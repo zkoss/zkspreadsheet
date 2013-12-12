@@ -1,21 +1,17 @@
 package org.zkoss.zss.ngmodel;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.URL;
 import java.text.DateFormat;
 import java.util.Locale;
 
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.zkoss.poi.xssf.usermodel.XSSFWorkbook;
+import org.junit.*;
 import org.zkoss.zss.ngapi.NImporter;
 import org.zkoss.zss.ngapi.impl.ExcelImportFactory;
+import org.zkoss.zss.ngmodel.NCellStyle.Alignment;
+import org.zkoss.zss.ngmodel.NCellStyle.VerticalAlignment;
 import org.zkoss.zss.ngmodel.NFont.TypeOffset;
 
 /**
@@ -60,8 +56,8 @@ public class ImporterTest {
 			e.printStackTrace();
 		}
 		
-		assertEquals(book.getBookName(), "XSSFBook");
-		assertEquals(book.getNumOfSheet(), 4);
+		assertEquals("XSSFBook", book.getBookName());
+		assertEquals(6, book.getNumOfSheet());
 	}
 	
 	@Test
@@ -74,8 +70,8 @@ public class ImporterTest {
 			e.printStackTrace();
 		}
 		
-		assertEquals(book.getBookName(), "XSSFBook");
-		assertEquals(book.getNumOfSheet(), 4);
+		assertEquals("XSSFBook", book.getBookName());
+		assertEquals(6, book.getNumOfSheet());
 	}
 	
 	@Test
@@ -87,8 +83,8 @@ public class ImporterTest {
 			e.printStackTrace();
 		}
 		
-		assertEquals(book.getBookName(), "XSSFBook");
-		assertEquals(book.getNumOfSheet(), 4);
+		assertEquals("XSSFBook", book.getBookName());
+		assertEquals(6, book.getNumOfSheet());
 	}
 	
 	//content
@@ -101,7 +97,7 @@ public class ImporterTest {
 			e.printStackTrace();
 		}
 		
-		assertEquals(book.getNumOfSheet(), 4);
+		assertEquals(6, book.getNumOfSheet());
 
 		NSheet sheet1 = book.getSheet(0);
 		assertEquals("Value", sheet1.getSheetName());
@@ -162,6 +158,36 @@ public class ImporterTest {
 		assertEquals(NCell.CellType.BLANK, row5.getCell(1).getType());
 		assertEquals("", row5.getCell(1).getStringValue());
 	}
+	
+	@Test
+	public void cellStyleTest(){
+		NBook book = null;
+		try {
+			book = importer.imports(fileUnderTest, "XSSFBook");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		NSheet sheet = book.getSheetByName("Style");
+		assertEquals(true, sheet.getCell(24, 1).getCellStyle().isWrapText());
+		//alignment
+		assertEquals(VerticalAlignment.TOP, sheet.getCell(26, 1).getCellStyle().getVerticalAlignment());
+		assertEquals(VerticalAlignment.CENTER, sheet.getCell(26, 2).getCellStyle().getVerticalAlignment());
+		assertEquals(VerticalAlignment.BOTTOM, sheet.getCell(26, 3).getCellStyle().getVerticalAlignment());
+		assertEquals(Alignment.LEFT, sheet.getCell(27, 1).getCellStyle().getAlignment());
+		assertEquals(Alignment.CENTER, sheet.getCell(27, 2).getCellStyle().getAlignment());
+		assertEquals(Alignment.RIGHT, sheet.getCell(27, 3).getCellStyle().getAlignment());
+		
+		NSheet protectedSheet = book.getSheetByName("sheet-protection");
+		assertEquals(true, protectedSheet.getCell(0, 0).getCellStyle().isLocked());
+		assertEquals(false, protectedSheet.getCell(1, 0).getCellStyle().isLocked());
+		
+		//FIXME
+//		NSheet columnSheet = book.getSheetByName("column");
+//		assertEquals(true, columnSheet.getColumn(4).getCellStyle().isHidden());
+//		assertEquals(true, columnSheet.getCell(5, 4).getCellStyle().isHidden());
+	}
+		
 
 	@Test
 	public void cellFontNameTest(){

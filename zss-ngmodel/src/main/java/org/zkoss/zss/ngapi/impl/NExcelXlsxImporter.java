@@ -24,6 +24,7 @@ import org.zkoss.poi.xssf.usermodel.*;
 import org.zkoss.zss.ngmodel.*;
 import org.zkoss.zss.ngmodel.NCellStyle.Alignment;
 import org.zkoss.zss.ngmodel.NCellStyle.BorderType;
+import org.zkoss.zss.ngmodel.NCellStyle.VerticalAlignment;
 import org.zkoss.zss.ngmodel.NFont.TypeOffset;
 import org.zkoss.zss.ngmodel.NFont.Underline;
 import org.zkoss.zss.ngmodel.impl.BookImpl;
@@ -135,12 +136,15 @@ public class NExcelXlsxImporter extends AbstractImporter{
 			// FIXME
 			
 			cellStyle.setDataFormat(xssfCellStyle.getDataFormatString());
+			cellStyle.setWrapText(xssfCellStyle.getWrapText());
+			cellStyle.setLocked(xssfCellStyle.getLocked());
+			cellStyle.setAlignment(convertAlignment(xssfCellStyle.getAlignmentEnum()));
+			cellStyle.setVerticalAlignment(convertVerticalAlignment(xssfCellStyle.getVerticalAlignmentEnum()));
 			
 //			nCellStyle.setFillColor(xssfCellStyle.getff);
 			
-//			cellStyle.setLocked(xssfCellStyle.getLocked());
 			/*
-			nCellStyle.setAlignment(poiToNGAlignment(xssfCellStyle.getAlignmentEnum()));
+			cellStyle.setHidden(xssfCellStyle.getHidden());
 			nCellStyle.setBorderBottom(poiToBorderType(xssfCellStyle.getBorderBottomEnum()));
 			nCellStyle.setBorderBottomColor(new ColorImpl(xssfCellStyle.getBottomBorderColorColor().getRgb()));
 			nCellStyle.setBorderLeft(poiToBorderType(xssfCellStyle.getBorderLeftEnum()));
@@ -150,10 +154,6 @@ public class NExcelXlsxImporter extends AbstractImporter{
 			nCellStyle.setBorderRight(poiToBorderType(xssfCellStyle.getBorderRightEnum()));
 			nCellStyle.setBorderRightColor(new ColorImpl(xssfCellStyle.getRightBorderColorColor().getRgb()));
 //			nCellStyle.setFillPattern(fillPattern);
-			nCellStyle.setFont(font);
-			nCellStyle.setHidden(xssfCellStyle.getHidden());
-//			nCellStyle.setVerticalAlignment(verticalAlignment);
-			nCellStyle.setWrapText(xssfCellStyle.getWrapText());
 			 */
 			
 		return cellStyle;
@@ -209,7 +209,7 @@ public class NExcelXlsxImporter extends AbstractImporter{
 		}				
 	}
 	
-	private Alignment poiToNGAlignment(HorizontalAlignment poiAlignment) {
+	private Alignment convertAlignment(HorizontalAlignment poiAlignment) {
 		switch (poiAlignment) {
 			case LEFT:
 				return Alignment.LEFT;
@@ -223,6 +223,20 @@ public class NExcelXlsxImporter extends AbstractImporter{
 				return Alignment.JUSTIFY;
 			default:	
 				return Alignment.GENERAL;
+		}
+	}
+	
+	private VerticalAlignment convertVerticalAlignment(org.zkoss.poi.ss.usermodel.VerticalAlignment vAlignment) {
+		switch (vAlignment) {
+			case TOP:
+				return VerticalAlignment.TOP;
+			case CENTER:
+				return VerticalAlignment.CENTER;
+			case JUSTIFY:
+				return VerticalAlignment.JUSTIFY;
+			case BOTTOM:
+			default:	
+				return VerticalAlignment.BOTTOM;
 		}
 	}
 
