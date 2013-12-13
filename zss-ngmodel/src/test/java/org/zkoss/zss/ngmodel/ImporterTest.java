@@ -334,11 +334,15 @@ public class ImporterTest {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		NSheet sheet = book.getSheetByName("Value");
+		NSheet sheet = book.getSheetByName("column");
+		//column style
 		assertEquals(NFont.Boldweight.BOLD, sheet.getColumn(0).getCellStyle().getFont().getBoldweight());
-		//TODO color of column style 
-		//FIXME width unit issue
-//		assertEquals(209, sheet.getColumn(0).getWidth());
-//		assertEquals(183, sheet.getColumn(1).getWidth());
+		//width
+		assertEquals(228, sheet.getColumn(0).getWidth()); 
+		assertEquals(100, sheet.getColumn(1).getWidth());
+		assertEquals(102, sheet.getColumn(2).getWidth());
+		assertEquals(0, sheet.getColumn(4).getWidth());		//the hidden column
+		assertEquals(72, sheet.getColumn(5).getWidth());	//default width
 	}
 }
+

@@ -61,7 +61,7 @@ public class NExcelXlsxImporter extends AbstractImporter{
 		book = new BookImpl(bookName);
 		// import book scope content
 		for(XSSFSheet xssfSheet : workbook) {
-			importPoiSheet(book, xssfSheet);
+			importPoiSheet(xssfSheet);
 		}
 		return book;
 	}
@@ -70,11 +70,12 @@ public class NExcelXlsxImporter extends AbstractImporter{
 	/*
 	 * import sheet scope content from XSSFSheet.
 	 */
-	private void importPoiSheet(NBook book, Sheet poiSheet) {
+	private void importPoiSheet(Sheet poiSheet) {
 		NSheet sheet = book.createSheet(poiSheet.getSheetName());
 		sheet.setDefaultRowHeight(XUtils.twipToPx(poiSheet.getDefaultRowHeight()));
 		//TODO default char width reference XSSFBookImpl._defaultCharWidth = 7
 		//TODO original width 64px, current is 72px
+		//reference XUtils.getDefaultColumnWidthInPx()
 		sheet.setDefaultColumnWidth(XUtils.defaultColumnWidthToPx(poiSheet.getDefaultColumnWidth(),8));
 		int maxColumnIndex = 0;
 		for(Row poiRow : poiSheet) {
@@ -86,8 +87,11 @@ public class NExcelXlsxImporter extends AbstractImporter{
 		
 		//import columns
 		for (int c=0 ; c<=maxColumnIndex ; c++){
-//			sheet.getColumn(c).setWidth(ExcelToHtmlUtils.getColumnWidthInPx(poiSheet.getColumnWidth(c)));
-			sheet.getColumn(c).setCellStyle(importXSSFCellStyle((XSSFCellStyle)poiSheet.getColumnStyle(c)));
+			//reference Spreadsheet.updateColWidth()
+			sheet.getColumn(c).setWidth(XUtils.getWidthAny(poiSheet, c, 8));
+			if (poiSheet.getColumnStyle(c) != null){
+				sheet.getColumn(c).setCellStyle(importXSSFCellStyle((XSSFCellStyle)poiSheet.getColumnStyle(c)));
+			}
 		}
 	}
 
@@ -98,7 +102,7 @@ public class NExcelXlsxImporter extends AbstractImporter{
 			row.setCellStyle(importXSSFCellStyle((XSSFCellStyle)poiRow.getRowStyle()));
 		}
 		
-		for(Cell poiCell : poiRow) { // Go through each cell
+		for(Cell poiCell : poiRow) {
 			importPoiCell(row, poiCell);
 		}
 	}

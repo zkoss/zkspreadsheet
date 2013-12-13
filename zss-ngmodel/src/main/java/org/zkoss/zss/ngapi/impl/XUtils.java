@@ -18,10 +18,11 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.ngapi.impl;
 
-import java.awt.font.FontRenderContext;
-import java.awt.font.TextAttribute;
-import java.awt.font.TextLayout;
+import java.awt.font.*;
 import java.text.AttributedString;
+
+import org.zkoss.poi.ss.usermodel.Sheet;
+
 
 /**
  * copied from ZSS project to make ng-model run.
@@ -29,6 +30,15 @@ import java.text.AttributedString;
  *
  */
 public class XUtils {
+
+	
+	public static int getWidthAny(Sheet zkSheet,int col, int charWidth){
+		int w = zkSheet.getColumnWidth(col);
+		if (w == zkSheet.getDefaultColumnWidth() * 256) { //default column width
+			return XUtils.defaultColumnWidthToPx(w / 256, charWidth);
+		}
+		return fileChar256ToPx(w, charWidth);
+	}
 	
 	//calculate the default char width in pixel per the given Font
 	public static int calcDefaultCharWidth(java.awt.Font font) {
