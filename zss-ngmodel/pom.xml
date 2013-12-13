@@ -27,6 +27,11 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
+			<groupId>org.zkoss.zk</groupId>
+			<artifactId>zk</artifactId>
+			<version>6.5.4</version>
+		</dependency>
+		<dependency>
 			<groupId>org.zkoss.poi</groupId>
 			<artifactId>zpoi</artifactId>
 			<version>3.9.1-SNAPSHOT</version>

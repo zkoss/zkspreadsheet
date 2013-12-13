@@ -43,12 +43,20 @@ import org.zkoss.zss.ngmodel.impl.BookImpl;
  */
 public class TestImporterFactory implements ImporterFactory{
 
+	static NBook book;//test test share
+	
 	@Override
 	public NImporter createImporter() {
 		return new AbstractImporter() {
 			
 			@Override
 			public NBook imports(InputStream is, String bookName) throws IOException {
+//				if(book!=null){
+//					return book;
+//				}
+//				book = NBooks.createBook(bookName);
+//				book.setShareScope("application");
+				
 				NBook book = NBooks.createBook(bookName);
 				
 				NSheet sheet1 = book.createSheet("Sheet 1");

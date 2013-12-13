@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.zkoss.lang.Objects;
 import org.zkoss.zss.ngmodel.InvalidateModelOpException;
 import org.zkoss.zss.ngmodel.ModelEvent;
 import org.zkoss.zss.ngmodel.ModelEventListener;
@@ -75,7 +76,7 @@ public class BookImpl extends BookAdv{
 	private final int maxRowSize = SpreadsheetVersion.EXCEL2007.getMaxRows();
 	private final int maxColumnSize = SpreadsheetVersion.EXCEL2007.getMaxColumns();
 	
-	private final List<ModelEventListener> listeners = new LinkedList<ModelEventListener>();
+	private EventListenerAdaptor eventListenerAdaptor;
 	
 	private final HashMap<String,Object> attributes = new LinkedHashMap<String, Object>();
 	
@@ -92,6 +93,8 @@ public class BookImpl extends BookAdv{
 		colors.put(ColorImpl.BLUE,ColorImpl.BLUE);
 		
 		bookId = ((char)('a'+random.nextInt(26))) + Long.toString(/*System.currentTimeMillis()+*/bookCount.getAndIncrement(), Character.MAX_RADIX) ;
+		
+		eventListenerAdaptor = new EventListenerAdaptorImpl();
 	}
 	
 	@Override
@@ -176,10 +179,7 @@ public class BookImpl extends BookAdv{
 	}
 	@Override
 	public void sendModelEvent(ModelEvent event){
-		//publish event to the listeners
-		for(ModelEventListener l:listeners){
-			l.onEvent(event);
-		}
+		eventListenerAdaptor.sendModelEvent(event);
 	}
 	
 	@Override
@@ -395,15 +395,11 @@ public class BookImpl extends BookAdv{
 	
 	@Override
 	public void addEventListener(ModelEventListener listener){
-		if(!listeners.contains(listener)){
-			listeners.add(listener);
-		}
+		eventListenerAdaptor.addEventListener(listener);
 	}
 	@Override
 	public void removeEventListener(ModelEventListener listener){
-		if(listeners!=null){
-			listeners.remove(listener);
-		}
+		eventListenerAdaptor.removeEventListener(listener);
 	}
 
 	@Override
@@ -532,7 +528,26 @@ public class BookImpl extends BookAdv{
 
 	@Override
 	public void setShareScope(String scope) {
-		this.shareScope = scope;
+		if(!Objects.equals(this.shareScope,scope)){
+			
+			if("disable".equals(scope)){
+				eventListenerAdaptor.clear();
+				return;
+			}
+			
+			if(eventListenerAdaptor.size()>0){
+				throw new IllegalStateException("can't change share scope after registed any listener");
+			}
+			
+			this.shareScope = scope;
+			eventListenerAdaptor.clear();
+			
+			if(scope!=null){
+				eventListenerAdaptor = new EventQueueListenerAdaptorImpl(scope, bookId);
+			}else{
+				eventListenerAdaptor = new EventListenerAdaptorImpl();
+			}
+		}
 	}
 
 	@Override
