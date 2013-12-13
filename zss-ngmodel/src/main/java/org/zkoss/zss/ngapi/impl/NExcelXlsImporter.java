@@ -29,7 +29,7 @@ import org.zkoss.zss.ngmodel.impl.BookImpl;
  * @author Hawk
  * @since 3.5.0
  */
-public class NExcelXlsImporter extends AbstractImporter{
+public class NExcelXlsImporter extends AbstractExcelImporter{
 
 
 	@Override

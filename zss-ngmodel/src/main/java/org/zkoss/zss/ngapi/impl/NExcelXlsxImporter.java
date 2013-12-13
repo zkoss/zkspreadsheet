@@ -27,7 +27,6 @@ import org.zkoss.zss.ngmodel.NCellStyle.BorderType;
 import org.zkoss.zss.ngmodel.NCellStyle.VerticalAlignment;
 import org.zkoss.zss.ngmodel.NFont.TypeOffset;
 import org.zkoss.zss.ngmodel.NFont.Underline;
-import org.zkoss.zss.ngmodel.impl.BookImpl;
 /**
  * Convert Excel XLSX format file to a Spreadsheet {@link NBook} model including following information:
  * Book:
@@ -41,7 +40,7 @@ import org.zkoss.zss.ngmodel.impl.BookImpl;
  * @author Hawk
  * @since 3.5.0
  */
-public class NExcelXlsxImporter extends AbstractImporter{
+public class NExcelXlsxImporter extends AbstractExcelImporter{
 
 	/** 
 	 * <poi CellStyle index, {@link NCellStyle} object> 
@@ -58,9 +57,9 @@ public class NExcelXlsxImporter extends AbstractImporter{
 	@Override
 	public NBook imports(InputStream is, String bookName) throws IOException {
 		workbook = new XSSFWorkbook(is);
-		book = new BookImpl(bookName);
+		book = NBooks.createBook(bookName);
 		// import book scope content
-		for(XSSFSheet xssfSheet : workbook) {
+		for(Sheet xssfSheet : workbook) {
 			importPoiSheet(xssfSheet);
 		}
 		return book;
@@ -70,7 +69,7 @@ public class NExcelXlsxImporter extends AbstractImporter{
 	/*
 	 * import sheet scope content from XSSFSheet.
 	 */
-	private void importPoiSheet(Sheet poiSheet) {
+	private NSheet importPoiSheet(Sheet poiSheet) {
 		NSheet sheet = book.createSheet(poiSheet.getSheetName());
 		sheet.setDefaultRowHeight(XUtils.twipToPx(poiSheet.getDefaultRowHeight()));
 		//TODO default char width reference XSSFBookImpl._defaultCharWidth = 7
@@ -93,9 +92,11 @@ public class NExcelXlsxImporter extends AbstractImporter{
 				sheet.getColumn(c).setCellStyle(importXSSFCellStyle((XSSFCellStyle)poiSheet.getColumnStyle(c)));
 			}
 		}
+		
+		return sheet;
 	}
 
-	private void importRow(NSheet sheet, Row poiRow) {
+	private NRow importRow(NSheet sheet, Row poiRow) {
 		NRow row = sheet.getRow(poiRow.getRowNum());
 		row.setHeight(XUtils.twipToPx(poiRow.getHeight()));
 		if (poiRow.getRowStyle()!= null){
@@ -105,9 +106,11 @@ public class NExcelXlsxImporter extends AbstractImporter{
 		for(Cell poiCell : poiRow) {
 			importPoiCell(row, poiCell);
 		}
+		
+		return row;
 	}
 	
-	private void importPoiCell(NRow row, Cell poiCell){
+	private NCell importPoiCell(NRow row, Cell poiCell){
 		NCell cell = row.getCell(poiCell.getColumnIndex());
 		switch (poiCell.getCellType()){
 			case Cell.CELL_TYPE_NUMERIC:
@@ -132,6 +135,8 @@ public class NExcelXlsxImporter extends AbstractImporter{
 				//TODO log "ignore a cell with unknown.
 		}
 		cell.setCellStyle(importXSSFCellStyle((XSSFCellStyle)poiCell.getCellStyle()));
+		
+		return cell;
 	}
 	
 	/**
