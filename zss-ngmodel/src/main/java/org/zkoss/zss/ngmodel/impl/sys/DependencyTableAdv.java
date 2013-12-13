@@ -9,7 +9,10 @@
 
 Copyright (C) 2013 Potix Corporation. All Rights Reserved.
  */
-package org.zkoss.zss.ngmodel.sys.dependency;
+package org.zkoss.zss.ngmodel.impl.sys;
+
+import org.zkoss.zss.ngmodel.sys.dependency.DependencyTable;
+import org.zkoss.zss.ngmodel.sys.dependency.Ref;
 
 /**
  * @author Pao

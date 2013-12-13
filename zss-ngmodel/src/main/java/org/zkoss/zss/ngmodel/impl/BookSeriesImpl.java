@@ -25,9 +25,9 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.zkoss.zss.ngmodel.NBook;
+import org.zkoss.zss.ngmodel.impl.sys.DependencyTableAdv;
 import org.zkoss.zss.ngmodel.sys.EngineFactory;
 import org.zkoss.zss.ngmodel.sys.dependency.DependencyTable;
-import org.zkoss.zss.ngmodel.sys.dependency.DependencyTableAdv;
 /**
  * 
  * @author dennis

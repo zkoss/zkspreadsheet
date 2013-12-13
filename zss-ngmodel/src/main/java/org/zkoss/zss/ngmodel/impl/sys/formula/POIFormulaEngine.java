@@ -15,6 +15,7 @@ import java.io.Serializable;
 import java.lang.reflect.Proxy;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import org.zkoss.poi.ss.formula.CollaboratingWorkbooksEnvironment;
 import org.zkoss.poi.ss.formula.EvaluationCell;
 import org.zkoss.poi.ss.formula.EvaluationWorkbook;
@@ -40,7 +41,7 @@ import org.zkoss.zss.ngmodel.NCell;
 import org.zkoss.zss.ngmodel.NSheet;
 import org.zkoss.zss.ngmodel.impl.BookSeriesAdv;
 import org.zkoss.zss.ngmodel.impl.RefImpl;
-import org.zkoss.zss.ngmodel.sys.dependency.DependencyTableAdv;
+import org.zkoss.zss.ngmodel.impl.sys.DependencyTableAdv;
 import org.zkoss.zss.ngmodel.sys.dependency.Ref;
 import org.zkoss.zss.ngmodel.sys.formula.EvaluationResult;
 import org.zkoss.zss.ngmodel.sys.formula.EvaluationResult.ResultType;

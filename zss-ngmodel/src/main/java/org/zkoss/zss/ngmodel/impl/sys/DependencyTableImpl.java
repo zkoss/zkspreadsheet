@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import org.zkoss.zss.ngmodel.sys.dependency.DependencyTableAdv;
+
 import org.zkoss.zss.ngmodel.sys.dependency.Ref;
 
 /* DependencyTableImpl.java
