@@ -311,9 +311,15 @@ public class ImporterTest {
 		assertEquals("#,##0.00", sheet.getCell(1, 1).getCellStyle().getDataFormat());
 		assertEquals("\"NT$\"#,##0.00", sheet.getCell(1, 2).getCellStyle().getDataFormat());
 		assertEquals("yyyy/m/d", sheet.getCell(1, 4).getCellStyle().getDataFormat());
+		//actual "h:mm AM/PM"
 //		assertEquals("hh:mm AM/PM", sheet.getCell(1, 5).getCellStyle().getDataFormat());
 		assertEquals("0.0%", sheet.getCell(1, 6).getCellStyle().getDataFormat());
 		assertEquals("# ??/??", sheet.getCell(3, 1).getCellStyle().getDataFormat());
+		assertEquals("0.00E+00", sheet.getCell(3, 2).getCellStyle().getDataFormat());
+		assertEquals("@", sheet.getCell(3, 3).getCellStyle().getDataFormat());
+		//TODO what characters required to escape
+//		assertEquals("[<=9999999]###\\-####;\\(0#\\)\\ ###\\-####", sheet.getCell(3, 4).getCellStyle().getDataFormat());
+		
 	}
 	
 	@Test

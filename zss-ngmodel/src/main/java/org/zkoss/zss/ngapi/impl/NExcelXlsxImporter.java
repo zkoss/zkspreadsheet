@@ -35,16 +35,24 @@ import org.zkoss.zss.ngmodel.impl.BookImpl;
  * Sheet:
  * 		name, column width, row height, hidden row (column), row (column) style
  * Cell:
- * 		type, value, font with color and style, type offset(normal or subscript), background color, border 
+ * 		type, value, font with color and style, type offset(normal or subscript), background color, border
+ * 
+ * TODO use XLSX, XLS common interface (e.g. CellStyle instead of {@link XSSFCellStyle}) to get content first for that codes can be easily moved to parent class. 
  * @author Hawk
  * @since 3.5.0
  */
 public class NExcelXlsxImporter extends AbstractImporter{
 
-	//<XSSF style index, NCellStyle object>
+	/** 
+	 * <poi CellStyle index, {@link NCellStyle} object> 
+	 * Keep track of imported style during importing to avoid creating duplicated style objects. 
+	 */
 	private Map<Short, NCellStyle> importedStyle = new HashMap<Short, NCellStyle>();
+	/**<poi Font index, {@link NFont} object> **/
 	private Map<Short, NFont> importedFont = new HashMap<Short, NFont>();
+	// destination book model
 	private NBook book;
+	// source book model
 	private XSSFWorkbook workbook;
 	
 	@Override
@@ -53,7 +61,7 @@ public class NExcelXlsxImporter extends AbstractImporter{
 		book = new BookImpl(bookName);
 		// import book scope content
 		for(XSSFSheet xssfSheet : workbook) {
-			importXSSFSheet(book, xssfSheet);
+			importPoiSheet(book, xssfSheet);
 		}
 		return book;
 	}
@@ -62,19 +70,20 @@ public class NExcelXlsxImporter extends AbstractImporter{
 	/*
 	 * import sheet scope content from XSSFSheet.
 	 */
-	private void importXSSFSheet(NBook book, Sheet poiSheet) {
+	private void importPoiSheet(NBook book, Sheet poiSheet) {
 		NSheet sheet = book.createSheet(poiSheet.getSheetName());
 		sheet.setDefaultRowHeight(XUtils.twipToPx(poiSheet.getDefaultRowHeight()));
 		//TODO default char width reference XSSFBookImpl._defaultCharWidth
 		sheet.setDefaultColumnWidth(XUtils.defaultColumnWidthToPx(poiSheet.getDefaultColumnWidth(),8));
 		int maxColumnIndex = 0;
-		for(Row poiRow : poiSheet) { // Go through each row
+		for(Row poiRow : poiSheet) {
 			importRow(sheet, poiRow);
 			if (poiRow.getLastCellNum() > maxColumnIndex){
 				maxColumnIndex = poiRow.getLastCellNum(); 
 			}
 		}
 		
+		//import columns
 		for (int c=0 ; c<=maxColumnIndex ; c++){
 //			sheet.getColumn(c).setWidth(ExcelToHtmlUtils.getColumnWidthInPx(poiSheet.getColumnWidth(c)));
 			sheet.getColumn(c).setCellStyle(importXSSFCellStyle((XSSFCellStyle)poiSheet.getColumnStyle(c)));
@@ -89,46 +98,70 @@ public class NExcelXlsxImporter extends AbstractImporter{
 		}
 		
 		for(Cell poiCell : poiRow) { // Go through each cell
-			NCell cell = importPoiCell(sheet, poiCell);
-			//same style always use same font
-			if(!importedStyle.containsKey(poiCell.getCellStyle().getIndex())) {
-				cell.setCellStyle(importXSSFCellStyle((XSSFCellStyle)poiCell.getCellStyle()));
-			}
+			importPoiCell(row, poiCell);
+		}
+	}
+	
+	private void importPoiCell(NRow row, Cell poiCell){
+		NCell cell = row.getCell(poiCell.getColumnIndex());
+		switch (poiCell.getCellType()){
+			case Cell.CELL_TYPE_NUMERIC:
+				cell.setNumberValue(poiCell.getNumericCellValue());
+				break;
+			case Cell.CELL_TYPE_STRING:
+				cell.setStringValue(poiCell.getStringCellValue());
+				break;
+			case Cell.CELL_TYPE_BOOLEAN:
+				cell.setBooleanValue(poiCell.getBooleanCellValue());
+				break;
+			case Cell.CELL_TYPE_FORMULA:
+				cell.setFormulaValue(poiCell.getCellFormula());
+				break;
+			case Cell.CELL_TYPE_ERROR:
+				cell.setErrorValue(convertErrorCode(poiCell.getErrorCellValue()));
+				break;
+			case Cell.CELL_TYPE_BLANK:
+				//do nothing because spreadsheet model auto creates blank cells
+				break;
+			default:
+				//TODO log "ignore a cell with unknown.
+		}
+		//same style always use same font
+		if(!importedStyle.containsKey(poiCell.getCellStyle().getIndex())) {
+			cell.setCellStyle(importXSSFCellStyle((XSSFCellStyle)poiCell.getCellStyle()));
 		}
 	}
 	
 	/**
-	 * copy XSSFCellStyle attributes into nCellStyle
-	 * @param nCellStyle
+	 * Convert CellStyle into NCellStyle
 	 * @param xssfCellStyle
 	 */
 	private NCellStyle importXSSFCellStyle(XSSFCellStyle xssfCellStyle) {
-		NCellStyle cellStyle;
-			cellStyle = book.createCellStyle(true);
-			importedStyle.put(xssfCellStyle.getIndex(), cellStyle);
-			
-			cellStyle.setDataFormat(xssfCellStyle.getDataFormatString());
-			cellStyle.setWrapText(xssfCellStyle.getWrapText());
-			cellStyle.setLocked(xssfCellStyle.getLocked());
-			cellStyle.setAlignment(convertAlignment(xssfCellStyle.getAlignmentEnum()));
-			cellStyle.setVerticalAlignment(convertVerticalAlignment(xssfCellStyle.getVerticalAlignmentEnum()));
-			cellStyle.setFillColor(convertPoiColor(xssfCellStyle.getFillForegroundColorColor(),"#000000"));
-			
-			cellStyle.setBorderLeft(convertBorderType(xssfCellStyle.getBorderLeftEnum()));
-			cellStyle.setBorderTop(convertBorderType(xssfCellStyle.getBorderTopEnum()));
-			cellStyle.setBorderRight(convertBorderType(xssfCellStyle.getBorderRightEnum()));
-			cellStyle.setBorderBottom(convertBorderType(xssfCellStyle.getBorderBottomEnum()));
+		NCellStyle cellStyle = book.createCellStyle(true);
+		importedStyle.put(xssfCellStyle.getIndex(), cellStyle);
 
-			cellStyle.setBorderLeftColor(convertPoiColor(xssfCellStyle.getLeftBorderColorColor(), "#FFFFFF"));
-			cellStyle.setBorderTopColor(convertPoiColor(xssfCellStyle.getTopBorderColorColor(), "#FFFFFF"));
-			cellStyle.setBorderRightColor(convertPoiColor(xssfCellStyle.getRightBorderColorColor(), "#FFFFFF"));
-			cellStyle.setBorderBottomColor(convertPoiColor(xssfCellStyle.getBottomBorderColorColor(), "#FFFFFF"));
-			/*
+		cellStyle.setDataFormat(xssfCellStyle.getDataFormatString());
+		cellStyle.setWrapText(xssfCellStyle.getWrapText());
+		cellStyle.setLocked(xssfCellStyle.getLocked());
+		cellStyle.setAlignment(convertAlignment(xssfCellStyle.getAlignmentEnum()));
+		cellStyle.setVerticalAlignment(convertVerticalAlignment(xssfCellStyle.getVerticalAlignmentEnum()));
+		cellStyle.setFillColor(convertPoiColor(xssfCellStyle.getFillForegroundColorColor(),"#000000"));
+
+		cellStyle.setBorderLeft(convertBorderType(xssfCellStyle.getBorderLeftEnum()));
+		cellStyle.setBorderTop(convertBorderType(xssfCellStyle.getBorderTopEnum()));
+		cellStyle.setBorderRight(convertBorderType(xssfCellStyle.getBorderRightEnum()));
+		cellStyle.setBorderBottom(convertBorderType(xssfCellStyle.getBorderBottomEnum()));
+
+		cellStyle.setBorderLeftColor(convertPoiColor(xssfCellStyle.getLeftBorderColorColor(), "#FFFFFF"));
+		cellStyle.setBorderTopColor(convertPoiColor(xssfCellStyle.getTopBorderColorColor(), "#FFFFFF"));
+		cellStyle.setBorderRightColor(convertPoiColor(xssfCellStyle.getRightBorderColorColor(), "#FFFFFF"));
+		cellStyle.setBorderBottomColor(convertPoiColor(xssfCellStyle.getBottomBorderColorColor(), "#FFFFFF"));
+		/*
 			cellStyle.setHidden(xssfCellStyle.getHidden());
 //			nCellStyle.setFillPattern(fillPattern);
-			 */
-			
-			cellStyle.setFont(importFont(xssfCellStyle));
+		 */
+
+		cellStyle.setFont(importFont(xssfCellStyle));
 		return cellStyle;
 		
 	}

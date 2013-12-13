@@ -49,7 +49,9 @@ public abstract class AbstractImporter implements NImporter{
 			if(is!=null){
 				try{
 					is.close();
-				}catch(Exception x){};
+				}catch(Exception e){
+					e.printStackTrace();
+				}
 			}
 		}
 	}
@@ -64,40 +66,13 @@ public abstract class AbstractImporter implements NImporter{
 			if (is != null) {
 				try {
 					is.close();
-				} catch (Exception x) {
+				} catch (Exception e) {
+					e.printStackTrace();
 				}
-				;
 			}
 		}
 	}
 	
-	protected NCell importPoiCell(NSheet sheet, Cell poiCell){
-		NCell cell = sheet.getCell(poiCell.getRowIndex(), poiCell.getColumnIndex());
-		switch (poiCell.getCellType()){
-			case Cell.CELL_TYPE_NUMERIC:
-				cell.setNumberValue(poiCell.getNumericCellValue());
-				break;
-			case Cell.CELL_TYPE_STRING:
-				cell.setStringValue(poiCell.getStringCellValue());
-				break;
-			case Cell.CELL_TYPE_BOOLEAN:
-				cell.setBooleanValue(poiCell.getBooleanCellValue());
-				break;
-			case Cell.CELL_TYPE_FORMULA:
-				cell.setFormulaValue(poiCell.getCellFormula());
-				break;
-			case Cell.CELL_TYPE_ERROR:
-				cell.setErrorValue(convertErrorCode(poiCell.getErrorCellValue()));
-				break;
-			case Cell.CELL_TYPE_BLANK:
-				//do nothing because spreadsheet model auto creates blank cells
-				break;
-			default:
-				//TODO log "ignore a cell with unknown.
-		}
-		return cell;
-	}
-
 	protected ErrorValue convertErrorCode(byte errorCellValue) {
 		switch (errorCellValue){
 			case ErrorConstants.ERROR_NAME:
