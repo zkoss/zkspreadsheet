@@ -72,17 +72,4 @@ public abstract class AbstractImporter implements NImporter{
 			}
 		}
 	}
-	
-	protected ErrorValue convertErrorCode(byte errorCellValue) {
-		switch (errorCellValue){
-			case ErrorConstants.ERROR_NAME:
-				return new ErrorValue(ErrorValue.INVALID_NAME);
-			case ErrorConstants.ERROR_VALUE:
-				return new ErrorValue(ErrorValue.INVALID_VALUE);
-			default:
-				//TODO log it
-				return new ErrorValue(ErrorValue.INVALID_NAME);
-		}
-		
-	}
 }
