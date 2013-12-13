@@ -83,4 +83,9 @@ public class DependencyTableImpl extends DependencyTableAdv {
 		}
 		return sb.toString();
 	}
+
+	@Override
+	public void merge(DependencyTableAdv dependencyTable) {
+		// TODO Auto-generated method stub
+	}
 }

@@ -18,9 +18,7 @@ package org.zkoss.zss.ngmodel.impl;
 
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -83,7 +81,7 @@ public class BookImpl extends BookAdv{
 	public BookImpl(String bookName){
 		Validations.argNotNull(bookName);
 		this.bookName = bookName;
-		bookSeries = new BookSeriesImpl(this);
+		bookSeries = new SimpleBookSeriesImpl(this);
 		fonts.add(defaultFont = new FontImpl());
 		cellStyles.add(defaultCellStyle = new CellStyleImpl(defaultFont));
 		colors.put(ColorImpl.WHITE,ColorImpl.WHITE);
@@ -553,6 +551,11 @@ public class BookImpl extends BookAdv{
 	@Override
 	public String getShareScope() {
 		return shareScope;
+	}
+
+	@Override
+	void setBookSeries(NBookSeries bookSeries) {
+		this.bookSeries = bookSeries;
 	}
 
 }

@@ -23,6 +23,7 @@ import java.util.Map;
 
 import org.zkoss.zss.ngmodel.ModelEvent;
 import org.zkoss.zss.ngmodel.NBook;
+import org.zkoss.zss.ngmodel.NBookSeries;
 import org.zkoss.zss.ngmodel.NCell;
 /**
  * 
@@ -50,5 +51,7 @@ public abstract class BookAdv implements NBook,Serializable{
 	ModelInternalEvent createModelInternalEvent(String name, Object... data){
 		return ModelInternalEvents.createModelInternalEvent(name,this,data);
 	}
+
+	/*package*/ abstract void setBookSeries(NBookSeries bookSeries);
 
 }

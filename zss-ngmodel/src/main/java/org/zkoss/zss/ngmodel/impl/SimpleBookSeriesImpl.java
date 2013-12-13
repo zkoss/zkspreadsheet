@@ -18,8 +18,6 @@ package org.zkoss.zss.ngmodel.impl;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -27,35 +25,28 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import org.zkoss.zss.ngmodel.NBook;
 import org.zkoss.zss.ngmodel.sys.EngineFactory;
 import org.zkoss.zss.ngmodel.sys.dependency.DependencyTable;
-import org.zkoss.zss.ngmodel.sys.dependency.DependencyTableAdv;
 /**
  * 
  * @author dennis
  * @since 3.5.0
  */
-public class BookSeriesImpl extends BookSeriesAdv {
+public class SimpleBookSeriesImpl extends BookSeriesAdv {
 	private static final long serialVersionUID = 1L;
 	
-	final private HashMap<String,BookAdv> books;
+	final private BookAdv book;
+	List<NBook> array;
 	
 	final private DependencyTable dependencyTable;
 	
 	final private ReadWriteLock lock = new ReentrantReadWriteLock();
 	
-	public BookSeriesImpl(BookAdv... books){
-		this.books = new LinkedHashMap<String, BookAdv>(1);
+	public SimpleBookSeriesImpl(BookAdv book){
+		this.book = book;
 		dependencyTable = EngineFactory.getInstance().createDependencyTable();
-		for(BookAdv book:books){
-			this.books.put(book.getBookName(), book);
-			((DependencyTableAdv) dependencyTable)
-					.merge((DependencyTableAdv) ((BookSeriesAdv) book
-							.getBookSeries()).getDependencyTable());
-			book.setBookSeries(this);
-		}
 	}
 	@Override
 	public NBook getBook(String name) {
-		return books.get(name);
+		return book.getBookName().equals(name)?book:null;
 	}
 
 	@Override
@@ -68,6 +59,11 @@ public class BookSeriesImpl extends BookSeriesAdv {
 	}
 	@Override
 	public List<NBook> getBooks() {
-		return Collections.unmodifiableList(new ArrayList<NBook>(books.values()));
+		if(array!=null){
+			return array;
+		}
+		array = new ArrayList<NBook>(1);
+		array.add(book);
+		return array = Collections.unmodifiableList(array);
 	}
 }

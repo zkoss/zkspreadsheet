@@ -18,4 +18,6 @@ package org.zkoss.zss.ngmodel.sys.dependency;
 public abstract class DependencyTableAdv implements DependencyTable {
 
 	abstract public void add(Ref dependant, Ref precedent);
+
+	abstract public void merge(DependencyTableAdv dependencyTable);
 }
