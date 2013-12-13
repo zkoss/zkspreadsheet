@@ -21,18 +21,15 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.locks.ReadWriteLock;
 
+import org.zkoss.poi.ss.usermodel.BorderStyle;
 import org.zkoss.poi.ss.usermodel.Cell;
-import org.zkoss.poi.ss.usermodel.CellStyle;
 import org.zkoss.poi.ss.usermodel.FillPatternType;
 import org.zkoss.poi.ss.usermodel.Font;
 import org.zkoss.poi.ss.usermodel.HorizontalAlignment;
-import org.zkoss.poi.ss.usermodel.Workbook;
 import org.zkoss.poi.ss.util.CellRangeAddress;
 import org.zkoss.poi.xssf.usermodel.XSSFCell;
 import org.zkoss.poi.xssf.usermodel.XSSFCellStyle;
@@ -42,12 +39,9 @@ import org.zkoss.poi.xssf.usermodel.XSSFFont;
 import org.zkoss.poi.xssf.usermodel.XSSFRow;
 import org.zkoss.poi.xssf.usermodel.XSSFSheet;
 import org.zkoss.poi.xssf.usermodel.XSSFWorkbook;
-import org.zkoss.zss.ngapi.NExporter;
-import org.zkoss.zss.ngapi.impl.ExcelExportFactory.Type;
 import org.zkoss.zss.ngmodel.CellRegion;
 import org.zkoss.zss.ngmodel.NBook;
 import org.zkoss.zss.ngmodel.NCell;
-import org.zkoss.zss.ngmodel.NCell.CellType;
 import org.zkoss.zss.ngmodel.NCellStyle;
 import org.zkoss.zss.ngmodel.NCellStyle.Alignment;
 import org.zkoss.zss.ngmodel.NCellStyle.BorderType;
@@ -58,11 +52,12 @@ import org.zkoss.zss.ngmodel.NFont;
 import org.zkoss.zss.ngmodel.NFont.Boldweight;
 import org.zkoss.zss.ngmodel.NFont.TypeOffset;
 import org.zkoss.zss.ngmodel.NFont.Underline;
+import org.zkoss.zss.ngmodel.NHyperlink;
 import org.zkoss.zss.ngmodel.NRow;
 import org.zkoss.zss.ngmodel.NSheet;
 /**
  * 
- * @author dennis
+ * @author dennis, kuro
  * @since 3.5.0
  */
 public class NExcelXlsxExporter extends AbstractExporter{
@@ -97,6 +92,19 @@ public class NExcelXlsxExporter extends AbstractExporter{
 		try{
 			
 			workbook = new XSSFWorkbook();
+			
+			// TODO, API isn't available 
+			//workbook.setActiveSheet(index);
+			//workbook.setFirstVisibleTab(index);
+			//workbook.setForceFormulaRecalculation(value);
+			//workbook.setHidden(hiddenFlag);
+			//workbook.setMissingCellPolicy(missingCellPolicy);
+			//workbook.setPrintArea(sheetIndex, reference);
+			//workbook.setSelectedTab(index);
+			//workbook.setSheetHidden(sheetIx, hidden);
+			//workbook.setSheetName(sheetIndex, sheetname);
+			//workbook.setSheetOrder(sheetname, pos);
+			
 			// sheet iterator
 			for(NSheet sheet : book.getSheets()) {
 				
@@ -111,9 +119,24 @@ public class NExcelXlsxExporter extends AbstractExporter{
 //				sheet.getCharts();
 //				sheet.getPictures();
 				
-//				xssfSheet.setDefaultColumnWidth(sheet.getDefaultColumnWidth() / 256);
-//				xssfSheet.setDefaultColumnStyle(column, style);
-//				xssfSheet.setDefaultRowHeight((short)pxToTwip(sheet.getDefaultRowHeight()));
+				// FIXME doesn't know correct or wrong.
+				// refer from Spreadsheet#setRowHeight
+				xssfSheet.setDefaultRowHeight((short)XUtils.pxToTwip(sheet.getDefaultRowHeight()));
+				
+				// FIXME doesn't know correct or wrong.
+				// How to convert px into column width?
+				xssfSheet.setDefaultColumnWidth((int)XUtils.pxToScreenChar1(sheet.getDefaultColumnWidth(), 8));
+				
+				// TODO, API isn't available 
+				//xssfSheet.setActiveCell(cellRef);
+				//xssfSheet.setArrayFormula(formula, range);
+				//xssfSheet.setAutobreaks(value);
+				//xssfSheet.setAutoFilter(range); // FIXME AutoFilter
+				//xssfSheet.setAutoFilterMode(b);
+				//xssfSheet.setColumnBreak(column);
+				//xssfSheet.setColumnGroupCollapsed(columnNumber, collapsed);
+				//xssfSheet.setZoom(scale);
+				
 				
 				// row iterator
 				Iterator<NRow> rowiter = sheet.getRowIterator();
@@ -122,11 +145,10 @@ public class NExcelXlsxExporter extends AbstractExporter{
 					NRow row = rowiter.next();
 					XSSFRow xssfRow = xssfSheet.createRow(row.getIndex());
 					
-//					if(row.getHeight() != sheet.getDefaultRowHeight()) {
-//						xssfRow.setCustomHeight(true);
-//					}
-					
-//					xssfRow.setHeight((short)pxToTwip(row.getHeight()));
+					if(row.getHeight() != sheet.getDefaultRowHeight()) {
+						xssfRow.setCustomHeight(true);
+						xssfRow.setHeight((short)XUtils.pxToTwip(row.getHeight()));
+					}
 					
 					NCellStyle rowStyle = row.getCellStyle();
 					XSSFCellStyle xssfRowStyle = toXSSFCellStyle(rowStyle);
@@ -141,6 +163,15 @@ public class NExcelXlsxExporter extends AbstractExporter{
 						
 						NCellStyle cellStyle = cell.getCellStyle();
 						xssfCell.setCellStyle(toXSSFCellStyle(cellStyle));
+						
+						// Hyperlink
+//						NHyperlink hyperlink = null;
+//						if((hyperlink = cell.getHyperlink()) != null) {
+//							XSSFHyperlink xssfLink = xssfSheet.getHyperlink(cell.getRowIndex(), cell.getColumnIndex());
+//							xssfLink.setAddress(hyperlink.getAddress());
+//							xssfLink.setLabel(hyperlink.getLabel());
+//							// TODO, some API isn't available.
+//						}
 						
 						switch(cell.getType()) {
 							case BLANK:
@@ -176,8 +207,18 @@ public class NExcelXlsxExporter extends AbstractExporter{
 				Iterator<NColumn> coliter = sheet.getColumnIterator();
 				while(coliter.hasNext()) {
 					NColumn column = coliter.next();
-//					xssfSheet.setColumnWidth(column.getIndex(), column.getWidth());
-//					xssfSheet.setColumnStyle(column.getIndex() ,toXSSFCellStyle(column.getCellStyle()));
+					int colIndex = column.getIndex();
+					
+					// refer from RangeImpl#setColumnWidth
+					int columnWidthChar256 = XUtils.pxToFileChar256(column.getWidth(), 8);
+					// refer from BookHelper#setColumnWidth
+					final int orgChar256 = xssfSheet.getColumnWidth(colIndex);
+					if (columnWidthChar256 != orgChar256) {
+						xssfSheet.setColumnWidth(colIndex, columnWidthChar256);
+					}
+
+					xssfSheet.setColumnHidden(column.getIndex(), column.isHidden());
+					xssfSheet.setDefaultColumnStyle(column.getIndex(), toXSSFCellStyle(column.getCellStyle()));
 				}
 				
 			} // End Sheet
@@ -188,11 +229,12 @@ public class NExcelXlsxExporter extends AbstractExporter{
 			lock.writeLock().unlock();
 		}
 	}
-	
-	public static int pxToTwip(int px) {
-		return px * 72 * 20 / 96; //assume 96dpi
-	}
 
+	/**
+	 * Utility to adapt ZSS 3.5 cell style into XSSFCellStyle
+	 * @param cellStyle
+	 * @return a XSSFCellStyle Object
+	 */
 	private XSSFCellStyle toXSSFCellStyle(NCellStyle cellStyle) {
 		
 		// instead of creating a new style, use old one if exist
@@ -215,8 +257,11 @@ public class NExcelXlsxExporter extends AbstractExporter{
 		xssfCellStyle.setFillForegroundColor(new XSSFColor(cellStyle.getFillColor().getRGB()));
 		xssfCellStyle.setFillPattern(toPOIFillPattern(cellStyle.getFillPattern()));
 		xssfCellStyle.setVerticalAlignment(toPOIVerticalAlignment(cellStyle.getVerticalAlignment()));
+		xssfCellStyle.setWrapText(cellStyle.isWrapText());
+		xssfCellStyle.setLocked(cellStyle.isLocked());
+		xssfCellStyle.setHidden(cellStyle.isHidden());
 		
-		// refer from BookHelper.setDataFormat
+		// refer from BookHelper#setDataFormat
 		XSSFDataFormat df = workbook.createDataFormat();
 		short fmt = df.getFormat(cellStyle.getDataFormat());
 		xssfCellStyle.setDataFormat(fmt);
@@ -230,6 +275,11 @@ public class NExcelXlsxExporter extends AbstractExporter{
 		return xssfCellStyle;
 	}
 	
+	/**
+	 * Utility to adapt ZSS 3.5 font into XSSFFont
+	 * @param 3.5 font
+	 * @return a XSSFFont Object
+	 */
 	private XSSFFont toXSSFFont(NFont font) {
 
 		XSSFFont xssfFont = fontTable.get(font);
@@ -239,9 +289,10 @@ public class NExcelXlsxExporter extends AbstractExporter{
 		
 		xssfFont = workbook.createFont();
 		xssfFont.setBoldweight(toPOIBoldweight(font.getBoldweight()));
-		// FIXME is POI color reuseable?
+		xssfFont.setStrikeout(font.isStrikeout());
+		xssfFont.setItalic(font.isItalic());
 		xssfFont.setColor(new XSSFColor(font.getColor().getRGB()));
-		xssfFont.setFontHeight((double)font.getHeightPoints()/20);
+		xssfFont.setFontHeight(font.getHeightPoints());
 		xssfFont.setFontName(font.getName());
 		xssfFont.setTypeOffset(toPOITypeOffset(font.getTypeOffset()));
 		xssfFont.setUnderline(toPOIUnderline(font.getUnderline()));
@@ -311,37 +362,37 @@ public class NExcelXlsxExporter extends AbstractExporter{
 		}
 	}
 	
-	private byte toPOIBorderType(BorderType borderType) {
+	private BorderStyle toPOIBorderType(BorderType borderType) {
 		switch(borderType) {
 		case DASH_DOT:
-			return CellStyle.BORDER_DASH_DOT;
+			return BorderStyle.DASH_DOT;
 		case DASHED:
-			return CellStyle.BORDER_DASHED;
+			return BorderStyle.DASHED;
 		case DOTTED:
-			return CellStyle.BORDER_DOTTED;
+			return BorderStyle.DOTTED;
 		case DOUBLE:
-			return CellStyle.BORDER_DOUBLE;
+			return BorderStyle.DOUBLE;
 		case HAIR:
-			return CellStyle.BORDER_HAIR;
+			return BorderStyle.HAIR;
 		case MEDIUM:
-			return CellStyle.BORDER_MEDIUM;
+			return BorderStyle.MEDIUM;
 		case MEDIUM_DASH_DOT:
-			return CellStyle.BORDER_DASH_DOT;
+			return BorderStyle.DASH_DOT;
 		case MEDIUM_DASH_DOT_DOT:
-			return CellStyle.BORDER_DASH_DOT_DOT;
+			return BorderStyle.DASH_DOT_DOT;
 		case MEDIUM_DASHED:
-			return CellStyle.BORDER_MEDIUM_DASHED;
+			return BorderStyle.MEDIUM_DASHED;
 		case SLANTED_DASH_DOT:
-			return CellStyle.BORDER_SLANTED_DASH_DOT;
+			return BorderStyle.SLANTED_DASH_DOT;
 		case THICK:
-			return CellStyle.BORDER_THICK;
+			return BorderStyle.THICK;
 		case THIN:
-			return CellStyle.BORDER_THIN;
+			return BorderStyle.THIN;
 		case DASH_DOT_DOT:
-			return CellStyle.BORDER_DASH_DOT_DOT;
+			return BorderStyle.DASH_DOT_DOT;
 		case NONE:
 		default:
-			return CellStyle.BORDER_NONE;
+			return BorderStyle.NONE;
 		}
 	}
 	
