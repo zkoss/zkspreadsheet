@@ -18,6 +18,7 @@ package org.zkoss.zss.ngmodel.impl;
 
 import java.lang.ref.WeakReference;
 
+import org.zkoss.zss.ngmodel.CellRegion;
 import org.zkoss.zss.ngmodel.NCellStyle;
 import org.zkoss.zss.ngmodel.NComment;
 import org.zkoss.zss.ngmodel.NHyperlink;
@@ -25,7 +26,6 @@ import org.zkoss.zss.ngmodel.NRichText;
 import org.zkoss.zss.ngmodel.NSheet;
 import org.zkoss.zss.ngmodel.NCell.CellType;
 import org.zkoss.zss.ngmodel.sys.formula.FormulaExpression;
-import org.zkoss.zss.ngmodel.util.CellReference;
 import org.zkoss.zss.ngmodel.util.Validations;
 /**
  * 
@@ -109,8 +109,7 @@ class CellProxy extends CellAdv {
 	@Override
 	public String getReferenceString() {
 		loadProxy();
-		return proxy == null ? new CellReference(null, rowIdx, columnIdx,
-				false, false).formatAsString() : proxy.getReferenceString();
+		return proxy == null ? new CellRegion(rowIdx, columnIdx).getReferenceString() : proxy.getReferenceString();
 	}
 
 	@Override

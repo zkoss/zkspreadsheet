@@ -21,8 +21,6 @@ import org.zkoss.zss.ngmodel.CellRegion;
 import org.zkoss.zss.ngmodel.NBook;
 import org.zkoss.zss.ngmodel.NName;
 import org.zkoss.zss.ngmodel.NSheet;
-import org.zkoss.zss.ngmodel.util.AreaReference;
-import org.zkoss.zss.ngmodel.util.CellReference;
 
 /**
  * To get the range.
@@ -48,10 +46,8 @@ public class NRanges {
 	 * @return the associated {@link NRange} of the specified {@link NSheet} and area reference string (e.g. "A1:D4"). 
 	 */
 	public static NRange range(NSheet sheet, String areaReference){
-		AreaReference ar = new AreaReference(areaReference);
-		CellReference cr1 = ar.getFirstCell();
-		CellReference cr2 = ar.getLastCell();
-		return new NRangeImpl(sheet,cr1.getRow(),cr1.getCol(),cr2.getRow(),cr2.getCol());
+		CellRegion ar = new CellRegion(areaReference);
+		return new NRangeImpl(sheet,ar.getRow(),ar.getColumn(),ar.getLastRow(),ar.getLastColumn());
 	}
 	
 	/** Returns the associated {@link NRange} of the specified name of a NamedRange (e.g. "MyRange");

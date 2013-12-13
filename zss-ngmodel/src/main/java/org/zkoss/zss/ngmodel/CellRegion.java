@@ -18,8 +18,9 @@ package org.zkoss.zss.ngmodel;
 
 import java.io.Serializable;
 
-import org.zkoss.zss.ngmodel.util.AreaReference;
-import org.zkoss.zss.ngmodel.util.CellReference;
+import org.zkoss.poi.ss.util.AreaReference;
+import org.zkoss.poi.ss.util.CellReference;
+
 
 /**
  * 
@@ -51,7 +52,7 @@ public class CellRegion implements Serializable {
 		if(ref==null){
 			ref = new AreaReference(new CellReference(row,column),new CellReference(lastRow,lastColumn));
 		}
-		return ref.formatAsString();
+		return isSingle()?ref.getFirstCell().formatAsString():ref.formatAsString();
 	}
 
 	private void checkLegal() {

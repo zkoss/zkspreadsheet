@@ -17,8 +17,9 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.ngmodel.impl;
 
 import java.io.Serializable;
+
+import org.zkoss.zss.ngmodel.CellRegion;
 import org.zkoss.zss.ngmodel.sys.dependency.Ref;
-import org.zkoss.zss.ngmodel.util.CellReference;
 /**
  * 
  * @author dennis
@@ -188,9 +189,9 @@ public class RefImpl implements Ref, Serializable {
 		StringBuilder sb = new StringBuilder();
 		switch (type) {
 		case AREA:
-			sb.insert(0,":"+ new CellReference(lastRow, lastColumn).formatAsString());
+			sb.insert(0,":"+ new CellRegion(lastRow, lastColumn).getReferenceString());
 		case CELL:
-			sb.insert(0, new CellReference(row, column).formatAsString());
+			sb.insert(0, new CellRegion(row, column).getReferenceString());
 		case SHEET:
 			if(lastSheetName != null) {
 				sb.insert(0, sheetName + ":" + lastSheetName + "!");
