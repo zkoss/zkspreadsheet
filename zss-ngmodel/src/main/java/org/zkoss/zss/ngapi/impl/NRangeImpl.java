@@ -396,7 +396,7 @@ public class NRangeImpl implements NRange {
 					if(resultVal instanceof Date){
 						cell.setDateValue((Date)resultVal);
 					}else{
-						cell.setNumberValue((Number) resultVal);
+						cell.setNumberValue((Double) resultVal);
 					}
 					break;
 				case STRING:

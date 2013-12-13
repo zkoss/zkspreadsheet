@@ -23,15 +23,15 @@ public class TestFormulaEngineImpl implements FormulaEngine {
 	static HashMap<String, Object[]> testType = new HashMap<String,Object[]>();
 	
 	{
-		testData.put("SUM(999)", new Object[]{999,ResultType.SUCCESS});
-		testData.put("SUM(A1)", new Object[]{999,ResultType.SUCCESS});
-		testData.put("SUM(B4:D4)", new Object[]{6,ResultType.SUCCESS});
+		testData.put("SUM(999)", new Object[]{999D,ResultType.SUCCESS});
+		testData.put("SUM(A1)", new Object[]{999D,ResultType.SUCCESS});
+		testData.put("SUM(B4:D4)", new Object[]{6D,ResultType.SUCCESS});
 		testData.put("A1:A3", new Object[]{new String[]{"A","B","C"},ResultType.SUCCESS});
-		testData.put("B1:B3", new Object[]{new Integer[]{1,2,3},ResultType.SUCCESS});
-		testData.put("C1:C3", new Object[]{new Integer[]{4,5,6},ResultType.SUCCESS});
+		testData.put("B1:B3", new Object[]{new Double[]{1D,2D,3D},ResultType.SUCCESS});
+		testData.put("C1:C3", new Object[]{new Double[]{4D,5D,6D},ResultType.SUCCESS});
 		testData.put("D1", new Object[]{"My Series",ResultType.SUCCESS});
-		testData.put("Sheet1!A1:B3", new Object[]{new Integer[]{1,2,3},ResultType.SUCCESS});
-		testData.put("Sheet2!A$2:B$4", new Object[]{new Integer[]{1,2,3},ResultType.SUCCESS});
+		testData.put("Sheet1!A1:B3", new Object[]{new Double[]{1D,2D,3D},ResultType.SUCCESS});
+		testData.put("Sheet2!A$2:B$4", new Object[]{new Double[]{1D,2D,3D},ResultType.SUCCESS});
 		
 	}
 	

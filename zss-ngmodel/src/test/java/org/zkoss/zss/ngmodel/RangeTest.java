@@ -77,7 +77,7 @@ public class RangeTest {
 		Assert.assertEquals(CellType.FORMULA, cell.getType());
 		Assert.assertEquals(CellType.NUMBER, cell.getFormulaResultType());
 		Assert.assertEquals("SUM(999)", cell.getFormulaValue());
-		Assert.assertEquals(999, cell.getValue());
+		Assert.assertEquals(999D, cell.getValue());
 		
 		NRanges.range(sheet,1,1).setEditText("=SUM)((999)");
 		Assert.assertEquals(CellType.FORMULA, cell.getType());
@@ -106,9 +106,9 @@ public class RangeTest {
 		Assert.assertEquals(CellType.STRING, cell.getType());
 		Assert.assertEquals("abc",cell.getValue());
 		
-		NRanges.range(sheet,1,1).setValue(123);
+		NRanges.range(sheet,1,1).setValue(123D);
 		Assert.assertEquals(CellType.NUMBER, cell.getType());
-		Assert.assertEquals(123,cell.getValue());
+		Assert.assertEquals(123D,cell.getValue());
 		
 		
 		NRanges.range(sheet,1,1).setValue(now);
@@ -124,7 +124,7 @@ public class RangeTest {
 		Assert.assertEquals(CellType.FORMULA, cell.getType());
 		Assert.assertEquals(CellType.NUMBER, cell.getFormulaResultType());
 		Assert.assertEquals("SUM(999)", cell.getFormulaValue());
-		Assert.assertEquals(999, cell.getValue());
+		Assert.assertEquals(999D, cell.getValue());
 		
 		NRanges.range(sheet,1,1).setValue("=SUM)((999)");
 		Assert.assertEquals(CellType.FORMULA, cell.getType());
@@ -154,7 +154,7 @@ public class RangeTest {
 		Assert.assertEquals(CellType.FORMULA, cell.getType());
 		Assert.assertEquals(CellType.NUMBER, cell.getFormulaResultType());
 		Assert.assertEquals("SUM(A1)", cell.getFormulaValue());
-		Assert.assertEquals(999, cell.getValue());
+		Assert.assertEquals(999D, cell.getValue());
 		
 		final AtomicInteger a0counter = new AtomicInteger(0);
 		final AtomicInteger b0counter = new AtomicInteger(0);

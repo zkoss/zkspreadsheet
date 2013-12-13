@@ -112,8 +112,8 @@ public interface NCell extends FormulaContent{
 	public void setFormulaValue(String formula);
 	public String getFormulaValue();
 	
-	public void setNumberValue(Number number);
-	public Number getNumberValue();
+	public void setNumberValue(Double number);
+	public Double getNumberValue();
 	
 	/**
 	 * Sets the number value a date instance, it will transfer the date to double value 

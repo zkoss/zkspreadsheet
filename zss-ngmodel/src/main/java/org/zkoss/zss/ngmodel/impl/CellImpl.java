@@ -223,8 +223,11 @@ public class CellImpl extends CellAdv {
 			newvalue = EngineFactory.getInstance().getCalendarUtil().dateToDoubleValue((Date)newvalue, false);
 		} else if (newvalue instanceof Boolean) {
 			type = CellType.BOOLEAN;
+		} else if (newvalue instanceof Double) {
+			type = CellType.NUMBER;
 		} else if (newvalue instanceof Number) {
 			type = CellType.NUMBER;
+			newvalue = ((Number)newvalue).doubleValue();
 		} else if (newvalue instanceof ErrorValue) {
 			type = CellType.ERROR;
 		} else {

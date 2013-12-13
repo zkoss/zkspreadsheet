@@ -138,9 +138,9 @@ public class TestImporterFactory implements ImporterFactory{
 				
 				//
 				(cell = sheet1.getCell(3, 0)).setValue("Formula:");
-				(cell = sheet1.getCell(3, 1)).setNumberValue(1);
-				(cell = sheet1.getCell(3, 2)).setNumberValue(2);
-				(cell = sheet1.getCell(3, 3)).setNumberValue(3);
+				(cell = sheet1.getCell(3, 1)).setNumberValue(1D);
+				(cell = sheet1.getCell(3, 2)).setNumberValue(2D);
+				(cell = sheet1.getCell(3, 3)).setNumberValue(3D);
 				(cell = sheet1.getCell(3, 4)).setFormulaValue("SUM(B4:D4)");
 				
 				(cell = sheet1.getCell(4, 0)).setStringValue("this is a long long long long long string");

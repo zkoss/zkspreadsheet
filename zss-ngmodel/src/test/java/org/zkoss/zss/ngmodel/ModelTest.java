@@ -1018,7 +1018,7 @@ public class ModelTest {
 		
 		cell.setValue(123);
 		Assert.assertEquals(CellType.NUMBER, cell.getType());
-		Assert.assertEquals(123,cell.getValue());
+		Assert.assertEquals(123D,cell.getValue());
 		
 		cell.setValue(now);
 		Assert.assertEquals(CellType.NUMBER, cell.getType());
@@ -1036,7 +1036,7 @@ public class ModelTest {
 		Assert.assertEquals(CellType.FORMULA, cell.getType());
 		Assert.assertEquals(CellType.NUMBER, cell.getFormulaResultType());
 		Assert.assertEquals("SUM(999)", cell.getFormulaValue());
-		Assert.assertEquals(999, cell.getValue());
+		Assert.assertEquals(999D, cell.getValue());
 		
 		
 		cell.setValue("=)))(999)");
@@ -1063,7 +1063,7 @@ public class ModelTest {
 		
 		cell.setValue(123);
 		Assert.assertEquals(CellType.NUMBER, cell.getType());
-		Assert.assertEquals(123,cell.getValue());
+		Assert.assertEquals(123D,cell.getValue());
 		
 		cell.setValue(now);
 		Assert.assertEquals(CellType.NUMBER, cell.getType());
@@ -1082,7 +1082,7 @@ public class ModelTest {
 		Assert.assertEquals(CellType.FORMULA, cell.getType());
 		Assert.assertEquals(CellType.NUMBER, cell.getFormulaResultType());
 		Assert.assertEquals("SUM(999)", cell.getFormulaValue());
-		Assert.assertEquals(999, cell.getValue());
+		Assert.assertEquals(999D, cell.getValue());
 		
 		cell.clearValue();
 		Assert.assertEquals(CellType.BLANK, cell.getType());
@@ -1104,9 +1104,9 @@ public class ModelTest {
 		Assert.assertEquals(CellType.STRING, cell.getType());
 		Assert.assertEquals("abc",cell.getStringValue());
 		
-		cell.setNumberValue(123);
+		cell.setNumberValue(123D);
 		Assert.assertEquals(CellType.NUMBER, cell.getType());
-		Assert.assertEquals(123,cell.getNumberValue());
+		Assert.assertEquals(123D,cell.getNumberValue());
 		
 		cell.setDateValue(now);
 		Assert.assertEquals(CellType.NUMBER, cell.getType());
@@ -1124,7 +1124,7 @@ public class ModelTest {
 		Assert.assertEquals(CellType.FORMULA, cell.getType());
 		Assert.assertEquals(CellType.NUMBER, cell.getFormulaResultType());
 		Assert.assertEquals("SUM(999)", cell.getFormulaValue());
-		Assert.assertEquals(999, cell.getNumberValue());
+		Assert.assertEquals(999D, cell.getNumberValue());
 		
 		cell.clearValue();
 		Assert.assertEquals(CellType.BLANK, cell.getType());
@@ -1160,7 +1160,7 @@ public class ModelTest {
 		Assert.assertEquals(CellType.FORMULA, cell.getType());
 		Assert.assertEquals(CellType.NUMBER, cell.getFormulaResultType());
 		Assert.assertEquals("SUM(999)", cell.getFormulaValue());
-		Assert.assertEquals(999, cell.getNumberValue());
+		Assert.assertEquals(999D, cell.getNumberValue());
 		
 		try{
 			cell.getStringValue();
@@ -1380,13 +1380,13 @@ public class ModelTest {
 		Assert.assertEquals(3, nseries1.getNumOfValue());
 		Assert.assertEquals(3, nseries1.getNumOfYValue());
 		
-		Assert.assertEquals(1, nseries1.getValue(0));
-		Assert.assertEquals(2, nseries1.getValue(1));
-		Assert.assertEquals(3, nseries1.getValue(2));
+		Assert.assertEquals(1D, nseries1.getValue(0));
+		Assert.assertEquals(2D, nseries1.getValue(1));
+		Assert.assertEquals(3D, nseries1.getValue(2));
 		
-		Assert.assertEquals(4, nseries1.getYValue(0));
-		Assert.assertEquals(5, nseries1.getYValue(1));
-		Assert.assertEquals(6, nseries1.getYValue(2));
+		Assert.assertEquals(4D, nseries1.getYValue(0));
+		Assert.assertEquals(5D, nseries1.getYValue(1));
+		Assert.assertEquals(6D, nseries1.getYValue(2));
 		
 		
 		////
@@ -1399,9 +1399,9 @@ public class ModelTest {
 		
 		Assert.assertEquals(3, nseries2.getNumOfValue());
 		
-		Assert.assertEquals(4, nseries2.getValue(0));
-		Assert.assertEquals(5, nseries2.getValue(1));
-		Assert.assertEquals(6, nseries2.getValue(2));
+		Assert.assertEquals(4D, nseries2.getValue(0));
+		Assert.assertEquals(5D, nseries2.getValue(1));
+		Assert.assertEquals(6D, nseries2.getValue(2));
 	}
 	
 	@Test
@@ -1411,7 +1411,7 @@ public class ModelTest {
 		NCell cell = sheet.getCell(10, 10);
 		cell.setFormulaValue("SUM(999)");
 		
-		Assert.assertEquals(999,cell.getNumberValue().intValue());
+		Assert.assertEquals(999D,cell.getNumberValue());
 		
 		book.deleteSheet(sheet);
 		
@@ -1542,7 +1542,7 @@ public class ModelTest {
 		
 		sheet.getCell(1, 1).setStringValue("ABCD");
 		sheet.getCell(2, 1).setupRichText().addSegment("ABC", book.getDefaultFont());
-		sheet.getCell(3, 1).setNumberValue(99);
+		sheet.getCell(3, 1).setNumberValue(99D);
 		sheet.getCell(4, 1).setDateValue(now);
 		sheet.getCell(5, 1).setErrorValue(new ErrorValue(ErrorValue.INVALID_NAME));
 		
@@ -1587,7 +1587,7 @@ public class ModelTest {
 			Assert.assertEquals("ABCD",sheet.getCell(1, 1).getStringValue());
 			Assert.assertEquals("ABC",sheet.getCell(2, 1).getRichText().getText());
 			Assert.assertEquals(book.getDefaultFont(),sheet.getCell(2, 1).getRichText().getSegments().get(0).getFont());
-			Assert.assertEquals(99,sheet.getCell(3, 1).getNumberValue());
+			Assert.assertEquals(99D,sheet.getCell(3, 1).getNumberValue());
 			Assert.assertEquals(now,sheet.getCell(4, 1).getDateValue());
 			Assert.assertEquals(ErrorValue.INVALID_NAME,sheet.getCell(5, 1).getErrorValue().getCode());
 			

@@ -90,12 +90,12 @@ public abstract class CellAdv implements NCell,LinkedModelObject,Serializable{
 	}
 
 	@Override
-	public void setNumberValue(Number number) {
+	public void setNumberValue(Double number) {
 		setValue(number);
 	}
 
 	@Override
-	public Number getNumberValue() {
+	public Double getNumberValue() {
 		if(getType() == CellType.FORMULA){
 			evalFormula();
 			checkFormulaResultType(CellType.NUMBER,CellType.BLANK);
@@ -103,7 +103,7 @@ public abstract class CellAdv implements NCell,LinkedModelObject,Serializable{
 			checkType(CellType.NUMBER,CellType.BLANK);
 		}
 		Object val = getValue();
-		return val==null?0.0:(Number)getValue();
+		return val==null?0.0:(Double)getValue();
 	}
 
 	@Override
