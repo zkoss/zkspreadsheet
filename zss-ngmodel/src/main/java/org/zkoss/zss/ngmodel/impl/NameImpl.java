@@ -104,7 +104,7 @@ public class NameImpl extends NameAdv {
 		
 		//use formula engine to keep dependency info
 		FormulaEngine fe = EngineFactory.getInstance().createFormulaEngine();
-		FormulaExpression expr = fe.parse(refersToExpr, new FormulaParseContext(book,new ObjectRefImpl(this,id)));
+		FormulaExpression expr = fe.parse(refersToExpr, new FormulaParseContext(book,new NameRefImpl(this)));
 		if(expr.hasError()){
 			isParsingError = true;
 		}else if(expr.isRefersTo()){
@@ -121,7 +121,7 @@ public class NameImpl extends NameAdv {
 
 	private void clearFormulaDependency() {
 		if(refersToExpr!=null){
-			Ref ref = new ObjectRefImpl(this,id);
+			Ref ref = new NameRefImpl(this);
 			((BookSeriesAdv)book.getBookSeries()).getDependencyTable().clearDependents(ref);
 		}
 	}

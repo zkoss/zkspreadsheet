@@ -33,20 +33,14 @@ public class ObjectRefImpl extends RefImpl implements ObjectRef{
 	private final ObjectType objType;
 	
 	public ObjectRefImpl(ChartAdv chart,String[] objectIdPath){
-		super(chart.getSheet().getBook().getBookName(),chart.getSheet().getSheetName(),-1,-1,-1,-1);
+		super(RefType.OBJECT,chart.getSheet().getBook().getBookName(),chart.getSheet().getSheetName(),-1,-1,-1,-1);
 		this.objectIdPath = objectIdPath;
 		objType = ObjectType.CHART;
 	}
 	public ObjectRefImpl(ChartAdv chart,String objectId){
-		super(chart.getSheet().getBook().getBookName(),chart.getSheet().getSheetName(),-1,-1,-1,-1);
+		super(RefType.OBJECT,chart.getSheet().getBook().getBookName(),chart.getSheet().getSheetName(),-1,-1,-1,-1);
 		this.objectIdPath = new String[]{objectId};
 		objType = ObjectType.CHART;
-	}
-	public ObjectRefImpl(NameAdv name,String objectId){
-		super(name.getBook().getBookName(),null,-1,-1,-1,-1);
-		this.objectIdPath = new String[]{objectId};
-		objType = ObjectType.NAME;
-		
 	}
 
 	@Override
@@ -83,8 +77,6 @@ public class ObjectRefImpl extends RefImpl implements ObjectRef{
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (!super.equals(obj))
-			return false;
 		if (getClass() != obj.getClass())
 			return false;
 		ObjectRefImpl other = (ObjectRefImpl) obj;

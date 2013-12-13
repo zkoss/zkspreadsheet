@@ -8,7 +8,7 @@ package org.zkoss.zss.ngmodel.sys.dependency;
 public interface Ref {
 
 	public enum RefType {
-		CELL, AREA, SHEET, BOOK, OBJECT
+		CELL, AREA, SHEET, BOOK, NAME, OBJECT 
 	}
 
 	public RefType getType();

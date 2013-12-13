@@ -173,6 +173,7 @@ public class RefImpl implements Ref, Serializable {
 			sb.insert(0, sheetName + "!");
 			break;
 		case OBJECT://will be override
+		case NAME://will be override
 		case BOOK:
 		}
 
