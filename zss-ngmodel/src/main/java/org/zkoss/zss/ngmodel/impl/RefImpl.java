@@ -17,7 +17,6 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.ngmodel.impl;
 
 import java.io.Serializable;
-
 import org.zkoss.zss.ngmodel.sys.dependency.Ref;
 import org.zkoss.zss.ngmodel.util.CellReference;
 /**
@@ -31,6 +30,7 @@ public class RefImpl implements Ref, Serializable {
 	final private RefType type;
 	final protected String bookName;
 	final protected String sheetName;
+	final protected String lastSheetName;
 	final private int row;
 	final private int column;
 	final private int lastRow;
@@ -38,39 +38,49 @@ public class RefImpl implements Ref, Serializable {
 
 	public RefImpl(String bookName, String sheetName, int row, int column,
 			int lastRow, int lastColumn) {
-		this(RefType.AREA, bookName, sheetName, row, column, lastRow,lastColumn);
+		this(RefType.AREA, bookName, sheetName, sheetName, row, column, lastRow,lastColumn);
 	}
 
 	public RefImpl(String bookName, String sheetName, int row, int column) {
-		this(RefType.CELL, bookName, sheetName, row, column, row, column);
+		this(RefType.CELL, bookName, sheetName, null, row, column, row, column);
+	}
+
+	public RefImpl(String bookName, String sheetName, String lastSheetName, int row, int column,
+			int lastRow, int lastColumn) {
+		this(RefType.AREA, bookName, sheetName, null, row, column, lastRow,lastColumn);
+	}
+
+	public RefImpl(String bookName, String sheetName, String lastSheetName, int row, int column) {
+		this(RefType.CELL, bookName, sheetName, lastSheetName, row, column, row, column);
 	}
 
 	public RefImpl(String bookName, String sheetName) {
-		this(RefType.SHEET, bookName, sheetName, -1, -1, -1, -1);
+		this(RefType.SHEET, bookName, sheetName, null, -1, -1, -1, -1);
 	}
 
 	public RefImpl(String bookName) {
-		this(RefType.BOOK, bookName, null, -1, -1, -1, -1);
+		this(RefType.BOOK, bookName, null, null, -1, -1, -1, -1);
 	}
 
 	public RefImpl(CellAdv cell) {
-		this(RefType.CELL, cell.getSheet().getBook().getBookName(), cell.getSheet().getSheetName(), cell.getRowIndex(),
+		this(RefType.CELL, cell.getSheet().getBook().getBookName(), cell.getSheet().getSheetName(), null, cell.getRowIndex(),
 		cell.getColumnIndex(), cell.getRowIndex(), cell.getColumnIndex());
 	}
 
 	public RefImpl(SheetAdv sheet) {
-		this(RefType.SHEET, ((BookAdv) sheet.getBook()).getBookName(), sheet.getSheetName(), -1, -1, -1, -1);
+		this(RefType.SHEET, ((BookAdv) sheet.getBook()).getBookName(), sheet.getSheetName(), null, -1, -1, -1, -1);
 	}
 
 	public RefImpl(BookAdv book) {
-		this(RefType.BOOK, book.getBookName(), null, -1, -1, -1, -1);
+		this(RefType.BOOK, book.getBookName(), null, null, -1, -1, -1, -1);
 	}
 
-	protected RefImpl(RefType type, String bookName, String sheetName,
+	protected RefImpl(RefType type, String bookName, String sheetName, String lastSheetName,
 			int row, int column, int lastRow, int lastColumn) {
 		this.type = type;
 		this.bookName = bookName;
 		this.sheetName = sheetName;
+		this.lastSheetName = lastSheetName;
 		this.row = row;
 		this.column = column;
 		this.lastRow = lastRow;
@@ -90,6 +100,11 @@ public class RefImpl implements Ref, Serializable {
 	@Override
 	public String getSheetName() {
 		return sheetName;
+	}
+	
+	@Override
+	public String getLastSheetName() {
+		return lastSheetName;
 	}
 
 	@Override
@@ -124,6 +139,8 @@ public class RefImpl implements Ref, Serializable {
 		result = prime * result + row;
 		result = prime * result
 				+ ((sheetName == null) ? 0 : sheetName.hashCode());
+		result = prime * result
+				+ ((lastSheetName == null) ? 0 : lastSheetName.hashCode());
 		result = prime * result + ((type == null) ? 0 : type.hashCode());
 		return result;
 	}
@@ -156,6 +173,11 @@ public class RefImpl implements Ref, Serializable {
 				return false;
 		} else if (!sheetName.equals(other.sheetName))
 			return false;
+		if (lastSheetName == null) {
+			if (other.lastSheetName != null)
+				return false;
+		} else if (!lastSheetName.equals(other.lastSheetName))
+			return false;
 		if (type != other.type)
 			return false;
 		return true;
@@ -170,7 +192,11 @@ public class RefImpl implements Ref, Serializable {
 		case CELL:
 			sb.insert(0, new CellReference(row, column).formatAsString());
 		case SHEET:
-			sb.insert(0, sheetName + "!");
+			if(lastSheetName != null) {
+				sb.insert(0, sheetName + ":" + lastSheetName + "!");
+			} else {
+				sb.insert(0, sheetName + "!");
+			}
 			break;
 		case OBJECT://will be override
 		case NAME://will be override

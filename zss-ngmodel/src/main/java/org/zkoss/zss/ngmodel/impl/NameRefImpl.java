@@ -33,7 +33,7 @@ public class NameRefImpl extends RefImpl implements NameRef{
 		this(name.getBook().getBookName(),name.getApplyToSheetName(),name.getName());
 	}
 	public NameRefImpl(String bookName, String sheetName, String nameName){
-		super(RefType.OBJECT,bookName,sheetName,-1,-1,-1,-1);
+		super(RefType.OBJECT,bookName,sheetName, null, -1,-1,-1,-1);
 		this.nameName = nameName;
 	}
 

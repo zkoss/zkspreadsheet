@@ -12,6 +12,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.ngmodel;
 
 import junit.framework.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.zkoss.zss.ngmodel.impl.BookImpl;
 
@@ -49,11 +50,6 @@ public class FormulaEvalTest {
 		NSheet sheet1 = book.createSheet("Sheet1");
 		NSheet sheet2 = book.createSheet("Sheet2");
 		NSheet sheetA = book.createSheet("SheetA");
-
-		// named range
-		// book.createName("ABC", "Sheet1").setRefersToFormula("C1:C10"); // TODO ZSS 3.5
-		book.createName("ABC").setRefersToFormula("C1:C10");
-		book.createName("DEF").setRefersToFormula("SheetA!D1:D10");
 
 		// cells in sheet1
 		// basic formula
@@ -100,6 +96,12 @@ public class FormulaEvalTest {
 			sheetA.getCell(i, 3).setNumberValue(i * 10.0);
 			sheetA.getCell(i, 4).setNumberValue(i * 10.0);
 		}
+		
+		// named range
+		// book.createName("ABC", "Sheet1").setRefersToFormula("C1:C10"); // TODO ZSS 3.5
+		book.createName("ABC").setRefersToFormula("Sheet1!C1:C10");
+		book.createName("DEF").setRefersToFormula("SheetA!D1:D10");
+		book.createName("GHI").setRefersToFormula("Sheet1:Sheet2!C1:C10");
 
 		// test
 		String[] expected = new String[]{"HELLO!!!", "ZK!!!", "45.0", "22.5", "67.5", "4.5", "0.0", "10.0",

@@ -16,6 +16,8 @@ public interface Ref {
 	public String getBookName();
 
 	public String getSheetName();
+	
+	public String getLastSheetName();
 
 	public int getRow();
 

@@ -33,12 +33,12 @@ public class ObjectRefImpl extends RefImpl implements ObjectRef{
 	private final ObjectType objType;
 	
 	public ObjectRefImpl(ChartAdv chart,String[] objectIdPath){
-		super(RefType.OBJECT,chart.getSheet().getBook().getBookName(),chart.getSheet().getSheetName(),-1,-1,-1,-1);
+		super(RefType.OBJECT,chart.getSheet().getBook().getBookName(),chart.getSheet().getSheetName(), null,-1,-1,-1,-1);
 		this.objectIdPath = objectIdPath;
 		objType = ObjectType.CHART;
 	}
 	public ObjectRefImpl(ChartAdv chart,String objectId){
-		super(RefType.OBJECT,chart.getSheet().getBook().getBookName(),chart.getSheet().getSheetName(),-1,-1,-1,-1);
+		super(RefType.OBJECT,chart.getSheet().getBook().getBookName(),chart.getSheet().getSheetName(), null,-1,-1,-1,-1);
 		this.objectIdPath = new String[]{objectId};
 		objType = ObjectType.CHART;
 	}
