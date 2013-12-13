@@ -81,6 +81,7 @@ public class NExcelXlsxImporter extends AbstractExcelImporter{
 		int maxColumnIndex = 0;
 		for(Row poiRow : poiSheet) {
 			importRow(sheet, poiRow);
+			//FIXME use another way to get maximal column
 			if (poiRow.getLastCellNum() > maxColumnIndex){
 				maxColumnIndex = poiRow.getLastCellNum(); 
 			}
@@ -91,6 +92,7 @@ public class NExcelXlsxImporter extends AbstractExcelImporter{
 			//reference Spreadsheet.updateColWidth()
 			sheet.getColumn(c).setWidth(XUtils.getWidthAny(poiSheet, c, 8));
 			CellStyle columnStyle = poiSheet.getColumnStyle(c); 
+			sheet.getColumn(c).setHidden(poiSheet.isColumnHidden(c));				
 			if (columnStyle != null){
 				sheet.getColumn(c).setCellStyle(importXSSFCellStyle((XSSFCellStyle)columnStyle));
 			}
@@ -117,6 +119,7 @@ public class NExcelXlsxImporter extends AbstractExcelImporter{
 		NRow row = sheet.getRow(poiRow.getRowNum());
 		row.setHeight(XUtils.twipToPx(poiRow.getHeight()));
 		CellStyle rowStyle = poiRow.getRowStyle();
+		row.setHidden(poiRow.getZeroHeight());
 		if (rowStyle != null){
 			row.setCellStyle(importXSSFCellStyle((XSSFCellStyle)rowStyle));
 		}
@@ -184,9 +187,7 @@ public class NExcelXlsxImporter extends AbstractExcelImporter{
 			cellStyle.setBorderRightColor(book.createColor(BookHelper.colorToBorderHTML(workbook,xssfCellStyle.getRightBorderColorColor())));
 			cellStyle.setBorderBottomColor(book.createColor(BookHelper.colorToBorderHTML(workbook,xssfCellStyle.getBottomBorderColorColor())));
 			cellStyle.setHidden(xssfCellStyle.getHidden());
-			/*
-			cellStyle.setFillPattern(xssfCellStyle.getFillPattern());
-			 */
+			cellStyle.setFillPattern(convertPoiFillPattern(xssfCellStyle.getFillPattern()));
 			//same style always use same font
 			cellStyle.setFont(importFont(xssfCellStyle));
 		}
@@ -313,6 +314,50 @@ public class NExcelXlsxImporter extends AbstractExcelImporter{
 				return new ErrorValue(ErrorValue.INVALID_NAME);
 		}
 		
+	}
+	
+	private FillPattern convertPoiFillPattern(short poiFillPattern){
+		switch(poiFillPattern){
+			case CellStyle.SOLID_FOREGROUND:
+				return FillPattern.SOLID_FOREGROUND;
+			case CellStyle.FINE_DOTS:
+				return FillPattern.FINE_DOTS;
+			case CellStyle.ALT_BARS:
+				return FillPattern.ALT_BARS;
+			case CellStyle.SPARSE_DOTS:
+				return FillPattern.SPARSE_DOTS;
+			case CellStyle.THICK_HORZ_BANDS:
+				return FillPattern.THICK_HORZ_BANDS;
+			case CellStyle.THICK_VERT_BANDS:
+				return FillPattern.THICK_VERT_BANDS;
+			case CellStyle.THICK_BACKWARD_DIAG:
+				return FillPattern.THICK_BACKWARD_DIAG;
+			case CellStyle.THICK_FORWARD_DIAG:
+				return FillPattern.THICK_FORWARD_DIAG;
+			case CellStyle.BIG_SPOTS:
+				return FillPattern.BIG_SPOTS;
+			case CellStyle.BRICKS:
+				return FillPattern.BRICKS;
+			case CellStyle.THIN_HORZ_BANDS:
+				return FillPattern.THIN_HORZ_BANDS;
+			case CellStyle.THIN_VERT_BANDS:
+				return FillPattern.THIN_VERT_BANDS;
+			case CellStyle.THIN_BACKWARD_DIAG:
+				return FillPattern.THIN_BACKWARD_DIAG;
+			case CellStyle.THIN_FORWARD_DIAG:
+				return FillPattern.THIN_FORWARD_DIAG;
+			case CellStyle.SQUARES:
+				return FillPattern.SQUARES;
+			case CellStyle.DIAMONDS:
+				return FillPattern.DIAMONDS;
+			case CellStyle.LESS_DOTS:
+				return FillPattern.LESS_DOTS;
+			case CellStyle.LEAST_DOTS:
+				return FillPattern.LEAST_DOTS;
+			case CellStyle.NO_FILL:
+			default:
+			return FillPattern.NO_FILL;
+		}
 	}
 	
 }

@@ -12,6 +12,7 @@ import org.zkoss.zss.ngapi.NImporter;
 import org.zkoss.zss.ngapi.impl.ExcelImportFactory;
 import org.zkoss.zss.ngmodel.NCellStyle.Alignment;
 import org.zkoss.zss.ngmodel.NCellStyle.BorderType;
+import org.zkoss.zss.ngmodel.NCellStyle.FillPattern;
 import org.zkoss.zss.ngmodel.NCellStyle.VerticalAlignment;
 import org.zkoss.zss.ngmodel.NFont.TypeOffset;
 
@@ -187,14 +188,15 @@ public class ImporterTest {
 		assertTrue(sheet.getCell(27, 0).getCellStyle().equals(sheet.getCell(26, 0).getCellStyle()));
 		assertTrue(sheet.getCell(28, 0).getCellStyle().equals(sheet.getCell(26, 0).getCellStyle()));
 		
+		//fill pattern
+		assertEquals(FillPattern.SOLID_FOREGROUND, sheet.getCell(37, 1).getCellStyle().getFillPattern());
+		assertEquals(FillPattern.ALT_BARS, sheet.getCell(37, 2).getCellStyle().getFillPattern());
+		
 		NSheet protectedSheet = book.getSheetByName("sheet-protection");
 		assertEquals(true, protectedSheet.getCell(0, 0).getCellStyle().isLocked());
 		assertEquals(false, protectedSheet.getCell(1, 0).getCellStyle().isLocked());
 		
-		//FIXME
-//		NSheet columnSheet = book.getSheetByName("column");
-//		assertEquals(true, columnSheet.getColumn(4).getCellStyle().isHidden());
-//		assertEquals(true, columnSheet.getCell(5, 4).getCellStyle().isHidden());
+		
 	}
 
 	@Test
@@ -301,6 +303,9 @@ public class ImporterTest {
 		assertEquals(true,rowStyle2.getFont().isItalic());
 		assertEquals(14,rowStyle2.getFont().getHeightPoints());		
 		
+		NSheet rowSheet = book.getSheetByName("column-row");
+		assertTrue(rowSheet.getRow(9).isHidden());
+		assertTrue(rowSheet.getRow(10).isHidden());
 	}
 
 	@Test
@@ -334,7 +339,7 @@ public class ImporterTest {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		NSheet sheet = book.getSheetByName("column");
+		NSheet sheet = book.getSheetByName("column-row");
 		//column style
 		assertEquals(NFont.Boldweight.BOLD, sheet.getColumn(0).getCellStyle().getFont().getBoldweight());
 		//width
@@ -343,6 +348,10 @@ public class ImporterTest {
 		assertEquals(102, sheet.getColumn(2).getWidth());
 		assertEquals(0, sheet.getColumn(4).getWidth());		//the hidden column
 		assertEquals(72, sheet.getColumn(5).getWidth());	//default width
+		
+		//the hidden column
+		assertFalse(sheet.getColumn(3).isHidden());
+		assertTrue(sheet.getColumn(4).isHidden());		
 	}
 }
 
