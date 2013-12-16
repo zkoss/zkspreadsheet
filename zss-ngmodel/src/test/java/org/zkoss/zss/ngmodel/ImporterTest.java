@@ -36,7 +36,7 @@ public class ImporterTest {
 	@BeforeClass
 	static public void initialize(){
 		try{
-			fileUnderTest = new File(ImporterTest.class.getResource("book/import.xls").toURI());
+			fileUnderTest = new File(ImporterTest.class.getResource("book/import.xlsx").toURI());
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -102,12 +102,7 @@ public class ImporterTest {
 	//content
 	@Test
 	public void sheetTest() {
-		NBook book = null;
-		try {
-			book = importer.imports(fileUnderTest, "XSSFBook");
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		NBook book = importBook(fileUnderTest, "XSSFBook");
 		
 		assertEquals(7, book.getNumOfSheet());
 
@@ -124,12 +119,7 @@ public class ImporterTest {
 
 	@Test
 	public void cellValueTest() {
-		NBook book = null;
-		try {
-			book = importer.imports(fileUnderTest, "XSSFBook");
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		NBook book = importBook(fileUnderTest, "XSSFBook");
 		NSheet sheet = book.getSheet(0);
 		//text
 		NRow row = sheet.getRow(0);
@@ -173,13 +163,7 @@ public class ImporterTest {
 	
 	@Test
 	public void cellStyleTest(){
-		NBook book = null;
-		try {
-			book = importer.imports(fileUnderTest, "XSSFBook");
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
+		NBook book = importBook(fileUnderTest, "XSSFBook");
 		NSheet sheet = book.getSheetByName("Style");
 		assertEquals(true, sheet.getCell(24, 1).getCellStyle().isWrapText());
 		//alignment
@@ -211,13 +195,7 @@ public class ImporterTest {
 
 	@Test
 	public void cellBorderTest(){
-		NBook book = null;
-		try {
-			book = importer.imports(fileUnderTest, "XSSFBook");
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
+		NBook book = importBook(fileUnderTest, "XSSFBook");
 		NSheet sheet = book.getSheetByName("cell-border");
 		assertEquals(BorderType.NONE, sheet.getCell(2, 0).getCellStyle().getBorderBottom());
 		assertEquals(BorderType.THIN, sheet.getCell(2, 1).getCellStyle().getBorderBottom());
@@ -237,13 +215,7 @@ public class ImporterTest {
 
 	@Test
 	public void cellFontNameTest(){
-		NBook book = null;
-		try {
-			book = importer.imports(fileUnderTest, "XSSFBook");
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
+		NBook book = importBook(fileUnderTest, "XSSFBook");
 		NSheet sheet = book.getSheetByName("Style");
 		assertEquals("Arial", sheet.getCell(3, 0).getCellStyle().getFont().getName());
 		assertEquals("Arial Black", sheet.getCell(3, 1).getCellStyle().getFont().getName());
@@ -252,12 +224,7 @@ public class ImporterTest {
 	
 	@Test
 	public void cellFontStyleTest(){
-		NBook book = null;
-		try {
-			book = importer.imports(fileUnderTest, "XSSFBook");
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		NBook book = importBook(fileUnderTest, "XSSFBook");
 		NSheet sheet = book.getSheetByName("Style");
 		assertEquals(NFont.Boldweight.BOLD, sheet.getCell(9, 0).getCellStyle().getFont().getBoldweight());
 		assertTrue(sheet.getCell(9, 1).getCellStyle().getFont().isItalic());
@@ -280,12 +247,7 @@ public class ImporterTest {
 	
 	@Test
 	public void cellFontColorTest(){
-		NBook book = null;
-		try {
-			book = importer.imports(fileUnderTest, "XSSFBook");
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		NBook book = importBook(fileUnderTest, "XSSFBook");
 		NSheet sheet = book.getSheetByName("Style");
 		assertEquals("#000000", sheet.getCell(0, 0).getCellStyle().getFont().getColor().getHtmlColor());
 		assertEquals("#FF0000", sheet.getCell(1, 0).getCellStyle().getFont().getColor().getHtmlColor());
@@ -296,12 +258,7 @@ public class ImporterTest {
 	
 	@Test
 	public void rowTest(){
-		NBook book = null;
-		try {
-			book = importer.imports(fileUnderTest, "XSSFBook");
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		NBook book = importBook(fileUnderTest, "XSSFBook");
 		NSheet sheet = book.getSheetByName("Style");
 		assertEquals(28, sheet.getRow(0).getHeight());
 		assertEquals(20, sheet.getRow(1).getHeight());
@@ -320,12 +277,7 @@ public class ImporterTest {
 
 	@Test
 	public void cellFormatTest(){
-		NBook book = null;
-		try {
-			book = importer.imports(fileUnderTest, "XSSFBook");
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		NBook book = importBook(fileUnderTest, "XSSFBook");
 		NSheet sheet = book.getSheetByName("Format");
 		assertEquals("#,##0.00", sheet.getCell(1, 1).getCellStyle().getDataFormat());
 		assertEquals("\"NT$\"#,##0.00", sheet.getCell(1, 2).getCellStyle().getDataFormat());
@@ -343,12 +295,7 @@ public class ImporterTest {
 	
 	@Test
 	public void columnTest(){
-		NBook book = null;
-		try {
-			book = importer.imports(fileUnderTest, "XSSFBook");
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		NBook book = importBook(fileUnderTest, "XSSFBook");
 		NSheet sheet = book.getSheetByName("column-row");
 		//column style
 		assertEquals(NFont.Boldweight.BOLD, sheet.getColumn(0).getCellStyle().getFont().getBoldweight());
@@ -374,6 +321,18 @@ public class ImporterTest {
 		assertEquals(80, sheet.getColumn(13).getWidth());
 	}
 	
+	@Test
+	public void viewInfoTest(){
+		NBook book = importBook(fileUnderTest, "XSSFBook");
+		NSheet sheet = book.getSheetByName("column-row");
+		assertEquals(3, sheet.getViewInfo().getNumOfRowFreeze());
+		assertEquals(1, sheet.getViewInfo().getNumOfColumnFreeze());
+		
+		//grid line display
+		assertTrue(sheet.getViewInfo().isDisplayGridline());
+		assertFalse(book.getSheetByName("cell-border").getViewInfo().isDisplayGridline());
+	}
+
 	protected NBook importBook(File file, String bookName){
 		NBook book = null;
 		try {

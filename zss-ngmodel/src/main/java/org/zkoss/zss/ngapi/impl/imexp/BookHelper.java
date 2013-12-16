@@ -13,10 +13,10 @@ Copyright (C) 2010 Potix Corporation. All Rights Reserved.
 
 package org.zkoss.zss.ngapi.impl.imexp;
 
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Logger;
 
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColor;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
 import org.zkoss.poi.hssf.usermodel.*;
 import org.zkoss.poi.hssf.util.*;
 import org.zkoss.poi.ss.usermodel.*;
@@ -88,6 +88,54 @@ public final class BookHelper {
 	public final static int FILL_SERIES = FILL_LINER_TREND;
 	
 	private static final Logger logger = Logger.getLogger(BookHelper.class.getName());
+	
+	
+	/**
+	 * gets the row freeze, 1 base
+	 */
+	public static int getRowFreeze(Sheet sheet) {
+		if (isFreezePane(sheet)) { //issue #103: Freeze row/column is not correctly interpreted
+			final PaneInformation pi = sheet.getPaneInformation();
+			int fr = pi != null ? pi.getHorizontalSplitPosition() : 0;
+			return fr>0?fr:0;
+		}else{
+			return 0;
+		}
+		
+	}
+	
+	/**
+	 * gets the column freeze, 1 base
+	 */
+	public static int getColumnFreeze(Sheet sheet) {
+		if (isFreezePane(sheet)) { //issue #103: Freeze row/column is not correctly interpreted
+			final PaneInformation pi = sheet.getPaneInformation();
+			int fc = pi != null ? pi.getVerticalSplitPosition() : 0;
+			return fc>0?fc:0;
+		}else{
+			return 0;
+		}
+		
+	}
+	
+	public static boolean isFreezePane(Sheet sheet) {
+		
+		if (sheet instanceof HSSFSheet){
+			return new HSSFSheetHelper((HSSFSheet)sheet).getInternalSheet().getWindowTwo().getFreezePanes();
+		}else{
+			final CTWorksheet ctsheet = ((XSSFSheet)sheet).getCTWorksheet();
+			final CTSheetViews views = ctsheet != null ? ctsheet.getSheetViews() : null;
+			final List<CTSheetView> viewList = views != null ? views.getSheetViewList() : null; 
+			final CTSheetView view = viewList != null && !viewList.isEmpty() ? viewList.get(0) : null;
+			final CTPane pane = view != null ? view.getPane() : null;
+			if (pane == null) {
+				return false;
+			} else {
+				return pane.getState() == STPaneState.FROZEN; 
+			}
+		}
+	}
+	
 	
 	public static String getFontHTMLColor(Workbook book, Font font) {
 		if (font instanceof XSSFFont) {

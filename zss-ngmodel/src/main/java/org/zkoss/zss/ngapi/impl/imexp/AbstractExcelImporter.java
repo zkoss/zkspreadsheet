@@ -53,6 +53,11 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 		//TODO original width 64px, current is 72px
 		//reference XUtils.getDefaultColumnWidthInPx()
 		sheet.setDefaultColumnWidth(XUtils.defaultColumnWidthToPx(poiSheet.getDefaultColumnWidth(),8));
+		//reference FreezeInfoLoaderImpl.getRowFreeze()
+		sheet.getViewInfo().setNumOfRowFreeze(BookHelper.getRowFreeze(poiSheet));
+		sheet.getViewInfo().setNumOfColumnFreeze(BookHelper.getColumnFreeze(poiSheet));
+		sheet.getViewInfo().setDisplayGridline(poiSheet.isDisplayGridlines());
+		
 		for(Row poiRow : poiSheet) {
 			importRow(sheet, poiRow);
 		}

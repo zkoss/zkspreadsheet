@@ -18,8 +18,8 @@ package org.zkoss.zss.ngapi.impl.imexp;
 
 import java.io.*;
 
-import org.zkoss.poi.hssf.usermodel.HSSFWorkbook;
-import org.zkoss.poi.ss.usermodel.*;
+import org.zkoss.poi.hssf.usermodel.*;
+import org.zkoss.poi.ss.usermodel.Sheet;
 import org.zkoss.zss.ngmodel.*;
 /**
  * 
