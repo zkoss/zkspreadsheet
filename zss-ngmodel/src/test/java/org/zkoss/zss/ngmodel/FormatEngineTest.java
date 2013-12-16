@@ -11,6 +11,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.zkoss.poi.ss.format.CellFormat;
 import org.zkoss.poi.ss.format.CellFormatResult;
+import org.zkoss.util.Locales;
 import org.zkoss.zss.ngmodel.impl.BookImpl;
 import org.zkoss.zss.ngmodel.impl.ColorImpl;
 import org.zkoss.zss.ngmodel.impl.sys.FormatEngineImpl;
@@ -18,7 +19,7 @@ import org.zkoss.zss.ngmodel.sys.format.FormatContext;
 import org.zkoss.zss.ngmodel.sys.format.FormatEngine;
 import org.zkoss.zss.ngmodel.sys.format.FormatResult;
 
-public class CellFormatTest {
+public class FormatEngineTest {
 
 	static private FormatContext formatContext;
 	static private FormatEngine formatEngine;
@@ -32,8 +33,9 @@ public class CellFormatTest {
 	}
 	
 	@Before
-	public void prepare(){
+	public void beforeTest(){
 		cell = createCell();
+		Locales.setThreadLocal(Locale.TAIWAN);
 	}
 	
 	

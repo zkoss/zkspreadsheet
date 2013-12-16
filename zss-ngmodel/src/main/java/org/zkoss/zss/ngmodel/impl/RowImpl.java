@@ -205,19 +205,7 @@ public class RowImpl extends RowAdv {
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
-	public Iterator<NCell> getCellIterator() {
-		return Collections.unmodifiableCollection((Collection)cells.values()).iterator();
+	public Iterator<CellAdv> getCellIterator() {
+		return Collections.unmodifiableCollection(cells.values()).iterator();
 	}
-	
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	@Override
-	public List<NCell> getCellList() {
-		return Collections.unmodifiableList(new ArrayList(cells.values()));
-	}
-
-	@Override
-	public NCell getCell(int idx) {
-		return getCell(idx,true);
-	}
-
 }

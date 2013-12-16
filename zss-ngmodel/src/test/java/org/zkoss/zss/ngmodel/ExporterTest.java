@@ -3,9 +3,12 @@ package org.zkoss.zss.ngmodel;
 
 import java.io.File;
 import java.io.InputStream;
+import java.util.Locale;
 
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.zkoss.util.Locales;
 import org.zkoss.zss.ngmodel.NCellStyle.BorderType;
 
 /**
@@ -17,6 +20,10 @@ public class ExporterTest extends InOutTestBase {
 	
 	@BeforeClass
 	static public void beforeClass() {
+	}
+	@Before
+	public void beforeTest() {
+		Locales.setThreadLocal(Locale.TAIWAN);
 	}
 	
 	@Test

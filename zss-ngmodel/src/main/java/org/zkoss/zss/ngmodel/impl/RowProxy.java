@@ -19,9 +19,7 @@ package org.zkoss.zss.ngmodel.impl;
 import java.lang.ref.WeakReference;
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.List;
 
-import org.zkoss.zss.ngmodel.NCell;
 import org.zkoss.zss.ngmodel.NCellStyle;
 import org.zkoss.zss.ngmodel.NSheet;
 import org.zkoss.zss.ngmodel.util.Validations;
@@ -178,27 +176,11 @@ class RowProxy extends RowAdv{
 		proxy.setHidden(hidden);
 	}
 	@Override
-	public Iterator<NCell> getCellIterator() {
+	public Iterator<CellAdv> getCellIterator() {
 		loadProxy();
 		if (proxy != null) {
 			return proxy.getCellIterator();
 		}
 		return Collections.EMPTY_LIST.iterator();
-	}
-	@Override
-	public List<NCell> getCellList() {
-		loadProxy();
-		if (proxy != null) {
-			return proxy.getCellList();
-		}
-		return Collections.EMPTY_LIST;
-	}
-	@Override
-	public NCell getCell(int idx) {
-		loadProxy();
-		if (proxy != null) {
-			return proxy.getCell(idx);
-		}
-		return new CellProxy((SheetAdv)getSheet(),index,idx);
 	}
 }

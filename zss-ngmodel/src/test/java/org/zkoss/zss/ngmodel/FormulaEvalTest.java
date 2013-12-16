@@ -11,9 +11,14 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
  */
 package org.zkoss.zss.ngmodel;
 
+import java.util.Locale;
+
 import junit.framework.Assert;
+
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.zkoss.util.Locales;
 import org.zkoss.zss.ngmodel.impl.BookImpl;
 
 /**
@@ -21,6 +26,11 @@ import org.zkoss.zss.ngmodel.impl.BookImpl;
  */
 public class FormulaEvalTest {
 
+	@Before
+	public void beforeTest() {
+		Locales.setThreadLocal(Locale.TAIWAN);
+	}
+	
 	@Test
 	public void testBasicEvaluation() {
 		NBook book = new BookImpl("book1");

@@ -7,9 +7,11 @@ import java.util.Locale;
 
 import junit.framework.Assert;
 
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.zkoss.util.Locales;
 import org.zkoss.zss.ngmodel.NCell.CellType;
 import org.zkoss.zss.ngmodel.sys.EngineFactory;
 import org.zkoss.zss.ngmodel.sys.input.InputEngine;
@@ -25,6 +27,11 @@ public class InputEngineTest {
 	public static void init(){
 		inputEngine = EngineFactory.getInstance().createInputEngine();
 		inputParseContext = new InputParseContext(Locale.US);
+	}
+	
+	@Before
+	public void beforeTest() {
+		Locales.setThreadLocal(Locale.TAIWAN);
 	}
 	
 	@Test

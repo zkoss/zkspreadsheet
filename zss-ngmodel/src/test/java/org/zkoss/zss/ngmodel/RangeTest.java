@@ -2,11 +2,15 @@ package org.zkoss.zss.ngmodel;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import junit.framework.Assert;
 
+import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
+import org.zkoss.util.Locales;
 import org.zkoss.zss.ngapi.NRange;
 import org.zkoss.zss.ngapi.NRanges;
 import org.zkoss.zss.ngmodel.NCell.CellType;
@@ -14,6 +18,15 @@ import org.zkoss.zss.ngmodel.impl.BookImpl;
 
 public class RangeTest {
 
+	@BeforeClass
+	static public void beforeClass() {
+	}
+	
+	@Before
+	public void beforeTest() {
+		Locales.setThreadLocal(Locale.TAIWAN);
+	}
+	
 	@Test
 	public void testGetRange(){
 		

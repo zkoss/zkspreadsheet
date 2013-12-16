@@ -17,7 +17,9 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.ngmodel.impl;
 
 import java.io.Serializable;
+import java.util.Iterator;
 
+import org.zkoss.zss.ngmodel.NCell;
 import org.zkoss.zss.ngmodel.NRow;
 /**
  * 
@@ -40,4 +42,6 @@ public abstract class RowAdv implements NRow,LinkedModelObject,Serializable{
 	/*package*/ abstract void deleteCell(int start, int size);
 
 	/*package*/ abstract int getCellIndex(CellAdv cell);
+	
+	/*package*/ abstract Iterator<CellAdv> getCellIterator();
 }

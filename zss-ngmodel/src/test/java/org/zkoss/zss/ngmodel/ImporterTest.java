@@ -8,6 +8,7 @@ import java.text.DateFormat;
 import java.util.Locale;
 
 import org.junit.*;
+import org.zkoss.util.Locales;
 import org.zkoss.zss.ngapi.NImporter;
 import org.zkoss.zss.ngapi.impl.imexp.ExcelImportFactory;
 import org.zkoss.zss.ngmodel.NCellStyle.Alignment;
@@ -42,8 +43,9 @@ public class ImporterTest {
 	}
 	
 	@Before
-	public void prepare(){
+	public void beforeTest(){
 		importer= new ExcelImportFactory().createImporter();
+		Locales.setThreadLocal(Locale.TAIWAN);
 	}
 	
 	//API
@@ -123,42 +125,42 @@ public class ImporterTest {
 		NSheet sheet = book.getSheet(0);
 		//text
 		NRow row = sheet.getRow(0);
-		assertEquals(NCell.CellType.STRING, row.getCell(1).getType());
-		assertEquals("B1", row.getCell(1).getStringValue());
-		assertEquals("C1", row.getCell(2).getStringValue());
-		assertEquals("D1", row.getCell(3).getStringValue());
+		assertEquals(NCell.CellType.STRING, sheet.getCell(0,1).getType());
+		assertEquals("B1", sheet.getCell(0,1).getStringValue());
+		assertEquals("C1", sheet.getCell(0,2).getStringValue());
+		assertEquals("D1", sheet.getCell(0,3).getStringValue());
 		
 		//number
 		NRow row1 = sheet.getRow(1);
-		assertEquals(NCell.CellType.NUMBER, row1.getCell(1).getType());
-		assertEquals(123, row1.getCell(1).getNumberValue().intValue());
-		assertEquals(123.45, row1.getCell(2).getNumberValue().doubleValue(), 0.01);
+		assertEquals(NCell.CellType.NUMBER, sheet.getCell(1,1).getType());
+		assertEquals(123, sheet.getCell(1,1).getNumberValue().intValue());
+		assertEquals(123.45, sheet.getCell(1,2).getNumberValue().doubleValue(), 0.01);
 		
 		//date
 		NRow row2 = sheet.getRow(2);
-		assertEquals(NCell.CellType.NUMBER, row2.getCell(1).getType());
-		assertEquals(41618, row2.getCell(1).getNumberValue().intValue());
-		assertEquals("Dec 10, 2013", DateFormat.getDateInstance(DateFormat.MEDIUM, Locale.US).format(row2.getCell(1).getDateValue()));
-		assertEquals(0.61, row2.getCell(2).getNumberValue().doubleValue(), 0.01);
-		assertEquals("2:44:10 PM", DateFormat.getTimeInstance (DateFormat.MEDIUM, Locale.US).format(row2.getCell(2).getDateValue()));
+		assertEquals(NCell.CellType.NUMBER, sheet.getCell(2,1).getType());
+		assertEquals(41618, sheet.getCell(2,1).getNumberValue().intValue());
+		assertEquals("Dec 10, 2013", DateFormat.getDateInstance(DateFormat.MEDIUM, Locale.US).format(sheet.getCell(2,1).getDateValue()));
+		assertEquals(0.61, sheet.getCell(2,2).getNumberValue().doubleValue(), 0.01);
+		assertEquals("2:44:10 PM", DateFormat.getTimeInstance (DateFormat.MEDIUM, Locale.US).format(sheet.getCell(2,2).getDateValue()));
 		
 		//formula
 		NRow row3 = sheet.getRow(3);
-		assertEquals(NCell.CellType.FORMULA, row3.getCell(1).getType());
-		assertEquals("SUM(10,20)", row3.getCell(1).getFormulaValue());
-		assertEquals("ISBLANK(B1)", row3.getCell(2).getFormulaValue());
-		assertEquals("B1", row3.getCell(3).getFormulaValue());
+		assertEquals(NCell.CellType.FORMULA, sheet.getCell(3,1).getType());
+		assertEquals("SUM(10,20)", sheet.getCell(3,1).getFormulaValue());
+		assertEquals("ISBLANK(B1)", sheet.getCell(3,2).getFormulaValue());
+		assertEquals("B1", sheet.getCell(3,3).getFormulaValue());
 		
 		//error
 		NRow row4 = sheet.getRow(4);
-		assertEquals(NCell.CellType.ERROR, row4.getCell(1).getType());
-		assertEquals(ErrorValue.INVALID_NAME, row4.getCell(1).getErrorValue().getCode());
-		assertEquals(ErrorValue.INVALID_VALUE, row4.getCell(2).getErrorValue().getCode());
+		assertEquals(NCell.CellType.ERROR, sheet.getCell(4,1).getType());
+		assertEquals(ErrorValue.INVALID_NAME, sheet.getCell(4,1).getErrorValue().getCode());
+		assertEquals(ErrorValue.INVALID_VALUE, sheet.getCell(4,2).getErrorValue().getCode());
 		
 		//blank
 		NRow row5 = sheet.getRow(5);
-		assertEquals(NCell.CellType.BLANK, row5.getCell(1).getType());
-		assertEquals("", row5.getCell(1).getStringValue());
+		assertEquals(NCell.CellType.BLANK, sheet.getCell(5,1).getType());
+		assertEquals("", sheet.getCell(5,1).getStringValue());
 	}
 	
 	@Test

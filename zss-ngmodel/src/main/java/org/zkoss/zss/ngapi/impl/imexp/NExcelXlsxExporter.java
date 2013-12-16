@@ -155,7 +155,7 @@ public class NExcelXlsxExporter extends AbstractExporter{
 					xssfRow.setRowStyle(xssfRowStyle);
 					
 					// cell iterator
-					Iterator<NCell> celliter = row.getCellIterator();
+					Iterator<NCell> celliter = sheet.getCellIterator(row.getIndex());
 					while(celliter.hasNext()) {
 						
 						NCell cell = celliter.next();

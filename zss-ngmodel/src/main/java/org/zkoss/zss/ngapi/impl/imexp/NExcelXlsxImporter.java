@@ -126,14 +126,14 @@ public class NExcelXlsxImporter extends AbstractExcelImporter{
 		}
 		
 		for(Cell poiCell : poiRow) {
-			importPoiCell(row, poiCell);
+			importPoiCell(sheet,poiRow.getRowNum(), poiCell);
 		}
 		
 		return row;
 	}
 	
-	private NCell importPoiCell(NRow row, Cell poiCell){
-		NCell cell = row.getCell(poiCell.getColumnIndex());
+	private NCell importPoiCell(NSheet sheet, int row, Cell poiCell){
+		NCell cell = sheet.getCell(row,poiCell.getColumnIndex());
 		switch (poiCell.getCellType()){
 			case Cell.CELL_TYPE_NUMERIC:
 				cell.setNumberValue(poiCell.getNumericCellValue());

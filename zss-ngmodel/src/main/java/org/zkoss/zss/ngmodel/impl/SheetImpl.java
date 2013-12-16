@@ -601,23 +601,17 @@ public class SheetImpl extends SheetAdv {
 	public Iterator<NRow> getRowIterator() {
 		return Collections.unmodifiableCollection((Collection)rows.values()).iterator();
 	}
-	
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	@Override
-	public List<NRow> getRowList() {
-		return Collections.unmodifiableList(new ArrayList(rows.values()));
-	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public Iterator<NColumn> getColumnIterator() {
 		return Collections.unmodifiableCollection((Collection)columns.values()).iterator();
 	}
-
+	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
-	public List<NColumn> getColumnList() {
-		return Collections.unmodifiableList(new ArrayList(columns.values()));
+	public Iterator<NCell> getCellIterator(int row) {
+		return (Iterator)((RowAdv)getRow(row)).getCellIterator();
 	}
 	
 	@Override

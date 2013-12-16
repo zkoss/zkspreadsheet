@@ -41,9 +41,8 @@ public interface NSheet {
 	public String getSheetName();
 	
 	public Iterator<NRow> getRowIterator();
-	public List<NRow> getRowList();
 	public Iterator<NColumn> getColumnIterator();
-	public List<NColumn> getColumnList();
+	public Iterator<NCell> getCellIterator(int row);
 	
 	public int getDefaultRowHeight();
 	public int getDefaultColumnWidth();

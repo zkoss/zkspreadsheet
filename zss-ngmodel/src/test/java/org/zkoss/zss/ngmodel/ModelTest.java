@@ -7,12 +7,15 @@ import java.io.ObjectOutputStream;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.locks.ReadWriteLock;
 
 import junit.framework.Assert;
 import junit.framework.AssertionFailedError;
 
+import org.junit.Before;
 import org.junit.Test;
+import org.zkoss.util.Locales;
 import org.zkoss.zss.ngmodel.NCell.CellType;
 import org.zkoss.zss.ngmodel.NCellStyle.Alignment;
 import org.zkoss.zss.ngmodel.NCellStyle.BorderType;
@@ -31,6 +34,10 @@ import org.zkoss.zss.ngmodel.util.FontMatcher;
 
 public class ModelTest {
 
+	@Before
+	public void beforeTest() {
+		Locales.setThreadLocal(Locale.TAIWAN);
+	}
 	
 	@Test 
 	public void testLock(){

@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Random;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -14,12 +15,17 @@ import java.util.concurrent.FutureTask;
 
 import junit.framework.Assert;
 
+import org.junit.Before;
 import org.junit.Test;
+import org.zkoss.util.Locales;
 import org.zkoss.zss.ngmodel.impl.BookImpl;
 
 public class ConcurrentTest {
 
-	
+	@Before
+	public void beforeTest() {
+		Locales.setThreadLocal(Locale.TAIWAN);
+	}
 	public void testConcurrentTest(String caseName,List<FutureTask> tasks){
 		int conNo = tasks.size();
 		ExecutorService executor = Executors.newFixedThreadPool(conNo);
