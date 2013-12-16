@@ -2548,7 +2548,9 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			
 			List<HeaderPositionInfo> infos = new ArrayList<HeaderPositionInfo>();
 
-			for(NRow row: sheet.getRowList()) {
+			Iterator<NRow> iter = sheet.getRowIterator(); 
+			while(iter.hasNext()) {
+				NRow row = iter.next();
 				final boolean hidden = row.isHidden();
 				
 				final int height = row.getHeight();
@@ -2682,7 +2684,9 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		if (helper == null) {
 			final int defaultColSize = sheet.getDefaultColumnWidth();
 			List<HeaderPositionInfo> infos = new ArrayList<HeaderPositionInfo>();
-			for(NColumn column:sheet.getColumnList()) { 
+			Iterator<NColumn> iter = sheet.getColumnIterator(); 
+			while(iter.hasNext()) {
+				NColumn column = iter.next();
 				final boolean hidden = column.isHidden(); //whether this column is hidden
 				final int columnWidth = column.getWidth();//column width
 				if (columnWidth != defaultColSize || hidden) { 

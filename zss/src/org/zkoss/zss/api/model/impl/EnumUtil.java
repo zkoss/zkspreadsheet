@@ -579,6 +579,19 @@ public class EnumUtil {
 		}
 		throw new IllegalArgumentException("unknow hyperlink type "+type);
 	}
+	public static HyperlinkType toHyperlinkType(int type) {
+		switch(type){
+		case Hyperlink.LINK_URL:
+			return HyperlinkType.URL;
+		case Hyperlink.LINK_DOCUMENT:
+			return HyperlinkType.DOCUMENT;
+		case Hyperlink.LINK_EMAIL:
+			return HyperlinkType.EMAIL;
+		case Hyperlink.LINK_FILE:
+			return HyperlinkType.FILE;
+		}
+		throw new IllegalArgumentException("unknow hyperlink type "+type);
+	}
 	public static HyperlinkType toHyperlinkType(NHyperlink.HyperlinkType type) {
 		switch(type){
 		case URL:
