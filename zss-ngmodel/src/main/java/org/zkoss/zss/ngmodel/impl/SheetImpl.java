@@ -33,14 +33,11 @@ import org.zkoss.zss.ngmodel.NCell;
 import org.zkoss.zss.ngmodel.NChart;
 import org.zkoss.zss.ngmodel.NColumn;
 import org.zkoss.zss.ngmodel.NPicture;
-import org.zkoss.zss.ngmodel.NSheet;
-import org.zkoss.zss.ngmodel.NChart.NChartType;
 import org.zkoss.zss.ngmodel.NPicture.Format;
+import org.zkoss.zss.ngmodel.NPrintInfo;
 import org.zkoss.zss.ngmodel.NRow;
 import org.zkoss.zss.ngmodel.NViewAnchor;
 import org.zkoss.zss.ngmodel.NViewInfo;
-import org.zkoss.zss.ngmodel.chart.NChartData;
-import org.zkoss.zss.ngmodel.impl.chart.CategoryChartDataImpl;
 import org.zkoss.zss.ngmodel.util.CellReference;
 import org.zkoss.zss.ngmodel.util.Validations;
 /**
@@ -64,11 +61,12 @@ public class SheetImpl extends SheetAdv {
 	
 	private final List<CellRegion> mergedRegions = new LinkedList<CellRegion>();
 	
+	//to store some lowpriority view info
 	private final NViewInfo viewInfo = new ViewInfoImpl();
 	
+	private final NPrintInfo printInfo = new PrintInfoImpl();
+	
 	private final HashMap<String,Object> attributes = new LinkedHashMap<String, Object>();
-	private int columnFreeze = 0;
-	private int rowFreeze = 0;
 	private int defaultColumnWidth = 64; //in pixel
 	private int defaultRowHeight = 20;//in pixel
 	
@@ -643,26 +641,6 @@ public class SheetImpl extends SheetAdv {
 	}
 
 	@Override
-	public int getNumOfRowFreeze() {
-		return rowFreeze;
-	}
-
-	@Override
-	public int getNumOfColumnFreeze() {
-		return columnFreeze;
-	}
-
-	@Override
-	public void setNumOfRowFreeze(int num) {
-		rowFreeze = num;
-	}
-
-	@Override
-	public void setNumOfColumnFreeze(int num) {
-		columnFreeze = num;
-	}
-
-	@Override
 	public int getNumOfPicture() {
 		return pictures.size();
 	}
@@ -706,27 +684,14 @@ public class SheetImpl extends SheetAdv {
 	public NViewInfo getViewInfo(){
 		return viewInfo;
 	}
-
+	
 	@Override
-	public boolean isDisplayGridline() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean setDisplayGridline(boolean display) {
-		// TODO Auto-generated method stub
-		return false;
+	public NPrintInfo getPrintInfo(){
+		return printInfo;
 	}
 
 	@Override
 	public boolean isAutoFilterMode() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean isPrintGridline() {
 		// TODO Auto-generated method stub
 		return false;
 	}

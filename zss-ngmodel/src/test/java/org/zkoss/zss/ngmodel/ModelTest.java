@@ -7,6 +7,7 @@ import java.io.ObjectOutputStream;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.locks.ReadWriteLock;
 
 import junit.framework.Assert;
 import junit.framework.AssertionFailedError;
@@ -30,6 +31,107 @@ import org.zkoss.zss.ngmodel.util.FontMatcher;
 
 public class ModelTest {
 
+	
+	@Test 
+	public void testLock(){
+		NBook book = NBooks.createBook("book1");
+		NSheet sheet1 = book.createSheet("Sheet1");
+		Assert.assertEquals(1, book.getNumOfSheet());
+		NSheet sheet2 = book.createSheet("Sheet2");
+		Assert.assertEquals(2, book.getNumOfSheet());
+		
+		ReadWriteLock l = book.getBookSeries().getLock();
+		
+		//Write Read
+		System.out.println("A");
+		l.writeLock().lock();
+		try{
+			System.out.println("B");
+			l.readLock().lock();
+			System.out.println("C");
+			
+			l.readLock().unlock();
+			System.out.println("D");
+		}finally{
+			System.out.println("E");
+			l.writeLock().unlock();
+		}
+		System.out.println("F");
+		System.out.println("End Write Read");
+		
+		//Write Write
+		System.out.println("A");
+		l.writeLock().lock();
+		try{
+			System.out.println("B");
+			l.writeLock().lock();
+			System.out.println("C");
+			
+			l.writeLock().unlock();
+			System.out.println("D");
+		}finally{
+			System.out.println("E");
+			l.writeLock().unlock();
+		}
+		System.out.println("F");
+		System.out.println("End Write Write");
+		
+		//Read Read
+		System.out.println("A");
+		l.readLock().lock();
+		try{
+			System.out.println("B");
+			l.readLock().lock();
+			System.out.println("C");
+			
+			l.readLock().unlock();
+			System.out.println("D");
+		}finally{
+			System.out.println("E");
+			l.readLock().unlock();
+		}
+		System.out.println("F");
+		System.out.println("End Read Read");
+			
+		
+//		System.out.println("A");
+//		l.readLock().lock();
+//		try{
+//			System.out.println("B");
+//			l.writeLock().lock();
+//			System.out.println("C");
+//			
+//			l.writeLock().unlock();
+//			System.out.println("D");
+//		}finally{
+//			System.out.println("E");
+//			l.readLock().unlock();
+//		}
+//		System.out.println("F");
+//		System.out.println("End Read Write");		
+		
+		//Write Write
+		System.out.println("A");
+		l.writeLock().lock();
+		System.out.println("A2");
+		l.readLock().lock();
+		try{
+			System.out.println("B");
+			l.writeLock().lock();
+			System.out.println("C");
+			
+			l.writeLock().unlock();
+			System.out.println("D");
+		}finally{
+			System.out.println("E2");
+			l.readLock().unlock();
+			System.out.println("E");
+			l.writeLock().unlock();
+		}
+		System.out.println("F");
+		System.out.println("End Write Read Write");		
+	}
+	
 	@Test
 	public void testSheet(){
 		NBook book = NBooks.createBook("book1");

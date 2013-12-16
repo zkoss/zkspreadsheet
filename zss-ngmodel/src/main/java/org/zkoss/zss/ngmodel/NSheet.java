@@ -51,12 +51,6 @@ public interface NSheet {
 	public void setDefaultRowHeight(int height);
 	public void setDefaultColumnWidth(int width);
 	
-	public int getNumOfRowFreeze();
-	public int getNumOfColumnFreeze();
-	
-	public void setNumOfRowFreeze(int num);
-	public void setNumOfColumnFreeze(int num);
-	
 	
 	public NRow getRow(int rowIdx);
 	
@@ -74,7 +68,8 @@ public interface NSheet {
 	
 	public String getId();
 	
-	NViewInfo getViewInfo();
+	public NViewInfo getViewInfo();
+	public NPrintInfo getPrintInfo();
 	
 	//editable
 	public void clearRow(int rowIdx, int rowIdx2);
@@ -140,12 +135,9 @@ public interface NSheet {
 	
 	public void setProtected(boolean protect);
 
-	public boolean isDisplayGridline();
-	
-	public boolean setDisplayGridline(boolean display);
-
 	public boolean isAutoFilterMode();
 
-	public boolean isPrintGridline();
+
+	
 	
 }

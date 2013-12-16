@@ -21,9 +21,12 @@ import java.io.Serializable;
 import org.zkoss.zss.ngmodel.NViewInfo;
 
 public class ViewInfoImpl implements NViewInfo,Serializable {
-
+	private static final long serialVersionUID = 1L;
+	private boolean displayGridline = true;
 	
-	private boolean displayGridline = true; 
+	private int rowFreeze = 0;
+	private int columnFreeze = 0;
+	
 	
 	
 	@Override
@@ -32,8 +35,27 @@ public class ViewInfoImpl implements NViewInfo,Serializable {
 	}
 
 	@Override
-	public void setDisplayDridline(boolean display) {
-		displayGridline = display;
+	public void setDisplayGridline(boolean enable) {
+		displayGridline = enable;
 	}
 
+	@Override
+	public int getNumOfRowFreeze() {
+		return rowFreeze;
+	}
+
+	@Override
+	public int getNumOfColumnFreeze() {
+		return columnFreeze;
+	}
+
+	@Override
+	public void setNumOfRowFreeze(int num) {
+		rowFreeze = num;
+	}
+
+	@Override
+	public void setNumOfColumnFreeze(int num) {
+		columnFreeze = num;
+	}
 }
