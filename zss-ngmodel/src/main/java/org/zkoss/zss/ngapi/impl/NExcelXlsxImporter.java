@@ -101,7 +101,8 @@ public class NExcelXlsxImporter extends AbstractExcelImporter{
 		return sheet;
 	}
 	
-	public int getMaxConfiguredColumn(XSSFSheet poiSheet) {
+	//reference BookHelper.getMaxConfiguredColumn()
+	private int getMaxConfiguredColumn(XSSFSheet poiSheet) {
 		int max = -1;
 		CTWorksheet worksheet = poiSheet.getCTWorksheet();
 		if(worksheet.sizeOfColsArray()<=0){
@@ -170,6 +171,7 @@ public class NExcelXlsxImporter extends AbstractExcelImporter{
 			cellStyle = book.createCellStyle(true);
 			importedStyle.put(xssfCellStyle.getIndex(), cellStyle);
 			//reference XSSFDataFormat.getFormat()
+			//FIXME currently we get data format converted upon locale
 			cellStyle.setDataFormat(xssfCellStyle.getDataFormatString());
 			cellStyle.setWrapText(xssfCellStyle.getWrapText());
 			cellStyle.setLocked(xssfCellStyle.getLocked());
