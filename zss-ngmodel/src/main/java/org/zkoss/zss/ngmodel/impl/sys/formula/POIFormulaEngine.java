@@ -12,14 +12,13 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.ngmodel.impl.sys.formula;
 
 import java.io.Serializable;
-import java.lang.reflect.Proxy;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import org.zkoss.poi.ss.formula.CollaboratingWorkbooksEnvironment;
 import org.zkoss.poi.ss.formula.EvaluationCell;
-import org.zkoss.poi.ss.formula.EvaluationWorkbook;
 import org.zkoss.poi.ss.formula.FormulaParseException;
+import org.zkoss.poi.ss.formula.FormulaParser;
+import org.zkoss.poi.ss.formula.FormulaType;
 import org.zkoss.poi.ss.formula.WorkbookEvaluator;
 import org.zkoss.poi.ss.formula.eval.ErrorEval;
 import org.zkoss.poi.ss.formula.eval.NumberEval;
@@ -40,9 +39,11 @@ import org.zkoss.zss.ngmodel.NBook;
 import org.zkoss.zss.ngmodel.NCell;
 import org.zkoss.zss.ngmodel.NSheet;
 import org.zkoss.zss.ngmodel.impl.BookSeriesAdv;
+import org.zkoss.zss.ngmodel.impl.NameRefImpl;
 import org.zkoss.zss.ngmodel.impl.RefImpl;
 import org.zkoss.zss.ngmodel.impl.sys.DependencyTableAdv;
 import org.zkoss.zss.ngmodel.sys.dependency.Ref;
+import org.zkoss.zss.ngmodel.sys.dependency.Ref.RefType;
 import org.zkoss.zss.ngmodel.sys.formula.EvaluationResult;
 import org.zkoss.zss.ngmodel.sys.formula.EvaluationResult.ResultType;
 import org.zkoss.zss.ngmodel.sys.formula.FormulaEngine;
@@ -63,70 +64,57 @@ public class POIFormulaEngine implements FormulaEngine {
 		try {
 			// adapt and parse
 			NBook book = context.getBook();
-			int sheetIndex = book.getSheetIndex(context.getSheet());
-			EvaluationWorkbook evalBook = new EvalBook(book);
-			evalBook = (EvaluationWorkbook)Proxy.newProxyInstance(ClassLoader.getSystemClassLoader(),
-					new Class<?>[]{EvaluationWorkbook.class}, new LogHandler(evalBook));
-			Ptg[] tokens = evalBook.getFormulaTokens(sheetIndex, formula);
+			ParsingBook parsingBook = new ParsingBook(context.getSheet().getSheetName());
+			Ptg[] tokens = FormulaParser.parse(formula, parsingBook, FormulaType.CELL, 0); // current sheet index in parsing is always 0
 
 			// dependency tracking
 			BookSeriesAdv series = (BookSeriesAdv)book.getBookSeries();
 			DependencyTableAdv table = (DependencyTableAdv)series.getDependencyTable();
 			Ref dependant = context.getDependent();
 			for(Ptg ptg : tokens) {
-				Ref precedent = toDenpendRef(context, evalBook, ptg);
+				Ref precedent = toDenpendRef(context, parsingBook, ptg);
 				if(precedent != null) {
 					table.add(dependant, precedent);
 				}
 			}
 
 			// create result
-			expr = new FormulaExpressionImpl(formula, true);
+			Ref singleRef = tokens.length == 1 ? toDenpendRef(context, parsingBook, tokens[0]) : null;
+			expr = new FormulaExpressionImpl(formula, singleRef, false);
 		} catch(FormulaParseException e) {
 			logger.log(Level.INFO, e.getMessage(), e);
-			expr = new FormulaExpressionImpl(formula, false);
+			expr = new FormulaExpressionImpl(formula, null, true);
 		}
 		return expr;
 	}
 
-	private Ref toDenpendRef(FormulaParseContext ctx, EvaluationWorkbook evalBook, Ptg ptg) {
+	private Ref toDenpendRef(FormulaParseContext ctx, ParsingBook parsingBook, Ptg ptg) {
 		try {
 			NSheet sheet = ctx.getSheet();
 
 			if(ptg instanceof NamePtg) {
-				// TODO
-				// NamePtg namePtg = (NamePtg)ptg;
-				// EvaluationName nameRecord = ec.getWorkbook().getName(namePtg);
-				// return new NameEval(nameRecord.getNameText());
-				// new ObjectRefImpl(name, objectId) // how to create a ref before name existed
+				NamePtg namePtg = (NamePtg)ptg;
+				String bookName = sheet.getBook().getBookName();
+				String name = parsingBook.getName(namePtg.getIndex());
+				return new NameRefImpl(bookName, null, name); // assume name is book-scope
 			} else if(ptg instanceof NameXPtg) {
 				// TODO name in external book
 				// return ec.getNameXEval(((NameXPtg)ptg));
 			} else if(ptg instanceof Ref3DPtg) {
-				Ref3DPtg aptg = (Ref3DPtg)ptg;
-				String bookName = ctx.getBook().getBookName();
-				int sheetIndex1 = evalBook.convertFromExternSheetIndex(aptg.getExternSheetIndex());
-				int sheetIndex2 = evalBook.convertLastIndexFromExternSheetIndex(aptg.getExternSheetIndex());
-				if(sheetIndex1 == sheetIndex2) {
-					return new RefImpl(bookName, evalBook.getSheetName(sheetIndex1), aptg.getRow(),
-							aptg.getColumn());
-				} else {
-					return new RefImpl(bookName, evalBook.getSheetName(sheetIndex1),
-							evalBook.getSheetName(sheetIndex2), aptg.getRow(), aptg.getColumn());
-				}
+				Ref3DPtg rptg = (Ref3DPtg)ptg;
+				String bookName = sheet.getBook().getBookName();
+				String[] tokens = parsingBook.getName(rptg.getExternSheetIndex()).split(":");
+				String sheetName = tokens[0];
+				String lastSheetName = tokens.length >= 2 ? tokens[1] : null;
+				return new RefImpl(bookName, sheetName, lastSheetName, rptg.getRow(), rptg.getColumn());
 			} else if(ptg instanceof Area3DPtg) {
 				Area3DPtg aptg = (Area3DPtg)ptg;
-				String bookName = ctx.getBook().getBookName();
-				int sheetIndex1 = evalBook.convertFromExternSheetIndex(aptg.getExternSheetIndex());
-				int sheetIndex2 = evalBook.convertLastIndexFromExternSheetIndex(aptg.getExternSheetIndex());
-				if(sheetIndex1 == sheetIndex2) {
-					return new RefImpl(bookName, evalBook.getSheetName(sheetIndex1), aptg.getFirstRow(),
-							aptg.getFirstColumn(), aptg.getLastRow(), aptg.getLastColumn());
-				} else {
-					return new RefImpl(bookName, evalBook.getSheetName(sheetIndex1),
-							evalBook.getSheetName(sheetIndex2), aptg.getFirstRow(), aptg.getFirstColumn(),
-							aptg.getLastRow(), aptg.getLastColumn());
-				}
+				String bookName = sheet.getBook().getBookName();
+				String[] tokens = parsingBook.getName(aptg.getExternSheetIndex()).split(":");
+				String sheetName = tokens[0];
+				String lastSheetName = tokens.length >= 2 ? tokens[1] : null;
+				return new RefImpl(bookName, sheetName, lastSheetName, aptg.getFirstRow(),
+						aptg.getFirstColumn(), aptg.getLastRow(), aptg.getLastColumn());
 			} else if(ptg instanceof RefPtg) {
 				RefPtg rptg = (RefPtg)ptg;
 				String bookName = sheet.getBook().getBookName();
@@ -149,6 +137,11 @@ public class POIFormulaEngine implements FormulaEngine {
 
 	@Override
 	public EvaluationResult evaluate(FormulaExpression expr, FormulaEvaluationContext context) {
+
+		// by pass if expression is invalid format
+		if(expr.hasError()) {
+			return new EvaluationResultImpl(ResultType.ERROR, new ErrorValue(ErrorValue.INVALID_FORMULA));
+		}
 
 		EvaluationResult result = null;
 		try {
@@ -214,7 +207,7 @@ public class POIFormulaEngine implements FormulaEngine {
 			}
 		} catch(Exception e) {
 			logger.log(Level.SEVERE, e.getMessage(), e);
-			result = new EvaluationResultImpl(ResultType.ERROR, null);
+			result = new EvaluationResultImpl(ResultType.ERROR, new ErrorValue(ErrorValue.INVALID_FORMULA));
 		}
 		return result;
 	}
@@ -222,16 +215,21 @@ public class POIFormulaEngine implements FormulaEngine {
 	private static class FormulaExpressionImpl implements FormulaExpression, Serializable {
 		private static final long serialVersionUID = -8532826169759927711L;
 		private String formula;
-		private boolean valid;
+		private Ref ref;
+		private boolean error;
 
-		public FormulaExpressionImpl(String formula, boolean valid) {
+		/**
+		 * @param ref resolved reference if formula has only one parsed token
+		 */
+		public FormulaExpressionImpl(String formula, Ref ref, boolean error) {
 			this.formula = formula;
-			this.valid = valid;
+			this.ref = ref;
+			this.error = error;
 		}
 
 		@Override
 		public boolean hasError() {
-			return !valid;
+			return error;
 		}
 
 		@Override
@@ -242,22 +240,24 @@ public class POIFormulaEngine implements FormulaEngine {
 		@Override
 		public String reformSheetNameChanged(String oldName, String newName) {
 			// TODO
-			return null;
+			return formula;
 		}
 
 		@Override
 		public boolean isRefersTo() {
-			return false;
+			return ref != null && (ref.getType() == RefType.AREA || ref.getType() == RefType.CELL);
 		}
 
 		@Override
 		public String getRefersToSheetName() {
-			return null;
+			// FIXME 3D sheets
+			return isRefersTo() ? ref.getSheetName() : null;
 		}
 
 		@Override
 		public CellRegion getRefersToCellRegion() {
-			return null;
+			return isRefersTo() ? new CellRegion(ref.getRow(), ref.getColumn(), ref.getLastRow(),
+					ref.getLastColumn()) : null;
 		}
 
 	}

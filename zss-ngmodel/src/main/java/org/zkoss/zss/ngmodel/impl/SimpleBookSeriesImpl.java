@@ -21,8 +21,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-
 import org.zkoss.zss.ngmodel.NBook;
+import org.zkoss.zss.ngmodel.impl.sys.DependencyTableAdv;
 import org.zkoss.zss.ngmodel.sys.EngineFactory;
 import org.zkoss.zss.ngmodel.sys.dependency.DependencyTable;
 /**
@@ -43,6 +43,7 @@ public class SimpleBookSeriesImpl extends BookSeriesAdv {
 	public SimpleBookSeriesImpl(BookAdv book){
 		this.book = book;
 		dependencyTable = EngineFactory.getInstance().createDependencyTable();
+		((DependencyTableAdv)dependencyTable).setBookSeries(this);
 	}
 	@Override
 	public NBook getBook(String name) {

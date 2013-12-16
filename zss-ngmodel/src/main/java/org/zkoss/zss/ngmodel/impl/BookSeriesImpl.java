@@ -45,6 +45,7 @@ public class BookSeriesImpl extends BookSeriesAdv {
 	public BookSeriesImpl(BookAdv... books){
 		this.books = new LinkedHashMap<String, BookAdv>(1);
 		dependencyTable = EngineFactory.getInstance().createDependencyTable();
+		((DependencyTableAdv)dependencyTable).setBookSeries(this);
 		for(BookAdv book:books){
 			this.books.put(book.getBookName(), book);
 			((DependencyTableAdv) dependencyTable)

@@ -70,7 +70,7 @@ public class CategoryChartDataImpl extends ChartDataAdv implements NCategoryChar
 		if(!evaluated){
 			if(catFormula!=null){
 				FormulaEngine fe = EngineFactory.getInstance().createFormulaEngine();
-				EvaluationResult result = fe.evaluate(catFormula,new FormulaEvaluationContext(chart.getSheet().getBook()));
+				EvaluationResult result = fe.evaluate(catFormula,new FormulaEvaluationContext(chart.getSheet()));
 				Object val = result.getValue();
 				if(result.getType() == ResultType.SUCCESS){
 					evalResult = val;

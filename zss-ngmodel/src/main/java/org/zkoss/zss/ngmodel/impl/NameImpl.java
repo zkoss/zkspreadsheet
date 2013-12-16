@@ -104,7 +104,7 @@ public class NameImpl extends NameAdv {
 		
 		//use formula engine to keep dependency info
 		FormulaEngine fe = EngineFactory.getInstance().createFormulaEngine();
-		FormulaExpression expr = fe.parse(refersToExpr, new FormulaParseContext(book,new NameRefImpl(this)));
+		FormulaExpression expr = fe.parse(refersToExpr, new FormulaParseContext(book.getSheet(0),new NameRefImpl(this)));
 		if(expr.hasError()){
 			isParsingError = true;
 		}else if(expr.isRefersTo()){

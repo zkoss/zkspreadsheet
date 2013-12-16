@@ -4,13 +4,13 @@ import java.io.Serializable;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
-
+import org.zkoss.zss.ngmodel.NBookSeries;
 import org.zkoss.zss.ngmodel.impl.RefImpl;
-import org.zkoss.zss.ngmodel.sys.dependency.DependencyTable;
 import org.zkoss.zss.ngmodel.sys.dependency.Ref;
 import org.zkoss.zss.ngmodel.sys.dependency.Ref.RefType;
 
-public class TestDependencyTableImpl implements DependencyTable, Serializable {
+public class TestDependencyTableImpl extends DependencyTableAdv implements Serializable {
+	private static final long serialVersionUID = 1L;
 
 	public Set<Ref> getDependents(Ref precedent) {
 		if (precedent.getType() != RefType.CELL) {
@@ -28,6 +28,18 @@ public class TestDependencyTableImpl implements DependencyTable, Serializable {
 
 	public void clearDependents(Ref dependant) {
 		//
+	}
+
+	@Override
+	public void setBookSeries(NBookSeries series) {
+	}
+
+	@Override
+	public void add(Ref dependant, Ref precedent) {
+	}
+
+	@Override
+	public void merge(DependencyTableAdv dependencyTable) {
 	}
 
 }
