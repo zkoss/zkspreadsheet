@@ -88,6 +88,29 @@ public final class BookHelper {
 	public final static int FILL_SERIES = FILL_LINER_TREND;
 	
 	private static final Logger logger = Logger.getLogger(BookHelper.class.getName());
+	
+	public static String getFontHTMLColor(Workbook book, Font font) {
+		if (font instanceof XSSFFont) {
+			final XSSFFont f = (XSSFFont) font;
+			final XSSFColor color = f.getXSSFColor();
+			return BookHelper.colorToHTML(book, color);
+		} else {
+			//ZSS-409 Set font color doesn't work in 2003
+			//api to get font color is chaos here, i remove and use the reliable one to 
+			final HSSFColor color = getHSSFFontColor((HSSFWorkbook)book, (HSSFFont) font);
+			return BookHelper.colorToHTML(book, color);
+		}
+	}
+	
+	private static HSSFColor getHSSFFontColor(HSSFWorkbook book, HSSFFont font) {
+		final short index = font.getColor() == Font.COLOR_NORMAL ? HSSFColor.AUTOMATIC.index : font.getColor();
+		HSSFPalette palette = book.getCustomPalette();
+		if (palette != null) {
+			return palette.getColor(index);
+		}
+		Map<Integer, HSSFColor> indexHash = (Map<Integer, HSSFColor>) HSSFColor.getIndexHash();
+		return indexHash.get(Integer.valueOf(index));
+	}
 	/*
 	 * Returns the associated #rrggbb HTML color per the given POI Color.
 	 * @return the associated #rrggbb HTML color per the given POI Color.

@@ -3,7 +3,7 @@ package org.zkoss.zss.ngmodel;
 import static org.junit.Assert.*;
 
 import java.io.*;
-import java.net.URL;
+import java.net.*;
 import java.text.DateFormat;
 import java.util.Locale;
 
@@ -36,7 +36,7 @@ public class ImporterTest {
 	@BeforeClass
 	static public void initialize(){
 		try{
-			fileUnderTest = new File(ImporterTest.class.getResource("book/import.xlsx").toURI());
+			fileUnderTest = new File(ImporterTest.class.getResource("book/import.xls").toURI());
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -52,9 +52,10 @@ public class ImporterTest {
 	
 	@Test
 	public void importByInputStream(){
-		InputStream streamUnderTest = ImporterTest.class.getResourceAsStream("book/import.xlsx");
+		InputStream streamUnderTest = null;
 		NBook book = null;
 		try {
+			streamUnderTest = new FileInputStream(fileUnderTest);
 			book = importer.imports(streamUnderTest, "XSSFBook");
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -74,10 +75,9 @@ public class ImporterTest {
 	
 	@Test
 	public void importByUrl(){
-		URL surlUnderTest = ImporterTest.class.getResource("book/import.xlsx");
 		NBook book = null;
 		try {
-			book = importer.imports(surlUnderTest, "XSSFBook");
+			book = importer.imports(fileUnderTest.toURL(), "XSSFBook");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

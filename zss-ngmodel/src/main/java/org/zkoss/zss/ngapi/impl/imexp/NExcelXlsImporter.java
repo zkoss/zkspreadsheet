@@ -16,14 +16,11 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.ngapi.impl.imexp;
 
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 
 import org.zkoss.poi.hssf.usermodel.HSSFWorkbook;
-import org.zkoss.poi.ss.usermodel.Workbook;
-import org.zkoss.zss.ngmodel.NBook;
-import org.zkoss.zss.ngmodel.NBooks;
-import org.zkoss.zss.ngmodel.impl.BookImpl;
+import org.zkoss.poi.ss.usermodel.*;
+import org.zkoss.zss.ngmodel.*;
 /**
  * 
  * @author Hawk
@@ -35,10 +32,21 @@ public class NExcelXlsImporter extends AbstractExcelImporter{
 	@Override
 	public NBook imports(InputStream is, String bookName) throws IOException {
 
-		Workbook workbook = new HSSFWorkbook(is);
-		NBook book = NBooks.createBook(bookName);
-		
+		workbook = new HSSFWorkbook(is);
+		book = NBooks.createBook(bookName);
+		for (int i = 0 ; i < workbook.getNumberOfSheets(); i++){
+			importPoiSheet(workbook.getSheetAt(i));
+		}
 		return book;
 	}
+
+	@Override
+	protected int getMaxConfiguredColumn(Sheet poiSheet) {
+		// FIXME cannot impelement getMaxConfiguredColumn() because HSSFSheet.getSheet() is protected.
+//		((HSSFSheetImpl)poiSheet).get
+//		((HSSFSheet)poiSheet).getSheet().getMaxConfiguredColumn();
+		return 100;
+	}
+
 
 }
