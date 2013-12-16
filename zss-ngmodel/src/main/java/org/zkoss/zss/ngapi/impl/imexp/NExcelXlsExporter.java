@@ -32,22 +32,6 @@ import org.zkoss.zss.ngmodel.NBook;
  */
 public class NExcelXlsExporter extends AbstractExporter{
 	
-	
-	@Override
-	public void export(NBook book, File file) throws IOException {
-		OutputStream os = null;
-		try{
-			os = new FileOutputStream(file);
-			export(book,os);
-		}finally{
-			if(os!=null){
-				try{
-					os.close();
-				}catch(Exception x){};
-			}
-		}
-	}
-	
 	@Override
 	public void export(NBook book, OutputStream fos) throws IOException {
 		ReadWriteLock lock = book.getBookSeries().getLock();
