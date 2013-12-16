@@ -14,7 +14,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 {{IS_RIGHT
 }}IS_RIGHT
 */
-package org.zkoss.zss.ngapi.impl;
+package org.zkoss.zss.ngapi.impl.imexp;
 
 import java.io.File;
 import java.io.FileOutputStream;

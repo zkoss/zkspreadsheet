@@ -9,7 +9,7 @@ import java.util.Locale;
 
 import org.junit.*;
 import org.zkoss.zss.ngapi.NImporter;
-import org.zkoss.zss.ngapi.impl.ExcelImportFactory;
+import org.zkoss.zss.ngapi.impl.imexp.ExcelImportFactory;
 import org.zkoss.zss.ngmodel.NCellStyle.Alignment;
 import org.zkoss.zss.ngmodel.NCellStyle.BorderType;
 import org.zkoss.zss.ngmodel.NCellStyle.FillPattern;

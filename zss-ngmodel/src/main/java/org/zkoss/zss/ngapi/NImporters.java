@@ -19,8 +19,7 @@ package org.zkoss.zss.ngapi;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
-import org.zkoss.zss.ngapi.impl.ExcelImportFactory;
-import org.zkoss.zss.ngapi.impl.TestImporterFactory;
+import org.zkoss.zss.ngapi.impl.imexp.*;
 /**
  * Get importers by registered name
  * @author dennis

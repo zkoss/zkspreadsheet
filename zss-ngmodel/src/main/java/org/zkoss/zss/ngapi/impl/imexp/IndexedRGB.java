@@ -10,7 +10,7 @@
 Copyright (C) 2010 Potix Corporation. All Rights Reserved.
 */
 
-package org.zkoss.zss.ngapi.impl;
+package org.zkoss.zss.ngapi.impl.imexp;
 
 import java.util.HashMap;
 import java.util.Map;

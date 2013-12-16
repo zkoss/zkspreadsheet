@@ -9,9 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.zkoss.zss.ngapi.NImporter;
-import org.zkoss.zss.ngapi.impl.ExcelExportFactory;
-import org.zkoss.zss.ngapi.impl.ExcelImportFactory;
-import org.zkoss.zss.ngapi.impl.NExcelXlsxExporter;
+import org.zkoss.zss.ngapi.impl.imexp.*;
 
 /**
  * Utility for write and load book

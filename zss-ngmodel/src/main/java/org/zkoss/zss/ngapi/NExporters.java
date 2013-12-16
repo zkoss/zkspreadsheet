@@ -19,8 +19,8 @@ package org.zkoss.zss.ngapi;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
-import org.zkoss.zss.ngapi.impl.ExcelExportFactory;
-import org.zkoss.zss.ngapi.impl.ExcelExportFactory.Type;
+import org.zkoss.zss.ngapi.impl.imexp.ExcelExportFactory;
+import org.zkoss.zss.ngapi.impl.imexp.ExcelExportFactory.Type;
 
 /**
  * Get Exporter by registered name
