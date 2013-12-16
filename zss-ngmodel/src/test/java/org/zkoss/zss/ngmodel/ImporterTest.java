@@ -58,6 +58,14 @@ public class ImporterTest {
 			book = importer.imports(streamUnderTest, "XSSFBook");
 		} catch (IOException e) {
 			e.printStackTrace();
+		}finally{
+			if(streamUnderTest!=null){
+				try{
+					streamUnderTest.close();
+				}catch(Exception e){
+					e.printStackTrace();
+				}
+			}
 		}
 		
 		assertEquals("XSSFBook", book.getBookName());
@@ -93,7 +101,7 @@ public class ImporterTest {
 	
 	//content
 	@Test
-	public void sheet() {
+	public void sheetTest() {
 		NBook book = null;
 		try {
 			book = importer.imports(fileUnderTest, "XSSFBook");
@@ -355,5 +363,26 @@ public class ImporterTest {
 		assertFalse(sheet.getColumn(3).isHidden());
 		assertTrue(sheet.getColumn(4).isHidden());		
 	}
+	
+	/**
+	 * import last column that only has column width change but has all empty cells 
+	 */
+	@Test
+	public void lastColumnTest(){
+		NBook book = importBook(fileUnderTest, "XSSFBook");
+		NSheet sheet = book.getSheetByName("column-row");
+		assertEquals(80, sheet.getColumn(13).getWidth());
+	}
+	
+	protected NBook importBook(File file, String bookName){
+		NBook book = null;
+		try {
+			book = importer.imports(file, bookName);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return book;
+	}
 }
+
 
