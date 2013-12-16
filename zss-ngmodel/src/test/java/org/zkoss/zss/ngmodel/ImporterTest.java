@@ -333,6 +333,18 @@ public class ImporterTest {
 		assertFalse(book.getSheetByName("cell-border").getViewInfo().isDisplayGridline());
 	}
 
+	@Test
+	public void mergedTest(){
+		NBook book = importBook(fileUnderTest, "XSSFBook");
+		NSheet sheet = book.getSheetByName("cell-border");
+		assertEquals(4, sheet.getMergedRegions().size());
+		assertEquals("C31:D33", sheet.getMergedRegions().get(0).getReferenceString());
+		assertEquals("B31:B33", sheet.getMergedRegions().get(1).getReferenceString());
+		assertEquals("E28:G28", sheet.getMergedRegions().get(2).getReferenceString());
+		assertEquals("B28:C28", sheet.getMergedRegions().get(3).getReferenceString());
+	}
+	
+	
 	protected NBook importBook(File file, String bookName){
 		NBook book = null;
 		try {

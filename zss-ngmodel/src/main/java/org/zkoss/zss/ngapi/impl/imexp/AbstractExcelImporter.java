@@ -19,10 +19,14 @@ package org.zkoss.zss.ngapi.impl.imexp;
 import java.util.*;
 
 import org.zkoss.poi.ss.usermodel.*;
+import org.zkoss.poi.ss.util.CellRangeAddress;
 import org.zkoss.zss.ngmodel.*;
-import org.zkoss.zss.ngmodel.NCellStyle.*;
+import org.zkoss.zss.ngmodel.NCellStyle.Alignment;
+import org.zkoss.zss.ngmodel.NCellStyle.BorderType;
+import org.zkoss.zss.ngmodel.NCellStyle.FillPattern;
 import org.zkoss.zss.ngmodel.NCellStyle.VerticalAlignment;
-import org.zkoss.zss.ngmodel.NFont.*;
+import org.zkoss.zss.ngmodel.NFont.TypeOffset;
+import org.zkoss.zss.ngmodel.NFont.Underline;
 
 
 /**
@@ -57,6 +61,14 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 		sheet.getViewInfo().setNumOfRowFreeze(BookHelper.getRowFreeze(poiSheet));
 		sheet.getViewInfo().setNumOfColumnFreeze(BookHelper.getColumnFreeze(poiSheet));
 		sheet.getViewInfo().setDisplayGridline(poiSheet.isDisplayGridlines());
+		//merged cells
+		//reference RangeImpl.getMergeAreas()
+		int nMerged = poiSheet.getNumMergedRegions();
+		for(int i = nMerged - 1; i >= 0; --i) {
+			final CellRangeAddress mergedRegion = poiSheet.getMergedRegion(i);
+			sheet.addMergedRegion(new CellRegion(mergedRegion.getFirstRow(),mergedRegion.getFirstColumn(), mergedRegion.getLastRow(),mergedRegion.getLastColumn()));
+		}
+		
 		
 		for(Row poiRow : poiSheet) {
 			importRow(sheet, poiRow);
