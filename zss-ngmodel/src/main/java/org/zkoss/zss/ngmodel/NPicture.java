@@ -25,7 +25,12 @@ public interface NPicture {
 	public enum Format{
 		PNG,
 		JPG,
-		GIF
+		GIF;
+		public String getFileExtension() {
+			return name().toLowerCase();
+		}
+		
+		
 	}
 	public NSheet getSheet();
 	

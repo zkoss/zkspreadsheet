@@ -16,6 +16,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.ngapi.impl.imexp;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
@@ -33,8 +34,10 @@ import org.zkoss.zss.ngmodel.NCellStyle;
 import org.zkoss.zss.ngmodel.NCellStyle.BorderType;
 import org.zkoss.zss.ngmodel.NCellStyle.FillPattern;
 import org.zkoss.zss.ngmodel.NCellStyle.VerticalAlignment;
+import org.zkoss.zss.ngmodel.NPicture.Format;
 import org.zkoss.zss.ngmodel.NSheet;
 import org.zkoss.zss.ngmodel.NCellStyle.Alignment;
+import org.zkoss.zss.ngmodel.NViewAnchor;
 import org.zkoss.zss.ngmodel.impl.BookImpl;
 /**
  * 
@@ -192,7 +195,33 @@ public class TestImporterFactory implements ImporterFactory{
 				sheet1.getColumn(17).setWidth(100);
 				sheet1.getCell(0, 17).setStringValue("column style");
 				
+				
+				
+				sheet1.addPicture(Format.JPG, getTestImageData(), new NViewAnchor(12, 3, 30, 5, 600, 300));
+				
 				return book;
+			}
+
+			private byte[] getTestImageData() {
+				InputStream is = null;
+				try{
+					is = getClass().getResourceAsStream("test.jpg");
+					ByteArrayOutputStream os = new ByteArrayOutputStream();
+					byte[] b = new byte[1024];
+					int r;
+					while( (r = is.read(b)) !=-1){
+						os.write(b,0,r);
+					}
+					return os.toByteArray();
+				} catch (IOException e) {
+					throw new RuntimeException(e.getMessage(),e);
+				}finally{
+					if(is!=null){
+						try {
+							is.close();
+						} catch (IOException e) {}
+					}
+				}
 			}
 		};
 	}
