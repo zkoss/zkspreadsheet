@@ -41,6 +41,7 @@ import org.zkoss.zss.model.sys.impl.BookHelper;
 import org.zkoss.zss.ngmodel.NBook;
 import org.zkoss.zss.ngmodel.NColor;
 import org.zkoss.zss.ngmodel.NFont;
+import org.zkoss.zss.ngmodel.util.FontMatcher;
 /**
  * 
  * @author dennis
@@ -88,21 +89,24 @@ import org.zkoss.zss.ngmodel.NFont;
 	}
 
 	public Font findFont(Boldweight boldweight, Color color,
-			int fontHeight, String fontName, boolean italic,
+			int fontHeightPoints, String fontName, boolean italic,
 			boolean strikeout, TypeOffset typeOffset, Underline underline) {
-		Book book = _book;
+		NBook book = ((BookImpl) _book).getNative();
 
-		org.zkoss.poi.ss.usermodel.Font font;
-		/*TODO zss 3.5
-		font = ((BookImpl) book).getNative().findFont(
-				EnumUtil.toFontBoldweight(boldweight),
-				((ColorImpl) color).getNative(), (short)fontHeight, fontName, italic,
-				strikeout, EnumUtil.toFontTypeOffset(typeOffset),
-				EnumUtil.toFontUnderline(underline));
-		return font == null ? null : new FontImpl(((BookImpl) book).getRef(),
-				new SimpleRef<org.zkoss.poi.ss.usermodel.Font>(font));
-		*/
-		throw new UnsupportedOperationException("not implement");
+		FontMatcher fm = new FontMatcher();
+		fm.setBoldweight(EnumUtil.toFontBoldweight(boldweight));
+		fm.setColor(color.getHtmlColor());
+		fm.setHeightPoints(fontHeightPoints);
+		fm.setName(fontName);
+		fm.setItalic(italic);
+		fm.setStrikeout(strikeout);
+		fm.setTypeOffset(EnumUtil.toFontTypeOffset(typeOffset));
+		fm.setUnderline(EnumUtil.toFontUnderline(underline));
+		
+		NFont font = book.searchFont(fm);
+		
+		return font == null ? null : new FontImpl(((BookImpl) _book).getRef(),
+				new SimpleRef<NFont>(font));
 	}
 
 	

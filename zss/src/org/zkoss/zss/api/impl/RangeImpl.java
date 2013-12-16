@@ -250,22 +250,9 @@ public class RangeImpl implements Range{
 	
 	private boolean visitCell(CellVisitor visitor,int r, int c){
 		boolean ignore = false;
-		boolean ignoreSet = false;
 		NSheet sheet = _range.getSheet();
-		NRow row = sheet.getRow(r);
-		if(row.isNull()){
-			ignore = visitor.ignoreIfNotExist(r,c);
-			ignoreSet = true;
-			if(ignore){
-				return true;
-			}
-		}
-		NCell cell = row.getCell(c);
+		NCell cell = sheet.getCell(r,c);
 		if(cell.isNull()){
-			if(!ignoreSet){
-				ignore = visitor.ignoreIfNotExist(r,c);
-				ignoreSet = true;
-			}
 			if(ignore){
 				return true;
 			}else{

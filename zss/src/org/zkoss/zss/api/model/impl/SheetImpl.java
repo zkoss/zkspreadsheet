@@ -36,7 +36,9 @@ import org.zkoss.zss.model.sys.impl.DrawingManager;
 import org.zkoss.zss.model.sys.impl.HSSFSheetImpl;
 import org.zkoss.zss.model.sys.impl.SheetCtrl;
 import org.zkoss.zss.ngmodel.NBook;
+import org.zkoss.zss.ngmodel.NPicture;
 import org.zkoss.zss.ngmodel.NSheet;
+import org.zkoss.zss.ngmodel.NViewAnchor;
 import org.zkoss.zss.ui.impl.XUtils;
 /**
  * 
@@ -132,12 +134,10 @@ public class SheetImpl implements Sheet{
 	
 	public List<Picture> getPictures(){
 		List<Picture> pictures = new ArrayList<Picture>();
-		/*TODO zss 3.5
-		DrawingManager dm = ((SheetCtrl)getNative()).getDrawingManager();
-		for(org.zkoss.poi.ss.usermodel.Picture pic:dm.getPictures()){
-			pictures.add(new PictureImpl(_sheetRef, new SimpleRef<org.zkoss.poi.ss.usermodel.Picture>(pic)));
+
+		for(NPicture pic:getNative().getPictures()){
+			pictures.add(new PictureImpl(_sheetRef, new SimpleRef<NPicture>(pic)));
 		}
-		*/
 		return pictures;
 	}
 
@@ -182,42 +182,96 @@ public class SheetImpl implements Sheet{
 	/**
 	 * Utility method, internal use only
 	 */
-	/*TODO zss 3.5
-	public static ClientAnchor toClientAnchor(org.zkoss.poi.ss.usermodel.Sheet sheet,SheetAnchor anchor){
-		ClientAnchor can = null;
-		if(sheet instanceof HSSFSheetImpl){//2003
-			//it looks like not correct, need to double check this
-			can = new HSSFClientAnchor(anchor.getXOffset(),anchor.getYOffset(),anchor.getLastXOffset(),anchor.getLastYOffset(),
-					(short)anchor.getColumn(),(short)anchor.getRow(),(short)anchor.getLastColumn(),(short)anchor.getLastRow());
+	public static NViewAnchor toViewAnchor(NSheet sheet,SheetAnchor anchor){
+		int row = anchor.getRow();
+		int column = anchor.getColumn();
+		int x1 = anchor.getXOffset();
+		int y1 = anchor.getYOffset();
+		int lrow = anchor.getLastRow();
+		int lcolumn = anchor.getLastColumn();
+		int x2 = anchor.getLastXOffset();
+		int y2 = anchor.getLastYOffset();
+		
+		int w = 0;
+		int h = 0;
+		
+		if(row == lrow){
+			h = y2 - y1;
 		}else{
-			//code refer from ActionHandler.getClientAngent
-			//but it looks like not correct, need to double check this
-			can = new XSSFClientAnchor(UnitUtil.pxToEmu(anchor.getXOffset()),UnitUtil.pxToEmu(anchor.getYOffset()),
-					UnitUtil.pxToEmu(anchor.getLastXOffset()),UnitUtil.pxToEmu(anchor.getLastYOffset()),
-					(short)anchor.getColumn(),(short)anchor.getRow(),(short)anchor.getLastColumn(),(short)anchor.getLastRow());
-//			can = new XSSFClientAnchor(anchor.getXOffset(),anchor.getYOffset(),anchor.getLastXOffset(),anchor.getLastYOffset(),
-//					(short)anchor.getColumn(),(short)anchor.getRow(),(short)anchor.getLastColumn(),(short)anchor.getLastRow());
+			for(int i = row ; i<=lrow; i++){
+				if(i == row){
+					h += sheet.getRow(i).getHeight()-y1;
+				}else if(i == lrow){
+					h += y2;
+				}else{
+					h += sheet.getRow(i).getHeight();
+				}
+			}
 		}
-		return can;
+		
+		if(column == lcolumn){
+			w = x2 - x1;
+		}else{
+			for(int i = column; i<=lcolumn; i++){
+				if(i == column){
+					w += sheet.getColumn(i).getWidth()-x1;
+				}else if(i == lcolumn){
+					w += x2;
+				}else{
+					w += sheet.getColumn(i).getWidth();
+				}
+			}
+		}
+
+		NViewAnchor av = new NViewAnchor(row, column, x1, y1 ,w, h);
+		return av;
 	}
-	*/
 	
 	/**
 	 * Utility method, internal use only
 	 */
-	/*TODO zss 3.5
-	public static SheetAnchor toSheetAnchor(org.zkoss.poi.ss.usermodel.Sheet sheet,ClientAnchor anchor){
-		SheetAnchor san = null;
-		if(sheet instanceof HSSFSheetImpl){
-			san = new SheetAnchor(anchor.getRow1(),anchor.getCol1(),anchor.getDx1(),anchor.getDy1(),
-					anchor.getRow2(),anchor.getCol2(),anchor.getDx2(),anchor.getDy2());
-		}else{
-			san = new SheetAnchor(anchor.getRow1(),anchor.getCol1(),UnitUtil.emuToPx(anchor.getDx1()),UnitUtil.emuToPx(anchor.getDy1()),
-					anchor.getRow2(),anchor.getCol2(),UnitUtil.emuToPx(anchor.getDx2()),UnitUtil.emuToPx(anchor.getDy2()));
+	public static SheetAnchor toSheetAnchor(NSheet sheet,NViewAnchor anchor){
+		int row = anchor.getRowIndex();
+		int column = anchor.getColumnIndex();
+		int x1 = anchor.getXOffset();
+		int y1 = anchor.getYOffset();
+		int w = anchor.getWidth();
+		int h = anchor.getHeight();
+		
+		int row2 = row;
+		int column2 = column;
+		int x2 =0;
+		int y2 = 0;
+		
+		while(w>0){
+			if(column2==column){
+				w = w - ( sheet.getColumn(column).getWidth() - x1);
+				column2++;
+			}else{
+				w = w - sheet.getColumn(column).getWidth();
+				column2++;
+			}
 		}
+		column2--;
+		x2 = sheet.getColumn(column2).getWidth()+w;
+		
+		
+		while(h>0){
+			if(row2==row){
+				h = h - ( sheet.getRow(row2).getHeight() - y1);
+				row2++;
+			}else{
+				h = h - sheet.getRow(row2).getHeight();
+				row2++;
+			}
+		}
+		row2--;
+		y2 = sheet.getRow(row2).getHeight()+h;
+
+		SheetAnchor san = new SheetAnchor(row,column,x1,y1,
+				row2,column2,x2,y2);
 		return san;
 	}
-	*/
 
 	@Override
 	public int getFirstRow() {

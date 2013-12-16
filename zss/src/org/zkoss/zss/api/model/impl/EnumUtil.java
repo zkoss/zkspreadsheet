@@ -120,15 +120,15 @@ public class EnumUtil {
 		throw new IllegalArgumentException("unknow font type offset "+typeOffset);
 	}
 
-	public static short toFontTypeOffset(TypeOffset typeOffset) {
+	public static NFont.TypeOffset toFontTypeOffset(TypeOffset typeOffset) {
 		assertArgNotNull(typeOffset,"typeOffset");
 		switch(typeOffset){
 		case NONE:
-			return org.zkoss.poi.ss.usermodel.Font.SS_NONE;
+			return NFont.TypeOffset.NONE;
 		case SUB:
-			return org.zkoss.poi.ss.usermodel.Font.SS_SUB;
+			return NFont.TypeOffset.SUB;
 		case SUPER:
-			return org.zkoss.poi.ss.usermodel.Font.SS_SUPER;
+			return NFont.TypeOffset.SUPER;
 		}
 		throw new IllegalArgumentException("unknow font type offset "+typeOffset);
 	}

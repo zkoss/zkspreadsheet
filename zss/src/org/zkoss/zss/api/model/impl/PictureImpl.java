@@ -20,6 +20,9 @@ import org.zkoss.poi.ss.usermodel.ClientAnchor;
 import org.zkoss.zss.api.SheetAnchor;
 import org.zkoss.zss.api.model.Picture;
 import org.zkoss.zss.model.sys.XSheet;
+import org.zkoss.zss.ngmodel.NPicture;
+import org.zkoss.zss.ngmodel.NSheet;
+import org.zkoss.zss.ngmodel.NViewAnchor;
 /**
  * 
  * @author dennis
@@ -27,10 +30,10 @@ import org.zkoss.zss.model.sys.XSheet;
  */
 public class PictureImpl implements Picture{
 	
-	private ModelRef<XSheet> _sheetRef;
-	private ModelRef<org.zkoss.poi.ss.usermodel.Picture> _picRef;
+	private ModelRef<NSheet> _sheetRef;
+	private ModelRef<NPicture> _picRef;
 	
-	public PictureImpl(ModelRef<XSheet> sheetRef, ModelRef<org.zkoss.poi.ss.usermodel.Picture> picRef) {
+	public PictureImpl(ModelRef<NSheet> sheetRef, ModelRef<NPicture> picRef) {
 		this._sheetRef = sheetRef;
 		this._picRef = picRef;
 	}
@@ -60,21 +63,18 @@ public class PictureImpl implements Picture{
 		return true;
 	}
 	
-	public org.zkoss.poi.ss.usermodel.Picture getNative() {
+	public NPicture getNative() {
 		return _picRef.get();
 	}
 	
 	
 	public String getId(){
-		return getNative().getPictureId();
+		return getNative().getId();
 	}
 
 	@Override
 	public SheetAnchor getAnchor() {
-		/*TODO zss 3.5
-		ClientAnchor anchor = getNative().getPreferredSize();
+		NViewAnchor anchor = getNative().getAnchor();
 		return anchor==null?null:SheetImpl.toSheetAnchor(_sheetRef.get(), anchor);
-		*/
-		return null;
 	}
 }

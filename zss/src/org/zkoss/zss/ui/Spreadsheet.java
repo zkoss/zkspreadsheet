@@ -118,8 +118,10 @@ import org.zkoss.zss.ngmodel.NCell.CellType;
 import org.zkoss.zss.ngmodel.NCellStyle;
 import org.zkoss.zss.ngmodel.NCellStyle.Alignment;
 import org.zkoss.zss.ngmodel.NCellStyle.VerticalAlignment;
+import org.zkoss.zss.ngmodel.NChart;
 import org.zkoss.zss.ngmodel.NColumn;
 import org.zkoss.zss.ngmodel.NFont;
+import org.zkoss.zss.ngmodel.NPicture;
 import org.zkoss.zss.ngmodel.NRow;
 import org.zkoss.zss.ngmodel.NSheet;
 import org.zkoss.zss.ui.au.in.Command;
@@ -704,6 +706,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			/* TODO zss 3.5
 			_book.addVariableResolver(_variableResolver);
 			_book.addFunctionMapper(_functionMapper);
+			*///end zss 3.5
 			
 			//20130523, dennis, if share-scope is not empty, then should always sync the  focus, not only application and session
 			//TODO use a configuration to config this.
@@ -715,7 +718,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 					}
 				});
 			}
-			*///end zss 3.5
+			
 		}
 		_selfFocusId = null;//clean
 		refreshToolbarDisabled();
@@ -923,7 +926,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			smartUpdate("activeRange", activeRange);
 			
 			//handle Validation, must after render("activeRange"
-			/* zss 3.5
+			/* TODO zss 3.5
 			List<Map> dvs = getDataValidationHandler().loadDataValidtionJASON(getSelectedSheet());
 			if (dvs != null) {
 				smartUpdate("dataValidations", dvs);
@@ -1762,16 +1765,14 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	 */
 	public void setSelection(AreaRef sel) {
 		if (!Objects.equals(_selectionArea, sel)) {
-			/*TODO zss 3.5
-			final SpreadsheetVersion ver = _book.getSpreadsheetVersion();
+			;
 			if (sel.getColumn() < 0 || sel.getRow() < 0
-					|| sel.getLastColumn() > ver.getLastColumnIndex()
-					|| sel.getLastRow() > ver.getLastRowIndex()
+					|| sel.getLastColumn() > _book.getMaxColumnSize()
+					|| sel.getLastRow() > _book.getMaxRowSize()
 					|| sel.getColumn() > sel.getLastColumn()
 					|| sel.getRow() > sel.getLastRow()) {
 				throw new UiException("illegal selection : " + sel.toString());
 			}
-			*/
 			setSelectionDirectly(sel);
 		}
 	}
@@ -1981,7 +1982,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		private static final long serialVersionUID = 20100330164021L;
 
 		public InnerDataListener() {
-			/* zss 3.5
+			/*TODO zss 3.5
 			addEventListener(SSDataEvent.ON_SHEET_ORDER_CHANGE, new EventListener() {
 				@Override
 				public void onEvent(Event event) throws Exception {
@@ -2138,7 +2139,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			*/
 		}
 		
-		/* zss 3.5
+		/*TODO zss 3.5
 		private void onSheetOrderChange(SSDataEvent event) {
 			final String name = (String) event.getPayload(); 
 			Spreadsheet.this.smartUpdate("sheetLabels", getSheetLabels());
@@ -2370,12 +2371,10 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 				}
 				
 				//ZSS-455 Chart/Image doesn't move location after change column/row width/height
-				/*TODO zss 3.5
 				List<WidgetLoader> list = loadWidgetLoaders();
 				for(WidgetLoader loader:list){
 					loader.onColumnChange(sheet,left,right);
 				}
-				*/
 				
 				final AreaRef rect = ((SpreadsheetCtrl) getExtraCtrl()).getVisibleArea();
 				syncFriendFocusPosition(left, rect.getRow(), rect.getLastColumn(), rect.getLastRow());
@@ -2387,12 +2386,10 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 				}
 				
 				//ZSS-455 Chart/Image doesn't move location after change column/row width/height
-				/*TODO zss 3.5
 				List<WidgetLoader> list = loadWidgetLoaders();
 				for(WidgetLoader loader:list){
 					loader.onRowChange(sheet,top,bottom);
 				}
-				*/
 				
 				final AreaRef rect = ((SpreadsheetCtrl) getExtraCtrl()).getVisibleArea();
 				syncFriendFocusPosition(rect.getColumn(), top, rect.getLastColumn(), rect.getLastRow());
@@ -2585,9 +2582,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		if (this.isInvalidated())
 			return;// since it is invalidate, we don't need to do anymore
 		//update widgets per the content change of the range.
-		/*TODO zss 3.5
 		getWidgetHandler().updateWidgets(sheet, left, top, right, bottom);
-		*/
 	}
 	
 	private void updateCell(NSheet sheet, int left, int top, int right, int bottom) {
@@ -2842,16 +2837,12 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 
 		public void setLoadedRect(int left, int top, int right, int bottom) {
 			getActiveRangeHelper().setActiveRange(_selectedSheet, top, left, bottom, right);
-			/*TODO zss 3.5
 			getWidgetHandler().onLoadOnDemand(getSelectedXSheet(), left, top, right, bottom);
-			*/
 		}
 		
 		public void setVisibleRect(int left, int top, int right, int bottom) {
 			_visibleArea.setArea(top, left, bottom, right);
-			/*TODO zss 3.5
 			getWidgetHandler().onLoadOnDemand(getSelectedXSheet(), left, top, right, bottom);
-			*/
 		}
 
 		public AreaRef getVisibleArea() {
@@ -4108,13 +4099,11 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		}
 		deleteSelfEditorFocus();
 		
-		/*TODO zss 3.5
 		List list = loadWidgetLoaders();
 		int size = list.size();
 		for (int i = 0; i < size; i++) {
 			((WidgetLoader) list.get(i)).onSheetClean(_selectedSheet);
 		}
-		*/
 		
 //		_loadedRect.set(-1, -1, -1, -1);
 		_selectionArea.setArea(0, 0, 0, 0);
@@ -4128,13 +4117,11 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 //		org.zkoss.zk.ui.event.Events.postEvent(new Event(Events.ON_SHEET_SELECT, this));
 		
 		//load widgets
-		/*TODO zss 3.5
 		List list = loadWidgetLoaders();
 		int size = list.size();
 		for (int i = 0; i < size; i++) {
 			((WidgetLoader) list.get(i)).onSheetSelected(_selectedSheet);
 		}
-		*/
 		//setup gridline
 		setDisplayGridlines(_selectedSheet.getViewInfo().isDisplayGridline());
 		setProtectSheet(_selectedSheet.isProtected());
@@ -4151,10 +4138,9 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		return sheet==null?null:sheet.getSheetName();
 	}
 	
-	/*TODO zss 3.5
-	private void addChartWidget(NSheet sheet, ZssChartX chart) {
+	private void addChartWidget(NSheet sheet, NChart chart) {
 		if (!getSelectedXSheet().equals(sheet)){
-			releaseClientCache(XUtils.getSheetUuid(sheet));
+			releaseClientCache(sheet.getId());
 			return;
 		}
 		//load widgets
@@ -4165,9 +4151,9 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		}
 	}
 
-	private void addPictureWidget(XSheet sheet, Picture picture) {
+	private void addPictureWidget(NSheet sheet, NPicture picture) {
 		if (!getSelectedXSheet().equals(sheet)){
-			releaseClientCache(XUtils.getSheetUuid(sheet));
+			releaseClientCache(sheet.getId());
 			return;
 		}
 		//load widgets
@@ -4178,9 +4164,9 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		}
 	}
 
-	private void deletePictureWidget(XSheet sheet, String pictureId) {
+	private void deletePictureWidget(NSheet sheet, String pictureId) {
 		if (!getSelectedXSheet().equals(sheet)){
-			releaseClientCache(XUtils.getSheetUuid(sheet));
+			releaseClientCache(sheet.getId());
 			return;
 		}
 		//load widgets
@@ -4191,9 +4177,9 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		}
 	}
 	
-	private void updatePictureWidget(XSheet sheet, Picture picture) {
+	private void updatePictureWidget(NSheet sheet, NPicture picture) {
 		if (!getSelectedXSheet().equals(sheet)){
-			releaseClientCache(XUtils.getSheetUuid(sheet));
+			releaseClientCache(sheet.getId());
 			return;
 		}
 		//load widgets
@@ -4204,9 +4190,9 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		}
 	}
 
-	private void deleteChartWidget(XSheet sheet, String chartId) {
+	private void deleteChartWidget(NSheet sheet, String chartId) {
 		if (!getSelectedXSheet().equals(sheet)){
-			releaseClientCache(XUtils.getSheetUuid(sheet));
+			releaseClientCache(sheet.getId());
 			return;
 		}
 		//load widgets
@@ -4217,9 +4203,9 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		}
 	}
 
-	private void updateChartWidget(XSheet sheet, ZssChartX chart) {
+	private void updateChartWidget(NSheet sheet, NChart chart) {
 		if (!getSelectedXSheet().equals(sheet)){
-			releaseClientCache(XUtils.getSheetUuid(sheet));
+			releaseClientCache(sheet.getId());
 			return;
 		}
 		//load widgets
@@ -4229,7 +4215,6 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			((WidgetLoader) list.get(i)).updateChartWidget(sheet, chart);
 		}
 	}
-	*///end zss 3.5
 
 	private void clearHeaderSizeHelper(boolean row, boolean col) {
 		if (row)
@@ -4278,13 +4263,11 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 
 		this.getWidgetHandler().invaliate();
 
-		/*TODO zss 3.5
 		List list = loadWidgetLoaders();
 		int size = list.size();
 		for (int i = 0; i < size; i++) {
 			((WidgetLoader) list.get(i)).invalidate();
 		}
-		*/
 	}
 
 	/**
