@@ -47,6 +47,18 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 
 	abstract protected int getMaxConfiguredColumn(Sheet poiSheet);
 	
+	/**
+	 * Name should be created after sheets created.
+	 * A special defined name, _xlnm._FilterDatabase, stores the selected cells for auto-filter 
+	 */
+	protected void importNameRange(){
+		for (int i=0 ; i<workbook.getNumberOfNames() ; i++){
+			Name namedRange = workbook.getNameAt(i);
+			NName name = book.createName(namedRange.getNameName(), namedRange.getSheetName());
+			name.setRefersToFormula(namedRange.getRefersToFormula());
+		}
+	}
+	
 	/*
 	 * import sheet scope content from POI Sheet.
 	 */
@@ -61,6 +73,7 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 		sheet.getViewInfo().setNumOfRowFreeze(BookHelper.getRowFreeze(poiSheet));
 		sheet.getViewInfo().setNumOfColumnFreeze(BookHelper.getColumnFreeze(poiSheet));
 		sheet.getViewInfo().setDisplayGridline(poiSheet.isDisplayGridlines());
+		sheet.setProtected(poiSheet.getProtect());
 		//merged cells
 		//reference RangeImpl.getMergeAreas()
 		int nMerged = poiSheet.getNumMergedRegions();

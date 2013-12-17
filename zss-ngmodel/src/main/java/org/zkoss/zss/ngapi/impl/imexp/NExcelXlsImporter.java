@@ -34,9 +34,12 @@ public class NExcelXlsImporter extends AbstractExcelImporter{
 
 		workbook = new HSSFWorkbook(is);
 		book = NBooks.createBook(bookName);
+		
 		for (int i = 0 ; i < workbook.getNumberOfSheets(); i++){
 			importPoiSheet(workbook.getSheetAt(i));
 		}
+		
+		importNameRange();
 		return book;
 	}
 

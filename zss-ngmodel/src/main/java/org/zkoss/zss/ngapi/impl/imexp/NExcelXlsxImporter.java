@@ -45,6 +45,8 @@ public class NExcelXlsxImporter extends AbstractExcelImporter{
 		for(Sheet poiSheet : (XSSFWorkbook)workbook) { //only XSSFWorkwork is Iterable
 			importPoiSheet(poiSheet);
 		}
+		
+		importNameRange();
 		return book;
 	}
 
