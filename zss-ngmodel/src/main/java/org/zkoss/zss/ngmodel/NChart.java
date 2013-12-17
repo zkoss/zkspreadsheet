@@ -26,11 +26,39 @@ import org.zkoss.zss.ngmodel.impl.SheetAdv;
 public interface NChart {
 
 	public enum NChartType{
-		COLUMN,
-		LINE,
-		PIE,
+		AREA_3D,
+		AREA,
+		BAR_3D,
 		BAR,
-		AREA
+		BUBBLE,
+		COLUMN,
+		COLUMN_3D,
+		DOUGHNUT,
+		LINE_3D,
+		LINE,
+		OF_PIE,
+		PIE_3D,
+		PIE,
+		RADAR,
+		SCATTER,
+		STOCK,
+		SURFACE_3D,
+		SURFACE
+	}
+	
+	public enum NChartGrouping {
+		STANDARD,
+		STACKED,
+		PERCENT_STACKED,
+		CLUSTERED; //bar only
+	}
+	
+	public enum NLegendPosition {
+		BOTTOM,
+		LEFT,
+		RIGHT,
+		TOP,
+		TOP_RIGHT
 	}
 	
 	public String getId();
@@ -54,4 +82,12 @@ public interface NChart {
 	void setXAxisTitle(String xAxisTitle);
 
 	void setYAxisTitle(String yAxisTitle);
+	
+	public void setLegendPosition(NLegendPosition pos);
+	
+	public NLegendPosition getLegendPosition();
+	
+	public void setGrouping(NChartGrouping grouping);
+	
+	public NChartGrouping getGrouping();
 }

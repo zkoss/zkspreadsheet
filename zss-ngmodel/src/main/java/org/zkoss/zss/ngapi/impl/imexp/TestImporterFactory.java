@@ -199,6 +199,11 @@ public class TestImporterFactory implements ImporterFactory{
 				
 				sheet1.addPicture(Format.JPG, getTestImageData(), new NViewAnchor(12, 3, 30, 5, 600, 300));
 				
+				NSheet sheet2 = book.createSheet("Sheet 2");
+				
+				sheet2.getViewInfo().setNumOfColumnFreeze(5);
+				sheet2.getViewInfo().setNumOfRowFreeze(7);
+				sheet2.addPicture(Format.JPG, getTestImageData(), new NViewAnchor(3, 3, 600, 300));
 				return book;
 			}
 

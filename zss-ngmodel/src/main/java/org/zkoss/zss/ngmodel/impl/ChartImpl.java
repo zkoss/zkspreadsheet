@@ -37,6 +37,9 @@ public class ChartImpl extends ChartAdv {
 	String yAxisTitle;
 	SheetAdv sheet;
 	
+	NLegendPosition legendPosition;
+	NChartGrouping grouping;
+	
 	public ChartImpl(SheetAdv sheet,String id,NChartType type,NViewAnchor anchor){
 		this.sheet = sheet;
 		this.id = id;
@@ -94,10 +97,15 @@ public class ChartImpl extends ChartAdv {
 		//TODO for type;
 		switch(type){
 		case AREA:
+		case AREA_3D:
 		case BAR:
+		case BAR_3D:
 		case COLUMN:
+		case COLUMN_3D:
 		case LINE:
+		case LINE_3D:
 		case PIE:
+		case PIE_3D:
 			return new CategoryChartDataImpl(this,id+"-data");
 		}
 		throw new UnsupportedOperationException("unsupported chart type "+type);
@@ -116,6 +124,22 @@ public class ChartImpl extends ChartAdv {
 		if (sheet == null) {
 			throw new IllegalStateException("doesn't connect to parent");
 		}
+	}
+	@Override
+	public void setLegendPosition(NLegendPosition pos) {
+		this.legendPosition = pos;
+	}
+	@Override
+	public NLegendPosition getLegendPosition() {
+		return legendPosition;
+	}
+	@Override
+	public void setGrouping(NChartGrouping grouping) {
+		this.grouping = grouping;
+	}
+	@Override
+	public NChartGrouping getGrouping() {
+		return grouping;
 	}
 	
 }
