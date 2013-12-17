@@ -190,6 +190,7 @@ public class ImporterTest {
 		//ensure cell style reusing
 		assertTrue(sheet.getCell(27, 0).getCellStyle().equals(sheet.getCell(26, 0).getCellStyle()));
 		assertTrue(sheet.getCell(28, 0).getCellStyle().equals(sheet.getCell(26, 0).getCellStyle()));
+		assertTrue(sheet.getCell(28, 0).getCellStyle().getFont().equals(sheet.getCell(26, 0).getCellStyle().getFont()));
 		
 		//fill pattern
 		assertEquals(FillPattern.SOLID_FOREGROUND, sheet.getCell(37, 1).getCellStyle().getFillPattern());
@@ -284,31 +285,42 @@ public class ImporterTest {
 		assertTrue(rowSheet.getRow(10).isHidden());
 	}
 
+	/**
+	 * Information technology — Document description and processing languages — 
+	 * Office Open XML File Formats — Part 1: Fundamentals and Markup LanguageReference  
+	 * 18.8.30 numFmt (Number Format) 
+	 */
 	@Test
 	public void cellFormatTest(){
 		NBook book = importBook(fileUnderTest, "XSSFBook");
 		NSheet sheet = book.getSheetByName("Format");
 		assertEquals("#,##0.00", sheet.getCell(1, 1).getCellStyle().getDataFormat());
 		assertEquals("\"NT$\"#,##0.00", sheet.getCell(1, 2).getCellStyle().getDataFormat());
-		assertEquals("yyyy/m/d", sheet.getCell(1, 4).getCellStyle().getDataFormat());
-		//actual "h:mm AM/PM"
-//		assertEquals("hh:mm AM/PM", sheet.getCell(1, 5).getCellStyle().getDataFormat());
+		assertEquals("m/d/yyyy", sheet.getCell(1, 4).getCellStyle().getDataFormat());
+		//Excel shows "hh:mm AM/PM"
+		assertEquals("h:mm AM/PM", sheet.getCell(1, 5).getCellStyle().getDataFormat());
 		assertEquals("0.0%", sheet.getCell(1, 6).getCellStyle().getDataFormat());
 		assertEquals("# ??/??", sheet.getCell(3, 1).getCellStyle().getDataFormat());
 		assertEquals("0.00E+00", sheet.getCell(3, 2).getCellStyle().getDataFormat());
 		assertEquals("@", sheet.getCell(3, 3).getCellStyle().getDataFormat());
-		//TODO what characters required to escape
-//		assertEquals("[<=9999999]###\\-####;\\(0#\\)\\ ###\\-####", sheet.getCell(3, 4).getCellStyle().getDataFormat());
-		
+		assertEquals("[<=9999999]###\\-####;\\(0#\\)\\ ###\\-####", sheet.getCell(3, 4).getCellStyle().getDataFormat());
 	}
-	
+
+	/**
+	 * Under different locales, TW and US, should import the same format pattern
+	 */
 	@Test
-	public void dataFormatOnLocaleTest(){
-//		NBook book = importBook(fileUnderTest, "XSSFBook");
-//		NSheet sheet = book.getSheetByName("Format");
-//		Locales.setThreadLocal(locale)
-//		BuiltinFormats.getBuiltinFormat(index, ZssContext.getCurrent().getLocale())
-//		assertEquals("yyyy/m/d", sheet.getCell(1, 4).getCellStyle().getDataFormat());
+	public void formatNotDependLocaleTest(){
+		NBook book = importBook(fileUnderTest, "XSSFBook");
+		NSheet sheet = book.getSheetByName("Format");
+		assertEquals("zh_TW", Locales.getCurrent().toString());
+		assertEquals("m/d/yyyy", sheet.getCell(1, 4).getCellStyle().getDataFormat());
+		
+		Locales.setThreadLocal(Locale.US);
+		book = importBook(fileUnderTest, "XSSFBook");
+		sheet = book.getSheetByName("Format");
+		assertEquals("en_US", Locales.getCurrent().toString());
+		assertEquals("m/d/yyyy", sheet.getCell(1, 4).getCellStyle().getDataFormat());
 	}
 	
 	@Test

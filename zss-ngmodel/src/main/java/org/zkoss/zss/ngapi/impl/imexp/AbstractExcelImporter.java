@@ -173,9 +173,11 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 			cellStyle = book.createCellStyle(true);
 			importedStyle.put(poiCellStyle.getIndex(), cellStyle);
 			//reference XSSFDataFormat.getFormat()
-			//FIXME currently we get data format converted upon locale
-//			poiCellStyle.getDataFormat()
-			cellStyle.setDataFormat(poiCellStyle.getDataFormatString());
+			String dataFormat = null;
+			if ((dataFormat = BuiltinFormats.getBuiltinFormat(poiCellStyle.getDataFormat()))==null){
+				dataFormat = poiCellStyle.getDataFormatString();
+			}
+			cellStyle.setDataFormat(dataFormat);
 			cellStyle.setWrapText(poiCellStyle.getWrapText());
 			cellStyle.setLocked(poiCellStyle.getLocked());
 			cellStyle.setAlignment(convertAlignment(poiCellStyle.getAlignment()));
