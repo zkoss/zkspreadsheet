@@ -56,6 +56,10 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 		for (int i=0 ; i<workbook.getNumberOfNames() ; i++){
 			Name namedRange = workbook.getNameAt(i);
 			NName name = null;
+			//TODO skip auto-filter's defined name for it's not ready
+			if (namedRange.getNameName().startsWith("_xlnm")){
+				continue;
+			}
 			if (namedRange.getSheetName() != null && namedRange.getSheetName().length()>0){
 				name = book.createName(namedRange.getNameName(), namedRange.getSheetName());
 			}else{
@@ -170,6 +174,7 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 			importedStyle.put(poiCellStyle.getIndex(), cellStyle);
 			//reference XSSFDataFormat.getFormat()
 			//FIXME currently we get data format converted upon locale
+//			poiCellStyle.getDataFormat()
 			cellStyle.setDataFormat(poiCellStyle.getDataFormatString());
 			cellStyle.setWrapText(poiCellStyle.getWrapText());
 			cellStyle.setLocked(poiCellStyle.getLocked());

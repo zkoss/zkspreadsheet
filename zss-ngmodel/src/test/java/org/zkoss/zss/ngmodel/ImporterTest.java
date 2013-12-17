@@ -7,6 +7,7 @@ import java.text.DateFormat;
 import java.util.Locale;
 
 import org.junit.*;
+import org.zkoss.poi.ss.usermodel.*;
 import org.zkoss.util.Locales;
 import org.zkoss.zss.ngapi.NImporter;
 import org.zkoss.zss.ngapi.impl.imexp.ExcelImportFactory;
@@ -126,7 +127,7 @@ public class ImporterTest {
 	@Test
 	public void sheetNamedRangeTest() {
 		NBook book = importBook(fileUnderTest, "XSSFBook");
-		assertEquals(3, book.getNumOfName());
+		assertEquals(2, book.getNumOfName());
 		assertEquals("NamedRange!$B$2:$D$3", book.getNameByName("TestRange1", "NamedRange").getRefersToFormula());
 		assertEquals("NamedRange!$F$2", book.getNameByName("RangeMerged", "NamedRange").getRefersToFormula());
 	}
@@ -302,6 +303,15 @@ public class ImporterTest {
 	}
 	
 	@Test
+	public void dataFormatOnLocaleTest(){
+//		NBook book = importBook(fileUnderTest, "XSSFBook");
+//		NSheet sheet = book.getSheetByName("Format");
+//		Locales.setThreadLocal(locale)
+//		BuiltinFormats.getBuiltinFormat(index, ZssContext.getCurrent().getLocale())
+//		assertEquals("yyyy/m/d", sheet.getCell(1, 4).getCellStyle().getDataFormat());
+	}
+	
+	@Test
 	public void columnTest(){
 		NBook book = importBook(fileUnderTest, "XSSFBook");
 		NSheet sheet = book.getSheetByName("column-row");
@@ -323,7 +333,7 @@ public class ImporterTest {
 	 * import last column that only has column width change but has all empty cells 
 	 */
 	@Test
-	public void lastColumnTest(){
+	public void lastChangedColumnTest(){
 		NBook book = importBook(fileUnderTest, "XSSFBook");
 		NSheet sheet = book.getSheetByName("column-row");
 		assertEquals(80, sheet.getColumn(13).getWidth());
