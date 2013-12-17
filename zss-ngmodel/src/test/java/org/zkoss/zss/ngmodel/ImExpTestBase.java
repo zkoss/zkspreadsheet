@@ -13,7 +13,7 @@ import org.zkoss.zss.ngmodel.NCellStyle.BorderType;
  * @author kuro, hawk
  *
  */
-public class InOutTestBase {
+public class ImExpTestBase {
 	
 	/**
 	 * Test sheet in book

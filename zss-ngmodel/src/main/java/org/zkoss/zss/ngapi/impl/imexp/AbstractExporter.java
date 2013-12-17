@@ -37,7 +37,9 @@ public abstract class AbstractExporter implements NExporter,Serializable{
 			if(os!=null){
 				try{
 					os.close();
-				}catch(Exception x){};
+				}catch(Exception x){
+					x.printStackTrace();
+				}
 			}
 		}
 	}

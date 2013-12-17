@@ -1,13 +1,10 @@
 package org.zkoss.zss.ngmodel;
 
 
-import java.io.File;
-import java.io.InputStream;
+import java.io.*;
 import java.util.Locale;
 
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
 import org.zkoss.util.Locales;
 import org.zkoss.zss.ngmodel.NCellStyle.BorderType;
 
@@ -16,7 +13,7 @@ import org.zkoss.zss.ngmodel.NCellStyle.BorderType;
  * @author kuro
  *
  */
-public class ExporterTest extends InOutTestBase {
+public class ExporterTest extends ImExpTestBase {
 	
 	@BeforeClass
 	static public void beforeClass() {
@@ -29,24 +26,24 @@ public class ExporterTest extends InOutTestBase {
 	@Test
 	public void sheetTest() {
 		InputStream is = ImporterTest.class.getResourceAsStream("book/import.xlsx");
-		File outFile = InOutTestUtil.writeBookToFile(InOutTestUtil.loadBook(is));
-		NBook book = InOutTestUtil.loadBook(outFile);
+		File outFile = ImExpTestUtil.writeBookToFile(ImExpTestUtil.loadBook(is));
+		NBook book = ImExpTestUtil.loadBook(outFile);
 		sheetTest(book);
 	}
 	
 	@Test
 	public void cellValueTest() {
 		InputStream is = ImporterTest.class.getResourceAsStream("book/import.xlsx");
-		File outFile = InOutTestUtil.writeBookToFile(InOutTestUtil.loadBook(is));
-		NBook book = InOutTestUtil.loadBook(outFile);		
+		File outFile = ImExpTestUtil.writeBookToFile(ImExpTestUtil.loadBook(is));
+		NBook book = ImExpTestUtil.loadBook(outFile);		
 		cellValueTest(book);
 	}
 
 	@Test
 	public void exportBorderFileTest() {
 		InputStream is = ImporterTest.class.getResourceAsStream("book/cell_borders.xlsx");
-		NBook book = InOutTestUtil.loadBook(is);
-		InOutTestUtil.writeBookToFile(book);
+		NBook book = ImExpTestUtil.loadBook(is);
+		ImExpTestUtil.writeBookToFile(book);
 	}
 
 	@Test
@@ -89,8 +86,8 @@ public class ExporterTest extends InOutTestBase {
 		style23.setBorderTop(BorderType.NONE);
 		cell23.setCellStyle(style23);
 		
-		File file = InOutTestUtil.writeBookToFile(book);
-		NBook inBook = InOutTestUtil.loadBook(file);
+		File file = ImExpTestUtil.writeBookToFile(book);
+		NBook inBook = ImExpTestUtil.loadBook(file);
 		
 		// confirm
 		borderTypeTest(inBook);
@@ -99,8 +96,8 @@ public class ExporterTest extends InOutTestBase {
 	@Test
 	public void book() {
 		InputStream is = ImporterTest.class.getResourceAsStream("book/import.xlsx");
-		NBook book = InOutTestUtil.loadBook(is);
-		InOutTestUtil.writeBookToFile(book);
+		NBook book = ImExpTestUtil.loadBook(is);
+		ImExpTestUtil.writeBookToFile(book);
 		
 	}
 }

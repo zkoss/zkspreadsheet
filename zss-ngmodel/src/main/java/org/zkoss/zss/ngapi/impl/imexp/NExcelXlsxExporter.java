@@ -16,45 +16,21 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.ngapi.impl.imexp;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.io.*;
+import java.util.*;
 import java.util.concurrent.locks.ReadWriteLock;
 
-import org.zkoss.poi.ss.usermodel.BorderStyle;
-import org.zkoss.poi.ss.usermodel.Cell;
-import org.zkoss.poi.ss.usermodel.FillPatternType;
-import org.zkoss.poi.ss.usermodel.Font;
-import org.zkoss.poi.ss.usermodel.HorizontalAlignment;
+import org.zkoss.poi.ss.usermodel.*;
 import org.zkoss.poi.ss.util.CellRangeAddress;
-import org.zkoss.poi.xssf.usermodel.XSSFCell;
-import org.zkoss.poi.xssf.usermodel.XSSFCellStyle;
-import org.zkoss.poi.xssf.usermodel.XSSFColor;
-import org.zkoss.poi.xssf.usermodel.XSSFDataFormat;
-import org.zkoss.poi.xssf.usermodel.XSSFFont;
-import org.zkoss.poi.xssf.usermodel.XSSFRow;
-import org.zkoss.poi.xssf.usermodel.XSSFSheet;
-import org.zkoss.poi.xssf.usermodel.XSSFWorkbook;
-import org.zkoss.zss.ngmodel.CellRegion;
-import org.zkoss.zss.ngmodel.NBook;
-import org.zkoss.zss.ngmodel.NCell;
-import org.zkoss.zss.ngmodel.NCellStyle;
+import org.zkoss.poi.xssf.usermodel.*;
+import org.zkoss.zss.ngmodel.*;
 import org.zkoss.zss.ngmodel.NCellStyle.Alignment;
 import org.zkoss.zss.ngmodel.NCellStyle.BorderType;
 import org.zkoss.zss.ngmodel.NCellStyle.FillPattern;
 import org.zkoss.zss.ngmodel.NCellStyle.VerticalAlignment;
-import org.zkoss.zss.ngmodel.NColumn;
-import org.zkoss.zss.ngmodel.NFont;
 import org.zkoss.zss.ngmodel.NFont.Boldweight;
 import org.zkoss.zss.ngmodel.NFont.TypeOffset;
 import org.zkoss.zss.ngmodel.NFont.Underline;
-import org.zkoss.zss.ngmodel.NHyperlink;
-import org.zkoss.zss.ngmodel.NRow;
-import org.zkoss.zss.ngmodel.NSheet;
 /**
  * 
  * @author dennis, kuro
@@ -63,19 +39,15 @@ import org.zkoss.zss.ngmodel.NSheet;
 public class NExcelXlsxExporter extends AbstractExporter{
 	
 	private XSSFWorkbook workbook;
-	private Map<NCellStyle, XSSFCellStyle> styleTable;
-	private Map<NFont, XSSFFont> fontTable;
+	private Map<NCellStyle, XSSFCellStyle> styleTable = new HashMap<NCellStyle, XSSFCellStyle>();
+	private Map<NFont, XSSFFont> fontTable = new HashMap<NFont, XSSFFont>();
 	
 	@Override
 	public void export(NBook book, OutputStream fos) throws IOException {
 		ReadWriteLock lock = book.getBookSeries().getLock();
 		lock.writeLock().lock();
 		
-		styleTable = new HashMap<NCellStyle, XSSFCellStyle>();
-		fontTable = new HashMap<NFont, XSSFFont>();
-		
 		try{
-			
 			workbook = new XSSFWorkbook();
 			
 			// TODO, API isn't available 
@@ -90,66 +62,98 @@ public class NExcelXlsxExporter extends AbstractExporter{
 			//workbook.setSheetName(sheetIndex, sheetname);
 			//workbook.setSheetOrder(sheetname, pos);
 			
-			// sheet iterator
 			for(NSheet sheet : book.getSheets()) {
-				
-				XSSFSheet xssfSheet = workbook.createSheet(sheet.getSheetName());
-				
-				// Merge
-				for(CellRegion region : sheet.getMergedRegions()) {
-					xssfSheet.addMergedRegion(new CellRangeAddress(region.row, region.lastRow, region.column, region.lastColumn));
-				}
-				
-				// TODO charts & picture
+				exportSheet(sheet);
+			}
+			workbook.write(fos);
+		} finally {
+			lock.writeLock().unlock();
+		}
+	}
+
+	private void exportSheet(NSheet sheet) {
+		XSSFSheet xssfSheet = workbook.createSheet(sheet.getSheetName());
+		
+		// Merge
+		for(CellRegion region : sheet.getMergedRegions()) {
+			xssfSheet.addMergedRegion(new CellRangeAddress(region.row, region.lastRow, region.column, region.lastColumn));
+		}
+		
+		// TODO charts & picture
 //				sheet.getCharts();
 //				sheet.getPictures();
-				
-				// FIXME doesn't know correct or wrong.
-				// refer from Spreadsheet#setRowHeight
-				xssfSheet.setDefaultRowHeight((short)XUtils.pxToTwip(sheet.getDefaultRowHeight()));
-				
-				// FIXME doesn't know correct or wrong.
-				// How to convert px into column width?
-				xssfSheet.setDefaultColumnWidth((int)XUtils.pxToScreenChar1(sheet.getDefaultColumnWidth(), 8));
-				
-				// TODO, API isn't available 
-				//xssfSheet.setActiveCell(cellRef);
-				//xssfSheet.setArrayFormula(formula, range);
-				//xssfSheet.setAutobreaks(value);
-				//xssfSheet.setAutoFilter(range); // FIXME AutoFilter
-				//xssfSheet.setAutoFilterMode(b);
-				//xssfSheet.setColumnBreak(column);
-				//xssfSheet.setColumnGroupCollapsed(columnNumber, collapsed);
-				//xssfSheet.setZoom(scale);
-				
-				
-				// row iterator
-				Iterator<NRow> rowiter = sheet.getRowIterator();
-				while(rowiter.hasNext()) {
-					
-					NRow row = rowiter.next();
-					XSSFRow xssfRow = xssfSheet.createRow(row.getIndex());
-					
-					if(row.getHeight() != sheet.getDefaultRowHeight()) {
-						xssfRow.setCustomHeight(true);
-						xssfRow.setHeight((short)XUtils.pxToTwip(row.getHeight()));
-					}
-					
-					NCellStyle rowStyle = row.getCellStyle();
-					XSSFCellStyle xssfRowStyle = toXSSFCellStyle(rowStyle);
-					xssfRow.setRowStyle(xssfRowStyle);
-					
-					// cell iterator
-					Iterator<NCell> celliter = sheet.getCellIterator(row.getIndex());
-					while(celliter.hasNext()) {
-						
-						NCell cell = celliter.next();
-						XSSFCell xssfCell = xssfRow.createCell(cell.getColumnIndex());
-						
-						NCellStyle cellStyle = cell.getCellStyle();
-						xssfCell.setCellStyle(toXSSFCellStyle(cellStyle));
-						
-						// Hyperlink
+		
+		// FIXME doesn't know correct or wrong.
+		// refer from Spreadsheet#setRowHeight
+		xssfSheet.setDefaultRowHeight((short)XUtils.pxToTwip(sheet.getDefaultRowHeight()));
+		
+		// FIXME doesn't know correct or wrong.
+		// How to convert px into column width?
+		xssfSheet.setDefaultColumnWidth((int)XUtils.pxToScreenChar1(sheet.getDefaultColumnWidth(), 8));
+		
+		// TODO, API isn't available 
+		//xssfSheet.setActiveCell(cellRef);
+		//xssfSheet.setArrayFormula(formula, range);
+		//xssfSheet.setAutobreaks(value);
+		//xssfSheet.setAutoFilter(range); // FIXME AutoFilter
+		//xssfSheet.setAutoFilterMode(b);
+		//xssfSheet.setColumnBreak(column);
+		//xssfSheet.setColumnGroupCollapsed(columnNumber, collapsed);
+		//xssfSheet.setZoom(scale);
+		
+		
+		// row iterator
+		Iterator<NRow> rowIterator = sheet.getRowIterator();
+		while(rowIterator.hasNext()) {
+			NRow row = rowIterator.next();
+			exportRow(sheet, xssfSheet, row);
+		} 
+		
+		// column iterator
+		Iterator<NColumn> coliter = sheet.getColumnIterator();
+		while(coliter.hasNext()) {
+			NColumn column = coliter.next();
+			int colIndex = column.getIndex();
+			
+			// refer from RangeImpl#setColumnWidth
+			int columnWidthChar256 = XUtils.pxToFileChar256(column.getWidth(), 8);
+			// refer from BookHelper#setColumnWidth
+			final int orgChar256 = xssfSheet.getColumnWidth(colIndex);
+			if (columnWidthChar256 != orgChar256) {
+				xssfSheet.setColumnWidth(colIndex, columnWidthChar256);
+			}
+
+			xssfSheet.setColumnHidden(column.getIndex(), column.isHidden());
+			xssfSheet.setDefaultColumnStyle(column.getIndex(), toXSSFCellStyle(column.getCellStyle()));
+		}
+	}
+
+	private void exportRow(NSheet sheet, XSSFSheet xssfSheet, NRow row) {
+		XSSFRow xssfRow = xssfSheet.createRow(row.getIndex());
+		
+		if(row.getHeight() != sheet.getDefaultRowHeight()) {
+			xssfRow.setCustomHeight(true);
+			xssfRow.setHeight((short)XUtils.pxToTwip(row.getHeight()));
+		}
+		
+		NCellStyle rowStyle = row.getCellStyle();
+		XSSFCellStyle xssfRowStyle = toXSSFCellStyle(rowStyle);
+		xssfRow.setRowStyle(xssfRowStyle);
+		
+		Iterator<NCell> celliter = sheet.getCellIterator(row.getIndex());
+		while(celliter.hasNext()) {
+			NCell cell = celliter.next();
+			exportCell(xssfRow, cell);
+		}
+	}
+
+	private void exportCell(XSSFRow xssfRow, NCell cell) {
+		XSSFCell xssfCell = xssfRow.createCell(cell.getColumnIndex());
+		
+		NCellStyle cellStyle = cell.getCellStyle();
+		xssfCell.setCellStyle(toXSSFCellStyle(cellStyle));
+		
+		// Hyperlink
 //						NHyperlink hyperlink = null;
 //						if((hyperlink = cell.getHyperlink()) != null) {
 //							XSSFHyperlink xssfLink = xssfSheet.getHyperlink(cell.getRowIndex(), cell.getColumnIndex());
@@ -157,61 +161,32 @@ public class NExcelXlsxExporter extends AbstractExporter{
 //							xssfLink.setLabel(hyperlink.getLabel());
 //							// TODO, some API isn't available.
 //						}
-						
-						switch(cell.getType()) {
-							case BLANK:
-								xssfCell.setCellType(Cell.CELL_TYPE_BLANK);
-								break;
-							case ERROR:
-								xssfCell.setCellType(Cell.CELL_TYPE_ERROR);
-								xssfCell.setCellErrorValue(cell.getErrorValue().getCode());
-								break;
-							case BOOLEAN:
-								xssfCell.setCellType(Cell.CELL_TYPE_BOOLEAN);
-								xssfCell.setCellValue(cell.getBooleanValue());
-								break;
-							case FORMULA:
-								xssfCell.setCellType(Cell.CELL_TYPE_FORMULA);
-								xssfCell.setCellFormula(cell.getFormulaValue());
-								break;
-							case NUMBER:
-								xssfCell.setCellType(Cell.CELL_TYPE_NUMERIC);
-								xssfCell.setCellValue((Double)cell.getNumberValue());
-								break;
-							case STRING:
-								xssfCell.setCellType(Cell.CELL_TYPE_STRING);
-								xssfCell.setCellValue(cell.getStringValue());
-								break;
-							default:
-						}
-
-					} // End Cell
-				} // End Row
-				
-				// column iterator
-				Iterator<NColumn> coliter = sheet.getColumnIterator();
-				while(coliter.hasNext()) {
-					NColumn column = coliter.next();
-					int colIndex = column.getIndex();
-					
-					// refer from RangeImpl#setColumnWidth
-					int columnWidthChar256 = XUtils.pxToFileChar256(column.getWidth(), 8);
-					// refer from BookHelper#setColumnWidth
-					final int orgChar256 = xssfSheet.getColumnWidth(colIndex);
-					if (columnWidthChar256 != orgChar256) {
-						xssfSheet.setColumnWidth(colIndex, columnWidthChar256);
-					}
-
-					xssfSheet.setColumnHidden(column.getIndex(), column.isHidden());
-					xssfSheet.setDefaultColumnStyle(column.getIndex(), toXSSFCellStyle(column.getCellStyle()));
-				}
-				
-			} // End Sheet
-			
-			workbook.write(fos);
-			
-		} finally {
-			lock.writeLock().unlock();
+		
+		switch(cell.getType()) {
+			case BLANK:
+				xssfCell.setCellType(Cell.CELL_TYPE_BLANK);
+				break;
+			case ERROR:
+				xssfCell.setCellType(Cell.CELL_TYPE_ERROR);
+				xssfCell.setCellErrorValue(cell.getErrorValue().getCode());
+				break;
+			case BOOLEAN:
+				xssfCell.setCellType(Cell.CELL_TYPE_BOOLEAN);
+				xssfCell.setCellValue(cell.getBooleanValue());
+				break;
+			case FORMULA:
+				xssfCell.setCellType(Cell.CELL_TYPE_FORMULA);
+				xssfCell.setCellFormula(cell.getFormulaValue());
+				break;
+			case NUMBER:
+				xssfCell.setCellType(Cell.CELL_TYPE_NUMERIC);
+				xssfCell.setCellValue((Double)cell.getNumberValue());
+				break;
+			case STRING:
+				xssfCell.setCellType(Cell.CELL_TYPE_STRING);
+				xssfCell.setCellValue(cell.getStringValue());
+				break;
+			default:
 		}
 	}
 

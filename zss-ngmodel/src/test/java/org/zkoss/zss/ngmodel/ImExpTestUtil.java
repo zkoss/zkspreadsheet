@@ -16,7 +16,7 @@ import org.zkoss.zss.ngapi.impl.imexp.*;
  * @author kuro
  *
  */
-public class InOutTestUtil {
+public class ImExpTestUtil {
 	
 	static private String impoortFileName = "import.xlsx";
 	static private String exportFileName = "exported.xlsx";
@@ -29,7 +29,7 @@ public class InOutTestUtil {
 	public static File writeBookToFile(NBook book, File outFile) {
 		try {
 			if(outFile == null) {
-				outFile = new File(InOutTestUtil.class.getProtectionDomain().getCodeSource().getLocation().getPath() + "/org/zkoss/zss/ngmodel/book/" + exportFileName);
+				outFile = new File(ImExpTestUtil.class.getProtectionDomain().getCodeSource().getLocation().getPath() + "/org/zkoss/zss/ngmodel/book/" + exportFileName);
 				outFile.createNewFile();
 			}
 			xlsxExporter.export(book, outFile);
@@ -72,7 +72,6 @@ public class InOutTestUtil {
 		try {
 			return loadBook(new FileInputStream(file));
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;
