@@ -35,6 +35,9 @@ public abstract class RowAdv implements NRow,LinkedModelObject,Serializable{
 	
 	/*package*/ abstract void onModelEvent(ModelInternalEvent event);
 
+	/*package*/ abstract int getStartCellIndex();
+	/*package*/ abstract int getEndCellIndex();
+	
 	/*package*/ abstract void clearCell(int start, int end);
 
 	/*package*/ abstract void insertCell(int start, int size);

@@ -264,7 +264,7 @@ public class ModelTest {
 		sheet1.getColumn(100).setHidden(true); //mark 2nd column
 		sheet1.getRow(1000).setHidden(true); //mark 2nd row
 		
-		sheet1.getCell(600, 60).setValue("Test");
+		sheet1.getCell(600, 60).setValue("Test");//this will not create custom column
 		
 		
 		Assert.assertEquals(true, sheet1.getColumn(100).isHidden());
@@ -299,11 +299,6 @@ public class ModelTest {
 		Assert.assertEquals(30, col.getWidth());
 		Assert.assertEquals(false, col.isHidden());
 		
-		Assert.assertTrue(coliter.hasNext());
-		col = coliter.next();
-		Assert.assertEquals(60, col.getIndex());
-		Assert.assertEquals(sheet1.getDefaultColumnWidth(), col.getWidth());
-		Assert.assertEquals(false, col.isHidden());
 		
 		Assert.assertTrue(coliter.hasNext());
 		col = coliter.next();
@@ -349,13 +344,13 @@ public class ModelTest {
 		Assert.assertEquals(-1, sheet.getEndRowIndex());
 		Assert.assertEquals(-1, sheet.getStartColumnIndex());
 		Assert.assertEquals(-1, sheet.getEndColumnIndex());
-		Assert.assertEquals(-1, sheet.getStartColumnIndex(0));
-		Assert.assertEquals(-1, sheet.getEndColumn(0));
+		Assert.assertEquals(-1, sheet.getStartCellIndex(0));
+		Assert.assertEquals(-1, sheet.getEndCellIndex(0));
 		
 		NRow row = sheet.getRow(3);
 		Assert.assertEquals(true, row.isNull());
-		Assert.assertEquals(-1, row.getStartCellIndex());
-		Assert.assertEquals(-1, row.getEndCellIndex());
+		Assert.assertEquals(-1, sheet.getStartCellIndex(row.getIndex()));
+		Assert.assertEquals(-1, sheet.getEndCellIndex(row.getIndex()));
 		NColumn column = sheet.getColumn(6);
 		Assert.assertEquals(true, column.isNull());
 		
@@ -364,23 +359,25 @@ public class ModelTest {
 		
 		cell.setValue("(3,6)");
 		Assert.assertEquals(false, row.isNull());
-		Assert.assertEquals(false, column.isNull());
+		Assert.assertEquals(true, column.isNull());
 		Assert.assertEquals(false, cell.isNull());
 		Assert.assertEquals("(3,6)", cell.getValue());
 		
+		column.setWidth(300);
+		Assert.assertEquals(false, column.isNull());
 		Assert.assertEquals(3, sheet.getStartRowIndex());
 		Assert.assertEquals(3, sheet.getEndRowIndex());
 		Assert.assertEquals(6, sheet.getStartColumnIndex());
 		Assert.assertEquals(6, sheet.getEndColumnIndex());
 		
-		Assert.assertEquals(-1, sheet.getStartColumnIndex(0));
-		Assert.assertEquals(-1, sheet.getEndColumn(0));
-		Assert.assertEquals(6, sheet.getStartColumnIndex(3));
-		Assert.assertEquals(6, sheet.getEndColumn(3));
-		Assert.assertEquals(6, row.getStartCellIndex());
-		Assert.assertEquals(6, row.getEndCellIndex());
-		Assert.assertEquals(-1, sheet.getStartColumnIndex(4));
-		Assert.assertEquals(-1, sheet.getEndColumn(4));
+		Assert.assertEquals(-1, sheet.getStartCellIndex(0));
+		Assert.assertEquals(-1, sheet.getEndCellIndex(0));
+		Assert.assertEquals(6, sheet.getStartCellIndex(3));
+		Assert.assertEquals(6, sheet.getEndCellIndex(3));
+		Assert.assertEquals(6, sheet.getStartCellIndex(row.getIndex()));
+		Assert.assertEquals(6, sheet.getEndCellIndex(row.getIndex()));
+		Assert.assertEquals(-1, sheet.getStartCellIndex(4));
+		Assert.assertEquals(-1, sheet.getEndCellIndex(4));
 		
 		
 		//another cell
@@ -392,23 +389,26 @@ public class ModelTest {
 		
 		cell.setValue("(3,12)");
 		Assert.assertEquals(false, row.isNull());
-		Assert.assertEquals(false, column.isNull());
+		Assert.assertEquals(true, column.isNull());
 		Assert.assertEquals(false, cell.isNull());
 		Assert.assertEquals("(3,12)", cell.getValue());
 		
-		Assert.assertEquals(6, row.getStartCellIndex());
-		Assert.assertEquals(12, row.getEndCellIndex());
+		column.setWidth(300);
+		Assert.assertEquals(false, column.isNull());
+		
+		Assert.assertEquals(6, sheet.getStartCellIndex(row.getIndex()));
+		Assert.assertEquals(12, sheet.getEndCellIndex(row.getIndex()));
 		
 		Assert.assertEquals(3, sheet.getStartRowIndex());
 		Assert.assertEquals(3, sheet.getEndRowIndex());
 		Assert.assertEquals(6, sheet.getStartColumnIndex());
 		Assert.assertEquals(12, sheet.getEndColumnIndex());
-		Assert.assertEquals(-1, sheet.getStartColumnIndex(0));
-		Assert.assertEquals(-1, sheet.getEndColumn(0));
-		Assert.assertEquals(6, sheet.getStartColumnIndex(3));
-		Assert.assertEquals(12, sheet.getEndColumn(3));
-		Assert.assertEquals(-1, sheet.getStartColumnIndex(4));
-		Assert.assertEquals(-1, sheet.getEndColumn(4));
+		Assert.assertEquals(-1, sheet.getStartCellIndex(0));
+		Assert.assertEquals(-1, sheet.getEndCellIndex(0));
+		Assert.assertEquals(6, sheet.getStartCellIndex(3));
+		Assert.assertEquals(12, sheet.getEndCellIndex(3));
+		Assert.assertEquals(-1, sheet.getStartCellIndex(4));
+		Assert.assertEquals(-1, sheet.getEndCellIndex(4));
 		
 		
 		//another cell
@@ -422,23 +422,26 @@ public class ModelTest {
 		
 		cell.setValue("(4,8)");
 		Assert.assertEquals(false, row.isNull());
-		Assert.assertEquals(false, column.isNull());
+		Assert.assertEquals(true, column.isNull());
 		Assert.assertEquals(false, cell.isNull());
 		Assert.assertEquals("(4,8)", cell.getValue());
 		
-		Assert.assertEquals(8, row.getStartCellIndex());
-		Assert.assertEquals(8, row.getEndCellIndex());
+		column.setWidth(300);
+		Assert.assertEquals(false, column.isNull());
+		
+		Assert.assertEquals(8, sheet.getStartCellIndex(row.getIndex()));
+		Assert.assertEquals(8, sheet.getEndCellIndex(row.getIndex()));
 		
 		Assert.assertEquals(3, sheet.getStartRowIndex());
 		Assert.assertEquals(4, sheet.getEndRowIndex());
 		Assert.assertEquals(6, sheet.getStartColumnIndex());
 		Assert.assertEquals(12, sheet.getEndColumnIndex());
-		Assert.assertEquals(-1, sheet.getStartColumnIndex(0));
-		Assert.assertEquals(-1, sheet.getEndColumn(0));
-		Assert.assertEquals(6, sheet.getStartColumnIndex(3));
-		Assert.assertEquals(12, sheet.getEndColumn(3));
-		Assert.assertEquals(8, sheet.getStartColumnIndex(4));
-		Assert.assertEquals(8, sheet.getEndColumn(4));
+		Assert.assertEquals(-1, sheet.getStartCellIndex(0));
+		Assert.assertEquals(-1, sheet.getEndCellIndex(0));
+		Assert.assertEquals(6, sheet.getStartCellIndex(3));
+		Assert.assertEquals(12, sheet.getEndCellIndex(3));
+		Assert.assertEquals(8, sheet.getStartCellIndex(4));
+		Assert.assertEquals(8, sheet.getEndCellIndex(4));
 		
 		
 		//another cell
@@ -452,144 +455,26 @@ public class ModelTest {
 		
 		cell.setValue("(0,0)");
 		Assert.assertEquals(false, row.isNull());
-		Assert.assertEquals(false, column.isNull());
+		Assert.assertEquals(true, column.isNull());
 		Assert.assertEquals(false, cell.isNull());
 		Assert.assertEquals("(0,0)", cell.getValue());
 		
-		Assert.assertEquals(0, row.getStartCellIndex());
-		Assert.assertEquals(0, row.getEndCellIndex());
+		column.setWidth(300);
+		Assert.assertEquals(false, column.isNull());
+		
+		Assert.assertEquals(0, sheet.getStartCellIndex(row.getIndex()));
+		Assert.assertEquals(0, sheet.getEndCellIndex(row.getIndex()));
 		
 		Assert.assertEquals(0, sheet.getStartRowIndex());
 		Assert.assertEquals(4, sheet.getEndRowIndex());
 		Assert.assertEquals(0, sheet.getStartColumnIndex());
 		Assert.assertEquals(12, sheet.getEndColumnIndex());
-		Assert.assertEquals(0, sheet.getStartColumnIndex(0));
-		Assert.assertEquals(0, sheet.getEndColumn(0));
-		Assert.assertEquals(6, sheet.getStartColumnIndex(3));
-		Assert.assertEquals(12, sheet.getEndColumn(3));
-		Assert.assertEquals(8, sheet.getStartColumnIndex(4));
-		Assert.assertEquals(8, sheet.getEndColumn(4));	
-	}
-	
-	@Test
-	public void testClearSheetRow(){
-		NBook book = NBooks.createBook("book1");
-		NSheet sheet = book.createSheet("Sheet 1");
-		
-		for(int i=10;i<=20;i+=2){
-			for(int j=3;j<=15;j+=3){
-				NCell cell = sheet.getCell(i, j);
-				cell.setValue("("+i+","+j+")");
-			}
-		}
-		Assert.assertEquals(false, sheet.getRow(10).isNull());
-		Assert.assertEquals(false, sheet.getRow(12).isNull());
-		Assert.assertEquals(false, sheet.getRow(14).isNull());
-		Assert.assertEquals(false, sheet.getRow(16).isNull());
-		
-		Assert.assertEquals("(10,3)", sheet.getCell(10, 3).getValue());
-		Assert.assertEquals("(12,6)", sheet.getCell(12, 6).getValue());
-		Assert.assertEquals("(14,9)", sheet.getCell(14, 9).getValue());
-		Assert.assertEquals("(16,12)", sheet.getCell(16, 12).getValue());
-		
-		sheet.clearRow(12, 14);
-		
-		Assert.assertEquals(false, sheet.getRow(10).isNull());
-		Assert.assertEquals(true, sheet.getRow(12).isNull());
-		Assert.assertEquals(true, sheet.getRow(14).isNull());
-		Assert.assertEquals(false, sheet.getRow(16).isNull());
-		
-		Assert.assertEquals("(10,3)", sheet.getCell(10, 3).getValue());
-		Assert.assertEquals(null, sheet.getCell(12, 6).getValue());
-		Assert.assertEquals(null, sheet.getCell(14, 9).getValue());
-		Assert.assertEquals(true, sheet.getCell(12, 6).isNull());
-		Assert.assertEquals(true, sheet.getCell(14, 9).isNull());
-		Assert.assertEquals("(16,12)", sheet.getCell(16, 12).getValue());
-		
-		Assert.assertEquals(10, sheet.getStartRowIndex());
-		Assert.assertEquals(20, sheet.getEndRowIndex());
-		
-		Assert.assertEquals(3, sheet.getStartColumnIndex());
-		Assert.assertEquals(15, sheet.getEndColumnIndex());
-		
-		
-		sheet.clearRow(1, 100);
-		Assert.assertEquals(true, sheet.getRow(10).isNull());
-		Assert.assertEquals(true, sheet.getRow(12).isNull());
-		Assert.assertEquals(true, sheet.getRow(14).isNull());
-		Assert.assertEquals(true, sheet.getRow(16).isNull());
-		Assert.assertEquals(true, sheet.getRow(18).isNull());
-		Assert.assertEquals(true, sheet.getRow(20).isNull());
-		
-		Assert.assertEquals(-1, sheet.getStartRowIndex());
-		Assert.assertEquals(-1, sheet.getEndRowIndex());
-		
-		//clear all down doesn't effect the existed column status.(think about column style on the column)
-		Assert.assertEquals(3, sheet.getStartColumnIndex());
-		Assert.assertEquals(15, sheet.getEndColumnIndex());
-		
-	}
-	
-	@Test
-	public void testClearSheetColumn(){
-		NBook book = NBooks.createBook("book1");
-		NSheet sheet = book.createSheet("Sheet 1");
-		
-		for(int i=10;i<=20;i+=2){
-			for(int j=3;j<=15;j+=3){
-				NCell cell = sheet.getCell(j, i);
-				cell.setValue("("+j+","+i+")");
-			}
-		}
-		
-		Assert.assertEquals(false, sheet.getColumn(10).isNull());
-		Assert.assertEquals(false, sheet.getColumn(12).isNull());
-		Assert.assertEquals(false, sheet.getColumn(14).isNull());
-		Assert.assertEquals(false, sheet.getColumn(16).isNull());
-		
-		Assert.assertEquals("(3,10)", sheet.getCell(3,10).getValue());
-		Assert.assertEquals("(6,12)", sheet.getCell(6,12).getValue());
-		Assert.assertEquals("(9,14)", sheet.getCell(9,14).getValue());
-		Assert.assertEquals("(12,16)", sheet.getCell(12,16).getValue());
-		
-		sheet.clearColumn(12, 14);
-		
-		
-		Assert.assertEquals(false, sheet.getColumn(10).isNull());
-		Assert.assertEquals(true, sheet.getColumn(12).isNull());
-		Assert.assertEquals(true, sheet.getColumn(14).isNull());
-		Assert.assertEquals(false, sheet.getColumn(16).isNull());
-		
-		Assert.assertEquals("(3,10)", sheet.getCell(3, 10).getValue());
-		Assert.assertEquals(null, sheet.getCell(6, 12).getValue());
-		Assert.assertEquals(null, sheet.getCell(9, 14).getValue());
-		Assert.assertEquals(true, sheet.getCell(6, 12).isNull());
-		Assert.assertEquals(true, sheet.getCell(9, 14).isNull());
-		Assert.assertEquals("(12,16)", sheet.getCell(12, 16).getValue());
-		
-		Assert.assertEquals(3, sheet.getStartRowIndex());
-		Assert.assertEquals(15, sheet.getEndRowIndex());
-		
-		Assert.assertEquals(10, sheet.getStartColumnIndex());
-		Assert.assertEquals(20, sheet.getEndColumnIndex());
-		
-		
-		sheet.clearColumn(1, 30);
-		Assert.assertEquals(true, sheet.getColumn(10).isNull());
-		Assert.assertEquals(true, sheet.getColumn(12).isNull());
-		Assert.assertEquals(true, sheet.getColumn(14).isNull());
-		Assert.assertEquals(true, sheet.getColumn(16).isNull());
-		Assert.assertEquals(true, sheet.getColumn(18).isNull());
-		Assert.assertEquals(true, sheet.getColumn(20).isNull());
-		
-		//clear all down doesn't effect the existed column status.(think about column style on the column)
-		Assert.assertEquals(3, sheet.getStartRowIndex());
-		Assert.assertEquals(15, sheet.getEndRowIndex());
-		
-		
-		Assert.assertEquals(-1, sheet.getStartColumnIndex());
-		Assert.assertEquals(-1, sheet.getEndColumnIndex());
-
+		Assert.assertEquals(0, sheet.getStartCellIndex(0));
+		Assert.assertEquals(0, sheet.getEndCellIndex(0));
+		Assert.assertEquals(6, sheet.getStartCellIndex(3));
+		Assert.assertEquals(12, sheet.getEndCellIndex(3));
+		Assert.assertEquals(8, sheet.getStartCellIndex(4));
+		Assert.assertEquals(8, sheet.getEndCellIndex(4));	
 	}
 	
 	@Test
@@ -601,7 +486,9 @@ public class ModelTest {
 			for(int j=3;j<=15;j+=3){
 				NCell cell = sheet.getCell(i, j);
 				cell.setValue("("+i+","+j+")");
+				sheet.getColumn(j).setWidth(300);
 			}
+			
 		}
 		Assert.assertEquals(false, sheet.getRow(10).isNull());
 		Assert.assertEquals(false, sheet.getRow(12).isNull());
@@ -768,13 +655,26 @@ public class ModelTest {
 		for(int i=10;i<=20;i+=2){
 			for(int j=3;j<=15;j+=3){
 				NCell cell = sheet.getCell(j, i);
-				cell.setValue("("+j+","+i+")");
+				cell.setValue("("+j+","+i+")");//will not create custom column
 			}
 		}
+		Assert.assertEquals(true, sheet.getColumn(10).isNull());
+		Assert.assertEquals(true, sheet.getColumn(12).isNull());
+		Assert.assertEquals(true, sheet.getColumn(14).isNull());
+		Assert.assertEquals(true, sheet.getColumn(16).isNull());
+		Assert.assertEquals(true, sheet.getColumn(20).isNull());
+		
+		sheet.getColumn(10).setWidth(300);
+		sheet.getColumn(12).setWidth(300);
+		sheet.getColumn(14).setWidth(300);
+		sheet.getColumn(16).setWidth(300);
+		sheet.getColumn(20).setWidth(300);
+		
 		Assert.assertEquals(false, sheet.getColumn(10).isNull());
 		Assert.assertEquals(false, sheet.getColumn(12).isNull());
 		Assert.assertEquals(false, sheet.getColumn(14).isNull());
 		Assert.assertEquals(false, sheet.getColumn(16).isNull());
+		Assert.assertEquals(false, sheet.getColumn(20).isNull());
 		
 		Assert.assertEquals("(3,10)", sheet.getCell(3, 10).getValue());
 		Assert.assertEquals("(6,12)", sheet.getCell(6, 12).getValue());

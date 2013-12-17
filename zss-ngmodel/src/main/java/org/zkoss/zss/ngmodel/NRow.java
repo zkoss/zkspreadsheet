@@ -32,9 +32,6 @@ public interface NRow {
 	public NCellStyle getCellStyle();
 	public NCellStyle getCellStyle(boolean local);
 	
-	public int getStartCellIndex();
-	public int getEndCellIndex();
-	
 	//editable
 	public void setCellStyle(NCellStyle cellStyle);
 	

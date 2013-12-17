@@ -181,7 +181,7 @@ public class SheetImpl extends SheetAdv {
 		return columns.lastKey();
 	}
 
-	public int getStartColumnIndex(int row) {
+	public int getStartCellIndex(int row) {
 		RowAdv rowObj = (RowAdv) getRow(row,false);
 		if(rowObj!=null){
 			return rowObj.getStartCellIndex();
@@ -189,7 +189,7 @@ public class SheetImpl extends SheetAdv {
 		return -1;
 	}
 
-	public int getEndColumn(int row) {
+	public int getEndCellIndex(int row) {
 		RowAdv rowObj = (RowAdv) getRow(row,false);
 		if(rowObj!=null){
 			return rowObj.getEndCellIndex();
@@ -212,36 +212,36 @@ public class SheetImpl extends SheetAdv {
 		//TODO to other object
 	}
 	
-	public void clearRow(int rowIdx, int rowIdx2) {
-		int start = Math.min(rowIdx, rowIdx2);
-		int end = Math.max(rowIdx, rowIdx2);
-		
-		//clear before move relation
-		for(RowAdv row:rows.subValues(start,end)){
-			row.destroy();
-		}		
-		rows.clear(start,end);
-		
-		//Send event?
-		
-	}
+//	public void clearRow(int rowIdx, int rowIdx2) {
+//		int start = Math.min(rowIdx, rowIdx2);
+//		int end = Math.max(rowIdx, rowIdx2);
+//		
+//		//clear before move relation
+//		for(RowAdv row:rows.subValues(start,end)){
+//			row.destroy();
+//		}		
+//		rows.clear(start,end);
+//		
+//		//Send event?
+//		
+//	}
 
-	public void clearColumn(int columnIdx, int columnIdx2) {
-		int start = Math.min(columnIdx, columnIdx2);
-		int end = Math.max(columnIdx, columnIdx2);
-		
-		
-		for(ColumnAdv column:columns.subValues(start,end)){
-			column.destroy();
-		}
-		columns.clear(start,end);
-		
-		for(RowAdv row:rows.values()){
-			row.clearCell(start,end);
-		}
-		//Send event?
-		
-	}
+//	public void clearColumn(int columnIdx, int columnIdx2) {
+//		int start = Math.min(columnIdx, columnIdx2);
+//		int end = Math.max(columnIdx, columnIdx2);
+//		
+//		
+//		for(ColumnAdv column:columns.subValues(start,end)){
+//			column.destroy();
+//		}
+//		columns.clear(start,end);
+//		
+//		for(RowAdv row:rows.values()){
+//			row.clearCell(start,end);
+//		}
+//		//Send event?
+//		
+//	}
 
 	public void clearCell(int rowIdx, int columnIdx, int rowIdx2,
 			int columnIdx2) {

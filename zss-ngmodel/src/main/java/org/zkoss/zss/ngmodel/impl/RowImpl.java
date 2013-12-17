@@ -81,8 +81,6 @@ public class RowImpl extends RowAdv {
 			checkOrphan();
 			cellObj = new CellImpl(this);
 			cells.put(columnIdx, cellObj);
-			// create column since we have cell of it
-			sheet.getOrCreateColumn(columnIdx);
 		}
 		return cellObj;
 	}

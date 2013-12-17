@@ -61,9 +61,8 @@ public interface NSheet {
 	public int getEndRowIndex();
 	public int getStartColumnIndex();
 	public int getEndColumnIndex();
-	
-	public int getStartColumnIndex(int rowIdx);
-	public int getEndColumn(int rowIdx);
+	public int getStartCellIndex(int rowIdx);
+	public int getEndCellIndex(int rowIdx);
 	
 	public String getId();
 	
@@ -71,8 +70,8 @@ public interface NSheet {
 	public NPrintInfo getPrintInfo();
 	
 	//editable
-	public void clearRow(int rowIdx, int rowIdx2);
-	public void clearColumn(int columnIdx,int columnIdx2);
+//	public void clearRow(int rowIdx, int rowIdx2);
+//	public void clearColumn(int columnIdx,int columnIdx2);
 	public void clearCell(int rowIdx, int columnIdx,int rowIdx2,int columnIdx2);
 	
 	public void insertRow(int rowIdx, int size);
