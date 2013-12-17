@@ -1,8 +1,8 @@
 package org.zkoss.zss.ngmodel.impl.sys;
 
 import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -36,7 +36,7 @@ public class DependencyTableImpl extends DependencyTableAdv {
 			RefType.CELL);
 
 	/** Map<dependant, precedent> */
-	private Map<Ref, Set<Ref>> map = new HashMap<Ref, Set<Ref>>();
+	private Map<Ref, Set<Ref>> map = new LinkedHashMap<Ref, Set<Ref>>();
 	private NBookSeries books;
 
 	public DependencyTableImpl() {
@@ -51,7 +51,7 @@ public class DependencyTableImpl extends DependencyTableAdv {
 	public void add(Ref dependant, Ref precedent) {
 		Set<Ref> precedents = map.get(dependant);
 		if(precedents == null) {
-			precedents = new HashSet<Ref>();
+			precedents = new LinkedHashSet<Ref>();
 			map.put(dependant, precedents);
 		}
 		precedents.add(precedent);
@@ -69,7 +69,7 @@ public class DependencyTableImpl extends DependencyTableAdv {
 	public Set<Ref> getDependents(Ref precedent) {
 
 		// search dependents and their dependents recursively
-		Set<Ref> result = new HashSet<Ref>();
+		Set<Ref> result = new LinkedHashSet<Ref>();
 		Queue<Ref> queue = new LinkedList<Ref>();
 		queue.add(precedent);
 

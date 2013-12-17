@@ -12,6 +12,8 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.ngmodel.impl.sys.formula;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.zkoss.poi.ss.formula.CollaboratingWorkbooksEnvironment;
@@ -20,8 +22,12 @@ import org.zkoss.poi.ss.formula.FormulaParseException;
 import org.zkoss.poi.ss.formula.FormulaParser;
 import org.zkoss.poi.ss.formula.FormulaType;
 import org.zkoss.poi.ss.formula.WorkbookEvaluator;
+import org.zkoss.poi.ss.formula.eval.AreaEval;
+import org.zkoss.poi.ss.formula.eval.BlankEval;
 import org.zkoss.poi.ss.formula.eval.ErrorEval;
+import org.zkoss.poi.ss.formula.eval.EvaluationException;
 import org.zkoss.poi.ss.formula.eval.NumberEval;
+import org.zkoss.poi.ss.formula.eval.RefEval;
 import org.zkoss.poi.ss.formula.eval.StringEval;
 import org.zkoss.poi.ss.formula.eval.ValueEval;
 import org.zkoss.poi.ss.formula.eval.ValuesEval;
@@ -171,11 +177,11 @@ public class POIFormulaEngine implements FormulaEngine {
 			// evaluation formula
 			ValueEval value = null;
 			int currentSheetIndex = book.getSheetIndex(context.getSheet());
-			if(context.getCell().isNull()) {
+			NCell cell = context.getCell();
+			if(cell == null || cell.isNull()) {
 				// evaluation formula directly
-				value = evaluator.evaluate(currentSheetIndex, expr.getFormulaString(), false);
+				value = evaluator.evaluate(currentSheetIndex, expr.getFormulaString(), true);
 			} else {
-				NCell cell = context.getCell();
 				EvaluationCell evalCell = evalBook.getSheet(currentSheetIndex).getCell(cell.getRowIndex(),
 						cell.getColumnIndex());
 				value = evaluator.evaluate(evalCell);
@@ -185,6 +191,8 @@ public class POIFormulaEngine implements FormulaEngine {
 			if(value instanceof ErrorEval) {
 				int code = ((ErrorEval)value).getErrorCode();
 				result = new EvaluationResultImpl(ResultType.ERROR, new ErrorValue((byte)code));
+			} else if(value instanceof BlankEval) {
+				result = new EvaluationResultImpl(ResultType.SUCCESS, "");
 			} else if(value instanceof StringEval) {
 				result = new EvaluationResultImpl(ResultType.SUCCESS, ((StringEval)value).getStringValue());
 			} else if(value instanceof NumberEval) {
@@ -193,15 +201,24 @@ public class POIFormulaEngine implements FormulaEngine {
 				ValueEval[] values = ((ValuesEval)value).getValueEvals();
 				Object[] array = new Object[values.length];
 				for(int i = 0; i < values.length; ++i) {
-					if(value instanceof StringEval) {
-						array[i] = ((StringEval)values[i]).getStringValue();
-					} else if(value instanceof NumberEval) {
-						array[i] = ((NumberEval)values[i]).getNumberValue();
-					} else {
-						throw new Exception("no matched type: " + array[i]); // FIXME
+					array[i] = getResolvedValue(values[i]);
+				}
+				result = new EvaluationResultImpl(ResultType.SUCCESS, array);
+			} else if(value instanceof AreaEval) {
+				// covert all values into an array
+				List<Object> list = new ArrayList<Object>();
+				AreaEval area = (AreaEval)value;
+				for(int r = 0; r < area.getHeight(); ++r) {
+					for(int c = 0; c < area.getWidth(); ++c) {
+						ValueEval v = area.getValue(r, c);
+						list.add(getResolvedValue(v));
 					}
 				}
-				return new EvaluationResultImpl(ResultType.SUCCESS, array);
+				result = new EvaluationResultImpl(ResultType.SUCCESS, list);
+			} else if(value instanceof RefEval) {
+				ValueEval ve = ((RefEval)value).getInnerValueEval();
+				Object v = getResolvedValue(ve);
+				result = new EvaluationResultImpl(ResultType.SUCCESS, v);
 			} else {
 				throw new Exception("no matched type: " + value); // FIXME
 			}
@@ -210,6 +227,18 @@ public class POIFormulaEngine implements FormulaEngine {
 			result = new EvaluationResultImpl(ResultType.ERROR, new ErrorValue(ErrorValue.INVALID_FORMULA));
 		}
 		return result;
+	}
+	
+	private Object getResolvedValue(ValueEval value) throws EvaluationException {
+		if(value instanceof StringEval) {
+			return ((StringEval)value).getStringValue();
+		} else if(value instanceof NumberEval) {
+			return ((NumberEval)value).getNumberValue();
+		} else if(value instanceof BlankEval) {
+			return "";
+		} else {
+			throw new EvaluationException(null, "no matched type: " + value); // FIXME
+		}
 	}
 
 	private static class FormulaExpressionImpl implements FormulaExpression, Serializable {

@@ -58,9 +58,9 @@ public class SeriesImpl implements NSeries,Serializable,LinkedModelObject{
 	/*package*/ void evalFormula(){
 		if(!evaluated){
 			FormulaEngine fe = EngineFactory.getInstance().createFormulaEngine();
-			NBook book = chart.getSheet().getBook();
+			NSheet sheet = chart.getSheet();
 			if(nameExpr!=null){
-				EvaluationResult result = fe.evaluate(nameExpr,new FormulaEvaluationContext(book));
+				EvaluationResult result = fe.evaluate(nameExpr,new FormulaEvaluationContext(sheet));
 
 				Object val = result.getValue();
 				if(result.getType() == ResultType.SUCCESS){
@@ -71,7 +71,7 @@ public class SeriesImpl implements NSeries,Serializable,LinkedModelObject{
 				
 			}
 			if(valueExpr!=null){
-				EvaluationResult result = fe.evaluate(valueExpr,new FormulaEvaluationContext(book));
+				EvaluationResult result = fe.evaluate(valueExpr,new FormulaEvaluationContext(sheet));
 				Object val = result.getValue();
 				if(result.getType() == ResultType.SUCCESS){
 					evalValuesResult = val;
@@ -80,7 +80,7 @@ public class SeriesImpl implements NSeries,Serializable,LinkedModelObject{
 				}
 			}
 			if(yValueExpr!=null){
-				EvaluationResult result = fe.evaluate(yValueExpr,new FormulaEvaluationContext(book));
+				EvaluationResult result = fe.evaluate(yValueExpr,new FormulaEvaluationContext(sheet));
 				Object val = result.getValue();
 				if(result.getType() == ResultType.SUCCESS){
 					evalYValuesResult = val;
