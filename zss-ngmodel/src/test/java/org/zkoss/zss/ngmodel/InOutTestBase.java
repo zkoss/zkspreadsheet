@@ -30,7 +30,7 @@ public class InOutTestBase {
 		NSheet sheet2 = book.getSheet(1);
 		assertEquals("Style", sheet2.getSheetName());
 		NSheet sheet3 = book.getSheet(2);
-		assertEquals("Third", sheet3.getSheetName());
+		assertEquals("NamedRange", sheet3.getSheetName());
 	}
 	
 	/**

@@ -36,19 +36,16 @@ public class NExcelXlsImporter extends AbstractExcelImporter{
 		book = NBooks.createBook(bookName);
 		
 		for (int i = 0 ; i < workbook.getNumberOfSheets(); i++){
-			importPoiSheet(workbook.getSheetAt(i));
+			importSheet(workbook.getSheetAt(i));
 		}
 		
-		importNameRange();
+		importNamedRange();
 		return book;
 	}
 
 	@Override
-	protected int getMaxConfiguredColumn(Sheet poiSheet) {
-		// FIXME cannot impelement getMaxConfiguredColumn() because HSSFSheet.getSheet() is protected.
-//		((HSSFSheetImpl)poiSheet).get
-//		((HSSFSheet)poiSheet).getSheet().getMaxConfiguredColumn();
-		return 100;
+	protected int getLastChangedColumnIndex(Sheet poiSheet) {
+		return new HSSFSheetHelper((HSSFSheet)poiSheet).getInternalSheet().getMaxConfiguredColumn();
 	}
 
 

@@ -32,9 +32,10 @@ import org.zkoss.zss.ngmodel.NFont.Underline;
 /**
  * Contains common importing behavior for both XLSX and XLS.
  * @author Hawk
- *
+ * @since 3.5.0 
  */
 abstract public class AbstractExcelImporter extends AbstractImporter {
+	private static final int CHRACTER_WIDTH = 8;
 	/** 
 	 * <poi CellStyle index, {@link NCellStyle} object> 
 	 * Keep track of imported style during importing to avoid creating duplicated style objects. 
@@ -45,16 +46,21 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 	protected NBook book;
 	protected Workbook workbook;
 
-	abstract protected int getMaxConfiguredColumn(Sheet poiSheet);
+	abstract protected int getLastChangedColumnIndex(Sheet poiSheet);
 	
 	/**
 	 * Name should be created after sheets created.
 	 * A special defined name, _xlnm._FilterDatabase, stores the selected cells for auto-filter 
 	 */
-	protected void importNameRange(){
+	protected void importNamedRange(){
 		for (int i=0 ; i<workbook.getNumberOfNames() ; i++){
 			Name namedRange = workbook.getNameAt(i);
-			NName name = book.createName(namedRange.getNameName(), namedRange.getSheetName());
+			NName name = null;
+			if (namedRange.getSheetName() != null && namedRange.getSheetName().length()>0){
+				name = book.createName(namedRange.getNameName(), namedRange.getSheetName());
+			}else{
+				name = book.createName(namedRange.getNameName());
+			}
 			name.setRefersToFormula(namedRange.getRefersToFormula());
 		}
 	}
@@ -62,13 +68,14 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 	/*
 	 * import sheet scope content from POI Sheet.
 	 */
-	protected NSheet importPoiSheet(Sheet poiSheet) {
+	protected NSheet importSheet(Sheet poiSheet) {
 		NSheet sheet = book.createSheet(poiSheet.getSheetName());
 		sheet.setDefaultRowHeight(XUtils.twipToPx(poiSheet.getDefaultRowHeight()));
 		//TODO default char width reference XSSFBookImpl._defaultCharWidth = 7
 		//TODO original width 64px, current is 72px
 		//reference XUtils.getDefaultColumnWidthInPx()
-		sheet.setDefaultColumnWidth(XUtils.defaultColumnWidthToPx(poiSheet.getDefaultColumnWidth(),8));
+		int defaultWidth = XUtils.defaultColumnWidthToPx(poiSheet.getDefaultColumnWidth(), CHRACTER_WIDTH);
+		sheet.setDefaultColumnWidth(defaultWidth);
 		//reference FreezeInfoLoaderImpl.getRowFreeze()
 		sheet.getViewInfo().setNumOfRowFreeze(BookHelper.getRowFreeze(poiSheet));
 		sheet.getViewInfo().setNumOfColumnFreeze(BookHelper.getColumnFreeze(poiSheet));
@@ -88,13 +95,19 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 		}
 		
 		//import columns
-		for (int c=0 ; c <= getMaxConfiguredColumn(poiSheet) ; c++){
+		int lastChangedColumnIndex = getLastChangedColumnIndex(poiSheet);
+		for (int c=0 ; c <= lastChangedColumnIndex ; c++){
 			//reference Spreadsheet.updateColWidth()
-			sheet.getColumn(c).setWidth(XUtils.getWidthAny(poiSheet, c, 8));
+			int width = XUtils.getWidthAny(poiSheet, c, CHRACTER_WIDTH);
+			NColumn col = sheet.getColumn(c);
+			//to avoid creating unnecessary column with just default value
+			if(width != defaultWidth){
+				col.setWidth(width);
+				col.setHidden(poiSheet.isColumnHidden(c));
+			}
 			CellStyle columnStyle = poiSheet.getColumnStyle(c); 
-			sheet.getColumn(c).setHidden(poiSheet.isColumnHidden(c));				
 			if (columnStyle != null){
-				sheet.getColumn(c).setCellStyle(importPoiCellStyle(columnStyle));
+				col.setCellStyle(importCellStyle(columnStyle));
 			}
 		}
 		
@@ -107,17 +120,17 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 		CellStyle rowStyle = poiRow.getRowStyle();
 		row.setHidden(poiRow.getZeroHeight());
 		if (rowStyle != null){
-			row.setCellStyle(importPoiCellStyle(rowStyle));
+			row.setCellStyle(importCellStyle(rowStyle));
 		}
 		
 		for(Cell poiCell : poiRow) {
-			importPoiCell(sheet,poiRow.getRowNum(), poiCell);
+			importCell(sheet,poiRow.getRowNum(), poiCell);
 		}
 		
 		return row;
 	}
 	
-	protected NCell importPoiCell(NSheet sheet, int row, Cell poiCell){
+	protected NCell importCell(NSheet sheet, int row, Cell poiCell){
 		NCell cell = sheet.getCell(row,poiCell.getColumnIndex());
 		switch (poiCell.getCellType()){
 			case Cell.CELL_TYPE_NUMERIC:
@@ -141,7 +154,7 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 			default:
 				//TODO log "ignore a cell with unknown.
 		}
-		cell.setCellStyle(importPoiCellStyle(poiCell.getCellStyle()));
+		cell.setCellStyle(importCellStyle(poiCell.getCellStyle()));
 		
 		return cell;
 	}
@@ -150,7 +163,7 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 	 * Convert CellStyle into NCellStyle
 	 * @param poiCellStyle
 	 */
-	protected NCellStyle importPoiCellStyle(CellStyle poiCellStyle) {
+	protected NCellStyle importCellStyle(CellStyle poiCellStyle) {
 		NCellStyle cellStyle = null;
 		if((cellStyle = importedStyle.get(poiCellStyle.getIndex())) ==null){
 			cellStyle = book.createCellStyle(true);
