@@ -556,6 +556,51 @@ public class ModelTest {
 		Assert.assertEquals(300, array.getWidth());
 		
 	}
+	@Test
+	public void testColumnIterator(){
+		NBook book = NBooks.createBook("book1");
+		NSheet sheet1 = book.createSheet("Sheet1");
+		Iterator<NColumn> colIter = sheet1.getColumnIterator();
+		Assert.assertFalse(colIter.hasNext());
+		
+		sheet1.getColumn(4).setWidth(20);
+		colIter = sheet1.getColumnIterator();
+		NColumn col = colIter.next();
+		Assert.assertEquals(0, col.getIndex());
+		Assert.assertEquals(sheet1.getDefaultColumnWidth(), col.getWidth());
+		col = colIter.next();
+		Assert.assertEquals(1, col.getIndex());
+		Assert.assertEquals(sheet1.getDefaultColumnWidth(), col.getWidth());
+		col = colIter.next();
+		Assert.assertEquals(2, col.getIndex());
+		Assert.assertEquals(sheet1.getDefaultColumnWidth(), col.getWidth());
+		col = colIter.next();
+		Assert.assertEquals(3, col.getIndex());
+		Assert.assertEquals(sheet1.getDefaultColumnWidth(), col.getWidth());
+		col = colIter.next();
+		Assert.assertEquals(4, col.getIndex());
+		Assert.assertEquals(20, col.getWidth());
+		Assert.assertFalse(colIter.hasNext());
+		
+		sheet1.getColumn(2).setWidth(30);
+		colIter = sheet1.getColumnIterator();
+		col = colIter.next();
+		Assert.assertEquals(0, col.getIndex());
+		Assert.assertEquals(sheet1.getDefaultColumnWidth(), col.getWidth());
+		col = colIter.next();
+		Assert.assertEquals(1, col.getIndex());
+		Assert.assertEquals(sheet1.getDefaultColumnWidth(), col.getWidth());
+		col = colIter.next();
+		Assert.assertEquals(2, col.getIndex());
+		Assert.assertEquals(30, col.getWidth());
+		col = colIter.next();
+		Assert.assertEquals(3, col.getIndex());
+		Assert.assertEquals(sheet1.getDefaultColumnWidth(), col.getWidth());
+		col = colIter.next();
+		Assert.assertEquals(4, col.getIndex());
+		Assert.assertEquals(20, col.getWidth());
+		Assert.assertFalse(colIter.hasNext());
+	}
 	
 	@Test
 	public void testInsertColumnArray2(){

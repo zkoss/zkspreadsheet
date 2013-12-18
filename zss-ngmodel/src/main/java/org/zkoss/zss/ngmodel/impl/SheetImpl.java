@@ -892,6 +892,29 @@ public class SheetImpl extends SheetAdv {
 		return Collections.unmodifiableCollection((Collection)columnArrays.values()).iterator();
 	}
 	
+
+	@Override
+	public Iterator<NColumn> getColumnIterator() {
+		return new Iterator<NColumn>(){
+			int index = -1;
+			@Override
+			public boolean hasNext() {
+				return getColumnArray(index+1)!=null;
+			}
+
+			@Override
+			public NColumn next() {
+				index++;
+				return getColumn(index);
+			}
+
+			@Override
+			public void remove() {
+				throw new UnsupportedOperationException("illegal");
+			}
+		};
+	}
+	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public Iterator<NCell> getCellIterator(int row) {
@@ -973,5 +996,6 @@ public class SheetImpl extends SheetAdv {
 		// TODO Auto-generated method stub
 		return false;
 	}
+
 
 }
