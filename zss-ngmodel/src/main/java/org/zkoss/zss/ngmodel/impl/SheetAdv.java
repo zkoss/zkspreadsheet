@@ -32,8 +32,10 @@ public abstract class SheetAdv implements NSheet,LinkedModelObject,Serializable{
 	/*package*/ abstract int getRowIndex(RowAdv row);
 	
 	/*package*/ abstract ColumnAdv getColumn(int columnIdx, boolean proxy);
-	/*package*/ abstract ColumnAdv getOrCreateColumn(int columnIdx);
-	/*package*/ abstract int getColumnIndex(ColumnAdv column);
+	/*package*/ abstract ColumnArrayAdv getOrSplitColumnArray(int index);
+	
+//	/*package*/ abstract ColumnAdv getOrCreateColumn(int columnIdx);
+//	/*package*/ abstract int getColumnIndex(ColumnAdv column);
 	
 	/*package*/ abstract CellAdv getCell(int rowIdx, int columnIdx, boolean proxy);
 	/*package*/ abstract CellAdv getOrCreateCell(int rowIdx, int columnIdx);
@@ -47,4 +49,5 @@ public abstract class SheetAdv implements NSheet,LinkedModelObject,Serializable{
 	ModelInternalEvent createModelInternalEvent(String name, Object... data){
 		return ModelInternalEvents.createModelInternalEvent(name,this,data);
 	}
+	
 }

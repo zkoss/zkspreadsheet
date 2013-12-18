@@ -23,6 +23,7 @@ import java.util.Date;
 import org.zkoss.zss.ngmodel.CellRegion;
 import org.zkoss.zss.ngmodel.ErrorValue;
 import org.zkoss.zss.ngmodel.NCellStyle;
+import org.zkoss.zss.ngmodel.NColumnArray;
 import org.zkoss.zss.ngmodel.NComment;
 import org.zkoss.zss.ngmodel.NHyperlink;
 import org.zkoss.zss.ngmodel.NRichText;
@@ -117,8 +118,10 @@ public class CellImpl extends CellAdv {
 		cellStyle = (CellStyleAdv) row.getCellStyle(true);
 		SheetAdv sheet = (SheetAdv)row.getSheet();
 		if (cellStyle == null) {
-			cellStyle = (CellStyleAdv) sheet.getColumn(getColumnIndex())
-					.getCellStyle(true);
+			NColumnArray array = sheet.getColumnArray(getColumnIndex());
+			if(array!=null){
+				cellStyle = (CellStyleAdv)((ColumnArrayAdv)array).getCellStyle(true);
+			}
 		}
 		if (cellStyle == null) {
 			cellStyle = (CellStyleAdv) sheet.getBook()

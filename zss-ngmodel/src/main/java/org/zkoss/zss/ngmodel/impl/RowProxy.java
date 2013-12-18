@@ -79,11 +79,6 @@ class RowProxy extends RowAdv{
 		loadProxy();
 		return proxy==null?-1:proxy.getEndCellIndex();
 	}
-
-	public String asString() {
-		loadProxy();
-		return proxy==null?Integer.toString(index+1):proxy.asString();
-	}
 	
 	public NCellStyle getCellStyle() {
 		return getCellStyle(false);

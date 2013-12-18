@@ -23,6 +23,7 @@ import java.util.Set;
 
 import org.zkoss.zss.ngmodel.ErrorValue;
 import org.zkoss.zss.ngmodel.NCell;
+import org.zkoss.zss.ngmodel.NCellStyle;
 import org.zkoss.zss.ngmodel.NComment;
 import org.zkoss.zss.ngmodel.NHyperlink;
 import org.zkoss.zss.ngmodel.NRichText;
@@ -64,8 +65,9 @@ public abstract class CellAdv implements NCell,LinkedModelObject,Serializable{
 		}
 	}
 	
-	abstract protected void evalFormula();
-	abstract protected Object getValue(boolean valueOfFormula);
+	/*package*/ abstract void evalFormula();
+	/*package*/ abstract Object getValue(boolean valueOfFormula);
+	/*package*/ abstract NCellStyle getCellStyle(boolean local);
 	
 	@Override
 	public Object getValue(){

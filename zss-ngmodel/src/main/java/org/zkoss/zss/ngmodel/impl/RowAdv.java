@@ -20,6 +20,7 @@ import java.io.Serializable;
 import java.util.Iterator;
 
 import org.zkoss.zss.ngmodel.NCell;
+import org.zkoss.zss.ngmodel.NCellStyle;
 import org.zkoss.zss.ngmodel.NRow;
 /**
  * 
@@ -29,6 +30,8 @@ import org.zkoss.zss.ngmodel.NRow;
 public abstract class RowAdv implements NRow,LinkedModelObject,Serializable{
 	private static final long serialVersionUID = 1L;
 
+	/*package*/ abstract NCellStyle getCellStyle(boolean local);
+	
 	/*package*/ abstract CellAdv getCell(int columnIdx, boolean proxy);
 
 	/*package*/ abstract CellAdv getOrCreateCell(int columnIdx);

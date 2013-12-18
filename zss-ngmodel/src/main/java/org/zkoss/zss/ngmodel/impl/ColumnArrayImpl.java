@@ -26,7 +26,7 @@ import org.zkoss.zss.ngmodel.util.Validations;
  * @author dennis
  * @since 3.5.0
  */
-public class ColumnImpl extends ColumnAdv {
+public class ColumnArrayImpl extends ColumnArrayAdv {
 	private static final long serialVersionUID = 1L;
 
 	private SheetAdv sheet;
@@ -35,20 +35,21 @@ public class ColumnImpl extends ColumnAdv {
 	private Integer width;
 	private boolean hidden = false;
 
-	public ColumnImpl(SheetAdv sheet) {
+	int index;
+	int lastIndex;
+	
+	public ColumnArrayImpl(SheetAdv sheet, int index, int lastIndex) {
 		this.sheet = sheet;
+		this.index = index;
+		this.lastIndex = lastIndex;
 	}
 
 	@Override
 	public int getIndex() {
 		checkOrphan();
-		return sheet.getColumnIndex(this);
+		return index;
 	}
 
-	@Override
-	public boolean isNull() {
-		return false;
-	}
 
 	@Override
 	void onModelEvent(ModelInternalEvent event) {
@@ -56,10 +57,6 @@ public class ColumnImpl extends ColumnAdv {
 
 	}
 
-	@Override
-	public String asString() {
-		return CellReference.convertNumToColString(getIndex());
-	}
 
 	@Override
 	public void checkOrphan() {
@@ -123,6 +120,27 @@ public class ColumnImpl extends ColumnAdv {
 	@Override
 	public void setHidden(boolean hidden) {
 		this.hidden = hidden;
+	}
+
+	@Override
+	public int getLastIndex() {
+		return lastIndex;
+	}
+
+	@Override
+	void setIndex(int index) {
+		this.index = index;
+	}
+
+	@Override
+	void setLastIndex(int lastIndex) {
+		this.lastIndex = lastIndex;
+	}
+	
+	public String toString(){
+		StringBuilder sb = new StringBuilder();
+		sb.append(super.toString()).append("[").append(getIndex()).append("-").append(getLastIndex()).append("]");
+		return sb.toString();
 	}
 
 }

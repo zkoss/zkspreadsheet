@@ -20,8 +20,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.zkoss.zss.ngmodel.chart.NChartData;
-
 /**
  * @author dennis
  * @since 3.5.0
@@ -41,7 +39,16 @@ public interface NSheet {
 	public String getSheetName();
 	
 	public Iterator<NRow> getRowIterator();
-	public Iterator<NColumn> getColumnIterator();
+//	public Iterator<NColumn> getColumnIterator();
+	public Iterator<NColumnArray> getColumnArrayIterator();
+	/**
+	 * Set up a column array, if any array overlapped the existed array , it throws IllegalStateException.
+	 * if you setup a column array that is not continue, (for example, 0-2, 5-6), then it will create a continue array automatically.(3-4 in the example) 
+	 * @param colunmIdx
+	 * @param lastColumnIdx
+	 * @return the new created column array
+	 */
+	public NColumnArray setupColumnArray(int index,int lastIndex);	
 	public Iterator<NCell> getCellIterator(int row);
 	
 	public int getDefaultRowHeight();
@@ -53,6 +60,7 @@ public interface NSheet {
 	
 	public NRow getRow(int rowIdx);
 	
+	NColumnArray getColumnArray(int columnIdx);
 	public NColumn getColumn(int columnIdx);
 	
 	public NCell getCell(int rowIdx, int columnIdx);

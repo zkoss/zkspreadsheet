@@ -136,11 +136,6 @@ public class RowImpl extends RowAdv {
 	}
 
 	@Override
-	public String asString() {
-		return String.valueOf(getIndex() + 1);
-	}
-
-	@Override
 	public void checkOrphan() {
 		if (sheet == null) {
 			throw new IllegalStateException("doesn't connect to parent");

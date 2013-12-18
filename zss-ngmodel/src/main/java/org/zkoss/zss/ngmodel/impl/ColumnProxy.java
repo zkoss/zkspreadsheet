@@ -31,19 +31,18 @@ class ColumnProxy extends ColumnAdv {
 	private static final long serialVersionUID = 1L;
 	private final WeakReference<SheetAdv> sheetRef;
 	private final int index;
-	private ColumnAdv proxy;
+	private ColumnArrayAdv proxy;
 
 	public ColumnProxy(SheetAdv sheet, int index) {
 		this.sheetRef = new WeakReference(sheet);
 		this.index = index;
 	}
 
-	protected void loadProxy() {
-		if (proxy == null) {
-			proxy = (ColumnAdv) ((SheetAdv)getSheet()).getColumn(index, false);
-			if (proxy != null) {
-				sheetRef.clear();
-			}
+	protected void loadProxy(boolean split) {
+		if(split){
+			proxy = (ColumnArrayAdv) ((SheetAdv)getSheet()).getOrSplitColumnArray(index);
+		}else if (proxy == null) {
+			proxy = (ColumnArrayAdv) ((SheetAdv)getSheet()).getColumnArray(index);
 		}
 	}
 
@@ -59,21 +58,13 @@ class ColumnProxy extends ColumnAdv {
 
 	@Override
 	public int getIndex() {
-		loadProxy();
-		return proxy == null ? index : proxy.getIndex();
+		return index;
 	}
 
 	@Override
 	public boolean isNull() {
-		loadProxy();
-		return proxy == null ? true : proxy.isNull();
-	}
-
-	@Override
-	public String asString() {
-		loadProxy();
-		return proxy == null ? CellReference.convertNumToColString(getIndex())
-				: proxy.asString();
+		loadProxy(false);
+		return proxy == null ? true : false;
 	}
 
 	@Override
@@ -83,7 +74,7 @@ class ColumnProxy extends ColumnAdv {
 
 	@Override
 	public NCellStyle getCellStyle(boolean local) {
-		loadProxy();
+		loadProxy(false);
 		if (proxy != null) {
 			return proxy.getCellStyle(local);
 		}
@@ -93,10 +84,7 @@ class ColumnProxy extends ColumnAdv {
 	@Override
 	public void setCellStyle(NCellStyle cellStyle) {
 		Validations.argNotNull(cellStyle);
-		loadProxy();
-		if (proxy == null) {
-			proxy = (ColumnAdv)((SheetAdv)getSheet()).getOrCreateColumn(index);
-		}
+		loadProxy(true);
 		proxy.setCellStyle(cellStyle);
 	}
 
@@ -114,7 +102,7 @@ class ColumnProxy extends ColumnAdv {
 
 	@Override
 	public int getWidth() {
-		loadProxy();
+		loadProxy(false);
 		if (proxy != null) {
 			return proxy.getWidth();
 		}
@@ -123,7 +111,7 @@ class ColumnProxy extends ColumnAdv {
 
 	@Override
 	public boolean isHidden() {
-		loadProxy();
+		loadProxy(false);
 		if (proxy != null) {
 			return proxy.isHidden();
 		}
@@ -132,19 +120,13 @@ class ColumnProxy extends ColumnAdv {
 
 	@Override
 	public void setWidth(int width) {
-		loadProxy();
-		if (proxy == null) {
-			proxy = (ColumnAdv)((SheetAdv)getSheet()).getOrCreateColumn(index);
-		}
+		loadProxy(true);
 		proxy.setWidth(width);
 	}
 
 	@Override
 	public void setHidden(boolean hidden) {
-		loadProxy();
-		if (proxy == null) {
-			proxy = (ColumnAdv)((SheetAdv)getSheet()).getOrCreateColumn(index);
-		}
+		loadProxy(true);
 		proxy.setHidden(hidden);
 	}
 }

@@ -64,8 +64,6 @@ public interface NCell extends FormulaContent{
 	
 	public NCellStyle getCellStyle();
 	
-	public NCellStyle getCellStyle(boolean local);
-	
 	public void setCellStyle(NCellStyle cellStyle);
 	
 	public NHyperlink getHyperlink();
