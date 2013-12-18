@@ -2,11 +2,8 @@ package org.zkoss.zss.ngmodel;
 
 import static org.junit.Assert.fail;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
+import java.net.URL;
 
 import org.zkoss.zss.ngapi.NImporter;
 import org.zkoss.zss.ngapi.impl.imexp.*;
@@ -77,4 +74,12 @@ public class ImExpTestUtil {
 		return null;
 	}
 	
+	public static NBook loadBook(URL fileUrl, String bookName) {
+		try {
+			return new ExcelImportFactory().createImporter().imports(fileUrl, bookName);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 }
