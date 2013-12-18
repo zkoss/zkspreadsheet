@@ -42,18 +42,11 @@ public class NExcelXlsExporter extends AbstractExcelExporter {
 		
 		workbook = new HSSFWorkbook();
 		
-		// Sheet
 		for(NSheet sheet : book.getSheets()) {
 			exportSheet(sheet);
 		}
 		
-		// NamedRange
-		for(NName name : book.getNames()) {
-			Name poiName = workbook.createName();
-			poiName.setNameName(name.getName());
-			poiName.setSheetIndex(workbook.getSheetIndex(name.getRefersToSheetName()));
-			poiName.setRefersToFormula(name.getRefersToFormula());
-		}
+		exportNameRange(book);
 		
 		try{
 			

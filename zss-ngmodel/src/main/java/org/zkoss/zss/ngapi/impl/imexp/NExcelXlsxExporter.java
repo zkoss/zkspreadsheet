@@ -66,18 +66,7 @@ public class NExcelXlsxExporter extends AbstractExcelExporter {
 			exportSheet(sheet);
 		}
 		
-		// NamedRange
-		for(NName name : book.getNames()) {
-			Name poiName = workbook.createName();
-			poiName.setNameName(name.getName());
-			poiName.setSheetIndex(workbook.getSheetIndex(name.getRefersToSheetName()));
-			poiName.setRefersToFormula(name.getRefersToFormula());
-			// API not available
-			// name.getRefersToCellRegion()
-			// xssfName.setFunction(value);
-			// xssfName.setComment(comment);
-			// xssfName.setFunctionGroupId(functionGroupId);
-		}
+		exportNameRange(book);
 		
 		try{
 			workbook.write(fos);

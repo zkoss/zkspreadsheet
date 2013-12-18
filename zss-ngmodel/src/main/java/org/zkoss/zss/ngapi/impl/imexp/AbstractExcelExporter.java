@@ -9,16 +9,19 @@ import org.zkoss.poi.ss.usermodel.CellStyle;
 import org.zkoss.poi.ss.usermodel.Color;
 import org.zkoss.poi.ss.usermodel.DataFormat;
 import org.zkoss.poi.ss.usermodel.Font;
+import org.zkoss.poi.ss.usermodel.Name;
 import org.zkoss.poi.ss.usermodel.Row;
 import org.zkoss.poi.ss.usermodel.Sheet;
 import org.zkoss.poi.ss.usermodel.Workbook;
 import org.zkoss.poi.ss.util.CellRangeAddress;
 import org.zkoss.zss.ngmodel.CellRegion;
+import org.zkoss.zss.ngmodel.NBook;
 import org.zkoss.zss.ngmodel.NCell;
 import org.zkoss.zss.ngmodel.NCellStyle;
 import org.zkoss.zss.ngmodel.NColor;
 import org.zkoss.zss.ngmodel.NColumn;
 import org.zkoss.zss.ngmodel.NFont;
+import org.zkoss.zss.ngmodel.NName;
 import org.zkoss.zss.ngmodel.NRow;
 import org.zkoss.zss.ngmodel.NSheet;
 import org.zkoss.zss.ngmodel.NCellStyle.Alignment;
@@ -30,24 +33,46 @@ import org.zkoss.zss.ngmodel.NFont.TypeOffset;
 import org.zkoss.zss.ngmodel.NFont.Underline;
 
 abstract public class AbstractExcelExporter extends AbstractExporter {
-
+	
 	protected Workbook workbook;
 	protected Map<NCellStyle, CellStyle> styleTable = new HashMap<NCellStyle, CellStyle>();
 	protected Map<NFont, Font> fontTable = new HashMap<NFont, Font>();
 	protected Map<NColor, Color> colorTable = new HashMap<NColor, Color>();
 	
+	protected void exportNameRange(NBook book) {
+		
+		// NamedRange
+		for(NName name : book.getNames()) {
+			Name poiName = workbook.createName();
+			poiName.setNameName(name.getName());
+			poiName.setSheetIndex(workbook.getSheetIndex(name.getRefersToSheetName()));
+			poiName.setRefersToFormula(name.getRefersToFormula());
+			// API not available
+			// name.getRefersToCellRegion()
+			// xssfName.setFunction(value);
+			// xssfName.setComment(comment);
+			// xssfName.setFunctionGroupId(functionGroupId);
+		}
+	}
+	
 	protected void exportSheet(NSheet sheet) {
 		Sheet poiSheet = workbook.createSheet(sheet.getSheetName());
 		
 		// Merge
-		for(CellRegion region : sheet.getMergedRegions()) {
+//		for(CellRegion region : sheet.getMergedRegions()) {
+//			poiSheet.addMergedRegion(new CellRangeAddress(region.row, region.lastRow, region.column, region.lastColumn));
+//		}
+		
+		// consistent with importer, read from last merged region
+		for(int i = sheet.getNumOfMergedRegion() - 1; i >= 0; i--) {
+			CellRegion region = sheet.getMergedRegion(i);
 			poiSheet.addMergedRegion(new CellRangeAddress(region.row, region.lastRow, region.column, region.lastColumn));
 		}
 		
 		// refer to BookHelper#setFreezePanel
 		int freezeRow = sheet.getViewInfo().getNumOfRowFreeze();
 		int freezeCol = sheet.getViewInfo().getNumOfColumnFreeze();
-		poiSheet.createFreezePane(freezeRow <= 0 ? 0 : freezeRow, freezeCol <= 0 ? 0 : freezeCol);
+		poiSheet.createFreezePane(freezeCol <= 0 ? 0 : freezeCol, freezeRow <= 0 ? 0 : freezeRow);
 		
 		// grid
 		poiSheet.setDisplayGridlines(sheet.getViewInfo().isDisplayGridline());
@@ -67,7 +92,7 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 		
 		// FIXME doesn't know correct or wrong.
 		// How to convert px into column width?
-		poiSheet.setDefaultColumnWidth((int)XUtils.pxToScreenChar1(sheet.getDefaultColumnWidth(), 8));
+		poiSheet.setDefaultColumnWidth((int)XUtils.pxToScreenChar1(sheet.getDefaultColumnWidth(), AbstractExcelImporter.CHRACTER_WIDTH));
 		
 		// TODO, API isn't available 
 		//xssfSheet.setActiveCell(cellRef);
@@ -99,13 +124,14 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 		int colIndex = column.getIndex();
 		
 		boolean hidden = column.isHidden();
-		if(hidden) {
+		if(column.isHidden()) {
 			// hidden
+			poiSheet.setColumnWidth(column.getIndex(), 0);
 			poiSheet.setColumnHidden(column.getIndex(), true);
 		} else {
 			// not hidden, calculate width
 			// refer from RangeImpl#setColumnWidth
-			int columnWidthChar256 = XUtils.pxToFileChar256(column.getWidth(), 8);
+			int columnWidthChar256 = XUtils.pxToFileChar256(column.getWidth(), AbstractExcelImporter.CHRACTER_WIDTH);
 			// refer from BookHelper#setColumnWidth
 			final int orgChar256 = poiSheet.getColumnWidth(colIndex);
 			if (columnWidthChar256 != orgChar256) {
@@ -214,7 +240,7 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 		BookHelper.setTopBorderColor(poiCellStyle, toPOIColor(cellStyle.getBorderTopColor()));
 		
 		/* Fill Foreground Color */
-		BookHelper.setFillForegroundColor(poiCellStyle, toPOIColor(cellStyle.getBorderTopColor()));
+		BookHelper.setFillForegroundColor(poiCellStyle, toPOIColor(cellStyle.getFillColor()));
 		
 		poiCellStyle.setFillPattern(toPOIFillPattern(cellStyle.getFillPattern()));
 		poiCellStyle.setAlignment(toPOIAlignment(cellStyle.getAlignment()));
