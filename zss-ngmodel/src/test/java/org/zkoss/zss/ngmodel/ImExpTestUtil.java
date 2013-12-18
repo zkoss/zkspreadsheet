@@ -30,7 +30,7 @@ public class ImExpTestUtil {
 	
 	public static File writeBookToFile(NBook book, File outFile) {
 		try {
-			outFile = new File("./target/" + exportFileName);
+			outFile = new File("./target/" + outFile.getName());
 			outFile.createNewFile();
 			xlsxExporter.export(book, outFile);
 		} catch (Exception e) {
