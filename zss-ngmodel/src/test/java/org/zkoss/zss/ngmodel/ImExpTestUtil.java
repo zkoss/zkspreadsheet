@@ -18,7 +18,6 @@ public class ImExpTestUtil {
 	
 	static private String impoortFileName = "import.xlsx";
 	static private String exportFileName = "exported.xlsx";
-	static private NExcelXlsxExporter xlsxExporter = (NExcelXlsxExporter) new ExcelExportFactory(ExcelExportFactory.Type.XLSX).createExporter();
 	
 	public static File write(NBook book) {
 		return writeBookToFile(book, new File("./target/" + exportFileName));
@@ -32,6 +31,7 @@ public class ImExpTestUtil {
 		try {
 			outFile = new File("./target/" + outFile.getName());
 			outFile.createNewFile();
+			NExcelXlsxExporter xlsxExporter = (NExcelXlsxExporter) new ExcelExportFactory(ExcelExportFactory.Type.XLSX).createExporter();
 			xlsxExporter.export(book, outFile);
 		} catch (Exception e) {
 			e.printStackTrace();
