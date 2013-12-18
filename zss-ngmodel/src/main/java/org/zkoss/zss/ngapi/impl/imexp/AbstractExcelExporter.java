@@ -4,6 +4,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCol;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCols;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
 import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.poi.ss.usermodel.CellStyle;
 import org.zkoss.poi.ss.usermodel.Color;
@@ -14,12 +17,14 @@ import org.zkoss.poi.ss.usermodel.Row;
 import org.zkoss.poi.ss.usermodel.Sheet;
 import org.zkoss.poi.ss.usermodel.Workbook;
 import org.zkoss.poi.ss.util.CellRangeAddress;
+import org.zkoss.poi.xssf.usermodel.XSSFSheet;
 import org.zkoss.zss.ngmodel.CellRegion;
 import org.zkoss.zss.ngmodel.NBook;
 import org.zkoss.zss.ngmodel.NCell;
 import org.zkoss.zss.ngmodel.NCellStyle;
 import org.zkoss.zss.ngmodel.NColor;
 import org.zkoss.zss.ngmodel.NColumn;
+import org.zkoss.zss.ngmodel.NColumnArray;
 import org.zkoss.zss.ngmodel.NFont;
 import org.zkoss.zss.ngmodel.NName;
 import org.zkoss.zss.ngmodel.NRow;
@@ -112,34 +117,57 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 		} 
 		
 		// column iterator
-		Iterator<NColumn> coliter = sheet.getColumnIterator();
-		while(coliter.hasNext()) {
-			NColumn column = coliter.next();
-			exportColumn(sheet, poiSheet, column);
+		Iterator<NColumnArray> colArrIter = sheet.getColumnArrayIterator();
+		while(colArrIter.hasNext()) {
+			NColumnArray columnArr = colArrIter.next();
+			exportColumnArray(sheet, (XSSFSheet)poiSheet, columnArr);
 		}
+		
+//		Iterator<NColumn> coliter = sheet.getColumnIterator();
+//		while(coliter.hasNext()) {
+//			NColumn column = coliter.next();
+//			exportColumn(sheet, poiSheet, column);
+//		}
 	}
 	
-	protected void exportColumn(NSheet sheet, Sheet poiSheet, NColumn column) {
+	protected void exportColumnArray(NSheet sheet, XSSFSheet poiSheet, NColumnArray columnArr) {
 		
-		int colIndex = column.getIndex();
+//		CTWorksheet worksheet = poiSheet.getCTWorksheet();
+//		if(worksheet.sizeOfColsArray() == 0) {
+//			worksheet.addNewCols();
+//    	}
+//        CTCol col = worksheet.getColsArray(0).addNewCol();
+//        col.setMin(columnArr.getIndex());
+//        col.setMax(columnArr.getLastIndex());
+//        col.setWidth(XUtils.pxToFileChar256(columnArr.getWidth(), AbstractExcelImporter.CHRACTER_WIDTH));
+//        col.setHidden(columnArr.isHidden());
 		
-		boolean hidden = column.isHidden();
-		if(column.isHidden()) {
-			// hidden
-			poiSheet.setColumnWidth(column.getIndex(), 0);
-			poiSheet.setColumnHidden(column.getIndex(), true);
-		} else {
-			// not hidden, calculate width
-			// refer from RangeImpl#setColumnWidth
-			int columnWidthChar256 = XUtils.pxToFileChar256(column.getWidth(), AbstractExcelImporter.CHRACTER_WIDTH);
-			// refer from BookHelper#setColumnWidth
-			final int orgChar256 = poiSheet.getColumnWidth(colIndex);
-			if (columnWidthChar256 != orgChar256) {
-				poiSheet.setColumnWidth(colIndex, columnWidthChar256);
-			}
-		}
-		
-		poiSheet.setDefaultColumnStyle(column.getIndex(), toPOICellStyle(column.getCellStyle()));
+		// FIXME, Need further confirm
+		poiSheet.setColumnWidth(columnArr.getIndex(), XUtils.pxToFileChar256(columnArr.getWidth(), AbstractExcelImporter.CHRACTER_WIDTH));
+		poiSheet.setColumnHidden(columnArr.getIndex(), columnArr.isHidden());
+        poiSheet.setDefaultColumnStyle(columnArr.getIndex(), toPOICellStyle(columnArr.getCellStyle()));
+        
+//        col.setStyle(arg0);
+//        
+//		int colIndex = column.getIndex();
+//		
+//		boolean hidden = column.isHidden();
+//		if(column.isHidden()) {
+//			// hidden
+//			poiSheet.setColumnWidth(column.getIndex(), 0);
+//			poiSheet.setColumnHidden(column.getIndex(), true);
+//		} else {
+//			// not hidden, calculate width
+//			// refer from RangeImpl#setColumnWidth
+//			int columnWidthChar256 = XUtils.pxToFileChar256(column.getWidth(), AbstractExcelImporter.CHRACTER_WIDTH);
+//			// refer from BookHelper#setColumnWidth
+//			final int orgChar256 = poiSheet.getColumnWidth(colIndex);
+//			if (columnWidthChar256 != orgChar256) {
+//				poiSheet.setColumnWidth(colIndex, columnWidthChar256);
+//			}
+//		}
+//		
+//		poiSheet.setDefaultColumnStyle(column.getIndex(), toPOICellStyle(column.getCellStyle()));
 	}
 
 	protected void exportRow(NSheet sheet, Sheet poiSheet, NRow row) {
