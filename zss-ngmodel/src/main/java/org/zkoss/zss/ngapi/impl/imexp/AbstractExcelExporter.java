@@ -1,37 +1,19 @@
 package org.zkoss.zss.ngapi.impl.imexp;
 
-import java.io.IOException;
-import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.zkoss.poi.hssf.record.FullColorExt;
-import org.zkoss.poi.hssf.record.XFExtRecord;
-import org.zkoss.poi.hssf.usermodel.HSSFCellStyle;
-import org.zkoss.poi.hssf.usermodel.HSSFPalette;
-import org.zkoss.poi.hssf.usermodel.HSSFWorkbook;
-import org.zkoss.poi.hssf.util.HSSFColor;
-import org.zkoss.poi.hssf.util.HSSFColorExt;
-import org.zkoss.poi.ss.usermodel.BorderStyle;
 import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.poi.ss.usermodel.CellStyle;
 import org.zkoss.poi.ss.usermodel.Color;
 import org.zkoss.poi.ss.usermodel.DataFormat;
-import org.zkoss.poi.ss.usermodel.FillPatternType;
 import org.zkoss.poi.ss.usermodel.Font;
-import org.zkoss.poi.ss.usermodel.HorizontalAlignment;
 import org.zkoss.poi.ss.usermodel.Row;
 import org.zkoss.poi.ss.usermodel.Sheet;
 import org.zkoss.poi.ss.usermodel.Workbook;
 import org.zkoss.poi.ss.util.CellRangeAddress;
-import org.zkoss.poi.xssf.usermodel.XSSFCellStyle;
-import org.zkoss.poi.xssf.usermodel.XSSFColor;
-import org.zkoss.poi.xssf.usermodel.XSSFDataFormat;
-import org.zkoss.poi.xssf.usermodel.XSSFFont;
-import org.zkoss.poi.xssf.usermodel.XSSFWorkbook;
 import org.zkoss.zss.ngmodel.CellRegion;
-import org.zkoss.zss.ngmodel.NBook;
 import org.zkoss.zss.ngmodel.NCell;
 import org.zkoss.zss.ngmodel.NCellStyle;
 import org.zkoss.zss.ngmodel.NColor;
