@@ -58,9 +58,8 @@ public class SheetImpl extends SheetAdv {
 	
 	private final BiIndexPool<RowAdv> rows = new BiIndexPool<RowAdv>();
 //	private final BiIndexPool<ColumnAdv> columns = new BiIndexPool<ColumnAdv>();
-//	private final List<ColumnArrayAdv> columnArrays = new LinkedList<ColumnArrayAdv>();
-	private final TreeMap<Integer,ColumnArrayAdv> columnArrayFirst = new TreeMap<Integer,ColumnArrayAdv>();
-	private final TreeMap<Integer,ColumnArrayAdv> columnArrayLast = new TreeMap<Integer,ColumnArrayAdv>();
+	private final ColumnArrayPool columnArrays = new ColumnArrayPool();
+	
 	
 	private final List<PictureAdv> pictures = new LinkedList<PictureAdv>();
 	private final List<ChartAdv> charts = new LinkedList<ChartAdv>();
@@ -140,10 +139,10 @@ public class SheetImpl extends SheetAdv {
 	}
 	@Override
 	public NColumnArray getColumnArray(int columnIdx) {
-		if(columnArrayLast.size()<=0 || columnIdx>columnArrayLast.lastKey()){
+		if(columnArrays.hasLastKey(columnIdx)){
 			return null;
 		}
-		SortedMap<Integer, ColumnArrayAdv> submap = columnArrayLast.subMap(columnIdx, true, columnArrayLast.lastKey(),true);
+		SortedMap<Integer, ColumnArrayAdv> submap = columnArrays.lastSubMap(columnIdx);
 		
 		return submap.size()>0?submap.get(submap.firstKey()):null;
 	}
@@ -162,10 +161,10 @@ public class SheetImpl extends SheetAdv {
 		
 		ColumnArrayAdv prev = null;
 		System.out.println(">>>>>>>>>>>>>>>>");
-		for(ColumnArrayAdv array:columnArrayLast.values()){
+		for(ColumnArrayAdv array:columnArrays.values()){
 			System.out.println(">>>>"+array.getIndex()+":"+array.getLastIndex());
 		}
-		for(ColumnArrayAdv array:columnArrayLast.values()){
+		for(ColumnArrayAdv array:columnArrays.values()){
 			//check the existed data
 			if(prev==null){
 				if(array.getIndex()!=0){
@@ -190,29 +189,24 @@ public class SheetImpl extends SheetAdv {
 		int start1,end1;
 		start1 = end1 = -1;
 		
-		SortedMap overlap = columnArrayFirst.size()==0?null:columnArrayFirst.subMap(index, true, lastIndex,true); 
-		if(overlap!=null && overlap.size()>0){
-			throw new IllegalStateException("Can't setup an overlapped column array "+index+","+lastIndex +" overlppaed "+overlap.get(overlap.firstKey()));
-		}
-		overlap = columnArrayLast.size()==0?null:columnArrayLast.subMap(index, true, lastIndex, true); 
-		if(overlap!=null && overlap.size()>0){
-			throw new IllegalStateException("Can't setup an overlapped column array "+index+","+lastIndex +" overlppaed "+overlap.get(overlap.firstKey()));
+		ColumnArrayAdv ov = columnArrays.overlap(index,lastIndex); 
+		if(ov!=null){
+			throw new IllegalStateException("Can't setup an overlapped column array "+index+","+lastIndex +" overlppaed "+ov);
 		}
 		
-		if(columnArrayLast.size()>0){
-			start1 = columnArrayLast.lastKey()+1;
+		
+		if(columnArrays.size()>0){
+			start1 = columnArrays.lastLastKey()+1;
 		}
 		
 		end1 = index-1;
 		ColumnArrayAdv array;
 		if(start1<=end1 && end1>-1){
 			array = new ColumnArrayImpl(this, start1, end1);
-			columnArrayFirst.put(array.getIndex(),array);
-			columnArrayLast.put(array.getLastIndex(),array);
+			columnArrays.put(array);
 		}
 		array = new ColumnArrayImpl(this, index, lastIndex);
-		columnArrayFirst.put(array.getIndex(),array);
-		columnArrayLast.put(array.getLastIndex(),array);
+		columnArrays.put(array);
 		
 		checkColumnArrayStatus();
 		return array;
@@ -230,11 +224,11 @@ public class SheetImpl extends SheetAdv {
 		start1 = end1 = start2 = end2 = -1;
 		
 		if(contains==null){
-			if(columnArrayFirst.size()==0){//no data
+			if(columnArrays.size()==0){//no data
 				start1 = 0;
 				end1 = columnIdx-1;
 			}else{//out of existed array
-				start1 = columnArrayLast.lastKey()+1;
+				start1 = columnArrays.lastLastKey()+1;
 				end1 = columnIdx-1;
 			}
 		}else{
@@ -254,14 +248,12 @@ public class SheetImpl extends SheetAdv {
 		ColumnArrayAdv array = null;
 		ColumnArrayAdv prev = null;
 		if(contains!=null){
-			columnArrayFirst.remove(contains.getIndex());
-			columnArrayLast.remove(contains.getLastIndex());
+			columnArrays.remove(contains);
 		}
 		//
 		if(start2<=end2 && end2>-1){
 			prev =new ColumnArrayImpl(this, start2, end2);
-			columnArrayFirst.put(prev.getIndex(),prev);
-			columnArrayLast.put(prev.getLastIndex(),prev);
+			columnArrays.put(prev);
 			if(contains!=null){
 				prev.setCellStyle(contains.getCellStyle());
 				prev.setHidden(contains.isHidden());
@@ -270,9 +262,7 @@ public class SheetImpl extends SheetAdv {
 		}
 		
 		array = new ColumnArrayImpl(this, columnIdx, columnIdx);
-		columnArrayFirst.put(array.getIndex(),array);
-		columnArrayLast.put(array.getLastIndex(),array);
-		
+		columnArrays.put(array);
 		if(contains!=null){
 			array.setCellStyle(contains.getCellStyle());
 			array.setHidden(contains.isHidden());
@@ -281,8 +271,7 @@ public class SheetImpl extends SheetAdv {
 		
 		if(start1<=end1 && end1>-1){
 			prev =new ColumnArrayImpl(this, start1, end1);
-			columnArrayFirst.put(prev.getIndex(),prev);
-			columnArrayLast.put(prev.getLastIndex(),prev);
+			columnArrays.put(prev);
 			if(contains!=null){
 				prev.setCellStyle(contains.getCellStyle());
 				prev.setHidden(contains.isHidden());
@@ -326,11 +315,11 @@ public class SheetImpl extends SheetAdv {
 	}
 	
 	public int getStartColumnIndex() {
-		return columnArrayFirst.size()>0?columnArrayFirst.firstKey():-1;
+		return columnArrays.size()>0?columnArrays.firstFirstKey():-1;
 	}
 
 	public int getEndColumnIndex() {
-		return columnArrayLast.size()>0?columnArrayLast.lastKey():-1;
+		return columnArrays.size()>0?columnArrays.lastLastKey():-1;
 	}
 
 	public int getStartCellIndex(int row) {
@@ -358,7 +347,7 @@ public class SheetImpl extends SheetAdv {
 		for(RowAdv row:rows.values()){
 			row.onModelEvent(event);
 		}
-		for(ColumnArrayAdv column:columnArrayFirst.values()){
+		for(ColumnArrayAdv column:columnArrays.values()){
 			column.onModelEvent(event);
 		}
 		//TODO to other object
@@ -600,13 +589,13 @@ public class SheetImpl extends SheetAdv {
 		int start1,end1,start2,end2;
 		start1 = end1 = start2 = end2 = -1;
 		
-		if(columnArrayLast.size()==0 || columnIdx > columnArrayLast.lastKey()){//no data
+		if(columnArrays.hasLastKey(columnIdx)){//no data
 			return;
 		}
 		
 		List<ColumnArrayAdv> shift = new LinkedList<ColumnArrayAdv>();
 		
-		for(ColumnArrayAdv array:columnArrayLast.subMap(columnIdx, true, columnArrayLast.lastKey(), true).values()){
+		for(ColumnArrayAdv array:columnArrays.lastSubMap(columnIdx).values()){
 			if(array.getIndex()<=columnIdx && array.getLastIndex()>=columnIdx){
 				contains = array;
 			}
@@ -615,14 +604,12 @@ public class SheetImpl extends SheetAdv {
 			}
 		}
 		for(ColumnArrayAdv array:shift){
-			columnArrayFirst.remove(array.getIndex());
-			columnArrayLast.remove(array.getLastIndex());
+			columnArrays.remove(array);
 			
 			array.setIndex(array.getIndex()+size);
 			array.setLastIndex(array.getLastIndex()+size);
 			
-			columnArrayFirst.put(array.getIndex(),array);
-			columnArrayLast.put(array.getLastIndex(),array);
+			columnArrays.put(array);
 		}
 		
 		if(contains==null){//doesn't need to do anything
@@ -642,13 +629,11 @@ public class SheetImpl extends SheetAdv {
 		ColumnArrayAdv array = null;
 		ColumnArrayAdv prev = null;
 		
-		columnArrayFirst.remove(contains.getIndex());
-		columnArrayLast.remove(contains.getLastIndex());
+		columnArrays.remove(contains);
 		//
 		if(start2<=end2 && end2>-1){
 			prev =new ColumnArrayImpl(this, start2, end2);
-			columnArrayFirst.put(prev.getIndex(),prev);
-			columnArrayLast.put(prev.getLastIndex(),prev);
+			columnArrays.put(prev);
 			if(contains!=null){
 				prev.setCellStyle(contains.getCellStyle());
 				prev.setHidden(contains.isHidden());
@@ -657,14 +642,12 @@ public class SheetImpl extends SheetAdv {
 		}
 		
 		array = new ColumnArrayImpl(this, columnIdx, columnIdx+size-1);
-		columnArrayFirst.put(array.getIndex(),array);
-		columnArrayLast.put(array.getLastIndex(),array);
+		columnArrays.put(array);
 		//don't need to copy the property from contains to new inserted array, keep it default.
 		
 		if(start1<=end1 && end1>-1){
 			prev =new ColumnArrayImpl(this, start1, end1);
-			columnArrayFirst.put(prev.getIndex(),prev);
-			columnArrayLast.put(prev.getLastIndex(),prev);
+			columnArrays.put(prev);
 			if(contains!=null){
 				prev.setCellStyle(contains.getCellStyle());
 				prev.setHidden(contains.isHidden());
@@ -692,7 +675,7 @@ public class SheetImpl extends SheetAdv {
 	
 	private void deleteAndShrinkColumnArray(int columnIdx,int size){
 
-		if(columnArrayLast.size()==0 || columnIdx > columnArrayLast.lastKey()){//no data
+		if(columnArrays.hasLastKey(columnIdx)){//no data
 			return;
 		}
 		
@@ -703,7 +686,7 @@ public class SheetImpl extends SheetAdv {
 		List<ColumnArrayAdv> right = new LinkedList<ColumnArrayAdv>();
 		
 		int lastColumnIdx = columnIdx+size-1;
-		for(ColumnArrayAdv array:columnArrayLast.subMap(columnIdx, true, columnArrayLast.lastKey(), true).values()){
+		for(ColumnArrayAdv array:columnArrays.lastSubMap(columnIdx).values()){
 			int arrIdx = array.getIndex();
 			int arrLastIdx = array.getLastIndex();
 			if(arrIdx<columnIdx && arrLastIdx > lastColumnIdx){//array large and contain delete column
@@ -722,41 +705,35 @@ public class SheetImpl extends SheetAdv {
 			
 		}
 		for(ColumnArrayAdv array:contains){
-			columnArrayLast.remove(array.getLastIndex());
+			columnArrays.remove(array);
 			array.setLastIndex(array.getLastIndex()-size);
-			columnArrayLast.put(array.getLastIndex(),array);
+			columnArrays.put(array);
 		}
 		for(ColumnArrayAdv array:leftOver){
-			columnArrayLast.remove(array.getLastIndex());
+			columnArrays.remove(array);
 			array.setLastIndex(columnIdx-1);//shrink trail
-			columnArrayLast.put(array.getLastIndex(),array);
+			columnArrays.put(array);
 		}
 		for(ColumnArrayAdv array:remove){
-			columnArrayFirst.remove(array.getIndex());
-			columnArrayLast.remove(array.getLastIndex());
+			columnArrays.remove(array);
 		}
 		for(ColumnArrayAdv array:rightOver){
 			int arrIdx = array.getIndex();
 			int arrLastIdx = array.getLastIndex();
 			
-			columnArrayFirst.remove(array.getIndex());
-			columnArrayLast.remove(array.getLastIndex());
+			columnArrays.remove(array);
 			array.setIndex(columnIdx);//shrink head and move trail
 			array.setLastIndex(columnIdx + arrLastIdx-lastColumnIdx -1); 
-			columnArrayFirst.put(array.getIndex(),array);
-			columnArrayLast.put(array.getLastIndex(),array);
-			
+			columnArrays.put(array);
 		}
 		for(ColumnArrayAdv array:right){
 			int arrIdx = array.getIndex();
 			int arrLastIdx = array.getLastIndex();
 			
-			columnArrayFirst.remove(array.getIndex());
-			columnArrayLast.remove(array.getLastIndex());
+			columnArrays.remove(array);
 			array.setIndex(arrIdx-size);//shrink head and move trail
 			array.setLastIndex(arrLastIdx-size); 
-			columnArrayFirst.put(array.getIndex(),array);
-			columnArrayLast.put(array.getLastIndex(),array);
+			columnArrays.put(array);
 		}	
 
 		checkColumnArrayStatus();
@@ -771,20 +748,22 @@ public class SheetImpl extends SheetAdv {
 	@Override
 	public void destroy(){
 		checkOrphan();
-		for(ColumnArrayAdv column:columnArrayFirst.values()){
+		for(ColumnArrayAdv column:columnArrays.values()){
 			column.destroy();
 		}
-		columnArrayFirst.clear();
-		columnArrayLast.clear();
+		columnArrays.clear();
 		for(RowAdv row:rows.values()){
 			row.destroy();
 		}
+		rows.clear();
 		for(ChartAdv chart:charts){
 			chart.destroy();
 		}
+		charts.clear();
 		for(PictureAdv picture:pictures){
 			picture.destroy();
 		}
+		pictures.clear();
 		book = null;
 		//TODO all 
 		
@@ -910,7 +889,7 @@ public class SheetImpl extends SheetAdv {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public Iterator<NColumnArray> getColumnArrayIterator() {
-		return Collections.unmodifiableCollection((Collection)columnArrayLast.values()).iterator();
+		return Collections.unmodifiableCollection((Collection)columnArrays.values()).iterator();
 	}
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })

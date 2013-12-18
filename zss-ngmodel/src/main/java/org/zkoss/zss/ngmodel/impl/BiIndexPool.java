@@ -132,6 +132,11 @@ import java.util.TreeMap;
 	public Collection<T> subValues(int start,int end){
 		return objs.subMap(start, true, end, true).values();
 	}
+
+	public void clear() {
+		objs.clear();
+		objsReverse.clear();
+	}
 	
 	
 }
