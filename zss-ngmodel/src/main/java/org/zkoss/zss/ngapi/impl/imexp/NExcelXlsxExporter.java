@@ -36,406 +36,149 @@ import org.zkoss.zss.ngmodel.NFont.Underline;
  * @author dennis, kuro
  * @since 3.5.0
  */
-public class NExcelXlsxExporter extends AbstractExporter{
+public class NExcelXlsxExporter extends AbstractExcelExporter {
 	
-	private XSSFWorkbook workbook;
-	private Map<NCellStyle, XSSFCellStyle> styleTable = new HashMap<NCellStyle, XSSFCellStyle>();
-	private Map<NFont, XSSFFont> fontTable = new HashMap<NFont, XSSFFont>();
-	private Map<NColor, XSSFColor> colorTable = new HashMap<NColor, XSSFColor>();
+//	private XSSFWorkbook workbook;
+//	private Map<NCellStyle, XSSFCellStyle> styleTable = new HashMap<NCellStyle, XSSFCellStyle>();
+//	private Map<NFont, XSSFFont> fontTable = new HashMap<NFont, XSSFFont>();
+//	private Map<NColor, XSSFColor> colorTable = new HashMap<NColor, XSSFColor>();
 	
 	@Override
 	public void export(NBook book, OutputStream fos) throws IOException {
 		ReadWriteLock lock = book.getBookSeries().getLock();
-		lock.writeLock().lock();
+		lock.readLock().lock();
 		
-		try{
-			workbook = new XSSFWorkbook();
-			
-			// TODO, API isn't available 
-			//workbook.setActiveSheet(index);
-			//workbook.setFirstVisibleTab(index);
-			//workbook.setForceFormulaRecalculation(value);
-			//workbook.setHidden(hiddenFlag);
-			//workbook.setMissingCellPolicy(missingCellPolicy);
-			//workbook.setPrintArea(sheetIndex, reference);
-			//workbook.setSelectedTab(index);
-			//workbook.setSheetHidden(sheetIx, hidden);
-			//workbook.setSheetName(sheetIndex, sheetname);
-			//workbook.setSheetOrder(sheetname, pos);
-			
-			for(NSheet sheet : book.getSheets()) {
-				exportSheet(sheet);
-			}
-			
-			workbook.write(fos);
-		} finally {
-			lock.writeLock().unlock();
-		}
-	}
-
-	private void exportSheet(NSheet sheet) {
-		XSSFSheet xssfSheet = workbook.createSheet(sheet.getSheetName());
-		
-		// Merge
-		for(CellRegion region : sheet.getMergedRegions()) {
-			xssfSheet.addMergedRegion(new CellRangeAddress(region.row, region.lastRow, region.column, region.lastColumn));
-		}
-		
-		// TODO charts & picture
-//				sheet.getCharts();
-//				sheet.getPictures();
-		
-		// FIXME doesn't know correct or wrong.
-		// refer from Spreadsheet#setRowHeight
-		xssfSheet.setDefaultRowHeight((short)XUtils.pxToTwip(sheet.getDefaultRowHeight()));
-		
-		// FIXME doesn't know correct or wrong.
-		// How to convert px into column width?
-		xssfSheet.setDefaultColumnWidth((int)XUtils.pxToScreenChar1(sheet.getDefaultColumnWidth(), 8));
+		workbook = new XSSFWorkbook();
 		
 		// TODO, API isn't available 
-		//xssfSheet.setActiveCell(cellRef);
-		//xssfSheet.setArrayFormula(formula, range);
-		//xssfSheet.setAutobreaks(value);
-		//xssfSheet.setAutoFilter(range); // FIXME AutoFilter
-		//xssfSheet.setAutoFilterMode(b);
-		//xssfSheet.setColumnBreak(column);
-		//xssfSheet.setColumnGroupCollapsed(columnNumber, collapsed);
-		//xssfSheet.setZoom(scale);
+		//workbook.setActiveSheet(index);
+		//workbook.setFirstVisibleTab(index);
+		//workbook.setForceFormulaRecalculation(value);
+		//workbook.setHidden(hiddenFlag);
+		//workbook.setMissingCellPolicy(missingCellPolicy);
+		//workbook.setPrintArea(sheetIndex, reference);
+		//workbook.setSelectedTab(index);
+		//workbook.setSheetHidden(sheetIx, hidden);
+		//workbook.setSheetName(sheetIndex, sheetname);
+		//workbook.setSheetOrder(sheetname, pos);
 		
+		for(NSheet sheet : book.getSheets()) {
+			exportSheet(sheet);
+		}
 		
-		// row iterator
-		Iterator<NRow> rowIterator = sheet.getRowIterator();
-		while(rowIterator.hasNext()) {
-			NRow row = rowIterator.next();
-			exportRow(sheet, xssfSheet, row);
-		} 
+		// NamedRange
+		for(NName name : book.getNames()) {
+			Name poiName = workbook.createName();
+			poiName.setNameName(name.getName());
+			poiName.setSheetIndex(workbook.getSheetIndex(name.getRefersToSheetName()));
+			poiName.setRefersToFormula(name.getRefersToFormula());
+			// API not available
+			// name.getRefersToCellRegion()
+			// xssfName.setFunction(value);
+			// xssfName.setComment(comment);
+			// xssfName.setFunctionGroupId(functionGroupId);
+		}
 		
-		// column iterator
-		Iterator<NColumn> coliter = sheet.getColumnIterator();
-		while(coliter.hasNext()) {
-			NColumn column = coliter.next();
-			int colIndex = column.getIndex();
+		try{
+			workbook.write(fos);
 			
-			// refer from RangeImpl#setColumnWidth
-			int columnWidthChar256 = XUtils.pxToFileChar256(column.getWidth(), 8);
-			// refer from BookHelper#setColumnWidth
-			final int orgChar256 = xssfSheet.getColumnWidth(colIndex);
-			if (columnWidthChar256 != orgChar256) {
-				xssfSheet.setColumnWidth(colIndex, columnWidthChar256);
-			}
-
-			xssfSheet.setColumnHidden(column.getIndex(), column.isHidden());
-			xssfSheet.setDefaultColumnStyle(column.getIndex(), toXSSFCellStyle(column.getCellStyle()));
+		} finally {
+			lock.readLock().unlock();
 		}
 	}
-
-	private void exportRow(NSheet sheet, XSSFSheet xssfSheet, NRow row) {
-		XSSFRow xssfRow = xssfSheet.createRow(row.getIndex());
-		
-		if(row.getHeight() != sheet.getDefaultRowHeight()) {
-			xssfRow.setCustomHeight(true);
-			xssfRow.setHeight((short)XUtils.pxToTwip(row.getHeight()));
-		}
-		
-		NCellStyle rowStyle = row.getCellStyle();
-		XSSFCellStyle xssfRowStyle = toXSSFCellStyle(rowStyle);
-		xssfRow.setRowStyle(xssfRowStyle);
-		
-		Iterator<NCell> celliter = sheet.getCellIterator(row.getIndex());
-		while(celliter.hasNext()) {
-			NCell cell = celliter.next();
-			exportCell(xssfRow, cell);
-		}
-	}
-
-	private void exportCell(XSSFRow xssfRow, NCell cell) {
-		XSSFCell xssfCell = xssfRow.createCell(cell.getColumnIndex());
-		
-		NCellStyle cellStyle = cell.getCellStyle();
-
-		xssfCell.setCellStyle(toXSSFCellStyle(cellStyle));
-		
-		// Hyperlink
-//						NHyperlink hyperlink = null;
-//						if((hyperlink = cell.getHyperlink()) != null) {
-//							XSSFHyperlink xssfLink = xssfSheet.getHyperlink(cell.getRowIndex(), cell.getColumnIndex());
-//							xssfLink.setAddress(hyperlink.getAddress());
-//							xssfLink.setLabel(hyperlink.getLabel());
-//							// TODO, some API isn't available.
-//						}
-		
-		switch(cell.getType()) {
-			case BLANK:
-				xssfCell.setCellType(Cell.CELL_TYPE_BLANK);
-				break;
-			case ERROR:
-				xssfCell.setCellType(Cell.CELL_TYPE_ERROR);
-				xssfCell.setCellErrorValue(cell.getErrorValue().getCode());
-				break;
-			case BOOLEAN:
-				xssfCell.setCellType(Cell.CELL_TYPE_BOOLEAN);
-				xssfCell.setCellValue(cell.getBooleanValue());
-				break;
-			case FORMULA:
-				xssfCell.setCellType(Cell.CELL_TYPE_FORMULA);
-				xssfCell.setCellFormula(cell.getFormulaValue());
-				break;
-			case NUMBER:
-				xssfCell.setCellType(Cell.CELL_TYPE_NUMERIC);
-				xssfCell.setCellValue((Double)cell.getNumberValue());
-				break;
-			case STRING:
-				xssfCell.setCellType(Cell.CELL_TYPE_STRING);
-				xssfCell.setCellValue(cell.getStringValue());
-				break;
-			default:
-		}
-	}
-
+	
 	/**
 	 * Utility to adapt ZSS 3.5 cell style into XSSFCellStyle
 	 * @param cellStyle
 	 * @return a XSSFCellStyle Object
 	 */
-	private XSSFCellStyle toXSSFCellStyle(NCellStyle cellStyle) {
-		
-		// instead of creating a new style, use old one if exist
-		XSSFCellStyle xssfCellStyle = styleTable.get(cellStyle);
-		if(xssfCellStyle != null) {
-			return xssfCellStyle;
-		}
-		
-		xssfCellStyle = workbook.createCellStyle();
-		
-		xssfCellStyle.setAlignment(toPOIAlignment(cellStyle.getAlignment()));
-		
-		/* Bottom Border */
-		xssfCellStyle.setBorderBottom(toPOIBorderType(cellStyle.getBorderBottom()));
-		xssfCellStyle.setBottomBorderColor(toXSSFColor(cellStyle.getBorderBottomColor()));
-		
-		/* Left Border */
-		xssfCellStyle.setBorderLeft(toPOIBorderType(cellStyle.getBorderLeft()));
-		xssfCellStyle.setLeftBorderColor(toXSSFColor(cellStyle.getBorderLeftColor()));
-		
-		/* Right Border */
-		xssfCellStyle.setBorderRight(toPOIBorderType(cellStyle.getBorderRight()));
-		xssfCellStyle.setRightBorderColor(toXSSFColor(cellStyle.getBorderRightColor()));
-		
-		/* Top Border*/
-		xssfCellStyle.setBorderTop(toPOIBorderType(cellStyle.getBorderTop()));
-		xssfCellStyle.setTopBorderColor(toXSSFColor(cellStyle.getBorderTopColor()));
-		
-		/* Fill Foreground Color */
-		xssfCellStyle.setFillForegroundColor(toXSSFColor(cellStyle.getFillColor()));
-		
-		xssfCellStyle.setFillPattern(toPOIFillPattern(cellStyle.getFillPattern()));
-		xssfCellStyle.setVerticalAlignment(toPOIVerticalAlignment(cellStyle.getVerticalAlignment()));
-		xssfCellStyle.setWrapText(cellStyle.isWrapText());
-		xssfCellStyle.setLocked(cellStyle.isLocked());
-		xssfCellStyle.setHidden(cellStyle.isHidden());
-		
-		// refer from BookHelper#setDataFormat
-		XSSFDataFormat df = workbook.createDataFormat();
-		short fmt = df.getFormat(cellStyle.getDataFormat());
-		xssfCellStyle.setDataFormat(fmt);
-		
-		// font
-		xssfCellStyle.setFont(toXSSFFont(cellStyle.getFont()));
-		
-		// put into table
-		styleTable.put(cellStyle, xssfCellStyle);
-		
-		return xssfCellStyle;
-	}
-	
-	private XSSFColor toXSSFColor(NColor color) {
-		XSSFColor xssfFillColor = colorTable.get(color);
-		
-		if(xssfFillColor != null) {
-			return xssfFillColor;
-		}
-		colorTable.put(color, xssfFillColor);
-		return new XSSFColor(color.getRGB());
-	}
-	
-	/**
-	 * Utility to adapt ZSS 3.5 font into XSSFFont
-	 * @param 3.5 font
-	 * @return a XSSFFont Object
-	 */
-	private XSSFFont toXSSFFont(NFont font) {
-
-		XSSFFont xssfFont = fontTable.get(font);
-		if(xssfFont != null) {
-			return xssfFont;
-		}
-		
-		xssfFont = workbook.createFont();
-		xssfFont.setBoldweight(toPOIBoldweight(font.getBoldweight()));
-		xssfFont.setStrikeout(font.isStrikeout());
-		xssfFont.setItalic(font.isItalic());
-		xssfFont.setColor(new XSSFColor(font.getColor().getRGB()));
-		xssfFont.setFontHeight(font.getHeightPoints());
-		xssfFont.setFontName(font.getName());
-		xssfFont.setTypeOffset(toPOITypeOffset(font.getTypeOffset()));
-		xssfFont.setUnderline(toPOIUnderline(font.getUnderline()));
-		
-		// put into table
-		fontTable.put(font, xssfFont);
-		
-		return xssfFont;
-	}
-	
-	private org.zkoss.poi.ss.usermodel.VerticalAlignment toPOIVerticalAlignment(VerticalAlignment vAlignment) {
-		
-		switch(vAlignment) {
-			case BOTTOM:
-				return org.zkoss.poi.ss.usermodel.VerticalAlignment.BOTTOM;
-			case CENTER:
-				return org.zkoss.poi.ss.usermodel.VerticalAlignment.CENTER;
-			case JUSTIFY:
-				return org.zkoss.poi.ss.usermodel.VerticalAlignment.JUSTIFY;
-			case TOP:
-			default:
-				return org.zkoss.poi.ss.usermodel.VerticalAlignment.TOP;
-		}
-	}
-	
-	private FillPatternType toPOIFillPattern(FillPattern fillPattern) {
-		switch(fillPattern) {
-		case ALT_BARS:
-			return FillPatternType.ALT_BARS;
-		case BIG_SPOTS:
-			return FillPatternType.BIG_SPOTS;
-		case BRICKS:
-			return FillPatternType.BRICKS;
-		case DIAMONDS:
-			return FillPatternType.DIAMONDS;
-		case FINE_DOTS:
-			return FillPatternType.FINE_DOTS;
-		case LEAST_DOTS:
-			return FillPatternType.LEAST_DOTS;
-		case LESS_DOTS:
-			return FillPatternType.LESS_DOTS;
-		case SOLID_FOREGROUND:
-			return FillPatternType.SOLID_FOREGROUND;
-		case SPARSE_DOTS:
-			return FillPatternType.SPARSE_DOTS;
-		case SQUARES:
-			return FillPatternType.SQUARES;
-		case THICK_BACKWARD_DIAG:
-			return FillPatternType.THICK_BACKWARD_DIAG;
-		case THICK_FORWARD_DIAG:
-			return FillPatternType.THICK_FORWARD_DIAG;
-		case THICK_HORZ_BANDS:
-			return FillPatternType.THICK_HORZ_BANDS;
-		case THICK_VERT_BANDS:
-			return FillPatternType.THICK_VERT_BANDS;
-		case THIN_BACKWARD_DIAG:
-			return FillPatternType.THIN_BACKWARD_DIAG;
-		case THIN_FORWARD_DIAG:
-			return FillPatternType.THIN_FORWARD_DIAG;
-		case THIN_HORZ_BANDS:
-			return FillPatternType.THIN_HORZ_BANDS;
-		case THIN_VERT_BANDS:
-			return FillPatternType.THIN_VERT_BANDS;
-		case NO_FILL:
-		default:
-			return FillPatternType.NO_FILL;
-		}
-	}
-	
-	private BorderStyle toPOIBorderType(BorderType borderType) {
-		switch(borderType) {
-		case DASH_DOT:
-			return BorderStyle.DASH_DOT;
-		case DASHED:
-			return BorderStyle.DASHED;
-		case DOTTED:
-			return BorderStyle.DOTTED;
-		case DOUBLE:
-			return BorderStyle.DOUBLE;
-		case HAIR:
-			return BorderStyle.HAIR;
-		case MEDIUM:
-			return BorderStyle.MEDIUM;
-		case MEDIUM_DASH_DOT:
-			return BorderStyle.DASH_DOT;
-		case MEDIUM_DASH_DOT_DOT:
-			return BorderStyle.DASH_DOT_DOT;
-		case MEDIUM_DASHED:
-			return BorderStyle.MEDIUM_DASHED;
-		case SLANTED_DASH_DOT:
-			return BorderStyle.SLANTED_DASH_DOT;
-		case THICK:
-			return BorderStyle.THICK;
-		case THIN:
-			return BorderStyle.THIN;
-		case DASH_DOT_DOT:
-			return BorderStyle.DASH_DOT_DOT;
-		case NONE:
-		default:
-			return BorderStyle.NONE;
-		}
-	}
-	
-	private HorizontalAlignment toPOIAlignment(Alignment alignment) {
-		switch(alignment) {
-		case CENTER:
-			return HorizontalAlignment.CENTER;
-		case FILL:
-			return HorizontalAlignment.FILL;
-		case JUSTIFY:
-			return HorizontalAlignment.JUSTIFY;
-		case RIGHT:
-			return HorizontalAlignment.RIGHT;
-		case LEFT:
-			return HorizontalAlignment.LEFT;
-		case CENTER_SELECTION:
-			return HorizontalAlignment.CENTER_SELECTION;
-		case GENERAL:
-			default:
-			return HorizontalAlignment.GENERAL;
-		}
-	}
-	
-	private short toPOIBoldweight(Boldweight bold) {
-		switch(bold) {
-			case BOLD:
-				return Font.BOLDWEIGHT_BOLD;
-			case NORMAL:
-			default:
-				return Font.BOLDWEIGHT_NORMAL;
-		}
-	}
-	
-	private short toPOITypeOffset(TypeOffset typeOffset) {
-		switch(typeOffset) {
-			case SUPER:
-				return Font.SS_SUPER;
-			case SUB:
-				return Font.SS_SUB;
-			case NONE:
-			default:
-				return Font.SS_NONE;
-		}
-	}
-	
-	private byte toPOIUnderline(Underline underline) {
-		switch(underline) {
-			case SINGLE:
-				return Font.U_SINGLE;
-			case DOUBLE:
-				return Font.U_DOUBLE;
-			case DOUBLE_ACCOUNTING:
-				return Font.U_DOUBLE_ACCOUNTING;
-			case SINGLE_ACCOUNTING:
-				return Font.U_SINGLE_ACCOUNTING;
-			case NONE:
-			default:
-				return Font.U_NONE;
-		}
-	}
+//	protected XSSFCellStyle toXSSFCellStyle(NCellStyle cellStyle) {
+//		
+//		// instead of creating a new style, use old one if exist
+//		XSSFCellStyle xssfCellStyle = (XSSFCellStyle) styleTable.get(cellStyle);
+//		if(xssfCellStyle != null) {
+//			return xssfCellStyle;
+//		}
+//		
+//		xssfCellStyle = (XSSFCellStyle) workbook.createCellStyle();
+//		
+//		xssfCellStyle.setAlignment(toPOIAlignment(cellStyle.getAlignment()));
+//		
+//		/* Bottom Border */
+//		xssfCellStyle.setBorderBottom(toPOIBorderType(cellStyle.getBorderBottom()));
+//		xssfCellStyle.setBottomBorderColor(toXSSFColor(cellStyle.getBorderBottomColor()));
+//		
+//		/* Left Border */
+//		xssfCellStyle.setBorderLeft(toPOIBorderType(cellStyle.getBorderLeft()));
+//		xssfCellStyle.setLeftBorderColor(toXSSFColor(cellStyle.getBorderLeftColor()));
+//		
+//		/* Right Border */
+//		xssfCellStyle.setBorderRight(toPOIBorderType(cellStyle.getBorderRight()));
+//		xssfCellStyle.setRightBorderColor(toXSSFColor(cellStyle.getBorderRightColor()));
+//		
+//		/* Top Border*/
+//		xssfCellStyle.setBorderTop(toPOIBorderType(cellStyle.getBorderTop()));
+//		xssfCellStyle.setTopBorderColor(toXSSFColor(cellStyle.getBorderTopColor()));
+//		
+//		/* Fill Foreground Color */
+//		xssfCellStyle.setFillForegroundColor(toXSSFColor(cellStyle.getFillColor()));
+//		
+//		xssfCellStyle.setFillPattern(toPOIFillPattern(cellStyle.getFillPattern()));
+//		xssfCellStyle.setVerticalAlignment(toPOIVerticalAlignment(cellStyle.getVerticalAlignment()));
+//		xssfCellStyle.setWrapText(cellStyle.isWrapText());
+//		xssfCellStyle.setLocked(cellStyle.isLocked());
+//		xssfCellStyle.setHidden(cellStyle.isHidden());
+//		
+//		// refer from BookHelper#setDataFormat
+//		XSSFDataFormat df = (XSSFDataFormat) workbook.createDataFormat();
+//		short fmt = df.getFormat(cellStyle.getDataFormat());
+//		xssfCellStyle.setDataFormat(fmt);
+//		
+//		// font
+//		xssfCellStyle.setFont(toXSSFFont(cellStyle.getFont()));
+//		
+//		// put into table
+//		styleTable.put(cellStyle, xssfCellStyle);
+//		
+//		return xssfCellStyle;
+//	}
+//	
+//	protected XSSFColor toXSSFColor(NColor color) {
+//		XSSFColor xssfFillColor = (XSSFColor) colorTable.get(color);
+//		
+//		if(xssfFillColor != null) {
+//			return xssfFillColor;
+//		}
+//		colorTable.put(color, xssfFillColor);
+//		return new XSSFColor(color.getRGB());
+//	}
+//	
+//	/**
+//	 * Utility to adapt ZSS 3.5 font into XSSFFont
+//	 * @param 3.5 font
+//	 * @return a XSSFFont Object
+//	 */
+//	protected XSSFFont toXSSFFont(NFont font) {
+//
+//		XSSFFont xssfFont = (XSSFFont) fontTable.get(font);
+//		if(xssfFont != null) {
+//			return xssfFont;
+//		}
+//		
+//		xssfFont = (XSSFFont) workbook.createFont();
+//		xssfFont.setBoldweight(toPOIBoldweight(font.getBoldweight()));
+//		xssfFont.setStrikeout(font.isStrikeout());
+//		xssfFont.setItalic(font.isItalic());
+//		xssfFont.setColor(new XSSFColor(font.getColor().getRGB()));
+//		xssfFont.setFontHeight(font.getHeightPoints());
+//		xssfFont.setFontName(font.getName());
+//		xssfFont.setTypeOffset(toPOITypeOffset(font.getTypeOffset()));
+//		xssfFont.setUnderline(toPOIUnderline(font.getUnderline()));
+//		
+//		// put into table
+//		fontTable.put(font, xssfFont);
+//		
+//		return xssfFont;
+//	}
 
 }

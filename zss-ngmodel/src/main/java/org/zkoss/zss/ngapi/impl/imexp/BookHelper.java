@@ -17,6 +17,7 @@ import java.util.*;
 import java.util.logging.Logger;
 
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
+import org.zkoss.poi.hssf.record.FullColorExt;
 import org.zkoss.poi.hssf.usermodel.*;
 import org.zkoss.poi.hssf.util.*;
 import org.zkoss.poi.ss.usermodel.*;
@@ -330,5 +331,114 @@ public final class BookHelper {
 	
 	private static String tripletToHTML(short[] triplet) {
 		return triplet == null ? null : "#"+ toHex(triplet[0])+ toHex(triplet[1])+ toHex(triplet[2]);
+	}
+	
+	public static void setLeftBorderColor(CellStyle style, Color color) {
+		if (style instanceof HSSFCellStyle) {
+			((HSSFCellStyle)style).setLeftBorderColor(((HSSFColor)color));
+		} else {
+			((XSSFCellStyle)style).setLeftBorderColor((XSSFColor)color);
+		}
+	}
+	public static void setRightBorderColor(CellStyle style, Color color) {
+		if (style instanceof HSSFCellStyle) {
+			((HSSFCellStyle)style).setRightBorderColor(((HSSFColor)color));
+		} else {
+			((XSSFCellStyle)style).setRightBorderColor((XSSFColor)color);
+		}
+	}
+	public static void setTopBorderColor(CellStyle style, Color color) {
+		if (style instanceof HSSFCellStyle) {
+			((HSSFCellStyle)style).setTopBorderColor(((HSSFColor)color));
+		} else {
+			((XSSFCellStyle)style).setTopBorderColor((XSSFColor)color);
+		}
+	}
+	public static void setBottomBorderColor(CellStyle style, Color color) {
+		if (style instanceof HSSFCellStyle) {
+			((HSSFCellStyle)style).setBottomBorderColor(((HSSFColor)color));
+		} else {
+			((XSSFCellStyle)style).setBottomBorderColor((XSSFColor)color);
+		}
+	}
+	
+	public static Color HTMLToColor(Workbook book, String color) {
+		if (book instanceof HSSFWorkbook) {
+			return HTMLToHSSFColor((HSSFWorkbook) book, color);
+		} else {
+			return HTMLToXSSFColor((XSSFWorkbook) book, color);
+		}
+	}
+	
+	private static Color HTMLToXSSFColor(XSSFWorkbook book, String color) {
+		byte[] triplet = HTMLToTriplet(color);
+		byte a = (byte) 0xff;
+		byte r = triplet[0];
+		byte g = triplet[1];
+		byte b = triplet[2];
+		return  new XSSFColor(new byte[] {a, r, g, b});
+	}
+	
+	private static Color HTMLToHSSFColor(HSSFWorkbook book, String color) {
+		byte[] triplet = HTMLToTriplet(color);
+		byte r = triplet[0];
+		byte g = triplet[1];
+		byte b = triplet[2];
+		short red = (short) (r & 0xff);
+		short green = (short) (g & 0xff);
+		short blue = (short) (b & 0xff);
+		HSSFPalette palette = book.getCustomPalette();
+		HSSFColor pcolor = palette != null ? palette.findColor(r, g, b) : null;
+		if (pcolor != null) { //find default palette
+			return pcolor;
+		} else {
+			final Hashtable<short[], HSSFColor> colors = HSSFColor.getRgbHash();
+			HSSFColor tcolor = colors.get(new short[] {red, green, blue});
+			if (tcolor != null)
+				return tcolor;
+			else {
+				try {
+					HSSFColor ncolor = palette.addColor(r, g, b);
+					return ncolor;
+				} catch (RuntimeException ex) {
+					//try to create a fullcolor if not a built in palette color
+					FullColorExt fullColor = new FullColorExt(red, green, blue);
+					return new HSSFColorExt(fullColor);
+				}
+				
+			}
+		}
+	}
+	
+	private static byte[] HTMLToTriplet(String color) {
+		final int offset = color.charAt(0) == '#' ? 1 : 0;
+		final short red = Short.parseShort(color.substring(offset+0,offset+2), 16); //red
+		final short green = Short.parseShort(color.substring(offset+2,offset+4), 16); //green
+		final short blue = Short.parseShort(color.substring(offset+4, offset+6), 16); //blue
+		final byte r = (byte)(red & 0xff);
+		final byte g = (byte)(green & 0xff);
+		final byte b = (byte)(blue & 0xff);
+		return new byte[] {r, g, b};
+	}
+	
+	public static void setFillForegroundColor(CellStyle newCellStyle, Color xlsColor) {
+		if (newCellStyle instanceof HSSFCellStyle) {
+			((HSSFCellStyle)newCellStyle).setFillForegroundColor((HSSFColor)xlsColor);
+		} else {
+			((XSSFCellStyle)newCellStyle).setFillForegroundColor((XSSFColor)xlsColor);
+		}
+	}
+	
+	public static void setFontColor(Workbook book, Font font, Color color) {
+		if (font instanceof HSSFFont) {
+			if (color instanceof HSSFColorExt) { //not palette color
+				color = ((HSSFColorExt)color).getSimilarColor(((HSSFWorkbook)book).getCustomPalette());
+			}
+			((HSSFFont)font).setColor(((HSSFColor)color).getIndex());
+		} else {
+			//20130415, dennischen, force reset, set rgb color is not able to override previous set a color with theme(color form default cell) 
+			((XSSFFont)font).setColor(null);
+			((XSSFFont)font).setColor((XSSFColor)color);
+		}
 	}
 }

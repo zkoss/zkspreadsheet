@@ -26,7 +26,7 @@ import org.zkoss.zss.ngapi.NExporter;
 import org.zkoss.zss.ngapi.NImporter;
 import org.zkoss.zss.ngmodel.NBook;
 
-public abstract class AbstractExporter implements NExporter,Serializable{
+public abstract class AbstractExporter implements NExporter, Serializable{
 	@Override
 	public void export(NBook book, File file) throws IOException {
 		OutputStream os = null;

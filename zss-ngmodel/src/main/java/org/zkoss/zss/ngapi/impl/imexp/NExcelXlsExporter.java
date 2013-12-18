@@ -23,24 +23,41 @@ import java.io.OutputStream;
 import java.util.concurrent.locks.ReadWriteLock;
 
 import org.zkoss.poi.hssf.usermodel.HSSFWorkbook;
+import org.zkoss.poi.ss.usermodel.Name;
 import org.zkoss.poi.ss.usermodel.Workbook;
 import org.zkoss.zss.ngmodel.NBook;
+import org.zkoss.zss.ngmodel.NName;
+import org.zkoss.zss.ngmodel.NSheet;
 /**
  * 
  * @author dennis
  * @since 3.5.0
  */
-public class NExcelXlsExporter extends AbstractExporter{
+public class NExcelXlsExporter extends AbstractExcelExporter {
 	
 	@Override
 	public void export(NBook book, OutputStream fos) throws IOException {
 		ReadWriteLock lock = book.getBookSeries().getLock();
 		lock.writeLock().lock();
-		Workbook workbook = new HSSFWorkbook();
+		
+		workbook = new HSSFWorkbook();
+		
+		// Sheet
+		for(NSheet sheet : book.getSheets()) {
+			exportSheet(sheet);
+		}
+		
+		// NamedRange
+		for(NName name : book.getNames()) {
+			Name poiName = workbook.createName();
+			poiName.setNameName(name.getName());
+			poiName.setSheetIndex(workbook.getSheetIndex(name.getRefersToSheetName()));
+			poiName.setRefersToFormula(name.getRefersToFormula());
+		}
+		
 		try{
-			//implement here
 			
-		}finally{
+		} finally{
 			lock.writeLock().unlock();
 		}
 	}

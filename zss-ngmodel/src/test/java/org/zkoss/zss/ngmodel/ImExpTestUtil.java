@@ -3,6 +3,7 @@ package org.zkoss.zss.ngmodel;
 import static org.junit.Assert.fail;
 
 import java.io.*;
+import java.net.URISyntaxException;
 import java.net.URL;
 
 import org.zkoss.zss.ngapi.NImporter;
@@ -19,16 +20,18 @@ public class ImExpTestUtil {
 	static private String exportFileName = "exported.xlsx";
 	static private NExcelXlsxExporter xlsxExporter = (NExcelXlsxExporter) new ExcelExportFactory(ExcelExportFactory.Type.XLSX).createExporter();
 	
-	public static File writeBookToFile(NBook book) {
-		return writeBookToFile(book, null);
+	public static File write(NBook book) {
+		return writeBookToFile(book, new File("./target/" + exportFileName));
+	}
+	
+	public static File writeBookToFile(NBook book, String filePath) {
+		return writeBookToFile(book, new File(filePath));
 	}
 	
 	public static File writeBookToFile(NBook book, File outFile) {
 		try {
-			if(outFile == null) {
-				outFile = new File(ImExpTestUtil.class.getProtectionDomain().getCodeSource().getLocation().getPath() + "/org/zkoss/zss/ngmodel/book/" + exportFileName);
-				outFile.createNewFile();
-			}
+			outFile = new File("./target/" + exportFileName);
+			outFile.createNewFile();
 			xlsxExporter.export(book, outFile);
 		} catch (Exception e) {
 			e.printStackTrace();
