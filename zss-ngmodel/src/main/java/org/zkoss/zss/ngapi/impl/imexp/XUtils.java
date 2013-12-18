@@ -31,6 +31,10 @@ import org.zkoss.poi.ss.usermodel.Sheet;
  */
 public class XUtils {
 
+	public static int getDefaultColumnWidthInPx(Sheet sheet, int charWidth) {
+		int columnWidth = sheet != null ? sheet.getDefaultColumnWidth() : -1;
+		return columnWidth <= 0 ? 64 : XUtils.defaultColumnWidthToPx(columnWidth, charWidth);
+	}
 	
 	public static int getWidthAny(Sheet zkSheet,int col, int charWidth){
 		int w = zkSheet.getColumnWidth(col);

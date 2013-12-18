@@ -35,15 +35,17 @@ import org.zkoss.zss.ngmodel.NFont.Underline;
  * @since 3.5.0 
  */
 abstract public class AbstractExcelImporter extends AbstractImporter {
-	private static final int CHRACTER_WIDTH = 8;
+	public static final int CHRACTER_WIDTH = 8;
 	/** 
 	 * <poi CellStyle index, {@link NCellStyle} object> 
 	 * Keep track of imported style during importing to avoid creating duplicated style objects. 
 	 */
 	protected Map<Short, NCellStyle> importedStyle = new HashMap<Short, NCellStyle>();
-	/**<poi Font index, {@link NFont} object> **/
+	/** <poi Font index, {@link NFont} object> **/
 	protected Map<Short, NFont> importedFont = new HashMap<Short, NFont>();
+	/** target book model */
 	protected NBook book;
+	/** source POI book */
 	protected Workbook workbook;
 
 	abstract protected int getLastChangedColumnIndex(Sheet poiSheet);
@@ -57,7 +59,7 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 			Name namedRange = workbook.getNameAt(i);
 			NName name = null;
 			//TODO skip auto-filter's defined name for it's not ready
-			if (namedRange.getNameName().startsWith("_xlnm")){
+			if (namedRange.getNameName().contains("_FilterDatabase")){
 				continue;
 			}
 			if (namedRange.getSheetName() != null && namedRange.getSheetName().length()>0){
@@ -78,7 +80,7 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 		//TODO default char width reference XSSFBookImpl._defaultCharWidth = 7
 		//TODO original width 64px, current is 72px
 		//reference XUtils.getDefaultColumnWidthInPx()
-		int defaultWidth = XUtils.defaultColumnWidthToPx(poiSheet.getDefaultColumnWidth(), CHRACTER_WIDTH);
+		int defaultWidth = XUtils.getDefaultColumnWidthInPx(poiSheet, CHRACTER_WIDTH);
 		sheet.setDefaultColumnWidth(defaultWidth);
 		//reference FreezeInfoLoaderImpl.getRowFreeze()
 		sheet.getViewInfo().setNumOfRowFreeze(BookHelper.getRowFreeze(poiSheet));
@@ -121,8 +123,8 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 	protected NRow importRow(NSheet sheet, Row poiRow) {
 		NRow row = sheet.getRow(poiRow.getRowNum());
 		row.setHeight(XUtils.twipToPx(poiRow.getHeight()));
-		CellStyle rowStyle = poiRow.getRowStyle();
 		row.setHidden(poiRow.getZeroHeight());
+		CellStyle rowStyle = poiRow.getRowStyle();
 		if (rowStyle != null){
 			row.setCellStyle(importCellStyle(rowStyle));
 		}
