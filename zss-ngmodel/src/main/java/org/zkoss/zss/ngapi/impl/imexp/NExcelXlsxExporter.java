@@ -41,6 +41,7 @@ public class NExcelXlsxExporter extends AbstractExporter{
 	private XSSFWorkbook workbook;
 	private Map<NCellStyle, XSSFCellStyle> styleTable = new HashMap<NCellStyle, XSSFCellStyle>();
 	private Map<NFont, XSSFFont> fontTable = new HashMap<NFont, XSSFFont>();
+	private Map<NColor, XSSFColor> colorTable = new HashMap<NColor, XSSFColor>();
 	
 	@Override
 	public void export(NBook book, OutputStream fos) throws IOException {
@@ -65,6 +66,7 @@ public class NExcelXlsxExporter extends AbstractExporter{
 			for(NSheet sheet : book.getSheets()) {
 				exportSheet(sheet);
 			}
+			
 			workbook.write(fos);
 		} finally {
 			lock.writeLock().unlock();
@@ -151,6 +153,7 @@ public class NExcelXlsxExporter extends AbstractExporter{
 		XSSFCell xssfCell = xssfRow.createCell(cell.getColumnIndex());
 		
 		NCellStyle cellStyle = cell.getCellStyle();
+
 		xssfCell.setCellStyle(toXSSFCellStyle(cellStyle));
 		
 		// Hyperlink
@@ -206,15 +209,26 @@ public class NExcelXlsxExporter extends AbstractExporter{
 		xssfCellStyle = workbook.createCellStyle();
 		
 		xssfCellStyle.setAlignment(toPOIAlignment(cellStyle.getAlignment()));
+		
+		/* Bottom Border */
 		xssfCellStyle.setBorderBottom(toPOIBorderType(cellStyle.getBorderBottom()));
-		xssfCellStyle.setBottomBorderColor(new XSSFColor(cellStyle.getBorderBottomColor().getRGB()));
+		xssfCellStyle.setBottomBorderColor(toXSSFColor(cellStyle.getBorderBottomColor()));
+		
+		/* Left Border */
 		xssfCellStyle.setBorderLeft(toPOIBorderType(cellStyle.getBorderLeft()));
-		xssfCellStyle.setLeftBorderColor(new XSSFColor(cellStyle.getBorderLeftColor().getRGB()));
+		xssfCellStyle.setLeftBorderColor(toXSSFColor(cellStyle.getBorderLeftColor()));
+		
+		/* Right Border */
 		xssfCellStyle.setBorderRight(toPOIBorderType(cellStyle.getBorderRight()));
-		xssfCellStyle.setRightBorderColor(new XSSFColor(cellStyle.getBorderRightColor().getRGB()));
+		xssfCellStyle.setRightBorderColor(toXSSFColor(cellStyle.getBorderRightColor()));
+		
+		/* Top Border*/
 		xssfCellStyle.setBorderTop(toPOIBorderType(cellStyle.getBorderTop()));
-		xssfCellStyle.setTopBorderColor(new XSSFColor(cellStyle.getBorderTopColor().getRGB()));
-		xssfCellStyle.setFillForegroundColor(new XSSFColor(cellStyle.getFillColor().getRGB()));
+		xssfCellStyle.setTopBorderColor(toXSSFColor(cellStyle.getBorderTopColor()));
+		
+		/* Fill Foreground Color */
+		xssfCellStyle.setFillForegroundColor(toXSSFColor(cellStyle.getFillColor()));
+		
 		xssfCellStyle.setFillPattern(toPOIFillPattern(cellStyle.getFillPattern()));
 		xssfCellStyle.setVerticalAlignment(toPOIVerticalAlignment(cellStyle.getVerticalAlignment()));
 		xssfCellStyle.setWrapText(cellStyle.isWrapText());
@@ -233,6 +247,16 @@ public class NExcelXlsxExporter extends AbstractExporter{
 		styleTable.put(cellStyle, xssfCellStyle);
 		
 		return xssfCellStyle;
+	}
+	
+	private XSSFColor toXSSFColor(NColor color) {
+		XSSFColor xssfFillColor = colorTable.get(color);
+		
+		if(xssfFillColor != null) {
+			return xssfFillColor;
+		}
+		colorTable.put(color, xssfFillColor);
+		return new XSSFColor(color.getRGB());
 	}
 	
 	/**
