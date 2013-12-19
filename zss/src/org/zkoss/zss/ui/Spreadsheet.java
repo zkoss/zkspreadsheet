@@ -120,6 +120,7 @@ import org.zkoss.zss.ngmodel.NCellStyle.Alignment;
 import org.zkoss.zss.ngmodel.NCellStyle.VerticalAlignment;
 import org.zkoss.zss.ngmodel.NChart;
 import org.zkoss.zss.ngmodel.NColumn;
+import org.zkoss.zss.ngmodel.NColumnArray;
 import org.zkoss.zss.ngmodel.NFont;
 import org.zkoss.zss.ngmodel.NPicture;
 import org.zkoss.zss.ngmodel.NRow;
@@ -2276,6 +2277,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			final int top = region.getRow();
 			final int right = region.getLastColumn();
 			int bottom = region.getLastRow();
+			//TODO zss 3.5 , call when any cell change to update a widget.
 			updateWidget(sheet, left, top, right, bottom);
 			updateCell(sheet, left, top, right, bottom);
 			org.zkoss.zk.ui.event.Events.postEvent(new CellAreaEvent(
@@ -2679,13 +2681,15 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		if (helper == null) {
 			final int defaultColSize = sheet.getDefaultColumnWidth();
 			List<HeaderPositionInfo> infos = new ArrayList<HeaderPositionInfo>();
-			Iterator<NColumn> iter = sheet.getColumnIterator(); 
+			Iterator<NColumnArray> iter = sheet.getColumnArrayIterator(); 
 			while(iter.hasNext()) {
-				NColumn column = iter.next();
-				final boolean hidden = column.isHidden(); //whether this column is hidden
-				final int columnWidth = column.getWidth();//column width
+				NColumnArray columnArray = iter.next();
+				final boolean hidden = columnArray.isHidden(); //whether this column is hidden
+				final int columnWidth = columnArray.getWidth();//column width
 				if (columnWidth != defaultColSize || hidden) { 
-					infos.add(new HeaderPositionInfo(column.getIndex(), columnWidth, _custColId.next(), hidden));
+					for(int i = columnArray.getIndex(); i <= columnArray.getLastIndex();i++){
+						infos.add(new HeaderPositionInfo(i, columnWidth, _custColId.next(), hidden));
+					}
 				}
 			}
 

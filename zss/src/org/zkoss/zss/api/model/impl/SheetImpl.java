@@ -285,11 +285,11 @@ public class SheetImpl implements Sheet{
 
 	@Override
 	public int getFirstColumn(int row) {
-		return getNative().getRow(row).getStartCellIndex();
+		return getNative().getStartCellIndex(row);
 	}
 
 	@Override
 	public int getLastColumn(int row) {
-		 return getNative().getRow(row).getEndCellIndex();
+		 return getNative().getEndCellIndex(row);
 	}
 }
