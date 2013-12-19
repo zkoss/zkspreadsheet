@@ -3,7 +3,6 @@ package org.zkoss.zss.ngmodel;
 import static org.junit.Assert.fail;
 
 import java.io.*;
-import java.net.URISyntaxException;
 import java.net.URL;
 
 import org.zkoss.zss.ngapi.NImporter;
@@ -16,11 +15,12 @@ import org.zkoss.zss.ngapi.impl.imexp.*;
  */
 public class ImExpTestUtil {
 	
-	static private String impoortFileName = "import.xlsx";
-	static private String exportFileName = "exported.xlsx";
+
+	static public String DEFAULT_EXPORT_TARGET_PATH = "./target/";
+	static public String DEFAULT_EXPORT_FILE_NAME_XLSX = "exported.xlsx";
 	
 	public static File write(NBook book) {
-		return writeBookToFile(book, new File("./target/" + exportFileName));
+		return writeBookToFile(book, new File(DEFAULT_EXPORT_TARGET_PATH + DEFAULT_EXPORT_FILE_NAME_XLSX));
 	}
 	
 	public static File writeBookToFile(NBook book, String filePath) {
@@ -29,7 +29,7 @@ public class ImExpTestUtil {
 	
 	public static File writeBookToFile(NBook book, File outFile) {
 		try {
-			outFile = new File("./target/" + outFile.getName());
+			outFile = new File(DEFAULT_EXPORT_TARGET_PATH + outFile.getName());
 			outFile.createNewFile();
 			NExcelXlsxExporter xlsxExporter = (NExcelXlsxExporter) new ExcelExportFactory(ExcelExportFactory.Type.XLSX).createExporter();
 			xlsxExporter.export(book, outFile);
@@ -41,7 +41,7 @@ public class ImExpTestUtil {
 	}
 	
 	/**
-	 * Utility to load book from inputstream
+	 * Utility to load book from input stream
 	 * @param is
 	 * @return
 	 */
@@ -66,12 +66,13 @@ public class ImExpTestUtil {
 	/**
 	 * Utility to load book from file
 	 * @param file
+	 * @param bookName TODO
 	 * @return
 	 */
-	public static NBook loadBook(File file) {
+	public static NBook loadBook(File file, String bookName) {
 		try {
-			return loadBook(new FileInputStream(file));
-		} catch (FileNotFoundException e) {
+			return new ExcelImportFactory().createImporter().imports(file, bookName);
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		return null;
@@ -85,4 +86,5 @@ public class ImExpTestUtil {
 		}
 		return null;
 	}
+
 }

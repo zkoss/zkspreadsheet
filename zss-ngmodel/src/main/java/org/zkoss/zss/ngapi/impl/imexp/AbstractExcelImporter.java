@@ -35,7 +35,13 @@ import org.zkoss.zss.ngmodel.NFont.Underline;
  * @since 3.5.0 
  */
 abstract public class AbstractExcelImporter extends AbstractImporter {
-	public static final int CHRACTER_WIDTH = 8;
+	/**
+	 * Office Open XML Part 4: Markup Language Reference
+	 * 3.3.1.12  col (Column Width & Formatting)
+	 * The character width 7 is based on Calibri 11.
+	 * We can get correct column width under Excel 2007, but incorrect column width in 2010
+	 */
+	public static final int CHRACTER_WIDTH = 7;
 	/** 
 	 * <poi CellStyle index, {@link NCellStyle} object> 
 	 * Keep track of imported style during importing to avoid creating duplicated style objects. 
@@ -77,8 +83,6 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 	protected NSheet importSheet(Sheet poiSheet) {
 		NSheet sheet = book.createSheet(poiSheet.getSheetName());
 		sheet.setDefaultRowHeight(XUtils.twipToPx(poiSheet.getDefaultRowHeight()));
-		//TODO default char width reference XSSFBookImpl._defaultCharWidth = 7
-		//TODO original width 64px, current is 72px
 		//reference XUtils.getDefaultColumnWidthInPx()
 		int defaultWidth = XUtils.getDefaultColumnWidthInPx(poiSheet, CHRACTER_WIDTH);
 		sheet.setDefaultColumnWidth(defaultWidth);

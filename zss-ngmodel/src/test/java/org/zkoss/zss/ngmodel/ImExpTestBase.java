@@ -2,6 +2,7 @@ package org.zkoss.zss.ngmodel;
 
 import static org.junit.Assert.*;
 
+import java.net.URL;
 import java.text.DateFormat;
 import java.util.Locale;
 
@@ -19,14 +20,17 @@ import org.zkoss.zss.ngmodel.NFont.TypeOffset;
  */
 public class ImExpTestBase {
 	
-	
+	protected static String DEFAULT_BOOK_NAME = "PoiBook";
+	protected static URL fileForImporterTest = ImporterTest.class.getResource("book/import2007.xlsx");
+
+
 	protected void sheetTest(NBook book) {
 		assertEquals(7, book.getNumOfSheet());
 
 		NSheet sheet1 = book.getSheetByName("Value");
 		assertEquals("Value", sheet1.getSheetName());
-		assertEquals(21, sheet1.getDefaultRowHeight());
-		assertEquals(72, sheet1.getDefaultColumnWidth());
+		assertEquals(20, sheet1.getDefaultRowHeight());
+		assertEquals(64, sheet1.getDefaultColumnWidth());
 		
 		NSheet sheet2 = book.getSheetByName("Style");
 		assertEquals("Style", sheet2.getSheetName());
@@ -194,8 +198,8 @@ public class ImExpTestBase {
 	}
 
 	/**
-	 * Information technology — Document description and processing languages — 
-	 * Office Open XML File Formats — Part 1: Fundamentals and Markup LanguageReference  
+	 * Information technology ??Document description and processing languages ??
+	 * Office Open XML File Formats ??Part 1: Fundamentals and Markup LanguageReference  
 	 * 18.8.30 numFmt (Number Format) 
 	 */
 	
@@ -223,7 +227,7 @@ public class ImExpTestBase {
 		assertEquals(100, sheet.getColumn(1).getWidth());
 		assertEquals(102, sheet.getColumn(2).getWidth());
 		assertEquals(0, sheet.getColumn(4).getWidth());		//the hidden column
-		assertEquals(72, sheet.getColumn(5).getWidth());	//default width
+		assertEquals(64, sheet.getColumn(5).getWidth());	//default width
 		
 		//the hidden column
 		assertFalse(sheet.getColumn(3).isHidden());
@@ -236,7 +240,7 @@ public class ImExpTestBase {
 	
 	protected void lastChangedColumnTest(NBook book){
 		NSheet sheet = book.getSheetByName("column-row");
-		assertEquals(80, sheet.getColumn(13).getWidth());
+		assertEquals(110, sheet.getColumn(13).getWidth());
 	}
 	
 	

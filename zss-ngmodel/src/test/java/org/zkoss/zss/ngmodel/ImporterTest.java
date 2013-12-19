@@ -16,7 +16,6 @@ import org.zkoss.zss.ngapi.impl.imexp.ExcelImportFactory;
  */
 public class ImporterTest extends ImExpTestBase {
 	
-	static private URL fileUrlUnderTest;
 	private NImporter importer; 
 	
 	/**
@@ -24,17 +23,9 @@ public class ImporterTest extends ImExpTestBase {
 	 * @param fileUrl
 	 */
 	static public void setFileUnderTest(URL fileUrl){
-		fileUrlUnderTest = fileUrl;
+		fileForImporterTest = fileUrl;
 	}
 	
-	@BeforeClass
-	static public void initialize(){
-		try{
-			fileUrlUnderTest = ImporterTest.class.getResource("book/import.xlsx");
-		}catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
 	
 	@Before
 	public void beforeTest(){
@@ -49,7 +40,7 @@ public class ImporterTest extends ImExpTestBase {
 		InputStream streamUnderTest = null;
 		NBook book = null;
 		try {
-			book = importer.imports(fileUrlUnderTest.openStream(), "XSSFBook");
+			book = importer.imports(fileForImporterTest.openStream(), "XSSFBook");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}finally{
@@ -70,7 +61,7 @@ public class ImporterTest extends ImExpTestBase {
 	public void importByUrl(){
 		NBook book = null;
 		try {
-			book = importer.imports(fileUrlUnderTest, "XSSFBook");
+			book = importer.imports(fileForImporterTest, "XSSFBook");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -83,7 +74,7 @@ public class ImporterTest extends ImExpTestBase {
 	public void importByFile() {
 		NBook book = null;
 		try {
-			book = importer.imports(new File(fileUrlUnderTest.toURI()), "XSSFBook");
+			book = importer.imports(new File(fileForImporterTest.toURI()), "XSSFBook");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -95,75 +86,75 @@ public class ImporterTest extends ImExpTestBase {
 	//content
 	@Test
 	public void sheetTest() {
-		NBook book = ImExpTestUtil.loadBook(fileUrlUnderTest, "XSSFBook");
+		NBook book = ImExpTestUtil.loadBook(fileForImporterTest, "XSSFBook");
 		
 		sheetTest(book);
 	}	
 	
 	@Test
 	public void sheetProtectionTest() {
-		NBook book = ImExpTestUtil.loadBook(fileUrlUnderTest, "XSSFBook");
+		NBook book = ImExpTestUtil.loadBook(fileForImporterTest, "XSSFBook");
 		sheetProtectionTest(book);
 	}
 	
 	@Test
 	public void sheetNamedRangeTest() {
-		NBook book = ImExpTestUtil.loadBook(fileUrlUnderTest, "XSSFBook");
+		NBook book = ImExpTestUtil.loadBook(fileForImporterTest, "XSSFBook");
 		sheetNamedRangeTest(book);
 	}
 
 	@Test
 	public void cellValueTest() {
-		NBook book = ImExpTestUtil.loadBook(fileUrlUnderTest, "XSSFBook");
+		NBook book = ImExpTestUtil.loadBook(fileForImporterTest, "XSSFBook");
 		
 		cellValueTest(book);
 	}
 	
 	@Test
 	public void cellStyleTest(){
-		NBook book = ImExpTestUtil.loadBook(fileUrlUnderTest, "XSSFBook");
+		NBook book = ImExpTestUtil.loadBook(fileForImporterTest, "XSSFBook");
 		cellStyleTest(book);
 	}
 
 	@Test
 	public void cellBorderTest(){
-		NBook book = ImExpTestUtil.loadBook(fileUrlUnderTest, "XSSFBook");
+		NBook book = ImExpTestUtil.loadBook(fileForImporterTest, "XSSFBook");
 		cellBorderTest(book);
 	}
 
 	@Test
 	public void cellFontNameTest(){
-		NBook book = ImExpTestUtil.loadBook(fileUrlUnderTest, "XSSFBook");
+		NBook book = ImExpTestUtil.loadBook(fileForImporterTest, "XSSFBook");
 		cellFontNameTest(book);
 	}
 	
 	@Test
 	public void cellFontStyleTest(){
-		NBook book = ImExpTestUtil.loadBook(fileUrlUnderTest, "XSSFBook");
+		NBook book = ImExpTestUtil.loadBook(fileForImporterTest, "XSSFBook");
 		cellFontStyleTest(book);
 	}
 	
 	@Test
 	public void cellFontColorTest(){
-		NBook book = ImExpTestUtil.loadBook(fileUrlUnderTest, "XSSFBook");
+		NBook book = ImExpTestUtil.loadBook(fileForImporterTest, "XSSFBook");
 		cellFontColorTest(book);
 		
 	}
 	
 	@Test
 	public void rowTest(){
-		NBook book = ImExpTestUtil.loadBook(fileUrlUnderTest, "XSSFBook");
+		NBook book = ImExpTestUtil.loadBook(fileForImporterTest, "XSSFBook");
 		rowTest(book);
 	}
 
 	/**
-	 * Information technology — Document description and processing languages — 
-	 * Office Open XML File Formats — Part 1: Fundamentals and Markup LanguageReference  
+	 * Information technology Document description and processing languages 
+	 * Office Open XML File Formats Part 1: Fundamentals and Markup LanguageReference  
 	 * 18.8.30 numFmt (Number Format) 
 	 */
 	@Test
 	public void cellFormatTest(){
-		NBook book = ImExpTestUtil.loadBook(fileUrlUnderTest, "XSSFBook");
+		NBook book = ImExpTestUtil.loadBook(fileForImporterTest, "XSSFBook");
 		cellFormatTest(book);
 	}
 
@@ -172,13 +163,13 @@ public class ImporterTest extends ImExpTestBase {
 	 */
 	@Test
 	public void formatNotDependLocaleTest(){
-		NBook book = ImExpTestUtil.loadBook(fileUrlUnderTest, "XSSFBook");
+		NBook book = ImExpTestUtil.loadBook(fileForImporterTest, "XSSFBook");
 		NSheet sheet = book.getSheetByName("Format");
 		assertEquals("zh_TW", Locales.getCurrent().toString());
 		assertEquals("m/d/yyyy", sheet.getCell(1, 4).getCellStyle().getDataFormat());
 		
 		Locales.setThreadLocal(Locale.US);
-		book = ImExpTestUtil.loadBook(fileUrlUnderTest, "XSSFBook");
+		book = ImExpTestUtil.loadBook(fileForImporterTest, "XSSFBook");
 		sheet = book.getSheetByName("Format");
 		assertEquals("en_US", Locales.getCurrent().toString());
 		assertEquals("m/d/yyyy", sheet.getCell(1, 4).getCellStyle().getDataFormat());
@@ -186,7 +177,7 @@ public class ImporterTest extends ImExpTestBase {
 	
 	@Test
 	public void columnTest(){
-		NBook book = ImExpTestUtil.loadBook(fileUrlUnderTest, "XSSFBook");
+		NBook book = ImExpTestUtil.loadBook(fileForImporterTest, "XSSFBook");
 		columnTest(book);		
 	}
 	
@@ -195,19 +186,19 @@ public class ImporterTest extends ImExpTestBase {
 	 */
 	@Test
 	public void lastChangedColumnTest(){
-		NBook book = ImExpTestUtil.loadBook(fileUrlUnderTest, "XSSFBook");
+		NBook book = ImExpTestUtil.loadBook(fileForImporterTest, "XSSFBook");
 		lastChangedColumnTest(book);
 	}
 	
 	@Test
 	public void viewInfoTest(){
-		NBook book = ImExpTestUtil.loadBook(fileUrlUnderTest, "XSSFBook");
+		NBook book = ImExpTestUtil.loadBook(fileForImporterTest, "XSSFBook");
 		viewInfoTest(book);
 	}
 
 	@Test
 	public void mergedTest(){
-		NBook book = ImExpTestUtil.loadBook(fileUrlUnderTest, "XSSFBook");
+		NBook book = ImExpTestUtil.loadBook(fileForImporterTest, "XSSFBook");
 		mergedTest(book);
 	}
 }
