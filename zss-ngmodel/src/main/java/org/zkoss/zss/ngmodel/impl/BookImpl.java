@@ -58,7 +58,7 @@ public class BookImpl extends BookAdv{
 	private NBookSeries bookSeries;
 	
 	private final List<SheetAdv> sheets = new LinkedList<SheetAdv>();
-	private final List<NameAdv> names = new LinkedList<NameAdv>();
+	private List<NameAdv> names;
 	
 	private final List<CellStyleAdv> cellStyles = new LinkedList<CellStyleAdv>();
 	private final CellStyleAdv defaultCellStyle;
@@ -76,7 +76,7 @@ public class BookImpl extends BookAdv{
 	
 	private EventListenerAdaptor eventListenerAdaptor;
 	
-	private final HashMap<String,Object> attributes = new LinkedHashMap<String, Object>();
+	private transient HashMap<String,Object> attributes;
 	
 	public BookImpl(String bookName){
 		Validations.argNotNull(bookName);
@@ -141,7 +141,7 @@ public class BookImpl extends BookAdv{
 		}
 	}
 	protected void checkOwnership(NName name){
-		if(!names.contains(name)){
+		if(names==null || !names.contains(name)){
 			throw new InvalidateModelOpException("doesn't has ownership "+ name);
 		}
 	}
@@ -402,17 +402,20 @@ public class BookImpl extends BookAdv{
 
 	@Override
 	public Object getAttribute(String name) {
-		return attributes.get(name);
+		return attributes==null?null:attributes.get(name);
 	}
 
 	@Override
 	public Object setAttribute(String name, Object value) {
+		if(attributes==null){
+			attributes = new HashMap<String, Object>();
+		}
 		return attributes.put(name, value);
 	}
 
 	@Override
 	public Map<String, Object> getAttributes() {
-		return Collections.unmodifiableMap(attributes);
+		return attributes==null?Collections.EMPTY_MAP:Collections.unmodifiableMap(attributes);
 	}
 
 	@Override
@@ -451,6 +454,11 @@ public class BookImpl extends BookAdv{
 		NameAdv name = new NameImpl(this,nextObjId("name"));
 		name.setName(namename);
 		name.setApplyToSheetName(sheetName);
+		
+		if(names==null){
+			names = new LinkedList<NameAdv>();
+		}
+		
 		names.add(name);
 		
 //		sendEvent(ModelEvents.ON_NAME_ADDED, 
@@ -491,11 +499,14 @@ public class BookImpl extends BookAdv{
 
 	@Override
 	public int getNumOfName() {
-		return names.size();
+		return names==null?0:names.size();
 	}
 
 	@Override
 	public NName getName(int idx) {
+		if(names==null){
+			throw new ArrayIndexOutOfBoundsException(idx);
+		}
 		return names.get(idx);
 	}
 
@@ -504,6 +515,8 @@ public class BookImpl extends BookAdv{
 		return getNameByName(namename,null);
 	}
 	public NName getNameByName(String namename,String sheetName) {
+		if(names==null)
+			return null;
 		for(NName name:names){
 			if((sheetName==null || sheetName.equals(name.getApplyToSheetName())) 
 					&& name.getName().equalsIgnoreCase(namename)){
@@ -516,7 +529,7 @@ public class BookImpl extends BookAdv{
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public List<NName> getNames() {
-		return Collections.unmodifiableList((List)names);
+		return names==null?Collections.EMPTY_LIST:Collections.unmodifiableList((List)names);
 	}
 
 	@Override

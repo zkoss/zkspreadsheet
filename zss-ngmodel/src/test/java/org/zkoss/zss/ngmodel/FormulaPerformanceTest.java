@@ -135,7 +135,7 @@ public class FormulaPerformanceTest {
 			}
 		} else {
 			XSSFWorkbook book = (XSSFWorkbook)model;
-//			XSSFFormulaEvaluator evaluator = XSSFFormulaEvaluator.create(book, null, null);
+			XSSFFormulaEvaluator evaluator = XSSFFormulaEvaluator.create(book, null, null);
 			XSSFSheet sheet = book.getSheetAt(0);
 			// get all values except first column
 			for(int r = 0; r < ROW_COUNT; ++r) {

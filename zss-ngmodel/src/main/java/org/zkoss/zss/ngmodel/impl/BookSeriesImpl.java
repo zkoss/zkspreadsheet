@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+
 import org.zkoss.zss.ngmodel.NBook;
 import org.zkoss.zss.ngmodel.impl.sys.DependencyTableAdv;
 import org.zkoss.zss.ngmodel.sys.EngineFactory;
@@ -76,28 +77,19 @@ public class BookSeriesImpl extends BookSeriesAdv {
 	
 	@Override
 	public Object getAttribute(String name) {
-		return name != null ? getAttributeMap().get(name) : null;
+		return attributes==null?null:attributes.get(name);
 	}
 
 	@Override
 	public Object setAttribute(String name, Object value) {
-		if(name != null) {
-			Map<String, Object> map = getAttributeMap();
-			return value != null ? map.put(name, value) : map.remove(name);
-		} else {
-			return null;
+		if(attributes==null){
+			attributes = new HashMap<String, Object>();
 		}
+		return attributes.put(name, value);
 	}
 
 	@Override
 	public Map<String, Object> getAttributes() {
-		return Collections.unmodifiableMap(getAttributeMap());
-	}
-	
-	private Map<String, Object> getAttributeMap() {
-		if(attributes == null) {
-			attributes = new LinkedHashMap<String, Object>();
-		}
-		return attributes;
+		return attributes==null?Collections.EMPTY_MAP:Collections.unmodifiableMap(attributes);
 	}
 }

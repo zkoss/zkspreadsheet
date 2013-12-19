@@ -71,7 +71,7 @@ public class SheetImpl extends SheetAdv {
 	
 	private final NPrintInfo printInfo = new PrintInfoImpl();
 	
-	private final HashMap<String,Object> attributes = new LinkedHashMap<String, Object>();
+	private transient HashMap<String,Object> attributes;
 	private int defaultColumnWidth = 64; //in pixel
 	private int defaultRowHeight = 20;//in pixel
 	
@@ -867,17 +867,20 @@ public class SheetImpl extends SheetAdv {
 
 	@Override
 	public Object getAttribute(String name) {
-		return attributes.get(name);
+		return attributes==null?null:attributes.get(name);
 	}
 
 	@Override
 	public Object setAttribute(String name, Object value) {
+		if(attributes==null){
+			attributes = new HashMap<String, Object>();
+		}
 		return attributes.put(name, value);
 	}
 
 	@Override
 	public Map<String, Object> getAttributes() {
-		return Collections.unmodifiableMap(attributes);
+		return attributes==null?Collections.EMPTY_MAP:Collections.unmodifiableMap(attributes);
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })

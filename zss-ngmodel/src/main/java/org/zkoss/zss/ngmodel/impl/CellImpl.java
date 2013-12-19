@@ -174,15 +174,19 @@ public class CellImpl extends CellAdv {
 		
 		// FIXME zss 3.5, hard code and must be modified
 		if(formulaResult!=null){
-			NBookSeries bookSeries = getSheet().getBook().getBookSeries();
-			WorkbookEvaluator evaluator = (WorkbookEvaluator)bookSeries.getAttribute("evaluator");
-			EvaluationWorkbook book = (EvaluationWorkbook)bookSeries.getAttribute("evalBook");
-			if(evaluator != null && book != null) {
-				String sheetName = getSheet().getSheetName();
-				EvaluationSheet sheet = book.getSheet(book.getSheetIndex(sheetName));
-				EvaluationCell cell = sheet.getCell(getRowIndex(), getColumnIndex());
-				evaluator.notifyUpdateCell(cell);
-			}
+			
+			//only clear when there is a formula result, or poi will do full cache scan to clean blank.
+			EngineFactory.getInstance().createFormulaEngine().clearCache(new FormulaEvaluationContext(this));
+			
+//			NBookSeries bookSeries = getSheet().getBook().getBookSeries();
+//			WorkbookEvaluator evaluator = (WorkbookEvaluator)bookSeries.getAttribute("evaluator");
+//			EvaluationWorkbook book = (EvaluationWorkbook)bookSeries.getAttribute("evalBook");
+//			if(evaluator != null && book != null) {
+//				String sheetName = getSheet().getSheetName();
+//				EvaluationSheet sheet = book.getSheet(book.getSheetIndex(sheetName));
+//				EvaluationCell cell = sheet.getCell(getRowIndex(), getColumnIndex());
+//				evaluator.notifyUpdateCell(cell);
+//			}
 		}
 		
 		formulaResult = null;

@@ -16,8 +16,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import org.zkoss.poi.ss.formula.CollaboratingWorkbooksEnvironment;
 import org.zkoss.poi.ss.formula.EvaluationCell;
+import org.zkoss.poi.ss.formula.EvaluationSheet;
 import org.zkoss.poi.ss.formula.FormulaParseException;
 import org.zkoss.poi.ss.formula.FormulaParser;
 import org.zkoss.poi.ss.formula.FormulaType;
@@ -342,5 +344,34 @@ public class POIFormulaEngine implements FormulaEngine {
 			return toerantFunction;
 		}
 	};
+
+	@Override
+	public void clearCache(FormulaEvaluationContext context) {
+
+		EvaluationResult result = null;
+		try {
+			NBook book = context.getBook();
+			// book series
+			BookSeriesAdv bookSeries = (BookSeriesAdv)book.getBookSeries();
+			EvalBook evalBook = (EvalBook)bookSeries.getAttribute(KEY_EVAL_BOOK);
+			WorkbookEvaluator evaluator = (WorkbookEvaluator)bookSeries.getAttribute(KEY_EVALUATOR);
+			// do nothing if not existed
+			if(evalBook == null || evaluator == null) {
+				return;
+			}
+			NSheet sheet = context.getSheet();
+			NCell cell = context.getCell();
+			if(cell != null && !cell.isNull()) {
+				String sheetName = sheet.getSheetName();
+				EvaluationSheet evalSheet = evalBook.getSheet(evalBook.getSheetIndex(sheetName));
+				EvaluationCell evalCell = evalSheet.getCell(cell.getRowIndex(), cell.getColumnIndex());
+				evaluator.notifyUpdateCell(evalCell);
+			} else {
+				//TODO for the case sheet name changed.?
+			}
+		} catch(Exception e) {
+			logger.log(Level.SEVERE, e.getMessage(), e);
+		}
+	}
 
 }

@@ -94,4 +94,10 @@ public class TestFormulaEngineImpl implements FormulaEngine {
 			}};
 	}
 
+	@Override
+	public void clearCache(FormulaEvaluationContext context) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }
