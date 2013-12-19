@@ -18,7 +18,9 @@ package org.zkoss.zss.ngmodel.impl;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import org.zkoss.zss.ngmodel.NBook;
@@ -39,6 +41,8 @@ public class SimpleBookSeriesImpl extends BookSeriesAdv {
 	final private DependencyTable dependencyTable;
 	
 	final private ReadWriteLock lock = new ReentrantReadWriteLock();
+	
+	private transient Map<String, Object> attributes;
 	
 	public SimpleBookSeriesImpl(BookAdv book){
 		this.book = book;
@@ -66,5 +70,32 @@ public class SimpleBookSeriesImpl extends BookSeriesAdv {
 		array = new ArrayList<NBook>(1);
 		array.add(book);
 		return array = Collections.unmodifiableList(array);
+	}
+
+	@Override
+	public Object getAttribute(String name) {
+		return name != null ? getAttributeMap().get(name) : null;
+	}
+
+	@Override
+	public Object setAttribute(String name, Object value) {
+		if(name != null) {
+			Map<String, Object> map = getAttributeMap();
+			return value != null ? map.put(name, value) : map.remove(name);
+		} else {
+			return null;
+		}
+	}
+
+	@Override
+	public Map<String, Object> getAttributes() {
+		return Collections.unmodifiableMap(getAttributeMap());
+	}
+	
+	private Map<String, Object> getAttributeMap() {
+		if(attributes == null) {
+			attributes = new LinkedHashMap<String, Object>();
+		}
+		return attributes;
 	}
 }

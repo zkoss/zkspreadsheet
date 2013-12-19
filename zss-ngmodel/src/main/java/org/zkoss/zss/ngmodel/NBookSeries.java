@@ -17,6 +17,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.ngmodel;
 
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.locks.ReadWriteLock;
 
 /**
@@ -43,4 +44,25 @@ public interface NBookSeries {
 	 * @return
 	 */
 	public ReadWriteLock getLock();
+	
+	/**
+	 * Get the runtime custom attribute that stored in this book
+	 * @param name the attribute name
+	 * @return the value, or null if not found
+	 */
+	public Object getAttribute(String name);
+	
+	/**
+	 * Set the runtime custom attribute to stored in this book, the attribute is only use for developer to stored runtime data in the book,
+	 * values will not stored to excel when exporting.
+	 * @param name name the attribute name
+	 * @param value the attribute value
+	 */
+	public Object setAttribute(String name,Object value);
+	
+	/**
+	 * Get the unmodifiable runtime attributes map
+	 * @return
+	 */
+	public Map<String,Object> getAttributes();
 }

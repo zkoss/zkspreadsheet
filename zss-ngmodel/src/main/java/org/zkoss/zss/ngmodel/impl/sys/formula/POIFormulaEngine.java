@@ -21,6 +21,8 @@ import org.zkoss.poi.ss.formula.EvaluationCell;
 import org.zkoss.poi.ss.formula.FormulaParseException;
 import org.zkoss.poi.ss.formula.FormulaParser;
 import org.zkoss.poi.ss.formula.FormulaType;
+import org.zkoss.poi.ss.formula.IStabilityClassifier;
+import org.zkoss.poi.ss.formula.OperationEvaluationContext;
 import org.zkoss.poi.ss.formula.WorkbookEvaluator;
 import org.zkoss.poi.ss.formula.eval.AreaEval;
 import org.zkoss.poi.ss.formula.eval.BlankEval;
@@ -31,6 +33,7 @@ import org.zkoss.poi.ss.formula.eval.RefEval;
 import org.zkoss.poi.ss.formula.eval.StringEval;
 import org.zkoss.poi.ss.formula.eval.ValueEval;
 import org.zkoss.poi.ss.formula.eval.ValuesEval;
+import org.zkoss.poi.ss.formula.functions.FreeRefFunction;
 import org.zkoss.poi.ss.formula.ptg.Area3DPtg;
 import org.zkoss.poi.ss.formula.ptg.AreaPtg;
 import org.zkoss.poi.ss.formula.ptg.FuncPtg;
@@ -39,6 +42,7 @@ import org.zkoss.poi.ss.formula.ptg.NameXPtg;
 import org.zkoss.poi.ss.formula.ptg.Ptg;
 import org.zkoss.poi.ss.formula.ptg.Ref3DPtg;
 import org.zkoss.poi.ss.formula.ptg.RefPtg;
+import org.zkoss.poi.ss.formula.udf.UDFFinder;
 import org.zkoss.zss.ngmodel.CellRegion;
 import org.zkoss.zss.ngmodel.ErrorValue;
 import org.zkoss.zss.ngmodel.NBook;
@@ -63,6 +67,8 @@ import org.zkoss.zss.ngmodel.sys.formula.FormulaParseContext;
  */
 public class POIFormulaEngine implements FormulaEngine {
 	private final static Logger logger = Logger.getLogger(POIFormulaEngine.class.getName());
+	private final static String KEY_EVALUATOR = "evaluator";
+	private final static String KEY_EVAL_BOOK = "evalBook";
 
 	@Override
 	public FormulaExpression parse(String formula, FormulaParseContext context) {
@@ -152,24 +158,30 @@ public class POIFormulaEngine implements FormulaEngine {
 		EvaluationResult result = null;
 		try {
 			NBook book = context.getBook();
-			EvalBook evalBook = null;
-			WorkbookEvaluator evaluator = null;
 
 			// book series
 			BookSeriesAdv bookSeries = (BookSeriesAdv)book.getBookSeries();
-			NBook[] books = bookSeries.getBooks().toArray(new NBook[0]);
-			String[] bookNames = new String[books.length];
-			WorkbookEvaluator[] evaluators = new WorkbookEvaluator[books.length];
-			for(int i = 0; i < books.length; ++i) {
-				bookNames[i] = books[i].getBookName();
-				EvalBook eb = new EvalBook(books[i]);
-				evaluators[i] = new WorkbookEvaluator(eb, null, null);
-				if(context.getBook() == books[i]) {
-					evalBook = eb;
-					evaluator = evaluators[i];
+			EvalBook evalBook = (EvalBook)bookSeries.getAttribute(KEY_EVAL_BOOK);
+			WorkbookEvaluator evaluator = (WorkbookEvaluator)bookSeries.getAttribute(KEY_EVALUATOR);
+			// create evaluators if not existed
+			if(evalBook == null || evaluator == null) {
+				NBook[] books = bookSeries.getBooks().toArray(new NBook[0]);
+				String[] bookNames = new String[books.length];
+				WorkbookEvaluator[] evaluators = new WorkbookEvaluator[books.length];
+				for(int i = 0; i < books.length; ++i) {
+					bookNames[i] = books[i].getBookName();
+					EvalBook eb = new EvalBook(books[i]);
+					evaluators[i] = new WorkbookEvaluator(eb, noCacheClassifier, tolerantUDFFinder);
+					if(context.getBook() == books[i]) {
+						evalBook = eb;
+						evaluator = evaluators[i];
+					}
 				}
+				CollaboratingWorkbooksEnvironment.setup(bookNames, evaluators);
+				bookSeries.setAttribute(KEY_EVAL_BOOK, evalBook);
+				bookSeries.setAttribute(KEY_EVALUATOR, evaluator);
 			}
-			CollaboratingWorkbooksEnvironment.setup(bookNames, evaluators);
+			// check again
 			if(evalBook == null || evaluator == null) { // just in case
 				return new EvaluationResultImpl(ResultType.ERROR, "The book isn't in the book series.");
 			}
@@ -228,7 +240,7 @@ public class POIFormulaEngine implements FormulaEngine {
 		}
 		return result;
 	}
-	
+
 	private Object getResolvedValue(ValueEval value) throws EvaluationException {
 		if(value instanceof StringEval) {
 			return ((StringEval)value).getStringValue();
@@ -312,5 +324,23 @@ public class POIFormulaEngine implements FormulaEngine {
 		}
 
 	}
+
+	private final static IStabilityClassifier noCacheClassifier = new IStabilityClassifier() {
+		public boolean isCellFinal(int sheetIndex, int rowIndex, int columnIndex) {
+			return true;
+		}
+	};
+
+	private final static FreeRefFunction toerantFunction = new FreeRefFunction() {
+		public ValueEval evaluate(ValueEval[] args, OperationEvaluationContext ec) {
+			return ErrorEval.NAME_INVALID;
+		}
+	};
+
+	private final static UDFFinder tolerantUDFFinder = new UDFFinder() {
+		public FreeRefFunction findFunction(String name) {
+			return toerantFunction;
+		}
+	};
 
 }

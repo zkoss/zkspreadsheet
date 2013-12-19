@@ -19,9 +19,13 @@ package org.zkoss.zss.ngmodel.impl;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
-
+import org.zkoss.poi.ss.formula.EvaluationCell;
+import org.zkoss.poi.ss.formula.EvaluationSheet;
+import org.zkoss.poi.ss.formula.EvaluationWorkbook;
+import org.zkoss.poi.ss.formula.WorkbookEvaluator;
 import org.zkoss.zss.ngmodel.CellRegion;
 import org.zkoss.zss.ngmodel.ErrorValue;
+import org.zkoss.zss.ngmodel.NBookSeries;
 import org.zkoss.zss.ngmodel.NCellStyle;
 import org.zkoss.zss.ngmodel.NColumnArray;
 import org.zkoss.zss.ngmodel.NComment;
@@ -167,6 +171,20 @@ public class CellImpl extends CellAdv {
 
 	@Override
 	public void clearFormulaResultCache() {
+		
+		// FIXME zss 3.5, hard code and must be modified
+		if(formulaResult!=null){
+			NBookSeries bookSeries = getSheet().getBook().getBookSeries();
+			WorkbookEvaluator evaluator = (WorkbookEvaluator)bookSeries.getAttribute("evaluator");
+			EvaluationWorkbook book = (EvaluationWorkbook)bookSeries.getAttribute("evalBook");
+			if(evaluator != null && book != null) {
+				String sheetName = getSheet().getSheetName();
+				EvaluationSheet sheet = book.getSheet(book.getSheetIndex(sheetName));
+				EvaluationCell cell = sheet.getCell(getRowIndex(), getColumnIndex());
+				evaluator.notifyUpdateCell(cell);
+			}
+		}
+		
 		formulaResult = null;
 	}
 	
