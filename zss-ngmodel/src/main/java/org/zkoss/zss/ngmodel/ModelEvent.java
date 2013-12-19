@@ -80,4 +80,8 @@ private String name;
 		}
 		return region.row<=0 && region.lastRow>=book.getMaxRowSize();
 	}
+
+	public String getObjectId() {
+		return (String)getData(ModelEvents.PARAM_OBJECT_ID);
+	}
 }

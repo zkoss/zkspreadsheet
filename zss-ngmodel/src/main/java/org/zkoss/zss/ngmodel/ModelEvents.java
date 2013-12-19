@@ -29,19 +29,25 @@ public class ModelEvents {
 	
 	public static final String ON_CELL_CONTENT_CHANGE = "onCellChange";
 	public static final String ON_ROW_COLUMN_SIZE_CHANGE = "onRowColumnSizeChange";
+	public static final String ON_CHART_CONTENT_CHANGE = "onChartContentChange";
 	
 	public static final String PARAM_BOOK = "book";
 	public static final String PARAM_SHEET = "sheet";
 	public static final String PARAM_REGION = "region";
+	public static final String PARAM_OBJECT_ID = "objid";
 	
 	
-	public static ModelEvent createModelEvent(String name, NBook book,Object... data){
-		return createModelEvent(name,book,null,null,data);
+	
+	public static ModelEvent createModelEvent(String name, NBook book, Object... data){
+		return createModelEvent0(name,book,null,null,data);
 	}
 	public static ModelEvent createModelEvent(String name, NSheet sheet, Object... data){
-		return createModelEvent(name,sheet.getBook(),sheet,null,data);
+		return createModelEvent0(name,sheet.getBook(),sheet,null,data);
 	}
-	public static ModelEvent createModelEvent(String name, NBook book, NSheet sheet,CellRegion region,Object... data){
+	public static ModelEvent createModelEvent(String name, NSheet sheet,CellRegion region,Object... data){
+		return createModelEvent0(name,sheet.getBook(),sheet,region,data);
+	}
+	private static ModelEvent createModelEvent0(String name, NBook book, NSheet sheet,CellRegion region,Object... data){
 		Map<String,Object> datamap = new HashMap<String,Object>();
 		if(book!=null){
 			datamap.put(ModelEvents.PARAM_BOOK, book);
@@ -49,7 +55,7 @@ public class ModelEvents {
 		if(sheet!=null){
 			datamap.put(ModelEvents.PARAM_SHEET, sheet);
 		}
-		if(sheet!=null){
+		if(region!=null){
 			datamap.put(ModelEvents.PARAM_REGION, region);
 		}
 		if(datamap!=null){

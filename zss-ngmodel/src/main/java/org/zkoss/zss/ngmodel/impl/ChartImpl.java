@@ -37,8 +37,11 @@ public class ChartImpl extends ChartAdv {
 	String yAxisTitle;
 	SheetAdv sheet;
 	
-	NLegendPosition legendPosition;
+	NChartLegendPosition legendPosition;
 	NChartGrouping grouping;
+	NChartDirection direction;
+	
+	boolean threeD;
 	
 	public ChartImpl(SheetAdv sheet,String id,NChartType type,NViewAnchor anchor){
 		this.sheet = sheet;
@@ -97,15 +100,10 @@ public class ChartImpl extends ChartAdv {
 		//TODO for type;
 		switch(type){
 		case AREA:
-		case AREA_3D:
 		case BAR:
-		case BAR_3D:
 		case COLUMN:
-		case COLUMN_3D:
 		case LINE:
-		case LINE_3D:
 		case PIE:
-		case PIE_3D:
 			return new CategoryChartDataImpl(this,id+"-data");
 		}
 		throw new UnsupportedOperationException("unsupported chart type "+type);
@@ -126,11 +124,11 @@ public class ChartImpl extends ChartAdv {
 		}
 	}
 	@Override
-	public void setLegendPosition(NLegendPosition pos) {
+	public void setLegendPosition(NChartLegendPosition pos) {
 		this.legendPosition = pos;
 	}
 	@Override
-	public NLegendPosition getLegendPosition() {
+	public NChartLegendPosition getLegendPosition() {
 		return legendPosition;
 	}
 	@Override
@@ -140,6 +138,22 @@ public class ChartImpl extends ChartAdv {
 	@Override
 	public NChartGrouping getGrouping() {
 		return grouping;
+	}
+	@Override
+	public void setBarDirection(NChartDirection direction) {
+		this.direction = direction;
+	}
+	@Override
+	public NChartDirection getBarDirection() {
+		return direction;
+	}
+	@Override
+	public boolean isThreeD() {
+		return threeD;
+	}
+	@Override
+	public void setThreeD(boolean threeD) {
+		this.threeD = threeD;
 	}
 	
 }

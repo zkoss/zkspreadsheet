@@ -17,7 +17,6 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.ngmodel;
 
 import org.zkoss.zss.ngmodel.chart.NChartData;
-import org.zkoss.zss.ngmodel.impl.SheetAdv;
 /**
  * 
  * @author dennis
@@ -26,23 +25,23 @@ import org.zkoss.zss.ngmodel.impl.SheetAdv;
 public interface NChart {
 
 	public enum NChartType{
-		AREA_3D,
+//		AREA_3D,
 		AREA,
-		BAR_3D,
+//		BAR_3D,
 		BAR,
 		BUBBLE,
 		COLUMN,
-		COLUMN_3D,
+//		COLUMN_3D,
 		DOUGHNUT,
-		LINE_3D,
+//		LINE_3D,
 		LINE,
 		OF_PIE,
-		PIE_3D,
+//		PIE_3D,
 		PIE,
 		RADAR,
 		SCATTER,
 		STOCK,
-		SURFACE_3D,
+//		SURFACE_3D,
 		SURFACE
 	}
 	
@@ -53,13 +52,18 @@ public interface NChart {
 		CLUSTERED; //bar only
 	}
 	
-	public enum NLegendPosition {
+	public enum NChartLegendPosition {
 		BOTTOM,
 		LEFT,
 		RIGHT,
 		TOP,
 		TOP_RIGHT
 	}
+	public enum NChartDirection {
+		HORIZONTAL, //horizontal, bar chart
+		VERTICAL; //vertical, column chart
+	}
+
 	
 	public String getId();
 	
@@ -83,11 +87,19 @@ public interface NChart {
 
 	void setYAxisTitle(String yAxisTitle);
 	
-	public void setLegendPosition(NLegendPosition pos);
+	public void setLegendPosition(NChartLegendPosition pos);
 	
-	public NLegendPosition getLegendPosition();
+	public NChartLegendPosition getLegendPosition();
 	
 	public void setGrouping(NChartGrouping grouping);
 	
 	public NChartGrouping getGrouping();
+	
+	public void setBarDirection(NChartDirection direction);
+	
+	public NChartDirection getBarDirection();
+	
+	public boolean isThreeD();
+	
+	public void setThreeD(boolean threeD);
 }

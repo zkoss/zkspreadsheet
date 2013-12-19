@@ -137,6 +137,9 @@ public class CategoryChartDataImpl extends ChartDataAdv implements NCategoryChar
 	public void clearFormulaResultCache() {
 		evalResult = null;
 		evaluated = false;
+		for(SeriesImpl series:serieses){
+			series.clearFormulaResultCache();
+		}
 	}
 	
 	@Override

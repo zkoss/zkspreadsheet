@@ -130,6 +130,10 @@ public class SeriesImpl implements NSeries,Serializable,LinkedModelObject{
 	}
 	
 	@Override
+	public void setFormula(String nameExpression,String valueExpression){
+		setFormula(nameExpression,valueExpression);
+	}
+	@Override
 	public void setFormula(String nameExpression,String valueExpression, String yValueExpression){
 		evaluated = false;
 		clearFormulaDependency();

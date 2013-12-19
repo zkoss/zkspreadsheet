@@ -18,6 +18,7 @@ package org.zkoss.zss.ngapi.impl;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -216,58 +217,21 @@ public class NRangeImpl implements NRange {
 		}
 
 		handleRefDependent(bookSeries,dependentSet);
-		handleRefContentNotify(bookSeries,notifySet);
+		handleRefNotifyContentChange(bookSeries,notifySet);
 	}
 	
-	private void handleRefDependent(NBookSeries bookSeries,LinkedHashSet<Ref> dependentSet) {
+	private void handleRefDependent(NBookSeries bookSeries,HashSet<Ref> dependentSet) {
 		// clear formula cache
-		for (Ref dependent : dependentSet) {
-			System.out.println(">>> Dependent "+dependent);
-			//clear the dependent's formula cache since the precedent is changed.
-			if (dependent.getType() == RefType.CELL) {
-				NBook dependentBook = bookSeries.getBook(dependent
-						.getBookName());
-				NSheet dependentSheet = dependentBook.getSheetByName(dependent
-						.getSheetName());
-				NCell cell = dependentSheet.getCell(dependent.getRow(),
-						dependent.getColumn());
-				cell.clearFormulaResultCache();
-			} else {// TODO another
-
-			}
-		}
+		new RefDependentHandler(bookSeries).handleRefDependent(dependentSet);
 	}
 	
-	private void handleRefContentNotify(NBookSeries bookSeries,LinkedHashSet<Ref> notifySet) {
+	private void handleRefNotifyContentChange(NBookSeries bookSeries,HashSet<Ref> notifySet) {
 		// notify changes
-		for (Ref notify : notifySet) {
-			System.out.println(">>> Notify "+notify);
-			RefType type = notify.getType();
-			if (type == RefType.CELL || type == RefType.AREA) {
-				NBook notifyBook = bookSeries.getBook(notify.getBookName());
-				NSheet notifySheet = notifyBook.getSheetByName(notify.getSheetName());
-				((BookAdv) notifyBook).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_CELL_CONTENT_CHANGE,notifyBook,notifySheet,
-						new CellRegion(notify.getRow(),notify.getColumn(),notify.getLastRow(),notify.getLastColumn())));
-			} else {// TODO another
-
-			}
-		}
+		new RefNotifyContentChangeHandler(bookSeries).handleRefNotify(notifySet);
 	}
 	
-	private void handleRefSizeNotify(NBookSeries bookSeries,LinkedHashSet<Ref> notifySet) {
-		// notify size changes
-		for (Ref notify : notifySet) {
-			System.out.println(">>> Notify Size "+notify);
-			RefType type = notify.getType();
-			if (type == RefType.CELL || type == RefType.AREA) {
-				NBook notifyBook = bookSeries.getBook(notify.getBookName());
-				NSheet notifySheet = notifyBook.getSheetByName(notify.getSheetName());
-				((BookAdv) notifyBook).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_ROW_COLUMN_SIZE_CHANGE,notifyBook,notifySheet,
-						new CellRegion(notify.getRow(),notify.getColumn(),notify.getLastRow(),notify.getLastColumn())));
-			} else {// TODO another
-
-			}
-		}
+	private void handleRefNotifySizeChange(NBookSeries bookSeries,HashSet<Ref> notifySet) {
+		new RefNotifySizeChangeHandler(bookSeries).handleRefNotify(notifySet);
 	}
 
 	/**
@@ -308,7 +272,7 @@ public class NRangeImpl implements NRange {
 		}
 
 		handleRefDependent(bookSeries,dependentSet);
-		handleRefContentNotify(bookSeries,notifySet);
+		handleRefNotifyContentChange(bookSeries,notifySet);
 	}
 
 	private boolean euqlas(Object obj1, Object obj2) {
@@ -443,7 +407,7 @@ public class NRangeImpl implements NRange {
 			Ref ref = new RefImpl(bookName, sheetName, region.row, region.column,region.lastRow,region.lastColumn);
 			notifySet.add(ref);
 		}
-		handleRefContentNotify(bookSeries,notifySet);
+		handleRefNotifyContentChange(bookSeries,notifySet);
 	}
 	
 	@Override
@@ -493,7 +457,7 @@ public class NRangeImpl implements NRange {
 			}
 		}
 
-		handleRefSizeNotify(bookSeries, notifySet);
+		handleRefNotifySizeChange(bookSeries, notifySet);
 	}
 
 	@Override
@@ -537,7 +501,7 @@ public class NRangeImpl implements NRange {
 				notifySet.add(new RefImpl(bookName,sheetName,0,i,maxrow,i));
 			}
 		}
-		handleRefSizeNotify(bookSeries, notifySet);
+		handleRefNotifySizeChange(bookSeries, notifySet);
 	}
 
 	@Override
