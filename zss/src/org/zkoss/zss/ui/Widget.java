@@ -106,4 +106,10 @@ public interface Widget {
 	 */
 	public String getPanel();
 	
+	/**
+	 * the id of this widget
+	 * @return
+	 */
+	public String getId();
+	
 }

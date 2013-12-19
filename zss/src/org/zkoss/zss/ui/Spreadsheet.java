@@ -125,6 +125,7 @@ import org.zkoss.zss.ngmodel.NFont;
 import org.zkoss.zss.ngmodel.NPicture;
 import org.zkoss.zss.ngmodel.NRow;
 import org.zkoss.zss.ngmodel.NSheet;
+import org.zkoss.zss.ngmodel.NViewAnchor;
 import org.zkoss.zss.ui.au.in.Command;
 import org.zkoss.zss.ui.au.out.AuCellFocus;
 import org.zkoss.zss.ui.au.out.AuCellFocusTo;
@@ -165,6 +166,7 @@ import org.zkoss.zss.ui.impl.SequenceId;
 import org.zkoss.zss.ui.impl.SimpleCellDisplayLoader;
 import org.zkoss.zss.ui.impl.StringAggregation;
 import org.zkoss.zss.ui.impl.Styles;
+import org.zkoss.zss.ui.impl.VoidWidgetHandler;
 import org.zkoss.zss.ui.impl.XUtils;
 import org.zkoss.zss.ui.sys.CellDisplayLoader;
 import org.zkoss.zss.ui.sys.FreezeInfoLoader;
@@ -2027,6 +2029,12 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 					onCellContentChange((ModelEvent)event);
 				}
 			});
+			addEventListener(ModelEvents.ON_CHART_CONTENT_CHANGE, new ModelEventListener() {
+				@Override
+				public void onEvent(ModelEvent event) {
+					onChartContentChange((ModelEvent)event);
+				}
+			});
 			/*
 			addEventListener(SSDataEvent.ON_RANGE_INSERT, new EventListener() {
 				@Override
@@ -2277,12 +2285,22 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			final int top = region.getRow();
 			final int right = region.getLastColumn();
 			int bottom = region.getLastRow();
-			//TODO zss 3.5 , call when any cell change to update a widget.
-			updateWidget(sheet, left, top, right, bottom);
 			updateCell(sheet, left, top, right, bottom);
 			org.zkoss.zk.ui.event.Events.postEvent(new CellAreaEvent(
 					Events.ON_AFTER_CELL_CHANGE, Spreadsheet.this, new SheetImpl(new SimpleRef<NBook>(sheet.getBook()),new SimpleRef<NSheet>(sheet))
 					,top, left, bottom,right));
+		}
+		
+		private void onChartContentChange(ModelEvent event) {
+			final NSheet sheet = event.getSheet();
+			
+			final String objid = event.getObjectId();
+			NChart chart = sheet.getChart(objid);
+			if(chart!=null){
+				NViewAnchor anchor = chart.getAnchor();
+				//TODO zss 3.5 , I don't have api to update chart precisely, so , i use the old region api
+				updateWidget(sheet, objid);
+			}
 		}
 		/*
 		private void onRangeInsert(SSDataEvent event) {
@@ -2576,15 +2594,16 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		updateCell(getSelectedXSheet(), left, top, right, bottom);
 	}
 
-	private void updateWidget(NSheet sheet, int left, int top, int right, int bottom) {
+	private void updateWidget(NSheet sheet,String objId) {
 		if (!getSelectedXSheet().equals(sheet)){
 			releaseClientCache(sheet.getId());
 			return;
 		}
 		if (this.isInvalidated())
 			return;// since it is invalidate, we don't need to do anymore
-		//update widgets per the content change of the range.
-		getWidgetHandler().updateWidgets(sheet, left, top, right, bottom);
+		
+		//by our implement, object id equals to widget id
+		getWidgetHandler().updateWidget(sheet, objId);
 	}
 	
 	private void updateCell(NSheet sheet, int left, int top, int right, int bottom) {
@@ -4383,36 +4402,6 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	 */
 	private boolean removeWidget(Widget widget) {
 		return getWidgetHandler().removeWidget(widget);
-	}
-	
-	/**
-	 * Default widget implementation, don't provide any function.
-	 */
-	private class VoidWidgetHandler implements WidgetHandler, Serializable {
-
-		public boolean addWidget(Widget widget) {
-			return false;
-		}
-
-		public Spreadsheet getSpreadsheet() {
-			return Spreadsheet.this;
-		};
-
-		public void invaliate() {
-		}
-
-		public void onLoadOnDemand(NSheet sheet, int left, int top, int right, int bottom) {
-		}
-
-		public boolean removeWidget(Widget widget) {
-			return false;
-		}
-
-		public void init(Spreadsheet spreadsheet) {
-		}
-		
-		public void updateWidgets(NSheet sheet, int left, int top, int right, int bottom) {
-		}
 	}
 
 	private void processStartEditing(String token, StartEditingEvent event, String editingType) {

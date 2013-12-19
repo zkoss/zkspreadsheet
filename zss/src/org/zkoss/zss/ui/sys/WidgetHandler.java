@@ -82,6 +82,15 @@ public interface WidgetHandler{
 	 * @param top top row of the range 
 	 * @param right right column of the range 
 	 * @param bottom bottom row of the range
+	 * @Deprecated since 3.5 
 	 */
+	@Deprecated
 	public void updateWidgets(NSheet sheet, int left, int top, int right, int bottom);
+	
+	/**
+	 * Redraw widget
+	 * @param sheet
+	 * @param widgetId
+	 */
+	public void updateWidget(NSheet sheet, String widgetId);
 }
