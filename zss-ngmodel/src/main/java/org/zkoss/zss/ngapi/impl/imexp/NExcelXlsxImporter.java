@@ -19,7 +19,7 @@ package org.zkoss.zss.ngapi.impl.imexp;
 import java.io.*;
 
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
-import org.zkoss.poi.ss.usermodel.Sheet;
+import org.zkoss.poi.ss.usermodel.*;
 import org.zkoss.poi.xssf.usermodel.*;
 import org.zkoss.zss.ngmodel.*;
 import org.zkoss.zss.ngmodel.util.SpreadsheetVersion;
@@ -57,7 +57,6 @@ public class NExcelXlsxImporter extends AbstractExcelImporter{
 	 * @param poiSheet
 	 * @return
 	 */
-	@Override
 	protected int getLastChangedColumnIndex(Sheet poiSheet) {
 		int max = -1;
 		CTWorksheet worksheet = ((XSSFSheet)poiSheet).getCTWorksheet();
@@ -74,6 +73,32 @@ public class NExcelXlsxImporter extends AbstractExcelImporter{
 			}
 		}
 		return max;
+	}
+
+	/**
+	 * [ISO/IEC 29500-1 1st Edition] 18.3.1.13 col (Column Width & Formatting)
+	 */
+	@Override
+	protected void importColumn(Sheet poiSheet, NSheet sheet, int defaultWidth) {
+		CTWorksheet worksheet = ((XSSFSheet)poiSheet).getCTWorksheet();
+		if(worksheet.sizeOfColsArray()<=0){
+			return;
+		}
+		
+		CTCols colsArray = worksheet.getColsArray(0);
+		for (int i = 0; i < colsArray.sizeOfColArray(); i++) {
+			CTCol ctCol = colsArray.getColArray(i);
+			//max is 16384
+			
+			NColumnArray columnArray = sheet.setupColumnArray((int)ctCol.getMin()-1, (int)ctCol.getMax()-1);
+			columnArray.setHidden(ctCol.getHidden());
+			int columnIndex = (int)ctCol.getMin()-1;
+			columnArray.setWidth(XUtils.getWidthAny(poiSheet, columnIndex, CHRACTER_WIDTH));
+			CellStyle columnStyle = poiSheet.getColumnStyle(columnIndex);
+			if (columnStyle != null){
+				columnArray.setCellStyle(importCellStyle(columnStyle));
+			}
+		}
 	}
 	
 }

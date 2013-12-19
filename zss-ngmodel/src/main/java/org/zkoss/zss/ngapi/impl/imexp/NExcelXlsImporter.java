@@ -19,7 +19,7 @@ package org.zkoss.zss.ngapi.impl.imexp;
 import java.io.*;
 
 import org.zkoss.poi.hssf.usermodel.*;
-import org.zkoss.poi.ss.usermodel.Sheet;
+import org.zkoss.poi.ss.usermodel.*;
 import org.zkoss.zss.ngmodel.*;
 /**
  * 
@@ -27,7 +27,6 @@ import org.zkoss.zss.ngmodel.*;
  * @since 3.5.0
  */
 public class NExcelXlsImporter extends AbstractExcelImporter{
-
 
 	@Override
 	public NBook imports(InputStream is, String bookName) throws IOException {
@@ -43,9 +42,32 @@ public class NExcelXlsImporter extends AbstractExcelImporter{
 		return book;
 	}
 
-	@Override
-	protected int getLastChangedColumnIndex(Sheet poiSheet) {
+	/**
+	 * 
+	 * @param poiSheet
+	 * @return 256
+	 */
+	private int getLastChangedColumnIndex(Sheet poiSheet) {
 		return new HSSFSheetHelper((HSSFSheet)poiSheet).getInternalSheet().getMaxConfiguredColumn();
+	}
+
+	@Override
+	protected void importColumn(Sheet poiSheet, NSheet sheet, int defaultWidth) {
+		int lastChangedColumnIndex = getLastChangedColumnIndex(poiSheet);
+		for (int c=0 ; c <= lastChangedColumnIndex ; c++){
+			//reference Spreadsheet.updateColWidth()
+			int width = XUtils.getWidthAny(poiSheet, c, CHRACTER_WIDTH);
+			NColumn col = sheet.getColumn(c);
+			//to avoid creating unnecessary column with just default value
+			if(width != defaultWidth){
+				col.setWidth(width);
+				col.setHidden(poiSheet.isColumnHidden(c));
+			}
+			CellStyle columnStyle = poiSheet.getColumnStyle(c); 
+			if (columnStyle != null){
+				col.setCellStyle(importCellStyle(columnStyle));
+			}
+		}
 	}
 
 

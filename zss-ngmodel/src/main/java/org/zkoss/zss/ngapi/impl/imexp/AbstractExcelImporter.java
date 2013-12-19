@@ -54,7 +54,7 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 	/** source POI book */
 	protected Workbook workbook;
 
-	abstract protected int getLastChangedColumnIndex(Sheet poiSheet);
+	abstract protected void importColumn(Sheet poiSheet, NSheet sheet, int defaultWidth);
 	
 	/**
 	 * Name should be created after sheets created.
@@ -64,10 +64,6 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 		for (int i=0 ; i<workbook.getNumberOfNames() ; i++){
 			Name namedRange = workbook.getNameAt(i);
 			NName name = null;
-			//TODO skip auto-filter's defined name for it's not ready
-			if (namedRange.getNameName().contains("_FilterDatabase")){
-				continue;
-			}
 			if (namedRange.getSheetName() != null && namedRange.getSheetName().length()>0){
 				name = book.createName(namedRange.getNameName(), namedRange.getSheetName());
 			}else{
@@ -104,25 +100,11 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 			importRow(sheet, poiRow);
 		}
 		
-		//import columns
-		int lastChangedColumnIndex = getLastChangedColumnIndex(poiSheet);
-		for (int c=0 ; c <= lastChangedColumnIndex ; c++){
-			//reference Spreadsheet.updateColWidth()
-			int width = XUtils.getWidthAny(poiSheet, c, CHRACTER_WIDTH);
-			NColumn col = sheet.getColumn(c);
-			//to avoid creating unnecessary column with just default value
-			if(width != defaultWidth){
-				col.setWidth(width);
-				col.setHidden(poiSheet.isColumnHidden(c));
-			}
-			CellStyle columnStyle = poiSheet.getColumnStyle(c); 
-			if (columnStyle != null){
-				col.setCellStyle(importCellStyle(columnStyle));
-			}
-		}
+		importColumn(poiSheet, sheet, defaultWidth);
 		
 		return sheet;
 	}
+
 	
 	protected NRow importRow(NSheet sheet, Row poiRow) {
 		NRow row = sheet.getRow(poiRow.getRowNum());
