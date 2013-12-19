@@ -1,3 +1,19 @@
+/*
+
+{{IS_NOTE
+	Purpose:
+		
+	Description:
+		
+	History:
+		2013/12/18 , Created by Hawk
+}}IS_NOTE
+
+Copyright (C) 2013 Potix Corporation. All Rights Reserved.
+
+{{IS_RIGHT
+}}IS_RIGHT
+*/
 package org.zkoss.zss.ngapi.impl.imexp;
 
 import java.util.HashMap;
@@ -37,14 +53,23 @@ import org.zkoss.zss.ngmodel.NFont.Boldweight;
 import org.zkoss.zss.ngmodel.NFont.TypeOffset;
 import org.zkoss.zss.ngmodel.NFont.Underline;
 
+/**
+ * Common exporting behavior for both XLSX and XLS.
+ * 
+ * @author kuro, Hawk
+ * @since 3.5.0
+ */
 abstract public class AbstractExcelExporter extends AbstractExporter {
 	
 	protected Workbook workbook;
+	/**
+	 * The map stores the exported {@link CellStyle} during exporting, so that we can reuse for exporting other cells.
+	 */
 	protected Map<NCellStyle, CellStyle> styleTable = new HashMap<NCellStyle, CellStyle>();
 	protected Map<NFont, Font> fontTable = new HashMap<NFont, Font>();
 	protected Map<NColor, Color> colorTable = new HashMap<NColor, Color>();
 	
-	protected void exportNameRange(NBook book) {
+	protected void exportNamedRange(NBook book) {
 		
 		// NamedRange
 		for(NName name : book.getNames()) {

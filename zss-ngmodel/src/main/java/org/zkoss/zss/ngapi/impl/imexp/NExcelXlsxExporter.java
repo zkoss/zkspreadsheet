@@ -66,7 +66,7 @@ public class NExcelXlsxExporter extends AbstractExcelExporter {
 			exportSheet(sheet);
 		}
 		
-		exportNameRange(book);
+		exportNamedRange(book);
 		
 		try{
 			workbook.write(fos);

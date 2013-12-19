@@ -46,7 +46,7 @@ public class NExcelXlsExporter extends AbstractExcelExporter {
 			exportSheet(sheet);
 		}
 		
-		exportNameRange(book);
+		exportNamedRange(book);
 		
 		try{
 			
