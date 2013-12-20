@@ -77,6 +77,13 @@ public class NExcelXlsxImporter extends AbstractExcelImporter{
 
 	/**
 	 * [ISO/IEC 29500-1 1st Edition] 18.3.1.13 col (Column Width & Formatting)
+	 * By experiments, CT_Col is always created in ascending order by min and the range specified by min & max doesn't overlap each other.<br/>
+	 * For example:
+	 * <x:cols xmlns:x="http://schemas.openxmlformats.org/spreadsheetml/2006/main">
+	 *   <x:col min="1" max="1" width="11.28515625" customWidth="1" />
+	 *   <x:col min="2" max="4" width="11.28515625" hidden="1" customWidth="1" />
+	 *   <x:col min="5" max="5" width="11.28515625" customWidth="1" />
+	 * </x:cols> 
 	 */
 	@Override
 	protected void importColumn(Sheet poiSheet, NSheet sheet, int defaultWidth) {
