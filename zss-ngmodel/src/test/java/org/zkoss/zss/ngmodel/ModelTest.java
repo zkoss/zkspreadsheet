@@ -2003,7 +2003,7 @@ public class ModelTest {
 		Assert.assertEquals(null, nseries1.getName());
 		
 		nseries1.setFormula("KK()",null,null);//fail 
-		Assert.assertEquals("#N/A", nseries1.getName());
+		Assert.assertEquals("#NAME?", nseries1.getName());
 //		Assert.assertTrue(nseries1.isFormulaParsingError());
 		
 		nseries1.setFormula("D1",null,null);

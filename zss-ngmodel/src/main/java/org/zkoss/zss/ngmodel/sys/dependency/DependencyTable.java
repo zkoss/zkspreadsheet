@@ -16,7 +16,6 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.ngmodel.sys.dependency;
 
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -32,6 +31,8 @@ import java.util.Set;
 public interface DependencyTable {
 
 	public Set<Ref> getDependents(Ref precedent);
+	
+	public void add(Ref dependant, Ref precedent);
 	
 	public void clearDependents(Ref dependant);
 	

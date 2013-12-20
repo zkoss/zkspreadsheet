@@ -13,10 +13,11 @@ package org.zkoss.zss.ngmodel.impl.sys.formula;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import org.zkoss.poi.ss.formula.CollaboratingWorkbooksEnvironment;
 import org.zkoss.poi.ss.formula.EvaluationCell;
 import org.zkoss.poi.ss.formula.EvaluationSheet;
@@ -69,8 +70,7 @@ import org.zkoss.zss.ngmodel.sys.formula.FormulaParseContext;
  */
 public class POIFormulaEngine implements FormulaEngine {
 	private final static Logger logger = Logger.getLogger(POIFormulaEngine.class.getName());
-	private final static String KEY_EVALUATOR = "evaluator";
-	private final static String KEY_EVAL_BOOK = "evalBook";
+	private final static String KEY_EVALUATORS = "evaluators";
 
 	@Override
 	public FormulaExpression parse(String formula, FormulaParseContext context) {
@@ -150,6 +150,7 @@ public class POIFormulaEngine implements FormulaEngine {
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	public EvaluationResult evaluate(FormulaExpression expr, FormulaEvaluationContext context) {
 
 		// by pass if expression is invalid format
@@ -163,30 +164,32 @@ public class POIFormulaEngine implements FormulaEngine {
 
 			// book series
 			BookSeriesAdv bookSeries = (BookSeriesAdv)book.getBookSeries();
-			EvalBook evalBook = (EvalBook)bookSeries.getAttribute(KEY_EVAL_BOOK);
-			WorkbookEvaluator evaluator = (WorkbookEvaluator)bookSeries.getAttribute(KEY_EVALUATOR);
+			Map<String, EvalContext> evalCtxMap = (Map<String, EvalContext>)bookSeries
+					.getAttribute(KEY_EVALUATORS);
 			// create evaluators if not existed
-			if(evalBook == null || evaluator == null) {
-				NBook[] books = bookSeries.getBooks().toArray(new NBook[0]);
-				String[] bookNames = new String[books.length];
-				WorkbookEvaluator[] evaluators = new WorkbookEvaluator[books.length];
-				for(int i = 0; i < books.length; ++i) {
-					bookNames[i] = books[i].getBookName();
-					EvalBook eb = new EvalBook(books[i]);
-					evaluators[i] = new WorkbookEvaluator(eb, noCacheClassifier, tolerantUDFFinder);
-					if(context.getBook() == books[i]) {
-						evalBook = eb;
-						evaluator = evaluators[i];
-					}
+			if(evalCtxMap == null) {
+				evalCtxMap = new LinkedHashMap<String, POIFormulaEngine.EvalContext>();
+				List<String> bookNames = new ArrayList<String>();
+				List<WorkbookEvaluator> evaluators = new ArrayList<WorkbookEvaluator>();
+				for(NBook b : bookSeries.getBooks()) {
+					String n = b.getBookName();
+					EvalBook eb = new EvalBook(b);
+					WorkbookEvaluator we = new WorkbookEvaluator(eb, noCacheClassifier, tolerantUDFFinder);
+					bookNames.add(n);
+					evaluators.add(we);
+					evalCtxMap.put(n, new EvalContext(eb, we));
 				}
-				CollaboratingWorkbooksEnvironment.setup(bookNames, evaluators);
-				bookSeries.setAttribute(KEY_EVAL_BOOK, evalBook);
-				bookSeries.setAttribute(KEY_EVALUATOR, evaluator);
+				CollaboratingWorkbooksEnvironment.setup(bookNames.toArray(new String[0]),
+						evaluators.toArray(new WorkbookEvaluator[0]));
+				bookSeries.setAttribute(KEY_EVALUATORS, evalCtxMap);
 			}
 			// check again
-			if(evalBook == null || evaluator == null) { // just in case
+			EvalContext ctx = evalCtxMap.get(book.getBookName());
+			if(ctx == null) { // just in case
 				return new EvaluationResultImpl(ResultType.ERROR, "The book isn't in the book series.");
 			}
+			EvalBook evalBook = ctx.getBook();
+			WorkbookEvaluator evaluator = ctx.getEvaluator();
 
 			// evaluation formula
 			ValueEval value = null;
@@ -327,47 +330,112 @@ public class POIFormulaEngine implements FormulaEngine {
 
 	}
 
+	// for POI formula evaluator
 	private final static IStabilityClassifier noCacheClassifier = new IStabilityClassifier() {
 		public boolean isCellFinal(int sheetIndex, int rowIndex, int columnIndex) {
 			return true;
 		}
 	};
-
 	private final static FreeRefFunction toerantFunction = new FreeRefFunction() {
 		public ValueEval evaluate(ValueEval[] args, OperationEvaluationContext ec) {
 			return ErrorEval.NAME_INVALID;
 		}
 	};
-
 	private final static UDFFinder tolerantUDFFinder = new UDFFinder() {
 		public FreeRefFunction findFunction(String name) {
 			return toerantFunction;
 		}
 	};
 
+	private static class EvalContext {
+		private EvalBook book;
+		private WorkbookEvaluator evaluator;
+
+		public EvalContext(EvalBook book, WorkbookEvaluator evaluator) {
+			this.book = book;
+			this.evaluator = evaluator;
+		}
+
+		public EvalBook getBook() {
+			return book;
+		}
+
+		public WorkbookEvaluator getEvaluator() {
+			return evaluator;
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + ((book == null) ? 0 : book.hashCode());
+			result = prime * result + ((evaluator == null) ? 0 : evaluator.hashCode());
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if(this == obj)
+				return true;
+			if(obj == null)
+				return false;
+			if(getClass() != obj.getClass())
+				return false;
+			EvalContext other = (EvalContext)obj;
+			if(book == null) {
+				if(other.book != null)
+					return false;
+			} else if(!book.equals(other.book))
+				return false;
+			if(evaluator == null) {
+				if(other.evaluator != null)
+					return false;
+			} else if(!evaluator.equals(other.evaluator))
+				return false;
+			return true;
+		}
+
+	}
+
 	@Override
+	@SuppressWarnings("unchecked")
 	public void clearCache(FormulaEvaluationContext context) {
 
-		EvaluationResult result = null;
 		try {
 			NBook book = context.getBook();
-			// book series
-			BookSeriesAdv bookSeries = (BookSeriesAdv)book.getBookSeries();
-			EvalBook evalBook = (EvalBook)bookSeries.getAttribute(KEY_EVAL_BOOK);
-			WorkbookEvaluator evaluator = (WorkbookEvaluator)bookSeries.getAttribute(KEY_EVALUATOR);
-			// do nothing if not existed
-			if(evalBook == null || evaluator == null) {
-				return;
-			}
 			NSheet sheet = context.getSheet();
 			NCell cell = context.getCell();
+
+			// take evaluators from book series
+			BookSeriesAdv bookSeries = (BookSeriesAdv)book.getBookSeries();
+			Map<String, EvalContext> map = (Map<String, EvalContext>)bookSeries.getAttribute(KEY_EVALUATORS);
+
+			// do nothing if not existed
+			if(map == null) {
+				return;
+			}
+
+			// clean cache and target is a cell
 			if(cell != null && !cell.isNull()) {
+
+				// do nothing if not existed
+				EvalContext ctx = map.get(book.getBookName());
+				if(ctx == null) {
+					logger.log(Level.WARNING, "clear a non-existed book? >> " + book.getBookName());
+					return;
+				}
+
+				// notify POI formula evaluator one of cell has been updated
 				String sheetName = sheet.getSheetName();
+				EvalBook evalBook = ctx.getBook();
 				EvaluationSheet evalSheet = evalBook.getSheet(evalBook.getSheetIndex(sheetName));
 				EvaluationCell evalCell = evalSheet.getCell(cell.getRowIndex(), cell.getColumnIndex());
+				WorkbookEvaluator evaluator = ctx.getEvaluator();
 				evaluator.notifyUpdateCell(evalCell);
 			} else {
-				//TODO for the case sheet name changed.?
+				// no cell indicates clearing all cache
+				bookSeries.setAttribute(KEY_EVALUATORS, null);
+				map.clear(); // just in case
 			}
 		} catch(Exception e) {
 			logger.log(Level.SEVERE, e.getMessage(), e);

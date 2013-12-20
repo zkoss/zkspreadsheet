@@ -40,6 +40,7 @@ import org.zkoss.zss.ngmodel.NSheet;
  */
 public final class EvalBook implements FormulaRenderingWorkbook, EvaluationWorkbook, FormulaParsingWorkbook {
 
+	private NBook nbook;
 	private IndexedUDFFinder udfFinder = new IndexedUDFFinder();
 	private List<EvaluationSheet> sheets = new ArrayList<EvaluationSheet>();
 	private Map<EvaluationSheet, Integer> sheet2index = new HashMap<EvaluationSheet, Integer>();
@@ -49,12 +50,17 @@ public final class EvalBook implements FormulaRenderingWorkbook, EvaluationWorkb
 	private Map<String, EvaluationName> name2namedRanges = new HashMap<String, EvaluationName>();
 
 	public EvalBook(NBook book) {
+		this.nbook = book;
 		for(NSheet sheet : book.getSheets()) {
 			addSheet(sheet.getSheetName(), new EvalSheet(sheet));
 		}
 		for(NName n : book.getNames()) {
 			addNameRange(-1, n.getName(), n.getRefersToFormula());
 		}
+	}
+	
+	public NBook getNBook() {
+		return nbook;
 	}
 
 	public void addSheet(String name, EvaluationSheet sheet) {
