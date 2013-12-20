@@ -21,6 +21,7 @@ import org.zkoss.zss.ngmodel.NViewAnchor;
 import org.zkoss.zss.ngmodel.chart.NChartData;
 import org.zkoss.zss.ngmodel.impl.chart.CategoryChartDataImpl;
 import org.zkoss.zss.ngmodel.impl.chart.ChartDataAdv;
+import org.zkoss.zss.ngmodel.impl.chart.UnsupportedChartDataImpl;
 /**
  * 
  * @author dennis
@@ -39,7 +40,6 @@ public class ChartImpl extends ChartAdv {
 	
 	NChartLegendPosition legendPosition;
 	NChartGrouping grouping;
-	NChartDirection direction;
 	
 	boolean threeD;
 	
@@ -97,14 +97,23 @@ public class ChartImpl extends ChartAdv {
 	}
 
 	private ChartDataAdv createChartData(NChartType type){
-		//TODO for type;
 		switch(type){
 		case AREA:
 		case BAR:
-		case COLUMN:
+		case COLUMN://same as bar
 		case LINE:
+		case DOUGHNUT://same as pie
 		case PIE:
+		case SCATTER://xy , reuse category
+		case BUBBLE://xyz , reuse category
+		case STOCK://stock, reuse category			
 			return new CategoryChartDataImpl(this,id+"-data");
+			
+		//not supported	
+		case OF_PIE:
+		case RADAR:
+		case SURFACE:
+			return new UnsupportedChartDataImpl(this);
 		}
 		throw new UnsupportedOperationException("unsupported chart type "+type);
 	}
@@ -140,12 +149,15 @@ public class ChartImpl extends ChartAdv {
 		return grouping;
 	}
 	@Override
-	public void setBarDirection(NChartDirection direction) {
-		this.direction = direction;
-	}
-	@Override
-	public NChartDirection getBarDirection() {
-		return direction;
+	public NBarDirection getBarDirection() {
+		switch(type){
+		case BAR:
+			return NBarDirection.HORIZONTAL;
+		case COLUMN:
+			return NBarDirection.VERTICAL;
+		default:
+			return null;
+		}
 	}
 	@Override
 	public boolean isThreeD() {

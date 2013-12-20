@@ -32,9 +32,14 @@ public interface NSeries extends FormulaContent{
 	//for Scatter, xy chart
 	public int getNumOfYValue();
 	public Object getYValue(int index);
+	
+	public int getNumOfZValue();
+	public Object getZValue(int index);
 	public void setFormula(String nameExpr,String valuesExpr);
 	public void setFormula(String nameExpr,String xValuesExpr,String yValuesExpr);
+	public void setFormula(String nameExpr,String xValuesExpr,String yValuesExpr,String zValuesExpr);
 	public String getNameFormula();
 	public String getValuesFormula();
 	public String getYValuesFormula();
+	public String getZValuesFormula();
 }

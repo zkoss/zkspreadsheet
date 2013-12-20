@@ -106,14 +106,47 @@ public class TestImporterFactory implements ImporterFactory{
 				sheet.getCell(3, 3).setValue(9);
 				
 				
-				NChart chart = sheet.addChart(NChartType.PIE, new NViewAnchor(1, 7, 300, 200));
+				NChart chart = sheet.addChart(NChartType.PIE, new NViewAnchor(1, 6, 300, 200));
 				buildChartData(chart);
 				chart.setLegendPosition(NChartLegendPosition.RIGHT);
 				
-				chart = sheet.addChart(NChartType.PIE, new NViewAnchor(1, 12, 400, 200));
+				chart = sheet.addChart(NChartType.PIE, new NViewAnchor(1, 12, 300, 200));
 				buildChartData(chart);
 				chart.setTitle("Another Title");
 				chart.setThreeD(true);
+				
+				chart = sheet.addChart(NChartType.DOUGHNUT, new NViewAnchor(1, 18, 300, 200));
+				buildChartData(chart);
+				chart.setLegendPosition(NChartLegendPosition.RIGHT);
+				
+				chart = sheet.addChart(NChartType.BAR, new NViewAnchor(12, 0, 300, 200));
+				buildChartData(chart);
+				chart.setLegendPosition(NChartLegendPosition.BOTTOM);
+				
+				chart = sheet.addChart(NChartType.BAR, new NViewAnchor(12, 6, 300, 200));
+				buildChartData(chart);
+				chart.setThreeD(true);
+				
+				chart = sheet.addChart(NChartType.COLUMN, new NViewAnchor(12, 12, 300, 200));
+				buildChartData(chart);
+				chart.setLegendPosition(NChartLegendPosition.LEFT);
+				
+				chart = sheet.addChart(NChartType.COLUMN, new NViewAnchor(12, 18, 300, 200));
+				buildChartData(chart);
+				chart.setThreeD(true);
+				
+				
+				chart = sheet.addChart(NChartType.LINE, new NViewAnchor(24, 0, 300, 200));
+				buildChartData(chart);
+				chart.setLegendPosition(NChartLegendPosition.TOP);
+				
+				chart = sheet.addChart(NChartType.LINE, new NViewAnchor(24, 6, 300, 200));
+				buildChartData(chart);
+				chart.setThreeD(true);
+				
+				chart = sheet.addChart(NChartType.AREA, new NViewAnchor(24, 12, 300, 200));
+				buildChartData(chart);
+				
 			}
 			
 
@@ -124,9 +157,9 @@ public class TestImporterFactory implements ImporterFactory{
 				NSeries series = data.addSeries();
 				series.setFormula("A1", "B2:B4", null);
 				series = data.addSeries();
-				series.setFormula("\"Test Series\"", "C2:C4", null);
+				series.setFormula("\"Series 2\"", "C2:C4", null);
 				series = data.addSeries();
-				series.setFormula(null, "D2:CD", null);
+				series.setFormula(null, "D2:D4", null);
 			}
 
 			private void buildNormalSheet(NBook book) {

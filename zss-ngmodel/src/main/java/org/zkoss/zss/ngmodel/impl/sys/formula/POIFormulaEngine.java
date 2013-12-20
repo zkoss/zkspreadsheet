@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import org.zkoss.poi.ss.formula.CollaboratingWorkbooksEnvironment;
 import org.zkoss.poi.ss.formula.EvaluationCell;
 import org.zkoss.poi.ss.formula.EvaluationSheet;
@@ -188,7 +189,7 @@ public class POIFormulaEngine implements FormulaEngine {
 			// check again
 			EvalContext ctx = evalCtxMap.get(book.getBookName());
 			if(ctx == null) { // just in case
-				return new EvaluationResultImpl(ResultType.ERROR, "The book isn't in the book series.");
+				throw new IllegalStateException("The book isn't in the book series.");
 			}
 			EvalBook evalBook = ctx.getBook();
 			WorkbookEvaluator evaluator = ctx.getEvaluator();
@@ -243,8 +244,11 @@ public class POIFormulaEngine implements FormulaEngine {
 			} else {
 				throw new Exception("no matched type: " + value); // FIXME
 			}
+		} catch(FormulaParseException e) {
+			logger.log(Level.SEVERE, e.getMessage() +" when eval "+expr.getFormulaString());
+			result = new EvaluationResultImpl(ResultType.ERROR, new ErrorValue(ErrorValue.INVALID_FORMULA));
 		} catch(Exception e) {
-			logger.log(Level.SEVERE, e.getMessage(), e);
+			logger.log(Level.SEVERE, e.getMessage() +" when eval "+expr.getFormulaString(), e);
 			result = new EvaluationResultImpl(ResultType.ERROR, new ErrorValue(ErrorValue.INVALID_FORMULA));
 		}
 		return result;

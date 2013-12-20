@@ -25,23 +25,17 @@ import org.zkoss.zss.ngmodel.chart.NChartData;
 public interface NChart {
 
 	public enum NChartType{
-//		AREA_3D,
 		AREA,
-//		BAR_3D,
 		BAR,
 		BUBBLE,
 		COLUMN,
-//		COLUMN_3D,
 		DOUGHNUT,
-//		LINE_3D,
 		LINE,
 		OF_PIE,
-//		PIE_3D,
 		PIE,
 		RADAR,
 		SCATTER,
 		STOCK,
-//		SURFACE_3D,
 		SURFACE
 	}
 	
@@ -59,7 +53,7 @@ public interface NChart {
 		TOP,
 		TOP_RIGHT
 	}
-	public enum NChartDirection {
+	public enum NBarDirection {
 		HORIZONTAL, //horizontal, bar chart
 		VERTICAL; //vertical, column chart
 	}
@@ -95,9 +89,7 @@ public interface NChart {
 	
 	public NChartGrouping getGrouping();
 	
-	public void setBarDirection(NChartDirection direction);
-	
-	public NChartDirection getBarDirection();
+	public NBarDirection getBarDirection();
 	
 	public boolean isThreeD();
 	
