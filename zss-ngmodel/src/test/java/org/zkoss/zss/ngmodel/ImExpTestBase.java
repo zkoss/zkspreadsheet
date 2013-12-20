@@ -29,7 +29,7 @@ public class ImExpTestBase {
 		NSheet sheet1 = book.getSheetByName("Value");
 		assertEquals("Value", sheet1.getSheetName());
 		assertEquals(20, sheet1.getDefaultRowHeight());
-		assertEquals(64, sheet1.getDefaultColumnWidth());
+		assertEquals(61, sheet1.getDefaultColumnWidth());
 		
 		NSheet sheet2 = book.getSheetByName("Style");
 		assertEquals("Style", sheet2.getSheetName());
@@ -222,8 +222,8 @@ public class ImExpTestBase {
 		assertEquals(228, sheet.getColumn(0).getWidth()); 
 		assertEquals(100, sheet.getColumn(1).getWidth());
 		assertEquals(102, sheet.getColumn(2).getWidth());
-		assertEquals(64, sheet.getColumn(4).getWidth());	//the hidden column
-		assertEquals(64, sheet.getColumn(5).getWidth());	//default width
+		assertEquals(61, sheet.getColumn(4).getWidth());	//the hidden column
+		assertEquals(61, sheet.getColumn(5).getWidth());	//default width
 		
 		//the hidden column
 		assertFalse(sheet.getColumn(3).isHidden());

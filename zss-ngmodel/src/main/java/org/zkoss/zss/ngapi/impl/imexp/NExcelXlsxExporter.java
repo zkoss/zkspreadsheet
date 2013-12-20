@@ -19,6 +19,9 @@ package org.zkoss.zss.ngapi.impl.imexp;
 import java.io.*;
 import java.util.concurrent.locks.ReadWriteLock;
 
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCol;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
+import org.zkoss.poi.ss.usermodel.Sheet;
 import org.zkoss.poi.xssf.usermodel.*;
 import org.zkoss.zss.ngmodel.*;
 /**
@@ -65,98 +68,23 @@ public class NExcelXlsxExporter extends AbstractExcelExporter {
 		}
 	}
 	
-	/**
-	 * Utility to adapt ZSS 3.5 cell style into XSSFCellStyle
-	 * @param cellStyle
-	 * @return a XSSFCellStyle Object
-	 */
-//	protected XSSFCellStyle toXSSFCellStyle(NCellStyle cellStyle) {
-//		
-//		// instead of creating a new style, use old one if exist
-//		XSSFCellStyle xssfCellStyle = (XSSFCellStyle) styleTable.get(cellStyle);
-//		if(xssfCellStyle != null) {
-//			return xssfCellStyle;
-//		}
-//		
-//		xssfCellStyle = (XSSFCellStyle) workbook.createCellStyle();
-//		
-//		xssfCellStyle.setAlignment(toPOIAlignment(cellStyle.getAlignment()));
-//		
-//		/* Bottom Border */
-//		xssfCellStyle.setBorderBottom(toPOIBorderType(cellStyle.getBorderBottom()));
-//		xssfCellStyle.setBottomBorderColor(toXSSFColor(cellStyle.getBorderBottomColor()));
-//		
-//		/* Left Border */
-//		xssfCellStyle.setBorderLeft(toPOIBorderType(cellStyle.getBorderLeft()));
-//		xssfCellStyle.setLeftBorderColor(toXSSFColor(cellStyle.getBorderLeftColor()));
-//		
-//		/* Right Border */
-//		xssfCellStyle.setBorderRight(toPOIBorderType(cellStyle.getBorderRight()));
-//		xssfCellStyle.setRightBorderColor(toXSSFColor(cellStyle.getBorderRightColor()));
-//		
-//		/* Top Border*/
-//		xssfCellStyle.setBorderTop(toPOIBorderType(cellStyle.getBorderTop()));
-//		xssfCellStyle.setTopBorderColor(toXSSFColor(cellStyle.getBorderTopColor()));
-//		
-//		/* Fill Foreground Color */
-//		xssfCellStyle.setFillForegroundColor(toXSSFColor(cellStyle.getFillColor()));
-//		
-//		xssfCellStyle.setFillPattern(toPOIFillPattern(cellStyle.getFillPattern()));
-//		xssfCellStyle.setVerticalAlignment(toPOIVerticalAlignment(cellStyle.getVerticalAlignment()));
-//		xssfCellStyle.setWrapText(cellStyle.isWrapText());
-//		xssfCellStyle.setLocked(cellStyle.isLocked());
-//		xssfCellStyle.setHidden(cellStyle.isHidden());
-//		
-//		// refer from BookHelper#setDataFormat
-//		XSSFDataFormat df = (XSSFDataFormat) workbook.createDataFormat();
-//		short fmt = df.getFormat(cellStyle.getDataFormat());
-//		xssfCellStyle.setDataFormat(fmt);
-//		
-//		// font
-//		xssfCellStyle.setFont(toXSSFFont(cellStyle.getFont()));
-//		
-//		// put into table
-//		styleTable.put(cellStyle, xssfCellStyle);
-//		
-//		return xssfCellStyle;
-//	}
-//	
-//	protected XSSFColor toXSSFColor(NColor color) {
-//		XSSFColor xssfFillColor = (XSSFColor) colorTable.get(color);
-//		
-//		if(xssfFillColor != null) {
-//			return xssfFillColor;
-//		}
-//		colorTable.put(color, xssfFillColor);
-//		return new XSSFColor(color.getRGB());
-//	}
-//	
-//	/**
-//	 * Utility to adapt ZSS 3.5 font into XSSFFont
-//	 * @param 3.5 font
-//	 * @return a XSSFFont Object
-//	 */
-//	protected XSSFFont toXSSFFont(NFont font) {
-//
-//		XSSFFont xssfFont = (XSSFFont) fontTable.get(font);
-//		if(xssfFont != null) {
-//			return xssfFont;
-//		}
-//		
-//		xssfFont = (XSSFFont) workbook.createFont();
-//		xssfFont.setBoldweight(toPOIBoldweight(font.getBoldweight()));
-//		xssfFont.setStrikeout(font.isStrikeout());
-//		xssfFont.setItalic(font.isItalic());
-//		xssfFont.setColor(new XSSFColor(font.getColor().getRGB()));
-//		xssfFont.setFontHeight(font.getHeightPoints());
-//		xssfFont.setFontName(font.getName());
-//		xssfFont.setTypeOffset(toPOITypeOffset(font.getTypeOffset()));
-//		xssfFont.setUnderline(toPOIUnderline(font.getUnderline()));
-//		
-//		// put into table
-//		fontTable.put(font, xssfFont);
-//		
-//		return xssfFont;
-//	}
+	protected void exportColumnArray(NSheet sheet, Sheet poiSheet, NColumnArray columnArr) {
+		
+		XSSFSheet xssfSheet = (XSSFSheet) poiSheet;
+		
+        CTWorksheet ctSheet = xssfSheet.getCTWorksheet();
+    	if(xssfSheet.getCTWorksheet().sizeOfColsArray() == 0) {
+    		xssfSheet.getCTWorksheet().addNewCols();
+    	}
+    		
+    	CTCol col = ctSheet.getColsArray(0).addNewCol();
+        col.setMin(columnArr.getIndex()+1);
+        col.setMax(columnArr.getLastIndex()+1);
+    	col.setStyle(toPOICellStyle(columnArr.getCellStyle()).getIndex());
+    	col.setCustomWidth(true);
+    	col.setWidth(XUtils.pxToCTChar(columnArr.getWidth(), AbstractExcelImporter.CHRACTER_WIDTH));
+    	col.setHidden(columnArr.isHidden());
+
+	}
 
 }

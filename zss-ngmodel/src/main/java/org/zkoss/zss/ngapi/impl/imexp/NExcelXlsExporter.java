@@ -20,8 +20,13 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.concurrent.locks.ReadWriteLock;
 
+import org.zkoss.poi.hssf.usermodel.HSSFSheet;
 import org.zkoss.poi.hssf.usermodel.HSSFWorkbook;
+import org.zkoss.poi.ss.SpreadsheetVersion;
+import org.zkoss.poi.ss.usermodel.CellStyle;
+import org.zkoss.poi.ss.usermodel.Sheet;
 import org.zkoss.zss.ngmodel.NBook;
+import org.zkoss.zss.ngmodel.NColumnArray;
 import org.zkoss.zss.ngmodel.NSheet;
 /**
  * 
@@ -47,6 +52,19 @@ public class NExcelXlsExporter extends AbstractExcelExporter {
 			workbook.write(fos);
 		} finally {
 			lock.writeLock().unlock();
+		}
+	}
+
+	@Override
+	protected void exportColumnArray(NSheet sheet, Sheet poiSheet, NColumnArray columnArr) {
+		
+		CellStyle poiCellStyle = toPOICellStyle(columnArr.getCellStyle());
+		boolean hidden = columnArr.isHidden();
+		
+		for(int i = columnArr.getIndex(); i <= columnArr.getLastIndex() && i <= SpreadsheetVersion.EXCEL97.getMaxColumns(); i++) {
+			poiSheet.setColumnWidth(i+1, XUtils.pxToFileChar256(columnArr.getWidth(), AbstractExcelImporter.CHRACTER_WIDTH));
+			poiSheet.setColumnHidden(i+1, hidden);
+			poiSheet.setDefaultColumnStyle(i+1, poiCellStyle);
 		}
 	}
 

@@ -142,11 +142,22 @@ public class XUtils {
 			roundTo100th((w - 5) / charWidth);
 	}
 
+	// FIXME
 	/** Convert default columns character width to pixel */ 
 	public static int defaultColumnWidthToPx(int columnWidth, int charWidth) {
 		final int w = columnWidth * charWidth + 5;
-		final int diff = w % 8;
-		return w + (diff > 0 ? (8 - diff) : 0);
+		return w;
+		//final int diff = w % 8;
+		//return w + (diff > 0 ? (8 - diff) : 0);
+	}
+	
+	// FIXME
+	public static int pxToDefaultColumnWidth(int px, int charWidth) {
+		return (px - 5) / charWidth;
+	}
+	
+	public static double pxToCTChar(int px, int charWidth) {
+		return (double) pxToFileChar256(px, charWidth) / 256;
 	}
 	
 	private static double roundTo100th(double w) {

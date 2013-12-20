@@ -69,6 +69,8 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 	protected Map<NFont, Font> fontTable = new HashMap<NFont, Font>();
 	protected Map<NColor, Color> colorTable = new HashMap<NColor, Color>();
 	
+	abstract protected void exportColumnArray(NSheet sheet, Sheet poiSheet, NColumnArray columnArr);
+	
 	protected void exportNamedRange(NBook book) {
 		
 		// NamedRange
@@ -101,7 +103,8 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 		}
 		
 		poiSheet.setDefaultRowHeight((short)XUtils.pxToTwip(sheet.getDefaultRowHeight()));
-		poiSheet.setDefaultColumnWidth((int)XUtils.pxToScreenChar1(sheet.getDefaultColumnWidth(), AbstractExcelImporter.CHRACTER_WIDTH));
+		poiSheet.setDefaultColumnWidth((int)XUtils.pxToDefaultColumnWidth(sheet.getDefaultColumnWidth(), AbstractExcelImporter.CHRACTER_WIDTH));
+		//poiSheet.setDefaultColumnWidth((int)XUtils.pxToCTChar(sheet.getDefaultColumnWidth(), AbstractExcelImporter.CHRACTER_WIDTH));
 		
 		// row iterator
 		Iterator<NRow> rowIterator = sheet.getRowIterator();
@@ -117,12 +120,6 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 			exportColumnArray(sheet, poiSheet, columnArr);
 		}
 
-	}
-	
-	protected void exportColumnArray(NSheet sheet, Sheet poiSheet, NColumnArray columnArr) {
-		poiSheet.setColumnWidth(columnArr.getIndex(), XUtils.pxToFileChar256(columnArr.getWidth(), AbstractExcelImporter.CHRACTER_WIDTH));
-		poiSheet.setColumnHidden(columnArr.getIndex(), columnArr.isHidden());
-        poiSheet.setDefaultColumnStyle(columnArr.getIndex(), toPOICellStyle(columnArr.getCellStyle()));
 	}
 
 	protected void exportRow(NSheet sheet, Sheet poiSheet, NRow row) {

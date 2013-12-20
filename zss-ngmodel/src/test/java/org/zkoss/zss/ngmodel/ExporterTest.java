@@ -2,7 +2,10 @@ package org.zkoss.zss.ngmodel;
 
 
 import java.io.*;
+import java.util.Iterator;
 import java.util.Locale;
+
+import junit.framework.Assert;
 
 import org.junit.*;
 import org.zkoss.util.Locales;
@@ -185,5 +188,132 @@ public class ExporterTest extends ImExpTestBase {
 	public void exportXLS() {
 		NBook book = ImExpTestUtil.loadBook(fileForImporterTest, "HSSFBook");
 		ImExpTestUtil.writeBookToFile(book, ImExpTestUtil.DEFAULT_EXPORT_TARGET_PATH+"export.xls", ExcelExportFactory.Type.XLS);
+	}
+	
+	@Test
+	public void export() {
+		NBook book = ImExpTestUtil.loadBook(ImporterTest.class.getResource("book/defaultWidth.xlsx"), "HSSFBook");
+		ImExpTestUtil.writeBookToFile(book, ImExpTestUtil.DEFAULT_EXPORT_TARGET_PATH+"export-width.xlsx", ExcelExportFactory.Type.XLSX);
+	}
+	
+	@Test
+	public void exportWidthSplitXLSXTest() {
+		NBook book = NBooks.createBook("book1");
+		NSheet sheet1 = book.createSheet("Sheet1");
+		int defaultWidth = 100;
+		sheet1.setDefaultColumnWidth(defaultWidth);
+		sheet1.setDefaultRowHeight(200);
+		Assert.assertEquals(defaultWidth, sheet1.getDefaultColumnWidth());
+		Assert.assertEquals(200, sheet1.getDefaultRowHeight());
+		
+		Iterator<NColumnArray> arrays = sheet1.getColumnArrayIterator();
+		Assert.assertFalse(arrays.hasNext());
+		
+		Assert.assertNull(sheet1.getColumnArray(0));
+		
+		sheet1.setupColumnArray(0, 8).setWidth(10);
+		sheet1.setupColumnArray(11, 255);
+		arrays = sheet1.getColumnArrayIterator();
+		NColumnArray array = arrays.next();
+		Assert.assertEquals(0, array.getIndex());
+		Assert.assertEquals(8, array.getLastIndex());
+		Assert.assertEquals(10, array.getWidth());
+		
+		array = arrays.next();
+		Assert.assertEquals(9, array.getIndex());
+		Assert.assertEquals(10, array.getLastIndex());
+		Assert.assertEquals(defaultWidth, array.getWidth());
+		
+		array = arrays.next();
+		Assert.assertEquals(11, array.getIndex());
+		Assert.assertEquals(255, array.getLastIndex());
+		Assert.assertEquals(defaultWidth, array.getWidth());
+		
+		///////////// first export
+		File outFile = ImExpTestUtil.writeBookToFile(book, ImExpTestUtil.DEFAULT_EXPORT_TARGET_PATH+"export.xlsx", ExcelExportFactory.Type.XLSX);
+		NBook outBook = ImExpTestUtil.loadBook(outFile, "OutBook");
+		
+		sheet1 = outBook.getSheet(0);
+		
+		// default width become 104px
+		//Assert.assertEquals(defaultWidth, sheet1.getDefaultColumnWidth());
+		Assert.assertEquals(200, sheet1.getDefaultRowHeight());
+
+		arrays = sheet1.getColumnArrayIterator();
+		Assert.assertTrue(arrays.hasNext());
+		
+		arrays = sheet1.getColumnArrayIterator();
+		array = arrays.next();
+		Assert.assertEquals(0, array.getIndex());
+		Assert.assertEquals(8, array.getLastIndex());
+		Assert.assertEquals(10, array.getWidth());
+		
+		array = arrays.next();
+		Assert.assertEquals(9, array.getIndex());
+		Assert.assertEquals(10, array.getLastIndex());
+		Assert.assertEquals(defaultWidth, array.getWidth());
+		
+		array = arrays.next();
+		Assert.assertEquals(11, array.getIndex());
+		Assert.assertEquals(255, array.getLastIndex());
+		Assert.assertEquals(defaultWidth, array.getWidth());
+		
+		///////////// second export
+		File outFile2 = ImExpTestUtil.writeBookToFile(outBook, ImExpTestUtil.DEFAULT_EXPORT_TARGET_PATH+"export.xlsx", ExcelExportFactory.Type.XLSX);
+		NBook outBook2 = ImExpTestUtil.loadBook(outFile2, "OutBook");
+		
+		sheet1 = outBook2.getSheet(0);
+		
+		// default width become 104px
+		//Assert.assertEquals(100, sheet1.getDefaultColumnWidth());
+		Assert.assertEquals(200, sheet1.getDefaultRowHeight());
+
+		arrays = sheet1.getColumnArrayIterator();
+		Assert.assertTrue(arrays.hasNext());
+		
+		arrays = sheet1.getColumnArrayIterator();
+		array = arrays.next();
+		Assert.assertEquals(0, array.getIndex());
+		Assert.assertEquals(8, array.getLastIndex());
+		Assert.assertEquals(10, array.getWidth());
+		
+		array = arrays.next();
+		Assert.assertEquals(9, array.getIndex());
+		Assert.assertEquals(10, array.getLastIndex());
+		Assert.assertEquals(100, array.getWidth());
+		
+		array = arrays.next();
+		Assert.assertEquals(11, array.getIndex());
+		Assert.assertEquals(255, array.getLastIndex());
+		Assert.assertEquals(100, array.getWidth());
+	}
+	
+	@Test
+	public void exportWidthSplitXLSTest() {
+		NBook book = NBooks.createBook("book1");
+		NSheet sheet1 = book.createSheet("Sheet1");
+		
+		sheet1.setDefaultColumnWidth(100);
+		sheet1.setDefaultRowHeight(200);
+		Assert.assertEquals(100, sheet1.getDefaultColumnWidth());
+		Assert.assertEquals(200, sheet1.getDefaultRowHeight());
+		
+		Iterator<NColumnArray> arrays = sheet1.getColumnArrayIterator();
+		Assert.assertFalse(arrays.hasNext());
+		
+		Assert.assertNull(sheet1.getColumnArray(0));
+		
+		sheet1.setupColumnArray(0, 10).setWidth(10);
+		sheet1.setupColumnArray(11, 255);
+		arrays = sheet1.getColumnArrayIterator();
+		NColumnArray array = arrays.next();
+		Assert.assertEquals(0, array.getIndex());
+		Assert.assertEquals(10, array.getLastIndex());
+		Assert.assertEquals(10, array.getWidth());
+		
+		array = arrays.next();
+		Assert.assertEquals(11, array.getIndex());
+		Assert.assertEquals(255, array.getLastIndex());
+		Assert.assertEquals(100, array.getWidth());
 	}
 }
