@@ -98,7 +98,7 @@ public class POIFormulaEngine implements FormulaEngine {
 			Ref singleRef = tokens.length == 1 ? toDenpendRef(context, parsingBook, tokens[0]) : null;
 			expr = new FormulaExpressionImpl(formula, singleRef, false);
 		} catch(FormulaParseException e) {
-			logger.log(Level.INFO, e.getMessage(), e);
+			logger.log(Level.INFO, e.getMessage());
 			expr = new FormulaExpressionImpl(formula, null, true);
 		}
 		return expr;

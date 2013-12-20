@@ -958,7 +958,7 @@ public class ModelTest {
 		Assert.assertEquals("F10",sheet1.getCell(9,5).getReferenceString());
 //		Assert.assertEquals("Sheet1!F10",sheet1.getCell(9,5).getReferenceString(true));
 		
-		dump(book);
+//		dump(book);
 	}
 	
 	@Test
@@ -1125,7 +1125,7 @@ public class ModelTest {
 		Assert.assertEquals("(14,9)", sheet.getCell(14, 9).getValue());
 		Assert.assertEquals("(16,12)", sheet.getCell(16, 12).getValue());
 		
-		dump(book);
+//		dump(book);
 		
 		sheet.clearCell(12, 6 ,14, 9);
 		
