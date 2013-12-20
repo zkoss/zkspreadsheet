@@ -70,13 +70,13 @@ public class ErrorValue implements Serializable{
 		this.message = message;
 	}
 	
-	public String gettErrorString(){
+	public String getErrorString(){
 		return getErrorString(code);
 	}
 	
 	public String toString(){
 		StringBuilder sb = new StringBuilder(super.toString());
-		sb.append("/").append(gettErrorString());
+		sb.append("/").append(getErrorString());
 		return sb.toString();
 	}
 	

@@ -8,6 +8,7 @@ import org.zkoss.zss.ngmodel.ErrorValue;
 import org.zkoss.zss.ngmodel.NCell.CellType;
 import org.zkoss.zss.ngmodel.sys.formula.EvaluationResult;
 import org.zkoss.zss.ngmodel.sys.formula.EvaluationResult.ResultType;
+import org.zkoss.zss.ngmodel.sys.formula.FormulaClearContext;
 import org.zkoss.zss.ngmodel.sys.formula.FormulaEngine;
 import org.zkoss.zss.ngmodel.sys.formula.FormulaEvaluationContext;
 import org.zkoss.zss.ngmodel.sys.formula.FormulaExpression;
@@ -95,9 +96,7 @@ public class TestFormulaEngineImpl implements FormulaEngine {
 	}
 
 	@Override
-	public void clearCache(FormulaEvaluationContext context) {
-		// TODO Auto-generated method stub
-		
+	public void clearCache(FormulaClearContext context) {
 	}
 
 }

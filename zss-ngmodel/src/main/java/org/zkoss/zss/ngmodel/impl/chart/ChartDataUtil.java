@@ -49,7 +49,7 @@ import org.zkoss.zss.ngmodel.ErrorValue;
 		}else if(obj.getClass().isArray()){
 			return ((Object[])obj)[index];
 		}else if(obj instanceof ErrorValue){
-			return ((ErrorValue)obj).gettErrorString();
+			return ((ErrorValue)obj).getErrorString();
 		}else{
 			return obj;
 		}

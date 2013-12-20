@@ -18,12 +18,16 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.zkoss.util.Locales;
+import org.zkoss.zss.ngapi.NRange;
+import org.zkoss.zss.ngapi.NRanges;
 import org.zkoss.zss.ngmodel.NCell.CellType;
 import org.zkoss.zss.ngmodel.impl.BookSeriesAdv;
 import org.zkoss.zss.ngmodel.impl.NameRefImpl;
 import org.zkoss.zss.ngmodel.impl.RefImpl;
+import org.zkoss.zss.ngmodel.sys.EngineFactory;
 import org.zkoss.zss.ngmodel.sys.dependency.DependencyTable;
 import org.zkoss.zss.ngmodel.sys.dependency.Ref;
+import org.zkoss.zss.ngmodel.sys.formula.FormulaEvaluationContext;
 
 /**
  * @author Pao
@@ -134,7 +138,7 @@ public class FormulaEvalTest {
 					Assert.assertEquals(expected[i], cell.getNumberValue().toString());
 					break;
 				case ERROR:
-					Assert.assertEquals(expected[i], cell.getErrorValue().gettErrorString());
+					Assert.assertEquals(expected[i], cell.getErrorValue().getErrorString());
 					break;
 				default:
 					Assert.fail("not expected result type: " + cell.getFormulaResultType());
@@ -201,6 +205,10 @@ public class FormulaEvalTest {
 				r.getLastColumn());
 	}
 	
+	private Ref toSheetRef(String sheet1) {
+		return new RefImpl("book1", sheet1);
+	}
+	
 	private Ref toCellRef(String sheet1, String sheet2, String cell) {
 		CellRegion r = new CellRegion(cell);
 		return new RefImpl("book1", sheet1, sheet2, r.getRow(), r.getColumn());
@@ -214,6 +222,9 @@ public class FormulaEvalTest {
 	@Test
 	public void testEvalAndModifyNormal(){
 		NBook book = NBooks.createBook("book1");
+		
+		DependencyTable table = ((BookSeriesAdv)book.getBookSeries()).getDependencyTable();
+		
 		NSheet sheet1 = book.createSheet("Sheet1");
 		NSheet sheet2 = book.createSheet("Sheet2");
 
@@ -238,13 +249,117 @@ public class FormulaEvalTest {
 		Assert.assertEquals(CellType.BOOLEAN, cell.getFormulaResultType());
 		Assert.assertEquals(true, cell.getValue());
 		
+		sheet2.getCell(0, 0).setValue(123);
+		Assert.assertEquals(CellType.BOOLEAN, cell.getFormulaResultType());
+		Assert.assertEquals(true, cell.getValue());
+		cell.clearFormulaResultCache();
+		Assert.assertEquals(CellType.NUMBER, cell.getFormulaResultType());
+		Assert.assertEquals(123D, cell.getValue());
 		
-//		sheet1.getCell(1, 0).setFormulaValue("Sheet3!A1");
-//		Assert.assertEquals(CellType.ERROR, sheet2.getCell(1, 0).getType());
-//		Assert.assertEquals("#REF", sheet2.getCell(1, 0).getErrorValue().toString());
-//		
-//		
-//		NSheet sheet3 = book.createSheet("Sheet3");
+		Set<Ref> dependents = table.getDependents(toCellRef("Sheet2",null,"A1"));
+		Assert.assertEquals(1, dependents.size());
+		Ref ref = dependents.iterator().next();
+		Assert.assertEquals("Sheet1", ref.getSheetName());
+		Assert.assertEquals(null, ref.getLastSheetName());
+		Assert.assertEquals(0, ref.getRow());
+		Assert.assertEquals(0, ref.getColumn());
+		Assert.assertEquals(0, ref.getLastRow());
+		Assert.assertEquals(0, ref.getLastColumn());
+		
+		
+		//use range, it notify to clean automatically
+		cell = sheet1.getCell(1, 0);
+		cell.setFormulaValue("Sheet2!A2");
+		NRange r = NRanges.range(sheet2, 1, 0);
+		
+		Assert.assertEquals(CellType.FORMULA, cell.getType());
+		Assert.assertEquals(CellType.NUMBER, cell.getFormulaResultType());
+		Assert.assertEquals(0D, cell.getValue());
+		
+		r.setValue("ABC");
+		Assert.assertEquals(CellType.STRING, cell.getFormulaResultType());
+		Assert.assertEquals("ABC", cell.getValue());
+		
+		r.setValue(Boolean.TRUE);
+		Assert.assertEquals(CellType.BOOLEAN, cell.getFormulaResultType());
+		Assert.assertEquals(true, cell.getValue());
+		
+		r.setValue(123);
+		Assert.assertEquals(CellType.NUMBER, cell.getFormulaResultType());
+		Assert.assertEquals(123D, cell.getValue());
+		
+		dependents = table.getDependents(toCellRef("Sheet2",null,"A2"));
+		Assert.assertEquals(1, dependents.size());
+		ref = dependents.iterator().next();
+		Assert.assertEquals("Sheet1", ref.getSheetName());
+		Assert.assertEquals(null, ref.getLastSheetName());
+		Assert.assertEquals(1, ref.getRow());
+		Assert.assertEquals(0, ref.getColumn());
+		Assert.assertEquals(1, ref.getLastRow());
+		Assert.assertEquals(0, ref.getLastColumn());
+		
+		//TODO test clear
+		cell.setFormulaValue("Sheet2!A3");
+		
+		dependents = table.getDependents(toCellRef("Sheet2",null,"A3"));
+		Assert.assertEquals(1, dependents.size());
+		ref = dependents.iterator().next();
+		Assert.assertEquals("Sheet1", ref.getSheetName());
+		Assert.assertEquals(null, ref.getLastSheetName());
+		Assert.assertEquals(1, ref.getRow());
+		Assert.assertEquals(0, ref.getColumn());
+		Assert.assertEquals(1, ref.getLastRow());
+		
+		//should get 0
+		dependents = table.getDependents(toCellRef("Sheet2",null,"A2"));
+		Assert.assertEquals(0, dependents.size());
+	}
+	
+	@Test
+	public void testEvalNoRef(){
+		NBook book = NBooks.createBook("book1");
+		
+		DependencyTable table = ((BookSeriesAdv)book.getBookSeries()).getDependencyTable();
+		
+		NSheet sheet1 = book.createSheet("Sheet1");
+
+		NCell cell = sheet1.getCell(0, 0);
+		cell.setFormulaValue("Sheet2!A1");
+		
+		Assert.assertEquals(CellType.FORMULA, cell.getType());
+		Assert.assertEquals(CellType.ERROR, cell.getFormulaResultType());
+		Assert.assertEquals("#REF!", cell.getErrorValue().getErrorString());
+		
+		
+		Set<Ref> dependents = table.getDependents(toSheetRef("Sheet2"));
+		Assert.assertEquals(1, dependents.size());
+		Ref ref = dependents.iterator().next();
+		Assert.assertEquals("Sheet1", ref.getSheetName());
+		Assert.assertEquals(null, ref.getLastSheetName());
+		Assert.assertEquals(0, ref.getRow());
+		Assert.assertEquals(0, ref.getColumn());
+		Assert.assertEquals(0, ref.getLastRow());
+		Assert.assertEquals(0, ref.getLastColumn());
+		
+		
+		NSheet sheet2 = book.createSheet("Sheet2");
+		//should clear all for any sheet state change.
+		
+		Assert.assertEquals(CellType.FORMULA, cell.getType());
+		Assert.assertEquals(CellType.ERROR, cell.getFormulaResultType());
+		Assert.assertEquals("#REF!", cell.getErrorValue().getErrorString());
+		cell.clearFormulaResultCache();
+		Assert.assertEquals(CellType.FORMULA, cell.getType());
+		Assert.assertEquals(CellType.NUMBER, cell.getFormulaResultType());
+		Assert.assertEquals(0D, cell.getValue());
+		
+
+		sheet2.getCell(0, 0).setValue("ABC");
+		Assert.assertEquals(CellType.NUMBER, cell.getFormulaResultType());
+		Assert.assertEquals(0D, cell.getValue());
+		cell.clearFormulaResultCache();
+		Assert.assertEquals(CellType.STRING, cell.getFormulaResultType());
+		Assert.assertEquals("ABC", cell.getValue());
 	}
 
 }

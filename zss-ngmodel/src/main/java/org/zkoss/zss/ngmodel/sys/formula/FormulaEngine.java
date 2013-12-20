@@ -26,5 +26,5 @@ public interface FormulaEngine {
 	
 	public EvaluationResult evaluate(FormulaExpression expr, FormulaEvaluationContext context);
 
-	public void clearCache(FormulaEvaluationContext context);
+	public void clearCache(FormulaClearContext context);
 }

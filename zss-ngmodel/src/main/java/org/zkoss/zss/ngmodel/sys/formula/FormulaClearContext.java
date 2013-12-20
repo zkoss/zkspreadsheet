@@ -27,25 +27,25 @@ import org.zkoss.zss.ngmodel.sys.dependency.Ref;
  * @author dennis
  * @since 3.5.0
  */
-public class FormulaEvaluationContext extends AbstractContext {
+public class FormulaClearContext extends AbstractContext {
 
 	private final NBook book;
 	private final NSheet sheet;
 	private final NCell cell;
 
-	public FormulaEvaluationContext(NCell cell) {
+	public FormulaClearContext(NCell cell) {
 		this(cell.getSheet().getBook(), cell.getSheet(), cell);
 	}
 
-	public FormulaEvaluationContext(NSheet sheet) {
+	public FormulaClearContext(NSheet sheet) {
 		this(sheet.getBook(), sheet, null);
 	}
 
-	public FormulaEvaluationContext(NBook book) {
+	public FormulaClearContext(NBook book) {
 		this(book, null, null);
 	}
 
-	private FormulaEvaluationContext(NBook book, NSheet sheet, NCell cell) {
+	private FormulaClearContext(NBook book, NSheet sheet, NCell cell) {
 		this.book = book;
 		this.sheet = sheet;
 		this.cell = cell;

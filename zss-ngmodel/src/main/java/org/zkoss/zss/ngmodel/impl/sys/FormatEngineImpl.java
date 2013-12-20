@@ -85,7 +85,7 @@ public class FormatEngineImpl implements FormatEngine {
 			case BOOLEAN:
 				return cell.getBooleanValue() ? "TRUE" : "FALSE";
 			case ERROR:
-				return cell.getErrorValue().gettErrorString();
+				return cell.getErrorValue().getErrorString();
 			case FORMULA:
 				return "="+cell.getFormulaValue();
 			case NUMBER:

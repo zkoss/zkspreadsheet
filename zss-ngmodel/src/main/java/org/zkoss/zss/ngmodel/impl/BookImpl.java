@@ -38,6 +38,8 @@ import org.zkoss.zss.ngmodel.NColor;
 import org.zkoss.zss.ngmodel.NFont;
 import org.zkoss.zss.ngmodel.NName;
 import org.zkoss.zss.ngmodel.NSheet;
+import org.zkoss.zss.ngmodel.sys.EngineFactory;
+import org.zkoss.zss.ngmodel.sys.formula.FormulaClearContext;
 import org.zkoss.zss.ngmodel.util.CellStyleMatcher;
 import org.zkoss.zss.ngmodel.util.FontMatcher;
 import org.zkoss.zss.ngmodel.util.SpreadsheetVersion;
@@ -211,6 +213,9 @@ public class BookImpl extends BookAdv{
 		((SheetAdv)sheet).setSheetName(name);
 		sheets.add(sheet);
 		
+		//create formula cache for any sheet, sheet name, position change
+		EngineFactory.getInstance().createFormulaEngine().clearCache(new FormulaClearContext(this));
+		
 		sendModelInternalEvent(createModelInternalEvent(ModelInternalEvents.ON_SHEET_ADDED, 
 				ModelEvents.PARAM_SHEET, sheet));
 		return sheet;
@@ -223,6 +228,9 @@ public class BookImpl extends BookAdv{
 		
 		String oldname = sheet.getSheetName();
 		((SheetAdv)sheet).setSheetName(newname);
+		
+		//create formula cache for any sheet, sheet name, position change
+		EngineFactory.getInstance().createFormulaEngine().clearCache(new FormulaClearContext(this));
 		
 		sendModelInternalEvent(createModelInternalEvent(ModelInternalEvents.ON_SHEET_RENAMED, 
 				ModelEvents.PARAM_SHEET, sheet,
@@ -261,6 +269,9 @@ public class BookImpl extends BookAdv{
 		int index = sheets.indexOf(sheet);
 		sheets.remove(index);
 		
+		//create formula cache for any sheet, sheet name, position change
+		EngineFactory.getInstance().createFormulaEngine().clearCache(new FormulaClearContext(this));
+		
 		sendModelInternalEvent(createModelInternalEvent(ModelInternalEvents.ON_SHEET_DELETED, 
 				ModelEvents.PARAM_SHEET, sheet,
 				ModelInternalEvents.PARAM_SHEET_OLD_INDEX, index));
@@ -278,6 +289,10 @@ public class BookImpl extends BookAdv{
 		}
 		sheets.remove(oldindex);
 		sheets.add(index, (SheetAdv)sheet);
+		
+		//create formula cache for any sheet, sheet name, position change
+		EngineFactory.getInstance().createFormulaEngine().clearCache(new FormulaClearContext(this));
+		
 		sendModelInternalEvent(createModelInternalEvent(ModelInternalEvents.ON_SHEET_MOVED, 
 				ModelEvents.PARAM_SHEET, sheet,
 				ModelInternalEvents.PARAM_SHEET_OLD_INDEX, oldindex));

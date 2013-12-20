@@ -60,6 +60,7 @@ import org.zkoss.zss.ngmodel.sys.dependency.Ref;
 import org.zkoss.zss.ngmodel.sys.dependency.Ref.RefType;
 import org.zkoss.zss.ngmodel.sys.formula.EvaluationResult;
 import org.zkoss.zss.ngmodel.sys.formula.EvaluationResult.ResultType;
+import org.zkoss.zss.ngmodel.sys.formula.FormulaClearContext;
 import org.zkoss.zss.ngmodel.sys.formula.FormulaEngine;
 import org.zkoss.zss.ngmodel.sys.formula.FormulaEvaluationContext;
 import org.zkoss.zss.ngmodel.sys.formula.FormulaExpression;
@@ -71,7 +72,7 @@ import org.zkoss.zss.ngmodel.sys.formula.FormulaParseContext;
  */
 public class POIFormulaEngine implements FormulaEngine {
 	private final static Logger logger = Logger.getLogger(POIFormulaEngine.class.getName());
-	private final static String KEY_EVALUATORS = "evaluators";
+	private final static String KEY_EVALUATORS = "$ZSS_EVALUATORS$";
 
 	@Override
 	public FormulaExpression parse(String formula, FormulaParseContext context) {
@@ -401,9 +402,7 @@ public class POIFormulaEngine implements FormulaEngine {
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
-	public void clearCache(FormulaEvaluationContext context) {
-
+	public void clearCache(FormulaClearContext context) {
 		try {
 			NBook book = context.getBook();
 			NSheet sheet = context.getSheet();

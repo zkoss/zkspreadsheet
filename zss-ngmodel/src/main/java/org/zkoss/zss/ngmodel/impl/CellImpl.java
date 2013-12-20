@@ -19,6 +19,7 @@ package org.zkoss.zss.ngmodel.impl;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
+
 import org.zkoss.poi.ss.formula.EvaluationCell;
 import org.zkoss.poi.ss.formula.EvaluationSheet;
 import org.zkoss.poi.ss.formula.EvaluationWorkbook;
@@ -36,6 +37,7 @@ import org.zkoss.zss.ngmodel.sys.EngineFactory;
 import org.zkoss.zss.ngmodel.sys.dependency.Ref;
 import org.zkoss.zss.ngmodel.sys.formula.EvaluationResult;
 import org.zkoss.zss.ngmodel.sys.formula.EvaluationResult.ResultType;
+import org.zkoss.zss.ngmodel.sys.formula.FormulaClearContext;
 import org.zkoss.zss.ngmodel.sys.formula.FormulaEngine;
 import org.zkoss.zss.ngmodel.sys.formula.FormulaEvaluationContext;
 import org.zkoss.zss.ngmodel.sys.formula.FormulaExpression;
@@ -176,17 +178,7 @@ public class CellImpl extends CellAdv {
 		if(formulaResult!=null){
 			
 			//only clear when there is a formula result, or poi will do full cache scan to clean blank.
-			EngineFactory.getInstance().createFormulaEngine().clearCache(new FormulaEvaluationContext(this));
-			
-//			NBookSeries bookSeries = getSheet().getBook().getBookSeries();
-//			WorkbookEvaluator evaluator = (WorkbookEvaluator)bookSeries.getAttribute("evaluator");
-//			EvaluationWorkbook book = (EvaluationWorkbook)bookSeries.getAttribute("evalBook");
-//			if(evaluator != null && book != null) {
-//				String sheetName = getSheet().getSheetName();
-//				EvaluationSheet sheet = book.getSheet(book.getSheetIndex(sheetName));
-//				EvaluationCell cell = sheet.getCell(getRowIndex(), getColumnIndex());
-//				evaluator.notifyUpdateCell(cell);
-//			}
+			EngineFactory.getInstance().createFormulaEngine().clearCache(new FormulaClearContext(this));
 		}
 		
 		formulaResult = null;
@@ -290,9 +282,6 @@ public class CellImpl extends CellAdv {
 			}else if(val instanceof Number){
 				cellType = CellType.NUMBER;
 				value = (Number)val;
-			}else if(val instanceof Date){
-				cellType = CellType.NUMBER;
-				value = (Date)val;
 			}else if(val instanceof Boolean){
 				cellType = CellType.BOOLEAN;
 				value = (Boolean)val;

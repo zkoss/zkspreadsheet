@@ -100,7 +100,7 @@ public class SeriesImpl implements NSeries,Serializable,LinkedModelObject{
 	@Override
 	public String getName() {
 		evalFormula();
-		return evalNameResult==null?null:(evalNameResult instanceof ErrorValue)?((ErrorValue)evalNameResult).gettErrorString():evalNameResult.toString();
+		return evalNameResult==null?null:(evalNameResult instanceof ErrorValue)?((ErrorValue)evalNameResult).getErrorString():evalNameResult.toString();
 	}
 	@Override
 	public int getNumOfValue(){
