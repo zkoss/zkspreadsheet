@@ -11,7 +11,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
  */
 package org.zkoss.zss.ngmodel;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.zkoss.poi.ss.usermodel.CellValue;
@@ -29,8 +29,9 @@ import org.zkoss.zss.ngmodel.util.CellReference;
 public class FormulaPerformanceTest {
 	private final static int ROW_COUNT = 1000;
 	private final static int COL_COUNT = 50;
-	
-	XSSFFormulaEvaluator evaluator ;
+	private static final double EPSILON = 0.0000001;
+
+	XSSFFormulaEvaluator evaluator;
 
 	@Before
 	public void before() {
@@ -145,7 +146,7 @@ public class FormulaPerformanceTest {
 					XSSFCell cell = row.getCell(c);
 					CellValue value = evaluator.evaluate(cell);
 					double v = value.getNumberValue();
-					Assert.assertEquals(expected, v, 0.0000001);
+					Assert.assertEquals(expected, v, EPSILON);
 					expected *= 2.0;
 				}
 			}
@@ -205,23 +206,23 @@ public class FormulaPerformanceTest {
 		}
 		System.out.printf("used:  %,16d bytes (GC spend %,ds)\n", usedHeap, ms / 1000L);
 	}
-	
+
 	@Test
 	public void testDepend() {
 		NBook book = NBooks.createBook("Book1");
 		NSheet sheet = book.createSheet("Sheet1");
 		sheet.getCell(0, 0).setNumberValue(3.0); // A1
 		sheet.getCell(0, 1).setFormulaValue("A1 * 2"); // B1
-		Assert.assertEquals(3.0, sheet.getCell(0, 0).getNumberValue());
-		Assert.assertEquals(6.0, sheet.getCell(0, 1).getNumberValue());
-		
+		Assert.assertEquals(3.0, sheet.getCell(0, 0).getNumberValue(), EPSILON);
+		Assert.assertEquals(6.0, sheet.getCell(0, 1).getNumberValue(), EPSILON);
+
 		sheet.getCell(0, 0).setNumberValue(1.0);
-		Assert.assertEquals(6.0, sheet.getCell(0, 1).getNumberValue());
+		Assert.assertEquals(6.0, sheet.getCell(0, 1).getNumberValue(), EPSILON);
 		sheet.getCell(0, 1).clearFormulaResultCache();
-		Assert.assertEquals(2.0, sheet.getCell(0, 1).getNumberValue());
-		
+		Assert.assertEquals(2.0, sheet.getCell(0, 1).getNumberValue(), EPSILON);
+
 		sheet.getCell(0, 0).clearValue();
 		sheet.getCell(0, 1).clearFormulaResultCache();
-		Assert.assertEquals(0.0, sheet.getCell(0, 1).getNumberValue());
+		Assert.assertEquals(0.0, sheet.getCell(0, 1).getNumberValue(), EPSILON);
 	}
 }
