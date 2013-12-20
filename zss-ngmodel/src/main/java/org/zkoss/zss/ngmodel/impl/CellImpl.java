@@ -210,8 +210,8 @@ public class CellImpl extends CellAdv {
 	}
 
 	@Override
-	public Object getValue(boolean valueOfFormula) {
-		if (valueOfFormula && type == CellType.FORMULA) {
+	public Object getValue(boolean evaluatedVal) {
+		if (evaluatedVal && type == CellType.FORMULA) {
 			evalFormula();
 			return this.formulaResult.getValue();
 		}
@@ -293,6 +293,9 @@ public class CellImpl extends CellAdv {
 			}else if(val instanceof Date){
 				cellType = CellType.NUMBER;
 				value = (Date)val;
+			}else if(val instanceof Boolean){
+				cellType = CellType.BOOLEAN;
+				value = (Boolean)val;
 			}else if(val instanceof Collection){
 				//possible a engine return a collection in cell evaluation case? who should take care array formula?
 				if(((Collection)val).size()>0){

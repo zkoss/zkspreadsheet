@@ -13,10 +13,12 @@ package org.zkoss.zss.ngmodel;
 
 import java.util.Locale;
 import java.util.Set;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.zkoss.util.Locales;
+import org.zkoss.zss.ngmodel.NCell.CellType;
 import org.zkoss.zss.ngmodel.impl.BookSeriesAdv;
 import org.zkoss.zss.ngmodel.impl.NameRefImpl;
 import org.zkoss.zss.ngmodel.impl.RefImpl;
@@ -206,6 +208,43 @@ public class FormulaEvalTest {
 
 	private Ref toNameRef(String name) {
 		return new NameRefImpl("book1", null, name);
+	}
+	
+	
+	@Test
+	public void testEvalAndModifyNormal(){
+		NBook book = NBooks.createBook("book1");
+		NSheet sheet1 = book.createSheet("Sheet1");
+		NSheet sheet2 = book.createSheet("Sheet2");
+
+		NCell cell = sheet1.getCell(0, 0);
+		cell.setFormulaValue("Sheet2!A1");
+		
+		Assert.assertEquals(CellType.FORMULA, cell.getType());
+		Assert.assertEquals(CellType.NUMBER, cell.getFormulaResultType());
+		Assert.assertEquals(0D, cell.getValue());
+		
+		sheet2.getCell(0, 0).setValue("ABC");
+		Assert.assertEquals(CellType.NUMBER, cell.getFormulaResultType());
+		Assert.assertEquals(0D, cell.getValue());
+		cell.clearFormulaResultCache();
+		Assert.assertEquals(CellType.STRING, cell.getFormulaResultType());
+		Assert.assertEquals("ABC", cell.getValue());
+		
+		sheet2.getCell(0, 0).setValue(Boolean.TRUE);
+		Assert.assertEquals(CellType.STRING, cell.getFormulaResultType());
+		Assert.assertEquals("ABC", cell.getValue());
+		cell.clearFormulaResultCache();
+		Assert.assertEquals(CellType.BOOLEAN, cell.getFormulaResultType());
+		Assert.assertEquals(true, cell.getValue());
+		
+		
+//		sheet1.getCell(1, 0).setFormulaValue("Sheet3!A1");
+//		Assert.assertEquals(CellType.ERROR, sheet2.getCell(1, 0).getType());
+//		Assert.assertEquals("#REF", sheet2.getCell(1, 0).getErrorValue().toString());
+//		
+//		
+//		NSheet sheet3 = book.createSheet("Sheet3");
 	}
 
 }

@@ -74,6 +74,12 @@ public class ErrorValue implements Serializable{
 		return getErrorString(code);
 	}
 	
+	public String toString(){
+		StringBuilder sb = new StringBuilder(super.toString());
+		sb.append("/").append(gettErrorString());
+		return sb.toString();
+	}
+	
     public static final String getErrorString(int errorCode) {
         switch(errorCode) {
             case ERROR_NULL:  return "#NULL!";

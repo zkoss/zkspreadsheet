@@ -66,7 +66,7 @@ public abstract class CellAdv implements NCell,LinkedModelObject,Serializable{
 	}
 	
 	/*package*/ abstract void evalFormula();
-	/*package*/ abstract Object getValue(boolean valueOfFormula);
+	/*package*/ abstract Object getValue(boolean evaluatedVal);
 	/*package*/ abstract NCellStyle getCellStyle(boolean local);
 	
 	@Override

@@ -29,6 +29,7 @@ import org.zkoss.poi.ss.formula.OperationEvaluationContext;
 import org.zkoss.poi.ss.formula.WorkbookEvaluator;
 import org.zkoss.poi.ss.formula.eval.AreaEval;
 import org.zkoss.poi.ss.formula.eval.BlankEval;
+import org.zkoss.poi.ss.formula.eval.BoolEval;
 import org.zkoss.poi.ss.formula.eval.ErrorEval;
 import org.zkoss.poi.ss.formula.eval.EvaluationException;
 import org.zkoss.poi.ss.formula.eval.NumberEval;
@@ -214,6 +215,8 @@ public class POIFormulaEngine implements FormulaEngine {
 				result = new EvaluationResultImpl(ResultType.SUCCESS, ((StringEval)value).getStringValue());
 			} else if(value instanceof NumberEval) {
 				result = new EvaluationResultImpl(ResultType.SUCCESS, ((NumberEval)value).getNumberValue());
+			} else if(value instanceof BoolEval) {
+				result = new EvaluationResultImpl(ResultType.SUCCESS, ((BoolEval)value).getBooleanValue());
 			} else if(value instanceof ValuesEval) {
 				ValueEval[] values = ((ValuesEval)value).getValueEvals();
 				Object[] array = new Object[values.length];
