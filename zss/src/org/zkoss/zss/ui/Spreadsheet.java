@@ -4373,10 +4373,10 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			processCancelEditing0(token, event.getSheet(), event.getRow(), event.getColumn(), false, editingType);
 	}
 	
-	private void showFormulaError(FormulaParseException ex) {
+	private void showFormulaErrorThenRetry(FormulaParseException ex, final String token, final Worksheet sheet, final int rowIdx,final int colIdx, final Object value, final String editingType) {				
 		Messagebox.show(ex.getMessage(), "ZK Spreadsheet", Messagebox.OK, Messagebox.EXCLAMATION, new EventListener() {
 			public void onEvent(Event evt) {
-				Spreadsheet.this.focus();
+				Spreadsheet.this.processRetryEditing0(token, sheet, rowIdx, colIdx, value, editingType);
 			}
 		});
 	}
@@ -4412,10 +4412,10 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 
 			smartUpdate("dataUpdateStop", new Object[] { token,	Utils.getSheetUuid(sheet), result});
 		} catch (RuntimeException x) {
-			processCancelEditing0(token, sheet, rowIdx, colIdx, false, editingType);
 			if (x instanceof FormulaParseException) {
-				showFormulaError((FormulaParseException)x);
+				showFormulaErrorThenRetry((FormulaParseException)x, token, sheet, rowIdx, colIdx, value, editingType);
 			} else {
+				processCancelEditing0(token, sheet, rowIdx, colIdx, false, editingType);
 				throw x;
 			}
 		}
