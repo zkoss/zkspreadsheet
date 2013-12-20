@@ -158,6 +158,9 @@ public abstract class CellAdv implements NCell,LinkedModelObject,Serializable{
 	public void setFormulaValue(String formula) {
 		checkOrphan();
 		Validations.argNotNull(formula);
+		//for a formula, we should clear it's value before paring/create new dependency)
+		clearValue();
+		
 		FormulaEngine fe = EngineFactory.getInstance().createFormulaEngine();
 		FormulaExpression expr = fe.parse(formula, new FormulaParseContext(this ,new RefImpl(this)));
 		setValue(expr);

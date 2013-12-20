@@ -163,11 +163,17 @@ public class CellImpl extends CellAdv {
 
 	@Override
 	public void clearValue() {
+		clearValue(true);
+	}
+	
+	private void clearValue(boolean clearDependency) {
 		checkOrphan();
+		if(clearDependency){
+			clearFormulaDependency();
+		}
+		clearFormulaResultCache();
 		value = null;
 		richText = null;
-		clearFormulaDependency();
-		clearFormulaResultCache();
 		type = CellType.BLANK;
 	}
 
@@ -196,7 +202,7 @@ public class CellImpl extends CellAdv {
 		if (type == CellType.FORMULA) {
 			// clear depends
 			Ref ref = new RefImpl(this);
-			((BookSeriesAdv) row.getSheet().getBook().getBookSeries())
+			((BookSeriesAdv) getSheet().getBook().getBookSeries())
 					.getDependencyTable().clearDependents(ref);
 		}
 	}
@@ -219,7 +225,7 @@ public class CellImpl extends CellAdv {
 		if (value != null && value.equals(newvalue)) {
 			return;
 		}
-		clearValue();
+		clearValue(!(newvalue instanceof FormulaExpression));
 
 		if (newvalue == null) {
 			// nothing
