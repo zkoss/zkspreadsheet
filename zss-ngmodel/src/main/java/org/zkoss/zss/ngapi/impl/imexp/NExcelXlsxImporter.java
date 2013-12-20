@@ -98,9 +98,14 @@ public class NExcelXlsxImporter extends AbstractExcelImporter{
 			//max is 16384
 			
 			NColumnArray columnArray = sheet.setupColumnArray((int)ctCol.getMin()-1, (int)ctCol.getMax()-1);
-			columnArray.setHidden(ctCol.getHidden());
+			boolean hidden = ctCol.getHidden();
 			int columnIndex = (int)ctCol.getMin()-1;
-			columnArray.setWidth(XUtils.getWidthAny(poiSheet, columnIndex, CHRACTER_WIDTH));
+			
+			columnArray.setHidden(hidden);
+			if (hidden == false){
+				//when CT_Col is hidden with default width, We don't import the width for it's 0.  
+				columnArray.setWidth(XUtils.getWidthAny(poiSheet, columnIndex, CHRACTER_WIDTH));
+			}
 			CellStyle columnStyle = poiSheet.getColumnStyle(columnIndex);
 			if (columnStyle != null){
 				columnArray.setCellStyle(importCellStyle(columnStyle));

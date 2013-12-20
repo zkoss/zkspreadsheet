@@ -51,17 +51,21 @@ public class NExcelXlsImporter extends AbstractExcelImporter{
 		return new HSSFSheetHelper((HSSFSheet)poiSheet).getInternalSheet().getMaxConfiguredColumn();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	protected void importColumn(Sheet poiSheet, NSheet sheet, int defaultWidth) {
 		int lastChangedColumnIndex = getLastChangedColumnIndex(poiSheet);
 		for (int c=0 ; c <= lastChangedColumnIndex ; c++){
 			//reference Spreadsheet.updateColWidth()
-			int width = XUtils.getWidthAny(poiSheet, c, CHRACTER_WIDTH);
 			NColumn col = sheet.getColumn(c);
+			int width = XUtils.getWidthAny(poiSheet, c, CHRACTER_WIDTH);
+			boolean hidden = poiSheet.isColumnHidden(c);
+			col.setHidden(hidden);
 			//to avoid creating unnecessary column with just default value
-			if(width != defaultWidth){
+			if(!hidden && width != defaultWidth){
 				col.setWidth(width);
-				col.setHidden(poiSheet.isColumnHidden(c));
 			}
 			CellStyle columnStyle = poiSheet.getColumnStyle(c); 
 			if (columnStyle != null){

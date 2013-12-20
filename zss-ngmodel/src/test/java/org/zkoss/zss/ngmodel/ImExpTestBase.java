@@ -13,8 +13,7 @@ import org.zkoss.zss.ngmodel.NCellStyle.VerticalAlignment;
 import org.zkoss.zss.ngmodel.NFont.TypeOffset;
 
 /**
- * importer & exporter test case base.
- * migrate the common test case here.
+ * Common test cases for importer & exporter.
  * @author kuro, hawk
  *
  */
@@ -116,8 +115,6 @@ public class ImExpTestBase {
 		NSheet protectedSheet = book.getSheetByName("sheet-protection");
 		assertEquals(true, protectedSheet.getCell(0, 0).getCellStyle().isLocked());
 		assertEquals(false, protectedSheet.getCell(1, 0).getCellStyle().isLocked());
-		
-		
 	}
 
 	
@@ -176,7 +173,6 @@ public class ImExpTestBase {
 		assertEquals("#FF0000", sheet.getCell(1, 0).getCellStyle().getFont().getColor().getHtmlColor());
 		assertEquals("#00FF00", sheet.getCell(1, 1).getCellStyle().getFont().getColor().getHtmlColor());
 		assertEquals("#0000FF", sheet.getCell(1, 2).getCellStyle().getFont().getColor().getHtmlColor());
-		
 	}
 	
 	
@@ -226,7 +222,7 @@ public class ImExpTestBase {
 		assertEquals(228, sheet.getColumn(0).getWidth()); 
 		assertEquals(100, sheet.getColumn(1).getWidth());
 		assertEquals(102, sheet.getColumn(2).getWidth());
-		assertEquals(0, sheet.getColumn(4).getWidth());		//the hidden column
+		assertEquals(64, sheet.getColumn(4).getWidth());	//the hidden column
 		assertEquals(64, sheet.getColumn(5).getWidth());	//default width
 		
 		//the hidden column

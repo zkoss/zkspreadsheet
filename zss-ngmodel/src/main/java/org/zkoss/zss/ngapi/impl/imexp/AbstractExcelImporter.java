@@ -54,6 +54,12 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 	/** source POI book */
 	protected Workbook workbook;
 
+	/**
+	 * When a column is hidden with default width, we don't import the width for it's 0.
+	 * @param poiSheet
+	 * @param sheet
+	 * @param defaultWidth
+	 */
 	abstract protected void importColumn(Sheet poiSheet, NSheet sheet, int defaultWidth);
 	
 	/**
