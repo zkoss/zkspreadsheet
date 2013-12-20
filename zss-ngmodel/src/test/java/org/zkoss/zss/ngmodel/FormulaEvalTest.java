@@ -160,7 +160,7 @@ public class FormulaEvalTest {
 		book.createName("ABC").setRefersToFormula("Sheet1!A1:A5");
 		book.createName("DEF").setRefersToFormula("Sheet1:Sheet2!B2");
 		book.createName("GHI").setRefersToFormula("Sheet1:Sheet3!C2:C3");
-		
+
 		Set<Ref> dependents = table.getDependents(toAreaRef("Sheet1", null, "A2:C2"));
 		Assert.assertEquals(dependents.toString(), 3, dependents.size());
 		Assert.assertTrue(dependents.contains(toNameRef("ABC")));
@@ -184,13 +184,13 @@ public class FormulaEvalTest {
 		Assert.assertEquals(dependents.toString(), 2, dependents.size());
 		Assert.assertTrue(dependents.toString(), dependents.contains(toNameRef("ABC")));
 		Assert.assertTrue(dependents.toString(), dependents.contains(toCellRef("Sheet1", null, "A9")));
-		
+
 		dependents = table.getDependents(toAreaRef("Sheet1", null, "B4"));
 		Assert.assertEquals(dependents.toString(), 3, dependents.size());
 		Assert.assertTrue(dependents.toString(), dependents.contains(toCellRef("Sheet1", null, "A4")));
 		Assert.assertTrue(dependents.toString(), dependents.contains(toNameRef("ABC")));
 		Assert.assertTrue(dependents.toString(), dependents.contains(toCellRef("Sheet1", null, "A9")));
-		
+
 		dependents = table.getDependents(toAreaRef("Sheet2", null, "D2"));
 		Assert.assertEquals(dependents.toString(), 4, dependents.size());
 		Assert.assertTrue(dependents.toString(), dependents.contains(toCellRef("Sheet1", null, "A7")));
@@ -204,11 +204,11 @@ public class FormulaEvalTest {
 		return new RefImpl("book1", sheet1, sheet2, r.getRow(), r.getColumn(), r.getLastRow(),
 				r.getLastColumn());
 	}
-	
+
 	private Ref toSheetRef(String sheet1) {
 		return new RefImpl("book1", sheet1);
 	}
-	
+
 	private Ref toCellRef(String sheet1, String sheet2, String cell) {
 		CellRegion r = new CellRegion(cell);
 		return new RefImpl("book1", sheet1, sheet2, r.getRow(), r.getColumn());
@@ -360,6 +360,66 @@ public class FormulaEvalTest {
 		cell.clearFormulaResultCache();
 		Assert.assertEquals(CellType.STRING, cell.getFormulaResultType());
 		Assert.assertEquals("ABC", cell.getValue());
+	}
+
+	@Test
+	public void testClearFormulaDependency() {
+		NBook book = NBooks.createBook("book1");
+		NSheet sheet1 = book.createSheet("Sheet1");
+		DependencyTable table = ((BookSeriesAdv)book.getBookSeries()).getDependencyTable();
+
+		// initial test
+		Assert.assertTrue(table.getDependents(toAreaRef("Sheet1", null, "B1")).isEmpty());
+		Assert.assertTrue(table.getDependents(toAreaRef("Sheet1", null, "C1")).isEmpty());
+		// group2
+		Assert.assertTrue(table.getDependents(toAreaRef("Sheet1", null, "B2")).isEmpty());
+		Assert.assertTrue(table.getDependents(toAreaRef("Sheet1", null, "C2")).isEmpty());
+
+		// make some dependencies
+		sheet1.getCell(0, 0).setFormulaValue("B1 + C1"); // A1 = B1 + C1
+		sheet1.getCell(0, 1).setNumberValue(1.0); // B1 = 1.0
+		sheet1.getCell(0, 2).setNumberValue(2.0); // C1 = 2.0
+		// group2, clean must not effect these
+		sheet1.getCell(1, 0).setFormulaValue("B2 + C2"); // A2 = B2 + C2
+		sheet1.getCell(1, 1).setNumberValue(3.0); // B2 = 3.0
+		sheet1.getCell(1, 2).setNumberValue(4.0); // C2 = 4.0
+
+		// test value
+		Assert.assertEquals(Double.valueOf(3.0), sheet1.getCell(0, 0).getNumberValue());
+		Assert.assertEquals(Double.valueOf(7.0), sheet1.getCell(1, 0).getNumberValue());
+
+		// test normal dependencies
+		Set<Ref> dependents;
+		dependents = table.getDependents(toAreaRef("Sheet1", null, "B1"));
+		Assert.assertEquals(dependents.toString(), 1, dependents.size());
+		Assert.assertTrue(dependents.contains(toCellRef("Sheet1", null, "A1")));
+		dependents = table.getDependents(toAreaRef("Sheet1", null, "C1"));
+		Assert.assertEquals(dependents.toString(), 1, dependents.size());
+		Assert.assertTrue(dependents.contains(toCellRef("Sheet1", null, "A1")));
+		// group2
+		dependents = table.getDependents(toAreaRef("Sheet1", null, "B2"));
+		Assert.assertEquals(dependents.toString(), 1, dependents.size());
+		Assert.assertTrue(dependents.contains(toCellRef("Sheet1", null, "A2")));
+		dependents = table.getDependents(toAreaRef("Sheet1", null, "C2"));
+		Assert.assertEquals(dependents.toString(), 1, dependents.size());
+		Assert.assertTrue(dependents.contains(toCellRef("Sheet1", null, "A2")));
+
+		// modify cell and make clear dependencies
+		sheet1.getCell(0, 0).clearValue();
+		Assert.assertEquals(CellType.BLANK, sheet1.getCell(0, 0).getType());
+		Assert.assertEquals(Double.valueOf(7.0), sheet1.getCell(1, 0).getNumberValue());
+
+		// test dependency clearing
+		Assert.assertTrue(table.getDependents(toAreaRef("Sheet1", null, "B1")).isEmpty());
+		Assert.assertTrue(table.getDependents(toAreaRef("Sheet1", null, "C1")).isEmpty());
+		// group2
+		dependents = table.getDependents(toAreaRef("Sheet1", null, "B2"));
+		Assert.assertEquals(dependents.toString(), 1, dependents.size());
+		Assert.assertTrue(dependents.contains(toCellRef("Sheet1", null, "A2")));
+		dependents = table.getDependents(toAreaRef("Sheet1", null, "C2"));
+		Assert.assertEquals(dependents.toString(), 1, dependents.size());
+		Assert.assertTrue(dependents.contains(toCellRef("Sheet1", null, "A2")));
+
 	}
 
 }
