@@ -2,28 +2,29 @@ package org.zkoss.zss.ngapi.impl;
 
 import java.util.HashSet;
 
+import org.zkoss.zss.ngmodel.CellRegion;
+import org.zkoss.zss.ngmodel.ModelEvents;
 import org.zkoss.zss.ngmodel.NBook;
 import org.zkoss.zss.ngmodel.NBookSeries;
-import org.zkoss.zss.ngmodel.NCell;
-import org.zkoss.zss.ngmodel.NChart;
 import org.zkoss.zss.ngmodel.NSheet;
+import org.zkoss.zss.ngmodel.impl.BookAdv;
 import org.zkoss.zss.ngmodel.sys.dependency.ObjectRef;
 import org.zkoss.zss.ngmodel.sys.dependency.ObjectRef.ObjectType;
 import org.zkoss.zss.ngmodel.sys.dependency.Ref;
 import org.zkoss.zss.ngmodel.sys.dependency.Ref.RefType;
 
-/*package*/ class RefDependentHandler {
+/*package*/ class RefNotifyContentChangeHelper {
 	final NBookSeries bookSeries;
-	public RefDependentHandler(NBookSeries bookSeries) {
+	public RefNotifyContentChangeHelper(NBookSeries bookSeries) {
 		this.bookSeries = bookSeries;
 	}
 
-	public void handleRefDependent(HashSet<Ref> dependentSet) {
+	public void handle(HashSet<Ref> dependentSet) {
 		// clear formula cache
 		for (Ref dependent : dependentSet) {
-			System.out.println(">>> Dependent "+dependent);
+			System.out.println(">>> Notify "+dependent);
 			//clear the dependent's formula cache since the precedent is changed.
-			if (dependent.getType() == RefType.CELL) {
+			if (dependent.getType() == RefType.CELL || dependent.getType() == RefType.AREA) {
 				handleCellRef(dependent);
 			} else if (dependent.getType() == RefType.OBJECT) {
 				if(((ObjectRef)dependent).getObjectType()==ObjectType.CHART){
@@ -36,23 +37,22 @@ import org.zkoss.zss.ngmodel.sys.dependency.Ref.RefType;
 			}
 		}
 	}
+
 	private void handleChartRef(ObjectRef dependent) {
 		NBook book = bookSeries.getBook(dependent
 				.getBookName());
 		NSheet sheet = book.getSheetByName(dependent
 				.getSheetName());
 		String[] ids = dependent.getObjectIdPath();
-		NChart chart = sheet.getChart(ids[0]);
-		chart.getData().clearFormulaResultCache();
+		((BookAdv) book).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_CHART_CONTENT_CHANGE,sheet,
+				ModelEvents.PARAM_OBJECT_ID,ids[0]));
+				
 	}
 
-	private void handleCellRef(Ref dependent) {
-		NBook book = bookSeries.getBook(dependent
-				.getBookName());
-		NSheet sheet = book.getSheetByName(dependent
-				.getSheetName());
-		NCell cell = sheet.getCell(dependent.getRow(),
-				dependent.getColumn());
-		cell.clearFormulaResultCache();
+	private void handleCellRef(Ref notify) {
+		NBook book = bookSeries.getBook(notify.getBookName());
+		NSheet sheet = book.getSheetByName(notify.getSheetName());
+		((BookAdv) book).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_CELL_CONTENT_CHANGE,sheet,
+				new CellRegion(notify.getRow(),notify.getColumn(),notify.getLastRow(),notify.getLastColumn())));
 	}
 }

@@ -31,7 +31,7 @@ import org.zkoss.zss.ngmodel.util.FontMatcher;
  * @author Dennis.Chen
  *
  */
-public class NStyles {
+public class StyleUtil {
 //	private static final Log log = Log.lookup(NStyles.class);
 	
 	public static NCellStyle cloneCellStyle(NCell cell) {

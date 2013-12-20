@@ -33,6 +33,8 @@ public class FormatEngineImpl implements FormatEngine {
 			}
 			return new FormatResultImpl(cell.getStringValue(),null);//no color as well
 			
+		}else if(type==CellType.ERROR){
+			return new FormatResultImpl(cell.getErrorValue().getErrorString(),null);//no color as well
 		}
 		return format(cell.getCellStyle().getDataFormat(), cell.getValue(), context);
 	}

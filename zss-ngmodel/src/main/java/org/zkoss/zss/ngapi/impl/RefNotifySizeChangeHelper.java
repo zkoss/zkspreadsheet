@@ -6,21 +6,18 @@ import org.zkoss.zss.ngmodel.CellRegion;
 import org.zkoss.zss.ngmodel.ModelEvents;
 import org.zkoss.zss.ngmodel.NBook;
 import org.zkoss.zss.ngmodel.NBookSeries;
-import org.zkoss.zss.ngmodel.NCell;
 import org.zkoss.zss.ngmodel.NSheet;
 import org.zkoss.zss.ngmodel.impl.BookAdv;
-import org.zkoss.zss.ngmodel.sys.dependency.ObjectRef;
-import org.zkoss.zss.ngmodel.sys.dependency.ObjectRef.ObjectType;
 import org.zkoss.zss.ngmodel.sys.dependency.Ref;
 import org.zkoss.zss.ngmodel.sys.dependency.Ref.RefType;
 
-/*package*/ class RefNotifySizeChangeHandler {
+/*package*/ class RefNotifySizeChangeHelper {
 	final NBookSeries bookSeries;
-	public RefNotifySizeChangeHandler(NBookSeries bookSeries) {
+	public RefNotifySizeChangeHelper(NBookSeries bookSeries) {
 		this.bookSeries = bookSeries;
 	}
 
-	public void handleRefNotify(HashSet<Ref> dependentSet) {
+	public void handle(HashSet<Ref> dependentSet) {
 		// clear formula cache
 		for (Ref dependent : dependentSet) {
 			System.out.println(">>> Notify Size"+dependent);

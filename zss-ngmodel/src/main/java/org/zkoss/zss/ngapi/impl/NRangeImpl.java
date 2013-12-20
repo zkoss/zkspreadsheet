@@ -222,16 +222,16 @@ public class NRangeImpl implements NRange {
 	
 	private void handleRefDependent(NBookSeries bookSeries,HashSet<Ref> dependentSet) {
 		// clear formula cache
-		new RefDependentHandler(bookSeries).handleRefDependent(dependentSet);
+		new RefDependentHelper(bookSeries).handle(dependentSet);
 	}
 	
 	private void handleRefNotifyContentChange(NBookSeries bookSeries,HashSet<Ref> notifySet) {
 		// notify changes
-		new RefNotifyContentChangeHandler(bookSeries).handleRefNotify(notifySet);
+		new RefNotifyContentChangeHelper(bookSeries).handle(notifySet);
 	}
 	
 	private void handleRefNotifySizeChange(NBookSeries bookSeries,HashSet<Ref> notifySet) {
-		new RefNotifySizeChangeHandler(bookSeries).handleRefNotify(notifySet);
+		new RefNotifySizeChangeHelper(bookSeries).handle(notifySet);
 	}
 
 	/**
@@ -374,7 +374,7 @@ public class NRangeImpl implements NRange {
 				String oldFormat = cell.getCellStyle().getDataFormat();
 				if(format!=null && NCellStyle.FORMAT_GENERAL.equals(oldFormat)){
 					//if there is a suggested format and old format is not general
-					NStyles.setDataFormat(cell.getSheet(), cell.getRowIndex(), cell.getColumnIndex(), format);
+					StyleUtil.setDataFormat(cell.getSheet(), cell.getRowIndex(), cell.getColumnIndex(), format);
 				}
 				return true;
 			}

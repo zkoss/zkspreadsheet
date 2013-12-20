@@ -266,6 +266,10 @@ public class TestImporterFactory implements ImporterFactory{
 				
 				
 				sheet.addPicture(Format.JPG, getTestImageData(), new NViewAnchor(12, 3, 30, 5, 600, 300));
+				
+				
+				sheet = book.createSheet("Sheet 2");
+				sheet.getCell(0, 0).setValue("=SUM('Sheet 1'!B4:D4)");
 			}
 
 
