@@ -156,6 +156,7 @@ public class SheetImpl extends SheetAdv {
 //	}
 	
 	/**internal use only for developing/test state, should remove when stable*/
+	public static boolean DEBUG = false;
 	
 	private void checkColumnArrayStatus(){
 		if(!DEBUG) //only check in dev 
