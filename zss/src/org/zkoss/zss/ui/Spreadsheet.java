@@ -4509,12 +4509,12 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			processCancelEditing0(token, event.getSheet(), event.getRow(), event.getColumn(), false, editingType);
 	}
 	
-	private void showFormulaError(IllegalFormulaException ex) {
+	private void showFormulaErrorThenRetry(IllegalFormulaException ex, final String token, final Sheet sheet, final int rowIdx,final int colIdx, final Object value, final String editingType) {
 		String title = Labels.getLabel("zss.msg.warn_title");
 		String msg = Labels.getLabel("zss.msg.formula_error",new Object[]{ex.getMessage()});
 		Messagebox.show(msg, title, Messagebox.OK, Messagebox.EXCLAMATION, new EventListener() {
 			public void onEvent(Event evt) {
-				Spreadsheet.this.focus();
+				Spreadsheet.this.processRetryEditing0(token, sheet, rowIdx, colIdx, value, editingType);
 			}
 		});
 	}
@@ -4564,10 +4564,10 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 
 			smartUpdate("dataUpdateStop", new Object[] { token,	XUtils.getSheetUuid(sheet), result});
 		} catch (RuntimeException x) {
-			processCancelEditing0(token, sheet, rowIdx, colIdx, false, editingType);
 			if (x instanceof IllegalFormulaException) {
-				showFormulaError((IllegalFormulaException)x);
+				showFormulaErrorThenRetry((IllegalFormulaException)x, token, sheet, rowIdx, colIdx, value, editingType);
 			} else {
+				processCancelEditing0(token, sheet, rowIdx, colIdx, false, editingType);
 				throw x;
 			}
 		}

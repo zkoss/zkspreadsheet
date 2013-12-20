@@ -127,16 +127,22 @@ zss.DataPanel = zk.$extends(zk.Object, {
 	 * @param evt
 	 * @param val
 	 * @param type editing type. Either 'inlineEditing' or 'formulabarEditing'
+	 * @param pos optional, specify the row & column index of a cell to start editing 
 	 */
-	startEditing: function (evt, val, type) {
+	startEditing: function (evt, val, type, pos) {
 		var sheet = this.sheet;
 		if (sheet.config.readonly) 
 			return false;
-			
-		var pos = sheet.getLastFocus(),
-			row = pos.row,
-			col = pos.column,
-			type = type || 'inlineEditing',
+		
+		var row, col;
+		if (typeof pos != 'undefined'){
+			row = pos.row;
+			col = pos.col;
+		}else{ 
+			row = sheet.getLastFocus().row,
+			col = sheet.getLastFocus().column;
+		}
+		var type = type || 'inlineEditing',
 			cell = sheet.getCell(row, col);
 		if (this._wgt.isProtect() && cell && cell.isLocked()) {
 			sheet.showInfo(msgzss.cannotEditProtected, true);
@@ -305,8 +311,8 @@ zss.DataPanel = zk.$extends(zk.Object, {
 	/**
 	 * Retry editing using inline editor
 	 */
-	retryEditing: function (val) {
-		this.startEditing(null, val);
+	retryEditing: function (val, row, column) {
+		this.startEditing(null, val, 'inlineEditing', {row:row, col:column});
 		this._openEditbox(val);
 	},
 	/**

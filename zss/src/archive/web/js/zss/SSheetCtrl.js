@@ -679,7 +679,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			this.dp.cancelEditing(result.et);
 			break;
 		case "retryedit":
-			this.dp.retryEditing(value);
+			this.dp.retryEditing(value, result.r, result.c);
 			break;
 		}
 	},
