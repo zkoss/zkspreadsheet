@@ -5,8 +5,10 @@ import static org.junit.Assert.fail;
 import java.io.*;
 import java.net.URL;
 
+import org.zkoss.zss.ngapi.NExporter;
 import org.zkoss.zss.ngapi.NImporter;
 import org.zkoss.zss.ngapi.impl.imexp.*;
+import org.zkoss.zss.ngapi.impl.imexp.ExcelExportFactory.Type;
 
 /**
  * Utility for write and load book
@@ -19,20 +21,20 @@ public class ImExpTestUtil {
 	static public String DEFAULT_EXPORT_TARGET_PATH = "./target/";
 	static public String DEFAULT_EXPORT_FILE_NAME_XLSX = "exported.xlsx";
 	
-	public static File write(NBook book) {
-		return writeBookToFile(book, new File(DEFAULT_EXPORT_TARGET_PATH + DEFAULT_EXPORT_FILE_NAME_XLSX));
+	public static File write(NBook book, Type type) {
+		return writeBookToFile(book, new File(DEFAULT_EXPORT_TARGET_PATH + DEFAULT_EXPORT_FILE_NAME_XLSX), type);
 	}
 	
-	public static File writeBookToFile(NBook book, String filePath) {
-		return writeBookToFile(book, new File(filePath));
+	public static File writeBookToFile(NBook book, String filePath, Type type) {
+		return writeBookToFile(book, new File(filePath), type);
 	}
 	
-	public static File writeBookToFile(NBook book, File outFile) {
+	public static File writeBookToFile(NBook book, File outFile, Type type) {
 		try {
 			outFile = new File(DEFAULT_EXPORT_TARGET_PATH + outFile.getName());
 			outFile.createNewFile();
-			NExcelXlsxExporter xlsxExporter = (NExcelXlsxExporter) new ExcelExportFactory(ExcelExportFactory.Type.XLSX).createExporter();
-			xlsxExporter.export(book, outFile);
+			NExporter exporter = new ExcelExportFactory(type).createExporter();
+			exporter.export(book, outFile);
 		} catch (Exception e) {
 			e.printStackTrace();
 			fail(e.toString());

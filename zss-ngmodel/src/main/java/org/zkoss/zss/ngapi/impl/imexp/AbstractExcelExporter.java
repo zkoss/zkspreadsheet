@@ -77,22 +77,12 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 			poiName.setNameName(name.getName());
 			poiName.setSheetIndex(workbook.getSheetIndex(name.getRefersToSheetName()));
 			poiName.setRefersToFormula(name.getRefersToFormula());
-			// API not available
-			// name.getRefersToCellRegion()
-			// xssfName.setFunction(value);
-			// xssfName.setComment(comment);
-			// xssfName.setFunctionGroupId(functionGroupId);
 		}
 	}
 	
 	protected void exportSheet(NSheet sheet) {
 		Sheet poiSheet = workbook.createSheet(sheet.getSheetName());
-		
-		// Merge
-//		for(CellRegion region : sheet.getMergedRegions()) {
-//			poiSheet.addMergedRegion(new CellRangeAddress(region.row, region.lastRow, region.column, region.lastColumn));
-//		}
-		
+
 		// consistent with importer, read from last merged region
 		for(int i = sheet.getNumOfMergedRegion() - 1; i >= 0; i--) {
 			CellRegion region = sheet.getMergedRegion(i);
@@ -103,36 +93,15 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 		int freezeRow = sheet.getViewInfo().getNumOfRowFreeze();
 		int freezeCol = sheet.getViewInfo().getNumOfColumnFreeze();
 		poiSheet.createFreezePane(freezeCol <= 0 ? 0 : freezeCol, freezeRow <= 0 ? 0 : freezeRow);
-		
-		// grid
+
 		poiSheet.setDisplayGridlines(sheet.getViewInfo().isDisplayGridline());
 		
-		// protected
 		if(sheet.isProtected()) {
 			poiSheet.protectSheet(""); // without password
 		}
 		
-		// TODO charts & picture
-//				sheet.getCharts();
-//				sheet.getPictures();
-		
-		// FIXME doesn't know correct or wrong.
-		// refer from Spreadsheet#setRowHeight
 		poiSheet.setDefaultRowHeight((short)XUtils.pxToTwip(sheet.getDefaultRowHeight()));
-		
-		// FIXME doesn't know correct or wrong.
-		// How to convert px into column width?
 		poiSheet.setDefaultColumnWidth((int)XUtils.pxToScreenChar1(sheet.getDefaultColumnWidth(), AbstractExcelImporter.CHRACTER_WIDTH));
-		
-		// TODO, API isn't available 
-		//xssfSheet.setActiveCell(cellRef);
-		//xssfSheet.setArrayFormula(formula, range);
-		//xssfSheet.setAutobreaks(value);
-		//xssfSheet.setAutoFilter(range); // FIXME AutoFilter
-		//xssfSheet.setAutoFilterMode(b);
-		//xssfSheet.setColumnBreak(column);
-		//xssfSheet.setColumnGroupCollapsed(columnNumber, collapsed);
-		//xssfSheet.setZoom(scale);
 		
 		// row iterator
 		Iterator<NRow> rowIterator = sheet.getRowIterator();
@@ -145,54 +114,15 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 		Iterator<NColumnArray> colArrIter = sheet.getColumnArrayIterator();
 		while(colArrIter.hasNext()) {
 			NColumnArray columnArr = colArrIter.next();
-			exportColumnArray(sheet, (XSSFSheet)poiSheet, columnArr);
+			exportColumnArray(sheet, poiSheet, columnArr);
 		}
-		
-//		Iterator<NColumn> coliter = sheet.getColumnIterator();
-//		while(coliter.hasNext()) {
-//			NColumn column = coliter.next();
-//			exportColumn(sheet, poiSheet, column);
-//		}
+
 	}
 	
-	protected void exportColumnArray(NSheet sheet, XSSFSheet poiSheet, NColumnArray columnArr) {
-		
-//		CTWorksheet worksheet = poiSheet.getCTWorksheet();
-//		if(worksheet.sizeOfColsArray() == 0) {
-//			worksheet.addNewCols();
-//    	}
-//        CTCol col = worksheet.getColsArray(0).addNewCol();
-//        col.setMin(columnArr.getIndex());
-//        col.setMax(columnArr.getLastIndex());
-//        col.setWidth(XUtils.pxToFileChar256(columnArr.getWidth(), AbstractExcelImporter.CHRACTER_WIDTH));
-//        col.setHidden(columnArr.isHidden());
-		
-		// FIXME, Need further confirm
+	protected void exportColumnArray(NSheet sheet, Sheet poiSheet, NColumnArray columnArr) {
 		poiSheet.setColumnWidth(columnArr.getIndex(), XUtils.pxToFileChar256(columnArr.getWidth(), AbstractExcelImporter.CHRACTER_WIDTH));
 		poiSheet.setColumnHidden(columnArr.getIndex(), columnArr.isHidden());
         poiSheet.setDefaultColumnStyle(columnArr.getIndex(), toPOICellStyle(columnArr.getCellStyle()));
-        
-//        col.setStyle(arg0);
-//        
-//		int colIndex = column.getIndex();
-//		
-//		boolean hidden = column.isHidden();
-//		if(column.isHidden()) {
-//			// hidden
-//			poiSheet.setColumnWidth(column.getIndex(), 0);
-//			poiSheet.setColumnHidden(column.getIndex(), true);
-//		} else {
-//			// not hidden, calculate width
-//			// refer from RangeImpl#setColumnWidth
-//			int columnWidthChar256 = XUtils.pxToFileChar256(column.getWidth(), AbstractExcelImporter.CHRACTER_WIDTH);
-//			// refer from BookHelper#setColumnWidth
-//			final int orgChar256 = poiSheet.getColumnWidth(colIndex);
-//			if (columnWidthChar256 != orgChar256) {
-//				poiSheet.setColumnWidth(colIndex, columnWidthChar256);
-//			}
-//		}
-//		
-//		poiSheet.setDefaultColumnStyle(column.getIndex(), toPOICellStyle(column.getCellStyle()));
 	}
 
 	protected void exportRow(NSheet sheet, Sheet poiSheet, NRow row) {
@@ -500,118 +430,4 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 				return Font.U_NONE;
 		}
 	}
-
-//	protected org.zkoss.poi.ss.usermodel.VerticalAlignment toPOIVerticalAlignment(VerticalAlignment vAlignment) {
-//	
-//	switch(vAlignment) {
-//		case BOTTOM:
-//			return org.zkoss.poi.ss.usermodel.VerticalAlignment.BOTTOM;
-//		case CENTER:
-//			return org.zkoss.poi.ss.usermodel.VerticalAlignment.CENTER;
-//		case JUSTIFY:
-//			return org.zkoss.poi.ss.usermodel.VerticalAlignment.JUSTIFY;
-//		case TOP:
-//		default:
-//			return org.zkoss.poi.ss.usermodel.VerticalAlignment.TOP;
-//	}
-//}
-//
-//	
-//	protected FillPatternType toPOIFillPattern(FillPattern fillPattern) {
-//		switch(fillPattern) {
-//		case ALT_BARS:
-//			return FillPatternType.ALT_BARS;
-//		case BIG_SPOTS:
-//			return FillPatternType.BIG_SPOTS;
-//		case BRICKS:
-//			return FillPatternType.BRICKS;
-//		case DIAMONDS:
-//			return FillPatternType.DIAMONDS;
-//		case FINE_DOTS:
-//			return FillPatternType.FINE_DOTS;
-//		case LEAST_DOTS:
-//			return FillPatternType.LEAST_DOTS;
-//		case LESS_DOTS:
-//			return FillPatternType.LESS_DOTS;
-//		case SOLID_FOREGROUND:
-//			return FillPatternType.SOLID_FOREGROUND;
-//		case SPARSE_DOTS:
-//			return FillPatternType.SPARSE_DOTS;
-//		case SQUARES:
-//			return FillPatternType.SQUARES;
-//		case THICK_BACKWARD_DIAG:
-//			return FillPatternType.THICK_BACKWARD_DIAG;
-//		case THICK_FORWARD_DIAG:
-//			return FillPatternType.THICK_FORWARD_DIAG;
-//		case THICK_HORZ_BANDS:
-//			return FillPatternType.THICK_HORZ_BANDS;
-//		case THICK_VERT_BANDS:
-//			return FillPatternType.THICK_VERT_BANDS;
-//		case THIN_BACKWARD_DIAG:
-//			return FillPatternType.THIN_BACKWARD_DIAG;
-//		case THIN_FORWARD_DIAG:
-//			return FillPatternType.THIN_FORWARD_DIAG;
-//		case THIN_HORZ_BANDS:
-//			return FillPatternType.THIN_HORZ_BANDS;
-//		case THIN_VERT_BANDS:
-//			return FillPatternType.THIN_VERT_BANDS;
-//		case NO_FILL:
-//		default:
-//			return FillPatternType.NO_FILL;
-//		}
-//	}
-//	
-//	protected BorderStyle toPOIBorderType(BorderType borderType) {
-//		switch(borderType) {
-//		case DASH_DOT:
-//			return BorderStyle.DASH_DOT;
-//		case DASHED:
-//			return BorderStyle.DASHED;
-//		case DOTTED:
-//			return BorderStyle.DOTTED;
-//		case DOUBLE:
-//			return BorderStyle.DOUBLE;
-//		case HAIR:
-//			return BorderStyle.HAIR;
-//		case MEDIUM:
-//			return BorderStyle.MEDIUM;
-//		case MEDIUM_DASH_DOT:
-//			return BorderStyle.DASH_DOT;
-//		case MEDIUM_DASH_DOT_DOT:
-//			return BorderStyle.DASH_DOT_DOT;
-//		case MEDIUM_DASHED:
-//			return BorderStyle.MEDIUM_DASHED;
-//		case SLANTED_DASH_DOT:
-//			return BorderStyle.SLANTED_DASH_DOT;
-//		case THICK:
-//			return BorderStyle.THICK;
-//		case THIN:
-//			return BorderStyle.THIN;
-//		case DASH_DOT_DOT:
-//			return BorderStyle.DASH_DOT_DOT;
-//		case NONE:
-//		default:
-//			return BorderStyle.NONE;
-//		}
-//	}
-//	
-//	protected HorizontalAlignment toPOIAlignment(Alignment alignment) {
-//	switch(alignment) {
-//	case CENTER:
-//		return HorizontalAlignment.CENTER;
-//	case FILL:
-//		return HorizontalAlignment.FILL;
-//	case JUSTIFY:
-//		return HorizontalAlignment.JUSTIFY;
-//	case RIGHT:
-//		return HorizontalAlignment.RIGHT;
-//	case LEFT:
-//		return HorizontalAlignment.LEFT;
-//	case CENTER_SELECTION:
-//		return HorizontalAlignment.CENTER_SELECTION;
-//	case GENERAL:
-//		default:
-//		return HorizontalAlignment.GENERAL;
-//	}
-//}
 }

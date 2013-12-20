@@ -17,20 +17,10 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.ngapi.impl.imexp;
 
 import java.io.*;
-import java.util.*;
 import java.util.concurrent.locks.ReadWriteLock;
 
-import org.zkoss.poi.ss.usermodel.*;
-import org.zkoss.poi.ss.util.CellRangeAddress;
 import org.zkoss.poi.xssf.usermodel.*;
 import org.zkoss.zss.ngmodel.*;
-import org.zkoss.zss.ngmodel.NCellStyle.Alignment;
-import org.zkoss.zss.ngmodel.NCellStyle.BorderType;
-import org.zkoss.zss.ngmodel.NCellStyle.FillPattern;
-import org.zkoss.zss.ngmodel.NCellStyle.VerticalAlignment;
-import org.zkoss.zss.ngmodel.NFont.Boldweight;
-import org.zkoss.zss.ngmodel.NFont.TypeOffset;
-import org.zkoss.zss.ngmodel.NFont.Underline;
 /**
  * 
  * @author dennis, kuro
@@ -48,29 +38,28 @@ public class NExcelXlsxExporter extends AbstractExcelExporter {
 		ReadWriteLock lock = book.getBookSeries().getLock();
 		lock.readLock().lock();
 		
-		workbook = new XSSFWorkbook();
-		
-		// TODO, API isn't available 
-		//workbook.setActiveSheet(index);
-		//workbook.setFirstVisibleTab(index);
-		//workbook.setForceFormulaRecalculation(value);
-		//workbook.setHidden(hiddenFlag);
-		//workbook.setMissingCellPolicy(missingCellPolicy);
-		//workbook.setPrintArea(sheetIndex, reference);
-		//workbook.setSelectedTab(index);
-		//workbook.setSheetHidden(sheetIx, hidden);
-		//workbook.setSheetName(sheetIndex, sheetname);
-		//workbook.setSheetOrder(sheetname, pos);
-		
-		for(NSheet sheet : book.getSheets()) {
-			exportSheet(sheet);
-		}
-		
-		exportNamedRange(book);
-		
-		try{
-			workbook.write(fos);
+		try {
+			workbook = new XSSFWorkbook();
 			
+			// TODO, API isn't available 
+			//workbook.setActiveSheet(index);
+			//workbook.setFirstVisibleTab(index);
+			//workbook.setForceFormulaRecalculation(value);
+			//workbook.setHidden(hiddenFlag);
+			//workbook.setMissingCellPolicy(missingCellPolicy);
+			//workbook.setPrintArea(sheetIndex, reference);
+			//workbook.setSelectedTab(index);
+			//workbook.setSheetHidden(sheetIx, hidden);
+			//workbook.setSheetName(sheetIndex, sheetname);
+			//workbook.setSheetOrder(sheetname, pos);
+			
+			for(NSheet sheet : book.getSheets()) {
+				exportSheet(sheet);
+			}
+			
+			exportNamedRange(book);
+			
+			workbook.write(fos);
 		} finally {
 			lock.readLock().unlock();
 		}
