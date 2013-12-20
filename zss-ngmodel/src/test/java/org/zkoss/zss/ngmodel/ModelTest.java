@@ -30,6 +30,7 @@ import org.zkoss.zss.ngmodel.chart.NCategoryChartData;
 import org.zkoss.zss.ngmodel.chart.NSeries;
 import org.zkoss.zss.ngmodel.impl.BookImpl;
 import org.zkoss.zss.ngmodel.impl.SheetAdv;
+import org.zkoss.zss.ngmodel.impl.SheetImpl;
 import org.zkoss.zss.ngmodel.util.CellStyleMatcher;
 import org.zkoss.zss.ngmodel.util.FontMatcher;
 
@@ -38,6 +39,7 @@ public class ModelTest {
 	@Before
 	public void beforeTest() {
 		Locales.setThreadLocal(Locale.TAIWAN);
+		SheetImpl.DEBUG = true;
 	}
 	
 	@Test 
@@ -297,6 +299,37 @@ public class ModelTest {
 		Assert.assertEquals(20, array.getLastIndex());
 		Assert.assertEquals(40, array.getWidth());
 		Assert.assertFalse(arrays.hasNext());
+	}
+
+	@Test
+	public void testSetupColumnArray2() {
+		NBook book = NBooks.createBook("book1");
+		NSheet sheet1 = book.createSheet("Sheet1");
+
+		sheet1.setDefaultColumnWidth(100);
+		sheet1.setDefaultRowHeight(200);
+		Assert.assertEquals(100, sheet1.getDefaultColumnWidth());
+		Assert.assertEquals(200, sheet1.getDefaultRowHeight());
+
+		Iterator<NColumnArray> arrays = sheet1.getColumnArrayIterator();
+		Assert.assertFalse(arrays.hasNext());
+
+		Assert.assertNull(sheet1.getColumnArray(0));
+
+		sheet1.setupColumnArray(1, 1).setWidth(10);
+		arrays = sheet1.getColumnArrayIterator();
+		NColumnArray array = arrays.next();
+		Assert.assertEquals(0, array.getIndex());
+		Assert.assertEquals(0, array.getLastIndex());
+		Assert.assertEquals(100, array.getWidth());
+
+		array = arrays.next();
+		Assert.assertEquals(1, array.getIndex());
+		Assert.assertEquals(1, array.getLastIndex());
+		Assert.assertEquals(10, array.getWidth());
+
+		Assert.assertFalse(arrays.hasNext());
+
 	}
 	
 	@Test

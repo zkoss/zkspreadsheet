@@ -155,29 +155,36 @@ public class SheetImpl extends SheetAdv {
 //		return proxy?new ColumnProxy(this,columnIdx):null;
 //	}
 	
+	/**internal use only for developing/test state, should remove when stable*/
+	
 	private void checkColumnArrayStatus(){
-		if(true) //only check in dev 
+		if(!DEBUG) //only check in dev 
 			return;
 		
 		ColumnArrayAdv prev = null;
-		System.out.println(">>>>>>>>>>>>>>>>");
-		for(ColumnArrayAdv array:columnArrays.values()){
-			System.out.println(">>>>"+array.getIndex()+":"+array.getLastIndex());
-		}
-		for(ColumnArrayAdv array:columnArrays.values()){
-			//check the existed data
-			if(prev==null){
-				if(array.getIndex()!=0){
-					throw new IllegalStateException("column array doesn't not start with 0 is "+array.getIndex());
+		try{
+			for(ColumnArrayAdv array:columnArrays.values()){
+				//check the existed data
+				if(prev==null){
+					if(array.getIndex()!=0){
+						throw new IllegalStateException("column array doesn't not start with 0 is "+array.getIndex());
+					}
+				}else{
+					if(prev.getLastIndex()+1!=array.getIndex()){
+						throw new IllegalStateException("column array doesn't continue, "+prev.getLastIndex() +" to "+array.getIndex());
+					}
 				}
-			}else{
-				if(prev.getLastIndex()+1!=array.getIndex()){
-					throw new IllegalStateException("column array doesn't continue, "+prev.getLastIndex() +" to "+array.getIndex());
-				}
+				prev = array;
 			}
-			prev = array;
+		}catch(RuntimeException x){
+			System.out.println(">>>>>>>>>>>>>>>>");
+			for(ColumnArrayAdv array:columnArrays.values()){
+				System.out.println(">>>>"+array.getIndex()+":"+array.getLastIndex());
+			}
+			System.out.println(">>>>>>>>>>>>>>>>");
+			throw x;
 		}
-		System.out.println(">>>>>>>>>>>>>>>>");
+		
 	}
 	
 
@@ -195,11 +202,13 @@ public class SheetImpl extends SheetAdv {
 		}
 		
 		
-		if(columnArrays.size()>0){
+		if(columnArrays.size()==0){
+			start1 = 0;
+		}else{
 			start1 = columnArrays.lastLastKey()+1;
 		}
-		
 		end1 = index-1;
+		
 		ColumnArrayAdv array;
 		if(start1<=end1 && end1>-1){
 			array = new ColumnArrayImpl(this, start1, end1);
@@ -226,11 +235,10 @@ public class SheetImpl extends SheetAdv {
 		if(contains==null){
 			if(columnArrays.size()==0){//no data
 				start1 = 0;
-				end1 = columnIdx-1;
 			}else{//out of existed array
 				start1 = columnArrays.lastLastKey()+1;
-				end1 = columnIdx-1;
 			}
+			end1 = columnIdx-1;
 		}else{
 			if(contains.getIndex()==columnIdx){//for the begin
 				start2 = columnIdx+1;
