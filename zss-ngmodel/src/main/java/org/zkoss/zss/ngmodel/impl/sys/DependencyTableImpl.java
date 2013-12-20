@@ -63,7 +63,9 @@ public class DependencyTableImpl extends DependencyTableAdv {
 
 	@Override
 	public void clearDependents(Ref dependant) {
-		// TODO 
+		if(dependant != null) {
+			map.remove(dependant);
+		}
 	}
 
 	@Override
