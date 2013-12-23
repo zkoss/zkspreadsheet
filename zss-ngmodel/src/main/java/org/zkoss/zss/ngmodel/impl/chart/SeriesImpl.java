@@ -154,14 +154,14 @@ public class SeriesImpl implements NSeries,Serializable,LinkedModelObject{
 	
 	@Override
 	public void setFormula(String nameExpression,String valueExpression){
-		setFormula(nameExpression,valueExpression);
+		setXYZFormula(nameExpression,valueExpression,null,null);
 	}
 	@Override
-	public void setFormula(String nameExpression,String valueExpression, String yValueExpression){
-		setFormula(nameExpression,valueExpression,yValueExpression,null);
+	public void setXYFormula(String nameExpression,String xValueExpression, String yValueExpression){
+		setXYZFormula(nameExpression,xValueExpression,yValueExpression,null);
 	}
 	@Override
-	public void setFormula(String nameExpression,String valueExpression, String yValueExpression,String zValueExpression){
+	public void setXYZFormula(String nameExpression,String xValueExpression, String yValueExpression,String zValueExpression){
 		evaluated = false;
 		clearFormulaDependency();
 		
@@ -173,8 +173,8 @@ public class SeriesImpl implements NSeries,Serializable,LinkedModelObject{
 		}else{
 			nameExpr = null;
 		}
-		if(valueExpression!=null){
-			valueExpr = fe.parse(valueExpression, new FormulaParseContext(sheet,ref));
+		if(xValueExpression!=null){
+			valueExpr = fe.parse(xValueExpression, new FormulaParseContext(sheet,ref));
 		}else{
 			valueExpr = null;
 		}
@@ -259,6 +259,21 @@ public class SeriesImpl implements NSeries,Serializable,LinkedModelObject{
 		if(chart==null){
 			throw new IllegalStateException("doesn't connect to parent");
 		}
+	}
+
+	@Override
+	public int getNumOfXValue() {
+		return getNumOfValue();
+	}
+
+	@Override
+	public Object getXValue(int index) {
+		return getValue(index);
+	}
+
+	@Override
+	public String getXValuesFormula() {
+		return getValuesFormula();
 	}
 
 }

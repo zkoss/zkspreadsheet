@@ -90,6 +90,7 @@ public interface NChart {
 	public NChartGrouping getGrouping();
 	
 	public NBarDirection getBarDirection();
+	public void setBarDirection(NBarDirection direction);
 	
 	public boolean isThreeD();
 	

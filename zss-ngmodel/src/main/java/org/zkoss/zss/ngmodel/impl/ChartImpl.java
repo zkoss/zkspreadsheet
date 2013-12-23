@@ -40,6 +40,7 @@ public class ChartImpl extends ChartAdv {
 	
 	NChartLegendPosition legendPosition;
 	NChartGrouping grouping;
+	NBarDirection direction;
 	
 	boolean threeD;
 	
@@ -49,6 +50,15 @@ public class ChartImpl extends ChartAdv {
 		this.type = type;
 		this.anchor = anchor;
 		this.data = createChartData(type);
+		
+		switch(type){//default initialization
+		case BAR:
+			direction = NBarDirection.HORIZONTAL;
+			break;
+		case COLUMN:
+			direction = NBarDirection.VERTICAL;
+			break;
+		}
 	}
 	@Override
 	public NSheet getSheet(){
@@ -150,14 +160,10 @@ public class ChartImpl extends ChartAdv {
 	}
 	@Override
 	public NBarDirection getBarDirection() {
-		switch(type){
-		case BAR:
-			return NBarDirection.HORIZONTAL;
-		case COLUMN:
-			return NBarDirection.VERTICAL;
-		default:
-			return null;
-		}
+		return direction;
+	}
+	public void setBarDirection(NBarDirection direction){
+		this.direction = direction;
 	}
 	@Override
 	public boolean isThreeD() {

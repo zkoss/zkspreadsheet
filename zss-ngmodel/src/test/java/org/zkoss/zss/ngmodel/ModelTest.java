@@ -2002,11 +2002,11 @@ public class ModelTest {
 		Assert.assertEquals(1, chartData.getNumOfSeries());
 		Assert.assertEquals(null, nseries1.getName());
 		
-		nseries1.setFormula("KK()",null,null);//fail 
+		nseries1.setXYFormula("KK()",null,null);//fail 
 		Assert.assertEquals("#NAME?", nseries1.getName());
 //		Assert.assertTrue(nseries1.isFormulaParsingError());
 		
-		nseries1.setFormula("D1",null,null);
+		nseries1.setXYFormula("D1",null,null);
 		Assert.assertEquals("My Series", nseries1.getName());
 		
 		Assert.assertEquals(0, nseries1.getNumOfValue());
@@ -2014,12 +2014,12 @@ public class ModelTest {
 		Assert.assertFalse(nseries1.isFormulaParsingError());
 		
 		
-		nseries1.setFormula("D1","KK()","KK()");
+		nseries1.setXYFormula("D1","KK()","KK()");
 		Assert.assertEquals(0, nseries1.getNumOfValue());
 		Assert.assertEquals(0, nseries1.getNumOfYValue());
 //		Assert.assertTrue(nseries1.isFormulaParsingError());
 		
-		nseries1.setFormula("D1","B1:B3","C1:C3");
+		nseries1.setXYFormula("D1","B1:B3","C1:C3");
 		Assert.assertFalse(nseries1.isFormulaParsingError());
 		
 		Assert.assertEquals(3, nseries1.getNumOfValue());
@@ -2040,7 +2040,7 @@ public class ModelTest {
 		Assert.assertEquals(null, nseries2.getName());
 		
 		Assert.assertEquals(0, nseries2.getNumOfValue());
-		nseries2.setFormula(null,"C1:C3",null);
+		nseries2.setXYFormula(null,"C1:C3",null);
 		
 		Assert.assertEquals(3, nseries2.getNumOfValue());
 		
@@ -2206,7 +2206,7 @@ public class ModelTest {
 		NGeneralChartData data = (NGeneralChartData)chart.getData();
 		data.setCategoriesFormula("A1:A3");
 		NSeries series = data.addSeries();
-		series.setFormula("B1:B3", "C1:C3", null);
+		series.setXYFormula("B1:B3", "C1:C3", null);
 		
 		sheet.addPicture(Format.PNG, new byte[]{}, new NViewAnchor(0, 0, 800, 600));
 		
