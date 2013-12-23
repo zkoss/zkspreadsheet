@@ -20,7 +20,7 @@ package org.zkoss.zss.ngmodel.chart;
  * @author dennis
  * @since 3.5.0
  */
-public interface NCategoryChartData extends NChartData{
+public interface NGeneralChartData extends NChartData{
 
 	/**
 	 * Return formula parsing state.

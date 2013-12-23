@@ -19,7 +19,7 @@ package org.zkoss.zss.ngmodel.impl;
 import org.zkoss.zss.ngmodel.NSheet;
 import org.zkoss.zss.ngmodel.NViewAnchor;
 import org.zkoss.zss.ngmodel.chart.NChartData;
-import org.zkoss.zss.ngmodel.impl.chart.CategoryChartDataImpl;
+import org.zkoss.zss.ngmodel.impl.chart.GeneralChartDataImpl;
 import org.zkoss.zss.ngmodel.impl.chart.ChartDataAdv;
 import org.zkoss.zss.ngmodel.impl.chart.UnsupportedChartDataImpl;
 /**
@@ -107,7 +107,7 @@ public class ChartImpl extends ChartAdv {
 		case SCATTER://xy , reuse category
 		case BUBBLE://xyz , reuse category
 		case STOCK://stock, reuse category			
-			return new CategoryChartDataImpl(this,id+"-data");
+			return new GeneralChartDataImpl(this,id+"-data");
 			
 		//not supported	
 		case OF_PIE:

@@ -22,7 +22,7 @@ import java.util.List;
 import org.zkoss.zss.ngmodel.ErrorValue;
 import org.zkoss.zss.ngmodel.InvalidateModelOpException;
 import org.zkoss.zss.ngmodel.NChart;
-import org.zkoss.zss.ngmodel.chart.NCategoryChartData;
+import org.zkoss.zss.ngmodel.chart.NGeneralChartData;
 import org.zkoss.zss.ngmodel.chart.NSeries;
 import org.zkoss.zss.ngmodel.impl.BookSeriesAdv;
 import org.zkoss.zss.ngmodel.impl.ChartAdv;
@@ -41,7 +41,7 @@ import org.zkoss.zss.ngmodel.sys.formula.FormulaParseContext;
  * @author dennis
  * @since 3.5.0
  */
-public class CategoryChartDataImpl extends ChartDataAdv implements NCategoryChartData{
+public class GeneralChartDataImpl extends ChartDataAdv implements NGeneralChartData{
 
 	private static final long serialVersionUID = 1L;
 
@@ -57,7 +57,7 @@ public class CategoryChartDataImpl extends ChartDataAdv implements NCategoryChar
 	
 	private int seriesCount = 0;
 	
-	public CategoryChartDataImpl(ChartAdv chart,String id){
+	public GeneralChartDataImpl(ChartAdv chart,String id){
 		this.chart = chart;
 		this.id = id;
 	}

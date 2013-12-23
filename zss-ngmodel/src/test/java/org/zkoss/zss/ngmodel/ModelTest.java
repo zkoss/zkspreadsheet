@@ -26,7 +26,7 @@ import org.zkoss.zss.ngmodel.NFont.TypeOffset;
 import org.zkoss.zss.ngmodel.NFont.Underline;
 import org.zkoss.zss.ngmodel.NHyperlink.HyperlinkType;
 import org.zkoss.zss.ngmodel.NPicture.Format;
-import org.zkoss.zss.ngmodel.chart.NCategoryChartData;
+import org.zkoss.zss.ngmodel.chart.NGeneralChartData;
 import org.zkoss.zss.ngmodel.chart.NSeries;
 import org.zkoss.zss.ngmodel.impl.BookImpl;
 import org.zkoss.zss.ngmodel.impl.SheetAdv;
@@ -1987,7 +1987,7 @@ public class ModelTest {
 		
 		NChart p1 = sheet.addChart(NChart.NChartType.BAR, new NViewAnchor(6, 10, 22, 33, 800, 600));
 		
-		NCategoryChartData chartData = (NCategoryChartData)p1.getData();
+		NGeneralChartData chartData = (NGeneralChartData)p1.getData();
 		Assert.assertEquals(0, chartData.getNumOfCategory());
 		Assert.assertEquals(0, chartData.getNumOfSeries());
 		Assert.assertEquals(null, chartData.getCategory(100)); //allow out of index
@@ -2203,7 +2203,7 @@ public class ModelTest {
 		
 		NChart chart = sheet.addChart(NChartType.BAR, new NViewAnchor(0, 0, 800, 600));
 		
-		NCategoryChartData data = (NCategoryChartData)chart.getData();
+		NGeneralChartData data = (NGeneralChartData)chart.getData();
 		data.setCategoriesFormula("A1:A3");
 		NSeries series = data.addSeries();
 		series.setFormula("B1:B3", "C1:C3", null);
@@ -2259,7 +2259,7 @@ public class ModelTest {
 			Assert.assertEquals(1, sheet.getCharts().size());
 			chart = sheet.getCharts().get(0);
 			
-			data = (NCategoryChartData)chart.getData();
+			data = (NGeneralChartData)chart.getData();
 			
 			Assert.assertEquals("A1:A3", data.getCategoriesFormula());
 			Assert.assertEquals("B1:B3", data.getSeries(0).getNameFormula());

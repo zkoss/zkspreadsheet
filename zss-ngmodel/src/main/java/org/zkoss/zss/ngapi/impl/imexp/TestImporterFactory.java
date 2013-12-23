@@ -41,7 +41,7 @@ import org.zkoss.zss.ngmodel.NPicture.Format;
 import org.zkoss.zss.ngmodel.NSheet;
 import org.zkoss.zss.ngmodel.NCellStyle.Alignment;
 import org.zkoss.zss.ngmodel.NViewAnchor;
-import org.zkoss.zss.ngmodel.chart.NCategoryChartData;
+import org.zkoss.zss.ngmodel.chart.NGeneralChartData;
 import org.zkoss.zss.ngmodel.chart.NSeries;
 import org.zkoss.zss.ngmodel.impl.BookImpl;
 /**
@@ -152,7 +152,7 @@ public class TestImporterFactory implements ImporterFactory{
 
 			
 			private void buildChartData(NChart chart){
-				NCategoryChartData data = (NCategoryChartData)chart.getData();
+				NGeneralChartData data = (NGeneralChartData)chart.getData();
 				data.setCategoriesFormula("A2:A4");//A,B,C
 				NSeries series = data.addSeries();
 				series.setFormula("A1", "B2:B4", null);
