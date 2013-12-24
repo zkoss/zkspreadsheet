@@ -118,7 +118,7 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 			final CellRangeAddress mergedRegion = poiSheet.getMergedRegion(i);
 			sheet.addMergedRegion(new CellRegion(mergedRegion.getFirstRow(),mergedRegion.getFirstColumn(), mergedRegion.getLastRow(),mergedRegion.getLastColumn()));
 		}
-		
+		importChart(poiSheet, sheet);
 		
 		for(Row poiRow : poiSheet) {
 			importRow(sheet, poiRow);
@@ -129,6 +129,7 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 		return sheet;
 	}
 
+	abstract protected void importChart(Sheet poiSheet, NSheet sheet);
 	
 	protected NRow importRow(NSheet sheet, Row poiRow) {
 		NRow row = sheet.getRow(poiRow.getRowNum());

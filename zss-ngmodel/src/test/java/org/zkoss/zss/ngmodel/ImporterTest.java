@@ -10,6 +10,10 @@ import org.junit.*;
 import org.zkoss.util.Locales;
 import org.zkoss.zss.ngapi.NImporter;
 import org.zkoss.zss.ngapi.impl.imexp.ExcelImportFactory;
+import org.zkoss.zss.ngmodel.NChart.NBarDirection;
+import org.zkoss.zss.ngmodel.NChart.NChartGrouping;
+import org.zkoss.zss.ngmodel.NChart.NChartLegendPosition;
+import org.zkoss.zss.ngmodel.chart.NGeneralChartData;
 
 /**
  * @author Hawk
@@ -201,6 +205,36 @@ public class ImporterTest extends ImExpTestBase {
 		assertEquals("en_US", Locales.getCurrent().toString());
 		assertEquals("m/d/yyyy", sheet.getCell(1, 4).getCellStyle().getDataFormat());
 	}
+	
+	@Test
+	public void barChart(){
+		NBook book = ImExpTestUtil.loadBook(ImporterTest.class.getResource("book/chart.xlsx"), "Chart");
+		NSheet sheet = book.getSheetByName("BarChart");
+		NChart barChart = sheet.getChart(0);
+		
+		assertEquals("Bar Chart Title",barChart.getTitle());
+		
+		assertEquals(480, barChart.getAnchor().getWidth());
+		assertEquals(288, barChart.getAnchor().getHeight());
+		
+		assertEquals(NBarDirection.HORIZONTAL, barChart.getBarDirection());
+		assertEquals(NChartGrouping.CLUSTERED, barChart.getGrouping());
+		assertEquals(false, barChart.isThreeD());
+		assertEquals(NChartLegendPosition.RIGHT, barChart.getLegendPosition());
+		
+		//data
+		NGeneralChartData chartData = (NGeneralChartData)barChart.getData();
+		assertEquals(3, chartData.getNumOfCategory());
+		assertEquals("Internet Explorer", chartData.getCategory(0));
+		assertEquals("Chrome", chartData.getCategory(1));
+		assertEquals("Firefox", chartData.getCategory(2));
+		assertEquals(3, chartData.getNumOfSeries());
+		assertEquals("January 2012", chartData.getSeries(0).getName());
+		assertEquals(0.3427, chartData.getSeries(0).getValue(0));
+		assertEquals(0.2599, chartData.getSeries(0).getValue(1));
+		assertEquals(0.2268, chartData.getSeries(0).getValue(2));
+	}
 }
+
 
 

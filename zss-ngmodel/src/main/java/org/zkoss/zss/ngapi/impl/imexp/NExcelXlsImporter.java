@@ -66,5 +66,11 @@ public class NExcelXlsImporter extends AbstractExcelImporter{
 		}
 	}
 
+//	@Override
+	protected void importChart(Sheet poiSheet, NSheet sheet) {
+		// TODO Auto-generated method stub
+		
+	}
+
 
 }

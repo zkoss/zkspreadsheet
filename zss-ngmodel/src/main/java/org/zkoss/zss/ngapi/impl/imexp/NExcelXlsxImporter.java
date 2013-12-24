@@ -17,11 +17,25 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.ngapi.impl.imexp;
 
 import java.io.*;
+import java.util.*;
 
+import org.openxmlformats.schemas.drawingml.x2006.main.*;
+import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.*;
+import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTDrawing;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
+import org.w3c.dom.Node;
+import org.zkoss.poi.POIXMLDocumentPart;
 import org.zkoss.poi.ss.usermodel.*;
+import org.zkoss.poi.ss.usermodel.charts.*;
+import org.zkoss.poi.ss.util.*;
 import org.zkoss.poi.xssf.usermodel.*;
+import org.zkoss.poi.xssf.usermodel.charts.*;
 import org.zkoss.zss.ngmodel.*;
+import org.zkoss.zss.ngmodel.NChart.NBarDirection;
+import org.zkoss.zss.ngmodel.NChart.NChartGrouping;
+import org.zkoss.zss.ngmodel.NChart.NChartLegendPosition;
+import org.zkoss.zss.ngmodel.NChart.NChartType;
+import org.zkoss.zss.ngmodel.chart.*;
 import org.zkoss.zss.ngmodel.util.SpreadsheetVersion;
 /**
  * Convert Excel XLSX format file to a Spreadsheet {@link NBook} model including following information:
@@ -43,29 +57,6 @@ public class NExcelXlsxImporter extends AbstractExcelImporter{
 		return new XSSFWorkbook(is);
 	}
 
-	/**
-	 * get last column index that is different from default value, e.g. width is customized.
-	 * reference BookHelper.getMaxConfiguredColumn()
-	 * @param poiSheet
-	 * @return
-	 */
-	protected int getLastChangedColumnIndex(Sheet poiSheet) {
-		int max = -1;
-		CTWorksheet worksheet = ((XSSFSheet)poiSheet).getCTWorksheet();
-		if(worksheet.sizeOfColsArray()<=0){
-			return max;
-		}
-		
-		CTCols colsArray = worksheet.getColsArray(0);
-		for (int i = 0; i < colsArray.sizeOfColArray(); i++) {
-			CTCol ctCol = colsArray.getColArray(i);
-			//TODO ZSS-525, to avoid getting upper bound value of column index
-			if (ctCol.getCustomWidth() && ctCol.getMax()!=SpreadsheetVersion.EXCEL2007.getMaxColumns()){
-				max = Math.max(max, (int) ctCol.getMax()-1);//in CT col it is 1base, -1 to 0base.
-			}
-		}
-		return max;
-	}
 
 	/**
 	 * [ISO/IEC 29500-1 1st Edition] 18.3.1.13 col (Column Width & Formatting)
@@ -104,6 +95,217 @@ public class NExcelXlsxImporter extends AbstractExcelImporter{
 			}
 		}
 	}
+
+	/**
+	 * not setXAxisTitle() because {@link XSSFCategoryAxis} doesn't have API to get title. 
+	 */
+	@Override
+	protected void importChart(Sheet poiSheet, NSheet sheet) {
+		List<ZssChartX> charts = importXSSFDrawings((XSSFSheet)poiSheet);
+		
+		for (ZssChartX zssChart : charts){
+			XSSFChart xssfChart = (XSSFChart)zssChart.getChart();
+			ClientAnchor clientAnchor = xssfChart.getPreferredSize();
+			int width = getXSSFWidthInPx(poiSheet, clientAnchor);
+			int height = getXSSFHeightInPx(poiSheet, clientAnchor);
+			NViewAnchor viewAnchor = new NViewAnchor(clientAnchor.getRow1(), clientAnchor.getCol1(), width, height);
+
+			switch(xssfChart.getChartType()){
+			case Bar:
+				NChart chart = sheet.addChart(NChartType.BAR, viewAnchor);
+				XSSFBarChartData chartData = new XSSFBarChartData(xssfChart);
+				chart.setBarDirection(convertBarDirection(chartData.getBarDirection()));
+				chart.setGrouping(convertGrouping(chartData.getGrouping()));
+				if (xssfChart.getTitle()!=null){
+					chart.setTitle(xssfChart.getTitle().getString());
+				}
+				chart.setThreeD(xssfChart.isSetView3D());
+				chart.setLegendPosition(convertLengendPosition(xssfChart.getOrCreateLegend().getPosition()));
+				
+				importSeries(chartData.getSeries(), chart);
+			}
+			
+		}
+	}
+
+
+	private void importSeries(List<? extends CategoryDataSerie> seriesList, NChart chart) {
+		for (CategoryDataSerie sourceSerie:seriesList){
+			String nameExpression = null;
+			//reference ChartHelper.prepareLabels()
+			if (sourceSerie.getCategories().isReference()){
+				((NGeneralChartData)chart.getData()).setCategoriesFormula(sourceSerie.getCategories().getFormulaString());
+			}else{
+				//TODO get category label
+			}
+
+			//reference to ChartHelper.prepareTitle()
+			if (sourceSerie.getTitle().isReference()){
+				nameExpression = sourceSerie.getTitle().getFormulaString();
+			}else{
+				nameExpression = sourceSerie.getTitle().getTextString();
+			}
+			
+			String xValueExpression = null;
+			if (sourceSerie.getValues().isReference()){
+				xValueExpression = sourceSerie.getValues().getFormulaString();
+			}else{
+				//TODO get values
+			}
+			
+			NSeries series = ((NGeneralChartData)chart.getData()).addSeries();
+			series.setFormula(nameExpression, xValueExpression);
+		}
+	}
 	
+	private NChartLegendPosition convertLengendPosition(LegendPosition position){
+		switch(position){
+		case BOTTOM:
+			return NChartLegendPosition.BOTTOM;
+		case LEFT:
+			return NChartLegendPosition.LEFT;
+		case TOP:
+			return NChartLegendPosition.TOP;
+		case TOP_RIGHT:
+			return NChartLegendPosition.TOP_RIGHT;
+		case RIGHT:
+		default:
+			return NChartLegendPosition.RIGHT;
+		}
+		
+	}
+	private NBarDirection convertBarDirection(ChartDirection direction){
+		switch(direction){
+		case VERTICAL:
+			return NBarDirection.VERTICAL;
+		case HORIZONTAL:
+		default:
+			return NBarDirection.HORIZONTAL;
+		}
+	}
+	
+	private NChartGrouping convertGrouping(ChartGrouping grouping){
+		switch(grouping){
+		case STACKED:
+			return NChartGrouping.STACKED;
+		case PERCENT_STACKED:
+			return NChartGrouping.PERCENT_STACKED;
+		case CLUSTERED:
+			return NChartGrouping.CLUSTERED;
+		case STANDARD:
+		default:
+			return NChartGrouping.STANDARD;
+		}
+	}
+	
+	/*
+	 * reference DrawingManagerImpl.initXSSFDrawings()
+	 */
+	private List<ZssChartX> importXSSFDrawings(XSSFSheet sheet) {
+		List<ZssChartX> charts = new LinkedList<ZssChartX>();
+		XSSFDrawing patriarch = null;
+		for(POIXMLDocumentPart dr : sheet.getRelations()){
+			if(dr instanceof XSSFDrawing){
+				patriarch = (XSSFDrawing) dr;
+				break;
+			}
+		}
+		if (patriarch != null) {			
+			final CTDrawing ctdrawing = patriarch.getCTDrawing();
+			for (CTTwoCellAnchor anchor: ctdrawing.getTwoCellAnchorArray()) {
+				final CTMarker from = anchor.getFrom();
+				final CTMarker to = anchor.getTo();
+				XSSFClientAnchor clientAnchor = null;
+				if (from != null && to != null){
+					clientAnchor = new XSSFClientAnchor((int)from.getColOff(), (int)from.getRowOff(), (int)to.getColOff(), (int)to.getRowOff(), 
+							from.getCol(), from.getRow(), to.getCol(), to.getRow());
+				}
+				final CTGraphicalObjectFrame gfrm = anchor.getGraphicFrame();
+				if (gfrm != null) {
+					final XSSFChartX chartX = createXSSFChartX(patriarch, gfrm , clientAnchor);
+					charts.add(chartX);
+				}
+			}
+		}
+		
+		return charts;
+	}
+	
+	private XSSFChartX createXSSFChartX(XSSFDrawing patriarch, CTGraphicalObjectFrame gfrm , XSSFClientAnchor xanchor) {
+		//chart
+		final String name = gfrm.getNvGraphicFramePr().getCNvPr().getName();
+		final CTGraphicalObject gobj = gfrm.getGraphic();
+		final CTGraphicalObjectData gdata = gobj.getGraphicData();
+		String chartId = null;
+		// ZSS-358: must skip other XML nodes such as TEXT_NODE
+		Node child = gdata.getDomNode().getFirstChild();
+		while(child != null) {
+			if("chart".equals(child.getLocalName())) {
+				chartId = child.getAttributes().getNamedItemNS("http://schemas.openxmlformats.org/officeDocument/2006/relationships", "id").getNodeValue();
+				break;
+			}
+			child = child.getNextSibling();
+		}
+		final XSSFChartX chartX = new XSSFChartX(patriarch, xanchor, name, chartId);
+		return chartX;
+	}
+	
+	/**
+	 * Reference DefaultBookWidgetLoader.getXSSFWidthInPx()
+	 */
+	private static int getXSSFWidthInPx(Sheet poiSheet, ClientAnchor anchor) {
+	    final int l = anchor.getCol1();
+	    final int lfrc = anchor.getDx1();
+	    
+	    //first column
+	    final int lw = XUtils.getWidthAny(poiSheet,l, AbstractExcelImporter.CHRACTER_WIDTH);
+	    
+	    final int wFirst = lw - UnitUtil.emuToPx(lfrc);  
+	    
+	    //last column
+	    final int r = anchor.getCol2();
+	    int wLast = 0;
+		final int rfrc = anchor.getDx2();
+		wLast = UnitUtil.emuToPx(rfrc);
+	    
+	    //in between
+	    int width = l != r ? wFirst + wLast : wLast - UnitUtil.emuToPx(lfrc);
+	    width = Math.abs(width); // just in case
+	    
+	    for (int j = l+1; j < r; ++j) {
+	    	width += XUtils.getWidthAny(poiSheet,j, AbstractExcelImporter.CHRACTER_WIDTH);
+	    }
+	    
+	    return width;
+	}
+	
+	/**
+	 * DefaultBookWidgetLoader.getXSSFHeightInPx()
+	 */
+	private static int getXSSFHeightInPx(Sheet poiSheet, ClientAnchor anchor) {
+		
+	    final int t = anchor.getRow1();
+	    final int tfrc = anchor.getDy1();
+	    
+	    //first row
+	    final int th = XUtils.getHeightAny(poiSheet,t);
+	    final int hFirst = th - UnitUtil.emuToPx(tfrc);  
+	    
+	    //last row
+	    final int b = anchor.getRow2();
+	    int hLast = 0;
+		final int bfrc = anchor.getDy2();
+	    hLast = UnitUtil.emuToPx(bfrc);
+	    
+	    //in between
+	    int height = b != t ? hFirst + hLast : hLast - UnitUtil.emuToPx(tfrc);
+	    height = Math.abs(height); // just in case
+	    for (int j = t+1; j < b; ++j) {
+	    	height += XUtils.getHeightAny(poiSheet,j);
+	    }
+	    
+	    return height;
+	}
+
 }
  

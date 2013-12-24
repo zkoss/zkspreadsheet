@@ -21,7 +21,7 @@ package org.zkoss.zss.ngapi.impl.imexp;
 import java.awt.font.*;
 import java.text.AttributedString;
 
-import org.zkoss.poi.ss.usermodel.Sheet;
+import org.zkoss.poi.ss.usermodel.*;
 
 
 /**
@@ -38,6 +38,19 @@ public class XUtils {
 			return XUtils.defaultColumnWidthToPx(w / 256, charWidth);
 		}
 		return fileChar256ToPx(w, charWidth);
+	}
+	
+	public static int getHeightAny(Sheet sheet, int row){
+		return getRowHeightInPx(sheet, sheet.getRow(row));
+	}
+	
+	public static int getRowHeightInPx(Sheet sheet, Row row) {
+		final int defaultHeight = sheet.getDefaultRowHeight();
+		int h = row == null ? defaultHeight : row.getHeight();
+		if (h == 0xFF) {
+			h = defaultHeight;
+		}
+		return twipToPx(h);
 	}
 	
 	//calculate the default char width in pixel per the given Font
