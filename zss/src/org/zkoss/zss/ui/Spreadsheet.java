@@ -2303,7 +2303,6 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			NChart chart = sheet.getChart(objid);
 			if(chart!=null){
 				NViewAnchor anchor = chart.getAnchor();
-				//TODO zss 3.5 , I don't have api to update chart precisely, so , i use the old region api
 				updateWidget(sheet, objid);
 			}
 		}
