@@ -34,6 +34,7 @@ public class ColumnArrayImpl extends ColumnArrayAdv {
 	
 	private Integer width;
 	private boolean hidden = false;
+	private boolean customWidth = false;
 
 	int index;
 	int lastIndex;
@@ -141,6 +142,16 @@ public class ColumnArrayImpl extends ColumnArrayAdv {
 		StringBuilder sb = new StringBuilder();
 		sb.append(super.toString()).append("[").append(getIndex()).append("-").append(getLastIndex()).append("]");
 		return sb.toString();
+	}
+
+	@Override
+	public boolean isCustomWidth() {
+		return customWidth;
+	}
+
+	@Override
+	public void setCustomWidth(boolean custom) {
+		customWidth = custom;
 	}
 
 }

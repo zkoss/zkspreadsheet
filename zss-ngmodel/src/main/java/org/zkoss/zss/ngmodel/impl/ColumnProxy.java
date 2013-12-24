@@ -129,4 +129,18 @@ class ColumnProxy extends ColumnAdv {
 		loadProxy(true);
 		proxy.setHidden(hidden);
 	}
+	
+	@Override
+	public boolean isCustomWidth() {
+		loadProxy(false);
+		if (proxy != null) {
+			return proxy.isCustomWidth();
+		}
+		return false;
+	}
+	@Override
+	public void setCustomWidth(boolean custom) {
+		loadProxy(true);
+		proxy.setCustomWidth(custom);
+	}
 }

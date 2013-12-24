@@ -15,7 +15,9 @@ public interface NColumnArray {
 	
 	public int getWidth();
 	public boolean isHidden();
+	public boolean isCustomWidth();
 	
 	public void setWidth(int width);
 	public void setHidden(boolean hidden);
+	public void setCustomWidth(boolean custom);
 }

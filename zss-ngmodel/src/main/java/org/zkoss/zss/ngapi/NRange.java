@@ -287,17 +287,20 @@ public interface NRange {
 	 */
 	public void setRowHeight(int heightPx);
 
-//	/**
-//	 * Sets row height in points with customHeight flag.
-//	 * @param points new row height in points
-//	 * @param customHeight true if manually set by user. 
-//	 */
-//	public void setRowHeight(int points, boolean customHeight);
-	
-//	/**
-//	 * Returns Whether the row with customHeight. 
-//	 */
-//	public boolean isCustomHeight();
+	/**
+	 * Sets the width(in pixel) of column in this range, it effect to whole column. 
+	 * @param widthPx width in pixel
+	 * @param custom mark it as custom value
+	 * @see #toColumnRange()
+	 */
+	public void setColumnWidth(int widthPx,boolean custom);
+	/**
+	 * Sets the height(in pixel) of row in this range, it effect to whole row.
+	 * @param widthPx width in pixel
+	 * @param custom mark it as custom value
+	 * @see #toRowRange()
+	 */
+	public void setRowHeight(int heightPx,boolean custom);
 	
 	/**
 	 * Returns associate {@link NSheet} of this range.

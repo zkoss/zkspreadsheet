@@ -36,7 +36,9 @@ public interface NRow {
 	
 	public int getHeight();
 	public boolean isHidden();
+	public boolean isCustomHeight();
 	
 	public void setHeight(int height);
 	public void setHidden(boolean hidden);
+	public void setCustomHeight(boolean custom);
 }

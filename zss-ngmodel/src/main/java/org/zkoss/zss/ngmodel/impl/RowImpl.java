@@ -38,6 +38,7 @@ public class RowImpl extends RowAdv {
 	
 	private Integer height;
 	private boolean hidden = false;
+	private boolean customHeight = false;
 
 	public RowImpl(SheetAdv sheet) {
 		this.sheet = sheet;
@@ -190,6 +191,15 @@ public class RowImpl extends RowAdv {
 	@Override
 	public void setHidden(boolean hidden) {
 		this.hidden = hidden;
+	}
+	
+	@Override
+	public boolean isCustomHeight() {
+		return customHeight;
+	}
+	@Override
+	public void setCustomHeight(boolean custom) {
+		customHeight = custom;
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })

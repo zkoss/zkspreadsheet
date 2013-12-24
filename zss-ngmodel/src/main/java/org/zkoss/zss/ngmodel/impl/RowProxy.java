@@ -170,6 +170,20 @@ class RowProxy extends RowAdv{
 		}
 		proxy.setHidden(hidden);
 	}
+	
+	@Override
+	public boolean isCustomHeight() {
+		loadProxy();
+		if (proxy != null) {
+			return proxy.isCustomHeight();
+		}
+		return false;
+	}
+	@Override
+	public void setCustomHeight(boolean custom) {
+		loadProxy();
+		proxy.setCustomHeight(custom);
+	}
 	@Override
 	public Iterator<CellAdv> getCellIterator() {
 		loadProxy();

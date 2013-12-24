@@ -427,15 +427,18 @@ public class NRangeImpl implements NRange {
 
 	@Override
 	public void setRowHeight(final int heightPx) {
+		setRowHeight(heightPx,true);
+	}
+	public void setRowHeight(final int heightPx, final boolean custom) {
 		new ReadWriteTask() {
 			@Override
 			public Object invoke() {
-				setRowHeightInLock(heightPx,null);
+				setRowHeightInLock(heightPx,null,custom);
 				return null;
 			}
 		}.doInWriteLock(getLock());
 	}
-	private void setRowHeightInLock(Integer heightPx,Boolean hidden){
+	private void setRowHeightInLock(Integer heightPx,Boolean hidden, Boolean custom){
 		LinkedHashSet<Ref> notifySet = new LinkedHashSet<Ref>();
 		NBookSeries bookSeries = getBookSeries();
 
@@ -452,6 +455,9 @@ public class NRangeImpl implements NRange {
 				}
 				if(hidden!=null){
 					row.setHidden(hidden);
+				}
+				if(custom!=null){
+					row.setCustomHeight(custom);
 				}
 				notifySet.add(new RefImpl(bookName,sheetName,i,0,i,maxcol));
 			}
@@ -472,15 +478,18 @@ public class NRangeImpl implements NRange {
 
 	@Override
 	public void setColumnWidth(final int widthPx) {
+		setColumnWidth(widthPx,true);
+	}
+	public void setColumnWidth(final int widthPx,final boolean custom) {
 		new ReadWriteTask() {
 			@Override
 			public Object invoke() {
-				setColumnWidthInLock(widthPx,null);
+				setColumnWidthInLock(widthPx,null,custom);
 				return null;
 			}
 		}.doInWriteLock(getLock());
 	}
-	private void setColumnWidthInLock(Integer widthPx,Boolean hidden){
+	private void setColumnWidthInLock(Integer widthPx,Boolean hidden, Boolean custom){
 		LinkedHashSet<Ref> notifySet = new LinkedHashSet<Ref>();
 		NBookSeries bookSeries = getBookSeries();
 
@@ -497,6 +506,9 @@ public class NRangeImpl implements NRange {
 				}
 				if(hidden!=null){
 					column.setHidden(hidden);
+				}
+				if(custom!=null){
+					column.setCustomWidth(true);
 				}
 				notifySet.add(new RefImpl(bookName,sheetName,0,i,maxrow,i));
 			}

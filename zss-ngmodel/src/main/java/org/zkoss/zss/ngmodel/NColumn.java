@@ -16,7 +16,6 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.ngmodel;
 
-import org.zkoss.zss.ngmodel.impl.SheetAdv;
 /**
  * 
  * @author dennis
@@ -36,8 +35,10 @@ public interface NColumn {
 	
 	public int getWidth();
 	public boolean isHidden();
+	public boolean isCustomWidth();
 	
 	public void setWidth(int width);
 	public void setHidden(boolean hidden);
+	public void setCustomWidth(boolean custom);
 	
 }
