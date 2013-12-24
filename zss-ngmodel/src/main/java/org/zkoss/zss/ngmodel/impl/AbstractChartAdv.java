@@ -18,15 +18,13 @@ package org.zkoss.zss.ngmodel.impl;
 
 import java.io.Serializable;
 
-import org.zkoss.zss.ngmodel.NBookSeries;
-import org.zkoss.zss.ngmodel.sys.dependency.DependencyTable;
+import org.zkoss.zss.ngmodel.NChart;
+import org.zkoss.zss.ngmodel.NSheet;
 /**
  * 
  * @author dennis
  * @since 3.5.0
  */
-public abstract class BookSeriesAdv implements NBookSeries,Serializable{
+public abstract class AbstractChartAdv implements NChart,LinkedModelObject,Serializable{
 	private static final long serialVersionUID = 1L;
-
-	public abstract DependencyTable getDependencyTable();
 }

@@ -38,7 +38,7 @@ import org.zkoss.zss.ngmodel.util.Validations;
  * @author dennis
  * @since 3.5.0
  */
-public abstract class CellAdv implements NCell,LinkedModelObject,Serializable{
+public abstract class AbstractCellAdv implements NCell,LinkedModelObject,Serializable{
 	private static final long serialVersionUID = 1L;
 	
 	protected void checkType(CellType... types){

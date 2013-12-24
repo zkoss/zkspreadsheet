@@ -18,13 +18,13 @@ package org.zkoss.zss.ngmodel.impl;
 
 import java.io.Serializable;
 
-import org.zkoss.zss.ngmodel.NColor;
+import org.zkoss.zss.ngmodel.NCellStyle;
 /**
  * 
  * @author dennis
  * @since 3.5.0
  */
-public abstract class ColorAdv implements NColor,Serializable{
+public abstract class AbstractCellStyleAdv implements NCellStyle,Serializable{
 	private static final long serialVersionUID = 1L;
 
 }

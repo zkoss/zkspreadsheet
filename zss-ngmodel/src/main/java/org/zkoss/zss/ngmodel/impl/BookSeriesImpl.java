@@ -34,10 +34,10 @@ import org.zkoss.zss.ngmodel.sys.dependency.DependencyTable;
  * @author dennis
  * @since 3.5.0
  */
-public class BookSeriesImpl extends BookSeriesAdv {
+public class BookSeriesImpl extends AbstractBookSeriesAdv {
 	private static final long serialVersionUID = 1L;
 	
-	final private HashMap<String,BookAdv> books;
+	final private HashMap<String,AbstractBookAdv> books;
 	
 	final private DependencyTable dependencyTable;
 	
@@ -45,14 +45,14 @@ public class BookSeriesImpl extends BookSeriesAdv {
 	
 	private transient Map<String, Object> attributes;
 
-	public BookSeriesImpl(BookAdv... books){
-		this.books = new LinkedHashMap<String, BookAdv>(1);
+	public BookSeriesImpl(AbstractBookAdv... books){
+		this.books = new LinkedHashMap<String, AbstractBookAdv>(1);
 		dependencyTable = EngineFactory.getInstance().createDependencyTable();
 		((DependencyTableAdv)dependencyTable).setBookSeries(this);
-		for(BookAdv book:books){
+		for(AbstractBookAdv book:books){
 			this.books.put(book.getBookName(), book);
 			((DependencyTableAdv) dependencyTable)
-					.merge((DependencyTableAdv) ((BookSeriesAdv) book
+					.merge((DependencyTableAdv) ((AbstractBookSeriesAdv) book
 							.getBookSeries()).getDependencyTable());
 			book.setBookSeries(this);
 		}

@@ -22,8 +22,8 @@ import org.zkoss.zss.ngmodel.ErrorValue;
 import org.zkoss.zss.ngmodel.NBook;
 import org.zkoss.zss.ngmodel.NSheet;
 import org.zkoss.zss.ngmodel.chart.NSeries;
-import org.zkoss.zss.ngmodel.impl.BookSeriesAdv;
-import org.zkoss.zss.ngmodel.impl.ChartAdv;
+import org.zkoss.zss.ngmodel.impl.AbstractBookSeriesAdv;
+import org.zkoss.zss.ngmodel.impl.AbstractChartAdv;
 import org.zkoss.zss.ngmodel.impl.LinkedModelObject;
 import org.zkoss.zss.ngmodel.impl.ObjectRefImpl;
 import org.zkoss.zss.ngmodel.impl.RefImpl;
@@ -47,7 +47,7 @@ public class SeriesImpl implements NSeries,Serializable,LinkedModelObject{
 	private FormulaExpression yValueExpr;
 	private FormulaExpression zValueExpr;
 	
-	private ChartAdv chart;
+	private AbstractChartAdv chart;
 	private String id;
 	
 	private Object evalNameResult;
@@ -103,7 +103,7 @@ public class SeriesImpl implements NSeries,Serializable,LinkedModelObject{
 		}
 	}
 	
-	public SeriesImpl(ChartAdv chart,String id){
+	public SeriesImpl(AbstractChartAdv chart,String id){
 		this.chart = chart;
 		this.id = id;
 	}
@@ -237,7 +237,7 @@ public class SeriesImpl implements NSeries,Serializable,LinkedModelObject{
 	
 	private void clearFormulaDependency() {
 		if(nameExpr!=null || valueExpr!=null || yValueExpr!=null || zValueExpr!=null){
-			((BookSeriesAdv) chart.getSheet().getBook().getBookSeries())
+			((AbstractBookSeriesAdv) chart.getSheet().getBook().getBookSeries())
 					.getDependencyTable().clearDependents(getRef());
 		}
 	}

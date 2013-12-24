@@ -63,16 +63,16 @@ public class RefImpl implements Ref, Serializable {
 		this(RefType.BOOK, bookName, null, null, -1, -1, -1, -1);
 	}
 
-	public RefImpl(CellAdv cell) {
+	public RefImpl(AbstractCellAdv cell) {
 		this(RefType.CELL, cell.getSheet().getBook().getBookName(), cell.getSheet().getSheetName(), null, cell.getRowIndex(),
 		cell.getColumnIndex(), cell.getRowIndex(), cell.getColumnIndex());
 	}
 
-	public RefImpl(SheetAdv sheet) {
-		this(RefType.SHEET, ((BookAdv) sheet.getBook()).getBookName(), sheet.getSheetName(), null, -1, -1, -1, -1);
+	public RefImpl(AbstractSheetAdv sheet) {
+		this(RefType.SHEET, ((AbstractBookAdv) sheet.getBook()).getBookName(), sheet.getSheetName(), null, -1, -1, -1, -1);
 	}
 
-	public RefImpl(BookAdv book) {
+	public RefImpl(AbstractBookAdv book) {
 		this(RefType.BOOK, book.getBookName(), null, null, -1, -1, -1, -1);
 	}
 

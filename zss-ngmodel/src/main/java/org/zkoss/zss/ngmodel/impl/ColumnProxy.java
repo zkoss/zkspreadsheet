@@ -19,6 +19,7 @@ package org.zkoss.zss.ngmodel.impl;
 import java.lang.ref.WeakReference;
 
 import org.zkoss.zss.ngmodel.NCellStyle;
+import org.zkoss.zss.ngmodel.NColumn;
 import org.zkoss.zss.ngmodel.NSheet;
 import org.zkoss.zss.ngmodel.util.CellReference;
 import org.zkoss.zss.ngmodel.util.Validations;
@@ -27,28 +28,28 @@ import org.zkoss.zss.ngmodel.util.Validations;
  * @author dennis
  * @since 3.5.0
  */
-class ColumnProxy extends ColumnAdv {
+class ColumnProxy implements NColumn {
 	private static final long serialVersionUID = 1L;
-	private final WeakReference<SheetAdv> sheetRef;
+	private final WeakReference<AbstractSheetAdv> sheetRef;
 	private final int index;
-	private ColumnArrayAdv proxy;
+	private AbstractColumnArrayAdv proxy;
 
-	public ColumnProxy(SheetAdv sheet, int index) {
+	public ColumnProxy(AbstractSheetAdv sheet, int index) {
 		this.sheetRef = new WeakReference(sheet);
 		this.index = index;
 	}
 
 	protected void loadProxy(boolean split) {
 		if(split){
-			proxy = (ColumnArrayAdv) ((SheetAdv)getSheet()).getOrSplitColumnArray(index);
+			proxy = (AbstractColumnArrayAdv) ((AbstractSheetAdv)getSheet()).getOrSplitColumnArray(index);
 		}else if (proxy == null) {
-			proxy = (ColumnArrayAdv) ((SheetAdv)getSheet()).getColumnArray(index);
+			proxy = (AbstractColumnArrayAdv) ((AbstractSheetAdv)getSheet()).getColumnArray(index);
 		}
 	}
 
 	@Override
 	public NSheet getSheet() {
-		SheetAdv sheet = sheetRef.get();
+		AbstractSheetAdv sheet = sheetRef.get();
 		if (sheet == null) {
 			throw new IllegalStateException(
 					"proxy target lost, you should't keep this instance");
@@ -69,16 +70,11 @@ class ColumnProxy extends ColumnAdv {
 
 	@Override
 	public NCellStyle getCellStyle() {
-		return getCellStyle(false);
-	}
-
-	@Override
-	public NCellStyle getCellStyle(boolean local) {
 		loadProxy(false);
 		if (proxy != null) {
-			return proxy.getCellStyle(local);
+			return proxy.getCellStyle();
 		}
-		return local ? null : getSheet().getBook().getDefaultCellStyle();
+		return getSheet().getBook().getDefaultCellStyle();
 	}
 
 	@Override
@@ -87,18 +83,6 @@ class ColumnProxy extends ColumnAdv {
 		loadProxy(true);
 		proxy.setCellStyle(cellStyle);
 	}
-
-	@Override
-	public void destroy() {
-		throw new IllegalStateException(
-				"never link proxy object and call it's release");
-	}
-
-	@Override
-	public void checkOrphan() {}
-
-	@Override
-	void onModelEvent(ModelInternalEvent event) {}
 
 	@Override
 	public int getWidth() {

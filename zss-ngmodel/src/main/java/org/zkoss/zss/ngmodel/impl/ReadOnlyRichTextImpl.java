@@ -7,7 +7,7 @@ import java.util.List;
 import org.zkoss.zss.ngmodel.NFont;
 import org.zkoss.zss.ngmodel.NRichText;
 
-public class ReadOnlyRichTextImpl extends RichTextAdv {
+public class ReadOnlyRichTextImpl extends AbstractRichTextAdv {
 
 	private static final long serialVersionUID = 1L;
 	private List<Segment> segments;

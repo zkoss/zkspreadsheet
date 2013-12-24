@@ -24,8 +24,8 @@ import org.zkoss.zss.ngmodel.InvalidateModelOpException;
 import org.zkoss.zss.ngmodel.NChart;
 import org.zkoss.zss.ngmodel.chart.NGeneralChartData;
 import org.zkoss.zss.ngmodel.chart.NSeries;
-import org.zkoss.zss.ngmodel.impl.BookSeriesAdv;
-import org.zkoss.zss.ngmodel.impl.ChartAdv;
+import org.zkoss.zss.ngmodel.impl.AbstractBookSeriesAdv;
+import org.zkoss.zss.ngmodel.impl.AbstractChartAdv;
 import org.zkoss.zss.ngmodel.impl.ObjectRefImpl;
 import org.zkoss.zss.ngmodel.impl.RefImpl;
 import org.zkoss.zss.ngmodel.sys.EngineFactory;
@@ -48,7 +48,7 @@ public class GeneralChartDataImpl extends ChartDataAdv implements NGeneralChartD
 	private FormulaExpression catFormula;
 	
 	final private List<SeriesImpl> serieses = new LinkedList<SeriesImpl>();
-	private ChartAdv chart;
+	private AbstractChartAdv chart;
 	final private String id;
 	
 	private Object evalResult;
@@ -57,7 +57,7 @@ public class GeneralChartDataImpl extends ChartDataAdv implements NGeneralChartD
 	
 	private int seriesCount = 0;
 	
-	public GeneralChartDataImpl(ChartAdv chart,String id){
+	public GeneralChartDataImpl(AbstractChartAdv chart,String id){
 		this.chart = chart;
 		this.id = id;
 	}
@@ -149,7 +149,7 @@ public class GeneralChartDataImpl extends ChartDataAdv implements NGeneralChartD
 	
 	private void clearFormulaDependency(){
 		if(catFormula!=null){
-			((BookSeriesAdv) chart.getSheet().getBook().getBookSeries())
+			((AbstractBookSeriesAdv) chart.getSheet().getBook().getBookSeries())
 					.getDependencyTable().clearDependents(getRef());
 		}
 	}

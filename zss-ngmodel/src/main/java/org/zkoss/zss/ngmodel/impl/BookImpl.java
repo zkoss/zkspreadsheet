@@ -50,7 +50,7 @@ import org.zkoss.zss.ngmodel.util.Validations;
  * @author dennis
  * @since 3.5.0
  */
-public class BookImpl extends BookAdv{
+public class BookImpl extends AbstractBookAdv{
 	private static final long serialVersionUID = 1L;
 
 	private final String bookName;
@@ -59,14 +59,14 @@ public class BookImpl extends BookAdv{
 	
 	private NBookSeries bookSeries;
 	
-	private final List<SheetAdv> sheets = new LinkedList<SheetAdv>();
-	private List<NameAdv> names;
+	private final List<AbstractSheetAdv> sheets = new LinkedList<AbstractSheetAdv>();
+	private List<AbstractNameAdv> names;
 	
-	private final List<CellStyleAdv> cellStyles = new LinkedList<CellStyleAdv>();
-	private final CellStyleAdv defaultCellStyle;
-	private final List<FontAdv> fonts = new LinkedList<FontAdv>();
-	private final FontAdv defaultFont;
-	private final HashMap<ColorAdv,ColorAdv> colors = new LinkedHashMap<ColorAdv,ColorAdv>();
+	private final List<AbstractCellStyleAdv> cellStyles = new LinkedList<AbstractCellStyleAdv>();
+	private final AbstractCellStyleAdv defaultCellStyle;
+	private final List<AbstractFontAdv> fonts = new LinkedList<AbstractFontAdv>();
+	private final AbstractFontAdv defaultFont;
+	private final HashMap<AbstractColorAdv,AbstractColorAdv> colors = new LinkedHashMap<AbstractColorAdv,AbstractColorAdv>();
 	
 	private final static Random random = new Random(System.currentTimeMillis());
 	private final static AtomicInteger bookCount = new AtomicInteger();
@@ -164,7 +164,7 @@ public class BookImpl extends BookAdv{
 	@Override
 	void onModelInternalEvent(ModelInternalEvent event){
 		//implicitly deliver to sheet
-		for(SheetAdv sheet:sheets){
+		for(AbstractSheetAdv sheet:sheets){
 			sheet.onModelInternalEvent(event);
 		}
 	}
@@ -173,7 +173,7 @@ public class BookImpl extends BookAdv{
 	public void sendModelInternalEvent(ModelInternalEvent event){
 		//publish event to the series.
 		for(NBook book:getBookSeries().getBooks()){
-			((BookAdv)book).onModelInternalEvent(event);
+			((AbstractBookAdv)book).onModelInternalEvent(event);
 		}
 		//TODO some internal event could consider to set it to external(model-event)?
 	}
@@ -206,11 +206,11 @@ public class BookImpl extends BookAdv{
 			checkOwnership(src);
 		
 
-		SheetAdv sheet = new SheetImpl(this,nextObjId("sheet"));
-		if(src instanceof SheetAdv){
-			((SheetAdv)src).copyTo(sheet);
+		AbstractSheetAdv sheet = new SheetImpl(this,nextObjId("sheet"));
+		if(src instanceof AbstractSheetAdv){
+			((AbstractSheetAdv)src).copyTo(sheet);
 		}
-		((SheetAdv)sheet).setSheetName(name);
+		((AbstractSheetAdv)sheet).setSheetName(name);
 		sheets.add(sheet);
 		
 		//create formula cache for any sheet, sheet name, position change
@@ -227,7 +227,7 @@ public class BookImpl extends BookAdv{
 		checkOwnership(sheet);
 		
 		String oldname = sheet.getSheetName();
-		((SheetAdv)sheet).setSheetName(newname);
+		((AbstractSheetAdv)sheet).setSheetName(newname);
 		
 		//create formula cache for any sheet, sheet name, position change
 		EngineFactory.getInstance().createFormulaEngine().clearCache(new FormulaClearContext(this));
@@ -264,7 +264,7 @@ public class BookImpl extends BookAdv{
 	public void deleteSheet(NSheet sheet) {
 		checkOwnership(sheet);
 		
-		((SheetAdv)sheet).destroy();
+		((AbstractSheetAdv)sheet).destroy();
 		
 		int index = sheets.indexOf(sheet);
 		sheets.remove(index);
@@ -288,7 +288,7 @@ public class BookImpl extends BookAdv{
 			return;
 		}
 		sheets.remove(oldindex);
-		sheets.add(index, (SheetAdv)sheet);
+		sheets.add(index, (AbstractSheetAdv)sheet);
 		
 		//create formula cache for any sheet, sheet name, position change
 		EngineFactory.getInstance().createFormulaEngine().clearCache(new FormulaClearContext(this));
@@ -299,7 +299,7 @@ public class BookImpl extends BookAdv{
 	}
 
 	public void dump(StringBuilder builder) {
-		for(SheetAdv sheet:sheets){
+		for(AbstractSheetAdv sheet:sheets){
 			if(sheet instanceof SheetImpl){
 				((SheetImpl)sheet).dump(builder);
 			}else{
@@ -321,9 +321,9 @@ public class BookImpl extends BookAdv{
 	@Override
 	public NCellStyle createCellStyle(NCellStyle src,boolean inStyleTable) {
 		if(src!=null){
-			Validations.argInstance(src, CellStyleAdv.class);
+			Validations.argInstance(src, AbstractCellStyleAdv.class);
 		}
-		CellStyleAdv style = new CellStyleImpl(defaultFont);
+		AbstractCellStyleAdv style = new CellStyleImpl(defaultFont);
 		if(src!=null){
 			style.copyFrom(src);
 		}
@@ -359,11 +359,11 @@ public class BookImpl extends BookAdv{
 	@Override
 	public NFont createFont(NFont src,boolean inFontTable) {
 		if(src!=null){
-			Validations.argInstance(src, FontAdv.class);
+			Validations.argInstance(src, AbstractFontAdv.class);
 		}
-		FontAdv font = new FontImpl();
+		AbstractFontAdv font = new FontImpl();
 		if(src!=null){
-			((FontAdv)src).copyTo(font);
+			((AbstractFontAdv)src).copyTo(font);
 		}
 		
 		if(inFontTable){
@@ -393,17 +393,17 @@ public class BookImpl extends BookAdv{
 		return maxColumnSize;
 	}
 
-	@Override
-	List<NCell> optimizeCellStyle() {
-		//search all the cell's style , 
-		//if it is same as style in the style table (but different instance), then reassign the one in the table
-		// 
-		//if no one match a cell's style, then set it to style table.
-		//(Optional) it total cell style are too many, search the similar cell style the get a similar style and reassign to the cell
-		
-		//TODO
-		throw new UnsupportedOperationException("not implementate la.");
-	}
+//	@Override
+//	List<NCell> optimizeCellStyle() {
+//		//search all the cell's style , 
+//		//if it is same as style in the style table (but different instance), then reassign the one in the table
+//		// 
+//		//if no one match a cell's style, then set it to style table.
+//		//(Optional) it total cell style are too many, search the similar cell style the get a similar style and reassign to the cell
+//		
+//		//TODO
+//		throw new UnsupportedOperationException("not implementate la.");
+//	}
 
 	
 	@Override
@@ -435,8 +435,8 @@ public class BookImpl extends BookAdv{
 
 	@Override
 	public NColor createColor(byte r, byte g, byte b) {
-		ColorAdv newcolor = new ColorImpl(r,g,b);
-		ColorAdv color = colors.get(newcolor);//reuse the existed color object
+		AbstractColorAdv newcolor = new ColorImpl(r,g,b);
+		AbstractColorAdv color = colors.get(newcolor);//reuse the existed color object
 		if(color==null){
 			colors.put(newcolor, color = newcolor);
 		}
@@ -445,8 +445,8 @@ public class BookImpl extends BookAdv{
 
 	@Override
 	public NColor createColor(String htmlColor) {
-		ColorAdv newcolor = new ColorImpl(htmlColor);
-		ColorAdv color = colors.get(newcolor);//reuse the existed color object
+		AbstractColorAdv newcolor = new ColorImpl(htmlColor);
+		AbstractColorAdv color = colors.get(newcolor);//reuse the existed color object
 		if(color==null){
 			colors.put(newcolor, color = newcolor);
 		}
@@ -466,12 +466,12 @@ public class BookImpl extends BookAdv{
 	public NName createName(String namename,String sheetName) {
 		checkLegalNameName(namename,sheetName);
 
-		NameAdv name = new NameImpl(this,nextObjId("name"));
+		AbstractNameAdv name = new NameImpl(this,nextObjId("name"));
 		name.setName(namename);
 		name.setApplyToSheetName(sheetName);
 		
 		if(names==null){
-			names = new LinkedList<NameAdv>();
+			names = new LinkedList<AbstractNameAdv>();
 		}
 		
 		names.add(name);
@@ -490,8 +490,8 @@ public class BookImpl extends BookAdv{
 		checkOwnership(name);
 		
 		String oldname = name.getRefersToSheetName();
-		((NameAdv)name).setName(newname);
-		((NameAdv)name).setApplyToSheetName(sheetName);
+		((AbstractNameAdv)name).setName(newname);
+		((AbstractNameAdv)name).setApplyToSheetName(sheetName);
 		
 //		sendEvent(ModelEvents.ON_NAME_RENAMED, 
 //				ModelEvents.PARAM_SHEET, sheet,
@@ -502,7 +502,7 @@ public class BookImpl extends BookAdv{
 	public void deleteName(NName name) {
 		checkOwnership(name);
 		
-		((NameAdv)name).destroy();
+		((AbstractNameAdv)name).destroy();
 		
 		int index = names.indexOf(name);
 		names.remove(index);

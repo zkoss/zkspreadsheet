@@ -18,7 +18,7 @@ package org.zkoss.zss.ngmodel;
 
 import java.util.Date;
 
-import org.zkoss.zss.ngmodel.impl.SheetAdv;
+import org.zkoss.zss.ngmodel.impl.AbstractSheetAdv;
 /**
  * 
  * @author dennis

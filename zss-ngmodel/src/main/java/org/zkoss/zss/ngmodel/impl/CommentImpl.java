@@ -22,7 +22,7 @@ import org.zkoss.zss.ngmodel.NRichText;
  * @author dennis
  * @since 3.5.0
  */
-public class CommentImpl extends CommentAdv {
+public class CommentImpl extends AbstractCommentAdv {
 	private static final long serialVersionUID = 1L;
 	private Object text;
 	private String author;

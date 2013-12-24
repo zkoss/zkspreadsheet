@@ -18,21 +18,15 @@ package org.zkoss.zss.ngmodel.impl;
 
 import java.io.Serializable;
 
-import org.zkoss.zss.ngmodel.NName;
+import org.zkoss.zss.ngmodel.NFont;
 /**
  * 
  * @author dennis
  * @since 3.5.0
  */
-public abstract class NameAdv implements NName,LinkedModelObject,Serializable{
-
+public abstract class AbstractFontAdv implements NFont,Serializable{
 	private static final long serialVersionUID = 1L;
 
-	abstract void setName(String newname);
-	abstract void setApplyToSheetName(String sheetName);
-
-	abstract public BookAdv getBook();
-
-	
+	/*package*/ abstract void copyTo(AbstractFontAdv dest);
 
 }

@@ -15,6 +15,9 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 }}IS_RIGHT
 */
 package org.zkoss.zss.ngmodel;
+
+import org.zkoss.zss.ngmodel.impl.AbstractBookAdv;
+
 /**
  * 
  * @author dennis
@@ -24,6 +27,8 @@ public interface NName extends FormulaContent{
 
 	public String getId();
 	public String getName();
+	
+	public NBook getBook();
 	
 	public String getRefersToSheetName();
 	public CellRegion getRefersToCellRegion();

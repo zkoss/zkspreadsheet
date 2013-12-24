@@ -27,7 +27,7 @@ import org.zkoss.zss.ngmodel.impl.chart.UnsupportedChartDataImpl;
  * @author dennis
  * @since 3.5.0
  */
-public class ChartImpl extends ChartAdv {
+public class ChartImpl extends AbstractChartAdv {
 	private static final long serialVersionUID = 1L;
 	String id;
 	NChartType type;
@@ -36,7 +36,7 @@ public class ChartImpl extends ChartAdv {
 	String title;
 	String xAxisTitle;
 	String yAxisTitle;
-	SheetAdv sheet;
+	AbstractSheetAdv sheet;
 	
 	NChartLegendPosition legendPosition;
 	NChartGrouping grouping;
@@ -44,7 +44,7 @@ public class ChartImpl extends ChartAdv {
 	
 	boolean threeD;
 	
-	public ChartImpl(SheetAdv sheet,String id,NChartType type,NViewAnchor anchor){
+	public ChartImpl(AbstractSheetAdv sheet,String id,NChartType type,NViewAnchor anchor){
 		this.sheet = sheet;
 		this.id = id;
 		this.type = type;

@@ -18,12 +18,14 @@ package org.zkoss.zss.ngmodel.impl;
 
 import java.io.Serializable;
 
-import org.zkoss.zss.ngmodel.NPicture;
+import org.zkoss.zss.ngmodel.NHyperlink;
 /**
  * 
  * @author dennis
  * @since 3.5.0
  */
-public abstract class PictureAdv implements NPicture,LinkedModelObject,Serializable{
+public abstract class AbstractHyperlinkAdv implements NHyperlink,Serializable{
 	private static final long serialVersionUID = 1L;
+
+
 }

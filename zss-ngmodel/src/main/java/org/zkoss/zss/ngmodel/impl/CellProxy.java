@@ -20,6 +20,7 @@ import java.lang.ref.WeakReference;
 
 import org.zkoss.zss.ngmodel.CellRegion;
 import org.zkoss.zss.ngmodel.NCellStyle;
+import org.zkoss.zss.ngmodel.NColumnArray;
 import org.zkoss.zss.ngmodel.NComment;
 import org.zkoss.zss.ngmodel.NHyperlink;
 import org.zkoss.zss.ngmodel.NRichText;
@@ -32,22 +33,22 @@ import org.zkoss.zss.ngmodel.util.Validations;
  * @author dennis
  * @since 3.5.0
  */
-class CellProxy extends CellAdv {
+class CellProxy extends AbstractCellAdv {
 	private static final long serialVersionUID = 1L;
-	private WeakReference<SheetAdv> sheetRef;
+	private WeakReference<AbstractSheetAdv> sheetRef;
 	private int rowIdx;
 	private int columnIdx;
-	CellAdv proxy;
+	AbstractCellAdv proxy;
 
-	public CellProxy(SheetAdv sheet, int row, int column) {
-		this.sheetRef = new WeakReference<SheetAdv>(sheet);
+	public CellProxy(AbstractSheetAdv sheet, int row, int column) {
+		this.sheetRef = new WeakReference<AbstractSheetAdv>(sheet);
 		this.rowIdx = row;
 		this.columnIdx = column;
 	}
 
 	@Override
 	public NSheet getSheet() {
-		SheetAdv sheet = sheetRef.get();
+		AbstractSheetAdv sheet = sheetRef.get();
 		if (sheet == null) {
 			throw new IllegalStateException(
 					"proxy target lost, you should't keep this instance");
@@ -57,7 +58,7 @@ class CellProxy extends CellAdv {
 
 	private void loadProxy() {
 		if (proxy == null) {
-			proxy = (CellAdv) ((SheetAdv)getSheet()).getCell(rowIdx, columnIdx, false);
+			proxy = (AbstractCellAdv) ((AbstractSheetAdv)getSheet()).getCell(rowIdx, columnIdx, false);
 			if (proxy != null) {
 				sheetRef.clear();
 			}
@@ -92,7 +93,7 @@ class CellProxy extends CellAdv {
 	public void setValue(Object value) {
 		loadProxy();
 		if (proxy == null && value != null) {
-			proxy = (CellAdv) ((RowAdv) ((SheetAdv)getSheet()).getOrCreateRow(
+			proxy = (AbstractCellAdv) ((AbstractRowAdv) ((AbstractSheetAdv)getSheet()).getOrCreateRow(
 					rowIdx)).getOrCreateCell(columnIdx);
 			proxy.setValue(value);
 		} else if (proxy != null) {
@@ -125,16 +126,16 @@ class CellProxy extends CellAdv {
 		}
 		if (local)
 			return null;
-		SheetAdv sheet =  ((SheetAdv)getSheet());
-		RowAdv row = (RowAdv) sheet.getRow(rowIdx, false);
+		AbstractSheetAdv sheet =  ((AbstractSheetAdv)getSheet());
+		AbstractRowAdv row = (AbstractRowAdv) sheet.getRow(rowIdx, false);
 		NCellStyle style = null;
 		if (row != null) {
 			style = row.getCellStyle(true);
 		}
 		if (style == null) {
-			ColumnAdv col = (ColumnAdv) sheet.getColumn(columnIdx, false);
-			if (col != null) {
-				style = col.getCellStyle(true);
+			AbstractColumnArrayAdv carr = (AbstractColumnArrayAdv)sheet.getColumnArray(columnIdx);
+			if (carr != null) {
+				style = carr.getCellStyle(true);
 			}
 		}
 		if (style == null) {
@@ -148,7 +149,7 @@ class CellProxy extends CellAdv {
 		Validations.argNotNull(cellStyle);
 		loadProxy();
 		if (proxy == null) {
-			proxy = (CellAdv) ((RowAdv)  ((SheetAdv)getSheet()).getOrCreateRow(
+			proxy = (AbstractCellAdv) ((AbstractRowAdv)  ((AbstractSheetAdv)getSheet()).getOrCreateRow(
 					rowIdx)).getOrCreateCell(columnIdx);
 		}
 		proxy.setCellStyle(cellStyle);
@@ -207,7 +208,7 @@ class CellProxy extends CellAdv {
 	public void setHyperlink(NHyperlink hyperlink) {
 		loadProxy();
 		if (proxy == null) {
-			proxy = (CellAdv) ((RowAdv)  ((SheetAdv)getSheet()).getOrCreateRow(
+			proxy = (AbstractCellAdv) ((AbstractRowAdv)  ((AbstractSheetAdv)getSheet()).getOrCreateRow(
 					rowIdx)).getOrCreateCell(columnIdx);
 		}
 		proxy.setHyperlink(hyperlink);
@@ -223,7 +224,7 @@ class CellProxy extends CellAdv {
 	public void setComment(NComment comment) {
 		loadProxy();
 		if (proxy == null) {
-			proxy = (CellAdv) ((RowAdv)  ((SheetAdv)getSheet()).getOrCreateRow(
+			proxy = (AbstractCellAdv) ((AbstractRowAdv)  ((AbstractSheetAdv)getSheet()).getOrCreateRow(
 					rowIdx)).getOrCreateCell(columnIdx);
 		}
 		proxy.setComment(comment);
@@ -239,7 +240,7 @@ class CellProxy extends CellAdv {
 	public void setRichText(NRichText text) {
 		loadProxy();
 		if (proxy == null) {
-			proxy = (CellAdv) ((RowAdv)  ((SheetAdv)getSheet()).getOrCreateRow(
+			proxy = (AbstractCellAdv) ((AbstractRowAdv)  ((AbstractSheetAdv)getSheet()).getOrCreateRow(
 					rowIdx)).getOrCreateCell(columnIdx);
 		}
 		proxy.setRichText(text);

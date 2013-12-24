@@ -18,13 +18,12 @@ package org.zkoss.zss.ngmodel.impl;
 
 import java.io.Serializable;
 
-import org.zkoss.zss.ngmodel.NCellStyle;
+import org.zkoss.zss.ngmodel.NPicture;
 /**
  * 
  * @author dennis
  * @since 3.5.0
  */
-public abstract class CellStyleAdv implements NCellStyle,Serializable{
+public abstract class AbstractPictureAdv implements NPicture,LinkedModelObject,Serializable{
 	private static final long serialVersionUID = 1L;
-
 }

@@ -27,20 +27,20 @@ import org.zkoss.zss.ngmodel.util.Validations;
  * @author dennis
  * @since 3.5.0
  */
-public class RowImpl extends RowAdv {
+public class RowImpl extends AbstractRowAdv {
 	private static final long serialVersionUID = 1L;
 
-	private SheetAdv sheet;
+	private AbstractSheetAdv sheet;
 
-	private final BiIndexPool<CellAdv> cells = new BiIndexPool<CellAdv>();
+	private final BiIndexPool<AbstractCellAdv> cells = new BiIndexPool<AbstractCellAdv>();
 
-	private CellStyleAdv cellStyle;
+	private AbstractCellStyleAdv cellStyle;
 	
 	private Integer height;
 	private boolean hidden = false;
 	private boolean customHeight = false;
 
-	public RowImpl(SheetAdv sheet) {
+	public RowImpl(AbstractSheetAdv sheet) {
 		this.sheet = sheet;
 	}
 
@@ -62,8 +62,8 @@ public class RowImpl extends RowAdv {
 	}
 
 	@Override
-	CellAdv getCell(int columnIdx, boolean proxy) {
-		CellAdv cellObj = cells.get(columnIdx);
+	AbstractCellAdv getCell(int columnIdx, boolean proxy) {
+		AbstractCellAdv cellObj = cells.get(columnIdx);
 		if (cellObj != null) {
 			return cellObj;
 		}
@@ -72,8 +72,8 @@ public class RowImpl extends RowAdv {
 	}
 
 	@Override
-	CellAdv getOrCreateCell(int columnIdx) {
-		CellAdv cellObj = cells.get(columnIdx);
+	AbstractCellAdv getOrCreateCell(int columnIdx) {
+		AbstractCellAdv cellObj = cells.get(columnIdx);
 		if (cellObj == null) {
 			checkOrphan();
 			cellObj = new CellImpl(this);
@@ -83,7 +83,7 @@ public class RowImpl extends RowAdv {
 	}
 
 	@Override
-	int getCellIndex(CellAdv cell) {
+	int getCellIndex(AbstractCellAdv cell) {
 		return cells.get(cell);
 	}
 
@@ -98,7 +98,7 @@ public class RowImpl extends RowAdv {
 	}
 
 	@Override
-	protected void onModelEvent(ModelInternalEvent event) {
+	protected void onModelInternalEvent(ModelInternalEvent event) {
 		// TODO Auto-generated method stub
 
 	}
@@ -106,7 +106,7 @@ public class RowImpl extends RowAdv {
 	@Override
 	public void clearCell(int start, int end) {
 		// clear before move relation
-		for (CellAdv cell : cells.subValues(start, end)) {
+		for (AbstractCellAdv cell : cells.subValues(start, end)) {
 			cell.destroy();
 		}
 		cells.clear(start, end);
@@ -125,7 +125,7 @@ public class RowImpl extends RowAdv {
 		if (size <= 0)
 			return;
 		// clear before move relation
-		for (CellAdv cell : cells.subValues(cellIdx, cellIdx + size)) {
+		for (AbstractCellAdv cell : cells.subValues(cellIdx, cellIdx + size)) {
 			cell.destroy();
 		}
 
@@ -142,7 +142,7 @@ public class RowImpl extends RowAdv {
 	@Override
 	public void destroy() {
 		checkOrphan();
-		for (CellAdv cell : cells.values()) {
+		for (AbstractCellAdv cell : cells.values()) {
 			cell.destroy();
 		}
 		sheet = null;
@@ -204,7 +204,7 @@ public class RowImpl extends RowAdv {
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
-	public Iterator<CellAdv> getCellIterator() {
+	public Iterator<AbstractCellAdv> getCellIterator() {
 		return Collections.unmodifiableCollection(cells.values()).iterator();
 	}
 }

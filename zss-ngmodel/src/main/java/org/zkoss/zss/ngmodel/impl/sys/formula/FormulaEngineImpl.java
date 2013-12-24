@@ -53,7 +53,7 @@ import org.zkoss.zss.ngmodel.ErrorValue;
 import org.zkoss.zss.ngmodel.NBook;
 import org.zkoss.zss.ngmodel.NCell;
 import org.zkoss.zss.ngmodel.NSheet;
-import org.zkoss.zss.ngmodel.impl.BookSeriesAdv;
+import org.zkoss.zss.ngmodel.impl.AbstractBookSeriesAdv;
 import org.zkoss.zss.ngmodel.impl.NameRefImpl;
 import org.zkoss.zss.ngmodel.impl.RefImpl;
 import org.zkoss.zss.ngmodel.impl.sys.DependencyTableAdv;
@@ -118,7 +118,7 @@ public class FormulaEngineImpl implements FormulaEngine {
 			Ptg[] tokens = FormulaParser.parse(formula, parsingBook, FormulaType.CELL, 0); // current sheet index in parsing is always 0
 
 			// dependency tracking
-			BookSeriesAdv series = (BookSeriesAdv)book.getBookSeries();
+			AbstractBookSeriesAdv series = (AbstractBookSeriesAdv)book.getBookSeries();
 			DependencyTableAdv table = (DependencyTableAdv)series.getDependencyTable();
 			Ref dependant = context.getDependent();
 			for(Ptg ptg : tokens) {
@@ -199,7 +199,7 @@ public class FormulaEngineImpl implements FormulaEngine {
 			NBook book = context.getBook();
 
 			// book series
-			BookSeriesAdv bookSeries = (BookSeriesAdv)book.getBookSeries();
+			AbstractBookSeriesAdv bookSeries = (AbstractBookSeriesAdv)book.getBookSeries();
 			Map<String, EvalContext> evalCtxMap = (Map<String, EvalContext>)bookSeries
 					.getAttribute(KEY_EVALUATORS);
 			// create evaluators if not existed
@@ -308,7 +308,7 @@ public class FormulaEngineImpl implements FormulaEngine {
 			NCell cell = context.getCell();
 	
 			// take evaluators from book series
-			BookSeriesAdv bookSeries = (BookSeriesAdv)book.getBookSeries();
+			AbstractBookSeriesAdv bookSeries = (AbstractBookSeriesAdv)book.getBookSeries();
 			Map<String, EvalContext> map = (Map<String, EvalContext>)bookSeries.getAttribute(KEY_EVALUATORS);
 	
 			// do nothing if not existed

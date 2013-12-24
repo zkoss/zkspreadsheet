@@ -18,15 +18,15 @@ package org.zkoss.zss.ngmodel.impl;
 
 import java.io.Serializable;
 
-import org.zkoss.zss.ngmodel.NComment;
 import org.zkoss.zss.ngmodel.NRichText;
 /**
  * 
  * @author dennis
  * @since 3.5.0
  */
-public abstract class CommentAdv implements NComment, Serializable{
-
+public abstract class AbstractRichTextAdv implements NRichText,Serializable {
 	private static final long serialVersionUID = 1L;
+
+	
 
 }

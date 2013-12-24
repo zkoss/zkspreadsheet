@@ -13,8 +13,8 @@ import java.util.TreeMap;
 public class ColumnArrayPool implements Serializable{
 
 	private static final long serialVersionUID = 1L;
-	private final TreeMap<Integer,ColumnArrayAdv> columnArrayFirst = new TreeMap<Integer,ColumnArrayAdv>();
-	private final TreeMap<Integer,ColumnArrayAdv> columnArrayLast = new TreeMap<Integer,ColumnArrayAdv>();
+	private final TreeMap<Integer,AbstractColumnArrayAdv> columnArrayFirst = new TreeMap<Integer,AbstractColumnArrayAdv>();
+	private final TreeMap<Integer,AbstractColumnArrayAdv> columnArrayLast = new TreeMap<Integer,AbstractColumnArrayAdv>();
 	
 	public ColumnArrayPool(){
 		
@@ -24,16 +24,16 @@ public class ColumnArrayPool implements Serializable{
 		return columnArrayLast.size()<=0 || columnIdx>columnArrayLast.lastKey();
 	}
 
-	public SortedMap<Integer, ColumnArrayAdv> lastSubMap(int columnIdx) {
+	public SortedMap<Integer, AbstractColumnArrayAdv> lastSubMap(int columnIdx) {
 		return columnArrayLast.subMap(columnIdx, true, columnArrayLast.lastKey(),true);
 	}
 
-	public Collection<ColumnArrayAdv> values() {
+	public Collection<AbstractColumnArrayAdv> values() {
 		return columnArrayLast.values();
 	}
 
-	public ColumnArrayAdv overlap(int index, int lastIndex) {
-		SortedMap<Integer,ColumnArrayAdv> overlap = columnArrayFirst.size()==0?null:columnArrayFirst.subMap(index, true, lastIndex,true); 
+	public AbstractColumnArrayAdv overlap(int index, int lastIndex) {
+		SortedMap<Integer,AbstractColumnArrayAdv> overlap = columnArrayFirst.size()==0?null:columnArrayFirst.subMap(index, true, lastIndex,true); 
 		if(overlap!=null && overlap.size()>0){
 			return overlap.get(overlap.firstKey());
 		}
@@ -53,8 +53,8 @@ public class ColumnArrayPool implements Serializable{
 		return columnArrayLast.lastKey();
 	}
 
-	public void put(ColumnArrayAdv array) {
-		ColumnArrayAdv old;
+	public void put(AbstractColumnArrayAdv array) {
+		AbstractColumnArrayAdv old;
 		if((old = columnArrayFirst.put(array.getIndex(),array))!=null){
 			throw new IllegalStateException("try to replace a column array in first map "+old +", new "+array);
 		}
@@ -63,7 +63,7 @@ public class ColumnArrayPool implements Serializable{
 		}
 	}
 
-	public void remove(ColumnArrayAdv array) {
+	public void remove(AbstractColumnArrayAdv array) {
 		columnArrayFirst.remove(array.getIndex());
 		columnArrayLast.remove(array.getLastIndex());
 	}

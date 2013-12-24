@@ -47,19 +47,19 @@ import org.zkoss.zss.ngmodel.util.Validations;
  * @author dennis
  * @since 3.5.0
  */
-public class CellImpl extends CellAdv {
+public class CellImpl extends AbstractCellAdv {
 	private static final long serialVersionUID = 1L;
-	private RowAdv row;
+	private AbstractRowAdv row;
 	private CellType type = CellType.BLANK;
 	private Object value = null;
-	private CellStyleAdv cellStyle;
-	private HyperlinkAdv hyperlink;
-	private CommentAdv comment;
-	private RichTextAdv richText;
+	private AbstractCellStyleAdv cellStyle;
+	private AbstractHyperlinkAdv hyperlink;
+	private AbstractCommentAdv comment;
+	private AbstractRichTextAdv richText;
 
 	transient private FormulaResultWrap formulaResult;// cache
 
-	public CellImpl(RowAdv row) {
+	public CellImpl(AbstractRowAdv row) {
 		this.row = row;
 	}
 
@@ -121,16 +121,16 @@ public class CellImpl extends CellAdv {
 			return cellStyle;
 		}
 		checkOrphan();
-		cellStyle = (CellStyleAdv) row.getCellStyle(true);
-		SheetAdv sheet = (SheetAdv)row.getSheet();
+		cellStyle = (AbstractCellStyleAdv) row.getCellStyle(true);
+		AbstractSheetAdv sheet = (AbstractSheetAdv)row.getSheet();
 		if (cellStyle == null) {
 			NColumnArray array = sheet.getColumnArray(getColumnIndex());
 			if(array!=null){
-				cellStyle = (CellStyleAdv)((ColumnArrayAdv)array).getCellStyle(true);
+				cellStyle = (AbstractCellStyleAdv)((AbstractColumnArrayAdv)array).getCellStyle(true);
 			}
 		}
 		if (cellStyle == null) {
-			cellStyle = (CellStyleAdv) sheet.getBook()
+			cellStyle = (AbstractCellStyleAdv) sheet.getBook()
 					.getDefaultCellStyle();
 		}
 		return cellStyle;
@@ -139,8 +139,8 @@ public class CellImpl extends CellAdv {
 	@Override
 	public void setCellStyle(NCellStyle cellStyle) {
 		Validations.argNotNull(cellStyle);
-		Validations.argInstance(cellStyle, CellStyleAdv.class);
-		this.cellStyle = (CellStyleAdv) cellStyle;
+		Validations.argInstance(cellStyle, AbstractCellStyleAdv.class);
+		this.cellStyle = (AbstractCellStyleAdv) cellStyle;
 	}
 
 	@Override
@@ -202,7 +202,7 @@ public class CellImpl extends CellAdv {
 		if (type == CellType.FORMULA) {
 			// clear depends
 			Ref ref = new RefImpl(this);
-			((BookSeriesAdv) getSheet().getBook().getBookSeries())
+			((AbstractBookSeriesAdv) getSheet().getBook().getBookSeries())
 					.getDependencyTable().clearDependents(ref);
 		}
 	}
@@ -329,8 +329,8 @@ public class CellImpl extends CellAdv {
 
 	@Override
 	public void setHyperlink(NHyperlink hyperlink) {
-		Validations.argInstance(hyperlink, HyperlinkAdv.class);
-		this.hyperlink = (HyperlinkAdv)hyperlink;
+		Validations.argInstance(hyperlink, AbstractHyperlinkAdv.class);
+		this.hyperlink = (AbstractHyperlinkAdv)hyperlink;
 	}
 	
 	@Override
@@ -340,14 +340,14 @@ public class CellImpl extends CellAdv {
 
 	@Override
 	public void setComment(NComment comment) {
-		Validations.argInstance(comment, CommentAdv.class);
-		this.comment = (CommentAdv)comment;
+		Validations.argInstance(comment, AbstractCommentAdv.class);
+		this.comment = (AbstractCommentAdv)comment;
 	}
 
 	@Override
 	public void setRichText(NRichText text) {
-		Validations.argInstance(text, RichTextAdv.class);
-		this.richText = (RichTextAdv)text;
+		Validations.argInstance(text, AbstractRichTextAdv.class);
+		this.richText = (AbstractRichTextAdv)text;
 	}
 
 	@Override

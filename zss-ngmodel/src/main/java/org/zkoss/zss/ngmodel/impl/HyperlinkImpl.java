@@ -20,7 +20,7 @@ package org.zkoss.zss.ngmodel.impl;
  * @author dennis
  * @since 3.5.0
  */
-public class HyperlinkImpl extends HyperlinkAdv {
+public class HyperlinkImpl extends AbstractHyperlinkAdv {
 
 	private static final long serialVersionUID = 1L;
 	

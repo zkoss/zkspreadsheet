@@ -18,15 +18,13 @@ package org.zkoss.zss.ngmodel.impl;
 
 import java.io.Serializable;
 
-import org.zkoss.zss.ngmodel.NFont;
+import org.zkoss.zss.ngmodel.NColor;
 /**
  * 
  * @author dennis
  * @since 3.5.0
  */
-public abstract class FontAdv implements NFont,Serializable{
+public abstract class AbstractColorAdv implements NColor,Serializable{
 	private static final long serialVersionUID = 1L;
-
-	/*package*/ abstract void copyTo(FontAdv dest);
 
 }

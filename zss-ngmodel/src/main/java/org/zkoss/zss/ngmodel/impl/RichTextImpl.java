@@ -28,7 +28,7 @@ import org.zkoss.zss.ngmodel.util.Validations;
  * @author dennis
  * @since 3.5.0
  */
-public class RichTextImpl extends RichTextAdv {
+public class RichTextImpl extends AbstractRichTextAdv {
 	private static final long serialVersionUID = 1L;
 
 	List<SegmentImpl> segments = new LinkedList<SegmentImpl>();

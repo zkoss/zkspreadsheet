@@ -25,10 +25,10 @@ import org.zkoss.zss.ngmodel.util.Validations;
  * @author dennis
  * @since 3.5.0
  */
-public class CellStyleImpl extends CellStyleAdv {
+public class CellStyleImpl extends AbstractCellStyleAdv {
 	private static final long serialVersionUID = 1L;
 
-	private FontAdv font;
+	private AbstractFontAdv font;
 	private NColor backgroundColor = ColorImpl.WHITE;
 	private FillPattern fillPattern = FillPattern.NO_FILL;
 	private Alignment alignment = Alignment.GENERAL;
@@ -48,7 +48,7 @@ public class CellStyleImpl extends CellStyleAdv {
 	private boolean locked = true;// default locked as excel.
 	private boolean hidden = false;
 
-	public CellStyleImpl(FontAdv font){
+	public CellStyleImpl(AbstractFontAdv font){
 		this.font = font;
 	}
 	
@@ -57,8 +57,8 @@ public class CellStyleImpl extends CellStyleAdv {
 	}
 	
 	public void setFont(NFont font){
-		Validations.argInstance(font, FontAdv.class);
-		this.font = (FontAdv)font;
+		Validations.argInstance(font, AbstractFontAdv.class);
+		this.font = (AbstractFontAdv)font;
 	}
 
 	@Override

@@ -7,7 +7,7 @@ import org.zkoss.zss.ngmodel.ModelEvents;
 import org.zkoss.zss.ngmodel.NBook;
 import org.zkoss.zss.ngmodel.NBookSeries;
 import org.zkoss.zss.ngmodel.NSheet;
-import org.zkoss.zss.ngmodel.impl.BookAdv;
+import org.zkoss.zss.ngmodel.impl.AbstractBookAdv;
 import org.zkoss.zss.ngmodel.sys.dependency.Ref;
 import org.zkoss.zss.ngmodel.sys.dependency.Ref.RefType;
 
@@ -34,7 +34,7 @@ import org.zkoss.zss.ngmodel.sys.dependency.Ref.RefType;
 	private void handleCellRef(Ref notify) {
 		NBook book = bookSeries.getBook(notify.getBookName());
 		NSheet sheet = book.getSheetByName(notify.getSheetName());
-		((BookAdv) book).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_ROW_COLUMN_SIZE_CHANGE,sheet,
+		((AbstractBookAdv) book).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_ROW_COLUMN_SIZE_CHANGE,sheet,
 				new CellRegion(notify.getRow(),notify.getColumn(),notify.getLastRow(),notify.getLastColumn())));
 	}
 }

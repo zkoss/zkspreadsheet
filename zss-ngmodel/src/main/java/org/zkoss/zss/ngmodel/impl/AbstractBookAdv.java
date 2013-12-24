@@ -30,14 +30,14 @@ import org.zkoss.zss.ngmodel.NCell;
  * @author dennis
  * @since 3.5.0
  */
-public abstract class BookAdv implements NBook,Serializable{
+public abstract class AbstractBookAdv implements NBook,Serializable{
 	private static final long serialVersionUID = 1L;
 	
 	/**
 	 * Optimize CellStyle, usually called when export book. 
 	 * @return
 	 */
-	/*package*/ abstract List<NCell> optimizeCellStyle();
+//	/*package*/ abstract List<NCell> optimizeCellStyle();
 	
 	/*package*/ abstract String nextObjId(String type);
 	
@@ -48,7 +48,7 @@ public abstract class BookAdv implements NBook,Serializable{
 	public abstract void sendModelEvent(ModelEvent event);
 	
 	
-	ModelInternalEvent createModelInternalEvent(String name, Object... data){
+	/*package*/ ModelInternalEvent createModelInternalEvent(String name, Object... data){
 		return ModelInternalEvents.createModelInternalEvent(name,this,data);
 	}
 

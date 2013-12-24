@@ -15,13 +15,13 @@ public class BookSeriesBuilderImpl extends NBookSeriesBuilder {
 	@Override
 	public void buildBookSeries(NBook... books) {
 		//check type
-		BookAdv bookadvs[] = new BookAdv[books.length];
+		AbstractBookAdv bookadvs[] = new AbstractBookAdv[books.length];
 		int i = 0;
 		for(NBook b: books){
-			if(!(b instanceof BookAdv)){
+			if(!(b instanceof AbstractBookAdv)){
 				throw new IllegalArgumentException("can't support to build a book "+b+" to book series");
 			}
-			bookadvs[i] = (BookAdv)b;
+			bookadvs[i] = (AbstractBookAdv)b;
 			i++;
 		}
 		new BookSeriesImpl(bookadvs);

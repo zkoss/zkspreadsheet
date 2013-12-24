@@ -23,7 +23,7 @@ import org.zkoss.zss.ngmodel.util.Validations;
  * @author dennis
  * @since 3.5.0
  */
-public class FontImpl extends FontAdv {
+public class FontImpl extends AbstractFontAdv {
 	private static final long serialVersionUID = 1L;
 
 
@@ -134,7 +134,7 @@ public class FontImpl extends FontAdv {
 	
 
 	@Override
-	public void copyTo(FontAdv dest) {
+	public void copyTo(AbstractFontAdv dest) {
 		if (dest == this)
 			return;
 		Validations.argInstance(dest, FontImpl.class);

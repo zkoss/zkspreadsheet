@@ -32,10 +32,10 @@ import org.zkoss.zss.ngmodel.sys.dependency.DependencyTable;
  * @author dennis
  * @since 3.5.0
  */
-public class SimpleBookSeriesImpl extends BookSeriesAdv {
+public class SimpleBookSeriesImpl extends AbstractBookSeriesAdv {
 	private static final long serialVersionUID = 1L;
 	
-	final private BookAdv book;
+	final private AbstractBookAdv book;
 	List<NBook> array;
 	
 	final private DependencyTable dependencyTable;
@@ -44,7 +44,7 @@ public class SimpleBookSeriesImpl extends BookSeriesAdv {
 	
 	private transient Map<String, Object> attributes;
 	
-	public SimpleBookSeriesImpl(BookAdv book){
+	public SimpleBookSeriesImpl(AbstractBookAdv book){
 		this.book = book;
 		dependencyTable = EngineFactory.getInstance().createDependencyTable();
 		((DependencyTableAdv)dependencyTable).setBookSeries(this);

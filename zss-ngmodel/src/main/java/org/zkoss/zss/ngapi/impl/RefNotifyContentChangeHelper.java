@@ -7,7 +7,7 @@ import org.zkoss.zss.ngmodel.ModelEvents;
 import org.zkoss.zss.ngmodel.NBook;
 import org.zkoss.zss.ngmodel.NBookSeries;
 import org.zkoss.zss.ngmodel.NSheet;
-import org.zkoss.zss.ngmodel.impl.BookAdv;
+import org.zkoss.zss.ngmodel.impl.AbstractBookAdv;
 import org.zkoss.zss.ngmodel.sys.dependency.ObjectRef;
 import org.zkoss.zss.ngmodel.sys.dependency.ObjectRef.ObjectType;
 import org.zkoss.zss.ngmodel.sys.dependency.Ref;
@@ -44,7 +44,7 @@ import org.zkoss.zss.ngmodel.sys.dependency.Ref.RefType;
 		NSheet sheet = book.getSheetByName(dependent
 				.getSheetName());
 		String[] ids = dependent.getObjectIdPath();
-		((BookAdv) book).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_CHART_CONTENT_CHANGE,sheet,
+		((AbstractBookAdv) book).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_CHART_CONTENT_CHANGE,sheet,
 				ModelEvents.PARAM_OBJECT_ID,ids[0]));
 				
 	}
@@ -52,7 +52,7 @@ import org.zkoss.zss.ngmodel.sys.dependency.Ref.RefType;
 	private void handleCellRef(Ref notify) {
 		NBook book = bookSeries.getBook(notify.getBookName());
 		NSheet sheet = book.getSheetByName(notify.getSheetName());
-		((BookAdv) book).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_CELL_CONTENT_CHANGE,sheet,
+		((AbstractBookAdv) book).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_CELL_CONTENT_CHANGE,sheet,
 				new CellRegion(notify.getRow(),notify.getColumn(),notify.getLastRow(),notify.getLastColumn())));
 	}
 }

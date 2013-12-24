@@ -26,11 +26,11 @@ import org.zkoss.zss.ngmodel.util.Validations;
  * @author dennis
  * @since 3.5.0
  */
-public class ColumnArrayImpl extends ColumnArrayAdv {
+public class ColumnArrayImpl extends AbstractColumnArrayAdv {
 	private static final long serialVersionUID = 1L;
 
-	private SheetAdv sheet;
-	private CellStyleAdv cellStyle;
+	private AbstractSheetAdv sheet;
+	private AbstractCellStyleAdv cellStyle;
 	
 	private Integer width;
 	private boolean hidden = false;
@@ -39,7 +39,7 @@ public class ColumnArrayImpl extends ColumnArrayAdv {
 	int index;
 	int lastIndex;
 	
-	public ColumnArrayImpl(SheetAdv sheet, int index, int lastIndex) {
+	public ColumnArrayImpl(AbstractSheetAdv sheet, int index, int lastIndex) {
 		this.sheet = sheet;
 		this.index = index;
 		this.lastIndex = lastIndex;
@@ -53,7 +53,7 @@ public class ColumnArrayImpl extends ColumnArrayAdv {
 
 
 	@Override
-	void onModelEvent(ModelInternalEvent event) {
+	void onModelInternalEvent(ModelInternalEvent event) {
 		// TODO Auto-generated method stub
 
 	}
@@ -95,8 +95,8 @@ public class ColumnArrayImpl extends ColumnArrayAdv {
 	@Override
 	public void setCellStyle(NCellStyle cellStyle) {
 		Validations.argNotNull(cellStyle);
-		Validations.argInstance(cellStyle, CellStyleAdv.class);
-		this.cellStyle = (CellStyleAdv) cellStyle;
+		Validations.argInstance(cellStyle, AbstractCellStyleAdv.class);
+		this.cellStyle = (AbstractCellStyleAdv) cellStyle;
 	}
 
 	@Override

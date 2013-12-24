@@ -23,15 +23,15 @@ import org.zkoss.zss.ngmodel.NViewAnchor;
  * @author dennis
  * @since 3.5.0
  */
-public class PictureImpl extends PictureAdv {
+public class PictureImpl extends AbstractPictureAdv {
 
 	String id;
 	Format format;
 	NViewAnchor anchor;
 	byte[] data;
-	SheetAdv sheet;
+	AbstractSheetAdv sheet;
 
-	public PictureImpl(SheetAdv sheet, String id, Format format,
+	public PictureImpl(AbstractSheetAdv sheet, String id, Format format,
 			byte[] data, NViewAnchor anchor) {
 		this.sheet = sheet;
 		this.id = id;

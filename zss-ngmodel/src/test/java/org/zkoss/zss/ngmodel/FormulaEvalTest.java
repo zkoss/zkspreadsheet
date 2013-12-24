@@ -21,7 +21,7 @@ import org.zkoss.util.Locales;
 import org.zkoss.zss.ngapi.NRange;
 import org.zkoss.zss.ngapi.NRanges;
 import org.zkoss.zss.ngmodel.NCell.CellType;
-import org.zkoss.zss.ngmodel.impl.BookSeriesAdv;
+import org.zkoss.zss.ngmodel.impl.AbstractBookSeriesAdv;
 import org.zkoss.zss.ngmodel.impl.NameRefImpl;
 import org.zkoss.zss.ngmodel.impl.RefImpl;
 import org.zkoss.zss.ngmodel.sys.EngineFactory;
@@ -154,7 +154,7 @@ public class FormulaEvalTest {
 		NSheet sheet1 = book.createSheet("Sheet1");
 		book.createSheet("Sheet2");
 		book.createSheet("Sheet3");
-		DependencyTable table = ((BookSeriesAdv)book.getBookSeries()).getDependencyTable();
+		DependencyTable table = ((AbstractBookSeriesAdv)book.getBookSeries()).getDependencyTable();
 
 		Assert.assertTrue(table.getDependents(toAreaRef("Sheet1", null, "A2:C2")).isEmpty());
 		book.createName("ABC").setRefersToFormula("Sheet1!A1:A5");
@@ -223,7 +223,7 @@ public class FormulaEvalTest {
 	public void testEvalAndModifyNormal(){
 		NBook book = NBooks.createBook("book1");
 		
-		DependencyTable table = ((BookSeriesAdv)book.getBookSeries()).getDependencyTable();
+		DependencyTable table = ((AbstractBookSeriesAdv)book.getBookSeries()).getDependencyTable();
 		
 		NSheet sheet1 = book.createSheet("Sheet1");
 		NSheet sheet2 = book.createSheet("Sheet2");
@@ -319,7 +319,7 @@ public class FormulaEvalTest {
 	public void testEvalNoRef(){
 		NBook book = NBooks.createBook("book1");
 		
-		DependencyTable table = ((BookSeriesAdv)book.getBookSeries()).getDependencyTable();
+		DependencyTable table = ((AbstractBookSeriesAdv)book.getBookSeries()).getDependencyTable();
 		
 		NSheet sheet1 = book.createSheet("Sheet1");
 
@@ -366,7 +366,7 @@ public class FormulaEvalTest {
 	public void testClearFormulaDependency() {
 		NBook book = NBooks.createBook("book1");
 		NSheet sheet1 = book.createSheet("Sheet1");
-		DependencyTable table = ((BookSeriesAdv)book.getBookSeries()).getDependencyTable();
+		DependencyTable table = ((AbstractBookSeriesAdv)book.getBookSeries()).getDependencyTable();
 
 		// initial test
 		Assert.assertTrue(table.getDependents(toAreaRef("Sheet1", null, "B1")).isEmpty());

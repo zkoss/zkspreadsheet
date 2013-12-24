@@ -28,20 +28,20 @@ import org.zkoss.zss.ngmodel.util.Validations;
  * @author dennis
  * @since 3.5.0
  */
-class RowProxy extends RowAdv{
+class RowProxy extends AbstractRowAdv{
 	private static final long serialVersionUID = 1L;
 	
-	private final WeakReference<SheetAdv> sheetRef;
+	private final WeakReference<AbstractSheetAdv> sheetRef;
 	private final int index;
-	RowAdv proxy;
+	AbstractRowAdv proxy;
 	
-	public RowProxy(SheetAdv sheet, int index) {
+	public RowProxy(AbstractSheetAdv sheet, int index) {
 		this.sheetRef = new WeakReference(sheet);
 		this.index = index;
 	}
 	@Override
 	public NSheet getSheet(){
-		SheetAdv sheet = sheetRef.get();
+		AbstractSheetAdv sheet = sheetRef.get();
 		if(sheet==null){
 			throw new IllegalStateException("proxy target lost, you should't keep this instance");
 		}
@@ -50,7 +50,7 @@ class RowProxy extends RowAdv{
 	
 	protected void loadProxy(){
 		if(proxy==null){
-			proxy = (RowAdv)((SheetAdv)getSheet()).getRow(index,false);
+			proxy = (AbstractRowAdv)((AbstractSheetAdv)getSheet()).getRow(index,false);
 			if(proxy!=null){
 				sheetRef.clear();
 			}
@@ -96,17 +96,17 @@ class RowProxy extends RowAdv{
 		Validations.argNotNull(cellStyle);
 		loadProxy();
 		if(proxy==null){
-			proxy = (RowAdv)((SheetAdv)getSheet()).getOrCreateRow(index);
+			proxy = (AbstractRowAdv)((AbstractSheetAdv)getSheet()).getOrCreateRow(index);
 		}
 		proxy.setCellStyle(cellStyle);
 	}
 	
 	@Override
-	CellAdv getCell(int columnIdx, boolean proxy) {
+	AbstractCellAdv getCell(int columnIdx, boolean proxy) {
 		throw new UnsupportedOperationException("not implement");
 	}
 	@Override
-	CellAdv getOrCreateCell(int columnIdx) {
+	AbstractCellAdv getOrCreateCell(int columnIdx) {
 		throw new UnsupportedOperationException("not implement");
 	}
 	@Override
@@ -122,7 +122,7 @@ class RowProxy extends RowAdv{
 		throw new UnsupportedOperationException("not implement");
 	}
 	@Override
-	int getCellIndex(CellAdv cell) {
+	int getCellIndex(AbstractCellAdv cell) {
 		throw new UnsupportedOperationException("not implement");
 	}
 	@Override
@@ -133,7 +133,7 @@ class RowProxy extends RowAdv{
 	public void checkOrphan() {}
 	
 	@Override
-	void onModelEvent(ModelInternalEvent event) {}
+	void onModelInternalEvent(ModelInternalEvent event) {}
 	
 	@Override
 	public int getHeight() {
@@ -157,7 +157,7 @@ class RowProxy extends RowAdv{
 	public void setHeight(int width) {
 		loadProxy();
 		if (proxy == null) {
-			proxy = (RowAdv)((SheetAdv)getSheet()).getOrCreateRow(index);
+			proxy = (AbstractRowAdv)((AbstractSheetAdv)getSheet()).getOrCreateRow(index);
 		}
 		proxy.setHeight(width);
 	}
@@ -166,7 +166,7 @@ class RowProxy extends RowAdv{
 	public void setHidden(boolean hidden) {
 		loadProxy();
 		if (proxy == null) {
-			proxy = (RowAdv)((SheetAdv)getSheet()).getOrCreateRow(index);
+			proxy = (AbstractRowAdv)((AbstractSheetAdv)getSheet()).getOrCreateRow(index);
 		}
 		proxy.setHidden(hidden);
 	}
@@ -185,7 +185,7 @@ class RowProxy extends RowAdv{
 		proxy.setCustomHeight(custom);
 	}
 	@Override
-	public Iterator<CellAdv> getCellIterator() {
+	public Iterator<AbstractCellAdv> getCellIterator() {
 		loadProxy();
 		if (proxy != null) {
 			return proxy.getCellIterator();

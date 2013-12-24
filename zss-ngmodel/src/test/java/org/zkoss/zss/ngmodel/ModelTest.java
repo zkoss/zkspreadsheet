@@ -29,7 +29,7 @@ import org.zkoss.zss.ngmodel.NPicture.Format;
 import org.zkoss.zss.ngmodel.chart.NGeneralChartData;
 import org.zkoss.zss.ngmodel.chart.NSeries;
 import org.zkoss.zss.ngmodel.impl.BookImpl;
-import org.zkoss.zss.ngmodel.impl.SheetAdv;
+import org.zkoss.zss.ngmodel.impl.AbstractSheetAdv;
 import org.zkoss.zss.ngmodel.impl.SheetImpl;
 import org.zkoss.zss.ngmodel.util.CellStyleMatcher;
 import org.zkoss.zss.ngmodel.util.FontMatcher;

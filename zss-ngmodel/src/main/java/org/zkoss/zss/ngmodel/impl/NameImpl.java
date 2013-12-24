@@ -27,10 +27,10 @@ import org.zkoss.zss.ngmodel.sys.formula.FormulaParseContext;
  * @author dennis
  * @since 3.5.0
  */
-public class NameImpl extends NameAdv {
+public class NameImpl extends AbstractNameAdv {
 
 	private final String id;
-	private BookAdv book;
+	private AbstractBookAdv book;
 	private String name;
 	
 	private String applyToSheetName;
@@ -42,7 +42,7 @@ public class NameImpl extends NameAdv {
 	
 	private boolean isParsingError;
 	
-	public NameImpl(BookAdv book, String id) {
+	public NameImpl(AbstractBookAdv book, String id) {
 		this.book = book;
 		this.id = id;
 	}
@@ -122,12 +122,12 @@ public class NameImpl extends NameAdv {
 	private void clearFormulaDependency() {
 		if(refersToExpr!=null){
 			Ref ref = new NameRefImpl(this);
-			((BookSeriesAdv)book.getBookSeries()).getDependencyTable().clearDependents(ref);
+			((AbstractBookSeriesAdv)book.getBookSeries()).getDependencyTable().clearDependents(ref);
 		}
 	}
 
 	@Override
-	public BookAdv getBook() {
+	public AbstractBookAdv getBook() {
 		checkOrphan();
 		return book;
 	}

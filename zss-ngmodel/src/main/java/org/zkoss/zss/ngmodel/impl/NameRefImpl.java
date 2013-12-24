@@ -29,7 +29,7 @@ public class NameRefImpl extends RefImpl implements NameRef{
 	
 	private final String nameName;
 	
-	public NameRefImpl(NameAdv name){
+	public NameRefImpl(AbstractNameAdv name){
 		this(name.getBook().getBookName(),name.getApplyToSheetName(),name.getName());
 	}
 	public NameRefImpl(String bookName, String sheetName, String nameName){

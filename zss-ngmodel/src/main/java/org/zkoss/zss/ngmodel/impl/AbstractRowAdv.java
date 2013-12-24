@@ -27,16 +27,16 @@ import org.zkoss.zss.ngmodel.NRow;
  * @author dennis
  * @since 3.5.0
  */
-public abstract class RowAdv implements NRow,LinkedModelObject,Serializable{
+public abstract class AbstractRowAdv implements NRow,LinkedModelObject,Serializable{
 	private static final long serialVersionUID = 1L;
 
 	/*package*/ abstract NCellStyle getCellStyle(boolean local);
 	
-	/*package*/ abstract CellAdv getCell(int columnIdx, boolean proxy);
+	/*package*/ abstract AbstractCellAdv getCell(int columnIdx, boolean proxy);
 
-	/*package*/ abstract CellAdv getOrCreateCell(int columnIdx);
+	/*package*/ abstract AbstractCellAdv getOrCreateCell(int columnIdx);
 	
-	/*package*/ abstract void onModelEvent(ModelInternalEvent event);
+	/*package*/ abstract void onModelInternalEvent(ModelInternalEvent event);
 
 	/*package*/ abstract int getStartCellIndex();
 	/*package*/ abstract int getEndCellIndex();
@@ -47,7 +47,7 @@ public abstract class RowAdv implements NRow,LinkedModelObject,Serializable{
 
 	/*package*/ abstract void deleteCell(int start, int size);
 
-	/*package*/ abstract int getCellIndex(CellAdv cell);
+	/*package*/ abstract int getCellIndex(AbstractCellAdv cell);
 	
-	/*package*/ abstract Iterator<CellAdv> getCellIterator();
+	/*package*/ abstract Iterator<AbstractCellAdv> getCellIterator();
 }

@@ -24,15 +24,15 @@ import org.zkoss.zss.ngmodel.NColor;
  * @author dennis
  * @since 3.5.0
  */
-public class ColorImpl extends ColorAdv {
+public class ColorImpl extends AbstractColorAdv {
 	private static final long serialVersionUID = 1L;
 	private final byte[] rgb;
 
-	public static final ColorAdv WHITE = new ColorImpl("#FFFFFF");
-	public static final ColorAdv BLACK = new ColorImpl("#000000");
-	public static final ColorAdv RED = new ColorImpl("#FF0000");
-	public static final ColorAdv GREEN = new ColorImpl("#00FF00");
-	public static final ColorAdv BLUE = new ColorImpl("#0000FF");
+	public static final AbstractColorAdv WHITE = new ColorImpl("#FFFFFF");
+	public static final AbstractColorAdv BLACK = new ColorImpl("#000000");
+	public static final AbstractColorAdv RED = new ColorImpl("#FF0000");
+	public static final AbstractColorAdv GREEN = new ColorImpl("#00FF00");
+	public static final AbstractColorAdv BLUE = new ColorImpl("#0000FF");
 
 	public ColorImpl(byte[] rgb) {
 		if (rgb == null) {

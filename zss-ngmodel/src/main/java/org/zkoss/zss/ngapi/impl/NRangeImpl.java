@@ -40,8 +40,8 @@ import org.zkoss.zss.ngmodel.NHyperlink;
 import org.zkoss.zss.ngmodel.NHyperlink.HyperlinkType;
 import org.zkoss.zss.ngmodel.NRow;
 import org.zkoss.zss.ngmodel.NSheet;
-import org.zkoss.zss.ngmodel.impl.BookAdv;
-import org.zkoss.zss.ngmodel.impl.BookSeriesAdv;
+import org.zkoss.zss.ngmodel.impl.AbstractBookAdv;
+import org.zkoss.zss.ngmodel.impl.AbstractBookSeriesAdv;
 import org.zkoss.zss.ngmodel.impl.RefImpl;
 import org.zkoss.zss.ngmodel.sys.EngineFactory;
 import org.zkoss.zss.ngmodel.sys.dependency.DependencyTable;
@@ -193,7 +193,7 @@ public class NRangeImpl implements NRange {
 		LinkedHashSet<Ref> notifySet = new LinkedHashSet<Ref>();
 
 		NBookSeries bookSeries = getBookSeries();
-		DependencyTable dependencyTable = ((BookSeriesAdv) bookSeries)
+		DependencyTable dependencyTable = ((AbstractBookSeriesAdv) bookSeries)
 				.getDependencyTable();
 
 		for (EffectedRegion r : rangeRefs) {
@@ -244,7 +244,7 @@ public class NRangeImpl implements NRange {
 
 		NBook book = getBook();
 		NBookSeries bookSeries = book.getBookSeries();
-		DependencyTable dependencyTable = ((BookSeriesAdv) bookSeries)
+		DependencyTable dependencyTable = ((AbstractBookSeriesAdv) bookSeries)
 				.getDependencyTable();
 
 		String bookName = book.getBookName();
