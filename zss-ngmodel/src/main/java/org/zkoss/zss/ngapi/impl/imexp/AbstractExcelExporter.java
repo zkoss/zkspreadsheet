@@ -16,35 +16,11 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.ngapi.impl.imexp;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCol;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCols;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
-import org.zkoss.poi.ss.usermodel.Cell;
-import org.zkoss.poi.ss.usermodel.CellStyle;
-import org.zkoss.poi.ss.usermodel.Color;
-import org.zkoss.poi.ss.usermodel.DataFormat;
-import org.zkoss.poi.ss.usermodel.Font;
-import org.zkoss.poi.ss.usermodel.Name;
-import org.zkoss.poi.ss.usermodel.Row;
-import org.zkoss.poi.ss.usermodel.Sheet;
-import org.zkoss.poi.ss.usermodel.Workbook;
+import org.zkoss.poi.ss.usermodel.*;
 import org.zkoss.poi.ss.util.CellRangeAddress;
-import org.zkoss.poi.xssf.usermodel.XSSFSheet;
-import org.zkoss.zss.ngmodel.CellRegion;
-import org.zkoss.zss.ngmodel.NBook;
-import org.zkoss.zss.ngmodel.NCell;
-import org.zkoss.zss.ngmodel.NCellStyle;
-import org.zkoss.zss.ngmodel.NColor;
-import org.zkoss.zss.ngmodel.NColumn;
-import org.zkoss.zss.ngmodel.NColumnArray;
-import org.zkoss.zss.ngmodel.NFont;
-import org.zkoss.zss.ngmodel.NName;
-import org.zkoss.zss.ngmodel.NRow;
-import org.zkoss.zss.ngmodel.NSheet;
+import org.zkoss.zss.ngmodel.*;
 import org.zkoss.zss.ngmodel.NCellStyle.Alignment;
 import org.zkoss.zss.ngmodel.NCellStyle.BorderType;
 import org.zkoss.zss.ngmodel.NCellStyle.FillPattern;
@@ -61,9 +37,12 @@ import org.zkoss.zss.ngmodel.NFont.Underline;
  */
 abstract public class AbstractExcelExporter extends AbstractExporter {
 	
+	/**
+	 * Exporting destination, POI book model 
+	 */
 	protected Workbook workbook;
 	/**
-	 * The map stores the exported {@link CellStyle} during exporting, so that we can reuse for exporting other cells.
+	 * The map stores the exported {@link CellStyle} during exporting, so that we can reuse them for exporting other cells.
 	 */
 	protected Map<NCellStyle, CellStyle> styleTable = new HashMap<NCellStyle, CellStyle>();
 	protected Map<NFont, Font> fontTable = new HashMap<NFont, Font>();
@@ -73,7 +52,6 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 	
 	protected void exportNamedRange(NBook book) {
 		
-		// NamedRange
 		for(NName name : book.getNames()) {
 			Name poiName = workbook.createName();
 			poiName.setNameName(name.getName());
@@ -106,17 +84,17 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 		poiSheet.setDefaultColumnWidth((int)XUtils.pxToDefaultColumnWidth(sheet.getDefaultColumnWidth(), AbstractExcelImporter.CHRACTER_WIDTH));
 		//poiSheet.setDefaultColumnWidth((int)XUtils.pxToCTChar(sheet.getDefaultColumnWidth(), AbstractExcelImporter.CHRACTER_WIDTH));
 		
-		// row iterator
+		//export rows
 		Iterator<NRow> rowIterator = sheet.getRowIterator();
 		while(rowIterator.hasNext()) {
 			NRow row = rowIterator.next();
 			exportRow(sheet, poiSheet, row);
 		} 
 		
-		// column iterator
-		Iterator<NColumnArray> colArrIter = sheet.getColumnArrayIterator();
-		while(colArrIter.hasNext()) {
-			NColumnArray columnArr = colArrIter.next();
+		//export columns
+		Iterator<NColumnArray> columnArrayIterator = sheet.getColumnArrayIterator();
+		while(columnArrayIterator.hasNext()) {
+			NColumnArray columnArr = columnArrayIterator.next();
 			exportColumnArray(sheet, poiSheet, columnArr);
 		}
 
@@ -141,9 +119,9 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 		poiRow.setRowStyle(poiRowStyle);
 		
 		// Export Cell
-		Iterator<NCell> celliter = sheet.getCellIterator(row.getIndex());
-		while(celliter.hasNext()) {
-			NCell cell = celliter.next();
+		Iterator<NCell> cellIterator = sheet.getCellIterator(row.getIndex());
+		while(cellIterator.hasNext()) {
+			NCell cell = cellIterator.next();
 			exportCell(poiRow, cell);
 		}
 	}

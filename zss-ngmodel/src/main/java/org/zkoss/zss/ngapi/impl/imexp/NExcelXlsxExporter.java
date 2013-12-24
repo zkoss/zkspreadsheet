@@ -31,11 +31,6 @@ import org.zkoss.zss.ngmodel.*;
  */
 public class NExcelXlsxExporter extends AbstractExcelExporter {
 	
-//	private XSSFWorkbook workbook;
-//	private Map<NCellStyle, XSSFCellStyle> styleTable = new HashMap<NCellStyle, XSSFCellStyle>();
-//	private Map<NFont, XSSFFont> fontTable = new HashMap<NFont, XSSFFont>();
-//	private Map<NColor, XSSFColor> colorTable = new HashMap<NColor, XSSFColor>();
-	
 	@Override
 	public void export(NBook book, OutputStream fos) throws IOException {
 		ReadWriteLock lock = book.getBookSeries().getLock();
@@ -69,7 +64,6 @@ public class NExcelXlsxExporter extends AbstractExcelExporter {
 	}
 	
 	protected void exportColumnArray(NSheet sheet, Sheet poiSheet, NColumnArray columnArr) {
-		
 		XSSFSheet xssfSheet = (XSSFSheet) poiSheet;
 		
         CTWorksheet ctSheet = xssfSheet.getCTWorksheet();
@@ -84,7 +78,6 @@ public class NExcelXlsxExporter extends AbstractExcelExporter {
     	col.setCustomWidth(true);
     	col.setWidth(XUtils.pxToCTChar(columnArr.getWidth(), AbstractExcelImporter.CHRACTER_WIDTH));
     	col.setHidden(columnArr.isHidden());
-
 	}
 
 }

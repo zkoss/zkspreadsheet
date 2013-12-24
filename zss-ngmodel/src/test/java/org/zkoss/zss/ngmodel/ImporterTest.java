@@ -102,6 +102,39 @@ public class ImporterTest extends ImExpTestBase {
 		NBook book = ImExpTestUtil.loadBook(fileForImporterTest, "XSSFBook");
 		sheetNamedRangeTest(book);
 	}
+	
+	@Test
+	public void viewInfoTest(){
+		NBook book = ImExpTestUtil.loadBook(fileForImporterTest, "XSSFBook");
+		viewInfoTest(book);
+	}
+	
+	@Test
+	public void mergedTest(){
+		NBook book = ImExpTestUtil.loadBook(fileForImporterTest, "XSSFBook");
+		mergedTest(book);
+	}
+	
+	@Test
+	public void rowTest(){
+		NBook book = ImExpTestUtil.loadBook(fileForImporterTest, "XSSFBook");
+		rowTest(book);
+	}
+	
+	@Test
+	public void columnTest(){
+		NBook book = ImExpTestUtil.loadBook(fileForImporterTest, "XSSFBook");
+		columnTest(book);		
+	}
+	
+	/**
+	 * import last column that only has column width change but has all empty cells 
+	 */
+	@Test
+	public void lastChangedColumnTest(){
+		NBook book = ImExpTestUtil.loadBook(fileForImporterTest, "XSSFBook");
+		lastChangedColumnTest(book);
+	}
 
 	@Test
 	public void cellValueTest() {
@@ -140,12 +173,6 @@ public class ImporterTest extends ImExpTestBase {
 		cellFontColorTest(book);
 		
 	}
-	
-	@Test
-	public void rowTest(){
-		NBook book = ImExpTestUtil.loadBook(fileForImporterTest, "XSSFBook");
-		rowTest(book);
-	}
 
 	/**
 	 * Information technology Document description and processing languages 
@@ -173,33 +200,6 @@ public class ImporterTest extends ImExpTestBase {
 		sheet = book.getSheetByName("Format");
 		assertEquals("en_US", Locales.getCurrent().toString());
 		assertEquals("m/d/yyyy", sheet.getCell(1, 4).getCellStyle().getDataFormat());
-	}
-	
-	@Test
-	public void columnTest(){
-		NBook book = ImExpTestUtil.loadBook(fileForImporterTest, "XSSFBook");
-		columnTest(book);		
-	}
-	
-	/**
-	 * import last column that only has column width change but has all empty cells 
-	 */
-	@Test
-	public void lastChangedColumnTest(){
-		NBook book = ImExpTestUtil.loadBook(fileForImporterTest, "XSSFBook");
-		lastChangedColumnTest(book);
-	}
-	
-	@Test
-	public void viewInfoTest(){
-		NBook book = ImExpTestUtil.loadBook(fileForImporterTest, "XSSFBook");
-		viewInfoTest(book);
-	}
-
-	@Test
-	public void mergedTest(){
-		NBook book = ImExpTestUtil.loadBook(fileForImporterTest, "XSSFBook");
-		mergedTest(book);
 	}
 }
 

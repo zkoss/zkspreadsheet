@@ -38,7 +38,7 @@ public class NExcelXlsExporter extends AbstractExcelExporter {
 	@Override
 	public void export(NBook book, OutputStream fos) throws IOException {
 		ReadWriteLock lock = book.getBookSeries().getLock();
-		lock.writeLock().lock();
+		lock.readLock().lock();
 
 		try {
 			workbook = new HSSFWorkbook();
@@ -51,7 +51,7 @@ public class NExcelXlsExporter extends AbstractExcelExporter {
 			
 			workbook.write(fos);
 		} finally {
-			lock.writeLock().unlock();
+			lock.readLock().unlock();
 		}
 	}
 
