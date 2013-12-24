@@ -13,6 +13,7 @@ package org.zkoss.zss.ngmodel;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.zkoss.poi.ss.usermodel.CellValue;
 import org.zkoss.poi.xssf.usermodel.XSSFCell;
@@ -26,6 +27,7 @@ import org.zkoss.zss.ngmodel.util.CellReference;
 /**
  * @author Pao
  */
+@Ignore
 public class FormulaPerformanceTest {
 	private final static int ROW_COUNT = 1000;
 	private final static int COL_COUNT = 50;
