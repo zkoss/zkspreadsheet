@@ -18,10 +18,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import org.zkoss.poi.ss.formula.CollaboratingWorkbooksEnvironment;
 import org.zkoss.poi.ss.formula.EvaluationCell;
 import org.zkoss.poi.ss.formula.EvaluationSheet;
+import org.zkoss.poi.ss.formula.EvaluationWorkbook;
 import org.zkoss.poi.ss.formula.FormulaParseException;
 import org.zkoss.poi.ss.formula.FormulaParser;
 import org.zkoss.poi.ss.formula.FormulaType;
@@ -71,9 +71,42 @@ import org.zkoss.zss.ngmodel.sys.formula.FormulaParseContext;
  * A formula engine implemented by ZPOI
  * @author Pao
  */
-public class POIFormulaEngine implements FormulaEngine {
-	private final static Logger logger = Logger.getLogger(POIFormulaEngine.class.getName());
-	private final static String KEY_EVALUATORS = "$ZSS_EVALUATORS$";
+public class FormulaEngineImpl implements FormulaEngine {
+	
+	public final static String KEY_EVALUATORS = "$ZSS_EVALUATORS$";
+	
+	private final static Logger logger = Logger.getLogger(FormulaEngineImpl.class.getName());
+	private static EvaluatorBuilder evaluatorBuilder = new DefaultEvaluatorBuilder();
+	
+	// for POI formula evaluator
+	private final static IStabilityClassifier noCacheClassifier = new IStabilityClassifier() {
+		public boolean isCellFinal(int sheetIndex, int rowIndex, int columnIndex) {
+			return true;
+		}
+	};
+
+	private final static FreeRefFunction toerantFunction = new FreeRefFunction() {
+		public ValueEval evaluate(ValueEval[] args, OperationEvaluationContext ec) {
+			return ErrorEval.NAME_INVALID;
+		}
+	};
+
+	private final static UDFFinder tolerantUDFFinder = new UDFFinder() {
+		public FreeRefFunction findFunction(String name) {
+			return toerantFunction;
+		}
+	};
+
+	/**
+	 * replace evaluator builder with specified one.
+	 */
+	public static void setEvaluatorBuilder(EvaluatorBuilder builder) {
+		if(builder == null) {
+			throw new IllegalArgumentException("builder can't be null");
+		}
+		evaluatorBuilder = builder;
+	}
+	
 
 	@Override
 	public FormulaExpression parse(String formula, FormulaParseContext context) {
@@ -171,13 +204,13 @@ public class POIFormulaEngine implements FormulaEngine {
 					.getAttribute(KEY_EVALUATORS);
 			// create evaluators if not existed
 			if(evalCtxMap == null) {
-				evalCtxMap = new LinkedHashMap<String, POIFormulaEngine.EvalContext>();
+				evalCtxMap = new LinkedHashMap<String, FormulaEngineImpl.EvalContext>();
 				List<String> bookNames = new ArrayList<String>();
 				List<WorkbookEvaluator> evaluators = new ArrayList<WorkbookEvaluator>();
 				for(NBook b : bookSeries.getBooks()) {
 					String n = b.getBookName();
 					EvalBook eb = new EvalBook(b);
-					WorkbookEvaluator we = new WorkbookEvaluator(eb, noCacheClassifier, tolerantUDFFinder);
+					WorkbookEvaluator we = evaluatorBuilder.createEvaluator(eb);
 					bookNames.add(n);
 					evaluators.add(we);
 					evalCtxMap.put(n, new EvalContext(eb, we));
@@ -266,6 +299,50 @@ public class POIFormulaEngine implements FormulaEngine {
 		}
 	}
 
+	@Override
+	@SuppressWarnings("unchecked")
+	public void clearCache(FormulaClearContext context) {
+		try {
+			NBook book = context.getBook();
+			NSheet sheet = context.getSheet();
+			NCell cell = context.getCell();
+	
+			// take evaluators from book series
+			BookSeriesAdv bookSeries = (BookSeriesAdv)book.getBookSeries();
+			Map<String, EvalContext> map = (Map<String, EvalContext>)bookSeries.getAttribute(KEY_EVALUATORS);
+	
+			// do nothing if not existed
+			if(map == null) {
+				return;
+			}
+	
+			// clean cache and target is a cell
+			if(cell != null && !cell.isNull()) {
+	
+				// do nothing if not existed
+				EvalContext ctx = map.get(book.getBookName());
+				if(ctx == null) {
+					logger.log(Level.WARNING, "clear a non-existed book? >> " + book.getBookName());
+					return;
+				}
+	
+				// notify POI formula evaluator one of cell has been updated
+				String sheetName = sheet.getSheetName();
+				EvalBook evalBook = ctx.getBook();
+				EvaluationSheet evalSheet = evalBook.getSheet(evalBook.getSheetIndex(sheetName));
+				EvaluationCell evalCell = evalSheet.getCell(cell.getRowIndex(), cell.getColumnIndex());
+				WorkbookEvaluator evaluator = ctx.getEvaluator();
+				evaluator.notifyUpdateCell(evalCell);
+			} else {
+				// no cell indicates clearing all cache
+				bookSeries.setAttribute(KEY_EVALUATORS, null);
+				map.clear(); // just in case
+			}
+		} catch(Exception e) {
+			logger.log(Level.SEVERE, e.getMessage(), e);
+		}
+	}
+
 	private static class FormulaExpressionImpl implements FormulaExpression, Serializable {
 		private static final long serialVersionUID = -8532826169759927711L;
 		private String formula;
@@ -338,23 +415,6 @@ public class POIFormulaEngine implements FormulaEngine {
 
 	}
 
-	// for POI formula evaluator
-	private final static IStabilityClassifier noCacheClassifier = new IStabilityClassifier() {
-		public boolean isCellFinal(int sheetIndex, int rowIndex, int columnIndex) {
-			return true;
-		}
-	};
-	private final static FreeRefFunction toerantFunction = new FreeRefFunction() {
-		public ValueEval evaluate(ValueEval[] args, OperationEvaluationContext ec) {
-			return ErrorEval.NAME_INVALID;
-		}
-	};
-	private final static UDFFinder tolerantUDFFinder = new UDFFinder() {
-		public FreeRefFunction findFunction(String name) {
-			return toerantFunction;
-		}
-	};
-
 	private static class EvalContext {
 		private EvalBook book;
 		private WorkbookEvaluator evaluator;
@@ -404,47 +464,11 @@ public class POIFormulaEngine implements FormulaEngine {
 		}
 
 	}
-
-	@Override
-	public void clearCache(FormulaClearContext context) {
-		try {
-			NBook book = context.getBook();
-			NSheet sheet = context.getSheet();
-			NCell cell = context.getCell();
-
-			// take evaluators from book series
-			BookSeriesAdv bookSeries = (BookSeriesAdv)book.getBookSeries();
-			Map<String, EvalContext> map = (Map<String, EvalContext>)bookSeries.getAttribute(KEY_EVALUATORS);
-
-			// do nothing if not existed
-			if(map == null) {
-				return;
-			}
-
-			// clean cache and target is a cell
-			if(cell != null && !cell.isNull()) {
-
-				// do nothing if not existed
-				EvalContext ctx = map.get(book.getBookName());
-				if(ctx == null) {
-					logger.log(Level.WARNING, "clear a non-existed book? >> " + book.getBookName());
-					return;
-				}
-
-				// notify POI formula evaluator one of cell has been updated
-				String sheetName = sheet.getSheetName();
-				EvalBook evalBook = ctx.getBook();
-				EvaluationSheet evalSheet = evalBook.getSheet(evalBook.getSheetIndex(sheetName));
-				EvaluationCell evalCell = evalSheet.getCell(cell.getRowIndex(), cell.getColumnIndex());
-				WorkbookEvaluator evaluator = ctx.getEvaluator();
-				evaluator.notifyUpdateCell(evalCell);
-			} else {
-				// no cell indicates clearing all cache
-				bookSeries.setAttribute(KEY_EVALUATORS, null);
-				map.clear(); // just in case
-			}
-		} catch(Exception e) {
-			logger.log(Level.SEVERE, e.getMessage(), e);
+	
+	private static class DefaultEvaluatorBuilder implements EvaluatorBuilder {
+		@Override
+		public WorkbookEvaluator createEvaluator(EvaluationWorkbook evalBook) {
+			return new WorkbookEvaluator(evalBook, noCacheClassifier, tolerantUDFFinder);
 		}
 	}
 

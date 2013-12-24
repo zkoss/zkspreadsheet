@@ -41,7 +41,7 @@ import org.zkoss.zss.ngmodel.NSheet;
 public final class EvalBook implements FormulaRenderingWorkbook, EvaluationWorkbook, FormulaParsingWorkbook {
 
 	private NBook nbook;
-	private IndexedUDFFinder udfFinder = new IndexedUDFFinder();
+	private IndexedUDFFinder udfFinder = new IndexedUDFFinder(UDFFinder.DEFAULT);
 	private List<EvaluationSheet> sheets = new ArrayList<EvaluationSheet>();
 	private Map<EvaluationSheet, Integer> sheet2index = new HashMap<EvaluationSheet, Integer>();
 	private List<String> names = new ArrayList<String>();

@@ -22,7 +22,7 @@ import org.zkoss.zss.ngmodel.impl.sys.FormatEngineImpl;
 import org.zkoss.zss.ngmodel.impl.sys.TestDependencyTableImpl;
 import org.zkoss.zss.ngmodel.impl.sys.TestFormulaEngineImpl;
 import org.zkoss.zss.ngmodel.impl.sys.InputEngineImpl;
-import org.zkoss.zss.ngmodel.impl.sys.formula.POIFormulaEngine;
+import org.zkoss.zss.ngmodel.impl.sys.formula.FormulaEngineImpl;
 import org.zkoss.zss.ngmodel.sys.dependency.DependencyTable;
 import org.zkoss.zss.ngmodel.sys.format.FormatEngine;
 import org.zkoss.zss.ngmodel.sys.formula.FormulaEngine;
@@ -59,7 +59,7 @@ public class EngineFactory {
 
 	public FormulaEngine createFormulaEngine() {
 //		return new TestFormulaEngineImpl();
-		return new POIFormulaEngine();
+		return new FormulaEngineImpl();
 	}
 
 	public DependencyTable createDependencyTable() {
