@@ -9,16 +9,17 @@
 
 Copyright (C) 2013 Potix Corporation. All Rights Reserved.
  */
-package org.zkoss.zss.api.impl;
+package org.zkoss.zss.ng;
 
 import java.io.Closeable;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Locale;
+import java.util.Set;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
-import org.zkoss.poi.ss.formula.DefaultDependencyTracker;
 import org.zkoss.poi.ss.usermodel.CellValue;
 import org.zkoss.poi.xssf.usermodel.XSSFCell;
 import org.zkoss.poi.xssf.usermodel.XSSFFormulaEvaluator;
@@ -26,24 +27,31 @@ import org.zkoss.poi.xssf.usermodel.XSSFRow;
 import org.zkoss.poi.xssf.usermodel.XSSFSheet;
 import org.zkoss.poi.xssf.usermodel.XSSFWorkbook;
 import org.zkoss.util.Locales;
+import org.zkoss.zss.engine.RefSheet;
 import org.zkoss.zss.model.sys.XBook;
+import org.zkoss.zss.model.sys.XSheet;
+import org.zkoss.zss.model.sys.impl.BookHelper;
 import org.zkoss.zss.model.sys.impl.XSSFBookImpl;
 import org.zkoss.zss.ngapi.impl.imexp.ExcelImportFactory;
 import org.zkoss.zss.ngmodel.NBook;
-import org.zkoss.zss.ngmodel.NBooks;
 import org.zkoss.zss.ngmodel.NCell;
 import org.zkoss.zss.ngmodel.NSheet;
+import org.zkoss.zss.ngmodel.impl.BookSeriesAdv;
+import org.zkoss.zss.ngmodel.impl.RefImpl;
+import org.zkoss.zss.ngmodel.sys.dependency.DependencyTable;
+import org.zkoss.zss.ngmodel.sys.dependency.Ref;
 
 /**
  * @author Pao
  */
-public class FormulaPerformanceTest {
+@Ignore
+public class ModelPerformanceTest {
 	private final static int ROW_COUNT = 1000;
 	private final static int COL_COUNT = 50;
 
 	private final static double EPSILON = 0.0000001;
 
-	private final static URL file = FormulaPerformanceTest.class.getResource("book/formula-1000x50.xlsx");
+	private final static URL file = ModelPerformanceTest.class.getResource("book/formula-1000x50.xlsx");
 	private final static int NG_MODEL = 0;
 	private final static int XBOOK_MODEL = 1;
 	private final static int WORKBOOK_MODEL = 2;
@@ -67,7 +75,7 @@ public class FormulaPerformanceTest {
 	}
 
 	@Test
-	public void testXBookMode() {
+	public void testXBookModel() {
 		System.out.println("=== XBook Model===");
 		testPerformanceAndMemory(XBOOK_MODEL);
 	}
@@ -80,22 +88,29 @@ public class FormulaPerformanceTest {
 		// create phase
 		System.out.println(">>> creation");
 		long start = System.currentTimeMillis();
-		Object book = createModel(type);
+		Object model = createModel(type);
 		showSpendTime(start);
 		showMemoryUsage();
 
 		// evaluation
 		System.out.println(">>> evaluation");
 		start = System.currentTimeMillis();
-		evaluation(type == NG_MODEL, book, 1.0);
+		evaluation(type == NG_MODEL, model, 1.0);
 		showSpendTime(start);
 		showMemoryUsage();
 
 		// evaluation with dependency tracking
 		System.out.println(">>> modify and evaluation");
 		start = System.currentTimeMillis();
-		modifyFirstColumn(type == NG_MODEL, book, 2.0);
-		evaluation(type == NG_MODEL, book, 2.0);
+		modifyFirstColumn(type == NG_MODEL, model, 2.0);
+		evaluation(type == NG_MODEL, model, 2.0);
+		showSpendTime(start);
+		showMemoryUsage();
+		
+		// search dependencies
+		System.out.println(">>> search dependencies");
+		start = System.currentTimeMillis();
+		searchDependencies(type, model);
 		showSpendTime(start);
 		showMemoryUsage();
 	}
@@ -189,6 +204,31 @@ public class FormulaPerformanceTest {
 				}
 				cell.setCellValue(firstColumnValue);
 			}
+		}
+	}
+	
+	private void searchDependencies(int type, Object model) {
+		if(type == NG_MODEL) {
+			NBook book = (NBook)model;
+			BookSeriesAdv series = (BookSeriesAdv)book.getBookSeries();
+			DependencyTable table = series.getDependencyTable();
+			String bookName = book.getBookName();
+			String sheetName = book.getSheet(0).getSheetName();
+			for(int c = 0; c < COL_COUNT; ++c) {
+				Ref ref = new RefImpl(bookName, sheetName, 0, c);
+				Set<Ref> dependencies = table.getDependents(ref);
+				Assert.assertEquals(COL_COUNT - c - 1, dependencies.size());
+			}
+		} else if(type == XBOOK_MODEL) {
+			XBook book = (XBook)model;
+			XSheet sheet = book.getWorksheetAt(0);
+			RefSheet refSheet = BookHelper.getRefSheet(book, sheet);
+			for(int c = 0; c < COL_COUNT; ++c) {
+				Set<org.zkoss.zss.engine.Ref>[] dependents = refSheet.getBothDependents(0, c);
+				Assert.assertEquals(COL_COUNT - c - 1, dependents[1].size());
+			}
+		} else if(type == WORKBOOK_MODEL) {
+			// do nothing, it has no dependency tracking
 		}
 	}
 
