@@ -31,10 +31,6 @@ import org.zkoss.poi.ss.usermodel.Sheet;
  */
 public class XUtils {
 
-	public static int getDefaultColumnWidthInPx(Sheet sheet, int charWidth) {
-		int columnWidth = sheet != null ? sheet.getDefaultColumnWidth() : -1;
-		return columnWidth <= 0 ? 64 : XUtils.defaultColumnWidthToPx(columnWidth, charWidth);
-	}
 	
 	public static int getWidthAny(Sheet zkSheet,int col, int charWidth){
 		int w = zkSheet.getColumnWidth(col);
@@ -141,20 +137,7 @@ public class XUtils {
 			roundTo100th(w / (charWidth + 5)):
 			roundTo100th((w - 5) / charWidth);
 	}
-
-	// FIXME
-	/** Convert default columns character width to pixel */ 
-	public static int defaultColumnWidthToPx(int columnWidth, int charWidth) {
-		final int w = columnWidth * charWidth + 5;
-		return w;
-		//final int diff = w % 8;
-		//return w + (diff > 0 ? (8 - diff) : 0);
-	}
 	
-	// FIXME
-	public static int pxToDefaultColumnWidth(int px, int charWidth) {
-		return (px - 5) / charWidth;
-	}
 	
 	public static double pxToCTChar(int px, int charWidth) {
 		return (double) pxToFileChar256(px, charWidth) / 256;
@@ -162,5 +145,34 @@ public class XUtils {
 	
 	private static double roundTo100th(double w) {
 		return Math.floor(w * 100 + 0.5) / 100;
+	}
+	
+	public static int getDefaultColumnWidthInPx(Sheet sheet, int charWidth) {
+		int columnWidth = sheet != null ? sheet.getDefaultColumnWidth() : -1;
+		return columnWidth <= 0 ? 64 : XUtils.defaultColumnWidthToPx(columnWidth, charWidth);
+	}
+	
+	/** 
+	 * Convert default columns width (in character) to pixel.
+	 * 5 pixels are margin padding.(There are 4 pixels of margin padding (two on each side), plus 1 pixel padding for the gridlines.)
+	 * Description of how column widths are determined in Excel (http://support.microsoft.com/kb/214123)
+	 * @param columnWidth number of character
+	 * @param charWidth Using the Calibri font, the maximum digit width of 11 point font size is 7 pixels (at 96 dpi).
+	 * @return width in pixel  Rounds this number up to the nearest multiple of 8 pixels.
+	 */ 
+	public static int defaultColumnWidthToPx(int columnWidth, int charWidth) {
+		final int w = columnWidth * charWidth + 5;
+		final int diff = w % 8;
+		return w + (diff > 0 ? (8 - diff) : 0);
+	}
+	
+	/**
+	 * Convert default column width in pixel to number of character by reverse defaultColumnWidthToPx() and ignore the mod(%) operation.
+	 * @param px default column width in pixel
+	 * @param charWidth  one character width in pixel of normal style's font 
+	 * @return default column width in character
+	 */
+	public static int pxToDefaultColumnWidth(int px, int charWidth) {
+		return (px - 5) / charWidth;
 	}
 }

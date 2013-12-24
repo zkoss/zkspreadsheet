@@ -190,7 +190,7 @@ public class ExporterTest extends ImExpTestBase {
 		ImExpTestUtil.writeBookToFile(book, ImExpTestUtil.DEFAULT_EXPORT_TARGET_PATH+"export.xls", ExcelExportFactory.Type.XLS);
 	}
 	
-	@Test
+	@Ignore("missing book/defaultWidth.xlsx") //TODO
 	public void export() {
 		NBook book = ImExpTestUtil.loadBook(ImporterTest.class.getResource("book/defaultWidth.xlsx"), "HSSFBook");
 		ImExpTestUtil.writeBookToFile(book, ImExpTestUtil.DEFAULT_EXPORT_TARGET_PATH+"export-width.xlsx", ExcelExportFactory.Type.XLSX);

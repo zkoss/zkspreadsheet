@@ -86,7 +86,7 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 		NSheet sheet = book.createSheet(poiSheet.getSheetName());
 		sheet.setDefaultRowHeight(XUtils.twipToPx(poiSheet.getDefaultRowHeight()));
 		//reference XUtils.getDefaultColumnWidthInPx()
-		int defaultWidth = XUtils.getDefaultColumnWidthInPx(poiSheet, CHRACTER_WIDTH);
+		int defaultWidth = XUtils.defaultColumnWidthToPx(poiSheet.getDefaultColumnWidth(), CHRACTER_WIDTH);
 		sheet.setDefaultColumnWidth(defaultWidth);
 		//reference FreezeInfoLoaderImpl.getRowFreeze()
 		sheet.getViewInfo().setNumOfRowFreeze(BookHelper.getRowFreeze(poiSheet));
