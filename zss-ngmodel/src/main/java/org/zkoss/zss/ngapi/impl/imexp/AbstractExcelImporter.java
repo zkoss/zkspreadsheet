@@ -16,8 +16,10 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.ngapi.impl.imexp;
 
+import java.io.*;
 import java.util.*;
 
+import org.zkoss.poi.hssf.usermodel.HSSFWorkbook;
 import org.zkoss.poi.ss.usermodel.*;
 import org.zkoss.poi.ss.util.CellRangeAddress;
 import org.zkoss.zss.ngmodel.*;
@@ -54,6 +56,22 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 	/** source POI book */
 	protected Workbook workbook;
 
+	@Override
+	public NBook imports(InputStream is, String bookName) throws IOException {
+
+		workbook = createPoiBook(is);
+		book = NBooks.createBook(bookName);
+		
+		for (int i = 0 ; i < workbook.getNumberOfSheets(); i++){
+			importSheet(workbook.getSheetAt(i));
+		}
+		
+		importNamedRange();
+		return book;
+	}
+	
+	abstract protected Workbook createPoiBook(InputStream is) throws IOException;
+	
 	/**
 	 * When a column is hidden with default width, we don't import the width for it's 0.
 	 * @param poiSheet

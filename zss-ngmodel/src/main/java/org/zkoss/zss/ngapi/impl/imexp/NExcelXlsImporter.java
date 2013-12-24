@@ -28,18 +28,10 @@ import org.zkoss.zss.ngmodel.*;
  */
 public class NExcelXlsImporter extends AbstractExcelImporter{
 
+	
 	@Override
-	public NBook imports(InputStream is, String bookName) throws IOException {
-
-		workbook = new HSSFWorkbook(is);
-		book = NBooks.createBook(bookName);
-		
-		for (int i = 0 ; i < workbook.getNumberOfSheets(); i++){
-			importSheet(workbook.getSheetAt(i));
-		}
-		
-		importNamedRange();
-		return book;
+	protected Workbook createPoiBook(InputStream is) throws IOException{
+		return new HSSFWorkbook(is);
 	}
 
 	/**

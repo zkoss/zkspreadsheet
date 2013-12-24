@@ -39,16 +39,8 @@ import org.zkoss.zss.ngmodel.util.SpreadsheetVersion;
 public class NExcelXlsxImporter extends AbstractExcelImporter{
 
 	@Override
-	public NBook imports(InputStream is, String bookName) throws IOException {
-		workbook = new XSSFWorkbook(is);
-		book = NBooks.createBook(bookName);
-		// import book scope content
-		for(Sheet poiSheet : (XSSFWorkbook)workbook) { //only XSSFWorkwork is Iterable
-			importSheet(poiSheet);
-		}
-		
-		importNamedRange();
-		return book;
+	protected Workbook createPoiBook(InputStream is) throws IOException {
+		return new XSSFWorkbook(is);
 	}
 
 	/**
