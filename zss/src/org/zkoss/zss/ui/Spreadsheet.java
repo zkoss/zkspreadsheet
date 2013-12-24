@@ -32,7 +32,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import org.zkoss.json.JSONArray;
 import org.zkoss.json.JSONObject;
 import org.zkoss.lang.Classes;
@@ -103,6 +102,7 @@ import org.zkoss.zss.json.JavaScriptValue;
 //import org.zkoss.zss.model.sys.XSheet;
 import org.zkoss.zss.model.sys.impl.BookCtrl;
 import org.zkoss.zss.model.sys.impl.BookHelper;
+import org.zkoss.zss.model.sys.impl.ZSSEvaluatorBuilder;
 //import org.zkoss.zss.model.sys.impl.ExcelImporter;
 //import org.zkoss.zss.model.sys.impl.SheetCtrl;
 import org.zkoss.zss.ngapi.NImporter;
@@ -126,6 +126,7 @@ import org.zkoss.zss.ngmodel.NPicture;
 import org.zkoss.zss.ngmodel.NRow;
 import org.zkoss.zss.ngmodel.NSheet;
 import org.zkoss.zss.ngmodel.NViewAnchor;
+import org.zkoss.zss.ngmodel.impl.sys.formula.FormulaEngineImpl;
 import org.zkoss.zss.ui.au.in.Command;
 import org.zkoss.zss.ui.au.out.AuCellFocus;
 import org.zkoss.zss.ui.au.out.AuCellFocusTo;
@@ -377,6 +378,10 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 				processStopEditing((String) data[0], (StopEditingEvent) data[1], (String) data[2]);
 			}
 		});
+		
+		// FIXME ZSS 3.5
+		// replace workbook evaluator builder by new builder with ZSS evaluator context
+		FormulaEngineImpl.setEvaluatorBuilder(new ZSSEvaluatorBuilder(_functionMapper));
 	}
 	
 	/**
