@@ -20,13 +20,8 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
 
-import org.zkoss.poi.ss.formula.EvaluationCell;
-import org.zkoss.poi.ss.formula.EvaluationSheet;
-import org.zkoss.poi.ss.formula.EvaluationWorkbook;
-import org.zkoss.poi.ss.formula.WorkbookEvaluator;
 import org.zkoss.zss.ngmodel.CellRegion;
 import org.zkoss.zss.ngmodel.ErrorValue;
-import org.zkoss.zss.ngmodel.NBookSeries;
 import org.zkoss.zss.ngmodel.NCellStyle;
 import org.zkoss.zss.ngmodel.NColumnArray;
 import org.zkoss.zss.ngmodel.NComment;
@@ -53,11 +48,24 @@ public class CellImpl extends AbstractCellAdv {
 	private CellType type = CellType.BLANK;
 	private Object value = null;
 	private AbstractCellStyleAdv cellStyle;
-	private AbstractHyperlinkAdv hyperlink;
-	private AbstractCommentAdv comment;
-	private AbstractRichTextAdv richText;
-
 	transient private FormulaResultWrap formulaResult;// cache
+	
+	
+	//use another object to reduce object reference size
+	private OptFields opts;
+	
+	private static class OptFields implements Serializable{
+		private AbstractHyperlinkAdv hyperlink;
+		private AbstractCommentAdv comment;
+		private AbstractRichTextAdv richText;
+	}
+
+	private OptFields getOpts(boolean create){
+		if(opts==null && create){
+			opts = new OptFields();
+		}
+		return opts;
+	}
 
 	public CellImpl(AbstractRowAdv row) {
 		this.row = row;
@@ -173,7 +181,11 @@ public class CellImpl extends AbstractCellAdv {
 		}
 		clearFormulaResultCache();
 		value = null;
-		richText = null;
+		
+		OptFields opts = getOpts(false); 
+		if(opts!=null){
+			opts.richText = null;
+		};
 		type = CellType.BLANK;
 	}
 
@@ -324,34 +336,37 @@ public class CellImpl extends AbstractCellAdv {
 
 	@Override
 	public NHyperlink getHyperlink() {
-		return hyperlink;
+		OptFields opts = getOpts(false);
+		return opts==null?null:opts.hyperlink;
 	}
 
 	@Override
 	public void setHyperlink(NHyperlink hyperlink) {
 		Validations.argInstance(hyperlink, AbstractHyperlinkAdv.class);
-		this.hyperlink = (AbstractHyperlinkAdv)hyperlink;
+		getOpts(true).hyperlink = (AbstractHyperlinkAdv)hyperlink;
 	}
 	
 	@Override
 	public NComment getComment() {
-		return comment;
+		OptFields opts = getOpts(false);
+		return opts==null?null:opts.comment;
 	}
 
 	@Override
 	public void setComment(NComment comment) {
 		Validations.argInstance(comment, AbstractCommentAdv.class);
-		this.comment = (AbstractCommentAdv)comment;
+		getOpts(true).comment = (AbstractCommentAdv)comment;
 	}
 
 	@Override
 	public void setRichText(NRichText text) {
 		Validations.argInstance(text, AbstractRichTextAdv.class);
-		this.richText = (AbstractRichTextAdv)text;
+		getOpts(true).richText = (AbstractRichTextAdv)text;
 	}
 
 	@Override
 	public NRichText getRichText() {
-		return richText;
+		OptFields opts = getOpts(false);
+		return opts==null?null:opts.richText;
 	}
 }
