@@ -144,6 +144,8 @@ public interface NSheet {
 	public boolean isAutoFilterMode();
 
 
+	public NDataGrid getDataGrid();
 	
+	public void setDataGrid(NDataGrid dataGrid);
 	
 }

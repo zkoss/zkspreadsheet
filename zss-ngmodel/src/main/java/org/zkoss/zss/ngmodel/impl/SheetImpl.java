@@ -35,6 +35,7 @@ import org.zkoss.zss.ngmodel.NCell;
 import org.zkoss.zss.ngmodel.NChart;
 import org.zkoss.zss.ngmodel.NColumn;
 import org.zkoss.zss.ngmodel.NColumnArray;
+import org.zkoss.zss.ngmodel.NDataGrid;
 import org.zkoss.zss.ngmodel.NPicture;
 import org.zkoss.zss.ngmodel.NPicture.Format;
 import org.zkoss.zss.ngmodel.NPrintInfo;
@@ -55,6 +56,8 @@ public class SheetImpl extends AbstractSheetAdv {
 	private final String id;
 	
 	private boolean protect;
+	
+	private NDataGrid dataGrid;
 	
 	private final IndexPool<AbstractRowAdv> rows = new IndexPool<AbstractRowAdv>(){
 		private static final long serialVersionUID = 1L;
@@ -413,6 +416,11 @@ public class SheetImpl extends AbstractSheetAdv {
 	public void insertRow(int rowIdx, int size) {
 		checkOrphan();
 		if(size<=0) return;
+		NDataGrid dg = getDataGrid();
+		if(!dg.supportInsertDelete()){
+			throw new InvalidateModelOpException("doesn't support insert/delete");
+		}
+		dg.insertRow(rowIdx, size);
 		
 		rows.insert(rowIdx, size);
 		
@@ -511,6 +519,11 @@ public class SheetImpl extends AbstractSheetAdv {
 	public void deleteRow(int rowIdx, int size) {
 		checkOrphan();
 		if(size<=0) return;
+		NDataGrid dg = getDataGrid();
+		if(!dg.supportInsertDelete()){
+			throw new InvalidateModelOpException("doesn't support insert/delete");
+		}
+		dg.deleteRow(rowIdx, size);
 		
 		//clear before move relation
 		for(AbstractRowAdv row:rows.subValues(rowIdx,rowIdx+size)){
@@ -580,6 +593,12 @@ public class SheetImpl extends AbstractSheetAdv {
 		checkOrphan();
 		if(size<=0) return;
 		
+		NDataGrid dg = getDataGrid();
+		
+		if(!dg.supportInsertDelete()){
+			throw new InvalidateModelOpException("doesn't support insert/delete");
+		}
+		dg.insertColumn(columnIdx, size);
 		
 		insertAndSplitColumnArray(columnIdx,size);
 		
@@ -672,6 +691,11 @@ public class SheetImpl extends AbstractSheetAdv {
 	public void deleteColumn(int columnIdx, int size) {
 		checkOrphan();
 		if(size<=0) return;
+		NDataGrid dg = getDataGrid();
+		if(!dg.supportInsertDelete()){
+			throw new InvalidateModelOpException("doesn't support insert/delete");
+		}
+		dg.deleteColumn(columnIdx, size);
 		
 		deleteAndShrinkColumnArray(columnIdx,size);
 		
@@ -1011,5 +1035,17 @@ public class SheetImpl extends AbstractSheetAdv {
 		return false;
 	}
 
+	@Override
+	public NDataGrid getDataGrid() {
+		if(dataGrid==null){
+			dataGrid = new DataGridImpl();
+		}
+		return dataGrid;
+	}
+
+	@Override
+	public void setDataGrid(NDataGrid dataGrid) {
+		this.dataGrid = dataGrid;
+	}
 
 }

@@ -68,6 +68,7 @@ public abstract class AbstractCellAdv implements NCell,LinkedModelObject,Seriali
 	/*package*/ abstract void evalFormula();
 	/*package*/ abstract Object getValue(boolean evaluatedVal);
 	/*package*/ abstract NCellStyle getCellStyle(boolean local);
+	/*package*/ abstract void clearValueForSet(boolean clearDependency);
 	
 	@Override
 	public Object getValue(){
@@ -159,13 +160,14 @@ public abstract class AbstractCellAdv implements NCell,LinkedModelObject,Seriali
 		checkOrphan();
 		Validations.argNotNull(formula);
 		//for a formula, we should clear it's value before paring/create new dependency)
-		clearValue();
+		if(getType()==CellType.FORMULA){
+			clearValueForSet(true);
+		}
 		
 		FormulaEngine fe = EngineFactory.getInstance().createFormulaEngine();
 		FormulaExpression expr = fe.parse(formula, new FormulaParseContext(this ,new RefImpl(this)));
 		setValue(expr);
 	}
-	
 
 	@Override
 	public String getFormulaValue() {
@@ -193,5 +195,8 @@ public abstract class AbstractCellAdv implements NCell,LinkedModelObject,Seriali
 		setComment(comment);
 		return comment;
 	}
+	
 	/*package*/ abstract void setIndex(int newidx);
+	/*package*/ abstract Object getLocalValue();
+	/*package*/ abstract void setLocalValue(Object value);
 }

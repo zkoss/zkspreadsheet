@@ -47,7 +47,7 @@ public class CellImpl extends AbstractCellAdv {
 	private AbstractRowAdv row;
 	private int index;
 	private CellType type = CellType.BLANK;
-	private Object value = null;
+	private Object localValue = null;
 	private AbstractCellStyleAdv cellStyle;
 	transient private FormulaResultWrap formulaResult;// cache
 	
@@ -158,7 +158,7 @@ public class CellImpl extends AbstractCellAdv {
 		if (type == CellType.FORMULA && formulaResult == null) {
 			FormulaEngine fe = EngineFactory.getInstance()
 					.createFormulaEngine();
-			formulaResult = new FormulaResultWrap(fe.evaluate((FormulaExpression) value,
+			formulaResult = new FormulaResultWrap(fe.evaluate((FormulaExpression) getDataGridValue(),
 					new FormulaEvaluationContext(this)));
 		}
 	}
@@ -173,22 +173,36 @@ public class CellImpl extends AbstractCellAdv {
 
 	@Override
 	public void clearValue() {
-		clearValue(true);
-	}
-	
-	private void clearValue(boolean clearDependency) {
 		checkOrphan();
-		if(clearDependency){
-			clearFormulaDependency();
-		}
+		//clear dg first, it might throw invalidate model operation exception
+		setDataGridValue(null);
+		
+		clearFormulaDependency();
 		clearFormulaResultCache();
-		value = null;
 		
 		OptFields opts = getOpts(false); 
 		if(opts!=null){
 			opts.richText = null;
 		};
 		type = CellType.BLANK;
+	}
+	
+	
+	/*package*/ void clearValueForSet(boolean clearDependency) {
+		checkOrphan();
+		
+		//in some situation, we should clear dependency (e.g. old type and new type are both formula)
+		if(clearDependency){
+			clearFormulaDependency();
+		}
+		clearFormulaResultCache();
+		
+		OptFields opts = getOpts(false); 
+		if(opts!=null){
+			opts.richText = null;
+		};
+		
+		//shouldn't clear type and data grid value
 	}
 
 	@Override
@@ -213,12 +227,9 @@ public class CellImpl extends AbstractCellAdv {
 	}
 	
 	private void clearFormulaDependency(){
-		if (type == CellType.FORMULA) {
-			// clear depends
-			Ref ref = new RefImpl(this);
+		Ref ref = new RefImpl(this);
 			((AbstractBookSeriesAdv) getSheet().getBook().getBookSeries())
 					.getDependencyTable().clearDependents(ref);
-		}
 	}
 
 	@Override
@@ -227,22 +238,34 @@ public class CellImpl extends AbstractCellAdv {
 			evalFormula();
 			return this.formulaResult.getValue();
 		}
-		return value;
+		return getDataGridValue();
 	}
 
 	private boolean isFormula(String string) {
 		return string != null && string.startsWith("=") && string.length() > 1;
 	}
+	
+	private Object getDataGridValue(){
+		checkOrphan();
+		return row.getSheet().getDataGrid().getValue(this);
+	}
+	
+	private void setDataGridValue(Object value){
+		checkOrphan();
+		row.getSheet().getDataGrid().setValue(this,value);
+	}
 
 	@Override
 	public void setValue(Object newvalue) {
+		Object value = getDataGridValue();
 		if (value != null && value.equals(newvalue)) {
 			return;
 		}
-		clearValue(!(newvalue instanceof FormulaExpression));
-
+		
+		CellType type;
+		
 		if (newvalue == null) {
-			// nothing
+			type = CellType.BLANK;
 		} else if (newvalue instanceof String) {
 			if ("".equals(newvalue)) {
 				type = CellType.BLANK;
@@ -273,9 +296,13 @@ public class CellImpl extends AbstractCellAdv {
 							+ newvalue
 							+ ", supports NULL, String, Date, Number and Byte(as Error Code)");
 		}
-		value = newvalue;
+
+		//should't clear dependency if new type is formula, it clear the dependency already when eval
+		clearValueForSet(this.type==CellType.FORMULA && type !=CellType.FORMULA);
+		this.type = type;
+		setDataGridValue(newvalue);
 	}
-	
+
 	private class FormulaResultWrap implements Serializable{
 		private static final long serialVersionUID = 1L;
 		
@@ -375,5 +402,15 @@ public class CellImpl extends AbstractCellAdv {
 	@Override
 	void setIndex(int newidx) {
 		this.index = newidx;
+	}
+
+	@Override
+	Object getLocalValue() {
+		return localValue;
+	}
+
+	@Override
+	void setLocalValue(Object value) {
+		this.localValue = value;
 	}
 }

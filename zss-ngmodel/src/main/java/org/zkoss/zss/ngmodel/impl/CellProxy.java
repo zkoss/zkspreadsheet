@@ -167,6 +167,11 @@ class CellProxy extends AbstractCellAdv {
 		if (proxy != null)
 			proxy.clearValue();
 	}
+	/*package*/ void clearValueForSet(boolean clearDependency) {
+		loadProxy();
+		if (proxy != null)
+			proxy.clearValueForSet(clearDependency);
+	}
 
 	@Override
 	public void clearFormulaResultCache() {
@@ -255,6 +260,17 @@ class CellProxy extends AbstractCellAdv {
 	@Override
 	void setIndex(int newidx) {
 		throw new UnsupportedOperationException("readonly");
+	}
+
+	@Override
+	Object getLocalValue() {
+		loadProxy();
+		return proxy == null ? null:proxy.getLocalValue();
+	}
+
+	@Override
+	void setLocalValue(Object value) {
+		throw new UnsupportedOperationException("unsupport");
 	}
 
 }
