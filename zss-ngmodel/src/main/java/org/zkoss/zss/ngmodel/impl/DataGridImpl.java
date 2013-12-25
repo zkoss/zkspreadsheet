@@ -1,39 +1,47 @@
 package org.zkoss.zss.ngmodel.impl;
 
 import java.io.Serializable;
+import java.util.Iterator;
 
 import org.zkoss.zss.ngmodel.NCell;
 import org.zkoss.zss.ngmodel.NDataGrid;
+import org.zkoss.zss.ngmodel.NDataRow;
+import org.zkoss.zss.ngmodel.NSheet;
 
 public class DataGridImpl implements NDataGrid,Serializable {
-	
-	public DataGridImpl() {
+	private static final long serialVersionUID = 1L;
+	private NSheet sheet;
+	public DataGridImpl(NSheet sheet) {
+		this.sheet = sheet;
 	}
 
 	@Override
-	public Object getValue(NCell cell) {
+	public Object getValue(int rowIdx,int columnIdx) {
+		NCell cell = sheet.getCell(rowIdx, columnIdx);
 		if(cell instanceof AbstractCellAdv){
 			return ((AbstractCellAdv)cell).getLocalValue();
 		}
-		throw new IllegalStateException("doesn't allow to store value to cell "+cell);
+		throw new IllegalStateException("doesn't support to store value to cell "+cell);
 	}
 
 	@Override
-	public void setValue(NCell cell, Object value) {
+	public void setValue(int rowIdx,int columnIdx, Object value) {
+		NCell cell = sheet.getCell(rowIdx, columnIdx);
 		if(cell instanceof AbstractCellAdv){
 			((AbstractCellAdv)cell).setLocalValue(value);
 		}else{
-			throw new IllegalStateException("doesn't allow to store value to cell "+cell);
+			throw new IllegalStateException("doesn't support to store value to cell "+cell);
 		}
 	}
-
+	
 	@Override
-	public boolean valideValue(NCell cell, Object value) {
+	public boolean validateValue(int rowIdx,int columnIdx, Object value) {
 		return true;
 	}
 
+
 	@Override
-	public boolean supportInsertDelete() {
+	public boolean supportOperations() {
 		return true;
 	}
 
@@ -55,6 +63,17 @@ public class DataGridImpl implements NDataGrid,Serializable {
 	@Override
 	public void deleteColumn(int rowIdx, int size) {
 		//don't need to do anything, we store data in cell local value
+	}
+
+	@Override
+	public boolean supportDataIterator() {
+		return false;
+	}
+
+	@Override
+	public Iterator<NDataRow> getDataRowIterator() {
+		//not support
+		return null;
 	}
 
 }

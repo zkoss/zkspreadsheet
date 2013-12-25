@@ -22,6 +22,7 @@ import java.util.Date;
 
 import org.zkoss.zss.ngmodel.CellRegion;
 import org.zkoss.zss.ngmodel.ErrorValue;
+import org.zkoss.zss.ngmodel.InvalidateModelOpException;
 import org.zkoss.zss.ngmodel.NCellStyle;
 import org.zkoss.zss.ngmodel.NColumnArray;
 import org.zkoss.zss.ngmodel.NComment;
@@ -247,12 +248,20 @@ public class CellImpl extends AbstractCellAdv {
 	
 	private Object getDataGridValue(){
 		checkOrphan();
-		return row.getSheet().getDataGrid().getValue(this);
+		return row.getSheet().getDataGrid().getValue(getRowIndex(),getColumnIndex());
+	}
+	
+
+	private void validateDataGridValue(Object value) {
+		checkOrphan();
+		if(!row.getSheet().getDataGrid().validateValue(getRowIndex(),getColumnIndex(),value)){
+			throw new InvalidateModelOpException("the value is not allow to be stored:"+value);
+		}
 	}
 	
 	private void setDataGridValue(Object value){
 		checkOrphan();
-		row.getSheet().getDataGrid().setValue(this,value);
+		row.getSheet().getDataGrid().setValue(getRowIndex(),getColumnIndex(),value);
 	}
 
 	@Override
@@ -297,10 +306,12 @@ public class CellImpl extends AbstractCellAdv {
 							+ ", supports NULL, String, Date, Number and Byte(as Error Code)");
 		}
 
+		validateDataGridValue(newvalue);
 		//should't clear dependency if new type is formula, it clear the dependency already when eval
 		clearValueForSet(this.type==CellType.FORMULA && type !=CellType.FORMULA);
-		this.type = type;
+		
 		setDataGridValue(newvalue);
+		this.type = type;
 	}
 
 	private class FormulaResultWrap implements Serializable{

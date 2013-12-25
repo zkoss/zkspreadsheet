@@ -417,7 +417,7 @@ public class SheetImpl extends AbstractSheetAdv {
 		checkOrphan();
 		if(size<=0) return;
 		NDataGrid dg = getDataGrid();
-		if(!dg.supportInsertDelete()){
+		if(!dg.supportOperations()){
 			throw new InvalidateModelOpException("doesn't support insert/delete");
 		}
 		dg.insertRow(rowIdx, size);
@@ -520,7 +520,7 @@ public class SheetImpl extends AbstractSheetAdv {
 		checkOrphan();
 		if(size<=0) return;
 		NDataGrid dg = getDataGrid();
-		if(!dg.supportInsertDelete()){
+		if(!dg.supportOperations()){
 			throw new InvalidateModelOpException("doesn't support insert/delete");
 		}
 		dg.deleteRow(rowIdx, size);
@@ -595,7 +595,7 @@ public class SheetImpl extends AbstractSheetAdv {
 		
 		NDataGrid dg = getDataGrid();
 		
-		if(!dg.supportInsertDelete()){
+		if(!dg.supportOperations()){
 			throw new InvalidateModelOpException("doesn't support insert/delete");
 		}
 		dg.insertColumn(columnIdx, size);
@@ -692,7 +692,7 @@ public class SheetImpl extends AbstractSheetAdv {
 		checkOrphan();
 		if(size<=0) return;
 		NDataGrid dg = getDataGrid();
-		if(!dg.supportInsertDelete()){
+		if(!dg.supportOperations()){
 			throw new InvalidateModelOpException("doesn't support insert/delete");
 		}
 		dg.deleteColumn(columnIdx, size);
@@ -1038,7 +1038,7 @@ public class SheetImpl extends AbstractSheetAdv {
 	@Override
 	public NDataGrid getDataGrid() {
 		if(dataGrid==null){
-			dataGrid = new DataGridImpl();
+			dataGrid = new DataGridImpl(this);
 		}
 		return dataGrid;
 	}

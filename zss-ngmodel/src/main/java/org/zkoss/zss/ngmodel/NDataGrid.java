@@ -1,4 +1,7 @@
 package org.zkoss.zss.ngmodel;
+
+import java.util.Iterator;
+
 /**
  * data grid to store cell data.
  * @author dennis
@@ -6,16 +9,22 @@ package org.zkoss.zss.ngmodel;
  */
 public interface NDataGrid {
 
-	public Object getValue(NCell cell);
+	//basic storage method?
+	public Object getValue(int row, int column);
+	public void setValue(int row, int column, Object value);
 	
-	public void setValue(NCell cell, Object value);
 	
-	public boolean supportInsertDelete();
+	//support operations
+	public boolean supportOperations();
 	public void insertRow(int rowIdx, int size);
 	public void deleteRow(int rowIdx, int size);
 	public void insertColumn(int rowIdx, int size);
 	public void deleteColumn(int rowIdx, int size);
 	
-	//TODO
-	public boolean valideValue(NCell cell, Object value);
+	//
+	public boolean supportDataIterator();
+	public Iterator<NDataRow> getDataRowIterator();
+	
+//	//TODO
+	public boolean validateValue(int row, int column, Object value);
 }
