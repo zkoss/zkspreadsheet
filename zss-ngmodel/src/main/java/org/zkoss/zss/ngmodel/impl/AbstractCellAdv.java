@@ -193,4 +193,5 @@ public abstract class AbstractCellAdv implements NCell,LinkedModelObject,Seriali
 		setComment(comment);
 		return comment;
 	}
+	/*package*/ abstract void setIndex(int newidx);
 }

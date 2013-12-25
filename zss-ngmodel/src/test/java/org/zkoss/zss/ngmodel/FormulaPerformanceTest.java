@@ -51,6 +51,21 @@ public class FormulaPerformanceTest {
 		System.out.println("=== NG Model ===");
 		testPerformanceAndMemory(true);
 	}
+	
+//	@Test
+	public void testNGMemory(){
+		boolean ngmodel = true;
+		Object book = createModel(ngmodel);
+		evaluation(ngmodel, book, 1.0);
+		modifyFirstColumn(ngmodel, book, 2.0);
+		evaluation(ngmodel, book, 2.0);
+		//
+		System.out.println(">>>>>>> go and use MAT");
+		try {
+			Thread.sleep(200000);
+		} catch (InterruptedException e) {e.printStackTrace();
+		}
+	}
 
 	private void testPerformanceAndMemory(boolean ngmodel) {
 		// base line

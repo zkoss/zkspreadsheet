@@ -103,27 +103,23 @@ class RowProxy extends AbstractRowAdv{
 	
 	@Override
 	AbstractCellAdv getCell(int columnIdx, boolean proxy) {
-		throw new UnsupportedOperationException("not implement");
+		throw new UnsupportedOperationException("readonly");
 	}
 	@Override
 	AbstractCellAdv getOrCreateCell(int columnIdx) {
-		throw new UnsupportedOperationException("not implement");
+		throw new UnsupportedOperationException("readonly");
 	}
 	@Override
 	void clearCell(int start, int end) {
-		throw new UnsupportedOperationException("not implement");
+		throw new UnsupportedOperationException("readonly");
 	}
 	@Override
 	void insertCell(int start, int size) {
-		throw new UnsupportedOperationException("not implement");
+		throw new UnsupportedOperationException("readonly");
 	}
 	@Override
 	void deleteCell(int start, int size) {
-		throw new UnsupportedOperationException("not implement");
-	}
-	@Override
-	int getCellIndex(AbstractCellAdv cell) {
-		throw new UnsupportedOperationException("not implement");
+		throw new UnsupportedOperationException("readonly");
 	}
 	@Override
 	public void destroy() {
@@ -191,5 +187,9 @@ class RowProxy extends AbstractRowAdv{
 			return proxy.getCellIterator();
 		}
 		return Collections.EMPTY_LIST.iterator();
+	}
+	@Override
+	void setIndex(int newidx) {
+		throw new UnsupportedOperationException("readonly");
 	}
 }

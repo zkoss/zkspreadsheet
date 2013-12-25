@@ -45,6 +45,7 @@ import org.zkoss.zss.ngmodel.util.Validations;
 public class CellImpl extends AbstractCellAdv {
 	private static final long serialVersionUID = 1L;
 	private AbstractRowAdv row;
+	private int index;
 	private CellType type = CellType.BLANK;
 	private Object value = null;
 	private AbstractCellStyleAdv cellStyle;
@@ -67,8 +68,9 @@ public class CellImpl extends AbstractCellAdv {
 		return opts;
 	}
 
-	public CellImpl(AbstractRowAdv row) {
+	public CellImpl(AbstractRowAdv row, int index) {
 		this.row = row;
+		this.index = index;
 	}
 
 	@Override
@@ -90,7 +92,7 @@ public class CellImpl extends AbstractCellAdv {
 	@Override
 	public int getColumnIndex() {
 		checkOrphan();
-		return row.getCellIndex(this);
+		return index;
 	}
 
 	@Override
@@ -368,5 +370,10 @@ public class CellImpl extends AbstractCellAdv {
 	public NRichText getRichText() {
 		OptFields opts = getOpts(false);
 		return opts==null?null:opts.richText;
+	}
+	
+	@Override
+	void setIndex(int newidx) {
+		this.index = newidx;
 	}
 }

@@ -33,10 +33,9 @@ import java.util.TreeMap;
  * @author dennis
  * @since 3.5.0
  */
-/*package*/ class BiIndexPool<T> implements Serializable{
+/*package*/ abstract class IndexPool<T> implements Serializable{
 	private static final long serialVersionUID = 1L;
 	private TreeMap<Integer,T> objs = new TreeMap<Integer,T>();
-	private HashMap<T,Integer> objsReverse = new HashMap<T,Integer>(); 
 	
 	public T get(int idx) {
 		return objs.get(idx);
@@ -44,16 +43,7 @@ import java.util.TreeMap;
 	
 	public T put(int idx, T obj){
 		T old = objs.put(idx, obj);
-		if(old!=null){
-			objsReverse.remove(old);
-		}
-		objsReverse.put(obj, idx);
 		return old;
-	}
-	
-	public int get(T obj){
-		Integer idx = objsReverse.get(obj);
-		return idx==null?-1:idx;
 	}
 	
 	public int firstKey(){
@@ -72,7 +62,6 @@ import java.util.TreeMap;
 		while(iter.hasNext()){
 			Entry<Integer,T> entry = iter.next();
 			T obj = entry.getValue();
-			objsReverse.remove(obj);
 			remove.add(obj);
 			iter.remove();
 		}
@@ -92,13 +81,16 @@ import java.util.TreeMap;
 			T obj = entry.getValue();
 			
 			objs.remove(idx);
-			objsReverse.remove(obj);
+			
+			resetIndex(newidx,obj);
 			
 			objs.put(newidx, obj);
-			objsReverse.put(obj, newidx);
+			
 		}
 	}
 	
+	abstract void resetIndex(int newidx, T obj);
+
 	public Collection<T> delete(int start, int size) {
 		if(size<=0) return Collections.EMPTY_LIST;
 		//get last,
@@ -110,10 +102,9 @@ import java.util.TreeMap;
 			int newidx = idx-size;
 			T obj = entry.getValue();
 			objs.remove(idx);
-			objsReverse.remove(obj);
 			if(newidx>=start){
+				resetIndex(newidx,obj);
 				objs.put(newidx, obj);
-				objsReverse.put(obj, newidx);
 			}else{
 				remove.add(obj);
 			}
@@ -135,7 +126,6 @@ import java.util.TreeMap;
 
 	public void clear() {
 		objs.clear();
-		objsReverse.clear();
 	}
 	
 	

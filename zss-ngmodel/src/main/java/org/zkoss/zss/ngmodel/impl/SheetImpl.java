@@ -16,6 +16,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.ngmodel.impl;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -23,7 +24,9 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.SortedMap;
+import java.util.TreeMap;
 
 import org.zkoss.zss.ngmodel.CellRegion;
 import org.zkoss.zss.ngmodel.InvalidateModelOpException;
@@ -53,7 +56,12 @@ public class SheetImpl extends AbstractSheetAdv {
 	
 	private boolean protect;
 	
-	private final BiIndexPool<AbstractRowAdv> rows = new BiIndexPool<AbstractRowAdv>();
+	private final IndexPool<AbstractRowAdv> rows = new IndexPool<AbstractRowAdv>(){
+		private static final long serialVersionUID = 1L;
+		@Override
+		void resetIndex(int newidx, AbstractRowAdv obj) {
+			obj.setIndex(newidx);
+		}};
 //	private final BiIndexPool<ColumnAdv> columns = new BiIndexPool<ColumnAdv>();
 	private final ColumnArrayPool columnArrays = new ColumnArrayPool();
 	
@@ -113,15 +121,12 @@ public class SheetImpl extends AbstractSheetAdv {
 	AbstractRowAdv getOrCreateRow(int rowIdx){
 		AbstractRowAdv rowObj = rows.get(rowIdx);
 		if(rowObj == null){
-			rowObj = new RowImpl(this);
+			rowObj = new RowImpl(this,rowIdx);
 			rows.put(rowIdx, rowObj);
 		}
 		return rowObj;
 	}
-	@Override
-	int getRowIndex(AbstractRowAdv row){
-		return rows.get(row);
-	}
+
 	@Override
 	public NColumn getColumn(int columnIdx) {
 		return getColumn(columnIdx,true);

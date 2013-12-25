@@ -252,4 +252,9 @@ class CellProxy extends AbstractCellAdv {
 		return proxy == null ? null : proxy.getRichText();
 	}
 
+	@Override
+	void setIndex(int newidx) {
+		throw new UnsupportedOperationException("readonly");
+	}
+
 }

@@ -30,7 +30,7 @@ public abstract class AbstractSheetAdv implements NSheet,LinkedModelObject,Seria
 
 	/*package*/ abstract AbstractRowAdv getRow(int rowIdx, boolean proxy);
 	/*package*/ abstract AbstractRowAdv getOrCreateRow(int rowIdx);
-	/*package*/ abstract int getRowIndex(AbstractRowAdv row);
+//	/*package*/ abstract int getRowIndex(AbstractRowAdv row);
 	
 	/*package*/ abstract NColumn getColumn(int columnIdx, boolean proxy);
 	/*package*/ abstract AbstractColumnArrayAdv getOrSplitColumnArray(int index);

@@ -31,17 +31,26 @@ public class RowImpl extends AbstractRowAdv {
 	private static final long serialVersionUID = 1L;
 
 	private AbstractSheetAdv sheet;
+	private int index;
+	
+	private final IndexPool<AbstractCellAdv> cells = new IndexPool<AbstractCellAdv>(){
+		private static final long serialVersionUID = 1L;
 
-	private final BiIndexPool<AbstractCellAdv> cells = new BiIndexPool<AbstractCellAdv>();
+		@Override
+		void resetIndex(int newidx, AbstractCellAdv obj) {
+			obj.setIndex(newidx);
+		}};
 
 	private AbstractCellStyleAdv cellStyle;
+	
 	
 	private Integer height;
 	private boolean hidden = false;
 	private boolean customHeight = false;
 
-	public RowImpl(AbstractSheetAdv sheet) {
+	public RowImpl(AbstractSheetAdv sheet, int index) {
 		this.sheet = sheet;
+		this.index = index;
 	}
 
 	@Override
@@ -53,7 +62,7 @@ public class RowImpl extends AbstractRowAdv {
 	@Override
 	public int getIndex() {
 		checkOrphan();
-		return sheet.getRowIndex(this);
+		return index;
 	}
 
 	@Override
@@ -76,15 +85,10 @@ public class RowImpl extends AbstractRowAdv {
 		AbstractCellAdv cellObj = cells.get(columnIdx);
 		if (cellObj == null) {
 			checkOrphan();
-			cellObj = new CellImpl(this);
+			cellObj = new CellImpl(this, columnIdx);
 			cells.put(columnIdx, cellObj);
 		}
 		return cellObj;
-	}
-
-	@Override
-	int getCellIndex(AbstractCellAdv cell) {
-		return cells.get(cell);
 	}
 
 	@Override
@@ -206,5 +210,10 @@ public class RowImpl extends AbstractRowAdv {
 	@Override
 	public Iterator<AbstractCellAdv> getCellIterator() {
 		return Collections.unmodifiableCollection(cells.values()).iterator();
+	}
+
+	@Override
+	void setIndex(int newidx) {
+		this.index = newidx;
 	}
 }
