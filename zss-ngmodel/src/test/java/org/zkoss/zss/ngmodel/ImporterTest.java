@@ -13,6 +13,7 @@ import org.zkoss.zss.ngapi.impl.imexp.ExcelImportFactory;
 import org.zkoss.zss.ngmodel.NChart.NBarDirection;
 import org.zkoss.zss.ngmodel.NChart.NChartGrouping;
 import org.zkoss.zss.ngmodel.NChart.NChartLegendPosition;
+import org.zkoss.zss.ngmodel.NChart.NChartType;
 import org.zkoss.zss.ngmodel.chart.NGeneralChartData;
 
 /**
@@ -20,6 +21,7 @@ import org.zkoss.zss.ngmodel.chart.NGeneralChartData;
  */
 public class ImporterTest extends ImExpTestBase {
 	
+	private static final URL DEFAULT_CHART_IMPORT_FILE = ImporterTest.class.getResource("book/chart.xlsx");
 	private NImporter importer; 
 	
 	/**
@@ -208,10 +210,11 @@ public class ImporterTest extends ImExpTestBase {
 	
 	@Test
 	public void barChart(){
-		NBook book = ImExpTestUtil.loadBook(ImporterTest.class.getResource("book/chart.xlsx"), "Chart");
-		NSheet sheet = book.getSheetByName("BarChart");
+		NBook book = ImExpTestUtil.loadBook(DEFAULT_CHART_IMPORT_FILE, "Chart");
+		NSheet sheet = book.getSheetByName("Bar");
 		NChart barChart = sheet.getChart(0);
 		
+		assertEquals(NChartType.BAR,barChart.getType());
 		assertEquals("Bar Chart Title",barChart.getTitle());
 		
 		assertEquals(480, barChart.getAnchor().getWidth());
@@ -233,6 +236,80 @@ public class ImporterTest extends ImExpTestBase {
 		assertEquals(0.3427, chartData.getSeries(0).getValue(0));
 		assertEquals(0.2599, chartData.getSeries(0).getValue(1));
 		assertEquals(0.2268, chartData.getSeries(0).getValue(2));
+		
+		NChart barChart3D = sheet.getChart(1);
+		assertEquals(true, barChart3D.isThreeD());
+	}
+	
+	@Test
+	public void columnChart(){
+		NBook book = ImExpTestUtil.loadBook(DEFAULT_CHART_IMPORT_FILE, "Chart");
+		NSheet sheet = book.getSheetByName("Column");
+		NChart columnChart = sheet.getChart(0);
+		assertEquals(NChartType.COLUMN,columnChart.getType());
+		assertEquals(NBarDirection.VERTICAL, columnChart.getBarDirection());
+		assertEquals(NChartLegendPosition.TOP, columnChart.getLegendPosition());
+		
+		NGeneralChartData chartData = (NGeneralChartData)columnChart.getData();
+		assertEquals(4, chartData.getNumOfCategory());
+	
+		NChart column3dChart = sheet.getChart(1);
+		assertEquals(NChartGrouping.STACKED, column3dChart.getGrouping());
+	}
+	
+	@Test
+	public void areaChart(){
+		NBook book = ImExpTestUtil.loadBook(DEFAULT_CHART_IMPORT_FILE, "Chart");
+		NSheet sheet = book.getSheetByName("Area");
+		NChart areaChart = sheet.getChart(0);
+		assertEquals(NChartType.AREA,areaChart.getType());
+		
+		NGeneralChartData chartData = (NGeneralChartData)areaChart.getData();
+		assertEquals(8, chartData.getNumOfCategory());
+		
+		NChart area3dChart = sheet.getChart(1);
+		assertEquals(NChartGrouping.STANDARD, area3dChart.getGrouping());
+		assertEquals(NChartLegendPosition.BOTTOM, area3dChart.getLegendPosition());
+	}
+	
+	@Test
+	public void doughnutChart(){
+		NBook book = ImExpTestUtil.loadBook(DEFAULT_CHART_IMPORT_FILE, "Chart");
+		NSheet sheet = book.getSheetByName("Doughnut");
+		NChart doughnutChart = sheet.getChart(0);
+		assertEquals(NChartType.DOUGHNUT, doughnutChart.getType());
+		
+		NGeneralChartData chartData = (NGeneralChartData)doughnutChart.getData();
+		assertEquals(8, chartData.getNumOfCategory());
+	}
+	
+	@Test
+	public void bubbleChart(){
+		NBook book = ImExpTestUtil.loadBook(DEFAULT_CHART_IMPORT_FILE, "Chart");
+		NSheet sheet = book.getSheetByName("Bubble");
+		NChart bubbleChart = sheet.getChart(0);
+//		assertEquals("Sales",bubbleChart.getTitle()); FIXME
+		assertEquals(NChartType.BUBBLE, bubbleChart.getType());
+		
+		NGeneralChartData chartData = (NGeneralChartData)bubbleChart.getData();
+		assertEquals(0, chartData.getNumOfCategory());
+		assertEquals(1, chartData.getNumOfSeries());
+	}
+	
+	@Test
+	public void scatterChart(){
+		NBook book = ImExpTestUtil.loadBook(DEFAULT_CHART_IMPORT_FILE, "Chart");
+		NSheet sheet = book.getSheetByName("Scatter");
+		NChart scatterChart = sheet.getChart(0);
+		assertEquals(NChartType.SCATTER, scatterChart.getType());
+		
+		NGeneralChartData chartData = (NGeneralChartData)scatterChart.getData();
+		assertEquals(3, chartData.getNumOfSeries());
+		assertEquals("Internet Explorer", chartData.getSeries(0).getName());
+		assertEquals(0.3427, chartData.getSeries(0).getYValue(0));
+		assertEquals(0.327, chartData.getSeries(0).getYValue(1));
+		assertEquals(0.3168, chartData.getSeries(0).getYValue(2));
+		
 	}
 }
 

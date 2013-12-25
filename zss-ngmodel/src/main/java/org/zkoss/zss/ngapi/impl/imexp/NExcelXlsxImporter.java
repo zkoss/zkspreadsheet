@@ -27,7 +27,6 @@ import org.w3c.dom.Node;
 import org.zkoss.poi.POIXMLDocumentPart;
 import org.zkoss.poi.ss.usermodel.*;
 import org.zkoss.poi.ss.usermodel.charts.*;
-import org.zkoss.poi.ss.util.*;
 import org.zkoss.poi.xssf.usermodel.*;
 import org.zkoss.poi.xssf.usermodel.charts.*;
 import org.zkoss.zss.ngmodel.*;
@@ -36,7 +35,6 @@ import org.zkoss.zss.ngmodel.NChart.NChartGrouping;
 import org.zkoss.zss.ngmodel.NChart.NChartLegendPosition;
 import org.zkoss.zss.ngmodel.NChart.NChartType;
 import org.zkoss.zss.ngmodel.chart.*;
-import org.zkoss.zss.ngmodel.util.SpreadsheetVersion;
 /**
  * Convert Excel XLSX format file to a Spreadsheet {@link NBook} model including following information:
  * Book:
@@ -110,53 +108,171 @@ public class NExcelXlsxImporter extends AbstractExcelImporter{
 			int height = getXSSFHeightInPx(poiSheet, clientAnchor);
 			NViewAnchor viewAnchor = new NViewAnchor(clientAnchor.getRow1(), clientAnchor.getCol1(), width, height);
 
+			NChart chart = null;
+			CategoryData categoryData = null;
+			//reference ChartHelper.drawXSSFChart()
 			switch(xssfChart.getChartType()){
-			case Bar:
-				NChart chart = sheet.addChart(NChartType.BAR, viewAnchor);
-				XSSFBarChartData chartData = new XSSFBarChartData(xssfChart);
-				chart.setBarDirection(convertBarDirection(chartData.getBarDirection()));
-				chart.setGrouping(convertGrouping(chartData.getGrouping()));
-				if (xssfChart.getTitle()!=null){
-					chart.setTitle(xssfChart.getTitle().getString());
-				}
-				chart.setThreeD(xssfChart.isSetView3D());
-				chart.setLegendPosition(convertLengendPosition(xssfChart.getOrCreateLegend().getPosition()));
-				
-				importSeries(chartData.getSeries(), chart);
+				case Area:
+					chart = sheet.addChart(NChartType.AREA, viewAnchor);
+					categoryData = new XSSFAreaChartData(xssfChart);
+					chart.setGrouping(convertGrouping(((XSSFAreaChartData)categoryData).getGrouping()));
+					break;
+				case Area3D:
+					chart = sheet.addChart(NChartType.AREA, viewAnchor);
+					categoryData = new XSSFArea3DChartData(xssfChart);
+					chart.setGrouping(convertGrouping(((XSSFArea3DChartData)categoryData).getGrouping()));
+					break;
+				case Bar:
+					chart = sheet.addChart(NChartType.BAR, viewAnchor);
+					categoryData = new XSSFBarChartData(xssfChart);
+					chart.setBarDirection(convertBarDirection(((XSSFBarChartData)categoryData).getBarDirection()));
+					chart.setGrouping(convertGrouping(((XSSFBarChartData)categoryData).getGrouping()));
+					break;
+				case Bar3D:
+					chart = sheet.addChart(NChartType.BAR, viewAnchor);
+					categoryData = new XSSFBar3DChartData(xssfChart);
+					chart.setBarDirection(convertBarDirection(((XSSFBar3DChartData)categoryData).getBarDirection()));
+					chart.setGrouping(convertGrouping(((XSSFBar3DChartData)categoryData).getGrouping()));
+					break;
+				case Bubble:
+					chart = sheet.addChart(NChartType.BUBBLE, viewAnchor);
+					XYZData xyzData = new XSSFBubbleChartData(xssfChart);
+					importXyzSeries(xyzData.getSeries(), chart);
+					break;
+				case Column:
+					chart = sheet.addChart(NChartType.COLUMN, viewAnchor);
+					categoryData = new XSSFColumnChartData(xssfChart);
+					chart.setBarDirection(convertBarDirection(((XSSFColumnChartData)categoryData).getBarDirection()));
+					chart.setGrouping(convertGrouping(((XSSFColumnChartData)categoryData).getGrouping()));
+					break;
+				case Column3D:
+					chart = sheet.addChart(NChartType.COLUMN, viewAnchor);
+					categoryData = new XSSFColumn3DChartData(xssfChart);
+					chart.setBarDirection(convertBarDirection(((XSSFColumn3DChartData)categoryData).getBarDirection()));
+					chart.setGrouping(convertGrouping(((XSSFColumn3DChartData)categoryData).getGrouping()));
+					break;
+				case Doughnut:
+					chart = sheet.addChart(NChartType.DOUGHNUT, viewAnchor);
+					categoryData = new XSSFDoughnutChartData(xssfChart);
+					break;
+				case Line:
+					chart = sheet.addChart(NChartType.LINE, viewAnchor);
+					categoryData = new XSSFLineChartData(xssfChart);
+					break;
+				case Line3D:
+					chart = sheet.addChart(NChartType.LINE, viewAnchor);
+					categoryData = new XSSFLine3DChartData(xssfChart);
+					break;
+				case Scatter:
+					chart = sheet.addChart(NChartType.SCATTER, viewAnchor);
+					XYData xyData =  new XSSFScatChartData(xssfChart);
+					importXySeries(xyData.getSeries(), chart);
+					break;
+				default:
+					//TODO ignore unsupported charts
+					continue;
 			}
 			
+			if (xssfChart.getTitle()!=null){
+				chart.setTitle(xssfChart.getTitle().getString());
+			}
+			chart.setThreeD(xssfChart.isSetView3D());
+			chart.setLegendPosition(convertLengendPosition(xssfChart.getOrCreateLegend().getPosition()));
+			if (categoryData != null){
+				importSeries(categoryData.getSeries(), chart);
+			}
 		}
 	}
 
 
+	/**
+	 * reference ChartHepler.prepareCategoryModel() 
+	 * @param seriesList
+	 * @param chart
+	 */
 	private void importSeries(List<? extends CategoryDataSerie> seriesList, NChart chart) {
-		for (CategoryDataSerie sourceSerie:seriesList){
-			String nameExpression = null;
+		for (CategoryDataSerie sourceSeries :seriesList){
 			//reference ChartHelper.prepareLabels()
-			if (sourceSerie.getCategories().isReference()){
-				((NGeneralChartData)chart.getData()).setCategoriesFormula(sourceSerie.getCategories().getFormulaString());
+			if (sourceSeries.getCategories().isReference()){
+				((NGeneralChartData)chart.getData()).setCategoriesFormula(sourceSeries.getCategories().getFormulaString());
 			}else{
 				//TODO get category label
 			}
-
-			//reference to ChartHelper.prepareTitle()
-			if (sourceSerie.getTitle().isReference()){
-				nameExpression = sourceSerie.getTitle().getFormulaString();
-			}else{
-				nameExpression = sourceSerie.getTitle().getTextString();
-			}
-			
-			String xValueExpression = null;
-			if (sourceSerie.getValues().isReference()){
-				xValueExpression = sourceSerie.getValues().getFormulaString();
-			}else{
-				//TODO get values
-			}
-			
+			String nameExpression = getTitleExpression(sourceSeries.getTitle());			
+			String xValueExpression = getValueExpression(sourceSeries.getValues());
 			NSeries series = ((NGeneralChartData)chart.getData()).addSeries();
 			series.setFormula(nameExpression, xValueExpression);
 		}
 	}
+	
+	private void importXySeries(List<? extends XYDataSerie> seriesList, NChart chart) {
+		for (XYDataSerie sourceSeries :seriesList){
+
+			NSeries series = ((NGeneralChartData)chart.getData()).addSeries();
+			series.setXYFormula(getTitleExpression(sourceSeries.getTitle()), 
+								getValueExpression(sourceSeries.getXs()), 
+								getValueExpression(sourceSeries.getYs()));
+		}
+	}
+
+	/**
+	 * reference ChartHepler.prepareXYZModel() 
+	 * @param seriesList
+	 * @param chart
+	 */
+	private void importXyzSeries(List<? extends XYZDataSerie> seriesList, NChart chart) {
+		for (XYZDataSerie sourceSeries :seriesList){
+			//reference to ChartHelper.prepareTitle()
+			String nameExpression = getTitleExpression(sourceSeries.getTitle());			
+			String xValueExpression = getValueExpression(sourceSeries.getXs());
+			String yValueExpression = getValueExpression(sourceSeries.getYs());
+			String zValueExpression = getValueExpression(sourceSeries.getZs());	
+			
+			NSeries series = ((NGeneralChartData)chart.getData()).addSeries();
+			series.setXYZFormula(nameExpression, xValueExpression, yValueExpression, zValueExpression);
+		}
+	}
+	
+	/**
+	 * reference ChartHelper.prepareTitle()
+	 * @param textSource
+	 * @return
+	 */
+	private String getTitleExpression(ChartTextSource textSource){
+		if (textSource.isReference()){
+			return textSource.getFormulaString();
+		}else{
+			return textSource.getTextString();
+		}
+	}
+	
+	/**
+	 * reference ChartHelper.prepareValues()
+	 * @param dataSource
+	 * @return
+	 */
+	private String getValueExpression(ChartDataSource<? extends Number> dataSource){
+		if (dataSource.isReference()){
+			return dataSource.getFormulaString();
+		}else{
+			StringBuilder expression = new StringBuilder("{");
+			int count = dataSource.getPointCount();
+			for (int i = 0; i < count; ++i) {
+				Number value = dataSource.getPointAt(i);
+				if (value == null){
+					expression.append("0");
+				}else{
+					expression.append(Double.toString(value.doubleValue()));
+				}
+				if (i != count-1){
+					expression.append(",");
+				}
+			}
+			expression.append("}");
+			return expression.toString();
+		}
+	}
+	
 	
 	private NChartLegendPosition convertLengendPosition(LegendPosition position){
 		switch(position){
