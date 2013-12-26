@@ -26,6 +26,7 @@ import org.zkoss.zss.ngmodel.InvalidateModelOpException;
 import org.zkoss.zss.ngmodel.NCellStyle;
 import org.zkoss.zss.ngmodel.NColumnArray;
 import org.zkoss.zss.ngmodel.NComment;
+import org.zkoss.zss.ngmodel.NCellValue;
 import org.zkoss.zss.ngmodel.NHyperlink;
 import org.zkoss.zss.ngmodel.NRichText;
 import org.zkoss.zss.ngmodel.NSheet;
@@ -47,8 +48,7 @@ public class CellImpl extends AbstractCellAdv {
 	private static final long serialVersionUID = 1L;
 	private AbstractRowAdv row;
 	private int index;
-	private CellType type = CellType.BLANK;
-	private Object localValue = null;
+	private NCellValue localValue = null;
 	private AbstractCellStyleAdv cellStyle;
 	transient private FormulaResultWrap formulaResult;// cache
 	
@@ -76,7 +76,8 @@ public class CellImpl extends AbstractCellAdv {
 
 	@Override
 	public CellType getType() {
-		return type;
+		NCellValue val = getDataGridValue();
+		return val==null?CellType.BLANK:val.getType();
 	}
 
 	@Override
@@ -156,11 +157,14 @@ public class CellImpl extends AbstractCellAdv {
 
 	@Override
 	protected void evalFormula() {
-		if (type == CellType.FORMULA && formulaResult == null) {
-			FormulaEngine fe = EngineFactory.getInstance()
-					.createFormulaEngine();
-			formulaResult = new FormulaResultWrap(fe.evaluate((FormulaExpression) getDataGridValue(),
-					new FormulaEvaluationContext(this)));
+		if (formulaResult == null) {
+			NCellValue val = getDataGridValue();
+			if(val!=null &&  val.getType() == CellType.FORMULA){
+				FormulaEngine fe = EngineFactory.getInstance()
+						.createFormulaEngine();
+				formulaResult = new FormulaResultWrap(fe.evaluate((FormulaExpression) val.getValue(),
+						new FormulaEvaluationContext(this)));
+			}
 		}
 	}
 
@@ -185,12 +189,14 @@ public class CellImpl extends AbstractCellAdv {
 		if(opts!=null){
 			opts.richText = null;
 		};
-		type = CellType.BLANK;
 	}
 	
 	
 	/*package*/ void clearValueForSet(boolean clearDependency) {
 		checkOrphan();
+		
+		//shouldn't clear type and data grid value
+		//setDataGridValue(null);
 		
 		//in some situation, we should clear dependency (e.g. old type and new type are both formula)
 		if(clearDependency){
@@ -202,16 +208,11 @@ public class CellImpl extends AbstractCellAdv {
 		if(opts!=null){
 			opts.richText = null;
 		};
-		
-		//shouldn't clear type and data grid value
 	}
 
 	@Override
 	public void clearFormulaResultCache() {
-		
-		// FIXME zss 3.5, hard code and must be modified
-		if(formulaResult!=null){
-			
+		if(formulaResult!=null){			
 			//only clear when there is a formula result, or poi will do full cache scan to clean blank.
 			EngineFactory.getInstance().createFormulaEngine().clearCache(new FormulaClearContext(this));
 		}
@@ -221,7 +222,7 @@ public class CellImpl extends AbstractCellAdv {
 	
 	@Override
 	public boolean isFormulaParsingError() {
-		if (type == CellType.FORMULA) {
+		if (getType() == CellType.FORMULA) {
 			return ((FormulaExpression)getValue(false)).hasError();
 		}
 		return false;
@@ -235,83 +236,86 @@ public class CellImpl extends AbstractCellAdv {
 
 	@Override
 	public Object getValue(boolean evaluatedVal) {
-		if (evaluatedVal && type == CellType.FORMULA) {
+		NCellValue val = getDataGridValue();
+		if (evaluatedVal && val!=null && val.getType() == CellType.FORMULA) {
 			evalFormula();
 			return this.formulaResult.getValue();
 		}
-		return getDataGridValue();
+		return val==null?null:val.getValue();
 	}
 
 	private boolean isFormula(String string) {
 		return string != null && string.startsWith("=") && string.length() > 1;
 	}
 	
-	private Object getDataGridValue(){
+	private NCellValue getDataGridValue(){
 		checkOrphan();
 		return row.getSheet().getDataGrid().getValue(getRowIndex(),getColumnIndex());
 	}
 	
 
-	private void validateDataGridValue(Object value) {
+	private void validateDataGridValue(NCellValue value) {
 		checkOrphan();
 		if(!row.getSheet().getDataGrid().validateValue(getRowIndex(),getColumnIndex(),value)){
 			throw new InvalidateModelOpException("the value is not allow to be stored:"+value);
 		}
 	}
 	
-	private void setDataGridValue(Object value){
+	private void setDataGridValue(NCellValue value){
 		checkOrphan();
 		row.getSheet().getDataGrid().setValue(getRowIndex(),getColumnIndex(),value);
 	}
 
 	@Override
-	public void setValue(Object newvalue) {
-		Object value = getDataGridValue();
-		if (value != null && value.equals(newvalue)) {
+	public void setValue(Object newVal) {
+		NCellValue oldVal = getDataGridValue();
+		if( (oldVal==null && newVal==null) ||
+			(oldVal != null && oldVal.getValue().equals(newVal))) {
 			return;
 		}
 		
-		CellType type;
+		CellType newType;
 		
-		if (newvalue == null) {
-			type = CellType.BLANK;
-		} else if (newvalue instanceof String) {
-			if ("".equals(newvalue)) {
-				type = CellType.BLANK;
-				newvalue = null;
-			} else if (isFormula((String) newvalue)) {
-				setFormulaValue(((String) newvalue).substring(1));
+		if (newVal == null) {
+			newType = CellType.BLANK;
+		} else if (newVal instanceof String) {
+			if ("".equals(newVal)) {
+				newType = CellType.BLANK;
+				newVal = null;
+			} else if (isFormula((String) newVal)) {
+				setFormulaValue(((String) newVal).substring(1));
 				return;// break;
 			} else {
-				type = CellType.STRING;
+				newType = CellType.STRING;
 			}
-		} else if (newvalue instanceof FormulaExpression) {
-			type = CellType.FORMULA;
-		} else if (newvalue instanceof Date) {
-			type = CellType.NUMBER;
-			newvalue = EngineFactory.getInstance().getCalendarUtil().dateToDoubleValue((Date)newvalue, false);
-		} else if (newvalue instanceof Boolean) {
-			type = CellType.BOOLEAN;
-		} else if (newvalue instanceof Double) {
-			type = CellType.NUMBER;
-		} else if (newvalue instanceof Number) {
-			type = CellType.NUMBER;
-			newvalue = ((Number)newvalue).doubleValue();
-		} else if (newvalue instanceof ErrorValue) {
-			type = CellType.ERROR;
+		} else if (newVal instanceof FormulaExpression) {
+			newType = CellType.FORMULA;
+		} else if (newVal instanceof Date) {
+			newType = CellType.NUMBER;
+			newVal = EngineFactory.getInstance().getCalendarUtil().dateToDoubleValue((Date)newVal, false);
+		} else if (newVal instanceof Boolean) {
+			newType = CellType.BOOLEAN;
+		} else if (newVal instanceof Double) {
+			newType = CellType.NUMBER;
+		} else if (newVal instanceof Number) {
+			newType = CellType.NUMBER;
+			newVal = ((Number)newVal).doubleValue();
+		} else if (newVal instanceof ErrorValue) {
+			newType = CellType.ERROR;
 		} else {
 			throw new IllegalArgumentException(
 					"unsupported type "
-							+ newvalue
+							+ newVal
 							+ ", supports NULL, String, Date, Number and Byte(as Error Code)");
 		}
 
-		validateDataGridValue(newvalue);
-		//should't clear dependency if new type is formula, it clear the dependency already when eval
-		clearValueForSet(this.type==CellType.FORMULA && type !=CellType.FORMULA);
 		
-		setDataGridValue(newvalue);
-		this.type = type;
+		NCellValue newCellVal = new NCellValue(newType,newVal);
+		validateDataGridValue(newCellVal);
+		//should't clear dependency if new type is formula, it clear the dependency already when eval
+		clearValueForSet(oldVal!=null && oldVal.getType()==CellType.FORMULA && newType !=CellType.FORMULA);
+		
+		setDataGridValue(newCellVal);
 	}
 
 	private class FormulaResultWrap implements Serializable{
@@ -416,12 +420,12 @@ public class CellImpl extends AbstractCellAdv {
 	}
 
 	@Override
-	Object getLocalValue() {
+	NCellValue getLocalValue() {
 		return localValue;
 	}
 
 	@Override
-	void setLocalValue(Object value) {
+	void setLocalValue(NCellValue value) {
 		this.localValue = value;
 	}
 }

@@ -29,6 +29,7 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import org.zkoss.zss.ngmodel.CellRegion;
+import org.zkoss.zss.ngmodel.DefaultDataGrid;
 import org.zkoss.zss.ngmodel.InvalidateModelOpException;
 import org.zkoss.zss.ngmodel.NBook;
 import org.zkoss.zss.ngmodel.NCell;
@@ -1038,7 +1039,7 @@ public class SheetImpl extends AbstractSheetAdv {
 	@Override
 	public NDataGrid getDataGrid() {
 		if(dataGrid==null){
-			dataGrid = new DataGridImpl(this);
+			dataGrid = new DefaultDataGrid(this);
 		}
 		return dataGrid;
 	}

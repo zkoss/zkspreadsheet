@@ -51,8 +51,22 @@ public interface NCell extends FormulaContent{
 	
 	public NSheet getSheet();
 	
-	public CellType getType();
 	public CellType getFormulaResultType();
+	
+//	/**
+//	 * Get the cell type, it is same as {@link #getCellValue()}, {@link NCellValue#getCellType()}
+//	 * @return
+//	 */
+	public CellType getType();
+//	/**
+//	 * Get the cell value, it is same as {@link #getCellValue()}, {@link NCellValue#getCellType()}
+//	 * @return
+//	 */
+	public Object getValue();
+	
+	public void setValue(Object value);
+//	public NCellValue getCellValue();
+	
 	
 	public boolean isNull();
 	
@@ -79,9 +93,6 @@ public interface NCell extends FormulaContent{
 
 //	boolean isReadonly();
 //	
-	
-	public Object getValue();
-	public void setValue(Object value);
 
 	/**
 	 * clear cell value , reset it to blank

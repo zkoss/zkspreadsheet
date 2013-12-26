@@ -25,6 +25,7 @@ import org.zkoss.zss.ngmodel.ErrorValue;
 import org.zkoss.zss.ngmodel.NCell;
 import org.zkoss.zss.ngmodel.NCellStyle;
 import org.zkoss.zss.ngmodel.NComment;
+import org.zkoss.zss.ngmodel.NCellValue;
 import org.zkoss.zss.ngmodel.NHyperlink;
 import org.zkoss.zss.ngmodel.NRichText;
 import org.zkoss.zss.ngmodel.NSheet;
@@ -106,7 +107,13 @@ public abstract class AbstractCellAdv implements NCell,LinkedModelObject,Seriali
 			checkType(CellType.NUMBER,CellType.BLANK);
 		}
 		Object val = getValue();
-		return val==null?0.0:(Double)getValue();
+		if(val instanceof Double){
+			return (Double)val;
+		}else if(val instanceof Number){
+			return ((Number)val).doubleValue();
+		}else{
+			return Double.valueOf(0D);
+		}
 	}
 
 	@Override
@@ -160,13 +167,17 @@ public abstract class AbstractCellAdv implements NCell,LinkedModelObject,Seriali
 		checkOrphan();
 		Validations.argNotNull(formula);
 		//for a formula, we should clear it's value before paring/create new dependency)
+		String oldFormula = null;
 		if(getType()==CellType.FORMULA){
 			clearValueForSet(true);
 		}
 		
+		//this will create new dependency
 		FormulaEngine fe = EngineFactory.getInstance().createFormulaEngine();
 		FormulaExpression expr = fe.parse(formula, new FormulaParseContext(this ,new RefImpl(this)));
 		setValue(expr);
+		//TODO what if get exception when set value form data grid? 
+		//show we rollback the old dependency? (we called clearValueForSet(true); to clear old dependency)
 	}
 
 	@Override
@@ -197,6 +208,6 @@ public abstract class AbstractCellAdv implements NCell,LinkedModelObject,Seriali
 	}
 	
 	/*package*/ abstract void setIndex(int newidx);
-	/*package*/ abstract Object getLocalValue();
-	/*package*/ abstract void setLocalValue(Object value);
+	/*package*/ abstract NCellValue getLocalValue();
+	/*package*/ abstract void setLocalValue(NCellValue value);
 }

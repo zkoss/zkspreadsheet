@@ -32,9 +32,11 @@ import org.zkoss.zss.ngmodel.NBook;
 import org.zkoss.zss.ngmodel.NBooks;
 import org.zkoss.zss.ngmodel.NCell;
 import org.zkoss.zss.ngmodel.NCellStyle;
+import org.zkoss.zss.ngmodel.NCell.CellType;
 import org.zkoss.zss.ngmodel.NCellStyle.BorderType;
 import org.zkoss.zss.ngmodel.NCellStyle.FillPattern;
 import org.zkoss.zss.ngmodel.NCellStyle.VerticalAlignment;
+import org.zkoss.zss.ngmodel.NCellValue;
 import org.zkoss.zss.ngmodel.NChart;
 import org.zkoss.zss.ngmodel.NChart.NChartLegendPosition;
 import org.zkoss.zss.ngmodel.NChart.NChartType;
@@ -68,12 +70,23 @@ public class TestImporterFactory implements ImporterFactory{
 				
 				NBook book = NBooks.createBook(bookName);
 				
+				buildDataGridSheet(book);
+				
 				buildChartSheet(book);
 				
 				buildNormalSheet(book);
 
 				buildFreeze(book);
 				return book;
+			}
+
+			private void buildDataGridSheet(NBook book) {
+				NSheet sheet = book.createSheet("DataGrid");
+				sheet.getDataGrid().setValue(0, 0, new NCellValue(CellType.BLANK,null));
+				sheet.getDataGrid().setValue(0, 0, new NCellValue(CellType.STRING,"ABC"));
+				sheet.getDataGrid().setValue(1, 1, new NCellValue(CellType.NUMBER,12));
+				sheet.getDataGrid().setValue(2, 2, new NCellValue(CellType.NUMBER,3.45));
+				sheet.getDataGrid().setValue(2, 2, new NCellValue(CellType.BOOLEAN,false));
 			}
 
 			private void buildFreeze(NBook book) {

@@ -4,19 +4,28 @@ import java.io.Serializable;
 import java.util.Iterator;
 
 import org.zkoss.zss.ngmodel.NCell;
+import org.zkoss.zss.ngmodel.NCellValue;
 import org.zkoss.zss.ngmodel.NDataGrid;
 import org.zkoss.zss.ngmodel.NDataRow;
 import org.zkoss.zss.ngmodel.NSheet;
-
+/**
+ * 
+ * @author dennis
+ *
+ */
 public class DataGridImpl implements NDataGrid,Serializable {
 	private static final long serialVersionUID = 1L;
 	private NSheet sheet;
-	public DataGridImpl(NSheet sheet) {
+	protected DataGridImpl(NSheet sheet) {
 		this.sheet = sheet;
 	}
 
 	@Override
-	public Object getValue(int rowIdx,int columnIdx) {
+	public NCellValue getValue(int rowIdx,int columnIdx) {
+		return getLocalValue(rowIdx,columnIdx);
+	}
+	
+	protected NCellValue getLocalValue(int rowIdx,int columnIdx) {
 		NCell cell = sheet.getCell(rowIdx, columnIdx);
 		if(cell instanceof AbstractCellAdv){
 			return ((AbstractCellAdv)cell).getLocalValue();
@@ -25,7 +34,11 @@ public class DataGridImpl implements NDataGrid,Serializable {
 	}
 
 	@Override
-	public void setValue(int rowIdx,int columnIdx, Object value) {
+	public void setValue(int rowIdx,int columnIdx, NCellValue value) {
+		setLocalValue(rowIdx,columnIdx,value);
+	}
+	
+	protected void setLocalValue(int rowIdx,int columnIdx, NCellValue value) {
 		NCell cell = sheet.getCell(rowIdx, columnIdx);
 		if(cell instanceof AbstractCellAdv){
 			((AbstractCellAdv)cell).setLocalValue(value);
@@ -35,7 +48,7 @@ public class DataGridImpl implements NDataGrid,Serializable {
 	}
 	
 	@Override
-	public boolean validateValue(int rowIdx,int columnIdx, Object value) {
+	public boolean validateValue(int rowIdx,int columnIdx, NCellValue value) {
 		return true;
 	}
 

@@ -22,6 +22,7 @@ import org.zkoss.zss.ngmodel.CellRegion;
 import org.zkoss.zss.ngmodel.NCellStyle;
 import org.zkoss.zss.ngmodel.NColumnArray;
 import org.zkoss.zss.ngmodel.NComment;
+import org.zkoss.zss.ngmodel.NCellValue;
 import org.zkoss.zss.ngmodel.NHyperlink;
 import org.zkoss.zss.ngmodel.NRichText;
 import org.zkoss.zss.ngmodel.NSheet;
@@ -68,7 +69,8 @@ class CellProxy extends AbstractCellAdv {
 	@Override
 	public boolean isNull() {
 		loadProxy();
-		return proxy == null ? true : proxy.isNull();
+		//if any data in data grid and it is not null, you should handle it.
+		return proxy == null ? getSheet().getDataGrid().getValue(rowIdx, columnIdx)==null : proxy.isNull();
 	}
 
 	@Override
@@ -167,6 +169,7 @@ class CellProxy extends AbstractCellAdv {
 		if (proxy != null)
 			proxy.clearValue();
 	}
+	@Override
 	/*package*/ void clearValueForSet(boolean clearDependency) {
 		loadProxy();
 		if (proxy != null)
@@ -263,14 +266,19 @@ class CellProxy extends AbstractCellAdv {
 	}
 
 	@Override
-	Object getLocalValue() {
+	NCellValue getLocalValue() {
 		loadProxy();
 		return proxy == null ? null:proxy.getLocalValue();
 	}
 
 	@Override
-	void setLocalValue(Object value) {
-		throw new UnsupportedOperationException("unsupport");
+	void setLocalValue(NCellValue value) {
+		loadProxy();
+		if (proxy == null) {
+			proxy = (AbstractCellAdv) ((AbstractRowAdv)  ((AbstractSheetAdv)getSheet()).getOrCreateRow(
+					rowIdx)).getOrCreateCell(columnIdx);
+		}
+		proxy.setLocalValue(value);
 	}
 
 }

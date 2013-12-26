@@ -10,8 +10,8 @@ import java.util.Iterator;
 public interface NDataGrid {
 
 	//basic storage method?
-	public Object getValue(int row, int column);
-	public void setValue(int row, int column, Object value);
+	public NCellValue getValue(int row, int column);
+	public void setValue(int row, int column, NCellValue value);
 	
 	
 	//support operations
@@ -26,5 +26,5 @@ public interface NDataGrid {
 	public Iterator<NDataRow> getDataRowIterator();
 	
 //	//TODO
-	public boolean validateValue(int row, int column, Object value);
+	public boolean validateValue(int row, int column, NCellValue value);
 }

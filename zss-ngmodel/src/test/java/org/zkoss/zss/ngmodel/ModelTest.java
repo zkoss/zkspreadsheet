@@ -2060,7 +2060,11 @@ public class ModelTest {
 		
 		book.deleteSheet(sheet);
 		
-		Assert.assertEquals(CellType.BLANK,cell.getType());
+		try{
+			cell.getType();
+			Assert.fail();
+		}catch(IllegalStateException x){}
+		
 		
 		try{
 			cell.setValue("ABC");
