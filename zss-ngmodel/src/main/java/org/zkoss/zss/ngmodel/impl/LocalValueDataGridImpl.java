@@ -10,14 +10,14 @@ import org.zkoss.zss.ngmodel.NDataRow;
 import org.zkoss.zss.ngmodel.NSheet;
 import org.zkoss.zss.ngmodel.NCell.CellType;
 /**
- * 
+ * The implementation that store back value to cell
  * @author dennis
  *
  */
-public class DataGridImpl implements NDataGrid,Serializable {
+public class LocalValueDataGridImpl implements NDataGrid,Serializable {
 	private static final long serialVersionUID = 1L;
 	private NSheet sheet;
-	protected DataGridImpl(NSheet sheet) {
+	protected LocalValueDataGridImpl(NSheet sheet) {
 		this.sheet = sheet;
 	}
 
