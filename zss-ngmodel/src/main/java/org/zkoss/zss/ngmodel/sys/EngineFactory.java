@@ -21,8 +21,6 @@ import java.util.logging.Logger;
 import org.zkoss.zss.ngmodel.impl.sys.CalendarUtilImpl;
 import org.zkoss.zss.ngmodel.impl.sys.DependencyTableImpl;
 import org.zkoss.zss.ngmodel.impl.sys.FormatEngineImpl;
-import org.zkoss.zss.ngmodel.impl.sys.TestDependencyTableImpl;
-import org.zkoss.zss.ngmodel.impl.sys.TestFormulaEngineImpl;
 import org.zkoss.zss.ngmodel.impl.sys.InputEngineImpl;
 import org.zkoss.zss.ngmodel.impl.sys.formula.FormulaEngineImpl;
 import org.zkoss.zss.ngmodel.sys.dependency.DependencyTable;
@@ -61,16 +59,28 @@ public class EngineFactory {
 		return new InputEngineImpl();
 	}
 
-	public FormulaEngine createFormulaEngine() {
-//		if(true) return new TestFormulaEngineImpl();
+	static Class<?> formulaEnginClazz;
+	static {
 		try {
 			// FIXME zss 3.5
-			Class<?> clazz = Class.forName("org.zkoss.zss.model.sys.impl.ZSSFormulaEngine");
-			return (FormulaEngine)clazz.newInstance();
+			formulaEnginClazz = Class.forName("org.zkoss.zss.model.sys.impl.ZSSFormulaEngine");
 		} catch(ClassNotFoundException e) {
 			// do nothing
 		} catch(Exception e) {
 			logger.log(Level.WARNING, e.getMessage(), e);
+		}
+	}
+	
+	public FormulaEngine createFormulaEngine() {
+//		if(true) return new TestFormulaEngineImpl();
+		try {
+			// FIXME zss 3.5
+			if(formulaEnginClazz != null) {
+				return (FormulaEngine)formulaEnginClazz.newInstance();
+			}
+		} catch(Exception e) {
+			logger.log(Level.WARNING, e.getMessage(), e);
+			formulaEnginClazz = null;
 		}
 		return new FormulaEngineImpl();
 	}
