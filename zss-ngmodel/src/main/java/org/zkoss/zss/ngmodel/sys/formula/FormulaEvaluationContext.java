@@ -22,7 +22,6 @@ import org.zkoss.zss.ngmodel.NBook;
 import org.zkoss.zss.ngmodel.NCell;
 import org.zkoss.zss.ngmodel.NSheet;
 import org.zkoss.zss.ngmodel.sys.AbstractContext;
-import org.zkoss.zss.ngmodel.sys.dependency.Ref;
 
 /**
  * 
@@ -34,6 +33,8 @@ public class FormulaEvaluationContext extends AbstractContext {
 	private final NBook book;
 	private final NSheet sheet;
 	private final NCell cell;
+	private FunctionMapper functionMapper;
+	private VariableResolver vairableResolver;
 
 	public FormulaEvaluationContext(NCell cell) {
 		this(cell.getSheet().getBook(), cell.getSheet(), cell);
@@ -51,6 +52,12 @@ public class FormulaEvaluationContext extends AbstractContext {
 		this.book = book;
 		this.sheet = sheet;
 		this.cell = cell;
+		EvaluationContributor contributor = book instanceof EvaluationContributorContainer? 
+				((EvaluationContributorContainer)book).getEvaluationContributor():null;
+		if(contributor!=null){
+			functionMapper = contributor.getFunctionMaper(book);
+			vairableResolver = contributor.getVariableResolver(book);
+		}
 	}
 
 	public NBook getBook() {
@@ -66,10 +73,10 @@ public class FormulaEvaluationContext extends AbstractContext {
 	}
 	
 	public FunctionMapper getFunctionMapper() {
-		return null; // TODO
+		return functionMapper;
 	}
 	
 	public VariableResolver getVariableResolver() {
-		return null; // TODO
+		return vairableResolver;
 	}
 }

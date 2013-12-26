@@ -39,6 +39,8 @@ import org.zkoss.zss.ngmodel.NFont;
 import org.zkoss.zss.ngmodel.NName;
 import org.zkoss.zss.ngmodel.NSheet;
 import org.zkoss.zss.ngmodel.sys.EngineFactory;
+import org.zkoss.zss.ngmodel.sys.formula.EvaluationContributor;
+import org.zkoss.zss.ngmodel.sys.formula.EvaluationContributorContainer;
 import org.zkoss.zss.ngmodel.sys.formula.FormulaClearContext;
 import org.zkoss.zss.ngmodel.util.CellStyleMatcher;
 import org.zkoss.zss.ngmodel.util.FontMatcher;
@@ -79,6 +81,8 @@ public class BookImpl extends AbstractBookAdv{
 	private EventListenerAdaptor eventListenerAdaptor;
 	
 	private transient HashMap<String,Object> attributes;
+	
+	private EvaluationContributor evalContributor;
 	
 	public BookImpl(String bookName){
 		Validations.argNotNull(bookName);
@@ -584,6 +588,16 @@ public class BookImpl extends AbstractBookAdv{
 	@Override
 	void setBookSeries(NBookSeries bookSeries) {
 		this.bookSeries = bookSeries;
+	}
+
+	@Override
+	public EvaluationContributor getEvaluationContributor() {
+		return evalContributor;
+	}
+
+	@Override
+	public void setEvaluationContributor(EvaluationContributor contributor) {
+		this.evalContributor = contributor;
 	}
 
 }

@@ -17,21 +17,20 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.ngmodel.impl;
 
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import org.zkoss.zss.ngmodel.ModelEvent;
 import org.zkoss.zss.ngmodel.NBook;
 import org.zkoss.zss.ngmodel.NBookSeries;
-import org.zkoss.zss.ngmodel.NCell;
+import org.zkoss.zss.ngmodel.sys.formula.EvaluationContributorContainer;
 /**
  * 
  * @author dennis
  * @since 3.5.0
  */
-public abstract class AbstractBookAdv implements NBook,Serializable{
+public abstract class AbstractBookAdv implements NBook,EvaluationContributorContainer,Serializable{
 	private static final long serialVersionUID = 1L;
+	
+	public abstract void sendModelEvent(ModelEvent event);
 	
 	/**
 	 * Optimize CellStyle, usually called when export book. 
@@ -44,8 +43,6 @@ public abstract class AbstractBookAdv implements NBook,Serializable{
 	/*package*/ abstract void onModelInternalEvent(ModelInternalEvent event);
 	
 	/*package*/ abstract void sendModelInternalEvent(ModelInternalEvent event);
-	
-	public abstract void sendModelEvent(ModelEvent event);
 	
 	
 	/*package*/ ModelInternalEvent createModelInternalEvent(String name, Object... data){
