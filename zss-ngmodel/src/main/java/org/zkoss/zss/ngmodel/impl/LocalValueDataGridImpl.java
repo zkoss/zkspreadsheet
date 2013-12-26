@@ -16,7 +16,7 @@ import org.zkoss.zss.ngmodel.NCell.CellType;
  */
 public class LocalValueDataGridImpl implements NDataGrid,Serializable {
 	private static final long serialVersionUID = 1L;
-	private NSheet sheet;
+	protected final NSheet sheet;
 	protected LocalValueDataGridImpl(NSheet sheet) {
 		this.sheet = sheet;
 	}
@@ -31,7 +31,7 @@ public class LocalValueDataGridImpl implements NDataGrid,Serializable {
 		if(cell instanceof AbstractCellAdv){
 			return ((AbstractCellAdv)cell).getLocalValue();
 		}
-		throw new IllegalStateException("doesn't support to store value to cell "+cell);
+		throw new IllegalStateException("doesn't support to get value from cell "+cell);
 	}
 
 	@Override

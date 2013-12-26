@@ -2,7 +2,7 @@ package org.zkoss.zss.ngmodel;
 
 public interface NDataCell {
 
-	public Object getValue();
+	public NCellValue getValue();
 	public int getRowIndex();
 	public int getColumnIndex();
 }
