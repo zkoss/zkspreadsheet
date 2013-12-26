@@ -313,6 +313,21 @@ public class ImporterTest extends ImExpTestBase {
 	}
 	
 	@Test
+	public void pieChart(){
+		NBook book = ImExpTestUtil.loadBook(DEFAULT_CHART_IMPORT_FILE, "Chart");
+		NSheet sheet = book.getSheetByName("Pie");
+		NChart pieChart = sheet.getChart(0);
+		assertEquals(NChartType.PIE, pieChart.getType());
+		assertEquals(null,pieChart.getTitle());
+		NGeneralChartData chartData = (NGeneralChartData)pieChart.getData();
+		assertEquals(1, chartData.getNumOfSeries());
+		
+		NChart pie3dChart = sheet.getChart(1);
+		assertEquals(NChartType.PIE, pie3dChart.getType());
+		assertEquals(true, pie3dChart.isThreeD());
+	}
+	
+	@Test
 	public void scatterChart(){
 		NBook book = ImExpTestUtil.loadBook(DEFAULT_CHART_IMPORT_FILE, "Chart");
 		NSheet sheet = book.getSheetByName("Scatter");
@@ -327,10 +342,6 @@ public class ImporterTest extends ImExpTestBase {
 		assertEquals(0.3168, chartData.getSeries(0).getYValue(2));
 	}
 	
-	@Test
-	public void pieChart(){
-		
-	}
 }
 
 
