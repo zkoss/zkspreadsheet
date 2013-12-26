@@ -16,7 +16,6 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.ngmodel.impl;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -24,12 +23,9 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.SortedMap;
-import java.util.TreeMap;
 
 import org.zkoss.zss.ngmodel.CellRegion;
-import org.zkoss.zss.ngmodel.DefaultDataGrid;
 import org.zkoss.zss.ngmodel.InvalidateModelOpException;
 import org.zkoss.zss.ngmodel.NBook;
 import org.zkoss.zss.ngmodel.NCell;
@@ -418,10 +414,12 @@ public class SheetImpl extends AbstractSheetAdv {
 		checkOrphan();
 		if(size<=0) return;
 		NDataGrid dg = getDataGrid();
-		if(!dg.supportOperations()){
-			throw new InvalidateModelOpException("doesn't support insert/delete");
+		if(dg!=null){
+			if(!dg.supportOperations()){
+				throw new InvalidateModelOpException("doesn't support insert/delete");
+			}
+			dg.insertRow(rowIdx, size);
 		}
-		dg.insertRow(rowIdx, size);
 		
 		rows.insert(rowIdx, size);
 		
@@ -521,10 +519,12 @@ public class SheetImpl extends AbstractSheetAdv {
 		checkOrphan();
 		if(size<=0) return;
 		NDataGrid dg = getDataGrid();
-		if(!dg.supportOperations()){
-			throw new InvalidateModelOpException("doesn't support insert/delete");
+		if(dg!=null){
+			if(!dg.supportOperations()){
+				throw new InvalidateModelOpException("doesn't support insert/delete");
+			}
+			dg.deleteRow(rowIdx, size);
 		}
-		dg.deleteRow(rowIdx, size);
 		
 		//clear before move relation
 		for(AbstractRowAdv row:rows.subValues(rowIdx,rowIdx+size)){
@@ -595,11 +595,12 @@ public class SheetImpl extends AbstractSheetAdv {
 		if(size<=0) return;
 		
 		NDataGrid dg = getDataGrid();
-		
-		if(!dg.supportOperations()){
-			throw new InvalidateModelOpException("doesn't support insert/delete");
+		if(dg!=null){
+			if(!dg.supportOperations()){
+				throw new InvalidateModelOpException("doesn't support insert/delete");
+			}
+			dg.insertColumn(columnIdx, size);
 		}
-		dg.insertColumn(columnIdx, size);
 		
 		insertAndSplitColumnArray(columnIdx,size);
 		
@@ -693,10 +694,12 @@ public class SheetImpl extends AbstractSheetAdv {
 		checkOrphan();
 		if(size<=0) return;
 		NDataGrid dg = getDataGrid();
-		if(!dg.supportOperations()){
-			throw new InvalidateModelOpException("doesn't support insert/delete");
+		if(dg!=null){
+			if(!dg.supportOperations()){
+				throw new InvalidateModelOpException("doesn't support insert/delete");
+			}
+			dg.deleteColumn(columnIdx, size);
 		}
-		dg.deleteColumn(columnIdx, size);
 		
 		deleteAndShrinkColumnArray(columnIdx,size);
 		
@@ -1038,9 +1041,6 @@ public class SheetImpl extends AbstractSheetAdv {
 
 	@Override
 	public NDataGrid getDataGrid() {
-		if(dataGrid==null){
-			dataGrid = new DefaultDataGrid(this);
-		}
 		return dataGrid;
 	}
 

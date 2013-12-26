@@ -42,12 +42,16 @@ public class ModelTest {
 		SheetImpl.DEBUG = true;
 	}
 	
+	protected NSheet initialDataGrid(NSheet sheet){
+		return sheet;
+	}
+	
 	@Test 
 	public void testLock(){
 		NBook book = NBooks.createBook("book1");
-		NSheet sheet1 = book.createSheet("Sheet1");
+		NSheet sheet1 = initialDataGrid(book.createSheet("Sheet1"));
 		Assert.assertEquals(1, book.getNumOfSheet());
-		NSheet sheet2 = book.createSheet("Sheet2");
+		NSheet sheet2 = initialDataGrid(book.createSheet("Sheet2"));
 		Assert.assertEquals(2, book.getNumOfSheet());
 		
 		ReadWriteLock l = book.getBookSeries().getLock();
@@ -145,13 +149,13 @@ public class ModelTest {
 	@Test
 	public void testSheet(){
 		NBook book = NBooks.createBook("book1");
-		NSheet sheet1 = book.createSheet("Sheet1");
+		NSheet sheet1 = initialDataGrid(book.createSheet("Sheet1"));
 		Assert.assertEquals(1, book.getNumOfSheet());
-		NSheet sheet2 = book.createSheet("Sheet2");
+		NSheet sheet2 = initialDataGrid(book.createSheet("Sheet2"));
 		Assert.assertEquals(2, book.getNumOfSheet());
 		
 		try{
-			NSheet sheet = book.createSheet("Sheet2");
+			NSheet sheet = initialDataGrid(book.createSheet("Sheet2"));
 			Assert.fail("should get exception");
 		}catch(InvalidateModelOpException x){}
 		
@@ -176,7 +180,7 @@ public class ModelTest {
 		}catch(InvalidateModelOpException x){}//ownership
 		
 		try{
-			book.createSheet("Sheet3", sheet1);
+			initialDataGrid(book.createSheet("Sheet3", sheet1));
 			Assert.fail("should get exception");
 		}catch(InvalidateModelOpException x){}//ownership
 		
@@ -185,7 +189,7 @@ public class ModelTest {
 			Assert.fail("should get exception");
 		}catch(InvalidateModelOpException x){}//ownership
 		
-		sheet1 = book.createSheet("Sheet1");
+		sheet1 = initialDataGrid(book.createSheet("Sheet1"));
 		
 		Assert.assertEquals(2, book.getNumOfSheet());
 		Assert.assertEquals(sheet1, book.getSheet(1));
@@ -194,7 +198,7 @@ public class ModelTest {
 		Assert.assertEquals(sheet2, book.getSheetByName("Sheet2"));
 		Assert.assertEquals(null, book.getSheetByName("Sheet3"));
 		
-		NSheet sheet3 = book.createSheet("Sheet3");
+		NSheet sheet3 = initialDataGrid(book.createSheet("Sheet3"));
 		
 		Assert.assertEquals(3, book.getNumOfSheet());
 		Assert.assertEquals(sheet1, book.getSheet(1));
@@ -246,7 +250,7 @@ public class ModelTest {
 	@Test
 	public void testSetupColumnArray(){
 		NBook book = NBooks.createBook("book1");
-		NSheet sheet1 = book.createSheet("Sheet1");
+		NSheet sheet1 = initialDataGrid(book.createSheet("Sheet1"));
 		
 		sheet1.setDefaultColumnWidth(100);
 		sheet1.setDefaultRowHeight(200);
@@ -304,7 +308,7 @@ public class ModelTest {
 	@Test
 	public void testSetupColumnArray2() {
 		NBook book = NBooks.createBook("book1");
-		NSheet sheet1 = book.createSheet("Sheet1");
+		NSheet sheet1 = initialDataGrid(book.createSheet("Sheet1"));
 
 		sheet1.setDefaultColumnWidth(100);
 		sheet1.setDefaultRowHeight(200);
@@ -335,7 +339,7 @@ public class ModelTest {
 	@Test
 	public void testColumnArray(){
 		NBook book = NBooks.createBook("book1");
-		NSheet sheet1 = book.createSheet("Sheet1");
+		NSheet sheet1 = initialDataGrid(book.createSheet("Sheet1"));
 		
 		sheet1.setDefaultColumnWidth(100);
 		sheet1.setDefaultRowHeight(200);
@@ -427,7 +431,7 @@ public class ModelTest {
 	@Test
 	public void testColumnArray2(){
 		NBook book = NBooks.createBook("book1");
-		NSheet sheet1 = book.createSheet("Sheet1");
+		NSheet sheet1 = initialDataGrid(book.createSheet("Sheet1"));
 		
 		sheet1.setDefaultColumnWidth(100);
 		sheet1.setDefaultRowHeight(200);
@@ -489,7 +493,7 @@ public class ModelTest {
 	@Test
 	public void testInsertColumnArray(){
 		NBook book = NBooks.createBook("book1");
-		NSheet sheet1 = book.createSheet("Sheet1");
+		NSheet sheet1 = initialDataGrid(book.createSheet("Sheet1"));
 		
 		sheet1.setDefaultColumnWidth(100);
 		sheet1.setDefaultRowHeight(200);
@@ -592,7 +596,7 @@ public class ModelTest {
 	@Test
 	public void testColumnIterator(){
 		NBook book = NBooks.createBook("book1");
-		NSheet sheet1 = book.createSheet("Sheet1");
+		NSheet sheet1 = initialDataGrid(book.createSheet("Sheet1"));
 		Iterator<NColumn> colIter = sheet1.getColumnIterator();
 		Assert.assertFalse(colIter.hasNext());
 		
@@ -638,7 +642,7 @@ public class ModelTest {
 	@Test
 	public void testInsertColumnArray2(){
 		NBook book = NBooks.createBook("book1");
-		NSheet sheet1 = book.createSheet("Sheet1");
+		NSheet sheet1 = initialDataGrid(book.createSheet("Sheet1"));
 		
 		sheet1.setDefaultColumnWidth(100);
 		sheet1.setDefaultRowHeight(200);
@@ -677,7 +681,7 @@ public class ModelTest {
 	@Test
 	public void testDeleteColumnArray(){
 		NBook book = NBooks.createBook("book1");
-		NSheet sheet1 = book.createSheet("Sheet1");
+		NSheet sheet1 = initialDataGrid(book.createSheet("Sheet1"));
 		
 		sheet1.setDefaultColumnWidth(100);
 		sheet1.setDefaultRowHeight(200);
@@ -725,7 +729,7 @@ public class ModelTest {
 	@Test
 	public void testDeleteColumnArray2(){
 		NBook book = NBooks.createBook("book1");
-		NSheet sheet1 = book.createSheet("Sheet1");
+		NSheet sheet1 = initialDataGrid(book.createSheet("Sheet1"));
 		
 		sheet1.setDefaultColumnWidth(100);
 		sheet1.setDefaultRowHeight(200);
@@ -774,7 +778,7 @@ public class ModelTest {
 	@Test
 	public void testDeleteColumnArray3(){
 		NBook book = NBooks.createBook("book1");
-		NSheet sheet1 = book.createSheet("Sheet1");
+		NSheet sheet1 = initialDataGrid(book.createSheet("Sheet1"));
 		
 		sheet1.setDefaultColumnWidth(100);
 		sheet1.setDefaultRowHeight(200);
@@ -851,7 +855,7 @@ public class ModelTest {
 	@Test
 	public void testRowColumn(){
 		NBook book = NBooks.createBook("book1");
-		NSheet sheet1 = book.createSheet("Sheet1");
+		NSheet sheet1 = initialDataGrid(book.createSheet("Sheet1"));
 		
 		sheet1.setDefaultColumnWidth(100);
 		sheet1.setDefaultRowHeight(200);
@@ -939,7 +943,7 @@ public class ModelTest {
 	@Test
 	public void testReferenceString(){
 		NBook book = NBooks.createBook("book1");
-		NSheet sheet1 = book.createSheet("Sheet1");
+		NSheet sheet1 = initialDataGrid(book.createSheet("Sheet1"));
 		
 		Assert.assertEquals("1",asString(sheet1.getRow(0)));
 		Assert.assertEquals("101",asString(sheet1.getRow(100)));
@@ -964,9 +968,9 @@ public class ModelTest {
 	@Test
 	public void testCellRange(){
 		NBook book = NBooks.createBook("book1");
-		book.createSheet("Sheet1");
+		initialDataGrid(book.createSheet("Sheet1"));
 		Assert.assertEquals(1, book.getNumOfSheet());
-		NSheet sheet = book.createSheet("Sheet2");;
+		NSheet sheet = initialDataGrid(book.createSheet("Sheet2"));
 		Assert.assertEquals(-1, sheet.getStartRowIndex());
 		Assert.assertEquals(-1, sheet.getEndRowIndex());
 		Assert.assertEquals(-1, sheet.getStartColumnIndex());
@@ -1105,7 +1109,7 @@ public class ModelTest {
 	@Test
 	public void testClearSheetCell(){
 		NBook book = NBooks.createBook("book1");
-		NSheet sheet = book.createSheet("Sheet 1");
+		NSheet sheet = initialDataGrid(book.createSheet("Sheet 1"));
 		
 		for(int i=10;i<=20;i+=2){
 			for(int j=3;j<=15;j+=3){
@@ -1178,7 +1182,7 @@ public class ModelTest {
 	@Test
 	public void testInsertDeleteRow(){
 		NBook book = NBooks.createBook("book1");
-		NSheet sheet = book.createSheet("Sheet 1");
+		NSheet sheet = initialDataGrid(book.createSheet("Sheet 1"));
 		
 		for(int i=10;i<=20;i+=2){
 			for(int j=3;j<=15;j+=3){
@@ -1275,7 +1279,7 @@ public class ModelTest {
 	@Test
 	public void testInsertDeleteColumn(){
 		NBook book = NBooks.createBook("book1");
-		NSheet sheet = book.createSheet("Sheet 1");
+		NSheet sheet = initialDataGrid(book.createSheet("Sheet 1"));
 		
 		for(int i=10;i<=20;i+=2){
 			for(int j=3;j<=15;j+=3){
@@ -1393,7 +1397,7 @@ public class ModelTest {
 	@Test
 	public void testStyle(){
 		NBook book = NBooks.createBook("book1");
-		NSheet sheet = book.createSheet("Sheet 1");
+		NSheet sheet = initialDataGrid(book.createSheet("Sheet 1"));
 		
 		NCellStyle style = book.getDefaultCellStyle();
 		
@@ -1440,7 +1444,7 @@ public class ModelTest {
 	@Test
 	public void testStyleSearch(){
 		NBook book = NBooks.createBook("book1");
-		NSheet sheet = book.createSheet("Sheet 1");
+		NSheet sheet = initialDataGrid(book.createSheet("Sheet 1"));
 		
 		NCellStyle style1 = book.createCellStyle(true);
 		CellStyleMatcher matcher = new CellStyleMatcher(book.createCellStyle(false));//a style not in table
@@ -1581,7 +1585,7 @@ public class ModelTest {
 	@Test
 	public void testFontSearch(){
 		NBook book = NBooks.createBook("book1");
-		NSheet sheet = book.createSheet("Sheet 1");
+		NSheet sheet = initialDataGrid(book.createSheet("Sheet 1"));
 		
 		NFont font1 = book.createFont(true);
 		FontMatcher matcher = new FontMatcher(book.createFont(false));//a style not in table
@@ -1637,7 +1641,7 @@ public class ModelTest {
 	@Test
 	public void testGeneralCellValue(){
 		NBook book = NBooks.createBook("book1");
-		NSheet sheet = book.createSheet("Sheet 1");
+		NSheet sheet = initialDataGrid(book.createSheet("Sheet 1"));
 		Date now = new Date();
 		ErrorValue err = new ErrorValue(ErrorValue.INVALID_FORMULA);
 		NCell cell = sheet.getCell(1, 1);
@@ -1726,7 +1730,7 @@ public class ModelTest {
 	@Test
 	public void testGeneralCellValue2(){
 		NBook book = NBooks.createBook("book1");
-		NSheet sheet = book.createSheet("Sheet 1");
+		NSheet sheet = initialDataGrid(book.createSheet("Sheet 1"));
 		Date now = new Date();
 		ErrorValue err = new ErrorValue(ErrorValue.INVALID_FORMULA);
 		NCell cell = sheet.getCell(1, 1);
@@ -1769,7 +1773,7 @@ public class ModelTest {
 	@Test
 	public void testGeneralCellValueError(){
 		NBook book = NBooks.createBook("book1");
-		NSheet sheet = book.createSheet("Sheet 1");
+		NSheet sheet = initialDataGrid(book.createSheet("Sheet 1"));
 		Date now = new Date();
 		ErrorValue err = new ErrorValue(ErrorValue.INVALID_FORMULA);
 		NCell cell = sheet.getCell(1, 1);
@@ -1845,7 +1849,7 @@ public class ModelTest {
 	@Test
 	public void testPicture(){
 		NBook book = NBooks.createBook("book1");
-		NSheet sheet = book.createSheet("Sheet 1");
+		NSheet sheet = initialDataGrid(book.createSheet("Sheet 1"));
 
 		NPicture p1 = sheet.addPicture(Format.PNG, new byte[0], new NViewAnchor(6, 10, 22, 33, 800, 600));
 		NPicture p2 = sheet.addPicture(Format.PNG, new byte[0], new NViewAnchor(12, 14, 22, 33, 800, 600));
@@ -1900,7 +1904,7 @@ public class ModelTest {
 	@Test
 	public void testChart(){
 		NBook book = NBooks.createBook("book1");
-		NSheet sheet = book.createSheet("Sheet 1");
+		NSheet sheet = initialDataGrid(book.createSheet("Sheet 1"));
 
 		//no chart data implement yet
 		NChart p1 = sheet.addChart(NChart.NChartType.BAR, new NViewAnchor(6, 10, 22, 33, 800, 600));
@@ -1972,7 +1976,7 @@ public class ModelTest {
 	@Test
 	public void testChartData(){
 		NBook book = NBooks.createBook("book1");
-		NSheet sheet = book.createSheet("Sheet 1");
+		NSheet sheet = initialDataGrid(book.createSheet("Sheet 1"));
 		sheet.getCell(0, 0).setStringValue("A");
 		sheet.getCell(1, 0).setStringValue("B");
 		sheet.getCell(2, 0).setStringValue("C");
@@ -2052,7 +2056,7 @@ public class ModelTest {
 	@Test
 	public void testDeleteRelease(){
 		NBook book = NBooks.createBook("book1");
-		NSheet sheet = book.createSheet("Sheet 1");
+		NSheet sheet = initialDataGrid(book.createSheet("Sheet 1"));
 		NCell cell = sheet.getCell(10, 10);
 		cell.setFormulaValue("SUM(999)");
 		
@@ -2075,7 +2079,7 @@ public class ModelTest {
 	@Test
 	public void testMergedRange(){
 		NBook book = NBooks.createBook("book1");
-		NSheet sheet = book.createSheet("Sheet 1");
+		NSheet sheet = initialDataGrid(book.createSheet("Sheet 1"));
 		sheet.addMergedRegion(new CellRegion(1,1,2,2));
 		sheet.addMergedRegion(new CellRegion(3,4,5,6));
 		sheet.addMergedRegion(new CellRegion("J1:K2"));
@@ -2110,7 +2114,7 @@ public class ModelTest {
 		}catch(InvalidateModelOpException x){}
 		
 		
-		sheet = book.createSheet("Sheet 2");
+		sheet = initialDataGrid(book.createSheet("Sheet 2"));
 		
 		sheet.addMergedRegion(new CellRegion(1,1,2,2));
 		sheet.addMergedRegion(new CellRegion(1,7,2,8));
@@ -2185,8 +2189,8 @@ public class ModelTest {
 	@Test
 	public void testSerializable(){
 		NBook book = NBooks.createBook("book1");
-		NSheet sheet = book.createSheet("Sheet 1");
-		book.createSheet("Sheet 2");
+		NSheet sheet = initialDataGrid(book.createSheet("Sheet 1"));
+		initialDataGrid(book.createSheet("Sheet 2"));
 		Date now = new Date();
 		
 		sheet.getCell(1, 1).setStringValue("ABCD");
@@ -2282,7 +2286,7 @@ public class ModelTest {
 	@Test
 	public void testName(){
 		NBook book = NBooks.createBook("book1");
-		book.createSheet("Sheet1");
+		initialDataGrid(book.createSheet("Sheet1"));
 		
 		NName name1 = book.createName("test1");
 		try{

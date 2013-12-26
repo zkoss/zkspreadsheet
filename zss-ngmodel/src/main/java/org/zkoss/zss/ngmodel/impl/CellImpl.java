@@ -27,6 +27,7 @@ import org.zkoss.zss.ngmodel.NCellStyle;
 import org.zkoss.zss.ngmodel.NColumnArray;
 import org.zkoss.zss.ngmodel.NComment;
 import org.zkoss.zss.ngmodel.NCellValue;
+import org.zkoss.zss.ngmodel.NDataGrid;
 import org.zkoss.zss.ngmodel.NHyperlink;
 import org.zkoss.zss.ngmodel.NRichText;
 import org.zkoss.zss.ngmodel.NSheet;
@@ -250,20 +251,30 @@ public class CellImpl extends AbstractCellAdv {
 	
 	private NCellValue getDataGridValue(){
 		checkOrphan();
-		return row.getSheet().getDataGrid().getValue(getRowIndex(),getColumnIndex());
+		NDataGrid dg = row.getSheet().getDataGrid();
+		if(dg!=null){
+			return dg.getValue(getRowIndex(),getColumnIndex());
+		}
+		return localValue;
 	}
 	
 
 	private void validateDataGridValue(NCellValue value) {
 		checkOrphan();
-		if(!row.getSheet().getDataGrid().validateValue(getRowIndex(),getColumnIndex(),value)){
+		NDataGrid dg = row.getSheet().getDataGrid();
+		if(dg!=null && !dg.validateValue(getRowIndex(),getColumnIndex(),value)){
 			throw new InvalidateModelOpException("the value is not allow to be stored:"+value);
 		}
 	}
 	
 	private void setDataGridValue(NCellValue value){
 		checkOrphan();
-		row.getSheet().getDataGrid().setValue(getRowIndex(),getColumnIndex(),value);
+		NDataGrid dg = row.getSheet().getDataGrid();
+		if(dg!=null){
+			dg.setValue(getRowIndex(),getColumnIndex(),value);
+		}else{
+			this.localValue = value!=null&&value.getType()==CellType.BLANK?null:value;
+		}
 	}
 
 	@Override

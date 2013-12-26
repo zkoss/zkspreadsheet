@@ -143,9 +143,16 @@ public interface NSheet {
 
 	public boolean isAutoFilterMode();
 
-
+	/**
+	 * Get the data grid that this sheet stores it data, by default it is null, and the data store on cell directly
+	 * @return
+	 */
 	public NDataGrid getDataGrid();
 	
+	/**
+	 * Sets the data grid to store data of this sheet
+	 * @param dataGrid
+	 */
 	public void setDataGrid(NDataGrid dataGrid);
 	
 }

@@ -28,6 +28,7 @@ import org.zkoss.zss.ngapi.ImporterFactory;
 import org.zkoss.zss.ngapi.NImporter;
 import org.zkoss.zss.ngapi.NRanges;
 import org.zkoss.zss.ngmodel.CellRegion;
+import org.zkoss.zss.ngmodel.DefaultDataGrid;
 import org.zkoss.zss.ngmodel.NBook;
 import org.zkoss.zss.ngmodel.NBooks;
 import org.zkoss.zss.ngmodel.NCell;
@@ -82,6 +83,7 @@ public class TestImporterFactory implements ImporterFactory{
 
 			private void buildDataGridSheet(NBook book) {
 				NSheet sheet = book.createSheet("DataGrid");
+				sheet.setDataGrid(new DefaultDataGrid(sheet));
 				sheet.getDataGrid().setValue(0, 0, new NCellValue(CellType.BLANK,null));
 				sheet.getDataGrid().setValue(0, 0, new NCellValue(CellType.STRING,"ABC"));
 				sheet.getDataGrid().setValue(1, 1, new NCellValue(CellType.NUMBER,12));

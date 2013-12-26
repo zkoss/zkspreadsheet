@@ -46,9 +46,22 @@ public class FormulaPerformanceTest {
 		testPerformanceAndMemory(false);
 	}
 
+	
+	boolean useNGDataGrid;
+	
 	@Test
 	public void testNGModel() {
 		System.out.println("=== NG Model ===");
+		useNGDataGrid = false;
+		testPerformanceAndMemory(true);
+	}
+	
+	
+	
+	@Test
+	public void testNGModelDataGrid() {
+		System.out.println("=== NG Model DataGrid ===");
+		useNGDataGrid = true;
 		testPerformanceAndMemory(true);
 	}
 	
@@ -99,6 +112,9 @@ public class FormulaPerformanceTest {
 		if(ngmodel) {
 			NBook book = NBooks.createBook("Book1");
 			NSheet sheet = book.createSheet("Sheet1");
+			if(useNGDataGrid){
+				sheet.setDataGrid(new DefaultDataGrid(sheet));
+			}
 			// first column
 			modifyFirstColumn(ngmodel, book, 1.0);
 			// other columns

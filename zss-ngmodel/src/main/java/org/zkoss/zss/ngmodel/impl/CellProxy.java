@@ -23,6 +23,7 @@ import org.zkoss.zss.ngmodel.NCellStyle;
 import org.zkoss.zss.ngmodel.NColumnArray;
 import org.zkoss.zss.ngmodel.NComment;
 import org.zkoss.zss.ngmodel.NCellValue;
+import org.zkoss.zss.ngmodel.NDataGrid;
 import org.zkoss.zss.ngmodel.NHyperlink;
 import org.zkoss.zss.ngmodel.NRichText;
 import org.zkoss.zss.ngmodel.NSheet;
@@ -70,7 +71,15 @@ class CellProxy extends AbstractCellAdv {
 	public boolean isNull() {
 		loadProxy();
 		//if any data in data grid and it is not null, you should handle it.
-		return proxy == null ? getSheet().getDataGrid().getValue(rowIdx, columnIdx)==null : proxy.isNull();
+		if(proxy==null){
+			NDataGrid dg = getSheet().getDataGrid();
+			if(dg!=null){
+				return dg.getValue(rowIdx, columnIdx)==null;
+			}
+			return true;
+		}else{
+			return proxy.isNull();
+		}
 	}
 
 	@Override
