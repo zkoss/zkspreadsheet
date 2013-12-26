@@ -32,6 +32,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import org.zkoss.json.JSONArray;
 import org.zkoss.json.JSONObject;
 import org.zkoss.lang.Classes;
@@ -112,6 +113,7 @@ import org.zkoss.zss.ngmodel.NCell.CellType;
 import org.zkoss.zss.ngmodel.NCellStyle;
 import org.zkoss.zss.ngmodel.NCellStyle.Alignment;
 import org.zkoss.zss.ngmodel.NCellStyle.VerticalAlignment;
+import org.zkoss.zss.ngmodel.sys.formula.EvaluationContributorContainer;
 import org.zkoss.zss.ngmodel.NChart;
 import org.zkoss.zss.ngmodel.NColumn;
 import org.zkoss.zss.ngmodel.NColumnArray;
@@ -150,6 +152,7 @@ import org.zkoss.zss.ui.impl.undo.AggregatedAction;
 import org.zkoss.zss.ui.impl.undo.CellEditTextAction;
 import org.zkoss.zss.ui.impl.undo.HideHeaderAction;
 import org.zkoss.zss.ui.impl.undo.ResizeHeaderAction;
+import org.zkoss.zss.ui.impl.ComponentEvaluationContributor;
 import org.zkoss.zss.ui.impl.DefaultUserActionManagerCtrl;
 import org.zkoss.zss.ui.impl.DummyDataValidationHandler;
 import org.zkoss.zss.ui.impl.DummyFreezeInfoLoader;
@@ -669,13 +672,25 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		}
 	}
 	
+	
+	private boolean isBelowDesktopScope(NBook book){
+		String scope = _book.getShareScope();
+		return scope==null||"desktop".equals(scope);
+	}
+	
 	private void initBook0(NBook book) {
 		if (_book != null) {
-			_book.removeEventListener(_dataListener);
-			/* TODO zss 3.5
-			_book.removeVariableResolver(_variableResolver);
-			_book.removeFunctionMapper(_functionMapper);
-			*/
+			_book.getBookSeries().getLock().writeLock().lock();
+			try{
+				_book.removeEventListener(_dataListener);
+				if(isBelowDesktopScope(_book) && book instanceof EvaluationContributorContainer
+						&& ((EvaluationContributorContainer)book).getEvaluationContributor() instanceof ComponentEvaluationContributor){
+					((EvaluationContributorContainer)book).setEvaluationContributor(null);
+				}
+			
+			}finally{
+				_book.getBookSeries().getLock().writeLock().unlock();
+			}
 			if (_focusListener != null){
 				removeEventListener(Events.ON_CELL_FOUCS, _focusListener);
 				_focusListener = null;
@@ -699,11 +714,16 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		
 		_book = book;
 		if (_book != null) {
+			_book.getBookSeries().getLock().writeLock().lock();
 			_book.addEventListener(_dataListener);
-			/* TODO zss 3.5
-			_book.addVariableResolver(_variableResolver);
-			_book.addFunctionMapper(_functionMapper);
-			*///end zss 3.5
+			try{
+				if(isBelowDesktopScope(_book) && book instanceof EvaluationContributorContainer 
+						&& ((EvaluationContributorContainer)book).getEvaluationContributor()==null){
+					((EvaluationContributorContainer)book).setEvaluationContributor(new ComponentEvaluationContributor(this));
+				}
+			}finally{
+				_book.getBookSeries().getLock().writeLock().unlock();
+			}
 			
 			//20130523, dennis, if share-scope is not empty, then should always sync the  focus, not only application and session
 			//TODO use a configuration to config this.
