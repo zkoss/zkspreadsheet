@@ -33,7 +33,7 @@ public class FormulaPerformanceTest {
 	private final static int COL_COUNT = 50;
 	private static final double EPSILON = 0.0000001;
 
-	XSSFFormulaEvaluator evaluator;
+	private XSSFFormulaEvaluator evaluator;
 
 	@Before
 	public void before() {
@@ -153,7 +153,7 @@ public class FormulaPerformanceTest {
 			}
 		} else {
 			XSSFWorkbook book = (XSSFWorkbook)model;
-			XSSFFormulaEvaluator evaluator = XSSFFormulaEvaluator.create(book, null, null);
+			evaluator = XSSFFormulaEvaluator.create(book, null, null);
 			XSSFSheet sheet = book.getSheetAt(0);
 			// get all values except first column
 			for(int r = 0; r < ROW_COUNT; ++r) {
