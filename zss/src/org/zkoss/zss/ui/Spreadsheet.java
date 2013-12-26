@@ -83,7 +83,6 @@ import org.zkoss.zss.api.IllegalFormulaException;
 import org.zkoss.zss.api.Importer;
 import org.zkoss.zss.api.CellRef;
 import org.zkoss.zss.api.Range;
-import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.AreaRef;
 import org.zkoss.zss.api.impl.ImporterImpl;
 import org.zkoss.zss.api.model.Book;
@@ -91,9 +90,6 @@ import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.api.model.impl.BookImpl;
 import org.zkoss.zss.api.model.impl.SheetImpl;
 import org.zkoss.zss.api.model.impl.SimpleRef;
-import org.zkoss.zss.engine.Ref;
-import org.zkoss.zss.engine.event.EventDispatchListener;
-import org.zkoss.zss.engine.event.SSDataEvent;
 import org.zkoss.zss.json.JavaScriptValue;
 //import org.zkoss.zss.model.sys.XBook;
 //import org.zkoss.zss.model.sys.XImporter;
@@ -101,8 +97,6 @@ import org.zkoss.zss.json.JavaScriptValue;
 //import org.zkoss.zss.model.sys.XRanges;
 //import org.zkoss.zss.model.sys.XSheet;
 import org.zkoss.zss.model.sys.impl.BookCtrl;
-import org.zkoss.zss.model.sys.impl.BookHelper;
-import org.zkoss.zss.model.sys.impl.ZSSEvaluatorBuilder;
 //import org.zkoss.zss.model.sys.impl.ExcelImporter;
 //import org.zkoss.zss.model.sys.impl.SheetCtrl;
 import org.zkoss.zss.ngapi.NImporter;
@@ -126,7 +120,6 @@ import org.zkoss.zss.ngmodel.NPicture;
 import org.zkoss.zss.ngmodel.NRow;
 import org.zkoss.zss.ngmodel.NSheet;
 import org.zkoss.zss.ngmodel.NViewAnchor;
-import org.zkoss.zss.ngmodel.impl.sys.formula.FormulaEngineImpl;
 import org.zkoss.zss.ui.au.in.Command;
 import org.zkoss.zss.ui.au.out.AuCellFocus;
 import org.zkoss.zss.ui.au.out.AuCellFocusTo;
@@ -378,10 +371,6 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 				processStopEditing((String) data[0], (StopEditingEvent) data[1], (String) data[2]);
 			}
 		});
-		
-		// FIXME ZSS 3.5
-		// replace workbook evaluator builder by new builder with ZSS evaluator context
-		FormulaEngineImpl.setEvaluatorBuilder(new ZSSEvaluatorBuilder(_functionMapper));
 	}
 	
 	/**
