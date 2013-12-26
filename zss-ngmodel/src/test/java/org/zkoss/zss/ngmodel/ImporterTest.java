@@ -273,6 +273,19 @@ public class ImporterTest extends ImExpTestBase {
 	}
 	
 	@Test
+	public void bubbleChart(){
+		NBook book = ImExpTestUtil.loadBook(DEFAULT_CHART_IMPORT_FILE, "Chart");
+		NSheet sheet = book.getSheetByName("Bubble");
+		NChart bubbleChart = sheet.getChart(0);
+		assertEquals("Sales",bubbleChart.getTitle()); 
+		assertEquals(NChartType.BUBBLE, bubbleChart.getType());
+		
+		NGeneralChartData chartData = (NGeneralChartData)bubbleChart.getData();
+		assertEquals(0, chartData.getNumOfCategory());
+		assertEquals(1, chartData.getNumOfSeries());
+	}
+	
+	@Test
 	public void doughnutChart(){
 		NBook book = ImExpTestUtil.loadBook(DEFAULT_CHART_IMPORT_FILE, "Chart");
 		NSheet sheet = book.getSheetByName("Doughnut");
@@ -284,16 +297,19 @@ public class ImporterTest extends ImExpTestBase {
 	}
 	
 	@Test
-	public void bubbleChart(){
+	public void lineChart(){
 		NBook book = ImExpTestUtil.loadBook(DEFAULT_CHART_IMPORT_FILE, "Chart");
-		NSheet sheet = book.getSheetByName("Bubble");
-		NChart bubbleChart = sheet.getChart(0);
-//		assertEquals("Sales",bubbleChart.getTitle()); FIXME
-		assertEquals(NChartType.BUBBLE, bubbleChart.getType());
+		NSheet sheet = book.getSheetByName("Line");
+		NChart lineChart = sheet.getChart(0);
+		assertEquals(NChartType.LINE, lineChart.getType());
+		NGeneralChartData chartData = (NGeneralChartData)lineChart.getData();
+		assertEquals(3, chartData.getNumOfSeries());
 		
-		NGeneralChartData chartData = (NGeneralChartData)bubbleChart.getData();
-		assertEquals(0, chartData.getNumOfCategory());
-		assertEquals(1, chartData.getNumOfSeries());
+		NChart line3dChart = sheet.getChart(1);
+		assertEquals(true, line3dChart.isThreeD());
+		assertEquals("Line 3D Title",line3dChart.getTitle()); 
+		chartData = (NGeneralChartData)line3dChart.getData();
+		assertEquals(3, chartData.getNumOfSeries());
 	}
 	
 	@Test
@@ -309,6 +325,10 @@ public class ImporterTest extends ImExpTestBase {
 		assertEquals(0.3427, chartData.getSeries(0).getYValue(0));
 		assertEquals(0.327, chartData.getSeries(0).getYValue(1));
 		assertEquals(0.3168, chartData.getSeries(0).getYValue(2));
+	}
+	
+	@Test
+	public void pieChart(){
 		
 	}
 }

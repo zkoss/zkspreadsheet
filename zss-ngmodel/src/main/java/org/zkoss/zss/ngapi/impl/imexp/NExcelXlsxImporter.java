@@ -136,6 +136,7 @@ public class NExcelXlsxImporter extends AbstractExcelImporter{
 					break;
 				case Bubble:
 					chart = sheet.addChart(NChartType.BUBBLE, viewAnchor);
+					
 					XYZData xyzData = new XSSFBubbleChartData(xssfChart);
 					importXyzSeries(xyzData.getSeries(), chart);
 					break;
@@ -163,6 +164,14 @@ public class NExcelXlsxImporter extends AbstractExcelImporter{
 					chart = sheet.addChart(NChartType.LINE, viewAnchor);
 					categoryData = new XSSFLine3DChartData(xssfChart);
 					break;
+//				case Pie:
+//					chart = sheet.addChart(NChartType.PIE, viewAnchor);
+//					categoryData = new XSSFPieChartData(xssfChart);
+//					break;
+//				case Pie3D:
+//					chart = sheet.addChart(NChartType.PIE, viewAnchor);
+//					categoryData = new XSSFPie3DChartData(xssfChart);
+//					break;
 				case Scatter:
 					chart = sheet.addChart(NChartType.SCATTER, viewAnchor);
 					XYData xyData =  new XSSFScatChartData(xssfChart);
@@ -193,13 +202,9 @@ public class NExcelXlsxImporter extends AbstractExcelImporter{
 	private void importSeries(List<? extends CategoryDataSerie> seriesList, NChart chart) {
 		for (CategoryDataSerie sourceSeries :seriesList){
 			//reference ChartHelper.prepareLabels()
-			if (sourceSeries.getCategories().isReference()){
-				((NGeneralChartData)chart.getData()).setCategoriesFormula(sourceSeries.getCategories().getFormulaString());
-			}else{
-				//TODO get category label
-			}
-			String nameExpression = getTitleExpression(sourceSeries.getTitle());			
-			String xValueExpression = getValueExpression(sourceSeries.getValues());
+			((NGeneralChartData)chart.getData()).setCategoriesFormula(getValueFormula(sourceSeries.getCategories()));
+			String nameExpression = getTitleFormula(sourceSeries.getTitle());			
+			String xValueExpression = getValueFormula(sourceSeries.getValues());
 			NSeries series = ((NGeneralChartData)chart.getData()).addSeries();
 			series.setFormula(nameExpression, xValueExpression);
 		}
@@ -209,9 +214,9 @@ public class NExcelXlsxImporter extends AbstractExcelImporter{
 		for (XYDataSerie sourceSeries :seriesList){
 
 			NSeries series = ((NGeneralChartData)chart.getData()).addSeries();
-			series.setXYFormula(getTitleExpression(sourceSeries.getTitle()), 
-								getValueExpression(sourceSeries.getXs()), 
-								getValueExpression(sourceSeries.getYs()));
+			series.setXYFormula(getTitleFormula(sourceSeries.getTitle()), 
+								getValueFormula(sourceSeries.getXs()), 
+								getValueFormula(sourceSeries.getYs()));
 		}
 	}
 
@@ -223,10 +228,10 @@ public class NExcelXlsxImporter extends AbstractExcelImporter{
 	private void importXyzSeries(List<? extends XYZDataSerie> seriesList, NChart chart) {
 		for (XYZDataSerie sourceSeries :seriesList){
 			//reference to ChartHelper.prepareTitle()
-			String nameExpression = getTitleExpression(sourceSeries.getTitle());			
-			String xValueExpression = getValueExpression(sourceSeries.getXs());
-			String yValueExpression = getValueExpression(sourceSeries.getYs());
-			String zValueExpression = getValueExpression(sourceSeries.getZs());	
+			String nameExpression = getTitleFormula(sourceSeries.getTitle());			
+			String xValueExpression = getValueFormula(sourceSeries.getXs());
+			String yValueExpression = getValueFormula(sourceSeries.getYs());
+			String zValueExpression = getValueFormula(sourceSeries.getZs());	
 			
 			NSeries series = ((NGeneralChartData)chart.getData()).addSeries();
 			series.setXYZFormula(nameExpression, xValueExpression, yValueExpression, zValueExpression);
@@ -238,11 +243,15 @@ public class NExcelXlsxImporter extends AbstractExcelImporter{
 	 * @param textSource
 	 * @return
 	 */
-	private String getTitleExpression(ChartTextSource textSource){
-		if (textSource.isReference()){
-			return textSource.getFormulaString();
-		}else{
-			return textSource.getTextString();
+	private String getTitleFormula(ChartTextSource textSource){
+		if (textSource == null){
+			return "";
+		}else {
+			if (textSource.isReference()){
+				return textSource.getFormulaString();
+			}else{
+				return textSource.getTextString();
+			}
 		}
 	}
 	
@@ -251,18 +260,22 @@ public class NExcelXlsxImporter extends AbstractExcelImporter{
 	 * @param dataSource
 	 * @return
 	 */
-	private String getValueExpression(ChartDataSource<? extends Number> dataSource){
+	private String getValueFormula(ChartDataSource<?> dataSource){
 		if (dataSource.isReference()){
 			return dataSource.getFormulaString();
 		}else{
 			StringBuilder expression = new StringBuilder("{");
 			int count = dataSource.getPointCount();
 			for (int i = 0; i < count; ++i) {
-				Number value = dataSource.getPointAt(i);
+				Object value = dataSource.getPointAt(i); //Number or String
 				if (value == null){
-					expression.append("0");
+					if (dataSource.isNumeric()){
+						expression.append("0");
+					}else{
+						expression.append("");
+					}
 				}else{
-					expression.append(Double.toString(value.doubleValue()));
+					expression.append(value.toString());
 				}
 				if (i != count-1){
 					expression.append(",");
