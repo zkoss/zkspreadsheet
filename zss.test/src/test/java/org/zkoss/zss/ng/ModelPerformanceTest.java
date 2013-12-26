@@ -36,7 +36,7 @@ import org.zkoss.zss.ngapi.impl.imexp.ExcelImportFactory;
 import org.zkoss.zss.ngmodel.NBook;
 import org.zkoss.zss.ngmodel.NCell;
 import org.zkoss.zss.ngmodel.NSheet;
-import org.zkoss.zss.ngmodel.impl.BookSeriesAdv;
+import org.zkoss.zss.ngmodel.impl.AbstractBookSeriesAdv;
 import org.zkoss.zss.ngmodel.impl.RefImpl;
 import org.zkoss.zss.ngmodel.sys.dependency.DependencyTable;
 import org.zkoss.zss.ngmodel.sys.dependency.Ref;
@@ -55,7 +55,9 @@ public class ModelPerformanceTest {
 	private final static int NG_MODEL = 0;
 	private final static int XBOOK_MODEL = 1;
 	private final static int WORKBOOK_MODEL = 2;
-
+	
+	private XSSFFormulaEvaluator evaluator;
+	
 	@Before
 	public void before() {
 		memoryInit = -1;
@@ -160,7 +162,6 @@ public class ModelPerformanceTest {
 			}
 		} else {
 			XSSFWorkbook book = (XSSFWorkbook)model;
-			XSSFFormulaEvaluator evaluator;
 			if(book instanceof XBook){
 				evaluator = (XSSFFormulaEvaluator)((XBook)book).getFormulaEvaluator();
 				evaluator.clearAllCachedResultValues();
@@ -210,7 +211,7 @@ public class ModelPerformanceTest {
 	private void searchDependencies(int type, Object model) {
 		if(type == NG_MODEL) {
 			NBook book = (NBook)model;
-			BookSeriesAdv series = (BookSeriesAdv)book.getBookSeries();
+			AbstractBookSeriesAdv series = (AbstractBookSeriesAdv)book.getBookSeries();
 			DependencyTable table = series.getDependencyTable();
 			String bookName = book.getBookName();
 			String sheetName = book.getSheet(0).getSheetName();
