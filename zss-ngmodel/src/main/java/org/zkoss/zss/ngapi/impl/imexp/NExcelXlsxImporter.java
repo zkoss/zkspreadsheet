@@ -174,8 +174,13 @@ public class NExcelXlsxImporter extends AbstractExcelImporter{
 					break;
 				case Scatter:
 					chart = sheet.addChart(NChartType.SCATTER, viewAnchor);
+					
 					XYData xyData =  new XSSFScatChartData(xssfChart);
 					importXySeries(xyData.getSeries(), chart);
+					break;
+				case Stock:
+					chart = sheet.addChart(NChartType.STOCK, viewAnchor);
+					categoryData = new XSSFStockChartData(xssfChart);
 					break;
 				default:
 					//TODO ignore unsupported charts
@@ -202,7 +207,6 @@ public class NExcelXlsxImporter extends AbstractExcelImporter{
 	private void importSeries(List<? extends CategoryDataSerie> seriesList, NChart chart) {
 		for (int i =0 ;  i< seriesList.size() ; i++){
 			CategoryDataSerie sourceSeries = seriesList.get(i);
-			//reference ChartHelper.prepareLabels()
 			((NGeneralChartData)chart.getData()).setCategoriesFormula(getValueFormula(sourceSeries.getCategories()));
 			String nameExpression = getTitleFormula(sourceSeries.getTitle(), i);			
 			String xValueExpression = getValueFormula(sourceSeries.getValues());
@@ -241,18 +245,19 @@ public class NExcelXlsxImporter extends AbstractExcelImporter{
 	}
 	
 	/**
+	 * return a formula or generate a default title if title doesn't exist.
 	 * reference ChartHelper.prepareTitle()
 	 * @param textSource
 	 * @return
 	 */
 	private String getTitleFormula(ChartTextSource textSource, int seriesIndex){
 		if (textSource == null){
-			return "Series"+seriesIndex;
+			return "\"Series"+seriesIndex+"\"";
 		}else {
 			if (textSource.isReference()){
 				return textSource.getFormulaString();
 			}else{
-				return textSource.getTextString();
+				return "\""+textSource.getTextString()+"\"";
 			}
 		}
 	}
@@ -274,7 +279,7 @@ public class NExcelXlsxImporter extends AbstractExcelImporter{
 					if (dataSource.isNumeric()){
 						expression.append("0");
 					}else{
-						expression.append("");
+						expression.append("\"\"");
 					}
 				}else{
 					expression.append(value.toString());

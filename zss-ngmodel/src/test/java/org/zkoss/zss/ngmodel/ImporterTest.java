@@ -209,6 +209,21 @@ public class ImporterTest extends ImExpTestBase {
 	}
 	
 	@Test
+	public void areaChart(){
+		NBook book = ImExpTestUtil.loadBook(DEFAULT_CHART_IMPORT_FILE, "Chart");
+		NSheet sheet = book.getSheetByName("Area");
+		NChart areaChart = sheet.getChart(0);
+		assertEquals(NChartType.AREA,areaChart.getType());
+		
+		NGeneralChartData chartData = (NGeneralChartData)areaChart.getData();
+		assertEquals(8, chartData.getNumOfCategory());
+		
+		NChart area3dChart = sheet.getChart(1);
+		assertEquals(NChartGrouping.STANDARD, area3dChart.getGrouping());
+		assertEquals(NChartLegendPosition.BOTTOM, area3dChart.getLegendPosition());
+	}
+	
+	@Test
 	public void barChart(){
 		NBook book = ImExpTestUtil.loadBook(DEFAULT_CHART_IMPORT_FILE, "Chart");
 		NSheet sheet = book.getSheetByName("Bar");
@@ -236,9 +251,31 @@ public class ImporterTest extends ImExpTestBase {
 		assertEquals(0.3427, chartData.getSeries(0).getValue(0));
 		assertEquals(0.2599, chartData.getSeries(0).getValue(1));
 		assertEquals(0.2268, chartData.getSeries(0).getValue(2));
+		assertEquals("February 2012", chartData.getSeries(1).getName());
+		assertEquals(0.327, chartData.getSeries(1).getValue(0));
+		assertEquals(0.2724, chartData.getSeries(1).getValue(1));
+		assertEquals(0.2276, chartData.getSeries(1).getValue(2));
+		assertEquals("March 2012", chartData.getSeries(2).getName());
+		assertEquals(0.3168, chartData.getSeries(2).getValue(0));
+		assertEquals(0.2809, chartData.getSeries(2).getValue(1));
+		assertEquals(0.2273, chartData.getSeries(2).getValue(2));
 		
 		NChart barChart3D = sheet.getChart(1);
 		assertEquals(true, barChart3D.isThreeD());
+	}
+	
+	@Test
+	public void bubbleChtart(){
+		NBook book = ImExpTestUtil.loadBook(DEFAULT_CHART_IMPORT_FILE, "Chart");
+		NSheet sheet = book.getSheetByName("Bubble");
+		NChart bubbleChart = sheet.getChart(0);
+		assertEquals("Sales",bubbleChart.getTitle()); 
+		assertEquals(NChartType.BUBBLE, bubbleChart.getType());
+		
+		NGeneralChartData chartData = (NGeneralChartData)bubbleChart.getData();
+		assertEquals(0, chartData.getNumOfCategory());
+		assertEquals(1, chartData.getNumOfSeries());
+		assertEquals("String Literal Title", chartData.getSeries(0).getName());
 	}
 	
 	@Test
@@ -252,37 +289,9 @@ public class ImporterTest extends ImExpTestBase {
 		
 		NGeneralChartData chartData = (NGeneralChartData)columnChart.getData();
 		assertEquals(4, chartData.getNumOfCategory());
-	
+		
 		NChart column3dChart = sheet.getChart(1);
 		assertEquals(NChartGrouping.STACKED, column3dChart.getGrouping());
-	}
-	
-	@Test
-	public void areaChart(){
-		NBook book = ImExpTestUtil.loadBook(DEFAULT_CHART_IMPORT_FILE, "Chart");
-		NSheet sheet = book.getSheetByName("Area");
-		NChart areaChart = sheet.getChart(0);
-		assertEquals(NChartType.AREA,areaChart.getType());
-		
-		NGeneralChartData chartData = (NGeneralChartData)areaChart.getData();
-		assertEquals(8, chartData.getNumOfCategory());
-		
-		NChart area3dChart = sheet.getChart(1);
-		assertEquals(NChartGrouping.STANDARD, area3dChart.getGrouping());
-		assertEquals(NChartLegendPosition.BOTTOM, area3dChart.getLegendPosition());
-	}
-	
-	@Test
-	public void bubbleChart(){
-		NBook book = ImExpTestUtil.loadBook(DEFAULT_CHART_IMPORT_FILE, "Chart");
-		NSheet sheet = book.getSheetByName("Bubble");
-		NChart bubbleChart = sheet.getChart(0);
-		assertEquals("Sales",bubbleChart.getTitle()); 
-		assertEquals(NChartType.BUBBLE, bubbleChart.getType());
-		
-		NGeneralChartData chartData = (NGeneralChartData)bubbleChart.getData();
-		assertEquals(0, chartData.getNumOfCategory());
-		assertEquals(1, chartData.getNumOfSeries());
 	}
 	
 	@Test
@@ -342,6 +351,20 @@ public class ImporterTest extends ImExpTestBase {
 		assertEquals(0.3168, chartData.getSeries(0).getYValue(2));
 	}
 	
+	@Test
+	public void stockChart(){
+		NBook book = ImExpTestUtil.loadBook(DEFAULT_CHART_IMPORT_FILE, "Chart");
+		NSheet sheet = book.getSheetByName("Stock");
+		NChart stockChart = sheet.getChart(0);
+		assertEquals(NChartType.STOCK, stockChart.getType());
+		
+		NGeneralChartData chartData = (NGeneralChartData)stockChart.getData();
+		assertEquals(4, chartData.getNumOfSeries());
+		assertEquals("Open", chartData.getSeries(0).getName());
+		assertEquals("High", chartData.getSeries(1).getName());
+		assertEquals("Low", chartData.getSeries(2).getName());
+		assertEquals("Close", chartData.getSeries(3).getName());
+	}
 }
 
 
