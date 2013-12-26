@@ -16,20 +16,20 @@ public class IssueTest extends ZSSTestcaseBase {
 		captureOrAssert("loadpage");
 		
 		click("@button:eq(0)");
-		waitForTime(Setup.getTimeoutL1());//for zss render in browser
+		waitForTime(Setup.getTimeoutL2());//for zss render in browser
 		captureOrAssert("btn0");
 		
 		click("@button:eq(1)");
-		waitForTime(Setup.getTimeoutL1());//for zss render in browser
+		waitForTime(Setup.getTimeoutL2());//for zss render in browser
 		captureOrAssert("btn1");
 		
 		
 		click("@button:eq(2)");
-		waitForTime(Setup.getTimeoutL1());//for zss render in browser
+		waitForTime(Setup.getTimeoutL2());//for zss render in browser
 		captureOrAssert("btn2");
 		
 		click("@button:eq(3)");
-		waitForTime(Setup.getTimeoutL1());//for zss render in browser
+		waitForTime(Setup.getTimeoutL2());//for zss render in browser
 		captureOrAssert("btn3");
 	}
 	
@@ -71,7 +71,7 @@ public class IssueTest extends ZSSTestcaseBase {
 		
 		for(int i = 0; i < 8; i++) {
 			click("@button:eq("+ i +")");
-			waitForTime(Setup.getTimeoutL2());//for zss render in browser
+			waitForTime(Setup.getTimeoutL3());//for zss render in browser
 			captureOrAssert("step" + i);
 		}
 	}
