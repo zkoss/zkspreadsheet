@@ -13,14 +13,17 @@ package org.zkoss.zss.ngmodel.impl.sys.formula;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.zkoss.poi.ss.formula.CollaboratingWorkbooksEnvironment;
+import org.zkoss.poi.ss.formula.DependencyTracker;
 import org.zkoss.poi.ss.formula.EvaluationCell;
 import org.zkoss.poi.ss.formula.EvaluationSheet;
+import org.zkoss.poi.ss.formula.EvaluationWorkbook;
 import org.zkoss.poi.ss.formula.FormulaParseException;
 import org.zkoss.poi.ss.formula.FormulaParser;
 import org.zkoss.poi.ss.formula.FormulaType;
@@ -47,6 +50,11 @@ import org.zkoss.poi.ss.formula.ptg.Ptg;
 import org.zkoss.poi.ss.formula.ptg.Ref3DPtg;
 import org.zkoss.poi.ss.formula.ptg.RefPtg;
 import org.zkoss.poi.ss.formula.udf.UDFFinder;
+import org.zkoss.poi.xssf.model.IndexedUDFFinder;
+import org.zkoss.xel.FunctionMapper;
+import org.zkoss.xel.VariableResolver;
+import org.zkoss.xel.XelContext;
+import org.zkoss.xel.util.SimpleXelContext;
 import org.zkoss.zss.ngmodel.CellRegion;
 import org.zkoss.zss.ngmodel.ErrorValue;
 import org.zkoss.zss.ngmodel.NBook;
@@ -65,6 +73,8 @@ import org.zkoss.zss.ngmodel.sys.formula.FormulaEngine;
 import org.zkoss.zss.ngmodel.sys.formula.FormulaEvaluationContext;
 import org.zkoss.zss.ngmodel.sys.formula.FormulaExpression;
 import org.zkoss.zss.ngmodel.sys.formula.FormulaParseContext;
+import org.zkoss.zss.ngmodel.sys.formula.NFunctionResolver;
+import org.zkoss.zss.ngmodel.sys.formula.NFunctionResolverFactory;
 
 /**
  * A formula engine implemented by ZPOI
@@ -73,8 +83,11 @@ import org.zkoss.zss.ngmodel.sys.formula.FormulaParseContext;
 public class FormulaEngineImpl implements FormulaEngine {
 
 	public final static String KEY_EVALUATORS = "$ZSS_EVALUATORS$";
+	public static boolean EE_EDITION = true; // FIXME zss 3.5
 
 	private final static Logger logger = Logger.getLogger(FormulaEngineImpl.class.getName());
+
+	private Map<EvaluationWorkbook, XelContext> xelContexts = new HashMap<EvaluationWorkbook, XelContext>();
 
 	// for POI formula evaluator
 	protected final static IStabilityClassifier noCacheClassifier = new IStabilityClassifier() {
@@ -187,8 +200,9 @@ public class FormulaEngineImpl implements FormulaEngine {
 			// get evaluation context from book series
 			NBook book = context.getBook();
 			AbstractBookSeriesAdv bookSeries = (AbstractBookSeriesAdv)book.getBookSeries();
-			Map<String, EvalContext> evalCtxMap = (Map<String, EvalContext>)bookSeries.getAttribute(KEY_EVALUATORS);
-			
+			Map<String, EvalContext> evalCtxMap = (Map<String, EvalContext>)bookSeries
+					.getAttribute(KEY_EVALUATORS);
+
 			// get evaluation context or create new one if not existed
 			if(evalCtxMap == null) {
 				evalCtxMap = new LinkedHashMap<String, FormulaEngineImpl.EvalContext>();
@@ -216,7 +230,15 @@ public class FormulaEngineImpl implements FormulaEngine {
 			WorkbookEvaluator evaluator = ctx.getEvaluator();
 
 			// evaluation formula
-			result = evaluateFormula(expr, context, evalBook, evaluator);
+			// for resolving, temporarily replace current XEL context 
+			Object oldXelCtx = getXelContext();
+			XelContext xelCtx = getXelContextForResolving(context, evalBook, evaluator);
+			setXelContext(xelCtx);
+			try {
+				result = evaluateFormula(expr, context, evalBook, evaluator);
+			} finally {
+				setXelContext(oldXelCtx);
+			}
 
 		} catch(FormulaParseException e) {
 			logger.log(Level.SEVERE, e.getMessage() + " when eval " + expr.getFormulaString());
@@ -293,6 +315,60 @@ public class FormulaEngineImpl implements FormulaEngine {
 		} else {
 			throw new EvaluationException(null, "no matched type: " + value); // FIXME
 		}
+	}
+
+	protected Object getXelContext() {
+		return null; // do nothing
+	}
+
+	protected void setXelContext(Object ctx) {
+		// do nothing
+	}
+
+	private XelContext getXelContextForResolving(FormulaEvaluationContext context, EvaluationWorkbook evalBook, WorkbookEvaluator evaluator) {
+		XelContext xelContext = xelContexts.get(evalBook);
+		if(xelContext == null) {
+
+			// create function resolver
+			NFunctionResolver resolver = NFunctionResolverFactory.getFunctionResolver();
+
+			// aggregate built-in functions and user defined functions
+			UDFFinder zkUDFF = resolver.getUDFFinder(); // ZK user defined function finder
+			if(zkUDFF != null) {
+				IndexedUDFFinder bookUDFF = (IndexedUDFFinder)evalBook.getUDFFinder(); // book contained built-in function finder
+				bookUDFF.insert(0, zkUDFF);
+			}
+
+			// apply POI dependency tracker for defined name resolving
+			DependencyTracker tracker = resolver.getDependencyTracker();
+			if(tracker != null) {
+				evaluator.setDependencyTracker(tracker);
+			}
+			
+			// collect all function mappers 
+			NJoinFunctionMapper functionMapper = new NJoinFunctionMapper(null);
+			FunctionMapper extraFunctionMapper = context.getFunctionMapper();
+			if(extraFunctionMapper != null) {
+				functionMapper.addFunctionMapper(extraFunctionMapper); // must before ZSS function mapper
+			}
+			FunctionMapper zssFuncMapper = resolver.getFunctionMapper();
+			if(zssFuncMapper != null) {
+				functionMapper.addFunctionMapper(zssFuncMapper);
+			}
+			
+			// collect all variable resolvers
+			NJoinVariableResolver variableResolver = new NJoinVariableResolver();
+			VariableResolver extraVariableResolver = context.getVariableResolver();
+			if(extraVariableResolver != null) {
+				variableResolver.addVariableResolver(extraVariableResolver);
+			}
+			
+			// create XEL context
+			xelContext = new SimpleXelContext(variableResolver, functionMapper);
+			xelContext.setAttribute("zkoss.zss.CellType", Object.class);
+			xelContexts.put(evalBook, xelContext);
+		}
+		return xelContext;
 	}
 
 	@Override
