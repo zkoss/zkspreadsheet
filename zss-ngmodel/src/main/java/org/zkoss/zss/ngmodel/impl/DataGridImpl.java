@@ -8,6 +8,7 @@ import org.zkoss.zss.ngmodel.NCellValue;
 import org.zkoss.zss.ngmodel.NDataGrid;
 import org.zkoss.zss.ngmodel.NDataRow;
 import org.zkoss.zss.ngmodel.NSheet;
+import org.zkoss.zss.ngmodel.NCell.CellType;
 /**
  * 
  * @author dennis
@@ -41,7 +42,7 @@ public class DataGridImpl implements NDataGrid,Serializable {
 	protected void setLocalValue(int rowIdx,int columnIdx, NCellValue value) {
 		NCell cell = sheet.getCell(rowIdx, columnIdx);
 		if(cell instanceof AbstractCellAdv){
-			((AbstractCellAdv)cell).setLocalValue(value);
+			((AbstractCellAdv)cell).setLocalValue((value==null||value.getType()==CellType.BLANK)?null:value);
 		}else{
 			throw new IllegalStateException("doesn't support to store value to cell "+cell);
 		}
