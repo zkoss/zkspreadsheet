@@ -16,6 +16,8 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.ngmodel.sys;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.zkoss.zss.ngmodel.impl.sys.CalendarUtilImpl;
 import org.zkoss.zss.ngmodel.impl.sys.DependencyTableImpl;
 import org.zkoss.zss.ngmodel.impl.sys.FormatEngineImpl;
@@ -34,6 +36,8 @@ import org.zkoss.zss.ngmodel.sys.input.InputEngine;
  */
 public class EngineFactory {
 
+	static private Logger logger = Logger.getLogger(EngineFactory.class.getName());
+	
 	static private EngineFactory instance;
 	
 	static private CalendarUtil calendarUtil = new CalendarUtilImpl();
@@ -58,7 +62,16 @@ public class EngineFactory {
 	}
 
 	public FormulaEngine createFormulaEngine() {
-//		return new TestFormulaEngineImpl();
+//		if(true) return new TestFormulaEngineImpl();
+		try {
+			// FIXME zss 3.5
+			Class<?> clazz = Class.forName("org.zkoss.zss.model.sys.impl.ZSSFormulaEngine");
+			return (FormulaEngine)clazz.newInstance();
+		} catch(ClassNotFoundException e) {
+			// do nothing
+		} catch(Exception e) {
+			logger.log(Level.WARNING, e.getMessage(), e);
+		}
 		return new FormulaEngineImpl();
 	}
 

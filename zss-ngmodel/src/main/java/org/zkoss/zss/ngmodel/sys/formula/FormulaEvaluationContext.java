@@ -16,6 +16,8 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
  */
 package org.zkoss.zss.ngmodel.sys.formula;
 
+import org.zkoss.xel.FunctionMapper;
+import org.zkoss.xel.VariableResolver;
 import org.zkoss.zss.ngmodel.NBook;
 import org.zkoss.zss.ngmodel.NCell;
 import org.zkoss.zss.ngmodel.NSheet;
@@ -61,5 +63,13 @@ public class FormulaEvaluationContext extends AbstractContext {
 
 	public NCell getCell() {
 		return cell;
+	}
+	
+	public FunctionMapper getFunctionMapper() {
+		return null; // TODO
+	}
+	
+	public VariableResolver getVariableResolver() {
+		return null; // TODO
 	}
 }
