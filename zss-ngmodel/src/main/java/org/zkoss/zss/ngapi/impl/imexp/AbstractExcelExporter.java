@@ -16,7 +16,10 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.ngapi.impl.imexp;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.*;
+import java.util.concurrent.locks.ReadWriteLock;
 
 import org.zkoss.poi.ss.usermodel.*;
 import org.zkoss.poi.ss.util.CellRangeAddress;
@@ -49,6 +52,29 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 	protected Map<NColor, Color> colorTable = new HashMap<NColor, Color>();
 	
 	abstract protected void exportColumnArray(NSheet sheet, Sheet poiSheet, NColumnArray columnArr);
+	abstract protected Workbook createPoiBook();
+	
+	@Override
+	public void export(NBook book, OutputStream fos) throws IOException {
+		ReadWriteLock lock = book.getBookSeries().getLock();
+		lock.readLock().lock();
+		
+		try {
+			
+			workbook = createPoiBook();
+			
+			for(NSheet sheet : book.getSheets()) {
+				exportSheet(sheet);
+			}
+			
+			exportNamedRange(book);
+			
+			workbook.write(fos);
+		} finally {
+			lock.readLock().unlock();
+		}
+	}
+	
 	
 	protected void exportNamedRange(NBook book) {
 		

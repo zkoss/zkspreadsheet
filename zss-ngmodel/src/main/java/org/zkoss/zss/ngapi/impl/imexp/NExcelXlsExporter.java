@@ -20,11 +20,11 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.concurrent.locks.ReadWriteLock;
 
-import org.zkoss.poi.hssf.usermodel.HSSFSheet;
 import org.zkoss.poi.hssf.usermodel.HSSFWorkbook;
 import org.zkoss.poi.ss.SpreadsheetVersion;
 import org.zkoss.poi.ss.usermodel.CellStyle;
 import org.zkoss.poi.ss.usermodel.Sheet;
+import org.zkoss.poi.ss.usermodel.Workbook;
 import org.zkoss.zss.ngmodel.NBook;
 import org.zkoss.zss.ngmodel.NColumnArray;
 import org.zkoss.zss.ngmodel.NSheet;
@@ -66,6 +66,11 @@ public class NExcelXlsExporter extends AbstractExcelExporter {
 			poiSheet.setColumnHidden(i+1, hidden);
 			poiSheet.setDefaultColumnStyle(i+1, poiCellStyle);
 		}
+	}
+
+	@Override
+	protected Workbook createPoiBook() {
+		return new HSSFWorkbook();
 	}
 
 }

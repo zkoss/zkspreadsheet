@@ -16,12 +16,10 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.ngapi.impl.imexp;
 
-import java.io.*;
-import java.util.concurrent.locks.ReadWriteLock;
-
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCol;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
 import org.zkoss.poi.ss.usermodel.Sheet;
+import org.zkoss.poi.ss.usermodel.Workbook;
 import org.zkoss.poi.xssf.usermodel.*;
 import org.zkoss.zss.ngmodel.*;
 /**
@@ -30,38 +28,6 @@ import org.zkoss.zss.ngmodel.*;
  * @since 3.5.0
  */
 public class NExcelXlsxExporter extends AbstractExcelExporter {
-	
-	@Override
-	public void export(NBook book, OutputStream fos) throws IOException {
-		ReadWriteLock lock = book.getBookSeries().getLock();
-		lock.readLock().lock();
-		
-		try {
-			workbook = new XSSFWorkbook();
-			
-			// TODO, API isn't available 
-			//workbook.setActiveSheet(index);
-			//workbook.setFirstVisibleTab(index);
-			//workbook.setForceFormulaRecalculation(value);
-			//workbook.setHidden(hiddenFlag);
-			//workbook.setMissingCellPolicy(missingCellPolicy);
-			//workbook.setPrintArea(sheetIndex, reference);
-			//workbook.setSelectedTab(index);
-			//workbook.setSheetHidden(sheetIx, hidden);
-			//workbook.setSheetName(sheetIndex, sheetname);
-			//workbook.setSheetOrder(sheetname, pos);
-			
-			for(NSheet sheet : book.getSheets()) {
-				exportSheet(sheet);
-			}
-			
-			exportNamedRange(book);
-			
-			workbook.write(fos);
-		} finally {
-			lock.readLock().unlock();
-		}
-	}
 	
 	protected void exportColumnArray(NSheet sheet, Sheet poiSheet, NColumnArray columnArr) {
 		XSSFSheet xssfSheet = (XSSFSheet) poiSheet;
@@ -78,6 +44,11 @@ public class NExcelXlsxExporter extends AbstractExcelExporter {
     	col.setCustomWidth(true);
     	col.setWidth(XUtils.pxToCTChar(columnArr.getWidth(), AbstractExcelImporter.CHRACTER_WIDTH));
     	col.setHidden(columnArr.isHidden());
+	}
+
+	@Override
+	protected Workbook createPoiBook() {
+		return new XSSFWorkbook();
 	}
 
 }
