@@ -255,6 +255,7 @@ public class DefaultUserActionManagerCtrl implements UserActionManagerCtrl,UserA
 		
 		registerHandler(category, "^B", new FontBoldHandler());
 		registerHandler(category, "^I", new FontItalicHandler());
+		registerHandler(category, "^U", new FontUnderlineHandler());
 		registerHandler(category, "#del", new ClearCellHandler(ClearCellAction.Type.CONTENT));
 		
 		
