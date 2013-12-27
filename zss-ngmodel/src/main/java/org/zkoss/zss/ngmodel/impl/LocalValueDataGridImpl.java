@@ -85,9 +85,8 @@ public class LocalValueDataGridImpl implements NDataGrid,Serializable {
 	}
 
 	@Override
-	public Iterator<NDataRow> getDataRowIterator() {
-		//not support
-		return null;
+	public Iterator<NDataRow> getRowIterator() {
+		throw new UnsupportedOperationException("doens't support it");
 	}
 
 }

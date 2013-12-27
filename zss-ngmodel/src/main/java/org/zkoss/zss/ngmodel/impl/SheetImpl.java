@@ -121,6 +121,7 @@ public class SheetImpl extends AbstractSheetAdv {
 	AbstractRowAdv getOrCreateRow(int rowIdx){
 		AbstractRowAdv rowObj = rows.get(rowIdx);
 		if(rowObj == null){
+			checkOrphan();
 			rowObj = new RowImpl(this,rowIdx);
 			rows.put(rowIdx, rowObj);
 		}

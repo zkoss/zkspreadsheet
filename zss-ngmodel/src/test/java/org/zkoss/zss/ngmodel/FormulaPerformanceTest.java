@@ -21,6 +21,7 @@ import org.zkoss.poi.xssf.usermodel.XSSFFormulaEvaluator;
 import org.zkoss.poi.xssf.usermodel.XSSFRow;
 import org.zkoss.poi.xssf.usermodel.XSSFSheet;
 import org.zkoss.poi.xssf.usermodel.XSSFWorkbook;
+import org.zkoss.zss.ngmodel.impl.TreeMapDataGridImpl;
 import org.zkoss.zss.ngmodel.util.AreaReference;
 import org.zkoss.zss.ngmodel.util.CellReference;
 
@@ -47,12 +48,12 @@ public class FormulaPerformanceTest {
 	}
 
 	
-	boolean useNGDataGrid;
+	int useNGDataGrid;
 	
 	@Test
 	public void testNGModel() {
 		System.out.println("=== NG Model ===");
-		useNGDataGrid = false;
+		useNGDataGrid = 0;
 		testPerformanceAndMemory(true);
 	}
 	
@@ -61,7 +62,14 @@ public class FormulaPerformanceTest {
 	@Test
 	public void testNGModelDataGrid() {
 		System.out.println("=== NG Model DataGrid ===");
-		useNGDataGrid = true;
+		useNGDataGrid = 1;
+		testPerformanceAndMemory(true);
+	}
+	
+	@Test
+	public void testNGModelTreeMapDataGrid() {
+		System.out.println("=== NG Model TreeMapDataGrid ===");
+		useNGDataGrid = 2;
 		testPerformanceAndMemory(true);
 	}
 	
@@ -112,8 +120,10 @@ public class FormulaPerformanceTest {
 		if(ngmodel) {
 			NBook book = NBooks.createBook("Book1");
 			NSheet sheet = book.createSheet("Sheet1");
-			if(useNGDataGrid){
+			if(useNGDataGrid==1){
 				sheet.setDataGrid(new DefaultDataGrid(sheet));
+			}else if(useNGDataGrid==2){
+				sheet.setDataGrid(new TreeMapDataGridImpl());
 			}
 			// first column
 			modifyFirstColumn(ngmodel, book, 1.0);

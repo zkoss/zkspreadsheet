@@ -4,6 +4,6 @@ import java.util.Iterator;
 
 public interface NDataRow {
 
-	public Iterator<NDataCell> getDataCellIterator();
+	public Iterator<NDataCell> getCellIterator();
 	public int getIndex();
 }

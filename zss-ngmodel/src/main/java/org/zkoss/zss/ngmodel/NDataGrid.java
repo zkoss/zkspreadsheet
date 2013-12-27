@@ -9,10 +9,10 @@ import java.util.Iterator;
  */
 public interface NDataGrid {
 
-	//basic storage method?
+	//basic storage method
 	public NCellValue getValue(int row, int column);
 	public void setValue(int row, int column, NCellValue value);
-	
+	public boolean validateValue(int row, int column, NCellValue value);
 	
 	//support operations
 	public boolean supportOperations();
@@ -21,10 +21,8 @@ public interface NDataGrid {
 	public void insertColumn(int rowIdx, int size);
 	public void deleteColumn(int rowIdx, int size);
 	
-	//
+	//support data iterator
 	public boolean supportDataIterator();
-	public Iterator<NDataRow> getDataRowIterator();
+	public Iterator<NDataRow> getRowIterator();
 	
-//	//TODO
-	public boolean validateValue(int row, int column, NCellValue value);
 }
