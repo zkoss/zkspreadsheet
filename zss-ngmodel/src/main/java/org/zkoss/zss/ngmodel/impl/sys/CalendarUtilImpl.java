@@ -37,4 +37,14 @@ public class CalendarUtilImpl implements CalendarUtil {
 		return DateUtil.getExcelDate(date,date1904);
 	}
 
+	@Override
+	public Date doubleValueToDate(double val) {
+		return doubleValueToDate(val,false);
+	}
+
+	@Override
+	public double dateToDoubleValue(Date value) {
+		return dateToDoubleValue(value,false);
+	}
+
 }

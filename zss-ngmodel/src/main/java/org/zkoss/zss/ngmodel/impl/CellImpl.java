@@ -23,6 +23,7 @@ import java.util.Date;
 import org.zkoss.zss.ngmodel.CellRegion;
 import org.zkoss.zss.ngmodel.ErrorValue;
 import org.zkoss.zss.ngmodel.InvalidateModelOpException;
+import org.zkoss.zss.ngmodel.InvalidateModelValueException;
 import org.zkoss.zss.ngmodel.NCellStyle;
 import org.zkoss.zss.ngmodel.NColumnArray;
 import org.zkoss.zss.ngmodel.NComment;
@@ -182,6 +183,7 @@ public class CellImpl extends AbstractCellAdv {
 	public void clearValue() {
 		checkOrphan();
 		//clear dg first, it might throw invalidate model operation exception
+		validateDataGridValue(null);
 		setDataGridValue(null);
 		
 		clearFormulaDependency();
@@ -264,7 +266,7 @@ public class CellImpl extends AbstractCellAdv {
 		checkOrphan();
 		NDataGrid dg = row.getSheet().getDataGrid();
 		if(dg!=null && !dg.validateValue(getRowIndex(),getColumnIndex(),value)){
-			throw new InvalidateModelOpException("the value is not allow to be stored:"+value);
+			throw new InvalidateModelValueException("Invalidate Value : "+(value==null?null:value.getValue()) +" at "+getReferenceString());
 		}
 	}
 	
