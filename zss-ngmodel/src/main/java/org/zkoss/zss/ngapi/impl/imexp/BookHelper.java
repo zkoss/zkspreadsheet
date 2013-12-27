@@ -139,16 +139,22 @@ public final class BookHelper {
 	
 	
 	public static String getFontHTMLColor(Workbook book, Font font) {
+		String colorCode = null;
 		if (font instanceof XSSFFont) {
 			final XSSFFont f = (XSSFFont) font;
 			final XSSFColor color = f.getXSSFColor();
-			return BookHelper.colorToHTML(book, color);
+			colorCode = BookHelper.colorToHTML(book, color);
 		} else {
 			//ZSS-409 Set font color doesn't work in 2003
 			//api to get font color is chaos here, i remove and use the reliable one to 
 			final HSSFColor color = getHSSFFontColor((HSSFWorkbook)book, (HSSFFont) font);
-			return BookHelper.colorToHTML(book, color);
+			colorCode = BookHelper.colorToHTML(book, color);
 		}
+		//reference BookHelper.getFontCSSStyle()
+		if (AUTO_COLOR.equals(colorCode)){
+			colorCode = "#000000";
+		}
+		return colorCode;
 	}
 	
 	private static HSSFColor getHSSFFontColor(HSSFWorkbook book, HSSFFont font) {

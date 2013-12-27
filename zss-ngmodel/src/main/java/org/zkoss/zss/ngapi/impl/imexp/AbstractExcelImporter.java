@@ -19,9 +19,9 @@ package org.zkoss.zss.ngapi.impl.imexp;
 import java.io.*;
 import java.util.*;
 
-import org.zkoss.poi.hssf.usermodel.HSSFWorkbook;
 import org.zkoss.poi.ss.usermodel.*;
 import org.zkoss.poi.ss.util.CellRangeAddress;
+import org.zkoss.poi.xssf.usermodel.XSSFCellStyle;
 import org.zkoss.zss.ngmodel.*;
 import org.zkoss.zss.ngmodel.NCellStyle.Alignment;
 import org.zkoss.zss.ngmodel.NCellStyle.BorderType;
@@ -30,11 +30,20 @@ import org.zkoss.zss.ngmodel.NCellStyle.VerticalAlignment;
 import org.zkoss.zss.ngmodel.NFont.TypeOffset;
 import org.zkoss.zss.ngmodel.NFont.Underline;
 
-
 /**
- * Contains common importing behavior for both XLSX and XLS.
+ * Contains common importing behavior for both XLSX and XLS. Spreadsheet {@link NBook} model including following information:
+ * Book:
+ * 		name
+ * Sheet:
+ * 		name, (default) column width, (default) row height, hidden row (column), row (column) style, freeze, merge, protection, named range
+ * , gridline display
+ * Cell:
+ * 		type, value, font with color and style, type offset(normal or subscript), background color, border's type and color
+ * , data format, alignment, wrap, locked, fill pattern
+ * 
+ * We use XLSX, XLS common interface (e.g. CellStyle instead of {@link XSSFCellStyle}) to get content first for that codes can be easily moved to parent class. 
  * @author Hawk
- * @since 3.5.0 
+ * @since 3.5.0
  */
 abstract public class AbstractExcelImporter extends AbstractImporter {
 	/**

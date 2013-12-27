@@ -36,15 +36,8 @@ import org.zkoss.zss.ngmodel.NChart.NChartLegendPosition;
 import org.zkoss.zss.ngmodel.NChart.NChartType;
 import org.zkoss.zss.ngmodel.chart.*;
 /**
- * Convert Excel XLSX format file to a Spreadsheet {@link NBook} model including following information:
- * Book:
- * 		name
- * Sheet:
- * 		name, column width, row height, hidden row (column), row (column) style
- * Cell:
- * 		type, value, font with color and style, type offset(normal or subscript), background color, border
+ * Specific importing behavior for XLSX.
  * 
- * TODO use XLSX, XLS common interface (e.g. CellStyle instead of {@link XSSFCellStyle}) to get content first for that codes can be easily moved to parent class. 
  * @author Hawk
  * @since 3.5.0
  */
@@ -95,7 +88,7 @@ public class NExcelXlsxImporter extends AbstractExcelImporter{
 	}
 
 	/**
-	 * not setXAxisTitle() because {@link XSSFCategoryAxis} doesn't have API to get title. 
+	 * Not import X & Y axis title because {@link XSSFCategoryAxis} doesn't provide API to get title. 
 	 */
 	@Override
 	protected void importChart(Sheet poiSheet, NSheet sheet) {
