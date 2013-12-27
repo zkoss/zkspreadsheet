@@ -2,6 +2,7 @@
 ZK Spreadsheet 3.0.1
 *Features:
   ZSS-511 LEFTB and REPLACEB return #NAME
+  ZSS-527 Enter formula with bad syntax, would like "bad" formula to remain in cell
   
 *Bugs:
   ZSS-510 ApplyDataFormat with "" then getCellFormatText from range will cause IndexOutOfBoundaryException and spreadsheet crash.
