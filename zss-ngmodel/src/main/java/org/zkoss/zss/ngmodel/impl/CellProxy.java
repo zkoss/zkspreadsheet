@@ -85,7 +85,16 @@ class CellProxy extends AbstractCellAdv {
 	@Override
 	public CellType getType() {
 		loadProxy();
-		return proxy == null ? CellType.BLANK : proxy.getType();
+		if(proxy==null){
+			NDataGrid dg = getSheet().getDataGrid();
+			if(dg!=null){
+				NCellValue val = dg.getValue(rowIdx, columnIdx);
+				return val==null?CellType.BLANK:val.getType();
+			}
+			return CellType.BLANK;
+		}else{
+			return  proxy.getType();
+		}
 	}
 
 	@Override
@@ -115,7 +124,16 @@ class CellProxy extends AbstractCellAdv {
 	@Override
 	public Object getValue() {
 		loadProxy();
-		return proxy == null ? null : proxy.getValue();
+		if(proxy==null){
+			NDataGrid dg = getSheet().getDataGrid();
+			if(dg!=null){
+				NCellValue val = dg.getValue(rowIdx, columnIdx);
+				return val==null?null:val.getValue();
+			}
+			return null;
+		}else{
+			return  proxy.getValue();
+		}
 	}
 
 	@Override

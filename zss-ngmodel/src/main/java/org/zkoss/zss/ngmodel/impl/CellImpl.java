@@ -31,6 +31,7 @@ import org.zkoss.zss.ngmodel.NDataGrid;
 import org.zkoss.zss.ngmodel.NHyperlink;
 import org.zkoss.zss.ngmodel.NRichText;
 import org.zkoss.zss.ngmodel.NSheet;
+import org.zkoss.zss.ngmodel.NCell.CellType;
 import org.zkoss.zss.ngmodel.sys.EngineFactory;
 import org.zkoss.zss.ngmodel.sys.dependency.Ref;
 import org.zkoss.zss.ngmodel.sys.formula.EvaluationResult;
@@ -321,7 +322,7 @@ public class CellImpl extends AbstractCellAdv {
 		}
 
 		
-		NCellValue newCellVal = new NCellValue(newType,newVal);
+		NCellValue newCellVal = new InnerCellValue(newType,newVal);
 		validateDataGridValue(newCellVal);
 		//should't clear dependency if new type is formula, it clear the dependency already when eval
 		clearValueForSet(oldVal!=null && oldVal.getType()==CellType.FORMULA && newType !=CellType.FORMULA);
@@ -438,5 +439,12 @@ public class CellImpl extends AbstractCellAdv {
 	@Override
 	void setLocalValue(NCellValue value) {
 		this.localValue = value;
+	}
+	
+	private static class InnerCellValue extends NCellValue{
+		private static final long serialVersionUID = 1L;
+		private InnerCellValue(CellType type, Object value){
+			super(type,value);
+		}
 	}
 }

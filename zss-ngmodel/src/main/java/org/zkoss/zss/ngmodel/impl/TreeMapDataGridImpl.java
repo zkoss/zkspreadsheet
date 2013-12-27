@@ -235,4 +235,14 @@ public class TreeMapDataGridImpl implements NDataGrid,Serializable {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public Iterator<NDataCell> getCellIterator(int rowIdx) {
+		DataRowImpl row = getRow(rowIdx,false);
+		if(row==null){
+			return Collections.EMPTY_LIST.iterator();
+		}
+		return row.getCellIterator();
+	}
+
 }

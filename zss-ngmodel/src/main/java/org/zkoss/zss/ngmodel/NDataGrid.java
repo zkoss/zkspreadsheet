@@ -24,5 +24,6 @@ public interface NDataGrid {
 	//support data iterator
 	public boolean supportDataIterator();
 	public Iterator<NDataRow> getRowIterator();
+	public Iterator<NDataCell> getCellIterator(int row);
 	
 }

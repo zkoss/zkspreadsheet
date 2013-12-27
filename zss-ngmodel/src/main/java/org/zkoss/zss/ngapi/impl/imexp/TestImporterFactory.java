@@ -41,6 +41,7 @@ import org.zkoss.zss.ngmodel.NCellValue;
 import org.zkoss.zss.ngmodel.NChart;
 import org.zkoss.zss.ngmodel.NChart.NChartLegendPosition;
 import org.zkoss.zss.ngmodel.NChart.NChartType;
+import org.zkoss.zss.ngmodel.NDataGrid;
 import org.zkoss.zss.ngmodel.NPicture.Format;
 import org.zkoss.zss.ngmodel.NSheet;
 import org.zkoss.zss.ngmodel.NCellStyle.Alignment;
@@ -83,12 +84,24 @@ public class TestImporterFactory implements ImporterFactory{
 
 			private void buildDataGridSheet(NBook book) {
 				NSheet sheet = book.createSheet("DataGrid");
-				sheet.setDataGrid(new DefaultDataGrid(sheet));
-				sheet.getDataGrid().setValue(0, 0, new NCellValue(CellType.BLANK,null));
-				sheet.getDataGrid().setValue(0, 0, new NCellValue(CellType.STRING,"ABC"));
-				sheet.getDataGrid().setValue(1, 1, new NCellValue(CellType.NUMBER,12));
-				sheet.getDataGrid().setValue(2, 2, new NCellValue(CellType.NUMBER,3.45));
-				sheet.getDataGrid().setValue(2, 2, new NCellValue(CellType.BOOLEAN,false));
+				NDataGrid dg;
+				sheet.setDataGrid(dg=new DefaultDataGrid(sheet));
+				dg.setValue(0, 0, new NCellValue());
+				dg.setValue(0, 0, new NCellValue("ABC"));
+				dg.setValue(1, 1, new NCellValue(12D));
+				dg.setValue(2, 2, new NCellValue(3.45));
+				dg.setValue(2, 2, new NCellValue(false));
+				
+				for(int i=0;i<1000;i++){
+					dg.setValue(i, 5, new NCellValue(i*100D));
+				}
+				
+				NCellStyle style = book.createCellStyle(true);
+				style.setFillColor(book.createColor("#55AA55"));
+				style.setFillPattern(FillPattern.SOLID_FOREGROUND);
+				style.setDataFormat("#,000.00");
+				sheet.getColumn(5).setCellStyle(style);
+				sheet.getColumn(5).setWidth(200);
 			}
 
 			private void buildFreeze(NBook book) {

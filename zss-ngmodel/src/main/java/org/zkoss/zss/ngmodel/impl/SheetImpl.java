@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.SortedMap;
 
 import org.zkoss.zss.ngmodel.CellRegion;
+import org.zkoss.zss.ngmodel.DefaultDataGrid;
 import org.zkoss.zss.ngmodel.InvalidateModelOpException;
 import org.zkoss.zss.ngmodel.NBook;
 import org.zkoss.zss.ngmodel.NCell;
@@ -926,7 +927,12 @@ public class SheetImpl extends AbstractSheetAdv {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public Iterator<NRow> getRowIterator() {
-		return Collections.unmodifiableCollection((Collection)rows.values()).iterator();
+		NDataGrid dg = getDataGrid();
+		if(dg!=null && dg.supportDataIterator()){
+			return new JoinRowIterator(this,((Collection)rows.values()).iterator(),dg.getRowIterator());
+		}else{
+			return Collections.unmodifiableCollection((Collection)rows.values()).iterator();
+		}
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -961,7 +967,13 @@ public class SheetImpl extends AbstractSheetAdv {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public Iterator<NCell> getCellIterator(int row) {
-		return (Iterator)((AbstractRowAdv)getRow(row)).getCellIterator();
+		
+		NDataGrid dg = getDataGrid();
+		if(dg!=null && dg.supportDataIterator()){
+			return new JoinCellIterator(this,row,(Iterator)((AbstractRowAdv)getRow(row)).getCellIterator(),dg.getCellIterator(row));
+		}else{
+			return (Iterator)((AbstractRowAdv)getRow(row)).getCellIterator();
+		}
 	}
 	
 	@Override
@@ -1042,6 +1054,10 @@ public class SheetImpl extends AbstractSheetAdv {
 
 	@Override
 	public NDataGrid getDataGrid() {
+//		if(dataGrid==null){
+//			dataGrid = new TreeMapDataGridImpl();
+//			dataGrid = new DefaultDataGrid(this);
+//		}
 		return dataGrid;
 	}
 

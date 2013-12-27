@@ -5,6 +5,7 @@ import java.util.Iterator;
 
 import org.zkoss.zss.ngmodel.NCell;
 import org.zkoss.zss.ngmodel.NCellValue;
+import org.zkoss.zss.ngmodel.NDataCell;
 import org.zkoss.zss.ngmodel.NDataGrid;
 import org.zkoss.zss.ngmodel.NDataRow;
 import org.zkoss.zss.ngmodel.NSheet;
@@ -86,6 +87,11 @@ public class LocalValueDataGridImpl implements NDataGrid,Serializable {
 
 	@Override
 	public Iterator<NDataRow> getRowIterator() {
+		throw new UnsupportedOperationException("doens't support it");
+	}
+
+	@Override
+	public Iterator<NDataCell> getCellIterator(int row) {
 		throw new UnsupportedOperationException("doens't support it");
 	}
 
