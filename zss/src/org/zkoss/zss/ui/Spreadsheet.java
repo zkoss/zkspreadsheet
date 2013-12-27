@@ -4488,7 +4488,9 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	private void processStartEditing(String token, StartEditingEvent event, String editingType) {
 		if (!event.isCancel()) {
 			Object val;
-			final boolean useEditValue = event.isEditingSet() || event.getClientValue() == null; 
+			// ZSS-536 Don't need to care about condition : clienttxt == null
+			// only use server-side value when server-side modify it, otherwise, use client-side
+			final boolean useEditValue = event.isEditingSet();
 			if (useEditValue) {
 				val = event.getEditingValue();
 			} else {
