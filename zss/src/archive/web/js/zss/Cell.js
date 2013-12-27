@@ -142,40 +142,43 @@ zss.Cell = zk.$extends(zk.Widget, {
 		this.c = col;
 		this.src = src;
 		
-		var	data = src.getRow(row).getCell(col),
+		var	cellData = src.getRow(row).getCell(col),
 			colHeader = src.columnHeaders[col],
 			rowHeader = src.rowHeaders[row];
-		this.text = data.text || '';
+		this.text = cellData.text || '';
 		if (colHeader && rowHeader) {
 			this.ref = colHeader.t + rowHeader.t;
 		}
-		this.edit = data.editText ? data.editText : '';
+		this.edit = cellData.editText ? cellData.editText : '';
 		this.hastxt = !!this.text;
 		this.zsw = src.getColumnWidthId(col);
 		this.zsh = src.getRowHeightId(row);
-		this.lock = data.lock;
-		this.cellType = data.cellType;
+		this.lock = cellData.lock;
+		this.cellType = cellData.cellType;
 		
-		this.halign = data.halign;
-		this.valign = data.valign;
-		this.rborder = data.rightBorder;
+		this.halign = cellData.halign;
+		this.valign = cellData.valign;
+		this.rborder = cellData.rightBorder;
+		if (cellData.fontSize){
+			this.fontSize = cellData.fontSize;
+		}
 
-		var mId = data.mergeId;
+		var mId = cellData.mergeId;
 		if (mId) {
-			var r = data.merge;
+			var r = cellData.merge;
 			this.merid = mId;
 			this.merl = r.left;
 			this.merr = r.right;
 			this.mert = r.top;
 			this.merb = r.bottom;
-			this.mergeCls = data.mergeCls;
+			this.mergeCls = cellData.mergeCls;
 		}
-		this.wrap = data.wrap;
-		this.overflow = data.overflow;
-		this.maxOverflowCol = data.maxOverflowCol;
+		this.wrap = cellData.wrap;
+		this.overflow = cellData.overflow;
+		this.maxOverflowCol = cellData.maxOverflowCol;
 		
-		this.style = data.style;
-		this.innerStyle = data.innerStyle;
+		this.style = cellData.style;
+		this.innerStyle = cellData.innerStyle;
 	},
 	getVerticalAlign: function () {
 		switch (this.valign) {

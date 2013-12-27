@@ -64,6 +64,7 @@ ZK Spreadsheet 2.6.0
   ZSS-521 select whole column and format, long running process
   ZSS-520 Rapid typing causes error in spreadsheet
   ZSS-523 misleading error message for text formulas
+  ZSS-534 font size not displayed properly in toolbar
 
 ZK Spreadsheet 2.5.0
 *Features:   
