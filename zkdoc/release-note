@@ -15,6 +15,7 @@ ZK Spreadsheet 3.0.1
   ZSS-520 Rapid typing causes error in spreadsheet
   ZSS-512 when performing "clear style" on merged range can unmerge it, but "clear all" doesn't
   ZSS-538 Ctrl+u doesn't apply underline to a cell
+  ZSS-534 font size not displayed properly in toolbar
 
 ** Upgrade Notes
   * Members of BookType of Book are changed from EXCEL_2003,EXCEL_2007 to XLS,XLSX because of Spreadsheet depends on file format not Excel version.
