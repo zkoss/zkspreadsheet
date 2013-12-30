@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk xmlns:w="http://www.zkoss.org/2005/zk/client">
+	<window id="mainWin" hflex="1" vflex="1" apply="org.zkoss.zss.app.ui.BindAppCtrl">
+		<vlayout hflex="1" vflex="1" spacing="0">
+			<button id="export" label="export"/>
+			<spreadsheet id="ss" 
+				hflex="1" vflex="1" 
+				showToolbar="true" showFormulabar="true" showSheetbar="true" showContextMenu="true"
+				maxrows="4000" maxcolumns="40"/>
+		</vlayout>
+	</window>
+</zk>
