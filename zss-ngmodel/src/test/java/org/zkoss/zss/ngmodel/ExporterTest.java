@@ -310,4 +310,9 @@ public class ExporterTest extends ImExpTestBase {
 		Assert.assertEquals(255, array.getLastIndex());
 		Assert.assertEquals(100, array.getWidth());
 	}
+	
+	@Test
+	public void exportChart(){
+		File outFile = ImExpTestUtil.write(ImExpTestUtil.loadBook(DEFAULT_CHART_IMPORT_FILE, "XSSFBook"), ExcelExportFactory.Type.XLSX);
+	}
 }

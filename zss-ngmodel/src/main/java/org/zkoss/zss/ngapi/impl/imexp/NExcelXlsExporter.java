@@ -73,4 +73,9 @@ public class NExcelXlsExporter extends AbstractExcelExporter {
 		return new HSSFWorkbook();
 	}
 
+	@Override
+	protected void exportChart(NSheet sheet, Sheet poiSheet) {
+		// not support in XLS
+	}
+
 }

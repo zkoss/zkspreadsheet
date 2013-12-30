@@ -21,7 +21,6 @@ import org.zkoss.zss.ngmodel.chart.NGeneralChartData;
  */
 public class ImporterTest extends ImExpTestBase {
 	
-	private static final URL DEFAULT_CHART_IMPORT_FILE = ImporterTest.class.getResource("book/chart.xlsx");
 	private NImporter importer; 
 	
 	/**

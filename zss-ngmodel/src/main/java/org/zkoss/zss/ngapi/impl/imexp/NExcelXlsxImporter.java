@@ -198,9 +198,12 @@ public class NExcelXlsxImporter extends AbstractExcelImporter{
 	 * @param chart
 	 */
 	private void importSeries(List<? extends CategoryDataSerie> seriesList, NChart chart) {
+		CategoryDataSerie firstSeries = null;
+		if ((firstSeries = seriesList.get(0))!=null){
+			((NGeneralChartData)chart.getData()).setCategoriesFormula(getValueFormula(firstSeries.getCategories()));
+		}
 		for (int i =0 ;  i< seriesList.size() ; i++){
 			CategoryDataSerie sourceSeries = seriesList.get(i);
-			((NGeneralChartData)chart.getData()).setCategoriesFormula(getValueFormula(sourceSeries.getCategories()));
 			String nameExpression = getTitleFormula(sourceSeries.getTitle(), i);			
 			String xValueExpression = getValueFormula(sourceSeries.getValues());
 			NSeries series = ((NGeneralChartData)chart.getData()).addSeries();

@@ -19,6 +19,7 @@ import org.zkoss.zss.ngmodel.NFont.TypeOffset;
  */
 public class ImExpTestBase {
 	
+	protected static final URL DEFAULT_CHART_IMPORT_FILE = ImporterTest.class.getResource("book/chart.xlsx");
 	protected static String DEFAULT_BOOK_NAME = "PoiBook";
 	protected static URL fileForImporterTest = ImporterTest.class.getResource("book/import2007.xlsx");
 

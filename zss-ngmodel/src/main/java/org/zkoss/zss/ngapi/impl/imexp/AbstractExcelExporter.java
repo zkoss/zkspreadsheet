@@ -53,6 +53,7 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 	
 	abstract protected void exportColumnArray(NSheet sheet, Sheet poiSheet, NColumnArray columnArr);
 	abstract protected Workbook createPoiBook();
+	abstract protected void exportChart(NSheet sheet, Sheet poiSheet);
 	
 	@Override
 	public void export(NBook book, OutputStream fos) throws IOException {
@@ -109,6 +110,8 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 		poiSheet.setDefaultRowHeight((short)XUtils.pxToTwip(sheet.getDefaultRowHeight()));
 		poiSheet.setDefaultColumnWidth((int)XUtils.pxToDefaultColumnWidth(sheet.getDefaultColumnWidth(), AbstractExcelImporter.CHRACTER_WIDTH));
 		//poiSheet.setDefaultColumnWidth((int)XUtils.pxToCTChar(sheet.getDefaultColumnWidth(), AbstractExcelImporter.CHRACTER_WIDTH));
+		
+		exportChart(sheet, poiSheet);
 		
 		//export rows
 		Iterator<NRow> rowIterator = sheet.getRowIterator();
