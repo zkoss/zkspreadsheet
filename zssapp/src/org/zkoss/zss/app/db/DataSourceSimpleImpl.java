@@ -94,5 +94,15 @@ public class DataSourceSimpleImpl implements DataSource{
 		}
 
 	}
+
+	@Override
+	public int getMaxRow() {
+		return 300;
+	}
+
+	@Override
+	public int getMaxColumn() {
+		return 5;
+	}
 	
 }

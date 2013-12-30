@@ -19,16 +19,18 @@ public class DBDataGrid extends DefaultDataGrid {
 	public DBDataGrid() {
 	}
 
-	int maxRow = 300;
+	
 	
 	int cachedIndex = -1;
 	RowData cachedRow;
 	
 	DataSource src = new DataSourceSimpleImpl();
+	int maxRow = src.getMaxRow();
+	int maxColumn = src.getMaxColumn();
 	
 	@Override
 	public NCellValue getValue(int row, int column) {
-		if(column >= 5){
+		if(column >= maxColumn){
 			return super.getValue(row, column);
 		}
 		if(row>=maxRow){
@@ -62,7 +64,7 @@ public class DBDataGrid extends DefaultDataGrid {
 
 	@Override
 	public void setValue(int row, int column, NCellValue value) {
-		if(column >= 5){
+		if(column >= maxColumn){
 			super.setValue(row, column, value);
 			return;
 		}
@@ -102,7 +104,7 @@ public class DBDataGrid extends DefaultDataGrid {
 	@Override
 	public boolean validateValue(int row, int column, NCellValue value) {
 		
-		if(column>=5){
+		if(column>=maxColumn){
 			return true;
 		}
 		if(row>=maxRow){

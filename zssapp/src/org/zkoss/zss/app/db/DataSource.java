@@ -12,6 +12,10 @@ public interface DataSource {
 	public boolean canUpdate(Object key, int index, Object field);
 
 	public void update(Object key, int index, Object field);
+
+	public int getMaxRow();
+
+	public int getMaxColumn();
 	
 	
 }
