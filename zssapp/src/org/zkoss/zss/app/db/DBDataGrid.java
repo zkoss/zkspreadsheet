@@ -131,7 +131,7 @@ public class DBDataGrid extends DefaultDataGrid {
 	public void deleteColumn(int rowIdx, int size) {}
 
 	@Override
-	public boolean isSupportedDataIterator() {
+	public boolean isProvidedIterator() {
 		return false;
 	}
 

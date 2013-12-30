@@ -4455,7 +4455,6 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	
 	private void showInvalidateModelOpErrorThenRetry(InvalidateModelOpException ex, final String token, final Sheet sheet, final int rowIdx,final int colIdx, final Object value, final String editingType) {
 		String title = Labels.getLabel("zss.msg.warn_title");
-		ex.printStackTrace();
 		String msg = Labels.getLabel("zss.msg.invalidate_model_op_error",new Object[]{ex.getMessage()});
 		Messagebox.show(msg, title, Messagebox.OK, Messagebox.EXCLAMATION, new EventListener() {
 			public void onEvent(Event evt) {
@@ -4466,7 +4465,6 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	
 	private void showInvalidateModelValueErrorThenRetry(InvalidateModelValueException ex, final String token, final Sheet sheet, final int rowIdx,final int colIdx, final Object value, final String editingType) {
 		String title = Labels.getLabel("zss.msg.warn_title");
-		ex.printStackTrace();
 		String msg = Labels.getLabel("zss.msg.invalidate_model_value_error",new Object[]{value,new CellRegion(rowIdx,colIdx).getReferenceString()});
 		Messagebox.show(msg, title, Messagebox.OK, Messagebox.EXCLAMATION, new EventListener() {
 			public void onEvent(Event evt) {
