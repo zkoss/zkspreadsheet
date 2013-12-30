@@ -40,11 +40,16 @@ public class TreeMapDataGridImpl implements NDataGrid,Serializable {
 
 	@Override
 	public void setValue(int rowIdx, int columnIdx, NCellValue value) {
-		getRow(rowIdx,true).getCell(columnIdx, true).setValue(value);
+		DataRowImpl row = getRow(rowIdx, value!=null);
+		if(row==null) return;
+		DataCellImpl cell = row.getCell(columnIdx, value!=null);
+		if(cell!=null){
+			cell.setValue(value);
+		}
 	}
 
 	@Override
-	public boolean supportOperations() {
+	public boolean isSupportedOperations() {
 		return true;
 	}
 
@@ -94,7 +99,7 @@ public class TreeMapDataGridImpl implements NDataGrid,Serializable {
 	}
 
 	@Override
-	public boolean supportDataIterator() {
+	public boolean isSupportedDataIterator() {
 		return true;
 	}
 
@@ -110,7 +115,7 @@ public class TreeMapDataGridImpl implements NDataGrid,Serializable {
 	
 	DataRowImpl getRow(int rowIdx, boolean create){
 		DataRowImpl rowObj = rows.get(rowIdx);
-		if(rowObj == null){
+		if(rowObj == null && create){
 			rowObj = new DataRowImpl(this,rowIdx);
 			rows.put(rowIdx, rowObj);
 		}
@@ -156,7 +161,7 @@ public class TreeMapDataGridImpl implements NDataGrid,Serializable {
 
 		DataCellImpl getCell(int columnIdx, boolean create){
 			DataCellImpl cellObj = cells.get(columnIdx);
-			if (cellObj == null) {
+			if (cellObj == null && create) {
 				checkOrphan();
 				cellObj = new DataCellImpl(this, columnIdx);
 				cells.put(columnIdx, cellObj);
@@ -185,6 +190,14 @@ public class TreeMapDataGridImpl implements NDataGrid,Serializable {
 		@Override
 		public int getIndex() {
 			return rowIndex;
+		}
+
+		public int getStartCellIndex() {
+			return cells.firstKey();
+		}
+
+		public int getEndCellIndex() {
+			return cells.lastKey();
 		}
 	}
 	
@@ -243,6 +256,35 @@ public class TreeMapDataGridImpl implements NDataGrid,Serializable {
 			return Collections.EMPTY_LIST.iterator();
 		}
 		return row.getCellIterator();
+	}
+
+	public int getStartRowIndex() {
+		return rows.firstKey();
+	}
+
+	public int getEndRowIndex() {
+		return rows.lastKey();
+	}
+
+	public int getStartCellIndex(int row) {
+		DataRowImpl rowObj = (DataRowImpl) getRow(row,false);
+		if(rowObj!=null){
+			return rowObj.getStartCellIndex();
+		}
+		return -1;
+	}
+
+	public int getEndCellIndex(int row) {
+		DataRowImpl rowObj = (DataRowImpl) getRow(row,false);
+		if(rowObj!=null){
+			return rowObj.getEndCellIndex();
+		}
+		return -1;
+	}
+
+	@Override
+	public boolean isSupportedDataStartEndIndex() {
+		return true;
 	}
 
 }

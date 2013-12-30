@@ -56,7 +56,7 @@ public class LocalValueDataGridImpl implements NDataGrid,Serializable {
 
 
 	@Override
-	public boolean supportOperations() {
+	public boolean isSupportedOperations() {
 		return true;
 	}
 
@@ -81,7 +81,7 @@ public class LocalValueDataGridImpl implements NDataGrid,Serializable {
 	}
 
 	@Override
-	public boolean supportDataIterator() {
+	public boolean isSupportedDataIterator() {
 		return false;
 	}
 
@@ -92,6 +92,31 @@ public class LocalValueDataGridImpl implements NDataGrid,Serializable {
 
 	@Override
 	public Iterator<NDataCell> getCellIterator(int row) {
+		throw new UnsupportedOperationException("doens't support it");
+	}
+
+	@Override
+	public int getStartRowIndex() {
+		throw new UnsupportedOperationException("doens't support it");
+	}
+	
+	@Override
+	public boolean isSupportedDataStartEndIndex() {
+		return false;
+	}
+
+	@Override
+	public int getEndRowIndex() {
+		throw new UnsupportedOperationException("doens't support it");
+	}
+
+	@Override
+	public int getStartCellIndex(int rowIdx) {
+		throw new UnsupportedOperationException("doens't support it");
+	}
+
+	@Override
+	public int getEndCellIndex(int rowIdx) {
 		throw new UnsupportedOperationException("doens't support it");
 	}
 

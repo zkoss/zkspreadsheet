@@ -320,11 +320,33 @@ public class SheetImpl extends AbstractSheetAdv {
 	}
 
 	public int getStartRowIndex() {
-		return rows.firstKey();
+		int idx1 = rows.firstKey();
+		NDataGrid dg = getDataGrid();
+		if(dg==null || !dg.isSupportedDataStartEndIndex()){
+			return idx1;
+		}else{
+			int idx2 = dg.getStartRowIndex();
+			if(idx1<0)
+				return idx2;
+			if(idx2<0)
+				return idx1;
+			return Math.min(idx1, idx2);
+		}
 	}
 
 	public int getEndRowIndex() {
-		return rows.lastKey();
+		int idx1 = rows.lastKey();
+		NDataGrid dg = getDataGrid();
+		if(dg==null || !dg.isSupportedDataStartEndIndex()){
+			return idx1;
+		}else{
+			int idx2 = dg.getEndRowIndex();
+			if(idx1<0)
+				return idx2;
+			if(idx2<0)
+				return idx1;
+			return Math.max(idx1, idx2);
+		}
 	}
 	
 	public int getStartColumnIndex() {
@@ -336,19 +358,42 @@ public class SheetImpl extends AbstractSheetAdv {
 	}
 
 	public int getStartCellIndex(int row) {
+		int idx1 = -1;
 		AbstractRowAdv rowObj = (AbstractRowAdv) getRow(row,false);
 		if(rowObj!=null){
-			return rowObj.getStartCellIndex();
+			idx1 = rowObj.getStartCellIndex();
 		}
-		return -1;
+		
+		NDataGrid dg = getDataGrid();
+		if(dg==null || !dg.isSupportedDataStartEndIndex()){
+			return idx1;
+		}else{
+			int idx2 = dg.getStartCellIndex(row);
+			if(idx1<0)
+				return idx2;
+			if(idx2<0)
+				return idx1;
+			return Math.min(idx1, idx2);
+		}
 	}
 
 	public int getEndCellIndex(int row) {
+		int idx1 = -1;
 		AbstractRowAdv rowObj = (AbstractRowAdv) getRow(row,false);
 		if(rowObj!=null){
-			return rowObj.getEndCellIndex();
+			idx1 = rowObj.getEndCellIndex();
 		}
-		return -1;
+		NDataGrid dg = getDataGrid();
+		if(dg==null || !dg.isSupportedDataStartEndIndex()){
+			return idx1;
+		}else{
+			int idx2 = dg.getEndCellIndex(row);
+			if(idx1<0)
+				return idx2;
+			if(idx2<0)
+				return idx1;
+			return Math.max(idx1, idx2);
+		}
 	}
 
 	@Override
@@ -417,7 +462,7 @@ public class SheetImpl extends AbstractSheetAdv {
 		if(size<=0) return;
 		NDataGrid dg = getDataGrid();
 		if(dg!=null){
-			if(!dg.supportOperations()){
+			if(!dg.isSupportedOperations()){
 				throw new InvalidateModelOpException("doesn't support insert/delete");
 			}
 			dg.insertRow(rowIdx, size);
@@ -522,7 +567,7 @@ public class SheetImpl extends AbstractSheetAdv {
 		if(size<=0) return;
 		NDataGrid dg = getDataGrid();
 		if(dg!=null){
-			if(!dg.supportOperations()){
+			if(!dg.isSupportedOperations()){
 				throw new InvalidateModelOpException("doesn't support insert/delete");
 			}
 			dg.deleteRow(rowIdx, size);
@@ -598,7 +643,7 @@ public class SheetImpl extends AbstractSheetAdv {
 		
 		NDataGrid dg = getDataGrid();
 		if(dg!=null){
-			if(!dg.supportOperations()){
+			if(!dg.isSupportedOperations()){
 				throw new InvalidateModelOpException("doesn't support insert/delete");
 			}
 			dg.insertColumn(columnIdx, size);
@@ -697,7 +742,7 @@ public class SheetImpl extends AbstractSheetAdv {
 		if(size<=0) return;
 		NDataGrid dg = getDataGrid();
 		if(dg!=null){
-			if(!dg.supportOperations()){
+			if(!dg.isSupportedOperations()){
 				throw new InvalidateModelOpException("doesn't support insert/delete");
 			}
 			dg.deleteColumn(columnIdx, size);
@@ -928,7 +973,7 @@ public class SheetImpl extends AbstractSheetAdv {
 	@Override
 	public Iterator<NRow> getRowIterator() {
 		NDataGrid dg = getDataGrid();
-		if(dg!=null && dg.supportDataIterator()){
+		if(dg!=null && dg.isSupportedDataIterator()){
 			return new JoinRowIterator(this,((Collection)rows.values()).iterator(),dg.getRowIterator());
 		}else{
 			return Collections.unmodifiableCollection((Collection)rows.values()).iterator();
@@ -969,7 +1014,7 @@ public class SheetImpl extends AbstractSheetAdv {
 	public Iterator<NCell> getCellIterator(int row) {
 		
 		NDataGrid dg = getDataGrid();
-		if(dg!=null && dg.supportDataIterator()){
+		if(dg!=null && dg.isSupportedDataIterator()){
 			return new JoinCellIterator(this,row,(Iterator)((AbstractRowAdv)getRow(row)).getCellIterator(),dg.getCellIterator(row));
 		}else{
 			return (Iterator)((AbstractRowAdv)getRow(row)).getCellIterator();
