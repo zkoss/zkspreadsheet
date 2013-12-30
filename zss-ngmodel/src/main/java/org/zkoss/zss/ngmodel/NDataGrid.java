@@ -13,27 +13,27 @@ public interface NDataGrid {
 
 	/**
 	 * Get the cell value on row, column.
-	 * @param row the row index
-	 * @param column the column  index
+	 * @param rowIdx the row index
+	 * @param columnIdx the column  index
 	 * @return the cell value
 	 */
-	public NCellValue getValue(int row, int column);
+	public NCellValue getValue(int rowIdx, int columnIdx);
 	/**
 	 * Set the cell value on row, column.
-	 * @param row the row index
-	 * @param column the column  index
+	 * @param rowIdx the row index
+	 * @param columnIdx the column  index
 	 * @param value  the cell value
 	 */
-	public void setValue(int row, int column, NCellValue value);
+	public void setValue(int rowIdx, int columnIdx, NCellValue value);
 	
 	/**
 	 * Validate the cell value on row, column for {@link #setValue(int, int, NCellValue)}.
 	 * 
-	 * @param row the row index
-	 * @param column the column  index
+	 * @param rowIdx the row index
+	 * @param columnIdx the column  index
 	 * @param value  the cell value 
 	 */
-	public boolean validateValue(int row, int column, NCellValue value);
+	public boolean validateValue(int rowIdx, int columnIdx, NCellValue value);
 	
 	//support operations
 	public boolean isSupportedOperations();

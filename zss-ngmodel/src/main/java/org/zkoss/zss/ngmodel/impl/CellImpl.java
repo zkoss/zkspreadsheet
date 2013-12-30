@@ -283,11 +283,16 @@ public class CellImpl extends AbstractCellAdv {
 		}
 	}
 
+	
+	private static boolean valueEuqals(Object val1, Object val2){
+		return val1==val2||(val1!=null && val1.equals(val2));
+	}
+	
 	@Override
 	public void setValue(Object newVal) {
 		NCellValue oldVal = getDataGridValue();
 		if( (oldVal==null && newVal==null) ||
-			(oldVal != null && oldVal.getValue().equals(newVal))) {
+			(oldVal != null && valueEuqals(oldVal.getValue(),newVal))) {
 			return;
 		}
 		
