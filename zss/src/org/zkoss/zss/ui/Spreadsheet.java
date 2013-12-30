@@ -2580,7 +2580,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			
 			List<HeaderPositionInfo> infos = new ArrayList<HeaderPositionInfo>();
 
-			Iterator<NRow> iter = sheet.getRowIterator(); 
+			Iterator<NRow> iter = sheet.getRowIterator(false);//don't join data grid, we only need ui row to build information 
 			while(iter.hasNext()) {
 				NRow row = iter.next();
 				final boolean hidden = row.isHidden();

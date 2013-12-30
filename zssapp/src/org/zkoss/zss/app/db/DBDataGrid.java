@@ -19,7 +19,7 @@ public class DBDataGrid extends DefaultDataGrid {
 	public DBDataGrid() {
 	}
 
-	int maxRow = 20;
+	int maxRow = 300;
 	
 	int cachedIndex = -1;
 	RowData cachedRow;
@@ -129,18 +129,6 @@ public class DBDataGrid extends DefaultDataGrid {
 	public boolean isSupportedOperations() {
 		return false;
 	}
-
-	@Override
-	public void insertRow(int rowIdx, int size) {}
-
-	@Override
-	public void deleteRow(int rowIdx, int size) {}
-
-	@Override
-	public void insertColumn(int rowIdx, int size) {}
-
-	@Override
-	public void deleteColumn(int rowIdx, int size) {}
 
 	@Override
 	public boolean isProvidedIterator() {
