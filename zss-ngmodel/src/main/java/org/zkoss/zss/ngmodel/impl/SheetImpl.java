@@ -322,7 +322,7 @@ public class SheetImpl extends AbstractSheetAdv {
 	public int getStartRowIndex() {
 		int idx1 = rows.firstKey();
 		NDataGrid dg = getDataGrid();
-		if(dg==null || !dg.isSupportedDataStartEndIndex()){
+		if(dg==null || !dg.isProvidedStartEndIndex()){
 			return idx1;
 		}else{
 			int idx2 = dg.getStartRowIndex();
@@ -337,7 +337,7 @@ public class SheetImpl extends AbstractSheetAdv {
 	public int getEndRowIndex() {
 		int idx1 = rows.lastKey();
 		NDataGrid dg = getDataGrid();
-		if(dg==null || !dg.isSupportedDataStartEndIndex()){
+		if(dg==null || !dg.isProvidedStartEndIndex()){
 			return idx1;
 		}else{
 			int idx2 = dg.getEndRowIndex();
@@ -365,7 +365,7 @@ public class SheetImpl extends AbstractSheetAdv {
 		}
 		
 		NDataGrid dg = getDataGrid();
-		if(dg==null || !dg.isSupportedDataStartEndIndex()){
+		if(dg==null || !dg.isProvidedStartEndIndex()){
 			return idx1;
 		}else{
 			int idx2 = dg.getStartCellIndex(row);
@@ -384,7 +384,7 @@ public class SheetImpl extends AbstractSheetAdv {
 			idx1 = rowObj.getEndCellIndex();
 		}
 		NDataGrid dg = getDataGrid();
-		if(dg==null || !dg.isSupportedDataStartEndIndex()){
+		if(dg==null || !dg.isProvidedStartEndIndex()){
 			return idx1;
 		}else{
 			int idx2 = dg.getEndCellIndex(row);
@@ -973,7 +973,7 @@ public class SheetImpl extends AbstractSheetAdv {
 	@Override
 	public Iterator<NRow> getRowIterator() {
 		NDataGrid dg = getDataGrid();
-		if(dg!=null && dg.isSupportedDataIterator()){
+		if(dg!=null && dg.isProvidedIterator()){
 			return new JoinRowIterator(this,((Collection)rows.values()).iterator(),dg.getRowIterator());
 		}else{
 			return Collections.unmodifiableCollection((Collection)rows.values()).iterator();
@@ -1014,7 +1014,7 @@ public class SheetImpl extends AbstractSheetAdv {
 	public Iterator<NCell> getCellIterator(int row) {
 		
 		NDataGrid dg = getDataGrid();
-		if(dg!=null && dg.isSupportedDataIterator()){
+		if(dg!=null && dg.isProvidedIterator()){
 			return new JoinCellIterator(this,row,(Iterator)((AbstractRowAdv)getRow(row)).getCellIterator(),dg.getCellIterator(row));
 		}else{
 			return (Iterator)((AbstractRowAdv)getRow(row)).getCellIterator();

@@ -199,7 +199,8 @@ public class CellImpl extends AbstractCellAdv {
 	/*package*/ void clearValueForSet(boolean clearDependency) {
 		checkOrphan();
 		
-		//shouldn't clear type and data grid value
+		//shouldn't clear type and data grid value for setting, it will set a new value directly later 
+		//just clear cell local field.
 		//setDataGridValue(null);
 		
 		//in some situation, we should clear dependency (e.g. old type and new type are both formula)
@@ -255,6 +256,13 @@ public class CellImpl extends AbstractCellAdv {
 	private NCellValue getDataGridValue(){
 		checkOrphan();
 		NDataGrid dg = row.getSheet().getDataGrid();
+		if(localValue!=null){
+			CellType type = localValue.getType();
+			//formula and error are not stored in datagrid
+			if(type==CellType.FORMULA || type==CellType.ERROR){
+				return localValue;
+			}
+		}
 		if(dg!=null){
 			return dg.getValue(getRowIndex(),getColumnIndex());
 		}
@@ -264,6 +272,7 @@ public class CellImpl extends AbstractCellAdv {
 
 	private void validateDataGridValue(NCellValue value) {
 		checkOrphan();
+		
 		NDataGrid dg = row.getSheet().getDataGrid();
 		if(dg!=null && !dg.validateValue(getRowIndex(),getColumnIndex(),value)){
 			throw new InvalidateModelValueException("Invalidate Value : "+(value==null?null:value.getValue()) +" at "+getReferenceString());
@@ -272,8 +281,19 @@ public class CellImpl extends AbstractCellAdv {
 	
 	private void setDataGridValue(NCellValue value){
 		checkOrphan();
+		
+		if(value!=null){
+			CellType type = value.getType();
+			//formula and error are not stored in datagrid
+			if(type==CellType.FORMULA || type==CellType.ERROR){
+				localValue = value;
+				return;
+			}
+		}
+		
 		NDataGrid dg = row.getSheet().getDataGrid();
 		if(dg!=null){
+			this.localValue = null;//clear it if it is formula or error previously
 			dg.setValue(getRowIndex(),getColumnIndex(),value);
 		}else{
 			this.localValue = value!=null&&value.getType()==CellType.BLANK?null:value;

@@ -81,7 +81,7 @@ public class LocalValueDataGridImpl implements NDataGrid,Serializable {
 	}
 
 	@Override
-	public boolean isSupportedDataIterator() {
+	public boolean isProvidedIterator() {
 		return false;
 	}
 
@@ -101,7 +101,7 @@ public class LocalValueDataGridImpl implements NDataGrid,Serializable {
 	}
 	
 	@Override
-	public boolean isSupportedDataStartEndIndex() {
+	public boolean isProvidedStartEndIndex() {
 		return false;
 	}
 

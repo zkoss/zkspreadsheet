@@ -25,7 +25,7 @@ public class TreeMapDataGridTest extends ModelTest{
 		
 		NDataGrid grid = sheet1.getDataGrid();
 		
-		Assert.assertTrue(grid.isSupportedDataIterator());
+		Assert.assertTrue(grid.isProvidedIterator());
 		
 		Iterator<NDataRow> rows = grid.getRowIterator();
 		
@@ -241,7 +241,7 @@ public class TreeMapDataGridTest extends ModelTest{
 		
 		NDataGrid grid = sheet1.getDataGrid();
 		
-		Assert.assertTrue(grid.isSupportedDataIterator());
+		Assert.assertTrue(grid.isProvidedIterator());
 		
 		Iterator<NDataRow> rows = grid.getRowIterator();
 		

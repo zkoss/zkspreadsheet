@@ -99,7 +99,7 @@ public class TreeMapDataGridImpl implements NDataGrid,Serializable {
 	}
 
 	@Override
-	public boolean isSupportedDataIterator() {
+	public boolean isProvidedIterator() {
 		return true;
 	}
 
@@ -283,7 +283,7 @@ public class TreeMapDataGridImpl implements NDataGrid,Serializable {
 	}
 
 	@Override
-	public boolean isSupportedDataStartEndIndex() {
+	public boolean isProvidedStartEndIndex() {
 		return true;
 	}
 
