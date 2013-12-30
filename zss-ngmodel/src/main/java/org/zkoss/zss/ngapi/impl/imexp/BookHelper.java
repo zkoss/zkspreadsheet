@@ -30,67 +30,6 @@ import org.zkoss.poi.xssf.usermodel.*;
 public final class BookHelper {
 	public static final String AUTO_COLOR = "AUTO_COLOR";
 
-	//@see #setBorders()
-	public static final short BORDER_EDGE_BOTTOM		= 0x01;
-	public static final short BORDER_EDGE_RIGHT			= 0x02;
-	public static final short BORDER_EDGE_TOP			= 0x04;
-	public static final short BORDER_EDGE_LEFT			= 0x08;
-	public static final short BORDER_INSIDE_HORIZONTAL	= 0x10;
-	public static final short BORDER_INSIDE_VERTICAL 	= 0x20;
-	public static final short BORDER_DIAGONAL_DOWN		= 0x40;
-	public static final short BORDER_DIAGONAL_UP		= 0x80;
-	
-	public static final short BORDER_FULL		= 0xFF;
-	public static final short BORDER_OUTLINE	= 0x0F;
-	public static final short BORDER_INSIDE		= 0x30;
-	public static final short BORDER_DIAGONAL	= 0xC0;
-	
-	//@see #sort()
-	public static final int SORT_NORMAL_DEFAULT = 0;
-	public static final int SORT_TEXT_AS_NUMBERS = 1;
-	public static final int SORT_HEADER_NO  = 0;
-	public static final int SORT_HEADER_YES = 1;	
-	
-	//inner pasteType for #paste & #fill
-	public final static int INNERPASTE_NUMBER_FORMATS = 0x01;
-	public final static int INNERPASTE_BORDERS = 0x02;
-	public final static int INNERPASTE_OTHER_FORMATS = 0x04;
-	public final static int INNERPASTE_VALUES = 0x08;
-	public final static int INNERPASTE_FORMULAS = 0x10;
-	public final static int INNERPASTE_VALUES_AND_FORMULAS = INNERPASTE_FORMULAS + INNERPASTE_VALUES;
-	public final static int INNERPASTE_COMMENTS = 0x20;
-	public final static int INNERPASTE_VALIDATION = 0x40;
-	public final static int INNERPASTE_COLUMN_WIDTHS = 0x80;
-	public final static int INNERPASTE_FORMATS = INNERPASTE_NUMBER_FORMATS + INNERPASTE_BORDERS + INNERPASTE_OTHER_FORMATS;
-	
-	private final static int INNERPASTE_FILL_COPY = INNERPASTE_FORMATS + INNERPASTE_VALUES_AND_FORMULAS + INNERPASTE_VALIDATION;   
-	private final static int INNERPASTE_FILL_VALUE = INNERPASTE_VALUES_AND_FORMULAS + INNERPASTE_VALIDATION;   
-	private final static int INNERPASTE_FILL_FORMATS = INNERPASTE_FORMATS;   
-
-	//inner pasteOp for #paste & #fill
-	public final static int PASTEOP_ADD = 1;
-	public final static int PASTEOP_SUB = 2;
-	public final static int PASTEOP_MUL = 3;
-	public final static int PASTEOP_DIV = 4;
-	public final static int PASTEOP_NONE = 0;
-
-	//inner fillType for #fill
-	public final static int FILL_DEFAULT = 0x01; //system determine
-	public final static int FILL_FORMATS = 0x02; //formats only
-	public final static int FILL_VALUES = 0x04; //value+formula+validation+hyperlink (no comment)
-	public final static int FILL_COPY = 0x06; //value+formula+validation+hyperlink, formats
-	public final static int FILL_DAYS = 0x10;
-	public final static int FILL_WEEKDAYS = 0x20;
-	public final static int FILL_MONTHS = 0x30;
-	public final static int FILL_YEARS = 0x40;
-	public final static int FILL_HOURS = 0x50;
-	public final static int FILL_GROWTH_TREND = 0x100; //multiplicative relation
-	public final static int FILL_LINER_TREND = 0x200; //additive relation
-	public final static int FILL_SERIES = FILL_LINER_TREND;
-	
-	private static final Logger logger = Logger.getLogger(BookHelper.class.getName());
-	
-	
 	/**
 	 * gets the row freeze, 1 base
 	 */
@@ -184,6 +123,7 @@ public final class BookHelper {
 		}
 		return htmlColor;
 	}
+	
 	public static String colorToBackgroundHTML(Workbook book, Color color) {
 		String htmlColor = colorToHTML(book,color);
 		if(AUTO_COLOR.equals(htmlColor)){
@@ -191,13 +131,7 @@ public final class BookHelper {
 		}
 		return htmlColor;
 	}
-	public static String colorToForegroundHTML(Workbook book, Color color) {
-		String htmlColor = colorToHTML(book,color);
-		if(AUTO_COLOR.equals(htmlColor)){
-			return "#000000";
-		}
-		return htmlColor;
-	}
+	
 	private static byte[] getRgbWithTint(byte[] rgb, double tint) {
 		int k = rgb.length > 3 ? 1 : 0; 
 		final byte red = rgb[k++];
@@ -329,6 +263,7 @@ public final class BookHelper {
 		return triplet == null ? null : 
 			HSSFColor.AUTOMATIC.getInstance().equals(color) ? AUTO_COLOR : tripletToHTML(triplet);
 	}
+	
 	public static String toHex(int num) {
 		num = num & 0xff;
 		final String hex = Integer.toHexString(num);
@@ -346,6 +281,7 @@ public final class BookHelper {
 			((XSSFCellStyle)style).setLeftBorderColor((XSSFColor)color);
 		}
 	}
+	
 	public static void setRightBorderColor(CellStyle style, Color color) {
 		if (style instanceof HSSFCellStyle) {
 			((HSSFCellStyle)style).setRightBorderColor(((HSSFColor)color));
