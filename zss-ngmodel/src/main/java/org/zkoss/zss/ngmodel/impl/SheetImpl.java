@@ -319,11 +319,45 @@ public class SheetImpl extends AbstractSheetAdv {
 	}
 
 	public int getStartRowIndex() {
-		return rows.firstKey();
+		return getStartRowIndex(true);
 	}
 
 	public int getEndRowIndex() {
-		return rows.lastKey();
+		return getEndRowIndex(true);
+	}
+	@Override
+	public int getStartRowIndex(boolean joinDataGrid){
+		int idx1 = rows.firstKey();
+		NDataGrid dg = getDataGrid();
+		if(dg==null || !joinDataGrid){
+			return idx1;
+		}
+		
+		int idx2 = dg.getStartRowIndex();
+		if(idx1<0){
+			return idx2;
+		}
+		if(idx2<0){
+			return idx1;
+		}
+		return Math.min(idx1, idx2);
+	}
+	@Override
+	public int getEndRowIndex(boolean joinDataGrid){
+		int idx1 = rows.lastKey();
+		NDataGrid dg = getDataGrid();
+		if(dg==null || !joinDataGrid){
+			return idx1;
+		}
+		
+		int idx2 = dg.getEndRowIndex();
+		if(idx1<0){
+			return idx2;
+		}
+		if(idx2<0){
+			return idx1;
+		}
+		return Math.max(idx1, idx2);
 	}
 	
 	public int getStartColumnIndex() {
@@ -334,22 +368,56 @@ public class SheetImpl extends AbstractSheetAdv {
 		return columnArrays.size()>0?columnArrays.lastLastKey():-1;
 	}
 
-	public int getStartCellIndex(int row) {
+	public int getStartCellIndex(int rowIdx) {
+		return getStartCellIndex(rowIdx,true);
+	}
+
+	public int getEndCellIndex(int rowIdx) {
+		return getEndCellIndex(rowIdx, true);
+	}
+	@Override
+	public int getStartCellIndex(int rowIdx,boolean joinDataGrid){
 		int idx1 = -1;
-		AbstractRowAdv rowObj = (AbstractRowAdv) getRow(row,false);
+		AbstractRowAdv rowObj = (AbstractRowAdv) getRow(rowIdx,false);
 		if(rowObj!=null){
 			idx1 = rowObj.getStartCellIndex();
 		}
-		return idx1;
+		
+		NDataGrid dg = getDataGrid();
+		if(dg==null || !joinDataGrid){
+			return idx1;
+		}
+		
+		int idx2 = dg.getStartCellIndex(rowIdx);
+		if(idx1<0){
+			return idx2;
+		}
+		if(idx2<0){
+			return idx1;
+		}
+		return Math.min(idx1, idx2);
 	}
-
-	public int getEndCellIndex(int row) {
+	@Override
+	public int getEndCellIndex(int rowIdx,boolean joinDataGrid){
 		int idx1 = -1;
-		AbstractRowAdv rowObj = (AbstractRowAdv) getRow(row,false);
+		AbstractRowAdv rowObj = (AbstractRowAdv) getRow(rowIdx,false);
 		if(rowObj!=null){
 			idx1 = rowObj.getEndCellIndex();
 		}
-		return idx1;
+
+		NDataGrid dg = getDataGrid();
+		if(dg==null || !joinDataGrid){
+			return idx1;
+		}
+		
+		int idx2 = dg.getEndCellIndex(rowIdx);
+		if(idx1<0){
+			return idx2;
+		}
+		if(idx2<0){
+			return idx1;
+		}
+		return Math.max(idx1, idx2);
 	}
 
 	@Override
@@ -925,20 +993,19 @@ public class SheetImpl extends AbstractSheetAdv {
 		return attributes==null?Collections.EMPTY_MAP:Collections.unmodifiableMap(attributes);
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public Iterator<NRow> getRowIterator() {
-		return Collections.unmodifiableCollection((Collection)rows.values()).iterator();
+		return getRowIterator(true);
 	}
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
-	public Iterator<NRow> getDataGridJoinedRowIterator() {
+	public Iterator<NRow> getRowIterator(boolean joinDataGrid) {
 		NDataGrid dg = getDataGrid();
-		if(dg!=null && dg.isProvidedIterator()){
-			return new JoinRowIterator(this,getRowIterator(),dg.getRowIterator());
+		if(joinDataGrid && dg!=null && dg.isProvidedIterator()){
+			return new JoinRowIterator(this,Collections.unmodifiableCollection((Collection)rows.values()).iterator(),dg.getRowIterator());
 		}else{
-			return getRowIterator();
+			return Collections.unmodifiableCollection((Collection)rows.values()).iterator();
 		}
 	}
 
@@ -971,20 +1038,19 @@ public class SheetImpl extends AbstractSheetAdv {
 		};
 	}
 	
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public Iterator<NCell> getCellIterator(int row) {
-		return (Iterator)((AbstractRowAdv)getRow(row)).getCellIterator();
+		return getCellIterator(row,true);
 	}
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
-	public Iterator<NCell> getDataGridJoinedCellIterator(int row) {
+	public Iterator<NCell> getCellIterator(int row,boolean joinDataGrid) {
 		NDataGrid dg = getDataGrid();
-		if(dg!=null && dg.isProvidedIterator()){
-			return new JoinCellIterator(this,row,getCellIterator(row),dg.getCellIterator(row));
+		if(joinDataGrid && dg!=null && dg.isProvidedIterator()){
+			return new JoinCellIterator(this,row,(Iterator)((AbstractRowAdv)getRow(row)).getCellIterator(),dg.getCellIterator(row));
 		}else{
-			return getCellIterator(row);
+			return (Iterator)((AbstractRowAdv)getRow(row)).getCellIterator();
 		}
 	}
 	

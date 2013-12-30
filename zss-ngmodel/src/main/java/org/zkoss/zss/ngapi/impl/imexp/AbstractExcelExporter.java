@@ -111,7 +111,7 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 		//poiSheet.setDefaultColumnWidth((int)XUtils.pxToCTChar(sheet.getDefaultColumnWidth(), AbstractExcelImporter.CHRACTER_WIDTH));
 		
 		//export rows
-		Iterator<NRow> rowIterator = sheet.getDataGridJoinedRowIterator();
+		Iterator<NRow> rowIterator = sheet.getRowIterator();
 		while(rowIterator.hasNext()) {
 			NRow row = rowIterator.next();
 			exportRow(sheet, poiSheet, row);
@@ -145,7 +145,7 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 		poiRow.setRowStyle(poiRowStyle);
 		
 		// Export Cell
-		Iterator<NCell> cellIterator = sheet.getDataGridJoinedCellIterator(row.getIndex());
+		Iterator<NCell> cellIterator = sheet.getCellIterator(row.getIndex());
 		while(cellIterator.hasNext()) {
 			NCell cell = cellIterator.next();
 			exportCell(poiRow, cell);

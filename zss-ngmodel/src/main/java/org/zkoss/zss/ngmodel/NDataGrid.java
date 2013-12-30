@@ -47,8 +47,8 @@ public interface NDataGrid {
 	public Iterator<NDataRow> getRowIterator();
 	public Iterator<NDataCell> getCellIterator(int row);
 	
-//	public int getStartRowIndex();
-//	public int getEndRowIndex();
-//	public int getStartCellIndex(int rowIdx);
-//	public int getEndCellIndex(int rowIdx);
+	public int getStartRowIndex();
+	public int getEndRowIndex();
+	public int getStartCellIndex(int rowIdx);
+	public int getEndCellIndex(int rowIdx);
 }
