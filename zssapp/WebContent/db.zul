@@ -3,6 +3,7 @@
 <zk xmlns:w="http://www.zkoss.org/2005/zk/client">
 	<window id="mainWin" hflex="1" vflex="1" apply="org.zkoss.zss.app.ui.DBAppCtrl">
 		<vlayout hflex="1" vflex="1" spacing="0">
+			<button id="export" label="export"/>
 			<spreadsheet id="ss" 
 				hflex="1" vflex="1" 
 				showToolbar="true" showFormulabar="true" showSheetbar="true" showContextMenu="true"

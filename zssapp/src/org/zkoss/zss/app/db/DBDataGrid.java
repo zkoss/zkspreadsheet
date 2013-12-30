@@ -1,7 +1,9 @@
 package org.zkoss.zss.app.db;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
 
 import org.zkoss.zss.app.db.DataSource.RowData;
 import org.zkoss.zss.ngmodel.DefaultDataGrid;
@@ -14,10 +16,11 @@ import org.zkoss.zss.ngmodel.sys.EngineFactory;
 
 public class DBDataGrid extends DefaultDataGrid {
 
-	public DBDataGrid(NSheet sheet) {
-		super(sheet);
+	public DBDataGrid() {
 	}
 
+	int maxRow = 20;
+	
 	int cachedIndex = -1;
 	RowData cachedRow;
 	
@@ -26,7 +29,10 @@ public class DBDataGrid extends DefaultDataGrid {
 	@Override
 	public NCellValue getValue(int row, int column) {
 		if(column >= 5){
-			return getLocalValue(row, column);
+			return super.getValue(row, column);
+		}
+		if(row>=maxRow){
+			return null;
 		}
 		
 		if(cachedIndex!=row){
@@ -57,7 +63,10 @@ public class DBDataGrid extends DefaultDataGrid {
 	@Override
 	public void setValue(int row, int column, NCellValue value) {
 		if(column >= 5){
-			setLocalValue(row, column, value);
+			super.setValue(row, column, value);
+			return;
+		}
+		if(row>=maxRow){
 			return;
 		}
 		
@@ -96,6 +105,9 @@ public class DBDataGrid extends DefaultDataGrid {
 		if(column>=5){
 			return true;
 		}
+		if(row>=maxRow){
+			return false;
+		}
 		if(value==null)
 			return false;
 		
@@ -132,19 +144,106 @@ public class DBDataGrid extends DefaultDataGrid {
 
 	@Override
 	public boolean isProvidedIterator() {
-		return false;
+		return true;
 	}
 
 	@Override
 	public Iterator<NDataRow> getRowIterator() {
-		// TODO Auto-generated method stub
-		return null;
+		return new Iterator<NDataRow>(){
+			
+			int idx = 0;
+
+			@Override
+			public boolean hasNext() {
+				return idx<maxRow;
+			}
+
+			@Override
+			public NDataRow next() {
+				RowData data = src.getRowData(idx);
+				return new DataRowImpl(idx++,data);
+			}
+
+			@Override
+			public void remove() {
+				throw new UnsupportedOperationException("readonly");
+			}
+			
+		};
 	}
 
 	@Override
 	public Iterator<NDataCell> getCellIterator(int row) {
-		// TODO Auto-generated method stub
-		return null;
+		RowData data = src.getRowData(row);
+		return new DataRowImpl(row,data).getCellIterator();
+	}
+	
+	static class DataRowImpl implements NDataRow{
+
+		int index;
+		RowData data;
+		List<NDataCell> cells;
+		public DataRowImpl(int idx, RowData data){
+			this.index = idx;
+			this.data = data;
+		}
+		
+		@Override
+		public Iterator<NDataCell> getCellIterator() {
+			if(cells==null){
+				cells =  new ArrayList<NDataCell>();
+				int i=0;
+				for(Object obj:data.getFields()){
+					cells.add(new DataCellImpl(index,i++,obj));
+				}
+			}
+			return cells.iterator();
+		}
+
+		@Override
+		public int getIndex() {
+			return index;
+		}
+		
+	}
+	
+	static class DataCellImpl implements NDataCell{
+
+		int rowIndex;
+		int columnIndex;
+		Object value;
+		
+		public DataCellImpl(int rowIdx,int columnIdx,Object value){
+			this.rowIndex = rowIdx;
+			this.columnIndex = columnIdx;
+			this.value = value;
+					
+		}
+		
+		@Override
+		public NCellValue getValue() {
+			if(value instanceof String){
+				return new NCellValue((String)value);
+			}else if(value instanceof Number){
+				return new NCellValue(((Number)value).doubleValue());
+			}else if (value instanceof Date){
+				return new NCellValue(EngineFactory.getInstance().getCalendarUtil().dateToDoubleValue((Date)value,false));
+			}else if(value instanceof Boolean){
+				return new NCellValue((Boolean)value);
+			}
+			return null;
+		}
+
+		@Override
+		public int getRowIndex() {
+			return rowIndex;
+		}
+
+		@Override
+		public int getColumnIndex() {
+			return columnIndex;
+		}
+		
 	}
 
 }

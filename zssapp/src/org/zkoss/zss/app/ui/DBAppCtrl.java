@@ -1,8 +1,14 @@
 package org.zkoss.zss.app.ui;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.select.SelectorComposer;
+import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
+import org.zkoss.zss.api.Exporters;
 import org.zkoss.zss.app.db.DBDataGrid;
 import org.zkoss.zss.ngmodel.NBook;
 import org.zkoss.zss.ngmodel.NBooks;
@@ -12,6 +18,7 @@ import org.zkoss.zss.ngmodel.NFont;
 import org.zkoss.zss.ngmodel.NFont.Boldweight;
 import org.zkoss.zss.ngmodel.NSheet;
 import org.zkoss.zss.ui.Spreadsheet;
+import org.zkoss.zul.Filedownload;
 
 /**
  * to demo the capability to load table as a book
@@ -50,6 +57,19 @@ public class DBAppCtrl extends SelectorComposer<Component> {
 	}
 
 	private NDataGrid createDataGrid(NSheet sheet) {
-		return new DBDataGrid(sheet);
+		return new DBDataGrid();
+	}
+	
+	@Listen("onClick = #export")
+	public void onExport(){
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		try {
+			Exporters.getExporter().export(ss.getBook(), baos);
+			ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+			Filedownload.save(bais, null,"download.xlsx");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }
