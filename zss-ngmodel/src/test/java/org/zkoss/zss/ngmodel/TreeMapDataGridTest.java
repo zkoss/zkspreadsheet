@@ -80,12 +80,12 @@ public class TreeMapDataGridTest extends ModelTest{
 		dg.setValue(14, 5, new NCellValue("KKK"));
 		
 		
-		Iterator<NRow> rows = sheet1.getRowIterator();
+		Iterator<NRow> rows = sheet1.getDataGridJoinedRowIterator();
 		
 		NRow row = rows.next();
 		Assert.assertEquals(10,row.getIndex());
 		
-		Iterator<NCell> cells = sheet1.getCellIterator(row.getIndex());
+		Iterator<NCell> cells = sheet1.getDataGridJoinedCellIterator(row.getIndex());
 		NCell cell = cells.next();
 		Assert.assertEquals(10,cell.getRowIndex());
 		Assert.assertEquals(12,cell.getColumnIndex());
@@ -97,7 +97,7 @@ public class TreeMapDataGridTest extends ModelTest{
 		row = rows.next();
 		Assert.assertEquals(14,row.getIndex());
 		
-		cells = sheet1.getCellIterator(row.getIndex());
+		cells = sheet1.getDataGridJoinedCellIterator(row.getIndex());
 		cell = cells.next();
 		Assert.assertEquals(14,cell.getRowIndex());
 		Assert.assertEquals(5,cell.getColumnIndex());
@@ -106,7 +106,7 @@ public class TreeMapDataGridTest extends ModelTest{
 		row = rows.next();
 		Assert.assertEquals(23,row.getIndex());
 		
-		cells = sheet1.getCellIterator(row.getIndex());
+		cells = sheet1.getDataGridJoinedCellIterator(row.getIndex());
 		cell = cells.next();
 		Assert.assertEquals(23,cell.getRowIndex());
 		Assert.assertEquals(2,cell.getColumnIndex());
@@ -133,12 +133,12 @@ public class TreeMapDataGridTest extends ModelTest{
 		sheet1.getCell(14, 5).setValue("KKK");
 		
 		
-		Iterator<NRow> rows = sheet1.getRowIterator();
+		Iterator<NRow> rows = sheet1.getDataGridJoinedRowIterator();
 		
 		NRow row = rows.next();
 		Assert.assertEquals(10,row.getIndex());
 		
-		Iterator<NCell> cells = sheet1.getCellIterator(row.getIndex());
+		Iterator<NCell> cells = sheet1.getDataGridJoinedCellIterator(row.getIndex());
 		NCell cell = cells.next();
 		Assert.assertEquals(10,cell.getRowIndex());
 		Assert.assertEquals(12,cell.getColumnIndex());
@@ -150,7 +150,7 @@ public class TreeMapDataGridTest extends ModelTest{
 		row = rows.next();
 		Assert.assertEquals(14,row.getIndex());
 		
-		cells = sheet1.getCellIterator(row.getIndex());
+		cells = sheet1.getDataGridJoinedCellIterator(row.getIndex());
 		cell = cells.next();
 		Assert.assertEquals(14,cell.getRowIndex());
 		Assert.assertEquals(5,cell.getColumnIndex());
@@ -159,7 +159,7 @@ public class TreeMapDataGridTest extends ModelTest{
 		row = rows.next();
 		Assert.assertEquals(23,row.getIndex());
 		
-		cells = sheet1.getCellIterator(row.getIndex());
+		cells = sheet1.getDataGridJoinedCellIterator(row.getIndex());
 		cell = cells.next();
 		Assert.assertEquals(23,cell.getRowIndex());
 		Assert.assertEquals(2,cell.getColumnIndex());
@@ -186,12 +186,12 @@ public class TreeMapDataGridTest extends ModelTest{
 		dg.setValue(14, 5, new NCellValue("KKK"));
 		
 		
-		Iterator<NRow> rows = sheet1.getRowIterator();
+		Iterator<NRow> rows = sheet1.getDataGridJoinedRowIterator();
 		
 		NRow row = rows.next();
 		Assert.assertEquals(10,row.getIndex());
 		
-		Iterator<NCell> cells = sheet1.getCellIterator(row.getIndex());
+		Iterator<NCell> cells = sheet1.getDataGridJoinedCellIterator(row.getIndex());
 		NCell cell = cells.next();
 		Assert.assertEquals(10,cell.getRowIndex());
 		Assert.assertEquals(12,cell.getColumnIndex());
@@ -203,7 +203,7 @@ public class TreeMapDataGridTest extends ModelTest{
 		row = rows.next();
 		Assert.assertEquals(14,row.getIndex());
 		
-		cells = sheet1.getCellIterator(row.getIndex());
+		cells = sheet1.getDataGridJoinedCellIterator(row.getIndex());
 		cell = cells.next();
 		Assert.assertEquals(14,cell.getRowIndex());
 		Assert.assertEquals(5,cell.getColumnIndex());
@@ -212,7 +212,7 @@ public class TreeMapDataGridTest extends ModelTest{
 		row = rows.next();
 		Assert.assertEquals(23,row.getIndex());
 		
-		cells = sheet1.getCellIterator(row.getIndex());
+		cells = sheet1.getDataGridJoinedCellIterator(row.getIndex());
 		cell = cells.next();
 		Assert.assertEquals(23,cell.getRowIndex());
 		Assert.assertEquals(2,cell.getColumnIndex());
@@ -269,58 +269,5 @@ public class TreeMapDataGridTest extends ModelTest{
 		
 		Assert.assertFalse(cells.hasNext());
 		Assert.assertFalse(rows.hasNext());
-	}
-	
-	@Test
-	public void testDataGridStartEnd(){
-		NBook book = NBooks.createBook("book1");
-		NSheet sheet1 = initialDataGrid(book.createSheet("Sheet1"));
-		
-		Assert.assertEquals(-1,sheet1.getStartRowIndex());
-		Assert.assertEquals(-1,sheet1.getEndRowIndex());
-		
-		NDataGrid grid = sheet1.getDataGrid();
-		
-		sheet1.getCell(10, 2).setValue("ABC");
-		sheet1.getCell(10, 12).setValue("ABC");
-		sheet1.getCell(23, 6).setValue("DEF");
-		sheet1.getCell(23, 2).setValue("123");
-		sheet1.getCell(15, 3).setValue("ABC");
-		
-		Assert.assertEquals(10,sheet1.getStartRowIndex());
-		Assert.assertEquals(23,sheet1.getEndRowIndex());
-		
-		Assert.assertEquals(2,sheet1.getStartCellIndex(10));
-		Assert.assertEquals(12,sheet1.getEndCellIndex(10));
-		
-		Assert.assertEquals(3,sheet1.getStartCellIndex(15));
-		Assert.assertEquals(3,sheet1.getEndCellIndex(15));
-		
-		Assert.assertEquals(2,sheet1.getStartCellIndex(23));
-		Assert.assertEquals(6,sheet1.getEndCellIndex(23));
-		
-		Assert.assertEquals(-1,sheet1.getStartCellIndex(3));
-		Assert.assertEquals(-1,sheet1.getEndCellIndex(3));
-		
-		grid.setValue(3, 1, new NCellValue("ABC"));
-		
-		grid.setValue(15, 4, new NCellValue("ABC"));
-	
-		grid.setValue(23, 1, new NCellValue("ABC"));
-		
-		Assert.assertEquals(3,sheet1.getStartRowIndex());
-		Assert.assertEquals(23,sheet1.getEndRowIndex());
-		
-		Assert.assertEquals(2,sheet1.getStartCellIndex(10));
-		Assert.assertEquals(12,sheet1.getEndCellIndex(10));
-		
-		Assert.assertEquals(3,sheet1.getStartCellIndex(15));
-		Assert.assertEquals(4,sheet1.getEndCellIndex(15));
-		
-		Assert.assertEquals(1,sheet1.getStartCellIndex(23));
-		Assert.assertEquals(6,sheet1.getEndCellIndex(23));
-		
-		Assert.assertEquals(1,sheet1.getStartCellIndex(3));
-		Assert.assertEquals(1,sheet1.getEndCellIndex(3));
 	}
 }

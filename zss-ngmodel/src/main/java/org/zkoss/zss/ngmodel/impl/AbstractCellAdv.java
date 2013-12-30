@@ -208,6 +208,4 @@ public abstract class AbstractCellAdv implements NCell,LinkedModelObject,Seriali
 	}
 	
 	/*package*/ abstract void setIndex(int newidx);
-	/*package*/ abstract NCellValue getLocalValue();
-	/*package*/ abstract void setLocalValue(NCellValue value);
 }

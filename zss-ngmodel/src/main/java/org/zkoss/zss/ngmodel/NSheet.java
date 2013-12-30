@@ -39,6 +39,7 @@ public interface NSheet {
 	public String getSheetName();
 	
 	public Iterator<NRow> getRowIterator();
+	public Iterator<NRow> getDataGridJoinedRowIterator();
 	public Iterator<NColumn> getColumnIterator();
 	public Iterator<NColumnArray> getColumnArrayIterator();
 	/**
@@ -50,6 +51,8 @@ public interface NSheet {
 	 */
 	public NColumnArray setupColumnArray(int colunmIdx,int lastColumnIdx);	
 	public Iterator<NCell> getCellIterator(int row);
+	public Iterator<NCell> getDataGridJoinedCellIterator(int row);
+	
 	
 	public int getDefaultRowHeight();
 	public int getDefaultColumnWidth();
@@ -64,13 +67,6 @@ public interface NSheet {
 	public NColumn getColumn(int columnIdx);
 	
 	public NCell getCell(int rowIdx, int columnIdx);
-	
-	public int getStartRowIndex();
-	public int getEndRowIndex();
-	public int getStartColumnIndex();
-	public int getEndColumnIndex();
-	public int getStartCellIndex(int rowIdx);
-	public int getEndCellIndex(int rowIdx);
 	
 	public String getId();
 	

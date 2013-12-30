@@ -291,21 +291,4 @@ class CellProxy extends AbstractCellAdv {
 	void setIndex(int newidx) {
 		throw new UnsupportedOperationException("readonly");
 	}
-
-	@Override
-	NCellValue getLocalValue() {
-		loadProxy();
-		return proxy == null ? null:proxy.getLocalValue();
-	}
-
-	@Override
-	void setLocalValue(NCellValue value) {
-		loadProxy();
-		if (proxy == null) {
-			proxy = (AbstractCellAdv) ((AbstractRowAdv)  ((AbstractSheetAdv)getSheet()).getOrCreateRow(
-					rowIdx)).getOrCreateCell(columnIdx);
-		}
-		proxy.setLocalValue(value);
-	}
-
 }

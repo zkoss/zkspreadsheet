@@ -256,13 +256,6 @@ public class CellImpl extends AbstractCellAdv {
 	private NCellValue getDataGridValue(){
 		checkOrphan();
 		NDataGrid dg = row.getSheet().getDataGrid();
-		if(localValue!=null){
-			CellType type = localValue.getType();
-			//formula and error are not stored in datagrid
-			if(type==CellType.FORMULA || type==CellType.ERROR){
-				return localValue;
-			}
-		}
 		if(dg!=null){
 			return dg.getValue(getRowIndex(),getColumnIndex());
 		}
@@ -281,16 +274,6 @@ public class CellImpl extends AbstractCellAdv {
 	
 	private void setDataGridValue(NCellValue value){
 		checkOrphan();
-		
-		if(value!=null){
-			CellType type = value.getType();
-			//formula and error are not stored in datagrid
-			if(type==CellType.FORMULA || type==CellType.ERROR){
-				localValue = value;
-				return;
-			}
-		}
-		
 		NDataGrid dg = row.getSheet().getDataGrid();
 		if(dg!=null){
 			this.localValue = null;//clear it if it is formula or error previously
@@ -451,16 +434,6 @@ public class CellImpl extends AbstractCellAdv {
 	@Override
 	void setIndex(int newidx) {
 		this.index = newidx;
-	}
-
-	@Override
-	NCellValue getLocalValue() {
-		return localValue;
-	}
-
-	@Override
-	void setLocalValue(NCellValue value) {
-		this.localValue = value;
 	}
 	
 	private static class InnerCellValue extends NCellValue{

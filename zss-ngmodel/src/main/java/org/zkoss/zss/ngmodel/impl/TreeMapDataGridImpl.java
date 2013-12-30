@@ -103,6 +103,7 @@ public class TreeMapDataGridImpl implements NDataGrid,Serializable {
 		return true;
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public Iterator<NDataRow> getRowIterator() {
 		return Collections.unmodifiableCollection((Collection)rows.values()).iterator();
@@ -124,6 +125,7 @@ public class TreeMapDataGridImpl implements NDataGrid,Serializable {
 
 	
 	static class DataRowImpl implements NDataRow, Serializable{
+		private static final long serialVersionUID = 1L;
 		TreeMapDataGridImpl dataGrid;
 		int rowIndex;
 		private final IndexPool<DataCellImpl> cells = new IndexPool<DataCellImpl>(){
@@ -153,7 +155,7 @@ public class TreeMapDataGridImpl implements NDataGrid,Serializable {
 			dataGrid = null;
 		}
 		
-		@SuppressWarnings("unchecked")
+		@SuppressWarnings({ "unchecked", "rawtypes" })
 		@Override
 		public Iterator<NDataCell> getCellIterator() {
 			return Collections.unmodifiableCollection((Collection)cells.values()).iterator();
@@ -280,11 +282,6 @@ public class TreeMapDataGridImpl implements NDataGrid,Serializable {
 			return rowObj.getEndCellIndex();
 		}
 		return -1;
-	}
-
-	@Override
-	public boolean isProvidedStartEndIndex() {
-		return true;
 	}
 
 }

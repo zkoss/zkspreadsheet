@@ -85,7 +85,7 @@ public class TestImporterFactory implements ImporterFactory{
 			private void buildDataGridSheet(NBook book) {
 				NSheet sheet = book.createSheet("DataGrid");
 				NDataGrid dg;
-				sheet.setDataGrid(dg=new DefaultDataGrid(sheet));
+				sheet.setDataGrid(dg=new DefaultDataGrid());
 				dg.setValue(0, 0, new NCellValue());
 				dg.setValue(0, 0, new NCellValue("ABC"));
 				dg.setValue(1, 1, new NCellValue(12D));

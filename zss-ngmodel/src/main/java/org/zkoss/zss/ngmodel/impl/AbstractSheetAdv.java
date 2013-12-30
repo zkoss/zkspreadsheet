@@ -28,6 +28,13 @@ import org.zkoss.zss.ngmodel.NSheet;
 public abstract class AbstractSheetAdv implements NSheet,LinkedModelObject,Serializable{
 	private static final long serialVersionUID = 1L;
 
+	public abstract int getStartRowIndex();
+	public abstract int getEndRowIndex();
+	public abstract int getStartColumnIndex();
+	public abstract int getEndColumnIndex();
+	public abstract int getStartCellIndex(int rowIdx);
+	public abstract int getEndCellIndex(int rowIdx);
+	
 	/*package*/ abstract AbstractRowAdv getRow(int rowIdx, boolean proxy);
 	/*package*/ abstract AbstractRowAdv getOrCreateRow(int rowIdx);
 //	/*package*/ abstract int getRowIndex(AbstractRowAdv row);

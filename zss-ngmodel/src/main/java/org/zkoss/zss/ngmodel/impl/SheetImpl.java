@@ -26,7 +26,6 @@ import java.util.Map;
 import java.util.SortedMap;
 
 import org.zkoss.zss.ngmodel.CellRegion;
-import org.zkoss.zss.ngmodel.DefaultDataGrid;
 import org.zkoss.zss.ngmodel.InvalidateModelOpException;
 import org.zkoss.zss.ngmodel.NBook;
 import org.zkoss.zss.ngmodel.NCell;
@@ -320,33 +319,11 @@ public class SheetImpl extends AbstractSheetAdv {
 	}
 
 	public int getStartRowIndex() {
-		int idx1 = rows.firstKey();
-		NDataGrid dg = getDataGrid();
-		if(dg==null || !dg.isProvidedStartEndIndex()){
-			return idx1;
-		}else{
-			int idx2 = dg.getStartRowIndex();
-			if(idx1<0)
-				return idx2;
-			if(idx2<0)
-				return idx1;
-			return Math.min(idx1, idx2);
-		}
+		return rows.firstKey();
 	}
 
 	public int getEndRowIndex() {
-		int idx1 = rows.lastKey();
-		NDataGrid dg = getDataGrid();
-		if(dg==null || !dg.isProvidedStartEndIndex()){
-			return idx1;
-		}else{
-			int idx2 = dg.getEndRowIndex();
-			if(idx1<0)
-				return idx2;
-			if(idx2<0)
-				return idx1;
-			return Math.max(idx1, idx2);
-		}
+		return rows.lastKey();
 	}
 	
 	public int getStartColumnIndex() {
@@ -363,18 +340,7 @@ public class SheetImpl extends AbstractSheetAdv {
 		if(rowObj!=null){
 			idx1 = rowObj.getStartCellIndex();
 		}
-		
-		NDataGrid dg = getDataGrid();
-		if(dg==null || !dg.isProvidedStartEndIndex()){
-			return idx1;
-		}else{
-			int idx2 = dg.getStartCellIndex(row);
-			if(idx1<0)
-				return idx2;
-			if(idx2<0)
-				return idx1;
-			return Math.min(idx1, idx2);
-		}
+		return idx1;
 	}
 
 	public int getEndCellIndex(int row) {
@@ -383,17 +349,7 @@ public class SheetImpl extends AbstractSheetAdv {
 		if(rowObj!=null){
 			idx1 = rowObj.getEndCellIndex();
 		}
-		NDataGrid dg = getDataGrid();
-		if(dg==null || !dg.isProvidedStartEndIndex()){
-			return idx1;
-		}else{
-			int idx2 = dg.getEndCellIndex(row);
-			if(idx1<0)
-				return idx2;
-			if(idx2<0)
-				return idx1;
-			return Math.max(idx1, idx2);
-		}
+		return idx1;
 	}
 
 	@Override
@@ -972,11 +928,17 @@ public class SheetImpl extends AbstractSheetAdv {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public Iterator<NRow> getRowIterator() {
+		return Collections.unmodifiableCollection((Collection)rows.values()).iterator();
+	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@Override
+	public Iterator<NRow> getDataGridJoinedRowIterator() {
 		NDataGrid dg = getDataGrid();
 		if(dg!=null && dg.isProvidedIterator()){
-			return new JoinRowIterator(this,((Collection)rows.values()).iterator(),dg.getRowIterator());
+			return new JoinRowIterator(this,getRowIterator(),dg.getRowIterator());
 		}else{
-			return Collections.unmodifiableCollection((Collection)rows.values()).iterator();
+			return getRowIterator();
 		}
 	}
 
@@ -1012,12 +974,17 @@ public class SheetImpl extends AbstractSheetAdv {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public Iterator<NCell> getCellIterator(int row) {
-		
+		return (Iterator)((AbstractRowAdv)getRow(row)).getCellIterator();
+	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@Override
+	public Iterator<NCell> getDataGridJoinedCellIterator(int row) {
 		NDataGrid dg = getDataGrid();
 		if(dg!=null && dg.isProvidedIterator()){
-			return new JoinCellIterator(this,row,(Iterator)((AbstractRowAdv)getRow(row)).getCellIterator(),dg.getCellIterator(row));
+			return new JoinCellIterator(this,row,getCellIterator(row),dg.getCellIterator(row));
 		}else{
-			return (Iterator)((AbstractRowAdv)getRow(row)).getCellIterator();
+			return getCellIterator(row);
 		}
 	}
 	
