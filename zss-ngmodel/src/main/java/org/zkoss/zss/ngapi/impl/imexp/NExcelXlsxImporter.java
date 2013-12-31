@@ -96,10 +96,7 @@ public class NExcelXlsxImporter extends AbstractExcelImporter{
 		
 		for (ZssChartX zssChart : charts){
 			XSSFChart xssfChart = (XSSFChart)zssChart.getChart();
-			ClientAnchor clientAnchor = xssfChart.getPreferredSize();
-			int width = getXSSFWidthInPx(poiSheet, clientAnchor);
-			int height = getXSSFHeightInPx(poiSheet, clientAnchor);
-			NViewAnchor viewAnchor = new NViewAnchor(clientAnchor.getRow1(), clientAnchor.getCol1(), width, height);
+			NViewAnchor viewAnchor = toViewAnchor(poiSheet, xssfChart.getPreferredSize());
 
 			NChart chart = null;
 			CategoryData categoryData = null;
@@ -191,6 +188,13 @@ public class NExcelXlsxImporter extends AbstractExcelImporter{
 		}
 	}
 
+	private NViewAnchor toViewAnchor(Sheet poiSheet, ClientAnchor clientAnchor){
+		int width = getXSSFWidthInPx(poiSheet, clientAnchor);
+		int height = getXSSFHeightInPx(poiSheet, clientAnchor);
+		NViewAnchor viewAnchor = new NViewAnchor(clientAnchor.getRow1(), clientAnchor.getCol1(), width, height);
+		
+		return viewAnchor;
+	}
 
 	/**
 	 * reference ChartHepler.prepareCategoryModel() 

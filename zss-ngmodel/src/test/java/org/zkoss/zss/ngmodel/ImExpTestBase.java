@@ -6,11 +6,14 @@ import java.net.URL;
 import java.text.DateFormat;
 import java.util.Locale;
 
+import org.junit.Test;
 import org.zkoss.zss.ngmodel.NCellStyle.Alignment;
 import org.zkoss.zss.ngmodel.NCellStyle.BorderType;
 import org.zkoss.zss.ngmodel.NCellStyle.FillPattern;
 import org.zkoss.zss.ngmodel.NCellStyle.VerticalAlignment;
+import org.zkoss.zss.ngmodel.NChart.*;
 import org.zkoss.zss.ngmodel.NFont.TypeOffset;
+import org.zkoss.zss.ngmodel.chart.NGeneralChartData;
 
 /**
  * Common test cases for importer & exporter.
@@ -260,4 +263,127 @@ public class ImExpTestBase {
 		assertEquals("E28:G28", sheet.getMergedRegions().get(2).getReferenceString());
 		assertEquals("B28:C28", sheet.getMergedRegions().get(3).getReferenceString());
 	}	
+	
+	protected void areaChart(NBook book){
+		NSheet sheet = book.getSheetByName("Area");
+		NChart areaChart = sheet.getChart(0);
+		assertEquals(NChartType.AREA,areaChart.getType());
+		
+		NGeneralChartData chartData = (NGeneralChartData)areaChart.getData();
+		assertEquals(8, chartData.getNumOfCategory());
+		
+		NChart area3dChart = sheet.getChart(1);
+		assertEquals(NChartGrouping.STANDARD, area3dChart.getGrouping());
+		assertEquals(NChartLegendPosition.BOTTOM, area3dChart.getLegendPosition());
+	}
+	
+	protected void barChart(NBook book){
+		NSheet sheet = book.getSheetByName("Bar");
+		NChart barChart = sheet.getChart(0);
+		
+		assertEquals(NChartType.BAR,barChart.getType());
+		
+		
+		assertEquals(NBarDirection.HORIZONTAL, barChart.getBarDirection());
+		assertEquals(NChartGrouping.CLUSTERED, barChart.getGrouping());
+		assertEquals(false, barChart.isThreeD());
+		assertEquals(NChartLegendPosition.RIGHT, barChart.getLegendPosition());
+		
+		//data
+		NGeneralChartData chartData = (NGeneralChartData)barChart.getData();
+		assertEquals(3, chartData.getNumOfCategory());
+		assertEquals("Internet Explorer", chartData.getCategory(0));
+		assertEquals("Chrome", chartData.getCategory(1));
+		assertEquals("Firefox", chartData.getCategory(2));
+		assertEquals(3, chartData.getNumOfSeries());
+		assertEquals("January 2012", chartData.getSeries(0).getName());
+		assertEquals(0.3427, chartData.getSeries(0).getValue(0));
+		assertEquals(0.2599, chartData.getSeries(0).getValue(1));
+		assertEquals(0.2268, chartData.getSeries(0).getValue(2));
+		assertEquals("February 2012", chartData.getSeries(1).getName());
+		assertEquals(0.327, chartData.getSeries(1).getValue(0));
+		assertEquals(0.2724, chartData.getSeries(1).getValue(1));
+		assertEquals(0.2276, chartData.getSeries(1).getValue(2));
+		assertEquals("March 2012", chartData.getSeries(2).getName());
+		assertEquals(0.3168, chartData.getSeries(2).getValue(0));
+		assertEquals(0.2809, chartData.getSeries(2).getValue(1));
+		assertEquals(0.2273, chartData.getSeries(2).getValue(2));
+		
+		NChart barChart3D = sheet.getChart(1);
+		assertEquals(true, barChart3D.isThreeD());
+	}
+	
+	public void bubbleChart(NBook book){
+		NSheet sheet = book.getSheetByName("Bubble");
+		NChart bubbleChart = sheet.getChart(0);
+		assertEquals(NChartType.BUBBLE, bubbleChart.getType());
+		
+		NGeneralChartData chartData = (NGeneralChartData)bubbleChart.getData();
+		assertEquals(0, chartData.getNumOfCategory());
+		assertEquals(1, chartData.getNumOfSeries());
+		assertEquals("String Literal Title", chartData.getSeries(0).getName());
+	}
+	
+	public void columnChart(NBook book){
+		NSheet sheet = book.getSheetByName("Column");
+		NChart columnChart = sheet.getChart(0);
+		assertEquals(NChartType.COLUMN,columnChart.getType());
+		assertEquals(NBarDirection.VERTICAL, columnChart.getBarDirection());
+		assertEquals(NChartLegendPosition.TOP, columnChart.getLegendPosition());
+		
+		NGeneralChartData chartData = (NGeneralChartData)columnChart.getData();
+		assertEquals(4, chartData.getNumOfCategory());
+		
+		NChart column3dChart = sheet.getChart(1);
+		assertEquals(NChartGrouping.STACKED, column3dChart.getGrouping());
+	}
+	
+	public void doughnutChart(NBook book){
+		NSheet sheet = book.getSheetByName("Doughnut");
+		NChart doughnutChart = sheet.getChart(0);
+		assertEquals(NChartType.DOUGHNUT, doughnutChart.getType());
+		
+		NGeneralChartData chartData = (NGeneralChartData)doughnutChart.getData();
+		assertEquals(8, chartData.getNumOfCategory());
+	}
+	
+	public void lineChart(NBook book){
+		NSheet sheet = book.getSheetByName("Line");
+		NChart lineChart = sheet.getChart(0);
+		assertEquals(NChartType.LINE, lineChart.getType());
+		NGeneralChartData chartData = (NGeneralChartData)lineChart.getData();
+		assertEquals(3, chartData.getNumOfSeries());
+		
+		NChart line3dChart = sheet.getChart(1);
+		assertEquals(true, line3dChart.isThreeD());
+		chartData = (NGeneralChartData)line3dChart.getData();
+		assertEquals(3, chartData.getNumOfSeries());
+	}
+	
+	public void pieChart(NBook book){
+		NSheet sheet = book.getSheetByName("Pie");
+		NChart pieChart = sheet.getChart(0);
+		assertEquals(NChartType.PIE, pieChart.getType());
+		assertEquals(null,pieChart.getTitle());
+		NGeneralChartData chartData = (NGeneralChartData)pieChart.getData();
+		assertEquals(1, chartData.getNumOfSeries());
+		
+		NChart pie3dChart = sheet.getChart(1);
+		assertEquals(NChartType.PIE, pie3dChart.getType());
+		assertEquals(true, pie3dChart.isThreeD());
+	}
+	
+	public void scatterChart(NBook book){
+		NSheet sheet = book.getSheetByName("Scatter");
+		NChart scatterChart = sheet.getChart(0);
+		assertEquals(NChartType.SCATTER, scatterChart.getType());
+		
+		NGeneralChartData chartData = (NGeneralChartData)scatterChart.getData();
+		assertEquals(3, chartData.getNumOfSeries());
+		assertEquals("Internet Explorer", chartData.getSeries(0).getName());
+		assertEquals(0.3427, chartData.getSeries(0).getYValue(0));
+		assertEquals(0.327, chartData.getSeries(0).getYValue(1));
+		assertEquals(0.3168, chartData.getSeries(0).getYValue(2));
+	}
+	
 }

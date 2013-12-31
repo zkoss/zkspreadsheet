@@ -63,13 +63,14 @@ public class NExcelXlsxExporter extends AbstractExcelExporter {
 	protected void exportChart(NSheet sheet, Sheet poiSheet) {
 		for (NChart chart: sheet.getCharts()){
 			CategoryData categoryData = null;
-			ChartAxis bottomAxis = null;
 			switch(chart.getType()){
 				case AREA:
 					if (chart.isThreeD()){
 						categoryData = new XSSFArea3DChartData();
+						((XSSFArea3DChartData)categoryData).setGrouping(toPoiGrouping(chart.getGrouping()));
 					}else{
 						categoryData = new XSSFAreaChartData();
+						((XSSFAreaChartData)categoryData).setGrouping(toPoiGrouping(chart.getGrouping()));
 					}
 					break;
 				case BAR:
@@ -117,35 +118,37 @@ public class NExcelXlsxExporter extends AbstractExcelExporter {
 //				case SCATTER:
 //					XYData xyData =  new XSSFScatChartData(xssfChart);
 //					break;
-				case STOCK:
-					categoryData = new XSSFStockChartData();
-					break;
+//				case STOCK: TODO contains errors.
+//					categoryData = new XSSFStockChartData();
+//					break;
 				default:
 					//ignore unsupported chart
 					continue;
 			}
-			fillChartData(chart, categoryData);
+			if (categoryData != null){
+				fillCategoryData(chart, categoryData);
+			}
+			
+			// cannot create drawing before determining chart type
 			final Drawing drawing = poiSheet.createDrawingPatriarch();
 			ClientAnchor anchor = toClientAnchor(chart.getAnchor(), poiSheet);
 			final Chart poiChart = drawing.createChart(anchor);
-			
 			if (chart.isThreeD()){
 				poiChart.getOrCreateView3D(); //will create View3D
-			}
-			bottomAxis = createChartAxis(poiChart, chart.getType(), AxisPosition.BOTTOM);
-			if (bottomAxis != null) {
-				bottomAxis.setCrosses(AxisCrosses.AUTO_ZERO);
-				bottomAxis.setTickLabelPosition(AxisTickLabelPosition.NEXT_TO);
-				final ValueAxis leftAxis = poiChart.getChartAxisFactory().createValueAxis(AxisPosition.LEFT);
-				leftAxis.setCrosses(AxisCrosses.AUTO_ZERO);
-				leftAxis.setTickLabelPosition(AxisTickLabelPosition.NEXT_TO);
-				poiChart.plot(categoryData, bottomAxis, leftAxis);
-			} else {
-				poiChart.plot(categoryData);
 			}
 			if (chart.getLegendPosition() != null) {
 				ChartLegend legend = poiChart.getOrCreateLegend();
 				legend.setPosition(toPoiLegendPosition(chart.getLegendPosition()));
+			}
+		
+			ChartAxis bottomAxis = createChartAxis(poiChart, chart.getType(), AxisPosition.BOTTOM);
+			if (bottomAxis != null) {
+				bottomAxis.setCrosses(AxisCrosses.AUTO_ZERO);
+				final ValueAxis leftAxis = poiChart.getChartAxisFactory().createValueAxis(AxisPosition.LEFT);
+				leftAxis.setCrosses(AxisCrosses.AUTO_ZERO);
+				poiChart.plot(categoryData, bottomAxis, leftAxis);
+			} else {
+				poiChart.plot(categoryData);
 			}
 //			final XSSFClientAnchor xanchor = (XSSFClientAnchor) anchor;
 //			final XSSFGraphicFrame frame = ((XSSFChart)poiChart).getGraphicFrame();
@@ -201,7 +204,7 @@ public class NExcelXlsxExporter extends AbstractExcelExporter {
 		return clientAnchor;
 	}
 	
-	private void fillChartData(NChart chart, CategoryData categoryData){
+	private void fillCategoryData(NChart chart, CategoryData categoryData){
 		NGeneralChartData chartData = (NGeneralChartData)chart.getData();
 		ChartDataSource<?> categories = createFormulaChartDataSource(chartData);
 		for (int i=0 ; i < chartData.getNumOfSeries() ; i++){
@@ -210,6 +213,10 @@ public class NExcelXlsxExporter extends AbstractExcelExporter {
 			ChartDataSource<? extends Number> values = createFormulaChartDataSource(series);
 			categoryData.addSerie(title, categories, values);
 		}
+	}
+	
+	private void fillXYData(NChart chart, XYData xyData){
+		
 	}
 	
 	private ChartTextSource createFormulaChartTextSource(final String formula){
@@ -345,6 +352,13 @@ public class NExcelXlsxExporter extends AbstractExcelExporter {
 		}
 	}
 	
+	/**
+	 * 
+	 * @param chart
+	 * @param type
+	 * @param pos
+	 * @return
+	 */
 	private ChartAxis createChartAxis(Chart chart, NChartType type, AxisPosition pos) {
 		switch(type) {
 		case DOUGHNUT:
