@@ -17,6 +17,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.ngmodel.impl;
 
 import org.zkoss.zss.ngmodel.NColor;
+import org.zkoss.zss.ngmodel.NFont;
 import org.zkoss.zss.ngmodel.util.Validations;
 /**
  * 
@@ -134,18 +135,32 @@ public class FontImpl extends AbstractFontAdv {
 	
 
 	@Override
-	public void copyTo(AbstractFontAdv dest) {
-		if (dest == this)
+	public void copyFrom(NFont src) {
+		if (src == this)
 			return;
-		Validations.argInstance(dest, FontImpl.class);
-		FontImpl another = (FontImpl) dest;
-		another.fontName = fontName;
-		another.fontColor = fontColor;
-		another.fontBoldweight = fontBoldweight;
-		another.fontHeightPoint = fontHeightPoint;
-		another.fontItalic = fontItalic;
-		another.fontStrikeout = fontStrikeout;
-		another.fontTypeOffset = fontTypeOffset;
-		another.fontUnderline = fontUnderline;
+		Validations.argInstance(src, FontImpl.class);
+		
+		setName(src.getName());
+		setColor(src.getColor());
+		setBoldweight(src.getBoldweight());
+		setHeightPoints(src.getHeightPoints());
+		setItalic(src.isItalic());
+		setStrikeout(src.isStrikeout());
+		setTypeOffset(src.getTypeOffset());
+		setUnderline(src.getUnderline());
+	}
+
+	@Override
+	String getStyleKey() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(fontName)
+		.append(".").append(fontColor.getHtmlColor())
+		.append(".").append(fontBoldweight.ordinal())
+		.append(".").append(fontHeightPoint)
+		.append(".").append(fontItalic?"T":"F")
+		.append(".").append(fontStrikeout?"T":"F")
+		.append(".").append(fontTypeOffset.ordinal())
+		.append(".").append(fontUnderline.ordinal());
+		return sb.toString();
 	}
 }

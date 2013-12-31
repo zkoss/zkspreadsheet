@@ -104,6 +104,4 @@ public class ColorImpl extends AbstractColorAdv {
 			return false;
 		return true;
 	}
-
-	
 }

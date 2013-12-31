@@ -26,7 +26,6 @@ import org.zkoss.zss.ngmodel.NFont;
  */
 public abstract class AbstractFontAdv implements NFont,Serializable{
 	private static final long serialVersionUID = 1L;
-
-	/*package*/ abstract void copyTo(AbstractFontAdv dest);
+	abstract String getStyleKey();
 
 }

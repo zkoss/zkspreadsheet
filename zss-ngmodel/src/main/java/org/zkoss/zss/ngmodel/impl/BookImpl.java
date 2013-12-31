@@ -16,8 +16,11 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.ngmodel.impl;
 
+import java.awt.Color;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -35,8 +38,10 @@ import org.zkoss.zss.ngmodel.NBookSeries;
 import org.zkoss.zss.ngmodel.NCell;
 import org.zkoss.zss.ngmodel.NCellStyle;
 import org.zkoss.zss.ngmodel.NColor;
+import org.zkoss.zss.ngmodel.NColumnArray;
 import org.zkoss.zss.ngmodel.NFont;
 import org.zkoss.zss.ngmodel.NName;
+import org.zkoss.zss.ngmodel.NRow;
 import org.zkoss.zss.ngmodel.NSheet;
 import org.zkoss.zss.ngmodel.sys.EngineFactory;
 import org.zkoss.zss.ngmodel.sys.formula.EvaluationContributor;
@@ -367,7 +372,7 @@ public class BookImpl extends AbstractBookAdv{
 		}
 		AbstractFontAdv font = new FontImpl();
 		if(src!=null){
-			((AbstractFontAdv)src).copyTo(font);
+			font.copyFrom(src);
 		}
 		
 		if(inFontTable){
@@ -397,19 +402,79 @@ public class BookImpl extends AbstractBookAdv{
 		return maxColumnSize;
 	}
 
-//	@Override
-//	List<NCell> optimizeCellStyle() {
-//		//search all the cell's style , 
-//		//if it is same as style in the style table (but different instance), then reassign the one in the table
-//		// 
-//		//if no one match a cell's style, then set it to style table.
-//		//(Optional) it total cell style are too many, search the similar cell style the get a similar style and reassign to the cell
-//		
-//		//TODO
-//		throw new UnsupportedOperationException("not implementate la.");
-//	}
-
+	@Override
+	public void optimizeCellStyle() {
+		HashMap<String,NCellStyle> stylePool = new LinkedHashMap<String,NCellStyle>();
+		cellStyles.clear();
+		fonts.clear();
+		
+		NCellStyle defaultStyle = getDefaultCellStyle();
+		NFont defaultFont = getDefaultFont();
+		stylePool.put(((AbstractCellStyleAdv)defaultStyle).getStyleKey(), defaultStyle);
+		
+		for(NSheet sheet:sheets){
+			Iterator<NRow> rowIter = sheet.getRowIterator(false); 
+			while(rowIter.hasNext()){
+				NRow row = rowIter.next();
+				
+				row.setCellStyle(hitStyle(defaultStyle,row.getCellStyle(),stylePool));
+				Iterator<NCell> cellIter = sheet.getCellIterator(row.getIndex());
+				while(cellIter.hasNext()){
+					NCell cell = cellIter.next();
+					cell.setCellStyle(hitStyle(defaultStyle,cell.getCellStyle(),stylePool));
+				}
+			}
+			Iterator<NColumnArray> colIter = sheet.getColumnArrayIterator();
+			while(colIter.hasNext()){
+				NColumnArray colarr = colIter.next();
+				colarr.setCellStyle(hitStyle(defaultStyle,colarr.getCellStyle(),stylePool));
+			}
+		}
+		
+		cellStyles.addAll((Collection)stylePool.values());
+		String key;
+		HashMap<String,NFont> fontPool = new LinkedHashMap<String,NFont>();
+		
+		fontPool.put(((AbstractFontAdv)defaultFont).getStyleKey(), defaultFont);
+		for(NCellStyle style:cellStyles){
+			NFont font = style.getFont();
+			key = ((AbstractFontAdv)font).getStyleKey();
+			if(fontPool.get(key)==null){
+				fontPool.put(key, font);
+			}
+		}
+		
+		fonts.addAll((Collection)fontPool.values());
+		
+		colors.clear();//color is immutable, just clear it.
+	}
 	
+	
+	@SuppressWarnings("unchecked")
+	public List<NCellStyle> getCellStyleTable(){
+		return Collections.unmodifiableList((List)cellStyles);
+	}
+	@SuppressWarnings("unchecked")
+	public List<NFont> getFontTable(){
+		return Collections.unmodifiableList((List)fonts);
+	}
+	
+	private NCellStyle hitStyle(NCellStyle defaultStyle,NCellStyle currSytle,
+			HashMap<String, NCellStyle> stylePool) {
+		String key;
+		NCellStyle hit;
+		if(currSytle==defaultStyle){//quick case for most cell use default style
+			return defaultStyle;
+		}else{
+			key = ((AbstractCellStyleAdv)currSytle).getStyleKey();
+			hit = stylePool.get(key);
+			if(hit==null){
+				stylePool.put(key, hit = currSytle);
+			}
+		}
+		return hit;
+	}
+
 	@Override
 	public void addEventListener(ModelEventListener listener){
 		eventListenerAdaptor.addEventListener(listener);

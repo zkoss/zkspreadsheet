@@ -29,7 +29,7 @@ public class CellStyleImpl extends AbstractCellStyleAdv {
 	private static final long serialVersionUID = 1L;
 
 	private AbstractFontAdv font;
-	private NColor backgroundColor = ColorImpl.WHITE;
+	private NColor fillColor = ColorImpl.WHITE;
 	private FillPattern fillPattern = FillPattern.NO_FILL;
 	private Alignment alignment = Alignment.GENERAL;
 	private VerticalAlignment verticalAlignment = VerticalAlignment.BOTTOM;
@@ -63,13 +63,13 @@ public class CellStyleImpl extends AbstractCellStyleAdv {
 
 	@Override
 	public NColor getFillColor() {
-		return backgroundColor;
+		return fillColor;
 	}
 
 	@Override
-	public void setFillColor(NColor backgroundColor) {
-		Validations.argNotNull(backgroundColor);
-		this.backgroundColor = backgroundColor;
+	public void setFillColor(NColor fillColor) {
+		Validations.argNotNull(fillColor);
+		this.fillColor = fillColor;
 	}
 
 	@Override
@@ -79,7 +79,7 @@ public class CellStyleImpl extends AbstractCellStyleAdv {
 
 	@Override
 	public void setFillPattern(FillPattern fillPattern) {
-		Validations.argNotNull(backgroundColor);
+		Validations.argNotNull(fillPattern);
 		this.fillPattern = fillPattern;
 	}
 
@@ -90,7 +90,7 @@ public class CellStyleImpl extends AbstractCellStyleAdv {
 
 	@Override
 	public void setAlignment(Alignment alignment) {
-		Validations.argNotNull(backgroundColor);
+		Validations.argNotNull(alignment);
 		this.alignment = alignment;
 	}
 
@@ -101,7 +101,7 @@ public class CellStyleImpl extends AbstractCellStyleAdv {
 
 	@Override
 	public void setVerticalAlignment(VerticalAlignment verticalAlignment) {
-		Validations.argNotNull(backgroundColor);
+		Validations.argNotNull(verticalAlignment);
 		this.verticalAlignment = verticalAlignment;
 	}
 
@@ -122,7 +122,7 @@ public class CellStyleImpl extends AbstractCellStyleAdv {
 
 	@Override
 	public void setBorderLeft(BorderType borderLeft) {
-		Validations.argNotNull(backgroundColor);
+		Validations.argNotNull(borderLeft);
 		this.borderLeft = borderLeft;
 	}
 
@@ -133,7 +133,7 @@ public class CellStyleImpl extends AbstractCellStyleAdv {
 
 	@Override
 	public void setBorderTop(BorderType borderTop) {
-		Validations.argNotNull(backgroundColor);
+		Validations.argNotNull(borderTop);
 		this.borderTop = borderTop;
 	}
 
@@ -144,7 +144,7 @@ public class CellStyleImpl extends AbstractCellStyleAdv {
 
 	@Override
 	public void setBorderRight(BorderType borderRight) {
-		Validations.argNotNull(backgroundColor);
+		Validations.argNotNull(borderRight);
 		this.borderRight = borderRight;
 	}
 
@@ -155,7 +155,7 @@ public class CellStyleImpl extends AbstractCellStyleAdv {
 
 	@Override
 	public void setBorderBottom(BorderType borderBottom){
-		Validations.argNotNull(backgroundColor);
+		Validations.argNotNull(borderBottom);
 		this.borderBottom = borderBottom;
 	}
 
@@ -259,5 +259,28 @@ public class CellStyleImpl extends AbstractCellStyleAdv {
 		setDataFormat(src.getDataFormat());
 		setLocked(src.isLocked());
 		setHidden(src.isHidden());
+	}
+	
+	@Override
+	String getStyleKey() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(font.getStyleKey())
+		.append(".").append(fillPattern.ordinal())
+		.append(".").append(fillColor.getHtmlColor())
+		.append(".").append(alignment.ordinal())
+		.append(".").append(verticalAlignment.ordinal())
+		.append(".").append(wrapText?"T":"F")
+		.append(".").append(borderLeft.ordinal())
+		.append(".").append(borderLeftColor.getHtmlColor())
+		.append(".").append(borderRight.ordinal())
+		.append(".").append(borderRightColor.getHtmlColor())
+		.append(".").append(borderTop.ordinal())
+		.append(".").append(borderTopColor.getHtmlColor())
+		.append(".").append(borderBottom.ordinal())
+		.append(".").append(borderBottomColor.getHtmlColor())
+		.append(".").append(dataFormat)
+		.append(".").append(locked?"T":"F")
+		.append(".").append(hidden?"T":"F");
+		return sb.toString();
 	}
 }

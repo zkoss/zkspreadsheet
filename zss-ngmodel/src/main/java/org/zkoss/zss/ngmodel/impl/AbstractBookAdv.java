@@ -32,12 +32,6 @@ public abstract class AbstractBookAdv implements NBook,EvaluationContributorCont
 	
 	public abstract void sendModelEvent(ModelEvent event);
 	
-	/**
-	 * Optimize CellStyle, usually called when export book. 
-	 * @return
-	 */
-//	/*package*/ abstract List<NCell> optimizeCellStyle();
-	
 	/*package*/ abstract String nextObjId(String type);
 	
 	/*package*/ abstract void onModelInternalEvent(ModelInternalEvent event);

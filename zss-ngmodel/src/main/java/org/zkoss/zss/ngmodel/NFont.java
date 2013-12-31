@@ -15,6 +15,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 }}IS_RIGHT
 */
 package org.zkoss.zss.ngmodel;
+
 /**
  * 
  * @author dennis
@@ -103,4 +104,6 @@ public interface NFont {
 	public void setTypeOffset(TypeOffset fontTypeOffset);
 
 	public void setUnderline(Underline fontUnderline);
+	
+	public void copyFrom(NFont src);
 }

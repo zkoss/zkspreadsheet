@@ -26,5 +26,4 @@ import org.zkoss.zss.ngmodel.NColor;
  */
 public abstract class AbstractColorAdv implements NColor,Serializable{
 	private static final long serialVersionUID = 1L;
-
 }

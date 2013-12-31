@@ -2329,4 +2329,74 @@ public class ModelTest {
 		Assert.assertTrue(name2.isFormulaParsingError());
 		
 	}
+	
+	@Test
+	public void testStyleOptimal(){
+		NBook book = NBooks.createBook("book1");
+		NSheet sheet1 = initialDataGrid(book.createSheet("Sheet1"));
+		
+		NCellStyle defaultStyle = book.getDefaultCellStyle();
+		NFont defaultFont = book.getDefaultFont();
+		
+		if(!(book instanceof BookImpl)){
+			Assert.fail("not a book impl");
+		}
+		
+		List<NCellStyle> styleTable = ((BookImpl)book).getCellStyleTable();
+		List<NFont> fontTable = ((BookImpl)book).getFontTable();
+		
+		Assert.assertEquals(1, styleTable.size());
+		Assert.assertEquals(defaultStyle, styleTable.get(0));
+		
+		Assert.assertEquals(1, fontTable.size());
+		Assert.assertEquals(defaultFont, fontTable.get(0));
+		
+		book.createCellStyle(true).setAlignment(Alignment.LEFT);;//just cear , dosn't assign to cell
+		book.createFont(true).setBoldweight(Boldweight.BOLD);
+		
+		Assert.assertEquals(2, styleTable.size());
+		Assert.assertEquals(2, fontTable.size());
+		
+		book.optimizeCellStyle();
+		Assert.assertEquals(1, styleTable.size());
+		Assert.assertEquals(1, fontTable.size());
+		
+		NCellStyle style1,style2,style3,style4;
+		NFont font1,font2;
+		//style1 and style has same style but different font
+		style1 = book.createCellStyle(true);
+		style1.setAlignment(Alignment.LEFT);
+		style2 = book.createCellStyle(true);
+		style2.setAlignment(Alignment.LEFT);
+		
+		font1 = book.createFont(true);
+		font1.setBoldweight(Boldweight.BOLD);
+		style2.setFont(font1);
+		
+		
+		//style 3 is same as default
+		style3 = book.createCellStyle(true);
+		
+		//style 4 is same as default but has a font as default
+		style4 = book.createCellStyle(true);
+		font2 = book.createFont(true);
+		style4.setFont(font2);
+		
+		sheet1.getCell(0, 0).setCellStyle(style1);
+		sheet1.getCell(1, 1).setCellStyle(style2);
+		sheet1.getCell(2, 2).setCellStyle(style3);
+		sheet1.getCell(3, 3).setCellStyle(style4);
+		
+		Assert.assertEquals(5, styleTable.size());
+		Assert.assertEquals(3, fontTable.size());
+		
+		book.optimizeCellStyle();
+		Assert.assertEquals(3, styleTable.size());//
+		Assert.assertEquals(2, fontTable.size());
+		
+		Assert.assertEquals(style1, sheet1.getCell(0, 0).getCellStyle());
+		Assert.assertEquals(style2, sheet1.getCell(1, 1).getCellStyle());
+		Assert.assertEquals(defaultStyle, sheet1.getCell(2, 2).getCellStyle());
+		Assert.assertEquals(defaultStyle, sheet1.getCell(3, 3).getCellStyle());
+	}
 }

@@ -26,5 +26,7 @@ import org.zkoss.zss.ngmodel.NCellStyle;
  */
 public abstract class AbstractCellStyleAdv implements NCellStyle,Serializable{
 	private static final long serialVersionUID = 1L;
+	
+	abstract String getStyleKey();
 
 }

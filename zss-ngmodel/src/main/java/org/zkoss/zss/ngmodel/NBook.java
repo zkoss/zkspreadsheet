@@ -220,5 +220,9 @@ public interface NBook {
 
 	public String getShareScope();
 
-	
+	/**
+	 * Optimize CellStyle, usually called when export book or after many style operation 
+	 * @return
+	 */
+	public void optimizeCellStyle();
 }
