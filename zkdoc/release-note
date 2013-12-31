@@ -2,6 +2,7 @@
 ZK Spreadsheet 3.0.1
 *Features:
   ZSS-511 LEFTB and REPLACEB return #NAME
+  ZSS-527 Enter formula with bad syntax, would like "bad" formula to remain in cell
   
 *Bugs:
   ZSS-510 ApplyDataFormat with "" then getCellFormatText from range will cause IndexOutOfBoundaryException and spreadsheet crash.
@@ -13,6 +14,11 @@ ZK Spreadsheet 3.0.1
   ZSS-523 misleading error message for text formulas
   ZSS-520 Rapid typing causes error in spreadsheet
   ZSS-512 when performing "clear style" on merged range can unmerge it, but "clear all" doesn't
+  ZSS-538 Ctrl+u doesn't apply underline to a cell
+  ZSS-534 font size not displayed properly in toolbar
+  ZSS-536 Type on a cell something get empty result
+  ZSS-533 formula's function with non-existed name should be resolved to #NAME? and an name be created in file
+  
 ** Upgrade Notes
   * Members of BookType of Book are changed from EXCEL_2003,EXCEL_2007 to XLS,XLSX because of Spreadsheet depends on file format not Excel version.
 
