@@ -57,14 +57,15 @@ ZK Spreadsheet 2.6.0
 	ZSS-453 NullPointerException when the sheet has hyperlinks
 	ZSS-488 After undoing a deleted column under frozen rows, gridline is in disorder
 	ZSS-380 When input wrong formula, the formula bar will change to below cell and "Enter" key can't blur it
-  ZSS-464 Other styles are changed (background color, font size) when just changing cell border
-  ZSS-521 select whole column and format, long running process
-  ZSS-331 select all cell has poor performance even not many cells
-  ZSS-462 Can't copy all selected cells to other application when using Chrome
-  ZSS-521 select whole column and format, long running process
-  ZSS-520 Rapid typing causes error in spreadsheet
-  ZSS-523 misleading error message for text formulas
-  ZSS-534 font size not displayed properly in toolbar
+	ZSS-464 Other styles are changed (background color, font size) when just changing cell border
+	ZSS-521 select whole column and format, long running process
+	ZSS-331 select all cell has poor performance even not many cells
+	ZSS-462 Can't copy all selected cells to other application when using Chrome
+	ZSS-521 select whole column and format, long running process
+	ZSS-520 Rapid typing causes error in spreadsheet
+	ZSS-523 misleading error message for text formulas
+	ZSS-534 font size not displayed properly in toolbar
+	ZSS-533 formula's function with non-existed name should be resolved to #NAME? and an name be created in file
 
 ZK Spreadsheet 2.5.0
 *Features:   

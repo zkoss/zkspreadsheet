@@ -17,7 +17,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.openxmlformats.schemas.officeDocument.x2006.docPropsVTypes.CTVariant;
@@ -39,8 +38,6 @@ import org.zkoss.poi.ss.usermodel.Color;
 import org.zkoss.poi.ss.usermodel.Font;
 import org.zkoss.poi.ss.usermodel.FormulaEvaluator;
 import org.zkoss.poi.ss.usermodel.PictureData;
-import org.zkoss.poi.ss.usermodel.PivotCache;
-import org.zkoss.poi.ss.util.AreaReference;
 import org.zkoss.poi.ss.util.CellRangeAddress;
 import org.zkoss.poi.xssf.usermodel.XSSFColor;
 import org.zkoss.poi.xssf.usermodel.XSSFEvaluationWorkbook;
@@ -111,7 +108,7 @@ public class XSSFBookImpl extends XSSFWorkbook implements Book, BookCtrl {
 		if(udff!=null){
 			insertToolPack(0, udff);
 		}
-		_evaluator = XSSFFormulaEvaluator.create(this, NoCacheClassifier.instance, TolerantUDFFinder.instance); 
+		_evaluator = XSSFFormulaEvaluator.create(this, NoCacheClassifier.instance,  null); // ZSS-533: not need Tolerant function anymore  
 		_bookEvaluator = _evaluator.getWorkbookEvaluator(); 
 		_bookEvaluator.setDependencyTracker(resolver.getDependencyTracker(this));
 		_functionMapper = new JoinFunctionMapper(resolver.getFunctionMapper());
