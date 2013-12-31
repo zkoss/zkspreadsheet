@@ -11,6 +11,8 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
  */
 package org.zkoss.zss.ngmodel.impl.sys.formula.ex;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.zkoss.poi.ss.formula.DependencyTracker;
 import org.zkoss.poi.ss.formula.OperationEvaluationContext;
 import org.zkoss.poi.ss.formula.UserDefinedFunction;
@@ -25,6 +27,7 @@ import org.zkoss.poi.ss.formula.ptg.Ptg;
  * @author Pao
  */
 public class NDependencyTrackerEx implements DependencyTracker {
+	private final Logger logger = Logger.getLogger(NDependencyTrackerEx.class.getName());
 
 	@Override
 	public ValueEval postProcessValueEval(OperationEvaluationContext ec, ValueEval opResult, boolean eval) {
@@ -36,8 +39,7 @@ public class NDependencyTrackerEx implements DependencyTracker {
 						new NameEval(NFunctionResolverEx.EL_FUNCTION_KEY), new StringEval("${" + name + "}")},
 						ec);
 			} catch(NotImplementedException ex) {
-				// ignore
-				System.err.println(ex);
+				logger.log(Level.FINE, ex.getMessage(), ex);
 			}
 		}
 		return opResultX;

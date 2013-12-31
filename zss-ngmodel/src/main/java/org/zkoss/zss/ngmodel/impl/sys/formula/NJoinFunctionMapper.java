@@ -16,14 +16,9 @@ package org.zkoss.zss.ngmodel.impl.sys.formula;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
-import java.util.List;
-
-import org.zkoss.util.resource.ClassLocator;
 import org.zkoss.xel.Function;
 import org.zkoss.xel.FunctionMapper;
 import org.zkoss.xel.XelException;
-import org.zkoss.xel.taglib.Taglib;
-import org.zkoss.xel.taglib.Taglibs;
 
 /**
  * Aggregate FunctionMapper that join serveral {@link FunctionMapper} together. The first
@@ -56,12 +51,12 @@ public class NJoinFunctionMapper implements FunctionMapper {
 	}
 	
 	//--FunctionMapper--//
-	public Collection getClassNames() {
+	public Collection<?> getClassNames() {
 		return new ArrayList<String>(0);
 	}
 
 
-	public Class resolveClass(String name) throws XelException {
+	public Class<?> resolveClass(String name) throws XelException {
 		return null;
 	}
 

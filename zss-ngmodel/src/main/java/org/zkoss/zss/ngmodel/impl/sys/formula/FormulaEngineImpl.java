@@ -28,7 +28,6 @@ import org.zkoss.poi.ss.formula.FormulaParseException;
 import org.zkoss.poi.ss.formula.FormulaParser;
 import org.zkoss.poi.ss.formula.FormulaType;
 import org.zkoss.poi.ss.formula.IStabilityClassifier;
-import org.zkoss.poi.ss.formula.OperationEvaluationContext;
 import org.zkoss.poi.ss.formula.WorkbookEvaluator;
 import org.zkoss.poi.ss.formula.eval.AreaEval;
 import org.zkoss.poi.ss.formula.eval.BlankEval;
@@ -40,7 +39,6 @@ import org.zkoss.poi.ss.formula.eval.RefEval;
 import org.zkoss.poi.ss.formula.eval.StringEval;
 import org.zkoss.poi.ss.formula.eval.ValueEval;
 import org.zkoss.poi.ss.formula.eval.ValuesEval;
-import org.zkoss.poi.ss.formula.functions.FreeRefFunction;
 import org.zkoss.poi.ss.formula.ptg.Area3DPtg;
 import org.zkoss.poi.ss.formula.ptg.AreaPtg;
 import org.zkoss.poi.ss.formula.ptg.FuncPtg;
@@ -93,18 +91,6 @@ public class FormulaEngineImpl implements FormulaEngine {
 	protected final static IStabilityClassifier noCacheClassifier = new IStabilityClassifier() {
 		public boolean isCellFinal(int sheetIndex, int rowIndex, int columnIndex) {
 			return true;
-		}
-	};
-
-	protected final static FreeRefFunction toerantFunction = new FreeRefFunction() {
-		public ValueEval evaluate(ValueEval[] args, OperationEvaluationContext ec) {
-			return ErrorEval.NAME_INVALID;
-		}
-	};
-
-	protected final static UDFFinder tolerantUDFFinder = new UDFFinder() {
-		public FreeRefFunction findFunction(String name) {
-			return toerantFunction;
 		}
 	};
 
@@ -211,8 +197,7 @@ public class FormulaEngineImpl implements FormulaEngine {
 				for(NBook nb : bookSeries.getBooks()) {
 					String bookName = nb.getBookName();
 					EvalBook evalBook = new EvalBook(nb);
-					WorkbookEvaluator we = new WorkbookEvaluator(evalBook, noCacheClassifier,
-							tolerantUDFFinder);
+					WorkbookEvaluator we = new WorkbookEvaluator(evalBook, noCacheClassifier, null);
 					bookNames.add(bookName);
 					evaluators.add(we);
 					evalCtxMap.put(bookName, new EvalContext(evalBook, we));
