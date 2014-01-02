@@ -14,7 +14,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 {{IS_RIGHT
 }}IS_RIGHT
 */
-package org.zkoss.zss.ngmodel.impl.chart;
+package org.zkoss.zss.ngmodel.impl;
 
 import java.util.Collection;
 import java.util.List;
@@ -25,9 +25,9 @@ import org.zkoss.zss.ngmodel.ErrorValue;
  * @author dennis
  * @since 3.5.0
  */
-/*package*/ class ChartDataUtil {
+public class EvaluationUtil {
 	
-	static final int sizeOf(Object obj){
+	static public int sizeOf(Object obj){
 		if(obj==null){
 			return 0;
 		}else if(obj instanceof Collection){
@@ -41,7 +41,7 @@ import org.zkoss.zss.ngmodel.ErrorValue;
 		}
 	}
 	
-	static final Object valueOf(Object obj,int index){
+	static public Object valueOf(Object obj,int index){
 		if(obj instanceof List){//faster before collection
 			return ((List)obj).get(index);
 		}else if(obj instanceof Collection){

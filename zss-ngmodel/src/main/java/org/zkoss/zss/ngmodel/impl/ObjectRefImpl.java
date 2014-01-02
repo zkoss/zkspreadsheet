@@ -42,6 +42,12 @@ public class ObjectRefImpl extends RefImpl implements ObjectRef{
 		this.objectIdPath = new String[]{objectId};
 		objType = ObjectType.CHART;
 	}
+	
+	public ObjectRefImpl(AbstractDataValidationAdv validation,String objectId){
+		super(RefType.OBJECT,validation.getSheet().getBook().getBookName(),validation.getSheet().getSheetName(), null,-1,-1,-1,-1);
+		this.objectIdPath = new String[]{objectId};
+		objType = ObjectType.DATA_VALIDATION;
+	}
 
 	@Override
 	public String getObjectId() {

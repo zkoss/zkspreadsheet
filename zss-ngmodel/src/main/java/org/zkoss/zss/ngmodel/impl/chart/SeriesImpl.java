@@ -24,6 +24,7 @@ import org.zkoss.zss.ngmodel.NSheet;
 import org.zkoss.zss.ngmodel.chart.NSeries;
 import org.zkoss.zss.ngmodel.impl.AbstractBookSeriesAdv;
 import org.zkoss.zss.ngmodel.impl.AbstractChartAdv;
+import org.zkoss.zss.ngmodel.impl.EvaluationUtil;
 import org.zkoss.zss.ngmodel.impl.LinkedModelObject;
 import org.zkoss.zss.ngmodel.impl.ObjectRefImpl;
 import org.zkoss.zss.ngmodel.impl.RefImpl;
@@ -116,40 +117,40 @@ public class SeriesImpl implements NSeries,Serializable,LinkedModelObject{
 	@Override
 	public int getNumOfValue(){
 		evalFormula();
-		return ChartDataUtil.sizeOf(evalValuesResult);
+		return EvaluationUtil.sizeOf(evalValuesResult);
 	}
 	@Override
 	public Object getValue(int index) {
 		evalFormula();
-		if(index>=ChartDataUtil.sizeOf(evalValuesResult)){
+		if(index>=EvaluationUtil.sizeOf(evalValuesResult)){
 			return null;
 		}
-		return ChartDataUtil.valueOf(evalValuesResult,index);
+		return EvaluationUtil.valueOf(evalValuesResult,index);
 	}
 	@Override
 	public int getNumOfYValue(){
 		evalFormula();
-		return ChartDataUtil.sizeOf(evalYValuesResult);
+		return EvaluationUtil.sizeOf(evalYValuesResult);
 	}
 	@Override
 	public Object getYValue(int index) {
 		evalFormula();
-		if(index>=ChartDataUtil.sizeOf(evalYValuesResult)){
+		if(index>=EvaluationUtil.sizeOf(evalYValuesResult)){
 			return null;
 		}
-		return ChartDataUtil.valueOf(evalYValuesResult,index);
+		return EvaluationUtil.valueOf(evalYValuesResult,index);
 	}
 	public int getNumOfZValue(){
 		evalFormula();
-		return ChartDataUtil.sizeOf(evalZValuesResult);
+		return EvaluationUtil.sizeOf(evalZValuesResult);
 	}
 	@Override
 	public Object getZValue(int index) {
 		evalFormula();
-		if(index>=ChartDataUtil.sizeOf(evalZValuesResult)){
+		if(index>=EvaluationUtil.sizeOf(evalZValuesResult)){
 			return null;
 		}
-		return ChartDataUtil.valueOf(evalZValuesResult,index);
+		return EvaluationUtil.valueOf(evalZValuesResult,index);
 	}
 	
 	@Override
@@ -162,6 +163,7 @@ public class SeriesImpl implements NSeries,Serializable,LinkedModelObject{
 	}
 	@Override
 	public void setXYZFormula(String nameExpression,String xValueExpression, String yValueExpression,String zValueExpression){
+		checkOrphan();
 		evaluated = false;
 		clearFormulaDependency();
 		

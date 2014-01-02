@@ -8,7 +8,7 @@ package org.zkoss.zss.ngmodel.sys.dependency;
 public interface ObjectRef extends Ref{
 	
 	public enum ObjectType{
-		CHART, VALIDATION
+		CHART, DATA_VALIDATION
 	}
 	public ObjectType getObjectType();
 	public String getObjectId();

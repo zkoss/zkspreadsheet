@@ -117,6 +117,20 @@ public interface NSheet {
 	public int getNumOfMergedRegion();
 	public CellRegion getMergedRegion(int idx);
 	
+	public NDataValidation addDataValidation(CellRegion region);
+	public NDataValidation getDataValidation(String id);
+	public void deleteDataValidation(NDataValidation validation);
+	public int getNumOfDataValidation();
+	public NDataValidation getDataValidation(int idx);
+	public List<NDataValidation> getDataValidations();
+	
+	/**
+	 * @param row
+	 * @param column
+	 * @return the first data validation at row, column
+	 */
+	public NDataValidation getDataValidation(int row, int column);
+	
 	/**
 	 * Get the merged region that overlapped the region
 	 * @return the region that contains overlapped or null if not found.

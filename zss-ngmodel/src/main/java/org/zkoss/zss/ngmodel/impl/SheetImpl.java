@@ -33,6 +33,7 @@ import org.zkoss.zss.ngmodel.NChart;
 import org.zkoss.zss.ngmodel.NColumn;
 import org.zkoss.zss.ngmodel.NColumnArray;
 import org.zkoss.zss.ngmodel.NDataGrid;
+import org.zkoss.zss.ngmodel.NDataValidation;
 import org.zkoss.zss.ngmodel.NPicture;
 import org.zkoss.zss.ngmodel.NPicture.Format;
 import org.zkoss.zss.ngmodel.NPrintInfo;
@@ -68,6 +69,7 @@ public class SheetImpl extends AbstractSheetAdv {
 	
 	private final List<AbstractPictureAdv> pictures = new LinkedList<AbstractPictureAdv>();
 	private final List<AbstractChartAdv> charts = new LinkedList<AbstractChartAdv>();
+	private final List<AbstractDataValidationAdv> dataValidations = new LinkedList<AbstractDataValidationAdv>();
 	
 	private final List<CellRegion> mergedRegions = new LinkedList<CellRegion>();
 	
@@ -94,6 +96,12 @@ public class SheetImpl extends AbstractSheetAdv {
 	protected void checkOwnership(NChart chart){
 		if(!charts.contains(chart)){
 			throw new InvalidateModelOpException("doesn't has ownership "+ chart);
+		}
+	}
+	
+	protected void checkOwnership(NDataValidation validation){
+		if(!dataValidations.contains(validation)){
+			throw new InvalidateModelOpException("doesn't has ownership "+ validation);
 		}
 	}
 	
@@ -517,6 +525,7 @@ public class SheetImpl extends AbstractSheetAdv {
 				anchor.setRowIndex(idx + size);
 			}
 		}
+		//TODO shift data validation?
 	}
 	private void shiftAfterRowDelete(int rowIdx, int size) {
 		//handling pic shift
@@ -540,7 +549,8 @@ public class SheetImpl extends AbstractSheetAdv {
 				anchor.setRowIndex(rowIdx);//as excel's rule
 				anchor.setYOffset(0);
 			}
-		}			
+		}
+		//TODO shift data validation?
 	}
 	private void shiftAfterColumnInsert(int columnIdx, int size) {
 		// handling pic shift
@@ -558,7 +568,8 @@ public class SheetImpl extends AbstractSheetAdv {
 			if (idx >= columnIdx) {
 				anchor.setColumnIndex(idx + size);
 			}
-		}		
+		}
+		//TODO shift data validation?
 	}
 	private void shiftAfterColumnDelete(int columnIdx, int size) {
 		//handling pic shift
@@ -582,7 +593,8 @@ public class SheetImpl extends AbstractSheetAdv {
 				anchor.setColumnIndex(columnIdx);//as excel's rule
 				anchor.setXOffset(0);
 			}
-		}		
+		}
+		//TODO shift data validation?
 	}
 	
 
@@ -874,6 +886,11 @@ public class SheetImpl extends AbstractSheetAdv {
 			picture.destroy();
 		}
 		pictures.clear();
+		for(AbstractDataValidationAdv validation:dataValidations){
+			validation.destroy();
+		}
+		dataValidations.clear();
+		
 		book = null;
 		//TODO all 
 		
@@ -907,17 +924,30 @@ public class SheetImpl extends AbstractSheetAdv {
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@Override
 	public List<NPicture> getPictures() {
 		return Collections.unmodifiableList((List)pictures);
 	}
 	
+	
+	@Override
+	public int getNumOfPicture() {
+		return pictures.size();
+	}
+
+	@Override
+	public NPicture getPicture(int idx) {
+		return pictures.get(idx);
+	}
+	
+	@Override
 	public NChart addChart(NChart.NChartType type,NViewAnchor anchor) {
 		checkOrphan();
 		AbstractChartAdv pic = new ChartImpl(this, book.nextObjId("chart"), type, anchor);
 		charts.add(pic);
 		return pic;
 	}
-	
+	@Override
 	public NChart getChart(String picid){
 		for(NChart pic:charts){
 			if(pic.getId().equals(picid)){
@@ -926,7 +956,7 @@ public class SheetImpl extends AbstractSheetAdv {
 		}
 		return null;
 	}
-
+	@Override
 	public void deleteChart(NChart chart) {
 		checkOrphan();
 		checkOwnership(chart);
@@ -935,8 +965,19 @@ public class SheetImpl extends AbstractSheetAdv {
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@Override
 	public List<NChart> getCharts() {
 		return Collections.unmodifiableList((List)charts);
+	}
+
+	@Override
+	public int getNumOfChart() {
+		return charts.size();
+	}
+
+	@Override
+	public NChart getChart(int idx) {
+		return charts.get(idx);
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -1074,25 +1115,6 @@ public class SheetImpl extends AbstractSheetAdv {
 		defaultColumnWidth = width;
 	}
 
-	@Override
-	public int getNumOfPicture() {
-		return pictures.size();
-	}
-
-	@Override
-	public NPicture getPicture(int idx) {
-		return pictures.get(idx);
-	}
-
-	@Override
-	public int getNumOfChart() {
-		return charts.size();
-	}
-
-	@Override
-	public NChart getChart(int idx) {
-		return charts.get(idx);
-	}
 
 	@Override
 	public int getNumOfMergedRegion() {
@@ -1142,6 +1164,58 @@ public class SheetImpl extends AbstractSheetAdv {
 	@Override
 	public void setDataGrid(NDataGrid dataGrid) {
 		this.dataGrid = dataGrid;
+	}
+	
+	@Override
+	public NDataValidation addDataValidation(CellRegion region) {
+		checkOrphan();
+		AbstractDataValidationAdv validation = new DataValidationImpl(this, book.nextObjId("valid"));
+		validation.addRegion(region);
+		dataValidations.add(validation);
+		return validation;
+	}
+	@Override
+	public NDataValidation getDataValidation(String validationid){
+		for(NDataValidation validation:dataValidations){
+			if(validation.getId().equals(validationid)){
+				return validation;
+			}
+		}
+		return null;
+	}
+	@Override
+	public void deleteDataValidation(NDataValidation validationid) {
+		checkOrphan();
+		checkOwnership(validationid);
+		((AbstractDataValidationAdv)validationid).destroy();
+		dataValidations.remove(validationid);
+	}
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public List<NDataValidation> getDataValidations() {
+		return Collections.unmodifiableList((List)dataValidations);
+	}
+
+	@Override
+	public int getNumOfDataValidation() {
+		return dataValidations.size();
+	}
+
+	@Override
+	public NDataValidation getDataValidation(int idx) {
+		return dataValidations.get(idx);
+	}
+	
+	@Override
+	public NDataValidation getDataValidation(int rowIdx,int columnIdx) {
+		for(NDataValidation validation:dataValidations){
+			for(CellRegion region:validation.getRegions()){
+				if(region.contains(rowIdx, columnIdx)){
+					return validation;
+				}
+			}
+		}
+		return null;
 	}
 
 }

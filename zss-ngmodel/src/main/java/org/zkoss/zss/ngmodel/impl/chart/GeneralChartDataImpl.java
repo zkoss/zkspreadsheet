@@ -26,6 +26,7 @@ import org.zkoss.zss.ngmodel.chart.NGeneralChartData;
 import org.zkoss.zss.ngmodel.chart.NSeries;
 import org.zkoss.zss.ngmodel.impl.AbstractBookSeriesAdv;
 import org.zkoss.zss.ngmodel.impl.AbstractChartAdv;
+import org.zkoss.zss.ngmodel.impl.EvaluationUtil;
 import org.zkoss.zss.ngmodel.impl.ObjectRefImpl;
 import org.zkoss.zss.ngmodel.impl.RefImpl;
 import org.zkoss.zss.ngmodel.sys.EngineFactory;
@@ -91,14 +92,14 @@ public class GeneralChartDataImpl extends ChartDataAdv implements NGeneralChartD
 	}
 	public int getNumOfCategory() {
 		evalFormula();
-		return ChartDataUtil.sizeOf(evalResult);
+		return EvaluationUtil.sizeOf(evalResult);
 	}
 	public Object getCategory(int i) {
 		evalFormula();
-		if(i>=ChartDataUtil.sizeOf(evalResult)){
+		if(i>=EvaluationUtil.sizeOf(evalResult)){
 			return null;
 		}
-		return ChartDataUtil.valueOf(evalResult,i);
+		return EvaluationUtil.valueOf(evalResult,i);
 	}
 	public NSeries addSeries() {
 		SeriesImpl series = new SeriesImpl(chart,chart.getId() + "-series" + (seriesCount++));

@@ -33,7 +33,9 @@ import org.zkoss.zss.ngmodel.sys.dependency.Ref.RefType;
 
 	private void handleCellRef(Ref notify) {
 		NBook book = bookSeries.getBook(notify.getBookName());
+		if(book==null) return;
 		NSheet sheet = book.getSheetByName(notify.getSheetName());
+		if(sheet==null) return;
 		((AbstractBookAdv) book).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_ROW_COLUMN_SIZE_CHANGE,sheet,
 				new CellRegion(notify.getRow(),notify.getColumn(),notify.getLastRow(),notify.getLastColumn())));
 	}
