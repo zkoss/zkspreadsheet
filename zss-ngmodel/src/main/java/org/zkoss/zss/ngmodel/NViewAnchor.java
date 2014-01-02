@@ -18,7 +18,7 @@ package org.zkoss.zss.ngmodel;
 
 import java.io.Serializable;
 /**
- * 
+ * Represent a rectangle area by its left-top cell index, width, height, x and y offset within the cell.
  * @author dennis
  * @since 3.5.0
  */
@@ -44,6 +44,9 @@ public class NViewAnchor implements Serializable {
 		this.height = height;
 	}
 
+	/**
+	 * @return the left-top cell's row index
+	 */
 	public int getRowIndex() {
 		return rowIndex;
 	}
@@ -52,6 +55,9 @@ public class NViewAnchor implements Serializable {
 		this.rowIndex = rowIndex;
 	}
 
+	/**
+	 * @return the left-top cell's column index
+	 */
 	public int getColumnIndex() {
 		return columnIndex;
 	}
@@ -60,6 +66,10 @@ public class NViewAnchor implements Serializable {
 		this.columnIndex = columnIndex;
 	}
 
+	/**
+	 * The offset is larger if the anchor's position is more to the right of the cell's left border. 
+	 * @return the x coordinate within the anchor's left-top cell.
+	 */
 	public int getXOffset() {
 		return xOffset;
 	}
@@ -68,6 +78,10 @@ public class NViewAnchor implements Serializable {
 		this.xOffset = xOffset;
 	}
 
+	/**
+	 * The offset is larger if the anchor's position is more to the bottom of the cell's top border.
+	 * @return the y coordinate within the anchor's left-top cell.
+	 */
 	public int getYOffset() {
 		return yOffset;
 	}
