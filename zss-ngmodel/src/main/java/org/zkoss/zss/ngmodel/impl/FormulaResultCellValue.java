@@ -5,16 +5,19 @@ import java.util.Collection;
 
 import org.zkoss.zss.ngmodel.ErrorValue;
 import org.zkoss.zss.ngmodel.NCell.CellType;
+import org.zkoss.zss.ngmodel.NCellValue;
 import org.zkoss.zss.ngmodel.sys.formula.EvaluationResult;
 import org.zkoss.zss.ngmodel.sys.formula.EvaluationResult.ResultType;
 
-public class FormulaResultWrap implements Serializable {
+/**
+ * the formula result cell value
+ * @author dennis
+ *
+ */
+public class FormulaResultCellValue extends NCellValue implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	CellType cellType = null;
-	Object value = null;
-
-	public FormulaResultWrap(EvaluationResult result) {
+	public FormulaResultCellValue(EvaluationResult result) {
 		Object val = result.getValue();
 		ResultType type = result.getType();
 		if (type == ResultType.ERROR) {

@@ -7,7 +7,7 @@ import org.zkoss.zss.ngmodel.NCell.CellType;
 import org.zkoss.zss.ngmodel.NDataValidation;
 import org.zkoss.zss.ngmodel.NDataValidation.ValidationType;
 import org.zkoss.zss.ngmodel.NSheet;
-import org.zkoss.zss.ngmodel.impl.FormulaResultWrap;
+import org.zkoss.zss.ngmodel.impl.FormulaResultCellValue;
 import org.zkoss.zss.ngmodel.sys.CalendarUtil;
 import org.zkoss.zss.ngmodel.sys.EngineFactory;
 import org.zkoss.zss.ngmodel.sys.formula.FormulaEngine;
@@ -57,7 +57,7 @@ public class DataValidationHelper {
 			if(expr.hasError()){
 				return false;
 			}
-			FormulaResultWrap result = new FormulaResultWrap(engine.evaluate(expr, new FormulaEvaluationContext(sheet)));
+			FormulaResultCellValue result = new FormulaResultCellValue(engine.evaluate(expr, new FormulaEvaluationContext(sheet)));
 			
 			value = result.getValue();
 			cellType = result.getCellType();

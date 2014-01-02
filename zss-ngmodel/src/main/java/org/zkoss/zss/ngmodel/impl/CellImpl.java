@@ -53,7 +53,7 @@ public class CellImpl extends AbstractCellAdv {
 	private int index;
 	private NCellValue localValue = null;
 	private AbstractCellStyleAdv cellStyle;
-	transient private FormulaResultWrap formulaResult;// cache
+	transient private FormulaResultCellValue formulaResultValue;// cache
 	
 	
 	//use another object to reduce object reference size
@@ -160,12 +160,12 @@ public class CellImpl extends AbstractCellAdv {
 
 	@Override
 	protected void evalFormula() {
-		if (formulaResult == null) {
+		if (formulaResultValue == null) {
 			NCellValue val = getDataGridValue();
 			if(val!=null &&  val.getType() == CellType.FORMULA){
 				FormulaEngine fe = EngineFactory.getInstance()
 						.createFormulaEngine();
-				formulaResult = new FormulaResultWrap(fe.evaluate((FormulaExpression) val.getValue(),
+				formulaResultValue = new FormulaResultCellValue(fe.evaluate((FormulaExpression) val.getValue(),
 						new FormulaEvaluationContext(this)));
 			}
 		}
@@ -176,7 +176,7 @@ public class CellImpl extends AbstractCellAdv {
 		checkType(CellType.FORMULA);
 		evalFormula();
 
-		return formulaResult.getCellType();
+		return formulaResultValue.getCellType();
 	}
 
 	@Override
@@ -217,12 +217,12 @@ public class CellImpl extends AbstractCellAdv {
 
 	@Override
 	public void clearFormulaResultCache() {
-		if(formulaResult!=null){			
+		if(formulaResultValue!=null){			
 			//only clear when there is a formula result, or poi will do full cache scan to clean blank.
 			EngineFactory.getInstance().createFormulaEngine().clearCache(new FormulaClearContext(this));
 		}
 		
-		formulaResult = null;
+		formulaResultValue = null;
 	}
 	
 	@Override
@@ -244,7 +244,7 @@ public class CellImpl extends AbstractCellAdv {
 		NCellValue val = getDataGridValue();
 		if (evaluatedVal && val!=null && val.getType() == CellType.FORMULA) {
 			evalFormula();
-			return this.formulaResult.getValue();
+			return this.formulaResultValue.getValue();
 		}
 		return val==null?null:val.getValue();
 	}

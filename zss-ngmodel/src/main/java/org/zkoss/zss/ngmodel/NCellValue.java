@@ -6,8 +6,8 @@ import org.zkoss.zss.ngmodel.NCell.CellType;
 
 public class NCellValue implements Serializable {
 	private static final long serialVersionUID = 1L;
-	private final CellType type;
-	private final Object value;
+	protected CellType cellType;
+	protected Object value;
 	public NCellValue(String value){
 		this(CellType.STRING,value);
 	}
@@ -22,11 +22,12 @@ public class NCellValue implements Serializable {
 	}
 	
 	protected NCellValue(CellType type, Object value){
-		this.type = value==null?CellType.BLANK:type;
+		this.cellType = value==null?CellType.BLANK:type;
 		this.value = value;
 	}
+	
 	public CellType getType() {
-		return type;
+		return cellType;
 	}
 	public Object getValue() {
 		return value;
