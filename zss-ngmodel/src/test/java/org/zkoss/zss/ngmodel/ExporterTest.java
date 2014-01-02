@@ -7,7 +7,6 @@ import java.util.*;
 import junit.framework.Assert;
 
 import org.junit.*;
-import org.junit.runner.*;
 import org.zkoss.util.Locales;
 import org.zkoss.zss.ngapi.impl.imexp.ExcelExportFactory;
 import org.zkoss.zss.ngmodel.NCellStyle.BorderType;
@@ -311,59 +310,68 @@ public class ExporterTest extends ImExpTestBase {
 		Assert.assertEquals(100, array.getWidth());
 	}
 	
+	
+	
 	@Test
-	public void exportAreaChart(){
+	public void areaChart(){
 		File outFile = ImExpTestUtil.write(ImExpTestUtil.loadBook(DEFAULT_CHART_IMPORT_FILE, "XSSFBook"), ExcelExportFactory.Type.XLSX);
 		NBook book = ImExpTestUtil.loadBook(outFile, DEFAULT_BOOK_NAME);
 		areaChart(book);
 	}
 	
 	@Test
-	public void exportBarChart(){
+	public void barChart(){
 		File outFile = ImExpTestUtil.write(ImExpTestUtil.loadBook(DEFAULT_CHART_IMPORT_FILE, "XSSFBook"), ExcelExportFactory.Type.XLSX);
 		NBook book = ImExpTestUtil.loadBook(outFile, DEFAULT_BOOK_NAME);
 		barChart(book);
 	}
 	
 	@Ignore
-	public void exportBubbleChart(){
+	public void bubbleChart(){
 		File outFile = ImExpTestUtil.write(ImExpTestUtil.loadBook(DEFAULT_CHART_IMPORT_FILE, "XSSFBook"), ExcelExportFactory.Type.XLSX);
 		NBook book = ImExpTestUtil.loadBook(outFile, DEFAULT_BOOK_NAME);
 		bubbleChart(book);
 	}
 	
 	@Test
-	public void exportColumnChart(){
+	public void columnChart(){
 		File outFile = ImExpTestUtil.write(ImExpTestUtil.loadBook(DEFAULT_CHART_IMPORT_FILE, "XSSFBook"), ExcelExportFactory.Type.XLSX);
 		NBook book = ImExpTestUtil.loadBook(outFile, DEFAULT_BOOK_NAME);
 		columnChart(book);
 	}
 	
 	@Test
-	public void exportDoughnutChart(){
+	public void doughnutChart(){
 		File outFile = ImExpTestUtil.write(ImExpTestUtil.loadBook(DEFAULT_CHART_IMPORT_FILE, "XSSFBook"), ExcelExportFactory.Type.XLSX);
 		NBook book = ImExpTestUtil.loadBook(outFile, DEFAULT_BOOK_NAME);
 		doughnutChart(book);
 	}
 	
 	@Test
-	public void exportLineChart(){
+	public void lineChart(){
 		File outFile = ImExpTestUtil.write(ImExpTestUtil.loadBook(DEFAULT_CHART_IMPORT_FILE, "XSSFBook"), ExcelExportFactory.Type.XLSX);
 		NBook book = ImExpTestUtil.loadBook(outFile, DEFAULT_BOOK_NAME);
 		lineChart(book);
 	}
 	
 	@Test
-	public void exportPieChart(){
+	public void pieChart(){
 		File outFile = ImExpTestUtil.write(ImExpTestUtil.loadBook(DEFAULT_CHART_IMPORT_FILE, "XSSFBook"), ExcelExportFactory.Type.XLSX);
 		NBook book = ImExpTestUtil.loadBook(outFile, DEFAULT_BOOK_NAME);
-		doughnutChart(book);
+		pieChart(book);
 	}
 	
-	@Ignore("not implemented")
-	public void exportScatterChart(){
+	@Test
+	public void scatterChart(){
 		File outFile = ImExpTestUtil.write(ImExpTestUtil.loadBook(DEFAULT_CHART_IMPORT_FILE, "XSSFBook"), ExcelExportFactory.Type.XLSX);
 		NBook book = ImExpTestUtil.loadBook(outFile, DEFAULT_BOOK_NAME);
-		doughnutChart(book);
+		scatterChart(book);
+	}
+	
+	/**
+	 * create stock chart model dynamically because stock chart data implementation is incorrect.
+	 */
+	@Test
+	public void stockChart(){
 	}
 }

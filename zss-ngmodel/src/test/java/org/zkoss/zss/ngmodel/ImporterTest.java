@@ -10,9 +10,6 @@ import org.junit.*;
 import org.zkoss.util.Locales;
 import org.zkoss.zss.ngapi.NImporter;
 import org.zkoss.zss.ngapi.impl.imexp.ExcelImportFactory;
-import org.zkoss.zss.ngmodel.NChart.NBarDirection;
-import org.zkoss.zss.ngmodel.NChart.NChartGrouping;
-import org.zkoss.zss.ngmodel.NChart.NChartLegendPosition;
 import org.zkoss.zss.ngmodel.NChart.NChartType;
 import org.zkoss.zss.ngmodel.chart.NGeneralChartData;
 
@@ -221,8 +218,7 @@ public class ImporterTest extends ImExpTestBase {
 		NChart barChart = sheet.getChart(0);
 		
 		assertEquals("Bar Chart Title",barChart.getTitle());
-		assertEquals(480, barChart.getAnchor().getWidth());
-		assertEquals(288, barChart.getAnchor().getHeight());
+		
 	}
 	
 	@Test

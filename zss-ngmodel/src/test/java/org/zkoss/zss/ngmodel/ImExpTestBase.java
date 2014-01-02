@@ -283,6 +283,10 @@ public class ImExpTestBase {
 		
 		assertEquals(NChartType.BAR,barChart.getType());
 		
+		assertEquals(480, barChart.getAnchor().getWidth());
+		assertEquals(284, barChart.getAnchor().getHeight());
+		assertEquals(25, barChart.getAnchor().getXOffset());
+		assertEquals(7, barChart.getAnchor().getYOffset());
 		
 		assertEquals(NBarDirection.HORIZONTAL, barChart.getBarDirection());
 		assertEquals(NChartGrouping.CLUSTERED, barChart.getGrouping());
@@ -387,3 +391,4 @@ public class ImExpTestBase {
 	}
 	
 }
+

@@ -89,6 +89,7 @@ public class NExcelXlsxImporter extends AbstractExcelImporter{
 
 	/**
 	 * Not import X & Y axis title because {@link XSSFCategoryAxis} doesn't provide API to get title. 
+	 * Reference ChartHelper.drawXSSFChart()
 	 */
 	@Override
 	protected void importChart(Sheet poiSheet, NSheet sheet) {
@@ -192,7 +193,8 @@ public class NExcelXlsxImporter extends AbstractExcelImporter{
 		int width = getXSSFWidthInPx(poiSheet, clientAnchor);
 		int height = getXSSFHeightInPx(poiSheet, clientAnchor);
 		NViewAnchor viewAnchor = new NViewAnchor(clientAnchor.getRow1(), clientAnchor.getCol1(), width, height);
-		
+		viewAnchor.setXOffset(UnitUtil.emuToPx(clientAnchor.getDx1()));
+		viewAnchor.setYOffset(UnitUtil.emuToPx(clientAnchor.getDy1()));
 		return viewAnchor;
 	}
 
@@ -245,7 +247,7 @@ public class NExcelXlsxImporter extends AbstractExcelImporter{
 	}
 	
 	/**
-	 * return a formula or generate a default title if title doesn't exist.
+	 * return a formula or generate a default title ("Series[N]")if title doesn't exist.
 	 * reference ChartHelper.prepareTitle()
 	 * @param textSource
 	 * @return

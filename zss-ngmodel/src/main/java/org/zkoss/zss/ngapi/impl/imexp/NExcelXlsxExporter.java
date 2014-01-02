@@ -63,6 +63,7 @@ public class NExcelXlsxExporter extends AbstractExcelExporter {
 	protected void exportChart(NSheet sheet, Sheet poiSheet) {
 		for (NChart chart: sheet.getCharts()){
 			CategoryData categoryData = null;
+			ChartData chartData = null;
 			switch(chart.getType()){
 				case AREA:
 					if (chart.isThreeD()){
@@ -85,7 +86,8 @@ public class NExcelXlsxExporter extends AbstractExcelExporter {
 					}
 					break;
 //				case BUBBLE:
-//					categoryData = XSSFBubbleChartData();
+//					XYZData xyzData  = new XSSFBubbleChartData();
+//					fillXYData();
 //					break;
 				case COLUMN:
 					if (chart.isThreeD()){
@@ -115,9 +117,11 @@ public class NExcelXlsxExporter extends AbstractExcelExporter {
 						categoryData = new XSSFPieChartData();
 					}
 					break;
-//				case SCATTER:
-//					XYData xyData =  new XSSFScatChartData(xssfChart);
-//					break;
+				case SCATTER:
+					XYData xyData =  new XSSFScatChartData();
+					fillXYData(chart, xyData);
+					chartData = xyData;
+					break;
 //				case STOCK: TODO contains errors.
 //					categoryData = new XSSFStockChartData();
 //					break;
@@ -127,83 +131,100 @@ public class NExcelXlsxExporter extends AbstractExcelExporter {
 			}
 			if (categoryData != null){
 				fillCategoryData(chart, categoryData);
+				chartData = categoryData;
 			}
 			
-			// cannot create drawing before determining chart type
-			final Drawing drawing = poiSheet.createDrawingPatriarch();
-			ClientAnchor anchor = toClientAnchor(chart.getAnchor(), poiSheet);
-			final Chart poiChart = drawing.createChart(anchor);
-			if (chart.isThreeD()){
-				poiChart.getOrCreateView3D(); //will create View3D
-			}
-			if (chart.getLegendPosition() != null) {
-				ChartLegend legend = poiChart.getOrCreateLegend();
-				legend.setPosition(toPoiLegendPosition(chart.getLegendPosition()));
-			}
-		
-			ChartAxis bottomAxis = createChartAxis(poiChart, chart.getType(), AxisPosition.BOTTOM);
-			if (bottomAxis != null) {
-				bottomAxis.setCrosses(AxisCrosses.AUTO_ZERO);
-				final ValueAxis leftAxis = poiChart.getChartAxisFactory().createValueAxis(AxisPosition.LEFT);
-				leftAxis.setCrosses(AxisCrosses.AUTO_ZERO);
-				poiChart.plot(categoryData, bottomAxis, leftAxis);
-			} else {
-				poiChart.plot(categoryData);
-			}
-//			final XSSFClientAnchor xanchor = (XSSFClientAnchor) anchor;
-//			final XSSFGraphicFrame frame = ((XSSFChart)poiChart).getGraphicFrame();
-//			final CTGraphicalObjectFrame gfrm = frame.getCTGraphicalObjectFrame();
-//			ZssChartX chartX = createXSSFChartX((XSSFDrawing)drawing, gfrm , xanchor);
-//			if (_charts == null) {
-//				_charts = new ArrayList<ZssChartX>();
-//				_chartXMap = new HashMap<Chart, ZssChartX>();
+			plotChart(chart, chartData,sheet, poiSheet );
+//			ChartAxis bottomAxis = createChartAxis(poiChart, chart.getType(), AxisPosition.BOTTOM);
+//			if (bottomAxis != null) {
+//				bottomAxis.setCrosses(AxisCrosses.AUTO_ZERO);
+//				final ValueAxis leftAxis = poiChart.getChartAxisFactory().createValueAxis(AxisPosition.LEFT);
+//				leftAxis.setCrosses(AxisCrosses.AUTO_ZERO);
+//				poiChart.plot(categoryData, bottomAxis, leftAxis);
+//			} else {
+//				poiChart.plot(categoryData);
 //			}
-//			_charts.add(chartX);
-//			_chartXMap.put(chartX.getChart(), chartX);
-			//        return chartX;
 		}
 	}
 	
-	private ClientAnchor toClientAnchor(NViewAnchor viewAnchor, Sheet poiSheet){
+	private void plotChart(NChart chart, ChartData chartData, NSheet sheet, Sheet poiSheet){
+		final Drawing drawing = poiSheet.createDrawingPatriarch();
+		ClientAnchor anchor = toClientAnchor(chart.getAnchor(),sheet, poiSheet);
+		final Chart poiChart = drawing.createChart(anchor);
+		if (chart.isThreeD()){
+			poiChart.getOrCreateView3D(); //will create View3D
+		}
+		if (chart.getLegendPosition() != null) {
+			ChartLegend legend = poiChart.getOrCreateLegend();
+			legend.setPosition(toPoiLegendPosition(chart.getLegendPosition()));
+		}
+		ChartAxis bottomAxis = null;
+		switch(chart.getType()) {
+		case AREA:
+		case BAR:
+		case COLUMN:
+		case LINE:
+			bottomAxis=  poiChart.getChartAxisFactory().createCategoryAxis(AxisPosition.BOTTOM);
+		case SCATTER:
+			bottomAxis = poiChart.getChartAxisFactory().createValueAxis(AxisPosition.BOTTOM);
+		}
+		if (bottomAxis != null) {
+			bottomAxis.setCrosses(AxisCrosses.AUTO_ZERO);
+			final ValueAxis leftAxis = poiChart.getChartAxisFactory().createValueAxis(AxisPosition.LEFT);
+			leftAxis.setCrosses(AxisCrosses.AUTO_ZERO);
+			poiChart.plot(chartData, bottomAxis, leftAxis);
+		} else {
+			poiChart.plot(chartData);
+		}
+	}
+	
+	private ClientAnchor toClientAnchor(NViewAnchor viewAnchor, NSheet sheet, Sheet poiSheet){
 		
 		//calculate last column index
-		int chartWidth = viewAnchor.getWidth();
+		int dx1 = viewAnchor.getXOffset();
+		int offsetPlusChartWidth = dx1 + viewAnchor.getWidth();
 		int lastColumn = viewAnchor.getColumnIndex();
-		int lastXOffset = 0;
+		int dx2 = 0;
 		//TODO same column?
 		for (int column = viewAnchor.getColumnIndex(); ;column++){
-			int interColumnWidth = XUtils.getWidthAny(poiSheet,column, AbstractExcelImporter.CHRACTER_WIDTH); 
-			if (chartWidth - interColumnWidth < 0){ 
+			int interColumnWidth = sheet.getColumn(column).getWidth();
+			if (offsetPlusChartWidth - interColumnWidth < 0){ 
 				lastColumn = column;
-				lastXOffset = chartWidth;
+				dx2 = offsetPlusChartWidth;
 				break;
 			}else{
-				chartWidth -= interColumnWidth;
+				offsetPlusChartWidth -= interColumnWidth;
 			}
 		}
 		
 		//calculate last row index
-		int chartHeight = viewAnchor.getHeight();
+		int dy1 = viewAnchor.getYOffset();
+		int offsetPlusChartHeight = dy1 + viewAnchor.getHeight();
 		int lastRow = viewAnchor.getRowIndex();
-		int lastYOffset = 0;
+		int dy2 = 0;
 		for (int row = viewAnchor.getRowIndex(); ;row++){
-			int interRowHeight = XUtils.getHeightAny(poiSheet, row);
-			if (chartHeight - interRowHeight < 0){
+			int interRowHeight = sheet.getRow(row).getHeight();
+			if (offsetPlusChartHeight - interRowHeight < 0){
 				lastRow = row;
-				lastYOffset = chartHeight;
+				dy2 = offsetPlusChartHeight;
 				break;
 			}else{
-				chartHeight -= interRowHeight;
+				offsetPlusChartHeight -= interRowHeight;
 			}
 		}
 		
-		ClientAnchor clientAnchor = new XSSFClientAnchor(UnitUtil.pxToEmu(viewAnchor.getXOffset()),UnitUtil.pxToEmu(viewAnchor.getYOffset()),
-				UnitUtil.pxToEmu(lastXOffset),UnitUtil.pxToEmu(lastYOffset),
+		ClientAnchor clientAnchor = new XSSFClientAnchor(UnitUtil.pxToEmu(dx1),UnitUtil.pxToEmu(dy1),
+				UnitUtil.pxToEmu(dx2),UnitUtil.pxToEmu(dy2),
 				viewAnchor.getColumnIndex(),viewAnchor.getRowIndex(),
 				lastColumn,lastRow);
 		return clientAnchor;
 	}
 	
+	/**
+	 * reference ChartDataUtil.fillCategoryData()
+	 * @param chart
+	 * @param categoryData
+	 */
 	private void fillCategoryData(NChart chart, CategoryData categoryData){
 		NGeneralChartData chartData = (NGeneralChartData)chart.getData();
 		ChartDataSource<?> categories = createFormulaChartDataSource(chartData);
@@ -215,8 +236,80 @@ public class NExcelXlsxExporter extends AbstractExcelExporter {
 		}
 	}
 	
+	/**
+	 * reference ChartDataUtil.fillXYData()
+	 * @param chart
+	 * @param xyData
+	 */
 	private void fillXYData(NChart chart, XYData xyData){
-		
+		NGeneralChartData chartData = (NGeneralChartData)chart.getData();
+		for (int i=0 ; i < chartData.getNumOfSeries() ; i++){
+			final NSeries series = chartData.getSeries(i);
+			ChartTextSource title = createFormulaChartTextSource(series.getNameFormula());
+			ChartDataSource<? extends Number> xValues = new ChartDataSource<Number>() {
+
+				@Override
+				public int getPointCount() {
+					return series.getNumOfXValue();
+				}
+
+				@Override
+				public Number getPointAt(int index) {
+					return Double.parseDouble(series.getXValue(index).toString());
+				}
+
+				@Override
+				public boolean isReference() {
+					return true;
+				}
+
+				@Override
+				public boolean isNumeric() {
+					return true;
+				}
+
+				@Override
+				public String getFormulaString() {
+					return series.getXValuesFormula();
+				}
+
+				@Override
+				public void renameSheet(String oldname, String newname) {
+				}
+			};
+			ChartDataSource<? extends Number> yValues = new ChartDataSource<Number>() {
+
+				@Override
+				public int getPointCount() {
+					return series.getNumOfYValue();
+				}
+
+				@Override
+				public Number getPointAt(int index) {
+					return Double.parseDouble(series.getYValue(index).toString());
+				}
+
+				@Override
+				public boolean isReference() {
+					return true;
+				}
+
+				@Override
+				public boolean isNumeric() {
+					return true;
+				}
+
+				@Override
+				public String getFormulaString() {
+					return series.getYValuesFormula();
+				}
+
+				@Override
+				public void renameSheet(String oldname, String newname) {
+				}
+			};
+			xyData.addSerie(title, xValues, yValues);
+		}
 	}
 	
 	private ChartTextSource createFormulaChartTextSource(final String formula){
