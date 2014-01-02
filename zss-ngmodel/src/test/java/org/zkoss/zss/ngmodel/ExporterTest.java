@@ -326,7 +326,7 @@ public class ExporterTest extends ImExpTestBase {
 		barChart(book);
 	}
 	
-	@Ignore
+	@Test
 	public void bubbleChart(){
 		File outFile = ImExpTestUtil.write(ImExpTestUtil.loadBook(DEFAULT_CHART_IMPORT_FILE, "XSSFBook"), ExcelExportFactory.Type.XLSX);
 		NBook book = ImExpTestUtil.loadBook(outFile, DEFAULT_BOOK_NAME);
@@ -366,12 +366,5 @@ public class ExporterTest extends ImExpTestBase {
 		File outFile = ImExpTestUtil.write(ImExpTestUtil.loadBook(DEFAULT_CHART_IMPORT_FILE, "XSSFBook"), ExcelExportFactory.Type.XLSX);
 		NBook book = ImExpTestUtil.loadBook(outFile, DEFAULT_BOOK_NAME);
 		scatterChart(book);
-	}
-	
-	/**
-	 * create stock chart model dynamically because stock chart data implementation is incorrect.
-	 */
-	@Test
-	public void stockChart(){
 	}
 }
