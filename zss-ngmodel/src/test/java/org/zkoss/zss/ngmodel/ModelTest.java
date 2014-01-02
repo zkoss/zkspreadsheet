@@ -34,7 +34,6 @@ import org.zkoss.zss.ngmodel.chart.NSeries;
 import org.zkoss.zss.ngmodel.impl.AbstractBookSeriesAdv;
 import org.zkoss.zss.ngmodel.impl.AbstractCellAdv;
 import org.zkoss.zss.ngmodel.impl.BookImpl;
-import org.zkoss.zss.ngmodel.impl.AbstractSheetAdv;
 import org.zkoss.zss.ngmodel.impl.RefImpl;
 import org.zkoss.zss.ngmodel.impl.SheetImpl;
 import org.zkoss.zss.ngmodel.sys.dependency.DependencyTable;
@@ -2497,7 +2496,5 @@ public class ModelTest {
 		Assert.assertEquals(0, refs.size());
 		refs = table.getDependents(new RefImpl((AbstractCellAdv)sheet1.getCell(0, 2)));
 		Assert.assertEquals(0, refs.size());
-		
-		
 	}
 }

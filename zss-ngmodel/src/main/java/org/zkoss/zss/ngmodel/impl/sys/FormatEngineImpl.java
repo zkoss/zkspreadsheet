@@ -54,7 +54,7 @@ public class FormatEngineImpl implements FormatEngine {
 			
 			CellFormat formatter = CellFormat.getInstance(format, context.getLocale());
 			if(value instanceof Double && formatter.isApplicableDateFormat((Double)value)){
-				value = EngineFactory.getInstance().getCalendarUtil().doubleValueToDate((Double)value, false);
+				value = EngineFactory.getInstance().getCalendarUtil().doubleValueToDate((Double)value);
 			}
 			return new FormatResultImpl(formatter.apply(value));
 		}finally{

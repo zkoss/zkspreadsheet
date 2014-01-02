@@ -69,7 +69,7 @@ public interface NDataValidation extends FormulaContent{
 	public String getPromptBoxText();
 
 	public void setErrorBox(String title, String text);
-	public String setErrorBoxTitle();
+	public String getErrorBoxTitle();
 	public String getErrorBoxText();
 
 	public List<CellRegion> getRegions();

@@ -314,7 +314,7 @@ public class CellImpl extends AbstractCellAdv {
 			newType = CellType.FORMULA;
 		} else if (newVal instanceof Date) {
 			newType = CellType.NUMBER;
-			newVal = EngineFactory.getInstance().getCalendarUtil().dateToDoubleValue((Date)newVal, false);
+			newVal = EngineFactory.getInstance().getCalendarUtil().dateToDoubleValue((Date)newVal);
 		} else if (newVal instanceof Boolean) {
 			newType = CellType.BOOLEAN;
 		} else if (newVal instanceof Double) {
@@ -340,65 +340,7 @@ public class CellImpl extends AbstractCellAdv {
 		setDataGridValue(newCellVal);
 	}
 
-	private class FormulaResultWrap implements Serializable{
-		private static final long serialVersionUID = 1L;
-		
-		CellType cellType = null;
-		Object value = null;
-		private FormulaResultWrap(EvaluationResult result){
-			Object val = result.getValue();
-			ResultType type = result.getType();
-			if(type==ResultType.ERROR){
-				cellType = CellType.ERROR;
-				value = (val instanceof ErrorValue)?(ErrorValue)val:new ErrorValue(ErrorValue.INVALID_VALUE);
-			}else if(type==ResultType.SUCCESS){
-				setByValue(val);
-			}
-		}
-		
-		private void setByValue(Object val){
-			if(val==null || "".equals(val)){
-				cellType = CellType.BLANK;
-				value = null;
-			}else if(val instanceof String){
-				cellType = CellType.STRING;
-				value = (String)val;
-			}else if(val instanceof Number){
-				cellType = CellType.NUMBER;
-				value = (Number)val;
-			}else if(val instanceof Boolean){
-				cellType = CellType.BOOLEAN;
-				value = (Boolean)val;
-			}else if(val instanceof Collection){
-				//possible a engine return a collection in cell evaluation case? who should take care array formula?
-				if(((Collection)val).size()>0){
-					setByValue(((Collection)val).iterator().next());
-				}else{
-					cellType = CellType.BLANK;
-					value = null;
-				}
-			}else if(val.getClass().isArray()){
-				//possible a engine return a collection in cell evaluation case? who should take care array formula?
-				if(((Object[])val).length>0){
-					setByValue(((Object[])val)[0]);
-				}else{
-					cellType = CellType.BLANK;
-					value = null;
-				}
-			}else{
-				cellType = CellType.ERROR;
-				value = (val instanceof ErrorValue)?(ErrorValue)val:new ErrorValue(ErrorValue.INVALID_VALUE,"Unknow value type "+val);
-			}
-		}
-		
-		private CellType getCellType(){
-			return cellType;
-		}
-		
-		private Object getValue(){
-			return value;
-		}
-	}
+	
 
 	@Override
 	public NHyperlink getHyperlink() {

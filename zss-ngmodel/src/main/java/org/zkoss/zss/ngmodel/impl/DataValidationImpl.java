@@ -147,7 +147,7 @@ public class DataValidationImpl extends AbstractDataValidationAdv {
 	}
 
 	@Override
-	public String setErrorBoxTitle() {
+	public String getErrorBoxTitle() {
 		return errorBoxTitle;
 	}
 

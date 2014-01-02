@@ -28,25 +28,22 @@ import org.zkoss.poi.ss.formula.eval.NotImplementedException;
 import org.zkoss.util.Locales;
 import org.zkoss.zss.ngapi.NRange;
 import org.zkoss.zss.ngmodel.CellRegion;
-import org.zkoss.zss.ngmodel.ModelEvents;
 import org.zkoss.zss.ngmodel.NBook;
 import org.zkoss.zss.ngmodel.NBookSeries;
 import org.zkoss.zss.ngmodel.NCell;
-import org.zkoss.zss.ngmodel.NCell.CellType;
 import org.zkoss.zss.ngmodel.NCellStyle;
 import org.zkoss.zss.ngmodel.NCellStyle.BorderType;
 import org.zkoss.zss.ngmodel.NColumn;
+import org.zkoss.zss.ngmodel.NDataValidation;
 import org.zkoss.zss.ngmodel.NHyperlink;
 import org.zkoss.zss.ngmodel.NHyperlink.HyperlinkType;
 import org.zkoss.zss.ngmodel.NRow;
 import org.zkoss.zss.ngmodel.NSheet;
-import org.zkoss.zss.ngmodel.impl.AbstractBookAdv;
 import org.zkoss.zss.ngmodel.impl.AbstractBookSeriesAdv;
 import org.zkoss.zss.ngmodel.impl.RefImpl;
 import org.zkoss.zss.ngmodel.sys.EngineFactory;
 import org.zkoss.zss.ngmodel.sys.dependency.DependencyTable;
 import org.zkoss.zss.ngmodel.sys.dependency.Ref;
-import org.zkoss.zss.ngmodel.sys.dependency.Ref.RefType;
 import org.zkoss.zss.ngmodel.sys.format.FormatContext;
 import org.zkoss.zss.ngmodel.sys.format.FormatEngine;
 import org.zkoss.zss.ngmodel.sys.input.InputEngine;
@@ -666,12 +663,38 @@ public class NRangeImpl implements NRange {
 
 	@Override
 	public String getCellFormatText() {
-		throw new NotImplementedException("not implement yet");		
+		final ResultWrap<String> r = new ResultWrap<String>();
+		new FirstCellVisitorTask(new CellVisitor() {
+			@Override
+			public boolean visit(NCell cell) {
+				FormatEngine fe = EngineFactory.getInstance().createFormatEngine();
+				r.set(fe.format(cell, new FormatContext(Locales.getCurrent())).getText());		
+				return false;//no update
+			}
+		}).doInReadLock(getLock());
+		return r.get();
+				
 	}
 
 	@Override
 	public boolean isSheetProtected() {
-		// TODO Auto-generated method stub
-		return false;
+		throw new NotImplementedException("not implement yet");		
+	}
+
+	@Override
+	public NDataValidation validate(final String editText) {
+		final ResultWrap<NDataValidation> retrunVal = new ResultWrap<NDataValidation>();
+		new FirstCellVisitorTask(new CellVisitor() {
+			public boolean visit(NCell cell) {
+				NDataValidation validation = getSheet().getDataValidation(cell.getRowIndex(), cell.getColumnIndex());
+				if(validation!=null){
+					if(!new DataValidationHelper(validation).validate(editText,cell.getCellStyle().getDataFormat())){
+						retrunVal.set(validation);
+					}
+				}
+				return false;
+			}
+		}).doInReadLock(getLock());
+		return retrunVal.get();
 	}
 }

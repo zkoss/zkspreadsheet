@@ -19,6 +19,7 @@ package org.zkoss.zss.ngapi;
 import java.util.concurrent.locks.ReadWriteLock;
 
 import org.zkoss.zss.ngmodel.NCellStyle;
+import org.zkoss.zss.ngmodel.NDataValidation;
 import org.zkoss.zss.ngmodel.NHyperlink;
 import org.zkoss.zss.ngmodel.NHyperlink.HyperlinkType;
 import org.zkoss.zss.ngmodel.NSheet;
@@ -578,13 +579,13 @@ public interface NRange {
 //	 */
 //	public void deleteChart(Chart chart);
 //	
-//	/**
-//	 * Returns whether the plain text input by the end user is valid or not;
-//	 * note the validation only applies to the left-top cell of this Range.
-//	 * @param txt the string input by the end user.
-//	 * @return null if a valid input to the specified range; otherwise, the DataValidation
-//	 */
-//	public DataValidation validate(String txt);
+	/**
+	 * Returns whether the plain text input by the end user is valid or not;
+	 * note the validation only applies to the left-top cell of this Range.
+	 * @param txt the string input by the end user.
+	 * @return null if a valid input to the specified range; otherwise, the DataValidation
+	 */
+	public NDataValidation validate(String txt);
 	
 	/**
 	 * Returns whether any cell is protected and locked in this Range.

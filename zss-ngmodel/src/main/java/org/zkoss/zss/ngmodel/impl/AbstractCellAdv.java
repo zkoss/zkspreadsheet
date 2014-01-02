@@ -118,14 +118,14 @@ public abstract class AbstractCellAdv implements NCell,LinkedModelObject,Seriali
 
 	@Override
 	public void setDateValue(Date date) {
-		double num = EngineFactory.getInstance().getCalendarUtil().dateToDoubleValue(date, false);
+		double num = EngineFactory.getInstance().getCalendarUtil().dateToDoubleValue(date);
 		setNumberValue(num);
 	}
 
 	@Override
 	public Date getDateValue() {
 		Number num = getNumberValue();
-		return EngineFactory.getInstance().getCalendarUtil().doubleValueToDate(num.doubleValue(), false);
+		return EngineFactory.getInstance().getCalendarUtil().doubleValueToDate(num.doubleValue());
 	}
 	
 	@Override
