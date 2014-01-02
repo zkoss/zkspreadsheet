@@ -180,12 +180,11 @@ public class NExcelXlsxExporter extends AbstractExcelExporter {
 	
 	private ClientAnchor toClientAnchor(NViewAnchor viewAnchor, NSheet sheet, Sheet poiSheet){
 		
-		//calculate last column index
 		int dx1 = viewAnchor.getXOffset();
 		int offsetPlusChartWidth = dx1 + viewAnchor.getWidth();
 		int lastColumn = viewAnchor.getColumnIndex();
 		int dx2 = 0;
-		//TODO same column?
+		//minus width of each inter-column to find last column index and dx2
 		for (int column = viewAnchor.getColumnIndex(); ;column++){
 			int interColumnWidth = sheet.getColumn(column).getWidth();
 			if (offsetPlusChartWidth - interColumnWidth < 0){ 
@@ -197,11 +196,11 @@ public class NExcelXlsxExporter extends AbstractExcelExporter {
 			}
 		}
 		
-		//calculate last row index
 		int dy1 = viewAnchor.getYOffset();
 		int offsetPlusChartHeight = dy1 + viewAnchor.getHeight();
 		int lastRow = viewAnchor.getRowIndex();
 		int dy2 = 0;
+		//minus height of each inter-row to find last row index and dy2
 		for (int row = viewAnchor.getRowIndex(); ;row++){
 			int interRowHeight = sheet.getRow(row).getHeight();
 			if (offsetPlusChartHeight - interRowHeight < 0){
