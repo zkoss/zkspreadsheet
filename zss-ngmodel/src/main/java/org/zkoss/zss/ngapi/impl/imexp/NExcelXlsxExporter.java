@@ -63,7 +63,9 @@ public class NExcelXlsxExporter extends AbstractExcelExporter {
 	protected void exportChart(NSheet sheet, Sheet poiSheet) {
 		for (NChart chart: sheet.getCharts()){
 			ChartData chartData = fillChartData(chart);
-			plotChart(chart, chartData, sheet, poiSheet );
+			if (chartData != null){ //unsupported chart has null chart data
+				plotChart(chart, chartData, sheet, poiSheet );
+			}
 		}
 	}
 
