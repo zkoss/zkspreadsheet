@@ -55,7 +55,7 @@ public class DBDataGrid extends DefaultDataGrid {
 		}else if(field instanceof Number){
 			return new NCellValue(((Number)field).doubleValue());
 		}else if (field instanceof Date){
-			return new NCellValue(EngineFactory.getInstance().getCalendarUtil().dateToDoubleValue((Date)field,false));
+			return new NCellValue(EngineFactory.getInstance().getCalendarUtil().dateToDoubleValue((Date)field));
 		}else if(field instanceof Boolean){
 			return new NCellValue((Boolean)field);
 		}
@@ -217,7 +217,7 @@ public class DBDataGrid extends DefaultDataGrid {
 			}else if(value instanceof Number){
 				return new NCellValue(((Number)value).doubleValue());
 			}else if (value instanceof Date){
-				return new NCellValue(EngineFactory.getInstance().getCalendarUtil().dateToDoubleValue((Date)value,false));
+				return new NCellValue(EngineFactory.getInstance().getCalendarUtil().dateToDoubleValue((Date)value));
 			}else if(value instanceof Boolean){
 				return new NCellValue((Boolean)value);
 			}
