@@ -25,11 +25,10 @@ import org.zkoss.zss.ngmodel.*;
 import org.zkoss.zss.ngmodel.NChart.NBarDirection;
 import org.zkoss.zss.ngmodel.NChart.NChartGrouping;
 import org.zkoss.zss.ngmodel.NChart.NChartLegendPosition;
-import org.zkoss.zss.ngmodel.NChart.NChartType;
 import org.zkoss.zss.ngmodel.chart.*;
 /**
  * 
- * @author dennis, kuro
+ * @author dennis, kuro, Hawk
  * @since 3.5.0
  */
 public class NExcelXlsxExporter extends AbstractExcelExporter {
@@ -62,14 +61,19 @@ public class NExcelXlsxExporter extends AbstractExcelExporter {
 	@Override
 	protected void exportChart(NSheet sheet, Sheet poiSheet) {
 		for (NChart chart: sheet.getCharts()){
-			ChartData chartData = fillChartData(chart);
-			if (chartData != null){ //unsupported chart has null chart data
-				plotChart(chart, chartData, sheet, poiSheet );
+			ChartData chartData = fillPoiChartData(chart);
+			if (chartData != null){ //an unsupported chart has null chart data
+				plotPoiChart(chart, chartData, sheet, poiSheet );
 			}
 		}
 	}
 
-	private ChartData fillChartData(NChart chart) {
+	/**
+	 * 
+	 * @param chart
+	 * @return a POI ChartData filled with Spreadsheet chart data, or null if the chart type is unsupported.   
+	 */
+	private ChartData fillPoiChartData(NChart chart) {
 		CategoryData categoryData = null;
 		ChartData chartData = null;
 		switch(chart.getType()){
@@ -95,7 +99,7 @@ public class NExcelXlsxExporter extends AbstractExcelExporter {
 				break;
 			case BUBBLE:
 				XYZData xyzData  = new XSSFBubbleChartData();
-				fillXYZData(chart, xyzData);
+				fillXYZData((NGeneralChartData)chart.getData(), xyzData);
 				chartData = xyzData;
 				break;
 			case COLUMN:
@@ -128,26 +132,31 @@ public class NExcelXlsxExporter extends AbstractExcelExporter {
 				break;
 			case SCATTER:
 				XYData xyData =  new XSSFScatChartData();
-				fillXYData(chart, xyData);
+				fillXYData((NGeneralChartData)chart.getData(), xyData);
 				chartData = xyData;
 				break;
-//				case STOCK: TODO XSSFStockChartData is implemented with errors.
-//					categoryData = new XSSFStockChartData();
-//					break;
+//			case STOCK: TODO XSSFStockChartData is implemented with errors.
+//				categoryData = new XSSFStockChartData();
+//				break;
 			default:
-			return chartData;
+				return chartData;
 		}
 		if (categoryData != null){
-			fillCategoryData(chart, categoryData);
+			fillCategoryData((NGeneralChartData)chart.getData(), categoryData);
 			chartData = categoryData;
 		}
 		return chartData;
 	}
 	
-	private void plotChart(NChart chart, ChartData chartData, NSheet sheet, Sheet poiSheet){
-		final Drawing drawing = poiSheet.createDrawingPatriarch();
-		ClientAnchor anchor = toClientAnchor(chart.getAnchor(),sheet, poiSheet);
-		final Chart poiChart = drawing.createChart(anchor);
+	/**
+	 * Create and plot a POI chart with its chart data.
+	 * @param chart
+	 * @param chartData
+	 * @param sheet
+	 * @param poiSheet the sheet where the POI chart locates
+	 */
+	private void plotPoiChart(NChart chart, ChartData chartData, NSheet sheet, Sheet poiSheet){
+		Chart poiChart = poiSheet.createDrawingPatriarch().createChart(toClientAnchor(chart.getAnchor(),sheet, poiSheet));
 		//TODO export a chart's title
 		if (chart.isThreeD()){
 			poiChart.getOrCreateView3D();
@@ -170,10 +179,7 @@ public class NExcelXlsxExporter extends AbstractExcelExporter {
 				break;
 		}
 		if (bottomAxis != null) {
-			bottomAxis.setCrosses(AxisCrosses.AUTO_ZERO);
-			final ValueAxis leftAxis = poiChart.getChartAxisFactory().createValueAxis(AxisPosition.LEFT);
-			leftAxis.setCrosses(AxisCrosses.AUTO_ZERO);
-			poiChart.plot(chartData, bottomAxis, leftAxis);
+			poiChart.plot(chartData, bottomAxis, poiChart.getChartAxisFactory().createValueAxis(AxisPosition.LEFT));
 		} else {
 			poiChart.plot(chartData);
 		}
@@ -225,8 +231,7 @@ public class NExcelXlsxExporter extends AbstractExcelExporter {
 	 * @param chart
 	 * @param categoryData
 	 */
-	private void fillCategoryData(NChart chart, CategoryData categoryData){
-		NGeneralChartData chartData = (NGeneralChartData)chart.getData();
+	private void fillCategoryData(NGeneralChartData chartData, CategoryData categoryData){
 		ChartDataSource<?> categories = createCategoryChartDataSource(chartData);
 		for (int i=0 ; i < chartData.getNumOfSeries() ; i++){
 			NSeries series = chartData.getSeries(i);
@@ -241,8 +246,7 @@ public class NExcelXlsxExporter extends AbstractExcelExporter {
 	 * @param chart
 	 * @param xyData
 	 */
-	private void fillXYData(NChart chart, XYData xyData){
-		NGeneralChartData chartData = (NGeneralChartData)chart.getData();
+	private void fillXYData(NGeneralChartData chartData, XYData xyData){
 		for (int i=0 ; i < chartData.getNumOfSeries() ; i++){
 			final NSeries series = chartData.getSeries(i);
 			ChartTextSource title = createChartTextSource(series);
@@ -255,8 +259,7 @@ public class NExcelXlsxExporter extends AbstractExcelExporter {
 	/**
 	 * reference ChartDataUtil.fillXYZData()
 	 */
-	private void fillXYZData(NChart chart, XYZData xyzData){
-		NGeneralChartData chartData = (NGeneralChartData)chart.getData();
+	private void fillXYZData(NGeneralChartData chartData, XYZData xyzData){
 		for (int i=0 ; i < chartData.getNumOfSeries() ; i++){
 			final NSeries series = chartData.getSeries(i);
 			ChartTextSource title = createChartTextSource(series);
