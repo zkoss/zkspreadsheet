@@ -90,6 +90,9 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 	 */
 	abstract protected void importColumn(Sheet poiSheet, NSheet sheet, int defaultWidth);
 	
+	abstract protected int getAnchorWidthInPx(ClientAnchor anchor, Sheet poiSheet);
+	abstract protected int getAnchorHeightInPx(ClientAnchor anchor, Sheet poiSheet);
+	
 	/**
 	 * Name should be created after sheets created.
 	 * A special defined name, _xlnm._FilterDatabase, stores the selected cells for auto-filter 
@@ -395,5 +398,14 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 			default:
 			return FillPattern.NO_FILL;
 		}
+	}
+
+	protected NViewAnchor toViewAnchor(Sheet poiSheet, ClientAnchor clientAnchor) {
+		int width = getAnchorWidthInPx(clientAnchor, poiSheet);
+		int height = getAnchorHeightInPx(clientAnchor, poiSheet);
+		NViewAnchor viewAnchor = new NViewAnchor(clientAnchor.getRow1(), clientAnchor.getCol1(), width, height);
+		viewAnchor.setXOffset(UnitUtil.emuToPx(clientAnchor.getDx1()));
+		viewAnchor.setYOffset(UnitUtil.emuToPx(clientAnchor.getDy1()));
+		return viewAnchor;
 	}
 }

@@ -158,7 +158,7 @@ public class NExcelXlsxImporter extends AbstractExcelImporter{
 					chart = sheet.addChart(NChartType.BUBBLE, viewAnchor);
 					
 					XYZData xyzData = new XSSFBubbleChartData(xssfChart);
-					importXyzSeries(xyzData.getSeries(), chart);
+					importXyzSeries(xyzData.getSeries(), (NGeneralChartData)chart.getData());
 					break;
 				case Column:
 					chart = sheet.addChart(NChartType.COLUMN, viewAnchor);
@@ -196,7 +196,7 @@ public class NExcelXlsxImporter extends AbstractExcelImporter{
 					chart = sheet.addChart(NChartType.SCATTER, viewAnchor);
 					
 					XYData xyData =  new XSSFScatChartData(xssfChart);
-					importXySeries(xyData.getSeries(), chart);
+					importXySeries(xyData.getSeries(), (NGeneralChartData)chart.getData());
 					break;
 				case Stock:
 					chart = sheet.addChart(NChartType.STOCK, viewAnchor);
@@ -213,43 +213,34 @@ public class NExcelXlsxImporter extends AbstractExcelImporter{
 			chart.setThreeD(xssfChart.isSetView3D());
 			chart.setLegendPosition(convertLengendPosition(xssfChart.getOrCreateLegend().getPosition()));
 			if (categoryData != null){
-				importSeries(categoryData.getSeries(), chart);
+				importSeries(categoryData.getSeries(), (NGeneralChartData)chart.getData());
 			}
 		}
 	}
 
-	private NViewAnchor toViewAnchor(Sheet poiSheet, ClientAnchor clientAnchor){
-		int width = getXSSFWidthInPx(poiSheet, clientAnchor);
-		int height = getXSSFHeightInPx(poiSheet, clientAnchor);
-		NViewAnchor viewAnchor = new NViewAnchor(clientAnchor.getRow1(), clientAnchor.getCol1(), width, height);
-		viewAnchor.setXOffset(UnitUtil.emuToPx(clientAnchor.getDx1()));
-		viewAnchor.setYOffset(UnitUtil.emuToPx(clientAnchor.getDy1()));
-		return viewAnchor;
-	}
-
 	/**
 	 * reference ChartHepler.prepareCategoryModel() 
-	 * @param seriesList
-	 * @param chart
+	 * @param seriesList source chart data
+	 * @param chartData destination chart data
 	 */
-	private void importSeries(List<? extends CategoryDataSerie> seriesList, NChart chart) {
+	private void importSeries(List<? extends CategoryDataSerie> seriesList, NGeneralChartData chartData) {
 		CategoryDataSerie firstSeries = null;
 		if ((firstSeries = seriesList.get(0))!=null){
-			((NGeneralChartData)chart.getData()).setCategoriesFormula(getValueFormula(firstSeries.getCategories()));
+			chartData.setCategoriesFormula(getValueFormula(firstSeries.getCategories()));
 		}
 		for (int i =0 ;  i< seriesList.size() ; i++){
 			CategoryDataSerie sourceSeries = seriesList.get(i);
 			String nameExpression = getTitleFormula(sourceSeries.getTitle(), i);			
 			String xValueExpression = getValueFormula(sourceSeries.getValues());
-			NSeries series = ((NGeneralChartData)chart.getData()).addSeries();
+			NSeries series = chartData.addSeries();
 			series.setFormula(nameExpression, xValueExpression);
 		}
 	}
 	
-	private void importXySeries(List<? extends XYDataSerie> seriesList, NChart chart) {
+	private void importXySeries(List<? extends XYDataSerie> seriesList, NGeneralChartData chartData) {
 		for (int i =0 ;  i< seriesList.size() ; i++){
 			XYDataSerie sourceSeries = seriesList.get(i);
-			NSeries series = ((NGeneralChartData)chart.getData()).addSeries();
+			NSeries series = chartData.addSeries();
 			series.setXYFormula(getTitleFormula(sourceSeries.getTitle(), i), 
 								getValueFormula(sourceSeries.getXs()), 
 								getValueFormula(sourceSeries.getYs()));
@@ -261,7 +252,7 @@ public class NExcelXlsxImporter extends AbstractExcelImporter{
 	 * @param seriesList
 	 * @param chart
 	 */
-	private void importXyzSeries(List<? extends XYZDataSerie> seriesList, NChart chart) {
+	private void importXyzSeries(List<? extends XYZDataSerie> seriesList, NGeneralChartData chartData) {
 		for (int i =0 ;  i< seriesList.size() ; i++){
 			XYZDataSerie sourceSeries = seriesList.get(i);
 			//reference to ChartHelper.prepareTitle()
@@ -270,7 +261,7 @@ public class NExcelXlsxImporter extends AbstractExcelImporter{
 			String yValueExpression = getValueFormula(sourceSeries.getYs());
 			String zValueExpression = getValueFormula(sourceSeries.getZs());	
 			
-			NSeries series = ((NGeneralChartData)chart.getData()).addSeries();
+			NSeries series = chartData.addSeries();
 			series.setXYZFormula(nameExpression, xValueExpression, yValueExpression, zValueExpression);
 		}
 	}
@@ -420,7 +411,8 @@ public class NExcelXlsxImporter extends AbstractExcelImporter{
 	/**
 	 * Reference DefaultBookWidgetLoader.getXSSFWidthInPx()
 	 */
-	private static int getXSSFWidthInPx(Sheet poiSheet, ClientAnchor anchor) {
+	@Override
+	protected int getAnchorWidthInPx(ClientAnchor anchor, Sheet poiSheet) {
 	    final int l = anchor.getCol1();
 	    final int lfrc = anchor.getDx1();
 	    
@@ -449,7 +441,8 @@ public class NExcelXlsxImporter extends AbstractExcelImporter{
 	/**
 	 * DefaultBookWidgetLoader.getXSSFHeightInPx()
 	 */
-	private static int getXSSFHeightInPx(Sheet poiSheet, ClientAnchor anchor) {
+	@Override
+	protected int getAnchorHeightInPx(ClientAnchor anchor, Sheet poiSheet) {
 		
 	    final int t = anchor.getRow1();
 	    final int tfrc = anchor.getDy1();
