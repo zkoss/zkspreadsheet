@@ -114,6 +114,7 @@ import org.zkoss.zss.ngmodel.NCell.CellType;
 import org.zkoss.zss.ngmodel.NCellStyle;
 import org.zkoss.zss.ngmodel.NCellStyle.Alignment;
 import org.zkoss.zss.ngmodel.NCellStyle.VerticalAlignment;
+import org.zkoss.zss.ngmodel.NDataValidation;
 import org.zkoss.zss.ngmodel.sys.formula.EvaluationContributorContainer;
 import org.zkoss.zss.ngmodel.InvalidateModelOpException;
 import org.zkoss.zss.ngmodel.NChart;
@@ -2052,6 +2053,12 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 					onChartContentChange((ModelEvent)event);
 				}
 			});
+			addEventListener(ModelEvents.ON_DATA_VALIDATION_CONTENT_CHANGE, new ModelEventListener() {
+				@Override
+				public void onEvent(ModelEvent event) {
+					onDataValidationContentChange((ModelEvent)event);
+				}
+			});
 			/*
 			addEventListener(SSDataEvent.ON_RANGE_INSERT, new EventListener() {
 				@Override
@@ -2314,8 +2321,17 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			final String objid = event.getObjectId();
 			NChart chart = sheet.getChart(objid);
 			if(chart!=null){
-				NViewAnchor anchor = chart.getAnchor();
 				updateWidget(sheet, objid);
+			}
+		}
+		
+		private void onDataValidationContentChange(ModelEvent event) {
+			final NSheet sheet = event.getSheet();
+			
+			final String objid = event.getObjectId();
+			NDataValidation validation = sheet.getDataValidation(objid);
+			if(validation!=null){
+				updateDataValidation(sheet, objid);
 			}
 		}
 		/*
@@ -2620,6 +2636,26 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		
 		//by our implement, object id equals to widget id
 		getWidgetHandler().updateWidget(sheet, objId);
+	}
+	
+	private void updateDataValidation(NSheet sheet,String objId) {
+		if (!getSelectedXSheet().equals(sheet)){
+			releaseClientCache(sheet.getId());
+			return;
+		}
+		if (this.isInvalidated())
+			return;// since it is invalidate, we don't need to do anymore
+		
+		
+		//currently, we just update all validation (no suitable client api for now)
+		
+		//handle Validation, must after render("activeRange" ...)
+		List<Map> dvs = getDataValidationHandler().loadDataValidtionJASON(getSelectedSheet());
+		if (dvs != null) {
+			smartUpdate("dataValidations", dvs);
+		} else {
+			smartUpdate("dataValidations", (String) null);
+		}
 	}
 	
 	private void updateCell(NSheet sheet, int left, int top, int right, int bottom) {

@@ -1,3 +1,14 @@
+ZK Spreadsheet 3.5.0
+*Features:
+  
+  
+*Bugs:
+  ZSS-350 When using cell validation with cell list, the drop-down list won't update after the referred cells changed
+  
+** Upgrade Notes
+  * 
+
+
  ------------
 ZK Spreadsheet 3.0.1
 *Features:
