@@ -19,27 +19,16 @@ package org.zkoss.zss.api.model.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.zkoss.poi.hssf.usermodel.HSSFClientAnchor;
-import org.zkoss.poi.ss.usermodel.ClientAnchor;
-import org.zkoss.poi.ss.usermodel.Row;
-import org.zkoss.poi.xssf.usermodel.XSSFClientAnchor;
 import org.zkoss.zss.api.SheetAnchor;
-import org.zkoss.zss.api.UnitUtil;
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.Chart;
 import org.zkoss.zss.api.model.Picture;
 import org.zkoss.zss.api.model.Sheet;
-//import org.zkoss.zss.model.sys.XBook;
-//import org.zkoss.zss.model.sys.XSheet;
-import org.zkoss.zss.model.sys.impl.BookHelper;
-import org.zkoss.zss.model.sys.impl.DrawingManager;
-import org.zkoss.zss.model.sys.impl.HSSFSheetImpl;
-import org.zkoss.zss.model.sys.impl.SheetCtrl;
 import org.zkoss.zss.ngmodel.NBook;
+import org.zkoss.zss.ngmodel.NChart;
 import org.zkoss.zss.ngmodel.NPicture;
 import org.zkoss.zss.ngmodel.NSheet;
 import org.zkoss.zss.ngmodel.NViewAnchor;
-import org.zkoss.zss.ui.impl.XUtils;
 /**
  * 
  * @author dennis
@@ -99,7 +88,7 @@ public class SheetImpl implements Sheet{
 	}
 
 	public boolean isAutoFilterEnabled() {
-		return getNative().isAutoFilterMode();
+		return getNative().getAutoFilter()!=null;
 	}
 
 	public boolean isDisplayGridlines() {
@@ -122,12 +111,10 @@ public class SheetImpl implements Sheet{
 	public List<Chart> getCharts(){
 		Book book = getBook();
 		List<Chart> charts = new ArrayList<Chart>();
-		/*TODO zss 3.5
-		DrawingManager dm = ((SheetCtrl)getNative()).getDrawingManager();
-		for(org.zkoss.poi.ss.usermodel.Chart chart:dm.getCharts()){
-			charts.add(new ChartImpl(_sheetRef, new SimpleRef<org.zkoss.poi.ss.usermodel.Chart>(chart)));
+		
+		for(NChart chart:getNative().getCharts()){
+			charts.add(new ChartImpl(_sheetRef, new SimpleRef<NChart>(chart)));
 		}
-		*/
 		return charts;
 	}
 

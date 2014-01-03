@@ -16,10 +16,11 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.api.model.impl;
 
-import org.zkoss.poi.ss.usermodel.ClientAnchor;
 import org.zkoss.zss.api.SheetAnchor;
 import org.zkoss.zss.api.model.Chart;
-import org.zkoss.zss.model.sys.XSheet;
+import org.zkoss.zss.ngmodel.NChart;
+import org.zkoss.zss.ngmodel.NSheet;
+import org.zkoss.zss.ngmodel.NViewAnchor;
 /**
  * 
  * @author dennis
@@ -27,10 +28,10 @@ import org.zkoss.zss.model.sys.XSheet;
  */
 public class ChartImpl implements Chart{
 	
-	private ModelRef<XSheet> _sheetRef;
-	private ModelRef<org.zkoss.poi.ss.usermodel.Chart> _chartRef;
+	private ModelRef<NSheet> _sheetRef;
+	private ModelRef<NChart> _chartRef;
 	
-	public ChartImpl(ModelRef<XSheet> sheetRef, ModelRef<org.zkoss.poi.ss.usermodel.Chart> chartRef) {
+	public ChartImpl(ModelRef<NSheet> sheetRef, ModelRef<NChart> chartRef) {
 		this._sheetRef = sheetRef;
 		this._chartRef = chartRef;
 	}
@@ -60,20 +61,17 @@ public class ChartImpl implements Chart{
 		return true;
 	}
 	
-	public org.zkoss.poi.ss.usermodel.Chart getNative() {
+	public NChart getNative() {
 		return _chartRef.get();
 	}
 	
 	public String getId(){
-		return getNative().getChartId();
+		return getNative().getId();
 	}
 	
 	@Override
 	public SheetAnchor getAnchor() {
-		/*TODO zss 3.5
-		ClientAnchor anchor = getNative().getPreferredSize();
+		NViewAnchor anchor = getNative().getAnchor();
 		return anchor==null?null:SheetImpl.toSheetAnchor(_sheetRef.get(), anchor);
-		*/
-		return null;
 	}
 }
