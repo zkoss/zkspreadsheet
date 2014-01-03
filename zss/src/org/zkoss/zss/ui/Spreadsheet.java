@@ -108,6 +108,8 @@ import org.zkoss.zss.ngmodel.ModelEvent;
 import org.zkoss.zss.ngmodel.ModelEventDispatcher;
 import org.zkoss.zss.ngmodel.ModelEventListener;
 import org.zkoss.zss.ngmodel.ModelEvents;
+import org.zkoss.zss.ngmodel.NAutoFilter;
+import org.zkoss.zss.ngmodel.NAutoFilter.NFilterColumn;
 import org.zkoss.zss.ngmodel.NBook;
 import org.zkoss.zss.ngmodel.NCell;
 import org.zkoss.zss.ngmodel.NCell.CellType;
@@ -906,14 +908,12 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			smartUpdate("columnFreeze", getSelectedSheetColumnfreeze());
 			
 			//handle AutoFilter
-			/*TODO zss 3.5
 			Map afmap = convertAutoFilterToJSON(sheet.getAutoFilter());
 			if (afmap != null) {
 				smartUpdate("_autoFilter", afmap);
 			} else {
 				smartUpdate("_autoFilter", (String) null);
 			}
-			*/
 			
 			smartUpdate("rowHeight", getRowheight());
 			smartUpdate("columnWidth", getColumnwidth());
@@ -1427,29 +1427,28 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		return _showContextMenu;
 	}
 	
-	/*TODO zss 3.5
-	private Map convertAutoFilterToJSON(AutoFilter af) {
+	private Map convertAutoFilterToJSON(NAutoFilter af) {
 		if (af != null) {
-			final CellRangeAddress addr = af.getRangeAddress();
+			final CellRegion addr = af.getRegion();
 			if (addr == null) {
 				return null;
 			}
 			final Map addrmap = new HashMap();
-			final int left = addr.getFirstColumn();
+			final int left = addr.getColumn();
 			final int right = addr.getLastColumn();
-			final int top = addr.getFirstRow();
-			final XSheet sheet = this.getSelectedXSheet();
+			final int top = addr.getRow();
+			final NSheet sheet = this.getSelectedXSheet();
 			addrmap.put("left", left);
 			addrmap.put("top", top);
 			addrmap.put("right", right);
 			addrmap.put("bottom", addr.getLastRow());
 			
 			int offcol = -1;
-			final List<FilterColumn> fcs = af.getFilterColumns();
+			final Collection<NFilterColumn> fcs = af.getFilterColumns();
 			final List<Map> fcsary = fcs != null ? new ArrayList<Map>(fcs.size()) : null;
 			if (fcsary != null) {
 				for(int col = left; col <= right; ++col) {
-					final FilterColumn fc = af.getFilterColumn(col - left);
+					final NFilterColumn fc = af.getFilterColumn(col - left,false);
 					final List<String> filters = fc != null ? fc.getFilters() : null;
 					final boolean on = fc != null ? fc.isOn() : true;
 					Map fcmap = new HashMap();
@@ -1479,7 +1478,6 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		}
 		return null;
 	}
-	*/
 
 	
 
@@ -1563,14 +1561,13 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		}
 		
 		//handle AutoFilter
-		/*TODO zss 3.5
 		Map afmap = convertAutoFilterToJSON(sheet.getAutoFilter());
 		if (afmap != null) {
 			renderer.render("autoFilter", afmap);
 		} else {
 			renderer.render("autoFilter", (String) null);
 		}
-		*/
+
 		int rowHeight = getRowheight();
 		if (rowHeight != DEFAULT_ROW_HEIGHT) {
 			renderer.render("rowHeight", getRowheight());
@@ -1875,11 +1872,9 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	 * Update autofilter buttons.
 	 * @param af the current AutoFilter.
 	 */
-	/*TODO zss 3.5
-	private void updateAutoFilter(AutoFilter af) {
+	private void updateAutoFilter(NAutoFilter af) {
 		smartUpdate("autoFilter", convertAutoFilterToJSON(af));
 	}
-	*/
 
     /**
      * Sets the sheet protection
