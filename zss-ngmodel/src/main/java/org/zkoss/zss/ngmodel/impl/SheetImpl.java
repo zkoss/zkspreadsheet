@@ -27,6 +27,7 @@ import java.util.SortedMap;
 
 import org.zkoss.zss.ngmodel.CellRegion;
 import org.zkoss.zss.ngmodel.InvalidateModelOpException;
+import org.zkoss.zss.ngmodel.NAutoFilter;
 import org.zkoss.zss.ngmodel.NBook;
 import org.zkoss.zss.ngmodel.NCell;
 import org.zkoss.zss.ngmodel.NChart;
@@ -56,6 +57,8 @@ public class SheetImpl extends AbstractSheetAdv {
 	private boolean protect;
 	
 	private NDataGrid dataGrid;
+	
+	private NAutoFilter autoFilter;
 	
 	private final IndexPool<AbstractRowAdv> rows = new IndexPool<AbstractRowAdv>(){
 		private static final long serialVersionUID = 1L;
@@ -1146,11 +1149,6 @@ public class SheetImpl extends AbstractSheetAdv {
 		return printInfo;
 	}
 
-	@Override
-	public boolean isAutoFilterMode() {
-		// TODO Auto-generated method stub
-		return false;
-	}
 
 	@Override
 	public NDataGrid getDataGrid() {
@@ -1216,6 +1214,22 @@ public class SheetImpl extends AbstractSheetAdv {
 			}
 		}
 		return null;
+	}
+
+	@Override
+	public NAutoFilter getAutoFilter() {
+		return autoFilter;
+	}
+
+	@Override
+	public NAutoFilter createAutoFilter(CellRegion region) {
+		Validations.argNotNull(region);
+		return autoFilter = new AutoFilterImpl(region);
+	}
+
+	@Override
+	public void clearAutoFilter() {
+		autoFilter = null;
 	}
 
 }

@@ -18,6 +18,8 @@ import org.junit.Test;
 import org.zkoss.poi.ss.util.CellReference;
 import org.zkoss.util.Locales;
 import org.zkoss.zss.ngapi.NRanges;
+import org.zkoss.zss.ngmodel.NAutoFilter.FilterOp;
+import org.zkoss.zss.ngmodel.NAutoFilter.NFilterColumn;
 import org.zkoss.zss.ngmodel.NCell.CellType;
 import org.zkoss.zss.ngmodel.NCellStyle.Alignment;
 import org.zkoss.zss.ngmodel.NCellStyle.BorderType;
@@ -2230,6 +2232,8 @@ public class ModelTest {
 		
 		sheet.addDataValidation(new CellRegion("A1"));
 		
+		sheet.createAutoFilter(new CellRegion(0,0,20,20));
+		
 		ByteArrayOutputStream baos;
 		ObjectOutputStream oos;
 		try {
@@ -2287,6 +2291,8 @@ public class ModelTest {
 			
 			Assert.assertEquals(1, sheet.getNumOfDataValidation());
 			sheet.getDataValidation(0);
+			
+			Assert.assertEquals(new CellRegion(0,0,20,20), sheet.getAutoFilter().getRegion());
 			
 		} catch (Exception x) {
 			throw new RuntimeException(x.getMessage(),x);
@@ -2501,5 +2507,45 @@ public class ModelTest {
 		Assert.assertEquals(0, refs.size());
 		refs = table.getDependents(new RefImpl((AbstractCellAdv)sheet1.getCell(0, 2)));
 		Assert.assertEquals(0, refs.size());
+	}
+	
+	@Test
+	public void testAutoFilter(){
+		NBook book = NBooks.createBook("book1");
+		NSheet sheet1 = initialDataGrid(book.createSheet("Sheet1"));
+		
+		
+		Assert.assertNull(sheet1.getAutoFilter());
+		
+		NAutoFilter filter = sheet1.createAutoFilter(new CellRegion(0,0,1,1));
+		Assert.assertNotNull(filter);
+		Assert.assertEquals(filter, sheet1.getAutoFilter());
+		
+		
+		Assert.assertNull(filter.getFilterColumn(0, false));
+		NFilterColumn col0 = filter.getFilterColumn(0, true);
+		Assert.assertEquals(col0, filter.getFilterColumn(0, true));
+		
+		col0.addFilter("ABC");
+		col0.addFilter("DEF");
+		col0.addCriteria1(1);
+		
+		NFilterColumn col1 = filter.getFilterColumn(1, true);
+		try{
+			filter.getFilterColumn(2, true);	
+			Assert.fail();
+		}catch(IllegalStateException x){}
+		
+		Assert.assertEquals(FilterOp.AND, col0.getOperator());
+		Assert.assertEquals(1,col0.getCriteria1().size());
+		Assert.assertEquals(1,col0.getCriteria1().iterator().next());
+		Assert.assertEquals(0,col0.getCriteria2().size());
+		Assert.assertEquals(2,col0.getFilters().size());
+		Assert.assertEquals("ABC",col0.getFilters().get(0));
+		Assert.assertEquals("DEF",col0.getFilters().get(1));
+		
+		sheet1.clearAutoFilter();
+		Assert.assertNull(sheet1.getAutoFilter());
+		
 	}
 }

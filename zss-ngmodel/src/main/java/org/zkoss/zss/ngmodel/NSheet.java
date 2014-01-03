@@ -163,8 +163,6 @@ public interface NSheet {
 	
 	public void setProtected(boolean protect);
 
-	public boolean isAutoFilterMode();
-
 	/**
 	 * Get the data grid that this sheet stores it data, by default it is null, and the data store on cell directly
 	 * @return
@@ -177,4 +175,22 @@ public interface NSheet {
 	 */
 	public void setDataGrid(NDataGrid dataGrid);
 	
+	
+	/**
+	 * Gets the auto filter information if there is.
+	 * @return the auto filter, or null if not found
+	 */
+	public NAutoFilter getAutoFilter();
+	
+	/**
+	 * Creates a new auto filter, the old one will be drop directly.
+	 * @param region the auto filter region
+	 * @return the new auto filter.
+	 */
+	public NAutoFilter createAutoFilter(CellRegion region);
+	
+	/**
+	 * Clear auto filter if there is.
+	 */
+	public void clearAutoFilter();
 }
