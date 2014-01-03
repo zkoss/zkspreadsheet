@@ -356,16 +356,16 @@ public interface NRange {
 	 */
 	public void fillUp();
 	
-//	/**
-//	 * To find a range of cells for applying auto filter according to this range.
-//	 * Usually, these two ranges are different.
-//	 * This method searches the filtering range through a specific rules. 
-//	 * @see org.zkoss.zss.api.Range#findAutoFilterRange()
-//	 * @return a range of cells for applying auto filter or null if can't find one from this Range. 
-//	 * @since 3.0.0
-//	 */
-//	// Refer to ZSS-246.
-//	NRange findAutoFilterRange();
+	/**
+	 * To find a range of cells for applying auto filter according to this range.
+	 * Usually, these two ranges are different.
+	 * This method searches the filtering range through a specific rules. 
+	 * @see org.zkoss.zss.api.Range#findAutoFilterRange()
+	 * @return a range of cells for applying auto filter or null if can't find one from this Range. 
+	 * @since 3.0.0
+	 */
+	// Refer to ZSS-246.
+	NRange findAutoFilterRange();
 	
 //	/**
 //	 * Filters a list specified by this Range and returns an AutoFilter object.

@@ -27,6 +27,7 @@ import java.util.concurrent.locks.ReadWriteLock;
 import org.zkoss.poi.ss.formula.eval.NotImplementedException;
 import org.zkoss.util.Locales;
 import org.zkoss.zss.ngapi.NRange;
+import org.zkoss.zss.ngapi.NRanges;
 import org.zkoss.zss.ngmodel.CellRegion;
 import org.zkoss.zss.ngmodel.NBook;
 import org.zkoss.zss.ngmodel.NBookSeries;
@@ -679,5 +680,19 @@ public class NRangeImpl implements NRange {
 			
 		}).doInReadLock(getLock());
 		return retrunVal.get();
+	}
+
+	@Override
+	public NRange findAutoFilterRange() {
+		return (NRange) new ReadWriteTask() {			
+			@Override
+			public Object invoke() {
+				CellRegion region = new DataRegionHelper(NRangeImpl.this).findDataRegion();
+				if(region!=null){
+					return NRanges.range(getSheet(),region.getRow(),region.getColumn(),region.getLastRow(),region.getLastColumn());
+				}
+				return null;
+			}
+		}.doInReadLock(getLock());
 	}
 }

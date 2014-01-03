@@ -1,31 +1,26 @@
 package org.zkoss.zss.ngapi.impl;
 
-import org.zkoss.poi.ss.usermodel.Cell;
-import org.zkoss.poi.ss.usermodel.Row;
-import org.zkoss.poi.ss.util.CellRangeAddress;
-import org.zkoss.zss.engine.Ref;
-import org.zkoss.zss.model.sys.XRange;
-import org.zkoss.zss.model.sys.XRanges;
-import org.zkoss.zss.model.sys.XSheet;
-import org.zkoss.zss.model.sys.impl.BookHelper;
-import org.zkoss.zss.model.sys.impl.XRangeImpl;
 import org.zkoss.zss.ngapi.NRange;
+import org.zkoss.zss.ngmodel.CellRegion;
+import org.zkoss.zss.ngmodel.NCell;
+import org.zkoss.zss.ngmodel.NCell.CellType;
+import org.zkoss.zss.ngmodel.NRow;
 import org.zkoss.zss.ngmodel.NSheet;
 
 /**
- * to help seach the max data region
+ * To help search the data region
  * @author dennis
  *
  */
-//these code if from XRangeImpl,  
+//these code if from XRangeImpl and migrate to new model
 public class DataRegionHelper {
 
 	NSheet sheet;
 	NRange range;
 	
-	public DataRegionHelper(NSheet sheet, NRange range){
-		this.sheet = sheet;
+	public DataRegionHelper(NRange range){
 		this.range = range;
+		this.sheet = range.getSheet();
 	}
 
 	public int getRow() {
@@ -50,32 +45,31 @@ public class DataRegionHelper {
 
 
 	// ZSS-246: give an API for user checking the auto-filtering range before applying it.
-	public XRange findAutoFilterRange() {
+	public CellRegion findDataRegion() {
 		
 		//The logic to decide the actual affected range to implement autofilter:
 		//If it's a multiple cell range, it's the range intersect with largest range of the sheet.
 		//If it's a single cell range, it has to be extend to a continuous range by looking up the near 8 cells of the single cell.
-		CellRangeAddress currentArea = new CellRangeAddress(getRow(), getLastRow(), getColumn(), getLastColumn());
-		final Ref ref = getRefs().iterator().next();
+		CellRegion currentArea = new CellRegion(getRow(), getColumn(), getLastRow(), getLastColumn());
 		
 		//ZSS-199
-		if (ref.isWholeRow()) {
+		if (isWholeRow()) {
 			//extend to a continuous range from the top row
-			CellRangeAddress cra = getRowCurrentRegion(_sheet, ref.getTopRow(), ref.getBottomRow());
-			return cra != null ? XRanges.range(_sheet, cra.getFirstRow(), cra.getFirstColumn(), cra.getLastRow(), cra.getLastColumn()) : null; 
+			CellRegion cra = getRowCurrentRegion(sheet, getRow(), getLastRow());
+			return cra; 
 			
-		} else if (BookHelper.isOneCell(_sheet, currentArea)) {
+		} else if (isOneCell(sheet,currentArea)){
 			//only one cell selected(include merged one), try to look the max range surround by blank cells 
-			CellRangeAddress cra = getCurrentRegion(_sheet, getRow(), getColumn());
-			return cra != null ? XRanges.range(_sheet, cra.getFirstRow(), cra.getFirstColumn(), cra.getLastRow(), cra.getLastColumn()) : null; 
+			CellRegion cra = getCurrentRegion(sheet, getRow(), getColumn());
+			return cra; 
 			
 		} else {
-			CellRangeAddress largeRange = getLargestRange(_sheet); //get the largest range that contains non-blank cells
+			CellRegion largeRange = getLargestRange(sheet); //get the largest range that contains non-blank cells
 			if (largeRange == null) {
 				return null;
 			}
-			int left = largeRange.getFirstColumn();
-			int top = largeRange.getFirstRow();
+			int left = largeRange.getColumn();
+			int top = largeRange.getRow();
 			int right = largeRange.getLastColumn();
 			int bottom = largeRange.getLastRow();
 			if (left < getColumn()) {
@@ -93,19 +87,19 @@ public class DataRegionHelper {
 			if (top > bottom || left > right) {
 				return null;
 			}
-			return XRanges.range(_sheet, top, left, bottom, right); 
+			return new CellRegion(top, left, bottom, right); 
 		}
 	}	
 	
-	private CellRangeAddress getRowCurrentRegion(XSheet sheet, int topRow, int btmRow) {
+	private CellRegion getRowCurrentRegion(NSheet sheet,int topRow, int btmRow) {
 		int minc = 0;
 		int maxc = 0;
 		int minr = topRow;
 		int maxr = btmRow;
-		final Row roworg = sheet.getRow(topRow);
-		for (int c = minc; c <= roworg.getLastCellNum(); c++) {
+		final int lastCellIdx = sheet.getEndCellIndex(topRow);
+		for (int c = minc; c <= lastCellIdx; c++) {
 			boolean foundMax = false;
-			for (int r = minr + 1; r <= sheet.getLastRowNum(); r++) {
+			for (int r = minr + 1; r <= sheet.getEndRowIndex(); r++) {
 				int[] cellMinMax = getCellMinMax(sheet, r, c);
 				if (cellMinMax == null && r >= btmRow) {
 					break;
@@ -120,34 +114,40 @@ public class DataRegionHelper {
 			}
 		}
 
-		return new CellRangeAddress(minr, maxr, minc, maxc);
+		return new CellRegion(minr, minc, maxr, maxc);
 	}
 	
-	private int[] getCellMinMax(XSheet sheet, int row, int col) {
-		final CellRangeAddress rng = BookHelper.getMergeRegion(sheet, row, col);
-		final int t = rng.getFirstRow();
-		final int l = rng.getFirstColumn();
+	private int[] getCellMinMax(NSheet sheet, int row, int col) {
+		CellRegion rng = sheet.getContainsMergedRegion(row,col);
+		if(rng==null){
+			rng = new CellRegion(row,col,row,col);
+		}
+		final int t = rng.getRow();
+		final int l = rng.getColumn();
 		final int b = rng.getLastRow();
 		final int r = rng.getLastColumn();
-		final Cell cell = BookHelper.getCell(sheet, t, l);
-		return (!BookHelper.isBlankCell(cell)) ?
-			new int[] {l, t, r, b} : null;
-	}	
+		final NCell cell = sheet.getCell(t, l);
+		return isBlank(cell) ? null : new int[] {l, t, r, b};
+	}
+	private boolean isBlank(NCell cell){
+		return cell==null || cell.isNull() || cell.getType()==CellType.BLANK;
+	}
 	
-	public static boolean isOneCell(XSheet sheet, CellRangeAddress rng) {
-		if (rng.getNumberOfCells() == 1) {
+	public static boolean isOneCell(NSheet sheet, CellRegion rng) {
+		if (rng.isSingle()) {
 			return true;
 		}
-		final int l = rng.getFirstColumn();
-		final int t = rng.getFirstRow();
+		final int l = rng.getColumn();
+		final int t = rng.getRow();
 		final int r = rng.getLastColumn();
 		final int b = rng.getLastRow();
 		
-		for (int i = 0; i < sheet.getNumMergedRegions(); i++) {
-			final CellRangeAddress ref = sheet.getMergedRegion(i);
-			final int top = ref.getFirstRow();
+		int s = sheet.getNumOfMergedRegion();
+		for (int i = 0; i < s; i++) {
+			final CellRegion ref = sheet.getMergedRegion(i);
+			final int top = ref.getRow();
 	        final int bottom = ref.getLastRow();
-	        final int left = ref.getFirstColumn();
+	        final int left = ref.getColumn();
 	        final int right = ref.getLastColumn();
 	    
 	        if (l == left && t == top && r == right && b == bottom) {
@@ -165,12 +165,12 @@ public class DataRegionHelper {
 	 * @param col starting cell's column index
 	 * @return
 	 */
-	private CellRangeAddress getCurrentRegion(XSheet sheet, int row, int col) {
+	private CellRegion getCurrentRegion(NSheet sheet, int row, int col) {
 		int minNonBlankColumn = col;
 		int maxNonBlankColumn = col;
 		int minNonBlankRow = Integer.MAX_VALUE;
 		int maxNonBlankRow = -1;
-		final Row roworg = sheet.getRow(row);
+		final NRow roworg = sheet.getRow(row);
 		final int[] leftTopRightBottom = getRowMinMax(sheet, roworg, minNonBlankColumn, maxNonBlankColumn);
 		if (leftTopRightBottom != null) {
 			minNonBlankColumn = leftTopRightBottom[0];
@@ -187,7 +187,7 @@ public class DataRegionHelper {
 		do {
 			//for row above
 			if (!stopFindingUp) {
-				final Row rowu = sheet.getRow(rowUp);
+				final NRow rowu = sheet.getRow(rowUp);
 				final int[] upperRowLeftTopRightBottom = getRowMinMax(sheet, rowu, minNonBlankColumn, maxNonBlankColumn);
 				if (upperRowLeftTopRightBottom != null) {
 					if (minNonBlankColumn != upperRowLeftTopRightBottom[0] || maxNonBlankColumn != upperRowLeftTopRightBottom[2]) {  //minc or maxc changed!
@@ -210,7 +210,7 @@ public class DataRegionHelper {
 
 			//for row below
 			if (!stopFindingDown) {
-				final Row rowd = sheet.getRow(rowDown);
+				final NRow rowd = sheet.getRow(rowDown);
 				final int[] downRowLeftTopRightBottom = getRowMinMax(sheet, rowd, minNonBlankColumn, maxNonBlankColumn);
 				if (downRowLeftTopRightBottom != null) {
 					if (minNonBlankColumn != downRowLeftTopRightBottom[0] || maxNonBlankColumn != downRowLeftTopRightBottom[2]) { //minc and maxc changed
@@ -233,15 +233,15 @@ public class DataRegionHelper {
 		}
 		minNonBlankRow = (minNonBlankRow == Integer.MAX_VALUE)? row: minNonBlankRow;
 		maxNonBlankRow = (maxNonBlankRow == -1)? row: maxNonBlankRow;
-		return new CellRangeAddress(minNonBlankRow, maxNonBlankRow, minNonBlankColumn, maxNonBlankColumn);
+		return new CellRegion(minNonBlankRow, minNonBlankColumn, maxNonBlankRow, maxNonBlankColumn);
 	}
 	
 	//[0]: left, [1]: top, [2]: right, [3]: bottom; null mean blank row
-	private int[] getRowMinMax(XSheet sheet, Row rowobj, int minc, int maxc) {
-		if (rowobj == null) { //check if no cell at all!
+	private int[] getRowMinMax(NSheet sheet, NRow rowobj, int minc, int maxc) {
+		if (rowobj.isNull()) { //check if no cell at all!
 			return null;
 		}
-		final int row = rowobj.getRowNum();
+		final int row = rowobj.getIndex();
 		int minr = row;
 		int maxr = row;
 		boolean allblank = true;
@@ -274,8 +274,8 @@ public class DataRegionHelper {
 			maxc = minrng[2];
 		}
 		
-		final int lc = rowobj.getFirstCellNum();
-		final int rc = rowobj.getLastCellNum() - 1;
+		final int lc = sheet.getStartCellIndex(row);
+		final int rc = sheet.getEndCellIndex(row) - 1;
 		final int left = minc > 0 ? minc - 1 : 0;
 		final int right = maxc + 1;
 
@@ -313,22 +313,22 @@ public class DataRegionHelper {
 	}	
 	
 	//returns the largest square range of this sheet that contains non-blank cells
-	private CellRangeAddress getLargestRange(XSheet sheet) {
-		int t = sheet.getFirstRowNum();
-		int b = sheet.getLastRowNum();
+	private CellRegion getLargestRange(NSheet sheet) {
+		int t = Math.max(0, sheet.getStartRowIndex());//to ignore -1 (no row)
+		int b = sheet.getEndRowIndex();
 		//top row
 		int minr = -1;
 		for(int r = t; r <= b && minr < 0; ++r) {
-			final Row rowobj = sheet.getRow(r);
-			if (rowobj != null) {
-				int ll = rowobj.getFirstCellNum();
+			final NRow rowobj = sheet.getRow(r);
+			if (!rowobj.isNull()) {
+				int ll = sheet.getStartCellIndex(r);
 				if (ll < 0) { //empty row
 					continue;
 				}
-				int rr = rowobj.getLastCellNum() - 1;
+				int rr = sheet.getEndCellIndex(r) - 1;
 				for(int c = ll; c <= rr; ++c) {
-					final Cell cell = rowobj.getCell(c);
-					if (!BookHelper.isBlankCell(cell)) { //first no blank row
+					final NCell cell = sheet.getCell(r,c);
+					if (!isBlank(cell)) { //first no blank row
 						minr = r;
 						break;
 					}
@@ -338,16 +338,16 @@ public class DataRegionHelper {
 		//bottom row
 		int maxr = -1;
 		for(int r = b; r >= minr && maxr < 0; --r) {
-			final Row rowobj = sheet.getRow(r);
-			if (rowobj != null) {
-				int ll = rowobj.getFirstCellNum();
+			final NRow rowobj = sheet.getRow(r);
+			if (!rowobj.isNull()) {
+				int ll = sheet.getStartCellIndex(r);
 				if (ll < 0) { //empty row
 					continue;
 				}
-				int rr = rowobj.getLastCellNum() - 1;
+				int rr = sheet.getEndCellIndex(r) - 1;
 				for(int c = ll; c <= rr; ++c) {
-					final Cell cell = rowobj.getCell(c);
-					if (!BookHelper.isBlankCell(cell)) { //first no blank row
+					final NCell cell = sheet.getCell(r, c);
+					if (!isBlank(cell)) { //first no blank row
 						maxr = r;
 						break;
 					}
@@ -357,16 +357,16 @@ public class DataRegionHelper {
 		//left col
 		int minc = Integer.MAX_VALUE;
 		for(int r = minr; r <= maxr; ++r) {
-			final Row rowobj = sheet.getRow(r);
-			if (rowobj != null) {
-				int ll = rowobj.getFirstCellNum();
+			final NRow rowobj = sheet.getRow(r);
+			if (!rowobj.isNull()) {
+				int ll = sheet.getStartCellIndex(r);
 				if (ll < 0) { //empty row
 					continue;
 				}
-				int rr = rowobj.getLastCellNum() - 1;
+				int rr = sheet.getEndCellIndex(r) - 1;
 				for(int c = ll; c < minc && c <= rr; ++c) {
-					final Cell cell = rowobj.getCell(c);
-					if (!BookHelper.isBlankCell(cell)) { //first no blank row
+					final NCell cell = sheet.getCell(r,c);
+					if (!isBlank(cell)) { //first no blank row
 						minc = c;
 						break;
 					}
@@ -376,16 +376,16 @@ public class DataRegionHelper {
 		//right col
 		int maxc = -1;
 		for(int r = minr; r <= maxr; ++r) {
-			final Row rowobj = sheet.getRow(r);
-			if (rowobj != null) {
-				int ll = rowobj.getFirstCellNum();
+			final NRow rowobj = sheet.getRow(r);
+			if (!rowobj.isNull()) {
+				int ll = sheet.getStartCellIndex(r);
 				if (ll < 0) { //empty row
 					continue;
 				}
-				int rr = rowobj.getLastCellNum() - 1;
+				int rr =  sheet.getEndCellIndex(r) - 1;
 				for(int c = rr; c > maxc && c >= ll; --c) {
-					final Cell cell = rowobj.getCell(c);
-					if (!BookHelper.isBlankCell(cell)) { //first no blank row
+					final NCell cell = sheet.getCell(r, c);
+					if (!isBlank(cell)) { //first no blank row
 						maxc = c;
 						break;
 					}
@@ -396,7 +396,7 @@ public class DataRegionHelper {
 		if (minr < 0 || maxc < 0) { //all blanks!
 			return null;
 		}
-		return new CellRangeAddress(minr, maxr, minc, maxc);
+		return new CellRegion(minr, minc, maxr, maxc);
 	}	
 	
 }
