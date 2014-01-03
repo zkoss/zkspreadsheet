@@ -6,6 +6,9 @@ import java.util.List;
 
 import org.zkoss.zss.ngmodel.CellRegion;
 import org.zkoss.zss.ngmodel.ErrorValue;
+import org.zkoss.zss.ngmodel.NBook;
+import org.zkoss.zss.ngmodel.NBookSeries;
+import org.zkoss.zss.ngmodel.NCell;
 import org.zkoss.zss.ngmodel.NSheet;
 import org.zkoss.zss.ngmodel.sys.EngineFactory;
 import org.zkoss.zss.ngmodel.sys.dependency.Ref;
@@ -316,6 +319,39 @@ public class DataValidationImpl extends AbstractDataValidationAdv {
 			}
 			evaluated = true;
 		}
+	}
+	
+	@Override
+	public List<NCell> getReferToCellList(){
+		if(value1Expr!=null && value1Expr.isRefersTo()){
+			List<NCell> list = new LinkedList<NCell>();
+			NBookSeries bookSeries = sheet.getBook().getBookSeries(); 
+			
+			String bookName = sheet.getBook().getBookName();//TODO zss 3.5 from expr
+			String sheetName = value1Expr.getRefersToSheetName();
+			CellRegion region = value1Expr.getRefersToCellRegion();
+			
+			NBook book = bookSeries.getBook(bookName);
+			if(book==null){
+				return list;
+			}
+			NSheet sheet = book.getSheetByName(sheetName);
+			if(sheet==null){
+				return list;
+			}
+			for(int i = region.getRow();i<=region.getLastRow();i++){
+				for(int j=region.getColumn();j<=region.getLastColumn();j++){
+					list.add(sheet.getCell(i, j));
+				}
+			}
+			return list;
+		}
+		return Collections.EMPTY_LIST;
+	}
+
+	@Override
+	public boolean hasReferToCellList() {
+		return value1Expr!=null && value1Expr.isRefersTo();
 	}
 
 }

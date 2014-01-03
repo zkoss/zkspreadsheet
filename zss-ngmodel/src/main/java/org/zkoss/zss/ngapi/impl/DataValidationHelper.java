@@ -3,6 +3,7 @@ package org.zkoss.zss.ngapi.impl;
 import java.util.Date;
 
 import org.zkoss.util.Locales;
+import org.zkoss.zss.ngmodel.NCell;
 import org.zkoss.zss.ngmodel.NCell.CellType;
 import org.zkoss.zss.ngmodel.NDataValidation;
 import org.zkoss.zss.ngmodel.NDataValidation.ValidationType;
@@ -166,11 +167,20 @@ public class DataValidationHelper {
 		if (value == null) {
 			return false;
 		}
-		int size = validation.getNumOfValue1();
-		for(int i=0;i<size;i++){
-			Object val = validation.getValue1(i);
-			if(value.equals(val)){
-				return true;
+		if(validation.hasReferToCellList()){
+			for(NCell cell:validation.getReferToCellList()){
+				Object val = cell.getValue();
+				if(value.equals(val)){
+					return true;
+				}
+			}
+		}else{
+			int size = validation.getNumOfValue1();
+			for(int i=0;i<size;i++){
+				Object val = validation.getValue1(i);
+				if(value.equals(val)){
+					return true;
+				}
 			}
 		}
 		return false;

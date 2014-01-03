@@ -33,6 +33,7 @@ import org.zkoss.zss.ngmodel.NBook;
 import org.zkoss.zss.ngmodel.NBooks;
 import org.zkoss.zss.ngmodel.NCell;
 import org.zkoss.zss.ngmodel.NCellStyle;
+import org.zkoss.zss.ngmodel.NDataValidation;
 import org.zkoss.zss.ngmodel.NCell.CellType;
 import org.zkoss.zss.ngmodel.NCellStyle.BorderType;
 import org.zkoss.zss.ngmodel.NCellStyle.FillPattern;
@@ -45,6 +46,7 @@ import org.zkoss.zss.ngmodel.NDataGrid;
 import org.zkoss.zss.ngmodel.NPicture.Format;
 import org.zkoss.zss.ngmodel.NSheet;
 import org.zkoss.zss.ngmodel.NCellStyle.Alignment;
+import org.zkoss.zss.ngmodel.NDataValidation.ValidationType;
 import org.zkoss.zss.ngmodel.NViewAnchor;
 import org.zkoss.zss.ngmodel.chart.NGeneralChartData;
 import org.zkoss.zss.ngmodel.chart.NSeries;
@@ -72,16 +74,57 @@ public class TestImporterFactory implements ImporterFactory{
 				
 				NBook book = NBooks.createBook(bookName);
 				
-				buildDataGridSheet(book);
+				buildValidation(book);
 				
 				buildChartSheet(book);
 				
 				buildNormalSheet(book);
 
 				buildFreeze(book);
+				
+				buildDataGridSheet(book);
 				return book;
 			}
-
+			private void buildValidation(NBook book) {
+				NSheet sheet1 = book.createSheet("Data Validtaion");
+				
+				NRanges.range(sheet1,0,0).setEditText("A");
+				NRanges.range(sheet1,0,1).setEditText("B");
+				NRanges.range(sheet1,0,2).setEditText("C");
+				NRanges.range(sheet1,1,0).setEditText("1");
+				NRanges.range(sheet1,1,1).setEditText("2");
+				NRanges.range(sheet1,1,2).setEditText("3");
+				NRanges.range(sheet1,2,0).setEditText("2013/1/1");
+				NRanges.range(sheet1,2,1).setEditText("2013/1/2");
+				NRanges.range(sheet1,2,2).setEditText("2013/1/3");
+				
+				NDataValidation dv0 = sheet1.addDataValidation(new CellRegion(0,3));
+				dv0.addRegion(new CellRegion(0,4,0,10));//test multiple place
+				dv0.setValidationType(ValidationType.LIST);
+				dv0.setShowPromptBox(true);
+				dv0.setPromptBox("select form A1:C1", "you should select the value in A1:C1");
+				
+				dv0.setShowErrorBox(true);
+				dv0.setErrorBox("Not in the list", "The value must in the list");
+				dv0.setShowDropDownArrow(true);
+				
+				dv0.setFormula("A1:C1");
+				
+				NDataValidation dv1 = sheet1.addDataValidation(new CellRegion(1,3));
+				dv1.setValidationType(ValidationType.LIST);
+				dv1.setFormula("A2:C2");
+				dv1.setShowErrorBox(true);
+				dv1.setErrorBox("Not in the list", "The value must in the list A2:C2");
+				dv1.setShowDropDownArrow(true);
+				
+				
+				NDataValidation dv2 = sheet1.addDataValidation(new CellRegion(2,3));
+				dv2.setValidationType(ValidationType.LIST);
+				dv2.setFormula("A3:C3");
+				dv2.setShowDropDownArrow(true);
+				dv2.setShowErrorBox(true);
+				
+			}
 			private void buildDataGridSheet(NBook book) {
 				NSheet sheet = book.createSheet("DataGrid");
 				NDataGrid dg;

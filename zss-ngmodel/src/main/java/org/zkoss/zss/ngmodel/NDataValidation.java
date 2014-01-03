@@ -89,6 +89,9 @@ public interface NDataValidation extends FormulaContent{
 	 */
 	public boolean isFormulaParsingError();
 	
+	public boolean hasReferToCellList();
+	public List<NCell> getReferToCellList();
+	
 	public int getNumOfValue1();
 	public Object getValue1(int i);
 	public int getNumOfValue2();
