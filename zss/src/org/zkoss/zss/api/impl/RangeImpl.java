@@ -516,7 +516,7 @@ public class RangeImpl implements Range{
 	public void setCellEditText(String editText){ 
 		try{
 			_range.setEditText(editText);
-			//TODO zss 3.5
+			//TODO zss 3.5 the parse exception
 		}catch(FormulaParseException x){
 			throw new IllegalFormulaException(x.getMessage(),x);
 		}

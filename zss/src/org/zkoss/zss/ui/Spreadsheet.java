@@ -665,11 +665,16 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	//ZSS-406 Spreadsheet doesn't be release when use application share scope
 	private void releaseBook(){
 		if (_book != null) {
-			_book.removeEventListener(_dataListener);
-			/* TODO zss 3.5
-			_book.removeVariableResolver(_variableResolver);
-			_book.removeFunctionMapper(_functionMapper);
-			*/
+			_book.getBookSeries().getLock().writeLock().lock();
+			try{
+				_book.removeEventListener(_dataListener);
+				if(isBelowDesktopScope(_book) && _book instanceof EvaluationContributorContainer
+						&& ((EvaluationContributorContainer)_book).getEvaluationContributor() instanceof ComponentEvaluationContributor){
+					((EvaluationContributorContainer)_book).setEvaluationContributor(null);
+				}
+			}finally{
+				_book.getBookSeries().getLock().writeLock().unlock();
+			}
 			_book = null;
 		}
 	}
@@ -685,9 +690,9 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			_book.getBookSeries().getLock().writeLock().lock();
 			try{
 				_book.removeEventListener(_dataListener);
-				if(isBelowDesktopScope(_book) && book instanceof EvaluationContributorContainer
-						&& ((EvaluationContributorContainer)book).getEvaluationContributor() instanceof ComponentEvaluationContributor){
-					((EvaluationContributorContainer)book).setEvaluationContributor(null);
+				if(isBelowDesktopScope(_book) && _book instanceof EvaluationContributorContainer
+						&& ((EvaluationContributorContainer)_book).getEvaluationContributor() instanceof ComponentEvaluationContributor){
+					((EvaluationContributorContainer)_book).setEvaluationContributor(null);
 				}
 			
 			}finally{
@@ -719,9 +724,9 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			_book.getBookSeries().getLock().writeLock().lock();
 			_book.addEventListener(_dataListener);
 			try{
-				if(isBelowDesktopScope(_book) && book instanceof EvaluationContributorContainer 
-						&& ((EvaluationContributorContainer)book).getEvaluationContributor()==null){
-					((EvaluationContributorContainer)book).setEvaluationContributor(new ComponentEvaluationContributor(this));
+				if(isBelowDesktopScope(_book) && _book instanceof EvaluationContributorContainer 
+						&& ((EvaluationContributorContainer)_book).getEvaluationContributor()==null){
+					((EvaluationContributorContainer)_book).setEvaluationContributor(new ComponentEvaluationContributor(this));
 				}
 			}finally{
 				_book.getBookSeries().getLock().writeLock().unlock();
@@ -945,14 +950,12 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			smartUpdate("activeRange", activeRange);
 			
 			//handle Validation, must after render("activeRange"
-			/* TODO zss 3.5
 			List<Map> dvs = getDataValidationHandler().loadDataValidtionJASON(getSelectedSheet());
 			if (dvs != null) {
 				smartUpdate("dataValidations", dvs);
 			} else {
 				smartUpdate("dataValidations", (String) null);
 			}
-			*/
 		}
 		
 		smartUpdate("sheetId", getSelectedSheetId());
@@ -1659,14 +1662,12 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		renderer.render("rowHeadHidden", _hideRowhead);
 		
 		//handle Validation, must after render("activeRange" ...)
-		/*TODO zss 3.5
 		List<Map> dvs = getDataValidationHandler().loadDataValidtionJASON(getSelectedSheet());
 		if (dvs != null) {
 			renderer.render("dataValidations", dvs);
 		} else {
 			renderer.render("dataValidations", (String) null);
 		}
-		*/
 
 	}
 	

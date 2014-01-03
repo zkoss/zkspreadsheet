@@ -134,10 +134,7 @@ public class CellDataImpl implements CellData{
 	}
 
 	public boolean validateEditText(String editText){
-		/*TODO zss 3.5
 		return _range.getNative().validate(editText)==null;
-		*/
-		throw new UnsupportedOperationException("not implement");
 	}
 
 	@Override
