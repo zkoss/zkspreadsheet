@@ -70,6 +70,7 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 
 		workbook = createPoiBook(is);
 		book = NBooks.createBook(bookName);
+		importExternalBookLinks();
 		
 		for (int i = 0 ; i < workbook.getNumberOfSheets(); i++){
 			importSheet(workbook.getSheetAt(i));
@@ -105,6 +106,13 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 			name.setRefersToFormula(namedRange.getRefersToFormula());
 		}
 	}
+	
+	/**
+	 * Excel uses external book links to map external book index and name.
+	 * The formula contains full external book name or index only (e.g [book2.xlsx] or [1]).
+	 * We needs such table for parsing and evaluating formula when necessary. 
+	 */
+	abstract protected void importExternalBookLinks();
 	
 	/*
 	 * import sheet scope content from POI Sheet.

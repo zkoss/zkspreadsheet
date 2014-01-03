@@ -14,6 +14,8 @@ package org.zkoss.zss.ngmodel.impl.sys.formula;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.zkoss.poi.ss.SpreadsheetVersion;
 import org.zkoss.poi.ss.formula.EvaluationName;
 import org.zkoss.poi.ss.formula.EvaluationWorkbook.ExternalSheet;
@@ -32,6 +34,7 @@ import org.zkoss.zss.ngmodel.sys.formula.FormulaEngine;
  * @author Pao
  */
 public class ParsingBook implements FormulaParsingWorkbook, FormulaRenderingWorkbook {
+	private static final Logger logger = Logger.getLogger(ParsingBook.class.getName());
 
 	private List<String> index2name = new ArrayList<String>();
 	private NBook book;
@@ -82,15 +85,15 @@ public class ParsingBook implements FormulaParsingWorkbook, FormulaRenderingWork
 
 		try {
 			// if external link index is really a index, convert it and find name from records
-			int index = Integer.parseInt(externalLinkIndex);
-			String[] names = (String[])book.getAttribute(FormulaEngine.KEY_EXTERNAL_BOOK_NAMES);
+			int index = Integer.parseInt(externalLinkIndex) - 1; // zero based
+			List<?> names = (List<?>)book.getAttribute(FormulaEngine.KEY_EXTERNAL_BOOK_NAMES);
 			if(names != null) {
-				return names[index];
+				return names.get(index).toString();
 			}
 		} catch(NumberFormatException e) {
 			// do nothing
 		} catch(IndexOutOfBoundsException e) {
-			// do nothing
+			logger.log(Level.WARNING, e.getMessage(), e);
 		}
 
 		// otherwise, it should be a book name already and just return itself.
@@ -137,7 +140,7 @@ public class ParsingBook implements FormulaParsingWorkbook, FormulaRenderingWork
 		ExternalSheet sheet = getAnyExternalSheet(externSheetIndex);
 		String name = sheet.getSheetName();
 		String lastName = sheet.getLastSheetName();
-		return name.equals(lastName) ? name : sheet + ":" + lastName;
+		return name.equals(lastName) ? name : name + ":" + lastName;
 	}
 
 	@Override

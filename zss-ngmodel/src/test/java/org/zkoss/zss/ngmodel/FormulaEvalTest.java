@@ -497,37 +497,59 @@ public class FormulaEvalTest {
 	
 	@Test
 	public void testExternalBookReference() {
-		NBook book1, book2;
+		NBook book1, book2, book3;
+		NSheet sheet1, sheet2;
 		
 		// direct creation
 		book1 = NBooks.createBook("Book1");
 		book2 = NBooks.createBook("Book2");
 		book1.createSheet("external").getCell(0, 1).setFormulaValue("SUM(3 + [Book2]ref!C6 - 3)"); // B1
 		book2.createSheet("ref").getCell(5, 2).setNumberValue(5.0);	// C6
-		new BookSeriesBuilderImpl().buildBookSeries(book1, book2); 
-//		NBookSeriesBuilder.getInstance().buildBookSeries(book1, book2);
 		testExternalBookReference(book1, book2);
 		
+		// direct creation - complex 
+		book1 = NBooks.createBook("Book1");
+		book2 = NBooks.createBook("Book2");
+		book3 = NBooks.createBook("Book3");
+		sheet1 = book1.createSheet("external");
+		sheet1.getCell(0, 1).setFormulaValue(" SUM(external:another!K1) + SUM( [Book2]ref!A1:A2 , [Book3]sheet1:sheet3!C1 ) + B2 - another!B3 "); // [Book1]external!B1
+		// same book + same sheet
+		sheet1.getCell(1, 1).setNumberValue(1.0); // [Book1]external!B2
+		// same book + other sheet
+		sheet2 = book1.createSheet("another");
+		sheet2.getCell(2, 1).setNumberValue(1.0); // [Book1]another!B3
+		// external book + area ref.
+		sheet1 = book2.createSheet("ref");
+		sheet1.getCell(0, 0).setNumberValue(1.0); // [Book2]ref!A1
+		sheet1.getCell(1, 0).setNumberValue(1.0); // [Book2]ref!A2
+		// external book + 3D ref.
+		book3.createSheet("sheet1").getCell(0, 2).setNumberValue(1.0); // [Book3]sheet1!C1 
+		book3.createSheet("sheet2").getCell(0, 2).setNumberValue(1.0); // [Book3]sheet2!C1
+		book3.createSheet("sheet3").getCell(0, 2).setNumberValue(1.0); // [Book3]sheet3!C1
+		testExternalBookReference(book1, book2, book3);
+
 		// 2007
-//		book1 = getBook("book/formula-eval-external.xlsx", "Book1");
-//		book2 = getBook("book/formula-eval.xlsx", "formula-eval.xlsx");
-//		NBookSeriesBuilder.getInstance().buildBookSeries(book1, book2);
-//		testExternalBookReference(book1, book2);
-		
+		book1 = getBook("book/formula-eval-external.xlsx", "Book1");
+		book2 = getBook("book/formula-eval.xlsx", "formula-eval.xlsx");
+		testExternalBookReference(book1, book2);
+
 		// 2003
-//		book1 = getBook("book/formula-eval-external.xls", "Book1");
-//		book2 = getBook("book/formula-eval.xls", "formula-eval.xls");
-//		NBookSeriesBuilder.getInstance().buildBookSeries(book1, book2);
-//		testExternalBookReference(book1, book2);
+		book1 = getBook("book/formula-eval-external.xls", "Book1");
+		book2 = getBook("book/formula-eval.xls", "formula-eval.xls");
+		testExternalBookReference(book1, book2);
 	}
 
-	public void testExternalBookReference(NBook book1, NBook book2) {
+	public void testExternalBookReference(NBook... books) {
+		Assert.assertTrue(books.length >= 2);
+		NBook book1 = books[0];
 
 		// update book series
-		Assert.assertNotNull(book1);
-		Assert.assertNotNull(book2);
+		for(NBook book : books) {
+			Assert.assertNotNull(book);
+		}
+		new BookSeriesBuilderImpl().buildBookSeries(books); 
 
-		// check eval. value
+		// check evaluated value of B1
 		NSheet sheet = book1.getSheetByName("external");
 		NCell b1 = sheet.getCell(0, 1);
 		Assert.assertFalse(b1.isNull());

@@ -17,7 +17,6 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.ngapi.impl.imexp;
 
 import java.io.*;
-
 import org.zkoss.poi.hssf.usermodel.*;
 import org.zkoss.poi.ss.usermodel.*;
 import org.zkoss.zss.ngmodel.*;
@@ -34,6 +33,14 @@ public class NExcelXlsImporter extends AbstractExcelImporter{
 		return new HSSFWorkbook(is);
 	}
 
+	@Override
+	protected void importExternalBookLinks() {
+		// do nothing
+		// xls file has no individual external book links
+		// every reference has every necessary information including external book index
+		// and already resolved by POI
+	}
+	
 	/**
 	 * 
 	 * @param poiSheet

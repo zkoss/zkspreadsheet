@@ -18,7 +18,8 @@ package org.zkoss.zss.ngapi.impl.imexp;
 
 import java.io.*;
 import java.util.*;
-
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.openxmlformats.schemas.drawingml.x2006.main.*;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.*;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTDrawing;
@@ -27,6 +28,7 @@ import org.w3c.dom.Node;
 import org.zkoss.poi.POIXMLDocumentPart;
 import org.zkoss.poi.ss.usermodel.*;
 import org.zkoss.poi.ss.usermodel.charts.*;
+import org.zkoss.poi.xssf.model.ExternalLink;
 import org.zkoss.poi.xssf.usermodel.*;
 import org.zkoss.poi.xssf.usermodel.charts.*;
 import org.zkoss.zss.ngmodel.*;
@@ -35,6 +37,7 @@ import org.zkoss.zss.ngmodel.NChart.NChartGrouping;
 import org.zkoss.zss.ngmodel.NChart.NChartLegendPosition;
 import org.zkoss.zss.ngmodel.NChart.NChartType;
 import org.zkoss.zss.ngmodel.chart.*;
+import org.zkoss.zss.ngmodel.sys.formula.FormulaEngine;
 /**
  * Specific importing behavior for XLSX.
  * 
@@ -42,10 +45,36 @@ import org.zkoss.zss.ngmodel.chart.*;
  * @since 3.5.0
  */
 public class NExcelXlsxImporter extends AbstractExcelImporter{
+	private static final Logger logger = Logger.getLogger(NExcelXlsxImporter.class.getName());
 
 	@Override
 	protected Workbook createPoiBook(InputStream is) throws IOException {
 		return new XSSFWorkbook(is);
+	}
+	
+	@Override
+	protected void importExternalBookLinks() {
+		try {
+			// directly use XML to retrieve external book references and fetch external book names
+			// if retrieving ExternalLink from relations list of workbook, the order might be incorrect.
+			// according to spec. ISO 29500-1, 18.17.2.3, p. 2048, the order should be natural order of XML tags.
+			List<String> bookNames = new ArrayList<String>();
+			XSSFWorkbook xssfBook = (XSSFWorkbook)workbook;
+			CTWorkbook ctBook = xssfBook.getCTWorkbook();
+			CTExternalReferences externalReferences = ctBook.getExternalReferences();
+			if(externalReferences != null) {
+				List<CTExternalReference> exRefs = externalReferences.getExternalReferenceList();
+				for(CTExternalReference exRef : exRefs) {
+					ExternalLink link = (ExternalLink)xssfBook.getRelationById(exRef.getId());
+					bookNames.add(link.getBookName());
+				}
+			}
+			if(bookNames.size() > 0) {
+				this.book.setAttribute(FormulaEngine.KEY_EXTERNAL_BOOK_NAMES, bookNames);
+			}
+		} catch(Exception e) {
+			logger.log(Level.SEVERE, e.getMessage(), e);
+		}
 	}
 
 

@@ -24,8 +24,11 @@ import org.zkoss.poi.ss.formula.DependencyTracker;
 import org.zkoss.poi.ss.formula.EvaluationCell;
 import org.zkoss.poi.ss.formula.EvaluationSheet;
 import org.zkoss.poi.ss.formula.EvaluationWorkbook;
+import org.zkoss.poi.ss.formula.EvaluationWorkbook.ExternalSheet;
+import org.zkoss.poi.ss.formula.ExternSheetReferenceToken;
 import org.zkoss.poi.ss.formula.FormulaParseException;
 import org.zkoss.poi.ss.formula.FormulaParser;
+import org.zkoss.poi.ss.formula.FormulaRenderer;
 import org.zkoss.poi.ss.formula.FormulaType;
 import org.zkoss.poi.ss.formula.IStabilityClassifier;
 import org.zkoss.poi.ss.formula.WorkbookEvaluator;
@@ -114,16 +117,31 @@ public class FormulaEngineImpl implements FormulaEngine {
 				}
 			}
 
-			// render formula and create result
+			// render formula, detect region and create result
+			String renderedFormula = renderFormula(parsingBook, formula, tokens);
 			Ref singleRef = tokens.length == 1 ? toDenpendRef(context, parsingBook, tokens[0]) : null;
-// TODO		optimal, only render if necessary	
-//			String renderredFormula = FormulaRenderer.toInternalFormulaString((FormulaRenderingWorkbook)pb, tokens);
-			expr = new FormulaExpressionImpl(formula, singleRef, false);
+			expr = new FormulaExpressionImpl(renderedFormula, singleRef, false);
 		} catch(FormulaParseException e) {
 			logger.log(Level.INFO, e.getMessage());
 			expr = new FormulaExpressionImpl(formula, null, true);
 		}
 		return expr;
+	}
+	
+	protected String renderFormula(ParsingBook parsingBook, String formula, Ptg[] tokens) {
+		boolean hit = false; // only render if necessary
+		for(Ptg token : tokens) {
+			// check it is a external book reference or not
+			if(token instanceof ExternSheetReferenceToken) {
+				ExternSheetReferenceToken externalRef = (ExternSheetReferenceToken)token;
+				ExternalSheet externalSheet = parsingBook.getExternalSheet(externalRef.getExternSheetIndex());
+				if(externalSheet != null) {
+					hit = true;
+					break;
+				}
+			}
+		}
+		return hit ? FormulaRenderer.toFormulaString(parsingBook, tokens) : formula;
 	}
 
 	protected Ref toDenpendRef(FormulaParseContext ctx, ParsingBook parsingBook, Ptg ptg) {
