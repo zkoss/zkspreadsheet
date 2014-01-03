@@ -33,14 +33,14 @@ public class CellRegion implements Serializable {
 	final public int column;
 	final public int lastRow;
 	final public int lastColumn;
-	AreaReference ref = null;
+	
 
 	public CellRegion(int row, int column) {
 		this(row, column, row, column);
 	}
 
 	public CellRegion(String areaReference) {
-		ref = new AreaReference(areaReference);
+		AreaReference ref = new AreaReference(areaReference);
 		this.row = ref.getFirstCell().getRow();
 		this.column = ref.getFirstCell().getCol();
 		this.lastRow = ref.getLastCell().getRow();
@@ -49,9 +49,7 @@ public class CellRegion implements Serializable {
 	}
 	
 	public String getReferenceString(){
-		if(ref==null){
-			ref = new AreaReference(new CellReference(row,column),new CellReference(lastRow,lastColumn));
-		}
+		AreaReference ref = new AreaReference(new CellReference(row,column),new CellReference(lastRow,lastColumn));
 		return isSingle()?ref.getFirstCell().formatAsString():ref.formatAsString();
 	}
 

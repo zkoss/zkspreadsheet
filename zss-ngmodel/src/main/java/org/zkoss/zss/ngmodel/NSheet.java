@@ -117,6 +117,12 @@ public interface NSheet {
 	public int getNumOfMergedRegion();
 	public CellRegion getMergedRegion(int idx);
 	
+	/**
+	 * Get the merged region that overlapped the region
+	 * @return the region that contains overlapped or null if not found.
+	 */
+	public List<CellRegion> getOverlappedMergedRegions(CellRegion region);
+	
 	public NDataValidation addDataValidation(CellRegion region);
 	public NDataValidation getDataValidation(String id);
 	public void deleteDataValidation(NDataValidation validation);
@@ -130,12 +136,6 @@ public interface NSheet {
 	 * @return the first data validation at row, column
 	 */
 	public NDataValidation getDataValidation(int row, int column);
-	
-	/**
-	 * Get the merged region that overlapped the region
-	 * @return the region that contains overlapped or null if not found.
-	 */
-	public List<CellRegion> getOverlappedMergedRegions(CellRegion region);
 	
 	/**
 	 * Get the runtime custom attribute that stored in this sheet

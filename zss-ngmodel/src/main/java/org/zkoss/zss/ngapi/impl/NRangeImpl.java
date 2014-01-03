@@ -106,6 +106,7 @@ public class NRangeImpl implements NRange {
 	
 	private class CellVisitorTask extends ReadWriteTask{
 		private CellVisitor visitor;
+		private boolean stop = false;
 		
 		private CellVisitorTask(CellVisitor visitor){
 			this.visitor = visitor;
@@ -113,7 +114,7 @@ public class NRangeImpl implements NRange {
 
 		@Override
 		public Object invoke() {
-			travelCells(visitor);
+			travelCells(visitor,false);
 			return null;
 		}
 	}
@@ -127,7 +128,7 @@ public class NRangeImpl implements NRange {
 
 		@Override
 		public Object invoke() {
-			travelFirstCell(visitor);
+			travelCells(visitor,true);
 			return null;
 		}
 	}
@@ -172,12 +173,16 @@ public class NRangeImpl implements NRange {
 		}
 	}
 
-	static interface CellVisitor {
+	static abstract class CellVisitor {
 		/**
 		 * @param cell
 		 * @return true if this cell has been updated after visit
 		 */
-		boolean visit(NCell cell);
+		abstract boolean visit(NCell cell);
+
+		boolean isStopVisit(){
+			return false;
+		}
 	}
 	
 
@@ -185,7 +190,7 @@ public class NRangeImpl implements NRange {
 	 * travels all the cells in this range
 	 * @param visitor
 	 */
-	private void travelCells(CellVisitor visitor) {
+	private void travelCells(CellVisitor visitor,boolean firstOnly) {
 		LinkedHashSet<Ref> dependentSet = new LinkedHashSet<Ref>();
 		LinkedHashSet<Ref> notifySet = new LinkedHashSet<Ref>();
 
@@ -197,6 +202,7 @@ public class NRangeImpl implements NRange {
 			String bookName = r._sheet.getBook().getBookName();
 			String sheetName = r._sheet.getSheetName();
 			CellRegion region = r.region;
+			loop1:
 			for (int i = region.row; i <= region.lastRow; i++) {
 				for (int j = region.column; j <= region.lastColumn; j++) {
 					NCell cell = r._sheet.getCell(i, j);
@@ -208,6 +214,12 @@ public class NRangeImpl implements NRange {
 						Set<Ref> dependent = dependencyTable.getDependents(ref);
 						notifySet.addAll(dependent);
 						dependentSet.addAll(dependent);
+					}
+					if(firstOnly){
+						break loop1;
+					}
+					if(visitor.isStopVisit()){
+						break loop1;
 					}
 				}
 			}
@@ -229,47 +241,6 @@ public class NRangeImpl implements NRange {
 	
 	private void handleRefNotifySizeChange(NBookSeries bookSeries,HashSet<Ref> notifySet) {
 		new RefNotifySizeChangeHelper(bookSeries).handle(notifySet);
-	}
-
-	/**
-	 * travels first cell in this range.
-	 * @param visitor
-	 */
-	private void travelFirstCell(CellVisitor visitor) {
-		LinkedHashSet<Ref> dependentSet = new LinkedHashSet<Ref>();
-		LinkedHashSet<Ref> notifySet = new LinkedHashSet<Ref>();
-
-		NBook book = getBook();
-		NBookSeries bookSeries = book.getBookSeries();
-		DependencyTable dependencyTable = ((AbstractBookSeriesAdv) bookSeries)
-				.getDependencyTable();
-
-		String bookName = book.getBookName();
-
-		if(rangeRefs.size()<=0)
-			return;
-		
-		EffectedRegion r = rangeRefs.get(0);
-		String sheetName = r._sheet.getSheetName();
-		CellRegion region = r.region;
-			
-		if(region.row <0 || region.column <0)
-			return;
-			
-		NCell cell = r._sheet.getCell(region.row, region.column);
-		boolean update = visitor.visit(cell);
-		if (update) {
-			Ref ref = new RefImpl(bookName, sheetName, region.row, region.column);
-			notifySet.add(ref);//always update this cell
-
-			//check if any dependent on this cell
-			Set<Ref> dependent = dependencyTable.getDependents(ref);
-			notifySet.addAll(dependent);
-			dependentSet.addAll(dependent);
-		}
-
-		handleRefDependent(bookSeries,dependentSet);
-		handleRefNotifyContentChange(bookSeries,notifySet);
 	}
 
 	private boolean euqlas(Object obj1, Object obj2) {
@@ -678,13 +649,18 @@ public class NRangeImpl implements NRange {
 
 	@Override
 	public boolean isSheetProtected() {
-		throw new NotImplementedException("not implement yet");		
+		//TODO do we really need to use lock in such simple call, it looks overkill.
+		return (Boolean)new ReadWriteTask(){
+			@Override
+			public Object invoke() {
+				return getSheet().isProtected();
+			}}.doInReadLock(getLock());
 	}
 
 	@Override
 	public NDataValidation validate(final String editText) {
 		final ResultWrap<NDataValidation> retrunVal = new ResultWrap<NDataValidation>();
-		new FirstCellVisitorTask(new CellVisitor() {
+		new CellVisitorTask(new CellVisitor() {
 			public boolean visit(NCell cell) {
 				NDataValidation validation = getSheet().getDataValidation(cell.getRowIndex(), cell.getColumnIndex());
 				if(validation!=null){
@@ -694,6 +670,13 @@ public class NRangeImpl implements NRange {
 				}
 				return false;
 			}
+
+			@Override
+			boolean isStopVisit() {
+				//break visit if there is any validation
+				return retrunVal.get()!=null;
+			}
+			
 		}).doInReadLock(getLock());
 		return retrunVal.get();
 	}

@@ -2228,6 +2228,8 @@ public class ModelTest {
 		NName name = book.createName("test");
 		name.setRefersToFormula("'Sheet 1'!A1:B1");
 		
+		sheet.addDataValidation(new CellRegion("A1"));
+		
 		ByteArrayOutputStream baos;
 		ObjectOutputStream oos;
 		try {
@@ -2282,6 +2284,9 @@ public class ModelTest {
 			
 			Assert.assertEquals(1, sheet.getPictures().size());
 			NPicture picture = sheet.getPictures().get(0);
+			
+			Assert.assertEquals(1, sheet.getNumOfDataValidation());
+			sheet.getDataValidation(0);
 			
 		} catch (Exception x) {
 			throw new RuntimeException(x.getMessage(),x);
