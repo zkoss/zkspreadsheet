@@ -11,11 +11,13 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
  */
 package org.zkoss.zss.ngmodel.impl.sys.formula;
 
+import org.zkoss.poi.ss.SpreadsheetVersion;
 import org.zkoss.poi.ss.formula.EvaluationCell;
 import org.zkoss.poi.ss.formula.EvaluationName;
 import org.zkoss.poi.ss.formula.EvaluationSheet;
 import org.zkoss.poi.ss.formula.EvaluationWorkbook;
 import org.zkoss.poi.ss.formula.FormulaParser;
+import org.zkoss.poi.ss.formula.FormulaParsingWorkbook;
 import org.zkoss.poi.ss.formula.FormulaType;
 import org.zkoss.poi.ss.formula.functions.FreeRefFunction;
 import org.zkoss.poi.ss.formula.ptg.NamePtg;
@@ -31,7 +33,7 @@ import org.zkoss.zss.ngmodel.NSheet;
  * modified from org.zkoss.poi.xssf.usermodel.XSSFEvaluationWorkbook
  * @author Josh Micich, Pao
  */
-public final class EvalBook implements EvaluationWorkbook {
+public final class EvalBook implements EvaluationWorkbook, FormulaParsingWorkbook /* implements parsing book for ugly typecast in POI OperationEvaluationContext.getDynamicReference() */ {
 
 	private NBook nbook;
 	private IndexedUDFFinder udfFinder = new IndexedUDFFinder(UDFFinder.DEFAULT);
@@ -211,5 +213,37 @@ public final class EvalBook implements EvaluationWorkbook {
 		public boolean isRange() {
 			return hasFormula(); // TODO - is this right?
 		}
+	}
+	
+	/* delegate to parsing book for ugly typecast in POI OperationEvaluationContext.getDynamicReference() */
+
+	@Override
+	public NameXPtg getNameXPtg(String name) {
+		return parsingBook.getNameXPtg(name);
+	}
+
+	@Override
+	public int getExternalSheetIndex(String sheetName) {
+		return parsingBook.getExternalSheetIndex(sheetName);
+	}
+
+	@Override
+	public int getExternalSheetIndex(String workbookName, String sheetName) {
+		return parsingBook.getExternalSheetIndex(workbookName, sheetName);
+	}
+
+	@Override
+	public SpreadsheetVersion getSpreadsheetVersion() {
+		return parsingBook.getSpreadsheetVersion();
+	}
+
+	@Override
+	public String getBookNameFromExternalLinkIndex(String externalLinkIndex) {
+		return parsingBook.getBookNameFromExternalLinkIndex(externalLinkIndex);
+	}
+
+	@Override
+	public EvaluationName getOrCreateName(String name, int sheetIndex) {
+		return parsingBook.getOrCreateName(name, sheetIndex);
 	}
 }
