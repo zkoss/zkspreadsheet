@@ -28,6 +28,10 @@ public class EvalSheet implements EvaluationSheet {
 	public EvalSheet(NSheet sheet) {
 		this.sheet = sheet;
 	}
+	
+	public NSheet getNSheet() {
+		return sheet;
+	}
 
 	public EvaluationCell getCell(int rowIndex, int columnIndex) {
 		NCell cell = sheet.getCell(rowIndex, columnIndex);

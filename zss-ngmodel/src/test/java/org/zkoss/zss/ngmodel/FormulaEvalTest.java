@@ -11,31 +11,37 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
  */
 package org.zkoss.zss.ngmodel;
 
+import java.io.Closeable;
+import java.io.InputStream;
 import java.util.Locale;
 import java.util.Set;
-
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.zkoss.util.Locales;
+import org.zkoss.zss.ngapi.NImporter;
 import org.zkoss.zss.ngapi.NRange;
 import org.zkoss.zss.ngapi.NRanges;
+import org.zkoss.zss.ngapi.impl.imexp.ExcelImportFactory;
 import org.zkoss.zss.ngmodel.NCell.CellType;
 import org.zkoss.zss.ngmodel.impl.AbstractBookSeriesAdv;
+import org.zkoss.zss.ngmodel.impl.BookSeriesBuilderImpl;
 import org.zkoss.zss.ngmodel.impl.NameRefImpl;
 import org.zkoss.zss.ngmodel.impl.RefImpl;
-import org.zkoss.zss.ngmodel.sys.EngineFactory;
 import org.zkoss.zss.ngmodel.sys.dependency.DependencyTable;
 import org.zkoss.zss.ngmodel.sys.dependency.Ref;
-import org.zkoss.zss.ngmodel.sys.formula.FormulaEvaluationContext;
 
 /**
  * @author Pao
  */
 public class FormulaEvalTest {
 
+	private NImporter importer;
+
 	@Before
 	public void beforeTest() {
+		importer= new ExcelImportFactory().createImporter();
 		Locales.setThreadLocal(Locale.TAIWAN);
 	}
 
@@ -422,4 +428,110 @@ public class FormulaEvalTest {
 
 	}
 
+	public NBook getBook(String path, String bookName) {
+		InputStream is = null;
+		try {
+			is = FormulaEvalTest.class.getResourceAsStream(path);
+			return importer.imports(is, bookName);
+		} catch(Exception e) {
+			e.printStackTrace();
+		} finally {
+			close(is);
+		}
+		return null;
+	}
+
+	public void close(Closeable r) {
+		try {
+			r.close();
+		} catch(Exception e) {
+		}
+	}
+
+	@Test
+	public void testArrayValue() {
+		NBook book = getBook("book/formula-eval.xlsx", "Book1");
+		Assert.assertNotNull(book);
+		NSheet sheet = book.getSheetByName("array");
+		Assert.assertNotNull(sheet);
+
+		// check formula
+		int c = 2;
+		for(int r = 1; r <= 6; ++r) { // C2:C7
+			NCell cell = sheet.getCell(r, c);
+			Assert.assertEquals("A2:A6", cell.getFormulaValue());
+		}
+
+		// check value
+		c = 0;
+		for(int r = 1; r <= 5; ++r) { // A2:A6
+			NCell cell = sheet.getCell(r, c);
+			Assert.assertEquals(r, cell.getNumberValue().intValue());
+		}
+		c = 2;
+		for(int r = 1; r <= 5; ++r) { // C2:C6
+			NCell cell = sheet.getCell(r, c);
+			Assert.assertEquals(r, cell.getNumberValue().intValue());
+		}
+
+		// check C7
+		NCell C7 = sheet.getCell(6, 2);
+		Assert.assertEquals(CellType.ERROR, C7.getFormulaResultType());
+		Assert.assertEquals(ErrorValue.INVALID_VALUE, C7.getErrorValue().getCode());
+	}
+	
+	@Test
+	@Ignore
+	public void testArrayFormula() {
+		NBook book = getBook("book/formula-eval.xlsx", "Book1");
+		NSheet sheet = book.getSheetByName("array");
+		Assert.assertNotNull(book);
+		Assert.assertNotNull(sheet);
+
+		// check eval. value
+		NCell e2 = sheet.getCell(1, 4);
+		Assert.assertFalse(e2.isNull());
+		Assert.assertEquals(CellType.NUMBER, e2.getFormulaResultType());
+		Assert.assertEquals(11, e2.getNumberValue().intValue());
+	}
+	
+	@Test
+	public void testExternalBookReference() {
+		NBook book1, book2;
+		
+		// direct creation
+		book1 = NBooks.createBook("Book1");
+		book2 = NBooks.createBook("Book2");
+		book1.createSheet("external").getCell(0, 1).setFormulaValue("SUM(3 + [Book2]ref!C6 - 3)"); // B1
+		book2.createSheet("ref").getCell(5, 2).setNumberValue(5.0);	// C6
+		new BookSeriesBuilderImpl().buildBookSeries(book1, book2); 
+//		NBookSeriesBuilder.getInstance().buildBookSeries(book1, book2);
+		testExternalBookReference(book1, book2);
+		
+		// 2007
+//		book1 = getBook("book/formula-eval-external.xlsx", "Book1");
+//		book2 = getBook("book/formula-eval.xlsx", "formula-eval.xlsx");
+//		NBookSeriesBuilder.getInstance().buildBookSeries(book1, book2);
+//		testExternalBookReference(book1, book2);
+		
+		// 2003
+//		book1 = getBook("book/formula-eval-external.xls", "Book1");
+//		book2 = getBook("book/formula-eval.xls", "formula-eval.xls");
+//		NBookSeriesBuilder.getInstance().buildBookSeries(book1, book2);
+//		testExternalBookReference(book1, book2);
+	}
+
+	public void testExternalBookReference(NBook book1, NBook book2) {
+
+		// update book series
+		Assert.assertNotNull(book1);
+		Assert.assertNotNull(book2);
+
+		// check eval. value
+		NSheet sheet = book1.getSheetByName("external");
+		NCell b1 = sheet.getCell(0, 1);
+		Assert.assertFalse(b1.isNull());
+		Assert.assertEquals(CellType.NUMBER, b1.getFormulaResultType());
+		Assert.assertEquals(5, b1.getNumberValue().intValue());
+	}
 }

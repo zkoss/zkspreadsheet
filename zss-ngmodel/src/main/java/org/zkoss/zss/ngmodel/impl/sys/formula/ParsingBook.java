@@ -16,27 +16,30 @@ import java.util.Arrays;
 import java.util.List;
 import org.zkoss.poi.ss.SpreadsheetVersion;
 import org.zkoss.poi.ss.formula.EvaluationName;
+import org.zkoss.poi.ss.formula.EvaluationWorkbook.ExternalSheet;
 import org.zkoss.poi.ss.formula.FormulaParser;
 import org.zkoss.poi.ss.formula.FormulaParsingWorkbook;
+import org.zkoss.poi.ss.formula.FormulaRenderingWorkbook;
 import org.zkoss.poi.ss.formula.FormulaType;
 import org.zkoss.poi.ss.formula.ptg.NamePtg;
 import org.zkoss.poi.ss.formula.ptg.NameXPtg;
 import org.zkoss.poi.ss.formula.ptg.Ptg;
+import org.zkoss.zss.ngmodel.NBook;
+import org.zkoss.zss.ngmodel.sys.formula.FormulaEngine;
 
 /**
  * A pseudo formula parsing workbook for parsing only.
  * @author Pao
  */
-public class ParsingBook implements FormulaParsingWorkbook {
+public class ParsingBook implements FormulaParsingWorkbook, FormulaRenderingWorkbook {
 
 	private List<String> index2name = new ArrayList<String>();
+	private NBook book;
+	private List<ExternalSheet> index2sheet = new ArrayList<ExternalSheet>();
 
-	public ParsingBook(String... names) {
+	public ParsingBook(NBook book, String... names) {
+		this.book = book;
 		index2name.addAll(Arrays.asList(names));
-	}
-
-	public String getName(int index) {
-		return index2name.get(index);
 	}
 
 	@Override
@@ -46,20 +49,26 @@ public class ParsingBook implements FormulaParsingWorkbook {
 
 	@Override
 	public NameXPtg getNameXPtg(String name) {
+		// formula function name
 		int index = index2name.size();
+		index2name.add(name);
 		return new NameXPtg(0, index);
 	}
 
 	@Override
 	public int getExternalSheetIndex(String sheetName) {
-		int index = index2name.size();
-		index2name.add(sheetName);
-		return index;
+		return getExternalSheetIndex(null, sheetName);
 	}
 
 	@Override
 	public int getExternalSheetIndex(String workbookName, String sheetName) {
-		throw new RuntimeException("not implemented yet");
+		// create new index and check sheet name is 3D or not
+		int index = index2sheet.size();
+		int p = sheetName.indexOf(':');
+		String name = p < 0 ? sheetName : sheetName.substring(0, p);
+		String lastName = p < 0 ? sheetName : sheetName.substring(p+1);
+		index2sheet.add(new ExternalSheet(workbookName, name, lastName));
+		return index;
 	}
 
 	@Override
@@ -70,47 +79,93 @@ public class ParsingBook implements FormulaParsingWorkbook {
 
 	@Override
 	public String getBookNameFromExternalLinkIndex(String externalLinkIndex) {
-		// TODO
-		return null;
+
+		try {
+			// if external link index is really a index, convert it and find name from records
+			int index = Integer.parseInt(externalLinkIndex);
+			String[] names = (String[])book.getAttribute(FormulaEngine.KEY_EXTERNAL_BOOK_NAMES);
+			if(names != null) {
+				return names[index];
+			}
+		} catch(NumberFormatException e) {
+			// do nothing
+		} catch(IndexOutOfBoundsException e) {
+			// do nothing
+		}
+
+		// otherwise, it should be a book name already and just return itself.
+		return externalLinkIndex;
 	}
 
 	@Override
 	public EvaluationName getOrCreateName(String name, int sheetIndex) {
 		int nameIndex = index2name.size();
-		EvaluationName n = new EvalName(name, nameIndex, null, sheetIndex, false);
+		EvaluationName n = new SimpleName(name, nameIndex, sheetIndex);
 		index2name.add(name);
 		return n;
+	}
+	
+	/* FormulaRenderingWorkbook */
+
+	@Override
+	public String getNameText(NamePtg namePtg) {
+		return index2name.get(namePtg.getIndex());
+	}
+	
+	@Override
+	public String resolveNameXText(NameXPtg nameXPtg) {
+		return index2name.get(nameXPtg.getNameIndex());
+	}
+	
+	/**
+	 * @return internal or external sheet.
+	 */
+	public ExternalSheet getAnyExternalSheet(int externSheetIndex) {
+		return index2sheet.get(externSheetIndex);
+	}
+	
+	@Override
+	public ExternalSheet getExternalSheet(int externSheetIndex) {
+		// return external sheet object if only if the sheet is exact external
+		ExternalSheet externalSheet = getAnyExternalSheet(externSheetIndex);
+		return externalSheet.getWorkbookName() != null ? externalSheet : null;
+	}
+	
+	@Override
+	public String getSheetNameByExternSheet(int externSheetIndex) {
+		// get sheet no matter external or internal, and covert to 3D ref. if any
+		ExternalSheet sheet = getAnyExternalSheet(externSheetIndex);
+		String name = sheet.getSheetName();
+		String lastName = sheet.getLastSheetName();
+		return name.equals(lastName) ? name : sheet + ":" + lastName;
+	}
+
+	@Override
+	public String getExternalLinkIndexFromBookName(String bookname) {
+		return bookname;
 	}
 
 	/**
 	 * name to represent named range
 	 * @author Pao
 	 */
-	private class EvalName implements EvaluationName {
+	private class SimpleName implements EvaluationName {
 
 		private final String name;
 		private final int nameIndex;
-		private String refersToFormula;
 		private int sheetIndex;
-		private boolean isFunctionName;
 
 		/**
-		 * @param name
-		 * @param nameIndex
-		 * @param refersToFormula
 		 * @param sheetIndex sheet index; if -1, indicates whole book.
-		 * @param isFunctionName true indicates a reference name of user-defined function
 		 */
-		public EvalName(String name, int nameIndex, String refersToFormula, int sheetIndex, boolean isFunctionName) {
+		public SimpleName(String name, int nameIndex, int sheetIndex) {
 			this.name = name;
 			this.nameIndex = nameIndex;
-			this.refersToFormula = refersToFormula;
 			this.sheetIndex = sheetIndex;
-			this.isFunctionName = isFunctionName;
 		}
 
 		public Ptg[] getNameDefinition() {
-			return FormulaParser.parse(refersToFormula, ParsingBook.this, FormulaType.NAMEDRANGE, sheetIndex);
+			return FormulaParser.parse(name, ParsingBook.this, FormulaType.NAMEDRANGE, sheetIndex);
 		}
 
 		public String getNameText() {
@@ -118,16 +173,15 @@ public class ParsingBook implements FormulaParsingWorkbook {
 		}
 
 		public boolean hasFormula() {
-			// according to spec. 18.2.5 definedName (Defined Name)
-			return !isFunctionName() && refersToFormula != null && refersToFormula.length() > 0;
+			return false;
 		}
 
 		public boolean isFunctionName() {
-			return isFunctionName;
+			return false;
 		}
 
 		public boolean isRange() {
-			return hasFormula(); // TODO - is this right?
+			return false;
 		}
 
 		public NamePtg createPtg() {

@@ -38,8 +38,11 @@ public interface FormulaExpression {
 	//parsing result for Name
 	
 	boolean isRefersTo();
+
+	String getRefersToBookName();
 	
 	String getRefersToSheetName();
+	String getRefersToLastSheetName();
 	
 	CellRegion getRefersToCellRegion();
 }

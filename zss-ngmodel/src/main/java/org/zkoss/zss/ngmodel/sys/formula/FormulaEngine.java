@@ -21,6 +21,8 @@ package org.zkoss.zss.ngmodel.sys.formula;
  * @since 3.5.0
  */
 public interface FormulaEngine {
+	
+	String KEY_EXTERNAL_BOOK_NAMES = "$ZSS_EXTERNAL_BOOK_NAMES$";
 
 	public FormulaExpression parse(String formula, FormulaParseContext context);
 	

@@ -100,7 +100,7 @@ public class FormulaEngineImpl implements FormulaEngine {
 		try {
 			// adapt and parse
 			NBook book = context.getBook();
-			ParsingBook parsingBook = new ParsingBook(context.getSheet().getSheetName());
+			ParsingBook parsingBook = new ParsingBook(book, context.getSheet().getSheetName());
 			Ptg[] tokens = FormulaParser.parse(formula, parsingBook, FormulaType.CELL, 0); // current sheet index in parsing is always 0
 
 			// dependency tracking
@@ -114,8 +114,10 @@ public class FormulaEngineImpl implements FormulaEngine {
 				}
 			}
 
-			// create result
+			// render formula and create result
 			Ref singleRef = tokens.length == 1 ? toDenpendRef(context, parsingBook, tokens[0]) : null;
+// TODO		optimal, only render if necessary	
+//			String renderredFormula = FormulaRenderer.toInternalFormulaString((FormulaRenderingWorkbook)pb, tokens);
 			expr = new FormulaExpressionImpl(formula, singleRef, false);
 		} catch(FormulaParseException e) {
 			logger.log(Level.INFO, e.getMessage());
@@ -131,7 +133,7 @@ public class FormulaEngineImpl implements FormulaEngine {
 			if(ptg instanceof NamePtg) {
 				NamePtg namePtg = (NamePtg)ptg;
 				String bookName = sheet.getBook().getBookName();
-				String name = parsingBook.getName(namePtg.getIndex());
+				String name = parsingBook.getNameText(namePtg);
 				return new NameRefImpl(bookName, null, name); // assume name is book-scope
 			} else if(ptg instanceof NameXPtg) {
 				// TODO name in external book
@@ -139,14 +141,14 @@ public class FormulaEngineImpl implements FormulaEngine {
 			} else if(ptg instanceof Ref3DPtg) {
 				Ref3DPtg rptg = (Ref3DPtg)ptg;
 				String bookName = sheet.getBook().getBookName();
-				String[] tokens = parsingBook.getName(rptg.getExternSheetIndex()).split(":");
+				String[] tokens = parsingBook.getSheetNameByExternSheet(rptg.getExternSheetIndex()).split(":");
 				String sheetName = tokens[0];
 				String lastSheetName = tokens.length >= 2 ? tokens[1] : null;
 				return new RefImpl(bookName, sheetName, lastSheetName, rptg.getRow(), rptg.getColumn());
 			} else if(ptg instanceof Area3DPtg) {
 				Area3DPtg aptg = (Area3DPtg)ptg;
 				String bookName = sheet.getBook().getBookName();
-				String[] tokens = parsingBook.getName(aptg.getExternSheetIndex()).split(":");
+				String[] tokens = parsingBook.getSheetNameByExternSheet(aptg.getExternSheetIndex()).split(":");
 				String sheetName = tokens[0];
 				String lastSheetName = tokens.length >= 2 ? tokens[1] : null;
 				return new RefImpl(bookName, sheetName, lastSheetName, aptg.getFirstRow(),
@@ -435,11 +437,20 @@ public class FormulaEngineImpl implements FormulaEngine {
 		public boolean isRefersTo() {
 			return ref != null && (ref.getType() == RefType.AREA || ref.getType() == RefType.CELL);
 		}
-
+		
+		@Override
+		public String getRefersToBookName() {
+			return isRefersTo() ? ref.getBookName() : null;
+		}
+		
 		@Override
 		public String getRefersToSheetName() {
-			// FIXME 3D sheets
 			return isRefersTo() ? ref.getSheetName() : null;
+		}
+		
+		@Override
+		public String getRefersToLastSheetName() {
+			return isRefersTo() ? ref.getLastSheetName() : null;
 		}
 
 		@Override

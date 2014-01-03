@@ -2,7 +2,6 @@ package org.zkoss.zss.ngmodel.impl.sys;
 
 import java.io.Serializable;
 import java.util.HashMap;
-
 import org.zkoss.zss.ngmodel.CellRegion;
 import org.zkoss.zss.ngmodel.ErrorValue;
 import org.zkoss.zss.ngmodel.NCell.CellType;
@@ -79,6 +78,16 @@ public class TestFormulaEngineImpl implements FormulaEngine {
 			CellReference cell1 = ref.getFirstCell();
 			CellReference cell2 = ref.getLastCell();
 			return new CellRegion(cell1.getRow(),cell1.getCol(),cell2.getRow(),cell2.getCol());
+		}
+
+		@Override
+		public String getRefersToBookName() {
+			return null; // TODO zss 3.5
+		}
+
+		@Override
+		public String getRefersToLastSheetName() {
+			return null; // TODO zss 3.5
 		}
 	}
 
