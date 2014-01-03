@@ -119,9 +119,10 @@ public interface NSheet {
 	
 	/**
 	 * Get the merged region that overlapped the region
-	 * @return the region that contains overlapped or null if not found.
+	 * @return the regions that overlaps or null if not found.
 	 */
-	public List<CellRegion> getOverlappedMergedRegions(CellRegion region);
+	public List<CellRegion> getOverlapsMergedRegions(CellRegion region);
+	public CellRegion getContainsMergedRegion(int row,int column);
 	
 	public NDataValidation addDataValidation(CellRegion region);
 	public NDataValidation getDataValidation(String id);

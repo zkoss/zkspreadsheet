@@ -1009,7 +1009,7 @@ public class SheetImpl extends AbstractSheetAdv {
 	}
 
 	@Override
-	public List<CellRegion> getOverlappedMergedRegions(CellRegion region) {
+	public List<CellRegion> getOverlapsMergedRegions(CellRegion region) {
 		List<CellRegion> list =new LinkedList<CellRegion>(); 
 		for(CellRegion r:mergedRegions){
 			if(r.overlaps(region)){
@@ -1018,6 +1018,16 @@ public class SheetImpl extends AbstractSheetAdv {
 		}
 		return list;
 	}
+	@Override
+	public CellRegion getContainsMergedRegion(int row, int column) {
+		List<CellRegion> list =new LinkedList<CellRegion>(); 
+		for(CellRegion r:mergedRegions){
+			if(r.contains(row, column)){
+				return r;
+			}
+		}
+		return null;
+	}	
 
 	@Override
 	public Object getAttribute(String name) {
