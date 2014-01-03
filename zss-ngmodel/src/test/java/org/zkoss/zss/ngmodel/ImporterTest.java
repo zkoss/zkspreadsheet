@@ -25,7 +25,7 @@ public class ImporterTest extends ImExpTestBase {
 	 * @param fileUrl
 	 */
 	static public void setFileUnderTest(URL fileUrl){
-		fileForImporterTest = fileUrl;
+		IMPORT_FILE_UNDER_TEST = fileUrl;
 	}
 	
 	
@@ -42,7 +42,7 @@ public class ImporterTest extends ImExpTestBase {
 		InputStream streamUnderTest = null;
 		NBook book = null;
 		try {
-			book = importer.imports(fileForImporterTest.openStream(), "XSSFBook");
+			book = importer.imports(IMPORT_FILE_UNDER_TEST.openStream(), "XSSFBook");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}finally{
@@ -63,7 +63,7 @@ public class ImporterTest extends ImExpTestBase {
 	public void importByUrl(){
 		NBook book = null;
 		try {
-			book = importer.imports(fileForImporterTest, "XSSFBook");
+			book = importer.imports(IMPORT_FILE_UNDER_TEST, "XSSFBook");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -76,7 +76,7 @@ public class ImporterTest extends ImExpTestBase {
 	public void importByFile() {
 		NBook book = null;
 		try {
-			book = importer.imports(new File(fileForImporterTest.toURI()), "XSSFBook");
+			book = importer.imports(new File(IMPORT_FILE_UNDER_TEST.toURI()), "XSSFBook");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -88,44 +88,44 @@ public class ImporterTest extends ImExpTestBase {
 	//content
 	@Test
 	public void sheetTest() {
-		NBook book = ImExpTestUtil.loadBook(fileForImporterTest, "XSSFBook");
+		NBook book = ImExpTestUtil.loadBook(IMPORT_FILE_UNDER_TEST, "XSSFBook");
 		
 		sheetTest(book);
 	}	
 	
 	@Test
 	public void sheetProtectionTest() {
-		NBook book = ImExpTestUtil.loadBook(fileForImporterTest, "XSSFBook");
+		NBook book = ImExpTestUtil.loadBook(IMPORT_FILE_UNDER_TEST, "XSSFBook");
 		sheetProtectionTest(book);
 	}
 	
 	@Test
 	public void sheetNamedRangeTest() {
-		NBook book = ImExpTestUtil.loadBook(fileForImporterTest, "XSSFBook");
+		NBook book = ImExpTestUtil.loadBook(IMPORT_FILE_UNDER_TEST, "XSSFBook");
 		sheetNamedRangeTest(book);
 	}
 	
 	@Test
 	public void viewInfoTest(){
-		NBook book = ImExpTestUtil.loadBook(fileForImporterTest, "XSSFBook");
+		NBook book = ImExpTestUtil.loadBook(IMPORT_FILE_UNDER_TEST, "XSSFBook");
 		viewInfoTest(book);
 	}
 	
 	@Test
 	public void mergedTest(){
-		NBook book = ImExpTestUtil.loadBook(fileForImporterTest, "XSSFBook");
+		NBook book = ImExpTestUtil.loadBook(IMPORT_FILE_UNDER_TEST, "XSSFBook");
 		mergedTest(book);
 	}
 	
 	@Test
 	public void rowTest(){
-		NBook book = ImExpTestUtil.loadBook(fileForImporterTest, "XSSFBook");
+		NBook book = ImExpTestUtil.loadBook(IMPORT_FILE_UNDER_TEST, "XSSFBook");
 		rowTest(book);
 	}
 	
 	@Test
 	public void columnTest(){
-		NBook book = ImExpTestUtil.loadBook(fileForImporterTest, "XSSFBook");
+		NBook book = ImExpTestUtil.loadBook(IMPORT_FILE_UNDER_TEST, "XSSFBook");
 		columnTest(book);		
 	}
 	
@@ -134,44 +134,44 @@ public class ImporterTest extends ImExpTestBase {
 	 */
 	@Test
 	public void lastChangedColumnTest(){
-		NBook book = ImExpTestUtil.loadBook(fileForImporterTest, "XSSFBook");
+		NBook book = ImExpTestUtil.loadBook(IMPORT_FILE_UNDER_TEST, "XSSFBook");
 		lastChangedColumnTest(book);
 	}
 
 	@Test
 	public void cellValueTest() {
-		NBook book = ImExpTestUtil.loadBook(fileForImporterTest, "XSSFBook");
+		NBook book = ImExpTestUtil.loadBook(IMPORT_FILE_UNDER_TEST, "XSSFBook");
 		
 		cellValueTest(book);
 	}
 	
 	@Test
 	public void cellStyleTest(){
-		NBook book = ImExpTestUtil.loadBook(fileForImporterTest, "XSSFBook");
+		NBook book = ImExpTestUtil.loadBook(IMPORT_FILE_UNDER_TEST, "XSSFBook");
 		cellStyleTest(book);
 	}
 
 	@Test
 	public void cellBorderTest(){
-		NBook book = ImExpTestUtil.loadBook(fileForImporterTest, "XSSFBook");
+		NBook book = ImExpTestUtil.loadBook(IMPORT_FILE_UNDER_TEST, "XSSFBook");
 		cellBorderTest(book);
 	}
 
 	@Test
 	public void cellFontNameTest(){
-		NBook book = ImExpTestUtil.loadBook(fileForImporterTest, "XSSFBook");
+		NBook book = ImExpTestUtil.loadBook(IMPORT_FILE_UNDER_TEST, "XSSFBook");
 		cellFontNameTest(book);
 	}
 	
 	@Test
 	public void cellFontStyleTest(){
-		NBook book = ImExpTestUtil.loadBook(fileForImporterTest, "XSSFBook");
+		NBook book = ImExpTestUtil.loadBook(IMPORT_FILE_UNDER_TEST, "XSSFBook");
 		cellFontStyleTest(book);
 	}
 	
 	@Test
 	public void cellFontColorTest(){
-		NBook book = ImExpTestUtil.loadBook(fileForImporterTest, "XSSFBook");
+		NBook book = ImExpTestUtil.loadBook(IMPORT_FILE_UNDER_TEST, "XSSFBook");
 		cellFontColorTest(book);
 		
 	}
@@ -183,7 +183,7 @@ public class ImporterTest extends ImExpTestBase {
 	 */
 	@Test
 	public void cellFormatTest(){
-		NBook book = ImExpTestUtil.loadBook(fileForImporterTest, "XSSFBook");
+		NBook book = ImExpTestUtil.loadBook(IMPORT_FILE_UNDER_TEST, "XSSFBook");
 		cellFormatTest(book);
 	}
 
@@ -192,13 +192,13 @@ public class ImporterTest extends ImExpTestBase {
 	 */
 	@Test
 	public void formatNotDependLocaleTest(){
-		NBook book = ImExpTestUtil.loadBook(fileForImporterTest, "XSSFBook");
+		NBook book = ImExpTestUtil.loadBook(IMPORT_FILE_UNDER_TEST, "XSSFBook");
 		NSheet sheet = book.getSheetByName("Format");
 		assertEquals("zh_TW", Locales.getCurrent().toString());
 		assertEquals("m/d/yyyy", sheet.getCell(1, 4).getCellStyle().getDataFormat());
 		
 		Locales.setThreadLocal(Locale.US);
-		book = ImExpTestUtil.loadBook(fileForImporterTest, "XSSFBook");
+		book = ImExpTestUtil.loadBook(IMPORT_FILE_UNDER_TEST, "XSSFBook");
 		sheet = book.getSheetByName("Format");
 		assertEquals("en_US", Locales.getCurrent().toString());
 		assertEquals("m/d/yyyy", sheet.getCell(1, 4).getCellStyle().getDataFormat());
@@ -206,13 +206,13 @@ public class ImporterTest extends ImExpTestBase {
 	
 	@Test
 	public void areaChart(){
-		NBook book = ImExpTestUtil.loadBook(DEFAULT_CHART_IMPORT_FILE, "Chart");
+		NBook book = ImExpTestUtil.loadBook(CHART_IMPORT_FILE_UNDER_TEST, "Chart");
 		areaChart(book);
 	}
 	
 	@Test
 	public void barChart(){
-		NBook book = ImExpTestUtil.loadBook(DEFAULT_CHART_IMPORT_FILE, "Chart");
+		NBook book = ImExpTestUtil.loadBook(CHART_IMPORT_FILE_UNDER_TEST, "Chart");
 		barChart(book);
 		NSheet sheet = book.getSheetByName("Bar");
 		NChart barChart = sheet.getChart(0);
@@ -223,7 +223,7 @@ public class ImporterTest extends ImExpTestBase {
 	
 	@Test
 	public void bubbleChtart(){
-		NBook book = ImExpTestUtil.loadBook(DEFAULT_CHART_IMPORT_FILE, "Chart");
+		NBook book = ImExpTestUtil.loadBook(CHART_IMPORT_FILE_UNDER_TEST, "Chart");
 		bubbleChart(book);
 		NSheet sheet = book.getSheetByName("Bubble");
 		NChart bubbleChart = sheet.getChart(0);
@@ -232,19 +232,19 @@ public class ImporterTest extends ImExpTestBase {
 	
 	@Test
 	public void columnChart(){
-		NBook book = ImExpTestUtil.loadBook(DEFAULT_CHART_IMPORT_FILE, "Chart");
+		NBook book = ImExpTestUtil.loadBook(CHART_IMPORT_FILE_UNDER_TEST, "Chart");
 		columnChart(book);
 	}
 	
 	@Test
 	public void doughnutChart(){
-		NBook book = ImExpTestUtil.loadBook(DEFAULT_CHART_IMPORT_FILE, "Chart");
+		NBook book = ImExpTestUtil.loadBook(CHART_IMPORT_FILE_UNDER_TEST, "Chart");
 		doughnutChart(book);
 	}
 	
 	@Test
 	public void lineChart(){
-		NBook book = ImExpTestUtil.loadBook(DEFAULT_CHART_IMPORT_FILE, "Chart");
+		NBook book = ImExpTestUtil.loadBook(CHART_IMPORT_FILE_UNDER_TEST, "Chart");
 		lineChart(book);
 		NSheet sheet = book.getSheetByName("Line");
 		NChart line3dChart = sheet.getChart(1);
@@ -253,19 +253,19 @@ public class ImporterTest extends ImExpTestBase {
 	
 	@Test
 	public void pieChart(){
-		NBook book = ImExpTestUtil.loadBook(DEFAULT_CHART_IMPORT_FILE, "Chart");
+		NBook book = ImExpTestUtil.loadBook(CHART_IMPORT_FILE_UNDER_TEST, "Chart");
 		pieChart(book);
 	}
 	
 	@Test
 	public void scatterChart(){
-		NBook book = ImExpTestUtil.loadBook(DEFAULT_CHART_IMPORT_FILE, "Chart");
+		NBook book = ImExpTestUtil.loadBook(CHART_IMPORT_FILE_UNDER_TEST, "Chart");
 		scatterChart(book);
 	}
 	
 	@Ignore("XSSFStockChartData implementation is incorrect")
 	public void stockChart(){
-		NBook book = ImExpTestUtil.loadBook(DEFAULT_CHART_IMPORT_FILE, "Chart");
+		NBook book = ImExpTestUtil.loadBook(CHART_IMPORT_FILE_UNDER_TEST, "Chart");
 		NSheet sheet = book.getSheetByName("Stock");
 		NChart stockChart = sheet.getChart(0);
 		assertEquals(NChartType.STOCK, stockChart.getType());
