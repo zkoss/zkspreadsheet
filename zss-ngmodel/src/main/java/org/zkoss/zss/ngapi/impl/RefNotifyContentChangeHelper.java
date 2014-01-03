@@ -57,13 +57,8 @@ import org.zkoss.zss.ngmodel.sys.dependency.Ref.RefType;
 		NSheet sheet = book.getSheetByName(dependent.getSheetName());
 		if(sheet==null) return;
 		String[] ids = dependent.getObjectIdPath();
-		NDataValidation validation = sheet.getDataValidation(ids[0]);
-		if(validation!=null){
-			for(CellRegion region:validation.getRegions()){
-				Ref ref = new RefImpl(book.getBookName(),sheet.getSheetName(),region.getRow(),region.getColumn(),region.getLastRow(),region.getLastColumn());
-				handleCellRef(ref);
-			}
-		}
+		((AbstractBookAdv) book).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_DATA_VALIDATION_CONTENT_CHANGE,sheet,
+				ModelEvents.PARAM_OBJECT_ID,ids[0]));
 	}
 
 	private void handleCellRef(Ref notify) {

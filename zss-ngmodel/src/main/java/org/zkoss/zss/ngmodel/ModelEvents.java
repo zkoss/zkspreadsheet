@@ -30,6 +30,7 @@ public class ModelEvents {
 	public static final String ON_CELL_CONTENT_CHANGE = "onCellChange";
 	public static final String ON_ROW_COLUMN_SIZE_CHANGE = "onRowColumnSizeChange";
 	public static final String ON_CHART_CONTENT_CHANGE = "onChartContentChange";
+	public static final String ON_DATA_VALIDATION_CONTENT_CHANGE = "onDataValidationContentChange";
 	
 	public static final String PARAM_BOOK = "book";
 	public static final String PARAM_SHEET = "sheet";

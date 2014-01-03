@@ -124,6 +124,12 @@ public class TestImporterFactory implements ImporterFactory{
 				dv2.setShowDropDownArrow(true);
 				dv2.setShowErrorBox(true);
 				
+				NDataValidation dv3 = sheet1.addDataValidation(new CellRegion(3,3));
+				dv3.setValidationType(ValidationType.LIST);
+				dv3.setFormula("A1:C3");
+				dv3.setShowDropDownArrow(true);
+				dv3.setShowErrorBox(true);
+				
 			}
 			private void buildDataGridSheet(NBook book) {
 				NSheet sheet = book.createSheet("DataGrid");
