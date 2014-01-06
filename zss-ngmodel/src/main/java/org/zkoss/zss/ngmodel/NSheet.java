@@ -67,6 +67,7 @@ public interface NSheet {
 	public NColumn getColumn(int columnIdx);
 	
 	public NCell getCell(int rowIdx, int columnIdx);
+	public NCell getCell(String cellRefString);
 	
 	public String getId();
 	

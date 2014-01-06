@@ -90,7 +90,7 @@ public class CellRegion implements Serializable {
 
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("[").append(row).append(",").append(column).append(",").append(lastRow)
+		sb.append(getReferenceString()).append("[").append(row).append(",").append(column).append(",").append(lastRow)
 				.append(",").append(lastColumn).append("]");
 
 		return sb.toString();

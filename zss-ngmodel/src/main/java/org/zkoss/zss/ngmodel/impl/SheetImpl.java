@@ -310,8 +310,14 @@ public class SheetImpl extends AbstractSheetAdv {
 //		return columns.get(column);
 //	}
 
+	@Override
 	public NCell getCell(int rowIdx, int columnIdx) {
 		return getCell(rowIdx,columnIdx,true);
+	}
+	@Override
+	public NCell getCell(String cellRef) {
+		CellRegion region = new CellRegion(cellRef);
+		return getCell(region.getRow(),region.getColumn(),true);
 	}
 	
 	@Override

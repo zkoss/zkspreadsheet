@@ -205,4 +205,89 @@ public class RangeTest {
 		
 		
 	}
+/* from D7
+A	1	4	5	=SUM(E7:F7)
+B	2	5	7	=SUM(E8:F8)
+C	3	6	9	=SUM(E9:F9)
+	
+ */
+	@Test
+	public void testAutoFilterRange(){
+		NBook book = NBooks.createBook("book1");
+		NSheet sheet = book.createSheet("Sheet 1");
+		
+		NRange range = NRanges.range(sheet,"D4").findAutoFilterRange();
+		
+		Assert.assertNull(range);
+		
+		
+		sheet.getCell("D7").setValue("A");
+		sheet.getCell("D8").setValue("B");
+		sheet.getCell("D9").setValue("C");
+		sheet.getCell("E7").setValue(1);
+		sheet.getCell("E8").setValue(2);
+		sheet.getCell("E9").setValue(3);
+		
+		sheet.getCell("F7").setValue(4);
+		sheet.getCell("F8").setValue(5);
+		sheet.getCell("F9").setValue(6);
+		
+		sheet.getCell("G7").setValue("=SUM(E7:F7)");
+		sheet.getCell("G8").setValue("=SUM(E8:F8)");
+		sheet.getCell("G9").setValue("=SUM(E9:F9)");
+		
+		Assert.assertEquals(5D, sheet.getCell("G7").getValue());
+		Assert.assertEquals(7D, sheet.getCell("G8").getValue());
+		Assert.assertEquals(9D, sheet.getCell("G9").getValue());
+		
+		
+		String nullLoc[] = new String[]{"C5","D5","G5","H5","B6","B7","B9","B10","J6","J7","J9","J10","C11","D11","G11","H11"};
+		for(String loc:nullLoc){
+			Assert.assertNull("at "+loc,NRanges.range(sheet,loc).findAutoFilterRange());
+		}
+		
+		String inSideLoc[] = new String[]{"D7","D8","D9","E7","E8","E9","F7","F8","F9","G7","G8","G9"};
+		for(String loc:inSideLoc){
+			range = NRanges.range(sheet,loc).findAutoFilterRange();
+			String at = "at "+loc;
+			Assert.assertNotNull(at,range);
+			Assert.assertEquals(at,6, range.getRow());
+			Assert.assertEquals(at,3, range.getColumn());
+			Assert.assertEquals(at,8, range.getLastRow());
+			Assert.assertEquals(at,6, range.getLastColumn());
+		}
+		
+		Object inCornerLoc[][] = new Object[][]{
+			new Object[]{"C6",-1,-1,0,0},//area, row,column,lastRow,lastColumn offset
+			new Object[]{"C7",0,-1,0,0},
+			new Object[]{"C9",0,-1,0,0},
+			new Object[]{"C10",0,-1,1,0},
+			
+			new Object[]{"H6",-1,0,0,1},
+			new Object[]{"H7",0,0,0,1},
+			new Object[]{"H9",0,0,0,1},
+			new Object[]{"H10",0,0,1,1},
+			
+			new Object[]{"D6",-1,0,0,0},
+			new Object[]{"E6",-1,0,0,0},
+			new Object[]{"F6",-1,0,0,0},
+			new Object[]{"G6",-1,0,0,0},
+			
+			new Object[]{"D10",0,0,1,0},
+			new Object[]{"E10",0,0,1,0},
+			new Object[]{"F10",0,0,1,0},
+			new Object[]{"G10",0,0,1,0}
+		};
+		
+		for(Object loc[]:inCornerLoc){
+			range = NRanges.range(sheet,(String)loc[0]).findAutoFilterRange();
+			String at = "at "+loc[0];
+			Assert.assertNotNull(at,range);
+			Assert.assertEquals(at,6+(Integer)loc[1], range.getRow());
+			Assert.assertEquals(at,3+(Integer)loc[2], range.getColumn());
+			Assert.assertEquals(at,8+(Integer)loc[3], range.getLastRow());
+			Assert.assertEquals(at,6+(Integer)loc[4], range.getLastColumn());
+		}
+
+	}
 }

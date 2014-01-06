@@ -275,7 +275,7 @@ public class DataRegionHelper {
 		}
 		
 		final int lc = sheet.getStartCellIndex(row);
-		final int rc = sheet.getEndCellIndex(row) - 1;
+		final int rc = sheet.getEndCellIndex(row);
 		final int left = minc > 0 ? minc - 1 : 0;
 		final int right = maxc + 1;
 
@@ -325,7 +325,7 @@ public class DataRegionHelper {
 				if (ll < 0) { //empty row
 					continue;
 				}
-				int rr = sheet.getEndCellIndex(r) - 1;
+				int rr = sheet.getEndCellIndex(r);
 				for(int c = ll; c <= rr; ++c) {
 					final NCell cell = sheet.getCell(r,c);
 					if (!isBlank(cell)) { //first no blank row
@@ -344,7 +344,7 @@ public class DataRegionHelper {
 				if (ll < 0) { //empty row
 					continue;
 				}
-				int rr = sheet.getEndCellIndex(r) - 1;
+				int rr = sheet.getEndCellIndex(r);
 				for(int c = ll; c <= rr; ++c) {
 					final NCell cell = sheet.getCell(r, c);
 					if (!isBlank(cell)) { //first no blank row
@@ -363,7 +363,7 @@ public class DataRegionHelper {
 				if (ll < 0) { //empty row
 					continue;
 				}
-				int rr = sheet.getEndCellIndex(r) - 1;
+				int rr = sheet.getEndCellIndex(r);
 				for(int c = ll; c < minc && c <= rr; ++c) {
 					final NCell cell = sheet.getCell(r,c);
 					if (!isBlank(cell)) { //first no blank row
@@ -382,7 +382,7 @@ public class DataRegionHelper {
 				if (ll < 0) { //empty row
 					continue;
 				}
-				int rr =  sheet.getEndCellIndex(r) - 1;
+				int rr =  sheet.getEndCellIndex(r);
 				for(int c = rr; c > maxc && c >= ll; --c) {
 					final NCell cell = sheet.getCell(r, c);
 					if (!isBlank(cell)) { //first no blank row
