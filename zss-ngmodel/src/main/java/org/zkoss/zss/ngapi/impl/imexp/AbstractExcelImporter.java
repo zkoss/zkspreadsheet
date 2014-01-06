@@ -99,14 +99,19 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 	 */
 	protected void importNamedRange(){
 		for (int i=0 ; i<workbook.getNumberOfNames() ; i++){
-			Name namedRange = workbook.getNameAt(i);
-			NName name = null;
-			if (namedRange.getSheetName() != null && namedRange.getSheetName().length()>0){
-				name = book.createName(namedRange.getNameName(), namedRange.getSheetName());
-			}else{
-				name = book.createName(namedRange.getNameName());
+			Name definedName = workbook.getNameAt(i);
+			if (definedName.isFunctionName()){
+				//ignore defined name of functions, they are macro functions that we don't support
+				continue;
 			}
-			name.setRefersToFormula(namedRange.getRefersToFormula());
+			
+			NName namedRange = null;
+			if (definedName.getSheetName() != null && definedName.getSheetName().length()>0){
+				namedRange = book.createName(definedName.getNameName(), definedName.getSheetName());
+			}else{
+				namedRange = book.createName(definedName.getNameName());
+			}
+			namedRange.setRefersToFormula(definedName.getRefersToFormula());
 		}
 	}
 	
@@ -401,11 +406,15 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 	}
 
 	protected NViewAnchor toViewAnchor(Sheet poiSheet, ClientAnchor clientAnchor) {
+		//FIXME
 		int width = getAnchorWidthInPx(clientAnchor, poiSheet);
 		int height = getAnchorHeightInPx(clientAnchor, poiSheet);
 		NViewAnchor viewAnchor = new NViewAnchor(clientAnchor.getRow1(), clientAnchor.getCol1(), width, height);
-		viewAnchor.setXOffset(UnitUtil.emuToPx(clientAnchor.getDx1()));
-		viewAnchor.setYOffset(UnitUtil.emuToPx(clientAnchor.getDy1()));
+		viewAnchor.setXOffset(getXoffsetInPixel(clientAnchor, poiSheet));
+		viewAnchor.setYOffset(getYoffsetInPixel(clientAnchor, poiSheet));
 		return viewAnchor;
 	}
+	
+	abstract protected int getXoffsetInPixel(ClientAnchor clientAnchor, Sheet poiSheet);
+	abstract protected int getYoffsetInPixel(ClientAnchor clientAnchor, Sheet poiSheet);
 }

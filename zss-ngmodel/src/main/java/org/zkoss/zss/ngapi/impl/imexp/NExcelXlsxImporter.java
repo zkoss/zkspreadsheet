@@ -220,6 +220,8 @@ public class NExcelXlsxImporter extends AbstractExcelImporter{
 
 	/**
 	 * reference ChartHepler.prepareCategoryModel() 
+	 * Category normally indicates the values show on X axis.
+	 * Tile indicates the name for each series.
 	 * @param seriesList source chart data
 	 * @param chartData destination chart data
 	 */
@@ -467,5 +469,15 @@ public class NExcelXlsxImporter extends AbstractExcelImporter{
 	    return height;
 	}
 
+
+	@Override
+	protected int getXoffsetInPixel(ClientAnchor clientAnchor, Sheet poiSheet) {
+		return UnitUtil.emuToPx(clientAnchor.getDx1());
+	}
+
+	@Override
+	protected int getYoffsetInPixel(ClientAnchor clientAnchor, Sheet poiSheet) {
+		return UnitUtil.emuToPx(clientAnchor.getDy1());
+	}
 }
  

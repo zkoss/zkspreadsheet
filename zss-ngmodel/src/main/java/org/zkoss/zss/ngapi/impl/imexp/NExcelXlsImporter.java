@@ -18,13 +18,17 @@ package org.zkoss.zss.ngapi.impl.imexp;
 
 import java.io.*;
 import java.util.*;
+
+import org.zkoss.poi.hssf.model.HSSFFormulaParser;
+import org.zkoss.poi.hssf.record.chart.LinkedDataRecord;
 import org.zkoss.poi.hssf.usermodel.*;
 import org.zkoss.poi.hssf.usermodel.HSSFChart.HSSFChartType;
 import org.zkoss.poi.hssf.usermodel.HSSFChart.HSSFSeries;
 import org.zkoss.poi.ss.usermodel.*;
-import org.zkoss.poi.ss.usermodel.charts.CategoryData;
 import org.zkoss.zss.ngmodel.*;
 import org.zkoss.zss.ngmodel.NChart.NChartType;
+import org.zkoss.zss.ngmodel.chart.*;
+
 /**
  * 
  * @author Hawk
@@ -85,33 +89,30 @@ public class NExcelXlsImporter extends AbstractExcelImporter{
 		for (ZssChartX zssChart : charts){
 			NViewAnchor viewAnchor = toViewAnchor(poiSheet, zssChart.getPreferredSize());
 			final HSSFChart hssfChart = (HSSFChart)zssChart.getChartInfo();
-			final HSSFChartType type = hssfChart.getType();
-			final HSSFSeries[] series = hssfChart.getSeries();
-			
+			HSSFChartType type = hssfChart.getType();
 			NChart chart = null;
-			CategoryData categoryData = null;
-			if(type!=null){
+			if (type != null){
 				switch(type) {
-					case Area:
-						chart = sheet.addChart(NChartType.AREA, viewAnchor);
-//						categoryData = new XSSFAreaChartData(xssfChart);
-						break;
-					case Bar:
-						//				model = prepareBarModel(drawer, (HSSFSheet)sheet, series);
-						break;
-					case Line:
-						//				model = prepareLineModel(drawer, (HSSFSheet)sheet, series);
-						break;
-					case Pie:
-						//				model = preparePieModel(drawer, (HSSFSheet)sheet, series);
-						break;
-					case Scatter:
-						//				model = prepareScatterModel(drawer, (HSSFSheet)sheet, series); //ZSS-107
-						break;
-					default:
-						continue;
+				case Area:
+					chart = sheet.addChart(NChartType.AREA, viewAnchor);
+					break;
+				case Bar:
+					//				model = prepareBarModel(drawer, (HSSFSheet)sheet, series);
+//					break;
+				case Line:
+					//				model = prepareLineModel(drawer, (HSSFSheet)sheet, series);
+//					break;
+				case Pie:
+					//				model = preparePieModel(drawer, (HSSFSheet)sheet, series);
+//					break;
+				case Scatter:
+					//				model = prepareScatterModel(drawer, (HSSFSheet)sheet, series); //ZSS-107
+//					break;
+				default:
+					continue;
 				}
 			}
+			importSeries(Arrays.asList(hssfChart.getSeries()), (NGeneralChartData)chart.getData());
 			if (hssfChart.getChartTitle() != null){
 				chart.setTitle(hssfChart.getChartTitle());
 			}
@@ -138,9 +139,6 @@ public class NExcelXlsImporter extends AbstractExcelImporter{
 				if (shape instanceof HSSFChartShape) {
 					new HSSFChartDecoder(helper,(HSSFChartShape)shape).decode();
 					charts.add((HSSFChartShape)shape);
-					//20130903, note by dennis, we didn't fully implement chart in hssf, here, HssfChartShape always return null
-					//this cause getCharts in HSSF drawing is always 0 or 1.
-					//					 _chartXMap.put(((HSSFChartShape)shape).getChart(), (ZssChartX)shape);
 				} else {
 					//log "unprocessed shape"
 				}
@@ -190,51 +188,59 @@ public class NExcelXlsImporter extends AbstractExcelImporter{
 	 */
 	@Override
 	protected int getAnchorWidthInPx(ClientAnchor anchor, Sheet sheet) {
-	    final int l = anchor.getCol1();
+	    final int firstColumn = anchor.getCol1();
 	    final int lfrc = anchor.getDx1();
 	    
 	    //first column
-	    final int lw = XUtils.getWidthAny(sheet,l, CHRACTER_WIDTH);
+	    final int lw = XUtils.getWidthAny(sheet,firstColumn, CHRACTER_WIDTH);
 	    
 	    final int wFirst = lfrc >= 1024 ? 0 : (lw - (int) Math.round(((double)lw) * lfrc / 1024));  
 	    
 	    //last column
-	    final int r = anchor.getCol2();
+	    final int lastColumn = anchor.getCol2();
 	    int wLast = 0;
-	    if (l != r) {
+	    if (firstColumn != lastColumn) {
 		    final int rfrc = anchor.getDx2();
-	    	final int rw = XUtils.getWidthAny(sheet,r, CHRACTER_WIDTH);
+	    	final int rw = XUtils.getWidthAny(sheet,lastColumn, CHRACTER_WIDTH);
 	    	wLast = (int) Math.round(((double)rw ) * rfrc / 1024);  
 	    }
 	    
 	    //in between
 	    int width = wFirst + wLast;
-	    for (int j = l+1; j < r; ++j) {
-	    	width += XUtils.getWidthAny(sheet,j, CHRACTER_WIDTH);
+	    for (int col = firstColumn+1; col < lastColumn; ++col) {
+	    	width += XUtils.getWidthAny(sheet,col, CHRACTER_WIDTH);
 	    }
 
 	    return width;
 	}
 
-	private void prepareCategoryModel(HSSFSheet sheet, HSSFSeries[] series) {
-	
-		for(HSSFSeries ser : series) {
-			// ZSS-140: the series data might be null or unexpected
-			// e.g a chart series has missed cell reference (#REF!)
-			try {
-//				final String title = prepareTitle(drawer, sheet, ser, -1);
-//				final String[] labels = prepareLabels(drawer, sheet, ser);
-//				final Number[] values = prepareValues(drawer, sheet, ser);
-				final String title = null;
-				final String[] labels = null;
-				final Number[] values = null;
-				int length = Math.min(labels.length, values.length); // prevent index out of bound
-				for(int j = 0; j < length; ++j) {
-				}
-			} catch(Exception e) {
-				e.printStackTrace();
-			}
+	private void importSeries(List<HSSFSeries> seriesList, NGeneralChartData chartData) {
+		HSSFSeries firstSeries = null;
+		if ((firstSeries = seriesList.get(0))!=null){
+			chartData.setCategoriesFormula(getTitleFormula(firstSeries.getDataCategoryLabels()));
 		}
+		for (int i =0 ;  i< seriesList.size() ; i++){
+			HSSFSeries sourceSeries = seriesList.get(i);
+			String nameExpression = getTitleFormula(sourceSeries.getDataName());			
+			String xValueExpression = getValueFormula(sourceSeries.getDataValues());
+			NSeries series = chartData.addSeries();
+			series.setFormula(nameExpression, xValueExpression);
+		}
+	}
+	
+
+	private String getValueFormula(LinkedDataRecord dataValues) {
+		if (dataValues == null) {
+			return "0";
+		}
+		return HSSFFormulaParser.toFormulaString((HSSFWorkbook)workbook, dataValues.getFormulaOfLink());
+	}
+
+	private String getTitleFormula(LinkedDataRecord dataCategoryLabels) {
+		if (dataCategoryLabels == null) {
+			return "";
+		}
+		return HSSFFormulaParser.toFormulaString((HSSFWorkbook)workbook, dataCategoryLabels.getFormulaOfLink());
 	}
 	
 	private String getChartTitle(HSSFSheet sheet, ChartInfo chartInfo) {
@@ -244,5 +250,23 @@ public class NExcelXlsImporter extends AbstractExcelImporter{
 //			return title != null ? title :  "pie".equals(type) || "ring".equals(type) ? getFirstSeriesTitle(drawer, sheet, chartInfo) : "";
 //		}
 		return "";
+	}
+
+	@Override
+	protected int getXoffsetInPixel(ClientAnchor anchor, Sheet poiSheet) {
+	    final int firstColumn = anchor.getCol1();
+	    final int firstXoffset = anchor.getDx1();
+	    
+	    final int columnWidthPixel = XUtils.getWidthAny(poiSheet,firstColumn, CHRACTER_WIDTH);
+	    return firstXoffset >= 1024 ? columnWidthPixel : (int) Math.round(((double)columnWidthPixel) * firstXoffset / 1024);  
+	}
+	
+	@Override
+	protected int getYoffsetInPixel(ClientAnchor anchor, Sheet poiSheet) {
+		final int firstRow = anchor.getRow1();
+		final int firstYoffset = anchor.getDy1();
+
+		final int rowHeightPixel = XUtils.getHeightAny(poiSheet,firstRow);
+		return firstYoffset >= 256 ? rowHeightPixel : (int) Math.round(((double)rowHeightPixel) * firstYoffset / 256);  
 	}
 }
