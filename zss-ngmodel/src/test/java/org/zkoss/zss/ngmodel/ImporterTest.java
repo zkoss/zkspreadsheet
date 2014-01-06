@@ -20,14 +20,6 @@ public class ImporterTest extends ImExpTestBase {
 	
 	private NImporter importer; 
 	
-	/**
-	 * For exporter test to specify its exported file to test.
-	 * @param fileUrl
-	 */
-	static public void setFileUnderTest(URL fileUrl){
-		IMPORT_FILE_UNDER_TEST = fileUrl;
-	}
-	
 	
 	@Before
 	public void beforeTest(){

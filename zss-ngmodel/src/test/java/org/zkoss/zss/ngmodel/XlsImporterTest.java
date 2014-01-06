@@ -8,8 +8,8 @@ import org.zkoss.zss.ngmodel.chart.NGeneralChartData;
 
 public class XlsImporterTest extends ImporterTest {
 
-	@BeforeClass
-	static public void setupTestFile(){
+	@Before
+	public void setupTestFile(){
 		IMPORT_FILE_UNDER_TEST = ImporterTest.class.getResource("book/import.xls");
 		CHART_IMPORT_FILE_UNDER_TEST = ImporterTest.class.getResource("book/chart.xls");
 	}

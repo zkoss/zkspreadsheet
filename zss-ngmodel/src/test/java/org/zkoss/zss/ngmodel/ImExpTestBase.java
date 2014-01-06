@@ -22,8 +22,8 @@ import org.zkoss.zss.ngmodel.chart.NGeneralChartData;
  */
 public class ImExpTestBase {
 	
-	protected static URL CHART_IMPORT_FILE_UNDER_TEST = ImporterTest.class.getResource("book/chart.xlsx");
-	protected static URL IMPORT_FILE_UNDER_TEST = ImporterTest.class.getResource("book/import2007.xlsx");
+	protected URL CHART_IMPORT_FILE_UNDER_TEST = ImporterTest.class.getResource("book/chart.xlsx");
+	protected URL IMPORT_FILE_UNDER_TEST = ImporterTest.class.getResource("book/import2007.xlsx");
 	protected static String DEFAULT_BOOK_NAME = "PoiBook";
 
 
@@ -50,8 +50,8 @@ public class ImExpTestBase {
 	
 	protected void sheetNamedRangeTest(NBook book) {
 		assertEquals(2, book.getNumOfName());
-		assertEquals("NamedRange!$B$2:$D$3", book.getNameByName("TestRange1", "NamedRange").getRefersToFormula());
-		assertEquals("NamedRange!$F$2", book.getNameByName("RangeMerged", "NamedRange").getRefersToFormula());
+		assertEquals("NamedRange!$B$2:$D$3", book.getNameByName("TestRange1").getRefersToFormula());
+		assertEquals("NamedRange!$F$2", book.getNameByName("RangeMerged").getRefersToFormula());
 	}
 
 	
