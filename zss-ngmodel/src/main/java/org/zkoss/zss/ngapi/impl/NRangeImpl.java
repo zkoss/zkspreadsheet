@@ -40,7 +40,7 @@ import org.zkoss.zss.ngmodel.NHyperlink.HyperlinkType;
 import org.zkoss.zss.ngmodel.NRow;
 import org.zkoss.zss.ngmodel.NSheet;
 import org.zkoss.zss.ngmodel.impl.DependentCollector;
-import org.zkoss.zss.ngmodel.impl.FormulaCacheClearer;
+import org.zkoss.zss.ngmodel.impl.FormulaCacheCleaner;
 import org.zkoss.zss.ngmodel.impl.RefImpl;
 import org.zkoss.zss.ngmodel.sys.EngineFactory;
 import org.zkoss.zss.ngmodel.sys.dependency.Ref;
@@ -190,7 +190,7 @@ public class NRangeImpl implements NRange {
 		DependentCollector dependentCtx = new DependentCollector();
 		DependentCollector oldDependentCtx = DependentCollector.getCurrent();
 		
-		FormulaCacheClearer oldClearer = FormulaCacheClearer.setCurrent(new FormulaCacheClearer(bookSeries));
+		FormulaCacheCleaner oldClearer = FormulaCacheCleaner.setCurrent(new FormulaCacheCleaner(bookSeries));
 		try{
 			DependentCollector.setCurrent(dependentCtx);
 			
@@ -217,7 +217,7 @@ public class NRangeImpl implements NRange {
 			notifySet.addAll(dependentCtx.getDependents());
 			
 			DependentCollector.setCurrent(oldDependentCtx);
-			FormulaCacheClearer.setCurrent(oldClearer);
+			FormulaCacheCleaner.setCurrent(oldClearer);
 		}
 
 		if(notifySet.size()>0){

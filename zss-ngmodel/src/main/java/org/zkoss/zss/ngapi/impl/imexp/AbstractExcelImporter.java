@@ -29,7 +29,7 @@ import org.zkoss.zss.ngmodel.NCellStyle.FillPattern;
 import org.zkoss.zss.ngmodel.NCellStyle.VerticalAlignment;
 import org.zkoss.zss.ngmodel.NFont.TypeOffset;
 import org.zkoss.zss.ngmodel.NFont.Underline;
-import org.zkoss.zss.ngmodel.impl.FormulaCacheClearer;
+import org.zkoss.zss.ngmodel.impl.FormulaCacheCleaner;
 
 /**
  * Contains common importing behavior for both XLSX and XLS. Spreadsheet {@link NBook} model including following information:
@@ -69,21 +69,19 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 	@Override
 	public NBook imports(InputStream is, String bookName) throws IOException {
 
+		workbook = createPoiBook(is);
+		book = NBooks.createBook(bookName);
+		book.getBookSeries().setAutoFormulaCacheClean(false);//disable temporary to avoid uncesassary clean up when import
 		
-		FormulaCacheClearer old = FormulaCacheClearer.setCurrent(new FormulaCacheClearer());//ignore clear
-		try{
-			workbook = createPoiBook(is);
-			book = NBooks.createBook(bookName);
-			importExternalBookLinks();
+		importExternalBookLinks();
 			
-			for (int i = 0 ; i < workbook.getNumberOfSheets(); i++){
-				importSheet(workbook.getSheetAt(i));
-			}
-			importNamedRange();
-			return book;
-		}finally{
-			FormulaCacheClearer.setCurrent(old);
+		for (int i = 0 ; i < workbook.getNumberOfSheets(); i++){
+			importSheet(workbook.getSheetAt(i));
 		}
+		importNamedRange();
+		
+		book.getBookSeries().setAutoFormulaCacheClean(true);//default enable
+		return book;
 	}
 	
 	abstract protected Workbook createPoiBook(InputStream is) throws IOException;

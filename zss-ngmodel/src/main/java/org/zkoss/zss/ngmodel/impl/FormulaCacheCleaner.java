@@ -11,45 +11,31 @@ import org.zkoss.zss.ngmodel.sys.dependency.Ref;
  * @author dennis
  *
  */
-public class FormulaCacheClearer {
+public class FormulaCacheCleaner {
 
-	static ThreadLocal<FormulaCacheClearer>  current = new ThreadLocal<FormulaCacheClearer>();
+	static ThreadLocal<FormulaCacheCleaner>  current = new ThreadLocal<FormulaCacheCleaner>();
 	
 	final private NBookSeries bookSeries;
-	final private boolean ignoreClear;
 	
-	public FormulaCacheClearer(){
-		this.bookSeries = null;
-		this.ignoreClear = true;
-	}
-	public FormulaCacheClearer(NBookSeries bookSeries){
+	public FormulaCacheCleaner(NBookSeries bookSeries){
 		this.bookSeries = bookSeries;
-		this.ignoreClear = false;
 	}
 
-	public static FormulaCacheClearer setCurrent(FormulaCacheClearer ctx){
-		FormulaCacheClearer old = current.get();
+	public static FormulaCacheCleaner setCurrent(FormulaCacheCleaner ctx){
+		FormulaCacheCleaner old = current.get();
 		current.set(ctx);
 		return old;
 	}
 	
-	public static FormulaCacheClearer getCurrent(){
+	public static FormulaCacheCleaner getCurrent(){
 		return current.get();
 	}
 	
 	public void clear(Set<Ref> dependents){
-		if(ignoreClear)
-			return;
 		new FormulaCacheClearHelper(bookSeries).clear(dependents);
-	}
-	
-	public boolean isIgnore(){
-		return ignoreClear;
 	}
 
 	public void clearByPrecedent(Ref precedent) {
-		if(ignoreClear)
-			return;
 		DependencyTable table = ((AbstractBookSeriesAdv)bookSeries).getDependencyTable();
 		Set<Ref> dependents = table.getDependents(precedent);
 		if(dependents.size()>0){

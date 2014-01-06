@@ -21,7 +21,7 @@ import org.zkoss.poi.xssf.usermodel.XSSFFormulaEvaluator;
 import org.zkoss.poi.xssf.usermodel.XSSFRow;
 import org.zkoss.poi.xssf.usermodel.XSSFSheet;
 import org.zkoss.poi.xssf.usermodel.XSSFWorkbook;
-import org.zkoss.zss.ngmodel.impl.FormulaCacheClearer;
+import org.zkoss.zss.ngmodel.impl.FormulaCacheCleaner;
 import org.zkoss.zss.ngmodel.impl.TreeMapDataGridImpl;
 import org.zkoss.zss.ngmodel.util.AreaReference;
 import org.zkoss.zss.ngmodel.util.CellReference;
@@ -55,7 +55,6 @@ public class FormulaPerformanceTest {
 	public void testNGModel() {
 		System.out.println("=== NG Model ===");
 		useNGDataGrid = 0;
-		FormulaCacheClearer.setCurrent(new FormulaCacheClearer());//don't update
 		testPerformanceAndMemory(true);
 	}
 	
@@ -113,6 +112,7 @@ public class FormulaPerformanceTest {
 	private Object createModel(boolean ngmodel) {
 		if(ngmodel) {
 			NBook book = NBooks.createBook("Book1");
+			book.getBookSeries().setAutoFormulaCacheClean(false);//in performance, we don't allow to clear automatically
 			NSheet sheet = book.createSheet("Sheet1");
 			if(useNGDataGrid==1){
 				sheet.setDataGrid(new DefaultDataGrid());

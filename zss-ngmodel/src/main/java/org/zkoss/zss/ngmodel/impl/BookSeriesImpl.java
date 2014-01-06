@@ -51,6 +51,11 @@ public class BookSeriesImpl extends AbstractBookSeriesAdv {
 		((DependencyTableAdv)dependencyTable).setBookSeries(this);
 		for(AbstractBookAdv book:books){
 			this.books.put(book.getBookName(), book);
+			
+			if(book.getBookSeries().isAutoFormulaCacheClean()){//if any book auto
+				autoFormulaCacheClean = true;
+			}
+			
 			((DependencyTableAdv) dependencyTable)
 					.merge((DependencyTableAdv) ((AbstractBookSeriesAdv) book
 							.getBookSeries()).getDependencyTable());
