@@ -21,7 +21,6 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.locks.ReadWriteLock;
 
 import org.zkoss.poi.ss.formula.eval.NotImplementedException;
@@ -40,10 +39,10 @@ import org.zkoss.zss.ngmodel.NHyperlink;
 import org.zkoss.zss.ngmodel.NHyperlink.HyperlinkType;
 import org.zkoss.zss.ngmodel.NRow;
 import org.zkoss.zss.ngmodel.NSheet;
-import org.zkoss.zss.ngmodel.impl.AbstractBookSeriesAdv;
+import org.zkoss.zss.ngmodel.impl.DependentCollector;
+import org.zkoss.zss.ngmodel.impl.FormulaCacheClearer;
 import org.zkoss.zss.ngmodel.impl.RefImpl;
 import org.zkoss.zss.ngmodel.sys.EngineFactory;
-import org.zkoss.zss.ngmodel.sys.dependency.DependencyTable;
 import org.zkoss.zss.ngmodel.sys.dependency.Ref;
 import org.zkoss.zss.ngmodel.sys.format.FormatContext;
 import org.zkoss.zss.ngmodel.sys.format.FormatEngine;
@@ -115,21 +114,7 @@ public class NRangeImpl implements NRange {
 
 		@Override
 		public Object invoke() {
-			travelCells(visitor,false);
-			return null;
-		}
-	}
-	
-	private class FirstCellVisitorTask extends ReadWriteTask{
-		private CellVisitor visitor;
-		
-		private FirstCellVisitorTask(CellVisitor visitor){
-			this.visitor = visitor;
-		}
-
-		@Override
-		public Object invoke() {
-			travelCells(visitor,true);
+			travelCells(visitor);
 			return null;
 		}
 	}
@@ -177,12 +162,18 @@ public class NRangeImpl implements NRange {
 	static abstract class CellVisitor {
 		/**
 		 * @param cell
-		 * @return true if this cell has been updated after visit
+		 * @return true if the cell has updated after visit
 		 */
 		abstract boolean visit(NCell cell);
-
+		
 		boolean isStopVisit(){
 			return false;
+		}
+	}
+	static abstract class OneCellVisitor extends CellVisitor{
+		@Override
+		boolean isStopVisit(){
+			return true;
 		}
 	}
 	
@@ -191,50 +182,49 @@ public class NRangeImpl implements NRange {
 	 * travels all the cells in this range
 	 * @param visitor
 	 */
-	private void travelCells(CellVisitor visitor,boolean firstOnly) {
-		LinkedHashSet<Ref> dependentSet = new LinkedHashSet<Ref>();
+	private void travelCells(CellVisitor visitor) {
 		LinkedHashSet<Ref> notifySet = new LinkedHashSet<Ref>();
 
 		NBookSeries bookSeries = getBookSeries();
-		DependencyTable dependencyTable = ((AbstractBookSeriesAdv) bookSeries)
-				.getDependencyTable();
 
-		for (EffectedRegion r : rangeRefs) {
-			String bookName = r._sheet.getBook().getBookName();
-			String sheetName = r._sheet.getSheetName();
-			CellRegion region = r.region;
-			loop1:
-			for (int i = region.row; i <= region.lastRow; i++) {
-				for (int j = region.column; j <= region.lastColumn; j++) {
-					NCell cell = r._sheet.getCell(i, j);
-					boolean update = visitor.visit(cell);
-					if (update) {
-						Ref ref = new RefImpl(bookName, sheetName, i, j);
-						notifySet.add(ref);
-
-						Set<Ref> dependent = dependencyTable.getDependents(ref);
-						notifySet.addAll(dependent);
-						dependentSet.addAll(dependent);
-					}
-					if(firstOnly){
-						break loop1;
-					}
-					if(visitor.isStopVisit()){
-						break loop1;
+		DependentCollector dependentCtx = new DependentCollector();
+		DependentCollector oldDependentCtx = DependentCollector.getCurrent();
+		
+		FormulaCacheClearer oldClearer = FormulaCacheClearer.setCurrent(new FormulaCacheClearer(bookSeries));
+		try{
+			DependentCollector.setCurrent(dependentCtx);
+			
+			for (EffectedRegion r : rangeRefs) {
+				String bookName = r._sheet.getBook().getBookName();
+				String sheetName = r._sheet.getSheetName();
+				CellRegion region = r.region;
+				loop1:
+				for (int i = region.row; i <= region.lastRow; i++) {
+					for (int j = region.column; j <= region.lastColumn; j++) {
+						NCell cell = r._sheet.getCell(i, j);
+						boolean update = visitor.visit(cell);
+						if(update){
+							Ref ref = new RefImpl(bookName, sheetName, i, j);
+							notifySet.add(ref);
+						}
+						if(visitor.isStopVisit()){
+							break loop1;
+						}
 					}
 				}
 			}
+		}finally{
+			notifySet.addAll(dependentCtx.getDependents());
+			
+			DependentCollector.setCurrent(oldDependentCtx);
+			FormulaCacheClearer.setCurrent(oldClearer);
 		}
 
-		handleRefDependent(bookSeries,dependentSet);
-		handleRefNotifyContentChange(bookSeries,notifySet);
+		if(notifySet.size()>0){
+			handleRefNotifyContentChange(bookSeries,notifySet);
+		}
 	}
-	
-	private void handleRefDependent(NBookSeries bookSeries,HashSet<Ref> dependentSet) {
-		// clear formula cache
-		new RefDependentHelper(bookSeries).handle(dependentSet);
-	}
-	
+
 	private void handleRefNotifyContentChange(NBookSeries bookSeries,HashSet<Ref> notifySet) {
 		// notify changes
 		new RefNotifyContentChangeHelper(bookSeries).handle(notifySet);
@@ -258,11 +248,11 @@ public class NRangeImpl implements NRange {
 		new CellVisitorTask(new CellVisitor() {
 			public boolean visit(NCell cell) {
 				Object cellval = cell.getValue();
-				if (euqlas(cellval, value)) {
-					return false;
+				if (!euqlas(cellval, value)) {
+					cell.setValue(value);
+					return true;
 				}
-				cell.setValue(value);
-				return true;
+				return false;
 			}
 		}).doInWriteLock(getLock());
 	}
@@ -271,11 +261,11 @@ public class NRangeImpl implements NRange {
 	public void clearContents() {
 		new CellVisitorTask(new CellVisitor() {
 			public boolean visit(NCell cell) {
-				if (cell.isNull()) {
+				if (!cell.isNull()) {
+					cell.setHyperlink(null);
+					cell.clearValue();
 					return false;
 				}
-				cell.setHyperlink(null);
-				cell.clearValue();
 				return true;
 			}
 		}).doInWriteLock(getLock());
@@ -353,12 +343,12 @@ public class NRangeImpl implements NRange {
 	@Override
 	public String getEditText() {
 		final ResultWrap<String> r = new ResultWrap<String>();
-		new FirstCellVisitorTask(new CellVisitor() {
+		new CellVisitorTask(new OneCellVisitor() {
 			@Override
 			public boolean visit(NCell cell) {
 				FormatEngine fe = EngineFactory.getInstance().createFormatEngine();
 				r.set(fe.getEditText(cell, new FormatContext(Locales.getCurrent())));		
-				return false;//no update
+				return false;
 			}
 		}).doInReadLock(getLock());
 		return r.get();
@@ -636,12 +626,12 @@ public class NRangeImpl implements NRange {
 	@Override
 	public String getCellFormatText() {
 		final ResultWrap<String> r = new ResultWrap<String>();
-		new FirstCellVisitorTask(new CellVisitor() {
+		new CellVisitorTask(new OneCellVisitor() {
 			@Override
 			public boolean visit(NCell cell) {
 				FormatEngine fe = EngineFactory.getInstance().createFormatEngine();
 				r.set(fe.format(cell, new FormatContext(Locales.getCurrent())).getText());		
-				return false;//no update
+				return false;
 			}
 		}).doInReadLock(getLock());
 		return r.get();
@@ -662,7 +652,7 @@ public class NRangeImpl implements NRange {
 	public NDataValidation validate(final String editText) {
 		final ResultWrap<NDataValidation> retrunVal = new ResultWrap<NDataValidation>();
 		new CellVisitorTask(new CellVisitor() {
-			public boolean visit(NCell cell) {
+			boolean visit(NCell cell) {
 				NDataValidation validation = getSheet().getDataValidation(cell.getRowIndex(), cell.getColumnIndex());
 				if(validation!=null){
 					if(!new DataValidationHelper(validation).validate(editText,cell.getCellStyle().getDataFormat())){
@@ -671,10 +661,9 @@ public class NRangeImpl implements NRange {
 				}
 				return false;
 			}
-
+			
 			@Override
-			boolean isStopVisit() {
-				//break visit if there is any validation
+			boolean isStopVisit(){
 				return retrunVal.get()!=null;
 			}
 			

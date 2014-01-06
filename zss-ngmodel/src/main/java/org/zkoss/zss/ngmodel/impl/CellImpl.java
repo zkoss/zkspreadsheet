@@ -19,11 +19,13 @@ package org.zkoss.zss.ngmodel.impl;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Set;
 
 import org.zkoss.zss.ngmodel.CellRegion;
 import org.zkoss.zss.ngmodel.ErrorValue;
 import org.zkoss.zss.ngmodel.InvalidateModelOpException;
 import org.zkoss.zss.ngmodel.InvalidateModelValueException;
+import org.zkoss.zss.ngmodel.NBookSeries;
 import org.zkoss.zss.ngmodel.NCellStyle;
 import org.zkoss.zss.ngmodel.NColumnArray;
 import org.zkoss.zss.ngmodel.NComment;
@@ -34,6 +36,7 @@ import org.zkoss.zss.ngmodel.NRichText;
 import org.zkoss.zss.ngmodel.NSheet;
 import org.zkoss.zss.ngmodel.NCell.CellType;
 import org.zkoss.zss.ngmodel.sys.EngineFactory;
+import org.zkoss.zss.ngmodel.sys.dependency.DependencyTable;
 import org.zkoss.zss.ngmodel.sys.dependency.Ref;
 import org.zkoss.zss.ngmodel.sys.formula.EvaluationResult;
 import org.zkoss.zss.ngmodel.sys.formula.EvaluationResult.ResultType;
@@ -234,8 +237,8 @@ public class CellImpl extends AbstractCellAdv {
 	}
 	
 	private void clearFormulaDependency(){
-		Ref ref = new RefImpl(this);
-			((AbstractBookSeriesAdv) getSheet().getBook().getBookSeries())
+		Ref ref = getRef();
+		((AbstractBookSeriesAdv) getSheet().getBook().getBookSeries())
 					.getDependencyTable().clearDependents(ref);
 	}
 
@@ -281,6 +284,10 @@ public class CellImpl extends AbstractCellAdv {
 		}else{
 			this.localValue = value!=null&&value.getType()==CellType.BLANK?null:value;
 		}
+		
+		//clear the dependent's formula result cache
+		NBookSeries bookSeries = getSheet().getBook().getBookSeries();
+		DependentUpdateUtil.handleDependentUpdate(bookSeries,getRef());
 	}
 
 	

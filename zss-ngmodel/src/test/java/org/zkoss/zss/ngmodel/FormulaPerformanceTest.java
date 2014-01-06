@@ -21,6 +21,7 @@ import org.zkoss.poi.xssf.usermodel.XSSFFormulaEvaluator;
 import org.zkoss.poi.xssf.usermodel.XSSFRow;
 import org.zkoss.poi.xssf.usermodel.XSSFSheet;
 import org.zkoss.poi.xssf.usermodel.XSSFWorkbook;
+import org.zkoss.zss.ngmodel.impl.FormulaCacheClearer;
 import org.zkoss.zss.ngmodel.impl.TreeMapDataGridImpl;
 import org.zkoss.zss.ngmodel.util.AreaReference;
 import org.zkoss.zss.ngmodel.util.CellReference;
@@ -54,6 +55,7 @@ public class FormulaPerformanceTest {
 	public void testNGModel() {
 		System.out.println("=== NG Model ===");
 		useNGDataGrid = 0;
+		FormulaCacheClearer.setCurrent(new FormulaCacheClearer());//don't update
 		testPerformanceAndMemory(true);
 	}
 	
@@ -161,7 +163,7 @@ public class FormulaPerformanceTest {
 				double expected = firstColumnValue;
 				for(int c = 1; c < COL_COUNT; ++c) {
 					NCell cell = sheet.getCell(r, c);
-					cell.clearFormulaResultCache();
+					cell.clearFormulaResultCache(); // cell clear it's cache automatically
 					double v = cell.getNumberValue();
 					Assert.assertEquals(expected, v, 0.0000001);
 					expected *= 2.0;
@@ -251,11 +253,11 @@ public class FormulaPerformanceTest {
 
 		sheet.getCell(0, 0).setNumberValue(1.0);
 		Assert.assertEquals(6.0, sheet.getCell(0, 1).getNumberValue(), EPSILON);
-		sheet.getCell(0, 1).clearFormulaResultCache();
+//		sheet.getCell(0, 1).clearFormulaResultCache();// cell clear it's cache automatically
 		Assert.assertEquals(2.0, sheet.getCell(0, 1).getNumberValue(), EPSILON);
 
 		sheet.getCell(0, 0).clearValue();
-		sheet.getCell(0, 1).clearFormulaResultCache();
+//		sheet.getCell(0, 1).clearFormulaResultCache();// cell clear it's cache automatically
 		Assert.assertEquals(0.0, sheet.getCell(0, 1).getNumberValue(), EPSILON);
 	}
 }

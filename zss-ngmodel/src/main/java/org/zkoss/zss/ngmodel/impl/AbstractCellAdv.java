@@ -30,6 +30,7 @@ import org.zkoss.zss.ngmodel.NHyperlink;
 import org.zkoss.zss.ngmodel.NRichText;
 import org.zkoss.zss.ngmodel.NSheet;
 import org.zkoss.zss.ngmodel.sys.EngineFactory;
+import org.zkoss.zss.ngmodel.sys.dependency.Ref;
 import org.zkoss.zss.ngmodel.sys.formula.FormulaEngine;
 import org.zkoss.zss.ngmodel.sys.formula.FormulaExpression;
 import org.zkoss.zss.ngmodel.sys.formula.FormulaParseContext;
@@ -174,10 +175,14 @@ public abstract class AbstractCellAdv implements NCell,LinkedModelObject,Seriali
 		
 		//this will create new dependency
 		FormulaEngine fe = EngineFactory.getInstance().createFormulaEngine();
-		FormulaExpression expr = fe.parse(formula, new FormulaParseContext(this ,new RefImpl(this)));
+		FormulaExpression expr = fe.parse(formula, new FormulaParseContext(this ,getRef()));
 		setValue(expr);
 		//TODO what if get exception when set value form data grid? 
 		//show we rollback the old dependency? (we called clearValueForSet(true); to clear old dependency)
+	}
+	
+	protected Ref getRef(){
+		return new RefImpl(this);
 	}
 
 	@Override

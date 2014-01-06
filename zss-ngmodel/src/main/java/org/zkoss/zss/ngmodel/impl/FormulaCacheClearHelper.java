@@ -1,6 +1,6 @@
-package org.zkoss.zss.ngapi.impl;
+package org.zkoss.zss.ngmodel.impl;
 
-import java.util.HashSet;
+import java.util.Set;
 
 import org.zkoss.zss.ngmodel.NBook;
 import org.zkoss.zss.ngmodel.NBookSeries;
@@ -13,16 +13,16 @@ import org.zkoss.zss.ngmodel.sys.dependency.ObjectRef.ObjectType;
 import org.zkoss.zss.ngmodel.sys.dependency.Ref;
 import org.zkoss.zss.ngmodel.sys.dependency.Ref.RefType;
 
-/*package*/ class RefDependentHelper {
+/*package*/ class FormulaCacheClearHelper {
 	final NBookSeries bookSeries;
-	public RefDependentHelper(NBookSeries bookSeries) {
+	public FormulaCacheClearHelper(NBookSeries bookSeries) {
 		this.bookSeries = bookSeries;
 	}
 
-	public void handle(HashSet<Ref> dependentSet) {
+	public void clear(Set<Ref> dependents) {
 		// clear formula cache
-		for (Ref dependent : dependentSet) {
-			System.out.println(">>> Dependent "+dependent);
+		for (Ref dependent : dependents) {
+			System.out.println(">>> Clear "+dependent);
 			//clear the dependent's formula cache since the precedent is changed.
 			if (dependent.getType() == RefType.CELL) {
 				handleCellRef(dependent);
