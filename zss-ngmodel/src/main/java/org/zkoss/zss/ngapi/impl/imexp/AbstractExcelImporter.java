@@ -95,21 +95,22 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 	
 	/**
 	 * Name should be created after sheets created.
-	 * A special defined name, _xlnm._FilterDatabase, stores the selected cells for auto-filter 
+	 * A special defined name, _xlnm._FilterDatabase (xlsx) or _FilterDatabase (xls), stores the selected cells for auto-filter 
 	 */
 	protected void importNamedRange(){
 		for (int i=0 ; i<workbook.getNumberOfNames() ; i++){
 			Name definedName = workbook.getNameAt(i);
-			if (definedName.isFunctionName()){
-				//ignore defined name of functions, they are macro functions that we don't support
+			if (definedName.isFunctionName() //ignore defined name of functions, they are macro functions that we don't support 
+				|| definedName.getRefersToFormula()==null){ //ignore defined name with null formula, don't know when will have this case
+				
 				continue;
 			}
 			
 			NName namedRange = null;
-			if (definedName.getSheetName() != null && definedName.getSheetName().length()>0){
-				namedRange = book.createName(definedName.getNameName(), definedName.getSheetName());
-			}else{
+			if (definedName.getSheetIndex() == -1){//workbook scope
 				namedRange = book.createName(definedName.getNameName());
+			}else{
+				namedRange = book.createName(definedName.getNameName(), definedName.getSheetName());
 			}
 			namedRange.setRefersToFormula(definedName.getRefersToFormula());
 		}
@@ -350,8 +351,18 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 	//TODO more error codes
 	protected ErrorValue convertErrorCode(byte errorCellValue) {
 		switch (errorCellValue){
+			case ErrorConstants.ERROR_DIV_0:
+				return new ErrorValue(ErrorValue.ERROR_DIV_0);
+			case ErrorConstants.ERROR_NA:
+				return new ErrorValue(ErrorValue.ERROR_NA);
 			case ErrorConstants.ERROR_NAME:
 				return new ErrorValue(ErrorValue.INVALID_NAME);
+			case ErrorConstants.ERROR_NULL:
+				return new ErrorValue(ErrorValue.ERROR_NULL);
+			case ErrorConstants.ERROR_NUM:
+				return new ErrorValue(ErrorValue.ERROR_NUM);
+			case ErrorConstants.ERROR_REF:
+				return new ErrorValue(ErrorValue.ERROR_REF);
 			case ErrorConstants.ERROR_VALUE:
 				return new ErrorValue(ErrorValue.INVALID_VALUE);
 			default:
