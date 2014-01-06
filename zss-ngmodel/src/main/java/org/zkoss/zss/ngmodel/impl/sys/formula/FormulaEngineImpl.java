@@ -37,6 +37,7 @@ import org.zkoss.poi.ss.formula.eval.BlankEval;
 import org.zkoss.poi.ss.formula.eval.BoolEval;
 import org.zkoss.poi.ss.formula.eval.ErrorEval;
 import org.zkoss.poi.ss.formula.eval.EvaluationException;
+import org.zkoss.poi.ss.formula.eval.NotImplementedException;
 import org.zkoss.poi.ss.formula.eval.NumberEval;
 import org.zkoss.poi.ss.formula.eval.RefEval;
 import org.zkoss.poi.ss.formula.eval.StringEval;
@@ -245,7 +246,12 @@ public class FormulaEngineImpl implements FormulaEngine {
 				setXelContext(oldXelCtx);
 			}
 
+		} catch(NotImplementedException e) {
+			logger.log(Level.INFO, e.getMessage() + " when eval " + expr.getFormulaString());
+			result = new EvaluationResultImpl(ResultType.ERROR, new ErrorValue(ErrorValue.INVALID_NAME));
 		} catch(FormulaParseException e) {
+			// we skip evaluation if formula has parsing error
+			// so if still occurring formula parsing exception, it should be a bug 
 			logger.log(Level.SEVERE, e.getMessage() + " when eval " + expr.getFormulaString());
 			result = new EvaluationResultImpl(ResultType.ERROR, new ErrorValue(ErrorValue.INVALID_FORMULA));
 		} catch(Exception e) {

@@ -108,13 +108,9 @@ public class EvalSheet implements EvaluationSheet {
 			ErrorValue errorValue = cell.getErrorValue();
 			switch(errorValue.getCode()) {
 				case ErrorValue.INVALID_FORMULA:
-					return FormulaError.NA.getCode(); // FIXME
-				case ErrorValue.INVALID_NAME:
-					return FormulaError.NAME.getCode();
-				case ErrorValue.INVALID_VALUE:
-					return FormulaError.VALUE.getCode();
+					return FormulaError.NA.getCode(); //TODO zss 3.5 this value is not in zpoi
 				default:
-					return FormulaError.VALUE.getCode(); // FIXME
+					return errorValue.getCode();
 			}
 		}
 
