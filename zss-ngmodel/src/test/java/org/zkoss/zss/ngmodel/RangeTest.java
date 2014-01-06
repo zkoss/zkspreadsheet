@@ -198,7 +198,7 @@ public class RangeTest {
 		Assert.assertEquals(2, a0counter.intValue());
 		Assert.assertEquals(0, unknowcounter.intValue());
 		
-		NRanges.range(sheet,0,0).setEditText("777");
+		NRanges.range(sheet,0,0).setEditText("777");//same value should just ignore change and return
 		Assert.assertEquals(2, b0counter.intValue());
 		Assert.assertEquals(2, a0counter.intValue());
 		Assert.assertEquals(0, unknowcounter.intValue());

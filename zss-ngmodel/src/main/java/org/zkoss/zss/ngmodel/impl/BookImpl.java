@@ -26,6 +26,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.zkoss.lang.Objects;
@@ -44,6 +45,8 @@ import org.zkoss.zss.ngmodel.NName;
 import org.zkoss.zss.ngmodel.NRow;
 import org.zkoss.zss.ngmodel.NSheet;
 import org.zkoss.zss.ngmodel.sys.EngineFactory;
+import org.zkoss.zss.ngmodel.sys.dependency.DependencyTable;
+import org.zkoss.zss.ngmodel.sys.dependency.Ref;
 import org.zkoss.zss.ngmodel.sys.formula.EvaluationContributor;
 import org.zkoss.zss.ngmodel.sys.formula.EvaluationContributorContainer;
 import org.zkoss.zss.ngmodel.sys.formula.FormulaClearContext;
@@ -219,7 +222,7 @@ public class BookImpl extends AbstractBookAdv{
 		if(src instanceof AbstractSheetAdv){
 			((AbstractSheetAdv)src).copyTo(sheet);
 		}
-		((AbstractSheetAdv)sheet).setSheetName(name);
+		sheet.setSheetName(name);
 		sheets.add(sheet);
 		
 		//create formula cache for any sheet, sheet name, position change
@@ -227,7 +230,14 @@ public class BookImpl extends AbstractBookAdv{
 		
 		sendModelInternalEvent(createModelInternalEvent(ModelInternalEvents.ON_SHEET_ADDED, 
 				ModelEvents.PARAM_SHEET, sheet));
+
+		DependentUpdateUtil.handleDependentUpdate(getBookSeries(),new RefImpl(sheet));
+
 		return sheet;
+	}
+
+	protected Ref getRef() {
+		return new RefImpl(this);
 	}
 
 	@Override

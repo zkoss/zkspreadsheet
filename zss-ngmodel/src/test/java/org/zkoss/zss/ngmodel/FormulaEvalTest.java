@@ -242,23 +242,14 @@ public class FormulaEvalTest {
 		Assert.assertEquals(0D, cell.getValue());
 		
 		sheet2.getCell(0, 0).setValue("ABC");
-		Assert.assertEquals(CellType.NUMBER, cell.getFormulaResultType());
-		Assert.assertEquals(0D, cell.getValue());
-		cell.clearFormulaResultCache();
 		Assert.assertEquals(CellType.STRING, cell.getFormulaResultType());
 		Assert.assertEquals("ABC", cell.getValue());
 		
 		sheet2.getCell(0, 0).setValue(Boolean.TRUE);
-		Assert.assertEquals(CellType.STRING, cell.getFormulaResultType());
-		Assert.assertEquals("ABC", cell.getValue());
-		cell.clearFormulaResultCache();
 		Assert.assertEquals(CellType.BOOLEAN, cell.getFormulaResultType());
 		Assert.assertEquals(true, cell.getValue());
 		
 		sheet2.getCell(0, 0).setValue(123);
-		Assert.assertEquals(CellType.BOOLEAN, cell.getFormulaResultType());
-		Assert.assertEquals(true, cell.getValue());
-		cell.clearFormulaResultCache();
 		Assert.assertEquals(CellType.NUMBER, cell.getFormulaResultType());
 		Assert.assertEquals(123D, cell.getValue());
 		
@@ -352,18 +343,10 @@ public class FormulaEvalTest {
 		//should clear all for any sheet state change.
 		
 		Assert.assertEquals(CellType.FORMULA, cell.getType());
-		Assert.assertEquals(CellType.ERROR, cell.getFormulaResultType());
-		Assert.assertEquals("#REF!", cell.getErrorValue().getErrorString());
-		cell.clearFormulaResultCache();
-		Assert.assertEquals(CellType.FORMULA, cell.getType());
 		Assert.assertEquals(CellType.NUMBER, cell.getFormulaResultType());
 		Assert.assertEquals(0D, cell.getValue());
 		
-
 		sheet2.getCell(0, 0).setValue("ABC");
-		Assert.assertEquals(CellType.NUMBER, cell.getFormulaResultType());
-		Assert.assertEquals(0D, cell.getValue());
-		cell.clearFormulaResultCache();
 		Assert.assertEquals(CellType.STRING, cell.getFormulaResultType());
 		Assert.assertEquals("ABC", cell.getValue());
 	}
