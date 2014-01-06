@@ -222,6 +222,14 @@ public class FormulaEngineImpl implements FormulaEngine {
 					bookNames.add(bookName);
 					evaluators.add(we);
 					evalCtxMap.put(bookName, new EvalContext(evalBook, we));
+
+					// aggregate built-in functions and user defined functions
+					NFunctionResolver resolver = NFunctionResolverFactory.getFunctionResolver();
+					UDFFinder zkUDFF = resolver.getUDFFinder(); // ZK user defined function finder
+					if(zkUDFF != null) {
+						IndexedUDFFinder bookUDFF = (IndexedUDFFinder)evalBook.getUDFFinder(); // book contained built-in function finder
+						bookUDFF.insert(0, zkUDFF);
+					}
 				}
 				CollaboratingWorkbooksEnvironment.setup(bookNames.toArray(new String[0]),
 						evaluators.toArray(new WorkbookEvaluator[0]));
@@ -342,13 +350,6 @@ public class FormulaEngineImpl implements FormulaEngine {
 
 			// create function resolver
 			NFunctionResolver resolver = NFunctionResolverFactory.getFunctionResolver();
-
-			// aggregate built-in functions and user defined functions
-			UDFFinder zkUDFF = resolver.getUDFFinder(); // ZK user defined function finder
-			if(zkUDFF != null) {
-				IndexedUDFFinder bookUDFF = (IndexedUDFFinder)evalBook.getUDFFinder(); // book contained built-in function finder
-				bookUDFF.insert(0, zkUDFF);
-			}
 
 			// apply POI dependency tracker for defined name resolving
 			DependencyTracker tracker = resolver.getDependencyTracker();
