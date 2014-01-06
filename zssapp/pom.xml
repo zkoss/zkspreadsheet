@@ -96,7 +96,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.zkoss.zss</groupId>
-			<artifactId>zssex</artifactId>
+			<artifactId>zss</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<!-- ZSS EE dependencies 
@@ -116,11 +116,6 @@
 			<version>${project.version}</version>
 		</dependency>
 		 -->
-		<dependency>
-			<groupId>org.zkoss.zss</groupId>
-			<artifactId>zsspdf</artifactId>
-			<version>${project.version}</version>
-		</dependency>
 	</dependencies>
   <build>
 		<sourceDirectory>${project.basedir}/src/</sourceDirectory>
