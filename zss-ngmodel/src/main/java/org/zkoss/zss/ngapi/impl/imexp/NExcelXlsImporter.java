@@ -155,26 +155,20 @@ public class NExcelXlsImporter extends AbstractExcelImporter{
 	 */
 	@Override
 	protected int getAnchorHeightInPx(ClientAnchor anchor, Sheet poiSheet) {
-	    final int t = anchor.getRow1();
-	    final int tfrc = anchor.getDy1();
+	    final int firstRow = anchor.getRow1();
+	    final int firstYoffset = anchor.getDy1();
+	    final int firstRowHeight = XUtils.getHeightAny(poiSheet,firstRow);
+	    int offsetInFirstRow = (int) Math.round(((double)firstRowHeight) * firstYoffset / 256);
+	    final int anchorHeightInFirstRow = firstYoffset >= 256 ? 0 : (firstRowHeight - offsetInFirstRow);  
 	    
-	    //first row
-	    final int th = XUtils.getHeightAny(poiSheet,t);
-	    final int hFirst = tfrc >= 256 ? 0 : (th - (int) Math.round(((double)th) * tfrc / 256));  
-	    
-	    //last row
-	    final int b = anchor.getRow2();
-	    int hLast = 0;
-	    if (t != b) {
-		    final int bfrc = anchor.getDy2();
-	    	final int bh = XUtils.getHeightAny(poiSheet,b);
-	    	hLast = (int) Math.round(((double)bh) * bfrc / 256);  
-	    }
-	    
-	    //in between
-	    int height = hFirst + hLast;
-	    for (int j = t+1; j < b; ++j) {
-	    	height += XUtils.getHeightAny(poiSheet,j);
+	    final int lastRow = anchor.getRow2();
+	    final int lastRowHeight = XUtils.getHeightAny(poiSheet,lastRow);
+	    int anchorHeightInLastRow = (int) Math.round(((double)lastRowHeight) * anchor.getDy2() / 256);  
+
+	    int height = lastRow == firstRow ? anchorHeightInLastRow - offsetInFirstRow : anchorHeightInFirstRow + anchorHeightInLastRow ;
+	    //add inter-rows height
+	    for (int row = firstRow+1; row < lastRow; ++row) {
+	    	height += XUtils.getHeightAny(poiSheet,row);
 	    }
 	    
 	    return height;
@@ -189,25 +183,19 @@ public class NExcelXlsImporter extends AbstractExcelImporter{
 	@Override
 	protected int getAnchorWidthInPx(ClientAnchor anchor, Sheet sheet) {
 	    final int firstColumn = anchor.getCol1();
-	    final int lfrc = anchor.getDx1();
+	    final int firstXoffset = anchor.getDx1();
+	    final int firstColumnWidthPixel = XUtils.getWidthAny(sheet,firstColumn, CHRACTER_WIDTH);
+	    int offsetInFirstColumn = (int) Math.round(((double)firstColumnWidthPixel) * firstXoffset / 1024);
+	    final int anchorWidthInFirstColumn = firstXoffset >= 1024 ? 0 : (firstColumnWidthPixel - offsetInFirstColumn);  
 	    
-	    //first column
-	    final int lw = XUtils.getWidthAny(sheet,firstColumn, CHRACTER_WIDTH);
-	    
-	    final int wFirst = lfrc >= 1024 ? 0 : (lw - (int) Math.round(((double)lw) * lfrc / 1024));  
-	    
-	    //last column
 	    final int lastColumn = anchor.getCol2();
-	    int wLast = 0;
-	    if (firstColumn != lastColumn) {
-		    final int rfrc = anchor.getDx2();
-	    	final int rw = XUtils.getWidthAny(sheet,lastColumn, CHRACTER_WIDTH);
-	    	wLast = (int) Math.round(((double)rw ) * rfrc / 1024);  
-	    }
+	    final int lastColumnWidth = XUtils.getWidthAny(sheet,lastColumn, CHRACTER_WIDTH);
+	    int anchorWidthInLastColumn = (int) Math.round(((double)lastColumnWidth ) * anchor.getDx2() / 1024);  
 	    
-	    //in between
-	    int width = wFirst + wLast;
-	    for (int col = firstColumn+1; col < lastColumn; ++col) {
+	    int width = firstColumn == lastColumn ? anchorWidthInLastColumn - offsetInFirstColumn : anchorWidthInFirstColumn + anchorWidthInLastColumn;
+	    
+	    // add inter-column width
+	    for (int col = firstColumn+1; col < lastColumn; col++) {
 	    	width += XUtils.getWidthAny(sheet,col, CHRACTER_WIDTH);
 	    }
 

@@ -415,25 +415,19 @@ public class NExcelXlsxImporter extends AbstractExcelImporter{
 	 */
 	@Override
 	protected int getAnchorWidthInPx(ClientAnchor anchor, Sheet poiSheet) {
-	    final int l = anchor.getCol1();
-	    final int lfrc = anchor.getDx1();
+		final int firstColumn = anchor.getCol1();
+	    final int firstColumnWidth = XUtils.getWidthAny(poiSheet,firstColumn, AbstractExcelImporter.CHRACTER_WIDTH);
+	    int offsetInFirstColumn = UnitUtil.emuToPx(anchor.getDx1());
+
+	    final int anchorWidthInFirstColumn = firstColumnWidth - offsetInFirstColumn;  
+		int anchorWidthInLastColumn = UnitUtil.emuToPx(anchor.getDx2());
 	    
-	    //first column
-	    final int lw = XUtils.getWidthAny(poiSheet,l, AbstractExcelImporter.CHRACTER_WIDTH);
-	    
-	    final int wFirst = lw - UnitUtil.emuToPx(lfrc);  
-	    
-	    //last column
-	    final int r = anchor.getCol2();
-	    int wLast = 0;
-		final int rfrc = anchor.getDx2();
-		wLast = UnitUtil.emuToPx(rfrc);
-	    
+		final int lastColumn = anchor.getCol2();
 	    //in between
-	    int width = l != r ? wFirst + wLast : wLast - UnitUtil.emuToPx(lfrc);
+	    int width = firstColumn == lastColumn ? anchorWidthInLastColumn - offsetInFirstColumn : anchorWidthInFirstColumn + anchorWidthInLastColumn;
 	    width = Math.abs(width); // just in case
 	    
-	    for (int j = l+1; j < r; ++j) {
+	    for (int j = firstColumn+1; j < lastColumn; ++j) {
 	    	width += XUtils.getWidthAny(poiSheet,j, AbstractExcelImporter.CHRACTER_WIDTH);
 	    }
 	    
@@ -445,25 +439,21 @@ public class NExcelXlsxImporter extends AbstractExcelImporter{
 	 */
 	@Override
 	protected int getAnchorHeightInPx(ClientAnchor anchor, Sheet poiSheet) {
-		
-	    final int t = anchor.getRow1();
-	    final int tfrc = anchor.getDy1();
-	    
+	    final int firstRow = anchor.getRow1();
+	    int offsetInFirstRow = UnitUtil.emuToPx(anchor.getDy1());
 	    //first row
-	    final int th = XUtils.getHeightAny(poiSheet,t);
-	    final int hFirst = th - UnitUtil.emuToPx(tfrc);  
+	    final int firstRowHeight = XUtils.getHeightAny(poiSheet,firstRow);
+		final int anchorHeightInFirstRow = firstRowHeight - offsetInFirstRow;  
 	    
 	    //last row
-	    final int b = anchor.getRow2();
-	    int hLast = 0;
-		final int bfrc = anchor.getDy2();
-	    hLast = UnitUtil.emuToPx(bfrc);
+		final int lastRow = anchor.getRow2();
+		int anchorHeightInLastRow = UnitUtil.emuToPx(anchor.getDy2());
+		int height = lastRow == firstRow ? anchorHeightInLastRow - offsetInFirstRow : anchorHeightInFirstRow + anchorHeightInLastRow ;
+		height = Math.abs(height); // just in case
 	    
-	    //in between
-	    int height = b != t ? hFirst + hLast : hLast - UnitUtil.emuToPx(tfrc);
-	    height = Math.abs(height); // just in case
-	    for (int j = t+1; j < b; ++j) {
-	    	height += XUtils.getHeightAny(poiSheet,j);
+	    //add inter-row height
+	    for (int row = firstRow+1; row < lastRow; ++row) {
+	    	height += XUtils.getHeightAny(poiSheet,row);
 	    }
 	    
 	    return height;

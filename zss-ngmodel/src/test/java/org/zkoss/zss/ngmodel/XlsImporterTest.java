@@ -22,14 +22,14 @@ public class XlsImporterTest extends ImporterTest {
 		assertEquals(NChartType.AREA,areaChart.getType());
 		
 		//a chart locating in one column and one row test
-//		assertEquals(493, areaChart.getAnchor().getWidth());
-//		assertEquals(283, areaChart.getAnchor().getHeight());
+		assertEquals(493, areaChart.getAnchor().getWidth());
+		assertEquals(283, areaChart.getAnchor().getHeight());
 		
 		NGeneralChartData chartData = (NGeneralChartData)areaChart.getData();
 		assertEquals(8, chartData.getNumOfCategory());
 		
 		NChart area3dChart = sheet.getChart(1);
-//		assertEquals(493, area3dChart.getAnchor().getWidth());
+		assertEquals(571, area3dChart.getAnchor().getWidth());
 		
 //		assertEquals(NChartGrouping.STANDARD, area3dChart.getGrouping());
 //		assertEquals(NChartLegendPosition.BOTTOM, area3dChart.getLegendPosition());

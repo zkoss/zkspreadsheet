@@ -96,6 +96,13 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 	 */
 	abstract protected void importColumn(Sheet poiSheet, NSheet sheet, int defaultWidth);
 	
+	/**
+	 * If in same column:
+	 * anchorWidthInFirstColumn + anchor width in inter-columns + anchorWidthInLastColumn (dx2)
+	 * no in same column:
+	 * anchorWidthInLastColumn - offsetInFirstColumn (dx1)
+	 * 
+	 */
 	abstract protected int getAnchorWidthInPx(ClientAnchor anchor, Sheet poiSheet);
 	abstract protected int getAnchorHeightInPx(ClientAnchor anchor, Sheet poiSheet);
 	
