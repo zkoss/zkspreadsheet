@@ -1803,12 +1803,12 @@ public class FormulaTestBase {
 	
 	protected void testCOMPLEX(Book book) {
 		Sheet sheet = book.getSheet("formula-engineering");
-		assertEquals(" 3+4i ", Ranges.range(sheet, "B17").getCellFormatText());
+		assertEquals("3+4i", Ranges.range(sheet, "B17").getCellFormatText());
 	}
 	
 	protected void testINDEX(Book book) {
 		Sheet sheet = book.getSheet("formula-lookup");
-		assertEquals(" pears ", Ranges.range(sheet, "B22").getCellFormatText());
+		assertEquals("pears", Ranges.range(sheet, "B22").getCellFormatText());
 		// "accounting format" has space in the front and back.
 	}
 	
