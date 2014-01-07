@@ -66,6 +66,9 @@ public interface NBookSeries {
 	 */
 	public Map<String,Object> getAttributes();
 	
+	/**
+	 * Get the auto formula cache clean, default false.
+	 */
 	public boolean isAutoFormulaCacheClean();
 	
 	public void setAutoFormulaCacheClean(boolean enable);

@@ -228,7 +228,7 @@ public class FormulaEvalTest {
 	@Test
 	public void testEvalAndModifyNormal(){
 		NBook book = NBooks.createBook("book1");
-		
+		book.getBookSeries().setAutoFormulaCacheClean(true);
 		DependencyTable table = ((AbstractBookSeriesAdv)book.getBookSeries()).getDependencyTable();
 		
 		NSheet sheet1 = book.createSheet("Sheet1");
@@ -315,7 +315,7 @@ public class FormulaEvalTest {
 	@Test
 	public void testEvalNoRef(){
 		NBook book = NBooks.createBook("book1");
-		
+		book.getBookSeries().setAutoFormulaCacheClean(true);
 		DependencyTable table = ((AbstractBookSeriesAdv)book.getBookSeries()).getDependencyTable();
 		
 		NSheet sheet1 = book.createSheet("Sheet1");

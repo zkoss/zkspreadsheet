@@ -71,16 +71,22 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 
 		workbook = createPoiBook(is);
 		book = NBooks.createBook(bookName);
-		book.getBookSeries().setAutoFormulaCacheClean(false);//disable temporary to avoid uncesassary clean up when import
 		
-		importExternalBookLinks();
+		NBookSeries bookSeries = book.getBookSeries();
+		boolean old = bookSeries.isAutoFormulaCacheClean();
+		try{
+			book.getBookSeries().setAutoFormulaCacheClean(false);//disable temporary to avoid uncesassary clean up when import
 			
-		for (int i = 0 ; i < workbook.getNumberOfSheets(); i++){
-			importSheet(workbook.getSheetAt(i));
+			importExternalBookLinks();
+				
+			for (int i = 0 ; i < workbook.getNumberOfSheets(); i++){
+				importSheet(workbook.getSheetAt(i));
+			}
+			importNamedRange();
+		}finally{
+			book.getBookSeries().setAutoFormulaCacheClean(old);
 		}
-		importNamedRange();
 		
-		book.getBookSeries().setAutoFormulaCacheClean(true);//default enable
 		return book;
 	}
 	

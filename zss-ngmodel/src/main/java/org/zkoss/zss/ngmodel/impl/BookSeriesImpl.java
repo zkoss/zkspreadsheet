@@ -53,7 +53,7 @@ public class BookSeriesImpl extends AbstractBookSeriesAdv {
 			this.books.put(book.getBookName(), book);
 			
 			if(book.getBookSeries().isAutoFormulaCacheClean()){//if any book auto
-				autoFormulaCacheClean = true;
+				this.autoFormulaCacheClean = true;
 			}
 			
 			((DependencyTableAdv) dependencyTable)

@@ -28,7 +28,7 @@ import org.zkoss.zss.ngmodel.sys.dependency.DependencyTable;
 public abstract class AbstractBookSeriesAdv implements NBookSeries,Serializable{
 	private static final long serialVersionUID = 1L;
 
-	protected boolean autoFormulaCacheClean = true;//default on
+	protected boolean autoFormulaCacheClean = false;//default off
 	
 	public abstract DependencyTable getDependencyTable();
 
