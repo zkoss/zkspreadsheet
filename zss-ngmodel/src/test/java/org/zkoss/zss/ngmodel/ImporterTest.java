@@ -214,7 +214,7 @@ public class ImporterTest extends ImExpTestBase {
 	}
 	
 	@Test
-	public void bubbleChtart(){
+	public void bubbleChart(){
 		NBook book = ImExpTestUtil.loadBook(CHART_IMPORT_FILE_UNDER_TEST, "Chart");
 		bubbleChart(book);
 		NSheet sheet = book.getSheetByName("Bubble");

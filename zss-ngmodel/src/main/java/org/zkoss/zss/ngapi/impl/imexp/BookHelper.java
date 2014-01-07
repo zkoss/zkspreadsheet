@@ -14,7 +14,6 @@ Copyright (C) 2010 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.ngapi.impl.imexp;
 
 import java.util.*;
-import java.util.logging.Logger;
 
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
 import org.zkoss.poi.hssf.record.FullColorExt;
