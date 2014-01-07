@@ -123,7 +123,9 @@ public class ModelPerformanceTest {
 		try {
 			is = file.openStream();
 			if(type == NG_MODEL) {
-				return new ExcelImportFactory().createImporter().imports(is, bookName);
+				NBook book = new ExcelImportFactory().createImporter().imports(is, bookName);
+				book.getBookSeries().setAutoFormulaCacheClean(false);//in performance, we don't allow to clear automatically
+				return book;
 			} else if(type == WORKBOOK_MODEL) {
 				return new XSSFWorkbook(is);
 			} else if(type == XBOOK_MODEL) {
