@@ -204,10 +204,117 @@ public class FormulaEvalTest {
 		Assert.assertTrue(dependents.toString(), dependents.contains(toCellRef("Sheet1", null, "A11")));
 		Assert.assertTrue(dependents.toString(), dependents.contains(toCellRef("Sheet1", null, "A12")));
 	}
+	
+	@Test
+	public void testFormulaDependencyTrackingWithExternalBook() {
+
+		NBook book1 = NBooks.createBook("book1");
+		NSheet sheetA = book1.createSheet("SheetA");
+		NBook book2 = NBooks.createBook("book2");
+		NSheet sheetB = book2.createSheet("SheetB");
+		getCell(sheetA, "A1").setFormulaValue("A2 + 1");
+		getCell(sheetA, "A2").setNumberValue(1.0);
+		getCell(sheetA, "A3").setFormulaValue("SUM(NameA)");
+		getCell(sheetA, "A4").setFormulaValue("SUM(NameB)");
+		getCell(sheetB, "B1").setFormulaValue("B2 + 1");
+		getCell(sheetB, "B2").setNumberValue(2.0);
+		getCell(sheetB, "B3").setFormulaValue("SUM(NameB)");
+		getCell(sheetB, "B4").setFormulaValue("SUM(NameA)");
+		book1.createName("NameA").setRefersToFormula("SheetA!A1:A2");
+		book2.createName("NameB").setRefersToFormula("SheetB!B1:B2");
+
+		// test initial
+		Assert.assertEquals(2.0, getCell(sheetA, "A1").getNumberValue(), 0.0001);
+		Assert.assertEquals(1.0, getCell(sheetA, "A2").getNumberValue(), 0.0001);
+		Assert.assertEquals(3.0, getCell(sheetA, "A3").getNumberValue(), 0.0001);
+		Assert.assertEquals(3.0, getCell(sheetB, "B1").getNumberValue(), 0.0001);
+		Assert.assertEquals(2.0, getCell(sheetB, "B2").getNumberValue(), 0.0001);
+		Assert.assertEquals(5.0, getCell(sheetB, "B3").getNumberValue(), 0.0001);
+		Assert.assertEquals(ErrorValue.INVALID_NAME, getCell(sheetA, "A4").getErrorValue().getCode());
+		Assert.assertEquals(ErrorValue.INVALID_NAME, getCell(sheetB, "B4").getErrorValue().getCode());
+		
+		DependencyTable table1 = ((AbstractBookSeriesAdv)book1.getBookSeries()).getDependencyTable();
+		Set<Ref> dependents = table1.getDependents(toCellRef("book1", "SheetA", null, "A2"));
+		Assert.assertEquals(dependents.toString(), 3, dependents.size());
+		Assert.assertTrue(dependents.contains(new NameRefImpl("book1", null, "NameA")));
+		Assert.assertTrue(dependents.contains(toCellRef("book1", "SheetA", null, "A1")));
+		Assert.assertTrue(dependents.contains(toCellRef("book1", "SheetA", null, "A3")));
+		
+		DependencyTable table2 = ((AbstractBookSeriesAdv)book2.getBookSeries()).getDependencyTable();
+		dependents = table2.getDependents(toCellRef("book2", "SheetB", null, "B2"));
+		Assert.assertEquals(dependents.toString(), 3, dependents.size());
+		Assert.assertTrue(dependents.contains(new NameRefImpl("book2", null, "NameB")));
+		Assert.assertTrue(dependents.contains(toCellRef("book2", "SheetB", null, "B1")));
+		Assert.assertTrue(dependents.contains(toCellRef("book2", "SheetB", null, "B3")));
+
+		// test dependency merge
+		// we can get other book's dependency after built book series
+		dependents = table1.getDependents(toCellRef("book2", "SheetB", null, "B2"));
+		Assert.assertEquals(dependents.toString(), 0, dependents.size());
+		Assert.assertFalse(dependents.contains(new NameRefImpl("book2", null, "NameB")));
+		Assert.assertFalse(dependents.contains(toCellRef("book2", "SheetB", null, "B1")));
+		Assert.assertFalse(dependents.contains(toCellRef("book2", "SheetB", null, "B3")));
+		dependents = table2.getDependents(toCellRef("book1", "SheetA", null, "A2"));
+		Assert.assertEquals(dependents.toString(), 0, dependents.size());
+		Assert.assertFalse(dependents.contains(new NameRefImpl("book1", null, "NameA")));
+		Assert.assertFalse(dependents.contains(toCellRef("book1", "SheetA", null, "A1")));
+		Assert.assertFalse(dependents.contains(toCellRef("book1", "SheetA", null, "A3")));
+
+		new BookSeriesBuilderImpl().buildBookSeries(book1, book2);
+		table1 = ((AbstractBookSeriesAdv)book1.getBookSeries()).getDependencyTable();
+		table2 = ((AbstractBookSeriesAdv)book2.getBookSeries()).getDependencyTable();
+		dependents = table1.getDependents(toCellRef("book2", "SheetB", null, "B2"));
+		Assert.assertEquals(dependents.toString(), 3, dependents.size());
+		Assert.assertTrue(dependents.contains(new NameRefImpl("book2", null, "NameB")));
+		Assert.assertTrue(dependents.contains(toCellRef("book2", "SheetB", null, "B1")));
+		Assert.assertTrue(dependents.contains(toCellRef("book2", "SheetB", null, "B3")));
+		dependents = table2.getDependents(toCellRef("book1", "SheetA", null, "A2"));
+		Assert.assertEquals(dependents.toString(), 3, dependents.size());
+		Assert.assertTrue(dependents.contains(new NameRefImpl("book1", null, "NameA")));
+		Assert.assertTrue(dependents.contains(toCellRef("book1", "SheetA", null, "A1")));
+		Assert.assertTrue(dependents.contains(toCellRef("book1", "SheetA", null, "A3")));
+		
+		// test dependency from external books reference
+		getCell(sheetA, "A5").setFormulaValue("[book2]SheetB!B5 + 1");
+		getCell(sheetB, "B5").setNumberValue(3.0);
+		Assert.assertEquals(4.0, getCell(sheetA, "A5").getNumberValue(), 0.0001);
+		Assert.assertEquals(3.0, getCell(sheetB, "B5").getNumberValue(), 0.0001);
+
+		dependents = table1.getDependents(toCellRef("book2", "SheetB", null, "B5"));
+		Assert.assertEquals(dependents.toString(), 1, dependents.size());
+		Assert.assertTrue(dependents.contains(toCellRef("book1", "SheetA", null, "A5")));
+		dependents = table2.getDependents(toCellRef("book2", "SheetB", null, "B5"));
+		Assert.assertEquals(dependents.toString(), 1, dependents.size());
+		Assert.assertTrue(dependents.contains(toCellRef("book1", "SheetA", null, "A5")));
+
+		getCell(sheetA, "A6").setNumberValue(4.0);
+		getCell(sheetB, "B6").setFormulaValue("[book1]SheetA!A6 + 1");
+		Assert.assertEquals(4.0, getCell(sheetA, "A6").getNumberValue(), 0.0001);
+		Assert.assertEquals(5.0, getCell(sheetB, "B6").getNumberValue(), 0.0001);
+
+		dependents = table1.getDependents(toCellRef("book1", "SheetA", null, "A6"));
+		Assert.assertEquals(dependents.toString(), 1, dependents.size());
+		Assert.assertTrue(dependents.contains(toCellRef("book2", "SheetB", null, "B6")));
+		dependents = table2.getDependents(toCellRef("book1", "SheetA", null, "A6"));
+		Assert.assertEquals(dependents.toString(), 1, dependents.size());
+		Assert.assertTrue(dependents.contains(toCellRef("book2", "SheetB", null, "B6")));
+
+		// extra test
+		Assert.assertEquals(ErrorValue.INVALID_NAME, getCell(sheetA, "A4").getErrorValue().getCode());
+		Assert.assertEquals(ErrorValue.INVALID_NAME, getCell(sheetB, "B4").getErrorValue().getCode());
+	}
+	
+	private NCell getCell(NSheet sheet, String ref) {
+		CellRegion region = new CellRegion(ref);
+		return sheet.getCell(region.getRow(), region.getColumn());
+	}
 
 	private Ref toAreaRef(String sheet1, String sheet2, String area) {
+		return toAreaRef("book1", sheet1, sheet2, area);
+	}
+	private Ref toAreaRef(String book, String sheet1, String sheet2, String area) {
 		CellRegion r = new CellRegion(area);
-		return new RefImpl("book1", sheet1, sheet2, r.getRow(), r.getColumn(), r.getLastRow(),
+		return new RefImpl(book, sheet1, sheet2, r.getRow(), r.getColumn(), r.getLastRow(),
 				r.getLastColumn());
 	}
 
@@ -216,8 +323,11 @@ public class FormulaEvalTest {
 	}
 
 	private Ref toCellRef(String sheet1, String sheet2, String cell) {
+		return toCellRef("book1", sheet1, sheet2, cell);
+	}
+	private Ref toCellRef(String book, String sheet1, String sheet2, String cell) {
 		CellRegion r = new CellRegion(cell);
-		return new RefImpl("book1", sheet1, sheet2, r.getRow(), r.getColumn());
+		return new RefImpl(book, sheet1, sheet2, r.getRow(), r.getColumn());
 	}
 
 	private Ref toNameRef(String name) {

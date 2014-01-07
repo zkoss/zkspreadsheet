@@ -149,27 +149,31 @@ public class FormulaEngineImpl implements FormulaEngine {
 		try {
 			NSheet sheet = ctx.getSheet();
 
-			if(ptg instanceof NamePtg) {
+			if(ptg instanceof NamePtg) {	// name range name
 				NamePtg namePtg = (NamePtg)ptg;
-				String bookName = sheet.getBook().getBookName();
+				// use current book, we don't refer to other book's defined name
+				String bookName = sheet.getBook().getBookName(); 
 				String name = parsingBook.getNameText(namePtg);
 				return new NameRefImpl(bookName, null, name); // assume name is book-scope
-			} else if(ptg instanceof NameXPtg) {
-				// TODO name in external book
-				// return ec.getNameXEval(((NameXPtg)ptg));
+			} else if(ptg instanceof NameXPtg) { // user defined function name
+				// TODO consider function-type dependency
+			} else if(ptg instanceof FuncPtg) {
+				// TODO consider function-type dependency
 			} else if(ptg instanceof Ref3DPtg) {
 				Ref3DPtg rptg = (Ref3DPtg)ptg;
-				String bookName = sheet.getBook().getBookName();
-				String[] tokens = parsingBook.getSheetNameByExternSheet(rptg.getExternSheetIndex()).split(":");
-				String sheetName = tokens[0];
-				String lastSheetName = tokens.length >= 2 ? tokens[1] : null;
+				// might be internal or external book reference
+				ExternalSheet es = parsingBook.getAnyExternalSheet(rptg.getExternSheetIndex());
+				String bookName = es.getWorkbookName() != null ? es.getWorkbookName() : sheet.getBook().getBookName();
+				String sheetName = es.getSheetName();
+				String lastSheetName = es.getLastSheetName().equals(sheetName) ? null : es.getLastSheetName();
 				return new RefImpl(bookName, sheetName, lastSheetName, rptg.getRow(), rptg.getColumn());
 			} else if(ptg instanceof Area3DPtg) {
 				Area3DPtg aptg = (Area3DPtg)ptg;
-				String bookName = sheet.getBook().getBookName();
-				String[] tokens = parsingBook.getSheetNameByExternSheet(aptg.getExternSheetIndex()).split(":");
-				String sheetName = tokens[0];
-				String lastSheetName = tokens.length >= 2 ? tokens[1] : null;
+				// might be internal or external book reference
+				ExternalSheet es = parsingBook.getAnyExternalSheet(aptg.getExternSheetIndex());
+				String bookName = es.getWorkbookName() != null ? es.getWorkbookName() : sheet.getBook().getBookName();
+				String sheetName = es.getSheetName();
+				String lastSheetName = es.getLastSheetName().equals(sheetName) ? null : es.getLastSheetName();
 				return new RefImpl(bookName, sheetName, lastSheetName, aptg.getFirstRow(),
 						aptg.getFirstColumn(), aptg.getLastRow(), aptg.getLastColumn());
 			} else if(ptg instanceof RefPtg) {
@@ -183,8 +187,6 @@ public class FormulaEngineImpl implements FormulaEngine {
 				String bookName = sheet.getBook().getBookName();
 				return new RefImpl(bookName, sheetName, aptg.getFirstRow(), aptg.getFirstColumn(),
 						aptg.getLastRow(), aptg.getLastColumn());
-			} else if(ptg instanceof FuncPtg) {
-				// TODO consider function-type dependency
 			}
 		} catch(Exception e) {
 			logger.log(Level.SEVERE, e.getMessage(), e);

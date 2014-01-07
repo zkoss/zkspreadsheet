@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Queue;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.zkoss.zss.ngmodel.NBook;
 import org.zkoss.zss.ngmodel.NBookSeries;
 import org.zkoss.zss.ngmodel.NSheet;
@@ -32,6 +34,7 @@ import org.zkoss.zss.ngmodel.sys.dependency.Ref.RefType;
  */
 public class DependencyTableImpl extends DependencyTableAdv {
 	private static final long serialVersionUID = 1L;
+	private static final Logger logger = Logger.getLogger(DependencyTableImpl.class.getName());
 	private static final EnumSet<RefType> regionTypes = EnumSet.of(RefType.BOOK, RefType.SHEET, RefType.AREA,
 			RefType.CELL);
 
@@ -174,6 +177,14 @@ public class DependencyTableImpl extends DependencyTableAdv {
 
 	@Override
 	public void merge(DependencyTableAdv dependencyTable) {
-		// TODO Auto-generated method stub
+		if(!(dependencyTable instanceof DependencyTableImpl)) {
+			// just in case
+			logger.log(Level.SEVERE, "can't merge different type of dependency table: " + dependencyTable.getClass().getName());
+			return;
+		}
+
+		// simply, just put everything in
+		DependencyTableImpl another = (DependencyTableImpl)dependencyTable;
+		map.putAll(another.map);
 	}
 }
