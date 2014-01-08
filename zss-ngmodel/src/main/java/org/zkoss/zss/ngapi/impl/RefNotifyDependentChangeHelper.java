@@ -6,19 +6,17 @@ import org.zkoss.zss.ngmodel.CellRegion;
 import org.zkoss.zss.ngmodel.ModelEvents;
 import org.zkoss.zss.ngmodel.NBook;
 import org.zkoss.zss.ngmodel.NBookSeries;
-import org.zkoss.zss.ngmodel.NDataValidation;
 import org.zkoss.zss.ngmodel.NSheet;
 import org.zkoss.zss.ngmodel.impl.AbstractBookAdv;
-import org.zkoss.zss.ngmodel.impl.RefImpl;
 import org.zkoss.zss.ngmodel.sys.dependency.ObjectRef;
 import org.zkoss.zss.ngmodel.sys.dependency.ObjectRef.ObjectType;
 import org.zkoss.zss.ngmodel.sys.dependency.Ref;
 import org.zkoss.zss.ngmodel.sys.dependency.Ref.RefType;
 
-/*package*/ class RefNotifyDependentChangeHelper {
-	final NBookSeries bookSeries;
+/*package*/ class RefNotifyDependentChangeHelper extends RefHelperBase{
+
 	public RefNotifyDependentChangeHelper(NBookSeries bookSeries) {
-		this.bookSeries = bookSeries;
+		super(bookSeries);
 	}
 
 	public void notifyContentChange(HashSet<Ref> dependentSet) {

@@ -17,6 +17,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.ngapi.impl;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -24,14 +25,23 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.locks.ReadWriteLock;
 
+import org.zkoss.poi.hssf.usermodel.HSSFSheet;
+import org.zkoss.poi.ss.usermodel.AutoFilter;
+import org.zkoss.poi.ss.usermodel.Cell;
+import org.zkoss.poi.ss.usermodel.FilterColumn;
+import org.zkoss.poi.ss.usermodel.Row;
+import org.zkoss.poi.ss.util.CellRangeAddress;
 import org.zkoss.util.Locales;
 import org.zkoss.zss.ngapi.NRange;
 import org.zkoss.zss.ngapi.NRanges;
 import org.zkoss.zss.ngmodel.CellRegion;
 import org.zkoss.zss.ngmodel.NAutoFilter;
+import org.zkoss.zss.ngmodel.NAutoFilter.FilterOp;
+import org.zkoss.zss.ngmodel.NAutoFilter.NFilterColumn;
 import org.zkoss.zss.ngmodel.NBook;
 import org.zkoss.zss.ngmodel.NBookSeries;
 import org.zkoss.zss.ngmodel.NCell;
+import org.zkoss.zss.ngmodel.NCell.CellType;
 import org.zkoss.zss.ngmodel.NCellStyle;
 import org.zkoss.zss.ngmodel.NCellStyle.BorderType;
 import org.zkoss.zss.ngmodel.NColumn;
@@ -596,7 +606,7 @@ public class NRangeImpl implements NRange {
 			String sheetName = r._sheet.getSheetName();
 			CellRegion region = r.region;
 			
-			if(isWholeRow(book,region)){
+			if(isWholeRow(book,region)){//hidden the row when it is whole row
 				for(int i = region.getRow(); i<=region.getLastRow();i++){
 					NRow row = r._sheet.getRow(i);
 					if(row.isHidden()==hidden)
@@ -727,7 +737,7 @@ public class NRangeImpl implements NRange {
 		return (NRange) new ReadWriteTask() {			
 			@Override
 			public Object invoke() {
-				CellRegion region = new DataRegionHelper(NRangeImpl.this).findDataRegion();
+				CellRegion region = new DataRegionHelper(NRangeImpl.this).findAutoFilterDataRegion();
 				if(region!=null){
 					return NRanges.range(getSheet(),region.getRow(),region.getColumn(),region.getLastRow(),region.getLastColumn());
 				}
@@ -759,28 +769,33 @@ public class NRangeImpl implements NRange {
 			public Object invoke() {
 				NSheet sheet = getSheet();
 				NAutoFilter filter = sheet.getAutoFilter();
-				boolean update = false;
-				if(filter!=null && !enable){
-					CellRegion region = filter.getRegion();
-					NRange toUnhide = NRanges.range(sheet,region.getRow(),region.getColumn(),region.getLastRow(),region.getLastColumn()).getRows();
-					//to show all hidden row in autofiler region when disable
-					toUnhide.setHidden(false);
-					sheet.deleteAutoFilter();
-					filter = null;
-					update = true;
-				}else if(filter==null && enable){
-					CellRegion region = new DataRegionHelper(NRangeImpl.this).findDataRegion();
-					if(region!=null){
-						filter = sheet.createAutoFilter(region);
-						update = true;
-					}
+				
+				if((filter==null && !enable) || (filter!=null && enable)){
+					return filter;
 				}
-				if(update){
-					new RefNotifyChangeHelper(sheet.getBook().getBookSeries()).notifySheetAutoFilterChange(getSheetRef());
-				}
+				
+				filter = new AutoFilterHelper(NRangeImpl.this).enableAutoFilter(enable);
+				new RefNotifyChangeHelper(sheet.getBook().getBookSeries()).notifySheetAutoFilterChange(getSheetRef());
 				
 				return filter;
 			}
 		}.doInWriteLock(getLock());
 	}
+
+	@Override
+	public NAutoFilter enableAutoFilter(final int field, final FilterOp filterOp,
+			final Object criteria1, final Object criteria2, final Boolean visibleDropDown) {
+		//it just handle the first ref
+		return (NAutoFilter) new ReadWriteTask() {			
+			@Override
+			public Object invoke() {
+				NAutoFilter filter = new AutoFilterHelper(NRangeImpl.this).enableAutoFilter(field, filterOp, criteria1, criteria2, visibleDropDown);
+				new RefNotifyChangeHelper(getBook().getBookSeries()).notifySheetAutoFilterChange(getSheetRef());
+				return filter;
+			}
+		}.doInWriteLock(getLock());
+	}
+	
+	
+	
 }

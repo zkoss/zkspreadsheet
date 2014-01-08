@@ -2526,7 +2526,7 @@ public class ModelTest {
 		NFilterColumn col0 = filter.getFilterColumn(0, true);
 		Assert.assertEquals(col0, filter.getFilterColumn(0, true));
 		
-		col0.setProperties(new String[]{"ABC","DEF"}, FilterOp.VALUES, null, false);
+		col0.setProperties(FilterOp.VALUES, new String[]{"ABC","DEF"}, null, false);
 
 		
 		NFilterColumn col1 = filter.getFilterColumn(1, true);

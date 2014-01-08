@@ -68,14 +68,15 @@ public abstract class AbstractAutoFilterAdv implements NAutoFilter,Serializable{
 		}
 		
 		@Override
-		public void setProperties(Object criteria1, FilterOp filterOp,
-				Object criteria2, boolean visibleDropDown) {
+		public void setProperties(FilterOp filterOp, Object criteria1,
+				Object criteria2, Boolean visibleDropDown) {
 			this.op = filterOp;
 			this.criteria1 = getCriteriaSet(criteria1);
 			this.criteria2 = getCriteriaSet(criteria2);
 			boolean blank1 = this.criteria1.contains("=");
-			
-			showButton = visibleDropDown;
+			if(visibleDropDown!=null){
+				showButton = visibleDropDown;
+			}
 			
 			
 			

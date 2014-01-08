@@ -11,10 +11,9 @@ import org.zkoss.zss.ngmodel.impl.AbstractBookAdv;
 import org.zkoss.zss.ngmodel.sys.dependency.Ref;
 import org.zkoss.zss.ngmodel.sys.dependency.Ref.RefType;
 
-/*package*/ class RefNotifyChangeHelper {
-	final NBookSeries bookSeries;
+/*package*/ class RefNotifyChangeHelper extends RefHelperBase{
 	public RefNotifyChangeHelper(NBookSeries bookSeries) {
-		this.bookSeries = bookSeries;
+		super(bookSeries);
 	}
 
 	public void notifySizeChange(HashSet<Ref> notifySet) {

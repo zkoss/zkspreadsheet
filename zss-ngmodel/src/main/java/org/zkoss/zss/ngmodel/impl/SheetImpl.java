@@ -1269,7 +1269,7 @@ public class SheetImpl extends AbstractSheetAdv {
 	        	for(int c = l; c < r; ++c) {
 		        	final int colId = c - left; 
 		        	final NFilterColumn col = autoFilter.getFilterColumn(colId, true);
-		        	col.setProperties(null, FilterOp.AND, null, false);
+		        	col.setProperties(FilterOp.AND, null, null, false);
 	        	}
 	        }
 		}

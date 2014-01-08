@@ -23,7 +23,7 @@ public interface NAutoFilter {
 		
 		public FilterOp getOperator();
 		
-		public void setProperties(Object criteria1, FilterOp filterOp, Object criteria2, boolean visibleDropDown);
+		public void setProperties(FilterOp filterOp, Object criteria1, Object criteria2, Boolean visibleDropDown);
 
 	}
 	

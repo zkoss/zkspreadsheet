@@ -19,6 +19,7 @@ package org.zkoss.zss.ngapi;
 import java.util.concurrent.locks.ReadWriteLock;
 
 import org.zkoss.zss.ngmodel.NAutoFilter;
+import org.zkoss.zss.ngmodel.NAutoFilter.FilterOp;
 import org.zkoss.zss.ngmodel.NCellStyle;
 import org.zkoss.zss.ngmodel.NDataValidation;
 import org.zkoss.zss.ngmodel.NHyperlink;
@@ -368,18 +369,18 @@ public interface NRange {
 	// Refer to ZSS-246.
 	NRange findAutoFilterRange();
 	
-//	/**
-//	 * Filters a list specified by this Range and returns an AutoFilter object.
-//	 * @param field offset of the field on which you want to base the filter on (1-based; i.e. leftmost column in this range is field 1).
-//	 * @param criteria1 "=" to find blank fields, "<>" to find non-blank fields. If null, means ALL. If filterOp == AutoFilter#FILTEROP_TOP10, 
-//	 * then this shall specifies the number of items (e.g. "10"). 
-//	 * @param filterOp see Range#FILTEROP_xxx. Use FILTEROP_AND and FILTEROP_OR with criteria1 and criterial2 to construct compound criteria.
-//	 * @param criteria2 2nd criteria; used with criteria1 and filterOP to construct compound criteria.
-//	 * @param visibleDropDown true to show the autoFilter drop-down arrow for the filtered field; false to hide the autoFilter drop-down arrow; null
-//	 * to keep as is.
-//	 * @return the applied AutoFiltering
-//	 */
-//	public NAutoFilter autoFilter(int field, Object criteria1, int filterOp, Object criteria2, Boolean visibleDropDown);
+	/**
+	 * Filters a list specified by this Range and returns an AutoFilter object.
+	 * @param field offset of the field on which you want to base the filter on (1-based; i.e. leftmost column in this range is field 1).
+	 * @param filterOp, Use FILTEROP_AND and FILTEROP_OR with criteria1 and criterial2 to construct compound criteria.
+	 * @param criteria1 "=" to find blank fields, "<>" to find non-blank fields. If null, means ALL. If filterOp == AutoFilter#FILTEROP_TOP10, 
+	 * then this shall specifies the number of items (e.g. "10"). 
+	 * @param criteria2 2nd criteria; used with criteria1 and filterOP to construct compound criteria.
+	 * @param visibleDropDown true to show the autoFilter drop-down arrow for the filtered field; false to hide the autoFilter drop-down arrow; null
+	 * to keep as is.
+	 * @return the applied AutoFiltering
+	 */
+	public NAutoFilter enableAutoFilter(int field, FilterOp filterOp, Object criteria1, Object criteria2, Boolean visibleDropDown);
 	
 	/**
 	 * Enable the auto filter and return it, get null if you disable it. 

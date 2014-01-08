@@ -111,11 +111,16 @@ public class TestImporterFactory implements ImporterFactory{
 				sheet.getCell("G10").setValue("=SUM(E7:F7)");
 				sheet.getCell("G11").setValue("=SUM(E9:F9)");
 				
+				
+				
 				NRanges.range(sheet,"H7").setEditText("2013/1/1");
 				NRanges.range(sheet,"H8").setEditText("2013/1/2");
 				NRanges.range(sheet,"H9").setEditText("2013/1/3");
 				NRanges.range(sheet,"H10").setEditText("2013/1/1");
 				NRanges.range(sheet,"H11").setEditText("2013/1/2");
+				
+				
+				NRanges.range(sheet,"D7").enableAutoFilter(true);
 
 			}
 			private void buildValidation(NBook book) {

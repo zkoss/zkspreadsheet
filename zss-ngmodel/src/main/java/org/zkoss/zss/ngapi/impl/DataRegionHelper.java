@@ -13,39 +13,14 @@ import org.zkoss.zss.ngmodel.NSheet;
  *
  */
 //these code if from XRangeImpl and migrate to new model
-public class DataRegionHelper {
-
-	NSheet sheet;
-	NRange range;
+/*package*/ class DataRegionHelper extends RangeHelperBase{
 	
 	public DataRegionHelper(NRange range){
-		this.range = range;
-		this.sheet = range.getSheet();
+		super(range);
 	}
-
-	public int getRow() {
-		return range.getRow();
-	}
-
-	public int getColumn() {
-		return range.getColumn();
-	}
-
-	public int getLastRow() {
-		return range.getLastRow();
-	}
-
-	public int getLastColumn() {
-		return range.getLastColumn();
-	}
-
-	public boolean isWholeRow(){
-		return range.isWholeRow();
-	}
-
 
 	// ZSS-246: give an API for user checking the auto-filtering range before applying it.
-	public CellRegion findDataRegion() {
+	public CellRegion findAutoFilterDataRegion() {
 		
 		//The logic to decide the actual affected range to implement autofilter:
 		//If it's a multiple cell range, it's the range intersect with largest range of the sheet.
@@ -128,9 +103,6 @@ public class DataRegionHelper {
 		final int r = rng.getLastColumn();
 		final NCell cell = sheet.getCell(t, l);
 		return isBlank(cell) ? null : new int[] {l, t, r, b};
-	}
-	private boolean isBlank(NCell cell){
-		return cell==null || cell.isNull() || cell.getType()==CellType.BLANK;
 	}
 	
 	public static boolean isOneCell(NSheet sheet, CellRegion rng) {
