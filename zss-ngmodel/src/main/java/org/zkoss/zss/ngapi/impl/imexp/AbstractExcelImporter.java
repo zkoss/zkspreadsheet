@@ -29,7 +29,6 @@ import org.zkoss.zss.ngmodel.NCellStyle.FillPattern;
 import org.zkoss.zss.ngmodel.NCellStyle.VerticalAlignment;
 import org.zkoss.zss.ngmodel.NFont.TypeOffset;
 import org.zkoss.zss.ngmodel.NFont.Underline;
-import org.zkoss.zss.ngmodel.impl.FormulaCacheCleaner;
 
 /**
  * Contains common importing behavior for both XLSX and XLS. Spreadsheet {@link NBook} model including following information:

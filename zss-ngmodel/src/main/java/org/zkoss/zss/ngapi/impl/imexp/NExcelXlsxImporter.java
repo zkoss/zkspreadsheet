@@ -404,9 +404,24 @@ public class NExcelXlsxImporter extends AbstractExcelImporter{
 	
 	private void importPicture(List<Picture> poiPictures, Sheet poiSheet, NSheet sheet){
 		for (Picture picture : poiPictures){
-			System.out.println(picture.getPictureData().getMimeType());
-			sheet.addPicture(Format.PNG, picture.getPictureData().getData(), toViewAnchor(poiSheet, picture.getClientAnchor()));
+			Format format = convertFormat(picture.getPictureData().suggestFileExtension());
+			if (format !=null){
+				sheet.addPicture(format, picture.getPictureData().getData(), toViewAnchor(poiSheet, picture.getClientAnchor()));
+			}else{
+				//TODO log to unsupported picture format
+			}
 		}
+	}
+	
+	private Format convertFormat(String fileExtension){
+		if (fileExtension.equalsIgnoreCase("jpg") || fileExtension.equalsIgnoreCase("jpeg")){
+			return Format.JPG;
+		}else if (fileExtension.equalsIgnoreCase("png")){
+			return Format.PNG;
+		}else if (fileExtension.equalsIgnoreCase("gif")){
+			return Format.GIF;
+		}
+		return null;
 	}
 	
 	private XSSFChartX createXSSFChartX(XSSFDrawing patriarch, CTGraphicalObjectFrame gfrm , XSSFClientAnchor xanchor) {
