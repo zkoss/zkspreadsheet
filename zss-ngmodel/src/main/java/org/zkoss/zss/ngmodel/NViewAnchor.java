@@ -18,7 +18,8 @@ package org.zkoss.zss.ngmodel;
 
 import java.io.Serializable;
 /**
- * Represent a rectangle area by its left-top cell index, width, height, x and y offset within the cell.
+ * Represent a anchor position by its left-top cell index, width, height, x and y offset within the cell, 
+ * or a right-bottom anchor position by its right-bottom cell index with 0 width and height.
  * @author dennis
  * @since 3.5.0
  */
@@ -104,6 +105,45 @@ public class NViewAnchor implements Serializable {
 
 	public void setHeight(int height) {
 		this.height = height;
+	}
+	
+	/**
+	 * Return the right-bottom anchor which depends on sheet with 0 height and width. 
+	 * @param sheet
+	 * @return
+	 */
+	public NViewAnchor getRightBottomAnchor(NSheet sheet){
+		
+		int offsetPlusChartWidth = getXOffset() + this.getWidth();
+		int lastColumn = this.getColumnIndex();
+		int xOffsetInLastColumn = 0;
+		//minus width of each inter-column to find last column index and x offset in last column
+		for (int column = this.getColumnIndex(); ;column++){
+			int interColumnWidth = sheet.getColumn(column).getWidth();
+			if (offsetPlusChartWidth - interColumnWidth < 0){ 
+				lastColumn = column;
+				xOffsetInLastColumn = offsetPlusChartWidth;
+				break;
+			}else{
+				offsetPlusChartWidth -= interColumnWidth;
+			}
+		}
+		
+		int offsetPlusChartHeight = getYOffset() + this.getHeight();
+		int lastRow = this.getRowIndex();
+		int yOffsetInLastRow = 0;
+		//minus height of each inter-row to find last row index and y offset in last row
+		for (int row = this.getRowIndex(); ;row++){
+			int interRowHeight = sheet.getRow(row).getHeight();
+			if (offsetPlusChartHeight - interRowHeight < 0){
+				lastRow = row;
+				yOffsetInLastRow = offsetPlusChartHeight;
+				break;
+			}else{
+				offsetPlusChartHeight -= interRowHeight;
+			}
+		}
+		return new NViewAnchor(lastRow, lastColumn, xOffsetInLastColumn, yOffsetInLastRow, 0, 0);
 	}
 
 }

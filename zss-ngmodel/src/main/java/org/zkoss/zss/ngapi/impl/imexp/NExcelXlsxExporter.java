@@ -156,7 +156,7 @@ public class NExcelXlsxExporter extends AbstractExcelExporter {
 	 * @param poiSheet the sheet where the POI chart locates
 	 */
 	private void plotPoiChart(NChart chart, ChartData chartData, NSheet sheet, Sheet poiSheet){
-		Chart poiChart = poiSheet.createDrawingPatriarch().createChart(toClientAnchor(chart.getAnchor(),sheet, poiSheet));
+		Chart poiChart = poiSheet.createDrawingPatriarch().createChart(toClientAnchor(chart.getAnchor(),sheet));
 		//TODO export a chart's title
 		if (chart.isThreeD()){
 			poiChart.getOrCreateView3D();
@@ -185,44 +185,14 @@ public class NExcelXlsxExporter extends AbstractExcelExporter {
 		}
 	}
 	
-	private ClientAnchor toClientAnchor(NViewAnchor viewAnchor, NSheet sheet, Sheet poiSheet){
+	
+	private ClientAnchor toClientAnchor(NViewAnchor viewAnchor, NSheet sheet){
+		NViewAnchor rightBottomAnchor = viewAnchor.getRightBottomAnchor(sheet);
 		
-		int dx1 = viewAnchor.getXOffset();
-		int offsetPlusChartWidth = dx1 + viewAnchor.getWidth();
-		int lastColumn = viewAnchor.getColumnIndex();
-		int dx2 = 0;
-		//minus width of each inter-column to find last column index and dx2
-		for (int column = viewAnchor.getColumnIndex(); ;column++){
-			int interColumnWidth = sheet.getColumn(column).getWidth();
-			if (offsetPlusChartWidth - interColumnWidth < 0){ 
-				lastColumn = column;
-				dx2 = offsetPlusChartWidth;
-				break;
-			}else{
-				offsetPlusChartWidth -= interColumnWidth;
-			}
-		}
-		
-		int dy1 = viewAnchor.getYOffset();
-		int offsetPlusChartHeight = dy1 + viewAnchor.getHeight();
-		int lastRow = viewAnchor.getRowIndex();
-		int dy2 = 0;
-		//minus height of each inter-row to find last row index and dy2
-		for (int row = viewAnchor.getRowIndex(); ;row++){
-			int interRowHeight = sheet.getRow(row).getHeight();
-			if (offsetPlusChartHeight - interRowHeight < 0){
-				lastRow = row;
-				dy2 = offsetPlusChartHeight;
-				break;
-			}else{
-				offsetPlusChartHeight -= interRowHeight;
-			}
-		}
-		
-		ClientAnchor clientAnchor = new XSSFClientAnchor(UnitUtil.pxToEmu(dx1),UnitUtil.pxToEmu(dy1),
-				UnitUtil.pxToEmu(dx2),UnitUtil.pxToEmu(dy2),
+		ClientAnchor clientAnchor = new XSSFClientAnchor(UnitUtil.pxToEmu(viewAnchor.getXOffset()),UnitUtil.pxToEmu(viewAnchor.getYOffset()),
+				UnitUtil.pxToEmu(rightBottomAnchor.getXOffset()),UnitUtil.pxToEmu(rightBottomAnchor.getYOffset()),
 				viewAnchor.getColumnIndex(),viewAnchor.getRowIndex(),
-				lastColumn,lastRow);
+				rightBottomAnchor.getColumnIndex(),rightBottomAnchor.getRowIndex());
 		return clientAnchor;
 	}
 	
