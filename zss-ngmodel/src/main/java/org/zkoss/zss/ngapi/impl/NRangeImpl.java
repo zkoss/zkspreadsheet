@@ -21,13 +21,14 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.locks.ReadWriteLock;
 
-import org.zkoss.poi.ss.formula.eval.NotImplementedException;
 import org.zkoss.util.Locales;
 import org.zkoss.zss.ngapi.NRange;
 import org.zkoss.zss.ngapi.NRanges;
 import org.zkoss.zss.ngmodel.CellRegion;
+import org.zkoss.zss.ngmodel.NAutoFilter;
 import org.zkoss.zss.ngmodel.NBook;
 import org.zkoss.zss.ngmodel.NBookSeries;
 import org.zkoss.zss.ngmodel.NCell;
@@ -39,6 +40,7 @@ import org.zkoss.zss.ngmodel.NHyperlink;
 import org.zkoss.zss.ngmodel.NHyperlink.HyperlinkType;
 import org.zkoss.zss.ngmodel.NRow;
 import org.zkoss.zss.ngmodel.NSheet;
+import org.zkoss.zss.ngmodel.impl.AbstractSheetAdv;
 import org.zkoss.zss.ngmodel.impl.DependentCollector;
 import org.zkoss.zss.ngmodel.impl.FormulaCacheCleaner;
 import org.zkoss.zss.ngmodel.impl.RefImpl;
@@ -227,11 +229,11 @@ public class NRangeImpl implements NRange {
 
 	private void handleRefNotifyContentChange(NBookSeries bookSeries,HashSet<Ref> notifySet) {
 		// notify changes
-		new RefNotifyContentChangeHelper(bookSeries).handle(notifySet);
+		new RefNotifyDependentChangeHelper(bookSeries).notifyContentChange(notifySet);
 	}
 	
 	private void handleRefNotifySizeChange(NBookSeries bookSeries,HashSet<Ref> notifySet) {
-		new RefNotifySizeChangeHelper(bookSeries).handle(notifySet);
+		new RefNotifyChangeHelper(bookSeries).notifySizeChange(notifySet);
 	}
 
 	private boolean euqlas(Object obj1, Object obj2) {
@@ -477,150 +479,199 @@ public class NRangeImpl implements NRange {
 
 	@Override
 	public NHyperlink getHyperlink() {
-		throw new NotImplementedException("not implement yet");
+		throw new UnsupportedOperationException("not implement yet");
 	}
 
 	@Override
 	public NRange copy(NRange dstRange, boolean cut) {
-		throw new NotImplementedException("not implement yet");
+		throw new UnsupportedOperationException("not implement yet");
 	}
 
 	@Override
 	public NRange copy(NRange dstRange) {
-		throw new NotImplementedException("not implement yet");
+		throw new UnsupportedOperationException("not implement yet");
 	}
 
 	@Override
 	public NRange pasteSpecial(NRange dstRange, PasteType pasteType,
 			PasteOperation pasteOp, boolean skipBlanks, boolean transpose) {
-		throw new NotImplementedException("not implement yet");
+		throw new UnsupportedOperationException("not implement yet");
 	}
 
 	@Override
 	public void insert(InsertShift shift, InsertCopyOrigin copyOrigin) {
-		throw new NotImplementedException("not implement yet");
+		throw new UnsupportedOperationException("not implement yet");
 	}
 
 	@Override
 	public void delete(DeleteShift shift) {
-		throw new NotImplementedException("not implement yet");
+		throw new UnsupportedOperationException("not implement yet");
 	}
 
 	@Override
 	public void merge(boolean across) {
-		throw new NotImplementedException("not implement yet");
+		throw new UnsupportedOperationException("not implement yet");
 	}
 
 	@Override
 	public void unmerge() {
-		throw new NotImplementedException("not implement yet");
+		throw new UnsupportedOperationException("not implement yet");
 	}
 
 	@Override
 	public void setBorders(ApplyBorderType borderIndex, BorderType lineStyle,
 			String color) {
-		throw new NotImplementedException("not implement yet");
+		throw new UnsupportedOperationException("not implement yet");
 	}
 
 	@Override
 	public void move(int nRow, int nCol) {
-		throw new NotImplementedException("not implement yet");
+		throw new UnsupportedOperationException("not implement yet");
 	}
 
 	@Override
 	public NRange getCells(int row, int col) {
-		throw new NotImplementedException("not implement yet");
+		throw new UnsupportedOperationException("not implement yet");
 	}
 
 	@Override
 	public void setStyle(NCellStyle style) {
-		throw new NotImplementedException("not implement yet");
+		throw new UnsupportedOperationException("not implement yet");
 	}
 
 	@Override
 	public void autoFill(NRange dstRange, AutoFillType fillType) {
-		throw new NotImplementedException("not implement yet");
+		throw new UnsupportedOperationException("not implement yet");
 	}
 
 	@Override
 	public void fillDown() {
-		throw new NotImplementedException("not implement yet");
+		throw new UnsupportedOperationException("not implement yet");
 	}
 
 	@Override
 	public void fillLeft() {
-		throw new NotImplementedException("not implement yet");
+		throw new UnsupportedOperationException("not implement yet");
 	}
 
 	@Override
 	public void fillRight() {
-		throw new NotImplementedException("not implement yet");
+		throw new UnsupportedOperationException("not implement yet");
 	}
 
 	@Override
 	public void fillUp() {
-		throw new NotImplementedException("not implement yet");
+		throw new UnsupportedOperationException("not implement yet");
 	}
 
 	@Override
-	public void setHidden(boolean hidden) {
-		throw new NotImplementedException("not implement yet");
+	public void setHidden(final boolean hidden) {
+		new ReadWriteTask() {
+			@Override
+			public Object invoke() {
+				setHiddenInLock(hidden);
+				return null;
+			}
+		}.doInWriteLock(getLock());
+	}
+	
+	
+	private boolean isWholeRow(NBook book,CellRegion region){
+		return region.column<=0 && region.lastColumn>=book.getMaxColumnSize();
+	}
+	
+	private boolean isWholeColumn(NBook book,CellRegion region){
+		return region.row<=0 && region.lastRow>=book.getMaxRowSize();
+	}
+
+	protected void setHiddenInLock(boolean hidden) {
+		LinkedHashSet<Ref> notifySet = new LinkedHashSet<Ref>();
+		NBookSeries bookSeries = getBookSeries();
+
+		for (EffectedRegion r : rangeRefs) {
+			NBook book = r._sheet.getBook();
+			String bookName = book.getBookName();
+			int maxcol = r._sheet.getBook().getMaxColumnSize();
+			int maxrow = r._sheet.getBook().getMaxRowSize();
+			String sheetName = r._sheet.getSheetName();
+			CellRegion region = r.region;
+			
+			if(isWholeRow(book,region)){
+				for(int i = region.getRow(); i<=region.getLastRow();i++){
+					NRow row = r._sheet.getRow(i);
+					if(row.isHidden()==hidden)
+						continue;
+					row.setHidden(hidden);
+					notifySet.add(new RefImpl(bookName,sheetName,i,0,i,maxcol));
+				}
+			}else if(isWholeColumn(book,region)){
+				for(int i = region.getColumn(); i<=region.getLastColumn();i++){
+					NColumn col = r._sheet.getColumn(i);
+					if(col.isHidden()==hidden)
+						continue;
+					col.setHidden(hidden);
+					notifySet.add(new RefImpl(bookName,sheetName,0,i,maxrow,i));
+				}
+			}
+			
+		}
+		handleRefNotifySizeChange(bookSeries, notifySet);
 	}
 
 	@Override
 	public void setDisplayGridlines(boolean show) {
-		throw new NotImplementedException("not implement yet");
+		throw new UnsupportedOperationException("not implement yet");
 	}
 
 	@Override
 	public void protectSheet(String password) {
-		throw new NotImplementedException("not implement yet");
+		throw new UnsupportedOperationException("not implement yet");
 	}
 
 	@Override
 	public void setHyperlink(HyperlinkType linkType, String address,
 			String display) {
-		throw new NotImplementedException("not implement yet");
+		throw new UnsupportedOperationException("not implement yet");
 	}
 
 	@Override
 	public Object getValue() {
-		throw new NotImplementedException("not implement yet");
+		throw new UnsupportedOperationException("not implement yet");
 	}
 
 	@Override
 	public NRange getOffset(int rowOffset, int colOffset) {
-		throw new NotImplementedException("not implement yet");
+		throw new UnsupportedOperationException("not implement yet");
 	}
 
 	@Override
 	public boolean isAnyCellProtected() {
-		throw new NotImplementedException("not implement yet");
+		throw new UnsupportedOperationException("not implement yet");
 	}
 
 	@Override
 	public void deleteSheet() {
-		throw new NotImplementedException("not implement yet");
+		throw new UnsupportedOperationException("not implement yet");
 	}
 
 	@Override
 	public NSheet createSheet(String name) {
-		throw new NotImplementedException("not implement yet");
+		throw new UnsupportedOperationException("not implement yet");
 	}
 
 	@Override
 	public void setSheetName(String name) {
-		throw new NotImplementedException("not implement yet");
+		throw new UnsupportedOperationException("not implement yet");
 	}
 
 	@Override
 	public void setSheetOrder(int pos) {
-		throw new NotImplementedException("not implement yet");
+		throw new UnsupportedOperationException("not implement yet");
 	}
 
 	@Override
 	public void setFreezePanel(int rowfreeze, int columnfreeze) {
-		throw new NotImplementedException("not implement yet");
+		throw new UnsupportedOperationException("not implement yet");
 	}
 
 	@Override
@@ -683,5 +734,53 @@ public class NRangeImpl implements NRange {
 				return null;
 			}
 		}.doInReadLock(getLock());
+	}
+	
+	Ref getSheetRef(){
+		EffectedRegion r = rangeRefs.iterator().next();
+		return new RefImpl((AbstractSheetAdv)rangeRefs.get(0)._sheet);
+	}
+	Ref getBookRef(){
+		EffectedRegion r = rangeRefs.iterator().next();
+		return new RefImpl((AbstractSheetAdv)rangeRefs.get(0)._sheet.getBook());
+	}
+	
+	private Set<Ref> toSet(Ref ref){
+		Set<Ref> refs = new HashSet(1);
+		refs.add(ref);
+		return refs;
+	}
+	
+	@Override 
+	public NAutoFilter enableAutoFilter(final boolean enable){
+		//it just handle the first ref
+		return (NAutoFilter) new ReadWriteTask() {			
+			@Override
+			public Object invoke() {
+				NSheet sheet = getSheet();
+				NAutoFilter filter = sheet.getAutoFilter();
+				boolean update = false;
+				if(filter!=null && !enable){
+					CellRegion region = filter.getRegion();
+					NRange toUnhide = NRanges.range(sheet,region.getRow(),region.getColumn(),region.getLastRow(),region.getLastColumn()).getRows();
+					//to show all hidden row in autofiler region when disable
+					toUnhide.setHidden(false);
+					sheet.deleteAutoFilter();
+					filter = null;
+					update = true;
+				}else if(filter==null && enable){
+					CellRegion region = new DataRegionHelper(NRangeImpl.this).findDataRegion();
+					if(region!=null){
+						filter = sheet.createAutoFilter(region);
+						update = true;
+					}
+				}
+				if(update){
+					new RefNotifyChangeHelper(sheet.getBook().getBookSeries()).notifySheetAutoFilterChange(getSheetRef());
+				}
+				
+				return filter;
+			}
+		}.doInWriteLock(getLock());
 	}
 }

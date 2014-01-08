@@ -27,6 +27,8 @@ public interface FormatResult {
 
 	boolean isRichText();
 	
+	boolean isDateFormatted();
+	
 	NRichText getRichText();
 	
 	String getText();

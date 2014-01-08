@@ -11,32 +11,39 @@ import org.zkoss.zss.ngmodel.impl.AbstractBookAdv;
 import org.zkoss.zss.ngmodel.sys.dependency.Ref;
 import org.zkoss.zss.ngmodel.sys.dependency.Ref.RefType;
 
-/*package*/ class RefNotifySizeChangeHelper {
+/*package*/ class RefNotifyChangeHelper {
 	final NBookSeries bookSeries;
-	public RefNotifySizeChangeHelper(NBookSeries bookSeries) {
+	public RefNotifyChangeHelper(NBookSeries bookSeries) {
 		this.bookSeries = bookSeries;
 	}
 
-	public void handle(HashSet<Ref> dependentSet) {
-		// clear formula cache
-		for (Ref dependent : dependentSet) {
-			System.out.println(">>> Notify Size"+dependent);
-			//clear the dependent's formula cache since the precedent is changed.
-			if (dependent.getType() == RefType.CELL || dependent.getType() == RefType.AREA) {
-				handleCellRef(dependent);
-			} else {// TODO another
-
-			}
+	public void notifySizeChange(HashSet<Ref> notifySet) {
+		for (Ref notify : notifySet) {
+			System.out.println(">>> Notify Size "+notify);
+			if (notify.getType() == RefType.CELL || notify.getType() == RefType.AREA) {
+				handleRowColumnSizeChange(notify);
+			} 
 		}
 	}
 
-
-	private void handleCellRef(Ref notify) {
+	private void handleRowColumnSizeChange(Ref notify) {
 		NBook book = bookSeries.getBook(notify.getBookName());
 		if(book==null) return;
 		NSheet sheet = book.getSheetByName(notify.getSheetName());
 		if(sheet==null) return;
 		((AbstractBookAdv) book).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_ROW_COLUMN_SIZE_CHANGE,sheet,
 				new CellRegion(notify.getRow(),notify.getColumn(),notify.getLastRow(),notify.getLastColumn())));
+	}
+	
+	public void notifySheetAutoFilterChange(Ref notify) {
+		if (notify.getType() != RefType.SHEET) {
+			return;
+		}
+		System.out.println(">>> Notify Autofilter "+notify);
+		NBook book = bookSeries.getBook(notify.getBookName());
+		if(book==null) return;
+		NSheet sheet = book.getSheetByName(notify.getSheetName());
+		if(sheet==null) return;
+		((AbstractBookAdv) book).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_AUTOFILTER_CHANGE,sheet));
 	}
 }

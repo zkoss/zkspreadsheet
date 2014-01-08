@@ -2526,9 +2526,8 @@ public class ModelTest {
 		NFilterColumn col0 = filter.getFilterColumn(0, true);
 		Assert.assertEquals(col0, filter.getFilterColumn(0, true));
 		
-		col0.addFilter("ABC");
-		col0.addFilter("DEF");
-		col0.addCriteria1(1);
+		col0.setProperties(new String[]{"ABC","DEF"}, FilterOp.VALUES, null, false);
+
 		
 		NFilterColumn col1 = filter.getFilterColumn(1, true);
 		try{
@@ -2536,9 +2535,9 @@ public class ModelTest {
 			Assert.fail();
 		}catch(IllegalStateException x){}
 		
-		Assert.assertEquals(FilterOp.AND, col0.getOperator());
-		Assert.assertEquals(1,col0.getCriteria1().size());
-		Assert.assertEquals(1,col0.getCriteria1().iterator().next());
+		Assert.assertEquals(FilterOp.VALUES, col0.getOperator());
+		Assert.assertEquals(2,col0.getCriteria1().size());
+		Assert.assertEquals("ABC",col0.getCriteria1().iterator().next());
 		Assert.assertEquals(0,col0.getCriteria2().size());
 		Assert.assertEquals(2,col0.getFilters().size());
 		Assert.assertEquals("ABC",col0.getFilters().get(0));

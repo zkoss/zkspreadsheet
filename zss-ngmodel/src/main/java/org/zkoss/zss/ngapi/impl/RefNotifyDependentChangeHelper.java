@@ -15,9 +15,9 @@ import org.zkoss.zss.ngmodel.sys.dependency.ObjectRef.ObjectType;
 import org.zkoss.zss.ngmodel.sys.dependency.Ref;
 import org.zkoss.zss.ngmodel.sys.dependency.Ref.RefType;
 
-/*package*/ class RefNotifyContentChangeHelper {
+/*package*/ class RefNotifyDependentChangeHelper {
 	final NBookSeries bookSeries;
-	public RefNotifyContentChangeHelper(NBookSeries bookSeries) {
+	public RefNotifyDependentChangeHelper(NBookSeries bookSeries) {
 		this.bookSeries = bookSeries;
 	}
 

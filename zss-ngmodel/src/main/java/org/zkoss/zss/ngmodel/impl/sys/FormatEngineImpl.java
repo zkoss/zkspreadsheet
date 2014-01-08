@@ -53,10 +53,12 @@ public class FormatEngineImpl implements FormatEngine {
 			}
 			
 			CellFormat formatter = CellFormat.getInstance(format, context.getLocale());
+			boolean dateFromatted = false;
 			if(value instanceof Double && formatter.isApplicableDateFormat((Double)value)){
 				value = EngineFactory.getInstance().getCalendarUtil().doubleValueToDate((Double)value);
+				dateFromatted = true;
 			}
-			return new FormatResultImpl(formatter.apply(value));
+			return new FormatResultImpl(formatter.apply(value),dateFromatted);
 		}finally{
 			ZssContext.setThreadLocal(old);
 		}

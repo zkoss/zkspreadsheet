@@ -2,7 +2,7 @@ package org.zkoss.zss.ngmodel.impl;
 
 import java.io.Serializable;
 import java.util.Collections;
-import java.util.LinkedHashSet;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -19,7 +19,7 @@ public abstract class AbstractAutoFilterAdv implements NAutoFilter,Serializable{
 		List<String> filters;
 		Set criteria1;
 		Set criteria2;
-		boolean on = false;
+		boolean showButton = false;
 		FilterOp op = FilterOp.AND;
 		
 		public FilterColumnImpl(int index){
@@ -48,7 +48,7 @@ public abstract class AbstractAutoFilterAdv implements NAutoFilter,Serializable{
 
 		@Override
 		public boolean isOn() {
-			return on;
+			return showButton;
 		}
 
 		@Override
@@ -56,54 +56,66 @@ public abstract class AbstractAutoFilterAdv implements NAutoFilter,Serializable{
 			return op;
 		}
 
-		@Override
-		public void addFilter(String filter) {
-			if(filters==null){
-				filters = new LinkedList<String>();
+		private Set getCriteriaSet(Object criteria) {
+			final Set set = new HashSet();
+			if (criteria instanceof String[]) {
+				String[] strings = (String[]) criteria;
+				for(int j = 0; j < strings.length; ++j) {
+					set.add(strings[j]);
+				}
 			}
-			filters.add(filter);
+			return set;
 		}
-
+		
 		@Override
-		public void clearFilter() {
-			filters = null;
-		}
-
-		@Override
-		public void addCriteria1(Object obj) {
-			if(criteria1==null){
-				criteria1 = new LinkedHashSet();
+		public void setProperties(Object criteria1, FilterOp filterOp,
+				Object criteria2, boolean visibleDropDown) {
+			this.op = filterOp;
+			this.criteria1 = getCriteriaSet(criteria1);
+			this.criteria2 = getCriteriaSet(criteria2);
+			boolean blank1 = this.criteria1.contains("=");
+			
+			showButton = visibleDropDown;
+			
+			
+			
+			if (criteria1 == null) { //remove filtering
+				filters = null;
+				return;
 			}
-			criteria1.add(obj);
-		}
-
-		@Override
-		public void clearCriteria1() {
-			criteria1 = null;
-		}
-
-		@Override
-		public void addCriteria2(Object obj) {
-			if(criteria2==null){
-				criteria2 = new LinkedHashSet();
+			
+			//TODO, more filtering operation
+			switch(filterOp) {
+			case VALUES:
+				
+				filters =  new LinkedList<String>();
+				
+				for(Object obj:this.criteria1){
+					if(obj instanceof String){
+						filters.add((String)obj);
+					}
+				}
+				if(filters.size()==0){
+					filters = null;
+				}
+				
+//				final String[] filters = (String[]) criteria1;
+				//remove old
+//				if (_ctfc.isSetFilters()) {
+//					_ctfc.unsetFilters();
+//				}
+				//TODO zss 3.5 WHAT is this?
+//				final CTFilters cflts = _ctfc.addNewFilters();
+//				if (blank1) {
+//					cflts.setBlank(blank1);
+//				}
+//				for(int j = 0; j < filters.length; ++j) {
+//					final CTFilter cflt = cflts.addNewFilter();
+//					cflt.setVal(filters[j]);
+//				}
 			}
-			criteria2.add(obj);
 		}
-
-		@Override
-		public void clearCriteria2() {
-			criteria2 = null;
-		}
-
-		@Override
-		public void setOn(boolean on) {
-			this.on = on;
-		}
-
-		@Override
-		public void setOperator(FilterOp op) {
-			this.op = op;
-		}
+		
 		
 	}
 }

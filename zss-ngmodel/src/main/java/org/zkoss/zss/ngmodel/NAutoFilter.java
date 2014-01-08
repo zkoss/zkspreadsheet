@@ -15,29 +15,16 @@ public interface NAutoFilter {
 		
 		public List<String> getFilters();
 		
-		public void addFilter(String filter);
-		
-		public void clearFilter();
-		
 		public Set getCriteria1();
-		
-		public void addCriteria1(Object obj);
-		
-		public void clearCriteria1();
-		
+
 		public Set getCriteria2();
-		
-		public void addCriteria2(Object obj);
-		
-		public void clearCriteria2();		
-		
-		public boolean isOn();
-		
-		public void setOn(boolean on);
+				
+		public boolean isOn(); //show button
 		
 		public FilterOp getOperator();
 		
-		public void setOperator(FilterOp op);
+		public void setProperties(Object criteria1, FilterOp filterOp, Object criteria2, boolean visibleDropDown);
+
 	}
 	
 	public enum FilterOp{

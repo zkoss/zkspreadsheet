@@ -25,9 +25,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
 
+import org.zkoss.poi.ss.usermodel.AutoFilter;
+import org.zkoss.poi.ss.util.CellRangeAddress;
+import org.zkoss.poi.xssf.usermodel.XSSFAutoFilter.XSSFFilterColumn;
 import org.zkoss.zss.ngmodel.CellRegion;
 import org.zkoss.zss.ngmodel.InvalidateModelOpException;
 import org.zkoss.zss.ngmodel.NAutoFilter;
+import org.zkoss.zss.ngmodel.NAutoFilter.FilterOp;
+import org.zkoss.zss.ngmodel.NAutoFilter.NFilterColumn;
 import org.zkoss.zss.ngmodel.NBook;
 import org.zkoss.zss.ngmodel.NCell;
 import org.zkoss.zss.ngmodel.NChart;
@@ -1245,7 +1250,32 @@ public class SheetImpl extends AbstractSheetAdv {
 	@Override
 	public NAutoFilter createAutoFilter(CellRegion region) {
 		Validations.argNotNull(region);
-		return autoFilter = new AutoFilterImpl(region);
+		
+		autoFilter = new AutoFilterImpl(region);
+		final int left = region.getColumn();
+        final int top = region.getRow();
+        final int right = region.getLastColumn();
+        final int bottom = region.getLastRow();
+        
+		//refer from XSSFSheet impl
+		//handle the showButton on merged cell
+		for (CellRegion mrng:getMergedRegions()) {
+			final int t = mrng.getRow();
+	        final int b = mrng.getLastRow();
+	        final int l = mrng.getColumn();
+	        final int r = mrng.getLastColumn();
+	        
+	        if (t == top && l <= right && l >= left) { // to be add filter column to hide button
+	        	for(int c = l; c < r; ++c) {
+		        	final int colId = c - left; 
+		        	final NFilterColumn col = autoFilter.getFilterColumn(colId, true);
+		        	col.setProperties(null, FilterOp.AND, null, false);
+	        	}
+	        }
+		}
+		
+		
+		return autoFilter;
 	}
 	
 	@Override

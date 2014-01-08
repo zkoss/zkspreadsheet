@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 
 import org.zkoss.zss.ngapi.ImporterFactory;
@@ -33,8 +32,7 @@ import org.zkoss.zss.ngmodel.NBook;
 import org.zkoss.zss.ngmodel.NBooks;
 import org.zkoss.zss.ngmodel.NCell;
 import org.zkoss.zss.ngmodel.NCellStyle;
-import org.zkoss.zss.ngmodel.NDataValidation;
-import org.zkoss.zss.ngmodel.NCell.CellType;
+import org.zkoss.zss.ngmodel.NCellStyle.Alignment;
 import org.zkoss.zss.ngmodel.NCellStyle.BorderType;
 import org.zkoss.zss.ngmodel.NCellStyle.FillPattern;
 import org.zkoss.zss.ngmodel.NCellStyle.VerticalAlignment;
@@ -43,14 +41,13 @@ import org.zkoss.zss.ngmodel.NChart;
 import org.zkoss.zss.ngmodel.NChart.NChartLegendPosition;
 import org.zkoss.zss.ngmodel.NChart.NChartType;
 import org.zkoss.zss.ngmodel.NDataGrid;
+import org.zkoss.zss.ngmodel.NDataValidation;
+import org.zkoss.zss.ngmodel.NDataValidation.ValidationType;
 import org.zkoss.zss.ngmodel.NPicture.Format;
 import org.zkoss.zss.ngmodel.NSheet;
-import org.zkoss.zss.ngmodel.NCellStyle.Alignment;
-import org.zkoss.zss.ngmodel.NDataValidation.ValidationType;
 import org.zkoss.zss.ngmodel.NViewAnchor;
 import org.zkoss.zss.ngmodel.chart.NGeneralChartData;
 import org.zkoss.zss.ngmodel.chart.NSeries;
-import org.zkoss.zss.ngmodel.impl.BookImpl;
 /**
  * 
  * @author dennis
@@ -74,6 +71,8 @@ public class TestImporterFactory implements ImporterFactory{
 				
 				NBook book = NBooks.createBook(bookName);
 				
+				buildAutoFilter(book);
+				
 				buildValidation(book);
 				
 				buildChartSheet(book);
@@ -84,6 +83,40 @@ public class TestImporterFactory implements ImporterFactory{
 				
 				buildDataGridSheet(book);
 				return book;
+			}
+			private void buildAutoFilter(NBook book) {
+				NSheet sheet = book.createSheet("AutoFilter");
+				sheet.getCell("D7").setValue("A");
+				sheet.getCell("D8").setValue("B");
+				sheet.getCell("D9").setValue("C");
+				sheet.getCell("D10").setValue("B");
+				sheet.getCell("D11").setValue("A");
+				sheet.getCell("D12").setValue("K");
+				
+				sheet.getCell("E7").setValue(1);
+				sheet.getCell("E8").setValue(2);
+				sheet.getCell("E9").setValue(3);
+				sheet.getCell("E10").setValue(1);
+				sheet.getCell("E11").setValue(3);
+				
+				sheet.getCell("F7").setValue(4);
+				sheet.getCell("F8").setValue(5);
+				sheet.getCell("F9").setValue(6);
+				sheet.getCell("F10").setValue(5);
+				sheet.getCell("F11").setValue(5);
+				
+				sheet.getCell("G7").setValue("=SUM(E7:F7)");
+				sheet.getCell("G8").setValue("=SUM(E8:F8)");
+				sheet.getCell("G9").setValue("=SUM(E9:F9)");
+				sheet.getCell("G10").setValue("=SUM(E7:F7)");
+				sheet.getCell("G11").setValue("=SUM(E9:F9)");
+				
+				NRanges.range(sheet,"H7").setEditText("2013/1/1");
+				NRanges.range(sheet,"H8").setEditText("2013/1/2");
+				NRanges.range(sheet,"H9").setEditText("2013/1/3");
+				NRanges.range(sheet,"H10").setEditText("2013/1/1");
+				NRanges.range(sheet,"H11").setEditText("2013/1/2");
+
 			}
 			private void buildValidation(NBook book) {
 				NSheet sheet1 = book.createSheet("Data Validtaion");

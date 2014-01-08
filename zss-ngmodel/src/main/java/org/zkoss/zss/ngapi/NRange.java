@@ -18,6 +18,7 @@ package org.zkoss.zss.ngapi;
 
 import java.util.concurrent.locks.ReadWriteLock;
 
+import org.zkoss.zss.ngmodel.NAutoFilter;
 import org.zkoss.zss.ngmodel.NCellStyle;
 import org.zkoss.zss.ngmodel.NDataValidation;
 import org.zkoss.zss.ngmodel.NHyperlink;
@@ -380,11 +381,11 @@ public interface NRange {
 //	 */
 //	public NAutoFilter autoFilter(int field, Object criteria1, int filterOp, Object criteria2, Boolean visibleDropDown);
 	
-//	/**
-//	 * Toggle the visibility of the AutoFilter dropdown buttons of this Range. Toggle off will remove current AutoFilter object. 
-//	 * @return the applied AutoFiltering if toggle on; null if toggle off. 
-//	 */
-//	public AutoFilter autoFilter();
+	/**
+	 * Enable the auto filter and return it, get null if you disable it. 
+	 * @return the autofilter if enable, or null if disable. 
+	 */
+	public NAutoFilter enableAutoFilter(boolean enable);
 
 	/**
 	 * Sets whether this rows or columns are hidden(useful only if this Range cover entire column or entire row)

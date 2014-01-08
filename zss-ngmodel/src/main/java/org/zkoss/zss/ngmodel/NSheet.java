@@ -191,6 +191,12 @@ public interface NSheet {
 	 */
 	public NAutoFilter createAutoFilter(CellRegion region);
 	
+	
+	/**
+	 * Delete current autofilter if it has
+	 */
+	public void deleteAutoFilter();
+	
 	/**
 	 * Clear auto filter if there is.
 	 */

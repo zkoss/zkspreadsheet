@@ -11,20 +11,24 @@ public class FormatResultImpl implements FormatResult {
 	private String text;
 	private NColor textColor;//it is possible no format result color
 	private NRichText richText;
+	private boolean dateFormatted = false;
 	public FormatResultImpl(NRichText richText){
 		this.richText = richText;
 	}
-	public FormatResultImpl(CellFormatResult result){
+	public FormatResultImpl(CellFormatResult result,boolean dateFormatted){
 		this.text = result.text;
 		if (result.textColor != null){
 			this.textColor = new ColorImpl((byte)result.textColor.getRed(),(byte)result.textColor.getGreen(),
 					(byte)result.textColor.getBlue());
 		}
+		this.dateFormatted = dateFormatted;
 	}
 	public FormatResultImpl(String text, NColor color){
 		this.text = text;
 		this.textColor = color;
 	}
+	
+	
 	
 	@Override
 	public String getText() {
@@ -42,6 +46,10 @@ public class FormatResultImpl implements FormatResult {
 	@Override
 	public NRichText getRichText() {
 		return richText;
+	}
+	@Override
+	public boolean isDateFormatted() {
+		return dateFormatted;
 	}
 
 
