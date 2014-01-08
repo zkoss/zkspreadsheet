@@ -1872,8 +1872,15 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	 * Update autofilter buttons.
 	 * @param af the current AutoFilter.
 	 */
-	private void updateAutoFilter(NAutoFilter af) {
-		smartUpdate("autoFilter", convertAutoFilterToJSON(af));
+	private void updateAutoFilter(NSheet sheet) {
+		if (!getSelectedXSheet().equals(sheet)){
+			releaseClientCache(sheet.getId());
+			return;
+		}
+		if (this.isInvalidated())
+			return;// since it is invalidate, we don't need to do anymore
+		
+		smartUpdate("autoFilter", convertAutoFilterToJSON(sheet.getAutoFilter()));
 	}
 
     /**
@@ -2068,12 +2075,13 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 					onRowColumnSizeChange(event);
 				}
 			});
-			/*addEventListener(SSDataEvent.ON_BTN_CHANGE, new EventListener() {
+			addEventListener(ModelEvents.ON_AUTOFILTER_CHANGE, new ModelEventListener() {
 				@Override
-				public void onEvent(Event event) throws Exception {
-					onBtnChange((SSDataEvent)event);
+				public void onEvent(ModelEvent event){
+					onAutoFilterChange(event);
 				}
 			});
+			/*
 			addEventListener(SSDataEvent.ON_RANGE_DELETE, new EventListener() {
 				@Override
 				public void onEvent(Event event) throws Exception {
@@ -2442,16 +2450,13 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 				syncFriendFocusPosition(rect.getColumn(), top, rect.getLastColumn(), rect.getLastRow());
 			}
 		}
-		/*
-		private void onBtnChange(SSDataEvent event) {
-			final Ref rng = event.getRef();
-			final XSheet sheet = getSheet(rng);
-			if (!getSelectedXSheet().equals(sheet)){
-				releaseClientCache(XUtils.getSheetUuid(sheet));
-				return;
-			}
-			updateAutoFilter(sheet.getAutoFilter());
+		
+		private void onAutoFilterChange(ModelEvent event) {
+			final NSheet sheet = event.getSheet();
+			
+			updateAutoFilter(sheet);
 		}
+		/*
 		private void onDisplayGridlines(SSDataEvent event) {
 			final Ref rng = event.getRef();
 			final XSheet sheet = getSheet(rng);

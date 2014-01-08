@@ -430,25 +430,20 @@ public class RangeImpl implements Range{
 	
 	// ZSS-246: give an API for user checking the auto-filtering range before applying it.
 	public Range findAutoFilterRange() {
-		throw new UnsupportedOperationException("not implment yet");/* zss 3.5 
 		NRange r = _range.findAutoFilterRange();
 		if(r != null) {
 			return Ranges.range(getSheet(), r.getRow(), r.getColumn(), r.getLastRow(), r.getLastColumn());
 		} else {
 			return null;
 		}
-		*/
 	}
 
 	/** enable/disable autofilter of the sheet**/
 	public void enableAutoFilter(boolean enable){
-		//TODO the syncLevel
 		if(isAutoFilterEnabled() == enable){
 			return ;
-		}
-		throw new UnsupportedOperationException("not implment yet");/* zss 3.5 
-		_range.autoFilter();//toggle on/off automatically
-		*/
+		} 
+		_range.enableAutoFilter(enable);
 	}
 	/** enable filter with condition **/
 	//TODO have to review this after I know more detail

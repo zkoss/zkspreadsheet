@@ -30,21 +30,33 @@ import java.util.TreeSet;
 import org.zkoss.json.JSONArray;
 import org.zkoss.lang.Objects;
 import org.zkoss.lang.Strings;
-import org.zkoss.poi.ss.usermodel.AutoFilter;
-import org.zkoss.poi.ss.usermodel.Cell;
-import org.zkoss.poi.ss.usermodel.DateUtil;
-import org.zkoss.poi.ss.usermodel.FilterColumn;
-import org.zkoss.poi.ss.usermodel.RichTextString;
-import org.zkoss.poi.ss.usermodel.Row;
+import org.zkoss.util.Locales;
+//import org.zkoss.poi.ss.usermodel.AutoFilter;
+//import org.zkoss.poi.ss.usermodel.Cell;
+//import org.zkoss.poi.ss.usermodel.DateUtil;
+//import org.zkoss.poi.ss.usermodel.FilterColumn;
+//import org.zkoss.poi.ss.usermodel.RichTextString;
+//import org.zkoss.poi.ss.usermodel.Row;
 import org.zkoss.zss.api.AreaRef;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.api.model.impl.SheetImpl;
-import org.zkoss.zss.model.sys.XRange;
-import org.zkoss.zss.model.sys.XRanges;
-import org.zkoss.zss.model.sys.XSheet;
-import org.zkoss.zss.model.sys.impl.BookHelper;
+//import org.zkoss.zss.model.sys.XRange;
+//import org.zkoss.zss.model.sys.XRanges;
+//import org.zkoss.zss.model.sys.XSheet;
+//import org.zkoss.zss.model.sys.impl.BookHelper;
+import org.zkoss.zss.ngapi.NRange;
+import org.zkoss.zss.ngapi.NRanges;
+import org.zkoss.zss.ngmodel.NAutoFilter;
+import org.zkoss.zss.ngmodel.NAutoFilter.NFilterColumn;
+import org.zkoss.zss.ngmodel.NCell;
+import org.zkoss.zss.ngmodel.NCell.CellType;
+import org.zkoss.zss.ngmodel.NSheet;
+import org.zkoss.zss.ngmodel.sys.EngineFactory;
+import org.zkoss.zss.ngmodel.sys.format.FormatContext;
+import org.zkoss.zss.ngmodel.sys.format.FormatEngine;
+import org.zkoss.zss.ngmodel.sys.format.FormatResult;
 import org.zkoss.zss.ui.Spreadsheet;
-import org.zkoss.zss.ui.impl.XUtils;
+//import org.zkoss.zss.ui.impl.XUtils;
 
 /**
  * a util to help command to handle 'dirty' directly.
@@ -57,20 +69,17 @@ import org.zkoss.zss.ui.impl.XUtils;
 	private FilterRowInfo blankRowInfo;
 	
 	/*package*/ AreaRef processFilter(Spreadsheet spreadsheet,Sheet sheet,int row, int col, int field) {
-		/*TODO zss 3.5
-		XSheet worksheet = ((SheetImpl)sheet).getNative();
-		final AutoFilter autoFilter = worksheet.getAutoFilter();
-		final FilterColumn filterColumn = autoFilter.getFilterColumn(field - 1);
-		final String rangeAddr = autoFilter.getRangeAddress().formatAsString();
-		final XRange range = XRanges.range(worksheet, rangeAddr);
+		NSheet worksheet = ((SheetImpl)sheet).getNative();
+		final NAutoFilter autoFilter = worksheet.getAutoFilter();
+		final NFilterColumn filterColumn = autoFilter.getFilterColumn(field - 1,false);
+		final String rangeAddr = autoFilter.getRegion().getReferenceString();
+		final NRange range = NRanges.range(worksheet, rangeAddr);
 		
 		spreadsheet.smartUpdate("autoFilterPopup", 
 			convertFilterInfoToJSON(row, col, field, rangeAddr, scanRows(field, filterColumn, range, worksheet)));
 		
 		AreaRef filterArea = new AreaRef(rangeAddr);
 		return filterArea;
-		*/
-		return null;
 	}
 	
 	private Map convertFilterInfoToJSON(int row, int col, int field, String rangeAddr, TreeSet<FilterRowInfo> orderedRowInfos) {
@@ -108,7 +117,7 @@ import org.zkoss.zss.ui.impl.XUtils;
 		return data;
 	}
 	
-	private TreeSet<FilterRowInfo> scanRows(int field, FilterColumn fc, XRange range, XSheet worksheet) {
+	private TreeSet<FilterRowInfo> scanRows(int field, NFilterColumn fc, NRange range, NSheet worksheet) {
 		TreeSet<FilterRowInfo> orderedRowInfos = new TreeSet<FilterRowInfo>(new FilterRowInfoComparator());
 		
 		blankRowInfo = new FilterRowInfo(BLANK_VALUE, "(Blanks)");
@@ -118,16 +127,17 @@ import org.zkoss.zss.ui.impl.XUtils;
 		final int top = range.getRow() + 1;
 		final int bottom = range.getLastRow();
 		final int columnIndex = range.getColumn() + field - 1;
+		FormatEngine fe = EngineFactory.getInstance().createFormatEngine();
 		for (int i = top; i <= bottom; i++) {
-			final Cell c = XUtils.getCell(worksheet, i, columnIndex);
-			if (!BookHelper.isBlankCell(c)) {
-				String displaytxt = BookHelper.getCellText(c);
-				Object val = BookHelper.getEvalCellValue(c);
-				if (val instanceof RichTextString) {
-					val = ((RichTextString)val).getString();
-				} else if (c.getCellType() == Cell.CELL_TYPE_NUMERIC && DateUtil.isCellDateFormatted(c)) {
-					val = c.getDateCellValue();
+			final NCell c = worksheet.getCell(i, columnIndex);
+			if (!c.isNull() && c.getType() != CellType.BLANK) {
+				FormatResult fr = fe.format(c, new FormatContext(Locales.getCurrent()));
+				String displaytxt = fr.getText();
+				Object val = displaytxt;
+				if(c.getType()==CellType.NUMBER && fr.isDateFormatted()){
+					val = c.getDateValue();
 				}
+				
 				FilterRowInfo rowInfo = new FilterRowInfo(val, displaytxt);
 				//ZSS-299
 				orderedRowInfos.add(rowInfo);
@@ -150,10 +160,10 @@ import org.zkoss.zss.ui.impl.XUtils;
 		return orderedRowInfos;
 	}
 	
-	private static boolean isHiddenRow(int rowIdx, XSheet worksheet) {
-		final Row r = worksheet.getRow(rowIdx);
-		return r != null && r.getZeroHeight();
-	}
+//	private static boolean isHiddenRow(int rowIdx, XSheet worksheet) {
+//		final Row r = worksheet.getRow(rowIdx);
+//		return r != null && r.getZeroHeight();
+//	}
 	
 	private final static Comparable BLANK_VALUE = new Comparable() {
 		@Override
