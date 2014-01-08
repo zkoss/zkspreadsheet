@@ -198,10 +198,10 @@ public class NExcelXlsxImporter extends AbstractExcelImporter{
 					XYData xyData =  new XSSFScatChartData(xssfChart);
 					importXySeries(xyData.getSeries(), (NGeneralChartData)chart.getData());
 					break;
-				case Stock:
-					chart = sheet.addChart(NChartType.STOCK, viewAnchor);
-					categoryData = new XSSFStockChartData(xssfChart);
-					break;
+//				case Stock:
+//					chart = sheet.addChart(NChartType.STOCK, viewAnchor);
+//					categoryData = new XSSFStockChartData(xssfChart); TODO XSSFStockChartData contains wrong implementation
+//					break;
 				default:
 					//TODO ignore unsupported charts
 					continue;
