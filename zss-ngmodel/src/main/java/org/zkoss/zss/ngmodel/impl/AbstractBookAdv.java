@@ -17,6 +17,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.ngmodel.impl;
 
 import java.io.Serializable;
+import java.util.Map;
 
 import org.zkoss.zss.ngmodel.ModelEvent;
 import org.zkoss.zss.ngmodel.NBook;
@@ -37,11 +38,6 @@ public abstract class AbstractBookAdv implements NBook,EvaluationContributorCont
 	/*package*/ abstract void onModelInternalEvent(ModelInternalEvent event);
 	
 	/*package*/ abstract void sendModelInternalEvent(ModelInternalEvent event);
-	
-	
-	/*package*/ ModelInternalEvent createModelInternalEvent(String name, Object... data){
-		return ModelInternalEvents.createModelInternalEvent(name,this,data);
-	}
 
 	/*package*/ abstract void setBookSeries(NBookSeries bookSeries);
 

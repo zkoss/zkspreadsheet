@@ -228,8 +228,9 @@ public class BookImpl extends AbstractBookAdv{
 		//create formula cache for any sheet, sheet name, position change
 		EngineFactory.getInstance().createFormulaEngine().clearCache(new FormulaClearContext(this));
 		
-		sendModelInternalEvent(createModelInternalEvent(ModelInternalEvents.ON_SHEET_ADDED, 
-				ModelEvents.PARAM_SHEET, sheet));
+		sendModelInternalEvent(ModelInternalEvents.createModelInternalEvent(ModelInternalEvents.ON_SHEET_ADDED,
+				this,
+				sheet));
 
 		DependentUpdateUtil.handleDependentUpdate(getBookSeries(),new RefImpl(sheet));
 
@@ -251,9 +252,8 @@ public class BookImpl extends AbstractBookAdv{
 		//create formula cache for any sheet, sheet name, position change
 		EngineFactory.getInstance().createFormulaEngine().clearCache(new FormulaClearContext(this));
 		
-		sendModelInternalEvent(createModelInternalEvent(ModelInternalEvents.ON_SHEET_RENAMED, 
-				ModelEvents.PARAM_SHEET, sheet,
-				ModelInternalEvents.PARAM_SHEET_OLD_NAME, oldname));
+		sendModelInternalEvent(ModelInternalEvents.createModelInternalEvent(ModelInternalEvents.ON_SHEET_RENAMED, 
+				this,sheet, ModelInternalEvents.createDataMap(ModelInternalEvents.PARAM_SHEET_OLD_NAME, oldname)));
 	}
 
 	private void checkLegalSheetName(String name) {
@@ -291,9 +291,8 @@ public class BookImpl extends AbstractBookAdv{
 		//create formula cache for any sheet, sheet name, position change
 		EngineFactory.getInstance().createFormulaEngine().clearCache(new FormulaClearContext(this));
 		
-		sendModelInternalEvent(createModelInternalEvent(ModelInternalEvents.ON_SHEET_DELETED, 
-				ModelEvents.PARAM_SHEET, sheet,
-				ModelInternalEvents.PARAM_SHEET_OLD_INDEX, index));
+		sendModelInternalEvent(ModelInternalEvents.createModelInternalEvent(ModelInternalEvents.ON_SHEET_DELETED, 
+				this,ModelInternalEvents.createDataMap(ModelInternalEvents.PARAM_SHEET_OLD_INDEX, index)));
 	}
 
 	@Override
@@ -312,9 +311,8 @@ public class BookImpl extends AbstractBookAdv{
 		//create formula cache for any sheet, sheet name, position change
 		EngineFactory.getInstance().createFormulaEngine().clearCache(new FormulaClearContext(this));
 		
-		sendModelInternalEvent(createModelInternalEvent(ModelInternalEvents.ON_SHEET_MOVED, 
-				ModelEvents.PARAM_SHEET, sheet,
-				ModelInternalEvents.PARAM_SHEET_OLD_INDEX, oldindex));
+		sendModelInternalEvent(ModelInternalEvents.createModelInternalEvent(ModelInternalEvents.ON_SHEET_MOVED, 
+				this,sheet,ModelInternalEvents.createDataMap(ModelInternalEvents.PARAM_SHEET_OLD_INDEX, oldindex)));
 	}
 
 	public void dump(StringBuilder builder) {

@@ -513,8 +513,10 @@ public class SheetImpl extends AbstractSheetAdv {
 		
 		shiftAfterRowInsert(rowIdx,size);
 		
-		book.sendModelInternalEvent(createModelInternalEvent(ModelInternalEvents.ON_ROW_INSERTED, ModelInternalEvents.PARAM_ROW_INDEX, rowIdx, 
-				ModelInternalEvents.PARAM_SIZE, size));
+		book.sendModelInternalEvent(ModelInternalEvents.createModelInternalEvent(ModelInternalEvents.ON_ROW_INSERTED, 
+				this, 
+				ModelInternalEvents.createDataMap(ModelInternalEvents.PARAM_ROW_INDEX, rowIdx,
+						ModelInternalEvents.PARAM_SIZE, size)));
 	}
 	
 	private void shiftAfterRowInsert(int rowIdx, int size) {
@@ -626,8 +628,9 @@ public class SheetImpl extends AbstractSheetAdv {
 		
 		shiftAfterRowDelete(rowIdx,size);	
 		
-		book.sendModelInternalEvent(createModelInternalEvent(ModelInternalEvents.ON_ROW_DELETED, ModelInternalEvents.PARAM_ROW_INDEX, rowIdx, 
-				ModelInternalEvents.PARAM_SIZE, size));
+		book.sendModelInternalEvent(ModelInternalEvents.createModelInternalEvent(ModelInternalEvents.ON_ROW_DELETED, 
+				this, ModelInternalEvents.createDataMap(ModelInternalEvents.PARAM_ROW_INDEX, rowIdx, 
+						ModelInternalEvents.PARAM_SIZE, size)));
 	}
 	
 	@Override
@@ -702,8 +705,9 @@ public class SheetImpl extends AbstractSheetAdv {
 		
 		shiftAfterColumnInsert(columnIdx,size);
 		
-		book.sendModelInternalEvent(createModelInternalEvent(ModelInternalEvents.ON_COLUMN_INSERTED, ModelInternalEvents.PARAM_COLUMN_INDEX, columnIdx, 
-				ModelInternalEvents.PARAM_SIZE, size));
+		book.sendModelInternalEvent(ModelInternalEvents.createModelInternalEvent(ModelInternalEvents.ON_COLUMN_INSERTED, this,
+				ModelInternalEvents.createDataMap(ModelInternalEvents.PARAM_COLUMN_INDEX, columnIdx, 
+						ModelInternalEvents.PARAM_SIZE, size)));
 	}
 	
 	private void insertAndSplitColumnArray(int columnIdx,int size){
@@ -800,8 +804,9 @@ public class SheetImpl extends AbstractSheetAdv {
 		}
 		shiftAfterColumnDelete(columnIdx,size);
 		
-		book.sendModelInternalEvent(createModelInternalEvent(ModelInternalEvents.ON_COLUMN_DELETED, ModelInternalEvents.PARAM_COLUMN_INDEX, columnIdx, 
-				ModelInternalEvents.PARAM_SIZE, size));
+		book.sendModelInternalEvent(ModelInternalEvents.createModelInternalEvent(ModelInternalEvents.ON_COLUMN_DELETED, 
+				this, ModelInternalEvents.createDataMap(ModelInternalEvents.PARAM_COLUMN_INDEX, columnIdx, 
+						ModelInternalEvents.PARAM_SIZE, size)));
 	}
 	
 	private void deleteAndShrinkColumnArray(int columnIdx,int size){
@@ -1241,6 +1246,11 @@ public class SheetImpl extends AbstractSheetAdv {
 	public NAutoFilter createAutoFilter(CellRegion region) {
 		Validations.argNotNull(region);
 		return autoFilter = new AutoFilterImpl(region);
+	}
+	
+	@Override
+	public void deleteAutoFilter() {
+		autoFilter = null;
 	}
 
 	@Override

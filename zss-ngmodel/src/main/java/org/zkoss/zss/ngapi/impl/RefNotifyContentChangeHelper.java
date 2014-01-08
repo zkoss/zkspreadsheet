@@ -21,7 +21,7 @@ import org.zkoss.zss.ngmodel.sys.dependency.Ref.RefType;
 		this.bookSeries = bookSeries;
 	}
 
-	public void handle(HashSet<Ref> dependentSet) {
+	public void notifyContentChange(HashSet<Ref> dependentSet) {
 		// clear formula cache
 		for (Ref dependent : dependentSet) {
 			System.out.println(">>> Notify "+dependent);
@@ -47,7 +47,7 @@ import org.zkoss.zss.ngmodel.sys.dependency.Ref.RefType;
 		if(sheet==null) return;
 		String[] ids = dependent.getObjectIdPath();
 		((AbstractBookAdv) book).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_CHART_CONTENT_CHANGE,sheet,
-				ModelEvents.PARAM_OBJECT_ID,ids[0]));
+				ModelEvents.createDataMap(ModelEvents.PARAM_OBJECT_ID,ids[0])));
 				
 	}
 	
@@ -58,7 +58,7 @@ import org.zkoss.zss.ngmodel.sys.dependency.Ref.RefType;
 		if(sheet==null) return;
 		String[] ids = dependent.getObjectIdPath();
 		((AbstractBookAdv) book).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_DATA_VALIDATION_CONTENT_CHANGE,sheet,
-				ModelEvents.PARAM_OBJECT_ID,ids[0]));
+				ModelEvents.createDataMap(ModelEvents.PARAM_OBJECT_ID,ids[0])));
 	}
 
 	private void handleCellRef(Ref notify) {

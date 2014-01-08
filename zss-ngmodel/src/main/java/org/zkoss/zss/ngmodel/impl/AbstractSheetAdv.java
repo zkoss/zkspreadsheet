@@ -47,8 +47,4 @@ public abstract class AbstractSheetAdv implements NSheet,LinkedModelObject,Seria
 	
 	/*package*/ abstract void onModelInternalEvent(ModelInternalEvent event);
 	
-	/*package*/ ModelInternalEvent createModelInternalEvent(String name, Object... data){
-		return ModelInternalEvents.createModelInternalEvent(name,this,data);
-	}
-	
 }
