@@ -74,15 +74,7 @@ public class XlsImporterTest extends ImporterTest {
 	@Override
 	public void bubbleChart() {
 		NBook book = ImExpTestUtil.loadBook(CHART_IMPORT_FILE_UNDER_TEST, "Chart");
-		NSheet sheet = book.getSheetByName("Bubble");
-		NChart bubbleChart = sheet.getChart(0);
-		//bubble chart is Scatter chart in XLS
-		assertEquals(NChartType.SCATTER, bubbleChart.getType());
-		
-		NGeneralChartData chartData = (NGeneralChartData)bubbleChart.getData();
-		assertEquals(0, chartData.getNumOfCategory());
-		assertEquals(1, chartData.getNumOfSeries());
-		assertEquals("String Literal Title", chartData.getSeries(0).getName());
+		bubbleChart(book);
 	}
 	
 	@Override
@@ -90,7 +82,7 @@ public class XlsImporterTest extends ImporterTest {
 		NBook book = ImExpTestUtil.loadBook(CHART_IMPORT_FILE_UNDER_TEST, "Chart");
 		NSheet sheet = book.getSheetByName("Column");
 		NChart columnChart = sheet.getChart(0);
-		assertEquals(NChartType.BAR,columnChart.getType());
+		assertEquals(NChartType.COLUMN,columnChart.getType());
 		
 		NGeneralChartData chartData = (NGeneralChartData)columnChart.getData();
 		assertEquals(4, chartData.getNumOfCategory());
@@ -103,12 +95,7 @@ public class XlsImporterTest extends ImporterTest {
 	@Override
 	public void doughnutChart() {
 		NBook book = ImExpTestUtil.loadBook(CHART_IMPORT_FILE_UNDER_TEST, "Chart");
-		NSheet sheet = book.getSheetByName("Doughnut");
-		NChart doughnutChart = sheet.getChart(0);
-		assertEquals(NChartType.PIE, doughnutChart.getType());
-		
-		NGeneralChartData chartData = (NGeneralChartData)doughnutChart.getData();
-		assertEquals(8, chartData.getNumOfCategory());
+		doughnutChart(book);
 	}
 	
 	@Override

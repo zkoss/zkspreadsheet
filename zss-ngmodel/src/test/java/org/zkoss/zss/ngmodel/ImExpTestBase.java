@@ -328,8 +328,12 @@ public class ImExpTestBase {
 		
 		NGeneralChartData chartData = (NGeneralChartData)bubbleChart.getData();
 		assertEquals(0, chartData.getNumOfCategory());
-		assertEquals(1, chartData.getNumOfSeries());
+		assertEquals(2, chartData.getNumOfSeries());
 		assertEquals("String Literal Title", chartData.getSeries(0).getName());
+		//has x, y, and z values
+		assertEquals(5, chartData.getSeries(0).getNumOfXValue());
+		assertEquals(5, chartData.getSeries(0).getNumOfYValue());
+		assertEquals(5, chartData.getSeries(0).getNumOfZValue());
 	}
 	
 	public void columnChart(NBook book){
@@ -392,6 +396,10 @@ public class ImExpTestBase {
 		assertEquals(0.3427, chartData.getSeries(0).getYValue(0));
 		assertEquals(0.327, chartData.getSeries(0).getYValue(1));
 		assertEquals(0.3168, chartData.getSeries(0).getYValue(2));
+		//has X and Y values
+		assertEquals(8, chartData.getSeries(0).getNumOfXValue());
+		assertEquals(8, chartData.getSeries(0).getNumOfYValue());
+		assertEquals(0, chartData.getSeries(0).getNumOfZValue());
 	}
 	
 }

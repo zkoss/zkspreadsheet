@@ -22,7 +22,6 @@ import java.util.*;
 import org.zkoss.poi.hssf.model.HSSFFormulaParser;
 import org.zkoss.poi.hssf.record.chart.*;
 import org.zkoss.poi.hssf.usermodel.*;
-import org.zkoss.poi.hssf.usermodel.HSSFChart.HSSFChartType;
 import org.zkoss.poi.hssf.usermodel.HSSFChart.HSSFSeries;
 import org.zkoss.poi.ss.usermodel.*;
 import org.zkoss.zss.ngmodel.*;
@@ -88,51 +87,66 @@ public class NExcelXlsImporter extends AbstractExcelImporter{
 		List<ZssChartX> charts = importHSSFDrawings((HSSFSheet)poiSheet);
 		//reference ChartHelper.drawHSSFChart()
 		for (ZssChartX zssChart : charts){
-			NViewAnchor viewAnchor = toViewAnchor(poiSheet, zssChart.getPreferredSize());
 			final HSSFChart hssfChart = (HSSFChart)zssChart.getChartInfo();
-			HSSFChartType type = hssfChart.getType();
+			NChartType type = convertChartType(hssfChart);
 			NChart chart = null;
-			if (type != null){
-				switch(type) {
-				case Area:
-					chart = sheet.addChart(NChartType.AREA, viewAnchor);
-					importSeries(Arrays.asList(hssfChart.getSeries()), (NGeneralChartData)chart.getData());
-					break;
-				case Bar:
-					chart = sheet.addChart(NChartType.BAR, viewAnchor);
-					importSeries(Arrays.asList(hssfChart.getSeries()), (NGeneralChartData)chart.getData());
-					break;
-				case Line:
-					chart = sheet.addChart(NChartType.LINE, viewAnchor);
-					importSeries(Arrays.asList(hssfChart.getSeries()), (NGeneralChartData)chart.getData());
-					break;
-				case Pie:
-					chart = sheet.addChart(NChartType.PIE, viewAnchor);
-					importSeries(Arrays.asList(hssfChart.getSeries()), (NGeneralChartData)chart.getData());
-					break;
-				case Scatter:
-					chart = sheet.addChart(NChartType.SCATTER, viewAnchor);
+			if (type == null){ //ignore unsupported charts
+				continue;
+			}
+			
+			chart = sheet.addChart(type, toViewAnchor(poiSheet, zssChart.getPreferredSize()));
+			
+			switch(type){
+				case SCATTER:
 					importXySeries(Arrays.asList(hssfChart.getSeries()), (NGeneralChartData)chart.getData());
 					break;
+				case BUBBLE:
+					importXyzSeries(Arrays.asList(hssfChart.getSeries()), (NGeneralChartData)chart.getData());
+					break;
 				default:
-					continue;
-				}
+					importSeries(Arrays.asList(hssfChart.getSeries()), (NGeneralChartData)chart.getData());
 			}
+			
 			if (getChartTitle(hssfChart) != null){
 				chart.setTitle(hssfChart.getChartTitle());
 			}
+			chart.setThreeD(hssfChart.getChart3D() != null);
 			
 			/*
 			 * TODO import legend position.
-			 * HSSFChart.getLegendPos() returns incorrect value (7). 
-			 * According to Excel Binary File Format (.xls) Structure \ 2.4.152 Legend, LegendRecord's implementation might be incorrect.
+			 * HSSFChart.getLegendPos() always returns a fixed value (7) which doesn't correspond to real legend position. 
+			 * According to Excel Binary File Format (.xls) Structure \ 2.4.152 Legend, 
+			 * we suspect that LegendRecord's implementation might be incorrect.
 			 */
+			chart.setLegendPosition(NChartLegendPosition.RIGHT);
 //			if (hssfChart.hasLegend()){
 //				chart.setLegendPosition(toLengendPosition(hssfChart.getLegendPos()));
 //			}
-			chart.setThreeD(hssfChart.getChart3D() != null);
 		}
 
+	}
+	
+	/**
+	 * refer to 2.2.3.7 Chart Group
+	 * @param hssfChart
+	 * @return
+	 */
+	private NChartType convertChartType(HSSFChart hssfChart){
+		if(hssfChart.getType()!=null){
+			switch(hssfChart.getType()) {
+			case Area:
+				return NChartType.AREA;
+			case Bar:
+				return ((BarRecord)hssfChart.getShapeRecord()).isHorizontal() ? NChartType.BAR : NChartType.COLUMN;
+			case Line:
+				return NChartType.LINE;
+			case Pie:
+				return ((PieRecord)hssfChart.getShapeRecord()).getPcDonut() == 0 ? NChartType.PIE: NChartType.DOUGHNUT;
+			case Scatter:
+				return ((ScatterRecord)hssfChart.getShapeRecord()).isBubbles() ? NChartType.BUBBLE : NChartType.SCATTER;
+			}
+		}
+		return null;
 	}
 	
 	private NChartLegendPosition toLengendPosition(int positionType){
@@ -268,7 +282,25 @@ public class NExcelXlsImporter extends AbstractExcelImporter{
 			series.setXYFormula(nameExpression, xValueExpression, yValueExpression);
 		}
 	}
+	
+	private void importXyzSeries(List<HSSFSeries> seriesList, NGeneralChartData chartData) {
+		for (int i =0 ;  i< seriesList.size() ; i++){
+			HSSFSeries sourceSeries = seriesList.get(i);
+			String nameExpression = getTitleFormula(sourceSeries, i);		
+			String xValueExpression = getValueFormula(sourceSeries.getDataCategoryLabels());
+			String yValueExpression = getValueFormula(sourceSeries.getDataValues());
+			String zValueExpression = getValueFormula(sourceSeries.getDataSecondaryCategoryLabels());
+			NSeries series = chartData.addSeries();
+			series.setXYZFormula(nameExpression, xValueExpression, yValueExpression, zValueExpression);
+		}
+	}
 
+
+	/**
+	 * cannot import string literal value.
+	 * @param dataValues
+	 * @return
+	 */
 	private String getValueFormula(LinkedDataRecord dataValues) {
 		if (dataValues.getReferenceType() == LinkedDataRecord.REFERENCE_TYPE_WORKSHEET) {
 			return HSSFFormulaParser.toFormulaString((HSSFWorkbook)workbook, dataValues.getFormulaOfLink());
@@ -277,6 +309,11 @@ public class NExcelXlsImporter extends AbstractExcelImporter{
 		}
 	}
 
+	/**
+	 * cannot import string literal value.
+	 * @param dataCategoryLabels
+	 * @return
+	 */
 	private String getCategoryFormula(LinkedDataRecord dataCategoryLabels) {
 		if (dataCategoryLabels.getReferenceType() == LinkedDataRecord.REFERENCE_TYPE_WORKSHEET) {
 			return HSSFFormulaParser.toFormulaString((HSSFWorkbook)workbook, dataCategoryLabels.getFormulaOfLink());
