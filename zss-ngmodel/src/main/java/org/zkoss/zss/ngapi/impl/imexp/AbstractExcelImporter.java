@@ -29,6 +29,7 @@ import org.zkoss.zss.ngmodel.NCellStyle.FillPattern;
 import org.zkoss.zss.ngmodel.NCellStyle.VerticalAlignment;
 import org.zkoss.zss.ngmodel.NFont.TypeOffset;
 import org.zkoss.zss.ngmodel.NFont.Underline;
+import org.zkoss.zss.ngmodel.NPicture.Format;
 
 /**
  * Contains common importing behavior for both XLSX and XLS. Spreadsheet {@link NBook} model including following information:
@@ -444,4 +445,26 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 	
 	abstract protected int getXoffsetInPixel(ClientAnchor clientAnchor, Sheet poiSheet);
 	abstract protected int getYoffsetInPixel(ClientAnchor clientAnchor, Sheet poiSheet);
+
+	protected void importPicture(List<Picture> poiPictures, Sheet poiSheet, NSheet sheet) {
+		for (Picture picture : poiPictures){
+			Format format = convertFormat(picture.getPictureData().suggestFileExtension());
+			if (format !=null){
+				sheet.addPicture(format, picture.getPictureData().getData(), toViewAnchor(poiSheet, picture.getClientAnchor()));
+			}else{
+				//TODO log we ignore a picture with unsupported format
+			}
+		}
+	}
+
+	private Format convertFormat(String fileExtension) {
+		if (fileExtension.equalsIgnoreCase("jpg") || fileExtension.equalsIgnoreCase("jpeg")){
+			return Format.JPG;
+		}else if (fileExtension.equalsIgnoreCase("png")){
+			return Format.PNG;
+		}else if (fileExtension.equalsIgnoreCase("gif")){
+			return Format.GIF;
+		}
+		return null;
+	}
 }

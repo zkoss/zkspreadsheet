@@ -12,6 +12,7 @@ import org.zkoss.zss.ngmodel.NCellStyle.Alignment;
 import org.zkoss.zss.ngmodel.NCellStyle.BorderType;
 import org.zkoss.zss.ngmodel.NCellStyle.FillPattern;
 import org.zkoss.zss.ngmodel.NCellStyle.VerticalAlignment;
+import org.zkoss.zss.ngmodel.NPicture.Format;
 import org.zkoss.zss.ngmodel.NChart.*;
 import org.zkoss.zss.ngmodel.NFont.TypeOffset;
 import org.zkoss.zss.ngmodel.chart.NGeneralChartData;
@@ -402,6 +403,22 @@ public class ImExpTestBase {
 		assertEquals(8, chartData.getSeries(0).getNumOfXValue());
 		assertEquals(8, chartData.getSeries(0).getNumOfYValue());
 		assertEquals(0, chartData.getSeries(0).getNumOfZValue());
+	}
+
+
+	protected void picture(NBook book) {
+		NSheet sheet1 = book.getSheet(0);
+		assertEquals(2,sheet1.getPictures().size());
+		NPicture zkLogo = sheet1.getPicture(0);
+		assertEquals(Format.PNG, zkLogo.getFormat());
+		assertEquals(450, zkLogo.getAnchor().getWidth());
+		assertEquals(320, zkLogo.getAnchor().getHeight());
+		
+		NPicture zssBanner = sheet1.getPicture(1);
+		assertEquals(Format.PNG, zssBanner.getFormat());
+		assertEquals(275, zssBanner.getAnchor().getWidth());
+		assertEquals(75, zssBanner.getAnchor().getHeight());
+
 	}
 	
 }

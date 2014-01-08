@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.*;
 import org.zkoss.zss.ngmodel.NChart.*;
+import org.zkoss.zss.ngmodel.NPicture.Format;
 import org.zkoss.zss.ngmodel.chart.NGeneralChartData;
 
 public class XlsImporterTest extends ImporterTest {
@@ -12,6 +13,7 @@ public class XlsImporterTest extends ImporterTest {
 	public void setupTestFile(){
 		IMPORT_FILE_UNDER_TEST = ImporterTest.class.getResource("book/import.xls");
 		CHART_IMPORT_FILE_UNDER_TEST = ImporterTest.class.getResource("book/chart.xls");
+		PICTURE_IMPORT_FILE_UNDER_TEST = ImporterTest.class.getResource("book/picture.xls");
 	}
 	
 	@Override
@@ -114,5 +116,25 @@ public class XlsImporterTest extends ImporterTest {
 	public void scatterChart() {
 		NBook book = ImExpTestUtil.loadBook(CHART_IMPORT_FILE_UNDER_TEST, "Chart");
 		scatterChart(book);
+	}
+	
+	@Override
+	public void picture(){
+		NBook book = ImExpTestUtil.loadBook(PICTURE_IMPORT_FILE_UNDER_TEST, "Picture");
+		picture(book);
+		
+		NSheet sheet2 = book.getSheet(1);
+		assertEquals(2,sheet2.getPictures().size());
+		
+		NPicture flowerJpg = sheet2.getPicture(0);
+		assertEquals(Format.JPG, flowerJpg.getFormat());
+		assertEquals(569, flowerJpg.getAnchor().getWidth());
+		assertEquals(427, flowerJpg.getAnchor().getHeight());
+		
+		//different spec in XLS, GIF pictures are treated as PNG
+		NPicture rainbowGif = sheet2.getPicture(1);
+		assertEquals(Format.PNG, rainbowGif.getFormat());
+		assertEquals(613, rainbowGif.getAnchor().getWidth());
+		assertEquals(345, rainbowGif.getAnchor().getHeight());
 	}
 }

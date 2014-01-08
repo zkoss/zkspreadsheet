@@ -278,31 +278,21 @@ public class ImporterTest extends ImExpTestBase {
 	@Test
 	public void picture(){
 		NBook book = ImExpTestUtil.loadBook(PICTURE_IMPORT_FILE_UNDER_TEST, "Chart");
-		NSheet sheet1 = book.getSheet(0);
-		assertEquals(2,sheet1.getPictures().size());
-		NPicture zkLogo = sheet1.getPicture(0);
-		assertEquals(Format.PNG, zkLogo.getFormat());
-		assertEquals(450, zkLogo.getAnchor().getWidth());
-		assertEquals(320, zkLogo.getAnchor().getHeight());
-		
-		NPicture banner = sheet1.getPicture(1);
-		assertEquals(Format.PNG, banner.getFormat());
-		assertEquals(275, banner.getAnchor().getWidth());
-		assertEquals(75, banner.getAnchor().getHeight());
-		
+		picture(book);
 		
 		NSheet sheet2 = book.getSheet(1);
 		assertEquals(2,sheet2.getPictures().size());
 		
-		NPicture flower = sheet2.getPicture(0);
-		assertEquals(Format.JPG, flower.getFormat());
-		assertEquals(569, flower.getAnchor().getWidth());
-		assertEquals(427, flower.getAnchor().getHeight());
+		NPicture flowerJpg = sheet2.getPicture(0);
+		assertEquals(Format.JPG, flowerJpg.getFormat());
+		assertEquals(569, flowerJpg.getAnchor().getWidth());
+		assertEquals(427, flowerJpg.getAnchor().getHeight());
 		
-		NPicture rainbow = sheet2.getPicture(1);
-		assertEquals(Format.GIF, rainbow.getFormat());
-		assertEquals(613, rainbow.getAnchor().getWidth());
-		assertEquals(345, rainbow.getAnchor().getHeight());
+		//different spec in XLS
+		NPicture rainbowGif = sheet2.getPicture(1);
+		assertEquals(Format.GIF, rainbowGif.getFormat());
+		assertEquals(613, rainbowGif.getAnchor().getWidth());
+		assertEquals(345, rainbowGif.getAnchor().getHeight());
 	}
 }
 

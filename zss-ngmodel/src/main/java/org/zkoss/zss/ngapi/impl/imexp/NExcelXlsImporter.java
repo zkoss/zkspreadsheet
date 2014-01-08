@@ -186,7 +186,9 @@ public class NExcelXlsImporter extends AbstractExcelImporter{
 
 			//populate pictures and charts
 			for (HSSFShape shape : patriarch.getChildren()) {
-				if (shape instanceof HSSFChartShape) {
+				if (shape instanceof HSSFPicture) {
+					poiPictures.add((Picture)shape);
+				}else if (shape instanceof HSSFChartShape) {
 					new HSSFChartDecoder(helper,(HSSFChartShape)shape).decode();
 					poiCharts.add((HSSFChartShape)shape);
 				} else {
@@ -195,6 +197,7 @@ public class NExcelXlsImporter extends AbstractExcelImporter{
 			}
 		}
 		importChart(poiCharts, poiSheet, sheet);
+		importPicture(poiPictures, poiSheet, sheet);
 	}
 
 	/**
@@ -357,10 +360,5 @@ public class NExcelXlsImporter extends AbstractExcelImporter{
 
 		final int rowHeightPixel = XUtils.getHeightAny(poiSheet,firstRow);
 		return firstYoffset >= 256 ? rowHeightPixel : (int) Math.round(((double)rowHeightPixel) * firstYoffset / 256);  
-	}
-
-	protected void importPicture(Sheet poiSheet, NSheet sheet) {
-		// TODO Auto-generated method stub
-		
 	}
 }

@@ -36,7 +36,6 @@ import org.zkoss.zss.ngmodel.NChart.NBarDirection;
 import org.zkoss.zss.ngmodel.NChart.NChartGrouping;
 import org.zkoss.zss.ngmodel.NChart.NChartLegendPosition;
 import org.zkoss.zss.ngmodel.NChart.NChartType;
-import org.zkoss.zss.ngmodel.NPicture.Format;
 import org.zkoss.zss.ngmodel.chart.*;
 import org.zkoss.zss.ngmodel.sys.formula.FormulaEngine;
 /**
@@ -400,28 +399,6 @@ public class NExcelXlsxImporter extends AbstractExcelImporter{
 		}
 		importChart(poiCharts, poiSheet, sheet);
 		importPicture(poiPictures, poiSheet, sheet);
-	}
-	
-	private void importPicture(List<Picture> poiPictures, Sheet poiSheet, NSheet sheet){
-		for (Picture picture : poiPictures){
-			Format format = convertFormat(picture.getPictureData().suggestFileExtension());
-			if (format !=null){
-				sheet.addPicture(format, picture.getPictureData().getData(), toViewAnchor(poiSheet, picture.getClientAnchor()));
-			}else{
-				//TODO log to unsupported picture format
-			}
-		}
-	}
-	
-	private Format convertFormat(String fileExtension){
-		if (fileExtension.equalsIgnoreCase("jpg") || fileExtension.equalsIgnoreCase("jpeg")){
-			return Format.JPG;
-		}else if (fileExtension.equalsIgnoreCase("png")){
-			return Format.PNG;
-		}else if (fileExtension.equalsIgnoreCase("gif")){
-			return Format.GIF;
-		}
-		return null;
 	}
 	
 	private XSSFChartX createXSSFChartX(XSSFDrawing patriarch, CTGraphicalObjectFrame gfrm , XSSFClientAnchor xanchor) {
