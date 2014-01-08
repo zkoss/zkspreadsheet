@@ -18,8 +18,8 @@ package org.zkoss.zss.ngapi.impl.imexp;
 
 import java.io.*;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.logging.*;
+
 import org.openxmlformats.schemas.drawingml.x2006.main.*;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.*;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTDrawing;
@@ -36,6 +36,7 @@ import org.zkoss.zss.ngmodel.NChart.NBarDirection;
 import org.zkoss.zss.ngmodel.NChart.NChartGrouping;
 import org.zkoss.zss.ngmodel.NChart.NChartLegendPosition;
 import org.zkoss.zss.ngmodel.NChart.NChartType;
+import org.zkoss.zss.ngmodel.NPicture.Format;
 import org.zkoss.zss.ngmodel.chart.*;
 import org.zkoss.zss.ngmodel.sys.formula.FormulaEngine;
 /**
@@ -120,11 +121,9 @@ public class NExcelXlsxImporter extends AbstractExcelImporter{
 	 * Not import X & Y axis title because {@link XSSFCategoryAxis} doesn't provide API to get title. 
 	 * Reference ChartHelper.drawXSSFChart()
 	 */
-	@Override
-	protected void importChart(Sheet poiSheet, NSheet sheet) {
-		List<ZssChartX> charts = importXSSFDrawings((XSSFSheet)poiSheet);
+	private void importChart(List<ZssChartX> poiCharts, Sheet poiSheet, NSheet sheet) {
 		
-		for (ZssChartX zssChart : charts){
+		for (ZssChartX zssChart : poiCharts){
 			XSSFChart xssfChart = (XSSFChart)zssChart.getChart();
 			NViewAnchor viewAnchor = toViewAnchor(poiSheet, xssfChart.getPreferredSize());
 
@@ -359,12 +358,19 @@ public class NExcelXlsxImporter extends AbstractExcelImporter{
 	}
 	
 	/*
+	 * import drawings which include charts and pictures.
 	 * reference DrawingManagerImpl.initXSSFDrawings()
 	 */
-	private List<ZssChartX> importXSSFDrawings(XSSFSheet sheet) {
-		List<ZssChartX> charts = new LinkedList<ZssChartX>();
+	@Override
+	protected void importDrawings(Sheet poiSheet, NSheet sheet) {
+		/**
+		 * A list of POI chart wrapper loaded during import.
+		 */
+		List<ZssChartX> poiCharts = new LinkedList<ZssChartX>();
+		List<Picture> poiPictures = new LinkedList<Picture>();
+		
 		XSSFDrawing patriarch = null;
-		for(POIXMLDocumentPart dr : sheet.getRelations()){
+		for(POIXMLDocumentPart dr : ((XSSFSheet)poiSheet).getRelations()){
 			if(dr instanceof XSSFDrawing){
 				patriarch = (XSSFDrawing) dr;
 				break;
@@ -380,15 +386,27 @@ public class NExcelXlsxImporter extends AbstractExcelImporter{
 					clientAnchor = new XSSFClientAnchor((int)from.getColOff(), (int)from.getRowOff(), (int)to.getColOff(), (int)to.getRowOff(), 
 							from.getCol(), from.getRow(), to.getCol(), to.getRow());
 				}
-				final CTGraphicalObjectFrame gfrm = anchor.getGraphicFrame();
-				if (gfrm != null) {
-					final XSSFChartX chartX = createXSSFChartX(patriarch, gfrm , clientAnchor);
-					charts.add(chartX);
+				CTPicture ctPicture = anchor.getPic();
+				if (ctPicture == null){ 
+					final CTGraphicalObjectFrame gfrm = anchor.getGraphicFrame();
+					if (gfrm != null) {
+						final XSSFChartX chartX = createXSSFChartX(patriarch, gfrm , clientAnchor);
+						poiCharts.add(chartX);
+					}
+				}else{ 
+					poiPictures.add(XSSFPictureHelper.newXSSFPicture(patriarch, clientAnchor, ctPicture));
 				}
 			}
 		}
-		
-		return charts;
+		importChart(poiCharts, poiSheet, sheet);
+		importPicture(poiPictures, poiSheet, sheet);
+	}
+	
+	private void importPicture(List<Picture> poiPictures, Sheet poiSheet, NSheet sheet){
+		for (Picture picture : poiPictures){
+			System.out.println(picture.getPictureData().getMimeType());
+			sheet.addPicture(Format.PNG, picture.getPictureData().getData(), toViewAnchor(poiSheet, picture.getClientAnchor()));
+		}
 	}
 	
 	private XSSFChartX createXSSFChartX(XSSFDrawing patriarch, CTGraphicalObjectFrame gfrm , XSSFClientAnchor xanchor) {

@@ -2,6 +2,7 @@ package org.zkoss.zss.ngmodel;
 
 import static org.junit.Assert.*;
 
+import java.io.File;
 import java.net.URL;
 import java.text.DateFormat;
 import java.util.Locale;
@@ -22,8 +23,9 @@ import org.zkoss.zss.ngmodel.chart.NGeneralChartData;
  */
 public class ImExpTestBase {
 	
-	protected URL CHART_IMPORT_FILE_UNDER_TEST = ImporterTest.class.getResource("book/chart.xlsx");
 	protected URL IMPORT_FILE_UNDER_TEST = ImporterTest.class.getResource("book/import2007.xlsx");
+	protected URL CHART_IMPORT_FILE_UNDER_TEST = ImporterTest.class.getResource("book/chart.xlsx");
+	protected URL PICTURE_IMPORT_FILE_UNDER_TEST = ImporterTest.class.getResource("book/picture.xlsx");	
 	protected static String DEFAULT_BOOK_NAME = "PoiBook";
 
 

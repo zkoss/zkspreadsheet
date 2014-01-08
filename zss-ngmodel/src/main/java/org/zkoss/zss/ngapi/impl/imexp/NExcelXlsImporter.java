@@ -82,11 +82,9 @@ public class NExcelXlsImporter extends AbstractExcelImporter{
 		}
 	}
 
-	@Override
-	protected void importChart(Sheet poiSheet, NSheet sheet) {
-		List<ZssChartX> charts = importHSSFDrawings((HSSFSheet)poiSheet);
+	private void importChart(List<ZssChartX> poiCharts, Sheet poiSheet, NSheet sheet) {
 		//reference ChartHelper.drawHSSFChart()
-		for (ZssChartX zssChart : charts){
+		for (ZssChartX zssChart : poiCharts){
 			final HSSFChart hssfChart = (HSSFChart)zssChart.getChartInfo();
 			NChartType type = convertChartType(hssfChart);
 			NChart chart = null;
@@ -168,13 +166,19 @@ public class NExcelXlsImporter extends AbstractExcelImporter{
 
 	/**
 	 * reference DrawingManagerImpl.initHSSFDrawings()
-	 * @param sheet
+	 * @param poiSheet
 	 * @return
 	 */
-	private List<ZssChartX> importHSSFDrawings(HSSFSheet sheet) {
-		List<ZssChartX> charts = new LinkedList<ZssChartX>();
+	@Override
+	protected void importDrawings(Sheet poiSheet, NSheet sheet) {
+		/**
+		 * A list of POI chart wrapper loaded during import.
+		 */
+		List<ZssChartX> poiCharts = new LinkedList<ZssChartX>();
+		List<Picture> poiPictures = new LinkedList<Picture>();
+		
 		//decode drawing/obj/chartStream record into shapes and construct the shape tree in patriarch
-		final HSSFPatriarch patriarch = sheet.getDrawingPatriarch(); 
+		final HSSFPatriarch patriarch = ((HSSFSheet)poiSheet).getDrawingPatriarch(); 
 		//will call sheet.getDrawingEscherAggregate() 
 		//and try to convert Record to HSSFShapes but will NOT!
 		if (patriarch != null) {
@@ -184,13 +188,13 @@ public class NExcelXlsImporter extends AbstractExcelImporter{
 			for (HSSFShape shape : patriarch.getChildren()) {
 				if (shape instanceof HSSFChartShape) {
 					new HSSFChartDecoder(helper,(HSSFChartShape)shape).decode();
-					charts.add((HSSFChartShape)shape);
+					poiCharts.add((HSSFChartShape)shape);
 				} else {
 					//log "unprocessed shape"
 				}
 			}
 		}
-		return charts;
+		importChart(poiCharts, poiSheet, sheet);
 	}
 
 	/**
@@ -353,5 +357,10 @@ public class NExcelXlsImporter extends AbstractExcelImporter{
 
 		final int rowHeightPixel = XUtils.getHeightAny(poiSheet,firstRow);
 		return firstYoffset >= 256 ? rowHeightPixel : (int) Math.round(((double)rowHeightPixel) * firstYoffset / 256);  
+	}
+
+	protected void importPicture(Sheet poiSheet, NSheet sheet) {
+		// TODO Auto-generated method stub
+		
 	}
 }

@@ -18,7 +18,8 @@ import org.zkoss.zss.ngmodel.chart.NGeneralChartData;
  */
 public class ImporterTest extends ImExpTestBase {
 	
-	private NImporter importer; 
+	private NImporter importer;
+	 
 	
 	
 	@Before
@@ -268,6 +269,15 @@ public class ImporterTest extends ImExpTestBase {
 		assertEquals("High", chartData.getSeries(1).getName());
 		assertEquals("Low", chartData.getSeries(2).getName());
 		assertEquals("Close", chartData.getSeries(3).getName());
+	}
+	
+	@Test
+	public void picture(){
+		NBook book = ImExpTestUtil.loadBook(PICTURE_IMPORT_FILE_UNDER_TEST, "Chart");
+		NSheet sheet1 = book.getSheet(0);
+		assertEquals(2,sheet1.getPictures().size());
+		NSheet sheet2 = book.getSheet(1);
+		assertEquals(2,sheet2.getPictures().size());
 	}
 }
 
