@@ -2160,12 +2160,14 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 					onWidgetChange((SSDataEvent)event);
 				}
 			});
-			addEventListener(SSDataEvent.ON_SHEET_FREEZE, new EventListener() {
+			*/
+			addEventListener(ModelEvents.ON_FREEZE_CHANGE, new ModelEventListener() {
 				@Override
-				public void onEvent(Event event) throws Exception {
-					onSheetFreeze((SSDataEvent)event);
+				public void onEvent(ModelEvent event){
+					onSheetFreeze(event);
 				}
 			});
+			/*
 			addEventListener(SSDataEvent.ON_BOOK_EXPORT, new EventListener() {
 				@Override
 				public void onEvent(Event event) throws Exception {
@@ -2475,11 +2477,11 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			}
 			setProtectSheet(event.getProtect());
 		}
-		private void onSheetFreeze(SSDataEvent event) {
-			final Ref rng = event.getRef();
-			final XSheet sheet = getSheet(rng);
+		*/
+		private void onSheetFreeze(ModelEvent event) {
+			final NSheet sheet = event.getSheet();
 			if (!getSelectedXSheet().equals(sheet)){
-				releaseClientCache(XUtils.getSheetUuid(sheet));
+				releaseClientCache(sheet.getId());
 				return;
 			}
 			//TODO
@@ -2490,6 +2492,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 				loader.onSheetFreeze(sheet);
 			}
 		}
+		/*
 		private void onBookExport(SSDataEvent event) {
 			//
 			String type = (String)event.getPayload();
