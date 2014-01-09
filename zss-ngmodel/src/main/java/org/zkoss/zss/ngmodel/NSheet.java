@@ -71,8 +71,8 @@ public interface NSheet {
 	
 	public String getId();
 	
-	public NViewInfo getViewInfo();
-	public NPrintInfo getPrintInfo();
+	public NSheetViewInfo getViewInfo();
+	public NPrintSetup getPrintSetup();
 	
 	public abstract int getStartRowIndex();
 	public abstract int getEndRowIndex();

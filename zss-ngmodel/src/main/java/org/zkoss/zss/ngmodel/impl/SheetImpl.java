@@ -42,10 +42,10 @@ import org.zkoss.zss.ngmodel.NDataGrid;
 import org.zkoss.zss.ngmodel.NDataValidation;
 import org.zkoss.zss.ngmodel.NPicture;
 import org.zkoss.zss.ngmodel.NPicture.Format;
-import org.zkoss.zss.ngmodel.NPrintInfo;
+import org.zkoss.zss.ngmodel.NPrintSetup;
 import org.zkoss.zss.ngmodel.NRow;
 import org.zkoss.zss.ngmodel.NViewAnchor;
-import org.zkoss.zss.ngmodel.NViewInfo;
+import org.zkoss.zss.ngmodel.NSheetViewInfo;
 import org.zkoss.zss.ngmodel.util.CellReference;
 import org.zkoss.zss.ngmodel.util.Validations;
 /**
@@ -82,9 +82,9 @@ public class SheetImpl extends AbstractSheetAdv {
 	private final List<CellRegion> mergedRegions = new LinkedList<CellRegion>();
 	
 	//to store some lowpriority view info
-	private final NViewInfo viewInfo = new ViewInfoImpl();
+	private final NSheetViewInfo viewInfo = new SheetViewInfoImpl();
 	
-	private final NPrintInfo printInfo = new PrintInfoImpl();
+	private final NPrintSetup printSetup = new PrintSetupImpl();
 	
 	private transient HashMap<String,Object> attributes;
 	private int defaultColumnWidth = 64; //in pixel
@@ -1166,13 +1166,13 @@ public class SheetImpl extends AbstractSheetAdv {
 	}
 
 	@Override
-	public NViewInfo getViewInfo(){
+	public NSheetViewInfo getViewInfo(){
 		return viewInfo;
 	}
 	
 	@Override
-	public NPrintInfo getPrintInfo(){
-		return printInfo;
+	public NPrintSetup getPrintSetup(){
+		return printSetup;
 	}
 
 

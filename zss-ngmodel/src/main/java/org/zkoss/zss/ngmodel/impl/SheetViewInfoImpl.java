@@ -22,9 +22,9 @@ import java.util.TreeSet;
 
 import org.zkoss.zss.ngmodel.NFooter;
 import org.zkoss.zss.ngmodel.NHeader;
-import org.zkoss.zss.ngmodel.NViewInfo;
+import org.zkoss.zss.ngmodel.NSheetViewInfo;
 
-public class ViewInfoImpl implements NViewInfo, Serializable {
+public class SheetViewInfoImpl implements NSheetViewInfo, Serializable {
 	private static final long serialVersionUID = 1L;
 	private boolean displayGridline = true;
 	

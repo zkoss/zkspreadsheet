@@ -21,7 +21,7 @@ package org.zkoss.zss.ngmodel;
  * @author dennis
  * @since 3.5.0
  */
-public interface NViewInfo {
+public interface NSheetViewInfo {
 	public int getNumOfRowFreeze();
 
 	public int getNumOfColumnFreeze();

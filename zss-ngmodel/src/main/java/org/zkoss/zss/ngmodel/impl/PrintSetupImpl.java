@@ -18,9 +18,9 @@ package org.zkoss.zss.ngmodel.impl;
 
 import java.io.Serializable;
 
-import org.zkoss.zss.ngmodel.NPrintInfo;
+import org.zkoss.zss.ngmodel.NPrintSetup;
 
-public class PrintInfoImpl implements NPrintInfo,Serializable {
+public class PrintSetupImpl implements NPrintSetup,Serializable {
 	private static final long serialVersionUID = 1L;
 	private boolean printGridline = false; 
 	private int headerMargin;
