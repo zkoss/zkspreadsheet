@@ -1,6 +1,8 @@
 package org.zkoss.zss.ngmodel;
 
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.File;
 import java.util.*;
 
@@ -10,6 +12,7 @@ import org.junit.*;
 import org.zkoss.util.Locales;
 import org.zkoss.zss.ngapi.impl.imexp.ExcelExportFactory;
 import org.zkoss.zss.ngmodel.NCellStyle.BorderType;
+import org.zkoss.zss.ngmodel.NPicture.Format;
 
 /**
  * Common practice used in the test case:
@@ -366,5 +369,25 @@ public class ExporterTest extends ImExpTestBase {
 		File outFile = ImExpTestUtil.write(ImExpTestUtil.loadBook(CHART_IMPORT_FILE_UNDER_TEST, "XSSFBook"), ExcelExportFactory.Type.XLSX);
 		NBook book = ImExpTestUtil.loadBook(outFile, DEFAULT_BOOK_NAME);
 		scatterChart(book);
+	}
+	
+	@Test
+	public void picture(){
+		File outFile = ImExpTestUtil.write(ImExpTestUtil.loadBook(PICTURE_IMPORT_FILE_UNDER_TEST, "XSSFBook"), ExcelExportFactory.Type.XLSX);
+		NBook book = ImExpTestUtil.loadBook(outFile, DEFAULT_BOOK_NAME);
+		picture(book);
+		
+		NSheet sheet2 = book.getSheet(1);
+		assertEquals(2,sheet2.getPictures().size());
+		NPicture flowerJpg = sheet2.getPicture(0);
+		assertEquals(Format.JPG, flowerJpg.getFormat());
+		assertEquals(569, flowerJpg.getAnchor().getWidth());
+		assertEquals(427, flowerJpg.getAnchor().getHeight());
+		
+		//different spec in XLS
+		NPicture rainbowGif = sheet2.getPicture(1);
+		assertEquals(Format.GIF, rainbowGif.getFormat());
+		assertEquals(613, rainbowGif.getAnchor().getWidth());
+		assertEquals(345, rainbowGif.getAnchor().getHeight());
 	}
 }

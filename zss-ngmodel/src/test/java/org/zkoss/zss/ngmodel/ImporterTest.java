@@ -282,7 +282,6 @@ public class ImporterTest extends ImExpTestBase {
 		
 		NSheet sheet2 = book.getSheet(1);
 		assertEquals(2,sheet2.getPictures().size());
-		
 		NPicture flowerJpg = sheet2.getPicture(0);
 		assertEquals(Format.JPG, flowerJpg.getFormat());
 		assertEquals(569, flowerJpg.getAnchor().getWidth());

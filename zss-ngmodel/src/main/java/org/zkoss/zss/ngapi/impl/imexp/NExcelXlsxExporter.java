@@ -25,6 +25,7 @@ import org.zkoss.zss.ngmodel.*;
 import org.zkoss.zss.ngmodel.NChart.NBarDirection;
 import org.zkoss.zss.ngmodel.NChart.NChartGrouping;
 import org.zkoss.zss.ngmodel.NChart.NChartLegendPosition;
+import org.zkoss.zss.ngmodel.NPicture.Format;
 import org.zkoss.zss.ngmodel.chart.*;
 /**
  * 
@@ -68,6 +69,29 @@ public class NExcelXlsxExporter extends AbstractExcelExporter {
 		}
 	}
 
+	/**
+	 * Reference DrawingManagerImpl.addPicture()
+	 */
+	@Override
+	protected void exportPicture(NSheet sheet, Sheet poiSheet) {
+		for (NPicture picture : sheet.getPictures()){
+			int poiPictureIndex = workbook.addPicture(picture.getData(), toPoiPictureFormat(picture.getFormat()));
+			poiSheet.createDrawingPatriarch().createPicture(toClientAnchor(picture.getAnchor(), sheet), poiPictureIndex);
+		}
+	}
+	
+	private int toPoiPictureFormat(Format format){
+		switch(format){
+		case GIF:
+			return XSSFWorkbook.PICTURE_TYPE_GIF;
+		case JPG:
+			return Workbook.PICTURE_TYPE_JPEG;
+		case PNG:
+		default:
+			return Workbook.PICTURE_TYPE_PNG;
+		}
+	}
+	
 	/**
 	 * 
 	 * @param chart

@@ -72,5 +72,10 @@ public class NExcelXlsExporter extends AbstractExcelExporter {
 	protected void exportChart(NSheet sheet, Sheet poiSheet) {
 		// not support in XLS
 	}
+	
+	@Override
+	protected void exportPicture(NSheet sheet, Sheet poiSheet) {
+		// not support in XLS
+	}
 
 }
