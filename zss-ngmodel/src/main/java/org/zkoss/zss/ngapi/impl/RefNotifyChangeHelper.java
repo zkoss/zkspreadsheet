@@ -18,7 +18,6 @@ import org.zkoss.zss.ngmodel.sys.dependency.Ref.RefType;
 
 	public void notifySizeChange(HashSet<Ref> notifySet) {
 		for (Ref notify : notifySet) {
-			System.out.println(">>> Notify Size "+notify);
 			if (notify.getType() == RefType.CELL || notify.getType() == RefType.AREA) {
 				handleRowColumnSizeChange(notify);
 			} 
@@ -38,11 +37,21 @@ import org.zkoss.zss.ngmodel.sys.dependency.Ref.RefType;
 		if (notify.getType() != RefType.SHEET) {
 			return;
 		}
-		System.out.println(">>> Notify Autofilter "+notify);
 		NBook book = bookSeries.getBook(notify.getBookName());
 		if(book==null) return;
 		NSheet sheet = book.getSheetByName(notify.getSheetName());
 		if(sheet==null) return;
 		((AbstractBookAdv) book).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_AUTOFILTER_CHANGE,sheet));
+	}
+
+	public void notifySheetFreezeChange(Ref notify) {
+		if (notify.getType() != RefType.SHEET) {
+			return;
+		}
+		NBook book = bookSeries.getBook(notify.getBookName());
+		if(book==null) return;
+		NSheet sheet = book.getSheetByName(notify.getSheetName());
+		if(sheet==null) return;
+		((AbstractBookAdv) book).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_FREEZE_CHANGE,sheet));
 	}
 }

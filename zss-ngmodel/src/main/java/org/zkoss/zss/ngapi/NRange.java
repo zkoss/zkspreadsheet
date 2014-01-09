@@ -666,10 +666,10 @@ public interface NRange {
 	
 	/**
 	 * Set the freeze panel
-	 * @param rowfreeze the number of row to freeze, 0 means no freeze
-	 * @param columnfreeze the number of column to freeze, 0 means no freeze
+	 * @param numOfRow the number of row to freeze, 0 means no freeze
+	 * @param numOfColumn the number of column to freeze, 0 means no freeze
 	 */
-	public void setFreezePanel(int rowfreeze, int columnfreeze);
+	public void setFreezePanel(int numOfRow, int numOfColumn);
 
 	public String getCellFormatText();
 

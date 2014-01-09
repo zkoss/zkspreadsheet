@@ -49,6 +49,7 @@ import org.zkoss.zss.ngmodel.NHyperlink;
 import org.zkoss.zss.ngmodel.NHyperlink.HyperlinkType;
 import org.zkoss.zss.ngmodel.NRow;
 import org.zkoss.zss.ngmodel.NSheet;
+import org.zkoss.zss.ngmodel.NSheetViewInfo;
 import org.zkoss.zss.ngmodel.impl.AbstractSheetAdv;
 import org.zkoss.zss.ngmodel.impl.DependentCollector;
 import org.zkoss.zss.ngmodel.impl.FormulaCacheCleaner;
@@ -238,7 +239,7 @@ public class NRangeImpl implements NRange {
 
 	private void handleRefNotifyContentChange(NBookSeries bookSeries,HashSet<Ref> notifySet) {
 		// notify changes
-		new RefNotifyDependentChangeHelper(bookSeries).notifyContentChange(notifySet);
+		new RefNotifyContentChangeHelper(bookSeries).notifyContentChange(notifySet);
 	}
 	
 	private void handleRefNotifySizeChange(NBookSeries bookSeries,HashSet<Ref> notifySet) {
@@ -679,8 +680,18 @@ public class NRangeImpl implements NRange {
 	}
 
 	@Override
-	public void setFreezePanel(int rowfreeze, int columnfreeze) {
-		throw new UnsupportedOperationException("not implement yet");
+	public void setFreezePanel(final int numOfRow, final int numOfColumn) {
+		//first ref only
+		new ReadWriteTask() {			
+			@Override
+			public Object invoke() {
+				NSheetViewInfo viewInfo = getSheet().getViewInfo();
+				viewInfo.setNumOfRowFreeze(numOfRow);
+				viewInfo.setNumOfColumnFreeze(numOfColumn);
+				new RefNotifyChangeHelper(getBook().getBookSeries()).notifySheetFreezeChange(getSheetRef());
+				return null;
+			}
+		}.doInWriteLock(getLock());	
 	}
 
 	@Override

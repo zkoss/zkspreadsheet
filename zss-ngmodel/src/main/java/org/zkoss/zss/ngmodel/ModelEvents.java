@@ -33,6 +33,7 @@ public class ModelEvents {
 	
 	public static final String ON_ROW_COLUMN_SIZE_CHANGE = "onRowColumnSizeChange";
 	public static final String ON_AUTOFILTER_CHANGE = "onAutoFilterChange";
+	public static final String ON_FREEZE_CHANGE = "onFreezeChange";
 	
 	public static final String PARAM_BOOK = "book";
 	public static final String PARAM_SHEET = "sheet";

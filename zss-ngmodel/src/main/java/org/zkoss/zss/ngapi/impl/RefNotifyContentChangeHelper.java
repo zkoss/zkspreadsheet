@@ -13,16 +13,15 @@ import org.zkoss.zss.ngmodel.sys.dependency.ObjectRef.ObjectType;
 import org.zkoss.zss.ngmodel.sys.dependency.Ref;
 import org.zkoss.zss.ngmodel.sys.dependency.Ref.RefType;
 
-/*package*/ class RefNotifyDependentChangeHelper extends RefHelperBase{
+/*package*/ class RefNotifyContentChangeHelper extends RefHelperBase{
 
-	public RefNotifyDependentChangeHelper(NBookSeries bookSeries) {
+	public RefNotifyContentChangeHelper(NBookSeries bookSeries) {
 		super(bookSeries);
 	}
 
 	public void notifyContentChange(HashSet<Ref> dependentSet) {
 		// clear formula cache
 		for (Ref dependent : dependentSet) {
-			System.out.println(">>> Notify "+dependent);
 			//clear the dependent's formula cache since the precedent is changed.
 			if (dependent.getType() == RefType.CELL || dependent.getType() == RefType.AREA) {
 				handleCellRef(dependent);
