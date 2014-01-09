@@ -434,7 +434,6 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 	}
 
 	protected NViewAnchor toViewAnchor(Sheet poiSheet, ClientAnchor clientAnchor) {
-		//FIXME
 		int width = getAnchorWidthInPx(clientAnchor, poiSheet);
 		int height = getAnchorHeightInPx(clientAnchor, poiSheet);
 		NViewAnchor viewAnchor = new NViewAnchor(clientAnchor.getRow1(), clientAnchor.getCol1(), width, height);
@@ -448,23 +447,12 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 
 	protected void importPicture(List<Picture> poiPictures, Sheet poiSheet, NSheet sheet) {
 		for (Picture picture : poiPictures){
-			Format format = convertFormat(picture.getPictureData().suggestFileExtension());
+			Format format = Format.valueOfFileExtension(picture.getPictureData().suggestFileExtension());
 			if (format !=null){
 				sheet.addPicture(format, picture.getPictureData().getData(), toViewAnchor(poiSheet, picture.getClientAnchor()));
 			}else{
 				//TODO log we ignore a picture with unsupported format
 			}
 		}
-	}
-
-	private Format convertFormat(String fileExtension) {
-		if (fileExtension.equalsIgnoreCase("jpg") || fileExtension.equalsIgnoreCase("jpeg")){
-			return Format.JPG;
-		}else if (fileExtension.equalsIgnoreCase("png")){
-			return Format.PNG;
-		}else if (fileExtension.equalsIgnoreCase("gif")){
-			return Format.GIF;
-		}
-		return null;
 	}
 }

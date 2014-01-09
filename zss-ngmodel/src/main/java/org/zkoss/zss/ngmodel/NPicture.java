@@ -30,6 +30,21 @@ public interface NPicture {
 			return name().toLowerCase();
 		}
 		
+		/**
+		 * Convert file extension to picture format
+		 * @param fileExtension
+		 * @return null if no corresponding format found
+		 */
+		public static Format valueOfFileExtension(String fileExtension) {
+			if (fileExtension.equalsIgnoreCase("jpg") || fileExtension.equalsIgnoreCase("jpeg")){
+				return Format.JPG;
+			}else if (fileExtension.equalsIgnoreCase("png")){
+				return Format.PNG;
+			}else if (fileExtension.equalsIgnoreCase("gif")){
+				return Format.GIF;
+			}
+			return null;
+		}
 		
 	}
 	public NSheet getSheet();
