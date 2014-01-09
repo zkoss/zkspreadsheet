@@ -20,12 +20,12 @@ import java.io.*;
 import java.util.*;
 
 import org.zkoss.poi.hssf.model.HSSFFormulaParser;
-import org.zkoss.poi.hssf.record.chart.LinkedDataRecord;
+import org.zkoss.poi.hssf.record.chart.*;
 import org.zkoss.poi.hssf.usermodel.*;
-import org.zkoss.poi.hssf.usermodel.HSSFChart.HSSFChartType;
 import org.zkoss.poi.hssf.usermodel.HSSFChart.HSSFSeries;
 import org.zkoss.poi.ss.usermodel.*;
 import org.zkoss.zss.ngmodel.*;
+import org.zkoss.zss.ngmodel.NChart.NChartLegendPosition;
 import org.zkoss.zss.ngmodel.NChart.NChartType;
 import org.zkoss.zss.ngmodel.chart.*;
 
@@ -82,53 +82,103 @@ public class NExcelXlsImporter extends AbstractExcelImporter{
 		}
 	}
 
-	@Override
-	protected void importChart(Sheet poiSheet, NSheet sheet) {
-		List<ZssChartX> charts = importHSSFDrawings((HSSFSheet)poiSheet);
+	private void importChart(List<ZssChartX> poiCharts, Sheet poiSheet, NSheet sheet) {
 		//reference ChartHelper.drawHSSFChart()
-		for (ZssChartX zssChart : charts){
-			NViewAnchor viewAnchor = toViewAnchor(poiSheet, zssChart.getPreferredSize());
+		for (ZssChartX zssChart : poiCharts){
 			final HSSFChart hssfChart = (HSSFChart)zssChart.getChartInfo();
-			HSSFChartType type = hssfChart.getType();
+			NChartType type = convertChartType(hssfChart);
 			NChart chart = null;
-			if (type != null){
-				switch(type) {
-				case Area:
-					chart = sheet.addChart(NChartType.AREA, viewAnchor);
-					break;
-				case Bar:
-					//				model = prepareBarModel(drawer, (HSSFSheet)sheet, series);
-//					break;
-				case Line:
-					//				model = prepareLineModel(drawer, (HSSFSheet)sheet, series);
-//					break;
-				case Pie:
-					//				model = preparePieModel(drawer, (HSSFSheet)sheet, series);
-//					break;
-				case Scatter:
-					//				model = prepareScatterModel(drawer, (HSSFSheet)sheet, series); //ZSS-107
-//					break;
-				default:
-					continue;
-				}
+			if (type == null){ //ignore unsupported charts
+				continue;
 			}
-			importSeries(Arrays.asList(hssfChart.getSeries()), (NGeneralChartData)chart.getData());
-			if (hssfChart.getChartTitle() != null){
+			
+			chart = sheet.addChart(type, toViewAnchor(poiSheet, zssChart.getPreferredSize()));
+			
+			switch(type){
+				case SCATTER:
+					importXySeries(Arrays.asList(hssfChart.getSeries()), (NGeneralChartData)chart.getData());
+					break;
+				case BUBBLE:
+					importXyzSeries(Arrays.asList(hssfChart.getSeries()), (NGeneralChartData)chart.getData());
+					break;
+				default:
+					importSeries(Arrays.asList(hssfChart.getSeries()), (NGeneralChartData)chart.getData());
+			}
+			
+			if (getChartTitle(hssfChart) != null){
 				chart.setTitle(hssfChart.getChartTitle());
 			}
+			chart.setThreeD(hssfChart.getChart3D() != null);
+			
+			/*
+			 * TODO import legend position.
+			 * HSSFChart.getLegendPos() always returns a fixed value (7) which doesn't correspond to real legend position. 
+			 * According to Excel Binary File Format (.xls) Structure \ 2.4.152 Legend, 
+			 * we suspect that LegendRecord's implementation might be incorrect.
+			 */
+			chart.setLegendPosition(NChartLegendPosition.RIGHT);
+//			if (hssfChart.hasLegend()){
+//				chart.setLegendPosition(toLengendPosition(hssfChart.getLegendPos()));
+//			}
 		}
 
+	}
+	
+	/**
+	 * refer to 2.2.3.7 Chart Group
+	 * @param hssfChart
+	 * @return
+	 */
+	private NChartType convertChartType(HSSFChart hssfChart){
+		if(hssfChart.getType()!=null){
+			switch(hssfChart.getType()) {
+			case Area:
+				return NChartType.AREA;
+			case Bar:
+				return ((BarRecord)hssfChart.getShapeRecord()).isHorizontal() ? NChartType.BAR : NChartType.COLUMN;
+			case Line:
+				return NChartType.LINE;
+			case Pie:
+				return ((PieRecord)hssfChart.getShapeRecord()).getPcDonut() == 0 ? NChartType.PIE: NChartType.DOUGHNUT;
+			case Scatter:
+				return ((ScatterRecord)hssfChart.getShapeRecord()).isBubbles() ? NChartType.BUBBLE : NChartType.SCATTER;
+			}
+		}
+		return null;
+	}
+	
+	private NChartLegendPosition toLengendPosition(int positionType){
+		switch (positionType) {
+		case LegendRecord.TYPE_BOTTOM:
+			return NChartLegendPosition.BOTTOM;
+		case LegendRecord.TYPE_CORNER:
+			return NChartLegendPosition.TOP_RIGHT;
+		case LegendRecord.TYPE_LEFT:
+			return NChartLegendPosition.LEFT;
+		case LegendRecord.TYPE_TOP:
+			return NChartLegendPosition.TOP;
+		case LegendRecord.TYPE_RIGHT:
+		case LegendRecord.TYPE_UNDOCKED:
+		default:
+			return NChartLegendPosition.RIGHT;
+		}
 	}
 
 	/**
 	 * reference DrawingManagerImpl.initHSSFDrawings()
-	 * @param sheet
+	 * @param poiSheet
 	 * @return
 	 */
-	private List<ZssChartX> importHSSFDrawings(HSSFSheet sheet) {
-		List<ZssChartX> charts = new LinkedList<ZssChartX>();
+	@Override
+	protected void importDrawings(Sheet poiSheet, NSheet sheet) {
+		/**
+		 * A list of POI chart wrapper loaded during import.
+		 */
+		List<ZssChartX> poiCharts = new LinkedList<ZssChartX>();
+		List<Picture> poiPictures = new LinkedList<Picture>();
+		
 		//decode drawing/obj/chartStream record into shapes and construct the shape tree in patriarch
-		final HSSFPatriarch patriarch = sheet.getDrawingPatriarch(); 
+		final HSSFPatriarch patriarch = ((HSSFSheet)poiSheet).getDrawingPatriarch(); 
 		//will call sheet.getDrawingEscherAggregate() 
 		//and try to convert Record to HSSFShapes but will NOT!
 		if (patriarch != null) {
@@ -136,15 +186,18 @@ public class NExcelXlsImporter extends AbstractExcelImporter{
 
 			//populate pictures and charts
 			for (HSSFShape shape : patriarch.getChildren()) {
-				if (shape instanceof HSSFChartShape) {
+				if (shape instanceof HSSFPicture) {
+					poiPictures.add((Picture)shape);
+				}else if (shape instanceof HSSFChartShape) {
 					new HSSFChartDecoder(helper,(HSSFChartShape)shape).decode();
-					charts.add((HSSFChartShape)shape);
+					poiCharts.add((HSSFChartShape)shape);
 				} else {
 					//log "unprocessed shape"
 				}
 			}
 		}
-		return charts;
+		importChart(poiCharts, poiSheet, sheet);
+		importPicture(poiPictures, poiSheet, sheet);
 	}
 
 	/**
@@ -202,42 +255,93 @@ public class NExcelXlsImporter extends AbstractExcelImporter{
 	    return width;
 	}
 
+	/**
+	 * reference ChartHelper.prepareCategoryModel()
+	 * @param seriesList
+	 * @param chartData
+	 */
 	private void importSeries(List<HSSFSeries> seriesList, NGeneralChartData chartData) {
 		HSSFSeries firstSeries = null;
 		if ((firstSeries = seriesList.get(0))!=null){
-			chartData.setCategoriesFormula(getTitleFormula(firstSeries.getDataCategoryLabels()));
+			chartData.setCategoriesFormula(getCategoryFormula(firstSeries.getDataCategoryLabels()));
 		}
 		for (int i =0 ;  i< seriesList.size() ; i++){
 			HSSFSeries sourceSeries = seriesList.get(i);
-			String nameExpression = getTitleFormula(sourceSeries.getDataName());			
+			String nameExpression = getTitleFormula(sourceSeries, i);			
 			String xValueExpression = getValueFormula(sourceSeries.getDataValues());
 			NSeries series = chartData.addSeries();
 			series.setFormula(nameExpression, xValueExpression);
 		}
 	}
 	
-
-	private String getValueFormula(LinkedDataRecord dataValues) {
-		if (dataValues == null) {
-			return "0";
+	/**
+	 * reference ChartHelper.prepareXYModel()
+	 * @param seriesList
+	 * @param chartData
+	 */
+	private void importXySeries(List<HSSFSeries> seriesList, NGeneralChartData chartData) {
+		for (int i =0 ;  i< seriesList.size() ; i++){
+			HSSFSeries sourceSeries = seriesList.get(i);
+			String nameExpression = getTitleFormula(sourceSeries, i);		
+			String xValueExpression = getValueFormula(sourceSeries.getDataCategoryLabels());
+			String yValueExpression = getValueFormula(sourceSeries.getDataValues());
+			NSeries series = chartData.addSeries();
+			series.setXYFormula(nameExpression, xValueExpression, yValueExpression);
 		}
-		return HSSFFormulaParser.toFormulaString((HSSFWorkbook)workbook, dataValues.getFormulaOfLink());
-	}
-
-	private String getTitleFormula(LinkedDataRecord dataCategoryLabels) {
-		if (dataCategoryLabels == null) {
-			return "";
-		}
-		return HSSFFormulaParser.toFormulaString((HSSFWorkbook)workbook, dataCategoryLabels.getFormulaOfLink());
 	}
 	
-	private String getChartTitle(HSSFSheet sheet, ChartInfo chartInfo) {
-//		final boolean autoTitleDeleted = ((HSSFChart)chartInfo).isAutoTitleDeleted();
-//		if (!autoTitleDeleted) {
-//			final String title = ((HSSFChart)chartInfo).getChartTitle();
-//			return title != null ? title :  "pie".equals(type) || "ring".equals(type) ? getFirstSeriesTitle(drawer, sheet, chartInfo) : "";
-//		}
-		return "";
+	private void importXyzSeries(List<HSSFSeries> seriesList, NGeneralChartData chartData) {
+		for (int i =0 ;  i< seriesList.size() ; i++){
+			HSSFSeries sourceSeries = seriesList.get(i);
+			String nameExpression = getTitleFormula(sourceSeries, i);		
+			String xValueExpression = getValueFormula(sourceSeries.getDataCategoryLabels());
+			String yValueExpression = getValueFormula(sourceSeries.getDataValues());
+			String zValueExpression = getValueFormula(sourceSeries.getDataSecondaryCategoryLabels());
+			NSeries series = chartData.addSeries();
+			series.setXYZFormula(nameExpression, xValueExpression, yValueExpression, zValueExpression);
+		}
+	}
+
+
+	/**
+	 * cannot import string literal value.
+	 * @param dataValues
+	 * @return
+	 */
+	private String getValueFormula(LinkedDataRecord dataValues) {
+		if (dataValues.getReferenceType() == LinkedDataRecord.REFERENCE_TYPE_WORKSHEET) {
+			return HSSFFormulaParser.toFormulaString((HSSFWorkbook)workbook, dataValues.getFormulaOfLink());
+		}else{
+			return "0";
+		}
+	}
+
+	/**
+	 * cannot import string literal value.
+	 * @param dataCategoryLabels
+	 * @return
+	 */
+	private String getCategoryFormula(LinkedDataRecord dataCategoryLabels) {
+		if (dataCategoryLabels.getReferenceType() == LinkedDataRecord.REFERENCE_TYPE_WORKSHEET) {
+			return HSSFFormulaParser.toFormulaString((HSSFWorkbook)workbook, dataCategoryLabels.getFormulaOfLink());
+		}else{
+			return "";
+		}
+	}
+	
+	private String getTitleFormula(HSSFSeries series, int index) {
+		if (series.getDataName().getReferenceType() == LinkedDataRecord.REFERENCE_TYPE_WORKSHEET){
+			return HSSFFormulaParser.toFormulaString((HSSFWorkbook)workbook, series.getDataName().getFormulaOfLink());
+		}
+
+		return series.getSeriesTitle() == null ? "\"Series"+index+"\"" : "\""+series.getSeriesTitle()+"\"";
+	}
+	
+	private String getChartTitle(HSSFChart hssfChart) {
+		if (!hssfChart.isAutoTitleDeleted()) {
+			return hssfChart.getChartTitle();
+		}
+		return null;
 	}
 
 	@Override

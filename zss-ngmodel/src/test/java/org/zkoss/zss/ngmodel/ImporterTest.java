@@ -11,6 +11,7 @@ import org.zkoss.util.Locales;
 import org.zkoss.zss.ngapi.NImporter;
 import org.zkoss.zss.ngapi.impl.imexp.ExcelImportFactory;
 import org.zkoss.zss.ngmodel.NChart.NChartType;
+import org.zkoss.zss.ngmodel.NPicture.Format;
 import org.zkoss.zss.ngmodel.chart.NGeneralChartData;
 
 /**
@@ -18,7 +19,8 @@ import org.zkoss.zss.ngmodel.chart.NGeneralChartData;
  */
 public class ImporterTest extends ImExpTestBase {
 	
-	private NImporter importer; 
+	private NImporter importer;
+	 
 	
 	
 	@Before
@@ -214,7 +216,7 @@ public class ImporterTest extends ImExpTestBase {
 	}
 	
 	@Test
-	public void bubbleChtart(){
+	public void bubbleChart(){
 		NBook book = ImExpTestUtil.loadBook(CHART_IMPORT_FILE_UNDER_TEST, "Chart");
 		bubbleChart(book);
 		NSheet sheet = book.getSheetByName("Bubble");
@@ -268,6 +270,29 @@ public class ImporterTest extends ImExpTestBase {
 		assertEquals("High", chartData.getSeries(1).getName());
 		assertEquals("Low", chartData.getSeries(2).getName());
 		assertEquals("Close", chartData.getSeries(3).getName());
+	}
+	
+	/**
+	 * quantity, width, height, format
+	 */
+	@Test
+	public void picture(){
+		NBook book = ImExpTestUtil.loadBook(PICTURE_IMPORT_FILE_UNDER_TEST, "Chart");
+		picture(book);
+		
+		NSheet sheet2 = book.getSheet(1);
+		assertEquals(2,sheet2.getPictures().size());
+		
+		NPicture flowerJpg = sheet2.getPicture(0);
+		assertEquals(Format.JPG, flowerJpg.getFormat());
+		assertEquals(569, flowerJpg.getAnchor().getWidth());
+		assertEquals(427, flowerJpg.getAnchor().getHeight());
+		
+		//different spec in XLS
+		NPicture rainbowGif = sheet2.getPicture(1);
+		assertEquals(Format.GIF, rainbowGif.getFormat());
+		assertEquals(613, rainbowGif.getAnchor().getWidth());
+		assertEquals(345, rainbowGif.getAnchor().getHeight());
 	}
 }
 

@@ -2,6 +2,7 @@ package org.zkoss.zss.ngmodel;
 
 import static org.junit.Assert.*;
 
+import java.io.File;
 import java.net.URL;
 import java.text.DateFormat;
 import java.util.Locale;
@@ -11,6 +12,7 @@ import org.zkoss.zss.ngmodel.NCellStyle.Alignment;
 import org.zkoss.zss.ngmodel.NCellStyle.BorderType;
 import org.zkoss.zss.ngmodel.NCellStyle.FillPattern;
 import org.zkoss.zss.ngmodel.NCellStyle.VerticalAlignment;
+import org.zkoss.zss.ngmodel.NPicture.Format;
 import org.zkoss.zss.ngmodel.NChart.*;
 import org.zkoss.zss.ngmodel.NFont.TypeOffset;
 import org.zkoss.zss.ngmodel.chart.NGeneralChartData;
@@ -22,8 +24,9 @@ import org.zkoss.zss.ngmodel.chart.NGeneralChartData;
  */
 public class ImExpTestBase {
 	
-	protected URL CHART_IMPORT_FILE_UNDER_TEST = ImporterTest.class.getResource("book/chart.xlsx");
 	protected URL IMPORT_FILE_UNDER_TEST = ImporterTest.class.getResource("book/import2007.xlsx");
+	protected URL CHART_IMPORT_FILE_UNDER_TEST = ImporterTest.class.getResource("book/chart.xlsx");
+	protected URL PICTURE_IMPORT_FILE_UNDER_TEST = ImporterTest.class.getResource("book/picture.xlsx");	
 	protected static String DEFAULT_BOOK_NAME = "PoiBook";
 
 
@@ -328,8 +331,12 @@ public class ImExpTestBase {
 		
 		NGeneralChartData chartData = (NGeneralChartData)bubbleChart.getData();
 		assertEquals(0, chartData.getNumOfCategory());
-		assertEquals(1, chartData.getNumOfSeries());
+		assertEquals(2, chartData.getNumOfSeries());
 		assertEquals("String Literal Title", chartData.getSeries(0).getName());
+		//has x, y, and z values
+		assertEquals(5, chartData.getSeries(0).getNumOfXValue());
+		assertEquals(5, chartData.getSeries(0).getNumOfYValue());
+		assertEquals(5, chartData.getSeries(0).getNumOfZValue());
 	}
 	
 	public void columnChart(NBook book){
@@ -392,6 +399,26 @@ public class ImExpTestBase {
 		assertEquals(0.3427, chartData.getSeries(0).getYValue(0));
 		assertEquals(0.327, chartData.getSeries(0).getYValue(1));
 		assertEquals(0.3168, chartData.getSeries(0).getYValue(2));
+		//has X and Y values
+		assertEquals(8, chartData.getSeries(0).getNumOfXValue());
+		assertEquals(8, chartData.getSeries(0).getNumOfYValue());
+		assertEquals(0, chartData.getSeries(0).getNumOfZValue());
+	}
+
+
+	protected void picture(NBook book) {
+		NSheet sheet1 = book.getSheet(0);
+		assertEquals(2,sheet1.getPictures().size());
+		NPicture zkLogo = sheet1.getPicture(0);
+		assertEquals(Format.PNG, zkLogo.getFormat());
+		assertEquals(450, zkLogo.getAnchor().getWidth());
+		assertEquals(320, zkLogo.getAnchor().getHeight());
+		
+		NPicture zssBanner = sheet1.getPicture(1);
+		assertEquals(Format.PNG, zssBanner.getFormat());
+		assertEquals(275, zssBanner.getAnchor().getWidth());
+		assertEquals(75, zssBanner.getAnchor().getHeight());
+
 	}
 	
 }
