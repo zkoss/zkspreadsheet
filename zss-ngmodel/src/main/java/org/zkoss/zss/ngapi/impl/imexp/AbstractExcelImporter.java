@@ -210,9 +210,9 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 				break;
 			case Cell.CELL_TYPE_BLANK:
 				//do nothing because spreadsheet model auto creates blank cells
-				break;
 			default:
-				//TODO log "ignore a cell with unknown.
+				//TODO log: leave an unknown cell type as a blank cell.
+				break;
 		}
 		cell.setCellStyle(importCellStyle(poiCell.getCellStyle()));
 		
@@ -365,7 +365,6 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 		}
 	}
 
-	//TODO more error codes
 	protected ErrorValue convertErrorCode(byte errorCellValue) {
 		switch (errorCellValue){
 			case ErrorConstants.ERROR_DIV_0:

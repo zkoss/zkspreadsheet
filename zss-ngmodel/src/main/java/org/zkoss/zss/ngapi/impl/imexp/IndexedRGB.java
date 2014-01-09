@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * copied from zss project. We should remove it after integration.
  * Excel standard color palette.
  * @author henrichen
  *

@@ -157,7 +157,7 @@ public class NExcelXlsxExporter extends AbstractExcelExporter {
 	 */
 	private void plotPoiChart(NChart chart, ChartData chartData, NSheet sheet, Sheet poiSheet){
 		Chart poiChart = poiSheet.createDrawingPatriarch().createChart(toClientAnchor(chart.getAnchor(),sheet));
-		//TODO export a chart's title
+		//TODO export a chart's title, no POI API supported
 		if (chart.isThreeD()){
 			poiChart.getOrCreateView3D();
 		}
