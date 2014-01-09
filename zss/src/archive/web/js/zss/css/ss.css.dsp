@@ -80,10 +80,10 @@
 	overflow-y: visible;/*don't set hidden, otherwise sometime there will appear h-scrollbar in row*/
 	white-space: nowrap;
 	z-index: 1;
-	<c:if test="${c:browser('ie')}"> 
+	<c:if test="${c:browser('ie') and not c:browser('ie11')}"> 
 		font-size:0;
 	</c:if>
-	<c:if test="${c:isExplorer() && !c:isExplorer7()}">
+	<c:if test="${c:isExplorer() and not c:isExplorer7() and not c:browser('ie11')}">
 		position: static;
 		overflow-y: hidden;
 	</c:if>
@@ -105,16 +105,12 @@
 	z-index:10;
 	position: relative;
 	cursor : default;
-	<c:if test="${c:browser('ie')}">
-		display: inline-block;
+	display: inline-block;
+	<c:if test="${c:browser('ie') and not c:browser('ie11')}">
 		zoom: 1;
 		*display: inline;
 	</c:if>
-	<c:if test="${c:isSafari()}">
-		display: inline-block;
-	</c:if>
 	<c:if test="${c:isOpera()}">
-		display: inline-block;
 		vertical-align:text-top;
 		/*vertical-align: top;*//* DIFF : important, vertical align will cause opera scrollbar disappear*/
 	</c:if>
@@ -222,22 +218,20 @@
 	overflow: hidden;
 	position:relative;
 	cursor : default;
+	display: inline-block;
 	<c:if test="${c:isGecko()}">
 		background-image: -moz-linear-gradient(top, #F9FCFD, #D3DBE9);
 	</c:if>
-	<c:if test="${c:browser('ie')}">
-		display: inline-block;
+	<c:if test="${c:browser('ie') and not c:browser('ie11')}">
 		zoom: 1;
 		*display: inline;
 		filter:  progid:DXImageTransform.Microsoft.gradient(startColorStr='#F9FCFD', EndColorStr='#D3DBE9'); /* IE6,IE7 */
 		-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#F9FCFD', EndColorStr='#D3DBE9')"; /* IE8 */
 	</c:if>
 	<c:if test="${c:isSafari()}">
-		display: inline-block;
 		background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0, #F9FCFD),color-stop(1, #D3DBE9));
 	</c:if>
 	<c:if test="${c:isOpera()}">
-		display: inline-block;
 		background-image: -o-linear-gradient(#F9FCFD, #D3DBE9);
 	</c:if>
 }
@@ -247,7 +241,7 @@
 	<c:if test="${c:isGecko()}">
 		background-image: -moz-linear-gradient(top, #F9D99F, #F1C15F);
 	</c:if>
-	<c:if test="${c:browser('ie')}">
+	<c:if test="${c:browser('ie') and not c:browser('ie11')}">
 		filter:  progid:DXImageTransform.Microsoft.gradient(startColorStr='#F9D99F', EndColorStr='#F1C15F'); /* IE6,IE7 */
 		-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#F9D99F', EndColorStr='#F1C15F')"; /* IE8 */
 	</c:if>
@@ -322,7 +316,7 @@
 	font-size: 11px;
 	height: 19px; /* rowHeight - 1, 1 is border */
 	text-align: center;
-	<c:if test="${c:browser('ie')}">
+	<c:if test="${c:browser('ie') and not c:browser('ie11')}">
 		font-size: 10px;
 	</c:if>
 }
@@ -377,7 +371,7 @@
 	height: 20px; /* topHeight - 2, 2 is border */
 	background-color:#DAE7F6;
 	overflow: hidden;
-	<c:if test="${c:browser('ie')}">
+	<c:if test="${c:browser('ie') and not c:browser('ie11')}">
 		*font-size: 0;
 	</c:if>
 }
@@ -406,7 +400,7 @@
 	z-index: 2;
 	display: none;
 	border: 3px solid #BBBBBB;
-	<c:if test="${c:browser('ie')}">
+	<c:if test="${c:browser('ie') and not c:browser('ie11')}">
 		font-size: 0;
 	</c:if>
 }
@@ -415,7 +409,7 @@
 	width:100%;
 	height:100%;
 	opacity: 0; /* ZSS-286: it's for modern browser (including IE 9+) */ 
-	<c:if test="${c:browser('ie')}">
+	<c:if test="${c:browser('ie') and not c:browser('ie11')}">
 		font-size: 0;
 		filter: alpha(opacity=0);
 		background: #FFFFFF;
@@ -442,7 +436,7 @@
 	display: none;
 	cursor: move;
 	border: 3px solid #222222;
-	<c:if test="${c:browser('ie')}">
+	<c:if test="${c:browser('ie') and not c:browser('ie11')}">
 		font-size: 0;
 	</c:if>
 	<c:if test="${c:isGecko3()}">
@@ -455,7 +449,7 @@
 	width:100%;
 	height:100%;
 	opacity: 0; /* ZSS-286: it's for modern browser (including IE 9+) */ 
-	<c:if test="${c:browser('ie')}">
+	<c:if test="${c:browser('ie') and not c:browser('ie11')}">
 		font-size: 0;
 		filter: alpha(opacity=0);
 		background: #FFFFFF;
@@ -465,7 +459,7 @@
 .zsselecti-r{
 	background-color: #E3ECF7;
 	opacity:.5;
-	<c:if test="${c:browser('ie')}">
+	<c:if test="${c:browser('ie') and not c:browser('ie11')}">
 		filter: alpha(opacity=50);
 	</c:if>
 }
@@ -479,7 +473,7 @@
 	border: 1px solid white;
 	background-color: #222222;
 	cursor: crosshair;
-	<c:if test="${c:browser('ie')}">
+	<c:if test="${c:browser('ie') and not c:browser('ie11')}">
 		font-size: 0;
 	</c:if>
 }
@@ -500,7 +494,7 @@
 	height:100%;
 	background-color: #BBAABB;
 	opacity:.4;
-	<c:if test="${c:browser('ie')}">
+	<c:if test="${c:browser('ie') and not c:browser('ie11')}">
 		filter: alpha(opacity=40);
 		background-color: #99FFAA;
 	</c:if>
@@ -553,33 +547,21 @@
 	left:-3px;
 	z-index:2;
 	vertical-align:top;
-	<c:if test="${c:browser('ie')}">
-		display: inline-block;
+	display: inline-block;
+	<c:if test="${c:browser('ie') and not c:browser('ie11')}">
 		zoom: 1;
 		*display: inline;
-	</c:if>
-	<c:if test="${c:isSafari()}">
-		display: inline-block;
-	</c:if>
-	<c:if test="${c:isOpera()}">
-		display: inline-block;
 	</c:if>
 }
 .zshbouni{
 	position: relative;
 	height:100%;
 	width:7px;
-	<c:if test="${c:browser('ie')}">
+	display: inline-block;
+	<c:if test="${c:browser('ie') and not c:browser('ie11')}">
 		*position: absolute;
-		display: inline-block;
 		zoom: 1;
 		*display: inline;
-	</c:if>
-	<c:if test="${c:isSafari()}">
-		display: inline-block;
-	</c:if>
-	<c:if test="${c:isOpera()}">
-		display: inline-block;
 	</c:if>
 }
 .zsvboun{
@@ -592,7 +574,7 @@
 	position: relative;
 	height:7px;
 	width:100%;
-	<c:if test="${c:browser('ie')}">
+	<c:if test="${c:browser('ie') and not c:browser('ie11')}">
 		*position: absolute;
 		font-size: 0;
 	</c:if>
@@ -609,18 +591,12 @@
 	position: relative;
 	height:100%;
 	width:3px;
-	<c:if test="${c:browser('ie')}">
-		display: inline-block;
+	display: inline-block;
+	<c:if test="${c:browser('ie') and not c:browser('ie11')}">
 		zoom: 1;
 		*display: inline;
 		*position: absolute;
 		*left:7px;
-	</c:if>
-	<c:if test="${c:isSafari()}">
-		display: inline-block;
-	</c:if>
-	<c:if test="${c:isOpera()}">
-		display: inline-block;
 	</c:if>
 }
 .zshbounw-over{
@@ -631,7 +607,7 @@
 	position: relative;
 	height:3px;
 	width:100%;
-	<c:if test="${c:browser('ie')}">
+	<c:if test="${c:browser('ie') and not c:browser('ie11')}">
 		font-size: 0;
 		*position: absolute;
 		*top:7px;
@@ -665,7 +641,7 @@
 	background-color : #A9C4E9;
 	opacity:.75;
 	display:table;
-	<c:if test="${c:browser('ie')}">
+	<c:if test="${c:browser('ie') and not c:browser('ie11')}">
 		filter:alpha(opacity=75);
 	</c:if>
 }
@@ -709,7 +685,7 @@
 	background: #FFFFFF;
 	border: 2px solid #333333;
 	opacity:.5;
-	<c:if test="${c:browser('ie')}">
+	<c:if test="${c:browser('ie') and not c:browser('ie11')}">
 		filter: alpha(opacity=50);
 	</c:if>
 }
@@ -927,7 +903,7 @@
 	padding: 10px 12px;
 	position: absolute;
 	right: 0;
-	<c:if test="${c:isExplorer() and not c:browser('ie8')}">
+	<c:if test="${c:isExplorer() and not c:browser('ie8') and not c:browser('ie11')}">
 		width: 150px;
 		height: 50px;
 	</c:if>
@@ -940,7 +916,7 @@
 	width: 50px;
 	padding: 0 8px;
 	display: inline-block;
-	<c:if test="${c:isExplorer() and not c:browser('ie8')}">
+	<c:if test="${c:isExplorer() and not c:browser('ie8') and not c:browser('ie11')}">
 		position: absolute;
 	</c:if>
 	border: 1px solid #C7C7C7;
@@ -950,14 +926,14 @@
 .zsafp-btn-disd {
 	cursor: default;
 	opacity: 0.6;
-	<c:if test="${c:browser('ie')}">
+	<c:if test="${c:browser('ie') and not c:browser('ie11')}">
 		filter: alpha(opacity=60);
 	</c:if>
 }
 
 .zsafp-ok-btn {
 	background: url(${c:encodeURL('~./zss/img/tick.png')}) no-repeat 25px 5px #EFEFEF;
-	<c:if test="${c:isExplorer() and not c:browser('ie8')}">
+	<c:if test="${c:isExplorer() and not c:browser('ie8') and not c:browser('ie11')}">
 		left: 0;
 	</c:if>
 	<c:if test="${c:browser('ie6-')}">
@@ -967,7 +943,7 @@
 
 .zsafp-cancel-btn {
 	background: url(${c:encodeURL('~./zss/img/cross.png')}) no-repeat 25px 5px #EFEFEF;
-	<c:if test="${c:isExplorer() and not c:browser('ie8')}">
+	<c:if test="${c:isExplorer() and not c:browser('ie8') and not c:browser('ie11')}">
 		right: 8px;
 	</c:if>
 	<c:if test="${c:browser('ie6-')}">
@@ -1012,7 +988,7 @@
 .zsnamebox-disd .zsnamebox-icon {
 	cursor: default;
 	opacity: 0.5;
-	<c:if test="${c:browser('ie')}">
+	<c:if test="${c:browser('ie') and not c:browser('ie11')}">
 		filter: alpha(opacity=50);
 	</c:if>
 }
@@ -1044,7 +1020,7 @@
 	text-align: center;
 	padding-top: 0;
 	padding-bottom: 4px;
-	<c:if test="${c:browser('ie')}">
+	<c:if test="${c:browser('ie') and not c:browser('ie11')}">
 		padding-top: 1px;
 		padding-bottom: 3px;
 	</c:if>
@@ -1058,7 +1034,7 @@
 	text-align: center;
 	padding-top: 0;
 	padding-bottom: 4px;
-	<c:if test="${c:browser('ie')}">
+	<c:if test="${c:browser('ie') and not c:browser('ie11')}">
 		padding-top: 1px;
 		padding-bottom: 3px;
 	</c:if>
@@ -1068,7 +1044,7 @@
 .zsformulabar-cancelbtn .zsformulabar-cancelbtn-body-over .z-toolbarbutton-cnt {
 	padding-top: 0;
 	padding-bottom: 4px;
-	<c:if test="${c:browser('ie')}">
+	<c:if test="${c:browser('ie') and not c:browser('ie11')}">
 		padding-top: 1px;
 		padding-bottom: 3px;
 	</c:if>
@@ -1230,7 +1206,7 @@
 	<c:if test="${c:isGecko()}">
 		background-image: -moz-linear-gradient(top, #D1EDFF, #A4D4FD);
 	</c:if>
-	<c:if test="${c:browser('ie')}">
+	<c:if test="${c:browser('ie') and not c:browser('ie11')}">
 		filter:  progid:DXImageTransform.Microsoft.gradient(startColorStr='#D1EDFF', EndColorStr='#A4D4FD'); /* IE6,IE7 */
 		-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#D1EDFF', EndColorStr='#A4D4FD')"; /* IE8 */
 	</c:if>

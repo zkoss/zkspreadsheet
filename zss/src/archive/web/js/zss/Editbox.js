@@ -134,7 +134,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 		sheet.inlineEditor.setValue(n.value);
 		end = start + ref.length;
 		info.end = end;
-		if (zk.ie) { 
+		if (zk.ie && zk.ie < 11) { 
 			setTimeout(function () {
 				zk(n).setSelectionRange(end, end);
 			});
@@ -398,7 +398,7 @@ zss.FormulabarEditor = zk.$extends(zul.inp.InputWidget, {
    	setWidth: function (v) {
    		this.$supers(zss.FormulabarEditor, 'setWidth', arguments);
    		var w = this.$n().clientWidth;
-   		jq(this.$n('real')).css('width', jq.px(zk.ie ? w - 8 : w));//8: IE's textarea scrollbar width
+   		jq(this.$n('real')).css('width', jq.px((zk.ie /*&& zk.ie < 11*/) ? w - 8 : w));//8: IE's textarea scrollbar width
    	},
    	setHeight: function (v) {
    		this.$supers(zss.FormulabarEditor, 'setHeight', arguments);
@@ -662,7 +662,7 @@ zss.Editbox = zk.$extends(zul.inp.InputWidget, {
 		w -= 1;
 		h -= 1;
 		
-		if (zk.ie || zk.safari || zk.opera)
+		if ((zk.ie /*&& zk.ie < 11*/) || zk.safari || zk.opera)
 			//the display in different browser. 
 			w -= 2;
 
@@ -671,7 +671,7 @@ zss.Editbox = zk.$extends(zul.inp.InputWidget, {
 
 		//issue 228: firefox need set display block, but IE can not set this.
 		$edit.css({'width': jq.px0(w), 'height': jq.px0(h), 'left': jq.px(l), 'top': jq.px(t), 'line-height': jq.px0(sheet.lineHeight)});
-		if (!zk.ie)
+		if (!zk.ie || zk.ie >= 11)
 			$edit.css('display', 'block');
 		zcss.copyStyle(txtcmp, editorcmp, ["font-family","font-size","font-weight","font-style","color","text-decoration","text-align"],true);
 		zcss.copyStyle(cellcmp, editorcmp, ["background-color"], true);
@@ -690,16 +690,16 @@ zss.Editbox = zk.$extends(zul.inp.InputWidget, {
 			}
 		};
 
-		if (!zk.safari && !zk.ie) fun();//safari must run after timeout
+		if (!zk.safari && (!zk.ie /*|| zk.ie >= 11*/)) fun();//safari must run after timeout
 		setTimeout(function(){
 			//issue 228: ie focus event need after show
-			if (zk.ie) {
+			if (zk.ie /*&& zk.ie < 11*/) {
 				$edit.show();
 			}
 			if (!noFocus) {
 				$edit.focus();
 				//issue 230: IE cursor position is not at the text end when press F2
-				if (zk.safari || zk.ie) fun();
+				if (zk.safari || (zk.ie /*&& zk.ie < 11*/)) fun();
 			}
 		}, 25);	
 		this.autoAdjust(true);
@@ -734,7 +734,7 @@ zss.Editbox = zk.$extends(zul.inp.InputWidget, {
 		if (type == "w") {
 			var custColWidth = this.sheet.custColWidth,
 				w = custColWidth.getStartPixel(this.col + this.sw + 1) - custColWidth.getStartPixel(this.col);
-			if (zk.ie || zk.safari || zk.opera)
+			if ((zk.ie && zk.ie < 11) || zk.safari || zk.opera)
 				w -= 2;
 			jq(editorcmp).css('width', jq.px0(w));
 		} else if (type=="h") {
