@@ -33,4 +33,16 @@ public interface NViewInfo {
 	public boolean isDisplayGridline();
 
 	public void setDisplayGridline(boolean enable);
+	
+	public NHeader getHeader();
+	
+	public NFooter getFooter();
+	
+
+	public int[] getRowBreaks();
+	public void setRowBreaks(int[] breaks);
+	public void addRowBreak(int rowIdx);
+	public int[] getColumnBreaks();
+	public void setColumnBreaks(int[] breaks);
+	public void addColumnBreak(int columnIdx);
 }

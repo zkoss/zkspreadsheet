@@ -23,6 +23,13 @@ import org.zkoss.zss.ngmodel.NPrintInfo;
 public class PrintInfoImpl implements NPrintInfo,Serializable {
 	private static final long serialVersionUID = 1L;
 	private boolean printGridline = false; 
+	private int headerMargin;
+	private int footerMargin;
+	private int leftMargin;
+	private int rightMargin;
+	private int topMargin;
+	private int bottomMargin;
+	
 	
 	@Override
 	public boolean isPrintGridline() {
@@ -33,5 +40,55 @@ public class PrintInfoImpl implements NPrintInfo,Serializable {
 	public void setPrintGridline(boolean enable) {
 		printGridline = enable;
 	}
+
+	public int getHeaderMargin() {
+		return headerMargin;
+	}
+
+	public void setHeaderMargin(int headerMargin) {
+		this.headerMargin = headerMargin;
+	}
+
+	public int getFooterMargin() {
+		return footerMargin;
+	}
+
+	public void setFooterMargin(int footerMargin) {
+		this.footerMargin = footerMargin;
+	}
+
+	public int getLeftMargin() {
+		return leftMargin;
+	}
+
+	public void setLeftMargin(int leftMargin) {
+		this.leftMargin = leftMargin;
+	}
+
+	public int getRightMargin() {
+		return rightMargin;
+	}
+
+	public void setRightMargin(int rightMargin) {
+		this.rightMargin = rightMargin;
+	}
+
+	public int getTopMargin() {
+		return topMargin;
+	}
+
+	public void setTopMargin(int topMargin) {
+		this.topMargin = topMargin;
+	}
+
+	public int getBottomMargin() {
+		return bottomMargin;
+	}
+
+	public void setBottomMargin(int bottomMargin) {
+		this.bottomMargin = bottomMargin;
+	}
+	
+	
 
 }

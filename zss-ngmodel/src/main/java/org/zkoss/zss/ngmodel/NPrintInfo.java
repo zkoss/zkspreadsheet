@@ -22,7 +22,22 @@ package org.zkoss.zss.ngmodel;
  * @since 3.5.0
  */
 public interface NPrintInfo {
+	
+	
+	
 	public boolean isPrintGridline();
-
 	public void setPrintGridline(boolean enable);
+	
+	public int getHeaderMargin();
+	public void setHeaderMargin(int px);
+	public int getFooterMargin();
+	public void setFooterMargin(int px);
+	public int getLeftMargin();
+	public void setLeftMargin(int px);
+	public int getRightMargin();
+	public void setRightMargin(int px);
+	public int getTopMargin();
+	public void setTopMargin(int px);
+	public int getBottomMargin();
+	public void setBottomMargin(int px);
 }
