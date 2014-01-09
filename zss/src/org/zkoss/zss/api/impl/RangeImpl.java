@@ -447,24 +447,18 @@ public class RangeImpl implements Range{
 	}
 	/** enable filter with condition **/
 	//TODO have to review this after I know more detail
-	public void enableAutoFilter(int field, AutoFilterOperation filterOp, Object criteria1, Object criteria2, Boolean visibleDropDown){ 
-		_range.enableAutoFilter(field,EnumUtil.toRangeAutoFilterOperation(filterOp),criteria1,criteria2,visibleDropDown);
+	public void enableAutoFilter(int field, AutoFilterOperation filterOp, Object criteria1, Object criteria2, Boolean showButton){ 
+		_range.enableAutoFilter(field,EnumUtil.toRangeAutoFilterOperation(filterOp),criteria1,criteria2,showButton);
 	}
 	
 	/** clear criteria of all filters, show all the data**/
 	public void resetAutoFilter(){
-		//TODO the syncLevel
-		throw new UnsupportedOperationException("not implment yet");/* zss 3.5 
-		_range.showAllData();
-		*/
+		_range.resetAutoFilter();
 	}
 	
 	/** re-apply existing criteria of filters **/
-	public void applyAutoFilter(){
-		//TODO the syncLevel
-		throw new UnsupportedOperationException("not implment yet");/* zss 3.5 
-		_range.applyFilter();
-		*/
+	public void applyAutoFilter(){ 
+		_range.applyAutoFilter();
 	}
 	
 	/** enable sheet protection and apply a password**/

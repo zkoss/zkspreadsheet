@@ -1450,7 +1450,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 				for(int col = left; col <= right; ++col) {
 					final NFilterColumn fc = af.getFilterColumn(col - left,false);
 					final List<String> filters = fc != null ? fc.getFilters() : null;
-					final boolean on = fc != null ? fc.isOn() : true;
+					final boolean on = fc != null ? fc.isShowButton() : true;
 					Map fcmap = new HashMap();
 					fcmap.put("col", Integer.valueOf(col));
 					fcmap.put("filter", filters);

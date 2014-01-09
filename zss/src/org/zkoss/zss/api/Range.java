@@ -602,9 +602,9 @@ public interface Range {
 	 * @param filterOp auto filter operation
 	 * @param criteria1 criteria for autofilter
 	 * @param criteria2 criteria for autofilter
-	 * @param visibleDropDown true/false for show/hide dropdown button, null will keep the original setting.
+	 * @param showButton true/false for show/hide dropdown button, null will keep the original setting.
 	 */
-	public void enableAutoFilter(int field, AutoFilterOperation filterOp, Object criteria1, Object criteria2, Boolean visibleDropDown);
+	public void enableAutoFilter(int field, AutoFilterOperation filterOp, Object criteria1, Object criteria2, Boolean showButton);
 	
 	/**
 	 * Clears condition of filter, show all the data
