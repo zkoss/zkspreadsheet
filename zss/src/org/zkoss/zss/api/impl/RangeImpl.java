@@ -447,11 +447,8 @@ public class RangeImpl implements Range{
 	}
 	/** enable filter with condition **/
 	//TODO have to review this after I know more detail
-	public void enableAutoFilter(int field, AutoFilterOperation filterOp, Object criteria1, Object criteria2, Boolean visibleDropDown){
-		//TODO the syncLevel
-		throw new UnsupportedOperationException("not implment yet");/* zss 3.5 
-		_range.autoFilter(field,criteria1,EnumUtil.toRangeAutoFilterOperation(filterOp),criteria2,visibleDropDown);
-		*/
+	public void enableAutoFilter(int field, AutoFilterOperation filterOp, Object criteria1, Object criteria2, Boolean visibleDropDown){ 
+		_range.enableAutoFilter(field,EnumUtil.toRangeAutoFilterOperation(filterOp),criteria1,criteria2,visibleDropDown);
 	}
 	
 	/** clear criteria of all filters, show all the data**/

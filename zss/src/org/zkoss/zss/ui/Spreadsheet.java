@@ -1456,17 +1456,17 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 					fcmap.put("filter", filters);
 					fcmap.put("on", on);
 					int field = col - left + 1;
-					if (offcol >= 0 && on) { //pre button not shown and I am shown, the field number might be different!
-						field = offcol - left + 1;
-					}
+//					if (offcol >= 0 && on) { //pre button not shown and I am shown, the field number might be different!
+//						field = offcol - left + 1;
+//					}
 					fcmap.put("field", field);
-					if (!on) {
-						if (offcol < 0) { //first button off column
-							offcol = col;
-						}
-					} else {
-						offcol = -1;
-					}
+//					if (!on) {
+//						if (offcol < 0) { //first button off column
+//							offcol = col;
+//						}
+//					} else {
+//						offcol = -1;
+//					}
 					fcsary.add(fcmap);
 				}
 			}

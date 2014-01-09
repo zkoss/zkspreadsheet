@@ -47,6 +47,7 @@ import org.zkoss.zss.api.model.Picture.Format;
 import org.zkoss.zss.model.sys.XRange;
 import org.zkoss.zss.model.sys.impl.BookHelper;
 import org.zkoss.zss.ngapi.NRange;
+import org.zkoss.zss.ngmodel.NAutoFilter.FilterOp;
 import org.zkoss.zss.ngmodel.NCellStyle;
 import org.zkoss.zss.ngmodel.NFont;
 import org.zkoss.zss.ngmodel.NHyperlink;
@@ -518,22 +519,22 @@ public class EnumUtil {
 		throw new IllegalArgumentException("unknow sort data option "+dataOption);
 	}
 
-	public static int toRangeAutoFilterOperation(AutoFilterOperation filterOp) {
+	public static FilterOp toRangeAutoFilterOperation(AutoFilterOperation filterOp) {
 		switch(filterOp){
 		case AND:
-			return AutoFilter.FILTEROP_AND;
+			return FilterOp.AND;
 		case OR:
-			return AutoFilter.FILTEROP_OR;
+			return FilterOp.OR;
 		case TOP10:
-			return AutoFilter.FILTEROP_TOP10;
+			return FilterOp.TOP10;
 		case TOP10PERCENT:
-			return AutoFilter.FILTEROP_TOP10PERCENT;
+			return FilterOp.TOP10_PERCENT;
 		case BOTTOM10:
-			return AutoFilter.FILTEROP_BOTTOM10;
+			return FilterOp.BOTTOM10;
 		case BOTOOM10PERCENT:
-			return AutoFilter.FILTEROP_BOTOOM10PERCENT;
+			return FilterOp.BOTOOM10_PERCENT;
 		case VALUES:
-			return AutoFilter.FILTEROP_VALUES;
+			return FilterOp.VALUES;
 		}
 		throw new IllegalArgumentException("unknow autofilter operation "+filterOp);
 	}

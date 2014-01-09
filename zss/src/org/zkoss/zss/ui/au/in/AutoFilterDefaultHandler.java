@@ -25,6 +25,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedSet;
 import java.util.TreeSet;
 
 import org.zkoss.json.JSONArray;
@@ -47,6 +48,7 @@ import org.zkoss.zss.api.model.impl.SheetImpl;
 import org.zkoss.zss.ngapi.NRange;
 import org.zkoss.zss.ngapi.NRanges;
 import org.zkoss.zss.ngmodel.NAutoFilter;
+import org.zkoss.zss.ngmodel.NAutoFilter.FilterOp;
 import org.zkoss.zss.ngmodel.NAutoFilter.NFilterColumn;
 import org.zkoss.zss.ngmodel.NCell;
 import org.zkoss.zss.ngmodel.NCell.CellType;
@@ -82,7 +84,7 @@ import org.zkoss.zss.ui.Spreadsheet;
 		return filterArea;
 	}
 	
-	private Map convertFilterInfoToJSON(int row, int col, int field, String rangeAddr, TreeSet<FilterRowInfo> orderedRowInfos) {
+	private Map convertFilterInfoToJSON(int row, int col, int field, String rangeAddr, SortedSet<FilterRowInfo> orderedRowInfos) {
 		final Map data = new HashMap();
 		
 		boolean selectAll = true;
@@ -117,8 +119,8 @@ import org.zkoss.zss.ui.Spreadsheet;
 		return data;
 	}
 	
-	private TreeSet<FilterRowInfo> scanRows(int field, NFilterColumn fc, NRange range, NSheet worksheet) {
-		TreeSet<FilterRowInfo> orderedRowInfos = new TreeSet<FilterRowInfo>(new FilterRowInfoComparator());
+	private SortedSet<FilterRowInfo> scanRows(int field, NFilterColumn fc, NRange range, NSheet worksheet) {
+		SortedSet<FilterRowInfo> orderedRowInfos = new TreeSet<FilterRowInfo>(new FilterRowInfoComparator());
 		
 		blankRowInfo = new FilterRowInfo(BLANK_VALUE, "(Blanks)");
 		final Set criteria1 = fc == null ? null : fc.getCriteria1();
@@ -324,15 +326,13 @@ import org.zkoss.zss.ui.Spreadsheet;
 
 	/*package*/ void applyFilter(Spreadsheet spreadsheet, Sheet selectedSheet,
 			String cellRangeAddr, boolean selectAll, int field, Object criteria) {
-		/*TODO zss 3.5
-		final XRange range = XRanges.range(((SheetImpl)selectedSheet).getNative(), cellRangeAddr);
+		final NRange range = NRanges.range(((SheetImpl)selectedSheet).getNative(), cellRangeAddr);
 		
 		if (selectAll) {
-			range.autoFilter(field, null, AutoFilter.FILTEROP_VALUES, null, null);
+			range.enableAutoFilter(field, FilterOp.VALUES, null, null, true);
 		} else { //partial selection
 			JSONArray ary = (JSONArray) criteria;
-			range.autoFilter(field, ary.toArray(new String[ary.size()]), AutoFilter.FILTEROP_VALUES, null, null);
+			range.enableAutoFilter(field, FilterOp.VALUES, ary.toArray(new String[ary.size()]), null, true);
 		}
-		*/
 	}
 }
