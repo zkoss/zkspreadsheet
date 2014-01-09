@@ -376,17 +376,28 @@ public interface NRange {
 	 * @param criteria1 "=" to find blank fields, "<>" to find non-blank fields. If null, means ALL. If filterOp == AutoFilter#FILTEROP_TOP10, 
 	 * then this shall specifies the number of items (e.g. "10"). 
 	 * @param criteria2 2nd criteria; used with criteria1 and filterOP to construct compound criteria.
-	 * @param visibleDropDown true to show the autoFilter drop-down arrow for the filtered field; false to hide the autoFilter drop-down arrow; null
+	 * @param showButton true to show the autoFilter drop-down arrow for the filtered field; false to hide the autoFilter drop-down arrow; null
 	 * to keep as is.
 	 * @return the applied AutoFiltering
 	 */
-	public NAutoFilter enableAutoFilter(int field, FilterOp filterOp, Object criteria1, Object criteria2, Boolean visibleDropDown);
+	public NAutoFilter enableAutoFilter(int field, FilterOp filterOp, Object criteria1, Object criteria2, Boolean showButton);
 	
 	/**
 	 * Enable the auto filter and return it, get null if you disable it. 
 	 * @return the autofilter if enable, or null if disable. 
 	 */
 	public NAutoFilter enableAutoFilter(boolean enable);
+	
+	
+	/**
+	 * Reset the autofilter, clear the condition, shows all the hidden row
+	 */
+	public void resetAutoFilter();
+	
+	/**
+	 * Apply the autofilter with the old condition and current cell values
+	 */
+	public void applyAutoFilter();
 
 	/**
 	 * Sets whether this rows or columns are hidden(useful only if this Range cover entire column or entire row)

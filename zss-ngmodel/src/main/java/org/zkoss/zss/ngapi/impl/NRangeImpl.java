@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.locks.ReadWriteLock;
 
-import org.zkoss.poi.hssf.usermodel.HSSFSheet;
 import org.zkoss.poi.ss.usermodel.AutoFilter;
 import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.poi.ss.usermodel.FilterColumn;
@@ -796,6 +795,28 @@ public class NRangeImpl implements NRange {
 		}.doInWriteLock(getLock());
 	}
 	
+	public void resetAutoFilter(){
+		//it just handle the first ref
+		new ReadWriteTask() {			
+			@Override
+			public Object invoke() {
+				new AutoFilterHelper(NRangeImpl.this).resetAutoFilter();
+				new RefNotifyChangeHelper(getBook().getBookSeries()).notifySheetAutoFilterChange(getSheetRef());
+				return null;
+			}
+		}.doInWriteLock(getLock());		
+	}
 	
+	public void applyAutoFilter(){
+		//it just handle the first ref
+		new ReadWriteTask() {			
+			@Override
+			public Object invoke() {
+				new AutoFilterHelper(NRangeImpl.this).applyAutoFilter();
+				new RefNotifyChangeHelper(getBook().getBookSeries()).notifySheetAutoFilterChange(getSheetRef());
+				return null;
+			}
+		}.doInWriteLock(getLock());		
+	}
 	
 }

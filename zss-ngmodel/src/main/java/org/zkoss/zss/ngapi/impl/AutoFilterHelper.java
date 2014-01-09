@@ -1,10 +1,11 @@
 package org.zkoss.zss.ngapi.impl;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
-import org.zkoss.poi.ss.usermodel.AutoFilter;
 import org.zkoss.zss.ngapi.NRange;
 import org.zkoss.zss.ngapi.NRanges;
 import org.zkoss.zss.ngmodel.CellRegion;
@@ -13,9 +14,6 @@ import org.zkoss.zss.ngmodel.NAutoFilter.FilterOp;
 import org.zkoss.zss.ngmodel.NAutoFilter.NFilterColumn;
 import org.zkoss.zss.ngmodel.NCell;
 import org.zkoss.zss.ngmodel.NRow;
-import org.zkoss.zss.ngmodel.sys.EngineFactory;
-import org.zkoss.zss.ngmodel.sys.dependency.Ref;
-import org.zkoss.zss.ngmodel.sys.format.FormatEngine;
 
 /**
  * 
@@ -60,7 +58,7 @@ import org.zkoss.zss.ngmodel.sys.format.FormatEngine;
 	
 	//refer to #XRangeImpl#autoFilter(int field, Object criteria1, int filterOp, Object criteria2, Boolean visibleDropDown) {
 	public NAutoFilter enableAutoFilter(final int field, final FilterOp filterOp,
-			final Object criteria1, final Object criteria2, final Boolean visibleDropDown) {
+			final Object criteria1, final Object criteria2, final Boolean showButton) {
 		NAutoFilter filter = sheet.getAutoFilter();
 		if(filter==null){
 			CellRegion region = new DataRegionHelper(range).findAutoFilterDataRegion();
@@ -72,7 +70,7 @@ import org.zkoss.zss.ngmodel.sys.format.FormatEngine;
 		}
 		
 		final NFilterColumn fc = filter.getFilterColumn(field-1,true);	
-		fc.setProperties(filterOp, criteria1, criteria2, visibleDropDown);
+		fc.setProperties(filterOp, criteria1, criteria2, showButton);
 
 		//update rows
 		final CellRegion affectedArea = filter.getRegion();
@@ -82,7 +80,7 @@ import org.zkoss.zss.ngmodel.sys.format.FormatEngine;
 		final int row = row1 + 1;
 		final int row2 = affectedArea.getLastRow();
 		final Set cr1 = fc.getCriteria1();
-		final Set<Ref> all = new HashSet<Ref>();
+//		final Set<Ref> all = new HashSet<Ref>();
 		for (int r = row; r <= row2; ++r) {
 			final NCell cell = sheet.getCell(r, col); 
 			final String val = isBlank(cell) ? "=" : getFormattedText(cell); //"=" means blank!
@@ -125,10 +123,99 @@ import org.zkoss.zss.ngmodel.sys.format.FormatEngine;
 	private boolean shallHide(NFilterColumn fc, int row, int col) {
 		final NCell cell = sheet.getCell(row, col + fc.getIndex());
 		final boolean blank = isBlank(cell); 
-		FormatEngine fe = EngineFactory.getInstance().createFormatEngine();
 		final String val =  blank ? "=" : getFormattedText(cell); //"=" means blank!
 		final Set critera1 = fc.getCriteria1();
 		return critera1 != null && !critera1.isEmpty() && !critera1.contains(val);
+	}
+
+	//refer to XRangeImpl#showAllData
+	public void resetAutoFilter() {
+		NAutoFilter af = sheet.getAutoFilter();
+		if (af == null) { //no AutoFilter to apply 
+			return;
+		}
+		final CellRegion afrng = af.getRegion();
+		final Collection<NFilterColumn> fcs = af.getFilterColumns();
+		if (fcs == null)
+			return;
+		for(NFilterColumn fc : fcs) {
+			fc.setProperties(FilterOp.VALUES, null, null, null); //clear all filter
+		}
+		final int row1 = afrng.getRow();
+		final int row = row1 + 1;
+		final int row2 = afrng.getLastRow();
+		final int col1 = afrng.getColumn();
+		final int col2 = afrng.getLastColumn();
+//		final Set<Ref> all = new HashSet<Ref>();
+		for (int r = row; r <= row2; ++r) {
+			final NRow rowobj = sheet.getRow(r);
+			if (rowobj.isHidden()) { //a hidden row
+				final int left = sheet.getStartCellIndex(r);
+				final int right = sheet.getEndCellIndex(r);
+				final NRange rng = NRanges.range(sheet,r,left,r,right); 
+//				all.addAll(rng.getRefs());
+				rng.getRows().setHidden(false); //unhide
+			}
+		}
+
+//		BookHelper.notifyCellChanges(_sheet.getBook(), all); //unhidden row must reevaluate
+		//update button
+//		final XRangeImpl buttonChange = (XRangeImpl) XRanges.range(_sheet, row1, col1, row1, col2);
+//		BookHelper.notifyBtnChanges(new HashSet<Ref>(buttonChange.getRefs()));
+	}
+	
+	//refer to XRangeImpl#applyFilter
+	public void applyAutoFilter() {
+		NAutoFilter oldFilter = sheet.getAutoFilter();
+		
+		if (oldFilter==null) { //no criteria is applied
+			return;
+		}
+		CellRegion region = oldFilter.getRegion();
+		//copy filtering criteria
+		int firstRow = region.getRow(); //first row is header
+		int firstColumn = region.getColumn();
+		//backup column data because getting from removed auto filter will cause XmlValueDisconnectedException
+		
+		//index,criteria1,op,criteria2,showVisible
+		List<Object[]> originalFilteringColumns = new ArrayList<Object[]>();
+		if (oldFilter.getFilterColumns() != null){ //has applied some criteria
+			for (NFilterColumn filterColumn : oldFilter.getFilterColumns()){
+				Object[] filterColumnData = new Object[5];
+				filterColumnData[0] = filterColumn.getIndex()+1;
+				filterColumnData[1] = filterColumn.getCriteria1().toArray(new String[0]);
+				filterColumnData[2] = filterColumn.getOperator();
+				filterColumnData[3] = filterColumn.getCriteria2();
+				filterColumnData[4] = filterColumn.isShowButton();
+				originalFilteringColumns.add(filterColumnData);
+			}
+		}
+		
+		enableAutoFilter(false); //disable existing filter
+		
+		//re-define filtering range 
+		CellRegion filteringRange = DataRegionHelper.findCurrentRegion(sheet, firstRow, firstColumn);
+		if (filteringRange == null){ //Don't enable auto filter if there are all blank cells
+			return;
+		}else{
+			//enable auto filter
+			sheet.createAutoFilter(filteringRange);
+//			BookHelper.notifyAutoFilterChange(getRefs().iterator().next(),true);
+
+			//apply original criteria
+			for (int nCol = 0 ; nCol < originalFilteringColumns.size(); nCol ++){
+				Object[] oldFilterColumn =  originalFilteringColumns.get(nCol);
+				
+				int field = (Integer)oldFilterColumn[0];
+				Object c1 = oldFilterColumn[1];
+				FilterOp op = (FilterOp)oldFilterColumn[2];
+				Object c2 = oldFilterColumn[3];
+				boolean showBtn = (Boolean)oldFilterColumn[4];
+				
+				enableAutoFilter(field,op,c1,c2,showBtn);
+			}
+		}	
+			
 	}
 
 }

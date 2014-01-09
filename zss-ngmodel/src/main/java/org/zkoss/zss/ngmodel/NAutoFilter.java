@@ -19,11 +19,11 @@ public interface NAutoFilter {
 
 		public Set getCriteria2();
 				
-		public boolean isOn(); //show button
+		public boolean isShowButton(); //show filter button
 		
 		public FilterOp getOperator();
 		
-		public void setProperties(FilterOp filterOp, Object criteria1, Object criteria2, Boolean visibleDropDown);
+		public void setProperties(FilterOp filterOp, Object criteria1, Object criteria2, Boolean showButton);
 
 	}
 	

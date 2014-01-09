@@ -19,7 +19,7 @@ public abstract class AbstractAutoFilterAdv implements NAutoFilter,Serializable{
 		List<String> filters;
 		Set criteria1;
 		Set criteria2;
-		boolean showButton = false;
+		Boolean showButton;
 		FilterOp op = FilterOp.AND;
 		
 		public FilterColumnImpl(int index){
@@ -47,8 +47,8 @@ public abstract class AbstractAutoFilterAdv implements NAutoFilter,Serializable{
 		}
 
 		@Override
-		public boolean isOn() {
-			return showButton;
+		public boolean isShowButton() {
+			return showButton==null?true:showButton.booleanValue();
 		}
 
 		@Override
@@ -69,13 +69,13 @@ public abstract class AbstractAutoFilterAdv implements NAutoFilter,Serializable{
 		
 		@Override
 		public void setProperties(FilterOp filterOp, Object criteria1,
-				Object criteria2, Boolean visibleDropDown) {
+				Object criteria2, Boolean showButton) {
 			this.op = filterOp;
 			this.criteria1 = getCriteriaSet(criteria1);
 			this.criteria2 = getCriteriaSet(criteria2);
 			boolean blank1 = this.criteria1.contains("=");
-			if(visibleDropDown!=null){
-				showButton = visibleDropDown;
+			if(showButton!=null){
+				showButton = showButton;
 			}
 			
 			

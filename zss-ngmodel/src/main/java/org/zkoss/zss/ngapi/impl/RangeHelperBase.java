@@ -19,7 +19,7 @@ public class RangeHelperBase {
 		this.sheet = range.getSheet();
 	}
 
-	public boolean isBlank(NCell cell){
+	public static boolean isBlank(NCell cell){
 		return cell==null || cell.isNull()||cell.getType() == CellType.BLANK;
 	}
 	

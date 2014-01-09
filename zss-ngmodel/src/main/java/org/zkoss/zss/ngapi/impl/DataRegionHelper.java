@@ -3,7 +3,6 @@ package org.zkoss.zss.ngapi.impl;
 import org.zkoss.zss.ngapi.NRange;
 import org.zkoss.zss.ngmodel.CellRegion;
 import org.zkoss.zss.ngmodel.NCell;
-import org.zkoss.zss.ngmodel.NCell.CellType;
 import org.zkoss.zss.ngmodel.NRow;
 import org.zkoss.zss.ngmodel.NSheet;
 
@@ -35,7 +34,7 @@ import org.zkoss.zss.ngmodel.NSheet;
 			
 		} else if (isOneCell(sheet,currentArea)){
 			//only one cell selected(include merged one), try to look the max range surround by blank cells 
-			CellRegion cra = getCurrentRegion(sheet, getRow(), getColumn());
+			CellRegion cra = findCurrentRegion(sheet, getRow(), getColumn());
 			return cra; 
 			
 		} else {
@@ -92,7 +91,7 @@ import org.zkoss.zss.ngmodel.NSheet;
 		return new CellRegion(minr, minc, maxr, maxc);
 	}
 	
-	private int[] getCellMinMax(NSheet sheet, int row, int col) {
+	private static int[] getCellMinMax(NSheet sheet, int row, int col) {
 		CellRegion rng = sheet.getContainsMergedRegion(row,col);
 		if(rng==null){
 			rng = new CellRegion(row,col,row,col);
@@ -137,7 +136,7 @@ import org.zkoss.zss.ngmodel.NSheet;
 	 * @param col starting cell's column index
 	 * @return
 	 */
-	private CellRegion getCurrentRegion(NSheet sheet, int row, int col) {
+	/*package*/ static CellRegion findCurrentRegion(NSheet sheet, int row, int col) {
 		int minNonBlankColumn = col;
 		int maxNonBlankColumn = col;
 		int minNonBlankRow = Integer.MAX_VALUE;
@@ -209,7 +208,7 @@ import org.zkoss.zss.ngmodel.NSheet;
 	}
 	
 	//[0]: left, [1]: top, [2]: right, [3]: bottom; null mean blank row
-	private int[] getRowMinMax(NSheet sheet, NRow rowobj, int minc, int maxc) {
+	private static int[] getRowMinMax(NSheet sheet, NRow rowobj, int minc, int maxc) {
 		if (rowobj.isNull()) { //check if no cell at all!
 			return null;
 		}
