@@ -33,25 +33,25 @@ import org.zkoss.zss.ngmodel.sys.dependency.Ref.RefType;
 				new CellRegion(notify.getRow(),notify.getColumn(),notify.getLastRow(),notify.getLastColumn())));
 	}
 	
-	public void notifySheetAutoFilterChange(Ref notify) {
-		if (notify.getType() != RefType.SHEET) {
-			return;
-		}
-		NBook book = bookSeries.getBook(notify.getBookName());
-		if(book==null) return;
-		NSheet sheet = book.getSheetByName(notify.getSheetName());
-		if(sheet==null) return;
-		((AbstractBookAdv) book).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_AUTOFILTER_CHANGE,sheet));
-	}
-
-	public void notifySheetFreezeChange(Ref notify) {
-		if (notify.getType() != RefType.SHEET) {
-			return;
-		}
-		NBook book = bookSeries.getBook(notify.getBookName());
-		if(book==null) return;
-		NSheet sheet = book.getSheetByName(notify.getSheetName());
-		if(sheet==null) return;
-		((AbstractBookAdv) book).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_FREEZE_CHANGE,sheet));
-	}
+//	public void notifySheetAutoFilterChange(Ref notify) {
+//		if (notify.getType() != RefType.SHEET) {
+//			return;
+//		}
+//		NBook book = bookSeries.getBook(notify.getBookName());
+//		if(book==null) return;
+//		NSheet sheet = book.getSheetByName(notify.getSheetName());
+//		if(sheet==null) return;
+//		((AbstractBookAdv) book).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_AUTOFILTER_CHANGE,sheet));
+//	}
+//
+//	public void notifySheetFreezeChange(Ref notify) {
+//		if (notify.getType() != RefType.SHEET) {
+//			return;
+//		}
+//		NBook book = bookSeries.getBook(notify.getBookName());
+//		if(book==null) return;
+//		NSheet sheet = book.getSheetByName(notify.getSheetName());
+//		if(sheet==null) return;
+//		((AbstractBookAdv) book).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_FREEZE_CHANGE,sheet));
+//	}
 }

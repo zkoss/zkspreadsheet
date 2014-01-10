@@ -24,10 +24,12 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.locks.ReadWriteLock;
 
+import org.zkoss.lang.Strings;
 import org.zkoss.util.Locales;
 import org.zkoss.zss.ngapi.NRange;
 import org.zkoss.zss.ngapi.NRanges;
 import org.zkoss.zss.ngmodel.CellRegion;
+import org.zkoss.zss.ngmodel.InvalidateModelOpException;
 import org.zkoss.zss.ngmodel.NAutoFilter;
 import org.zkoss.zss.ngmodel.NAutoFilter.FilterOp;
 import org.zkoss.zss.ngmodel.ModelEvents;
@@ -64,6 +66,7 @@ import org.zkoss.zss.ngmodel.util.Validations;
  */
 public class NRangeImpl implements NRange {
 
+	private NBook book;
 	private final List<EffectedRegion> rangeRefs = new ArrayList<EffectedRegion>(
 			1);
 
@@ -72,22 +75,20 @@ public class NRangeImpl implements NRange {
 	private int _lastColumn = Integer.MIN_VALUE;
 	private int _lastRow = Integer.MIN_VALUE;
 
-	private NRangeImpl() {
+	public NRangeImpl(NBook book) {
+		this.book = book;
 	}
-
+	
 	public NRangeImpl(NSheet sheet) {
-		this();
 		addRangeRef(sheet, 0, 0, sheet.getBook().getMaxRowSize(), sheet
 				.getBook().getMaxColumnSize());
 	}
 
 	public NRangeImpl(NSheet sheet, int row, int col) {
-		this();
 		addRangeRef(sheet, row, col, row, col);
 	}
 
 	public NRangeImpl(NSheet sheet, int tRow, int lCol, int bRow, int rCol) {
-		this();
 		addRangeRef(sheet, tRow, lCol, bRow, rCol);
 	}
 
@@ -130,11 +131,17 @@ public class NRangeImpl implements NRange {
 	}
 	
 	NBook getBook(){
-		return getSheet().getBook();
+		if(book==null){
+			book = getSheet().getBook();
+		}
+		return book;
 	}
 	
 	@Override
 	public NSheet getSheet() {
+		if(rangeRefs.size()<=0){
+			throw new IllegalStateException("can find any effected range");
+		}
 		return rangeRefs.get(0)._sheet;
 	}
 	@Override
@@ -270,9 +277,9 @@ public class NRangeImpl implements NRange {
 				if (!cell.isNull()) {
 					cell.setHyperlink(null);
 					cell.clearValue();
-					return false;
+					return true;
 				}
-				return true;
+				return false;
 			}
 		}).doInWriteLock(getLock());
 	}
@@ -362,8 +369,7 @@ public class NRangeImpl implements NRange {
 
 	@Override
 	public void notifyChange() {
-		NBook book = rangeRefs.get(0)._sheet.getBook();
-		NBookSeries bookSeries = book.getBookSeries();
+		NBookSeries bookSeries = getBookSeries();
 		LinkedHashSet<Ref> notifySet = new LinkedHashSet<Ref>();
 		for (EffectedRegion r : rangeRefs) {
 			String bookName = r._sheet.getBook().getBookName();
@@ -655,22 +661,106 @@ public class NRangeImpl implements NRange {
 
 	@Override
 	public void deleteSheet() {
-		throw new UnsupportedOperationException("not implement yet");
+		//it just handle the first ref
+		new DependentUpdateTask() {			
+			@Override
+			public Object invokeInner() {
+				NBook book = getBook();
+				int sheetCount;
+				if((sheetCount = book.getNumOfSheet())<=1){
+					throw new InvalidateModelOpException("can't delete last sheet ");
+				}
+				
+				NSheet toDelete = getSheet();
+				
+				int index = book.getSheetIndex(toDelete);
+//				final int newIndex =  index < (sheetCount - 1) ? index : (index - 1);
+				
+				book.deleteSheet(toDelete);
+				
+				((AbstractBookAdv) getBook()).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_SHEET_DELETE,book,
+						ModelEvents.createDataMap(ModelEvents.PARAM_SHEET,toDelete,ModelEvents.PARAM_INDEX,index)));
+				return null;
+			}
+		}.doInWriteLock(getLock());
 	}
 
 	@Override
-	public NSheet createSheet(String name) {
-		throw new UnsupportedOperationException("not implement yet");
+	public NSheet createSheet(final String name) {
+		//it just handle the first ref
+		return (NSheet)new DependentUpdateTask() {			
+			@Override
+			public Object invokeInner() {
+				NBook book = getBook();
+				NSheet sheet;
+				if (Strings.isBlank(name)) {
+					sheet = book.createSheet(nextSheetName());
+				} else {
+					sheet = book.createSheet(name);
+				}
+				((AbstractBookAdv) getBook()).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_SHEET_CREATE,sheet));
+				return sheet;
+			}
+		}.doInWriteLock(getLock());	
+	}
+	
+	private String nextSheetName() {
+		NBook book = getBook();
+		Integer idx = (Integer)book.getAttribute("zss.nextSheetCount");
+		int i = idx==null?1:idx;
+		HashSet<String> names = new HashSet<String>();
+		for (NSheet sheet : getBook().getSheets()) {
+			names.add(sheet.getSheetName());
+		}
+		String base = "Sheet";
+		String name = base + i; 
+		while (names.contains(name)) {
+			name = base+ (++i);
+		}
+		book.setAttribute("zss.nextSheetCount", Integer.valueOf(i+1));
+		return name;
 	}
 
 	@Override
-	public void setSheetName(String name) {
-		throw new UnsupportedOperationException("not implement yet");
+	public void setSheetName(final String newname) {
+		//it just handle the first ref
+		new DependentUpdateTask() {			
+			@Override
+			public Object invokeInner() {
+				NBook book = getBook();
+				NSheet sheet = getSheet();
+				if(sheet.getSheetName().equals(newname)){
+					return null;
+				}
+				book.setSheetName(sheet, newname);
+				
+				((AbstractBookAdv) getBook()).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_SHEET_NAME_CHANGE,sheet));
+				return null;
+			}
+		}.doInWriteLock(getLock());	
 	}
 
 	@Override
-	public void setSheetOrder(int pos) {
-		throw new UnsupportedOperationException("not implement yet");
+	public void setSheetOrder(final int pos) {
+		//it just handle the first ref
+		new DependentUpdateTask() {			
+			@Override
+			public Object invokeInner() {
+				NBook book = getBook();
+				NSheet sheet = getSheet();
+				
+				int oldIdx = book.getSheetIndex(sheet);
+				if(oldIdx==pos){
+					return null;
+				}
+				
+				//in our new model, we don't use sheet index, so we don't need to clear anything when move it
+				book.moveSheetTo(sheet, pos);
+
+				((AbstractBookAdv) getBook()).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_SHEET_ORDER_CHANGE,sheet));
+				return null;
+			}
+		}.doInWriteLock(getLock());	
 	}
 
 	@Override
@@ -682,10 +772,14 @@ public class NRangeImpl implements NRange {
 				NSheetViewInfo viewInfo = getSheet().getViewInfo();
 				viewInfo.setNumOfRowFreeze(numOfRow);
 				viewInfo.setNumOfColumnFreeze(numOfColumn);
-				new RefNotifyChangeHelper(getBook().getBookSeries()).notifySheetFreezeChange(getSheetRef());
+				notifySheetFreezeChange();
 				return null;
 			}
 		}.doInWriteLock(getLock());	
+	}
+	
+	private void notifySheetFreezeChange(){
+		((AbstractBookAdv) getBook()).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_FREEZE_CHANGE,getSheet()));
 	}
 
 	@Override
@@ -751,12 +845,10 @@ public class NRangeImpl implements NRange {
 	}
 	
 	Ref getSheetRef(){
-		EffectedRegion r = rangeRefs.iterator().next();
-		return new RefImpl((AbstractSheetAdv)rangeRefs.get(0)._sheet);
+		return new RefImpl((AbstractSheetAdv)getSheet());
 	}
 	Ref getBookRef(){
-		EffectedRegion r = rangeRefs.iterator().next();
-		return new RefImpl((AbstractSheetAdv)rangeRefs.get(0)._sheet.getBook());
+		return new RefImpl((AbstractSheetAdv)getBook());
 	}
 	
 	private Set<Ref> toSet(Ref ref){
@@ -779,8 +871,7 @@ public class NRangeImpl implements NRange {
 				}
 				
 				filter = new AutoFilterHelper(NRangeImpl.this).enableAutoFilter(enable);
-				new RefNotifyChangeHelper(sheet.getBook().getBookSeries()).notifySheetAutoFilterChange(getSheetRef());
-				
+				notifySheetAutoFilterChange();
 				return filter;
 			}
 		}.doInWriteLock(getLock());
@@ -794,7 +885,7 @@ public class NRangeImpl implements NRange {
 			@Override
 			public Object invoke() {
 				NAutoFilter filter = new AutoFilterHelper(NRangeImpl.this).enableAutoFilter(field, filterOp, criteria1, criteria2, visibleDropDown);
-				new RefNotifyChangeHelper(getBook().getBookSeries()).notifySheetAutoFilterChange(getSheetRef());
+				notifySheetAutoFilterChange();
 				return filter;
 			}
 		}.doInWriteLock(getLock());
@@ -806,7 +897,7 @@ public class NRangeImpl implements NRange {
 			@Override
 			public Object invoke() {
 				new AutoFilterHelper(NRangeImpl.this).resetAutoFilter();
-				new RefNotifyChangeHelper(getBook().getBookSeries()).notifySheetAutoFilterChange(getSheetRef());
+				notifySheetAutoFilterChange();
 				return null;
 			}
 		}.doInWriteLock(getLock());		
@@ -818,10 +909,14 @@ public class NRangeImpl implements NRange {
 			@Override
 			public Object invoke() {
 				new AutoFilterHelper(NRangeImpl.this).applyAutoFilter();
-				new RefNotifyChangeHelper(getBook().getBookSeries()).notifySheetAutoFilterChange(getSheetRef());
+				notifySheetAutoFilterChange();
 				return null;
 			}
 		}.doInWriteLock(getLock());		
+	}
+	
+	private void notifySheetAutoFilterChange(){
+		((AbstractBookAdv) getBook()).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_AUTOFILTER_CHANGE,getSheet()));
 	}
 
 	@Override
@@ -842,6 +937,40 @@ public class NRangeImpl implements NRange {
 			task.doInWriteLock(getLock());
 		}else{
 			task.doInReadLock(getLock());
+		}
+	}
+	
+	private abstract class DependentUpdateTask extends ReadWriteTask{
+
+		
+		abstract Object invokeInner();
+		
+		@Override
+		public Object invoke() {
+			LinkedHashSet<Ref> notifySet = new LinkedHashSet<Ref>();
+
+			NBookSeries bookSeries = getBookSeries();
+
+			DependentCollector dependentCtx = new DependentCollector();
+			DependentCollector oldDependentCtx = DependentCollector.getCurrent();
+			
+			FormulaCacheCleaner oldClearer = FormulaCacheCleaner.setCurrent(new FormulaCacheCleaner(bookSeries));
+			Object result = null;
+			try{
+				DependentCollector.setCurrent(dependentCtx);
+				
+				result = invokeInner();
+			}finally{
+				notifySet.addAll(dependentCtx.getDependents());
+				
+				DependentCollector.setCurrent(oldDependentCtx);
+				FormulaCacheCleaner.setCurrent(oldClearer);
+			}
+
+			if(notifySet.size()>0){
+				handleRefNotifyContentChange(bookSeries,notifySet);
+			}
+			return result;
 		}
 	}
 	

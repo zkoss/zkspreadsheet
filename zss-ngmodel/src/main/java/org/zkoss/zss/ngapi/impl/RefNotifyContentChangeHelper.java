@@ -22,6 +22,7 @@ import org.zkoss.zss.ngmodel.sys.dependency.Ref.RefType;
 	public void notifyContentChange(HashSet<Ref> dependentSet) {
 		// clear formula cache
 		for (Ref dependent : dependentSet) {
+			System.out.println(">>> Notify "+dependent);
 			//clear the dependent's formula cache since the precedent is changed.
 			if (dependent.getType() == RefType.CELL || dependent.getType() == RefType.AREA) {
 				handleCellRef(dependent);

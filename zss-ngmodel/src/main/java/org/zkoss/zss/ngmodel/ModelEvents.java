@@ -35,11 +35,18 @@ public class ModelEvents {
 	public static final String ON_AUTOFILTER_CHANGE = "onAutoFilterChange";
 	public static final String ON_FREEZE_CHANGE = "onFreezeChange";
 	
+	public static final String ON_SHEET_CREATE = "onSheetCreate";
+	public static final String ON_SHEET_NAME_CHANGE = "onSheetNameChange";
+	public static final String ON_SHEET_ORDER_CHANGE = "onSheetOrderChange";
+	public static final String ON_SHEET_DELETE = "onSheetDelete";
+	
 	public static final String PARAM_BOOK = "book";
 	public static final String PARAM_SHEET = "sheet";
 	public static final String PARAM_REGION = "region";
 	public static final String PARAM_OBJECT_ID = "objid";
 	public static final String PARAM_CUSTOM_DATA = "custom";
+	public static final String PARAM_INDEX = "index";
+	
 	
 	
 	
