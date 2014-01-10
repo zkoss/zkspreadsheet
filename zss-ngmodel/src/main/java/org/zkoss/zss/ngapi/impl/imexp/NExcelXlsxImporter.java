@@ -36,6 +36,9 @@ import org.zkoss.zss.ngmodel.NChart.NBarDirection;
 import org.zkoss.zss.ngmodel.NChart.NChartGrouping;
 import org.zkoss.zss.ngmodel.NChart.NChartLegendPosition;
 import org.zkoss.zss.ngmodel.NChart.NChartType;
+import org.zkoss.zss.ngmodel.NDataValidation.ErrorStyle;
+import org.zkoss.zss.ngmodel.NDataValidation.OperatorType;
+import org.zkoss.zss.ngmodel.NDataValidation.ValidationType;
 import org.zkoss.zss.ngmodel.chart.*;
 import org.zkoss.zss.ngmodel.sys.formula.FormulaEngine;
 /**
@@ -478,6 +481,93 @@ public class NExcelXlsxImporter extends AbstractExcelImporter{
 	@Override
 	protected int getYoffsetInPixel(ClientAnchor clientAnchor, Sheet poiSheet) {
 		return UnitUtil.emuToPx(clientAnchor.getDy1());
+	}
+
+	@Override
+	protected void importValidation(Sheet poiSheet, NSheet sheet) {
+		//TODO 
+		for (DataValidation poiValidation : poiSheet.getDataValidations()){
+			
+			CellRegion cellRegion = new CellRegion(poiValidation.getRegions().getCellRangeAddresses()[0].formatAsString());
+			NDataValidation dataValidation = sheet.addDataValidation(cellRegion);
+			DataValidationConstraint poiConstraint = poiValidation.getValidationConstraint();
+			// getExplicitListValues() will be represented as formula1
+			dataValidation.setFormula(poiConstraint.getFormula1(), poiConstraint.getFormula2());
+			dataValidation.setOperatorType(toOperatorType(poiConstraint.getOperator()));
+			dataValidation.setValidationType(toValidationType(poiConstraint.getValidationType()));
+			
+			dataValidation.setEmptyCellAllowed(poiValidation.getEmptyCellAllowed());
+			dataValidation.setErrorBox(poiValidation.getErrorBoxTitle(), poiValidation.getErrorBoxText());
+			dataValidation.setErrorStyle(toErrorStyle(poiValidation.getErrorStyle()));
+			dataValidation.setPromptBox(poiValidation.getPromptBoxTitle(), poiValidation.getPromptBoxText());
+			if (poiConstraint.getValidationType() == DataValidationConstraint.ValidationType.LIST){
+				/* 
+				 * Excel file format contains reversed value. If showing, file contains 1 (true). If not showing, 
+				 * attribute "showDropDown" won't exist. But POI's API reverse its value again.
+				 * So we just accept the boolean value.
+				 */
+				dataValidation.setShowDropDownArrow(poiValidation.getSuppressDropDownArrow());
+			}
+			dataValidation.setShowErrorBox(poiValidation.getShowErrorBox());
+			dataValidation.setShowPromptBox(poiValidation.getShowPromptBox());
+			
+		}
+	}
+	
+	private ErrorStyle toErrorStyle(int errorStyle){
+		switch(errorStyle){
+			case DataValidation.ErrorStyle.INFO:
+				return ErrorStyle.INFO;
+			case DataValidation.ErrorStyle.WARNING:
+				return ErrorStyle.WARNING;
+			case DataValidation.ErrorStyle.STOP:
+			default:
+					return ErrorStyle.STOP;
+		}
+	}
+	
+	private OperatorType toOperatorType(int poiOperator){
+		switch(poiOperator){
+			case DataValidationConstraint.OperatorType.EQUAL:
+				return OperatorType.EQUAL;
+			case DataValidationConstraint.OperatorType.GREATER_OR_EQUAL:
+				return OperatorType.GREATER_OR_EQUAL;
+			case DataValidationConstraint.OperatorType.GREATER_THAN:
+				return OperatorType.GREATER_THAN;
+			case DataValidationConstraint.OperatorType.LESS_OR_EQUAL:
+				return OperatorType.LESS_OR_EQUAL;
+			case DataValidationConstraint.OperatorType.LESS_THAN:
+				return OperatorType.LESS_THAN;
+			case DataValidationConstraint.OperatorType.NOT_BETWEEN:
+				return OperatorType.NOT_BETWEEN;
+			case DataValidationConstraint.OperatorType.NOT_EQUAL:
+				return OperatorType.NOT_EQUAL;
+			case DataValidationConstraint.OperatorType.BETWEEN:
+			default:
+				return OperatorType.BETWEEN;
+		}
+	}
+	
+	private ValidationType toValidationType(int validationType){
+		switch(validationType){
+			case DataValidationConstraint.ValidationType.TIME:
+				return ValidationType.TIME;
+			case DataValidationConstraint.ValidationType.TEXT_LENGTH:
+				return ValidationType.TEXT_LENGTH;
+			case DataValidationConstraint.ValidationType.LIST:
+				return ValidationType.LIST;
+			case DataValidationConstraint.ValidationType.INTEGER:
+				return ValidationType.INTEGER;
+			case DataValidationConstraint.ValidationType.FORMULA:
+				return ValidationType.FORMULA;
+			case DataValidationConstraint.ValidationType.DECIMAL:
+				return ValidationType.DECIMAL;
+			case DataValidationConstraint.ValidationType.DATE:
+				return ValidationType.DATE;
+			case DataValidationConstraint.ValidationType.ANY:
+			default:
+				return ValidationType.ANY;
+		}
 	}
 }
  

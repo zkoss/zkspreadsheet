@@ -11,6 +11,9 @@ import org.zkoss.util.Locales;
 import org.zkoss.zss.ngapi.NImporter;
 import org.zkoss.zss.ngapi.impl.imexp.ExcelImportFactory;
 import org.zkoss.zss.ngmodel.NChart.NChartType;
+import org.zkoss.zss.ngmodel.NDataValidation.ErrorStyle;
+import org.zkoss.zss.ngmodel.NDataValidation.OperatorType;
+import org.zkoss.zss.ngmodel.NDataValidation.ValidationType;
 import org.zkoss.zss.ngmodel.NPicture.Format;
 import org.zkoss.zss.ngmodel.chart.NGeneralChartData;
 
@@ -50,7 +53,7 @@ public class ImporterTest extends ImExpTestBase {
 		}
 		
 		assertEquals("XSSFBook", book.getBookName());
-		assertEquals(7, book.getNumOfSheet());
+		assertEquals(8, book.getNumOfSheet());
 	}
 	
 	@Test
@@ -63,7 +66,7 @@ public class ImporterTest extends ImExpTestBase {
 		}
 		
 		assertEquals("XSSFBook", book.getBookName());
-		assertEquals(7, book.getNumOfSheet());
+		assertEquals(8, book.getNumOfSheet());
 	}
 	
 	@Test
@@ -76,7 +79,7 @@ public class ImporterTest extends ImExpTestBase {
 		}
 		
 		assertEquals("XSSFBook", book.getBookName());
-		assertEquals(7, book.getNumOfSheet());
+		assertEquals(8, book.getNumOfSheet());
 	}
 	
 	//content
@@ -277,7 +280,7 @@ public class ImporterTest extends ImExpTestBase {
 	 */
 	@Test
 	public void picture(){
-		NBook book = ImExpTestUtil.loadBook(PICTURE_IMPORT_FILE_UNDER_TEST, "Chart");
+		NBook book = ImExpTestUtil.loadBook(PICTURE_IMPORT_FILE_UNDER_TEST, "XLSX");
 		picture(book);
 		
 		NSheet sheet2 = book.getSheet(1);
@@ -292,6 +295,43 @@ public class ImporterTest extends ImExpTestBase {
 		assertEquals(Format.GIF, rainbowGif.getFormat());
 		assertEquals(613, rainbowGif.getAnchor().getWidth());
 		assertEquals(345, rainbowGif.getAnchor().getHeight());
+	}
+	
+	@Test
+	public void validation(){
+		NBook book = ImExpTestUtil.loadBook(IMPORT_FILE_UNDER_TEST, "XLSX");
+		NSheet validationSheet = book.getSheetByName("Validation");
+		assertEquals(5, validationSheet.getDataValidations().size());
+
+		NDataValidation one2Ten  = validationSheet.getDataValidation(1, 1);
+		assertEquals(ErrorStyle.STOP, one2Ten.getErrorStyle());
+		assertEquals(OperatorType.BETWEEN, one2Ten.getOperatorType());
+		assertEquals(ValidationType.INTEGER, one2Ten.getValidationType());
+		assertEquals("Sorry", one2Ten.getErrorBoxTitle());
+		assertEquals("1 - 10", one2Ten.getErrorBoxText());
+		assertEquals("Notice", one2Ten.getPromptBoxTitle());
+		assertEquals("valid between 1 to 10", one2Ten.getPromptBoxText());
+		assertEquals(false, one2Ten.isShowDropDownArrow());
+		assertEquals(true, one2Ten.isEmptyCellAllowed());
+		assertEquals(true, one2Ten.isShowErrorBox());
+		assertEquals(true, one2Ten.isShowPromptBox());
+		
+		NDataValidation fourGrades  = validationSheet.getDataValidation(2, 1);
+		assertEquals(ErrorStyle.WARNING, fourGrades.getErrorStyle());
+		assertEquals("$C$3:$F$3", fourGrades.getValue1Formula());
+		assertEquals(4, fourGrades.getNumOfValue1());
+		assertEquals(0, fourGrades.getNumOfValue2());
+		assertEquals(false, fourGrades.isShowDropDownArrow());
+		
+		NDataValidation dayAfter2014  = validationSheet.getDataValidation(3, 1);
+		assertEquals(ErrorStyle.INFO, dayAfter2014.getErrorStyle());
+		
+		NDataValidation lengthEquals10  = validationSheet.getDataValidation(4, 1);
+		assertEquals(ErrorStyle.STOP, lengthEquals10.getErrorStyle());
+		
+		NDataValidation limitedColors  = validationSheet.getDataValidation(5, 1);
+		assertEquals("\"red, blue, green\"", limitedColors.getValue1Formula());
+		assertEquals(true, limitedColors.isShowDropDownArrow());
 	}
 }
 

@@ -361,4 +361,10 @@ public class NExcelXlsImporter extends AbstractExcelImporter{
 		final int rowHeightPixel = XUtils.getHeightAny(poiSheet,firstRow);
 		return firstYoffset >= 256 ? rowHeightPixel : (int) Math.round(((double)rowHeightPixel) * firstYoffset / 256);  
 	}
+
+	@Override
+	protected void importValidation(Sheet poiSheet, NSheet sheet) {
+		// TODO Auto-generated method stub
+		
+	}
 }

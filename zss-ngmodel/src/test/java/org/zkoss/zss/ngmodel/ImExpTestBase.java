@@ -23,15 +23,17 @@ import org.zkoss.zss.ngmodel.chart.NGeneralChartData;
  *
  */
 public class ImExpTestBase {
-	
-	protected URL IMPORT_FILE_UNDER_TEST = ImporterTest.class.getResource("book/import2007.xlsx");
+	/**
+	 * We create all XLSX file with Excel 2007. (With 2010, it will have differences.) 
+	 */
+	protected URL IMPORT_FILE_UNDER_TEST = ImporterTest.class.getResource("book/import.xlsx");
 	protected URL CHART_IMPORT_FILE_UNDER_TEST = ImporterTest.class.getResource("book/chart.xlsx");
 	protected URL PICTURE_IMPORT_FILE_UNDER_TEST = ImporterTest.class.getResource("book/picture.xlsx");	
 	protected static String DEFAULT_BOOK_NAME = "PoiBook";
 
 
 	protected void sheetTest(NBook book) {
-		assertEquals(7, book.getNumOfSheet());
+		assertEquals(8, book.getNumOfSheet());
 
 		NSheet sheet1 = book.getSheetByName("Value");
 		assertEquals("Value", sheet1.getSheetName());
