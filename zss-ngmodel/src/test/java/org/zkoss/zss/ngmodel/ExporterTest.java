@@ -390,4 +390,11 @@ public class ExporterTest extends ImExpTestBase {
 		assertEquals(613, rainbowGif.getAnchor().getWidth());
 		assertEquals(345, rainbowGif.getAnchor().getHeight());
 	}
+	
+	@Test
+	public void validation(){
+		File outFile = ImExpTestUtil.write(ImExpTestUtil.loadBook(IMPORT_FILE_UNDER_TEST, "XSSFBook"), ExcelExportFactory.Type.XLSX);
+		NBook book = ImExpTestUtil.loadBook(outFile, DEFAULT_BOOK_NAME);
+		validation(book);
+	}
 }

@@ -491,11 +491,11 @@ public class NExcelXlsxImporter extends AbstractExcelImporter{
 	protected void importValidation(Sheet poiSheet, NSheet sheet) {
 		for (DataValidation poiValidation : poiSheet.getDataValidations()){
 			
-			if (poiValidation.getRegions().countRanges() <=0){
-				continue;
-			}
-			
 			CellRangeAddress[] cellRangeAddresses = poiValidation.getRegions().getCellRangeAddresses();
+			/*
+			 * According to ISO/IEC 29500-1 \ 18.18.76  ST_Sqref (Reference Sequence) and A.2 
+			 * Its XML Schema indicates it's a required attribute, so CellRangeAddresses must have at least one address. 
+			 */
 			NDataValidation dataValidation = sheet.addDataValidation(new CellRegion(cellRangeAddresses[0].formatAsString()));
 			for (int i = 1 ; i<cellRangeAddresses.length ; i++){ //starts from 2nd one
 				dataValidation.addRegion(new CellRegion(cellRangeAddresses[i].formatAsString()));

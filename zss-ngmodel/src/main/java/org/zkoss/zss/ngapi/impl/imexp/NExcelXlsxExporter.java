@@ -19,13 +19,14 @@ package org.zkoss.zss.ngapi.impl.imexp;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
 import org.zkoss.poi.ss.usermodel.*;
 import org.zkoss.poi.ss.usermodel.charts.*;
+import org.zkoss.poi.ss.util.CellRangeAddressList;
 import org.zkoss.poi.xssf.usermodel.*;
 import org.zkoss.poi.xssf.usermodel.charts.*;
 import org.zkoss.zss.ngmodel.*;
 import org.zkoss.zss.ngmodel.NChart.NBarDirection;
 import org.zkoss.zss.ngmodel.NChart.NChartGrouping;
 import org.zkoss.zss.ngmodel.NChart.NChartLegendPosition;
-import org.zkoss.zss.ngmodel.NDataValidation.OperatorType;
+import org.zkoss.zss.ngmodel.NDataValidation.*;
 import org.zkoss.zss.ngmodel.NPicture.Format;
 import org.zkoss.zss.ngmodel.chart.*;
 /**
@@ -468,43 +469,65 @@ public class NExcelXlsxExporter extends AbstractExcelExporter {
 		}
 	}
 
+	/**
+	 * According to {@link ValidationType}, FORMULA means custom validation.
+	 */
 	@Override
 	protected void exportValidation(NSheet sheet, Sheet poiSheet) {
 		for (NDataValidation validation : sheet.getDataValidations()){
 			int operatorType = toPoiOperatorType(validation.getOperatorType());
 			String formula1 = validation.getValue1Formula();
 			String formula2 = validation.getValue2Formula();
+			DataValidationConstraint constraint = null;
 			switch(validation.getValidationType()){
 				case TIME:
-					poiSheet.getDataValidationHelper().createTimeConstraint(operatorType, formula1, formula2);
+					constraint = poiSheet.getDataValidationHelper().createTimeConstraint(operatorType, formula1, formula2);
 					break;
 				case TEXT_LENGTH:
-					poiSheet.getDataValidationHelper().createTextLengthConstraint(operatorType, formula1, formula2);
+					constraint = poiSheet.getDataValidationHelper().createTextLengthConstraint(operatorType, formula1, formula2);
 					break;
 				case DATE:
-					//the last argument, dateFormat, is only used in XLS. We just put null here. 
-					poiSheet.getDataValidationHelper().createDateConstraint(operatorType, formula1, formula2, "");
+					//the last argument, dateFormat, is only used in XLS. We just pass empty string here. 
+					constraint = poiSheet.getDataValidationHelper().createDateConstraint(operatorType, formula1, formula2, "");
 					break;
 				case LIST:
-					poiSheet.getDataValidationHelper().createFormulaListConstraint(formula1);
+					constraint = poiSheet.getDataValidationHelper().createFormulaListConstraint(formula1);
 					break;
 				case INTEGER:
-					poiSheet.getDataValidationHelper().createIntegerConstraint(operatorType, formula1, formula2);
+					constraint = poiSheet.getDataValidationHelper().createIntegerConstraint(operatorType, formula1, formula2);
 					break;
-				case FORMULA: //custom
-					poiSheet.getDataValidationHelper().createCustomConstraint(formula1);
+				case FORMULA: // custom
+					constraint = poiSheet.getDataValidationHelper().createCustomConstraint(formula1);
 					break;
 				case DECIMAL:
-					poiSheet.getDataValidationHelper().createDecimalConstraint(operatorType, formula1, formula2);
+					constraint = poiSheet.getDataValidationHelper().createDecimalConstraint(operatorType, formula1, formula2);
 					break;
 				case ANY:
 					// ANY validation type means no validation
 				default:
 					continue;
 			}
+			CellRegion firstRegion = validation.getRegions().get(0);
 			
-//			poiSheet.getDataValidationHelper().cre
-//			poiSheet.getDataValidationHelper().createValidation(constraint, cellRangeAddressList)
+			DataValidation poiValidation = poiSheet.getDataValidationHelper().createValidation(constraint, 
+					new CellRangeAddressList(firstRegion.getRow(),firstRegion.getLastRow(), firstRegion.getColumn(), firstRegion.getLastColumn()));
+			
+			for (int i =1 ; i< validation.getRegions().size() ; i++){ //starts from 2nd one
+				CellRegion r = validation.getRegions().get(i);
+				poiValidation.getRegions().addCellRangeAddress(r.getRow(), r.getColumn(), r.getLastRow(), r.getLastColumn());
+			}
+			
+			poiValidation.setEmptyCellAllowed(validation.isEmptyCellAllowed());
+			poiValidation.setSuppressDropDownArrow(validation.isShowDropDownArrow());
+			
+			poiValidation.setErrorStyle(toPoiErrorStyle(validation.getErrorStyle()));
+			poiValidation.createErrorBox(validation.getErrorBoxTitle(), validation.getErrorBoxText());
+			poiValidation.setShowErrorBox(validation.isShowErrorBox());
+			
+			poiValidation.createPromptBox(validation.getPromptBoxTitle(), validation.getPromptBoxText());
+			poiValidation.setShowPromptBox(validation.isShowPromptBox());
+			
+			poiSheet.addValidationData(poiValidation);
 		}
 	}
 	
@@ -527,6 +550,18 @@ public class NExcelXlsxExporter extends AbstractExcelExporter {
 			case BETWEEN:
 			default:
 				return DataValidationConstraint.OperatorType.BETWEEN;
+		}
+	}
+	
+	private int toPoiErrorStyle(ErrorStyle style){
+		switch(style){
+		case INFO:
+			return DataValidation.ErrorStyle.INFO;
+		case WARNING:
+			return DataValidation.ErrorStyle.WARNING;
+		case STOP:
+		default:
+			return DataValidation.ErrorStyle.STOP;
 		}
 	}
 	

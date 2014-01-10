@@ -115,6 +115,7 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 		
 		exportChart(sheet, poiSheet);
 		exportPicture(sheet, poiSheet);
+		exportValidation(sheet, poiSheet);
 		
 		//export rows
 		Iterator<NRow> rowIterator = sheet.getRowIterator();
