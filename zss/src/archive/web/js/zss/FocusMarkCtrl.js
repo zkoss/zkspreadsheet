@@ -94,10 +94,13 @@ zss.FocusMarkCtrl = zk.$extends(zk.Object, {
 			}
 		}
 		if(color && label){
-			
-			if(comp.children(".zsfocmarkl").length>0) return;//already existed
 			var left = comp.width()+1;
-			var lab = jq("<span class='zsfocmarkl'/>"); 
+			var lab = comp.children(".zsfocmarkl"); 
+			if(lab.length>0) {//already existed, just adjust left
+				lab.css({'left':left})
+				return;
+			}
+			lab = jq("<span class='zsfocmarkl'/>"); 
 			lab.text(label).css({'background-color':color,'left':left}).appendTo(comp);
 			lab.fadeOut(1800,function(){lab.detach()});
 			if(bright>0.5){

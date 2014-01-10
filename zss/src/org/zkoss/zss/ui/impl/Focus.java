@@ -14,7 +14,7 @@ public class Focus {
 	private String color;
 	private int row,col;
 	private String sheetId;
-	final private WeakReference<Spreadsheet> ss;
+	final transient private WeakReference<Spreadsheet> ss;
 	
 	public Focus(String id, String name, String color, String sheetId, int row, int col, Spreadsheet ss) {
 		this.id=id;

@@ -97,11 +97,13 @@ import org.zkoss.zss.json.JavaScriptValue;
 //import org.zkoss.zss.model.sys.XRange;
 //import org.zkoss.zss.model.sys.XRanges;
 //import org.zkoss.zss.model.sys.XSheet;
-import org.zkoss.zss.model.sys.impl.BookCtrl;
+//import org.zkoss.zss.model.sys.impl.BookCtrl;
 //import org.zkoss.zss.model.sys.impl.ExcelImporter;
 //import org.zkoss.zss.model.sys.impl.SheetCtrl;
 import org.zkoss.zss.ngapi.NImporter;
 import org.zkoss.zss.ngapi.NImporters;
+import org.zkoss.zss.ngapi.NRange;
+import org.zkoss.zss.ngapi.NRanges;
 import org.zkoss.zss.ngmodel.CellRegion;
 import org.zkoss.zss.ngmodel.InvalidateModelValueException;
 import org.zkoss.zss.ngmodel.ModelEvent;
@@ -363,6 +365,9 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	private DataValidationHandler _dataValidationHandler = null;
 	
 	private FreezeInfoLoader _freezeInfoLoader = null;
+	
+	private static final String ON_MODEL_FRIEND_FOCUS_DELETE = "onFriendFocusDelete";
+	private static final String ON_MODEL_FRIEND_FOCUS_MOVE = "onFriendFocusMove";
 	
 	public Spreadsheet() {
 		this.addEventListener("onStartEditingImpl", new EventListener() {
@@ -630,29 +635,38 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		}
 	}
 	private Focus _selfEditorFocus;
+	private static final String FRIEND_FOCUS_KEY = "zss.FirendFocus";
+	
+	private FriendFocusHelper getFriendFocusHelper(){
+		FriendFocusHelper helper = null;
+		if(_book!=null){
+			helper = (FriendFocusHelper) _book.getAttribute(FRIEND_FOCUS_KEY);
+			if(helper==null){
+				_book.setAttribute(FRIEND_FOCUS_KEY, helper = new FriendFocusHelper());
+			}
+		}
+		return helper;
+	}
+	
 	private void deleteSelfEditorFocus() {
 		if (_selectedSheet != null && getXBook().getSheetIndex(_selectedSheet) != -1  && _selfEditorFocus != null) {
-			/* TODO zss 3.5
-			final XRange rng = XRanges.range(_selectedSheet);
-			rng.notifyDeleteFriendFocus(_selfEditorFocus);
-			((BookCtrl)_book).removeFocus(_selfEditorFocus);
+			final NRange rng = NRanges.range(_selectedSheet);
+			getFriendFocusHelper().removeFocus(_selfEditorFocus);
+			rng.notifyCustomEvent(ON_MODEL_FRIEND_FOCUS_DELETE,_selfEditorFocus,false);//zss 3.5 false?
 			_selfEditorFocus = null;
-			*/
 		}
 	}
 	private void moveSelfEditorFocus(String sheetId,int row, int column) {
 		if (_selectedSheet != null) {
-			/* TODO zss 3.5
 			if (_selfEditorFocus == null) {
 				_selfEditorFocus = newSelfFocus(sheetId,row,column);
-				((BookCtrl)_book).addFocus(_selfEditorFocus);
+				getFriendFocusHelper().addFocus(_selfEditorFocus);
 			}else{
 				_selfEditorFocus.setSheetId(sheetId);
 				_selfEditorFocus.setPosition(row, column);
 			}
-			final XRange rng = XRanges.range(_selectedSheet);
-			rng.notifyMoveFriendFocus(_selfEditorFocus);
-			*/
+			final NRange rng = NRanges.range(_selectedSheet);
+			rng.notifyCustomEvent(ON_MODEL_FRIEND_FOCUS_MOVE,_selfEditorFocus,false);//zss 3.5 false?
 		}
 		syncFriendFocus();
 	}
@@ -755,7 +769,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	private Focus newSelfFocus(String sheetId, int row, int column) {
 		//show id/uuid is useless for co-edit and ugly
 		final String focusName = _userName == null ? ""/*+ (getId() == null ? getUuid() : getId()) */: _userName;
-		_selfFocusId = _selfFocusId==null?((BookCtrl)_book).nextFocusId():_selfFocusId;
+		_selfFocusId = _selfFocusId==null?getFriendFocusHelper().nextFocusId():_selfFocusId;
 		Focus focus = new Focus(_selfFocusId, focusName, "#000", sheetId,row,column, this);
 		return focus;
 	}
@@ -2030,19 +2044,20 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 					onSheetDelete((SSDataEvent)event);
 				}
 			});
-			addEventListener(SSDataEvent.ON_FRIEND_FOCUS_MOVE, new EventListener() {
-				@Override
-				public void onEvent(Event event) throws Exception {
-					onFriendFocusMove((SSDataEvent)event);
-				}
-			});
-			addEventListener(SSDataEvent.ON_FRIEND_FOCUS_DELETE, new EventListener() {
-				@Override
-				public void onEvent(Event event) throws Exception {
-					onFriendFocusDelete((SSDataEvent)event);
-				}
-			});
 			*/
+			addEventListener(ON_MODEL_FRIEND_FOCUS_MOVE, new ModelEventListener() {
+				@Override
+				public void onEvent(ModelEvent event){
+					onFriendFocusMove(event);
+				}
+			});
+			addEventListener(ON_MODEL_FRIEND_FOCUS_DELETE, new ModelEventListener() {
+				@Override
+				public void onEvent(ModelEvent event){
+					onFriendFocusDelete(event);
+				}
+			});
+			
 			addEventListener(ModelEvents.ON_CELL_CONTENT_CHANGE, new ModelEventListener() {
 				@Override
 				public void onEvent(ModelEvent event) {
@@ -2227,27 +2242,25 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		private XSheet getSheet(Ref rng) {
 			return XUtils.getSheetByRefSheet(_book, rng.getOwnerSheet()); 
 		}
-
-		private void onFriendFocusMove(SSDataEvent event) {
-			final Ref rng = event.getRef();
-			XSheet sheet = getSheet(rng);
-			if (sheet == null) {//ZSS-209: book may removed
+		*/
+		private void onFriendFocusMove(ModelEvent event) {
+			NSheet sheet = event.getSheet();
+			if (!getSelectedXSheet().equals(sheet)){
 				return;
 			}
-			final Focus focus = (Focus) event.getPayload(); //other's spreadsheet's focus
+			final Focus focus = (Focus) event.getCustomData(); //other's spreadsheet's focus
 			final String id = focus.getId();
 			if (_selfEditorFocus!=null && !id.equals(_selfEditorFocus.getId())) {
 				addOrMoveFriendFocus(id, focus.getName(), focus.getColor(), focus.getSheetId(),focus.getRow(), focus.getColumn());
 				syncFriendFocus();
 			}
 		}
-		private void onFriendFocusDelete(SSDataEvent event) {
-			final Ref rng = event.getRef();
-			XSheet sheet = BookHelper.getSheet(_book, rng.getOwnerSheet());
-			if (sheet == null) {//ZSS-209: book may removed
+		private void onFriendFocusDelete(ModelEvent event) {
+			NSheet sheet = event.getSheet();
+			if (!getSelectedXSheet().equals(sheet)){
 				return;
 			}
-			final Focus focus = (Focus) event.getPayload(); //other's spreadsheet's focus
+			final Focus focus = (Focus) event.getCustomData(); //other's spreadsheet's focus
 			final String id = focus.getId();
 			if (_selfEditorFocus!=null && !id.equals(_selfEditorFocus.getId())) {
 				//NOTE should remove friend color, the firend is possible back (sheet switch back)
@@ -2257,6 +2270,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			}
 			
 		}
+		/*TODO zss 3.5
 		private void onChartAdd(SSDataEvent event) {
 			final Ref rng = event.getRef();
 			final XSheet sheet = getSheet(rng);
@@ -4769,12 +4783,11 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	
 	private void syncFriendFocus() {
 		if (_book != null) {
-			/* TODO zss 3.5
 			final Set<Object> bookFocuses;
 			final Set<String> keep = new HashSet<String>();
 			final Set<String> inbook = new HashSet<String>();
 			
-			bookFocuses = ((BookCtrl)_book).getAllFocus();
+			bookFocuses = getFriendFocusHelper().getAllFocus();
 			
 			String sheetid = getSelectedSheetId();
 			for(Object f:bookFocuses){
@@ -4800,7 +4813,6 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 				if(keep.contains(fid)) continue;
 				removeFriendFocus(fid);				
 			}
-			*/
 		}
 	}
 	

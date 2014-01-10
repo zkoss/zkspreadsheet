@@ -26,6 +26,7 @@ import org.zkoss.zss.ui.Spreadsheet;
  */
 public class CoeditComposer extends GenericForwardComposer {
 	private static Book book = null;
+	private static int i = 0;
 	private Spreadsheet ss;
 
 	public void doAfterCompose(Component comp) throws Exception {
@@ -40,5 +41,6 @@ public class CoeditComposer extends GenericForwardComposer {
 			}
 		}
 		ss.setBook(book);
+		ss.setUserName("User "+ ++i);
 	}
 }
