@@ -39,6 +39,7 @@ public class ModelEvents {
 	public static final String PARAM_SHEET = "sheet";
 	public static final String PARAM_REGION = "region";
 	public static final String PARAM_OBJECT_ID = "objid";
+	public static final String PARAM_CUSTOM_DATA = "custom";
 	
 	
 	

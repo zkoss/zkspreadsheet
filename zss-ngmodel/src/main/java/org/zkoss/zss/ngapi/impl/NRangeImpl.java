@@ -17,7 +17,6 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.ngapi.impl;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -25,22 +24,16 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.locks.ReadWriteLock;
 
-import org.zkoss.poi.ss.usermodel.AutoFilter;
-import org.zkoss.poi.ss.usermodel.Cell;
-import org.zkoss.poi.ss.usermodel.FilterColumn;
-import org.zkoss.poi.ss.usermodel.Row;
-import org.zkoss.poi.ss.util.CellRangeAddress;
 import org.zkoss.util.Locales;
 import org.zkoss.zss.ngapi.NRange;
 import org.zkoss.zss.ngapi.NRanges;
 import org.zkoss.zss.ngmodel.CellRegion;
 import org.zkoss.zss.ngmodel.NAutoFilter;
 import org.zkoss.zss.ngmodel.NAutoFilter.FilterOp;
-import org.zkoss.zss.ngmodel.NAutoFilter.NFilterColumn;
+import org.zkoss.zss.ngmodel.ModelEvents;
 import org.zkoss.zss.ngmodel.NBook;
 import org.zkoss.zss.ngmodel.NBookSeries;
 import org.zkoss.zss.ngmodel.NCell;
-import org.zkoss.zss.ngmodel.NCell.CellType;
 import org.zkoss.zss.ngmodel.NCellStyle;
 import org.zkoss.zss.ngmodel.NCellStyle.BorderType;
 import org.zkoss.zss.ngmodel.NColumn;
@@ -50,6 +43,7 @@ import org.zkoss.zss.ngmodel.NHyperlink.HyperlinkType;
 import org.zkoss.zss.ngmodel.NRow;
 import org.zkoss.zss.ngmodel.NSheet;
 import org.zkoss.zss.ngmodel.NSheetViewInfo;
+import org.zkoss.zss.ngmodel.impl.AbstractBookAdv;
 import org.zkoss.zss.ngmodel.impl.AbstractSheetAdv;
 import org.zkoss.zss.ngmodel.impl.DependentCollector;
 import org.zkoss.zss.ngmodel.impl.FormulaCacheCleaner;
@@ -828,6 +822,27 @@ public class NRangeImpl implements NRange {
 				return null;
 			}
 		}.doInWriteLock(getLock());		
+	}
+
+	@Override
+	public void notifyCustomEvent(final String customEventName, final Object data, boolean writelock) {
+		//it just handle the first ref
+		ReadWriteTask task = new ReadWriteTask() {			
+			@Override
+			public Object invoke() {
+				for (EffectedRegion r : rangeRefs) {
+					NBook book = r._sheet.getBook();
+					((AbstractBookAdv) book).sendModelEvent(ModelEvents.createModelEvent(customEventName,r._sheet,
+							ModelEvents.createDataMap(ModelEvents.PARAM_CUSTOM_DATA,data)));
+				}
+				return null;
+			}
+		};
+		if(writelock){
+			task.doInWriteLock(getLock());
+		}else{
+			task.doInReadLock(getLock());
+		}
 	}
 	
 }

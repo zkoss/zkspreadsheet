@@ -18,6 +18,7 @@ package org.zkoss.zss.ngapi;
 
 import java.util.concurrent.locks.ReadWriteLock;
 
+import org.zkoss.zss.ngmodel.ModelEvents;
 import org.zkoss.zss.ngmodel.NAutoFilter;
 import org.zkoss.zss.ngmodel.NAutoFilter.FilterOp;
 import org.zkoss.zss.ngmodel.NCellStyle;
@@ -617,6 +618,14 @@ public interface NRange {
 //	 * @param token the token to identify the registration
 //	 */
 //	public void notifyDeleteFriendFocus(Object token);
+	
+	/**
+	 * Send a custom model event to all book's listener, the event name must not conflict with that in {@link ModelEvents} 
+	 * @param customEventName the event custom event
+	 * @param data the data
+	 * @param writeLock use write lock when notify , set true if the synchronized book listener will modify the book.
+	 */
+	public void notifyCustomEvent(String customEventName,Object data,boolean writeLock);
 	
 	/**
 	 * Delete sheet of this Range.

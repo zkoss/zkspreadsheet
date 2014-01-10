@@ -57,6 +57,10 @@ private String name;
 		return (CellRegion)getData(ModelEvents.PARAM_REGION);
 	}
 	
+	public Object getCustomData() {
+		return getData(ModelEvents.PARAM_CUSTOM_DATA);
+	}
+	
 	public boolean isWholeRow(){
 		NBook book = getBook();
 		if(book == null){
