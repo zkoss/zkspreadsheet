@@ -28,6 +28,7 @@ import org.w3c.dom.Node;
 import org.zkoss.poi.POIXMLDocumentPart;
 import org.zkoss.poi.ss.usermodel.*;
 import org.zkoss.poi.ss.usermodel.charts.*;
+import org.zkoss.poi.ss.util.CellRangeAddress;
 import org.zkoss.poi.xssf.model.ExternalLink;
 import org.zkoss.poi.xssf.usermodel.*;
 import org.zkoss.poi.xssf.usermodel.charts.*;
@@ -490,8 +491,16 @@ public class NExcelXlsxImporter extends AbstractExcelImporter{
 	protected void importValidation(Sheet poiSheet, NSheet sheet) {
 		for (DataValidation poiValidation : poiSheet.getDataValidations()){
 			
-			CellRegion cellRegion = new CellRegion(poiValidation.getRegions().getCellRangeAddresses()[0].formatAsString());
-			NDataValidation dataValidation = sheet.addDataValidation(cellRegion);
+			if (poiValidation.getRegions().countRanges() <=0){
+				continue;
+			}
+			
+			CellRangeAddress[] cellRangeAddresses = poiValidation.getRegions().getCellRangeAddresses();
+			NDataValidation dataValidation = sheet.addDataValidation(new CellRegion(cellRangeAddresses[0].formatAsString()));
+			for (int i = 1 ; i<cellRangeAddresses.length ; i++){ //starts from 2nd one
+				dataValidation.addRegion(new CellRegion(cellRangeAddresses[i].formatAsString()));
+			}
+			
 			DataValidationConstraint poiConstraint = poiValidation.getValidationConstraint();
 			// getExplicitListValues() will be represented as formula1
 			dataValidation.setFormula(poiConstraint.getFormula1(), poiConstraint.getFormula2());

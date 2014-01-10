@@ -1,6 +1,6 @@
 package org.zkoss.zss.ngmodel;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import java.io.*;
 import java.net.URL;
@@ -301,7 +301,10 @@ public class ImporterTest extends ImExpTestBase {
 	public void validation(){
 		NBook book = ImExpTestUtil.loadBook(IMPORT_FILE_UNDER_TEST, "XLSX");
 		NSheet validationSheet = book.getSheetByName("Validation");
-		assertEquals(5, validationSheet.getDataValidations().size());
+		assertEquals(7, validationSheet.getDataValidations().size());
+		
+		NDataValidation noValidation  = validationSheet.getDataValidation(0, 1);
+		assertNull(noValidation);
 
 		NDataValidation one2Ten  = validationSheet.getDataValidation(1, 1);
 		assertEquals(ErrorStyle.STOP, one2Ten.getErrorStyle());
@@ -322,6 +325,10 @@ public class ImporterTest extends ImExpTestBase {
 		assertEquals("$C$3:$F$3", fourGrades.getValue1Formula());
 		assertEquals(4, fourGrades.getNumOfValue1());
 		assertEquals(0, fourGrades.getNumOfValue2());
+		assertEquals("A", fourGrades.getValue1(0).toString());
+		assertEquals("B", fourGrades.getValue1(1).toString());
+		assertEquals("C", fourGrades.getValue1(2).toString());
+		assertEquals("D", fourGrades.getValue1(3).toString());
 		assertEquals(false, fourGrades.isShowDropDownArrow());
 		
 		NDataValidation dayAfter2014  = validationSheet.getDataValidation(3, 1);
@@ -334,6 +341,12 @@ public class ImporterTest extends ImExpTestBase {
 		assertEquals(ValidationType.LIST, limitedColors.getValidationType());
 		assertEquals("\"red, blue, green\"", limitedColors.getValue1Formula());
 		assertEquals(true, limitedColors.isShowDropDownArrow());
+		
+		NDataValidation custom  = validationSheet.getDataValidation(6, 1);
+		assertEquals(ValidationType.FORMULA, custom.getValidationType());
+		
+		NDataValidation decimalRange  = validationSheet.getDataValidation(7, 1);
+		assertEquals(ValidationType.DECIMAL, decimalRange.getValidationType());
 	}
 }
 
