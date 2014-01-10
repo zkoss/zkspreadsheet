@@ -153,6 +153,27 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 		sheet.getViewInfo().setNumOfRowFreeze(BookHelper.getRowFreeze(poiSheet));
 		sheet.getViewInfo().setNumOfColumnFreeze(BookHelper.getColumnFreeze(poiSheet));
 		sheet.getViewInfo().setDisplayGridline(poiSheet.isDisplayGridlines());
+		sheet.getViewInfo().setColumnBreaks(poiSheet.getColumnBreaks());
+		sheet.getViewInfo().setRowBreaks(poiSheet.getRowBreaks());
+		
+		sheet.getPrintSetup().setBottomMargin(XUtils.incheToPx(poiSheet.getMargin(Sheet.BottomMargin)));
+		sheet.getPrintSetup().setTopMargin(XUtils.incheToPx(poiSheet.getMargin(Sheet.TopMargin)));
+		sheet.getPrintSetup().setLeftMargin(XUtils.incheToPx(poiSheet.getMargin(Sheet.LeftMargin)));
+		sheet.getPrintSetup().setRightMargin(XUtils.incheToPx(poiSheet.getMargin(Sheet.RightMargin)));
+		sheet.getPrintSetup().setHeaderMargin(XUtils.incheToPx(poiSheet.getMargin(Sheet.HeaderMargin)));
+		sheet.getPrintSetup().setFooterMargin(XUtils.incheToPx(poiSheet.getMargin(Sheet.FooterMargin)));
+		
+		NHeader header = sheet.getViewInfo().getHeader();
+		header.setCenterText(poiSheet.getHeader().getCenter());
+		header.setLeftText(poiSheet.getHeader().getLeft());
+		header.setRightText(poiSheet.getHeader().getRight());
+
+		
+		NFooter footer = sheet.getViewInfo().getFooter();
+		footer.setCenterText(poiSheet.getFooter().getCenter());
+		footer.setLeftText(poiSheet.getFooter().getLeft());
+		footer.setRightText(poiSheet.getFooter().getRight());
+		
 		sheet.setProtected(poiSheet.getProtect());
 		//merged cells
 		//reference RangeImpl.getMergeAreas()

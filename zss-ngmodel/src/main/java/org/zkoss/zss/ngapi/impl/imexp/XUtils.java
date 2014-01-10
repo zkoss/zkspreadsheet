@@ -188,4 +188,15 @@ public class XUtils {
 	public static int pxToDefaultColumnWidth(int px, int charWidth) {
 		return (px - 5) / charWidth;
 	}
+	
+	// Formula: Pixels = Inches * DPI, assume 96 DPI
+	public static int incheToPx(double inches) {
+		return (int) (inches * 96);
+	}
+	
+	// Formula: Inches = Pixels / DPI, assume 96 DPI
+	public static double pxToInche(int px) {
+		return px / 96.0;
+	}
+	
 }
