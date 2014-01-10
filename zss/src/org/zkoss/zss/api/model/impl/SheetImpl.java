@@ -138,7 +138,7 @@ public class SheetImpl implements Sheet{
 
 	@Override
 	public boolean isPrintGridlines() {
-		return getNative().getPrintInfo().isPrintGridline();
+		return getNative().getPrintSetup().isPrintGridline();
 	}
 
 	/*TODO zss 3.5
