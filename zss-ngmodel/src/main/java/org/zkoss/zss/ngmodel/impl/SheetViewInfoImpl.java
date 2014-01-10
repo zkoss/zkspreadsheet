@@ -90,7 +90,7 @@ public class SheetViewInfoImpl implements NSheetViewInfo, Serializable {
 		if(rowBreaks==null){
 			return new int[0];
 		}
-		int[] arr = new int[]{rowBreaks.size()};
+		int[] arr = new int[rowBreaks.size()];
 		Iterator<Integer> iter = rowBreaks.iterator();
 		for(int i=0;i<arr.length;i++){
 			arr[i] = iter.next();
@@ -130,7 +130,7 @@ public class SheetViewInfoImpl implements NSheetViewInfo, Serializable {
 		if(columnBreaks==null){
 			return new int[0];
 		}
-		int[] arr = new int[]{columnBreaks.size()};
+		int[] arr = new int[columnBreaks.size()];
 		Iterator<Integer> iter = columnBreaks.iterator();
 		for(int i=0;i<arr.length;i++){
 			arr[i] = iter.next();
