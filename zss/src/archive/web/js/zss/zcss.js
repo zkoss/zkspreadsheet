@@ -212,7 +212,7 @@ zcss._porp2attr = function (prop) {
  * get Rules for a stylesheet
  */
 zcss._getSSRules = function (){
-	if (zk.ie || zk.safari) {
+	if ((zk.ie && zk.ie < 11) || zk.safari) {
 		return function(styleSheet) {
 			return styleSheet.rules;
 		};
@@ -230,7 +230,7 @@ zcss._getSSRules = function (){
  * get stylesheet object from a element
  */
 zcss._getElementSheet = function () {
-	if (zk.ie) {
+	if (zk.ie && zk.ie < 11) {
 		return function(element){
 			return element.styleSheet;
 		};
@@ -245,7 +245,7 @@ zcss._getElementSheet = function () {
  * insert rule to sheet, return the inserted rule
  */
 zcss._insertRule2Sheet = function () {
-	if (zk.ie) {
+	if (zk.ie && zk.ie < 11) {
 		return function(sheetobj, selector, style, index) {
 			sheetobj.addRule(selector, "{"+style+"}", index);
 			return sheetobj.rules[index];
@@ -270,7 +270,7 @@ zcss._insertRule2Sheet = function () {
  * insert rule to sheet, return the inserted rule
  */
 zcss._removeRulesFromSheet = function () {
-	if (zk.ie) {
+	if (zk.ie && zk.ie < 11) {
 		return function(sheetobj, selectors) {
 			//sheetobj.removeRule(selector);
 			var rules = zcss._getSSRules(sheetobj);
@@ -304,7 +304,7 @@ zcss._removeRulesFromSheet = function () {
  * set rule property
  */
 zcss._setRuleProperty = function (){
-	if (zk.ie) {
+	if (zk.ie && zk.ie < 11) {
 		return function (rule, prop, value) {
 			prop = zcss._porp2attr(prop);
 			rule.style[prop]=value;
@@ -317,7 +317,7 @@ zcss._setRuleProperty = function (){
 }();
 
 zcss._setStyleProperty = function(){
-	if (zk.ie) {
+	if (zk.ie && zk.ie < 11) {
 		return function (style, prop, value, comp) {
 			if (zcss.nonNegativeAttr.$contains(prop) && typeof value == "string" && value.indexOf("-") == 0) {
 				value = "0" + zcss._trimPrefixNumber(value);

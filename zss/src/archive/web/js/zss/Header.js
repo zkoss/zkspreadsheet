@@ -210,8 +210,8 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 			bcmp = ctrl.ibcomp,
 			bcmpw = bcmp.offsetWidth,
 			bcmph = bcmp.offsetHeight,
-			height = zk.ie ? 2 : 3,
-			width = zk.ie ? 2 : 3,
+			height = (zk.ie && zk.ie < 11) ? 2 : 3,
+			width = (zk.ie && zk.ie < 11) ? 2 : 3,
 			top = ofs[1] + bcmph,
 			left = ofs[0] + bcmpw,
 			spcomp = ctrl.sheet.sp.comp;

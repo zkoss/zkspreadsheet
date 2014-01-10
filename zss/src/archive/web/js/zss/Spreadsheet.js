@@ -120,7 +120,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 		
 	    if (id)
 	       jq(styleObj).attr("id", id);
-	    if (zk.ie) {
+	    if (zk.ie && zk.ie < 11) {
 	        head.appendChild(styleObj);
 	        sheetobj = styleObj.styleSheet;
 	        sheetobj.cssText = cssText;
@@ -149,7 +149,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 	 * get stylesheet object from DOMElement
 	 */
 	function _getElementSheet () {
-		if (zk.ie) {
+		if (zk.ie && zk.ie < 11) {
 			return function (element) {
 				return element.styleSheet;
 			};
@@ -842,7 +842,7 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 	 * @param boolean trigger, true will fire a focus event, false won't.
 	 */
 	focus: function (trigger) {
-		if (zk.ie) {
+		if (zk.ie && zk.ie < 11) {
 			var self = this;
 			setTimeout(function () {
 				var sht = self.sheetCtrl;

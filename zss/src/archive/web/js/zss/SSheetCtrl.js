@@ -687,7 +687,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		switch (type) {
 		case 'neighbor': //move to a neighbor block
 			this.activeBlock.loadForVisible();
-			if (zk.ie) {
+			if (zk.ie && zk.ie < 11) {
 				//TODO: test if set display none could speedup or not when switch cache  
 				//ie have some display error(cell overlap) when scroll up(neighbor north)
 				//same issue when scroll right
@@ -1543,7 +1543,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			}
 		} else if((cmp = zkS.parentByZSType(elm, "SSelDot", 1)) != null) {
 		//TODO
-		} else if((cmp = zkS.parentByZSType(elm, [zk.ie8 ? "SSelInner" : "SSelect", "SFocus", "SHighlight"], 1)) != null ) {
+		} else if((cmp = zkS.parentByZSType(elm, [(zk.ie8 && zk.ie < 11) ? "SSelInner" : "SSelect", "SFocus", "SHighlight"], 1)) != null ) {
 			//Mouse click on Selection / Focus Block
 			var sheetofs = zk(sheet.comp).revisedOffset();
 			mx = evt.pageX;
@@ -2111,7 +2111,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			
 		var cellheight;// = zk.revisedSize(colcmp,height,true);
 		
-		if(zk.ie || zk.safari || zk.opera)
+		if((zk.ie && zk.ie < 11) || zk.safari || zk.opera)
 			//1989680
 			cellheight = height > 0 ? height : 0;
 		else
@@ -2157,7 +2157,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			h -= custRowHeight.getStartPixel(range.top);
 
 			celltextheight = h;
-			cellheight = zk.ie || zk.safari || zk.opera ? celltextheight : h;
+			cellheight = (zk.ie && zk.ie < 11) || zk.safari || zk.opera ? celltextheight : h;
 
 			if (h <= 0) {
 				zcss.setRule(name+" .zsmerge"+range.id,"display","none",true, cssId);

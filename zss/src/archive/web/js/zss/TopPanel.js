@@ -106,7 +106,7 @@ zss.TopPanel = zk.$extends(zss.Panel, {
 	},
 	bind_: function () {
 		this.$supers(zss.TopPanel, 'bind_', arguments);
-		var fontSize= this.isCorner && zk.ie ? this._getTopHeaderFontSize() : null;
+		var fontSize= this.isCorner && (zk.ie && zk.ie < 11) ? this._getTopHeaderFontSize() : null;
 		if (fontSize)
 			this.fontSize = fontSize;
 	},
@@ -230,7 +230,7 @@ zss.TopPanel = zk.$extends(zss.Panel, {
 			ctrl,
 			colHeaders = this.getHeaderData_(),
 			type = zss.Header.HOR,
-			fontSize = zk.ie ? this._getCornerHeaderFontSize() : null;
+			fontSize = (zk.ie && zk.ie < 11) ? this._getCornerHeaderFontSize() : null;
 			
 		//insert columns intersect with selection range, must remove selection CSS before insert cells
 		var sheet = this.sheet,

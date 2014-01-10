@@ -40,7 +40,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 		if (!range) return;
 		jq(obj.comp).css('display', 'block');
 		jq(obj.icomp)[((range.top != range.bottom) || (range.left != range.right)) ? 'addClass' : 'removeClass']("zsselecti-r");
-		if (zk.ie8 && redrawOpacity)
+		if ((zk.ie8 && zk.ie < 11) && redrawOpacity)
 			_redrawOpacity(obj);
 	}
 
@@ -191,7 +191,7 @@ zss.SelAreaCtrl = zk.$extends(zss.AreaCtrl, {
 		this._stopHyperlink(); //just in case event is not properly fired ...
 		//stupid ie8 will call _doMouseOut, and _doMouseMove between _startHyperlink and _tryAndEndHyperlink.
 		//and #_hyperlinkElm will lost in #_resetHyperlink
-		if(zk.ie8) this._start = true;
+		if(zk.ie8 && zk.ie < 11) this._start = true;
 		var t = 1000;
 		this._mdtimeout = (new Date()).getTime() + t;
 		if((aelm && aelm.tagName.toLowerCase() == 'a') || this._hyperlinkElm) {
@@ -217,7 +217,7 @@ zss.SelAreaCtrl = zk.$extends(zss.AreaCtrl, {
 	_stopHyperlink: function () {
 		//stupid ie8 will call _doMouseOut, and _doMouseMove between _startHyperlink and _tryAndEndHyperlink.
 		//and #_hyperlinkElm will lost in #_resetHyperlink
-		if(zk.ie8) delete this._start;
+		if(zk.ie8 && zk.ie < 11) delete this._start;
 		delete this._mdtimeout;
 		if (this._aelm) {
 			jq(this._aelm).css('cursor', '');
@@ -241,7 +241,7 @@ zss.SelAreaCtrl = zk.$extends(zss.AreaCtrl, {
 	_resetHyperlink: function () {
 		//stupid ie8 will call _doMouseOut, and _doMouseMove between _startHyperlink and _tryAndEndHyperlink.
 		//and #_hyperlinkElm will lost in #_resetHyperlink. Must work around it
-		if (!zk.ie8 || !this._start) {
+		if ((!zk.ie8 || zk.ie >= 11)|| !this._start) {
 			delete this._hyperlinkElm;
 			this._resetHyperlinkCursor();
 		}
