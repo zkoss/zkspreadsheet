@@ -19,6 +19,7 @@ ZK Spreadsheet 3.0.1
   ZSS-536 Type on a cell something get empty result
   ZSS-533 formula's function with non-existed name should be resolved to #NAME? and an name be created in file
   ZSS-513 inline editor is at wrong position when re-edit cell with validation
+  ZSS-537 Spreadsheet messed using Internet Explorer 11
   
 ** Upgrade Notes
   * Members of BookType of Book are changed from EXCEL_2003,EXCEL_2007 to XLS,XLSX because of Spreadsheet depends on file format not Excel version.
