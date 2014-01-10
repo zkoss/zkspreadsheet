@@ -2019,32 +2019,30 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		private static final long serialVersionUID = 20100330164021L;
 
 		public InnerDataListener() {
-			/*TODO zss 3.5
-			addEventListener(SSDataEvent.ON_SHEET_ORDER_CHANGE, new EventListener() {
+			addEventListener(ModelEvents.ON_SHEET_ORDER_CHANGE, new ModelEventListener() {
 				@Override
-				public void onEvent(Event event) throws Exception {
-					onSheetOrderChange((SSDataEvent)event);
+				public void onEvent(ModelEvent event){
+					onSheetOrderChange(event);
 				}
 			});
-			addEventListener(SSDataEvent.ON_SHEET_NAME_CHANGE, new EventListener() {
+			addEventListener(ModelEvents.ON_SHEET_NAME_CHANGE, new ModelEventListener() {
 				@Override
-				public void onEvent(Event event) throws Exception {
-					onSheetNameChange((SSDataEvent)event);
+				public void onEvent(ModelEvent event){
+					onSheetNameChange(event);
 				}
 			});
-			addEventListener(SSDataEvent.ON_SHEET_CREATE, new EventListener() {
+			addEventListener(ModelEvents.ON_SHEET_CREATE, new ModelEventListener() {
 				@Override
-				public void onEvent(Event event) throws Exception {
-					onSheetCreate((SSDataEvent)event);
+				public void onEvent(ModelEvent event){
+					onSheetCreate(event);
 				}
 			});
-			addEventListener(SSDataEvent.ON_SHEET_DELETE, new EventListener() {
+			addEventListener(ModelEvents.ON_SHEET_DELETE, new ModelEventListener() {
 				@Override
-				public void onEvent(Event event) throws Exception {
-					onSheetDelete((SSDataEvent)event);
+				public void onEvent(ModelEvent event){
+					onSheetDelete(event);
 				}
 			});
-			*/
 			addEventListener(ON_MODEL_FRIEND_FOCUS_MOVE, new ModelEventListener() {
 				@Override
 				public void onEvent(ModelEvent event){
@@ -2192,53 +2190,44 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			*/
 		}
 		
-		/*TODO zss 3.5
-		private void onSheetOrderChange(SSDataEvent event) {
-			final String name = (String) event.getPayload(); 
+		private void onSheetOrderChange(ModelEvent event) { 
 			Spreadsheet.this.smartUpdate("sheetLabels", getSheetLabels());
-			Sheet sheet = getBook().getSheet(name);
+			Sheet sheet = getBook().getSheet(event.getSheet().getSheetName());
 			org.zkoss.zk.ui.event.Events.postEvent(new SheetEvent(Events.ON_AFTER_SHEET_ORDER_CHANGE, Spreadsheet.this, sheet));
 		}
-		private void onSheetNameChange(SSDataEvent event) {
-			final String name = (String) event.getPayload(); 
+		private void onSheetNameChange(ModelEvent event) { 
 			Spreadsheet.this.smartUpdate("sheetLabels", getSheetLabels());
-			Sheet sheet = getBook().getSheet(name);
+			Sheet sheet = getBook().getSheet(event.getSheet().getSheetName());
 			org.zkoss.zk.ui.event.Events.postEvent(new SheetEvent(Events.ON_AFTER_SHEET_NAME_CHANGE, Spreadsheet.this, sheet));
 		}
-		private void onSheetCreate(SSDataEvent event) {
-			final String name = (String) event.getPayload(); 
+		
+		private void onSheetCreate(ModelEvent event) {
 			Spreadsheet.this.smartUpdate("sheetLabels", getSheetLabels());
-			Sheet sheet = getBook().getSheet(name);
+			Sheet sheet = getBook().getSheet(event.getSheet().getSheetName());
 			org.zkoss.zk.ui.event.Events.postEvent(new SheetEvent(Events.ON_AFTER_SHEET_CREATE, Spreadsheet.this, sheet));
 		}
-		private void onSheetDelete(SSDataEvent event) {
-			final Object[] payload = (Object[]) event.getPayload(); 
-			final String delSheetName = (String) payload[0]; //deleted sheet name
-			final String newSheetName= (String) payload[1]; //new selected sheet name
+		
+		private void onSheetDelete(ModelEvent event) {
+			NBook book = getXBook();
+			NSheet delSheet = event.getSheet();
+			//TODO zss 3.5 clear active client cache and active range record
 			
-			//Dennis, 20130515, should handle it by default
 			
-			//Dennis, 20130523, can't get sheet name if it was deleted.
-			String selectedName = delSheetName;
-			try{
-				selectedName = getSelectedSheet().getSheetName();
-			}catch(Exception x){
-//				>>org.apache.xmlbeans.impl.values.XmlValueDisconnectedException
-//				>>	at org.apache.xmlbeans.impl.values.XmlObjectBase.check_orphaned(XmlObjectBase.java:1213)
-//				>>	at org.openxmlformats.schemas.spreadsheetml.x2006.main.impl.CTSheetImpl.getName(Unknown Source)
-				selectedName = null;
-			}
-			
-			if(selectedName == null || selectedName.equals(delSheetName)){
+			if(delSheet == getSelectedXSheet()){
+				int delIndex = (Integer)event.getData(ModelEvents.PARAM_INDEX);
+				//the sheet that selected is deleted, re select another
+				if(delIndex>=book.getNumOfSheet()-1){
+					delIndex = book.getNumOfSheet()-1;
+				}
 				//if current select sheet name, euqlas the delete sheet, we should select to suggest new sheet 
-				setSelectedSheet(newSheetName);//this will also update sheet label	
+				setSelectedSheet(book.getSheet(delIndex).getSheetName());//this will also update sheet label	
 			}else{
 				//just update sheet label
 				Spreadsheet.this.smartUpdate("sheetLabels", getSheetLabels());
 			}
-			org.zkoss.zk.ui.event.Events.postEvent(new SheetDeleteEvent(Events.ON_AFTER_SHEET_DELETE, Spreadsheet.this, delSheetName));
+			org.zkoss.zk.ui.event.Events.postEvent(new SheetDeleteEvent(Events.ON_AFTER_SHEET_DELETE, Spreadsheet.this, delSheet.getSheetName()));
 		}
-		
+		/* zss 3.5
 		private XSheet getSheet(Ref rng) {
 			return XUtils.getSheetByRefSheet(_book, rng.getOwnerSheet()); 
 		}
@@ -2687,6 +2676,8 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		// should also update the left - 1, top - 1 part
 		top = top > 0 ? top - 1 : 0;
 		
+		//TODO zss 3.5, just found the logic here might be not correct, 
+		//the rect and select freeze should base on sheet, not selectedSheet
 		final AreaRef rect = getActiveRangeHelper().getArea(_selectedSheet);
 		
 		final int loadLeft = rect.getColumn();
