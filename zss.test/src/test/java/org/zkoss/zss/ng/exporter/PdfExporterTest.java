@@ -1,8 +1,10 @@
 package org.zkoss.zss.ng.exporter;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Locale;
 
 import org.junit.After;
@@ -10,7 +12,11 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.zkoss.zss.Setup;
+import org.zkoss.zss.Util;
+import org.zkoss.zss.model.impl.pdf.BackupExporter;
 import org.zkoss.zss.model.impl.pdf.PdfExporter;
+import org.zkoss.zss.model.sys.XBook;
+import org.zkoss.zss.model.sys.impl.ExcelImporter;
 import org.zkoss.zss.ngapi.NImporter;
 import org.zkoss.zss.ngapi.impl.imexp.ExcelImportFactory;
 import org.zkoss.zss.ngmodel.NBook;
@@ -23,8 +29,6 @@ import org.zkoss.zss.ngmodel.NRichText;
 import org.zkoss.zss.ngmodel.NSheet;
 
 public class PdfExporterTest {
-	
-	private static String DEFAULT_EXPORT_PATH = "./target/test.pdf";
 	
 	@BeforeClass
 	public static void setUpLibrary() throws Exception {
@@ -79,44 +83,64 @@ public class PdfExporterTest {
 		font3.setColor(book.createColor("#CCCC99"));
 		font3.setName("HGPSoeiKakupoptai");
 		rText.addSegment("000", font3);
-
-		exportBook(book);
+		
+		File temp = Setup.getTempFile("pdfExportTest",".pdf");
+		
+		exportBook(book, temp);
+		
+		Util.open(temp);
 	}
 	
 	@Test
-	public void exportPdf() {
-		NBook book = importBook("./book/simple.xlsx");
-		exportBook(book);
+	public void exportPdfTest() {
+		NBook book = importBook("book/simple.xlsx");
+		File temp = Setup.getTempFile("pdfExportTest",".pdf");
+		exportBook(book, temp);
+		Util.open(temp);
+	}
+	
+	@Test
+	public void oldExportPdf() throws IOException {
+		BackupExporter exporter = new BackupExporter();
+		InputStream is  = PdfExporterTest.class.getResourceAsStream("book/simple.xlsx");
+		ExcelImporter importer = new ExcelImporter();
+		XBook book = importer.imports(is, "test");
+		is.close();
+		File tmpFile = Setup.getTempFile("pdfExportTest",".pdf");
+		OutputStream os = new FileOutputStream(tmpFile);
+		exporter.export(book, os);
+		os.close();
+		Util.open(tmpFile);
 	}
 	
 	private NBook importBook(String path) {
 		NImporter importer = new ExcelImportFactory().createImporter();
-		InputStream is  = PdfExporterTest.class.getResourceAsStream("./book/simple.xlsx");
+		InputStream is  = PdfExporterTest.class.getResourceAsStream(path);
 		NBook book = null;
 		try {
 			book = importer.imports(is, "PDFBook");
-			is.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} finally {
+			try {
+				is.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 		return book;
 	}
 	
-	private void exportBook(NBook book) {
-		exportBook(book, null);
-	}
-	
-	private void exportBook(NBook book, String path) {
-		
-		path = path != null ? path : DEFAULT_EXPORT_PATH;
+	private void exportBook(NBook book, File file) {
 		
 		PdfExporter exporter = new PdfExporter();
+		exporter.enableGridLines(false);
 		try {
-			exporter.export(book, new File(path));
+			exporter.export(book, file);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+
 	}
 
 }
