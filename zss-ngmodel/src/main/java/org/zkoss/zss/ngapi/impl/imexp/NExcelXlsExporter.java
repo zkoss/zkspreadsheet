@@ -78,4 +78,9 @@ public class NExcelXlsExporter extends AbstractExcelExporter {
 		// not support in XLS
 	}
 
+	@Override
+	protected void exportValidation(NSheet sheet, Sheet poiSheet) {
+		// not support in XLS
+	}
+
 }

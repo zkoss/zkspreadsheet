@@ -317,6 +317,7 @@ public class ImporterTest extends ImExpTestBase {
 		assertEquals(true, one2Ten.isShowPromptBox());
 		
 		NDataValidation fourGrades  = validationSheet.getDataValidation(2, 1);
+		assertEquals(ValidationType.LIST, fourGrades.getValidationType());
 		assertEquals(ErrorStyle.WARNING, fourGrades.getErrorStyle());
 		assertEquals("$C$3:$F$3", fourGrades.getValue1Formula());
 		assertEquals(4, fourGrades.getNumOfValue1());
@@ -330,6 +331,7 @@ public class ImporterTest extends ImExpTestBase {
 		assertEquals(ErrorStyle.STOP, lengthEquals10.getErrorStyle());
 		
 		NDataValidation limitedColors  = validationSheet.getDataValidation(5, 1);
+		assertEquals(ValidationType.LIST, limitedColors.getValidationType());
 		assertEquals("\"red, blue, green\"", limitedColors.getValue1Formula());
 		assertEquals(true, limitedColors.isShowDropDownArrow());
 	}

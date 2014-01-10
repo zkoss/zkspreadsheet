@@ -55,6 +55,7 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 	abstract protected Workbook createPoiBook();
 	abstract protected void exportChart(NSheet sheet, Sheet poiSheet);
 	abstract protected void exportPicture(NSheet sheet, Sheet poiSheet);
+	abstract protected void exportValidation(NSheet sheet, Sheet poiSheet);
 	
 	@Override
 	public void export(NBook book, OutputStream fos) throws IOException {

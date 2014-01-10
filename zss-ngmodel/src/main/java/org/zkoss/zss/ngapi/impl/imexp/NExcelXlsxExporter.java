@@ -25,6 +25,7 @@ import org.zkoss.zss.ngmodel.*;
 import org.zkoss.zss.ngmodel.NChart.NBarDirection;
 import org.zkoss.zss.ngmodel.NChart.NChartGrouping;
 import org.zkoss.zss.ngmodel.NChart.NChartLegendPosition;
+import org.zkoss.zss.ngmodel.NDataValidation.OperatorType;
 import org.zkoss.zss.ngmodel.NPicture.Format;
 import org.zkoss.zss.ngmodel.chart.*;
 /**
@@ -466,4 +467,67 @@ public class NExcelXlsxExporter extends AbstractExcelExporter {
 			
 		}
 	}
+
+	@Override
+	protected void exportValidation(NSheet sheet, Sheet poiSheet) {
+		for (NDataValidation validation : sheet.getDataValidations()){
+			int operatorType = toPoiOperatorType(validation.getOperatorType());
+			String formula1 = validation.getValue1Formula();
+			String formula2 = validation.getValue2Formula();
+			switch(validation.getValidationType()){
+				case TIME:
+					poiSheet.getDataValidationHelper().createTimeConstraint(operatorType, formula1, formula2);
+					break;
+				case TEXT_LENGTH:
+					poiSheet.getDataValidationHelper().createTextLengthConstraint(operatorType, formula1, formula2);
+					break;
+				case DATE:
+					//the last argument, dateFormat, is only used in XLS. We just put null here. 
+					poiSheet.getDataValidationHelper().createDateConstraint(operatorType, formula1, formula2, "");
+					break;
+				case LIST:
+					poiSheet.getDataValidationHelper().createFormulaListConstraint(formula1);
+					break;
+				case INTEGER:
+					poiSheet.getDataValidationHelper().createIntegerConstraint(operatorType, formula1, formula2);
+					break;
+				case FORMULA: //custom
+					poiSheet.getDataValidationHelper().createCustomConstraint(formula1);
+					break;
+				case DECIMAL:
+					poiSheet.getDataValidationHelper().createDecimalConstraint(operatorType, formula1, formula2);
+					break;
+				case ANY:
+					// ANY validation type means no validation
+				default:
+					continue;
+			}
+			
+//			poiSheet.getDataValidationHelper().cre
+//			poiSheet.getDataValidationHelper().createValidation(constraint, cellRangeAddressList)
+		}
+	}
+	
+	private int toPoiOperatorType(OperatorType type){
+		switch (type) {
+			case NOT_EQUAL:
+				return DataValidationConstraint.OperatorType.NOT_EQUAL;
+			case NOT_BETWEEN:	
+				return DataValidationConstraint.OperatorType.NOT_BETWEEN;
+			case LESS_THAN:
+				return DataValidationConstraint.OperatorType.LESS_THAN;
+			case LESS_OR_EQUAL:
+				return DataValidationConstraint.OperatorType.LESS_OR_EQUAL;
+			case GREATER_THAN:
+				return DataValidationConstraint.OperatorType.GREATER_THAN;
+			case GREATER_OR_EQUAL:
+				return DataValidationConstraint.OperatorType.GREATER_OR_EQUAL;
+			case EQUAL:
+				return DataValidationConstraint.OperatorType.EQUAL;
+			case BETWEEN:
+			default:
+				return DataValidationConstraint.OperatorType.BETWEEN;
+		}
+	}
+	
 }

@@ -483,6 +483,9 @@ public class NExcelXlsxImporter extends AbstractExcelImporter{
 		return UnitUtil.emuToPx(clientAnchor.getDy1());
 	}
 
+	/**
+	 * Reference BookHelper.validate()
+	 */
 	@Override
 	protected void importValidation(Sheet poiSheet, NSheet sheet) {
 		for (DataValidation poiValidation : poiSheet.getDataValidations()){
@@ -501,9 +504,10 @@ public class NExcelXlsxImporter extends AbstractExcelImporter{
 			dataValidation.setPromptBox(poiValidation.getPromptBoxTitle(), poiValidation.getPromptBoxText());
 			if (poiConstraint.getValidationType() == DataValidationConstraint.ValidationType.LIST){
 				/* 
-				 * Excel file format contains reversed value. If showing, file contains 1 (true). If not showing, 
-				 * attribute "showDropDown" won't exist. But POI's API reverse its value again.
-				 * So we just accept the boolean value.
+				 * According to ISO/IEC 29500-1 \ 18.3.1.32  dataValidation (Data Validation) 
+				 * Excel file contains reversed value against format specification . If not showing drop down, file contains 1 (true). If showing, 
+				 * attribute "showDropDown" won't exist and POI get false. But POI's API reverse its value again.
+				 * So we just directly accept the POI returned value.
 				 */
 				dataValidation.setShowDropDownArrow(poiValidation.getSuppressDropDownArrow());
 			}
