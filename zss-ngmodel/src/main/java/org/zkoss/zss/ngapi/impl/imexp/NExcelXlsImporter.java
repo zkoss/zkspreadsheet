@@ -364,7 +364,6 @@ public class NExcelXlsImporter extends AbstractExcelImporter{
 
 	@Override
 	protected void importValidation(Sheet poiSheet, NSheet sheet) {
-		// TODO Auto-generated method stub
-		
+		// unsupported features
 	}
 }

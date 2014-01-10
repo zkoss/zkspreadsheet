@@ -485,7 +485,6 @@ public class NExcelXlsxImporter extends AbstractExcelImporter{
 
 	@Override
 	protected void importValidation(Sheet poiSheet, NSheet sheet) {
-		//TODO 
 		for (DataValidation poiValidation : poiSheet.getDataValidations()){
 			
 			CellRegion cellRegion = new CellRegion(poiValidation.getRegions().getCellRangeAddresses()[0].formatAsString());
@@ -510,7 +509,6 @@ public class NExcelXlsxImporter extends AbstractExcelImporter{
 			}
 			dataValidation.setShowErrorBox(poiValidation.getShowErrorBox());
 			dataValidation.setShowPromptBox(poiValidation.getShowPromptBox());
-			
 		}
 	}
 	
