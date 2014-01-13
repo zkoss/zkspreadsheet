@@ -661,10 +661,12 @@ public class NRangeImpl implements NRange {
 
 	@Override
 	public void deleteSheet() {
+		final ResultWrap<NSheet> toDeleteSheet = new ResultWrap<NSheet>();
+		final ResultWrap<Integer> toDeleteIndex = new ResultWrap<Integer>();
 		//it just handle the first ref
 		new DependentUpdateTask() {			
 			@Override
-			public Object invokeInner() {
+			public Object doInvokePhase() {
 				NBook book = getBook();
 				int sheetCount;
 				if((sheetCount = book.getNumOfSheet())<=1){
@@ -676,21 +678,30 @@ public class NRangeImpl implements NRange {
 				int index = book.getSheetIndex(toDelete);
 //				final int newIndex =  index < (sheetCount - 1) ? index : (index - 1);
 				
-				book.deleteSheet(toDelete);
+				toDeleteSheet.set(toDelete);
+				toDeleteIndex.set(index);
 				
-				((AbstractBookAdv) getBook()).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_SHEET_DELETE,book,
-						ModelEvents.createDataMap(ModelEvents.PARAM_SHEET,toDelete,ModelEvents.PARAM_INDEX,index)));
+				book.deleteSheet(toDelete);
 				return null;
+			}
+
+			@Override
+			void doNotifyPhase() {
+				if(toDeleteSheet!=null){
+					((AbstractBookAdv) getBook()).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_SHEET_DELETE,book,
+						ModelEvents.createDataMap(ModelEvents.PARAM_SHEET,toDeleteSheet.get(),ModelEvents.PARAM_INDEX,toDeleteIndex.get())));
+				}
 			}
 		}.doInWriteLock(getLock());
 	}
 
 	@Override
 	public NSheet createSheet(final String name) {
+		final ResultWrap<NSheet> resultSheet = new ResultWrap<NSheet>();
 		//it just handle the first ref
 		return (NSheet)new DependentUpdateTask() {			
 			@Override
-			public Object invokeInner() {
+			public Object doInvokePhase() {
 				NBook book = getBook();
 				NSheet sheet;
 				if (Strings.isBlank(name)) {
@@ -698,8 +709,15 @@ public class NRangeImpl implements NRange {
 				} else {
 					sheet = book.createSheet(name);
 				}
-				((AbstractBookAdv) getBook()).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_SHEET_CREATE,sheet));
+				resultSheet.set(sheet);
 				return sheet;
+			}
+
+			@Override
+			void doNotifyPhase() {
+				if(resultSheet.get()!=null){
+					((AbstractBookAdv) getBook()).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_SHEET_CREATE,resultSheet.get()));
+				}
 			}
 		}.doInWriteLock(getLock());	
 	}
@@ -724,18 +742,26 @@ public class NRangeImpl implements NRange {
 	@Override
 	public void setSheetName(final String newname) {
 		//it just handle the first ref
+		final ResultWrap<NSheet> resultSheet = new ResultWrap<NSheet>();
 		new DependentUpdateTask() {			
 			@Override
-			public Object invokeInner() {
+			public Object doInvokePhase() {
 				NBook book = getBook();
 				NSheet sheet = getSheet();
 				if(sheet.getSheetName().equals(newname)){
 					return null;
 				}
 				book.setSheetName(sheet, newname);
+				resultSheet.set(sheet);
 				
-				((AbstractBookAdv) getBook()).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_SHEET_NAME_CHANGE,sheet));
 				return null;
+			}
+
+			@Override
+			void doNotifyPhase() {
+				if(resultSheet.get()!=null){
+					((AbstractBookAdv) getBook()).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_SHEET_NAME_CHANGE,resultSheet.get()));
+				}
 			}
 		}.doInWriteLock(getLock());	
 	}
@@ -743,9 +769,10 @@ public class NRangeImpl implements NRange {
 	@Override
 	public void setSheetOrder(final int pos) {
 		//it just handle the first ref
+		final ResultWrap<NSheet> resultSheet = new ResultWrap<NSheet>();
 		new DependentUpdateTask() {			
 			@Override
-			public Object invokeInner() {
+			public Object doInvokePhase() {
 				NBook book = getBook();
 				NSheet sheet = getSheet();
 				
@@ -756,9 +783,15 @@ public class NRangeImpl implements NRange {
 				
 				//in our new model, we don't use sheet index, so we don't need to clear anything when move it
 				book.moveSheetTo(sheet, pos);
-
-				((AbstractBookAdv) getBook()).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_SHEET_ORDER_CHANGE,sheet));
+				resultSheet.set(sheet);
 				return null;
+			}
+
+			@Override
+			void doNotifyPhase() {
+				if(resultSheet.get()!=null){
+					((AbstractBookAdv) getBook()).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_SHEET_ORDER_CHANGE,resultSheet.get()));
+				}
 			}
 		}.doInWriteLock(getLock());	
 	}
@@ -943,7 +976,8 @@ public class NRangeImpl implements NRange {
 	private abstract class DependentUpdateTask extends ReadWriteTask{
 
 		
-		abstract Object invokeInner();
+		abstract Object doInvokePhase();
+		abstract void doNotifyPhase();
 		
 		@Override
 		public Object invoke() {
@@ -959,7 +993,7 @@ public class NRangeImpl implements NRange {
 			try{
 				DependentCollector.setCurrent(dependentCtx);
 				
-				result = invokeInner();
+				result = doInvokePhase();
 			}finally{
 				notifySet.addAll(dependentCtx.getDependents());
 				
@@ -970,6 +1004,7 @@ public class NRangeImpl implements NRange {
 			if(notifySet.size()>0){
 				handleRefNotifyContentChange(bookSeries,notifySet);
 			}
+			doNotifyPhase();
 			return result;
 		}
 	}
