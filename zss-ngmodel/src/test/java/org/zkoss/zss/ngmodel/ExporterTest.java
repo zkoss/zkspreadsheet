@@ -10,12 +10,13 @@ import junit.framework.Assert;
 
 import org.junit.*;
 import org.zkoss.util.Locales;
-import org.zkoss.zss.ngapi.impl.imexp.ExcelExportFactory;
+import org.zkoss.zss.ngapi.impl.imexp.*;
+import org.zkoss.zss.ngapi.impl.imexp.ExcelExportFactory.Type;
 import org.zkoss.zss.ngmodel.NCellStyle.BorderType;
 import org.zkoss.zss.ngmodel.NPicture.Format;
 
 /**
- * Common practice used in the test case:
+ * Common practices used in the test case:
  * 		1. We load and export the test file of importer then use importer's test cases to verify exported content.
  * 		2. Creating a book model in run-time to export and verify it.
  * @author kuro, Hawk
@@ -23,6 +24,8 @@ import org.zkoss.zss.ngmodel.NPicture.Format;
  */
 public class ExporterTest extends ImExpTestBase {
 	
+	protected Type EXPORTER_TYPE = ExcelExportFactory.Type.XLSX;
+
 	@Before
 	public void beforeTest() {
 		Locales.setThreadLocal(Locale.TAIWAN);
@@ -30,104 +33,104 @@ public class ExporterTest extends ImExpTestBase {
 	
 	@Test
 	public void sheetTest() {
-		File outFile = ImExpTestUtil.write(ImExpTestUtil.loadBook(IMPORT_FILE_UNDER_TEST, "XSSFBook"), ExcelExportFactory.Type.XLSX);
+		File outFile = ImExpTestUtil.write(ImExpTestUtil.loadBook(IMPORT_FILE_UNDER_TEST, "XSSFBook"), EXPORTER_TYPE);
 		NBook book = ImExpTestUtil.loadBook(outFile, DEFAULT_BOOK_NAME);
 		sheetTest(book);
 	}
 	
 	@Test
 	public void cellValueTest() {
-		File outFile = ImExpTestUtil.write(ImExpTestUtil.loadBook(IMPORT_FILE_UNDER_TEST, "XSSFBook"), ExcelExportFactory.Type.XLSX);
+		File outFile = ImExpTestUtil.write(ImExpTestUtil.loadBook(IMPORT_FILE_UNDER_TEST, "XSSFBook"), EXPORTER_TYPE);
 		NBook book = ImExpTestUtil.loadBook(outFile, DEFAULT_BOOK_NAME);		
 		cellValueTest(book);
 	}
 	
 	@Test
 	public void sheetProtectionTest() {
-		File outFile = ImExpTestUtil.write(ImExpTestUtil.loadBook(IMPORT_FILE_UNDER_TEST, "XSSFBook"), ExcelExportFactory.Type.XLSX);
+		File outFile = ImExpTestUtil.write(ImExpTestUtil.loadBook(IMPORT_FILE_UNDER_TEST, "XSSFBook"), EXPORTER_TYPE);
 		NBook book = ImExpTestUtil.loadBook(outFile, DEFAULT_BOOK_NAME);
 		sheetProtectionTest(book);
 	}
 	@Test
 	public void sheetNamedRangeTest() {
-		File outFile = ImExpTestUtil.write(ImExpTestUtil.loadBook(IMPORT_FILE_UNDER_TEST, "XSSFBook"), ExcelExportFactory.Type.XLSX);
+		File outFile = ImExpTestUtil.write(ImExpTestUtil.loadBook(IMPORT_FILE_UNDER_TEST, "XSSFBook"), EXPORTER_TYPE);
 		NBook book = ImExpTestUtil.loadBook(outFile, DEFAULT_BOOK_NAME);
 		sheetNamedRangeTest(book);
 	}
 	
 	@Test
 	public void cellStyleTest() {
-		File outFile = ImExpTestUtil.write(ImExpTestUtil.loadBook(IMPORT_FILE_UNDER_TEST, "XSSFBook"), ExcelExportFactory.Type.XLSX);
+		File outFile = ImExpTestUtil.write(ImExpTestUtil.loadBook(IMPORT_FILE_UNDER_TEST, "XSSFBook"), EXPORTER_TYPE);
 		NBook book = ImExpTestUtil.loadBook(outFile, DEFAULT_BOOK_NAME);
 		cellStyleTest(book);
 	}
 	
 	@Test
 	public void cellBorderTest() {
-		File outFile = ImExpTestUtil.write(ImExpTestUtil.loadBook(IMPORT_FILE_UNDER_TEST, "XSSFBook"), ExcelExportFactory.Type.XLSX);
+		File outFile = ImExpTestUtil.write(ImExpTestUtil.loadBook(IMPORT_FILE_UNDER_TEST, "XSSFBook"), EXPORTER_TYPE);
 		NBook book = ImExpTestUtil.loadBook(outFile, DEFAULT_BOOK_NAME);
 		cellBorderTest(book);
 	}
 	
 	@Test
 	public void cellFontNameTest() {
-		File outFile = ImExpTestUtil.write(ImExpTestUtil.loadBook(IMPORT_FILE_UNDER_TEST, "XSSFBook"), ExcelExportFactory.Type.XLSX);
+		File outFile = ImExpTestUtil.write(ImExpTestUtil.loadBook(IMPORT_FILE_UNDER_TEST, "XSSFBook"), EXPORTER_TYPE);
 		NBook book = ImExpTestUtil.loadBook(outFile, DEFAULT_BOOK_NAME);
 		cellFontNameTest(book);
 	}
 	
 	@Test
 	public void cellFontStyleTest() {
-		File outFile = ImExpTestUtil.write(ImExpTestUtil.loadBook(IMPORT_FILE_UNDER_TEST, "XSSFBook"), ExcelExportFactory.Type.XLSX);
+		File outFile = ImExpTestUtil.write(ImExpTestUtil.loadBook(IMPORT_FILE_UNDER_TEST, "XSSFBook"), EXPORTER_TYPE);
 		NBook book = ImExpTestUtil.loadBook(outFile, DEFAULT_BOOK_NAME);
 		cellFontStyleTest(book);
 	}
 	
 	@Test
 	public void cellFontColorTest() {
-		File outFile = ImExpTestUtil.write(ImExpTestUtil.loadBook(IMPORT_FILE_UNDER_TEST, "XSSFBook"), ExcelExportFactory.Type.XLSX);
+		File outFile = ImExpTestUtil.write(ImExpTestUtil.loadBook(IMPORT_FILE_UNDER_TEST, "XSSFBook"), EXPORTER_TYPE);
 		NBook book = ImExpTestUtil.loadBook(outFile, DEFAULT_BOOK_NAME);
 		cellFontColorTest(book);
 	}
 	
 	@Test
 	public void rowTest() {
-		File outFile = ImExpTestUtil.write(ImExpTestUtil.loadBook(IMPORT_FILE_UNDER_TEST, "XSSFBook"), ExcelExportFactory.Type.XLSX);
+		File outFile = ImExpTestUtil.write(ImExpTestUtil.loadBook(IMPORT_FILE_UNDER_TEST, "XSSFBook"), EXPORTER_TYPE);
 		NBook book = ImExpTestUtil.loadBook(outFile, DEFAULT_BOOK_NAME);
 		rowTest(book);
 	}
 	
 	@Test
 	public void cellFormatTest() {
-		File outFile = ImExpTestUtil.write(ImExpTestUtil.loadBook(IMPORT_FILE_UNDER_TEST, "XSSFBook"), ExcelExportFactory.Type.XLSX);
+		File outFile = ImExpTestUtil.write(ImExpTestUtil.loadBook(IMPORT_FILE_UNDER_TEST, "XSSFBook"), EXPORTER_TYPE);
 		NBook book = ImExpTestUtil.loadBook(outFile, DEFAULT_BOOK_NAME);
 		cellFormatTest(book);
 	}
 	
 	@Test
 	public void columnTest() {
-		File outFile = ImExpTestUtil.write(ImExpTestUtil.loadBook(IMPORT_FILE_UNDER_TEST, "XSSFBook"), ExcelExportFactory.Type.XLSX);
+		File outFile = ImExpTestUtil.write(ImExpTestUtil.loadBook(IMPORT_FILE_UNDER_TEST, "XSSFBook"), EXPORTER_TYPE);
 		NBook book = ImExpTestUtil.loadBook(outFile, DEFAULT_BOOK_NAME);
 		columnTest(book);
 	}
 	
 	@Test
 	public void lastChangedColumnTest() {
-		File outFile = ImExpTestUtil.write(ImExpTestUtil.loadBook(IMPORT_FILE_UNDER_TEST, "XSSFBook"), ExcelExportFactory.Type.XLSX);
+		File outFile = ImExpTestUtil.write(ImExpTestUtil.loadBook(IMPORT_FILE_UNDER_TEST, "XSSFBook"), EXPORTER_TYPE);
 		NBook book = ImExpTestUtil.loadBook(outFile, DEFAULT_BOOK_NAME);
 		lastChangedColumnTest(book);
 	}
 	
 	@Test
 	public void viewInfoTest() {
-		File outFile = ImExpTestUtil.write(ImExpTestUtil.loadBook(IMPORT_FILE_UNDER_TEST, "XSSFBook"), ExcelExportFactory.Type.XLSX);
+		File outFile = ImExpTestUtil.write(ImExpTestUtil.loadBook(IMPORT_FILE_UNDER_TEST, "XSSFBook"), EXPORTER_TYPE);
 		NBook book = ImExpTestUtil.loadBook(outFile, DEFAULT_BOOK_NAME);
 		viewInfoTest(book);
 	}
 	
 	@Test
 	public void mergedTest(){
-		File outFile = ImExpTestUtil.write(ImExpTestUtil.loadBook(IMPORT_FILE_UNDER_TEST, "XSSFBook"), ExcelExportFactory.Type.XLSX);
+		File outFile = ImExpTestUtil.write(ImExpTestUtil.loadBook(IMPORT_FILE_UNDER_TEST, "XSSFBook"), EXPORTER_TYPE);
 		NBook book = ImExpTestUtil.loadBook(outFile, DEFAULT_BOOK_NAME);
 		mergedTest(book);
 	}
@@ -183,7 +186,7 @@ public class ExporterTest extends ImExpTestBase {
 	@Test
 	public void exportXLSX() {
 		NBook book = ImExpTestUtil.loadBook(IMPORT_FILE_UNDER_TEST, "XSSFBook");
-		ImExpTestUtil.writeBookToFile(book, ImExpTestUtil.DEFAULT_EXPORT_TARGET_PATH+"export.xlsx", ExcelExportFactory.Type.XLSX);
+		ImExpTestUtil.writeBookToFile(book, ImExpTestUtil.DEFAULT_EXPORT_TARGET_PATH+"export.xlsx", EXPORTER_TYPE);
 	}
 	
 	@Test
@@ -226,7 +229,7 @@ public class ExporterTest extends ImExpTestBase {
 		Assert.assertEquals(defaultWidth, array.getWidth());
 		
 		///////////// first export
-		File outFile = ImExpTestUtil.writeBookToFile(book, ImExpTestUtil.DEFAULT_EXPORT_TARGET_PATH+"export.xlsx", ExcelExportFactory.Type.XLSX);
+		File outFile = ImExpTestUtil.writeBookToFile(book, ImExpTestUtil.DEFAULT_EXPORT_TARGET_PATH+"export.xlsx", EXPORTER_TYPE);
 		NBook outBook = ImExpTestUtil.loadBook(outFile, "OutBook");
 		
 		sheet1 = outBook.getSheet(0);
@@ -255,7 +258,7 @@ public class ExporterTest extends ImExpTestBase {
 		Assert.assertEquals(defaultWidth, array.getWidth());
 		
 		///////////// second export
-		File outFile2 = ImExpTestUtil.writeBookToFile(outBook, ImExpTestUtil.DEFAULT_EXPORT_TARGET_PATH+"export.xlsx", ExcelExportFactory.Type.XLSX);
+		File outFile2 = ImExpTestUtil.writeBookToFile(outBook, ImExpTestUtil.DEFAULT_EXPORT_TARGET_PATH+"export.xlsx", EXPORTER_TYPE);
 		NBook outBook2 = ImExpTestUtil.loadBook(outFile2, "OutBook");
 		
 		sheet1 = outBook2.getSheet(0);
@@ -317,63 +320,63 @@ public class ExporterTest extends ImExpTestBase {
 	
 	@Test
 	public void areaChart(){
-		File outFile = ImExpTestUtil.write(ImExpTestUtil.loadBook(CHART_IMPORT_FILE_UNDER_TEST, "XSSFBook"), ExcelExportFactory.Type.XLSX);
+		File outFile = ImExpTestUtil.write(ImExpTestUtil.loadBook(CHART_IMPORT_FILE_UNDER_TEST, "XSSFBook"), EXPORTER_TYPE);
 		NBook book = ImExpTestUtil.loadBook(outFile, DEFAULT_BOOK_NAME);
 		areaChart(book);
 	}
 	
 	@Test
 	public void barChart(){
-		File outFile = ImExpTestUtil.write(ImExpTestUtil.loadBook(CHART_IMPORT_FILE_UNDER_TEST, "XSSFBook"), ExcelExportFactory.Type.XLSX);
+		File outFile = ImExpTestUtil.write(ImExpTestUtil.loadBook(CHART_IMPORT_FILE_UNDER_TEST, "XSSFBook"), EXPORTER_TYPE);
 		NBook book = ImExpTestUtil.loadBook(outFile, DEFAULT_BOOK_NAME);
 		barChart(book);
 	}
 	
 	@Test
 	public void bubbleChart(){
-		File outFile = ImExpTestUtil.write(ImExpTestUtil.loadBook(CHART_IMPORT_FILE_UNDER_TEST, "XSSFBook"), ExcelExportFactory.Type.XLSX);
+		File outFile = ImExpTestUtil.write(ImExpTestUtil.loadBook(CHART_IMPORT_FILE_UNDER_TEST, "XSSFBook"), EXPORTER_TYPE);
 		NBook book = ImExpTestUtil.loadBook(outFile, DEFAULT_BOOK_NAME);
 		bubbleChart(book);
 	}
 	
 	@Test
 	public void columnChart(){
-		File outFile = ImExpTestUtil.write(ImExpTestUtil.loadBook(CHART_IMPORT_FILE_UNDER_TEST, "XSSFBook"), ExcelExportFactory.Type.XLSX);
+		File outFile = ImExpTestUtil.write(ImExpTestUtil.loadBook(CHART_IMPORT_FILE_UNDER_TEST, "XSSFBook"), EXPORTER_TYPE);
 		NBook book = ImExpTestUtil.loadBook(outFile, DEFAULT_BOOK_NAME);
 		columnChart(book);
 	}
 	
 	@Test
 	public void doughnutChart(){
-		File outFile = ImExpTestUtil.write(ImExpTestUtil.loadBook(CHART_IMPORT_FILE_UNDER_TEST, "XSSFBook"), ExcelExportFactory.Type.XLSX);
+		File outFile = ImExpTestUtil.write(ImExpTestUtil.loadBook(CHART_IMPORT_FILE_UNDER_TEST, "XSSFBook"), EXPORTER_TYPE);
 		NBook book = ImExpTestUtil.loadBook(outFile, DEFAULT_BOOK_NAME);
 		doughnutChart(book);
 	}
 	
 	@Test
 	public void lineChart(){
-		File outFile = ImExpTestUtil.write(ImExpTestUtil.loadBook(CHART_IMPORT_FILE_UNDER_TEST, "XSSFBook"), ExcelExportFactory.Type.XLSX);
+		File outFile = ImExpTestUtil.write(ImExpTestUtil.loadBook(CHART_IMPORT_FILE_UNDER_TEST, "XSSFBook"), EXPORTER_TYPE);
 		NBook book = ImExpTestUtil.loadBook(outFile, DEFAULT_BOOK_NAME);
 		lineChart(book);
 	}
 	
 	@Test
 	public void pieChart(){
-		File outFile = ImExpTestUtil.write(ImExpTestUtil.loadBook(CHART_IMPORT_FILE_UNDER_TEST, "XSSFBook"), ExcelExportFactory.Type.XLSX);
+		File outFile = ImExpTestUtil.write(ImExpTestUtil.loadBook(CHART_IMPORT_FILE_UNDER_TEST, "XSSFBook"), EXPORTER_TYPE);
 		NBook book = ImExpTestUtil.loadBook(outFile, DEFAULT_BOOK_NAME);
 		pieChart(book);
 	}
 	
 	@Test
 	public void scatterChart(){
-		File outFile = ImExpTestUtil.write(ImExpTestUtil.loadBook(CHART_IMPORT_FILE_UNDER_TEST, "XSSFBook"), ExcelExportFactory.Type.XLSX);
+		File outFile = ImExpTestUtil.write(ImExpTestUtil.loadBook(CHART_IMPORT_FILE_UNDER_TEST, "XSSFBook"), EXPORTER_TYPE);
 		NBook book = ImExpTestUtil.loadBook(outFile, DEFAULT_BOOK_NAME);
 		scatterChart(book);
 	}
 	
 	@Test
 	public void picture(){
-		File outFile = ImExpTestUtil.write(ImExpTestUtil.loadBook(PICTURE_IMPORT_FILE_UNDER_TEST, "XSSFBook"), ExcelExportFactory.Type.XLSX);
+		File outFile = ImExpTestUtil.write(ImExpTestUtil.loadBook(PICTURE_IMPORT_FILE_UNDER_TEST, "XSSFBook"), EXPORTER_TYPE);
 		NBook book = ImExpTestUtil.loadBook(outFile, DEFAULT_BOOK_NAME);
 		picture(book);
 		
@@ -393,7 +396,7 @@ public class ExporterTest extends ImExpTestBase {
 	
 	@Test
 	public void validation(){
-		File outFile = ImExpTestUtil.write(ImExpTestUtil.loadBook(IMPORT_FILE_UNDER_TEST, "XSSFBook"), ExcelExportFactory.Type.XLSX);
+		File outFile = ImExpTestUtil.write(ImExpTestUtil.loadBook(IMPORT_FILE_UNDER_TEST, "XSSFBook"), EXPORTER_TYPE);
 		NBook book = ImExpTestUtil.loadBook(outFile, DEFAULT_BOOK_NAME);
 		validation(book);
 	}

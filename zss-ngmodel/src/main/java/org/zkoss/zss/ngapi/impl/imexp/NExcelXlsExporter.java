@@ -31,26 +31,6 @@ import org.zkoss.zss.ngmodel.*;
 public class NExcelXlsExporter extends AbstractExcelExporter {
 	
 	@Override
-	public void export(NBook book, OutputStream fos) throws IOException {
-		ReadWriteLock lock = book.getBookSeries().getLock();
-		lock.readLock().lock();
-
-		try {
-			workbook = new HSSFWorkbook();
-			
-			for(NSheet sheet : book.getSheets()) {
-				exportSheet(sheet);
-			}
-			
-			exportNamedRange(book);
-			
-			workbook.write(fos);
-		} finally {
-			lock.readLock().unlock();
-		}
-	}
-
-	@Override
 	protected void exportColumnArray(NSheet sheet, Sheet poiSheet, NColumnArray columnArr) {
 		
 		CellStyle poiCellStyle = toPOICellStyle(columnArr.getCellStyle());

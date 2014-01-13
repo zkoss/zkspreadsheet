@@ -15,6 +15,11 @@ public class XlsImporterTest extends ImporterTest {
 		CHART_IMPORT_FILE_UNDER_TEST = ImporterTest.class.getResource("book/chart.xls");
 		PICTURE_IMPORT_FILE_UNDER_TEST = ImporterTest.class.getResource("book/picture.xls");
 	}
+
+	@Override
+	public void sheetTest() {
+		super.sheetTest();
+	}
 	
 	@Override
 	public void areaChart() {

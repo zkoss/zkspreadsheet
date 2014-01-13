@@ -20,9 +20,14 @@ public class ImExpTestUtil {
 
 	static public String DEFAULT_EXPORT_TARGET_PATH = "./target/";
 	static public String DEFAULT_EXPORT_FILE_NAME_XLSX = "exported.xlsx";
+	static public String DEFAULT_EXPORT_FILE_NAME_XLS = "exported.xls";
 	
 	public static File write(NBook book, Type type) {
-		return writeBookToFile(book, new File(DEFAULT_EXPORT_TARGET_PATH + DEFAULT_EXPORT_FILE_NAME_XLSX), type);
+		if (type.equals(ExcelExportFactory.Type.XLSX)){
+			return writeBookToFile(book, new File(DEFAULT_EXPORT_TARGET_PATH + DEFAULT_EXPORT_FILE_NAME_XLSX), type);
+		}else{
+			return writeBookToFile(book, new File(DEFAULT_EXPORT_TARGET_PATH + DEFAULT_EXPORT_FILE_NAME_XLS), type);
+		}
 	}
 	
 	public static File writeBookToFile(NBook book, String filePath, Type type) {
