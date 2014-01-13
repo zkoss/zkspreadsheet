@@ -143,6 +143,11 @@ public class CellRegion implements Serializable {
 		return lastColumn;
 	}
 	
-	
+	public int getRowCount(){
+		return lastRow-row+1;
+	}
+	public int getColumnCount(){
+		return lastColumn-column+1;
+	}
 
 }

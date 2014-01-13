@@ -45,6 +45,7 @@ import org.zkoss.zss.ngmodel.NHyperlink.HyperlinkType;
 import org.zkoss.zss.ngmodel.NRow;
 import org.zkoss.zss.ngmodel.NSheet;
 import org.zkoss.zss.ngmodel.NSheetViewInfo;
+import org.zkoss.zss.ngmodel.SheetRegion;
 import org.zkoss.zss.ngmodel.impl.AbstractBookAdv;
 import org.zkoss.zss.ngmodel.impl.AbstractSheetAdv;
 import org.zkoss.zss.ngmodel.impl.DependentCollector;
@@ -242,10 +243,6 @@ public class NRangeImpl implements NRange {
 		// notify changes
 		new RefNotifyContentChangeHelper(bookSeries).notifyContentChange(notifySet);
 	}
-	
-	private void handleRefNotifySizeChange(NBookSeries bookSeries,HashSet<Ref> notifySet) {
-		new RefNotifyChangeHelper(bookSeries).notifySizeChange(notifySet);
-	}
 
 	private boolean euqlas(Object obj1, Object obj2) {
 		if (obj1 == obj2) {
@@ -410,13 +407,10 @@ public class NRangeImpl implements NRange {
 		}.doInWriteLock(getLock());
 	}
 	private void setRowHeightInLock(Integer heightPx,Boolean hidden, Boolean custom){
-		LinkedHashSet<Ref> notifySet = new LinkedHashSet<Ref>();
-		NBookSeries bookSeries = getBookSeries();
+		LinkedHashSet<SheetRegion> notifySet = new LinkedHashSet<SheetRegion>();
 
 		for (EffectedRegion r : rangeRefs) {
-			String bookName = r._sheet.getBook().getBookName();
 			int maxcol = r._sheet.getBook().getMaxColumnSize();
-			String sheetName = r._sheet.getSheetName();
 			CellRegion region = r.region;
 			
 			for (int i = region.row; i <= region.lastRow; i++) {
@@ -430,11 +424,11 @@ public class NRangeImpl implements NRange {
 				if(custom!=null){
 					row.setCustomHeight(custom);
 				}
-				notifySet.add(new RefImpl(bookName,sheetName,i,0,i,maxcol));
+				notifySet.add(new SheetRegion(r._sheet,i,0,i,maxcol));
 			}
 		}
 
-		handleRefNotifySizeChange(bookSeries, notifySet);
+		new NotifyChangeHelper(this).notifySizeChange(notifySet);
 	}
 
 	@Override
@@ -461,13 +455,10 @@ public class NRangeImpl implements NRange {
 		}.doInWriteLock(getLock());
 	}
 	private void setColumnWidthInLock(Integer widthPx,Boolean hidden, Boolean custom){
-		LinkedHashSet<Ref> notifySet = new LinkedHashSet<Ref>();
-		NBookSeries bookSeries = getBookSeries();
+		LinkedHashSet<SheetRegion> notifySet = new LinkedHashSet<SheetRegion>();
 
 		for (EffectedRegion r : rangeRefs) {
-			String bookName = r._sheet.getBook().getBookName();
 			int maxrow = r._sheet.getBook().getMaxRowSize();
-			String sheetName = r._sheet.getSheetName();
 			CellRegion region = r.region;
 			
 			for (int i = region.column; i <= region.lastColumn; i++) {
@@ -481,10 +472,10 @@ public class NRangeImpl implements NRange {
 				if(custom!=null){
 					column.setCustomWidth(true);
 				}
-				notifySet.add(new RefImpl(bookName,sheetName,0,i,maxrow,i));
+				notifySet.add(new SheetRegion(r._sheet,0,i,maxrow,i));
 			}
 		}
-		handleRefNotifySizeChange(bookSeries, notifySet);
+		new NotifyChangeHelper(this).notifySizeChange(notifySet);
 	}
 
 	@Override
@@ -595,15 +586,11 @@ public class NRangeImpl implements NRange {
 	}
 
 	protected void setHiddenInLock(boolean hidden) {
-		LinkedHashSet<Ref> notifySet = new LinkedHashSet<Ref>();
-		NBookSeries bookSeries = getBookSeries();
-
+		LinkedHashSet<SheetRegion> notifySet = new LinkedHashSet<SheetRegion>();
 		for (EffectedRegion r : rangeRefs) {
 			NBook book = r._sheet.getBook();
-			String bookName = book.getBookName();
 			int maxcol = r._sheet.getBook().getMaxColumnSize();
 			int maxrow = r._sheet.getBook().getMaxRowSize();
-			String sheetName = r._sheet.getSheetName();
 			CellRegion region = r.region;
 			
 			if(isWholeRow(book,region)){//hidden the row when it is whole row
@@ -612,7 +599,7 @@ public class NRangeImpl implements NRange {
 					if(row.isHidden()==hidden)
 						continue;
 					row.setHidden(hidden);
-					notifySet.add(new RefImpl(bookName,sheetName,i,0,i,maxcol));
+					notifySet.add(new SheetRegion(r._sheet,i,0,i,maxcol));
 				}
 			}else if(isWholeColumn(book,region)){
 				for(int i = region.getColumn(); i<=region.getLastColumn();i++){
@@ -620,12 +607,11 @@ public class NRangeImpl implements NRange {
 					if(col.isHidden()==hidden)
 						continue;
 					col.setHidden(hidden);
-					notifySet.add(new RefImpl(bookName,sheetName,0,i,maxrow,i));
+					notifySet.add(new SheetRegion(r._sheet,0,i,maxrow,i));
 				}
 			}
-			
 		}
-		handleRefNotifySizeChange(bookSeries, notifySet);
+		new NotifyChangeHelper(this).notifySizeChange(notifySet);
 	}
 
 	@Override
@@ -687,7 +673,7 @@ public class NRangeImpl implements NRange {
 
 			@Override
 			void doNotifyPhase() {
-				if(toDeleteSheet!=null){
+				if(toDeleteSheet.get()!=null){
 					((AbstractBookAdv) getBook()).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_SHEET_DELETE,book,
 						ModelEvents.createDataMap(ModelEvents.PARAM_SHEET,toDeleteSheet.get(),ModelEvents.PARAM_INDEX,toDeleteIndex.get())));
 				}
@@ -812,7 +798,7 @@ public class NRangeImpl implements NRange {
 	}
 	
 	private void notifySheetFreezeChange(){
-		((AbstractBookAdv) getBook()).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_FREEZE_CHANGE,getSheet()));
+		new NotifyChangeHelper(this).notifySheetFreezeChange(new SheetRegion(getSheet(),-1,-1,-1,-1));
 	}
 
 	@Override
@@ -949,7 +935,7 @@ public class NRangeImpl implements NRange {
 	}
 	
 	private void notifySheetAutoFilterChange(){
-		((AbstractBookAdv) getBook()).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_AUTOFILTER_CHANGE,getSheet()));
+		new NotifyChangeHelper(this).notifySheetAutoFilterChange(new SheetRegion(getSheet(),-1,-1,-1,-1));
 	}
 
 	@Override
