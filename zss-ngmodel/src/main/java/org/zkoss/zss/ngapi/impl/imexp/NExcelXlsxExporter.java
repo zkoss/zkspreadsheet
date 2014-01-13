@@ -26,7 +26,9 @@ import org.zkoss.zss.ngmodel.*;
 import org.zkoss.zss.ngmodel.NChart.NBarDirection;
 import org.zkoss.zss.ngmodel.NChart.NChartGrouping;
 import org.zkoss.zss.ngmodel.NChart.NChartLegendPosition;
-import org.zkoss.zss.ngmodel.NDataValidation.*;
+import org.zkoss.zss.ngmodel.NDataValidation.ErrorStyle;
+import org.zkoss.zss.ngmodel.NDataValidation.OperatorType;
+import org.zkoss.zss.ngmodel.NDataValidation.ValidationType;
 import org.zkoss.zss.ngmodel.NPicture.Format;
 import org.zkoss.zss.ngmodel.chart.*;
 /**
