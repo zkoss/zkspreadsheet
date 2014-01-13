@@ -37,9 +37,9 @@ public class NExcelXlsExporter extends AbstractExcelExporter {
 		boolean hidden = columnArr.isHidden();
 		
 		for(int i = columnArr.getIndex(); i <= columnArr.getLastIndex() && i <= SpreadsheetVersion.EXCEL97.getMaxColumns(); i++) {
-			poiSheet.setColumnWidth(i+1, XUtils.pxToFileChar256(columnArr.getWidth(), AbstractExcelImporter.CHRACTER_WIDTH));
-			poiSheet.setColumnHidden(i+1, hidden);
-			poiSheet.setDefaultColumnStyle(i+1, poiCellStyle);
+			poiSheet.setColumnWidth(i, XUtils.pxToFileChar256(columnArr.getWidth(), AbstractExcelImporter.CHRACTER_WIDTH));
+			poiSheet.setColumnHidden(i, hidden);
+			poiSheet.setDefaultColumnStyle(i, poiCellStyle);
 		}
 	}
 
