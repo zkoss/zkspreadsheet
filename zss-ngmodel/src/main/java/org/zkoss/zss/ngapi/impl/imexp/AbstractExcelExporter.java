@@ -57,6 +57,12 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 	abstract protected void exportPicture(NSheet sheet, Sheet poiSheet);
 	abstract protected void exportValidation(NSheet sheet, Sheet poiSheet);
 	
+	/**
+	 * Export the model according to reversed depended order: book, sheet, defined name, cells, chart, pictures, validation.   
+	 * Because named ranges (defined names) require sheet index, they should be imported after sheets created.
+	 * Besides, cells, charts, and validations may have formulas referring to named ranges, they must be imported after named ranged.
+	 * Pictures depend on cells.
+	 */
 	@Override
 	public void export(NBook book, OutputStream fos) throws IOException {
 		ReadWriteLock lock = book.getBookSeries().getLock();
@@ -69,8 +75,15 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 			for(NSheet sheet : book.getSheets()) {
 				exportSheet(sheet);
 			}
-			
 			exportNamedRange(book);
+			for (int n = 0 ; n < book.getSheets().size() ; n++){
+				NSheet sheet = book.getSheet(n);
+				Sheet poiSheet = workbook.getSheetAt(n);
+				exportRowColumn(sheet, poiSheet);
+				exportChart(sheet, poiSheet);
+				exportPicture(sheet, poiSheet);
+				exportValidation(sheet, poiSheet);
+			}
 			
 			workbook.write(fos);
 		} finally {
@@ -113,10 +126,10 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 		poiSheet.setDefaultColumnWidth((int)XUtils.pxToDefaultColumnWidth(sheet.getDefaultColumnWidth(), AbstractExcelImporter.CHRACTER_WIDTH));
 		//poiSheet.setDefaultColumnWidth((int)XUtils.pxToCTChar(sheet.getDefaultColumnWidth(), AbstractExcelImporter.CHRACTER_WIDTH));
 		
-		exportChart(sheet, poiSheet);
-		exportPicture(sheet, poiSheet);
-		exportValidation(sheet, poiSheet);
-		
+
+	}
+	
+	protected void exportRowColumn(NSheet sheet, Sheet poiSheet) {
 		//export rows
 		Iterator<NRow> rowIterator = sheet.getRowIterator();
 		while(rowIterator.hasNext()) {
@@ -130,7 +143,6 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 			NColumnArray columnArr = columnArrayIterator.next();
 			exportColumnArray(sheet, poiSheet, columnArr);
 		}
-
 	}
 
 	protected void exportRow(NSheet sheet, Sheet poiSheet, NRow row) {
