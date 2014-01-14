@@ -51,7 +51,7 @@ public class NExcelXlsxExporter extends AbstractExcelExporter {
         col.setMax(columnArr.getLastIndex()+1);
     	col.setStyle(toPOICellStyle(columnArr.getCellStyle()).getIndex());
     	col.setCustomWidth(true);
-    	col.setWidth(XUtils.pxToCTChar(columnArr.getWidth(), AbstractExcelImporter.CHRACTER_WIDTH));
+    	col.setWidth(UnitUtil.pxToCTChar(columnArr.getWidth(), AbstractExcelImporter.CHRACTER_WIDTH));
     	col.setHidden(columnArr.isHidden());
 	}
 

@@ -145,9 +145,9 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 	 */
 	protected NSheet importSheet(Sheet poiSheet) {
 		NSheet sheet = book.createSheet(poiSheet.getSheetName());
-		sheet.setDefaultRowHeight(XUtils.twipToPx(poiSheet.getDefaultRowHeight()));
+		sheet.setDefaultRowHeight(UnitUtil.twipToPx(poiSheet.getDefaultRowHeight()));
 		//reference XUtils.getDefaultColumnWidthInPx()
-		int defaultWidth = XUtils.defaultColumnWidthToPx(poiSheet.getDefaultColumnWidth(), CHRACTER_WIDTH);
+		int defaultWidth = UnitUtil.defaultColumnWidthToPx(poiSheet.getDefaultColumnWidth(), CHRACTER_WIDTH);
 		sheet.setDefaultColumnWidth(defaultWidth);
 		//reference FreezeInfoLoaderImpl.getRowFreeze()
 		sheet.getViewInfo().setNumOfRowFreeze(BookHelper.getRowFreeze(poiSheet));
@@ -156,12 +156,12 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 		sheet.getViewInfo().setColumnBreaks(poiSheet.getColumnBreaks());
 		sheet.getViewInfo().setRowBreaks(poiSheet.getRowBreaks());
 		
-		sheet.getPrintSetup().setBottomMargin(XUtils.incheToPx(poiSheet.getMargin(Sheet.BottomMargin)));
-		sheet.getPrintSetup().setTopMargin(XUtils.incheToPx(poiSheet.getMargin(Sheet.TopMargin)));
-		sheet.getPrintSetup().setLeftMargin(XUtils.incheToPx(poiSheet.getMargin(Sheet.LeftMargin)));
-		sheet.getPrintSetup().setRightMargin(XUtils.incheToPx(poiSheet.getMargin(Sheet.RightMargin)));
-		sheet.getPrintSetup().setHeaderMargin(XUtils.incheToPx(poiSheet.getMargin(Sheet.HeaderMargin)));
-		sheet.getPrintSetup().setFooterMargin(XUtils.incheToPx(poiSheet.getMargin(Sheet.FooterMargin)));
+		sheet.getPrintSetup().setBottomMargin(UnitUtil.incheToPx(poiSheet.getMargin(Sheet.BottomMargin)));
+		sheet.getPrintSetup().setTopMargin(UnitUtil.incheToPx(poiSheet.getMargin(Sheet.TopMargin)));
+		sheet.getPrintSetup().setLeftMargin(UnitUtil.incheToPx(poiSheet.getMargin(Sheet.LeftMargin)));
+		sheet.getPrintSetup().setRightMargin(UnitUtil.incheToPx(poiSheet.getMargin(Sheet.RightMargin)));
+		sheet.getPrintSetup().setHeaderMargin(UnitUtil.incheToPx(poiSheet.getMargin(Sheet.HeaderMargin)));
+		sheet.getPrintSetup().setFooterMargin(UnitUtil.incheToPx(poiSheet.getMargin(Sheet.FooterMargin)));
 		
 		NHeader header = sheet.getViewInfo().getHeader();
 		header.setCenterText(poiSheet.getHeader().getCenter());
@@ -199,7 +199,7 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 	
 	protected NRow importRow(NSheet sheet, Row poiRow) {
 		NRow row = sheet.getRow(poiRow.getRowNum());
-		row.setHeight(XUtils.twipToPx(poiRow.getHeight()));
+		row.setHeight(UnitUtil.twipToPx(poiRow.getHeight()));
 		row.setHidden(poiRow.getZeroHeight());
 		CellStyle rowStyle = poiRow.getRowStyle();
 		if (rowStyle != null){

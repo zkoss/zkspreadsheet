@@ -122,8 +122,8 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 			poiSheet.protectSheet(""); // without password
 		}
 		
-		poiSheet.setDefaultRowHeight((short)XUtils.pxToTwip(sheet.getDefaultRowHeight()));
-		poiSheet.setDefaultColumnWidth((int)XUtils.pxToDefaultColumnWidth(sheet.getDefaultColumnWidth(), AbstractExcelImporter.CHRACTER_WIDTH));
+		poiSheet.setDefaultRowHeight((short)UnitUtil.pxToTwip(sheet.getDefaultRowHeight()));
+		poiSheet.setDefaultColumnWidth((int)UnitUtil.pxToDefaultColumnWidth(sheet.getDefaultColumnWidth(), AbstractExcelImporter.CHRACTER_WIDTH));
 		//poiSheet.setDefaultColumnWidth((int)XUtils.pxToCTChar(sheet.getDefaultColumnWidth(), AbstractExcelImporter.CHRACTER_WIDTH));
 		
 
@@ -155,7 +155,7 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 			// not hidden, calculate height
 			if(row.getHeight() != sheet.getDefaultRowHeight()) {
 				poiRow.setCustomHeight(true);
-				poiRow.setHeight((short)XUtils.pxToTwip(row.getHeight()));
+				poiRow.setHeight((short)UnitUtil.pxToTwip(row.getHeight()));
 			}
 		}
 		
