@@ -66,6 +66,10 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 	/** source POI book */
 	protected Workbook workbook;
 
+	/**
+	 * Import the model according to reversed dependency order among model objects: 
+	 * 		book, sheet, defined name, cells, chart, pictures, validation.
+	 */
 	@Override
 	public NBook imports(InputStream is, String bookName) throws IOException {
 
@@ -73,9 +77,9 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 		book = NBooks.createBook(bookName);
 		
 		NBookSeries bookSeries = book.getBookSeries();
-		boolean old = bookSeries.isAutoFormulaCacheClean();
+		boolean isCacheClean = bookSeries.isAutoFormulaCacheClean();
 		try{
-			book.getBookSeries().setAutoFormulaCacheClean(false);//disable temporary to avoid uncesassary clean up when import
+			bookSeries.setAutoFormulaCacheClean(false);//disable temporary to avoid unnecessary clean up when import
 			
 			importExternalBookLinks();
 				
@@ -83,8 +87,20 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 				importSheet(workbook.getSheetAt(i));
 			}
 			importNamedRange();
+			for (int i = 0 ; i < workbook.getNumberOfSheets(); i++){
+				NSheet sheet = book.getSheet(i);
+				Sheet poiSheet = workbook.getSheetAt(i);
+				
+				for(Row poiRow : poiSheet) {
+					importRow(poiRow, sheet);
+				}
+				importColumn(poiSheet, sheet);
+				importMergedRegions(poiSheet, sheet);
+				importDrawings(poiSheet, sheet);
+				importValidation(poiSheet, sheet);
+			}
 		}finally{
-			book.getBookSeries().setAutoFormulaCacheClean(old);
+			book.getBookSeries().setAutoFormulaCacheClean(isCacheClean);
 		}
 		
 		return book;
@@ -96,9 +112,8 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 	 * When a column is hidden with default width, we don't import the width for it's 0.
 	 * @param poiSheet
 	 * @param sheet
-	 * @param defaultWidth
 	 */
-	abstract protected void importColumn(Sheet poiSheet, NSheet sheet, int defaultWidth);
+	abstract protected void importColumn(Sheet poiSheet, NSheet sheet);
 	
 	/**
 	 * If in same column:
@@ -156,6 +171,16 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 		sheet.getViewInfo().setColumnBreaks(poiSheet.getColumnBreaks());
 		sheet.getViewInfo().setRowBreaks(poiSheet.getRowBreaks());
 		
+		NHeader header = sheet.getViewInfo().getHeader();
+		header.setCenterText(poiSheet.getHeader().getCenter());
+		header.setLeftText(poiSheet.getHeader().getLeft());
+		header.setRightText(poiSheet.getHeader().getRight());
+		
+		NFooter footer = sheet.getViewInfo().getFooter();
+		footer.setCenterText(poiSheet.getFooter().getCenter());
+		footer.setLeftText(poiSheet.getFooter().getLeft());
+		footer.setRightText(poiSheet.getFooter().getRight());
+		
 		sheet.getPrintSetup().setBottomMargin(UnitUtil.incheToPx(poiSheet.getMargin(Sheet.BottomMargin)));
 		sheet.getPrintSetup().setTopMargin(UnitUtil.incheToPx(poiSheet.getMargin(Sheet.TopMargin)));
 		sheet.getPrintSetup().setLeftMargin(UnitUtil.incheToPx(poiSheet.getMargin(Sheet.LeftMargin)));
@@ -163,18 +188,12 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 		sheet.getPrintSetup().setHeaderMargin(UnitUtil.incheToPx(poiSheet.getMargin(Sheet.HeaderMargin)));
 		sheet.getPrintSetup().setFooterMargin(UnitUtil.incheToPx(poiSheet.getMargin(Sheet.FooterMargin)));
 		
-		NHeader header = sheet.getViewInfo().getHeader();
-		header.setCenterText(poiSheet.getHeader().getCenter());
-		header.setLeftText(poiSheet.getHeader().getLeft());
-		header.setRightText(poiSheet.getHeader().getRight());
-
-		
-		NFooter footer = sheet.getViewInfo().getFooter();
-		footer.setCenterText(poiSheet.getFooter().getCenter());
-		footer.setLeftText(poiSheet.getFooter().getLeft());
-		footer.setRightText(poiSheet.getFooter().getRight());
-		
 		sheet.setProtected(poiSheet.getProtect());
+		
+		return sheet;
+	}
+
+	protected void importMergedRegions(Sheet poiSheet, NSheet sheet) {
 		//merged cells
 		//reference RangeImpl.getMergeAreas()
 		int nMerged = poiSheet.getNumMergedRegions();
@@ -182,22 +201,12 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 			final CellRangeAddress mergedRegion = poiSheet.getMergedRegion(i);
 			sheet.addMergedRegion(new CellRegion(mergedRegion.getFirstRow(),mergedRegion.getFirstColumn(), mergedRegion.getLastRow(),mergedRegion.getLastColumn()));
 		}
-		importDrawings(poiSheet, sheet);
-		importValidation(poiSheet, sheet);
-		
-		for(Row poiRow : poiSheet) {
-			importRow(sheet, poiRow);
-		}
-		
-		importColumn(poiSheet, sheet, defaultWidth);
-		
-		return sheet;
 	}
 
 	abstract protected void importDrawings(Sheet poiSheet, NSheet sheet);
 	abstract protected void importValidation(Sheet poiSheet, NSheet sheet);
 	
-	protected NRow importRow(NSheet sheet, Row poiRow) {
+	protected NRow importRow(Row poiRow, NSheet sheet) {
 		NRow row = sheet.getRow(poiRow.getRowNum());
 		row.setHeight(UnitUtil.twipToPx(poiRow.getHeight()));
 		row.setHidden(poiRow.getZeroHeight());
@@ -207,13 +216,13 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 		}
 		
 		for(Cell poiCell : poiRow) {
-			importCell(sheet,poiRow.getRowNum(), poiCell);
+			importCell(poiCell,poiRow.getRowNum(), sheet);
 		}
 		
 		return row;
 	}
 	
-	protected NCell importCell(NSheet sheet, int row, Cell poiCell){
+	protected NCell importCell(Cell poiCell, int row, NSheet sheet){
 		NCell cell = sheet.getCell(row,poiCell.getColumnIndex());
 		switch (poiCell.getCellType()){
 			case Cell.CELL_TYPE_NUMERIC:

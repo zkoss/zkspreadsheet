@@ -93,7 +93,7 @@ public class NExcelXlsxImporter extends AbstractExcelImporter{
 	 * </x:cols> 
 	 */
 	@Override
-	protected void importColumn(Sheet poiSheet, NSheet sheet, int defaultWidth) {
+	protected void importColumn(Sheet poiSheet, NSheet sheet) {
 		CTWorksheet worksheet = ((XSSFSheet)poiSheet).getCTWorksheet();
 		if(worksheet.sizeOfColsArray()<=0){
 			return;

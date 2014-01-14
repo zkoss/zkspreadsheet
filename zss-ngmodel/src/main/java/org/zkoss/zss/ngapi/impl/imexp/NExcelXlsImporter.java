@@ -63,7 +63,7 @@ public class NExcelXlsImporter extends AbstractExcelImporter{
 	 * {@inheritDoc}
 	 */
 	@Override
-	protected void importColumn(Sheet poiSheet, NSheet sheet, int defaultWidth) {
+	protected void importColumn(Sheet poiSheet, NSheet sheet) {
 		int lastChangedColumnIndex = getLastChangedColumnIndex(poiSheet);
 		for (int c=0 ; c <= lastChangedColumnIndex ; c++){
 			//reference Spreadsheet.updateColWidth()
@@ -72,7 +72,7 @@ public class NExcelXlsImporter extends AbstractExcelImporter{
 			boolean hidden = poiSheet.isColumnHidden(c);
 			col.setHidden(hidden);
 			//to avoid creating unnecessary column with just default value
-			if(!hidden && width != defaultWidth){
+			if(!hidden && width != sheet.getDefaultColumnWidth()){
 				col.setWidth(width);
 			}
 			CellStyle columnStyle = poiSheet.getColumnStyle(c); 

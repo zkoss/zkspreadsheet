@@ -69,7 +69,6 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 		lock.readLock().lock();
 		
 		try {
-			
 			workbook = createPoiBook();
 			
 			for(NSheet sheet : book.getSheets()) {
@@ -80,6 +79,7 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 				NSheet sheet = book.getSheet(n);
 				Sheet poiSheet = workbook.getSheetAt(n);
 				exportRowColumn(sheet, poiSheet);
+				exportMergedRegions(sheet, poiSheet);
 				exportChart(sheet, poiSheet);
 				exportPicture(sheet, poiSheet);
 				exportValidation(sheet, poiSheet);
@@ -105,11 +105,6 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 	protected void exportSheet(NSheet sheet) {
 		Sheet poiSheet = workbook.createSheet(sheet.getSheetName());
 
-		// consistent with importer, read from last merged region
-		for(int i = sheet.getNumOfMergedRegion() - 1; i >= 0; i--) {
-			CellRegion region = sheet.getMergedRegion(i);
-			poiSheet.addMergedRegion(new CellRangeAddress(region.row, region.lastRow, region.column, region.lastColumn));
-		}
 		
 		// refer to BookHelper#setFreezePanel
 		int freezeRow = sheet.getViewInfo().getNumOfRowFreeze();
@@ -124,9 +119,13 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 		
 		poiSheet.setDefaultRowHeight((short)UnitUtil.pxToTwip(sheet.getDefaultRowHeight()));
 		poiSheet.setDefaultColumnWidth((int)UnitUtil.pxToDefaultColumnWidth(sheet.getDefaultColumnWidth(), AbstractExcelImporter.CHRACTER_WIDTH));
-		//poiSheet.setDefaultColumnWidth((int)XUtils.pxToCTChar(sheet.getDefaultColumnWidth(), AbstractExcelImporter.CHRACTER_WIDTH));
-		
-
+	}
+	protected void exportMergedRegions(NSheet sheet, Sheet poiSheet) {
+		// consistent with importer, read from last merged region
+		for(int i = sheet.getNumOfMergedRegion() - 1; i >= 0; i--) {
+			CellRegion region = sheet.getMergedRegion(i);
+			poiSheet.addMergedRegion(new CellRangeAddress(region.row, region.lastRow, region.column, region.lastColumn));
+		}
 	}
 	
 	protected void exportRowColumn(NSheet sheet, Sheet poiSheet) {
