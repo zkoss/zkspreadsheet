@@ -19,10 +19,12 @@ package org.zkoss.zss.ngapi.impl.imexp;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
 import org.zkoss.poi.ss.usermodel.*;
 import org.zkoss.poi.ss.usermodel.charts.*;
-import org.zkoss.poi.ss.util.CellRangeAddressList;
+import org.zkoss.poi.ss.util.*;
 import org.zkoss.poi.xssf.usermodel.*;
+import org.zkoss.poi.xssf.usermodel.XSSFAutoFilter.XSSFFilterColumn;
 import org.zkoss.poi.xssf.usermodel.charts.*;
 import org.zkoss.zss.ngmodel.*;
+import org.zkoss.zss.ngmodel.NAutoFilter.NFilterColumn;
 import org.zkoss.zss.ngmodel.NChart.NBarDirection;
 import org.zkoss.zss.ngmodel.NChart.NChartGrouping;
 import org.zkoss.zss.ngmodel.NChart.NChartLegendPosition;
@@ -564,6 +566,30 @@ public class NExcelXlsxExporter extends AbstractExcelExporter {
 		case STOP:
 		default:
 			return DataValidation.ErrorStyle.STOP;
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	protected void exportAutoFilter(NSheet sheet, Sheet poiSheet) {
+		NAutoFilter autoFilter = sheet.getAutoFilter();
+		if (autoFilter != null){
+			CellRegion region = autoFilter.getRegion();
+			XSSFAutoFilter poiAutoFilter = (XSSFAutoFilter)poiSheet.setAutoFilter(new CellRangeAddress(region.getRow(), region.getLastRow(), region.getColumn(), region.getLastColumn()));
+			for( int i = 0 ; i < autoFilter.getFilterColumns().size() ; i++){
+				NFilterColumn srcFilterColumn = autoFilter.getFilterColumn(i, false);
+				XSSFFilterColumn destFilterColumn = (XSSFFilterColumn)poiAutoFilter.getOrCreateFilterColumn(i);
+				Object[] criteria1 = null;
+				if (srcFilterColumn.getCriteria1()!=null){
+					criteria1 = srcFilterColumn.getCriteria1().toArray(new String[0]);
+				}
+				Object[] criteria2 = null;
+				if (srcFilterColumn.getCriteria1()!=null){
+					criteria2 = srcFilterColumn.getCriteria2().toArray(new String[0]);
+				}
+				destFilterColumn.setProperties(criteria1, toPoiFilterOperator(srcFilterColumn.getOperator()),
+						criteria2, srcFilterColumn.isShowButton());
+			}
 		}
 	}
 	

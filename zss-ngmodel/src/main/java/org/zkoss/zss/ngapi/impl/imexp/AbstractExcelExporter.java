@@ -24,6 +24,7 @@ import java.util.concurrent.locks.ReadWriteLock;
 import org.zkoss.poi.ss.usermodel.*;
 import org.zkoss.poi.ss.util.CellRangeAddress;
 import org.zkoss.zss.ngmodel.*;
+import org.zkoss.zss.ngmodel.NAutoFilter.FilterOp;
 import org.zkoss.zss.ngmodel.NCellStyle.Alignment;
 import org.zkoss.zss.ngmodel.NCellStyle.BorderType;
 import org.zkoss.zss.ngmodel.NCellStyle.FillPattern;
@@ -83,6 +84,7 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 				exportChart(sheet, poiSheet);
 				exportPicture(sheet, poiSheet);
 				exportValidation(sheet, poiSheet);
+				exportAutoFilter(sheet, poiSheet);
 			}
 			
 			workbook.write(fos);
@@ -90,7 +92,6 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 			lock.readLock().unlock();
 		}
 	}
-	
 	
 	protected void exportNamedRange(NBook book) {
 		
@@ -213,6 +214,29 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 //			// TODO, some API isn't available.
 //		}
 
+	}
+	
+	
+	protected abstract void exportAutoFilter(NSheet sheet, Sheet poiSheet);
+	
+	protected int toPoiFilterOperator(FilterOp operator){
+		switch(operator){
+			case AND:
+				return AutoFilter.FILTEROP_AND;
+			case BOTTOM10:
+				return AutoFilter.FILTEROP_BOTTOM10;
+			case BOTOOM10_PERCENT:
+				return AutoFilter.FILTEROP_BOTOOM10PERCENT;
+			case OR:
+				return AutoFilter.FILTEROP_OR;
+			case TOP10:
+				return AutoFilter.FILTEROP_TOP10;
+			case TOP10_PERCENT:
+				return AutoFilter.FILTEROP_TOP10PERCENT;
+			case VALUES:
+			default:
+				return AutoFilter.FILTEROP_VALUES;
+		}
 	}
 	
 	protected CellStyle toPOICellStyle(NCellStyle cellStyle) {

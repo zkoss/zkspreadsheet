@@ -87,4 +87,8 @@ public class ExporterXlsTest extends ExporterTest {
 	@Override @Ignore("not supported")
 	public void validation() {
 	}
+	
+	@Override @Ignore("not supported")
+	public void autoFilter() {
+	}
 }

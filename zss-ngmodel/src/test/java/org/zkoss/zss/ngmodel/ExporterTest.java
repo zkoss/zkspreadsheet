@@ -16,6 +16,7 @@ import org.zkoss.zss.ngmodel.NCellStyle.BorderType;
 import org.zkoss.zss.ngmodel.NPicture.Format;
 
 /**
+ * XLSX exporter test cases.
  * Common practices used in the test case:
  * 		1. We load and export the test file of importer then use importer's test cases to verify exported content.
  * 		2. Creating a book model in run-time to export and verify it.
@@ -362,5 +363,12 @@ public class ExporterTest extends ImExpTestBase {
 		File outFile = ImExpTestUtil.write(ImExpTestUtil.loadBook(IMPORT_FILE_UNDER_TEST, "XSSFBook"), EXPORTER_TYPE);
 		NBook book = ImExpTestUtil.loadBook(outFile, DEFAULT_BOOK_NAME);
 		validation(book);
+	}
+	
+	@Test
+	public void autoFilter(){
+		File outFile = ImExpTestUtil.write(ImExpTestUtil.loadBook(FILTER_IMPORT_FILE_UNDER_TEST, "XSSFBook"), EXPORTER_TYPE);
+		NBook book = ImExpTestUtil.loadBook(outFile, DEFAULT_BOOK_NAME);
+		autoFilter(book);
 	}
 }

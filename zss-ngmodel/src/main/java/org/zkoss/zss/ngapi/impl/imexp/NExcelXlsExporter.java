@@ -19,7 +19,9 @@ package org.zkoss.zss.ngapi.impl.imexp;
 import org.zkoss.poi.hssf.usermodel.HSSFWorkbook;
 import org.zkoss.poi.ss.SpreadsheetVersion;
 import org.zkoss.poi.ss.usermodel.*;
+import org.zkoss.poi.ss.util.CellRangeAddress;
 import org.zkoss.zss.ngmodel.*;
+import org.zkoss.zss.ngmodel.NAutoFilter.NFilterColumn;
 /**
  * 
  * @author dennis, kuro
@@ -57,6 +59,11 @@ public class NExcelXlsExporter extends AbstractExcelExporter {
 
 	@Override
 	protected void exportValidation(NSheet sheet, Sheet poiSheet) {
+		// not support in XLS
+	}
+
+	@Override
+	protected void exportAutoFilter(NSheet sheet, Sheet poiSheet) {
 		// not support in XLS
 	}
 

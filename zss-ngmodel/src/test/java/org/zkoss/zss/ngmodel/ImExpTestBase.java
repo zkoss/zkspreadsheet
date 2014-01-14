@@ -8,6 +8,8 @@ import java.text.DateFormat;
 import java.util.Locale;
 
 import org.junit.Test;
+import org.zkoss.zss.ngmodel.NAutoFilter.FilterOp;
+import org.zkoss.zss.ngmodel.NAutoFilter.NFilterColumn;
 import org.zkoss.zss.ngmodel.NCellStyle.Alignment;
 import org.zkoss.zss.ngmodel.NCellStyle.BorderType;
 import org.zkoss.zss.ngmodel.NCellStyle.FillPattern;
@@ -481,6 +483,35 @@ public class ImExpTestBase {
 		
 		NDataValidation decimalRange  = validationSheet.getDataValidation(7, 1);
 		assertEquals(ValidationType.DECIMAL, decimalRange.getValidationType());
+	}
+
+
+	protected void autoFilter(NBook book) {
+		NAutoFilter filter1 = book.getSheetByName("Filter1").getAutoFilter();
+		assertEquals("B1:D10", filter1.getRegion().getReferenceString());
+		assertEquals(1, filter1.getFilterColumns().size());
+		assertEquals(FilterOp.VALUES, filter1.getFilterColumn(0, false).getOperator());
+		assertEquals(1, filter1.getFilterColumn(0, false).getFilters().size());
+		assertEquals(1, filter1.getFilterColumn(0, false).getCriteria1().size());
+		assertTrue(filter1.getFilterColumn(0, false).getCriteria1().contains("Meat"));
+		
+		
+		NAutoFilter filter2 = book.getSheetByName("Filter2").getAutoFilter();
+		assertEquals("A1:C21", filter2.getRegion().getReferenceString());
+		assertEquals(2, filter2.getFilterColumns().size());
+		
+		NFilterColumn firstFilterColumn = filter2.getFilterColumn(0, false);
+		assertEquals(FilterOp.VALUES, firstFilterColumn.getOperator());
+		assertEquals(3, firstFilterColumn.getFilters().size());
+		assertEquals(3, firstFilterColumn.getCriteria1().size());
+		assertTrue(firstFilterColumn.getCriteria1().contains("XL"));
+		assertTrue(firstFilterColumn.getCriteria1().contains("XXL"));
+		assertTrue(firstFilterColumn.getCriteria1().contains("XXXL"));
+		
+		NFilterColumn secondFilterColumn = filter2.getFilterColumn(1, false);
+		assertEquals(2, secondFilterColumn.getCriteria1().size());
+		assertTrue(secondFilterColumn.getCriteria1().contains("Blue"));
+		assertTrue(secondFilterColumn.getCriteria1().contains("Black"));
 	}
 	
 }
