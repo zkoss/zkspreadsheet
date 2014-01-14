@@ -7,7 +7,7 @@ import junit.framework.Assert;
 import org.junit.*;
 import org.zkoss.zss.ngapi.impl.imexp.ExcelExportFactory;
 
-public class XlsExporterTest extends ExporterTest {
+public class ExporterXlsTest extends ExporterTest {
 
 
 	@Before

@@ -7,7 +7,7 @@ import org.zkoss.zss.ngmodel.NChart.*;
 import org.zkoss.zss.ngmodel.NPicture.Format;
 import org.zkoss.zss.ngmodel.chart.NGeneralChartData;
 
-public class XlsImporterTest extends ImporterTest {
+public class ImporterXlsTest extends ImporterTest {
 
 	@Before
 	public void setupTestFile(){
