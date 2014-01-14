@@ -31,7 +31,8 @@ public class ImExpTestBase {
 	 */
 	protected URL IMPORT_FILE_UNDER_TEST = ImporterTest.class.getResource("book/import.xlsx");
 	protected URL CHART_IMPORT_FILE_UNDER_TEST = ImporterTest.class.getResource("book/chart.xlsx");
-	protected URL PICTURE_IMPORT_FILE_UNDER_TEST = ImporterTest.class.getResource("book/picture.xlsx");	
+	protected URL PICTURE_IMPORT_FILE_UNDER_TEST = ImporterTest.class.getResource("book/picture.xlsx");
+	protected URL FILTER_IMPORT_FILE_UNDER_TEST = ImporterTest.class.getResource("book/filter.xlsx");
 	protected static String DEFAULT_BOOK_NAME = "PoiBook";
 
 

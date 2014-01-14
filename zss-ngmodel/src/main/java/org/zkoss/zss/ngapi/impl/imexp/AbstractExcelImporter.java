@@ -23,6 +23,8 @@ import org.zkoss.poi.ss.usermodel.*;
 import org.zkoss.poi.ss.util.CellRangeAddress;
 import org.zkoss.poi.xssf.usermodel.XSSFCellStyle;
 import org.zkoss.zss.ngmodel.*;
+import org.zkoss.zss.ngmodel.NAutoFilter.FilterOp;
+import org.zkoss.zss.ngmodel.NAutoFilter.NFilterColumn;
 import org.zkoss.zss.ngmodel.NCellStyle.Alignment;
 import org.zkoss.zss.ngmodel.NCellStyle.BorderType;
 import org.zkoss.zss.ngmodel.NCellStyle.FillPattern;
@@ -98,6 +100,7 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 				importMergedRegions(poiSheet, sheet);
 				importDrawings(poiSheet, sheet);
 				importValidation(poiSheet, sheet);
+				importAutoFilter(poiSheet, sheet);
 			}
 		}finally{
 			book.getBookSeries().setAutoFormulaCacheClean(isCacheClean);
@@ -484,6 +487,39 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 			}else{
 				//TODO log we ignore a picture with unsupported format
 			}
+		}
+	}
+	
+	private void importAutoFilter(Sheet poiSheet, NSheet sheet) {
+		AutoFilter poiAutoFilter = poiSheet.getAutoFilter();
+		if (poiAutoFilter != null){
+			NAutoFilter autoFilter = sheet.createAutoFilter(new CellRegion(poiAutoFilter.getRangeAddress().formatAsString()));
+			for( int i = 0 ; i < poiAutoFilter.getFilterColumns().size() ; i ++){
+				FilterColumn srcColumn = poiAutoFilter.getFilterColumn(i);
+				NFilterColumn destColumn = autoFilter.getFilterColumn(i, true);
+				destColumn.setProperties(toFilterOperator(srcColumn.getOperator()), srcColumn.getCriteria1(),
+						srcColumn.getCriteria2(), srcColumn.isOn());
+			}
+		}
+	}
+	
+	private FilterOp toFilterOperator(int operator){
+		switch(operator){
+			case AutoFilter.FILTEROP_AND:
+				return FilterOp.AND;
+			case AutoFilter.FILTEROP_BOTTOM10:
+				return FilterOp.BOTTOM10;
+			case AutoFilter.FILTEROP_BOTOOM10PERCENT:
+				return FilterOp.BOTOOM10_PERCENT;
+			case AutoFilter.FILTEROP_OR:
+				return FilterOp.OR;
+			case AutoFilter.FILTEROP_TOP10:
+				return FilterOp.TOP10;
+			case AutoFilter.FILTEROP_TOP10PERCENT:
+				return FilterOp.TOP10_PERCENT;
+			case AutoFilter.FILTEROP_VALUES: 
+			default:
+				return FilterOp.VALUES;
 		}
 	}
 }

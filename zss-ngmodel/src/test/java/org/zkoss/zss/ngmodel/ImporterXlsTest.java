@@ -143,8 +143,11 @@ public class ImporterXlsTest extends ImporterTest {
 		assertEquals(345, rainbowGif.getAnchor().getHeight());
 	}
 	
-	@Override @Ignore
+	@Override @Ignore("not support")
 	public void validation() {
-		//not support in XLS
+	}
+	
+	@Override @Ignore("not support")
+	public void autoFilter() {
 	}
 }

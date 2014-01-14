@@ -57,12 +57,14 @@ public abstract class AbstractAutoFilterAdv implements NAutoFilter,Serializable{
 		}
 
 		private Set getCriteriaSet(Object criteria) {
-			final Set set = new HashSet();
+			Set set = new HashSet();
 			if (criteria instanceof String[]) {
 				String[] strings = (String[]) criteria;
 				for(int j = 0; j < strings.length; ++j) {
 					set.add(strings[j]);
 				}
+			}else if (criteria instanceof Set){
+				set = (Set)criteria;
 			}
 			return set;
 		}
