@@ -568,7 +568,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			try {
 				NImporter importer = _importer;
 				if (importer == null) {
-					importer = NImporters.getImporter("test");
+					importer = NImporters.getImporter();
 				}
 
 				NBook book = null;
@@ -2094,7 +2094,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 					onAutoFilterChange(event);
 				}
 			});
-			/*
+			/* TODO zss 3.5
 			addEventListener(SSDataEvent.ON_RANGE_DELETE, new EventListener() {
 				@Override
 				public void onEvent(Event event) throws Exception {
@@ -2149,24 +2149,26 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 					onChartUpdate((SSDataEvent)event);
 				}
 			});
-			addEventListener(SSDataEvent.ON_PICTURE_ADD, new EventListener() {
+			*/
+			addEventListener(ModelEvents.ON_PICTURE_ADD, new ModelEventListener() {
 				@Override
-				public void onEvent(Event event) throws Exception {
-					onPictureAdd((SSDataEvent)event);
+				public void onEvent(ModelEvent event){
+					onPictureAdd(event);
 				}
 			});
-			addEventListener(SSDataEvent.ON_PICTURE_DELETE, new EventListener() {
+			addEventListener(ModelEvents.ON_PICTURE_DELETE, new ModelEventListener() {
 				@Override
-				public void onEvent(Event event) throws Exception {
-					onPictureDelete((SSDataEvent)event);
+				public void onEvent(ModelEvent event) {
+					onPictureDelete(event);
 				}
 			});
-			addEventListener(SSDataEvent.ON_PICTURE_UPDATE, new EventListener() {
+			addEventListener(ModelEvents.ON_PICTURE_UPDATE, new ModelEventListener() {
 				@Override
-				public void onEvent(Event event) throws Exception {
-					onPictureUpdate((SSDataEvent)event);
+				public void onEvent(ModelEvent event) {
+					onPictureUpdate(event);
 				}
 			});
+			/* TODO zss 3.5
 			addEventListener(SSDataEvent.ON_WIDGET_CHANGE, new EventListener() {
 				@Override
 				public void onEvent(Event event) throws Exception {
@@ -2277,25 +2279,17 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			final XSheet sheet = getSheet(rng);
 			final Object payload = event.getPayload();
 			updateChartWidget(sheet, (ZssChartX) payload);
+		} */
+		private void onPictureAdd(ModelEvent event) {
+			addPictureWidget(event.getSheet(), (NPicture)event.getData(ModelEvents.PARAM_PICTURE));
 		}
-		private void onPictureAdd(SSDataEvent event) {
-			final Ref rng = event.getRef();
-			final XSheet sheet = getSheet(rng);
-			final Object payload = event.getPayload();
-			addPictureWidget(sheet, (Picture) payload);
+		private void onPictureDelete(ModelEvent event) {
+			deletePictureWidget(event.getSheet(), ((NPicture)event.getData(ModelEvents.PARAM_PICTURE)).getId());
 		}
-		private void onPictureDelete(SSDataEvent event) {
-			final Ref rng = event.getRef();
-			final XSheet sheet = getSheet(rng);
-			final Object payload = event.getPayload();
-			deletePictureWidget(sheet, (String) payload);
+		private void onPictureUpdate(ModelEvent event) {
+			updatePictureWidget(event.getSheet(), (NPicture)event.getData(ModelEvents.PARAM_PICTURE));
 		}
-		private void onPictureUpdate(SSDataEvent event) {
-			final Ref rng = event.getRef();
-			final XSheet sheet = getSheet(rng);
-			final Object payload = event.getPayload();
-			updatePictureWidget(sheet, (Picture) payload);
-		}
+		/*TODO zss 3.5
 		private void onWidgetChange(SSDataEvent event) {
 			final Ref rng = event.getRef();
 			final XSheet sheet = getSheet(rng);
