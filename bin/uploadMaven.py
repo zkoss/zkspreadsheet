@@ -1,8 +1,9 @@
 # A script to upload ZSS Maven bundle files to POTIX release file server
 # Written in Python 3
 # Usage:
-# 	1. copy this file under /tmp, the same folder with those ready-to-release files
-#	2. Run it with python 3: python3 uploadMaven.py
+#	Run it with python 3: python3 uploadMaven.py
+# could be refined to a MavenUploader which knows their version, project list, bundle files, 
+# target path respectively and just create 2 instances with different parameters and ask them to upload.  
 
 import subprocess
 import os
@@ -12,11 +13,13 @@ import shutil
 ZSS_VERSION = None 
 ZPOI_VERSION = None
 
-ZSS_BUNDLE_FILE_PATH = 'zss/maven/FL/' #FIXME not for proprietary
-ZPOI_BUNDLE_FILE_PATH = 'zpoi/maven/FL/'
+ZSS_BUNDLE_FILE_PATH = '/zss/maven/FL/' #FIXME not for proprietary
+ZPOI_BUNDLE_FILE_PATH = '/zpoi/maven/FL/'
 
+LOCAL_RELEASE_PATH = "/tmp"
 REMOTE_RELEASE_PATH = "//10.1.3.252/potix/rd"
-MOUNTED_RELEASE_PATH = "/tmp/potix-rd/"
+MOUNTED_RELEASE_PATH = LOCAL_RELEASE_PATH+"/potix-rd/"
+
 zssList = ['zss', 'zssex', 'zsshtml', 'zssjsf','zssjsp','zsspdf']
 zpoiList = ['zpoi', 'zpoiex']
 
@@ -34,17 +37,17 @@ def mountRemoteFolder():
 
 # initialize zss, zpoi version from released file names
 def initProjectVersion():
-	freshlyVersionRe = re.compile("(\d\.)+FL\.(\d)+")
+	freshlyVersionRegExpr = re.compile("(\d\.)+FL\.(\d)+")
 	#officialVersionRe =
 	
 	print("Get freshly version")
 	#find zpoi version
 	global ZPOI_VERSION 
-	ZPOI_VERSION = freshlyVersionRe.search(os.listdir("zpoi/maven/FL")[0]).group(0)
+	ZPOI_VERSION = freshlyVersionRegExpr.search(os.listdir(getBundleFilePath(zpoiList[0]))[0]).group(0)
 	print("zpoi version: "+ZPOI_VERSION)
 	#find zss version
 	global ZSS_VERSION 
-	ZSS_VERSION = freshlyVersionRe.search(os.listdir("zss/maven/FL")[0]).group(0)
+	ZSS_VERSION = freshlyVersionRegExpr.search(os.listdir(getBundleFilePath(zssList[0]))[0]).group(0)
 	print("zss version: "+ZSS_VERSION)
 
 
@@ -76,9 +79,9 @@ def getProjectVersion(projectName):
 
 def getBundleFilePath(projectName):
 	if projectName in zssList:
-		return ZSS_BUNDLE_FILE_PATH
+		return LOCAL_RELEASE_PATH+ZSS_BUNDLE_FILE_PATH
 	elif projectName in zpoiList:
-		return ZPOI_BUNDLE_FILE_PATH
+		return LOCAL_RELEASE_PATH+ZPOI_BUNDLE_FILE_PATH
 
 
 initProjectVersion()
