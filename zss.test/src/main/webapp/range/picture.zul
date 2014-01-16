@@ -1,0 +1,57 @@
+<zk>
+	<window hflex="1" vflex="1" apply="zss.testapp.PictureComposer">
+
+		<hlayout hflex="1" vflex="1">
+			<spreadsheet id="ss" hflex="1" vflex="1" showFormulabar="true" showContextMenu="true"
+				showToolbar="true" showSheetbar="true" maxVisibleRows="100" maxVisibleColumns="40"
+				src="/range/picture.xlsx" />
+			<vlayout width="350px" vflex="1">
+				<groupbox hflex="1">
+					<caption label="Picture" />
+					<listbox id="pictureListbox">
+						<listhead>
+							<listheader label="ID" width="50px"/>
+							<listheader label="Row" width="50px" />
+							<listheader label="Column" width="50px"/>
+						</listhead>
+						<template name="model">
+							<listitem>
+								<listcell label="${each.id}"></listcell>
+								<listcell label="${each.anchor.rowIndex}"></listcell>
+								<listcell label="${each.anchor.columnIndex}"></listcell>
+								<!-- 
+								<listcell label="${each.anchor.XOffset}"></listcell>
+								<listcell label="${each.anchor.YOffset}"></listcell>
+								<listcell label="${each.anchor.lastXOffset}"></listcell>
+								<listcell label="${each.anchor.lastYOffset}"></listcell>
+								 -->
+							</listitem>
+						</template>
+					</listbox>
+				</groupbox>
+				<groupbox hflex="1">
+					<caption label="Control" />
+					<grid vflex="1" hflex="1">
+						<rows>
+							<row spans="2" align="right">
+								<hlayout >
+								To Row:
+								<intbox id="toRowBox" value="0"  width="70px"/>
+								To Column:
+								<intbox id="toColumnBox" value="0" width="70px"/>
+								<button id="moveButton" label="Move" />
+								</hlayout>
+							</row>
+							<row spans="2" align="right">
+								<hlayout>
+									<button id="addButton" label="Add a Picture" />
+									<button id="deleteButton" label="Delete" />
+								</hlayout>
+							</row>
+						</rows>
+					</grid>
+				</groupbox>
+			</vlayout>
+		</hlayout>
+	</window>
+</zk>
