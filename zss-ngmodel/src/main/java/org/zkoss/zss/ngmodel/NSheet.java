@@ -89,7 +89,9 @@ public interface NSheet {
 	//editable
 //	public void clearRow(int rowIdx, int rowIdx2);
 //	public void clearColumn(int columnIdx,int columnIdx2);
-	public void clearCell(int rowIdx, int columnIdx,int rowIdx2,int columnIdx2);
+	public void clearCell(int rowIdx, int columnIdx,int lastRowIdx,int lastColumnIdx);
+	
+	public void moveCell(int rowIdx, int columnIdx,int lastRowIdx,int lastColumnIdx, int rowOffset, int columnOffset);
 	
 	public void insertRow(int rowIdx, int size);
 	public void deleteRow(int rowIdx, int size);

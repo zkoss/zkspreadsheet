@@ -987,6 +987,14 @@ public class SheetImpl extends AbstractSheetAdv {
 
 		checkColumnArrayStatus();
 	}
+	
+	public void moveCell(int rowIdx, int columnIdx,int lastRowIdx,int lastColumnIdx, int rowOffset, int columnOffset){
+		if(rowOffset==0 && columnOffset==0)
+			return;
+		
+		
+		
+	}
 
 	
 	public void checkOrphan(){
