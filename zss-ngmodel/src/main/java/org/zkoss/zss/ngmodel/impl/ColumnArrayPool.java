@@ -1,16 +1,20 @@
 package org.zkoss.zss.ngmodel.impl;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.Map.Entry;
 
 /**
  * to lo/high (firstIdx/lastIdx) index the column array
  * @author dennis
  *
  */
-public class ColumnArrayPool implements Serializable{
+/*package*/ class ColumnArrayPool implements Serializable{
 
 	private static final long serialVersionUID = 1L;
 	private final TreeMap<Integer,AbstractColumnArrayAdv> columnArrayFirst = new TreeMap<Integer,AbstractColumnArrayAdv>();
@@ -26,6 +30,10 @@ public class ColumnArrayPool implements Serializable{
 
 	public SortedMap<Integer, AbstractColumnArrayAdv> lastSubMap(int columnIdx) {
 		return columnArrayLast.subMap(columnIdx, true, columnArrayLast.lastKey(),true);
+	}
+	
+	public Collection<AbstractColumnArrayAdv> firstSubValues(int start, int end){
+		return columnArrayFirst.subMap(start, true, end, true).values();
 	}
 
 	public Collection<AbstractColumnArrayAdv> values() {
@@ -75,5 +83,15 @@ public class ColumnArrayPool implements Serializable{
 	public void clear() {
 		columnArrayFirst.clear();
 		columnArrayLast.clear();
+	}
+	
+	public Collection<AbstractColumnArrayAdv> trim(int start){
+		Collection<AbstractColumnArrayAdv> effected = columnArrayFirst.tailMap(start,true).values();
+		LinkedList<AbstractColumnArrayAdv> remove = new LinkedList<AbstractColumnArrayAdv>(); 
+		for(AbstractColumnArrayAdv array:new ArrayList<AbstractColumnArrayAdv>(effected)){
+			remove(array);
+			remove.add(array);
+		}
+		return remove;
 	}
 }

@@ -16,6 +16,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.ngmodel.impl;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
@@ -86,6 +87,9 @@ public class RowImpl extends AbstractRowAdv {
 		AbstractCellAdv cellObj = cells.get(columnIdx);
 		if (cellObj == null) {
 			checkOrphan();
+			if(columnIdx>=getSheet().getBook().getMaxColumnSize()){
+				throw new IllegalStateException("can't create the cell that exceeds max column size "+getSheet().getBook().getMaxColumnSize());
+			}
 			cellObj = new CellImpl(this, columnIdx);
 			cells.put(columnIdx, cellObj);
 		}
@@ -123,6 +127,16 @@ public class RowImpl extends AbstractRowAdv {
 			return;
 		
 		cells.insert(cellIdx, size);
+		
+		//destroy the cell that exceeds the max size
+		int max = getSheet().getBook().getMaxColumnSize();
+		Collection<AbstractCellAdv> exceeds = new ArrayList<AbstractCellAdv>(cells.subValues(max, Integer.MAX_VALUE));
+		if(exceeds.size()>0){
+			cells.trim(max);
+		}
+		for(AbstractCellAdv cell:exceeds){
+			cell.destroy();
+		}
 	}
 
 	@Override

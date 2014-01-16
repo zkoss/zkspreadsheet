@@ -136,6 +136,9 @@ public class SheetImpl extends AbstractSheetAdv {
 		AbstractRowAdv rowObj = rows.get(rowIdx);
 		if(rowObj == null){
 			checkOrphan();
+			if(rowIdx>=getBook().getMaxRowSize()){
+				throw new IllegalStateException("can't create the row that exceeds max row size "+getBook().getMaxRowSize());
+			}
 			rowObj = new RowImpl(this,rowIdx);
 			rows.put(rowIdx, rowObj);
 		}
@@ -245,6 +248,10 @@ public class SheetImpl extends AbstractSheetAdv {
 		AbstractColumnArrayAdv contains = (AbstractColumnArrayAdv)getColumnArray(columnIdx);
 		if(contains!=null && contains.getIndex()==columnIdx && contains.getLastIndex()==columnIdx){
 			return contains;
+		}
+		
+		if(columnIdx>=getBook().getMaxColumnSize()){
+			throw new IllegalStateException("can't create the column array that exceeds max row size "+getBook().getMaxRowSize());
 		}
 		
 		int start1,end1,start2,end2;
@@ -512,6 +519,19 @@ public class SheetImpl extends AbstractSheetAdv {
 		
 		rows.insert(rowIdx, size);
 		
+		
+		//destroy the row that exceed the max size
+		int max = getBook().getMaxRowSize();
+		Collection<AbstractRowAdv> exceeds = new ArrayList<AbstractRowAdv>(rows.subValues(max, Integer.MAX_VALUE));
+		if(exceeds.size()>0){
+			rows.trim(max);
+		}
+		for(AbstractRowAdv row:exceeds){
+			row.destroy();
+		}
+		
+		
+		
 		shiftAfterRowInsert(rowIdx,size);
 		
 		book.sendModelInternalEvent(ModelInternalEvents.createModelInternalEvent(ModelInternalEvents.ON_ROW_INSERTED, 
@@ -655,11 +675,18 @@ public class SheetImpl extends AbstractSheetAdv {
 				row.insertCell(columnIdx,columnSize);
 			}	
 		}else{
+			int max = getBook().getMaxRowSize();
 			Collection<AbstractRowAdv> effectedRows = rows.descendingSubValues(rowIdx,Integer.MAX_VALUE);
 			for(AbstractRowAdv row: new ArrayList<AbstractRowAdv>(effectedRows)){//to aovid concurrent modify
 				//move the cell down to target row
-				AbstractRowAdv target = getOrCreateRow(row.getIndex()+rowSize);
-				row.moveCellTo(target,columnIdx,columnIdx+columnSize-1);
+				int idx = row.getIndex()+rowSize;
+				if(idx>=max){
+					//clear the cell since it out of max
+					row.clearCell(columnIdx,columnIdx+columnSize-1);
+				}else{
+					AbstractRowAdv target = getOrCreateRow(idx);
+					row.moveCellTo(target,columnIdx,columnIdx+columnSize-1);
+				}
 			}
 
 		}
@@ -857,6 +884,17 @@ public class SheetImpl extends AbstractSheetAdv {
 				prev.setWidth(contains.getWidth());
 			}
 		}
+		
+		//destroy the cell that exceeds the max size
+		int max = getBook().getMaxColumnSize();
+		Collection<AbstractColumnArrayAdv> exceeds = new ArrayList<AbstractColumnArrayAdv>(columnArrays.firstSubValues(max, Integer.MAX_VALUE));
+		if(exceeds.size()>0){
+			columnArrays.trim(max);
+		}
+		for(AbstractColumnArrayAdv ca:exceeds){
+			ca.destroy();
+		}
+		
 		
 		checkColumnArrayStatus();
 	}

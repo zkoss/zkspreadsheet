@@ -2816,6 +2816,96 @@ public class ModelTest {
 	}
 	
 	@Test
+	public void testInsertExceed(){
+		NBook book = NBooks.createBook("book1");
+		NSheet sheet1 = initialDataGrid(book.createSheet("Sheet1"));
+		
+		int maxRow = book.getMaxRowSize();
+		int maxColumn = book.getMaxColumnSize();
+		
+		NRow row0 = sheet1.getRow(maxRow-2);
+		NRow row1 = sheet1.getRow(maxRow-1);
+		NRow row2 = sheet1.getRow(maxRow);
+		
+		row0.setHeight(99);
+		row1.setHeight(100);
+		Assert.assertEquals(99, sheet1.getRow(maxRow-2).getHeight());
+		Assert.assertEquals(100, sheet1.getRow(maxRow-1).getHeight());
+		
+		try{
+			row2.setHeight(100);
+			Assert.fail();
+		}catch(IllegalStateException x){}
+		
+		sheet1.insertRow(0, 1);
+		Assert.assertEquals(sheet1.getDefaultRowHeight(), sheet1.getRow(maxRow-2).getHeight());
+		Assert.assertEquals(99, sheet1.getRow(maxRow-1).getHeight());
+		Assert.assertEquals(sheet1.getDefaultRowHeight(), sheet1.getRow(maxRow).getHeight());
+		
+		
+		/////////column
+		NColumn column0 = sheet1.getColumn(maxColumn-2);
+		NColumn column1 = sheet1.getColumn(maxColumn-1);
+		NColumn column2 = sheet1.getColumn(maxColumn);
+		
+		column0.setWidth(33);
+		column1.setWidth(55);
+		Assert.assertEquals(33, sheet1.getColumn(maxColumn-2).getWidth());
+		Assert.assertEquals(55, sheet1.getColumn(maxColumn-1).getWidth());
+		
+		try{
+			column2.setWidth(100);
+			Assert.fail();
+		}catch(IllegalStateException x){}
+		
+		sheet1.insertColumn(0, 1);
+		Assert.assertEquals(sheet1.getDefaultColumnWidth(), sheet1.getColumn(maxColumn-2).getWidth());
+		Assert.assertEquals(33, sheet1.getColumn(maxColumn-1).getWidth());
+		Assert.assertEquals(sheet1.getDefaultColumnWidth(), sheet1.getColumn(maxColumn).getWidth());
+		
+		
+		//cell vertical
+		NCell cell0 = sheet1.getCell(maxRow-2,0);
+		NCell cell1 = sheet1.getCell(maxRow-1,0);
+		NCell cell2 = sheet1.getCell(maxRow,0);
+		
+		cell0.setValue("A");
+		cell1.setValue("B");
+		Assert.assertEquals("A", sheet1.getCell(maxRow-2,0).getValue());
+		Assert.assertEquals("B", sheet1.getCell(maxRow-1,0).getValue());
+		
+		try{
+			cell2.setValue("C");
+			Assert.fail();
+		}catch(IllegalStateException x){}
+		
+		sheet1.insertCell(0, 0, 1, 1,false);
+		Assert.assertEquals(null, sheet1.getCell(maxRow-2,0).getValue());
+		Assert.assertEquals("A", sheet1.getCell(maxRow-1,0).getValue());
+		Assert.assertEquals(null, sheet1.getCell(maxRow,0).getValue());
+		
+		//cell horizontal
+		cell0 = sheet1.getCell(0,maxColumn-2);
+		cell1 = sheet1.getCell(0,maxColumn-1);
+		cell2 = sheet1.getCell(0,maxColumn);
+		
+		cell0.setValue("X");
+		cell1.setValue("Y");
+		Assert.assertEquals("X", sheet1.getCell(0,maxColumn-2).getValue());
+		Assert.assertEquals("Y", sheet1.getCell(0,maxColumn-1).getValue());
+		
+		try{
+			cell2.setValue("C");
+			Assert.fail();
+		}catch(IllegalStateException x){}
+		
+		sheet1.insertCell(0, 0, 1, 1,true);
+		Assert.assertEquals(null, sheet1.getCell(0,maxColumn-2).getValue());
+		Assert.assertEquals("X", sheet1.getCell(0,maxColumn-1).getValue());
+		Assert.assertEquals(null, sheet1.getCell(0,maxColumn).getValue());		
+	}
+	
+	@Test
 	public void testAutoFilter(){
 		NBook book = NBooks.createBook("book1");
 		NSheet sheet1 = initialDataGrid(book.createSheet("Sheet1"));

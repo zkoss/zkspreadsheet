@@ -112,6 +112,19 @@ import java.util.TreeMap;
 		return remove;
 	}
 	
+	public Collection<T> trim(int start) {
+		//get last,
+		SortedMap<Integer,T> effected = objs.tailMap(start,true);
+		LinkedList<T> remove = new LinkedList<T>(); 
+		//shift
+		for(Entry<Integer,T> entry:new ArrayList<Entry<Integer,T>>(effected.entrySet())){
+			int idx = entry.getKey();
+			objs.remove(idx);
+			remove.add(entry.getValue());
+		}
+		return remove;
+	}
+	
 	public Set<Integer> keySet(){
 		return objs.keySet();
 	}
