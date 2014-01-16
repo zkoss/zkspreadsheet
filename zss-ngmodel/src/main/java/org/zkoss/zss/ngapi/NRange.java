@@ -18,14 +18,10 @@ package org.zkoss.zss.ngapi;
 
 import java.util.concurrent.locks.ReadWriteLock;
 
-import org.zkoss.zss.ngmodel.ModelEvents;
-import org.zkoss.zss.ngmodel.NAutoFilter;
+import org.zkoss.zss.ngmodel.*;
 import org.zkoss.zss.ngmodel.NAutoFilter.FilterOp;
-import org.zkoss.zss.ngmodel.NCellStyle;
-import org.zkoss.zss.ngmodel.NDataValidation;
-import org.zkoss.zss.ngmodel.NHyperlink;
 import org.zkoss.zss.ngmodel.NHyperlink.HyperlinkType;
-import org.zkoss.zss.ngmodel.NSheet;
+import org.zkoss.zss.ngmodel.NPicture.Format;
 /**
  * The most useful api to manipulate a book
  *  
@@ -551,34 +547,25 @@ public interface NRange {
 //	 */
 //	public Chart addChart(ClientAnchor anchor, ChartData data, ChartType type, ChartGrouping grouping, LegendPosition pos);
 //
-//	/**
-//	 * Insert a picture into the sheet of this Range
-//	 * @param anchor picture anchor
-//	 * @param image image data
-//	 * @param format image format
-//	 * @see Workbook#PICTURE_TYPE_EMF
-//     * @see Workbook#PICTURE_TYPE_WMF
-//     * @see Workbook#PICTURE_TYPE_PICT
-//     * @see Workbook#PICTURE_TYPE_JPEG
-//     * @see Workbook#PICTURE_TYPE_PNG
-//     * @see Workbook#PICTURE_TYPE_DIB
-//     * @return the created picture
-//	 */
-//	public Picture addPicture(ClientAnchor anchor, byte[] image, int format);
-//
-//
-//	/**
-//	 * Delete an existing picture from the sheet of this Range.
-//	 * @param picture the picture to be deleted
-//	 */
-//	public void deletePicture(Picture picture);
-//	
-//	/**
-//	 * Update picture anchor.
-//	 * @param picture the picture to change anchor
-//	 * @param anchor the new anchor
-//	 */
-//	public void movePicture(Picture picture, ClientAnchor anchor);
+
+	/**
+	 * Add a picture into the sheet of this Range
+     * @return the created picture
+	 */
+	public NPicture addPicture(NViewAnchor anchor, byte[] image, Format format);
+
+	/**
+	 * Delete an existing picture from the sheet of this Range.
+	 * @param picture the picture to be deleted
+	 */
+	public void deletePicture(NPicture picture);
+	
+	/**
+	 * Update picture anchor. Can be used to resize or move a picture.
+	 * @param picture the picture to change
+	 * @param anchor the new anchor
+	 */
+	public void movePicture(NPicture picture, NViewAnchor anchor);
 //
 //	/**
 //	 * Update chart anchor.

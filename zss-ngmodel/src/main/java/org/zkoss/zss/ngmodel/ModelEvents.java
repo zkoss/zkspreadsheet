@@ -40,14 +40,17 @@ public class ModelEvents {
 	public static final String ON_SHEET_ORDER_CHANGE = "onSheetOrderChange";
 	public static final String ON_SHEET_DELETE = "onSheetDelete";
 	
+	public static final String ON_PICTURE_ADD = "onPictureAdd";
+	public static final String ON_PICTURE_UPDATE = "onPictureUpdate";
+	public static final String ON_PICTURE_DELETE = "onPictureDelete";
+	
 	public static final String PARAM_BOOK = "book";
 	public static final String PARAM_SHEET = "sheet";
 	public static final String PARAM_REGION = "region";
 	public static final String PARAM_OBJECT_ID = "objid";
 	public static final String PARAM_CUSTOM_DATA = "custom";
 	public static final String PARAM_INDEX = "index";
-	
-	
+	public static final String PARAM_PICTURE = "picture";
 	
 	
 	public static ModelEvent createModelEvent(String name, NBook book){

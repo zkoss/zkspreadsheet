@@ -16,52 +16,25 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.ngapi.impl;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.locks.ReadWriteLock;
 
 import org.zkoss.lang.Strings;
 import org.zkoss.util.Locales;
-import org.zkoss.zss.ngapi.NRange;
-import org.zkoss.zss.ngapi.NRanges;
-import org.zkoss.zss.ngmodel.CellRegion;
-import org.zkoss.zss.ngmodel.InvalidateModelOpException;
-import org.zkoss.zss.ngmodel.NAutoFilter;
+import org.zkoss.zss.ngapi.*;
+import org.zkoss.zss.ngmodel.*;
 import org.zkoss.zss.ngmodel.NAutoFilter.FilterOp;
-import org.zkoss.zss.ngmodel.ModelEvents;
-import org.zkoss.zss.ngmodel.NBook;
-import org.zkoss.zss.ngmodel.NBookSeries;
-import org.zkoss.zss.ngmodel.NCell;
-import org.zkoss.zss.ngmodel.NCellStyle;
 import org.zkoss.zss.ngmodel.NCellStyle.BorderType;
-import org.zkoss.zss.ngmodel.NColumn;
-import org.zkoss.zss.ngmodel.NDataValidation;
-import org.zkoss.zss.ngmodel.NHyperlink;
 import org.zkoss.zss.ngmodel.NHyperlink.HyperlinkType;
-import org.zkoss.zss.ngmodel.NRow;
-import org.zkoss.zss.ngmodel.NSheet;
-import org.zkoss.zss.ngmodel.NSheetViewInfo;
-import org.zkoss.zss.ngmodel.SheetRegion;
-import org.zkoss.zss.ngmodel.impl.AbstractBookAdv;
-import org.zkoss.zss.ngmodel.impl.AbstractSheetAdv;
-import org.zkoss.zss.ngmodel.impl.DependentCollector;
-import org.zkoss.zss.ngmodel.impl.FormulaCacheCleaner;
-import org.zkoss.zss.ngmodel.impl.RefImpl;
+import org.zkoss.zss.ngmodel.impl.*;
 import org.zkoss.zss.ngmodel.sys.EngineFactory;
 import org.zkoss.zss.ngmodel.sys.dependency.Ref;
-import org.zkoss.zss.ngmodel.sys.format.FormatContext;
-import org.zkoss.zss.ngmodel.sys.format.FormatEngine;
-import org.zkoss.zss.ngmodel.sys.input.InputEngine;
-import org.zkoss.zss.ngmodel.sys.input.InputParseContext;
-import org.zkoss.zss.ngmodel.sys.input.InputResult;
-import org.zkoss.zss.ngmodel.util.ReadWriteTask;
-import org.zkoss.zss.ngmodel.util.Validations;
+import org.zkoss.zss.ngmodel.sys.format.*;
+import org.zkoss.zss.ngmodel.sys.input.*;
+import org.zkoss.zss.ngmodel.util.*;
 /**
- * 
+ * Only those methods that set cell data, cell style, row (column) style, width, height, and hidden consider 3-D references. 
+ * Others don't, just perform on first cell.
  * @author dennis
  * @since 3.5.0
  */
@@ -994,5 +967,40 @@ public class NRangeImpl implements NRange {
 			return result;
 		}
 	}
+
+	@Override
+	public NPicture addPicture(final NViewAnchor anchor, final byte[] image, final NPicture.Format format){
+		return (NPicture) new ReadWriteTask() {			
+			@Override
+			public Object invoke() {
+				NPicture picture = getSheet().addPicture(format, image, anchor);
+				new NotifyChangeHelper(NRangeImpl.this).notifySheetPictureAdd(getSheet(), picture);
+				return picture;
+			}
+		}.doInWriteLock(getLock());
+	}
 	
+	@Override
+	public void deletePicture(final NPicture picture){
+		new ReadWriteTask() {			
+			@Override
+			public Object invoke() {
+				getSheet().deletePicture(picture);
+				new NotifyChangeHelper(NRangeImpl.this).notifySheetPictureDelete(getSheet(), picture);
+				return null;
+			}
+		}.doInWriteLock(getLock());
+	}
+	
+	@Override
+	public void movePicture(final NPicture picture, final NViewAnchor anchor){
+		new ReadWriteTask() {			
+			@Override
+			public Object invoke() {
+				picture.setAnchor(anchor);
+				new NotifyChangeHelper(NRangeImpl.this).notifySheetPictureMove(getSheet(), picture);
+				return null;
+			}
+		}.doInWriteLock(getLock());
+	}
 }

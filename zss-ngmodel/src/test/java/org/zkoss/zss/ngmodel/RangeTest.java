@@ -1,5 +1,8 @@
 package org.zkoss.zss.ngmodel;
 
+import static org.junit.Assert.*;
+
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -10,10 +13,12 @@ import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.zkoss.image.AImage;
 import org.zkoss.util.Locales;
-import org.zkoss.zss.ngapi.NRange;
-import org.zkoss.zss.ngapi.NRanges;
+import org.zkoss.zss.ngapi.*;
+import org.zkoss.zss.ngapi.impl.imexp.ExcelExportFactory.Type;
 import org.zkoss.zss.ngmodel.NCell.CellType;
+import org.zkoss.zss.ngmodel.NPicture.Format;
 import org.zkoss.zss.ngmodel.impl.BookImpl;
 
 public class RangeTest {
@@ -289,5 +294,29 @@ C	3	6	9	=SUM(E9:F9)
 			Assert.assertEquals(at,6+(Integer)loc[4], range.getLastColumn());
 		}
 
+	}
+	
+	@Test
+	public void addPicture(){
+		NBook book = NBooks.createBook("book1");
+		NSheet sheet = book.createSheet("Picture");
+		
+		assertEquals(0, sheet.getPictures().size());
+		
+		try {
+			AImage zklogo = new AImage(RangeTest.class.getResource("zklogo.png"));
+			
+			NViewAnchor anchor = new NViewAnchor(0, 1, zklogo.getWidth()/2, zklogo.getHeight()/2);
+			NPicture picture = NRanges.range(sheet).addPicture(anchor, zklogo.getByteData(), NPicture.Format.PNG);
+			
+			assertEquals(1, sheet.getPictures().size());
+			assertEquals(Format.PNG, picture.getFormat());
+			assertEquals(zklogo.getWidth()/2, picture.getAnchor().getWidth());
+			
+//			ImExpTestUtil.write(book, Type.XLSX); //human checking
+		} catch (IOException e) {
+			e.printStackTrace();
+			fail();
+		}
 	}
 }

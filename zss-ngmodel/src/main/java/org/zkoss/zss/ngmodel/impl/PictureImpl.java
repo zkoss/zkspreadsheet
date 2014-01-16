@@ -58,6 +58,11 @@ public class PictureImpl extends AbstractPictureAdv {
 	}
 
 	@Override
+	public void setAnchor(NViewAnchor anchor){
+		this.anchor = anchor;
+	}
+	
+	@Override
 	public byte[] getData() {
 		return data;
 	}

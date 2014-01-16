@@ -56,4 +56,6 @@ public interface NPicture {
 	public byte[] getData();
 	
 	public NViewAnchor getAnchor();
+
+	void setAnchor(NViewAnchor anchor);
 }
