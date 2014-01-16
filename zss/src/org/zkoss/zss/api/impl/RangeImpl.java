@@ -19,43 +19,17 @@ package org.zkoss.zss.api.impl;
 import java.util.concurrent.locks.ReadWriteLock;
 
 import org.zkoss.poi.ss.formula.FormulaParseException;
-import org.zkoss.zss.api.CellVisitor;
-import org.zkoss.zss.api.IllegalFormulaException;
-import org.zkoss.zss.api.Range;
-import org.zkoss.zss.api.RangeRunner;
-import org.zkoss.zss.api.Ranges;
-import org.zkoss.zss.api.SheetAnchor;
-import org.zkoss.zss.api.model.Book;
-import org.zkoss.zss.api.model.CellData;
-import org.zkoss.zss.api.model.CellStyle;
+import org.zkoss.zss.api.*;
+import org.zkoss.zss.api.model.*;
 import org.zkoss.zss.api.model.CellStyle.BorderType;
-import org.zkoss.zss.api.model.Chart;
 import org.zkoss.zss.api.model.Chart.Grouping;
 import org.zkoss.zss.api.model.Chart.LegendPosition;
 import org.zkoss.zss.api.model.Chart.Type;
-import org.zkoss.zss.api.model.ChartData;
-import org.zkoss.zss.api.model.Hyperlink;
 import org.zkoss.zss.api.model.Hyperlink.HyperlinkType;
-import org.zkoss.zss.api.model.Picture;
 import org.zkoss.zss.api.model.Picture.Format;
-import org.zkoss.zss.api.model.Sheet;
-import org.zkoss.zss.api.model.impl.BookImpl;
-import org.zkoss.zss.api.model.impl.CellDataImpl;
-import org.zkoss.zss.api.model.impl.CellStyleImpl;
-import org.zkoss.zss.api.model.impl.EnumUtil;
-import org.zkoss.zss.api.model.impl.HyperlinkImpl;
-import org.zkoss.zss.api.model.impl.ModelRef;
-import org.zkoss.zss.api.model.impl.SheetImpl;
-import org.zkoss.zss.api.model.impl.SimpleRef;
-import org.zkoss.zss.ngapi.NRange;
-import org.zkoss.zss.ngapi.NRanges;
-import org.zkoss.zss.ngmodel.CellRegion;
-import org.zkoss.zss.ngmodel.NBook;
-import org.zkoss.zss.ngmodel.NCell;
-import org.zkoss.zss.ngmodel.NCellStyle;
-import org.zkoss.zss.ngmodel.NHyperlink;
-import org.zkoss.zss.ngmodel.NRow;
-import org.zkoss.zss.ngmodel.NSheet;
+import org.zkoss.zss.api.model.impl.*;
+import org.zkoss.zss.ngapi.*;
+import org.zkoss.zss.ngmodel.*;
 
 /**
  * 1.Range is not handling the protection issue, if you have handle it yourself before calling the api(by calling {@code #isProtected()})
@@ -584,26 +558,16 @@ public class RangeImpl implements Range{
 
 	
 	public Picture addPicture(SheetAnchor anchor,byte[] image,Format format){
-		throw new UnsupportedOperationException("not implment yet");/* zss 3.5 
-		ClientAnchor an = SheetImpl.toClientAnchor(getSheet().getPoiSheet(),anchor);
-		org.zkoss.poi.ss.usermodel.Picture pic = _range.addPicture(an, image, EnumUtil.toPictureFormat(format));
-		return new PictureImpl(getSheetRef(), new SimpleRef<org.zkoss.poi.ss.usermodel.Picture>(pic));
-		*/
+		NPicture picture = _range.addPicture(SheetImpl.toViewAnchor(_range.getSheet(), anchor), image, EnumUtil.toPictureFormat(format));
+		return new PictureImpl(new SimpleRef<NSheet>(_range.getSheet()), new SimpleRef<NPicture>(picture));
 	}
 	
 	public void deletePicture(Picture picture){
-		//TODO the syncLevel
-		throw new UnsupportedOperationException("not implment yet");/* zss 3.5 
 		_range.deletePicture(((PictureImpl)picture).getNative());
-		*/
 	}
 	
 	public void movePicture(SheetAnchor anchor,Picture picture){
-		//TODO the syncLevel
-		throw new UnsupportedOperationException("not implment yet");/* zss 3.5 
-		ClientAnchor an = SheetImpl.toClientAnchor(getSheet().getPoiSheet(),anchor);
-		_range.movePicture(((PictureImpl)picture).getNative(), an);
-		*/
+		_range.movePicture(((PictureImpl)picture).getNative(), SheetImpl.toViewAnchor(_range.getSheet(), anchor));
 	}
 	
 	//currently, we only support to modify chart in XSSF

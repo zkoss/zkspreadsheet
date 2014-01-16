@@ -17,10 +17,8 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.api.model.impl;
 
 import org.zkoss.poi.common.usermodel.Hyperlink;
-import org.zkoss.poi.ss.usermodel.AutoFilter;
 import org.zkoss.poi.ss.usermodel.Workbook;
-import org.zkoss.poi.ss.usermodel.charts.ChartGrouping;
-import org.zkoss.poi.ss.usermodel.charts.ChartType;
+import org.zkoss.poi.ss.usermodel.charts.*;
 import org.zkoss.zss.api.Range.ApplyBorderType;
 import org.zkoss.zss.api.Range.AutoFillType;
 import org.zkoss.zss.api.Range.AutoFilterOperation;
@@ -30,15 +28,14 @@ import org.zkoss.zss.api.Range.InsertShift;
 import org.zkoss.zss.api.Range.PasteOperation;
 import org.zkoss.zss.api.Range.PasteType;
 import org.zkoss.zss.api.Range.SortDataOption;
+import org.zkoss.zss.api.model.*;
 import org.zkoss.zss.api.model.CellStyle.Alignment;
 import org.zkoss.zss.api.model.CellStyle.BorderType;
 import org.zkoss.zss.api.model.CellStyle.FillPattern;
-import org.zkoss.zss.api.model.CellStyle;
 import org.zkoss.zss.api.model.CellStyle.VerticalAlignment;
 import org.zkoss.zss.api.model.Chart.Grouping;
 import org.zkoss.zss.api.model.Chart.LegendPosition;
 import org.zkoss.zss.api.model.Chart.Type;
-import org.zkoss.zss.api.model.Font;
 import org.zkoss.zss.api.model.Font.Boldweight;
 import org.zkoss.zss.api.model.Font.TypeOffset;
 import org.zkoss.zss.api.model.Font.Underline;
@@ -48,9 +45,7 @@ import org.zkoss.zss.model.sys.XRange;
 import org.zkoss.zss.model.sys.impl.BookHelper;
 import org.zkoss.zss.ngapi.NRange;
 import org.zkoss.zss.ngmodel.NAutoFilter.FilterOp;
-import org.zkoss.zss.ngmodel.NCellStyle;
-import org.zkoss.zss.ngmodel.NFont;
-import org.zkoss.zss.ngmodel.NHyperlink;
+import org.zkoss.zss.ngmodel.*;
 /**
  * 
  * @author dennis
@@ -607,20 +602,20 @@ public class EnumUtil {
 		throw new IllegalArgumentException("unknow hyperlink type "+type);
 	}
 
-	public static int toPictureFormat(Format format) {
+	public static NPicture.Format toPictureFormat(Format format) {
 		switch(format){
 		case EMF:
-			return Workbook.PICTURE_TYPE_EMF;
+			return NPicture.Format.EMF;
 		case WMF:
-			return Workbook.PICTURE_TYPE_WMF;
+			return NPicture.Format.WMF;
 		case PICT:
-			return Workbook.PICTURE_TYPE_PICT;
+			return NPicture.Format.PICT;
 		case JPEG:
-			return Workbook.PICTURE_TYPE_JPEG;
+			return NPicture.Format.JPG;
 		case PNG:
-			return Workbook.PICTURE_TYPE_PNG;
+			return NPicture.Format.PNG;
 		case DIB:
-			return Workbook.PICTURE_TYPE_DIB;
+			return NPicture.Format.DIB;
 		}
 		throw new IllegalArgumentException("unknow pciture format "+format);
 	}
