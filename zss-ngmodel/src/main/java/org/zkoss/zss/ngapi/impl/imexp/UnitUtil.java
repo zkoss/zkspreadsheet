@@ -18,42 +18,44 @@ package org.zkoss.zss.ngapi.impl.imexp;
 
 
 /**
- * copied from ZSS. We should remove it after integration.
- * Pure unit conversion methods.
+ * copied from ZSS.
+ * Various unit conversion methods.
  */
 public class UnitUtil {
 
+	private static final int DPI = 96;
+
 	/** convert pixel to point */
 	public static int pxToPoint(int px) {
-		return px * 72 / 96; //assume 96dpi
+		return px * 72 / DPI; //assume 96dpi
 	}
 	
 	/** convert point to pixel */
 	public static int pointToPx(int point) {
-		return point * 96 / 72; //assume 96dpi
+		return point * DPI / 72; //assume 96dpi
 	}
 	
 	
 	/** convert pixel to EMU */
 	public static int pxToEmu(int px) {
 		//refer form ActionHandler,ChartHelper
-		return (int) Math.round(((double)px) * 72 * 20 * 635 / 96); //assume 96dpi
+		return (int) Math.round(((double)px) * 72 * 20 * 635 / DPI); //assume 96dpi
 	}
 	
 	/** convert EMU to pixel, 1 twip == 635 emu */
 	public static int emuToPx(int emu) {
 		//refer form ChartHelper
-		return (int) Math.round(((double)emu) * 96 / 72 / 20 / 635); //assume 96dpi
+		return (int) Math.round(((double)emu) * DPI / 72 / 20 / 635); //assume 96dpi
 	}
 
 	/** convert twip (1/20 point) to pixel */
 	public static int twipToPx(int twip) {
-		return twip * 96 / 72 / 20; //assume 96dpi
+		return twip * DPI / 72 / 20; //assume 96dpi
 	}
 	
 	/** convert pixel to twip (1/20 point) */
 	public static int pxToTwip(int px) {
-		return px * 72 * 20 / 96; //assume 96dpi
+		return px * 72 * 20 / DPI; //assume 96dpi
 	}
 
 	/** convert file 1/256 character width to pixel */
@@ -94,12 +96,12 @@ public class UnitUtil {
 
 	// Formula: Pixels = Inches * DPI, assume 96 DPI
 	public static int incheToPx(double inches) {
-		return (int) (inches * 96);
+		return (int) (inches * DPI);
 	}
 
 	// Formula: Inches = Pixels / DPI, assume 96 DPI
 	public static double pxToInche(int px) {
-		return px / 96.0;
+		return px / DPI;
 	}
 
 	public static double pxToCTChar(int px, int charWidth) {
