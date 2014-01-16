@@ -89,7 +89,11 @@ public interface NSheet {
 	//editable
 //	public void clearRow(int rowIdx, int rowIdx2);
 //	public void clearColumn(int columnIdx,int columnIdx2);
-	public void clearCell(int rowIdx, int columnIdx,int rowIdx2,int columnIdx2);
+	public void clearCell(int rowIdx, int columnIdx,int lastRowIdx,int lastColumnIdx);
+	public void clearCell(CellRegion region);
+	
+	public void moveCell(int rowIdx, int columnIdx,int lastRowIdx,int lastColumnIdx, int rowOffset, int columnOffset);
+	public void moveCell(CellRegion region, int rowOffset, int columnOffset);
 	
 	public void insertRow(int rowIdx, int size);
 	public void deleteRow(int rowIdx, int size);
@@ -122,10 +126,16 @@ public interface NSheet {
 	
 	/**
 	 * Get the merged region that overlapped the region
-	 * @return the regions that overlaps or null if not found.
+	 * @return the regions that overlaps
 	 */
 	public List<CellRegion> getOverlapsMergedRegions(CellRegion region);
-	public CellRegion getContainsMergedRegion(int row,int column);
+	/**
+	 * Get the merged region that are contained by region.
+	 * @return the regions that are contained
+	 */
+	public List<CellRegion> getContainsMergedRegions(CellRegion region);
+	public CellRegion getMergedRegion(int row,int column);
+	public CellRegion getMergedRegion(String cellRefString);
 	
 	public NDataValidation addDataValidation(CellRegion region);
 	public NDataValidation getDataValidation(String id);

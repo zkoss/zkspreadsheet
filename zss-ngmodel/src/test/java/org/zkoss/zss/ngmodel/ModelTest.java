@@ -2816,6 +2816,33 @@ public class ModelTest {
 	}
 	
 	@Test
+	public void testInsertCellBlank(){
+		NBook book = NBooks.createBook("book1");
+		NSheet sheet1 = initialDataGrid(book.createSheet("Sheet1"));
+		
+
+		sheet1.getCell("A2").setValue("A2");
+//		sheet1.getCell("B2").setValue("B2");
+		sheet1.getCell("C2").setValue("C2");
+		sheet1.getCell("A3").setValue("A3");
+		sheet1.getCell("B3").setValue("B3");
+		sheet1.getCell("C3").setValue("C3");
+		
+		sheet1.insertCell(0, 0, 1, 3, false);//row 1, A-C
+		Assert.assertEquals(null,sheet1.getCell("A2").getValue());
+		Assert.assertEquals(null,sheet1.getCell("B2").getValue());
+		Assert.assertEquals(null,sheet1.getCell("C2").getValue());
+		Assert.assertEquals("A2",sheet1.getCell("A3").getValue());
+		Assert.assertEquals(null,sheet1.getCell("B3").getValue());
+		Assert.assertEquals("C2",sheet1.getCell("C3").getValue());
+		Assert.assertEquals("A3",sheet1.getCell("A4").getValue());
+		Assert.assertEquals("B3",sheet1.getCell("B4").getValue());
+		Assert.assertEquals("C3",sheet1.getCell("C4").getValue());
+		
+		
+	}
+	
+	@Test
 	public void testInsertExceed(){
 		NBook book = NBooks.createBook("book1");
 		NSheet sheet1 = initialDataGrid(book.createSheet("Sheet1"));
@@ -2903,6 +2930,173 @@ public class ModelTest {
 		Assert.assertEquals(null, sheet1.getCell(0,maxColumn-2).getValue());
 		Assert.assertEquals("X", sheet1.getCell(0,maxColumn-1).getValue());
 		Assert.assertEquals(null, sheet1.getCell(0,maxColumn).getValue());		
+	}
+	
+	@Test
+	public void testMoveCell(){
+		NBook book = NBooks.createBook("book1");
+		NSheet sheet1 = initialDataGrid(book.createSheet("Sheet1"));
+		
+		
+		sheet1.getCell("D3").setValue("D3");
+		sheet1.getCell("D4").setValue("D4");
+		sheet1.getCell("D5").setValue("D5");
+		sheet1.getCell("E3").setValue("E3");
+//		sheet1.getCell("E4").setValue("E4");//E4 is empty
+		sheet1.getCell("E5").setValue("E5");
+		sheet1.getCell("F3").setValue("F3");
+		sheet1.getCell("F4").setValue("F4");
+		sheet1.getCell("F5").setValue("F5");
+		
+		System.out.println(">>>>>>>>>>>>> Down");
+		//fill  data that will be replaced when move
+		sheet1.getCell("D6").setValue("A");
+		sheet1.getCell("E6").setValue("B");
+		sheet1.getCell("F6").setValue("C");
+		sheet1.moveCell(2, 3, 4, 5, 1, 0);
+		
+		Assert.assertEquals(null,sheet1.getCell("D3").getValue());
+		Assert.assertEquals("D3",sheet1.getCell("D4").getValue());
+		Assert.assertEquals("D4",sheet1.getCell("D5").getValue());
+		Assert.assertEquals("D5",sheet1.getCell("D6").getValue());
+		Assert.assertEquals(null,sheet1.getCell("D7").getValue());
+		Assert.assertEquals(null,sheet1.getCell("E3").getValue());
+		Assert.assertEquals("E3",sheet1.getCell("E4").getValue());
+		Assert.assertEquals(null,sheet1.getCell("E5").getValue());
+		Assert.assertEquals("E5",sheet1.getCell("E6").getValue());
+		Assert.assertEquals(null,sheet1.getCell("E7").getValue());
+		Assert.assertEquals(null,sheet1.getCell("F3").getValue());
+		Assert.assertEquals("F3",sheet1.getCell("F4").getValue());
+		Assert.assertEquals("F4",sheet1.getCell("F5").getValue());
+		Assert.assertEquals("F5",sheet1.getCell("F6").getValue());
+		Assert.assertEquals(null,sheet1.getCell("F7").getValue());
+		
+		System.out.println(">>>>>>>>>>>>> Up");
+		//fill  data that will be replaced when move
+		sheet1.getCell("D3").setValue("A");
+		sheet1.getCell("E3").setValue("B");
+		sheet1.getCell("F3").setValue("C");
+		sheet1.moveCell(3, 3, 5, 5, -1, 0);
+		Assert.assertEquals(null,sheet1.getCell("D2").getValue());
+		Assert.assertEquals("D3",sheet1.getCell("D3").getValue());
+		Assert.assertEquals("D4",sheet1.getCell("D4").getValue());
+		Assert.assertEquals("D5",sheet1.getCell("D5").getValue());
+		Assert.assertEquals(null,sheet1.getCell("E2").getValue());
+		Assert.assertEquals("E3",sheet1.getCell("E3").getValue());
+		Assert.assertEquals(null,sheet1.getCell("E4").getValue());
+		Assert.assertEquals("E5",sheet1.getCell("E5").getValue());
+		Assert.assertEquals(null,sheet1.getCell("F2").getValue());
+		Assert.assertEquals("F3",sheet1.getCell("F3").getValue());
+		Assert.assertEquals("F4",sheet1.getCell("F4").getValue());
+		Assert.assertEquals("F5",sheet1.getCell("F5").getValue());
+		
+		System.out.println(">>>>>>>>>>>>> Right");
+		//fill  data that will be replaced when move
+		sheet1.getCell("G3").setValue("A");
+		sheet1.getCell("G4").setValue("B");
+		sheet1.getCell("G5").setValue("C");		
+		sheet1.moveCell(2, 3, 4, 5, 0, 1);
+		Assert.assertEquals(null,sheet1.getCell("D3").getValue());
+		Assert.assertEquals(null,sheet1.getCell("D4").getValue());
+		Assert.assertEquals(null,sheet1.getCell("D5").getValue());
+		Assert.assertEquals("D3",sheet1.getCell("E3").getValue());
+		Assert.assertEquals("D4",sheet1.getCell("E4").getValue());
+		Assert.assertEquals("D5",sheet1.getCell("E5").getValue());
+		Assert.assertEquals("E3",sheet1.getCell("F3").getValue());
+		Assert.assertEquals(null,sheet1.getCell("F4").getValue());
+		Assert.assertEquals("E5",sheet1.getCell("F5").getValue());
+		Assert.assertEquals("F3",sheet1.getCell("G3").getValue());
+		Assert.assertEquals("F4",sheet1.getCell("G4").getValue());
+		Assert.assertEquals("F5",sheet1.getCell("G5").getValue());
+		Assert.assertEquals(null,sheet1.getCell("H3").getValue());
+		Assert.assertEquals(null,sheet1.getCell("H4").getValue());
+		Assert.assertEquals(null,sheet1.getCell("H5").getValue());
+		
+		System.out.println(">>>>>>>>>>>>> Left");
+		//fill  data that will be replaced when move
+		sheet1.getCell("D3").setValue("A");
+		sheet1.getCell("D4").setValue("B");
+		sheet1.getCell("D5").setValue("C");			
+		sheet1.moveCell(2, 4, 4, 6, 0, -1);
+		Assert.assertEquals(null,sheet1.getCell("C3").getValue());
+		Assert.assertEquals(null,sheet1.getCell("C4").getValue());
+		Assert.assertEquals(null,sheet1.getCell("C5").getValue());
+		Assert.assertEquals("D3",sheet1.getCell("D3").getValue());
+		Assert.assertEquals("D4",sheet1.getCell("D4").getValue());
+		Assert.assertEquals("D5",sheet1.getCell("D5").getValue());
+		Assert.assertEquals("E3",sheet1.getCell("E3").getValue());
+		Assert.assertEquals(null,sheet1.getCell("E4").getValue());
+		Assert.assertEquals("E5",sheet1.getCell("E5").getValue());
+		Assert.assertEquals("F3",sheet1.getCell("F3").getValue());
+		Assert.assertEquals("F4",sheet1.getCell("F4").getValue());
+		Assert.assertEquals("F5",sheet1.getCell("F5").getValue());
+		
+		System.out.println(">>>>>>>>>>>>> Down-Right");
+		sheet1.moveCell(2, 3, 4, 5, 1, 1);
+		Assert.assertEquals(null,sheet1.getCell("D3").getValue());
+		Assert.assertEquals(null,sheet1.getCell("D4").getValue());
+		Assert.assertEquals(null,sheet1.getCell("D5").getValue());
+		Assert.assertEquals(null,sheet1.getCell("D6").getValue());
+		
+		Assert.assertEquals(null,sheet1.getCell("E3").getValue());
+		Assert.assertEquals("D3",sheet1.getCell("E4").getValue());
+		Assert.assertEquals("D4",sheet1.getCell("E5").getValue());
+		Assert.assertEquals("D5",sheet1.getCell("E6").getValue());
+		
+		Assert.assertEquals(null,sheet1.getCell("F3").getValue());
+		Assert.assertEquals("E3",sheet1.getCell("F4").getValue());
+		Assert.assertEquals(null,sheet1.getCell("F5").getValue());
+		Assert.assertEquals("E5",sheet1.getCell("F6").getValue());
+		
+		Assert.assertEquals(null,sheet1.getCell("G3").getValue());
+		Assert.assertEquals("F3",sheet1.getCell("G4").getValue());
+		Assert.assertEquals("F4",sheet1.getCell("G5").getValue());
+		Assert.assertEquals("F5",sheet1.getCell("G6").getValue());
+		
+		
+		System.out.println(">>>>>>>>>>>>> Top-Left");
+		sheet1.moveCell(3, 4, 5, 6, -1, -1);
+		Assert.assertEquals("D3",sheet1.getCell("D3").getValue());
+		Assert.assertEquals("D4",sheet1.getCell("D4").getValue());
+		Assert.assertEquals("D5",sheet1.getCell("D5").getValue());
+		Assert.assertEquals("E3",sheet1.getCell("E3").getValue());
+		Assert.assertEquals(null,sheet1.getCell("E4").getValue());
+		Assert.assertEquals("E5",sheet1.getCell("E5").getValue());
+		Assert.assertEquals("F3",sheet1.getCell("F3").getValue());
+		Assert.assertEquals("F4",sheet1.getCell("F4").getValue());
+		Assert.assertEquals("F5",sheet1.getCell("F5").getValue());
+	}
+	
+	@Test
+	public void testMoveCellWithMerge(){
+		NBook book = NBooks.createBook("book1");
+		NSheet sheet1 = initialDataGrid(book.createSheet("Sheet1"));
+		sheet1.getCell("A1").setValue("A");
+		sheet1.addMergedRegion(new CellRegion("B2:C3"));
+		sheet1.addMergedRegion(new CellRegion("D2:E3"));
+		
+		try{
+			sheet1.moveCell(new CellRegion("A1:C2"), 1,1);//source overlap
+			Assert.fail();
+		}catch(InvalidateModelOpException x){}
+		
+		try{
+			sheet1.moveCell(new CellRegion("A1:C3"), 0,3);//target overlap
+			Assert.fail();
+		}catch(InvalidateModelOpException x){}
+		
+		sheet1.moveCell(new CellRegion("A1:C3"), 4, 1);
+		
+		Assert.assertEquals("A", sheet1.getCell("B5").getValue());
+		Assert.assertEquals(2, sheet1.getNumOfMergedRegion());
+		Assert.assertEquals("C6:D7", sheet1.getMergedRegion(5, 2).getReferenceString());
+		Assert.assertEquals("C6:D7", sheet1.getMergedRegion("C6").getReferenceString());
+		Assert.assertEquals("C6:D7", sheet1.getMergedRegion("C7").getReferenceString());
+		Assert.assertEquals("C6:D7", sheet1.getMergedRegion("D6").getReferenceString());
+		Assert.assertEquals("C6:D7", sheet1.getMergedRegion("D7").getReferenceString());
+		
+		
+		
 	}
 	
 	@Test

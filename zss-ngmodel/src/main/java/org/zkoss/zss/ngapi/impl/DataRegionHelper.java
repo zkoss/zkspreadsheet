@@ -92,7 +92,7 @@ import org.zkoss.zss.ngmodel.NSheet;
 	}
 	
 	private static int[] getCellMinMax(NSheet sheet, int row, int col) {
-		CellRegion rng = sheet.getContainsMergedRegion(row,col);
+		CellRegion rng = sheet.getMergedRegion(row,col);
 		if(rng==null){
 			rng = new CellRegion(row,col,row,col);
 		}

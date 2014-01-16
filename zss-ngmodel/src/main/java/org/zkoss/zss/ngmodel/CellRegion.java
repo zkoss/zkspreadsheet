@@ -76,6 +76,10 @@ public class CellRegion implements Serializable {
 		return row >= this.row && row <= this.lastRow && column >= this.column
 				&& column <= this.lastColumn;
 	}
+	public boolean contains(CellRegion region) {
+		return contains(region.row, region.column)
+				&& contains(region.lastRow, region.lastColumn); 
+	}
 
 	public boolean overlaps(CellRegion region) {
 		return contains(region.row, region.column)

@@ -224,8 +224,8 @@ public class RowImpl extends AbstractRowAdv {
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
-	public Iterator<AbstractCellAdv> getCellIterator() {
-		return Collections.unmodifiableCollection(cells.values()).iterator();
+	public Iterator<AbstractCellAdv> getCellIterator(boolean reverse) {
+		return Collections.unmodifiableCollection(reverse?cells.descendingValues():cells.values()).iterator();
 	}
 
 	@Override
@@ -234,15 +234,27 @@ public class RowImpl extends AbstractRowAdv {
 	}
 
 	@Override
-	void moveCellTo(AbstractRowAdv target, int start, int end) {
+	void moveCellTo(AbstractRowAdv target, int start, int end, int offset) {
 		if(!(target instanceof RowImpl)){
 			throw new IllegalStateException("not RowImpl, is "+target);
 		}
+		if(getSheet()!=target.getSheet()){
+			throw new IllegalStateException("not in the same sheet");
+		}
+		
+		if(target!=this){
+			//clear the cell in different target range first
+			Collection<AbstractCellAdv> toReplace = ((RowImpl)target).cells.clear(start+offset, end+offset);
+			for(AbstractCellAdv cell:toReplace){
+				cell.destroy();
+			}
+		}
 		
 		Collection<AbstractCellAdv> toMove = cells.clear(start, end);
-		
 		for(AbstractCellAdv cell:toMove){
-			AbstractCellAdv old = ((RowImpl)target).cells.put(cell.getColumnIndex(), cell);
+			int newidx = cell.getColumnIndex()+offset;
+			AbstractCellAdv old = ((RowImpl)target).cells.put(newidx, cell);
+			cell.setIndex(newidx);
 			cell.setRow(target);
 			if(old!=null){
 				old.destroy();
