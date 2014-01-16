@@ -33,7 +33,7 @@ public interface FormulaExpression {
 	
 	String getFormulaString();
 	
-	String reformSheetNameChanged(String oldName,String newName);
+//	String reformSheetNameChanged(String oldName,String newName);
 	
 	//parsing result for Name
 	

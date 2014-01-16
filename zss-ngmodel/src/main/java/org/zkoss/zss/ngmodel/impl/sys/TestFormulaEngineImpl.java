@@ -5,6 +5,7 @@ import java.util.HashMap;
 import org.zkoss.zss.ngmodel.CellRegion;
 import org.zkoss.zss.ngmodel.ErrorValue;
 import org.zkoss.zss.ngmodel.NCell.CellType;
+import org.zkoss.zss.ngmodel.SheetRegion;
 import org.zkoss.zss.ngmodel.sys.formula.EvaluationResult;
 import org.zkoss.zss.ngmodel.sys.formula.EvaluationResult.ResultType;
 import org.zkoss.zss.ngmodel.sys.formula.FormulaClearContext;
@@ -106,6 +107,16 @@ public class TestFormulaEngineImpl implements FormulaEngine {
 
 	@Override
 	public void clearCache(FormulaClearContext context) {
+	}
+
+	@Override
+	public FormulaExpression shift(String formula, SheetRegion srcRegion, int rowOffset, int columnOffset, FormulaParseContext context) {
+		return null;
+	}
+
+	@Override
+	public FormulaExpression renameSheet(String formula, String oldName, String newName, FormulaParseContext context) {
+		return null;
 	}
 
 }

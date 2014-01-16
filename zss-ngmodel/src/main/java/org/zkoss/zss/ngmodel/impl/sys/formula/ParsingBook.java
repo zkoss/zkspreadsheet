@@ -13,7 +13,9 @@ package org.zkoss.zss.ngmodel.impl.sys.formula;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.zkoss.poi.ss.SpreadsheetVersion;
@@ -36,13 +38,16 @@ import org.zkoss.zss.ngmodel.sys.formula.FormulaEngine;
 public class ParsingBook implements FormulaParsingWorkbook, FormulaRenderingWorkbook {
 	private static final Logger logger = Logger.getLogger(ParsingBook.class.getName());
 
-	private List<String> index2name = new ArrayList<String>();
 	private NBook book;
+	// defined names
+	private List<String> index2name = new ArrayList<String>();
+	private Map<String, Integer> name2index = new HashMap<String, Integer>();
+	// sheets
 	private List<ExternalSheet> index2sheet = new ArrayList<ExternalSheet>();
+	private Map<String, Integer> sheetName2index = new HashMap<String, Integer>();
 
-	public ParsingBook(NBook book, String... names) {
+	public ParsingBook(NBook book) {
 		this.book = book;
-		index2name.addAll(Arrays.asList(names));
 	}
 
 	@Override
@@ -52,9 +57,14 @@ public class ParsingBook implements FormulaParsingWorkbook, FormulaRenderingWork
 
 	@Override
 	public NameXPtg getNameXPtg(String name) {
-		// formula function name
-		int index = index2name.size();
-		index2name.add(name);
+		String key = toKey("", name);
+		Integer index = name2index.get(key);
+		if(index == null) {
+			// formula function name
+			index = index2name.size();
+			index2name.add(name);
+			name2index.put(key, index);
+		}
 		return new NameXPtg(0, index);
 	}
 
@@ -65,13 +75,41 @@ public class ParsingBook implements FormulaParsingWorkbook, FormulaRenderingWork
 
 	@Override
 	public int getExternalSheetIndex(String workbookName, String sheetName) {
-		// create new index and check sheet name is 3D or not
-		int index = index2sheet.size();
-		int p = sheetName.indexOf(':');
-		String name = p < 0 ? sheetName : sheetName.substring(0, p);
-		String lastName = p < 0 ? sheetName : sheetName.substring(p+1);
-		index2sheet.add(new ExternalSheet(workbookName, name, lastName));
+		// directly get index if existed
+		String key = toKey(workbookName, sheetName);
+		Integer index = sheetName2index.get(key);
+		if(index == null) {
+			// create new index and check sheet name is 3D or not
+			index = index2sheet.size();
+			int p = sheetName.indexOf(':');
+			String name = p < 0 ? sheetName : sheetName.substring(0, p);
+			String lastName = p < 0 ? sheetName : sheetName.substring(p+1);
+			index2sheet.add(new ExternalSheet(workbookName, name, lastName));
+			sheetName2index.put(toKey(workbookName, sheetName), index);
+		}
 		return index;
+	}
+	
+	/**
+	 * @param sheetName sheet name or 3D sheet name (e.g "Sheet1:Sheet3")
+	 * @return the external sheet index or -1 if not found
+	 */
+	public int findExternalSheetIndex(String sheetName) {
+		return findExternalSheetIndex(null, sheetName);
+	}
+
+	/**
+	 * @param workbookName book name or null
+	 * @param sheetName sheet name or 3D sheet name (e.g "Sheet1:Sheet3")
+	 * @return the external sheet index or -1 if not found
+	 */
+	public int findExternalSheetIndex(String workbookName, String sheetName) {
+		Integer index = sheetName2index.get(toKey(workbookName, sheetName));
+		return index != null ? index : -1;
+	}
+
+	private String toKey(String... strings) {
+		return Arrays.toString(strings);
 	}
 
 	@Override
@@ -102,9 +140,14 @@ public class ParsingBook implements FormulaParsingWorkbook, FormulaRenderingWork
 
 	@Override
 	public EvaluationName getOrCreateName(String name, int sheetIndex) {
-		int nameIndex = index2name.size();
-		EvaluationName n = new SimpleName(name, nameIndex, sheetIndex);
-		index2name.add(name);
+		String key = toKey(String.valueOf(sheetIndex), name);
+		Integer index = name2index.get(key);
+		if(index == null) {
+			index = index2name.size();
+			index2name.add(name);
+			name2index.put(key, index);
+		}
+		EvaluationName n = new SimpleName(name, index, sheetIndex);
 		return n;
 	}
 	

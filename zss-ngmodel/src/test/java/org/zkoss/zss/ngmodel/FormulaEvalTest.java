@@ -13,6 +13,7 @@ package org.zkoss.zss.ngmodel;
 
 import java.io.Closeable;
 import java.io.InputStream;
+import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.Set;
 import org.junit.Assert;
@@ -29,8 +30,12 @@ import org.zkoss.zss.ngmodel.impl.AbstractBookSeriesAdv;
 import org.zkoss.zss.ngmodel.impl.BookSeriesBuilderImpl;
 import org.zkoss.zss.ngmodel.impl.NameRefImpl;
 import org.zkoss.zss.ngmodel.impl.RefImpl;
+import org.zkoss.zss.ngmodel.sys.EngineFactory;
 import org.zkoss.zss.ngmodel.sys.dependency.DependencyTable;
 import org.zkoss.zss.ngmodel.sys.dependency.Ref;
+import org.zkoss.zss.ngmodel.sys.formula.FormulaEngine;
+import org.zkoss.zss.ngmodel.sys.formula.FormulaExpression;
+import org.zkoss.zss.ngmodel.sys.formula.FormulaParseContext;
 
 /**
  * @author Pao
@@ -648,5 +653,89 @@ public class FormulaEvalTest {
 		Assert.assertFalse(b1.isNull());
 		Assert.assertEquals(CellType.NUMBER, b1.getFormulaResultType());
 		Assert.assertEquals(5, b1.getNumberValue().intValue());
+	}
+	
+	@Test
+	public void testFormulaShifting() {
+
+		FormulaEngine engine = EngineFactory.getInstance().createFormulaEngine();
+		NBook book1 = NBooks.createBook("Book1");
+		NSheet sheetA = book1.createSheet("SheetA");
+		NSheet sheetB = book1.createSheet("SheetB");
+		NBook book2 = NBooks.createBook("Book2");
+		NSheet book2SheetA = book2.createSheet("SheetA");
+		book2.createSheet("SheetB");
+		new BookSeriesBuilderImpl().buildBookSeries(book1, book2);
+		
+		final int maxRow = book1.getMaxRowSize();
+		final int maxColumn = book1.getMaxColumnSize();
+
+		// shift rows
+		String f = "SUM(C3:E5)+SUM(SheetA!C3:E5)+SUM(SheetB!C3:E5)";
+		testFormulaShifting(engine, sheetA, f, new SheetRegion(sheetA, "C3:E5"), 2, 0,
+				"SUM(C5:E7)+SUM(SheetA!C5:E7)+SUM(SheetB!C3:E5)");
+		testFormulaShifting(engine, sheetA, f, new SheetRegion(sheetA, "C3:E5"), -2, 0,
+				"SUM(C1:E3)+SUM(SheetA!C1:E3)+SUM(SheetB!C3:E5)");
+		// shift columns
+		testFormulaShifting(engine, sheetA, f, new SheetRegion(sheetA, "C3:E5"), 0, 2,
+				"SUM(E3:G5)+SUM(SheetA!E3:G5)+SUM(SheetB!C3:E5)");
+		testFormulaShifting(engine, sheetA, f, new SheetRegion(sheetA, "C3:E5"), 0, -2,
+				"SUM(A3:C5)+SUM(SheetA!A3:C5)+SUM(SheetB!C3:E5)");
+		// shift both
+		testFormulaShifting(engine, sheetA, f, new SheetRegion(sheetA, "C3:E5"), 2, 2,
+				"SUM(E5:G7)+SUM(SheetA!E5:G7)+SUM(SheetB!C3:E5)");
+		testFormulaShifting(engine, sheetA, f, new SheetRegion(sheetA, "C3:E5"), -2, -2,
+				"SUM(A1:C3)+SUM(SheetA!A1:C3)+SUM(SheetB!C3:E5)");
+		
+		// shift other sheet's region
+		testFormulaShifting(engine, sheetA, f, new SheetRegion(sheetB, "C3:E5"), 2, 2,
+				"SUM(C3:E5)+SUM(SheetA!C3:E5)+SUM(SheetB!E5:G7)");
+		testFormulaShifting(engine, sheetA, f, new SheetRegion(sheetB, "C3:E5"), -2, -2,
+				"SUM(C3:E5)+SUM(SheetA!C3:E5)+SUM(SheetB!A1:C3)");
+		
+		// out of bound, exceed min.
+		testFormulaShifting(engine, sheetA, f, new SheetRegion(sheetA, "C3:E5"), -3, 0,
+				"SUM(C1:E2)+SUM(SheetA!C1:E2)+SUM(SheetB!C3:E5)");
+		testFormulaShifting(engine, sheetA, f, new SheetRegion(sheetA, "C3:E5"), 0, -3,
+				"SUM(A3:B5)+SUM(SheetA!A3:B5)+SUM(SheetB!C3:E5)");
+		// out of bound, exceed max.
+		testFormulaShifting(engine, sheetA, f, new SheetRegion(sheetA, "C3:E5"), maxRow-3, 0,
+				MessageFormat.format("SUM(C{0}:E{0})+SUM(SheetA!C{0}:E{0})+SUM(SheetB!C3:E5)", String.valueOf(maxRow))); // only last row exceeds 
+		testFormulaShifting(engine, sheetA, f, new SheetRegion(sheetA, "C3:E5"), maxRow, 0,
+				"SUM(#REF!)+SUM(SheetA!#REF!)+SUM(SheetB!C3:E5)"); // first and last both exceed 
+		testFormulaShifting(engine, sheetA, f, new SheetRegion(sheetA, "C3:E5"), 0, maxColumn-3,
+				MessageFormat.format("SUM({0}:{1})+SUM(SheetA!{0}:{1})+SUM(SheetB!C3:E5)", new CellRegion(2, maxColumn-1).getReferenceString(), new CellRegion(4, maxColumn-1).getReferenceString())); // only last column exceeds 
+		testFormulaShifting(engine, sheetA, f, new SheetRegion(sheetA, "C3:E5"), 0, maxColumn,
+				"SUM(#REF!)+SUM(SheetA!#REF!)+SUM(SheetB!C3:E5)"); // first and last both exceed 
+		
+		// external book references
+		f = "SUM(A1:A3)+SUM(SheetA!A1:A3)+SUM([Book2]SheetA!A1:A3)+SUM([Book2]SheetB!A1:A3)";
+		testFormulaShifting(engine, sheetA, f, new SheetRegion(sheetA, "A1:A3"), 2, 0,
+				"SUM(A3:A5)+SUM(SheetA!A3:A5)+SUM([Book2]SheetA!A1:A3)+SUM([Book2]SheetB!A1:A3)"); // shift in current book
+		testFormulaShifting(engine, sheetA, f, new SheetRegion(book2SheetA, "A1:A3"), 2, 0,
+				"SUM(A1:A3)+SUM(SheetA!A1:A3)+SUM([Book2]SheetA!A3:A5)+SUM([Book2]SheetB!A1:A3)"); // shift in external book
+
+		// absolute formula only effect copy and auto-fill operation
+		// move, insert and delete operations still effect absolute formulas  
+		f = "SUM($C3:$E5)+SUM(C$3:E$5)+SUM($C$3:$E$5)";
+		testFormulaShifting(engine, sheetA, f, new SheetRegion(sheetA, "C3:E5"), 2, 2,
+				"SUM($E5:$G7)+SUM(E$5:G$7)+SUM($E$5:$G$7)");
+		
+		// 3D reference, don't get any effected
+		f = "SUM(Sheet1:Sheet3!A1)";
+		testFormulaShifting(engine, sheetA, f, new SheetRegion(sheetA, "A1:A1"), 2, 2, f);
+		
+		// intersection
+		f = "SUM(C3:E5)";
+		testFormulaShifting(engine, sheetA, f, new SheetRegion(sheetA, "D3:E5"), 0, 1, "SUM(C3:F5)");
+		
+
+	}
+
+	private void testFormulaShifting(FormulaEngine engine, NSheet sheet, String f, SheetRegion region, int rowOffset, int colOffset, String expected) {
+		FormulaParseContext context = new FormulaParseContext(sheet, null);
+		FormulaExpression expr = engine.shift(f, region, rowOffset, colOffset, context);
+		Assert.assertFalse(expr.hasError());
+		Assert.assertEquals(expected, expr.getFormulaString());
 	}
 }

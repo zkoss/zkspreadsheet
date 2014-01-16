@@ -31,6 +31,7 @@ import org.zkoss.poi.ss.formula.FormulaParser;
 import org.zkoss.poi.ss.formula.FormulaRenderer;
 import org.zkoss.poi.ss.formula.FormulaType;
 import org.zkoss.poi.ss.formula.IStabilityClassifier;
+import org.zkoss.poi.ss.formula.PtgShifter;
 import org.zkoss.poi.ss.formula.WorkbookEvaluator;
 import org.zkoss.poi.ss.formula.eval.AreaEval;
 import org.zkoss.poi.ss.formula.eval.BlankEval;
@@ -62,6 +63,7 @@ import org.zkoss.zss.ngmodel.ErrorValue;
 import org.zkoss.zss.ngmodel.NBook;
 import org.zkoss.zss.ngmodel.NCell;
 import org.zkoss.zss.ngmodel.NSheet;
+import org.zkoss.zss.ngmodel.SheetRegion;
 import org.zkoss.zss.ngmodel.impl.AbstractBookSeriesAdv;
 import org.zkoss.zss.ngmodel.impl.NameRefImpl;
 import org.zkoss.zss.ngmodel.impl.RefImpl;
@@ -90,7 +92,7 @@ public class FormulaEngineImpl implements FormulaEngine {
 	private final static Logger logger = Logger.getLogger(FormulaEngineImpl.class.getName());
 
 	private Map<EvaluationWorkbook, XelContext> xelContexts = new HashMap<EvaluationWorkbook, XelContext>();
-
+	
 	// for POI formula evaluator
 	protected final static IStabilityClassifier noCacheClassifier = new IStabilityClassifier() {
 		public boolean isCellFinal(int sheetIndex, int rowIndex, int columnIndex) {
@@ -104,17 +106,20 @@ public class FormulaEngineImpl implements FormulaEngine {
 		try {
 			// adapt and parse
 			NBook book = context.getBook();
-			ParsingBook parsingBook = new ParsingBook(book, context.getSheet().getSheetName());
-			Ptg[] tokens = FormulaParser.parse(formula, parsingBook, FormulaType.CELL, 0); // current sheet index in parsing is always 0
+			ParsingBook parsingBook = new ParsingBook(book);
+			int sheetIndex = parsingBook.getExternalSheetIndex(null, context.getSheet().getSheetName());
+			Ptg[] tokens = FormulaParser.parse(formula, parsingBook, FormulaType.CELL, sheetIndex); // current sheet index in parsing is always 0
 
-			// dependency tracking
-			AbstractBookSeriesAdv series = (AbstractBookSeriesAdv)book.getBookSeries();
-			DependencyTableAdv table = (DependencyTableAdv)series.getDependencyTable();
+			// dependency tracking if necessary
 			Ref dependant = context.getDependent();
-			for(Ptg ptg : tokens) {
-				Ref precedent = toDenpendRef(context, parsingBook, ptg);
-				if(precedent != null) {
-					table.add(dependant, precedent);
+			if(dependant != null) {
+				AbstractBookSeriesAdv series = (AbstractBookSeriesAdv)book.getBookSeries();
+				DependencyTableAdv table = (DependencyTableAdv)series.getDependencyTable();
+				for(Ptg ptg : tokens) {
+					Ref precedent = toDenpendRef(context, parsingBook, ptg);
+					if(precedent != null) {
+						table.add(dependant, precedent);
+					}
 				}
 			}
 
@@ -455,12 +460,6 @@ public class FormulaEngineImpl implements FormulaEngine {
 		}
 
 		@Override
-		public String reformSheetNameChanged(String oldName, String newName) {
-			// TODO
-			return formula;
-		}
-
-		@Override
 		public boolean isRefersTo() {
 			return ref != null && (ref.getType() == RefType.AREA || ref.getType() == RefType.CELL);
 		}
@@ -559,4 +558,49 @@ public class FormulaEngineImpl implements FormulaEngine {
 		}
 
 	}
+
+	@Override
+	public FormulaExpression renameSheet(String formula, String oldName, String newName, FormulaParseContext context) {
+		// TODO
+		
+		return null;
+	}
+	
+	@Override
+	public FormulaExpression shift(String formula, SheetRegion region, int rowOffset, int columnOffset, FormulaParseContext context) {
+		FormulaExpression expr = null;
+		try {
+			// adapt and parse
+			ParsingBook parsingBook = new ParsingBook(context.getBook());
+			String bookName = context.getBook().getBookName();
+			String sheetName = context.getSheet().getSheetName();
+			int sheetIndex = parsingBook.getExternalSheetIndex(null, sheetName); // create index according parsing book logic
+			Ptg[] tokens = FormulaParser.parse(formula, parsingBook, FormulaType.CELL, sheetIndex); // current sheet index in parsing is always 0
+
+			// shift formula, limit to bound if dest. is out; if first and last both out on bound, it will be "#REF!"
+			String regionBookName = region.getSheet().getBook().getBookName();
+			String regionSheetName = region.getSheet().getSheetName();
+			int regionSheetIndex;
+			if(bookName.equals(regionBookName)) { // at same book
+				regionSheetIndex = parsingBook.findExternalSheetIndex(regionSheetName); // find index, DON'T create
+			} else { // different books
+				regionSheetIndex = parsingBook.findExternalSheetIndex(regionBookName, regionSheetName); // find index, DON'T create
+			}
+			PtgShifter shifter = new PtgShifter(regionSheetIndex, region.getRow(), region.getLastRow(),
+					rowOffset, region.getColumn(), region.getLastColumn(), columnOffset,
+					parsingBook.getSpreadsheetVersion());
+			boolean shifted = shifter.adjustFormula(tokens, sheetIndex);
+
+			// render formula, detect region and create result
+			String renderedFormula = shifted ? FormulaRenderer.toFormulaString(parsingBook, tokens) : formula;
+			Ref singleRef = tokens.length == 1 ? toDenpendRef(context, parsingBook, tokens[0]) : null;
+			expr = new FormulaExpressionImpl(renderedFormula, singleRef, false);
+
+		} catch(FormulaParseException e) {
+			logger.log(Level.INFO, e.getMessage());
+			expr = new FormulaExpressionImpl(formula, null, true);
+		}
+		return expr;
+	}
+
 }
