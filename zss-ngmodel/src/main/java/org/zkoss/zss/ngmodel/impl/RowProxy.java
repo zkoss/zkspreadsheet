@@ -181,10 +181,10 @@ class RowProxy extends AbstractRowAdv{
 		proxy.setCustomHeight(custom);
 	}
 	@Override
-	public Iterator<AbstractCellAdv> getCellIterator() {
+	public Iterator<AbstractCellAdv> getCellIterator(boolean reverse) {
 		loadProxy();
 		if (proxy != null) {
-			return proxy.getCellIterator();
+			return proxy.getCellIterator(reverse);
 		}
 		return Collections.EMPTY_LIST.iterator();
 	}
@@ -193,7 +193,7 @@ class RowProxy extends AbstractRowAdv{
 		throw new UnsupportedOperationException("readonly");
 	}
 	@Override
-	void moveCellTo(AbstractRowAdv target, int start, int end) {
+	void moveCellTo(AbstractRowAdv target, int start, int end, int offset) {
 		throw new UnsupportedOperationException("readonly");
 	}
 	

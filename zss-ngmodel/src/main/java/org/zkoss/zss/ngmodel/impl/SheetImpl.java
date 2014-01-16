@@ -327,6 +327,9 @@ public class SheetImpl extends AbstractSheetAdv {
 	@Override
 	public NCell getCell(String cellRef) {
 		CellRegion region = new CellRegion(cellRef);
+		if(!region.isSingle()){
+			throw new IllegalArgumentException("not a single ref "+cellRef);
+		}
 		return getCell(region.getRow(),region.getColumn(),true);
 	}
 	
@@ -493,6 +496,12 @@ public class SheetImpl extends AbstractSheetAdv {
 //		
 //	}
 
+	@Override
+	public void clearCell(CellRegion region) {
+		this.clearCell(region.getRow(), region.getColumn(), region.getLastRow(), region.getLastColumn());
+	}
+	
+	@Override
 	public void clearCell(int rowIdx, int columnIdx, int rowIdx2,
 			int columnIdx2) {
 		int rowStart = Math.min(rowIdx, rowIdx2);
@@ -685,7 +694,7 @@ public class SheetImpl extends AbstractSheetAdv {
 					row.clearCell(columnIdx,columnIdx+columnSize-1);
 				}else{
 					AbstractRowAdv target = getOrCreateRow(idx);
-					row.moveCellTo(target,columnIdx,columnIdx+columnSize-1);
+					row.moveCellTo(target,columnIdx,columnIdx+columnSize-1,0);
 				}
 			}
 
@@ -724,7 +733,7 @@ public class SheetImpl extends AbstractSheetAdv {
 			for(AbstractRowAdv row: new ArrayList<AbstractRowAdv>(effectedRows)){//to aovid concurrent modify
 				//move the cell up
 				AbstractRowAdv target = getOrCreateRow(row.getIndex()-rowSize);
-				row.moveCellTo(target,columnIdx,columnIdx+columnSize-1);
+				row.moveCellTo(target,columnIdx,columnIdx+columnSize-1,0);
 			}
 		}
 		
@@ -987,13 +996,88 @@ public class SheetImpl extends AbstractSheetAdv {
 
 		checkColumnArrayStatus();
 	}
+	@Override
+	public void moveCell(CellRegion region,int rowOffset, int columnOffset) {
+		this.moveCell(region.getRow(), region.getColumn(), region.getLastRow(), region.getLastColumn(),rowOffset,columnOffset);
+	}
 	
+	@Override
 	public void moveCell(int rowIdx, int columnIdx,int lastRowIdx,int lastColumnIdx, int rowOffset, int columnOffset){
 		if(rowOffset==0 && columnOffset==0)
 			return;
 		
+		int maxRow = getBook().getMaxRowSize();
+		int maxCol = getBook().getMaxColumnSize();
+		
+		if(rowIdx<0 || columnIdx<0 || 
+				rowIdx > lastRowIdx || lastRowIdx >= maxRow || columnIdx>lastColumnIdx || lastColumnIdx>=maxCol){
+			throw new IllegalArgumentException(new CellRegion(rowIdx,columnIdx,lastRowIdx,lastColumnIdx).getReferenceString()+" is illegal");
+		}
+		
+		if(rowIdx+rowOffset<0 || columnIdx+columnOffset<0 || 
+				lastRowIdx+rowOffset >= maxRow|| lastColumnIdx+columnOffset >= maxCol){
+			throw new IllegalArgumentException(new CellRegion(rowIdx,columnIdx,lastRowIdx,lastColumnIdx).getReferenceString()+" can't move to offset "+rowOffset+","+columnOffset);
+		}
+		
+		//check merge overlaps and contains
+		CellRegion sreRegion = new CellRegion(rowIdx,columnIdx,lastRowIdx,lastColumnIdx);
+		Collection<CellRegion> containsMerge = getContainsMergedRegions(sreRegion);
+		Collection<CellRegion> overlapsMerge = getOverlapsMergedRegions(sreRegion);
+		if(containsMerge.size()!=overlapsMerge.size()){
+			ArrayList<CellRegion> ov = new ArrayList<CellRegion>(overlapsMerge);
+			ov.removeAll(containsMerge);
+			throw new InvalidateModelOpException("can't move to "+sreRegion+" which overlaps merge area "+ov);
+		}
+		CellRegion targetRegion = new CellRegion(rowIdx+rowOffset,columnIdx+columnOffset,lastRowIdx+rowOffset,lastColumnIdx+columnOffset);
+		if(getOverlapsMergedRegions(targetRegion).size()>0){
+			throw new InvalidateModelOpException("can't move to "+targetRegion+" which overlaps merge area");
+		}
 		
 		
+		boolean reverseYDir = rowOffset>0;
+		boolean reverseXDir = columnOffset>0;
+		
+		int rowStart = reverseYDir?lastRowIdx:rowIdx;
+		int rowEnd = reverseYDir?rowIdx:lastRowIdx;
+		int colStart = reverseXDir?lastColumnIdx:columnIdx;
+		int colEnd = reverseXDir?columnIdx:lastColumnIdx;
+		
+		for(int r = rowStart; reverseYDir?r>=rowEnd:r<=rowEnd;){
+			int tr = r+rowOffset;
+			AbstractRowAdv row = getRow(r,false);
+			for(int c = colStart; reverseXDir?c>=colEnd:c<=colEnd;){
+				int tc = c+columnOffset;
+				NCell cell = row==null?null:row.getCell(c, false);
+				if(cell==null){ // no such cell, the clear the target cell
+					clearCell(tr, tc, tr, tc);
+				}else{
+					AbstractRowAdv target = getOrCreateRow(tr);
+					row.moveCellTo(target, c, c, columnOffset);
+				}
+				if(reverseXDir){
+					c--;
+				}else{
+					c++;
+				}				
+			}
+			if(reverseYDir){
+				r--;
+			}else{
+				r++;
+			}
+		}
+		
+		//shift the merge
+		mergedRegions.removeAll(containsMerge);
+		for(CellRegion merge:containsMerge){
+			CellRegion newMerge = new CellRegion(merge.getRow() + rowOffset,merge.getColumn()+ columnOffset,
+					merge.getLastRow()+rowOffset,merge.getLastColumn()+columnOffset);
+			mergedRegions.add(newMerge);
+			//TODO zss 3.5 collect merge change info
+		}
+		
+		
+		//TODO handle the merge, validation and other stuff
 	}
 
 	
@@ -1151,7 +1235,26 @@ public class SheetImpl extends AbstractSheetAdv {
 		return list;
 	}
 	@Override
-	public CellRegion getContainsMergedRegion(int row, int column) {
+	public List<CellRegion> getContainsMergedRegions(CellRegion region) {
+		List<CellRegion> list =new LinkedList<CellRegion>(); 
+		for(CellRegion r:mergedRegions){
+			if(region.contains(r)){
+				list.add(r);
+			}
+		}
+		return list;
+	}	
+	
+	@Override
+	public CellRegion getMergedRegion(String cellRef) {
+		CellRegion region = new CellRegion(cellRef);
+		if(!region.isSingle()){
+			throw new IllegalArgumentException("not a single ref "+cellRef);
+		}
+		return getMergedRegion(region.getRow(),region.getColumn());
+	}
+	@Override
+	public CellRegion getMergedRegion(int row, int column) {
 		List<CellRegion> list =new LinkedList<CellRegion>(); 
 		for(CellRegion r:mergedRegions){
 			if(r.contains(row, column)){
@@ -1234,9 +1337,9 @@ public class SheetImpl extends AbstractSheetAdv {
 	public Iterator<NCell> getCellIterator(int row,boolean joinDataGrid) {
 		NDataGrid dg = getDataGrid();
 		if(joinDataGrid && dg!=null && dg.isProvidedIterator()){
-			return new JoinCellIterator(this,row,(Iterator)((AbstractRowAdv)getRow(row)).getCellIterator(),dg.getCellIterator(row));
+			return new JoinCellIterator(this,row,(Iterator)((AbstractRowAdv)getRow(row)).getCellIterator(false),dg.getCellIterator(row));
 		}else{
-			return (Iterator)((AbstractRowAdv)getRow(row)).getCellIterator();
+			return (Iterator)((AbstractRowAdv)getRow(row)).getCellIterator(false);
 		}
 	}
 	
