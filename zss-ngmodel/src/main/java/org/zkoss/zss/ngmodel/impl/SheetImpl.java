@@ -16,6 +16,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.ngmodel.impl;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -25,9 +26,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
 
-import org.zkoss.poi.ss.usermodel.AutoFilter;
-import org.zkoss.poi.ss.util.CellRangeAddress;
-import org.zkoss.poi.xssf.usermodel.XSSFAutoFilter.XSSFFilterColumn;
 import org.zkoss.zss.ngmodel.CellRegion;
 import org.zkoss.zss.ngmodel.InvalidateModelOpException;
 import org.zkoss.zss.ngmodel.NAutoFilter;
@@ -44,8 +42,8 @@ import org.zkoss.zss.ngmodel.NPicture;
 import org.zkoss.zss.ngmodel.NPicture.Format;
 import org.zkoss.zss.ngmodel.NPrintSetup;
 import org.zkoss.zss.ngmodel.NRow;
-import org.zkoss.zss.ngmodel.NViewAnchor;
 import org.zkoss.zss.ngmodel.NSheetViewInfo;
+import org.zkoss.zss.ngmodel.NViewAnchor;
 import org.zkoss.zss.ngmodel.util.CellReference;
 import org.zkoss.zss.ngmodel.util.Validations;
 /**
@@ -496,10 +494,8 @@ public class SheetImpl extends AbstractSheetAdv {
 		int columnEnd = Math.max(columnIdx, columnIdx2);
 		
 		Collection<AbstractRowAdv> effected = rows.subValues(rowStart,rowEnd);
-		
-		Iterator<AbstractRowAdv> iter = effected.iterator();
-		while(iter.hasNext()){
-			iter.next().clearCell(columnStart, columnEnd);
+		for(AbstractRowAdv row:effected){
+			row.clearCell(columnStart, columnEnd);
 		}
 	}
 
@@ -523,6 +519,33 @@ public class SheetImpl extends AbstractSheetAdv {
 				ModelInternalEvents.createDataMap(ModelInternalEvents.PARAM_ROW_INDEX, rowIdx,
 						ModelInternalEvents.PARAM_SIZE, size)));
 	}
+	
+	
+
+	public void deleteRow(int rowIdx, int size) {
+		checkOrphan();
+		if(size<=0) return;
+		NDataGrid dg = getDataGrid();
+		if(dg!=null){
+			if(!dg.isSupportedOperations()){
+				throw new InvalidateModelOpException("doesn't support insert/delete");
+			}
+			dg.deleteRow(rowIdx, size);
+		}
+		
+		//clear before move relation
+		for(AbstractRowAdv row:rows.subValues(rowIdx,rowIdx+size-1)){
+			row.destroy();
+		}
+		
+		rows.delete(rowIdx, size);
+		
+		shiftAfterRowDelete(rowIdx,size);
+		
+		book.sendModelInternalEvent(ModelInternalEvents.createModelInternalEvent(ModelInternalEvents.ON_ROW_DELETED, 
+				this, ModelInternalEvents.createDataMap(ModelInternalEvents.PARAM_ROW_INDEX, rowIdx, 
+						ModelInternalEvents.PARAM_SIZE, size)));
+	}	
 	
 	private void shiftAfterRowInsert(int rowIdx, int size) {
 		// handling pic shift
@@ -613,29 +636,76 @@ public class SheetImpl extends AbstractSheetAdv {
 		//TODO shift data validation?
 	}
 	
-
-	public void deleteRow(int rowIdx, int size) {
+	public void insertCell(int rowIdx,int columnIdx,int rowSize, int columnSize,boolean horizontal){
 		checkOrphan();
-		if(size<=0) return;
+		if(rowSize<=0 || columnSize<=0) return;
 		NDataGrid dg = getDataGrid();
 		if(dg!=null){
 			if(!dg.isSupportedOperations()){
 				throw new InvalidateModelOpException("doesn't support insert/delete");
 			}
-			dg.deleteRow(rowIdx, size);
+			//TODO
+//			dg.insertCell(rowIdx, columnIdx, rowSize,columnSize,horizontal);
 		}
 		
-		//clear before move relation
-		for(AbstractRowAdv row:rows.subValues(rowIdx,rowIdx+size)){
-			row.destroy();
-		}		
-		rows.delete(rowIdx, size);
 		
-		shiftAfterRowDelete(rowIdx,size);	
+		if(horizontal){
+			Collection<AbstractRowAdv> effectedRows = rows.subValues(rowIdx,rowIdx+rowSize-1);
+			for(AbstractRowAdv row:effectedRows){
+				row.insertCell(columnIdx,columnSize);
+			}	
+		}else{
+			Collection<AbstractRowAdv> effectedRows = rows.descendingSubValues(rowIdx,Integer.MAX_VALUE);
+			for(AbstractRowAdv row: new ArrayList<AbstractRowAdv>(effectedRows)){//to aovid concurrent modify
+				//move the cell down to target row
+				AbstractRowAdv target = getOrCreateRow(row.getIndex()+rowSize);
+				row.moveCellTo(target,columnIdx,columnIdx+columnSize-1);
+			}
+
+		}
 		
-		book.sendModelInternalEvent(ModelInternalEvents.createModelInternalEvent(ModelInternalEvents.ON_ROW_DELETED, 
-				this, ModelInternalEvents.createDataMap(ModelInternalEvents.PARAM_ROW_INDEX, rowIdx, 
-						ModelInternalEvents.PARAM_SIZE, size)));
+//		shiftAfterCellInsert(rowIdx, columnIdx, rowSize,columnSize,horizontal);
+//		
+//		book.sendModelInternalEvent(ModelInternalEvents.createModelInternalEvent(ModelInternalEvents.ON_CELL_INSERTED, 
+//				this, 
+//				ModelInternalEvents.createDataMap(ModelInternalEvents.PARAM_ROW_INDEX, rowIdx,
+//						ModelInternalEvents.PARAM_SIZE, size)));
+		
+	}
+	public void deleteCell(int rowIdx,int columnIdx,int rowSize, int columnSize,boolean horizontal){
+		checkOrphan();
+		if(rowSize<=0 || columnSize<=0) return;
+		NDataGrid dg = getDataGrid();
+		if(dg!=null){
+			if(!dg.isSupportedOperations()){
+				throw new InvalidateModelOpException("doesn't support insert/delete");
+			}
+			//TODO
+//			dg.deleteCell(rowIdx, columnIdx, rowSize,columnSize,horizontal);
+		}
+		if(horizontal){
+			Collection<AbstractRowAdv> effected = rows.subValues(rowIdx,rowIdx+rowSize-1);
+			for(AbstractRowAdv row:effected){
+				row.deleteCell(columnIdx,columnSize);
+			}	
+		}else{
+			Collection<AbstractRowAdv> effectedRows = rows.subValues(rowIdx,rowIdx+rowSize-1);
+			for(AbstractRowAdv row:effectedRows){
+				row.clearCell(columnIdx,columnIdx+columnSize-1);
+			}
+			effectedRows = rows.subValues(rowIdx+rowSize,Integer.MAX_VALUE);
+			for(AbstractRowAdv row: new ArrayList<AbstractRowAdv>(effectedRows)){//to aovid concurrent modify
+				//move the cell up
+				AbstractRowAdv target = getOrCreateRow(row.getIndex()-rowSize);
+				row.moveCellTo(target,columnIdx,columnIdx+columnSize-1);
+			}
+		}
+		
+//		shiftAfterCellDelete(rowIdx, columnIdx, rowSize,columnSize,horizontal);
+//		
+//		book.sendModelInternalEvent(ModelInternalEvents.createModelInternalEvent(ModelInternalEvents.ON_CELL_DELETED, 
+//				this, ModelInternalEvents.createDataMap(ModelInternalEvents.PARAM_ROW_INDEX, rowIdx, 
+//						ModelInternalEvents.PARAM_SIZE, size)));
 	}
 	
 	@Override

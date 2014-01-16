@@ -17,29 +17,22 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.ngmodel.impl;
 
 import java.io.Serializable;
-import java.util.Collection;
 import java.util.Date;
-import java.util.Set;
 
 import org.zkoss.zss.ngmodel.CellRegion;
 import org.zkoss.zss.ngmodel.ErrorValue;
-import org.zkoss.zss.ngmodel.InvalidateModelOpException;
 import org.zkoss.zss.ngmodel.InvalidateModelValueException;
 import org.zkoss.zss.ngmodel.NBookSeries;
 import org.zkoss.zss.ngmodel.NCellStyle;
+import org.zkoss.zss.ngmodel.NCellValue;
 import org.zkoss.zss.ngmodel.NColumnArray;
 import org.zkoss.zss.ngmodel.NComment;
-import org.zkoss.zss.ngmodel.NCellValue;
 import org.zkoss.zss.ngmodel.NDataGrid;
 import org.zkoss.zss.ngmodel.NHyperlink;
 import org.zkoss.zss.ngmodel.NRichText;
 import org.zkoss.zss.ngmodel.NSheet;
-import org.zkoss.zss.ngmodel.NCell.CellType;
 import org.zkoss.zss.ngmodel.sys.EngineFactory;
-import org.zkoss.zss.ngmodel.sys.dependency.DependencyTable;
 import org.zkoss.zss.ngmodel.sys.dependency.Ref;
-import org.zkoss.zss.ngmodel.sys.formula.EvaluationResult;
-import org.zkoss.zss.ngmodel.sys.formula.EvaluationResult.ResultType;
 import org.zkoss.zss.ngmodel.sys.formula.FormulaClearContext;
 import org.zkoss.zss.ngmodel.sys.formula.FormulaEngine;
 import org.zkoss.zss.ngmodel.sys.formula.FormulaEvaluationContext;
@@ -236,10 +229,12 @@ public class CellImpl extends AbstractCellAdv {
 		return false;
 	}
 	
-	private void clearFormulaDependency(){
-		Ref ref = getRef();
-		((AbstractBookSeriesAdv) getSheet().getBook().getBookSeries())
-					.getDependencyTable().clearDependents(ref);
+	/*package*/ void clearFormulaDependency(){
+		if(lastRef!=null){
+			((AbstractBookSeriesAdv) getSheet().getBook().getBookSeries())
+					.getDependencyTable().clearDependents(lastRef);
+		}
+		lastRef = null;
 	}
 
 	@Override
@@ -390,10 +385,31 @@ public class CellImpl extends AbstractCellAdv {
 		this.index = newidx;
 	}
 	
+	@Override
+	void setRow(AbstractRowAdv row){
+		checkOrphan();
+		this.row = row;
+	}
+	
+	private Ref lastRef;
+
+	protected Ref getRef(){
+		if(lastRef==null){//keep the last ref for clear dependency (cell is possible be shifted)
+			lastRef = new RefImpl(this);
+		}
+		return lastRef;
+	}
+	
 	private static class InnerCellValue extends NCellValue{
 		private static final long serialVersionUID = 1L;
 		private InnerCellValue(CellType type, Object value){
 			super(type,value);
 		}
+	}
+	
+	public String toString(){
+		StringBuilder sb = new StringBuilder();
+		sb.append("Cell:[").append(getRowIndex()).append(",").append(getColumnIndex()).append("]");
+		return sb.toString();
 	}
 }

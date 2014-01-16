@@ -192,4 +192,14 @@ class RowProxy extends AbstractRowAdv{
 	void setIndex(int newidx) {
 		throw new UnsupportedOperationException("readonly");
 	}
+	@Override
+	void moveCellTo(AbstractRowAdv target, int start, int end) {
+		throw new UnsupportedOperationException("readonly");
+	}
+	
+	public String toString(){
+		StringBuilder sb = new StringBuilder();
+		sb.append("Row:").append(getIndex());
+		return sb.toString();
+	}
 }

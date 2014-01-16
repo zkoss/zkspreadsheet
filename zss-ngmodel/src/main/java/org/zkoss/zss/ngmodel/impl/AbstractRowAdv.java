@@ -50,4 +50,6 @@ public abstract class AbstractRowAdv implements NRow,LinkedModelObject,Serializa
 	/*package*/ abstract Iterator<AbstractCellAdv> getCellIterator();
 
 	/*package*/ abstract void setIndex(int newidx);
+
+	/*package*/ abstract void moveCellTo(AbstractRowAdv target, int start, int end);
 }

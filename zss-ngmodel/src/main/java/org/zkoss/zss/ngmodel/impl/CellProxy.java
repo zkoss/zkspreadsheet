@@ -28,6 +28,7 @@ import org.zkoss.zss.ngmodel.NHyperlink;
 import org.zkoss.zss.ngmodel.NRichText;
 import org.zkoss.zss.ngmodel.NSheet;
 import org.zkoss.zss.ngmodel.NCell.CellType;
+import org.zkoss.zss.ngmodel.sys.dependency.Ref;
 import org.zkoss.zss.ngmodel.sys.formula.FormulaExpression;
 import org.zkoss.zss.ngmodel.util.Validations;
 /**
@@ -290,5 +291,13 @@ class CellProxy extends AbstractCellAdv {
 	@Override
 	void setIndex(int newidx) {
 		throw new UnsupportedOperationException("readonly");
+	}
+	@Override
+	void setRow(AbstractRowAdv row) {
+		throw new UnsupportedOperationException("readonly");
+	}
+	
+	protected Ref getRef(){
+		return new RefImpl(this);
 	}
 }

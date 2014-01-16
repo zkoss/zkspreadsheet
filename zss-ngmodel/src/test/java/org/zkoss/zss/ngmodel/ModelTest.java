@@ -2509,6 +2509,312 @@ public class ModelTest {
 		Assert.assertEquals(0, refs.size());
 	}
 	
+//	@Test
+//	public void testRowColumnInsertDeleteDependency(){
+//		NBook book = NBooks.createBook("book1");
+//		NSheet sheet1 = initialDataGrid(book.createSheet("Sheet1"));
+//		
+//		sheet1.getCell("C3").setValue(3);
+//		sheet1.getCell("A1").setFormulaValue("C3");
+//		
+//		Assert.assertEquals(3D, sheet1.getCell("A1").getValue());
+//		
+//		sheet1.insertRow(1,1);
+//		
+//		
+//	}
+	
+	@Test
+	public void testInsertDeleteCellVertical(){
+		NBook book = NBooks.createBook("book1");
+		NSheet sheet1 = initialDataGrid(book.createSheet("Sheet1"));
+		
+		sheet1.getCell("A1").setValue("A1");
+		sheet1.getCell("A2").setValue("A2");
+		sheet1.getCell("A3").setValue("A3");
+		sheet1.getCell("A4").setValue("A4");
+		sheet1.getCell("B1").setValue("B1");
+		sheet1.getCell("B2").setValue("B2");
+		sheet1.getCell("B3").setValue("B3");
+		sheet1.getCell("B4").setValue("B4");
+		sheet1.getCell("C1").setValue("C1");
+		sheet1.getCell("C2").setValue("C2");
+		sheet1.getCell("C3").setValue("C3");
+		sheet1.getCell("C4").setValue("C4");
+		sheet1.getCell("D1").setValue("D1");
+		sheet1.getCell("D2").setValue("D2");
+		sheet1.getCell("D3").setValue("D3");
+		sheet1.getCell("D4").setValue("D4");
+		
+		sheet1.insertCell(1, 1, 2, 2, false);
+		
+		Assert.assertEquals("A1",sheet1.getCell("A1").getValue());
+		Assert.assertEquals("A2",sheet1.getCell("A2").getValue());
+		Assert.assertEquals("A3",sheet1.getCell("A3").getValue());
+		Assert.assertEquals("A4",sheet1.getCell("A4").getValue());
+		
+		Assert.assertEquals("B1",sheet1.getCell("B1").getValue());
+		Assert.assertEquals(null,sheet1.getCell("B2").getValue());
+		Assert.assertEquals(null,sheet1.getCell("B3").getValue());
+		Assert.assertEquals("B2",sheet1.getCell("B4").getValue());
+		Assert.assertEquals("B3",sheet1.getCell("B5").getValue());
+		Assert.assertEquals("B4",sheet1.getCell("B6").getValue());
+		
+		Assert.assertEquals("C1",sheet1.getCell("C1").getValue());
+		Assert.assertEquals(null,sheet1.getCell("C2").getValue());
+		Assert.assertEquals(null,sheet1.getCell("C3").getValue());
+		Assert.assertEquals("C2",sheet1.getCell("C4").getValue());
+		Assert.assertEquals("C3",sheet1.getCell("C5").getValue());
+		Assert.assertEquals("C4",sheet1.getCell("C6").getValue());
+		
+		Assert.assertEquals("D1",sheet1.getCell("D1").getValue());
+		Assert.assertEquals("D2",sheet1.getCell("D2").getValue());
+		Assert.assertEquals("D3",sheet1.getCell("D3").getValue());
+		Assert.assertEquals("D4",sheet1.getCell("D4").getValue());
+		
+		
+		sheet1.deleteCell(2, 2, 2, 2, false);
+		
+		Assert.assertEquals("A1",sheet1.getCell("A1").getValue());
+		Assert.assertEquals("A2",sheet1.getCell("A2").getValue());
+		Assert.assertEquals("A3",sheet1.getCell("A3").getValue());
+		Assert.assertEquals("A4",sheet1.getCell("A4").getValue());
+		
+		Assert.assertEquals("B1",sheet1.getCell("B1").getValue());
+		Assert.assertEquals(null,sheet1.getCell("B2").getValue());
+		Assert.assertEquals(null,sheet1.getCell("B3").getValue());
+		Assert.assertEquals("B2",sheet1.getCell("B4").getValue());
+		Assert.assertEquals("B3",sheet1.getCell("B5").getValue());
+		Assert.assertEquals("B4",sheet1.getCell("B6").getValue());
+		
+		Assert.assertEquals("C1",sheet1.getCell("C1").getValue());
+		Assert.assertEquals(null,sheet1.getCell("C2").getValue());
+		Assert.assertEquals("C3",sheet1.getCell("C3").getValue());
+		Assert.assertEquals("C4",sheet1.getCell("C4").getValue());
+		Assert.assertEquals(null,sheet1.getCell("C5").getValue());
+		Assert.assertEquals(null,sheet1.getCell("C6").getValue());
+		
+		Assert.assertEquals("D1",sheet1.getCell("D1").getValue());
+		Assert.assertEquals("D2",sheet1.getCell("D2").getValue());
+		Assert.assertEquals(null,sheet1.getCell("D3").getValue());
+		Assert.assertEquals(null,sheet1.getCell("D4").getValue());
+		
+		sheet1.insertCell(0, 0, 1, 1, false);
+		Assert.assertEquals(null,sheet1.getCell("A1").getValue());
+		Assert.assertEquals("A1",sheet1.getCell("A2").getValue());
+		Assert.assertEquals("A2",sheet1.getCell("A3").getValue());
+		Assert.assertEquals("A3",sheet1.getCell("A4").getValue());
+		Assert.assertEquals("A4",sheet1.getCell("A5").getValue());
+		
+		Assert.assertEquals("B1",sheet1.getCell("B1").getValue());
+		Assert.assertEquals(null,sheet1.getCell("B2").getValue());
+		Assert.assertEquals(null,sheet1.getCell("B3").getValue());
+		Assert.assertEquals("B2",sheet1.getCell("B4").getValue());
+		Assert.assertEquals("B3",sheet1.getCell("B5").getValue());
+		Assert.assertEquals("B4",sheet1.getCell("B6").getValue());
+		
+		Assert.assertEquals("C1",sheet1.getCell("C1").getValue());
+		Assert.assertEquals(null,sheet1.getCell("C2").getValue());
+		Assert.assertEquals("C3",sheet1.getCell("C3").getValue());
+		Assert.assertEquals("C4",sheet1.getCell("C4").getValue());
+		Assert.assertEquals(null,sheet1.getCell("C5").getValue());
+		Assert.assertEquals(null,sheet1.getCell("C6").getValue());
+		
+		Assert.assertEquals("D1",sheet1.getCell("D1").getValue());
+		Assert.assertEquals("D2",sheet1.getCell("D2").getValue());
+		Assert.assertEquals(null,sheet1.getCell("D3").getValue());
+		Assert.assertEquals(null,sheet1.getCell("D4").getValue());
+		
+		
+		sheet1.deleteCell(0, 0, 1, 1, false);
+		Assert.assertEquals("A1",sheet1.getCell("A1").getValue());
+		Assert.assertEquals("A2",sheet1.getCell("A2").getValue());
+		Assert.assertEquals("A3",sheet1.getCell("A3").getValue());
+		Assert.assertEquals("A4",sheet1.getCell("A4").getValue());
+		
+		Assert.assertEquals("B1",sheet1.getCell("B1").getValue());
+		Assert.assertEquals(null,sheet1.getCell("B2").getValue());
+		Assert.assertEquals(null,sheet1.getCell("B3").getValue());
+		Assert.assertEquals("B2",sheet1.getCell("B4").getValue());
+		Assert.assertEquals("B3",sheet1.getCell("B5").getValue());
+		Assert.assertEquals("B4",sheet1.getCell("B6").getValue());
+		
+		Assert.assertEquals("C1",sheet1.getCell("C1").getValue());
+		Assert.assertEquals(null,sheet1.getCell("C2").getValue());
+		Assert.assertEquals("C3",sheet1.getCell("C3").getValue());
+		Assert.assertEquals("C4",sheet1.getCell("C4").getValue());
+		Assert.assertEquals(null,sheet1.getCell("C5").getValue());
+		Assert.assertEquals(null,sheet1.getCell("C6").getValue());
+		
+		Assert.assertEquals("D1",sheet1.getCell("D1").getValue());
+		Assert.assertEquals("D2",sheet1.getCell("D2").getValue());
+		Assert.assertEquals(null,sheet1.getCell("D3").getValue());
+		Assert.assertEquals(null,sheet1.getCell("D4").getValue());
+		
+		
+		sheet1.insertCell(100, 100, 2, 2, false);
+		sheet1.deleteCell(100, 100, 2, 2, false);
+		
+	}
+	
+	@Test
+	public void testInsertDeleteCellHorzontal(){
+		NBook book = NBooks.createBook("book1");
+		NSheet sheet1 = initialDataGrid(book.createSheet("Sheet1"));
+		
+		sheet1.getCell("A1").setValue("A1");
+		sheet1.getCell("A2").setValue("A2");
+		sheet1.getCell("A3").setValue("A3");
+		sheet1.getCell("A4").setValue("A4");
+		sheet1.getCell("B1").setValue("B1");
+		sheet1.getCell("B2").setValue("B2");
+		sheet1.getCell("B3").setValue("B3");
+		sheet1.getCell("B4").setValue("B4");
+		sheet1.getCell("C1").setValue("C1");
+		sheet1.getCell("C2").setValue("C2");
+		sheet1.getCell("C3").setValue("C3");
+		sheet1.getCell("C4").setValue("C4");
+		sheet1.getCell("D1").setValue("D1");
+		sheet1.getCell("D2").setValue("D2");
+		sheet1.getCell("D3").setValue("D3");
+		sheet1.getCell("D4").setValue("D4");
+		
+		sheet1.insertCell(1, 1, 2, 2, true);
+		
+		Assert.assertEquals("A1",sheet1.getCell("A1").getValue());
+		Assert.assertEquals("A2",sheet1.getCell("A2").getValue());
+		Assert.assertEquals("A3",sheet1.getCell("A3").getValue());
+		Assert.assertEquals("A4",sheet1.getCell("A4").getValue());
+		
+		Assert.assertEquals("B1",sheet1.getCell("B1").getValue());
+		Assert.assertEquals(null,sheet1.getCell("B2").getValue());
+		Assert.assertEquals(null,sheet1.getCell("B3").getValue());
+		Assert.assertEquals("B4",sheet1.getCell("B4").getValue());
+		
+		
+		Assert.assertEquals("C1",sheet1.getCell("C1").getValue());
+		Assert.assertEquals(null,sheet1.getCell("C2").getValue());
+		Assert.assertEquals(null,sheet1.getCell("C3").getValue());
+		Assert.assertEquals("C4",sheet1.getCell("C4").getValue());
+		
+		Assert.assertEquals("D1",sheet1.getCell("D1").getValue());
+		Assert.assertEquals("B2",sheet1.getCell("D2").getValue());
+		Assert.assertEquals("B3",sheet1.getCell("D3").getValue());
+		Assert.assertEquals("D4",sheet1.getCell("D4").getValue());
+		
+		Assert.assertEquals(null,sheet1.getCell("E1").getValue());
+		Assert.assertEquals("C2",sheet1.getCell("E2").getValue());
+		Assert.assertEquals("C3",sheet1.getCell("E3").getValue());
+		Assert.assertEquals(null,sheet1.getCell("E4").getValue());
+		
+		Assert.assertEquals(null,sheet1.getCell("F1").getValue());
+		Assert.assertEquals("D2",sheet1.getCell("F2").getValue());
+		Assert.assertEquals("D3",sheet1.getCell("F3").getValue());
+		Assert.assertEquals(null,sheet1.getCell("F4").getValue());
+		
+		
+		sheet1.deleteCell(2, 2, 2, 2, true);
+		
+		Assert.assertEquals("A1",sheet1.getCell("A1").getValue());
+		Assert.assertEquals("A2",sheet1.getCell("A2").getValue());
+		Assert.assertEquals("A3",sheet1.getCell("A3").getValue());
+		Assert.assertEquals("A4",sheet1.getCell("A4").getValue());
+		
+		Assert.assertEquals("B1",sheet1.getCell("B1").getValue());
+		Assert.assertEquals(null,sheet1.getCell("B2").getValue());
+		Assert.assertEquals(null,sheet1.getCell("B3").getValue());
+		Assert.assertEquals("B4",sheet1.getCell("B4").getValue());
+		
+		
+		Assert.assertEquals("C1",sheet1.getCell("C1").getValue());
+		Assert.assertEquals(null,sheet1.getCell("C2").getValue());
+		Assert.assertEquals("C3",sheet1.getCell("C3").getValue());
+		Assert.assertEquals(null,sheet1.getCell("C4").getValue());
+		
+		Assert.assertEquals("D1",sheet1.getCell("D1").getValue());
+		Assert.assertEquals("B2",sheet1.getCell("D2").getValue());
+		Assert.assertEquals("D3",sheet1.getCell("D3").getValue());
+		Assert.assertEquals(null,sheet1.getCell("D4").getValue());
+		
+		Assert.assertEquals(null,sheet1.getCell("E1").getValue());
+		Assert.assertEquals("C2",sheet1.getCell("E2").getValue());
+		Assert.assertEquals(null,sheet1.getCell("E3").getValue());
+		Assert.assertEquals(null,sheet1.getCell("E4").getValue());
+		
+		Assert.assertEquals(null,sheet1.getCell("F1").getValue());
+		Assert.assertEquals("D2",sheet1.getCell("F2").getValue());
+		Assert.assertEquals(null,sheet1.getCell("F3").getValue());
+		Assert.assertEquals(null,sheet1.getCell("F4").getValue());
+		
+		
+		sheet1.insertCell(0, 0, 1, 1, true);
+		Assert.assertEquals(null,sheet1.getCell("A1").getValue());
+		Assert.assertEquals("A2",sheet1.getCell("A2").getValue());
+		Assert.assertEquals("A3",sheet1.getCell("A3").getValue());
+		Assert.assertEquals("A4",sheet1.getCell("A4").getValue());
+		
+		Assert.assertEquals("A1",sheet1.getCell("B1").getValue());
+		Assert.assertEquals(null,sheet1.getCell("B2").getValue());
+		Assert.assertEquals(null,sheet1.getCell("B3").getValue());
+		Assert.assertEquals("B4",sheet1.getCell("B4").getValue());
+		
+		
+		Assert.assertEquals("B1",sheet1.getCell("C1").getValue());
+		Assert.assertEquals(null,sheet1.getCell("C2").getValue());
+		Assert.assertEquals("C3",sheet1.getCell("C3").getValue());
+		Assert.assertEquals(null,sheet1.getCell("C4").getValue());
+		
+		Assert.assertEquals("C1",sheet1.getCell("D1").getValue());
+		Assert.assertEquals("B2",sheet1.getCell("D2").getValue());
+		Assert.assertEquals("D3",sheet1.getCell("D3").getValue());
+		Assert.assertEquals(null,sheet1.getCell("D4").getValue());
+		
+		Assert.assertEquals("D1",sheet1.getCell("E1").getValue());
+		Assert.assertEquals("C2",sheet1.getCell("E2").getValue());
+		Assert.assertEquals(null,sheet1.getCell("E3").getValue());
+		Assert.assertEquals(null,sheet1.getCell("E4").getValue());
+		
+		Assert.assertEquals(null,sheet1.getCell("F1").getValue());
+		Assert.assertEquals("D2",sheet1.getCell("F2").getValue());
+		Assert.assertEquals(null,sheet1.getCell("F3").getValue());
+		Assert.assertEquals(null,sheet1.getCell("F4").getValue());
+		
+		sheet1.deleteCell(0, 0, 1, 1, true);
+		Assert.assertEquals("A1",sheet1.getCell("A1").getValue());
+		Assert.assertEquals("A2",sheet1.getCell("A2").getValue());
+		Assert.assertEquals("A3",sheet1.getCell("A3").getValue());
+		Assert.assertEquals("A4",sheet1.getCell("A4").getValue());
+		
+		Assert.assertEquals("B1",sheet1.getCell("B1").getValue());
+		Assert.assertEquals(null,sheet1.getCell("B2").getValue());
+		Assert.assertEquals(null,sheet1.getCell("B3").getValue());
+		Assert.assertEquals("B4",sheet1.getCell("B4").getValue());
+		
+		
+		Assert.assertEquals("C1",sheet1.getCell("C1").getValue());
+		Assert.assertEquals(null,sheet1.getCell("C2").getValue());
+		Assert.assertEquals("C3",sheet1.getCell("C3").getValue());
+		Assert.assertEquals(null,sheet1.getCell("C4").getValue());
+		
+		Assert.assertEquals("D1",sheet1.getCell("D1").getValue());
+		Assert.assertEquals("B2",sheet1.getCell("D2").getValue());
+		Assert.assertEquals("D3",sheet1.getCell("D3").getValue());
+		Assert.assertEquals(null,sheet1.getCell("D4").getValue());
+		
+		Assert.assertEquals(null,sheet1.getCell("E1").getValue());
+		Assert.assertEquals("C2",sheet1.getCell("E2").getValue());
+		Assert.assertEquals(null,sheet1.getCell("E3").getValue());
+		Assert.assertEquals(null,sheet1.getCell("E4").getValue());
+		
+		Assert.assertEquals(null,sheet1.getCell("F1").getValue());
+		Assert.assertEquals("D2",sheet1.getCell("F2").getValue());
+		Assert.assertEquals(null,sheet1.getCell("F3").getValue());
+		Assert.assertEquals(null,sheet1.getCell("F4").getValue());
+		
+		sheet1.insertCell(100, 100, 2, 2, true);
+		sheet1.deleteCell(100, 100, 2, 2, true);
+	}
+	
 	@Test
 	public void testAutoFilter(){
 		NBook book = NBooks.createBook("book1");

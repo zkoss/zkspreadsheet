@@ -95,6 +95,8 @@ public interface NSheet {
 	public void deleteRow(int rowIdx, int size);
 	public void insertColumn(int columnIdx, int size);
 	public void deleteColumn(int columnIdx, int size);
+	public void insertCell(int rowIdx,int columnIdx,int rowSize, int columnSize,boolean horizontal);
+	public void deleteCell(int rowIdx,int columnIdx,int rowSize, int columnSize,boolean horizontal);
 	
 	public NPicture addPicture(NPicture.Format format, byte[] data, NViewAnchor anchor);
 	public NPicture getPicture(String picid);

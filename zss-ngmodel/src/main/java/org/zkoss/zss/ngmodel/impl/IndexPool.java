@@ -119,9 +119,15 @@ import java.util.TreeMap;
 	public Collection<T> values() {
 		return objs.values();
 	}
+	public Collection<T> descendingValues() {
+		return objs.descendingMap().values();
+	}
 	
 	public Collection<T> subValues(int start,int end){
 		return objs.subMap(start, true, end, true).values();
+	}
+	public Collection<T> descendingSubValues(int start,int end){
+		return objs.subMap(start, true, end, true).descendingMap().values();
 	}
 
 	public void clear() {

@@ -16,6 +16,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.ngmodel.impl;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 
@@ -120,7 +121,7 @@ public class RowImpl extends AbstractRowAdv {
 	public void insertCell(int cellIdx, int size) {
 		if (size <= 0)
 			return;
-
+		
 		cells.insert(cellIdx, size);
 	}
 
@@ -128,8 +129,9 @@ public class RowImpl extends AbstractRowAdv {
 	public void deleteCell(int cellIdx, int size) {
 		if (size <= 0)
 			return;
+		
 		// clear before move relation
-		for (AbstractCellAdv cell : cells.subValues(cellIdx, cellIdx + size)) {
+		for (AbstractCellAdv cell : cells.subValues(cellIdx, cellIdx + size - 1)) {
 			cell.destroy();
 		}
 
@@ -215,5 +217,29 @@ public class RowImpl extends AbstractRowAdv {
 	@Override
 	void setIndex(int newidx) {
 		this.index = newidx;
+	}
+
+	@Override
+	void moveCellTo(AbstractRowAdv target, int start, int end) {
+		if(!(target instanceof RowImpl)){
+			throw new IllegalStateException("not RowImpl, is "+target);
+		}
+		
+		Collection<AbstractCellAdv> toMove = cells.clear(start, end);
+		
+		for(AbstractCellAdv cell:toMove){
+			AbstractCellAdv old = ((RowImpl)target).cells.put(cell.getColumnIndex(), cell);
+			cell.setRow(target);
+			if(old!=null){
+				old.destroy();
+			}
+		}
+		
+	}
+	
+	public String toString(){
+		StringBuilder sb = new StringBuilder();
+		sb.append("Row:").append(getIndex()).append(cells.keySet());
+		return sb.toString();
 	}
 }

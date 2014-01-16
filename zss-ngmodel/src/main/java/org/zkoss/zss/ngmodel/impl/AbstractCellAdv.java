@@ -180,10 +180,6 @@ public abstract class AbstractCellAdv implements NCell,LinkedModelObject,Seriali
 		//TODO what if get exception when set value form data grid? 
 		//show we rollback the old dependency? (we called clearValueForSet(true); to clear old dependency)
 	}
-	
-	protected Ref getRef(){
-		return new RefImpl(this);
-	}
 
 	@Override
 	public String getFormulaValue() {
@@ -213,4 +209,6 @@ public abstract class AbstractCellAdv implements NCell,LinkedModelObject,Seriali
 	}
 	
 	/*package*/ abstract void setIndex(int newidx);
+	/*package*/ abstract void setRow(AbstractRowAdv row);
+	/*package*/ abstract Ref getRef();
 }
