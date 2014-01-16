@@ -23,9 +23,13 @@ package org.zkoss.zss.ngmodel;
 public interface NPicture {
 
 	public enum Format{
-		PNG,
+		DIB,
+		EMF,
+		GIF,
 		JPG,
-		GIF;
+		PICT,
+		PNG,
+		WMF;
 		public String getFileExtension() {
 			return name().toLowerCase();
 		}
@@ -36,12 +40,20 @@ public interface NPicture {
 		 * @return null if no corresponding format found
 		 */
 		public static Format valueOfFileExtension(String fileExtension) {
-			if (fileExtension.equalsIgnoreCase("jpg") || fileExtension.equalsIgnoreCase("jpeg")){
-				return Format.JPG;
-			}else if (fileExtension.equalsIgnoreCase("png")){
-				return Format.PNG;
+			if (fileExtension.equalsIgnoreCase("dib")){
+				return DIB;
+			}else if (fileExtension.equalsIgnoreCase("emf")){
+				return EMF;
 			}else if (fileExtension.equalsIgnoreCase("gif")){
-				return Format.GIF;
+				return GIF;
+			}else if (fileExtension.equalsIgnoreCase("jpg") || fileExtension.equalsIgnoreCase("jpeg")){
+				return JPG;
+			}else if (fileExtension.equalsIgnoreCase("pct") || fileExtension.equalsIgnoreCase("pict") || fileExtension.equalsIgnoreCase("pic")){
+				return PICT;
+			}else if (fileExtension.equalsIgnoreCase("png")){
+				return PNG;
+			}else if (fileExtension.equalsIgnoreCase("wmf")){
+				return WMF;
 			}
 			return null;
 		}
