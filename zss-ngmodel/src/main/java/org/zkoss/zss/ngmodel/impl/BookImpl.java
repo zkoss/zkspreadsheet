@@ -151,12 +151,12 @@ public class BookImpl extends AbstractBookAdv{
 	
 	protected void checkOwnership(NSheet sheet){
 		if(!sheets.contains(sheet)){
-			throw new InvalidateModelOpException("doesn't has ownership "+ sheet);
+			throw new IllegalStateException("doesn't has ownership "+ sheet);
 		}
 	}
 	protected void checkOwnership(NName name){
 		if(names==null || !names.contains(name)){
-			throw new InvalidateModelOpException("doesn't has ownership "+ name);
+			throw new IllegalStateException("doesn't has ownership "+ name);
 		}
 	}
 	

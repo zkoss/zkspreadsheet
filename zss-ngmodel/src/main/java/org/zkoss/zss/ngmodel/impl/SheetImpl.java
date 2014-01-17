@@ -95,19 +95,19 @@ public class SheetImpl extends AbstractSheetAdv {
 	
 	protected void checkOwnership(NPicture picture){
 		if(!pictures.contains(picture)){
-			throw new InvalidateModelOpException("doesn't has ownership "+ picture);
+			throw new IllegalStateException("doesn't has ownership "+ picture);
 		}
 	}
 	
 	protected void checkOwnership(NChart chart){
 		if(!charts.contains(chart)){
-			throw new InvalidateModelOpException("doesn't has ownership "+ chart);
+			throw new IllegalStateException("doesn't has ownership "+ chart);
 		}
 	}
 	
 	protected void checkOwnership(NDataValidation validation){
 		if(!dataValidations.contains(validation)){
-			throw new InvalidateModelOpException("doesn't has ownership "+ validation);
+			throw new IllegalStateException("doesn't has ownership "+ validation);
 		}
 	}
 	
@@ -328,7 +328,7 @@ public class SheetImpl extends AbstractSheetAdv {
 	public NCell getCell(String cellRef) {
 		CellRegion region = new CellRegion(cellRef);
 		if(!region.isSingle()){
-			throw new IllegalArgumentException("not a single ref "+cellRef);
+			throw new InvalidateModelOpException("not a single ref "+cellRef);
 		}
 		return getCell(region.getRow(),region.getColumn(),true);
 	}
@@ -521,7 +521,7 @@ public class SheetImpl extends AbstractSheetAdv {
 		NDataGrid dg = getDataGrid();
 		if(dg!=null){
 			if(!dg.isSupportedOperations()){
-				throw new InvalidateModelOpException("doesn't support insert/delete");
+				throw new IllegalStateException("doesn't support insert/delete");
 			}
 			dg.insertRow(rowIdx, size);
 		}
@@ -557,7 +557,7 @@ public class SheetImpl extends AbstractSheetAdv {
 		NDataGrid dg = getDataGrid();
 		if(dg!=null){
 			if(!dg.isSupportedOperations()){
-				throw new InvalidateModelOpException("doesn't support insert/delete");
+				throw new IllegalStateException("doesn't support insert/delete");
 			}
 			dg.deleteRow(rowIdx, size);
 		}
@@ -671,7 +671,7 @@ public class SheetImpl extends AbstractSheetAdv {
 		NDataGrid dg = getDataGrid();
 		if(dg!=null){
 			if(!dg.isSupportedOperations()){
-				throw new InvalidateModelOpException("doesn't support insert/delete");
+				throw new IllegalStateException("doesn't support insert/delete");
 			}
 			//TODO
 //			dg.insertCell(rowIdx, columnIdx, rowSize,columnSize,horizontal);
@@ -714,7 +714,7 @@ public class SheetImpl extends AbstractSheetAdv {
 		NDataGrid dg = getDataGrid();
 		if(dg!=null){
 			if(!dg.isSupportedOperations()){
-				throw new InvalidateModelOpException("doesn't support insert/delete");
+				throw new IllegalStateException("doesn't support insert/delete");
 			}
 			//TODO
 //			dg.deleteCell(rowIdx, columnIdx, rowSize,columnSize,horizontal);
@@ -803,7 +803,7 @@ public class SheetImpl extends AbstractSheetAdv {
 		NDataGrid dg = getDataGrid();
 		if(dg!=null){
 			if(!dg.isSupportedOperations()){
-				throw new InvalidateModelOpException("doesn't support insert/delete");
+				throw new IllegalStateException("doesn't support insert/delete");
 			}
 			dg.insertColumn(columnIdx, size);
 		}
@@ -914,7 +914,7 @@ public class SheetImpl extends AbstractSheetAdv {
 		NDataGrid dg = getDataGrid();
 		if(dg!=null){
 			if(!dg.isSupportedOperations()){
-				throw new InvalidateModelOpException("doesn't support insert/delete");
+				throw new IllegalStateException("doesn't support insert/delete");
 			}
 			dg.deleteColumn(columnIdx, size);
 		}
@@ -1011,12 +1011,12 @@ public class SheetImpl extends AbstractSheetAdv {
 		
 		if(rowIdx<0 || columnIdx<0 || 
 				rowIdx > lastRowIdx || lastRowIdx >= maxRow || columnIdx>lastColumnIdx || lastColumnIdx>=maxCol){
-			throw new IllegalArgumentException(new CellRegion(rowIdx,columnIdx,lastRowIdx,lastColumnIdx).getReferenceString()+" is illegal");
+			throw new InvalidateModelOpException(new CellRegion(rowIdx,columnIdx,lastRowIdx,lastColumnIdx).getReferenceString()+" is illegal");
 		}
 		
 		if(rowIdx+rowOffset<0 || columnIdx+columnOffset<0 || 
 				lastRowIdx+rowOffset >= maxRow|| lastColumnIdx+columnOffset >= maxCol){
-			throw new IllegalArgumentException(new CellRegion(rowIdx,columnIdx,lastRowIdx,lastColumnIdx).getReferenceString()+" can't move to offset "+rowOffset+","+columnOffset);
+			throw new InvalidateModelOpException(new CellRegion(rowIdx,columnIdx,lastRowIdx,lastColumnIdx).getReferenceString()+" can't move to offset "+rowOffset+","+columnOffset);
 		}
 		
 		NDataGrid dg = getDataGrid();
@@ -1263,7 +1263,7 @@ public class SheetImpl extends AbstractSheetAdv {
 	public CellRegion getMergedRegion(String cellRef) {
 		CellRegion region = new CellRegion(cellRef);
 		if(!region.isSingle()){
-			throw new IllegalArgumentException("not a single ref "+cellRef);
+			throw new InvalidateModelOpException("not a single ref "+cellRef);
 		}
 		return getMergedRegion(region.getRow(),region.getColumn());
 	}
@@ -1336,7 +1336,7 @@ public class SheetImpl extends AbstractSheetAdv {
 
 			@Override
 			public void remove() {
-				throw new UnsupportedOperationException("illegal");
+				throw new UnsupportedOperationException("readonly");
 			}
 		};
 	}

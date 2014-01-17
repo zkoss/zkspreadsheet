@@ -18,6 +18,7 @@ package org.zkoss.zss.ngapi;
 
 import org.zkoss.zss.ngapi.impl.NRangeImpl;
 import org.zkoss.zss.ngmodel.CellRegion;
+import org.zkoss.zss.ngmodel.InvalidateModelOpException;
 import org.zkoss.zss.ngmodel.NBook;
 import org.zkoss.zss.ngmodel.NName;
 import org.zkoss.zss.ngmodel.NSheet;
@@ -60,12 +61,12 @@ public class NRanges {
 		NBook book = sheet.getBook();
 		NName n = book.getNameByName(name);
 		if(n==null){
-			throw new IllegalStateException("can't find name "+name);
+			throw new InvalidateModelOpException("can't find name "+name);
 		}
 		sheet = book.getSheetByName(n.getRefersToSheetName());
 		CellRegion region = n.getRefersToCellRegion();
 		if(sheet==null || region==null){
-			throw new IllegalStateException("bad name "+name+ " : "+n.getRefersToFormula());
+			throw new InvalidateModelOpException("bad name "+name+ " : "+n.getRefersToFormula());
 		}
 		
 		return new NRangeImpl(sheet,region.row,region.column,region.lastRow,region.lastColumn);

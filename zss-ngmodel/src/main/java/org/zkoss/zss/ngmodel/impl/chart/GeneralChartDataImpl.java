@@ -109,7 +109,7 @@ public class GeneralChartDataImpl extends ChartDataAdv implements NGeneralChartD
 	
 	protected void checkOwnership(NSeries series){
 		if(!serieses.contains(series)){
-			throw new InvalidateModelOpException("doesn't has ownership "+ series);
+			throw new IllegalStateException("doesn't has ownership "+ series);
 		}
 	}
 	

@@ -9,6 +9,7 @@ import java.util.Set;
 import org.zkoss.zss.ngapi.NRange;
 import org.zkoss.zss.ngapi.NRanges;
 import org.zkoss.zss.ngmodel.CellRegion;
+import org.zkoss.zss.ngmodel.InvalidateModelOpException;
 import org.zkoss.zss.ngmodel.NAutoFilter;
 import org.zkoss.zss.ngmodel.NAutoFilter.FilterOp;
 import org.zkoss.zss.ngmodel.NAutoFilter.NFilterColumn;
@@ -50,7 +51,7 @@ import org.zkoss.zss.ngmodel.NRow;
 				filter = sheet.createAutoFilter(region);
 				update = true;
 			}else{
-				throw new IllegalStateException("null region, you should call #findAutoFilterRange to ensure a valid region before enalbe autofilter");
+				throw new InvalidateModelOpException("can't find any data in range");
 			}
 		}
 		return filter;
@@ -65,7 +66,7 @@ import org.zkoss.zss.ngmodel.NRow;
 			if(region!=null){
 				filter = sheet.createAutoFilter(region);
 			}else{
-				throw new IllegalStateException("null region, you should call #findAutoFilterRange to ensure a valid region before enalbe autofilter");
+				throw new InvalidateModelOpException("can't find any data in range");
 			}
 		}
 		

@@ -186,17 +186,17 @@ public class ModelTest {
 		try{
 			book.deleteSheet(sheet1);
 			Assert.fail("should get exception");
-		}catch(InvalidateModelOpException x){}//ownership
+		}catch(IllegalStateException x){}//ownership
 		
 		try{
 			initialDataGrid(book.createSheet("Sheet3", sheet1));
 			Assert.fail("should get exception");
-		}catch(InvalidateModelOpException x){}//ownership
+		}catch(IllegalStateException x){}//ownership
 		
 		try{
 			book.moveSheetTo(sheet1, 0);
 			Assert.fail("should get exception");
-		}catch(InvalidateModelOpException x){}//ownership
+		}catch(IllegalStateException x){}//ownership
 		
 		sheet1 = initialDataGrid(book.createSheet("Sheet1"));
 		
