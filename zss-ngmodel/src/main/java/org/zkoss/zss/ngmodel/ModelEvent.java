@@ -70,7 +70,7 @@ private String name;
 		if(region==null){
 			return false;
 		}
-		return region.column<=0 && region.lastColumn>=book.getMaxColumnSize();
+		return region.column<=0 && region.lastColumn>=book.getMaxColumnIndex();
 	}
 	
 	public boolean isWholeColumn(){
@@ -82,7 +82,7 @@ private String name;
 		if(region==null){
 			return false;
 		}
-		return region.row<=0 && region.lastRow>=book.getMaxRowSize();
+		return region.row<=0 && region.lastRow>=book.getMaxRowIndex();
 	}
 
 	public String getObjectId() {

@@ -54,8 +54,8 @@ public class NRangeImpl implements NRange {
 	}
 	
 	public NRangeImpl(NSheet sheet) {
-		addRangeRef(sheet, 0, 0, sheet.getBook().getMaxRowSize(), sheet
-				.getBook().getMaxColumnSize());
+		addRangeRef(sheet, 0, 0, sheet.getBook().getMaxRowIndex(), sheet
+				.getBook().getMaxColumnIndex());
 	}
 
 	public NRangeImpl(NSheet sheet, int row, int col) {
@@ -358,12 +358,12 @@ public class NRangeImpl implements NRange {
 
 	@Override
 	public boolean isWholeRow() {
-		return _column<=0 && _lastColumn>=getBook().getMaxColumnSize();
+		return _column<=0 && _lastColumn>=getBook().getMaxColumnIndex();
 	}
 
 	@Override
 	public NRange getRows() {
-		return new NRangeImpl(getSheet(), _row, 0, _lastRow,getBook().getMaxColumnSize());
+		return new NRangeImpl(getSheet(), _row, 0, _lastRow,getBook().getMaxColumnIndex());
 	}
 
 	@Override
@@ -383,7 +383,7 @@ public class NRangeImpl implements NRange {
 		LinkedHashSet<SheetRegion> notifySet = new LinkedHashSet<SheetRegion>();
 
 		for (EffectedRegion r : rangeRefs) {
-			int maxcol = r._sheet.getBook().getMaxColumnSize();
+			int maxcol = r._sheet.getBook().getMaxColumnIndex();
 			CellRegion region = r.region;
 			
 			for (int i = region.row; i <= region.lastRow; i++) {
@@ -406,12 +406,12 @@ public class NRangeImpl implements NRange {
 
 	@Override
 	public boolean isWholeColumn() {
-		return _row<=0 && _lastRow>=getBook().getMaxRowSize();
+		return _row<=0 && _lastRow>=getBook().getMaxRowIndex();
 	}
 
 	@Override
 	public NRange getColumns() {
-		return new NRangeImpl(getSheet(), 0, _column, getBook().getMaxRowSize(), _lastColumn);
+		return new NRangeImpl(getSheet(), 0, _column, getBook().getMaxRowIndex(), _lastColumn);
 	}
 
 	@Override
@@ -431,7 +431,7 @@ public class NRangeImpl implements NRange {
 		LinkedHashSet<SheetRegion> notifySet = new LinkedHashSet<SheetRegion>();
 
 		for (EffectedRegion r : rangeRefs) {
-			int maxrow = r._sheet.getBook().getMaxRowSize();
+			int maxrow = r._sheet.getBook().getMaxRowIndex();
 			CellRegion region = r.region;
 			
 			for (int i = region.column; i <= region.lastColumn; i++) {
@@ -499,8 +499,18 @@ public class NRangeImpl implements NRange {
 	}
 
 	@Override
-	public void move(int nRow, int nCol) {
-		
+	public void move(final int nRow, final int nCol) {
+		new ModelUpdateTask(){
+			@Override
+			Object doInvokePhase() {
+				NSheet sheet = getSheet();
+				sheet.moveCell(getRow(), getColumn(), getLastRow(), getLastColumn(), nRow, nCol); 
+				return null;
+			}
+			@Override
+			void doNotifyPhase() {}
+			
+		}.doInWriteLock(getLock());
 	}
 
 	@Override
@@ -551,19 +561,19 @@ public class NRangeImpl implements NRange {
 	
 	
 	private boolean isWholeRow(NBook book,CellRegion region){
-		return region.column<=0 && region.lastColumn>=book.getMaxColumnSize();
+		return region.column<=0 && region.lastColumn>=book.getMaxColumnIndex();
 	}
 	
 	private boolean isWholeColumn(NBook book,CellRegion region){
-		return region.row<=0 && region.lastRow>=book.getMaxRowSize();
+		return region.row<=0 && region.lastRow>=book.getMaxRowIndex();
 	}
 
 	protected void setHiddenInLock(boolean hidden) {
 		LinkedHashSet<SheetRegion> notifySet = new LinkedHashSet<SheetRegion>();
 		for (EffectedRegion r : rangeRefs) {
 			NBook book = r._sheet.getBook();
-			int maxcol = r._sheet.getBook().getMaxColumnSize();
-			int maxrow = r._sheet.getBook().getMaxRowSize();
+			int maxcol = r._sheet.getBook().getMaxColumnIndex();
+			int maxrow = r._sheet.getBook().getMaxRowIndex();
 			CellRegion region = r.region;
 			
 			if(isWholeRow(book,region)){//hidden the row when it is whole row
@@ -973,16 +983,17 @@ public class NRangeImpl implements NRange {
 				FormulaCacheCleaner.setCurrent(oldClearer);
 			}
 
+			doNotifyPhase();
+			
 			if(dependentNotifySet.size()>0){
 				handleRefNotifyContentChange(bookSeries,dependentNotifySet);
 			}
 			if(cellNotifySet.size()>0){
-				handleCellNotifyContentChange(cellNotifySet);
+				handleCellNotifyContentChange(getSheet(),cellNotifySet);
 			}
 			if(mergeNotifySet.size()>0){
-				handleMergeNotifyChange(mergeNotifySet);
+				handleMergeNotifyChange(getSheet(),mergeNotifySet);
 			}
-			doNotifyPhase();
 			return result;
 		}
 	}
@@ -999,12 +1010,12 @@ public class NRangeImpl implements NRange {
 		}.doInWriteLock(getLock());
 	}
 	
-	public void handleMergeNotifyChange(Set<MergeUpdate> mergeNotifySet) {
-		new NotifyChangeHelper(this).notifyMergeChange(mergeNotifySet);
+	public void handleMergeNotifyChange(NSheet sheet,Set<MergeUpdate> mergeNotifySet) {
+		new NotifyChangeHelper(this).notifyMergeChange(sheet,mergeNotifySet);
 	}
 
-	public void handleCellNotifyContentChange(Set<CellRegion> cellNotifySet) {
-		new NotifyChangeHelper(this).notifyCellChange(cellNotifySet);
+	public void handleCellNotifyContentChange(NSheet sheet,Set<CellRegion> cellNotifySet) {
+		new NotifyChangeHelper(this).notifyCellChange(sheet,cellNotifySet);
 	}
 
 	@Override

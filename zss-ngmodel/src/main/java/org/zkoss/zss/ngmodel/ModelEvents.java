@@ -44,6 +44,9 @@ public class ModelEvents {
 	public static final String ON_PICTURE_UPDATE = "onPictureUpdate";
 	public static final String ON_PICTURE_DELETE = "onPictureDelete";
 	
+	public static final String ON_MERGE_ADD = "onMergeAdd";
+	public static final String ON_MERGE_DELETE = "onMergeDelete";
+	
 	public static final String PARAM_BOOK = "book";
 	public static final String PARAM_SHEET = "sheet";
 	public static final String PARAM_REGION = "region";

@@ -678,4 +678,14 @@ public class BookImpl extends AbstractBookAdv{
 		this.evalContributor = contributor;
 	}
 
+	@Override
+	public int getMaxRowIndex() {
+		return getMaxRowSize()-1;
+	}
+
+	@Override
+	public int getMaxColumnIndex() {
+		return getMaxColumnSize()-1;
+	}
+
 }

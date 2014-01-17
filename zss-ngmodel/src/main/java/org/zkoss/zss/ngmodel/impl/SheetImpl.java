@@ -136,8 +136,8 @@ public class SheetImpl extends AbstractSheetAdv {
 		AbstractRowAdv rowObj = rows.get(rowIdx);
 		if(rowObj == null){
 			checkOrphan();
-			if(rowIdx>=getBook().getMaxRowSize()){
-				throw new IllegalStateException("can't create the row that exceeds max row size "+getBook().getMaxRowSize());
+			if(rowIdx > getBook().getMaxRowIndex()){
+				throw new IllegalStateException("can't create the row that exceeds max row size "+getBook().getMaxRowIndex());
 			}
 			rowObj = new RowImpl(this,rowIdx);
 			rows.put(rowIdx, rowObj);
@@ -250,8 +250,8 @@ public class SheetImpl extends AbstractSheetAdv {
 			return contains;
 		}
 		
-		if(columnIdx>=getBook().getMaxColumnSize()){
-			throw new IllegalStateException("can't create the column array that exceeds max row size "+getBook().getMaxRowSize());
+		if(columnIdx > getBook().getMaxColumnIndex()){
+			throw new IllegalStateException("can't create the column array that exceeds max row size "+getBook().getMaxRowIndex());
 		}
 		
 		int start1,end1,start2,end2;
@@ -530,10 +530,10 @@ public class SheetImpl extends AbstractSheetAdv {
 		
 		
 		//destroy the row that exceed the max size
-		int max = getBook().getMaxRowSize();
-		Collection<AbstractRowAdv> exceeds = new ArrayList<AbstractRowAdv>(rows.subValues(max, Integer.MAX_VALUE));
+		int maxSize = getBook().getMaxRowSize();
+		Collection<AbstractRowAdv> exceeds = new ArrayList<AbstractRowAdv>(rows.subValues(maxSize, Integer.MAX_VALUE));
 		if(exceeds.size()>0){
-			rows.trim(max);
+			rows.trim(maxSize);
 		}
 		for(AbstractRowAdv row:exceeds){
 			row.destroy();
@@ -684,12 +684,12 @@ public class SheetImpl extends AbstractSheetAdv {
 				row.insertCell(columnIdx,columnSize);
 			}	
 		}else{
-			int max = getBook().getMaxRowSize();
+			int maxSize = getBook().getMaxRowSize();
 			Collection<AbstractRowAdv> effectedRows = rows.descendingSubValues(rowIdx,Integer.MAX_VALUE);
 			for(AbstractRowAdv row: new ArrayList<AbstractRowAdv>(effectedRows)){//to aovid concurrent modify
 				//move the cell down to target row
 				int idx = row.getIndex()+rowSize;
-				if(idx>=max){
+				if(idx >= maxSize){
 					//clear the cell since it out of max
 					row.clearCell(columnIdx,columnIdx+columnSize-1);
 				}else{
@@ -895,10 +895,10 @@ public class SheetImpl extends AbstractSheetAdv {
 		}
 		
 		//destroy the cell that exceeds the max size
-		int max = getBook().getMaxColumnSize();
-		Collection<AbstractColumnArrayAdv> exceeds = new ArrayList<AbstractColumnArrayAdv>(columnArrays.firstSubValues(max, Integer.MAX_VALUE));
+		int maxSize = getBook().getMaxColumnSize();
+		Collection<AbstractColumnArrayAdv> exceeds = new ArrayList<AbstractColumnArrayAdv>(columnArrays.firstSubValues(maxSize, Integer.MAX_VALUE));
 		if(exceeds.size()>0){
-			columnArrays.trim(max);
+			columnArrays.trim(maxSize);
 		}
 		for(AbstractColumnArrayAdv ca:exceeds){
 			ca.destroy();
@@ -1006,18 +1006,20 @@ public class SheetImpl extends AbstractSheetAdv {
 		if(rowOffset==0 && columnOffset==0)
 			return;
 		
-		int maxRow = getBook().getMaxRowSize();
-		int maxCol = getBook().getMaxColumnSize();
+		int maxRow = getBook().getMaxRowIndex();
+		int maxCol = getBook().getMaxColumnIndex();
 		
 		if(rowIdx<0 || columnIdx<0 || 
-				rowIdx > lastRowIdx || lastRowIdx >= maxRow || columnIdx>lastColumnIdx || lastColumnIdx>=maxCol){
+				rowIdx > lastRowIdx || lastRowIdx > maxRow || columnIdx>lastColumnIdx || lastColumnIdx>=maxCol){
 			throw new InvalidateModelOpException(new CellRegion(rowIdx,columnIdx,lastRowIdx,lastColumnIdx).getReferenceString()+" is illegal");
 		}
 		
 		if(rowIdx+rowOffset<0 || columnIdx+columnOffset<0 || 
-				lastRowIdx+rowOffset >= maxRow|| lastColumnIdx+columnOffset >= maxCol){
+				lastRowIdx+rowOffset > maxRow|| lastColumnIdx+columnOffset >= maxCol){
 			throw new InvalidateModelOpException(new CellRegion(rowIdx,columnIdx,lastRowIdx,lastColumnIdx).getReferenceString()+" can't move to offset "+rowOffset+","+columnOffset);
 		}
+		
+		//TODO whole row, whole column
 		
 		NDataGrid dg = getDataGrid();
 		if(dg!=null){
@@ -1064,10 +1066,6 @@ public class SheetImpl extends AbstractSheetAdv {
 					row.moveCellTo(target, c, c, columnOffset);
 				}
 				
-				//both (r,c) and (tr,tc) was changed.
-				ModelUpdateUtil.addCellUpdate(r,c);
-				ModelUpdateUtil.addCellUpdate(tr,tc);
-				
 				if(reverseXDir){
 					c--;
 				}else{
@@ -1080,7 +1078,8 @@ public class SheetImpl extends AbstractSheetAdv {
 				r++;
 			}
 		}
-		
+		ModelUpdateUtil.addCellUpdate(rowIdx,columnIdx,lastRowIdx,lastColumnIdx);
+		ModelUpdateUtil.addCellUpdate(rowIdx+rowOffset,columnIdx+columnOffset,lastRowIdx+rowOffset,lastColumnIdx+columnOffset);
 		//shift the merge
 		mergedRegions.removeAll(containsMerge);
 		for(CellRegion merge:containsMerge){
@@ -1091,7 +1090,7 @@ public class SheetImpl extends AbstractSheetAdv {
 		}
 		
 		
-		//TODO handle the merge, validation and other stuff
+		//TODO validation and other stuff
 	}
 
 	

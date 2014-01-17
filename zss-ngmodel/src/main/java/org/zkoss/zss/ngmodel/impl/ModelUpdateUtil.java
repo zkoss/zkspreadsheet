@@ -36,9 +36,12 @@ import org.zkoss.zss.ngmodel.sys.dependency.Ref;
 	}
 	
 	/*package*/ static void addCellUpdate(int row,int column){
+		addCellUpdate(row,column,row,column);
+	}
+	/*package*/ static void addCellUpdate(int row,int column, int lastRow, int lastColumn){
 		CellUpdateCollector collector = CellUpdateCollector.getCurrent();
 		if(collector!=null){
-			collector.addCellUpdate(row, column);
+			collector.addCellUpdate(row, column,lastRow,lastColumn);
 		}
 	}
 	

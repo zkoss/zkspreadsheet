@@ -1,6 +1,7 @@
 package org.zkoss.zss.ngapi.impl;
 
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.zkoss.zss.ngapi.NRange;
@@ -52,14 +53,43 @@ import org.zkoss.zss.ngmodel.impl.AbstractBookAdv;
 				sheet, ModelEvents.createDataMap(ModelEvents.PARAM_PICTURE, picture)));
 	}
 
-	public void notifyMergeChange(Set<MergeUpdate> mergeNotifySet) {
-		// TODO Auto-generated method stub
+	public void notifyMergeChange(NSheet sheet,Set<MergeUpdate> mergeNotifySet) {
+		LinkedHashSet<CellRegion> toRemove = new LinkedHashSet<CellRegion>();
+		LinkedHashSet<CellRegion> toAdd = new LinkedHashSet<CellRegion>();
+		for(MergeUpdate mu:mergeNotifySet){
+			CellRegion remove = mu.getOrgMerge();
+			CellRegion add = mu.getMerge();
+			if(remove!=null){
+				toRemove.add(remove);
+				toAdd.remove(remove);
+			}
+			if(add!=null){
+				toAdd.add(add);
+				toRemove.remove(add);
+			}
+		}
+		NBook book = sheet.getBook();
+		for(CellRegion notify:toRemove){//remove the final remove list
+			System.out.println(">>> notify remove merge "+notify.getReferenceString());
+			((AbstractBookAdv) book).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_MERGE_DELETE,sheet,
+					notify));
+			
+		}
+		for(CellRegion notify:toAdd){
+			System.out.println(">>> notify add merge "+notify.getReferenceString());
+			((AbstractBookAdv) book).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_MERGE_ADD,sheet,
+					notify));
+		}
 		
 	}
 
-	public void notifyCellChange(Set<CellRegion> cellNotifySet) {
-		// TODO Auto-generated method stub
-		
+	public void notifyCellChange(NSheet sheet,Set<CellRegion> cellNotifySet) {
+		NBook book = sheet.getBook();
+		for(CellRegion notify:cellNotifySet){
+			System.out.println(">>> notify update cell "+notify.getReferenceString());
+			((AbstractBookAdv) book).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_CELL_CONTENT_CHANGE,sheet,
+				new CellRegion(notify.getRow(),notify.getColumn(),notify.getLastRow(),notify.getLastColumn())));
+		}
 	}
 	
 }

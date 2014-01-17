@@ -42,8 +42,8 @@ public class RangeTest {
 		NRange r1 = NRanges.range(sheet1);
 		Assert.assertEquals(0, r1.getRow());
 		Assert.assertEquals(0, r1.getColumn());
-		Assert.assertEquals(book.getMaxRowSize(), r1.getLastRow());
-		Assert.assertEquals(book.getMaxColumnSize(), r1.getLastColumn());
+		Assert.assertEquals(book.getMaxRowIndex(), r1.getLastRow());
+		Assert.assertEquals(book.getMaxColumnIndex(), r1.getLastColumn());
 		
 		
 		r1 = NRanges.range(sheet1,3,4);

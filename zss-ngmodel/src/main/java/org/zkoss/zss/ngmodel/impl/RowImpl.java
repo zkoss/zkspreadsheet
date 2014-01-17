@@ -87,8 +87,8 @@ public class RowImpl extends AbstractRowAdv {
 		AbstractCellAdv cellObj = cells.get(columnIdx);
 		if (cellObj == null) {
 			checkOrphan();
-			if(columnIdx>=getSheet().getBook().getMaxColumnSize()){
-				throw new IllegalStateException("can't create the cell that exceeds max column size "+getSheet().getBook().getMaxColumnSize());
+			if(columnIdx > getSheet().getBook().getMaxColumnIndex()){
+				throw new IllegalStateException("can't create the cell that exceeds max column size "+getSheet().getBook().getMaxColumnIndex());
 			}
 			cellObj = new CellImpl(this, columnIdx);
 			cells.put(columnIdx, cellObj);
@@ -129,10 +129,10 @@ public class RowImpl extends AbstractRowAdv {
 		cells.insert(cellIdx, size);
 		
 		//destroy the cell that exceeds the max size
-		int max = getSheet().getBook().getMaxColumnSize();
-		Collection<AbstractCellAdv> exceeds = new ArrayList<AbstractCellAdv>(cells.subValues(max, Integer.MAX_VALUE));
+		int maxSize = getSheet().getBook().getMaxColumnSize();
+		Collection<AbstractCellAdv> exceeds = new ArrayList<AbstractCellAdv>(cells.subValues(maxSize, Integer.MAX_VALUE));
 		if(exceeds.size()>0){
-			cells.trim(max);
+			cells.trim(maxSize);
 		}
 		for(AbstractCellAdv cell:exceeds){
 			cell.destroy();

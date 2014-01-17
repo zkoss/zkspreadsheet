@@ -167,6 +167,16 @@ public interface NBook {
 	public int getMaxColumnSize();
 	
 	/**
+	 * Get the max row index of this book, it is {@link #getMaxRowSize()}-1
+	 */
+	public int getMaxRowIndex();
+	
+	/**
+	 * Get the max column index of this book, it is {@link #getMaxColumnIndex()}-1
+	 */
+	public int getMaxColumnIndex();
+	
+	/**
 	 * add event listener to this book
 	 * @param listener the listener
 	 */
