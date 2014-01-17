@@ -483,13 +483,31 @@ public class NRangeImpl implements NRange {
 	}
 
 	@Override
-	public void merge(boolean across) {
-		throw new UnsupportedOperationException("not implement yet");
+	public void merge(final boolean across) {
+		new ModelUpdateTask(){
+			@Override
+			Object doInvokePhase() {
+				new MergeHelper(NRangeImpl.this).merge(across);
+				return null;
+			}
+			@Override
+			void doNotifyPhase() {}
+			
+		}.doInWriteLock(getLock());
 	}
 
 	@Override
 	public void unmerge() {
-		throw new UnsupportedOperationException("not implement yet");
+		new ModelUpdateTask(){
+			@Override
+			Object doInvokePhase() {
+				new MergeHelper(NRangeImpl.this).unmerge(true);
+				return null;
+			}
+			@Override
+			void doNotifyPhase() {}
+			
+		}.doInWriteLock(getLock());
 	}
 
 	@Override

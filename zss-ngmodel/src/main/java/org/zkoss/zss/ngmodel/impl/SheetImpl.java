@@ -1228,7 +1228,7 @@ public class SheetImpl extends AbstractSheetAdv {
 	public void addMergedRegion(CellRegion region) {
 		Validations.argNotNull(region);
 		if(region.isSingle()){
-			//just ignore it.
+			return;
 		}
 		for(CellRegion r:mergedRegions){
 			if(r.overlaps(region)){

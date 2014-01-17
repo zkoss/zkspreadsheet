@@ -125,6 +125,15 @@ public class TestImporterFactory implements ImporterFactory{
 				style.setFillColor(book.createColor("#FFFF00"));
 				sheet.getCell("I4").setCellStyle(style);
 				
+				
+				
+				style = book.createCellStyle(true);
+				style.setFillPattern(FillPattern.SOLID_FOREGROUND);
+				style.setFillColor(book.createColor("#FF00FF"));
+				sheet.getCell("D10").setCellStyle(style);
+				sheet.getCell("D10").setValue("D10");
+				sheet.getCell("D11").setValue("D11");
+				
 			}
 			private void buildAutoFilter(NBook book) {
 				NSheet sheet = book.createSheet("AutoFilter");

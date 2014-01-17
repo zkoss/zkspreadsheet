@@ -86,10 +86,11 @@ public class MergeHelper extends RangeHelperBase{
 		int bRow = range.getLastColumn();
 		int rCol = range.getLastColumn();
 		
-		if(sheet.getOverlapsMergedRegions(new CellRegion(tRow,lCol,bRow,rCol))!=null){
-			throw new InvalidateModelOpException("can merge an overlapped region, unmerge it first");
-		}
+		List<CellRegion> overlaps = sheet.getOverlapsMergedRegions(new CellRegion(tRow,lCol,bRow,rCol)); 
 		
+		if(overlaps!=null && overlaps.size()>0){
+			throw new InvalidateModelOpException("can't merge an overlapped region "+overlaps.get(0).getReferenceString()+", unmerge it first");
+		}
 		
 		if (across) {
 //			final Set<CellRegion> toEval = new HashSet<CellRegion>();
@@ -110,6 +111,8 @@ public class MergeHelper extends RangeHelperBase{
 	}
 	
 	private void merge0(NSheet sheet, int tRow, int lCol, int bRow, int rCol) {
+		if(tRow==bRow && lCol==rCol)
+			return;
 //		final List<MergeChange> changes = new ArrayList<MergeChange>();
 //		final Set<CellRegion> all = new HashSet<CellRegion>();
 //		final Set<CellRegion> last = new HashSet<CellRegion>();
@@ -175,7 +178,7 @@ public class MergeHelper extends RangeHelperBase{
 				}
 			}
 		}
-		final CellRegion mergeArea = new CellRegion(tRow, bRow, lCol, rCol);
+		final CellRegion mergeArea = new CellRegion(tRow, lCol,bRow,rCol);
 		sheet.addMergedRegion(mergeArea);
 //		final Ref mergeArea = new AreaRefImpl(tRow, lCol, bRow, rCol, BookHelper.getRefSheet((XBook)sheet.getWorkbook(), sheet)); 
 //		all.add(mergeArea);//should update the cell in the merge area.

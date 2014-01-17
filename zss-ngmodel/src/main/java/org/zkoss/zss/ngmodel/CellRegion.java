@@ -54,9 +54,9 @@ public class CellRegion implements Serializable {
 	}
 
 	private void checkLegal() {
-		if ((row > lastRow && column > lastColumn)
+		if ((row > lastRow || column > lastColumn)
 				|| (row < 0 || lastRow < 0 || column < 0 || lastColumn < 0)) {
-			throw new IllegalArgumentException("the region is legal " + this);
+			throw new IllegalArgumentException("the region is illegal " + this);
 		}
 	}
 
