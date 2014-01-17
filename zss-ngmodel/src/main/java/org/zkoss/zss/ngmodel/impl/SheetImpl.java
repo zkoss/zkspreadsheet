@@ -1010,12 +1010,12 @@ public class SheetImpl extends AbstractSheetAdv {
 		int maxCol = getBook().getMaxColumnIndex();
 		
 		if(rowIdx<0 || columnIdx<0 || 
-				rowIdx > lastRowIdx || lastRowIdx > maxRow || columnIdx>lastColumnIdx || lastColumnIdx>=maxCol){
+				rowIdx > lastRowIdx || lastRowIdx > maxRow || columnIdx>lastColumnIdx || lastColumnIdx>maxCol){
 			throw new InvalidateModelOpException(new CellRegion(rowIdx,columnIdx,lastRowIdx,lastColumnIdx).getReferenceString()+" is illegal");
 		}
 		
 		if(rowIdx+rowOffset<0 || columnIdx+columnOffset<0 || 
-				lastRowIdx+rowOffset > maxRow|| lastColumnIdx+columnOffset >= maxCol){
+				lastRowIdx+rowOffset > maxRow|| lastColumnIdx+columnOffset > maxCol){
 			throw new InvalidateModelOpException(new CellRegion(rowIdx,columnIdx,lastRowIdx,lastColumnIdx).getReferenceString()+" can't move to offset "+rowOffset+","+columnOffset);
 		}
 		
@@ -1037,11 +1037,11 @@ public class SheetImpl extends AbstractSheetAdv {
 		if(containsMerge.size()!=overlapsMerge.size()){
 			ArrayList<CellRegion> ov = new ArrayList<CellRegion>(overlapsMerge);
 			ov.removeAll(containsMerge);
-			throw new InvalidateModelOpException("can't move to "+sreRegion+" which overlaps merge area "+ov);
+			throw new InvalidateModelOpException("can't move "+sreRegion.getReferenceString()+" which overlaps merge area "+ov.get(0).getReferenceString());
 		}
 		CellRegion targetRegion = new CellRegion(rowIdx+rowOffset,columnIdx+columnOffset,lastRowIdx+rowOffset,lastColumnIdx+columnOffset);
 		if(getOverlapsMergedRegions(targetRegion).size()>0){
-			throw new InvalidateModelOpException("can't move to "+targetRegion+" which overlaps merge area");
+			throw new InvalidateModelOpException("can't move to "+targetRegion.getReferenceString()+" which overlaps merge area");
 		}
 		
 		
@@ -1074,7 +1074,7 @@ public class SheetImpl extends AbstractSheetAdv {
 			}
 			if(reverseYDir){
 				r--;
-			}else{
+			}else{ 
 				r++;
 			}
 		}

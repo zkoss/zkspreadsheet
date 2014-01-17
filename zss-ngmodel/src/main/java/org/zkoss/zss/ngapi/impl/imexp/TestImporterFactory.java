@@ -71,6 +71,8 @@ public class TestImporterFactory implements ImporterFactory{
 				
 				NBook book = NBooks.createBook(bookName);
 				
+				buildMerge(book);
+				
 				buildAutoFilter(book);
 				
 				buildValidation(book);
@@ -83,6 +85,46 @@ public class TestImporterFactory implements ImporterFactory{
 				
 				buildDataGridSheet(book);
 				return book;
+			}
+			private void buildMerge(NBook book) {
+				NSheet sheet = book.createSheet("Merge");
+				
+				
+				sheet.getCell("C3").setValue("C3");
+				sheet.getCell("C4").setValue("C4");
+				sheet.getCell("C5").setValue("C5");
+				sheet.getCell("C6").setValue("C6");
+				
+				sheet.getCell("D3").setValue("D3");
+				sheet.getCell("D4").setValue("D4");
+				sheet.getCell("D6").setValue("C6");
+				
+				sheet.getCell("E3").setValue("E3");
+				sheet.getCell("E6").setValue("E6");
+				
+				sheet.getCell("F3").setValue("F3");
+				sheet.getCell("F6").setValue("F6");
+				
+				sheet.getCell("G3").setValue("G3");
+				sheet.getCell("G4").setValue("G4");
+				sheet.getCell("G5").setValue("G5");
+				sheet.getCell("G6").setValue("G6");
+				
+				sheet.addMergedRegion(new CellRegion("D4:F5"));
+				
+				NCellStyle style = book.createCellStyle(true);
+				style.setFillPattern(FillPattern.SOLID_FOREGROUND);
+				style.setFillColor(book.createColor("#FF0000"));
+				sheet.getCell("D4").setCellStyle(style);
+				
+				
+				sheet.addMergedRegion(new CellRegion("I4:K5"));
+				
+				style = book.createCellStyle(true);
+				style.setFillPattern(FillPattern.SOLID_FOREGROUND);
+				style.setFillColor(book.createColor("#FFFF00"));
+				sheet.getCell("I4").setCellStyle(style);
+				
 			}
 			private void buildAutoFilter(NBook book) {
 				NSheet sheet = book.createSheet("AutoFilter");

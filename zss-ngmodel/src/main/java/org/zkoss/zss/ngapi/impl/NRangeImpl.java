@@ -968,8 +968,8 @@ public class NRangeImpl implements NRange {
 			Object result = null;
 			try{
 				DependentUpdateCollector.setCurrent(dependentCtx);
-				MergeUpdateCollector.setCurrent(oldMergeUpdateCtx);
-				CellUpdateCollector.setCurrent(oldCellUpdateCtx);
+				MergeUpdateCollector.setCurrent(mergeUpdateCtx);
+				CellUpdateCollector.setCurrent(cellUpdateCtx);
 				
 				result = doInvokePhase();
 			}finally{
