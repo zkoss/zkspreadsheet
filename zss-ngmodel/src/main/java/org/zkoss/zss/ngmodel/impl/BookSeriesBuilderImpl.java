@@ -19,7 +19,7 @@ public class BookSeriesBuilderImpl extends NBookSeriesBuilder {
 		int i = 0;
 		for(NBook b: books){
 			if(!(b instanceof AbstractBookAdv)){
-				throw new IllegalArgumentException("can't support to build a book "+b+" to book series");
+				throw new IllegalStateException("can't support to build a book "+b+" to book series");
 			}
 			bookadvs[i] = (AbstractBookAdv)b;
 			i++;

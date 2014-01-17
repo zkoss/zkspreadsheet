@@ -1222,6 +1222,7 @@ public class SheetImpl extends AbstractSheetAdv {
 	@Override
 	public void removeMergedRegion(CellRegion region) {
 		mergedRegions.remove(region);
+		ModelUpdateUtil.addMergeUpdate(region, null);
 	}
 
 	@Override
@@ -1236,6 +1237,7 @@ public class SheetImpl extends AbstractSheetAdv {
 			}
 		}
 		mergedRegions.add(region);
+		ModelUpdateUtil.addMergeUpdate(null, region);
 	}
 
 	@Override

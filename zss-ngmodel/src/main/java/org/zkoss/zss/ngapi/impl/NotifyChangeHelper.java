@@ -1,6 +1,7 @@
 package org.zkoss.zss.ngapi.impl;
 
 import java.util.HashSet;
+import java.util.Set;
 
 import org.zkoss.zss.ngapi.NRange;
 import org.zkoss.zss.ngmodel.*;
@@ -17,23 +18,23 @@ import org.zkoss.zss.ngmodel.impl.AbstractBookAdv;
 		}
 	}
 
-	public void notifySizeChange(SheetRegion notify) {//TODO zss 3.5 just pass NSheet
+	public void notifySizeChange(SheetRegion notify) {
 		((AbstractBookAdv) notify.getSheet().getBook()).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_ROW_COLUMN_SIZE_CHANGE,
 				notify.getSheet(),
 				new CellRegion(notify.getRow(),notify.getColumn(),notify.getLastRow(),notify.getLastColumn())));
 	}
 	
 	
-	public void notifySheetAutoFilterChange(SheetRegion notify) {
-		((AbstractBookAdv) notify.getSheet().getBook())
+	public void notifySheetAutoFilterChange(NSheet sheet) {
+		((AbstractBookAdv) sheet.getBook())
 				.sendModelEvent(ModelEvents.createModelEvent(
-						ModelEvents.ON_AUTOFILTER_CHANGE, notify.getSheet()));
+						ModelEvents.ON_AUTOFILTER_CHANGE, sheet));
 	}
 
-	public void notifySheetFreezeChange(SheetRegion notify) {
-		((AbstractBookAdv) notify.getSheet().getBook())
+	public void notifySheetFreezeChange(NSheet sheet) {
+		((AbstractBookAdv) sheet.getBook())
 				.sendModelEvent(ModelEvents.createModelEvent(
-						ModelEvents.ON_FREEZE_CHANGE, notify.getSheet()));
+						ModelEvents.ON_FREEZE_CHANGE, sheet));
 	}
 	
 	public void notifySheetPictureAdd(NSheet sheet, NPicture picture){
@@ -49,6 +50,16 @@ import org.zkoss.zss.ngmodel.impl.AbstractBookAdv;
 	public void notifySheetPictureMove(NSheet sheet, NPicture picture) {
 		((AbstractBookAdv) sheet.getBook()).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_PICTURE_UPDATE, 
 				sheet, ModelEvents.createDataMap(ModelEvents.PARAM_PICTURE, picture)));
+	}
+
+	public void notifyMergeChange(Set<MergeUpdate> mergeNotifySet) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void notifyCellChange(Set<CellRegion> cellNotifySet) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 }

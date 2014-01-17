@@ -33,7 +33,7 @@ public class MergeUpdateCollector {
 		mergeChanges.add(mergeUpdate);
 	}
 	
-	public Set<MergeUpdate> getMergeChanges(){
+	public Set<MergeUpdate> getMergeUpdates(){
 		return mergeChanges==null?Collections.EMPTY_SET:Collections.unmodifiableSet(mergeChanges);
 	}
 

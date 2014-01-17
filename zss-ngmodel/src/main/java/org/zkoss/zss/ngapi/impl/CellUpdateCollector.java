@@ -9,6 +9,9 @@ import org.zkoss.zss.ngmodel.CellRegion;
 public class CellUpdateCollector {
 	static ThreadLocal<CellUpdateCollector>  current = new ThreadLocal<CellUpdateCollector>();
 	
+	//a last object to prevent unnecessary cell-region creation
+	CellRegion last = null;
+	
 	private Set<CellRegion> cellUpdates;
 	
 	public CellUpdateCollector(){
@@ -24,9 +27,13 @@ public class CellUpdateCollector {
 	}
 
 	public void addCellUpdate(int row, int column) {
-		addCellUpdate(new CellRegion(row,column));
+		addCellUpdate(row,column,row,column);
 	}
 	public void addCellUpdate(int row, int column, int lastRow, int lastColumn) {
+		if(last!=null && last.row == row && last.column==column
+				&& last.lastRow == lastRow && last.lastColumn == lastColumn){
+			return;
+		}
 		addCellUpdate(new CellRegion(row,column,lastRow,lastColumn));
 	}
 	public void addCellUpdate(CellRegion cellUpdate) {
@@ -34,9 +41,10 @@ public class CellUpdateCollector {
 			cellUpdates = new LinkedHashSet<CellRegion>();
 		}
 		cellUpdates.add(cellUpdate);
+		last = cellUpdate;
 	}
 	
-	public Set<CellRegion> getCellUpdate(){
+	public Set<CellRegion> getCellUpdates(){
 		return cellUpdates==null?Collections.EMPTY_SET:Collections.unmodifiableSet(cellUpdates);
 	}
 

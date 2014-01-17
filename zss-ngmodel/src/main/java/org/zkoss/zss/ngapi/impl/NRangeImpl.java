@@ -500,7 +500,7 @@ public class NRangeImpl implements NRange {
 
 	@Override
 	public void move(int nRow, int nCol) {
-		throw new UnsupportedOperationException("not implement yet");
+		
 	}
 
 	@Override
@@ -623,7 +623,7 @@ public class NRangeImpl implements NRange {
 		final ResultWrap<NSheet> toDeleteSheet = new ResultWrap<NSheet>();
 		final ResultWrap<Integer> toDeleteIndex = new ResultWrap<Integer>();
 		//it just handle the first ref
-		new DependentUpdateTask() {			
+		new ModelUpdateTask() {			
 			@Override
 			public Object doInvokePhase() {
 				NBook book = getBook();
@@ -658,7 +658,7 @@ public class NRangeImpl implements NRange {
 	public NSheet createSheet(final String name) {
 		final ResultWrap<NSheet> resultSheet = new ResultWrap<NSheet>();
 		//it just handle the first ref
-		return (NSheet)new DependentUpdateTask() {			
+		return (NSheet)new ModelUpdateTask() {			
 			@Override
 			public Object doInvokePhase() {
 				NBook book = getBook();
@@ -702,7 +702,7 @@ public class NRangeImpl implements NRange {
 	public void setSheetName(final String newname) {
 		//it just handle the first ref
 		final ResultWrap<NSheet> resultSheet = new ResultWrap<NSheet>();
-		new DependentUpdateTask() {			
+		new ModelUpdateTask() {			
 			@Override
 			public Object doInvokePhase() {
 				NBook book = getBook();
@@ -729,7 +729,7 @@ public class NRangeImpl implements NRange {
 	public void setSheetOrder(final int pos) {
 		//it just handle the first ref
 		final ResultWrap<NSheet> resultSheet = new ResultWrap<NSheet>();
-		new DependentUpdateTask() {			
+		new ModelUpdateTask() {			
 			@Override
 			public Object doInvokePhase() {
 				NBook book = getBook();
@@ -771,7 +771,7 @@ public class NRangeImpl implements NRange {
 	}
 	
 	private void notifySheetFreezeChange(){
-		new NotifyChangeHelper(this).notifySheetFreezeChange(new SheetRegion(getSheet(),-1,-1,-1,-1));
+		new NotifyChangeHelper(this).notifySheetFreezeChange(getSheet());
 	}
 
 	@Override
@@ -908,7 +908,7 @@ public class NRangeImpl implements NRange {
 	}
 	
 	private void notifySheetAutoFilterChange(){
-		new NotifyChangeHelper(this).notifySheetAutoFilterChange(new SheetRegion(getSheet(),-1,-1,-1,-1));
+		new NotifyChangeHelper(this).notifySheetAutoFilterChange(getSheet());
 	}
 
 	@Override
@@ -932,36 +932,55 @@ public class NRangeImpl implements NRange {
 		}
 	}
 	
-	private abstract class DependentUpdateTask extends ReadWriteTask{
-
+	private abstract class ModelUpdateTask extends ReadWriteTask{
 		
 		abstract Object doInvokePhase();
 		abstract void doNotifyPhase();
 		
 		@Override
 		public Object invoke() {
-			LinkedHashSet<Ref> notifySet = new LinkedHashSet<Ref>();
+			LinkedHashSet<Ref> dependentNotifySet = new LinkedHashSet<Ref>();
+			LinkedHashSet<MergeUpdate> mergeNotifySet = new LinkedHashSet<MergeUpdate>();
+			LinkedHashSet<CellRegion> cellNotifySet = new LinkedHashSet<CellRegion>();
 
 			NBookSeries bookSeries = getBookSeries();
 
 			DependentUpdateCollector dependentCtx = new DependentUpdateCollector();
+			MergeUpdateCollector mergeUpdateCtx = new MergeUpdateCollector();
+			CellUpdateCollector cellUpdateCtx = new CellUpdateCollector();
+			
+			
 			DependentUpdateCollector oldDependentCtx = DependentUpdateCollector.getCurrent();
+			MergeUpdateCollector oldMergeUpdateCtx = MergeUpdateCollector.getCurrent();
+			CellUpdateCollector oldCellUpdateCtx = CellUpdateCollector.getCurrent();
 			
 			FormulaCacheCleaner oldClearer = FormulaCacheCleaner.setCurrent(new FormulaCacheCleaner(bookSeries));
 			Object result = null;
 			try{
 				DependentUpdateCollector.setCurrent(dependentCtx);
+				MergeUpdateCollector.setCurrent(oldMergeUpdateCtx);
+				CellUpdateCollector.setCurrent(oldCellUpdateCtx);
 				
 				result = doInvokePhase();
 			}finally{
-				notifySet.addAll(dependentCtx.getDependents());
+				dependentNotifySet.addAll(dependentCtx.getDependents());
+				mergeNotifySet.addAll(mergeUpdateCtx.getMergeUpdates());
+				cellNotifySet.addAll(cellUpdateCtx.getCellUpdates());
 				
 				DependentUpdateCollector.setCurrent(oldDependentCtx);
+				MergeUpdateCollector.setCurrent(oldMergeUpdateCtx);
+				CellUpdateCollector.setCurrent(oldCellUpdateCtx);
 				FormulaCacheCleaner.setCurrent(oldClearer);
 			}
 
-			if(notifySet.size()>0){
-				handleRefNotifyContentChange(bookSeries,notifySet);
+			if(dependentNotifySet.size()>0){
+				handleRefNotifyContentChange(bookSeries,dependentNotifySet);
+			}
+			if(cellNotifySet.size()>0){
+				handleCellNotifyContentChange(cellNotifySet);
+			}
+			if(mergeNotifySet.size()>0){
+				handleMergeNotifyChange(mergeNotifySet);
 			}
 			doNotifyPhase();
 			return result;
@@ -980,6 +999,14 @@ public class NRangeImpl implements NRange {
 		}.doInWriteLock(getLock());
 	}
 	
+	public void handleMergeNotifyChange(Set<MergeUpdate> mergeNotifySet) {
+		new NotifyChangeHelper(this).notifyMergeChange(mergeNotifySet);
+	}
+
+	public void handleCellNotifyContentChange(Set<CellRegion> cellNotifySet) {
+		new NotifyChangeHelper(this).notifyCellChange(cellNotifySet);
+	}
+
 	@Override
 	public void deletePicture(final NPicture picture){
 		new ReadWriteTask() {			

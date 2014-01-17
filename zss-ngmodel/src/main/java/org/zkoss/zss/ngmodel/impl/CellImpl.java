@@ -152,6 +152,7 @@ public class CellImpl extends AbstractCellAdv {
 		Validations.argNotNull(cellStyle);
 		Validations.argInstance(cellStyle, AbstractCellStyleAdv.class);
 		this.cellStyle = (AbstractCellStyleAdv) cellStyle;
+		addCellUpdate();
 	}
 
 	@Override
@@ -189,6 +190,12 @@ public class CellImpl extends AbstractCellAdv {
 		if(opts!=null){
 			opts.richText = null;
 		};
+		
+		addCellUpdate();
+	}
+	
+	private void addCellUpdate(){
+		ModelUpdateUtil.addCellUpdate(getRowIndex(), getColumnIndex());
 	}
 	
 	
@@ -340,6 +347,7 @@ public class CellImpl extends AbstractCellAdv {
 		clearValueForSet(oldVal!=null && oldVal.getType()==CellType.FORMULA && newType !=CellType.FORMULA);
 		
 		setDataGridValue(newCellVal);
+		addCellUpdate();
 	}
 
 	
@@ -354,6 +362,7 @@ public class CellImpl extends AbstractCellAdv {
 	public void setHyperlink(NHyperlink hyperlink) {
 		Validations.argInstance(hyperlink, AbstractHyperlinkAdv.class);
 		getOpts(true).hyperlink = (AbstractHyperlinkAdv)hyperlink;
+		addCellUpdate();
 	}
 	
 	@Override
@@ -366,12 +375,14 @@ public class CellImpl extends AbstractCellAdv {
 	public void setComment(NComment comment) {
 		Validations.argInstance(comment, AbstractCommentAdv.class);
 		getOpts(true).comment = (AbstractCommentAdv)comment;
+		addCellUpdate();
 	}
 
 	@Override
 	public void setRichText(NRichText text) {
 		Validations.argInstance(text, AbstractRichTextAdv.class);
 		getOpts(true).richText = (AbstractRichTextAdv)text;
+		addCellUpdate();
 	}
 
 	@Override

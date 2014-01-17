@@ -19,14 +19,15 @@ public class MergeHelper extends RangeHelperBase{
 		super(range);
 	}
 	
-	public ChangeInfo unmerge(boolean overlapped) {
+	//BookHelper, public static ChangeInfo unMerge(XSheet sheet, int tRow, int lCol, int bRow, int rCol,boolean overlapped) {
+	public void unmerge(boolean overlapped) {
 		int tRow = getRow();
 		int lCol = getColumn();
 		int bRow = getLastColumn();
 		int rCol = getLastColumn();
 		
 //		final RefSheet refSheet = BookHelper.getRefSheet((XBook)sheet.getWorkbook(), sheet);
-		final List<MergeChange> changes = new ArrayList<MergeChange>(); 
+//		final List<MergeChange> changes = new ArrayList<MergeChange>(); 
 		for(int j = sheet.getNumOfMergedRegion() - 1; j >= 0; --j) {
         	final CellRegion merged = sheet.getMergedRegion(j);
         	
@@ -39,11 +40,11 @@ public class MergeHelper extends RangeHelperBase{
         	// ZSS-412 use a flag to decide to check overlap or not.
         	if( (overlapped && overlap(firstRow, firstCol, lastRow, lastCol, tRow, lCol, bRow, rCol)) || 
         			(!overlapped && contain(tRow, lCol, bRow, rCol,firstRow, firstCol, lastRow, lastCol)) ) {
-				changes.add(new MergeChange(merged,null));
+//				changes.add(new MergeChange(merged,null));
 				sheet.removeMergedRegion(merged);
         	}
 		}
-		return new ChangeInfo(null, null, changes);
+//		return new ChangeInfo(null, null, changes);
 	}
 	
 	//a b are overlapped.
@@ -79,7 +80,7 @@ public class MergeHelper extends RangeHelperBase{
 	 * @return {@link Ref} array where the affected formula cell references in index 1 and to be evaluated formula cell references in index 0.
 	 */
 	@SuppressWarnings("unchecked")
-	public ChangeInfo merge(boolean across) {
+	public void merge(boolean across) {
 		int tRow = range.getRow();
 		int lCol = range.getColumn();
 		int bRow = range.getLastColumn();
@@ -91,25 +92,27 @@ public class MergeHelper extends RangeHelperBase{
 		
 		
 		if (across) {
-			final Set<CellRegion> toEval = new HashSet<CellRegion>();
-			final Set<CellRegion> affected = new HashSet<CellRegion>();
-			final List<MergeChange> changes = new ArrayList<MergeChange>();
+//			final Set<CellRegion> toEval = new HashSet<CellRegion>();
+//			final Set<CellRegion> affected = new HashSet<CellRegion>();
+//			final List<MergeChange> changes = new ArrayList<MergeChange>();
 			for(int r = tRow; r <= bRow; ++r) {
-				final ChangeInfo info = merge0(sheet, r, lCol, r, rCol);
-				changes.addAll(info.getMergeChanges());
-				toEval.addAll(info.getToEval());
-				affected.addAll(info.getAffected());
+//				final ChangeInfo info = merge0(sheet, r, lCol, r, rCol);
+				merge0(sheet, r, lCol, r, rCol);
+//				changes.addAll(info.getMergeChanges());
+//				toEval.addAll(info.getToEval());
+//				affected.addAll(info.getAffected());
 			}
-			return new ChangeInfo(toEval, affected, changes);
+//			return new ChangeInfo(toEval, affected, changes);
 		} else {
-			return merge0(sheet, tRow, lCol, bRow, rCol);
+//			return merge0(sheet, tRow, lCol, bRow, rCol);
+			merge0(sheet, tRow, lCol, bRow, rCol);
 		}
 	}
 	
-	private ChangeInfo merge0(NSheet sheet, int tRow, int lCol, int bRow, int rCol) {
-		final List<MergeChange> changes = new ArrayList<MergeChange>();
-		final Set<CellRegion> all = new HashSet<CellRegion>();
-		final Set<CellRegion> last = new HashSet<CellRegion>();
+	private void merge0(NSheet sheet, int tRow, int lCol, int bRow, int rCol) {
+//		final List<MergeChange> changes = new ArrayList<MergeChange>();
+//		final Set<CellRegion> all = new HashSet<CellRegion>();
+//		final Set<CellRegion> last = new HashSet<CellRegion>();
 		//find the left most non-blank cell.
 		NCell target = null;
 		for(int r = tRow; target == null && r <= bRow; ++r) {
@@ -129,8 +132,8 @@ public class MergeHelper extends RangeHelperBase{
 			final int nRow = tRow - tgtRow;
 			final int nCol = lCol - tgtCol;
 			if (nRow != 0 || nCol != 0) { //if target not the left-top one, move to left-top
-				//TODO zss 3.5 check and implement this
 //				final ChangeInfo info = BookHelper.moveRange(sheet, tgtRow, tgtCol, tgtRow, tgtCol, nRow, nCol);
+				sheet.moveCell(tgtRow, tgtCol, tgtRow, tgtCol, nRow, nCol);
 //				if (info != null) {
 //					changes.addAll(info.getMergeChanges());
 //					last.addAll(info.getToEval());
@@ -175,10 +178,10 @@ public class MergeHelper extends RangeHelperBase{
 		final CellRegion mergeArea = new CellRegion(tRow, bRow, lCol, rCol);
 		sheet.addMergedRegion(mergeArea);
 //		final Ref mergeArea = new AreaRefImpl(tRow, lCol, bRow, rCol, BookHelper.getRefSheet((XBook)sheet.getWorkbook(), sheet)); 
-		all.add(mergeArea);//should update the cell in the merge area.
-		changes.add(new MergeChange(null, mergeArea));
+//		all.add(mergeArea);//should update the cell in the merge area.
+//		changes.add(new MergeChange(null, mergeArea));
 		
-		return new ChangeInfo(last, all, changes);
+//		return new ChangeInfo(last, all, changes);
 	}	
 
 }
