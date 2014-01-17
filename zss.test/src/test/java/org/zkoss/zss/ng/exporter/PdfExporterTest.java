@@ -93,7 +93,16 @@ public class PdfExporterTest {
 	
 	@Test
 	public void exportPdfTest() {
-		NBook book = importBook("book/simple.xlsx");
+		NBook book = importBook("book/taubman.xlsx");
+		int[] colbreak = book.getSheet(0).getViewInfo().getColumnBreaks();
+		File temp = Setup.getTempFile("pdfExportTest",".pdf");
+		exportBook(book, temp);
+		Util.open(temp);
+	}
+	
+	@Test
+	public void zss529Test() {
+		NBook book = importBook("book/taubman-nobreak.xlsx");
 		File temp = Setup.getTempFile("pdfExportTest",".pdf");
 		exportBook(book, temp);
 		Util.open(temp);
@@ -102,7 +111,7 @@ public class PdfExporterTest {
 	@Test
 	public void oldExportPdf() throws IOException {
 		BackupExporter exporter = new BackupExporter();
-		InputStream is  = PdfExporterTest.class.getResourceAsStream("book/simple.xlsx");
+		InputStream is  = PdfExporterTest.class.getResourceAsStream("book/taubman.xlsx");
 		ExcelImporter importer = new ExcelImporter();
 		XBook book = importer.imports(is, "test");
 		is.close();

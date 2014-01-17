@@ -35,7 +35,7 @@ public class HtmlExporterTest {
 	
 	@Test
 	public void exportHtml() {
-		NBook book = importBook("book/simple.xlsx");
+		NBook book = importBook("book/simpleChart.xlsx");
 		File temp = Setup.getTempFile("htmlExportTest",".html");
 		exportBook(book, temp);
 		Util.open(temp);
