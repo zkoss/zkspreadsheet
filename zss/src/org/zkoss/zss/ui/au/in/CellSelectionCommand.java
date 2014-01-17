@@ -62,8 +62,8 @@ public class CellSelectionCommand extends AbstractCommand implements Command {
 		
 		//TODO request shall send back maxcol/maxrow (do it in client side)
 		final NBook book = ((SheetImpl)sheet).getNative().getBook();
-		final int maxcol = book.getMaxColumnSize();
-		final int maxrow = book.getMaxRowSize();
+		final int maxcol = book.getMaxColumnIndex();
+		final int maxrow = book.getMaxRowIndex();
 		
 		String t = (String) data.get("type");
 		CellSelectionType type = null;

@@ -30,6 +30,7 @@ import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.api.model.impl.SheetImpl;
 import org.zkoss.zss.model.sys.XBook;
+import org.zkoss.zss.ngmodel.NBook;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.event.CellSelectionAction;
 import org.zkoss.zss.ui.event.CellSelectionType;
@@ -57,9 +58,9 @@ public class CellSelectionUpdateCommand extends AbstractCommand implements Comma
 		if (!XUtils.getSheetUuid(sheet).equals(sheetId))
 			return;
 		
-		final XBook book = (XBook) ((SheetImpl)sheet).getNative().getBook();
-		final int maxcol = book.getSpreadsheetVersion().getLastColumnIndex();
-		final int maxrow = book.getSpreadsheetVersion().getLastRowIndex();
+		final NBook book = ((SheetImpl)sheet).getNative().getBook();
+		final int maxcol = book.getMaxColumnIndex();
+		final int maxrow = book.getMaxRowIndex();
 		
 		
 		String t = (String) data.get("type");

@@ -1799,8 +1799,8 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		if (!Objects.equals(_selectionArea, sel)) {
 			;
 			if (sel.getColumn() < 0 || sel.getRow() < 0
-					|| sel.getLastColumn() > _book.getMaxColumnSize()
-					|| sel.getLastRow() > _book.getMaxRowSize()
+					|| sel.getLastColumn() > _book.getMaxColumnIndex()
+					|| sel.getLastRow() > _book.getMaxRowIndex()
 					|| sel.getColumn() > sel.getLastColumn()
 					|| sel.getRow() > sel.getLastRow()) {
 				throw new UiException("illegal selection : " + sel.toString());
@@ -2074,7 +2074,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 					onDataValidationContentChange((ModelEvent)event);
 				}
 			});
-			/*
+			/*TODO zss 3.5
 			addEventListener(SSDataEvent.ON_RANGE_INSERT, new EventListener() {
 				@Override
 				public void onEvent(Event event) throws Exception {
@@ -2107,18 +2107,21 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 					onMergeChange((SSDataEvent)event);
 				}
 			});
-			addEventListener(SSDataEvent.ON_MERGE_ADD, new EventListener() {
+			*/
+			addEventListener(ModelEvents.ON_MERGE_ADD, new ModelEventListener() {
 				@Override
-				public void onEvent(Event event) throws Exception {
-					onMergeAdd((SSDataEvent)event);
+				public void onEvent(ModelEvent event) {
+					onMergeAdd(event);
 				}
 			});
-			addEventListener(SSDataEvent.ON_MERGE_DELETE, new EventListener() {
+			
+			addEventListener(ModelEvents.ON_MERGE_DELETE, new ModelEventListener() {
 				@Override
-				public void onEvent(Event event) throws Exception {
-					onMergeDelete((SSDataEvent)event);
+				public void onEvent(ModelEvent event) {
+					onMergeDelete(event);
 				}
 			});
+			/*TODO zss 3.5
 			addEventListener(SSDataEvent.ON_DISPLAY_GRIDLINES, new EventListener() {
 				@Override
 				public void onEvent(Event event) throws Exception {
@@ -2399,20 +2402,28 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 					rng.getLeftCol(), rng.getTopRow(), rng.getRightCol(), rng.getBottomRow(),
 					orng.getLeftCol(), orng.getTopRow(), orng.getRightCol(), orng.getBottomRow());
 		}
-		private void onMergeAdd(SSDataEvent event) {
-			final Ref rng = event.getRef();
-			final XSheet sheet = getSheet(rng);
+		*/
+		private void onMergeAdd(ModelEvent event) {
+			NSheet sheet = event.getSheet();
+			if (!getSelectedXSheet().equals(sheet)){
+				releaseClientCache(sheet.getId());
+				return;
+			}
+			CellRegion region = event.getRegion();
 			((ExtraCtrl) getExtraCtrl()).addMergeCell(sheet, 
-					rng.getLeftCol(), rng.getTopRow(), rng.getRightCol(), rng.getBottomRow());
+					region.getColumn(), region.getRow(), region.getLastColumn(), region.getLastRow());
 
 		}
-		private void onMergeDelete(SSDataEvent event) {
-			final Ref orng = event.getRef();
-			final XSheet sheet = getSheet(orng);
-			((ExtraCtrl) getExtraCtrl()).deleteMergeCell(sheet, orng.getLeftCol(),
-					orng.getTopRow(), orng.getRightCol(), orng.getBottomRow());
+		private void onMergeDelete(ModelEvent event) {
+			NSheet sheet = event.getSheet();
+			if (!getSelectedXSheet().equals(sheet)){
+				releaseClientCache(sheet.getId());
+				return;
+			}
+			CellRegion region = event.getRegion();
+			((ExtraCtrl) getExtraCtrl()).deleteMergeCell(sheet,
+					region.getColumn(), region.getRow(), region.getLastColumn(), region.getLastRow());
 		}
-		*/
 		private void onRowColumnSizeChange(ModelEvent event) {
 			//TODO shall pass the range over to the client side and let client side do it; rather than iterate each column and send multiple command
 			final NSheet sheet = event.getSheet();
