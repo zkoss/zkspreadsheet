@@ -1019,6 +1019,15 @@ public class SheetImpl extends AbstractSheetAdv {
 			throw new IllegalArgumentException(new CellRegion(rowIdx,columnIdx,lastRowIdx,lastColumnIdx).getReferenceString()+" can't move to offset "+rowOffset+","+columnOffset);
 		}
 		
+		NDataGrid dg = getDataGrid();
+		if(dg!=null){
+			if(!dg.isSupportedOperations()){
+				throw new InvalidateModelOpException("doesn't support insert/delete");
+			}
+			//TODO
+//			dg.moveCell(rowIdx, columnIdx, rowSize,columnSize,horizontal);
+		}
+		
 		//check merge overlaps and contains
 		CellRegion sreRegion = new CellRegion(rowIdx,columnIdx,lastRowIdx,lastColumnIdx);
 		Collection<CellRegion> containsMerge = getContainsMergedRegions(sreRegion);
@@ -1054,6 +1063,11 @@ public class SheetImpl extends AbstractSheetAdv {
 					AbstractRowAdv target = getOrCreateRow(tr);
 					row.moveCellTo(target, c, c, columnOffset);
 				}
+				
+				//both (r,c) and (tr,tc) was changed.
+				ModelUpdateUtil.addCellUpdate(r,c);
+				ModelUpdateUtil.addCellUpdate(tr,tc);
+				
 				if(reverseXDir){
 					c--;
 				}else{
@@ -1073,7 +1087,7 @@ public class SheetImpl extends AbstractSheetAdv {
 			CellRegion newMerge = new CellRegion(merge.getRow() + rowOffset,merge.getColumn()+ columnOffset,
 					merge.getLastRow()+rowOffset,merge.getLastColumn()+columnOffset);
 			mergedRegions.add(newMerge);
-			//TODO zss 3.5 collect merge change info
+			ModelUpdateUtil.addMergeUpdate(merge, newMerge);
 		}
 		
 		

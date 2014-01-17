@@ -174,12 +174,12 @@ public class NRangeImpl implements NRange {
 
 		NBookSeries bookSeries = getBookSeries();
 
-		DependentCollector dependentCtx = new DependentCollector();
-		DependentCollector oldDependentCtx = DependentCollector.getCurrent();
+		DependentUpdateCollector dependentCtx = new DependentUpdateCollector();
+		DependentUpdateCollector oldDependentCtx = DependentUpdateCollector.getCurrent();
 		
 		FormulaCacheCleaner oldClearer = FormulaCacheCleaner.setCurrent(new FormulaCacheCleaner(bookSeries));
 		try{
-			DependentCollector.setCurrent(dependentCtx);
+			DependentUpdateCollector.setCurrent(dependentCtx);
 			
 			for (EffectedRegion r : rangeRefs) {
 				String bookName = r._sheet.getBook().getBookName();
@@ -203,7 +203,7 @@ public class NRangeImpl implements NRange {
 		}finally{
 			notifySet.addAll(dependentCtx.getDependents());
 			
-			DependentCollector.setCurrent(oldDependentCtx);
+			DependentUpdateCollector.setCurrent(oldDependentCtx);
 			FormulaCacheCleaner.setCurrent(oldClearer);
 		}
 
@@ -944,19 +944,19 @@ public class NRangeImpl implements NRange {
 
 			NBookSeries bookSeries = getBookSeries();
 
-			DependentCollector dependentCtx = new DependentCollector();
-			DependentCollector oldDependentCtx = DependentCollector.getCurrent();
+			DependentUpdateCollector dependentCtx = new DependentUpdateCollector();
+			DependentUpdateCollector oldDependentCtx = DependentUpdateCollector.getCurrent();
 			
 			FormulaCacheCleaner oldClearer = FormulaCacheCleaner.setCurrent(new FormulaCacheCleaner(bookSeries));
 			Object result = null;
 			try{
-				DependentCollector.setCurrent(dependentCtx);
+				DependentUpdateCollector.setCurrent(dependentCtx);
 				
 				result = doInvokePhase();
 			}finally{
 				notifySet.addAll(dependentCtx.getDependents());
 				
-				DependentCollector.setCurrent(oldDependentCtx);
+				DependentUpdateCollector.setCurrent(oldDependentCtx);
 				FormulaCacheCleaner.setCurrent(oldClearer);
 			}
 

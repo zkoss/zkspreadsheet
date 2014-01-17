@@ -282,7 +282,7 @@ public class CellImpl extends AbstractCellAdv {
 		
 		//clear the dependent's formula result cache
 		NBookSeries bookSeries = getSheet().getBook().getBookSeries();
-		DependentUpdateUtil.handleDependentUpdate(bookSeries,getRef());
+		ModelUpdateUtil.handleDependentUpdate(bookSeries,getRef());
 	}
 
 	

@@ -23,26 +23,26 @@ import org.zkoss.zss.ngmodel.CellRegion;
  * @author henrichen
  *
  */
-public class ChangeInfo {
-	final private Set<CellRegion> _affected; //all affected reference area
-	final private Set<CellRegion> _toEval; //to be evaluated reference area that will recursively evaluate all affected reference area
-	final private List<MergeChange> _mergeChanges; //list of changed merge ranges
-	
-	public ChangeInfo(Set<CellRegion> toEval, Set<CellRegion> affected, List<MergeChange> mergeChanges) {
-		this._affected = affected;
-		this._toEval = toEval;
-		this._mergeChanges = mergeChanges;
-	}
-	
-	public Set<CellRegion> getAffected() {
-		return _affected;
-	}
-
-	public Set<CellRegion> getToEval() {
-		return _toEval;
-	}
-
-	public List<MergeChange> getMergeChanges() {
-		return _mergeChanges;
-	}
-}
+//public class ChangeInfo {
+//	final private Set<CellRegion> _affected; //all affected reference area
+//	final private Set<CellRegion> _toEval; //to be evaluated reference area that will recursively evaluate all affected reference area
+//	final private List<MergeChange> _mergeChanges; //list of changed merge ranges
+//	
+//	public ChangeInfo(Set<CellRegion> toEval, Set<CellRegion> affected, List<MergeChange> mergeChanges) {
+//		this._affected = affected;
+//		this._toEval = toEval;
+//		this._mergeChanges = mergeChanges;
+//	}
+//	
+//	public Set<CellRegion> getAffected() {
+//		return _affected;
+//	}
+//
+//	public Set<CellRegion> getToEval() {
+//		return _toEval;
+//	}
+//
+//	public List<MergeChange> getMergeChanges() {
+//		return _mergeChanges;
+//	}
+//}

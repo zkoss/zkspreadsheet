@@ -1,4 +1,4 @@
-package org.zkoss.zss.ngmodel.impl;
+package org.zkoss.zss.ngapi.impl;
 
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -11,21 +11,21 @@ import org.zkoss.zss.ngmodel.sys.dependency.Ref;
  * @author dennis
  *
  */
-public class DependentCollector {
+public class DependentUpdateCollector {
 
-	static ThreadLocal<DependentCollector>  current = new ThreadLocal<DependentCollector>();
+	static ThreadLocal<DependentUpdateCollector>  current = new ThreadLocal<DependentUpdateCollector>();
 	
 	private Set<Ref> dependents;
 	
-	public DependentCollector(){
+	public DependentUpdateCollector(){
 	}
-	public static DependentCollector setCurrent(DependentCollector ctx){
-		DependentCollector old = current.get();
+	public static DependentUpdateCollector setCurrent(DependentUpdateCollector ctx){
+		DependentUpdateCollector old = current.get();
 		current.set(ctx);
 		return old;
 	}
 	
-	public static DependentCollector getCurrent(){
+	public static DependentUpdateCollector getCurrent(){
 		return current.get();
 	}
 
