@@ -3,7 +3,7 @@ ZK Spreadsheet 2.6.0
 *Features:
 	ZSS-187 Better support for CellStyles while setBorders
 	ZSS-251 Support to override the default formula implementation
-  ZSS-527 Enter formula with bad syntax, would like "bad" formula to remain in cell
+	ZSS-527 Enter formula with bad syntax, would like "bad" formula to remain in cell
 
 *Bug
 	ZSS-171 Input "=" on cell shall not append cell reference
@@ -66,6 +66,7 @@ ZK Spreadsheet 2.6.0
 	ZSS-523 misleading error message for text formulas
 	ZSS-534 font size not displayed properly in toolbar
 	ZSS-533 formula's function with non-existed name should be resolved to #NAME? and an name be created in file
+	ZSS-205 scroll bar in function bar is not persistent
 
 ZK Spreadsheet 2.5.0
 *Features:   

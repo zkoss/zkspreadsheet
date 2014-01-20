@@ -200,36 +200,42 @@ zss.FormulabarEditor = zk.$extends(zul.inp.InputWidget, {
    	 */
    	syncEditorPosition: function (p) {
 		var	sheet = this.sheet;
-		if (!sheet)
+		if (!sheet) {
 			return;
+		}
 		
-		var n = this.$n('real');
-		p = p != undefined ? p : zk(n).getSelectionRange()[1];
-		if (!p) {
-			jq(n).css('top', '0px');
+		var n = this.$n(); // it's outer element
+		var textarea = this.$n('real');
+
+		// adjust target position
+		// and check position is most-top or bottom
+		p = p != undefined ? p : zk(textarea).getSelectionRange()[1];
+		if (p <= 0) { // scroll to most-top
+			jq(n).scrollTop(0); // ZSS-205: scroll the parent, don't move the TEXTAREA
 			return;
 		}
-		var	lineHeight = sheet.lineHeight,
-			str = n.value,
-			len = str.length,
-			lineNum = 1;
-		for (var i = 0; i < len; i++) {
-			if (i == p)
-				break;
-			if (str.charAt(i) == '\n')
-				lineNum++;
-		}
-		if (lineNum - 1) {
-			var h = lineNum * lineHeight,
-				curHgh = jq(this.$n()).height(),
-				curLine = Math.floor(curHgh / lineHeight);
-			if (curLine < lineNum) {
-				//6: n.paddingTop (2px) + n.marginTop (1px) + text top offset (3px)
-				jq(n).css('top', (curHgh - h - 6) + 'px');
-			}
-		} else {
-			jq(n).css('top', '0px');
-		}
+		
+		// ZSS-205: scroll to specific position
+		var textHeight = this.getTextHeight(textarea.value.substring(0, p));
+		var sp = textHeight - this.getLineHeight();
+		jq(n).scrollTop(sp);
+   	},
+   	/** one line height in formula editor */
+   	getLineHeight: function() {
+   		// calculate once and keep the result
+   		if(this._lineHeight == undefined) {
+   			// use one char to simulate one line and get the height
+   			this._lineHeight = this.getTextHeight('a');
+   		}
+   		return this._lineHeight;
+   	},
+   	/** get specific text height in formula editor */
+   	getTextHeight: function(text) {
+		var support = this.$n('support');
+		support.value = text;
+		var height = support.scrollHeight;
+		support.value = null; // clear
+		return height;
    	},
    	/**
    	 * Sets the value of formula editor
@@ -238,12 +244,16 @@ zss.FormulabarEditor = zk.$extends(zul.inp.InputWidget, {
    	 * @param int pos the text cursor position
    	 */
    	setValue: function (v, pos) {
-	   	var n = this.$n('real');
-   	   	n.value = v;
+   		var n = this.$n();
+	   	var textarea = this.$n('real');
+	   	textarea.value = v;
    		if (this.isRealVisible()) {
-   	   		syncEditorHeight(n);
+   			
+   			// ZSS-205: reset height to parent's height before sync. editor's height with scroll height
+   			jq(textarea).css('height', jq.px0(n.clientHeight - 3 /* top padding */ ));
+   	   		syncEditorHeight(textarea);
    	   		
-   	   		this.syncEditorPosition(pos != undefined ? pos : n.value.length);
+   	   		this.syncEditorPosition(pos != undefined ? pos : textarea.value.length);
    		}
    	},
    	getValue: function () {
@@ -301,7 +311,9 @@ zss.FormulabarEditor = zk.$extends(zul.inp.InputWidget, {
    			var p = sheet.getLastFocus(),
    				c = sheet.getCell(p.row, p.column);
    			if (c) {
-   				this.$n('real').value = c.edit || '';
+   				// ZSS-205: called by server updating cells
+   				// should call setValue(), don't change DOM directly 
+   				this.setValue(c.edit || '', 0);
    			}
    		}
    	},
@@ -317,8 +329,8 @@ zss.FormulabarEditor = zk.$extends(zul.inp.InputWidget, {
    			   	var d = evt.data,
    			   		cell = sheet.getCell(d.top, d.left);
    			   	if (cell) {
-   			   		this.$n('real').value = cell.edit || '';
-   			   		this.syncEditorPosition(0);
+   			   		// ZSS-205: should call setValue(), don't change DOM directly
+   			   		this.setValue(cell.edit || '', 0);
    			   	} else {
    			   	}
    			} else if (sheet.state == zss.SSheetCtrl.EDITING) {
@@ -373,7 +385,7 @@ zss.FormulabarEditor = zk.$extends(zul.inp.InputWidget, {
 				end = p[1],
 				v = n.value,
 				info = sheet.editingFormulaInfo;
-			syncEditorHeight(n);
+			syncEditorHeight(n); // ZSS-205: doesn't need to reset height here
 			this.syncEditorPosition(end);
 			sheet.inlineEditor.setValue(v);
 			this._wgt.fire('onEditboxEditing', {token: '', sheetId: sheet.serverSheetId, clienttxt: n.value});
@@ -404,20 +416,33 @@ zss.FormulabarEditor = zk.$extends(zul.inp.InputWidget, {
 	},
    	setWidth: function (v) {
    		this.$supers(zss.FormulabarEditor, 'setWidth', arguments);
-   		var w = this.$n().clientWidth;
-   		jq(this.$n('real')).css('width', jq.px(zk.ie ? w - 8 : w));//8: IE's textarea scrollbar width
+   		
+   		// ZSS-205: textarea should be adjusted to sync. editor
+   		// should subtract padding (left and right are both 3px)
+   		// and scrollbar width according to browsers
+   		var w = this.$n().clientWidth - 6; // 6px is padding
+   		w = w - zss.Spreadsheet.scrollWidth; // scrollbar width
+   		if(w < 0) {
+   			w = 0;
+   		}
+   		jq(this.$n('real')).css('width', jq.px(w));
+   		jq(this.$n('support')).css('width', jq.px(w)); // must sync. with textarea
    	},
    	setHeight: function (v) {
    		this.$supers(zss.FormulabarEditor, 'setHeight', arguments);
-   		var h = this.$n().clientHeight,
-   			n = this.$n('real');
-   		n.style.height = n.scrollHeight > h ? n.scrollHeight + 'px' : h + 'px';
+   		
+   		// ZSS-205: textarea should be adjusted to sync. editor
+   		var textarea = this.$n('real');
+   		var n = this.$n();
+		jq(textarea).css('height', jq.px0(n.clientHeight - 3 /* top padding */ )); // reset height to parent's height before sync. editor's height with scroll height
+   		syncEditorHeight(textarea);
    		this.syncEditorPosition();
    	},
    	redrawHTML_: function () {
    		var uid = this.uuid,
    			zcls = this.getZclass();
-   		return '<div id="' + uid + '" class="' + zcls + '"><textarea id="' + uid + '-real" class="' + zcls + '-real">' + this._areaText() + '</textarea></div>';
+   		// ZSS-205: add a support element for calculating scroll position 
+   		return '<div id="' + uid + '" class="' + zcls + '"><textarea id="' + uid + '-real" class="' + zcls + '-real">' + this._areaText() + '</textarea><div id="' + uid + '-wrap-support" class="' + zcls + '-wrap-support"><textarea id="' + uid + '-support" class="' + zcls + '-support"></textarea></div></div>';
    	},
    	getZclass: function () {
    		return 'zsformulabar-editor';

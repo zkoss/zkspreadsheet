@@ -1107,23 +1107,43 @@
 .zsformulabar-editor {
 	border: 1px solid #D8D8D8;
 	border-top: 0;
-	overflow: hidden;
+	overflow-x: hidden;
+	overflow-y: auto;
 	margin-top: -1px;
 }
-.zsformulabar-editor-real {
+.zsformulabar-editor-real, .zsformulabar-editor-support {
 	border: 0;
 	font-size: 16px;
-	padding: 2px 3px 0 3px;
+	padding: 3px 3px 0 3px; /* ZSS-205: make padding be consistent */
 	font-family: arial,sans-serif;
-	position: absolute;
+	position: relative;
 	top: 0;
 	left: 0;
-	<c:if test="${c:isSafari()}">
-		padding-top: 4px;
-	</c:if>
-	<c:if test="${c:isOpera() || c:browser('ie7-') || c:browser('ie6-')}">
-		padding-top: 5px;
-	</c:if>
+	/* ZSS-205: hide scrollbar and disable resize */
+	overflow: hidden; 
+	resize: none;
+	white-space: pre-wrap;
+	word-wrap: break-word;
+	word-break: break-all;
+	/* ZSS-205: no necessary to adjust padding for different browsers */
+}
+
+.zsformulabar-editor-support {
+	visibility: hidden;
+	width: 0;
+	height: 0;
+	min-width: 0;
+	min-height: 0;
+}
+
+.zsformulabar-editor-wrap-support {
+	visibility: hidden;
+	width: 0;
+	height: 0;
+	overflow: scroll;
+	position: relative;
+	top: -9000px; /* make it out of formula bar */
+	left: -9000px; 
 }
 
 .zssheetselector .z-tab-hl, .zssheetselector .z-tab-hr, .zssheetselector .z-tab-hm {
