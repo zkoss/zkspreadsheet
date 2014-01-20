@@ -83,7 +83,7 @@ public class MergeHelper extends RangeHelperBase{
 	public void merge(boolean across) {
 		int tRow = range.getRow();
 		int lCol = range.getColumn();
-		int bRow = range.getLastColumn();
+		int bRow = range.getLastRow();
 		int rCol = range.getLastColumn();
 		
 		List<CellRegion> overlaps = sheet.getOverlapsMergedRegions(new CellRegion(tRow,lCol,bRow,rCol)); 
