@@ -568,7 +568,13 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			try {
 				NImporter importer = _importer;
 				if (importer == null) {
-					importer = NImporters.getImporter();
+					//TODO zss 3.5 remove this
+					if("true".equals(Executions.getCurrent().getParameter("zsstest"))){
+						importer = NImporters.getImporter("test");
+					}else{
+						importer = NImporters.getImporter();
+					}
+					
 				}
 
 				NBook book = null;
