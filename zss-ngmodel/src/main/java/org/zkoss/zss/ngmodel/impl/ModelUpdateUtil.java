@@ -13,12 +13,12 @@ import org.zkoss.zss.ngmodel.sys.dependency.Ref;
 /*package*/ class ModelUpdateUtil {
 
 	
-	/*package*/ static void handleDependentUpdate(NBookSeries bookSeries, Ref precedent){
+	/*package*/ static void handlePrecedentUpdate(NBookSeries bookSeries, Ref precedent){
 		//clear formula cache (that reval the unexisted sheet before
 		FormulaCacheCleaner clearer = FormulaCacheCleaner.getCurrent();
 		DependentUpdateCollector collector = DependentUpdateCollector.getCurrent();
 		Set<Ref> dependents = null; 
-		//get tabl when collector and clearer is not ignored (in import case, we should ignore clear cahche)
+		//get table when collector and clearer is not ignored (in import case, we should ignore clear cahche)
 		if(collector!=null || clearer!=null || bookSeries.isAutoFormulaCacheClean()){
 			DependencyTable table = ((AbstractBookSeriesAdv)bookSeries).getDependencyTable();
 			dependents = table.getDependents(precedent); 

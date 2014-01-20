@@ -22,7 +22,7 @@ import org.zkoss.zss.ngmodel.sys.dependency.Ref.RefType;
 	public void clear(Set<Ref> dependents) {
 		// clear formula cache
 		for (Ref dependent : dependents) {
-			System.out.println(">>> Clear "+dependent);
+			System.out.println(">>>Clear Formula Cache: "+dependent);
 			//clear the dependent's formula cache since the precedent is changed.
 			if (dependent.getType() == RefType.CELL) {
 				handleCellRef(dependent);

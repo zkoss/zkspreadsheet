@@ -70,13 +70,13 @@ import org.zkoss.zss.ngmodel.impl.AbstractBookAdv;
 		}
 		NBook book = sheet.getBook();
 		for(CellRegion notify:toRemove){//remove the final remove list
-			System.out.println(">>> notify remove merge "+notify.getReferenceString());
+			System.out.println(">>> Notify remove merge "+notify.getReferenceString());
 			((AbstractBookAdv) book).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_MERGE_DELETE,sheet,
 					notify));
 			
 		}
 		for(CellRegion notify:toAdd){
-			System.out.println(">>> notify add merge "+notify.getReferenceString());
+			System.out.println(">>> Notify add merge "+notify.getReferenceString());
 			((AbstractBookAdv) book).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_MERGE_ADD,sheet,
 					notify));
 		}
@@ -86,7 +86,7 @@ import org.zkoss.zss.ngmodel.impl.AbstractBookAdv;
 	public void notifyCellChange(NSheet sheet,Set<CellRegion> cellNotifySet) {
 		NBook book = sheet.getBook();
 		for(CellRegion notify:cellNotifySet){
-			System.out.println(">>> notify update cell "+notify.getReferenceString());
+			System.out.println(">>> Notify update cell "+notify.getReferenceString());
 			((AbstractBookAdv) book).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_CELL_CONTENT_CHANGE,sheet,
 				new CellRegion(notify.getRow(),notify.getColumn(),notify.getLastRow(),notify.getLastColumn())));
 		}

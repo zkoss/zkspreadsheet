@@ -232,7 +232,7 @@ public class BookImpl extends AbstractBookAdv{
 				this,
 				sheet));
 
-		ModelUpdateUtil.handleDependentUpdate(getBookSeries(),new RefImpl(sheet));
+		ModelUpdateUtil.handlePrecedentUpdate(getBookSeries(),new RefImpl(sheet));
 
 		return sheet;
 	}
@@ -255,8 +255,8 @@ public class BookImpl extends AbstractBookAdv{
 		sendModelInternalEvent(ModelInternalEvents.createModelInternalEvent(ModelInternalEvents.ON_SHEET_RENAMED, 
 				this,sheet, ModelInternalEvents.createDataMap(ModelInternalEvents.PARAM_SHEET_OLD_NAME, oldname)));
 		
-		ModelUpdateUtil.handleDependentUpdate(getBookSeries(),new RefImpl(this.getBookName(),newname));//to clear the cahce of formula that has unexisted name
-		ModelUpdateUtil.handleDependentUpdate(getBookSeries(),new RefImpl(this.getBookName(),oldname));
+		ModelUpdateUtil.handlePrecedentUpdate(getBookSeries(),new RefImpl(this.getBookName(),newname));//to clear the cahce of formula that has unexisted name
+		ModelUpdateUtil.handlePrecedentUpdate(getBookSeries(),new RefImpl(this.getBookName(),oldname));
 	}
 
 	private void checkLegalSheetName(String name) {
@@ -297,7 +297,7 @@ public class BookImpl extends AbstractBookAdv{
 		sendModelInternalEvent(ModelInternalEvents.createModelInternalEvent(ModelInternalEvents.ON_SHEET_DELETED, 
 				this,ModelInternalEvents.createDataMap(ModelInternalEvents.PARAM_SHEET_OLD_INDEX, index)));
 		
-		ModelUpdateUtil.handleDependentUpdate(getBookSeries(),new RefImpl(this.getBookName(),sheet.getSheetName()));
+		ModelUpdateUtil.handlePrecedentUpdate(getBookSeries(),new RefImpl(this.getBookName(),sheet.getSheetName()));
 	}
 
 	@Override

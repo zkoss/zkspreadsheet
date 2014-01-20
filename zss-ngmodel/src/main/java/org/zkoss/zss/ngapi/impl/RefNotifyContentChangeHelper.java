@@ -19,18 +19,18 @@ import org.zkoss.zss.ngmodel.sys.dependency.Ref.RefType;
 		super(bookSeries);
 	}
 
-	public void notifyContentChange(HashSet<Ref> dependentSet) {
+	public void notifyContentChange(HashSet<Ref> notifySet) {
 		// clear formula cache
-		for (Ref dependent : dependentSet) {
-			System.out.println(">>> Notify "+dependent);
+		for (Ref notify : notifySet) {
+			System.out.println(">>> Notify Dependent Change : "+notify);
 			//clear the dependent's formula cache since the precedent is changed.
-			if (dependent.getType() == RefType.CELL || dependent.getType() == RefType.AREA) {
-				handleCellRef(dependent);
-			} else if (dependent.getType() == RefType.OBJECT) {
-				if(((ObjectRef)dependent).getObjectType()==ObjectType.CHART){
-					handleChartRef((ObjectRef)dependent);
-				}else if(((ObjectRef)dependent).getObjectType()==ObjectType.DATA_VALIDATION){
-					handleDataValidationRef((ObjectRef)dependent);
+			if (notify.getType() == RefType.CELL || notify.getType() == RefType.AREA) {
+				handleCellRef(notify);
+			} else if (notify.getType() == RefType.OBJECT) {
+				if(((ObjectRef)notify).getObjectType()==ObjectType.CHART){
+					handleChartRef((ObjectRef)notify);
+				}else if(((ObjectRef)notify).getObjectType()==ObjectType.DATA_VALIDATION){
+					handleDataValidationRef((ObjectRef)notify);
 				}
 			} else {// TODO another
 
@@ -38,23 +38,23 @@ import org.zkoss.zss.ngmodel.sys.dependency.Ref.RefType;
 		}
 	}
 
-	private void handleChartRef(ObjectRef dependent) {
-		NBook book = bookSeries.getBook(dependent.getBookName());
+	private void handleChartRef(ObjectRef notify) {
+		NBook book = bookSeries.getBook(notify.getBookName());
 		if(book==null) return;
-		NSheet sheet = book.getSheetByName(dependent.getSheetName());
+		NSheet sheet = book.getSheetByName(notify.getSheetName());
 		if(sheet==null) return;
-		String[] ids = dependent.getObjectIdPath();
+		String[] ids = notify.getObjectIdPath();
 		((AbstractBookAdv) book).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_CHART_CONTENT_CHANGE,sheet,
 				ModelEvents.createDataMap(ModelEvents.PARAM_OBJECT_ID,ids[0])));
 				
 	}
 	
-	private void handleDataValidationRef(ObjectRef dependent) {
-		NBook book = bookSeries.getBook(dependent.getBookName());
+	private void handleDataValidationRef(ObjectRef notify) {
+		NBook book = bookSeries.getBook(notify.getBookName());
 		if(book==null) return;
-		NSheet sheet = book.getSheetByName(dependent.getSheetName());
+		NSheet sheet = book.getSheetByName(notify.getSheetName());
 		if(sheet==null) return;
-		String[] ids = dependent.getObjectIdPath();
+		String[] ids = notify.getObjectIdPath();
 		((AbstractBookAdv) book).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_DATA_VALIDATION_CONTENT_CHANGE,sheet,
 				ModelEvents.createDataMap(ModelEvents.PARAM_OBJECT_ID,ids[0])));
 	}

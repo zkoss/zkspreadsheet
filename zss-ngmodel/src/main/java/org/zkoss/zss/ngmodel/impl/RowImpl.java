@@ -231,6 +231,9 @@ public class RowImpl extends AbstractRowAdv {
 	@Override
 	void setIndex(int newidx) {
 		this.index = newidx;
+		for(AbstractCellAdv cell:cells.values()){
+			cell.setRow(this);//set this row again to trigger rebuildFormulaDependency
+		}
 	}
 
 	@Override

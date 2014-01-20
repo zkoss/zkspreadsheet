@@ -37,6 +37,7 @@ import org.zkoss.zss.ngmodel.sys.formula.FormulaClearContext;
 import org.zkoss.zss.ngmodel.sys.formula.FormulaEngine;
 import org.zkoss.zss.ngmodel.sys.formula.FormulaEvaluationContext;
 import org.zkoss.zss.ngmodel.sys.formula.FormulaExpression;
+import org.zkoss.zss.ngmodel.sys.formula.FormulaParseContext;
 import org.zkoss.zss.ngmodel.util.Validations;
 /**
  * 
@@ -289,7 +290,7 @@ public class CellImpl extends AbstractCellAdv {
 		
 		//clear the dependent's formula result cache
 		NBookSeries bookSeries = getSheet().getBook().getBookSeries();
-		ModelUpdateUtil.handleDependentUpdate(bookSeries,getRef());
+		ModelUpdateUtil.handlePrecedentUpdate(bookSeries,getRef());
 	}
 
 	
@@ -394,12 +395,14 @@ public class CellImpl extends AbstractCellAdv {
 	@Override
 	void setIndex(int newidx) {
 		this.index = newidx;
+		rebuildFormulaDependency();
 	}
 	
 	@Override
 	void setRow(AbstractRowAdv row){
 		checkOrphan();
 		this.row = row;
+		rebuildFormulaDependency();
 	}
 	
 	private Ref lastRef;
@@ -422,5 +425,19 @@ public class CellImpl extends AbstractCellAdv {
 		StringBuilder sb = new StringBuilder();
 		sb.append("Cell:[").append(getRowIndex()).append(",").append(getColumnIndex()).append("]");
 		return sb.toString();
+	}
+	
+	//rebuild formula dependency after shift
+	/*package*/ void rebuildFormulaDependency(){
+		if(getType()==CellType.FORMULA && lastRef!=null){
+			FormulaExpression expr = (FormulaExpression)getValue(false);
+			if(!expr.hasError()){
+				//clear and rebuild the dependency
+				clearFormulaDependency();
+				FormulaEngine fe = EngineFactory.getInstance().createFormulaEngine();
+				fe.parse(expr.getFormulaString(), new FormulaParseContext(this ,getRef()));//rebuild the expression to make new dependency with current row,column
+			}
+		}
+		
 	}
 }

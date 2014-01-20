@@ -71,6 +71,9 @@ public class TestImporterFactory implements ImporterFactory{
 				
 				NBook book = NBooks.createBook(bookName);
 				
+				
+				buildMove(book);
+				
 				buildMerge(book);
 				
 				buildAutoFilter(book);
@@ -86,9 +89,22 @@ public class TestImporterFactory implements ImporterFactory{
 				buildDataGridSheet(book);
 				return book;
 			}
+			
+			private void buildMove(NBook book) {
+				NSheet sheet = book.createSheet("Move");
+				
+				sheet.getCell("A1").setValue(3);
+				
+				sheet.getCell("C3").setValue("=A1");
+				
+				sheet.getCell("A10").setValue("=C3");
+				sheet.getCell("G1").setValue("=C3");
+				sheet.getCell("G10").setValue("=C3");
+			}
 			private void buildMerge(NBook book) {
 				NSheet sheet = book.createSheet("Merge");
 				
+				sheet.getCell("A1").setValue("ABC");
 				
 				sheet.getCell("C3").setValue("C3");
 				sheet.getCell("C4").setValue("C4");
@@ -96,7 +112,7 @@ public class TestImporterFactory implements ImporterFactory{
 				sheet.getCell("C6").setValue("C6");
 				
 				sheet.getCell("D3").setValue("D3");
-				sheet.getCell("D4").setValue("D4");
+				sheet.getCell("D4").setValue("=A1");
 				sheet.getCell("D6").setValue("C6");
 				
 				sheet.getCell("E3").setValue("E3");
