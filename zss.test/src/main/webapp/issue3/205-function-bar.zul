@@ -1,0 +1,11 @@
+<zk>
+	<button label="change A1">
+		<attribute name="onClick"><![CDATA[
+			Ranges.range(ss.getSelectedSheet(), "A1").setCellEditText(System.currentTimeMillis() + "");
+		]]></attribute>
+	</button>
+	<spreadsheet id="ss" src="/issue3/book/205-function-bar.xlsx" maxrows="250" maxcolumns="40"
+		width="600px" height="600px"
+		ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e"
+		showContextMenu="true" showSheetbar="true" showToolbar="true" showFormulabar="true" />
+</zk>
