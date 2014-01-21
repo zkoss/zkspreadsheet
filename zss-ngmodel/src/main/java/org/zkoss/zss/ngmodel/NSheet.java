@@ -95,12 +95,12 @@ public interface NSheet {
 	public void moveCell(int rowIdx, int columnIdx,int lastRowIdx,int lastColumnIdx, int rowOffset, int columnOffset);
 	public void moveCell(CellRegion region, int rowOffset, int columnOffset);
 	
-	public void insertRow(int rowIdx, int size);
-	public void deleteRow(int rowIdx, int size);
-	public void insertColumn(int columnIdx, int size);
-	public void deleteColumn(int columnIdx, int size);
-	public void insertCell(int rowIdx,int columnIdx,int rowSize, int columnSize,boolean horizontal);
-	public void deleteCell(int rowIdx,int columnIdx,int rowSize, int columnSize,boolean horizontal);
+	public void insertRow(int rowIdx, int lastRowIdx);
+	public void deleteRow(int rowIdx, int lastRowIdx);
+	public void insertColumn(int columnIdx, int lastColumnIdx);
+	public void deleteColumn(int columnIdx, int lastColumnIdx);
+	public void insertCell(int rowIdx,int columnIdx,int lastRowIndex, int lastColumnIndex,boolean horizontal);
+	public void deleteCell(int rowIdx,int columnIdx,int lastRowIndex, int lastColumnIndex,boolean horizontal);
 	
 	public NPicture addPicture(NPicture.Format format, byte[] data, NViewAnchor anchor);
 	public NPicture getPicture(String picid);
