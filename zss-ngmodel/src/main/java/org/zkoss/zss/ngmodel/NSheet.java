@@ -100,6 +100,8 @@ public interface NSheet {
 	public void insertColumn(int columnIdx, int lastColumnIdx);
 	public void deleteColumn(int columnIdx, int lastColumnIdx);
 	public void insertCell(int rowIdx,int columnIdx,int lastRowIndex, int lastColumnIndex,boolean horizontal);
+	public void insertCell(CellRegion region,boolean horizontal);
+	public void deleteCell(CellRegion region,boolean horizontal);
 	public void deleteCell(int rowIdx,int columnIdx,int lastRowIndex, int lastColumnIndex,boolean horizontal);
 	
 	public NPicture addPicture(NPicture.Format format, byte[] data, NViewAnchor anchor);
