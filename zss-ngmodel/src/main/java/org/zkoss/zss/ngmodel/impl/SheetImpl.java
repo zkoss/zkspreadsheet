@@ -671,6 +671,10 @@ public class SheetImpl extends AbstractSheetAdv {
 	}
 	
 	@Override
+	public void insertCell(CellRegion region,boolean horizontal){
+		insertCell(region.getRow(),region.getColumn(),region.getLastRow(),region.getLastColumn(),horizontal);
+	}
+	@Override
 	public void insertCell(int rowIdx,int columnIdx,int lastRowIdx, int lastColumnIdx,boolean horizontal){
 		checkOrphan();
 		
@@ -722,6 +726,12 @@ public class SheetImpl extends AbstractSheetAdv {
 //						ModelInternalEvents.PARAM_SIZE, size)));
 		
 	}
+	
+	@Override
+	public void deleteCell(CellRegion region,boolean horizontal){
+		deleteCell(region.getRow(),region.getColumn(),region.getLastRow(),region.getLastColumn(),horizontal);
+	}
+	@Override
 	public void deleteCell(int rowIdx,int columnIdx,int lastRowIdx, int lastColumnIdx,boolean horizontal){
 		checkOrphan();
 		if(rowIdx>lastRowIdx){
