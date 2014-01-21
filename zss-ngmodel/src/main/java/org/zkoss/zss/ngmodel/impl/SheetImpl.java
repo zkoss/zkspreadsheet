@@ -515,20 +515,22 @@ public class SheetImpl extends AbstractSheetAdv {
 		}
 	}
 
-	public void insertRow(int rowIdx, int size) {
+	@Override
+	public void insertRow(int rowIdx, int lastRowIdx) {
 		checkOrphan();
-		if(size<=0) return;
+		if(rowIdx>lastRowIdx){
+			throw new IllegalArgumentException(rowIdx+">"+lastRowIdx);
+		}
 		NDataGrid dg = getDataGrid();
 		if(dg!=null){
 			if(!dg.isSupportedOperations()){
 				throw new IllegalStateException("doesn't support insert/delete");
 			}
-			dg.insertRow(rowIdx, size);
+			dg.insertRow(rowIdx, lastRowIdx);
 		}
-		
+		int size = lastRowIdx-rowIdx+1;
 		rows.insert(rowIdx, size);
-		
-		
+
 		//destroy the row that exceed the max size
 		int maxSize = getBook().getMaxRowSize();
 		Collection<AbstractRowAdv> exceeds = new ArrayList<AbstractRowAdv>(rows.subValues(maxSize, Integer.MAX_VALUE));
@@ -539,41 +541,40 @@ public class SheetImpl extends AbstractSheetAdv {
 			row.destroy();
 		}
 		
-		
-		
 		shiftAfterRowInsert(rowIdx,size);
 		
 		book.sendModelInternalEvent(ModelInternalEvents.createModelInternalEvent(ModelInternalEvents.ON_ROW_INSERTED, 
 				this, 
 				ModelInternalEvents.createDataMap(ModelInternalEvents.PARAM_ROW_INDEX, rowIdx,
-						ModelInternalEvents.PARAM_SIZE, size)));
+						ModelInternalEvents.PARAM_LAST_ROW_INDEX, size)));
 	}
 	
-	
-
-	public void deleteRow(int rowIdx, int size) {
+	@Override
+	public void deleteRow(int rowIdx, int lastRowIdx) {
 		checkOrphan();
-		if(size<=0) return;
+		if(rowIdx>lastRowIdx){
+			throw new IllegalArgumentException(rowIdx+">"+lastRowIdx);
+		}
 		NDataGrid dg = getDataGrid();
 		if(dg!=null){
 			if(!dg.isSupportedOperations()){
 				throw new IllegalStateException("doesn't support insert/delete");
 			}
-			dg.deleteRow(rowIdx, size);
+			dg.deleteRow(rowIdx, lastRowIdx);
 		}
 		
 		//clear before move relation
-		for(AbstractRowAdv row:rows.subValues(rowIdx,rowIdx+size-1)){
+		for(AbstractRowAdv row:rows.subValues(rowIdx,lastRowIdx)){
 			row.destroy();
 		}
-		
+		int size = lastRowIdx-rowIdx+1;
 		rows.delete(rowIdx, size);
 		
 		shiftAfterRowDelete(rowIdx,size);
 		
 		book.sendModelInternalEvent(ModelInternalEvents.createModelInternalEvent(ModelInternalEvents.ON_ROW_DELETED, 
 				this, ModelInternalEvents.createDataMap(ModelInternalEvents.PARAM_ROW_INDEX, rowIdx, 
-						ModelInternalEvents.PARAM_SIZE, size)));
+						ModelInternalEvents.PARAM_ROW_INDEX, lastRowIdx)));
 	}	
 	
 	private void shiftAfterRowInsert(int rowIdx, int size) {
@@ -665,21 +666,30 @@ public class SheetImpl extends AbstractSheetAdv {
 		//TODO shift data validation?
 	}
 	
-	public void insertCell(int rowIdx,int columnIdx,int rowSize, int columnSize,boolean horizontal){
+	@Override
+	public void insertCell(int rowIdx,int columnIdx,int lastRowIdx, int lastColumnIdx,boolean horizontal){
 		checkOrphan();
-		if(rowSize<=0 || columnSize<=0) return;
+		
+		if(rowIdx>lastRowIdx){
+			throw new IllegalArgumentException(rowIdx+">"+lastRowIdx);
+		}
+		if(columnIdx>lastColumnIdx){
+			throw new IllegalArgumentException(columnIdx+">"+lastColumnIdx);
+		}
+		
 		NDataGrid dg = getDataGrid();
 		if(dg!=null){
 			if(!dg.isSupportedOperations()){
 				throw new IllegalStateException("doesn't support insert/delete");
 			}
 			//TODO
-//			dg.insertCell(rowIdx, columnIdx, rowSize,columnSize,horizontal);
+//			dg.insertCell(rowIdx, columnIdx, lastRowIdx,lastColumnIdx,horizontal);
 		}
 		
-		
+		int columnSize = lastColumnIdx - columnIdx+1;
+		int rowSize = lastRowIdx - rowIdx +1; 
 		if(horizontal){
-			Collection<AbstractRowAdv> effectedRows = rows.subValues(rowIdx,rowIdx+rowSize-1);
+			Collection<AbstractRowAdv> effectedRows = rows.subValues(rowIdx,lastRowIdx);
 			for(AbstractRowAdv row:effectedRows){
 				row.insertCell(columnIdx,columnSize);
 			}	
@@ -691,10 +701,10 @@ public class SheetImpl extends AbstractSheetAdv {
 				int idx = row.getIndex()+rowSize;
 				if(idx >= maxSize){
 					//clear the cell since it out of max
-					row.clearCell(columnIdx,columnIdx+columnSize-1);
+					row.clearCell(columnIdx,lastColumnIdx);
 				}else{
 					AbstractRowAdv target = getOrCreateRow(idx);
-					row.moveCellTo(target,columnIdx,columnIdx+columnSize-1,0);
+					row.moveCellTo(target,columnIdx,lastColumnIdx,0);
 				}
 			}
 
@@ -708,9 +718,14 @@ public class SheetImpl extends AbstractSheetAdv {
 //						ModelInternalEvents.PARAM_SIZE, size)));
 		
 	}
-	public void deleteCell(int rowIdx,int columnIdx,int rowSize, int columnSize,boolean horizontal){
+	public void deleteCell(int rowIdx,int columnIdx,int lastRowIdx, int lastColumnIdx,boolean horizontal){
 		checkOrphan();
-		if(rowSize<=0 || columnSize<=0) return;
+		if(rowIdx>lastRowIdx){
+			throw new IllegalArgumentException(rowIdx+">"+lastRowIdx);
+		}
+		if(columnIdx>lastColumnIdx){
+			throw new IllegalArgumentException(columnIdx+">"+lastColumnIdx);
+		}
 		NDataGrid dg = getDataGrid();
 		if(dg!=null){
 			if(!dg.isSupportedOperations()){
@@ -719,21 +734,25 @@ public class SheetImpl extends AbstractSheetAdv {
 			//TODO
 //			dg.deleteCell(rowIdx, columnIdx, rowSize,columnSize,horizontal);
 		}
+		
+		int columnSize = lastColumnIdx - columnIdx+1;
+		int rowSize = lastRowIdx - rowIdx +1; 
+		
 		if(horizontal){
-			Collection<AbstractRowAdv> effected = rows.subValues(rowIdx,rowIdx+rowSize-1);
+			Collection<AbstractRowAdv> effected = rows.subValues(rowIdx,lastRowIdx);
 			for(AbstractRowAdv row:effected){
 				row.deleteCell(columnIdx,columnSize);
 			}	
 		}else{
-			Collection<AbstractRowAdv> effectedRows = rows.subValues(rowIdx,rowIdx+rowSize-1);
+			Collection<AbstractRowAdv> effectedRows = rows.subValues(rowIdx,lastRowIdx);
 			for(AbstractRowAdv row:effectedRows){
-				row.clearCell(columnIdx,columnIdx+columnSize-1);
+				row.clearCell(columnIdx,lastColumnIdx);
 			}
 			effectedRows = rows.subValues(rowIdx+rowSize,Integer.MAX_VALUE);
 			for(AbstractRowAdv row: new ArrayList<AbstractRowAdv>(effectedRows)){//to aovid concurrent modify
 				//move the cell up
 				AbstractRowAdv target = getOrCreateRow(row.getIndex()-rowSize);
-				row.moveCellTo(target,columnIdx,columnIdx+columnSize-1,0);
+				row.moveCellTo(target,columnIdx,lastColumnIdx,0);
 			}
 		}
 		
@@ -796,18 +815,20 @@ public class SheetImpl extends AbstractSheetAdv {
 		builder.append("}\n");
 	}
 
-	public void insertColumn(int columnIdx, int size) {
+	@Override
+	public void insertColumn(int columnIdx, int lastColumnIdx) {
 		checkOrphan();
-		if(size<=0) return;
-		
+		if(columnIdx>lastColumnIdx){
+			throw new IllegalArgumentException(columnIdx+">"+lastColumnIdx);
+		}
 		NDataGrid dg = getDataGrid();
 		if(dg!=null){
 			if(!dg.isSupportedOperations()){
 				throw new IllegalStateException("doesn't support insert/delete");
 			}
-			dg.insertColumn(columnIdx, size);
+			dg.insertColumn(columnIdx, lastColumnIdx);
 		}
-		
+		int size = lastColumnIdx - columnIdx + 1;
 		insertAndSplitColumnArray(columnIdx,size);
 		
 		for(AbstractRowAdv row:rows.values()){
@@ -818,7 +839,7 @@ public class SheetImpl extends AbstractSheetAdv {
 		
 		book.sendModelInternalEvent(ModelInternalEvents.createModelInternalEvent(ModelInternalEvents.ON_COLUMN_INSERTED, this,
 				ModelInternalEvents.createDataMap(ModelInternalEvents.PARAM_COLUMN_INDEX, columnIdx, 
-						ModelInternalEvents.PARAM_SIZE, size)));
+						ModelInternalEvents.PARAM_LAST_COLUMN_INDEX, lastColumnIdx)));
 	}
 	
 	private void insertAndSplitColumnArray(int columnIdx,int size){
@@ -908,17 +929,20 @@ public class SheetImpl extends AbstractSheetAdv {
 		checkColumnArrayStatus();
 	}
 
-	public void deleteColumn(int columnIdx, int size) {
+	@Override
+	public void deleteColumn(int columnIdx, int lastColumnIdx) {
 		checkOrphan();
-		if(size<=0) return;
+		if(columnIdx>lastColumnIdx){
+			throw new IllegalArgumentException(columnIdx+">"+lastColumnIdx);
+		}
 		NDataGrid dg = getDataGrid();
 		if(dg!=null){
 			if(!dg.isSupportedOperations()){
 				throw new IllegalStateException("doesn't support insert/delete");
 			}
-			dg.deleteColumn(columnIdx, size);
+			dg.deleteColumn(columnIdx, lastColumnIdx);
 		}
-		
+		int size = lastColumnIdx - columnIdx + 1;
 		deleteAndShrinkColumnArray(columnIdx,size);
 		
 		for(AbstractRowAdv row:rows.values()){
@@ -928,7 +952,7 @@ public class SheetImpl extends AbstractSheetAdv {
 		
 		book.sendModelInternalEvent(ModelInternalEvents.createModelInternalEvent(ModelInternalEvents.ON_COLUMN_DELETED, 
 				this, ModelInternalEvents.createDataMap(ModelInternalEvents.PARAM_COLUMN_INDEX, columnIdx, 
-						ModelInternalEvents.PARAM_SIZE, size)));
+						ModelInternalEvents.PARAM_LAST_COLUMN_INDEX, lastColumnIdx)));
 	}
 	
 	private void deleteAndShrinkColumnArray(int columnIdx,int size){

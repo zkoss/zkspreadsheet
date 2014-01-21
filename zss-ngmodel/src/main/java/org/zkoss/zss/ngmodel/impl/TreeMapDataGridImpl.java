@@ -54,8 +54,11 @@ public class TreeMapDataGridImpl implements NDataGrid,Serializable {
 	}
 
 	@Override
-	public void insertRow(int rowIdx, int size) {
-		if(size<=0) return;
+	public void insertRow(int rowIdx, int lastRowIdx) {
+		if(rowIdx>lastRowIdx){
+			throw new IllegalArgumentException(rowIdx+">"+lastRowIdx);
+		}
+		int size = lastRowIdx-rowIdx+1;
 		
 		rows.insert(rowIdx, size);
 		
@@ -65,8 +68,11 @@ public class TreeMapDataGridImpl implements NDataGrid,Serializable {
 	
 
 	@Override
-	public void deleteRow(int rowIdx, int size) {
-		if(size<=0) return;
+	public void deleteRow(int rowIdx, int lastRowIdx) {
+		if(rowIdx>lastRowIdx){
+			throw new IllegalArgumentException(rowIdx+">"+lastRowIdx);
+		}
+		int size = lastRowIdx-rowIdx+1;
 		
 		//clear before move relation
 		for(DataRowImpl row:rows.subValues(rowIdx,rowIdx+size)){
@@ -78,9 +84,11 @@ public class TreeMapDataGridImpl implements NDataGrid,Serializable {
 	}
 
 	@Override
-	public void insertColumn(int columnIdx, int size) {
-		if(size<=0) return;
-		
+	public void insertColumn(int columnIdx, int lastColumnIdx) {
+		if(columnIdx>lastColumnIdx){
+			throw new IllegalArgumentException(columnIdx+">"+lastColumnIdx);
+		}
+		int size = lastColumnIdx - columnIdx + 1;
 		for(DataRowImpl row:rows.values()){
 			row.insertCell(columnIdx,size);
 		}
@@ -89,9 +97,11 @@ public class TreeMapDataGridImpl implements NDataGrid,Serializable {
 	}
 
 	@Override
-	public void deleteColumn(int columnIdx, int size) {
-		if(size<=0) return;
-		
+	public void deleteColumn(int columnIdx, int lastColumnIdx) {
+		if(columnIdx>lastColumnIdx){
+			throw new IllegalArgumentException(columnIdx+">"+lastColumnIdx);
+		}
+		int size = lastColumnIdx - columnIdx + 1;
 		for(DataRowImpl row:rows.values()){
 			row.deleteCell(columnIdx,size);
 		}

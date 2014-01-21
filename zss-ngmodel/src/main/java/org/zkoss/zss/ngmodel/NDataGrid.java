@@ -37,10 +37,10 @@ public interface NDataGrid {
 	
 	//support operations
 	public boolean isSupportedOperations();
-	public void insertRow(int rowIdx, int size);
-	public void deleteRow(int rowIdx, int size);
-	public void insertColumn(int rowIdx, int size);
-	public void deleteColumn(int rowIdx, int size);
+	public void insertRow(int rowIdx, int lastRowIdx);
+	public void deleteRow(int rowIdx, int lastRowIdx);
+	public void insertColumn(int rowIdx, int lastColumnIdx);
+	public void deleteColumn(int rowIdx, int lastColumnIdx);
 	
 	//support data iterator
 	public boolean isProvidedIterator();

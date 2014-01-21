@@ -45,6 +45,8 @@ public class ModelInternalEvents {
 	public static final String PARAM_SHEET_OLD_INDEX = "sheetIdx";
 	public static final String PARAM_ROW_INDEX = "rowIdx";
 	public static final String PARAM_COLUMN_INDEX = "columnIdx";
+	public static final String PARAM_LAST_ROW_INDEX = "lastRowIdx";
+	public static final String PARAM_LAST_COLUMN_INDEX = "lastColumnIdx";
 	public static final String PARAM_SIZE = "size";
 	
 	public static ModelInternalEvent createModelInternalEvent(String name, NBook book){

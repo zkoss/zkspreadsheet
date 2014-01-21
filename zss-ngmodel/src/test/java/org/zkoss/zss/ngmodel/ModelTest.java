@@ -511,14 +511,14 @@ public class ModelTest {
 		
 		Iterator<NColumnArray> arrays = sheet1.getColumnArrayIterator();
 		Assert.assertFalse(arrays.hasNext());
-		sheet1.insertColumn(10, 3);
+		sheet1.insertColumn(10, 12);
 		
 		arrays = sheet1.getColumnArrayIterator();
 		Assert.assertFalse(arrays.hasNext());
 		
 		//0-99,100
 		sheet1.getColumn(100).setWidth(300);
-		sheet1.insertColumn(200, 3);
+		sheet1.insertColumn(200, 202);
 		
 		arrays = sheet1.getColumnArrayIterator();
 		NColumnArray array = arrays.next();
@@ -536,7 +536,7 @@ public class ModelTest {
 		
 		
 		//0-49,50-52,53-102,103
-		sheet1.insertColumn(50, 3);
+		sheet1.insertColumn(50, 52);
 		
 		arrays = sheet1.getColumnArrayIterator();
 		array = arrays.next();
@@ -561,9 +561,9 @@ public class ModelTest {
 		
 		//0-49,50-52,53-102,103 ->
 		//0-1,2-51,52-54,55-104,105
-		sheet1.insertColumn(0, 2);
+		sheet1.insertColumn(0, 1);
 		//0-2,3-51,52-54,55-103,104-106,107,108
-		sheet1.insertColumn(104, 3);
+		sheet1.insertColumn(104, 106);
 		
 		arrays = sheet1.getColumnArrayIterator();
 		array = arrays.next();
@@ -665,7 +665,7 @@ public class ModelTest {
 		sheet1.getColumn(10).setWidth(33);
 		
 		//0-9,10,11
-		sheet1.insertColumn(10, 1);
+		sheet1.insertColumn(10, 10);
 		
 		arrays = sheet1.getColumnArrayIterator();
 		NColumnArray array = arrays.next();
@@ -699,7 +699,7 @@ public class ModelTest {
 		
 		Iterator<NColumnArray> arrays = sheet1.getColumnArrayIterator();
 		Assert.assertFalse(arrays.hasNext());
-		sheet1.insertColumn(10, 3);
+		sheet1.insertColumn(10, 12);
 		
 		arrays = sheet1.getColumnArrayIterator();
 		Assert.assertFalse(arrays.hasNext());
@@ -712,7 +712,7 @@ public class ModelTest {
 		sheet1.setupColumnArray(21, 30).setWidth(555);
 		
 		//0-10(111),11-12(222),13-17(444),18-27(555)
-		sheet1.deleteColumn(13, 3);
+		sheet1.deleteColumn(13, 15);
 		arrays = sheet1.getColumnArrayIterator();
 		NColumnArray array = arrays.next();
 		Assert.assertEquals(0, array.getIndex());
@@ -747,7 +747,7 @@ public class ModelTest {
 		
 		Iterator<NColumnArray> arrays = sheet1.getColumnArrayIterator();
 		Assert.assertFalse(arrays.hasNext());
-		sheet1.insertColumn(10, 3);
+		sheet1.insertColumn(10, 12);
 		
 		arrays = sheet1.getColumnArrayIterator();
 		Assert.assertFalse(arrays.hasNext());
@@ -760,7 +760,7 @@ public class ModelTest {
 		sheet1.setupColumnArray(21, 30).setWidth(555);
 		
 		//0-10(111),11-11(222),12-15(444),16-25(555)
-		sheet1.deleteColumn(12, 5);
+		sheet1.deleteColumn(12, 16);
 		arrays = sheet1.getColumnArrayIterator();
 		NColumnArray array = arrays.next();
 		Assert.assertEquals(0, array.getIndex());
@@ -796,7 +796,7 @@ public class ModelTest {
 		
 		Iterator<NColumnArray> arrays = sheet1.getColumnArrayIterator();
 		Assert.assertFalse(arrays.hasNext());
-		sheet1.insertColumn(10, 3);
+		sheet1.insertColumn(10, 12);
 		
 		arrays = sheet1.getColumnArrayIterator();
 		Assert.assertFalse(arrays.hasNext());
@@ -807,7 +807,7 @@ public class ModelTest {
 		
 		
 		//0-10(111),11-18(222)
-		sheet1.deleteColumn(12, 2);
+		sheet1.deleteColumn(12,13);
 		arrays = sheet1.getColumnArrayIterator();
 		NColumnArray array = arrays.next();
 		Assert.assertEquals(0, array.getIndex());
@@ -822,7 +822,7 @@ public class ModelTest {
 		
 		
 		//0-10(111),11-15(222)
-		sheet1.deleteColumn(11, 3);
+		sheet1.deleteColumn(11, 13);
 		arrays = sheet1.getColumnArrayIterator();
 		array = arrays.next();
 		Assert.assertEquals(0, array.getIndex());
@@ -836,7 +836,7 @@ public class ModelTest {
 		Assert.assertFalse(arrays.hasNext());
 		
 		//0-9(111),10-12(222)
-		sheet1.deleteColumn(10, 3);
+		sheet1.deleteColumn(10, 12);
 		arrays = sheet1.getColumnArrayIterator();
 		array = arrays.next();
 		Assert.assertEquals(0, array.getIndex());
@@ -851,7 +851,7 @@ public class ModelTest {
 		Assert.assertFalse(arrays.hasNext());
 		
 		//0-9(111),10-12(222)
-		sheet1.deleteColumn(10, 3);
+		sheet1.deleteColumn(10, 12);
 		arrays = sheet1.getColumnArrayIterator();
 		array = arrays.next();
 		Assert.assertEquals(0, array.getIndex());
@@ -1217,7 +1217,7 @@ public class ModelTest {
 		NRow row14 = sheet.getRow(14);
 		NRow row16 = sheet.getRow(16);
 		
-		sheet.insertRow(12, 3);
+		sheet.insertRow(12, 14);
 		
 		Assert.assertEquals(false, sheet.getRow(10).isNull());
 		Assert.assertEquals(true, sheet.getRow(12).isNull());
@@ -1243,13 +1243,13 @@ public class ModelTest {
 		Assert.assertEquals(10, sheet.getStartRowIndex());
 		Assert.assertEquals(23, sheet.getEndRowIndex());
 		
-		sheet.insertRow(100, 3);
+		sheet.insertRow(100, 102);
 		
 		Assert.assertEquals(10, sheet.getStartRowIndex());
 		Assert.assertEquals(23, sheet.getEndRowIndex());
 		
 		
-		sheet.deleteRow(10, 6);
+		sheet.deleteRow(10, 15);
 		
 		Assert.assertEquals(true, sheet.getRow(10).isNull());
 		Assert.assertEquals(true, sheet.getRow(12).isNull());
@@ -1279,7 +1279,7 @@ public class ModelTest {
 		Assert.assertEquals(17, sheet.getEndRowIndex());
 		
 		
-		sheet.deleteRow(100, 3);
+		sheet.deleteRow(100, 102);
 		
 		Assert.assertEquals(11, sheet.getStartRowIndex());
 		Assert.assertEquals(17, sheet.getEndRowIndex());
@@ -1327,7 +1327,7 @@ public class ModelTest {
 		NColumn column14 = sheet.getColumn(14);
 		NColumn column16 = sheet.getColumn(16);
 		
-		sheet.insertColumn(12, 3);
+		sheet.insertColumn(12, 14);
 		
 		Assert.assertEquals(false, sheet.getColumn(10).isNull());
 		Assert.assertEquals(false, sheet.getColumn(12).isNull());
@@ -1354,13 +1354,13 @@ public class ModelTest {
 		Assert.assertEquals(0, sheet.getStartColumnIndex());
 		Assert.assertEquals(23, sheet.getEndColumnIndex());
 		
-		sheet.insertColumn(100, 3);
+		sheet.insertColumn(100, 102);
 		
 		Assert.assertEquals(0, sheet.getStartColumnIndex());
 		Assert.assertEquals(23, sheet.getEndColumnIndex());
 		
 		
-		sheet.deleteColumn(10, 6);
+		sheet.deleteColumn(10, 15);
 		
 		//no more avaiable test after re design to column array
 //		Assert.assertEquals(true, sheet.getColumn(10).isNull());
@@ -1391,7 +1391,7 @@ public class ModelTest {
 		Assert.assertEquals(17, sheet.getEndColumnIndex());
 		
 		
-		sheet.deleteColumn(100, 3);
+		sheet.deleteColumn(100, 102);
 		
 		Assert.assertEquals(0, sheet.getStartColumnIndex());
 		Assert.assertEquals(17, sheet.getEndColumnIndex());
@@ -1867,42 +1867,42 @@ public class ModelTest {
 		Assert.assertEquals(p1,sheet.getPictures().get(0));
 		Assert.assertEquals(p2,sheet.getPictures().get(1));
 		
-		sheet.insertRow(7, 2);
+		sheet.insertRow(7, 8);
 		Assert.assertEquals(6,p1.getAnchor().getRowIndex());
 		Assert.assertEquals(14,p2.getAnchor().getRowIndex());
 		
-		sheet.insertRow(6, 3);
+		sheet.insertRow(6, 8);
 		Assert.assertEquals(9,p1.getAnchor().getRowIndex());
 		Assert.assertEquals(17,p2.getAnchor().getRowIndex());
 		
-		sheet.deleteRow(10, 2);
+		sheet.deleteRow(10, 11);
 		Assert.assertEquals(9,p1.getAnchor().getRowIndex());
 		Assert.assertEquals(15,p2.getAnchor().getRowIndex());
 		Assert.assertEquals(33,p2.getAnchor().getYOffset());
 		
-		sheet.deleteRow(10, 6);
+		sheet.deleteRow(10, 15);
 		Assert.assertEquals(10,p2.getAnchor().getRowIndex());
 		Assert.assertEquals(0,p2.getAnchor().getYOffset());
 		
-		sheet.insertColumn(12, 3);
+		sheet.insertColumn(12, 14);
 		Assert.assertEquals(10,p1.getAnchor().getColumnIndex());
 		Assert.assertEquals(17,p2.getAnchor().getColumnIndex());
 		
-		sheet.insertColumn(10, 1);
+		sheet.insertColumn(10, 10);
 		Assert.assertEquals(11,p1.getAnchor().getColumnIndex());
 		Assert.assertEquals(18,p2.getAnchor().getColumnIndex());
 		
 		
-		sheet.deleteColumn(15, 1);
+		sheet.deleteColumn(15, 15);
 		Assert.assertEquals(11,p1.getAnchor().getColumnIndex());
 		Assert.assertEquals(17,p2.getAnchor().getColumnIndex());
 		
-		sheet.deleteColumn(15, 2);
+		sheet.deleteColumn(15, 16);
 		Assert.assertEquals(11,p1.getAnchor().getColumnIndex());
 		Assert.assertEquals(15,p2.getAnchor().getColumnIndex());
 		Assert.assertEquals(22,p2.getAnchor().getXOffset());
 		
-		sheet.deleteColumn(10, 10);
+		sheet.deleteColumn(10, 19);
 		Assert.assertEquals(10,p1.getAnchor().getColumnIndex());
 		Assert.assertEquals(0,p1.getAnchor().getXOffset());
 		Assert.assertEquals(10,p2.getAnchor().getColumnIndex());
@@ -1939,42 +1939,42 @@ public class ModelTest {
 		Assert.assertEquals(p1,sheet.getCharts().get(0));
 		Assert.assertEquals(p2,sheet.getCharts().get(1));
 		
-		sheet.insertRow(7, 2);
+		sheet.insertRow(7, 8);
 		Assert.assertEquals(6,p1.getAnchor().getRowIndex());
 		Assert.assertEquals(14,p2.getAnchor().getRowIndex());
 		
-		sheet.insertRow(6, 3);
+		sheet.insertRow(6, 8);
 		Assert.assertEquals(9,p1.getAnchor().getRowIndex());
 		Assert.assertEquals(17,p2.getAnchor().getRowIndex());
 		
-		sheet.deleteRow(10, 2);
+		sheet.deleteRow(10, 11);
 		Assert.assertEquals(9,p1.getAnchor().getRowIndex());
 		Assert.assertEquals(15,p2.getAnchor().getRowIndex());
 		Assert.assertEquals(33,p2.getAnchor().getYOffset());
 		
-		sheet.deleteRow(10, 6);
+		sheet.deleteRow(10, 15);
 		Assert.assertEquals(10,p2.getAnchor().getRowIndex());
 		Assert.assertEquals(0,p2.getAnchor().getYOffset());
 		
-		sheet.insertColumn(12, 3);
+		sheet.insertColumn(12, 14);
 		Assert.assertEquals(10,p1.getAnchor().getColumnIndex());
 		Assert.assertEquals(17,p2.getAnchor().getColumnIndex());
 		
-		sheet.insertColumn(10, 1);
+		sheet.insertColumn(10, 10);
 		Assert.assertEquals(11,p1.getAnchor().getColumnIndex());
 		Assert.assertEquals(18,p2.getAnchor().getColumnIndex());
 		
 		
-		sheet.deleteColumn(15, 1);
+		sheet.deleteColumn(15, 15);
 		Assert.assertEquals(11,p1.getAnchor().getColumnIndex());
 		Assert.assertEquals(17,p2.getAnchor().getColumnIndex());
 		
-		sheet.deleteColumn(15, 2);
+		sheet.deleteColumn(15, 16);
 		Assert.assertEquals(11,p1.getAnchor().getColumnIndex());
 		Assert.assertEquals(15,p2.getAnchor().getColumnIndex());
 		Assert.assertEquals(22,p2.getAnchor().getXOffset());
 		
-		sheet.deleteColumn(10, 10);
+		sheet.deleteColumn(10, 19);
 		Assert.assertEquals(10,p1.getAnchor().getColumnIndex());
 		Assert.assertEquals(0,p1.getAnchor().getXOffset());
 		Assert.assertEquals(10,p2.getAnchor().getColumnIndex());
@@ -2573,7 +2573,7 @@ public class ModelTest {
 		Assert.assertEquals("D4",sheet1.getCell("D4").getValue());
 		
 		
-		sheet1.deleteCell(2, 2, 2, 2, false);
+		sheet1.deleteCell(2, 2, 3, 3, false);
 		
 		Assert.assertEquals("A1",sheet1.getCell("A1").getValue());
 		Assert.assertEquals("A2",sheet1.getCell("A2").getValue());
@@ -2599,7 +2599,7 @@ public class ModelTest {
 		Assert.assertEquals(null,sheet1.getCell("D3").getValue());
 		Assert.assertEquals(null,sheet1.getCell("D4").getValue());
 		
-		sheet1.insertCell(0, 0, 1, 1, false);
+		sheet1.insertCell(0, 0, 0, 0, false);
 		Assert.assertEquals(null,sheet1.getCell("A1").getValue());
 		Assert.assertEquals("A1",sheet1.getCell("A2").getValue());
 		Assert.assertEquals("A2",sheet1.getCell("A3").getValue());
@@ -2626,7 +2626,7 @@ public class ModelTest {
 		Assert.assertEquals(null,sheet1.getCell("D4").getValue());
 		
 		
-		sheet1.deleteCell(0, 0, 1, 1, false);
+		sheet1.deleteCell(0, 0, 0, 0, false);
 		Assert.assertEquals("A1",sheet1.getCell("A1").getValue());
 		Assert.assertEquals("A2",sheet1.getCell("A2").getValue());
 		Assert.assertEquals("A3",sheet1.getCell("A3").getValue());
@@ -2652,8 +2652,8 @@ public class ModelTest {
 		Assert.assertEquals(null,sheet1.getCell("D4").getValue());
 		
 		
-		sheet1.insertCell(100, 100, 2, 2, false);
-		sheet1.deleteCell(100, 100, 2, 2, false);
+		sheet1.insertCell(100, 100, 101, 101, false);
+		sheet1.deleteCell(100, 100, 101, 101, false);
 		
 	}
 	
@@ -2713,7 +2713,7 @@ public class ModelTest {
 		Assert.assertEquals(null,sheet1.getCell("F4").getValue());
 		
 		
-		sheet1.deleteCell(2, 2, 2, 2, true);
+		sheet1.deleteCell(2, 2, 3, 3, true);
 		
 		Assert.assertEquals("A1",sheet1.getCell("A1").getValue());
 		Assert.assertEquals("A2",sheet1.getCell("A2").getValue());
@@ -2747,7 +2747,7 @@ public class ModelTest {
 		Assert.assertEquals(null,sheet1.getCell("F4").getValue());
 		
 		
-		sheet1.insertCell(0, 0, 1, 1, true);
+		sheet1.insertCell(0, 0, 0, 0, true);
 		Assert.assertEquals(null,sheet1.getCell("A1").getValue());
 		Assert.assertEquals("A2",sheet1.getCell("A2").getValue());
 		Assert.assertEquals("A3",sheet1.getCell("A3").getValue());
@@ -2779,7 +2779,7 @@ public class ModelTest {
 		Assert.assertEquals(null,sheet1.getCell("F3").getValue());
 		Assert.assertEquals(null,sheet1.getCell("F4").getValue());
 		
-		sheet1.deleteCell(0, 0, 1, 1, true);
+		sheet1.deleteCell(0, 0, 0, 0, true);
 		Assert.assertEquals("A1",sheet1.getCell("A1").getValue());
 		Assert.assertEquals("A2",sheet1.getCell("A2").getValue());
 		Assert.assertEquals("A3",sheet1.getCell("A3").getValue());
@@ -2811,8 +2811,8 @@ public class ModelTest {
 		Assert.assertEquals(null,sheet1.getCell("F3").getValue());
 		Assert.assertEquals(null,sheet1.getCell("F4").getValue());
 		
-		sheet1.insertCell(100, 100, 2, 2, true);
-		sheet1.deleteCell(100, 100, 2, 2, true);
+		sheet1.insertCell(100, 100, 101, 101, true);
+		sheet1.deleteCell(100, 100, 101, 101, true);
 	}
 	
 	@Test
@@ -2828,7 +2828,7 @@ public class ModelTest {
 		sheet1.getCell("B3").setValue("B3");
 		sheet1.getCell("C3").setValue("C3");
 		
-		sheet1.insertCell(0, 0, 1, 3, false);//row 1, A-C
+		sheet1.insertCell(0, 0, 0, 2, false);//row 1, A-C
 		Assert.assertEquals(null,sheet1.getCell("A2").getValue());
 		Assert.assertEquals(null,sheet1.getCell("B2").getValue());
 		Assert.assertEquals(null,sheet1.getCell("C2").getValue());
@@ -2864,7 +2864,7 @@ public class ModelTest {
 			Assert.fail();
 		}catch(IllegalStateException x){}
 		
-		sheet1.insertRow(0, 1);
+		sheet1.insertRow(0, 0);
 		Assert.assertEquals(sheet1.getDefaultRowHeight(), sheet1.getRow(maxRow-2).getHeight());
 		Assert.assertEquals(99, sheet1.getRow(maxRow-1).getHeight());
 		Assert.assertEquals(sheet1.getDefaultRowHeight(), sheet1.getRow(maxRow).getHeight());
@@ -2885,7 +2885,7 @@ public class ModelTest {
 			Assert.fail();
 		}catch(IllegalStateException x){}
 		
-		sheet1.insertColumn(0, 1);
+		sheet1.insertColumn(0, 0);
 		Assert.assertEquals(sheet1.getDefaultColumnWidth(), sheet1.getColumn(maxColumn-2).getWidth());
 		Assert.assertEquals(33, sheet1.getColumn(maxColumn-1).getWidth());
 		Assert.assertEquals(sheet1.getDefaultColumnWidth(), sheet1.getColumn(maxColumn).getWidth());
@@ -2906,7 +2906,7 @@ public class ModelTest {
 			Assert.fail();
 		}catch(IllegalStateException x){}
 		
-		sheet1.insertCell(0, 0, 1, 1,false);
+		sheet1.insertCell(0, 0, 0, 0,false);
 		Assert.assertEquals(null, sheet1.getCell(maxRow-2,0).getValue());
 		Assert.assertEquals("A", sheet1.getCell(maxRow-1,0).getValue());
 		Assert.assertEquals(null, sheet1.getCell(maxRow,0).getValue());
@@ -2926,7 +2926,7 @@ public class ModelTest {
 			Assert.fail();
 		}catch(IllegalStateException x){}
 		
-		sheet1.insertCell(0, 0, 1, 1,true);
+		sheet1.insertCell(0, 0, 0, 0,true);
 		Assert.assertEquals(null, sheet1.getCell(0,maxColumn-2).getValue());
 		Assert.assertEquals("X", sheet1.getCell(0,maxColumn-1).getValue());
 		Assert.assertEquals(null, sheet1.getCell(0,maxColumn).getValue());		
