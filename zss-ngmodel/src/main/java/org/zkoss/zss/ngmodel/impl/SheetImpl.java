@@ -24,6 +24,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.SortedMap;
 
 import org.zkoss.zss.ngmodel.CellRegion;
@@ -44,6 +45,9 @@ import org.zkoss.zss.ngmodel.NPrintSetup;
 import org.zkoss.zss.ngmodel.NRow;
 import org.zkoss.zss.ngmodel.NSheetViewInfo;
 import org.zkoss.zss.ngmodel.NViewAnchor;
+import org.zkoss.zss.ngmodel.SheetRegion;
+import org.zkoss.zss.ngmodel.sys.dependency.DependencyTable;
+import org.zkoss.zss.ngmodel.sys.dependency.Ref;
 import org.zkoss.zss.ngmodel.util.CellReference;
 import org.zkoss.zss.ngmodel.util.Validations;
 /**
@@ -1019,7 +1023,7 @@ public class SheetImpl extends AbstractSheetAdv {
 			throw new InvalidateModelOpException(new CellRegion(rowIdx,columnIdx,lastRowIdx,lastColumnIdx).getReferenceString()+" can't move to offset "+rowOffset+","+columnOffset);
 		}
 		
-		//TODO whole row, whole column
+		//TODO optimal for whole row, whole column
 		
 		NDataGrid dg = getDataGrid();
 		if(dg!=null){
@@ -1089,11 +1093,26 @@ public class SheetImpl extends AbstractSheetAdv {
 			ModelUpdateUtil.addMergeUpdate(merge, newMerge);
 		}
 		
+		shiftAfterCellMove(rowIdx, columnIdx,lastRowIdx,lastColumnIdx, rowOffset, columnOffset);
 		
 		//TODO validation and other stuff
 	}
 
 	
+	private void shiftAfterCellMove(int rowIdx, int columnIdx, int lastRowIdx,
+			int lastColumnIdx, int rowOffset, int columnOffset) {
+		shiftFormula(new CellRegion(rowIdx,columnIdx,lastRowIdx,lastColumnIdx),rowOffset,columnOffset);
+	}
+	
+	private void shiftFormula(CellRegion src,int rowOffset,int columnOffset){
+		NBook book = getBook();
+		AbstractBookSeriesAdv bs = (AbstractBookSeriesAdv)book.getBookSeries();
+		DependencyTable dt = bs.getDependencyTable();
+		Set<Ref> dependents = dt.getDependents(new RefImpl(book.getBookName(),getSheetName(),src.getRow(),src.getColumn(),src.getLastRow(),src.getLastColumn()));
+		FormulaShiftHelper shiftHelper = new FormulaShiftHelper(bs,new SheetRegion(this,src),rowOffset,columnOffset);
+		shiftHelper.shift(dependents);
+	}
+
 	public void checkOrphan(){
 		if(book==null){
 			throw new IllegalStateException("doesn't connect to parent");

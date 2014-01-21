@@ -73,6 +73,11 @@ public class ModelFormulaTest {
 		Assert.assertEquals(9D, sheet1.getCell("B2").getValue());
 	}
 	
+//	@Test
+	public void testFormulaDependencyClearAfterInsertDeleteCell(){
+		//TODO
+	}
+	
 	@Test
 	public void testFormulaDependencyClearAfterInsertDeleteRow(){
 		NBook book = NBooks.createBook("book1");
@@ -161,5 +166,66 @@ public class ModelFormulaTest {
 		sheet1.getCell("A1").setValue(9);
 		Assert.assertEquals(null, sheet1.getCell("D3").getValue());
 		Assert.assertEquals(9D, sheet1.getCell("B3").getValue());
+	}
+	
+	//
+	
+	@Test
+	public void testFormulaShiftingAfterMoveCell(){
+		NBook book = NBooks.createBook("book1");
+		book.getBookSeries().setAutoFormulaCacheClean(true);
+		DependencyTable dt = ((AbstractBookSeriesAdv)book.getBookSeries()).getDependencyTable();
+		NSheet sheet1 = initialDataGrid(book.createSheet("Sheet1"));
+		
+		sheet1.getCell("A1").setValue(3);
+		sheet1.getCell("C3").setValue("=A1");
+		sheet1.getCell("G3").setValue("=C3");
+		sheet1.getCell("A9").setValue("=SUM(C3)");
+		sheet1.getCell("E6").setValue("=SUM(Sheet1!C3)");
+		sheet1.getCell("F5").setValue("=SUM(Sheet1!C3)");
+		
+		Assert.assertEquals(3D, sheet1.getCell("C3").getValue());
+		Assert.assertEquals(3D, sheet1.getCell("G3").getValue());
+		Assert.assertEquals(3D, sheet1.getCell("A9").getValue());
+		Assert.assertEquals(3D, sheet1.getCell("E6").getValue());
+		Assert.assertEquals(3D, sheet1.getCell("F5").getValue());
+		
+		sheet1.getCell("A1").setValue(5);
+		Assert.assertEquals(5D, sheet1.getCell("C3").getValue());
+		Assert.assertEquals(5D, sheet1.getCell("G3").getValue());
+		Assert.assertEquals(5D, sheet1.getCell("A9").getValue());
+		Assert.assertEquals(5D, sheet1.getCell("E6").getValue());
+		Assert.assertEquals(5D, sheet1.getCell("F5").getValue());
+		
+		//move cell
+		sheet1.moveCell(new CellRegion("C3"), 1, 1);
+		
+		Assert.assertEquals("A1", sheet1.getCell("D4").getFormulaValue());
+		Assert.assertEquals("D4", sheet1.getCell("G3").getFormulaValue());
+		Assert.assertEquals("SUM(D4)", sheet1.getCell("A9").getFormulaValue());
+		Assert.assertEquals("SUM(Sheet1!D4)", sheet1.getCell("E6").getFormulaValue());
+		Assert.assertEquals("SUM(Sheet1!D4)", sheet1.getCell("F5").getFormulaValue());
+		
+		sheet1.getCell("A1").setValue(7);
+		Assert.assertEquals(7D, sheet1.getCell("D4").getValue());
+		Assert.assertEquals(7D, sheet1.getCell("G3").getValue());
+		Assert.assertEquals(7D, sheet1.getCell("A9").getValue());
+		Assert.assertEquals(7D, sheet1.getCell("E6").getValue());
+		Assert.assertEquals(7D, sheet1.getCell("F5").getValue());
+		
+		//move cell
+		sheet1.moveCell(new CellRegion("D4"), -2, -1);
+		
+		Assert.assertEquals("C2", sheet1.getCell("G3").getFormulaValue());
+		Assert.assertEquals("SUM(C2)", sheet1.getCell("A9").getFormulaValue());
+		Assert.assertEquals("SUM(Sheet1!C2)", sheet1.getCell("E6").getFormulaValue());
+		Assert.assertEquals("SUM(Sheet1!C2)", sheet1.getCell("F5").getFormulaValue());
+		
+		sheet1.getCell("A1").setValue(9);
+		Assert.assertEquals(9D, sheet1.getCell("C2").getValue());
+		Assert.assertEquals(9D, sheet1.getCell("G3").getValue());
+		Assert.assertEquals(9D, sheet1.getCell("A9").getValue());
+		Assert.assertEquals(9D, sheet1.getCell("E6").getValue());
+		Assert.assertEquals(9D, sheet1.getCell("F5").getValue());
 	}
 }
