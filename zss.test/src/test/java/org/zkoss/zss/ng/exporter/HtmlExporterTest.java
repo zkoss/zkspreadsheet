@@ -8,6 +8,7 @@ import java.util.Locale;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.zkoss.zss.Setup;
 import org.zkoss.zss.Util;
@@ -33,6 +34,7 @@ public class HtmlExporterTest {
 		Setup.popZssContextLocale();
 	}
 	
+	@Ignore("manual test only")
 	@Test
 	public void exportHtml() {
 		NBook book = importBook("book/simpleChart.xlsx");

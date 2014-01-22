@@ -10,6 +10,7 @@ import java.util.Locale;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.zkoss.zss.Setup;
 import org.zkoss.zss.Util;
@@ -91,15 +92,16 @@ public class PdfExporterTest {
 		Util.open(temp);
 	}
 	
+	@Ignore("manual test only")
 	@Test
 	public void exportPdfTest() {
-		NBook book = importBook("book/taubman.xlsx");
-		int[] colbreak = book.getSheet(0).getViewInfo().getColumnBreaks();
+		NBook book = importBook("book/simpleChart.xlsx");
 		File temp = Setup.getTempFile("pdfExportTest",".pdf");
 		exportBook(book, temp);
 		Util.open(temp);
 	}
 	
+	@Ignore("not fixed yet")
 	@Test
 	public void zss529Test() {
 		NBook book = importBook("book/taubman-nobreak.xlsx");
@@ -108,6 +110,7 @@ public class PdfExporterTest {
 		Util.open(temp);
 	}
 	
+	@Ignore("manual test only")
 	@Test
 	public void oldExportPdf() throws IOException {
 		BackupExporter exporter = new BackupExporter();
