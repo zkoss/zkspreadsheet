@@ -4,6 +4,7 @@ ZK Spreadsheet 2.6.0
 	ZSS-187 Better support for CellStyles while setBorders
 	ZSS-251 Support to override the default formula implementation
 	ZSS-527 Enter formula with bad syntax, would like "bad" formula to remain in cell
+	ZSS-544 Support ignore row break and column break when export PDF
 
 *Bug
 	ZSS-171 Input "=" on cell shall not append cell reference
