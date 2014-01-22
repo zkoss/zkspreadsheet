@@ -30,6 +30,10 @@ public class PrintSetupImpl implements NPrintSetup,Serializable {
 	private int topMargin;
 	private int bottomMargin;
 	
+	private boolean landscape = false;
+	private short scale;
+	private short paperSize;
+	
 	
 	@Override
 	public boolean isPrintGridline() {
@@ -88,7 +92,35 @@ public class PrintSetupImpl implements NPrintSetup,Serializable {
 	public void setBottomMargin(int bottomMargin) {
 		this.bottomMargin = bottomMargin;
 	}
-	
-	
+
+	@Override
+	public void setPaperSize(short size) {
+		this.paperSize = size;
+	}
+
+	@Override
+	public short getPaperSize() {
+		return paperSize;
+	}
+
+	@Override
+	public void setLandscape(boolean landscape) {
+		this.landscape = landscape;
+	}
+
+	@Override
+	public boolean isLandscape() {
+		return landscape;
+	}
+
+	@Override
+	public void setScale(short scale) {
+		this.scale = scale;
+	}
+
+	@Override
+	public short getScale() {
+		return scale;
+	}
 
 }

@@ -40,4 +40,14 @@ public interface NPrintSetup {
 	public void setTopMargin(int px);
 	public int getBottomMargin();
 	public void setBottomMargin(int px);
+	
+	public void setPaperSize(short size);
+	public short getPaperSize();
+	
+	public void setLandscape(boolean landscape);
+	public boolean isLandscape();
+	
+	public void setScale(short scale);
+	public short getScale();
+	
 }
