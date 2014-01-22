@@ -599,6 +599,11 @@ public class SheetImpl extends AbstractSheetAdv {
 			}
 		}
 		//TODO shift data validation?
+		
+		NBook book = getBook();
+		shiftFormula(new CellRegion(rowIdx,0,book.getMaxRowIndex(),book.getMaxColumnIndex()), size, 0);
+		
+		
 	}
 	private void shiftAfterRowDelete(int rowIdx, int size) {
 		//handling pic shift
@@ -624,6 +629,9 @@ public class SheetImpl extends AbstractSheetAdv {
 			}
 		}
 		//TODO shift data validation?
+		
+		shiftFormula(new CellRegion(rowIdx,0,book.getMaxRowIndex(),book.getMaxColumnIndex()), -size, 0);
+		
 	}
 	private void shiftAfterColumnInsert(int columnIdx, int size) {
 		// handling pic shift
@@ -643,6 +651,9 @@ public class SheetImpl extends AbstractSheetAdv {
 			}
 		}
 		//TODO shift data validation?
+		
+		shiftFormula(new CellRegion(0,columnIdx,book.getMaxRowIndex(),book.getMaxColumnIndex()), 0, size);
+		
 	}
 	private void shiftAfterColumnDelete(int columnIdx, int size) {
 		//handling pic shift
@@ -668,6 +679,9 @@ public class SheetImpl extends AbstractSheetAdv {
 			}
 		}
 		//TODO shift data validation?
+		
+		shiftFormula(new CellRegion(0,columnIdx,book.getMaxRowIndex(),book.getMaxColumnIndex()), 0, -size);
+		
 	}
 	
 	@Override
@@ -718,7 +732,7 @@ public class SheetImpl extends AbstractSheetAdv {
 
 		}
 		
-//		shiftAfterCellInsert(rowIdx, columnIdx, rowSize,columnSize,horizontal);
+		shiftAfterCellInsert(rowIdx, columnIdx, lastRowIdx,lastColumnIdx,horizontal);
 //		
 //		book.sendModelInternalEvent(ModelInternalEvents.createModelInternalEvent(ModelInternalEvents.ON_CELL_INSERTED, 
 //				this, 
@@ -726,7 +740,7 @@ public class SheetImpl extends AbstractSheetAdv {
 //						ModelInternalEvents.PARAM_SIZE, size)));
 		
 	}
-	
+
 	@Override
 	public void deleteCell(CellRegion region,boolean horizontal){
 		deleteCell(region.getRow(),region.getColumn(),region.getLastRow(),region.getLastColumn(),horizontal);
@@ -770,11 +784,35 @@ public class SheetImpl extends AbstractSheetAdv {
 			}
 		}
 		
-//		shiftAfterCellDelete(rowIdx, columnIdx, rowSize,columnSize,horizontal);
-//		
+		shiftAfterCellDelete(rowIdx, columnIdx, lastRowIdx,lastColumnIdx,horizontal);
+		
 //		book.sendModelInternalEvent(ModelInternalEvents.createModelInternalEvent(ModelInternalEvents.ON_CELL_DELETED, 
 //				this, ModelInternalEvents.createDataMap(ModelInternalEvents.PARAM_ROW_INDEX, rowIdx, 
 //						ModelInternalEvents.PARAM_SIZE, size)));
+	}
+	
+	
+	private void shiftAfterCellInsert(int rowIdx, int columnIdx, int lastRowIdx,
+			int lastColumnIdx, boolean horizontal) {
+		NBook book = getBook();
+		if(horizontal){
+			shiftFormula(
+				new CellRegion(rowIdx, columnIdx, lastRowIdx, book.getMaxColumnIndex()), 0, lastColumnIdx-columnIdx+1);
+		}else{
+			shiftFormula(
+				new CellRegion(rowIdx, columnIdx, book.getMaxRowIndex(), lastColumnIdx), lastRowIdx - rowIdx + 1, 0);
+		}
+	}
+	private void shiftAfterCellDelete(int rowIdx, int columnIdx, int lastRowIdx,
+			int lastColumnIdx, boolean horizontal) {
+		NBook book = getBook();
+		if(horizontal){
+			shiftFormula(
+				new CellRegion(rowIdx, columnIdx, lastRowIdx, book.getMaxColumnIndex()), 0, -(lastColumnIdx-columnIdx+1));
+		}else{
+			shiftFormula(
+				new CellRegion(rowIdx, columnIdx, book.getMaxRowIndex(), lastColumnIdx), -(lastRowIdx - rowIdx + 1), 0);
+		}
 	}
 	
 	@Override
@@ -1130,6 +1168,8 @@ public class SheetImpl extends AbstractSheetAdv {
 		shiftAfterCellMove(rowIdx, columnIdx,lastRowIdx,lastColumnIdx, rowOffset, columnOffset);
 		
 		//TODO validation and other stuff
+		
+		//TODO event
 	}
 
 	
