@@ -94,6 +94,24 @@ public class DependencyTableImpl extends DependencyTableAdv {
 		}
 		return result;
 	}
+	
+	@Override
+	public Set<Ref> getDirectDependents(Ref precedent) {
+		// search direct dependents 
+		Set<Ref> result = new LinkedHashSet<Ref>();
+		for(Entry<Ref, Set<Ref>> entry : map.entrySet()) {
+			Ref target = entry.getKey();
+			if(!result.contains(target)) {
+				for(Ref pre : entry.getValue()) {
+					if(isMatched(pre, precedent)) {
+						result.add(target);
+						break;
+					}
+				}
+			}
+		}
+		return result;
+	}	
 
 	private boolean isMatched(Ref a, Ref b) {
 		if(regionTypes.contains(a.getType()) && regionTypes.contains(b.getType())) {

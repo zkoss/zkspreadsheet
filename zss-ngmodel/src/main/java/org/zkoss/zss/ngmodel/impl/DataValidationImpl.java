@@ -213,6 +213,14 @@ public class DataValidationImpl extends AbstractDataValidationAdv {
 	}
 
 	@Override
+	public int getNumOfValue(){
+		return getNumOfValue1();
+	}
+	@Override
+	public Object getValue(int index) {
+		return getValue1(index);
+	}
+	@Override
 	public int getNumOfValue1(){
 		evalFormula();
 		return EvaluationUtil.sizeOf(evalValue1Result);
@@ -240,6 +248,11 @@ public class DataValidationImpl extends AbstractDataValidationAdv {
 		return EvaluationUtil.valueOf(evalValue2Result,index);
 	}
 
+	@Override
+	public String getValueFormula() {
+		return getValue1Formula();
+	}
+	
 	@Override
 	public String getValue1Formula() {
 		return value1Expr==null?null:value1Expr.getFormulaString();

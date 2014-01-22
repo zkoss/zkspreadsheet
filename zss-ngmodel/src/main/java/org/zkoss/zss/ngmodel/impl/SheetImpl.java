@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -598,10 +599,15 @@ public class SheetImpl extends AbstractSheetAdv {
 				anchor.setRowIndex(idx + size);
 			}
 		}
-		//TODO shift data validation?
+		for(AbstractDataValidationAdv validation:dataValidations){
+			for(CellRegion region:validation.getRegions()){
+				//TODO
+//				CellRegion shifted = Shift
+			}
+		}
 		
 		NBook book = getBook();
-		shiftFormula(new CellRegion(rowIdx,0,book.getMaxRowIndex(),book.getMaxColumnIndex()), size, 0);
+		shiftFormula(new CellRegion(rowIdx,0,book.getMaxRowIndex(),book.getMaxColumnIndex()), size, 0, null);
 		
 		
 	}
@@ -630,7 +636,9 @@ public class SheetImpl extends AbstractSheetAdv {
 		}
 		//TODO shift data validation?
 		
-		shiftFormula(new CellRegion(rowIdx,0,book.getMaxRowIndex(),book.getMaxColumnIndex()), -size, 0);
+		Set<Ref> dependents = trimFormula(new CellRegion(rowIdx,0,rowIdx+size-1,book.getMaxColumnIndex()),false,null);
+		//no need to handle the ref that are tirm already
+		shiftFormula(new CellRegion(rowIdx+size,0,book.getMaxRowIndex(),book.getMaxColumnIndex()), -size, 0,dependents);
 		
 	}
 	private void shiftAfterColumnInsert(int columnIdx, int size) {
@@ -652,7 +660,7 @@ public class SheetImpl extends AbstractSheetAdv {
 		}
 		//TODO shift data validation?
 		
-		shiftFormula(new CellRegion(0,columnIdx,book.getMaxRowIndex(),book.getMaxColumnIndex()), 0, size);
+		shiftFormula(new CellRegion(0,columnIdx,book.getMaxRowIndex(),book.getMaxColumnIndex()), 0, size, null);
 		
 	}
 	private void shiftAfterColumnDelete(int columnIdx, int size) {
@@ -680,7 +688,10 @@ public class SheetImpl extends AbstractSheetAdv {
 		}
 		//TODO shift data validation?
 		
-		shiftFormula(new CellRegion(0,columnIdx,book.getMaxRowIndex(),book.getMaxColumnIndex()), 0, -size);
+		
+		Set<Ref> dependents = trimFormula(new CellRegion(0,columnIdx,book.getMaxRowIndex(),columnIdx+size-1),true,null);
+		//no need to handle the ref that are tirm already
+		shiftFormula(new CellRegion(0,columnIdx+size,book.getMaxRowIndex(),book.getMaxColumnIndex()), 0, -size, dependents);
 		
 	}
 	
@@ -797,21 +808,26 @@ public class SheetImpl extends AbstractSheetAdv {
 		NBook book = getBook();
 		if(horizontal){
 			shiftFormula(
-				new CellRegion(rowIdx, columnIdx, lastRowIdx, book.getMaxColumnIndex()), 0, lastColumnIdx-columnIdx+1);
+				new CellRegion(rowIdx, columnIdx, lastRowIdx, book.getMaxColumnIndex()), 0, lastColumnIdx-columnIdx+1, null);
 		}else{
 			shiftFormula(
-				new CellRegion(rowIdx, columnIdx, book.getMaxRowIndex(), lastColumnIdx), lastRowIdx - rowIdx + 1, 0);
+				new CellRegion(rowIdx, columnIdx, book.getMaxRowIndex(), lastColumnIdx), lastRowIdx - rowIdx + 1, 0, null);
 		}
 	}
 	private void shiftAfterCellDelete(int rowIdx, int columnIdx, int lastRowIdx,
 			int lastColumnIdx, boolean horizontal) {
 		NBook book = getBook();
+		Set<Ref> dependents = trimFormula(new CellRegion(rowIdx,columnIdx,lastRowIdx,lastColumnIdx),horizontal,null);
 		if(horizontal){
+			//no need to handle the ref that are tirm already
 			shiftFormula(
-				new CellRegion(rowIdx, columnIdx, lastRowIdx, book.getMaxColumnIndex()), 0, -(lastColumnIdx-columnIdx+1));
+				new CellRegion(rowIdx, lastColumnIdx+1, lastRowIdx, book.getMaxColumnIndex()), 0, -(lastColumnIdx-columnIdx+1),
+				dependents);
 		}else{
+			//no need to handle the ref that are tirm already
 			shiftFormula(
-				new CellRegion(rowIdx, columnIdx, book.getMaxRowIndex(), lastColumnIdx), -(lastRowIdx - rowIdx + 1), 0);
+				new CellRegion(lastRowIdx+1, columnIdx, book.getMaxRowIndex(), lastColumnIdx), -(lastRowIdx - rowIdx + 1), 0,
+				dependents);
 		}
 	}
 	
@@ -1175,16 +1191,33 @@ public class SheetImpl extends AbstractSheetAdv {
 	
 	private void shiftAfterCellMove(int rowIdx, int columnIdx, int lastRowIdx,
 			int lastColumnIdx, int rowOffset, int columnOffset) {
-		shiftFormula(new CellRegion(rowIdx,columnIdx,lastRowIdx,lastColumnIdx),rowOffset,columnOffset);
+		shiftFormula(new CellRegion(rowIdx,columnIdx,lastRowIdx,lastColumnIdx),rowOffset,columnOffset, null);
 	}
 	
-	private void shiftFormula(CellRegion src,int rowOffset,int columnOffset){
+	private Set<Ref> shiftFormula(CellRegion src,int rowOffset,int columnOffset,Set<Ref> ignore){
 		NBook book = getBook();
 		AbstractBookSeriesAdv bs = (AbstractBookSeriesAdv)book.getBookSeries();
 		DependencyTable dt = bs.getDependencyTable();
-		Set<Ref> dependents = dt.getDependents(new RefImpl(book.getBookName(),getSheetName(),src.getRow(),src.getColumn(),src.getLastRow(),src.getLastColumn()));
-		FormulaShiftHelper shiftHelper = new FormulaShiftHelper(bs,new SheetRegion(this,src),rowOffset,columnOffset);
-		shiftHelper.shift(dependents);
+		Set<Ref> dependents = new LinkedHashSet<Ref>(dt.getDependents(new RefImpl(book.getBookName(),getSheetName(),src.getRow(),src.getColumn(),src.getLastRow(),src.getLastColumn())));
+		if(ignore!=null){
+			dependents.removeAll(ignore);
+		}
+		FormulaShiftHelper shiftHelper = new FormulaShiftHelper(bs,new SheetRegion(this,src));
+		shiftHelper.shift(dependents,rowOffset,columnOffset);
+		return dependents;
+	}
+	
+	private Set<Ref> trimFormula(CellRegion src,boolean horizontal,Set<Ref> ignore){
+		NBook book = getBook();
+		AbstractBookSeriesAdv bs = (AbstractBookSeriesAdv)book.getBookSeries();
+		DependencyTable dt = bs.getDependencyTable();
+		Set<Ref> dependents = new LinkedHashSet<Ref>(dt.getDirectDependents(new RefImpl(book.getBookName(),getSheetName(),src.getRow(),src.getColumn(),src.getLastRow(),src.getLastColumn())));
+		if(ignore!=null){
+			dependents.removeAll(ignore);
+		}
+		FormulaShiftHelper shiftHelper = new FormulaShiftHelper(bs,new SheetRegion(this,src));
+		shiftHelper.trim(dependents,horizontal);
+		return dependents;
 	}
 
 	public void checkOrphan(){

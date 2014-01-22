@@ -92,11 +92,14 @@ public interface NDataValidation extends FormulaContent{
 	public boolean hasReferToCellList();
 	public List<NCell> getReferToCellList();
 	
+	public int getNumOfValue();
+	public Object getValue(int i);
 	public int getNumOfValue1();
 	public Object getValue1(int i);
 	public int getNumOfValue2();
 	public Object getValue2(int i);
 	
+	public String getValueFormula();
 	public String getValue1Formula();
 	public String getValue2Formula();
 	public void setFormula(String valueExpr);

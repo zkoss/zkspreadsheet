@@ -31,6 +31,7 @@ import java.util.Set;
 public interface DependencyTable {
 
 	public Set<Ref> getDependents(Ref precedent);
+	public Set<Ref> getDirectDependents(Ref precedent);
 	
 	public void add(Ref dependant, Ref precedent);
 	

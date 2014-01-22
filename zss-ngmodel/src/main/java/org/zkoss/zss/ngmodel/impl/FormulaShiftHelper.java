@@ -22,36 +22,30 @@ import org.zkoss.zss.ngmodel.sys.formula.FormulaParseContext;
 /*package*/ class FormulaShiftHelper {
 	final NBookSeries bookSeries;
 	final SheetRegion sheetRegion;
-	final int rowOffset;
-	final int columnOffset;
 
 	public FormulaShiftHelper(AbstractBookSeriesAdv bookSeries,
-			SheetRegion sheetRegion, int rowOffset, int columnOffset) {
+			SheetRegion sheetRegion) {
 		this.bookSeries = bookSeries;
 		this.sheetRegion = sheetRegion;
-		this.rowOffset = rowOffset;
-		this.columnOffset = columnOffset;
 	}
 
-	public void shift(Set<Ref> dependents) {
-		// clear formula cache
+	public void shift(Set<Ref> dependents,int rowOffset, int columnOffset) {
 		for (Ref dependent : dependents) {
-			System.out.println(">>>Sheet Formula: "+dependent);
-			//clear the dependent's formula cache since the precedent is changed.
+			System.out.println(">>>Shift Sheet Formula: "+dependent);
 			if (dependent.getType() == RefType.CELL) {
-				handleCellRef(dependent);
+				shiftCellRef(dependent,rowOffset,columnOffset);
 			} else if (dependent.getType() == RefType.OBJECT) {
 				if(((ObjectRef)dependent).getObjectType()==ObjectType.CHART){
-					handleChartRef((ObjectRef)dependent);
+					shiftChartRef((ObjectRef)dependent,rowOffset,columnOffset);
 				}else if(((ObjectRef)dependent).getObjectType()==ObjectType.DATA_VALIDATION){
-					handleDataValidationRef((ObjectRef)dependent);
+					shiftDataValidationRef((ObjectRef)dependent,rowOffset,columnOffset);
 				}
 			} else {// TODO another
 
 			}
 		}
 	}
-	private void handleChartRef(ObjectRef dependent) {
+	private void shiftChartRef(ObjectRef dependent,int rowOffset, int columnOffset) {
 		//TODO zss 3.5
 //		NBook book = bookSeries.getBook(dependent.getBookName());
 //		if(book==null) return;
@@ -63,7 +57,7 @@ import org.zkoss.zss.ngmodel.sys.formula.FormulaParseContext;
 //			chart.getData().clearFormulaResultCache();
 //		}
 	}
-	private void handleDataValidationRef(ObjectRef dependent) {
+	private void shiftDataValidationRef(ObjectRef dependent,int rowOffset, int columnOffset) {
 		//TODO zss 3.5
 //		NBook book = bookSeries.getBook(dependent.getBookName());
 //		if(book==null) return;
@@ -76,7 +70,7 @@ import org.zkoss.zss.ngmodel.sys.formula.FormulaParseContext;
 //		}
 	}
 
-	private void handleCellRef(Ref dependent) {
+	private void shiftCellRef(Ref dependent,int rowOffset, int columnOffset) {
 		NBook book = bookSeries.getBook(dependent.getBookName());
 		if(book==null) return;
 		NSheet sheet = book.getSheetByName(dependent.getSheetName());
@@ -102,4 +96,64 @@ import org.zkoss.zss.ngmodel.sys.formula.FormulaParseContext;
 		}
 		return engine;
 	}
+
+	public void trim(Set<Ref> dependents, boolean horizontal) {
+		for (Ref dependent : dependents) {
+			System.out.println(">>>Trim Sheet Formula: "+dependent);
+			if (dependent.getType() == RefType.CELL) {
+				trimCellRef(dependent,horizontal);
+			} else if (dependent.getType() == RefType.OBJECT) {
+				if(((ObjectRef)dependent).getObjectType()==ObjectType.CHART){
+					trimChartRef((ObjectRef)dependent,horizontal);
+				}else if(((ObjectRef)dependent).getObjectType()==ObjectType.DATA_VALIDATION){
+					trimDataValidationRef((ObjectRef)dependent,horizontal);
+				}
+			} else {// TODO another
+
+			}
+		}
+	}
+	private void trimChartRef(ObjectRef dependent, boolean horizontal) {
+		//TODO zss 3.5
+//		NBook book = bookSeries.getBook(dependent.getBookName());
+//		if(book==null) return;
+//		NSheet sheet = book.getSheetByName(dependent.getSheetName());
+//		if(sheet==null) return;
+//		String[] ids = dependent.getObjectIdPath();
+//		NChart chart = sheet.getChart(ids[0]);
+//		if(chart!=null){
+//			chart.getData().clearFormulaResultCache();
+//		}
+	}
+	private void trimDataValidationRef(ObjectRef dependent, boolean horizontal) {
+		//TODO zss 3.5
+//		NBook book = bookSeries.getBook(dependent.getBookName());
+//		if(book==null) return;
+//		NSheet sheet = book.getSheetByName(dependent.getSheetName());
+//		if(sheet==null) return;
+//		String[] ids = dependent.getObjectIdPath();
+//		NDataValidation validation = sheet.getDataValidation(ids[0]);
+//		if(validation!=null){
+//			validation.clearFormulaResultCache();
+//		}
+	}
+
+	private void trimCellRef(Ref dependent, boolean horizontal) {
+//		NBook book = bookSeries.getBook(dependent.getBookName());
+//		if(book==null) return;
+//		NSheet sheet = book.getSheetByName(dependent.getSheetName());
+//		if(sheet==null) return;
+//		NCell cell = sheet.getCell(dependent.getRow(),
+//				dependent.getColumn());
+//		if(cell.getType()!=CellType.FORMULA)
+//			return;//impossible
+//		
+//		String expr = cell.getFormulaValue();
+//		
+//		FormulaEngine engine = getFormulaEngine();
+//		FormulaExpression exprAfter = engine.shift(expr, sheetRegion, rowOffset, columnOffset, new FormulaParseContext(sheet, null));//null ref, no trace dependence here
+//		cell.setFormulaValue(exprAfter.getFormulaString());
+//		
+//		System.out.println(">>>>"+expr+" trim to "+exprAfter.getFormulaString());
+	}	
 }

@@ -17,6 +17,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.ngmodel.impl;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -50,7 +51,7 @@ public abstract class AbstractCellAdv implements NCell,LinkedModelObject,Seriali
 		}
 		
 		if(!set.contains(getType())){
-			throw new IllegalStateException("is "+getType()+", not the one of "+types);
+			throw new IllegalStateException("is "+getType()+", not the one of "+Arrays.asList(types));
 		}
 	}
 	protected void checkFormulaResultType(CellType... types){
