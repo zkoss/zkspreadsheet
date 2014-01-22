@@ -120,6 +120,30 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 		
 		poiSheet.setDefaultRowHeight((short)UnitUtil.pxToTwip(sheet.getDefaultRowHeight()));
 		poiSheet.setDefaultColumnWidth((int)UnitUtil.pxToDefaultColumnWidth(sheet.getDefaultColumnWidth(), AbstractExcelImporter.CHRACTER_WIDTH));
+		
+		// Header
+		Header header = poiSheet.getHeader();
+		header.setLeft(sheet.getViewInfo().getHeader().getLeftText());
+		header.setCenter(sheet.getViewInfo().getHeader().getCenterText());
+		header.setRight(sheet.getViewInfo().getHeader().getRightText());
+		
+		// Footer
+		Footer footer = poiSheet.getFooter();
+		footer.setLeft(sheet.getViewInfo().getFooter().getLeftText());
+		footer.setCenter(sheet.getViewInfo().getFooter().getCenterText());
+		footer.setRight(sheet.getViewInfo().getFooter().getRightText());
+		
+		// Margin
+		poiSheet.setMargin(Sheet.LeftMargin, UnitUtil.pxToInche(sheet.getPrintSetup().getLeftMargin()));
+		poiSheet.setMargin(Sheet.RightMargin, UnitUtil.pxToInche(sheet.getPrintSetup().getRightMargin()));
+		poiSheet.setMargin(Sheet.TopMargin, UnitUtil.pxToInche(sheet.getPrintSetup().getTopMargin()));
+		poiSheet.setMargin(Sheet.BottomMargin, UnitUtil.pxToInche(sheet.getPrintSetup().getBottomMargin()));
+		
+		// Print Setup Information
+		poiSheet.getPrintSetup().setPaperSize(sheet.getPrintSetup().getPaperSize());
+		poiSheet.getPrintSetup().setScale(sheet.getPrintSetup().getScale());
+		poiSheet.getPrintSetup().setLandscape(sheet.getPrintSetup().isLandscape());
+		
 	}
 	protected void exportMergedRegions(NSheet sheet, Sheet poiSheet) {
 		// consistent with importer, read from last merged region

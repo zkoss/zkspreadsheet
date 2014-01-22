@@ -188,8 +188,12 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 		sheet.getPrintSetup().setTopMargin(UnitUtil.incheToPx(poiSheet.getMargin(Sheet.TopMargin)));
 		sheet.getPrintSetup().setLeftMargin(UnitUtil.incheToPx(poiSheet.getMargin(Sheet.LeftMargin)));
 		sheet.getPrintSetup().setRightMargin(UnitUtil.incheToPx(poiSheet.getMargin(Sheet.RightMargin)));
+		
 		sheet.getPrintSetup().setHeaderMargin(UnitUtil.incheToPx(poiSheet.getMargin(Sheet.HeaderMargin)));
 		sheet.getPrintSetup().setFooterMargin(UnitUtil.incheToPx(poiSheet.getMargin(Sheet.FooterMargin)));
+		sheet.getPrintSetup().setPaperSize(poiSheet.getPrintSetup().getPaperSize());
+		sheet.getPrintSetup().setLandscape(poiSheet.getPrintSetup().getLandscape());
+		sheet.getPrintSetup().setScale(poiSheet.getPrintSetup().getScale());
 		
 		sheet.setProtected(poiSheet.getProtect());
 		
