@@ -4,6 +4,7 @@ ZK Spreadsheet 3.0.1
   ZSS-511 LEFTB and REPLACEB return #NAME
   ZSS-527 Enter formula with bad syntax, would like "bad" formula to remain in cell
   ZSS-537 Spreadsheet supports Internet Explorer 11
+  ZSS-544 Support ignore row break and column break when export PDF
   
 *Bugs:
   ZSS-510 ApplyDataFormat with "" then getCellFormatText from range will cause IndexOutOfBoundaryException and spreadsheet crash.
