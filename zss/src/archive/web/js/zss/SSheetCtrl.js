@@ -99,8 +99,8 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 		if (str) {
 			str = str.split(",");
 			var size  = str.length;
-			for (var i = 0; i < size; i = i + 4)
-				array.push([zk.parseInt(str[i]), zk.parseInt(str[i + 1]), zk.parseInt(str[i + 2]), 'true' == str[i+3]]);
+			for (var i = 0; i < size; i = i + 5)
+				array.push([zk.parseInt(str[i]), zk.parseInt(str[i + 1]), zk.parseInt(str[i + 2]), 'true' == str[i+3], 'true' == str[i+4]]);
 		}
 		return array;
 	}
@@ -456,15 +456,16 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			this.fireProcessOverflow_();
 		}
 	},
+	/**
+	 * calculate row range (top, bottom) to process wrap text
+	 */
 	triggerWrap: function (row, run) {
 		var r = this._wrapRange;
 		if (!r) {
 			r = this._wrapRange = {};//tRow, bRow
 		}
-		var	tRow = r.tRow,
-			bRow = r.bRow;
-		tRow ? r.tRow = Math.min(tRow, row) : r.tRow = row;
-		bRow ? r.bRow = Math.max(bRow, row) : r.bRow = row;
+		typeof r.tRow == 'undefined' ? r.tRow = row : r.tRow = Math.min(r.tRow, row);
+		typeof r.bRow == 'undefined' ? r.bRow = row : r.bRow = Math.max(r.bRow, row);
 		if (run) {
 			this.fireProcessWrap_();
 		}
@@ -1017,9 +1018,9 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 	_cmdSize: function (result) {
 		var type = result.type;
 		if (type == "column")
-			this._setColumnWidth(result.column, result.width, false, true, result.hidden, result.id);
+			this._setColumnWidth(result.column, result.width, false, true, result.hidden, result.id, true);
 		else if(type=="row")
-			this._setRowHeight(result.row, result.height, false, true, result.hidden, result.id);
+			this._setRowHeight(result.row, result.height, false, true, result.hidden, result.id, result.custom);
 	},
 	_cmdHighlight: function (result) {
 		var type = result.type;
@@ -2018,7 +2019,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		for(var row=top; row<=bottom; ++row)
 			this._setRowHeight(row, height, fireevent, loadvis, hidden, metaid);
 	},
-	_setRowHeight: function(row, height, fireevent, loadvis, hidden, metaid) {
+	_setRowHeight: function(row, height, fireevent, loadvis, hidden, metaid, isCustom) {
 		var wgt = this._wgt,
 			sheetid = this.sheetid,
 			custRowHeight = this.custRowHeight,
@@ -2045,12 +2046,12 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		if (!meta) {
 			//append style class to column header and cell
 			zsh = zkS.t(metaid) ? metaid : custRowHeight.ids.next();
-			custRowHeight.setCustomizedSize(row, height, zsh, hidden);
+			custRowHeight.setCustomizedSize(row, height, zsh, hidden, isCustom);
 			this._appendZSH(row, zsh);
 			this._wgt._cacheCtrl.getSelectedSheet().updateRowHeightId(row, zsh);
 		} else {
 			zsh = zkS.t(metaid) ? metaid : meta[2];
-			custRowHeight.setCustomizedSize(row, height, zsh, hidden);
+			custRowHeight.setCustomizedSize(row, height, zsh, hidden, isCustom);
 		}
 		
 		var name = wgt.getSelectorPrefix(),
@@ -2122,7 +2123,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 
 		if (fireevent) {
 			this._wgt.fire('onZSSHeaderModif', 
-					{sheetId: this.serverSheetId, type: "left", event: "size", index: row, newsize: height, id: zsh, hidden: hidden},
+					{sheetId: this.serverSheetId, type: "left", event: "size", index: row, newsize: height, id: zsh, hidden: hidden, custom:isCustom},
 					{toServer: true, sendAhead: true}, 25);//ZSS-180
 		}
 		//ZSS-180

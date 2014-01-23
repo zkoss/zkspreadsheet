@@ -94,7 +94,8 @@ public class HeaderCommand implements Command {
 			int newsize = (Integer) data.get("newsize");
 			int id = (Integer) data.get("id");
 			boolean hidden = (Boolean) data.get("hidden");
-			((SpreadsheetInCtrl)spreadsheet.getExtraCtrl()).setRowSize(sheetId, index, newsize,id, hidden);
+			boolean isCustom= (Boolean) data.get("custom");
+			((SpreadsheetInCtrl)spreadsheet.getExtraCtrl()).setRowSize(sheetId, index, newsize,id, hidden, isCustom);
 			if (Events.isListened(spreadsheet,org.zkoss.zss.ui.event.Events.ON_HEADER_SIZE, true)){
 				HeaderEvent he = new HeaderEvent(org.zkoss.zss.ui.event.Events.ON_HEADER_SIZE, spreadsheet, sheet, HeaderEvent.LEFT_HEADER,index, Integer.valueOf(newsize), hidden);
 				Events.postEvent(he);

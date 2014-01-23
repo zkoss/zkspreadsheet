@@ -46,8 +46,9 @@ public interface SpreadsheetInCtrl {
 	 * @param newsize the new size
 	 * @param id a unique id of this customized column size
 	 * @param hidden whether this row is hidden
+	 * @param isCustom whether the size is custom (set by users) or not (determined by the component automatically)
 	 */
-	public void setRowSize(String sheetId,int row,int newsize,int id, boolean hidden);
+	public void setRowSize(String sheetId,int row,int newsize,int id, boolean hidden, boolean isCustom);
 	
 	/**
 	 * Indicate user change selection rectangle

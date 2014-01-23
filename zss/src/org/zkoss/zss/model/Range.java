@@ -283,7 +283,7 @@ public interface Range {
 	public void setRowHeight(int points);
 
 	/**
-	 * Sets row height in points with customHeight flag.
+	 * Sets row height in points with customHeight flag. The customHeight flag is usually true.
 	 * @param points new row height in points
 	 * @param customHeight true if manually set by user. 
 	 */

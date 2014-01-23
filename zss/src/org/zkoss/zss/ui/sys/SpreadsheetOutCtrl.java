@@ -45,5 +45,5 @@ public interface SpreadsheetOutCtrl {
 	public void addMergeCell(Worksheet sheet,int left,int top,int right,int bottom);
 	
 	public void setColumnWidth(Worksheet sheet,int col,int width, int id, boolean hidden);
-	public void setRowHeight(Worksheet sheet,int row, int height, int id, boolean hidden);
+	public void setRowHeight(Worksheet sheet,int row, int height, int id, boolean hidden, boolean isCustom);
 }
