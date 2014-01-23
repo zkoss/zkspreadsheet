@@ -677,8 +677,8 @@ public class CellOperationUtil {
 		src.autoFill(dest, type);
 	}
 	
-	public static void setRowHeight(Range range, int heightPx) {
-		range.setRowHeight(heightPx);
+	public static void setRowHeight(Range range, int heightPx, boolean isCustom) {
+		range.setRowHeight(heightPx, isCustom);
 	}
 	
 	public static void setColumnWidth(Range range, int widthPx) {

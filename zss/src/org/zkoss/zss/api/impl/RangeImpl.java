@@ -620,6 +620,12 @@ public class RangeImpl implements Range{
 		r.setRowHeight(heightPx);
 	}
 	
+	@Override
+	public void setRowHeight(int heightPx, boolean isCustom) {
+		NRange r = _range.isWholeRow()?_range:_range.getRows();
+		r.setRowHeight(heightPx, isCustom);
+	}
+	
 	//api that need special object wrap
 	
 	

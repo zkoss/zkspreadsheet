@@ -38,19 +38,7 @@ zss.Row = zk.$extends(zk.Widget, {
 	},
 	bind_: function (desktop, skipper, after) {
 		this.$supers(zss.Row, 'bind_', arguments);//after bind cells, may need to process wrap height
-		var sf = this,
-			sheet = this.sheet,
-			wgt = sheet._wgt,
-			wrapCells = this.wrapedCells;
-		if (wrapCells.length) {
-			if (wgt.isSheetCSSReady())
-				this._updateWrapRowHeight();
-			else
-				sheet.addSSInitLater(function () {
-					sf._updateWrapRowHeight();
-				});
-			this._listenProcessWrap(true);
-		}
+		this._listenProcessWrap(true);
 		if (zk.ie6_) {
 			this.sheet.listen({onRowHeightChanged: this.proxy(this._onRowHeightChanged)});
 		}
@@ -72,31 +60,35 @@ zss.Row = zk.$extends(zk.Widget, {
 	},
 	_onProcessWrap: function (evt) {
 		var d = evt.data,
-			r = this.r,
 			tRow = d.tRow,
 			bRow = d.bRow;
-		if (tRow != undefined && bRow != undefined && r >= tRow && r <= bRow) {
+		if (tRow != undefined && bRow != undefined 
+			&& this.r != undefined && this.r >= tRow && this.r <= bRow) {
 			this._updateWrapRowHeight();
 		}
 	},
 	_updateWrapRowHeight: function () {
-		var largestHeight = this.sheet.custRowHeight._getCustomizedSize(this.r);
-		var i = this.wrapedCells.length;
+		var autoHeight = 0;
 		
-		while (i--) {
-			var c = this.wrapedCells[i];
-			if (c) {
-				largestHeight = Math.max(largestHeight, c.getTextHeight());
+		if (this.wrapedCells.length >0){
+			//enlarge height upon largest text height among wrapped cells
+			var i = this.wrapedCells.length;
+			while (i--) {
+				if (this.wrapedCells[i]) {
+					autoHeight = Math.max(autoHeight,  this.wrapedCells[i].getTextHeight());
+				}
 			}
+		}else{ //no wrapped cells, auto resize to default height
+			autoHeight = this.sheet.custRowHeight.getDefaultSize();
 		}
 		
-		if (jq(this.$n()).height() == largestHeight)
-			return;//correct row height, no need to set CSS row height
-		
-		this.sheet._setRowHeight(this.r, largestHeight, true, false, false, this.zsh);
+		if (jq(this.$n()).height() == autoHeight)
+			return;//equals to current row height, no need to change
+		var CUSTOM = false;
+		this.sheet._setRowHeight(this.r, autoHeight, true, false, false, this.zsh, CUSTOM);
 	},
 	processWrapCell: function (cell, ignoreUpdateNow) {
-		if (this.sheet.custRowHeight.isDefaultSize(cell.r)) {
+		if (!this.sheet.custRowHeight.isCustomSize(cell.r)) {
 			var wrapedCells = this.wrapedCells;
 			if (cell.wrap) {
 				if (!wrapedCells.$contains(cell)) {
@@ -107,17 +99,16 @@ zss.Row = zk.$extends(zk.Widget, {
 			} else {
 				if (wrapedCells.$remove(cell)) {
 					//if there's no wrap cell to process, shall restore row height by invoke updateWrapRowHeight
-					if (!ignoreUpdateNow ||
-						!wrapedCells.length) {
+					if (!ignoreUpdateNow) {
 						this._updateWrapRowHeight();
 					}
 				}
 			}
 			
-			this._listenProcessWrap(!!wrapedCells.length);
+			this._listenProcessWrap(true);
 			if (ignoreUpdateNow) //process wrap on sheet onContentChange
 				this.sheet.triggerWrap(this.r);
-		} 
+		}
 	},
 	//IE6 only
 	_onRowHeightChanged: function (evt) {

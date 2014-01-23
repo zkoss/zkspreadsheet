@@ -436,11 +436,17 @@ public interface Range {
 	public void setColumnWidth(int widthPx);
 	/**
 	 * Sets the height(in pixel) of row in this range, it effect to whole row.
-	 * @param widthPx width in pixel
+	 * @param heightPx height in pixel
 	 * @see #toRowRange()
 	 */
 	public void setRowHeight(int heightPx);
 	
+	/**
+	 * Sets the height(in pixel) of row in this range and specify it's custom size or not.
+	 * @param heightPx height in pixel
+	 * @param isCustom true if it's set by users manually, false if it's determined by the component automatically
+	 */
+	public void setRowHeight(int heightPx, boolean isCustom);
 	/* 
 	 * ==================================================
 	 * cell relative API

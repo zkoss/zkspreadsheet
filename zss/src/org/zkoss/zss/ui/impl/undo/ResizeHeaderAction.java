@@ -39,13 +39,15 @@ public class ResizeHeaderAction extends AbstractUndoableAction {
 	
 	final Type _type;
 	final int _size;
+	boolean _isCustom = true;
 	
 	
 	
-	public ResizeHeaderAction(String label,Sheet sheet,int row, int column, int lastRow,int lastColumn,Type type,int size){
+	public ResizeHeaderAction(String label,Sheet sheet,int row, int column, int lastRow,int lastColumn,Type type,int size, boolean isCustom){
 		super(label,sheet,row,column,lastRow,lastColumn);
 		this._type = type;
 		this._size = size;
+		_isCustom = isCustom;
 	}
 
 	@Override
@@ -57,7 +59,7 @@ public class ResizeHeaderAction extends AbstractUndoableAction {
 			for(int i=_row;i<=_lastRow;i++){
 				_oldSizes[i-_row] = _sheet.getRowHeight(i);
 			}
-			CellOperationUtil.setRowHeight(Ranges.range(_sheet,_row,0,_lastRow,0).toRowRange(),_size);
+			CellOperationUtil.setRowHeight(Ranges.range(_sheet,_row,0,_lastRow,0).toRowRange(),_size, _isCustom);
 		}else{
 			_oldSizes = new int[_lastColumn-_column+1];
 			for(int i=_column;i<=_lastColumn;i++){
@@ -83,7 +85,7 @@ public class ResizeHeaderAction extends AbstractUndoableAction {
 		if(_oldSizes!=null){
 			if(_type==Type.ROW){
 				for(int i=_row;i<=_lastRow;i++){
-					CellOperationUtil.setRowHeight(Ranges.range(_sheet,i,0,i,0).toRowRange(),_oldSizes[i-_row]);
+					CellOperationUtil.setRowHeight(Ranges.range(_sheet,i,0,i,0).toRowRange(),_oldSizes[i-_row], _isCustom);
 				}
 			}else{
 				for(int i=_column;i<=_lastColumn;i++){

@@ -33,9 +33,9 @@ public class HeaderPositionHelperTest {
 	public void setUp() throws Exception {
 		int custId = 0;
 		final List<HeaderPositionInfo> infos = new ArrayList<HeaderPositionInfo>();
-		infos.add(new HeaderPositionInfo(3, 30, custId++, false));
-		infos.add(new HeaderPositionInfo(9, 20, custId++, false));
-		infos.add(new HeaderPositionInfo(10, 60, custId++, false));
+		infos.add(new HeaderPositionInfo(3, 30, custId++, false, true));
+		infos.add(new HeaderPositionInfo(9, 20, custId++, false, true));
+		infos.add(new HeaderPositionInfo(10, 60, custId++, false, true));
 		int defaultSize = 40;
 		_helper = new HeaderPositionHelper(defaultSize, infos);
 	}

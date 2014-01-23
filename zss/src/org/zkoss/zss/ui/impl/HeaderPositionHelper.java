@@ -27,8 +27,8 @@ import java.util.List;
 
 /**
  * 
- * A utility class for calculating position of header
- * 
+ * A utility class for calculating position of header.
+ * Each non-default size of a row or column header is stored as a {@link HeaderPositionInfo} in this helper.  
  * @author Dennis.Chen
  * 
  */
@@ -93,11 +93,11 @@ public class HeaderPositionHelper {
 	}
 
 	//set new info values at the specified cellIndex; if not exist, create a new one and add into this Helper.
-	public void setInfoValues(int cellIndex, int size, int id, boolean hidden) {
+	public void setInfoValues(int cellIndex, int size, int id, boolean hidden, boolean isCustom) {
 		final int j = Collections.binarySearch(_infos, Integer.valueOf(cellIndex), new HeaderPositionInfoComparator());
 		final int index = j < 0 ? (-j - 1) : j;
 		if (j < 0) {
-			_infos.add(index, new HeaderPositionInfo(cellIndex, size, id, hidden));
+			_infos.add(index, new HeaderPositionInfo(cellIndex, size, id, hidden, isCustom));
 		} else {
 			final HeaderPositionInfo info = _infos.get(index);
 			info.size = size;
@@ -272,12 +272,22 @@ public class HeaderPositionHelper {
 		public int size; //width/height in pixel
 		public int id; //column/row uuid
 		public boolean hidden; //whether the column/row is hidden
+		private boolean custom = true;
 		
-		public HeaderPositionInfo(int index, int size, int id, boolean hidden) {
+		public HeaderPositionInfo(int index, int size, int id, boolean hidden, boolean isCustom) {
 			this.index = index;
 			this.size = size;
 			this.id = id;
 			this.hidden = hidden;
+			this.custom = isCustom;
+		}
+
+		public boolean isCustom() {
+			return custom;
+		}
+
+		public void setCustom(boolean custom) {
+			this.custom = custom;
 		}
 	}
 	
