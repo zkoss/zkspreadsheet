@@ -81,15 +81,15 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 		NBookSeries bookSeries = book.getBookSeries();
 		boolean isCacheClean = bookSeries.isAutoFormulaCacheClean();
 		try{
-			bookSeries.setAutoFormulaCacheClean(false);//disable temporary to avoid unnecessary clean up when import
+			bookSeries.setAutoFormulaCacheClean(false);//disable it to avoid unnecessary clean up during importing
 			
 			importExternalBookLinks();
-				
-			for (int i = 0 ; i < workbook.getNumberOfSheets(); i++){
+			int numberOfSheet = workbook.getNumberOfSheets();
+			for (int i = 0 ; i < numberOfSheet; i++){
 				importSheet(workbook.getSheetAt(i));
 			}
 			importNamedRange();
-			for (int i = 0 ; i < workbook.getNumberOfSheets(); i++){
+			for (int i = 0 ; i < numberOfSheet; i++){
 				NSheet sheet = book.getSheet(i);
 				Sheet poiSheet = workbook.getSheetAt(i);
 				
@@ -212,6 +212,7 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 	protected NRow importRow(Row poiRow, NSheet sheet) {
 		NRow row = sheet.getRow(poiRow.getRowNum());
 		row.setHeight(UnitUtil.twipToPx(poiRow.getHeight()));
+		row.setCustomHeight(poiRow.isCustomHeight());
 		row.setHidden(poiRow.getZeroHeight());
 		CellStyle rowStyle = poiRow.getRowStyle();
 		if (rowStyle != null){
