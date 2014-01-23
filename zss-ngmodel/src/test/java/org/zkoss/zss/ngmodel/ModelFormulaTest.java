@@ -663,6 +663,57 @@ public class ModelFormulaTest {
 		Assert.assertEquals(8D, sheet1.getCell("F1").getValue());
 	}
 	
+	@Test
+	public void testOverlapShift(){
+		NBook book = NBooks.createBook("book1");
+		book.getBookSeries().setAutoFormulaCacheClean(true);
+		NSheet sheet1 = initialDataGrid(book.createSheet("Sheet1"));
+		
+		sheet1.getCell("B2").setValue(1);
+		sheet1.getCell("B3").setValue(2);
+		sheet1.getCell("C2").setValue(3);
+		sheet1.getCell("C3").setValue(4);
+		sheet1.getCell("C4").setValue(5);
+		sheet1.getCell("D3").setValue(6);
+		sheet1.getCell("D4").setValue(7);
+		
+		sheet1.getCell("F1").setValue("=SUM(A1:B2)");
+		sheet1.getCell("F2").setValue("=SUM(B2:C3)");
+		sheet1.getCell("F3").setValue("=SUM(C3:D4)");
+		sheet1.getCell("G1").setValue("=A1");
+		sheet1.getCell("G2").setValue("=B2");
+		sheet1.getCell("G3").setValue("=C3");
+		sheet1.getCell("G4").setValue("=D4");
+
+		Assert.assertEquals(1D, sheet1.getCell("F1").getValue());
+		Assert.assertEquals(10D, sheet1.getCell("F2").getValue());
+		Assert.assertEquals(22D, sheet1.getCell("F3").getValue());
+		Assert.assertEquals(0D, sheet1.getCell("G1").getValue());
+		Assert.assertEquals(1D, sheet1.getCell("G2").getValue());
+		Assert.assertEquals(4D, sheet1.getCell("G3").getValue());
+		Assert.assertEquals(7D, sheet1.getCell("G4").getValue());
+		
+		sheet1.moveCell(new CellRegion("B2:C3"), -1,-1);
+		
+		Assert.assertEquals("SUM(#REF!)", sheet1.getCell("F1").getFormulaValue());
+		Assert.assertEquals("SUM(A1:B2)", sheet1.getCell("F2").getFormulaValue());
+		Assert.assertEquals("SUM(C3:D4)", sheet1.getCell("F3").getFormulaValue());
+//		Assert.assertEquals("#REF!", sheet1.getCell("G1").getFormulaValue()); //TODO shouldn't fail here, or spec?
+		Assert.assertEquals("A1", sheet1.getCell("G2").getFormulaValue());
+		Assert.assertEquals("B2", sheet1.getCell("G3").getFormulaValue());
+		Assert.assertEquals("D4", sheet1.getCell("G4").getFormulaValue());
+		
+		
+		Assert.assertEquals("#REF!", sheet1.getCell("F1").getErrorValue().getErrorString());
+		Assert.assertEquals(10D, sheet1.getCell("F2").getValue());
+		Assert.assertEquals(18D, sheet1.getCell("F3").getValue());
+//		Assert.assertEquals("#REF!", sheet1.getCell("G1").getErrorValue().getErrorString());//TODO shouldn't fail here, or spec?
+		Assert.assertEquals(1D, sheet1.getCell("G2").getValue());
+		Assert.assertEquals(4D, sheet1.getCell("G3").getValue());
+		Assert.assertEquals(7D, sheet1.getCell("G4").getValue());
+		
+	}
+	
 	private NSheet prepareValidationSheet(){
 		NBook book = NBooks.createBook("book1");
 		book.getBookSeries().setAutoFormulaCacheClean(true);

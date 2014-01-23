@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -33,6 +34,7 @@ import org.zkoss.zss.ngmodel.InvalidateModelOpException;
 import org.zkoss.zss.ngmodel.NAutoFilter;
 import org.zkoss.zss.ngmodel.NAutoFilter.FilterOp;
 import org.zkoss.zss.ngmodel.NAutoFilter.NFilterColumn;
+import org.zkoss.zss.ngmodel.ModelEvents;
 import org.zkoss.zss.ngmodel.NBook;
 import org.zkoss.zss.ngmodel.NCell;
 import org.zkoss.zss.ngmodel.NChart;
@@ -546,7 +548,7 @@ public class SheetImpl extends AbstractSheetAdv {
 			row.destroy();
 		}
 		
-		shiftAfterRowInsert(rowIdx,size);
+		shiftAfterRowInsert(rowIdx,lastRowIdx);
 		
 		book.sendModelInternalEvent(ModelInternalEvents.createModelInternalEvent(ModelInternalEvents.ON_ROW_INSERTED, 
 				this, 
@@ -575,15 +577,16 @@ public class SheetImpl extends AbstractSheetAdv {
 		int size = lastRowIdx-rowIdx+1;
 		rows.delete(rowIdx, size);
 		
-		shiftAfterRowDelete(rowIdx,size);
+		shiftAfterRowDelete(rowIdx,lastRowIdx);
 		
 		book.sendModelInternalEvent(ModelInternalEvents.createModelInternalEvent(ModelInternalEvents.ON_ROW_DELETED, 
 				this, ModelInternalEvents.createDataMap(ModelInternalEvents.PARAM_ROW_INDEX, rowIdx, 
 						ModelInternalEvents.PARAM_ROW_INDEX, lastRowIdx)));
 	}	
 	
-	private void shiftAfterRowInsert(int rowIdx, int size) {
-		// handling pic shift
+	private void shiftAfterRowInsert(int rowIdx, int lastRowIdx) {
+		// handling pic location shift
+		int size = lastRowIdx - rowIdx+1;
 		for (AbstractPictureAdv pic : pictures) {
 			NViewAnchor anchor = pic.getAnchor();
 			int idx = anchor.getRowIndex();
@@ -591,7 +594,7 @@ public class SheetImpl extends AbstractSheetAdv {
 				anchor.setRowIndex(idx + size);
 			}
 		}
-		// handling pic shift
+		// handling chart location shift
 		for (AbstractChartAdv chart : charts) {
 			NViewAnchor anchor = chart.getAnchor();
 			int idx = anchor.getRowIndex();
@@ -600,19 +603,40 @@ public class SheetImpl extends AbstractSheetAdv {
 			}
 		}
 		for(AbstractDataValidationAdv validation:dataValidations){
-			for(CellRegion region:validation.getRegions()){
-				//TODO
-//				CellRegion shifted = Shift
-			}
+			//TODO zss 3.5
+//			int idx =0;
+//			Set<CellRegion> remove = new HashSet<CellRegion>();
+//			boolean dirty = false;
+//			for(CellRegion region:validation.getRegions()){
+//				//TODO
+//				CellRegion shifted = null; //TODO Shift
+//				if(shifted == null){
+//					remove.add(region);
+//				}else if(!shifted.equals(region)){
+//					validation.setRegion(idx, region);
+//					dirty = true;
+//				}
+//				idx++;
+//			}
+//			for(CellRegion r:remove){
+//				validation.removeRegion(r);
+//				dirty = true;
+//			}
+//			
+//			if(dirty){
+//				((AbstractBookAdv) book).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_DATA_VALIDATION_CONTENT_CHANGE,this,
+//					ModelEvents.createDataMap(ModelEvents.PARAM_OBJECT_ID,validation.getId())));
+//			}
+			
 		}
 		
-		NBook book = getBook();
-		shiftFormula(new CellRegion(rowIdx,0,book.getMaxRowIndex(),book.getMaxColumnIndex()), size, 0, null);
-		
-		
+		extendFormula(new CellRegion(rowIdx,0,lastRowIdx,book.getMaxColumnIndex()), false);
 	}
-	private void shiftAfterRowDelete(int rowIdx, int size) {
+	
+	
+	private void shiftAfterRowDelete(int rowIdx, int lastRowIdx) {
 		//handling pic shift
+		int size = lastRowIdx - rowIdx+1;
 		for(AbstractPictureAdv pic:pictures){
 			NViewAnchor anchor = pic.getAnchor();
 			int idx = anchor.getRowIndex();
@@ -636,12 +660,11 @@ public class SheetImpl extends AbstractSheetAdv {
 		}
 		//TODO shift data validation?
 		
-		Set<Ref> dependents = trimFormula(new CellRegion(rowIdx,0,rowIdx+size-1,book.getMaxColumnIndex()),false,null);
-		//no need to handle the ref that are tirm already
-		shiftFormula(new CellRegion(rowIdx+size,0,book.getMaxRowIndex(),book.getMaxColumnIndex()), -size, 0,dependents);
+		shrinkFormula(new CellRegion(rowIdx,0,lastRowIdx,book.getMaxColumnIndex()), false);
 		
 	}
-	private void shiftAfterColumnInsert(int columnIdx, int size) {
+	private void shiftAfterColumnInsert(int columnIdx, int lastColumnIdx) {
+		int size = lastColumnIdx - columnIdx+1;
 		// handling pic shift
 		for (AbstractPictureAdv pic : pictures) {
 			NViewAnchor anchor = pic.getAnchor();
@@ -650,7 +673,7 @@ public class SheetImpl extends AbstractSheetAdv {
 				anchor.setColumnIndex(idx + size);
 			}
 		}
-		// handling pic shift
+		// handling chart shift
 		for (AbstractChartAdv chart : charts) {
 			NViewAnchor anchor = chart.getAnchor();
 			int idx = anchor.getColumnIndex();
@@ -660,10 +683,11 @@ public class SheetImpl extends AbstractSheetAdv {
 		}
 		//TODO shift data validation?
 		
-		shiftFormula(new CellRegion(0,columnIdx,book.getMaxRowIndex(),book.getMaxColumnIndex()), 0, size, null);
+		extendFormula(new CellRegion(0,columnIdx,book.getMaxRowIndex(),lastColumnIdx), true);
 		
 	}
-	private void shiftAfterColumnDelete(int columnIdx, int size) {
+	private void shiftAfterColumnDelete(int columnIdx,int lastColumnIdx) {
+		int size = lastColumnIdx - columnIdx+1;
 		//handling pic shift
 		for(AbstractPictureAdv pic:pictures){
 			NViewAnchor anchor = pic.getAnchor();
@@ -675,7 +699,7 @@ public class SheetImpl extends AbstractSheetAdv {
 				anchor.setXOffset(0);
 			}
 		}
-		//handling pic shift
+		//handling chart shift
 		for(AbstractChartAdv chart:charts){
 			NViewAnchor anchor = chart.getAnchor();
 			int idx = anchor.getColumnIndex();
@@ -687,12 +711,8 @@ public class SheetImpl extends AbstractSheetAdv {
 			}
 		}
 		//TODO shift data validation?
-		
-		
-		Set<Ref> dependents = trimFormula(new CellRegion(0,columnIdx,book.getMaxRowIndex(),columnIdx+size-1),true,null);
-		//no need to handle the ref that are tirm already
-		shiftFormula(new CellRegion(0,columnIdx+size,book.getMaxRowIndex(),book.getMaxColumnIndex()), 0, -size, dependents);
-		
+
+		shrinkFormula(new CellRegion(0,columnIdx,book.getMaxRowIndex(),lastColumnIdx), true);
 	}
 	
 	@Override
@@ -805,30 +825,12 @@ public class SheetImpl extends AbstractSheetAdv {
 	
 	private void shiftAfterCellInsert(int rowIdx, int columnIdx, int lastRowIdx,
 			int lastColumnIdx, boolean horizontal) {
-		NBook book = getBook();
-		if(horizontal){
-			shiftFormula(
-				new CellRegion(rowIdx, columnIdx, lastRowIdx, book.getMaxColumnIndex()), 0, lastColumnIdx-columnIdx+1, null);
-		}else{
-			shiftFormula(
-				new CellRegion(rowIdx, columnIdx, book.getMaxRowIndex(), lastColumnIdx), lastRowIdx - rowIdx + 1, 0, null);
-		}
+		extendFormula(new CellRegion(rowIdx, columnIdx, lastRowIdx, lastColumnIdx),horizontal);
 	}
+	
 	private void shiftAfterCellDelete(int rowIdx, int columnIdx, int lastRowIdx,
 			int lastColumnIdx, boolean horizontal) {
-		NBook book = getBook();
-		Set<Ref> dependents = trimFormula(new CellRegion(rowIdx,columnIdx,lastRowIdx,lastColumnIdx),horizontal,null);
-		if(horizontal){
-			//no need to handle the ref that are tirm already
-			shiftFormula(
-				new CellRegion(rowIdx, lastColumnIdx+1, lastRowIdx, book.getMaxColumnIndex()), 0, -(lastColumnIdx-columnIdx+1),
-				dependents);
-		}else{
-			//no need to handle the ref that are tirm already
-			shiftFormula(
-				new CellRegion(lastRowIdx+1, columnIdx, book.getMaxRowIndex(), lastColumnIdx), -(lastRowIdx - rowIdx + 1), 0,
-				dependents);
-		}
+		shrinkFormula(new CellRegion(rowIdx, columnIdx, lastRowIdx, lastColumnIdx),horizontal);
 	}
 	
 	@Override
@@ -903,7 +905,7 @@ public class SheetImpl extends AbstractSheetAdv {
 			row.insertCell(columnIdx,size);
 		}
 		
-		shiftAfterColumnInsert(columnIdx,size);
+		shiftAfterColumnInsert(columnIdx,lastColumnIdx);
 		
 		book.sendModelInternalEvent(ModelInternalEvents.createModelInternalEvent(ModelInternalEvents.ON_COLUMN_INSERTED, this,
 				ModelInternalEvents.createDataMap(ModelInternalEvents.PARAM_COLUMN_INDEX, columnIdx, 
@@ -1016,7 +1018,7 @@ public class SheetImpl extends AbstractSheetAdv {
 		for(AbstractRowAdv row:rows.values()){
 			row.deleteCell(columnIdx,size);
 		}
-		shiftAfterColumnDelete(columnIdx,size);
+		shiftAfterColumnDelete(columnIdx,lastColumnIdx);
 		
 		book.sendModelInternalEvent(ModelInternalEvents.createModelInternalEvent(ModelInternalEvents.ON_COLUMN_DELETED, 
 				this, ModelInternalEvents.createDataMap(ModelInternalEvents.PARAM_COLUMN_INDEX, columnIdx, 
@@ -1191,33 +1193,40 @@ public class SheetImpl extends AbstractSheetAdv {
 	
 	private void shiftAfterCellMove(int rowIdx, int columnIdx, int lastRowIdx,
 			int lastColumnIdx, int rowOffset, int columnOffset) {
-		shiftFormula(new CellRegion(rowIdx,columnIdx,lastRowIdx,lastColumnIdx),rowOffset,columnOffset, null);
+		shiftFormula(new CellRegion(rowIdx,columnIdx,lastRowIdx,lastColumnIdx),rowOffset,columnOffset);
 	}
 	
-	private Set<Ref> shiftFormula(CellRegion src,int rowOffset,int columnOffset,Set<Ref> ignore){
+	private void shiftFormula(CellRegion src,int rowOffset,int columnOffset){
 		NBook book = getBook();
 		AbstractBookSeriesAdv bs = (AbstractBookSeriesAdv)book.getBookSeries();
 		DependencyTable dt = bs.getDependencyTable();
-		Set<Ref> dependents = new LinkedHashSet<Ref>(dt.getDependents(new RefImpl(book.getBookName(),getSheetName(),src.getRow(),src.getColumn(),src.getLastRow(),src.getLastColumn())));
-		if(ignore!=null){
-			dependents.removeAll(ignore);
+		Set<Ref> dependents = dt.getDependents(new RefImpl(book.getBookName(),getSheetName(),src.getRow(),src.getColumn(),src.getLastRow(),src.getLastColumn()));
+		if(dependents.size()>0){
+			FormulaShiftHelper shiftHelper = new FormulaShiftHelper(bs,new SheetRegion(this,src));
+			shiftHelper.shift(dependents,rowOffset,columnOffset);
 		}
-		FormulaShiftHelper shiftHelper = new FormulaShiftHelper(bs,new SheetRegion(this,src));
-		shiftHelper.shift(dependents,rowOffset,columnOffset);
-		return dependents;
 	}
 	
-	private Set<Ref> trimFormula(CellRegion src,boolean horizontal,Set<Ref> ignore){
+	private void shrinkFormula(CellRegion src,boolean horizontal){
 		NBook book = getBook();
 		AbstractBookSeriesAdv bs = (AbstractBookSeriesAdv)book.getBookSeries();
 		DependencyTable dt = bs.getDependencyTable();
-		Set<Ref> dependents = new LinkedHashSet<Ref>(dt.getDirectDependents(new RefImpl(book.getBookName(),getSheetName(),src.getRow(),src.getColumn(),src.getLastRow(),src.getLastColumn())));
-		if(ignore!=null){
-			dependents.removeAll(ignore);
+		Set<Ref> dependents = dt.getDependents(new RefImpl(book.getBookName(),getSheetName(),src.getRow(),src.getColumn(),src.getLastRow(),src.getLastColumn()));
+		if(dependents.size()>0){
+			FormulaShiftHelper shiftHelper = new FormulaShiftHelper(bs,new SheetRegion(this,src));
+			shiftHelper.shrink(dependents,horizontal);
 		}
-		FormulaShiftHelper shiftHelper = new FormulaShiftHelper(bs,new SheetRegion(this,src));
-		shiftHelper.trim(dependents,horizontal);
-		return dependents;
+	}
+	
+	private void extendFormula(CellRegion src,boolean horizontal){
+		NBook book = getBook();
+		AbstractBookSeriesAdv bs = (AbstractBookSeriesAdv)book.getBookSeries();
+		DependencyTable dt = bs.getDependencyTable();
+		Set<Ref> dependents = dt.getDependents(new RefImpl(book.getBookName(),getSheetName(),src.getRow(),src.getColumn(),src.getLastRow(),src.getLastColumn()));
+		if(dependents.size()>0){
+			FormulaShiftHelper shiftHelper = new FormulaShiftHelper(bs,new SheetRegion(this,src));
+			shiftHelper.extend(dependents,horizontal);
+		}
 	}
 
 	public void checkOrphan(){

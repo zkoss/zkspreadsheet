@@ -177,6 +177,12 @@ public class DataValidationImpl extends AbstractDataValidationAdv {
 		Validations.argNotNull(region);
 		regions.remove(region);
 	}
+	
+	@Override
+	void setRegion(int idx,CellRegion region){
+		Validations.argNotNull(region);
+		regions.set(idx,region);
+	}
 
 	@Override
 	public ValidationType getValidationType() {

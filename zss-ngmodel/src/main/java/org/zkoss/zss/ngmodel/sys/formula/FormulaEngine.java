@@ -32,6 +32,12 @@ public interface FormulaEngine {
 	public FormulaExpression shift(String formula, SheetRegion srcRegion, int rowOffset,int columnOffset,
 			FormulaParseContext context);
 	
+	public FormulaExpression shrink(String formula, SheetRegion srcRegion, boolean hrizontal,
+			FormulaParseContext context);
+	
+	public FormulaExpression extend(String formula, SheetRegion srcRegion, boolean hrizontal,
+			FormulaParseContext context);
+	
 	public FormulaExpression renameSheet(String formula, String oldName,String newName,
 			FormulaParseContext context);
 	

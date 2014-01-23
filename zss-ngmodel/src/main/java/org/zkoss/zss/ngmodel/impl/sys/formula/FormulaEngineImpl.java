@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import org.zkoss.poi.ss.formula.CollaboratingWorkbooksEnvironment;
 import org.zkoss.poi.ss.formula.DependencyTracker;
 import org.zkoss.poi.ss.formula.EvaluationCell;
@@ -601,6 +602,20 @@ public class FormulaEngineImpl implements FormulaEngine {
 			expr = new FormulaExpressionImpl(formula, null, true);
 		}
 		return expr;
+	}
+
+	@Override
+	public FormulaExpression shrink(String formula, SheetRegion srcRegion,
+			boolean hrizontal, FormulaParseContext context) {
+		// TODO zss 3.5
+		return new FormulaExpressionImpl(formula, null, true);
+	}
+
+	@Override
+	public FormulaExpression extend(String formula, SheetRegion srcRegion,
+			boolean hrizontal, FormulaParseContext context) {
+		// TODO zss 3.5
+		return new FormulaExpressionImpl(formula, null, true);
 	}
 
 }
