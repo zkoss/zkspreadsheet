@@ -490,12 +490,25 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 		}
 	}
 	
+	/**
+	 * A FilterColumn object only exists when we have set a criteria on that column. 
+	 * For example, if we enable auto filter on 2 columns, but we only set criteria on 2nd column. 
+	 * Thus, the size of filter column is 1. There is only one FilterColumn object and its column id is 1.  
+	 * Only getFilterColumn(1) will return a FilterColumn, other get null.
+	 * @param poiSheet
+	 * @param sheet
+	 */
 	private void importAutoFilter(Sheet poiSheet, NSheet sheet) {
 		AutoFilter poiAutoFilter = poiSheet.getAutoFilter();
 		if (poiAutoFilter != null){
-			NAutoFilter autoFilter = sheet.createAutoFilter(new CellRegion(poiAutoFilter.getRangeAddress().formatAsString()));
-			for( int i = 0 ; i < poiAutoFilter.getFilterColumns().size() ; i ++){
+			CellRangeAddress filteringRange = poiAutoFilter.getRangeAddress();
+			NAutoFilter autoFilter = sheet.createAutoFilter(new CellRegion(filteringRange.formatAsString()));
+			int numberOfColumn = filteringRange.getLastColumn() - filteringRange.getFirstColumn() +1;
+			for( int i = 0 ; i < numberOfColumn ; i ++){
 				FilterColumn srcColumn = poiAutoFilter.getFilterColumn(i);
+				if (srcColumn == null){
+					continue;
+				}
 				NFilterColumn destColumn = autoFilter.getFilterColumn(i, true);
 				destColumn.setProperties(toFilterOperator(srcColumn.getOperator()), srcColumn.getCriteria1(),
 						srcColumn.getCriteria2(), srcColumn.isOn());
