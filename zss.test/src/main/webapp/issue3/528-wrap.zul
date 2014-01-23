@@ -1,0 +1,73 @@
+<zk>
+	<window width="100%" height="100%" style="padding: 20px" apply="zss.issue.WrapComposer">
+		<button onClick="doExport()">export</button>
+		<button onClick="toggleWrap()">Toggle Wrap</button>
+		<spreadsheet id="ss" src="/issue3/book/528-wrap.xlsx" width="800px" height="700px"
+			ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e" maxrows="100" maxcolumns="20" showToolbar="true" showFormulabar="true"
+			showSheetbar="true" showContextMenu="true">
+		</spreadsheet>
+		Row's Height Change Message:
+		<vlayout id="msgArea">
+		</vlayout>
+		<zscript><![CDATA[
+		import java.io.*;
+		import org.zkoss.zss.model.*;
+		import org.zkoss.zul.*;
+		import org.zkoss.util.media.*;
+		public void doExport() throws IOException {
+			Exporter exporter = Exporters.getExporter("excel");
+			Book book = ss.getBook();
+			File file = File.createTempFile(Long.toString(System.currentTimeMillis()), "temp");
+			FileOutputStream fos = null;
+			try {
+				fos = new FileOutputStream(file);
+				exporter.export(book, fos);
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				if (fos != null) {
+					fos.close();
+				}
+			}
+			//generate file name upon book type (2007,2003)
+			Filedownload.save(new AMedia("wrap.xlsx", null, null, file, true));
+		}
+		
+		public void toggleWrap(){
+			Range selection = Ranges.range(ss.getSelectedSheet(), ss.getSelection());
+		    CellStyle oldStyle = selection.getCellStyle();
+		    EditableCellStyle newStyle = selection.getCellStyleHelper().createCellStyle(oldStyle);
+		    newStyle.setWrapText(!oldStyle.isWrapText());
+		    selection.setCellStyle(newStyle);
+		}
+		]]></zscript>
+	</window>
+</zk>
+<!--
+Original Specs
+
+1. The "wrap text" takes effect on cells with string.
+3-1. The cell's height is not shrinked back after disable "wrap text".
+5. if wrapping text causes height of rows change, it should send event "onZSSHeaderModif" to the server
+
+New Specs (Only list changed):
+
+	1. Spreadsheet can read "wrap text" setting from Excel file.
+	2. When enabling "wrap text", Spreadsheet wraps a cell's text according to its width and automatically adjusts the height to display complete text.
+
+		1. Component adjusts the height largest text height among wrapped cells
+
+	3. When disabling "wrap text" on all cells in a row, component will shrink height to default size if the height is enlarged automatically.
+	4. For those cells with custom height and merged cells, Spreadsheet doesn't adjust their height automatically when enabling "wrap text".
+
+
+
+	
+Test Case:
+1. read a excel with "wrap text"
+2. enable and disable "wrap text"
+3. enable and disable wrapping in a merge cell
+4. enable and disable cells mixed with wrapped and non-wrapped ones
+5. enable and disable "wrap text" in custom height cells
+
+-->
