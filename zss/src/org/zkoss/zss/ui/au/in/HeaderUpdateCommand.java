@@ -100,7 +100,8 @@ public class HeaderUpdateCommand extends AbstractCommand implements Command {
 			int newsize = AuDataUtil.getInt(data,"size");
 			int id = (Integer) data.get("id");
 			boolean hidden = (Boolean) data.get("hidden");
-			((SpreadsheetInCtrl)spreadsheet.getExtraCtrl()).setRowSize(sheetId, index, newsize,id, hidden);
+			boolean isCustom= (Boolean) data.get("custom");
+			((SpreadsheetInCtrl)spreadsheet.getExtraCtrl()).setRowSize(sheetId, index, newsize,id, hidden, isCustom);
 			if (Events.isListened(spreadsheet,org.zkoss.zss.ui.event.Events.ON_HEADER_UPDATE, true)){
 				HeaderUpdateEvent he = new HeaderUpdateEvent(
 						org.zkoss.zss.ui.event.Events.ON_HEADER_UPDATE,

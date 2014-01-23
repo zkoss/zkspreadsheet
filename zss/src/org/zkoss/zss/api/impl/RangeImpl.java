@@ -777,6 +777,12 @@ public class RangeImpl implements Range{
 		r.setRowHeight(XUtils.pxToPoint(heightPx));
 	}
 	
+	@Override
+	public void setRowHeight(int heightPx, boolean isCustom) {
+		XRange r = _range.isWholeRow()?_range:_range.getRows();
+		r.setRowHeight(XUtils.pxToPoint(heightPx), isCustom);
+	}
+	
 	//api that need special object wrap
 	
 	

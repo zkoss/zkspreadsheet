@@ -19,22 +19,9 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 
 (function () {
 	
-	function setSize(obj, size, wrap) {
-		if (obj[4]) {//indicate use wrap size currently
-			if (wrap) {//no need to save original save
-				obj[1] = size;
-			} else {//use new size, remove original save
-				obj[1] = size;
-				obj[4] = null;
-			}
-		} else {
-			if (wrap) {
-				obj[4] = obj[1]; //save original custom size
-				obj[1] = size;
-			} else {
-				obj[1] = size;
-			}
-		}
+	function updateSize(customizedSizeInfo, size, custom) {
+		customizedSizeInfo[1] = size;
+		customizedSizeInfo[4] = custom;
 	}
 /**
  * PositionHelper for calculate pixel to column/row index or vice versa
@@ -216,8 +203,7 @@ zss.PositionHelper = zk.$extends(zk.Object, {
 			i = customizedSize.length;
 		while (i--) {
 			if (index == customizedSize[i][0]) {
-				//if use wrap size, the original size is save at [4]
-				return customizedSize[i][4] ? customizedSize[i][4] : customizedSize[i][1];	
+				return customizedSize[i][1];	
 			}
 		}
 		return this.size;
@@ -262,15 +248,15 @@ zss.PositionHelper = zk.$extends(zk.Object, {
 	 * @param int size
 	 * @param string id
 	 * @param boolean hidden
-	 * @param boolean wrap
+	 * @param boolean custom
 	 */
-	setCustomizedSize: function (cellIndex, size, id, hidden, wrap) {
+	setCustomizedSize: function (cellIndex, size, id, hidden, custom) {
 		var customizedSize = this.custom,
 			defaultSize = this.size,
 			s = 0,
 			e = customizedSize.length;
 		if (e == 0) {
-			this._insert(0, cellIndex, size, id, hidden, wrap);
+			this._insert(0, cellIndex, size, id, hidden, custom);
 			return;
 		}
 		var i;
@@ -279,7 +265,7 @@ zss.PositionHelper = zk.$extends(zk.Object, {
 			if (customizedSize[i][0] == cellIndex) {
 				customizedSize[i][2] = id;
 				customizedSize[i][3] = hidden;
-				setSize(customizedSize[i], size, wrap);
+				updateSize(customizedSize[i], size, custom);
 				return;
 			} else if (customizedSize[i][0] > cellIndex) {
 				e = i - 1;
@@ -288,17 +274,17 @@ zss.PositionHelper = zk.$extends(zk.Object, {
 			}
 			if (e == s) {
 				if (e >= customizedSize.length || customizedSize[e][0] > cellIndex) {
-					this._insert(e, cellIndex, size, id, hidden, wrap);
+					this._insert(e, cellIndex, size, id, hidden, custom);
 				} else if (customizedSize[e][0] == cellIndex) {
 					customizedSize[e][2] = id;
 					customizedSize[e][3] = hidden;
-					setSize(customizedSize[e], size, wrap);
+					updateSize(customizedSize[e], size, custom);
 				} else {
-					this._insert(e + 1, cellIndex, size, id, hidden, wrap);
+					this._insert(e + 1, cellIndex, size, id, hidden, custom);
 				}
 				break;
 			} else if (e < s) {
-				this._insert(s, cellIndex, size, id, hidden, wrap);
+				this._insert(s, cellIndex, size, id, hidden, custom);
 			}
 		}
 	},
@@ -350,12 +336,9 @@ zss.PositionHelper = zk.$extends(zk.Object, {
 			customizedSize.push.apply(customizedSize, tail);
 		}
 	},
-	_insert: function(index, cellIndex, size, id, hidden, wrap) {
+	_insert: function(index, cellIndex, size, id, hidden, custom) {
 		var customizedSize = this.custom,
-			obj = [cellIndex, size, id, hidden];
-		if (wrap) {
-			obj[4] = this.size; // original default size
-		}
+			obj = [cellIndex, size, id, hidden, custom];
 		if (customizedSize.length == 0) {
 			customizedSize.push.apply(customizedSize, [obj]);
 			return;
@@ -370,6 +353,22 @@ zss.PositionHelper = zk.$extends(zk.Object, {
 			customizedSize.push.apply(customizedSize, [obj]);
 			customizedSize.push.apply(customizedSize, tail);
 		}
+	},
+	/**
+	 * An custom size is set manually users. The size determined by Spreadsheet automatically for some features, i.e. wrap text, 
+	 * is not custom.
+	 * @return boolean indicate whether the size is determined automatically or not
+	 */
+	isCustomSize: function(rowIndex){
+		var customSize = this.getMeta(rowIndex);
+		if (customSize == null){ //no custom info, default size
+			return false;
+		}else{
+			return customSize[4];
+		}
+	},
+	getDefaultSize: function(){
+		return this.size;
 	}
 });
 })();
