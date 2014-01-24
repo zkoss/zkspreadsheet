@@ -27,9 +27,8 @@ public class FormatEngineImpl implements FormatEngine {
 		
 		if(type==CellType.BLANK || type == CellType.STRING){
 			//handling as text/rich text
-			NRichText text = cell.getRichText();
-			if(text!=null){
-				return new FormatResultImpl(new ReadOnlyRichTextImpl(text));
+			if(cell.isRichTextValue()){
+				return new FormatResultImpl(new ReadOnlyRichTextImpl(cell.getRichTextValue()));
 			}
 			return new FormatResultImpl(cell.getStringValue(),null);//no color as well
 			

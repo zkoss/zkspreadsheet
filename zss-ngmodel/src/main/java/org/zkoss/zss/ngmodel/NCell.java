@@ -104,15 +104,22 @@ public interface NCell extends FormulaContent{
 	public void setStringValue(String value);
 	public String getStringValue();
 	
-	/**
-	 * Set rich test value.
+	
+	/** 
+	 * Setup a rich text value(Create a new one if the old value is not a rich-text) and return the instance which to be edited.
 	 */
-	public void setRichText(NRichText text);
+	public NRichText setupRichTextValue();
 	
-	/** Set a empty rich text value and return the instance which to be edited **/
-	public NRichText setupRichText();
+	/**
+	 * Return the rich text value. if this cell is a simple string value, it will return a readonly rich-text which wraps string-value and current font.
+	 * @return
+	 */
+	public NRichText getRichTextValue();
 	
-	public NRichText getRichText();
+	/**
+	 *  Check if this cell contains a rich-text value 
+	 */
+	public boolean isRichTextValue();
 	
 	/**
 	 * set formula as string without '=', ex: SUM(A1:B2)

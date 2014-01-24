@@ -19,9 +19,11 @@ package org.zkoss.zss.ngapi.impl.imexp;
 import java.io.*;
 import java.util.*;
 
+import org.zkoss.poi.hssf.usermodel.HSSFRichTextString;
 import org.zkoss.poi.ss.usermodel.*;
 import org.zkoss.poi.ss.util.CellRangeAddress;
 import org.zkoss.poi.xssf.usermodel.XSSFCellStyle;
+import org.zkoss.poi.xssf.usermodel.XSSFRichTextString;
 import org.zkoss.zss.ngmodel.*;
 import org.zkoss.zss.ngmodel.NAutoFilter.FilterOp;
 import org.zkoss.zss.ngmodel.NAutoFilter.NFilterColumn;
@@ -81,15 +83,15 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 		NBookSeries bookSeries = book.getBookSeries();
 		boolean isCacheClean = bookSeries.isAutoFormulaCacheClean();
 		try{
-			bookSeries.setAutoFormulaCacheClean(false);//disable temporary to avoid unnecessary clean up when import
+			bookSeries.setAutoFormulaCacheClean(false);//disable it to avoid unnecessary clean up during importing
 			
 			importExternalBookLinks();
-				
-			for (int i = 0 ; i < workbook.getNumberOfSheets(); i++){
+			int numberOfSheet = workbook.getNumberOfSheets();
+			for (int i = 0 ; i < numberOfSheet; i++){
 				importSheet(workbook.getSheetAt(i));
 			}
 			importNamedRange();
-			for (int i = 0 ; i < workbook.getNumberOfSheets(); i++){
+			for (int i = 0 ; i < numberOfSheet; i++){
 				NSheet sheet = book.getSheet(i);
 				Sheet poiSheet = workbook.getSheetAt(i);
 				
@@ -188,8 +190,11 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 		sheet.getPrintSetup().setTopMargin(UnitUtil.incheToPx(poiSheet.getMargin(Sheet.TopMargin)));
 		sheet.getPrintSetup().setLeftMargin(UnitUtil.incheToPx(poiSheet.getMargin(Sheet.LeftMargin)));
 		sheet.getPrintSetup().setRightMargin(UnitUtil.incheToPx(poiSheet.getMargin(Sheet.RightMargin)));
+		
 		sheet.getPrintSetup().setHeaderMargin(UnitUtil.incheToPx(poiSheet.getMargin(Sheet.HeaderMargin)));
 		sheet.getPrintSetup().setFooterMargin(UnitUtil.incheToPx(poiSheet.getMargin(Sheet.FooterMargin)));
+		sheet.getPrintSetup().setPaperSize(toZssPaperSize(poiSheet.getPrintSetup().getPaperSize()));
+		sheet.getPrintSetup().setLandscape(poiSheet.getPrintSetup().getLandscape());
 		
 		sheet.setProtected(poiSheet.getProtect());
 		
@@ -212,6 +217,7 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 	protected NRow importRow(Row poiRow, NSheet sheet) {
 		NRow row = sheet.getRow(poiRow.getRowNum());
 		row.setHeight(UnitUtil.twipToPx(poiRow.getHeight()));
+		row.setCustomHeight(poiRow.isCustomHeight());
 		row.setHidden(poiRow.getZeroHeight());
 		CellStyle rowStyle = poiRow.getRowStyle();
 		if (rowStyle != null){
@@ -225,31 +231,49 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 		return row;
 	}
 	
-	protected NCell importCell(Cell poiCell, int row, NSheet sheet){
+	protected NCell importCell(Cell poiCell, int row, NSheet sheet) {
+		
 		NCell cell = sheet.getCell(row,poiCell.getColumnIndex());
-		switch (poiCell.getCellType()){
-			case Cell.CELL_TYPE_NUMERIC:
-				cell.setNumberValue(poiCell.getNumericCellValue());
-				break;
-			case Cell.CELL_TYPE_STRING:
-				cell.setStringValue(poiCell.getStringCellValue());
-				break;
-			case Cell.CELL_TYPE_BOOLEAN:
-				cell.setBooleanValue(poiCell.getBooleanCellValue());
-				break;
-			case Cell.CELL_TYPE_FORMULA:
-				cell.setFormulaValue(poiCell.getCellFormula());
-				break;
-			case Cell.CELL_TYPE_ERROR:
-				cell.setErrorValue(convertErrorCode(poiCell.getErrorCellValue()));
-				break;
-			case Cell.CELL_TYPE_BLANK:
-				//do nothing because spreadsheet model auto creates blank cells
-			default:
-				//TODO log: leave an unknown cell type as a blank cell.
-				break;
-		}
 		cell.setCellStyle(importCellStyle(poiCell.getCellStyle()));
+		
+		// TODO ZSS 3.5 - RichText
+		String formatStr = poiCell.getCellStyle().getDataFormatString();
+		// How can I know the POI cell is richText?
+		//if (poiCell.getCellType() == Cell.CELL_TYPE_STRING && ("General".equalsIgnoreCase(formatStr) || "@".equals(formatStr))) {
+		if(false) {
+			//TODO ZSS 3.5 how to i know it is simple string or a really richtext?
+			NRichText richText = cell.setupRichTextValue();
+			RichTextString poiRichTextString = poiCell.getRichStringCellValue();
+			String cellValue = poiRichTextString.getString();
+			for(int i = 0; i < poiRichTextString.numFormattingRuns(); i++) {
+				int nextFormattingRunIndex = (i + 1) >= poiRichTextString.numFormattingRuns() ? cellValue.length() : poiRichTextString.getIndexOfFormattingRun(i + 1);
+				final String content = cellValue.substring(poiRichTextString.getIndexOfFormattingRun(i), nextFormattingRunIndex);
+				richText.addSegment(content, toZssFont(getPoiFontFromRichText(workbook, poiRichTextString, i)));
+			}
+		} else {
+			switch (poiCell.getCellType()){
+				case Cell.CELL_TYPE_NUMERIC:
+					cell.setNumberValue(poiCell.getNumericCellValue());
+					break;
+				case Cell.CELL_TYPE_STRING:
+					cell.setStringValue(poiCell.getStringCellValue());
+					break;
+				case Cell.CELL_TYPE_BOOLEAN:
+					cell.setBooleanValue(poiCell.getBooleanCellValue());
+					break;
+				case Cell.CELL_TYPE_FORMULA:
+					cell.setFormulaValue(poiCell.getCellFormula());
+					break;
+				case Cell.CELL_TYPE_ERROR:
+					cell.setErrorValue(convertErrorCode(poiCell.getErrorCellValue()));
+					break;
+				case Cell.CELL_TYPE_BLANK:
+					//do nothing because spreadsheet model auto creates blank cells
+				default:
+					//TODO log: leave an unknown cell type as a blank cell.
+					break;
+			}
+		}
 		
 		return cell;
 	}
@@ -316,6 +340,97 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 			font.setColor(book.createColor(BookHelper.getFontHTMLColor(workbook,poiFont)));
 		}
 		return font;
+	}
+	
+	protected NFont toZssFont(Font poiFont) {
+		NFont font = null;
+		if (importedFont.containsKey(poiFont.getIndex())) {
+			font = importedFont.get(poiFont.getIndex());
+		} else {
+			font = book.createFont(true);
+			//font
+			font.setName(poiFont.getFontName());
+			if (poiFont.getBoldweight()==Font.BOLDWEIGHT_BOLD){
+				font.setBoldweight(NFont.Boldweight.BOLD);
+			}else{
+				font.setBoldweight(NFont.Boldweight.NORMAL);
+			}
+			font.setItalic(poiFont.getItalic());
+			font.setStrikeout(poiFont.getStrikeout());
+			font.setUnderline(convertUnderline(poiFont.getUnderline()));
+			
+			font.setHeightPoints(poiFont.getFontHeightInPoints());
+			font.setTypeOffset(convertTypeOffset(poiFont.getTypeOffset()));
+			font.setColor(book.createColor(BookHelper.getFontHTMLColor(workbook,poiFont)));
+		}
+		return font;
+	}
+	
+	protected NPrintSetup.PaperSize toZssPaperSize(short paperSize) {
+		switch(paperSize) {
+		case PrintSetup.A3_PAPERSIZE:
+			return NPrintSetup.PaperSize.A3;
+		case PrintSetup.A4_EXTRA_PAPERSIZE:
+			return NPrintSetup.PaperSize.A4_EXTRA;
+		case PrintSetup.A4_PAPERSIZE:
+			return NPrintSetup.PaperSize.A4;
+		case PrintSetup.A4_PLUS_PAPERSIZE:
+			return NPrintSetup.PaperSize.A4_PLUS;
+		case PrintSetup.A4_ROTATED_PAPERSIZE:
+			return NPrintSetup.PaperSize.A4_ROTATED;
+		case PrintSetup.A4_SMALL_PAPERSIZE:
+			return NPrintSetup.PaperSize.A4_SMALL;
+		case PrintSetup.A4_TRANSVERSE_PAPERSIZE:
+			return NPrintSetup.PaperSize.A4_TRANSVERSE;
+		case PrintSetup.A5_PAPERSIZE:
+			return NPrintSetup.PaperSize.A5;
+		case PrintSetup.B4_PAPERSIZE:
+			return NPrintSetup.PaperSize.B4;
+		case PrintSetup.B5_PAPERSIZE:
+			return NPrintSetup.PaperSize.B5;
+		case PrintSetup.ELEVEN_BY_SEVENTEEN_PAPERSIZE:
+			return NPrintSetup.PaperSize.ELEVEN_BY_SEVENTEEN;
+		case PrintSetup.ENVELOPE_10_PAPERSIZE:
+			return NPrintSetup.PaperSize.ENVELOPE_10;
+		case PrintSetup.ENVELOPE_9_PAPERSIZE:
+			return NPrintSetup.PaperSize.ENVELOPE_9;
+		case PrintSetup.ENVELOPE_C3_PAPERSIZE:
+			return NPrintSetup.PaperSize.ENVELOPE_C3;
+		case PrintSetup.ENVELOPE_C4_PAPERSIZE:
+			return NPrintSetup.PaperSize.ENVELOPE_C4;
+		case PrintSetup.ENVELOPE_C5_PAPERSIZE:
+			return NPrintSetup.PaperSize.ENVELOPE_C5;
+		case PrintSetup.ENVELOPE_C6_PAPERSIZE:
+			return NPrintSetup.PaperSize.ENVELOPE_C6;
+		case PrintSetup.ENVELOPE_DL_PAPERSIZE:
+			return NPrintSetup.PaperSize.ENVELOPE_DL;
+		case PrintSetup.ENVELOPE_MONARCH_PAPERSIZE:
+			return NPrintSetup.PaperSize.ENVELOPE_MONARCH;
+		case PrintSetup.EXECUTIVE_PAPERSIZE:
+			return NPrintSetup.PaperSize.EXECUTIVE;
+		case PrintSetup.FOLIO8_PAPERSIZE:
+			return NPrintSetup.PaperSize.FOLIO8;
+		case PrintSetup.LEDGER_PAPERSIZE:
+			return NPrintSetup.PaperSize.LEDGER;
+		case PrintSetup.LETTER_PAPERSIZE:
+			return NPrintSetup.PaperSize.LETTER;
+		case PrintSetup.LETTER_ROTATED_PAPERSIZE:
+			return NPrintSetup.PaperSize.LETTER_ROTATED;
+		case PrintSetup.LETTER_SMALL_PAGESIZE:
+			return NPrintSetup.PaperSize.LETTER_SMALL;
+		case PrintSetup.NOTE8_PAPERSIZE:
+			return NPrintSetup.PaperSize.NOTE8;
+		case PrintSetup.QUARTO_PAPERSIZE:
+			return NPrintSetup.PaperSize.QUARTO;
+		case PrintSetup.STATEMENT_PAPERSIZE:
+			return NPrintSetup.PaperSize.STATEMENT;
+		case PrintSetup.TABLOID_PAPERSIZE:
+			return NPrintSetup.PaperSize.TABLOID;
+		case PrintSetup.TEN_BY_FOURTEEN_PAPERSIZE:
+			return NPrintSetup.PaperSize.TEN_BY_FOURTEEN;
+			default:
+				return NPrintSetup.PaperSize.A4;
+		}
 	}
 	
 	/*
@@ -490,12 +605,25 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 		}
 	}
 	
+	/**
+	 * A FilterColumn object only exists when we have set a criteria on that column. 
+	 * For example, if we enable auto filter on 2 columns, but we only set criteria on 2nd column. 
+	 * Thus, the size of filter column is 1. There is only one FilterColumn object and its column id is 1.  
+	 * Only getFilterColumn(1) will return a FilterColumn, other get null.
+	 * @param poiSheet
+	 * @param sheet
+	 */
 	private void importAutoFilter(Sheet poiSheet, NSheet sheet) {
 		AutoFilter poiAutoFilter = poiSheet.getAutoFilter();
 		if (poiAutoFilter != null){
-			NAutoFilter autoFilter = sheet.createAutoFilter(new CellRegion(poiAutoFilter.getRangeAddress().formatAsString()));
-			for( int i = 0 ; i < poiAutoFilter.getFilterColumns().size() ; i ++){
+			CellRangeAddress filteringRange = poiAutoFilter.getRangeAddress();
+			NAutoFilter autoFilter = sheet.createAutoFilter(new CellRegion(filteringRange.formatAsString()));
+			int numberOfColumn = filteringRange.getLastColumn() - filteringRange.getFirstColumn() +1;
+			for( int i = 0 ; i < numberOfColumn ; i ++){
 				FilterColumn srcColumn = poiAutoFilter.getFilterColumn(i);
+				if (srcColumn == null){
+					continue;
+				}
 				NFilterColumn destColumn = autoFilter.getFilterColumn(i, true);
 				destColumn.setProperties(toFilterOperator(srcColumn.getOperator()), srcColumn.getCriteria1(),
 						srcColumn.getCriteria2(), srcColumn.isOn());
@@ -521,5 +649,10 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 			default:
 				return FilterOp.VALUES;
 		}
+	}
+	
+	private org.zkoss.poi.ss.usermodel.Font getPoiFontFromRichText(Workbook book, RichTextString rstr, int run) {
+		org.zkoss.poi.ss.usermodel.Font font = rstr instanceof HSSFRichTextString ? book.getFontAt(((HSSFRichTextString)rstr).getFontOfFormattingRun(run)) : ((XSSFRichTextString)rstr).getFontOfFormattingRun(run);
+		return font == null ? book.getFontAt((short)0) : font;
 	}
 }

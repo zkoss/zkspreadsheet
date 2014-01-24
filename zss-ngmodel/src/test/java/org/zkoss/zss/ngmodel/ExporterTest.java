@@ -13,6 +13,8 @@ import org.zkoss.util.Locales;
 import org.zkoss.zss.ngapi.impl.imexp.*;
 import org.zkoss.zss.ngapi.impl.imexp.ExcelExportFactory.Type;
 import org.zkoss.zss.ngmodel.NCellStyle.BorderType;
+import org.zkoss.zss.ngmodel.NFont.Boldweight;
+import org.zkoss.zss.ngmodel.NFont.Underline;
 import org.zkoss.zss.ngmodel.NPicture.Format;
 
 /**
@@ -134,6 +136,53 @@ public class ExporterTest extends ImExpTestBase {
 		File outFile = ImExpTestUtil.write(ImExpTestUtil.loadBook(IMPORT_FILE_UNDER_TEST, "XSSFBook"), EXPORTER_TYPE);
 		NBook book = ImExpTestUtil.loadBook(outFile, DEFAULT_BOOK_NAME);
 		mergedTest(book);
+	}
+	
+	@Test
+	public void richTextTest() {
+		
+	}
+	
+	@Test
+	public void richTextModelTest() {
+		NBook book = NBooks.createBook("rich");
+		NSheet sheet = book.createSheet("first");
+		NCell cell = sheet.getCell(0, 0);
+		
+		NRichText rText = cell.setupRichTextValue();
+		NFont font1 = book.createFont(true);
+		font1.setColor(book.createColor("#0000FF"));
+		font1.setStrikeout(true);
+		rText.addSegment("abc", font1);
+		
+		NFont font2 = book.createFont(true);
+		font2.setColor(book.createColor("#FF0000"));
+		font2.setBoldweight(Boldweight.BOLD);
+		rText.addSegment("123", font2);
+		
+		NFont font3 = book.createFont(true);
+		font3.setColor(book.createColor("#C78548"));
+		font3.setUnderline(Underline.SINGLE);
+		rText.addSegment("xyz", font3);
+		
+		cell = sheet.getCell(0, 1);
+		rText = cell.setupRichTextValue();
+		font1 = book.createFont(true);
+		font1.setColor(book.createColor("#FFFF00"));
+		font1.setItalic(true);
+		rText.addSegment("Hello", font1);
+		
+		font2 = book.createFont(true);
+		font2.setColor(book.createColor("#FF33FF"));
+		font2.setBoldweight(Boldweight.BOLD);
+		rText.addSegment("World", font2);
+		
+		font3 = book.createFont(true);
+		font3.setColor(book.createColor("#CCCC99"));
+		font3.setName("HGPSoeiKakupoptai");
+		rText.addSegment("000", font3);
+		
+		ImExpTestUtil.write(book, ExcelExportFactory.Type.XLSX);
 	}
 
 	@Test @Ignore("incomplete")

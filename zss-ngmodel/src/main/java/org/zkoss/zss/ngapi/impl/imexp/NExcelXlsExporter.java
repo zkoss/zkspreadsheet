@@ -16,12 +16,15 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.ngapi.impl.imexp;
 
+import org.zkoss.poi.hssf.usermodel.HSSFRichTextString;
 import org.zkoss.poi.hssf.usermodel.HSSFWorkbook;
 import org.zkoss.poi.ss.SpreadsheetVersion;
 import org.zkoss.poi.ss.usermodel.*;
 import org.zkoss.poi.ss.util.CellRangeAddress;
 import org.zkoss.zss.ngmodel.*;
 import org.zkoss.zss.ngmodel.NAutoFilter.NFilterColumn;
+import org.zkoss.zss.ngmodel.NRichText.Segment;
+import org.zkoss.zss.ngmodel.sys.format.FormatResult;
 /**
  * 
  * @author dennis, kuro
@@ -65,6 +68,22 @@ public class NExcelXlsExporter extends AbstractExcelExporter {
 	@Override
 	protected void exportAutoFilter(NSheet sheet, Sheet poiSheet) {
 		// not support in XLS
+	}
+
+	@Override
+	protected void exportRichTextString(FormatResult result, Cell poiCell) {
+		HSSFRichTextString poiRichTextString = new HSSFRichTextString(result.getText());
+		int start = 0;
+		int end = 0;
+		for(Segment sg : result.getRichText().getSegments()) {
+			NFont font = sg.getFont();
+			int len = sg.getText().length();
+			end += len;
+			poiRichTextString.applyFont(start, end, toPOIFont(font));
+			start += len;
+		}
+		poiCell.setCellValue(poiRichTextString);
+		
 	}
 
 }

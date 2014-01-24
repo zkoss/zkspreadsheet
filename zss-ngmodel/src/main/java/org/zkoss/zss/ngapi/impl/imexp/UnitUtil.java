@@ -94,18 +94,34 @@ public class UnitUtil {
 		return (px - 5) / charWidth;
 	}
 
-	// Formula: Pixels = Inches * DPI, assume 96 DPI
+	// Formula: Pixels = Inches * DPI
 	public static int incheToPx(double inches) {
 		return (int) (inches * DPI);
 	}
 
-	// Formula: Inches = Pixels / DPI, assume 96 DPI
+	// Formula: Inches = Pixels / DPI
 	public static double pxToInche(int px) {
-		return px / DPI;
+		return px / (DPI * 1.0);
 	}
 
 	public static double pxToCTChar(int px, int charWidth) {
 		return (double) pxToFileChar256(px, charWidth) / 256;
+	}
+	
+	public static double cmToInche(double cm) {
+		return cm / 2.54;
+	}
+	
+	public static double incheToCm(double inches) {
+		return inches * 2.54;
+	}
+	
+	public static int cmToPx(double cm) {
+		return incheToPx(cmToInche(cm));
+	}
+	
+	public static double pxToCm(int px) {
+		return incheToCm(pxToInche(px));
 	}
 
 }

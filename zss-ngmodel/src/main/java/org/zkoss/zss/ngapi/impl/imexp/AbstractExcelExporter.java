@@ -23,15 +23,12 @@ import java.util.concurrent.locks.ReadWriteLock;
 
 import org.zkoss.poi.ss.usermodel.*;
 import org.zkoss.poi.ss.util.CellRangeAddress;
+import org.zkoss.util.Locales;
 import org.zkoss.zss.ngmodel.*;
-import org.zkoss.zss.ngmodel.NAutoFilter.FilterOp;
-import org.zkoss.zss.ngmodel.NCellStyle.Alignment;
-import org.zkoss.zss.ngmodel.NCellStyle.BorderType;
-import org.zkoss.zss.ngmodel.NCellStyle.FillPattern;
-import org.zkoss.zss.ngmodel.NCellStyle.VerticalAlignment;
-import org.zkoss.zss.ngmodel.NFont.Boldweight;
-import org.zkoss.zss.ngmodel.NFont.TypeOffset;
-import org.zkoss.zss.ngmodel.NFont.Underline;
+import org.zkoss.zss.ngmodel.sys.EngineFactory;
+import org.zkoss.zss.ngmodel.sys.format.FormatContext;
+import org.zkoss.zss.ngmodel.sys.format.FormatEngine;
+import org.zkoss.zss.ngmodel.sys.format.FormatResult;
 
 /**
  * Common exporting behavior for both XLSX and XLS.
@@ -57,6 +54,8 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 	abstract protected void exportChart(NSheet sheet, Sheet poiSheet);
 	abstract protected void exportPicture(NSheet sheet, Sheet poiSheet);
 	abstract protected void exportValidation(NSheet sheet, Sheet poiSheet);
+	abstract protected void exportRichTextString(FormatResult result, Cell poiCell);
+	abstract protected void exportAutoFilter(NSheet sheet, Sheet poiSheet);
 	
 	/**
 	 * Export the model according to reversed depended order: book, sheet, defined name, cells, chart, pictures, validation.   
@@ -120,7 +119,31 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 		
 		poiSheet.setDefaultRowHeight((short)UnitUtil.pxToTwip(sheet.getDefaultRowHeight()));
 		poiSheet.setDefaultColumnWidth((int)UnitUtil.pxToDefaultColumnWidth(sheet.getDefaultColumnWidth(), AbstractExcelImporter.CHRACTER_WIDTH));
+		
+		// Header
+		Header header = poiSheet.getHeader();
+		header.setLeft(sheet.getViewInfo().getHeader().getLeftText());
+		header.setCenter(sheet.getViewInfo().getHeader().getCenterText());
+		header.setRight(sheet.getViewInfo().getHeader().getRightText());
+		
+		// Footer
+		Footer footer = poiSheet.getFooter();
+		footer.setLeft(sheet.getViewInfo().getFooter().getLeftText());
+		footer.setCenter(sheet.getViewInfo().getFooter().getCenterText());
+		footer.setRight(sheet.getViewInfo().getFooter().getRightText());
+		
+		// Margin
+		poiSheet.setMargin(Sheet.LeftMargin, UnitUtil.pxToInche(sheet.getPrintSetup().getLeftMargin()));
+		poiSheet.setMargin(Sheet.RightMargin, UnitUtil.pxToInche(sheet.getPrintSetup().getRightMargin()));
+		poiSheet.setMargin(Sheet.TopMargin, UnitUtil.pxToInche(sheet.getPrintSetup().getTopMargin()));
+		poiSheet.setMargin(Sheet.BottomMargin, UnitUtil.pxToInche(sheet.getPrintSetup().getBottomMargin()));
+		
+		// Print Setup Information
+		poiSheet.getPrintSetup().setPaperSize(ExporterEnumUtil.toPoiPaperSize(sheet.getPrintSetup().getPaperSize()));
+		poiSheet.getPrintSetup().setLandscape(sheet.getPrintSetup().isLandscape());
+		
 	}
+	
 	protected void exportMergedRegions(NSheet sheet, Sheet poiSheet) {
 		// consistent with importer, read from last merged region
 		for(int i = sheet.getNumOfMergedRegion() - 1; i >= 0; i--) {
@@ -173,71 +196,52 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 
 	protected void exportCell(Row poiRow, NCell cell) {
 		Cell poiCell = poiRow.createCell(cell.getColumnIndex());
-		
-		NCellStyle cellStyle = cell.getCellStyle();
 
+		NCellStyle cellStyle = cell.getCellStyle();
 		poiCell.setCellStyle(toPOICellStyle(cellStyle));
 		
-		switch(cell.getType()) {
-			case BLANK:
-				poiCell.setCellType(Cell.CELL_TYPE_BLANK);
-				break;
-			case ERROR:
-				poiCell.setCellType(Cell.CELL_TYPE_ERROR);
-				poiCell.setCellErrorValue(cell.getErrorValue().getCode());
-				break;
-			case BOOLEAN:
-				poiCell.setCellType(Cell.CELL_TYPE_BOOLEAN);
-				poiCell.setCellValue(cell.getBooleanValue());
-				break;
-			case FORMULA:
-				poiCell.setCellType(Cell.CELL_TYPE_FORMULA);
-				poiCell.setCellFormula(cell.getFormulaValue());
-				break;
-			case NUMBER:
-				poiCell.setCellType(Cell.CELL_TYPE_NUMERIC);
-				poiCell.setCellValue((Double)cell.getNumberValue());
-				break;
-			case STRING:
-				poiCell.setCellType(Cell.CELL_TYPE_STRING);
-				poiCell.setCellValue(cell.getStringValue());
-				break;
-			default:
-		}
-		
-		// Hyperlink
-//		NHyperlink hyperlink = null;
-//		if((hyperlink = cell.getHyperlink()) != null) {
-//			XSSFHyperlink xssfLink = xssfSheet.getHyperlink(cell.getRowIndex(), cell.getColumnIndex());
-//			xssfLink.setAddress(hyperlink.getAddress());
-//			xssfLink.setLabel(hyperlink.getLabel());
-//			// TODO, some API isn't available.
+//		Hyperlink poiHyperlink = poiCell.getHyperlink();
+//		if(poiHyperlink != null) {
+//			NHyperlink hyperlink = cell.setupHyperlink();
+//			hyperlink.setType(poiHyperlink.getType());
+//			hyperlink.setAddress(poiHyperlink.getAddress());
+//			hyperlink.setLabel(poiHyperlink.getLabel());
 //		}
-
-	}
-	
-	
-	protected abstract void exportAutoFilter(NSheet sheet, Sheet poiSheet);
-	
-	protected int toPoiFilterOperator(FilterOp operator){
-		switch(operator){
-			case AND:
-				return AutoFilter.FILTEROP_AND;
-			case BOTTOM10:
-				return AutoFilter.FILTEROP_BOTTOM10;
-			case BOTOOM10_PERCENT:
-				return AutoFilter.FILTEROP_BOTOOM10PERCENT;
-			case OR:
-				return AutoFilter.FILTEROP_OR;
-			case TOP10:
-				return AutoFilter.FILTEROP_TOP10;
-			case TOP10_PERCENT:
-				return AutoFilter.FILTEROP_TOP10PERCENT;
-			case VALUES:
-			default:
-				return AutoFilter.FILTEROP_VALUES;
+		
+		FormatEngine fe = EngineFactory.getInstance().createFormatEngine();
+		FormatResult result = fe.format(cell, new FormatContext(Locales.getCurrent()));
+		if(result.isRichText()) {
+			exportRichTextString(result, poiCell);
+		} else {
+			switch(cell.getType()) {
+				case BLANK:
+					poiCell.setCellType(Cell.CELL_TYPE_BLANK);
+					break;
+				case ERROR:
+					poiCell.setCellType(Cell.CELL_TYPE_ERROR);
+					poiCell.setCellErrorValue(cell.getErrorValue().getCode());
+					break;
+				case BOOLEAN:
+					poiCell.setCellType(Cell.CELL_TYPE_BOOLEAN);
+					poiCell.setCellValue(cell.getBooleanValue());
+					break;
+				case FORMULA:
+					poiCell.setCellType(Cell.CELL_TYPE_FORMULA);
+					poiCell.setCellFormula(cell.getFormulaValue());
+					break;
+				case NUMBER:
+					poiCell.setCellType(Cell.CELL_TYPE_NUMERIC);
+					poiCell.setCellValue((Double)cell.getNumberValue());
+					break;
+				case STRING:
+					poiCell.setCellType(Cell.CELL_TYPE_STRING);
+					poiCell.setCellValue(cell.getStringValue());
+					break;
+				default:
+			}
 		}
 	}
+
 	
 	protected CellStyle toPOICellStyle(NCellStyle cellStyle) {
 		// instead of creating a new style, use old one if exist
@@ -249,28 +253,28 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 		poiCellStyle = workbook.createCellStyle();
 		
 		/* Bottom Border */
-		poiCellStyle.setBorderBottom(toPOIBorderType(cellStyle.getBorderBottom()));
+		poiCellStyle.setBorderBottom(ExporterEnumUtil.toPoiBorderType(cellStyle.getBorderBottom()));
 		
 		BookHelper.setBottomBorderColor(poiCellStyle, toPOIColor(cellStyle.getBorderBottomColor()));
 		
 		/* Left Border */
-		poiCellStyle.setBorderLeft(toPOIBorderType(cellStyle.getBorderLeft()));
+		poiCellStyle.setBorderLeft(ExporterEnumUtil.toPoiBorderType(cellStyle.getBorderLeft()));
 		BookHelper.setLeftBorderColor(poiCellStyle, toPOIColor(cellStyle.getBorderLeftColor()));
 		
 		/* Right Border */
-		poiCellStyle.setBorderRight(toPOIBorderType(cellStyle.getBorderRight()));
+		poiCellStyle.setBorderRight(ExporterEnumUtil.toPoiBorderType(cellStyle.getBorderRight()));
 		BookHelper.setRightBorderColor(poiCellStyle, toPOIColor(cellStyle.getBorderRightColor()));
 		
 		/* Top Border*/
-		poiCellStyle.setBorderTop(toPOIBorderType(cellStyle.getBorderTop()));
+		poiCellStyle.setBorderTop(ExporterEnumUtil.toPoiBorderType(cellStyle.getBorderTop()));
 		BookHelper.setTopBorderColor(poiCellStyle, toPOIColor(cellStyle.getBorderTopColor()));
 		
 		/* Fill Foreground Color */
 		BookHelper.setFillForegroundColor(poiCellStyle, toPOIColor(cellStyle.getFillColor()));
 		
-		poiCellStyle.setFillPattern(toPOIFillPattern(cellStyle.getFillPattern()));
-		poiCellStyle.setAlignment(toPOIAlignment(cellStyle.getAlignment()));
-		poiCellStyle.setVerticalAlignment(toPOIVerticalAlignment(cellStyle.getVerticalAlignment()));
+		poiCellStyle.setFillPattern(ExporterEnumUtil.toPoiFillPattern(cellStyle.getFillPattern()));
+		poiCellStyle.setAlignment(ExporterEnumUtil.toPoiAlignment(cellStyle.getAlignment()));
+		poiCellStyle.setVerticalAlignment(ExporterEnumUtil.toPoiVerticalAlignment(cellStyle.getVerticalAlignment()));
 		poiCellStyle.setWrapText(cellStyle.isWrapText());
 		poiCellStyle.setLocked(cellStyle.isLocked());
 		poiCellStyle.setHidden(cellStyle.isHidden());
@@ -301,6 +305,13 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 		return poiColor;
 	}
 	
+	/**
+	 * Convert ZSS Font into POI Font.
+	 * Cache font in the fontTable. 
+	 * If font exist, don't create a new one. 
+	 * @param font
+	 * @return
+	 */
 	protected Font toPOIFont(NFont font) {
 
 		Font poiFont = fontTable.get(font);
@@ -309,14 +320,14 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 		}
 		
 		poiFont = workbook.createFont();
-		poiFont.setBoldweight(toPOIBoldweight(font.getBoldweight()));
+		poiFont.setBoldweight(ExporterEnumUtil.toPoiBoldweight(font.getBoldweight()));
 		poiFont.setStrikeout(font.isStrikeout());
 		poiFont.setItalic(font.isItalic());
 		BookHelper.setFontColor(workbook, poiFont, toPOIColor(font.getColor()));
 		poiFont.setFontHeightInPoints((short)font.getHeightPoints());
 		poiFont.setFontName(font.getName());
-		poiFont.setTypeOffset(toPOITypeOffset(font.getTypeOffset()));
-		poiFont.setUnderline(toPOIUnderline(font.getUnderline()));
+		poiFont.setTypeOffset(ExporterEnumUtil.toPoiTypeOffset(font.getTypeOffset()));
+		poiFont.setUnderline(ExporterEnumUtil.toPoiUnderline(font.getUnderline()));
 		
 		// put into table
 		fontTable.put(font, poiFont);
@@ -324,153 +335,4 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 		return poiFont;
 	}
 	
-	protected short toPOIVerticalAlignment(VerticalAlignment vAlignment) {
-		switch(vAlignment) {
-			case BOTTOM:
-				return CellStyle.VERTICAL_BOTTOM;
-			case CENTER:
-				return CellStyle.VERTICAL_CENTER;
-			case JUSTIFY:
-				return CellStyle.VERTICAL_JUSTIFY;
-			case TOP:
-			default:
-				return CellStyle.VERTICAL_TOP;
-		}
-	}
-	
-	protected short toPOIFillPattern(FillPattern fillPattern) {
-		switch(fillPattern) {
-		case ALT_BARS:
-			return CellStyle.ALT_BARS;
-		case BIG_SPOTS:
-			return CellStyle.BIG_SPOTS;
-		case BRICKS:
-			return CellStyle.BRICKS;
-		case DIAMONDS:
-			return CellStyle.DIAMONDS;
-		case FINE_DOTS:
-			return CellStyle.FINE_DOTS;
-		case LEAST_DOTS:
-			return CellStyle.LEAST_DOTS;
-		case LESS_DOTS:
-			return CellStyle.LESS_DOTS;
-		case SOLID_FOREGROUND:
-			return CellStyle.SOLID_FOREGROUND;
-		case SPARSE_DOTS:
-			return CellStyle.SPARSE_DOTS;
-		case SQUARES:
-			return CellStyle.SQUARES;
-		case THICK_BACKWARD_DIAG:
-			return CellStyle.THICK_BACKWARD_DIAG;
-		case THICK_FORWARD_DIAG:
-			return CellStyle.THICK_FORWARD_DIAG;
-		case THICK_HORZ_BANDS:
-			return CellStyle.THICK_HORZ_BANDS;
-		case THICK_VERT_BANDS:
-			return CellStyle.THICK_VERT_BANDS;
-		case THIN_BACKWARD_DIAG:
-			return CellStyle.THIN_BACKWARD_DIAG;
-		case THIN_FORWARD_DIAG:
-			return CellStyle.THIN_FORWARD_DIAG;
-		case THIN_HORZ_BANDS:
-			return CellStyle.THIN_HORZ_BANDS;
-		case THIN_VERT_BANDS:
-			return CellStyle.THIN_VERT_BANDS;
-		case NO_FILL:
-		default:
-			return CellStyle.NO_FILL;
-		}
-	}
-	
-	protected short toPOIBorderType(BorderType borderType) {
-		switch(borderType) {
-		case DASH_DOT:
-			return CellStyle.BORDER_DASH_DOT;
-		case DASHED:
-			return CellStyle.BORDER_DASHED;
-		case DOTTED:
-			return CellStyle.BORDER_DOTTED;
-		case DOUBLE:
-			return CellStyle.BORDER_DOUBLE;
-		case HAIR:
-			return CellStyle.BORDER_HAIR;
-		case MEDIUM:
-			return CellStyle.BORDER_MEDIUM;
-		case MEDIUM_DASH_DOT:
-			return CellStyle.BORDER_DASH_DOT;
-		case MEDIUM_DASH_DOT_DOT:
-			return CellStyle.BORDER_DASH_DOT_DOT;
-		case MEDIUM_DASHED:
-			return CellStyle.BORDER_MEDIUM_DASHED;
-		case SLANTED_DASH_DOT:
-			return CellStyle.BORDER_SLANTED_DASH_DOT;
-		case THICK:
-			return CellStyle.BORDER_THICK;
-		case THIN:
-			return CellStyle.BORDER_THIN;
-		case DASH_DOT_DOT:
-			return CellStyle.BORDER_DASH_DOT_DOT;
-		case NONE:
-		default:
-			return CellStyle.BORDER_NONE;
-		}
-	}
-	
-	protected short toPOIAlignment(Alignment alignment) {
-		switch(alignment) {
-		case CENTER:
-			return CellStyle.ALIGN_CENTER;
-		case FILL:
-			return CellStyle.ALIGN_FILL;
-		case JUSTIFY:
-			return CellStyle.ALIGN_JUSTIFY;
-		case RIGHT:
-			return CellStyle.ALIGN_RIGHT;
-		case LEFT:
-			return CellStyle.ALIGN_LEFT;
-		case CENTER_SELECTION:
-			return CellStyle.ALIGN_CENTER_SELECTION;
-		case GENERAL:
-			default:
-			return CellStyle.ALIGN_GENERAL;
-		}
-	}
-	
-	protected short toPOIBoldweight(Boldweight bold) {
-		switch(bold) {
-			case BOLD:
-				return Font.BOLDWEIGHT_BOLD;
-			case NORMAL:
-			default:
-				return Font.BOLDWEIGHT_NORMAL;
-		}
-	}
-	
-	protected short toPOITypeOffset(TypeOffset typeOffset) {
-		switch(typeOffset) {
-			case SUPER:
-				return Font.SS_SUPER;
-			case SUB:
-				return Font.SS_SUB;
-			case NONE:
-			default:
-				return Font.SS_NONE;
-		}
-	}
-	
-	protected byte toPOIUnderline(Underline underline) {
-		switch(underline) {
-			case SINGLE:
-				return Font.U_SINGLE;
-			case DOUBLE:
-				return Font.U_DOUBLE;
-			case DOUBLE_ACCOUNTING:
-				return Font.U_DOUBLE_ACCOUNTING;
-			case SINGLE_ACCOUNTING:
-				return Font.U_SINGLE_ACCOUNTING;
-			case NONE:
-			default:
-				return Font.U_NONE;
-		}
-	}
 }

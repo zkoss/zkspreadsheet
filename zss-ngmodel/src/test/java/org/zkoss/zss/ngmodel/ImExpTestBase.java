@@ -487,16 +487,16 @@ public class ImExpTestBase {
 
 
 	protected void autoFilter(NBook book) {
-		NAutoFilter filter1 = book.getSheetByName("Filter1").getAutoFilter();
+		NAutoFilter filter1 = book.getSheetByName("1 column").getAutoFilter();
 		assertEquals("B1:D10", filter1.getRegion().getReferenceString());
 		assertEquals(1, filter1.getFilterColumns().size());
-		assertEquals(FilterOp.VALUES, filter1.getFilterColumn(0, false).getOperator());
-		assertEquals(1, filter1.getFilterColumn(0, false).getFilters().size());
-		assertEquals(1, filter1.getFilterColumn(0, false).getCriteria1().size());
-		assertTrue(filter1.getFilterColumn(0, false).getCriteria1().contains("Meat"));
+		assertEquals(FilterOp.VALUES, filter1.getFilterColumn(1, false).getOperator());
+		assertEquals(1, filter1.getFilterColumn(1, false).getFilters().size());
+		assertEquals(1, filter1.getFilterColumn(1, false).getCriteria1().size());
+		assertTrue(filter1.getFilterColumn(1, false).getCriteria1().contains("Davolio"));
 		
 		
-		NAutoFilter filter2 = book.getSheetByName("Filter2").getAutoFilter();
+		NAutoFilter filter2 = book.getSheetByName("2 columns").getAutoFilter();
 		assertEquals("A1:C21", filter2.getRegion().getReferenceString());
 		assertEquals(2, filter2.getFilterColumns().size());
 		
@@ -512,6 +512,10 @@ public class ImExpTestBase {
 		assertEquals(2, secondFilterColumn.getCriteria1().size());
 		assertTrue(secondFilterColumn.getCriteria1().contains("Blue"));
 		assertTrue(secondFilterColumn.getCriteria1().contains("Black"));
+		
+		NAutoFilter noCriteriaFilter = book.getSheetByName("no criteria").getAutoFilter();
+		assertEquals("B2:D11", noCriteriaFilter.getRegion().getReferenceString());
+		assertEquals(0, noCriteriaFilter.getFilterColumns().size());
 	}
 	
 }

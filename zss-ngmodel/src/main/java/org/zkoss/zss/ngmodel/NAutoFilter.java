@@ -44,7 +44,7 @@ public interface NAutoFilter {
 	
 	/**
 	 * Returns the column filter information of the specified column; null if the column is not filtered.
-	 * @param col the nth column (1st column in the filter range is 0)
+	 * @param index the nth column (1st column in the filter range is 0)
 	 * @return the column filter information of the specified column; null if the column is not filtered.
 	 */
 	public NFilterColumn getFilterColumn(int index, boolean create);

@@ -11,9 +11,9 @@ public class HeaderFooterImpl implements NHeader,NFooter,Serializable{
 
 	private static final long serialVersionUID = 1L;
 	
-	String leftText;
-	String rightText;
-	String centerText;
+	String leftText = "";
+	String rightText = "";
+	String centerText = "";
 	public String getLeftText() {
 		return leftText;
 	}
