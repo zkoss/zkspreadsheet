@@ -1,7 +1,11 @@
 package org.zkoss.zss.ngmodel.impl;
 
+import java.util.List;
+
 import org.zkoss.zss.ngapi.impl.StyleUtil;
 import org.zkoss.zss.ngmodel.CellRegion;
+import org.zkoss.zss.ngmodel.InvalidateModelOpException;
+import org.zkoss.zss.ngmodel.NBook;
 import org.zkoss.zss.ngmodel.NCell;
 import org.zkoss.zss.ngmodel.NCell.CellType;
 import org.zkoss.zss.ngmodel.NCellStyle;
@@ -11,13 +15,21 @@ import org.zkoss.zss.ngmodel.NSheet;
 import org.zkoss.zss.ngmodel.PasteOption;
 import org.zkoss.zss.ngmodel.PasteOption.PasteType;
 import org.zkoss.zss.ngmodel.SheetRegion;
+import org.zkoss.zss.ngmodel.sys.EngineFactory;
+import org.zkoss.zss.ngmodel.sys.formula.FormulaEngine;
+import org.zkoss.zss.ngmodel.sys.formula.FormulaExpression;
+import org.zkoss.zss.ngmodel.sys.formula.FormulaParseContext;
 import org.zkoss.zss.ngmodel.util.Validations;
 
 /*package*/ class CopyCellHelper {
 
-	private final AbstractSheetAdv destSheet;
-	public CopyCellHelper(AbstractSheetAdv destSheet){
+	private final NSheet destSheet;
+	private final NBook book;
+	private final NCellStyle defaultStyle;
+	public CopyCellHelper(NSheet destSheet){
 		this.destSheet = destSheet;
+		this.book = destSheet.getBook();
+		defaultStyle = book.getDefaultCellStyle();
 	}
 	
 	static class CellBuffer{
@@ -85,7 +97,7 @@ import org.zkoss.zss.ngmodel.util.Validations;
 		Validations.argNotNull(dest);
 		NSheet srcSheet = src.getSheet();
 		boolean sameSheet = srcSheet == destSheet;
-		if(!sameSheet && srcSheet.getBook()!= destSheet.getBook()){
+		if(!sameSheet && srcSheet.getBook()!= book){
 			throw new IllegalArgumentException("the src sheet must be in the same book");
 		}
 		if(option==null){
@@ -97,21 +109,38 @@ import org.zkoss.zss.ngmodel.util.Validations;
 			return;
 		}
 		
+		
+		int rowOffset = dest.getRow() - src.getRow();
+		int columnOffset = dest.getColumn() - src.getColumn();
+		
 		int srcColCount = src.getColumnCount();
 		int srcRowCount = src.getRowCount();
 		int destColCount = dest.getColumnCount();
 		int destRowCount = dest.getRowCount();
 		
-		CellBuffer[][] srcBuffer = prepareBuffer(src,dest,option);
+		
 		boolean wrongMultiple = (destRowCount>1 && destRowCount%srcRowCount!=0)||(destColCount>1 && destColCount%srcColCount!=0);
 		
 		int rowMultiple = destRowCount<=1||wrongMultiple?1:destRowCount/srcRowCount;
 		int colMultiple = destColCount<=1||wrongMultiple?1:destColCount/srcColCount;
 		
+		CellRegion finalRegion = new CellRegion(dest.getRow(),dest.getColumn(),
+				dest.getRow()+srcRowCount*rowMultiple-1,dest.getColumn()+srcColCount*colMultiple-1);
+		
+		List<CellRegion> merged = destSheet.getOverlapsMergedRegions(finalRegion); 
+		if(merged.size()>0){
+			throw new InvalidateModelOpException("Can't paste to "+finalRegion.getReferenceString()+", it overlaps merged cells "+merged.get(0).getReferenceString());
+		}
+		
+		CellBuffer[][] srcBuffer = prepareBuffer(src,option);
 		for(int i=0;i<rowMultiple;i++){
 			for(int j=0;j<colMultiple;j++){
-				copyCell0(srcBuffer,new CellRegion(dest.getRow()+i*srcRowCount,dest.getColumn()+j*srcColCount,
-						dest.getLastRow()+i*srcRowCount,dest.getLastColumn()+j*srcColCount),option);
+				int rowMultpleOffset = i*srcRowCount;
+				int colMultipleOffset = j*srcColCount;
+				CellRegion destRegion = new CellRegion(dest.getRow()+rowMultpleOffset,dest.getColumn()+colMultipleOffset,
+						dest.getRow()+srcRowCount+ -1 + rowMultpleOffset,
+						dest.getColumn()+srcColCount -1 + colMultipleOffset);
+				copyCell0(src,srcBuffer,destRegion,option,rowOffset+rowMultpleOffset,columnOffset+colMultipleOffset);
 			}
 		}
 		
@@ -123,14 +152,14 @@ import org.zkoss.zss.ngmodel.util.Validations;
 		
 	}
 	
-	private void copyCell0(CellBuffer[][] srcBuffer, CellRegion cellRegion,PasteOption option) {
-		int row = cellRegion.getRow();
-		int col = cellRegion.getColumn();
-		int lastRow = cellRegion.getLastRow();
-		int lastColumn = cellRegion.getLastColumn();
-		
+	private void copyCell0(SheetRegion srcRegion,CellBuffer[][] srcBuffer, CellRegion destRegion,PasteOption option, int rowOffset,int columnOffset) {
+		int row = destRegion.getRow();
+		int col = destRegion.getColumn();
+		int lastRow = destRegion.getLastRow();
+		int lastColumn = destRegion.getLastColumn();
+		//TODO zss 3.5 handle merge, unmerge
 		for(int r = row; r <= lastRow; r++){
-			for (int c = col; c<lastColumn;c++){
+			for (int c = col; c <= lastColumn;c++){
 				CellBuffer buffer = srcBuffer[r-row][c-col];
 				if((buffer==null || buffer.getType()==CellType.BLANK) && option.isSkipBlank()){
 					continue;
@@ -146,13 +175,13 @@ import org.zkoss.zss.ngmodel.util.Validations;
 				
 				switch(option.getPasteType()){
 				case ALL:
-					pasteValue(buffer,destCell,true);
+					pasteValue(srcRegion,buffer,destCell,true,rowOffset,columnOffset);
 					pasteStyle(buffer,destCell,true);//border,comment
 					pasteComment(buffer,destCell);
 					pasteValidation(buffer,destCell);
 					break;
 				case ALL_EXCEPT_BORDERS:
-					pasteValue(buffer,destCell,true);
+					pasteValue(srcRegion,buffer,destCell,true,rowOffset,columnOffset);
 					pasteStyle(buffer,destCell,false);//border,comment
 					pasteComment(buffer,destCell);
 					pasteValidation(buffer,destCell);
@@ -166,14 +195,14 @@ import org.zkoss.zss.ngmodel.util.Validations;
 				case FORMULAS_AND_NUMBER_FORMATS:
 					pasteFormat(buffer,destCell);
 				case FORMULAS:
-					pasteValue(buffer,destCell,true);
+					pasteValue(srcRegion,buffer,destCell,true,rowOffset,columnOffset);
 					break;
 				case VALIDATAION:
 					pasteValidation(buffer,destCell);
 				case VALUES_AND_NUMBER_FORMATS:
 					pasteFormat(buffer,destCell);
 				case VALUES:
-					pasteValue(buffer,destCell,false);
+					pasteValue(srcRegion,buffer,destCell,false,rowOffset,columnOffset);
 					break;
 				case COLUMN_WIDTHS:
 					break;				
@@ -204,10 +233,13 @@ import org.zkoss.zss.ngmodel.util.Validations;
 	}
 
 	private void pasteStyle(CellBuffer buffer, NCell destCell, boolean pasteBorder) {
+		if(destCell.getCellStyle()==defaultStyle && buffer.getStyle()==defaultStyle){
+			return;
+		}
 		if(pasteBorder){
 			destCell.setCellStyle(buffer.getStyle());
 		}else{
-			NCellStyle newStyle = destSheet.getBook().createCellStyle(buffer.getStyle(), true);
+			NCellStyle newStyle = book.createCellStyle(buffer.getStyle(), true);
 			NCellStyle destStyle = destCell.getCellStyle();
 			//keep original border
 			newStyle.setBorderBottom(destStyle.getBorderBottom());
@@ -222,24 +254,45 @@ import org.zkoss.zss.ngmodel.util.Validations;
 		}
 	}
 
-	private void pasteValue(CellBuffer buffer, NCell destCell, boolean pasteFormula) {
+	private void pasteValue(SheetRegion sreRegion,CellBuffer buffer, NCell destCell, boolean pasteFormula,int rowOffset,int columnOffset) {
 		if(pasteFormula){
 			String formula = buffer.getFormula();
 			if(formula!=null){
-				destCell.setFormulaValue(formula);
+				//TODO zss 3.5 , shift non-absolute formula
+				//TODO zss 3.5 rename sheetName
+				FormulaEngine engine = getFormulaEignin();
+				//TODO zss 3.5 should shift regardless sheet
+//				FormulaExpression expr = engine.shift(formula, sreRegion.getRegion(), rowOffset, columnOffset, 
+//						new FormulaParseContext(destSheet, null));
+				FormulaExpression expr = engine.move(formula,sreRegion, rowOffset, columnOffset, 
+						new FormulaParseContext(destSheet, null));
+				System.out.println(">>> Shift "+formula+" to "+expr.getFormulaString());
+				//copy paste doesn't need to handle sheet rename
+				
+				destCell.setFormulaValue(expr.getFormulaString());
 				return;
 			}
 		}
 		destCell.setValue(buffer.getValue());
 	}
 
-	private CellBuffer[][] prepareBuffer(SheetRegion src, CellRegion dest, PasteOption option) {
+	FormulaEngine formulaEngine;
+	
+	private FormulaEngine getFormulaEignin() {
+		if(formulaEngine == null){
+			formulaEngine = EngineFactory.getInstance().createFormulaEngine();
+		}
+		return formulaEngine;
+	}
+
+
+	private CellBuffer[][] prepareBuffer(SheetRegion src, PasteOption option) {
 		int srcColCount = src.getColumnCount();
 		int srcRowCount = src.getRowCount();
 		CellBuffer[][] srcBuffer = new CellBuffer[srcRowCount][srcColCount];
 		NSheet srcSheet = src.getSheet();
 		for(int r = 0; r < srcRowCount;r++){
-			for(int c = 0; r < srcColCount;c++){
+			for(int c = 0; c < srcColCount;c++){
 				NCell srcCell = srcSheet.getCell(r,c);
 				if(srcCell.isNull()) //to avoid uncessary create
 					continue;
