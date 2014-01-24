@@ -122,15 +122,15 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 		
 		// Header
 		Header header = poiSheet.getHeader();
-		header.setLeft(sheet.getViewInfo().getHeader().getLeftText() == null ? "" : sheet.getViewInfo().getHeader().getLeftText());
-		header.setCenter(sheet.getViewInfo().getHeader().getCenterText() == null ? "" : sheet.getViewInfo().getHeader().getCenterText());
-		header.setRight(sheet.getViewInfo().getHeader().getRightText() == null ? "" : sheet.getViewInfo().getHeader().getRightText());
+		header.setLeft(sheet.getViewInfo().getHeader().getLeftText());
+		header.setCenter(sheet.getViewInfo().getHeader().getCenterText());
+		header.setRight(sheet.getViewInfo().getHeader().getRightText());
 		
 		// Footer
 		Footer footer = poiSheet.getFooter();
-		footer.setLeft(sheet.getViewInfo().getFooter().getLeftText() == null ? "" : sheet.getViewInfo().getFooter().getLeftText());
-		footer.setCenter(sheet.getViewInfo().getFooter().getCenterText() == null ? "" : sheet.getViewInfo().getFooter().getCenterText());
-		footer.setRight(sheet.getViewInfo().getFooter().getRightText() == null ? "" : sheet.getViewInfo().getFooter().getRightText());
+		footer.setLeft(sheet.getViewInfo().getFooter().getLeftText());
+		footer.setCenter(sheet.getViewInfo().getFooter().getCenterText());
+		footer.setRight(sheet.getViewInfo().getFooter().getRightText());
 		
 		// Margin
 		poiSheet.setMargin(Sheet.LeftMargin, UnitUtil.pxToInche(sheet.getPrintSetup().getLeftMargin()));
