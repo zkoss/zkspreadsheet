@@ -200,13 +200,13 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 		NCellStyle cellStyle = cell.getCellStyle();
 		poiCell.setCellStyle(toPOICellStyle(cellStyle));
 		
-		Hyperlink poiHyperlink = poiCell.getHyperlink();
-		if(poiHyperlink != null) {
-			NHyperlink hyperlink = cell.getHyperlink();
-			//hyperlink.setType(poiHyperlink.getType());f
-			hyperlink.setAddress(poiHyperlink.getAddress());
-			hyperlink.setLabel(poiHyperlink.getLabel());
-		}
+//		Hyperlink poiHyperlink = poiCell.getHyperlink();
+//		if(poiHyperlink != null) {
+//			NHyperlink hyperlink = cell.setupHyperlink();
+//			hyperlink.setType(poiHyperlink.getType());
+//			hyperlink.setAddress(poiHyperlink.getAddress());
+//			hyperlink.setLabel(poiHyperlink.getLabel());
+//		}
 		
 		FormatEngine fe = EngineFactory.getInstance().createFormatEngine();
 		FormatResult result = fe.format(cell, new FormatContext(Locales.getCurrent()));

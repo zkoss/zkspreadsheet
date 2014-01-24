@@ -239,7 +239,8 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 		// TODO ZSS 3.5 - RichText
 		String formatStr = poiCell.getCellStyle().getDataFormatString();
 		// How can I know the POI cell is richText?
-		if (poiCell.getCellType() == Cell.CELL_TYPE_STRING && ("General".equalsIgnoreCase(formatStr) || "@".equals(formatStr))) {
+		//if (poiCell.getCellType() == Cell.CELL_TYPE_STRING && ("General".equalsIgnoreCase(formatStr) || "@".equals(formatStr))) {
+		if(false) {
 			NRichText richText = cell.setupRichText();
 			RichTextString poiRichTextString = poiCell.getRichStringCellValue();
 			String cellValue = poiRichTextString.getString();
@@ -650,6 +651,7 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 	}
 	
 	private org.zkoss.poi.ss.usermodel.Font getPoiFontFromRichText(Workbook book, RichTextString rstr, int run) {
-		return rstr instanceof HSSFRichTextString ? book.getFontAt(((HSSFRichTextString)rstr).getFontOfFormattingRun(run)) : ((XSSFRichTextString)rstr).getFontOfFormattingRun(run);
+		org.zkoss.poi.ss.usermodel.Font font = rstr instanceof HSSFRichTextString ? book.getFontAt(((HSSFRichTextString)rstr).getFontOfFormattingRun(run)) : ((XSSFRichTextString)rstr).getFontOfFormattingRun(run);
+		return font == null ? book.getFontAt((short)0) : font;
 	}
 }
