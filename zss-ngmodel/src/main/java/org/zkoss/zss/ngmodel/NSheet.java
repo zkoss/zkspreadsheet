@@ -215,4 +215,12 @@ public interface NSheet {
 	 * Clear auto filter if there is.
 	 */
 	public void clearAutoFilter();
+	
+	/**
+	 * copy cell from src sheet to this sheet, the sheets must in same book
+	 * @param src src sheet and it's region to copy
+	 * @param dest destination region in this sheet
+	 * @param option the copy option
+	 */
+	public void copyCell(SheetRegion src,CellRegion dest,PasteOption option);
 }

@@ -72,4 +72,13 @@ public class RichTextImpl extends AbstractRichTextAdv {
 		return segments.get(0).getFont();
 	}
 
+	@Override
+	public AbstractRichTextAdv clone() {
+		RichTextImpl richText = new RichTextImpl();
+		for(Segment s:segments){
+			richText.addSegment(s.getText(), s.getFont());
+		}
+		return richText;
+	}
+
 }

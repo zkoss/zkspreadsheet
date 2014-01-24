@@ -63,4 +63,18 @@ public class CommentImpl extends AbstractCommentAdv {
 		this.author = author;
 	}
 
+	@Override
+	public AbstractCommentAdv clone() {
+		CommentImpl comment = new CommentImpl();
+		comment.setAuthor(author);
+		if(this.text instanceof NRichText){
+			comment.setRichText(((AbstractRichTextAdv)text).clone());
+		}else if(this.text instanceof String){
+			comment.setText((String)text);
+		}
+		
+		
+		return comment;
+	}
+
 }

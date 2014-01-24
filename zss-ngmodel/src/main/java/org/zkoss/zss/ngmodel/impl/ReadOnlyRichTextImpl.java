@@ -47,5 +47,9 @@ public class ReadOnlyRichTextImpl extends AbstractRichTextAdv {
 	public void clearSegments() {
 		throw new UnsupportedOperationException("readonly rich text");
 	}
+	@Override
+	public AbstractRichTextAdv clone() {
+		return richText==null?new ReadOnlyRichTextImpl(segments.get(0).getText(),segments.get(0).getFont()):new ReadOnlyRichTextImpl(richText);
+	}
 
 }

@@ -19,7 +19,6 @@ package org.zkoss.zss.ngmodel.impl;
 import java.io.Serializable;
 
 import org.zkoss.zss.ngmodel.NComment;
-import org.zkoss.zss.ngmodel.NRichText;
 /**
  * 
  * @author dennis
@@ -28,5 +27,7 @@ import org.zkoss.zss.ngmodel.NRichText;
 public abstract class AbstractCommentAdv implements NComment, Serializable{
 
 	private static final long serialVersionUID = 1L;
+	
+	public abstract AbstractCommentAdv clone();
 
 }

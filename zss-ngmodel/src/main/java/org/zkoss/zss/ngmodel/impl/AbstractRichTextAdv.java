@@ -27,6 +27,6 @@ import org.zkoss.zss.ngmodel.NRichText;
 public abstract class AbstractRichTextAdv implements NRichText,Serializable {
 	private static final long serialVersionUID = 1L;
 
-	
+	public abstract AbstractRichTextAdv clone();
 
 }

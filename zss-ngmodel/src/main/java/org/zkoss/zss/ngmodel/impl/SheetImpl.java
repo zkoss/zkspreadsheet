@@ -46,8 +46,10 @@ import org.zkoss.zss.ngmodel.NPicture;
 import org.zkoss.zss.ngmodel.NPicture.Format;
 import org.zkoss.zss.ngmodel.NPrintSetup;
 import org.zkoss.zss.ngmodel.NRow;
+import org.zkoss.zss.ngmodel.NSheet;
 import org.zkoss.zss.ngmodel.NSheetViewInfo;
 import org.zkoss.zss.ngmodel.NViewAnchor;
+import org.zkoss.zss.ngmodel.PasteOption;
 import org.zkoss.zss.ngmodel.SheetRegion;
 import org.zkoss.zss.ngmodel.sys.dependency.DependencyTable;
 import org.zkoss.zss.ngmodel.sys.dependency.Ref;
@@ -1657,4 +1659,9 @@ public class SheetImpl extends AbstractSheetAdv {
 		autoFilter = null;
 	}
 
+
+	@Override
+	public void copyCell(SheetRegion src, CellRegion dest, PasteOption option) {
+		new CopyCellHelper(this).copyCell(src,dest,option);
+	}
 }
