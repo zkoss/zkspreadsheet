@@ -193,9 +193,8 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 		
 		sheet.getPrintSetup().setHeaderMargin(UnitUtil.incheToPx(poiSheet.getMargin(Sheet.HeaderMargin)));
 		sheet.getPrintSetup().setFooterMargin(UnitUtil.incheToPx(poiSheet.getMargin(Sheet.FooterMargin)));
-		sheet.getPrintSetup().setPaperSize(poiSheet.getPrintSetup().getPaperSize());
+		sheet.getPrintSetup().setPaperSize(toZssPaperSize(poiSheet.getPrintSetup().getPaperSize()));
 		sheet.getPrintSetup().setLandscape(poiSheet.getPrintSetup().getLandscape());
-		sheet.getPrintSetup().setScale(poiSheet.getPrintSetup().getScale());
 		
 		sheet.setProtected(poiSheet.getProtect());
 		
@@ -247,7 +246,7 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 			for(int i = 0; i < poiRichTextString.numFormattingRuns(); i++) {
 				int nextFormattingRunIndex = (i + 1) >= poiRichTextString.numFormattingRuns() ? cellValue.length() : poiRichTextString.getIndexOfFormattingRun(i + 1);
 				final String content = cellValue.substring(poiRichTextString.getIndexOfFormattingRun(i), nextFormattingRunIndex);
-				richText.addSegment(content, toZSSFont(getPoiFontFromRichText(workbook, poiRichTextString, i)));
+				richText.addSegment(content, toZssFont(getPoiFontFromRichText(workbook, poiRichTextString, i)));
 			}
 		} else {
 			switch (poiCell.getCellType()){
@@ -341,7 +340,7 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 		return font;
 	}
 	
-	protected NFont toZSSFont(Font poiFont) {
+	protected NFont toZssFont(Font poiFont) {
 		NFont font = null;
 		if (importedFont.containsKey(poiFont.getIndex())) {
 			font = importedFont.get(poiFont.getIndex());
@@ -363,6 +362,73 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 			font.setColor(book.createColor(BookHelper.getFontHTMLColor(workbook,poiFont)));
 		}
 		return font;
+	}
+	
+	protected NPrintSetup.PaperSize toZssPaperSize(short paperSize) {
+		switch(paperSize) {
+		case PrintSetup.A3_PAPERSIZE:
+			return NPrintSetup.PaperSize.A3;
+		case PrintSetup.A4_EXTRA_PAPERSIZE:
+			return NPrintSetup.PaperSize.A4_EXTRA;
+		case PrintSetup.A4_PAPERSIZE:
+			return NPrintSetup.PaperSize.A4;
+		case PrintSetup.A4_PLUS_PAPERSIZE:
+			return NPrintSetup.PaperSize.A4_PLUS;
+		case PrintSetup.A4_ROTATED_PAPERSIZE:
+			return NPrintSetup.PaperSize.A4_ROTATED;
+		case PrintSetup.A4_SMALL_PAPERSIZE:
+			return NPrintSetup.PaperSize.A4_SMALL;
+		case PrintSetup.A4_TRANSVERSE_PAPERSIZE:
+			return NPrintSetup.PaperSize.A4_TRANSVERSE;
+		case PrintSetup.A5_PAPERSIZE:
+			return NPrintSetup.PaperSize.A5;
+		case PrintSetup.B4_PAPERSIZE:
+			return NPrintSetup.PaperSize.B4;
+		case PrintSetup.B5_PAPERSIZE:
+			return NPrintSetup.PaperSize.B5;
+		case PrintSetup.ELEVEN_BY_SEVENTEEN_PAPERSIZE:
+			return NPrintSetup.PaperSize.ELEVEN_BY_SEVENTEEN;
+		case PrintSetup.ENVELOPE_10_PAPERSIZE:
+			return NPrintSetup.PaperSize.ENVELOPE_10;
+		case PrintSetup.ENVELOPE_9_PAPERSIZE:
+			return NPrintSetup.PaperSize.ENVELOPE_9;
+		case PrintSetup.ENVELOPE_C3_PAPERSIZE:
+			return NPrintSetup.PaperSize.ENVELOPE_C3;
+		case PrintSetup.ENVELOPE_C4_PAPERSIZE:
+			return NPrintSetup.PaperSize.ENVELOPE_C4;
+		case PrintSetup.ENVELOPE_C5_PAPERSIZE:
+			return NPrintSetup.PaperSize.ENVELOPE_C5;
+		case PrintSetup.ENVELOPE_C6_PAPERSIZE:
+			return NPrintSetup.PaperSize.ENVELOPE_C6;
+		case PrintSetup.ENVELOPE_DL_PAPERSIZE:
+			return NPrintSetup.PaperSize.ENVELOPE_DL;
+		case PrintSetup.ENVELOPE_MONARCH_PAPERSIZE:
+			return NPrintSetup.PaperSize.ENVELOPE_MONARCH;
+		case PrintSetup.EXECUTIVE_PAPERSIZE:
+			return NPrintSetup.PaperSize.EXECUTIVE;
+		case PrintSetup.FOLIO8_PAPERSIZE:
+			return NPrintSetup.PaperSize.FOLIO8;
+		case PrintSetup.LEDGER_PAPERSIZE:
+			return NPrintSetup.PaperSize.LEDGER;
+		case PrintSetup.LETTER_PAPERSIZE:
+			return NPrintSetup.PaperSize.LETTER;
+		case PrintSetup.LETTER_ROTATED_PAPERSIZE:
+			return NPrintSetup.PaperSize.LETTER_ROTATED;
+		case PrintSetup.LETTER_SMALL_PAGESIZE:
+			return NPrintSetup.PaperSize.LETTER_SMALL;
+		case PrintSetup.NOTE8_PAPERSIZE:
+			return NPrintSetup.PaperSize.NOTE8;
+		case PrintSetup.QUARTO_PAPERSIZE:
+			return NPrintSetup.PaperSize.QUARTO;
+		case PrintSetup.STATEMENT_PAPERSIZE:
+			return NPrintSetup.PaperSize.STATEMENT;
+		case PrintSetup.TABLOID_PAPERSIZE:
+			return NPrintSetup.PaperSize.TABLOID;
+		case PrintSetup.TEN_BY_FOURTEEN_PAPERSIZE:
+			return NPrintSetup.PaperSize.TEN_BY_FOURTEEN;
+			default:
+				return NPrintSetup.PaperSize.A4;
+		}
 	}
 	
 	/*

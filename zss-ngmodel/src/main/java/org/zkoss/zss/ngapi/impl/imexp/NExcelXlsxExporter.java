@@ -63,6 +63,10 @@ public class NExcelXlsxExporter extends AbstractExcelExporter {
 	protected Workbook createPoiBook() {
 		return new XSSFWorkbook();
 	}
+	
+	// TODO ZSS 3.5 Hyperlink
+	protected void exportHyperlink(NCell cell, Sheet poiSheet) {
+	}
 
 	/**
 	 * reference DrawingManagerImpl.addChartX()
@@ -603,7 +607,7 @@ public class NExcelXlsxExporter extends AbstractExcelExporter {
 				if (srcFilterColumn.getCriteria1()!=null){
 					criteria2 = srcFilterColumn.getCriteria2().toArray(new String[0]);
 				}
-				destFilterColumn.setProperties(criteria1, toPoiFilterOperator(srcFilterColumn.getOperator()),
+				destFilterColumn.setProperties(criteria1, ExporterEnumUtil.toPoiFilterOperator(srcFilterColumn.getOperator()),
 						criteria2, srcFilterColumn.isShowButton());
 			}
 		}

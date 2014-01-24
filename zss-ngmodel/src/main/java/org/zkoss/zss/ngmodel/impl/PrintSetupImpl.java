@@ -32,7 +32,7 @@ public class PrintSetupImpl implements NPrintSetup,Serializable {
 	
 	private boolean landscape = false;
 	private short scale = 100; // default value
-	private short paperSize;
+	private PaperSize paperSize;
 	
 	
 	@Override
@@ -94,12 +94,12 @@ public class PrintSetupImpl implements NPrintSetup,Serializable {
 	}
 
 	@Override
-	public void setPaperSize(short size) {
+	public void setPaperSize(PaperSize size) {
 		this.paperSize = size;
 	}
 
 	@Override
-	public short getPaperSize() {
+	public PaperSize getPaperSize() {
 		return paperSize;
 	}
 
@@ -113,14 +113,14 @@ public class PrintSetupImpl implements NPrintSetup,Serializable {
 		return landscape;
 	}
 
-	@Override
-	public void setScale(short scale) {
-		this.scale = scale;
-	}
-
-	@Override
-	public short getScale() {
-		return scale;
-	}
+//	@Override
+//	public void setScale(short scale) {
+//		this.scale = scale;
+//	}
+//
+//	@Override
+//	public short getScale() {
+//		return scale;
+//	}
 
 }
