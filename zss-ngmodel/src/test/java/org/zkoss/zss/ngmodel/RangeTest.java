@@ -104,8 +104,8 @@ public class RangeTest {
 		Assert.assertTrue(cell.getValue() instanceof ErrorValue);
 		
 		NRanges.range(sheet,1,1).setEditText("");
-		Assert.assertEquals(CellType.BLANK, cell.getType());
-		Assert.assertNull(cell.getValue());		
+		Assert.assertEquals(CellType.STRING, cell.getType());
+		Assert.assertEquals("",cell.getValue());		
 		
 	}
 	
@@ -151,8 +151,8 @@ public class RangeTest {
 		Assert.assertTrue(cell.getValue() instanceof ErrorValue);
 		
 		NRanges.range(sheet,1,1).setValue("");
-		Assert.assertEquals(CellType.BLANK, cell.getType());
-		Assert.assertNull(cell.getValue());		
+		Assert.assertEquals(CellType.STRING, cell.getType());
+		Assert.assertEquals("",cell.getValue());			
 	}
 	
 	@Test

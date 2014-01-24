@@ -311,10 +311,7 @@ public class CellImpl extends AbstractCellAdv {
 		if (newVal == null) {
 			newType = CellType.BLANK;
 		} else if (newVal instanceof String) {
-			if ("".equals(newVal)) {
-				newType = CellType.BLANK;
-				newVal = null;
-			} else if (isFormula((String) newVal)) {
+			if (isFormula((String) newVal)) {
 				setFormulaValue(((String) newVal).substring(1));
 				return;// break;
 			} else {
