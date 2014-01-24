@@ -855,9 +855,9 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 				range = block.range;
 			block.loadstate = zss.MainBlockCtrl.IDLE;
 			if (dir == "east" || dir == "west") {
-				sheet.sp.scrollToVisible(null, dir == "east" ? range.right : range.left);
+				sheet.sp.scrollToVisible(null, dir == "east" ? range.right : range.left, null, zss.SCROLL_TO_VISIBLE.BOTH);
 			} else if (dir == "south" || dir == "north") {
-				sheet.sp.scrollToVisible(dir == "south" ? range.bottom: range.top ? range.right: range.left, null);
+				sheet.sp.scrollToVisible(dir == "south" ? range.bottom: range.top ? range.right: range.left, null, null, zss.SCROLL_TO_VISIBLE.BOTH);
 			}
 			block.loadForVisible();
 		});

@@ -182,29 +182,22 @@ zss.ScrollPanel = zk.$extends(zk.Object, {
 	 * scroll a row, col or cell to visible
 	 * @param {Object} cell cell ctrl
 	 */
-	scrollToVisible: function (row, col, cell) {
-		if (!cell) return;
+	scrollToVisible: function (row, col, cell, direction) { // ZSS-475: add direction parameter
+		//zss-219, scrollToVisible should able to not depends on cell dom instance
 		
 		var sheet = this.sheet;
 		if (cell) {
 			row = cell.r;
 		    col = cell.c;
-		} else {
-			if (zkS.t(row) && zkS.t(col))
-				cell = sheet.getCell(row, col);
-			else if(zkS.t(row))
-				cell = sheet.getCell(row, sheet.activeBlock.range.left);
-			else if(zkS.t(col))
-				cell = sheet.getCell(sheet.activeBlock.range.top, col);
 		}
+		var cellLoc = this._getCellLocation(sheet,row,col);
 		
-		var cellcmp = cell.comp,
-			spcmp = this.comp,
+		var spcmp = this.comp,
 			block = sheet.activeBlock,
-			w = cellcmp.offsetWidth, // component width
-			h = cellcmp.offsetHeight, // component height
-			l = cellcmp.offsetLeft + block.comp.offsetLeft,//cell left in row + block left in datapanel = cell left in scroll panel 
-			t = cellcmp.parentNode.offsetTop + block.comp.offsetTop,//Row top in block + block top in datapanel = cell top in scroll panel.
+			w = cellLoc.width,//cellcmp.offsetWidth, // component width
+			h = cellLoc.height,//cellcmp.offsetHeight, // component height
+			l = cellLoc.left + sheet.leftWidth,//cellcmp.offsetLeft + block.comp.offsetLeft,//cell left in row + block left in datapanel = cell left in scroll panel 
+			t = cellLoc.top + sheet.topHeight,//cellcmp.parentNode.offsetTop + block.comp.offsetTop,//Row top in block + block top in datapanel = cell top in scroll panel.
 			sl = spcmp.scrollLeft,//current scroll left
 			st = spcmp.scrollTop,//current scroll top
 			sw = spcmp.clientWidth,//scroll panel width(no scroll bar)
@@ -270,11 +263,32 @@ zss.ScrollPanel = zk.$extends(zk.Object, {
 			}
 		}
 
+		
 		if (dirty) {
 			this._visFlg = true;
-			spcmp.scrollLeft = lsl;
-			spcmp.scrollTop = lst;
+
+			// ZSS-475: consider scrolling direction accroding to argument
+			switch(direction) {
+			case zss.SCROLL_TO_VISIBLE.HORIZONTAL :
+					spcmp.scrollLeft = lsl;
+					break;
+			case zss.SCROLL_TO_VISIBLE.VERTICAL :
+					spcmp.scrollTop = lst;
+					break;
+			case zss.SCROLL_TO_VISIBLE.BOTH :
+					spcmp.scrollLeft = lsl;
+					spcmp.scrollTop = lst;
+					break;
+			}
 			//after this , onScroll will be fired.
 		}
+	},
+	_getCellLocation : function(sheet, row, column){
+		var loc = {};
+		loc.left = sheet.custColWidth.getStartPixel(column);
+		loc.width = sheet.custColWidth.getSize(column);
+		loc.top = sheet.custRowHeight.getStartPixel(row);
+		loc.height = sheet.custRowHeight.getSize(row);
+		return loc;
 	}
 });
