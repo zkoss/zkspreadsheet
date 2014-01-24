@@ -52,7 +52,7 @@ public class PdfExporterTest {
 		NSheet sheet = book.createSheet("first");
 		NCell cell = sheet.getCell(0, 0);
 		
-		NRichText rText = cell.setupRichText();
+		NRichText rText = cell.setupRichTextValue();
 		NFont font1 = book.createFont(true);
 		font1.setColor(book.createColor("#0000FF"));
 		font1.setStrikeout(true);
@@ -69,7 +69,7 @@ public class PdfExporterTest {
 		rText.addSegment("xyz", font3);
 		
 		cell = sheet.getCell(0, 1);
-		rText = cell.setupRichText();
+		rText = cell.setupRichTextValue();
 		font1 = book.createFont(true);
 		font1.setColor(book.createColor("#FFFF00"));
 		font1.setItalic(true);
@@ -92,10 +92,10 @@ public class PdfExporterTest {
 		Util.open(temp);
 	}
 	
-	@Ignore("manual test only")
+	//@Ignore("manual test only")
 	@Test
 	public void exportPdfTest() {
-		NBook book = importBook("book/simpleChart.xlsx");
+		NBook book = importBook("book/PrintSetup.xlsx");
 		File temp = Setup.getTempFile("pdfExportTest",".pdf");
 		exportBook(book, temp);
 		Util.open(temp);
@@ -110,11 +110,11 @@ public class PdfExporterTest {
 		Util.open(temp);
 	}
 	
-	@Ignore("manual test only")
+	//@Ignore("manual test only")
 	@Test
 	public void oldExportPdf() throws IOException {
 		BackupExporter exporter = new BackupExporter();
-		InputStream is  = PdfExporterTest.class.getResourceAsStream("book/taubman.xlsx");
+		InputStream is  = PdfExporterTest.class.getResourceAsStream("book/PrintSetup.xlsx");
 		ExcelImporter importer = new ExcelImporter();
 		XBook book = importer.imports(is, "test");
 		is.close();
