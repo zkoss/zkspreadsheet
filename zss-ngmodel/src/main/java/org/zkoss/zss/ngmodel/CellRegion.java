@@ -82,11 +82,16 @@ public class CellRegion implements Serializable {
 	}
 
 	public boolean overlaps(CellRegion region) {
-		return ((this.lastColumn >= region.column) &&
-			    (this.lastRow >= region.row) &&
-			    (this.column <= region.lastColumn) &&
-			    (this.row <= region.lastRow));
+		return overlaps0(this,region) || overlaps0(region,this);
 	}
+	
+	private static boolean overlaps0(CellRegion r1,CellRegion r2) {
+		return ((r1.lastColumn >= r2.column) &&
+			    (r1.lastRow >= r2.row) &&
+			    (r1.column <= r2.lastColumn) &&
+			    (r1.row <= r2.lastRow));
+	}
+	
 	public boolean equals(int row, int column, int lastRow, int lastColumn){
 		return this.row == row && this.column==column && this.lastRow==lastRow && this.lastColumn == lastColumn;
 	}
