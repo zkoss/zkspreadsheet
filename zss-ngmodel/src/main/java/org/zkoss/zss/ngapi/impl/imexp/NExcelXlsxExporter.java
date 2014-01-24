@@ -32,7 +32,9 @@ import org.zkoss.zss.ngmodel.NDataValidation.ErrorStyle;
 import org.zkoss.zss.ngmodel.NDataValidation.OperatorType;
 import org.zkoss.zss.ngmodel.NDataValidation.ValidationType;
 import org.zkoss.zss.ngmodel.NPicture.Format;
+import org.zkoss.zss.ngmodel.NRichText.Segment;
 import org.zkoss.zss.ngmodel.chart.*;
+import org.zkoss.zss.ngmodel.sys.format.FormatResult;
 /**
  * 
  * @author dennis, kuro, Hawk
@@ -84,6 +86,20 @@ public class NExcelXlsxExporter extends AbstractExcelExporter {
 			int poiPictureIndex = workbook.addPicture(picture.getData(), toPoiPictureFormat(picture.getFormat()));
 			poiSheet.createDrawingPatriarch().createPicture(toClientAnchor(picture.getAnchor(), sheet), poiPictureIndex);
 		}
+	}
+	
+	protected void exportRichTextString(FormatResult result, Cell poiCell) {
+		XSSFRichTextString poiRichTextString = new XSSFRichTextString(result.getText());
+		int start = 0;
+		int end = 0;
+		for(Segment sg : result.getRichText().getSegments()) {
+			NFont font = sg.getFont();
+			int len = sg.getText().length();
+			end += len;
+			poiRichTextString.applyFont(start, end, toPOIFont(font));
+			start += len;
+		}
+		poiCell.setCellValue(poiRichTextString);
 	}
 	
 	private int toPoiPictureFormat(Format format){

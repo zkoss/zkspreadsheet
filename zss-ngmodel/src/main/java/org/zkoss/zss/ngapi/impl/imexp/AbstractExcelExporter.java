@@ -23,6 +23,7 @@ import java.util.concurrent.locks.ReadWriteLock;
 
 import org.zkoss.poi.ss.usermodel.*;
 import org.zkoss.poi.ss.util.CellRangeAddress;
+import org.zkoss.util.Locales;
 import org.zkoss.zss.ngmodel.*;
 import org.zkoss.zss.ngmodel.NAutoFilter.FilterOp;
 import org.zkoss.zss.ngmodel.NCellStyle.Alignment;
@@ -32,6 +33,11 @@ import org.zkoss.zss.ngmodel.NCellStyle.VerticalAlignment;
 import org.zkoss.zss.ngmodel.NFont.Boldweight;
 import org.zkoss.zss.ngmodel.NFont.TypeOffset;
 import org.zkoss.zss.ngmodel.NFont.Underline;
+import org.zkoss.zss.ngmodel.NRichText.Segment;
+import org.zkoss.zss.ngmodel.sys.EngineFactory;
+import org.zkoss.zss.ngmodel.sys.format.FormatContext;
+import org.zkoss.zss.ngmodel.sys.format.FormatEngine;
+import org.zkoss.zss.ngmodel.sys.format.FormatResult;
 
 /**
  * Common exporting behavior for both XLSX and XLS.
@@ -57,6 +63,7 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 	abstract protected void exportChart(NSheet sheet, Sheet poiSheet);
 	abstract protected void exportPicture(NSheet sheet, Sheet poiSheet);
 	abstract protected void exportValidation(NSheet sheet, Sheet poiSheet);
+	abstract protected void exportRichTextString(FormatResult result, Cell poiCell);
 	
 	/**
 	 * Export the model according to reversed depended order: book, sheet, defined name, cells, chart, pictures, validation.   
@@ -123,15 +130,15 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 		
 		// Header
 		Header header = poiSheet.getHeader();
-		header.setLeft(sheet.getViewInfo().getHeader().getLeftText());
-		header.setCenter(sheet.getViewInfo().getHeader().getCenterText());
-		header.setRight(sheet.getViewInfo().getHeader().getRightText());
+		header.setLeft(sheet.getViewInfo().getHeader().getLeftText() == null ? "" : sheet.getViewInfo().getHeader().getLeftText());
+		header.setCenter(sheet.getViewInfo().getHeader().getCenterText() == null ? "" : sheet.getViewInfo().getHeader().getCenterText());
+		header.setRight(sheet.getViewInfo().getHeader().getRightText() == null ? "" : sheet.getViewInfo().getHeader().getRightText());
 		
 		// Footer
 		Footer footer = poiSheet.getFooter();
-		footer.setLeft(sheet.getViewInfo().getFooter().getLeftText());
-		footer.setCenter(sheet.getViewInfo().getFooter().getCenterText());
-		footer.setRight(sheet.getViewInfo().getFooter().getRightText());
+		footer.setLeft(sheet.getViewInfo().getFooter().getLeftText() == null ? "" : sheet.getViewInfo().getFooter().getLeftText());
+		footer.setCenter(sheet.getViewInfo().getFooter().getCenterText() == null ? "" : sheet.getViewInfo().getFooter().getCenterText());
+		footer.setRight(sheet.getViewInfo().getFooter().getRightText() == null ? "" : sheet.getViewInfo().getFooter().getRightText());
 		
 		// Margin
 		poiSheet.setMargin(Sheet.LeftMargin, UnitUtil.pxToInche(sheet.getPrintSetup().getLeftMargin()));
@@ -197,36 +204,41 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 
 	protected void exportCell(Row poiRow, NCell cell) {
 		Cell poiCell = poiRow.createCell(cell.getColumnIndex());
-		
-		NCellStyle cellStyle = cell.getCellStyle();
 
+		NCellStyle cellStyle = cell.getCellStyle();
 		poiCell.setCellStyle(toPOICellStyle(cellStyle));
 		
-		switch(cell.getType()) {
-			case BLANK:
-				poiCell.setCellType(Cell.CELL_TYPE_BLANK);
-				break;
-			case ERROR:
-				poiCell.setCellType(Cell.CELL_TYPE_ERROR);
-				poiCell.setCellErrorValue(cell.getErrorValue().getCode());
-				break;
-			case BOOLEAN:
-				poiCell.setCellType(Cell.CELL_TYPE_BOOLEAN);
-				poiCell.setCellValue(cell.getBooleanValue());
-				break;
-			case FORMULA:
-				poiCell.setCellType(Cell.CELL_TYPE_FORMULA);
-				poiCell.setCellFormula(cell.getFormulaValue());
-				break;
-			case NUMBER:
-				poiCell.setCellType(Cell.CELL_TYPE_NUMERIC);
-				poiCell.setCellValue((Double)cell.getNumberValue());
-				break;
-			case STRING:
-				poiCell.setCellType(Cell.CELL_TYPE_STRING);
-				poiCell.setCellValue(cell.getStringValue());
-				break;
-			default:
+		FormatEngine fe = EngineFactory.getInstance().createFormatEngine();
+		FormatResult result = fe.format(cell, new FormatContext(Locales.getCurrent()));
+		if(result.isRichText()) {
+			exportRichTextString(result, poiCell);
+		} else {
+			switch(cell.getType()) {
+				case BLANK:
+					poiCell.setCellType(Cell.CELL_TYPE_BLANK);
+					break;
+				case ERROR:
+					poiCell.setCellType(Cell.CELL_TYPE_ERROR);
+					poiCell.setCellErrorValue(cell.getErrorValue().getCode());
+					break;
+				case BOOLEAN:
+					poiCell.setCellType(Cell.CELL_TYPE_BOOLEAN);
+					poiCell.setCellValue(cell.getBooleanValue());
+					break;
+				case FORMULA:
+					poiCell.setCellType(Cell.CELL_TYPE_FORMULA);
+					poiCell.setCellFormula(cell.getFormulaValue());
+					break;
+				case NUMBER:
+					poiCell.setCellType(Cell.CELL_TYPE_NUMERIC);
+					poiCell.setCellValue((Double)cell.getNumberValue());
+					break;
+				case STRING:
+					poiCell.setCellType(Cell.CELL_TYPE_STRING);
+					poiCell.setCellValue(cell.getStringValue());
+					break;
+				default:
+			}
 		}
 		
 		// Hyperlink

@@ -19,9 +19,11 @@ package org.zkoss.zss.ngapi.impl.imexp;
 import java.io.*;
 import java.util.*;
 
+import org.zkoss.poi.hssf.usermodel.HSSFRichTextString;
 import org.zkoss.poi.ss.usermodel.*;
 import org.zkoss.poi.ss.util.CellRangeAddress;
 import org.zkoss.poi.xssf.usermodel.XSSFCellStyle;
+import org.zkoss.poi.xssf.usermodel.XSSFRichTextString;
 import org.zkoss.zss.ngmodel.*;
 import org.zkoss.zss.ngmodel.NAutoFilter.FilterOp;
 import org.zkoss.zss.ngmodel.NAutoFilter.NFilterColumn;
@@ -230,31 +232,47 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 		return row;
 	}
 	
-	protected NCell importCell(Cell poiCell, int row, NSheet sheet){
+	protected NCell importCell(Cell poiCell, int row, NSheet sheet) {
+		
 		NCell cell = sheet.getCell(row,poiCell.getColumnIndex());
-		switch (poiCell.getCellType()){
-			case Cell.CELL_TYPE_NUMERIC:
-				cell.setNumberValue(poiCell.getNumericCellValue());
-				break;
-			case Cell.CELL_TYPE_STRING:
-				cell.setStringValue(poiCell.getStringCellValue());
-				break;
-			case Cell.CELL_TYPE_BOOLEAN:
-				cell.setBooleanValue(poiCell.getBooleanCellValue());
-				break;
-			case Cell.CELL_TYPE_FORMULA:
-				cell.setFormulaValue(poiCell.getCellFormula());
-				break;
-			case Cell.CELL_TYPE_ERROR:
-				cell.setErrorValue(convertErrorCode(poiCell.getErrorCellValue()));
-				break;
-			case Cell.CELL_TYPE_BLANK:
-				//do nothing because spreadsheet model auto creates blank cells
-			default:
-				//TODO log: leave an unknown cell type as a blank cell.
-				break;
-		}
 		cell.setCellStyle(importCellStyle(poiCell.getCellStyle()));
+		
+		// TODO ZSS 3.5 - RichText
+		String formatStr = poiCell.getCellStyle().getDataFormatString();
+		// How can I know the POI cell is richText?
+		if (poiCell.getCellType() == Cell.CELL_TYPE_STRING && ("General".equalsIgnoreCase(formatStr) || "@".equals(formatStr))) {
+			NRichText richText = cell.setupRichText();
+			RichTextString poiRichTextString = poiCell.getRichStringCellValue();
+			String cellValue = poiRichTextString.getString();
+			for(int i = 0; i < poiRichTextString.numFormattingRuns(); i++) {
+				int nextFormattingRunIndex = (i + 1) >= poiRichTextString.numFormattingRuns() ? cellValue.length() : poiRichTextString.getIndexOfFormattingRun(i + 1);
+				final String content = cellValue.substring(poiRichTextString.getIndexOfFormattingRun(i), nextFormattingRunIndex);
+				richText.addSegment(content, toZSSFont(getPoiFontFromRichText(workbook, poiRichTextString, i)));
+			}
+		} else {
+			switch (poiCell.getCellType()){
+				case Cell.CELL_TYPE_NUMERIC:
+					cell.setNumberValue(poiCell.getNumericCellValue());
+					break;
+				case Cell.CELL_TYPE_STRING:
+					cell.setStringValue(poiCell.getStringCellValue());
+					break;
+				case Cell.CELL_TYPE_BOOLEAN:
+					cell.setBooleanValue(poiCell.getBooleanCellValue());
+					break;
+				case Cell.CELL_TYPE_FORMULA:
+					cell.setFormulaValue(poiCell.getCellFormula());
+					break;
+				case Cell.CELL_TYPE_ERROR:
+					cell.setErrorValue(convertErrorCode(poiCell.getErrorCellValue()));
+					break;
+				case Cell.CELL_TYPE_BLANK:
+					//do nothing because spreadsheet model auto creates blank cells
+				default:
+					//TODO log: leave an unknown cell type as a blank cell.
+					break;
+			}
+		}
 		
 		return cell;
 	}
@@ -304,6 +322,30 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 			font = importedFont.get(poiCellStyle.getFontIndex());
 		}else{
 			Font poiFont = workbook.getFontAt(poiCellStyle.getFontIndex());
+			font = book.createFont(true);
+			//font
+			font.setName(poiFont.getFontName());
+			if (poiFont.getBoldweight()==Font.BOLDWEIGHT_BOLD){
+				font.setBoldweight(NFont.Boldweight.BOLD);
+			}else{
+				font.setBoldweight(NFont.Boldweight.NORMAL);
+			}
+			font.setItalic(poiFont.getItalic());
+			font.setStrikeout(poiFont.getStrikeout());
+			font.setUnderline(convertUnderline(poiFont.getUnderline()));
+			
+			font.setHeightPoints(poiFont.getFontHeightInPoints());
+			font.setTypeOffset(convertTypeOffset(poiFont.getTypeOffset()));
+			font.setColor(book.createColor(BookHelper.getFontHTMLColor(workbook,poiFont)));
+		}
+		return font;
+	}
+	
+	protected NFont toZSSFont(Font poiFont) {
+		NFont font = null;
+		if (importedFont.containsKey(poiFont.getIndex())) {
+			font = importedFont.get(poiFont.getIndex());
+		} else {
 			font = book.createFont(true);
 			//font
 			font.setName(poiFont.getFontName());
@@ -539,5 +581,9 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 			default:
 				return FilterOp.VALUES;
 		}
+	}
+	
+	private org.zkoss.poi.ss.usermodel.Font getPoiFontFromRichText(Workbook book, RichTextString rstr, int run) {
+		return rstr instanceof HSSFRichTextString ? book.getFontAt(((HSSFRichTextString)rstr).getFontOfFormattingRun(run)) : ((XSSFRichTextString)rstr).getFontOfFormattingRun(run);
 	}
 }
