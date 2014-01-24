@@ -32,7 +32,7 @@ public class ModelCopyTest {
 		sheet1.getCell("A3").setValue("=A2");
 		sheet1.getCell("A4").setValue("=SUM(A2:A3)");
 		
-		sheet1.copyCell(new SheetRegion(sheet1,"A1:A4"), new CellRegion("B2"), null);
+		sheet1.pasteCell(new SheetRegion(sheet1,"A1:A4"), new CellRegion("B2"), null);
 		
 		Assert.assertEquals("A", sheet1.getCell("B2").getValue());
 		Assert.assertEquals(13D, sheet1.getCell("B3").getValue());
@@ -47,7 +47,7 @@ public class ModelCopyTest {
 		Assert.assertEquals(20D, sheet1.getCell("B5").getValue());
 		
 		//multiple row
-		sheet1.copyCell(new SheetRegion(sheet1,"A1:A4"), new CellRegion("C2:C9"), null);
+		sheet1.pasteCell(new SheetRegion(sheet1,"A1:A4"), new CellRegion("C2:C9"), null);
 		Assert.assertEquals("A", sheet1.getCell("C2").getValue());
 		Assert.assertEquals(13D, sheet1.getCell("C3").getValue());
 		Assert.assertEquals("C3", sheet1.getCell("C4").getFormulaValue());
@@ -64,7 +64,7 @@ public class ModelCopyTest {
 		Assert.assertEquals(26D, sheet1.getCell("C9").getValue());
 		
 		//multiple row/column
-		sheet1.copyCell(new SheetRegion(sheet1,"A1:A4"), new CellRegion("C2:D9"), null);
+		sheet1.pasteCell(new SheetRegion(sheet1,"A1:A4"), new CellRegion("C2:D9"), null);
 		Assert.assertEquals("A", sheet1.getCell("C2").getValue());
 		Assert.assertEquals(13D, sheet1.getCell("C3").getValue());
 		Assert.assertEquals("C3", sheet1.getCell("C4").getFormulaValue());
@@ -111,13 +111,70 @@ public class ModelCopyTest {
 		sheet1.getCell("B2").setValue("F");
 		sheet1.getCell("B3").setValue("G");
 		sheet1.getCell("B4").setValue("H");
+		sheet1.getCell("C1").setValue("E");
+		sheet1.getCell("C2").setValue("F");
+		sheet1.getCell("C3").setValue("G");
+		sheet1.getCell("C4").setValue("H");
+		PasteOption opt = new PasteOption();
 		
-		sheet1.copyCell(new SheetRegion(sheet1,"A1:A4"), new CellRegion("B1"), null);
+		sheet1.pasteCell(new SheetRegion(sheet1,"A1:A4"), new CellRegion("B1"), opt);
 		
 		Assert.assertEquals("A", sheet1.getCell("B1").getValue());
 		Assert.assertEquals(null, sheet1.getCell("B2").getValue());
 		Assert.assertEquals("", sheet1.getCell("B3").getValue());
 		Assert.assertEquals("D", sheet1.getCell("B4").getValue());
+		
+		opt.setSkipBlank(true);
+		sheet1.pasteCell(new SheetRegion(sheet1,"A1:A4"), new CellRegion("C1"), opt);
+		Assert.assertEquals("A", sheet1.getCell("C1").getValue());
+		Assert.assertEquals("F", sheet1.getCell("C2").getValue());
+		Assert.assertEquals("", sheet1.getCell("C3").getValue());
+		Assert.assertEquals("D", sheet1.getCell("C4").getValue());
+	}
+	
+	@Test 
+	public void testCut(){
+		NBook book = NBooks.createBook("book1");
+		book.getBookSeries().setAutoFormulaCacheClean(true);
+		NSheet sheet1 = initialDataGrid(book.createSheet("Sheet1"));
+		
+		sheet1.getCell("A1").setValue("A");
+		sheet1.getCell("A2").setValue("B");
+		sheet1.getCell("A3").setValue("C");
+		sheet1.getCell("A4").setValue("D");
+		
+		sheet1.getCell("B1").setValue("E");
+		sheet1.getCell("B2").setValue("F");
+		sheet1.getCell("B3").setValue("G");
+		sheet1.getCell("B4").setValue("H");
+		
+		PasteOption opt = new PasteOption();
+		opt.setCut(true);
+		sheet1.pasteCell(new SheetRegion(sheet1,"A1:A4"), new CellRegion("B1"), opt);
+		
+		Assert.assertEquals(null, sheet1.getCell("A1").getValue());
+		Assert.assertEquals(null, sheet1.getCell("A2").getValue());
+		Assert.assertEquals(null, sheet1.getCell("A3").getValue());
+		Assert.assertEquals(null, sheet1.getCell("A4").getValue());
+		
+		Assert.assertEquals("A", sheet1.getCell("B1").getValue());
+		Assert.assertEquals("B", sheet1.getCell("B2").getValue());
+		Assert.assertEquals("C", sheet1.getCell("B3").getValue());
+		Assert.assertEquals("D", sheet1.getCell("B4").getValue());
+		
+		sheet1.pasteCell(new SheetRegion(sheet1,"B1:B4"), new CellRegion("B2"), opt);
+		Assert.assertEquals(null, sheet1.getCell("B1").getValue());
+		Assert.assertEquals("A", sheet1.getCell("B2").getValue());
+		Assert.assertEquals("B", sheet1.getCell("B3").getValue());
+		Assert.assertEquals("C", sheet1.getCell("B4").getValue());
+		Assert.assertEquals("D", sheet1.getCell("B5").getValue());
+		
+		sheet1.pasteCell(new SheetRegion(sheet1,"B2:B4"), new CellRegion("B1"), opt);
+		Assert.assertEquals("A", sheet1.getCell("B1").getValue());
+		Assert.assertEquals("B", sheet1.getCell("B2").getValue());
+		Assert.assertEquals("C", sheet1.getCell("B3").getValue());
+		Assert.assertEquals(null, sheet1.getCell("B4").getValue());
+		Assert.assertEquals("D", sheet1.getCell("B5").getValue());
 	}
 	
 

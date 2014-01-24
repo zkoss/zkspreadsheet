@@ -130,7 +130,7 @@ public interface NSheet {
 	 * Get the merged region that overlapped the region
 	 * @return the regions that overlaps
 	 */
-	public List<CellRegion> getOverlapsMergedRegions(CellRegion region);
+	public List<CellRegion> getOverlapsMergedRegions(CellRegion region, boolean excludeContains);
 	/**
 	 * Get the merged region that are contained by region.
 	 * @return the regions that are contained
@@ -217,10 +217,10 @@ public interface NSheet {
 	public void clearAutoFilter();
 	
 	/**
-	 * copy cell from src sheet to this sheet, the sheets must in same book
-	 * @param src src sheet and it's region to copy
+	 * paste cell from src sheet to this sheet, the sheets must in same book
+	 * @param src src sheet and it's region to paste
 	 * @param dest destination region in this sheet
 	 * @param option the copy option
 	 */
-	public void copyCell(SheetRegion src,CellRegion dest,PasteOption option);
+	public void pasteCell(SheetRegion src,CellRegion dest,PasteOption option);
 }

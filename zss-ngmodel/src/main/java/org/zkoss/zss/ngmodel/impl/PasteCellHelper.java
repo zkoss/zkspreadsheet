@@ -1,5 +1,6 @@
 package org.zkoss.zss.ngmodel.impl;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.zkoss.zss.ngapi.impl.StyleUtil;
@@ -21,12 +22,12 @@ import org.zkoss.zss.ngmodel.sys.formula.FormulaExpression;
 import org.zkoss.zss.ngmodel.sys.formula.FormulaParseContext;
 import org.zkoss.zss.ngmodel.util.Validations;
 
-/*package*/ class CopyCellHelper {
+/*package*/ class PasteCellHelper {
 
 	private final NSheet destSheet;
 	private final NBook book;
 	private final NCellStyle defaultStyle;
-	public CopyCellHelper(NSheet destSheet){
+	public PasteCellHelper(NSheet destSheet){
 		this.destSheet = destSheet;
 		this.book = destSheet.getBook();
 		defaultStyle = book.getDefaultCellStyle();
@@ -92,7 +93,7 @@ import org.zkoss.zss.ngmodel.util.Validations;
 		}
 	}
 	
-	public void copyCell(SheetRegion src, CellRegion dest, PasteOption option) {
+	public void pasteCell(SheetRegion src, CellRegion dest, PasteOption option) {
 		Validations.argNotNull(src);
 		Validations.argNotNull(dest);
 		NSheet srcSheet = src.getSheet();
@@ -107,6 +108,12 @@ import org.zkoss.zss.ngmodel.util.Validations;
 		if(option.getPasteType()==PasteType.COLUMN_WIDTHS){
 			copyColumnWidth(src,dest);
 			return;
+		}
+		
+		CellRegion srcRegion = src.getRegion();
+		Collection<CellRegion> overlapsMerge = srcSheet.getOverlapsMergedRegions(srcRegion,true);
+		if(overlapsMerge.size()>0){
+			throw new InvalidateModelOpException("Can't copy "+srcRegion.getReferenceString()+" which overlaps merge area "+overlapsMerge.iterator().next().getReferenceString());
 		}
 		
 		
@@ -127,10 +134,12 @@ import org.zkoss.zss.ngmodel.util.Validations;
 		CellRegion finalRegion = new CellRegion(dest.getRow(),dest.getColumn(),
 				dest.getRow()+srcRowCount*rowMultiple-1,dest.getColumn()+srcColCount*colMultiple-1);
 		
-		List<CellRegion> merged = destSheet.getOverlapsMergedRegions(finalRegion); 
+		List<CellRegion> merged = destSheet.getOverlapsMergedRegions(finalRegion,false); 
 		if(merged.size()>0){
 			throw new InvalidateModelOpException("Can't paste to "+finalRegion.getReferenceString()+", it overlaps merged cells "+merged.get(0).getReferenceString());
 		}
+		
+		Collection<CellRegion> containsMerge = srcSheet.getContainsMergedRegions(srcRegion);
 		
 		CellBuffer[][] srcBuffer = prepareBuffer(src,option);
 		for(int i=0;i<rowMultiple;i++){
@@ -140,19 +149,59 @@ import org.zkoss.zss.ngmodel.util.Validations;
 				CellRegion destRegion = new CellRegion(dest.getRow()+rowMultpleOffset,dest.getColumn()+colMultipleOffset,
 						dest.getRow()+srcRowCount+ -1 + rowMultpleOffset,
 						dest.getColumn()+srcColCount -1 + colMultipleOffset);
-				copyCell0(src,srcBuffer,destRegion,option,rowOffset+rowMultpleOffset,columnOffset+colMultipleOffset);
+				pasteCell(src,srcBuffer,destRegion,option,rowOffset+rowMultpleOffset,columnOffset+colMultipleOffset);
+				pasteMerge(src,containsMerge,rowOffset+rowMultpleOffset,columnOffset+colMultipleOffset);
 			}
+		}
+		if(option.isCut()){
+			//clear the src that are not in dest are
+			clearCell(src,sameSheet?finalRegion:null);
+			clearMerge(src,containsMerge);
 		}
 		
 	}
 	
+
+	private void clearMerge(SheetRegion src, Collection<CellRegion> containsMerge) {
+		for(CellRegion merge:containsMerge){
+			src.getSheet().removeMergedRegion(merge);
+		}
+	}
+
+
+	private void pasteMerge(SheetRegion src,
+			Collection<CellRegion> containsMerge, int rowOffset,
+			int columnOffset) {
+		for(CellRegion merge:containsMerge){
+			src.getSheet().addMergedRegion(new CellRegion(merge.getRow()+rowOffset,merge.getColumn()+columnOffset,
+					merge.getLastRow()+rowOffset,merge.getLastColumn()+columnOffset));
+		}
+	}
+
+
+	private void clearCell(SheetRegion src, CellRegion ignoreRegion) {
+		int row = src.getRow();
+		int column = src.getColumn();
+		int lastRow = src.getLastRow();
+		int lastColumn = src.getLastColumn();
+		NSheet srcSheet = src.getSheet();
+		for(int r = row ; r<=lastRow;r++){
+			for(int c= column; c<=lastColumn;c++){
+				NCell cell = srcSheet.getCell(r,c);
+				if(!cell.isNull() && (ignoreRegion==null?true:!ignoreRegion.contains(r, c))){
+					srcSheet.clearCell(new CellRegion(r,c));
+				}
+			}
+		}
+	}
+
 
 	private void copyColumnWidth(SheetRegion src, CellRegion dest) {
 		// TODO zss 3.5
 		
 	}
 	
-	private void copyCell0(SheetRegion srcRegion,CellBuffer[][] srcBuffer, CellRegion destRegion,PasteOption option, int rowOffset,int columnOffset) {
+	private void pasteCell(SheetRegion src,CellBuffer[][] srcBuffer, CellRegion destRegion,PasteOption option, int rowOffset,int columnOffset) {
 		int row = destRegion.getRow();
 		int col = destRegion.getColumn();
 		int lastRow = destRegion.getLastRow();
@@ -175,13 +224,13 @@ import org.zkoss.zss.ngmodel.util.Validations;
 				
 				switch(option.getPasteType()){
 				case ALL:
-					pasteValue(srcRegion,buffer,destCell,true,rowOffset,columnOffset);
+					pasteValue(src,buffer,destCell,true,rowOffset,columnOffset);
 					pasteStyle(buffer,destCell,true);//border,comment
 					pasteComment(buffer,destCell);
 					pasteValidation(buffer,destCell);
 					break;
 				case ALL_EXCEPT_BORDERS:
-					pasteValue(srcRegion,buffer,destCell,true,rowOffset,columnOffset);
+					pasteValue(src,buffer,destCell,true,rowOffset,columnOffset);
 					pasteStyle(buffer,destCell,false);//border,comment
 					pasteComment(buffer,destCell);
 					pasteValidation(buffer,destCell);
@@ -195,14 +244,14 @@ import org.zkoss.zss.ngmodel.util.Validations;
 				case FORMULAS_AND_NUMBER_FORMATS:
 					pasteFormat(buffer,destCell);
 				case FORMULAS:
-					pasteValue(srcRegion,buffer,destCell,true,rowOffset,columnOffset);
+					pasteValue(src,buffer,destCell,true,rowOffset,columnOffset);
 					break;
 				case VALIDATAION:
 					pasteValidation(buffer,destCell);
 				case VALUES_AND_NUMBER_FORMATS:
 					pasteFormat(buffer,destCell);
 				case VALUES:
-					pasteValue(srcRegion,buffer,destCell,false,rowOffset,columnOffset);
+					pasteValue(src,buffer,destCell,false,rowOffset,columnOffset);
 					break;
 				case COLUMN_WIDTHS:
 					break;				
@@ -254,7 +303,7 @@ import org.zkoss.zss.ngmodel.util.Validations;
 		}
 	}
 
-	private void pasteValue(SheetRegion sreRegion,CellBuffer buffer, NCell destCell, boolean pasteFormula,int rowOffset,int columnOffset) {
+	private void pasteValue(SheetRegion src,CellBuffer buffer, NCell destCell, boolean pasteFormula,int rowOffset,int columnOffset) {
 		if(pasteFormula){
 			String formula = buffer.getFormula();
 			if(formula!=null){
@@ -264,7 +313,7 @@ import org.zkoss.zss.ngmodel.util.Validations;
 				//TODO zss 3.5 should shift regardless sheet
 //				FormulaExpression expr = engine.shift(formula, sreRegion.getRegion(), rowOffset, columnOffset, 
 //						new FormulaParseContext(destSheet, null));
-				FormulaExpression expr = engine.move(formula,sreRegion, rowOffset, columnOffset, 
+				FormulaExpression expr = engine.move(formula,src, rowOffset, columnOffset, 
 						new FormulaParseContext(destSheet, null));
 				System.out.println(">>> Shift "+formula+" to "+expr.getFormulaString());
 				//copy paste doesn't need to handle sheet rename
@@ -287,17 +336,21 @@ import org.zkoss.zss.ngmodel.util.Validations;
 
 
 	private CellBuffer[][] prepareBuffer(SheetRegion src, PasteOption option) {
+		int row = src.getRow();
+		int column = src.getColumn();
+		int lastRow = src.getLastRow();
+		int lastColumn = src.getLastColumn();
 		int srcColCount = src.getColumnCount();
 		int srcRowCount = src.getRowCount();
 		CellBuffer[][] srcBuffer = new CellBuffer[srcRowCount][srcColCount];
 		NSheet srcSheet = src.getSheet();
-		for(int r = 0; r < srcRowCount;r++){
-			for(int c = 0; c < srcColCount;c++){
+		for(int r = row; r <= lastRow;r++){
+			for(int c = column; c <= lastColumn;c++){
 				NCell srcCell = srcSheet.getCell(r,c);
-				if(srcCell.isNull()) //to avoid uncessary create
+				if(srcCell.isNull()) //to avoid unnecessary create
 					continue;
 				
-				CellBuffer buffer = srcBuffer[r][c] = new CellBuffer(r,c);
+				CellBuffer buffer = srcBuffer[r-row][c-column] = new CellBuffer(r,c);
 				buffer.setType(srcCell.getType());
 				
 				switch(option.getPasteType()){

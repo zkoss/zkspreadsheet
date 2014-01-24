@@ -1126,18 +1126,16 @@ public class SheetImpl extends AbstractSheetAdv {
 //			dg.moveCell(rowIdx, columnIdx, rowSize,columnSize,horizontal);
 		}
 		
+		//TODO zss 3.5 move to  movecellhelper
 		//check merge overlaps and contains
-		CellRegion sreRegion = new CellRegion(rowIdx,columnIdx,lastRowIdx,lastColumnIdx);
-		Collection<CellRegion> containsMerge = getContainsMergedRegions(sreRegion);
-		Collection<CellRegion> overlapsMerge = getOverlapsMergedRegions(sreRegion);
-		if(containsMerge.size()!=overlapsMerge.size()){
-			ArrayList<CellRegion> ov = new ArrayList<CellRegion>(overlapsMerge);
-			ov.removeAll(containsMerge);
-			throw new InvalidateModelOpException("can't move "+sreRegion.getReferenceString()+" which overlaps merge area "+ov.get(0).getReferenceString());
+		CellRegion srcRegion = new CellRegion(rowIdx,columnIdx,lastRowIdx,lastColumnIdx);
+		Collection<CellRegion> overlapsMerge = getOverlapsMergedRegions(srcRegion,true);
+		if(overlapsMerge.size()>0){
+			throw new InvalidateModelOpException("Can't move "+srcRegion.getReferenceString()+" which overlaps merge area "+overlapsMerge.iterator().next().getReferenceString());
 		}
 		CellRegion targetRegion = new CellRegion(rowIdx+rowOffset,columnIdx+columnOffset,lastRowIdx+rowOffset,lastColumnIdx+columnOffset);
-		if(getOverlapsMergedRegions(targetRegion).size()>0){
-			throw new InvalidateModelOpException("can't move to "+targetRegion.getReferenceString()+" which overlaps merge area");
+		if(getOverlapsMergedRegions(targetRegion,false).size()>0){
+			throw new InvalidateModelOpException("Can't move to "+targetRegion.getReferenceString()+" which overlaps merge area");
 		}
 		
 		
@@ -1176,6 +1174,8 @@ public class SheetImpl extends AbstractSheetAdv {
 		}
 		ModelUpdateUtil.addCellUpdate(this,rowIdx,columnIdx,lastRowIdx,lastColumnIdx);
 		ModelUpdateUtil.addCellUpdate(this,rowIdx+rowOffset,columnIdx+columnOffset,lastRowIdx+rowOffset,lastColumnIdx+columnOffset);
+		
+		Collection<CellRegion> containsMerge = getContainsMergedRegions(srcRegion);
 		//shift the merge
 		mergedRegions.removeAll(containsMerge);
 		for(CellRegion merge:containsMerge){
@@ -1377,15 +1377,17 @@ public class SheetImpl extends AbstractSheetAdv {
 	}
 
 	@Override
-	public List<CellRegion> getOverlapsMergedRegions(CellRegion region) {
+	public List<CellRegion> getOverlapsMergedRegions(CellRegion region,boolean excludeContains){
 		List<CellRegion> list =new LinkedList<CellRegion>(); 
 		for(CellRegion r:mergedRegions){
+			if(excludeContains && region.contains(r))
+				continue;
 			if(r.overlaps(region)){
 				list.add(r);
 			}
 		}
 		return list;
-	}
+	}	
 	@Override
 	public List<CellRegion> getContainsMergedRegions(CellRegion region) {
 		List<CellRegion> list =new LinkedList<CellRegion>(); 
@@ -1395,7 +1397,9 @@ public class SheetImpl extends AbstractSheetAdv {
 			}
 		}
 		return list;
-	}	
+	}
+	
+
 	
 	@Override
 	public CellRegion getMergedRegion(String cellRef) {
@@ -1661,7 +1665,7 @@ public class SheetImpl extends AbstractSheetAdv {
 
 
 	@Override
-	public void copyCell(SheetRegion src, CellRegion dest, PasteOption option) {
-		new CopyCellHelper(this).copyCell(src,dest,option);
+	public void pasteCell(SheetRegion src, CellRegion dest, PasteOption option) {
+		new PasteCellHelper(this).pasteCell(src,dest,option);
 	}
 }

@@ -86,9 +86,9 @@ public class MergeHelper extends RangeHelperBase{
 		int bRow = range.getLastRow();
 		int rCol = range.getLastColumn();
 		
-		List<CellRegion> overlaps = sheet.getOverlapsMergedRegions(new CellRegion(tRow,lCol,bRow,rCol)); 
+		List<CellRegion> overlaps = sheet.getOverlapsMergedRegions(new CellRegion(tRow,lCol,bRow,rCol),false); 
 		
-		if(overlaps!=null && overlaps.size()>0){
+		if(overlaps.size()>0){
 			throw new InvalidateModelOpException("can't merge an overlapped region "+overlaps.get(0).getReferenceString()+", unmerge it first");
 		}
 		

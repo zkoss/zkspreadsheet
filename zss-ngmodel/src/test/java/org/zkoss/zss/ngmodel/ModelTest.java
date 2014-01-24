@@ -2131,7 +2131,7 @@ public class ModelTest {
 		sheet.addMergedRegion(new CellRegion(7,1,8,2));
 		sheet.addMergedRegion(new CellRegion(7,7,8,8));
 		
-		List<CellRegion> merges = sheet.getOverlapsMergedRegions(new CellRegion(1,2,8,3));
+		List<CellRegion> merges = sheet.getOverlapsMergedRegions(new CellRegion(1,2,8,3),false);
 		
 		Assert.assertEquals(2, merges.size());
 		region = merges.get(0);
@@ -2146,7 +2146,7 @@ public class ModelTest {
 		Assert.assertEquals(2, region.lastColumn);
 		
 		
-		merges = sheet.getOverlapsMergedRegions(new CellRegion(1,2,8,4));
+		merges = sheet.getOverlapsMergedRegions(new CellRegion(1,2,8,4),false);
 		
 		Assert.assertEquals(3, merges.size());
 		region = merges.get(0);
@@ -2166,7 +2166,7 @@ public class ModelTest {
 		Assert.assertEquals(2, region.lastColumn);
 		
 		
-		merges = sheet.getOverlapsMergedRegions(new CellRegion(2,2,5,5));
+		merges = sheet.getOverlapsMergedRegions(new CellRegion(2,2,5,5),false);
 		
 		Assert.assertEquals(2, merges.size());
 		region = merges.get(0);
@@ -2180,7 +2180,7 @@ public class ModelTest {
 		Assert.assertEquals(5, region.lastRow);
 		Assert.assertEquals(5, region.lastColumn);
 
-		merges = sheet.getOverlapsMergedRegions(new CellRegion(2,2,6,6));
+		merges = sheet.getOverlapsMergedRegions(new CellRegion(2,2,6,6),false);
 		
 		Assert.assertEquals(2, merges.size());
 		region = merges.get(0);

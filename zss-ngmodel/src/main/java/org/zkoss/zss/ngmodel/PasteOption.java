@@ -27,6 +27,7 @@ public class PasteOption {
 	}
 	
 	boolean skipBlank = false;
+	boolean cut = false;
 //	boolean transport = false;
 	
 	PasteType pasteType = PasteType.ALL;
@@ -52,4 +53,21 @@ public class PasteOption {
 		Validations.argNotNull(pasteOperation);
 		this.pasteOperation = pasteOperation;
 	}
+	
+	/** 
+	 * Shall cut the source region after paste
+	 * @return
+	 */
+	public boolean isCut() {
+		return cut;
+	}
+	/**
+	 * Set true to enable cutting source region after paste
+	 * @param cut
+	 */
+	public void setCut(boolean cut) {
+		this.cut = cut;
+	}
+	
+	
 }
