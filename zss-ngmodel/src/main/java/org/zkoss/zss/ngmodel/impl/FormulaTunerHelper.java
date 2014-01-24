@@ -5,11 +5,9 @@ import java.util.Set;
 import org.zkoss.zss.ngmodel.NBook;
 import org.zkoss.zss.ngmodel.NBookSeries;
 import org.zkoss.zss.ngmodel.NCell;
-import org.zkoss.zss.ngmodel.NChart;
-import org.zkoss.zss.ngmodel.NDataValidation;
+import org.zkoss.zss.ngmodel.NCell.CellType;
 import org.zkoss.zss.ngmodel.NSheet;
 import org.zkoss.zss.ngmodel.SheetRegion;
-import org.zkoss.zss.ngmodel.NCell.CellType;
 import org.zkoss.zss.ngmodel.sys.EngineFactory;
 import org.zkoss.zss.ngmodel.sys.dependency.ObjectRef;
 import org.zkoss.zss.ngmodel.sys.dependency.ObjectRef.ObjectType;
@@ -19,33 +17,33 @@ import org.zkoss.zss.ngmodel.sys.formula.FormulaEngine;
 import org.zkoss.zss.ngmodel.sys.formula.FormulaExpression;
 import org.zkoss.zss.ngmodel.sys.formula.FormulaParseContext;
 
-/*package*/ class FormulaShiftHelper {
+/*package*/ class FormulaTunerHelper {
 	final NBookSeries bookSeries;
 	final SheetRegion sheetRegion;
 
-	public FormulaShiftHelper(AbstractBookSeriesAdv bookSeries,
+	public FormulaTunerHelper(AbstractBookSeriesAdv bookSeries,
 			SheetRegion sheetRegion) {
 		this.bookSeries = bookSeries;
 		this.sheetRegion = sheetRegion;
 	}
 
-	public void shift(Set<Ref> dependents,int rowOffset, int columnOffset) {
+	public void move(Set<Ref> dependents,int rowOffset, int columnOffset) {
 		for (Ref dependent : dependents) {
-			System.out.println(">>>Shift Sheet Formula: "+dependent);
+			System.out.println(">>>Move Sheet Formula: "+dependent);
 			if (dependent.getType() == RefType.CELL) {
-				shiftCellRef(dependent,rowOffset,columnOffset);
+				moveCellRef(dependent,rowOffset,columnOffset);
 			} else if (dependent.getType() == RefType.OBJECT) {
 				if(((ObjectRef)dependent).getObjectType()==ObjectType.CHART){
-					shiftChartRef((ObjectRef)dependent,rowOffset,columnOffset);
+					moveChartRef((ObjectRef)dependent,rowOffset,columnOffset);
 				}else if(((ObjectRef)dependent).getObjectType()==ObjectType.DATA_VALIDATION){
-					shiftDataValidationRef((ObjectRef)dependent,rowOffset,columnOffset);
+					moveDataValidationRef((ObjectRef)dependent,rowOffset,columnOffset);
 				}
 			} else {// TODO another
 
 			}
 		}
 	}
-	private void shiftChartRef(ObjectRef dependent,int rowOffset, int columnOffset) {
+	private void moveChartRef(ObjectRef dependent,int rowOffset, int columnOffset) {
 		//TODO zss 3.5
 //		NBook book = bookSeries.getBook(dependent.getBookName());
 //		if(book==null) return;
@@ -57,7 +55,7 @@ import org.zkoss.zss.ngmodel.sys.formula.FormulaParseContext;
 //			chart.getData().clearFormulaResultCache();
 //		}
 	}
-	private void shiftDataValidationRef(ObjectRef dependent,int rowOffset, int columnOffset) {
+	private void moveDataValidationRef(ObjectRef dependent,int rowOffset, int columnOffset) {
 		//TODO zss 3.5
 //		NBook book = bookSeries.getBook(dependent.getBookName());
 //		if(book==null) return;
@@ -70,7 +68,7 @@ import org.zkoss.zss.ngmodel.sys.formula.FormulaParseContext;
 //		}
 	}
 
-	private void shiftCellRef(Ref dependent,int rowOffset, int columnOffset) {
+	private void moveCellRef(Ref dependent,int rowOffset, int columnOffset) {
 		NBook book = bookSeries.getBook(dependent.getBookName());
 		if(book==null) return;
 		NSheet sheet = book.getSheetByName(dependent.getSheetName());
@@ -83,10 +81,10 @@ import org.zkoss.zss.ngmodel.sys.formula.FormulaParseContext;
 		String expr = cell.getFormulaValue();
 		
 		FormulaEngine engine = getFormulaEngine();
-		FormulaExpression exprAfter = engine.shift(expr, sheetRegion, rowOffset, columnOffset, new FormulaParseContext(sheet, null));//null ref, no trace dependence here
+		FormulaExpression exprAfter = engine.move(expr, sheetRegion, rowOffset, columnOffset, new FormulaParseContext(sheet, null));//null ref, no trace dependence here
 		cell.setFormulaValue(exprAfter.getFormulaString());
 		
-		System.out.println(">>>>"+expr+" shift to "+exprAfter.getFormulaString());
+		System.out.println(">>>>"+expr+" move to "+exprAfter.getFormulaString());
 	}
 
 	private FormulaEngine engine;

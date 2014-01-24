@@ -734,7 +734,7 @@ public class FormulaEvalTest {
 
 	private void testFormulaShifting(FormulaEngine engine, NSheet sheet, String f, SheetRegion region, int rowOffset, int colOffset, String expected) {
 		FormulaParseContext context = new FormulaParseContext(sheet, null);
-		FormulaExpression expr = engine.shift(f, region, rowOffset, colOffset, context);
+		FormulaExpression expr = engine.move(f, region, rowOffset, colOffset, context);
 		Assert.assertFalse(expr.hasError());
 		Assert.assertEquals(expected, expr.getFormulaString());
 	}

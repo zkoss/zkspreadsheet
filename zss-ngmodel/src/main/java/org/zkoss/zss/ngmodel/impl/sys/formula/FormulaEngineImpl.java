@@ -562,13 +562,12 @@ public class FormulaEngineImpl implements FormulaEngine {
 
 	@Override
 	public FormulaExpression renameSheet(String formula, String oldName, String newName, FormulaParseContext context) {
-		// TODO
-		
-		return null;
+		// TODO zss 3.5
+		return new FormulaExpressionImpl(formula, null, true);
 	}
 	
 	@Override
-	public FormulaExpression shift(String formula, SheetRegion region, int rowOffset, int columnOffset, FormulaParseContext context) {
+	public FormulaExpression move(String formula, SheetRegion region, int rowOffset, int columnOffset, FormulaParseContext context) {
 		FormulaExpression expr = null;
 		try {
 			// adapt and parse

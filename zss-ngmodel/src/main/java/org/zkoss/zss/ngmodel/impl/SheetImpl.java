@@ -1195,17 +1195,17 @@ public class SheetImpl extends AbstractSheetAdv {
 	
 	private void shiftAfterCellMove(int rowIdx, int columnIdx, int lastRowIdx,
 			int lastColumnIdx, int rowOffset, int columnOffset) {
-		shiftFormula(new CellRegion(rowIdx,columnIdx,lastRowIdx,lastColumnIdx),rowOffset,columnOffset);
+		moveFormula(new CellRegion(rowIdx,columnIdx,lastRowIdx,lastColumnIdx),rowOffset,columnOffset);
 	}
 	
-	private void shiftFormula(CellRegion src,int rowOffset,int columnOffset){
+	private void moveFormula(CellRegion src,int rowOffset,int columnOffset){
 		NBook book = getBook();
 		AbstractBookSeriesAdv bs = (AbstractBookSeriesAdv)book.getBookSeries();
 		DependencyTable dt = bs.getDependencyTable();
 		Set<Ref> dependents = dt.getDependents(new RefImpl(book.getBookName(),getSheetName(),src.getRow(),src.getColumn(),src.getLastRow(),src.getLastColumn()));
 		if(dependents.size()>0){
-			FormulaShiftHelper shiftHelper = new FormulaShiftHelper(bs,new SheetRegion(this,src));
-			shiftHelper.shift(dependents,rowOffset,columnOffset);
+			FormulaTunerHelper tuner = new FormulaTunerHelper(bs,new SheetRegion(this,src));
+			tuner.move(dependents,rowOffset,columnOffset);
 		}
 	}
 	
@@ -1215,8 +1215,8 @@ public class SheetImpl extends AbstractSheetAdv {
 		DependencyTable dt = bs.getDependencyTable();
 		Set<Ref> dependents = dt.getDependents(new RefImpl(book.getBookName(),getSheetName(),src.getRow(),src.getColumn(),src.getLastRow(),src.getLastColumn()));
 		if(dependents.size()>0){
-			FormulaShiftHelper shiftHelper = new FormulaShiftHelper(bs,new SheetRegion(this,src));
-			shiftHelper.shrink(dependents,horizontal);
+			FormulaTunerHelper tuner = new FormulaTunerHelper(bs,new SheetRegion(this,src));
+			tuner.shrink(dependents,horizontal);
 		}
 	}
 	
@@ -1226,8 +1226,8 @@ public class SheetImpl extends AbstractSheetAdv {
 		DependencyTable dt = bs.getDependencyTable();
 		Set<Ref> dependents = dt.getDependents(new RefImpl(book.getBookName(),getSheetName(),src.getRow(),src.getColumn(),src.getLastRow(),src.getLastColumn()));
 		if(dependents.size()>0){
-			FormulaShiftHelper shiftHelper = new FormulaShiftHelper(bs,new SheetRegion(this,src));
-			shiftHelper.extend(dependents,horizontal);
+			FormulaTunerHelper tuner = new FormulaTunerHelper(bs,new SheetRegion(this,src));
+			tuner.extend(dependents,horizontal);
 		}
 	}
 

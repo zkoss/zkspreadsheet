@@ -12,6 +12,9 @@ public class SheetRegion implements Serializable{
 		this.sheet = sheet;
 		this.region = region;
 	}
+	public SheetRegion(NSheet sheet,int row, int column){
+		this(sheet,new CellRegion(row,column));
+	}
 	public SheetRegion(NSheet sheet,int row, int column, int lastRow, int lastColumn){
 		this(sheet,new CellRegion(row,column,lastRow,lastColumn));
 	}
