@@ -17,10 +17,12 @@ Copyright (C) 2014 Potix Corporation. All Rights Reserved.
 
 package org.zkoss.zss.ngapi.impl.imexp;
 
+import org.zkoss.poi.common.usermodel.Hyperlink;
 import org.zkoss.poi.ss.usermodel.AutoFilter;
 import org.zkoss.poi.ss.usermodel.CellStyle;
 import org.zkoss.poi.ss.usermodel.Font;
 import org.zkoss.poi.ss.usermodel.PrintSetup;
+import org.zkoss.zss.ngmodel.NHyperlink;
 import org.zkoss.zss.ngmodel.NPrintSetup;
 import org.zkoss.zss.ngmodel.NAutoFilter.FilterOp;
 import org.zkoss.zss.ngmodel.NCellStyle.Alignment;
@@ -38,6 +40,20 @@ import org.zkoss.zss.ngmodel.NFont.Underline;
  * @since 3.5.0
  */
 public class ExporterEnumUtil {
+	
+	public static int toPoiHyperlinkType(NHyperlink.HyperlinkType type) {
+		switch(type) {
+		case DOCUMENT:
+			return Hyperlink.LINK_DOCUMENT;
+		case EMAIL:
+			return Hyperlink.LINK_EMAIL;
+		case FILE:
+			return Hyperlink.LINK_FILE;
+		case URL:
+			default:
+			return Hyperlink.LINK_URL;
+		}
+	}
 	
 	public static int toPoiFilterOperator(FilterOp operator){
 		switch(operator){

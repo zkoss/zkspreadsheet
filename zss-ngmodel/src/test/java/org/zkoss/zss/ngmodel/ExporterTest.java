@@ -139,8 +139,25 @@ public class ExporterTest extends ImExpTestBase {
 	}
 	
 	@Test
-	public void richTextTest() {
+	public void hyperlinkTest() {
+		File outFile = ImExpTestUtil.write(ImExpTestUtil.loadBook(IMPORT_FILE_UNDER_TEST, "XSSFBook"), EXPORTER_TYPE);
+		NBook book = ImExpTestUtil.loadBook(outFile, DEFAULT_BOOK_NAME);
+		hyperlinkTest(book);
+	}
+	
+	@Test
+	public void hyperlinkModelTest() {
+		NBook book = NBooks.createBook("hyperlink");
+		NSheet sheet = book.createSheet("link");
+		NCell cell = sheet.getCell(0, 0);
+		NHyperlink hyperlink = cell.setupHyperlink();
+		hyperlink.setAddress("http://www.zkoss.org/download/zkspreadsheet");
+		hyperlink.setLabel("Download ZK Spreadsheet");
+		hyperlink.setType(NHyperlink.HyperlinkType.URL);
 		
+		cell.setStringValue("Go to ZK Spreadsheet Download Page");
+		
+		ImExpTestUtil.write(book, ExcelExportFactory.Type.XLSX);
 	}
 	
 	@Test

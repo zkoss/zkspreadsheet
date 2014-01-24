@@ -2,12 +2,10 @@ package org.zkoss.zss.ngmodel;
 
 import static org.junit.Assert.*;
 
-import java.io.File;
 import java.net.URL;
 import java.text.DateFormat;
 import java.util.Locale;
 
-import org.junit.Test;
 import org.zkoss.zss.ngmodel.NAutoFilter.FilterOp;
 import org.zkoss.zss.ngmodel.NAutoFilter.NFilterColumn;
 import org.zkoss.zss.ngmodel.NCellStyle.Alignment;
@@ -36,8 +34,17 @@ public class ImExpTestBase {
 	protected URL PICTURE_IMPORT_FILE_UNDER_TEST = ImporterTest.class.getResource("book/picture.xlsx");
 	protected URL FILTER_IMPORT_FILE_UNDER_TEST = ImporterTest.class.getResource("book/filter.xlsx");
 	protected static String DEFAULT_BOOK_NAME = "PoiBook";
-
-
+	
+	protected void hyperlinkTest(NBook book) {
+		NSheet sheet = book.getSheetByName("Style");
+		NCell cell = sheet.getCell("B31");
+		NHyperlink link = cell.getHyperlink();
+		
+		assertEquals("http://www.zkoss.org/", link.getAddress());
+		assertEquals("", link.getLabel());
+		assertEquals(NHyperlink.HyperlinkType.URL, link.getType());
+	}
+	
 	protected void sheetTest(NBook book) {
 		assertEquals(8, book.getNumOfSheet());
 
