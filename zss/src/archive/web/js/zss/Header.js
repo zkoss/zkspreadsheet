@@ -62,10 +62,11 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 				top = rng.top,
 				bottom = rng.bottom;
 			if (fh < ctrl.minVHeight) fh = ctrl.minVHeight;
+			var CUSTOM = true; 
 			if (type == zss.SelDrag.SELROW && top <= idx && idx <= bottom) {
-				sheet._setRowsHeight(top, bottom, fh, true, true, dg._unhide? false : undefined); //undefined means depends on fh
+				sheet._setRowsHeight(top, bottom, fh, true, true, dg._unhide? false : undefined, null, CUSTOM); //undefined means depends on fh
 			} else
-				sheet._setRowHeight(idx, fh, true, true, dg._unhide? false : undefined); //undefined means depends on fh
+				sheet._setRowHeight(idx, fh, true, true, dg._unhide? false : undefined, null, CUSTOM); //undefined means depends on fh
 		}
 		//clear header style
 		ctrl.comp.removeAttribute('style');

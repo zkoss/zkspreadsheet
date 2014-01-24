@@ -1967,7 +1967,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 
 		if (fireevent) {
 			this._wgt.fire('onZSSHeaderModif', 
-					{sheetId: this.serverSheetId, type: "top", event: "size", index: col, newsize: width, id: zsw, hidden: hidden},
+					{sheetId: this.serverSheetId, type: "top", event: "size", index: col, newsize: width, id: zsw, hidden: hidden, custom:true},
 					{toServer: true, sendAhead: true}, 25);//ZSS-180
 		}
 		//ZSS-180
@@ -2013,11 +2013,11 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 	 * @param {Object} height new height of row
 	 */
 	setRowHeight: function(row, height) {
-		this._setRowHeight(row, height, true, true);
+		this._setRowHeight(row, height, true, true, false, null, true);
 	},
-	_setRowsHeight: function(top, bottom, height, fireevent, loadvis, hidden, metaid) {
+	_setRowsHeight: function(top, bottom, height, fireevent, loadvis, hidden, metaid, isCustom) {
 		for(var row=top; row<=bottom; ++row)
-			this._setRowHeight(row, height, fireevent, loadvis, hidden, metaid);
+			this._setRowHeight(row, height, fireevent, loadvis, hidden, metaid, isCustom);
 	},
 	_setRowHeight: function(row, height, fireevent, loadvis, hidden, metaid, isCustom) {
 		var wgt = this._wgt,
