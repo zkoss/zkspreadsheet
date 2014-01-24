@@ -195,7 +195,7 @@ public class CellImpl extends AbstractCellAdv {
 	}
 	
 	private void addCellUpdate(){
-		ModelUpdateUtil.addCellUpdate(getRowIndex(), getColumnIndex());
+		ModelUpdateUtil.addCellUpdate(getSheet(), getRowIndex(), getColumnIndex());
 	}
 	
 	

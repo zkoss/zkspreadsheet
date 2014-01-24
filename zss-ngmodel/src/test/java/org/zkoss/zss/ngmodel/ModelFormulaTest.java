@@ -6,6 +6,7 @@ import java.util.Set;
 import junit.framework.Assert;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.zkoss.util.Locales;
 import org.zkoss.zss.ngmodel.NDataValidation.ValidationType;
@@ -351,6 +352,7 @@ public class ModelFormulaTest {
 		Assert.assertEquals(9D, sheet1.getCell("F5").getValue());
 	}
 	
+	@Ignore("zss 3.5")
 	@Test
 	public void testFormulaShiftAfterInsertDeleteCellVertical(){
 		NBook book = NBooks.createBook("book1");
@@ -416,7 +418,7 @@ public class ModelFormulaTest {
 	}
 	
 	
-	
+	@Ignore("zss 3.5")
 	@Test
 	public void testFormulaShiftAfterInsertDeleteCellHorzontal(){
 		NBook book = NBooks.createBook("book1");
@@ -480,6 +482,8 @@ public class ModelFormulaTest {
 		Assert.assertEquals("SUM(#REF!)", sheet1.getCell("E6").getFormulaValue());
 		Assert.assertEquals("SUM(#REF!,1)", sheet1.getCell("E5").getFormulaValue());
 	}
+	
+	@Ignore("zss 3.5")
 	@Test
 	public void testFormulaShiftAfterInsertDeleteRow(){
 		NBook book = NBooks.createBook("book1");
@@ -542,6 +546,8 @@ public class ModelFormulaTest {
 		Assert.assertEquals("SUM(Sheet1!#REF!)", sheet1.getCell("E4").getFormulaValue());
 		Assert.assertEquals("SUM(Sheet1!#REF!,1)", sheet1.getCell("F3").getFormulaValue());
 	}
+	
+	@Ignore("zss 3.5")
 	@Test
 	public void testFormulaShiftAfterInsertDeleteColumn(){
 		NBook book = NBooks.createBook("book1");
@@ -605,6 +611,7 @@ public class ModelFormulaTest {
 		Assert.assertEquals("SUM(#REF!,1)", sheet1.getCell("D5").getFormulaValue());
 	}
 	
+	@Ignore("zss 3.5")
 	@Test
 	public void testLinkingShift(){
 		NBook book = NBooks.createBook("book1");

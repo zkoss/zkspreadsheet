@@ -1174,15 +1174,15 @@ public class SheetImpl extends AbstractSheetAdv {
 				r++;
 			}
 		}
-		ModelUpdateUtil.addCellUpdate(rowIdx,columnIdx,lastRowIdx,lastColumnIdx);
-		ModelUpdateUtil.addCellUpdate(rowIdx+rowOffset,columnIdx+columnOffset,lastRowIdx+rowOffset,lastColumnIdx+columnOffset);
+		ModelUpdateUtil.addCellUpdate(this,rowIdx,columnIdx,lastRowIdx,lastColumnIdx);
+		ModelUpdateUtil.addCellUpdate(this,rowIdx+rowOffset,columnIdx+columnOffset,lastRowIdx+rowOffset,lastColumnIdx+columnOffset);
 		//shift the merge
 		mergedRegions.removeAll(containsMerge);
 		for(CellRegion merge:containsMerge){
 			CellRegion newMerge = new CellRegion(merge.getRow() + rowOffset,merge.getColumn()+ columnOffset,
 					merge.getLastRow()+rowOffset,merge.getLastColumn()+columnOffset);
 			mergedRegions.add(newMerge);
-			ModelUpdateUtil.addMergeUpdate(merge, newMerge);
+			ModelUpdateUtil.addMergeUpdate(this,merge, newMerge);
 		}
 		
 		shiftAfterCellMove(rowIdx, columnIdx,lastRowIdx,lastColumnIdx, rowOffset, columnOffset);
@@ -1358,7 +1358,7 @@ public class SheetImpl extends AbstractSheetAdv {
 	@Override
 	public void removeMergedRegion(CellRegion region) {
 		mergedRegions.remove(region);
-		ModelUpdateUtil.addMergeUpdate(region, null);
+		ModelUpdateUtil.addMergeUpdate(this,region, null);
 	}
 
 	@Override
@@ -1373,7 +1373,7 @@ public class SheetImpl extends AbstractSheetAdv {
 			}
 		}
 		mergedRegions.add(region);
-		ModelUpdateUtil.addMergeUpdate(null, region);
+		ModelUpdateUtil.addMergeUpdate(this,null, region);
 	}
 
 	@Override

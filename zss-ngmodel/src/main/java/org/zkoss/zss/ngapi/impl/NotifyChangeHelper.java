@@ -8,10 +8,7 @@ import org.zkoss.zss.ngapi.NRange;
 import org.zkoss.zss.ngmodel.*;
 import org.zkoss.zss.ngmodel.impl.AbstractBookAdv;
 
-/*package*/ class NotifyChangeHelper extends RangeHelperBase{
-	public NotifyChangeHelper(NRange range) {
-		super(range);
-	}
+/*package*/ class NotifyChangeHelper{
 
 	public void notifySizeChange(HashSet<SheetRegion> notifySet) {
 		for (SheetRegion notify : notifySet) {
@@ -53,12 +50,12 @@ import org.zkoss.zss.ngmodel.impl.AbstractBookAdv;
 				sheet, ModelEvents.createDataMap(ModelEvents.PARAM_PICTURE, picture)));
 	}
 
-	public void notifyMergeChange(NSheet sheet,Set<MergeUpdate> mergeNotifySet) {
-		LinkedHashSet<CellRegion> toRemove = new LinkedHashSet<CellRegion>();
-		LinkedHashSet<CellRegion> toAdd = new LinkedHashSet<CellRegion>();
+	public void notifyMergeChange(Set<MergeUpdate> mergeNotifySet) {
+		LinkedHashSet<SheetRegion> toRemove = new LinkedHashSet<SheetRegion>();
+		LinkedHashSet<SheetRegion> toAdd = new LinkedHashSet<SheetRegion>();
 		for(MergeUpdate mu:mergeNotifySet){
-			CellRegion remove = mu.getOrgMerge();
-			CellRegion add = mu.getMerge();
+			SheetRegion remove = mu.getOrgMerge()==null?null:new SheetRegion(mu.getSheet(),mu.getOrgMerge());
+			SheetRegion add = mu.getMerge()==null?null:new SheetRegion(mu.getSheet(),mu.getMerge());
 			if(remove!=null){
 				toRemove.add(remove);
 				toAdd.remove(remove);
@@ -68,26 +65,27 @@ import org.zkoss.zss.ngmodel.impl.AbstractBookAdv;
 				toRemove.remove(add);
 			}
 		}
-		NBook book = sheet.getBook();
-		for(CellRegion notify:toRemove){//remove the final remove list
-			System.out.println(">>> Notify remove merge "+notify.getReferenceString());
-			((AbstractBookAdv) book).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_MERGE_DELETE,sheet,
-					notify));
+		for(SheetRegion notify:toRemove){//remove the final remove list
+			NBook book = notify.getSheet().getBook();
+			System.out.println(">>> Notify remove merge "+notify.getRegion().getReferenceString());
+			((AbstractBookAdv) book).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_MERGE_DELETE,notify.getSheet(),
+					notify.getRegion()));
 			
 		}
-		for(CellRegion notify:toAdd){
-			System.out.println(">>> Notify add merge "+notify.getReferenceString());
-			((AbstractBookAdv) book).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_MERGE_ADD,sheet,
-					notify));
+		for(SheetRegion notify:toAdd){
+			NBook book = notify.getSheet().getBook();
+			System.out.println(">>> Notify add merge "+notify.getRegion().getReferenceString());
+			((AbstractBookAdv) book).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_MERGE_ADD,notify.getSheet(),
+					notify.getRegion()));
 		}
 		
 	}
 
-	public void notifyCellChange(NSheet sheet,Set<CellRegion> cellNotifySet) {
-		NBook book = sheet.getBook();
-		for(CellRegion notify:cellNotifySet){
-			System.out.println(">>> Notify update cell "+notify.getReferenceString());
-			((AbstractBookAdv) book).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_CELL_CONTENT_CHANGE,sheet,
+	public void notifyCellChange(Set<SheetRegion> cellNotifySet) {
+		for(SheetRegion notify:cellNotifySet){
+			NBook book = notify.getSheet().getBook();
+			System.out.println(">>> Notify update cell "+notify.getRegion().getReferenceString());
+			((AbstractBookAdv) book).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_CELL_CONTENT_CHANGE,notify.getSheet(),
 				new CellRegion(notify.getRow(),notify.getColumn(),notify.getLastRow(),notify.getLastColumn())));
 		}
 	}

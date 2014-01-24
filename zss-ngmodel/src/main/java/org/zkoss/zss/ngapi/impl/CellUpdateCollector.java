@@ -4,15 +4,16 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import org.zkoss.zss.ngmodel.CellRegion;
+import org.zkoss.zss.ngmodel.NSheet;
+import org.zkoss.zss.ngmodel.SheetRegion;
 
 public class CellUpdateCollector {
 	static ThreadLocal<CellUpdateCollector>  current = new ThreadLocal<CellUpdateCollector>();
 	
 	//a last object to prevent unnecessary cell-region creation
-	CellRegion last = null;
+	SheetRegion last = null;
 	
-	private Set<CellRegion> cellUpdates;
+	private Set<SheetRegion> cellUpdates;
 	
 	public CellUpdateCollector(){
 	}
@@ -26,31 +27,31 @@ public class CellUpdateCollector {
 		return current.get();
 	}
 
-	public void addCellUpdate(int row, int column) {
-		addCellUpdate(row,column,row,column);
+	public void addCellUpdate(NSheet sheet,int row, int column) {
+		addCellUpdate(sheet,row,column,row,column);
 	}
-	public void addCellUpdate(int row, int column, int lastRow, int lastColumn) {
-		if(last!=null && last.row == row && last.column==column
-				&& last.lastRow == lastRow && last.lastColumn == lastColumn){
+	public void addCellUpdate(NSheet sheet,int row, int column, int lastRow, int lastColumn) {
+		if(last!=null && last.getSheet() == sheet && last.getRow() == row && last.getColumn()==column
+				&& last.getLastRow() == lastRow && last.getLastColumn() == lastColumn){
 			return;
 		}
-		addCellUpdate(new CellRegion(row,column,lastRow,lastColumn));
+		addCellUpdate(new SheetRegion(sheet, row,column,lastRow,lastColumn));
 	}
-	public void addCellUpdate(CellRegion cellUpdate) {
+	public void addCellUpdate(SheetRegion cellUpdate) {
 		if(cellUpdates==null){
-			cellUpdates = new LinkedHashSet<CellRegion>();
+			cellUpdates = new LinkedHashSet<SheetRegion>();
 		}
 		cellUpdates.add(cellUpdate);
 		last = cellUpdate;
 	}
 	
-	public Set<CellRegion> getCellUpdates(){
+	public Set<SheetRegion> getCellUpdates(){
 		return cellUpdates==null?Collections.EMPTY_SET:Collections.unmodifiableSet(cellUpdates);
 	}
 
-	public void addCellUpdate(Set<CellRegion> cellUpdates) {
+	public void addCellUpdate(Set<SheetRegion> cellUpdates) {
 		if(this.cellUpdates==null){
-			this.cellUpdates = new LinkedHashSet<CellRegion>();
+			this.cellUpdates = new LinkedHashSet<SheetRegion>();
 		}
 		this.cellUpdates.addAll(cellUpdates);
 	}

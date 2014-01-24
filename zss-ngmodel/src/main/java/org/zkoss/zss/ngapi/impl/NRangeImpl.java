@@ -401,7 +401,7 @@ public class NRangeImpl implements NRange {
 			}
 		}
 
-		new NotifyChangeHelper(this).notifySizeChange(notifySet);
+		new NotifyChangeHelper().notifySizeChange(notifySet);
 	}
 
 	@Override
@@ -448,7 +448,7 @@ public class NRangeImpl implements NRange {
 				notifySet.add(new SheetRegion(r._sheet,0,i,maxrow,i));
 			}
 		}
-		new NotifyChangeHelper(this).notifySizeChange(notifySet);
+		new NotifyChangeHelper().notifySizeChange(notifySet);
 	}
 
 	@Override
@@ -612,7 +612,7 @@ public class NRangeImpl implements NRange {
 				}
 			}
 		}
-		new NotifyChangeHelper(this).notifySizeChange(notifySet);
+		new NotifyChangeHelper().notifySizeChange(notifySet);
 	}
 
 	@Override
@@ -799,7 +799,7 @@ public class NRangeImpl implements NRange {
 	}
 	
 	private void notifySheetFreezeChange(){
-		new NotifyChangeHelper(this).notifySheetFreezeChange(getSheet());
+		new NotifyChangeHelper().notifySheetFreezeChange(getSheet());
 	}
 
 	@Override
@@ -936,7 +936,7 @@ public class NRangeImpl implements NRange {
 	}
 	
 	private void notifySheetAutoFilterChange(){
-		new NotifyChangeHelper(this).notifySheetAutoFilterChange(getSheet());
+		new NotifyChangeHelper().notifySheetAutoFilterChange(getSheet());
 	}
 
 	@Override
@@ -969,7 +969,7 @@ public class NRangeImpl implements NRange {
 		public Object invoke() {
 			LinkedHashSet<Ref> dependentNotifySet = new LinkedHashSet<Ref>();
 			LinkedHashSet<MergeUpdate> mergeNotifySet = new LinkedHashSet<MergeUpdate>();
-			LinkedHashSet<CellRegion> cellNotifySet = new LinkedHashSet<CellRegion>();
+			LinkedHashSet<SheetRegion> cellNotifySet = new LinkedHashSet<SheetRegion>();
 
 			NBookSeries bookSeries = getBookSeries();
 
@@ -1007,10 +1007,10 @@ public class NRangeImpl implements NRange {
 				handleRefNotifyContentChange(bookSeries,dependentNotifySet);
 			}
 			if(cellNotifySet.size()>0){
-				handleCellNotifyContentChange(getSheet(),cellNotifySet);
+				handleCellNotifyContentChange(cellNotifySet);
 			}
 			if(mergeNotifySet.size()>0){
-				handleMergeNotifyChange(getSheet(),mergeNotifySet);
+				handleMergeNotifyChange(mergeNotifySet);
 			}
 			return result;
 		}
@@ -1022,18 +1022,18 @@ public class NRangeImpl implements NRange {
 			@Override
 			public Object invoke() {
 				NPicture picture = getSheet().addPicture(format, image, anchor);
-				new NotifyChangeHelper(NRangeImpl.this).notifySheetPictureAdd(getSheet(), picture);
+				new NotifyChangeHelper().notifySheetPictureAdd(getSheet(), picture);
 				return picture;
 			}
 		}.doInWriteLock(getLock());
 	}
 	
-	public void handleMergeNotifyChange(NSheet sheet,Set<MergeUpdate> mergeNotifySet) {
-		new NotifyChangeHelper(this).notifyMergeChange(sheet,mergeNotifySet);
+	public void handleMergeNotifyChange(Set<MergeUpdate> mergeNotifySet) {
+		new NotifyChangeHelper().notifyMergeChange(mergeNotifySet);
 	}
 
-	public void handleCellNotifyContentChange(NSheet sheet,Set<CellRegion> cellNotifySet) {
-		new NotifyChangeHelper(this).notifyCellChange(sheet,cellNotifySet);
+	public void handleCellNotifyContentChange(Set<SheetRegion> cellNotifySet) {
+		new NotifyChangeHelper().notifyCellChange(cellNotifySet);
 	}
 
 	@Override
@@ -1042,7 +1042,7 @@ public class NRangeImpl implements NRange {
 			@Override
 			public Object invoke() {
 				getSheet().deletePicture(picture);
-				new NotifyChangeHelper(NRangeImpl.this).notifySheetPictureDelete(getSheet(), picture);
+				new NotifyChangeHelper().notifySheetPictureDelete(getSheet(), picture);
 				return null;
 			}
 		}.doInWriteLock(getLock());
@@ -1054,7 +1054,7 @@ public class NRangeImpl implements NRange {
 			@Override
 			public Object invoke() {
 				picture.setAnchor(anchor);
-				new NotifyChangeHelper(NRangeImpl.this).notifySheetPictureMove(getSheet(), picture);
+				new NotifyChangeHelper().notifySheetPictureMove(getSheet(), picture);
 				return null;
 			}
 		}.doInWriteLock(getLock());

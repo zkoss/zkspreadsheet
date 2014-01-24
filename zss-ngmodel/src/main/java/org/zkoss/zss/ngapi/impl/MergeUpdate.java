@@ -14,16 +14,19 @@ Copyright (C) 2010 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.ngapi.impl;
 
 import org.zkoss.zss.ngmodel.CellRegion;
+import org.zkoss.zss.ngmodel.NSheet;
 
 /**
  * A pair of reference areas indicate the changes of the merge area. 
  * @author henrichen
- *
+ * @author dennischen
  */
 public class MergeUpdate {
+	final private NSheet _sheet;
 	final private CellRegion _orgMerge; //original merge range
 	final private CellRegion _merge; //merge range changed
-	public MergeUpdate(CellRegion orgMerge, CellRegion merge) {
+	public MergeUpdate(NSheet sheet, CellRegion orgMerge, CellRegion merge) {
+		this._sheet = sheet;
 		this._orgMerge = orgMerge;
 		this._merge = merge;
 	}
@@ -34,6 +37,10 @@ public class MergeUpdate {
 	public CellRegion getMerge() {
 		return _merge;
 	}
+	
+	public NSheet getSheet(){
+		return _sheet;
+	}
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -41,6 +48,7 @@ public class MergeUpdate {
 		result = prime * result + ((_merge == null) ? 0 : _merge.hashCode());
 		result = prime * result
 				+ ((_orgMerge == null) ? 0 : _orgMerge.hashCode());
+		result = prime * result + ((_sheet == null) ? 0 : _sheet.hashCode());
 		return result;
 	}
 	@Override
@@ -62,6 +70,12 @@ public class MergeUpdate {
 				return false;
 		} else if (!_orgMerge.equals(other._orgMerge))
 			return false;
+		if (_sheet == null) {
+			if (other._sheet != null)
+				return false;
+		} else if (!_sheet.equals(other._sheet))
+			return false;
 		return true;
 	}
+
 }

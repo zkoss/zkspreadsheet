@@ -7,6 +7,7 @@ import org.zkoss.zss.ngapi.impl.DependentUpdateCollector;
 import org.zkoss.zss.ngapi.impl.MergeUpdateCollector;
 import org.zkoss.zss.ngmodel.CellRegion;
 import org.zkoss.zss.ngmodel.NBookSeries;
+import org.zkoss.zss.ngmodel.NSheet;
 import org.zkoss.zss.ngmodel.sys.dependency.DependencyTable;
 import org.zkoss.zss.ngmodel.sys.dependency.Ref;
 
@@ -35,20 +36,20 @@ import org.zkoss.zss.ngmodel.sys.dependency.Ref;
 		}
 	}
 	
-	/*package*/ static void addCellUpdate(int row,int column){
-		addCellUpdate(row,column,row,column);
+	/*package*/ static void addCellUpdate(NSheet sheet,int row,int column){
+		addCellUpdate(sheet,row,column,row,column);
 	}
-	/*package*/ static void addCellUpdate(int row,int column, int lastRow, int lastColumn){
+	/*package*/ static void addCellUpdate(NSheet sheet,int row,int column, int lastRow, int lastColumn){
 		CellUpdateCollector collector = CellUpdateCollector.getCurrent();
 		if(collector!=null){
-			collector.addCellUpdate(row, column,lastRow,lastColumn);
+			collector.addCellUpdate(sheet,row, column,lastRow,lastColumn);
 		}
 	}
 	
-	/*package*/ static void addMergeUpdate(CellRegion original,CellRegion changeTo){
+	/*package*/ static void addMergeUpdate(NSheet sheet,CellRegion original,CellRegion changeTo){
 		MergeUpdateCollector collector = MergeUpdateCollector.getCurrent();
 		if(collector!=null){
-			collector.addMergeChange(original,changeTo);
+			collector.addMergeChange(sheet,original,changeTo);
 		}
 	}
 }
