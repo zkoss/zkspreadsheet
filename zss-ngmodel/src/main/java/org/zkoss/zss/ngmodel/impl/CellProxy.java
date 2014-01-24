@@ -273,22 +273,6 @@ class CellProxy extends AbstractCellAdv {
 	}
 
 	@Override
-	public void setRichText(NRichText text) {
-		loadProxy();
-		if (proxy == null) {
-			proxy = (AbstractCellAdv) ((AbstractRowAdv)  ((AbstractSheetAdv)getSheet()).getOrCreateRow(
-					rowIdx)).getOrCreateCell(columnIdx);
-		}
-		proxy.setRichText(text);
-	}
-
-	@Override
-	public NRichText getRichText() {
-		loadProxy();
-		return proxy == null ? null : proxy.getRichText();
-	}
-
-	@Override
 	void setIndex(int newidx) {
 		throw new UnsupportedOperationException("readonly");
 	}

@@ -59,7 +59,6 @@ public class CellImpl extends AbstractCellAdv {
 	private static class OptFields implements Serializable{
 		private AbstractHyperlinkAdv hyperlink;
 		private AbstractCommentAdv comment;
-		private AbstractRichTextAdv richText;
 	}
 
 	private OptFields getOpts(boolean create){
@@ -189,7 +188,7 @@ public class CellImpl extends AbstractCellAdv {
 		
 		OptFields opts = getOpts(false); 
 		if(opts!=null){
-			opts.richText = null;
+			opts.hyperlink = null;
 		};
 		
 		addCellUpdate();
@@ -215,7 +214,7 @@ public class CellImpl extends AbstractCellAdv {
 		
 		OptFields opts = getOpts(false); 
 		if(opts!=null){
-			opts.richText = null;
+			opts.hyperlink = null;
 		};
 	}
 
@@ -320,6 +319,8 @@ public class CellImpl extends AbstractCellAdv {
 			} else {
 				newType = CellType.STRING;
 			}
+		} else if (newVal instanceof NRichText) {
+			newType = CellType.STRING;
 		} else if (newVal instanceof FormulaExpression) {
 			newType = CellType.FORMULA;
 		} else if (newVal instanceof Date) {
@@ -377,19 +378,6 @@ public class CellImpl extends AbstractCellAdv {
 		Validations.argInstance(comment, AbstractCommentAdv.class);
 		getOpts(true).comment = (AbstractCommentAdv)comment;
 		addCellUpdate();
-	}
-
-	@Override
-	public void setRichText(NRichText text) {
-		Validations.argInstance(text, AbstractRichTextAdv.class);
-		getOpts(true).richText = (AbstractRichTextAdv)text;
-		addCellUpdate();
-	}
-
-	@Override
-	public NRichText getRichText() {
-		OptFields opts = getOpts(false);
-		return opts==null?null:opts.richText;
 	}
 	
 	@Override

@@ -92,7 +92,7 @@ public abstract class AbstractCellAdv implements NCell,LinkedModelObject,Seriali
 			checkType(CellType.STRING,CellType.BLANK);
 		}
 		Object val = getValue();
-		return val==null?"":(String)val;
+		return val==null?"":val instanceof NRichText?((NRichText)val).getText():(String)val;
 	}
 
 	@Override
@@ -191,11 +191,43 @@ public abstract class AbstractCellAdv implements NCell,LinkedModelObject,Seriali
 	
 
 	@Override
-	public NRichText setupRichText() {
+	public NRichText setupRichTextValue() {
+		Object val = getValue();
+		if(val instanceof NRichText){
+			return (NRichText)val;
+		}
 		NRichText text = new RichTextImpl();
-		setRichText(text);
+		setValue(text);
 		return text;
 	}
+
+//	@Override
+//	public void setRichTextValue(NRichText text) {
+//		Validations.argInstance(text, AbstractRichTextAdv.class);
+//		setValue(text);
+//	}
+
+	@Override
+	public NRichText getRichTextValue() {
+		if(getType() == CellType.FORMULA){
+			evalFormula();
+			checkFormulaResultType(CellType.STRING,CellType.BLANK);
+		}else{
+			checkType(CellType.STRING,CellType.BLANK);
+		}
+		Object val = getValue();
+		if(val instanceof NRichText){
+			return (NRichText)val;
+		}
+		return new ReadOnlyRichTextImpl(val==null?"":(String)val,getCellStyle().getFont());
+	}	
+	
+	@Override 
+	public boolean isRichTextValue(){
+		Object val = getValue();
+		return val instanceof NRichText;
+	}
+	
 	@Override
 	public NHyperlink setupHyperlink(){
 		NHyperlink hyperlink = new HyperlinkImpl();

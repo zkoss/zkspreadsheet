@@ -241,7 +241,8 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 		// How can I know the POI cell is richText?
 		//if (poiCell.getCellType() == Cell.CELL_TYPE_STRING && ("General".equalsIgnoreCase(formatStr) || "@".equals(formatStr))) {
 		if(false) {
-			NRichText richText = cell.setupRichText();
+			//TODO ZSS 3.5 how to i know it is simple string or a really richtext?
+			NRichText richText = cell.setupRichTextValue();
 			RichTextString poiRichTextString = poiCell.getRichStringCellValue();
 			String cellValue = poiRichTextString.getString();
 			for(int i = 0; i < poiRichTextString.numFormattingRuns(); i++) {

@@ -149,7 +149,7 @@ public class ExporterTest extends ImExpTestBase {
 		NSheet sheet = book.createSheet("first");
 		NCell cell = sheet.getCell(0, 0);
 		
-		NRichText rText = cell.setupRichText();
+		NRichText rText = cell.setupRichTextValue();
 		NFont font1 = book.createFont(true);
 		font1.setColor(book.createColor("#0000FF"));
 		font1.setStrikeout(true);
@@ -166,7 +166,7 @@ public class ExporterTest extends ImExpTestBase {
 		rText.addSegment("xyz", font3);
 		
 		cell = sheet.getCell(0, 1);
-		rText = cell.setupRichText();
+		rText = cell.setupRichTextValue();
 		font1 = book.createFont(true);
 		font1.setColor(book.createColor("#FFFF00"));
 		font1.setItalic(true);
