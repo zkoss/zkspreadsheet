@@ -31,8 +31,8 @@ public class PrintSetupImpl implements NPrintSetup,Serializable {
 	private int bottomMargin;
 	
 	private boolean landscape = false;
-	private short scale = 100; // default value
-	private PaperSize paperSize;
+	// private short scale = 100;
+	private PaperSize paperSize = PaperSize.A4;
 	
 	
 	@Override
