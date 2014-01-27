@@ -68,7 +68,7 @@ zss.Row = zk.$extends(zk.Widget, {
 		}
 	},
 	_updateWrapRowHeight: function () {
-		var autoHeight = 0;
+		var autoHeight = this.sheet.custRowHeight.getDefaultSize();
 		
 		if (this.wrapedCells.length >0){
 			//enlarge height upon largest text height among wrapped cells
@@ -78,8 +78,6 @@ zss.Row = zk.$extends(zk.Widget, {
 					autoHeight = Math.max(autoHeight,  this.wrapedCells[i].getTextHeight());
 				}
 			}
-		}else{ //no wrapped cells, auto resize to default height
-			autoHeight = this.sheet.custRowHeight.getDefaultSize();
 		}
 		
 		if (jq(this.$n()).height() == autoHeight)
