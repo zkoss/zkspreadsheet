@@ -28,7 +28,7 @@ public class PasteOption {
 	
 	boolean skipBlank = false;
 	boolean cut = false;
-//	boolean transport = false;
+	boolean transpose = false;
 	
 	PasteType pasteType = PasteType.ALL;
 	PasteOperation pasteOperation = PasteOperation.NONE;
@@ -68,6 +68,13 @@ public class PasteOption {
 	public void setCut(boolean cut) {
 		this.cut = cut;
 	}
+	public boolean isTranspose() {
+		return transpose;
+	}
+	public void setTranspose(boolean transpose) {
+		this.transpose = transpose;
+	}
+	
 	
 	
 }

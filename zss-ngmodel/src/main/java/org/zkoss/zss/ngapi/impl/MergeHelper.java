@@ -26,25 +26,23 @@ public class MergeHelper extends RangeHelperBase{
 		int bRow = getLastColumn();
 		int rCol = getLastColumn();
 		
-//		final RefSheet refSheet = BookHelper.getRefSheet((XBook)sheet.getWorkbook(), sheet);
-//		final List<MergeChange> changes = new ArrayList<MergeChange>(); 
-		for(int j = sheet.getNumOfMergedRegion() - 1; j >= 0; --j) {
-        	final CellRegion merged = sheet.getMergedRegion(j);
-        	
-        	final int firstCol = merged.getColumn();
-        	final int lastCol = merged.getLastColumn();
-        	final int firstRow = merged.getRow();
-        	final int lastRow = merged.getLastRow();
-        	
-        	// ZSS-395 unmerge when any cell overlap with merged region
-        	// ZSS-412 use a flag to decide to check overlap or not.
-        	if( (overlapped && overlap(firstRow, firstCol, lastRow, lastCol, tRow, lCol, bRow, rCol)) || 
-        			(!overlapped && contain(tRow, lCol, bRow, rCol,firstRow, firstCol, lastRow, lastCol)) ) {
-//				changes.add(new MergeChange(merged,null));
-				sheet.removeMergedRegion(merged);
-        	}
-		}
-//		return new ChangeInfo(null, null, changes);
+		sheet.removeMergedRegion(new CellRegion(tRow,lCol,bRow,rCol),overlapped);
+		
+//		for(int j = sheet.getNumOfMergedRegion() - 1; j >= 0; --j) {
+//        	final CellRegion merged = sheet.getMergedRegion(j);
+//        	
+//        	final int firstCol = merged.getColumn();
+//        	final int lastCol = merged.getLastColumn();
+//        	final int firstRow = merged.getRow();
+//        	final int lastRow = merged.getLastRow();
+//        	
+//        	// ZSS-395 unmerge when any cell overlap with merged region
+//        	// ZSS-412 use a flag to decide to check overlap or not.
+//        	if( (overlapped && overlap(firstRow, firstCol, lastRow, lastCol, tRow, lCol, bRow, rCol)) || 
+//        			(!overlapped && contain(tRow, lCol, bRow, rCol,firstRow, firstCol, lastRow, lastCol)) ) {
+//				sheet.removeMergedRegion(merged);
+//        	}
+//		}
 	}
 	
 	//a b are overlapped.

@@ -121,7 +121,16 @@ public interface NSheet {
 	
 	
 	public List<CellRegion> getMergedRegions();
-	public void removeMergedRegion(CellRegion region);
+	/**
+	 * Remove the merged area that are contained by region 
+	 * @param region
+	 * @param removeOverlpas true if you want to remove the merged areas that are just overlapped.
+	 */
+	public void removeMergedRegion(CellRegion region,boolean removeOverlaps);
+	/**
+	 * Add a merged area, you can't assign a area that overlaps existed merged area.
+	 * @param region
+	 */
 	public void addMergedRegion(CellRegion region);
 	public int getNumOfMergedRegion();
 	public CellRegion getMergedRegion(int idx);

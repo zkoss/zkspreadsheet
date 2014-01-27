@@ -31,16 +31,16 @@ public interface FormulaEngine {
 	public FormulaExpression parse(String formula, FormulaParseContext context);
 	
 	/**
-	 * Shift the formula that care about region and formula's absolute, it doesn't care the related sheet.
+	 * Shift the formula 
 	 * @param formula
-	 * @param srcRegion
 	 * @param rowOffset
 	 * @param columnOffset
+	 * @param transpose
 	 * @param context
 	 * @return
 	 */
 	//TODO zss 3.5
-//	public FormulaExpression shift(String formula, CellRegion srcRegion, int rowOffset,int columnOffset,
+//	public FormulaExpression shift(String formula, int rowOffset,int columnOffset, boolean transpose,
 //			FormulaParseContext context);
 	/**
 	 * Shift the formula that care on sheet and region.

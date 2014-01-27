@@ -864,14 +864,15 @@ public class SheetImpl extends AbstractSheetAdv {
 			builder.append(CellReference.convertNumToColString(i)).append(":").append(i).append("\t");
 		}
 		builder.append("\n");
-		builder.append("  ==Row==");
+		builder.append("  ==Row=={");
 		for(int i=0;i<=endRow;i++){
 			builder.append("\n  ").append(i).append("\t");
 			if(getRow(i).isNull()){
 				builder.append("-*");
 				continue;
 			}
-			for(int j=0;j<=endColumn;j++){
+			int endCell = getEndCellIndex(i);
+			for(int j=0;j<=endCell;j++){
 				NCell cell = getCell(i, j);
 				Object cellvalue = cell.isNull()?"-":cell.getValue();
 				String str = cellvalue==null?"null":cellvalue.toString();
@@ -884,7 +885,7 @@ public class SheetImpl extends AbstractSheetAdv {
 				builder.append(str);
 			}
 		}
-		builder.append("}\n");
+		builder.append("\n}\n");
 	}
 
 	@Override
@@ -1356,9 +1357,13 @@ public class SheetImpl extends AbstractSheetAdv {
 	}
 
 	@Override
-	public void removeMergedRegion(CellRegion region) {
-		mergedRegions.remove(region);
-		ModelUpdateUtil.addMergeUpdate(this,region, null);
+	public void removeMergedRegion(CellRegion region,boolean removeOverlaps) {
+		for(CellRegion r:new ArrayList<CellRegion>(mergedRegions)){
+			if((removeOverlaps && region.overlaps(r)) || region.contains(r)){
+				mergedRegions.remove(r);
+				ModelUpdateUtil.addMergeUpdate(this,r, null);
+			}
+		}
 	}
 
 	@Override
@@ -1411,14 +1416,13 @@ public class SheetImpl extends AbstractSheetAdv {
 	}
 	@Override
 	public CellRegion getMergedRegion(int row, int column) {
-		List<CellRegion> list =new LinkedList<CellRegion>(); 
 		for(CellRegion r:mergedRegions){
 			if(r.contains(row, column)){
 				return r;
 			}
 		}
 		return null;
-	}	
+	}
 
 	@Override
 	public Object getAttribute(String name) {
