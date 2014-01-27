@@ -30,7 +30,7 @@ zss.clientCopy = {
 	maxRowCount: 1000,
 	maxColumnCount: 40
 };
-zss.SCROLL_TO_VISIBLE = { // ZSS-475: add direction enum. for scrolling to visible
+zss.SCROLL_DIR = { // ZSS-475: add direction enum. for scrolling to visible
 	BOTH: "both",
 	HORIZONTAL: "horizontal",
 	VERTICAL: "vertical"

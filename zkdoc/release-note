@@ -69,7 +69,8 @@ ZK Spreadsheet 2.6.0
 	ZSS-534 font size not displayed properly in toolbar
 	ZSS-533 formula's function with non-existed name should be resolved to #NAME? and an name be created in file
 	ZSS-205 scroll bar in function bar is not persistent
-  ZSS-528 Unwrapping text in a cell does not resize cell
+	ZSS-528 Unwrapping text in a cell does not resize cell
+	ZSS-219 Problem with org.zkoss.zss.ui.Spreadsheet.focusTo
 
 ZK Spreadsheet 2.5.0
 *Features:   

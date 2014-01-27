@@ -1,6 +1,14 @@
 <zk>
-	<spreadsheet id="ss" src="/issue/475-selection.xlsx" maxrows="1000" maxcolumns="100"
-		width="600px" height="600px"
-		ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e"
-		showContextMenu="true" showSheetbar="true" showToolbar="true" showFormulabar="true" />
+	<vbox>
+		<button label="freeze E6">
+			<attribute name="onClick"><![CDATA[
+				ss.setRowfreeze(4);
+				ss.setColumnfreeze(3);
+			]]></attribute>
+		</button>
+		<spreadsheet id="ss" src="/issue/475-selection.xlsx" maxrows="1000" maxcolumns="100"
+			width="600px" height="600px"
+			ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e"
+			showContextMenu="true" showSheetbar="true" showToolbar="true" showFormulabar="true" />
+	</vbox>
 </zk>

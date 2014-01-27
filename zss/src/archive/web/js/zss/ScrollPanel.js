@@ -183,6 +183,11 @@ zss.ScrollPanel = zk.$extends(zk.Object, {
 	 * @param {Object} cell cell ctrl
 	 */
 	scrollToVisible: function (row, col, cell, direction) { // ZSS-475: add direction parameter
+		
+		if(direction == undefined || direction == null) {
+			direction = zss.SCROLL_DIR.BOTH; 
+		}
+		
 		//zss-219, scrollToVisible should able to not depends on cell dom instance
 		
 		var sheet = this.sheet;
@@ -269,13 +274,13 @@ zss.ScrollPanel = zk.$extends(zk.Object, {
 
 			// ZSS-475: consider scrolling direction accroding to argument
 			switch(direction) {
-			case zss.SCROLL_TO_VISIBLE.HORIZONTAL :
+			case zss.SCROLL_DIR.HORIZONTAL :
 					spcmp.scrollLeft = lsl;
 					break;
-			case zss.SCROLL_TO_VISIBLE.VERTICAL :
+			case zss.SCROLL_DIR.VERTICAL :
 					spcmp.scrollTop = lst;
 					break;
-			case zss.SCROLL_TO_VISIBLE.BOTH :
+			case zss.SCROLL_DIR.BOTH :
 					spcmp.scrollLeft = lsl;
 					spcmp.scrollTop = lst;
 					break;

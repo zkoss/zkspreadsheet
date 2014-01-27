@@ -496,7 +496,7 @@ zss.DataPanel = zk.$extends(zk.Object, {
 			fn = function () {
 				//zss-219, if the cell dom is not exsited, scroll to it first, and then focus it. 
 				if(!!!sheet.getCell(row, col)){
-					sheet.sp.scrollToVisible(row,col, null, zss.SCROLL_TO_VISIBLE.BOTH);
+					sheet.sp.scrollToVisible(row,col);
 					setTimeout(function(){
 						local._moveFocus(row, col, scroll, selection, noevt, noslevt);	
 					},25);
@@ -538,7 +538,7 @@ zss.DataPanel = zk.$extends(zk.Object, {
 		this._gainFocus(true, noevt, sheet.state < zss.SSheetCtrl.FOCUSED ? false : true);
 		
 		if (scroll)
-			sheet.sp.scrollToVisible(null, null, cell, zss.SCROLL_TO_VISIBLE.BOTH);	
+			sheet.sp.scrollToVisible(null, null, cell);	
 		return true;
 	},
 	/* re-focus current cell , and stop editing*/
