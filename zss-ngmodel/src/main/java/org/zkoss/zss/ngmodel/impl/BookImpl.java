@@ -87,6 +87,8 @@ public class BookImpl extends AbstractBookAdv{
 	
 	private EvaluationContributor evalContributor;
 	
+	/*package*/ final static ThreadLocal<NSheet> destroyingSheet = new ThreadLocal<NSheet>(); 
+	
 	public BookImpl(String bookName){
 		Validations.argNotNull(bookName);
 		this.bookName = bookName;
@@ -281,7 +283,12 @@ public class BookImpl extends AbstractBookAdv{
 	public void deleteSheet(NSheet sheet) {
 		checkOwnership(sheet);
 		
-		((AbstractSheetAdv)sheet).destroy();
+			destroyingSheet.set(sheet);
+		try{
+			((AbstractSheetAdv)sheet).destroy();
+		}finally{
+			destroyingSheet.set(null);
+		}
 		
 		int index = sheets.indexOf(sheet);
 		sheets.remove(index);
