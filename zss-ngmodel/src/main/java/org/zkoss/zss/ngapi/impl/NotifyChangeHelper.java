@@ -10,13 +10,13 @@ import org.zkoss.zss.ngmodel.impl.AbstractBookAdv;
 
 /*package*/ class NotifyChangeHelper{
 
-	public void notifySizeChange(HashSet<SheetRegion> notifySet) {
+	public void notifyRowColumnSizeChange(HashSet<SheetRegion> notifySet) {
 		for (SheetRegion notify : notifySet) {
-			notifySizeChange(notify);
+			notifyRowColumnSizeChange(notify);
 		}
 	}
 
-	public void notifySizeChange(SheetRegion notify) {
+	public void notifyRowColumnSizeChange(SheetRegion notify) {
 		((AbstractBookAdv) notify.getSheet().getBook()).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_ROW_COLUMN_SIZE_CHANGE,
 				notify.getSheet(),
 				new CellRegion(notify.getRow(),notify.getColumn(),notify.getLastRow(),notify.getLastColumn())));
@@ -37,17 +37,17 @@ import org.zkoss.zss.ngmodel.impl.AbstractBookAdv;
 	
 	public void notifySheetPictureAdd(NSheet sheet, NPicture picture){
 		((AbstractBookAdv) sheet.getBook()).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_PICTURE_ADD, 
-				sheet, ModelEvents.createDataMap(ModelEvents.PARAM_PICTURE, picture)));
+				sheet, ModelEvents.createDataMap(ModelEvents.PARAM_OBJECT_ID, picture.getId())));
 	}
 
-	public void notifySheetPictureDelete(NSheet sheet, NPicture picture) {
+	public void notifySheetPictureDelete(NSheet sheet, String id) {
 		((AbstractBookAdv) sheet.getBook()).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_PICTURE_DELETE, 
-				sheet, ModelEvents.createDataMap(ModelEvents.PARAM_PICTURE, picture)));
+				sheet, ModelEvents.createDataMap(ModelEvents.PARAM_OBJECT_ID, id)));
 	}
 
 	public void notifySheetPictureMove(NSheet sheet, NPicture picture) {
 		((AbstractBookAdv) sheet.getBook()).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_PICTURE_UPDATE, 
-				sheet, ModelEvents.createDataMap(ModelEvents.PARAM_PICTURE, picture)));
+				sheet, ModelEvents.createDataMap(ModelEvents.PARAM_OBJECT_ID, picture.getId())));
 	}
 
 	public void notifyMergeChange(Set<MergeUpdate> mergeNotifySet) {
@@ -83,11 +83,49 @@ import org.zkoss.zss.ngmodel.impl.AbstractBookAdv;
 
 	public void notifyCellChange(Set<SheetRegion> cellNotifySet) {
 		for(SheetRegion notify:cellNotifySet){
-			NBook book = notify.getSheet().getBook();
-			System.out.println(">>> Notify update cell "+notify.getRegion().getReferenceString());
-			((AbstractBookAdv) book).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_CELL_CONTENT_CHANGE,notify.getSheet(),
-				new CellRegion(notify.getRow(),notify.getColumn(),notify.getLastRow(),notify.getLastColumn())));
+			notifyCellChange(notify);
 		}
+	}
+	public void notifyCellChange(SheetRegion notify) {
+		NBook book = notify.getSheet().getBook();
+		System.out.println(">>> Notify update cell "+notify.getRegion().getReferenceString());
+		((AbstractBookAdv) book).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_CELL_CONTENT_CHANGE,notify.getSheet(),
+				notify.getRegion()));
+	}
+	
+	public void notifySheetDelete(NBook book,NSheet deletedSheet,int deletedIndex){
+		((AbstractBookAdv) book).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_SHEET_DELETE,book,
+				ModelEvents.createDataMap(ModelEvents.PARAM_SHEET,deletedSheet,ModelEvents.PARAM_INDEX,deletedIndex)));
+	}
+	
+	public void notifySheetCreate(NSheet sheet){
+		((AbstractBookAdv) sheet.getBook()).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_SHEET_CREATE,sheet));
+	}
+	
+	public void notifySheetNameChange(NSheet sheet,String oldName){
+		((AbstractBookAdv) sheet.getBook()).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_SHEET_NAME_CHANGE,sheet,
+				ModelEvents.createDataMap(ModelEvents.PARAM_OLD_NAME,oldName)));
+	}
+	
+	public void notifySheetReorder(NSheet sheet,int oldIdx){
+		((AbstractBookAdv) sheet.getBook()).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_SHEET_ORDER_CHANGE,sheet,
+				ModelEvents.createDataMap(ModelEvents.PARAM_OLD_INDEX,oldIdx)));
+	}
+
+	public void notifyDataValidationChange(NSheet sheet, String validationId) {
+		((AbstractBookAdv) sheet.getBook()).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_DATA_VALIDATION_CONTENT_CHANGE,sheet,
+				ModelEvents.createDataMap(ModelEvents.PARAM_OBJECT_ID,validationId)));
+	}
+
+	public void notifyChartChange(NSheet sheet, String chartId) {
+		((AbstractBookAdv) sheet.getBook()).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_CHART_CONTENT_CHANGE,sheet,
+				ModelEvents.createDataMap(ModelEvents.PARAM_OBJECT_ID,chartId)));
+	}
+
+	public void notifyCustomEvent(String customEventName, NSheet sheet,
+			Object data) {
+		((AbstractBookAdv) sheet.getBook()).sendModelEvent(ModelEvents.createModelEvent(customEventName,sheet,
+				ModelEvents.createDataMap(ModelEvents.PARAM_CUSTOM_DATA,data)));
 	}
 	
 }

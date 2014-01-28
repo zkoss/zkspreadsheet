@@ -401,7 +401,7 @@ public class NRangeImpl implements NRange {
 			}
 		}
 
-		new NotifyChangeHelper().notifySizeChange(notifySet);
+		new NotifyChangeHelper().notifyRowColumnSizeChange(notifySet);
 	}
 
 	@Override
@@ -448,7 +448,7 @@ public class NRangeImpl implements NRange {
 				notifySet.add(new SheetRegion(r._sheet,0,i,maxrow,i));
 			}
 		}
-		new NotifyChangeHelper().notifySizeChange(notifySet);
+		new NotifyChangeHelper().notifyRowColumnSizeChange(notifySet);
 	}
 
 	@Override
@@ -612,7 +612,7 @@ public class NRangeImpl implements NRange {
 				}
 			}
 		}
-		new NotifyChangeHelper().notifySizeChange(notifySet);
+		new NotifyChangeHelper().notifyRowColumnSizeChange(notifySet);
 	}
 
 	@Override
@@ -675,8 +675,7 @@ public class NRangeImpl implements NRange {
 			@Override
 			void doNotifyPhase() {
 				if(toDeleteSheet.get()!=null){
-					((AbstractBookAdv) getBook()).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_SHEET_DELETE,book,
-						ModelEvents.createDataMap(ModelEvents.PARAM_SHEET,toDeleteSheet.get(),ModelEvents.PARAM_INDEX,toDeleteIndex.get())));
+					new NotifyChangeHelper().notifySheetDelete(getBook(), toDeleteSheet.get(), toDeleteIndex.get());
 				}
 			}
 		}.doInWriteLock(getLock());
@@ -703,7 +702,7 @@ public class NRangeImpl implements NRange {
 			@Override
 			void doNotifyPhase() {
 				if(resultSheet.get()!=null){
-					((AbstractBookAdv) getBook()).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_SHEET_CREATE,resultSheet.get()));
+					new NotifyChangeHelper().notifySheetCreate(resultSheet.get());
 				}
 			}
 		}.doInWriteLock(getLock());	
@@ -730,24 +729,26 @@ public class NRangeImpl implements NRange {
 	public void setSheetName(final String newname) {
 		//it just handle the first ref
 		final ResultWrap<NSheet> resultSheet = new ResultWrap<NSheet>();
+		final ResultWrap<String> oldName = new ResultWrap<String>();
 		new ModelUpdateTask() {			
 			@Override
 			public Object doInvokePhase() {
 				NBook book = getBook();
 				NSheet sheet = getSheet();
-				if(sheet.getSheetName().equals(newname)){
+				String old = sheet.getSheetName();
+				if(old.equals(newname)){
 					return null;
 				}
 				book.setSheetName(sheet, newname);
 				resultSheet.set(sheet);
-				
+				oldName.set(old);
 				return null;
 			}
 
 			@Override
 			void doNotifyPhase() {
 				if(resultSheet.get()!=null){
-					((AbstractBookAdv) getBook()).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_SHEET_NAME_CHANGE,resultSheet.get()));
+					new NotifyChangeHelper().notifySheetNameChange(resultSheet.get(),oldName.get());
 				}
 			}
 		}.doInWriteLock(getLock());	
@@ -757,27 +758,29 @@ public class NRangeImpl implements NRange {
 	public void setSheetOrder(final int pos) {
 		//it just handle the first ref
 		final ResultWrap<NSheet> resultSheet = new ResultWrap<NSheet>();
+		final ResultWrap<Integer> oldIdx = new ResultWrap<Integer>();
 		new ModelUpdateTask() {			
 			@Override
 			public Object doInvokePhase() {
 				NBook book = getBook();
 				NSheet sheet = getSheet();
 				
-				int oldIdx = book.getSheetIndex(sheet);
-				if(oldIdx==pos){
+				int old = book.getSheetIndex(sheet);
+				if(old==pos){
 					return null;
 				}
 				
 				//in our new model, we don't use sheet index, so we don't need to clear anything when move it
 				book.moveSheetTo(sheet, pos);
 				resultSheet.set(sheet);
+				oldIdx.set(old);
 				return null;
 			}
 
 			@Override
 			void doNotifyPhase() {
 				if(resultSheet.get()!=null){
-					((AbstractBookAdv) getBook()).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_SHEET_ORDER_CHANGE,resultSheet.get()));
+					new NotifyChangeHelper().notifySheetReorder(resultSheet.get(),oldIdx.get());
 				}
 			}
 		}.doInWriteLock(getLock());	
@@ -945,10 +948,10 @@ public class NRangeImpl implements NRange {
 		ReadWriteTask task = new ReadWriteTask() {			
 			@Override
 			public Object invoke() {
+				NotifyChangeHelper notifyHelper =  new NotifyChangeHelper();
 				for (EffectedRegion r : rangeRefs) {
 					NBook book = r._sheet.getBook();
-					((AbstractBookAdv) book).sendModelEvent(ModelEvents.createModelEvent(customEventName,r._sheet,
-							ModelEvents.createDataMap(ModelEvents.PARAM_CUSTOM_DATA,data)));
+					notifyHelper.notifyCustomEvent(customEventName,r._sheet,data);
 				}
 				return null;
 			}
@@ -1041,8 +1044,9 @@ public class NRangeImpl implements NRange {
 		new ReadWriteTask() {			
 			@Override
 			public Object invoke() {
+				String pid = picture.getId();
 				getSheet().deletePicture(picture);
-				new NotifyChangeHelper().notifySheetPictureDelete(getSheet(), picture);
+				new NotifyChangeHelper().notifySheetPictureDelete(getSheet(), pid);
 				return null;
 			}
 		}.doInWriteLock(getLock());

@@ -319,4 +319,21 @@ C	3	6	9	=SUM(E9:F9)
 			fail();
 		}
 	}
+	
+	@Test
+	public void testDeleteSheet(){
+		NBook book = NBooks.createBook("book1");
+		NSheet sheet1 = book.createSheet("Sheet1");
+		NSheet sheet2 = book.createSheet("Sheet2");
+		
+		sheet1.getCell("A1").setValue(11);
+		sheet1.getCell("B1").setValue("=A1");
+		sheet2.getCell("B1").setValue("=Sheet1!A1");
+		Assert.assertEquals(11D, sheet1.getCell("B1").getValue());
+		Assert.assertEquals(11D, sheet2.getCell("B1").getValue());
+		
+		NRanges.range(sheet1).deleteSheet();
+		
+		Assert.assertEquals("#REF!", sheet2.getCell("B1").getErrorValue().getErrorString());
+	}
 }

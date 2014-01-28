@@ -52,11 +52,11 @@ public class ColumnArrayImpl extends AbstractColumnArrayAdv {
 	}
 
 
-	@Override
-	void onModelInternalEvent(ModelInternalEvent event) {
-		// TODO Auto-generated method stub
-
-	}
+//	@Override
+//	void onModelInternalEvent(ModelInternalEvent event) {
+//		// TODO Auto-generated method stub
+//
+//	}
 
 
 	@Override

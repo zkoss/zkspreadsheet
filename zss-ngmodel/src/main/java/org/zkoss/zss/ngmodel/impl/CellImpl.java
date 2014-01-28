@@ -190,8 +190,10 @@ public class CellImpl extends AbstractCellAdv {
 		if(opts!=null){
 			opts.hyperlink = null;
 		};
-		
-		addCellUpdate();
+		//don't update when sheet is destroying
+		if(BookImpl.destroyingSheet.get()!=getSheet()){
+			addCellUpdate();
+		}
 	}
 	
 	private void addCellUpdate(){

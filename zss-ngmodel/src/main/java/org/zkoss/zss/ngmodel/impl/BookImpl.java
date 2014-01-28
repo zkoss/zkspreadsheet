@@ -87,6 +87,8 @@ public class BookImpl extends AbstractBookAdv{
 	
 	private EvaluationContributor evalContributor;
 	
+	/*package*/ final static ThreadLocal<NSheet> destroyingSheet = new ThreadLocal<NSheet>(); 
+	
 	public BookImpl(String bookName){
 		Validations.argNotNull(bookName);
 		this.bookName = bookName;
@@ -168,22 +170,22 @@ public class BookImpl extends AbstractBookAdv{
 //		return name;
 //	}
 	
-	@Override
-	void onModelInternalEvent(ModelInternalEvent event){
-		//implicitly deliver to sheet
-		for(AbstractSheetAdv sheet:sheets){
-			sheet.onModelInternalEvent(event);
-		}
-	}
+//	@Override
+//	void onModelInternalEvent(ModelInternalEvent event){
+//		//implicitly deliver to sheet
+//		for(AbstractSheetAdv sheet:sheets){
+//			sheet.onModelInternalEvent(event);
+//		}
+//	}
 	
-	@Override
-	public void sendModelInternalEvent(ModelInternalEvent event){
-		//publish event to the series.
-		for(NBook book:getBookSeries().getBooks()){
-			((AbstractBookAdv)book).onModelInternalEvent(event);
-		}
-		//TODO some internal event could consider to set it to external(model-event)?
-	}
+//	@Override
+//	public void sendModelInternalEvent(ModelInternalEvent event){
+//		//publish event to the series.
+//		for(NBook book:getBookSeries().getBooks()){
+//			((AbstractBookAdv)book).onModelInternalEvent(event);
+//		}
+//		//TODO some internal event could consider to set it to external(model-event)?
+//	}
 	@Override
 	public void sendModelEvent(ModelEvent event){
 		eventListenerAdaptor.sendModelEvent(event);
@@ -223,9 +225,9 @@ public class BookImpl extends AbstractBookAdv{
 		//create formula cache for any sheet, sheet name, position change
 		EngineFactory.getInstance().createFormulaEngine().clearCache(new FormulaClearContext(this));
 		
-		sendModelInternalEvent(ModelInternalEvents.createModelInternalEvent(ModelInternalEvents.ON_SHEET_ADDED,
-				this,
-				sheet));
+//		sendModelInternalEvent(ModelInternalEvents.createModelInternalEvent(ModelInternalEvents.ON_SHEET_ADDED,
+//				this,
+//				sheet));
 
 		ModelUpdateUtil.handlePrecedentUpdate(getBookSeries(),new RefImpl(sheet));
 
@@ -247,8 +249,8 @@ public class BookImpl extends AbstractBookAdv{
 		//create formula cache for any sheet, sheet name, position change
 		EngineFactory.getInstance().createFormulaEngine().clearCache(new FormulaClearContext(this));
 		
-		sendModelInternalEvent(ModelInternalEvents.createModelInternalEvent(ModelInternalEvents.ON_SHEET_RENAMED, 
-				this,sheet, ModelInternalEvents.createDataMap(ModelInternalEvents.PARAM_SHEET_OLD_NAME, oldname)));
+//		sendModelInternalEvent(ModelInternalEvents.createModelInternalEvent(ModelInternalEvents.ON_SHEET_RENAMED, 
+//				this,sheet, ModelInternalEvents.createDataMap(ModelInternalEvents.PARAM_SHEET_OLD_NAME, oldname)));
 		
 		ModelUpdateUtil.handlePrecedentUpdate(getBookSeries(),new RefImpl(this.getBookName(),newname));//to clear the cahce of formula that has unexisted name
 		ModelUpdateUtil.handlePrecedentUpdate(getBookSeries(),new RefImpl(this.getBookName(),oldname));
@@ -281,7 +283,12 @@ public class BookImpl extends AbstractBookAdv{
 	public void deleteSheet(NSheet sheet) {
 		checkOwnership(sheet);
 		
-		((AbstractSheetAdv)sheet).destroy();
+			destroyingSheet.set(sheet);
+		try{
+			((AbstractSheetAdv)sheet).destroy();
+		}finally{
+			destroyingSheet.set(null);
+		}
 		
 		int index = sheets.indexOf(sheet);
 		sheets.remove(index);
@@ -289,8 +296,8 @@ public class BookImpl extends AbstractBookAdv{
 		//create formula cache for any sheet, sheet name, position change
 		EngineFactory.getInstance().createFormulaEngine().clearCache(new FormulaClearContext(this));
 		
-		sendModelInternalEvent(ModelInternalEvents.createModelInternalEvent(ModelInternalEvents.ON_SHEET_DELETED, 
-				this,ModelInternalEvents.createDataMap(ModelInternalEvents.PARAM_SHEET_OLD_INDEX, index)));
+//		sendModelInternalEvent(ModelInternalEvents.createModelInternalEvent(ModelInternalEvents.ON_SHEET_DELETED, 
+//				this,ModelInternalEvents.createDataMap(ModelInternalEvents.PARAM_SHEET_OLD_INDEX, index)));
 		
 		ModelUpdateUtil.handlePrecedentUpdate(getBookSeries(),new RefImpl(this.getBookName(),sheet.getSheetName()));
 	}
@@ -311,8 +318,8 @@ public class BookImpl extends AbstractBookAdv{
 		//create formula cache for any sheet, sheet name, position change
 		EngineFactory.getInstance().createFormulaEngine().clearCache(new FormulaClearContext(this));
 		
-		sendModelInternalEvent(ModelInternalEvents.createModelInternalEvent(ModelInternalEvents.ON_SHEET_MOVED, 
-				this,sheet,ModelInternalEvents.createDataMap(ModelInternalEvents.PARAM_SHEET_OLD_INDEX, oldindex)));
+//		sendModelInternalEvent(ModelInternalEvents.createModelInternalEvent(ModelInternalEvents.ON_SHEET_MOVED, 
+//				this,sheet,ModelInternalEvents.createDataMap(ModelInternalEvents.PARAM_SHEET_OLD_INDEX, oldindex)));
 	}
 
 	public void dump(StringBuilder builder) {

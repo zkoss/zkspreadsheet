@@ -463,16 +463,16 @@ public class SheetImpl extends AbstractSheetAdv {
 	void setSheetName(String name) {
 		this.name = name;
 	}
-	@Override
-	void onModelInternalEvent(ModelInternalEvent event) {
-		for(AbstractRowAdv row:rows.values()){
-			row.onModelInternalEvent(event);
-		}
-		for(AbstractColumnArrayAdv column:columnArrays.values()){
-			column.onModelInternalEvent(event);
-		}
-		//TODO to other object
-	}
+//	@Override
+//	void onModelInternalEvent(ModelInternalEvent event) {
+//		for(AbstractRowAdv row:rows.values()){
+//			row.onModelInternalEvent(event);
+//		}
+//		for(AbstractColumnArrayAdv column:columnArrays.values()){
+//			column.onModelInternalEvent(event);
+//		}
+//		//TODO to other object
+//	}
 	
 //	public void clearRow(int rowIdx, int rowIdx2) {
 //		int start = Math.min(rowIdx, rowIdx2);
@@ -552,10 +552,10 @@ public class SheetImpl extends AbstractSheetAdv {
 		
 		shiftAfterRowInsert(rowIdx,lastRowIdx);
 		
-		book.sendModelInternalEvent(ModelInternalEvents.createModelInternalEvent(ModelInternalEvents.ON_ROW_INSERTED, 
-				this, 
-				ModelInternalEvents.createDataMap(ModelInternalEvents.PARAM_ROW_INDEX, rowIdx,
-						ModelInternalEvents.PARAM_LAST_ROW_INDEX, size)));
+//		book.sendModelInternalEvent(ModelInternalEvents.createModelInternalEvent(ModelInternalEvents.ON_ROW_INSERTED, 
+//				this, 
+//				ModelInternalEvents.createDataMap(ModelInternalEvents.PARAM_ROW_INDEX, rowIdx,
+//						ModelInternalEvents.PARAM_LAST_ROW_INDEX, size)));
 	}
 	
 	@Override
@@ -581,9 +581,9 @@ public class SheetImpl extends AbstractSheetAdv {
 		
 		shiftAfterRowDelete(rowIdx,lastRowIdx);
 		
-		book.sendModelInternalEvent(ModelInternalEvents.createModelInternalEvent(ModelInternalEvents.ON_ROW_DELETED, 
-				this, ModelInternalEvents.createDataMap(ModelInternalEvents.PARAM_ROW_INDEX, rowIdx, 
-						ModelInternalEvents.PARAM_ROW_INDEX, lastRowIdx)));
+//		book.sendModelInternalEvent(ModelInternalEvents.createModelInternalEvent(ModelInternalEvents.ON_ROW_DELETED, 
+//				this, ModelInternalEvents.createDataMap(ModelInternalEvents.PARAM_ROW_INDEX, rowIdx, 
+//						ModelInternalEvents.PARAM_ROW_INDEX, lastRowIdx)));
 	}	
 	
 	private void shiftAfterRowInsert(int rowIdx, int lastRowIdx) {
@@ -910,9 +910,9 @@ public class SheetImpl extends AbstractSheetAdv {
 		
 		shiftAfterColumnInsert(columnIdx,lastColumnIdx);
 		
-		book.sendModelInternalEvent(ModelInternalEvents.createModelInternalEvent(ModelInternalEvents.ON_COLUMN_INSERTED, this,
-				ModelInternalEvents.createDataMap(ModelInternalEvents.PARAM_COLUMN_INDEX, columnIdx, 
-						ModelInternalEvents.PARAM_LAST_COLUMN_INDEX, lastColumnIdx)));
+//		book.sendModelInternalEvent(ModelInternalEvents.createModelInternalEvent(ModelInternalEvents.ON_COLUMN_INSERTED, this,
+//				ModelInternalEvents.createDataMap(ModelInternalEvents.PARAM_COLUMN_INDEX, columnIdx, 
+//						ModelInternalEvents.PARAM_LAST_COLUMN_INDEX, lastColumnIdx)));
 	}
 	
 	private void insertAndSplitColumnArray(int columnIdx,int size){
@@ -1023,9 +1023,9 @@ public class SheetImpl extends AbstractSheetAdv {
 		}
 		shiftAfterColumnDelete(columnIdx,lastColumnIdx);
 		
-		book.sendModelInternalEvent(ModelInternalEvents.createModelInternalEvent(ModelInternalEvents.ON_COLUMN_DELETED, 
-				this, ModelInternalEvents.createDataMap(ModelInternalEvents.PARAM_COLUMN_INDEX, columnIdx, 
-						ModelInternalEvents.PARAM_LAST_COLUMN_INDEX, lastColumnIdx)));
+//		book.sendModelInternalEvent(ModelInternalEvents.createModelInternalEvent(ModelInternalEvents.ON_COLUMN_DELETED, 
+//				this, ModelInternalEvents.createDataMap(ModelInternalEvents.PARAM_COLUMN_INDEX, columnIdx, 
+//						ModelInternalEvents.PARAM_LAST_COLUMN_INDEX, lastColumnIdx)));
 	}
 	
 	private void deleteAndShrinkColumnArray(int columnIdx,int size){

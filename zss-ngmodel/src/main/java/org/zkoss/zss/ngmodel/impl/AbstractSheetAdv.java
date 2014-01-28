@@ -45,6 +45,6 @@ public abstract class AbstractSheetAdv implements NSheet,LinkedModelObject,Seria
 	/*package*/ abstract void copyTo(AbstractSheetAdv sheet);
 	/*package*/ abstract void setSheetName(String name);
 	
-	/*package*/ abstract void onModelInternalEvent(ModelInternalEvent event);
+//	/*package*/ abstract void onModelInternalEvent(ModelInternalEvent event);
 	
 }
