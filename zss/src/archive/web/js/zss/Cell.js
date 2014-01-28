@@ -265,7 +265,8 @@ zss.Cell = zk.$extends(zk.Widget, {
 			txt = data.text,
 			txtChd = txt != this.text,
 			wrapChanged = this.wrap != data.wrap,
-			processWrap = data.wrap || wrapChanged || (this.wrap && this.getText() != data.text),
+			// only when "wrap text" status change and text change, we need to re-calculate wrap cells 
+			processWrap = wrapChanged || (this.wrap && this.getText() != data.text),
 			cave = this.$n('cave'),
 			prevWidth = cave.style.width,
 			fontSize = data.fontSize;
