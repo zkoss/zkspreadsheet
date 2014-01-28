@@ -327,7 +327,7 @@ zss.Cell = zk.$extends(zk.Widget, {
 		if (processWrap)
 			this._txtHgh = jq(this.getTextNode()).height();//cache txt height
 		//merged cell won't change row height automatically
-		if (this.cellType == STR_CELL && !this.merid && processWrap) {//must process wrap after set text
+		if ((this.cellType == STR_CELL || this.cellType == BLANK_CELL) && !this.merid && processWrap) {//must process wrap after set text
 			this.parent.processWrapCell(this, true);
 		}
 	},
@@ -552,6 +552,11 @@ zss.Cell = zk.$extends(zk.Widget, {
 		var max = this.maxOverflowCol;
 		if (this.overflow && max && max != this.c) {
 			this._processOverflow();
+		}
+		//to record how many cells enabling "wrap text"
+		if ((this.cellType == STR_CELL || this.cellType == BLANK_CELL) && !this.merid && this.wrap) {
+			//true indicate delay calcuate wrap height after CSS ready	
+			this.parent.processWrapCell(this, true);
 		}
 	},
 	unbind_: function () {
