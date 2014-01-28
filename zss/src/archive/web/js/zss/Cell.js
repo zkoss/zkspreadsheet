@@ -264,12 +264,11 @@ zss.Cell = zk.$extends(zk.Widget, {
 			cellType = data.cellType,
 			txt = data.text,
 			txtChd = txt != this.text,
-			wrapChanged = this.wrap != data.wrap,
-			// only when "wrap text" status change and text change, we need to re-calculate wrap cells 
-			processWrap = wrapChanged || (this.wrap && this.getText() != data.text),
 			cave = this.$n('cave'),
 			prevWidth = cave.style.width,
 			fontSize = data.fontSize;
+		var wrapChanged = this.wrap != data.wrap;
+		var fontSizeChanged = this.fontSize != data.fontSize;
 		if (fontSize) {
 			this.fontSize = fontSize;
 		}
@@ -318,8 +317,9 @@ zss.Cell = zk.$extends(zk.Widget, {
 			this.sheet.triggerOverflowColumn_(this.r, this.c);
 		}
 		this.cellType = cellType;
-		
-		if (txtChd && processWrap)
+
+		var processWrap = wrapChanged || (this.wrap && (txtChd || fontSizeChanged));
+		if (processWrap)
 			this._txtHgh = jq(this.getTextNode()).height();//cache txt height
 		//merged cell won't change row height automatically
 		if (this.cellType == STR_CELL && !this.merid && processWrap) {//must process wrap after set text
