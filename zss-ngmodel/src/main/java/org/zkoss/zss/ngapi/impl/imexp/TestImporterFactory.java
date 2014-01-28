@@ -26,6 +26,7 @@ import java.util.Date;
 import org.zkoss.zss.ngapi.ImporterFactory;
 import org.zkoss.zss.ngapi.NImporter;
 import org.zkoss.zss.ngapi.NRanges;
+import org.zkoss.zss.ngapi.impl.StyleUtil;
 import org.zkoss.zss.ngmodel.CellRegion;
 import org.zkoss.zss.ngmodel.DefaultDataGrid;
 import org.zkoss.zss.ngmodel.NBook;
@@ -71,6 +72,7 @@ public class TestImporterFactory implements ImporterFactory{
 				
 				NBook book = NBooks.createBook(bookName);
 				
+				buildCopyPaste(book);
 				
 				buildMove(book);
 				
@@ -89,7 +91,66 @@ public class TestImporterFactory implements ImporterFactory{
 				buildDataGridSheet(book);
 				return book;
 			}
-			
+			private void buildCopyPaste(NBook book) {
+				NSheet sheet1 = book.createSheet("CopyPaste");
+				
+				NCellStyle totalStyle = book.createCellStyle(true);
+				totalStyle.setDataFormat("#,000.0");
+				totalStyle.setBorderBottom(BorderType.MEDIUM,book.createColor("#FF0000"));
+				
+				NCellStyle headerStyle = book.createCellStyle(true);
+				headerStyle.setFillColor(book.createColor("#AAAAAA"));
+				headerStyle.setFillPattern(FillPattern.SOLID_FOREGROUND);
+				headerStyle.setAlignment(Alignment.CENTER);
+				
+				sheet1.getColumn(3).setWidth(150);
+				
+				
+				sheet1.getCell("D4").setValue("Sales by Region");
+				sheet1.getCell("D4").setCellStyle(headerStyle);
+				
+				sheet1.getCell("D5").setValue("Q1");
+				sheet1.getCell("D6").setValue("Q2");
+				sheet1.getCell("D7").setValue("Q3");
+				sheet1.getCell("D8").setValue("Q4");
+				sheet1.getCell("E4").setValue("Eurpoe");
+				sheet1.getCell("E4").setCellStyle(headerStyle);
+				sheet1.getCell("E5").setValue(10);
+				StyleUtil.setDataFormat(sheet1, 4, 4, "##.0");
+				sheet1.getCell("E6").setValue(30);
+				StyleUtil.setDataFormat(sheet1, 5, 4, "##.0");
+				sheet1.getCell("E7").setValue(50);
+				StyleUtil.setDataFormat(sheet1, 6, 4, "##.0");
+				sheet1.getCell("E8").setValue(70);
+				StyleUtil.setDataFormat(sheet1, 7, 4, "##.0");
+				sheet1.getCell("F4").setValue("Asia");
+				sheet1.getCell("F4").setCellStyle(headerStyle);
+				sheet1.getCell("F5").setValue(20);
+				StyleUtil.setDataFormat(sheet1, 4, 5, "##.0");
+				sheet1.getCell("F6").setValue(40);
+				StyleUtil.setDataFormat(sheet1, 5, 5, "##.0");
+				sheet1.getCell("F7").setValue(60);
+				StyleUtil.setDataFormat(sheet1, 6, 5, "##.0");
+				sheet1.getCell("F8").setValue(80);
+				StyleUtil.setDataFormat(sheet1, 7, 5, "##.0");
+				sheet1.getCell("G4").setValue("Total");
+				sheet1.getCell("G4").setCellStyle(headerStyle);
+				
+				sheet1.getCell("G5").setValue("=SUM(E5:F5)");
+				sheet1.getCell("G5").setCellStyle(totalStyle);
+				
+				sheet1.getCell("G6").setValue("=SUM(E6:F6)");
+				sheet1.getCell("G6").setCellStyle(totalStyle);
+				
+				sheet1.getCell("G7").setValue("=SUM(E7:F7)");
+				sheet1.getCell("G7").setCellStyle(totalStyle);
+				
+				sheet1.getCell("G8").setValue("=SUM(E8:F8)");
+				sheet1.getCell("G8").setCellStyle(totalStyle);
+
+				
+				
+			}
 			private void buildMove(NBook book) {
 				NSheet sheet = book.createSheet("Move");
 				

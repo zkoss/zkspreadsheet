@@ -153,12 +153,16 @@ public interface NCellStyle {
 	public void setWrapText(boolean wrapText);
 
 	public void setBorderLeft(BorderType borderLeft);
+	public void setBorderLeft(BorderType borderLeft,NColor color);
 
 	public void setBorderTop(BorderType borderTop);
+	public void setBorderTop(BorderType borderTop,NColor color);
 
 	public void setBorderRight(BorderType borderRight);
+	public void setBorderRight(BorderType borderRight,NColor color);
 
 	public void setBorderBottom(BorderType borderBottom);
+	public void setBorderBottom(BorderType borderBottom,NColor color);
 
 	public void setBorderTopColor(NColor borderTopColor);
 

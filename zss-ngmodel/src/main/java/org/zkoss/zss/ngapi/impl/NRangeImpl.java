@@ -457,19 +457,93 @@ public class NRangeImpl implements NRange {
 	}
 
 	@Override
-	public NRange copy(NRange dstRange, boolean cut) {
-		throw new UnsupportedOperationException("not implement yet");
+	public NRange copy(final NRange dstRange, final boolean cut) {
+		PasteOption option = new PasteOption();
+		option.setCut(cut);
+		return pasteSpecial0(dstRange,option);		
 	}
 
 	@Override
 	public NRange copy(NRange dstRange) {
-		throw new UnsupportedOperationException("not implement yet");
+		return copy(dstRange,false);
 	}
 
 	@Override
 	public NRange pasteSpecial(NRange dstRange, PasteType pasteType,
 			PasteOperation pasteOp, boolean skipBlanks, boolean transpose) {
-		throw new UnsupportedOperationException("not implement yet");
+		PasteOption option = new PasteOption();
+		option.setSkipBlank(skipBlanks);
+		option.setTranspose(transpose);
+		option.setPasteType(toModelPasteType(pasteType));
+		option.setPasteOperation(toModelPasteOperation(pasteOp));
+		return pasteSpecial0(dstRange,option);
+	}
+	
+	private PasteOption.PasteOperation toModelPasteOperation(
+			PasteOperation pasteOp) {
+		switch(pasteOp){
+		case ADD:
+			return PasteOption.PasteOperation.ADD;
+		case DIV:
+			return PasteOption.PasteOperation.DIV;
+		case MUL:
+			return PasteOption.PasteOperation.MUL;
+		case NONE:
+			return PasteOption.PasteOperation.NONE;
+		case SUB:
+			return PasteOption.PasteOperation.SUB;
+		}
+		throw new IllegalStateException("unknow operation "+pasteOp);
+	}
+
+	private PasteOption.PasteType toModelPasteType(
+			PasteType pasteType) {
+		switch(pasteType){
+		case ALL:
+			return PasteOption.PasteType.ALL;
+		case ALL_EXCEPT_BORDERS:
+			return PasteOption.PasteType.ALL_EXCEPT_BORDERS;
+		case COLUMN_WIDTHS:
+			return PasteOption.PasteType.COLUMN_WIDTHS;
+		case COMMENTS:
+			return PasteOption.PasteType.COMMENTS;
+		case FORMATS:
+			return PasteOption.PasteType.FORMATS;
+		case FORMULAS:
+			return PasteOption.PasteType.FORMULAS;
+		case FORMULAS_AND_NUMBER_FORMATS:
+			return PasteOption.PasteType.FORMULAS_AND_NUMBER_FORMATS;
+		case VALIDATAION:
+			return PasteOption.PasteType.VALIDATAION;
+		case VALUES:
+			return PasteOption.PasteType.VALUES;
+		case VALUES_AND_NUMBER_FORMATS:
+			return PasteOption.PasteType.VALUES_AND_NUMBER_FORMATS;
+		}
+		throw new IllegalStateException("unknow type "+pasteType);
+	}
+
+	public NRange pasteSpecial0(final NRange dstRange, final PasteOption option) {
+		final ResultWrap<CellRegion> effectedRegion = new ResultWrap<CellRegion>();
+		return (NRange)new ModelUpdateTask(){
+			@Override
+			Object doInvokePhase() {
+				CellRegion effected = dstRange.getSheet().pasteCell(new SheetRegion(getSheet(),getRow(),getColumn(),getLastRow(),getLastColumn()), 
+						new CellRegion(dstRange.getRow(),dstRange.getColumn(),dstRange.getLastRow(),dstRange.getLastColumn()),
+						option);
+				effectedRegion.set(effected);
+				return new NRangeImpl(getSheet(),effected.getRow(),effected.getColumn(),effected.getLastRow(),effected.getLastColumn());
+			}
+			@Override
+			void doNotifyPhase() {
+				if(option.getPasteType()==PasteOption.PasteType.COLUMN_WIDTHS){
+					CellRegion effected = effectedRegion.get();
+					new NotifyChangeHelper().notifyRowColumnSizeChange(new SheetRegion(dstRange.getSheet(),effected));
+				}
+			}
+			
+		}.doInWriteLock(getLock());		
+		
 	}
 
 	@Override

@@ -118,7 +118,7 @@ import org.zkoss.zss.ngmodel.util.Validations;
 							dest.getRow(),dest.getColumn()+srcColCount -1 + colMultipleOffset);
 					pasteColumnWidth(widthBuffer,destRegion);
 			}
-			return new CellRegion(dest.getRow(),dest.getColumn(),dest.getRow(),dest.getColumn()+srcColCount*colMultiple-1);
+			return new CellRegion(0,dest.getColumn(),destSheet.getBook().getMaxRowIndex(),dest.getColumn()+srcColCount*colMultiple-1);
 		}
 		PasteType pasteType = option.getPasteType();
 		boolean handleMerge = shouldHandleMerge(pasteType);
@@ -347,7 +347,6 @@ import org.zkoss.zss.ngmodel.util.Validations;
 		int col = destRegion.getColumn();
 		int lastRow = destRegion.getLastRow();
 		int lastColumn = destRegion.getLastColumn();
-		boolean transport = option.isTranspose();
 		for(int r = row; r <= lastRow; r++){
 			for (int c = col; c <= lastColumn;c++){
 				CellBuffer buffer = srcBuffer[r-row][c-col];
@@ -410,11 +409,11 @@ import org.zkoss.zss.ngmodel.util.Validations;
 	}
 
 	private void pasteFormat(CellBuffer buffer, NCell destCell) {
-		String srcFormat = buffer.getFormula();
+		String srcFormat = buffer.getStyle().getDataFormat();
 		NCellStyle destStyle = destCell.getCellStyle();
 		String destFormat = destStyle.getDataFormat();
 		if(!destFormat.equals(srcFormat)){
-			StyleUtil.setDataFormat(destSheet, destCell.getRowIndex(), destCell.getColumnIndex(), destFormat);
+			StyleUtil.setDataFormat(destSheet, destCell.getRowIndex(), destCell.getColumnIndex(), srcFormat);
 		}
 	}
 

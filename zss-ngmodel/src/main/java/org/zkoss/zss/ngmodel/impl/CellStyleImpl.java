@@ -283,4 +283,28 @@ public class CellStyleImpl extends AbstractCellStyleAdv {
 		.append(".").append(hidden?"T":"F");
 		return sb.toString();
 	}
+
+	@Override
+	public void setBorderLeft(BorderType borderLeft, NColor color) {
+		setBorderLeft(borderLeft);
+		setBorderLeftColor(color);
+	}
+
+	@Override
+	public void setBorderTop(BorderType borderTop, NColor color) {
+		setBorderTop(borderTop);
+		setBorderTopColor(color);
+	}
+
+	@Override
+	public void setBorderRight(BorderType borderRight, NColor color) {
+		setBorderRight(borderRight);
+		setBorderRightColor(color);
+	}
+
+	@Override
+	public void setBorderBottom(BorderType borderBottom, NColor color) {
+		setBorderBottom(borderBottom);
+		setBorderBottomColor(color);
+	}
 }

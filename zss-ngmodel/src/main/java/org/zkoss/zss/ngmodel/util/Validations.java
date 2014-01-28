@@ -30,7 +30,7 @@ public class Validations {
 		}
 		for(int i=0;i<obj.length;i++){
 			if(obj[i]==null){
-				throw new IllegalArgumentException(message +" "+ i);
+				throw new IllegalArgumentException(message +" at "+ i);
 			}
 		}
 	}

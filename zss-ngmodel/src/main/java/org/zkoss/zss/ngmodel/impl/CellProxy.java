@@ -51,10 +51,13 @@ class CellProxy extends AbstractCellAdv {
 
 	@Override
 	public NSheet getSheet() {
+		if(proxy!=null){
+			return proxy.getSheet();
+		}
 		AbstractSheetAdv sheet = sheetRef.get();
 		if (sheet == null) {
 			throw new IllegalStateException(
-					"proxy target lost, you should't keep this instance");
+					"proxy sheet target lost, you should't keep this instance");
 		}
 		return sheet;
 	}
@@ -62,9 +65,6 @@ class CellProxy extends AbstractCellAdv {
 	private void loadProxy() {
 		if (proxy == null) {
 			proxy = (AbstractCellAdv) ((AbstractSheetAdv)getSheet()).getCell(rowIdx, columnIdx, false);
-			if (proxy != null) {
-				sheetRef.clear();
-			}
 		}
 	}
 

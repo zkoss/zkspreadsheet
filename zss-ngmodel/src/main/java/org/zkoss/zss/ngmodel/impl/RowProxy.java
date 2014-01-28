@@ -51,9 +51,6 @@ class RowProxy extends AbstractRowAdv{
 	protected void loadProxy(){
 		if(proxy==null){
 			proxy = (AbstractRowAdv)((AbstractSheetAdv)getSheet()).getRow(index,false);
-			if(proxy!=null){
-				sheetRef.clear();
-			}
 		}
 	}
 	

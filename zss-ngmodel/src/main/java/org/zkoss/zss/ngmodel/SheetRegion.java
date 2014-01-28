@@ -2,6 +2,9 @@ package org.zkoss.zss.ngmodel;
 
 import java.io.Serializable;
 
+import org.zkoss.zss.ngmodel.util.AreaReference;
+import org.zkoss.zss.ngmodel.util.CellReference;
+
 public class SheetRegion implements Serializable{
 	private static final long serialVersionUID = 1L;
 
@@ -88,6 +91,9 @@ public class SheetRegion implements Serializable{
 		return true;
 	}
 	
-	
+	public String getReferenceString(){
+		return new AreaReference(new CellReference(sheet.getSheetName(),region.getRow(), region.getColumn(),false,false), 
+				new CellReference(sheet.getSheetName(), region.getLastRow(),region.getLastColumn(),false,false)).formatAsString();
+	}
 	
 }
