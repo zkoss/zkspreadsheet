@@ -128,8 +128,8 @@ class RowProxy extends AbstractRowAdv{
 	@Override
 	public void checkOrphan() {}
 	
-	@Override
-	void onModelInternalEvent(ModelInternalEvent event) {}
+//	@Override
+//	void onModelInternalEvent(ModelInternalEvent event) {}
 	
 	@Override
 	public int getHeight() {

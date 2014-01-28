@@ -36,7 +36,7 @@ public abstract class AbstractRowAdv implements NRow,LinkedModelObject,Serializa
 
 	/*package*/ abstract AbstractCellAdv getOrCreateCell(int columnIdx);
 	
-	/*package*/ abstract void onModelInternalEvent(ModelInternalEvent event);
+//	/*package*/ abstract void onModelInternalEvent(ModelInternalEvent event);
 
 	/*package*/ abstract int getStartCellIndex();
 	/*package*/ abstract int getEndCellIndex();

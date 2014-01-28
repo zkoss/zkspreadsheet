@@ -35,9 +35,9 @@ public abstract class AbstractBookAdv implements NBook,EvaluationContributorCont
 	
 	/*package*/ abstract String nextObjId(String type);
 	
-	/*package*/ abstract void onModelInternalEvent(ModelInternalEvent event);
-	
-	/*package*/ abstract void sendModelInternalEvent(ModelInternalEvent event);
+//	/*package*/ abstract void onModelInternalEvent(ModelInternalEvent event);
+//	
+//	/*package*/ abstract void sendModelInternalEvent(ModelInternalEvent event);
 
 	/*package*/ abstract void setBookSeries(NBookSeries bookSeries);
 
