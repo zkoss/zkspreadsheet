@@ -1100,6 +1100,7 @@
 	border: 0;
 	font-size: 16px;
 	padding: 3px 3px 0 3px; /* ZSS-205: make padding be consistent */
+	margin: 0; /* make sure zero margin (or Firefox will append 2px margin) */
 	font-family: arial,sans-serif;
 	position: relative;
 	top: 0;
