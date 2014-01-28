@@ -84,7 +84,7 @@ import org.zkoss.zss.ngmodel.util.Validations;
 		}
 	}
 	
-	public void pasteCell(SheetRegion src, CellRegion dest, PasteOption option) {
+	public CellRegion pasteCell(SheetRegion src, CellRegion dest, PasteOption option) {
 		Validations.argNotNull(src);
 		Validations.argNotNull(dest);
 		NSheet srcSheet = src.getSheet();
@@ -118,7 +118,7 @@ import org.zkoss.zss.ngmodel.util.Validations;
 							dest.getRow(),dest.getColumn()+srcColCount -1 + colMultipleOffset);
 					pasteColumnWidth(widthBuffer,destRegion);
 			}
-			return;
+			return new CellRegion(dest.getRow(),dest.getColumn(),dest.getRow(),dest.getColumn()+srcColCount*colMultiple-1);
 		}
 		PasteType pasteType = option.getPasteType();
 		boolean handleMerge = shouldHandleMerge(pasteType);
@@ -169,6 +169,10 @@ import org.zkoss.zss.ngmodel.util.Validations;
 				}
 			}
 		}
+		
+		return new CellRegion(dest.getRow(),dest.getColumn(),
+				dest.getRow()+srcRowCount*rowMultiple-1,
+				dest.getColumn()+srcColCount*colMultiple-1);
 	}
 	
 

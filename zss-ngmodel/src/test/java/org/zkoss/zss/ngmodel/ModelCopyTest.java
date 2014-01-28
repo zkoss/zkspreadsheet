@@ -35,7 +35,8 @@ public class ModelCopyTest {
 		sheet1.getCell("A3").setValue("=A2");
 		sheet1.getCell("A4").setValue("=SUM(A2:A3)");
 		
-		sheet1.pasteCell(new SheetRegion(sheet1,"A1:A4"), new CellRegion("B2"), null);
+		CellRegion finalRegion = sheet1.pasteCell(new SheetRegion(sheet1,"A1:A4"), new CellRegion("B2"), null);
+		Assert.assertEquals("B2:B5", finalRegion.getReferenceString());
 		
 		Assert.assertEquals("A", sheet1.getCell("B2").getValue());
 		Assert.assertEquals(13D, sheet1.getCell("B3").getValue());
@@ -50,7 +51,9 @@ public class ModelCopyTest {
 		Assert.assertEquals(20D, sheet1.getCell("B5").getValue());
 		
 		//multiple row
-		sheet1.pasteCell(new SheetRegion(sheet1,"A1:A4"), new CellRegion("C2:C9"), null);
+		finalRegion = sheet1.pasteCell(new SheetRegion(sheet1,"A1:A4"), new CellRegion("C2:C9"), null);
+		Assert.assertEquals("C2:C9", finalRegion.getReferenceString());
+		
 		Assert.assertEquals("A", sheet1.getCell("C2").getValue());
 		Assert.assertEquals(13D, sheet1.getCell("C3").getValue());
 		Assert.assertEquals("C3", sheet1.getCell("C4").getFormulaValue());
@@ -67,7 +70,8 @@ public class ModelCopyTest {
 		Assert.assertEquals(26D, sheet1.getCell("C9").getValue());
 		
 		//multiple row/column
-		sheet1.pasteCell(new SheetRegion(sheet1,"A1:A4"), new CellRegion("C2:D9"), null);
+		finalRegion = sheet1.pasteCell(new SheetRegion(sheet1,"A1:A4"), new CellRegion("C2:D9"), null);
+		Assert.assertEquals("C2:D9", finalRegion.getReferenceString());
 		Assert.assertEquals("A", sheet1.getCell("C2").getValue());
 		Assert.assertEquals(13D, sheet1.getCell("C3").getValue());
 		Assert.assertEquals("C3", sheet1.getCell("C4").getFormulaValue());

@@ -1669,7 +1669,7 @@ public class SheetImpl extends AbstractSheetAdv {
 
 
 	@Override
-	public void pasteCell(SheetRegion src, CellRegion dest, PasteOption option) {
-		new PasteCellHelper(this).pasteCell(src,dest,option);
+	public CellRegion pasteCell(SheetRegion src, CellRegion dest, PasteOption option) {
+		return new PasteCellHelper(this).pasteCell(src,dest,option);
 	}
 }

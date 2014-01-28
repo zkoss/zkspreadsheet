@@ -230,6 +230,7 @@ public interface NSheet {
 	 * @param src src sheet and it's region to paste
 	 * @param dest destination region in this sheet
 	 * @param option the copy option
+	 * @return the final effected region
 	 */
-	public void pasteCell(SheetRegion src,CellRegion dest,PasteOption option);
+	public CellRegion pasteCell(SheetRegion src,CellRegion dest,PasteOption option);
 }
