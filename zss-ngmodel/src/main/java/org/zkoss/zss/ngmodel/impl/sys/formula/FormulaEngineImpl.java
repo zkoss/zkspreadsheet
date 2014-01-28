@@ -605,9 +605,35 @@ public class FormulaEngineImpl implements FormulaEngine {
 
 	@Override
 	public FormulaExpression shrink(String formula, SheetRegion srcRegion,
-			boolean hrizontal, FormulaParseContext context) {
-		// TODO zss 3.5
-		return new FormulaExpressionImpl(formula, null, true);
+ boolean horizontal, FormulaParseContext context) {
+		NSheet sheet = context.getSheet();
+
+		// shrinking is equals to move the neighbor region
+		// calculate the neighbor and offset
+		int rowOffset = 0, colOffset = 0;
+		SheetRegion neighbor;
+		if(horizontal) {
+			// adjust on column
+			colOffset = -srcRegion.getColumnCount();
+			int col = srcRegion.getLastColumn() + 1;
+			int lastCol = context.getBook().getMaxColumnIndex();
+			// no change on row
+			int row = srcRegion.getRow();
+			int lastRow = srcRegion.getLastRow();
+			neighbor = new SheetRegion(sheet, row, col, lastRow, lastCol);
+		} else { // vertical
+			// adjust on row
+			rowOffset = -srcRegion.getRowCount();
+			int row = srcRegion.getLastRow() + 1;
+			int lastRow = context.getBook().getMaxRowIndex();
+			// no change on column
+			int col = srcRegion.getColumn();
+			int lastCol = srcRegion.getLastColumn();
+			neighbor = new SheetRegion(sheet, row, col, lastRow, lastCol);
+		}
+
+		// move it
+		return move(formula, neighbor, rowOffset, colOffset, context);
 	}
 
 	@Override

@@ -656,7 +656,7 @@ public class FormulaEvalTest {
 	}
 	
 	@Test
-	public void testFormulaShifting() {
+	public void testFormulaMove() {
 
 		FormulaEngine engine = EngineFactory.getInstance().createFormulaEngine();
 		NBook book1 = NBooks.createBook("Book1");
@@ -672,69 +672,119 @@ public class FormulaEvalTest {
 
 		// shift rows
 		String f = "SUM(C3:E5)+SUM(SheetA!C3:E5)+SUM(SheetB!C3:E5)";
-		testFormulaShifting(engine, sheetA, f, new SheetRegion(sheetA, "C3:E5"), 2, 0,
+		testFormulaMove(engine, sheetA, f, new SheetRegion(sheetA, "C3:E5"), 2, 0,
 				"SUM(C5:E7)+SUM(SheetA!C5:E7)+SUM(SheetB!C3:E5)");
-		testFormulaShifting(engine, sheetA, f, new SheetRegion(sheetA, "C3:E5"), -2, 0,
+		testFormulaMove(engine, sheetA, f, new SheetRegion(sheetA, "C3:E5"), -2, 0,
 				"SUM(C1:E3)+SUM(SheetA!C1:E3)+SUM(SheetB!C3:E5)");
 		// shift columns
-		testFormulaShifting(engine, sheetA, f, new SheetRegion(sheetA, "C3:E5"), 0, 2,
+		testFormulaMove(engine, sheetA, f, new SheetRegion(sheetA, "C3:E5"), 0, 2,
 				"SUM(E3:G5)+SUM(SheetA!E3:G5)+SUM(SheetB!C3:E5)");
-		testFormulaShifting(engine, sheetA, f, new SheetRegion(sheetA, "C3:E5"), 0, -2,
+		testFormulaMove(engine, sheetA, f, new SheetRegion(sheetA, "C3:E5"), 0, -2,
 				"SUM(A3:C5)+SUM(SheetA!A3:C5)+SUM(SheetB!C3:E5)");
 		// shift both
-		testFormulaShifting(engine, sheetA, f, new SheetRegion(sheetA, "C3:E5"), 2, 2,
+		testFormulaMove(engine, sheetA, f, new SheetRegion(sheetA, "C3:E5"), 2, 2,
 				"SUM(E5:G7)+SUM(SheetA!E5:G7)+SUM(SheetB!C3:E5)");
-		testFormulaShifting(engine, sheetA, f, new SheetRegion(sheetA, "C3:E5"), -2, -2,
+		testFormulaMove(engine, sheetA, f, new SheetRegion(sheetA, "C3:E5"), -2, -2,
 				"SUM(A1:C3)+SUM(SheetA!A1:C3)+SUM(SheetB!C3:E5)");
 		
 		// shift other sheet's region
-		testFormulaShifting(engine, sheetA, f, new SheetRegion(sheetB, "C3:E5"), 2, 2,
+		testFormulaMove(engine, sheetA, f, new SheetRegion(sheetB, "C3:E5"), 2, 2,
 				"SUM(C3:E5)+SUM(SheetA!C3:E5)+SUM(SheetB!E5:G7)");
-		testFormulaShifting(engine, sheetA, f, new SheetRegion(sheetB, "C3:E5"), -2, -2,
+		testFormulaMove(engine, sheetA, f, new SheetRegion(sheetB, "C3:E5"), -2, -2,
 				"SUM(C3:E5)+SUM(SheetA!C3:E5)+SUM(SheetB!A1:C3)");
 		
 		// out of bound, exceed min.
-		testFormulaShifting(engine, sheetA, f, new SheetRegion(sheetA, "C3:E5"), -3, 0,
+		testFormulaMove(engine, sheetA, f, new SheetRegion(sheetA, "C3:E5"), -3, 0,
 				"SUM(C1:E2)+SUM(SheetA!C1:E2)+SUM(SheetB!C3:E5)");
-		testFormulaShifting(engine, sheetA, f, new SheetRegion(sheetA, "C3:E5"), 0, -3,
+		testFormulaMove(engine, sheetA, f, new SheetRegion(sheetA, "C3:E5"), 0, -3,
 				"SUM(A3:B5)+SUM(SheetA!A3:B5)+SUM(SheetB!C3:E5)");
 		// out of bound, exceed max.
-		testFormulaShifting(engine, sheetA, f, new SheetRegion(sheetA, "C3:E5"), maxRow-3, 0,
+		testFormulaMove(engine, sheetA, f, new SheetRegion(sheetA, "C3:E5"), maxRow-3, 0,
 				MessageFormat.format("SUM(C{0}:E{0})+SUM(SheetA!C{0}:E{0})+SUM(SheetB!C3:E5)", String.valueOf(maxRow))); // only last row exceeds 
-		testFormulaShifting(engine, sheetA, f, new SheetRegion(sheetA, "C3:E5"), maxRow, 0,
+		testFormulaMove(engine, sheetA, f, new SheetRegion(sheetA, "C3:E5"), maxRow, 0,
 				"SUM(#REF!)+SUM(SheetA!#REF!)+SUM(SheetB!C3:E5)"); // first and last both exceed 
-		testFormulaShifting(engine, sheetA, f, new SheetRegion(sheetA, "C3:E5"), 0, maxColumn-3,
+		testFormulaMove(engine, sheetA, f, new SheetRegion(sheetA, "C3:E5"), 0, maxColumn-3,
 				MessageFormat.format("SUM({0}:{1})+SUM(SheetA!{0}:{1})+SUM(SheetB!C3:E5)", new CellRegion(2, maxColumn-1).getReferenceString(), new CellRegion(4, maxColumn-1).getReferenceString())); // only last column exceeds 
-		testFormulaShifting(engine, sheetA, f, new SheetRegion(sheetA, "C3:E5"), 0, maxColumn,
+		testFormulaMove(engine, sheetA, f, new SheetRegion(sheetA, "C3:E5"), 0, maxColumn,
 				"SUM(#REF!)+SUM(SheetA!#REF!)+SUM(SheetB!C3:E5)"); // first and last both exceed 
 		
 		// external book references
 		f = "SUM(A1:A3)+SUM(SheetA!A1:A3)+SUM([Book2]SheetA!A1:A3)+SUM([Book2]SheetB!A1:A3)";
-		testFormulaShifting(engine, sheetA, f, new SheetRegion(sheetA, "A1:A3"), 2, 0,
+		testFormulaMove(engine, sheetA, f, new SheetRegion(sheetA, "A1:A3"), 2, 0,
 				"SUM(A3:A5)+SUM(SheetA!A3:A5)+SUM([Book2]SheetA!A1:A3)+SUM([Book2]SheetB!A1:A3)"); // shift in current book
-		testFormulaShifting(engine, sheetA, f, new SheetRegion(book2SheetA, "A1:A3"), 2, 0,
+		testFormulaMove(engine, sheetA, f, new SheetRegion(book2SheetA, "A1:A3"), 2, 0,
 				"SUM(A1:A3)+SUM(SheetA!A1:A3)+SUM([Book2]SheetA!A3:A5)+SUM([Book2]SheetB!A1:A3)"); // shift in external book
 
 		// absolute formula only effect copy and auto-fill operation
 		// move, insert and delete operations still effect absolute formulas  
 		f = "SUM($C3:$E5)+SUM(C$3:E$5)+SUM($C$3:$E$5)";
-		testFormulaShifting(engine, sheetA, f, new SheetRegion(sheetA, "C3:E5"), 2, 2,
+		testFormulaMove(engine, sheetA, f, new SheetRegion(sheetA, "C3:E5"), 2, 2,
 				"SUM($E5:$G7)+SUM(E$5:G$7)+SUM($E$5:$G$7)");
 		
 		// 3D reference, don't get any effected
 		f = "SUM(Sheet1:Sheet3!A1)";
-		testFormulaShifting(engine, sheetA, f, new SheetRegion(sheetA, "A1:A1"), 2, 2, f);
+		testFormulaMove(engine, sheetA, f, new SheetRegion(sheetA, "A1:A1"), 2, 2, f);
 		
 		// intersection
 		f = "SUM(C3:E5)";
-		testFormulaShifting(engine, sheetA, f, new SheetRegion(sheetA, "D3:E5"), 0, 1, "SUM(C3:F5)");
+		testFormulaMove(engine, sheetA, f, new SheetRegion(sheetA, "D3:E5"), 0, 1, "SUM(C3:F5)");
 		
 
 	}
 
-	private void testFormulaShifting(FormulaEngine engine, NSheet sheet, String f, SheetRegion region, int rowOffset, int colOffset, String expected) {
+	private void testFormulaMove(FormulaEngine engine, NSheet sheet, String f, SheetRegion region, int rowOffset, int colOffset, String expected) {
 		FormulaParseContext context = new FormulaParseContext(sheet, null);
 		FormulaExpression expr = engine.move(f, region, rowOffset, colOffset, context);
+		Assert.assertFalse(expr.hasError());
+		Assert.assertEquals(expected, expr.getFormulaString());
+	}
+	
+	@Test
+	public void testFormulaShrink() {
+		FormulaEngine engine = EngineFactory.getInstance().createFormulaEngine();
+		NBook book1 = NBooks.createBook("Book1");
+		NSheet sheetA = book1.createSheet("SheetA");
+
+		// the formula contains 3 region in current sheet
+		// delete region won't cover region 1, complete cover region 2, and partial cover region 3
+		// there are the same region in different sheet and external book
+		String f = "SUM(C3:E5)+SUM(G3:I5)+SUM(K3:M5)";
+
+		// delete cells and shift up
+		boolean horizontal = false;
+		// source region at top
+		testFormulaShrink(f,"G1:L1", horizontal, "SUM(C3:E5)+SUM(G2:I4)+SUM(K3:M5)", engine, sheetA);
+		testFormulaShrink(f,"G1:L2", horizontal, "SUM(C3:E5)+SUM(G1:I3)+SUM(K3:M5)", engine, sheetA);
+		// source region overlapped
+		testFormulaShrink(f,"G3:L3", horizontal, "SUM(C3:E5)+SUM(G3:I4)+SUM(K3:M5)", engine, sheetA); // 1 row
+		testFormulaShrink(f,"G4:L4", horizontal, "SUM(C3:E5)+SUM(G3:I4)+SUM(K3:M5)", engine, sheetA); // 1 row
+		testFormulaShrink(f,"G5:L5", horizontal, "SUM(C3:E5)+SUM(G3:I4)+SUM(K3:M5)", engine, sheetA); // 1 row
+		testFormulaShrink(f,"G4:L5", horizontal, "SUM(C3:E5)+SUM(G3:I3)+SUM(K3:M5)", engine, sheetA); // 2 rows
+		testFormulaShrink(f,"G3:L5", horizontal, "SUM(C3:E5)+SUM(#REF!)+SUM(K3:M5)", engine, sheetA); // 3 rows
+//		testFormulaShrink(f,"G3:L5", horizontal, "SUM(C3:E5)+SUM(#REF!)+SUM(M3:M5)", engine, sheetA); // it's Excel approach 
+		// source region at bottom
+		testFormulaShrink(f,"G6:L6", horizontal, f, engine, sheetA);
+
+		// delete cells and shift left
+		f = "SUM(C3:E5)+SUM(C7:E9)+SUM(C11:E13)";
+		horizontal = true;
+		// source region at left
+		testFormulaShrink(f,"A7:A12", horizontal, "SUM(C3:E5)+SUM(B7:D9)+SUM(C11:E13)", engine, sheetA);
+		testFormulaShrink(f,"A7:B12", horizontal, "SUM(C3:E5)+SUM(A7:C9)+SUM(C11:E13)", engine, sheetA);
+		// source region overlapped
+		testFormulaShrink(f,"C7:C12", horizontal, "SUM(C3:E5)+SUM(C7:D9)+SUM(C11:E13)", engine, sheetA); // 1 column
+		testFormulaShrink(f,"D7:D12", horizontal, "SUM(C3:E5)+SUM(C7:D9)+SUM(C11:E13)", engine, sheetA); // 1 column
+		testFormulaShrink(f,"E7:E12", horizontal, "SUM(C3:E5)+SUM(C7:D9)+SUM(C11:E13)", engine, sheetA); // 1 column
+		testFormulaShrink(f,"D7:E12", horizontal, "SUM(C3:E5)+SUM(C7:C9)+SUM(C11:E13)", engine, sheetA); // 2 columns
+		testFormulaShrink(f,"C7:E12", horizontal, "SUM(C3:E5)+SUM(#REF!)+SUM(C11:E13)", engine, sheetA); // 3 columns
+//		testFormulaShrink(f,"C7:E12", horizontal, "SUM(C3:E5)+SUM(#REF!)+SUM(C13:E13)", engine, sheetA); // it's Excel approach 
+		// source region at right
+		testFormulaShrink(f,"F7:F12", horizontal, f, engine, sheetA);
+	}
+
+	private void testFormulaShrink(String formula, String delete, boolean hrizontal, String expected, FormulaEngine engine, NSheet sheet) {
+		FormulaParseContext context = new FormulaParseContext(sheet, null);
+		FormulaExpression expr = engine.shrink(formula, new SheetRegion(sheet, delete), hrizontal, context);
 		Assert.assertFalse(expr.hasError());
 		Assert.assertEquals(expected, expr.getFormulaString());
 	}
