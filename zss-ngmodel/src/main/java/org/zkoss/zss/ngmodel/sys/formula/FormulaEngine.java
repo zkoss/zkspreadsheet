@@ -31,17 +31,24 @@ public interface FormulaEngine {
 	public FormulaExpression parse(String formula, FormulaParseContext context);
 	
 	/**
-	 * Shift the formula 
+	 * Shift the formula base on the offset
 	 * @param formula
 	 * @param rowOffset
 	 * @param columnOffset
-	 * @param transpose
 	 * @param context
 	 * @return
 	 */
-	//TODO zss 3.5
-//	public FormulaExpression shift(String formula, int rowOffset,int columnOffset, boolean transpose,
-//			FormulaParseContext context);
+	public FormulaExpression shift(String formula, int rowOffset,int columnOffset, FormulaParseContext context);
+	
+	/**
+	 * Transpose the formula base one the origin
+	 * @param formula
+	 * @param rowOrigin
+	 * @param columnOrigin
+	 * @param context
+	 * @return
+	 */
+	public FormulaExpression transpose(String formula, int rowOrigin,int columnOrigin, FormulaParseContext context);
 	/**
 	 * Shift the formula that care on sheet and region.
 	 * @param formula
