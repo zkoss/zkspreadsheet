@@ -47,13 +47,43 @@ public class ModelEvents {
 	public static final String ON_MERGE_ADD = "onMergeAdd";
 	public static final String ON_MERGE_DELETE = "onMergeDelete";
 	
+	/**
+	 * the effected book
+	 */
 	public static final String PARAM_BOOK = "book";
+	
+	/**
+	 * the effected sheet
+	 */
 	public static final String PARAM_SHEET = "sheet";
+	
+	/**
+	 * the effected region
+	 */
 	public static final String PARAM_REGION = "region";
+	
+	/**
+	 * the object, e.g. notify chart, picture, validation change
+	 */
 	public static final String PARAM_OBJECT_ID = "objid";
-	public static final String PARAM_CUSTOM_DATA = "custom";
+	
+	/**
+	 * the custom data, e.g. notify custom event
+	 */
+	public static final String PARAM_CUSTOM_DATA = "customData";
+	/**
+	 * the index, e.g the deleted sheet index
+	 */
 	public static final String PARAM_INDEX = "index";
-	public static final String PARAM_PICTURE = "picture";
+	/**
+	 * the old name, e.g old sheet name when rename the sheet
+	 */
+	public static final Object PARAM_OLD_NAME = "oldName";
+	
+	/**
+	 * the old index, e.g old sheet index when reorder the sheet
+	 */
+	public static final Object PARAM_OLD_INDEX = "oldIndex";
 	
 	
 	public static ModelEvent createModelEvent(String name, NBook book){
