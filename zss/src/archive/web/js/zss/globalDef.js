@@ -12,6 +12,11 @@
 		MOVE: "move",
 		RESIZE: "resize"
 	};
+	zss.SCROLL_DIR = { // ZSS-475: add direction enum. for scrolling to visible
+		BOTH: "both",
+		HORIZONTAL: "horizontal",
+		VERTICAL: "vertical"
+	};
 	zss.clientCopy = {
 			maxRowCount: 400,
 			maxColumnCount: 40

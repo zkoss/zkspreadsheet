@@ -2724,7 +2724,12 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		
 		
 		//TODO , check cell merge
-		//TODO , auto scroll
+		
+		// ZSS-475: auto scroll
+		var destRow = (bottom > row) ? bottom : top; // compare selection bottom with focus row to know current row  
+		var destCol = (right > col) ? right : left;
+		this.sp.scrollToVisible(destRow, destCol);
+		this.activeBlock.loadCell(destRow, destCol, 5); // just load one cell, it'll load a whole rectangle block. see DataPanel.moveFocus() 
 		
 		if (left != ls.left || top != ls.top || right != ls.right || bottom != ls.bottom){
 			this.moveCellSelection(left, top, right, bottom, true);

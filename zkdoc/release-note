@@ -34,6 +34,7 @@ ZK Spreadsheet 3.0.1
   ZSS-513 inline editor is at wrong position when re-edit cell with validation
   ZSS-205 scroll bar in function bar is not persistent
   ZSS-528 Unwrapping text in a cell does not resize cell
+  ZSS-475 Select shift and down arrow, scroll the screen automatically
   
 ** Upgrade Notes
   * Members of BookType of Book are changed from EXCEL_2003,EXCEL_2007 to XLS,XLSX because of Spreadsheet depends on file format not Excel version.
