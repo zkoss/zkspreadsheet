@@ -617,4 +617,18 @@ public class FormulaEngineImpl implements FormulaEngine {
 		return new FormulaExpressionImpl(formula, null, true);
 	}
 
+	@Override
+	public FormulaExpression shift(String formula, int rowOffset,
+			int columnOffset, FormulaParseContext context) {
+		// TODO zss 3.5
+		return new FormulaExpressionImpl(formula, null, true);
+	}
+
+	@Override
+	public FormulaExpression transpose(String formula, int rowOrigin,
+			int columnOrigin, FormulaParseContext context) {
+		// TODO zss 3.5
+		return new FormulaExpressionImpl(formula, null, true);
+	}
+
 }
