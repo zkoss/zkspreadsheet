@@ -554,7 +554,7 @@ zss.Cell = zk.$extends(zk.Widget, {
 			this._processOverflow();
 		}
 		//to record how many cells enabling "wrap text"
-		if ((this.cellType == STR_CELL || this.cellType == BLANK_CELL) && !this.merid && this.wrap) {
+		if ((this.cellType == STR_CELL || this.cellType == BLANK_CELL) && !this.merid && this.wrap && !(this._justInserted === true))  {
 			//true indicate delay calcuate wrap height after CSS ready	
 			this.parent.processWrapCell(this, true);
 		}
