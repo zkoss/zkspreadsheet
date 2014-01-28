@@ -401,7 +401,7 @@ public class NRangeImpl implements NRange {
 			}
 		}
 
-		new NotifyChangeHelper().notifySizeChange(notifySet);
+		new NotifyChangeHelper().notifyRowColumnSizeChange(notifySet);
 	}
 
 	@Override
@@ -448,7 +448,7 @@ public class NRangeImpl implements NRange {
 				notifySet.add(new SheetRegion(r._sheet,0,i,maxrow,i));
 			}
 		}
-		new NotifyChangeHelper().notifySizeChange(notifySet);
+		new NotifyChangeHelper().notifyRowColumnSizeChange(notifySet);
 	}
 
 	@Override
@@ -612,7 +612,7 @@ public class NRangeImpl implements NRange {
 				}
 			}
 		}
-		new NotifyChangeHelper().notifySizeChange(notifySet);
+		new NotifyChangeHelper().notifyRowColumnSizeChange(notifySet);
 	}
 
 	@Override
@@ -948,10 +948,10 @@ public class NRangeImpl implements NRange {
 		ReadWriteTask task = new ReadWriteTask() {			
 			@Override
 			public Object invoke() {
+				NotifyChangeHelper notifyHelper =  new NotifyChangeHelper();
 				for (EffectedRegion r : rangeRefs) {
 					NBook book = r._sheet.getBook();
-					((AbstractBookAdv) book).sendModelEvent(ModelEvents.createModelEvent(customEventName,r._sheet,
-							ModelEvents.createDataMap(ModelEvents.PARAM_CUSTOM_DATA,data)));
+					notifyHelper.notifyCustomEvent(customEventName,r._sheet,data);
 				}
 				return null;
 			}
