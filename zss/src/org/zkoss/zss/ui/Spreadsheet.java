@@ -2290,14 +2290,27 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			updateChartWidget(sheet, (ZssChartX) payload);
 		} */
 		private void onPictureAdd(ModelEvent event) {
-			addPictureWidget(event.getSheet(), (NPicture)event.getData(ModelEvents.PARAM_PICTURE));
+			final NSheet sheet = event.getSheet();
+			
+			final String objid = event.getObjectId();
+			NPicture picture = sheet.getPicture(objid);
+			if(picture!=null){
+				addPictureWidget(event.getSheet(), picture);
+			}
 		}
 		private void onPictureDelete(ModelEvent event) {
-			deletePictureWidget(event.getSheet(), ((NPicture)event.getData(ModelEvents.PARAM_PICTURE)).getId());
+			deletePictureWidget(event.getSheet(), event.getObjectId());
 		}
 		private void onPictureUpdate(ModelEvent event) {
-			updatePictureWidget(event.getSheet(), (NPicture)event.getData(ModelEvents.PARAM_PICTURE));
+			final NSheet sheet = event.getSheet();
+			
+			final String objid = event.getObjectId();
+			NPicture picture = sheet.getPicture(objid);
+			if(picture!=null){
+				updatePictureWidget(event.getSheet(), picture);
+			}
 		}
+		
 		/*TODO zss 3.5
 		private void onWidgetChange(SSDataEvent event) {
 			final Ref rng = event.getRef();
@@ -2411,10 +2424,12 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		*/
 		private void onMergeAdd(ModelEvent event) {
 			NSheet sheet = event.getSheet();
-			if (!getSelectedXSheet().equals(sheet)){
-				releaseClientCache(sheet.getId());
-				return;
-			}
+			//don't skip at here, let extraCtrl sync mergeMatrix helper and skip
+//			if (!getSelectedXSheet().equals(sheet)){
+//				releaseClientCache(sheet.getId());
+//				getMergeMatrixHelper(sheet);
+//				return;
+//			}
 			CellRegion region = event.getRegion();
 			((ExtraCtrl) getExtraCtrl()).addMergeCell(sheet, 
 					region.getColumn(), region.getRow(), region.getLastColumn(), region.getLastRow());
@@ -2422,10 +2437,11 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		}
 		private void onMergeDelete(ModelEvent event) {
 			NSheet sheet = event.getSheet();
-			if (!getSelectedXSheet().equals(sheet)){
-				releaseClientCache(sheet.getId());
-				return;
-			}
+			//don't skip at here, let extraCtrl sync mergeMatrix helper and skip
+//			if (!getSelectedXSheet().equals(sheet)){
+//				releaseClientCache(sheet.getId());
+//				return;
+//			}
 			CellRegion region = event.getRegion();
 			((ExtraCtrl) getExtraCtrl()).deleteMergeCell(sheet,
 					region.getColumn(), region.getRow(), region.getLastColumn(), region.getLastRow());
