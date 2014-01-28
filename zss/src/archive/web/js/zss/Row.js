@@ -257,7 +257,7 @@ zss.Row = zk.$extends(zk.Widget, {
 			//don't care merge property, it will be sync by removeMergeRange and addMergeRange.
 			//don't care the sytle, since cell should be updated by continus updatecell event.
 			ctrl = new zss.Cell(sheet, block, r, c, src);
-			
+			ctrl._justInserted = true; //deleted after update cells
 			//because of overflow logic, we must maintain overflow link from overhead
 			//copy over flow attrbute overby and overhead,
 			if (tempcell) {

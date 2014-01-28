@@ -268,8 +268,9 @@ zss.Cell = zk.$extends(zk.Widget, {
 			prevWidth = cave.style.width,
 			fontSize = data.fontSize;
 		var wrapChanged = this.wrap != data.wrap;
-		var fontSizeChanged = this.fontSize != data.fontSize;
-		if (fontSize) {
+		var fontSizeChanged = false;
+		if (fontSize != undefined) {
+			fontSizeChanged = this.fontSize != data.fontSize
 			this.fontSize = fontSize;
 		}
 		this.$n().style.cssText = st;
@@ -319,6 +320,10 @@ zss.Cell = zk.$extends(zk.Widget, {
 		this.cellType = cellType;
 
 		var processWrap = wrapChanged || (this.wrap && (txtChd || fontSizeChanged));
+		if (this._justInserted === true){	//zss-528, when a cell is just inserted, its status is not synchronized with server, we ignore its status difference from server's.
+			processWrap = false;
+			delete this._justInserted;
+		}
 		if (processWrap)
 			this._txtHgh = jq(this.getTextNode()).height();//cache txt height
 		//merged cell won't change row height automatically
@@ -547,11 +552,6 @@ zss.Cell = zk.$extends(zk.Widget, {
 		var max = this.maxOverflowCol;
 		if (this.overflow && max && max != this.c) {
 			this._processOverflow();
-		}
-		//merged cell won't change row height automatically
-		if (this.cellType == STR_CELL && !this.merid && this.wrap) {
-			//true indicate delay calcuate wrap height after CSS ready	
-			this.parent.processWrapCell(this, true);
 		}
 	},
 	unbind_: function () {
