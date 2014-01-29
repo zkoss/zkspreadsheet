@@ -31,6 +31,7 @@ import org.zkoss.zss.ngmodel.NColor;
 import org.zkoss.zss.ngmodel.NFont;
 import org.zkoss.zss.ngmodel.NFont.Boldweight;
 import org.zkoss.zss.ngmodel.NFont.Underline;
+import org.zkoss.zss.ngmodel.NHyperlink;
 import org.zkoss.zss.ngmodel.NRichText;
 import org.zkoss.zss.ngmodel.NRichText.Segment;
 import org.zkoss.zss.ngmodel.NSheet;
@@ -417,28 +418,48 @@ public class CellFormatHelper {
 			final FormatResult ft = EngineFactory.getInstance().createFormatEngine().format(cell, new FormatContext(Locales.getCurrent()));
 			if (ft.isRichText()) {
 				final NRichText rstr = ft.getRichText();
-				text = rstr == null ? "" : getRichTextHtml(rstr, wrap, true);
+				final NHyperlink hlink = cell.getHyperlink();
+				if (hlink == null) {
+					text = getRichTextHtml(rstr, wrap, true);
+				} else {
+					text = getHyperlinkHtml(getRichTextHtml(rstr, wrap, true), hlink);						
+				}
 			} else {
 				text = escapeText(ft.getText(), wrap, true);
+				final NHyperlink hlink = cell.getHyperlink();
+				if (hlink != null) {
+					text = getHyperlinkHtml(text, hlink);
+				}				
 			}
+
 			
-			//TODO no else here for ft!=null?
-			/* TODO zss 3.5
-			final NHyperlink hlink = cell.getHyperlink();
-			if (hlink != null) {
-				text = XUtils.formatHyperlink(sheet, hlink, text, wrap);
-			}
-			*/
 		}
 		return text;
+	}
+	
+	private static String getHyperlinkHtml(String label, NHyperlink link) {
+		String addr = escapeText(link.getAddress(), false, false); //TODO escape something?
+		if (label == null) {
+			label = escapeText(link.getLabel(), false, false);
+		}
+		if( label == null) {
+			label = escapeText(addr, false, false);
+		}
+		final StringBuffer sb  = new StringBuffer();
+		//ZSS-233, don't use href directly to avoid direct click on spreadsheet at the beginning.
+		sb.append("<a zs.t=\"SHyperlink\" z.t=\"").append(link.getType().getValue()).append("\" href=\"javascript:\" z.href=\"")
+			.append(addr).append("\">")
+			.append(label==null?"":label)
+			.append("</a>");
+		return sb.toString();		
 	}
 	
 	private static String getRichTextHtml(NRichText text, boolean wrap, boolean multiline) {
 		StringBuilder sb = new StringBuilder();
 		for(Segment seg:text.getSegments()){
 			sb.append("<span style=\"")
-			.append(getFontCSSStyle(seg.getFont()))
-			.append("\">");
+				.append(getFontCSSStyle(seg.getFont()))
+				.append("\">");
 			sb.append(escapeText(seg.getText(),wrap,multiline));
 			sb.append("</span>");
 		}

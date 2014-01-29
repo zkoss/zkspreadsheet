@@ -3300,7 +3300,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 					attrs.put("ct", cellType.value());
 				
 				if (updateText) {
-					if (cellType != CellType.BLANK) {
+					if (cellType != CellType.BLANK || cell.getHyperlink() != null) {
 						String cellText = getCellDisplayLoader().getCellHtmlText(sheet, row, col);
 						final String editText = cfh.getCellEditText();
 						final String formatText = cfh.getCellFormattedText();
