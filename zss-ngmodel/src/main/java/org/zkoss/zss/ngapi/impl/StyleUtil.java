@@ -233,10 +233,12 @@ public class StyleUtil {
 	public static final short BORDER_EDGE_RIGHT			= 0x02;
 	public static final short BORDER_EDGE_TOP			= 0x04;
 	public static final short BORDER_EDGE_LEFT			= 0x08;
+	public static final short BORDER_EDGE_ALL			= BORDER_EDGE_BOTTOM|BORDER_EDGE_RIGHT|BORDER_EDGE_TOP|BORDER_EDGE_LEFT;
 	
 	public static void setBorder(NSheet sheet,int row,int col, String color, NCellStyle.BorderType linestyle){
-		setBorder(sheet,row,col, color, linestyle, BORDER_EDGE_BOTTOM|BORDER_EDGE_RIGHT|BORDER_EDGE_TOP|BORDER_EDGE_LEFT);
+		setBorder(sheet,row,col, color, linestyle, BORDER_EDGE_ALL);
 	}
+	
 	public static void setBorderTop(NSheet sheet,int row,int col,String color, NCellStyle.BorderType linestyle){
 		setBorder(sheet,row,col, color, linestyle, BORDER_EDGE_TOP);
 	}
@@ -250,7 +252,7 @@ public class StyleUtil {
 		setBorder(sheet,row,col, color, linestyle, BORDER_EDGE_RIGHT);
 	}
 	
-	public static void setBorder(NSheet sheet,int row,int col, String htmlColor, NCellStyle.BorderType lineStyle, int at){
+	public static void setBorder(NSheet sheet,int row,int col, String htmlColor, NCellStyle.BorderType lineStyle, short at){
 		final NBook book = sheet.getBook();
 		final NCell cell = sheet.getCell(row,col);
 		final NCellStyle orgStyle = cell.getCellStyle();

@@ -23,7 +23,7 @@ public class MergeHelper extends RangeHelperBase{
 	public void unmerge(boolean overlapped) {
 		int tRow = getRow();
 		int lCol = getColumn();
-		int bRow = getLastColumn();
+		int bRow = getLastRow();
 		int rCol = getLastColumn();
 		
 		sheet.removeMergedRegion(new CellRegion(tRow,lCol,bRow,rCol),overlapped);
@@ -46,25 +46,25 @@ public class MergeHelper extends RangeHelperBase{
 	}
 	
 	//a b are overlapped.
-	private static boolean overlap(int aTopRow, int aLeftCol, int aBottomRow, int aRightCol,
-			int bTopRow, int bLeftCol, int bBottomRow, int bRightCol) {
-		
-		boolean xOverlap = between(aLeftCol, bLeftCol, bRightCol) || between(bLeftCol, aLeftCol, aRightCol);
-		boolean yOverlap = between(aTopRow, bTopRow, bBottomRow) || between(bTopRow, aTopRow, aBottomRow);
-		
-		return xOverlap && yOverlap;
-	}
+//	private static boolean overlap(int aTopRow, int aLeftCol, int aBottomRow, int aRightCol,
+//			int bTopRow, int bLeftCol, int bBottomRow, int bRightCol) {
+//		
+//		boolean xOverlap = between(aLeftCol, bLeftCol, bRightCol) || between(bLeftCol, aLeftCol, aRightCol);
+//		boolean yOverlap = between(aTopRow, bTopRow, bBottomRow) || between(bTopRow, aTopRow, aBottomRow);
+//		
+//		return xOverlap && yOverlap;
+//	}
 	
 	//a contains b
-	private static boolean contain(int aTopRow, int aLeftCol, int aBottomRow, int aRightCol,
-			int bTopRow, int bLeftCol, int bBottomRow, int bRightCol){
-		return aLeftCol <= bLeftCol && aRightCol >= bRightCol 
-        		&& aTopRow <= bTopRow && aBottomRow >= bBottomRow;
-	}
-	
-	private static boolean between(int value, int min, int max) {
-		return (value >= min) && (value <= max);
-	}
+//	private static boolean contain(int aTopRow, int aLeftCol, int aBottomRow, int aRightCol,
+//			int bTopRow, int bLeftCol, int bBottomRow, int bRightCol){
+//		return aLeftCol <= bLeftCol && aRightCol >= bRightCol 
+//        		&& aTopRow <= bTopRow && aBottomRow >= bBottomRow;
+//	}
+//	
+//	private static boolean between(int value, int min, int max) {
+//		return (value >= min) && (value <= max);
+//	}
 	
 	/*
 	 * Merge the specified range per the given tRow, lCol, bRow, rCol.
@@ -77,7 +77,7 @@ public class MergeHelper extends RangeHelperBase{
 	 * @param across merge across each row.
 	 * @return {@link Ref} array where the affected formula cell references in index 1 and to be evaluated formula cell references in index 0.
 	 */
-	@SuppressWarnings("unchecked")
+//	@SuppressWarnings("unchecked")
 	public void merge(boolean across) {
 		int tRow = range.getRow();
 		int lCol = range.getColumn();

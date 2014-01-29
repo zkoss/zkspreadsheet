@@ -585,9 +585,19 @@ public class NRangeImpl implements NRange {
 	}
 
 	@Override
-	public void setBorders(ApplyBorderType borderIndex, BorderType lineStyle,
-			String color) {
-		throw new UnsupportedOperationException("not implement yet");
+	public void setBorders(final ApplyBorderType borderType,final BorderType lineStyle,
+			final String color) {
+		new ModelUpdateTask(){
+			@Override
+			Object doInvokePhase() {
+				new BorderHelper(NRangeImpl.this).applyBorder(borderType,lineStyle,color);
+				return null;
+			}
+			@Override
+			void doNotifyPhase() {}
+			
+		}.doInWriteLock(getLock());
+		
 	}
 
 	@Override
