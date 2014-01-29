@@ -511,10 +511,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 	},
 	onContentsChanged: function (evt) {
 		this.fireProcessOverflow_();
-		if (!(evt.data.requireProcessWrap === false)){
-			this.fireProcessWrap_();
-		}
-		
+		this.fireProcessWrap_();
 		
 		var r = this._selectionRange;
 		if (r) {
@@ -659,7 +656,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 				if (cacheSheet.id == selSheet.id) {//update current sheet
 					// ZSS-392: update every panel separately 
 					this.update_(data); // update cell DOM
-					wgt._triggerContentsChanged = {};
+					wgt._triggerContentsChanged = true;
 				}
 			}
 			break;

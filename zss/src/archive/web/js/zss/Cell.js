@@ -320,14 +320,14 @@ zss.Cell = zk.$extends(zk.Widget, {
 		this.cellType = cellType;
 
 		var processWrap = wrapChanged || (this.wrap && (txtChd || fontSizeChanged));
-		if (this._justInserted === true){	//zss-528, when a cell is just inserted, its status is not synchronized with server, we ignore its status difference from server's.
-			processWrap = false;
-			delete this._justInserted;
-		}
 		if (processWrap)
 			this._txtHgh = jq(this.getTextNode()).height();//cache txt height
+		if (this._justCopied === true){	//zss-528, when a cell is just inserted, its status is not synchronized with server, we ignore its status difference from server's.
+			processWrap = false;
+			delete this._justCopied;
+		}
 		//merged cell won't change row height automatically
-		if ((this.cellType == STR_CELL || this.cellType == BLANK_CELL) && !this.merid && processWrap) {//must process wrap after set text
+		if ((this.cellType == STR_CELL ||this.cellType == BLANK_CELL)&& !this.merid && processWrap ) {//must process wrap after set text
 			this.parent.processWrapCell(this, true);
 		}
 	},
@@ -553,10 +553,14 @@ zss.Cell = zk.$extends(zk.Widget, {
 		if (this.overflow && max && max != this.c) {
 			this._processOverflow();
 		}
+		
 		//to record how many cells enabling "wrap text"
-		if ((this.cellType == STR_CELL || this.cellType == BLANK_CELL) && !this.merid && this.wrap && !(this._justInserted === true))  {
+		if ((this.cellType == STR_CELL || this.cellType == BLANK_CELL) && !this.merid && this.wrap) {
 			//true indicate delay calcuate wrap height after CSS ready	
-			this.parent.processWrapCell(this, true);
+			var currentHeight = this.parent.getHeight();
+			var defaultHeight = this.sheet.custRowHeight.getDefaultSize();
+			//doesn't update wrap range when row height is not default
+			this.parent.processWrapCell(this, true, currentHeight!=defaultHeight);
 		}
 	},
 	unbind_: function () {

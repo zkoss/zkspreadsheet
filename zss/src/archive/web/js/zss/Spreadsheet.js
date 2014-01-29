@@ -740,9 +740,7 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 				range;
 			if (sheet) {
 				c.setSelectedSheet(v);
-				this._triggerContentsChanged = {};
-				//ZSS-528 do no adjust row height when selecting a sheet at the first time
-				this._triggerContentsChanged.requireProcessWrap = false;
+				this._triggerContentsChanged = true;
 			}
 		}
 	},
@@ -1091,7 +1089,7 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 	},
 	onResponse: function () {
 		if (this._triggerContentsChanged != undefined) {
-			this.sheetCtrl.fire('onContentsChanged', this._triggerContentsChanged);
+			this.sheetCtrl.fire('onContentsChanged');
 			delete this._triggerContentsChanged;
 		}
 
