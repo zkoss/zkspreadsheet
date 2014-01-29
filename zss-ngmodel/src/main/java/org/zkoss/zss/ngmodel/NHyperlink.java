@@ -22,7 +22,17 @@ package org.zkoss.zss.ngmodel;
  */
 public interface NHyperlink {
 	public enum HyperlinkType {
-		URL, DOCUMENT, EMAIL, FILE
+		URL(1), DOCUMENT(2), EMAIL(3), FILE(4);
+		
+		private int value;
+		
+		HyperlinkType(int value) {
+			this.value = value;
+		}
+		
+		public int getValue(){
+			return value;
+		}
 	}
 
 	public HyperlinkType getType();

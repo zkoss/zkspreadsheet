@@ -188,7 +188,8 @@ public class CellImpl extends AbstractCellAdv {
 		
 		OptFields opts = getOpts(false); 
 		if(opts!=null){
-			opts.hyperlink = null;
+			// clear for value, don't clear hyperlink
+//			opts.hyperlink = null;
 		};
 		//don't update when sheet is destroying
 		if(BookImpl.destroyingSheet.get()!=getSheet()){
@@ -216,7 +217,8 @@ public class CellImpl extends AbstractCellAdv {
 		
 		OptFields opts = getOpts(false); 
 		if(opts!=null){
-			opts.hyperlink = null;
+			// Clear value only, don't clear hyperlink
+//			opts.hyperlink = null;
 		};
 	}
 
