@@ -68,6 +68,10 @@ zss.Row = zk.$extends(zk.Widget, {
 		}
 	},
 	_updateWrapRowHeight: function () {
+		if (this.sheet.custRowHeight.isCustomSize(this.r)) {
+			return;
+		}
+
 		var autoHeight = this.sheet.custRowHeight.getDefaultSize();
 		
 		if (this.wrapedCells.length >0){
@@ -85,8 +89,8 @@ zss.Row = zk.$extends(zk.Widget, {
 		var CUSTOM = false;
 		this.sheet._setRowHeight(this.r, autoHeight, true, false, false, this.zsh, CUSTOM);
 	},
-	processWrapCell: function (cell, ignoreUpdateNow) {
-		if (!this.sheet.custRowHeight.isCustomSize(cell.r)) {
+	processWrapCell: function (cell, ignoreUpdateNow, ignoreUpdateWrapRange) {
+		if (!this.sheet.custRowHeight.isCustomSize(this.r)) {
 			var wrapedCells = this.wrapedCells;
 			if (cell.wrap) {
 				if (!wrapedCells.$contains(cell)) {
@@ -104,8 +108,9 @@ zss.Row = zk.$extends(zk.Widget, {
 			}
 			
 			this._listenProcessWrap(true);
-			if (ignoreUpdateNow) //process wrap on sheet onContentChange
+			if (ignoreUpdateNow && !(ignoreUpdateWrapRange===true)){ //process wrap on sheet onContentChange
 				this.sheet.triggerWrap(this.r);
+			}
 		}
 	},
 	//IE6 only
@@ -256,7 +261,7 @@ zss.Row = zk.$extends(zk.Widget, {
 			//don't care merge property, it will be sync by removeMergeRange and addMergeRange.
 			//don't care the sytle, since cell should be updated by continus updatecell event.
 			ctrl = new zss.Cell(sheet, block, r, c, src);
-			
+			ctrl._justCopied = true; 
 			//because of overflow logic, we must maintain overflow link from overhead
 			//copy over flow attrbute overby and overhead,
 			if (tempcell) {
@@ -317,6 +322,9 @@ zss.Row = zk.$extends(zk.Widget, {
 		}
 			
 		this.shiftCellInfo(index, col);
+	},
+	getHeight: function(){
+		return this.sheet.custRowHeight._getCustomizedSize(this.r);
 	}
 }, {
 	/**
@@ -336,6 +344,7 @@ zss.Row = zk.$extends(zk.Widget, {
 				block = srcCell.block,
 				sht = srcCell.sheet,
 				newCell = new zss.Cell(sht, block, r, c, src);
+			newCell._justCopied = true;
 			html += newCell.getHtml();
 			destRow.appendCell(newCell);
 		}
