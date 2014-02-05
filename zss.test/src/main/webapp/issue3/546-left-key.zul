@@ -1,0 +1,13 @@
+<zk>
+	<vbox>
+		<label multiline="true"><![CDATA[
+			1. select "C1"
+			2. move to "B1" by left key
+			3. the focus will jump into ".zsfocus" textarea (for client-side copy)
+		]]></label>
+		<spreadsheet id="ss" src="/issue3/book/546-left-key.xlsx" maxrows="1000" maxcolumns="100"
+			width="600px" height="600px"
+			ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e"
+			showContextMenu="true" showSheetbar="true" showToolbar="true" showFormulabar="true" />
+	</vbox>
+</zk>
