@@ -208,10 +208,4 @@ public class NumberTest {
 		assertEquals("1234.568 ", Ranges.range(sheet, "G45").getCellFormatText());
 	}
 
-	@Test
-	public void testNumberFormat47() {
-		Sheet sheet = book.getSheet("Number");
-		assertEquals("12.0", Ranges.range(sheet, "E47").getCellFormatText());
-		assertEquals("12.0", Ranges.range(sheet, "G47").getCellFormatText());
-	}
 }

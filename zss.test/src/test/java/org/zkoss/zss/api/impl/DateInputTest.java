@@ -383,7 +383,7 @@ public class DateInputTest {
 		Assert.assertEquals("General", r.getCellStyle().getDataFormat());
 		CellOperationUtil.applyDataFormat(r, "m/d/yyyy"); 
 		todayStr = Util.getDateFormat("M/d/yyyy",Setup.getZssContextLocale()).format(today);
-		todayStrLong = Util.getDateFormat("M/dd/yyyy h:mm:ss a",Setup.getZssContextLocale()).format(today); // it is M/dd/yyyy h:mm:ss in US
+		todayStrLong = Util.getDateFormat("MM/dd/yyyy h:mm:ss a",Setup.getZssContextLocale()).format(today); // it is M/dd/yyyy h:mm:ss in US
 		
 		r.setCellEditText(todayStr);
 		Assert.assertEquals("m/d/yyyy", r.getCellStyle().getDataFormat()); //format change
