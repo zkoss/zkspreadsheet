@@ -116,7 +116,7 @@ public class NRangeImpl implements NRange {
 		if(rangeRefs.size()<=0){
 			throw new IllegalStateException("can find any effected range");
 		}
-		return rangeRefs.get(0)._sheet;
+		return rangeRefs.get(0).sheet;
 	}
 	@Override
 	public int getRow() {
@@ -136,12 +136,12 @@ public class NRangeImpl implements NRange {
 	}
 
 	private class EffectedRegion {
-		private final NSheet _sheet;
+		private final NSheet sheet;
 		private final CellRegion region;
 
 		public EffectedRegion(NSheet sheet, int row, int column, int lastRow,
 				int lastColumn) {
-			_sheet = sheet;
+			this.sheet = sheet;
 			region = new CellRegion(row, column,lastRow,lastColumn);
 		}
 	}
@@ -182,13 +182,13 @@ public class NRangeImpl implements NRange {
 			DependentUpdateCollector.setCurrent(dependentCtx);
 			
 			for (EffectedRegion r : rangeRefs) {
-				String bookName = r._sheet.getBook().getBookName();
-				String sheetName = r._sheet.getSheetName();
+				String bookName = r.sheet.getBook().getBookName();
+				String sheetName = r.sheet.getSheetName();
 				CellRegion region = r.region;
 				loop1:
 				for (int i = region.row; i <= region.lastRow; i++) {
 					for (int j = region.column; j <= region.lastColumn; j++) {
-						NCell cell = r._sheet.getCell(i, j);
+						NCell cell = r.sheet.getCell(i, j);
 						boolean update = visitor.visit(cell);
 						if(update){
 							Ref ref = new RefImpl(bookName, sheetName, i, j);
@@ -342,8 +342,8 @@ public class NRangeImpl implements NRange {
 		NBookSeries bookSeries = getBookSeries();
 		LinkedHashSet<Ref> notifySet = new LinkedHashSet<Ref>();
 		for (EffectedRegion r : rangeRefs) {
-			String bookName = r._sheet.getBook().getBookName();
-			String sheetName = r._sheet.getSheetName();
+			String bookName = r.sheet.getBook().getBookName();
+			String sheetName = r.sheet.getSheetName();
 			CellRegion region = r.region;
 			Ref ref = new RefImpl(bookName, sheetName, region.row, region.column,region.lastRow,region.lastColumn);
 			notifySet.add(ref);
@@ -383,11 +383,11 @@ public class NRangeImpl implements NRange {
 		LinkedHashSet<SheetRegion> notifySet = new LinkedHashSet<SheetRegion>();
 
 		for (EffectedRegion r : rangeRefs) {
-			int maxcol = r._sheet.getBook().getMaxColumnIndex();
+			int maxcol = r.sheet.getBook().getMaxColumnIndex();
 			CellRegion region = r.region;
 			
 			for (int i = region.row; i <= region.lastRow; i++) {
-				NRow row = r._sheet.getRow(i);
+				NRow row = r.sheet.getRow(i);
 				if(heightPx!=null){
 					row.setHeight(heightPx);
 				}
@@ -397,7 +397,7 @@ public class NRangeImpl implements NRange {
 				if(custom!=null){
 					row.setCustomHeight(custom);
 				}
-				notifySet.add(new SheetRegion(r._sheet,i,0,i,maxcol));
+				notifySet.add(new SheetRegion(r.sheet,i,0,i,maxcol));
 			}
 		}
 
@@ -431,11 +431,11 @@ public class NRangeImpl implements NRange {
 		LinkedHashSet<SheetRegion> notifySet = new LinkedHashSet<SheetRegion>();
 
 		for (EffectedRegion r : rangeRefs) {
-			int maxrow = r._sheet.getBook().getMaxRowIndex();
+			int maxrow = r.sheet.getBook().getMaxRowIndex();
 			CellRegion region = r.region;
 			
 			for (int i = region.column; i <= region.lastColumn; i++) {
-				NColumn column = r._sheet.getColumn(i);
+				NColumn column = r.sheet.getColumn(i);
 				if(widthPx!=null){
 					column.setWidth(widthPx);
 				}
@@ -445,7 +445,7 @@ public class NRangeImpl implements NRange {
 				if(custom!=null){
 					column.setCustomWidth(true);
 				}
-				notifySet.add(new SheetRegion(r._sheet,0,i,maxrow,i));
+				notifySet.add(new SheetRegion(r.sheet,0,i,maxrow,i));
 			}
 		}
 		new NotifyChangeHelper().notifyRowColumnSizeChange(notifySet);
@@ -701,26 +701,26 @@ public class NRangeImpl implements NRange {
 	protected void setHiddenInLock(boolean hidden) {
 		LinkedHashSet<SheetRegion> notifySet = new LinkedHashSet<SheetRegion>();
 		for (EffectedRegion r : rangeRefs) {
-			NBook book = r._sheet.getBook();
-			int maxcol = r._sheet.getBook().getMaxColumnIndex();
-			int maxrow = r._sheet.getBook().getMaxRowIndex();
+			NBook book = r.sheet.getBook();
+			int maxcol = r.sheet.getBook().getMaxColumnIndex();
+			int maxrow = r.sheet.getBook().getMaxRowIndex();
 			CellRegion region = r.region;
 			
 			if(isWholeRow(book,region)){//hidden the row when it is whole row
 				for(int i = region.getRow(); i<=region.getLastRow();i++){
-					NRow row = r._sheet.getRow(i);
+					NRow row = r.sheet.getRow(i);
 					if(row.isHidden()==hidden)
 						continue;
 					row.setHidden(hidden);
-					notifySet.add(new SheetRegion(r._sheet,i,0,i,maxcol));
+					notifySet.add(new SheetRegion(r.sheet,i,0,i,maxcol));
 				}
 			}else if(isWholeColumn(book,region)){
 				for(int i = region.getColumn(); i<=region.getLastColumn();i++){
-					NColumn col = r._sheet.getColumn(i);
+					NColumn col = r.sheet.getColumn(i);
 					if(col.isHidden()==hidden)
 						continue;
 					col.setHidden(hidden);
-					notifySet.add(new SheetRegion(r._sheet,0,i,maxrow,i));
+					notifySet.add(new SheetRegion(r.sheet,0,i,maxrow,i));
 				}
 			}
 		}
@@ -733,7 +733,7 @@ public class NRangeImpl implements NRange {
 			@Override
 			public Object invoke() {
 				for (EffectedRegion r : rangeRefs) {
-					NSheet sheet = r._sheet;
+					NSheet sheet = r.sheet;
 					if(sheet.getViewInfo().isDisplayGridline()!=show){
 						sheet.getViewInfo().setDisplayGridline(show);
 						new NotifyChangeHelper().notifyDisplayGirdline(sheet,show);
@@ -751,7 +751,7 @@ public class NRangeImpl implements NRange {
 			@Override
 			public Object invoke() {
 				for (EffectedRegion r : rangeRefs) {
-					NSheet sheet = r._sheet;
+					NSheet sheet = r.sheet;
 					if(sheet.isProtected() && password==null){
 						sheet.setPassword(null);
 						new NotifyChangeHelper().notifyProtectSheet(sheet,false);
@@ -799,7 +799,27 @@ public class NRangeImpl implements NRange {
 
 	@Override
 	public boolean isAnyCellProtected() {
-		throw new UnsupportedOperationException("not implement yet");
+		return (Boolean)new ReadWriteTask(){
+			@Override
+			public Object invoke() {
+				for (EffectedRegion r : rangeRefs) {
+					NSheet sheet = r.sheet;
+					if(sheet.isProtected()){
+						CellRegion region = r.region;
+						for (int i = region.row; i <= region.lastRow; i++) {
+							for (int j = region.column; j <= region.lastColumn; j++) {
+								NCellStyle style = r.sheet.getCell(i, j).getCellStyle();
+								if(style.isLocked()){
+									return true;
+								}
+							}
+						}
+					}
+				}
+				return false;
+			}
+			
+		}.doInReadLock(getLock());
 	}
 
 	@Override
@@ -1106,8 +1126,8 @@ public class NRangeImpl implements NRange {
 			public Object invoke() {
 				NotifyChangeHelper notifyHelper =  new NotifyChangeHelper();
 				for (EffectedRegion r : rangeRefs) {
-					NBook book = r._sheet.getBook();
-					notifyHelper.notifyCustomEvent(customEventName,r._sheet,data);
+					NBook book = r.sheet.getBook();
+					notifyHelper.notifyCustomEvent(customEventName,r.sheet,data);
 				}
 				return null;
 			}
