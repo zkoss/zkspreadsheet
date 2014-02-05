@@ -215,7 +215,7 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 		sheet.getPrintSetup().setPaperSize(toZssPaperSize(poiSheet.getPrintSetup().getPaperSize()));
 		sheet.getPrintSetup().setLandscape(poiSheet.getPrintSetup().getLandscape());
 
-		sheet.setProtected(poiSheet.getProtect());
+		sheet.setPassword(poiSheet.getProtect()?"":null);
 		
 		return sheet;
 	}

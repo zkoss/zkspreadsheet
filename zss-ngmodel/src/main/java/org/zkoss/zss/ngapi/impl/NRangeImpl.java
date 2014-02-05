@@ -453,7 +453,15 @@ public class NRangeImpl implements NRange {
 
 	@Override
 	public NHyperlink getHyperlink() {
-		throw new UnsupportedOperationException("not implement yet");
+		final ResultWrap<NHyperlink> r = new ResultWrap<NHyperlink>();
+		new CellVisitorTask(new OneCellVisitor() {
+			@Override
+			public boolean visit(NCell cell) {
+				r.set(cell.getHyperlink());		
+				return false;
+			}
+		}).doInReadLock(getLock());
+		return r.get();
 	}
 
 	@Override
@@ -548,11 +556,13 @@ public class NRangeImpl implements NRange {
 
 	@Override
 	public void insert(InsertShift shift, InsertCopyOrigin copyOrigin) {
+		//TODO
 		throw new UnsupportedOperationException("not implement yet");
 	}
 
 	@Override
 	public void delete(DeleteShift shift) {
+		//TODO
 		throw new UnsupportedOperationException("not implement yet");
 	}
 
@@ -616,37 +626,55 @@ public class NRangeImpl implements NRange {
 	}
 
 	@Override
-	public NRange getCells(int row, int col) {
-		throw new UnsupportedOperationException("not implement yet");
+	public void setCellStyle(final NCellStyle style) {
+		new CellVisitorTask(new CellVisitor() {
+			public boolean visit(NCell cell) {
+				cell.setCellStyle(style);
+				return true;
+			}
+		}).doInWriteLock(getLock());
 	}
-
+	
 	@Override
-	public void setStyle(NCellStyle style) {
-		throw new UnsupportedOperationException("not implement yet");
+	public NCellStyle getCellStyle() {
+		final ResultWrap<NCellStyle> r = new ResultWrap<NCellStyle>();
+		new CellVisitorTask(new OneCellVisitor() {
+			@Override
+			public boolean visit(NCell cell) {
+				r.set(cell.getCellStyle());		
+				return false;
+			}
+		}).doInReadLock(getLock());
+		return r.get();
 	}
 
 	@Override
 	public void autoFill(NRange dstRange, AutoFillType fillType) {
+		//TODO
 		throw new UnsupportedOperationException("not implement yet");
 	}
 
 	@Override
 	public void fillDown() {
+		//TODO
 		throw new UnsupportedOperationException("not implement yet");
 	}
 
 	@Override
 	public void fillLeft() {
+		//TODO
 		throw new UnsupportedOperationException("not implement yet");
 	}
 
 	@Override
 	public void fillRight() {
+		//TODO
 		throw new UnsupportedOperationException("not implement yet");
 	}
 
 	@Override
 	public void fillUp() {
+		//TODO
 		throw new UnsupportedOperationException("not implement yet");
 	}
 
@@ -700,23 +728,67 @@ public class NRangeImpl implements NRange {
 	}
 
 	@Override
-	public void setDisplayGridlines(boolean show) {
-		throw new UnsupportedOperationException("not implement yet");
+	public void setDisplayGridlines(final boolean show) {
+		new ReadWriteTask() {			
+			@Override
+			public Object invoke() {
+				for (EffectedRegion r : rangeRefs) {
+					NSheet sheet = r._sheet;
+					if(sheet.getViewInfo().isDisplayGridline()!=show){
+						sheet.getViewInfo().setDisplayGridline(show);
+						new NotifyChangeHelper().notifyDisplayGirdline(sheet,show);
+					}
+				}
+				return null;
+			}
+		}.doInWriteLock(getLock());
+		
 	}
 
 	@Override
-	public void protectSheet(String password) {
-		throw new UnsupportedOperationException("not implement yet");
+	public void protectSheet(final String password) {
+		new ReadWriteTask() {			
+			@Override
+			public Object invoke() {
+				for (EffectedRegion r : rangeRefs) {
+					NSheet sheet = r._sheet;
+					if(sheet.isProtected() && password==null){
+						sheet.setPassword(null);
+						new NotifyChangeHelper().notifyProtectSheet(sheet,false);
+					}else if(!sheet.isProtected() && password!=null){
+						sheet.setPassword(password);
+						new NotifyChangeHelper().notifyProtectSheet(sheet,true);
+					}
+				}
+				return null;
+			}
+		}.doInWriteLock(getLock());
 	}
 
 	@Override
-	public void setHyperlink(HyperlinkType linkType, String address,
-			String display) {
-		throw new UnsupportedOperationException("not implement yet");
+	public void setHyperlink(final HyperlinkType linkType,final String address,
+			final String display) {
+		new CellVisitorTask(new CellVisitor() {
+			public boolean visit(NCell cell) {
+				NHyperlink link = cell.setupHyperlink();
+				link.setType(linkType);
+				link.setAddress(address);
+				link.setLabel(display);
+				
+				String text = display;
+				while(text.startsWith("=")){
+					text = text.substring(1);
+				}
+				cell.setStringValue(text);
+				return true;
+			}
+		}).doInWriteLock(getLock());
 	}
 
 	@Override
 	public Object getValue() {
+		//follow the original implementation in BookHelper:getCellValue(Cell cell) {
+		
 		throw new UnsupportedOperationException("not implement yet");
 	}
 

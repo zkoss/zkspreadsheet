@@ -18,6 +18,7 @@ import org.zkoss.util.Locales;
 import org.zkoss.zss.ngapi.*;
 import org.zkoss.zss.ngapi.impl.imexp.ExcelExportFactory.Type;
 import org.zkoss.zss.ngmodel.NCell.CellType;
+import org.zkoss.zss.ngmodel.NHyperlink.HyperlinkType;
 import org.zkoss.zss.ngmodel.NPicture.Format;
 import org.zkoss.zss.ngmodel.impl.BookImpl;
 
@@ -335,5 +336,42 @@ C	3	6	9	=SUM(E9:F9)
 		NRanges.range(sheet1).deleteSheet();
 		
 		Assert.assertEquals("#REF!", sheet2.getCell("B1").getErrorValue().getErrorString());
+	}
+	
+	@Test
+	public void testSetHyperlink(){
+		NBook book = NBooks.createBook("book1");
+		NSheet sheet1 = book.createSheet("Sheet1");
+		NRange range = NRanges.range(sheet1,"A1:B2");
+		range.setHyperlink(HyperlinkType.URL, "http://www.google.com", "Google");
+		
+		NHyperlink link = range.getHyperlink();
+		Assert.assertEquals(HyperlinkType.URL, link.getType());
+		Assert.assertEquals("http://www.google.com", link.getAddress());
+		Assert.assertEquals("Google", link.getLabel());
+		
+		Assert.assertEquals("Google", sheet1.getCell("A1").getStringValue());
+		
+		link = NRanges.range(sheet1,"B2").getHyperlink();
+		Assert.assertEquals(HyperlinkType.URL, link.getType());
+		Assert.assertEquals("http://www.google.com", link.getAddress());
+		Assert.assertEquals("Google", link.getLabel());
+		Assert.assertEquals("Google", sheet1.getCell("B2").getStringValue());
+	}
+	
+	@Test
+	public void testSetStyle(){
+		NBook book = NBooks.createBook("book1");
+		NSheet sheet1 = book.createSheet("Sheet1");
+		NCellStyle style1 = book.createCellStyle(true);
+		
+		NRanges.range(sheet1,"A1:B2").setCellStyle(style1);
+		Assert.assertEquals(style1, NRanges.range(sheet1,"A1").getCellStyle());
+		Assert.assertEquals(style1, NRanges.range(sheet1,"A2").getCellStyle());
+		Assert.assertEquals(style1, NRanges.range(sheet1,"B1").getCellStyle());
+		Assert.assertEquals(style1, NRanges.range(sheet1,"B2").getCellStyle());
+		Assert.assertEquals(book.getDefaultCellStyle(), NRanges.range(sheet1,"C1").getCellStyle());
+		Assert.assertEquals(book.getDefaultCellStyle(), NRanges.range(sheet1,"C2").getCellStyle());
+		
 	}
 }

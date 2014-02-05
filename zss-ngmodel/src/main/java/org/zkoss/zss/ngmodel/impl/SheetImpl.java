@@ -66,7 +66,7 @@ public class SheetImpl extends AbstractSheetAdv {
 	private String name;
 	private final String id;
 	
-	private boolean protect;
+	private String password;
 	
 	private NDataGrid dataGrid;
 	
@@ -1536,12 +1536,17 @@ public class SheetImpl extends AbstractSheetAdv {
 
 	@Override
 	public boolean isProtected() {
-		return protect;
+		return password!=null;
 	}
 
 	@Override
-	public void setProtected(boolean protect) {
-		this.protect = protect;
+	public void setPassword(String password) {
+		this.password = password;
+	}
+	
+	@Override
+	public String getPassword() {
+		return this.password;
 	}
 
 	@Override

@@ -230,14 +230,20 @@ public abstract class AbstractCellAdv implements NCell,LinkedModelObject,Seriali
 	
 	@Override
 	public NHyperlink setupHyperlink(){
-		NHyperlink hyperlink = new HyperlinkImpl();
-		setHyperlink(hyperlink);
+		NHyperlink hyperlink = getHyperlink();
+		if(hyperlink!=null){
+			return hyperlink;
+		}
+		setHyperlink(hyperlink = new HyperlinkImpl());
 		return hyperlink;
 	}
 	@Override
 	public NComment setupComment(){
-		NComment comment = new CommentImpl();
-		setComment(comment);
+		NComment comment = getComment();
+		if(comment!=null){
+			return comment;
+		}
+		setComment(comment = new CommentImpl());
 		return comment;
 	}
 	

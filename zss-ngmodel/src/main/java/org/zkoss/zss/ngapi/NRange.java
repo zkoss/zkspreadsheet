@@ -308,19 +308,19 @@ public interface NRange {
 	 */
 	public NSheet getSheet();
 	
-	/**
-	 * Return the range that contains the cell specified in row, col (relative to this Range).
-	 * @param row row index relative to this Range(note that it is 0-based)
-	 * @param col column index relative to this Range(note that it is 0-based)
-	 * @return the range that contains the cell specified in row, col (relative to this Range).
-	 */
-	public NRange getCells(int row, int col);
+//	/**
+//	 * Return the range that contains the cell specified in row, col (relative to this Range).
+//	 * @param row row index relative to this Range(note that it is 0-based)
+//	 * @param col column index relative to this Range(note that it is 0-based)
+//	 * @return the range that contains the cell specified in row, col (relative to this Range).
+//	 */
+//	public NRange getCells(int row, int col);
 	
 	/**
 	 * Sets a Style object to this Range.
 	 * @param style the style object
 	 */
-	public void setStyle(NCellStyle style);
+	public void setCellStyle(NCellStyle style);
 	
 	/**
 	 * Perform an auto fill on the specified destination Range. Note the given destination Range
@@ -667,7 +667,17 @@ public interface NRange {
 	 */
 	public void setFreezePanel(int numOfRow, int numOfColumn);
 
+	/**
+	 * Gets the first(top-left) cell's formatted text
+	 * @return
+	 */
 	public String getCellFormatText();
+	
+	/**
+	 * Gets the first(top-left) cell's style
+	 * @return
+	 */
+	public NCellStyle getCellStyle();
 
 	public boolean isSheetProtected();
 	

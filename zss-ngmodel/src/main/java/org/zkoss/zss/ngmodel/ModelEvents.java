@@ -47,6 +47,9 @@ public class ModelEvents {
 	public static final String ON_MERGE_ADD = "onMergeAdd";
 	public static final String ON_MERGE_DELETE = "onMergeDelete";
 	
+	public static final String ON_DISPLAY_GRIDLINE_CHANGE = "onDisplayGridlineChange";
+	public static final String ON_PROTECT_SHEET_CHANGE = "onProtectSheetChange";
+	
 	/**
 	 * the effected book
 	 */
@@ -78,12 +81,17 @@ public class ModelEvents {
 	/**
 	 * the old name, e.g old sheet name when rename the sheet
 	 */
-	public static final Object PARAM_OLD_NAME = "oldName";
+	public static final String PARAM_OLD_NAME = "oldName";
 	
 	/**
 	 * the old index, e.g old sheet index when reorder the sheet
 	 */
-	public static final Object PARAM_OLD_INDEX = "oldIndex";
+	public static final String PARAM_OLD_INDEX = "oldIndex";
+	
+	/**
+	 * the enable state, e.g enable display gridlines 
+	 */
+	public static final String PARAM_ENABLED = "enabled";
 	
 	
 	public static ModelEvent createModelEvent(String name, NBook book){

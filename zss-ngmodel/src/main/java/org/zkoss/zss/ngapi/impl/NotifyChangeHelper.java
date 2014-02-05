@@ -127,5 +127,15 @@ import org.zkoss.zss.ngmodel.impl.AbstractBookAdv;
 		((AbstractBookAdv) sheet.getBook()).sendModelEvent(ModelEvents.createModelEvent(customEventName,sheet,
 				ModelEvents.createDataMap(ModelEvents.PARAM_CUSTOM_DATA,data)));
 	}
+
+	public void notifyDisplayGirdline(NSheet sheet, boolean show) {
+		((AbstractBookAdv) sheet.getBook()).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_DISPLAY_GRIDLINE_CHANGE,sheet,
+				ModelEvents.createDataMap(ModelEvents.PARAM_ENABLED,show)));
+	}
+	
+	public void notifyProtectSheet(NSheet sheet, boolean protect) {
+		((AbstractBookAdv) sheet.getBook()).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_PROTECT_SHEET_CHANGE,sheet,
+				ModelEvents.createDataMap(ModelEvents.PARAM_ENABLED,protect)));
+	}
 	
 }

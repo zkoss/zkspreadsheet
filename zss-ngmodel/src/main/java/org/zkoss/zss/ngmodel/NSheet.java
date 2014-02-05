@@ -183,10 +183,23 @@ public interface NSheet {
 	 */
 	public Map<String,Object> getAttributes();
 
-	
+	/**
+	 * Check if the sheet is protected
+	 * @return
+	 */
 	public boolean isProtected();
 	
-	public void setProtected(boolean protect);
+	/**
+	 * Sets password to protect sheet, set null to unprotect it.
+	 * @param protection
+	 */
+	public void setPassword(String password);
+	
+	/**
+	 * Gets the password
+	 * @return
+	 */
+	public String getPassword();
 
 	/**
 	 * Get the data grid that this sheet stores it data, by default it is null, and the data store on cell directly

@@ -44,6 +44,9 @@ public class CommentImpl extends AbstractCommentAdv {
 
 	@Override
 	public NRichText setupRichText() {
+		if(this.text instanceof NRichText){
+			return (NRichText)this.text;
+		}
 		this.text = new RichTextImpl();
 		return (NRichText)this.text;
 	}
