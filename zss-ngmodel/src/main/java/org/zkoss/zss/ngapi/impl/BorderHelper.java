@@ -3,7 +3,10 @@ package org.zkoss.zss.ngapi.impl;
 import org.zkoss.zss.ngapi.NRange;
 import org.zkoss.zss.ngapi.NRange.ApplyBorderType;
 import org.zkoss.zss.ngmodel.NBook;
+import org.zkoss.zss.ngmodel.NCell;
+import org.zkoss.zss.ngmodel.NCellStyle;
 import org.zkoss.zss.ngmodel.NCellStyle.BorderType;
+import org.zkoss.zss.ngmodel.NColor;
 import org.zkoss.zss.ngmodel.NSheet;
 
 public class BorderHelper extends RangeHelperBase {
@@ -15,6 +18,7 @@ public class BorderHelper extends RangeHelperBase {
 	
 	final int maxRowIndex;
 	final int maxColumnIndex;
+	final static String BLACK = "#000000";
 	
 	public BorderHelper(NRange range) {
 		super(range);
@@ -141,27 +145,19 @@ public class BorderHelper extends RangeHelperBase {
 		//right border when RIGHT
 		short at = 0;
 		if((location&TOP)!=0){
-			if(r-1>=0){
-				StyleUtil.setBorder(sheet, r-1, c, borderColor, lineStyle,StyleUtil.BORDER_EDGE_BOTTOM);
-			}
+			resetBorderBottom(sheet,r-1,c,lineStyle,borderColor);
 			at |= StyleUtil.BORDER_EDGE_TOP;
 		}
 		if((location&LEFT)!=0){
-			if(c-1>=0){
-				StyleUtil.setBorder(sheet, r, c-1, borderColor, lineStyle,StyleUtil.BORDER_EDGE_RIGHT);
-			}
+			resetBorderRight(sheet,r,c-1,lineStyle,borderColor);
 			at |= StyleUtil.BORDER_EDGE_LEFT;
 		}
 		if((location&BOTTOM)!=0){
-			if(r+1<=maxRowIndex){
-				StyleUtil.setBorder(sheet, r+1, c, borderColor, lineStyle,StyleUtil.BORDER_EDGE_TOP);
-			}
+			resetBorderTop(sheet,r+1,c,lineStyle,borderColor);
 			at |= StyleUtil.BORDER_EDGE_BOTTOM;
 		}
 		if((location&RIGHT)!=0){
-			if(c+1<=maxColumnIndex){
-				StyleUtil.setBorder(sheet, r, c+1, borderColor, lineStyle,StyleUtil.BORDER_EDGE_LEFT);
-			}
+			resetBorderLeft(sheet,r,c+1,lineStyle,borderColor);
 			at |= StyleUtil.BORDER_EDGE_RIGHT;
 		}
 		StyleUtil.setBorder(sheet, r, c, borderColor, lineStyle,at);
@@ -172,9 +168,7 @@ public class BorderHelper extends RangeHelperBase {
 			BorderType lineStyle, String borderColor, short location) {
 		//left border when LEFT
 		if((location&LEFT)!=0){
-			if(c-1>=0){
-				StyleUtil.setBorder(sheet, r, c-1, borderColor, lineStyle,StyleUtil.BORDER_EDGE_RIGHT);
-			}
+			resetBorderRight(sheet,r,c-1,lineStyle,borderColor);
 			StyleUtil.setBorder(sheet, r, c, borderColor, lineStyle,StyleUtil.BORDER_EDGE_LEFT);
 		}
 	}
@@ -183,9 +177,7 @@ public class BorderHelper extends RangeHelperBase {
 			BorderType lineStyle, String borderColor, short location) {
 		//top border when TOP
 		if((location&TOP)!=0){
-			if(r-1>=0){
-				StyleUtil.setBorder(sheet, r-1, c, borderColor, lineStyle,StyleUtil.BORDER_EDGE_BOTTOM);
-			}
+			resetBorderBottom(sheet,r-1,c,lineStyle,borderColor);
 			StyleUtil.setBorder(sheet, r, c, borderColor, lineStyle,StyleUtil.BORDER_EDGE_TOP);
 		}
 	}
@@ -194,9 +186,7 @@ public class BorderHelper extends RangeHelperBase {
 			BorderType lineStyle, String borderColor, short location) {
 		//right border when RIGHT
 		if((location&RIGHT)!=0){
-			if(c+1<=maxColumnIndex){
-				StyleUtil.setBorder(sheet, r, c+1, borderColor, lineStyle,StyleUtil.BORDER_EDGE_LEFT);
-			}
+			resetBorderLeft(sheet,r,c+1,lineStyle,borderColor);
 			StyleUtil.setBorder(sheet, r, c, borderColor, lineStyle,StyleUtil.BORDER_EDGE_RIGHT);
 		}
 	}
@@ -205,9 +195,7 @@ public class BorderHelper extends RangeHelperBase {
 			BorderType lineStyle, String borderColor, short location) {
 		//bottom border when BOTTOM
 		if((location&BOTTOM)!=0){
-			if(r+1<=maxRowIndex){
-				StyleUtil.setBorder(sheet, r+1, c, borderColor, lineStyle,StyleUtil.BORDER_EDGE_TOP);
-			}
+			resetBorderTop(sheet,r+1,c,lineStyle,borderColor);
 			StyleUtil.setBorder(sheet, r, c, borderColor, lineStyle,StyleUtil.BORDER_EDGE_BOTTOM);
 		}
 		
@@ -218,35 +206,120 @@ public class BorderHelper extends RangeHelperBase {
 		short at = 0;
 		//top border when top
 		if((location&TOP)!=0){
-			if(r-1>=0){
-				StyleUtil.setBorder(sheet, r-1, c, borderColor, lineStyle,StyleUtil.BORDER_EDGE_BOTTOM);
-			}
+			resetBorderBottom(sheet,r-1,c,lineStyle,borderColor);
 			at |= StyleUtil.BORDER_EDGE_TOP;
 		}
 		//left border when left
 		if((location&LEFT)!=0){
-			if(c-1>=0){
-				StyleUtil.setBorder(sheet, r, c-1, borderColor, lineStyle,StyleUtil.BORDER_EDGE_RIGHT);
-			}
+			resetBorderRight(sheet,r,c-1,lineStyle,borderColor);
 			at |= StyleUtil.BORDER_EDGE_LEFT;
 		}
 		
 		//right and bottom border
 		if((location&BOTTOM)!=0){
-			if(r+1<=maxRowIndex){
-				StyleUtil.setBorder(sheet, r+1, c, borderColor, lineStyle,StyleUtil.BORDER_EDGE_TOP);
-			}
+			resetBorderTop(sheet,r+1,c,lineStyle,borderColor);
 			
 		}
 		if((location&RIGHT)!=0){
-			if(c+1<=maxColumnIndex){
-				StyleUtil.setBorder(sheet, r, c+1, borderColor, lineStyle,StyleUtil.BORDER_EDGE_LEFT);
-			}
+			resetBorderLeft(sheet,r,c+1,lineStyle,borderColor);
 		}
 		at |= StyleUtil.BORDER_EDGE_RIGHT;
 		at |= StyleUtil.BORDER_EDGE_BOTTOM;
 		StyleUtil.setBorder(sheet, r, c, borderColor, lineStyle,at);
 	}
 
-
+	private boolean isOutOfBoundCell(NSheet sheet, int r, int c){
+		return (r<0|| c<0 || r>maxRowIndex || c>maxColumnIndex);
+	}
+	
+	private boolean resetBorderTop(NSheet sheet,int r, int c,BorderType borderType,String borderColor){
+		if(isOutOfBoundCell(sheet,r,c)){
+			return false;
+		}
+		
+		NCell cell = sheet.getCell(r,c);
+		if(cell.isNull())
+			return false;
+		
+		NCellStyle style = cell.getCellStyle();
+		BorderType bType = style.getBorderTop();
+		String bColor = style.getBorderTopColor().getHtmlColor();
+		if(NCellStyle.BorderType.NONE.equals(bType)){
+			return false;
+		}
+		//same border
+		if(borderType.equals(bType) && borderColor.equals(bColor)){
+			return false;
+		}
+		StyleUtil.setBorder(sheet, r, c,BLACK, NCellStyle.BorderType.NONE,StyleUtil.BORDER_EDGE_TOP);
+		return true;
+	}
+	private boolean resetBorderBottom(NSheet sheet,int r, int c,BorderType borderType,String borderColor){
+		if(isOutOfBoundCell(sheet,r,c)){
+			return false;
+		}
+		
+		NCell cell = sheet.getCell(r,c);
+		if(cell.isNull())
+			return false;
+		
+		NCellStyle style = cell.getCellStyle();
+		BorderType bType = style.getBorderBottom();
+		String bColor = style.getBorderBottomColor().getHtmlColor();
+		if(NCellStyle.BorderType.NONE.equals(bType)){
+			return false;
+		}
+		//same border
+		if(borderType.equals(bType) && borderColor.equals(bColor)){
+			return false;
+		}
+		
+		StyleUtil.setBorder(sheet, r, c,BLACK, NCellStyle.BorderType.NONE,StyleUtil.BORDER_EDGE_BOTTOM);
+		
+		return true;
+	}
+	private boolean resetBorderLeft(NSheet sheet,int r, int c,BorderType borderType,String borderColor){
+		if(isOutOfBoundCell(sheet,r,c)){
+			return false;
+		}
+		
+		NCell cell = sheet.getCell(r,c);
+		if(cell.isNull())
+			return false;
+		
+		NCellStyle style = cell.getCellStyle();
+		BorderType bType = style.getBorderLeft();
+		String bColor = style.getBorderLeftColor().getHtmlColor();
+		if(NCellStyle.BorderType.NONE.equals(bType)){
+			return false;
+		}
+		//same border
+		if(borderType.equals(bType) && borderColor.equals(bColor)){
+			return false;
+		}
+		StyleUtil.setBorder(sheet, r, c,BLACK, NCellStyle.BorderType.NONE,StyleUtil.BORDER_EDGE_LEFT);
+		return true;
+	}
+	private boolean resetBorderRight(NSheet sheet,int r, int c,BorderType borderType,String borderColor){
+		if(isOutOfBoundCell(sheet,r,c)){
+			return false;
+		}
+		
+		NCell cell = sheet.getCell(r,c);
+		if(cell.isNull())
+			return false;
+		
+		NCellStyle style = cell.getCellStyle();
+		BorderType bType = style.getBorderRight();
+		String bColor = style.getBorderRightColor().getHtmlColor();
+		if(NCellStyle.BorderType.NONE.equals(bType)){
+			return false;
+		}
+		//same border
+		if(borderType.equals(bType) && borderColor.equals(bColor)){
+			return false;
+		}
+		StyleUtil.setBorder(sheet, r, c,BLACK, NCellStyle.BorderType.NONE,StyleUtil.BORDER_EDGE_RIGHT);
+		return true;
+	}
 }
