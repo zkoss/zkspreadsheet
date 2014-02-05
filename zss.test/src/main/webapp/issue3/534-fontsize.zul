@@ -1,5 +1,7 @@
 <zk>
-	<spreadsheet id="ss" src="/issue3/book/534-fontsize.xlsx" width="100%"
-		height="80%" showContextMenu="true" showSheetbar="true" showToolbar="true" 
-		showFormulabar="true" />
+	<vbox hflex="1" vflex="1">
+		<spreadsheet id="ss" src="/issue3/book/534-fontsize.xlsx"
+			hflex="1" vflex="1" showContextMenu="true" showSheetbar="true"
+			showToolbar="true" showFormulabar="true" />
+	</vbox>
 </zk>

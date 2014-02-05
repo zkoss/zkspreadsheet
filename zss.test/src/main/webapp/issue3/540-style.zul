@@ -1,10 +1,13 @@
 <zk>
-	<window apply="zss.testapp.ExportComposer" height="100%">
+	<vbox hflex="1" vflex="1" apply="zss.testapp.ExportComposer">
 
-	<button label="Export Excel" />
+		<hbox hflex="1">
+			<button label="Export Excel" />
+		</hbox>
 
-	<spreadsheet id="source" src="/issue3/book/540-style.xlsx" maxVisibleRows="100"
-		maxVisibleColumns="30" width="100%" height="100%" showContextMenu="true" showSheetbar="true"
-		showToolbar="true" showFormulabar="true" />
-	</window>
+		<spreadsheet id="source" src="/issue3/book/540-style.xlsx"
+			maxVisibleRows="100" maxVisibleColumns="30" hflex="1" vflex="1"
+			showContextMenu="true" showSheetbar="true" showToolbar="true"
+			showFormulabar="true" />
+	</vbox>
 </zk>

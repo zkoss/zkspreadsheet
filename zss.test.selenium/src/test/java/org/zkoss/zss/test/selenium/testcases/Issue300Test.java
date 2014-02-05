@@ -574,6 +574,34 @@ public class Issue300Test extends ZSSTestcaseBase {
 		
 		getTo("/issue3/519-blankBackground2.zul");
 		waitForTime(Setup.getTimeoutL1());
+		captureOrAssert("loadPage");
+	}
+	
+	@Test
+	public void testZSS533() throws Exception{
+		basename();
+		
+		getTo("/issue3/533-name-el-udf.zul");
+		waitForTime(Setup.getTimeoutL1());
+		captureOrAssert("loadPage");
+	}
+	
+	@Test
+	public void testZSS534() throws Exception{
+		basename();
+		
+		getTo("/issue3/534-fontsize.zul");
+		waitForTime(Setup.getTimeoutL1());
+		captureOrAssert("loadPage");
+	}
+	
+	@Test
+	public void testZSS540() throws Exception{
+		basename();
+		
+		getTo("/issue3/540-style.zul");
+		waitForTime(Setup.getTimeoutL1());
+		captureOrAssert("loadPage");
 	}
 
 }

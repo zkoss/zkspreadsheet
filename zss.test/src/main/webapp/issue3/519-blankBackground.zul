@@ -1,5 +1,8 @@
 <zk>
-	<spreadsheet src="/issue3/book/519-blankBackground.xlsx" maxVisibleRows="200" maxVisibleColumns="40" width="100%"
-		height="80%" showContextMenu="true" showSheetbar="true" showToolbar="true" 
-		showFormulabar="true"/>
+	<vbox hflex="1" vflex="1">
+		<spreadsheet src="/issue3/book/519-blankBackground.xlsx"
+			maxVisibleRows="200" maxVisibleColumns="40" hflex="1" vflex="1"
+			showContextMenu="true" showSheetbar="true" showToolbar="true"
+			showFormulabar="true" />
+	</vbox>
 </zk>
