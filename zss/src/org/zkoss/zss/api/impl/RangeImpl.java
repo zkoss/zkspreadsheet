@@ -163,7 +163,7 @@ public class RangeImpl implements Range{
 	}
 
 	public void setCellStyle(final CellStyle nstyle) { 
-		_range.setStyle(nstyle==null?null:((CellStyleImpl)nstyle).getNative());
+		_range.setCellStyle(nstyle==null?null:((CellStyleImpl)nstyle).getNative());
 	}
 
 
@@ -546,13 +546,7 @@ public class RangeImpl implements Range{
 	 * @return cell style if cell is exist, the check row style and column cell style if cell not found, if row and column style is not exist, then return default style of sheet
 	 */
 	public CellStyle getCellStyle() {
-		NSheet sheet = _range.getSheet();
-		NBook book = sheet.getBook();
-		
-		int r = _range.getRow();
-		int c = _range.getColumn();
-		NCellStyle style = sheet.getCell(r, c).getCellStyle();
-
+		NCellStyle style = _range.getCellStyle();
 		return new CellStyleImpl(getBookRef(), new SimpleRef<NCellStyle>(style));		
 	}
 

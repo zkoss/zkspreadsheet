@@ -2127,19 +2127,19 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 					onMergeDelete(event);
 				}
 			});
+			addEventListener(ModelEvents.ON_DISPLAY_GRIDLINE_CHANGE, new ModelEventListener() {
+				@Override
+				public void onEvent(ModelEvent event) {
+					onDisplayGridlines(event);
+				}
+			});
+			addEventListener(ModelEvents.ON_PROTECT_SHEET_CHANGE, new ModelEventListener() {
+				@Override
+				public void onEvent(ModelEvent event) {
+					onProtectSheet(event);
+				}
+			});
 			/*TODO zss 3.5
-			addEventListener(SSDataEvent.ON_DISPLAY_GRIDLINES, new EventListener() {
-				@Override
-				public void onEvent(Event event) throws Exception {
-					onDisplayGridlines((SSDataEvent)event);
-				}
-			});
-			addEventListener(SSDataEvent.ON_PROTECT_SHEET, new EventListener() {
-				@Override
-				public void onEvent(Event event) throws Exception {
-					onProtectSheet((SSDataEvent)event);
-				}
-			});
 			addEventListener(SSDataEvent.ON_CHART_ADD, new EventListener() {
 				@Override
 				public void onEvent(Event event) throws Exception {
@@ -2488,26 +2488,22 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			
 			updateAutoFilter(sheet);
 		}
-		/*
-		private void onDisplayGridlines(SSDataEvent event) {
-			final Ref rng = event.getRef();
-			final XSheet sheet = getSheet(rng);
+		private void onDisplayGridlines(ModelEvent event) {
+			final NSheet sheet = event.getSheet();
 			if (!getSelectedXSheet().equals(sheet)){
-				releaseClientCache(XUtils.getSheetUuid(sheet));
+				releaseClientCache(sheet.getId());
 				return;
 			}
-			setDisplayGridlines(event.isShow());
+			setDisplayGridlines((Boolean)event.getData(ModelEvents.PARAM_ENABLED));
 		}
-		private void onProtectSheet(SSDataEvent event) {
-			final Ref rng = event.getRef();
-			final XSheet sheet = getSheet(rng);
+		private void onProtectSheet(ModelEvent event) {
+			final NSheet sheet = event.getSheet();
 			if (!getSelectedXSheet().equals(sheet)){
-				releaseClientCache(XUtils.getSheetUuid(sheet));
+				releaseClientCache(sheet.getId());
 				return;
 			}
-			setProtectSheet(event.getProtect());
+			setProtectSheet((Boolean)event.getData(ModelEvents.PARAM_ENABLED));
 		}
-		*/
 		private void onSheetFreeze(ModelEvent event) {
 			final NSheet sheet = event.getSheet();
 			if (!getSelectedXSheet().equals(sheet)){
