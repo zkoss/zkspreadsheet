@@ -852,7 +852,7 @@ public class Issue400Test {
 		Sheet sheet = book.getSheetAt(0);
 		sheet.getPoiSheet().setPrintGridlines(true);
 		
-		File temp = Setup.getTempFile("zss446","pdf");
+		File temp = Setup.getTempFile("zss446",".pdf");
 		
 		Exporter pdfExporter = Exporters.getExporter("pdf");
 		pdfExporter.export(book, temp);

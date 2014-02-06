@@ -1,35 +1,37 @@
-
 <?xel-method prefix="zss" name="toTWD"
     class="zss.testapp.formula.CurrencyFns"  
     signature="double toTWD(double,double)"?>
-    
+
 <?taglib uri="/WEB-INF/tld/formula.tld" prefix="zss" ?>
-    
+
 <zk>
-	<window id="win" title="ZSS" border="normal" height="100%">
-		<button label="download">
-			<attribute name="onClick"><![CDATA[
-   			Book book = ss.getBook();
-   			String fileName = "exported.xlsx";
-   			Exporter exporter = Exporters.getExporter();
-   			java.io.ByteArrayOutputStream os = new java.io.ByteArrayOutputStream();
-   			exporter.export(book, os);
-   			os.close();
-   			org.zkoss.zul.Filedownload.save(os.toByteArray(), "application/octet-stream", fileName);
-			]]></attribute>
-		</button>
+	<vbox hflex="1" vflex="1">
+		<hbox hflex="1">
+			<button label="download">
+				<attribute name="onClick"><![CDATA[
+	Book book = ss.getBook();
+	String fileName = "exported.xlsx";
+	Exporter exporter = Exporters.getExporter();
+	java.io.ByteArrayOutputStream os = new java.io.ByteArrayOutputStream();
+	exporter.export(book, os);
+	os.close();
+	org.zkoss.zul.Filedownload.save(os.toByteArray(),
+			"application/octet-stream", fileName);
+]]></attribute>
+			</button>
+		</hbox>
 		<spreadsheet id="ss" src="/issue3/book/533-name-el-udf.xlsx"
-			maxVisibleRows="250" maxVisibleColumns="40" width="100%"
-			height="100%" showContextMenu="true" showSheetbar="true"
-			showToolbar="true" showFormulabar="true" />
+			maxVisibleRows="250" maxVisibleColumns="40" hflex="1" vflex="1"
+			showContextMenu="true" showSheetbar="true" showToolbar="true"
+			showFormulabar="true" />
 		<zscript><![CDATA[
-			class Person {
-				public int getAge() {
-					return 2;
-				}
-			}
-			int variable1 = 1;
-			Person variable2 = new Person();
-		]]></zscript>
-	</window>
+	class Person {
+		public int getAge() {
+			return 2;
+		}
+	}
+	int variable1 = 1;
+	Person variable2 = new Person();
+]]></zscript>
+	</vbox>
 </zk>
