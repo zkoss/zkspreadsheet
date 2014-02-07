@@ -5,7 +5,7 @@
 	<groupId>org.zkoss.zss</groupId>
 	<artifactId>zss</artifactId>
 	<properties>
-		<zk.version>6.5.5</zk.version>
+		<zk.version>6.5.4</zk.version>
 		<zpoi.version>3.9.1-SNAPSHOT</zpoi.version>
 		<commons-math.version>2.2</commons-math.version>
 	</properties>

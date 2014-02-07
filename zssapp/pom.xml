@@ -89,6 +89,11 @@
 			<version>${bsh.version}</version>
 			<scope>runtime</scope>
 		</dependency>
+		<dependency><!-- to override version dependency from zpoi -->
+			<groupId>org.zkoss.common</groupId>
+			<artifactId>zcommon</artifactId>
+			<version>${zk.version}</version>
+		</dependency>			
 		<dependency>
 			<groupId>org.zkoss.zk</groupId>
 			<artifactId>zkplus</artifactId>
@@ -99,7 +104,12 @@
 			<artifactId>zss</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-		<!-- ZSS EE dependencies 
+		<!-- ZSS EE dependencies
+		<dependency>
+			<groupId>org.zkoss.zk</groupId>
+			<artifactId>zkex</artifactId>
+			<version>${zk.version}</version>
+		</dependency>		 
 		<dependency>
 			<groupId>org.zkoss.zss</groupId>
 			<artifactId>zsspdf</artifactId>
