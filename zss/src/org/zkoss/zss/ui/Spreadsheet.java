@@ -3296,10 +3296,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 					}
 					
 					Font font = _book.getFontAt(cellStyle.getFontIndex());
-					short fontHeight = font.getFontHeightInPoints();
-					if (fontHeight != XSSFFont.DEFAULT_FONT_SIZE) {
-						attrs.put("fs", fontHeight);
-					}
+					attrs.put("fs", font.getFontHeightInPoints());
 				}
 			}
 			return attrs;
