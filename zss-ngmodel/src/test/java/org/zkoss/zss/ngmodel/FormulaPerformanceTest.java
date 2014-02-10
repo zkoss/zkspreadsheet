@@ -16,6 +16,8 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.zkoss.poi.ss.usermodel.CellValue;
+import org.zkoss.poi.ss.util.AreaReference;
+import org.zkoss.poi.ss.util.CellReference;
 import org.zkoss.poi.xssf.usermodel.XSSFCell;
 import org.zkoss.poi.xssf.usermodel.XSSFFormulaEvaluator;
 import org.zkoss.poi.xssf.usermodel.XSSFRow;
@@ -23,8 +25,6 @@ import org.zkoss.poi.xssf.usermodel.XSSFSheet;
 import org.zkoss.poi.xssf.usermodel.XSSFWorkbook;
 import org.zkoss.zss.ngmodel.impl.FormulaCacheCleaner;
 import org.zkoss.zss.ngmodel.impl.TreeMapDataGridImpl;
-import org.zkoss.zss.ngmodel.util.AreaReference;
-import org.zkoss.zss.ngmodel.util.CellReference;
 
 /**
  * @author Pao

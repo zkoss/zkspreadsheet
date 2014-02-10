@@ -28,6 +28,7 @@ import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.zkoss.lang.Objects;
+import org.zkoss.poi.ss.SpreadsheetVersion;
 import org.zkoss.zss.ngmodel.InvalidateModelOpException;
 import org.zkoss.zss.ngmodel.ModelEvent;
 import org.zkoss.zss.ngmodel.ModelEventListener;
@@ -47,7 +48,6 @@ import org.zkoss.zss.ngmodel.sys.formula.EvaluationContributor;
 import org.zkoss.zss.ngmodel.sys.formula.FormulaClearContext;
 import org.zkoss.zss.ngmodel.util.CellStyleMatcher;
 import org.zkoss.zss.ngmodel.util.FontMatcher;
-import org.zkoss.zss.ngmodel.util.SpreadsheetVersion;
 import org.zkoss.zss.ngmodel.util.Strings;
 import org.zkoss.zss.ngmodel.util.Validations;
 

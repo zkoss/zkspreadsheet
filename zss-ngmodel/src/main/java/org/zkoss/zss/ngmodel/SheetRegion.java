@@ -2,9 +2,13 @@ package org.zkoss.zss.ngmodel;
 
 import java.io.Serializable;
 
-import org.zkoss.zss.ngmodel.util.AreaReference;
-import org.zkoss.zss.ngmodel.util.CellReference;
-
+import org.zkoss.poi.ss.util.AreaReference;
+import org.zkoss.poi.ss.util.CellReference;
+/**
+ * Indicates a region of cells in a sheet
+ * @author Dennis
+ * @since 3.5.0
+ */
 public class SheetRegion implements Serializable{
 	private static final long serialVersionUID = 1L;
 

@@ -31,6 +31,7 @@ public class NImporters {
 	static{
 		//default registration
 		register("excel",new ExcelImportFactory());
+		//TODO zss 3.5 remove test
 		register("test",new TestImporterFactory());
 	}
 	

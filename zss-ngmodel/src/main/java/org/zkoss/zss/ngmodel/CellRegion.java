@@ -23,7 +23,7 @@ import org.zkoss.poi.ss.util.CellReference;
 
 
 /**
- * 
+ * A region of cells, it doesn't relates to a sheet
  * @author dennis
  * @since 3.5.0
  */
