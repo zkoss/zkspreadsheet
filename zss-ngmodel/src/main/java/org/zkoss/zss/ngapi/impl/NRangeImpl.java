@@ -24,6 +24,7 @@ import org.zkoss.util.Locales;
 import org.zkoss.zss.ngapi.*;
 import org.zkoss.zss.ngmodel.*;
 import org.zkoss.zss.ngmodel.NAutoFilter.FilterOp;
+import org.zkoss.zss.ngmodel.NCell.CellType;
 import org.zkoss.zss.ngmodel.NCellStyle.BorderType;
 import org.zkoss.zss.ngmodel.NHyperlink.HyperlinkType;
 import org.zkoss.zss.ngmodel.impl.*;
@@ -64,6 +65,12 @@ public class NRangeImpl implements NRange {
 
 	public NRangeImpl(NSheet sheet, int tRow, int lCol, int bRow, int rCol) {
 		addRangeRef(sheet, tRow, lCol, bRow, rCol);
+	}
+	
+	private NRangeImpl(Collection<SheetRegion> regions) {
+		for(SheetRegion region:regions){
+			addRangeRef(region.getSheet(), region.getRow(), region.getColumn(), region.getLastRow(), region.getLastColumn());
+		}
 	}
 
 	private void addRangeRef(NSheet sheet, int tRow, int lCol, int bRow,
@@ -787,14 +794,61 @@ public class NRangeImpl implements NRange {
 
 	@Override
 	public Object getValue() {
-		//follow the original implementation in BookHelper:getCellValue(Cell cell) {
+		//Dennis, Should I follow the original implementation in BookHelper:getCellValue(Cell cell) ? it doesn't look appropriately to Range api.
+		//I make this api become more easier to get the cell value (if it is formula, then get formula evaluation result
 		
-		throw new UnsupportedOperationException("not implement yet");
+		final ResultWrap<Object> r = new ResultWrap<Object>();
+		new CellVisitorTask(new OneCellVisitor() {
+			@Override
+			public boolean visit(NCell cell) {
+				Object val = cell.getValue();
+				r.set(val);
+				return false;
+			}
+		}).doInReadLock(getLock());
+		return r.get();
 	}
 
 	@Override
 	public NRange getOffset(int rowOffset, int colOffset) {
-		throw new UnsupportedOperationException("not implement yet");
+		//follow the original XRange implementation
+		if (rowOffset == 0 && colOffset == 0) { //no offset, return this
+			return this;
+		}
+		if (rangeRefs != null && !rangeRefs.isEmpty()) {
+			final NBook book = getBook();
+			final int maxCol = book.getMaxColumnIndex();
+			final int maxRow = book.getMaxRowIndex();
+			final LinkedHashSet<SheetRegion> nrefs = new LinkedHashSet<SheetRegion>(rangeRefs.size()); 
+
+			for(EffectedRegion ref : rangeRefs) {
+				final int left = ref.region.getColumn() + colOffset;
+				final int top = ref.region.getRow() + rowOffset;
+				final int right = ref.region.getLastColumn() + colOffset;
+				final int bottom = ref.region.getLastRow() + rowOffset;
+				
+				final NSheet refSheet = ref.sheet;
+				final int nleft = colOffset < 0 ? Math.max(0, left) : left;  
+				final int ntop = rowOffset < 0 ? Math.max(0, top) : top;
+				final int nright = colOffset > 0 ? Math.min(maxCol, right) : right;
+				final int nbottom = rowOffset > 0 ? Math.min(maxRow, bottom) : bottom;
+				
+				if (nleft > nright || ntop > nbottom) { //offset out of range
+					continue;
+				}
+				final SheetRegion refAddr = new SheetRegion(refSheet,ntop, nleft, nbottom, nright);
+				if (nrefs.contains(refAddr)) { //same area there, next
+					continue;
+				}
+				nrefs.add(refAddr);
+			}
+			if (nrefs.isEmpty()) {
+				return EMPTY_RANGE;
+			} else{
+				return new NRangeImpl(nrefs);
+			}
+		}
+		return EMPTY_RANGE;
 	}
 
 	@Override
@@ -1239,4 +1293,6 @@ public class NRangeImpl implements NRange {
 			}
 		}.doInWriteLock(getLock());
 	}
+	
+	private static final NRange EMPTY_RANGE = new NEmptyRange();
 }
