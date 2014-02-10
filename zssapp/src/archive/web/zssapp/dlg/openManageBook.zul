@@ -14,7 +14,7 @@
 					</listitem>
 				</template>
 			</listbox>
-			<space orient="horizontal"/>
+			<space orient="horizontal" hflex="1"/>
 			<hbox hflex="1" pack="center" align="center">
 				<button id="open" label="Open" autodisable="open,cancel,delete,upload" disabled="true"/>
 				<button id="delete" label="Delete" disabled="true" />
