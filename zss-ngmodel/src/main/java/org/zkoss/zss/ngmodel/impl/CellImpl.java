@@ -27,7 +27,6 @@ import org.zkoss.zss.ngmodel.NCellStyle;
 import org.zkoss.zss.ngmodel.NCellValue;
 import org.zkoss.zss.ngmodel.NColumnArray;
 import org.zkoss.zss.ngmodel.NComment;
-import org.zkoss.zss.ngmodel.NDataGrid;
 import org.zkoss.zss.ngmodel.NHyperlink;
 import org.zkoss.zss.ngmodel.NRichText;
 import org.zkoss.zss.ngmodel.NSheet;
@@ -75,7 +74,7 @@ public class CellImpl extends AbstractCellAdv {
 
 	@Override
 	public CellType getType() {
-		NCellValue val = getDataGridValue();
+		NCellValue val = getCellValue();
 		return val==null?CellType.BLANK:val.getType();
 	}
 
@@ -158,7 +157,7 @@ public class CellImpl extends AbstractCellAdv {
 	@Override
 	protected void evalFormula() {
 		if (formulaResultValue == null) {
-			NCellValue val = getDataGridValue();
+			NCellValue val = getCellValue();
 			if(val!=null &&  val.getType() == CellType.FORMULA){
 				FormulaEngine fe = EngineFactory.getInstance()
 						.createFormulaEngine();
@@ -179,9 +178,7 @@ public class CellImpl extends AbstractCellAdv {
 	@Override
 	public void clearValue() {
 		checkOrphan();
-		//clear dg first, it might throw invalidate model operation exception
-		validateDataGridValue(null);
-		setDataGridValue(null);
+		setCellValue(null);
 		
 		clearFormulaDependency();
 		clearFormulaResultCache();
@@ -204,10 +201,6 @@ public class CellImpl extends AbstractCellAdv {
 	
 	/*package*/ void clearValueForSet(boolean clearDependency) {
 		checkOrphan();
-		
-		//shouldn't clear type and data grid value for setting, it will set a new value directly later 
-		//just clear cell local field.
-		//setDataGridValue(null);
 		
 		//in some situation, we should clear dependency (e.g. old type and new type are both formula)
 		if(clearDependency){
@@ -250,7 +243,7 @@ public class CellImpl extends AbstractCellAdv {
 
 	@Override
 	public Object getValue(boolean evaluatedVal) {
-		NCellValue val = getDataGridValue();
+		NCellValue val = getCellValue();
 		if (evaluatedVal && val!=null && val.getType() == CellType.FORMULA) {
 			evalFormula();
 			return this.formulaResultValue.getValue();
@@ -262,34 +255,14 @@ public class CellImpl extends AbstractCellAdv {
 		return string != null && string.startsWith("=") && string.length() > 1;
 	}
 	
-	private NCellValue getDataGridValue(){
+	private NCellValue getCellValue(){
 		checkOrphan();
-		NDataGrid dg = row.getSheet().getDataGrid();
-		if(dg!=null){
-			return dg.getValue(getRowIndex(),getColumnIndex());
-		}
 		return localValue;
 	}
 	
-
-	private void validateDataGridValue(NCellValue value) {
+	private void setCellValue(NCellValue value){
 		checkOrphan();
-		
-		NDataGrid dg = row.getSheet().getDataGrid();
-		if(dg!=null && !dg.validateValue(getRowIndex(),getColumnIndex(),value)){
-			throw new InvalidateModelValueException("Invalidate Value : "+(value==null?null:value.getValue()) +" at "+getReferenceString());
-		}
-	}
-	
-	private void setDataGridValue(NCellValue value){
-		checkOrphan();
-		NDataGrid dg = row.getSheet().getDataGrid();
-		if(dg!=null){
-			this.localValue = null;//clear it if it is formula or error previously
-			dg.setValue(getRowIndex(),getColumnIndex(),value);
-		}else{
-			this.localValue = value!=null&&value.getType()==CellType.BLANK?null:value;
-		}
+		this.localValue = value!=null&&value.getType()==CellType.BLANK?null:value;
 		
 		//clear the dependent's formula result cache
 		NBookSeries bookSeries = getSheet().getBook().getBookSeries();
@@ -303,7 +276,7 @@ public class CellImpl extends AbstractCellAdv {
 	
 	@Override
 	public void setValue(Object newVal) {
-		NCellValue oldVal = getDataGridValue();
+		NCellValue oldVal = getCellValue();
 		if( (oldVal==null && newVal==null) ||
 			(oldVal != null && valueEuqals(oldVal.getValue(),newVal))) {
 			return;
@@ -345,11 +318,10 @@ public class CellImpl extends AbstractCellAdv {
 
 		
 		NCellValue newCellVal = new InnerCellValue(newType,newVal);
-		validateDataGridValue(newCellVal);
 		//should't clear dependency if new type is formula, it clear the dependency already when eval
 		clearValueForSet(oldVal!=null && oldVal.getType()==CellType.FORMULA && newType !=CellType.FORMULA);
 		
-		setDataGridValue(newCellVal);
+		setCellValue(newCellVal);
 		addCellUpdate();
 	}
 

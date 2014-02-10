@@ -39,7 +39,6 @@ public interface NSheet {
 	public String getSheetName();
 	
 	public Iterator<NRow> getRowIterator();
-	public Iterator<NRow> getRowIterator(boolean joinDataGrid);
 	public Iterator<NColumn> getColumnIterator();
 	public Iterator<NColumnArray> getColumnArrayIterator();
 	/**
@@ -51,7 +50,6 @@ public interface NSheet {
 	 */
 	public NColumnArray setupColumnArray(int colunmIdx,int lastColumnIdx);	
 	public Iterator<NCell> getCellIterator(int row);
-	public Iterator<NCell> getCellIterator(int row,boolean joinDataGrid);
 	
 	
 	public int getDefaultRowHeight();
@@ -81,12 +79,6 @@ public interface NSheet {
 	public abstract int getStartCellIndex(int rowIdx);
 	public abstract int getEndCellIndex(int rowIdx);
 	
-	
-	public abstract int getStartRowIndex(boolean joinDataGrid);
-	public abstract int getEndRowIndex(boolean joinDataGrid);
-	public abstract int getStartCellIndex(int rowIdx,boolean joinDataGrid);
-	public abstract int getEndCellIndex(int rowIdx,boolean joinDataGrid);
-	//editable
 //	public void clearRow(int rowIdx, int rowIdx2);
 //	public void clearColumn(int columnIdx,int columnIdx2);
 	public void clearCell(int rowIdx, int columnIdx,int lastRowIdx,int lastColumnIdx);
@@ -200,19 +192,6 @@ public interface NSheet {
 	 * @return
 	 */
 	public String getPassword();
-
-	/**
-	 * Get the data grid that this sheet stores it data, by default it is null, and the data store on cell directly
-	 * @return
-	 */
-	public NDataGrid getDataGrid();
-	
-	/**
-	 * Sets the data grid to store data of this sheet
-	 * @param dataGrid
-	 */
-	public void setDataGrid(NDataGrid dataGrid);
-	
 	
 	/**
 	 * Gets the auto filter information if there is.

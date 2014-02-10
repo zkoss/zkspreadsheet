@@ -428,7 +428,7 @@ public class BookImpl extends AbstractBookAdv{
 		stylePool.put(((AbstractCellStyleAdv)defaultStyle).getStyleKey(), defaultStyle);
 		
 		for(NSheet sheet:sheets){
-			Iterator<NRow> rowIter = sheet.getRowIterator(false); 
+			Iterator<NRow> rowIter = sheet.getRowIterator(); 
 			while(rowIter.hasNext()){
 				NRow row = rowIter.next();
 				

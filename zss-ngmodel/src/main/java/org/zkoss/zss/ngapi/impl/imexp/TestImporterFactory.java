@@ -28,7 +28,6 @@ import org.zkoss.zss.ngapi.NImporter;
 import org.zkoss.zss.ngapi.NRanges;
 import org.zkoss.zss.ngapi.impl.StyleUtil;
 import org.zkoss.zss.ngmodel.CellRegion;
-import org.zkoss.zss.ngmodel.DefaultDataGrid;
 import org.zkoss.zss.ngmodel.NBook;
 import org.zkoss.zss.ngmodel.NBooks;
 import org.zkoss.zss.ngmodel.NCell;
@@ -41,7 +40,6 @@ import org.zkoss.zss.ngmodel.NCellValue;
 import org.zkoss.zss.ngmodel.NChart;
 import org.zkoss.zss.ngmodel.NChart.NChartLegendPosition;
 import org.zkoss.zss.ngmodel.NChart.NChartType;
-import org.zkoss.zss.ngmodel.NDataGrid;
 import org.zkoss.zss.ngmodel.NDataValidation;
 import org.zkoss.zss.ngmodel.NDataValidation.ValidationType;
 import org.zkoss.zss.ngmodel.NPicture.Format;
@@ -88,7 +86,6 @@ public class TestImporterFactory implements ImporterFactory{
 
 				buildFreeze(book);
 				
-				buildDataGridSheet(book);
 				return book;
 			}
 			private void buildCopyPaste(NBook book) {
@@ -296,27 +293,6 @@ public class TestImporterFactory implements ImporterFactory{
 				dv3.setShowDropDownArrow(true);
 				dv3.setShowErrorBox(true);
 				
-			}
-			private void buildDataGridSheet(NBook book) {
-				NSheet sheet = book.createSheet("DataGrid");
-				NDataGrid dg;
-				sheet.setDataGrid(dg=new DefaultDataGrid());
-				dg.setValue(0, 0, new NCellValue());
-				dg.setValue(0, 0, new NCellValue("ABC"));
-				dg.setValue(1, 1, new NCellValue(12D));
-				dg.setValue(2, 2, new NCellValue(3.45));
-				dg.setValue(2, 2, new NCellValue(false));
-				
-				for(int i=0;i<1000;i++){
-					dg.setValue(i, 5, new NCellValue(i*100D));
-				}
-				
-				NCellStyle style = book.createCellStyle(true);
-				style.setFillColor(book.createColor("#55AA55"));
-				style.setFillPattern(FillPattern.SOLID_FOREGROUND);
-				style.setDataFormat("#,000.00");
-				sheet.getColumn(5).setCellStyle(style);
-				sheet.getColumn(5).setWidth(200);
 			}
 
 			private void buildFreeze(NBook book) {

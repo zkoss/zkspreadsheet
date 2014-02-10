@@ -41,7 +41,6 @@ import org.zkoss.zss.ngmodel.NCell;
 import org.zkoss.zss.ngmodel.NChart;
 import org.zkoss.zss.ngmodel.NColumn;
 import org.zkoss.zss.ngmodel.NColumnArray;
-import org.zkoss.zss.ngmodel.NDataGrid;
 import org.zkoss.zss.ngmodel.NDataValidation;
 import org.zkoss.zss.ngmodel.NPicture;
 import org.zkoss.zss.ngmodel.NPicture.Format;
@@ -67,8 +66,6 @@ public class SheetImpl extends AbstractSheetAdv {
 	private final String id;
 	
 	private String password;
-	
-	private NDataGrid dataGrid;
 	
 	private NAutoFilter autoFilter;
 	
@@ -358,45 +355,11 @@ public class SheetImpl extends AbstractSheetAdv {
 	}
 
 	public int getStartRowIndex() {
-		return getStartRowIndex(true);
+		return rows.firstKey();
 	}
 
 	public int getEndRowIndex() {
-		return getEndRowIndex(true);
-	}
-	@Override
-	public int getStartRowIndex(boolean joinDataGrid){
-		int idx1 = rows.firstKey();
-		NDataGrid dg = getDataGrid();
-		if(dg==null || !joinDataGrid){
-			return idx1;
-		}
-		
-		int idx2 = dg.getStartRowIndex();
-		if(idx1<0){
-			return idx2;
-		}
-		if(idx2<0){
-			return idx1;
-		}
-		return Math.min(idx1, idx2);
-	}
-	@Override
-	public int getEndRowIndex(boolean joinDataGrid){
-		int idx1 = rows.lastKey();
-		NDataGrid dg = getDataGrid();
-		if(dg==null || !joinDataGrid){
-			return idx1;
-		}
-		
-		int idx2 = dg.getEndRowIndex();
-		if(idx1<0){
-			return idx2;
-		}
-		if(idx2<0){
-			return idx1;
-		}
-		return Math.max(idx1, idx2);
+		return rows.lastKey();
 	}
 	
 	public int getStartColumnIndex() {
@@ -408,57 +371,24 @@ public class SheetImpl extends AbstractSheetAdv {
 	}
 
 	public int getStartCellIndex(int rowIdx) {
-		return getStartCellIndex(rowIdx,true);
-	}
-
-	public int getEndCellIndex(int rowIdx) {
-		return getEndCellIndex(rowIdx, true);
-	}
-	@Override
-	public int getStartCellIndex(int rowIdx,boolean joinDataGrid){
 		int idx1 = -1;
 		AbstractRowAdv rowObj = (AbstractRowAdv) getRow(rowIdx,false);
 		if(rowObj!=null){
 			idx1 = rowObj.getStartCellIndex();
 		}
-		
-		NDataGrid dg = getDataGrid();
-		if(dg==null || !joinDataGrid){
-			return idx1;
-		}
-		
-		int idx2 = dg.getStartCellIndex(rowIdx);
-		if(idx1<0){
-			return idx2;
-		}
-		if(idx2<0){
-			return idx1;
-		}
-		return Math.min(idx1, idx2);
+		return idx1;
+
 	}
-	@Override
-	public int getEndCellIndex(int rowIdx,boolean joinDataGrid){
+
+	public int getEndCellIndex(int rowIdx) {
 		int idx1 = -1;
 		AbstractRowAdv rowObj = (AbstractRowAdv) getRow(rowIdx,false);
 		if(rowObj!=null){
 			idx1 = rowObj.getEndCellIndex();
 		}
-
-		NDataGrid dg = getDataGrid();
-		if(dg==null || !joinDataGrid){
-			return idx1;
-		}
-		
-		int idx2 = dg.getEndCellIndex(rowIdx);
-		if(idx1<0){
-			return idx2;
-		}
-		if(idx2<0){
-			return idx1;
-		}
-		return Math.max(idx1, idx2);
+		return idx1;
 	}
-
+	
 	@Override
 	void setSheetName(String name) {
 		this.name = name;
@@ -530,13 +460,6 @@ public class SheetImpl extends AbstractSheetAdv {
 		if(rowIdx>lastRowIdx){
 			throw new IllegalArgumentException(rowIdx+">"+lastRowIdx);
 		}
-		NDataGrid dg = getDataGrid();
-		if(dg!=null){
-			if(!dg.isSupportedOperations()){
-				throw new IllegalStateException("doesn't support insert/delete");
-			}
-			dg.insertRow(rowIdx, lastRowIdx);
-		}
 		int size = lastRowIdx-rowIdx+1;
 		rows.insert(rowIdx, size);
 
@@ -563,13 +486,6 @@ public class SheetImpl extends AbstractSheetAdv {
 		checkOrphan();
 		if(rowIdx>lastRowIdx){
 			throw new IllegalArgumentException(rowIdx+">"+lastRowIdx);
-		}
-		NDataGrid dg = getDataGrid();
-		if(dg!=null){
-			if(!dg.isSupportedOperations()){
-				throw new IllegalStateException("doesn't support insert/delete");
-			}
-			dg.deleteRow(rowIdx, lastRowIdx);
 		}
 		
 		//clear before move relation
@@ -732,15 +648,6 @@ public class SheetImpl extends AbstractSheetAdv {
 			throw new IllegalArgumentException(columnIdx+">"+lastColumnIdx);
 		}
 		
-		NDataGrid dg = getDataGrid();
-		if(dg!=null){
-			if(!dg.isSupportedOperations()){
-				throw new IllegalStateException("doesn't support insert/delete");
-			}
-			//TODO
-//			dg.insertCell(rowIdx, columnIdx, lastRowIdx,lastColumnIdx,horizontal);
-		}
-		
 		int columnSize = lastColumnIdx - columnIdx+1;
 		int rowSize = lastRowIdx - rowIdx +1; 
 		if(horizontal){
@@ -786,14 +693,6 @@ public class SheetImpl extends AbstractSheetAdv {
 		}
 		if(columnIdx>lastColumnIdx){
 			throw new IllegalArgumentException(columnIdx+">"+lastColumnIdx);
-		}
-		NDataGrid dg = getDataGrid();
-		if(dg!=null){
-			if(!dg.isSupportedOperations()){
-				throw new IllegalStateException("doesn't support insert/delete");
-			}
-			//TODO
-//			dg.deleteCell(rowIdx, columnIdx, rowSize,columnSize,horizontal);
 		}
 		
 		int columnSize = lastColumnIdx - columnIdx+1;
@@ -894,13 +793,7 @@ public class SheetImpl extends AbstractSheetAdv {
 		if(columnIdx>lastColumnIdx){
 			throw new IllegalArgumentException(columnIdx+">"+lastColumnIdx);
 		}
-		NDataGrid dg = getDataGrid();
-		if(dg!=null){
-			if(!dg.isSupportedOperations()){
-				throw new IllegalStateException("doesn't support insert/delete");
-			}
-			dg.insertColumn(columnIdx, lastColumnIdx);
-		}
+
 		int size = lastColumnIdx - columnIdx + 1;
 		insertAndSplitColumnArray(columnIdx,size);
 		
@@ -1008,13 +901,6 @@ public class SheetImpl extends AbstractSheetAdv {
 		if(columnIdx>lastColumnIdx){
 			throw new IllegalArgumentException(columnIdx+">"+lastColumnIdx);
 		}
-		NDataGrid dg = getDataGrid();
-		if(dg!=null){
-			if(!dg.isSupportedOperations()){
-				throw new IllegalStateException("doesn't support insert/delete");
-			}
-			dg.deleteColumn(columnIdx, lastColumnIdx);
-		}
 		int size = lastColumnIdx - columnIdx + 1;
 		deleteAndShrinkColumnArray(columnIdx,size);
 		
@@ -1117,15 +1003,6 @@ public class SheetImpl extends AbstractSheetAdv {
 		}
 		
 		//TODO optimal for whole row, whole column
-		
-		NDataGrid dg = getDataGrid();
-		if(dg!=null){
-			if(!dg.isSupportedOperations()){
-				throw new InvalidateModelOpException("doesn't support insert/delete");
-			}
-			//TODO
-//			dg.moveCell(rowIdx, columnIdx, rowSize,columnSize,horizontal);
-		}
 		
 		//TODO zss 3.5 move to  movecellhelper
 		//check merge overlaps and contains
@@ -1442,20 +1319,10 @@ public class SheetImpl extends AbstractSheetAdv {
 		return attributes==null?Collections.EMPTY_MAP:Collections.unmodifiableMap(attributes);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Iterator<NRow> getRowIterator() {
-		return getRowIterator(true);
-	}
-	
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	@Override
-	public Iterator<NRow> getRowIterator(boolean joinDataGrid) {
-		NDataGrid dg = getDataGrid();
-		if(joinDataGrid && dg!=null && dg.isProvidedIterator()){
-			return new JoinRowIterator(this,Collections.unmodifiableCollection((Collection)rows.values()).iterator(),dg.getRowIterator());
-		}else{
-			return Collections.unmodifiableCollection((Collection)rows.values()).iterator();
-		}
+		return Collections.unmodifiableCollection((Collection)rows.values()).iterator();
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -1487,20 +1354,10 @@ public class SheetImpl extends AbstractSheetAdv {
 		};
 	}
 	
-	@Override
-	public Iterator<NCell> getCellIterator(int row) {
-		return getCellIterator(row,true);
-	}
-	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
-	public Iterator<NCell> getCellIterator(int row,boolean joinDataGrid) {
-		NDataGrid dg = getDataGrid();
-		if(joinDataGrid && dg!=null && dg.isProvidedIterator()){
-			return new JoinCellIterator(this,row,(Iterator)((AbstractRowAdv)getRow(row)).getCellIterator(false),dg.getCellIterator(row));
-		}else{
-			return (Iterator)((AbstractRowAdv)getRow(row)).getCellIterator(false);
-		}
+	public Iterator<NCell> getCellIterator(int row) {
+		return (Iterator)((AbstractRowAdv)getRow(row)).getCellIterator(false);
 	}
 	
 	@Override
@@ -1557,21 +1414,6 @@ public class SheetImpl extends AbstractSheetAdv {
 	@Override
 	public NPrintSetup getPrintSetup(){
 		return printSetup;
-	}
-
-
-	@Override
-	public NDataGrid getDataGrid() {
-//		if(dataGrid==null){
-//			dataGrid = new TreeMapDataGridImpl();
-//			dataGrid = new DefaultDataGrid(this);
-//		}
-		return dataGrid;
-	}
-
-	@Override
-	public void setDataGrid(NDataGrid dataGrid) {
-		this.dataGrid = dataGrid;
 	}
 	
 	@Override
