@@ -157,5 +157,13 @@ public class CellRegion implements Serializable {
 	public int getColumnCount(){
 		return lastColumn-column+1;
 	}
+	
+	public static String convertIndexToColumnString(int columnIdx){
+		return CellReference.convertNumToColString(columnIdx);
+	}
+	
+	public static int convertColumnStringToIndex(String colRef){
+		return CellReference.convertColStringToIndex(colRef);
+	}
 
 }
