@@ -744,6 +744,7 @@ public class FormulaEvalTest {
 		FormulaEngine engine = EngineFactory.getInstance().createFormulaEngine();
 		NBook book1 = NBooks.createBook("Book1");
 		NSheet sheetA = book1.createSheet("SheetA");
+		NSheet sheetB = book1.createSheet("SheetB");
 
 		// the formula contains 3 region in current sheet
 		// delete region won't cover region 1, complete cover region 2, and partial cover region 3
@@ -765,6 +766,10 @@ public class FormulaEvalTest {
 //		testFormulaShrink(f,"G3:L5", horizontal, "SUM(C3:E5)+SUM(#REF!)+SUM(M3:M5)", engine, sheetA); // it's Excel approach 
 		// source region at bottom
 		testFormulaShrink(f,"G6:L6", horizontal, f, engine, sheetA);
+		// external sheet with external book (Note that we can't modify a external book reference)
+		f = "SUM(A1:A3)+SUM(SheetA!A1:A3)+SUM(SheetB!A1:A3)+SUM([Book2]SheetA!A1:A3)";
+		testFormulaShrink(f,"A2:A2", horizontal, "SUM(A1:A2)+SUM(SheetA!A1:A2)+SUM(SheetB!A1:A3)+SUM([Book2]SheetA!A1:A3)", engine, sheetA); // on SheetA
+		testFormulaShrink(f,"A2:A2", horizontal, "SUM(A1:A2)+SUM(SheetA!A1:A3)+SUM(SheetB!A1:A2)+SUM([Book2]SheetA!A1:A3)", engine, sheetB); // on SheetB
 
 		// delete cells and shift left
 		f = "SUM(C3:E5)+SUM(C7:E9)+SUM(C11:E13)";
@@ -783,6 +788,10 @@ public class FormulaEvalTest {
 //		testFormulaShrink(f,"C7:E12", horizontal, "SUM(C3:E5)+SUM(#REF!)+SUM(C13:E13)", engine, sheetA); // it's Excel approach 
 		// source region at right
 		testFormulaShrink(f,"F7:F12", horizontal, f, engine, sheetA);
+		// external sheet with external book (Note that we can't modify a external book reference)
+		f = "SUM(A1:C1)+SUM(SheetA!A1:C1)+SUM(SheetB!A1:C1)+SUM([Book2]SheetA!A1:C1)";
+		testFormulaShrink(f,"B1:B1", horizontal, "SUM(A1:B1)+SUM(SheetA!A1:B1)+SUM(SheetB!A1:C1)+SUM([Book2]SheetA!A1:C1)", engine, sheetA); // on SheetA
+		testFormulaShrink(f,"B1:B1", horizontal, "SUM(A1:B1)+SUM(SheetA!A1:C1)+SUM(SheetB!A1:B1)+SUM([Book2]SheetA!A1:C1)", engine, sheetB); // on SheetB
 	}
 
 	private void testFormulaShrink(String formula, String region, boolean hrizontal, String expected, FormulaEngine engine, NSheet sheet) {
@@ -797,6 +806,7 @@ public class FormulaEvalTest {
 		FormulaEngine engine = EngineFactory.getInstance().createFormulaEngine();
 		NBook book1 = NBooks.createBook("Book1");
 		NSheet sheetA = book1.createSheet("SheetA");
+		NSheet sheetB = book1.createSheet("SheetB");
 
 		// the formula contains 3 region in current sheet
 		// target region won't cover region 1, complete cover region 2, and partial cover region 3
@@ -817,6 +827,10 @@ public class FormulaEvalTest {
 		testFormulaExtend(f,"G3:L5", horizontal, "SUM(C3:E5)+SUM(G6:I8)+SUM(K3:M5)", engine, sheetA); // 3 rows
 		// source region at bottom
 		testFormulaExtend(f,"G6:L6", horizontal, f, engine, sheetA);
+		// external sheet with external book (Note that we can't modify a external book reference)
+		f = "SUM(A1:A3)+SUM(SheetA!A1:A3)+SUM(SheetB!A1:A3)+SUM([Book2]SheetA!A1:A3)";
+		testFormulaExtend(f,"A2:A2", horizontal, "SUM(A1:A4)+SUM(SheetA!A1:A4)+SUM(SheetB!A1:A3)+SUM([Book2]SheetA!A1:A3)", engine, sheetA); // on SheetA
+		testFormulaExtend(f,"A2:A2", horizontal, "SUM(A1:A4)+SUM(SheetA!A1:A3)+SUM(SheetB!A1:A4)+SUM([Book2]SheetA!A1:A3)", engine, sheetB); // on SheetB
 
 		// delete cells and shift left
 		f = "SUM(C3:E5)+SUM(C7:E9)+SUM(C11:E13)";
@@ -834,6 +848,10 @@ public class FormulaEvalTest {
 		testFormulaExtend(f,"C7:E12", horizontal, "SUM(C3:E5)+SUM(F7:H9)+SUM(C11:E13)", engine, sheetA); // 3 columns
 		// source region at right
 		testFormulaExtend(f,"F7:F12", horizontal, f, engine, sheetA);
+		// external sheet with external book (Note that we can't modify a external book reference)
+		f = "SUM(A1:C1)+SUM(SheetA!A1:C1)+SUM(SheetB!A1:C1)+SUM([Book2]SheetA!A1:C1)";
+		testFormulaExtend(f,"B1:B1", horizontal, "SUM(A1:D1)+SUM(SheetA!A1:D1)+SUM(SheetB!A1:C1)+SUM([Book2]SheetA!A1:C1)", engine, sheetA); // on SheetA
+		testFormulaExtend(f,"B1:B1", horizontal, "SUM(A1:D1)+SUM(SheetA!A1:C1)+SUM(SheetB!A1:D1)+SUM([Book2]SheetA!A1:C1)", engine, sheetB); // on SheetB
 	}
 	
 	private void testFormulaExtend(String formula, String region, boolean hrizontal, String expected, FormulaEngine engine, NSheet sheet) {
