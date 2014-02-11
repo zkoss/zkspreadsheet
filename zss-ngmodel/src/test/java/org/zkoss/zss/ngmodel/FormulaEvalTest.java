@@ -747,7 +747,6 @@ public class FormulaEvalTest {
 
 		// the formula contains 3 region in current sheet
 		// delete region won't cover region 1, complete cover region 2, and partial cover region 3
-		// there are the same region in different sheet and external book
 		String f = "SUM(C3:E5)+SUM(G3:I5)+SUM(K3:M5)";
 
 		// delete cells and shift up
@@ -782,9 +781,56 @@ public class FormulaEvalTest {
 		testFormulaShrink(f,"F7:F12", horizontal, f, engine, sheetA);
 	}
 
-	private void testFormulaShrink(String formula, String delete, boolean hrizontal, String expected, FormulaEngine engine, NSheet sheet) {
+	private void testFormulaShrink(String formula, String region, boolean hrizontal, String expected, FormulaEngine engine, NSheet sheet) {
 		FormulaParseContext context = new FormulaParseContext(sheet, null);
-		FormulaExpression expr = engine.shrink(formula, new SheetRegion(sheet, delete), hrizontal, context);
+		FormulaExpression expr = engine.shrink(formula, new SheetRegion(sheet, region), hrizontal, context);
+		Assert.assertFalse(expr.hasError());
+		Assert.assertEquals(expected, expr.getFormulaString());
+	}
+	
+	@Test
+	public void testFormulaExtend() {
+		FormulaEngine engine = EngineFactory.getInstance().createFormulaEngine();
+		NBook book1 = NBooks.createBook("Book1");
+		NSheet sheetA = book1.createSheet("SheetA");
+
+		// the formula contains 3 region in current sheet
+		// target region won't cover region 1, complete cover region 2, and partial cover region 3
+		String f = "SUM(C3:E5)+SUM(G3:I5)+SUM(K3:M5)";
+		
+		// delete cells and shift up
+		boolean horizontal = false;
+		// source region at top
+		testFormulaExtend(f,"G1:L1", horizontal, "SUM(C3:E5)+SUM(G4:I6)+SUM(K3:M5)", engine, sheetA);
+		testFormulaExtend(f,"G1:L2", horizontal, "SUM(C3:E5)+SUM(G5:I7)+SUM(K3:M5)", engine, sheetA);
+		// source region overlapped
+		testFormulaExtend(f,"G3:L3", horizontal, "SUM(C3:E5)+SUM(G4:I6)+SUM(K3:M5)", engine, sheetA); // 1 row
+		testFormulaExtend(f,"G4:L4", horizontal, "SUM(C3:E5)+SUM(G3:I6)+SUM(K3:M5)", engine, sheetA); // 1 row
+		testFormulaExtend(f,"G5:L5", horizontal, "SUM(C3:E5)+SUM(G3:I6)+SUM(K3:M5)", engine, sheetA); // 1 row
+		testFormulaExtend(f,"G4:L5", horizontal, "SUM(C3:E5)+SUM(G3:I7)+SUM(K3:M5)", engine, sheetA); // 2 rows
+		testFormulaExtend(f,"G3:L5", horizontal, "SUM(C3:E5)+SUM(G6:I8)+SUM(K3:M5)", engine, sheetA); // 3 rows
+		// source region at bottom
+		testFormulaExtend(f,"G6:L6", horizontal, f, engine, sheetA);
+
+		// delete cells and shift left
+		f = "SUM(C3:E5)+SUM(C7:E9)+SUM(C11:E13)";
+		horizontal = true;
+		// source region at left
+		testFormulaExtend(f,"A7:A12", horizontal, "SUM(C3:E5)+SUM(D7:F9)+SUM(C11:E13)", engine, sheetA);
+		testFormulaExtend(f,"A7:B12", horizontal, "SUM(C3:E5)+SUM(E7:G9)+SUM(C11:E13)", engine, sheetA);
+		// source region overlapped
+		testFormulaExtend(f,"C7:C12", horizontal, "SUM(C3:E5)+SUM(D7:F9)+SUM(C11:E13)", engine, sheetA); // 1 column
+		testFormulaExtend(f,"D7:D12", horizontal, "SUM(C3:E5)+SUM(C7:F9)+SUM(C11:E13)", engine, sheetA); // 1 column
+		testFormulaExtend(f,"E7:E12", horizontal, "SUM(C3:E5)+SUM(C7:F9)+SUM(C11:E13)", engine, sheetA); // 1 column
+		testFormulaExtend(f,"D7:E12", horizontal, "SUM(C3:E5)+SUM(C7:G9)+SUM(C11:E13)", engine, sheetA); // 2 columns
+		testFormulaExtend(f,"C7:E12", horizontal, "SUM(C3:E5)+SUM(F7:H9)+SUM(C11:E13)", engine, sheetA); // 3 columns
+		// source region at right
+		testFormulaExtend(f,"F7:F12", horizontal, f, engine, sheetA);
+	}
+	
+	private void testFormulaExtend(String formula, String region, boolean hrizontal, String expected, FormulaEngine engine, NSheet sheet) {
+		FormulaParseContext context = new FormulaParseContext(sheet, null);
+		FormulaExpression expr = engine.extend(formula, new SheetRegion(sheet, region), hrizontal, context);
 		Assert.assertFalse(expr.hasError());
 		Assert.assertEquals(expected, expr.getFormulaString());
 	}
