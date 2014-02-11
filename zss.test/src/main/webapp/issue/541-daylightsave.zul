@@ -1,0 +1,40 @@
+<vbox hflex="1" vflex="1">
+<label multiline="true">
+To test this issue, you have to start zss by add -Duser.timezone=America/New_York in JVM
+1.click following fill button to fill cells
+2.click following check button to check values
+</label>
+	<vbox hflex="1" vflex="1" id="main" apply="zss.issue.B541Composer">
+		<hbox hflex="1">
+			<button label="Fill A" onClick='main$composer.autoFill("A2","A2:A12",self)'/>
+			<button label="Fill B" onClick='main$composer.autoFill("B12","B2:B12",self)'/>
+			<button label="Fill C" onClick='main$composer.autoFill("C2:C3","C2:C12",self)'/>
+			<button label="Fill D" onClick='main$composer.autoFill("D2:D3","D2:D12",self)'/>
+			<button label="Fill E" onClick='main$composer.autoFill("E2","E2:E12",self)'/>
+			<button label="Fill F" onClick='main$composer.autoFill("F2:F3","F2:F12",self)'/>
+			<button label="Fill G" onClick='main$composer.autoFill("G2:G3","G2:G12",self)'/>
+			<button label="Fill H" onClick='main$composer.autoFill("H2","H2:H12",self)'/>
+			<button label="Fill I" onClick='main$composer.autoFill("I2:I3","I2:I12",self)'/>
+			<button label="Fill J" onClick='main$composer.autoFill("J2:J3","J2:J12",self)'/>
+			<button label="Fill K" onClick='main$composer.autoFill("K2:K3","K2:K12",self)'/>
+			<button label="Fill L" onClick='main$composer.autoFill("L2:L3","L2:L12",self)'/>
+		</hbox>
+		<hbox hflex="1">
+			<button label="Check A" onClick='main$composer.checkValue("A2:A12","A15:A25",self)'/>
+			<button label="Check B" onClick='main$composer.checkValue("B2:B12","B15:B25",self)'/>
+			<button label="Check C" onClick='main$composer.checkValue("C2:C12","C15:C25",self)'/>
+			<button label="Check D" onClick='main$composer.checkValue("D2:D12","D15:D25",self)'/>
+			<button label="Check E" onClick='main$composer.checkValue("E2:E12","E15:E25",self)'/>
+			<button label="Check F" onClick='main$composer.checkValue("F2:F12","F15:F25",self)'/>
+			<button label="Check G" onClick='main$composer.checkValue("G2:G12","G15:G25",self)'/>
+			<button label="Check H" onClick='main$composer.checkValue("H2:H12","H15:H25",self)'/>
+			<button label="Check I" onClick='main$composer.checkValue("I2:I12","I15:I25",self)'/>
+			<button label="Check J" onClick='main$composer.checkValue("J2:J12","J15:J25",self)'/>
+			<button label="Check K" onClick='main$composer.checkValue("K2:K12","K15:K25",self)'/>
+			<button label="Check L" onClick='main$composer.checkValue("L2:L12","L15:L25",self)'/>
+		</hbox>
+		<spreadsheet id="ss" src="/issue/541-daylightsave.xlsx" width="100%" maxrows="200" maxcolumns="40" 
+			hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
+			showFormulabar="true" />
+	</vbox>
+</vbox>
