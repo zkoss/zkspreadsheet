@@ -758,6 +758,8 @@ public class FormulaEvalTest {
 		testFormulaShrink(f,"G3:L3", horizontal, "SUM(C3:E5)+SUM(G3:I4)+SUM(K3:M5)", engine, sheetA); // 1 row
 		testFormulaShrink(f,"G4:L4", horizontal, "SUM(C3:E5)+SUM(G3:I4)+SUM(K3:M5)", engine, sheetA); // 1 row
 		testFormulaShrink(f,"G5:L5", horizontal, "SUM(C3:E5)+SUM(G3:I4)+SUM(K3:M5)", engine, sheetA); // 1 row
+		testFormulaShrink(f,"G2:L3", horizontal, "SUM(C3:E5)+SUM(G2:I3)+SUM(K3:M5)", engine, sheetA); // 2 rows
+		testFormulaShrink(f,"G2:L4", horizontal, "SUM(C3:E5)+SUM(G2:I2)+SUM(K3:M5)", engine, sheetA); // 2 rows
 		testFormulaShrink(f,"G4:L5", horizontal, "SUM(C3:E5)+SUM(G3:I3)+SUM(K3:M5)", engine, sheetA); // 2 rows
 		testFormulaShrink(f,"G3:L5", horizontal, "SUM(C3:E5)+SUM(#REF!)+SUM(K3:M5)", engine, sheetA); // 3 rows
 //		testFormulaShrink(f,"G3:L5", horizontal, "SUM(C3:E5)+SUM(#REF!)+SUM(M3:M5)", engine, sheetA); // it's Excel approach 
@@ -774,6 +776,8 @@ public class FormulaEvalTest {
 		testFormulaShrink(f,"C7:C12", horizontal, "SUM(C3:E5)+SUM(C7:D9)+SUM(C11:E13)", engine, sheetA); // 1 column
 		testFormulaShrink(f,"D7:D12", horizontal, "SUM(C3:E5)+SUM(C7:D9)+SUM(C11:E13)", engine, sheetA); // 1 column
 		testFormulaShrink(f,"E7:E12", horizontal, "SUM(C3:E5)+SUM(C7:D9)+SUM(C11:E13)", engine, sheetA); // 1 column
+		testFormulaShrink(f,"B7:C12", horizontal, "SUM(C3:E5)+SUM(B7:C9)+SUM(C11:E13)", engine, sheetA); // 2 columns
+		testFormulaShrink(f,"B7:D12", horizontal, "SUM(C3:E5)+SUM(B7:B9)+SUM(C11:E13)", engine, sheetA); // 2 columns
 		testFormulaShrink(f,"D7:E12", horizontal, "SUM(C3:E5)+SUM(C7:C9)+SUM(C11:E13)", engine, sheetA); // 2 columns
 		testFormulaShrink(f,"C7:E12", horizontal, "SUM(C3:E5)+SUM(#REF!)+SUM(C11:E13)", engine, sheetA); // 3 columns
 //		testFormulaShrink(f,"C7:E12", horizontal, "SUM(C3:E5)+SUM(#REF!)+SUM(C13:E13)", engine, sheetA); // it's Excel approach 
@@ -807,6 +811,8 @@ public class FormulaEvalTest {
 		testFormulaExtend(f,"G3:L3", horizontal, "SUM(C3:E5)+SUM(G4:I6)+SUM(K3:M5)", engine, sheetA); // 1 row
 		testFormulaExtend(f,"G4:L4", horizontal, "SUM(C3:E5)+SUM(G3:I6)+SUM(K3:M5)", engine, sheetA); // 1 row
 		testFormulaExtend(f,"G5:L5", horizontal, "SUM(C3:E5)+SUM(G3:I6)+SUM(K3:M5)", engine, sheetA); // 1 row
+		testFormulaExtend(f,"G2:L3", horizontal, "SUM(C3:E5)+SUM(G5:I7)+SUM(K3:M5)", engine, sheetA); // 2 rows
+		testFormulaExtend(f,"G2:L4", horizontal, "SUM(C3:E5)+SUM(G6:I8)+SUM(K3:M5)", engine, sheetA); // 2 rows
 		testFormulaExtend(f,"G4:L5", horizontal, "SUM(C3:E5)+SUM(G3:I7)+SUM(K3:M5)", engine, sheetA); // 2 rows
 		testFormulaExtend(f,"G3:L5", horizontal, "SUM(C3:E5)+SUM(G6:I8)+SUM(K3:M5)", engine, sheetA); // 3 rows
 		// source region at bottom
@@ -822,6 +828,8 @@ public class FormulaEvalTest {
 		testFormulaExtend(f,"C7:C12", horizontal, "SUM(C3:E5)+SUM(D7:F9)+SUM(C11:E13)", engine, sheetA); // 1 column
 		testFormulaExtend(f,"D7:D12", horizontal, "SUM(C3:E5)+SUM(C7:F9)+SUM(C11:E13)", engine, sheetA); // 1 column
 		testFormulaExtend(f,"E7:E12", horizontal, "SUM(C3:E5)+SUM(C7:F9)+SUM(C11:E13)", engine, sheetA); // 1 column
+		testFormulaExtend(f,"B7:C12", horizontal, "SUM(C3:E5)+SUM(E7:G9)+SUM(C11:E13)", engine, sheetA); // 2 columns
+		testFormulaExtend(f,"B7:D12", horizontal, "SUM(C3:E5)+SUM(F7:H9)+SUM(C11:E13)", engine, sheetA); // 2 columns
 		testFormulaExtend(f,"D7:E12", horizontal, "SUM(C3:E5)+SUM(C7:G9)+SUM(C11:E13)", engine, sheetA); // 2 columns
 		testFormulaExtend(f,"C7:E12", horizontal, "SUM(C3:E5)+SUM(F7:H9)+SUM(C11:E13)", engine, sheetA); // 3 columns
 		// source region at right
