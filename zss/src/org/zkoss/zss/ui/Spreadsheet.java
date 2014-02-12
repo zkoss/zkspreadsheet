@@ -2882,12 +2882,16 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 				uam.doAction(new HideHeaderAction(Labels.getLabel("zss.undo.hideRow"), 
 						sheet, row,0, row, 0, HideHeaderAction.Type.ROW, hidden));
 			}else{
-				uam.doAction(
-					new AggregatedAction(Labels.getLabel("zss.undo.rowSize"),
-						new UndoableAction[]{
-							new HideHeaderAction(null,sheet,  row,0, row, 0, HideHeaderAction.Type.ROW, hidden),
-							new ResizeHeaderAction(null,sheet,  row,0, row, 0, ResizeHeaderAction.Type.ROW, newsize, isCustom)}
-					));
+				if (isCustom){
+					uam.doAction(
+							new AggregatedAction(Labels.getLabel("zss.undo.rowSize"),
+									new UndoableAction[]{
+								new HideHeaderAction(null,sheet,  row,0, row, 0, HideHeaderAction.Type.ROW, hidden),
+								new ResizeHeaderAction(null,sheet,  row,0, row, 0, ResizeHeaderAction.Type.ROW, newsize, isCustom)}
+									));
+				}else{ //ZSS-552 avoid auto-adjusting row height being put into undo history
+					CellOperationUtil.setRowHeight(Ranges.range(sheet,row,0,row,0).toRowRange(),newsize, isCustom);
+				}
 			}
 		}
 

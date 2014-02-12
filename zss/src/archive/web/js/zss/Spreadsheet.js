@@ -140,8 +140,13 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 	 * @param {String} id the style sheet id 
 	 */
 	function removeSSheet (id) {
+
 		var node = document.getElementById(id);
 		if(node && node.type == "text/css"){
+			// ZSS-561: force clear css, or IE 10,11 will cache old css
+			if(zk.ie >= 10) {
+				node.removeAttribute('href');
+			}
 			node.parentNode.removeChild(node);
 		}
 	}
