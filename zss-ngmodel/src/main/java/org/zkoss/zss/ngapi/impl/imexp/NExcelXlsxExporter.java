@@ -569,6 +569,9 @@ public class NExcelXlsxExporter extends AbstractExcelExporter {
 		}
 	}
 
+	/**
+	 * See Javadoc at {@link AbstractExcelImporter} importAutoFilter().
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	protected void exportAutoFilter(NSheet sheet, Sheet poiSheet) {
@@ -576,8 +579,12 @@ public class NExcelXlsxExporter extends AbstractExcelExporter {
 		if (autoFilter != null){
 			CellRegion region = autoFilter.getRegion();
 			XSSFAutoFilter poiAutoFilter = (XSSFAutoFilter)poiSheet.setAutoFilter(new CellRangeAddress(region.getRow(), region.getLastRow(), region.getColumn(), region.getLastColumn()));
-			for( int i = 0 ; i < autoFilter.getFilterColumns().size() ; i++){
+			int numberOfColumn = region.getLastColumn() - region.getColumn() + 1;
+			for( int i = 0 ; i < numberOfColumn ; i++){
 				NFilterColumn srcFilterColumn = autoFilter.getFilterColumn(i, false);
+				if (srcFilterColumn == null){
+					continue;
+				}
 				XSSFFilterColumn destFilterColumn = (XSSFFilterColumn)poiAutoFilter.getOrCreateFilterColumn(i);
 				Object[] criteria1 = null;
 				if (srcFilterColumn.getCriteria1()!=null){

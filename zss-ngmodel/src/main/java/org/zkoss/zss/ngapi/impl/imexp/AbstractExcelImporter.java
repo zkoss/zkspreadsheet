@@ -647,14 +647,15 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 	}
 
 	/**
-	 * A FilterColumn object only exists when we have set a criteria on that
-	 * column. For example, if we enable auto filter on 2 columns, but we only
-	 * set criteria on 2nd column. Thus, the size of filter column is 1. There
-	 * is only one FilterColumn object and its column id is 1. Only
-	 * getFilterColumn(1) will return a FilterColumn, other get null.
+	 * POI AutoFilter.getFilterColumn(i) sometimes returns null. A POI FilterColumn object only 
+	 * exists when we have set a criteria on that column. 
+	 * For example, if we enable auto filter on 2 columns, but we only set criteria on 
+	 * 2nd column. Thus, the size of filter column is 1. There is only one FilterColumn 
+	 * object and its column id is 1. Only getFilterColumn(1) will return a FilterColumn, 
+	 * other get null.
 	 * 
-	 * @param poiSheet
-	 * @param sheet
+	 * @param poiSheet source POI sheet
+	 * @param sheet destination sheet
 	 */
 	private void importAutoFilter(Sheet poiSheet, NSheet sheet) {
 		AutoFilter poiAutoFilter = poiSheet.getAutoFilter();
