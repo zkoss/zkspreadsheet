@@ -51,12 +51,12 @@ public class StyleTest {
 	
 	@Before
 	public void startUp() throws Exception {
-		Setup.pushZssContextLocale(Locale.TAIWAN);
+		Setup.pushZssLocale(Locale.TAIWAN);
 	}
 	
 	@After
 	public void tearDown() throws Exception {
-		Setup.popZssContextLocale();
+		Setup.popZssLocale();
 	}
 	
 	@Ignore("Border spec for test is not confirm yet") // FIXME

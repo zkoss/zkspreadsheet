@@ -41,12 +41,12 @@ public class ShiftTest {
 	
 	@Before
 	public void startUp() throws Exception {
-		Setup.pushZssContextLocale(Locale.TAIWAN);
+		Setup.pushZssLocale(Locale.TAIWAN);
 	}
 	
 	@After
 	public void tearDown() throws Exception {
-		Setup.popZssContextLocale();
+		Setup.popZssLocale();
 	}
 	
 	@Test

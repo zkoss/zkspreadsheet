@@ -18,6 +18,9 @@ package org.zkoss.zss.api.model;
 
 import java.util.List;
 
+import org.zkoss.zss.ngmodel.NBook;
+import org.zkoss.zss.ngmodel.NSheet;
+
 /**
  * This interface provides the access to a sheet of a {@link Book}.
  * @author dennis
@@ -28,6 +31,13 @@ public interface Sheet {
 	/*TODO zss 3.5
 	public org.zkoss.poi.ss.usermodel.Sheet getPoiSheet();
 	*/
+	
+	/** 
+	 * get the internal model object to do advanced operation <br/>
+	 * Note : operate on internal object will not automatically update Spreadsheet   
+	 * @return
+	 */
+	public NSheet getInternalSheet();
 	
 	public Book getBook();
 	

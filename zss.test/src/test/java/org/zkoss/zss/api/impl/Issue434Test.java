@@ -2,20 +2,13 @@ package org.zkoss.zss.api.impl;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Locale;
-import java.util.Set;
 
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.zkoss.poi.ss.usermodel.ZssContext;
 import org.zkoss.zss.AssertUtil;
 import org.zkoss.zss.Setup;
 import org.zkoss.zss.Util;
@@ -41,12 +34,12 @@ public class Issue434Test {
 	
 	@Before
 	public void startUp() throws Exception {
-		Setup.pushZssContextLocale(Locale.TAIWAN);
+		Setup.pushZssLocale(Locale.TAIWAN);
 	}
 	
 	@After
 	public void tearDown() throws Exception {
-		Setup.popZssContextLocale();
+		Setup.popZssLocale();
 	}
 	
 	@Test
@@ -59,15 +52,15 @@ public class Issue434Test {
 	private void testBlank_InsertRow1(Book book) throws IOException {
 		Sheet sheet = book.getSheetAt(0);
 		
-		Assert.assertEquals(0, sheet.getPoiSheet().getNumMergedRegions());
+		Assert.assertEquals(0, sheet.getInternalSheet().getNumOfMergedRegion());
 		
 		Ranges.range(sheet,"B2:D4").merge(false);
-		Assert.assertEquals(1, sheet.getPoiSheet().getNumMergedRegions());
-		Assert.assertEquals("B2:D4", sheet.getPoiSheet().getMergedRegion(0).formatAsString());
+		Assert.assertEquals(1, sheet.getInternalSheet().getNumOfMergedRegion());
+		Assert.assertEquals("B2:D4", sheet.getInternalSheet().getMergedRegion(0).getReferenceString());
 		
 		Ranges.range(sheet,"A3").toRowRange().insert(Range.InsertShift.DOWN,Range.InsertCopyOrigin.FORMAT_LEFT_ABOVE);
-		Assert.assertEquals(1, sheet.getPoiSheet().getNumMergedRegions());
-		Assert.assertEquals("B2:D5", sheet.getPoiSheet().getMergedRegion(0).formatAsString());
+		Assert.assertEquals(1, sheet.getInternalSheet().getNumOfMergedRegion());
+		Assert.assertEquals("B2:D5", sheet.getInternalSheet().getMergedRegion(0).getReferenceString());
 		
 		//export and test again
 		File temp = Setup.getTempFile();
@@ -75,22 +68,22 @@ public class Issue434Test {
 		book = Importers.getImporter().imports(temp, "test");
 		sheet = book.getSheetAt(0);
 		
-		Assert.assertEquals(1, sheet.getPoiSheet().getNumMergedRegions());
-		Assert.assertEquals("B2:D5", sheet.getPoiSheet().getMergedRegion(0).formatAsString());
+		Assert.assertEquals(1, sheet.getInternalSheet().getNumOfMergedRegion());
+		Assert.assertEquals("B2:D5", sheet.getInternalSheet().getMergedRegion(0).getReferenceString());
 	}
 	private void testBlank_InsertRow2(Book book) throws IOException {
 		Sheet sheet = book.getSheetAt(0);
 		
-		Assert.assertEquals(0, sheet.getPoiSheet().getNumMergedRegions());
+		Assert.assertEquals(0, sheet.getInternalSheet().getNumOfMergedRegion());
 		
 		
 		Ranges.range(sheet,"B2:D4").merge(false);
-		Assert.assertEquals(1, sheet.getPoiSheet().getNumMergedRegions());
-		Assert.assertEquals("B2:D4", sheet.getPoiSheet().getMergedRegion(0).formatAsString());
+		Assert.assertEquals(1, sheet.getInternalSheet().getNumOfMergedRegion());
+		Assert.assertEquals("B2:D4", sheet.getInternalSheet().getMergedRegion(0).getReferenceString());
 		
 		Ranges.range(sheet,"A2").toRowRange().insert(Range.InsertShift.DOWN,Range.InsertCopyOrigin.FORMAT_LEFT_ABOVE);
-		Assert.assertEquals(1, sheet.getPoiSheet().getNumMergedRegions());
-		Assert.assertEquals("B3:D5", sheet.getPoiSheet().getMergedRegion(0).formatAsString());
+		Assert.assertEquals(1, sheet.getInternalSheet().getNumOfMergedRegion());
+		Assert.assertEquals("B3:D5", sheet.getInternalSheet().getMergedRegion(0).getReferenceString());
 		
 		//export and test again
 		File temp = Setup.getTempFile();
@@ -98,8 +91,8 @@ public class Issue434Test {
 		book = Importers.getImporter().imports(temp, "test");
 		sheet = book.getSheetAt(0);
 		
-		Assert.assertEquals(1, sheet.getPoiSheet().getNumMergedRegions());
-		Assert.assertEquals("B3:D5", sheet.getPoiSheet().getMergedRegion(0).formatAsString());
+		Assert.assertEquals(1, sheet.getInternalSheet().getNumOfMergedRegion());
+		Assert.assertEquals("B3:D5", sheet.getInternalSheet().getMergedRegion(0).getReferenceString());
 	}
 	
 	
@@ -113,7 +106,7 @@ public class Issue434Test {
 	private void testCase1_InsertRow1(Book book) throws IOException {
 		Sheet sheet = book.getSheetAt(0);
 		
-		Assert.assertEquals(4, sheet.getPoiSheet().getNumMergedRegions());
+		Assert.assertEquals(4, sheet.getInternalSheet().getNumOfMergedRegion());
 		AssertUtil.assertMeregedRegion(new String[]{"B2:D4","K2:M4","B10:D12","K10:M12"}, sheet);
 		
 		
@@ -147,15 +140,15 @@ public class Issue434Test {
 	private void testBlank_DeleteRow1(Book book) throws IOException {
 		Sheet sheet = book.getSheetAt(0);
 		
-		Assert.assertEquals(0, sheet.getPoiSheet().getNumMergedRegions());
+		Assert.assertEquals(0, sheet.getInternalSheet().getNumOfMergedRegion());
 		
 		Ranges.range(sheet,"B2:D4").merge(false);
-		Assert.assertEquals(1, sheet.getPoiSheet().getNumMergedRegions());
-		Assert.assertEquals("B2:D4", sheet.getPoiSheet().getMergedRegion(0).formatAsString());
+		Assert.assertEquals(1, sheet.getInternalSheet().getNumOfMergedRegion());
+		Assert.assertEquals("B2:D4", sheet.getInternalSheet().getMergedRegion(0).getReferenceString());
 		
 		Ranges.range(sheet,"A3").toRowRange().delete(DeleteShift.UP);
-		Assert.assertEquals(1, sheet.getPoiSheet().getNumMergedRegions());
-		Assert.assertEquals("B2:D3", sheet.getPoiSheet().getMergedRegion(0).formatAsString());
+		Assert.assertEquals(1, sheet.getInternalSheet().getNumOfMergedRegion());
+		Assert.assertEquals("B2:D3", sheet.getInternalSheet().getMergedRegion(0).getReferenceString());
 		
 		//export and test again
 		File temp = Setup.getTempFile();
@@ -163,24 +156,24 @@ public class Issue434Test {
 		book = Importers.getImporter().imports(temp, "test");
 		sheet = book.getSheetAt(0);
 		
-		Assert.assertEquals(1, sheet.getPoiSheet().getNumMergedRegions());
-		Assert.assertEquals("B2:D3", sheet.getPoiSheet().getMergedRegion(0).formatAsString());
+		Assert.assertEquals(1, sheet.getInternalSheet().getNumOfMergedRegion());
+		Assert.assertEquals("B2:D3", sheet.getInternalSheet().getMergedRegion(0).getReferenceString());
 	}
 	private void testBlank_DeleteRow2(Book book) throws IOException {
 		
 		
 		Sheet sheet = book.getSheetAt(0);
 		
-		Assert.assertEquals(0, sheet.getPoiSheet().getNumMergedRegions());
+		Assert.assertEquals(0, sheet.getInternalSheet().getNumOfMergedRegion());
 		
 		
 		Ranges.range(sheet,"B2:D4").merge(false);
-		Assert.assertEquals(1, sheet.getPoiSheet().getNumMergedRegions());
-		Assert.assertEquals("B2:D4", sheet.getPoiSheet().getMergedRegion(0).formatAsString());
+		Assert.assertEquals(1, sheet.getInternalSheet().getNumOfMergedRegion());
+		Assert.assertEquals("B2:D4", sheet.getInternalSheet().getMergedRegion(0).getReferenceString());
 		
 		Ranges.range(sheet,"A2").toRowRange().delete(DeleteShift.UP);
-		Assert.assertEquals(1, sheet.getPoiSheet().getNumMergedRegions());
-		Assert.assertEquals("B2:D3", sheet.getPoiSheet().getMergedRegion(0).formatAsString());
+		Assert.assertEquals(1, sheet.getInternalSheet().getNumOfMergedRegion());
+		Assert.assertEquals("B2:D3", sheet.getInternalSheet().getMergedRegion(0).getReferenceString());
 		
 		//export and test again
 		File temp = Setup.getTempFile();
@@ -188,8 +181,8 @@ public class Issue434Test {
 		book = Importers.getImporter().imports(temp, "test");
 		sheet = book.getSheetAt(0);
 		
-		Assert.assertEquals(1, sheet.getPoiSheet().getNumMergedRegions());
-		Assert.assertEquals("B2:D3", sheet.getPoiSheet().getMergedRegion(0).formatAsString());
+		Assert.assertEquals(1, sheet.getInternalSheet().getNumOfMergedRegion());
+		Assert.assertEquals("B2:D3", sheet.getInternalSheet().getMergedRegion(0).getReferenceString());
 	}
 	
 
@@ -203,7 +196,7 @@ public class Issue434Test {
 	private void testCase1_DeleteRow1(Book book) throws IOException {
 		Sheet sheet = book.getSheetAt(0);
 		
-		Assert.assertEquals(4, sheet.getPoiSheet().getNumMergedRegions());
+		Assert.assertEquals(4, sheet.getInternalSheet().getNumOfMergedRegion());
 		AssertUtil.assertMeregedRegion(new String[]{"B2:D4","K2:M4","B10:D12","K10:M12"}, sheet);
 		
 		
@@ -237,15 +230,15 @@ public class Issue434Test {
 		
 		Sheet sheet = book.getSheetAt(0);
 		
-		Assert.assertEquals(0, sheet.getPoiSheet().getNumMergedRegions());
+		Assert.assertEquals(0, sheet.getInternalSheet().getNumOfMergedRegion());
 		
 		Ranges.range(sheet,"B2:D4").merge(false);
-		Assert.assertEquals(1, sheet.getPoiSheet().getNumMergedRegions());
-		Assert.assertEquals("B2:D4", sheet.getPoiSheet().getMergedRegion(0).formatAsString());
+		Assert.assertEquals(1, sheet.getInternalSheet().getNumOfMergedRegion());
+		Assert.assertEquals("B2:D4", sheet.getInternalSheet().getMergedRegion(0).getReferenceString());
 		
 		Ranges.range(sheet,"C1").toColumnRange().insert(Range.InsertShift.RIGHT,Range.InsertCopyOrigin.FORMAT_LEFT_ABOVE);
-		Assert.assertEquals(1, sheet.getPoiSheet().getNumMergedRegions());
-		Assert.assertEquals("B2:E4", sheet.getPoiSheet().getMergedRegion(0).formatAsString());
+		Assert.assertEquals(1, sheet.getInternalSheet().getNumOfMergedRegion());
+		Assert.assertEquals("B2:E4", sheet.getInternalSheet().getMergedRegion(0).getReferenceString());
 		
 		//export and test again
 		File temp = Setup.getTempFile();
@@ -253,22 +246,22 @@ public class Issue434Test {
 		book = Importers.getImporter().imports(temp, "test");
 		sheet = book.getSheetAt(0);
 		
-		Assert.assertEquals(1, sheet.getPoiSheet().getNumMergedRegions());
-		Assert.assertEquals("B2:E4", sheet.getPoiSheet().getMergedRegion(0).formatAsString());
+		Assert.assertEquals(1, sheet.getInternalSheet().getNumOfMergedRegion());
+		Assert.assertEquals("B2:E4", sheet.getInternalSheet().getMergedRegion(0).getReferenceString());
 	}
 	private void testBlank_InserColumn2(Book book) throws IOException {
 		
 		Sheet sheet = book.getSheetAt(0);
 		
-		Assert.assertEquals(0, sheet.getPoiSheet().getNumMergedRegions());
+		Assert.assertEquals(0, sheet.getInternalSheet().getNumOfMergedRegion());
 		
 		Ranges.range(sheet,"B2:D4").merge(false);
-		Assert.assertEquals(1, sheet.getPoiSheet().getNumMergedRegions());
-		Assert.assertEquals("B2:D4", sheet.getPoiSheet().getMergedRegion(0).formatAsString());
+		Assert.assertEquals(1, sheet.getInternalSheet().getNumOfMergedRegion());
+		Assert.assertEquals("B2:D4", sheet.getInternalSheet().getMergedRegion(0).getReferenceString());
 		
 		Ranges.range(sheet,"B1").toColumnRange().insert(Range.InsertShift.RIGHT,Range.InsertCopyOrigin.FORMAT_LEFT_ABOVE);
-		Assert.assertEquals(1, sheet.getPoiSheet().getNumMergedRegions());
-		Assert.assertEquals("C2:E4", sheet.getPoiSheet().getMergedRegion(0).formatAsString());
+		Assert.assertEquals(1, sheet.getInternalSheet().getNumOfMergedRegion());
+		Assert.assertEquals("C2:E4", sheet.getInternalSheet().getMergedRegion(0).getReferenceString());
 		
 		//export and test again
 		File temp = Setup.getTempFile();
@@ -276,8 +269,8 @@ public class Issue434Test {
 		book = Importers.getImporter().imports(temp, "test");
 		sheet = book.getSheetAt(0);
 		
-		Assert.assertEquals(1, sheet.getPoiSheet().getNumMergedRegions());
-		Assert.assertEquals("C2:E4", sheet.getPoiSheet().getMergedRegion(0).formatAsString());
+		Assert.assertEquals(1, sheet.getInternalSheet().getNumOfMergedRegion());
+		Assert.assertEquals("C2:E4", sheet.getInternalSheet().getMergedRegion(0).getReferenceString());
 	}
 	
 	
@@ -291,15 +284,15 @@ public class Issue434Test {
 	private void testBlank_DeleteColumn1(Book book) throws IOException {
 		Sheet sheet = book.getSheetAt(0);
 		
-		Assert.assertEquals(0, sheet.getPoiSheet().getNumMergedRegions());
+		Assert.assertEquals(0, sheet.getInternalSheet().getNumOfMergedRegion());
 		
 		Ranges.range(sheet,"B2:D4").merge(false);
-		Assert.assertEquals(1, sheet.getPoiSheet().getNumMergedRegions());
-		Assert.assertEquals("B2:D4", sheet.getPoiSheet().getMergedRegion(0).formatAsString());
+		Assert.assertEquals(1, sheet.getInternalSheet().getNumOfMergedRegion());
+		Assert.assertEquals("B2:D4", sheet.getInternalSheet().getMergedRegion(0).getReferenceString());
 		
 		Ranges.range(sheet,"C3").toColumnRange().delete(DeleteShift.LEFT);
-		Assert.assertEquals(1, sheet.getPoiSheet().getNumMergedRegions());
-		Assert.assertEquals("B2:C4", sheet.getPoiSheet().getMergedRegion(0).formatAsString());
+		Assert.assertEquals(1, sheet.getInternalSheet().getNumOfMergedRegion());
+		Assert.assertEquals("B2:C4", sheet.getInternalSheet().getMergedRegion(0).getReferenceString());
 		
 		//export and test again
 		File temp = Setup.getTempFile();
@@ -307,24 +300,24 @@ public class Issue434Test {
 		book = Importers.getImporter().imports(temp, "test");
 		sheet = book.getSheetAt(0);
 		
-		Assert.assertEquals(1, sheet.getPoiSheet().getNumMergedRegions());
-		Assert.assertEquals("B2:C4", sheet.getPoiSheet().getMergedRegion(0).formatAsString());
+		Assert.assertEquals(1, sheet.getInternalSheet().getNumOfMergedRegion());
+		Assert.assertEquals("B2:C4", sheet.getInternalSheet().getMergedRegion(0).getReferenceString());
 	}
 	private void testBlank_DeleteColumn2(Book book) throws IOException {
 		
 		
 		Sheet sheet = book.getSheetAt(0);
 		
-		Assert.assertEquals(0, sheet.getPoiSheet().getNumMergedRegions());
+		Assert.assertEquals(0, sheet.getInternalSheet().getNumOfMergedRegion());
 		
 		
 		Ranges.range(sheet,"B2:D4").merge(false);
-		Assert.assertEquals(1, sheet.getPoiSheet().getNumMergedRegions());
-		Assert.assertEquals("B2:D4", sheet.getPoiSheet().getMergedRegion(0).formatAsString());
+		Assert.assertEquals(1, sheet.getInternalSheet().getNumOfMergedRegion());
+		Assert.assertEquals("B2:D4", sheet.getInternalSheet().getMergedRegion(0).getReferenceString());
 		
 		Ranges.range(sheet,"B2").toColumnRange().delete(DeleteShift.LEFT);
-		Assert.assertEquals(1, sheet.getPoiSheet().getNumMergedRegions());
-		Assert.assertEquals("B2:C4", sheet.getPoiSheet().getMergedRegion(0).formatAsString());
+		Assert.assertEquals(1, sheet.getInternalSheet().getNumOfMergedRegion());
+		Assert.assertEquals("B2:C4", sheet.getInternalSheet().getMergedRegion(0).getReferenceString());
 		
 		//export and test again
 		File temp = Setup.getTempFile();
@@ -332,8 +325,8 @@ public class Issue434Test {
 		book = Importers.getImporter().imports(temp, "test");
 		sheet = book.getSheetAt(0);
 		
-		Assert.assertEquals(1, sheet.getPoiSheet().getNumMergedRegions());
-		Assert.assertEquals("B2:C4", sheet.getPoiSheet().getMergedRegion(0).formatAsString());
+		Assert.assertEquals(1, sheet.getInternalSheet().getNumOfMergedRegion());
+		Assert.assertEquals("B2:C4", sheet.getInternalSheet().getMergedRegion(0).getReferenceString());
 	}
 	
 	
@@ -347,7 +340,7 @@ public class Issue434Test {
 	private void testCase1_InsertColumn1(Book book) throws IOException {
 		Sheet sheet = book.getSheetAt(0);
 		
-		Assert.assertEquals(4, sheet.getPoiSheet().getNumMergedRegions());
+		Assert.assertEquals(4, sheet.getInternalSheet().getNumOfMergedRegion());
 		
 		AssertUtil.assertMeregedRegion(new String[]{"B2:D4","K2:M4","B10:D12","K10:M12"}, sheet);
 		
@@ -387,7 +380,7 @@ public class Issue434Test {
 	private void testCase1_DeleteColumn1(Book book) throws IOException {
 		Sheet sheet = book.getSheetAt(0);
 		
-		Assert.assertEquals(4, sheet.getPoiSheet().getNumMergedRegions());
+		Assert.assertEquals(4, sheet.getInternalSheet().getNumOfMergedRegion());
 		
 		AssertUtil.assertMeregedRegion(new String[]{"B2:D4","K2:M4","B10:D12","K10:M12"}, sheet);
 		
@@ -418,7 +411,7 @@ public class Issue434Test {
 	private void testCase1_InsertRange1(Book book) throws IOException {
 		Sheet sheet = book.getSheetAt(0);
 		
-		Assert.assertEquals(4, sheet.getPoiSheet().getNumMergedRegions());
+		Assert.assertEquals(4, sheet.getInternalSheet().getNumOfMergedRegion());
 		
 		AssertUtil.assertMeregedRegion(new String[]{"B2:D4","K2:M4","B10:D12","K10:M12"}, sheet);
 		//right
@@ -462,7 +455,7 @@ public class Issue434Test {
 	private void testCase1_DeleteRange1(Book book) throws IOException {
 		Sheet sheet = book.getSheetAt(0);
 		
-		Assert.assertEquals(4, sheet.getPoiSheet().getNumMergedRegions());
+		Assert.assertEquals(4, sheet.getInternalSheet().getNumOfMergedRegion());
 		
 		AssertUtil.assertMeregedRegion(new String[]{"B2:D4","K2:M4","B10:D12","K10:M12"}, sheet);
 		
@@ -492,7 +485,7 @@ public class Issue434Test {
 	}
 	private void testBlank_MoveRange(Book book) throws IOException {
 		Sheet sheet = book.getSheetAt(0);
-		Assert.assertEquals(0, sheet.getPoiSheet().getNumMergedRegions());
+		Assert.assertEquals(0, sheet.getInternalSheet().getNumOfMergedRegion());
 		
 		Ranges.range(sheet,"B2:D4").merge(false);
 		AssertUtil.assertMeregedRegion(new String[]{"B2:D4"}, sheet);

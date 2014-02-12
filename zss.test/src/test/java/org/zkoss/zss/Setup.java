@@ -70,43 +70,41 @@ public class Setup {
 		return file;
 	}
 	
-	static ThreadLocal<Stack<ZssContext>> zssCtx = new ThreadLocal<Stack<ZssContext>>();
+	//in 3.5 , we count on zk Locales
+	static ThreadLocal<Stack<Locale>> zssLocale = new ThreadLocal<Stack<Locale>>();
 	static{
-		zssCtx.set(new Stack<ZssContext>());
+		zssLocale.set(new Stack<Locale>());
 	}
 	
-	public static void pushZssContextLocale(Locale l){
-		ZssContext old = ZssContext.getCurrent();
+	public static void pushZssLocale(Locale l){
+		Locale old = Locales.getCurrent();
 		if(old!=null){
-			zssCtx.get().push(old);
+			zssLocale.get().push(old);
 		}
-		ZssContext.setThreadLocal(new ZssContext(l,-1));
 		Locales.setThreadLocal(l);
 	}
 	
-	public static void popZssContextLocale(){
-		if(zssCtx.get().isEmpty()){
+	public static void popZssLocale(){
+		if(zssLocale.get().isEmpty()){
 			System.out.print("WARN: No zss context to pop, please check your call stack");
 			return;
 		}
-		ZssContext old = zssCtx.get().pop();
-		ZssContext.setThreadLocal(old);
-		Locales.setThreadLocal(old.getLocale());
+		Locale old = zssLocale.get().pop();
+		Locales.setThreadLocal(old);
 	}
 	
-	public static Locale getZssContextLocale(){
-		if(zssCtx.get().isEmpty()){
+	public static Locale getZssLocale(){
+		if(zssLocale.get().isEmpty()){
 			return null;
 		}
-		ZssContext curr = ZssContext.getCurrent();
-		return curr.getLocale();
+		return Locales.getCurrent();
 	}
 	
 	//set current content locale
-	public static void setZssContentLocale(Locale l){
-		if(!zssCtx.get().isEmpty()){
-			popZssContextLocale();
+	public static void setZssLocale(Locale l){
+		if(!zssLocale.get().isEmpty()){
+			popZssLocale();
 		}
-		pushZssContextLocale(l);
+		pushZssLocale(l);
 	}
 }

@@ -16,7 +16,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.api.model;
 
-import org.zkoss.poi.ss.usermodel.Workbook;
+import org.zkoss.zss.ngmodel.NBook;
 
 /**
  * This interface provides entry to access Spreadsheet's data model.  
@@ -38,11 +38,19 @@ public interface Book {
 	public Workbook getPoiBook();
 	*/
 	
+	/** 
+	 * get the internal model object to do advanced operation <br/>
+	 * Note : operate on internal object will not automatically update Spreadsheet   
+	 * @return
+	 */
+	public NBook getInternalBook();
+	
 	/**
 	 * Gets the object for synchronized a book.
 	 * Note: you shouldn't synchronize a book directly, you have to get the sync object to synchronize it
 	 * @return
 	 */
+	//TODO zss 3.5 duplicated it
 	public Object getSync();
 	
 	/**

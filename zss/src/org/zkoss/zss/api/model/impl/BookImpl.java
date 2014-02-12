@@ -48,6 +48,11 @@ public class BookImpl implements Book{
 		return _bookRef.get();
 	}
 	
+	@Override
+	public NBook getInternalBook(){
+		return _bookRef.get();
+	}
+	
 	public ModelRef<NBook> getRef(){
 		return _bookRef;
 	}

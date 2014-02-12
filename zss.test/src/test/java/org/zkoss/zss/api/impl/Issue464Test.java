@@ -1,30 +1,18 @@
 package org.zkoss.zss.api.impl;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Locale;
-import java.util.Set;
 
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.zkoss.poi.ss.usermodel.ZssContext;
-import org.zkoss.zss.AssertUtil;
 import org.zkoss.zss.Setup;
 import org.zkoss.zss.Util;
 import org.zkoss.zss.api.CellOperationUtil;
-import org.zkoss.zss.api.Exporters;
-import org.zkoss.zss.api.Importers;
 import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.Range.ApplyBorderType;
-import org.zkoss.zss.api.Range.DeleteShift;
 import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.CellStyle;
@@ -49,12 +37,12 @@ public class Issue464Test {
 	
 	@Before
 	public void startUp() throws Exception {
-		Setup.pushZssContextLocale(Locale.TAIWAN);
+		Setup.pushZssLocale(Locale.TAIWAN);
 	}
 	
 	@After
 	public void tearDown() throws Exception {
-		Setup.popZssContextLocale();
+		Setup.popZssLocale();
 	}
 	
 	@Test
@@ -269,7 +257,7 @@ public class Issue464Test {
 		Sheet sheet = book.getSheetAt(0);
 		int row = 100;
 		int column = 50;
-		System.out.println("cell style number before "+book.getPoiBook().getNumCellStyles());
+//		System.out.println("cell style number before "+book.getInternalBook().getNumCellStyles());
 		Range r = Ranges.range(sheet,0,0,row,column);
 		CellOperationUtil.applyBackgroundColor(r,"#ff0000");
 		for(int i=0;i<=row;i++){
@@ -294,7 +282,7 @@ public class Issue464Test {
 				}
 			}
 		}
-		System.out.println("cell style number after "+book.getPoiBook().getNumCellStyles());
+//		System.out.println("cell style number after "+book.getInternalBook().getNumCellStyles());
 		book = Util.swap(book);
 		sheet = book.getSheetAt(0);
 		for(int i=0;i<=row;i++){
@@ -321,7 +309,7 @@ public class Issue464Test {
 		Sheet sheet = book.getSheetAt(0);
 		int row = 100;
 		int column = 50;
-		System.out.println("cell style number before "+book.getPoiBook().getNumCellStyles());
+//		System.out.println("cell style number before "+book.getInternalBook().getNumCellStyles());
 		Range r = Ranges.range(sheet,0,0,row,column);
 		CellOperationUtil.applyAlignment(r, Alignment.CENTER);
 		for(int i=0;i<=row;i++){
@@ -346,7 +334,7 @@ public class Issue464Test {
 				}
 			}
 		}
-		System.out.println("cell style number after "+book.getPoiBook().getNumCellStyles());
+//		System.out.println("cell style number after "+book.getInternalBook().getNumCellStyles());
 		book = Util.swap(book);
 		sheet = book.getSheetAt(0);
 		for(int i=0;i<=row;i++){
@@ -374,7 +362,7 @@ public class Issue464Test {
 		Sheet sheet = book.getSheetAt(0);
 		int row = 100;
 		int column = 50;
-		System.out.println("cell style number before "+book.getPoiBook().getNumCellStyles());
+//		System.out.println("cell style number before "+book.getInternalBook().getNumCellStyles());
 		Range r = Ranges.range(sheet,0,0,row,column);
 		CellOperationUtil.applyVerticalAlignment(r, VerticalAlignment.CENTER);
 		for(int i=0;i<=row;i++){
@@ -399,7 +387,7 @@ public class Issue464Test {
 				}
 			}
 		}
-		System.out.println("cell style number after "+book.getPoiBook().getNumCellStyles());
+//		System.out.println("cell style number after "+book.getInternalBook().getNumCellStyles());
 		book = Util.swap(book);
 		sheet = book.getSheetAt(0);
 		for(int i=0;i<=row;i++){
@@ -427,7 +415,7 @@ public class Issue464Test {
 		Sheet sheet = book.getSheetAt(0);
 		int row = 100;
 		int column = 50;
-		System.out.println("cell style number before "+book.getPoiBook().getNumCellStyles());
+//		System.out.println("cell style number before "+book.getInternalBook().getNumCellStyles());
 		Range r = Ranges.range(sheet,0,0,row,column);
 		CellOperationUtil.applyDataFormat(r, "yyyymmdd");
 		for(int i=0;i<=row;i++){
@@ -452,7 +440,7 @@ public class Issue464Test {
 				}
 			}
 		}
-		System.out.println("cell style number after "+book.getPoiBook().getNumCellStyles());
+//		System.out.println("cell style number after "+book.getInternalBook().getNumCellStyles());
 		book = Util.swap(book);
 		sheet = book.getSheetAt(0);
 		for(int i=0;i<=row;i++){
@@ -478,7 +466,7 @@ public class Issue464Test {
 		Sheet sheet = book.getSheetAt(0);
 		int row = 100;
 		int column = 50;
-		System.out.println("cell style number before "+book.getPoiBook().getNumCellStyles());
+//		System.out.println("cell style number before "+book.getInternalBook().getNumCellStyles());
 		Range r = Ranges.range(sheet,0,0,row,column);
 		CellOperationUtil.applyWrapText(r, true);
 		for(int i=0;i<=row;i++){
@@ -503,7 +491,7 @@ public class Issue464Test {
 				}
 			}
 		}
-		System.out.println("cell style number after "+book.getPoiBook().getNumCellStyles());
+//		System.out.println("cell style number after "+book.getInternalBook().getNumCellStyles());
 		book = Util.swap(book);
 		sheet = book.getSheetAt(0);
 		for(int i=0;i<=row;i++){
@@ -533,7 +521,7 @@ public class Issue464Test {
 		Sheet sheet = book.getSheetAt(0);
 		int row = 100;
 		int column = 50;
-		System.out.println("cell style number before "+book.getPoiBook().getNumCellStyles());
+//		System.out.println("cell style number before "+book.getInternalBook().getNumCellStyles());
 		Range r = Ranges.range(sheet,0,0,row,column);
 		CellOperationUtil.applyFontName(r, "Georgia");
 		for(int i=0;i<=row;i++){
@@ -558,7 +546,7 @@ public class Issue464Test {
 				}
 			}
 		}
-		System.out.println("cell style number after "+book.getPoiBook().getNumCellStyles());
+//		System.out.println("cell style number after "+book.getInternalBook().getNumCellStyles());
 		book = Util.swap(book);
 		sheet = book.getSheetAt(0);
 		for(int i=0;i<=row;i++){
@@ -584,7 +572,7 @@ public class Issue464Test {
 		Sheet sheet = book.getSheetAt(0);
 		int row = 100;
 		int column = 50;
-		System.out.println("cell style number before "+book.getPoiBook().getNumCellStyles());
+//		System.out.println("cell style number before "+book.getInternalBook().getNumCellStyles());
 		Range r = Ranges.range(sheet,0,0,row,column);
 		CellOperationUtil.applyFontHeight(r, 20);
 		for(int i=0;i<=row;i++){
@@ -609,7 +597,7 @@ public class Issue464Test {
 				}
 			}
 		}
-		System.out.println("cell style number after "+book.getPoiBook().getNumCellStyles());
+//		System.out.println("cell style number after "+book.getInternalBook().getNumCellStyles());
 		book = Util.swap(book);
 		sheet = book.getSheetAt(0);
 		for(int i=0;i<=row;i++){
@@ -636,7 +624,7 @@ public class Issue464Test {
 		Sheet sheet = book.getSheetAt(0);
 		int row = 100;
 		int column = 50;
-		System.out.println("cell style number before "+book.getPoiBook().getNumCellStyles());
+//		System.out.println("cell style number before "+book.getInternalBook().getNumCellStyles());
 		Range r = Ranges.range(sheet,0,0,row,column);
 		CellOperationUtil.applyFontColor(r, "#0000ff");
 		for(int i=0;i<=row;i++){
@@ -661,7 +649,7 @@ public class Issue464Test {
 				}
 			}
 		}
-		System.out.println("cell style number after "+book.getPoiBook().getNumCellStyles());
+//		System.out.println("cell style number after "+book.getInternalBook().getNumCellStyles());
 		book = Util.swap(book);
 		sheet = book.getSheetAt(0);
 		for(int i=0;i<=row;i++){
@@ -688,7 +676,7 @@ public class Issue464Test {
 		Sheet sheet = book.getSheetAt(0);
 		int row = 100;
 		int column = 50;
-		System.out.println("cell style number before "+book.getPoiBook().getNumCellStyles());
+//		System.out.println("cell style number before "+book.getInternalBook().getNumCellStyles());
 		Range r = Ranges.range(sheet,0,0,row,column);
 		CellOperationUtil.applyFontBoldweight(r, Boldweight.BOLD);
 		for(int i=0;i<=row;i++){
@@ -713,7 +701,7 @@ public class Issue464Test {
 				}
 			}
 		}
-		System.out.println("cell style number after "+book.getPoiBook().getNumCellStyles());
+//		System.out.println("cell style number after "+book.getInternalBook().getNumCellStyles());
 		book = Util.swap(book);
 		sheet = book.getSheetAt(0);
 		for(int i=0;i<=row;i++){
@@ -740,7 +728,7 @@ public class Issue464Test {
 		Sheet sheet = book.getSheetAt(0);
 		int row = 100;
 		int column = 50;
-		System.out.println("cell style number before "+book.getPoiBook().getNumCellStyles());
+//		System.out.println("cell style number before "+book.getInternalBook().getNumCellStyles());
 		Range r = Ranges.range(sheet,0,0,row,column);
 		CellOperationUtil.applyFontItalic(r, true);
 		for(int i=0;i<=row;i++){
@@ -765,7 +753,7 @@ public class Issue464Test {
 				}
 			}
 		}
-		System.out.println("cell style number after "+book.getPoiBook().getNumCellStyles());
+//		System.out.println("cell style number after "+book.getInternalBook().getNumCellStyles());
 		book = Util.swap(book);
 		sheet = book.getSheetAt(0);
 		for(int i=0;i<=row;i++){
@@ -792,7 +780,7 @@ public class Issue464Test {
 		Sheet sheet = book.getSheetAt(0);
 		int row = 100;
 		int column = 50;
-		System.out.println("cell style number before "+book.getPoiBook().getNumCellStyles());
+//		System.out.println("cell style number before "+book.getInternalBook().getNumCellStyles());
 		Range r = Ranges.range(sheet,0,0,row,column);
 		CellOperationUtil.applyFontStrikeout(r, true);
 		for(int i=0;i<=row;i++){
@@ -817,7 +805,7 @@ public class Issue464Test {
 				}
 			}
 		}
-		System.out.println("cell style number after "+book.getPoiBook().getNumCellStyles());
+//		System.out.println("cell style number after "+book.getInternalBook().getNumCellStyles());
 		book = Util.swap(book);
 		sheet = book.getSheetAt(0);
 		for(int i=0;i<=row;i++){
@@ -844,7 +832,7 @@ public class Issue464Test {
 		Sheet sheet = book.getSheetAt(0);
 		int row = 100;
 		int column = 50;
-		System.out.println("cell style number before "+book.getPoiBook().getNumCellStyles());
+//		System.out.println("cell style number before "+book.getInternalBook().getNumCellStyles());
 		Range r = Ranges.range(sheet,0,0,row,column);
 		CellOperationUtil.applyFontUnderline(r, Underline.SINGLE);
 		for(int i=0;i<=row;i++){
@@ -869,7 +857,7 @@ public class Issue464Test {
 				}
 			}
 		}
-		System.out.println("cell style number after "+book.getPoiBook().getNumCellStyles());
+//		System.out.println("cell style number after "+book.getInternalBook().getNumCellStyles());
 		book = Util.swap(book);
 		sheet = book.getSheetAt(0);
 		for(int i=0;i<=row;i++){

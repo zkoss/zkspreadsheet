@@ -9,8 +9,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Locale;
 
 import org.junit.After;
@@ -19,7 +17,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.zkoss.poi.ss.formula.FormulaParseException;
 import org.zkoss.poi.xssf.usermodel.XSSFComment;
 import org.zkoss.poi.xssf.usermodel.XSSFSheet;
 import org.zkoss.zss.AssertUtil;
@@ -47,8 +44,6 @@ import org.zkoss.zss.api.model.Font;
 import org.zkoss.zss.api.model.Hyperlink;
 import org.zkoss.zss.api.model.Hyperlink.HyperlinkType;
 import org.zkoss.zss.api.model.Sheet;
-import org.zkoss.zss.model.sys.XSheet;
-import org.zkoss.zssex.ui.impl.XUtils;
 
 /**
  * ZSS-408.
@@ -69,12 +64,12 @@ public class Issue400Test {
 	
 	@Before
 	public void startUp() throws Exception {
-		Setup.pushZssContextLocale(Locale.TAIWAN);
+		Setup.pushZssLocale(Locale.TAIWAN);
 	}
 	
 	@After
 	public void tearDown() throws Exception {
-		Setup.popZssContextLocale();
+		Setup.popZssLocale();
 	}
 	
 	@Test
@@ -328,7 +323,7 @@ public class Issue400Test {
 		Range a3 = Ranges.range(sheet, "A3");
 		Range a4 = Ranges.range(sheet, "A4");
 		
-		Setup.pushZssContextLocale(Locale.TAIWAN);
+		Setup.pushZssLocale(Locale.TAIWAN);
 		try{
 			org.junit.Assert.assertEquals("yyyy/m/d", a1.getCellStyle().getDataFormat()); //default format will depends on LOCAL
 			org.junit.Assert.assertEquals("2013/12/24", a1.getCellFormatText());
@@ -339,9 +334,9 @@ public class Issue400Test {
 			org.junit.Assert.assertEquals("m/d/yyyy", a3.getCellStyle().getDataFormat()); // PASS is POI
 			org.junit.Assert.assertEquals("12/24/2013", a3.getCellFormatText());// PASS is POI
 		}finally{
-			Setup.popZssContextLocale();
+			Setup.popZssLocale();
 		}
-		Setup.pushZssContextLocale(Locale.US);
+		Setup.pushZssLocale(Locale.US);
 		try{
 			org.junit.Assert.assertEquals("m/d/yyyy", a1.getCellStyle().getDataFormat()); //this cell contains default format, it should depends on locale
 			org.junit.Assert.assertEquals("12/24/2013", a1.getCellFormatText());
@@ -352,13 +347,13 @@ public class Issue400Test {
 			org.junit.Assert.assertEquals("m/d/yyyy", a3.getCellStyle().getDataFormat()); //this is custom format, it regardless locale.
 			org.junit.Assert.assertEquals("12/24/2013", a3.getCellFormatText());
 		}finally{
-			Setup.popZssContextLocale();
+			Setup.popZssLocale();
 		}
 		
 		//test input, depends on locale
 		Range a5 = Ranges.range(sheet, "A5");
 		Range a6 = Ranges.range(sheet, "A6");
-		Setup.pushZssContextLocale(Locale.TAIWAN);
+		Setup.pushZssLocale(Locale.TAIWAN);
 		try{
 			org.junit.Assert.assertEquals("General", a5.getCellStyle().getDataFormat());
 			org.junit.Assert.assertEquals("General", a6.getCellStyle().getDataFormat());
@@ -373,12 +368,12 @@ public class Issue400Test {
 			org.junit.Assert.assertEquals("General", a6.getCellStyle().getDataFormat());
 			org.junit.Assert.assertEquals("2/1/2013", a6.getCellFormatText());
 		}finally{
-			Setup.popZssContextLocale();
+			Setup.popZssLocale();
 		}
 		
 		Range a7 = Ranges.range(sheet, "A7");
 		Range a8 = Ranges.range(sheet, "A8");
-		Setup.pushZssContextLocale(Locale.US);
+		Setup.pushZssLocale(Locale.US);
 		try{
 			org.junit.Assert.assertEquals("General", a7.getCellStyle().getDataFormat());
 			org.junit.Assert.assertEquals("General", a8.getCellStyle().getDataFormat());
@@ -393,7 +388,7 @@ public class Issue400Test {
 			org.junit.Assert.assertEquals("General", a8.getCellStyle().getDataFormat()); //default format will depends on LOCAL
 			org.junit.Assert.assertEquals("2013/2/1", a8.getCellFormatText());
 		}finally{
-			Setup.popZssContextLocale();
+			Setup.popZssLocale();
 		}
 
 	}
@@ -654,8 +649,8 @@ public class Issue400Test {
 		Assert.assertEquals(row, sheet.getRowFreeze());
 		Assert.assertEquals(column, sheet.getColumnFreeze());
 		
-		Assert.assertEquals(0, sheet.getPoiSheet().getTopRow());
-		Assert.assertEquals(0, sheet.getPoiSheet().getLeftCol());
+		Assert.assertEquals(0, sheet.getInternalSheet().getStartRowIndex());
+		Assert.assertEquals(0, sheet.getInternalSheet().getStartColumnIndex());
 		
 		File temp = Setup.getTempFile();
 		//export first time
@@ -667,8 +662,8 @@ public class Issue400Test {
 		
 		Assert.assertEquals(row, sheet.getRowFreeze());
 		Assert.assertEquals(column, sheet.getColumnFreeze());
-		Assert.assertEquals(0, sheet.getPoiSheet().getTopRow());
-		Assert.assertEquals(0, sheet.getPoiSheet().getLeftCol());
+		Assert.assertEquals(0, sheet.getInternalSheet().getStartRowIndex());
+		Assert.assertEquals(0, sheet.getInternalSheet().getStartColumnIndex());
 		
 		//TODO how to verify it in Excel?
 	}
@@ -704,26 +699,26 @@ public class Issue400Test {
 		Book book = Util.loadBook(this,"book/412-overlap-undo.xls");
 		Sheet sheet = book.getSheetAt(0);
 		
-		Assert.assertEquals(1, sheet.getPoiSheet().getNumMergedRegions());
-		Assert.assertEquals("A2:A3", sheet.getPoiSheet().getMergedRegion(0).formatAsString());
+		Assert.assertEquals(1, sheet.getInternalSheet().getNumOfMergedRegion());
+		Assert.assertEquals("A2:A3", sheet.getInternalSheet().getMergedRegion(0).getReferenceString());
 		
 		Range r1 = Ranges.range(sheet,"A1:A3");
 		Range r2 = Ranges.range(sheet,"A2");
 		r1.paste(r2);	
 		
-		Assert.assertEquals(1, sheet.getPoiSheet().getNumMergedRegions());
-		Assert.assertEquals("A3:A4", sheet.getPoiSheet().getMergedRegion(0).formatAsString());
+		Assert.assertEquals(1, sheet.getInternalSheet().getNumOfMergedRegion());
+		Assert.assertEquals("A3:A4", sheet.getInternalSheet().getMergedRegion(0).getReferenceString());
 		
 		Range r3 = Ranges.range(sheet,"A2:A3");
 		r3.merge(false);
-		Assert.assertEquals(1, sheet.getPoiSheet().getNumMergedRegions());
-		Assert.assertEquals("A2:A3", sheet.getPoiSheet().getMergedRegion(0).formatAsString());
+		Assert.assertEquals(1, sheet.getInternalSheet().getNumOfMergedRegion());
+		Assert.assertEquals("A2:A3", sheet.getInternalSheet().getMergedRegion(0).getReferenceString());
 		
 		r3 = Ranges.range(sheet,"A2:B3");
 		r3.merge(true);
-		Assert.assertEquals(2, sheet.getPoiSheet().getNumMergedRegions());
-		Assert.assertEquals("A2:B2", sheet.getPoiSheet().getMergedRegion(0).formatAsString());
-		Assert.assertEquals("A3:B3", sheet.getPoiSheet().getMergedRegion(1).formatAsString());
+		Assert.assertEquals(2, sheet.getInternalSheet().getNumOfMergedRegion());
+		Assert.assertEquals("A2:B2", sheet.getInternalSheet().getMergedRegion(0).getReferenceString());
+		Assert.assertEquals("A3:B3", sheet.getInternalSheet().getMergedRegion(1).getReferenceString());
 	}
 	@Test
 	public void testZSS412_395_1() throws IOException {
@@ -732,30 +727,30 @@ public class Issue400Test {
 		Range rangeA = Ranges.range(sheet, "H11:J13");
 		rangeA.merge(false); // merge a 3 x 3
 		
-		Assert.assertEquals(1, sheet.getPoiSheet().getNumMergedRegions());
-		Assert.assertEquals("H11:J13", sheet.getPoiSheet().getMergedRegion(0).formatAsString());
+		Assert.assertEquals(1, sheet.getInternalSheet().getNumOfMergedRegion());
+		Assert.assertEquals("H11:J13", sheet.getInternalSheet().getMergedRegion(0).getReferenceString());
 		
 		Range rangeB = Ranges.range(sheet, "H12"); // a whole row cross the merged cell
 		rangeB.toRowRange().unmerge(); // perform unmerge operation
 	
-		Assert.assertEquals(0, sheet.getPoiSheet().getNumMergedRegions());
+		Assert.assertEquals(0, sheet.getInternalSheet().getNumOfMergedRegion());
 		
 		//again on column
 		rangeA = Ranges.range(sheet, "H11:J13");
 		rangeA.merge(false); // merge a 3 x 3
-		Assert.assertEquals(1, sheet.getPoiSheet().getNumMergedRegions());
-		Assert.assertEquals("H11:J13", sheet.getPoiSheet().getMergedRegion(0).formatAsString());
+		Assert.assertEquals(1, sheet.getInternalSheet().getNumOfMergedRegion());
+		Assert.assertEquals("H11:J13", sheet.getInternalSheet().getMergedRegion(0).getReferenceString());
 		
 		rangeB = Ranges.range(sheet, "H12"); // a whole row cross the merged cell
 		rangeB.toColumnRange().unmerge(); // perform unmerge operation
-		Assert.assertEquals(0, sheet.getPoiSheet().getNumMergedRegions());
+		Assert.assertEquals(0, sheet.getInternalSheet().getNumOfMergedRegion());
 	}
 	
 	@Test
 	public void testZSS418() throws IOException {
 		Book book = Util.loadBook(this,"book/418-comment.xlsx");
 		Sheet sheet = book.getSheetAt(0);
-		XSSFSheet ps = (XSSFSheet)sheet.getPoiSheet();
+		XSSFSheet ps = (XSSFSheet)sheet.getInternalSheet();
 		
 		// check original comments
 		String[] refs = {"C3", "D3", "E3", "F3", "H3", "I3", "C4", "C5", "C6", "C8", "C9"};
@@ -850,7 +845,7 @@ public class Issue400Test {
 
 		// print setting >> with grid lines 
 		Sheet sheet = book.getSheetAt(0);
-		sheet.getPoiSheet().setPrintGridlines(true);
+		sheet.getInternalSheet().getPrintSetup().setPrintGridlines(true);
 		
 		File temp = Setup.getTempFile("zss446",".pdf");
 		
@@ -977,16 +972,18 @@ public class Issue400Test {
 		assertEquals(false, srcRange.hasMergedCell());
 	}
 	
+	@Ignore("invlaidate")
 	@Test
 	public void testZSS453(){
-		Book workbook = Util.loadBook(Issue400Test.class, "book/453-emptyHyperlink.xlsx");
-		String correctHyperlink = "<a zs.t=\"SHyperlink\" z.t=\"1\" href=\"javascript:\" z.href=\"http://www.zkoss.org/\">zkoss</a>";
-		assertEquals(correctHyperlink, XUtils.getRichCellHtmlText((XSheet)workbook.getPoiBook().getSheetAt(0),0,0));
-		try{
-			XUtils.getRichCellHtmlText((XSheet)workbook.getPoiBook().getSheetAt(0),1,1);
-		}catch(NullPointerException npe){
-			fail("empty hyperlink shouldn't throw an exception.");
-		}
+		//uncomment in zss 3.5, test case invalidate
+//		Book workbook = Util.loadBook(Issue400Test.class, "book/453-emptyHyperlink.xlsx");
+//		String correctHyperlink = "<a zs.t=\"SHyperlink\" z.t=\"1\" href=\"javascript:\" z.href=\"http://www.zkoss.org/\">zkoss</a>";
+//		assertEquals(correctHyperlink, XUtils.getRichCellHtmlText((XSheet)workbook.getPoiBook().getSheetAt(0),0,0));
+//		try{
+//			XUtils.getRichCellHtmlText((XSheet)workbook.getPoiBook().getSheetAt(0),1,1);
+//		}catch(NullPointerException npe){
+//			fail("empty hyperlink shouldn't throw an exception.");
+//		}
 	}
 	
 	@Test
@@ -1111,7 +1108,7 @@ public class Issue400Test {
 		Book book = Util.loadBook(Issue400Test.class, "book/465-exception.xls");
 		for(int i=0;i<book.getNumberOfSheets();i++){
 			Sheet sheet = book.getSheetAt(0);
-			sheet.getPoiSheet().getDataValidations();
+			sheet.getInternalSheet().getDataValidations();
 		}
 	}
 	

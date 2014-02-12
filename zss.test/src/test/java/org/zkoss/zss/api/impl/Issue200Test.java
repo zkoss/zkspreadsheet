@@ -78,12 +78,12 @@ public class Issue200Test {
 	
 	@Before
 	public void startUp() throws Exception {
-		Setup.pushZssContextLocale(Locale.TAIWAN);
+		Setup.pushZssLocale(Locale.TAIWAN);
 	}
 	
 	@After
 	public void tearDown() throws Exception {
-		Setup.popZssContextLocale();
+		Setup.popZssLocale();
 	}
 	
 	@Test
@@ -366,7 +366,7 @@ public class Issue200Test {
 		Book workbook = Util.loadBook(this,filename);
 		
 		//shouldn't throw any exception
-		((HSSFSheet)workbook.getSheetAt(0).getPoiSheet()).getDataValidations();
+		((HSSFSheet)workbook.getSheetAt(0).getInternalSheet()).getDataValidations();
 	}
 	
 	@Ignore("ZSS-270")
@@ -1451,7 +1451,7 @@ public class Issue200Test {
 
 		// print setting >> with grid lines 
 		Sheet sheet = book.getSheetAt(0);
-		sheet.getPoiSheet().setPrintGridlines(true);
+		sheet.getInternalSheet().getPrintSetup().setPrintGridlines(true);
 		
 		// export to PDF
 		File temp = Setup.getTempFile("zss399-1", ".pdf");
@@ -1469,7 +1469,7 @@ public class Issue200Test {
 		
 		// print setting >> without grid lines 
 		sheet = book.getSheetAt(0);
-		sheet.getPoiSheet().setPrintGridlines(false);
+		sheet.getInternalSheet().getPrintSetup().setPrintGridlines(false);
 		
 		// export to PDF
 		temp = Setup.getTempFile("zss399-2", ".pdf");
@@ -1562,7 +1562,7 @@ public class Issue200Test {
 		Assert.assertTrue(sheet.isRowHidden(5));
 		Assert.assertFalse(sheet.isRowHidden(6));
 		
-		Assert.assertEquals(10, BookHelper.getMaxConfiguredColumn((XSheet)sheet.getPoiSheet()));
+		Assert.assertEquals(10, sheet.getInternalSheet().getEndColumnIndex());
 		Assert.assertFalse(sheet.isColumnHidden(3));
 		Assert.assertTrue(sheet.isColumnHidden(4));
 		Assert.assertFalse(sheet.isColumnHidden(5));
@@ -1577,35 +1577,35 @@ public class Issue200Test {
 		CellOperationUtil.applyDataFormat(r, "h:mm AM/PM");
 
 		// TAIWAN Locale
-		Setup.pushZssContextLocale(Locale.TAIWAN);
+		Setup.pushZssLocale(Locale.TAIWAN);
 		try{
 			Assert.assertEquals("6:12 \u4E0B\u5348", r.getCellFormatText());
 		}finally{
-			Setup.popZssContextLocale();
+			Setup.popZssLocale();
 		}
 		
 		// US Locale
-		Setup.pushZssContextLocale(Locale.US);
+		Setup.pushZssLocale(Locale.US);
 		try{
 			Assert.assertEquals("6:12 PM", r.getCellFormatText());
 		}finally{
-			Setup.popZssContextLocale();
+			Setup.popZssLocale();
 		}
 		
 		// KOERAN
-		Setup.pushZssContextLocale(Locale.KOREAN);
+		Setup.pushZssLocale(Locale.KOREAN);
 		try{
 			Assert.assertEquals("6:12 \uC624\uD6C4", r.getCellFormatText());
 		}finally{
-			Setup.popZssContextLocale();
+			Setup.popZssLocale();
 		}
 		
 		// Japanese
-		Setup.pushZssContextLocale(Locale.JAPANESE);
+		Setup.pushZssLocale(Locale.JAPANESE);
 		try{
 			Assert.assertEquals("6:12 \u5348\u5F8C", r.getCellFormatText());
 		}finally{
-			Setup.popZssContextLocale();
+			Setup.popZssLocale();
 		}
 	}
 

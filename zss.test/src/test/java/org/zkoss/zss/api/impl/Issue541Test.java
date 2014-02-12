@@ -38,14 +38,14 @@ public class Issue541Test {
 	
 	@Before
 	public void startUp() throws Exception {
-		Setup.pushZssContextLocale(Locale.US);
+		Setup.pushZssLocale(Locale.US);
 		oldTimeZone = TimeZone.getDefault();
 		TimeZone.setDefault(TimeZone.getTimeZone("America/New_York"));//timezone for issue 541
 	}
 	
 	@After
 	public void tearDown() throws Exception {
-		Setup.popZssContextLocale();
+		Setup.popZssLocale();
 		TimeZone.setDefault(oldTimeZone);
 	}
 	

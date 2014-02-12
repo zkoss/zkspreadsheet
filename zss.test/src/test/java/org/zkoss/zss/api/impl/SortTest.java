@@ -26,12 +26,12 @@ public class SortTest {
 	
 	@Before
 	public void startUp() throws Exception {
-		Setup.pushZssContextLocale(Locale.TAIWAN);
+		Setup.pushZssLocale(Locale.TAIWAN);
 	}
 	
 	@After
 	public void tearDown() throws Exception {
-		Setup.popZssContextLocale();
+		Setup.popZssLocale();
 	}
 	
 	
@@ -96,7 +96,7 @@ public class SortTest {
 	}
 	
 	private void testSortByRowWithHeader(Book workbook) throws IOException {
-		Setup.pushZssContextLocale(Locale.US);
+		Setup.pushZssLocale(Locale.US);
 		try{
 		Sheet sheet = workbook.getSheet("MonthData");
 		Ranges.range(sheet, "A1:G5").sort(false, true, false, true, null);
@@ -144,14 +144,14 @@ public class SortTest {
 		assertEquals("747", Ranges.range(sheet, "G4").getCellFormatText());
 		assertEquals("769", Ranges.range(sheet, "G5").getCellFormatText());
 		}finally{
-			Setup.popZssContextLocale();
+			Setup.popZssLocale();
 		}
 		
 	}
 	
 	private void testSortWithHeader(Book workbook) throws IOException {
 		
-		Setup.pushZssContextLocale(Locale.US);
+		Setup.pushZssLocale(Locale.US);
 		try{
 		Sheet sheet = workbook.getSheet("WeekdaySort");
 		Ranges.range(sheet, "A1:D20").sort(true, true, false, false, null);
@@ -212,13 +212,13 @@ public class SortTest {
 		assertEquals("244", Ranges.range(sheet, "C11").getCellFormatText());
 		assertEquals("$437", Ranges.range(sheet, "D11").getCellFormatText().trim());
 		}finally{
-			Setup.popZssContextLocale();
+			Setup.popZssLocale();
 		}
 	}
 	
 	private void testSimpleSortWithNumberAndCharacterAndFormula(Book workbook) throws IOException {
 		
-		Setup.pushZssContextLocale(Locale.US);
+		Setup.pushZssLocale(Locale.US);
 		try{
 		Sheet sheet = workbook.getSheet("WeekdaySort");
 		Ranges.range(sheet, "A2:D20").sort(true);
@@ -273,7 +273,7 @@ public class SortTest {
 		assertEquals("244", Ranges.range(sheet, "C11").getCellFormatText());
 		assertEquals("$437", Ranges.range(sheet, "D11").getCellFormatText().trim());
 		}finally{
-			Setup.popZssContextLocale();
+			Setup.popZssLocale();
 		}
 	}
 	

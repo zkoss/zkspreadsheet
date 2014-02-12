@@ -13,6 +13,8 @@ import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.model.CellStyle;
 import org.zkoss.zss.api.model.CellStyle.BorderType;
 import org.zkoss.zss.api.model.Sheet;
+import org.zkoss.zss.ngmodel.CellRegion;
+import org.zkoss.zss.ngmodel.NSheet;
 
 public class AssertUtil {
 	
@@ -95,11 +97,11 @@ public class AssertUtil {
 	
 	
 	public static void assertMeregedRegion(String[] regions,Sheet sheet){
-		Assert.assertEquals(regions.length, sheet.getPoiSheet().getNumMergedRegions());
+		Assert.assertEquals(regions.length, sheet.getInternalSheet().getNumOfMergedRegion());
 		List<String> expect = new ArrayList<String>(Arrays.asList(regions));
 		List<String> result = new ArrayList<String>();
 		for(int i=0;i<regions.length;i++){
-			String fm = sheet.getPoiSheet().getMergedRegion(i).formatAsString();
+			String fm = sheet.getInternalSheet().getMergedRegion(i).getReferenceString();
 			result.add(fm);
 		}
 		Collections.sort(expect);
@@ -120,12 +122,12 @@ public class AssertUtil {
 	}
 	
 	private static boolean isMergedRange(Range range){
-		org.zkoss.poi.ss.usermodel.Sheet sheet = range.getSheet().getPoiSheet();
+		NSheet sheet = range.getSheet().getInternalSheet();
 		// go through all region
-		for (int number = sheet.getNumMergedRegions(); number > 0; number--) {
-			org.zkoss.poi.ss.util.CellRangeAddress addr = sheet.getMergedRegion(number - 1);
+		for (int number = sheet.getNumOfMergedRegion(); number > 0; number--) {
+			CellRegion addr = sheet.getMergedRegion(number - 1);
 			// match four corner
-			if (addr.getFirstRow() == range.getRow() && addr.getLastRow() == range.getLastRow() && addr.getFirstColumn() == range.getColumn() && addr.getLastColumn() == range.getLastColumn()) {
+			if (addr.getRow() == range.getRow() && addr.getLastRow() == range.getLastRow() && addr.getColumn() == range.getColumn() && addr.getLastColumn() == range.getLastColumn()) {
 				return true;
 			}
 		}
@@ -198,7 +200,7 @@ public class AssertUtil {
 		}
 		Assert.assertEquals(msg, type, tbt);
 		if(color!=null){
-			Assert.assertEquals(msg, color, tcolor);
+			Assert.assertEquals(msg, color.toLowerCase(), tcolor.toLowerCase());
 		}
 	}
 

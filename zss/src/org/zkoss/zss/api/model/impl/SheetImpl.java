@@ -46,6 +46,12 @@ public class SheetImpl implements Sheet{
 	public NSheet getNative(){
 		return _sheetRef.get();
 	}
+	
+	@Override
+	public NSheet getInternalSheet(){
+		return _sheetRef.get();
+	}
+	
 	public ModelRef<NSheet> getRef(){
 		return _sheetRef;
 	}
@@ -138,7 +144,7 @@ public class SheetImpl implements Sheet{
 
 	@Override
 	public boolean isPrintGridlines() {
-		return getNative().getPrintSetup().isPrintGridline();
+		return getNative().getPrintSetup().isPrintGridlines();
 	}
 
 	/*TODO zss 3.5
