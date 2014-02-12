@@ -372,22 +372,22 @@ public class CellStyleMatcher {
 				}
 				break;
 			case BorderBottomColor:
-				if(!equals(e.getValue(),style.getBorderBottomColor().getHtmlColor())){
+				if(!htmlColorEuqlas(e.getValue(),style.getBorderBottomColor().getHtmlColor())){
 					return false;
 				}
 				break;
 			case BorderRightColor:
-				if(!equals(e.getValue(),style.getBorderRightColor().getHtmlColor())){
+				if(!htmlColorEuqlas(e.getValue(),style.getBorderRightColor().getHtmlColor())){
 					return false;
 				}
 				break;
 			case BorderTopColor:
-				if(!equals(e.getValue(),style.getBorderTopColor().getHtmlColor())){
+				if(!htmlColorEuqlas(e.getValue(),style.getBorderTopColor().getHtmlColor())){
 					return false;
 				}
 				break;
 			case BorderLeftColor:
-				if(!equals(e.getValue(),style.getBorderLeftColor().getHtmlColor())){
+				if(!htmlColorEuqlas(e.getValue(),style.getBorderLeftColor().getHtmlColor())){
 					return false;
 				}
 				break;
@@ -397,7 +397,7 @@ public class CellStyleMatcher {
 				}
 				break;
 			case FillColor:
-				if(!equals(e.getValue(),style.getFillColor().getHtmlColor())){
+				if(!htmlColorEuqlas(e.getValue(),style.getFillColor().getHtmlColor())){
 					return false;
 				}
 				break;
@@ -412,7 +412,7 @@ public class CellStyleMatcher {
 				}
 				break;			
 			case FontColor:
-				if(!equals(e.getValue(),style.getFont().getColor().getHtmlColor())){
+				if(!htmlColorEuqlas(e.getValue(),style.getFont().getColor().getHtmlColor())){
 					return false;
 				}
 				break;
@@ -480,6 +480,15 @@ public class CellStyleMatcher {
 			}
 		}
 		return true;
+	}
+	
+	public boolean htmlColorEuqlas(Object o1, Object o2){
+		if(o1==o2)
+			return true;
+		if(o1 instanceof String && o2 instanceof String){
+			return ((String)o1).equalsIgnoreCase((String)o2);
+		}
+		return false;
 	}
 	
 	public boolean equals(Object o1,Object o2){

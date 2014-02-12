@@ -36,12 +36,12 @@ public class PrintSetupImpl implements NPrintSetup,Serializable {
 	
 	
 	@Override
-	public boolean isPrintGridline() {
+	public boolean isPrintGridlines() {
 		return printGridline;
 	}
 
 	@Override
-	public void setPrintGridline(boolean enable) {
+	public void setPrintGridlines(boolean enable) {
 		printGridline = enable;
 	}
 

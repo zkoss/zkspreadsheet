@@ -121,9 +121,9 @@ public class ImExpTestBase {
 		assertEquals(Alignment.CENTER, sheet.getCell(27, 2).getCellStyle().getAlignment());
 		assertEquals(Alignment.RIGHT, sheet.getCell(27, 3).getCellStyle().getAlignment());
 		//cell filled color
-		assertEquals("#FF0000", sheet.getCell(11, 0).getCellStyle().getFillColor().getHtmlColor());
-		assertEquals("#00FF00", sheet.getCell(11, 1).getCellStyle().getFillColor().getHtmlColor());
-		assertEquals("#0000FF", sheet.getCell(11, 2).getCellStyle().getFillColor().getHtmlColor());
+		assertEquals("#ff0000", sheet.getCell(11, 0).getCellStyle().getFillColor().getHtmlColor());
+		assertEquals("#00ff00", sheet.getCell(11, 1).getCellStyle().getFillColor().getHtmlColor());
+		assertEquals("#0000ff", sheet.getCell(11, 2).getCellStyle().getFillColor().getHtmlColor());
 
 		//ensure cell style reusing
 		assertTrue(sheet.getCell(27, 0).getCellStyle().equals(sheet.getCell(26, 0).getCellStyle()));
@@ -152,10 +152,10 @@ public class ImExpTestBase {
 		assertEquals(BorderType.DOTTED, sheet.getCell(4, 2).getCellStyle().getBorderBottom());
 		assertEquals(BorderType.DASHED, sheet.getCell(4, 3).getCellStyle().getBorderBottom());
 		
-		assertEquals("#FF0000", sheet.getCell(14, 1).getCellStyle().getBorderBottomColor().getHtmlColor());
-		assertEquals("#0000FF", sheet.getCell(14, 1).getCellStyle().getBorderLeftColor().getHtmlColor());
-		assertEquals("#0000FF", sheet.getCell(14, 1).getCellStyle().getBorderTopColor().getHtmlColor());
-		assertEquals("#FF0000", sheet.getCell(14, 1).getCellStyle().getBorderRightColor().getHtmlColor());
+		assertEquals("#ff0000", sheet.getCell(14, 1).getCellStyle().getBorderBottomColor().getHtmlColor());
+		assertEquals("#0000ff", sheet.getCell(14, 1).getCellStyle().getBorderLeftColor().getHtmlColor());
+		assertEquals("#0000ff", sheet.getCell(14, 1).getCellStyle().getBorderTopColor().getHtmlColor());
+		assertEquals("#ff0000", sheet.getCell(14, 1).getCellStyle().getBorderRightColor().getHtmlColor());
 	}
 
 	
@@ -192,9 +192,9 @@ public class ImExpTestBase {
 	protected void cellFontColorTest(NBook book){
 		NSheet sheet = book.getSheetByName("Style");
 		assertEquals("#000000", sheet.getCell(0, 0).getCellStyle().getFont().getColor().getHtmlColor());
-		assertEquals("#FF0000", sheet.getCell(1, 0).getCellStyle().getFont().getColor().getHtmlColor());
-		assertEquals("#00FF00", sheet.getCell(1, 1).getCellStyle().getFont().getColor().getHtmlColor());
-		assertEquals("#0000FF", sheet.getCell(1, 2).getCellStyle().getFont().getColor().getHtmlColor());
+		assertEquals("#ff0000", sheet.getCell(1, 0).getCellStyle().getFont().getColor().getHtmlColor());
+		assertEquals("#00ff00", sheet.getCell(1, 1).getCellStyle().getFont().getColor().getHtmlColor());
+		assertEquals("#0000ff", sheet.getCell(1, 2).getCellStyle().getFont().getColor().getHtmlColor());
 	}
 	
 	
@@ -204,7 +204,7 @@ public class ImExpTestBase {
 		assertEquals(20, sheet.getRow(1).getHeight());
 		//style
 		NCellStyle rowStyle1 = sheet.getRow(34).getCellStyle();
-		assertEquals("#0000FF",rowStyle1.getFont().getColor().getHtmlColor());
+		assertEquals("#0000ff",rowStyle1.getFont().getColor().getHtmlColor());
 		assertEquals(12,rowStyle1.getFont().getHeightPoints());
 		NCellStyle rowStyle2 = sheet.getRow(35).getCellStyle();
 		assertEquals(true,rowStyle2.getFont().isItalic());

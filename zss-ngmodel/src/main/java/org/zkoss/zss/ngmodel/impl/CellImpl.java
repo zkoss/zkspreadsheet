@@ -148,8 +148,9 @@ public class CellImpl extends AbstractCellAdv {
 
 	@Override
 	public void setCellStyle(NCellStyle cellStyle) {
-		Validations.argNotNull(cellStyle);
-		Validations.argInstance(cellStyle, AbstractCellStyleAdv.class);
+		if(cellStyle!=null){
+			Validations.argInstance(cellStyle, AbstractCellStyleAdv.class);
+		}
 		this.cellStyle = (AbstractCellStyleAdv) cellStyle;
 		addCellUpdate();
 	}

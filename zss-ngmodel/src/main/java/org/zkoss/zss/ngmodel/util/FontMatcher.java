@@ -124,7 +124,7 @@ public class FontMatcher {
 		for(Entry<Property,Object> e:criteria.entrySet()){
 			switch(e.getKey()){
 			case Color:
-				if(!equals(e.getValue(),style.getColor().getHtmlColor())){
+				if(!htmlColorEuqlas(e.getValue(),style.getColor().getHtmlColor())){
 					return false;
 				}
 				break;
@@ -166,6 +166,15 @@ public class FontMatcher {
 			}
 		}
 		return true;
+	}
+
+	public boolean htmlColorEuqlas(Object o1, Object o2){
+		if(o1==o2)
+			return true;
+		if(o1 instanceof String && o2 instanceof String){
+			return ((String)o1).equalsIgnoreCase((String)o2);
+		}
+		return false;
 	}
 	
 	public boolean equals(Object o1,Object o2){

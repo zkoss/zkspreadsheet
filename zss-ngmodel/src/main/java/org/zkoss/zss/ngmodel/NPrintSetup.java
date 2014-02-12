@@ -89,8 +89,8 @@ public interface NPrintSetup {
 	    A4_ROTATED
 	}
 	
-	public boolean isPrintGridline();
-	public void setPrintGridline(boolean enable);
+	public boolean isPrintGridlines();
+	public void setPrintGridlines(boolean enable);
 	
 	public int getHeaderMargin();
 	public void setHeaderMargin(int px);

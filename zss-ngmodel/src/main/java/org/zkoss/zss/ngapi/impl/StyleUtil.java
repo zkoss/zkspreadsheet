@@ -43,8 +43,8 @@ public class StyleUtil {
 		final NCell cell = sheet.getCell(row,col);
 		final NBook book = sheet.getBook();
 		final NCellStyle orgStyle = cell.getCellStyle();
-		NFont font = orgStyle.getFont();
-		final NColor orgColor = font.getColor();
+		NFont orgFont = orgStyle.getFont();
+		final NColor orgColor = orgFont.getColor();
 		final NColor newColor = book.createColor(color);
 		if (orgColor == newColor || orgColor != null && orgColor.equals(newColor)) {
 			return;
@@ -56,10 +56,10 @@ public class StyleUtil {
 //			return;
 //		}
 		
-		FontMatcher fontmatcher = new FontMatcher(font);
+		FontMatcher fontmatcher = new FontMatcher(orgFont);
 		fontmatcher.setColor(color);
 		
-		font = book.searchFont(fontmatcher);
+		NFont font = book.searchFont(fontmatcher);
 		
 		
 		
@@ -69,8 +69,8 @@ public class StyleUtil {
 			matcher.setFont(font);
 			style = book.searchCellStyle(matcher);
 		}else{
-			font = book.createFont(font,true);
-			font.setColor(book.createColor(color));
+			font = book.createFont(orgFont,true);
+			font.setColor(newColor);
 		}
 		
 		if(style==null){
@@ -132,17 +132,17 @@ public class StyleUtil {
 		final NCell cell = sheet.getCell(row,col);
 		final NBook book = sheet.getBook();
 		final NCellStyle orgStyle = cell.getCellStyle();
-		NFont font = orgStyle.getFont();
+		NFont orgFont = orgStyle.getFont();
 		
-		final int orgSize = font.getHeightPoints();
+		final int orgSize = orgFont.getHeightPoints();
 		if (orgSize == fontHeightPoints) { //no change, skip
 			return;
 		}
 		
-		FontMatcher fontmatcher = new FontMatcher(font);
+		FontMatcher fontmatcher = new FontMatcher(orgFont);
 		fontmatcher.setHeightPoints(fontHeightPoints);
 		
-		font = book.searchFont(fontmatcher);
+		NFont font = book.searchFont(fontmatcher);
 		
 		NCellStyle style = null;
 		if(font!=null){//search it since we have existed font
@@ -150,7 +150,7 @@ public class StyleUtil {
 			matcher.setFont(font);
 			style = book.searchCellStyle(matcher);
 		}else{
-			font = book.createFont(font,true);
+			font = book.createFont(orgFont,true);
 			font.setHeightPoints(fontHeightPoints);
 		}
 		
@@ -165,17 +165,17 @@ public class StyleUtil {
 		final NCell cell = sheet.getCell(row,col);
 		final NBook book = sheet.getBook();
 		final NCellStyle orgStyle = cell.getCellStyle();
-		NFont font = orgStyle.getFont();
+		NFont orgFont = orgStyle.getFont();
 		
-		final boolean orgStrikeout = font.isStrikeout();
+		final boolean orgStrikeout = orgFont.isStrikeout();
 		if (orgStrikeout == strikeout) { //no change, skip
 			return;
 		}
 
-		FontMatcher fontmatcher = new FontMatcher(font);
+		FontMatcher fontmatcher = new FontMatcher(orgFont);
 		fontmatcher.setStrikeout(strikeout);
 		
-		font = book.searchFont(fontmatcher);
+		NFont font = book.searchFont(fontmatcher);
 		
 		NCellStyle style = null;
 		if(font!=null){//search it since we have existed font
@@ -183,7 +183,7 @@ public class StyleUtil {
 			matcher.setFont(font);
 			style = book.searchCellStyle(matcher);
 		}else{
-			font = book.createFont(font,true);
+			font = book.createFont(orgFont,true);
 			font.setStrikeout(strikeout);
 		}
 		
@@ -199,17 +199,17 @@ public class StyleUtil {
 		final NCell cell = sheet.getCell(row,col);
 		final NBook book = sheet.getBook();
 		final NCellStyle orgStyle = cell.getCellStyle();
-		NFont font = orgStyle.getFont();
+		NFont orgFont = orgStyle.getFont();
 		
-		final String orgName = font.getName();
+		final String orgName = orgFont.getName();
 		if (orgName.equals(name)) { //no change, skip
 			return;
 		}
 		
-		FontMatcher fontmatcher = new FontMatcher(font);
+		FontMatcher fontmatcher = new FontMatcher(orgFont);
 		fontmatcher.setName(name);
 		
-		font = book.searchFont(fontmatcher);
+		NFont font = book.searchFont(fontmatcher);
 		
 		NCellStyle style = null;
 		if(font!=null){//search it since we have existed font
@@ -217,7 +217,7 @@ public class StyleUtil {
 			matcher.setFont(font);
 			style = book.searchCellStyle(matcher);
 		}else{
-			font = book.createFont(font,true);
+			font = book.createFont(orgFont,true);
 			font.setName(name);
 		}
 		
@@ -339,17 +339,17 @@ public class StyleUtil {
 		final NCell cell = sheet.getCell(row,col);
 		final NBook book = sheet.getBook();
 		final NCellStyle orgStyle = cell.getCellStyle();
-		NFont font = orgStyle.getFont();
+		NFont orgFont = orgStyle.getFont();
 		
-		final NFont.Boldweight orgBoldWeight = font.getBoldweight();
+		final NFont.Boldweight orgBoldWeight = orgFont.getBoldweight();
 		if (orgBoldWeight.equals(boldWeight)) { //no change, skip
 			return;
 		}
 		
-		FontMatcher fontmatcher = new FontMatcher(font);
+		FontMatcher fontmatcher = new FontMatcher(orgFont);
 		fontmatcher.setBoldweight(boldWeight);
 		
-		font = book.searchFont(fontmatcher);
+		NFont font = book.searchFont(fontmatcher);
 		
 		NCellStyle style = null;
 		if(font!=null){//search it since we have existed font
@@ -357,7 +357,7 @@ public class StyleUtil {
 			matcher.setFont(font);
 			style = book.searchCellStyle(matcher);
 		}else{
-			font = book.createFont(font,true);
+			font = book.createFont(orgFont,true);
 			font.setBoldweight(boldWeight);
 		}
 		
@@ -372,17 +372,17 @@ public class StyleUtil {
 		final NCell cell = sheet.getCell(row,col);
 		final NBook book = sheet.getBook();
 		final NCellStyle orgStyle = cell.getCellStyle();
-		NFont font = orgStyle.getFont();
+		NFont orgFont = orgStyle.getFont();
 		
-		final boolean orgItalic = font.isItalic();
+		final boolean orgItalic = orgFont.isItalic();
 		if (orgItalic == italic) { //no change, skip
 			return;
 		}
 
-		FontMatcher fontmatcher = new FontMatcher(font);
+		FontMatcher fontmatcher = new FontMatcher(orgFont);
 		fontmatcher.setItalic(italic);
 		
-		font = book.searchFont(fontmatcher);
+		NFont font = book.searchFont(fontmatcher);
 		
 		NCellStyle style = null;
 		if(font!=null){//search it since we have existed font
@@ -390,7 +390,7 @@ public class StyleUtil {
 			matcher.setFont(font);
 			style = book.searchCellStyle(matcher);
 		}else{
-			font = book.createFont(font,true);
+			font = book.createFont(orgFont,true);
 			font.setItalic(italic);
 		}
 		
@@ -406,17 +406,17 @@ public class StyleUtil {
 		final NCell cell = sheet.getCell(row,col);
 		final NBook book = sheet.getBook();
 		final NCellStyle orgStyle = cell.getCellStyle();
-		NFont font = orgStyle.getFont();
+		NFont orgFont = orgStyle.getFont();
 		
-		final NFont.Underline orgUnderline = font.getUnderline();
+		final NFont.Underline orgUnderline = orgFont.getUnderline();
 		if (orgUnderline.equals(underline)) { //no change, skip
 			return;
 		}
 		
-		FontMatcher fontmatcher = new FontMatcher(font);
+		FontMatcher fontmatcher = new FontMatcher(orgFont);
 		fontmatcher.setUnderline(underline);
 		
-		font = book.searchFont(fontmatcher);
+		NFont font = book.searchFont(fontmatcher);
 		
 		NCellStyle style = null;
 		if(font!=null){//search it since we have existed font
@@ -424,7 +424,7 @@ public class StyleUtil {
 			matcher.setFont(font);
 			style = book.searchCellStyle(matcher);
 		}else{
-			font = book.createFont(font,true);
+			font = book.createFont(orgFont,true);
 			font.setUnderline(underline);
 		}
 		

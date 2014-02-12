@@ -62,7 +62,7 @@ public class ColorImpl extends AbstractColorAdv {
 	}
 	
 	private static final char HEX[] = {
-		'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'
+		'0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f' //lower case to compatible with 3.0
 	};
 
 	@Override
@@ -103,5 +103,9 @@ public class ColorImpl extends AbstractColorAdv {
 		if (!Arrays.equals(rgb, other.rgb))
 			return false;
 		return true;
+	}
+	
+	public String toString(){
+		return getHtmlColor();
 	}
 }

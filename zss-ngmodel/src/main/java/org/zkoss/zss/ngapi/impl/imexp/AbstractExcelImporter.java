@@ -506,19 +506,35 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 
 	protected BorderType convertBorderType(short poiBorder) {
 		switch (poiBorder) {
-		case CellStyle.BORDER_DASH_DOT:
-			return BorderType.DASH_DOT;
-		case CellStyle.BORDER_DASH_DOT_DOT:
-			return BorderType.DASH_DOT_DOT;
+		case CellStyle.BORDER_THIN:
+			return BorderType.THIN;
+		case CellStyle.BORDER_MEDIUM:
+			return BorderType.MEDIUM;
 		case CellStyle.BORDER_DASHED:
 			return BorderType.DASHED;
+		case CellStyle.BORDER_HAIR:
+			return BorderType.HAIR;
+		case CellStyle.BORDER_THICK:
+			return BorderType.THICK;
+		case CellStyle.BORDER_DOUBLE:
+			return BorderType.DOUBLE;
 		case CellStyle.BORDER_DOTTED:
 			return BorderType.DOTTED;
+		case CellStyle.BORDER_MEDIUM_DASHED:
+			return BorderType.MEDIUM_DASHED;
+		case CellStyle.BORDER_DASH_DOT:
+			return BorderType.DASH_DOT;
+		case CellStyle.BORDER_MEDIUM_DASH_DOT:
+			return BorderType.MEDIUM_DASH_DOT;
+		case CellStyle.BORDER_DASH_DOT_DOT:
+			return BorderType.DASH_DOT_DOT;
+		case CellStyle.BORDER_MEDIUM_DASH_DOT_DOT:
+			return BorderType.MEDIUM_DASH_DOT_DOT;
+		case CellStyle.BORDER_SLANTED_DASH_DOT:
+			return BorderType.SLANTED_DASH_DOT;
 		case CellStyle.BORDER_NONE:
-			return BorderType.NONE;
-		case CellStyle.BORDER_THIN:
 		default:
-			return BorderType.THIN; // unsupported border type
+			return BorderType.NONE;
 		}
 	}
 
