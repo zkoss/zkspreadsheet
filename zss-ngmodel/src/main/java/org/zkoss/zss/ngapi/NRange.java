@@ -668,10 +668,20 @@ public interface NRange {
 	public void setFreezePanel(int numOfRow, int numOfColumn);
 
 	/**
-	 * Gets the first(top-left) cell's formatted text
+	 * Gets the first(top-left) cell's formatted text,
+	 * if the cell's format is the special LOCALE aware format (such as m/d/yyyy), 
+	 * it will formats the value by transferred format (e.g m/d/yyyy will transfer to yyyy/m/d in TW locale) 
 	 * @return
 	 */
 	public String getCellFormatText();
+	
+	/**
+	 * Gets the first(top-left) cell's format,
+	 * if the cell's format is the special LOCALE aware format (such as m/d/yyyy), 
+	 * it transfer the format by LOCALE(e.g m/d/yyyy will transfer to yyyy/m/d in TW locale) 
+	 * @return
+	 */
+	public String getCellDataFormat();
 	
 	/**
 	 * Gets the first(top-left) cell's style

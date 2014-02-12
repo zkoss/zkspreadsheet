@@ -9,7 +9,6 @@ import org.zkoss.poi.ss.usermodel.ZssContext;
 import org.zkoss.poi.ss.util.NumberToTextConverter;
 import org.zkoss.zss.ngmodel.NCell;
 import org.zkoss.zss.ngmodel.NCell.CellType;
-import org.zkoss.zss.ngmodel.NRichText;
 import org.zkoss.zss.ngmodel.impl.ReadOnlyRichTextImpl;
 import org.zkoss.zss.ngmodel.sys.EngineFactory;
 import org.zkoss.zss.ngmodel.sys.format.FormatContext;
@@ -63,6 +62,28 @@ public class FormatEngineImpl implements FormatEngine {
 		}
 	}
 	
+	@Override
+	public String getFormat(NCell cell, FormatContext context){
+		return getFormat(cell.getCellStyle().getDataFormat(),context);
+	}	
+	
+	@Override
+	public String getFormat(String format, FormatContext context){
+		ZssContext old = ZssContext.getThreadLocal();
+		try{
+			ZssContext zssContext = old==null?new ZssContext(context.getLocale(),-1): new ZssContext(context.getLocale(),old.getTwoDigitYearUpperBound());
+			ZssContext.setThreadLocal(zssContext);
+			//Have to transfer format that depends on locale
+			//for example, m/d/yyyy will transfer to yyyy/m/d in TW
+			int i = BuiltinFormats.getBuiltinFormat(format);
+			if(i>=0){
+				format = BuiltinFormats.getBuiltinFormat(i, context.getLocale());
+			}
+			return format;
+		}finally{
+			ZssContext.setThreadLocal(old);
+		}
+	}	
 	
 	private boolean isDateFormatted(String format, Double value,Locale locale) {
 		CellFormat formatter = CellFormat.getInstance(format, locale);

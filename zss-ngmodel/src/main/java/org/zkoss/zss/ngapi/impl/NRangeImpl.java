@@ -1047,7 +1047,20 @@ public class NRangeImpl implements NRange {
 			}
 		}).doInReadLock(getLock());
 		return r.get();
-				
+	}
+	
+	@Override
+	public String getCellDataFormat() {
+		final ResultWrap<String> r = new ResultWrap<String>();
+		new CellVisitorTask(new OneCellVisitor() {
+			@Override
+			public boolean visit(NCell cell) {
+				FormatEngine fe = EngineFactory.getInstance().createFormatEngine();
+				r.set(fe.getFormat(cell, new FormatContext(Locales.getCurrent())));		
+				return false;
+			}
+		}).doInReadLock(getLock());
+		return r.get();
 	}
 
 	@Override

@@ -393,4 +393,9 @@ import org.zkoss.zss.ngmodel.NViewAnchor;
 		return false;
 	}
 
+	@Override
+	public String getCellDataFormat() {
+		return null;
+	}
+
 }
