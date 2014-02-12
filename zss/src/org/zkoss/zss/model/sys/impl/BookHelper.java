@@ -3654,14 +3654,14 @@ public final class BookHelper {
 	private static Step getTimeStep(Cell[] srcCells, int b, int e, boolean positive, int fillType, int subType) {
 		final Cell srcCell1 = srcCells[b];
 		if (b == e) { //only one srcCell
-			return new MsecondStep(srcCell1.getDateCellValue(), positive ? 60*60*1000 : -60*60*1000, subType);
+			return new DateTimeStep(srcCell1.getDateCellValue(),0, 0, 0, positive ? 60*60*1000 : -60*60*1000, subType);
 		}
 		
 		//more than one srcCell
 		Date date1 = srcCell1.getDateCellValue();
 		Cell srcCell2 = srcCells[b+1];
 		Date date2 = srcCell2.getDateCellValue();
-		final long step = date2.getTime() - date1.getTime();
+		final int step = (int)(date2.getTime() - date1.getTime());
     	for(int k = b+2; k <= e; ++k) {
     		srcCell2 = srcCells[k];
     		date1 = date2;
@@ -3670,7 +3670,7 @@ public final class BookHelper {
     			return CopyStep.instance;
     		}
     	}
-		return new MsecondStep(date2, step, subType);
+    	return new DateTimeStep(date2, 0, 0, 0, step, subType);
 	}
 	private static Step getDateStep(Cell[] srcCells, int b, int e, boolean positive, int fillType, int subType) {
 		if (fillType == FILL_DEFAULT) {
@@ -3689,19 +3689,20 @@ public final class BookHelper {
     	int min1 = time1[j]; ++j;
     	int s1 = time1[j]; ++j;
     	int ms1 = time1[j];
-    	int t1 = (h1 < 0 ? 0 : h1 * 60 * 60 * 1000) + min1 * 60 * 1000 + s1 * 1000 + ms1;
+    	int t1 = (h1 < 0 ? 0 : h1 * 60 * 60 * 1000) + min1 * 60 * 1000 + s1 * 1000 + ms1; //time field in millisecond of a day
 		if (b == e) { //only one srcCell
+			Date date = srcCells[b].getDateCellValue();
 			switch(fillType) {
 			case FILL_DAYS:
-				return new MsecondStep(srcCells[b].getDateCellValue(), positive ? 24*60*60*1000 : -24*60*60*1000, subType);
+				return new DateTimeStep(date, 0, 0, positive ? 1 : -1, 0, subType);
 			case FILL_HOURS:
-				return new MsecondStep(srcCells[b].getDateCellValue(), positive ? 60*60*1000 : -60*60*1000, subType);
+				return new DateTimeStep(date, 0, 0, 0, positive ? 60*60*1000 : -60*60*1000, subType);
 			case FILL_MONTHS:
-				return new DateStep(y1, m1, d1, t1, positive ? 1 : -1, 0, subType);
+				return new DateTimeStep(date, 0, positive ? 1 : -1, 0, 0, subType);
 			case FILL_YEARS:
-				return new DateStep(y1, m1, d1, t1, positive ? 12 : -12, 0, subType);
+				return new DateTimeStep(date, positive ? 1 : -1, 0, 0, 0, subType);
 			case FILL_WEEKDAYS:
-				return new MsecondStep(srcCells[b].getDateCellValue(), positive ? 7*24*60*60*1000 : -7*24*60*60*1000, subType);
+				return new DateTimeStep(date, 0, 0, positive ? 7 : -7, 0, subType);
 			default:
 				return CopyStep.instance;
 			}
@@ -3718,7 +3719,9 @@ public final class BookHelper {
     	int min2 = time2[j]; ++j;
     	int s2 = time2[j]; ++j;
     	int ms2 = time2[j];
+    	//month different of years
     	int diffM = m2 - m1 + (y2 - y1) * 12;
+    	//day different in a month
     	int diffD = d2 - d1;
     	if (h1 < 0 && h2 >= 0) {
     		h1 = h2;
@@ -3731,7 +3734,9 @@ public final class BookHelper {
     		s2 = s1;
     		ms2 = ms1;
     	}
+    	//time field in millisecond of a single day day
     	int t2 = (h2 < 0 ? 0 : h2 * 60 * 60 * 1000) + min2 * 60 * 1000 + s2 * 1000 + ms2;
+    	//time different of a single day
     	int diffT = t2 - t1;
     	for(int k = b+2; k <= e; ++k) {
         	y1 = y2;
@@ -3754,6 +3759,7 @@ public final class BookHelper {
         	s2 = time[j]; ++j;
         	ms2 = time[j];
         	if ((diffM != m2 - m1 + (y2 - y1) * 12) || (diffD != d2 - d1)) {
+        		//if the month and day difference doesn't equals to cell1 and 2, then use the simple copy step
         		return CopyStep.instance;
         	}
         	if (h1 < 0 && h2 >= 0) {
@@ -3770,28 +3776,35 @@ public final class BookHelper {
         	t2 = (h2 < 0 ? 0 : h2 * 60 * 60 * 1000) + min2 * 60 * 1000 + s2 * 1000 + ms2;
         	
         	if (diffT != t2 - t1) {
+        		//if the time difference doesn't equals to cell1 and 2, then reset the time different
         		diffT  = 0;
         	}
     	}
     	
-		if (diffD != 0) {
-			if (h1 < 0) {
-				h1 = 0;
-			}
-			if (h2 < 0) {
-				h2 = 0;
-			}
+		//sync -1 value back to 0 (see getTimeParts) 
+		if (h1 < 0) {
+			h1 = 0;
+		}
+		if (h2 < 0) {
+			h2 = 0;
+		}
+		
+    	final Calendar cal2 = Calendar.getInstance(); //TODO Timezone?
+		cal2.set(y2, m2, d2, h2, min2, s2);
+		cal2.set(Calendar.MILLISECOND, ms2);
+		if(diffD != 0){//special cause that care month step or day step
 			final Calendar cal1 = Calendar.getInstance(); //TODO Timezone?
-			final Calendar cal2 = Calendar.getInstance(); //TODO Timezone?
 			cal1.set(y1, m1, d1, h1, min1, s1);
 			cal1.set(Calendar.MILLISECOND, ms1);
-			cal2.set(y2, m2, d2, h2, min2, s2);
-			cal2.set(Calendar.MILLISECOND, ms2);
-    		final long step = cal2.getTime().getTime() - cal1.getTime().getTime();
-    		return new MsecondStep(cal2.getTime(), step, -1);
-    	} else { //date stepping
-        	return new DateStep(y2, m2, d2, t2, diffM, diffT, -1);
-    	}
+			
+			int doy1 = cal1.get(Calendar.DAY_OF_YEAR);
+			int doy2 = cal2.get(Calendar.DAY_OF_YEAR);
+			
+			diffD = (y2-y1)*365+doy2-doy1; //real day different
+			return new DateTimeStep(cal2.getTime(), 0, 0, diffD, diffT, -1);
+		}else{
+			return new DateTimeStep(cal2.getTime(), 0, diffM, 0, diffT, -1);
+		}
 	}
 	private static Step getGrowthStep(Cell[] srcCells, int b, int e, boolean positive) {
 		if (b == e) { //only one source cell

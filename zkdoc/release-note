@@ -1,3 +1,13 @@
+ZK Spreadsheet 3.0.2
+*Features:
+  
+  
+*Bugs:
+  ZSS-541 date autofill timestamp is incorrect
+  
+** Upgrade Notes
+  
+
  ------------
 ZK Spreadsheet 3.0.1
 *Features:
