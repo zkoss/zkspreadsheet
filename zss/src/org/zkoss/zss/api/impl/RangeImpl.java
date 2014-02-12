@@ -486,6 +486,10 @@ public class RangeImpl implements Range{
 		return _range.getCellFormatText();
 	}
 	
+	public String getCellDataFormat(){ 
+		return _range.getCellDataFormat();
+	}
+	
 	public Object getCellValue(){ 
 		return _range.getValue();
 	}

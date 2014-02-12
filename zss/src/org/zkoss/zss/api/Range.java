@@ -509,11 +509,17 @@ public interface Range {
 	public String getCellEditText();
 	
 	/**
-	 * Gets the first cell(top-left) format text of this range
+	 * Gets the first cell(top-left) formatted text of this range
 	 * @return format text
 	 * @see CellData#getFormatText()
 	 */
 	public String getCellFormatText();
+	
+	/**
+	 * Gets the first cell(top-left)  format of this range
+	 * @return
+	 */
+	public String getCellDataFormat();
 	
 	/**
 	 * Gets the first cell(top-left) value of this this range
