@@ -55,7 +55,7 @@ public class B541Composer extends SelectorComposer<Component>{
 				}
 				if(!Objects.equals(editText1, editText2)){
 					if(!compareDouble(editText1,editText2)){
-						Messagebox.show("edit text different between "+a1.formatAsString()+"("+editText1+") and "+a2.formatAsString()+"("+editText1+")");
+						Messagebox.show("edit text different between "+a1.formatAsString()+"("+editText1+") and "+a2.formatAsString()+"("+editText2+")");
 						return;
 					}
 				}
