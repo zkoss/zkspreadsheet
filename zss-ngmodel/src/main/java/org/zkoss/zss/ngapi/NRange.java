@@ -20,8 +20,12 @@ import java.util.concurrent.locks.ReadWriteLock;
 
 import org.zkoss.zss.ngmodel.*;
 import org.zkoss.zss.ngmodel.NAutoFilter.FilterOp;
+import org.zkoss.zss.ngmodel.NChart.NChartGrouping;
+import org.zkoss.zss.ngmodel.NChart.NChartLegendPosition;
+import org.zkoss.zss.ngmodel.NChart.NChartType;
 import org.zkoss.zss.ngmodel.NHyperlink.HyperlinkType;
 import org.zkoss.zss.ngmodel.NPicture.Format;
+import org.zkoss.zss.ngmodel.chart.NChartData;
 /**
  * The most useful api to manipulate a book
  *  
@@ -540,13 +544,13 @@ public interface NRange {
 //	 */
 //	public void showAllData();
 
-//	/**
-//	 * Add a chart into the sheet of this Range 
-//	 * @param anchor
-//	 * @return the created chart 
-//	 */
-//	public Chart addChart(ClientAnchor anchor, ChartData data, ChartType type, ChartGrouping grouping, LegendPosition pos);
-//
+	/**
+	 * Add a chart into the sheet of this Range 
+	 * @param anchor
+	 * @return the created chart 
+	 */
+	public NChart addChart(NViewAnchor anchor, NChartData data, NChartType type, NChartGrouping grouping, NChartLegendPosition pos);
+
 
 	/**
 	 * Add a picture into the sheet of this Range
@@ -566,20 +570,20 @@ public interface NRange {
 	 * @param anchor the new anchor
 	 */
 	public void movePicture(NPicture picture, NViewAnchor anchor);
-//
-//	/**
-//	 * Update chart anchor.
-//	 * @param chart the chart to change anchor
-//	 * @param anchor the new anchor
-//	 */
-//	public void moveChart(Chart chart, ClientAnchor anchor);
-//	
-//	/**
-//	 * Delete an existing chart from the sheet of this Range.
-//	 * @param chart the chart to be deleted
-//	 */
-//	public void deleteChart(Chart chart);
-//	
+
+	/**
+	 * Move the chart to the new anchor.
+	 * @param chart the chart to change anchor
+	 * @param anchor the new anchor
+	 */
+	public void moveChart(NChart chart, NViewAnchor anchor);
+	
+	/**
+	 * Delete an existing chart from the sheet of this Range.
+	 * @param chart the chart to be deleted
+	 */
+	public void deleteChart(NChart chart);
+	
 	/**
 	 * Returns whether the plain text input by the end user is valid or not;
 	 * note the validation only applies to the left-top cell of this Range.

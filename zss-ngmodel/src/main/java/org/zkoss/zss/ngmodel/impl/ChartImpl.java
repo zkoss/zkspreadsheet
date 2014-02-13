@@ -74,6 +74,10 @@ public class ChartImpl extends AbstractChartAdv {
 		return anchor;
 	}
 	@Override
+	public void setAnchor(NViewAnchor anchor) {
+		this.anchor = anchor;		
+	}
+	@Override
 	public NChartType getType(){
 		return type;
 	}

@@ -20,13 +20,16 @@ import java.util.*;
 import java.util.concurrent.locks.ReadWriteLock;
 
 import org.zkoss.lang.Strings;
+import org.zkoss.poi.ss.usermodel.charts.LegendPosition;
 import org.zkoss.util.Locales;
 import org.zkoss.zss.ngapi.*;
 import org.zkoss.zss.ngmodel.*;
 import org.zkoss.zss.ngmodel.NAutoFilter.FilterOp;
 import org.zkoss.zss.ngmodel.NCell.CellType;
 import org.zkoss.zss.ngmodel.NCellStyle.BorderType;
+import org.zkoss.zss.ngmodel.NChart.*;
 import org.zkoss.zss.ngmodel.NHyperlink.HyperlinkType;
+import org.zkoss.zss.ngmodel.chart.NChartData;
 import org.zkoss.zss.ngmodel.impl.*;
 import org.zkoss.zss.ngmodel.sys.EngineFactory;
 import org.zkoss.zss.ngmodel.sys.dependency.Ref;
@@ -1292,7 +1295,7 @@ public class NRangeImpl implements NRange {
 			@Override
 			public Object invoke() {
 				NPicture picture = getSheet().addPicture(format, image, anchor);
-				new NotifyChangeHelper().notifySheetPictureAdd(getSheet(), picture);
+				new NotifyChangeHelper().notifySheetPictureAdd(getSheet(), picture.getId());
 				return picture;
 			}
 		}.doInWriteLock(getLock());
@@ -1325,8 +1328,48 @@ public class NRangeImpl implements NRange {
 			@Override
 			public Object invoke() {
 				picture.setAnchor(anchor);
-				new NotifyChangeHelper().notifySheetPictureMove(getSheet(), picture);
+				new NotifyChangeHelper().notifySheetPictureMove(getSheet(), picture.getId());
 				return null;
+			}
+		}.doInWriteLock(getLock());
+	}
+	
+	@Override
+	public NChart addChart(final NViewAnchor anchor, final NChartData data, final NChartType type,
+			final NChartGrouping grouping, final NChartLegendPosition pos) {
+		return (NChart) new ReadWriteTask() {			
+			@Override
+			public Object invoke() {
+				NChart chart = data.getChart();
+				//TODO parameter "type" is not read
+				chart.setGrouping(grouping);
+				chart.setLegendPosition(pos);
+				new NotifyChangeHelper().notifySheetChartAdd(getSheet(), chart.getId());
+				return chart;
+			}
+		}.doInWriteLock(getLock());
+	}
+	
+	@Override
+	public void deleteChart(final NChart chart){
+		new ReadWriteTask() {			
+			@Override
+			public Object invoke() {
+				getSheet().deleteChart(chart);
+				new NotifyChangeHelper().notifySheetChartAdd(getSheet(), chart.getId());
+				return null;
+			}
+		}.doInWriteLock(getLock());
+	}
+	
+	@Override
+	public void moveChart(final NChart chart, final NViewAnchor anchor) {
+		new ReadWriteTask() {			
+			@Override
+			public Object invoke() {
+				chart.setAnchor(anchor);
+				new NotifyChangeHelper().notifySheetChartMove(getSheet(), chart.getId());
+				return chart;
 			}
 		}.doInWriteLock(getLock());
 	}

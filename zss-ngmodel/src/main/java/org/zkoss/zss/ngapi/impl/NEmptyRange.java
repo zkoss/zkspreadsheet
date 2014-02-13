@@ -3,17 +3,14 @@ package org.zkoss.zss.ngapi.impl;
 import java.util.concurrent.locks.ReadWriteLock;
 
 import org.zkoss.zss.ngapi.NRange;
-import org.zkoss.zss.ngmodel.NAutoFilter;
+import org.zkoss.zss.ngmodel.*;
 import org.zkoss.zss.ngmodel.NAutoFilter.FilterOp;
-import org.zkoss.zss.ngmodel.NCellStyle;
 import org.zkoss.zss.ngmodel.NCellStyle.BorderType;
-import org.zkoss.zss.ngmodel.NDataValidation;
-import org.zkoss.zss.ngmodel.NHyperlink;
+import org.zkoss.zss.ngmodel.NChart.NChartGrouping;
+import org.zkoss.zss.ngmodel.NChart.NChartType;
 import org.zkoss.zss.ngmodel.NHyperlink.HyperlinkType;
-import org.zkoss.zss.ngmodel.NPicture;
 import org.zkoss.zss.ngmodel.NPicture.Format;
-import org.zkoss.zss.ngmodel.NSheet;
-import org.zkoss.zss.ngmodel.NViewAnchor;
+import org.zkoss.zss.ngmodel.chart.NChartData;
 
 /**
  * the empty range implementation that do nothing
@@ -396,6 +393,20 @@ import org.zkoss.zss.ngmodel.NViewAnchor;
 	@Override
 	public String getCellDataFormat() {
 		return null;
+	}
+	
+	public NChart addChart(NViewAnchor anchor, NChartData data, NChartType type, NChartGrouping grouping, org.zkoss.zss.ngmodel.NChart.NChartLegendPosition pos) {
+		return null;
+	};
+	
+	@Override
+	public void moveChart(NChart chart, NViewAnchor anchor) {
+		
+	}
+
+	@Override
+	public void deleteChart(NChart chart) {
+		
 	}
 
 }

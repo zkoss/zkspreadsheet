@@ -69,6 +69,8 @@ public interface NChart {
 	
 	public NViewAnchor getAnchor();
 	
+	public void setAnchor(NViewAnchor anchor);
+	
 	public String getTitle();
 	
 	public String getXAxisTitle();

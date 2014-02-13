@@ -35,9 +35,9 @@ import org.zkoss.zss.ngmodel.impl.AbstractBookAdv;
 						ModelEvents.ON_FREEZE_CHANGE, sheet));
 	}
 	
-	public void notifySheetPictureAdd(NSheet sheet, NPicture picture){
+	public void notifySheetPictureAdd(NSheet sheet, String id){
 		((AbstractBookAdv) sheet.getBook()).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_PICTURE_ADD, 
-				sheet, ModelEvents.createDataMap(ModelEvents.PARAM_OBJECT_ID, picture.getId())));
+				sheet, ModelEvents.createDataMap(ModelEvents.PARAM_OBJECT_ID, id)));
 	}
 
 	public void notifySheetPictureDelete(NSheet sheet, String id) {
@@ -45,11 +45,26 @@ import org.zkoss.zss.ngmodel.impl.AbstractBookAdv;
 				sheet, ModelEvents.createDataMap(ModelEvents.PARAM_OBJECT_ID, id)));
 	}
 
-	public void notifySheetPictureMove(NSheet sheet, NPicture picture) {
+	public void notifySheetPictureMove(NSheet sheet, String id) {
 		((AbstractBookAdv) sheet.getBook()).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_PICTURE_UPDATE, 
-				sheet, ModelEvents.createDataMap(ModelEvents.PARAM_OBJECT_ID, picture.getId())));
+				sheet, ModelEvents.createDataMap(ModelEvents.PARAM_OBJECT_ID, id)));
 	}
 
+	public void notifySheetChartAdd(NSheet sheet, String id){
+		((AbstractBookAdv) sheet.getBook()).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_CHART_ADD, 
+				sheet, ModelEvents.createDataMap(ModelEvents.PARAM_OBJECT_ID, id)));
+	}
+	
+	public void notifySheetChartDelete(NSheet sheet, String id){
+		((AbstractBookAdv) sheet.getBook()).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_CHART_DELETE, 
+				sheet, ModelEvents.createDataMap(ModelEvents.PARAM_OBJECT_ID, id)));
+	}
+	
+	public void notifySheetChartMove(NSheet sheet, String id){
+		((AbstractBookAdv) sheet.getBook()).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_CHART_UPDATE, 
+				sheet, ModelEvents.createDataMap(ModelEvents.PARAM_OBJECT_ID, id)));
+	}
+	
 	public void notifyMergeChange(Set<MergeUpdate> mergeNotifySet) {
 		LinkedHashSet<SheetRegion> toRemove = new LinkedHashSet<SheetRegion>();
 		LinkedHashSet<SheetRegion> toAdd = new LinkedHashSet<SheetRegion>();

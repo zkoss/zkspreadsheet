@@ -44,6 +44,10 @@ public class ModelEvents {
 	public static final String ON_PICTURE_UPDATE = "onPictureUpdate";
 	public static final String ON_PICTURE_DELETE = "onPictureDelete";
 	
+	public static final String ON_CHART_ADD = "onChartAdd";
+	public static final String ON_CHART_UPDATE = "onChartUpdate";
+	public static final String ON_CHART_DELETE = "onChartDelete";
+	
 	public static final String ON_MERGE_ADD = "onMergeAdd";
 	public static final String ON_MERGE_DELETE = "onMergeDelete";
 	
