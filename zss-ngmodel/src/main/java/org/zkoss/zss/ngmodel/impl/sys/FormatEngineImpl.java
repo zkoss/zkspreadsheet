@@ -9,6 +9,7 @@ import org.zkoss.poi.ss.usermodel.ZssContext;
 import org.zkoss.poi.ss.util.NumberToTextConverter;
 import org.zkoss.zss.ngmodel.NCell;
 import org.zkoss.zss.ngmodel.NCell.CellType;
+import org.zkoss.zss.ngmodel.NCellStyle;
 import org.zkoss.zss.ngmodel.impl.ReadOnlyRichTextImpl;
 import org.zkoss.zss.ngmodel.sys.EngineFactory;
 import org.zkoss.zss.ngmodel.sys.format.FormatContext;
@@ -23,16 +24,19 @@ public class FormatEngineImpl implements FormatEngine {
 		if(type == CellType.FORMULA){
 			type = cell.getFormulaResultType();
 		}
-		
+		String format = cell.getCellStyle().getDataFormat();
 		if(type==CellType.BLANK || type == CellType.STRING){
-			//handling as text/rich text
-			if(cell.isRichTextValue()){
-				return new FormatResultImpl(new ReadOnlyRichTextImpl(cell.getRichTextValue()));
+			if(NCellStyle.FORMAT_GENERAL.equals(format)){
+				//handling as text/rich text
+				if(cell.isRichTextValue()){
+					return new FormatResultImpl(new ReadOnlyRichTextImpl(cell.getRichTextValue()));
+				}
+				return new FormatResultImpl(cell.getStringValue(),null);//no color as well
 			}
-			return new FormatResultImpl(cell.getStringValue(),null);//no color as well
-			
 		}else if(type==CellType.ERROR){
-			return new FormatResultImpl(cell.getErrorValue().getErrorString(),null);//no color as well
+			if(NCellStyle.FORMAT_GENERAL.equals(format)){
+				return new FormatResultImpl(cell.getErrorValue().getErrorString(),null);//no color as well
+			}
 		}
 		return format(cell.getCellStyle().getDataFormat(), cell.getValue(), context);
 	}
