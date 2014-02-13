@@ -330,6 +330,8 @@ public class CellOperationUtil {
 	public static CellStyleApplier getDataFormatApplier(final String format) {
 		return new CellStyleApplier() {
 			public void apply(Range range) {
+				//TODO zss 3.5 should transfer the format by locale if it is build in
+				
 				//ZSS 464, efficient implement
 				StyleUtil.setDataFormat(((SheetImpl)range.getSheet()).getNative(),range.getRow(),range.getColumn(),format);
 				range.notifyChange();
