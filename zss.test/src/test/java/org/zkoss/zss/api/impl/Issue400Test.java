@@ -325,26 +325,26 @@ public class Issue400Test {
 		
 		Setup.pushZssLocale(Locale.TAIWAN);
 		try{
-			org.junit.Assert.assertEquals("yyyy/m/d", a1.getCellStyle().getDataFormat()); //default format will depends on LOCAL
+			org.junit.Assert.assertEquals("yyyy/m/d", a1.getCellDataFormat()); //default format will depends on LOCAL
 			org.junit.Assert.assertEquals("2013/12/24", a1.getCellFormatText());
 			
-			org.junit.Assert.assertEquals("yyyy/m/d", a2.getCellStyle().getDataFormat());
+			org.junit.Assert.assertEquals("yyyy/m/d", a2.getCellDataFormat());
 			org.junit.Assert.assertEquals("2013/12/24", a2.getCellFormatText());
 			
-			org.junit.Assert.assertEquals("m/d/yyyy", a3.getCellStyle().getDataFormat()); // PASS is POI
+			org.junit.Assert.assertEquals("m/d/yyyy", a3.getCellDataFormat()); // PASS is POI
 			org.junit.Assert.assertEquals("12/24/2013", a3.getCellFormatText());// PASS is POI
 		}finally{
 			Setup.popZssLocale();
 		}
 		Setup.pushZssLocale(Locale.US);
 		try{
-			org.junit.Assert.assertEquals("m/d/yyyy", a1.getCellStyle().getDataFormat()); //this cell contains default format, it should depends on locale
+			org.junit.Assert.assertEquals("m/d/yyyy", a1.getCellDataFormat()); //this cell contains default format, it should depends on locale
 			org.junit.Assert.assertEquals("12/24/2013", a1.getCellFormatText());
 			
-			org.junit.Assert.assertEquals("m/d/yyyy", a2.getCellStyle().getDataFormat()); //this cell contains default format, it should depends on locale
+			org.junit.Assert.assertEquals("m/d/yyyy", a2.getCellDataFormat()); //this cell contains default format, it should depends on locale
 			org.junit.Assert.assertEquals("12/24/2013", a2.getCellFormatText());
 			
-			org.junit.Assert.assertEquals("m/d/yyyy", a3.getCellStyle().getDataFormat()); //this is custom format, it regardless locale.
+			org.junit.Assert.assertEquals("m/d/yyyy", a3.getCellDataFormat()); //this is custom format, it regardless locale.
 			org.junit.Assert.assertEquals("12/24/2013", a3.getCellFormatText());
 		}finally{
 			Setup.popZssLocale();
@@ -355,17 +355,17 @@ public class Issue400Test {
 		Range a6 = Ranges.range(sheet, "A6");
 		Setup.pushZssLocale(Locale.TAIWAN);
 		try{
-			org.junit.Assert.assertEquals("General", a5.getCellStyle().getDataFormat());
-			org.junit.Assert.assertEquals("General", a6.getCellStyle().getDataFormat());
+			org.junit.Assert.assertEquals("General", a5.getCellDataFormat());
+			org.junit.Assert.assertEquals("General", a6.getCellDataFormat());
 			
 			a5.setCellEditText("2013/2/1");
 			org.junit.Assert.assertEquals(CellType.NUMERIC, a5.getCellData().getType());
-			org.junit.Assert.assertEquals("yyyy/m/d", a5.getCellStyle().getDataFormat()); //default format will depends on LOCAL
+			org.junit.Assert.assertEquals("yyyy/m/d", a5.getCellDataFormat()); //default format will depends on LOCAL
 			org.junit.Assert.assertEquals("2013/2/1", a5.getCellFormatText());
 			
 			a6.setCellEditText("2/1/2013");
 			org.junit.Assert.assertEquals(CellType.STRING, a6.getCellData().getType());
-			org.junit.Assert.assertEquals("General", a6.getCellStyle().getDataFormat());
+			org.junit.Assert.assertEquals("General", a6.getCellDataFormat());
 			org.junit.Assert.assertEquals("2/1/2013", a6.getCellFormatText());
 		}finally{
 			Setup.popZssLocale();
@@ -375,17 +375,17 @@ public class Issue400Test {
 		Range a8 = Ranges.range(sheet, "A8");
 		Setup.pushZssLocale(Locale.US);
 		try{
-			org.junit.Assert.assertEquals("General", a7.getCellStyle().getDataFormat());
-			org.junit.Assert.assertEquals("General", a8.getCellStyle().getDataFormat());
+			org.junit.Assert.assertEquals("General", a7.getCellDataFormat());
+			org.junit.Assert.assertEquals("General", a8.getCellDataFormat());
 			
 			a7.setCellEditText("2/1/2013");
 			org.junit.Assert.assertEquals(CellType.NUMERIC, a7.getCellData().getType());
-			org.junit.Assert.assertEquals("m/d/yyyy", a7.getCellStyle().getDataFormat());
+			org.junit.Assert.assertEquals("m/d/yyyy", a7.getCellDataFormat());
 			org.junit.Assert.assertEquals("2/1/2013", a7.getCellFormatText());
 			
 			a8.setCellEditText("2013/2/1");
 			org.junit.Assert.assertEquals(CellType.STRING, a8.getCellData().getType());
-			org.junit.Assert.assertEquals("General", a8.getCellStyle().getDataFormat()); //default format will depends on LOCAL
+			org.junit.Assert.assertEquals("General", a8.getCellDataFormat()); //default format will depends on LOCAL
 			org.junit.Assert.assertEquals("2013/2/1", a8.getCellFormatText());
 		}finally{
 			Setup.popZssLocale();
