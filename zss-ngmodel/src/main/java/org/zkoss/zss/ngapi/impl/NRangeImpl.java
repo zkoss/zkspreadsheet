@@ -279,6 +279,7 @@ public class NRangeImpl implements NRange {
 	public void setEditText(final String editText) {
 		final InputEngine ie = EngineFactory.getInstance().createInputEngine();
 		final ResultWrap<InputResult> input = new ResultWrap<InputResult>();
+		final ResultWrap<HyperlinkType> hyperlinkType = new ResultWrap<HyperlinkType>();
 		new CellVisitorTask(new CellVisitor() {
 			public boolean visit(NCell cell) {
 				InputResult result;
@@ -286,6 +287,11 @@ public class NRangeImpl implements NRange {
 					result = ie.parseInput(editText == null ? ""
 						: editText, cell.getCellStyle().getDataFormat(), new InputParseContext(Locales.getCurrent()));
 					input.set(result);
+					
+					//check if a hyperlink
+					if(result.getType() == CellType.STRING){
+						hyperlinkType.set(getHyperlinkType((String)result.getValue()));
+					}
 				}
 				
 				Object cellval = cell.getValue();
@@ -314,6 +320,12 @@ public class NRangeImpl implements NRange {
 					break;
 				case STRING:
 					cell.setStringValue((String) resultVal);
+					if(hyperlinkType.get()!=null){
+						NHyperlink link = cell.setupHyperlink();
+						link.setType(hyperlinkType.get());
+						link.setAddress((String)resultVal);
+						link.setLabel((String)resultVal);
+					}
 					break;
 				case ERROR:
 				default:
@@ -328,6 +340,18 @@ public class NRangeImpl implements NRange {
 				return true;
 			}
 		}).doInWriteLock(getLock());
+	}
+	
+	private NHyperlink.HyperlinkType getHyperlinkType(String address) {
+		if (address != null) {
+			final String addr = address.toLowerCase(); // ZSS-288: support more scheme according to POI code, see  org.zkoss.poi.ss.formula.functions.Hyperlink
+			if (addr.startsWith("http://") || addr.startsWith("https://")) {
+				return NHyperlink.HyperlinkType.URL;
+			} else if (addr.startsWith("mailto:")) {
+				return NHyperlink.HyperlinkType.EMAIL;
+			} // ZSS-288: don't support auto-create hyperlink for DOCUMENT and FILE type
+		}
+		return null;
 	}
 
 	@Override
