@@ -17,8 +17,6 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.api.model.impl;
 
 import org.zkoss.poi.common.usermodel.Hyperlink;
-import org.zkoss.poi.ss.usermodel.Workbook;
-import org.zkoss.poi.ss.usermodel.charts.*;
 import org.zkoss.zss.api.Range.ApplyBorderType;
 import org.zkoss.zss.api.Range.AutoFillType;
 import org.zkoss.zss.api.Range.AutoFilterOperation;
@@ -46,6 +44,9 @@ import org.zkoss.zss.model.sys.impl.BookHelper;
 import org.zkoss.zss.ngapi.NRange;
 import org.zkoss.zss.ngmodel.NAutoFilter.FilterOp;
 import org.zkoss.zss.ngmodel.*;
+import org.zkoss.zss.ngmodel.NChart.NChartGrouping;
+import org.zkoss.zss.ngmodel.NChart.NChartLegendPosition;
+import org.zkoss.zss.ngmodel.NChart.NChartType;
 /**
  * 
  * @author dennis
@@ -620,75 +621,68 @@ public class EnumUtil {
 		throw new IllegalArgumentException("unknow pciture format "+format);
 	}
 
-	public static ChartType toChartType(Type type) {
+	public static NChartType toChartType(Type type) {
 		switch(type){
 		case AREA_3D:
-			return ChartType.Area3D;
 		case AREA:
-			return ChartType.Area3D;
+			return NChartType.AREA;
 		case BAR_3D:
-			return ChartType.Bar3D;
 		case BAR:
-			return ChartType.Bar;
+			return NChartType.BAR;
 		case BUBBLE:
-			return ChartType.Bubble;
+			return NChartType.BUBBLE;
 		case COLUMN:
-			return ChartType.Column;
 		case COLUMN_3D:
-			return ChartType.Column3D;
+			return NChartType.COLUMN;
 		case DOUGHNUT:
-			return ChartType.Doughnut;
+			return NChartType.DOUGHNUT;
 		case LINE_3D:
-			return ChartType.Line3D;
 		case LINE:
-			return ChartType.Line;
+			return NChartType.LINE;
 		case OF_PIE:
-			return ChartType.OfPie;
+			return NChartType.OF_PIE;
 		case PIE_3D:
-			return ChartType.Pie3D;
 		case PIE:
-			return ChartType.Pie;
+			return NChartType.PIE;
 		case RADAR:
-			return ChartType.Radar;
+			return NChartType.RADAR;
 		case SCATTER:
-			return ChartType.Scatter;
+			return NChartType.SCATTER;
 		case STOCK:
-			return ChartType.Stock;
+			return NChartType.STOCK;
 		case SURFACE_3D:
-			return ChartType.Surface3D;
 		case SURFACE:
-			return ChartType.Surface;
+			return NChartType.SURFACE;
 		}
 		throw new IllegalArgumentException("unknow chart type "+type);
 	}
 
-	public static ChartGrouping toChartGrouping(Grouping grouping) {
+	public static NChartGrouping toChartGrouping(Grouping grouping) {
 		switch(grouping){
 		case STANDARD:
-			return ChartGrouping.STANDARD;
+			return NChartGrouping.STANDARD;
 		case STACKED:
-			return ChartGrouping.STACKED;
+			return NChartGrouping.STACKED;
 		case PERCENT_STACKED:
-			return ChartGrouping.PERCENT_STACKED;
+			return NChartGrouping.PERCENT_STACKED;
 		case CLUSTERED:
-			return ChartGrouping.CLUSTERED;//bar only
+			return NChartGrouping.CLUSTERED;//bar only
 		}
 		throw new IllegalArgumentException("unknow grouping "+grouping);
 	}
 
-	public static org.zkoss.poi.ss.usermodel.charts.LegendPosition toLegendPosition(
-			LegendPosition pos) {
+	public static NChartLegendPosition toLegendPosition(LegendPosition pos) {
 		switch(pos){
 		case BOTTOM:
-			return org.zkoss.poi.ss.usermodel.charts.LegendPosition.BOTTOM;
+			return NChartLegendPosition.BOTTOM;
 		case LEFT:
-			return org.zkoss.poi.ss.usermodel.charts.LegendPosition.LEFT;
+			return NChartLegendPosition.LEFT;
 		case RIGHT:
-			return org.zkoss.poi.ss.usermodel.charts.LegendPosition.RIGHT;
+			return NChartLegendPosition.RIGHT;
 		case TOP:
-			return org.zkoss.poi.ss.usermodel.charts.LegendPosition.TOP;
+			return NChartLegendPosition.TOP;
 		case TOP_RIGHT:
-			return org.zkoss.poi.ss.usermodel.charts.LegendPosition.TOP_RIGHT;
+			return NChartLegendPosition.TOP_RIGHT;
 		}
 		throw new IllegalArgumentException("unknow legend position "+pos);
 	}

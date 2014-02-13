@@ -17,6 +17,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.api.model.impl;
 
 import org.zkoss.zss.api.model.ChartData;
+import org.zkoss.zss.ngmodel.chart.NChartData;
 /**
  * 
  * @author dennis
@@ -24,9 +25,9 @@ import org.zkoss.zss.api.model.ChartData;
  */
 public class ChartDataImpl implements ChartData{
 
-	private ModelRef<org.zkoss.poi.ss.usermodel.charts.ChartData> _chartDataRef;
+	private ModelRef<NChartData> _chartDataRef;
 	
-	public ChartDataImpl(ModelRef<org.zkoss.poi.ss.usermodel.charts.ChartData> chartDataRef) {
+	public ChartDataImpl(ModelRef<NChartData> chartDataRef) {
 		this._chartDataRef = chartDataRef;
 	}
 
@@ -56,13 +57,8 @@ public class ChartDataImpl implements ChartData{
 		return true;
 	}
 	
-	public org.zkoss.poi.ss.usermodel.charts.ChartData getNative(){
+	public NChartData getNative(){
 		return _chartDataRef.get();
 	}
 	
-	
-	public org.zkoss.poi.ss.usermodel.charts.ChartData getPoiChartData(){
-		return _chartDataRef.get();
-	}
-
 }

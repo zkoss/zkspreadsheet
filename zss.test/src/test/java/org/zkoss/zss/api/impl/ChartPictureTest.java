@@ -1,16 +1,23 @@
 package org.zkoss.zss.api.impl;
 
-import java.io.IOException;
+import static org.junit.Assert.*;
+
+import java.io.*;
 import java.util.Locale;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.zkoss.poi.ss.usermodel.ZssContext;
-import org.zkoss.zss.Setup;
-import org.zkoss.zss.Util;
-import org.zkoss.zss.api.model.Book;
+import org.junit.*;
+import org.zkoss.zss.*;
+import org.zkoss.zss.api.AreaRef;
+import org.zkoss.zss.api.model.*;
+import org.zkoss.zss.api.model.Chart.Type;
+import org.zkoss.zss.ngapi.*;
+import org.zkoss.zss.ngapi.impl.imexp.*;
+import org.zkoss.zss.ngmodel.*;
+import org.zkoss.zss.ngmodel.NChart.NChartGrouping;
+import org.zkoss.zss.ngmodel.NChart.NChartLegendPosition;
+import org.zkoss.zss.ngmodel.NChart.NChartType;
+import org.zkoss.zss.ngmodel.chart.NGeneralChartData;
+import org.zkoss.zssex.api.ChartDataUtil;
 
 public class ChartPictureTest extends ChartPictureTestBase {
 
@@ -96,4 +103,157 @@ public class ChartPictureTest extends ChartPictureTestBase {
 		testAddDoughnutChart(book);
 	}
 	
+	/**
+	 * For data area, row count is less or equal than column count.
+	 */
+	@Test
+	public void addBarChart(){
+		NBook book = loadBook(this.getClass().getResourceAsStream("book/insert-charts.xlsx"));
+		NSheet sheet = book.getSheetByName("chart-image");
+		
+		assertEquals(0, sheet.getCharts().size());
+		NViewAnchor anchor = new NViewAnchor(2, 5, 600, 400);
+		ChartData chartData =  ChartDataUtil.getChartData(sheet, new AreaRef("A4:D7"), Type.BAR, anchor);
+		//FIXME how to know 3D
+		NChart chart = NRanges.range(sheet).addChart(anchor, chartData.getNative(), NChartType.BAR, NChartGrouping.STANDARD, NChartLegendPosition.RIGHT);
+
+		assertEquals(1, sheet.getCharts().size());
+		NGeneralChartData nChartData = (NGeneralChartData)chart.getData();
+		assertEquals(3, nChartData.getNumOfCategory());
+		assertEquals("Internet Explorer", nChartData.getCategory(0));
+		assertEquals("Chrome", nChartData.getCategory(1));
+		assertEquals("Firefox", nChartData.getCategory(2));
+		assertEquals(3, nChartData.getNumOfSeries());
+		//TODO evaluation result of A5:A5 should not have left , right bracket   
+//		assertEquals("January 2012", nChartData.getSeries(0).getName()); 
+		assertEquals(0.3427, nChartData.getSeries(0).getValue(0));
+		assertEquals(0.2599, nChartData.getSeries(0).getValue(1));
+		assertEquals(0.2268, nChartData.getSeries(0).getValue(2));
+//		assertEquals("February 2012", nChartData.getSeries(1).getName());
+		assertEquals(0.327, nChartData.getSeries(1).getValue(0));
+		assertEquals(0.2724, nChartData.getSeries(1).getValue(1));
+		assertEquals(0.2276, nChartData.getSeries(1).getValue(2));
+//		assertEquals("March 2012", nChartData.getSeries(2).getName());
+		assertEquals(0.3168, nChartData.getSeries(2).getValue(0));
+		assertEquals(0.2809, nChartData.getSeries(2).getValue(1));
+		assertEquals(0.2273, nChartData.getSeries(2).getValue(2));
+
+//		write(book,  org.zkoss.zss.ngapi.impl.imexp.ExcelExportFactory.Type.XLSX); //human checking
+	}
+	
+	/**
+	 * For data area, row count is larger than column count.
+	 */
+	@Test
+	public void addColumnChart(){
+		NBook book = loadBook(this.getClass().getResourceAsStream("book/insert-charts.xlsx"));
+		NSheet sheet = book.getSheetByName("chart-image");
+		
+		assertEquals(0, sheet.getCharts().size());
+		NViewAnchor anchor = new NViewAnchor(2, 5, 600, 400);
+		ChartData chartData =  ChartDataUtil.getChartData(sheet, new AreaRef("A4:D9"), Type.COLUMN, anchor);
+		//FIXME how to know 3D
+		NChart chart = NRanges.range(sheet).addChart(anchor, chartData.getNative(), NChartType.COLUMN, NChartGrouping.STANDARD, NChartLegendPosition.RIGHT);
+
+		assertEquals(1, sheet.getCharts().size());
+		NGeneralChartData nChartData = (NGeneralChartData)chart.getData();
+		assertEquals(5, nChartData.getNumOfCategory());
+		assertEquals("January 2012", nChartData.getCategory(0));
+		assertEquals("February 2012", nChartData.getCategory(1));
+		assertEquals("March 2012", nChartData.getCategory(2));
+		assertEquals(3, nChartData.getNumOfSeries());
+		assertEquals(0.3427, nChartData.getSeries(0).getValue(0));
+		assertEquals(0.327, nChartData.getSeries(0).getValue(1));
+		assertEquals(0.3168, nChartData.getSeries(0).getValue(2));
+		
+		assertEquals(0.2599, nChartData.getSeries(1).getValue(0));
+		assertEquals(0.2724, nChartData.getSeries(1).getValue(1));
+		assertEquals(0.2809, nChartData.getSeries(1).getValue(2));
+		
+		assertEquals(0.2268, nChartData.getSeries(2).getValue(0));
+		assertEquals(0.2276, nChartData.getSeries(2).getValue(1));
+		assertEquals(0.2273, nChartData.getSeries(2).getValue(2));
+
+//		write(book,  org.zkoss.zss.ngapi.impl.imexp.ExcelExportFactory.Type.XLSX); //human checking
+	}
+	
+	/**
+	 * To test fill chart data with x & y values.
+	 */
+	@Test
+	public void addScatterChart(){
+		NBook book = loadBook(this.getClass().getResourceAsStream("book/insert-charts.xlsx"));
+		NSheet sheet = book.getSheetByName("chart-image");
+		
+		assertEquals(0, sheet.getCharts().size());
+		NViewAnchor anchor = new NViewAnchor(2, 5, 600, 400);
+		ChartData chartData =  ChartDataUtil.getChartData(sheet, new AreaRef("A4:D9"), Type.SCATTER, anchor);
+		//FIXME how to know 3D
+		NChart chart = NRanges.range(sheet).addChart(anchor, chartData.getNative(), NChartType.SCATTER, NChartGrouping.STANDARD, NChartLegendPosition.RIGHT);
+
+		assertEquals(1, sheet.getCharts().size());
+		NGeneralChartData nChartData = (NGeneralChartData)chart.getData();
+		assertEquals(0, nChartData.getNumOfCategory());
+		assertEquals(3, nChartData.getNumOfSeries());
+		assertEquals("January 2012", nChartData.getSeries(0).getValue(0));
+		assertEquals("February 2012", nChartData.getSeries(0).getValue(1));
+		assertEquals("March 2012", nChartData.getSeries(0).getValue(2));
+		
+		assertEquals(0.3427, nChartData.getSeries(0).getYValue(0));
+		assertEquals(0.327, nChartData.getSeries(0).getYValue(1));
+		assertEquals(0.3168, nChartData.getSeries(0).getYValue(2));
+		
+		assertEquals(0.2599, nChartData.getSeries(1).getYValue(0));
+		assertEquals(0.2724, nChartData.getSeries(1).getYValue(1));
+		assertEquals(0.2809, nChartData.getSeries(1).getYValue(2));
+		
+		assertEquals(0.2268, nChartData.getSeries(2).getYValue(0));
+		assertEquals(0.2276, nChartData.getSeries(2).getYValue(1));
+		assertEquals(0.2273, nChartData.getSeries(2).getYValue(2));
+
+//		write(book,  org.zkoss.zss.ngapi.impl.imexp.ExcelExportFactory.Type.XLSX); //human checking
+		
+	}
+	//TODO use ImExpTestUtil.loadBook()
+	public static NBook loadBook(InputStream is) {
+		NImporter importer = new ExcelImportFactory().createImporter();
+		NBook book = null;
+		try {
+			book = importer.imports(is, "book");
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				is.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return book;
+	}
+	static public String DEFAULT_EXPORT_TARGET_PATH = "./target/";
+	static public String DEFAULT_EXPORT_FILE_NAME_XLSX = "exported.xlsx";
+	static public String DEFAULT_EXPORT_FILE_NAME_XLS = "exported.xls";
+	
+	public static File write(NBook book, org.zkoss.zss.ngapi.impl.imexp.ExcelExportFactory.Type type) {
+		if (type.equals(ExcelExportFactory.Type.XLSX)){
+			return writeBookToFile(book, new File(DEFAULT_EXPORT_TARGET_PATH + DEFAULT_EXPORT_FILE_NAME_XLSX), type);
+		}else{
+			return writeBookToFile(book, new File(DEFAULT_EXPORT_TARGET_PATH + DEFAULT_EXPORT_FILE_NAME_XLS), type);
+		}
+	}
+	
+	public static File writeBookToFile(NBook book, File outFile, org.zkoss.zss.ngapi.impl.imexp.ExcelExportFactory.Type type) {
+		try {
+			outFile = new File(DEFAULT_EXPORT_TARGET_PATH + outFile.getName());
+			outFile.createNewFile();
+			NExporter exporter = new ExcelExportFactory(type).createExporter();
+			exporter.export(book, outFile);
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail(e.toString());
+		}
+		return outFile;
+	}
 }

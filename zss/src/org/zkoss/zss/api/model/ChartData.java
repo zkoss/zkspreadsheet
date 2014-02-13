@@ -16,6 +16,8 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.api.model;
 
+import org.zkoss.zss.ngmodel.chart.NChartData;
+
 /**
  * This interface provides the access to the underlying data object ({@link org.zkoss.poi.ss.usermodel.charts.ChartData}) of a chart.
  * @author dennis
@@ -23,5 +25,5 @@ package org.zkoss.zss.api.model;
  */
 public interface ChartData {
 
-	public org.zkoss.poi.ss.usermodel.charts.ChartData getPoiChartData();
+	public NChartData getNative();
 }

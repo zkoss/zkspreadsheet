@@ -568,15 +568,11 @@ public class RangeImpl implements Range{
 		_range.movePicture(((PictureImpl)picture).getNative(), SheetImpl.toViewAnchor(_range.getSheet(), anchor));
 	}
 	
-	//currently, we only support to modify chart in XSSF
-	public Chart addChart(SheetAnchor anchor,ChartData data,Type type, Grouping grouping, LegendPosition pos){
-		//TODO the syncLevel
-		throw new UnsupportedOperationException("not implment yet");/* zss 3.5 
-		ClientAnchor an = SheetImpl.toClientAnchor(getSheet().getPoiSheet(),anchor);
-		org.zkoss.poi.ss.usermodel.charts.ChartData cdata = ((ChartDataImpl)data).getNative();
-		org.zkoss.poi.ss.usermodel.Chart chart = _range.addChart(an, cdata, EnumUtil.toChartType(type), EnumUtil.toChartGrouping(grouping), EnumUtil.toLegendPosition(pos));
-		return new ChartImpl(getSheetRef(), new SimpleRef<org.zkoss.poi.ss.usermodel.Chart>(chart));
-		*/
+	public Chart addChart(SheetAnchor anchor,ChartData chartData,Type type, Grouping grouping, LegendPosition pos){
+		NChart chart =  _range.addChart(SheetImpl.toViewAnchor(_range.getSheet(), anchor), chartData.getNative(), 
+				EnumUtil.toChartType(type), EnumUtil.toChartGrouping(grouping),
+				EnumUtil.toLegendPosition(pos));
+		return new ChartImpl(new SimpleRef<NSheet>(_range.getSheet()), new SimpleRef<NChart>(chart));
 	}
 	
 	//currently, we only support to modify chart in XSSF

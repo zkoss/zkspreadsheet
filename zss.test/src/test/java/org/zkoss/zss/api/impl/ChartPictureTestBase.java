@@ -61,7 +61,7 @@ public class ChartPictureTestBase {
 	
 	protected void testAddBarChart(Book workbook) throws IOException {
 		Sheet sheet = workbook.getSheet("chart-image");
-		ChartData cd3 = ChartDataUtil.getChartData(sheet, new AreaRef(4,3,14,3), Chart.Type.BAR);
+		NChartData cd3 = ChartDataUtil.getChartData(sheet, new AreaRef(4,3,14,3), Chart.Type.BAR);
 		SheetOperationUtil.addChart(Ranges.range(sheet, "Q1"), cd3, Chart.Type.BAR, Grouping.STANDARD, LegendPosition.TOP);
 	}
 	
