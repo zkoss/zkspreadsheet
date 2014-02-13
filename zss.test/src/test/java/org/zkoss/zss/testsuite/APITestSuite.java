@@ -5,7 +5,7 @@ import org.junit.runner.RunWith;
 
 @RunWith(ClasspathSuite.class)
 @ClassnameFilters({
-	"org.zkoss.zss.api.impl.*Test"})
+	"org.zkoss.zss.api.impl.\\w*Test"})
 public class APITestSuite {
 
 }
