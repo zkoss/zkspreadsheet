@@ -148,7 +148,7 @@ public class ImExpTestBase {
 		assertEquals(BorderType.THIN, sheet.getCell(2, 3).getCellStyle().getBorderLeft());
 		assertEquals(BorderType.THIN, sheet.getCell(2, 4).getCellStyle().getBorderRight());
 		
-		assertEquals(BorderType.THIN, sheet.getCell(4, 1).getCellStyle().getBorderBottom());
+		assertEquals(BorderType.HAIR, sheet.getCell(4, 1).getCellStyle().getBorderBottom());
 		assertEquals(BorderType.DOTTED, sheet.getCell(4, 2).getCellStyle().getBorderBottom());
 		assertEquals(BorderType.DASHED, sheet.getCell(4, 3).getCellStyle().getBorderBottom());
 		
