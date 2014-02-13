@@ -131,6 +131,12 @@ public interface NCellStyle {
 	
 	/**
 	 * 
+	 * @return true if the data format is direct data format, which mean it will not care Locale when formatting
+	 */
+	public boolean isDirectDataFormat();
+	
+	/**
+	 * 
 	 * @return true if locked
 	 */
 	public boolean isLocked();
@@ -173,6 +179,8 @@ public interface NCellStyle {
 	public void setBorderRightColor(NColor borderRightColor);
 
 	public void setDataFormat(String dataFormat);
+	
+	public void setDirectDataFormat(String dataFormat);
 	
 	public void setLocked(boolean locked);
 

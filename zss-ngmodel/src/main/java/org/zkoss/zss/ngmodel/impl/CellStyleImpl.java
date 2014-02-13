@@ -45,6 +45,7 @@ public class CellStyleImpl extends AbstractCellStyleAdv {
 	private NColor borderRightColor = ColorImpl.BLACK;
 
 	private String dataFormat = FORMAT_GENERAL;
+	private boolean directFormat = false;
 	private boolean locked = true;// default locked as excel.
 	private boolean hidden = false;
 
@@ -207,15 +208,26 @@ public class CellStyleImpl extends AbstractCellStyleAdv {
 	public String getDataFormat() {
 		return dataFormat;
 	}
+	
+	@Override
+	public boolean isDirectDataFormat(){
+		return directFormat;
+	}
 
 	@Override
 	public void setDataFormat(String dataFormat) {
-//		Validations.argNotNull(dataFormat);
 		//set to general if null to compatible with 3.0
-		if(dataFormat==null){
+		if(dataFormat==null || "".equals(dataFormat.trim())){
 			dataFormat = FORMAT_GENERAL;
 		}
 		this.dataFormat = dataFormat;
+		directFormat = false;
+	}
+	
+	@Override
+	public void setDirectDataFormat(String dataFormat){
+		setDataFormat(dataFormat);
+		directFormat = true;
 	}
 
 	@Override

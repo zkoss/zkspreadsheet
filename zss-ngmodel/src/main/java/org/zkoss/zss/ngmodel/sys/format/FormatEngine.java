@@ -27,7 +27,6 @@ public interface FormatEngine {
 
 	String getEditText(NCell cell,FormatContext ctx);
 	String getFormat(NCell cell, FormatContext ctx);
-	String getFormat(String format, FormatContext ctx);
 	FormatResult format(NCell cell, FormatContext ctx);
 	FormatResult format(String format, Object value, FormatContext ctx);
 	

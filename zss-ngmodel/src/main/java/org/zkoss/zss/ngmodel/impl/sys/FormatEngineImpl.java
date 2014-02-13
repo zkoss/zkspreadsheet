@@ -34,14 +34,15 @@ public class FormatEngineImpl implements FormatEngine {
 				return new FormatResultImpl(cell.getStringValue(),null);//no color as well
 			}
 		}else if(type==CellType.ERROR){
-			if(NCellStyle.FORMAT_GENERAL.equals(format)){
-				return new FormatResultImpl(cell.getErrorValue().getErrorString(),null);//no color as well
-			}
+			return new FormatResultImpl(cell.getErrorValue().getErrorString(),null);//no color as well
 		}
-		return format(cell.getCellStyle().getDataFormat(), cell.getValue(), context);
+		return format0(cell.getCellStyle().getDataFormat(), cell.getCellStyle().isDirectDataFormat(), cell.getValue(), context);
 	}
 	@Override
 	public FormatResult format(String format, Object value, FormatContext context){
+		return format0(format,false,value,context);
+	}
+	public FormatResult format0(String format, boolean direct,Object value, FormatContext context){
 		ZssContext old = ZssContext.getThreadLocal();
 		try{
 			ZssContext zssContext = old==null?new ZssContext(context.getLocale(),-1): new ZssContext(context.getLocale(),old.getTwoDigitYearUpperBound());
@@ -49,10 +50,13 @@ public class FormatEngineImpl implements FormatEngine {
 			
 			//Have to transfer format that depends on locale
 			//for example, m/d/yyyy will transfer to yyyy/m/d in TW
-			int i = BuiltinFormats.getBuiltinFormat(format);
-			if(i>=0){
-				format = BuiltinFormats.getBuiltinFormat(i, context.getLocale());
+			if(!direct){
+				int i = BuiltinFormats.getBuiltinFormat(format);
+				if(i>=0){
+					format = BuiltinFormats.getBuiltinFormat(i, context.getLocale());
+				}
 			}
+			format = normalizeFormat(format);
 			
 			CellFormat formatter = CellFormat.getInstance(format, context.getLocale());
 			boolean dateFromatted = false;
@@ -65,24 +69,22 @@ public class FormatEngineImpl implements FormatEngine {
 			ZssContext.setThreadLocal(old);
 		}
 	}
-	
 	@Override
 	public String getFormat(NCell cell, FormatContext context){
-		return getFormat(cell.getCellStyle().getDataFormat(),context);
-	}	
-	
-	@Override
-	public String getFormat(String format, FormatContext context){
 		ZssContext old = ZssContext.getThreadLocal();
 		try{
 			ZssContext zssContext = old==null?new ZssContext(context.getLocale(),-1): new ZssContext(context.getLocale(),old.getTwoDigitYearUpperBound());
 			ZssContext.setThreadLocal(zssContext);
+			String format = cell.getCellStyle().getDataFormat();
 			//Have to transfer format that depends on locale
 			//for example, m/d/yyyy will transfer to yyyy/m/d in TW
-			int i = BuiltinFormats.getBuiltinFormat(format);
-			if(i>=0){
-				format = BuiltinFormats.getBuiltinFormat(i, context.getLocale());
+			if(!cell.getCellStyle().isDirectDataFormat()){
+				int i = BuiltinFormats.getBuiltinFormat(format);
+				if(i>=0){
+					format = BuiltinFormats.getBuiltinFormat(i, context.getLocale());
+				}
 			}
+			format = normalizeFormat(format);
 			return format;
 		}finally{
 			ZssContext.setThreadLocal(old);
@@ -150,6 +152,14 @@ public class FormatEngineImpl implements FormatEngine {
 			ZssContext.setThreadLocal(old);
 		}
 		return "";
+	}
+	
+	private static String normalizeFormat(String format){
+		//zss-510
+		if(format==null || "".equals(format.trim())){
+			format = NCellStyle.FORMAT_GENERAL;
+		}
+		return format;
 	}
 	
 	//ZSS-67

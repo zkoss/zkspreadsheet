@@ -316,7 +316,11 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 			if(dataFormat==null){//just in case
 				dataFormat = NCellStyle.FORMAT_GENERAL;
 			}
-			cellStyle.setDataFormat(dataFormat);
+			if(!poiCellStyle.isBuiltinDataFormat()){
+				cellStyle.setDirectDataFormat(dataFormat);
+			}else{
+				cellStyle.setDataFormat(dataFormat);
+			}
 			cellStyle.setWrapText(poiCellStyle.getWrapText());
 			cellStyle.setLocked(poiCellStyle.getLocked());
 			cellStyle.setAlignment(convertAlignment(poiCellStyle.getAlignment()));
