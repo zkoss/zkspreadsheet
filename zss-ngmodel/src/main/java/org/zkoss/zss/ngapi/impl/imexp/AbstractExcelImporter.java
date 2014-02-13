@@ -97,7 +97,6 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 			for (int i = 0; i < numberOfSheet; i++) {
 				NSheet sheet = book.getSheet(i);
 				Sheet poiSheet = workbook.getSheetAt(i);
-
 				for (Row poiRow : poiSheet) {
 					importRow(poiRow, sheet);
 				}
@@ -309,15 +308,12 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 	 */
 	protected NCellStyle importCellStyle(CellStyle poiCellStyle) {
 		NCellStyle cellStyle = null;
-		if ((cellStyle = importedStyle.get(poiCellStyle.getIndex())) == null) {
+		short idx = poiCellStyle.getIndex();
+		if ((cellStyle = importedStyle.get(idx)) == null) {
 			cellStyle = book.createCellStyle(true);
-			importedStyle.put(poiCellStyle.getIndex(), cellStyle);
-			// reference XSSFDataFormat.getFormat()
-			String dataFormat = null;
-			if ((dataFormat = BuiltinFormats.getBuiltinFormat(poiCellStyle.getDataFormat())) == null) {
-				dataFormat = poiCellStyle.getDataFormatString();
-			}
-			if(dataFormat==null){//still null
+			importedStyle.put(idx, cellStyle);
+			String dataFormat = poiCellStyle.getRawDataFormatString();
+			if(dataFormat==null){//just in case
 				dataFormat = NCellStyle.FORMAT_GENERAL;
 			}
 			cellStyle.setDataFormat(dataFormat);
