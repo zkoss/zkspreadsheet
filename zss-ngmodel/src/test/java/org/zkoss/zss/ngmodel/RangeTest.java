@@ -322,6 +322,62 @@ C	3	6	9	=SUM(E9:F9)
 	}
 	
 	@Test
+	public void deletePicture(){
+		NBook book = NBooks.createBook("book1");
+		NSheet sheet = book.createSheet("Picture");
+		
+		assertEquals(0, sheet.getPictures().size());
+		
+		try {
+			AImage zklogo = new AImage(RangeTest.class.getResource("zklogo.png"));
+			
+			NViewAnchor anchor = new NViewAnchor(0, 1, zklogo.getWidth()/2, zklogo.getHeight()/2);
+			NPicture picture = NRanges.range(sheet).addPicture(anchor, zklogo.getByteData(), NPicture.Format.PNG);
+			
+			assertEquals(1, sheet.getPictures().size());
+			assertEquals(Format.PNG, picture.getFormat());
+			assertEquals(zklogo.getWidth()/2, picture.getAnchor().getWidth());
+			
+			NRanges.range(sheet).deletePicture(picture);
+			assertEquals(0, sheet.getPictures().size());
+			
+//			ImExpTestUtil.write(book, Type.XLSX); //human checking
+		} catch (IOException e) {
+			e.printStackTrace();
+			fail();
+		}
+	}
+	
+	@Test
+	public void movePicture(){
+		NBook book = NBooks.createBook("book1");
+		NSheet sheet = book.createSheet("Picture");
+		
+		assertEquals(0, sheet.getPictures().size());
+		
+		try {
+			AImage zklogo = new AImage(RangeTest.class.getResource("zklogo.png"));
+			
+			NViewAnchor anchor = new NViewAnchor(0, 1, zklogo.getWidth()/2, zklogo.getHeight()/2);
+			NPicture picture = NRanges.range(sheet).addPicture(anchor, zklogo.getByteData(), NPicture.Format.PNG);
+			
+			assertEquals(1, sheet.getPictures().size());
+			assertEquals(Format.PNG, picture.getFormat());
+			assertEquals(zklogo.getWidth()/2, picture.getAnchor().getWidth());
+			
+			NViewAnchor newAnchor = new NViewAnchor(3, 4, zklogo.getWidth()/2, zklogo.getHeight()/2);
+			NRanges.range(sheet).movePicture(picture, newAnchor);
+			assertEquals(3, picture.getAnchor().getRowIndex());
+			assertEquals(4, picture.getAnchor().getColumnIndex());
+			
+//			ImExpTestUtil.write(book, Type.XLSX); //human checking
+		} catch (IOException e) {
+			e.printStackTrace();
+			fail();
+		}
+	}
+	
+	@Test
 	public void testDeleteSheet(){
 		NBook book = NBooks.createBook("book1");
 		NSheet sheet1 = book.createSheet("Sheet1");
