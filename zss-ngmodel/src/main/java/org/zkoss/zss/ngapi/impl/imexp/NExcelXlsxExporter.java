@@ -280,7 +280,11 @@ public class NExcelXlsxExporter extends AbstractExcelExporter {
 
 			@Override
 			public Number getPointAt(int index) {
-				return Double.parseDouble(series.getXValue(index).toString());
+				try{
+					return Double.parseDouble(series.getXValue(index).toString());
+				}catch(NumberFormatException nfe){
+					return index;
+				}
 			}
 
 			@Override
@@ -314,7 +318,11 @@ public class NExcelXlsxExporter extends AbstractExcelExporter {
 
 			@Override
 			public Number getPointAt(int index) {
-				return Double.parseDouble(series.getYValue(index).toString());
+				try{
+					return Double.parseDouble(series.getYValue(index).toString());
+				}catch (NumberFormatException nfe) {
+					return index;
+				}
 			}
 
 			@Override
@@ -348,7 +356,11 @@ public class NExcelXlsxExporter extends AbstractExcelExporter {
 
 			@Override
 			public Number getPointAt(int index) {
-				return Double.parseDouble(series.getZValue(index).toString());
+				try{
+					return Double.parseDouble(series.getZValue(index).toString());
+				}catch (NumberFormatException e) {
+					return index;
+				}
 			}
 
 			@Override
