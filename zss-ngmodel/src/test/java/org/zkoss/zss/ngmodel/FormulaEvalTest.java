@@ -860,4 +860,47 @@ public class FormulaEvalTest {
 		Assert.assertFalse(expr.hasError());
 		Assert.assertEquals(expected, expr.getFormulaString());
 	}
+	
+	@Test
+	public void testFormulaShift() {
+		FormulaEngine engine = EngineFactory.getInstance().createFormulaEngine();
+		NBook book1 = NBooks.createBook("Book1");
+		NSheet sheetA = book1.createSheet("SheetA");
+		
+		String f = "SUM(B2,B3:C4,Sheet1!B5:D7,Sheet2:Sheet3!B8:E11,[Book2.xlsx]Sheet1!E11:G13)";
+		// no shift
+		testFormulaShift(engine, sheetA, f, 0, 0, f);
+		// row
+		testFormulaShift(engine, sheetA, f, -1, 0, "SUM(B1,B2:C3,Sheet1!B4:D6,Sheet2:Sheet3!B7:E10,[Book2.xlsx]Sheet1!E10:G12)");
+		testFormulaShift(engine, sheetA, f, 1, 0, "SUM(B3,B4:C5,Sheet1!B6:D8,Sheet2:Sheet3!B9:E12,[Book2.xlsx]Sheet1!E12:G14)");
+		testFormulaShift(engine, sheetA, f, 2, 0, "SUM(B4,B5:C6,Sheet1!B7:D9,Sheet2:Sheet3!B10:E13,[Book2.xlsx]Sheet1!E13:G15)");
+		// column
+		testFormulaShift(engine, sheetA, f, 0, -1, "SUM(A2,A3:B4,Sheet1!A5:C7,Sheet2:Sheet3!A8:D11,[Book2.xlsx]Sheet1!D11:F13)");
+		testFormulaShift(engine, sheetA, f, 0, 1, "SUM(C2,C3:D4,Sheet1!C5:E7,Sheet2:Sheet3!C8:F11,[Book2.xlsx]Sheet1!F11:H13)");
+		testFormulaShift(engine, sheetA, f, 0, 2, "SUM(D2,D3:E4,Sheet1!D5:F7,Sheet2:Sheet3!D8:G11,[Book2.xlsx]Sheet1!G11:I13)");
+		// both
+		testFormulaShift(engine, sheetA, f, -1, -1, "SUM(A1,A2:B3,Sheet1!A4:C6,Sheet2:Sheet3!A7:D10,[Book2.xlsx]Sheet1!D10:F12)");
+		testFormulaShift(engine, sheetA, f, 1, 2, "SUM(D3,D4:E5,Sheet1!D6:F8,Sheet2:Sheet3!D9:G12,[Book2.xlsx]Sheet1!G12:I14)");
+		testFormulaShift(engine, sheetA, f, 2, 1, "SUM(C4,C5:D6,Sheet1!C7:E9,Sheet2:Sheet3!C10:F13,[Book2.xlsx]Sheet1!F13:H15)");
+		// out of bounds
+		testFormulaShift(engine, sheetA, f, -2, 0, "SUM(#REF!,B1:C2,Sheet1!B3:D5,Sheet2:Sheet3!B6:E9,[Book2.xlsx]Sheet1!E9:G11)");
+		testFormulaShift(engine, sheetA, f, 0, -2, "SUM(#REF!,#REF!,Sheet1!#REF!,Sheet2:Sheet3!#REF!,[Book2.xlsx]Sheet1!C11:E13)");
+		testFormulaShift(engine, sheetA, f, -2, -2, "SUM(#REF!,#REF!,Sheet1!#REF!,Sheet2:Sheet3!#REF!,[Book2.xlsx]Sheet1!C9:E11)");
+		testFormulaShift(engine, sheetA, f, book1.getMaxRowSize() - 10, 0, "SUM(B1048568,B1048569:C1048570,Sheet1!B1048571:D1048573,Sheet2:Sheet3!#REF!,[Book2.xlsx]Sheet1!#REF!)");
+		testFormulaShift(engine, sheetA, f, 0, book1.getMaxColumnSize() - 4, "SUM(XFB2,XFB3:XFC4,Sheet1!XFB5:XFD7,Sheet2:Sheet3!#REF!,[Book2.xlsx]Sheet1!#REF!)");
+		
+		// absolute
+		testFormulaShift(engine, sheetA, "SUM(B2,B$2,$B2,$B$2)", 1, 1, "SUM(C3,C$2,$B3,$B$2)"); // ref
+		testFormulaShift(engine, sheetA, "SUM(B2:C3,$B2:C3,B$2:C3,B2:$C3,B2:C$3,$B$2:C3,B2:$C$3,$B2:$C3,B$2:C$3,B$2:$C3,$B$2:$C3,$B$2:C$3,$B2:$C$3,B$2:$C$3,$B$2:$C$3)",
+				1, 1, "SUM(C3:D4,$B3:D4,C$2:D4,C3:$C4,C3:D$3,$B$2:D4,C3:$C$3,$B3:$C4,C$2:D$3,C$2:$C4,$B$2:$C4,$B$2:D$3,$B3:$C$3,C$2:$C$3,$B$2:$C$3)"); // area
+		testFormulaShift(engine, sheetA, "SUM($B2,B$3:C4,Sheet1!B5:$D7,Sheet2!B8:E$11,[Book2.xlsx]Sheet1!$E11:G$13)", 
+				1, 1, "SUM($B3,C$3:D5,Sheet1!C6:$D8,Sheet2!C9:F$11,[Book2.xlsx]Sheet1!$E12:H$13)");
+	}
+	
+	private void testFormulaShift(FormulaEngine engine, NSheet sheet, String formula, int rowOffset, int columnOffset, String expected) {
+		FormulaParseContext context = new FormulaParseContext(sheet, null);
+		FormulaExpression expr = engine.shift(formula, rowOffset, columnOffset, context);
+		Assert.assertFalse(expr.hasError());
+		Assert.assertEquals(expected, expr.getFormulaString());
+	}
 }

@@ -261,9 +261,9 @@ public class BookImpl extends AbstractBookAdv{
 			throw new InvalidateModelOpException("sheet name '"+name+"' is not legal");
 		}
 		if(getSheetByName(name)!=null){
-			throw new InvalidateModelOpException("sheet name '"+name+"' is dpulicated");
+			throw new InvalidateModelOpException("sheet name '"+name+"' is duplicated");
 		}
-		//TODO
+		//TODO zss 3.5
 	}
 	
 	private void checkLegalNameName(String name,String sheetName) {
@@ -276,7 +276,7 @@ public class BookImpl extends AbstractBookAdv{
 		if(sheetName!=null && getSheetByName(sheetName)==null){
 			throw new InvalidateModelOpException("no such sheet "+sheetName);
 		}
-		//TODO
+		//TODO zss 3.5
 	}
 
 	@Override

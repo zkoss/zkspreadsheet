@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import org.zkoss.poi.ss.formula.CollaboratingWorkbooksEnvironment;
 import org.zkoss.poi.ss.formula.DependencyTracker;
 import org.zkoss.poi.ss.formula.EvaluationCell;
@@ -47,12 +46,14 @@ import org.zkoss.poi.ss.formula.eval.ValueEval;
 import org.zkoss.poi.ss.formula.eval.ValuesEval;
 import org.zkoss.poi.ss.formula.ptg.Area3DPtg;
 import org.zkoss.poi.ss.formula.ptg.AreaPtg;
+import org.zkoss.poi.ss.formula.ptg.AreaPtgBase;
 import org.zkoss.poi.ss.formula.ptg.FuncPtg;
 import org.zkoss.poi.ss.formula.ptg.NamePtg;
 import org.zkoss.poi.ss.formula.ptg.NameXPtg;
 import org.zkoss.poi.ss.formula.ptg.Ptg;
 import org.zkoss.poi.ss.formula.ptg.Ref3DPtg;
 import org.zkoss.poi.ss.formula.ptg.RefPtg;
+import org.zkoss.poi.ss.formula.ptg.RefPtgBase;
 import org.zkoss.poi.ss.formula.udf.UDFFinder;
 import org.zkoss.poi.xssf.model.IndexedUDFFinder;
 import org.zkoss.xel.FunctionMapper;
@@ -577,7 +578,7 @@ public class FormulaEngineImpl implements FormulaEngine {
 			int sheetIndex = parsingBook.getExternalSheetIndex(null, sheetName); // create index according parsing book logic
 			Ptg[] tokens = FormulaParser.parse(formula, parsingBook, FormulaType.CELL, sheetIndex); // current sheet index in parsing is always 0
 
-			// shift formula, limit to bound if dest. is out; if first and last both out on bound, it will be "#REF!"
+			// move formula, limit to bound if dest. is out; if first and last both out on bound, it will be "#REF!"
 			String regionBookName = region.getSheet().getBook().getBookName();
 			String regionSheetName = region.getSheet().getSheetName();
 			int regionSheetIndex;
@@ -589,10 +590,10 @@ public class FormulaEngineImpl implements FormulaEngine {
 			PtgShifter shifter = new PtgShifter(regionSheetIndex, region.getRow(), region.getLastRow(),
 					rowOffset, region.getColumn(), region.getLastColumn(), columnOffset,
 					parsingBook.getSpreadsheetVersion());
-			boolean shifted = shifter.adjustFormula(tokens, sheetIndex);
+			boolean moved = shifter.adjustFormula(tokens, sheetIndex);
 
 			// render formula, detect region and create result
-			String renderedFormula = shifted ? FormulaRenderer.toFormulaString(parsingBook, tokens) : formula;
+			String renderedFormula = moved ? FormulaRenderer.toFormulaString(parsingBook, tokens) : formula;
 			Ref singleRef = tokens.length == 1 ? toDenpendRef(context, parsingBook, tokens[0]) : null;
 			expr = new FormulaExpressionImpl(renderedFormula, singleRef, false);
 
@@ -672,8 +673,71 @@ public class FormulaEngineImpl implements FormulaEngine {
 	@Override
 	public FormulaExpression shift(String formula, int rowOffset,
 			int columnOffset, FormulaParseContext context) {
-		// TODO zss 3.5
-		return new FormulaExpressionImpl(formula, null, true);
+		
+		FormulaExpression expr = null;
+		try {
+			// adapt and parse
+			NBook book = context.getBook();
+			ParsingBook parsingBook = new ParsingBook(book);
+			String sheetName = context.getSheet().getSheetName();
+			int sheetIndex = parsingBook.getExternalSheetIndex(null, sheetName); // create index according parsing book logic
+			Ptg[] tokens = FormulaParser.parse(formula, parsingBook, FormulaType.CELL, sheetIndex); // current sheet index in parsing is always 0
+
+			// simply shift every PTG and no need to consider sheet index
+			if(rowOffset != 0 || columnOffset != 0) { // shift formula only if necessary
+				for(int i = 0; i < tokens.length; ++i) {
+					Ptg ptg = tokens[i];
+					if(ptg instanceof RefPtgBase) {
+						RefPtgBase rptg = (RefPtgBase)ptg;
+						// calculate offset
+						int r = rptg.getRow() + (rptg.isRowRelative() ? rowOffset : 0);
+						int c = rptg.getColumn() + (rptg.isColRelative() ? columnOffset : 0);
+						// if reference is out of bounds, convert it to #REF
+						if(isValidRowIndex(book, r) && isValidColumnIndex(book, c)) {
+							rptg.setRow(r);
+							rptg.setColumn(c);
+						} else {
+							tokens[i] = PtgShifter.createDeletedRef(rptg);
+						}
+					} else if(ptg instanceof AreaPtgBase) {
+						AreaPtgBase aptg = (AreaPtgBase)ptg;
+						// shift
+						int r0 = aptg.getFirstRow() + (aptg.isFirstRowRelative() ? rowOffset : 0);
+						int r1 = aptg.getLastRow() + (aptg.isLastRowRelative() ? rowOffset : 0);
+						int c0 = aptg.getFirstColumn() + (aptg.isFirstColRelative() ? columnOffset : 0);
+						int c1 = aptg.getLastColumn() + (aptg.isLastColRelative() ? columnOffset : 0);
+						// if reference is out of bounds, convert it to #REF
+						if(isValidRowIndex(book, r0) && isValidRowIndex(book, r1)
+								&& isValidColumnIndex(book, c0) && isValidColumnIndex(book, c1)) {
+							aptg.setFirstRow(Math.min(r0, r1));
+							aptg.setLastRow(Math.max(r0, r1));
+							aptg.setFirstColumn(Math.min(c0, c1));
+							aptg.setLastColumn(Math.max(c0, c1));
+						} else {
+							tokens[i] = PtgShifter.createDeletedRef(aptg);
+						}
+					}
+				}
+			}
+
+			// render formula, detect region and create result
+			String renderedFormula = FormulaRenderer.toFormulaString(parsingBook, tokens);
+			Ref singleRef = tokens.length == 1 ? toDenpendRef(context, parsingBook, tokens[0]) : null;
+			expr = new FormulaExpressionImpl(renderedFormula, singleRef, false);
+
+		} catch(FormulaParseException e) {
+			logger.log(Level.INFO, e.getMessage());
+			expr = new FormulaExpressionImpl(formula, null, true);
+		}
+		return expr;
+	}
+	
+	private boolean isValidRowIndex(NBook book, int rowIndex) {
+		return 0 <= rowIndex && rowIndex <= book.getMaxRowIndex();
+	}
+	
+	private boolean isValidColumnIndex(NBook book, int columnIndex) {
+		return 0 <= columnIndex && columnIndex <= book.getMaxColumnIndex();
 	}
 
 	@Override
