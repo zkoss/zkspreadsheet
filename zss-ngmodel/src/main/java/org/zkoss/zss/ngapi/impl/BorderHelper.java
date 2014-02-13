@@ -97,12 +97,26 @@ public class BorderHelper extends RangeHelperBase {
 			String borderColor, short location) {
 		//ignore when RIGHT or BOTTOM
 		//right and bottom border
-		short at = StyleUtil.BORDER_EDGE_RIGHT | StyleUtil.BORDER_EDGE_BOTTOM;
+		short at = StyleUtil.BORDER_EDGE_LEFT | StyleUtil.BORDER_EDGE_TOP | StyleUtil.BORDER_EDGE_RIGHT | StyleUtil.BORDER_EDGE_BOTTOM;
+		//top border when top
+		if((location&TOP)!=0){
+			resetBorderBottom(sheet,r-1,c,lineStyle,borderColor);
+			at -= StyleUtil.BORDER_EDGE_TOP;
+		}
+		//left border when left
+		if((location&LEFT)!=0){
+			resetBorderRight(sheet,r,c-1,lineStyle,borderColor);
+			at -= StyleUtil.BORDER_EDGE_LEFT;
+		}
 		
+		//right and bottom border
 		if((location&BOTTOM)!=0){
+			resetBorderTop(sheet,r+1,c,lineStyle,borderColor);
 			at -= StyleUtil.BORDER_EDGE_BOTTOM;
+			
 		}
 		if((location&RIGHT)!=0){
+			resetBorderLeft(sheet,r,c+1,lineStyle,borderColor);
 			at -= StyleUtil.BORDER_EDGE_RIGHT;
 		}
 		
@@ -114,10 +128,13 @@ public class BorderHelper extends RangeHelperBase {
 			String borderColor, short location) {
 		//ignore when RIGHT or BOTTOM
 		//right border
-		short at = StyleUtil.BORDER_EDGE_RIGHT;
-
+		short at = StyleUtil.BORDER_EDGE_LEFT | StyleUtil.BORDER_EDGE_RIGHT;
+		
+		if((location&LEFT)!=0){
+			at -= StyleUtil.BORDER_EDGE_LEFT;
+		}
 		if((location&RIGHT)!=0){
-			return;
+			at -= StyleUtil.BORDER_EDGE_RIGHT;
 		}
 		
 		StyleUtil.setBorder(sheet, r, c, borderColor, lineStyle,at);
@@ -128,10 +145,13 @@ public class BorderHelper extends RangeHelperBase {
 		//ignore when RIGHT or BOTTOM
 		//bottom border
 			
-		short at = StyleUtil.BORDER_EDGE_BOTTOM;
+		short at = StyleUtil.BORDER_EDGE_BOTTOM | StyleUtil.BORDER_EDGE_TOP;
 		
 		if((location&BOTTOM)!=0){
-			return;
+			at -= StyleUtil.BORDER_EDGE_BOTTOM;
+		}
+		if((location&TOP)!=0){
+			at -= StyleUtil.BORDER_EDGE_TOP;
 		}
 		
 		StyleUtil.setBorder(sheet, r, c, borderColor, lineStyle,at);
@@ -207,12 +227,10 @@ public class BorderHelper extends RangeHelperBase {
 		//top border when top
 		if((location&TOP)!=0){
 			resetBorderBottom(sheet,r-1,c,lineStyle,borderColor);
-			at |= StyleUtil.BORDER_EDGE_TOP;
 		}
 		//left border when left
 		if((location&LEFT)!=0){
 			resetBorderRight(sheet,r,c-1,lineStyle,borderColor);
-			at |= StyleUtil.BORDER_EDGE_LEFT;
 		}
 		
 		//right and bottom border
@@ -223,6 +241,8 @@ public class BorderHelper extends RangeHelperBase {
 		if((location&RIGHT)!=0){
 			resetBorderLeft(sheet,r,c+1,lineStyle,borderColor);
 		}
+		at |= StyleUtil.BORDER_EDGE_LEFT;
+		at |= StyleUtil.BORDER_EDGE_TOP;
 		at |= StyleUtil.BORDER_EDGE_RIGHT;
 		at |= StyleUtil.BORDER_EDGE_BOTTOM;
 		StyleUtil.setBorder(sheet, r, c, borderColor, lineStyle,at);
