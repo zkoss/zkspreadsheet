@@ -71,7 +71,6 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 	protected NBook book;
 	/** source POI book */
 	protected Workbook workbook;
-
 	/**
 	 * Import the model according to reversed dependency order among model
 	 * objects: book, sheet, defined name, cells, chart, pictures, validation.
@@ -317,6 +316,9 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 			String dataFormat = null;
 			if ((dataFormat = BuiltinFormats.getBuiltinFormat(poiCellStyle.getDataFormat())) == null) {
 				dataFormat = poiCellStyle.getDataFormatString();
+			}
+			if(dataFormat==null){//still null
+				dataFormat = NCellStyle.FORMAT_GENERAL;
 			}
 			cellStyle.setDataFormat(dataFormat);
 			cellStyle.setWrapText(poiCellStyle.getWrapText());

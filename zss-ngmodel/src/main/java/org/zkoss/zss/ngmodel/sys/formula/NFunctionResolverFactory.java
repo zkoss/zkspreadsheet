@@ -20,7 +20,7 @@ import org.zkoss.zss.ngmodel.impl.sys.formula.ex.NFunctionResolverEx;
  */
 public class NFunctionResolverFactory {
 
-	private static boolean EE_EDITION = false; // FIXME zss 3.5
+	private static boolean EE_EDITION = true; // FIXME zss 3.5
 
 	private final static NFunctionResolver resolver;
 

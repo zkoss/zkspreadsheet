@@ -210,7 +210,11 @@ public class CellStyleImpl extends AbstractCellStyleAdv {
 
 	@Override
 	public void setDataFormat(String dataFormat) {
-		Validations.argNotNull(dataFormat);
+//		Validations.argNotNull(dataFormat);
+		//set to general if null to compatible with 3.0
+		if(dataFormat==null){
+			dataFormat = FORMAT_GENERAL;
+		}
 		this.dataFormat = dataFormat;
 	}
 
