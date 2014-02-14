@@ -161,7 +161,6 @@ class CellProxy extends AbstractCellAdv {
 
 	@Override
 	public void setCellStyle(NCellStyle cellStyle) {
-		Validations.argNotNull(cellStyle);
 		loadProxy();
 		if (proxy == null) {
 			proxy = (AbstractCellAdv) ((AbstractRowAdv)  ((AbstractSheetAdv)getSheet()).getOrCreateRow(
