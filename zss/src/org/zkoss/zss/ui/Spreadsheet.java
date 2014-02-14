@@ -2141,26 +2141,25 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 					onProtectSheet(event);
 				}
 			});
-			/*TODO zss 3.5
-			addEventListener(SSDataEvent.ON_CHART_ADD, new EventListener() {
+			addEventListener(ModelEvents.ON_CHART_ADD, new ModelEventListener() {
 				@Override
-				public void onEvent(Event event) throws Exception {
-					onChartAdd((SSDataEvent)event);
+				public void onEvent(ModelEvent event) {
+					onChartAdd(event);
 				}
 			});
-			addEventListener(SSDataEvent.ON_CHART_DELETE, new EventListener() {
+			addEventListener(ModelEvents.ON_CHART_DELETE, new ModelEventListener() {
 				@Override
-				public void onEvent(Event event) throws Exception {
-					onChartDelete((SSDataEvent)event);
+				public void onEvent(ModelEvent event) {
+					onChartDelete(event);
 				}
 			});
-			addEventListener(SSDataEvent.ON_CHART_UPDATE, new EventListener() {
+			addEventListener(ModelEvents.ON_CHART_UPDATE, new ModelEventListener() {
 				@Override
-				public void onEvent(Event event) throws Exception {
-					onChartUpdate((SSDataEvent)event);
+				public void onEvent(ModelEvent event) {
+					onChartUpdate(event);
 				}
 			});
-			*/
+			
 			addEventListener(ModelEvents.ON_PICTURE_ADD, new ModelEventListener() {
 				@Override
 				public void onEvent(ModelEvent event){
@@ -2272,25 +2271,24 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			}
 			
 		}
-		/*TODO zss 3.5
-		private void onChartAdd(SSDataEvent event) {
-			final Ref rng = event.getRef();
-			final XSheet sheet = getSheet(rng);
-			final Object payload = event.getPayload();
-			addChartWidget(sheet, (ZssChartX) payload);
+		private void onChartAdd(ModelEvent event) {
+			final NSheet sheet = event.getSheet();
+			final NChart chart = sheet.getChart(event.getObjectId());
+			if (chart !=null){
+				addChartWidget(sheet, chart);
+			}
 		}
-		private void onChartDelete(SSDataEvent event) {
-			final Ref rng = event.getRef();
-			final XSheet sheet = getSheet(rng);
-			final Object payload = event.getPayload();
-			deleteChartWidget(sheet, (String) payload);
+		private void onChartDelete(ModelEvent event) {
+			final NSheet sheet = event.getSheet();
+			deleteChartWidget(sheet, event.getObjectId());
 		}
-		private void onChartUpdate(SSDataEvent event) {
-			final Ref rng = event.getRef();
-			final XSheet sheet = getSheet(rng);
-			final Object payload = event.getPayload();
-			updateChartWidget(sheet, (ZssChartX) payload);
-		} */
+		private void onChartUpdate(ModelEvent event) {
+			final NSheet sheet = event.getSheet();
+			final NChart chart = sheet.getChart(event.getObjectId());
+			if (chart !=null){
+				updateChartWidget(sheet, chart);
+			}
+		} 
 		private void onPictureAdd(ModelEvent event) {
 			final NSheet sheet = event.getSheet();
 			
