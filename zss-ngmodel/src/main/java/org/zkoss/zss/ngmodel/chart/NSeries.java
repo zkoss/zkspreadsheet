@@ -26,6 +26,8 @@ public interface NSeries extends FormulaContent{
 
 	public String getName();
 	
+	public String getId();
+	
 	public int getNumOfValue();
 	public Object getValue(int index);
 	

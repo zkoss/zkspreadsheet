@@ -52,4 +52,9 @@ import org.zkoss.zss.ngmodel.sys.dependency.Ref;
 			collector.addMergeChange(sheet,original,changeTo);
 		}
 	}
+
+	public static void addDepednentUpdate(NSheet sheet, Ref dependent) {
+		DependentUpdateCollector collector = DependentUpdateCollector.getCurrent();
+		collector.addDependent(dependent);
+	}
 }

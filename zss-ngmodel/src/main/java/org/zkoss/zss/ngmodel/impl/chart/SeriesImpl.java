@@ -49,7 +49,7 @@ public class SeriesImpl implements NSeries,Serializable,LinkedModelObject{
 	private FormulaExpression zValueExpr;
 	
 	private AbstractChartAdv chart;
-	private String id;
+	private final String id;
 	
 	private Object evalNameResult;
 	private Object evalValuesResult;
@@ -107,6 +107,11 @@ public class SeriesImpl implements NSeries,Serializable,LinkedModelObject{
 	public SeriesImpl(AbstractChartAdv chart,String id){
 		this.chart = chart;
 		this.id = id;
+	}
+	
+	@Override
+	public String getId(){
+		return id;
 	}
 	
 	@Override
