@@ -96,8 +96,12 @@ public class SheetRegion implements Serializable{
 	}
 	
 	public String getReferenceString(){
-		return new AreaReference(new CellReference(sheet.getSheetName(),region.getRow(), region.getColumn(),false,false), 
+		if(region.isSingle()){
+			return new CellReference(sheet.getSheetName(),region.getRow(), region.getColumn(),false,false).formatAsString();
+		}else{
+			return new AreaReference(new CellReference(sheet.getSheetName(),region.getRow(), region.getColumn(),false,false), 
 				new CellReference(sheet.getSheetName(), region.getLastRow(),region.getLastColumn(),false,false)).formatAsString();
+		}
 	}
 	
 }

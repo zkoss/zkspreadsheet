@@ -7,6 +7,7 @@ import org.zkoss.zss.ngmodel.*;
 import org.zkoss.zss.ngmodel.NAutoFilter.FilterOp;
 import org.zkoss.zss.ngmodel.NCellStyle.BorderType;
 import org.zkoss.zss.ngmodel.NChart.NChartGrouping;
+import org.zkoss.zss.ngmodel.NChart.NChartLegendPosition;
 import org.zkoss.zss.ngmodel.NChart.NChartType;
 import org.zkoss.zss.ngmodel.NHyperlink.HyperlinkType;
 import org.zkoss.zss.ngmodel.NPicture.Format;
@@ -395,7 +396,7 @@ import org.zkoss.zss.ngmodel.chart.NChartData;
 		return null;
 	}
 	
-	public NChart addChart(NViewAnchor anchor, NChartData data, NChartType type, NChartGrouping grouping, org.zkoss.zss.ngmodel.NChart.NChartLegendPosition pos) {
+	public NChart addChart(NViewAnchor anchor, NChartData data, NChartType type, NChartGrouping grouping, NChartLegendPosition pos) {
 		return null;
 	};
 	
