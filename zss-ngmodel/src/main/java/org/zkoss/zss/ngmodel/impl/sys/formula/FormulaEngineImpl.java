@@ -128,10 +128,10 @@ public class FormulaEngineImpl implements FormulaEngine {
 			// render formula, detect region and create result
 			String renderedFormula = renderFormula(parsingBook, formula, tokens);
 			Ref singleRef = tokens.length == 1 ? toDenpendRef(context, parsingBook, tokens[0]) : null;
-			expr = new FormulaExpressionImpl(renderedFormula, singleRef, false);
+			expr = new FormulaExpressionImpl(renderedFormula, singleRef);
 		} catch(FormulaParseException e) {
 			logger.log(Level.INFO, e.getMessage());
-			expr = new FormulaExpressionImpl(formula, null, true);
+			expr = new FormulaExpressionImpl(formula, null, true,e.getMessage());
 		}
 		return expr;
 	}
@@ -265,15 +265,15 @@ public class FormulaEngineImpl implements FormulaEngine {
 
 		} catch(NotImplementedException e) {
 			logger.log(Level.INFO, e.getMessage() + " when eval " + expr.getFormulaString());
-			result = new EvaluationResultImpl(ResultType.ERROR, new ErrorValue(ErrorValue.INVALID_NAME));
+			result = new EvaluationResultImpl(ResultType.ERROR, new ErrorValue(ErrorValue.INVALID_NAME, e.getMessage()));
 		} catch(FormulaParseException e) {
 			// we skip evaluation if formula has parsing error
 			// so if still occurring formula parsing exception, it should be a bug 
 			logger.log(Level.SEVERE, e.getMessage() + " when eval " + expr.getFormulaString());
-			result = new EvaluationResultImpl(ResultType.ERROR, new ErrorValue(ErrorValue.INVALID_FORMULA));
+			result = new EvaluationResultImpl(ResultType.ERROR, new ErrorValue(ErrorValue.INVALID_FORMULA, e.getMessage()));
 		} catch(Exception e) {
 			logger.log(Level.SEVERE, e.getMessage() + " when eval " + expr.getFormulaString(), e);
-			result = new EvaluationResultImpl(ResultType.ERROR, new ErrorValue(ErrorValue.INVALID_FORMULA));
+			result = new EvaluationResultImpl(ResultType.ERROR, new ErrorValue(ErrorValue.INVALID_FORMULA, e.getMessage()));
 		}
 		return result;
 	}
@@ -441,19 +441,29 @@ public class FormulaEngineImpl implements FormulaEngine {
 		private String formula;
 		private Ref ref;
 		private boolean error;
+		private String errorMessage;
 
 		/**
 		 * @param ref resolved reference if formula has only one parsed token
 		 */
-		public FormulaExpressionImpl(String formula, Ref ref, boolean error) {
+		public FormulaExpressionImpl(String formula, Ref ref) {
+			this(formula,ref,false,null);
+		}
+		public FormulaExpressionImpl(String formula, Ref ref, boolean error, String errorMessage) {
 			this.formula = formula;
 			this.ref = ref;
 			this.error = error;
+			this.errorMessage = errorMessage;
 		}
 
 		@Override
 		public boolean hasError() {
 			return error;
+		}
+		
+		@Override
+		public String getErrorMessage(){
+			return errorMessage;
 		}
 
 		@Override
@@ -564,7 +574,7 @@ public class FormulaEngineImpl implements FormulaEngine {
 	@Override
 	public FormulaExpression renameSheet(String formula, String oldName, String newName, FormulaParseContext context) {
 		// TODO zss 3.5
-		return new FormulaExpressionImpl(formula, null, true);
+		return new FormulaExpressionImpl(formula, null);
 	}
 	
 	@Override
@@ -595,11 +605,11 @@ public class FormulaEngineImpl implements FormulaEngine {
 			// render formula, detect region and create result
 			String renderedFormula = moved ? FormulaRenderer.toFormulaString(parsingBook, tokens) : formula;
 			Ref singleRef = tokens.length == 1 ? toDenpendRef(context, parsingBook, tokens[0]) : null;
-			expr = new FormulaExpressionImpl(renderedFormula, singleRef, false);
+			expr = new FormulaExpressionImpl(renderedFormula, singleRef);
 
 		} catch(FormulaParseException e) {
 			logger.log(Level.INFO, e.getMessage());
-			expr = new FormulaExpressionImpl(formula, null, true);
+			expr = new FormulaExpressionImpl(formula, null);
 		}
 		return expr;
 	}
@@ -722,11 +732,11 @@ public class FormulaEngineImpl implements FormulaEngine {
 			// render formula, detect region and create result
 			String renderedFormula = FormulaRenderer.toFormulaString(parsingBook, tokens);
 			Ref singleRef = tokens.length == 1 ? toDenpendRef(context, parsingBook, tokens[0]) : null;
-			expr = new FormulaExpressionImpl(renderedFormula, singleRef, false);
+			expr = new FormulaExpressionImpl(renderedFormula, singleRef);
 
 		} catch(FormulaParseException e) {
 			logger.log(Level.INFO, e.getMessage());
-			expr = new FormulaExpressionImpl(formula, null, true);
+			expr = new FormulaExpressionImpl(formula, null, true, e.getMessage());
 		}
 		return expr;
 	}
@@ -816,11 +826,11 @@ public class FormulaEngineImpl implements FormulaEngine {
 			// render formula, detect region and create result
 			String renderedFormula = FormulaRenderer.toFormulaString(parsingBook, tokens);
 			Ref singleRef = tokens.length == 1 ? toDenpendRef(context, parsingBook, tokens[0]) : null;
-			expr = new FormulaExpressionImpl(renderedFormula, singleRef, false);
+			expr = new FormulaExpressionImpl(renderedFormula, singleRef);
 
 		} catch(FormulaParseException e) {
 			logger.log(Level.INFO, e.getMessage());
-			expr = new FormulaExpressionImpl(formula, null, true);
+			expr = new FormulaExpressionImpl(formula, null, true, e.getMessage());
 		}
 		return expr;
 	}

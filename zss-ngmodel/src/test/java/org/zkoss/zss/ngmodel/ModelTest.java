@@ -1685,13 +1685,15 @@ public class ModelTest {
 		Assert.assertEquals("SUM(999)", cell.getFormulaValue());
 		Assert.assertEquals(999D, cell.getValue());
 		
-		
-		cell.setValue("=)))(999)");
-		Assert.assertEquals(CellType.FORMULA, cell.getType());
-		Assert.assertEquals(CellType.ERROR, cell.getFormulaResultType());
-		Assert.assertEquals(")))(999)", cell.getFormulaValue());
-		Assert.assertTrue(cell.isFormulaParsingError());
-		Assert.assertEquals(ErrorValue.INVALID_FORMULA, cell.getErrorValue().getCode());
+		try{
+			cell.setValue("=)))(999)");
+			Assert.fail("not here");
+		}catch(InvalidateModelOpException x){
+			Assert.assertEquals(CellType.FORMULA, cell.getType());
+			Assert.assertEquals(CellType.NUMBER, cell.getFormulaResultType());
+			Assert.assertEquals("SUM(999)", cell.getFormulaValue());
+			Assert.assertEquals(999D, cell.getValue());
+		}
 		
 		cell.clearValue();
 		Assert.assertEquals(CellType.BLANK, cell.getType());
@@ -1818,24 +1820,18 @@ public class ModelTest {
 			Assert.fail();
 		}catch(IllegalStateException x){}
 		
-		
-		cell.setFormulaValue("[(999)");
-		Assert.assertEquals(CellType.FORMULA, cell.getType());
-		Assert.assertEquals(CellType.ERROR, cell.getFormulaResultType());
-		Assert.assertEquals("[(999)", cell.getFormulaValue());
-		Assert.assertNotNull(cell.getErrorValue());
-		System.out.println(">>>>"+cell.getErrorValue().getMessage());
+		try{
+			cell.setFormulaValue("[(999)");
+			Assert.fail("not here");
+		}catch(InvalidateModelOpException x){
+			Assert.assertEquals(CellType.FORMULA, cell.getType());
+			Assert.assertEquals(CellType.NUMBER, cell.getFormulaResultType());
+			Assert.assertEquals("SUM(999)", cell.getFormulaValue());
+			Assert.assertEquals(999D, cell.getNumberValue());
+		}
 		
 		try{
 			cell.getStringValue();
-			Assert.fail();
-		}catch(IllegalStateException x){}
-		try{
-			cell.getNumberValue();
-			Assert.fail();
-		}catch(IllegalStateException x){}
-		try{
-			cell.getDateValue();
 			Assert.fail();
 		}catch(IllegalStateException x){}
 		

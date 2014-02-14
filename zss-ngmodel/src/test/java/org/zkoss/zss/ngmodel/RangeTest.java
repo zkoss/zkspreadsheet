@@ -98,12 +98,17 @@ public class RangeTest {
 		Assert.assertEquals("SUM(999)", cell.getFormulaValue());
 		Assert.assertEquals(999D, cell.getValue());
 		
-		NRanges.range(sheet,1,1).setEditText("=SUM)((999)");
-		Assert.assertEquals(CellType.FORMULA, cell.getType());
-		Assert.assertEquals(CellType.ERROR, cell.getFormulaResultType());
-		Assert.assertEquals("SUM)((999)", cell.getFormulaValue());
-		Assert.assertTrue(cell.getValue() instanceof ErrorValue);
-		
+		try{
+			NRanges.range(sheet,1,1).setEditText("=SUM)((999)");
+			Assert.fail("not here");
+		}catch(InvalidateModelOpException x){
+			//old value
+			Assert.assertEquals(CellType.FORMULA, cell.getType());
+			Assert.assertEquals(CellType.NUMBER, cell.getFormulaResultType());
+			Assert.assertEquals("SUM(999)", cell.getFormulaValue());
+			Assert.assertEquals(999D, cell.getValue());
+		}
+
 		NRanges.range(sheet,1,1).setEditText("");
 		Assert.assertEquals(CellType.STRING, cell.getType());
 		Assert.assertEquals("",cell.getValue());		
@@ -145,11 +150,15 @@ public class RangeTest {
 		Assert.assertEquals("SUM(999)", cell.getFormulaValue());
 		Assert.assertEquals(999D, cell.getValue());
 		
-		NRanges.range(sheet,1,1).setValue("=SUM)((999)");
-		Assert.assertEquals(CellType.FORMULA, cell.getType());
-		Assert.assertEquals(CellType.ERROR, cell.getFormulaResultType());
-		Assert.assertEquals("SUM)((999)", cell.getFormulaValue());
-		Assert.assertTrue(cell.getValue() instanceof ErrorValue);
+		try{
+			NRanges.range(sheet,1,1).setValue("=SUM)((999)");
+			Assert.fail("not here");
+		}catch(InvalidateModelOpException x){
+			Assert.assertEquals(CellType.FORMULA, cell.getType());
+			Assert.assertEquals(CellType.NUMBER, cell.getFormulaResultType());
+			Assert.assertEquals("SUM(999)", cell.getFormulaValue());
+			Assert.assertEquals(999D, cell.getValue());
+		}
 		
 		NRanges.range(sheet,1,1).setValue("");
 		Assert.assertEquals(CellType.STRING, cell.getType());

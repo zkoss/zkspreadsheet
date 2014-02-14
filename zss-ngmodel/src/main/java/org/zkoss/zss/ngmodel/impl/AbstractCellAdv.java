@@ -23,6 +23,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.zkoss.zss.ngmodel.ErrorValue;
+import org.zkoss.zss.ngmodel.InvalidateModelOpException;
 import org.zkoss.zss.ngmodel.NCell;
 import org.zkoss.zss.ngmodel.NCellStyle;
 import org.zkoss.zss.ngmodel.NComment;
@@ -168,18 +169,20 @@ public abstract class AbstractCellAdv implements NCell,LinkedModelObject,Seriali
 	public void setFormulaValue(String formula) {
 		checkOrphan();
 		Validations.argNotNull(formula);
-		//for a formula, we should clear it's value before paring/create new dependency)
-		String oldFormula = null;
+		FormulaEngine fe = EngineFactory.getInstance().createFormulaEngine();
+		FormulaExpression expr = fe.parse(formula, new FormulaParseContext(this,null));//for test error, no need to build dependency
+		if(expr.hasError()){	
+			String msg = expr.getErrorMessage();
+			throw new InvalidateModelOpException(msg==null?"The formula contains error":msg);
+		}
+		
 		if(getType()==CellType.FORMULA){
 			clearValueForSet(true);
 		}
 		
-		//this will create new dependency
-		FormulaEngine fe = EngineFactory.getInstance().createFormulaEngine();
-		FormulaExpression expr = fe.parse(formula, new FormulaParseContext(this ,getRef()));
+		//parse again, this will create new dependency
+		expr = fe.parse(formula, new FormulaParseContext(this ,getRef()));
 		setValue(expr);
-		//TODO what if get exception when set value form data grid? 
-		//show we rollback the old dependency? (we called clearValueForSet(true); to clear old dependency)
 	}
 
 	@Override

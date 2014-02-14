@@ -24,6 +24,7 @@ import java.util.concurrent.locks.ReadWriteLock;
 import org.zkoss.poi.ss.usermodel.*;
 import org.zkoss.poi.ss.util.CellRangeAddress;
 import org.zkoss.zss.ngmodel.*;
+import org.zkoss.zss.ngmodel.NCell.CellType;
 import org.zkoss.zss.ngmodel.NRichText.Segment;
 
 /**
@@ -210,16 +211,23 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 			poiCell.setCellType(Cell.CELL_TYPE_BLANK);
 			break;
 		case ERROR:
-			poiCell.setCellType(Cell.CELL_TYPE_ERROR);
-			poiCell.setCellErrorValue(cell.getErrorValue().getCode());
+			//ignore the value of this cell, excel doesn't allow it invalid formula (pasring error).
+			if(cell.getErrorValue().getCode() != ErrorValue.INVALID_FORMULA){
+				poiCell.setCellType(Cell.CELL_TYPE_ERROR);
+				poiCell.setCellErrorValue(cell.getErrorValue().getCode());
+			}
 			break;
 		case BOOLEAN:
 			poiCell.setCellType(Cell.CELL_TYPE_BOOLEAN);
 			poiCell.setCellValue(cell.getBooleanValue());
 			break;
 		case FORMULA:
-			poiCell.setCellType(Cell.CELL_TYPE_FORMULA);
-			poiCell.setCellFormula(cell.getFormulaValue());
+			if(cell.getFormulaResultType()==CellType.ERROR && cell.getErrorValue().getCode() != ErrorValue.INVALID_FORMULA){
+				//ignore the value of this cell, excel doesn't allow it invalid formula (pasring error).
+			}else{
+				poiCell.setCellType(Cell.CELL_TYPE_FORMULA);
+				poiCell.setCellFormula(cell.getFormulaValue());
+			}
 			break;
 		case NUMBER:
 			poiCell.setCellType(Cell.CELL_TYPE_NUMERIC);

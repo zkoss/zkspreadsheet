@@ -31,6 +31,12 @@ public interface FormulaExpression {
 	 */
 	boolean hasError();
 	
+	/**
+	 * Get the expression parsing error message if any
+	 * @return
+	 */
+	String getErrorMessage();
+	
 	String getFormulaString();
 	
 //	String reformSheetNameChanged(String oldName,String newName);
