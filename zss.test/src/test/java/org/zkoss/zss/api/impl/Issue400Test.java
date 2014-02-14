@@ -650,7 +650,7 @@ public class Issue400Test {
 		Assert.assertEquals(column, sheet.getColumnFreeze());
 		
 		Assert.assertEquals(0, sheet.getInternalSheet().getStartRowIndex());
-		Assert.assertEquals(0, sheet.getInternalSheet().getStartColumnIndex());
+		Assert.assertEquals(-1, sheet.getInternalSheet().getStartColumnIndex());//in new 3.5, it is -1 if no column is configured.
 		
 		File temp = Setup.getTempFile();
 		//export first time
@@ -663,7 +663,7 @@ public class Issue400Test {
 		Assert.assertEquals(row, sheet.getRowFreeze());
 		Assert.assertEquals(column, sheet.getColumnFreeze());
 		Assert.assertEquals(0, sheet.getInternalSheet().getStartRowIndex());
-		Assert.assertEquals(0, sheet.getInternalSheet().getStartColumnIndex());
+		Assert.assertEquals(-1, sheet.getInternalSheet().getStartColumnIndex());
 		
 		//TODO how to verify it in Excel?
 	}

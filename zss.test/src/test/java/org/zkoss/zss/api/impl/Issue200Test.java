@@ -848,7 +848,7 @@ public class Issue200Test {
 		try {
 			Range A1 = Ranges.range(sheet1, "A1");
 			A1.setCellEditText("=ISERR()");
-			assertEquals("#N/A!", A1.getCellData().getFormatText());//should be N/A since excel doesn't allow to input it.
+			assertEquals("#N/A", A1.getCellData().getFormatText());//should be N/A since excel doesn't allow to input it.
 		} catch(IllegalFormulaException e) {
 			return;
 		}

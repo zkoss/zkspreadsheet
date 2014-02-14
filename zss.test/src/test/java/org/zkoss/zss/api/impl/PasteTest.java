@@ -9,6 +9,7 @@ import java.util.Locale;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.zkoss.poi.ss.usermodel.ZssContext;
 import org.zkoss.zss.AssertUtil;
@@ -56,12 +57,14 @@ public class PasteTest {
 		Setup.popZssLocale();
 	}
 	
+	@Ignore("in 3.5 we allow to do it")
 	@Test(expected = IllegalOpArgumentException.class)
 	public void testTransposePasteOverlap2007() throws IOException {
 		Book book = Util.loadBook(this,"book/pasteTest.xlsx");
 		testTransposePasteOverlap0(book);
 	}
 	
+	@Ignore("in 3.5 we allow to do it")
 	@Test(expected = IllegalOpArgumentException.class)
 	public void testTransposePasteOverlap2003() throws IOException {
 		Book book = Util.loadBook(this,"book/pasteTest.xls");
