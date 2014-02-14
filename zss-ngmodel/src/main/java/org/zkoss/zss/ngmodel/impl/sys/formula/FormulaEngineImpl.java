@@ -577,41 +577,61 @@ public class FormulaEngineImpl implements FormulaEngine {
 		return new FormulaExpressionImpl(formula, null);
 	}
 	
-	@Override
-	public FormulaExpression move(String formula, SheetRegion region, int rowOffset, int columnOffset, FormulaParseContext context) {
+	/**
+	 * adjust formula through specific adjuster
+	 */
+	private FormulaExpression adjust(String formula, FormulaParseContext context, FormulaAdjuster adjuster) {
 		FormulaExpression expr = null;
 		try {
 			// adapt and parse
 			ParsingBook parsingBook = new ParsingBook(context.getBook());
-			String bookName = context.getBook().getBookName();
 			String sheetName = context.getSheet().getSheetName();
 			int sheetIndex = parsingBook.getExternalSheetIndex(null, sheetName); // create index according parsing book logic
 			Ptg[] tokens = FormulaParser.parse(formula, parsingBook, FormulaType.CELL, sheetIndex); // current sheet index in parsing is always 0
 
-			// move formula, limit to bound if dest. is out; if first and last both out on bound, it will be "#REF!"
-			String regionBookName = region.getSheet().getBook().getBookName();
-			String regionSheetName = region.getSheet().getSheetName();
-			int regionSheetIndex;
-			if(bookName.equals(regionBookName)) { // at same book
-				regionSheetIndex = parsingBook.findExternalSheetIndex(regionSheetName); // find index, DON'T create
-			} else { // different books
-				regionSheetIndex = parsingBook.findExternalSheetIndex(regionBookName, regionSheetName); // find index, DON'T create
-			}
-			PtgShifter shifter = new PtgShifter(regionSheetIndex, region.getRow(), region.getLastRow(),
-					rowOffset, region.getColumn(), region.getLastColumn(), columnOffset,
-					parsingBook.getSpreadsheetVersion());
-			boolean moved = shifter.adjustFormula(tokens, sheetIndex);
-
+			// adjust formula
+			boolean modified = adjuster.process(formula, sheetIndex, tokens, parsingBook, context);
+			
 			// render formula, detect region and create result
-			String renderedFormula = moved ? FormulaRenderer.toFormulaString(parsingBook, tokens) : formula;
+			String renderedFormula = modified ? FormulaRenderer.toFormulaString(parsingBook, tokens) : formula;
 			Ref singleRef = tokens.length == 1 ? toDenpendRef(context, parsingBook, tokens[0]) : null;
 			expr = new FormulaExpressionImpl(renderedFormula, singleRef);
 
 		} catch(FormulaParseException e) {
 			logger.log(Level.INFO, e.getMessage());
-			expr = new FormulaExpressionImpl(formula, null);
+			expr = new FormulaExpressionImpl(formula, null, true, e.getMessage());
 		}
 		return expr;
+	}
+	
+	private static interface FormulaAdjuster {
+		/**
+		 * @return true if formula modified, denote this formula needs re-render
+		 */
+		public boolean process(String formula, int sheetIndex, Ptg[] tokens, ParsingBook parsingBook, FormulaParseContext context);
+	}
+	
+	@Override
+	public FormulaExpression move(String formula, final SheetRegion region, final int rowOffset, final int columnOffset, FormulaParseContext context) {
+		return adjust(formula, context, new FormulaAdjuster() {
+			@Override
+			public boolean process(String formula, int sheetIndex, Ptg[] tokens, ParsingBook parsingBook, FormulaParseContext context) {
+				// move formula, limit to bound if dest. is out; if first and last both out on bound, it will be "#REF!"
+				String bookName = context.getBook().getBookName();
+				String regionBookName = region.getSheet().getBook().getBookName();
+				String regionSheetName = region.getSheet().getSheetName();
+				int regionSheetIndex;
+				if(bookName.equals(regionBookName)) { // at same book
+					regionSheetIndex = parsingBook.findExternalSheetIndex(regionSheetName); // find index, DON'T create
+				} else { // different books
+					regionSheetIndex = parsingBook.findExternalSheetIndex(regionBookName, regionSheetName); // find index, DON'T create
+				}
+				PtgShifter shifter = new PtgShifter(regionSheetIndex, region.getRow(), region.getLastRow(),
+						rowOffset, region.getColumn(), region.getLastColumn(), columnOffset,
+						parsingBook.getSpreadsheetVersion());
+				return shifter.adjustFormula(tokens, sheetIndex);
+			}
+		});
 	}
 
 	@Override
@@ -680,65 +700,55 @@ public class FormulaEngineImpl implements FormulaEngine {
 	}
 
 	@Override
-	public FormulaExpression shift(String formula, int rowOffset,
-			int columnOffset, FormulaParseContext context) {
-		
-		FormulaExpression expr = null;
-		try {
-			// adapt and parse
-			NBook book = context.getBook();
-			ParsingBook parsingBook = new ParsingBook(book);
-			String sheetName = context.getSheet().getSheetName();
-			int sheetIndex = parsingBook.getExternalSheetIndex(null, sheetName); // create index according parsing book logic
-			Ptg[] tokens = FormulaParser.parse(formula, parsingBook, FormulaType.CELL, sheetIndex); // current sheet index in parsing is always 0
-
-			// simply shift every PTG and no need to consider sheet index
-			if(rowOffset != 0 || columnOffset != 0) { // shift formula only if necessary
-				for(int i = 0; i < tokens.length; ++i) {
-					Ptg ptg = tokens[i];
-					if(ptg instanceof RefPtgBase) {
-						RefPtgBase rptg = (RefPtgBase)ptg;
-						// calculate offset
-						int r = rptg.getRow() + (rptg.isRowRelative() ? rowOffset : 0);
-						int c = rptg.getColumn() + (rptg.isColRelative() ? columnOffset : 0);
-						// if reference is out of bounds, convert it to #REF
-						if(isValidRowIndex(book, r) && isValidColumnIndex(book, c)) {
-							rptg.setRow(r);
-							rptg.setColumn(c);
-						} else {
-							tokens[i] = PtgShifter.createDeletedRef(rptg);
-						}
-					} else if(ptg instanceof AreaPtgBase) {
-						AreaPtgBase aptg = (AreaPtgBase)ptg;
-						// shift
-						int r0 = aptg.getFirstRow() + (aptg.isFirstRowRelative() ? rowOffset : 0);
-						int r1 = aptg.getLastRow() + (aptg.isLastRowRelative() ? rowOffset : 0);
-						int c0 = aptg.getFirstColumn() + (aptg.isFirstColRelative() ? columnOffset : 0);
-						int c1 = aptg.getLastColumn() + (aptg.isLastColRelative() ? columnOffset : 0);
-						// if reference is out of bounds, convert it to #REF
-						if(isValidRowIndex(book, r0) && isValidRowIndex(book, r1)
-								&& isValidColumnIndex(book, c0) && isValidColumnIndex(book, c1)) {
-							aptg.setFirstRow(Math.min(r0, r1));
-							aptg.setLastRow(Math.max(r0, r1));
-							aptg.setFirstColumn(Math.min(c0, c1));
-							aptg.setLastColumn(Math.max(c0, c1));
-						} else {
-							tokens[i] = PtgShifter.createDeletedRef(aptg);
+	public FormulaExpression shift(String formula, final int rowOffset, final int columnOffset, FormulaParseContext context) {
+		return adjust(formula, context, new FormulaAdjuster() {
+			@Override
+			public boolean process(String formula, int sheetIndex, Ptg[] tokens, ParsingBook parsingBook, FormulaParseContext context) {
+				
+				// shift formula only if necessary
+				if(rowOffset != 0 || columnOffset != 0) {
+					
+					// simply shift every PTG and no need to consider sheet index
+					NBook book = context.getBook();
+					for(int i = 0; i < tokens.length; ++i) {
+						Ptg ptg = tokens[i];
+						if(ptg instanceof RefPtgBase) {
+							RefPtgBase rptg = (RefPtgBase)ptg;
+							// calculate offset
+							int r = rptg.getRow() + (rptg.isRowRelative() ? rowOffset : 0);
+							int c = rptg.getColumn() + (rptg.isColRelative() ? columnOffset : 0);
+							// if reference is out of bounds, convert it to #REF
+							if(isValidRowIndex(book, r) && isValidColumnIndex(book, c)) {
+								rptg.setRow(r);
+								rptg.setColumn(c);
+							} else {
+								tokens[i] = PtgShifter.createDeletedRef(rptg);
+							}
+						} else if(ptg instanceof AreaPtgBase) {
+							AreaPtgBase aptg = (AreaPtgBase)ptg;
+							// shift
+							int r0 = aptg.getFirstRow() + (aptg.isFirstRowRelative() ? rowOffset : 0);
+							int r1 = aptg.getLastRow() + (aptg.isLastRowRelative() ? rowOffset : 0);
+							int c0 = aptg.getFirstColumn() + (aptg.isFirstColRelative() ? columnOffset : 0);
+							int c1 = aptg.getLastColumn() + (aptg.isLastColRelative() ? columnOffset : 0);
+							// if reference is out of bounds, convert it to #REF
+							if(isValidRowIndex(book, r0) && isValidRowIndex(book, r1)
+									&& isValidColumnIndex(book, c0) && isValidColumnIndex(book, c1)) {
+								aptg.setFirstRow(Math.min(r0, r1));
+								aptg.setLastRow(Math.max(r0, r1));
+								aptg.setFirstColumn(Math.min(c0, c1));
+								aptg.setLastColumn(Math.max(c0, c1));
+							} else {
+								tokens[i] = PtgShifter.createDeletedRef(aptg);
+							}
 						}
 					}
+					return true;
+				} else {
+					return false;
 				}
 			}
-
-			// render formula, detect region and create result
-			String renderedFormula = FormulaRenderer.toFormulaString(parsingBook, tokens);
-			Ref singleRef = tokens.length == 1 ? toDenpendRef(context, parsingBook, tokens[0]) : null;
-			expr = new FormulaExpressionImpl(renderedFormula, singleRef);
-
-		} catch(FormulaParseException e) {
-			logger.log(Level.INFO, e.getMessage());
-			expr = new FormulaExpressionImpl(formula, null, true, e.getMessage());
-		}
-		return expr;
+		});
 	}
 	
 	private boolean isValidRowIndex(NBook book, int rowIndex) {
@@ -750,89 +760,75 @@ public class FormulaEngineImpl implements FormulaEngine {
 	}
 
 	@Override
-	public FormulaExpression transpose(String formula, int rowOrigin,
-			int columnOrigin, FormulaParseContext context) {
-		
-		FormulaExpression expr = null;
-		try {
-			// adapt and parse
-			NBook book = context.getBook();
-			ParsingBook parsingBook = new ParsingBook(book);
-			String sheetName = context.getSheet().getSheetName();
-			int sheetIndex = parsingBook.getExternalSheetIndex(null, sheetName); // create index according parsing book logic
-			Ptg[] tokens = FormulaParser.parse(formula, parsingBook, FormulaType.CELL, sheetIndex); // current sheet index in parsing is always 0
+	public FormulaExpression transpose(String formula, final int rowOrigin, final int columnOrigin, FormulaParseContext context) {
+		return adjust(formula, context, new FormulaAdjuster() {
+			@Override
+			public boolean process(String formula, int sheetIndex, Ptg[] tokens, ParsingBook parsingBook, FormulaParseContext context) {
 
-			// simply adjust every PTG and no need to consider sheet index
-			for(int i = 0; i < tokens.length; ++i) {
-				Ptg ptg = tokens[i];
-				if(ptg instanceof RefPtgBase) {
-					RefPtgBase rptg = (RefPtgBase)ptg;
-					
-					// process transpose only if both directions are relative
-					if(rptg.isRowRelative() && rptg.isColRelative()) {
-						
-						// every direction:
-						// 1. translate origin 2. swap row and column 3. translate origin back
-						int r = (rptg.getColumn() - columnOrigin) + rowOrigin;
-						int c = (rptg.getRow() - rowOrigin) + columnOrigin;
-						
-						// if reference is out of bounds, convert it to #REF
-						if(isValidRowIndex(book, r) && isValidColumnIndex(book, c)) {
-							rptg.setRow(r);
-							rptg.setColumn(c);
-						} else {
-							tokens[i] = PtgShifter.createDeletedRef(rptg);
+				// simply adjust every PTG and no need to consider sheet index
+				NBook book = context.getBook();
+				for(int i = 0; i < tokens.length; ++i) {
+					Ptg ptg = tokens[i];
+					if(ptg instanceof RefPtgBase) {
+						RefPtgBase rptg = (RefPtgBase)ptg;
+
+						// process transpose only if both directions are relative
+						if(rptg.isRowRelative() && rptg.isColRelative()) {
+
+							// every direction:
+							// 1. translate origin 2. swap row and column 3. translate origin back
+							int r = (rptg.getColumn() - columnOrigin) + rowOrigin;
+							int c = (rptg.getRow() - rowOrigin) + columnOrigin;
+
+							// if reference is out of bounds, convert it to #REF
+							if(isValidRowIndex(book, r) && isValidColumnIndex(book, c)) {
+								rptg.setRow(r);
+								rptg.setColumn(c);
+							} else {
+								tokens[i] = PtgShifter.createDeletedRef(rptg);
+							}
 						}
-					}
-				} else if(ptg instanceof AreaPtgBase) {
-					AreaPtgBase aptg = (AreaPtgBase)ptg;
+					} else if(ptg instanceof AreaPtgBase) {
+						AreaPtgBase aptg = (AreaPtgBase)ptg;
 
-					// need transpose process if ANY pair's both directions are relative
-					// if so,
-					// 1. this process skip any rest absolute setting
-					// 2. swap absolute setting to another direction 
-					if((aptg.isFirstRowRelative() && aptg.isFirstColRelative()) 
-							|| (aptg.isLastRowRelative() && aptg.isLastColRelative())) {
-						
-						// every direction:
-						// 1. translate origin 2. swap row and column 3. translate origin back
-						int r0 = (aptg.getFirstColumn() - columnOrigin) + rowOrigin;
-						int c0 = (aptg.getFirstRow() - rowOrigin) + columnOrigin;
-						int r1 = (aptg.getLastColumn() - columnOrigin) + rowOrigin;
-						int c1 = (aptg.getLastRow() - rowOrigin) + columnOrigin;
-						
-						// swap absolute setting
-						boolean temp = aptg.isFirstRowRelative();
-						aptg.setFirstRowRelative(aptg.isFirstColRelative());
-						aptg.setFirstColRelative(temp);
-						temp = aptg.isLastRowRelative();
-						aptg.setLastRowRelative(aptg.isLastColRelative());
-						aptg.setLastColRelative(temp);
-						
-						// if reference is out of bounds, convert it to #REF
-						if(isValidRowIndex(book, r0) && isValidRowIndex(book, r1)
-								&& isValidColumnIndex(book, c0) && isValidColumnIndex(book, c1)) {
-							aptg.setFirstRow(Math.min(r0, r1));
-							aptg.setLastRow(Math.max(r0, r1));
-							aptg.setFirstColumn(Math.min(c0, c1));
-							aptg.setLastColumn(Math.max(c0, c1));
-						} else {
-							tokens[i] = PtgShifter.createDeletedRef(aptg);
+						// need transpose process if ANY pair's both directions are relative
+						// if so,
+						// 1. this process skip any rest absolute setting
+						// 2. swap absolute setting to another direction
+						if((aptg.isFirstRowRelative() && aptg.isFirstColRelative())
+								|| (aptg.isLastRowRelative() && aptg.isLastColRelative())) {
+
+							// every direction:
+							// 1. translate origin 2. swap row and column 3. translate origin back
+							int r0 = (aptg.getFirstColumn() - columnOrigin) + rowOrigin;
+							int c0 = (aptg.getFirstRow() - rowOrigin) + columnOrigin;
+							int r1 = (aptg.getLastColumn() - columnOrigin) + rowOrigin;
+							int c1 = (aptg.getLastRow() - rowOrigin) + columnOrigin;
+
+							// swap absolute setting
+							boolean temp = aptg.isFirstRowRelative();
+							aptg.setFirstRowRelative(aptg.isFirstColRelative());
+							aptg.setFirstColRelative(temp);
+							temp = aptg.isLastRowRelative();
+							aptg.setLastRowRelative(aptg.isLastColRelative());
+							aptg.setLastColRelative(temp);
+
+							// if reference is out of bounds, convert it to #REF
+							if(isValidRowIndex(book, r0) && isValidRowIndex(book, r1)
+									&& isValidColumnIndex(book, c0) && isValidColumnIndex(book, c1)) {
+								aptg.setFirstRow(Math.min(r0, r1));
+								aptg.setLastRow(Math.max(r0, r1));
+								aptg.setFirstColumn(Math.min(c0, c1));
+								aptg.setLastColumn(Math.max(c0, c1));
+							} else {
+								tokens[i] = PtgShifter.createDeletedRef(aptg);
+							}
 						}
 					}
 				}
+				return true;
 			}
-
-			// render formula, detect region and create result
-			String renderedFormula = FormulaRenderer.toFormulaString(parsingBook, tokens);
-			Ref singleRef = tokens.length == 1 ? toDenpendRef(context, parsingBook, tokens[0]) : null;
-			expr = new FormulaExpressionImpl(renderedFormula, singleRef);
-
-		} catch(FormulaParseException e) {
-			logger.log(Level.INFO, e.getMessage());
-			expr = new FormulaExpressionImpl(formula, null, true, e.getMessage());
-		}
-		return expr;
+		});
 	}
 
 }
