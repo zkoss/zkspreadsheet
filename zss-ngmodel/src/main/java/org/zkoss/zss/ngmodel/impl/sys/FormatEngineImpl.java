@@ -26,11 +26,11 @@ public class FormatEngineImpl implements FormatEngine {
 		}
 		String format = cell.getCellStyle().getDataFormat();
 		if(type==CellType.BLANK || type == CellType.STRING){
-			if(NCellStyle.FORMAT_GENERAL.equals(format)){
-				//handling as text/rich text
-				if(cell.isRichTextValue()){
-					return new FormatResultImpl(new ReadOnlyRichTextImpl(cell.getRichTextValue()));
-				}
+			//handling as text/rich text
+			if(cell.isRichTextValue()){
+				return new FormatResultImpl(new ReadOnlyRichTextImpl(cell.getRichTextValue()));
+			}
+			if(NCellStyle.FORMAT_GENERAL.equals(format)){ // return the direct result if the format is general
 				return new FormatResultImpl(cell.getStringValue(),null);//no color as well
 			}
 		}else if(type==CellType.ERROR){
