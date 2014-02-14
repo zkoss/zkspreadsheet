@@ -70,6 +70,10 @@ public class TestImporterFactory implements ImporterFactory{
 				
 				NBook book = NBooks.createBook(bookName);
 				
+//				buildTest(book);
+				
+				
+				
 				buildCopyPaste(book);
 				
 				buildMove(book);
@@ -87,6 +91,13 @@ public class TestImporterFactory implements ImporterFactory{
 				buildFreeze(book);
 				
 				return book;
+			}
+			
+			private void buildTest(NBook book) {
+				NSheet sheet1 = book.createSheet("Test");
+				sheet1.getCell("A1").setValue(12);
+				sheet1.getCell("B1").setValue(34);
+				sheet1.getCell("C1").setValue("=SUM(A1:B1)");
 			}
 			private void buildCopyPaste(NBook book) {
 				NSheet sheet1 = book.createSheet("CopyPaste");
@@ -146,6 +157,13 @@ public class TestImporterFactory implements ImporterFactory{
 				sheet1.getCell("G8").setCellStyle(totalStyle);
 
 				
+				NChart chart = sheet1.addChart(NChartType.LINE, new NViewAnchor(0, 9, 600, 400));
+				chart.setLegendPosition(NChartLegendPosition.RIGHT);
+				NGeneralChartData data = (NGeneralChartData)chart.getData();
+				data.setCategoriesFormula("D5:D8");
+				data.addSeries().setFormula("E4", "E5:E8");
+				data.addSeries().setFormula("F4", "F5:F8");
+				data.addSeries().setFormula("G4", "G5:G8");
 				
 			}
 			private void buildMove(NBook book) {

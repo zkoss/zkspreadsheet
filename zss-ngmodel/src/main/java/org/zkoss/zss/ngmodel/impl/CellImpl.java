@@ -399,6 +399,8 @@ public class CellImpl extends AbstractCellAdv {
 				FormulaEngine fe = EngineFactory.getInstance().createFormulaEngine();
 				fe.parse(expr.getFormulaString(), new FormulaParseContext(this ,getRef()));//rebuild the expression to make new dependency with current row,column
 			}
+		}else if(lastRef!=null){
+			lastRef = null;//just clear when rebuild (it is possible this was cell moved)
 		}
 		
 	}
