@@ -335,6 +335,39 @@ public class ChartPictureTest extends ChartPictureTestBase {
 		assertNull(nChartData.getSeries(1).getName());
 	}
 	
+	@Test
+	public void deleteChart(){
+		NBook book = loadBook(this.getClass().getResourceAsStream("book/insert-charts.xlsx"));
+		NSheet sheet = book.getSheetByName("chart-image");
+		
+		assertEquals(0, sheet.getCharts().size());
+		NViewAnchor anchor = new NViewAnchor(2, 5, 600, 400);
+		ChartData chartData =  ChartDataUtil.getChartData(sheet, new AreaRef("A4:D9"), Type.COLUMN, anchor);
+		NChart chart = NRanges.range(sheet).addChart(anchor, chartData.getNative(), NChartType.COLUMN, NChartGrouping.STANDARD, NChartLegendPosition.RIGHT);
+		assertEquals(1, sheet.getCharts().size());
+		
+		NRanges.range(sheet).deleteChart(chart);
+		assertEquals(0, sheet.getCharts().size());
+	}
+	
+	@Test
+	public void moveChart(){
+		NBook book = loadBook(this.getClass().getResourceAsStream("book/insert-charts.xlsx"));
+		NSheet sheet = book.getSheetByName("chart-image");
+		
+		assertEquals(0, sheet.getCharts().size());
+		NViewAnchor anchor = new NViewAnchor(2, 5, 600, 400);
+		ChartData chartData =  ChartDataUtil.getChartData(sheet, new AreaRef("A4:D9"), Type.COLUMN, anchor);
+		NChart chart = NRanges.range(sheet).addChart(anchor, chartData.getNative(), NChartType.COLUMN, NChartGrouping.STANDARD, NChartLegendPosition.RIGHT);
+		assertEquals(1, sheet.getCharts().size());
+		assertEquals(2, chart.getAnchor().getRowIndex());
+		assertEquals(5, chart.getAnchor().getColumnIndex());
+		
+		NRanges.range(sheet).moveChart(chart, new NViewAnchor(5, 8, 700, 500));
+		assertEquals(5, chart.getAnchor().getRowIndex());
+		assertEquals(8, chart.getAnchor().getColumnIndex());
+	}
+	
 	
 	//TODO use ImExpTestUtil.loadBook()
 	public static NBook loadBook(InputStream is) {

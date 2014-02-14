@@ -575,21 +575,14 @@ public class RangeImpl implements Range{
 		return new ChartImpl(new SimpleRef<NSheet>(_range.getSheet()), new SimpleRef<NChart>(chart));
 	}
 	
-	//currently, we only support to modify chart in XSSF
+	
 	public void deleteChart(Chart chart){
-		//TODO the syncLevel
-		throw new UnsupportedOperationException("not implment yet");/* zss 3.5 
 		_range.deleteChart(((ChartImpl)chart).getNative());
-		*/
 	}
 	
-	//currently, we only support to modify chart in XSSF
+	
 	public void moveChart(SheetAnchor anchor,Chart chart){
-		//TODO the syncLevel
-		throw new UnsupportedOperationException("not implment yet");/* zss 3.5 
-		ClientAnchor an = SheetImpl.toClientAnchor(getSheet().getPoiSheet(),anchor);
-		_range.moveChart(((ChartImpl)chart).getNative(), an);
-		*/
+		_range.moveChart(((ChartImpl)chart).getNative(), SheetImpl.toViewAnchor(_range.getSheet(), anchor));
 	}
 	
 	
