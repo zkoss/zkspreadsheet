@@ -605,8 +605,7 @@ public class FormulaEngineImpl implements FormulaEngine {
 	}
 
 	@Override
-	public FormulaExpression shrink(String formula, SheetRegion srcRegion,
- boolean horizontal, FormulaParseContext context) {
+	public FormulaExpression shrink(String formula, SheetRegion srcRegion, boolean horizontal, FormulaParseContext context) {
 		NSheet sheet = context.getSheet();
 
 		// shrinking is equals to move the neighbor region

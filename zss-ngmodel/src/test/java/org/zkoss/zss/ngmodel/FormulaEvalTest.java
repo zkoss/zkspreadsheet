@@ -729,7 +729,11 @@ public class FormulaEvalTest {
 		f = "SUM(C3:E5)";
 		testFormulaMove(engine, sheetA, f, new SheetRegion(sheetA, "D3:E5"), 0, 1, "SUM(C3:F5)");
 		
-
+		// area direction
+		testFormulaMove(engine, sheetA, "SUM(C3:E5)", new SheetRegion(sheetA, "C3:E5"), 2, 2, "SUM(E5:G7)");
+		testFormulaMove(engine, sheetA, "SUM(E5:C3)", new SheetRegion(sheetA, "C3:E5"), 2, 2, "SUM(E5:G7)");
+		testFormulaMove(engine, sheetA, "SUM(C5:E3)", new SheetRegion(sheetA, "C3:E5"), 2, 2, "SUM(E5:G7)");
+		testFormulaMove(engine, sheetA, "SUM(E3:C5)", new SheetRegion(sheetA, "C3:E5"), 2, 2, "SUM(E5:G7)");
 	}
 
 	private void testFormulaMove(FormulaEngine engine, NSheet sheet, String f, SheetRegion region, int rowOffset, int colOffset, String expected) {
@@ -792,6 +796,12 @@ public class FormulaEvalTest {
 		f = "SUM(A1:C1)+SUM(SheetA!A1:C1)+SUM(SheetB!A1:C1)+SUM([Book2]SheetA!A1:C1)";
 		testFormulaShrink(f,"B1:B1", horizontal, "SUM(A1:B1)+SUM(SheetA!A1:B1)+SUM(SheetB!A1:C1)+SUM([Book2]SheetA!A1:C1)", engine, sheetA); // on SheetA
 		testFormulaShrink(f,"B1:B1", horizontal, "SUM(A1:B1)+SUM(SheetA!A1:C1)+SUM(SheetB!A1:B1)+SUM([Book2]SheetA!A1:C1)", engine, sheetB); // on SheetB
+		
+		// area direction
+		testFormulaShrink("SUM(G3:I5)", "G1:L1", false, "SUM(G2:I4)", engine, sheetA);
+		testFormulaShrink("SUM(G3:I5)", "G1:L1", false, "SUM(G2:I4)", engine, sheetA);
+		testFormulaShrink("SUM(G3:I5)", "G1:L1", false, "SUM(G2:I4)", engine, sheetA);
+		testFormulaShrink("SUM(G3:I5)", "G1:L1", false, "SUM(G2:I4)", engine, sheetA);
 	}
 
 	private void testFormulaShrink(String formula, String region, boolean hrizontal, String expected, FormulaEngine engine, NSheet sheet) {
@@ -852,6 +862,12 @@ public class FormulaEvalTest {
 		f = "SUM(A1:C1)+SUM(SheetA!A1:C1)+SUM(SheetB!A1:C1)+SUM([Book2]SheetA!A1:C1)";
 		testFormulaExtend(f,"B1:B1", horizontal, "SUM(A1:D1)+SUM(SheetA!A1:D1)+SUM(SheetB!A1:C1)+SUM([Book2]SheetA!A1:C1)", engine, sheetA); // on SheetA
 		testFormulaExtend(f,"B1:B1", horizontal, "SUM(A1:D1)+SUM(SheetA!A1:C1)+SUM(SheetB!A1:D1)+SUM([Book2]SheetA!A1:C1)", engine, sheetB); // on SheetB
+		
+		// area direction
+		testFormulaExtend("SUM(G3:I5)", "G1:L1", false, "SUM(G4:I6)", engine, sheetA);
+		testFormulaExtend("SUM(I5:G3)", "G1:L1", false, "SUM(G4:I6)", engine, sheetA);
+		testFormulaExtend("SUM(G5:I3)", "G1:L1", false, "SUM(G4:I6)", engine, sheetA);
+		testFormulaExtend("SUM(I3:G5)", "G1:L1", false, "SUM(G4:I6)", engine, sheetA);
 	}
 	
 	private void testFormulaExtend(String formula, String region, boolean hrizontal, String expected, FormulaEngine engine, NSheet sheet) {
@@ -895,6 +911,12 @@ public class FormulaEvalTest {
 				1, 1, "SUM(C3:D4,$B3:D4,C$2:D4,C3:$C4,C3:D$3,$B$2:D4,C3:$C$3,$B3:$C4,C$2:D$3,C$2:$C4,$B$2:$C4,$B$2:D$3,$B3:$C$3,C$2:$C$3,$B$2:$C$3)"); // area
 		testFormulaShift(engine, sheetA, "SUM($B2,B$3:C4,Sheet1!B5:$D7,Sheet2!B8:E$11,[Book2.xlsx]Sheet1!$E11:G$13)", 
 				1, 1, "SUM($B3,C$3:D5,Sheet1!C6:$D8,Sheet2!C9:F$11,[Book2.xlsx]Sheet1!$E12:H$13)");
+		
+		// area direction
+		testFormulaShift(engine, sheetA, "SUM(G6:H11)", 2, 3, "SUM(J8:K13)");
+		testFormulaShift(engine, sheetA, "SUM(H11:G6)", 2, 3, "SUM(J8:K13)");
+		testFormulaShift(engine, sheetA, "SUM(G11:H6)", 2, 3, "SUM(J8:K13)");
+		testFormulaShift(engine, sheetA, "SUM(H6:G11)", 2, 3, "SUM(J8:K13)");
 	}
 	
 	private void testFormulaShift(FormulaEngine engine, NSheet sheet, String formula, int rowOffset, int columnOffset, String expected) {
@@ -931,6 +953,12 @@ public class FormulaEvalTest {
 		testFormulaShift(engine, sheetA, D5, 1, -1, C5);
 		testFormulaShift(engine, sheetA, C6, -1, 1, C5);
 		testFormulaShift(engine, sheetA, D6, 0, 0, C5);
+		
+		// area direction
+		testFormulaTranspose(engine, sheetA, "SUM(G6:H11)", "C5", "SUM(D9:I10)");
+		testFormulaTranspose(engine, sheetA, "SUM(H11:G6)", "C5", "SUM(D9:I10)");
+		testFormulaTranspose(engine, sheetA, "SUM(G11:H6)", "C5", "SUM(D9:I10)");
+		testFormulaTranspose(engine, sheetA, "SUM(H6:G11)", "C5", "SUM(D9:I10)");
 	}
 	
 	private String testFormulaTranspose(FormulaEngine engine, NSheet sheet, String formula, String origin, String expected) {
