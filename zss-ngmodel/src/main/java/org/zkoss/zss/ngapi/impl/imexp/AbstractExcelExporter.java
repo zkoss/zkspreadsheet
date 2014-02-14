@@ -100,7 +100,10 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 		for (NName name : book.getNames()) {
 			Name poiName = workbook.createName();
 			poiName.setNameName(name.getName());
-			poiName.setSheetIndex(workbook.getSheetIndex(name.getRefersToSheetName()));
+			String sheetName = name.getRefersToSheetName();
+			if(sheetName!=null){
+				poiName.setSheetIndex(workbook.getSheetIndex(sheetName));
+			}
 			poiName.setRefersToFormula(name.getRefersToFormula());
 		}
 	}
