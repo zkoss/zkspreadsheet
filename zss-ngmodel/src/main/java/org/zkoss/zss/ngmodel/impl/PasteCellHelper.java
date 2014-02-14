@@ -162,7 +162,7 @@ import org.zkoss.zss.ngmodel.util.Validations;
 				CellRegion destRegion = new CellRegion(dest.getRow()+rowMultpleOffset,dest.getColumn()+colMultipleOffset,
 						dest.getRow()+srcRowCount+ -1 + rowMultpleOffset,
 						dest.getColumn()+srcColCount -1 + colMultipleOffset);
-				pasteCell(srcBuffer,destRegion,option,rowOffset+rowMultpleOffset,columnOffset+colMultipleOffset);
+				pasteCells(srcBuffer,destRegion,option,rowOffset+rowMultpleOffset,columnOffset+colMultipleOffset);
 				
 				if(mergeBuffer!=null && mergeBuffer.size()>0){
 					pasteMergeRegion(mergeBuffer,rowOffset+rowMultpleOffset,columnOffset+colMultipleOffset);
@@ -342,11 +342,12 @@ import org.zkoss.zss.ngmodel.util.Validations;
 		}
 	}
 	
-	private void pasteCell(CellBuffer[][] srcBuffer, CellRegion destRegion,PasteOption option, int rowOffset,int columnOffset) {
+	private void pasteCells(CellBuffer[][] srcBuffer, CellRegion destRegion,PasteOption option, int rowOffset,int columnOffset) {
 		int row = destRegion.getRow();
 		int col = destRegion.getColumn();
 		int lastRow = destRegion.getLastRow();
 		int lastColumn = destRegion.getLastColumn();
+		boolean transpose = option.isTranspose();
 		for(int r = row; r <= lastRow; r++){
 			for (int c = col; c <= lastColumn;c++){
 				CellBuffer buffer = srcBuffer[r-row][c-col];
@@ -371,13 +372,13 @@ import org.zkoss.zss.ngmodel.util.Validations;
 				
 				switch(option.getPasteType()){
 				case ALL:
-					pasteValue(buffer,destCell,true,rowOffset,columnOffset,option);
+					pasteValue(buffer,destCell,true,rowOffset,columnOffset,transpose,row,col);
 					pasteStyle(buffer,destCell,true);//border,comment
 					pasteComment(buffer,destCell);
 					pasteValidation(buffer,destCell);
 					break;
 				case ALL_EXCEPT_BORDERS:
-					pasteValue(buffer,destCell,true,rowOffset,columnOffset,option);
+					pasteValue(buffer,destCell,true,rowOffset,columnOffset,transpose,row,col);
 					pasteStyle(buffer,destCell,false);//border,comment
 					pasteComment(buffer,destCell);
 					pasteValidation(buffer,destCell);
@@ -391,14 +392,14 @@ import org.zkoss.zss.ngmodel.util.Validations;
 				case FORMULAS_AND_NUMBER_FORMATS:
 					pasteFormat(buffer,destCell);
 				case FORMULAS:
-					pasteValue(buffer,destCell,true,rowOffset,columnOffset,option);
+					pasteValue(buffer,destCell,true,rowOffset,columnOffset,transpose,row,col);
 					break;
 				case VALIDATAION:
 					pasteValidation(buffer,destCell);
 				case VALUES_AND_NUMBER_FORMATS:
 					pasteFormat(buffer,destCell);
 				case VALUES:
-					pasteValue(buffer,destCell,false,rowOffset,columnOffset,option);
+					pasteValue(buffer,destCell);
 					break;
 				case COLUMN_WIDTHS:
 					break;				
@@ -450,25 +451,23 @@ import org.zkoss.zss.ngmodel.util.Validations;
 		}
 	}
 
-	private void pasteValue(CellBuffer buffer, NCell destCell, boolean pasteFormula,int rowOffset,int columnOffset,PasteOption option) {
+	private void pasteValue(CellBuffer buffer, NCell destCell) {
+		pasteValue(buffer,destCell,false,-1,-1,false,-1,-1);
+	}
+	private void pasteValue(CellBuffer buffer, NCell destCell, boolean pasteFormula, int rowOffset,int columnOffset, boolean transpose, int rowOrigin, int columnOrigin) {
 		if(pasteFormula){
 			String formula = buffer.getFormula();
 			if(formula!=null){
-				boolean transpose = option.isTranspose();
-				//TODO zss 3.5 , shift non-absolute formula
-				//TODO zss 3.5 rename sheetName
 				FormulaEngine engine = getFormulaEignin();
-				//TODO zss 3.5 should shift regardless sheet
-//				FormulaExpression expr = engine.shift(formula,rowOffset, columnOffset, 
-//						new FormulaParseContext(destSheet, null));
-				//TODO this a temporary
-				FormulaExpression expr = engine.move(formula, new SheetRegion(destSheet,0,0,book.getMaxRowIndex(),book.getMaxColumnIndex()), 
-						transpose?columnOffset:rowOffset, transpose?rowOffset:columnOffset, 
-						new FormulaParseContext(destSheet, null));
-				System.out.println(">>> Shift "+formula+" to "+expr.getFormulaString());
-				//copy paste doesn't need to handle sheet rename
 				
-				destCell.setFormulaValue(expr.getFormulaString());
+				FormulaExpression expr = engine.shift(formula,rowOffset, columnOffset,new FormulaParseContext(destSheet, null));//no dependency
+				if(!expr.hasError() && transpose){
+					expr = engine.transpose(expr.getFormulaString(),rowOffset, columnOffset,new FormulaParseContext(destSheet, null));
+				}
+				
+				if(!expr.hasError()){
+					destCell.setFormulaValue(expr.getFormulaString());
+				}//ignore if get parsing error
 				return;
 			}
 		}

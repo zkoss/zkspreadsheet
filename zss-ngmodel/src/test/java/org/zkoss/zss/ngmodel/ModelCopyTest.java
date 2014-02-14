@@ -275,17 +275,16 @@ public class ModelCopyTest {
 		Assert.assertEquals(80D,sheet1.getCell("I13").getValue());
 		
 		Assert.assertEquals("Total", sheet1.getCell("E14").getValue());
-		/*
+		
 		Assert.assertEquals("SUM(F12:F13)",sheet1.getCell("F14").getFormulaValue());
 		Assert.assertEquals("SUM(G12:G13)",sheet1.getCell("G14").getFormulaValue());
-		Assert.assertEquals("SUM(H12:H13)",sheet1.getCell("J14").getFormulaValue());
+		Assert.assertEquals("SUM(H12:H13)",sheet1.getCell("H14").getFormulaValue());
 		Assert.assertEquals("SUM(I12:I13)",sheet1.getCell("I14").getFormulaValue());
 		
 		Assert.assertEquals(30D, sheet1.getCell("F14").getValue());
 		Assert.assertEquals(70D, sheet1.getCell("G14").getValue());
 		Assert.assertEquals(110D, sheet1.getCell("H14").getValue());
 		Assert.assertEquals(150D, sheet1.getCell("I14").getValue());
-		*/
 		
 		
 		//paste transpose
@@ -311,7 +310,7 @@ public class ModelCopyTest {
 		Assert.assertEquals(80D,sheet1.getCell("I13").getValue());
 		
 		Assert.assertEquals("Total", sheet1.getCell("E14").getValue());
-		/* TODO zss 3.5 remove following test when shift api ready
+		
 		Assert.assertEquals("SUM(F12:F13)",sheet1.getCell("F14").getFormulaValue());
 		Assert.assertEquals("SUM(G12:G13)",sheet1.getCell("G14").getFormulaValue());
 		Assert.assertEquals("SUM(H12:H13)",sheet1.getCell("H14").getFormulaValue());
@@ -321,7 +320,7 @@ public class ModelCopyTest {
 		Assert.assertEquals(70D, sheet1.getCell("G14").getValue());
 		Assert.assertEquals(110D, sheet1.getCell("H14").getValue());
 		Assert.assertEquals(150D, sheet1.getCell("I14").getValue());
-		*/
+		
 		
 		//the repeat 2
 		Assert.assertEquals("Sales by Region", sheet1.getCell("E15").getValue());
@@ -343,19 +342,16 @@ public class ModelCopyTest {
 		Assert.assertEquals(80D,sheet1.getCell("I17").getValue());
 		
 		Assert.assertEquals("Total", sheet1.getCell("E18").getValue());
-		/* TODO zss 3.5 remove following test when shift api ready
-		Assert.assertEquals("SUM(F12:F13)",sheet1.getCell("F18").getFormulaValue());
-		Assert.assertEquals("SUM(G12:G13)",sheet1.getCell("G18").getFormulaValue());
-		Assert.assertEquals("SUM(H12:H13)",sheet1.getCell("H18").getFormulaValue());
-		Assert.assertEquals("SUM(I12:I13)",sheet1.getCell("I18").getFormulaValue());
+		
+		Assert.assertEquals("SUM(F16:F17)",sheet1.getCell("F18").getFormulaValue());
+		Assert.assertEquals("SUM(G16:G17)",sheet1.getCell("G18").getFormulaValue());
+		Assert.assertEquals("SUM(H16:H17)",sheet1.getCell("H18").getFormulaValue());
+		Assert.assertEquals("SUM(I16:I17)",sheet1.getCell("I18").getFormulaValue());
 		
 		Assert.assertEquals(30D, sheet1.getCell("F18").getValue());
 		Assert.assertEquals(70D, sheet1.getCell("G18").getValue());
 		Assert.assertEquals(110D, sheet1.getCell("H18").getValue());
 		Assert.assertEquals(150D, sheet1.getCell("I18").getValue());
-		*/		
-		
-		
 	}
 	
 	public static void dump(NBook book){
