@@ -352,7 +352,6 @@ public class ModelFormulaTest {
 		Assert.assertEquals(9D, sheet1.getCell("F5").getValue());
 	}
 	
-	@Ignore("zss 3.5")
 	@Test
 	public void testFormulaShiftAfterInsertDeleteCellVertical(){
 		NBook book = NBooks.createBook("book1");
@@ -413,12 +412,11 @@ public class ModelFormulaTest {
 		sheet1.deleteCell(new CellRegion("C2"),false);
 		Assert.assertEquals("#REF!", sheet1.getCell("G1").getFormulaValue());
 		Assert.assertEquals("SUM(#REF!)", sheet1.getCell("A9").getFormulaValue());
-		Assert.assertEquals("SUM(#REF!)", sheet1.getCell("E5").getFormulaValue());
-		Assert.assertEquals("SUM(#REF!,1)", sheet1.getCell("F5").getFormulaValue());
+		Assert.assertEquals("SUM(Sheet1!#REF!)", sheet1.getCell("E5").getFormulaValue());
+		Assert.assertEquals("SUM(Sheet1!#REF!,1)", sheet1.getCell("F5").getFormulaValue());
 	}
 	
 	
-	@Ignore("zss 3.5")
 	@Test
 	public void testFormulaShiftAfterInsertDeleteCellHorzontal(){
 		NBook book = NBooks.createBook("book1");
@@ -479,11 +477,10 @@ public class ModelFormulaTest {
 		sheet1.deleteCell(new CellRegion("B3"),true);
 		Assert.assertEquals("#REF!", sheet1.getCell("G1").getFormulaValue());
 		Assert.assertEquals("SUM(#REF!)", sheet1.getCell("A9").getFormulaValue());
-		Assert.assertEquals("SUM(#REF!)", sheet1.getCell("E6").getFormulaValue());
-		Assert.assertEquals("SUM(#REF!,1)", sheet1.getCell("E5").getFormulaValue());
+		Assert.assertEquals("SUM(Sheet1!#REF!)", sheet1.getCell("E6").getFormulaValue());
+		Assert.assertEquals("SUM(Sheet1!#REF!,1)", sheet1.getCell("E5").getFormulaValue());
 	}
 	
-	@Ignore("zss 3.5")
 	@Test
 	public void testFormulaShiftAfterInsertDeleteRow(){
 		NBook book = NBooks.createBook("book1");
@@ -547,7 +544,6 @@ public class ModelFormulaTest {
 		Assert.assertEquals("SUM(Sheet1!#REF!,1)", sheet1.getCell("F3").getFormulaValue());
 	}
 	
-	@Ignore("zss 3.5")
 	@Test
 	public void testFormulaShiftAfterInsertDeleteColumn(){
 		NBook book = NBooks.createBook("book1");
@@ -607,11 +603,10 @@ public class ModelFormulaTest {
 		sheet1.deleteColumn(1, 1);
 		Assert.assertEquals("#REF!", sheet1.getCell("E1").getFormulaValue());
 		Assert.assertEquals("SUM(#REF!)", sheet1.getCell("A9").getFormulaValue());
-		Assert.assertEquals("SUM(#REF!)", sheet1.getCell("C6").getFormulaValue());
-		Assert.assertEquals("SUM(#REF!,1)", sheet1.getCell("D5").getFormulaValue());
+		Assert.assertEquals("SUM(Sheet1!#REF!)", sheet1.getCell("C6").getFormulaValue());
+		Assert.assertEquals("SUM(Sheet1!#REF!,1)", sheet1.getCell("D5").getFormulaValue());
 	}
 	
-	@Ignore("zss 3.5")
 	@Test
 	public void testLinkingShift(){
 		NBook book = NBooks.createBook("book1");

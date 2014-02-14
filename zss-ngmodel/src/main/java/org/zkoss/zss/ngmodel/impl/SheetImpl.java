@@ -474,11 +474,6 @@ public class SheetImpl extends AbstractSheetAdv {
 		}
 		
 		shiftAfterRowInsert(rowIdx,lastRowIdx);
-		
-//		book.sendModelInternalEvent(ModelInternalEvents.createModelInternalEvent(ModelInternalEvents.ON_ROW_INSERTED, 
-//				this, 
-//				ModelInternalEvents.createDataMap(ModelInternalEvents.PARAM_ROW_INDEX, rowIdx,
-//						ModelInternalEvents.PARAM_LAST_ROW_INDEX, size)));
 	}
 	
 	@Override
@@ -496,10 +491,6 @@ public class SheetImpl extends AbstractSheetAdv {
 		rows.delete(rowIdx, size);
 		
 		shiftAfterRowDelete(rowIdx,lastRowIdx);
-		
-//		book.sendModelInternalEvent(ModelInternalEvents.createModelInternalEvent(ModelInternalEvents.ON_ROW_DELETED, 
-//				this, ModelInternalEvents.createDataMap(ModelInternalEvents.PARAM_ROW_INDEX, rowIdx, 
-//						ModelInternalEvents.PARAM_ROW_INDEX, lastRowIdx)));
 	}	
 	
 	private void shiftAfterRowInsert(int rowIdx, int lastRowIdx) {
@@ -673,12 +664,6 @@ public class SheetImpl extends AbstractSheetAdv {
 		}
 		
 		shiftAfterCellInsert(rowIdx, columnIdx, lastRowIdx,lastColumnIdx,horizontal);
-//		
-//		book.sendModelInternalEvent(ModelInternalEvents.createModelInternalEvent(ModelInternalEvents.ON_CELL_INSERTED, 
-//				this, 
-//				ModelInternalEvents.createDataMap(ModelInternalEvents.PARAM_ROW_INDEX, rowIdx,
-//						ModelInternalEvents.PARAM_SIZE, size)));
-		
 	}
 
 	@Override
@@ -717,10 +702,6 @@ public class SheetImpl extends AbstractSheetAdv {
 		}
 		
 		shiftAfterCellDelete(rowIdx, columnIdx, lastRowIdx,lastColumnIdx,horizontal);
-		
-//		book.sendModelInternalEvent(ModelInternalEvents.createModelInternalEvent(ModelInternalEvents.ON_CELL_DELETED, 
-//				this, ModelInternalEvents.createDataMap(ModelInternalEvents.PARAM_ROW_INDEX, rowIdx, 
-//						ModelInternalEvents.PARAM_SIZE, size)));
 	}
 	
 	
@@ -802,10 +783,6 @@ public class SheetImpl extends AbstractSheetAdv {
 		}
 		
 		shiftAfterColumnInsert(columnIdx,lastColumnIdx);
-		
-//		book.sendModelInternalEvent(ModelInternalEvents.createModelInternalEvent(ModelInternalEvents.ON_COLUMN_INSERTED, this,
-//				ModelInternalEvents.createDataMap(ModelInternalEvents.PARAM_COLUMN_INDEX, columnIdx, 
-//						ModelInternalEvents.PARAM_LAST_COLUMN_INDEX, lastColumnIdx)));
 	}
 	
 	private void insertAndSplitColumnArray(int columnIdx,int size){
@@ -908,10 +885,6 @@ public class SheetImpl extends AbstractSheetAdv {
 			row.deleteCell(columnIdx,size);
 		}
 		shiftAfterColumnDelete(columnIdx,lastColumnIdx);
-		
-//		book.sendModelInternalEvent(ModelInternalEvents.createModelInternalEvent(ModelInternalEvents.ON_COLUMN_DELETED, 
-//				this, ModelInternalEvents.createDataMap(ModelInternalEvents.PARAM_COLUMN_INDEX, columnIdx, 
-//						ModelInternalEvents.PARAM_LAST_COLUMN_INDEX, lastColumnIdx)));
 	}
 	
 	private void deleteAndShrinkColumnArray(int columnIdx,int size){
@@ -1091,7 +1064,11 @@ public class SheetImpl extends AbstractSheetAdv {
 		NBook book = getBook();
 		AbstractBookSeriesAdv bs = (AbstractBookSeriesAdv)book.getBookSeries();
 		DependencyTable dt = bs.getDependencyTable();
-		Set<Ref> dependents = dt.getDependents(new RefImpl(book.getBookName(),getSheetName(),src.getRow(),src.getColumn(),src.getLastRow(),src.getLastColumn()));
+		
+		Ref ref = new RefImpl(book.getBookName(),getSheetName(),src.getRow(), src.getColumn(),
+				horizontal?src.getLastRow():book.getMaxRowIndex(),horizontal?book.getMaxColumnIndex():src.getLastColumn());
+		
+		Set<Ref> dependents = dt.getDependents(ref);
 		if(dependents.size()>0){
 			FormulaTunerHelper tuner = new FormulaTunerHelper(bs,new SheetRegion(this,src));
 			tuner.shrink(dependents,horizontal);
@@ -1102,7 +1079,9 @@ public class SheetImpl extends AbstractSheetAdv {
 		NBook book = getBook();
 		AbstractBookSeriesAdv bs = (AbstractBookSeriesAdv)book.getBookSeries();
 		DependencyTable dt = bs.getDependencyTable();
-		Set<Ref> dependents = dt.getDependents(new RefImpl(book.getBookName(),getSheetName(),src.getRow(),src.getColumn(),src.getLastRow(),src.getLastColumn()));
+		Ref ref = new RefImpl(book.getBookName(),getSheetName(),src.getRow(), src.getColumn(),
+				horizontal?src.getLastRow():book.getMaxRowIndex(),horizontal?book.getMaxColumnIndex():src.getLastColumn());
+		Set<Ref> dependents = dt.getDependents(ref);
 		if(dependents.size()>0){
 			FormulaTunerHelper tuner = new FormulaTunerHelper(bs,new SheetRegion(this,src));
 			tuner.extend(dependents,horizontal);
