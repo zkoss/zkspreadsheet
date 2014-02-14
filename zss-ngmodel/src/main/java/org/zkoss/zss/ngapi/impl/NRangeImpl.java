@@ -1356,7 +1356,7 @@ public class NRangeImpl implements NRange {
 			@Override
 			public Object invoke() {
 				getSheet().deleteChart(chart);
-				new NotifyChangeHelper().notifySheetChartAdd(getSheet(), chart.getId());
+				new NotifyChangeHelper().notifySheetChartDelete(getSheet(), chart.getId());
 				return null;
 			}
 		}.doInWriteLock(getLock());
