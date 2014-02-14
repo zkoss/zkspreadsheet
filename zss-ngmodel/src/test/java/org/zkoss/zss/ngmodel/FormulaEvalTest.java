@@ -903,4 +903,43 @@ public class FormulaEvalTest {
 		Assert.assertFalse(expr.hasError());
 		Assert.assertEquals(expected, expr.getFormulaString());
 	}
+	
+	@Test
+	public void testFormulaTranspose() {
+		FormulaEngine engine = EngineFactory.getInstance().createFormulaEngine();
+		NBook book1 = NBooks.createBook("Book1");
+		NSheet sheetA = book1.createSheet("SheetA");
+
+		// normal
+		String f = "SUM(G6,Sheet1!G6,Sheet2:Sheet3!G6:I7,[Book2.xlsx]Sheet1!G6:H11)";
+		String C5 = testFormulaTranspose(engine, sheetA, f, "C5", "SUM(D9,Sheet1!D9,Sheet2:Sheet3!D9:E11,[Book2.xlsx]Sheet1!D9:I10)"); 
+		String D5 = testFormulaTranspose(engine, sheetA, f, "D5", "SUM(E8,Sheet1!E8,Sheet2:Sheet3!E8:F10,[Book2.xlsx]Sheet1!E8:J9)"); 
+		String C6 = testFormulaTranspose(engine, sheetA, f, "C6", "SUM(C10,Sheet1!C10,Sheet2:Sheet3!C10:D12,[Book2.xlsx]Sheet1!C10:H11)");
+		String D6 = testFormulaTranspose(engine, sheetA, f, "D6", "SUM(D9,Sheet1!D9,Sheet2:Sheet3!D9:E11,[Book2.xlsx]Sheet1!D9:I10)");
+		// different origin positions
+		testFormulaTranspose(engine, sheetA, f, "H2", "SUM(L1,Sheet1!L1,Sheet2:Sheet3!L1:M3,[Book2.xlsx]Sheet1!L1:Q2)"); 
+		testFormulaTranspose(engine, sheetA, f, "K8", "SUM(I4,Sheet1!I4,Sheet2:Sheet3!I4:J6,[Book2.xlsx]Sheet1!I4:N5)");
+		testFormulaTranspose(engine, sheetA, f, "F11", "SUM(A12,Sheet1!A12,Sheet2:Sheet3!A12:B14,[Book2.xlsx]Sheet1!A12:F13)");
+		// absolute
+		testFormulaTranspose(engine, sheetA, "SUM(G12,G$12,$G12,$G$12)", "H2", "SUM(R1,G$12,$G12,$G$12)"); 
+		testFormulaTranspose(engine, sheetA, "SUM(H9:J15,$H9:J15,H$9:J15,H9:$J15,H9:J$15,$H$9:J15,$H9:$J15,$H9:J$15,H$9:$J15,H$9:J$15,H9:$J$15,$H$9:$J15,$H$9:J$15,$H9:$J$15,H$9:$J$15,$H$9:$J$15)",
+				"K8", "SUM(L5:R7,L$5:R7,$L5:R7,L5:R$7,L5:$R7,$L$5:R7,$H9:$J15,$H9:J$15,H$9:$J15,H$9:J$15,L5:$R$7,$H$9:$J15,$H$9:J$15,$H9:$J$15,H$9:$J$15,$H$9:$J$15)");
+		testFormulaTranspose(engine, sheetA, "SUM($G9,G$9:J15,Sheet1!G10:$J16,Sheet2:Sheet3!H11:L$12,[Book2.xlsx]Sheet1!$G9:O$10)",
+				"F11", "SUM($G9,$D12:J15,Sheet1!E12:K$15,Sheet2:Sheet3!F13:$G17,[Book2.xlsx]Sheet1!$G9:O$10)");
+
+		// transpose than shift
+		testFormulaShift(engine, sheetA, D5, 1, -1, C5);
+		testFormulaShift(engine, sheetA, C6, -1, 1, C5);
+		testFormulaShift(engine, sheetA, D6, 0, 0, C5);
+	}
+	
+	private String testFormulaTranspose(FormulaEngine engine, NSheet sheet, String formula, String origin, String expected) {
+		SheetRegion o = new SheetRegion(sheet, origin);
+		FormulaParseContext context = new FormulaParseContext(sheet, null);
+		FormulaExpression expr = engine.transpose(formula, o.getRow(), o.getColumn(), context);
+		Assert.assertFalse(expr.hasError());
+		String actual = expr.getFormulaString();
+		Assert.assertEquals(expected, actual);
+		return actual;
+	}
 }
