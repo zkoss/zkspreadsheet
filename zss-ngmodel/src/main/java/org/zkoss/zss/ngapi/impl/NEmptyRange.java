@@ -11,7 +11,6 @@ import org.zkoss.zss.ngmodel.NChart.NChartLegendPosition;
 import org.zkoss.zss.ngmodel.NChart.NChartType;
 import org.zkoss.zss.ngmodel.NHyperlink.HyperlinkType;
 import org.zkoss.zss.ngmodel.NPicture.Format;
-import org.zkoss.zss.ngmodel.chart.NChartData;
 
 /**
  * the empty range implementation that do nothing
@@ -396,7 +395,7 @@ import org.zkoss.zss.ngmodel.chart.NChartData;
 		return null;
 	}
 	
-	public NChart addChart(NViewAnchor anchor, NChartData data, NChartType type, NChartGrouping grouping, NChartLegendPosition pos) {
+	public NChart addChart(NViewAnchor anchor, NChartType type, NChartGrouping grouping, NChartLegendPosition pos) {
 		return null;
 	};
 	

@@ -1335,13 +1335,13 @@ public class NRangeImpl implements NRange {
 	}
 	
 	@Override
-	public NChart addChart(final NViewAnchor anchor, final NChartData data, final NChartType type,
-			final NChartGrouping grouping, final NChartLegendPosition pos) {
+	public NChart addChart(final NViewAnchor anchor, final NChartType type,	final NChartGrouping grouping, final NChartLegendPosition pos) {
 		return (NChart) new ReadWriteTask() {			
 			@Override
 			public Object invoke() {
-				NChart chart = data.getChart();
-				//TODO parameter "type" is not read
+				NChart chart = getSheet().addChart(type, anchor);
+				//TODO determine 3D 
+				new ChartDataHelper(NRangeImpl.this).fillChartData(chart);
 				chart.setGrouping(grouping);
 				chart.setLegendPosition(pos);
 				new NotifyChangeHelper().notifySheetChartAdd(getSheet(), chart.getId());

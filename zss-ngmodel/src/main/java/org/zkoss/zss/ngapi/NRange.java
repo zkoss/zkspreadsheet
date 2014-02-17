@@ -25,7 +25,6 @@ import org.zkoss.zss.ngmodel.NChart.NChartLegendPosition;
 import org.zkoss.zss.ngmodel.NChart.NChartType;
 import org.zkoss.zss.ngmodel.NHyperlink.HyperlinkType;
 import org.zkoss.zss.ngmodel.NPicture.Format;
-import org.zkoss.zss.ngmodel.chart.NChartData;
 /**
  * The most useful api to manipulate a book
  *  
@@ -549,7 +548,7 @@ public interface NRange {
 	 * @param anchor
 	 * @return the created chart 
 	 */
-	public NChart addChart(NViewAnchor anchor, NChartData data, NChartType type, NChartGrouping grouping, NChartLegendPosition pos);
+	public NChart addChart(NViewAnchor anchor, NChartType type, NChartGrouping grouping, NChartLegendPosition pos);
 
 
 	/**
