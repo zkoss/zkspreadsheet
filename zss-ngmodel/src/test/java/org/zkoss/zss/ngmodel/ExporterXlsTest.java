@@ -1,5 +1,8 @@
 package org.zkoss.zss.ngmodel;
 
+import static org.junit.Assert.assertEquals;
+
+import java.io.File;
 import java.util.Iterator;
 
 import junit.framework.Assert;
@@ -16,6 +19,19 @@ public class ExporterXlsTest extends ExporterTest {
 		CHART_IMPORT_FILE_UNDER_TEST = ImporterTest.class.getResource("book/chart.xls");
 		PICTURE_IMPORT_FILE_UNDER_TEST = ImporterTest.class.getResource("book/picture.xls");
 		EXPORTER_TYPE = ExcelExportFactory.Type.XLS;
+	}
+	
+	@Override
+	public void hyperlinkTest() {
+		File outFile = ImExpTestUtil.write(ImExpTestUtil.loadBook(IMPORT_FILE_UNDER_TEST, "XSSFBook"), EXPORTER_TYPE);
+		NBook book = ImExpTestUtil.loadBook(outFile, DEFAULT_BOOK_NAME);
+		NSheet sheet = book.getSheetByName("Style");
+		NCell cell = sheet.getCell("B31");
+		NHyperlink link = cell.getHyperlink();
+		
+		assertEquals("http://www.zkoss.org/", link.getAddress());
+		assertEquals("url", link.getLabel());
+		assertEquals(NHyperlink.HyperlinkType.URL, link.getType());
 	}
 	
 	@Override

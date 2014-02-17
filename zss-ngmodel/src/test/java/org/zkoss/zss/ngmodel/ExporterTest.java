@@ -138,7 +138,6 @@ public class ExporterTest extends ImExpTestBase {
 		mergedTest(book);
 	}
 	
-	@Ignore("Dont know why, Run all will cause failure")
 	@Test
 	public void hyperlinkTest() {
 		File outFile = ImExpTestUtil.write(ImExpTestUtil.loadBook(IMPORT_FILE_UNDER_TEST, "XSSFBook"), EXPORTER_TYPE);
