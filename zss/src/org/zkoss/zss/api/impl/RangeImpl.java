@@ -568,8 +568,8 @@ public class RangeImpl implements Range{
 		_range.movePicture(((PictureImpl)picture).getNative(), SheetImpl.toViewAnchor(_range.getSheet(), anchor));
 	}
 	
-	public Chart addChart(SheetAnchor anchor,ChartData chartData,Type type, Grouping grouping, LegendPosition pos){
-		NChart chart =  _range.addChart(SheetImpl.toViewAnchor(_range.getSheet(), anchor), chartData.getNative(), 
+	public Chart addChart(SheetAnchor anchor,Type type, Grouping grouping, LegendPosition pos){
+		NChart chart =  _range.addChart(SheetImpl.toViewAnchor(_range.getSheet(), anchor), 
 				EnumUtil.toChartType(type), EnumUtil.toChartGrouping(grouping),
 				EnumUtil.toLegendPosition(pos));
 		return new ChartImpl(new SimpleRef<NSheet>(_range.getSheet()), new SimpleRef<NChart>(chart));

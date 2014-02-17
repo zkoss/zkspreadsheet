@@ -190,10 +190,10 @@ public class SheetOperationUtil {
 	 * @param grouping the grouping type
 	 * @param pos the legend position type
 	 */
-	public static Chart addChart(Range range, ChartData data, Chart.Type type, Chart.Grouping grouping,
+	public static Chart addChart(Range range, Chart.Type type, Chart.Grouping grouping,
 			Chart.LegendPosition pos) {
 		SheetAnchor anchor = toChartAnchor(range);
-		return addChart(range,anchor, data, type, grouping, pos);
+		return addChart(range,anchor, type, grouping, pos);
 	}
 	
 	/**
@@ -205,11 +205,11 @@ public class SheetOperationUtil {
 	 * @param grouping the grouping type
 	 * @param pos the legend position type
 	 */
-	public static Chart addChart(Range range, SheetAnchor anchor, ChartData data, Chart.Type type, Chart.Grouping grouping,
+	public static Chart addChart(Range range, SheetAnchor anchor, Chart.Type type, Chart.Grouping grouping,
 			Chart.LegendPosition pos) {
 		if (range.isProtected())
 			return null;
-		return range.addChart(anchor, data, type, grouping, pos);
+		return range.addChart(anchor,type, grouping, pos);
 	}
 	
 	/**

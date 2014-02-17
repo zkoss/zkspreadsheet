@@ -652,15 +652,14 @@ public interface Range {
 	
 	/**
 	 * Adds chart to sheet
-	 * @param anchor the anchor for chart
-	 * @param data the chart data
+	 * @param anchor the destination anchor of the chart
 	 * @param type the chart type
 	 * @param grouping the chart grouping
 	 * @param pos the legend position
 	 * @return the new added chart
 	 */
 	//currently, we only support to modify chart in XSSF
-	public Chart addChart(SheetAnchor anchor,ChartData data,Type type, Grouping grouping, LegendPosition pos);
+	public Chart addChart(SheetAnchor anchor,Type type, Grouping grouping, LegendPosition pos);
 	
 	/**
 	 * Deletes chart

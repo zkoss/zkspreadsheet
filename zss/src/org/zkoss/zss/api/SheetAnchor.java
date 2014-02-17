@@ -20,7 +20,7 @@ import org.zkoss.zss.api.model.Chart;
 import org.zkoss.zss.api.model.Picture;
 
 /**
- * The anchor for the objects ( {@link Picture} , {@link Chart}) of a sheet
+ * The anchor represents a position in a sheet for the objects ( {@link Picture} , or {@link Chart}) by row and column index.
  * @author dennis
  * @see Picture
  * @see Range#addPicture(SheetAnchor, byte[], org.zkoss.zss.api.model.Picture.Format)
