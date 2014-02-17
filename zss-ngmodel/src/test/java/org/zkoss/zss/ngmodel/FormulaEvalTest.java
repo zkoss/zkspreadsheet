@@ -749,6 +749,9 @@ public class FormulaEvalTest {
 		NBook book1 = NBooks.createBook("Book1");
 		NSheet sheetA = book1.createSheet("SheetA");
 		NSheet sheetB = book1.createSheet("SheetB");
+		NBook book2 = NBooks.createBook("Book2");
+		NSheet book2SheetA = book2.createSheet("SheetA");
+		new BookSeriesBuilderImpl().buildBookSeries(book1, book2);
 
 		// the formula contains 3 region in current sheet
 		// delete region won't cover region 1, complete cover region 2, and partial cover region 3
@@ -757,56 +760,60 @@ public class FormulaEvalTest {
 		// delete cells and shift up
 		boolean horizontal = false;
 		// source region at top
-		testFormulaShrink(f,"G1:L1", horizontal, "SUM(C3:E5)+SUM(G2:I4)+SUM(K3:M5)", engine, sheetA);
-		testFormulaShrink(f,"G1:L2", horizontal, "SUM(C3:E5)+SUM(G1:I3)+SUM(K3:M5)", engine, sheetA);
+		testFormulaShrink(f,sheetA, "G1:L1", null, horizontal, "SUM(C3:E5)+SUM(G2:I4)+SUM(K3:M5)", engine);
+		testFormulaShrink(f,sheetA, "G1:L2", null, horizontal, "SUM(C3:E5)+SUM(G1:I3)+SUM(K3:M5)", engine);
 		// source region overlapped
-		testFormulaShrink(f,"G3:L3", horizontal, "SUM(C3:E5)+SUM(G3:I4)+SUM(K3:M5)", engine, sheetA); // 1 row
-		testFormulaShrink(f,"G4:L4", horizontal, "SUM(C3:E5)+SUM(G3:I4)+SUM(K3:M5)", engine, sheetA); // 1 row
-		testFormulaShrink(f,"G5:L5", horizontal, "SUM(C3:E5)+SUM(G3:I4)+SUM(K3:M5)", engine, sheetA); // 1 row
-		testFormulaShrink(f,"G2:L3", horizontal, "SUM(C3:E5)+SUM(G2:I3)+SUM(K3:M5)", engine, sheetA); // 2 rows
-		testFormulaShrink(f,"G2:L4", horizontal, "SUM(C3:E5)+SUM(G2:I2)+SUM(K3:M5)", engine, sheetA); // 2 rows
-		testFormulaShrink(f,"G4:L5", horizontal, "SUM(C3:E5)+SUM(G3:I3)+SUM(K3:M5)", engine, sheetA); // 2 rows
-		testFormulaShrink(f,"G3:L5", horizontal, "SUM(C3:E5)+SUM(#REF!)+SUM(K3:M5)", engine, sheetA); // 3 rows
+		testFormulaShrink(f,sheetA, "G3:L3", null, horizontal, "SUM(C3:E5)+SUM(G3:I4)+SUM(K3:M5)", engine); // 1 row
+		testFormulaShrink(f,sheetA, "G4:L4", null, horizontal, "SUM(C3:E5)+SUM(G3:I4)+SUM(K3:M5)", engine); // 1 row
+		testFormulaShrink(f,sheetA, "G5:L5", null, horizontal, "SUM(C3:E5)+SUM(G3:I4)+SUM(K3:M5)", engine); // 1 row
+		testFormulaShrink(f,sheetA, "G2:L3", null, horizontal, "SUM(C3:E5)+SUM(G2:I3)+SUM(K3:M5)", engine); // 2 rows
+		testFormulaShrink(f,sheetA, "G2:L4", null, horizontal, "SUM(C3:E5)+SUM(G2:I2)+SUM(K3:M5)", engine); // 2 rows
+		testFormulaShrink(f,sheetA, "G4:L5", null, horizontal, "SUM(C3:E5)+SUM(G3:I3)+SUM(K3:M5)", engine); // 2 rows
+		testFormulaShrink(f,sheetA, "G3:L5", null, horizontal, "SUM(C3:E5)+SUM(#REF!)+SUM(K3:M5)", engine); // 3 rows
 //		testFormulaShrink(f,"G3:L5", horizontal, "SUM(C3:E5)+SUM(#REF!)+SUM(M3:M5)", engine, sheetA); // it's Excel approach 
 		// source region at bottom
-		testFormulaShrink(f,"G6:L6", horizontal, f, engine, sheetA);
+		testFormulaShrink(f,sheetA, "G6:L6", null, horizontal, f, engine);
 		// external sheet with external book (Note that we can't modify a external book reference)
 		f = "SUM(A1:A3)+SUM(SheetA!A1:A3)+SUM(SheetB!A1:A3)+SUM([Book2]SheetA!A1:A3)";
-		testFormulaShrink(f,"A2:A2", horizontal, "SUM(A1:A2)+SUM(SheetA!A1:A2)+SUM(SheetB!A1:A3)+SUM([Book2]SheetA!A1:A3)", engine, sheetA); // on SheetA
-		testFormulaShrink(f,"A2:A2", horizontal, "SUM(A1:A2)+SUM(SheetA!A1:A3)+SUM(SheetB!A1:A2)+SUM([Book2]SheetA!A1:A3)", engine, sheetB); // on SheetB
+		testFormulaShrink(f,sheetA, "A2:A2", null, horizontal, "SUM(A1:A2)+SUM(SheetA!A1:A2)+SUM(SheetB!A1:A3)+SUM([Book2]SheetA!A1:A3)", engine); // on SheetA
+		testFormulaShrink(f,sheetB, "A2:A2", null, horizontal, "SUM(A1:A2)+SUM(SheetA!A1:A3)+SUM(SheetB!A1:A2)+SUM([Book2]SheetA!A1:A3)", engine); // on SheetB
 
 		// delete cells and shift left
 		f = "SUM(C3:E5)+SUM(C7:E9)+SUM(C11:E13)";
 		horizontal = true;
 		// source region at left
-		testFormulaShrink(f,"A7:A12", horizontal, "SUM(C3:E5)+SUM(B7:D9)+SUM(C11:E13)", engine, sheetA);
-		testFormulaShrink(f,"A7:B12", horizontal, "SUM(C3:E5)+SUM(A7:C9)+SUM(C11:E13)", engine, sheetA);
+		testFormulaShrink(f,sheetA, "A7:A12", null, horizontal, "SUM(C3:E5)+SUM(B7:D9)+SUM(C11:E13)", engine);
+		testFormulaShrink(f,sheetA, "A7:B12", null, horizontal, "SUM(C3:E5)+SUM(A7:C9)+SUM(C11:E13)", engine);
 		// source region overlapped
-		testFormulaShrink(f,"C7:C12", horizontal, "SUM(C3:E5)+SUM(C7:D9)+SUM(C11:E13)", engine, sheetA); // 1 column
-		testFormulaShrink(f,"D7:D12", horizontal, "SUM(C3:E5)+SUM(C7:D9)+SUM(C11:E13)", engine, sheetA); // 1 column
-		testFormulaShrink(f,"E7:E12", horizontal, "SUM(C3:E5)+SUM(C7:D9)+SUM(C11:E13)", engine, sheetA); // 1 column
-		testFormulaShrink(f,"B7:C12", horizontal, "SUM(C3:E5)+SUM(B7:C9)+SUM(C11:E13)", engine, sheetA); // 2 columns
-		testFormulaShrink(f,"B7:D12", horizontal, "SUM(C3:E5)+SUM(B7:B9)+SUM(C11:E13)", engine, sheetA); // 2 columns
-		testFormulaShrink(f,"D7:E12", horizontal, "SUM(C3:E5)+SUM(C7:C9)+SUM(C11:E13)", engine, sheetA); // 2 columns
-		testFormulaShrink(f,"C7:E12", horizontal, "SUM(C3:E5)+SUM(#REF!)+SUM(C11:E13)", engine, sheetA); // 3 columns
+		testFormulaShrink(f,sheetA, "C7:C12", null, horizontal, "SUM(C3:E5)+SUM(C7:D9)+SUM(C11:E13)", engine); // 1 column
+		testFormulaShrink(f,sheetA, "D7:D12", null, horizontal, "SUM(C3:E5)+SUM(C7:D9)+SUM(C11:E13)", engine); // 1 column
+		testFormulaShrink(f,sheetA, "E7:E12", null, horizontal, "SUM(C3:E5)+SUM(C7:D9)+SUM(C11:E13)", engine); // 1 column
+		testFormulaShrink(f,sheetA, "B7:C12", null, horizontal, "SUM(C3:E5)+SUM(B7:C9)+SUM(C11:E13)", engine); // 2 columns
+		testFormulaShrink(f,sheetA, "B7:D12", null, horizontal, "SUM(C3:E5)+SUM(B7:B9)+SUM(C11:E13)", engine); // 2 columns
+		testFormulaShrink(f,sheetA, "D7:E12", null, horizontal, "SUM(C3:E5)+SUM(C7:C9)+SUM(C11:E13)", engine); // 2 columns
+		testFormulaShrink(f,sheetA, "C7:E12", null, horizontal, "SUM(C3:E5)+SUM(#REF!)+SUM(C11:E13)", engine); // 3 columns
 //		testFormulaShrink(f,"C7:E12", horizontal, "SUM(C3:E5)+SUM(#REF!)+SUM(C13:E13)", engine, sheetA); // it's Excel approach 
 		// source region at right
-		testFormulaShrink(f,"F7:F12", horizontal, f, engine, sheetA);
-		// external sheet with external book (Note that we can't modify a external book reference)
+		testFormulaShrink(f,sheetA, "F7:F12", null, horizontal, f, engine);
+		// external sheet with external book
 		f = "SUM(A1:C1)+SUM(SheetA!A1:C1)+SUM(SheetB!A1:C1)+SUM([Book2]SheetA!A1:C1)";
-		testFormulaShrink(f,"B1:B1", horizontal, "SUM(A1:B1)+SUM(SheetA!A1:B1)+SUM(SheetB!A1:C1)+SUM([Book2]SheetA!A1:C1)", engine, sheetA); // on SheetA
-		testFormulaShrink(f,"B1:B1", horizontal, "SUM(A1:B1)+SUM(SheetA!A1:C1)+SUM(SheetB!A1:B1)+SUM([Book2]SheetA!A1:C1)", engine, sheetB); // on SheetB
+		testFormulaShrink(f,sheetA, "B1:B1", null, horizontal, "SUM(A1:B1)+SUM(SheetA!A1:B1)+SUM(SheetB!A1:C1)+SUM([Book2]SheetA!A1:C1)", engine); // on SheetA
+		testFormulaShrink(f,sheetB, "B1:B1", null, horizontal, "SUM(A1:B1)+SUM(SheetA!A1:C1)+SUM(SheetB!A1:B1)+SUM([Book2]SheetA!A1:C1)", engine); // on SheetB
+		testFormulaShrink(f,sheetA, "B1:B1", book2SheetA, horizontal, "SUM(A1:C1)+SUM(SheetA!A1:C1)+SUM(SheetB!A1:C1)+SUM([Book2]SheetA!A1:B1)", engine); // on Book2 SheetA
 		
 		// area direction
-		testFormulaShrink("SUM(G3:I5)", "G1:L1", false, "SUM(G2:I4)", engine, sheetA);
-		testFormulaShrink("SUM(G3:I5)", "G1:L1", false, "SUM(G2:I4)", engine, sheetA);
-		testFormulaShrink("SUM(G3:I5)", "G1:L1", false, "SUM(G2:I4)", engine, sheetA);
-		testFormulaShrink("SUM(G3:I5)", "G1:L1", false, "SUM(G2:I4)", engine, sheetA);
+		testFormulaShrink("SUM(G3:I5)", sheetA, "G1:L1", null, false, "SUM(G2:I4)", engine);
+		testFormulaShrink("SUM(G3:I5)", sheetA, "G1:L1", null, false, "SUM(G2:I4)", engine);
+		testFormulaShrink("SUM(G3:I5)", sheetA, "G1:L1", null, false, "SUM(G2:I4)", engine);
+		testFormulaShrink("SUM(G3:I5)", sheetA, "G1:L1", null, false, "SUM(G2:I4)", engine);
 	}
 
-	private void testFormulaShrink(String formula, String region, boolean hrizontal, String expected, FormulaEngine engine, NSheet sheet) {
-		FormulaParseContext context = new FormulaParseContext(sheet, null);
-		FormulaExpression expr = engine.shrink(formula, new SheetRegion(sheet, region), hrizontal, context);
+	private void testFormulaShrink(String formula, NSheet formulaSheet, String region, NSheet regionSheet, boolean hrizontal, String expected, FormulaEngine engine) {
+		if(regionSheet == null) {
+			regionSheet = formulaSheet;
+		}
+		FormulaParseContext context = new FormulaParseContext(formulaSheet, null);
+		FormulaExpression expr = engine.shrink(formula, new SheetRegion(regionSheet, region), hrizontal, context);
 		Assert.assertFalse(expr.hasError());
 		Assert.assertEquals(expected, expr.getFormulaString());
 	}
@@ -817,6 +824,9 @@ public class FormulaEvalTest {
 		NBook book1 = NBooks.createBook("Book1");
 		NSheet sheetA = book1.createSheet("SheetA");
 		NSheet sheetB = book1.createSheet("SheetB");
+		NBook book2 = NBooks.createBook("Book2");
+		NSheet book2SheetA = book2.createSheet("SheetA");
+		new BookSeriesBuilderImpl().buildBookSeries(book1, book2);
 
 		// the formula contains 3 region in current sheet
 		// target region won't cover region 1, complete cover region 2, and partial cover region 3
@@ -825,54 +835,58 @@ public class FormulaEvalTest {
 		// delete cells and shift up
 		boolean horizontal = false;
 		// source region at top
-		testFormulaExtend(f,"G1:L1", horizontal, "SUM(C3:E5)+SUM(G4:I6)+SUM(K3:M5)", engine, sheetA);
-		testFormulaExtend(f,"G1:L2", horizontal, "SUM(C3:E5)+SUM(G5:I7)+SUM(K3:M5)", engine, sheetA);
+		testFormulaExtend(f,sheetA, "G1:L1", null, horizontal, "SUM(C3:E5)+SUM(G4:I6)+SUM(K3:M5)", engine);
+		testFormulaExtend(f,sheetA, "G1:L2", null, horizontal, "SUM(C3:E5)+SUM(G5:I7)+SUM(K3:M5)", engine);
 		// source region overlapped
-		testFormulaExtend(f,"G3:L3", horizontal, "SUM(C3:E5)+SUM(G4:I6)+SUM(K3:M5)", engine, sheetA); // 1 row
-		testFormulaExtend(f,"G4:L4", horizontal, "SUM(C3:E5)+SUM(G3:I6)+SUM(K3:M5)", engine, sheetA); // 1 row
-		testFormulaExtend(f,"G5:L5", horizontal, "SUM(C3:E5)+SUM(G3:I6)+SUM(K3:M5)", engine, sheetA); // 1 row
-		testFormulaExtend(f,"G2:L3", horizontal, "SUM(C3:E5)+SUM(G5:I7)+SUM(K3:M5)", engine, sheetA); // 2 rows
-		testFormulaExtend(f,"G2:L4", horizontal, "SUM(C3:E5)+SUM(G6:I8)+SUM(K3:M5)", engine, sheetA); // 2 rows
-		testFormulaExtend(f,"G4:L5", horizontal, "SUM(C3:E5)+SUM(G3:I7)+SUM(K3:M5)", engine, sheetA); // 2 rows
-		testFormulaExtend(f,"G3:L5", horizontal, "SUM(C3:E5)+SUM(G6:I8)+SUM(K3:M5)", engine, sheetA); // 3 rows
+		testFormulaExtend(f,sheetA, "G3:L3", null, horizontal, "SUM(C3:E5)+SUM(G4:I6)+SUM(K3:M5)", engine); // 1 row
+		testFormulaExtend(f,sheetA, "G4:L4", null, horizontal, "SUM(C3:E5)+SUM(G3:I6)+SUM(K3:M5)", engine); // 1 row
+		testFormulaExtend(f,sheetA, "G5:L5", null, horizontal, "SUM(C3:E5)+SUM(G3:I6)+SUM(K3:M5)", engine); // 1 row
+		testFormulaExtend(f,sheetA, "G2:L3", null, horizontal, "SUM(C3:E5)+SUM(G5:I7)+SUM(K3:M5)", engine); // 2 rows
+		testFormulaExtend(f,sheetA, "G2:L4", null, horizontal, "SUM(C3:E5)+SUM(G6:I8)+SUM(K3:M5)", engine); // 2 rows
+		testFormulaExtend(f,sheetA, "G4:L5", null, horizontal, "SUM(C3:E5)+SUM(G3:I7)+SUM(K3:M5)", engine); // 2 rows
+		testFormulaExtend(f,sheetA, "G3:L5", null, horizontal, "SUM(C3:E5)+SUM(G6:I8)+SUM(K3:M5)", engine); // 3 rows
 		// source region at bottom
-		testFormulaExtend(f,"G6:L6", horizontal, f, engine, sheetA);
+		testFormulaExtend(f,sheetA, "G6:L6", null, horizontal, f, engine);
 		// external sheet with external book (Note that we can't modify a external book reference)
 		f = "SUM(A1:A3)+SUM(SheetA!A1:A3)+SUM(SheetB!A1:A3)+SUM([Book2]SheetA!A1:A3)";
-		testFormulaExtend(f,"A2:A2", horizontal, "SUM(A1:A4)+SUM(SheetA!A1:A4)+SUM(SheetB!A1:A3)+SUM([Book2]SheetA!A1:A3)", engine, sheetA); // on SheetA
-		testFormulaExtend(f,"A2:A2", horizontal, "SUM(A1:A4)+SUM(SheetA!A1:A3)+SUM(SheetB!A1:A4)+SUM([Book2]SheetA!A1:A3)", engine, sheetB); // on SheetB
+		testFormulaExtend(f,sheetA, "A2:A2", null, horizontal, "SUM(A1:A4)+SUM(SheetA!A1:A4)+SUM(SheetB!A1:A3)+SUM([Book2]SheetA!A1:A3)", engine); // on SheetA
+		testFormulaExtend(f,sheetB, "A2:A2", null, horizontal, "SUM(A1:A4)+SUM(SheetA!A1:A3)+SUM(SheetB!A1:A4)+SUM([Book2]SheetA!A1:A3)", engine); // on SheetB
 
 		// delete cells and shift left
 		f = "SUM(C3:E5)+SUM(C7:E9)+SUM(C11:E13)";
 		horizontal = true;
 		// source region at left
-		testFormulaExtend(f,"A7:A12", horizontal, "SUM(C3:E5)+SUM(D7:F9)+SUM(C11:E13)", engine, sheetA);
-		testFormulaExtend(f,"A7:B12", horizontal, "SUM(C3:E5)+SUM(E7:G9)+SUM(C11:E13)", engine, sheetA);
+		testFormulaExtend(f,sheetA, "A7:A12", null, horizontal, "SUM(C3:E5)+SUM(D7:F9)+SUM(C11:E13)", engine);
+		testFormulaExtend(f,sheetA, "A7:B12", null, horizontal, "SUM(C3:E5)+SUM(E7:G9)+SUM(C11:E13)", engine);
 		// source region overlapped
-		testFormulaExtend(f,"C7:C12", horizontal, "SUM(C3:E5)+SUM(D7:F9)+SUM(C11:E13)", engine, sheetA); // 1 column
-		testFormulaExtend(f,"D7:D12", horizontal, "SUM(C3:E5)+SUM(C7:F9)+SUM(C11:E13)", engine, sheetA); // 1 column
-		testFormulaExtend(f,"E7:E12", horizontal, "SUM(C3:E5)+SUM(C7:F9)+SUM(C11:E13)", engine, sheetA); // 1 column
-		testFormulaExtend(f,"B7:C12", horizontal, "SUM(C3:E5)+SUM(E7:G9)+SUM(C11:E13)", engine, sheetA); // 2 columns
-		testFormulaExtend(f,"B7:D12", horizontal, "SUM(C3:E5)+SUM(F7:H9)+SUM(C11:E13)", engine, sheetA); // 2 columns
-		testFormulaExtend(f,"D7:E12", horizontal, "SUM(C3:E5)+SUM(C7:G9)+SUM(C11:E13)", engine, sheetA); // 2 columns
-		testFormulaExtend(f,"C7:E12", horizontal, "SUM(C3:E5)+SUM(F7:H9)+SUM(C11:E13)", engine, sheetA); // 3 columns
+		testFormulaExtend(f,sheetA, "C7:C12", null, horizontal, "SUM(C3:E5)+SUM(D7:F9)+SUM(C11:E13)", engine); // 1 column
+		testFormulaExtend(f,sheetA, "D7:D12", null, horizontal, "SUM(C3:E5)+SUM(C7:F9)+SUM(C11:E13)", engine); // 1 column
+		testFormulaExtend(f,sheetA, "E7:E12", null, horizontal, "SUM(C3:E5)+SUM(C7:F9)+SUM(C11:E13)", engine); // 1 column
+		testFormulaExtend(f,sheetA, "B7:C12", null, horizontal, "SUM(C3:E5)+SUM(E7:G9)+SUM(C11:E13)", engine); // 2 columns
+		testFormulaExtend(f,sheetA, "B7:D12", null, horizontal, "SUM(C3:E5)+SUM(F7:H9)+SUM(C11:E13)", engine); // 2 columns
+		testFormulaExtend(f,sheetA, "D7:E12", null, horizontal, "SUM(C3:E5)+SUM(C7:G9)+SUM(C11:E13)", engine); // 2 columns
+		testFormulaExtend(f,sheetA, "C7:E12", null, horizontal, "SUM(C3:E5)+SUM(F7:H9)+SUM(C11:E13)", engine); // 3 columns
 		// source region at right
-		testFormulaExtend(f,"F7:F12", horizontal, f, engine, sheetA);
-		// external sheet with external book (Note that we can't modify a external book reference)
+		testFormulaExtend(f,sheetA, "F7:F12", null, horizontal, f, engine);
+		// external sheet with external book
 		f = "SUM(A1:C1)+SUM(SheetA!A1:C1)+SUM(SheetB!A1:C1)+SUM([Book2]SheetA!A1:C1)";
-		testFormulaExtend(f,"B1:B1", horizontal, "SUM(A1:D1)+SUM(SheetA!A1:D1)+SUM(SheetB!A1:C1)+SUM([Book2]SheetA!A1:C1)", engine, sheetA); // on SheetA
-		testFormulaExtend(f,"B1:B1", horizontal, "SUM(A1:D1)+SUM(SheetA!A1:C1)+SUM(SheetB!A1:D1)+SUM([Book2]SheetA!A1:C1)", engine, sheetB); // on SheetB
+		testFormulaExtend(f,sheetA, "B1:B1", null, horizontal, "SUM(A1:D1)+SUM(SheetA!A1:D1)+SUM(SheetB!A1:C1)+SUM([Book2]SheetA!A1:C1)", engine); // on SheetA
+		testFormulaExtend(f,sheetB, "B1:B1", null, horizontal, "SUM(A1:D1)+SUM(SheetA!A1:C1)+SUM(SheetB!A1:D1)+SUM([Book2]SheetA!A1:C1)", engine); // on SheetB
+		testFormulaExtend(f,sheetA, "B1:B1", book2SheetA, horizontal, "SUM(A1:C1)+SUM(SheetA!A1:C1)+SUM(SheetB!A1:C1)+SUM([Book2]SheetA!A1:D1)", engine); // on Book2 SheetA
 		
 		// area direction
-		testFormulaExtend("SUM(G3:I5)", "G1:L1", false, "SUM(G4:I6)", engine, sheetA);
-		testFormulaExtend("SUM(I5:G3)", "G1:L1", false, "SUM(G4:I6)", engine, sheetA);
-		testFormulaExtend("SUM(G5:I3)", "G1:L1", false, "SUM(G4:I6)", engine, sheetA);
-		testFormulaExtend("SUM(I3:G5)", "G1:L1", false, "SUM(G4:I6)", engine, sheetA);
+		testFormulaExtend("SUM(G3:I5)", sheetA, "G1:L1", null, false, "SUM(G4:I6)", engine);
+		testFormulaExtend("SUM(I5:G3)", sheetA, "G1:L1", null, false, "SUM(G4:I6)", engine);
+		testFormulaExtend("SUM(G5:I3)", sheetA, "G1:L1", null, false, "SUM(G4:I6)", engine);
+		testFormulaExtend("SUM(I3:G5)", sheetA, "G1:L1", null, false, "SUM(G4:I6)", engine);
 	}
 	
-	private void testFormulaExtend(String formula, String region, boolean hrizontal, String expected, FormulaEngine engine, NSheet sheet) {
-		FormulaParseContext context = new FormulaParseContext(sheet, null);
-		FormulaExpression expr = engine.extend(formula, new SheetRegion(sheet, region), hrizontal, context);
+	private void testFormulaExtend(String formula, NSheet formulaSheet, String region, NSheet regionSheet, boolean hrizontal, String expected, FormulaEngine engine) {
+		if(regionSheet == null) {
+			regionSheet = formulaSheet;
+		}
+		FormulaParseContext context = new FormulaParseContext(formulaSheet, null);
+		FormulaExpression expr = engine.extend(formula, new SheetRegion(regionSheet, region), hrizontal, context);
 		Assert.assertFalse(expr.hasError());
 		Assert.assertEquals(expected, expr.getFormulaString());
 	}
@@ -969,5 +983,47 @@ public class FormulaEvalTest {
 		String actual = expr.getFormulaString();
 		Assert.assertEquals(expected, actual);
 		return actual;
+	}
+	
+	@Test
+	public void testFormulaRenameSheet() {
+		FormulaEngine engine = EngineFactory.getInstance().createFormulaEngine();
+		NBook bookA = NBooks.createBook("BookA");
+		NSheet sheetX = bookA.createSheet("SheetX");
+		bookA.createSheet("Sheet1");
+		bookA.createSheet("Sheet2");
+		bookA.createSheet("Sheet3");
+		bookA.createSheet("Sheet4");
+		bookA.createSheet("Sheet5");
+		bookA.createSheet("Sheet6");
+		NBook bookB = NBooks.createBook("BookB.xlsx");
+		bookB.createSheet("Sheet1");
+		new BookSeriesBuilderImpl().buildBookSeries(bookA, bookB);
+
+		String f = "SUM(Sheet1!A1,Sheet2:Sheet5!A1,Sheet6!A1,[BookB.xlsx]Sheet1!A1)";
+
+		// normal
+		testFormulaRenameSheet(engine, sheetX, f, bookA, "Sheet1", "sht1", "SUM(sht1!A1,Sheet2:Sheet5!A1,Sheet6!A1,[BookB.xlsx]Sheet1!A1)");
+		testFormulaRenameSheet(engine, sheetX, f, bookA, "Sheet2", "sht2", "SUM(Sheet1!A1,sht2:Sheet5!A1,Sheet6!A1,[BookB.xlsx]Sheet1!A1)");
+		testFormulaRenameSheet(engine, sheetX, f, bookA, "Sheet3", "sht3", f);
+		testFormulaRenameSheet(engine, sheetX, f, bookA, "Sheet4", "sht4", f);
+		testFormulaRenameSheet(engine, sheetX, f, bookA, "Sheet5", "sht5", "SUM(Sheet1!A1,Sheet2:sht5!A1,Sheet6!A1,[BookB.xlsx]Sheet1!A1)");
+		testFormulaRenameSheet(engine, sheetX, f, bookA, "Sheet6", "sht6", "SUM(Sheet1!A1,Sheet2:Sheet5!A1,sht6!A1,[BookB.xlsx]Sheet1!A1)");
+
+		// duplicate name
+		// modification should be successful but just fail to eval.
+		testFormulaRenameSheet(engine, sheetX, f, bookA, "Sheet1", "Sheet2", "SUM(Sheet2!A1,Sheet2:Sheet5!A1,Sheet6!A1,[BookB.xlsx]Sheet1!A1)");
+		testFormulaRenameSheet(engine, sheetX, f, bookA, "Sheet2", "Sheet5", "SUM(Sheet1!A1,Sheet5!A1,Sheet6!A1,[BookB.xlsx]Sheet1!A1)"); // merge sheet range
+
+		// external book
+		testFormulaRenameSheet(engine, sheetX, f, bookB, "Sheet1", "sht1", "SUM(Sheet1!A1,Sheet2:Sheet5!A1,Sheet6!A1,[BookB.xlsx]sht1!A1)");
+		testFormulaRenameSheet(engine, sheetX, f, bookB, "Sheet2", "sht2", f);
+	}
+	
+	private void testFormulaRenameSheet(FormulaEngine engine, NSheet formulaSheet, String formula, NBook targetBook, String oldSheetName, String newSheetName, String expected) {
+		FormulaParseContext context = new FormulaParseContext(formulaSheet, null);
+		FormulaExpression expr = engine.renameSheet(formula, targetBook, oldSheetName, newSheetName, context);
+		Assert.assertFalse(expr.hasError());
+		Assert.assertEquals(expected, expr.getFormulaString());
 	}
 }

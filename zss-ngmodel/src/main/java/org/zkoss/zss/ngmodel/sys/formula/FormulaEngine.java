@@ -16,7 +16,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.ngmodel.sys.formula;
 
-import org.zkoss.zss.ngmodel.CellRegion;
+import org.zkoss.zss.ngmodel.NBook;
 import org.zkoss.zss.ngmodel.SheetRegion;
 
 /**
@@ -67,7 +67,7 @@ public interface FormulaEngine {
 	public FormulaExpression extend(String formula, SheetRegion srcRegion, boolean hrizontal,
 			FormulaParseContext context);
 	
-	public FormulaExpression renameSheet(String formula, String oldName,String newName,
+	public FormulaExpression renameSheet(String formula, NBook book, String oldName,String newName,
 			FormulaParseContext context);
 	
 	public EvaluationResult evaluate(FormulaExpression expr, FormulaEvaluationContext context);

@@ -44,7 +44,7 @@ public class ParsingBook implements FormulaParsingWorkbook, FormulaRenderingWork
 	private Map<String, Integer> name2index = new HashMap<String, Integer>();
 	// sheets
 	private List<ExternalSheet> index2sheet = new ArrayList<ExternalSheet>();
-	private Map<String, Integer> sheetName2index = new HashMap<String, Integer>();
+	private Map<String, Integer> sheetName2index = new HashMap<String, Integer>(); // the name combine names of book, sheet 1 and sheet 2
 
 	public ParsingBook(NBook book) {
 		this.book = book;
@@ -189,6 +189,43 @@ public class ParsingBook implements FormulaParsingWorkbook, FormulaRenderingWork
 	@Override
 	public String getExternalLinkIndexFromBookName(String bookname) {
 		return bookname;
+	}
+	
+	/**
+	 * rename a sheet in this parsing book directly.
+	 * if it can't find a sheet with old name, it won't create a sheet for the new name.
+	 */
+	public void renameSheet(String bookName, String oldName, String newName) {
+		
+		// null as current book
+		if(book.getBookName().equals(bookName)) {
+			bookName = null;
+		}
+		
+		// check every external sheet data and rename sheet if necessary
+		// rename as replacing by new external sheets (Note, the index should not be changed)
+		List<ExternalSheet> temp = new ArrayList<ExternalSheet>(index2sheet.size()); 
+		for(ExternalSheet extSheet : index2sheet) {
+			if((bookName == null && extSheet.getWorkbookName() == null)
+				|| (bookName != null && bookName.equals(extSheet.getWorkbookName()))) {
+				String sheet1 = oldName.equals(extSheet.getSheetName()) ? newName : extSheet.getSheetName();
+				String sheet2 = oldName.equals(extSheet.getLastSheetName()) ? newName : extSheet.getLastSheetName();
+				temp.add(new ExternalSheet(extSheet.getWorkbookName(), sheet1, sheet2));
+			} else {
+				temp.add(extSheet);
+			}
+		}
+		index2sheet = temp;
+		
+		// clear the map of external sheet name to index and rebuild it
+		sheetName2index.clear();
+		for(int i = 0; i < index2sheet.size(); ++i) {
+			String book = index2sheet.get(i).getWorkbookName();
+			String sheet1 = index2sheet.get(i).getSheetName();
+			String sheet2 = index2sheet.get(i).getLastSheetName();
+			String key = toKey(book, sheet1.equals(sheet2) ? (sheet1 + ":" + sheet2) : sheet1);
+			sheetName2index.put(key, i);
+		}
 	}
 
 	/**

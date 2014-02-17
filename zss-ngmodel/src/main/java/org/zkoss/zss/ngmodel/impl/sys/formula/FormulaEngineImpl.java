@@ -570,12 +570,6 @@ public class FormulaEngineImpl implements FormulaEngine {
 		}
 
 	}
-
-	@Override
-	public FormulaExpression renameSheet(String formula, String oldName, String newName, FormulaParseContext context) {
-		// TODO zss 3.5
-		return new FormulaExpressionImpl(formula, null);
-	}
 	
 	/**
 	 * adjust formula through specific adjuster
@@ -636,7 +630,7 @@ public class FormulaEngineImpl implements FormulaEngine {
 
 	@Override
 	public FormulaExpression shrink(String formula, SheetRegion srcRegion, boolean horizontal, FormulaParseContext context) {
-		NSheet sheet = context.getSheet();
+		NSheet sheet = srcRegion.getSheet();
 
 		// shrinking is equals to move the neighbor region
 		// calculate the neighbor and offset
@@ -646,7 +640,7 @@ public class FormulaEngineImpl implements FormulaEngine {
 			// adjust on column
 			colOffset = -srcRegion.getColumnCount();
 			int col = srcRegion.getLastColumn() + 1;
-			int lastCol = context.getBook().getMaxColumnIndex();
+			int lastCol = sheet.getBook().getMaxColumnIndex();
 			// no change on row
 			int row = srcRegion.getRow();
 			int lastRow = srcRegion.getLastRow();
@@ -655,7 +649,7 @@ public class FormulaEngineImpl implements FormulaEngine {
 			// adjust on row
 			rowOffset = -srcRegion.getRowCount();
 			int row = srcRegion.getLastRow() + 1;
-			int lastRow = context.getBook().getMaxRowIndex();
+			int lastRow = sheet.getBook().getMaxRowIndex();
 			// no change on column
 			int col = srcRegion.getColumn();
 			int lastCol = srcRegion.getLastColumn();
@@ -667,9 +661,8 @@ public class FormulaEngineImpl implements FormulaEngine {
 	}
 
 	@Override
-	public FormulaExpression extend(String formula, SheetRegion srcRegion,
-			boolean horizontal, FormulaParseContext context) {
-		NSheet sheet = context.getSheet();
+	public FormulaExpression extend(String formula, SheetRegion srcRegion, boolean horizontal, FormulaParseContext context) {
+		NSheet sheet = srcRegion.getSheet();
 
 		// extending is equals to move selected region and neighbor region at the same time
 		// calculate the target region (combined selected and neighbor) and offset
@@ -679,7 +672,7 @@ public class FormulaEngineImpl implements FormulaEngine {
 			// adjust on column
 			colOffset = srcRegion.getColumnCount();
 			int col = srcRegion.getColumn();
-			int lastCol = context.getBook().getMaxColumnIndex();
+			int lastCol = sheet.getBook().getMaxColumnIndex();
 			// no change on row
 			int row = srcRegion.getRow();
 			int lastRow = srcRegion.getLastRow();
@@ -688,7 +681,7 @@ public class FormulaEngineImpl implements FormulaEngine {
 			// adjust on row
 			rowOffset = srcRegion.getRowCount();
 			int row = srcRegion.getRow();
-			int lastRow = context.getBook().getMaxRowIndex();
+			int lastRow = sheet.getBook().getMaxRowIndex();
 			// no change on column
 			int col = srcRegion.getColumn();
 			int lastCol = srcRegion.getLastColumn();
@@ -831,4 +824,17 @@ public class FormulaEngineImpl implements FormulaEngine {
 		});
 	}
 
+	@Override
+	public FormulaExpression renameSheet(String formula, final NBook targetBook, final String oldSheetName, final String newSheetName, FormulaParseContext context) {
+		return adjust(formula, context, new FormulaAdjuster() {
+			@Override
+			public boolean process(String formula, int formulaSheetIndex, Ptg[] tokens, ParsingBook parsingBook, FormulaParseContext context) {
+				// parsed tokens has only external sheet index, not real sheet name
+				// the sheet names are kept in parsing book, so we just rename sheets in parsing book
+				// finally use such parsing book to re-render formula will get a renamed formula
+				parsingBook.renameSheet(targetBook.getBookName(), oldSheetName, newSheetName);
+				return true;
+			}
+		});
+	}
 }
