@@ -587,6 +587,10 @@ public class RangeImpl implements Range{
 		_range.moveChart(((ChartImpl)chart).getNative(), SheetImpl.toViewAnchor(_range.getSheet(), anchor));
 	}
 	
+	@Override
+	public void updateChart(Chart chart){
+		_range.updateChart(((ChartImpl)chart).getNative());
+	}
 	
 	public Sheet createSheet(String name){
 		NSheet sheet = _range.createSheet(name);
