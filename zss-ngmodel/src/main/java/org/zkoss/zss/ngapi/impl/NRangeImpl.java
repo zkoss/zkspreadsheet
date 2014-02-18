@@ -1249,9 +1249,24 @@ public class NRangeImpl implements NRange {
 		}
 		
 		public void doFinially(){
-			refNotifySet.addAll(refCtx.getRefs());
+			
+			Set<Ref> refs = refCtx.getRefs();
+			Set<SheetRegion> cells = new LinkedHashSet<SheetRegion>();
+			
+			//remove the duplicate update between cell and refs
+			for(SheetRegion region:cellUpdateCtx.getCellUpdates()){
+				String bookName = region.getSheet().getBook().getBookName();
+				String sheetName = region.getSheet().getSheetName();
+				Ref ref = new RefImpl(bookName,sheetName,region.getRow(),region.getColumn());
+				if(refs.contains(ref)){
+					continue;
+				}
+				cells.add(region);
+			}
+			
+			refNotifySet.addAll(refs);
 			mergeNotifySet.addAll(mergeUpdateCtx.getMergeUpdates());
-			cellNotifySet.addAll(cellUpdateCtx.getCellUpdates());
+			cellNotifySet.addAll(cells);
 			
 			RefUpdateCollector.setCurrent(oldRefCtx);
 			MergeUpdateCollector.setCurrent(oldMergeUpdateCtx);
