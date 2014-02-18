@@ -546,9 +546,10 @@ public interface NRange {
 	/**
 	 * Add a chart into the sheet of this Range 
 	 * @param anchor
+	 * @param isThreeD TODO
 	 * @return the created chart 
 	 */
-	public NChart addChart(NViewAnchor anchor, NChartType type, NChartGrouping grouping, NChartLegendPosition pos);
+	public NChart addChart(NViewAnchor anchor, NChartType type, NChartGrouping grouping, NChartLegendPosition pos, boolean isThreeD);
 
 
 	/**

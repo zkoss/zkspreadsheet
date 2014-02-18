@@ -1333,12 +1333,12 @@ public class NRangeImpl implements NRange {
 	}
 	
 	@Override
-	public NChart addChart(final NViewAnchor anchor, final NChartType type,	final NChartGrouping grouping, final NChartLegendPosition pos) {
+	public NChart addChart(final NViewAnchor anchor, final NChartType type,	final NChartGrouping grouping, final NChartLegendPosition pos, final boolean isThreeD) {
 		return (NChart) new ReadWriteTask() {			
 			@Override
 			public Object invoke() {
 				NChart chart = getSheet().addChart(type, anchor);
-				//TODO determine 3D 
+				chart.setThreeD(isThreeD); 
 				new ChartDataHelper(NRangeImpl.this).fillChartData(chart);
 				chart.setGrouping(grouping);
 				chart.setLegendPosition(pos);

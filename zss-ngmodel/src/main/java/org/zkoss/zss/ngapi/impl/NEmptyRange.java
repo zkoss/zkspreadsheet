@@ -395,7 +395,7 @@ import org.zkoss.zss.ngmodel.NPicture.Format;
 		return null;
 	}
 	
-	public NChart addChart(NViewAnchor anchor, NChartType type, NChartGrouping grouping, NChartLegendPosition pos) {
+	public NChart addChart(NViewAnchor anchor, NChartType type, NChartGrouping grouping, NChartLegendPosition pos, boolean isThreeD) {
 		return null;
 	};
 	
