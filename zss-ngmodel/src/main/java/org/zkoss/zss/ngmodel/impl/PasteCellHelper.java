@@ -462,7 +462,7 @@ import org.zkoss.zss.ngmodel.util.Validations;
 				
 				FormulaExpression expr = engine.shift(formula,rowOffset, columnOffset,new FormulaParseContext(destSheet, null));//no dependency
 				if(!expr.hasError() && transpose){
-					expr = engine.transpose(expr.getFormulaString(),rowOffset, columnOffset,new FormulaParseContext(destSheet, null));
+					expr = engine.transpose(expr.getFormulaString(),rowOrigin, columnOrigin,new FormulaParseContext(destSheet, null));
 				}
 				
 				if(!expr.hasError()){
