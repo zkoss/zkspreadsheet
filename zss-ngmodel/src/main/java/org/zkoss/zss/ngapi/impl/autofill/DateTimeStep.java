@@ -18,8 +18,10 @@ package org.zkoss.zss.ngapi.impl.autofill;
 import java.util.Calendar;
 import java.util.Date;
 
-import org.zkoss.poi.ss.usermodel.Cell;
-import org.zkoss.poi.ss.usermodel.DateUtil;
+
+//import org.zkoss.poi.ss.usermodel.DateUtil;
+import org.zkoss.zss.ngmodel.NCell;
+import org.zkoss.zss.ngmodel.sys.EngineFactory;
 
 /**
  * Step value by given steps by Calendar
@@ -45,10 +47,10 @@ public class DateTimeStep implements Step {
 		_dayStep = dayStep;
 		_millisecondStep = millisecondStep;
 		_type = type;
-		_zero = DateUtil.getJavaDate(0.0).getTime();
+		_zero = EngineFactory.getInstance().getCalendarUtil().doubleValueToDate(0.0).getTime();
 	}
 	@Override
-	public Object next(Cell cell) {
+	public Object next(NCell cell) {
 		_cal.clear();
 		_cal.setTimeInMillis(_current);
 		

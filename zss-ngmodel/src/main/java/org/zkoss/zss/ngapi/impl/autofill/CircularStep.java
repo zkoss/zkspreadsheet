@@ -16,6 +16,7 @@ Copyright (C) 2011 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.ngapi.impl.autofill;
 
 import org.zkoss.poi.ss.usermodel.Cell;
+import org.zkoss.zss.ngmodel.NCell;
 
 
 /**
@@ -34,7 +35,7 @@ import org.zkoss.poi.ss.usermodel.Cell;
 		_count = data.getSize();
 		_data = data;
 	}
-	public Object next(Cell srcCell) {
+	public Object next(NCell srcCell) {
 		_current = nextIndex(_current, _step);
 		return _data.getData(_current);
 	}

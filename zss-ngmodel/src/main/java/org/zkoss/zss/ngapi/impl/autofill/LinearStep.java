@@ -15,7 +15,8 @@ Copyright (C) 2011 Potix Corporation. All Rights Reserved.
 
 package org.zkoss.zss.ngapi.impl.autofill;
 
-import org.zkoss.poi.ss.usermodel.Cell;
+import org.zkoss.zss.ngmodel.NCell;
+import org.zkoss.zss.ngmodel.NCell.CellType;
 
 /**
  * Linear incremental Step.
@@ -38,8 +39,8 @@ public class LinearStep implements Step {
 	}
 
 	@Override
-	public Object next(Cell cell) {
-		if (cell.getCellType() != Cell.CELL_TYPE_NUMERIC) {
+	public Object next(NCell cell) {
+		if (cell.getType() != CellType.NUMBER) {
 			return null;
 		}
 		final double current = _current;

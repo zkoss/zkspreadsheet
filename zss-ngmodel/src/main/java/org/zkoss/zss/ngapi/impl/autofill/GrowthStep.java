@@ -15,7 +15,7 @@ Copyright (C) 2011 Potix Corporation. All Rights Reserved.
 
 package org.zkoss.zss.ngapi.impl.autofill;
 
-import org.zkoss.poi.ss.usermodel.Cell;
+import org.zkoss.zss.ngmodel.NCell;
 
 /**
  * Step for growth sequence.
@@ -37,7 +37,7 @@ public class GrowthStep implements Step {
 		return _type;
 	}
 	@Override
-	public Object next(Cell cell) {
+	public Object next(NCell cell) {
 		return Double.valueOf(_current*= _ratio);
 	}
 }

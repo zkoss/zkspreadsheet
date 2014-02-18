@@ -15,7 +15,7 @@ Copyright (C) 2011 Potix Corporation. All Rights Reserved.
 
 package org.zkoss.zss.ngapi.impl.autofill;
 
-import org.zkoss.poi.ss.usermodel.Cell;
+import org.zkoss.zss.ngmodel.NCell;
 
 /**
  * Step for handling incremental auto fill
@@ -42,7 +42,7 @@ public interface Step {
 	 * @param srcCell the source cell for filling
 	 * @return next value of this step per the source cell
 	 */
-	public Object next(Cell srcCell); //return next value of the incremental sequence
+	public Object next(NCell srcCell); //return next value of the incremental sequence
 	/**
 	 * Returns the data type of this Step.
 	 * @return the data type of this Step.

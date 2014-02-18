@@ -17,7 +17,7 @@ package org.zkoss.zss.ngapi.impl.autofill;
 
 import java.util.Locale;
 
-import org.zkoss.poi.ss.usermodel.Cell;
+import org.zkoss.zss.ngmodel.NCell;
 
 /**
  * Full month Step.
@@ -36,7 +36,7 @@ import org.zkoss.poi.ss.usermodel.Cell;
 		return _type;
 	}
 	@Override
-	public Object next(Cell srcCell) {
+	public Object next(NCell srcCell) {
 		return _innerStep.next(srcCell);
 	}
 }
