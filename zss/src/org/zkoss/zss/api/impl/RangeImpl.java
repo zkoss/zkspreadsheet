@@ -571,7 +571,7 @@ public class RangeImpl implements Range{
 	public Chart addChart(SheetAnchor anchor,Type type, Grouping grouping, LegendPosition pos){
 		NChart chart =  _range.addChart(SheetImpl.toViewAnchor(_range.getSheet(), anchor), 
 				EnumUtil.toChartType(type), EnumUtil.toChartGrouping(grouping),
-				EnumUtil.toLegendPosition(pos));
+				EnumUtil.toLegendPosition(pos), EnumUtil.isThreeDimentionalChart(type));
 		return new ChartImpl(new SimpleRef<NSheet>(_range.getSheet()), new SimpleRef<NChart>(chart));
 	}
 	

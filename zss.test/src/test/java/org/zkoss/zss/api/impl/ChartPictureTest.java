@@ -16,7 +16,7 @@ import org.zkoss.zss.ngmodel.*;
 import org.zkoss.zss.ngmodel.NChart.NChartGrouping;
 import org.zkoss.zss.ngmodel.NChart.NChartLegendPosition;
 import org.zkoss.zss.ngmodel.NChart.NChartType;
-import org.zkoss.zss.ngmodel.chart.NGeneralChartData;
+import org.zkoss.zss.ngmodel.chart.*;
 import org.zkoss.zssex.api.ChartDataUtil;
 
 public class ChartPictureTest extends ChartPictureTestBase {
@@ -103,6 +103,44 @@ public class ChartPictureTest extends ChartPictureTestBase {
 		testAddDoughnutChart(book);
 	}
 	
+	@Test
+	public void addCustomChartData(){
+		NBook book = loadBook(this.getClass().getResourceAsStream("book/insert-charts.xlsx"));
+		NSheet sheet = book.getSheetByName("chart-image");
+		
+		assertEquals(0, sheet.getCharts().size());
+		NViewAnchor anchor = new NViewAnchor(2, 5, 600, 400);
+		NChart chart = NRanges.range(sheet).addChart(anchor, NChartType.BAR, NChartGrouping.STANDARD, NChartLegendPosition.RIGHT, false);
+		assertEquals(1, sheet.getCharts().size());
+		
+		NGeneralChartData chartData = (NGeneralChartData)chart.getData();
+		chartData.setCategoriesFormula(new SheetRegion(sheet, "B4:D4").getReferenceString());
+		for (int row = 4; row <= 6; row++){
+			NSeries series = chartData.addSeries();
+			SheetRegion nameRegion = new SheetRegion(sheet, row, 0);
+			SheetRegion valueRegion = new SheetRegion(sheet, row, 1, row, 3);
+			series.setFormula(nameRegion.getReferenceString(), valueRegion.getReferenceString());
+		}
+		
+		assertEquals(3, chartData.getNumOfCategory());
+		assertEquals("Internet Explorer", chartData.getCategory(0));
+		assertEquals("Chrome", chartData.getCategory(1));
+		assertEquals("Firefox", chartData.getCategory(2));
+		assertEquals(3, chartData.getNumOfSeries());
+		assertEquals("January 2012", chartData.getSeries(0).getName()); 
+		assertEquals(0.3427, chartData.getSeries(0).getValue(0));
+		assertEquals(0.2599, chartData.getSeries(0).getValue(1));
+		assertEquals(0.2268, chartData.getSeries(0).getValue(2));
+		assertEquals("February 2012", chartData.getSeries(1).getName());
+		assertEquals(0.327, chartData.getSeries(1).getValue(0));
+		assertEquals(0.2724, chartData.getSeries(1).getValue(1));
+		assertEquals(0.2276, chartData.getSeries(1).getValue(2));
+		assertEquals("March 2012", chartData.getSeries(2).getName());
+		assertEquals(0.3168, chartData.getSeries(2).getValue(0));
+		assertEquals(0.2809, chartData.getSeries(2).getValue(1));
+		assertEquals(0.2273, chartData.getSeries(2).getValue(2));
+	}
+	
 	/**
 	 * For data area, row count is less or equal than column count.
 	 */
@@ -113,7 +151,7 @@ public class ChartPictureTest extends ChartPictureTestBase {
 		
 		assertEquals(0, sheet.getCharts().size());
 		NViewAnchor anchor = new NViewAnchor(2, 5, 600, 400);
-		NChart chart = NRanges.range(sheet, "A4:D7").addChart(anchor, NChartType.BAR, NChartGrouping.STANDARD, NChartLegendPosition.RIGHT);
+		NChart chart = NRanges.range(sheet, "A4:D7").addChart(anchor, NChartType.BAR, NChartGrouping.STANDARD, NChartLegendPosition.RIGHT, false);
 
 		assertEquals(1, sheet.getCharts().size());
 		NGeneralChartData nChartData = (NGeneralChartData)chart.getData();
@@ -135,7 +173,7 @@ public class ChartPictureTest extends ChartPictureTestBase {
 		assertEquals(0.2809, nChartData.getSeries(2).getValue(1));
 		assertEquals(0.2273, nChartData.getSeries(2).getValue(2));
 
-		write(book,  org.zkoss.zss.ngapi.impl.imexp.ExcelExportFactory.Type.XLSX); //human checking
+//		write(book,  org.zkoss.zss.ngapi.impl.imexp.ExcelExportFactory.Type.XLSX); //human checking
 	}
 	
 	/**
@@ -148,7 +186,7 @@ public class ChartPictureTest extends ChartPictureTestBase {
 		
 		assertEquals(0, sheet.getCharts().size());
 		NViewAnchor anchor = new NViewAnchor(2, 5, 600, 400);
-		NChart chart = NRanges.range(sheet, "A4:D9").addChart(anchor, NChartType.COLUMN, NChartGrouping.STANDARD, NChartLegendPosition.RIGHT);
+		NChart chart = NRanges.range(sheet, "A4:D9").addChart(anchor, NChartType.COLUMN, NChartGrouping.STANDARD, NChartLegendPosition.RIGHT, false);
 
 		assertEquals(1, sheet.getCharts().size());
 		NGeneralChartData nChartData = (NGeneralChartData)chart.getData();
@@ -182,7 +220,7 @@ public class ChartPictureTest extends ChartPictureTestBase {
 		
 		assertEquals(0, sheet.getCharts().size());
 		NViewAnchor anchor = new NViewAnchor(2, 5, 600, 400);
-		NChart chart = NRanges.range(sheet, "B4:D9").addChart(anchor, NChartType.COLUMN, NChartGrouping.STANDARD, NChartLegendPosition.RIGHT);
+		NChart chart = NRanges.range(sheet, "B4:D9").addChart(anchor, NChartType.COLUMN, NChartGrouping.STANDARD, NChartLegendPosition.RIGHT, false);
 		assertEquals(1, sheet.getCharts().size());
 
 		NGeneralChartData nChartData = (NGeneralChartData)chart.getData();
@@ -210,7 +248,7 @@ public class ChartPictureTest extends ChartPictureTestBase {
 		
 		assertEquals(0, sheet.getCharts().size());
 		NViewAnchor anchor = new NViewAnchor(2, 5, 600, 400);
-		NChart chart = NRanges.range(sheet, "A5:D9").addChart(anchor, NChartType.COLUMN, NChartGrouping.STANDARD, NChartLegendPosition.RIGHT);
+		NChart chart = NRanges.range(sheet, "A5:D9").addChart(anchor, NChartType.COLUMN, NChartGrouping.STANDARD, NChartLegendPosition.RIGHT, false);
 		assertEquals(1, sheet.getCharts().size());
 
 		NGeneralChartData nChartData = (NGeneralChartData)chart.getData();
@@ -244,7 +282,7 @@ public class ChartPictureTest extends ChartPictureTestBase {
 		
 		assertEquals(0, sheet.getCharts().size());
 		NViewAnchor anchor = new NViewAnchor(2, 5, 600, 400);
-		NChart chart = NRanges.range(sheet, "A4:D9").addChart(anchor, NChartType.SCATTER, NChartGrouping.STANDARD, NChartLegendPosition.RIGHT);
+		NChart chart = NRanges.range(sheet, "A4:D9").addChart(anchor, NChartType.SCATTER, NChartGrouping.STANDARD, NChartLegendPosition.RIGHT, false);
 		assertEquals(1, sheet.getCharts().size());
 		
 		NGeneralChartData nChartData = (NGeneralChartData)chart.getData();
@@ -279,7 +317,7 @@ public class ChartPictureTest extends ChartPictureTestBase {
 		
 		assertEquals(0, sheet.getCharts().size());
 		NViewAnchor anchor = new NViewAnchor(30, 5, 600, 400);
-		NChart chart = NRanges.range(sheet,"A30:B39").addChart(anchor, NChartType.SCATTER, NChartGrouping.STANDARD, NChartLegendPosition.RIGHT);
+		NChart chart = NRanges.range(sheet,"A30:B39").addChart(anchor, NChartType.SCATTER, NChartGrouping.STANDARD, NChartLegendPosition.RIGHT, false);
 
 		assertEquals(1, sheet.getCharts().size());
 		NGeneralChartData nChartData = (NGeneralChartData)chart.getData();
@@ -310,7 +348,7 @@ public class ChartPictureTest extends ChartPictureTestBase {
 		
 		assertEquals(0, sheet.getCharts().size());
 		NViewAnchor anchor = new NViewAnchor(30, 5, 600, 400);
-		NChart chart = NRanges.range(sheet, "A30:B32").addChart(anchor, NChartType.SCATTER, NChartGrouping.STANDARD, NChartLegendPosition.RIGHT);
+		NChart chart = NRanges.range(sheet, "A30:B32").addChart(anchor, NChartType.SCATTER, NChartGrouping.STANDARD, NChartLegendPosition.RIGHT, false);
 
 		assertEquals(1, sheet.getCharts().size());
 		NGeneralChartData nChartData = (NGeneralChartData)chart.getData();
@@ -328,7 +366,7 @@ public class ChartPictureTest extends ChartPictureTestBase {
 		
 		assertEquals(0, sheet.getCharts().size());
 		NViewAnchor anchor = new NViewAnchor(2, 5, 600, 400);
-		NChart chart = NRanges.range(sheet, "A4:D9").addChart(anchor, NChartType.COLUMN, NChartGrouping.STANDARD, NChartLegendPosition.RIGHT);
+		NChart chart = NRanges.range(sheet, "A4:D9").addChart(anchor, NChartType.COLUMN, NChartGrouping.STANDARD, NChartLegendPosition.RIGHT, false);
 		assertEquals(1, sheet.getCharts().size());
 		
 		NRanges.range(sheet).deleteChart(chart);
@@ -342,7 +380,7 @@ public class ChartPictureTest extends ChartPictureTestBase {
 		
 		assertEquals(0, sheet.getCharts().size());
 		NViewAnchor anchor = new NViewAnchor(2, 5, 600, 400);
-		NChart chart = NRanges.range(sheet, "A4:D9").addChart(anchor, NChartType.COLUMN, NChartGrouping.STANDARD, NChartLegendPosition.RIGHT);
+		NChart chart = NRanges.range(sheet, "A4:D9").addChart(anchor, NChartType.COLUMN, NChartGrouping.STANDARD, NChartLegendPosition.RIGHT, false);
 		assertEquals(1, sheet.getCharts().size());
 		assertEquals(2, chart.getAnchor().getRowIndex());
 		assertEquals(5, chart.getAnchor().getColumnIndex());
