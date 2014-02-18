@@ -6,7 +6,7 @@ import org.zkoss.zss.ngmodel.NCell.CellType;
 import org.zkoss.zss.ngmodel.chart.*;
 
 /**
- * Fill {@link NChartData} with series according to a selection. One series is determined by row or column. 
+ * Fill {@link NChartData} with series according to a selection. One series could be determined by row or column. 
  * @author Hawk
  *
  */
@@ -18,6 +18,10 @@ public class ChartDataHelper extends RangeHelperBase {
 	}
 
 	public void fillChartData(NChart chart) {
+		//avoid extreme large selection
+		if (range.isWholeSheet() || range.isWholeColumn() || range.isWholeRow()){
+			return;
+		}
 		NGeneralChartData chartData = (NGeneralChartData)chart.getData();
 		CellRegion selection = new CellRegion(range.getRow(), range.getColumn(), range.getLastRow(), range.getLastColumn());
 		switch (chart.getType()) {
