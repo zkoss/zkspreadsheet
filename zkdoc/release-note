@@ -71,7 +71,8 @@ ZK Spreadsheet 2.6.0
 	ZSS-205 scroll bar in function bar is not persistent
 	ZSS-528 Unwrapping text in a cell does not resize cell
 	ZSS-219 Problem with org.zkoss.zss.ui.Spreadsheet.focusTo
-  ZSS-541 date autofill timestamp is incorrect
+	ZSS-541 date autofill timestamp is incorrect
+	ZSS-547 Sheet index (31) is out of range (0..30) error when deleting sheets in a workbook
 
 ZK Spreadsheet 2.5.0
 *Features:   

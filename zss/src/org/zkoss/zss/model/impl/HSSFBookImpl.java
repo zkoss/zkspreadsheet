@@ -242,6 +242,10 @@ public class HSSFBookImpl extends HSSFWorkbook implements Book, BookCtrl {
 			_refBook.removeRefSheet(sheetname);
 		}
 		super.removeSheetAt(index);
+		
+		// ZSS-547, clear evaluator's indexes cache after deleting sheet
+		// otherwise, we will get no sheet or wrong sheet
+		getFormulaEvaluator().clearAllCachedResultValues();
 	}
 
 	@Override
