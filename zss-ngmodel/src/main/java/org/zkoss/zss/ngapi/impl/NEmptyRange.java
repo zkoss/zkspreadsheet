@@ -409,4 +409,9 @@ import org.zkoss.zss.ngmodel.NPicture.Format;
 		
 	}
 
+	@Override
+	public void updateChart(NChart chart) {
+		
+	}
+
 }

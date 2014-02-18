@@ -60,7 +60,7 @@ import org.zkoss.zss.ngmodel.impl.AbstractBookAdv;
 				sheet, ModelEvents.createDataMap(ModelEvents.PARAM_OBJECT_ID, id)));
 	}
 	
-	public void notifySheetChartMove(NSheet sheet, String id){
+	public void notifySheetChartUpdate(NSheet sheet, String id){
 		((AbstractBookAdv) sheet.getBook()).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_CHART_UPDATE, 
 				sheet, ModelEvents.createDataMap(ModelEvents.PARAM_OBJECT_ID, id)));
 	}

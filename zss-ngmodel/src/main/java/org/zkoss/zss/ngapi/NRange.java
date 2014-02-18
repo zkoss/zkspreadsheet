@@ -579,6 +579,12 @@ public interface NRange {
 	public void moveChart(NChart chart, NViewAnchor anchor);
 	
 	/**
+	 * Notify the model that a chart contains change, for example, chart data changes.
+	 * @param chart the chart that changes
+	 */
+	public void updateChart(NChart chart);
+	
+	/**
 	 * Delete an existing chart from the sheet of this Range.
 	 * @param chart the chart to be deleted
 	 */

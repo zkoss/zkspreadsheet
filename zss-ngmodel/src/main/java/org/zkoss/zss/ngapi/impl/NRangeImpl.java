@@ -1366,8 +1366,19 @@ public class NRangeImpl implements NRange {
 			@Override
 			public Object invoke() {
 				chart.setAnchor(anchor);
-				new NotifyChangeHelper().notifySheetChartMove(getSheet(), chart.getId());
-				return chart;
+				new NotifyChangeHelper().notifySheetChartUpdate(getSheet(), chart.getId());
+				return null;
+			}
+		}.doInWriteLock(getLock());
+	}
+	
+	@Override
+	public void updateChart(final NChart chart) {
+		new ReadWriteTask() {			
+			@Override
+			public Object invoke() {
+				new NotifyChangeHelper().notifySheetChartUpdate(getSheet(), chart.getId());
+				return null;
 			}
 		}.doInWriteLock(getLock());
 	}
