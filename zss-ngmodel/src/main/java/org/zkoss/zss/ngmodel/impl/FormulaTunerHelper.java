@@ -4,7 +4,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.zkoss.zss.ngapi.impl.DependentUpdateCollector;
+import org.zkoss.zss.ngapi.impl.RefUpdateCollector;
 import org.zkoss.zss.ngmodel.ModelEvents;
 import org.zkoss.zss.ngmodel.NBook;
 import org.zkoss.zss.ngmodel.NBookSeries;
@@ -37,8 +37,11 @@ import org.zkoss.zss.ngmodel.sys.formula.FormulaParseContext;
 	}
 
 	public void move(Set<Ref> dependents,int rowOffset, int columnOffset) {
-		//TODO collect to same chart/validation and only for once
-		Map<String,Ref> chartDependents  = new LinkedHashMap<String, Ref>(); 
+		//because of the chart shifting is for all chart, but the input dependent is on series,
+		//so we need to collect the dependent for only shift chart once
+		Map<String,Ref> chartDependents  = new LinkedHashMap<String, Ref>();
+		Map<String,Ref> validationDependents  = new LinkedHashMap<String, Ref>();
+		
 		for (Ref dependent : dependents) {
 			if (dependent.getType() == RefType.CELL) {
 				System.out.println(">>>Move Sheet Cell Formula: "+dependent);
@@ -47,8 +50,7 @@ import org.zkoss.zss.ngmodel.sys.formula.FormulaParseContext;
 				if(((ObjectRef)dependent).getObjectType()==ObjectType.CHART){
 					chartDependents.put(((ObjectRef)dependent).getObjectIdPath()[0], dependent);
 				}else if(((ObjectRef)dependent).getObjectType()==ObjectType.DATA_VALIDATION){
-					System.out.println(">>>Move Sheet Validation Formula: "+dependent);
-					moveDataValidationRef((ObjectRef)dependent,rowOffset,columnOffset);
+					validationDependents.put(((ObjectRef)dependent).getObjectIdPath()[0], dependent);
 				}
 			} else {// TODO another
 
@@ -56,6 +58,9 @@ import org.zkoss.zss.ngmodel.sys.formula.FormulaParseContext;
 		}
 		for (Ref dependent : chartDependents.values()) {
 			moveChartRef((ObjectRef)dependent,rowOffset,columnOffset);
+		}
+		for (Ref dependent : validationDependents.values()) {
+			moveDataValidationRef((ObjectRef)dependent,rowOffset,columnOffset);
 		}
 	}
 	private void moveChartRef(ObjectRef dependent,int rowOffset, int columnOffset) {
@@ -121,11 +126,12 @@ import org.zkoss.zss.ngmodel.sys.formula.FormulaParseContext;
 			System.out.println(">>>end move series "+series.getId());
 		}
 		
-		ModelUpdateUtil.addDepednentUpdate(sheet, dependent);
+		ModelUpdateUtil.addRefUpdate(dependent);
 		
 	}
 	private void moveDataValidationRef(ObjectRef dependent,int rowOffset, int columnOffset) {
 		//TODO zss 3.5
+		throw new UnsupportedOperationException("not implement yet");
 //		NBook book = bookSeries.getBook(dependent.getBookName());
 //		if(book==null) return;
 //		NSheet sheet = book.getSheetByName(dependent.getSheetName());
@@ -164,23 +170,35 @@ import org.zkoss.zss.ngmodel.sys.formula.FormulaParseContext;
 	}
 	
 	public void extend(Set<Ref> dependents, boolean horizontal) {
+		//because of the chart shifting is for all chart, but the input dependent is on series,
+		//so we need to collect the dependent for only shift chart once
+		Map<String,Ref> chartDependents  = new LinkedHashMap<String, Ref>();
+		Map<String,Ref> validationDependents  = new LinkedHashMap<String, Ref>();
+				
 		for (Ref dependent : dependents) {
 			System.out.println(">>>Extend Sheet Formula: "+dependent);
 			if (dependent.getType() == RefType.CELL) {
 				extendCellRef(dependent,horizontal);
 			} else if (dependent.getType() == RefType.OBJECT) {
 				if(((ObjectRef)dependent).getObjectType()==ObjectType.CHART){
-					extendChartRef((ObjectRef)dependent,horizontal);
+					chartDependents.put(((ObjectRef)dependent).getObjectIdPath()[0], dependent);
 				}else if(((ObjectRef)dependent).getObjectType()==ObjectType.DATA_VALIDATION){
-					extendDataValidationRef((ObjectRef)dependent,horizontal);
+					validationDependents.put(((ObjectRef)dependent).getObjectIdPath()[0], dependent);
 				}
 			} else {// TODO another
 
 			}
 		}
+		for (Ref dependent : chartDependents.values()) {
+			extendChartRef((ObjectRef)dependent,horizontal);
+		}
+		for (Ref dependent : validationDependents.values()) {
+			extendDataValidationRef((ObjectRef)dependent,horizontal);
+		}		
 	}
 	private void extendChartRef(ObjectRef dependent, boolean horizontal) {
 		//TODO zss 3.5
+		throw new UnsupportedOperationException("not implement yet");
 //		NBook book = bookSeries.getBook(dependent.getBookName());
 //		if(book==null) return;
 //		NSheet sheet = book.getSheetByName(dependent.getSheetName());
@@ -193,6 +211,7 @@ import org.zkoss.zss.ngmodel.sys.formula.FormulaParseContext;
 	}
 	private void extendDataValidationRef(ObjectRef dependent, boolean horizontal) {
 		//TODO zss 3.5
+		throw new UnsupportedOperationException("not implement yet");
 //		NBook book = bookSeries.getBook(dependent.getBookName());
 //		if(book==null) return;
 //		NSheet sheet = book.getSheetByName(dependent.getSheetName());
@@ -224,23 +243,34 @@ import org.zkoss.zss.ngmodel.sys.formula.FormulaParseContext;
 	}	
 
 	public void shrink(Set<Ref> dependents, boolean horizontal) {
+		//because of the chart shifting is for all chart, but the input dependent is on series,
+		//so we need to collect the dependent for only shift chart once
+		Map<String,Ref> chartDependents  = new LinkedHashMap<String, Ref>();
+		Map<String,Ref> validationDependents  = new LinkedHashMap<String, Ref>();		
 		for (Ref dependent : dependents) {
 			System.out.println(">>>Shrink Sheet Formula: "+dependent);
 			if (dependent.getType() == RefType.CELL) {
 				shrinkCellRef(dependent,horizontal);
 			} else if (dependent.getType() == RefType.OBJECT) {
 				if(((ObjectRef)dependent).getObjectType()==ObjectType.CHART){
-					shrinkChartRef((ObjectRef)dependent,horizontal);
+					chartDependents.put(((ObjectRef)dependent).getObjectIdPath()[0], dependent);
 				}else if(((ObjectRef)dependent).getObjectType()==ObjectType.DATA_VALIDATION){
-					shrinkDataValidationRef((ObjectRef)dependent,horizontal);
+					validationDependents.put(((ObjectRef)dependent).getObjectIdPath()[0], dependent);
 				}
 			} else {// TODO another
 
 			}
 		}
+		for (Ref dependent : chartDependents.values()) {
+			shrinkChartRef((ObjectRef)dependent,horizontal);
+		}
+		for (Ref dependent : validationDependents.values()) {
+			shrinkDataValidationRef((ObjectRef)dependent,horizontal);
+		}		
 	}
 	private void shrinkChartRef(ObjectRef dependent, boolean horizontal) {
 		//TODO zss 3.5
+		throw new UnsupportedOperationException("not implement yet");
 //		NBook book = bookSeries.getBook(dependent.getBookName());
 //		if(book==null) return;
 //		NSheet sheet = book.getSheetByName(dependent.getSheetName());
@@ -253,6 +283,7 @@ import org.zkoss.zss.ngmodel.sys.formula.FormulaParseContext;
 	}
 	private void shrinkDataValidationRef(ObjectRef dependent, boolean horizontal) {
 		//TODO zss 3.5
+		throw new UnsupportedOperationException("not implement yet");
 //		NBook book = bookSeries.getBook(dependent.getBookName());
 //		if(book==null) return;
 //		NSheet sheet = book.getSheetByName(dependent.getSheetName());

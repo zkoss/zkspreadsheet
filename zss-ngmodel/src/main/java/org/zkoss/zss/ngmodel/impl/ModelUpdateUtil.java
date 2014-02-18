@@ -3,7 +3,7 @@ package org.zkoss.zss.ngmodel.impl;
 import java.util.Set;
 
 import org.zkoss.zss.ngapi.impl.CellUpdateCollector;
-import org.zkoss.zss.ngapi.impl.DependentUpdateCollector;
+import org.zkoss.zss.ngapi.impl.RefUpdateCollector;
 import org.zkoss.zss.ngapi.impl.MergeUpdateCollector;
 import org.zkoss.zss.ngmodel.CellRegion;
 import org.zkoss.zss.ngmodel.NBookSeries;
@@ -17,13 +17,14 @@ import org.zkoss.zss.ngmodel.sys.dependency.Ref;
 	/*package*/ static void handlePrecedentUpdate(NBookSeries bookSeries, Ref precedent){
 		//clear formula cache (that reval the unexisted sheet before
 		FormulaCacheCleaner clearer = FormulaCacheCleaner.getCurrent();
-		DependentUpdateCollector collector = DependentUpdateCollector.getCurrent();
+		RefUpdateCollector collector = RefUpdateCollector.getCurrent();
 		Set<Ref> dependents = null; 
 		//get table when collector and clearer is not ignored (in import case, we should ignore clear cahche)
 		if(collector!=null || clearer!=null || bookSeries.isAutoFormulaCacheClean()){
 			DependencyTable table = ((AbstractBookSeriesAdv)bookSeries).getDependencyTable();
 			dependents = table.getDependents(precedent); 
 		}
+		addRefUpdate(precedent);
 		if(dependents!=null && dependents.size()>0){
 			if(clearer!=null){
 				clearer.clear(dependents);
@@ -31,8 +32,15 @@ import org.zkoss.zss.ngmodel.sys.dependency.Ref;
 				new FormulaCacheClearHelper(bookSeries).clear(dependents);
 			}
 			if(collector!=null){
-				collector.addDependents(dependents);
+				collector.addRefs(dependents);
 			}
+		}
+	}
+
+	/*package*/ static void addRefUpdate(Ref ref) {
+		RefUpdateCollector collector = RefUpdateCollector.getCurrent();
+		if(collector!=null){
+			collector.addRef(ref);
 		}
 	}
 	
@@ -51,10 +59,5 @@ import org.zkoss.zss.ngmodel.sys.dependency.Ref;
 		if(collector!=null){
 			collector.addMergeChange(sheet,original,changeTo);
 		}
-	}
-
-	public static void addDepednentUpdate(NSheet sheet, Ref dependent) {
-		DependentUpdateCollector collector = DependentUpdateCollector.getCurrent();
-		collector.addDependent(dependent);
 	}
 }

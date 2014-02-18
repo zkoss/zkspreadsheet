@@ -20,7 +20,6 @@ import java.util.*;
 import java.util.concurrent.locks.ReadWriteLock;
 
 import org.zkoss.lang.Strings;
-import org.zkoss.poi.ss.usermodel.charts.LegendPosition;
 import org.zkoss.util.Locales;
 import org.zkoss.zss.ngapi.*;
 import org.zkoss.zss.ngmodel.*;
@@ -29,7 +28,6 @@ import org.zkoss.zss.ngmodel.NCell.CellType;
 import org.zkoss.zss.ngmodel.NCellStyle.BorderType;
 import org.zkoss.zss.ngmodel.NChart.*;
 import org.zkoss.zss.ngmodel.NHyperlink.HyperlinkType;
-import org.zkoss.zss.ngmodel.chart.NChartData;
 import org.zkoss.zss.ngmodel.impl.*;
 import org.zkoss.zss.ngmodel.sys.EngineFactory;
 import org.zkoss.zss.ngmodel.sys.dependency.Ref;
@@ -159,19 +157,9 @@ public class NRangeImpl implements NRange {
 	static abstract class CellVisitor {
 		/**
 		 * @param cell
-		 * @return true if the cell has updated after visit
+		 * @return true if continue the visit next cell
 		 */
 		abstract boolean visit(NCell cell);
-		
-		boolean isStopVisit(){
-			return false;
-		}
-	}
-	static abstract class OneCellVisitor extends CellVisitor{
-		@Override
-		boolean isStopVisit(){
-			return true;
-		}
 	}
 	
 
@@ -180,46 +168,26 @@ public class NRangeImpl implements NRange {
 	 * @param visitor
 	 */
 	private void travelCells(CellVisitor visitor) {
-		LinkedHashSet<Ref> notifySet = new LinkedHashSet<Ref>();
 
-		NBookSeries bookSeries = getBookSeries();
-
-		DependentUpdateCollector dependentCtx = new DependentUpdateCollector();
-		DependentUpdateCollector oldDependentCtx = DependentUpdateCollector.getCurrent();
-		
-		FormulaCacheCleaner oldClearer = FormulaCacheCleaner.setCurrent(new FormulaCacheCleaner(bookSeries));
+		UpdateCollectorWrap updateWrap = new UpdateCollectorWrap(getBookSeries());
 		try{
-			DependentUpdateCollector.setCurrent(dependentCtx);
-			
 			for (EffectedRegion r : rangeRefs) {
-				String bookName = r.sheet.getBook().getBookName();
-				String sheetName = r.sheet.getSheetName();
 				CellRegion region = r.region;
 				loop1:
 				for (int i = region.row; i <= region.lastRow; i++) {
 					for (int j = region.column; j <= region.lastColumn; j++) {
 						NCell cell = r.sheet.getCell(i, j);
-						boolean update = visitor.visit(cell);
-						if(update){
-							Ref ref = new RefImpl(bookName, sheetName, i, j);
-							notifySet.add(ref);
-						}
-						if(visitor.isStopVisit()){
+						boolean conti = visitor.visit(cell);
+						if(!conti){
 							break loop1;
 						}
 					}
 				}
 			}
 		}finally{
-			notifySet.addAll(dependentCtx.getDependents());
-			
-			DependentUpdateCollector.setCurrent(oldDependentCtx);
-			FormulaCacheCleaner.setCurrent(oldClearer);
+			updateWrap.doFinially();
 		}
-
-		if(notifySet.size()>0){
-			handleRefNotifyContentChange(bookSeries,notifySet);
-		}
+		updateWrap.doNotify();
 	}
 
 	private void handleRefNotifyContentChange(NBookSeries bookSeries,HashSet<Ref> notifySet) {
@@ -243,9 +211,8 @@ public class NRangeImpl implements NRange {
 				Object cellval = cell.getValue();
 				if (!euqlas(cellval, value)) {
 					cell.setValue(value);
-					return true;
 				}
-				return false;
+				return true;
 			}
 		}).doInWriteLock(getLock());
 	}
@@ -257,9 +224,8 @@ public class NRangeImpl implements NRange {
 				if (!cell.isNull()) {
 					cell.setHyperlink(null);
 					cell.clearValue();
-					return true;
 				}
-				return false;
+				return true;
 			}
 		}).doInWriteLock(getLock());
 	}
@@ -301,7 +267,7 @@ public class NRangeImpl implements NRange {
 				Object resultVal = result.getValue();
 				String format = result.getFormat();
 				if (euqlas(cellval, resultVal)) {
-					return false;
+					return true;
 				}
 				
 				switch (result.getType()) {
@@ -360,7 +326,7 @@ public class NRangeImpl implements NRange {
 	@Override
 	public String getEditText() {
 		final ResultWrap<String> r = new ResultWrap<String>();
-		new CellVisitorTask(new OneCellVisitor() {
+		new CellVisitorTask(new CellVisitor() {
 			@Override
 			public boolean visit(NCell cell) {
 				FormatEngine fe = EngineFactory.getInstance().createFormatEngine();
@@ -488,7 +454,7 @@ public class NRangeImpl implements NRange {
 	@Override
 	public NHyperlink getHyperlink() {
 		final ResultWrap<NHyperlink> r = new ResultWrap<NHyperlink>();
-		new CellVisitorTask(new OneCellVisitor() {
+		new CellVisitorTask(new CellVisitor() {
 			@Override
 			public boolean visit(NCell cell) {
 				r.set(cell.getHyperlink());		
@@ -672,7 +638,7 @@ public class NRangeImpl implements NRange {
 	@Override
 	public NCellStyle getCellStyle() {
 		final ResultWrap<NCellStyle> r = new ResultWrap<NCellStyle>();
-		new CellVisitorTask(new OneCellVisitor() {
+		new CellVisitorTask(new CellVisitor() {
 			@Override
 			public boolean visit(NCell cell) {
 				r.set(cell.getCellStyle());		
@@ -825,7 +791,7 @@ public class NRangeImpl implements NRange {
 		//I make this api become more easier to get the cell value (if it is formula, then get formula evaluation result
 		
 		final ResultWrap<Object> r = new ResultWrap<Object>();
-		new CellVisitorTask(new OneCellVisitor() {
+		new CellVisitorTask(new CellVisitor() {
 			@Override
 			public boolean visit(NCell cell) {
 				Object val = cell.getValue();
@@ -1065,7 +1031,7 @@ public class NRangeImpl implements NRange {
 	@Override
 	public String getCellFormatText() {
 		final ResultWrap<String> r = new ResultWrap<String>();
-		new CellVisitorTask(new OneCellVisitor() {
+		new CellVisitorTask(new CellVisitor() {
 			@Override
 			public boolean visit(NCell cell) {
 				FormatEngine fe = EngineFactory.getInstance().createFormatEngine();
@@ -1079,7 +1045,7 @@ public class NRangeImpl implements NRange {
 	@Override
 	public String getCellDataFormat() {
 		final ResultWrap<String> r = new ResultWrap<String>();
-		new CellVisitorTask(new OneCellVisitor() {
+		new CellVisitorTask(new CellVisitor() {
 			@Override
 			public boolean visit(NCell cell) {
 				FormatEngine fe = EngineFactory.getInstance().createFormatEngine();
@@ -1109,16 +1075,11 @@ public class NRangeImpl implements NRange {
 				if(validation!=null){
 					if(!new DataValidationHelper(validation).validate(editText,cell.getCellStyle().getDataFormat())){
 						retrunVal.set(validation);
+						return false;
 					}
 				}
-				return false;
+				return true;
 			}
-			
-			@Override
-			boolean isStopVisit(){
-				return retrunVal.get()!=null;
-			}
-			
 		}).doInReadLock(getLock());
 		return retrunVal.get();
 	}
@@ -1240,44 +1201,67 @@ public class NRangeImpl implements NRange {
 		
 		@Override
 		public Object invoke() {
-			LinkedHashSet<Ref> dependentNotifySet = new LinkedHashSet<Ref>();
-			LinkedHashSet<MergeUpdate> mergeNotifySet = new LinkedHashSet<MergeUpdate>();
-			LinkedHashSet<SheetRegion> cellNotifySet = new LinkedHashSet<SheetRegion>();
-
-			NBookSeries bookSeries = getBookSeries();
-
-			DependentUpdateCollector dependentCtx = new DependentUpdateCollector();
-			MergeUpdateCollector mergeUpdateCtx = new MergeUpdateCollector();
-			CellUpdateCollector cellUpdateCtx = new CellUpdateCollector();
-			
-			
-			DependentUpdateCollector oldDependentCtx = DependentUpdateCollector.getCurrent();
-			MergeUpdateCollector oldMergeUpdateCtx = MergeUpdateCollector.getCurrent();
-			CellUpdateCollector oldCellUpdateCtx = CellUpdateCollector.getCurrent();
-			
-			FormulaCacheCleaner oldClearer = FormulaCacheCleaner.setCurrent(new FormulaCacheCleaner(bookSeries));
+			UpdateCollectorWrap updateWrap = new UpdateCollectorWrap(getBookSeries());
 			Object result = null;
 			try{
-				DependentUpdateCollector.setCurrent(dependentCtx);
-				MergeUpdateCollector.setCurrent(mergeUpdateCtx);
-				CellUpdateCollector.setCurrent(cellUpdateCtx);
-				
 				result = doInvokePhase();
 			}finally{
-				dependentNotifySet.addAll(dependentCtx.getDependents());
-				mergeNotifySet.addAll(mergeUpdateCtx.getMergeUpdates());
-				cellNotifySet.addAll(cellUpdateCtx.getCellUpdates());
-				
-				DependentUpdateCollector.setCurrent(oldDependentCtx);
-				MergeUpdateCollector.setCurrent(oldMergeUpdateCtx);
-				CellUpdateCollector.setCurrent(oldCellUpdateCtx);
-				FormulaCacheCleaner.setCurrent(oldClearer);
+				updateWrap.doFinially();
 			}
 
 			doNotifyPhase();
+			updateWrap.doNotify();
 			
-			if(dependentNotifySet.size()>0){
-				handleRefNotifyContentChange(bookSeries,dependentNotifySet);
+			return result;
+		}
+	}
+	
+	private class UpdateCollectorWrap {
+		NBookSeries bookSeries;
+		
+		LinkedHashSet<Ref> refNotifySet;
+		LinkedHashSet<MergeUpdate> mergeNotifySet;
+		LinkedHashSet<SheetRegion> cellNotifySet;
+		
+		RefUpdateCollector refCtx;
+		MergeUpdateCollector mergeUpdateCtx;
+		CellUpdateCollector cellUpdateCtx;
+		
+		
+		RefUpdateCollector oldRefCtx;
+		MergeUpdateCollector oldMergeUpdateCtx;
+		CellUpdateCollector oldCellUpdateCtx;
+		
+		FormulaCacheCleaner oldClearer;
+		
+		public UpdateCollectorWrap(NBookSeries bookSeries){
+			this.bookSeries = bookSeries;
+			
+			refNotifySet = new LinkedHashSet<Ref>();
+			mergeNotifySet = new LinkedHashSet<MergeUpdate>();
+			cellNotifySet = new LinkedHashSet<SheetRegion>();			
+			
+			oldRefCtx = RefUpdateCollector.setCurrent(refCtx = new RefUpdateCollector());
+			oldMergeUpdateCtx = MergeUpdateCollector.setCurrent(mergeUpdateCtx = new MergeUpdateCollector());
+			oldCellUpdateCtx = CellUpdateCollector.setCurrent(cellUpdateCtx = new CellUpdateCollector());
+
+			oldClearer = FormulaCacheCleaner.setCurrent(new FormulaCacheCleaner(bookSeries));
+		}
+		
+		public void doFinially(){
+			refNotifySet.addAll(refCtx.getRefs());
+			mergeNotifySet.addAll(mergeUpdateCtx.getMergeUpdates());
+			cellNotifySet.addAll(cellUpdateCtx.getCellUpdates());
+			
+			RefUpdateCollector.setCurrent(oldRefCtx);
+			MergeUpdateCollector.setCurrent(oldMergeUpdateCtx);
+			CellUpdateCollector.setCurrent(oldCellUpdateCtx);
+			FormulaCacheCleaner.setCurrent(oldClearer);
+		}
+		
+		public void doNotify(){
+			if(refNotifySet.size()>0){
+				handleRefNotifyContentChange(bookSeries,refNotifySet);
 			}
 			if(cellNotifySet.size()>0){
 				handleCellNotifyContentChange(cellNotifySet);
@@ -1285,9 +1269,8 @@ public class NRangeImpl implements NRange {
 			if(mergeNotifySet.size()>0){
 				handleMergeNotifyChange(mergeNotifySet);
 			}
-			return result;
 		}
-	}
+	}	
 
 	@Override
 	public NPicture addPicture(final NViewAnchor anchor, final byte[] image, final NPicture.Format format){

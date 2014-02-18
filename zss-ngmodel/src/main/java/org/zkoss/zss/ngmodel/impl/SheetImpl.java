@@ -1023,8 +1023,15 @@ public class SheetImpl extends AbstractSheetAdv {
 				r++;
 			}
 		}
-		ModelUpdateUtil.addCellUpdate(this,rowIdx,columnIdx,lastRowIdx,lastColumnIdx);
-		ModelUpdateUtil.addCellUpdate(this,rowIdx+rowOffset,columnIdx+columnOffset,lastRowIdx+rowOffset,lastColumnIdx+columnOffset);
+		
+		//should use precedent update since the value might be changed and need to clear cache
+		ModelUpdateUtil.handlePrecedentUpdate(getBook().getBookSeries(),
+				new RefImpl(getBook().getBookName(), getSheetName(), rowIdx,
+						columnIdx, lastRowIdx, lastColumnIdx));
+		ModelUpdateUtil.handlePrecedentUpdate(getBook().getBookSeries(),
+				new RefImpl(getBook().getBookName(), getSheetName(), rowIdx
+						+ rowOffset, columnIdx + columnOffset, lastRowIdx
+						+ rowOffset, lastColumnIdx + columnOffset));
 		
 		Collection<CellRegion> containsMerge = getContainsMergedRegions(srcRegion);
 		//shift the merge
