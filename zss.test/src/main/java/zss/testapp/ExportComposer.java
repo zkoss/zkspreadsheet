@@ -1,56 +1,32 @@
 package zss.testapp;
 
 
-import static org.zkoss.zss.api.CellOperationUtil.applyAlignment;
-import static org.zkoss.zss.api.CellOperationUtil.applyBackgroundColor;
-import static org.zkoss.zss.api.CellOperationUtil.applyBorder;
-import static org.zkoss.zss.api.CellOperationUtil.applyFontBoldweight;
-import static org.zkoss.zss.api.CellOperationUtil.applyFontColor;
-import static org.zkoss.zss.api.CellOperationUtil.applyFontItalic;
-import static org.zkoss.zss.api.CellOperationUtil.applyFontSize;
-import static org.zkoss.zss.api.CellOperationUtil.applyFontStrikeout;
-import static org.zkoss.zss.api.CellOperationUtil.applyFontUnderline;
-import static org.zkoss.zss.api.CellOperationUtil.applyVerticalAlignment;
+import static org.zkoss.zss.api.CellOperationUtil.*;
 import static org.zkoss.zss.api.Ranges.range;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 
 import org.zkoss.image.AImage;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.select.SelectorComposer;
-import org.zkoss.zk.ui.select.annotation.Listen;
-import org.zkoss.zk.ui.select.annotation.Wire;
-import org.zkoss.zss.api.Exporter;
-import org.zkoss.zss.api.Exporters;
-import org.zkoss.zss.api.Importer;
-import org.zkoss.zss.api.Importers;
-import org.zkoss.zss.api.AreaRef;
+import org.zkoss.zk.ui.select.annotation.*;
+import org.zkoss.zss.api.*;
 import org.zkoss.zss.api.Range.ApplyBorderType;
-import org.zkoss.zss.api.SheetOperationUtil;
-import org.zkoss.zss.api.model.Book;
-import org.zkoss.zss.api.model.CellStyle;
+import org.zkoss.zss.api.model.*;
 import org.zkoss.zss.api.model.CellStyle.BorderType;
 import org.zkoss.zss.api.model.Chart.Grouping;
 import org.zkoss.zss.api.model.Chart.LegendPosition;
 import org.zkoss.zss.api.model.Chart.Type;
-import org.zkoss.zss.api.model.ChartData;
-import org.zkoss.zss.api.model.Font;
 import org.zkoss.zss.api.model.Picture.Format;
-import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.ui.Spreadsheet;
-import org.zkoss.zssex.api.ChartDataUtil;
 import org.zkoss.zul.Filedownload;
 
 public class ExportComposer extends SelectorComposer<Component> {
 
 	private static final long serialVersionUID = 1L;
 	
-	Exporter excelExporter = Exporters.getExporter("excel");
-	Exporter pdfExporter = Exporters.getExporter("pdf");
-	Exporter htmlExporter = Exporters.getExporter("html");
+//	Exporter pdfExporter = Exporters.getExporter("pdf"); //FIXME temporarily unavailable
+//	Exporter htmlExporter = Exporters.getExporter("html"); //FIXME temporarily unavailable
 	
 	@Wire("#source")
 	private Spreadsheet srcSpreadsheet;
@@ -167,8 +143,7 @@ public class ExportComposer extends SelectorComposer<Component> {
 			Type[] tt = types[r];
 			for(int c = 0; c < tt.length; ++c) {
 				Type t = tt[c];
-				ChartData cd = ChartDataUtil.getChartData(sheet, new AreaRef(0, 0, 10, 1), t);
-				SheetOperationUtil.addChart(range(sheet, r * 8, c * 7), cd, t, Grouping.STANDARD, LegendPosition.TOP);
+				SheetOperationUtil.addChart(range(sheet, 0, 0, 10, 1),  t, Grouping.STANDARD, LegendPosition.TOP);
 			}
 		}
 		
@@ -177,8 +152,8 @@ public class ExportComposer extends SelectorComposer<Component> {
 			Type[] tt = types[r];
 			for(int c = 0; c < tt.length; ++c) {
 				Type t = tt[c];
-				ChartData cd = ChartDataUtil.getChartData(sheet, new AreaRef(0, 0, 10, 0), t);
-				SheetOperationUtil.addChart(range(sheet, r * 8 + 16, c * 7), cd, t, Grouping.STANDARD, LegendPosition.TOP);
+//				ChartData cd = ChartDataUtil.getChartData(sheet, new AreaRef(0, 0, 10, 0), t);
+				SheetOperationUtil.addChart(range(sheet, 0, 0, 10, 0), t, Grouping.STANDARD, LegendPosition.TOP);
 			}
 		}
 	}
@@ -203,7 +178,8 @@ public class ExportComposer extends SelectorComposer<Component> {
 	public void export2Destination() throws IOException{
 		File exportedFile = new File("exported.xlsx");
 		FileOutputStream fos = new FileOutputStream(exportedFile);
-		excelExporter.export(srcSpreadsheet.getBook(), fos);
+		//shall get exporter for each exporting
+		Exporters.getExporter("excel").export(srcSpreadsheet.getBook(), fos);
 		fos.flush();
 		fos.close();
 
@@ -221,10 +197,12 @@ public class ExportComposer extends SelectorComposer<Component> {
 	public void toExcel() throws IOException{
 		File file = new File("exported.xlsx");
 		FileOutputStream fos = new FileOutputStream(file);
-		excelExporter.export(srcSpreadsheet.getBook(), fos);
+		//shall get exporter for each exporting
+		Exporters.getExporter("excel").export(srcSpreadsheet.getBook(), fos);
 		Filedownload.save(file, "application/excel");
 	}
 
+	/*
 	@Listen("onClick = button[label='Export PDF']")
 	public void toPdf() throws IOException{
 
@@ -241,5 +219,5 @@ public class ExportComposer extends SelectorComposer<Component> {
 		htmlExporter.export(srcSpreadsheet.getBook(), fos);
 		Filedownload.save(file, "text/html");
 	}
-	
+	*/
 }

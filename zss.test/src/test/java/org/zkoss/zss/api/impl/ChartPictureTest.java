@@ -113,9 +113,7 @@ public class ChartPictureTest extends ChartPictureTestBase {
 		
 		assertEquals(0, sheet.getCharts().size());
 		NViewAnchor anchor = new NViewAnchor(2, 5, 600, 400);
-		ChartData chartData =  ChartDataUtil.getChartData(sheet, new AreaRef("A4:D7"), Type.BAR, anchor);
-		//FIXME how to know 3D
-		NChart chart = NRanges.range(sheet).addChart(anchor, chartData.getNative(), NChartType.BAR, NChartGrouping.STANDARD, NChartLegendPosition.RIGHT);
+		NChart chart = NRanges.range(sheet, "A4:D7").addChart(anchor, NChartType.BAR, NChartGrouping.STANDARD, NChartLegendPosition.RIGHT);
 
 		assertEquals(1, sheet.getCharts().size());
 		NGeneralChartData nChartData = (NGeneralChartData)chart.getData();
@@ -150,9 +148,7 @@ public class ChartPictureTest extends ChartPictureTestBase {
 		
 		assertEquals(0, sheet.getCharts().size());
 		NViewAnchor anchor = new NViewAnchor(2, 5, 600, 400);
-		ChartData chartData =  ChartDataUtil.getChartData(sheet, new AreaRef("A4:D9"), Type.COLUMN, anchor);
-		//FIXME how to know 3D
-		NChart chart = NRanges.range(sheet).addChart(anchor, chartData.getNative(), NChartType.COLUMN, NChartGrouping.STANDARD, NChartLegendPosition.RIGHT);
+		NChart chart = NRanges.range(sheet, "A4:D9").addChart(anchor, NChartType.COLUMN, NChartGrouping.STANDARD, NChartLegendPosition.RIGHT);
 
 		assertEquals(1, sheet.getCharts().size());
 		NGeneralChartData nChartData = (NGeneralChartData)chart.getData();
@@ -186,9 +182,7 @@ public class ChartPictureTest extends ChartPictureTestBase {
 		
 		assertEquals(0, sheet.getCharts().size());
 		NViewAnchor anchor = new NViewAnchor(2, 5, 600, 400);
-		ChartData chartData =  ChartDataUtil.getChartData(sheet, new AreaRef("B4:D9"), Type.COLUMN, anchor);
-		//FIXME how to know 3D
-		NChart chart = NRanges.range(sheet).addChart(anchor, chartData.getNative(), NChartType.COLUMN, NChartGrouping.STANDARD, NChartLegendPosition.RIGHT);
+		NChart chart = NRanges.range(sheet, "B4:D9").addChart(anchor, NChartType.COLUMN, NChartGrouping.STANDARD, NChartLegendPosition.RIGHT);
 		assertEquals(1, sheet.getCharts().size());
 
 		NGeneralChartData nChartData = (NGeneralChartData)chart.getData();
@@ -216,9 +210,7 @@ public class ChartPictureTest extends ChartPictureTestBase {
 		
 		assertEquals(0, sheet.getCharts().size());
 		NViewAnchor anchor = new NViewAnchor(2, 5, 600, 400);
-		ChartData chartData =  ChartDataUtil.getChartData(sheet, new AreaRef("A5:D9"), Type.COLUMN, anchor);
-		//FIXME how to know 3D
-		NChart chart = NRanges.range(sheet).addChart(anchor, chartData.getNative(), NChartType.COLUMN, NChartGrouping.STANDARD, NChartLegendPosition.RIGHT);
+		NChart chart = NRanges.range(sheet, "A5:D9").addChart(anchor, NChartType.COLUMN, NChartGrouping.STANDARD, NChartLegendPosition.RIGHT);
 		assertEquals(1, sheet.getCharts().size());
 
 		NGeneralChartData nChartData = (NGeneralChartData)chart.getData();
@@ -252,9 +244,7 @@ public class ChartPictureTest extends ChartPictureTestBase {
 		
 		assertEquals(0, sheet.getCharts().size());
 		NViewAnchor anchor = new NViewAnchor(2, 5, 600, 400);
-		ChartData chartData =  ChartDataUtil.getChartData(sheet, new AreaRef("A4:D9"), Type.SCATTER, anchor);
-		//FIXME how to know 3D
-		NChart chart = NRanges.range(sheet).addChart(anchor, chartData.getNative(), NChartType.SCATTER, NChartGrouping.STANDARD, NChartLegendPosition.RIGHT);
+		NChart chart = NRanges.range(sheet, "A4:D9").addChart(anchor, NChartType.SCATTER, NChartGrouping.STANDARD, NChartLegendPosition.RIGHT);
 		assertEquals(1, sheet.getCharts().size());
 		
 		NGeneralChartData nChartData = (NGeneralChartData)chart.getData();
@@ -289,9 +279,7 @@ public class ChartPictureTest extends ChartPictureTestBase {
 		
 		assertEquals(0, sheet.getCharts().size());
 		NViewAnchor anchor = new NViewAnchor(30, 5, 600, 400);
-		ChartData chartData =  ChartDataUtil.getChartData(sheet, new AreaRef("A30:B39"), Type.SCATTER, anchor);
-		//FIXME how to know 3D
-		NChart chart = NRanges.range(sheet).addChart(anchor, chartData.getNative(), NChartType.SCATTER, NChartGrouping.STANDARD, NChartLegendPosition.RIGHT);
+		NChart chart = NRanges.range(sheet,"A30:B39").addChart(anchor, NChartType.SCATTER, NChartGrouping.STANDARD, NChartLegendPosition.RIGHT);
 
 		assertEquals(1, sheet.getCharts().size());
 		NGeneralChartData nChartData = (NGeneralChartData)chart.getData();
@@ -322,9 +310,7 @@ public class ChartPictureTest extends ChartPictureTestBase {
 		
 		assertEquals(0, sheet.getCharts().size());
 		NViewAnchor anchor = new NViewAnchor(30, 5, 600, 400);
-		ChartData chartData =  ChartDataUtil.getChartData(sheet, new AreaRef("A30:B32"), Type.SCATTER, anchor);
-		//FIXME how to know 3D
-		NChart chart = NRanges.range(sheet).addChart(anchor, chartData.getNative(), NChartType.SCATTER, NChartGrouping.STANDARD, NChartLegendPosition.RIGHT);
+		NChart chart = NRanges.range(sheet, "A30:B32").addChart(anchor, NChartType.SCATTER, NChartGrouping.STANDARD, NChartLegendPosition.RIGHT);
 
 		assertEquals(1, sheet.getCharts().size());
 		NGeneralChartData nChartData = (NGeneralChartData)chart.getData();
@@ -342,8 +328,7 @@ public class ChartPictureTest extends ChartPictureTestBase {
 		
 		assertEquals(0, sheet.getCharts().size());
 		NViewAnchor anchor = new NViewAnchor(2, 5, 600, 400);
-		ChartData chartData =  ChartDataUtil.getChartData(sheet, new AreaRef("A4:D9"), Type.COLUMN, anchor);
-		NChart chart = NRanges.range(sheet).addChart(anchor, chartData.getNative(), NChartType.COLUMN, NChartGrouping.STANDARD, NChartLegendPosition.RIGHT);
+		NChart chart = NRanges.range(sheet, "A4:D9").addChart(anchor, NChartType.COLUMN, NChartGrouping.STANDARD, NChartLegendPosition.RIGHT);
 		assertEquals(1, sheet.getCharts().size());
 		
 		NRanges.range(sheet).deleteChart(chart);
@@ -357,8 +342,7 @@ public class ChartPictureTest extends ChartPictureTestBase {
 		
 		assertEquals(0, sheet.getCharts().size());
 		NViewAnchor anchor = new NViewAnchor(2, 5, 600, 400);
-		ChartData chartData =  ChartDataUtil.getChartData(sheet, new AreaRef("A4:D9"), Type.COLUMN, anchor);
-		NChart chart = NRanges.range(sheet).addChart(anchor, chartData.getNative(), NChartType.COLUMN, NChartGrouping.STANDARD, NChartLegendPosition.RIGHT);
+		NChart chart = NRanges.range(sheet, "A4:D9").addChart(anchor, NChartType.COLUMN, NChartGrouping.STANDARD, NChartLegendPosition.RIGHT);
 		assertEquals(1, sheet.getCharts().size());
 		assertEquals(2, chart.getAnchor().getRowIndex());
 		assertEquals(5, chart.getAnchor().getColumnIndex());

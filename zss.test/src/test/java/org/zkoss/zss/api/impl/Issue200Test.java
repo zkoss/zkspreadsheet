@@ -1075,17 +1075,14 @@ public class Issue200Test {
 		Book workbook = Util.loadBook(this,filename);
 		Sheet sheet = workbook.getSheet("chart-image");
 		// Insert chart 1, 2
-		ChartData cd1 = ChartDataUtil.getChartData(sheet, new AreaRef(4,1,14,1), Chart.Type.LINE);
-		Chart chart1 = SheetOperationUtil.addChart(Ranges.range(sheet, "A1"), cd1, Chart.Type.LINE, Grouping.STANDARD, LegendPosition.TOP);
-		ChartData cd2 = ChartDataUtil.getChartData(sheet, new AreaRef(4,2,14,2), Chart.Type.LINE);
-		SheetOperationUtil.addChart(Ranges.range(sheet, "I1"), cd2, Chart.Type.LINE, Grouping.STANDARD, LegendPosition.TOP);
+		Chart chart1 = SheetOperationUtil.addChart(Ranges.range(sheet,4,1,14,1), Chart.Type.LINE, Grouping.STANDARD, LegendPosition.TOP);
+		SheetOperationUtil.addChart(Ranges.range(sheet, 4,2,14,2), Chart.Type.LINE, Grouping.STANDARD, LegendPosition.TOP);
 		
 		// Delete chart 1
 		SheetOperationUtil.deleteChart(Ranges.range(sheet, "A1"), chart1);
 		
 		// Insert chart 3
-		ChartData cd3 = ChartDataUtil.getChartData(sheet, new AreaRef(4,3,14,3), Chart.Type.LINE);
-		SheetOperationUtil.addChart(Ranges.range(sheet, "Q1"), cd3, Chart.Type.LINE, Grouping.STANDARD, LegendPosition.TOP);
+		SheetOperationUtil.addChart(Ranges.range(sheet, 4,3,14,3), Chart.Type.LINE, Grouping.STANDARD, LegendPosition.TOP);
 		
 	}
 	

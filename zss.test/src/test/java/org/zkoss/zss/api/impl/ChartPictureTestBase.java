@@ -1,20 +1,17 @@
 package org.zkoss.zss.api.impl;
 
-import java.io.File;
-import java.io.IOException;
+import static org.junit.Assert.assertEquals;
+
+import java.io.*;
 
 import org.zkoss.image.AImage;
-import org.zkoss.zss.api.AreaRef;
-import org.zkoss.zss.api.Ranges;
-import org.zkoss.zss.api.SheetOperationUtil;
-import org.zkoss.zss.api.model.Book;
-import org.zkoss.zss.api.model.Chart;
-import org.zkoss.zss.api.model.ChartData;
-import org.zkoss.zss.api.model.Picture;
-import org.zkoss.zss.api.model.Sheet;
+import org.zkoss.zss.api.*;
+import org.zkoss.zss.api.model.*;
 import org.zkoss.zss.api.model.Chart.Grouping;
 import org.zkoss.zss.api.model.Chart.LegendPosition;
-import org.zkoss.zssex.api.ChartDataUtil;
+import org.zkoss.zss.api.model.impl.ChartImpl;
+import org.zkoss.zss.ngmodel.*;
+import org.zkoss.zss.ngmodel.NChart.NChartType;
 
 /**
  * all method implementation to test chart & picture operation
@@ -39,87 +36,86 @@ public class ChartPictureTestBase {
 		SheetOperationUtil.addPicture(Ranges.range(sheet), new AImage(new File(ChartPictureTestBase.class.getResource("").getPath() + "book/zklogo.png")));
 	}
 	
-	protected void testMoveChart(Book workbook) throws IOException {
+	protected void testMoveChart(Book workbook){
 		Sheet sheet = workbook.getSheet("chart-image");
-		ChartData cd1 = ChartDataUtil.getChartData(sheet, new AreaRef(4,1,14,1), Chart.Type.LINE);
-		Chart chart = SheetOperationUtil.addChart(Ranges.range(sheet, "A1"), cd1, Chart.Type.LINE, Grouping.STANDARD, LegendPosition.TOP);
+		Chart chart = SheetOperationUtil.addChart(Ranges.range(sheet, 4,1,14,1), Chart.Type.LINE, Grouping.STANDARD, LegendPosition.TOP);
 		SheetOperationUtil.moveChart(Ranges.range(sheet), chart, 10, 20);
 	}
 	
-	protected void testDeleteChart(Book workbook) throws IOException {
+	protected void testDeleteChart(Book workbook){
 		Sheet sheet = workbook.getSheet("chart-image");
-		ChartData cd1 = ChartDataUtil.getChartData(sheet, new AreaRef(4,1,14,1), Chart.Type.LINE);
-		Chart chart = SheetOperationUtil.addChart(Ranges.range(sheet, "A1"), cd1, Chart.Type.LINE, Grouping.STANDARD, LegendPosition.TOP);
+		Chart chart = SheetOperationUtil.addChart(Ranges.range(sheet, 4,1,14,1), Chart.Type.LINE, Grouping.STANDARD, LegendPosition.TOP);
+		assertEquals(1, sheet.getCharts().size());
+		
 		SheetOperationUtil.deleteChart(Ranges.range(sheet), chart);
+		assertEquals(0, sheet.getCharts().size());
 	}
 	
-	protected void testAddLineChart(Book workbook) throws IOException {
+	protected void testAddLineChart(Book workbook){
 		Sheet sheet = workbook.getSheet("chart-image");
-		ChartData cd1 = ChartDataUtil.getChartData(sheet, new AreaRef(4,1,14,1), Chart.Type.LINE);
-		SheetOperationUtil.addChart(Ranges.range(sheet, "A1"), cd1, Chart.Type.LINE, Grouping.STANDARD, LegendPosition.TOP);
+		Chart chart = SheetOperationUtil.addChart(Ranges.range(sheet, 4,1,14,1),  Chart.Type.LINE, Grouping.STANDARD, LegendPosition.TOP);
+		assertEquals(1, sheet.getCharts().size());
+		NChart nchart = ((ChartImpl)chart).getNative();
+		assertEquals(nchart.getType(), NChartType.LINE);
 	}
 	
 	protected void testAddBarChart(Book workbook) throws IOException {
 		Sheet sheet = workbook.getSheet("chart-image");
-		ChartData cd3 = ChartDataUtil.getChartData(sheet, new AreaRef(4,3,14,3), Chart.Type.BAR);
-		SheetOperationUtil.addChart(Ranges.range(sheet, "Q1"), cd3, Chart.Type.BAR, Grouping.STANDARD, LegendPosition.TOP);
+		SheetOperationUtil.addChart(Ranges.range(sheet, 4,3,14,3), Chart.Type.BAR, Grouping.STANDARD, LegendPosition.TOP);
+		assertEquals(1, sheet.getCharts().size());
 	}
 	
-	protected void testAddAreaChart(Book workbook) throws IOException {
+	protected void testAddAreaChart(Book workbook) {
 		Sheet sheet = workbook.getSheet("chart-image");
-		ChartData cd4 = ChartDataUtil.getChartData(sheet, new AreaRef(4,3,14,3), Chart.Type.AREA);
-		SheetOperationUtil.addChart(Ranges.range(sheet, "Q10"), cd4, Chart.Type.AREA, Grouping.STANDARD, LegendPosition.TOP);
+		SheetOperationUtil.addChart(Ranges.range(sheet, 4,3,14,3), Chart.Type.AREA, Grouping.STANDARD, LegendPosition.TOP);
+		assertEquals(1, sheet.getCharts().size());
 	}
 	
 	// unsupported 3.0.0 RC
 	protected void testAddBubbleChart(Book workbook) throws IOException {
 		Sheet sheet = workbook.getSheet("chart-image");
-		ChartData cd5 = ChartDataUtil.getChartData(sheet, new AreaRef(4,3,14,3), Chart.Type.BUBBLE);
-		SheetOperationUtil.addChart(Ranges.range(sheet, "Q20"), cd5, Chart.Type.BUBBLE, Grouping.STANDARD, LegendPosition.TOP);
+		SheetOperationUtil.addChart(Ranges.range(sheet, 4,3,14,3), Chart.Type.BUBBLE, Grouping.STANDARD, LegendPosition.TOP);
+		assertEquals(1, sheet.getCharts().size());
 	}
 	
 	protected void testAddColumnChart(Book workbook) throws IOException {
 		Sheet sheet = workbook.getSheet("chart-image");
-		ChartData cd6 = ChartDataUtil.getChartData(sheet, new AreaRef(4,3,14,3), Chart.Type.COLUMN);
-		SheetOperationUtil.addChart(Ranges.range(sheet, "Q30"), cd6, Chart.Type.COLUMN, Grouping.STANDARD, LegendPosition.TOP);
+		SheetOperationUtil.addChart(Ranges.range(sheet, 4,3,14,3), Chart.Type.COLUMN, Grouping.STANDARD, LegendPosition.TOP);
+		assertEquals(1, sheet.getCharts().size());
 	}
 	
 	protected void testAddPieChart(Book workbook) throws IOException {
 		Sheet sheet = workbook.getSheet("chart-image");
-		ChartData cd7 = ChartDataUtil.getChartData(sheet, new AreaRef(4,3,14,3), Chart.Type.PIE);
-		SheetOperationUtil.addChart(Ranges.range(sheet, "Q40"), cd7, Chart.Type.PIE, Grouping.STANDARD, LegendPosition.TOP);
+		SheetOperationUtil.addChart(Ranges.range(sheet, 4,3,14,3), Chart.Type.PIE, Grouping.STANDARD, LegendPosition.TOP);
+		assertEquals(1, sheet.getCharts().size());
 	}
 	
-	// Not Implement 3.0.0 RC
+	// Not Implement
 	protected void testAddRadarChart(Book workbook) throws IOException {
 		Sheet sheet = workbook.getSheet("chart-image");
-		ChartData cd8 = ChartDataUtil.getChartData(sheet, new AreaRef(4,3,14,3), Chart.Type.RADAR);
-		SheetOperationUtil.addChart(Ranges.range(sheet, "Q50"), cd8, Chart.Type.RADAR, Grouping.STANDARD, LegendPosition.TOP);
+		SheetOperationUtil.addChart(Ranges.range(sheet, 4,3,14,3), Chart.Type.RADAR, Grouping.STANDARD, LegendPosition.TOP);
 	}
 	
 	protected void testAddScatterChart(Book workbook) throws IOException {
 		Sheet sheet = workbook.getSheet("chart-image");
-		ChartData cd9 = ChartDataUtil.getChartData(sheet, new AreaRef(4,3,14,3), Chart.Type.SCATTER);
-		SheetOperationUtil.addChart(Ranges.range(sheet, "Q60"), cd9, Chart.Type.SCATTER, Grouping.STANDARD, LegendPosition.TOP);
+		SheetOperationUtil.addChart(Ranges.range(sheet, 4,3,14,3),  Chart.Type.SCATTER, Grouping.STANDARD, LegendPosition.TOP);
+		assertEquals(1, sheet.getCharts().size());
 	}
 	
-	// unsupported 3.0.0 RC
+	// unsupported
 	protected void testAddStockChart(Book workbook) throws IOException {
 		Sheet sheet = workbook.getSheet("chart-image");
-		ChartData cd10 = ChartDataUtil.getChartData(sheet, new AreaRef(4,3,14,3), Chart.Type.STOCK);
-		SheetOperationUtil.addChart(Ranges.range(sheet, "Q70"), cd10, Chart.Type.STOCK, Grouping.STANDARD, LegendPosition.TOP);
+		SheetOperationUtil.addChart(Ranges.range(sheet, 4,3,14,3), Chart.Type.STOCK, Grouping.STANDARD, LegendPosition.TOP);
 	}
 	
-	// unsupported 3.0.0 RC
+	// unsupported 
 	protected void testAddSurfaceChart(Book workbook) throws IOException {
 		Sheet sheet = workbook.getSheet("chart-image");
-		ChartData cd11 = ChartDataUtil.getChartData(sheet, new AreaRef(4,3,14,3), Chart.Type.SURFACE);
-		SheetOperationUtil.addChart(Ranges.range(sheet, "Q80"), cd11, Chart.Type.SURFACE, Grouping.STANDARD, LegendPosition.TOP);
+		SheetOperationUtil.addChart(Ranges.range(sheet, 4,3,14,3), Chart.Type.SURFACE, Grouping.STANDARD, LegendPosition.TOP);
 	}
 	
 	protected void testAddDoughnutChart(Book workbook) throws IOException {
 		Sheet sheet = workbook.getSheet("chart-image");
-		ChartData cd11 = ChartDataUtil.getChartData(sheet, new AreaRef(4,3,14,3), Chart.Type.DOUGHNUT);
-		SheetOperationUtil.addChart(Ranges.range(sheet, "Q90"), cd11, Chart.Type.DOUGHNUT, Grouping.STANDARD, LegendPosition.TOP);
+		SheetOperationUtil.addChart(Ranges.range(sheet, 4,3,14,3), Chart.Type.DOUGHNUT, Grouping.STANDARD, LegendPosition.TOP);
 	}
 }
