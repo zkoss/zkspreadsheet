@@ -27,5 +27,6 @@ import org.zkoss.zss.ngmodel.NHyperlink;
 public abstract class AbstractHyperlinkAdv implements NHyperlink,Serializable{
 	private static final long serialVersionUID = 1L;
 
+	public abstract AbstractHyperlinkAdv clone();
 
 }

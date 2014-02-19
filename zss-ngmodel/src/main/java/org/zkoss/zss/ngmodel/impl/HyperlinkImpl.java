@@ -53,4 +53,8 @@ public class HyperlinkImpl extends AbstractHyperlinkAdv {
 	public void setLabel(String label) {
 		this.label = label;
 	}
+	@Override
+	public AbstractHyperlinkAdv clone() {
+		return new HyperlinkImpl(type,address,label);
+	}
 }

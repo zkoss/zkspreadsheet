@@ -548,9 +548,10 @@ public interface NRange {
 	/**
 	 * Add a chart into the sheet of this Range 
 	 * @param anchor
+	 * @param isThreeD TODO
 	 * @return the created chart 
 	 */
-	public NChart addChart(NViewAnchor anchor, NChartType type, NChartGrouping grouping, NChartLegendPosition pos);
+	public NChart addChart(NViewAnchor anchor, NChartType type, NChartGrouping grouping, NChartLegendPosition pos, boolean isThreeD);
 
 
 	/**
@@ -578,6 +579,12 @@ public interface NRange {
 	 * @param anchor the new anchor
 	 */
 	public void moveChart(NChart chart, NViewAnchor anchor);
+	
+	/**
+	 * Notify the model that a chart contains change, for example, chart data changes.
+	 * @param chart the chart that changes
+	 */
+	public void updateChart(NChart chart);
 	
 	/**
 	 * Delete an existing chart from the sheet of this Range.

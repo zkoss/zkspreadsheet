@@ -14,6 +14,7 @@ import org.zkoss.zss.ngmodel.NCellStyle;
 import org.zkoss.zss.ngmodel.NColumn;
 import org.zkoss.zss.ngmodel.NComment;
 import org.zkoss.zss.ngmodel.NDataValidation;
+import org.zkoss.zss.ngmodel.NHyperlink;
 import org.zkoss.zss.ngmodel.NSheet;
 import org.zkoss.zss.ngmodel.PasteOption;
 import org.zkoss.zss.ngmodel.PasteOption.PasteType;
@@ -33,55 +34,6 @@ import org.zkoss.zss.ngmodel.util.Validations;
 		this.destSheet = destSheet;
 		this.book = destSheet.getBook();
 		defaultStyle = book.getDefaultCellStyle();
-	}
-	
-	static class CellBuffer{
-		CellType type;
-		Object value;
-		String formula;
-		NCellStyle style;
-		
-		NComment comment;
-		NDataValidation validation;
-		
-		public CellBuffer(){
-		}
-		public CellType getType() {
-			return type;
-		}
-		public void setType(CellType type) {
-			this.type = type;
-		}
-		public Object getValue() {
-			return value;
-		}
-		public void setValue(Object value) {
-			this.value = value;
-		}
-		public String getFormula() {
-			return formula;
-		}
-		public void setFormula(String formula) {
-			this.formula = formula;
-		}
-		public NCellStyle getStyle() {
-			return style;
-		}
-		public void setStyle(NCellStyle style) {
-			this.style = style;
-		}
-		public NComment getComment() {
-			return comment;
-		}
-		public void setComment(NComment comment) {
-			this.comment = comment;
-		}
-		public NDataValidation getValidation() {
-			return validation;
-		}
-		public void setValidation(NDataValidation validation) {
-			this.validation = validation;
-		}
 	}
 	
 	public CellRegion pasteCell(SheetRegion src, CellRegion dest, PasteOption option) {
@@ -253,6 +205,7 @@ import org.zkoss.zss.ngmodel.util.Validations;
 				case ALL_EXCEPT_BORDERS:
 					prepareValue(buffer,srcCell,true);
 					buffer.setStyle(srcCell.getCellStyle());
+					buffer.setHyperlink(srcCell.getHyperlink());
 					buffer.setComment(srcCell.getComment());
 					buffer.setValidation(srcSheet.getDataValidation(r, c));
 					break;
@@ -268,6 +221,7 @@ import org.zkoss.zss.ngmodel.util.Validations;
 					prepareValue(buffer,srcCell,true);
 					break;
 				case VALIDATAION:
+					//TODO what can we do to keep validation to paste, the structure is not directly assign to cell currently
 					buffer.setValidation(srcSheet.getDataValidation(r, c));
 				case VALUES_AND_NUMBER_FORMATS:
 					buffer.setStyle(srcCell.getCellStyle());
@@ -374,17 +328,19 @@ import org.zkoss.zss.ngmodel.util.Validations;
 				case ALL:
 					pasteValue(buffer,destCell,true,rowOffset,columnOffset,transpose,row,col);
 					pasteStyle(buffer,destCell,true);//border,comment
-					pasteComment(buffer,destCell);
-					pasteValidation(buffer,destCell);
+					buffer.applyHyperlink(destCell);
+					buffer.applyComment(destCell);
+					buffer.applyValidation(destCell);
 					break;
 				case ALL_EXCEPT_BORDERS:
 					pasteValue(buffer,destCell,true,rowOffset,columnOffset,transpose,row,col);
 					pasteStyle(buffer,destCell,false);//border,comment
-					pasteComment(buffer,destCell);
-					pasteValidation(buffer,destCell);
+					buffer.applyHyperlink(destCell);
+					buffer.applyComment(destCell);
+					buffer.applyValidation(destCell);
 					break;
 				case COMMENTS:
-					pasteComment(buffer,destCell);
+					buffer.applyComment(destCell);
 					break;
 				case FORMATS:
 					pasteFormat(buffer,destCell);
@@ -395,7 +351,7 @@ import org.zkoss.zss.ngmodel.util.Validations;
 					pasteValue(buffer,destCell,true,rowOffset,columnOffset,transpose,row,col);
 					break;
 				case VALIDATAION:
-					pasteValidation(buffer,destCell);
+					buffer.applyValidation(destCell);
 				case VALUES_AND_NUMBER_FORMATS:
 					pasteFormat(buffer,destCell);
 				case VALUES:
@@ -416,17 +372,6 @@ import org.zkoss.zss.ngmodel.util.Validations;
 		if(!destFormat.equals(srcFormat)){
 			StyleUtil.setDataFormat(destSheet, destCell.getRowIndex(), destCell.getColumnIndex(), srcFormat);
 		}
-	}
-
-	private void pasteValidation(CellBuffer buffer, NCell destCell) {
-		NDataValidation srcValidation = buffer.getValidation();
-		//TODO, base on original validation data structure, it it very complicated to past a validation, consider to change the structure.
-	}
-
-	private void pasteComment(CellBuffer buffer, NCell destCell) {
-		NComment comment = buffer.getComment();
-		
-		destCell.setComment(comment==null?null:((AbstractCommentAdv)comment).clone());
 	}
 
 	private void pasteStyle(CellBuffer buffer, NCell destCell, boolean pasteBorder) {
