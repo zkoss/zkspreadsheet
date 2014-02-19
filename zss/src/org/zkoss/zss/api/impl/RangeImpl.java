@@ -28,6 +28,7 @@ import org.zkoss.zss.api.model.Chart.Type;
 import org.zkoss.zss.api.model.Hyperlink.HyperlinkType;
 import org.zkoss.zss.api.model.Picture.Format;
 import org.zkoss.zss.api.model.impl.*;
+import org.zkoss.zss.model.sys.impl.BookHelper;
 import org.zkoss.zss.ngapi.*;
 import org.zkoss.zss.ngmodel.*;
 
@@ -359,7 +360,7 @@ public class RangeImpl implements Range{
 	}
 	
 	public void sort(boolean desc,
-			boolean header, 
+			boolean hasHeader, 
 			boolean matchCase, 
 			boolean sortByRows, 
 			SortDataOption dataOption){
@@ -374,7 +375,7 @@ public class RangeImpl implements Range{
 		sort(index,desc,dataOption,
 			null,false,null,
 			null,false,null,
-			header,matchCase,sortByRows);
+			hasHeader,matchCase,sortByRows);
 	}
 	
 	public void sort(Range index1,boolean desc1,SortDataOption dataOption1,
@@ -386,16 +387,14 @@ public class RangeImpl implements Range{
 			boolean sortByRows
 			/*int sortMethod, //not implement*/){
 		
-		//TODO review the full impl for range1,range2,range3
-		throw new UnsupportedOperationException("not implment yet");/* zss 3.5 */
-//		_range.sort(index1==null?null:((RangeImpl)index1).getNative(), desc1, 
-//				index2==null?null:((RangeImpl)index2).getNative()/*rng2*/, -1 /*type*/, desc2/*desc2*/, 
-//				index3==null?null:((RangeImpl)index3).getNative()/*rng3*/, desc3/*desc3*/,
-//				header?BookHelper.SORT_HEADER_YES:BookHelper.SORT_HEADER_NO/*header*/,
-//				-1/*orderCustom*/, matchCase, sortByRows, -1/*sortMethod*/, 
-//				dataOption1==null?BookHelper.SORT_NORMAL_DEFAULT:EnumUtil.toRangeSortDataOption(dataOption1)/*dataOption1*/,
-//				dataOption2==null?BookHelper.SORT_NORMAL_DEFAULT:EnumUtil.toRangeSortDataOption(dataOption2)/*dataOption2*/,
-//				dataOption3==null?BookHelper.SORT_NORMAL_DEFAULT:EnumUtil.toRangeSortDataOption(dataOption3)/*dataOption3*/);
+		_range.sort(index1==null?null:((RangeImpl)index1).getNative(), desc1, 
+				index2==null?null:((RangeImpl)index2).getNative()/*rng2*/, -1 /*type*/, desc2/*desc2*/, 
+				index3==null?null:((RangeImpl)index3).getNative()/*rng3*/, desc3/*desc3*/,
+				header?BookHelper.SORT_HEADER_YES:BookHelper.SORT_HEADER_NO/*header*/,
+				-1/*orderCustom*/, matchCase, sortByRows, -1/*sortMethod*/, 
+				dataOption1==null?NRange.SortDataOption.NORMAL_DEFAULT:EnumUtil.toRangeSortDataOption(dataOption1)/*dataOption1*/,
+				dataOption2==null?NRange.SortDataOption.NORMAL_DEFAULT:EnumUtil.toRangeSortDataOption(dataOption2)/*dataOption2*/,
+				dataOption3==null?NRange.SortDataOption.NORMAL_DEFAULT:EnumUtil.toRangeSortDataOption(dataOption3)/*dataOption3*/);
 		
 	}
 	

@@ -40,7 +40,6 @@ import org.zkoss.zss.api.model.Font.Underline;
 import org.zkoss.zss.api.model.Hyperlink.HyperlinkType;
 import org.zkoss.zss.api.model.Picture.Format;
 import org.zkoss.zss.model.sys.XRange;
-import org.zkoss.zss.model.sys.impl.BookHelper;
 import org.zkoss.zss.ngapi.NRange;
 import org.zkoss.zss.ngapi.NRange.FillType;
 import org.zkoss.zss.ngmodel.NAutoFilter.FilterOp;
@@ -506,12 +505,12 @@ public class EnumUtil {
 		throw new IllegalArgumentException("unknow range delete shift "+shift);
 	}
 
-	public static int toRangeSortDataOption(SortDataOption dataOption) {
+	public static NRange.SortDataOption toRangeSortDataOption(SortDataOption dataOption) {
 		switch(dataOption){
 		case TEXT_AS_NUMBERS:
-			return BookHelper.SORT_TEXT_AS_NUMBERS;
+			return NRange.SortDataOption.TEXT_AS_NUMBERS;
 		case NORMAL_DEFAULT:
-			return BookHelper.SORT_NORMAL_DEFAULT;
+			return NRange.SortDataOption.NORMAL_DEFAULT;
 		}
 		throw new IllegalArgumentException("unknow sort data option "+dataOption);
 	}
