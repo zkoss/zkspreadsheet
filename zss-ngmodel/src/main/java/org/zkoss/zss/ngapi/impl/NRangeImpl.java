@@ -677,7 +677,7 @@ public class NRangeImpl implements NRange {
 		new ModelUpdateTask() {
 			@Override
 			Object doInvokePhase() {
-				autoFillInLock(new CellRegion(getRow(),getColumn(),getLastRow(),getLastColumn()),
+				autoFillInLock(new CellRegion(getRow(),getColumn(),getRow(),getLastColumn()),
 						new CellRegion(getRow(),getColumn(),getLastRow(),getLastColumn()), FillType.COPY);
 				return null;
 			}
