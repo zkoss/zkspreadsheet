@@ -440,11 +440,8 @@ public class RangeImpl implements Range{
 		_range.protectSheet(password);
 	}
 	
-	public void autoFill(Range dest,AutoFillType fillType){
-		//TODO the syncLevel
-		throw new UnsupportedOperationException("not implment yet");/* zss 3.5 
-		_range.autoFill(((RangeImpl)dest).getNative(), EnumUtil.toRangeAutoFillType(fillType));
-		*/
+	public void autoFill(Range dest,AutoFillType fillType){ 
+		_range.fill(((RangeImpl)dest).getNative(), EnumUtil.toRangeFillType(fillType));
 	}
 	
 	public void fillDown(){ 

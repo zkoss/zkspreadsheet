@@ -42,6 +42,7 @@ import org.zkoss.zss.api.model.Picture.Format;
 import org.zkoss.zss.model.sys.XRange;
 import org.zkoss.zss.model.sys.impl.BookHelper;
 import org.zkoss.zss.ngapi.NRange;
+import org.zkoss.zss.ngapi.NRange.FillType;
 import org.zkoss.zss.ngmodel.NAutoFilter.FilterOp;
 import org.zkoss.zss.ngmodel.*;
 import org.zkoss.zss.ngmodel.NChart.NChartGrouping;
@@ -535,32 +536,32 @@ public class EnumUtil {
 		throw new IllegalArgumentException("unknow autofilter operation "+filterOp);
 	}
 
-	public static int toRangeAutoFillType(AutoFillType fillType) {
+	public static FillType toRangeFillType(AutoFillType fillType) {
 		switch(fillType){
 		case COPY:
-			return XRange.FILL_COPY;
+			return FillType.COPY;
 		case DAYS:
-			return XRange.FILL_DAYS;
+			return FillType.DAYS;
 		case DEFAULT:
-			return XRange.FILL_DEFAULT;
+			return FillType.DEFAULT;
 		case FORMATS:
-			return XRange.FILL_FORMATS;
+			return FillType.FORMATS;
 		case MONTHS:
-			return XRange.FILL_MONTHS;
+			return FillType.MONTHS;
 		case SERIES:
-			return XRange.FILL_SERIES;
+			return FillType.SERIES;
 		case VALUES:
-			return XRange.FILL_VALUES;
+			return FillType.VALUES;
 		case WEEKDAYS:
-			return XRange.FILL_WEEKDAYS;
+			return FillType.WEEKDAYS;
 		case YEARS:
-			return XRange.FILL_YEARS;
+			return FillType.YEARS;
 		case GROWTH_TREND:
-			return XRange.FILL_GROWTH_TREND;
+			return FillType.GROWTH_TREND;
 		case LINER_TREND:
-			return XRange.FILL_LINER_TREND;
+			return FillType.LINER_TREND;
 		}
-		throw new IllegalArgumentException("unknow autofill type "+fillType);
+		throw new IllegalArgumentException("unknow fill type "+fillType);
 	}
 
 	public static NHyperlink.HyperlinkType toHyperlinkType(HyperlinkType type) {
