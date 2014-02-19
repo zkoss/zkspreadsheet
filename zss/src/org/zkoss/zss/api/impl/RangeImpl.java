@@ -42,6 +42,8 @@ public class RangeImpl implements Range{
 	
 	private CellStyleHelper _cellStyleHelper;
 	private CellData _cellData;
+	private static int DEFAULT_CHART_WIDTH = 600;
+	private static int DEFAULT_CHART_HEIGHT = 480;
 	
 	/**
 	 * @deprecated since 3.5 it is always synchronized on book by a read write lock.
@@ -566,9 +568,9 @@ public class RangeImpl implements Range{
 	}
 	
 	public Chart addChart(SheetAnchor anchor,Type type, Grouping grouping, LegendPosition pos){
-		NChart chart =  _range.addChart(SheetImpl.toViewAnchor(_range.getSheet(), anchor), 
+		NChart chart =  _range.addChart(new NViewAnchor(anchor.getRow(), anchor.getColumn(), DEFAULT_CHART_WIDTH, DEFAULT_CHART_HEIGHT), 
 				EnumUtil.toChartType(type), EnumUtil.toChartGrouping(grouping),
-				EnumUtil.toLegendPosition(pos));
+				EnumUtil.toLegendPosition(pos), EnumUtil.isThreeDimentionalChart(type));
 		return new ChartImpl(new SimpleRef<NSheet>(_range.getSheet()), new SimpleRef<NChart>(chart));
 	}
 	
@@ -582,6 +584,10 @@ public class RangeImpl implements Range{
 		_range.moveChart(((ChartImpl)chart).getNative(), SheetImpl.toViewAnchor(_range.getSheet(), anchor));
 	}
 	
+	@Override
+	public void updateChart(Chart chart){
+		_range.updateChart(((ChartImpl)chart).getNative());
+	}
 	
 	public Sheet createSheet(String name){
 		NSheet sheet = _range.createSheet(name);

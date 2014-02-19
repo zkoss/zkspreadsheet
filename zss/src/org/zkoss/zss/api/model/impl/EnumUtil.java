@@ -657,6 +657,20 @@ public class EnumUtil {
 		}
 		throw new IllegalArgumentException("unknow chart type "+type);
 	}
+	
+	public static boolean isThreeDimentionalChart(Type type) {
+		switch(type){
+		case AREA_3D:
+		case BAR_3D:
+		case COLUMN_3D:
+		case LINE_3D:
+		case PIE_3D:
+		case SURFACE_3D:
+			return true;
+		default:
+			return false;
+		}
+	}
 
 	public static NChartGrouping toChartGrouping(Grouping grouping) {
 		switch(grouping){

@@ -767,4 +767,9 @@ public interface Range {
 		public boolean isAvailable(CellStyle style);
 	}
 
+	/**
+	 * Notify the component that a chart has change, e.g. call it after chart data changes.
+	 * @param chart the chart that contains change
+	 */
+	public void updateChart(Chart chart);
 }

@@ -22,24 +22,34 @@ public class ChartPictureTestBase {
 	protected void testDeletePicture(Book workbook) throws IOException {
 		Sheet sheet = workbook.getSheet("Sheet1");
 		Picture picture = SheetOperationUtil.addPicture(Ranges.range(sheet), new AImage(new File(ChartPictureTestBase.class.getResource("").getPath() + "book/zklogo.png")));
+		assertEquals(1, sheet.getPictures().size());
 		SheetOperationUtil.deletePicture(Ranges.range(sheet), picture);
+		assertEquals(0, sheet.getPictures().size());
 	}
 	
 	protected void testMovePicture(Book workbook) throws IOException {
 		Sheet sheet = workbook.getSheet("Sheet1");
 		Picture picture = SheetOperationUtil.addPicture(Ranges.range(sheet), new AImage(new File(ChartPictureTestBase.class.getResource("").getPath() + "book/zklogo.png")));
+		assertEquals(1, sheet.getPictures().size());
 		SheetOperationUtil.movePicture(Ranges.range(sheet), picture, 10, 30);
+		assertEquals(10 , picture.getAnchor().getRow());
+		assertEquals(30 , picture.getAnchor().getColumn());
 	}
 	
 	protected void testAddPicture(Book workbook) throws IOException {
 		Sheet sheet = workbook.getSheet("Sheet1");
-		SheetOperationUtil.addPicture(Ranges.range(sheet), new AImage(new File(ChartPictureTestBase.class.getResource("").getPath() + "book/zklogo.png")));
+		Picture picture = SheetOperationUtil.addPicture(Ranges.range(sheet), new AImage(new File(ChartPictureTestBase.class.getResource("").getPath() + "book/zklogo.png")));
+		assertEquals(1, sheet.getPictures().size());
+		assertEquals(0 , picture.getAnchor().getRow());
+		assertEquals(0 , picture.getAnchor().getColumn());
 	}
 	
 	protected void testMoveChart(Book workbook){
 		Sheet sheet = workbook.getSheet("chart-image");
 		Chart chart = SheetOperationUtil.addChart(Ranges.range(sheet, 4,1,14,1), Chart.Type.LINE, Grouping.STANDARD, LegendPosition.TOP);
 		SheetOperationUtil.moveChart(Ranges.range(sheet), chart, 10, 20);
+		assertEquals(10 , chart.getAnchor().getRow());
+		assertEquals(20 , chart.getAnchor().getColumn());
 	}
 	
 	protected void testDeleteChart(Book workbook){
@@ -71,7 +81,7 @@ public class ChartPictureTestBase {
 		assertEquals(1, sheet.getCharts().size());
 	}
 	
-	// unsupported 3.0.0 RC
+	// unsupported 
 	protected void testAddBubbleChart(Book workbook) throws IOException {
 		Sheet sheet = workbook.getSheet("chart-image");
 		SheetOperationUtil.addChart(Ranges.range(sheet, 4,3,14,3), Chart.Type.BUBBLE, Grouping.STANDARD, LegendPosition.TOP);
@@ -82,6 +92,11 @@ public class ChartPictureTestBase {
 		Sheet sheet = workbook.getSheet("chart-image");
 		SheetOperationUtil.addChart(Ranges.range(sheet, 4,3,14,3), Chart.Type.COLUMN, Grouping.STANDARD, LegendPosition.TOP);
 		assertEquals(1, sheet.getCharts().size());
+	}
+	
+	protected void testAddDoughnutChart(Book workbook) throws IOException {
+		Sheet sheet = workbook.getSheet("chart-image");
+		SheetOperationUtil.addChart(Ranges.range(sheet, 4,3,14,3), Chart.Type.DOUGHNUT, Grouping.STANDARD, LegendPosition.TOP);
 	}
 	
 	protected void testAddPieChart(Book workbook) throws IOException {
@@ -112,10 +127,5 @@ public class ChartPictureTestBase {
 	protected void testAddSurfaceChart(Book workbook) throws IOException {
 		Sheet sheet = workbook.getSheet("chart-image");
 		SheetOperationUtil.addChart(Ranges.range(sheet, 4,3,14,3), Chart.Type.SURFACE, Grouping.STANDARD, LegendPosition.TOP);
-	}
-	
-	protected void testAddDoughnutChart(Book workbook) throws IOException {
-		Sheet sheet = workbook.getSheet("chart-image");
-		SheetOperationUtil.addChart(Ranges.range(sheet, 4,3,14,3), Chart.Type.DOUGHNUT, Grouping.STANDARD, LegendPosition.TOP);
 	}
 }
