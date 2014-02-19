@@ -385,7 +385,7 @@ public class CellImpl extends AbstractCellAdv {
 	
 	public String toString(){
 		StringBuilder sb = new StringBuilder();
-		sb.append("Cell:[").append(getRowIndex()).append(",").append(getColumnIndex()).append("]");
+		sb.append("Cell:"+getReferenceString()+"[").append(getRowIndex()).append(",").append(getColumnIndex()).append("]");
 		return sb.toString();
 	}
 	

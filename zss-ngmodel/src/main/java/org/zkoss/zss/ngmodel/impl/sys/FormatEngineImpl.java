@@ -1,5 +1,6 @@
 package org.zkoss.zss.ngmodel.impl.sys;
 
+import java.text.Format;
 import java.util.Locale;
 
 import org.zkoss.poi.ss.format.CellFormat;
@@ -61,12 +62,16 @@ public class FormatEngineImpl implements FormatEngine {
 			format = normalizeFormat(format);
 			
 			CellFormat formatter = CellFormat.getInstance(format, context.getLocale());
+			Format javaFormat = null;
+			if(value instanceof Number){//provide format object for further use
+				javaFormat = DataFormatter.getJavaFormat(((Number)value).doubleValue(),format,context.getLocale());
+			}
 			boolean dateFromatted = false;
 			if(value instanceof Double && formatter.isApplicableDateFormat((Double)value)){
 				value = EngineFactory.getInstance().getCalendarUtil().doubleValueToDate((Double)value);
 				dateFromatted = true;
 			}
-			return new FormatResultImpl(formatter.apply(value),dateFromatted);
+			return new FormatResultImpl(formatter.apply(value), javaFormat, dateFromatted);
 		}finally{
 			ZssContext.setThreadLocal(old);
 		}

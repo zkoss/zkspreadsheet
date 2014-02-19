@@ -1,5 +1,7 @@
 package org.zkoss.zss.ngmodel.impl.sys;
 
+import java.text.Format;
+
 import org.zkoss.poi.ss.format.CellFormatResult;
 import org.zkoss.zss.ngmodel.NColor;
 import org.zkoss.zss.ngmodel.NRichText;
@@ -12,15 +14,17 @@ public class FormatResultImpl implements FormatResult {
 	private NColor textColor;//it is possible no format result color
 	private NRichText richText;
 	private boolean dateFormatted = false;
+	private Format formater;
 	public FormatResultImpl(NRichText richText){
 		this.richText = richText;
 	}
-	public FormatResultImpl(CellFormatResult result,boolean dateFormatted){
+	public FormatResultImpl(CellFormatResult result, Format formater, boolean dateFormatted){
 		this.text = result.text;
 		if (result.textColor != null){
 			this.textColor = new ColorImpl((byte)result.textColor.getRed(),(byte)result.textColor.getGreen(),
 					(byte)result.textColor.getBlue());
 		}
+		this.formater = formater;
 		this.dateFormatted = dateFormatted;
 	}
 	public FormatResultImpl(String text, NColor color){
@@ -28,7 +32,10 @@ public class FormatResultImpl implements FormatResult {
 		this.textColor = color;
 	}
 	
-	
+	@Override
+	public Format getFormater(){
+		return formater;
+	}
 	
 	@Override
 	public String getText() {

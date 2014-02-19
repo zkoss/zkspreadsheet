@@ -22,6 +22,7 @@ import java.util.concurrent.locks.ReadWriteLock;
 import org.zkoss.lang.Strings;
 import org.zkoss.util.Locales;
 import org.zkoss.zss.ngapi.*;
+import org.zkoss.zss.ngapi.impl.autofill.AutoFillHelper;
 import org.zkoss.zss.ngmodel.*;
 import org.zkoss.zss.ngmodel.NAutoFilter.FilterOp;
 import org.zkoss.zss.ngmodel.NCell.CellType;
@@ -649,33 +650,82 @@ public class NRangeImpl implements NRange {
 	}
 
 	@Override
-	public void autoFill(NRange dstRange, AutoFillType fillType) {
-		//TODO
-		throw new UnsupportedOperationException("not implement yet");
+	public void fill(final NRange dstRange, final FillType fillType) {
+		NSheet sheet = getSheet();
+		if(!dstRange.getSheet().equals(sheet)){
+			throw new InvalidateModelOpException("the source sheet and destination sheet aren't the same");
+		}
+		new ModelUpdateTask() {
+			@Override
+			Object doInvokePhase() {
+				autoFillInLock(new CellRegion(getRow(),getColumn(),getLastRow(),getLastColumn()),
+						new CellRegion(dstRange.getRow(),dstRange.getColumn(),dstRange.getLastRow(),dstRange.getLastColumn()), fillType);
+				return null;
+			}
+			@Override
+			void doNotifyPhase() {}
+		}.doInWriteLock(getLock());
+	}
+	
+	private void autoFillInLock(CellRegion src,CellRegion dest, FillType fillType){
+		NSheet sheet = getSheet();
+		new AutoFillHelper().fill(sheet, src,dest, fillType);
 	}
 
 	@Override
 	public void fillDown() {
-		//TODO
-		throw new UnsupportedOperationException("not implement yet");
+		new ModelUpdateTask() {
+			@Override
+			Object doInvokePhase() {
+				autoFillInLock(new CellRegion(getRow(),getColumn(),getLastRow(),getLastColumn()),
+						new CellRegion(getRow(),getColumn(),getLastRow(),getLastColumn()), FillType.COPY);
+				return null;
+			}
+			@Override
+			void doNotifyPhase() {}
+		}.doInWriteLock(getLock());
 	}
 
 	@Override
 	public void fillLeft() {
-		//TODO
-		throw new UnsupportedOperationException("not implement yet");
+		new ModelUpdateTask() {
+			@Override
+			Object doInvokePhase() {
+				autoFillInLock(new CellRegion(getRow(),getLastColumn(),getLastRow(),getLastColumn()),
+						new CellRegion(getRow(),getColumn(),getLastRow(),getLastColumn()), FillType.COPY);
+				return null;
+			}
+			@Override
+			void doNotifyPhase() {}
+		}.doInWriteLock(getLock());
 	}
 
 	@Override
 	public void fillRight() {
-		//TODO
-		throw new UnsupportedOperationException("not implement yet");
+		new ModelUpdateTask() {
+			@Override
+			Object doInvokePhase() {
+				autoFillInLock(new CellRegion(getRow(),getColumn(),getLastRow(),getColumn()),
+						new CellRegion(getRow(),getColumn(),getLastRow(),getLastColumn()), FillType.COPY);
+				return null;
+			}
+			@Override
+			void doNotifyPhase() {}
+		}.doInWriteLock(getLock());
 	}
 
 	@Override
 	public void fillUp() {
-		//TODO
-		throw new UnsupportedOperationException("not implement yet");
+		new ModelUpdateTask() {
+			@Override
+			Object doInvokePhase() {
+				autoFillInLock(new CellRegion(getLastRow(),getColumn(),getLastRow(),getLastColumn()),
+						new CellRegion(getRow(),getColumn(),getLastRow(),getLastColumn()), FillType.COPY);
+				return null;
+			}
+			@Override
+			void doNotifyPhase() {}
+		}.doInWriteLock(getLock());
 	}
 
 	@Override

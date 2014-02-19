@@ -56,6 +56,22 @@ public interface NRange {
 		NONE;
 	}
 	
+	public enum FillType{
+		//fillType of #autoFill
+		DEFAULT,// = 0x01; //system determine
+		FORMATS,// = 0x02; //formats only
+		VALUES,// = 0x04; //value+formula+validation+hyperlink (no comment)
+		COPY,// = 0x06; //value+formula+validation+hyperlink, formats
+		DAYS,// = 0x10;
+		WEEKDAYS,// = 0x20;
+		MONTHS,// = 0x30;
+		YEARS,// = 0x40;
+		HOURS,// = 0x50;
+		GROWTH_TREND,// = 0x100; //multiplicative relation
+		LINER_TREND,// = 0x200; //additive relation
+		SERIES// = LINER_TREND;
+	}
+	
 	public enum ApplyBorderType{
 		FULL,
 		EDGE_BOTTOM,
@@ -105,20 +121,6 @@ public interface NRange {
 		TOP10,
 		TOP10PERCENT,
 		VALUES
-	}
-	
-	public enum AutoFillType{
-		COPY,
-		DAYS,
-		DEFAULT,
-		FORMATS,
-		MONTHS,
-		SERIES,
-		VALUES,
-		WEEKDAYS,
-		YEARS,
-		GROWTH_TREND,
-		LINER_TREND
 	}
 	
 //	public NSheet getSheet();
@@ -331,7 +333,7 @@ public interface NRange {
 	 * @param dstRange destination range to do the auto fill. Note the given destination Range must include this source Range
 	 * @param fillType the fillType
 	 */
-	public void autoFill(NRange dstRange, AutoFillType fillType);
+	public void fill(NRange dstRange, FillType fillType);
 	
 	/**
 	 * Clears the data from this Range.

@@ -17,8 +17,6 @@ package org.zkoss.zss.ngapi.impl.autofill;
 
 import java.util.Locale;
 
-import org.zkoss.util.Locales;
-
 /**
  * @author henrichen
  *

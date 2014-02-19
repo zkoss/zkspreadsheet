@@ -136,7 +136,7 @@ import org.zkoss.zss.ngmodel.NPicture.Format;
 	}
 
 	@Override
-	public void autoFill(NRange dstRange, AutoFillType fillType) {
+	public void fill(NRange dstRange, FillType fillType) {
 		
 
 	}

@@ -1,87 +1,36 @@
 package org.zkoss.zss.ngapi.impl.autofill;
 
+import java.text.Format;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Locale;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.zkoss.lang.Strings;
-import org.zkoss.poi.ss.usermodel.Cell;
-import org.zkoss.poi.ss.usermodel.DataFormatter;
-import org.zkoss.poi.ss.usermodel.DateUtil;
-import org.zkoss.poi.ss.usermodel.ZssContext;
-import org.zkoss.zk.ui.UiException;
-import org.zkoss.zss.engine.Ref;
-import org.zkoss.zss.engine.RefSheet;
-import org.zkoss.zss.engine.impl.AreaRefImpl;
-import org.zkoss.zss.engine.impl.ChangeInfo;
-import org.zkoss.zss.engine.impl.MergeChange;
-import org.zkoss.zss.model.sys.XBook;
-import org.zkoss.zss.model.sys.XSheet;
-import org.zkoss.zss.model.sys.impl.BlankStep;
-import org.zkoss.zss.model.sys.impl.BookHelper;
-import org.zkoss.zss.model.sys.impl.CircularData;
-import org.zkoss.zss.model.sys.impl.CopyStep;
-import org.zkoss.zss.model.sys.impl.DateTimeStep;
-import org.zkoss.zss.model.sys.impl.FullMonthData;
-import org.zkoss.zss.model.sys.impl.FullMonthStep;
-import org.zkoss.zss.model.sys.impl.FullWeekData;
-import org.zkoss.zss.model.sys.impl.FullWeekStep;
-import org.zkoss.zss.model.sys.impl.GrowthStep;
-import org.zkoss.zss.model.sys.impl.LinearStep;
-import org.zkoss.zss.model.sys.impl.ShortMonthData;
-import org.zkoss.zss.model.sys.impl.ShortMonthStep;
-import org.zkoss.zss.model.sys.impl.ShortWeekData;
-import org.zkoss.zss.model.sys.impl.ShortWeekStep;
-import org.zkoss.zss.model.sys.impl.Step;
-import org.zkoss.zss.model.sys.impl.BookHelper.CopyStepChunk;
-import org.zkoss.zss.model.sys.impl.BookHelper.StepChunk;
+import org.zkoss.util.Locales;
+import org.zkoss.zss.ngapi.NRange.FillType;
+import org.zkoss.zss.ngmodel.CellRegion;
+import org.zkoss.zss.ngmodel.InvalidateModelOpException;
+import org.zkoss.zss.ngmodel.NCell;
+import org.zkoss.zss.ngmodel.NCell.CellType;
+import org.zkoss.zss.ngmodel.NSheet;
+import org.zkoss.zss.ngmodel.PasteOption;
+import org.zkoss.zss.ngmodel.PasteOption.PasteType;
+import org.zkoss.zss.ngmodel.SheetRegion;
+import org.zkoss.zss.ngmodel.sys.EngineFactory;
+import org.zkoss.zss.ngmodel.sys.format.FormatContext;
+import org.zkoss.zss.ngmodel.sys.format.FormatEngine;
+import org.zkoss.zss.ngmodel.sys.format.FormatResult;
 
+/**
+ * To help data filling.
+ * @author Dennis
+ *
+ */
+//the code was migrated from original BookHelper.fill series method.
 public class AutoFillHelper {
-
-	//inner pasteType for #paste & #fill
-	public final static int INNERPASTE_NUMBER_FORMATS = 0x01;
-	public final static int INNERPASTE_BORDERS = 0x02;
-	public final static int INNERPASTE_OTHER_FORMATS = 0x04;
-	public final static int INNERPASTE_VALUES = 0x08;
-	public final static int INNERPASTE_FORMULAS = 0x10;
-	public final static int INNERPASTE_VALUES_AND_FORMULAS = INNERPASTE_FORMULAS + INNERPASTE_VALUES;
-	public final static int INNERPASTE_COMMENTS = 0x20;
-	public final static int INNERPASTE_VALIDATION = 0x40;
-	public final static int INNERPASTE_COLUMN_WIDTHS = 0x80;
-	public final static int INNERPASTE_FORMATS = INNERPASTE_NUMBER_FORMATS + INNERPASTE_BORDERS + INNERPASTE_OTHER_FORMATS;
-	
-	private final static int INNERPASTE_FILL_COPY = INNERPASTE_FORMATS + INNERPASTE_VALUES_AND_FORMULAS + INNERPASTE_VALIDATION;   
-	private final static int INNERPASTE_FILL_VALUE = INNERPASTE_VALUES_AND_FORMULAS + INNERPASTE_VALIDATION;   
-	private final static int INNERPASTE_FILL_FORMATS = INNERPASTE_FORMATS;   
-
-	//inner pasteOp for #paste & #fill
-	public final static int PASTEOP_ADD = 1;
-	public final static int PASTEOP_SUB = 2;
-	public final static int PASTEOP_MUL = 3;
-	public final static int PASTEOP_DIV = 4;
-	public final static int PASTEOP_NONE = 0;
-
-	//inner fillType for #fill
-	public final static int FILL_DEFAULT = 0x01; //system determine
-	public final static int FILL_FORMATS = 0x02; //formats only
-	public final static int FILL_VALUES = 0x04; //value+formula+validation+hyperlink (no comment)
-	public final static int FILL_COPY = 0x06; //value+formula+validation+hyperlink, formats
-	public final static int FILL_DAYS = 0x10;
-	public final static int FILL_WEEKDAYS = 0x20;
-	public final static int FILL_MONTHS = 0x30;
-	public final static int FILL_YEARS = 0x40;
-	public final static int FILL_HOURS = 0x50;
-	public final static int FILL_GROWTH_TREND = 0x100; //multiplicative relation
-	public final static int FILL_LINER_TREND = 0x200; //additive relation
-	public final static int FILL_SERIES = FILL_LINER_TREND;
-	
 	
 	//inner fill direction for #fill
 	private static final int FILL_INVALID = 0;
@@ -91,24 +40,34 @@ public class AutoFillHelper {
 	private static final int FILL_RIGHT = 4;
 	private static final int FILL_LEFT = 5;
 	
-	//[0]:last [1]:all
-	public static ChangeInfo fill(XSheet sheet, Ref srcRef, Ref dstRef, int fillType) {
-		final int fillDir = BookHelper.getFillDirection(sheet, srcRef, dstRef);
-		if (fillDir == BookHelper.FILL_NONE) { //nothing to fill up, just return
-			return null;
+	/**
+	 * fill the sheet, from srcRef to dstRef
+	 * @param sheet
+	 * @param srcRegion
+	 * @param dstRegion
+	 * @param fillType
+	 */
+	public void fill(NSheet sheet, CellRegion srcRegion, CellRegion dstRegion, FillType fillType) {
+		final int fillDir = getFillDirection(srcRegion, dstRegion);
+		if (fillDir == FILL_NONE) { //nothing to fill up, just return
+			return;
 		}
 		switch(fillDir) {
 		case FILL_UP:
-			return fillUp(sheet, srcRef, dstRef, fillType);
+			fillUp(sheet, srcRegion, dstRegion, fillType);
+			return;
 		case FILL_DOWN:
-			return fillDown(sheet, srcRef, dstRef, fillType);
+			fillDown(sheet, srcRegion, dstRegion, fillType);
+			return;
 		case FILL_RIGHT:
-			return fillRight(sheet, srcRef, dstRef, fillType);
+			fillRight(sheet, srcRegion, dstRegion, fillType);
+			return;
 		case FILL_LEFT:
-			return fillLeft(sheet, srcRef, dstRef, fillType);
+			fillLeft(sheet, srcRegion, dstRegion, fillType);
+			return;
 		}
 		//FILL_INVALID
-		throw new UiException("Destination range must include source range and can be fill in one direction only"); 
+		throw new InvalidateModelOpException("Destination range must include source range and can be fill in one direction only"); 
 	}
 	private static int getShortWeekIndex(String x, Locale locale) { //ZSS-69
 		return ShortWeekData.getInstance(CircularData.NORMAL, locale).getIndex(x);
@@ -189,45 +148,55 @@ public class AutoFillHelper {
 		Matcher dateM = timePattern.matcher(pattern);
 		return dateM.find();
     }
-	private static int getDateTimeSubType(Cell cell) {
-        if (DateUtil.isCellDateFormatted(cell)) {
+    FormatEngine formatEngine;
+    
+    private FormatEngine getFormatEngine(){
+    	if(formatEngine==null){
+    		formatEngine = EngineFactory.getInstance().createFormatEngine();
+    	}
+    	return formatEngine;
+    }
+
+	private int getDateTimeSubType(NCell cell) {
+		FormatResult result = getFormatEngine().format(cell, new FormatContext(Locales.getCurrent()));
+		Format format = result.getFormater();
+        if (result.isDateFormatted() && format instanceof SimpleDateFormat){
         	//check if a pure time format
-        	SimpleDateFormat format = (SimpleDateFormat) DataFormatter.getJavaFormat(cell, ZssContext.getCurrent().getLocale()); //ZSS-69
-        	final String pattern = format.toPattern();
-        	return isDatePattern(pattern) ? Step.DATE : Step.TIME; //a date or a time
+        	final String pattern = ((SimpleDateFormat)format).toPattern();
+            return isDatePattern(pattern) ? Step.DATE : Step.TIME; //a date or a time
         }
         return Step.NUMBER; //a nubmer
 	}
-	private static class StepChunk {
+	private class StepChunk {
 		private Step[] _steps;
 		protected StepChunk() {}
 		
-		public StepChunk(Cell[] srcCells, int fillType, boolean positive, int siblingCount) {
+		public StepChunk(NCell[] srcCells, FillType fillType, boolean positive, int siblingCount) {
 			_steps = new Step[srcCells.length];
 			int b = 0, e = 0;
-			int prevtype = -1;
+			CellType prevtype = null;
 			int subType = -1;
-			final Locale locale = ZssContext.getCurrent().getLocale(); //ZSS-69
+			final Locale locale = Locales.getCurrent(); //ZSS-69
 			for (int j = 0; j < srcCells.length; ++j) {
-				final Cell cell = srcCells[j];
-				final int type = cell == null ? Cell.CELL_TYPE_BLANK : cell.getCellType();
+				final NCell cell = srcCells[j];
+				final CellType type = cell.isNull() ? CellType.BLANK : cell.getType();
 				if (type != prevtype) {
-					if (prevtype >= 0) {
+					if (prevtype != null) {
 						prepareSteps(srcCells, b, e, positive, fillType, subType, siblingCount); //per the chunk, get the proper Step
 					}
 					b = e = j;
 					prevtype = type;
-					if (type == Cell.CELL_TYPE_STRING) { //could be Blank, String, short week/month, full week/month
-						final String x = cell.getStringCellValue();
+					if (type == CellType.STRING) { //could be Blank, String, short week/month, full week/month
+						final String x = cell.getStringValue();
 						subType = getWeekMonthSubType(x, locale); //ZSS-69
-					} else if (type == Cell.CELL_TYPE_NUMERIC) { //could be number/date/time
+					} else if (type == CellType.NUMBER) { //could be number/date/time
 						subType = getDateTimeSubType(cell);
 					}
 					continue;
 				}
 				//type == prevtype
-				if (type == Cell.CELL_TYPE_STRING) { //check if week/month
-					final String x = cell.getStringCellValue();
+				if (type == CellType.STRING) { //check if week/month
+					final String x = cell.getStringValue();
 					final int curSubType = getWeekMonthSubType(x, locale); //ZSS-69
 					if (curSubType == subType) {
 						e = j;
@@ -237,7 +206,7 @@ public class AutoFillHelper {
 					prepareSteps(srcCells, b, e, positive, fillType, subType, siblingCount); //prepare steps
 					b = e = j;
 					subType = curSubType;
-				} else if (type == Cell.CELL_TYPE_NUMERIC) { //special case, date or number
+				} else if (type == CellType.NUMBER) { //special case, date or number
 					final int curSubType = getDateTimeSubType(cell);
 					if (subType == curSubType) {
 						e = j;
@@ -259,26 +228,26 @@ public class AutoFillHelper {
 		private void replaceWithCopyStep(int index) {
 			_steps[index] = CopyStep.instance;
 		}
-		private void prepareSteps(Cell[] srcCells, int b, int e, boolean positive, int fillType, int subType, int siblingCount) {
-			final Cell srcCell = srcCells[b];
-			final int type = srcCell == null ? Cell.CELL_TYPE_BLANK : srcCell.getCellType();
+		private void prepareSteps(NCell[] srcCells, int b, int e, boolean positive, FillType fillType, int subType, int siblingCount) {
+			final NCell srcCell = srcCells[b];
+			final CellType type = srcCell.isNull() ? CellType.BLANK : srcCell.getType();
 			Step step;
 			switch(type) {
 			default:
-			case Cell.CELL_TYPE_FORMULA:
-			case Cell.CELL_TYPE_BOOLEAN:
-			case Cell.CELL_TYPE_ERROR:
+			case FORMULA:
+			case BOOLEAN:
+			case ERROR:
 				step = CopyStep.instance; //copy
 				break;
-			case Cell.CELL_TYPE_BLANK:
+			case BLANK:
 				step = BlankStep.instance; //blank
 				break;
-			case Cell.CELL_TYPE_NUMERIC:
+			case NUMBER:
 				switch(subType) {
 				default:
 				case Step.NUMBER:
 					step = srcCells.length == 1 && siblingCount == 1 ? CopyStep.instance : 	//number, one source cell, copy only  
-						fillType == FILL_GROWTH_TREND ? 
+						fillType == FillType.GROWTH_TREND ? 
 							getGrowthStep(srcCells, b, e, positive) : //a growth trend 
 							getLinearStep(srcCells, b, e, positive) ; //a linear trend
 					break;
@@ -290,8 +259,8 @@ public class AutoFillHelper {
 					break;
 				}
 				break;
-			case Cell.CELL_TYPE_STRING:
-				final Locale locale = ZssContext.getCurrent().getLocale(); //ZSS-69 locale aware then US when drag-fill
+			case STRING:
+				final Locale locale = Locales.getCurrent(); //ZSS-69 locale aware then US when drag-fill
 				switch(subType) {
 				default:
 				case Step.BLANK:
@@ -332,65 +301,69 @@ public class AutoFillHelper {
 			}
 		}
 	}
-	private static class CopyStepChunk extends StepChunk {
-		public static final StepChunk instance = new CopyStepChunk();
+	private class CopyStepChunk extends StepChunk {
 		@Override
 		public Step getStep(int index) {
 			return CopyStep.instance;
 		}
 	}
-	private static int[] getTimeParts(Cell srcCell) {
+	private final StepChunk CopyStepChunkInstance = new CopyStepChunk();
+	
+	private int[] getTimeParts(NCell srcCell) {
 		int[] parts = new int[7]; //year, month, day, hour, mintue, second, millsecond
 		int j = 0;
-		Date date = srcCell.getDateCellValue();
+		Date date = srcCell.getDateValue();
 		final Calendar cal = Calendar.getInstance(); //TODO Timezone?
 		cal.setTimeInMillis(date.getTime());
 		parts[j++]= cal.get(Calendar.YEAR);
 		parts[j++]= cal.get(Calendar.MONTH);
 		parts[j++]= cal.get(Calendar.DAY_OF_MONTH);
 		
-    	final SimpleDateFormat format = (SimpleDateFormat) DataFormatter.getJavaFormat(srcCell, ZssContext.getCurrent().getLocale()); //ZSS-68
-    	final String pattern1 = format.toPattern();
-		final boolean withtime = isTimePattern(pattern1);
-		if (withtime) {
-			parts[j++]= cal.get(Calendar.HOUR_OF_DAY);
-			parts[j++]= cal.get(Calendar.MINUTE);
-			parts[j++]= cal.get(Calendar.SECOND);
-			parts[j++]= cal.get(Calendar.MILLISECOND);
-		} else {
-			parts[j++]= -1;
-		}
+		FormatResult result = getFormatEngine().format(srcCell, new FormatContext(Locales.getCurrent()));
+		Format format = result.getFormater();
+        if (result.isDateFormatted() && format instanceof SimpleDateFormat){
+        	final String pattern1 = ((SimpleDateFormat)format).toPattern();
+        	final boolean withtime = isTimePattern(pattern1);
+        	if (withtime) {
+        		parts[j++]= cal.get(Calendar.HOUR_OF_DAY);
+        		parts[j++]= cal.get(Calendar.MINUTE);
+        		parts[j++]= cal.get(Calendar.SECOND);
+        		parts[j++]= cal.get(Calendar.MILLISECOND);
+        		return parts;
+        	}
+        }
+        parts[j++]= -1;
 		return parts;
 	}
-	private static Step getTimeStep(Cell[] srcCells, int b, int e, boolean positive, int fillType, int subType) {
-		final Cell srcCell1 = srcCells[b];
+	private static Step getTimeStep(NCell[] srcCells, int b, int e, boolean positive, FillType fillType, int subType) {
+		final NCell srcCell1 = srcCells[b];
 		if (b == e) { //only one srcCell
-			return new DateTimeStep(srcCell1.getDateCellValue(),0, 0, 0, positive ? 60*60*1000 : -60*60*1000, subType);
+			return new DateTimeStep(srcCell1.getDateValue(),0, 0, 0, positive ? 60*60*1000 : -60*60*1000, subType);
 		}
 		
 		//more than one srcCell
-		Date date1 = srcCell1.getDateCellValue();
-		Cell srcCell2 = srcCells[b+1];
-		Date date2 = srcCell2.getDateCellValue();
+		Date date1 = srcCell1.getDateValue();
+		NCell srcCell2 = srcCells[b+1];
+		Date date2 = srcCell2.getDateValue();
 		final int step = (int)(date2.getTime() - date1.getTime());
     	for(int k = b+2; k <= e; ++k) {
     		srcCell2 = srcCells[k];
     		date1 = date2;
-    		date2 = srcCell2.getDateCellValue();
+    		date2 = srcCell2.getDateValue();
     		if (step != (date2.getTime() - date1.getTime())) {
     			return CopyStep.instance;
     		}
     	}
     	return new DateTimeStep(date2, 0, 0, 0, step, subType);
 	}
-	private static Step getDateStep(Cell[] srcCells, int b, int e, boolean positive, int fillType, int subType) {
-		if (fillType == FILL_DEFAULT) {
-			fillType = FILL_DAYS;
+	private Step getDateStep(NCell[] srcCells, int b, int e, boolean positive, FillType fillType, int subType) {
+		if (fillType == FillType.DEFAULT) {
+			fillType = FillType.DAYS;
 		}
 		return myGetDateStep(srcCells, b, e, positive, fillType, subType); 
 	}
-	private static Step myGetDateStep(Cell[] srcCells, int b, int e, boolean positive, int fillType, int subType) {
-		final Cell srcCell1 = srcCells[b]; 
+	private Step myGetDateStep(NCell[] srcCells, int b, int e, boolean positive, FillType fillType, int subType) {
+		final NCell srcCell1 = srcCells[b]; 
 		final int[] time1 = getTimeParts(srcCell1);
     	int j = 0;
     	int y1 = time1[j]; ++j; 
@@ -402,17 +375,17 @@ public class AutoFillHelper {
     	int ms1 = time1[j];
     	int t1 = (h1 < 0 ? 0 : h1 * 60 * 60 * 1000) + min1 * 60 * 1000 + s1 * 1000 + ms1; //time field in millisecond of a day
 		if (b == e) { //only one srcCell
-			Date date = srcCells[b].getDateCellValue();
+			Date date = srcCells[b].getDateValue();
 			switch(fillType) {
-			case FILL_DAYS:
+			case DAYS:
 				return new DateTimeStep(date, 0, 0, positive ? 1 : -1, 0, subType);
-			case FILL_HOURS:
+			case HOURS:
 				return new DateTimeStep(date, 0, 0, 0, positive ? 60*60*1000 : -60*60*1000, subType);
-			case FILL_MONTHS:
+			case MONTHS:
 				return new DateTimeStep(date, 0, positive ? 1 : -1, 0, 0, subType);
-			case FILL_YEARS:
+			case YEARS:
 				return new DateTimeStep(date, positive ? 1 : -1, 0, 0, 0, subType);
-			case FILL_WEEKDAYS:
+			case WEEKDAYS:
 				return new DateTimeStep(date, 0, 0, positive ? 7 : -7, 0, subType);
 			default:
 				return CopyStep.instance;
@@ -420,7 +393,7 @@ public class AutoFillHelper {
 		}
 		
 		//more than one srcCell
-    	final Cell srcCell2  = srcCells[b+1];
+    	final NCell srcCell2  = srcCells[b+1];
     	final int[] time2 = getTimeParts(srcCell2);
     	j = 0;
     	int y2 = time2[j]; ++j; 
@@ -459,7 +432,7 @@ public class AutoFillHelper {
         	ms1 = ms2;
         	t1 = t2;
         	
-        	final Cell srcCell = srcCells[k];
+        	final NCell srcCell = srcCells[k];
         	final int[] time = getTimeParts(srcCell);
         	j = 0;
         	y2 = time[j]; ++j; 
@@ -517,18 +490,18 @@ public class AutoFillHelper {
 			return new DateTimeStep(cal2.getTime(), 0, diffM, 0, diffT, -1);
 		}
 	}
-	private static Step getGrowthStep(Cell[] srcCells, int b, int e, boolean positive) {
+	private static Step getGrowthStep(NCell[] srcCells, int b, int e, boolean positive) {
 		if (b == e) { //only one source cell
 			return CopyStep.instance;
 		}
 		//calc first ratio
-		double prev = srcCells[b].getNumericCellValue();
-		double curv = srcCells[b+1].getNumericCellValue();
+		double prev = srcCells[b].getNumberValue();
+		double curv = srcCells[b+1].getNumberValue();
 		double ratio = curv / prev;
 		prev = curv;
 		for (int k = b+2; k <=e; ++k) {
-			final Cell srcCell = srcCells[k];
-			curv = srcCell.getNumericCellValue();
+			final NCell srcCell = srcCells[k];
+			curv = srcCell.getNumberValue();
 			if (ratio != (curv / prev)) {
 				return CopyStep.instance;
 			}
@@ -536,12 +509,12 @@ public class AutoFillHelper {
 		}
 		return new GrowthStep(curv, ratio, -1);
 	}
-	private static Step getLinearStep(Cell[] srcCells, int b, int e, boolean positive) {
+	private static Step getLinearStep(NCell[] srcCells, int b, int e, boolean positive) {
 		int count = e-b+1;
 		final double[] values = new double[count];
 		for (int j = 0, k = b; k <=e; ++k) {
-			final Cell srcCell = srcCells[k];
-			values[j++] = srcCell.getNumericCellValue();
+			final NCell srcCell = srcCells[k];
+			values[j++] = srcCell.getNumberValue();
 		}
 		if (count == 1) {
 			final double step = positive ? 1 : -1;
@@ -574,14 +547,14 @@ public class AutoFillHelper {
 		}
 		return 0; //normal case
 	}
-	private static Step getShortWeekStep(Cell[] srcCells, int b, int e, boolean positive, Locale locale) { //ZSS-69
+	private static Step getShortWeekStep(NCell[] srcCells, int b, int e, boolean positive, Locale locale) { //ZSS-69
 		final int count = e-b+1;
 		String bWeek = null;
 		int preIndex = -1;
 		int step = 0;
 		for (int j = b; j <= e; ++j) {
-			final Cell srcCell = srcCells[j];
-			final String x = srcCell.getStringCellValue(); 	
+			final NCell srcCell = srcCells[j];
+			final String x = srcCell.getStringValue(); 	
 			final int weekIndex = getShortWeekIndex(x, locale); //ZSS-69
 			if (step == 0) {
 				if (preIndex >= 0) {
@@ -603,14 +576,14 @@ public class AutoFillHelper {
 		}
 		return new ShortWeekStep(preIndex, step, getCaseType(bWeek), b == e ? Step.SHORT_WEEK : -1, locale); //ZSS-69
 	}
-	private static Step getFullWeekStep(Cell[] srcCells, int b, int e, boolean positive, Locale locale) { //ZSS-69
+	private static Step getFullWeekStep(NCell[] srcCells, int b, int e, boolean positive, Locale locale) { //ZSS-69
 		final int count = e-b+1;
 		String bWeek = null;
 		int preIndex = -1;
 		int step = 0;
 		for (int j = b; j <= e; ++j) {
-			final Cell srcCell = srcCells[j];
-			final String x = srcCell.getStringCellValue(); 	
+			final NCell srcCell = srcCells[j];
+			final String x = srcCell.getStringValue(); 	
 			final int weekIndex = getFullWeekIndex(x, locale); //ZSS-69
 			if (step == 0) {
 				if (preIndex >= 0) {
@@ -632,14 +605,14 @@ public class AutoFillHelper {
 		}
 		return new FullWeekStep(preIndex, step, getCaseType(bWeek), b == e ? Step.FULL_WEEK : -1, locale); //ZSS-69
 	}
-	private static Step getShortMonthStep(Cell[] srcCells, int b, int e, boolean positive, Locale locale) {
+	private static Step getShortMonthStep(NCell[] srcCells, int b, int e, boolean positive, Locale locale) {
 		final int count = e-b+1;
 		String bMonth = null;
 		int preIndex = -1;
 		int step = 0;
 		for (int j = b; j <= e; ++j) {
-			final Cell srcCell = srcCells[j];
-			final String x = srcCell.getStringCellValue(); 	
+			final NCell srcCell = srcCells[j];
+			final String x = srcCell.getStringValue(); 	
 			final int monthIndex = getShortMonthIndex(x, locale); //ZSS-69
 			if (step == 0) {
 				if (preIndex >= 0) {
@@ -661,14 +634,14 @@ public class AutoFillHelper {
 		}
 		return new ShortMonthStep(preIndex, step, getCaseType(bMonth), b == e ? Step.SHORT_MONTH : -1, locale); //ZSS-69
 	}
-	private static Step getFullMonthStep(Cell[] srcCells, int b, int e, boolean positive, Locale locale) { //ZSS-69
+	private static Step getFullMonthStep(NCell[] srcCells, int b, int e, boolean positive, Locale locale) { //ZSS-69
 		final int count = e-b+1;
 		String bMonth = null;
 		int preIndex = -1;
 		int step = 0;
 		for (int j = b; j <= e; ++j) {
-			final Cell srcCell = srcCells[j];
-			final String x = srcCell.getStringCellValue(); 	
+			final NCell srcCell = srcCells[j];
+			final String x = srcCell.getStringValue(); 	
 			final int monthIndex = getFullMonthIndex(x, locale); //ZSS-69
 			if (step == 0) {
 				if (preIndex >= 0) {
@@ -691,52 +664,52 @@ public class AutoFillHelper {
 		return new FullMonthStep(preIndex, step, getCaseType(bMonth), b == e ? Step.FULL_MONTH : -1, locale); //ZSS-69
 	}
 	
-	private static StepChunk getRowStepChunk(XSheet sheet, int fillType, int col, int row1, int row2, boolean pos, int colCount) {
+	private StepChunk getRowStepChunk(NSheet sheet, FillType fillType, int col, int row1, int row2, boolean pos, int colCount) {
 		switch(fillType) {
-		case FILL_DEFAULT:
+		case DEFAULT:
 			final int diff = row2 - row1;
-			final Cell[] cells = new Cell[(pos ? diff : -diff) + 1];
+			final NCell[] cells = new NCell[(pos ? diff : -diff) + 1];
 			if (pos) {
 				for (int row = row1, j = 0; row <= row2; ++row) {
-					final Cell srcCell = BookHelper.getCell(sheet, row, col);
+					final NCell srcCell = sheet.getCell(row, col);
 					cells[j++] = srcCell;
 				}
 			} else {
 				for (int row = row1, j = 0; row >= row2; --row) {
-					final Cell srcCell = BookHelper.getCell(sheet, row, col);
+					final NCell srcCell = sheet.getCell(row, col);
 					cells[j++] = srcCell;
 				}
 			}
 			return new StepChunk(cells, fillType, pos, colCount);
-		case FILL_COPY:
-		case FILL_FORMATS:
-		case FILL_VALUES:
+		case COPY:
+		case FORMATS:
+		case VALUES:
 		default:
-			return CopyStepChunk.instance; //pure copy
+			return CopyStepChunkInstance; //pure copy
 		}
 	}
-	private static StepChunk getColStepChunk(XSheet sheet, int fillType, int row, int col1, int col2, boolean pos, int rowCount) {
+	private StepChunk getColStepChunk(NSheet sheet, FillType fillType, int row, int col1, int col2, boolean pos, int rowCount) {
 		switch(fillType) {
-		case FILL_DEFAULT:
+		case DEFAULT:
 			final int diff = col2 - col1;
-			final Cell[] cells = new Cell[(pos ? diff : -diff) + 1];
+			final NCell[] cells = new NCell[(pos ? diff : -diff) + 1];
 			if (pos) {
 				for (int col = col1, j = 0; col <= col2; ++col) {
-					final Cell srcCell = BookHelper.getCell(sheet, row, col);
+					final NCell srcCell = sheet.getCell(row, col);
 					cells[j++] = srcCell;
 				}
 			} else {
 				for (int col = col1, j = 0; col >= col2; --col) {
-					final Cell srcCell = BookHelper.getCell(sheet, row, col);
+					final NCell srcCell = sheet.getCell(row, col);
 					cells[j++] = srcCell;
 				}
 			}
 			return new StepChunk(cells, fillType, pos, rowCount);
-		case FILL_COPY:
-		case FILL_FORMATS:
-		case FILL_VALUES:
+		case COPY:
+		case FORMATS:
+		case VALUES:
 		default:
-			return CopyStepChunk.instance; //pure copy
+			return CopyStepChunkInstance; //pure copy
 		}
 	}
 	private static void replaceWithCopyStep(StepChunk[] stepChunks, int index, int b, int e) {
@@ -772,33 +745,41 @@ public class AutoFillHelper {
 			}
 		}
 	}
-	public static ChangeInfo fillDown(XSheet sheet, Ref srcRef, Ref dstRef, int fillType) {
+	
+	
+	private PasteType toSupportedFillPasteType(FillType fillType){
 		//TODO FILL_DEFAULT, FILL_DAYS, FILL_WEEKDAYS, FILL_MONTHS, FILL_YEARS, FILL_GROWTH_TREND
-		int pasteType = BookHelper.INNERPASTE_FILL_COPY;
 		switch(fillType) {
-		default: //FILL_DEFAULT, FILL_LINEAR_TREND, FILL_SERIES,  
-		case FILL_COPY:
-			pasteType = BookHelper.INNERPASTE_FILL_COPY;
-			break;
-		case FILL_FORMATS:
-			pasteType = BookHelper.INNERPASTE_FILL_FORMATS;
-			break;
-		case FILL_VALUES:
-			pasteType = BookHelper.INNERPASTE_FILL_VALUE;
-			break;
+		case DEFAULT:
+		case COPY:
+			return PasteType.ALL;
+		case FORMATS:
+			return PasteType.FORMATS;
+		case VALUES:
+			return PasteType.VALUES;
+		default:
+			return null;
 		}
-		final Set<Ref> toEval = new HashSet<Ref>();
-		final Set<Ref> affected = new HashSet<Ref>();
-		final List<MergeChange> mergeChanges = new ArrayList<MergeChange>();
-		final ChangeInfo changeInfo = new ChangeInfo(toEval, affected, mergeChanges);
+	}
+	
+	public void fillDown(NSheet sheet, CellRegion srcRef, CellRegion dstRef, FillType fillType) {
+		//TODO FILL_DEFAULT, FILL_DAYS, FILL_WEEKDAYS, FILL_MONTHS, FILL_YEARS, FILL_GROWTH_TREND
+		PasteType pasteType = toSupportedFillPasteType(fillType);
+		if(pasteType==null){
+			return;
+		}
+
+		PasteOption pasteOption = new PasteOption();
+		pasteOption.setPasteType(pasteType);
+		
 		final int rowCount = srcRef.getRowCount();
 		final int colCount = srcRef.getColumnCount();
-		final int srctRow = srcRef.getTopRow();
-		final int srcbRow = srcRef.getBottomRow();
-		final int srclCol = srcRef.getLeftCol();
-		final int srcrCol = srcRef.getRightCol();
+		final int srctRow = srcRef.getRow();
+		final int srcbRow = srcRef.getLastRow();
+		final int srclCol = srcRef.getColumn();
+		final int srcrCol = srcRef.getLastColumn();
 		
-		final int dstbRow = dstRef.getBottomRow();
+		final int dstbRow = dstRef.getLastRow();
 		final StepChunk[] stepChunks = new StepChunk[colCount];
 		//prepare StepChunks
 		for(int c = srclCol, j = 0; c <= srcrCol; ++c) {
@@ -812,50 +793,45 @@ public class AutoFillHelper {
 			for(int srcIndex = 0, r = srcbRow + 1; r <= dstbRow; ++r, ++srcIndex) {
 				final int index = srcIndex % rowCount;
 				final int srcrow = srctRow + index;
-				final Cell srcCell = BookHelper.getCell(sheet, srcrow, c);
-				if (srcCell == null) {
-					final Set<Ref>[] refs = BookHelper.removeCell(sheet, r, c);
-					assignRefs(toEval, affected, refs);
+				final NCell srcCell = sheet.getCell(srcrow, c);
+				if (srcCell.isNull()) {
+					sheet.clearCell(new CellRegion(r,c));
 				} else {
-					final ChangeInfo changeInfo0 = BookHelper.copyCell(stepChunk.getStep(index).next(srcCell), srcCell, sheet, r, c, pasteType, BookHelper.PASTEOP_NONE, false);
-					assignChangeInfo(toEval, affected, mergeChanges, changeInfo0);
+					Object value = stepChunk.getStep(index).next(srcCell);
+					sheet.pasteCell(new SheetRegion(sheet,srcrow,c), new CellRegion(r,c), pasteOption);
+					applyStepValue(srcCell,sheet.getCell(r,c),value);
 				}
 			}
 		}
-		final RefSheet refSheet = BookHelper.getRefSheet((XBook)sheet.getWorkbook(), sheet);
-		affected.add(new AreaRefImpl(srcbRow + 1, srclCol, dstbRow, srcrCol, refSheet));
-		return changeInfo;
 	}
 	
-	public static ChangeInfo fillUp(XSheet sheet, Ref srcRef, Ref dstRef, int fillType) {
-		//TODO FILL_DEFAULT, FILL_DAYS, FILL_WEEKDAYS, FILL_MONTHS, FILL_YEARS, FILL_GROWTH_TREND
-		int pasteType = BookHelper.INNERPASTE_FILL_COPY;
-		switch(fillType) {
-		case FILL_DEFAULT:
-		case FILL_COPY:
-			pasteType = BookHelper.INNERPASTE_FILL_COPY;
-			break;
-		case FILL_FORMATS:
-			pasteType = BookHelper.INNERPASTE_FILL_FORMATS;
-			break;
-		case FILL_VALUES:
-			pasteType = BookHelper.INNERPASTE_FILL_VALUE;
-			break;
-		default:
-			return null;
+	public void applyStepValue(NCell srcCell,NCell dstCell,Object value){
+		CellType type = srcCell.getType();
+		if(type==CellType.FORMULA){
+			//it is formula, it should shift by copy/paste already, just ignore it.
+			return;
 		}
-		final Set<Ref> toEval = new HashSet<Ref>();
-		final Set<Ref> affected = new HashSet<Ref>();
-		final List<MergeChange> mergeChanges = new ArrayList<MergeChange>();
-		final ChangeInfo changeInfo = new ChangeInfo(toEval, affected, mergeChanges);
+		dstCell.setValue(value);
+	}
+	
+	public void fillUp(NSheet sheet, CellRegion srcRef, CellRegion dstRef, FillType fillType) {
+		//TODO FILL_DEFAULT, FILL_DAYS, FILL_WEEKDAYS, FILL_MONTHS, FILL_YEARS, FILL_GROWTH_TREND
+		PasteType pasteType = toSupportedFillPasteType(fillType);
+		if(pasteType==null){
+			return;
+		}
+
+		PasteOption pasteOption = new PasteOption();
+		pasteOption.setPasteType(pasteType);
+		
 		final int rowCount = srcRef.getRowCount();
 		final int colCount = srcRef.getColumnCount();
-		final int srctRow = srcRef.getTopRow();
-		final int srcbRow = srcRef.getBottomRow();
-		final int srclCol = srcRef.getLeftCol();
-		final int srcrCol = srcRef.getRightCol();
+		final int srctRow = srcRef.getRow();
+		final int srcbRow = srcRef.getLastRow();
+		final int srclCol = srcRef.getColumn();
+		final int srcrCol = srcRef.getLastColumn();
 		
-		final int dsttRow = dstRef.getTopRow();
+		final int dsttRow = dstRef.getRow();
 		final StepChunk[] stepChunks = new StepChunk[colCount];
 		for(int c = srclCol, j = 0; c <= srcrCol; ++c) {
 			final StepChunk stepChunk = getRowStepChunk(sheet, fillType, c, srcbRow, srctRow, false, colCount);
@@ -868,50 +844,36 @@ public class AutoFillHelper {
 			for(int srcIndex = 0, r = srctRow - 1; r >= dsttRow; --r, ++srcIndex) {
 				final int index = srcIndex % rowCount;
 				final int srcrow = srcbRow - index;
-				final Cell srcCell = BookHelper.getCell(sheet, srcrow, c);
-				if (srcCell == null) {
-					final Set<Ref>[] refs = BookHelper.removeCell(sheet, r, c);
-					assignRefs(toEval, affected, refs);
+				final NCell srcCell = sheet.getCell(srcrow, c);
+				if (srcCell.isNull()) {
+					sheet.clearCell(new CellRegion(r,c));
 				} else {
-					final ChangeInfo changeInfo0 = BookHelper.copyCell(stepChunk.getStep(index).next(srcCell), srcCell, sheet, r, c, pasteType, BookHelper.PASTEOP_NONE, false);
-					assignChangeInfo(toEval, affected, mergeChanges, changeInfo0);
+					Object value = stepChunk.getStep(index).next(srcCell);
+					sheet.pasteCell(new SheetRegion(sheet,srcrow,c), new CellRegion(r,c), pasteOption);
+					applyStepValue(srcCell, sheet.getCell(r,c),value);
 				}
 			}
 		}
-		final RefSheet refSheet = BookHelper.getRefSheet((XBook)sheet.getWorkbook(), sheet);
-		affected.add(new AreaRefImpl(dsttRow, srclCol, srctRow - 1, srcrCol, refSheet));
-		return changeInfo;
 	}
 	
-	public static ChangeInfo fillRight(XSheet sheet, Ref srcRef, Ref dstRef, int fillType) {
+	public void fillRight(NSheet sheet, CellRegion srcRef, CellRegion dstRef, FillType fillType) {
 		//TODO FILL_DEFAULT, FILL_DAYS, FILL_WEEKDAYS, FILL_MONTHS, FILL_YEARS, FILL_GROWTH_TREND
-		int pasteType = BookHelper.INNERPASTE_FILL_COPY;
-		switch(fillType) {
-		case FILL_DEFAULT:
-		case FILL_COPY:
-			pasteType = BookHelper.INNERPASTE_FILL_COPY;
-			break;
-		case FILL_FORMATS:
-			pasteType = BookHelper.INNERPASTE_FILL_FORMATS;
-			break;
-		case FILL_VALUES:
-			pasteType = BookHelper.INNERPASTE_FILL_VALUE;
-			break;
-		default:
-			return null;
+		PasteType pasteType = toSupportedFillPasteType(fillType);
+		if(pasteType==null){
+			return;
 		}
-		final Set<Ref> toEval = new HashSet<Ref>();
-		final Set<Ref> affected = new HashSet<Ref>();
-		final List<MergeChange> mergeChanges = new ArrayList<MergeChange>();
-		final ChangeInfo changeInfo = new ChangeInfo(toEval, affected, mergeChanges);
+
+		PasteOption pasteOption = new PasteOption();
+		pasteOption.setPasteType(pasteType);
+		
 		final int rowCount = srcRef.getRowCount();
 		final int colCount = srcRef.getColumnCount();
-		final int srclCol = srcRef.getLeftCol();
-		final int srcrCol = srcRef.getRightCol();
-		final int srctRow = srcRef.getTopRow();
-		final int srcbRow = srcRef.getBottomRow();
+		final int srclCol = srcRef.getColumn();
+		final int srcrCol = srcRef.getLastColumn();
+		final int srctRow = srcRef.getRow();
+		final int srcbRow = srcRef.getLastRow();
 		
-		final int dstrCol = dstRef.getRightCol();
+		final int dstrCol = dstRef.getLastColumn();
 		final StepChunk[] stepChunks = new StepChunk[rowCount];
 		for(int r = srctRow, j = 0; r <= srcbRow; ++r) {
 			final StepChunk stepChunk = getColStepChunk(sheet, fillType, r, srclCol, srcrCol, true, rowCount);
@@ -924,50 +886,37 @@ public class AutoFillHelper {
 			for(int srcIndex = 0, c = srcrCol + 1; c <= dstrCol; ++c, ++srcIndex) {
 				final int index = srcIndex % colCount;
 				final int srccol = srclCol + index;
-				final Cell srcCell = BookHelper.getCell(sheet, r, srccol);
-				if (srcCell == null) {
-					final Set<Ref>[] refs = BookHelper.removeCell(sheet, r, c);
-					assignRefs(toEval, affected, refs);
+				final NCell srcCell = sheet.getCell(r, srccol);
+				if (srcCell.isNull()) {
+					sheet.clearCell(new CellRegion(r, c));
 				} else {
-					final ChangeInfo changeInfo0 = BookHelper.copyCell(stepChunk.getStep(index).next(srcCell), srcCell, sheet, r, c, pasteType, BookHelper.PASTEOP_NONE, false);
-					assignChangeInfo(toEval, affected, mergeChanges, changeInfo0);
+					
+					Object value = stepChunk.getStep(index).next(srcCell);
+					sheet.pasteCell(new SheetRegion(sheet,r,srccol), new CellRegion(r,c), pasteOption);
+					applyStepValue(srcCell,sheet.getCell(r,c),value);
 				}
 			}
 		}
-		final RefSheet refSheet = BookHelper.getRefSheet((XBook)sheet.getWorkbook(), sheet);
-		affected.add(new AreaRefImpl(srctRow, srcrCol + 1, srcbRow, dstrCol, refSheet));
-		return changeInfo;
 	}
 	
-	public static ChangeInfo fillLeft(XSheet sheet, Ref srcRef, Ref dstRef, int fillType) {
+	public void fillLeft(NSheet sheet, CellRegion srcRef, CellRegion dstRef, FillType fillType) {
 		//TODO FILL_DEFAULT, FILL_DAYS, FILL_WEEKDAYS, FILL_MONTHS, FILL_YEARS, FILL_GROWTH_TREND
-		int pasteType = BookHelper.INNERPASTE_FILL_COPY;
-		switch(fillType) {
-		case FILL_DEFAULT:
-		case FILL_COPY:
-			pasteType = BookHelper.INNERPASTE_FILL_COPY;
-			break;
-		case FILL_FORMATS:
-			pasteType = BookHelper.INNERPASTE_FILL_FORMATS;
-			break;
-		case FILL_VALUES:
-			pasteType = BookHelper.INNERPASTE_FILL_VALUE;
-			break;
-		default:
-			return null;
+		PasteType pasteType = toSupportedFillPasteType(fillType);
+		if(pasteType==null){
+			return;
 		}
-		final Set<Ref> toEval = new HashSet<Ref>();
-		final Set<Ref> affected = new HashSet<Ref>();
-		final List<MergeChange> mergeChanges = new ArrayList<MergeChange>();
-		final ChangeInfo changeInfo = new ChangeInfo(toEval, affected, mergeChanges);
+
+		PasteOption pasteOption = new PasteOption();
+		pasteOption.setPasteType(pasteType);
+		
 		final int rowCount = srcRef.getRowCount();
 		final int colCount = srcRef.getColumnCount();
-		final int srclCol = srcRef.getLeftCol();
-		final int srcrCol = srcRef.getRightCol();
-		final int srctRow = srcRef.getTopRow();
-		final int srcbRow = srcRef.getBottomRow();
+		final int srclCol = srcRef.getColumn();
+		final int srcrCol = srcRef.getLastColumn();
+		final int srctRow = srcRef.getRow();
+		final int srcbRow = srcRef.getLastRow();
 		
-		final int dstlCol = dstRef.getLeftCol();
+		final int dstlCol = dstRef.getColumn();
 		final StepChunk[] stepChunks = new StepChunk[rowCount];
 		for(int r = srctRow, j = 0; r <= srcbRow; ++r) {
 			final StepChunk stepChunk = getColStepChunk(sheet, fillType, r, srcrCol, srclCol, false, rowCount);
@@ -980,33 +929,28 @@ public class AutoFillHelper {
 			for(int srcIndex = 0, c = srclCol - 1; c >= dstlCol; --c, ++srcIndex) {
 				final int index = srcIndex % colCount;
 				final int srccol = srcrCol - index;
-				final Cell srcCell = BookHelper.getCell(sheet, r, srccol);
-				if (srcCell == null) {
-					final Set<Ref>[] refs = BookHelper.removeCell(sheet, r, c);
-					assignRefs(toEval, affected, refs);
+				final NCell srcCell = sheet.getCell(r, srccol);
+				if (srcCell.isNull()) {
+					sheet.clearCell(new CellRegion(r, c));
 				} else {
-					final ChangeInfo changeInfo0 = BookHelper.copyCell(stepChunk.getStep(index).next(srcCell), srcCell, sheet, r, c, pasteType, BookHelper.PASTEOP_NONE, false);
-					assignChangeInfo(toEval, affected, mergeChanges, changeInfo0);
+					Object value = stepChunk.getStep(index).next(srcCell);
+					sheet.pasteCell(new SheetRegion(sheet,r,srccol), new CellRegion(r,c), pasteOption);
+					applyStepValue(srcCell,sheet.getCell(r,c),value);
 				}
 			}
 		}
-		final RefSheet refSheet = BookHelper.getRefSheet((XBook)sheet.getWorkbook(), sheet);
-		affected.add(new AreaRefImpl(srctRow, dstlCol, srcbRow, srclCol - 1, refSheet));
-		return changeInfo;
 	}
 	
-	private static int getFillDirection(XSheet sheet, Ref srcRef, Ref dstRef) {
-		final XSheet dstSheet = BookHelper.getSheet(sheet, dstRef.getOwnerSheet());
-		if (dstSheet.equals(sheet)) {
-			final int dsttRow = dstRef.getTopRow();
-			final int dstbRow = dstRef.getBottomRow();
-			final int dstlCol = dstRef.getLeftCol();
-			final int dstrCol = dstRef.getRightCol();
+	private static int getFillDirection(CellRegion srcRef, CellRegion dstRef) {
+			final int dsttRow = dstRef.getRow();
+			final int dstbRow = dstRef.getLastRow();
+			final int dstlCol = dstRef.getColumn();
+			final int dstrCol = dstRef.getLastColumn();
 			
-			final int srctRow = srcRef.getTopRow();
-			final int srcbRow = srcRef.getBottomRow();
-			final int srclCol = srcRef.getLeftCol();
-			final int srcrCol = srcRef.getRightCol();
+			final int srctRow = srcRef.getRow();
+			final int srcbRow = srcRef.getLastRow();
+			final int srclCol = srcRef.getColumn();
+			final int srcrCol = srcRef.getLastColumn();
 			
 			//check fill direction
 			if (srclCol == dstlCol && srcrCol == dstrCol) {
@@ -1028,7 +972,6 @@ public class AutoFillHelper {
 					return FILL_LEFT;
 				}
 			}
-		}
 		return FILL_INVALID;
 	}
 		
