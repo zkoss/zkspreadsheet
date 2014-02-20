@@ -826,6 +826,7 @@ public class ModelFormulaTest {
 		Assert.assertEquals(56D,sheet2.getCell("C3").getValue());
 		Assert.assertEquals(78D,sheet2.getCell("C4").getValue());
 
+		
 		refs = dt.getDependents(new RefImpl((AbstractCellAdv)sheet1.getCell("A1")));
 		Assert.assertEquals(1, refs.size());
 		Ref ref = refs.iterator().next();
@@ -854,7 +855,27 @@ public class ModelFormulaTest {
 		
 		book.setSheetName(sheet1, "SheetX");
 		
+		//shouldn't has old depedence on old sheet name
+		refs = dt.getDependents(new RefImpl(book.getBookName(),"Sheet1",0,0));//a1
+		Assert.assertEquals(0, refs.size());
+		refs = dt.getDependents(new RefImpl(book.getBookName(),"Sheet1",1,0));//a2
+		Assert.assertEquals(0, refs.size());
+
+		refs = dt.getDependents(new RefImpl(book.getBookName(),"Sheet1",2,0));//a3
+		Assert.assertEquals(0, refs.size());
 		
+		refs = dt.getDependents(new RefImpl(book.getBookName(),"Sheet1",3,0));//a4
+		Assert.assertEquals(0, refs.size());
+		
+		//still has in sheet2
+		refs = dt.getDependents(new RefImpl(book.getBookName(),"Sheet2",3,0));//a4
+		Assert.assertEquals(1, refs.size());
+		ref = refs.iterator().next();
+		refRegion = new CellRegion(ref.getRow(),ref.getColumn(),ref.getLastRow(),ref.getLastColumn());
+		Assert.assertEquals("C4",refRegion.getReferenceString());
+		
+		
+		//
 		Assert.assertEquals("A1",sheet1.getCell("B1").getFormulaValue());
 		Assert.assertEquals("SheetX!A2",sheet1.getCell("B2").getFormulaValue());
 		Assert.assertEquals("SheetX!A3",sheet2.getCell("C3").getFormulaValue());
@@ -896,5 +917,7 @@ public class ModelFormulaTest {
 		Assert.assertEquals(55D,sheet1.getCell("B2").getValue());
 		Assert.assertEquals(77D,sheet2.getCell("C3").getValue());
 		Assert.assertEquals(99D,sheet2.getCell("C4").getValue());
+		
+		
 	}
 }

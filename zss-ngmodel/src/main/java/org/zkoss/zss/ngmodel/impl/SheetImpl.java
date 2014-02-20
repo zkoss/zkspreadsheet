@@ -30,6 +30,7 @@ import java.util.Set;
 import java.util.SortedMap;
 
 import org.zkoss.poi.ss.util.CellReference;
+import org.zkoss.poi.ss.util.WorkbookUtil;
 import org.zkoss.zss.ngmodel.CellRegion;
 import org.zkoss.zss.ngmodel.InvalidateModelOpException;
 import org.zkoss.zss.ngmodel.NAutoFilter;
@@ -396,8 +397,14 @@ public class SheetImpl extends AbstractSheetAdv {
 	}
 	
 
-	private void checkLegalSheetName(String name2) {
-		
+	private void checkLegalSheetName(String name) {
+		try{
+			WorkbookUtil.validateSheetName(name);
+		}catch(IllegalArgumentException x){
+			throw new InvalidateModelOpException(x.getMessage());
+		}catch(Exception x){
+			throw new InvalidateModelOpException("The sheet name "+name+" is not allowed");
+		}
 	}
 //	@Override
 //	void onModelInternalEvent(ModelInternalEvent event) {

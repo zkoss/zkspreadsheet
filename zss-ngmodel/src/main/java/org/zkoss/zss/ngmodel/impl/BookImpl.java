@@ -249,18 +249,25 @@ public class BookImpl extends AbstractBookAdv{
 		//create formula cache for any sheet, sheet name, position change
 		EngineFactory.getInstance().createFormulaEngine().clearCache(new FormulaClearContext(this));
 		
-		ModelUpdateUtil.handlePrecedentUpdate(getBookSeries(),new RefImpl(this.getBookName(),newname));//to clear the cahce of formula that has unexisted name
+		ModelUpdateUtil.handlePrecedentUpdate(getBookSeries(),new RefImpl(this.getBookName(),newname));//to clear the cache of formula that has unexisted name
 		ModelUpdateUtil.handlePrecedentUpdate(getBookSeries(),new RefImpl(this.getBookName(),oldname));
 		
-		renameFormula(oldname,newname);
+		renameSheetFormula(oldname,newname);
 	}
 	
-	private void renameFormula(String oldName, String newName){
+	private void renameSheetFormula(String oldName, String newName){
 		AbstractBookSeriesAdv bs = (AbstractBookSeriesAdv)getBookSeries();
 		DependencyTable dt = bs.getDependencyTable();
 		Ref ref = new RefImpl(getBookName(),oldName);
-		Set<Ref> dependents = dt.getDependents(ref);
+		Set<Ref> dependents = dt.getDirectDependents(ref);
 		if(dependents.size()>0){
+			
+			//clear the dependents dependency before rename it's sheet name
+			for(Ref dependent:dependents){
+				dt.clearDependents(dependent);
+			}
+			
+			//rebuild the the formula by tuner
 			FormulaTunerHelper tuner = new FormulaTunerHelper(bs);
 			tuner.renameSheet(this,oldName,newName,dependents);
 		}
@@ -273,7 +280,6 @@ public class BookImpl extends AbstractBookAdv{
 		if(getSheetByName(name)!=null){
 			throw new InvalidateModelOpException("sheet name '"+name+"' is duplicated");
 		}
-		//TODO zss 3.5
 	}
 	
 	private void checkLegalNameName(String name,String sheetName) {

@@ -72,7 +72,7 @@ public class TestImporterFactory implements ImporterFactory{
 				
 //				buildTest(book);
 				
-				
+				buildSheetRename(book);
 				
 				buildCopyPaste(book);
 				
@@ -99,6 +99,20 @@ public class TestImporterFactory implements ImporterFactory{
 				sheet1.getCell("B1").setValue(34);
 				sheet1.getCell("C1").setValue("=SUM(A1:B1)");
 			}
+			private void buildSheetRename(NBook book) {
+				NSheet sheet1 = book.createSheet("SheetRename1");
+				sheet1.getCell("A1").setValue(1);
+				sheet1.getCell("B1").setValue(2);
+				sheet1.getCell("C1").setValue("=SUM(A1:B1)");
+				sheet1.getCell("D1").setValue("=SUM(SheetRename1!A1:B1)");
+				NSheet sheet2 = book.createSheet("SheetRename2");
+				sheet2.getCell("A1").setValue(3);
+				sheet2.getCell("B1").setValue(4);
+				sheet2.getCell("C1").setValue("=SUM(A1:B1)");
+				sheet2.getCell("D1").setValue("=SUM(SheetRename1!A1:B1)");
+				sheet2.getCell("E1").setValue("=SUM(SheetRename2!A1:B1)");
+			}
+			
 			private void buildCopyPaste(NBook book) {
 				NSheet sheet1 = book.createSheet("CopyPaste");
 				
