@@ -20,15 +20,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
-
 import org.zkoss.poi.ss.util.CellReference;
 import org.zkoss.poi.ss.util.WorkbookUtil;
 import org.zkoss.zss.ngmodel.CellRegion;
@@ -36,7 +33,6 @@ import org.zkoss.zss.ngmodel.InvalidateModelOpException;
 import org.zkoss.zss.ngmodel.NAutoFilter;
 import org.zkoss.zss.ngmodel.NAutoFilter.FilterOp;
 import org.zkoss.zss.ngmodel.NAutoFilter.NFilterColumn;
-import org.zkoss.zss.ngmodel.ModelEvents;
 import org.zkoss.zss.ngmodel.NBook;
 import org.zkoss.zss.ngmodel.NCell;
 import org.zkoss.zss.ngmodel.NChart;
@@ -47,7 +43,6 @@ import org.zkoss.zss.ngmodel.NPicture;
 import org.zkoss.zss.ngmodel.NPicture.Format;
 import org.zkoss.zss.ngmodel.NPrintSetup;
 import org.zkoss.zss.ngmodel.NRow;
-import org.zkoss.zss.ngmodel.NSheet;
 import org.zkoss.zss.ngmodel.NSheetViewInfo;
 import org.zkoss.zss.ngmodel.NViewAnchor;
 import org.zkoss.zss.ngmodel.PasteOption;
@@ -486,6 +481,7 @@ public class SheetImpl extends AbstractSheetAdv {
 			row.destroy();
 		}
 		
+		ModelUpdateUtil.addInsertDeleteUpdate(this, true, true, rowIdx, lastRowIdx);
 		shiftAfterRowInsert(rowIdx,lastRowIdx);
 	}
 	
@@ -503,6 +499,7 @@ public class SheetImpl extends AbstractSheetAdv {
 		int size = lastRowIdx-rowIdx+1;
 		rows.delete(rowIdx, size);
 		
+		ModelUpdateUtil.addInsertDeleteUpdate(this, false, true, rowIdx, lastRowIdx);
 		shiftAfterRowDelete(rowIdx,lastRowIdx);
 	}	
 	
@@ -524,6 +521,22 @@ public class SheetImpl extends AbstractSheetAdv {
 				anchor.setRowIndex(idx + size);
 			}
 		}
+		
+		// handling merged regions shift
+		// find merge cells in affected region and remove them
+		CellRegion affectedRegion = new CellRegion(rowIdx, 0, book.getMaxRowIndex(), book.getMaxColumnIndex());
+		List<CellRegion> toExtend = getOverlapsMergedRegions(affectedRegion, true);
+		List<CellRegion> toShiftOnly = getContainsMergedRegions(affectedRegion);
+		removeMergedRegion(affectedRegion, true);
+		// extend/move removed merged cells, then add them back
+		for(CellRegion r : toExtend) {
+			addMergedRegion(new CellRegion(r.row, r.column, r.lastRow + size, r.lastColumn));
+		}
+		for(CellRegion r : toShiftOnly) {
+			addMergedRegion(new CellRegion(r.row + size, r.column, r.lastRow + size, r.lastColumn));
+		}
+		
+		//TODO shift data validation?
 		for(AbstractDataValidationAdv validation:dataValidations){
 			//TODO zss 3.5
 //			int idx =0;
@@ -580,11 +593,66 @@ public class SheetImpl extends AbstractSheetAdv {
 				anchor.setYOffset(0);
 			}
 		}
+		
+		// handling merged regions shift
+		// find merge cells in affected region and remove them
+		CellRegion affectedRegion = new CellRegion(rowIdx, 0, book.getMaxRowIndex(), book.getMaxColumnIndex());
+		List<CellRegion> toShrink = getOverlapsMergedRegions(affectedRegion, false);
+		removeMergedRegion(affectedRegion, true);
+		// shrink/move removed merged cells, then add them back
+		for(CellRegion r : toShrink) {
+			CellRegion shrank = shrinkRow(r, rowIdx, lastRowIdx);
+			if(shrank != null) {
+				addMergedRegion(shrank);
+			}
+		}
+
 		//TODO shift data validation?
 		
 		shrinkFormula(new CellRegion(rowIdx,0,lastRowIdx,book.getMaxColumnIndex()), false);
 		
 	}
+	
+	private CellRegion shrinkRow(CellRegion region, int row, int lastRow) {
+		int[] shrank = shrinkIndexes(region.row, region.lastRow, row, lastRow);
+		return shrank != null ? new CellRegion(shrank[0], region.column, shrank[1], region.lastColumn) : null;
+	}
+	
+	private CellRegion shrinkColumn(CellRegion region, int column, int lastColumn) {
+		int[] shrank = shrinkIndexes(region.column, region.lastColumn, column, lastColumn);
+		return shrank != null ? new CellRegion(region.row, shrank[0], region.lastRow, shrank[1]) : null;
+	}
+	
+	/**
+	 * To shrink (and shift) line ab by given line cd, a~d are indexes.
+	 * @return a shrank line, or null if deleted completely.
+	 */
+	private int[] shrinkIndexes(int a, int b, int c, int d) {
+		if(a < 0 || b < 0 || c < 0 || d < 0 || a > b || c > d) {
+			throw new IllegalArgumentException("indexes must be >= 0 and ascending");
+		}
+
+		// check every point at shrinking segment or after it
+		// then move to corresponding position,
+		// e.g b point at shrinking segment, so move it to c-1:
+		//        c       d               c       d
+		// ---+---+-x-+-x-+--- >>> ---+---+-x-+-x-+---  
+		//    a       b               a  b 
+		int delta = d - c + 1;
+		if(a > d) {
+			a -= delta;
+		} else if(a >= c) {
+			a = c; // as (d + 1) - delta
+			a = (d + 1) - delta;
+		}
+		if(b > d) {
+			b -= delta;
+		} else if(b >= c) {
+			b = c - 1; //
+		}
+		return (b >= a) ? new int[]{a, b} : null;
+	}
+	
 	private void shiftAfterColumnInsert(int columnIdx, int lastColumnIdx) {
 		int size = lastColumnIdx - columnIdx+1;
 		// handling pic shift
@@ -603,6 +671,21 @@ public class SheetImpl extends AbstractSheetAdv {
 				anchor.setColumnIndex(idx + size);
 			}
 		}
+		
+		// handling merged regions shift
+		// find merge cells in affected region and remove them
+		CellRegion affectedRegion = new CellRegion(0, columnIdx, book.getMaxRowIndex(), book.getMaxColumnIndex());
+		List<CellRegion> toExtend = getOverlapsMergedRegions(affectedRegion, true);
+		List<CellRegion> toShiftOnly = getContainsMergedRegions(affectedRegion);
+		removeMergedRegion(affectedRegion, true);
+		// extend/move removed merged cells, then add them back
+		for(CellRegion r : toExtend) {
+			addMergedRegion(new CellRegion(r.row, r.column, r.lastRow, r.lastColumn + size));
+		}
+		for(CellRegion r : toShiftOnly) {
+			addMergedRegion(new CellRegion(r.row, r.column + size, r.lastRow, r.lastColumn + size));
+		}
+
 		//TODO shift data validation?
 		
 		extendFormula(new CellRegion(0,columnIdx,book.getMaxRowIndex(),lastColumnIdx), true);
@@ -632,6 +715,20 @@ public class SheetImpl extends AbstractSheetAdv {
 				anchor.setXOffset(0);
 			}
 		}
+		
+		// handling merged regions shift
+		// find merge cells in affected region and remove them
+		CellRegion affectedRegion = new CellRegion(0, columnIdx, book.getMaxRowIndex(), book.getMaxColumnIndex());
+		List<CellRegion> toShrink = getOverlapsMergedRegions(affectedRegion, false);
+		removeMergedRegion(affectedRegion, true);
+		// shrink/move removed merged cells, then add them back
+		for(CellRegion r : toShrink) {
+			CellRegion shrank = shrinkColumn(r, columnIdx, lastColumnIdx);
+			if(shrank != null) {
+				addMergedRegion(shrank);
+			}
+		}
+
 		//TODO shift data validation?
 
 		shrinkFormula(new CellRegion(0,columnIdx,book.getMaxRowIndex(),lastColumnIdx), true);
@@ -795,6 +892,7 @@ public class SheetImpl extends AbstractSheetAdv {
 			row.insertCell(columnIdx,size);
 		}
 		
+		ModelUpdateUtil.addInsertDeleteUpdate(this, true, false, columnIdx, lastColumnIdx);
 		shiftAfterColumnInsert(columnIdx,lastColumnIdx);
 	}
 	
@@ -897,6 +995,8 @@ public class SheetImpl extends AbstractSheetAdv {
 		for(AbstractRowAdv row:rows.values()){
 			row.deleteCell(columnIdx,size);
 		}
+		
+		ModelUpdateUtil.addInsertDeleteUpdate(this, false, false, columnIdx, lastColumnIdx);
 		shiftAfterColumnDelete(columnIdx,lastColumnIdx);
 	}
 	

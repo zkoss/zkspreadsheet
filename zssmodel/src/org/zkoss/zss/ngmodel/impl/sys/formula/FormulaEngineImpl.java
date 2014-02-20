@@ -135,9 +135,13 @@ public class FormulaEngineImpl implements FormulaEngine {
 			Ref singleRef = tokens.length == 1 ? toDenpendRef(context, parsingBook, tokens[0]) : null;
 			expr = new FormulaExpressionImpl(renderedFormula, singleRef);
 		} catch(FormulaParseException e) {
-			logger.log(Level.INFO, e.getMessage());
+			logger.log(Level.INFO, e.getMessage() + " when parsing " + formula);
+			expr = new FormulaExpressionImpl(formula, null, true,e.getMessage());
+		} catch(Exception e) {
+			logger.log(Level.SEVERE, e.getMessage() + " when parsing " + formula, e);
 			expr = new FormulaExpressionImpl(formula, null, true,e.getMessage());
 		}
+
 		return expr;
 	}
 	

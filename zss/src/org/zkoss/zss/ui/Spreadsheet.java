@@ -2081,14 +2081,30 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 					onDataValidationContentChange((ModelEvent)event);
 				}
 			});
-			/*TODO zss 3.5
-			addEventListener(SSDataEvent.ON_RANGE_INSERT, new EventListener() {
+			addEventListener(ModelEvents.ON_ROW_INSERT, new ModelEventListener() {
 				@Override
-				public void onEvent(Event event) throws Exception {
-					onRangeInsert((SSDataEvent)event);
+				public void onEvent(ModelEvent event) {
+					onRowColumnInsertDelete(event);
 				}
 			});
-			*/
+			addEventListener(ModelEvents.ON_ROW_DELETE, new ModelEventListener() {
+				@Override
+				public void onEvent(ModelEvent event) {
+					onRowColumnInsertDelete(event);
+				}
+			});
+			addEventListener(ModelEvents.ON_COLUMN_INSERT, new ModelEventListener() {
+				@Override
+				public void onEvent(ModelEvent event) {
+					onRowColumnInsertDelete(event);
+				}
+			});
+			addEventListener(ModelEvents.ON_COLUMN_DELETE, new ModelEventListener() {
+				@Override
+				public void onEvent(ModelEvent event) {
+					onRowColumnInsertDelete(event);
+				}
+			});
 			addEventListener(ModelEvents.ON_ROW_COLUMN_SIZE_CHANGE, new ModelEventListener() {
 				@Override
 				public void onEvent(ModelEvent event) {
@@ -2357,61 +2373,57 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 				updateDataValidation(sheet, objid);
 			}
 		}
+
+		private void onRowColumnInsertDelete(ModelEvent event) {
+
+			// determine parameters
+			boolean inserted = ModelEvents.ON_ROW_INSERT.equals(event.getName())
+					|| ModelEvents.ON_COLUMN_INSERT.equals(event.getName());
+			boolean isRow = ModelEvents.ON_ROW_INSERT.equals(event.getName())
+					|| ModelEvents.ON_ROW_DELETE.equals(event.getName());
+
+			// update client's row/column
+			_updateCellId.next();
+			NSheet sheet = event.getSheet();
+			CellRegion region = event.getRegion();
+			if(isRow) {
+				int row = region.getRow();
+				int lastRow = region.getLastRow();
+				int count = region.getRowCount();
+				if(inserted) {
+					((ExtraCtrl)getExtraCtrl()).insertRows(sheet, row, count);
+				} else {
+					((ExtraCtrl)getExtraCtrl()).removeRows(sheet, row, count);
+				}
+
+				// ZSS-306 a chart doesn't shrink its size when deleting rows or columns it overlaps
+				int widgetTop = row;
+				int widgetBottom = inserted ? lastRow + count - 1 : lastRow;
+				List<WidgetLoader> list = loadWidgetLoaders();
+				for(WidgetLoader loader : list) {
+					loader.onRowChange(sheet, widgetTop, widgetBottom);
+				}
+			} else { // column
+				int col = region.getColumn();
+				int lastCol = region.getLastColumn();
+				int count = region.getColumnCount();
+				if(inserted) {
+					((ExtraCtrl)getExtraCtrl()).insertColumns(sheet, col, count);
+				} else {
+					((ExtraCtrl)getExtraCtrl()).removeColumns(sheet, col, count);
+				}
+
+				// ZSS-306 a chart doesn't shrink its size when deleting rows or columns it overlaps
+				int widgetLeft = col;
+				int widgetRight = inserted ? lastCol + count - 1 : lastCol;
+				List<WidgetLoader> list = loadWidgetLoaders();
+				for(WidgetLoader loader : list) {
+					loader.onColumnChange(sheet, widgetLeft, widgetRight);
+				}
+			}
+		}
+		
 		/*
-		private void onRangeInsert(SSDataEvent event) {
-			final Ref rng = event.getRef();
-			final XSheet sheet = getSheet(rng);
-			_updateCellId.next();
-			if (rng.isWholeColumn()) {
-				final int left = rng.getLeftCol();
-				final int right = rng.getRightCol();
-				((ExtraCtrl) getExtraCtrl()).insertColumns(sheet, left, right - left + 1);
-				
-				//ZSS-306 a chart doesn't shrink its size when deleting rows or columns it overlaps
-				List<WidgetLoader> list = loadWidgetLoaders();
-				for(WidgetLoader loader:list){
-					loader.onColumnChange(sheet,left,right+(right-left));
-				}
-				
-			} else if (rng.isWholeRow()) {
-				final int top = rng.getTopRow();
-				final int bottom = rng.getBottomRow();
-				((ExtraCtrl) getExtraCtrl()).insertRows(sheet, top, bottom - top + 1);
-				
-				//ZSS-306 a chart doesn't shrink its size when deleting rows or columns it overlaps
-				List<WidgetLoader> list = loadWidgetLoaders();
-				for(WidgetLoader loader:list){
-					loader.onRowChange(sheet,top,bottom+(bottom-top));
-				}
-			}
-		}
-		private void onRangeDelete(SSDataEvent event) {
-			final Ref rng = event.getRef();
-			final XSheet sheet = getSheet(rng);
-			_updateCellId.next();
-			if (rng.isWholeColumn()) {
-				final int left = rng.getLeftCol();
-				final int right = rng.getRightCol();
-				((ExtraCtrl) getExtraCtrl()).removeColumns(sheet, left,
-						right - left + 1);
-				
-				//ZSS-306 a chart doesn't shrink its size when deleting rows or columns it overlaps
-				List<WidgetLoader> list = loadWidgetLoaders();
-				for(WidgetLoader loader:list){
-					loader.onColumnChange(sheet,left,right);
-				}
-			} else if (rng.isWholeRow()) {
-				final int top = rng.getTopRow();
-				final int bottom = rng.getBottomRow();
-				((ExtraCtrl) getExtraCtrl()).removeRows(sheet, top, bottom - top + 1);
-				
-				//ZSS-306 a chart doesn't shrink its size when deleting rows or columns it overlaps
-				List<WidgetLoader> list = loadWidgetLoaders();
-				for(WidgetLoader loader:list){
-					loader.onRowChange(sheet,top,bottom);
-				}
-			}
-		}
 		private void onMergeChange(SSDataEvent event) {
 			final Ref rng = event.getRef();
 			final Ref orng = event.getOriginalRef();

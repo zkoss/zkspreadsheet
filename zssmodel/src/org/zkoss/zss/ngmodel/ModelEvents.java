@@ -54,6 +54,11 @@ public class ModelEvents {
 	public static final String ON_DISPLAY_GRIDLINE_CHANGE = "onDisplayGridlineChange";
 	public static final String ON_PROTECT_SHEET_CHANGE = "onProtectSheetChange";
 	
+	public static final String ON_ROW_INSERT = "onRowInsert";
+	public static final String ON_ROW_DELETE = "onRowDelete";
+	public static final String ON_COLUMN_INSERT= "onColumnInsert";
+	public static final String ON_COLUMN_DELETE = "onColumnDelete";
+	
 	/**
 	 * the effected book
 	 */
@@ -96,7 +101,6 @@ public class ModelEvents {
 	 * the enable state, e.g enable display gridlines 
 	 */
 	public static final String PARAM_ENABLED = "enabled";
-	
 	
 	public static ModelEvent createModelEvent(String name, NBook book){
 		return createModelEvent0(name,book,null,null,null);

@@ -1,8 +1,8 @@
 package org.zkoss.zss.ngmodel.impl;
 
 import java.util.Set;
-
 import org.zkoss.zss.ngapi.impl.CellUpdateCollector;
+import org.zkoss.zss.ngapi.impl.InsertDeleteUpdateCollector;
 import org.zkoss.zss.ngapi.impl.RefUpdateCollector;
 import org.zkoss.zss.ngapi.impl.MergeUpdateCollector;
 import org.zkoss.zss.ngmodel.CellRegion;
@@ -58,6 +58,13 @@ import org.zkoss.zss.ngmodel.sys.dependency.Ref;
 		MergeUpdateCollector collector = MergeUpdateCollector.getCurrent();
 		if(collector!=null){
 			collector.addMergeChange(sheet,original,changeTo);
+		}
+	}
+
+	/*package*/static void addInsertDeleteUpdate(NSheet sheet, boolean inserted, boolean isRow, int index, int lastIndex) {
+		InsertDeleteUpdateCollector collector = InsertDeleteUpdateCollector.getCurrent();
+		if(collector != null) {
+			collector.addInsertDeleteUpdate(sheet, inserted, isRow, index, lastIndex);
 		}
 	}
 }

@@ -18,7 +18,6 @@ package org.zkoss.zss.ngapi.impl;
 
 import java.util.*;
 import java.util.concurrent.locks.ReadWriteLock;
-
 import org.zkoss.lang.Strings;
 import org.zkoss.util.Locales;
 import org.zkoss.zss.ngapi.*;
@@ -558,15 +557,29 @@ public class NRangeImpl implements NRange {
 	}
 
 	@Override
-	public void insert(InsertShift shift, InsertCopyOrigin copyOrigin) {
-		//TODO
-		throw new UnsupportedOperationException("not implement yet");
+	public void insert(final InsertShift shift, final InsertCopyOrigin copyOrigin) {
+		new ModelUpdateTask() {
+			@Override
+			Object doInvokePhase() {
+				new InsertDeleteHelper(NRangeImpl.this).insert(shift, copyOrigin);
+				return null;
+			}
+			@Override
+			void doNotifyPhase() {}
+		}.doInWriteLock(getLock());
 	}
 
 	@Override
-	public void delete(DeleteShift shift) {
-		//TODO
-		throw new UnsupportedOperationException("not implement yet");
+	public void delete(final DeleteShift shift) {
+		new ModelUpdateTask() {
+			@Override
+			Object doInvokePhase() {
+				new InsertDeleteHelper(NRangeImpl.this).delete(shift);
+				return null;
+			}
+			@Override
+			void doNotifyPhase() {}
+		}.doInWriteLock(getLock());
 	}
 
 	@Override
@@ -1272,17 +1285,20 @@ public class NRangeImpl implements NRange {
 		NBookSeries bookSeries;
 		
 		LinkedHashSet<Ref> refNotifySet;
-		LinkedHashSet<MergeUpdate> mergeNotifySet;
+		LinkedHashSet<SheetRegion> mergeRemoveNotifySet;
+		LinkedHashSet<SheetRegion> mergeAddNotifySet;
 		LinkedHashSet<SheetRegion> cellNotifySet;
+		List<InsertDeleteUpdate> insertDeleteNotifySet;
 		
 		RefUpdateCollector refCtx;
 		MergeUpdateCollector mergeUpdateCtx;
 		CellUpdateCollector cellUpdateCtx;
-		
+		InsertDeleteUpdateCollector insertDeleteUpdateCtx;
 		
 		RefUpdateCollector oldRefCtx;
 		MergeUpdateCollector oldMergeUpdateCtx;
 		CellUpdateCollector oldCellUpdateCtx;
+		InsertDeleteUpdateCollector oldInsertDeleteUpdateCtx;
 		
 		FormulaCacheCleaner oldClearer;
 		
@@ -1290,12 +1306,15 @@ public class NRangeImpl implements NRange {
 			this.bookSeries = bookSeries;
 			
 			refNotifySet = new LinkedHashSet<Ref>();
-			mergeNotifySet = new LinkedHashSet<MergeUpdate>();
-			cellNotifySet = new LinkedHashSet<SheetRegion>();			
+			mergeRemoveNotifySet = new LinkedHashSet<SheetRegion>();
+			mergeAddNotifySet = new LinkedHashSet<SheetRegion>();
+			cellNotifySet = new LinkedHashSet<SheetRegion>();		
+			insertDeleteNotifySet = new ArrayList<InsertDeleteUpdate>();
 			
 			oldRefCtx = RefUpdateCollector.setCurrent(refCtx = new RefUpdateCollector());
 			oldMergeUpdateCtx = MergeUpdateCollector.setCurrent(mergeUpdateCtx = new MergeUpdateCollector());
 			oldCellUpdateCtx = CellUpdateCollector.setCurrent(cellUpdateCtx = new CellUpdateCollector());
+			oldInsertDeleteUpdateCtx = InsertDeleteUpdateCollector.setCurrent(insertDeleteUpdateCtx = new InsertDeleteUpdateCollector());
 
 			oldClearer = FormulaCacheCleaner.setCurrent(new FormulaCacheCleaner(bookSeries));
 		}
@@ -1317,13 +1336,26 @@ public class NRangeImpl implements NRange {
 			}
 			
 			refNotifySet.addAll(refs);
-			mergeNotifySet.addAll(mergeUpdateCtx.getMergeUpdates());
 			cellNotifySet.addAll(cells);
+			insertDeleteNotifySet.addAll(insertDeleteUpdateCtx.getInsertDeleteUpdates());
+			for(MergeUpdate mu:mergeUpdateCtx.getMergeUpdates()){
+				SheetRegion remove = mu.getOrgMerge()==null?null:new SheetRegion(mu.getSheet(),mu.getOrgMerge());
+				SheetRegion add = mu.getMerge()==null?null:new SheetRegion(mu.getSheet(),mu.getMerge());
+				if(remove!=null){
+					mergeRemoveNotifySet.add(remove);
+					mergeAddNotifySet.remove(remove);
+				}
+				if(add!=null){
+					mergeAddNotifySet.add(add);
+					mergeRemoveNotifySet.remove(add);
+				}
+			}
 			
 			RefUpdateCollector.setCurrent(oldRefCtx);
 			MergeUpdateCollector.setCurrent(oldMergeUpdateCtx);
 			CellUpdateCollector.setCurrent(oldCellUpdateCtx);
 			FormulaCacheCleaner.setCurrent(oldClearer);
+			InsertDeleteUpdateCollector.setCurrent(oldInsertDeleteUpdateCtx);
 		}
 		
 		public void doNotify(){
@@ -1333,8 +1365,17 @@ public class NRangeImpl implements NRange {
 			if(cellNotifySet.size()>0){
 				handleCellNotifyContentChange(cellNotifySet);
 			}
-			if(mergeNotifySet.size()>0){
-				handleMergeNotifyChange(mergeNotifySet);
+			
+			// according to ZSS-354, we should:
+			// 1. remove merged cells 2. insert/delete row/column 3. add merged cells
+			if(mergeRemoveNotifySet.size()>0){
+				handleMergeRemoveNotifyChange(mergeRemoveNotifySet);
+			}
+			if(insertDeleteNotifySet.size()>0){
+				handleInsertDeleteNotifyChange(insertDeleteNotifySet);
+			}
+			if(mergeAddNotifySet.size()>0){
+				handleMergeAddNotifyChange(mergeAddNotifySet);
 			}
 		}
 	}	
@@ -1351,12 +1392,20 @@ public class NRangeImpl implements NRange {
 		}.doInWriteLock(getLock());
 	}
 	
-	public void handleMergeNotifyChange(Set<MergeUpdate> mergeNotifySet) {
-		new NotifyChangeHelper().notifyMergeChange(mergeNotifySet);
+	public void handleMergeRemoveNotifyChange(Set<SheetRegion> mergeNotifySet) {
+		new NotifyChangeHelper().notifyMergeRemove(mergeNotifySet);
+	}
+
+	public void handleMergeAddNotifyChange(Set<SheetRegion> mergeNotifySet) {
+		new NotifyChangeHelper().notifyMergeAdd(mergeNotifySet);
 	}
 
 	public void handleCellNotifyContentChange(Set<SheetRegion> cellNotifySet) {
 		new NotifyChangeHelper().notifyCellChange(cellNotifySet);
+	}
+	
+	public void handleInsertDeleteNotifyChange(List<InsertDeleteUpdate> insertDeleteNofitySet) {
+		new NotifyChangeHelper().notifyInsertDelete(insertDeleteNofitySet);
 	}
 
 	@Override

@@ -2,9 +2,8 @@ package org.zkoss.zss.ngapi.impl;
 
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
-
-import org.zkoss.zss.ngapi.NRange;
 import org.zkoss.zss.ngmodel.*;
 import org.zkoss.zss.ngmodel.impl.AbstractBookAdv;
 
@@ -65,35 +64,22 @@ import org.zkoss.zss.ngmodel.impl.AbstractBookAdv;
 				sheet, ModelEvents.createDataMap(ModelEvents.PARAM_OBJECT_ID, id)));
 	}
 	
-	public void notifyMergeChange(Set<MergeUpdate> mergeNotifySet) {
-		LinkedHashSet<SheetRegion> toRemove = new LinkedHashSet<SheetRegion>();
-		LinkedHashSet<SheetRegion> toAdd = new LinkedHashSet<SheetRegion>();
-		for(MergeUpdate mu:mergeNotifySet){
-			SheetRegion remove = mu.getOrgMerge()==null?null:new SheetRegion(mu.getSheet(),mu.getOrgMerge());
-			SheetRegion add = mu.getMerge()==null?null:new SheetRegion(mu.getSheet(),mu.getMerge());
-			if(remove!=null){
-				toRemove.add(remove);
-				toAdd.remove(remove);
-			}
-			if(add!=null){
-				toAdd.add(add);
-				toRemove.remove(add);
-			}
-		}
+	public void notifyMergeRemove(Set<SheetRegion> toRemove) {
 		for(SheetRegion notify:toRemove){//remove the final remove list
 			NBook book = notify.getSheet().getBook();
 			System.out.println(">>> Notify remove merge "+notify.getReferenceString());
 			((AbstractBookAdv) book).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_MERGE_DELETE,notify.getSheet(),
 					notify.getRegion()));
-			
 		}
+	}
+	
+	public void notifyMergeAdd(Set<SheetRegion> toAdd) {
 		for(SheetRegion notify:toAdd){
 			NBook book = notify.getSheet().getBook();
 			System.out.println(">>> Notify add merge "+notify.getReferenceString());
 			((AbstractBookAdv) book).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_MERGE_ADD,notify.getSheet(),
 					notify.getRegion()));
 		}
-		
 	}
 
 	public void notifyCellChange(Set<SheetRegion> cellNotifySet) {
@@ -153,4 +139,22 @@ import org.zkoss.zss.ngmodel.impl.AbstractBookAdv;
 				ModelEvents.createDataMap(ModelEvents.PARAM_ENABLED,protect)));
 	}
 	
+	public void notifyInsertDelete(List<InsertDeleteUpdate> insertDeleteNofitySet) {
+		// make sure they are orderly
+		for(InsertDeleteUpdate update : insertDeleteNofitySet) {
+			// create event, then fire it
+			String eventName;
+			CellRegion region;
+			if(update.isRow()) {
+				eventName = update.isInserted() ? ModelEvents.ON_ROW_INSERT : ModelEvents.ON_ROW_DELETE;
+				region = new CellRegion(update.getIndex(), 0, update.getLastIndex(), 0);
+			} else {
+				eventName = update.isInserted() ? ModelEvents.ON_COLUMN_INSERT : ModelEvents.ON_COLUMN_DELETE;
+				region = new CellRegion(0, update.getIndex(), 0, update.getLastIndex());
+			}
+			NSheet sheet = update.getSheet();
+			ModelEvent event = ModelEvents.createModelEvent(eventName, sheet, region);
+			((AbstractBookAdv)sheet.getBook()).sendModelEvent(event);
+		}
+	}
 }

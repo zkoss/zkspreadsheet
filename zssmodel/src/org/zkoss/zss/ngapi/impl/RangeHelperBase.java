@@ -62,4 +62,8 @@ public class RangeHelperBase {
 	public boolean isWholeRow(){
 		return range.isWholeRow();
 	}
+	
+	public boolean isWholeColumn() {
+		return range.isWholeColumn();
+	}
 }

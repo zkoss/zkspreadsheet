@@ -10,9 +10,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.concurrent.locks.ReadWriteLock;
-
 import junit.framework.Assert;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.zkoss.poi.ss.util.CellReference;
@@ -35,6 +33,7 @@ import org.zkoss.zss.ngmodel.chart.NGeneralChartData;
 import org.zkoss.zss.ngmodel.chart.NSeries;
 import org.zkoss.zss.ngmodel.impl.AbstractBookSeriesAdv;
 import org.zkoss.zss.ngmodel.impl.AbstractCellAdv;
+import org.zkoss.zss.ngmodel.impl.AbstractSheetAdv;
 import org.zkoss.zss.ngmodel.impl.BookImpl;
 import org.zkoss.zss.ngmodel.impl.RefImpl;
 import org.zkoss.zss.ngmodel.impl.SheetImpl;
@@ -3236,5 +3235,71 @@ public class ModelTest {
 		sheet1.clearAutoFilter();
 		Assert.assertNull(sheet1.getAutoFilter());
 		
+	}
+	
+	@Test
+	public void testDelRowAndShrinkMerged() {
+		NBook book = NBooks.createBook("book1");
+		NSheet sheet = book.createSheet("Sheet1");
+		AbstractSheetAdv sheetAdv = (AbstractSheetAdv)sheet;
+
+		CellRegion mergedCell = new CellRegion(3, 0, 5, 10);
+		testDelRowAndShrinkMerged(sheetAdv, mergedCell, 0, 2, new CellRegion(0, 0, 2, 10));
+		testDelRowAndShrinkMerged(sheetAdv, mergedCell, 1, 2, new CellRegion(1, 0, 3, 10));
+		testDelRowAndShrinkMerged(sheetAdv, mergedCell, 2, 3, new CellRegion(2, 0, 3, 10));
+		testDelRowAndShrinkMerged(sheetAdv, mergedCell, 2, 4, new CellRegion(2, 0, 2, 10));
+		testDelRowAndShrinkMerged(sheetAdv, mergedCell, 3, 5, null);
+		testDelRowAndShrinkMerged(sheetAdv, mergedCell, 4, 4, new CellRegion(3, 0, 4, 10));
+		testDelRowAndShrinkMerged(sheetAdv, mergedCell, 4, 5, new CellRegion(3, 0, 3, 10));
+		testDelRowAndShrinkMerged(sheetAdv, mergedCell, 5, 5, new CellRegion(3, 0, 4, 10));
+		testDelRowAndShrinkMerged(sheetAdv, mergedCell, 4, 6, new CellRegion(3, 0, 3, 10));
+		testDelRowAndShrinkMerged(sheetAdv, mergedCell, 2, 5, null);
+		testDelRowAndShrinkMerged(sheetAdv, mergedCell, 2, 6, null);
+		testDelRowAndShrinkMerged(sheetAdv, mergedCell, 3, 5, null);
+		testDelRowAndShrinkMerged(sheetAdv, mergedCell, 3, 6, null);
+	}
+	
+	private void testDelRowAndShrinkMerged(AbstractSheetAdv sheet, CellRegion mergedCell, int row, int lastRow, CellRegion expected) {
+		sheet.addMergedRegion(mergedCell);
+		sheet.deleteRow(row, lastRow);
+		if(expected != null) {
+			Assert.assertEquals(sheet.getMergedRegion(0), expected);
+			sheet.removeMergedRegion(expected, true);
+		} else {
+			Assert.assertTrue(sheet.getMergedRegions().isEmpty());
+		}
+	}
+	
+	@Test
+	public void testDelColAndShrinkMerged() {
+		NBook book = NBooks.createBook("book1");
+		NSheet sheet = book.createSheet("Sheet1");
+		AbstractSheetAdv sheetAdv = (AbstractSheetAdv)sheet;
+
+		CellRegion mergedCell = new CellRegion(0, 3, 10, 5);
+		testDelColAndShrinkMerged(sheetAdv, mergedCell, 0, 2, new CellRegion(0, 0, 10, 2));
+		testDelColAndShrinkMerged(sheetAdv, mergedCell, 1, 2, new CellRegion(0, 1, 10, 3));
+		testDelColAndShrinkMerged(sheetAdv, mergedCell, 2, 3, new CellRegion(0, 2, 10, 3));
+		testDelColAndShrinkMerged(sheetAdv, mergedCell, 2, 4, new CellRegion(0, 2, 10, 2));
+		testDelColAndShrinkMerged(sheetAdv, mergedCell, 3, 5, null);
+		testDelColAndShrinkMerged(sheetAdv, mergedCell, 4, 4, new CellRegion(0, 3, 10, 4));
+		testDelColAndShrinkMerged(sheetAdv, mergedCell, 4, 5, new CellRegion(0, 3, 10, 3));
+		testDelColAndShrinkMerged(sheetAdv, mergedCell, 5, 5, new CellRegion(0, 3, 10, 4));
+		testDelColAndShrinkMerged(sheetAdv, mergedCell, 4, 6, new CellRegion(0, 3, 10, 3));
+		testDelColAndShrinkMerged(sheetAdv, mergedCell, 2, 5, null);
+		testDelColAndShrinkMerged(sheetAdv, mergedCell, 2, 6, null);
+		testDelColAndShrinkMerged(sheetAdv, mergedCell, 3, 5, null);
+		testDelColAndShrinkMerged(sheetAdv, mergedCell, 3, 6, null);
+	}
+	
+	private void testDelColAndShrinkMerged(AbstractSheetAdv sheet, CellRegion mergedCell, int col, int lastCol, CellRegion expected) {
+		sheet.addMergedRegion(mergedCell);
+		sheet.deleteColumn(col, lastCol);
+		if(expected != null) {
+			Assert.assertEquals(sheet.getMergedRegion(0), expected);
+			sheet.removeMergedRegion(expected, true);
+		} else {
+			Assert.assertTrue(sheet.getMergedRegions().isEmpty());
+		}
 	}
 }
