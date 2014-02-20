@@ -29,9 +29,12 @@ import org.zkoss.poi.ss.formula.ExternSheetReferenceToken;
 import org.zkoss.poi.ss.formula.FormulaParseException;
 import org.zkoss.poi.ss.formula.FormulaParser;
 import org.zkoss.poi.ss.formula.FormulaRenderer;
+import org.zkoss.poi.ss.formula.FormulaRenderingWorkbook;
 import org.zkoss.poi.ss.formula.FormulaType;
 import org.zkoss.poi.ss.formula.IStabilityClassifier;
 import org.zkoss.poi.ss.formula.PtgShifter;
+import org.zkoss.poi.ss.formula.SheetNameFormatter;
+import org.zkoss.poi.ss.formula.WorkbookDependentFormula;
 import org.zkoss.poi.ss.formula.WorkbookEvaluator;
 import org.zkoss.poi.ss.formula.eval.AreaEval;
 import org.zkoss.poi.ss.formula.eval.BlankEval;
@@ -50,11 +53,13 @@ import org.zkoss.poi.ss.formula.ptg.AreaPtgBase;
 import org.zkoss.poi.ss.formula.ptg.FuncPtg;
 import org.zkoss.poi.ss.formula.ptg.NamePtg;
 import org.zkoss.poi.ss.formula.ptg.NameXPtg;
+import org.zkoss.poi.ss.formula.ptg.OperandPtg;
 import org.zkoss.poi.ss.formula.ptg.Ptg;
 import org.zkoss.poi.ss.formula.ptg.Ref3DPtg;
 import org.zkoss.poi.ss.formula.ptg.RefPtg;
 import org.zkoss.poi.ss.formula.ptg.RefPtgBase;
 import org.zkoss.poi.ss.formula.udf.UDFFinder;
+import org.zkoss.poi.util.LittleEndianOutput;
 import org.zkoss.poi.xssf.model.IndexedUDFFinder;
 import org.zkoss.xel.FunctionMapper;
 import org.zkoss.xel.VariableResolver;
@@ -829,12 +834,83 @@ public class FormulaEngineImpl implements FormulaEngine {
 		return adjust(formula, context, new FormulaAdjuster() {
 			@Override
 			public boolean process(String formula, int formulaSheetIndex, Ptg[] tokens, ParsingBook parsingBook, FormulaParseContext context) {
-				// parsed tokens has only external sheet index, not real sheet name
-				// the sheet names are kept in parsing book, so we just rename sheets in parsing book
-				// finally use such parsing book to re-render formula will get a renamed formula
-				parsingBook.renameSheet(targetBook.getBookName(), oldSheetName, newSheetName);
+				if(newSheetName != null) {
+					// parsed tokens has only external sheet index, not real sheet name
+					// the sheet names are kept in parsing book, so we just rename sheets in parsing book
+					// finally use such parsing book to re-render formula will get a renamed formula
+					parsingBook.renameSheet(targetBook.getBookName(), oldSheetName, newSheetName);
+					
+				} else { // if new sheet name is null, it indicates deleted sheet
+					
+					// compare every token and replace it by deleted reference if necessary
+					String bookName = targetBook == context.getBook() ? null : targetBook.getBookName(); 
+					for(int i = 0; i < tokens.length; ++i) {
+						Ptg ptg = tokens[i];
+						if(ptg instanceof ExternSheetReferenceToken) { // must be Ref3DPtg or Area3DPtg 
+							ExternSheetReferenceToken t = (ExternSheetReferenceToken)ptg;
+							ExternalSheet es = parsingBook.getAnyExternalSheet(t.getExternSheetIndex());
+							if((bookName == null && es.getWorkbookName() == null)
+									|| (bookName != null && bookName.equals(es.getWorkbookName()))) {
+								// replace token if any sheet name is matched 
+								if(oldSheetName.equals(es.getSheetName()) || oldSheetName.equals(es.getLastSheetName())) {
+									tokens[i] = new DeletedSheet3DPtg(bookName, ptg);
+								}
+							}
+						}
+					}
+				}
 				return true;
 			}
 		});
 	}
+	
+	private static class DeletedSheet3DPtg extends OperandPtg implements WorkbookDependentFormula {
+		private OperandPtg ptg;
+		private String bookName;
+
+		public DeletedSheet3DPtg(String bookName, Ptg ptg) {
+			if(ptg instanceof Ref3DPtg || ptg instanceof Area3DPtg) {
+				this.ptg = (OperandPtg)ptg;
+				this.bookName = bookName;
+			} else {
+				throw new IllegalArgumentException("must be Ref3dPtg or Area3DPtg");
+			}
+		}
+
+		@Override
+		public int getSize() {
+			return ptg.getSize();
+		}
+
+		@Override
+		public void write(LittleEndianOutput out) {
+			// do nothing
+		}
+
+		@Override
+		public String toFormulaString() {
+			return ptg.toFormulaString();
+		}
+
+		@Override
+		public byte getDefaultOperandClass() {
+			return ptg.getDefaultOperandClass();
+		}
+
+		@Override
+		public String toFormulaString(FormulaRenderingWorkbook book) {
+			StringBuffer sb = new StringBuffer();
+			if(bookName != null) {
+				SheetNameFormatter.appendFormat(sb, bookName, "#REF");
+			} else {
+				sb.append("#REF"); // don't use SheetNameFormatter, it will add quote because of '#' 
+			}
+			return sb.append('!').append(((ExternSheetReferenceToken)ptg).format2DRefAsString()).toString();
+		}
+
+		@Override
+		public String toInternalFormulaString(FormulaRenderingWorkbook book) {
+			throw new UnsupportedOperationException("unsupport internal formula string");
+		}
+	};
 }
