@@ -1,15 +1,17 @@
 package org.zkoss.zss.ngapi.impl;
 
 import java.io.Serializable;
+import java.lang.reflect.*;
 import java.util.*;
 import java.util.Map.Entry;
 
-import org.zkoss.poi.ss.usermodel.*;
 import org.zkoss.zk.ui.UiException;
-import org.zkoss.zss.ngapi.NRange;
-import org.zkoss.zss.ngapi.impl.imexp.BookHelper;
+import org.zkoss.zss.ngapi.*;
+import org.zkoss.zss.ngapi.NRange.SortDataOption;
 import org.zkoss.zss.ngmodel.*;
 import org.zkoss.zss.ngmodel.PasteOption.PasteType;
+import org.zkoss.zss.ngmodel.impl.CellBuffer;
+import org.zkoss.zss.ngmodel.sys.formula.*;
 
 /**
  * Manipulate cells according to sorting criteria and options.
@@ -19,6 +21,9 @@ import org.zkoss.zss.ngmodel.PasteOption.PasteType;
 //porting implementation from BookHelper.sort()
 public class SortHelper extends RangeHelperBase {
 
+	public static final int SORT_HEADER_NO  = 0;
+	public static final int SORT_HEADER_YES = 1;
+	
 	private static final PasteOption PASTE_ALL_OPTION = new PasteOption();
 	
 	public SortHelper(NRange range) {
@@ -51,10 +56,11 @@ public class SortHelper extends RangeHelperBase {
 	 */
 	public void sort(NSheet sheet, int tRow, int lCol, int bRow, int rCol, 
 			NRange key1, boolean desc1, NRange key2, int type, boolean desc2, NRange key3, boolean desc3, int header, int orderCustom,
-			boolean matchCase, boolean sortByRows, int sortMethod, int dataOption1, int dataOption2, int dataOption3) {
+			boolean matchCase, boolean sortByRows, int sortMethod, SortDataOption dataOption1, SortDataOption dataOption2, SortDataOption dataOption3) {
 		//TODO type not yet implemented(Sort label/Sort value, for PivotTable)
 		//TODO orderCustom is not implemented yet
-		if (header == BookHelper.SORT_HEADER_YES) {
+		
+		if (header == SORT_HEADER_YES) {
 			if (sortByRows) {
 				++lCol;
 			} else {
@@ -77,7 +83,7 @@ public class SortHelper extends RangeHelperBase {
 		if (keyCount == 0) {
 			throw new UiException("Must specify at least the key1");
 		}
-		final int[] dataOptions = new int[keyCount];
+		final SortDataOption[] dataOptions = new SortDataOption[keyCount];
 		final boolean[] descs = new boolean[keyCount];
 		final int[] keyIndexes = new int[keyCount];
 		keyIndexes[0] = rangeToIndex(key1, sortByRows);
@@ -160,6 +166,7 @@ public class SortHelper extends RangeHelperBase {
 		}
 	}
 	
+	
 	private int rangeToIndex(NRange range, boolean sortByRows) {
 		return sortByRows ? range.getRow() : range.getColumn();
 	}
@@ -182,13 +189,18 @@ public class SortHelper extends RangeHelperBase {
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
-	private static void  assignColumns(NSheet sheet, List<SortKey> sortKeys, int tRow, int lCol, int bRow, int rCol) {
+	/**
+	 * Change order of cells in column-wise according to sorting result. We might move them left or right.
+	 * @param sheet
+	 * @param sortKeys
+	 * @param tRow
+	 * @param lCol
+	 * @param bRow
+	 * @param rCol
+	 */
+	private void  assignColumns(NSheet sheet, List<SortKey> sortKeys, int tRow, int lCol, int bRow, int rCol) {
 		final int cellCount = bRow - tRow + 1;
 		final Map<Integer, List<NCell>> newCols = new HashMap<Integer, List<NCell>>(); //key: new column index after sorting 
-//		final Set<Ref> toEval = new HashSet<Ref>();
-//		final Set<Ref> affected = new HashSet<Ref>();
-//		final List<MergeChange> mergeChanges = new ArrayList<MergeChange>();
 		int j = 0;
 		for(final Iterator<SortKey> it = sortKeys.iterator(); it.hasNext();++j) {
 			final SortKey sortKey = it.next();
@@ -226,7 +238,7 @@ public class SortHelper extends RangeHelperBase {
 	}
 
 	/**
-	 * Change order of rows according to sorting result.
+	 * Change order of cells in row-wise according to sorting result. We might move them up or down.
 	 * @param sheet
 	 * @param sortKeys
 	 * @param tRow
@@ -235,64 +247,60 @@ public class SortHelper extends RangeHelperBase {
 	 * @param rCol
 	 * @return
 	 */
-	@SuppressWarnings("unchecked")
-	private static void assignRows(NSheet sheet, List<SortKey> sortKeys, int tRow, int lCol, int bRow, int rCol) {
+	private void assignRows(NSheet sheet, List<SortKey> sortKeys, int tRow, int lCol, int bRow, int rCol) {
 		final int cellCount = rCol - lCol + 1;
-		final Map<Integer, List<NCell>> newRows = new HashMap<Integer, List<NCell>>(); //key: new row index after sorting 
-//		final Set<Ref> toEval = new HashSet<Ref>();
-//		final Set<Ref> affected = new HashSet<Ref>();
-		int j = 0;
-		for(final Iterator<SortKey> it = sortKeys.iterator(); it.hasNext();++j) {
+		int rowBufferIndex = 0;
+		List<SortResult> sortResults = new ArrayList<SortHelper.SortResult>(sortKeys.size());
+		//copy original rows in a buffer
+		for(final Iterator<SortKey> it = sortKeys.iterator(); it.hasNext();rowBufferIndex++) {
 			final SortKey sortKey = it.next();
 			final int oldRowNum = sortKey.getIndex();
-			final NRow row = sheet.getRow(oldRowNum); 
-			final int newRowNum = tRow + j;
-			it.remove();
-			if (oldRowNum == newRowNum) { //no move needed, skip it
-				continue;
+			final int newRowNum = tRow + rowBufferIndex;
+			CellBuffer[] cellBuffer = new CellBuffer[cellCount];
+			for (int c=0 ; c < cellCount ; c++){
+				cellBuffer[c] = CellBuffer.bufferAll(sheet.getCell(oldRowNum, lCol+c));
 			}
-			//remove cells from the old row of the Range
-			final List<NCell> cells = new ArrayList<NCell>(cellCount);
-			final int begCol = Math.max(lCol, sheet.getStartCellIndex(oldRowNum));
-			final int endCol = Math.min(rCol, sheet.getEndCellIndex(oldRowNum) - 1);
-			for(int k = begCol; k <= endCol; ++k) {
-				final NCell cell = sheet.getCell(oldRowNum, k);
-				if (cell != null) {
-					cells.add(cell);
-//					final Set<Ref>[] refs = BookHelper.removeCell(cell, false);
-//					assignRefs(toEval, affected, refs);
-				}
-			}
-			if (!cells.isEmpty()) {
-				newRows.put(Integer.valueOf(newRowNum), cells);
-			}
-//			CellRegion sourceRow = new CellRegion(oldRowNum,lCol ,oldRowNum, rCol);
-//			CellRegion destinationRow = new CellRegion(newRowNum,lCol ,newRowNum, rCol);
-//			sheet.pasteCell(new SheetRegion(sheet, sourceRow), destinationRow, PASTE_ALL_OPTION);
+			sortResults.add(new SortResult(oldRowNum, newRowNum, cellBuffer));
 		}
+		//copy cells to sorted new index
+		for (SortResult result : sortResults){
+			for (int c = 0 ; c < result.cellBuffer.length ; c++){
+				//skip sorting result with unchanged index
+				if (result.oldIndex == result.newIndex){
+					continue;
+				}
+				NCell cellProxy = getProxyInstance(sheet.getCell(result.newIndex, lCol+c), 
+						new SheetRegion(sheet, tRow, lCol, bRow, rCol), result.newIndex-result.oldIndex, 0);
+				result.cellBuffer[c].applyAll(cellProxy);
+			}
+		}
+	}
+	
+	/*
+	 * Store index change and cell data after sorting
+	 */
+	class SortResult{
+		int oldIndex;
+		int newIndex;
+		CellBuffer[] cellBuffer;
 		
-		//move cells
-		for(Entry<Integer, List<NCell>> entry : newRows.entrySet()) {
-			final int newRowIndex = entry.getKey().intValue();
-			final List<NCell> cells = entry.getValue();
-//			for(Cell cell : cells) {
-//				final int colNum = cell.getColumnIndex();
-//				BookHelper.copyCell(cell, sheet, newRowIndex, colNum, XRange.PASTE_ALL, XRange.PASTEOP_NONE, false);
-//				assignChangeInfo(toEval, affected, mergeChanges, changeInfo0);
-//			}
+		SortResult(int oldIndex, int newIndex, CellBuffer[] cellBuffer){
+			this.oldIndex = oldIndex;
+			this.newIndex = newIndex;
+			this.cellBuffer = cellBuffer;
 		}
 	}
 	
 	//convert cell sorting data upon data option
-	private Object getCellObject(NCell cell, int dataOption) {
+	private Object getCellObject(NCell cell, SortDataOption dataOption) {
 		Object val = cell.getValue();
-		if (val instanceof RichTextString && dataOption == BookHelper.SORT_TEXT_AS_NUMBERS) {
-			try {
-				val = new Double((String)((RichTextString)val).getString());
-			} catch(NumberFormatException ex) {
-				val = new Double(0);//ignore
-			}
-		}
+//		if (val instanceof RichTextString && dataOption == BookHelper.SORT_TEXT_AS_NUMBERS) {
+//			try {
+//				val = new Double((String)((RichTextString)val).getString());
+//			} catch(NumberFormatException ex) {
+//				val = new Double(0);//ignore
+//			}
+//		}
 		return val;
 	}
 	
@@ -362,8 +370,8 @@ public class SortHelper extends RangeHelperBase {
 			if (val1 == val2) {
 				return 0;
 			}
-			final int order1 = val1 instanceof Byte ? 4 : val1 instanceof Boolean ? 3 : val1 instanceof RichTextString ? 2 : val1 instanceof Number ? 1 : desc ? 0 : 5;
-			final int order2 = val2 instanceof Byte ? 4 : val2 instanceof Boolean ? 3 : val2 instanceof RichTextString ? 2 : val2 instanceof Number ? 1 : desc ? 0 : 5;
+			final int order1 = val1 instanceof Byte ? 4 : val1 instanceof Boolean ? 3 : val1 instanceof String ? 2 : val1 instanceof Number ? 1 : desc ? 0 : 5;
+			final int order2 = val2 instanceof Byte ? 4 : val2 instanceof Boolean ? 3 : val2 instanceof String ? 2 : val2 instanceof Number ? 1 : desc ? 0 : 5;
 			int ret = 0;
 			if (order1 != order2) {
 				ret = order1 - order2;
@@ -376,7 +384,7 @@ public class SortHelper extends RangeHelperBase {
 					ret = ((Boolean)val1).compareTo((Boolean)val2);
 					break;
 				case 2: //RichTextString
-					ret = compareString(((RichTextString)val1).getString(), ((RichTextString)val2).getString());
+					ret = compareString(val1.toString(), val2.toString());
 					break;
 				case 1: //Double
 					ret =((Double)val1).compareTo((Double)val2);
@@ -411,4 +419,46 @@ public class SortHelper extends RangeHelperBase {
 					(uch1 - uch2); //yes, a < b, a < B, A < b, and A < B
 		}
 	}
+	
+	private NCell getProxyInstance(NCell cell, SheetRegion srcRegion, int rowOffset, int columnOffset){
+		return (NCell)Proxy.newProxyInstance(
+				FormulaMovingCell.class.getClassLoader(),
+				new Class[] { NCell.class },
+				new FormulaMovingCell(cell, srcRegion, rowOffset, columnOffset));
+	}
+	
+	/**
+	 * Move the formula before setting to real cell.
+	 * @author Hawk
+	 *
+	 */
+	class FormulaMovingCell implements InvocationHandler{
+		private final NCell proxiedCell;
+		private final SheetRegion srcRegion;
+		private final int rowOffset;
+		private final int columnOffset;
+		private final FormulaParseContext context;
+
+		
+		public FormulaMovingCell(NCell cell, SheetRegion srcRegion, int rowOffset, int columnOffset){
+			this.proxiedCell = cell;
+			this.srcRegion = srcRegion;
+			this.rowOffset = rowOffset;
+			this.columnOffset = columnOffset;
+			context = new FormulaParseContext(proxiedCell, null);
+		}
+		
+		@Override
+		public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+			
+			if (method.getName().equals("setFormulaValue")){
+				FormulaExpression movedFormula = getFormulaEngine().move(args[0].toString(), srcRegion, rowOffset, columnOffset, context);
+				proxiedCell.setFormulaValue(movedFormula.getFormulaString());
+				return null;
+			}
+			return method.invoke(proxiedCell, args);
+		}
+	}
+	
+
 }
