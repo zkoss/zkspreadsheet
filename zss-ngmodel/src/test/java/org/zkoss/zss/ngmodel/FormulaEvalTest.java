@@ -773,10 +773,11 @@ public class FormulaEvalTest {
 //		testFormulaShrink(f,"G3:L5", horizontal, "SUM(C3:E5)+SUM(#REF!)+SUM(M3:M5)", engine, sheetA); // it's Excel approach 
 		// source region at bottom
 		testFormulaShrink(f,sheetA, "G6:L6", null, horizontal, f, engine);
-		// external sheet with external book (Note that we can't modify a external book reference)
+		// external sheet with external book
 		f = "SUM(A1:A3)+SUM(SheetA!A1:A3)+SUM(SheetB!A1:A3)+SUM([Book2]SheetA!A1:A3)";
 		testFormulaShrink(f,sheetA, "A2:A2", null, horizontal, "SUM(A1:A2)+SUM(SheetA!A1:A2)+SUM(SheetB!A1:A3)+SUM([Book2]SheetA!A1:A3)", engine); // on SheetA
 		testFormulaShrink(f,sheetB, "A2:A2", null, horizontal, "SUM(A1:A2)+SUM(SheetA!A1:A3)+SUM(SheetB!A1:A2)+SUM([Book2]SheetA!A1:A3)", engine); // on SheetB
+		testFormulaShrink(f,sheetA, "A2:A2", book2SheetA, horizontal, "SUM(A1:A3)+SUM(SheetA!A1:A3)+SUM(SheetB!A1:A3)+SUM([Book2]SheetA!A1:A2)", engine); // on Book2 SheetA
 
 		// delete cells and shift left
 		f = "SUM(C3:E5)+SUM(C7:E9)+SUM(C11:E13)";
@@ -847,11 +848,12 @@ public class FormulaEvalTest {
 		testFormulaExtend(f,sheetA, "G3:L5", null, horizontal, "SUM(C3:E5)+SUM(G6:I8)+SUM(K3:M5)", engine); // 3 rows
 		// source region at bottom
 		testFormulaExtend(f,sheetA, "G6:L6", null, horizontal, f, engine);
-		// external sheet with external book (Note that we can't modify a external book reference)
+		// external sheet with external book
 		f = "SUM(A1:A3)+SUM(SheetA!A1:A3)+SUM(SheetB!A1:A3)+SUM([Book2]SheetA!A1:A3)";
 		testFormulaExtend(f,sheetA, "A2:A2", null, horizontal, "SUM(A1:A4)+SUM(SheetA!A1:A4)+SUM(SheetB!A1:A3)+SUM([Book2]SheetA!A1:A3)", engine); // on SheetA
 		testFormulaExtend(f,sheetB, "A2:A2", null, horizontal, "SUM(A1:A4)+SUM(SheetA!A1:A3)+SUM(SheetB!A1:A4)+SUM([Book2]SheetA!A1:A3)", engine); // on SheetB
-
+		testFormulaExtend(f,sheetB, "A2:A2", book2SheetA, horizontal, "SUM(A1:A3)+SUM(SheetA!A1:A3)+SUM(SheetB!A1:A3)+SUM([Book2]SheetA!A1:A4)", engine); // on Book2 SheetA
+		
 		// delete cells and shift left
 		f = "SUM(C3:E5)+SUM(C7:E9)+SUM(C11:E13)";
 		horizontal = true;
@@ -990,11 +992,11 @@ public class FormulaEvalTest {
 		FormulaEngine engine = EngineFactory.getInstance().createFormulaEngine();
 		NBook bookA = NBooks.createBook("BookA");
 		NSheet sheetX = bookA.createSheet("SheetX");
-		bookA.createSheet("Sheet1");
-		bookA.createSheet("Sheet2");
+		NSheet sheet1 = bookA.createSheet("Sheet1");
+		NSheet sheet2 = bookA.createSheet("Sheet2");
 		bookA.createSheet("Sheet3");
 		bookA.createSheet("Sheet4");
-		bookA.createSheet("Sheet5");
+		NSheet sheet5 = bookA.createSheet("Sheet5");
 		bookA.createSheet("Sheet6");
 		NBook bookB = NBooks.createBook("BookB.xlsx");
 		bookB.createSheet("Sheet1");
@@ -1018,6 +1020,14 @@ public class FormulaEvalTest {
 		// external book
 		testFormulaRenameSheet(engine, sheetX, f, bookB, "Sheet1", "sht1", "SUM(Sheet1!A1,Sheet2:Sheet5!A1,Sheet6!A1,[BookB.xlsx]sht1!A1)");
 		testFormulaRenameSheet(engine, sheetX, f, bookB, "Sheet2", "sht2", f);
+		
+		// delete sheet
+		// this spec. isn't compatible to Excel, Excel approach is more smart.
+		f = "SUM(A1,Sheet1!A1,Sheet2:Sheet5!A1,Sheet6!A1,[BookB.xlsx]Sheet1!A1)";
+		testFormulaRenameSheet(engine, sheet1, f, bookA, "Sheet1", null, "SUM(A1,'#REF'!A1,Sheet2:Sheet5!A1,Sheet6!A1,[BookB.xlsx]Sheet1!A1)");
+		testFormulaRenameSheet(engine, sheet2, f, bookA, "Sheet2", null, "SUM(A1,Sheet1!A1,'#REF'!A1,Sheet6!A1,[BookB.xlsx]Sheet1!A1)");
+		testFormulaRenameSheet(engine, sheet5, f, bookA, "Sheet5", null, "SUM(A1,Sheet1!A1,'#REF'!A1,Sheet6!A1,[BookB.xlsx]Sheet1!A1)");
+		testFormulaRenameSheet(engine, sheet1, f, bookB, "Sheet1", null, "SUM(A1,Sheet1!A1,Sheet2:Sheet5!A1,Sheet6!A1,'[BookB.xlsx]#REF'!A1)");
 	}
 	
 	private void testFormulaRenameSheet(FormulaEngine engine, NSheet formulaSheet, String formula, NBook targetBook, String oldSheetName, String newSheetName, String expected) {
