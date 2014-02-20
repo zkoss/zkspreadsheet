@@ -2,7 +2,8 @@ package org.zkoss.zss.ngapi.impl;
 
 import java.util.concurrent.locks.ReadWriteLock;
 
-import org.zkoss.zss.ngapi.NRange;
+import org.zkoss.zss.ngapi.*;
+import org.zkoss.zss.ngapi.NRange.SortDataOption;
 import org.zkoss.zss.ngmodel.*;
 import org.zkoss.zss.ngmodel.NAutoFilter.FilterOp;
 import org.zkoss.zss.ngmodel.NCellStyle.BorderType;
@@ -411,6 +412,14 @@ import org.zkoss.zss.ngmodel.NPicture.Format;
 
 	@Override
 	public void updateChart(NChart chart) {
+		
+	}
+
+	@Override
+	public void sort(NRange rng1, boolean desc1, NRange rng2, int type, boolean desc2,
+			NRange rng3, boolean desc3, int header, int orderCustom, boolean matchCase,
+			boolean sortByRows, int sortMethod, SortDataOption dataOption1, SortDataOption dataOption2,
+			SortDataOption dataOption3) {
 		
 	}
 

@@ -27,7 +27,9 @@ import org.zkoss.zss.ngmodel.*;
 import org.zkoss.zss.ngmodel.NAutoFilter.FilterOp;
 import org.zkoss.zss.ngmodel.NCell.CellType;
 import org.zkoss.zss.ngmodel.NCellStyle.BorderType;
-import org.zkoss.zss.ngmodel.NChart.*;
+import org.zkoss.zss.ngmodel.NChart.NChartGrouping;
+import org.zkoss.zss.ngmodel.NChart.NChartLegendPosition;
+import org.zkoss.zss.ngmodel.NChart.NChartType;
 import org.zkoss.zss.ngmodel.NHyperlink.HyperlinkType;
 import org.zkoss.zss.ngmodel.impl.*;
 import org.zkoss.zss.ngmodel.sys.EngineFactory;
@@ -1431,6 +1433,29 @@ public class NRangeImpl implements NRange {
 				return null;
 			}
 		}.doInWriteLock(getLock());
+	}
+
+	@Override
+	public void sort(final NRange rng1, final boolean desc1, final NRange rng2, final int type, final boolean desc2,
+			final NRange rng3, final boolean desc3, final int header, final int orderCustom,
+			final boolean matchCase, final boolean sortByRows,final int sortMethod,
+			final SortDataOption dataOption1, final SortDataOption dataOption2, final SortDataOption dataOption3) {
+		new ModelUpdateTask() {			
+			@Override
+			Object doInvokePhase() {
+				int tRow = NRangeImpl.this.getRow();
+				final int lCol = NRangeImpl.this.getColumn();
+				final int bRow = NRangeImpl.this.getLastRow();
+				final int rCol = NRangeImpl.this.getLastColumn();
+				new SortHelper(NRangeImpl.this).sort(getSheet(), tRow, lCol, bRow, rCol, rng1, desc1, rng2, type, desc2, 
+						rng3, desc3, header, orderCustom, 
+						matchCase, sortByRows, sortMethod, dataOption1, dataOption2, dataOption3);
+				return null;
+			}
+
+			@Override
+			void doNotifyPhase() {}
+		}.doInWriteLock(getLock());			
 	}
 	
 	private static final NRange EMPTY_RANGE = new NEmptyRange();

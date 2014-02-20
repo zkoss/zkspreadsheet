@@ -18,6 +18,7 @@ package org.zkoss.zss.ngapi;
 
 import java.util.concurrent.locks.ReadWriteLock;
 
+import org.zkoss.zss.ngapi.NRange.SortDataOption;
 import org.zkoss.zss.ngmodel.*;
 import org.zkoss.zss.ngmodel.NAutoFilter.FilterOp;
 import org.zkoss.zss.ngmodel.NChart.NChartGrouping;
@@ -110,7 +111,7 @@ public interface NRange {
 	
 	public enum SortDataOption{
 		NORMAL_DEFAULT,
-		TEXT_AS_NUMBERS
+		TEXT_AS_NUMBERS //convert text to number
 	}
 	
 	public enum AutoFilterOperation{
@@ -225,26 +226,26 @@ public interface NRange {
 	 */
 	public void delete(DeleteShift shift);
 
-//	/**
-//	 * Sort this Range per the specified parameters
-//	 * @param rng1 key1 for sorting
-//	 * @param desc1 true to do descending sort; false to do ascending sort for key1. 
-//	 * @param rng2 key2 for sorting
-//	 * @param type PivotTable sorting type(byLabel or byValue); not implemented yet
-//	 * @param desc2 true to do descending sort; false to do ascending sort for key2.
-//	 * @param rng3 key3 for sorting
-//	 * @param desc3 true to do descending sort; false to do ascending sort for key3.
-//	 * @param header whether sort range includes header
-//	 * @param orderCustom index of custom order list; not implmented yet 
-//	 * @param matchCase true to match the string cases; false to ignore string cases
-//	 * @param sortByRows true to sort by rows(change columns orders); false to sort by columns(change row orders). 
-//	 * @param sortMethod special sorting method
-//	 * @param dataOption1 see numeric String as number or not for key1.
-//	 * @param dataOption2 see numeric String as number or not for key2.
-//	 * @param dataOption3 see numeric String as number or not for key3.
-//	 */
-//	public void sort(NRange rng1, boolean desc1, NRange rng2, int type, boolean desc2, NRange rng3, boolean desc3, int header, int orderCustom,
-//			boolean matchCase, boolean sortByRows, int sortMethod, int dataOption1, int dataOption2, int dataOption3);
+	/**
+	 * Sort this Range per the specified parameters
+	 * @param rng1 key1 for sorting
+	 * @param desc1 true to do descending sort; false to do ascending sort for key1. 
+	 * @param rng2 key2 for sorting
+	 * @param type PivotTable sorting type(byLabel or byValue); not implemented yet
+	 * @param desc2 true to do descending sort; false to do ascending sort for key2.
+	 * @param rng3 key3 for sorting
+	 * @param desc3 true to do descending sort; false to do ascending sort for key3.
+	 * @param header whether sort range includes header
+	 * @param orderCustom index of custom order list; not implemented yet 
+	 * @param matchCase true to match the string cases; false to ignore string cases
+	 * @param sortByRows true to sort by rows(change columns orders); false to sort by columns(change row orders). 
+	 * @param sortMethod special sorting method
+	 * @param dataOption1 see numeric String as number or not for key1.
+	 * @param dataOption2 see numeric String as number or not for key2.
+	 * @param dataOption3 see numeric String as number or not for key3.
+	 */
+	public void sort(NRange rng1, boolean desc1, NRange rng2, int type, boolean desc2, NRange rng3, boolean desc3, int header, int orderCustom,
+			boolean matchCase, boolean sortByRows, int sortMethod, SortDataOption dataOption1, SortDataOption dataOption2, SortDataOption dataOption3);
 
 	/**
 	 * Merge this range into a merged cell.
