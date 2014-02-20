@@ -666,6 +666,33 @@ public class ModelFormulaTest {
 	}
 	
 	@Test
+	public void testLinkedShift(){
+		NBook book = NBooks.createBook("book1");
+		book.getBookSeries().setAutoFormulaCacheClean(true);
+		NSheet sheet1 = initialDataGrid(book.createSheet("Sheet1"));
+		
+		sheet1.getCell("A1").setValue(12);
+		sheet1.getCell("A2").setValue("=A1");
+		sheet1.getCell("A3").setValue("=A2");
+		
+		Assert.assertEquals(12D, sheet1.getCell("A1").getValue());
+		Assert.assertEquals(12D, sheet1.getCell("A2").getValue());
+		Assert.assertEquals(12D, sheet1.getCell("A3").getValue());
+		
+		sheet1.moveCell(new CellRegion("A1"),0,1);
+		
+		Assert.assertEquals("B1", sheet1.getCell("A2").getFormulaValue());
+		Assert.assertEquals("A2", sheet1.getCell("A3").getFormulaValue());
+		
+		sheet1.getCell("B1").setValue(22);
+		
+		Assert.assertEquals(null, sheet1.getCell("A1").getValue());
+		Assert.assertEquals(22D, sheet1.getCell("B1").getValue());
+		Assert.assertEquals(22D, sheet1.getCell("A2").getValue());
+		Assert.assertEquals(22D, sheet1.getCell("A3").getValue());
+	}
+	
+	@Test
 	public void testOverlapShift(){
 		NBook book = NBooks.createBook("book1");
 		book.getBookSeries().setAutoFormulaCacheClean(true);
@@ -771,4 +798,5 @@ public class ModelFormulaTest {
 		
 
 	}
+	
 }

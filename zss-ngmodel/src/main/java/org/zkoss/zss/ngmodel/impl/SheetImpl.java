@@ -1060,7 +1060,7 @@ public class SheetImpl extends AbstractSheetAdv {
 		NBook book = getBook();
 		AbstractBookSeriesAdv bs = (AbstractBookSeriesAdv)book.getBookSeries();
 		DependencyTable dt = bs.getDependencyTable();
-		Set<Ref> dependents = dt.getDependents(new RefImpl(book.getBookName(),getSheetName(),src.getRow(),src.getColumn(),src.getLastRow(),src.getLastColumn()));
+		Set<Ref> dependents = dt.getDirectDependents(new RefImpl(book.getBookName(),getSheetName(),src.getRow(),src.getColumn(),src.getLastRow(),src.getLastColumn()));
 		if(dependents.size()>0){
 			FormulaTunerHelper tuner = new FormulaTunerHelper(bs,new SheetRegion(this,src));
 			tuner.move(dependents,rowOffset,columnOffset);
@@ -1075,7 +1075,7 @@ public class SheetImpl extends AbstractSheetAdv {
 		Ref ref = new RefImpl(book.getBookName(),getSheetName(),src.getRow(), src.getColumn(),
 				horizontal?src.getLastRow():book.getMaxRowIndex(),horizontal?book.getMaxColumnIndex():src.getLastColumn());
 		
-		Set<Ref> dependents = dt.getDependents(ref);
+		Set<Ref> dependents = dt.getDirectDependents(ref);
 		if(dependents.size()>0){
 			FormulaTunerHelper tuner = new FormulaTunerHelper(bs,new SheetRegion(this,src));
 			tuner.shrink(dependents,horizontal);
@@ -1088,7 +1088,7 @@ public class SheetImpl extends AbstractSheetAdv {
 		DependencyTable dt = bs.getDependencyTable();
 		Ref ref = new RefImpl(book.getBookName(),getSheetName(),src.getRow(), src.getColumn(),
 				horizontal?src.getLastRow():book.getMaxRowIndex(),horizontal?book.getMaxColumnIndex():src.getLastColumn());
-		Set<Ref> dependents = dt.getDependents(ref);
+		Set<Ref> dependents = dt.getDirectDependents(ref);
 		if(dependents.size()>0){
 			FormulaTunerHelper tuner = new FormulaTunerHelper(bs,new SheetRegion(this,src));
 			tuner.extend(dependents,horizontal);
