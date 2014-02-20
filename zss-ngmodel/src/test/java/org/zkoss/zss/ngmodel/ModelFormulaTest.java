@@ -997,8 +997,8 @@ public class ModelFormulaTest {
 		Assert.assertEquals("C4",refRegion.getReferenceString());
 		
 		
-		//
-		Assert.assertEquals("#REF!A3",sheet2.getCell("C3").getFormulaValue());
+		//poi parse can't suuport #REF!A3
+		Assert.assertEquals("'#REF'!A3",sheet2.getCell("C3").getFormulaValue());
 		Assert.assertEquals("A4",sheet2.getCell("C4").getFormulaValue());
 		
 		refs = dt.getDependents(new RefImpl((AbstractCellAdv)sheet2.getCell("A4")));
@@ -1010,7 +1010,7 @@ public class ModelFormulaTest {
 		
 		sheet2.getCell("A4").setValue(99);
 		
-		Assert.assertEquals("#REF",sheet2.getCell("C3").getErrorValue().getErrorString());
+		Assert.assertEquals("#REF!",sheet2.getCell("C3").getErrorValue().getErrorString());
 		Assert.assertEquals(99D,sheet2.getCell("C4").getValue());
 		
 		

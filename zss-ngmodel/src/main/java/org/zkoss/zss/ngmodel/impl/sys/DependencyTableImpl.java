@@ -141,7 +141,8 @@ public class DependencyTableImpl extends DependencyTableAdv {
 		NBook book = books.getBook(a.getBookName());
 		int[] aSheetIndexes = getSheetIndex(book, a);
 		int[] bSheetIndexes = getSheetIndex(book, b);
-		if(!isIntersected(aSheetIndexes[0], aSheetIndexes[1], bSheetIndexes[0], bSheetIndexes[1])) {
+		if(!a.getSheetName().equals(b.getSheetName()) &&
+				(isBothNotExist(aSheetIndexes, bSheetIndexes) || !isIntersected(aSheetIndexes[0], aSheetIndexes[1], bSheetIndexes[0], bSheetIndexes[1]))) {
 			return false;
 		}
 
@@ -154,6 +155,16 @@ public class DependencyTableImpl extends DependencyTableAdv {
 		// check overlapped or not
 		return isIntersected(a.getColumn(), a.getRow(), a.getLastColumn(), a.getLastRow(), b.getColumn(),
 				b.getRow(), b.getLastColumn(), b.getLastRow());
+	}
+
+	private boolean isBothNotExist(int[] aSheetIndexes, int[] bSheetIndexes) {
+		for(int i:aSheetIndexes){
+			if(i<0) return true;
+		}
+		for(int i:bSheetIndexes){
+			if(i<0) return true;
+		}
+		return false;
 	}
 
 	private int[] getSheetIndex(NBook book, Ref ref) {
