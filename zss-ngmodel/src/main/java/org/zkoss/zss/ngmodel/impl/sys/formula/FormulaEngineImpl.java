@@ -903,7 +903,10 @@ public class FormulaEngineImpl implements FormulaEngine {
 			if(bookName != null) {
 				SheetNameFormatter.appendFormat(sb, bookName, "#REF");
 			} else {
-				sb.append("#REF"); // don't use SheetNameFormatter, it will add quote because of '#' 
+				// because of the POI parser's limitation, it can't parse #REF!A1
+				// we use unusual '#REF' sheet name to represent a deleted sheet
+				SheetNameFormatter.appendFormat(sb, "#REF");
+				// sb.append("#REF"); // don't use SheetNameFormatter, it will add quote because of #
 			}
 			return sb.append('!').append(((ExternSheetReferenceToken)ptg).format2DRefAsString()).toString();
 		}

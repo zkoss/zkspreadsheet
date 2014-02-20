@@ -1024,9 +1024,9 @@ public class FormulaEvalTest {
 		// delete sheet
 		// this spec. isn't compatible to Excel, Excel approach is more smart.
 		f = "SUM(A1,Sheet1!A1,Sheet2:Sheet5!A1,Sheet6!A1,[BookB.xlsx]Sheet1!A1)";
-		testFormulaRenameSheet(engine, sheet1, f, bookA, "Sheet1", null, "SUM(A1,#REF!A1,Sheet2:Sheet5!A1,Sheet6!A1,[BookB.xlsx]Sheet1!A1)");
-		testFormulaRenameSheet(engine, sheet2, f, bookA, "Sheet2", null, "SUM(A1,Sheet1!A1,#REF!A1,Sheet6!A1,[BookB.xlsx]Sheet1!A1)");
-		testFormulaRenameSheet(engine, sheet5, f, bookA, "Sheet5", null, "SUM(A1,Sheet1!A1,#REF!A1,Sheet6!A1,[BookB.xlsx]Sheet1!A1)");
+		testFormulaRenameSheet(engine, sheet1, f, bookA, "Sheet1", null, "SUM(A1,'#REF'!A1,Sheet2:Sheet5!A1,Sheet6!A1,[BookB.xlsx]Sheet1!A1)");
+		testFormulaRenameSheet(engine, sheet2, f, bookA, "Sheet2", null, "SUM(A1,Sheet1!A1,'#REF'!A1,Sheet6!A1,[BookB.xlsx]Sheet1!A1)");
+		testFormulaRenameSheet(engine, sheet5, f, bookA, "Sheet5", null, "SUM(A1,Sheet1!A1,'#REF'!A1,Sheet6!A1,[BookB.xlsx]Sheet1!A1)");
 		testFormulaRenameSheet(engine, sheet1, f, bookB, "Sheet1", null, "SUM(A1,Sheet1!A1,Sheet2:Sheet5!A1,Sheet6!A1,'[BookB.xlsx]#REF'!A1)");
 	}
 	
