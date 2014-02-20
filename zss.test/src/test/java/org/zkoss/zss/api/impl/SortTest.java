@@ -12,7 +12,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.zkoss.zss.Setup;
 import org.zkoss.zss.Util;
-import org.zkoss.zss.api.Ranges;
+import org.zkoss.zss.api.*;
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.Sheet;
 
@@ -33,6 +33,25 @@ public class SortTest {
 		Setup.popZssLocale();
 	}
 	
+	/**
+	 * sort random number from 1:100.
+	 * Sort with 1 column.
+	 */
+	@Test
+	public void simpleSort() throws IOException {
+		Book workbook = Util.loadBook(this,"book/blank.xlsx");
+		Sheet sheet1 = workbook.getSheet("Sheet1");
+		int[] rands = new int[100];
+		for(int i = 0; i < 100; i++) {
+			rands[i] = (int)(Math.random() * 100) + 1;
+			Ranges.range(sheet1, i, 0).setCellValue(rands[i]);
+		}
+		Ranges.range(sheet1, 0, 0, 99, 0).sort(false);
+		Arrays.sort(rands);
+		for(int i = 0; i < 100; i++) {
+			assertEquals(rands[i], Ranges.range(sheet1, i, 0).getCellData().getDoubleValue(), 1E-8);
+		}
+	}
 	
 	@Test
 	public void testSortWithHeaderByID2003() throws IOException {
@@ -47,15 +66,27 @@ public class SortTest {
 	}
 	
 	@Test
-	public void testSortWithHeaderByBirthYr_ZipCode_ID_2003() throws IOException {
+	public void testSortWithHeader2003() throws IOException {
 		Book book = Util.loadBook(this,"book/excelsortsample.xls");
-		testSortWithHeaderByBirthYr_ZipCode_ID(book);
+		testSortWithHeader(book);
+	}
+	
+	@Test
+	public void testSortWithHeader2007() throws IOException {
+		Book book = Util.loadBook(this,"book/excelsortsample.xlsx");
+		testSortWithHeader(book);
 	}
 	
 	/**
 	 * sort with 3 columns.
 	 * @throws IOException
 	 */
+	@Test
+	public void testSortWithHeaderByBirthYr_ZipCode_ID_2003() throws IOException {
+		Book book = Util.loadBook(this,"book/excelsortsample.xls");
+		testSortWithHeaderByBirthYr_ZipCode_ID(book);
+	}
+	
 	@Test
 	public void testSortWithHeaderByBirthYr_ZipCode_ID_2007() throws IOException {
 		Book book = Util.loadBook(this,"book/excelsortsample.xlsx");
@@ -74,18 +105,7 @@ public class SortTest {
 		testSimpleSortWithNumberAndCharacterAndFormula(book);
 	}
 	
-	@Test
-	public void testSortWithHeader2003() throws IOException {
-		Book book = Util.loadBook(this,"book/excelsortsample.xls");
-		testSortWithHeader(book);
-	}
-	
-	@Test
-	public void testSortWithHeader2007() throws IOException {
-		Book book = Util.loadBook(this,"book/excelsortsample.xlsx");
-		testSortWithHeader(book);
-	}
-	
+	// sort by row
 	@Test
 	public void testSortByRowWithHeader2003() throws IOException {
 		Book book = Util.loadBook(this,"book/excelsortsample.xls");
@@ -96,6 +116,55 @@ public class SortTest {
 	public void testSortByRowWithHeader2007() throws IOException {
 		Book book = Util.loadBook(this,"book/excelsortsample.xlsx");
 		testSortByRowWithHeader(book);
+	}
+	
+	@Test
+	public void testSortByRow3Rows(){
+		Book book = Util.loadBook(this,"book/excelsortsample.xlsx");
+		Setup.pushZssLocale(Locale.US);
+		try{
+		Sheet sheet = book.getSheet("Left2Right");
+		Range genderRow = Ranges.range(sheet, "B3:K3");
+		Range birthYearRow = Ranges.range(sheet, "B4:K4");
+		Range idRow = Ranges.range(sheet, "B1:K1");
+		Ranges.range(sheet, "B1:K7").sort(genderRow, false, null, birthYearRow, false, null, idRow, false, null, false, false, true);
+		
+		
+		assertEquals("1",			Ranges.range(sheet, "B1").getCellFormatText());
+		assertEquals("Krause",		Ranges.range(sheet, "B2").getCellFormatText());
+		assertEquals("female", 		Ranges.range(sheet, "B3").getCellFormatText());
+		assertEquals("1943",		Ranges.range(sheet, "B4").getCellFormatText());
+		assertEquals("West Enfield",Ranges.range(sheet, "B5").getCellFormatText());
+		assertEquals("ME",			Ranges.range(sheet, "B6").getCellFormatText());
+		assertEquals("04493",		Ranges.range(sheet, "B7").getCellFormatText());
+		
+		assertEquals("4",			Ranges.range(sheet, "C1").getCellFormatText());
+		assertEquals("Williams",	Ranges.range(sheet, "C2").getCellFormatText());
+		assertEquals("female", 		Ranges.range(sheet, "C3").getCellFormatText());
+		assertEquals("1975",		Ranges.range(sheet, "C4").getCellFormatText());
+		assertEquals("San Diego",	Ranges.range(sheet, "C5").getCellFormatText());
+		assertEquals("CA",			Ranges.range(sheet, "C6").getCellFormatText());
+		assertEquals("92103",		Ranges.range(sheet, "C7").getCellFormatText());
+		
+		assertEquals("8",		Ranges.range(sheet, "G1").getCellFormatText());
+		assertEquals("Gentile",	Ranges.range(sheet, "G2").getCellFormatText());
+		assertEquals("male", 	Ranges.range(sheet, "G3").getCellFormatText());
+		assertEquals("1959",	Ranges.range(sheet, "G4").getCellFormatText());
+		assertEquals("Oakwood",	Ranges.range(sheet, "G5").getCellFormatText());
+		assertEquals("VA",		Ranges.range(sheet, "G6").getCellFormatText());
+		assertEquals("24631",	Ranges.range(sheet, "G7").getCellFormatText());
+		
+		assertEquals("6",			Ranges.range(sheet, "K1").getCellFormatText());
+		assertEquals("Borkowski",	Ranges.range(sheet, "K2").getCellFormatText());
+		assertEquals("male",		Ranges.range(sheet, "K3").getCellFormatText());
+		assertEquals("1985",		Ranges.range(sheet, "K4").getCellFormatText());
+		assertEquals("Grand Rapids",Ranges.range(sheet, "K5").getCellFormatText());
+		assertEquals("MI",			Ranges.range(sheet, "K6").getCellFormatText());
+		assertEquals("49503",		Ranges.range(sheet, "K7").getCellFormatText());
+		
+		}finally{
+			Setup.popZssLocale();
+		}
 	}
 	
 	private void testSortByRowWithHeader(Book workbook) throws IOException {
@@ -476,24 +545,4 @@ public class SortTest {
 		assertEquals("24055", Ranges.range(sheet, "H10").getCellFormatText());
 		assertEquals("04493", Ranges.range(sheet, "H11").getCellFormatText());
 	}
-	
-	/**
-	 * sort random number from 1:100
-	 */
-	@Test
-	public void simpleSort() throws IOException {
-		Book workbook = Util.loadBook(this,"book/blank.xlsx");
-		Sheet sheet1 = workbook.getSheet("Sheet1");
-		int[] rands = new int[100];
-		for(int i = 0; i < 100; i++) {
-			rands[i] = (int)(Math.random() * 100) + 1;
-			Ranges.range(sheet1, i, 0).setCellValue(rands[i]);
-		}
-		Ranges.range(sheet1, 0, 0, 99, 0).sort(false);
-		Arrays.sort(rands);
-		for(int i = 0; i < 100; i++) {
-			assertEquals(rands[i], Ranges.range(sheet1, i, 0).getCellData().getDoubleValue(), 1E-8);
-		}
-	}
-
 }
