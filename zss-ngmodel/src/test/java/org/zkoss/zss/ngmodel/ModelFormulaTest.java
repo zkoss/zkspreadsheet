@@ -920,4 +920,99 @@ public class ModelFormulaTest {
 		
 		
 	}
+	
+	
+	@Test
+	public void testDeleteSheet(){
+		NBook book = NBooks.createBook("book1");
+		book.getBookSeries().setAutoFormulaCacheClean(true);
+		DependencyTable dt = ((AbstractBookSeriesAdv)book.getBookSeries()).getDependencyTable();
+		Set<Ref> refs;
+		NSheet sheet1 = initialDataGrid(book.createSheet("Sheet1"));
+		NSheet sheet2 = initialDataGrid(book.createSheet("Sheet2"));
+		
+		sheet1.getCell("A1").setValue(12);
+		sheet1.getCell("B1").setValue("=A1");
+		
+		sheet1.getCell("A2").setValue(34);
+		sheet1.getCell("B2").setValue("=Sheet1!A2");
+		
+		sheet1.getCell("A3").setValue(56);
+		sheet2.getCell("C3").setValue("=Sheet1!A3"); //sheet2 a1
+		
+		sheet2.getCell("A4").setValue(78);
+		sheet2.getCell("C4").setValue("=A4");
+		
+		Assert.assertEquals(12D,sheet1.getCell("B1").getValue());
+		Assert.assertEquals(34D,sheet1.getCell("B2").getValue());
+		Assert.assertEquals(56D,sheet2.getCell("C3").getValue());
+		Assert.assertEquals(78D,sheet2.getCell("C4").getValue());
+
+		
+		refs = dt.getDependents(new RefImpl((AbstractCellAdv)sheet1.getCell("A1")));
+		Assert.assertEquals(1, refs.size());
+		Ref ref = refs.iterator().next();
+		CellRegion refRegion = new CellRegion(ref.getRow(),ref.getColumn(),ref.getLastRow(),ref.getLastColumn());
+		Assert.assertEquals("B1",refRegion.getReferenceString());
+		
+		refs = dt.getDependents(new RefImpl((AbstractCellAdv)sheet1.getCell("A2")));
+		Assert.assertEquals(1, refs.size());
+		ref = refs.iterator().next();
+		refRegion = new CellRegion(ref.getRow(),ref.getColumn(),ref.getLastRow(),ref.getLastColumn());
+		Assert.assertEquals("B2",refRegion.getReferenceString());
+		
+		refs = dt.getDependents(new RefImpl((AbstractCellAdv)sheet1.getCell("A3")));
+		Assert.assertEquals(1, refs.size());
+		ref = refs.iterator().next();
+		refRegion = new CellRegion(ref.getRow(),ref.getColumn(),ref.getLastRow(),ref.getLastColumn());
+		Assert.assertEquals("C3",refRegion.getReferenceString());
+		
+		refs = dt.getDependents(new RefImpl((AbstractCellAdv)sheet1.getCell("A4")));
+		Assert.assertEquals(0, refs.size());
+		refs = dt.getDependents(new RefImpl((AbstractCellAdv)sheet2.getCell("A4")));
+		Assert.assertEquals(1, refs.size());
+		ref = refs.iterator().next();
+		refRegion = new CellRegion(ref.getRow(),ref.getColumn(),ref.getLastRow(),ref.getLastColumn());
+		Assert.assertEquals("C4",refRegion.getReferenceString());
+		
+		book.deleteSheet(sheet1);
+		
+		//shouldn't has old depedence on old sheet name
+		refs = dt.getDependents(new RefImpl(book.getBookName(),"Sheet1",0,0));//a1
+		Assert.assertEquals(0, refs.size());
+		refs = dt.getDependents(new RefImpl(book.getBookName(),"Sheet1",1,0));//a2
+		Assert.assertEquals(0, refs.size());
+
+		refs = dt.getDependents(new RefImpl(book.getBookName(),"Sheet1",2,0));//a3
+		Assert.assertEquals(0, refs.size());
+		
+		refs = dt.getDependents(new RefImpl(book.getBookName(),"Sheet1",3,0));//a4
+		Assert.assertEquals(0, refs.size());
+		
+		//still has in sheet2
+		refs = dt.getDependents(new RefImpl(book.getBookName(),"Sheet2",3,0));//sheet2 a4
+		Assert.assertEquals(1, refs.size());
+		ref = refs.iterator().next();
+		refRegion = new CellRegion(ref.getRow(),ref.getColumn(),ref.getLastRow(),ref.getLastColumn());
+		Assert.assertEquals("C4",refRegion.getReferenceString());
+		
+		
+		//
+		Assert.assertEquals("#REF!A3",sheet2.getCell("C3").getFormulaValue());
+		Assert.assertEquals("A4",sheet2.getCell("C4").getFormulaValue());
+		
+		refs = dt.getDependents(new RefImpl((AbstractCellAdv)sheet2.getCell("A4")));
+		Assert.assertEquals(1, refs.size());
+		ref = refs.iterator().next();
+		refRegion = new CellRegion(ref.getRow(),ref.getColumn(),ref.getLastRow(),ref.getLastColumn());
+		Assert.assertEquals("C4",refRegion.getReferenceString());
+		
+		
+		sheet2.getCell("A4").setValue(99);
+		
+		Assert.assertEquals("#REF",sheet2.getCell("C3").getErrorValue().getErrorString());
+		Assert.assertEquals(99D,sheet2.getCell("C4").getValue());
+		
+		
+	}
 }

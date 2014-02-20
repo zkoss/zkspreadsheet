@@ -299,13 +299,13 @@ public class BookImpl extends AbstractBookAdv{
 	public void deleteSheet(NSheet sheet) {
 		checkOwnership(sheet);
 		
-			destroyingSheet.set(sheet);
+		destroyingSheet.set(sheet);
 		try{
 			((AbstractSheetAdv)sheet).destroy();
 		}finally{
 			destroyingSheet.set(null);
 		}
-		
+		String oldName = sheet.getSheetName();
 		int index = sheets.indexOf(sheet);
 		sheets.remove(index);
 		
@@ -316,6 +316,8 @@ public class BookImpl extends AbstractBookAdv{
 //				this,ModelInternalEvents.createDataMap(ModelInternalEvents.PARAM_SHEET_OLD_INDEX, index)));
 		
 		ModelUpdateUtil.handlePrecedentUpdate(getBookSeries(),new RefImpl(this.getBookName(),sheet.getSheetName()));
+		
+		renameSheetFormula(oldName,null);
 	}
 
 	@Override
@@ -333,9 +335,6 @@ public class BookImpl extends AbstractBookAdv{
 		
 		//create formula cache for any sheet, sheet name, position change
 		EngineFactory.getInstance().createFormulaEngine().clearCache(new FormulaClearContext(this));
-		
-//		sendModelInternalEvent(ModelInternalEvents.createModelInternalEvent(ModelInternalEvents.ON_SHEET_MOVED, 
-//				this,sheet,ModelInternalEvents.createDataMap(ModelInternalEvents.PARAM_SHEET_OLD_INDEX, oldindex)));
 	}
 
 	public void dump(StringBuilder builder) {
