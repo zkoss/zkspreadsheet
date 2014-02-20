@@ -25,6 +25,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.zkoss.lang.Objects;
@@ -42,7 +43,9 @@ import org.zkoss.zss.ngmodel.NFont;
 import org.zkoss.zss.ngmodel.NName;
 import org.zkoss.zss.ngmodel.NRow;
 import org.zkoss.zss.ngmodel.NSheet;
+import org.zkoss.zss.ngmodel.SheetRegion;
 import org.zkoss.zss.ngmodel.sys.EngineFactory;
+import org.zkoss.zss.ngmodel.sys.dependency.DependencyTable;
 import org.zkoss.zss.ngmodel.sys.dependency.Ref;
 import org.zkoss.zss.ngmodel.sys.formula.EvaluationContributor;
 import org.zkoss.zss.ngmodel.sys.formula.FormulaClearContext;
@@ -216,18 +219,15 @@ public class BookImpl extends AbstractBookAdv{
 		
 
 		AbstractSheetAdv sheet = new SheetImpl(this,nextObjId("sheet"));
-		if(src instanceof AbstractSheetAdv){
-			((AbstractSheetAdv)src).copyTo(sheet);
-		}
 		sheet.setSheetName(name);
 		sheets.add(sheet);
 		
+		if(src instanceof AbstractSheetAdv){
+			((AbstractSheetAdv)src).copyTo(sheet);
+		}
+		
 		//create formula cache for any sheet, sheet name, position change
 		EngineFactory.getInstance().createFormulaEngine().clearCache(new FormulaClearContext(this));
-		
-//		sendModelInternalEvent(ModelInternalEvents.createModelInternalEvent(ModelInternalEvents.ON_SHEET_ADDED,
-//				this,
-//				sheet));
 
 		ModelUpdateUtil.handlePrecedentUpdate(getBookSeries(),new RefImpl(sheet));
 
@@ -249,11 +249,21 @@ public class BookImpl extends AbstractBookAdv{
 		//create formula cache for any sheet, sheet name, position change
 		EngineFactory.getInstance().createFormulaEngine().clearCache(new FormulaClearContext(this));
 		
-//		sendModelInternalEvent(ModelInternalEvents.createModelInternalEvent(ModelInternalEvents.ON_SHEET_RENAMED, 
-//				this,sheet, ModelInternalEvents.createDataMap(ModelInternalEvents.PARAM_SHEET_OLD_NAME, oldname)));
-		
 		ModelUpdateUtil.handlePrecedentUpdate(getBookSeries(),new RefImpl(this.getBookName(),newname));//to clear the cahce of formula that has unexisted name
 		ModelUpdateUtil.handlePrecedentUpdate(getBookSeries(),new RefImpl(this.getBookName(),oldname));
+		
+		renameFormula(oldname,newname);
+	}
+	
+	private void renameFormula(String oldName, String newName){
+		AbstractBookSeriesAdv bs = (AbstractBookSeriesAdv)getBookSeries();
+		DependencyTable dt = bs.getDependencyTable();
+		Ref ref = new RefImpl(getBookName(),oldName);
+		Set<Ref> dependents = dt.getDependents(ref);
+		if(dependents.size()>0){
+			FormulaTunerHelper tuner = new FormulaTunerHelper(bs);
+			tuner.renameSheet(this,oldName,newName,dependents);
+		}
 	}
 
 	private void checkLegalSheetName(String name) {

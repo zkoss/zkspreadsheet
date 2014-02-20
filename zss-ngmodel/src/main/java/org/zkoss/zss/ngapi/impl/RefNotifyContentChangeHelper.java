@@ -1,6 +1,8 @@
 package org.zkoss.zss.ngapi.impl;
 
 import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import org.zkoss.zss.ngmodel.NBook;
 import org.zkoss.zss.ngmodel.NBookSeries;
@@ -19,6 +21,9 @@ import org.zkoss.zss.ngmodel.sys.dependency.Ref.RefType;
 	}
 
 	public void notifyContentChange(HashSet<Ref> notifySet) {
+		Map<String,Ref> chartDependents  = new LinkedHashMap<String, Ref>();
+		Map<String,Ref> validationDependents  = new LinkedHashMap<String, Ref>();	
+		
 		// clear formula cache
 		for (Ref notify : notifySet) {
 			System.out.println(">>> Notify Dependent Change : "+notify);
@@ -27,14 +32,21 @@ import org.zkoss.zss.ngmodel.sys.dependency.Ref.RefType;
 				handleCellRef(notify);
 			} else if (notify.getType() == RefType.OBJECT) {
 				if(((ObjectRef)notify).getObjectType()==ObjectType.CHART){
-					handleChartRef((ObjectRef)notify);
+					chartDependents.put(((ObjectRef)notify).getObjectIdPath()[0], notify);
 				}else if(((ObjectRef)notify).getObjectType()==ObjectType.DATA_VALIDATION){
-					handleDataValidationRef((ObjectRef)notify);
+					chartDependents.put(((ObjectRef)notify).getObjectIdPath()[0], notify);
 				}
 			} else {// TODO another
 
 			}
 		}
+		
+		for (Ref notify : chartDependents.values()) {
+			handleChartRef((ObjectRef)notify);
+		}
+		for (Ref notify : validationDependents.values()) {
+			handleDataValidationRef((ObjectRef)notify);
+		}	
 	}
 
 	private void handleChartRef(ObjectRef notify) {

@@ -200,6 +200,11 @@ public class RefImpl implements Ref, Serializable {
 			}
 			break;
 		case OBJECT://will be override
+			if(lastSheetName!=null){
+				sb.insert(0, sheetName + ":" + lastSheetName + "!");
+			}else if(sheetName!=null){
+				sb.insert(0, sheetName + "!");
+			}
 		case NAME://will be override
 		case BOOK:
 		}

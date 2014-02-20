@@ -391,7 +391,13 @@ public class SheetImpl extends AbstractSheetAdv {
 	
 	@Override
 	void setSheetName(String name) {
+		checkLegalSheetName(name);
 		this.name = name;
+	}
+	
+
+	private void checkLegalSheetName(String name2) {
+		
 	}
 //	@Override
 //	void onModelInternalEvent(ModelInternalEvent event) {
@@ -1062,8 +1068,8 @@ public class SheetImpl extends AbstractSheetAdv {
 		DependencyTable dt = bs.getDependencyTable();
 		Set<Ref> dependents = dt.getDirectDependents(new RefImpl(book.getBookName(),getSheetName(),src.getRow(),src.getColumn(),src.getLastRow(),src.getLastColumn()));
 		if(dependents.size()>0){
-			FormulaTunerHelper tuner = new FormulaTunerHelper(bs,new SheetRegion(this,src));
-			tuner.move(dependents,rowOffset,columnOffset);
+			FormulaTunerHelper tuner = new FormulaTunerHelper(bs);
+			tuner.move(new SheetRegion(this,src),dependents,rowOffset,columnOffset);
 		}
 	}
 	
@@ -1077,8 +1083,8 @@ public class SheetImpl extends AbstractSheetAdv {
 		
 		Set<Ref> dependents = dt.getDirectDependents(ref);
 		if(dependents.size()>0){
-			FormulaTunerHelper tuner = new FormulaTunerHelper(bs,new SheetRegion(this,src));
-			tuner.shrink(dependents,horizontal);
+			FormulaTunerHelper tuner = new FormulaTunerHelper(bs);
+			tuner.shrink(new SheetRegion(this,src),dependents,horizontal);
 		}
 	}
 	
@@ -1090,8 +1096,8 @@ public class SheetImpl extends AbstractSheetAdv {
 				horizontal?src.getLastRow():book.getMaxRowIndex(),horizontal?book.getMaxColumnIndex():src.getLastColumn());
 		Set<Ref> dependents = dt.getDirectDependents(ref);
 		if(dependents.size()>0){
-			FormulaTunerHelper tuner = new FormulaTunerHelper(bs,new SheetRegion(this,src));
-			tuner.extend(dependents,horizontal);
+			FormulaTunerHelper tuner = new FormulaTunerHelper(bs);
+			tuner.extend(new SheetRegion(this,src),dependents,horizontal);
 		}
 	}
 
