@@ -21,6 +21,7 @@ import java.util.Date;
 
 import org.zkoss.zss.ngmodel.CellRegion;
 import org.zkoss.zss.ngmodel.ErrorValue;
+import org.zkoss.zss.ngmodel.InvalidateModelOpException;
 import org.zkoss.zss.ngmodel.InvalidateModelValueException;
 import org.zkoss.zss.ngmodel.NBookSeries;
 import org.zkoss.zss.ngmodel.NCellStyle;
@@ -30,6 +31,7 @@ import org.zkoss.zss.ngmodel.NComment;
 import org.zkoss.zss.ngmodel.NHyperlink;
 import org.zkoss.zss.ngmodel.NRichText;
 import org.zkoss.zss.ngmodel.NSheet;
+import org.zkoss.zss.ngmodel.NCell.CellType;
 import org.zkoss.zss.ngmodel.sys.EngineFactory;
 import org.zkoss.zss.ngmodel.sys.dependency.Ref;
 import org.zkoss.zss.ngmodel.sys.formula.FormulaClearContext;
@@ -179,10 +181,10 @@ public class CellImpl extends AbstractCellAdv {
 	@Override
 	public void clearValue() {
 		checkOrphan();
-		setCellValue(null);
-		
 		clearFormulaDependency();
 		clearFormulaResultCache();
+		
+		setCellValue(null);
 		
 		OptFields opts = getOpts(false); 
 		if(opts!=null){
@@ -199,10 +201,27 @@ public class CellImpl extends AbstractCellAdv {
 		ModelUpdateUtil.addCellUpdate(getSheet(), getRowIndex(), getColumnIndex());
 	}
 	
-	
-	/*package*/ void clearValueForSet(boolean clearDependency) {
+	@Override
+	public void setFormulaValue(String formula) {
 		checkOrphan();
+		Validations.argNotNull(formula);
+		FormulaEngine fe = EngineFactory.getInstance().createFormulaEngine();
+		FormulaExpression expr = fe.parse(formula, new FormulaParseContext(this,null));//for test error, no need to build dependency
+		if(expr.hasError()){	
+			String msg = expr.getErrorMessage();
+			throw new InvalidateModelOpException(msg==null?"The formula contains error":msg);
+		}
 		
+		if(getType()==CellType.FORMULA){
+			clearValueForSet(true);
+		}
+		
+		//parse again, this will create new dependency
+		expr = fe.parse(formula, new FormulaParseContext(this ,getRef()));
+		setValue(expr);
+	}
+	
+	private void clearValueForSet(boolean clearDependency) {
 		//in some situation, we should clear dependency (e.g. old type and new type are both formula)
 		if(clearDependency){
 			clearFormulaDependency();
@@ -234,12 +253,11 @@ public class CellImpl extends AbstractCellAdv {
 		return false;
 	}
 	
-	/*package*/ void clearFormulaDependency(){
-		if(lastRef!=null){
+	private void clearFormulaDependency(){
+		if(getType()==CellType.FORMULA){
 			((AbstractBookSeriesAdv) getSheet().getBook().getBookSeries())
-					.getDependencyTable().clearDependents(lastRef);
+					.getDependencyTable().clearDependents(getRef());
 		}
-		lastRef = null;
 	}
 
 	@Override
@@ -356,24 +374,49 @@ public class CellImpl extends AbstractCellAdv {
 	
 	@Override
 	void setIndex(int newidx) {
+		if(this.index==newidx){
+			return;
+		}
+		
+		CellType type = getType();
+		String formula = null;
+		if(type == CellType.FORMULA){
+			formula = getFormulaValue();
+			((AbstractBookSeriesAdv) getSheet().getBook().getBookSeries())
+				.getDependencyTable().clearDependents(getRef());
+		}
 		this.index = newidx;
-		rebuildFormulaDependency();
+		if(formula!=null){
+			FormulaEngine fe = EngineFactory.getInstance().createFormulaEngine();
+			fe.parse(formula, new FormulaParseContext(this ,getRef()));//rebuild the expression to make new dependency with current row,column
+		}
 	}
 	
 	@Override
-	void setRow(AbstractRowAdv row){
-		checkOrphan();
+	void setRow(int oldRowIdx, AbstractRowAdv row){
+		if(oldRowIdx==row.getIndex() && this.row==row){
+			return;
+		}
+		
+		CellType type = getType();
+		String formula = null;
+		if(type == CellType.FORMULA){
+			formula = getFormulaValue();
+			//clear the old dependency
+			NSheet sheet = getSheet();
+			Ref oldRef = new RefImpl(sheet.getBook().getBookName(),sheet.getSheetName(),oldRowIdx,getColumnIndex());
+			((AbstractBookSeriesAdv) getSheet().getBook().getBookSeries()).getDependencyTable().clearDependents(oldRef);
+		}
 		this.row = row;
-		rebuildFormulaDependency();
+		if(formula!=null){
+			FormulaEngine fe = EngineFactory.getInstance().createFormulaEngine();
+			fe.parse(formula, new FormulaParseContext(this ,getRef()));//rebuild the expression to make new dependency with current row,column
+		}
 	}
 	
-	private Ref lastRef;
 
 	protected Ref getRef(){
-		if(lastRef==null){//keep the last ref for clear dependency (cell is possible be shifted)
-			lastRef = new RefImpl(this);
-		}
-		return lastRef;
+		return new RefImpl(this);
 	}
 	
 	private static class InnerCellValue extends NCellValue{
@@ -387,21 +430,5 @@ public class CellImpl extends AbstractCellAdv {
 		StringBuilder sb = new StringBuilder();
 		sb.append("Cell:"+getReferenceString()+"[").append(getRowIndex()).append(",").append(getColumnIndex()).append("]");
 		return sb.toString();
-	}
-	
-	//rebuild formula dependency after shift
-	/*package*/ void rebuildFormulaDependency(){
-		if(getType()==CellType.FORMULA && lastRef!=null){
-			FormulaExpression expr = (FormulaExpression)getValue(false);
-			if(!expr.hasError()){
-				//clear and rebuild the dependency
-				clearFormulaDependency();
-				FormulaEngine fe = EngineFactory.getInstance().createFormulaEngine();
-				fe.parse(expr.getFormulaString(), new FormulaParseContext(this ,getRef()));//rebuild the expression to make new dependency with current row,column
-			}
-		}else if(lastRef!=null){
-			lastRef = null;//just clear when rebuild (it is possible this was cell moved)
-		}
-		
 	}
 }

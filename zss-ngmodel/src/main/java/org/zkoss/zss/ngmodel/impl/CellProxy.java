@@ -101,6 +101,18 @@ class CellProxy extends AbstractCellAdv {
 	}
 
 	@Override
+	public void setFormulaValue(String formula) {
+		loadProxy();
+		if (proxy == null) {
+			proxy = (AbstractCellAdv) ((AbstractRowAdv) ((AbstractSheetAdv)getSheet()).getOrCreateRow(
+					rowIdx)).getOrCreateCell(columnIdx);
+			proxy.setFormulaValue(formula);
+		} else if (proxy != null) {
+			proxy.setFormulaValue(formula);
+		}
+	}
+	
+	@Override
 	public void setValue(Object value) {
 		loadProxy();
 		if (proxy == null && value != null) {
@@ -181,12 +193,6 @@ class CellProxy extends AbstractCellAdv {
 		if (proxy != null)
 			proxy.clearValue();
 	}
-	@Override
-	/*package*/ void clearValueForSet(boolean clearDependency) {
-		loadProxy();
-		if (proxy != null)
-			proxy.clearValueForSet(clearDependency);
-	}
 
 	@Override
 	public void clearFormulaResultCache() {
@@ -261,7 +267,7 @@ class CellProxy extends AbstractCellAdv {
 		throw new UnsupportedOperationException("readonly");
 	}
 	@Override
-	void setRow(AbstractRowAdv row) {
+	void setRow(int oldRowIdx,AbstractRowAdv row) {
 		throw new UnsupportedOperationException("readonly");
 	}
 	

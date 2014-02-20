@@ -230,9 +230,10 @@ public class RowImpl extends AbstractRowAdv {
 
 	@Override
 	void setIndex(int newidx) {
+		int oldIdx = index;
 		this.index = newidx;
 		for(AbstractCellAdv cell:cells.values()){
-			cell.setRow(this);//set this row again to trigger rebuildFormulaDependency
+			cell.setRow(oldIdx,this);//set this row again to trigger rebuildFormulaDependency
 		}
 	}
 
@@ -254,11 +255,12 @@ public class RowImpl extends AbstractRowAdv {
 		}
 		
 		Collection<AbstractCellAdv> toMove = cells.clear(start, end);
+		int oldRowIdx = getIndex();
 		for(AbstractCellAdv cell:toMove){
 			int newidx = cell.getColumnIndex()+offset;
 			AbstractCellAdv old = ((RowImpl)target).cells.put(newidx, cell);
 			cell.setIndex(newidx);
-			cell.setRow(target);
+			cell.setRow(oldRowIdx,target);
 			if(old!=null){
 				old.destroy();
 			}

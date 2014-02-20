@@ -72,7 +72,6 @@ public abstract class AbstractCellAdv implements NCell,LinkedModelObject,Seriali
 	/*package*/ abstract void evalFormula();
 	/*package*/ abstract Object getValue(boolean evaluatedVal);
 	/*package*/ abstract NCellStyle getCellStyle(boolean local);
-	/*package*/ abstract void clearValueForSet(boolean clearDependency);
 	
 	@Override
 	public Object getValue(){
@@ -164,26 +163,6 @@ public abstract class AbstractCellAdv implements NCell,LinkedModelObject,Seriali
 	public void setErrorValue(ErrorValue errorValue) {
 		setValue(errorValue);
 	}
-	
-	@Override
-	public void setFormulaValue(String formula) {
-		checkOrphan();
-		Validations.argNotNull(formula);
-		FormulaEngine fe = EngineFactory.getInstance().createFormulaEngine();
-		FormulaExpression expr = fe.parse(formula, new FormulaParseContext(this,null));//for test error, no need to build dependency
-		if(expr.hasError()){	
-			String msg = expr.getErrorMessage();
-			throw new InvalidateModelOpException(msg==null?"The formula contains error":msg);
-		}
-		
-		if(getType()==CellType.FORMULA){
-			clearValueForSet(true);
-		}
-		
-		//parse again, this will create new dependency
-		expr = fe.parse(formula, new FormulaParseContext(this ,getRef()));
-		setValue(expr);
-	}
 
 	@Override
 	public String getFormulaValue() {
@@ -251,6 +230,6 @@ public abstract class AbstractCellAdv implements NCell,LinkedModelObject,Seriali
 	}
 	
 	/*package*/ abstract void setIndex(int newidx);
-	/*package*/ abstract void setRow(AbstractRowAdv row);
+	/*package*/ abstract void setRow(int oldRowIdx, AbstractRowAdv row);
 	/*package*/ abstract Ref getRef();
 }
