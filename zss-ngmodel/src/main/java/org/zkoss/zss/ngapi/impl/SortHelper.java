@@ -6,12 +6,10 @@ import java.util.Map.Entry;
 
 import org.zkoss.poi.ss.usermodel.*;
 import org.zkoss.zk.ui.UiException;
-import org.zkoss.zss.engine.Ref;
-import org.zkoss.zss.engine.impl.*;
-import org.zkoss.zss.model.sys.*;
-import org.zkoss.zss.model.sys.impl.BookHelper;
-import org.zkoss.zss.model.sys.impl.BookHelper.*;
 import org.zkoss.zss.ngapi.NRange;
+import org.zkoss.zss.ngapi.impl.imexp.BookHelper;
+import org.zkoss.zss.ngmodel.*;
+import org.zkoss.zss.ngmodel.PasteOption.PasteType;
 
 /**
  * Manipulate cells according to sorting criteria and options.
@@ -21,20 +19,40 @@ import org.zkoss.zss.ngapi.NRange;
 //porting implementation from BookHelper.sort()
 public class SortHelper extends RangeHelperBase {
 
-	public static final int SORT_NORMAL_DEFAULT = 0;
-	public static final int SORT_TEXT_AS_NUMBERS = 1;
-	public static final int SORT_HEADER_NO  = 0;
-	public static final int SORT_HEADER_YES = 1;	
+	private static final PasteOption PASTE_ALL_OPTION = new PasteOption();
 	
 	public SortHelper(NRange range) {
 		super(range);
+		PASTE_ALL_OPTION.setPasteType(PasteType.ALL);
 	}
 	
-	@SuppressWarnings("unchecked")
-	public static ChangeInfo sort(XSheet sheet, int tRow, int lCol, int bRow, int rCol, 
-			Ref key1, boolean desc1, Ref key2, int type, boolean desc2, Ref key3, boolean desc3, int header, int orderCustom,
+	/**
+	 * 
+	 * @param sheet
+	 * @param tRow selection range to sort
+	 * @param lCol selection range to sort
+	 * @param bRow selection range to sort
+	 * @param rCol selection range to sort
+	 * @param key1
+	 * @param desc1
+	 * @param key2
+	 * @param type
+	 * @param desc2
+	 * @param key3
+	 * @param desc3
+	 * @param header
+	 * @param orderCustom
+	 * @param matchCase
+	 * @param sortByRows
+	 * @param sortMethod
+	 * @param dataOption1 BookHelper.SORT_TEXT_AS_NUMBERS, BookHelper.SORT_NORMAL_DEFAULT
+	 * @param dataOption2
+	 * @param dataOption3
+	 */
+	public void sort(NSheet sheet, int tRow, int lCol, int bRow, int rCol, 
+			NRange key1, boolean desc1, NRange key2, int type, boolean desc2, NRange key3, boolean desc3, int header, int orderCustom,
 			boolean matchCase, boolean sortByRows, int sortMethod, int dataOption1, int dataOption2, int dataOption3) {
-		//TODO type not yet imiplmented(Sort label/Sort value, for PivotTable)
+		//TODO type not yet implemented(Sort label/Sort value, for PivotTable)
 		//TODO orderCustom is not implemented yet
 		if (header == BookHelper.SORT_HEADER_YES) {
 			if (sortByRows) {
@@ -44,7 +62,7 @@ public class SortHelper extends RangeHelperBase {
 			}
 		}
 		if (tRow > bRow || lCol > rCol) { //nothing to sort!
-			return null;
+			return ;
 		}
 		int keyCount = 0;
 		if (key1 != null) {
@@ -78,48 +96,54 @@ public class SortHelper extends RangeHelperBase {
 		validateKeyIndexes(keyIndexes, tRow, lCol, bRow, rCol, sortByRows);
 		
 		final List<SortKey> sortKeys = new ArrayList<SortKey>(sortByRows ? rCol - lCol + 1 : bRow - tRow + 1);
-		final int begRow = Math.max(tRow, sheet.getFirstRowNum());
-		final int endRow = Math.min(bRow, sheet.getLastRowNum());
-		if (sortByRows) {
-			int begCol = ((XBook)sheet.getWorkbook()).getSpreadsheetVersion().getLastColumnIndex();
+//		final int begRow = Math.max(tRow, sheet.getFirstRowNum());
+//		final int endRow = Math.min(bRow, sheet.getLastRowNum());
+		final int begRow = Math.max(tRow, sheet.getStartRowIndex());
+		final int endRow = Math.min(bRow, sheet.getEndRowIndex());
+		if (sortByRows) { //keyIndex contains row index
+			int begCol = sheet.getBook().getMaxColumnIndex();
 			int endCol = 0;
 			//locate begCol/endCol of the sheet
 			for (int rowNum = begRow; rowNum <= endRow; ++rowNum) {
-				final Row row = sheet.getRow(rowNum);
+				final NRow row = sheet.getRow(rowNum);
 				if (row != null) {
-					begCol = Math.min(begCol, row.getFirstCellNum());
-					endCol = Math.max(begCol, row.getLastCellNum() - 1);
+//					begCol = Math.min(begCol, row.getFirstCellNum());
+//					endCol = Math.max(begCol, row.getLastCellNum() - 1);
+					begCol = Math.min(begCol, sheet.getStartCellIndex(rowNum));
+					endCol = Math.max(begCol, sheet.getEndCellIndex(rowNum) - 1);
 				}
 			}
 			begCol = Math.max(lCol, begCol);
 			endCol = Math.min(rCol, endCol);
 			for (int colnum = begCol; colnum <= endCol; ++colnum) {
-				final Object[] values = new Object[keyCount];
+				Object[] values = new Object[keyCount];
 				for(int j = 0; j < keyCount; ++j) {
-					final Row row = sheet.getRow(keyIndexes[j]);
-					final Cell cell = row != null ? row.getCell(colnum, Row.RETURN_BLANK_AS_NULL) : null;
-					final Object val = getCellObject(cell, dataOptions[j]);
+					NRow row = sheet.getRow(keyIndexes[j]);
+//					final Cell cell = row != null ? row.getCell(colnum, Row.RETURN_BLANK_AS_NULL) : null;
+					NCell cell = sheet.getCell(keyIndexes[j], colnum);
+					Object val = getCellObject(cell, dataOptions[j]);
 					values[j] = val;
 				}
-				final SortKey sortKey = new SortKey(colnum, values);
+				SortKey sortKey = new SortKey(colnum, values);
 				sortKeys.add(sortKey);
 			}
 			if (!sortKeys.isEmpty()) {
 				final Comparator<SortKey> keyComparator = new KeyComparator(descs, matchCase, sortMethod, type);
 				Collections.sort(sortKeys, keyComparator);
-				return BookHelper.assignColumns(sheet, sortKeys, begRow, lCol, endRow, rCol);
+				 assignColumns(sheet, sortKeys, begRow, lCol, endRow, rCol);
 			} else {
-				return null;
+				return ;
 			}
-		} else { //sortByColumn, default case
+		} else { //sortByColumn, default case , keyIndex contains column index
 			for (int rownum = begRow; rownum <= endRow; ++rownum) {
-				final Row row = sheet.getRow(rownum);
+				final NRow row = sheet.getRow(rownum);
 				if (row == null) {
 					continue; //nothing to sort
 				}
 				final Object[] values = new Object[keyCount];
 				for(int j = 0; j < keyCount; ++j) {
-					final Cell cell = row.getCell(keyIndexes[j], Row.RETURN_BLANK_AS_NULL);
+//					final Cell cell = row.getCell(keyIndexes[j], Row.RETURN_BLANK_AS_NULL);
+					final NCell cell = sheet.getCell(rownum, keyIndexes[j]);
 					final Object val = getCellObject(cell, dataOptions[j]);
 					values[j] = val;
 				}
@@ -129,134 +153,18 @@ public class SortHelper extends RangeHelperBase {
 			if (!sortKeys.isEmpty()) {
 				final Comparator<SortKey> keyComparator = new KeyComparator(descs, matchCase, sortMethod, type);
 				Collections.sort(sortKeys, keyComparator);
-				return BookHelper.assignRows(sheet, sortKeys, tRow, lCol, bRow, rCol);
+				assignRows(sheet, sortKeys, tRow, lCol, bRow, rCol);
 			} else {
-				return null;
+				return ;
 			}
 		}
 	}
 	
-	private static Object getCellObject(Cell cell, int dataOption) {
-		Object val = cell != null ? BookHelper.getCellObject(cell) : null;
-		if (val instanceof RichTextString && dataOption == BookHelper.SORT_TEXT_AS_NUMBERS) {
-			try {
-				val = new Double((String)((RichTextString)val).getString());
-			} catch(NumberFormatException ex) {
-				val = new Double(0);//ignore
-			}
-		}
-		return val;
+	private int rangeToIndex(NRange range, boolean sortByRows) {
+		return sortByRows ? range.getRow() : range.getColumn();
 	}
-	@SuppressWarnings("unchecked")
-	private static ChangeInfo  assignColumns(XSheet sheet, List<SortKey> sortKeys, int tRow, int lCol, int bRow, int rCol) {
-		final int cellCount = bRow - tRow + 1;
-		final Map<Integer, List<Cell>> newCols = new HashMap<Integer, List<Cell>>();  
-		final Set<Ref> toEval = new HashSet<Ref>();
-		final Set<Ref> affected = new HashSet<Ref>();
-		final List<MergeChange> mergeChanges = new ArrayList<MergeChange>();
-		final ChangeInfo changeInfo = new ChangeInfo(toEval, affected, mergeChanges);
-		int j = 0;
-		for(final Iterator<SortKey> it = sortKeys.iterator(); it.hasNext();++j) {
-			final SortKey sortKey = it.next();
-			final int oldColNum = sortKey.getIndex();
-			final int newColNum = lCol + j;
-			it.remove();
-			if (oldColNum == newColNum) { //no move needed, skip it
-				continue;
-			}
-			//remove cells from the old column of the Range
-			final List<Cell> cells = new ArrayList<Cell>(cellCount);
-			for(int k = tRow; k <= bRow; ++k) {
-				final Cell cell = BookHelper.getCell(sheet, k, oldColNum);
-				if (cell != null) {
-					cells.add(cell);
-					final Set<Ref>[] refs = BookHelper.removeCell(cell, false);
-					toEval.addAll(refs[0]);
-					affected.addAll(refs[1]);
-				}
-			}
-			if (!cells.isEmpty()) {
-				newCols.put(Integer.valueOf(newColNum), cells);
-			}
-		}
-		
-		//move cells
-		for(Entry<Integer, List<Cell>> entry : newCols.entrySet()) {
-			final int colNum = entry.getKey().intValue();
-			final List<Cell> cells = entry.getValue();
-			for(Cell cell : cells) {
-				final int rowNum = cell.getRowIndex();
-				final ChangeInfo changeInfo0 = BookHelper.copyCell(cell, sheet, rowNum, colNum, XRange.PASTE_ALL, XRange.PASTEOP_NONE, false);
-				assignChangeInfo(toEval, affected, mergeChanges, changeInfo0);
-			}
-		}
-		return changeInfo;
-	}
-
-	@SuppressWarnings("unchecked")
-	private static ChangeInfo assignRows(XSheet sheet, List<SortKey> sortKeys, int tRow, int lCol, int bRow, int rCol) {
-		final int cellCount = rCol - lCol + 1;
-		final Map<Integer, List<Cell>> newRows = new HashMap<Integer, List<Cell>>();  
-		final Set<Ref> toEval = new HashSet<Ref>();
-		final Set<Ref> affected = new HashSet<Ref>();
-		final List<MergeChange> mergeChanges = new ArrayList<MergeChange>();
-		final ChangeInfo changeInfo = new ChangeInfo(toEval, affected, mergeChanges);
-		int j = 0;
-		for(final Iterator<SortKey> it = sortKeys.iterator(); it.hasNext();++j) {
-			final SortKey sortKey = it.next();
-			final int oldRowNum = sortKey.getIndex();
-			final Row row = sheet.getRow(oldRowNum); 
-			final int newRowNum = tRow + j;
-			it.remove();
-			if (oldRowNum == newRowNum) { //no move needed, skip it
-				continue;
-			}
-			//remove cells from the old row of the Range
-			final List<Cell> cells = new ArrayList<Cell>(cellCount);
-			final int begCol = Math.max(lCol, row.getFirstCellNum());
-			final int endCol = Math.min(rCol, row.getLastCellNum() - 1);
-			for(int k = begCol; k <= endCol; ++k) {
-				final Cell cell = row.getCell(k);
-				if (cell != null) {
-					cells.add(cell);
-					final Set<Ref>[] refs = BookHelper.removeCell(cell, false);
-					assignRefs(toEval, affected, refs);
-				}
-			}
-			if (!cells.isEmpty()) {
-				newRows.put(Integer.valueOf(newRowNum), cells);
-			}
-		}
-		
-		//move cells
-		for(Entry<Integer, List<Cell>> entry : newRows.entrySet()) {
-			final int rowNum = entry.getKey().intValue();
-			final List<Cell> cells = entry.getValue();
-			for(Cell cell : cells) {
-				final int colNum = cell.getColumnIndex();
-				final ChangeInfo changeInfo0 = BookHelper.copyCell(cell, sheet, rowNum, colNum, XRange.PASTE_ALL, XRange.PASTEOP_NONE, false);
-				assignChangeInfo(toEval, affected, mergeChanges, changeInfo0);
-			}
-		}
-		return changeInfo;
-	}
-	private static Object getCellObject(Cell cell) {
-		if (cell == null) {
-			return "";
-		}
-		int cellType = cell.getCellType();
-		if (cellType == Cell.CELL_TYPE_FORMULA) {
-			final XBook book = (XBook)cell.getSheet().getWorkbook();
-			final CellValue cv = BookHelper.evaluate(book, cell);
-			return BookHelper.getValueByCellValue(cv);
-		} else {
-			return BookHelper.getCellValue(cell);
-		}
-	}
-	private static int rangeToIndex(Ref range, boolean sortByRows) {
-		return sortByRows ? range.getTopRow() : range.getLeftCol();
-	}
-	private static void validateKeyIndexes(int[] keyIndexes, int tRow, int lCol, int bRow, int rCol, boolean sortByRows) {
+	
+	private void validateKeyIndexes(int[] keyIndexes, int tRow, int lCol, int bRow, int rCol, boolean sortByRows) {
 		if (!sortByRows) {
 			for(int j = keyIndexes.length - 1; j >= 0; --j) {
 				final int keyIndex = keyIndexes[j]; 
@@ -272,6 +180,136 @@ public class SortHelper extends RangeHelperBase {
 				}
 			}
 		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	private static void  assignColumns(NSheet sheet, List<SortKey> sortKeys, int tRow, int lCol, int bRow, int rCol) {
+		final int cellCount = bRow - tRow + 1;
+		final Map<Integer, List<NCell>> newCols = new HashMap<Integer, List<NCell>>(); //key: new column index after sorting 
+//		final Set<Ref> toEval = new HashSet<Ref>();
+//		final Set<Ref> affected = new HashSet<Ref>();
+//		final List<MergeChange> mergeChanges = new ArrayList<MergeChange>();
+		int j = 0;
+		for(final Iterator<SortKey> it = sortKeys.iterator(); it.hasNext();++j) {
+			final SortKey sortKey = it.next();
+			final int oldColNum = sortKey.getIndex();
+			final int newColNum = lCol + j;
+			it.remove();
+			if (oldColNum == newColNum) { //no move needed, skip it
+				continue;
+			}
+			//remove cells from the old column of the Range
+			final List<NCell> cells = new ArrayList<NCell>(cellCount);
+			for(int k = tRow; k <= bRow; ++k) {
+				NCell cell = sheet.getCell(k, oldColNum);
+				if (cell != null) {
+					cells.add(cell);
+//					final Set<Ref>[] refs = BookHelper.removeCell(cell, false);
+//					toEval.addAll(refs[0]);
+//					affected.addAll(refs[1]);
+				}
+			}
+			if (!cells.isEmpty()) {
+				newCols.put(Integer.valueOf(newColNum), cells);
+			}
+		}
+		
+		//move cells
+		for(Entry<Integer, List<NCell>> entry : newCols.entrySet()) {
+			final int colNum = entry.getKey().intValue();
+			final List<NCell> cells = entry.getValue();
+			for(NCell cell : cells) {
+				final int rowNum = cell.getRowIndex();
+//				BookHelper.copyCell(cell, sheet, rowNum, colNum, XRange.PASTE_ALL, XRange.PASTEOP_NONE, false);
+			}
+		}
+	}
+
+	/**
+	 * Change order of rows according to sorting result.
+	 * @param sheet
+	 * @param sortKeys
+	 * @param tRow
+	 * @param lCol
+	 * @param bRow
+	 * @param rCol
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	private static void assignRows(NSheet sheet, List<SortKey> sortKeys, int tRow, int lCol, int bRow, int rCol) {
+		final int cellCount = rCol - lCol + 1;
+		final Map<Integer, List<NCell>> newRows = new HashMap<Integer, List<NCell>>(); //key: new row index after sorting 
+//		final Set<Ref> toEval = new HashSet<Ref>();
+//		final Set<Ref> affected = new HashSet<Ref>();
+		int j = 0;
+		for(final Iterator<SortKey> it = sortKeys.iterator(); it.hasNext();++j) {
+			final SortKey sortKey = it.next();
+			final int oldRowNum = sortKey.getIndex();
+			final NRow row = sheet.getRow(oldRowNum); 
+			final int newRowNum = tRow + j;
+			it.remove();
+			if (oldRowNum == newRowNum) { //no move needed, skip it
+				continue;
+			}
+			//remove cells from the old row of the Range
+			final List<NCell> cells = new ArrayList<NCell>(cellCount);
+			final int begCol = Math.max(lCol, sheet.getStartCellIndex(oldRowNum));
+			final int endCol = Math.min(rCol, sheet.getEndCellIndex(oldRowNum) - 1);
+			for(int k = begCol; k <= endCol; ++k) {
+				final NCell cell = sheet.getCell(oldRowNum, k);
+				if (cell != null) {
+					cells.add(cell);
+//					final Set<Ref>[] refs = BookHelper.removeCell(cell, false);
+//					assignRefs(toEval, affected, refs);
+				}
+			}
+			if (!cells.isEmpty()) {
+				newRows.put(Integer.valueOf(newRowNum), cells);
+			}
+//			CellRegion sourceRow = new CellRegion(oldRowNum,lCol ,oldRowNum, rCol);
+//			CellRegion destinationRow = new CellRegion(newRowNum,lCol ,newRowNum, rCol);
+//			sheet.pasteCell(new SheetRegion(sheet, sourceRow), destinationRow, PASTE_ALL_OPTION);
+		}
+		
+		//move cells
+		for(Entry<Integer, List<NCell>> entry : newRows.entrySet()) {
+			final int newRowIndex = entry.getKey().intValue();
+			final List<NCell> cells = entry.getValue();
+//			for(Cell cell : cells) {
+//				final int colNum = cell.getColumnIndex();
+//				BookHelper.copyCell(cell, sheet, newRowIndex, colNum, XRange.PASTE_ALL, XRange.PASTEOP_NONE, false);
+//				assignChangeInfo(toEval, affected, mergeChanges, changeInfo0);
+//			}
+		}
+	}
+	
+	//convert cell sorting data upon data option
+	private Object getCellObject(NCell cell, int dataOption) {
+		Object val = cell.getValue();
+		if (val instanceof RichTextString && dataOption == BookHelper.SORT_TEXT_AS_NUMBERS) {
+			try {
+				val = new Double((String)((RichTextString)val).getString());
+			} catch(NumberFormatException ex) {
+				val = new Double(0);//ignore
+			}
+		}
+		return val;
+	}
+	
+	//TODO getCellValue()
+	private Object getCellObject(NCell cell) {
+//		if (cell == null) {
+//			return "";
+//		}
+//		int cellType = cell.getCellType();
+//		if (cellType == Cell.CELL_TYPE_FORMULA) {
+//			final XBook book = (XBook)cell.getSheet().getWorkbook();
+//			final CellValue cv = BookHelper.evaluate(book, cell);
+//			return BookHelper.getValueByCellValue(cv);
+//		} else {
+//			return BookHelper.getCellValue(cell);
+//		}
+		return null;
 	}
 	
 	public static class SortKey {
@@ -372,5 +410,5 @@ public class SortHelper extends RangeHelperBase {
 					(ch2 - ch1) : //yes, a < A
 					(uch1 - uch2); //yes, a < b, a < B, A < b, and A < B
 		}
-	}	
+	}
 }

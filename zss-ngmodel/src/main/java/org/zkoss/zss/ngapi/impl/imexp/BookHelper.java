@@ -29,6 +29,10 @@ import org.zkoss.poi.xssf.usermodel.*;
 public final class BookHelper {
 	public static final String AUTO_COLOR = "AUTO_COLOR";
 
+	public static final int SORT_NORMAL_DEFAULT = 0;
+	public static final int SORT_TEXT_AS_NUMBERS = 1;
+	public static final int SORT_HEADER_NO  = 0;
+	public static final int SORT_HEADER_YES = 1;
 	/**
 	 * gets the row freeze, 1 base
 	 */
