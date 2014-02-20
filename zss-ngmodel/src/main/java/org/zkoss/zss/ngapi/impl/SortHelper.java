@@ -24,11 +24,8 @@ public class SortHelper extends RangeHelperBase {
 	public static final int SORT_HEADER_NO  = 0;
 	public static final int SORT_HEADER_YES = 1;
 	
-	private static final PasteOption PASTE_ALL_OPTION = new PasteOption();
-	
 	public SortHelper(NRange range) {
 		super(range);
-		PASTE_ALL_OPTION.setPasteType(PasteType.ALL);
 	}
 	
 	/**
@@ -102,8 +99,6 @@ public class SortHelper extends RangeHelperBase {
 		validateKeyIndexes(keyIndexes, tRow, lCol, bRow, rCol, sortByRows);
 		
 		final List<SortKey> sortKeys = new ArrayList<SortKey>(sortByRows ? rCol - lCol + 1 : bRow - tRow + 1);
-//		final int begRow = Math.max(tRow, sheet.getFirstRowNum());
-//		final int endRow = Math.min(bRow, sheet.getLastRowNum());
 		final int begRow = Math.max(tRow, sheet.getStartRowIndex());
 		final int endRow = Math.min(bRow, sheet.getEndRowIndex());
 		if (sortByRows) { //keyIndex contains row index
@@ -113,10 +108,8 @@ public class SortHelper extends RangeHelperBase {
 			for (int rowNum = begRow; rowNum <= endRow; ++rowNum) {
 				final NRow row = sheet.getRow(rowNum);
 				if (row != null) {
-//					begCol = Math.min(begCol, row.getFirstCellNum());
-//					endCol = Math.max(begCol, row.getLastCellNum() - 1);
 					begCol = Math.min(begCol, sheet.getStartCellIndex(rowNum));
-					endCol = Math.max(begCol, sheet.getEndCellIndex(rowNum) - 1);
+					endCol = Math.max(endCol, sheet.getEndCellIndex(rowNum));
 				}
 			}
 			begCol = Math.max(lCol, begCol);
@@ -124,10 +117,8 @@ public class SortHelper extends RangeHelperBase {
 			for (int colnum = begCol; colnum <= endCol; ++colnum) {
 				Object[] values = new Object[keyCount];
 				for(int j = 0; j < keyCount; ++j) {
-					NRow row = sheet.getRow(keyIndexes[j]);
-//					final Cell cell = row != null ? row.getCell(colnum, Row.RETURN_BLANK_AS_NULL) : null;
 					NCell cell = sheet.getCell(keyIndexes[j], colnum);
-					Object val = getCellObject(cell, dataOptions[j]);
+					Object val = getCellValue(cell, dataOptions[j]);
 					values[j] = val;
 				}
 				SortKey sortKey = new SortKey(colnum, values);
@@ -136,21 +127,20 @@ public class SortHelper extends RangeHelperBase {
 			if (!sortKeys.isEmpty()) {
 				final Comparator<SortKey> keyComparator = new KeyComparator(descs, matchCase, sortMethod, type);
 				Collections.sort(sortKeys, keyComparator);
-				 assignColumns(sheet, sortKeys, begRow, lCol, endRow, rCol);
+				assignColumns(sheet, sortKeys, begRow, lCol, endRow, rCol);
 			} else {
 				return ;
 			}
 		} else { //sortByColumn, default case , keyIndex contains column index
 			for (int rownum = begRow; rownum <= endRow; ++rownum) {
 				final NRow row = sheet.getRow(rownum);
-				if (row == null) {
+				if (row.isNull()) {
 					continue; //nothing to sort
 				}
 				final Object[] values = new Object[keyCount];
 				for(int j = 0; j < keyCount; ++j) {
-//					final Cell cell = row.getCell(keyIndexes[j], Row.RETURN_BLANK_AS_NULL);
 					final NCell cell = sheet.getCell(rownum, keyIndexes[j]);
-					final Object val = getCellObject(cell, dataOptions[j]);
+					final Object val = getCellValue(cell, dataOptions[j]);
 					values[j] = val;
 				}
 				final SortKey sortKey = new SortKey(rownum, values);
@@ -199,40 +189,30 @@ public class SortHelper extends RangeHelperBase {
 	 * @param rCol
 	 */
 	private void  assignColumns(NSheet sheet, List<SortKey> sortKeys, int tRow, int lCol, int bRow, int rCol) {
-		final int cellCount = bRow - tRow + 1;
-		final Map<Integer, List<NCell>> newCols = new HashMap<Integer, List<NCell>>(); //key: new column index after sorting 
-		int j = 0;
-		for(final Iterator<SortKey> it = sortKeys.iterator(); it.hasNext();++j) {
-			final SortKey sortKey = it.next();
-			final int oldColNum = sortKey.getIndex();
-			final int newColNum = lCol + j;
-			it.remove();
-			if (oldColNum == newColNum) { //no move needed, skip it
+		int cellCount = bRow - tRow + 1;
+		int columnBufferIndex = 0;
+		List<SortResult> sortResults = new ArrayList<SortHelper.SortResult>(sortKeys.size());
+		//copy original columns in a buffer
+		for(Iterator<SortKey> it = sortKeys.iterator(); it.hasNext();columnBufferIndex++) {
+			SortKey sortKey = it.next();
+			int oldColumnNum = sortKey.getIndex();
+			int newColumnNum = lCol + columnBufferIndex;
+			CellBuffer[] cellBuffer = new CellBuffer[cellCount];
+			for (int r=0 ; r < cellCount ; r++){
+				cellBuffer[r] = CellBuffer.bufferAll(sheet.getCell(tRow+r, oldColumnNum));
+			}
+			sortResults.add(new SortResult(oldColumnNum, newColumnNum, cellBuffer));
+		}
+		//copy cells to sorted new index
+		for (SortResult result : sortResults){
+			//skip sorting result with unchanged index
+			if (result.oldIndex == result.newIndex){
 				continue;
 			}
-			//remove cells from the old column of the Range
-			final List<NCell> cells = new ArrayList<NCell>(cellCount);
-			for(int k = tRow; k <= bRow; ++k) {
-				NCell cell = sheet.getCell(k, oldColNum);
-				if (cell != null) {
-					cells.add(cell);
-//					final Set<Ref>[] refs = BookHelper.removeCell(cell, false);
-//					toEval.addAll(refs[0]);
-//					affected.addAll(refs[1]);
-				}
-			}
-			if (!cells.isEmpty()) {
-				newCols.put(Integer.valueOf(newColNum), cells);
-			}
-		}
-		
-		//move cells
-		for(Entry<Integer, List<NCell>> entry : newCols.entrySet()) {
-			final int colNum = entry.getKey().intValue();
-			final List<NCell> cells = entry.getValue();
-			for(NCell cell : cells) {
-				final int rowNum = cell.getRowIndex();
-//				BookHelper.copyCell(cell, sheet, rowNum, colNum, XRange.PASTE_ALL, XRange.PASTEOP_NONE, false);
+			for (int r = 0 ; r < result.cellBuffer.length ; r++){
+				NCell cellProxy = getProxyInstance(sheet.getCell(tRow+r, result.newIndex), 
+						new SheetRegion(sheet, tRow, lCol, bRow, rCol), 0, result.newIndex-result.oldIndex);
+				result.cellBuffer[r].applyAll(cellProxy);
 			}
 		}
 	}
@@ -241,21 +221,21 @@ public class SortHelper extends RangeHelperBase {
 	 * Change order of cells in row-wise according to sorting result. We might move them up or down.
 	 * @param sheet
 	 * @param sortKeys
-	 * @param tRow
+	 * @param tRow sorting region without headers
 	 * @param lCol
 	 * @param bRow
 	 * @param rCol
 	 * @return
 	 */
 	private void assignRows(NSheet sheet, List<SortKey> sortKeys, int tRow, int lCol, int bRow, int rCol) {
-		final int cellCount = rCol - lCol + 1;
+		int cellCount = rCol - lCol + 1;
 		int rowBufferIndex = 0;
 		List<SortResult> sortResults = new ArrayList<SortHelper.SortResult>(sortKeys.size());
 		//copy original rows in a buffer
-		for(final Iterator<SortKey> it = sortKeys.iterator(); it.hasNext();rowBufferIndex++) {
-			final SortKey sortKey = it.next();
-			final int oldRowNum = sortKey.getIndex();
-			final int newRowNum = tRow + rowBufferIndex;
+		for(Iterator<SortKey> it = sortKeys.iterator(); it.hasNext();rowBufferIndex++) {
+			SortKey sortKey = it.next();
+			int oldRowNum = sortKey.getIndex();
+			int newRowNum = tRow + rowBufferIndex;
 			CellBuffer[] cellBuffer = new CellBuffer[cellCount];
 			for (int c=0 ; c < cellCount ; c++){
 				cellBuffer[c] = CellBuffer.bufferAll(sheet.getCell(oldRowNum, lCol+c));
@@ -264,11 +244,11 @@ public class SortHelper extends RangeHelperBase {
 		}
 		//copy cells to sorted new index
 		for (SortResult result : sortResults){
+			//skip sorting result with unchanged index
+			if (result.oldIndex == result.newIndex){
+				continue;
+			}
 			for (int c = 0 ; c < result.cellBuffer.length ; c++){
-				//skip sorting result with unchanged index
-				if (result.oldIndex == result.newIndex){
-					continue;
-				}
 				NCell cellProxy = getProxyInstance(sheet.getCell(result.newIndex, lCol+c), 
 						new SheetRegion(sheet, tRow, lCol, bRow, rCol), result.newIndex-result.oldIndex, 0);
 				result.cellBuffer[c].applyAll(cellProxy);
@@ -289,35 +269,24 @@ public class SortHelper extends RangeHelperBase {
 			this.newIndex = newIndex;
 			this.cellBuffer = cellBuffer;
 		}
+		
+		@Override
+		public String toString() {
+			return oldIndex +" -> "+newIndex+"("+cellBuffer.length+" cells)";
+		}
 	}
 	
 	//convert cell sorting data upon data option
-	private Object getCellObject(NCell cell, SortDataOption dataOption) {
+	private Object getCellValue(NCell cell, SortDataOption dataOption) {
 		Object val = cell.getValue();
-//		if (val instanceof RichTextString && dataOption == BookHelper.SORT_TEXT_AS_NUMBERS) {
-//			try {
-//				val = new Double((String)((RichTextString)val).getString());
-//			} catch(NumberFormatException ex) {
-//				val = new Double(0);//ignore
-//			}
-//		}
+		if (val instanceof String && dataOption == SortDataOption.TEXT_AS_NUMBERS) {
+			try {
+				val = new Double((String)val);
+			} catch(NumberFormatException ex) {
+				val = new Double(0);//ignore
+			}
+		}
 		return val;
-	}
-	
-	//TODO getCellValue()
-	private Object getCellObject(NCell cell) {
-//		if (cell == null) {
-//			return "";
-//		}
-//		int cellType = cell.getCellType();
-//		if (cellType == Cell.CELL_TYPE_FORMULA) {
-//			final XBook book = (XBook)cell.getSheet().getWorkbook();
-//			final CellValue cv = BookHelper.evaluate(book, cell);
-//			return BookHelper.getValueByCellValue(cv);
-//		} else {
-//			return BookHelper.getCellValue(cell);
-//		}
-		return null;
 	}
 	
 	public static class SortKey {
