@@ -10,7 +10,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.zkoss.poi.ss.usermodel.ZssContext;
 import org.zkoss.zss.Setup;
 import org.zkoss.zss.Util;
 import org.zkoss.zss.api.Ranges;
@@ -53,6 +52,10 @@ public class SortTest {
 		testSortWithHeaderByBirthYr_ZipCode_ID(book);
 	}
 	
+	/**
+	 * sort with 3 columns.
+	 * @throws IOException
+	 */
 	@Test
 	public void testSortWithHeaderByBirthYr_ZipCode_ID_2007() throws IOException {
 		Book book = Util.loadBook(this,"book/excelsortsample.xlsx");
@@ -483,7 +486,7 @@ public class SortTest {
 		Sheet sheet1 = workbook.getSheet("Sheet1");
 		int[] rands = new int[100];
 		for(int i = 0; i < 100; i++) {
-			rands[i] = (int)Math.random() * 100 + 1;
+			rands[i] = (int)(Math.random() * 100) + 1;
 			Ranges.range(sheet1, i, 0).setCellValue(rands[i]);
 		}
 		Ranges.range(sheet1, 0, 0, 99, 0).sort(false);
