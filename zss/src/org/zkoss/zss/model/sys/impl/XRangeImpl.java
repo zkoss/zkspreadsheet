@@ -402,9 +402,34 @@ public class XRangeImpl implements XRange {
 	@Override
 	public void notifyChange() {
 		synchronized (_sheet) {
-			if (_refs != null && !_refs.isEmpty()) {
-				final XBook book = (XBook) _sheet.getWorkbook();
-				BookHelper.notifyCellChanges(book, _refs);
+			if(_refs == null || _refs.isEmpty()){
+				return;
+			}
+			for(Ref ref : _refs) {
+				final int tRow = ref.getTopRow();
+				final int lCol = ref.getLeftCol();
+				final int bRow = ref.getBottomRow();
+				final int rCol = ref.getRightCol();
+				final RefSheet refSheet = ref.getOwnerSheet();
+				final XSheet sheet = BookHelper.getSheet(_sheet, refSheet);
+				final XBook book = sheet.getBook();
+				final Set<Ref> all = new HashSet<Ref>();
+				final Set<Ref> last = new HashSet<Ref>();
+				for(int row = tRow; row <= bRow; ++row) {
+					for (int col = lCol; col <= rCol; ++col) {
+						final Cell cell = BookHelper.getCell(sheet, row, col);
+						if(cell==null){
+							continue;
+						}
+						Set<Ref>[] refs = BookHelper.getBothDependents(cell);
+						last.addAll(refs[0]);
+						all.addAll(refs[1]);
+					}
+				}
+				
+				if (!all.isEmpty() || !all.isEmpty()) {
+					BookHelper.reevaluateAndNotify(book, all,last);
+				}
 			}
 		}
 	}
