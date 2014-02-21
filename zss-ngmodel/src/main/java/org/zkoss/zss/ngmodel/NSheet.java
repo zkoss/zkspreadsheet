@@ -141,6 +141,7 @@ public interface NSheet {
 	public CellRegion getMergedRegion(String cellRefString);
 	
 	public NDataValidation addDataValidation(CellRegion region);
+	public NDataValidation addDataValidation(CellRegion region,NDataValidation src);
 	public NDataValidation getDataValidation(String id);
 	public void deleteDataValidation(NDataValidation validation);
 	public int getNumOfDataValidation();

@@ -523,15 +523,10 @@ public class NExcelXlsxExporter extends AbstractExcelExporter {
 				default:
 					continue;
 			}
-			CellRegion firstRegion = validation.getRegions().get(0);
+			CellRegion firstRegion = validation.getRegion();
 			
 			DataValidation poiValidation = poiSheet.getDataValidationHelper().createValidation(constraint, 
 					new CellRangeAddressList(firstRegion.getRow(),firstRegion.getLastRow(), firstRegion.getColumn(), firstRegion.getLastColumn()));
-			
-			for (int i =1 ; i< validation.getRegions().size() ; i++){ //starts from 2nd one
-				CellRegion r = validation.getRegions().get(i);
-				poiValidation.getRegions().addCellRangeAddress(r.getRow(), r.getColumn(), r.getLastRow(), r.getLastColumn());
-			}
 			
 			poiValidation.setEmptyCellAllowed(validation.isEmptyCellAllowed());
 			poiValidation.setSuppressDropDownArrow(validation.isShowDropDownArrow());

@@ -34,7 +34,7 @@ import org.zkoss.zss.ngmodel.sys.dependency.Ref.RefType;
 				if(((ObjectRef)notify).getObjectType()==ObjectType.CHART){
 					chartDependents.put(((ObjectRef)notify).getObjectIdPath()[0], notify);
 				}else if(((ObjectRef)notify).getObjectType()==ObjectType.DATA_VALIDATION){
-					chartDependents.put(((ObjectRef)notify).getObjectIdPath()[0], notify);
+					validationDependents.put(((ObjectRef)notify).getObjectIdPath()[0], notify);
 				}
 			} else {// TODO another
 

@@ -283,29 +283,31 @@ public class TestImporterFactory implements ImporterFactory{
 			private void buildValidation(NBook book) {
 				NSheet sheet1 = book.createSheet("Data Validtaion");
 				
-				NRanges.range(sheet1,0,0).setEditText("A");
-				NRanges.range(sheet1,0,1).setEditText("B");
-				NRanges.range(sheet1,0,2).setEditText("C");
-				NRanges.range(sheet1,1,0).setEditText("1");
-				NRanges.range(sheet1,1,1).setEditText("2");
-				NRanges.range(sheet1,1,2).setEditText("3");
-				NRanges.range(sheet1,2,0).setEditText("2013/1/1");
-				NRanges.range(sheet1,2,1).setEditText("2013/1/2");
-				NRanges.range(sheet1,2,2).setEditText("2013/1/3");
+				NRanges.range(sheet1,"A1").setEditText("A");
+				NRanges.range(sheet1,"B1").setEditText("B");
+				NRanges.range(sheet1,"C1").setEditText("C");
+				NRanges.range(sheet1,"A2").setEditText("1");
+				NRanges.range(sheet1,"B2").setEditText("2");
+				NRanges.range(sheet1,"C2").setEditText("3");
+				NRanges.range(sheet1,"A3").setEditText("2013/1/1");
+				NRanges.range(sheet1,"B3").setEditText("2013/1/2");
+				NRanges.range(sheet1,"C3").setEditText("2013/1/3");
 				
-				NDataValidation dv0 = sheet1.addDataValidation(new CellRegion(0,3));
-				dv0.addRegion(new CellRegion(0,4,0,10));//test multiple place
+				NDataValidation dv0 = sheet1.addDataValidation(new CellRegion("D1"));
+				sheet1.getCell("E1").setValue("<A1:C1");
 				dv0.setValidationType(ValidationType.LIST);
 				dv0.setShowPromptBox(true);
 				dv0.setPromptBox("select form A1:C1", "you should select the value in A1:C1");
-				
 				dv0.setShowErrorBox(true);
 				dv0.setErrorBox("Not in the list", "The value must in the list");
 				dv0.setShowDropDownArrow(true);
-				
 				dv0.setFormula("A1:C1");
 				
-				NDataValidation dv1 = sheet1.addDataValidation(new CellRegion(1,3));
+				sheet1.addDataValidation(new CellRegion("F1:K1"),dv0);//test multiple place)
+				sheet1.getCell("L1").setValue("<F1:K1 by A1:C1");
+				
+				NDataValidation dv1 = sheet1.addDataValidation(new CellRegion("D2"));
+				sheet1.getCell("E2").setValue("<A2:C2");
 				dv1.setValidationType(ValidationType.LIST);
 				dv1.setFormula("A2:C2");
 				dv1.setShowErrorBox(true);
@@ -313,13 +315,15 @@ public class TestImporterFactory implements ImporterFactory{
 				dv1.setShowDropDownArrow(true);
 				
 				
-				NDataValidation dv2 = sheet1.addDataValidation(new CellRegion(2,3));
+				NDataValidation dv2 = sheet1.addDataValidation(new CellRegion("D3"));
+				sheet1.getCell("E3").setValue("<A3:C3");
 				dv2.setValidationType(ValidationType.LIST);
 				dv2.setFormula("A3:C3");
 				dv2.setShowDropDownArrow(true);
 				dv2.setShowErrorBox(true);
 				
-				NDataValidation dv3 = sheet1.addDataValidation(new CellRegion(3,3));
+				NDataValidation dv3 = sheet1.addDataValidation(new CellRegion("D4"));
+				sheet1.getCell("E4").setValue("<A1:C3");
 				dv3.setValidationType(ValidationType.LIST);
 				dv3.setFormula("A1:C3");
 				dv3.setShowDropDownArrow(true);

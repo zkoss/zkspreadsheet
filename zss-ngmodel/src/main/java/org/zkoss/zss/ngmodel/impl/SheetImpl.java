@@ -1417,10 +1417,17 @@ public class SheetImpl extends AbstractSheetAdv {
 	
 	@Override
 	public NDataValidation addDataValidation(CellRegion region) {
+		return addDataValidation(region,null);
+	}
+	public NDataValidation addDataValidation(CellRegion region,NDataValidation src) {
 		checkOrphan();
+		Validations.argInstance(src, AbstractDataValidationAdv.class);
 		AbstractDataValidationAdv validation = new DataValidationImpl(this, book.nextObjId("valid"));
-		validation.addRegion(region);
+		validation.setRegion(region);
 		dataValidations.add(validation);
+		if(src!=null){
+			validation.copyFrom((AbstractDataValidationAdv)src);
+		}
 		return validation;
 	}
 	@Override
@@ -1458,10 +1465,9 @@ public class SheetImpl extends AbstractSheetAdv {
 	@Override
 	public NDataValidation getDataValidation(int rowIdx,int columnIdx) {
 		for(NDataValidation validation:dataValidations){
-			for(CellRegion region:validation.getRegions()){
-				if(region.contains(rowIdx, columnIdx)){
-					return validation;
-				}
+			CellRegion region = validation.getRegion();
+			if(region.contains(rowIdx, columnIdx)){
+				return validation;
 			}
 		}
 		return null;

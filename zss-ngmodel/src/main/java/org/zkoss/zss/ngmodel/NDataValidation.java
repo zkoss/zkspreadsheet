@@ -72,10 +72,7 @@ public interface NDataValidation extends FormulaContent{
 	public String getErrorBoxTitle();
 	public String getErrorBoxText();
 
-	public List<CellRegion> getRegions();
-	public void addRegion(CellRegion region);
-	public void removeRegion(CellRegion region);
-	
+	public CellRegion getRegion();
 	
 	public ValidationType getValidationType();
 	public void setValidationType(ValidationType type);

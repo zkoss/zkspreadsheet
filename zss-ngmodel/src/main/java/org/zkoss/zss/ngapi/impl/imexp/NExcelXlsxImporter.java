@@ -492,36 +492,35 @@ public class NExcelXlsxImporter extends AbstractExcelImporter{
 		for (DataValidation poiValidation : poiSheet.getDataValidations()){
 			
 			CellRangeAddress[] cellRangeAddresses = poiValidation.getRegions().getCellRangeAddresses();
-			/*
-			 * According to ISO/IEC 29500-1 \ 18.18.76  ST_Sqref (Reference Sequence) and A.2 
-			 * Its XML Schema indicates it's a required attribute, so CellRangeAddresses must have at least one address. 
-			 */
-			NDataValidation dataValidation = sheet.addDataValidation(new CellRegion(cellRangeAddresses[0].formatAsString()));
-			for (int i = 1 ; i<cellRangeAddresses.length ; i++){ //starts from 2nd one
-				dataValidation.addRegion(new CellRegion(cellRangeAddresses[i].formatAsString()));
-			}
-			
-			DataValidationConstraint poiConstraint = poiValidation.getValidationConstraint();
-			// getExplicitListValues() will be represented as formula1
-			dataValidation.setFormula(poiConstraint.getFormula1(), poiConstraint.getFormula2());
-			dataValidation.setOperatorType(toOperatorType(poiConstraint.getOperator()));
-			dataValidation.setValidationType(toValidationType(poiConstraint.getValidationType()));
-			
-			dataValidation.setEmptyCellAllowed(poiValidation.getEmptyCellAllowed());
-			dataValidation.setErrorBox(poiValidation.getErrorBoxTitle(), poiValidation.getErrorBoxText());
-			dataValidation.setErrorStyle(toErrorStyle(poiValidation.getErrorStyle()));
-			dataValidation.setPromptBox(poiValidation.getPromptBoxTitle(), poiValidation.getPromptBoxText());
-			if (poiConstraint.getValidationType() == DataValidationConstraint.ValidationType.LIST){
-				/* 
-				 * According to ISO/IEC 29500-1 \ 18.3.1.32  dataValidation (Data Validation) 
-				 * Excel file contains reversed value against format specification . If not showing drop down, file contains 1 (true). If showing, 
-				 * attribute "showDropDown" won't exist and POI get false. But POI's API reverse its value again.
-				 * So we just directly accept the POI returned value.
+			for(CellRangeAddress cellRangeAddr:cellRangeAddresses){
+				/*
+				 * According to ISO/IEC 29500-1 \ 18.18.76  ST_Sqref (Reference Sequence) and A.2 
+				 * Its XML Schema indicates it's a required attribute, so CellRangeAddresses must have at least one address. 
 				 */
-				dataValidation.setShowDropDownArrow(poiValidation.getSuppressDropDownArrow());
+				NDataValidation dataValidation = sheet.addDataValidation(new CellRegion(cellRangeAddr.formatAsString()));
+				
+				DataValidationConstraint poiConstraint = poiValidation.getValidationConstraint();
+				// getExplicitListValues() will be represented as formula1
+				dataValidation.setFormula(poiConstraint.getFormula1(), poiConstraint.getFormula2());
+				dataValidation.setOperatorType(toOperatorType(poiConstraint.getOperator()));
+				dataValidation.setValidationType(toValidationType(poiConstraint.getValidationType()));
+				
+				dataValidation.setEmptyCellAllowed(poiValidation.getEmptyCellAllowed());
+				dataValidation.setErrorBox(poiValidation.getErrorBoxTitle(), poiValidation.getErrorBoxText());
+				dataValidation.setErrorStyle(toErrorStyle(poiValidation.getErrorStyle()));
+				dataValidation.setPromptBox(poiValidation.getPromptBoxTitle(), poiValidation.getPromptBoxText());
+				if (poiConstraint.getValidationType() == DataValidationConstraint.ValidationType.LIST){
+					/* 
+					 * According to ISO/IEC 29500-1 \ 18.3.1.32  dataValidation (Data Validation) 
+					 * Excel file contains reversed value against format specification . If not showing drop down, file contains 1 (true). If showing, 
+					 * attribute "showDropDown" won't exist and POI get false. But POI's API reverse its value again.
+					 * So we just directly accept the POI returned value.
+					 */
+					dataValidation.setShowDropDownArrow(poiValidation.getSuppressDropDownArrow());
+				}
+				dataValidation.setShowErrorBox(poiValidation.getShowErrorBox());
+				dataValidation.setShowPromptBox(poiValidation.getShowPromptBox());
 			}
-			dataValidation.setShowErrorBox(poiValidation.getShowErrorBox());
-			dataValidation.setShowPromptBox(poiValidation.getShowPromptBox());
 		}
 	}
 	

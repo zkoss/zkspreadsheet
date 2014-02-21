@@ -35,7 +35,7 @@ public class DataValidationImpl extends AbstractDataValidationAdv {
 	private String promptBoxText;
 	private String errorBoxTitle;
 	private String errorBoxText;
-	private List<CellRegion> regions;
+	private CellRegion region;
 	private ValidationType validationType = ValidationType.ANY;
 	private OperatorType operatorType = OperatorType.BETWEEN;
 	
@@ -50,7 +50,6 @@ public class DataValidationImpl extends AbstractDataValidationAdv {
 	public DataValidationImpl(AbstractSheetAdv sheet,String id){
 		this.sheet = sheet;
 		this.id = id;
-		regions = new LinkedList<CellRegion>();
 	}
 	
 	public String getId(){
@@ -160,28 +159,14 @@ public class DataValidationImpl extends AbstractDataValidationAdv {
 	}
 
 	@Override
-	public List<CellRegion> getRegions() {
-		return Collections.unmodifiableList(regions);
-	}
-
-	@Override
-	public void addRegion(CellRegion region) {
-		Validations.argNotNull(region);
-		if(!regions.contains(region)){
-			regions.add(region);
-		}
-	}
-
-	@Override
-	public void removeRegion(CellRegion region) {
-		Validations.argNotNull(region);
-		regions.remove(region);
+	public CellRegion getRegion() {
+		return region;
 	}
 	
 	@Override
-	void setRegion(int idx,CellRegion region){
+	void setRegion(CellRegion region){
 		Validations.argNotNull(region);
-		regions.set(idx,region);
+		this.region = region;
 	}
 
 	@Override
@@ -371,6 +356,28 @@ public class DataValidationImpl extends AbstractDataValidationAdv {
 	@Override
 	public boolean hasReferToCellList() {
 		return value1Expr!=null && value1Expr.isRefersTo();
+	}
+
+	@Override
+	void copyFrom(AbstractDataValidationAdv src) {
+		Validations.argInstance(src, DataValidationImpl.class);
+		DataValidationImpl srcImpl = (DataValidationImpl)src;
+		errorStyle = srcImpl.errorStyle;
+		emptyCellAllowed = srcImpl.emptyCellAllowed;
+		showDropDownArrow = srcImpl.showDropDownArrow;
+		showPromptBox = srcImpl.showPromptBox;
+		showErrorBox = srcImpl.showErrorBox;
+		promptBoxTitle = srcImpl.promptBoxTitle;
+		promptBoxText = srcImpl.promptBoxText;
+		errorBoxTitle = srcImpl.errorBoxTitle;
+		errorBoxText = srcImpl.errorBoxText;
+		validationType = srcImpl.validationType;
+		operatorType = srcImpl.operatorType;
+		
+		if(srcImpl.value1Expr!=null){
+			setFormula(srcImpl.value1Expr==null?null:srcImpl.value1Expr.getFormulaString()
+					, srcImpl.value2Expr==null?null:srcImpl.value2Expr.getFormulaString());
+		}
 	}
 
 }

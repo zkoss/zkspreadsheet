@@ -761,7 +761,7 @@ public class ModelFormulaTest {
 		Assert.assertEquals("B",dv.getValue(1));
 		Assert.assertEquals("C",dv.getValue(2));
 		Assert.assertEquals("D",dv.getValue(3));
-		Assert.assertEquals("B8",dv.getRegions().get(0).getReferenceString());
+		Assert.assertEquals("B8",dv.getRegion().getReferenceString());
 		return sheet1;
 	}
 //	@Test
@@ -773,7 +773,7 @@ public class ModelFormulaTest {
 		//insert row
 		sheet1.insertRow(2, 2);
 		
-		Assert.assertEquals("B9",dv.getRegions().get(0).getReferenceString());
+		Assert.assertEquals("B9",dv.getRegion().getReferenceString());
 		
 		Assert.assertEquals(5,dv.getNumOfValue());
 		Assert.assertEquals("A",dv.getValue(0));
