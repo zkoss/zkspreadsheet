@@ -1,17 +1,14 @@
 package zss.test.display;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
-import org.junit.Test;
+import org.junit.*;
 import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.runners.*;
 import org.junit.runners.Parameterized.Parameters;
-import org.zkoss.zss.model.Range;
-import org.zkoss.zss.model.Ranges;
+import org.zkoss.zss.model.*;
 import org.zkoss.zss.ui.Spreadsheet;
 
 import zss.test.SpreadsheetAgent;
@@ -24,6 +21,7 @@ import zss.test.SpreadsheetAgent;
  * @author Hawk
  *
  */
+@Ignore("require furthur confirmation")
 @RunWith(Parameterized.class)
 public class CellDataTest extends DisplayExcelTest{
 

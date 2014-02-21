@@ -2,12 +2,11 @@ package zss.test.display;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
-import org.junit.Test;
+import org.junit.*;
 import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.runners.*;
 import org.junit.runners.Parameterized.Parameters;
 import org.zkoss.zss.ui.Spreadsheet;
 
@@ -52,7 +51,7 @@ public class ImageTest extends DisplayExcelTest{
 		
 	}
 	
-	@Test
+	@Ignore("require furthur confirmation")
 	public void testCharts(){
 		assertEquals(12, sheet.getCharts().size());
 	}

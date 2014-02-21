@@ -2,18 +2,14 @@ package zss.test.display;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
-import org.junit.Test;
+import org.junit.*;
 import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.runners.*;
 import org.junit.runners.Parameterized.Parameters;
-import org.zkoss.poi.ss.usermodel.CellStyle;
-import org.zkoss.poi.ss.usermodel.Font;
-import org.zkoss.poi.ss.usermodel.Hyperlink;
-import org.zkoss.zss.model.Ranges;
-import org.zkoss.zss.model.Worksheet;
+import org.zkoss.poi.ss.usermodel.*;
+import org.zkoss.zss.model.*;
 import org.zkoss.zss.ui.Spreadsheet;
 
 import zss.test.SpreadsheetAgent;
@@ -121,7 +117,7 @@ public class CellTextTest extends DisplayExcelTest{
 		return sheet.getBook().getFontAt(getCell(sheet, row, column).getCellStyle().getFontIndex());
 	}
 
-	@Test
+	@Ignore("require furthur confirmation")
 	public void testFontSize(){
 		Font font =getFont(sheet, 6, 0);
 		assertEquals(8, font.getFontHeight()/20);

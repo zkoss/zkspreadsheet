@@ -1,16 +1,12 @@
 package zss.test.display;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
-import org.junit.Test;
+import org.junit.*;
 import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.runners.*;
 import org.junit.runners.Parameterized.Parameters;
 import org.zkoss.poi.ss.usermodel.AutoFilter;
 import org.zkoss.zss.ui.Spreadsheet;
@@ -25,6 +21,7 @@ import zss.test.SpreadsheetAgent;
  * @author Hawk
  *
  */
+@Ignore("require furthur confirmation")
 @RunWith(Parameterized.class)
 public class SheetTest extends DisplayExcelTest{
 
