@@ -435,7 +435,8 @@ public interface Range {
 	/**
 	 * Sets the height(in pixel) of row in this range and specify it's custom size or not.
 	 * @param heightPx height in pixel
-	 * @param isCustom true if it's set by users manually, false if it's determined by the component automatically
+	 * @param isCustom true if it's set by users manually, false if it's determined by the system automatically
+	 * @sicne 3.0.1
 	 */
 	public void setRowHeight(int heightPx, boolean isCustom);
 	/* 
