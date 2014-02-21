@@ -1,10 +1,8 @@
 package org.zkoss.zss.api.impl;
 
 import static org.junit.Assert.assertEquals;
-
 import java.io.UnsupportedEncodingException;
 import java.util.Locale;
-
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -194,5 +192,21 @@ public class Issue500Test {
 		assertEquals("HelWhatrld", Ranges.range(sheet, "K6").getCellFormatText());
 		assertEquals("HelWhatld", Ranges.range(sheet, "K7").getCellFormatText());
 		assertEquals("HelWhatd", Ranges.range(sheet, "K8").getCellFormatText());
+	}
+	
+	@Test
+	public void testZSS547_DeleteSheet() {
+		// there are Sheet1~4
+		testZSS547_DeleteSheet(Util.loadBook(this, "book/547-sheet-index.xlsx"));
+		testZSS547_DeleteSheet(Util.loadBook(this, "book/547-sheet-index.xls"));
+	}
+	
+	private void testZSS547_DeleteSheet(Book book) {
+		Ranges.range(book.getSheetAt(0), "A1").getCellValue(); // eval. Sheet1 A1
+		Ranges.range(book.getSheetAt(0)).deleteSheet(); // delete Sheet1
+		Ranges.range(book.getSheetAt(2)).deleteSheet(); // delete Sheet4
+		// eval Sheet3 F1
+		Assert.assertEquals(new Double(3.0), Ranges.range(book.getSheetAt(1), "F1").getCellValue()); 
+		// NOTE, there should not be any exception
 	}
 }

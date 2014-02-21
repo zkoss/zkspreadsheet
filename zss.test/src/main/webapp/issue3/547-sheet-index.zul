@@ -1,0 +1,35 @@
+<zk>
+	<hbox>
+		<label pre="true"><![CDATA[
+		 1. delete "Sheet1"
+		 2. switch to "Sheet4"
+		 3. delete "Sheet4"
+		   * this causes exception
+		]]></label>
+		<label pre="true"><![CDATA[
+		Another steps:		                           
+		 1. switch to "Sheet3"
+		 2. delete "Sheet4" than "Sheet1"
+		 3. switch to "Sheet3"
+		 4. scroll down util row 500
+		   * this causes exception
+		   * if not delete "Sheet4", the cell F500 has wrong value "0"
+		]]></label>
+	</hbox>
+	<hbox>
+		<vbox>
+			<label>XLSX</label>
+			<spreadsheet id="ss" src="/issue3/book/547-sheet-index.xlsx" maxrows="1000" maxcolumns="100"
+				width="800px" height="700px"
+				ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e"
+				showContextMenu="true" showSheetbar="true" showToolbar="true" showFormulabar="true" />
+		</vbox>
+		<vbox>
+			<label>XLS</label>
+			<spreadsheet id="ss2" src="/issue3/book/547-sheet-index.xls" maxrows="1000" maxcolumns="100"
+				width="800px" height="700px"
+				ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e"
+				showContextMenu="true" showSheetbar="true" showToolbar="true" showFormulabar="true" />
+		</vbox>
+	</hbox>
+</zk>
