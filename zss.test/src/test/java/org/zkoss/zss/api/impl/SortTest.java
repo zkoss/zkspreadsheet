@@ -3,8 +3,7 @@ package org.zkoss.zss.api.impl;
 import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Locale;
+import java.util.*;
 
 import org.junit.After;
 import org.junit.Before;
@@ -38,7 +37,7 @@ public class SortTest {
 	 * Sort with 1 column.
 	 */
 	@Test
-	public void simpleSort() throws IOException {
+	public void simpleSort(){
 		Book workbook = Util.loadBook(this,"book/blank.xlsx");
 		Sheet sheet1 = workbook.getSheet("Sheet1");
 		int[] rands = new int[100];
@@ -54,25 +53,50 @@ public class SortTest {
 	}
 	
 	@Test
-	public void testSortWithHeaderByID2003() throws IOException {
+	public void sortWithBlankRows(){
+		Book book = Util.loadBook(this,"book/excelsortsample.xls");
+		Sheet sheet = book.getSheet("SampleData");
+		//selection contains blank rows
+		// Sort By ID
+		Ranges.range(sheet, "A1:H14").sort(Ranges.range(sheet, "A1:A11"), true, null, null, false, null, null, false, null, true, false, false);
+		
+		// Header
+		assertEquals("ID", Ranges.range(sheet, "A1").getCellFormatText());
+		assertEquals("Surname", Ranges.range(sheet, "B1").getCellFormatText());
+		assertEquals("Gender", Ranges.range(sheet, "C1").getCellFormatText());
+		assertEquals("BirthYr", Ranges.range(sheet, "D1").getCellFormatText());
+		assertEquals("City", Ranges.range(sheet, "E1").getCellFormatText());
+		assertEquals("State", Ranges.range(sheet, "G1").getCellFormatText());
+		assertEquals("ZipCode", Ranges.range(sheet, "H1").getCellFormatText());
+		
+		// Data
+		
+		// ID
+		for(int i = 10; i > 0; i--) {
+			assertEquals(String.valueOf(i), Ranges.range(sheet, 11 - i, 0).getCellFormatText());
+		}
+	}
+	
+	@Test
+	public void testSortWithHeaderByID2003(){
 		Book book = Util.loadBook(this,"book/excelsortsample.xls");
 		testSortWithHeaderByID(book);
 	}
 	
 	@Test
-	public void testSortWithHeaderByID2007() throws IOException {
+	public void testSortWithHeaderByID2007(){
 		Book book = Util.loadBook(this,"book/excelsortsample.xlsx");
 		testSortWithHeaderByID(book);
 	}
 	
 	@Test
-	public void testSortWithHeader2003() throws IOException {
+	public void testSortWithHeader2003(){
 		Book book = Util.loadBook(this,"book/excelsortsample.xls");
 		testSortWithHeader(book);
 	}
 	
 	@Test
-	public void testSortWithHeader2007() throws IOException {
+	public void testSortWithHeader2007(){
 		Book book = Util.loadBook(this,"book/excelsortsample.xlsx");
 		testSortWithHeader(book);
 	}
@@ -82,38 +106,38 @@ public class SortTest {
 	 * @throws IOException
 	 */
 	@Test
-	public void testSortWithHeaderByBirthYr_ZipCode_ID_2003() throws IOException {
+	public void testSortWithHeaderByBirthYr_ZipCode_ID_2003(){
 		Book book = Util.loadBook(this,"book/excelsortsample.xls");
 		testSortWithHeaderByBirthYr_ZipCode_ID(book);
 	}
 	
 	@Test
-	public void testSortWithHeaderByBirthYr_ZipCode_ID_2007() throws IOException {
+	public void testSortWithHeaderByBirthYr_ZipCode_ID_2007(){
 		Book book = Util.loadBook(this,"book/excelsortsample.xlsx");
 		testSortWithHeaderByBirthYr_ZipCode_ID(book);
 	}
 	
 	@Test
-	public void testSimpleSortWithNumberAndCharacterAndFormula2003() throws IOException {
+	public void testSimpleSortWithNumberAndCharacterAndFormula2003(){
 		Book book = Util.loadBook(this,"book/excelsortsample.xls");
 		testSimpleSortWithNumberAndCharacterAndFormula(book);
 	}
 	
 	@Test
-	public void testSimpleSortWithNumberAndCharacterAndFormula2007() throws IOException {
+	public void testSimpleSortWithNumberAndCharacterAndFormula2007(){
 		Book book = Util.loadBook(this,"book/excelsortsample.xlsx");
 		testSimpleSortWithNumberAndCharacterAndFormula(book);
 	}
 	
 	// sort by row
 	@Test
-	public void testSortByRowWithHeader2003() throws IOException {
+	public void testSortByRowWithHeader2003(){
 		Book book = Util.loadBook(this,"book/excelsortsample.xls");
 		testSortByRowWithHeader(book);
 	}
 	
 	@Test
-	public void testSortByRowWithHeader2007() throws IOException {
+	public void testSortByRowWithHeader2007(){
 		Book book = Util.loadBook(this,"book/excelsortsample.xlsx");
 		testSortByRowWithHeader(book);
 	}
@@ -167,7 +191,39 @@ public class SortTest {
 		}
 	}
 	
-	private void testSortByRowWithHeader(Book workbook) throws IOException {
+	//TODO merged case
+	
+	//Corner cases ---------------------------------------------------------
+	
+	@Test
+	public void invalidRange(){
+		Book book = Util.loadBook(this,"book/excelsortsample.xls");
+		Sheet sheet = book.getSheet("SampleData");
+		//selection contains blank rows
+		// Sort By ID
+		Ranges.range(sheet, "A1:A1").sort(Ranges.range(sheet, "A1:A11"), true, null, null, false, null, null, false, null, true, false, false);
+		// no sorting, nothing change
+		for(int i = 1; i <=10 ; i++) {
+			assertEquals(String.valueOf(i), Ranges.range(sheet,i, 0).getCellFormatText());
+		}
+	}
+	
+	/**
+	 * If users select extreme large area, e.g. select whole sheet.
+	 * It should skip those blank cells and sort those cells with data.
+	 */
+	@Test
+	public void extremeLargeSelectionRange(){
+		Book book = Util.loadBook(this,"book/excelsortsample.xls");
+		Sheet sheet = book.getSheet("SampleData");
+		// Sort By ID
+		long startTime = Calendar.getInstance().getTimeInMillis();
+		Ranges.range(sheet, "A1:H100000000").sort(Ranges.range(sheet, "A1:A11"), true, null, null, false, null, null, false, null, true, false, false);
+		long endTime = Calendar.getInstance().getTimeInMillis();
+		assertEquals(true, ((endTime-startTime)/1000)<1);
+	}
+	
+	private void testSortByRowWithHeader(Book workbook){
 		Setup.pushZssLocale(Locale.US);
 		try{
 		Sheet sheet = workbook.getSheet("MonthData");
@@ -221,7 +277,7 @@ public class SortTest {
 		
 	}
 	
-	private void testSortWithHeader(Book workbook) throws IOException {
+	private void testSortWithHeader(Book workbook){
 		
 		Setup.pushZssLocale(Locale.US);
 		try{
@@ -288,7 +344,7 @@ public class SortTest {
 		}
 	}
 	
-	private void testSimpleSortWithNumberAndCharacterAndFormula(Book workbook) throws IOException {
+	private void testSimpleSortWithNumberAndCharacterAndFormula(Book workbook){
 		
 		Setup.pushZssLocale(Locale.US);
 		try{
@@ -349,7 +405,7 @@ public class SortTest {
 		}
 	}
 	
-	private void testSortWithHeaderByBirthYr_ZipCode_ID(Book workbook) throws IOException {
+	private void testSortWithHeaderByBirthYr_ZipCode_ID(Book workbook){
 		Sheet sheet = workbook.getSheet("SampleData");
 		
 		// Sort By BirthYr, ZipCode, ID
@@ -450,7 +506,7 @@ public class SortTest {
 		
 	}
 	
-	private void testSortWithHeaderByID(Book workbook) throws IOException {
+	private void testSortWithHeaderByID(Book workbook){
 		
 		Sheet sheet = workbook.getSheet("SampleData");
 		
