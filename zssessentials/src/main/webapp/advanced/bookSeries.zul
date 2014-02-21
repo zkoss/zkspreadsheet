@@ -1,6 +1,0 @@
-<zk>
-	<window hflex="1" vflex="1" apply="org.zkoss.zss.essential.advanced.BookSeriesComposer">
-		<spreadsheet id="ss" hflex="1" vflex="1" showFormulabar="true" showContextMenu="true"
-			showToolbar="true" showSheetbar="true" maxVisibleRows="100" maxVisibleColumns="40"/>
-	</window>
-</zk>
