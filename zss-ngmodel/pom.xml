@@ -34,7 +34,7 @@
 		<dependency>
 			<groupId>org.zkoss.poi</groupId>
 			<artifactId>zpoi</artifactId>
-			<version>3.9.1-SNAPSHOT</version>
+			<version>3.9.2-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 </project>
