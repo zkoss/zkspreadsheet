@@ -16,6 +16,8 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.api.model.impl;
 
+import java.util.concurrent.locks.ReadWriteLock;
+
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.ngmodel.NBook;
@@ -148,6 +150,11 @@ public class BookImpl implements Book{
 	@Override
 	public int getMaxColumns() {
 		return getNative().getMaxColumnSize();
+	}
+
+	@Override
+	public ReadWriteLock getLock() {
+		return getNative().getBookSeries().getLock();
 	}
 	
 }

@@ -518,6 +518,7 @@ public interface Range {
 	/**
 	 * Gets the first cell(top-left)  format of this range
 	 * @return
+	 * @since 3.5.0
 	 */
 	public String getCellDataFormat();
 	
@@ -770,6 +771,7 @@ public interface Range {
 	/**
 	 * Notify the component that a chart has change, e.g. call it after chart data changes.
 	 * @param chart the chart that contains change
+	 * @since 3.5.0
 	 */
 	public void updateChart(Chart chart);
 }

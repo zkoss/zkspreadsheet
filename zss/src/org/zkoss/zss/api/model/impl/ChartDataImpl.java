@@ -61,4 +61,9 @@ public class ChartDataImpl implements ChartData{
 		return _chartDataRef.get();
 	}
 	
+	@Override
+	public NChartData getInternalChartData(){
+		return _chartDataRef.get(); 
+	}
+	
 }

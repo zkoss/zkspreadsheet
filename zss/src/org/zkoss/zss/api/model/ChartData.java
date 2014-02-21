@@ -25,5 +25,9 @@ import org.zkoss.zss.ngmodel.chart.NChartData;
  */
 public interface ChartData {
 
-	public NChartData getNative();
+	/**
+	 * Get the internal chart data
+	 * @since 3.5.0
+	 */
+	public NChartData getInternalChartData();
 }

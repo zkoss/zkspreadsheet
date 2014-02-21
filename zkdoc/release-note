@@ -6,7 +6,19 @@ ZK Spreadsheet 3.5.0
   ZSS-350 When using cell validation with cell list, the drop-down list won't update after the referred cells changed
   
 ** Upgrade Notes
-  * 
+  * Following api are removed
+    * Book.getPoiBook() : you can't get any poi model object from this verion, instead of you get internal book model by getInternalBook()
+    * Sheet.getPoiSheet() : get the internal sheet by getInternalSheet()
+    * ChartData getPoiChartData() : get the internal chart data by getInternalChartData();
+
+  * Following api are changed
+    * addChart() : It will add the chart directly from the selected area/data in the range
+
+  * Following api are deprecated
+    * Range.SyncLevel and Range.setSyncLevel() :  It is always synchronized on Book by a read-write lock.  
+    * Book.getSync() : we use a new ReadWriteSync, you can get the lock by getLock()  
+    * CellStyle.getBackgroundColor() : use getFillColor()
+    * EditableCellStyle.setBackgroundColor : use setFillColor()
 
 
  ------------

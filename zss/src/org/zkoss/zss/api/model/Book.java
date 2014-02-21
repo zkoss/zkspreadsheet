@@ -16,6 +16,8 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.api.model;
 
+import java.util.concurrent.locks.ReadWriteLock;
+
 import org.zkoss.zss.ngmodel.NBook;
 
 /**
@@ -49,9 +51,16 @@ public interface Book {
 	 * Gets the object for synchronized a book.
 	 * Note: you shouldn't synchronize a book directly, you have to get the sync object to synchronize it
 	 * @return
+	 * @deprecated since 3.5.0, use {@link #getLock()} 
 	 */
-	//TODO zss 3.5 duplicated it
 	public Object getSync();
+	
+	/**
+	 * Get the read-write lock of this book
+	 * @return
+	 * @since 3.5.0
+	 */
+	public ReadWriteLock getLock();
 	
 	/**
 	 * Gets the book name
