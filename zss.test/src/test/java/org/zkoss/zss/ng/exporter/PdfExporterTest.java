@@ -14,7 +14,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.zkoss.zss.Setup;
 import org.zkoss.zss.Util;
-import org.zkoss.zss.model.impl.pdf.BackupExporter;
 import org.zkoss.zss.model.impl.pdf.PdfExporter;
 import org.zkoss.zss.model.sys.XBook;
 import org.zkoss.zss.model.sys.impl.ExcelImporter;
@@ -108,21 +107,6 @@ public class PdfExporterTest {
 		File temp = Setup.getTempFile("pdfExportTest",".pdf");
 		exportBook(book, temp);
 		Util.open(temp);
-	}
-	
-	//@Ignore("manual test only")
-	@Test
-	public void oldExportPdf() throws IOException {
-		BackupExporter exporter = new BackupExporter();
-		InputStream is  = PdfExporterTest.class.getResourceAsStream("book/PrintSetup.xlsx");
-		ExcelImporter importer = new ExcelImporter();
-		XBook book = importer.imports(is, "test");
-		is.close();
-		File tmpFile = Setup.getTempFile("pdfExportTest",".pdf");
-		OutputStream os = new FileOutputStream(tmpFile);
-		exporter.export(book, os);
-		os.close();
-		Util.open(tmpFile);
 	}
 	
 	private NBook importBook(String path) {
