@@ -63,12 +63,12 @@
 		</dependency>
 	</dependencies>
 	<build>
-		<!--sourceDirectory>${project.basedir}/src/main/java</sourceDirectory>
+		<sourceDirectory>${project.basedir}/src</sourceDirectory>
 		<resources>
 			<resource>
 				<directory>${project.basedir}/src/archive</directory>
 			</resource>
-		</resources-->
+		</resources>
 		<plugins>
 			<!--<plugin>
 				<groupId>org.zkoss.maven</groupId>
