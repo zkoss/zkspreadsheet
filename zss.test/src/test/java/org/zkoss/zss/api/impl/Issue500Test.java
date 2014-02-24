@@ -1,20 +1,15 @@
 package org.zkoss.zss.api.impl;
 
 import static org.junit.Assert.assertEquals;
+
 import java.io.UnsupportedEncodingException;
 import java.util.Locale;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.zkoss.zss.Setup;
-import org.zkoss.zss.Util;
-import org.zkoss.zss.api.CellOperationUtil;
-import org.zkoss.zss.api.Range;
-import org.zkoss.zss.api.Ranges;
-import org.zkoss.zss.api.model.Book;
-import org.zkoss.zss.api.model.Sheet;
+
+import org.junit.*;
+import org.zkoss.poi.ss.usermodel.ErrorConstants;
+import org.zkoss.zss.*;
+import org.zkoss.zss.api.*;
+import org.zkoss.zss.api.model.*;
 
 /**
  * @author Hawk
@@ -49,8 +44,7 @@ public class Issue500Test {
 		Ranges.range(book.getSheet("row")).deleteSheet();
 		
 		assertEquals("='#REF'!A1", referencingCell.getCellEditText());
-		//because ZSS-474 is unresolved, the assert below won't pass 
-		//assertEquals("#REF", referencingCell.getCellFormatText());
+		assertEquals(ErrorConstants.getText(ErrorConstants.ERROR_REF), referencingCell.getCellFormatText());
 	}
 	
 	@Test
@@ -64,8 +58,7 @@ public class Issue500Test {
 		Ranges.range(book.getSheet("row")).deleteSheet();
 		
 		assertEquals("=row!A1", referencingCell.getCellEditText());
-		//because ZSS-474 is unresolved, the assert below won't pass 
-//		assertEquals("#REF", referencingCell.getCellFormatText());
+		assertEquals(ErrorConstants.getText(ErrorConstants.ERROR_REF), referencingCell.getCellFormatText());
 	}
 	
 	
@@ -76,7 +69,7 @@ public class Issue500Test {
 		Range cell = Ranges.range(sheet, "A1");
 		cell.setCellEditText("=nonExisted!B1");
 		assertEquals("='#REF'!B1", cell.getCellEditText());
-		assertEquals("#REF!", cell.getCellFormatText());
+		assertEquals(ErrorConstants.getText(ErrorConstants.ERROR_REF), cell.getCellFormatText());
 	}
 	
 	@Test
@@ -86,7 +79,7 @@ public class Issue500Test {
 		Range cell = Ranges.range(sheet, "A1");
 		cell.setCellEditText("=nonExisted!B1");
 		assertEquals("=nonExisted!B1", cell.getCellEditText());
-		assertEquals("#REF!", cell.getCellFormatText());
+		assertEquals(ErrorConstants.getText(ErrorConstants.ERROR_REF), cell.getCellFormatText());
 	}
 	
 	@Test
