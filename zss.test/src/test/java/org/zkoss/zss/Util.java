@@ -60,7 +60,9 @@ public class Util {
 		
 		final InputStream is = ((Class)base).getResourceAsStream(respath);
 		try {
-			return Importers.getImporter().imports(is, respath);
+			int index = respath.lastIndexOf("/");
+			String bookName = index==-1?respath:respath.substring(index+1);
+			return Importers.getImporter().imports(is, bookName);
 		} catch (IOException e) {
 			throw new RuntimeException(e.getMessage(),e);
 		} finally {

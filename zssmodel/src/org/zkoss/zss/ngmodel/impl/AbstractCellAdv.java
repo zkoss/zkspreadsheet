@@ -65,7 +65,7 @@ public abstract class AbstractCellAdv implements NCell,LinkedModelObject,Seriali
 			set.add(t);
 		}
 		if(!set.contains(getFormulaResultType())){
-			throw new IllegalStateException("is "+getFormulaResultType()+", not the one of "+types);
+			throw new IllegalStateException("is "+getFormulaResultType()+", not the one of "+Arrays.asList(types));
 		}
 	}
 	
