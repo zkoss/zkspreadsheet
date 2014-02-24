@@ -48,8 +48,8 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.zkoss.zss</groupId>
-			<artifactId>zss-ngmodel</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<artifactId>zssmodel</artifactId>
+			<version>${project.version}</version>
 		</dependency>	
 		<dependency>
 			<groupId>org.zkoss.poi</groupId>
