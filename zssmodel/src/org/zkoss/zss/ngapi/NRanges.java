@@ -22,6 +22,7 @@ import org.zkoss.zss.ngmodel.InvalidateModelOpException;
 import org.zkoss.zss.ngmodel.NBook;
 import org.zkoss.zss.ngmodel.NName;
 import org.zkoss.zss.ngmodel.NSheet;
+import org.zkoss.zss.ngmodel.SheetRegion;
 
 /**
  * To get the range.
@@ -47,8 +48,9 @@ public class NRanges {
 	 * @return the associated {@link NRange} of the specified {@link NSheet} and area reference string (e.g. "A1:D4"). 
 	 */
 	public static NRange range(NSheet sheet, String areaReference){
-		CellRegion ar = new CellRegion(areaReference);
-		return new NRangeImpl(sheet,ar.getRow(),ar.getColumn(),ar.getLastRow(),ar.getLastColumn());
+		SheetRegion region = new SheetRegion(sheet, areaReference);
+		
+		return new NRangeImpl(sheet,region.getRow(),region.getColumn(),region.getLastRow(),region.getLastColumn());
 	}
 	
 	/** Returns the associated {@link NRange} of the specified name of a NamedRange (e.g. "MyRange");

@@ -41,10 +41,15 @@ public class CellRegion implements Serializable {
 
 	public CellRegion(String areaReference) {
 		AreaReference ref = new AreaReference(areaReference);
-		this.row = ref.getFirstCell().getRow();
-		this.column = ref.getFirstCell().getCol();
-		this.lastRow = ref.getLastCell().getRow();
-		this.lastColumn = ref.getLastCell().getCol();
+		int row = ref.getFirstCell().getRow();
+		int column = ref.getFirstCell().getCol();
+		int lastRow = ref.getLastCell().getRow();
+		int lastColumn = ref.getLastCell().getCol();
+		this.row = Math.min(row, lastRow);
+		this.column = Math.min(column,lastColumn);
+		this.lastRow = Math.max(row, lastRow);
+		this.lastColumn = Math.max(column, lastColumn);
+		
 		checkLegal();
 	}
 	

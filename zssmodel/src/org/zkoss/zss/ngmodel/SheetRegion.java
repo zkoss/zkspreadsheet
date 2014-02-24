@@ -26,7 +26,30 @@ public class SheetRegion implements Serializable{
 		this(sheet,new CellRegion(row,column,lastRow,lastColumn));
 	}
 	public SheetRegion(NSheet sheet,String areaReference){
-		this(sheet,new CellRegion(areaReference));
+		
+		//regard to testcase 439, now range should support "1:2" -> means row 1 to 2 
+		AreaReference ref = new AreaReference(areaReference);
+		int row = ref.getFirstCell().getRow();
+		int column = ref.getFirstCell().getCol();
+		int lastRow = ref.getLastCell().getRow();
+		int lastColumn = ref.getLastCell().getCol();
+		
+		if(row==-1){
+			row = 0;
+		}
+		if(lastRow==-1){
+			lastRow = sheet.getBook().getMaxRowIndex();
+		}
+		if(column==-1){
+			column = 0;
+		}
+		if(lastColumn==-1){
+			lastColumn = sheet.getBook().getMaxColumnIndex();
+		}
+		this.sheet = sheet;
+		this.region = new CellRegion(Math.min(row, lastRow), Math.min(column,
+				lastColumn), Math.max(row, lastRow), Math.max(column,
+				lastColumn));
 	}
 	
 	public String toString() {

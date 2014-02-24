@@ -54,6 +54,7 @@ public class ModelTest {
 	protected NSheet initialDataGrid(NSheet sheet){
 		return sheet;
 	}
+
 	
 	@Test 
 	public void testLock(){
@@ -153,6 +154,109 @@ public class ModelTest {
 		}
 		System.out.println("F");
 		System.out.println("End Write Read Write");		
+	}
+
+	
+	@Test 
+	public void testRegion(){
+		NBook book = NBooks.createBook("book1");
+		NSheet sheet1 = initialDataGrid(book.createSheet("Sheet1"));
+	
+		CellRegion region = new CellRegion("A1:B3");
+		
+		Assert.assertEquals("A1:B3", region.getReferenceString());
+		Assert.assertEquals(0, region.getRow());
+		Assert.assertEquals(0, region.getColumn());
+		Assert.assertEquals(2, region.getLastRow());
+		Assert.assertEquals(1, region.getLastColumn());
+		
+		
+		region = new CellRegion("B3:A1");
+		Assert.assertEquals("A1:B3", region.getReferenceString());
+		Assert.assertEquals(0, region.getRow());
+		Assert.assertEquals(0, region.getColumn());
+		Assert.assertEquals(2, region.getLastRow());
+		Assert.assertEquals(1, region.getLastColumn());
+		
+		region = new CellRegion("B1:A3");
+		Assert.assertEquals("A1:B3", region.getReferenceString());
+		Assert.assertEquals(0, region.getRow());
+		Assert.assertEquals(0, region.getColumn());
+		Assert.assertEquals(2, region.getLastRow());
+		Assert.assertEquals(1, region.getLastColumn());
+		
+		region = new CellRegion("A3:B1");
+		Assert.assertEquals("A1:B3", region.getReferenceString());
+		Assert.assertEquals(0, region.getRow());
+		Assert.assertEquals(0, region.getColumn());
+		Assert.assertEquals(2, region.getLastRow());
+		Assert.assertEquals(1, region.getLastColumn());
+		
+		
+		SheetRegion sregion = new SheetRegion(sheet1,"A1:B3");
+		
+		Assert.assertEquals("Sheet1!A1:B3", sregion.getReferenceString());
+		Assert.assertEquals(0, sregion.getRow());
+		Assert.assertEquals(0, sregion.getColumn());
+		Assert.assertEquals(2, sregion.getLastRow());
+		Assert.assertEquals(1, sregion.getLastColumn());
+		
+		
+		sregion = new SheetRegion(sheet1,"B3:A1");
+		Assert.assertEquals("Sheet1!A1:B3", sregion.getReferenceString());
+		Assert.assertEquals(0, sregion.getRow());
+		Assert.assertEquals(0, sregion.getColumn());
+		Assert.assertEquals(2, sregion.getLastRow());
+		Assert.assertEquals(1, sregion.getLastColumn());
+		
+		sregion = new SheetRegion(sheet1,"B1:A3");
+		Assert.assertEquals("Sheet1!A1:B3", sregion.getReferenceString());
+		Assert.assertEquals(0, sregion.getRow());
+		Assert.assertEquals(0, sregion.getColumn());
+		Assert.assertEquals(2, sregion.getLastRow());
+		Assert.assertEquals(1, sregion.getLastColumn());
+		
+		sregion = new SheetRegion(sheet1,"A3:B1");
+		Assert.assertEquals("Sheet1!A1:B3", sregion.getReferenceString());
+		Assert.assertEquals(0, sregion.getRow());
+		Assert.assertEquals(0, sregion.getColumn());
+		Assert.assertEquals(2, sregion.getLastRow());
+		Assert.assertEquals(1, sregion.getLastColumn());
+		
+		
+		sregion = new SheetRegion(sheet1,"1:3");
+		Assert.assertEquals("Sheet1!A1:XFD3", sregion.getReferenceString());
+		Assert.assertEquals(0, sregion.getRow());
+		Assert.assertEquals(0, sregion.getColumn());
+		Assert.assertEquals(2, sregion.getLastRow());
+		Assert.assertEquals(sheet1.getBook().getMaxColumnIndex(), sregion.getLastColumn());
+		
+		sregion = new SheetRegion(sheet1,"3:1");
+		Assert.assertEquals("Sheet1!A1:XFD3", sregion.getReferenceString());
+		Assert.assertEquals(0, sregion.getRow());
+		Assert.assertEquals(0, sregion.getColumn());
+		Assert.assertEquals(2, sregion.getLastRow());
+		Assert.assertEquals(sheet1.getBook().getMaxColumnIndex(), sregion.getLastColumn());
+		
+		
+		sregion = new SheetRegion(sheet1,"B:C");
+		
+		//Too bad, we poi's implementation always use 65535 to be the maxRow Number 
+		Assert.assertEquals("Sheet1!B1:C65536", sregion.getReferenceString());
+		Assert.assertEquals(0, sregion.getRow());
+		Assert.assertEquals(1, sregion.getColumn());
+//		Assert.assertEquals(sheet1.getBook().getMaxRowIndex(), sregion.getLastRow());
+		Assert.assertEquals(65535, sregion.getLastRow());
+		Assert.assertEquals(2, sregion.getLastColumn());
+		
+		
+		sregion = new SheetRegion(sheet1,"C:B");
+		Assert.assertEquals("Sheet1!B1:C65536", sregion.getReferenceString());
+		Assert.assertEquals(0, sregion.getRow());
+		Assert.assertEquals(1, sregion.getColumn());
+//		Assert.assertEquals(sheet1.getBook().getMaxRowIndex(), sregion.getLastRow());
+		Assert.assertEquals(65535, sregion.getLastRow());
+		Assert.assertEquals(2, sregion.getLastColumn());
 	}
 	
 	@Test
