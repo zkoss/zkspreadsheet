@@ -4,7 +4,7 @@
 
 	<groupId>org.zkoss</groupId>
 	<artifactId>zss.test.selenium</artifactId>
-	<version>3.0.2-SNAPSHOT</version>
+	<version>3.5.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>seleniumtest</name>
