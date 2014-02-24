@@ -1,0 +1,49 @@
+<?xel-method prefix="zss" name="mynow"
+    class="zss.testapp.howto.MyNow" 
+    signature="double mynow()"?>
+<vbox hflex="1" vflex="1">
+	<label multiline="true">
+	</label>
+	<button label="update">
+		<attribute name="onClick"><![CDATA[
+			updateSheet1();
+		]]></attribute>
+	</button>	
+	<spreadsheet id="ss" src="/howto/blank.xlsx" maxVisibleRows="200" maxVisibleColumns="40"
+		hflex="1" vflex="1" 
+		showContextMenu="true" showSheetbar="true" showToolbar="true" 
+		showFormulabar="true"/>
+	<zscript><![CDATA[
+	Book book = ss.getBook();
+	Sheet sheet = book.getSheetAt(0);
+
+	Range r = Ranges.range(sheet,"A1");
+	
+	r.toColumnRange().setColumnWidth(300);
+	
+	r.setCellEditText("=now()");
+	CellOperationUtil.applyDataFormat(r,"yyyy/MM/dd HH:mm:ss");
+	
+	r = Ranges.range(sheet,"A2");
+	r.setCellEditText("=mynow()");
+	CellOperationUtil.applyDataFormat(r,"yyyy/MM/dd HH:mm:ss");
+	
+	session.setAttribute("org.zkoss.web.preferred.timeZone", TimeZone.getTimeZone("Asia/Taipei"));
+	
+	
+//	System.out.println("System>>"+TimeZone.getDefault());
+//	System.out.println("User>>"+org.zkoss.util.TimeZones.getCurrent());
+	
+	
+	r = Ranges.range(sheet,"B1");
+	r.setCellEditText(TimeZone.getDefault().getID());
+	r = Ranges.range(sheet,"B2");
+	r.setCellEditText(org.zkoss.util.TimeZones.getCurrent().getID());
+	
+	
+	void updateSheet1(){
+		Ranges.range(sheet,"A1:A2").notifyChange();
+	}
+	]]>
+ </zscript>
+</vbox>
