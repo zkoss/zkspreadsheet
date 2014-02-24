@@ -19,7 +19,6 @@ package org.zkoss.zss.api.model.impl;
 import org.zkoss.poi.ss.usermodel.ClientAnchor;
 import org.zkoss.zss.api.SheetAnchor;
 import org.zkoss.zss.api.model.Picture;
-import org.zkoss.zss.model.sys.XSheet;
 import org.zkoss.zss.ngmodel.NPicture;
 import org.zkoss.zss.ngmodel.NSheet;
 import org.zkoss.zss.ngmodel.NViewAnchor;

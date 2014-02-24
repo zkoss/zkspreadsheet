@@ -18,9 +18,6 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.ui.sys;
 
-
-//import org.zkoss.zss.model.Sheet;
-import org.zkoss.zss.model.sys.XSheet;
 import org.zkoss.zss.ngmodel.NSheet;
 
 /**

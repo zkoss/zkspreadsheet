@@ -16,28 +16,23 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.api.impl;
 
-import org.zkoss.poi.hssf.usermodel.HSSFCellStyle;
-import org.zkoss.poi.xssf.usermodel.XSSFCellStyle;
 import org.zkoss.zss.api.Range.CellStyleHelper;
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.CellStyle;
 import org.zkoss.zss.api.model.Color;
+import org.zkoss.zss.api.model.EditableCellStyle;
 import org.zkoss.zss.api.model.EditableFont;
 import org.zkoss.zss.api.model.Font;
 import org.zkoss.zss.api.model.Font.Boldweight;
 import org.zkoss.zss.api.model.Font.TypeOffset;
 import org.zkoss.zss.api.model.Font.Underline;
-import org.zkoss.zss.api.model.EditableCellStyle;
 import org.zkoss.zss.api.model.impl.BookImpl;
-import org.zkoss.zss.api.model.impl.CellStyleImpl;
 import org.zkoss.zss.api.model.impl.ColorImpl;
 import org.zkoss.zss.api.model.impl.EditableCellStyleImpl;
 import org.zkoss.zss.api.model.impl.EditableFontImpl;
 import org.zkoss.zss.api.model.impl.EnumUtil;
 import org.zkoss.zss.api.model.impl.FontImpl;
 import org.zkoss.zss.api.model.impl.SimpleRef;
-import org.zkoss.zss.model.sys.XBook;
-import org.zkoss.zss.model.sys.impl.BookHelper;
 import org.zkoss.zss.ngmodel.NBook;
 import org.zkoss.zss.ngmodel.NColor;
 import org.zkoss.zss.ngmodel.NFont;

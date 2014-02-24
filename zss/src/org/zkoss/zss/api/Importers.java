@@ -17,8 +17,6 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.api;
 
 import org.zkoss.zss.api.impl.ImporterImpl;
-import org.zkoss.zss.model.sys.XImporter;
-import org.zkoss.zss.model.sys.XImporters;
 import org.zkoss.zss.ngapi.NImporter;
 import org.zkoss.zss.ngapi.NImporters;
 

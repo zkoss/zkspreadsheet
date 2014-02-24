@@ -39,7 +39,6 @@ import org.zkoss.zss.api.model.Font.TypeOffset;
 import org.zkoss.zss.api.model.Font.Underline;
 import org.zkoss.zss.api.model.Hyperlink.HyperlinkType;
 import org.zkoss.zss.api.model.Picture.Format;
-import org.zkoss.zss.model.sys.XRange;
 import org.zkoss.zss.ngapi.NRange;
 import org.zkoss.zss.ngapi.NRange.FillType;
 import org.zkoss.zss.ngmodel.NAutoFilter.FilterOp;

@@ -8,7 +8,6 @@ import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -16,19 +15,14 @@ import org.zkoss.util.Locales;
 import org.zkoss.zss.api.Exporter;
 import org.zkoss.zss.api.Exporters;
 import org.zkoss.zss.api.Importers;
-import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.Sheet;
-import org.zkoss.zss.model.sys.XFormatText;
-import org.zkoss.zss.model.sys.XSheet;
-import org.zkoss.zss.model.sys.impl.BookHelper;
 import org.zkoss.zss.ngmodel.NCell;
 import org.zkoss.zss.ngmodel.NSheet;
 import org.zkoss.zss.ngmodel.sys.EngineFactory;
 import org.zkoss.zss.ngmodel.sys.format.FormatContext;
 import org.zkoss.zss.ngmodel.sys.format.FormatEngine;
 import org.zkoss.zss.ngmodel.sys.format.FormatResult;
-import org.zkoss.zss.ui.impl.XUtils;
 
 /**
  * a helper for testing

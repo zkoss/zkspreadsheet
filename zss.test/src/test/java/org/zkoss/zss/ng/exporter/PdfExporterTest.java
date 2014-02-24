@@ -15,8 +15,6 @@ import org.junit.Test;
 import org.zkoss.zss.Setup;
 import org.zkoss.zss.Util;
 import org.zkoss.zss.model.impl.pdf.PdfExporter;
-import org.zkoss.zss.model.sys.XBook;
-import org.zkoss.zss.model.sys.impl.ExcelImporter;
 import org.zkoss.zss.ngapi.NImporter;
 import org.zkoss.zss.ngapi.impl.imexp.ExcelImportFactory;
 import org.zkoss.zss.ngmodel.NBook;

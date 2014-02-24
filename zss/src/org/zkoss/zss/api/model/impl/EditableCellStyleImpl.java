@@ -22,8 +22,6 @@ import org.zkoss.zss.api.model.Color;
 import org.zkoss.zss.api.model.Font;
 import org.zkoss.zss.api.model.EditableCellStyle;
 import org.zkoss.zss.api.model.impl.EnumUtil;
-import org.zkoss.zss.model.sys.XBook;
-import org.zkoss.zss.model.sys.impl.BookHelper;
 import org.zkoss.zss.ngmodel.NBook;
 import org.zkoss.zss.ngmodel.NCellStyle;
 /**

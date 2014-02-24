@@ -31,8 +31,6 @@ import org.zkoss.zk.ui.UiException;
 import org.zkoss.zss.api.AreaRef;
 //import org.zkoss.zss.model.Cell;
 //import org.zkoss.zss.model.Format;
-import org.zkoss.zss.model.sys.XFormatText;
-import org.zkoss.zss.model.sys.XSheet;
 import org.zkoss.zss.ngmodel.NSheet;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.impl.HeaderPositionHelper;
@@ -64,21 +62,21 @@ public class UtilFns {
 		return ss.getRowtitle(index);
 	}
 	
-	/**
-	 * Gets Cell text by given row and column
-	 */
-	static public String getCelltext(XSheet sheet, int row,int column){
-		return XUtils.getCellHtmlText(sheet, row, column);
-	}
-	
-	static public String getCellFormatText(XSheet sheet, int row,int column) {
-		return XUtils.getCellFormatText(sheet, row, column);
-	}
-
-	//Gets Cell edit text by given row and column
-	static public String getEdittext(XSheet sheet, int row,int column){
-		return XUtils.getEditText(sheet, row, column);
-	}
+//	/**
+//	 * Gets Cell text by given row and column
+//	 */
+//	static public String getCelltext(XSheet sheet, int row,int column){
+//		return XUtils.getCellHtmlText(sheet, row, column);
+//	}
+//	
+//	static public String getCellFormatText(XSheet sheet, int row,int column) {
+//		return XUtils.getCellFormatText(sheet, row, column);
+//	}
+//
+//	//Gets Cell edit text by given row and column
+//	static public String getEdittext(XSheet sheet, int row,int column){
+//		return XUtils.getEditText(sheet, row, column);
+//	}
 	
 	static public Integer getRowBegin(Spreadsheet ss){
 		return Integer.valueOf(0);

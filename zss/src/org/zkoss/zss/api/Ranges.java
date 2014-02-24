@@ -21,9 +21,6 @@ package org.zkoss.zss.api;
 import org.zkoss.zss.api.impl.RangeImpl;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.api.model.impl.SheetImpl;
-import org.zkoss.zss.model.sys.XRange;
-import org.zkoss.zss.model.sys.XRanges;
-import org.zkoss.zss.model.sys.XSheet;
 import org.zkoss.zss.ngapi.NRanges;
 
 /**

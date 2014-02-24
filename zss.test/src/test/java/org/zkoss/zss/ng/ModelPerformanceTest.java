@@ -27,11 +27,11 @@ import org.zkoss.poi.xssf.usermodel.XSSFRow;
 import org.zkoss.poi.xssf.usermodel.XSSFSheet;
 import org.zkoss.poi.xssf.usermodel.XSSFWorkbook;
 import org.zkoss.util.Locales;
-import org.zkoss.zss.engine.RefSheet;
-import org.zkoss.zss.model.sys.XBook;
-import org.zkoss.zss.model.sys.XSheet;
+//import org.zkoss.zss.engine.RefSheet;
+//import org.zkoss.zss.model.sys.XBook;
+//import org.zkoss.zss.model.sys.XSheet;
 import org.zkoss.zss.model.sys.impl.BookHelper;
-import org.zkoss.zss.model.sys.impl.XSSFBookImpl;
+//import org.zkoss.zss.model.sys.impl.XSSFBookImpl;
 import org.zkoss.zss.ngapi.impl.imexp.ExcelImportFactory;
 import org.zkoss.zss.ngmodel.NBook;
 import org.zkoss.zss.ngmodel.NCell;
@@ -127,9 +127,9 @@ public class ModelPerformanceTest {
 				book.getBookSeries().setAutoFormulaCacheClean(false);//in performance, we don't allow to clear automatically
 				return book;
 			} else if(type == WORKBOOK_MODEL) {
-				return new XSSFWorkbook(is);
+//				return new XSSFWorkbook(is);
 			} else if(type == XBOOK_MODEL) {
-				return new XSSFBookImpl(bookName, is);
+//				return new XSSFBookImpl(bookName, is);
 			}
 		} catch(Exception e) {
 			e.printStackTrace();
@@ -163,26 +163,26 @@ public class ModelPerformanceTest {
 				}
 			}
 		} else {
-			XSSFWorkbook book = (XSSFWorkbook)model;
-			if(book instanceof XBook){
-				evaluator = (XSSFFormulaEvaluator)((XBook)book).getFormulaEvaluator();
-				evaluator.clearAllCachedResultValues();
-			}else{
-				evaluator = XSSFFormulaEvaluator.create(book, null, null);
-			}
-			XSSFSheet sheet = book.getSheetAt(0);
-			// get all values except first column
-			for(int r = 0; r < ROW_COUNT; ++r) {
-				XSSFRow row = sheet.getRow(r);
-				double expected = firstColumnValue;
-				for(int c = 1; c < COL_COUNT; ++c) {
-					XSSFCell cell = row.getCell(c);
-					CellValue value = evaluator.evaluate(cell);
-					double v = value.getNumberValue();
-					Assert.assertEquals(expected, v, EPSILON);
-					expected *= 2.0;
-				}
-			}
+//			XSSFWorkbook book = (XSSFWorkbook)model;
+//			if(book instanceof XBook){
+//				evaluator = (XSSFFormulaEvaluator)((XBook)book).getFormulaEvaluator();
+//				evaluator.clearAllCachedResultValues();
+//			}else{
+//				evaluator = XSSFFormulaEvaluator.create(book, null, null);
+//			}
+//			XSSFSheet sheet = book.getSheetAt(0);
+//			// get all values except first column
+//			for(int r = 0; r < ROW_COUNT; ++r) {
+//				XSSFRow row = sheet.getRow(r);
+//				double expected = firstColumnValue;
+//				for(int c = 1; c < COL_COUNT; ++c) {
+//					XSSFCell cell = row.getCell(c);
+//					CellValue value = evaluator.evaluate(cell);
+//					double v = value.getNumberValue();
+//					Assert.assertEquals(expected, v, EPSILON);
+//					expected *= 2.0;
+//				}
+//			}
 		}
 	}
 
@@ -223,13 +223,13 @@ public class ModelPerformanceTest {
 				Assert.assertEquals(COL_COUNT - c - 1, dependencies.size());
 			}
 		} else if(type == XBOOK_MODEL) {
-			XBook book = (XBook)model;
-			XSheet sheet = book.getWorksheetAt(0);
-			RefSheet refSheet = BookHelper.getRefSheet(book, sheet);
-			for(int c = 0; c < COL_COUNT; ++c) {
-				Set<org.zkoss.zss.engine.Ref>[] dependents = refSheet.getBothDependents(0, c);
-				Assert.assertEquals(COL_COUNT - c - 1, dependents[1].size());
-			}
+//			XBook book = (XBook)model;
+//			XSheet sheet = book.getWorksheetAt(0);
+//			RefSheet refSheet = BookHelper.getRefSheet(book, sheet);
+//			for(int c = 0; c < COL_COUNT; ++c) {
+//				Set<org.zkoss.zss.engine.Ref>[] dependents = refSheet.getBothDependents(0, c);
+//				Assert.assertEquals(COL_COUNT - c - 1, dependents[1].size());
+//			}
 		} else if(type == WORKBOOK_MODEL) {
 			// do nothing, it has no dependency tracking
 		}

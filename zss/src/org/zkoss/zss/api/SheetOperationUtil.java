@@ -17,16 +17,12 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.api;
 
 import org.zkoss.image.AImage;
-import org.zkoss.poi.ss.usermodel.Row;
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.Chart;
-import org.zkoss.zss.api.model.ChartData;
 import org.zkoss.zss.api.model.Picture;
-import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.api.model.Picture.Format;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.api.model.impl.SheetImpl;
-import org.zkoss.zss.model.sys.XSheet;
 import org.zkoss.zss.ngmodel.NSheet;
 
 /**

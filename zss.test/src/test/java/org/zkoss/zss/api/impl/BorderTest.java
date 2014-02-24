@@ -43,8 +43,6 @@ import org.zkoss.zss.api.model.Font;
 import org.zkoss.zss.api.model.Hyperlink;
 import org.zkoss.zss.api.model.Hyperlink.HyperlinkType;
 import org.zkoss.zss.api.model.Sheet;
-import org.zkoss.zss.model.sys.XSheet;
-import org.zkoss.zssex.ui.impl.XUtils;
 
 /**
  * @author dennis

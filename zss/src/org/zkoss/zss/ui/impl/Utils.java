@@ -44,14 +44,6 @@ import org.zkoss.zk.ui.Execution;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zss.api.AreaRef;
-import org.zkoss.zss.engine.RefSheet;
-import org.zkoss.zss.model.sys.XBook;
-import org.zkoss.zss.model.sys.XFormatText;
-import org.zkoss.zss.model.sys.XRange;
-import org.zkoss.zss.model.sys.XRanges;
-import org.zkoss.zss.model.sys.XSheet;
-import org.zkoss.zss.model.sys.impl.BookHelper;
-import org.zkoss.zss.model.sys.impl.SheetCtrl;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zul.Messagebox;
 //
@@ -60,6 +52,7 @@ import org.zkoss.zul.Messagebox;
 // * @author Dennis.Chen
 // *
 // */
+@Deprecated
 public class Utils {
 	private static final Log log = Log.lookup(Utils.class);
 //
