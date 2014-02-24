@@ -1,0 +1,92 @@
+<vbox hflex="1" vflex="1">
+	<label multiline="true">
+	1.type text in first textbox, cell A1 should change correspondingly
+	2.type text in A1, the textbox value shold change automatically
+	</label>
+	<textbox id="tb1" value="Hello!!">
+		<attribute name="onChange"><![CDATA[
+			updateSheet1(self.getValue());
+		]]></attribute>
+	</textbox>
+	<spreadsheet id="ss" src="/howto/blank.xlsx" maxVisibleRows="200" maxVisibleColumns="40"
+		hflex="1" vflex="1" 
+		showContextMenu="true" showSheetbar="true" showToolbar="true" 
+		showFormulabar="true">
+		<attribute name="onStartEditing"><![CDATA[
+			org.zkoss.zss.ui.event.StartEditingEvent evt1 = (org.zkoss.zss.ui.event.StartEditingEvent)event;
+			int row = evt1.getRow();
+			int col = evt1.getColumn();
+			
+			String formula = Ranges.range(evt1.getSheet(),row,col).getCellEditText();
+			if(!formula.startsWith("=")){
+				return;
+			}
+			formula = formula.substring(1);
+			int dot = formula.indexOf(".");
+			String comp = dot==-1?null:formula.substring(0,dot);
+			
+			if("tb1".equals(comp)){
+				Object value = Ranges.range(evt1.getSheet(),row,col).getCellValue();
+				if((value instanceof Byte)){
+					//error code
+					value = "";
+				}else if(!(value instanceof String) && !(value instanceof Number)){
+					//only allow value and number
+					value = "";
+				}
+				System.out.println("get edit value ["+value+"]");
+				evt1.setEditingValue(value);
+			}
+		]]></attribute>		                                         
+		<attribute name="onStopEditing"><![CDATA[
+			org.zkoss.zss.ui.event.StopEditingEvent evt2 = (org.zkoss.zss.ui.event.StopEditingEvent)event;
+			int row = evt2.getRow();
+			int col = evt2.getColumn();
+			
+			String formula = Ranges.range(evt2.getSheet(),row,col).getCellEditText();
+			if(!formula.startsWith("=")){
+				return;
+			}
+			formula = formula.substring(1);
+			int dot = formula.indexOf(".");
+			String comp = dot==-1?null:formula.substring(0,dot);
+			if("tb1".equals(comp)){
+				Object value = evt2.getEditingValue();
+				if(!(value instanceof String) && !(value instanceof Number)){
+					//only allow value and number
+					value = null;
+				}
+				
+				System.out.println("set back value ["+value+"] to "+formula);
+				
+				Binder binder = new DefaultBinder();
+				org.zkoss.bind.sys.BindEvaluatorX eval = binder.getEvaluatorX();
+				eval.setValue(null,ss,eval.parseExpressionX(null,formula,Object.class),value);
+				
+				evt2.cancel(); //cancel it, so the value will not be update to cell 
+
+				
+				//to workaround #Name case
+				//the dependency can build if the formaul evaluated as #Name (tb1.scalss)
+				//and since the denendency is not build, we can't update the cell after we re-apply it.
+//				Ranges.range(sheet).notifyChange(new String[]{"tb1"});//still need to notify variable change because of the backend data was changed.				
+				
+				Ranges.range(sheet,row,col).notifyChange();
+			}
+			
+		]]></attribute>
+	</spreadsheet>
+	<zscript><![CDATA[
+	Book book = ss.getBook();
+	Sheet sheet = book.getSheetAt(0);
+	Range r = Ranges.range(sheet,"A1");
+	r.setCellEditText("=tb1.value");
+	r.toColumnRange().setColumnWidth(200);
+	void updateSheet1(String value){
+		Ranges.range(sheet).notifyChange(new String[]{"tb1"});
+	}
+	
+
+	]]>
+ </zscript>
+</vbox>

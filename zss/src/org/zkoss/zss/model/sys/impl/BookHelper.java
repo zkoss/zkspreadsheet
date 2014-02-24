@@ -1387,8 +1387,10 @@ public final class BookHelper {
 		return cellValue == value || (cellValue != null && cellValue.equals(value));
 	}
 	
+	
+	
 	//[0]:last, [1]:all
-	private static Set<Ref>[] getBothDependents(Cell cell) {
+	public static Set<Ref>[] getBothDependents(Cell cell) {
 		final XSheet sheet = (XSheet) cell.getSheet();
 		final XBook book = (XBook) sheet.getWorkbook();
 		final RefSheet refSheet = getRefSheet(book, sheet);
@@ -1408,7 +1410,7 @@ public final class BookHelper {
 			}
 		}
 		return refs;
-	}
+	} 
 	
 	//formula cell -> non-formula cell
 	private static void removeFormula(Cell cell, boolean clearFormula) {

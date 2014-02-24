@@ -679,10 +679,31 @@ public class CellOperationUtil {
 		src.autoFill(dest, type);
 	}
 	
+	/**
+	 * Sets the row height and make it as custom modified
+	 * @param range
+	 * @param heightPx
+	 */
+	public static void setRowHeight(Range range, int heightPx) {
+		range.setRowHeight(heightPx);
+	}
+	
+	/**
+	 * Sets the row height and provide a custom flag, a custom flag to indicate this height was set by user or system. 
+	 * @param range
+	 * @param heightPx
+	 * @param isCustom
+	 * @since 3.0.1
+	 */
 	public static void setRowHeight(Range range, int heightPx, boolean isCustom) {
 		range.setRowHeight(heightPx, isCustom);
 	}
-	
+
+	/**
+	 * Sets the column width
+	 * @param range
+	 * @param widthPx
+	 */
 	public static void setColumnWidth(Range range, int widthPx) {
 		range.setColumnWidth(widthPx);
 	}

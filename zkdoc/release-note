@@ -29,6 +29,7 @@ ZK Spreadsheet 3.0.2
 *Bugs:
   ZSS-541 date autofill timestamp is incorrect
   ZSS-547 Sheet index (31) is out of range (0..30) error when deleting sheets in a workbook
+  ZSS-569 Range.notifyChange can't update formula value
   
 ** Upgrade Notes
   

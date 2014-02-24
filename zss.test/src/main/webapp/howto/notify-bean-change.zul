@@ -1,0 +1,37 @@
+<vbox hflex="1" vflex="1">
+	<label multiline="true">
+	1.type text in first textbox, cell A1 should change correspondingly
+	2.type text in 2nd textobx, cell C2 should change correspondingly and C3 with a prefix value
+	</label>
+	<textbox id="tb1" value="Hello!!" >
+		<attribute name="onChange"><![CDATA[
+			updateSheet1(self.getValue());
+		]]></attribute>
+	</textbox>
+	<textbox id="tb2" value="World" >
+		<attribute name="onChange"><![CDATA[
+			updateSheet2(self.getValue());
+		]]></attribute>
+	</textbox>	
+	<spreadsheet id="ss" src="/howto/blank.xlsx" maxVisibleRows="200" maxVisibleColumns="40"
+		hflex="1" vflex="1" 
+		showContextMenu="true" showSheetbar="true" showToolbar="true" 
+		showFormulabar="true"/>
+	<zscript><![CDATA[
+	Book book = ss.getBook();
+	Sheet sheet = book.getSheetAt(0);
+
+	Ranges.range(sheet,"A1").setCellEditText("=tb1.value");
+	Ranges.range(sheet,"C2").setCellEditText("=tb2.value");
+	Ranges.range(sheet,"E2").setCellEditText("=C2");
+	
+	void updateSheet1(String value){
+		Ranges.range(sheet).notifyChange(new String[]{"tb1"});
+	}
+	void updateSheet2(String value){
+		Ranges.range(sheet,"C3").setCellEditText("Value : "+value);	
+		Ranges.range(sheet,"B1:D3").notifyChange();
+	}
+	]]>
+ </zscript>
+</vbox>
