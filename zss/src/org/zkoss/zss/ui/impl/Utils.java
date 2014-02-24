@@ -18,34 +18,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.ui.impl;
 
-import java.awt.font.FontRenderContext;
-import java.awt.font.TextAttribute;
-import java.awt.font.TextLayout;
-import java.text.AttributedString;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import org.zkoss.lang.Objects;
-import org.zkoss.poi.ss.usermodel.BorderStyle;
-import org.zkoss.poi.ss.usermodel.Cell;
-import org.zkoss.poi.ss.usermodel.CellStyle;
-import org.zkoss.poi.ss.usermodel.ClientAnchor;
-import org.zkoss.poi.ss.usermodel.Color;
-import org.zkoss.poi.ss.usermodel.DataFormat;
-import org.zkoss.poi.ss.usermodel.Font;
-import org.zkoss.poi.ss.usermodel.Hyperlink;
-import org.zkoss.poi.ss.usermodel.RichTextString;
-import org.zkoss.poi.ss.usermodel.Row;
-import org.zkoss.poi.ss.usermodel.Workbook;
-import org.zkoss.poi.ss.util.CellReference;
 import org.zkoss.util.logging.Log;
-import org.zkoss.zk.ui.Execution;
-import org.zkoss.zk.ui.Executions;
-import org.zkoss.zk.ui.event.EventListener;
-import org.zkoss.zss.api.AreaRef;
-import org.zkoss.zss.ui.Spreadsheet;
-import org.zkoss.zul.Messagebox;
 //
 ///**
 // * Internal Use Only. Utility class for {@link Spreadsheet}.

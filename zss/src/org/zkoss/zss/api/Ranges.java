@@ -16,8 +16,6 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.api;
 
-//import org.zkoss.poi.ss.util.AreaReference;
-//import org.zkoss.poi.ss.util.CellReference;
 import org.zkoss.zss.api.impl.RangeImpl;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.api.model.impl.SheetImpl;

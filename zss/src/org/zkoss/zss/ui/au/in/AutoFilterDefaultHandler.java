@@ -32,19 +32,9 @@ import org.zkoss.json.JSONArray;
 import org.zkoss.lang.Objects;
 import org.zkoss.lang.Strings;
 import org.zkoss.util.Locales;
-//import org.zkoss.poi.ss.usermodel.AutoFilter;
-//import org.zkoss.poi.ss.usermodel.Cell;
-//import org.zkoss.poi.ss.usermodel.DateUtil;
-//import org.zkoss.poi.ss.usermodel.FilterColumn;
-//import org.zkoss.poi.ss.usermodel.RichTextString;
-//import org.zkoss.poi.ss.usermodel.Row;
 import org.zkoss.zss.api.AreaRef;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.api.model.impl.SheetImpl;
-//import org.zkoss.zss.model.sys.XRange;
-//import org.zkoss.zss.model.sys.XRanges;
-//import org.zkoss.zss.model.sys.XSheet;
-//import org.zkoss.zss.model.sys.impl.BookHelper;
 import org.zkoss.zss.ngapi.NRange;
 import org.zkoss.zss.ngapi.NRanges;
 import org.zkoss.zss.ngmodel.NAutoFilter;
@@ -58,7 +48,6 @@ import org.zkoss.zss.ngmodel.sys.format.FormatContext;
 import org.zkoss.zss.ngmodel.sys.format.FormatEngine;
 import org.zkoss.zss.ngmodel.sys.format.FormatResult;
 import org.zkoss.zss.ui.Spreadsheet;
-//import org.zkoss.zss.ui.impl.XUtils;
 
 /**
  * a util to help command to handle 'dirty' directly.

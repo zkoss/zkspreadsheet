@@ -22,8 +22,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import org.zkoss.zss.api.AreaRef;
-//import org.zkoss.poi.hssf.util.AreaReference;
-//import org.zkoss.poi.hssf.util.CellReference;
 import org.zkoss.zss.api.Exporter;
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.Sheet;

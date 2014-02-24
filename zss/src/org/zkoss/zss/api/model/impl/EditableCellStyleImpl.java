@@ -16,12 +16,10 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.api.model.impl;
 
-import org.zkoss.poi.ss.usermodel.DataFormat;
 import org.zkoss.zss.api.model.CellStyle;
 import org.zkoss.zss.api.model.Color;
-import org.zkoss.zss.api.model.Font;
 import org.zkoss.zss.api.model.EditableCellStyle;
-import org.zkoss.zss.api.model.impl.EnumUtil;
+import org.zkoss.zss.api.model.Font;
 import org.zkoss.zss.ngmodel.NBook;
 import org.zkoss.zss.ngmodel.NCellStyle;
 /**

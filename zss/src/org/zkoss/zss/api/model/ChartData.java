@@ -19,7 +19,7 @@ package org.zkoss.zss.api.model;
 import org.zkoss.zss.ngmodel.chart.NChartData;
 
 /**
- * This interface provides the access to the underlying data object ({@link org.zkoss.poi.ss.usermodel.charts.ChartData}) of a chart.
+ * This interface provides the access to the underlying data object ({@link NChartData}) of a chart.
  * @author dennis
  * @since 3.0.0
  */

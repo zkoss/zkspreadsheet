@@ -18,24 +18,13 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.ui.fn;
 
-import java.io.IOException;
-import java.io.StringWriter;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 
-import org.zkoss.poi.ss.usermodel.Cell;
-import org.zkoss.poi.ss.usermodel.Hyperlink;
-import org.zkoss.poi.ss.usermodel.RichTextString;
-import org.zkoss.zk.ui.UiException;
 import org.zkoss.zss.api.AreaRef;
-//import org.zkoss.zss.model.Cell;
-//import org.zkoss.zss.model.Format;
 import org.zkoss.zss.ngmodel.NSheet;
 import org.zkoss.zss.ui.Spreadsheet;
-import org.zkoss.zss.ui.impl.HeaderPositionHelper;
 import org.zkoss.zss.ui.impl.MergeMatrixHelper;
-import org.zkoss.zss.ui.impl.XUtils;
 import org.zkoss.zss.ui.sys.SpreadsheetCtrl;
 
 

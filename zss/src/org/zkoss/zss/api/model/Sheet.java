@@ -28,10 +28,6 @@ import org.zkoss.zss.ngmodel.NSheet;
  */
 public interface Sheet {
 
-	/*TODO zss 3.5
-	public org.zkoss.poi.ss.usermodel.Sheet getPoiSheet();
-	*/
-	
 	/** 
 	 * get the internal model object to do advanced operation <br/>
 	 * Note : operate on internal object will not automatically update Spreadsheet   

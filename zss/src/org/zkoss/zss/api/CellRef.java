@@ -18,6 +18,8 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.api;
 
+import org.zkoss.zss.ngmodel.CellRegion;
+
 /**
  * A class that represents a cell position with 2 value : row and column
  * @author Dennis.Chen
@@ -59,6 +61,6 @@ public class CellRef {
 	 * @return reference string, e.x A1
 	 */
 	public String asString(){
-		return new org.zkoss.poi.ss.util.CellReference(_row,_column).formatAsString();
+		return new CellRegion(_row,_column).getReferenceString();
 	}
 }
