@@ -21,8 +21,9 @@ import java.util.Date;
 
 import org.zkoss.zss.ngmodel.CellRegion;
 import org.zkoss.zss.ngmodel.ErrorValue;
+import org.zkoss.zss.ngmodel.InvalidateFormulaException;
 import org.zkoss.zss.ngmodel.InvalidateModelOpException;
-import org.zkoss.zss.ngmodel.InvalidateModelValueException;
+//import org.zkoss.zss.ngmodel.InvalidateModelValueException;
 import org.zkoss.zss.ngmodel.NBookSeries;
 import org.zkoss.zss.ngmodel.NCellStyle;
 import org.zkoss.zss.ngmodel.NCellValue;
@@ -209,7 +210,7 @@ public class CellImpl extends AbstractCellAdv {
 		FormulaExpression expr = fe.parse(formula, new FormulaParseContext(this,null));//for test error, no need to build dependency
 		if(expr.hasError()){	
 			String msg = expr.getErrorMessage();
-			throw new InvalidateModelOpException(msg==null?"The formula contains error":msg);
+			throw new InvalidateFormulaException(msg==null?"The formula contains error":msg);
 		}
 		
 		if(getType()==CellType.FORMULA){

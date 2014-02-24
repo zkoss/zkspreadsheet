@@ -107,7 +107,6 @@ import org.zkoss.zss.ngapi.NImporters;
 import org.zkoss.zss.ngapi.NRange;
 import org.zkoss.zss.ngapi.NRanges;
 import org.zkoss.zss.ngmodel.CellRegion;
-import org.zkoss.zss.ngmodel.InvalidateModelValueException;
 import org.zkoss.zss.ngmodel.ModelEvent;
 import org.zkoss.zss.ngmodel.ModelEventDispatcher;
 import org.zkoss.zss.ngmodel.ModelEventListener;
@@ -4539,16 +4538,6 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		});
 	}
 	
-	private void showInvalidateModelValueErrorThenRetry(InvalidateModelValueException ex, final String token, final Sheet sheet, final int rowIdx,final int colIdx, final Object value, final String editingType) {
-		String title = Labels.getLabel("zss.msg.warn_title");
-		String msg = Labels.getLabel("zss.msg.invalidate_model_value_error",new Object[]{value,new CellRegion(rowIdx,colIdx).getReferenceString()});
-		Messagebox.show(msg, title, Messagebox.OK, Messagebox.EXCLAMATION, new EventListener() {
-			public void onEvent(Event evt) {
-				Spreadsheet.this.processRetryEditing0(token, sheet, rowIdx, colIdx, value, editingType);
-			}
-		});
-	}	
-	
 
 	// a local flag indicates that skip the validation and force this editing (ZSS-351) 
 	private boolean forceStopEditing0 = false; 
@@ -4595,12 +4584,10 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 
 			smartUpdate("dataUpdateStop", new Object[] { token,	XUtils.getSheetUuid(sheet), result});
 		} catch (RuntimeException x) {
-			if (x instanceof InvalidateModelOpException){
-				showInvalidateModelOpErrorThenRetry((InvalidateModelOpException)x, token, sheet, rowIdx, colIdx, value, editingType);
-			} else if (x instanceof InvalidateModelValueException){
-				showInvalidateModelValueErrorThenRetry((InvalidateModelValueException)x, token, sheet, rowIdx, colIdx, value, editingType);
-			} else if (x instanceof IllegalFormulaException) {
+			if (x instanceof IllegalFormulaException) {
 				showFormulaErrorThenRetry((IllegalFormulaException)x, token, sheet, rowIdx, colIdx, value, editingType);
+			} else if (x instanceof InvalidateModelOpException){
+				showInvalidateModelOpErrorThenRetry((InvalidateModelOpException)x, token, sheet, rowIdx, colIdx, value, editingType);
 			} else {
 				processCancelEditing0(token, sheet, rowIdx, colIdx, false, editingType);
 				throw x;

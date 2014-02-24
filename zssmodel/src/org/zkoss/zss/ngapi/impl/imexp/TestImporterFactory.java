@@ -336,7 +336,7 @@ public class TestImporterFactory implements ImporterFactory{
 				
 				sheet.getViewInfo().setNumOfColumnFreeze(5);
 				sheet.getViewInfo().setNumOfRowFreeze(7);
-				sheet.addPicture(Format.JPG, getTestImageData(), new NViewAnchor(3, 3, 600, 300));
+//				sheet.addPicture(Format.JPG, getTestImageData(), new NViewAnchor(3, 3, 600, 300));
 			}
 
 			private void buildChartSheet(NBook book) {
@@ -660,7 +660,7 @@ public class TestImporterFactory implements ImporterFactory{
 				
 				
 				
-				sheet.addPicture(Format.JPG, getTestImageData(), new NViewAnchor(12, 3, 30, 5, 600, 300));
+//				sheet.addPicture(Format.JPG, getTestImageData(), new NViewAnchor(12, 3, 30, 5, 600, 300));
 				
 				
 				sheet = book.createSheet("Sheet 2");

@@ -52,6 +52,7 @@ import org.zkoss.zss.ngapi.NRange;
 import org.zkoss.zss.ngapi.NRanges;
 import org.zkoss.zss.ngapi.impl.imexp.BookHelper;
 import org.zkoss.zss.ngmodel.CellRegion;
+import org.zkoss.zss.ngmodel.InvalidateFormulaException;
 import org.zkoss.zss.ngmodel.NBook;
 import org.zkoss.zss.ngmodel.NCell;
 import org.zkoss.zss.ngmodel.NCellStyle;
@@ -503,8 +504,7 @@ public class RangeImpl implements Range{
 	public void setCellEditText(String editText){ 
 		try{
 			_range.setEditText(editText);
-			//TODO zss 3.5 the parse exception
-		}catch(FormulaParseException x){
+		}catch(InvalidateFormulaException x){
 			throw new IllegalFormulaException(x.getMessage(),x);
 		}
 	}

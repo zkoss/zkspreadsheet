@@ -20,22 +20,22 @@ package org.zkoss.zss.ngmodel;
  * @author dennis
  * @since 3.5.0
  */
-public class InvalidateModelValueException extends RuntimeException {
+public class InvalidateFormulaException extends InvalidateModelOpException {
 	private static final long serialVersionUID = 1L;
 
-	public InvalidateModelValueException() {
+	public InvalidateFormulaException() {
 		super();
 	}
 
-	public InvalidateModelValueException(String message, Throwable cause) {
+	public InvalidateFormulaException(String message, Throwable cause) {
 		super(message, cause);
 	}
 
-	public InvalidateModelValueException(String message) {
+	public InvalidateFormulaException(String message) {
 		super(message);
 	}
 
-	public InvalidateModelValueException(Throwable cause) {
+	public InvalidateFormulaException(Throwable cause) {
 		super(cause);
 	}
 
