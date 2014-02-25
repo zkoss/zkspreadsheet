@@ -18,7 +18,6 @@ package org.zkoss.zss.api.impl;
 
 import java.util.concurrent.locks.ReadWriteLock;
 
-import org.zkoss.poi.ss.formula.FormulaParseException;
 import org.zkoss.zss.api.CellVisitor;
 import org.zkoss.zss.api.IllegalFormulaException;
 import org.zkoss.zss.api.Range;
@@ -408,23 +407,24 @@ public class RangeImpl implements Range{
 			hasHeader,matchCase,sortByRows);
 	}
 	
-	public void sort(Range index1,boolean desc1,SortDataOption dataOption1,
-			Range index2,boolean desc2,SortDataOption dataOption2,
-			Range index3,boolean desc3,SortDataOption dataOption3,
+	public void sort(Range key1,boolean desc1,SortDataOption dataOption1,
+			Range key2,boolean desc2,SortDataOption dataOption2,
+			Range key3,boolean desc3,SortDataOption dataOption3,
 			boolean header, 
-			/*int orderCustom, //not implement*/
 			boolean matchCase, 
 			boolean sortByRows
+			/*int orderCustom, //not implement*/
 			/*int sortMethod, //not implement*/){
 		
-		_range.sort(index1==null?null:((RangeImpl)index1).getNative(), desc1, 
-				index2==null?null:((RangeImpl)index2).getNative()/*rng2*/, -1 /*type*/, desc2/*desc2*/, 
-				index3==null?null:((RangeImpl)index3).getNative()/*rng3*/, desc3/*desc3*/,
-				header?BookHelper.SORT_HEADER_YES:BookHelper.SORT_HEADER_NO/*header*/,
-				-1/*orderCustom*/, matchCase, sortByRows, -1/*sortMethod*/, 
-				dataOption1==null?SRange.SortDataOption.NORMAL_DEFAULT:EnumUtil.toRangeSortDataOption(dataOption1)/*dataOption1*/,
-				dataOption2==null?SRange.SortDataOption.NORMAL_DEFAULT:EnumUtil.toRangeSortDataOption(dataOption2)/*dataOption2*/,
-				dataOption3==null?SRange.SortDataOption.NORMAL_DEFAULT:EnumUtil.toRangeSortDataOption(dataOption3)/*dataOption3*/);
+		_range.sort(key1==null?null:((RangeImpl)key1).getNative(), desc1, 
+				dataOption1==null?SRange.SortDataOption.NORMAL_DEFAULT:EnumUtil.toRangeSortDataOption(dataOption1),
+				key2==null?null:((RangeImpl)key2).getNative(), desc2, 
+				dataOption2==null?SRange.SortDataOption.NORMAL_DEFAULT:EnumUtil.toRangeSortDataOption(dataOption2), 
+				key3==null?null:((RangeImpl)key3).getNative(), desc3, 
+				dataOption3==null?SRange.SortDataOption.NORMAL_DEFAULT:EnumUtil.toRangeSortDataOption(dataOption3),
+				header?BookHelper.SORT_HEADER_YES:BookHelper.SORT_HEADER_NO, 
+				matchCase, 
+				sortByRows);
 		
 	}
 	

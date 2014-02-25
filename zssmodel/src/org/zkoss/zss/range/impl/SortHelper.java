@@ -3,11 +3,9 @@ package org.zkoss.zss.range.impl;
 import java.io.Serializable;
 import java.lang.reflect.*;
 import java.util.*;
-import java.util.Map.Entry;
 
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zss.model.*;
-import org.zkoss.zss.model.PasteOption.PasteType;
 import org.zkoss.zss.model.impl.CellBuffer;
 import org.zkoss.zss.model.sys.formula.*;
 import org.zkoss.zss.range.*;
@@ -23,6 +21,7 @@ public class SortHelper extends RangeHelperBase {
 
 	public static final int SORT_HEADER_NO  = 0;
 	public static final int SORT_HEADER_YES = 1;
+	private CellRegion sortingRegion; //a region contains only data to sort without headers
 	
 	public SortHelper(SRange range) {
 		super(range);
@@ -30,42 +29,26 @@ public class SortHelper extends RangeHelperBase {
 	
 	/**
 	 * 
-	 * @param sheet
-	 * @param tRow selection range to sort
-	 * @param lCol selection range to sort
-	 * @param bRow selection range to sort
-	 * @param rCol selection range to sort
 	 * @param key1
-	 * @param desc1
+	 * @param descending1
+	 * @param dataOption1 BookHelper.SORT_TEXT_AS_NUMBERS, BookHelper.SORT_NORMAL_DEFAULT
 	 * @param key2
-	 * @param type
-	 * @param desc2
+	 * @param descending2
+	 * @param dataOption2
 	 * @param key3
-	 * @param desc3
+	 * @param descending3
+	 * @param dataOption3
 	 * @param header
-	 * @param orderCustom
 	 * @param matchCase
 	 * @param sortByRows
-	 * @param sortMethod
-	 * @param dataOption1 BookHelper.SORT_TEXT_AS_NUMBERS, BookHelper.SORT_NORMAL_DEFAULT
-	 * @param dataOption2
-	 * @param dataOption3
 	 */
-	public void sort(SSheet sheet, int tRow, int lCol, int bRow, int rCol, 
-			SRange key1, boolean desc1, SRange key2, int type, boolean desc2, SRange key3, boolean desc3, int header, int orderCustom,
-			boolean matchCase, boolean sortByRows, int sortMethod, SortDataOption dataOption1, SortDataOption dataOption2, SortDataOption dataOption3) {
-		//TODO type not yet implemented(Sort label/Sort value, for PivotTable)
-		//TODO orderCustom is not implemented yet
-		
-		if (header == SORT_HEADER_YES) {
-			if (sortByRows) {
-				++lCol;
-			} else {
-				++tRow;
-			}
-		}
-		if (tRow > bRow || lCol > rCol) { //nothing to sort!
-			return ;
+	public void sort(SRange key1, boolean descending1, SortDataOption dataOption1, SRange key2, boolean descending2, SortDataOption dataOption2, SRange key3,
+			boolean descending3, SortDataOption dataOption3, int header, boolean matchCase, boolean sortByRows) {
+		try{
+			sortingRegion = findSortingRegion(header, sortByRows);
+		}catch (IllegalArgumentException e) {
+			// row & column indexes are illegal to form a region, cannot sort
+			return;
 		}
 		int keyCount = 0;
 		if (key1 != null) {
@@ -84,95 +67,104 @@ public class SortHelper extends RangeHelperBase {
 		final boolean[] descs = new boolean[keyCount];
 		final int[] keyIndexes = new int[keyCount];
 		keyIndexes[0] = rangeToIndex(key1, sortByRows);
-		descs[0] = desc1;
+		descs[0] = descending1;
 		dataOptions[0] = dataOption1;
 		if (keyCount > 1) {
 			keyIndexes[1] = rangeToIndex(key2, sortByRows);
-			descs[1] = desc2;
+			descs[1] = descending2;
 			dataOptions[1] = dataOption2;
 		}
 		if (keyCount > 2) {
 			keyIndexes[2] = rangeToIndex(key3, sortByRows);
-			descs[2] = desc3;
+			descs[2] = descending3;
 			dataOptions[2] = dataOption3;
 		}
-		validateKeyIndexes(keyIndexes, tRow, lCol, bRow, rCol, sortByRows);
+		validateKeyIndexes(keyIndexes, sortByRows);
 		
-		final List<SortKey> sortKeys = new ArrayList<SortKey>(sortByRows ? rCol - lCol + 1 : bRow - tRow + 1);
-		final int begRow = Math.max(tRow, sheet.getStartRowIndex());
-		final int endRow = Math.min(bRow, sheet.getEndRowIndex());
+		final List<SortKey> sortKeys = new ArrayList<SortKey>(sortByRows ? sortingRegion.getColumnCount() : sortingRegion.getRowCount());
 		if (sortByRows) { //keyIndex contains row index
-			int begCol = sheet.getBook().getMaxColumnIndex();
-			int endCol = 0;
-			//locate begCol/endCol of the sheet
-			for (int rowNum = begRow; rowNum <= endRow; ++rowNum) {
-				final SRow row = sheet.getRow(rowNum);
-				if (row != null) {
-					begCol = Math.min(begCol, sheet.getStartCellIndex(rowNum));
-					endCol = Math.max(endCol, sheet.getEndCellIndex(rowNum));
-				}
-			}
-			begCol = Math.max(lCol, begCol);
-			endCol = Math.min(rCol, endCol);
-			for (int colnum = begCol; colnum <= endCol; ++colnum) {
+			for (int columnIndex = sortingRegion.getColumn(); columnIndex <= sortingRegion.getLastColumn(); ++columnIndex) {
 				Object[] values = new Object[keyCount];
 				for(int j = 0; j < keyCount; ++j) {
-					SCell cell = sheet.getCell(keyIndexes[j], colnum);
-					Object val = getCellValue(cell, dataOptions[j]);
-					values[j] = val;
+					values[j] = getCellValue(sheet.getCell(keyIndexes[j], columnIndex), dataOptions[j]);
 				}
-				SortKey sortKey = new SortKey(colnum, values);
+				SortKey sortKey = new SortKey(columnIndex, values);
 				sortKeys.add(sortKey);
 			}
 			if (!sortKeys.isEmpty()) {
-				final Comparator<SortKey> keyComparator = new KeyComparator(descs, matchCase, sortMethod, type);
-				Collections.sort(sortKeys, keyComparator);
-				assignColumns(sheet, sortKeys, begRow, lCol, endRow, rCol);
-			} else {
-				return ;
+				Collections.sort(sortKeys, new KeyComparator(descs, matchCase));
+				repositionColumns(sortKeys);
 			}
 		} else { //sortByColumn, default case , keyIndex contains column index
-			for (int rownum = begRow; rownum <= endRow; ++rownum) {
-				final SRow row = sheet.getRow(rownum);
+			for (int rowIndex = sortingRegion.getRow(); rowIndex <= sortingRegion.getLastRow(); ++rowIndex) {
+				final SRow row = sheet.getRow(rowIndex);
 				if (row.isNull()) {
 					continue; //nothing to sort
 				}
 				final Object[] values = new Object[keyCount];
 				for(int j = 0; j < keyCount; ++j) {
-					final SCell cell = sheet.getCell(rownum, keyIndexes[j]);
-					final Object val = getCellValue(cell, dataOptions[j]);
-					values[j] = val;
+					values[j] = getCellValue(sheet.getCell(rowIndex, keyIndexes[j]), dataOptions[j]);
 				}
-				final SortKey sortKey = new SortKey(rownum, values);
+				final SortKey sortKey = new SortKey(rowIndex, values);
 				sortKeys.add(sortKey);
 			}
 			if (!sortKeys.isEmpty()) {
-				final Comparator<SortKey> keyComparator = new KeyComparator(descs, matchCase, sortMethod, type);
-				Collections.sort(sortKeys, keyComparator);
-				assignRows(sheet, sortKeys, tRow, lCol, bRow, rCol);
-			} else {
-				return ;
+				Collections.sort(sortKeys, new KeyComparator(descs, matchCase));
+				repositionRows(sortKeys);
 			}
 		}
 	}
 	
-	
+	/*
+	 * find the region that only contains data to sort without headers, blank rows and columns.
+	 */
+	private CellRegion findSortingRegion(int header, boolean sortByRows) {
+		int row = getRow();
+		int column = getColumn();
+		int lastRow = getLastRow();
+		int lastColumn = getLastColumn();
+		if (header == SORT_HEADER_YES) {
+			if (sortByRows){
+				column++;
+			}else{
+				row++;
+			}
+		}
+		//ignore blanks rows and columns
+		row = Math.max(row, sheet.getStartRowIndex());
+		lastRow = Math.min(lastRow, sheet.getEndRowIndex());
+		if (sortByRows){
+			int nonBlankColumn = range.getSheet().getBook().getMaxColumnIndex();
+			int nonBlankLastColumn = 0;
+			for (int index = row; index <= lastRow; ++index) {
+				nonBlankColumn = Math.min(nonBlankColumn, sheet.getStartCellIndex(index));
+				nonBlankLastColumn = Math.max(nonBlankLastColumn, sheet.getEndCellIndex(index));
+			}
+			//non-blank range cannot smaller than selection
+			column = Math.max(column, nonBlankColumn);
+			lastColumn = Math.min(lastColumn, nonBlankLastColumn);
+		}
+		
+		sortingRegion = new CellRegion(row, column, lastRow, lastColumn);
+		return sortingRegion;
+	}
+
 	private int rangeToIndex(SRange range, boolean sortByRows) {
 		return sortByRows ? range.getRow() : range.getColumn();
 	}
 	
-	private void validateKeyIndexes(int[] keyIndexes, int tRow, int lCol, int bRow, int rCol, boolean sortByRows) {
+	private void validateKeyIndexes(int[] keyIndexes, boolean sortByRows) {
 		if (!sortByRows) {
 			for(int j = keyIndexes.length - 1; j >= 0; --j) {
 				final int keyIndex = keyIndexes[j]; 
-				if (keyIndex < lCol || keyIndex > rCol) {
+				if (keyIndex < sortingRegion.getColumn() || keyIndex > sortingRegion.getLastColumn()) {
 					throw new UiException("The given key is out of the sorting range: "+keyIndex);
 				}
 			}
 		} else {
 			for(int j = keyIndexes.length - 1; j >= 0; --j) {
 				final int keyIndex = keyIndexes[j]; 
-				if (keyIndex < tRow || keyIndex > bRow) {
+				if (keyIndex < sortingRegion.getRow() || keyIndex > sortingRegion.getLastRow()) {
 					throw new UiException("The given key is out of the sorting range: "+keyIndex);
 				}
 			}
@@ -181,25 +173,20 @@ public class SortHelper extends RangeHelperBase {
 	
 	/**
 	 * Change order of cells in column-wise according to sorting result. We might move them left or right.
-	 * @param sheet
 	 * @param sortKeys
-	 * @param tRow
-	 * @param lCol
-	 * @param bRow
-	 * @param rCol
 	 */
-	private void  assignColumns(SSheet sheet, List<SortKey> sortKeys, int tRow, int lCol, int bRow, int rCol) {
-		int cellCount = bRow - tRow + 1;
+	private void  repositionColumns(List<SortKey> sortKeys) {
+		int cellCount = sortingRegion.getRowCount();
 		int columnBufferIndex = 0;
 		List<SortResult> sortResults = new ArrayList<SortHelper.SortResult>(sortKeys.size());
 		//copy original columns in a buffer
 		for(Iterator<SortKey> it = sortKeys.iterator(); it.hasNext();columnBufferIndex++) {
 			SortKey sortKey = it.next();
 			int oldColumnNum = sortKey.getIndex();
-			int newColumnNum = lCol + columnBufferIndex;
+			int newColumnNum = sortingRegion.getColumn() + columnBufferIndex;
 			CellBuffer[] cellBuffer = new CellBuffer[cellCount];
 			for (int r=0 ; r < cellCount ; r++){
-				cellBuffer[r] = CellBuffer.bufferAll(sheet.getCell(tRow+r, oldColumnNum));
+				cellBuffer[r] = CellBuffer.bufferAll(sheet.getCell(sortingRegion.getRow()+r, oldColumnNum));
 			}
 			sortResults.add(new SortResult(oldColumnNum, newColumnNum, cellBuffer));
 		}
@@ -210,8 +197,8 @@ public class SortHelper extends RangeHelperBase {
 				continue;
 			}
 			for (int r = 0 ; r < result.cellBuffer.length ; r++){
-				SCell cellProxy = getProxyInstance(sheet.getCell(tRow+r, result.newIndex), 
-						new SheetRegion(sheet, tRow, lCol, bRow, rCol), 0, result.newIndex-result.oldIndex);
+				SCell cellProxy = getProxyInstance(sheet.getCell(sortingRegion.getRow()+r, result.newIndex), 
+						new SheetRegion(sheet, sortingRegion), 0, result.newIndex-result.oldIndex);
 				result.cellBuffer[r].applyAll(cellProxy);
 			}
 		}
@@ -219,26 +206,21 @@ public class SortHelper extends RangeHelperBase {
 
 	/**
 	 * Change order of cells in row-wise according to sorting result. We might move them up or down.
-	 * @param sheet
 	 * @param sortKeys
-	 * @param tRow sorting region without headers
-	 * @param lCol
-	 * @param bRow
-	 * @param rCol
 	 * @return
 	 */
-	private void assignRows(SSheet sheet, List<SortKey> sortKeys, int tRow, int lCol, int bRow, int rCol) {
-		int cellCount = rCol - lCol + 1;
+	private void repositionRows(List<SortKey> sortKeys) {
+		int cellCount = sortingRegion.getColumnCount();
 		int rowBufferIndex = 0;
 		List<SortResult> sortResults = new ArrayList<SortHelper.SortResult>(sortKeys.size());
 		//copy original rows in a buffer
 		for(Iterator<SortKey> it = sortKeys.iterator(); it.hasNext();rowBufferIndex++) {
 			SortKey sortKey = it.next();
 			int oldRowNum = sortKey.getIndex();
-			int newRowNum = tRow + rowBufferIndex;
+			int newRowNum = sortingRegion.getRow() + rowBufferIndex;
 			CellBuffer[] cellBuffer = new CellBuffer[cellCount];
 			for (int c=0 ; c < cellCount ; c++){
-				cellBuffer[c] = CellBuffer.bufferAll(sheet.getCell(oldRowNum, lCol+c));
+				cellBuffer[c] = CellBuffer.bufferAll(sheet.getCell(oldRowNum, sortingRegion.getColumn()+c));
 			}
 			sortResults.add(new SortResult(oldRowNum, newRowNum, cellBuffer));
 		}
@@ -249,8 +231,8 @@ public class SortHelper extends RangeHelperBase {
 				continue;
 			}
 			for (int c = 0 ; c < result.cellBuffer.length ; c++){
-				SCell cellProxy = getProxyInstance(sheet.getCell(result.newIndex, lCol+c), 
-						new SheetRegion(sheet, tRow, lCol, bRow, rCol), result.newIndex-result.oldIndex, 0);
+				SCell cellProxy = getProxyInstance(sheet.getCell(result.newIndex, sortingRegion.getColumn()+c), 
+						new SheetRegion(sheet, sortingRegion), result.newIndex-result.oldIndex, 0);
 				result.cellBuffer[c].applyAll(cellProxy);
 			}
 		}
@@ -276,7 +258,7 @@ public class SortHelper extends RangeHelperBase {
 		}
 	}
 	
-	//convert cell sorting data upon data option
+	//convert cell value upon data option
 	private Object getCellValue(SCell cell, SortDataOption dataOption) {
 		Object val = cell.getValue();
 		if (val instanceof String && dataOption == SortDataOption.TEXT_AS_NUMBERS) {
@@ -291,7 +273,7 @@ public class SortHelper extends RangeHelperBase {
 	
 	public static class SortKey {
 		final private int _index; //original row/column index
-		final private Object[] _values;
+		final private Object[] _values; //cell value
 		public SortKey(int index, Object[] values) {
 			this._index = index;
 			this._values = values;
@@ -307,14 +289,12 @@ public class SortHelper extends RangeHelperBase {
 	private static class KeyComparator implements Comparator<SortKey>, Serializable {
 		final private boolean[] _descs;
 		final private boolean _matchCase;
-		final private int _sortMethod; //TODO byNumberOfStroks, byPinyYin
-		final private int _type; //TODO PivotTable only: byLabel, byValue
+//		final private int _sortMethod; //TODO byNumberOfStroks, byPinyYin
+//		final private int _type; //TODO PivotTable only: byLabel, byValue
 		
-		public KeyComparator(boolean[] descs, boolean matchCase, int sortMethod, int type) {
+		public KeyComparator(boolean[] descs, boolean matchCase) {
 			_descs = descs;
 			_matchCase = matchCase;
-			_sortMethod = sortMethod;
-			_type = type;
 		}
 		@Override
 		public int compare(SortKey o1, SortKey o2) {

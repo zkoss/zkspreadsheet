@@ -1488,20 +1488,14 @@ public class RangeImpl implements SRange {
 	}
 
 	@Override
-	public void sort(final SRange rng1, final boolean desc1, final SRange rng2, final int type, final boolean desc2,
-			final SRange rng3, final boolean desc3, final int header, final int orderCustom,
-			final boolean matchCase, final boolean sortByRows,final int sortMethod,
-			final SortDataOption dataOption1, final SortDataOption dataOption2, final SortDataOption dataOption3) {
+	public void sort(final SRange key1, final boolean descending1, final SortDataOption dataOption1, final SRange key2, final boolean descending2,
+			final SortDataOption dataOption2, final SRange key3, final boolean descending3, final SortDataOption dataOption3,
+			final int hasHeader, final boolean matchCase,final boolean sortByRows) {
 		new ModelUpdateTask() {			
 			@Override
 			Object doInvokePhase() {
-				int tRow = RangeImpl.this.getRow();
-				final int lCol = RangeImpl.this.getColumn();
-				final int bRow = RangeImpl.this.getLastRow();
-				final int rCol = RangeImpl.this.getLastColumn();
-				new SortHelper(RangeImpl.this).sort(getSheet(), tRow, lCol, bRow, rCol, rng1, desc1, rng2, type, desc2, 
-						rng3, desc3, header, orderCustom, 
-						matchCase, sortByRows, sortMethod, dataOption1, dataOption2, dataOption3);
+				new SortHelper(RangeImpl.this).sort(key1, descending1, dataOption1, key2, 
+						descending2, dataOption2, key3, descending3, dataOption3, hasHeader, matchCase, sortByRows);
 				return null;
 			}
 
