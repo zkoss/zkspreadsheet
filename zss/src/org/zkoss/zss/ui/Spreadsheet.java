@@ -125,10 +125,10 @@ import org.zkoss.zss.model.sys.formula.EvaluationContributorContainer;
 //import org.zkoss.zss.model.sys.impl.BookCtrl;
 //import org.zkoss.zss.model.sys.impl.ExcelImporter;
 //import org.zkoss.zss.model.sys.impl.SheetCtrl;
-import org.zkoss.zss.ngapi.NImporter;
-import org.zkoss.zss.ngapi.NImporters;
-import org.zkoss.zss.ngapi.NRange;
-import org.zkoss.zss.ngapi.NRanges;
+import org.zkoss.zss.range.SImporter;
+import org.zkoss.zss.range.SImporters;
+import org.zkoss.zss.range.SRange;
+import org.zkoss.zss.range.SRanges;
 import org.zkoss.zss.ui.au.in.Command;
 import org.zkoss.zss.ui.au.out.AuCellFocus;
 import org.zkoss.zss.ui.au.out.AuCellFocusTo;
@@ -257,7 +257,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	transient private SBook _book; // the spreadsheet book
 
 	private String _src; // the src to create an internal book
-	transient private NImporter _importer; // the spreadsheet importer
+	transient private SImporter _importer; // the spreadsheet importer
 	private int _maxRows = DEFAULT_MAX_ROWS; // how many row of this spreadsheet
 	private int _maxColumns = DEFAULT_MAX_COLUMNS; // how many column of this spreadsheet
 	
@@ -567,13 +567,13 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 				return null;
 			}
 			try {
-				NImporter importer = _importer;
+				SImporter importer = _importer;
 				if (importer == null) {
 					//TODO zss 3.5 remove this
 					if("true".equals(Executions.getCurrent().getParameter("zsstest"))){
-						importer = NImporters.getImporter("test");
+						importer = SImporters.getImporter("test");
 					}else{
-						importer = NImporters.getImporter();
+						importer = SImporters.getImporter();
 					}
 					
 				}
@@ -657,7 +657,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	
 	private void deleteSelfEditorFocus() {
 		if (_selectedSheet != null && getXBook().getSheetIndex(_selectedSheet) != -1  && _selfEditorFocus != null) {
-			final NRange rng = NRanges.range(_selectedSheet);
+			final SRange rng = SRanges.range(_selectedSheet);
 			getFriendFocusHelper().removeFocus(_selfEditorFocus);
 			rng.notifyCustomEvent(ON_MODEL_FRIEND_FOCUS_DELETE,_selfEditorFocus,false);//zss 3.5 false?
 			_selfEditorFocus = null;
@@ -672,7 +672,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 				_selfEditorFocus.setSheetId(sheetId);
 				_selfEditorFocus.setPosition(row, column);
 			}
-			final NRange rng = NRanges.range(_selectedSheet);
+			final SRange rng = SRanges.range(_selectedSheet);
 			rng.notifyCustomEvent(ON_MODEL_FRIEND_FOCUS_MOVE,_selfEditorFocus,false);//zss 3.5 false?
 		}
 		syncFriendFocus();
@@ -839,7 +839,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	 * @return the importer
 	 * @deprecated since 3.0.0 , use {@link #getImporter()}
 	 */
-	public NImporter getXImporter() {
+	public SImporter getXImporter() {
 		return _importer;
 	}
 
@@ -851,7 +851,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	 * #setSrc(). The default importer is {@link ExcelImporter}.
 	 * @deprecated since 3.0.0 , use {@link #setImporter(Importer)}
 	 */
-	public void setXImporter(NImporter importer) {
+	public void setXImporter(SImporter importer) {
 		if (!Objects.equals(importer, _importer)) {
 			_importer = importer;
 			setBook(null);

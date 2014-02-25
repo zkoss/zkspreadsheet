@@ -14,7 +14,7 @@ import org.zkoss.zss.model.SCell;
 import org.zkoss.zss.model.SColumnArray;
 import org.zkoss.zss.model.SHyperlink;
 import org.zkoss.zss.model.SSheet;
-import org.zkoss.zss.ngapi.impl.imexp.ExcelExportFactory;
+import org.zkoss.zss.range.impl.imexp.ExcelExportFactory;
 
 public class ExporterXlsTest extends ExporterTest {
 

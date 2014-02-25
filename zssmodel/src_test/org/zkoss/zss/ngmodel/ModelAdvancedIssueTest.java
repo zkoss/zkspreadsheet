@@ -29,7 +29,7 @@ import org.zkoss.zss.model.SCell.CellType;
 import org.zkoss.zss.model.SCellStyle.Alignment;
 import org.zkoss.zss.model.SCellStyle.BorderType;
 import org.zkoss.zss.model.SCellStyle.FillPattern;
-import org.zkoss.zss.model.SChart.NChartType;
+import org.zkoss.zss.model.SChart.ChartType;
 import org.zkoss.zss.model.SDataValidation.ValidationType;
 import org.zkoss.zss.model.SFont.Boldweight;
 import org.zkoss.zss.model.SFont.TypeOffset;
@@ -47,7 +47,7 @@ import org.zkoss.zss.model.sys.dependency.DependencyTable;
 import org.zkoss.zss.model.sys.dependency.Ref;
 import org.zkoss.zss.model.util.CellStyleMatcher;
 import org.zkoss.zss.model.util.FontMatcher;
-import org.zkoss.zss.ngapi.NRanges;
+import org.zkoss.zss.range.SRanges;
 
 public class ModelAdvancedIssueTest {
 

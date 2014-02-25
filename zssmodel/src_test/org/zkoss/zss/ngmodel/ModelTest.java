@@ -42,7 +42,7 @@ import org.zkoss.zss.model.SCell.CellType;
 import org.zkoss.zss.model.SCellStyle.Alignment;
 import org.zkoss.zss.model.SCellStyle.BorderType;
 import org.zkoss.zss.model.SCellStyle.FillPattern;
-import org.zkoss.zss.model.SChart.NChartType;
+import org.zkoss.zss.model.SChart.ChartType;
 import org.zkoss.zss.model.SDataValidation.ValidationType;
 import org.zkoss.zss.model.SFont.Boldweight;
 import org.zkoss.zss.model.SFont.TypeOffset;
@@ -61,7 +61,7 @@ import org.zkoss.zss.model.sys.dependency.DependencyTable;
 import org.zkoss.zss.model.sys.dependency.Ref;
 import org.zkoss.zss.model.util.CellStyleMatcher;
 import org.zkoss.zss.model.util.FontMatcher;
-import org.zkoss.zss.ngapi.NRanges;
+import org.zkoss.zss.range.SRanges;
 
 public class ModelTest {
 
@@ -2036,8 +2036,8 @@ public class ModelTest {
 		SSheet sheet = initialDataGrid(book.createSheet("Sheet 1"));
 
 		//no chart data implement yet
-		SChart p1 = sheet.addChart(SChart.NChartType.BAR, new ViewAnchor(6, 10, 22, 33, 800, 600));
-		SChart p2 = sheet.addChart(SChart.NChartType.BAR, new ViewAnchor(12, 14, 22, 33, 800, 600));
+		SChart p1 = sheet.addChart(SChart.ChartType.BAR, new ViewAnchor(6, 10, 22, 33, 800, 600));
+		SChart p2 = sheet.addChart(SChart.ChartType.BAR, new ViewAnchor(12, 14, 22, 33, 800, 600));
 		
 		p1.setTitle("MyChart");
 		p1.setXAxisTitle("X");
@@ -2118,7 +2118,7 @@ public class ModelTest {
 		sheet.getCell(2, 2).setNumberValue(6.0);
 
 		
-		SChart p1 = sheet.addChart(SChart.NChartType.BAR, new ViewAnchor(6, 10, 22, 33, 800, 600));
+		SChart p1 = sheet.addChart(SChart.ChartType.BAR, new ViewAnchor(6, 10, 22, 33, 800, 600));
 		
 		SGeneralChartData chartData = (SGeneralChartData)p1.getData();
 		Assert.assertEquals(0, chartData.getNumOfCategory());
@@ -2338,7 +2338,7 @@ public class ModelTest {
 		
 		sheet.addMergedRegion(new CellRegion(0,1,2,3));
 		
-		SChart chart = sheet.addChart(NChartType.BAR, new ViewAnchor(0, 0, 800, 600));
+		SChart chart = sheet.addChart(ChartType.BAR, new ViewAnchor(0, 0, 800, 600));
 		
 		SGeneralChartData data = (SGeneralChartData)chart.getData();
 		data.setCategoriesFormula("A1:A3");
@@ -2575,9 +2575,9 @@ public class ModelTest {
 		Assert.assertEquals(6D, dv3.getValue2(0));
 		
 		
-		NRanges.range(sheet1,0,0).setEditText("2");
-		NRanges.range(sheet1,0,1).setEditText("4");
-		NRanges.range(sheet1,0,2).setEditText("6");
+		SRanges.range(sheet1,0,0).setEditText("2");
+		SRanges.range(sheet1,0,1).setEditText("4");
+		SRanges.range(sheet1,0,2).setEditText("6");
 		
 		Assert.assertEquals(3, dv1.getNumOfValue1());
 		Assert.assertEquals(0, dv1.getNumOfValue2());

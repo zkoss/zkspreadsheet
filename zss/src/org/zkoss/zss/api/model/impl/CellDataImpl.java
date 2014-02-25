@@ -22,7 +22,7 @@ import org.zkoss.zss.api.impl.RangeImpl;
 import org.zkoss.zss.api.model.CellData;
 import org.zkoss.zss.model.SCell;
 import org.zkoss.zss.model.SSheet;
-import org.zkoss.zss.ngapi.NRange;
+import org.zkoss.zss.range.SRange;
 /**
  * 
  * @author dennis
@@ -54,7 +54,7 @@ public class CellDataImpl implements CellData{
 			return;
 		}
 		_cellInit = true;
-		NRange x = _range.getNative();
+		SRange x = _range.getNative();
 		SSheet sheet = x.getSheet();
 		
 		_cell = sheet.getCell(x.getRow(),x.getColumn());

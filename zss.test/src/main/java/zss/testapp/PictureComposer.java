@@ -8,7 +8,7 @@ import org.zkoss.zk.ui.*;
 import org.zkoss.zk.ui.select.SelectorComposer;
 import org.zkoss.zk.ui.select.annotation.*;
 import org.zkoss.zss.model.*;
-import org.zkoss.zss.ngapi.NRanges;
+import org.zkoss.zss.range.SRanges;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zul.*;
 
@@ -43,7 +43,7 @@ public class PictureComposer extends SelectorComposer<Component> {
 			AImage image = new AImage(WebApps.getCurrent().getResource("/range/zklogo.png"));
 			ViewAnchor anchor = new ViewAnchor(ss.getSelection().getRow(), ss.getSelection().getColumn(), image.getWidth(), image.getHeight());
 
-			NRanges.range(ss.getSelectedXSheet()).addPicture(anchor, image.getByteData(), SPicture.Format.PNG);
+			SRanges.range(ss.getSelectedXSheet()).addPicture(anchor, image.getByteData(), SPicture.Format.PNG);
 			refreshPictureList();
 		}catch(IOException e){
 			System.out.println("cannot add a picture for "+ e);
@@ -54,7 +54,7 @@ public class PictureComposer extends SelectorComposer<Component> {
 	@Listen("onClick = #deleteButton")
 	public void delete() {
 		if (pictureListbox.getSelectedItem() != null){
-			NRanges.range(ss.getSelectedXSheet()).deletePicture((SPicture)pictureListbox.getSelectedItem().getValue());
+			SRanges.range(ss.getSelectedXSheet()).deletePicture((SPicture)pictureListbox.getSelectedItem().getValue());
 			refreshPictureList();
 		}
 	}
@@ -65,7 +65,7 @@ public class PictureComposer extends SelectorComposer<Component> {
 			
 			SPicture picture = (SPicture) pictureListbox.getSelectedItem().getValue();
 			ViewAnchor anchor = new ViewAnchor(toRowBox.getValue(), toColumnBox.getValue(), picture.getAnchor().getWidth(), picture.getAnchor().getHeight());
-			NRanges.range(ss.getSelectedXSheet()).movePicture(picture, anchor);
+			SRanges.range(ss.getSelectedXSheet()).movePicture(picture, anchor);
 			refreshPictureList();
 		}
 	}

@@ -11,12 +11,12 @@ import org.zkoss.zss.api.AreaRef;
 import org.zkoss.zss.api.model.*;
 import org.zkoss.zss.api.model.Chart.Type;
 import org.zkoss.zss.model.*;
-import org.zkoss.zss.model.SChart.NChartGrouping;
-import org.zkoss.zss.model.SChart.NChartLegendPosition;
-import org.zkoss.zss.model.SChart.NChartType;
+import org.zkoss.zss.model.SChart.ChartGrouping;
+import org.zkoss.zss.model.SChart.ChartLegendPosition;
+import org.zkoss.zss.model.SChart.ChartType;
 import org.zkoss.zss.model.chart.*;
-import org.zkoss.zss.ngapi.*;
-import org.zkoss.zss.ngapi.impl.imexp.*;
+import org.zkoss.zss.range.*;
+import org.zkoss.zss.range.impl.imexp.*;
 import org.zkoss.zssex.api.ChartDataUtil;
 
 public class ChartPictureTest extends ChartPictureTestBase {
@@ -110,7 +110,7 @@ public class ChartPictureTest extends ChartPictureTestBase {
 		
 		assertEquals(0, sheet.getCharts().size());
 		ViewAnchor anchor = new ViewAnchor(2, 5, 600, 400);
-		SChart chart = NRanges.range(sheet).addChart(anchor, NChartType.BAR, NChartGrouping.STANDARD, NChartLegendPosition.RIGHT, false);
+		SChart chart = SRanges.range(sheet).addChart(anchor, ChartType.BAR, ChartGrouping.STANDARD, ChartLegendPosition.RIGHT, false);
 		assertEquals(1, sheet.getCharts().size());
 		
 		SGeneralChartData chartData = (SGeneralChartData)chart.getData();
@@ -151,7 +151,7 @@ public class ChartPictureTest extends ChartPictureTestBase {
 		
 		assertEquals(0, sheet.getCharts().size());
 		ViewAnchor anchor = new ViewAnchor(2, 5, 600, 400);
-		SChart chart = NRanges.range(sheet, "A4:D7").addChart(anchor, NChartType.BAR, NChartGrouping.STANDARD, NChartLegendPosition.RIGHT, false);
+		SChart chart = SRanges.range(sheet, "A4:D7").addChart(anchor, ChartType.BAR, ChartGrouping.STANDARD, ChartLegendPosition.RIGHT, false);
 
 		assertEquals(1, sheet.getCharts().size());
 		SGeneralChartData nChartData = (SGeneralChartData)chart.getData();
@@ -186,7 +186,7 @@ public class ChartPictureTest extends ChartPictureTestBase {
 		
 		assertEquals(0, sheet.getCharts().size());
 		ViewAnchor anchor = new ViewAnchor(2, 5, 600, 400);
-		SChart chart = NRanges.range(sheet, "A4:D9").addChart(anchor, NChartType.COLUMN, NChartGrouping.STANDARD, NChartLegendPosition.RIGHT, false);
+		SChart chart = SRanges.range(sheet, "A4:D9").addChart(anchor, ChartType.COLUMN, ChartGrouping.STANDARD, ChartLegendPosition.RIGHT, false);
 
 		assertEquals(1, sheet.getCharts().size());
 		SGeneralChartData nChartData = (SGeneralChartData)chart.getData();
@@ -220,7 +220,7 @@ public class ChartPictureTest extends ChartPictureTestBase {
 		
 		assertEquals(0, sheet.getCharts().size());
 		ViewAnchor anchor = new ViewAnchor(2, 5, 600, 400);
-		SChart chart = NRanges.range(sheet, "B4:D9").addChart(anchor, NChartType.COLUMN, NChartGrouping.STANDARD, NChartLegendPosition.RIGHT, false);
+		SChart chart = SRanges.range(sheet, "B4:D9").addChart(anchor, ChartType.COLUMN, ChartGrouping.STANDARD, ChartLegendPosition.RIGHT, false);
 		assertEquals(1, sheet.getCharts().size());
 
 		SGeneralChartData nChartData = (SGeneralChartData)chart.getData();
@@ -248,7 +248,7 @@ public class ChartPictureTest extends ChartPictureTestBase {
 		
 		assertEquals(0, sheet.getCharts().size());
 		ViewAnchor anchor = new ViewAnchor(2, 5, 600, 400);
-		SChart chart = NRanges.range(sheet, "A5:D9").addChart(anchor, NChartType.COLUMN, NChartGrouping.STANDARD, NChartLegendPosition.RIGHT, false);
+		SChart chart = SRanges.range(sheet, "A5:D9").addChart(anchor, ChartType.COLUMN, ChartGrouping.STANDARD, ChartLegendPosition.RIGHT, false);
 		assertEquals(1, sheet.getCharts().size());
 
 		SGeneralChartData nChartData = (SGeneralChartData)chart.getData();
@@ -282,7 +282,7 @@ public class ChartPictureTest extends ChartPictureTestBase {
 		
 		assertEquals(0, sheet.getCharts().size());
 		ViewAnchor anchor = new ViewAnchor(2, 5, 600, 400);
-		SChart chart = NRanges.range(sheet, "A4:D9").addChart(anchor, NChartType.SCATTER, NChartGrouping.STANDARD, NChartLegendPosition.RIGHT, false);
+		SChart chart = SRanges.range(sheet, "A4:D9").addChart(anchor, ChartType.SCATTER, ChartGrouping.STANDARD, ChartLegendPosition.RIGHT, false);
 		assertEquals(1, sheet.getCharts().size());
 		
 		SGeneralChartData nChartData = (SGeneralChartData)chart.getData();
@@ -317,7 +317,7 @@ public class ChartPictureTest extends ChartPictureTestBase {
 		
 		assertEquals(0, sheet.getCharts().size());
 		ViewAnchor anchor = new ViewAnchor(30, 5, 600, 400);
-		SChart chart = NRanges.range(sheet,"A30:B39").addChart(anchor, NChartType.SCATTER, NChartGrouping.STANDARD, NChartLegendPosition.RIGHT, false);
+		SChart chart = SRanges.range(sheet,"A30:B39").addChart(anchor, ChartType.SCATTER, ChartGrouping.STANDARD, ChartLegendPosition.RIGHT, false);
 
 		assertEquals(1, sheet.getCharts().size());
 		SGeneralChartData nChartData = (SGeneralChartData)chart.getData();
@@ -348,7 +348,7 @@ public class ChartPictureTest extends ChartPictureTestBase {
 		
 		assertEquals(0, sheet.getCharts().size());
 		ViewAnchor anchor = new ViewAnchor(30, 5, 600, 400);
-		SChart chart = NRanges.range(sheet, "A30:B32").addChart(anchor, NChartType.SCATTER, NChartGrouping.STANDARD, NChartLegendPosition.RIGHT, false);
+		SChart chart = SRanges.range(sheet, "A30:B32").addChart(anchor, ChartType.SCATTER, ChartGrouping.STANDARD, ChartLegendPosition.RIGHT, false);
 
 		assertEquals(1, sheet.getCharts().size());
 		SGeneralChartData nChartData = (SGeneralChartData)chart.getData();
@@ -366,10 +366,10 @@ public class ChartPictureTest extends ChartPictureTestBase {
 		
 		assertEquals(0, sheet.getCharts().size());
 		ViewAnchor anchor = new ViewAnchor(2, 5, 600, 400);
-		SChart chart = NRanges.range(sheet, "A4:D9").addChart(anchor, NChartType.COLUMN, NChartGrouping.STANDARD, NChartLegendPosition.RIGHT, false);
+		SChart chart = SRanges.range(sheet, "A4:D9").addChart(anchor, ChartType.COLUMN, ChartGrouping.STANDARD, ChartLegendPosition.RIGHT, false);
 		assertEquals(1, sheet.getCharts().size());
 		
-		NRanges.range(sheet).deleteChart(chart);
+		SRanges.range(sheet).deleteChart(chart);
 		assertEquals(0, sheet.getCharts().size());
 	}
 	
@@ -380,12 +380,12 @@ public class ChartPictureTest extends ChartPictureTestBase {
 		
 		assertEquals(0, sheet.getCharts().size());
 		ViewAnchor anchor = new ViewAnchor(2, 5, 600, 400);
-		SChart chart = NRanges.range(sheet, "A4:D9").addChart(anchor, NChartType.COLUMN, NChartGrouping.STANDARD, NChartLegendPosition.RIGHT, false);
+		SChart chart = SRanges.range(sheet, "A4:D9").addChart(anchor, ChartType.COLUMN, ChartGrouping.STANDARD, ChartLegendPosition.RIGHT, false);
 		assertEquals(1, sheet.getCharts().size());
 		assertEquals(2, chart.getAnchor().getRowIndex());
 		assertEquals(5, chart.getAnchor().getColumnIndex());
 		
-		NRanges.range(sheet).moveChart(chart, new ViewAnchor(5, 8, 700, 500));
+		SRanges.range(sheet).moveChart(chart, new ViewAnchor(5, 8, 700, 500));
 		assertEquals(5, chart.getAnchor().getRowIndex());
 		assertEquals(8, chart.getAnchor().getColumnIndex());
 	}
@@ -393,7 +393,7 @@ public class ChartPictureTest extends ChartPictureTestBase {
 	
 	//TODO use ImExpTestUtil.loadBook()
 	public static SBook loadBook(InputStream is) {
-		NImporter importer = new ExcelImportFactory().createImporter();
+		SImporter importer = new ExcelImportFactory().createImporter();
 		SBook book = null;
 		try {
 			book = importer.imports(is, "book");
@@ -413,7 +413,7 @@ public class ChartPictureTest extends ChartPictureTestBase {
 	static public String DEFAULT_EXPORT_FILE_NAME_XLSX = "exported.xlsx";
 	static public String DEFAULT_EXPORT_FILE_NAME_XLS = "exported.xls";
 	
-	public static File write(SBook book, org.zkoss.zss.ngapi.impl.imexp.ExcelExportFactory.Type type) {
+	public static File write(SBook book, org.zkoss.zss.range.impl.imexp.ExcelExportFactory.Type type) {
 		if (type.equals(ExcelExportFactory.Type.XLSX)){
 			return writeBookToFile(book, new File(DEFAULT_EXPORT_TARGET_PATH + DEFAULT_EXPORT_FILE_NAME_XLSX), type);
 		}else{
@@ -421,11 +421,11 @@ public class ChartPictureTest extends ChartPictureTestBase {
 		}
 	}
 	
-	public static File writeBookToFile(SBook book, File outFile, org.zkoss.zss.ngapi.impl.imexp.ExcelExportFactory.Type type) {
+	public static File writeBookToFile(SBook book, File outFile, org.zkoss.zss.range.impl.imexp.ExcelExportFactory.Type type) {
 		try {
 			outFile = new File(DEFAULT_EXPORT_TARGET_PATH + outFile.getName());
 			outFile.createNewFile();
-			NExporter exporter = new ExcelExportFactory(type).createExporter();
+			SExporter exporter = new ExcelExportFactory(type).createExporter();
 			exporter.export(book, outFile);
 		} catch (Exception e) {
 			e.printStackTrace();

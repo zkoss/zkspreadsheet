@@ -33,8 +33,8 @@ import org.zkoss.zss.model.SCell.CellType;
 import org.zkoss.zss.model.SHyperlink.HyperlinkType;
 import org.zkoss.zss.model.SPicture.Format;
 import org.zkoss.zss.model.impl.BookImpl;
-import org.zkoss.zss.ngapi.*;
-import org.zkoss.zss.ngapi.impl.imexp.ExcelExportFactory.Type;
+import org.zkoss.zss.range.*;
+import org.zkoss.zss.range.impl.imexp.ExcelExportFactory.Type;
 
 public class RangeTest {
 
@@ -54,20 +54,20 @@ public class RangeTest {
 		SSheet sheet1 = book.createSheet("Sheet1");
 		
 		
-		NRange r1 = NRanges.range(sheet1);
+		SRange r1 = SRanges.range(sheet1);
 		Assert.assertEquals(0, r1.getRow());
 		Assert.assertEquals(0, r1.getColumn());
 		Assert.assertEquals(book.getMaxRowIndex(), r1.getLastRow());
 		Assert.assertEquals(book.getMaxColumnIndex(), r1.getLastColumn());
 		
 		
-		r1 = NRanges.range(sheet1,3,4);
+		r1 = SRanges.range(sheet1,3,4);
 		Assert.assertEquals(3, r1.getRow());
 		Assert.assertEquals(4, r1.getColumn());
 		Assert.assertEquals(3, r1.getLastRow());
 		Assert.assertEquals(4, r1.getLastColumn());
 		
-		r1 = NRanges.range(sheet1,3,4,5,6);
+		r1 = SRanges.range(sheet1,3,4,5,6);
 		Assert.assertEquals(3, r1.getRow());
 		Assert.assertEquals(4, r1.getColumn());
 		Assert.assertEquals(5, r1.getLastRow());
@@ -86,34 +86,34 @@ public class RangeTest {
 		Assert.assertEquals(CellType.BLANK, cell.getType());
 		Assert.assertNull(cell.getValue());
 		
-		NRanges.range(sheet,1,1).setEditText("abc");
+		SRanges.range(sheet,1,1).setEditText("abc");
 		Assert.assertEquals(CellType.STRING, cell.getType());
 		Assert.assertEquals("abc",cell.getValue());
 		
-		NRanges.range(sheet,1,1).setEditText("123");
+		SRanges.range(sheet,1,1).setEditText("123");
 		Assert.assertEquals(CellType.NUMBER, cell.getType());
 		Assert.assertEquals(123,cell.getNumberValue().intValue());
 		
-		NRanges.range(sheet,1,1).setEditText("2013/01/01");
+		SRanges.range(sheet,1,1).setEditText("2013/01/01");
 		Assert.assertEquals(CellType.NUMBER, cell.getType());
 		Assert.assertEquals("2013/01/01",new SimpleDateFormat("yyyy/MM/dd").format((Date)cell.getDateValue()));
 		
-		NRanges.range(sheet,1,1).setEditText("tRue");
+		SRanges.range(sheet,1,1).setEditText("tRue");
 		Assert.assertEquals(CellType.BOOLEAN, cell.getType());
 		Assert.assertEquals(Boolean.TRUE,cell.getBooleanValue());
 		
-		NRanges.range(sheet,1,1).setEditText("FalSe");
+		SRanges.range(sheet,1,1).setEditText("FalSe");
 		Assert.assertEquals(CellType.BOOLEAN, cell.getType());
 		Assert.assertEquals(Boolean.FALSE,cell.getBooleanValue());
 		
-		NRanges.range(sheet,1,1).setEditText("=SUM(999)");
+		SRanges.range(sheet,1,1).setEditText("=SUM(999)");
 		Assert.assertEquals(CellType.FORMULA, cell.getType());
 		Assert.assertEquals(CellType.NUMBER, cell.getFormulaResultType());
 		Assert.assertEquals("SUM(999)", cell.getFormulaValue());
 		Assert.assertEquals(999D, cell.getValue());
 		
 		try{
-			NRanges.range(sheet,1,1).setEditText("=SUM)((999)");
+			SRanges.range(sheet,1,1).setEditText("=SUM)((999)");
 			Assert.fail("not here");
 		}catch(InvalidateModelOpException x){
 			//old value
@@ -123,7 +123,7 @@ public class RangeTest {
 			Assert.assertEquals(999D, cell.getValue());
 		}
 
-		NRanges.range(sheet,1,1).setEditText("");
+		SRanges.range(sheet,1,1).setEditText("");
 		Assert.assertEquals(CellType.STRING, cell.getType());
 		Assert.assertEquals("",cell.getValue());		
 		
@@ -140,32 +140,32 @@ public class RangeTest {
 		Assert.assertEquals(CellType.BLANK, cell.getType());
 		Assert.assertNull(cell.getValue());
 		
-		NRanges.range(sheet,1,1).setValue("abc");
+		SRanges.range(sheet,1,1).setValue("abc");
 		Assert.assertEquals(CellType.STRING, cell.getType());
 		Assert.assertEquals("abc",cell.getValue());
 		
-		NRanges.range(sheet,1,1).setValue(123D);
+		SRanges.range(sheet,1,1).setValue(123D);
 		Assert.assertEquals(CellType.NUMBER, cell.getType());
 		Assert.assertEquals(123D,cell.getValue());
 		
 		
-		NRanges.range(sheet,1,1).setValue(now);
+		SRanges.range(sheet,1,1).setValue(now);
 		Assert.assertEquals(CellType.NUMBER, cell.getType());
 		Assert.assertEquals(now,cell.getDateValue());
 		
-		NRanges.range(sheet,1,1).setValue(Boolean.TRUE);
+		SRanges.range(sheet,1,1).setValue(Boolean.TRUE);
 		Assert.assertEquals(CellType.BOOLEAN, cell.getType());
 		Assert.assertEquals(Boolean.TRUE,cell.getValue());
 		
 		
-		NRanges.range(sheet,1,1).setValue("=SUM(999)");
+		SRanges.range(sheet,1,1).setValue("=SUM(999)");
 		Assert.assertEquals(CellType.FORMULA, cell.getType());
 		Assert.assertEquals(CellType.NUMBER, cell.getFormulaResultType());
 		Assert.assertEquals("SUM(999)", cell.getFormulaValue());
 		Assert.assertEquals(999D, cell.getValue());
 		
 		try{
-			NRanges.range(sheet,1,1).setValue("=SUM)((999)");
+			SRanges.range(sheet,1,1).setValue("=SUM)((999)");
 			Assert.fail("not here");
 		}catch(InvalidateModelOpException x){
 			Assert.assertEquals(CellType.FORMULA, cell.getType());
@@ -174,7 +174,7 @@ public class RangeTest {
 			Assert.assertEquals(999D, cell.getValue());
 		}
 		
-		NRanges.range(sheet,1,1).setValue("");
+		SRanges.range(sheet,1,1).setValue("");
 		Assert.assertEquals(CellType.STRING, cell.getType());
 		Assert.assertEquals("",cell.getValue());			
 	}
@@ -184,8 +184,8 @@ public class RangeTest {
 		SBook book = SBooks.createBook("book1");
 		SSheet sheet = book.createSheet("Sheet 1");
 		
-		NRanges.range(sheet,0,0).setEditText("999");
-		NRanges.range(sheet,0,1).setValue("=SUM(A1)");
+		SRanges.range(sheet,0,0).setEditText("999");
+		SRanges.range(sheet,0,1).setValue("=SUM(A1)");
 		
 		
 		SCell cell = sheet.getCell(0, 0);
@@ -217,17 +217,17 @@ public class RangeTest {
 			}
 		});
 		
-		NRanges.range(sheet,0,0).setEditText("888");
+		SRanges.range(sheet,0,0).setEditText("888");
 		Assert.assertEquals(1, b0counter.intValue());
 		Assert.assertEquals(1, a0counter.intValue());
 		Assert.assertEquals(0, unknowcounter.intValue());
 		
-		NRanges.range(sheet,0,0).setEditText("777");
+		SRanges.range(sheet,0,0).setEditText("777");
 		Assert.assertEquals(2, b0counter.intValue());
 		Assert.assertEquals(2, a0counter.intValue());
 		Assert.assertEquals(0, unknowcounter.intValue());
 		
-		NRanges.range(sheet,0,0).setEditText("777");//same value should just ignore change and return
+		SRanges.range(sheet,0,0).setEditText("777");//same value should just ignore change and return
 		Assert.assertEquals(2, b0counter.intValue());
 		Assert.assertEquals(2, a0counter.intValue());
 		Assert.assertEquals(0, unknowcounter.intValue());
@@ -245,7 +245,7 @@ C	3	6	9	=SUM(E9:F9)
 		SBook book = SBooks.createBook("book1");
 		SSheet sheet = book.createSheet("Sheet 1");
 		
-		NRange range = NRanges.range(sheet,"D4").findAutoFilterRange();
+		SRange range = SRanges.range(sheet,"D4").findAutoFilterRange();
 		
 		Assert.assertNull(range);
 		
@@ -272,12 +272,12 @@ C	3	6	9	=SUM(E9:F9)
 		
 		String nullLoc[] = new String[]{"C5","D5","G5","H5","B6","B7","B9","B10","J6","J7","J9","J10","C11","D11","G11","H11"};
 		for(String loc:nullLoc){
-			Assert.assertNull("at "+loc,NRanges.range(sheet,loc).findAutoFilterRange());
+			Assert.assertNull("at "+loc,SRanges.range(sheet,loc).findAutoFilterRange());
 		}
 		
 		String inSideLoc[] = new String[]{"D7","D8","D9","E7","E8","E9","F7","F8","F9","G7","G8","G9"};
 		for(String loc:inSideLoc){
-			range = NRanges.range(sheet,loc).findAutoFilterRange();
+			range = SRanges.range(sheet,loc).findAutoFilterRange();
 			String at = "at "+loc;
 			Assert.assertNotNull(at,range);
 			Assert.assertEquals(at,6, range.getRow());
@@ -309,7 +309,7 @@ C	3	6	9	=SUM(E9:F9)
 		};
 		
 		for(Object loc[]:inCornerLoc){
-			range = NRanges.range(sheet,(String)loc[0]).findAutoFilterRange();
+			range = SRanges.range(sheet,(String)loc[0]).findAutoFilterRange();
 			String at = "at "+loc[0];
 			Assert.assertNotNull(at,range);
 			Assert.assertEquals(at,6+(Integer)loc[1], range.getRow());
@@ -331,7 +331,7 @@ C	3	6	9	=SUM(E9:F9)
 			AImage zklogo = new AImage(RangeTest.class.getResource("zklogo.png"));
 			
 			ViewAnchor anchor = new ViewAnchor(0, 1, zklogo.getWidth()/2, zklogo.getHeight()/2);
-			SPicture picture = NRanges.range(sheet).addPicture(anchor, zklogo.getByteData(), SPicture.Format.PNG);
+			SPicture picture = SRanges.range(sheet).addPicture(anchor, zklogo.getByteData(), SPicture.Format.PNG);
 			
 			assertEquals(1, sheet.getPictures().size());
 			assertEquals(Format.PNG, picture.getFormat());
@@ -355,13 +355,13 @@ C	3	6	9	=SUM(E9:F9)
 			AImage zklogo = new AImage(RangeTest.class.getResource("zklogo.png"));
 			
 			ViewAnchor anchor = new ViewAnchor(0, 1, zklogo.getWidth()/2, zklogo.getHeight()/2);
-			SPicture picture = NRanges.range(sheet).addPicture(anchor, zklogo.getByteData(), SPicture.Format.PNG);
+			SPicture picture = SRanges.range(sheet).addPicture(anchor, zklogo.getByteData(), SPicture.Format.PNG);
 			
 			assertEquals(1, sheet.getPictures().size());
 			assertEquals(Format.PNG, picture.getFormat());
 			assertEquals(zklogo.getWidth()/2, picture.getAnchor().getWidth());
 			
-			NRanges.range(sheet).deletePicture(picture);
+			SRanges.range(sheet).deletePicture(picture);
 			assertEquals(0, sheet.getPictures().size());
 			
 //			ImExpTestUtil.write(book, Type.XLSX); //human checking
@@ -382,14 +382,14 @@ C	3	6	9	=SUM(E9:F9)
 			AImage zklogo = new AImage(RangeTest.class.getResource("zklogo.png"));
 			
 			ViewAnchor anchor = new ViewAnchor(0, 1, zklogo.getWidth()/2, zklogo.getHeight()/2);
-			SPicture picture = NRanges.range(sheet).addPicture(anchor, zklogo.getByteData(), SPicture.Format.PNG);
+			SPicture picture = SRanges.range(sheet).addPicture(anchor, zklogo.getByteData(), SPicture.Format.PNG);
 			
 			assertEquals(1, sheet.getPictures().size());
 			assertEquals(Format.PNG, picture.getFormat());
 			assertEquals(zklogo.getWidth()/2, picture.getAnchor().getWidth());
 			
 			ViewAnchor newAnchor = new ViewAnchor(3, 4, zklogo.getWidth()/2, zklogo.getHeight()/2);
-			NRanges.range(sheet).movePicture(picture, newAnchor);
+			SRanges.range(sheet).movePicture(picture, newAnchor);
 			assertEquals(3, picture.getAnchor().getRowIndex());
 			assertEquals(4, picture.getAnchor().getColumnIndex());
 			
@@ -412,7 +412,7 @@ C	3	6	9	=SUM(E9:F9)
 		Assert.assertEquals(11D, sheet1.getCell("B1").getValue());
 		Assert.assertEquals(11D, sheet2.getCell("B1").getValue());
 		
-		NRanges.range(sheet1).deleteSheet();
+		SRanges.range(sheet1).deleteSheet();
 		
 		Assert.assertEquals("#REF!", sheet2.getCell("B1").getErrorValue().getErrorString());
 	}
@@ -421,7 +421,7 @@ C	3	6	9	=SUM(E9:F9)
 	public void testSetHyperlink(){
 		SBook book = SBooks.createBook("book1");
 		SSheet sheet1 = book.createSheet("Sheet1");
-		NRange range = NRanges.range(sheet1,"A1:B2");
+		SRange range = SRanges.range(sheet1,"A1:B2");
 		range.setHyperlink(HyperlinkType.URL, "http://www.google.com", "Google");
 		
 		SHyperlink link = range.getHyperlink();
@@ -431,7 +431,7 @@ C	3	6	9	=SUM(E9:F9)
 		
 		Assert.assertEquals("Google", sheet1.getCell("A1").getStringValue());
 		
-		link = NRanges.range(sheet1,"B2").getHyperlink();
+		link = SRanges.range(sheet1,"B2").getHyperlink();
 		Assert.assertEquals(HyperlinkType.URL, link.getType());
 		Assert.assertEquals("http://www.google.com", link.getAddress());
 		Assert.assertEquals("Google", link.getLabel());
@@ -444,13 +444,13 @@ C	3	6	9	=SUM(E9:F9)
 		SSheet sheet1 = book.createSheet("Sheet1");
 		SCellStyle style1 = book.createCellStyle(true);
 		
-		NRanges.range(sheet1,"A1:B2").setCellStyle(style1);
-		Assert.assertEquals(style1, NRanges.range(sheet1,"A1").getCellStyle());
-		Assert.assertEquals(style1, NRanges.range(sheet1,"A2").getCellStyle());
-		Assert.assertEquals(style1, NRanges.range(sheet1,"B1").getCellStyle());
-		Assert.assertEquals(style1, NRanges.range(sheet1,"B2").getCellStyle());
-		Assert.assertEquals(book.getDefaultCellStyle(), NRanges.range(sheet1,"C1").getCellStyle());
-		Assert.assertEquals(book.getDefaultCellStyle(), NRanges.range(sheet1,"C2").getCellStyle());
+		SRanges.range(sheet1,"A1:B2").setCellStyle(style1);
+		Assert.assertEquals(style1, SRanges.range(sheet1,"A1").getCellStyle());
+		Assert.assertEquals(style1, SRanges.range(sheet1,"A2").getCellStyle());
+		Assert.assertEquals(style1, SRanges.range(sheet1,"B1").getCellStyle());
+		Assert.assertEquals(style1, SRanges.range(sheet1,"B2").getCellStyle());
+		Assert.assertEquals(book.getDefaultCellStyle(), SRanges.range(sheet1,"C1").getCellStyle());
+		Assert.assertEquals(book.getDefaultCellStyle(), SRanges.range(sheet1,"C2").getCellStyle());
 		
 	}
 }

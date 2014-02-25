@@ -27,7 +27,7 @@ import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.impl.BookImpl;
 import org.zkoss.zss.api.model.impl.SimpleRef;
 import org.zkoss.zss.model.SBook;
-import org.zkoss.zss.ngapi.NImporter;
+import org.zkoss.zss.range.SImporter;
 
 /**
  * 
@@ -35,8 +35,8 @@ import org.zkoss.zss.ngapi.NImporter;
  * @since 3.0.0
  */
 public class ImporterImpl implements Importer{
-	private NImporter _importer;
-	public ImporterImpl(NImporter importer) {
+	private SImporter _importer;
+	public ImporterImpl(SImporter importer) {
 		this._importer = importer;
 	}
 
@@ -52,7 +52,7 @@ public class ImporterImpl implements Importer{
 	}
 
 
-	public NImporter getNative() {
+	public SImporter getNative() {
 		return _importer;
 	}
 

@@ -45,8 +45,8 @@ import org.zkoss.zss.model.sys.EngineFactory;
 import org.zkoss.zss.model.sys.format.FormatContext;
 import org.zkoss.zss.model.sys.format.FormatEngine;
 import org.zkoss.zss.model.sys.format.FormatResult;
-import org.zkoss.zss.ngapi.NRange;
-import org.zkoss.zss.ngapi.NRanges;
+import org.zkoss.zss.range.SRange;
+import org.zkoss.zss.range.SRanges;
 import org.zkoss.zss.ui.Spreadsheet;
 
 /**
@@ -64,7 +64,7 @@ import org.zkoss.zss.ui.Spreadsheet;
 		final SAutoFilter autoFilter = worksheet.getAutoFilter();
 		final NFilterColumn filterColumn = autoFilter.getFilterColumn(field - 1,false);
 		final String rangeAddr = autoFilter.getRegion().getReferenceString();
-		final NRange range = NRanges.range(worksheet, rangeAddr);
+		final SRange range = SRanges.range(worksheet, rangeAddr);
 		
 		spreadsheet.smartUpdate("autoFilterPopup", 
 			convertFilterInfoToJSON(row, col, field, rangeAddr, scanRows(field, filterColumn, range, worksheet)));
@@ -108,7 +108,7 @@ import org.zkoss.zss.ui.Spreadsheet;
 		return data;
 	}
 	
-	private SortedSet<FilterRowInfo> scanRows(int field, NFilterColumn fc, NRange range, SSheet worksheet) {
+	private SortedSet<FilterRowInfo> scanRows(int field, NFilterColumn fc, SRange range, SSheet worksheet) {
 		SortedSet<FilterRowInfo> orderedRowInfos = new TreeSet<FilterRowInfo>(new FilterRowInfoComparator());
 		
 		blankRowInfo = new FilterRowInfo(BLANK_VALUE, "(Blanks)");
@@ -315,7 +315,7 @@ import org.zkoss.zss.ui.Spreadsheet;
 
 	/*package*/ void applyFilter(Spreadsheet spreadsheet, Sheet selectedSheet,
 			String cellRangeAddr, boolean selectAll, int field, Object criteria) {
-		final NRange range = NRanges.range(((SheetImpl)selectedSheet).getNative(), cellRangeAddr);
+		final SRange range = SRanges.range(((SheetImpl)selectedSheet).getNative(), cellRangeAddr);
 		
 		if (selectAll) {
 			range.enableAutoFilter(field, FilterOp.VALUES, null, null, true);

@@ -7,10 +7,10 @@ import org.zkoss.zss.model.SBookSeries;
 import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.model.sys.dependency.DependencyTable;
 import org.zkoss.zss.model.sys.dependency.Ref;
-import org.zkoss.zss.ngapi.impl.CellUpdateCollector;
-import org.zkoss.zss.ngapi.impl.InsertDeleteUpdateCollector;
-import org.zkoss.zss.ngapi.impl.RefUpdateCollector;
-import org.zkoss.zss.ngapi.impl.MergeUpdateCollector;
+import org.zkoss.zss.range.impl.CellUpdateCollector;
+import org.zkoss.zss.range.impl.InsertDeleteUpdateCollector;
+import org.zkoss.zss.range.impl.MergeUpdateCollector;
+import org.zkoss.zss.range.impl.RefUpdateCollector;
 
 /*package*/ class ModelUpdateUtil {
 

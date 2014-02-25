@@ -30,7 +30,7 @@ public class ImporterXlsTest extends ImporterTest {
 		SBook book = ImExpTestUtil.loadBook(CHART_IMPORT_FILE_UNDER_TEST, "Chart");
 		SSheet sheet = book.getSheetByName("Area");
 		SChart areaChart = sheet.getChart(0);
-		assertEquals(NChartType.AREA,areaChart.getType());
+		assertEquals(ChartType.AREA,areaChart.getType());
 		
 		//a chart locating in one column and one row test
 		assertEquals(493, areaChart.getAnchor().getWidth());
@@ -49,7 +49,7 @@ public class ImporterXlsTest extends ImporterTest {
 		SSheet sheet = book.getSheetByName("Bar");
 		SChart barChart = sheet.getChart(0);
 		
-		assertEquals(NChartType.BAR,barChart.getType());
+		assertEquals(ChartType.BAR,barChart.getType());
 		
 		assertEquals(480, barChart.getAnchor().getWidth());
 		assertEquals(284, barChart.getAnchor().getHeight());
@@ -93,7 +93,7 @@ public class ImporterXlsTest extends ImporterTest {
 		SBook book = ImExpTestUtil.loadBook(CHART_IMPORT_FILE_UNDER_TEST, "Chart");
 		SSheet sheet = book.getSheetByName("Column");
 		SChart columnChart = sheet.getChart(0);
-		assertEquals(NChartType.COLUMN,columnChart.getType());
+		assertEquals(ChartType.COLUMN,columnChart.getType());
 		
 		SGeneralChartData chartData = (SGeneralChartData)columnChart.getData();
 		assertEquals(4, chartData.getNumOfCategory());

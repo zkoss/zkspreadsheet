@@ -26,7 +26,7 @@ import org.zkoss.zss.model.SCell.CellType;
 import org.zkoss.zss.model.SCellStyle.Alignment;
 import org.zkoss.zss.model.SCellStyle.BorderType;
 import org.zkoss.zss.model.SCellStyle.FillPattern;
-import org.zkoss.zss.model.SChart.NChartType;
+import org.zkoss.zss.model.SChart.ChartType;
 import org.zkoss.zss.model.SDataValidation.OperatorType;
 import org.zkoss.zss.model.SDataValidation.ValidationType;
 import org.zkoss.zss.model.SFont.Boldweight;
@@ -46,8 +46,8 @@ import org.zkoss.zss.model.sys.dependency.DependencyTable;
 import org.zkoss.zss.model.sys.dependency.Ref;
 import org.zkoss.zss.model.util.CellStyleMatcher;
 import org.zkoss.zss.model.util.FontMatcher;
-import org.zkoss.zss.ngapi.NRanges;
-import org.zkoss.zss.ngapi.impl.DataValidationHelper;
+import org.zkoss.zss.range.SRanges;
+import org.zkoss.zss.range.impl.DataValidationHelper;
 
 public class ValidationTest {
 
@@ -99,9 +99,9 @@ public class ValidationTest {
 		Assert.assertEquals(6D, dv3.getValue2(0));
 		
 		
-		NRanges.range(sheet1,0,0).setEditText("2");
-		NRanges.range(sheet1,0,1).setEditText("4");
-		NRanges.range(sheet1,0,2).setEditText("6");
+		SRanges.range(sheet1,0,0).setEditText("2");
+		SRanges.range(sheet1,0,1).setEditText("4");
+		SRanges.range(sheet1,0,2).setEditText("6");
 		
 		Assert.assertEquals(3, dv1.getNumOfValue1());
 		Assert.assertEquals(0, dv1.getNumOfValue2());
@@ -159,19 +159,19 @@ public class ValidationTest {
 		SSheet sheet1 = initialDataGrid(book.createSheet("Sheet1"));
 		sheet1.getCell(0, 0).setValue(1D);//min
 		sheet1.getCell(0, 1).setValue(3D);//max
-		NRanges.range(sheet1,0,2).setEditText("2013/1/1");//day start
-		NRanges.range(sheet1,0,3).setEditText("2013/2/1");//day end
-		NRanges.range(sheet1,0,4).setEditText("12:00");//time start
-		NRanges.range(sheet1,0,5).setEditText("14:00");//time end
+		SRanges.range(sheet1,0,2).setEditText("2013/1/1");//day start
+		SRanges.range(sheet1,0,3).setEditText("2013/2/1");//day end
+		SRanges.range(sheet1,0,4).setEditText("12:00");//time start
+		SRanges.range(sheet1,0,5).setEditText("14:00");//time end
 		
 		Assert.assertEquals(CellType.NUMBER, sheet1.getCell(0, 2).getType());
-		Assert.assertEquals("2013/1/1", NRanges.range(sheet1,0,2).getCellFormatText());
+		Assert.assertEquals("2013/1/1", SRanges.range(sheet1,0,2).getCellFormatText());
 		Assert.assertEquals(CellType.NUMBER, sheet1.getCell(0, 3).getType());
-		Assert.assertEquals("2013/2/1", NRanges.range(sheet1,0,3).getCellFormatText());
+		Assert.assertEquals("2013/2/1", SRanges.range(sheet1,0,3).getCellFormatText());
 		Assert.assertEquals(CellType.NUMBER, sheet1.getCell(0, 4).getType());
-		Assert.assertEquals("12:00", NRanges.range(sheet1,0,4).getCellFormatText());
+		Assert.assertEquals("12:00", SRanges.range(sheet1,0,4).getCellFormatText());
 		Assert.assertEquals(CellType.NUMBER, sheet1.getCell(0, 5).getType());
-		Assert.assertEquals("14:00", NRanges.range(sheet1,0,5).getCellFormatText());
+		Assert.assertEquals("14:00", SRanges.range(sheet1,0,5).getCellFormatText());
 		
 		
 		SDataValidation dv1 = sheet1.addDataValidation(new CellRegion(1,1));
@@ -354,10 +354,10 @@ public class ValidationTest {
 	public void testDataValidationHelperDate(){
 		SBook book = SBooks.createBook("book1");
 		SSheet sheet1 = initialDataGrid(book.createSheet("Sheet1"));
-		NRanges.range(sheet1,0,0).setEditText("2013/1/10");//day start
-		NRanges.range(sheet1,0,1).setEditText("2013/2/1");//day end
-		NRanges.range(sheet1,0,2).setEditText("12:00");//time start
-		NRanges.range(sheet1,0,3).setEditText("14:00");//time end
+		SRanges.range(sheet1,0,0).setEditText("2013/1/10");//day start
+		SRanges.range(sheet1,0,1).setEditText("2013/2/1");//day end
+		SRanges.range(sheet1,0,2).setEditText("12:00");//time start
+		SRanges.range(sheet1,0,3).setEditText("14:00");//time end
 		
 		
 		SDataValidation dv1 = sheet1.addDataValidation(new CellRegion(1,1));
@@ -416,8 +416,8 @@ public class ValidationTest {
 	public void testDataValidationHelperTime(){
 		SBook book = SBooks.createBook("book1");
 		SSheet sheet1 = initialDataGrid(book.createSheet("Sheet1"));
-		NRanges.range(sheet1,0,0).setEditText("12:00");//time start
-		NRanges.range(sheet1,0,1).setEditText("14:00");//time end
+		SRanges.range(sheet1,0,0).setEditText("12:00");//time start
+		SRanges.range(sheet1,0,1).setEditText("14:00");//time end
 		
 		
 		SDataValidation dv1 = sheet1.addDataValidation(new CellRegion(1,1));
@@ -477,15 +477,15 @@ public class ValidationTest {
 	public void testDataValidationHelperList(){
 		SBook book = SBooks.createBook("book1");
 		SSheet sheet1 = initialDataGrid(book.createSheet("Sheet1"));
-		NRanges.range(sheet1,0,0).setEditText("A");
-		NRanges.range(sheet1,0,1).setEditText("B");
-		NRanges.range(sheet1,0,2).setEditText("C");
-		NRanges.range(sheet1,1,0).setEditText("1");
-		NRanges.range(sheet1,1,1).setEditText("2");
-		NRanges.range(sheet1,1,2).setEditText("3");
-		NRanges.range(sheet1,2,0).setEditText("2013/1/1");
-		NRanges.range(sheet1,2,1).setEditText("2013/1/2");
-		NRanges.range(sheet1,2,2).setEditText("2013/1/3");
+		SRanges.range(sheet1,0,0).setEditText("A");
+		SRanges.range(sheet1,0,1).setEditText("B");
+		SRanges.range(sheet1,0,2).setEditText("C");
+		SRanges.range(sheet1,1,0).setEditText("1");
+		SRanges.range(sheet1,1,1).setEditText("2");
+		SRanges.range(sheet1,1,2).setEditText("3");
+		SRanges.range(sheet1,2,0).setEditText("2013/1/1");
+		SRanges.range(sheet1,2,1).setEditText("2013/1/2");
+		SRanges.range(sheet1,2,2).setEditText("2013/1/3");
 		
 		SDataValidation dv0 = sheet1.addDataValidation(new CellRegion(0,3));
 		
@@ -532,18 +532,18 @@ public class ValidationTest {
 	public void testDataValidationHelperFormula(){
 		SBook book = SBooks.createBook("book1");
 		SSheet sheet1 = initialDataGrid(book.createSheet("Sheet1"));
-		NRanges.range(sheet1,0,0).setEditText("A");
-		NRanges.range(sheet1,0,1).setEditText("B");
-		NRanges.range(sheet1,0,2).setEditText("C");
-		NRanges.range(sheet1,0,3).setEditText("D");
-		NRanges.range(sheet1,1,0).setEditText("1");
-		NRanges.range(sheet1,1,1).setEditText("2");
-		NRanges.range(sheet1,1,2).setEditText("3");
-		NRanges.range(sheet1,1,3).setEditText("4");
-		NRanges.range(sheet1,2,0).setEditText("2013/1/1");
-		NRanges.range(sheet1,2,1).setEditText("2013/1/2");
-		NRanges.range(sheet1,2,2).setEditText("2013/1/3");
-		NRanges.range(sheet1,2,3).setEditText("2013/1/4");
+		SRanges.range(sheet1,0,0).setEditText("A");
+		SRanges.range(sheet1,0,1).setEditText("B");
+		SRanges.range(sheet1,0,2).setEditText("C");
+		SRanges.range(sheet1,0,3).setEditText("D");
+		SRanges.range(sheet1,1,0).setEditText("1");
+		SRanges.range(sheet1,1,1).setEditText("2");
+		SRanges.range(sheet1,1,2).setEditText("3");
+		SRanges.range(sheet1,1,3).setEditText("4");
+		SRanges.range(sheet1,2,0).setEditText("2013/1/1");
+		SRanges.range(sheet1,2,1).setEditText("2013/1/2");
+		SRanges.range(sheet1,2,2).setEditText("2013/1/3");
+		SRanges.range(sheet1,2,3).setEditText("2013/1/4");
 		
 		SDataValidation dv0 = sheet1.addDataValidation(new CellRegion(0,4));
 		

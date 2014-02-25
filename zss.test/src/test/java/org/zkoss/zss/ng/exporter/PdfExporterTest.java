@@ -23,8 +23,8 @@ import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.model.SFont.Boldweight;
 import org.zkoss.zss.model.SFont.Underline;
 import org.zkoss.zss.model.impl.pdf.PdfExporter;
-import org.zkoss.zss.ngapi.NImporter;
-import org.zkoss.zss.ngapi.impl.imexp.ExcelImportFactory;
+import org.zkoss.zss.range.SImporter;
+import org.zkoss.zss.range.impl.imexp.ExcelImportFactory;
 
 public class PdfExporterTest {
 	
@@ -108,7 +108,7 @@ public class PdfExporterTest {
 	}
 	
 	private SBook importBook(String path) {
-		NImporter importer = new ExcelImportFactory().createImporter();
+		SImporter importer = new ExcelImportFactory().createImporter();
 		InputStream is  = PdfExporterTest.class.getResourceAsStream(path);
 		SBook book = null;
 		try {

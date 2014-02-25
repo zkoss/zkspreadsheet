@@ -26,7 +26,7 @@ import org.zkoss.zss.api.Exporter;
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.api.model.impl.BookImpl;
-import org.zkoss.zss.ngapi.NExporter;
+import org.zkoss.zss.range.SExporter;
 
 /**
  * 
@@ -34,8 +34,8 @@ import org.zkoss.zss.ngapi.NExporter;
  * @since 3.0.0
  */
 public class ExporterImpl implements Exporter {
-	private NExporter _exporter;
-	public ExporterImpl(NExporter exporter){
+	private SExporter _exporter;
+	public ExporterImpl(SExporter exporter){
 		if(exporter==null){
 			throw new IllegalAccessError("exporter not found");
 		}

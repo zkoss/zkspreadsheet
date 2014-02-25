@@ -1291,7 +1291,7 @@ public class SheetImpl extends AbstractSheetAdv {
 	}
 	
 	@Override
-	public SChart addChart(SChart.NChartType type,ViewAnchor anchor) {
+	public SChart addChart(SChart.ChartType type,ViewAnchor anchor) {
 		checkOrphan();
 		AbstractChartAdv pic = new ChartImpl(this, book.nextObjId("chart"), type, anchor);
 		charts.add(pic);

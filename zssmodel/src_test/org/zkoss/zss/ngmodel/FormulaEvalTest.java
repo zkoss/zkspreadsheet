@@ -40,17 +40,17 @@ import org.zkoss.zss.model.sys.dependency.Ref;
 import org.zkoss.zss.model.sys.formula.FormulaEngine;
 import org.zkoss.zss.model.sys.formula.FormulaExpression;
 import org.zkoss.zss.model.sys.formula.FormulaParseContext;
-import org.zkoss.zss.ngapi.NImporter;
-import org.zkoss.zss.ngapi.NRange;
-import org.zkoss.zss.ngapi.NRanges;
-import org.zkoss.zss.ngapi.impl.imexp.ExcelImportFactory;
+import org.zkoss.zss.range.SImporter;
+import org.zkoss.zss.range.SRange;
+import org.zkoss.zss.range.SRanges;
+import org.zkoss.zss.range.impl.imexp.ExcelImportFactory;
 
 /**
  * @author Pao
  */
 public class FormulaEvalTest {
 
-	private NImporter importer;
+	private SImporter importer;
 
 	@Before
 	public void beforeTest() {
@@ -390,7 +390,7 @@ public class FormulaEvalTest {
 		//use range, it notify to clean automatically
 		cell = sheet1.getCell(1, 0);
 		cell.setFormulaValue("Sheet2!A2");
-		NRange r = NRanges.range(sheet2, 1, 0);
+		SRange r = SRanges.range(sheet2, 1, 0);
 		
 		Assert.assertEquals(CellType.FORMULA, cell.getType());
 		Assert.assertEquals(CellType.NUMBER, cell.getFormulaResultType());

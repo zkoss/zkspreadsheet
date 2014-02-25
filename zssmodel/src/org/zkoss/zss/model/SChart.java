@@ -24,7 +24,7 @@ import org.zkoss.zss.model.chart.SChartData;
  */
 public interface SChart {
 
-	public enum NChartType{
+	public enum ChartType{
 		AREA,
 		BAR,
 		BUBBLE,
@@ -39,21 +39,21 @@ public interface SChart {
 		SURFACE
 	}
 	
-	public enum NChartGrouping {
+	public enum ChartGrouping {
 		STANDARD,
 		STACKED,
 		PERCENT_STACKED,
 		CLUSTERED; //bar only
 	}
 	
-	public enum NChartLegendPosition {
+	public enum ChartLegendPosition {
 		BOTTOM,
 		LEFT,
 		RIGHT,
 		TOP,
 		TOP_RIGHT
 	}
-	public enum NBarDirection {
+	public enum BarDirection {
 		HORIZONTAL, //horizontal, bar chart
 		VERTICAL; //vertical, column chart
 	}
@@ -63,7 +63,7 @@ public interface SChart {
 	
 	public SSheet getSheet();
 	
-	public NChartType getType();
+	public ChartType getType();
 	
 	public SChartData getData();
 	
@@ -83,16 +83,16 @@ public interface SChart {
 
 	void setYAxisTitle(String yAxisTitle);
 	
-	public void setLegendPosition(NChartLegendPosition pos);
+	public void setLegendPosition(ChartLegendPosition pos);
 	
-	public NChartLegendPosition getLegendPosition();
+	public ChartLegendPosition getLegendPosition();
 	
-	public void setGrouping(NChartGrouping grouping);
+	public void setGrouping(ChartGrouping grouping);
 	
-	public NChartGrouping getGrouping();
+	public ChartGrouping getGrouping();
 	
-	public NBarDirection getBarDirection();
-	public void setBarDirection(NBarDirection direction);
+	public BarDirection getBarDirection();
+	public void setBarDirection(BarDirection direction);
 	
 	public boolean isThreeD();
 	

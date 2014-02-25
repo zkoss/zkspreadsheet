@@ -58,9 +58,9 @@ import org.zkoss.zss.model.SHyperlink;
 import org.zkoss.zss.model.SPicture;
 import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.model.ViewAnchor;
-import org.zkoss.zss.ngapi.NRange;
-import org.zkoss.zss.ngapi.NRanges;
-import org.zkoss.zss.ngapi.impl.imexp.BookHelper;
+import org.zkoss.zss.range.SRange;
+import org.zkoss.zss.range.SRanges;
+import org.zkoss.zss.range.impl.imexp.BookHelper;
 
 /**
  * 1.Range is not handling the protection issue, if you have handle it yourself before calling the api(by calling {@code #isProtected()})
@@ -69,7 +69,7 @@ import org.zkoss.zss.ngapi.impl.imexp.BookHelper;
  */
 public class RangeImpl implements Range{
 	
-	private NRange _range;
+	private SRange _range;
 	
 	private CellStyleHelper _cellStyleHelper;
 	private CellData _cellData;
@@ -84,11 +84,11 @@ public class RangeImpl implements Range{
 	
 	private SharedContext _sharedCtx;
 	
-	public RangeImpl(NRange range,Sheet sheet) {
+	public RangeImpl(SRange range,Sheet sheet) {
 		this._range = range;
 		_sharedCtx = new SharedContext(sheet);
 	}
-	private RangeImpl(NRange range,SharedContext ctx) {
+	private RangeImpl(SRange range,SharedContext ctx) {
 		this._range = range;
 		_sharedCtx = ctx;
 	}
@@ -111,7 +111,7 @@ public class RangeImpl implements Range{
 		return _cellData;
 	}
 	
-	public NRange getNative(){
+	public SRange getNative(){
 		return _range;
 	}
 
@@ -166,18 +166,18 @@ public class RangeImpl implements Range{
 	}
 	
 	public Range paste(Range dest, boolean cut) { 
-		NRange r = _range.copy(((RangeImpl)dest).getNative(), cut);
+		SRange r = _range.copy(((RangeImpl)dest).getNative(), cut);
 		return new RangeImpl(r, dest.getSheet());
 	}
 
 	/* short-cut for pasteSpecial, it is original Range.copy*/
 	public Range paste(Range dest) { 
-		NRange r = _range.copy(((RangeImpl)dest).getNative());
+		SRange r = _range.copy(((RangeImpl)dest).getNative());
 		return new RangeImpl(r, dest.getSheet());
 	}
 	
 	public Range pasteSpecial(Range dest,PasteType type,PasteOperation op,boolean skipBlanks,boolean transpose) { 
-		NRange r = _range.pasteSpecial(((RangeImpl)dest).getNative(), EnumUtil.toRangePasteTypeNative(type), EnumUtil.toRangePasteOpNative(op), skipBlanks, transpose);
+		SRange r = _range.pasteSpecial(((RangeImpl)dest).getNative(), EnumUtil.toRangePasteTypeNative(type), EnumUtil.toRangePasteOpNative(op), skipBlanks, transpose);
 		return new RangeImpl(r, dest.getSheet());
 	}
 
@@ -267,7 +267,7 @@ public class RangeImpl implements Range{
 				visitor.createIfNotExist(r, c);
 			}
 		}
-		return visitor.visit(new RangeImpl(NRanges.range(_range.getSheet(),r,c),_sharedCtx));
+		return visitor.visit(new RangeImpl(SRanges.range(_range.getSheet(),r,c),_sharedCtx));
 	}
 
 	public Book getBook() {
@@ -335,7 +335,7 @@ public class RangeImpl implements Range{
 	
 	
 	public RangeImpl toCellRange(int rowOffset,int colOffset){
-		RangeImpl cellRange = new RangeImpl(NRanges.range(_range.getSheet(),getRow()+rowOffset,getColumn()+colOffset),_sharedCtx);
+		RangeImpl cellRange = new RangeImpl(SRanges.range(_range.getSheet(),getRow()+rowOffset,getColumn()+colOffset),_sharedCtx);
 		return cellRange;
 	}
 	
@@ -422,9 +422,9 @@ public class RangeImpl implements Range{
 				index3==null?null:((RangeImpl)index3).getNative()/*rng3*/, desc3/*desc3*/,
 				header?BookHelper.SORT_HEADER_YES:BookHelper.SORT_HEADER_NO/*header*/,
 				-1/*orderCustom*/, matchCase, sortByRows, -1/*sortMethod*/, 
-				dataOption1==null?NRange.SortDataOption.NORMAL_DEFAULT:EnumUtil.toRangeSortDataOption(dataOption1)/*dataOption1*/,
-				dataOption2==null?NRange.SortDataOption.NORMAL_DEFAULT:EnumUtil.toRangeSortDataOption(dataOption2)/*dataOption2*/,
-				dataOption3==null?NRange.SortDataOption.NORMAL_DEFAULT:EnumUtil.toRangeSortDataOption(dataOption3)/*dataOption3*/);
+				dataOption1==null?SRange.SortDataOption.NORMAL_DEFAULT:EnumUtil.toRangeSortDataOption(dataOption1)/*dataOption1*/,
+				dataOption2==null?SRange.SortDataOption.NORMAL_DEFAULT:EnumUtil.toRangeSortDataOption(dataOption2)/*dataOption2*/,
+				dataOption3==null?SRange.SortDataOption.NORMAL_DEFAULT:EnumUtil.toRangeSortDataOption(dataOption3)/*dataOption3*/);
 		
 	}
 	
@@ -435,7 +435,7 @@ public class RangeImpl implements Range{
 	
 	// ZSS-246: give an API for user checking the auto-filtering range before applying it.
 	public Range findAutoFilterRange() {
-		NRange r = _range.findAutoFilterRange();
+		SRange r = _range.findAutoFilterRange();
 		if(r != null) {
 			return Ranges.range(getSheet(), r.getRow(), r.getColumn(), r.getLastRow(), r.getLastColumn());
 		} else {
@@ -629,18 +629,18 @@ public class RangeImpl implements Range{
 	
 	@Override
 	public void setColumnWidth(int widthPx) {
-		NRange r = _range.isWholeColumn()?_range:_range.getColumns();
+		SRange r = _range.isWholeColumn()?_range:_range.getColumns();
 		r.setColumnWidth(widthPx);
 	}
 	@Override
 	public void setRowHeight(int heightPx) {
-		NRange r = _range.isWholeRow()?_range:_range.getRows();
+		SRange r = _range.isWholeRow()?_range:_range.getRows();
 		r.setRowHeight(heightPx);
 	}
 	
 	@Override
 	public void setRowHeight(int heightPx, boolean isCustom) {
-		NRange r = _range.isWholeRow()?_range:_range.getRows();
+		SRange r = _range.isWholeRow()?_range:_range.getRows();
 		r.setRowHeight(heightPx, isCustom);
 	}
 	

@@ -11,7 +11,7 @@ import org.zkoss.zss.api.model.Chart.Grouping;
 import org.zkoss.zss.api.model.Chart.LegendPosition;
 import org.zkoss.zss.api.model.impl.ChartImpl;
 import org.zkoss.zss.model.*;
-import org.zkoss.zss.model.SChart.NChartType;
+import org.zkoss.zss.model.SChart.ChartType;
 
 /**
  * all method implementation to test chart & picture operation
@@ -66,7 +66,7 @@ public class ChartPictureTestBase {
 		Chart chart = SheetOperationUtil.addChart(Ranges.range(sheet, 4,1,14,1),  Chart.Type.LINE, Grouping.STANDARD, LegendPosition.TOP);
 		assertEquals(1, sheet.getCharts().size());
 		SChart nchart = ((ChartImpl)chart).getNative();
-		assertEquals(nchart.getType(), NChartType.LINE);
+		assertEquals(nchart.getType(), ChartType.LINE);
 	}
 	
 	protected void testAddBarChart(Book workbook) throws IOException {

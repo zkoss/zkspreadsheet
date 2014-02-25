@@ -41,11 +41,11 @@ import org.zkoss.zss.api.model.Hyperlink.HyperlinkType;
 import org.zkoss.zss.api.model.Picture.Format;
 import org.zkoss.zss.model.*;
 import org.zkoss.zss.model.SAutoFilter.FilterOp;
-import org.zkoss.zss.model.SChart.NChartGrouping;
-import org.zkoss.zss.model.SChart.NChartLegendPosition;
-import org.zkoss.zss.model.SChart.NChartType;
-import org.zkoss.zss.ngapi.NRange;
-import org.zkoss.zss.ngapi.NRange.FillType;
+import org.zkoss.zss.model.SChart.ChartGrouping;
+import org.zkoss.zss.model.SChart.ChartLegendPosition;
+import org.zkoss.zss.model.SChart.ChartType;
+import org.zkoss.zss.range.SRange;
+import org.zkoss.zss.range.SRange.FillType;
 /**
  * 
  * @author dennis
@@ -59,47 +59,47 @@ public class EnumUtil {
 		}
 	}
 	
-	public static NRange.PasteOperation toRangePasteOpNative(PasteOperation op) {
+	public static SRange.PasteOperation toRangePasteOpNative(PasteOperation op) {
 		assertArgNotNull(op,"paste operation");
 		switch(op){
 		case ADD:
-			return NRange.PasteOperation.ADD;
+			return SRange.PasteOperation.ADD;
 		case SUB:
-			return NRange.PasteOperation.SUB;
+			return SRange.PasteOperation.SUB;
 		case MUL:
-			return NRange.PasteOperation.MUL;
+			return SRange.PasteOperation.MUL;
 		case DIV:
-			return NRange.PasteOperation.DIV;
+			return SRange.PasteOperation.DIV;
 		case NONE:
-			return NRange.PasteOperation.NONE;
+			return SRange.PasteOperation.NONE;
 		}
 		throw new IllegalArgumentException("unknow paste operation "+op);
 	}
 
 
-	public static NRange.PasteType toRangePasteTypeNative(PasteType type) {
+	public static SRange.PasteType toRangePasteTypeNative(PasteType type) {
 		assertArgNotNull(type,"paste type");
 		switch(type){
 		case ALL:
-			return NRange.PasteType.ALL;
+			return SRange.PasteType.ALL;
 		case ALL_EXCEPT_BORDERS:
-			return NRange.PasteType.ALL_EXCEPT_BORDERS;
+			return SRange.PasteType.ALL_EXCEPT_BORDERS;
 		case COLUMN_WIDTHS:
-			return NRange.PasteType.COLUMN_WIDTHS;
+			return SRange.PasteType.COLUMN_WIDTHS;
 		case COMMENTS:
-			return NRange.PasteType.COMMENTS;
+			return SRange.PasteType.COMMENTS;
 		case FORMATS:
-			return NRange.PasteType.FORMATS;
+			return SRange.PasteType.FORMATS;
 		case FORMULAS:
-			return NRange.PasteType.FORMULAS;
+			return SRange.PasteType.FORMULAS;
 		case FORMULAS_AND_NUMBER_FORMATS:
-			return NRange.PasteType.FORMULAS_AND_NUMBER_FORMATS;
+			return SRange.PasteType.FORMULAS_AND_NUMBER_FORMATS;
 		case VALIDATAION:
-			return NRange.PasteType.VALIDATAION;
+			return SRange.PasteType.VALIDATAION;
 		case VALUES:
-			return NRange.PasteType.VALUES;
+			return SRange.PasteType.VALUES;
 		case VALUES_AND_NUMBER_FORMATS:
-			return NRange.PasteType.VALUES_AND_NUMBER_FORMATS;
+			return SRange.PasteType.VALUES_AND_NUMBER_FORMATS;
 		}
 		throw new IllegalArgumentException("unknow paste operation "+type);
 	}
@@ -336,32 +336,32 @@ public class EnumUtil {
 		throw new IllegalArgumentException("unknow cell vertical alignment "+alignment);
 	}
 
-	public static NRange.ApplyBorderType toRangeApplyBorderType(ApplyBorderType type) {
+	public static SRange.ApplyBorderType toRangeApplyBorderType(ApplyBorderType type) {
 		switch(type){
 		case FULL:
-			return NRange.ApplyBorderType.FULL;
+			return SRange.ApplyBorderType.FULL;
 		case EDGE_BOTTOM:
-			return NRange.ApplyBorderType.EDGE_BOTTOM;
+			return SRange.ApplyBorderType.EDGE_BOTTOM;
 		case EDGE_RIGHT:
-			return NRange.ApplyBorderType.EDGE_RIGHT;
+			return SRange.ApplyBorderType.EDGE_RIGHT;
 		case EDGE_TOP:
-			return NRange.ApplyBorderType.EDGE_TOP;
+			return SRange.ApplyBorderType.EDGE_TOP;
 		case EDGE_LEFT:
-			return NRange.ApplyBorderType.EDGE_LEFT;
+			return SRange.ApplyBorderType.EDGE_LEFT;
 		case OUTLINE:
-			return NRange.ApplyBorderType.OUTLINE;
+			return SRange.ApplyBorderType.OUTLINE;
 		case INSIDE:
-			return NRange.ApplyBorderType.INSIDE;
+			return SRange.ApplyBorderType.INSIDE;
 		case INSIDE_HORIZONTAL:
-			return NRange.ApplyBorderType.INSIDE_HORIZONTAL;
+			return SRange.ApplyBorderType.INSIDE_HORIZONTAL;
 		case INSIDE_VERTICAL:
-			return NRange.ApplyBorderType.INSIDE_VERTICAL;
+			return SRange.ApplyBorderType.INSIDE_VERTICAL;
 		case DIAGONAL:
-			return NRange.ApplyBorderType.DIAGONAL;
+			return SRange.ApplyBorderType.DIAGONAL;
 		case DIAGONAL_DOWN:
-			return NRange.ApplyBorderType.DIAGONAL_DOWN;
+			return SRange.ApplyBorderType.DIAGONAL_DOWN;
 		case DIAGONAL_UP:
-			return NRange.ApplyBorderType.DIAGONAL_UP;
+			return SRange.ApplyBorderType.DIAGONAL_UP;
 		}
 		throw new IllegalArgumentException("unknow cell border apply type "+type);
 	}
@@ -468,48 +468,48 @@ public class EnumUtil {
 		throw new IllegalArgumentException("unknow cell border line style "+lineStyle);
 	}
 
-	public static NRange.InsertShift toRangeInsertShift(InsertShift shift) {
+	public static SRange.InsertShift toRangeInsertShift(InsertShift shift) {
 		switch(shift){
 		case DEFAULT:
-			return NRange.InsertShift.DEFAULT;
+			return SRange.InsertShift.DEFAULT;
 		case DOWN:
-			return NRange.InsertShift.DOWN;
+			return SRange.InsertShift.DOWN;
 		case RIGHT:
-			return NRange.InsertShift.RIGHT;
+			return SRange.InsertShift.RIGHT;
 		}
 		throw new IllegalArgumentException("unknow range insert shift "+shift);
 	}
 
-	public static NRange.InsertCopyOrigin toRangeInsertCopyOrigin(InsertCopyOrigin copyOrigin) {
+	public static SRange.InsertCopyOrigin toRangeInsertCopyOrigin(InsertCopyOrigin copyOrigin) {
 		switch(copyOrigin){
 		case FORMAT_NONE:
-			return NRange.InsertCopyOrigin.FORMAT_NONE;
+			return SRange.InsertCopyOrigin.FORMAT_NONE;
 		case FORMAT_LEFT_ABOVE:
-			return NRange.InsertCopyOrigin.FORMAT_LEFT_ABOVE;
+			return SRange.InsertCopyOrigin.FORMAT_LEFT_ABOVE;
 		case FORMAT_RIGHT_BELOW:
-			return NRange.InsertCopyOrigin.FORMAT_RIGHT_BELOW;
+			return SRange.InsertCopyOrigin.FORMAT_RIGHT_BELOW;
 		}
 		throw new IllegalArgumentException("unknow range insert copy origin "+copyOrigin);
 	}
 	
-	public static NRange.DeleteShift toRangeDeleteShift(DeleteShift shift) {
+	public static SRange.DeleteShift toRangeDeleteShift(DeleteShift shift) {
 		switch(shift){
 		case DEFAULT:
-			return NRange.DeleteShift.DEFAULT;
+			return SRange.DeleteShift.DEFAULT;
 		case UP:
-			return NRange.DeleteShift.UP;
+			return SRange.DeleteShift.UP;
 		case LEFT:
-			return NRange.DeleteShift.LEFT;
+			return SRange.DeleteShift.LEFT;
 		}
 		throw new IllegalArgumentException("unknow range delete shift "+shift);
 	}
 
-	public static NRange.SortDataOption toRangeSortDataOption(SortDataOption dataOption) {
+	public static SRange.SortDataOption toRangeSortDataOption(SortDataOption dataOption) {
 		switch(dataOption){
 		case TEXT_AS_NUMBERS:
-			return NRange.SortDataOption.TEXT_AS_NUMBERS;
+			return SRange.SortDataOption.TEXT_AS_NUMBERS;
 		case NORMAL_DEFAULT:
-			return NRange.SortDataOption.NORMAL_DEFAULT;
+			return SRange.SortDataOption.NORMAL_DEFAULT;
 		}
 		throw new IllegalArgumentException("unknow sort data option "+dataOption);
 	}
@@ -620,38 +620,38 @@ public class EnumUtil {
 		throw new IllegalArgumentException("unknow pciture format "+format);
 	}
 
-	public static NChartType toChartType(Type type) {
+	public static ChartType toChartType(Type type) {
 		switch(type){
 		case AREA_3D:
 		case AREA:
-			return NChartType.AREA;
+			return ChartType.AREA;
 		case BAR_3D:
 		case BAR:
-			return NChartType.BAR;
+			return ChartType.BAR;
 		case BUBBLE:
-			return NChartType.BUBBLE;
+			return ChartType.BUBBLE;
 		case COLUMN:
 		case COLUMN_3D:
-			return NChartType.COLUMN;
+			return ChartType.COLUMN;
 		case DOUGHNUT:
-			return NChartType.DOUGHNUT;
+			return ChartType.DOUGHNUT;
 		case LINE_3D:
 		case LINE:
-			return NChartType.LINE;
+			return ChartType.LINE;
 		case OF_PIE:
-			return NChartType.OF_PIE;
+			return ChartType.OF_PIE;
 		case PIE_3D:
 		case PIE:
-			return NChartType.PIE;
+			return ChartType.PIE;
 		case RADAR:
-			return NChartType.RADAR;
+			return ChartType.RADAR;
 		case SCATTER:
-			return NChartType.SCATTER;
+			return ChartType.SCATTER;
 		case STOCK:
-			return NChartType.STOCK;
+			return ChartType.STOCK;
 		case SURFACE_3D:
 		case SURFACE:
-			return NChartType.SURFACE;
+			return ChartType.SURFACE;
 		}
 		throw new IllegalArgumentException("unknow chart type "+type);
 	}
@@ -670,32 +670,32 @@ public class EnumUtil {
 		}
 	}
 
-	public static NChartGrouping toChartGrouping(Grouping grouping) {
+	public static ChartGrouping toChartGrouping(Grouping grouping) {
 		switch(grouping){
 		case STANDARD:
-			return NChartGrouping.STANDARD;
+			return ChartGrouping.STANDARD;
 		case STACKED:
-			return NChartGrouping.STACKED;
+			return ChartGrouping.STACKED;
 		case PERCENT_STACKED:
-			return NChartGrouping.PERCENT_STACKED;
+			return ChartGrouping.PERCENT_STACKED;
 		case CLUSTERED:
-			return NChartGrouping.CLUSTERED;//bar only
+			return ChartGrouping.CLUSTERED;//bar only
 		}
 		throw new IllegalArgumentException("unknow grouping "+grouping);
 	}
 
-	public static NChartLegendPosition toLegendPosition(LegendPosition pos) {
+	public static ChartLegendPosition toLegendPosition(LegendPosition pos) {
 		switch(pos){
 		case BOTTOM:
-			return NChartLegendPosition.BOTTOM;
+			return ChartLegendPosition.BOTTOM;
 		case LEFT:
-			return NChartLegendPosition.LEFT;
+			return ChartLegendPosition.LEFT;
 		case RIGHT:
-			return NChartLegendPosition.RIGHT;
+			return ChartLegendPosition.RIGHT;
 		case TOP:
-			return NChartLegendPosition.TOP;
+			return ChartLegendPosition.TOP;
 		case TOP_RIGHT:
-			return NChartLegendPosition.TOP_RIGHT;
+			return ChartLegendPosition.TOP_RIGHT;
 		}
 		throw new IllegalArgumentException("unknow legend position "+pos);
 	}

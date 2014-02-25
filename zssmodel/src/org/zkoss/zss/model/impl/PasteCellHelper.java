@@ -23,7 +23,7 @@ import org.zkoss.zss.model.sys.formula.FormulaEngine;
 import org.zkoss.zss.model.sys.formula.FormulaExpression;
 import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 import org.zkoss.zss.model.util.Validations;
-import org.zkoss.zss.ngapi.impl.StyleUtil;
+import org.zkoss.zss.range.impl.StyleUtil;
 
 /*package*/ class PasteCellHelper {
 

@@ -296,7 +296,7 @@ public class ImExpTestBase {
 	protected void areaChart(SBook book){
 		SSheet sheet = book.getSheetByName("Area");
 		SChart areaChart = sheet.getChart(0);
-		assertEquals(NChartType.AREA,areaChart.getType());
+		assertEquals(ChartType.AREA,areaChart.getType());
 		
 		//a chart locating in one column and one row test
 		assertEquals(493, areaChart.getAnchor().getWidth());
@@ -306,25 +306,25 @@ public class ImExpTestBase {
 		assertEquals(8, chartData.getNumOfCategory());
 		
 		SChart area3dChart = sheet.getChart(1);
-		assertEquals(NChartGrouping.STANDARD, area3dChart.getGrouping());
-		assertEquals(NChartLegendPosition.BOTTOM, area3dChart.getLegendPosition());
+		assertEquals(ChartGrouping.STANDARD, area3dChart.getGrouping());
+		assertEquals(ChartLegendPosition.BOTTOM, area3dChart.getLegendPosition());
 	}
 	
 	protected void barChart(SBook book){
 		SSheet sheet = book.getSheetByName("Bar");
 		SChart barChart = sheet.getChart(0);
 		
-		assertEquals(NChartType.BAR,barChart.getType());
+		assertEquals(ChartType.BAR,barChart.getType());
 		
 		assertEquals(480, barChart.getAnchor().getWidth());
 		assertEquals(284, barChart.getAnchor().getHeight());
 		assertEquals(25, barChart.getAnchor().getXOffset());
 		assertEquals(7, barChart.getAnchor().getYOffset());
 		
-		assertEquals(NBarDirection.HORIZONTAL, barChart.getBarDirection());
-		assertEquals(NChartGrouping.CLUSTERED, barChart.getGrouping());
+		assertEquals(BarDirection.HORIZONTAL, barChart.getBarDirection());
+		assertEquals(ChartGrouping.CLUSTERED, barChart.getGrouping());
 		assertEquals(false, barChart.isThreeD());
-		assertEquals(NChartLegendPosition.RIGHT, barChart.getLegendPosition());
+		assertEquals(ChartLegendPosition.RIGHT, barChart.getLegendPosition());
 		
 		//data
 		SGeneralChartData chartData = (SGeneralChartData)barChart.getData();
@@ -353,7 +353,7 @@ public class ImExpTestBase {
 	public void bubbleChart(SBook book){
 		SSheet sheet = book.getSheetByName("Bubble");
 		SChart bubbleChart = sheet.getChart(0);
-		assertEquals(NChartType.BUBBLE, bubbleChart.getType());
+		assertEquals(ChartType.BUBBLE, bubbleChart.getType());
 		
 		SGeneralChartData chartData = (SGeneralChartData)bubbleChart.getData();
 		assertEquals(0, chartData.getNumOfCategory());
@@ -368,21 +368,21 @@ public class ImExpTestBase {
 	public void columnChart(SBook book){
 		SSheet sheet = book.getSheetByName("Column");
 		SChart columnChart = sheet.getChart(0);
-		assertEquals(NChartType.COLUMN,columnChart.getType());
-		assertEquals(NBarDirection.VERTICAL, columnChart.getBarDirection());
-		assertEquals(NChartLegendPosition.TOP, columnChart.getLegendPosition());
+		assertEquals(ChartType.COLUMN,columnChart.getType());
+		assertEquals(BarDirection.VERTICAL, columnChart.getBarDirection());
+		assertEquals(ChartLegendPosition.TOP, columnChart.getLegendPosition());
 		
 		SGeneralChartData chartData = (SGeneralChartData)columnChart.getData();
 		assertEquals(4, chartData.getNumOfCategory());
 		
 		SChart column3dChart = sheet.getChart(1);
-		assertEquals(NChartGrouping.STACKED, column3dChart.getGrouping());
+		assertEquals(ChartGrouping.STACKED, column3dChart.getGrouping());
 	}
 	
 	public void doughnutChart(SBook book){
 		SSheet sheet = book.getSheetByName("Doughnut");
 		SChart doughnutChart = sheet.getChart(0);
-		assertEquals(NChartType.DOUGHNUT, doughnutChart.getType());
+		assertEquals(ChartType.DOUGHNUT, doughnutChart.getType());
 		
 		SGeneralChartData chartData = (SGeneralChartData)doughnutChart.getData();
 		assertEquals(8, chartData.getNumOfCategory());
@@ -391,7 +391,7 @@ public class ImExpTestBase {
 	public void lineChart(SBook book){
 		SSheet sheet = book.getSheetByName("Line");
 		SChart lineChart = sheet.getChart(0);
-		assertEquals(NChartType.LINE, lineChart.getType());
+		assertEquals(ChartType.LINE, lineChart.getType());
 		SGeneralChartData chartData = (SGeneralChartData)lineChart.getData();
 		assertEquals(3, chartData.getNumOfSeries());
 		
@@ -404,20 +404,20 @@ public class ImExpTestBase {
 	public void pieChart(SBook book){
 		SSheet sheet = book.getSheetByName("Pie");
 		SChart pieChart = sheet.getChart(0);
-		assertEquals(NChartType.PIE, pieChart.getType());
+		assertEquals(ChartType.PIE, pieChart.getType());
 		assertEquals(null,pieChart.getTitle());
 		SGeneralChartData chartData = (SGeneralChartData)pieChart.getData();
 		assertEquals(1, chartData.getNumOfSeries());
 		
 		SChart pie3dChart = sheet.getChart(1);
-		assertEquals(NChartType.PIE, pie3dChart.getType());
+		assertEquals(ChartType.PIE, pie3dChart.getType());
 		assertEquals(true, pie3dChart.isThreeD());
 	}
 	
 	public void scatterChart(SBook book){
 		SSheet sheet = book.getSheetByName("Scatter");
 		SChart scatterChart = sheet.getChart(0);
-		assertEquals(NChartType.SCATTER, scatterChart.getType());
+		assertEquals(ChartType.SCATTER, scatterChart.getType());
 		
 		SGeneralChartData chartData = (SGeneralChartData)scatterChart.getData();
 		assertEquals(3, chartData.getNumOfSeries());

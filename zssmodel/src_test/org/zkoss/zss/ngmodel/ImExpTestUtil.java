@@ -6,10 +6,10 @@ import java.io.*;
 import java.net.URL;
 
 import org.zkoss.zss.model.SBook;
-import org.zkoss.zss.ngapi.NExporter;
-import org.zkoss.zss.ngapi.NImporter;
-import org.zkoss.zss.ngapi.impl.imexp.*;
-import org.zkoss.zss.ngapi.impl.imexp.ExcelExportFactory.Type;
+import org.zkoss.zss.range.SExporter;
+import org.zkoss.zss.range.SImporter;
+import org.zkoss.zss.range.impl.imexp.*;
+import org.zkoss.zss.range.impl.imexp.ExcelExportFactory.Type;
 
 /**
  * Utility for write and load book
@@ -39,7 +39,7 @@ public class ImExpTestUtil {
 		try {
 			outFile = new File(DEFAULT_EXPORT_TARGET_PATH + outFile.getName());
 			outFile.createNewFile();
-			NExporter exporter = new ExcelExportFactory(type).createExporter();
+			SExporter exporter = new ExcelExportFactory(type).createExporter();
 			exporter.export(book, outFile);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -54,7 +54,7 @@ public class ImExpTestUtil {
 	 * @return
 	 */
 	public static SBook loadBook(InputStream is) {
-		NImporter importer = new ExcelImportFactory().createImporter();
+		SImporter importer = new ExcelImportFactory().createImporter();
 		SBook book = null;
 		try {
 			book = importer.imports(is, "XSSFBook");

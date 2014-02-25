@@ -24,8 +24,8 @@ import org.zkoss.zss.model.SCellStyle.BorderType;
 import org.zkoss.zss.model.SFont.Boldweight;
 import org.zkoss.zss.model.SFont.Underline;
 import org.zkoss.zss.model.SPicture.Format;
-import org.zkoss.zss.ngapi.impl.imexp.*;
-import org.zkoss.zss.ngapi.impl.imexp.ExcelExportFactory.Type;
+import org.zkoss.zss.range.impl.imexp.*;
+import org.zkoss.zss.range.impl.imexp.ExcelExportFactory.Type;
 
 /**
  * XLSX exporter test cases.

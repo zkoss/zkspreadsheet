@@ -14,8 +14,8 @@ import org.zkoss.zss.Setup;
 import org.zkoss.zss.Util;
 import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.impl.html.HtmlExporter;
-import org.zkoss.zss.ngapi.NImporter;
-import org.zkoss.zss.ngapi.impl.imexp.ExcelImportFactory;
+import org.zkoss.zss.range.SImporter;
+import org.zkoss.zss.range.impl.imexp.ExcelImportFactory;
 
 public class HtmlExporterTest {
 	
@@ -44,7 +44,7 @@ public class HtmlExporterTest {
 	}
 	
 	private SBook importBook(String path) {
-		NImporter importer = new ExcelImportFactory().createImporter();
+		SImporter importer = new ExcelImportFactory().createImporter();
 		InputStream is  = PdfExporterTest.class.getResourceAsStream(path);
 		SBook book = null;
 		try {

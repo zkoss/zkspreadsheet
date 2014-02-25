@@ -30,7 +30,7 @@ import org.zkoss.zss.model.impl.chart.UnsupportedChartDataImpl;
 public class ChartImpl extends AbstractChartAdv {
 	private static final long serialVersionUID = 1L;
 	String id;
-	NChartType type;
+	ChartType type;
 	ViewAnchor anchor;
 	ChartDataAdv data;
 	String title;
@@ -38,13 +38,13 @@ public class ChartImpl extends AbstractChartAdv {
 	String yAxisTitle;
 	AbstractSheetAdv sheet;
 	
-	NChartLegendPosition legendPosition;
-	NChartGrouping grouping;
-	NBarDirection direction;
+	ChartLegendPosition legendPosition;
+	ChartGrouping grouping;
+	BarDirection direction;
 	
 	boolean threeD;
 	
-	public ChartImpl(AbstractSheetAdv sheet,String id,NChartType type,ViewAnchor anchor){
+	public ChartImpl(AbstractSheetAdv sheet,String id,ChartType type,ViewAnchor anchor){
 		this.sheet = sheet;
 		this.id = id;
 		this.type = type;
@@ -53,10 +53,10 @@ public class ChartImpl extends AbstractChartAdv {
 		
 		switch(type){//default initialization
 		case BAR:
-			direction = NBarDirection.HORIZONTAL;
+			direction = BarDirection.HORIZONTAL;
 			break;
 		case COLUMN:
-			direction = NBarDirection.VERTICAL;
+			direction = BarDirection.VERTICAL;
 			break;
 		}
 	}
@@ -78,7 +78,7 @@ public class ChartImpl extends AbstractChartAdv {
 		this.anchor = anchor;		
 	}
 	@Override
-	public NChartType getType(){
+	public ChartType getType(){
 		return type;
 	}
 	@Override
@@ -110,7 +110,7 @@ public class ChartImpl extends AbstractChartAdv {
 		this.yAxisTitle = yAxisTitle;
 	}
 
-	private ChartDataAdv createChartData(NChartType type){
+	private ChartDataAdv createChartData(ChartType type){
 		switch(type){
 		case AREA:
 		case BAR:
@@ -147,26 +147,26 @@ public class ChartImpl extends AbstractChartAdv {
 		}
 	}
 	@Override
-	public void setLegendPosition(NChartLegendPosition pos) {
+	public void setLegendPosition(ChartLegendPosition pos) {
 		this.legendPosition = pos;
 	}
 	@Override
-	public NChartLegendPosition getLegendPosition() {
+	public ChartLegendPosition getLegendPosition() {
 		return legendPosition;
 	}
 	@Override
-	public void setGrouping(NChartGrouping grouping) {
+	public void setGrouping(ChartGrouping grouping) {
 		this.grouping = grouping;
 	}
 	@Override
-	public NChartGrouping getGrouping() {
+	public ChartGrouping getGrouping() {
 		return grouping;
 	}
 	@Override
-	public NBarDirection getBarDirection() {
+	public BarDirection getBarDirection() {
 		return direction;
 	}
-	public void setBarDirection(NBarDirection direction){
+	public void setBarDirection(BarDirection direction){
 		this.direction = direction;
 	}
 	@Override

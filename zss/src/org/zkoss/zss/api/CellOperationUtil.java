@@ -41,7 +41,7 @@ import org.zkoss.zss.api.model.Hyperlink.HyperlinkType;
 import org.zkoss.zss.api.model.impl.EnumUtil;
 import org.zkoss.zss.api.model.impl.SheetImpl;
 import org.zkoss.zss.model.SSheet;
-import org.zkoss.zss.ngapi.impl.StyleUtil;
+import org.zkoss.zss.range.impl.StyleUtil;
 
 /**
  * The utility to help UI to deal with user's cell operation of a {@link Range}.

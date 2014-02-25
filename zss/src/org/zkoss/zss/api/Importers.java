@@ -17,8 +17,8 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.api;
 
 import org.zkoss.zss.api.impl.ImporterImpl;
-import org.zkoss.zss.ngapi.NImporter;
-import org.zkoss.zss.ngapi.NImporters;
+import org.zkoss.zss.range.SImporter;
+import org.zkoss.zss.range.SImporters;
 
 /**
  * The main class to get an importer.
@@ -33,7 +33,7 @@ public class Importers {
 	 * @return importer instance for the type, null if not found
 	 */
 	public static Importer getImporter(String type) {
-		NImporter imp = NImporters.getImporter(type);
+		SImporter imp = SImporters.getImporter(type);
 		return imp == null ? null : new ImporterImpl(imp);
 	}
 	

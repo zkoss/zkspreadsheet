@@ -12,18 +12,18 @@ import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.SChart;
 import org.zkoss.zss.model.SPicture;
 import org.zkoss.zss.model.SSheet;
-import org.zkoss.zss.model.SChart.NChartType;
+import org.zkoss.zss.model.SChart.ChartType;
 import org.zkoss.zss.model.SPicture.Format;
 import org.zkoss.zss.model.chart.SGeneralChartData;
-import org.zkoss.zss.ngapi.NImporter;
-import org.zkoss.zss.ngapi.impl.imexp.ExcelImportFactory;
+import org.zkoss.zss.range.SImporter;
+import org.zkoss.zss.range.impl.imexp.ExcelImportFactory;
 
 /**
  * @author Hawk
  */
 public class ImporterTest extends ImExpTestBase {
 	
-	private NImporter importer;
+	private SImporter importer;
 	 
 	
 	
@@ -266,7 +266,7 @@ public class ImporterTest extends ImExpTestBase {
 		SBook book = ImExpTestUtil.loadBook(CHART_IMPORT_FILE_UNDER_TEST, "Chart");
 		SSheet sheet = book.getSheetByName("Stock");
 		SChart stockChart = sheet.getChart(0);
-		assertEquals(NChartType.STOCK, stockChart.getType());
+		assertEquals(ChartType.STOCK, stockChart.getType());
 		
 		SGeneralChartData chartData = (SGeneralChartData)stockChart.getData();
 		assertEquals(4, chartData.getNumOfSeries());

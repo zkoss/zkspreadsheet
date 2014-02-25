@@ -17,8 +17,8 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.api;
 
 import org.zkoss.zss.api.impl.ExporterImpl;
-import org.zkoss.zss.ngapi.NExporter;
-import org.zkoss.zss.ngapi.NExporters;
+import org.zkoss.zss.range.SExporter;
+import org.zkoss.zss.range.SExporters;
 
 /**
  * The main class to get an exporter.
@@ -32,7 +32,7 @@ public class Exporters {
 	 * @return exporter instance for the type, null if not found
 	 */
 	public static Exporter getExporter(String type) {
-		NExporter exp = NExporters.getExporter(type);
+		SExporter exp = SExporters.getExporter(type);
 		return exp==null?null:new ExporterImpl(exp);
 	}
 	

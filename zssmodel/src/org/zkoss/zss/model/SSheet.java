@@ -104,7 +104,7 @@ public interface SSheet {
 	public List<SPicture> getPictures();
 	
 	
-	public SChart addChart(SChart.NChartType type, ViewAnchor anchor);
+	public SChart addChart(SChart.ChartType type, ViewAnchor anchor);
 	public SChart getChart(String chartid);
 	public void deleteChart(SChart chart);
 	public int getNumOfChart();

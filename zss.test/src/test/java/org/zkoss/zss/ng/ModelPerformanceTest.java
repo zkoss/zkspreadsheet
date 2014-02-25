@@ -40,7 +40,7 @@ import org.zkoss.zss.model.sys.dependency.Ref;
 //import org.zkoss.zss.model.sys.XSheet;
 //import org.zkoss.zss.model.sys.impl.BookHelper;
 //import org.zkoss.zss.model.sys.impl.XSSFBookImpl;
-import org.zkoss.zss.ngapi.impl.imexp.ExcelImportFactory;
+import org.zkoss.zss.range.impl.imexp.ExcelImportFactory;
 
 /**
  * @author Pao
