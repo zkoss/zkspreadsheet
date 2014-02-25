@@ -18,6 +18,8 @@ package org.zkoss.zss.ngmodel.sys;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import org.zkoss.lang.Library;
 import org.zkoss.zss.ngmodel.impl.sys.CalendarUtilImpl;
 import org.zkoss.zss.ngmodel.impl.sys.DependencyTableImpl;
 import org.zkoss.zss.ngmodel.impl.sys.FormatEngineImpl;
@@ -61,20 +63,19 @@ public class EngineFactory {
 
 	static Class<?> formulaEnginClazz;
 	static {
-		try {
-			// FIXME zss 3.5
-			formulaEnginClazz = Class.forName("org.zkoss.zss.model.sys.impl.ZSSFormulaEngine");
-		} catch(ClassNotFoundException e) {
-			// do nothing
-		} catch(Exception e) {
-			logger.log(Level.WARNING, e.getMessage(), e);
+		String clz = Library.getProperty("org.zkoss.zss.model.FormulaEngine.class");
+		if(clz!=null){
+			try {
+				formulaEnginClazz = Class.forName(clz);
+			} catch(Exception e) {
+				logger.log(Level.WARNING, e.getMessage(), e);
+			}			
 		}
+		
 	}
 	
 	public FormulaEngine createFormulaEngine() {
-//		if(true) return new TestFormulaEngineImpl();
 		try {
-			// FIXME zss 3.5
 			if(formulaEnginClazz != null) {
 				return (FormulaEngine)formulaEnginClazz.newInstance();
 			}
@@ -86,7 +87,6 @@ public class EngineFactory {
 	}
 
 	public DependencyTable createDependencyTable() {
-//		return new TestDependencyTableImpl();
 		return new DependencyTableImpl();
 	}
 	

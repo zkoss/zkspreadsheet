@@ -14,7 +14,7 @@ Copyright (C) 2012 Potix Corporation. All Rights Reserved.
 {{IS_RIGHT
 }}IS_RIGHT
 */
-package org.zkoss.zss.json;
+package org.zkoss.zss.ui.impl;
 
 
 /**
