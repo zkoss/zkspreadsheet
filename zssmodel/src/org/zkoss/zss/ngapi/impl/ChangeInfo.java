@@ -16,7 +16,7 @@ package org.zkoss.zss.ngapi.impl;
 import java.util.List;
 import java.util.Set;
 
-import org.zkoss.zss.ngmodel.CellRegion;
+import org.zkoss.zss.model.CellRegion;
 
 /**
  * The change information caused by an operation to the spreadsheet sheet/book.

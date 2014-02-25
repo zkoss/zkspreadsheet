@@ -16,7 +16,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.api.model.impl;
 
-import org.zkoss.zss.ngmodel.NColor;
+import org.zkoss.zss.model.SColor;
 
 /**
  *

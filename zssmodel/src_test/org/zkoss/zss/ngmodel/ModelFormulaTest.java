@@ -9,13 +9,18 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.zkoss.util.Locales;
-import org.zkoss.zss.ngmodel.NDataValidation.ValidationType;
-import org.zkoss.zss.ngmodel.impl.AbstractBookSeriesAdv;
-import org.zkoss.zss.ngmodel.impl.AbstractCellAdv;
-import org.zkoss.zss.ngmodel.impl.RefImpl;
-import org.zkoss.zss.ngmodel.impl.SheetImpl;
-import org.zkoss.zss.ngmodel.sys.dependency.DependencyTable;
-import org.zkoss.zss.ngmodel.sys.dependency.Ref;
+import org.zkoss.zss.model.CellRegion;
+import org.zkoss.zss.model.SBook;
+import org.zkoss.zss.model.SBooks;
+import org.zkoss.zss.model.SDataValidation;
+import org.zkoss.zss.model.SSheet;
+import org.zkoss.zss.model.SDataValidation.ValidationType;
+import org.zkoss.zss.model.impl.AbstractBookSeriesAdv;
+import org.zkoss.zss.model.impl.AbstractCellAdv;
+import org.zkoss.zss.model.impl.RefImpl;
+import org.zkoss.zss.model.impl.SheetImpl;
+import org.zkoss.zss.model.sys.dependency.DependencyTable;
+import org.zkoss.zss.model.sys.dependency.Ref;
 
 public class ModelFormulaTest {
 	@Before
@@ -24,17 +29,17 @@ public class ModelFormulaTest {
 		SheetImpl.DEBUG = true;
 	}
 	
-	protected NSheet initialDataGrid(NSheet sheet){
+	protected SSheet initialDataGrid(SSheet sheet){
 		return sheet;
 	}
 		
 
 	@Test
 	public void testFormulaDependencyClearAfterMoveCell(){
-		NBook book = NBooks.createBook("book1");
+		SBook book = SBooks.createBook("book1");
 		book.getBookSeries().setAutoFormulaCacheClean(true);
 		DependencyTable dt = ((AbstractBookSeriesAdv)book.getBookSeries()).getDependencyTable();
-		NSheet sheet1 = initialDataGrid(book.createSheet("Sheet1"));
+		SSheet sheet1 = initialDataGrid(book.createSheet("Sheet1"));
 		
 		sheet1.getCell("A1").setValue(3);
 		sheet1.getCell("C3").setValue("=A1");
@@ -77,10 +82,10 @@ public class ModelFormulaTest {
 	
 	@Test
 	public void testFormulaDependencyClearAfterInsertDeleteCellVertical(){
-		NBook book = NBooks.createBook("book1");
+		SBook book = SBooks.createBook("book1");
 		book.getBookSeries().setAutoFormulaCacheClean(true);
 		DependencyTable dt = ((AbstractBookSeriesAdv)book.getBookSeries()).getDependencyTable();
-		NSheet sheet1 = initialDataGrid(book.createSheet("Sheet1"));
+		SSheet sheet1 = initialDataGrid(book.createSheet("Sheet1"));
 		
 		sheet1.getCell("A1").setValue(3);
 		sheet1.getCell("C3").setValue("=A1");
@@ -133,10 +138,10 @@ public class ModelFormulaTest {
 	
 	@Test
 	public void testFormulaDependencyClearAfterInsertDeleteCellHorzontal(){
-		NBook book = NBooks.createBook("book1");
+		SBook book = SBooks.createBook("book1");
 		book.getBookSeries().setAutoFormulaCacheClean(true);
 		DependencyTable dt = ((AbstractBookSeriesAdv)book.getBookSeries()).getDependencyTable();
-		NSheet sheet1 = initialDataGrid(book.createSheet("Sheet1"));
+		SSheet sheet1 = initialDataGrid(book.createSheet("Sheet1"));
 		
 		sheet1.getCell("A1").setValue(3);
 		sheet1.getCell("C3").setValue("=A1");
@@ -188,10 +193,10 @@ public class ModelFormulaTest {
 	
 	@Test
 	public void testFormulaDependencyClearAfterInsertDeleteRow(){
-		NBook book = NBooks.createBook("book1");
+		SBook book = SBooks.createBook("book1");
 		book.getBookSeries().setAutoFormulaCacheClean(true);
 		DependencyTable dt = ((AbstractBookSeriesAdv)book.getBookSeries()).getDependencyTable();
-		NSheet sheet1 = initialDataGrid(book.createSheet("Sheet1"));
+		SSheet sheet1 = initialDataGrid(book.createSheet("Sheet1"));
 		
 		sheet1.getCell("A1").setValue(3);
 		sheet1.getCell("C3").setValue("=A1");
@@ -241,10 +246,10 @@ public class ModelFormulaTest {
 	
 	@Test
 	public void testFormulaDependencyClearAfterInsertDeleteColumn(){
-		NBook book = NBooks.createBook("book1");
+		SBook book = SBooks.createBook("book1");
 		book.getBookSeries().setAutoFormulaCacheClean(true);
 		DependencyTable dt = ((AbstractBookSeriesAdv)book.getBookSeries()).getDependencyTable();
-		NSheet sheet1 = initialDataGrid(book.createSheet("Sheet1"));
+		SSheet sheet1 = initialDataGrid(book.createSheet("Sheet1"));
 		
 		sheet1.getCell("A1").setValue(3);
 		sheet1.getCell("C3").setValue("=A1");
@@ -296,9 +301,9 @@ public class ModelFormulaTest {
 	
 	@Test
 	public void testFormulaShiftAfterMoveCell(){
-		NBook book = NBooks.createBook("book1");
+		SBook book = SBooks.createBook("book1");
 		book.getBookSeries().setAutoFormulaCacheClean(true);
-		NSheet sheet1 = initialDataGrid(book.createSheet("Sheet1"));
+		SSheet sheet1 = initialDataGrid(book.createSheet("Sheet1"));
 		
 		sheet1.getCell("A1").setValue(3);
 		sheet1.getCell("C3").setValue("=A1");
@@ -354,9 +359,9 @@ public class ModelFormulaTest {
 	
 	@Test
 	public void testFormulaShiftAfterInsertDeleteCellVertical(){
-		NBook book = NBooks.createBook("book1");
+		SBook book = SBooks.createBook("book1");
 		book.getBookSeries().setAutoFormulaCacheClean(true);
-		NSheet sheet1 = initialDataGrid(book.createSheet("Sheet1"));
+		SSheet sheet1 = initialDataGrid(book.createSheet("Sheet1"));
 		
 		sheet1.getCell("A1").setValue(3);
 		sheet1.getCell("C3").setValue("=A1");
@@ -419,9 +424,9 @@ public class ModelFormulaTest {
 	
 	@Test
 	public void testFormulaShiftAfterInsertDeleteCellHorzontal(){
-		NBook book = NBooks.createBook("book1");
+		SBook book = SBooks.createBook("book1");
 		book.getBookSeries().setAutoFormulaCacheClean(true);
-		NSheet sheet1 = initialDataGrid(book.createSheet("Sheet1"));
+		SSheet sheet1 = initialDataGrid(book.createSheet("Sheet1"));
 		
 		sheet1.getCell("A1").setValue(3);
 		sheet1.getCell("C3").setValue("=A1");
@@ -483,9 +488,9 @@ public class ModelFormulaTest {
 	
 	@Test
 	public void testFormulaShiftAfterInsertDeleteRow(){
-		NBook book = NBooks.createBook("book1");
+		SBook book = SBooks.createBook("book1");
 		book.getBookSeries().setAutoFormulaCacheClean(true);
-		NSheet sheet1 = initialDataGrid(book.createSheet("Sheet1"));
+		SSheet sheet1 = initialDataGrid(book.createSheet("Sheet1"));
 		
 		sheet1.getCell("A1").setValue(3);
 		sheet1.getCell("C3").setValue("=A1");
@@ -546,9 +551,9 @@ public class ModelFormulaTest {
 	
 	@Test
 	public void testFormulaShiftAfterInsertDeleteColumn(){
-		NBook book = NBooks.createBook("book1");
+		SBook book = SBooks.createBook("book1");
 		book.getBookSeries().setAutoFormulaCacheClean(true);
-		NSheet sheet1 = initialDataGrid(book.createSheet("Sheet1"));
+		SSheet sheet1 = initialDataGrid(book.createSheet("Sheet1"));
 		
 		sheet1.getCell("A1").setValue(3);
 		sheet1.getCell("C3").setValue("=A1");
@@ -609,9 +614,9 @@ public class ModelFormulaTest {
 	
 	@Test
 	public void testLinkingShift(){
-		NBook book = NBooks.createBook("book1");
+		SBook book = SBooks.createBook("book1");
 		book.getBookSeries().setAutoFormulaCacheClean(true);
-		NSheet sheet1 = initialDataGrid(book.createSheet("Sheet1"));
+		SSheet sheet1 = initialDataGrid(book.createSheet("Sheet1"));
 		
 		sheet1.getCell("C1").setValue(4);
 		sheet1.getCell("E1").setValue("=C1");
@@ -667,9 +672,9 @@ public class ModelFormulaTest {
 	
 	@Test
 	public void testLinkedShift(){
-		NBook book = NBooks.createBook("book1");
+		SBook book = SBooks.createBook("book1");
 		book.getBookSeries().setAutoFormulaCacheClean(true);
-		NSheet sheet1 = initialDataGrid(book.createSheet("Sheet1"));
+		SSheet sheet1 = initialDataGrid(book.createSheet("Sheet1"));
 		
 		sheet1.getCell("A1").setValue(12);
 		sheet1.getCell("A2").setValue("=A1");
@@ -694,9 +699,9 @@ public class ModelFormulaTest {
 	
 	@Test
 	public void testOverlapShift(){
-		NBook book = NBooks.createBook("book1");
+		SBook book = SBooks.createBook("book1");
 		book.getBookSeries().setAutoFormulaCacheClean(true);
-		NSheet sheet1 = initialDataGrid(book.createSheet("Sheet1"));
+		SSheet sheet1 = initialDataGrid(book.createSheet("Sheet1"));
 		
 		sheet1.getCell("B2").setValue(1);
 		sheet1.getCell("B3").setValue(2);
@@ -743,17 +748,17 @@ public class ModelFormulaTest {
 		
 	}
 	
-	private NSheet prepareValidationSheet(){
-		NBook book = NBooks.createBook("book1");
+	private SSheet prepareValidationSheet(){
+		SBook book = SBooks.createBook("book1");
 		book.getBookSeries().setAutoFormulaCacheClean(true);
-		NSheet sheet1 = initialDataGrid(book.createSheet("Sheet1"));
+		SSheet sheet1 = initialDataGrid(book.createSheet("Sheet1"));
 		
 		sheet1.getCell("B2").setValue("A");
 		sheet1.getCell("B3").setValue("B");
 		sheet1.getCell("B4").setValue("C");
 		sheet1.getCell("B5").setValue("D");
 		
-		NDataValidation dv = sheet1.addDataValidation(new CellRegion("B8"));
+		SDataValidation dv = sheet1.addDataValidation(new CellRegion("B8"));
 		dv.setValidationType(ValidationType.LIST);
 		dv.setFormula("B2:B5");
 		Assert.assertEquals(4,dv.getNumOfValue());
@@ -766,9 +771,9 @@ public class ModelFormulaTest {
 	}
 //	@Test
 	public void testValidationFormulaShift(){
-		NSheet sheet1 = prepareValidationSheet();
+		SSheet sheet1 = prepareValidationSheet();
 		
-		NDataValidation dv = sheet1.getDataValidation(0);
+		SDataValidation dv = sheet1.getDataValidation(0);
 		
 		//insert row
 		sheet1.insertRow(2, 2);
@@ -802,12 +807,12 @@ public class ModelFormulaTest {
 	
 	@Test
 	public void testRenameSheet(){
-		NBook book = NBooks.createBook("book1");
+		SBook book = SBooks.createBook("book1");
 		book.getBookSeries().setAutoFormulaCacheClean(true);
 		DependencyTable dt = ((AbstractBookSeriesAdv)book.getBookSeries()).getDependencyTable();
 		Set<Ref> refs;
-		NSheet sheet1 = initialDataGrid(book.createSheet("Sheet1"));
-		NSheet sheet2 = initialDataGrid(book.createSheet("Sheet2"));
+		SSheet sheet1 = initialDataGrid(book.createSheet("Sheet1"));
+		SSheet sheet2 = initialDataGrid(book.createSheet("Sheet2"));
 		
 		sheet1.getCell("A1").setValue(12);
 		sheet1.getCell("B1").setValue("=A1");
@@ -924,12 +929,12 @@ public class ModelFormulaTest {
 	
 	@Test
 	public void testDeleteSheet(){
-		NBook book = NBooks.createBook("book1");
+		SBook book = SBooks.createBook("book1");
 		book.getBookSeries().setAutoFormulaCacheClean(true);
 		DependencyTable dt = ((AbstractBookSeriesAdv)book.getBookSeries()).getDependencyTable();
 		Set<Ref> refs;
-		NSheet sheet1 = initialDataGrid(book.createSheet("Sheet1"));
-		NSheet sheet2 = initialDataGrid(book.createSheet("Sheet2"));
+		SSheet sheet1 = initialDataGrid(book.createSheet("Sheet1"));
+		SSheet sheet2 = initialDataGrid(book.createSheet("Sheet2"));
 		
 		sheet1.getCell("A1").setValue(12);
 		sheet1.getCell("B1").setValue("=A1");

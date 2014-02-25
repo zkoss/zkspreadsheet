@@ -23,7 +23,11 @@ import org.zkoss.poi.xssf.usermodel.XSSFFormulaEvaluator;
 import org.zkoss.poi.xssf.usermodel.XSSFRow;
 import org.zkoss.poi.xssf.usermodel.XSSFSheet;
 import org.zkoss.poi.xssf.usermodel.XSSFWorkbook;
-import org.zkoss.zss.ngmodel.impl.FormulaCacheCleaner;
+import org.zkoss.zss.model.SBook;
+import org.zkoss.zss.model.SBooks;
+import org.zkoss.zss.model.SCell;
+import org.zkoss.zss.model.SSheet;
+import org.zkoss.zss.model.impl.FormulaCacheCleaner;
 
 /**
  * @author Pao
@@ -100,9 +104,9 @@ public class FormulaPerformanceTest {
 
 	private Object createModel(boolean ngmodel) {
 		if(ngmodel) {
-			NBook book = NBooks.createBook("Book1");
+			SBook book = SBooks.createBook("Book1");
 			book.getBookSeries().setAutoFormulaCacheClean(false);//in performance, we don't allow to clear automatically
-			NSheet sheet = book.createSheet("Sheet1");
+			SSheet sheet = book.createSheet("Sheet1");
 			// first column
 			modifyFirstColumn(ngmodel, book, 1.0);
 			// other columns
@@ -142,13 +146,13 @@ public class FormulaPerformanceTest {
 
 	private void evaluation(boolean ngmodel, Object model, double firstColumnValue) {
 		if(ngmodel) {
-			NBook book = (NBook)model;
-			NSheet sheet = book.getSheet(0);
+			SBook book = (SBook)model;
+			SSheet sheet = book.getSheet(0);
 			// get all values except first column
 			for(int r = 0; r < ROW_COUNT; ++r) {
 				double expected = firstColumnValue;
 				for(int c = 1; c < COL_COUNT; ++c) {
-					NCell cell = sheet.getCell(r, c);
+					SCell cell = sheet.getCell(r, c);
 					cell.clearFormulaResultCache(); // cell clear it's cache automatically
 					double v = cell.getNumberValue();
 					Assert.assertEquals(expected, v, 0.0000001);
@@ -176,8 +180,8 @@ public class FormulaPerformanceTest {
 
 	private void modifyFirstColumn(boolean ngmodel, Object model, double firstColumnValue) {
 		if(ngmodel) {
-			NBook book = (NBook)model;
-			NSheet sheet = book.getSheet(0);
+			SBook book = (SBook)model;
+			SSheet sheet = book.getSheet(0);
 			for(int r = 0; r < ROW_COUNT; ++r) {
 				sheet.getCell(r, 0).setNumberValue(firstColumnValue);
 			}
@@ -230,8 +234,8 @@ public class FormulaPerformanceTest {
 
 	@Test
 	public void testDepend() {
-		NBook book = NBooks.createBook("Book1");
-		NSheet sheet = book.createSheet("Sheet1");
+		SBook book = SBooks.createBook("Book1");
+		SSheet sheet = book.createSheet("Sheet1");
 		sheet.getCell(0, 0).setNumberValue(3.0); // A1
 		sheet.getCell(0, 1).setFormulaValue("A1 * 2"); // B1
 		Assert.assertEquals(3.0, sheet.getCell(0, 0).getNumberValue(), EPSILON);

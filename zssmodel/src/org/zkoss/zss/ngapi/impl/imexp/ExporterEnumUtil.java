@@ -22,16 +22,16 @@ import org.zkoss.poi.ss.usermodel.AutoFilter;
 import org.zkoss.poi.ss.usermodel.CellStyle;
 import org.zkoss.poi.ss.usermodel.Font;
 import org.zkoss.poi.ss.usermodel.PrintSetup;
-import org.zkoss.zss.ngmodel.NHyperlink;
-import org.zkoss.zss.ngmodel.NPrintSetup;
-import org.zkoss.zss.ngmodel.NAutoFilter.FilterOp;
-import org.zkoss.zss.ngmodel.NCellStyle.Alignment;
-import org.zkoss.zss.ngmodel.NCellStyle.BorderType;
-import org.zkoss.zss.ngmodel.NCellStyle.FillPattern;
-import org.zkoss.zss.ngmodel.NCellStyle.VerticalAlignment;
-import org.zkoss.zss.ngmodel.NFont.Boldweight;
-import org.zkoss.zss.ngmodel.NFont.TypeOffset;
-import org.zkoss.zss.ngmodel.NFont.Underline;
+import org.zkoss.zss.model.SHyperlink;
+import org.zkoss.zss.model.SPrintSetup;
+import org.zkoss.zss.model.SAutoFilter.FilterOp;
+import org.zkoss.zss.model.SCellStyle.Alignment;
+import org.zkoss.zss.model.SCellStyle.BorderType;
+import org.zkoss.zss.model.SCellStyle.FillPattern;
+import org.zkoss.zss.model.SCellStyle.VerticalAlignment;
+import org.zkoss.zss.model.SFont.Boldweight;
+import org.zkoss.zss.model.SFont.TypeOffset;
+import org.zkoss.zss.model.SFont.Underline;
 
 /**
  * enum utility for exporter ZSS model to POI model
@@ -41,7 +41,7 @@ import org.zkoss.zss.ngmodel.NFont.Underline;
  */
 public class ExporterEnumUtil {
 	
-	public static int toPoiHyperlinkType(NHyperlink.HyperlinkType type) {
+	public static int toPoiHyperlinkType(SHyperlink.HyperlinkType type) {
 		switch(type) {
 		case DOCUMENT:
 			return Hyperlink.LINK_DOCUMENT;
@@ -75,7 +75,7 @@ public class ExporterEnumUtil {
 		}
 	}
 
-	public static short toPoiPaperSize(NPrintSetup.PaperSize paperSize) {
+	public static short toPoiPaperSize(SPrintSetup.PaperSize paperSize) {
 		switch(paperSize) {
 		case A3:
 			return PrintSetup.A3_PAPERSIZE;

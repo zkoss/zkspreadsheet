@@ -5,6 +5,7 @@ import static org.junit.Assert.fail;
 import java.io.*;
 import java.net.URL;
 
+import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.ngapi.NExporter;
 import org.zkoss.zss.ngapi.NImporter;
 import org.zkoss.zss.ngapi.impl.imexp.*;
@@ -22,7 +23,7 @@ public class ImExpTestUtil {
 	static public String DEFAULT_EXPORT_FILE_NAME_XLSX = "exported.xlsx";
 	static public String DEFAULT_EXPORT_FILE_NAME_XLS = "exported.xls";
 	
-	public static File write(NBook book, Type type) {
+	public static File write(SBook book, Type type) {
 		if (type.equals(ExcelExportFactory.Type.XLSX)){
 			return writeBookToFile(book, new File(DEFAULT_EXPORT_TARGET_PATH + DEFAULT_EXPORT_FILE_NAME_XLSX), type);
 		}else{
@@ -30,11 +31,11 @@ public class ImExpTestUtil {
 		}
 	}
 	
-	public static File writeBookToFile(NBook book, String filePath, Type type) {
+	public static File writeBookToFile(SBook book, String filePath, Type type) {
 		return writeBookToFile(book, new File(filePath), type);
 	}
 	
-	public static File writeBookToFile(NBook book, File outFile, Type type) {
+	public static File writeBookToFile(SBook book, File outFile, Type type) {
 		try {
 			outFile = new File(DEFAULT_EXPORT_TARGET_PATH + outFile.getName());
 			outFile.createNewFile();
@@ -52,9 +53,9 @@ public class ImExpTestUtil {
 	 * @param is
 	 * @return
 	 */
-	public static NBook loadBook(InputStream is) {
+	public static SBook loadBook(InputStream is) {
 		NImporter importer = new ExcelImportFactory().createImporter();
-		NBook book = null;
+		SBook book = null;
 		try {
 			book = importer.imports(is, "XSSFBook");
 		} catch (IOException e) {
@@ -76,7 +77,7 @@ public class ImExpTestUtil {
 	 * @param bookName TODO
 	 * @return
 	 */
-	public static NBook loadBook(File file, String bookName) {
+	public static SBook loadBook(File file, String bookName) {
 		try {
 			return new ExcelImportFactory().createImporter().imports(file, bookName);
 		} catch (IOException e) {
@@ -85,7 +86,7 @@ public class ImExpTestUtil {
 		return null;
 	}
 	
-	public static NBook loadBook(URL fileUrl, String bookName) {
+	public static SBook loadBook(URL fileUrl, String bookName) {
 		try {
 			return new ExcelImportFactory().createImporter().imports(fileUrl, bookName);
 		} catch (IOException e) {

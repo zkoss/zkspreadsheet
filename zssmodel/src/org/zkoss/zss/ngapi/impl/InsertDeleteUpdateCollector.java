@@ -14,7 +14,8 @@ package org.zkoss.zss.ngapi.impl;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import org.zkoss.zss.ngmodel.NSheet;
+
+import org.zkoss.zss.model.SSheet;
 
 /**
  * A collector for collecting insert/delete row/column updates.
@@ -38,7 +39,7 @@ public class InsertDeleteUpdateCollector {
 		return current.get();
 	}
 
-	public void addInsertDeleteUpdate(NSheet sheet, boolean inserted, boolean isRow, int index, int lastIndex) {
+	public void addInsertDeleteUpdate(SSheet sheet, boolean inserted, boolean isRow, int index, int lastIndex) {
 		if(this.insertDeleteUpdates == null) {
 			insertDeleteUpdates = new ArrayList<InsertDeleteUpdate>();
 		}

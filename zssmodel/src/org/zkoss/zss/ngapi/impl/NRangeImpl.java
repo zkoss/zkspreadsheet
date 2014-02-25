@@ -18,24 +18,25 @@ package org.zkoss.zss.ngapi.impl;
 
 import java.util.*;
 import java.util.concurrent.locks.ReadWriteLock;
+
 import org.zkoss.lang.Strings;
 import org.zkoss.util.Locales;
+import org.zkoss.zss.model.*;
+import org.zkoss.zss.model.SAutoFilter.FilterOp;
+import org.zkoss.zss.model.SCell.CellType;
+import org.zkoss.zss.model.SCellStyle.BorderType;
+import org.zkoss.zss.model.SChart.NChartGrouping;
+import org.zkoss.zss.model.SChart.NChartLegendPosition;
+import org.zkoss.zss.model.SChart.NChartType;
+import org.zkoss.zss.model.SHyperlink.HyperlinkType;
+import org.zkoss.zss.model.impl.*;
+import org.zkoss.zss.model.sys.EngineFactory;
+import org.zkoss.zss.model.sys.dependency.Ref;
+import org.zkoss.zss.model.sys.format.*;
+import org.zkoss.zss.model.sys.input.*;
+import org.zkoss.zss.model.util.*;
 import org.zkoss.zss.ngapi.*;
 import org.zkoss.zss.ngapi.impl.autofill.AutoFillHelper;
-import org.zkoss.zss.ngmodel.*;
-import org.zkoss.zss.ngmodel.NAutoFilter.FilterOp;
-import org.zkoss.zss.ngmodel.NCell.CellType;
-import org.zkoss.zss.ngmodel.NCellStyle.BorderType;
-import org.zkoss.zss.ngmodel.NChart.NChartGrouping;
-import org.zkoss.zss.ngmodel.NChart.NChartLegendPosition;
-import org.zkoss.zss.ngmodel.NChart.NChartType;
-import org.zkoss.zss.ngmodel.NHyperlink.HyperlinkType;
-import org.zkoss.zss.ngmodel.impl.*;
-import org.zkoss.zss.ngmodel.sys.EngineFactory;
-import org.zkoss.zss.ngmodel.sys.dependency.Ref;
-import org.zkoss.zss.ngmodel.sys.format.*;
-import org.zkoss.zss.ngmodel.sys.input.*;
-import org.zkoss.zss.ngmodel.util.*;
 /**
  * Only those methods that set cell data, cell style, row (column) style, width, height, and hidden consider 3-D references. 
  * Others don't, just perform on first cell.
@@ -44,7 +45,7 @@ import org.zkoss.zss.ngmodel.util.*;
  */
 public class NRangeImpl implements NRange {
 
-	private NBook book;
+	private SBook book;
 	private final List<EffectedRegion> rangeRefs = new ArrayList<EffectedRegion>(
 			1);
 
@@ -53,20 +54,20 @@ public class NRangeImpl implements NRange {
 	private int _lastColumn = Integer.MIN_VALUE;
 	private int _lastRow = Integer.MIN_VALUE;
 
-	public NRangeImpl(NBook book) {
+	public NRangeImpl(SBook book) {
 		this.book = book;
 	}
 	
-	public NRangeImpl(NSheet sheet) {
+	public NRangeImpl(SSheet sheet) {
 		addRangeRef(sheet, 0, 0, sheet.getBook().getMaxRowIndex(), sheet
 				.getBook().getMaxColumnIndex());
 	}
 
-	public NRangeImpl(NSheet sheet, int row, int col) {
+	public NRangeImpl(SSheet sheet, int row, int col) {
 		addRangeRef(sheet, row, col, row, col);
 	}
 
-	public NRangeImpl(NSheet sheet, int tRow, int lCol, int bRow, int rCol) {
+	public NRangeImpl(SSheet sheet, int tRow, int lCol, int bRow, int rCol) {
 		addRangeRef(sheet, tRow, lCol, bRow, rCol);
 	}
 	
@@ -76,7 +77,7 @@ public class NRangeImpl implements NRange {
 		}
 	}
 
-	private void addRangeRef(NSheet sheet, int tRow, int lCol, int bRow,
+	private void addRangeRef(SSheet sheet, int tRow, int lCol, int bRow,
 			int rCol) {
 		Validations.argNotNull(sheet);
 		//TODO to support multiple sheet
@@ -110,11 +111,11 @@ public class NRangeImpl implements NRange {
 		}
 	}
 	
-	NBookSeries getBookSeries(){
+	SBookSeries getBookSeries(){
 		return getBook().getBookSeries();
 	}
 	
-	NBook getBook(){
+	SBook getBook(){
 		if(book==null){
 			book = getSheet().getBook();
 		}
@@ -122,7 +123,7 @@ public class NRangeImpl implements NRange {
 	}
 	
 	@Override
-	public NSheet getSheet() {
+	public SSheet getSheet() {
 		if(rangeRefs.size()<=0){
 			throw new IllegalStateException("can find any effected range");
 		}
@@ -146,10 +147,10 @@ public class NRangeImpl implements NRange {
 	}
 
 	private class EffectedRegion {
-		private final NSheet sheet;
+		private final SSheet sheet;
 		private final CellRegion region;
 
-		public EffectedRegion(NSheet sheet, int row, int column, int lastRow,
+		public EffectedRegion(SSheet sheet, int row, int column, int lastRow,
 				int lastColumn) {
 			this.sheet = sheet;
 			region = new CellRegion(row, column,lastRow,lastColumn);
@@ -161,7 +162,7 @@ public class NRangeImpl implements NRange {
 		 * @param cell
 		 * @return true if continue the visit next cell
 		 */
-		abstract boolean visit(NCell cell);
+		abstract boolean visit(SCell cell);
 	}
 	
 
@@ -178,7 +179,7 @@ public class NRangeImpl implements NRange {
 				loop1:
 				for (int i = region.row; i <= region.lastRow; i++) {
 					for (int j = region.column; j <= region.lastColumn; j++) {
-						NCell cell = r.sheet.getCell(i, j);
+						SCell cell = r.sheet.getCell(i, j);
 						boolean conti = visitor.visit(cell);
 						if(!conti){
 							break loop1;
@@ -192,7 +193,7 @@ public class NRangeImpl implements NRange {
 		updateWrap.doNotify();
 	}
 
-	private void handleRefNotifyContentChange(NBookSeries bookSeries,HashSet<Ref> notifySet) {
+	private void handleRefNotifyContentChange(SBookSeries bookSeries,HashSet<Ref> notifySet) {
 		// notify changes
 		new RefNotifyContentChangeHelper(bookSeries).notifyContentChange(notifySet);
 	}
@@ -209,7 +210,7 @@ public class NRangeImpl implements NRange {
 	@Override
 	public void setValue(final Object value) {
 		new CellVisitorTask(new CellVisitor() {
-			public boolean visit(NCell cell) {
+			public boolean visit(SCell cell) {
 				Object cellval = cell.getValue();
 				if (!euqlas(cellval, value)) {
 					cell.setValue(value);
@@ -222,7 +223,7 @@ public class NRangeImpl implements NRange {
 	@Override
 	public void clearContents() {
 		new CellVisitorTask(new CellVisitor() {
-			public boolean visit(NCell cell) {
+			public boolean visit(SCell cell) {
 				if (!cell.isNull()) {
 					cell.setHyperlink(null);
 					cell.clearValue();
@@ -252,7 +253,7 @@ public class NRangeImpl implements NRange {
 		final ResultWrap<InputResult> input = new ResultWrap<InputResult>();
 		final ResultWrap<HyperlinkType> hyperlinkType = new ResultWrap<HyperlinkType>();
 		new CellVisitorTask(new CellVisitor() {
-			public boolean visit(NCell cell) {
+			public boolean visit(SCell cell) {
 				InputResult result;
 				if((result = input.get())==null){
 					result = ie.parseInput(editText == null ? ""
@@ -292,7 +293,7 @@ public class NRangeImpl implements NRange {
 				case STRING:
 					cell.setStringValue((String) resultVal);
 					if(hyperlinkType.get()!=null){
-						NHyperlink link = cell.setupHyperlink();
+						SHyperlink link = cell.setupHyperlink();
 						link.setType(hyperlinkType.get());
 						link.setAddress((String)resultVal);
 						link.setLabel((String)resultVal);
@@ -304,7 +305,7 @@ public class NRangeImpl implements NRange {
 				}
 				
 				String oldFormat = cell.getCellStyle().getDataFormat();
-				if(format!=null && NCellStyle.FORMAT_GENERAL.equals(oldFormat)){
+				if(format!=null && SCellStyle.FORMAT_GENERAL.equals(oldFormat)){
 					//if there is a suggested format and old format is not general
 					StyleUtil.setDataFormat(cell.getSheet(), cell.getRowIndex(), cell.getColumnIndex(), format);
 				}
@@ -313,13 +314,13 @@ public class NRangeImpl implements NRange {
 		}).doInWriteLock(getLock());
 	}
 	
-	private NHyperlink.HyperlinkType getHyperlinkType(String address) {
+	private SHyperlink.HyperlinkType getHyperlinkType(String address) {
 		if (address != null) {
 			final String addr = address.toLowerCase(); // ZSS-288: support more scheme according to POI code, see  org.zkoss.poi.ss.formula.functions.Hyperlink
 			if (addr.startsWith("http://") || addr.startsWith("https://")) {
-				return NHyperlink.HyperlinkType.URL;
+				return SHyperlink.HyperlinkType.URL;
 			} else if (addr.startsWith("mailto:")) {
-				return NHyperlink.HyperlinkType.EMAIL;
+				return SHyperlink.HyperlinkType.EMAIL;
 			} // ZSS-288: don't support auto-create hyperlink for DOCUMENT and FILE type
 		}
 		return null;
@@ -330,7 +331,7 @@ public class NRangeImpl implements NRange {
 		final ResultWrap<String> r = new ResultWrap<String>();
 		new CellVisitorTask(new CellVisitor() {
 			@Override
-			public boolean visit(NCell cell) {
+			public boolean visit(SCell cell) {
 				FormatEngine fe = EngineFactory.getInstance().createFormatEngine();
 				r.set(fe.getEditText(cell, new FormatContext(Locales.getCurrent())));		
 				return false;
@@ -341,7 +342,7 @@ public class NRangeImpl implements NRange {
 
 	@Override
 	public void notifyChange() {
-		NBookSeries bookSeries = getBookSeries();
+		SBookSeries bookSeries = getBookSeries();
 		LinkedHashSet<Ref> notifySet = new LinkedHashSet<Ref>();
 		for (EffectedRegion r : rangeRefs) {
 			String bookName = r.sheet.getBook().getBookName();
@@ -389,7 +390,7 @@ public class NRangeImpl implements NRange {
 			CellRegion region = r.region;
 			
 			for (int i = region.row; i <= region.lastRow; i++) {
-				NRow row = r.sheet.getRow(i);
+				SRow row = r.sheet.getRow(i);
 				if(heightPx!=null){
 					row.setHeight(heightPx);
 				}
@@ -437,7 +438,7 @@ public class NRangeImpl implements NRange {
 			CellRegion region = r.region;
 			
 			for (int i = region.column; i <= region.lastColumn; i++) {
-				NColumn column = r.sheet.getColumn(i);
+				SColumn column = r.sheet.getColumn(i);
 				if(widthPx!=null){
 					column.setWidth(widthPx);
 				}
@@ -454,11 +455,11 @@ public class NRangeImpl implements NRange {
 	}
 
 	@Override
-	public NHyperlink getHyperlink() {
-		final ResultWrap<NHyperlink> r = new ResultWrap<NHyperlink>();
+	public SHyperlink getHyperlink() {
+		final ResultWrap<SHyperlink> r = new ResultWrap<SHyperlink>();
 		new CellVisitorTask(new CellVisitor() {
 			@Override
-			public boolean visit(NCell cell) {
+			public boolean visit(SCell cell) {
 				r.set(cell.getHyperlink());		
 				return false;
 			}
@@ -631,7 +632,7 @@ public class NRangeImpl implements NRange {
 		new ModelUpdateTask(){
 			@Override
 			Object doInvokePhase() {
-				NSheet sheet = getSheet();
+				SSheet sheet = getSheet();
 				sheet.moveCell(getRow(), getColumn(), getLastRow(), getLastColumn(), nRow, nCol); 
 				return null;
 			}
@@ -642,9 +643,9 @@ public class NRangeImpl implements NRange {
 	}
 
 	@Override
-	public void setCellStyle(final NCellStyle style) {
+	public void setCellStyle(final SCellStyle style) {
 		new CellVisitorTask(new CellVisitor() {
-			public boolean visit(NCell cell) {
+			public boolean visit(SCell cell) {
 				cell.setCellStyle(style);
 				return true;
 			}
@@ -652,11 +653,11 @@ public class NRangeImpl implements NRange {
 	}
 	
 	@Override
-	public NCellStyle getCellStyle() {
-		final ResultWrap<NCellStyle> r = new ResultWrap<NCellStyle>();
+	public SCellStyle getCellStyle() {
+		final ResultWrap<SCellStyle> r = new ResultWrap<SCellStyle>();
 		new CellVisitorTask(new CellVisitor() {
 			@Override
-			public boolean visit(NCell cell) {
+			public boolean visit(SCell cell) {
 				r.set(cell.getCellStyle());		
 				return false;
 			}
@@ -666,7 +667,7 @@ public class NRangeImpl implements NRange {
 
 	@Override
 	public void fill(final NRange dstRange, final FillType fillType) {
-		NSheet sheet = getSheet();
+		SSheet sheet = getSheet();
 		if(!dstRange.getSheet().equals(sheet)){
 			throw new InvalidateModelOpException("the source sheet and destination sheet aren't the same");
 		}
@@ -683,7 +684,7 @@ public class NRangeImpl implements NRange {
 	}
 	
 	private void autoFillInLock(CellRegion src,CellRegion dest, FillType fillType){
-		NSheet sheet = getSheet();
+		SSheet sheet = getSheet();
 		new AutoFillHelper().fill(sheet, src,dest, fillType);
 	}
 
@@ -755,25 +756,25 @@ public class NRangeImpl implements NRange {
 	}
 	
 	
-	private boolean isWholeRow(NBook book,CellRegion region){
+	private boolean isWholeRow(SBook book,CellRegion region){
 		return region.column<=0 && region.lastColumn>=book.getMaxColumnIndex();
 	}
 	
-	private boolean isWholeColumn(NBook book,CellRegion region){
+	private boolean isWholeColumn(SBook book,CellRegion region){
 		return region.row<=0 && region.lastRow>=book.getMaxRowIndex();
 	}
 
 	protected void setHiddenInLock(boolean hidden) {
 		LinkedHashSet<SheetRegion> notifySet = new LinkedHashSet<SheetRegion>();
 		for (EffectedRegion r : rangeRefs) {
-			NBook book = r.sheet.getBook();
+			SBook book = r.sheet.getBook();
 			int maxcol = r.sheet.getBook().getMaxColumnIndex();
 			int maxrow = r.sheet.getBook().getMaxRowIndex();
 			CellRegion region = r.region;
 			
 			if(isWholeRow(book,region)){//hidden the row when it is whole row
 				for(int i = region.getRow(); i<=region.getLastRow();i++){
-					NRow row = r.sheet.getRow(i);
+					SRow row = r.sheet.getRow(i);
 					if(row.isHidden()==hidden)
 						continue;
 					row.setHidden(hidden);
@@ -781,7 +782,7 @@ public class NRangeImpl implements NRange {
 				}
 			}else if(isWholeColumn(book,region)){
 				for(int i = region.getColumn(); i<=region.getLastColumn();i++){
-					NColumn col = r.sheet.getColumn(i);
+					SColumn col = r.sheet.getColumn(i);
 					if(col.isHidden()==hidden)
 						continue;
 					col.setHidden(hidden);
@@ -798,7 +799,7 @@ public class NRangeImpl implements NRange {
 			@Override
 			public Object invoke() {
 				for (EffectedRegion r : rangeRefs) {
-					NSheet sheet = r.sheet;
+					SSheet sheet = r.sheet;
 					if(sheet.getViewInfo().isDisplayGridline()!=show){
 						sheet.getViewInfo().setDisplayGridline(show);
 						new NotifyChangeHelper().notifyDisplayGirdline(sheet,show);
@@ -816,7 +817,7 @@ public class NRangeImpl implements NRange {
 			@Override
 			public Object invoke() {
 				for (EffectedRegion r : rangeRefs) {
-					NSheet sheet = r.sheet;
+					SSheet sheet = r.sheet;
 					if(sheet.isProtected() && password==null){
 						sheet.setPassword(null);
 						new NotifyChangeHelper().notifyProtectSheet(sheet,false);
@@ -834,8 +835,8 @@ public class NRangeImpl implements NRange {
 	public void setHyperlink(final HyperlinkType linkType,final String address,
 			final String display) {
 		new CellVisitorTask(new CellVisitor() {
-			public boolean visit(NCell cell) {
-				NHyperlink link = cell.setupHyperlink();
+			public boolean visit(SCell cell) {
+				SHyperlink link = cell.setupHyperlink();
 				link.setType(linkType);
 				link.setAddress(address);
 				link.setLabel(display);
@@ -858,7 +859,7 @@ public class NRangeImpl implements NRange {
 		final ResultWrap<Object> r = new ResultWrap<Object>();
 		new CellVisitorTask(new CellVisitor() {
 			@Override
-			public boolean visit(NCell cell) {
+			public boolean visit(SCell cell) {
 				Object val = cell.getValue();
 				r.set(val);
 				return false;
@@ -874,7 +875,7 @@ public class NRangeImpl implements NRange {
 			return this;
 		}
 		if (rangeRefs != null && !rangeRefs.isEmpty()) {
-			final NBook book = getBook();
+			final SBook book = getBook();
 			final int maxCol = book.getMaxColumnIndex();
 			final int maxRow = book.getMaxRowIndex();
 			final LinkedHashSet<SheetRegion> nrefs = new LinkedHashSet<SheetRegion>(rangeRefs.size()); 
@@ -885,7 +886,7 @@ public class NRangeImpl implements NRange {
 				final int right = ref.region.getLastColumn() + colOffset;
 				final int bottom = ref.region.getLastRow() + rowOffset;
 				
-				final NSheet refSheet = ref.sheet;
+				final SSheet refSheet = ref.sheet;
 				final int nleft = colOffset < 0 ? Math.max(0, left) : left;  
 				final int ntop = rowOffset < 0 ? Math.max(0, top) : top;
 				final int nright = colOffset > 0 ? Math.min(maxCol, right) : right;
@@ -915,12 +916,12 @@ public class NRangeImpl implements NRange {
 			@Override
 			public Object invoke() {
 				for (EffectedRegion r : rangeRefs) {
-					NSheet sheet = r.sheet;
+					SSheet sheet = r.sheet;
 					if(sheet.isProtected()){
 						CellRegion region = r.region;
 						for (int i = region.row; i <= region.lastRow; i++) {
 							for (int j = region.column; j <= region.lastColumn; j++) {
-								NCellStyle style = r.sheet.getCell(i, j).getCellStyle();
+								SCellStyle style = r.sheet.getCell(i, j).getCellStyle();
 								if(style.isLocked()){
 									return true;
 								}
@@ -936,19 +937,19 @@ public class NRangeImpl implements NRange {
 
 	@Override
 	public void deleteSheet() {
-		final ResultWrap<NSheet> toDeleteSheet = new ResultWrap<NSheet>();
+		final ResultWrap<SSheet> toDeleteSheet = new ResultWrap<SSheet>();
 		final ResultWrap<Integer> toDeleteIndex = new ResultWrap<Integer>();
 		//it just handle the first ref
 		new ModelUpdateTask() {			
 			@Override
 			public Object doInvokePhase() {
-				NBook book = getBook();
+				SBook book = getBook();
 				int sheetCount;
 				if((sheetCount = book.getNumOfSheet())<=1){
 					throw new InvalidateModelOpException("can't delete last sheet ");
 				}
 				
-				NSheet toDelete = getSheet();
+				SSheet toDelete = getSheet();
 				
 				int index = book.getSheetIndex(toDelete);
 //				final int newIndex =  index < (sheetCount - 1) ? index : (index - 1);
@@ -970,14 +971,14 @@ public class NRangeImpl implements NRange {
 	}
 
 	@Override
-	public NSheet createSheet(final String name) {
-		final ResultWrap<NSheet> resultSheet = new ResultWrap<NSheet>();
+	public SSheet createSheet(final String name) {
+		final ResultWrap<SSheet> resultSheet = new ResultWrap<SSheet>();
 		//it just handle the first ref
-		return (NSheet)new ModelUpdateTask() {			
+		return (SSheet)new ModelUpdateTask() {			
 			@Override
 			public Object doInvokePhase() {
-				NBook book = getBook();
-				NSheet sheet;
+				SBook book = getBook();
+				SSheet sheet;
 				if (Strings.isBlank(name)) {
 					sheet = book.createSheet(nextSheetName());
 				} else {
@@ -997,11 +998,11 @@ public class NRangeImpl implements NRange {
 	}
 	
 	private String nextSheetName() {
-		NBook book = getBook();
+		SBook book = getBook();
 		Integer idx = (Integer)book.getAttribute("zss.nextSheetCount");
 		int i = idx==null?1:idx;
 		HashSet<String> names = new HashSet<String>();
-		for (NSheet sheet : getBook().getSheets()) {
+		for (SSheet sheet : getBook().getSheets()) {
 			names.add(sheet.getSheetName());
 		}
 		String base = "Sheet";
@@ -1016,13 +1017,13 @@ public class NRangeImpl implements NRange {
 	@Override
 	public void setSheetName(final String newname) {
 		//it just handle the first ref
-		final ResultWrap<NSheet> resultSheet = new ResultWrap<NSheet>();
+		final ResultWrap<SSheet> resultSheet = new ResultWrap<SSheet>();
 		final ResultWrap<String> oldName = new ResultWrap<String>();
 		new ModelUpdateTask() {			
 			@Override
 			public Object doInvokePhase() {
-				NBook book = getBook();
-				NSheet sheet = getSheet();
+				SBook book = getBook();
+				SSheet sheet = getSheet();
 				String old = sheet.getSheetName();
 				if(old.equals(newname)){
 					return null;
@@ -1045,13 +1046,13 @@ public class NRangeImpl implements NRange {
 	@Override
 	public void setSheetOrder(final int pos) {
 		//it just handle the first ref
-		final ResultWrap<NSheet> resultSheet = new ResultWrap<NSheet>();
+		final ResultWrap<SSheet> resultSheet = new ResultWrap<SSheet>();
 		final ResultWrap<Integer> oldIdx = new ResultWrap<Integer>();
 		new ModelUpdateTask() {			
 			@Override
 			public Object doInvokePhase() {
-				NBook book = getBook();
-				NSheet sheet = getSheet();
+				SBook book = getBook();
+				SSheet sheet = getSheet();
 				
 				int old = book.getSheetIndex(sheet);
 				if(old==pos){
@@ -1080,7 +1081,7 @@ public class NRangeImpl implements NRange {
 		new ReadWriteTask() {			
 			@Override
 			public Object invoke() {
-				NSheetViewInfo viewInfo = getSheet().getViewInfo();
+				SSheetViewInfo viewInfo = getSheet().getViewInfo();
 				viewInfo.setNumOfRowFreeze(numOfRow);
 				viewInfo.setNumOfColumnFreeze(numOfColumn);
 				notifySheetFreezeChange();
@@ -1098,7 +1099,7 @@ public class NRangeImpl implements NRange {
 		final ResultWrap<String> r = new ResultWrap<String>();
 		new CellVisitorTask(new CellVisitor() {
 			@Override
-			public boolean visit(NCell cell) {
+			public boolean visit(SCell cell) {
 				FormatEngine fe = EngineFactory.getInstance().createFormatEngine();
 				r.set(fe.format(cell, new FormatContext(Locales.getCurrent())).getText());		
 				return false;
@@ -1112,7 +1113,7 @@ public class NRangeImpl implements NRange {
 		final ResultWrap<String> r = new ResultWrap<String>();
 		new CellVisitorTask(new CellVisitor() {
 			@Override
-			public boolean visit(NCell cell) {
+			public boolean visit(SCell cell) {
 				FormatEngine fe = EngineFactory.getInstance().createFormatEngine();
 				r.set(fe.getFormat(cell, new FormatContext(Locales.getCurrent())));		
 				return false;
@@ -1132,11 +1133,11 @@ public class NRangeImpl implements NRange {
 	}
 
 	@Override
-	public NDataValidation validate(final String editText) {
-		final ResultWrap<NDataValidation> retrunVal = new ResultWrap<NDataValidation>();
+	public SDataValidation validate(final String editText) {
+		final ResultWrap<SDataValidation> retrunVal = new ResultWrap<SDataValidation>();
 		new CellVisitorTask(new CellVisitor() {
-			boolean visit(NCell cell) {
-				NDataValidation validation = getSheet().getDataValidation(cell.getRowIndex(), cell.getColumnIndex());
+			boolean visit(SCell cell) {
+				SDataValidation validation = getSheet().getDataValidation(cell.getRowIndex(), cell.getColumnIndex());
 				if(validation!=null){
 					if(!new DataValidationHelper(validation).validate(editText,cell.getCellStyle().getDataFormat())){
 						retrunVal.set(validation);
@@ -1177,13 +1178,13 @@ public class NRangeImpl implements NRange {
 	}
 	
 	@Override 
-	public NAutoFilter enableAutoFilter(final boolean enable){
+	public SAutoFilter enableAutoFilter(final boolean enable){
 		//it just handle the first ref
-		return (NAutoFilter) new ReadWriteTask() {			
+		return (SAutoFilter) new ReadWriteTask() {			
 			@Override
 			public Object invoke() {
-				NSheet sheet = getSheet();
-				NAutoFilter filter = sheet.getAutoFilter();
+				SSheet sheet = getSheet();
+				SAutoFilter filter = sheet.getAutoFilter();
 				
 				if((filter==null && !enable) || (filter!=null && enable)){
 					return filter;
@@ -1197,13 +1198,13 @@ public class NRangeImpl implements NRange {
 	}
 
 	@Override
-	public NAutoFilter enableAutoFilter(final int field, final FilterOp filterOp,
+	public SAutoFilter enableAutoFilter(final int field, final FilterOp filterOp,
 			final Object criteria1, final Object criteria2, final Boolean visibleDropDown) {
 		//it just handle the first ref
-		return (NAutoFilter) new ReadWriteTask() {			
+		return (SAutoFilter) new ReadWriteTask() {			
 			@Override
 			public Object invoke() {
-				NAutoFilter filter = new AutoFilterHelper(NRangeImpl.this).enableAutoFilter(field, filterOp, criteria1, criteria2, visibleDropDown);
+				SAutoFilter filter = new AutoFilterHelper(NRangeImpl.this).enableAutoFilter(field, filterOp, criteria1, criteria2, visibleDropDown);
 				notifySheetAutoFilterChange();
 				return filter;
 			}
@@ -1246,7 +1247,7 @@ public class NRangeImpl implements NRange {
 			public Object invoke() {
 				NotifyChangeHelper notifyHelper =  new NotifyChangeHelper();
 				for (EffectedRegion r : rangeRefs) {
-					NBook book = r.sheet.getBook();
+					SBook book = r.sheet.getBook();
 					notifyHelper.notifyCustomEvent(customEventName,r.sheet,data);
 				}
 				return null;
@@ -1282,7 +1283,7 @@ public class NRangeImpl implements NRange {
 	}
 	
 	private class UpdateCollectorWrap {
-		NBookSeries bookSeries;
+		SBookSeries bookSeries;
 		
 		LinkedHashSet<Ref> refNotifySet;
 		LinkedHashSet<SheetRegion> mergeRemoveNotifySet;
@@ -1302,7 +1303,7 @@ public class NRangeImpl implements NRange {
 		
 		FormulaCacheCleaner oldClearer;
 		
-		public UpdateCollectorWrap(NBookSeries bookSeries){
+		public UpdateCollectorWrap(SBookSeries bookSeries){
 			this.bookSeries = bookSeries;
 			
 			refNotifySet = new LinkedHashSet<Ref>();
@@ -1381,11 +1382,11 @@ public class NRangeImpl implements NRange {
 	}	
 
 	@Override
-	public NPicture addPicture(final NViewAnchor anchor, final byte[] image, final NPicture.Format format){
-		return (NPicture) new ReadWriteTask() {			
+	public SPicture addPicture(final ViewAnchor anchor, final byte[] image, final SPicture.Format format){
+		return (SPicture) new ReadWriteTask() {			
 			@Override
 			public Object invoke() {
-				NPicture picture = getSheet().addPicture(format, image, anchor);
+				SPicture picture = getSheet().addPicture(format, image, anchor);
 				new NotifyChangeHelper().notifySheetPictureAdd(getSheet(), picture.getId());
 				return picture;
 			}
@@ -1409,7 +1410,7 @@ public class NRangeImpl implements NRange {
 	}
 
 	@Override
-	public void deletePicture(final NPicture picture){
+	public void deletePicture(final SPicture picture){
 		new ReadWriteTask() {			
 			@Override
 			public Object invoke() {
@@ -1422,7 +1423,7 @@ public class NRangeImpl implements NRange {
 	}
 	
 	@Override
-	public void movePicture(final NPicture picture, final NViewAnchor anchor){
+	public void movePicture(final SPicture picture, final ViewAnchor anchor){
 		new ReadWriteTask() {			
 			@Override
 			public Object invoke() {
@@ -1434,11 +1435,11 @@ public class NRangeImpl implements NRange {
 	}
 	
 	@Override
-	public NChart addChart(final NViewAnchor anchor, final NChartType type,	final NChartGrouping grouping, final NChartLegendPosition pos, final boolean isThreeD) {
-		return (NChart) new ReadWriteTask() {			
+	public SChart addChart(final ViewAnchor anchor, final NChartType type,	final NChartGrouping grouping, final NChartLegendPosition pos, final boolean isThreeD) {
+		return (SChart) new ReadWriteTask() {			
 			@Override
 			public Object invoke() {
-				NChart chart = getSheet().addChart(type, anchor);
+				SChart chart = getSheet().addChart(type, anchor);
 				chart.setThreeD(isThreeD); 
 				new ChartDataHelper(NRangeImpl.this).fillChartData(chart);
 				chart.setGrouping(grouping);
@@ -1450,7 +1451,7 @@ public class NRangeImpl implements NRange {
 	}
 	
 	@Override
-	public void deleteChart(final NChart chart){
+	public void deleteChart(final SChart chart){
 		new ReadWriteTask() {			
 			@Override
 			public Object invoke() {
@@ -1462,7 +1463,7 @@ public class NRangeImpl implements NRange {
 	}
 	
 	@Override
-	public void moveChart(final NChart chart, final NViewAnchor anchor) {
+	public void moveChart(final SChart chart, final ViewAnchor anchor) {
 		new ReadWriteTask() {			
 			@Override
 			public Object invoke() {
@@ -1474,7 +1475,7 @@ public class NRangeImpl implements NRange {
 	}
 	
 	@Override
-	public void updateChart(final NChart chart) {
+	public void updateChart(final SChart chart) {
 		new ReadWriteTask() {			
 			@Override
 			public Object invoke() {

@@ -11,20 +11,20 @@ Copyright (C) 2014 Potix Corporation. All Rights Reserved.
  */
 package org.zkoss.zss.ngapi.impl;
 
-import org.zkoss.zss.ngmodel.NSheet;
+import org.zkoss.zss.model.SSheet;
 
 /**
  * a range of row/column indicates insert/delete changes.
  * @author Pao
  */
 public class InsertDeleteUpdate {
-	private NSheet sheet;
+	private SSheet sheet;
 	private boolean inserted;
 	private boolean row;
 	private int index;
 	private int lastIndex;
 
-	public InsertDeleteUpdate(NSheet sheet, boolean inserted, boolean row, int index, int lastIndex) {
+	public InsertDeleteUpdate(SSheet sheet, boolean inserted, boolean row, int index, int lastIndex) {
 		this.sheet = sheet;
 		this.inserted = inserted;
 		this.row = row;
@@ -32,7 +32,7 @@ public class InsertDeleteUpdate {
 		this.lastIndex = lastIndex;
 	}
 
-	public NSheet getSheet() {
+	public SSheet getSheet() {
 		return sheet;
 	}
 

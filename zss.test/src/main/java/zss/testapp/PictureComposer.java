@@ -7,8 +7,8 @@ import org.zkoss.image.AImage;
 import org.zkoss.zk.ui.*;
 import org.zkoss.zk.ui.select.SelectorComposer;
 import org.zkoss.zk.ui.select.annotation.*;
+import org.zkoss.zss.model.*;
 import org.zkoss.zss.ngapi.NRanges;
-import org.zkoss.zss.ngmodel.*;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zul.*;
 
@@ -29,7 +29,7 @@ public class PictureComposer extends SelectorComposer<Component> {
 	@Wire
 	private Listbox pictureListbox;
 	
-	private ListModelList<NPicture> pictureList = new ListModelList<NPicture>();
+	private ListModelList<SPicture> pictureList = new ListModelList<SPicture>();
 
 
 	@Init
@@ -41,9 +41,9 @@ public class PictureComposer extends SelectorComposer<Component> {
 	public void add() {
 		try{ 
 			AImage image = new AImage(WebApps.getCurrent().getResource("/range/zklogo.png"));
-			NViewAnchor anchor = new NViewAnchor(ss.getSelection().getRow(), ss.getSelection().getColumn(), image.getWidth(), image.getHeight());
+			ViewAnchor anchor = new ViewAnchor(ss.getSelection().getRow(), ss.getSelection().getColumn(), image.getWidth(), image.getHeight());
 
-			NRanges.range(ss.getSelectedXSheet()).addPicture(anchor, image.getByteData(), NPicture.Format.PNG);
+			NRanges.range(ss.getSelectedXSheet()).addPicture(anchor, image.getByteData(), SPicture.Format.PNG);
 			refreshPictureList();
 		}catch(IOException e){
 			System.out.println("cannot add a picture for "+ e);
@@ -54,7 +54,7 @@ public class PictureComposer extends SelectorComposer<Component> {
 	@Listen("onClick = #deleteButton")
 	public void delete() {
 		if (pictureListbox.getSelectedItem() != null){
-			NRanges.range(ss.getSelectedXSheet()).deletePicture((NPicture)pictureListbox.getSelectedItem().getValue());
+			NRanges.range(ss.getSelectedXSheet()).deletePicture((SPicture)pictureListbox.getSelectedItem().getValue());
 			refreshPictureList();
 		}
 	}
@@ -63,8 +63,8 @@ public class PictureComposer extends SelectorComposer<Component> {
 	public void move() {
 		if (pictureListbox.getSelectedItem() != null){
 			
-			NPicture picture = (NPicture) pictureListbox.getSelectedItem().getValue();
-			NViewAnchor anchor = new NViewAnchor(toRowBox.getValue(), toColumnBox.getValue(), picture.getAnchor().getWidth(), picture.getAnchor().getHeight());
+			SPicture picture = (SPicture) pictureListbox.getSelectedItem().getValue();
+			ViewAnchor anchor = new ViewAnchor(toRowBox.getValue(), toColumnBox.getValue(), picture.getAnchor().getWidth(), picture.getAnchor().getHeight());
 			NRanges.range(ss.getSelectedXSheet()).movePicture(picture, anchor);
 			refreshPictureList();
 		}

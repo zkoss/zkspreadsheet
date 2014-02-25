@@ -6,15 +6,15 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.zkoss.zss.model.CellRegion;
+import org.zkoss.zss.model.InvalidateModelOpException;
+import org.zkoss.zss.model.SAutoFilter;
+import org.zkoss.zss.model.SCell;
+import org.zkoss.zss.model.SRow;
+import org.zkoss.zss.model.SAutoFilter.FilterOp;
+import org.zkoss.zss.model.SAutoFilter.NFilterColumn;
 import org.zkoss.zss.ngapi.NRange;
 import org.zkoss.zss.ngapi.NRanges;
-import org.zkoss.zss.ngmodel.CellRegion;
-import org.zkoss.zss.ngmodel.InvalidateModelOpException;
-import org.zkoss.zss.ngmodel.NAutoFilter;
-import org.zkoss.zss.ngmodel.NAutoFilter.FilterOp;
-import org.zkoss.zss.ngmodel.NAutoFilter.NFilterColumn;
-import org.zkoss.zss.ngmodel.NCell;
-import org.zkoss.zss.ngmodel.NRow;
 
 /**
  * 
@@ -34,8 +34,8 @@ import org.zkoss.zss.ngmodel.NRow;
 	
 	
 	//refer to #XRangeImpl#autoFilter
-	public NAutoFilter enableAutoFilter(final boolean enable){
-		NAutoFilter filter = sheet.getAutoFilter();
+	public SAutoFilter enableAutoFilter(final boolean enable){
+		SAutoFilter filter = sheet.getAutoFilter();
 		boolean update = false;
 		if(filter!=null && !enable){
 			CellRegion region = filter.getRegion();
@@ -58,9 +58,9 @@ import org.zkoss.zss.ngmodel.NRow;
 	}
 	
 	//refer to #XRangeImpl#autoFilter(int field, Object criteria1, int filterOp, Object criteria2, Boolean visibleDropDown) {
-	public NAutoFilter enableAutoFilter(final int field, final FilterOp filterOp,
+	public SAutoFilter enableAutoFilter(final int field, final FilterOp filterOp,
 			final Object criteria1, final Object criteria2, final Boolean showButton) {
-		NAutoFilter filter = sheet.getAutoFilter();
+		SAutoFilter filter = sheet.getAutoFilter();
 		if(filter==null){
 			CellRegion region = new DataRegionHelper(range).findAutoFilterDataRegion();
 			if(region!=null){
@@ -83,15 +83,15 @@ import org.zkoss.zss.ngmodel.NRow;
 		final Set cr1 = fc.getCriteria1();
 //		final Set<Ref> all = new HashSet<Ref>();
 		for (int r = row; r <= row2; ++r) {
-			final NCell cell = sheet.getCell(r, col); 
+			final SCell cell = sheet.getCell(r, col); 
 			final String val = isBlank(cell) ? "=" : getFormattedText(cell); //"=" means blank!
 			if (cr1 != null && !cr1.isEmpty() && !cr1.contains(val)) { //to be hidden
-				final NRow rowobj = sheet.getRow(r);
+				final SRow rowobj = sheet.getRow(r);
 				if (!rowobj.isHidden()) { //a non-hidden row
 					NRanges.range(sheet,r,0).getRows().setHidden(true);
 				}
 			} else { //candidate to be shown (other FieldColumn might still hide this row!
-				final NRow rowobj = sheet.getRow(r);
+				final SRow rowobj = sheet.getRow(r);
 				if (rowobj.isHidden() && canUnhide(filter, fc, r, col1)) { //a hidden row and no other hidden filtering
 					final int left = sheet.getStartCellIndex(r);
 					final int right = sheet.getEndCellIndex(r);
@@ -110,7 +110,7 @@ import org.zkoss.zss.ngmodel.NRow;
 	}
 	
 	
-	private boolean canUnhide(NAutoFilter af, NFilterColumn fc, int row, int col) {
+	private boolean canUnhide(SAutoFilter af, NFilterColumn fc, int row, int col) {
 		final Collection<NFilterColumn> fltcs = af.getFilterColumns();
 		for(NFilterColumn fltc: fltcs) {
 			if (fc.equals(fltc)) continue;
@@ -122,7 +122,7 @@ import org.zkoss.zss.ngmodel.NRow;
 	}
 	
 	private boolean shallHide(NFilterColumn fc, int row, int col) {
-		final NCell cell = sheet.getCell(row, col + fc.getIndex());
+		final SCell cell = sheet.getCell(row, col + fc.getIndex());
 		final boolean blank = isBlank(cell); 
 		final String val =  blank ? "=" : getFormattedText(cell); //"=" means blank!
 		final Set critera1 = fc.getCriteria1();
@@ -131,7 +131,7 @@ import org.zkoss.zss.ngmodel.NRow;
 
 	//refer to XRangeImpl#showAllData
 	public void resetAutoFilter() {
-		NAutoFilter af = sheet.getAutoFilter();
+		SAutoFilter af = sheet.getAutoFilter();
 		if (af == null) { //no AutoFilter to apply 
 			return;
 		}
@@ -149,7 +149,7 @@ import org.zkoss.zss.ngmodel.NRow;
 		final int col2 = afrng.getLastColumn();
 //		final Set<Ref> all = new HashSet<Ref>();
 		for (int r = row; r <= row2; ++r) {
-			final NRow rowobj = sheet.getRow(r);
+			final SRow rowobj = sheet.getRow(r);
 			if (rowobj.isHidden()) { //a hidden row
 				final int left = sheet.getStartCellIndex(r);
 				final int right = sheet.getEndCellIndex(r);
@@ -167,7 +167,7 @@ import org.zkoss.zss.ngmodel.NRow;
 	
 	//refer to XRangeImpl#applyFilter
 	public void applyAutoFilter() {
-		NAutoFilter oldFilter = sheet.getAutoFilter();
+		SAutoFilter oldFilter = sheet.getAutoFilter();
 		
 		if (oldFilter==null) { //no criteria is applied
 			return;

@@ -23,16 +23,16 @@ import org.zkoss.poi.ss.util.*;
 import org.zkoss.poi.xssf.usermodel.*;
 import org.zkoss.poi.xssf.usermodel.XSSFAutoFilter.XSSFFilterColumn;
 import org.zkoss.poi.xssf.usermodel.charts.*;
-import org.zkoss.zss.ngmodel.*;
-import org.zkoss.zss.ngmodel.NAutoFilter.NFilterColumn;
-import org.zkoss.zss.ngmodel.NChart.NBarDirection;
-import org.zkoss.zss.ngmodel.NChart.NChartGrouping;
-import org.zkoss.zss.ngmodel.NChart.NChartLegendPosition;
-import org.zkoss.zss.ngmodel.NDataValidation.ErrorStyle;
-import org.zkoss.zss.ngmodel.NDataValidation.OperatorType;
-import org.zkoss.zss.ngmodel.NDataValidation.ValidationType;
-import org.zkoss.zss.ngmodel.NPicture.Format;
-import org.zkoss.zss.ngmodel.chart.*;
+import org.zkoss.zss.model.*;
+import org.zkoss.zss.model.SAutoFilter.NFilterColumn;
+import org.zkoss.zss.model.SChart.NBarDirection;
+import org.zkoss.zss.model.SChart.NChartGrouping;
+import org.zkoss.zss.model.SChart.NChartLegendPosition;
+import org.zkoss.zss.model.SDataValidation.ErrorStyle;
+import org.zkoss.zss.model.SDataValidation.OperatorType;
+import org.zkoss.zss.model.SDataValidation.ValidationType;
+import org.zkoss.zss.model.SPicture.Format;
+import org.zkoss.zss.model.chart.*;
 /**
  * 
  * @author dennis, kuro, Hawk
@@ -40,7 +40,7 @@ import org.zkoss.zss.ngmodel.chart.*;
  */
 public class NExcelXlsxExporter extends AbstractExcelExporter {
 	
-	protected void exportColumnArray(NSheet sheet, Sheet poiSheet, NColumnArray columnArr) {
+	protected void exportColumnArray(SSheet sheet, Sheet poiSheet, SColumnArray columnArr) {
 		XSSFSheet xssfSheet = (XSSFSheet) poiSheet;
 		
         CTWorksheet ctSheet = xssfSheet.getCTWorksheet();
@@ -66,8 +66,8 @@ public class NExcelXlsxExporter extends AbstractExcelExporter {
 	 * reference DrawingManagerImpl.addChartX()
 	 */
 	@Override
-	protected void exportChart(NSheet sheet, Sheet poiSheet) {
-		for (NChart chart: sheet.getCharts()){
+	protected void exportChart(SSheet sheet, Sheet poiSheet) {
+		for (SChart chart: sheet.getCharts()){
 			ChartData chartData = fillPoiChartData(chart);
 			if (chartData != null){ //an unsupported chart has null chart data
 				plotPoiChart(chart, chartData, sheet, poiSheet );
@@ -79,8 +79,8 @@ public class NExcelXlsxExporter extends AbstractExcelExporter {
 	 * Reference DrawingManagerImpl.addPicture()
 	 */
 	@Override
-	protected void exportPicture(NSheet sheet, Sheet poiSheet) {
-		for (NPicture picture : sheet.getPictures()){
+	protected void exportPicture(SSheet sheet, Sheet poiSheet) {
+		for (SPicture picture : sheet.getPictures()){
 			int poiPictureIndex = workbook.addPicture(picture.getData(), toPoiPictureFormat(picture.getFormat()));
 			poiSheet.createDrawingPatriarch().createPicture(toClientAnchor(picture.getAnchor(), sheet), poiPictureIndex);
 		}
@@ -103,7 +103,7 @@ public class NExcelXlsxExporter extends AbstractExcelExporter {
 	 * @param chart
 	 * @return a POI ChartData filled with Spreadsheet chart data, or null if the chart type is unsupported.   
 	 */
-	private ChartData fillPoiChartData(NChart chart) {
+	private ChartData fillPoiChartData(SChart chart) {
 		CategoryData categoryData = null;
 		ChartData chartData = null;
 		switch(chart.getType()){
@@ -129,7 +129,7 @@ public class NExcelXlsxExporter extends AbstractExcelExporter {
 				break;
 			case BUBBLE:
 				XYZData xyzData  = new XSSFBubbleChartData();
-				fillXYZData((NGeneralChartData)chart.getData(), xyzData);
+				fillXYZData((SGeneralChartData)chart.getData(), xyzData);
 				chartData = xyzData;
 				break;
 			case COLUMN:
@@ -162,7 +162,7 @@ public class NExcelXlsxExporter extends AbstractExcelExporter {
 				break;
 			case SCATTER:
 				XYData xyData =  new XSSFScatChartData();
-				fillXYData((NGeneralChartData)chart.getData(), xyData);
+				fillXYData((SGeneralChartData)chart.getData(), xyData);
 				chartData = xyData;
 				break;
 //			case STOCK: TODO XSSFStockChartData is implemented with errors.
@@ -172,7 +172,7 @@ public class NExcelXlsxExporter extends AbstractExcelExporter {
 				return chartData;
 		}
 		if (categoryData != null){
-			fillCategoryData((NGeneralChartData)chart.getData(), categoryData);
+			fillCategoryData((SGeneralChartData)chart.getData(), categoryData);
 			chartData = categoryData;
 		}
 		return chartData;
@@ -185,7 +185,7 @@ public class NExcelXlsxExporter extends AbstractExcelExporter {
 	 * @param sheet
 	 * @param poiSheet the sheet where the POI chart locates
 	 */
-	private void plotPoiChart(NChart chart, ChartData chartData, NSheet sheet, Sheet poiSheet){
+	private void plotPoiChart(SChart chart, ChartData chartData, SSheet sheet, Sheet poiSheet){
 		Chart poiChart = poiSheet.createDrawingPatriarch().createChart(toClientAnchor(chart.getAnchor(),sheet));
 		//TODO export a chart's title, no POI API supported
 		if (chart.isThreeD()){
@@ -216,8 +216,8 @@ public class NExcelXlsxExporter extends AbstractExcelExporter {
 	}
 	
 	
-	private ClientAnchor toClientAnchor(NViewAnchor viewAnchor, NSheet sheet){
-		NViewAnchor rightBottomAnchor = viewAnchor.getRightBottomAnchor(sheet);
+	private ClientAnchor toClientAnchor(ViewAnchor viewAnchor, SSheet sheet){
+		ViewAnchor rightBottomAnchor = viewAnchor.getRightBottomAnchor(sheet);
 		
 		ClientAnchor clientAnchor = new XSSFClientAnchor(UnitUtil.pxToEmu(viewAnchor.getXOffset()),UnitUtil.pxToEmu(viewAnchor.getYOffset()),
 				UnitUtil.pxToEmu(rightBottomAnchor.getXOffset()),UnitUtil.pxToEmu(rightBottomAnchor.getYOffset()),
@@ -231,10 +231,10 @@ public class NExcelXlsxExporter extends AbstractExcelExporter {
 	 * @param chart
 	 * @param categoryData
 	 */
-	private void fillCategoryData(NGeneralChartData chartData, CategoryData categoryData){
+	private void fillCategoryData(SGeneralChartData chartData, CategoryData categoryData){
 		ChartDataSource<?> categories = createCategoryChartDataSource(chartData);
 		for (int i=0 ; i < chartData.getNumOfSeries() ; i++){
-			NSeries series = chartData.getSeries(i);
+			SSeries series = chartData.getSeries(i);
 			ChartTextSource title = createChartTextSource(series);
 			ChartDataSource<? extends Number> values = createXValueDataSource(series);
 			categoryData.addSerie(title, categories, values);
@@ -246,9 +246,9 @@ public class NExcelXlsxExporter extends AbstractExcelExporter {
 	 * @param chart
 	 * @param xyData
 	 */
-	private void fillXYData(NGeneralChartData chartData, XYData xyData){
+	private void fillXYData(SGeneralChartData chartData, XYData xyData){
 		for (int i=0 ; i < chartData.getNumOfSeries() ; i++){
-			final NSeries series = chartData.getSeries(i);
+			final SSeries series = chartData.getSeries(i);
 			ChartTextSource title = createChartTextSource(series);
 			ChartDataSource<? extends Number> xValues = createXValueDataSource(series);
 			ChartDataSource<? extends Number> yValues = createYValueDataSource(series);
@@ -259,9 +259,9 @@ public class NExcelXlsxExporter extends AbstractExcelExporter {
 	/**
 	 * reference ChartDataUtil.fillXYZData()
 	 */
-	private void fillXYZData(NGeneralChartData chartData, XYZData xyzData){
+	private void fillXYZData(SGeneralChartData chartData, XYZData xyzData){
 		for (int i=0 ; i < chartData.getNumOfSeries() ; i++){
-			final NSeries series = chartData.getSeries(i);
+			final SSeries series = chartData.getSeries(i);
 			ChartTextSource title = createChartTextSource(series);
 			ChartDataSource<? extends Number> xValues = createXValueDataSource(series);
 			ChartDataSource<? extends Number> yValues = createYValueDataSource(series);
@@ -270,7 +270,7 @@ public class NExcelXlsxExporter extends AbstractExcelExporter {
 		}
 	}
 	
-	private ChartDataSource<Number> createXValueDataSource(final NSeries series) {
+	private ChartDataSource<Number> createXValueDataSource(final SSeries series) {
 		return new ChartDataSource<Number>() {
 
 			@Override
@@ -308,7 +308,7 @@ public class NExcelXlsxExporter extends AbstractExcelExporter {
 		};
 	}
 
-	private ChartDataSource<Number> createYValueDataSource(final NSeries series) {
+	private ChartDataSource<Number> createYValueDataSource(final SSeries series) {
 		return new ChartDataSource<Number>() {
 
 			@Override
@@ -346,7 +346,7 @@ public class NExcelXlsxExporter extends AbstractExcelExporter {
 		};
 	}
 	
-	private ChartDataSource<Number> createZValueDataSource(final NSeries series) {
+	private ChartDataSource<Number> createZValueDataSource(final SSeries series) {
 		return new ChartDataSource<Number>() {
 
 			@Override
@@ -384,7 +384,7 @@ public class NExcelXlsxExporter extends AbstractExcelExporter {
 		};
 	}
 	
-	private ChartTextSource createChartTextSource(final NSeries series){
+	private ChartTextSource createChartTextSource(final SSeries series){
 		return new ChartTextSource() {
 			
 			@Override
@@ -409,7 +409,7 @@ public class NExcelXlsxExporter extends AbstractExcelExporter {
 		
 	}
 
-	private ChartDataSource<?> createCategoryChartDataSource(final NGeneralChartData chartData){
+	private ChartDataSource<?> createCategoryChartDataSource(final SGeneralChartData chartData){
 		return new ChartDataSource<String>() {
 
 			@Override
@@ -489,8 +489,8 @@ public class NExcelXlsxExporter extends AbstractExcelExporter {
 	 * According to {@link ValidationType}, FORMULA means custom validation.
 	 */
 	@Override
-	protected void exportValidation(NSheet sheet, Sheet poiSheet) {
-		for (NDataValidation validation : sheet.getDataValidations()){
+	protected void exportValidation(SSheet sheet, Sheet poiSheet) {
+		for (SDataValidation validation : sheet.getDataValidations()){
 			int operatorType = toPoiOperatorType(validation.getOperatorType());
 			String formula1 = validation.getValue1Formula();
 			String formula2 = validation.getValue2Formula();
@@ -581,8 +581,8 @@ public class NExcelXlsxExporter extends AbstractExcelExporter {
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	protected void exportAutoFilter(NSheet sheet, Sheet poiSheet) {
-		NAutoFilter autoFilter = sheet.getAutoFilter();
+	protected void exportAutoFilter(SSheet sheet, Sheet poiSheet) {
+		SAutoFilter autoFilter = sheet.getAutoFilter();
 		if (autoFilter != null){
 			CellRegion region = autoFilter.getRegion();
 			XSSFAutoFilter poiAutoFilter = (XSSFAutoFilter)poiSheet.setAutoFilter(new CellRangeAddress(region.getRow(), region.getLastRow(), region.getColumn(), region.getLastColumn()));

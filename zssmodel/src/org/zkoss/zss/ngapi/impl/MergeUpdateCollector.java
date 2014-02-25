@@ -4,8 +4,8 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import org.zkoss.zss.ngmodel.CellRegion;
-import org.zkoss.zss.ngmodel.NSheet;
+import org.zkoss.zss.model.CellRegion;
+import org.zkoss.zss.model.SSheet;
 
 
 public class MergeUpdateCollector {
@@ -24,7 +24,7 @@ public class MergeUpdateCollector {
 	public static MergeUpdateCollector getCurrent(){
 		return current.get();
 	}
-	public void addMergeChange(NSheet sheet,CellRegion original,CellRegion changeTo) {
+	public void addMergeChange(SSheet sheet,CellRegion original,CellRegion changeTo) {
 		addMergeChange(new MergeUpdate(sheet, original, changeTo));
 	}
 	public void addMergeChange(MergeUpdate mergeUpdate) {

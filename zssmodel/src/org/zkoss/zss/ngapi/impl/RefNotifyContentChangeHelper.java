@@ -4,19 +4,19 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.zkoss.zss.ngmodel.NBook;
-import org.zkoss.zss.ngmodel.NBookSeries;
-import org.zkoss.zss.ngmodel.NSheet;
-import org.zkoss.zss.ngmodel.SheetRegion;
-import org.zkoss.zss.ngmodel.sys.dependency.ObjectRef;
-import org.zkoss.zss.ngmodel.sys.dependency.ObjectRef.ObjectType;
-import org.zkoss.zss.ngmodel.sys.dependency.Ref;
-import org.zkoss.zss.ngmodel.sys.dependency.Ref.RefType;
+import org.zkoss.zss.model.SBook;
+import org.zkoss.zss.model.SBookSeries;
+import org.zkoss.zss.model.SSheet;
+import org.zkoss.zss.model.SheetRegion;
+import org.zkoss.zss.model.sys.dependency.ObjectRef;
+import org.zkoss.zss.model.sys.dependency.Ref;
+import org.zkoss.zss.model.sys.dependency.ObjectRef.ObjectType;
+import org.zkoss.zss.model.sys.dependency.Ref.RefType;
 
 /*package*/ class RefNotifyContentChangeHelper extends RefHelperBase{
 
 	NotifyChangeHelper notifyHelper = new NotifyChangeHelper();
-	public RefNotifyContentChangeHelper(NBookSeries bookSeries) {
+	public RefNotifyContentChangeHelper(SBookSeries bookSeries) {
 		super(bookSeries);
 	}
 
@@ -50,9 +50,9 @@ import org.zkoss.zss.ngmodel.sys.dependency.Ref.RefType;
 	}
 
 	private void handleChartRef(ObjectRef notify) {
-		NBook book = bookSeries.getBook(notify.getBookName());
+		SBook book = bookSeries.getBook(notify.getBookName());
 		if(book==null) return;
-		NSheet sheet = book.getSheetByName(notify.getSheetName());
+		SSheet sheet = book.getSheetByName(notify.getSheetName());
 		if(sheet==null) return;
 		String[] ids = notify.getObjectIdPath();
 		notifyHelper.notifyChartChange(sheet,ids[0]);
@@ -60,18 +60,18 @@ import org.zkoss.zss.ngmodel.sys.dependency.Ref.RefType;
 	}
 	
 	private void handleDataValidationRef(ObjectRef notify) {
-		NBook book = bookSeries.getBook(notify.getBookName());
+		SBook book = bookSeries.getBook(notify.getBookName());
 		if(book==null) return;
-		NSheet sheet = book.getSheetByName(notify.getSheetName());
+		SSheet sheet = book.getSheetByName(notify.getSheetName());
 		if(sheet==null) return;
 		String[] ids = notify.getObjectIdPath();
 		notifyHelper.notifyDataValidationChange(sheet,ids[0]);
 	}
 
 	private void handleCellRef(Ref notify) {
-		NBook book = bookSeries.getBook(notify.getBookName());
+		SBook book = bookSeries.getBook(notify.getBookName());
 		if(book==null) return;
-		NSheet sheet = book.getSheetByName(notify.getSheetName());
+		SSheet sheet = book.getSheetByName(notify.getSheetName());
 		if(sheet==null) return;
 		notifyHelper.notifyCellChange(new SheetRegion(sheet,notify.getRow(),notify.getColumn(),notify.getLastRow(),notify.getLastColumn()));
 	}

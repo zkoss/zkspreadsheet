@@ -4,7 +4,7 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import org.zkoss.zss.ngmodel.sys.dependency.Ref;
+import org.zkoss.zss.model.sys.dependency.Ref;
 
 /**
  * a collector to collect ref when doing model manipulation

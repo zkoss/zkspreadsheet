@@ -39,13 +39,13 @@ import org.zkoss.zss.api.model.Font.TypeOffset;
 import org.zkoss.zss.api.model.Font.Underline;
 import org.zkoss.zss.api.model.Hyperlink.HyperlinkType;
 import org.zkoss.zss.api.model.Picture.Format;
+import org.zkoss.zss.model.*;
+import org.zkoss.zss.model.SAutoFilter.FilterOp;
+import org.zkoss.zss.model.SChart.NChartGrouping;
+import org.zkoss.zss.model.SChart.NChartLegendPosition;
+import org.zkoss.zss.model.SChart.NChartType;
 import org.zkoss.zss.ngapi.NRange;
 import org.zkoss.zss.ngapi.NRange.FillType;
-import org.zkoss.zss.ngmodel.NAutoFilter.FilterOp;
-import org.zkoss.zss.ngmodel.*;
-import org.zkoss.zss.ngmodel.NChart.NChartGrouping;
-import org.zkoss.zss.ngmodel.NChart.NChartLegendPosition;
-import org.zkoss.zss.ngmodel.NChart.NChartType;
 /**
  * 
  * @author dennis
@@ -104,7 +104,7 @@ public class EnumUtil {
 		throw new IllegalArgumentException("unknow paste operation "+type);
 	}
 	
-	public static TypeOffset toFontTypeOffset(NFont.TypeOffset typeOffset){
+	public static TypeOffset toFontTypeOffset(SFont.TypeOffset typeOffset){
 		switch(typeOffset){
 		case NONE:
 			return Font.TypeOffset.NONE;
@@ -116,20 +116,20 @@ public class EnumUtil {
 		throw new IllegalArgumentException("unknow font type offset "+typeOffset);
 	}
 
-	public static NFont.TypeOffset toFontTypeOffset(TypeOffset typeOffset) {
+	public static SFont.TypeOffset toFontTypeOffset(TypeOffset typeOffset) {
 		assertArgNotNull(typeOffset,"typeOffset");
 		switch(typeOffset){
 		case NONE:
-			return NFont.TypeOffset.NONE;
+			return SFont.TypeOffset.NONE;
 		case SUB:
-			return NFont.TypeOffset.SUB;
+			return SFont.TypeOffset.SUB;
 		case SUPER:
-			return NFont.TypeOffset.SUPER;
+			return SFont.TypeOffset.SUPER;
 		}
 		throw new IllegalArgumentException("unknow font type offset "+typeOffset);
 	}
 
-	public static Underline toFontUnderline(NFont.Underline underline) {
+	public static Underline toFontUnderline(SFont.Underline underline) {
 		switch(underline){
 		case NONE:
 			return Font.Underline.NONE;
@@ -146,24 +146,24 @@ public class EnumUtil {
 	}
 
 
-	public static NFont.Underline toFontUnderline(Underline underline) {
+	public static SFont.Underline toFontUnderline(Underline underline) {
 		assertArgNotNull(underline,"underline");
 		switch(underline){
 		case NONE:
-			return NFont.Underline.NONE;
+			return SFont.Underline.NONE;
 		case SINGLE:
-			return NFont.Underline.SINGLE;
+			return SFont.Underline.SINGLE;
 		case SINGLE_ACCOUNTING:
-			return NFont.Underline.SINGLE_ACCOUNTING;
+			return SFont.Underline.SINGLE_ACCOUNTING;
 		case DOUBLE:
-			return NFont.Underline.DOUBLE;
+			return SFont.Underline.DOUBLE;
 		case DOUBLE_ACCOUNTING:
-			return NFont.Underline.DOUBLE_ACCOUNTING;
+			return SFont.Underline.DOUBLE_ACCOUNTING;
 		}
 		throw new IllegalArgumentException("unknow font underline "+underline);
 	}
 
-	public static Boldweight toFontBoldweight(org.zkoss.zss.ngmodel.NFont.Boldweight boldweight) {
+	public static Boldweight toFontBoldweight(org.zkoss.zss.model.SFont.Boldweight boldweight) {
 		switch(boldweight){
 		case BOLD:
 			return Font.Boldweight.BOLD;
@@ -173,17 +173,17 @@ public class EnumUtil {
 		throw new IllegalArgumentException("unknow font boldweight "+boldweight);
 	}
 	
-	public static NFont.Boldweight toFontBoldweight(Boldweight boldweight) {
+	public static SFont.Boldweight toFontBoldweight(Boldweight boldweight) {
 		switch(boldweight){
 		case BOLD:
-			return NFont.Boldweight.BOLD;
+			return SFont.Boldweight.BOLD;
 		case NORMAL:
-			return NFont.Boldweight.NORMAL;
+			return SFont.Boldweight.NORMAL;
 		}
 		throw new IllegalArgumentException("unknow font boldweight "+boldweight);
 	}
 
-	public static FillPattern toStyleFillPattern(NCellStyle.FillPattern pattern) {
+	public static FillPattern toStyleFillPattern(SCellStyle.FillPattern pattern) {
 		switch(pattern){
 		case NO_FILL:
 			return CellStyle.FillPattern.NO_FILL;
@@ -227,70 +227,70 @@ public class EnumUtil {
 		throw new IllegalArgumentException("unknow pattern type "+pattern);	
 	}
 	
-	public static NCellStyle.FillPattern toStyleFillPattern(FillPattern pattern) {
+	public static SCellStyle.FillPattern toStyleFillPattern(FillPattern pattern) {
 		switch(pattern){
 		case NO_FILL:
-			return NCellStyle.FillPattern.NO_FILL;
+			return SCellStyle.FillPattern.NO_FILL;
 		case SOLID_FOREGROUND:
-			return NCellStyle.FillPattern.SOLID_FOREGROUND;
+			return SCellStyle.FillPattern.SOLID_FOREGROUND;
 		case FINE_DOTS:
-			return NCellStyle.FillPattern.FINE_DOTS;
+			return SCellStyle.FillPattern.FINE_DOTS;
 		case ALT_BARS:
-			return NCellStyle.FillPattern.ALT_BARS;
+			return SCellStyle.FillPattern.ALT_BARS;
 		case SPARSE_DOTS:
-			return NCellStyle.FillPattern.SPARSE_DOTS;
+			return SCellStyle.FillPattern.SPARSE_DOTS;
 		case THICK_HORZ_BANDS:
-			return NCellStyle.FillPattern.THICK_HORZ_BANDS;
+			return SCellStyle.FillPattern.THICK_HORZ_BANDS;
 		case THICK_VERT_BANDS:
-			return NCellStyle.FillPattern.THICK_VERT_BANDS;
+			return SCellStyle.FillPattern.THICK_VERT_BANDS;
 		case THICK_BACKWARD_DIAG:
-			return NCellStyle.FillPattern.THICK_BACKWARD_DIAG;
+			return SCellStyle.FillPattern.THICK_BACKWARD_DIAG;
 		case THICK_FORWARD_DIAG:
-			return NCellStyle.FillPattern.THICK_FORWARD_DIAG;
+			return SCellStyle.FillPattern.THICK_FORWARD_DIAG;
 		case BIG_SPOTS:
-			return NCellStyle.FillPattern.BIG_SPOTS;
+			return SCellStyle.FillPattern.BIG_SPOTS;
 		case BRICKS:
-			return NCellStyle.FillPattern.BRICKS;
+			return SCellStyle.FillPattern.BRICKS;
 		case THIN_HORZ_BANDS:
-			return NCellStyle.FillPattern.THIN_HORZ_BANDS;
+			return SCellStyle.FillPattern.THIN_HORZ_BANDS;
 		case THIN_VERT_BANDS:
-			return NCellStyle.FillPattern.THIN_VERT_BANDS;
+			return SCellStyle.FillPattern.THIN_VERT_BANDS;
 		case THIN_BACKWARD_DIAG:
-			return NCellStyle.FillPattern.THIN_BACKWARD_DIAG;
+			return SCellStyle.FillPattern.THIN_BACKWARD_DIAG;
 		case THIN_FORWARD_DIAG:
-			return NCellStyle.FillPattern.THIN_FORWARD_DIAG;
+			return SCellStyle.FillPattern.THIN_FORWARD_DIAG;
 		case SQUARES:
-			return NCellStyle.FillPattern.SQUARES;
+			return SCellStyle.FillPattern.SQUARES;
 		case DIAMONDS:
-			return NCellStyle.FillPattern.DIAMONDS;
+			return SCellStyle.FillPattern.DIAMONDS;
 		case LESS_DOTS:
-			return NCellStyle.FillPattern.LESS_DOTS;
+			return SCellStyle.FillPattern.LESS_DOTS;
 		case LEAST_DOTS:
-			return NCellStyle.FillPattern.LEAST_DOTS;
+			return SCellStyle.FillPattern.LEAST_DOTS;
 		}
 		throw new IllegalArgumentException("unknow pattern type "+pattern);
 	}
 
-	public static NCellStyle.Alignment toStyleAlignemnt(Alignment alignment) {
+	public static SCellStyle.Alignment toStyleAlignemnt(Alignment alignment) {
 		switch(alignment){
 		case GENERAL:
-			return NCellStyle.Alignment.GENERAL;
+			return SCellStyle.Alignment.GENERAL;
 		case LEFT:
-			return NCellStyle.Alignment.LEFT;
+			return SCellStyle.Alignment.LEFT;
 		case CENTER:
-			return NCellStyle.Alignment.CENTER;
+			return SCellStyle.Alignment.CENTER;
 		case RIGHT:
-			return NCellStyle.Alignment.RIGHT;
+			return SCellStyle.Alignment.RIGHT;
 		case FILL:
-			return NCellStyle.Alignment.FILL;
+			return SCellStyle.Alignment.FILL;
 		case JUSTIFY:
-			return NCellStyle.Alignment.JUSTIFY;
+			return SCellStyle.Alignment.JUSTIFY;
 		case CENTER_SELECTION:
-			return NCellStyle.Alignment.CENTER_SELECTION;
+			return SCellStyle.Alignment.CENTER_SELECTION;
 		}
 		throw new IllegalArgumentException("unknow cell alignment "+alignment);
 	}
-	public static Alignment toStyleAlignemnt(NCellStyle.Alignment alignment) {
+	public static Alignment toStyleAlignemnt(SCellStyle.Alignment alignment) {
 		switch(alignment){
 		case GENERAL:
 			return Alignment.GENERAL;
@@ -309,20 +309,20 @@ public class EnumUtil {
 		}
 		throw new IllegalArgumentException("unknow cell alignment "+alignment);
 	}
-	public static NCellStyle.VerticalAlignment toStyleVerticalAlignemnt(VerticalAlignment alignment) {
+	public static SCellStyle.VerticalAlignment toStyleVerticalAlignemnt(VerticalAlignment alignment) {
 		switch(alignment){
 		case TOP:
-			return NCellStyle.VerticalAlignment.TOP;
+			return SCellStyle.VerticalAlignment.TOP;
 		case CENTER:
-			return NCellStyle.VerticalAlignment.CENTER;
+			return SCellStyle.VerticalAlignment.CENTER;
 		case BOTTOM:
-			return NCellStyle.VerticalAlignment.BOTTOM;
+			return SCellStyle.VerticalAlignment.BOTTOM;
 		case JUSTIFY:
-			return NCellStyle.VerticalAlignment.JUSTIFY;
+			return SCellStyle.VerticalAlignment.JUSTIFY;
 		}
 		throw new IllegalArgumentException("unknow cell vertical alignment "+alignment);
 	}
-	public static VerticalAlignment toStyleVerticalAlignemnt(NCellStyle.VerticalAlignment alignment) {
+	public static VerticalAlignment toStyleVerticalAlignemnt(SCellStyle.VerticalAlignment alignment) {
 		switch(alignment){
 		case TOP:
 			return VerticalAlignment.TOP;
@@ -366,41 +366,41 @@ public class EnumUtil {
 		throw new IllegalArgumentException("unknow cell border apply type "+type);
 	}
 
-	public static NCellStyle.BorderType toStyleBorderType(BorderType borderType) {
+	public static SCellStyle.BorderType toStyleBorderType(BorderType borderType) {
 		switch(borderType){
 		case NONE:
-			return NCellStyle.BorderType.NONE;
+			return SCellStyle.BorderType.NONE;
 		case THIN:
-			return NCellStyle.BorderType.THIN;
+			return SCellStyle.BorderType.THIN;
 		case MEDIUM:
-			return NCellStyle.BorderType.MEDIUM;
+			return SCellStyle.BorderType.MEDIUM;
 		case DASHED:
-			return NCellStyle.BorderType.DASHED;
+			return SCellStyle.BorderType.DASHED;
 		case HAIR:
-			return NCellStyle.BorderType.HAIR;
+			return SCellStyle.BorderType.HAIR;
 		case THICK:
-			return NCellStyle.BorderType.THICK;
+			return SCellStyle.BorderType.THICK;
 		case DOUBLE:
-			return NCellStyle.BorderType.DOUBLE;
+			return SCellStyle.BorderType.DOUBLE;
 		case DOTTED:
-			return NCellStyle.BorderType.DOTTED;
+			return SCellStyle.BorderType.DOTTED;
 		case MEDIUM_DASHED:
-			return NCellStyle.BorderType.MEDIUM_DASHED;
+			return SCellStyle.BorderType.MEDIUM_DASHED;
 		case DASH_DOT:
-			return NCellStyle.BorderType.DASH_DOT;
+			return SCellStyle.BorderType.DASH_DOT;
 		case MEDIUM_DASH_DOT:
-			return NCellStyle.BorderType.MEDIUM_DASH_DOT;
+			return SCellStyle.BorderType.MEDIUM_DASH_DOT;
 		case DASH_DOT_DOT:
-			return NCellStyle.BorderType.DASH_DOT_DOT;
+			return SCellStyle.BorderType.DASH_DOT_DOT;
 		case MEDIUM_DASH_DOT_DOT:
-			return NCellStyle.BorderType.MEDIUM_DASH_DOT_DOT;
+			return SCellStyle.BorderType.MEDIUM_DASH_DOT_DOT;
 		case SLANTED_DASH_DOT:
-			return NCellStyle.BorderType.SLANTED_DASH_DOT;
+			return SCellStyle.BorderType.SLANTED_DASH_DOT;
 		}
 		throw new IllegalArgumentException("unknow style border type "+borderType);
 	}
 	
-	public static BorderType toStyleBorderType(NCellStyle.BorderType borderType) {
+	public static BorderType toStyleBorderType(SCellStyle.BorderType borderType) {
 		switch(borderType){
 		case NONE:
 			return BorderType.NONE;
@@ -434,36 +434,36 @@ public class EnumUtil {
 		throw new IllegalArgumentException("unknow style border type "+borderType);
 	}
 	
-	public static NCellStyle.BorderType toRangeBorderType(BorderType lineStyle) {
+	public static SCellStyle.BorderType toRangeBorderType(BorderType lineStyle) {
 		switch(lineStyle){
 		case NONE:
-			return NCellStyle.BorderType.NONE;
+			return SCellStyle.BorderType.NONE;
 		case THIN:
-			return NCellStyle.BorderType.THIN;
+			return SCellStyle.BorderType.THIN;
 		case MEDIUM:
-			return NCellStyle.BorderType.MEDIUM;
+			return SCellStyle.BorderType.MEDIUM;
 		case DASHED:
-			return NCellStyle.BorderType.DASHED;
+			return SCellStyle.BorderType.DASHED;
 		case HAIR:
-			return NCellStyle.BorderType.HAIR;
+			return SCellStyle.BorderType.HAIR;
 		case THICK:
-			return NCellStyle.BorderType.THICK;
+			return SCellStyle.BorderType.THICK;
 		case DOUBLE:
-			return NCellStyle.BorderType.DOUBLE;
+			return SCellStyle.BorderType.DOUBLE;
 		case DOTTED:
-			return NCellStyle.BorderType.DOTTED;
+			return SCellStyle.BorderType.DOTTED;
 		case MEDIUM_DASHED:
-			return NCellStyle.BorderType.MEDIUM_DASHED;
+			return SCellStyle.BorderType.MEDIUM_DASHED;
 		case DASH_DOT:
-			return NCellStyle.BorderType.DASH_DOT;
+			return SCellStyle.BorderType.DASH_DOT;
 		case MEDIUM_DASH_DOT:
-			return NCellStyle.BorderType.MEDIUM_DASH_DOT;
+			return SCellStyle.BorderType.MEDIUM_DASH_DOT;
 		case DASH_DOT_DOT:
-			return NCellStyle.BorderType.DASH_DOT_DOT;
+			return SCellStyle.BorderType.DASH_DOT_DOT;
 		case MEDIUM_DASH_DOT_DOT:
-			return NCellStyle.BorderType.MEDIUM_DASH_DOT_DOT;
+			return SCellStyle.BorderType.MEDIUM_DASH_DOT_DOT;
 		case SLANTED_DASH_DOT:
-			return NCellStyle.BorderType.SLANTED_DASH_DOT;
+			return SCellStyle.BorderType.SLANTED_DASH_DOT;
 		}
 		throw new IllegalArgumentException("unknow cell border line style "+lineStyle);
 	}
@@ -562,16 +562,16 @@ public class EnumUtil {
 		throw new IllegalArgumentException("unknow fill type "+fillType);
 	}
 
-	public static NHyperlink.HyperlinkType toHyperlinkType(HyperlinkType type) {
+	public static SHyperlink.HyperlinkType toHyperlinkType(HyperlinkType type) {
 		switch(type){
 		case URL:
-			return NHyperlink.HyperlinkType.URL;
+			return SHyperlink.HyperlinkType.URL;
 		case DOCUMENT:
-			return NHyperlink.HyperlinkType.DOCUMENT;
+			return SHyperlink.HyperlinkType.DOCUMENT;
 		case EMAIL:
-			return NHyperlink.HyperlinkType.EMAIL;
+			return SHyperlink.HyperlinkType.EMAIL;
 		case FILE:
-			return NHyperlink.HyperlinkType.FILE;
+			return SHyperlink.HyperlinkType.FILE;
 		}
 		throw new IllegalArgumentException("unknow hyperlink type "+type);
 	}
@@ -588,7 +588,7 @@ public class EnumUtil {
 		}
 		throw new IllegalArgumentException("unknow hyperlink type "+type);
 	}
-	public static HyperlinkType toHyperlinkType(NHyperlink.HyperlinkType type) {
+	public static HyperlinkType toHyperlinkType(SHyperlink.HyperlinkType type) {
 		switch(type){
 		case URL:
 			return HyperlinkType.URL;
@@ -602,20 +602,20 @@ public class EnumUtil {
 		throw new IllegalArgumentException("unknow hyperlink type "+type);
 	}
 
-	public static NPicture.Format toPictureFormat(Format format) {
+	public static SPicture.Format toPictureFormat(Format format) {
 		switch(format){
 		case EMF:
-			return NPicture.Format.EMF;
+			return SPicture.Format.EMF;
 		case WMF:
-			return NPicture.Format.WMF;
+			return SPicture.Format.WMF;
 		case PICT:
-			return NPicture.Format.PICT;
+			return SPicture.Format.PICT;
 		case JPEG:
-			return NPicture.Format.JPG;
+			return SPicture.Format.JPG;
 		case PNG:
-			return NPicture.Format.PNG;
+			return SPicture.Format.PNG;
 		case DIB:
-			return NPicture.Format.DIB;
+			return SPicture.Format.DIB;
 		}
 		throw new IllegalArgumentException("unknow pciture format "+format);
 	}

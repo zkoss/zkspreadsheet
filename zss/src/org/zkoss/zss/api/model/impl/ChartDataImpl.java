@@ -17,7 +17,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.api.model.impl;
 
 import org.zkoss.zss.api.model.ChartData;
-import org.zkoss.zss.ngmodel.chart.NChartData;
+import org.zkoss.zss.model.chart.SChartData;
 /**
  * 
  * @author dennis
@@ -25,9 +25,9 @@ import org.zkoss.zss.ngmodel.chart.NChartData;
  */
 public class ChartDataImpl implements ChartData{
 
-	private ModelRef<NChartData> _chartDataRef;
+	private ModelRef<SChartData> _chartDataRef;
 	
-	public ChartDataImpl(ModelRef<NChartData> chartDataRef) {
+	public ChartDataImpl(ModelRef<SChartData> chartDataRef) {
 		this._chartDataRef = chartDataRef;
 	}
 
@@ -57,12 +57,12 @@ public class ChartDataImpl implements ChartData{
 		return true;
 	}
 	
-	public NChartData getNative(){
+	public SChartData getNative(){
 		return _chartDataRef.get();
 	}
 	
 	@Override
-	public NChartData getInternalChartData(){
+	public SChartData getInternalChartData(){
 		return _chartDataRef.get(); 
 	}
 	

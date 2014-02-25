@@ -23,7 +23,7 @@ import org.zkoss.zss.api.model.Picture;
 import org.zkoss.zss.api.model.Picture.Format;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.api.model.impl.SheetImpl;
-import org.zkoss.zss.ngmodel.NSheet;
+import org.zkoss.zss.model.SSheet;
 
 /**
  * The utility to help UI to deal with user's sheet operation of a Range.
@@ -396,7 +396,7 @@ public class SheetOperationUtil {
 		int lX = 0;
 		int lY = 0;
 		
-		NSheet ws = ((SheetImpl)sheet).getNative();
+		SSheet ws = ((SheetImpl)sheet).getNative();
 		for(int i = column;;i++){
 			if(ws.getColumn(i).isHidden()){
 				continue;

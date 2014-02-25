@@ -6,12 +6,12 @@ import java.util.*;
 import java.util.Map.Entry;
 
 import org.zkoss.zk.ui.UiException;
+import org.zkoss.zss.model.*;
+import org.zkoss.zss.model.PasteOption.PasteType;
+import org.zkoss.zss.model.impl.CellBuffer;
+import org.zkoss.zss.model.sys.formula.*;
 import org.zkoss.zss.ngapi.*;
 import org.zkoss.zss.ngapi.NRange.SortDataOption;
-import org.zkoss.zss.ngmodel.*;
-import org.zkoss.zss.ngmodel.PasteOption.PasteType;
-import org.zkoss.zss.ngmodel.impl.CellBuffer;
-import org.zkoss.zss.ngmodel.sys.formula.*;
 
 /**
  * Manipulate cells according to sorting criteria and options.
@@ -51,7 +51,7 @@ public class SortHelper extends RangeHelperBase {
 	 * @param dataOption2
 	 * @param dataOption3
 	 */
-	public void sort(NSheet sheet, int tRow, int lCol, int bRow, int rCol, 
+	public void sort(SSheet sheet, int tRow, int lCol, int bRow, int rCol, 
 			NRange key1, boolean desc1, NRange key2, int type, boolean desc2, NRange key3, boolean desc3, int header, int orderCustom,
 			boolean matchCase, boolean sortByRows, int sortMethod, SortDataOption dataOption1, SortDataOption dataOption2, SortDataOption dataOption3) {
 		//TODO type not yet implemented(Sort label/Sort value, for PivotTable)
@@ -106,7 +106,7 @@ public class SortHelper extends RangeHelperBase {
 			int endCol = 0;
 			//locate begCol/endCol of the sheet
 			for (int rowNum = begRow; rowNum <= endRow; ++rowNum) {
-				final NRow row = sheet.getRow(rowNum);
+				final SRow row = sheet.getRow(rowNum);
 				if (row != null) {
 					begCol = Math.min(begCol, sheet.getStartCellIndex(rowNum));
 					endCol = Math.max(endCol, sheet.getEndCellIndex(rowNum));
@@ -117,7 +117,7 @@ public class SortHelper extends RangeHelperBase {
 			for (int colnum = begCol; colnum <= endCol; ++colnum) {
 				Object[] values = new Object[keyCount];
 				for(int j = 0; j < keyCount; ++j) {
-					NCell cell = sheet.getCell(keyIndexes[j], colnum);
+					SCell cell = sheet.getCell(keyIndexes[j], colnum);
 					Object val = getCellValue(cell, dataOptions[j]);
 					values[j] = val;
 				}
@@ -133,13 +133,13 @@ public class SortHelper extends RangeHelperBase {
 			}
 		} else { //sortByColumn, default case , keyIndex contains column index
 			for (int rownum = begRow; rownum <= endRow; ++rownum) {
-				final NRow row = sheet.getRow(rownum);
+				final SRow row = sheet.getRow(rownum);
 				if (row.isNull()) {
 					continue; //nothing to sort
 				}
 				final Object[] values = new Object[keyCount];
 				for(int j = 0; j < keyCount; ++j) {
-					final NCell cell = sheet.getCell(rownum, keyIndexes[j]);
+					final SCell cell = sheet.getCell(rownum, keyIndexes[j]);
 					final Object val = getCellValue(cell, dataOptions[j]);
 					values[j] = val;
 				}
@@ -188,7 +188,7 @@ public class SortHelper extends RangeHelperBase {
 	 * @param bRow
 	 * @param rCol
 	 */
-	private void  assignColumns(NSheet sheet, List<SortKey> sortKeys, int tRow, int lCol, int bRow, int rCol) {
+	private void  assignColumns(SSheet sheet, List<SortKey> sortKeys, int tRow, int lCol, int bRow, int rCol) {
 		int cellCount = bRow - tRow + 1;
 		int columnBufferIndex = 0;
 		List<SortResult> sortResults = new ArrayList<SortHelper.SortResult>(sortKeys.size());
@@ -210,7 +210,7 @@ public class SortHelper extends RangeHelperBase {
 				continue;
 			}
 			for (int r = 0 ; r < result.cellBuffer.length ; r++){
-				NCell cellProxy = getProxyInstance(sheet.getCell(tRow+r, result.newIndex), 
+				SCell cellProxy = getProxyInstance(sheet.getCell(tRow+r, result.newIndex), 
 						new SheetRegion(sheet, tRow, lCol, bRow, rCol), 0, result.newIndex-result.oldIndex);
 				result.cellBuffer[r].applyAll(cellProxy);
 			}
@@ -227,7 +227,7 @@ public class SortHelper extends RangeHelperBase {
 	 * @param rCol
 	 * @return
 	 */
-	private void assignRows(NSheet sheet, List<SortKey> sortKeys, int tRow, int lCol, int bRow, int rCol) {
+	private void assignRows(SSheet sheet, List<SortKey> sortKeys, int tRow, int lCol, int bRow, int rCol) {
 		int cellCount = rCol - lCol + 1;
 		int rowBufferIndex = 0;
 		List<SortResult> sortResults = new ArrayList<SortHelper.SortResult>(sortKeys.size());
@@ -249,7 +249,7 @@ public class SortHelper extends RangeHelperBase {
 				continue;
 			}
 			for (int c = 0 ; c < result.cellBuffer.length ; c++){
-				NCell cellProxy = getProxyInstance(sheet.getCell(result.newIndex, lCol+c), 
+				SCell cellProxy = getProxyInstance(sheet.getCell(result.newIndex, lCol+c), 
 						new SheetRegion(sheet, tRow, lCol, bRow, rCol), result.newIndex-result.oldIndex, 0);
 				result.cellBuffer[c].applyAll(cellProxy);
 			}
@@ -277,7 +277,7 @@ public class SortHelper extends RangeHelperBase {
 	}
 	
 	//convert cell sorting data upon data option
-	private Object getCellValue(NCell cell, SortDataOption dataOption) {
+	private Object getCellValue(SCell cell, SortDataOption dataOption) {
 		Object val = cell.getValue();
 		if (val instanceof String && dataOption == SortDataOption.TEXT_AS_NUMBERS) {
 			try {
@@ -389,10 +389,10 @@ public class SortHelper extends RangeHelperBase {
 		}
 	}
 	
-	private NCell getProxyInstance(NCell cell, SheetRegion srcRegion, int rowOffset, int columnOffset){
-		return (NCell)Proxy.newProxyInstance(
+	private SCell getProxyInstance(SCell cell, SheetRegion srcRegion, int rowOffset, int columnOffset){
+		return (SCell)Proxy.newProxyInstance(
 				FormulaMovingCell.class.getClassLoader(),
-				new Class[] { NCell.class },
+				new Class[] { SCell.class },
 				new FormulaMovingCell(cell, srcRegion, rowOffset, columnOffset));
 	}
 	
@@ -402,14 +402,14 @@ public class SortHelper extends RangeHelperBase {
 	 *
 	 */
 	class FormulaMovingCell implements InvocationHandler{
-		private final NCell proxiedCell;
+		private final SCell proxiedCell;
 		private final SheetRegion srcRegion;
 		private final int rowOffset;
 		private final int columnOffset;
 		private final FormulaParseContext context;
 
 		
-		public FormulaMovingCell(NCell cell, SheetRegion srcRegion, int rowOffset, int columnOffset){
+		public FormulaMovingCell(SCell cell, SheetRegion srcRegion, int rowOffset, int columnOffset){
 			this.proxiedCell = cell;
 			this.srcRegion = srcRegion;
 			this.rowOffset = rowOffset;

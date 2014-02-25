@@ -21,7 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
-import org.zkoss.zss.ngmodel.NBook;
+import org.zkoss.zss.model.SBook;
 
 /**
  * An importer to import a input stream, file..etc to a new book
@@ -36,7 +36,7 @@ public interface NImporter {
 	 * @return the book instance
 	 * @throws IOException
 	 */
-	public NBook imports(InputStream is, String bookName) throws IOException;
+	public SBook imports(InputStream is, String bookName) throws IOException;
 	
 	/**
 	 * Import book from a file
@@ -45,7 +45,7 @@ public interface NImporter {
 	 * @return the book instance
 	 * @throws IOException
 	 */
-	public NBook imports(File file, String bookName) throws IOException;
+	public SBook imports(File file, String bookName) throws IOException;
 	
 	/**
 	 * Import book from a URL
@@ -54,5 +54,5 @@ public interface NImporter {
 	 * @return the book instance
 	 * @throws IOException
 	 */
-	public NBook imports(URL url, String bookName) throws IOException;
+	public SBook imports(URL url, String bookName) throws IOException;
 }

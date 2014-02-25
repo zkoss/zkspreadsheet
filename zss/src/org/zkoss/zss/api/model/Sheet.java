@@ -18,8 +18,8 @@ package org.zkoss.zss.api.model;
 
 import java.util.List;
 
-import org.zkoss.zss.ngmodel.NBook;
-import org.zkoss.zss.ngmodel.NSheet;
+import org.zkoss.zss.model.SBook;
+import org.zkoss.zss.model.SSheet;
 
 /**
  * This interface provides the access to a sheet of a {@link Book}.
@@ -33,7 +33,7 @@ public interface Sheet {
 	 * Note : operate on internal object will not automatically update Spreadsheet   
 	 * @return
 	 */
-	public NSheet getInternalSheet();
+	public SSheet getInternalSheet();
 	
 	public Book getBook();
 	

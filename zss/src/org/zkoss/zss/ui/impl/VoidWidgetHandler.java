@@ -2,7 +2,7 @@ package org.zkoss.zss.ui.impl;
 
 import java.io.Serializable;
 
-import org.zkoss.zss.ngmodel.NSheet;
+import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.Widget;
 import org.zkoss.zss.ui.sys.WidgetHandler;
@@ -28,7 +28,7 @@ public class VoidWidgetHandler implements WidgetHandler, Serializable {
 	public void invaliate() {
 	}
 
-	public void onLoadOnDemand(NSheet sheet, int left, int top, int right,
+	public void onLoadOnDemand(SSheet sheet, int left, int top, int right,
 			int bottom) {
 	}
 
@@ -40,10 +40,10 @@ public class VoidWidgetHandler implements WidgetHandler, Serializable {
 		this.spreadsheet = spreadsheet;
 	}
 
-	public void updateWidgets(NSheet sheet, int left, int top, int right,
+	public void updateWidgets(SSheet sheet, int left, int top, int right,
 			int bottom) {
 	}
 
-	public void updateWidget(NSheet sheet, String widgetId) {
+	public void updateWidget(SSheet sheet, String widgetId) {
 	}
 }

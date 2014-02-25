@@ -8,9 +8,15 @@ import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.zkoss.util.Locales;
-import org.zkoss.zss.ngmodel.PasteOption.PasteType;
-import org.zkoss.zss.ngmodel.impl.BookImpl;
-import org.zkoss.zss.ngmodel.impl.SheetImpl;
+import org.zkoss.zss.model.CellRegion;
+import org.zkoss.zss.model.SBook;
+import org.zkoss.zss.model.SBooks;
+import org.zkoss.zss.model.SSheet;
+import org.zkoss.zss.model.PasteOption;
+import org.zkoss.zss.model.SheetRegion;
+import org.zkoss.zss.model.PasteOption.PasteType;
+import org.zkoss.zss.model.impl.BookImpl;
+import org.zkoss.zss.model.impl.SheetImpl;
 
 public class ModelCopyTest {
 
@@ -20,15 +26,15 @@ public class ModelCopyTest {
 		SheetImpl.DEBUG = true;
 	}
 	
-	protected NSheet initialDataGrid(NSheet sheet){
+	protected SSheet initialDataGrid(SSheet sheet){
 		return sheet;
 	}
 	
 	@Test 
 	public void testCopySimple(){
-		NBook book = NBooks.createBook("book1");
+		SBook book = SBooks.createBook("book1");
 		book.getBookSeries().setAutoFormulaCacheClean(true);
-		NSheet sheet1 = initialDataGrid(book.createSheet("Sheet1"));
+		SSheet sheet1 = initialDataGrid(book.createSheet("Sheet1"));
 		
 		sheet1.getCell("A1").setValue("A");
 		sheet1.getCell("A2").setValue(13);
@@ -106,9 +112,9 @@ public class ModelCopyTest {
 	
 	@Test 
 	public void testCopyMerge(){
-		NBook book = NBooks.createBook("book1");
+		SBook book = SBooks.createBook("book1");
 		book.getBookSeries().setAutoFormulaCacheClean(true);
-		NSheet sheet1 = initialDataGrid(book.createSheet("Sheet1"));
+		SSheet sheet1 = initialDataGrid(book.createSheet("Sheet1"));
 		
 		sheet1.getCell("B2").setValue("A");
 		sheet1.getCell("B3").setValue("B");
@@ -200,9 +206,9 @@ public class ModelCopyTest {
 	
 	@Test 
 	public void testCopyColumnWidth(){
-		NBook book = NBooks.createBook("book1");
+		SBook book = SBooks.createBook("book1");
 		book.getBookSeries().setAutoFormulaCacheClean(true);
-		NSheet sheet1 = initialDataGrid(book.createSheet("Sheet1"));
+		SSheet sheet1 = initialDataGrid(book.createSheet("Sheet1"));
 		
 		sheet1.getColumn(0).setWidth(10);
 		sheet1.getColumn(1).setWidth(20);
@@ -221,9 +227,9 @@ public class ModelCopyTest {
 	
 	@Test 
 	public void testCopyTranspose(){
-		NBook book = NBooks.createBook("book1");
+		SBook book = SBooks.createBook("book1");
 		book.getBookSeries().setAutoFormulaCacheClean(true);
-		NSheet sheet1 = initialDataGrid(book.createSheet("Sheet1"));
+		SSheet sheet1 = initialDataGrid(book.createSheet("Sheet1"));
 		
 		sheet1.getCell("D4").setValue("Sales by Region");
 		sheet1.getCell("D5").setValue("Q1");
@@ -354,7 +360,7 @@ public class ModelCopyTest {
 		Assert.assertEquals(150D, sheet1.getCell("I18").getValue());
 	}
 	
-	public static void dump(NBook book){
+	public static void dump(SBook book){
 		StringBuilder builder = new StringBuilder();
 		((BookImpl)book).dump(builder);
 		System.out.println(builder.toString());
@@ -362,9 +368,9 @@ public class ModelCopyTest {
 	
 	@Test 
 	public void testCopyTransposeMerge(){
-		NBook book = NBooks.createBook("book1");
+		SBook book = SBooks.createBook("book1");
 		book.getBookSeries().setAutoFormulaCacheClean(true);
-		NSheet sheet1 = initialDataGrid(book.createSheet("Sheet1"));
+		SSheet sheet1 = initialDataGrid(book.createSheet("Sheet1"));
 		
 		sheet1.getCell("J4").setValue("Merge");
 		sheet1.getCell("K5").setValue("K5:L5");
@@ -417,9 +423,9 @@ public class ModelCopyTest {
 	
 	@Test 
 	public void testCopySkipBlank(){
-		NBook book = NBooks.createBook("book1");
+		SBook book = SBooks.createBook("book1");
 		book.getBookSeries().setAutoFormulaCacheClean(true);
-		NSheet sheet1 = initialDataGrid(book.createSheet("Sheet1"));
+		SSheet sheet1 = initialDataGrid(book.createSheet("Sheet1"));
 		
 		sheet1.getCell("A1").setValue("A");
 		sheet1.getCell("A3").setValue("");
@@ -452,9 +458,9 @@ public class ModelCopyTest {
 	
 	@Test 
 	public void testCut(){
-		NBook book = NBooks.createBook("book1");
+		SBook book = SBooks.createBook("book1");
 		book.getBookSeries().setAutoFormulaCacheClean(true);
-		NSheet sheet1 = initialDataGrid(book.createSheet("Sheet1"));
+		SSheet sheet1 = initialDataGrid(book.createSheet("Sheet1"));
 		
 		sheet1.getCell("A1").setValue("A");
 		sheet1.getCell("A2").setValue("B");

@@ -13,8 +13,8 @@ import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.model.CellStyle;
 import org.zkoss.zss.api.model.CellStyle.BorderType;
 import org.zkoss.zss.api.model.Sheet;
-import org.zkoss.zss.ngmodel.CellRegion;
-import org.zkoss.zss.ngmodel.NSheet;
+import org.zkoss.zss.model.CellRegion;
+import org.zkoss.zss.model.SSheet;
 
 public class AssertUtil {
 	
@@ -122,7 +122,7 @@ public class AssertUtil {
 	}
 	
 	private static boolean isMergedRange(Range range){
-		NSheet sheet = range.getSheet().getInternalSheet();
+		SSheet sheet = range.getSheet().getInternalSheet();
 		// go through all region
 		for (int number = sheet.getNumOfMergedRegion(); number > 0; number--) {
 			CellRegion addr = sheet.getMergedRegion(number - 1);

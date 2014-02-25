@@ -2,16 +2,16 @@ package org.zkoss.zss.ngapi.impl;
 
 import java.util.concurrent.locks.ReadWriteLock;
 
+import org.zkoss.zss.model.*;
+import org.zkoss.zss.model.SAutoFilter.FilterOp;
+import org.zkoss.zss.model.SCellStyle.BorderType;
+import org.zkoss.zss.model.SChart.NChartGrouping;
+import org.zkoss.zss.model.SChart.NChartLegendPosition;
+import org.zkoss.zss.model.SChart.NChartType;
+import org.zkoss.zss.model.SHyperlink.HyperlinkType;
+import org.zkoss.zss.model.SPicture.Format;
 import org.zkoss.zss.ngapi.*;
 import org.zkoss.zss.ngapi.NRange.SortDataOption;
-import org.zkoss.zss.ngmodel.*;
-import org.zkoss.zss.ngmodel.NAutoFilter.FilterOp;
-import org.zkoss.zss.ngmodel.NCellStyle.BorderType;
-import org.zkoss.zss.ngmodel.NChart.NChartGrouping;
-import org.zkoss.zss.ngmodel.NChart.NChartLegendPosition;
-import org.zkoss.zss.ngmodel.NChart.NChartType;
-import org.zkoss.zss.ngmodel.NHyperlink.HyperlinkType;
-import org.zkoss.zss.ngmodel.NPicture.Format;
 
 /**
  * the empty range implementation that do nothing
@@ -27,7 +27,7 @@ import org.zkoss.zss.ngmodel.NPicture.Format;
 	}
 
 	@Override
-	public NHyperlink getHyperlink() {
+	public SHyperlink getHyperlink() {
 		
 		return null;
 	}
@@ -125,13 +125,13 @@ import org.zkoss.zss.ngmodel.NPicture.Format;
 	}
 
 	@Override
-	public NSheet getSheet() {
+	public SSheet getSheet() {
 		
 		return null;
 	}
 
 	@Override
-	public void setCellStyle(NCellStyle style) {
+	public void setCellStyle(SCellStyle style) {
 		
 
 	}
@@ -179,14 +179,14 @@ import org.zkoss.zss.ngmodel.NPicture.Format;
 	}
 
 	@Override
-	public NAutoFilter enableAutoFilter(int field, FilterOp filterOp,
+	public SAutoFilter enableAutoFilter(int field, FilterOp filterOp,
 			Object criteria1, Object criteria2, Boolean showButton) {
 		
 		return null;
 	}
 
 	@Override
-	public NAutoFilter enableAutoFilter(boolean enable) {
+	public SAutoFilter enableAutoFilter(boolean enable) {
 		
 		return null;
 	}
@@ -283,25 +283,25 @@ import org.zkoss.zss.ngmodel.NPicture.Format;
 	}
 
 	@Override
-	public NPicture addPicture(NViewAnchor anchor, byte[] image, Format format) {
+	public SPicture addPicture(ViewAnchor anchor, byte[] image, Format format) {
 		
 		return null;
 	}
 
 	@Override
-	public void deletePicture(NPicture picture) {
+	public void deletePicture(SPicture picture) {
 		
 
 	}
 
 	@Override
-	public void movePicture(NPicture picture, NViewAnchor anchor) {
+	public void movePicture(SPicture picture, ViewAnchor anchor) {
 		
 
 	}
 
 	@Override
-	public NDataValidation validate(String txt) {
+	public SDataValidation validate(String txt) {
 		
 		return null;
 	}
@@ -326,7 +326,7 @@ import org.zkoss.zss.ngmodel.NPicture.Format;
 	}
 
 	@Override
-	public NSheet createSheet(String name) {
+	public SSheet createSheet(String name) {
 		
 		return null;
 	}
@@ -380,7 +380,7 @@ import org.zkoss.zss.ngmodel.NPicture.Format;
 	}
 
 	@Override
-	public NCellStyle getCellStyle() {
+	public SCellStyle getCellStyle() {
 		
 		return null;
 	}
@@ -396,22 +396,22 @@ import org.zkoss.zss.ngmodel.NPicture.Format;
 		return null;
 	}
 	
-	public NChart addChart(NViewAnchor anchor, NChartType type, NChartGrouping grouping, NChartLegendPosition pos, boolean isThreeD) {
+	public SChart addChart(ViewAnchor anchor, NChartType type, NChartGrouping grouping, NChartLegendPosition pos, boolean isThreeD) {
 		return null;
 	};
 	
 	@Override
-	public void moveChart(NChart chart, NViewAnchor anchor) {
+	public void moveChart(SChart chart, ViewAnchor anchor) {
 		
 	}
 
 	@Override
-	public void deleteChart(NChart chart) {
+	public void deleteChart(SChart chart) {
 		
 	}
 
 	@Override
-	public void updateChart(NChart chart) {
+	public void updateChart(SChart chart) {
 		
 	}
 

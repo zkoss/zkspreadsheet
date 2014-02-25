@@ -18,14 +18,14 @@ package org.zkoss.zss.ngapi;
 
 import java.util.concurrent.locks.ReadWriteLock;
 
+import org.zkoss.zss.model.*;
+import org.zkoss.zss.model.SAutoFilter.FilterOp;
+import org.zkoss.zss.model.SChart.NChartGrouping;
+import org.zkoss.zss.model.SChart.NChartLegendPosition;
+import org.zkoss.zss.model.SChart.NChartType;
+import org.zkoss.zss.model.SHyperlink.HyperlinkType;
+import org.zkoss.zss.model.SPicture.Format;
 import org.zkoss.zss.ngapi.NRange.SortDataOption;
-import org.zkoss.zss.ngmodel.*;
-import org.zkoss.zss.ngmodel.NAutoFilter.FilterOp;
-import org.zkoss.zss.ngmodel.NChart.NChartGrouping;
-import org.zkoss.zss.ngmodel.NChart.NChartLegendPosition;
-import org.zkoss.zss.ngmodel.NChart.NChartType;
-import org.zkoss.zss.ngmodel.NHyperlink.HyperlinkType;
-import org.zkoss.zss.ngmodel.NPicture.Format;
 /**
  * The most useful api to manipulate a book
  *  
@@ -161,7 +161,7 @@ public interface NRange {
 	 * Returns the hyperlink of this Range.
 	 * @return hyperlink of this Range
 	 */
-	public NHyperlink getHyperlink();
+	public SHyperlink getHyperlink();
 	
 //	/**
 //	 * Return the rich edit text of this Range.
@@ -271,7 +271,7 @@ public interface NRange {
  	 * @param lineStyle border line style, one of {@link BorderStyle} 
 	 * @param color color in HTML format; i.e., #rrggbb.
 	 */
-	public void setBorders(ApplyBorderType borderIndex, NCellStyle.BorderType lineStyle, String color);
+	public void setBorders(ApplyBorderType borderIndex, SCellStyle.BorderType lineStyle, String color);
 
 	/**
 	 * Move this range to a new place as specified by nRow(negative value to move up; 
@@ -309,10 +309,10 @@ public interface NRange {
 	public void setRowHeight(int heightPx,boolean custom);
 	
 	/**
-	 * Returns associate {@link NSheet} of this range.
-	 * @return associate {@link NSheet} of this range.
+	 * Returns associate {@link SSheet} of this range.
+	 * @return associate {@link SSheet} of this range.
 	 */
-	public NSheet getSheet();
+	public SSheet getSheet();
 	
 //	/**
 //	 * Return the range that contains the cell specified in row, col (relative to this Range).
@@ -326,7 +326,7 @@ public interface NRange {
 	 * Sets a Style object to this Range.
 	 * @param style the style object
 	 */
-	public void setCellStyle(NCellStyle style);
+	public void setCellStyle(SCellStyle style);
 	
 	/**
 	 * Perform an auto fill on the specified destination Range. Note the given destination Range
@@ -383,13 +383,13 @@ public interface NRange {
 	 * to keep as is.
 	 * @return the applied AutoFiltering
 	 */
-	public NAutoFilter enableAutoFilter(int field, FilterOp filterOp, Object criteria1, Object criteria2, Boolean showButton);
+	public SAutoFilter enableAutoFilter(int field, FilterOp filterOp, Object criteria1, Object criteria2, Boolean showButton);
 	
 	/**
 	 * Enable the auto filter and return it, get null if you disable it. 
 	 * @return the autofilter if enable, or null if disable. 
 	 */
-	public NAutoFilter enableAutoFilter(boolean enable);
+	public SAutoFilter enableAutoFilter(boolean enable);
 	
 	
 	/**
@@ -552,46 +552,46 @@ public interface NRange {
 	 * @param isThreeD TODO
 	 * @return the created chart 
 	 */
-	public NChart addChart(NViewAnchor anchor, NChartType type, NChartGrouping grouping, NChartLegendPosition pos, boolean isThreeD);
+	public SChart addChart(ViewAnchor anchor, NChartType type, NChartGrouping grouping, NChartLegendPosition pos, boolean isThreeD);
 
 
 	/**
 	 * Add a picture into the sheet of this Range
      * @return the created picture
 	 */
-	public NPicture addPicture(NViewAnchor anchor, byte[] image, Format format);
+	public SPicture addPicture(ViewAnchor anchor, byte[] image, Format format);
 
 	/**
 	 * Delete an existing picture from the sheet of this Range.
 	 * @param picture the picture to be deleted
 	 */
-	public void deletePicture(NPicture picture);
+	public void deletePicture(SPicture picture);
 	
 	/**
 	 * Update picture anchor. Can be used to resize or move a picture.
 	 * @param picture the picture to change
 	 * @param anchor the new anchor
 	 */
-	public void movePicture(NPicture picture, NViewAnchor anchor);
+	public void movePicture(SPicture picture, ViewAnchor anchor);
 
 	/**
 	 * Move the chart to the new anchor.
 	 * @param chart the chart to change anchor
 	 * @param anchor the new anchor
 	 */
-	public void moveChart(NChart chart, NViewAnchor anchor);
+	public void moveChart(SChart chart, ViewAnchor anchor);
 	
 	/**
 	 * Notify the model that a chart contains change, for example, chart data changes.
 	 * @param chart the chart that changes
 	 */
-	public void updateChart(NChart chart);
+	public void updateChart(SChart chart);
 	
 	/**
 	 * Delete an existing chart from the sheet of this Range.
 	 * @param chart the chart to be deleted
 	 */
-	public void deleteChart(NChart chart);
+	public void deleteChart(SChart chart);
 	
 	/**
 	 * Returns whether the plain text input by the end user is valid or not;
@@ -599,7 +599,7 @@ public interface NRange {
 	 * @param txt the string input by the end user.
 	 * @return null if a valid input to the specified range; otherwise, the DataValidation
 	 */
-	public NDataValidation validate(String txt);
+	public SDataValidation validate(String txt);
 	
 	/**
 	 * Returns whether any cell is protected and locked in this Range.
@@ -637,7 +637,7 @@ public interface NRange {
 	 * @param name the name of the new created sheet; null would use default 
 	 * "SheetX" name where X is the next sheet number.
 	 */
-	public NSheet createSheet(String name);
+	public SSheet createSheet(String name);
 	
 	/**
      * Set(Rename) the name of the sheet as specified in this Range.
@@ -700,7 +700,7 @@ public interface NRange {
 	 * Gets the first(top-left) cell's style
 	 * @return
 	 */
-	public NCellStyle getCellStyle();
+	public SCellStyle getCellStyle();
 
 	public boolean isSheetProtected();
 	

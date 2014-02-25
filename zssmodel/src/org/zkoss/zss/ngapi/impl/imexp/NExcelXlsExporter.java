@@ -19,7 +19,7 @@ package org.zkoss.zss.ngapi.impl.imexp;
 import org.zkoss.poi.hssf.usermodel.HSSFWorkbook;
 import org.zkoss.poi.ss.SpreadsheetVersion;
 import org.zkoss.poi.ss.usermodel.*;
-import org.zkoss.zss.ngmodel.*;
+import org.zkoss.zss.model.*;
 /**
  * 
  * @author dennis, kuro
@@ -28,7 +28,7 @@ import org.zkoss.zss.ngmodel.*;
 public class NExcelXlsExporter extends AbstractExcelExporter {
 	
 	@Override
-	protected void exportColumnArray(NSheet sheet, Sheet poiSheet, NColumnArray columnArr) {
+	protected void exportColumnArray(SSheet sheet, Sheet poiSheet, SColumnArray columnArr) {
 		
 		CellStyle poiCellStyle = toPOICellStyle(columnArr.getCellStyle());
 		boolean hidden = columnArr.isHidden();
@@ -46,22 +46,22 @@ public class NExcelXlsExporter extends AbstractExcelExporter {
 	}
 
 	@Override
-	protected void exportChart(NSheet sheet, Sheet poiSheet) {
+	protected void exportChart(SSheet sheet, Sheet poiSheet) {
 		// not support in XLS
 	}
 	
 	@Override
-	protected void exportPicture(NSheet sheet, Sheet poiSheet) {
+	protected void exportPicture(SSheet sheet, Sheet poiSheet) {
 		// not support in XLS
 	}
 
 	@Override
-	protected void exportValidation(NSheet sheet, Sheet poiSheet) {
+	protected void exportValidation(SSheet sheet, Sheet poiSheet) {
 		// not support in XLS
 	}
 
 	@Override
-	protected void exportAutoFilter(NSheet sheet, Sheet poiSheet) {
+	protected void exportAutoFilter(SSheet sheet, Sheet poiSheet) {
 		// not support in XLS
 	}
 

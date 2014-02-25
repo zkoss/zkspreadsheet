@@ -20,8 +20,11 @@ import java.util.Date;
 
 
 //import org.zkoss.poi.ss.usermodel.DateUtil;
-import org.zkoss.zss.ngmodel.NCell;
-import org.zkoss.zss.ngmodel.sys.EngineFactory;
+
+
+
+import org.zkoss.zss.model.SCell;
+import org.zkoss.zss.model.sys.EngineFactory;
 
 /**
  * Step value by given steps by Calendar
@@ -50,7 +53,7 @@ public class DateTimeStep implements Step {
 		_zero = EngineFactory.getInstance().getCalendarUtil().doubleValueToDate(0.0).getTime();
 	}
 	@Override
-	public Object next(NCell cell) {
+	public Object next(SCell cell) {
 		_cal.clear();
 		_cal.setTimeInMillis(_current);
 		

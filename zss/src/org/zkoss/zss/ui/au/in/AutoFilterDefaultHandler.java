@@ -35,18 +35,18 @@ import org.zkoss.util.Locales;
 import org.zkoss.zss.api.AreaRef;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.api.model.impl.SheetImpl;
+import org.zkoss.zss.model.SAutoFilter;
+import org.zkoss.zss.model.SCell;
+import org.zkoss.zss.model.SSheet;
+import org.zkoss.zss.model.SAutoFilter.FilterOp;
+import org.zkoss.zss.model.SAutoFilter.NFilterColumn;
+import org.zkoss.zss.model.SCell.CellType;
+import org.zkoss.zss.model.sys.EngineFactory;
+import org.zkoss.zss.model.sys.format.FormatContext;
+import org.zkoss.zss.model.sys.format.FormatEngine;
+import org.zkoss.zss.model.sys.format.FormatResult;
 import org.zkoss.zss.ngapi.NRange;
 import org.zkoss.zss.ngapi.NRanges;
-import org.zkoss.zss.ngmodel.NAutoFilter;
-import org.zkoss.zss.ngmodel.NAutoFilter.FilterOp;
-import org.zkoss.zss.ngmodel.NAutoFilter.NFilterColumn;
-import org.zkoss.zss.ngmodel.NCell;
-import org.zkoss.zss.ngmodel.NCell.CellType;
-import org.zkoss.zss.ngmodel.NSheet;
-import org.zkoss.zss.ngmodel.sys.EngineFactory;
-import org.zkoss.zss.ngmodel.sys.format.FormatContext;
-import org.zkoss.zss.ngmodel.sys.format.FormatEngine;
-import org.zkoss.zss.ngmodel.sys.format.FormatResult;
 import org.zkoss.zss.ui.Spreadsheet;
 
 /**
@@ -60,8 +60,8 @@ import org.zkoss.zss.ui.Spreadsheet;
 	private FilterRowInfo blankRowInfo;
 	
 	/*package*/ AreaRef processFilter(Spreadsheet spreadsheet,Sheet sheet,int row, int col, int field) {
-		NSheet worksheet = ((SheetImpl)sheet).getNative();
-		final NAutoFilter autoFilter = worksheet.getAutoFilter();
+		SSheet worksheet = ((SheetImpl)sheet).getNative();
+		final SAutoFilter autoFilter = worksheet.getAutoFilter();
 		final NFilterColumn filterColumn = autoFilter.getFilterColumn(field - 1,false);
 		final String rangeAddr = autoFilter.getRegion().getReferenceString();
 		final NRange range = NRanges.range(worksheet, rangeAddr);
@@ -108,7 +108,7 @@ import org.zkoss.zss.ui.Spreadsheet;
 		return data;
 	}
 	
-	private SortedSet<FilterRowInfo> scanRows(int field, NFilterColumn fc, NRange range, NSheet worksheet) {
+	private SortedSet<FilterRowInfo> scanRows(int field, NFilterColumn fc, NRange range, SSheet worksheet) {
 		SortedSet<FilterRowInfo> orderedRowInfos = new TreeSet<FilterRowInfo>(new FilterRowInfoComparator());
 		
 		blankRowInfo = new FilterRowInfo(BLANK_VALUE, "(Blanks)");
@@ -120,7 +120,7 @@ import org.zkoss.zss.ui.Spreadsheet;
 		final int columnIndex = range.getColumn() + field - 1;
 		FormatEngine fe = EngineFactory.getInstance().createFormatEngine();
 		for (int i = top; i <= bottom; i++) {
-			final NCell c = worksheet.getCell(i, columnIndex);
+			final SCell c = worksheet.getCell(i, columnIndex);
 			if (!c.isNull() && c.getType() != CellType.BLANK) {
 				FormatResult fr = fe.format(c, new FormatContext(Locales.getCurrent()));
 				String displaytxt = fr.getText();

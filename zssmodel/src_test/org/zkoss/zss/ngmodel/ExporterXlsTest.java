@@ -8,6 +8,12 @@ import java.util.Iterator;
 import junit.framework.Assert;
 
 import org.junit.*;
+import org.zkoss.zss.model.SBook;
+import org.zkoss.zss.model.SBooks;
+import org.zkoss.zss.model.SCell;
+import org.zkoss.zss.model.SColumnArray;
+import org.zkoss.zss.model.SHyperlink;
+import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.ngapi.impl.imexp.ExcelExportFactory;
 
 public class ExporterXlsTest extends ExporterTest {
@@ -24,27 +30,27 @@ public class ExporterXlsTest extends ExporterTest {
 	@Override
 	public void hyperlinkTest() {
 		File outFile = ImExpTestUtil.write(ImExpTestUtil.loadBook(IMPORT_FILE_UNDER_TEST, "XSSFBook"), EXPORTER_TYPE);
-		NBook book = ImExpTestUtil.loadBook(outFile, DEFAULT_BOOK_NAME);
-		NSheet sheet = book.getSheetByName("Style");
-		NCell cell = sheet.getCell("B31");
-		NHyperlink link = cell.getHyperlink();
+		SBook book = ImExpTestUtil.loadBook(outFile, DEFAULT_BOOK_NAME);
+		SSheet sheet = book.getSheetByName("Style");
+		SCell cell = sheet.getCell("B31");
+		SHyperlink link = cell.getHyperlink();
 		
 		assertEquals("http://www.zkoss.org/", link.getAddress());
 		assertEquals("url", link.getLabel());
-		assertEquals(NHyperlink.HyperlinkType.URL, link.getType());
+		assertEquals(SHyperlink.HyperlinkType.URL, link.getType());
 	}
 	
 	@Override
 	public void exportWidthSplitTest() {
-		NBook book = NBooks.createBook("book1");
-		NSheet sheet1 = book.createSheet("Sheet1");
+		SBook book = SBooks.createBook("book1");
+		SSheet sheet1 = book.createSheet("Sheet1");
 		
 		sheet1.setDefaultColumnWidth(100);
 		sheet1.setDefaultRowHeight(200);
 		Assert.assertEquals(100, sheet1.getDefaultColumnWidth());
 		Assert.assertEquals(200, sheet1.getDefaultRowHeight());
 		
-		Iterator<NColumnArray> arrays = sheet1.getColumnArrayIterator();
+		Iterator<SColumnArray> arrays = sheet1.getColumnArrayIterator();
 		Assert.assertFalse(arrays.hasNext());
 		
 		Assert.assertNull(sheet1.getColumnArray(0));
@@ -52,7 +58,7 @@ public class ExporterXlsTest extends ExporterTest {
 		sheet1.setupColumnArray(0, 10).setWidth(10);
 		sheet1.setupColumnArray(11, 255);
 		arrays = sheet1.getColumnArrayIterator();
-		NColumnArray array = arrays.next();
+		SColumnArray array = arrays.next();
 		Assert.assertEquals(0, array.getIndex());
 		Assert.assertEquals(10, array.getLastIndex());
 		Assert.assertEquals(10, array.getWidth());

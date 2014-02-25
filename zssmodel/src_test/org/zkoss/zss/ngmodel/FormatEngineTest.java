@@ -12,19 +12,23 @@ import org.junit.Test;
 import org.zkoss.poi.ss.format.CellFormat;
 import org.zkoss.poi.ss.format.CellFormatResult;
 import org.zkoss.util.Locales;
-import org.zkoss.zss.ngmodel.impl.BookImpl;
-import org.zkoss.zss.ngmodel.impl.ColorImpl;
-import org.zkoss.zss.ngmodel.impl.sys.FormatEngineImpl;
-import org.zkoss.zss.ngmodel.sys.format.FormatContext;
-import org.zkoss.zss.ngmodel.sys.format.FormatEngine;
-import org.zkoss.zss.ngmodel.sys.format.FormatResult;
+import org.zkoss.zss.model.SBook;
+import org.zkoss.zss.model.SBooks;
+import org.zkoss.zss.model.SCell;
+import org.zkoss.zss.model.SSheet;
+import org.zkoss.zss.model.impl.BookImpl;
+import org.zkoss.zss.model.impl.ColorImpl;
+import org.zkoss.zss.model.impl.sys.FormatEngineImpl;
+import org.zkoss.zss.model.sys.format.FormatContext;
+import org.zkoss.zss.model.sys.format.FormatEngine;
+import org.zkoss.zss.model.sys.format.FormatResult;
 
 public class FormatEngineTest {
 
 	static private FormatContext formatContext;
 	static private FormatEngine formatEngine;
 	
-	private NCell cell;
+	private SCell cell;
 	
 	@BeforeClass
 	public static void init(){
@@ -307,9 +311,9 @@ public class FormatEngineTest {
 	}
 	
 	/* utility methods */
-	private NCell createCell(){
-		NBook book = NBooks.createBook("book1");
-		NSheet sheet1 = book.createSheet("Sheet1");
+	private SCell createCell(){
+		SBook book = SBooks.createBook("book1");
+		SSheet sheet1 = book.createSheet("Sheet1");
 		return sheet1.getCell(0,0);
 	}
 }

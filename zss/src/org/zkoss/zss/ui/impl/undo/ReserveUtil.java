@@ -33,7 +33,7 @@ import org.zkoss.zss.api.model.CellStyle;
 import org.zkoss.zss.api.model.Font;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.api.model.impl.SheetImpl;
-import org.zkoss.zss.ngmodel.CellRegion;
+import org.zkoss.zss.model.CellRegion;
 
 /**
  * 

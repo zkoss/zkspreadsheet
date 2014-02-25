@@ -15,7 +15,7 @@ Copyright (C) 2011 Potix Corporation. All Rights Reserved.
 
 package org.zkoss.zss.ngapi.impl.autofill;
 
-import org.zkoss.zss.ngmodel.NCell;
+import org.zkoss.zss.model.SCell;
 
 /**
  * Copy from source to destination
@@ -25,7 +25,7 @@ import org.zkoss.zss.ngmodel.NCell;
 public class CopyStep implements Step {
 	public static final Step instance = new CopyStep(); //since CopyStep keeps no state, we can use a singleton to serve all!
 	@Override
-	public Object next(NCell cell) {
+	public Object next(SCell cell) {
 		return cell.getValue();
 	}
 	@Override

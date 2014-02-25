@@ -1,0 +1,71 @@
+/*
+
+{{IS_NOTE
+	Purpose:
+		
+	Description:
+		
+	History:
+		2013/12/01 , Created by dennis
+}}IS_NOTE
+
+Copyright (C) 2013 Potix Corporation. All Rights Reserved.
+
+{{IS_RIGHT
+}}IS_RIGHT
+ */
+package org.zkoss.zss.model.sys.formula;
+
+import org.zkoss.zss.model.SBook;
+import org.zkoss.zss.model.SCell;
+import org.zkoss.zss.model.SSheet;
+import org.zkoss.zss.model.sys.AbstractContext;
+import org.zkoss.zss.model.sys.dependency.Ref;
+
+/**
+ * 
+ * @author dennis
+ * @since 3.5.0
+ */
+public class FormulaParseContext extends AbstractContext {
+	private final Ref dependent;
+
+	private final SBook book;
+	private final SSheet sheet;
+	private final SCell cell;
+
+	public FormulaParseContext(SCell cell,Ref dependent) {
+		this(cell.getSheet().getBook(),cell.getSheet(),cell,dependent);
+	}
+	public FormulaParseContext(SSheet sheet,Ref dependent) {
+		this(sheet.getBook(),sheet,null,dependent);
+	}
+	public FormulaParseContext(SBook book,Ref dependent) {
+		this(book,null,null,dependent);
+		
+	}
+	public FormulaParseContext(SBook book, SSheet sheet, SCell cell,
+			Ref dependent) {
+		this.book = book;
+		this.sheet = sheet;
+		this.cell = cell;
+		this.dependent = dependent;
+	}
+
+	public Ref getDependent() {
+		return dependent;
+	}
+
+	public SBook getBook() {
+		return book;
+	}
+
+	public SSheet getSheet() {
+		return sheet;
+	}
+
+	public SCell getCell() {
+		return cell;
+	}
+
+}

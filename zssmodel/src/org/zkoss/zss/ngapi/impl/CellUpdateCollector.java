@@ -4,8 +4,8 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import org.zkoss.zss.ngmodel.NSheet;
-import org.zkoss.zss.ngmodel.SheetRegion;
+import org.zkoss.zss.model.SSheet;
+import org.zkoss.zss.model.SheetRegion;
 
 public class CellUpdateCollector {
 	static ThreadLocal<CellUpdateCollector>  current = new ThreadLocal<CellUpdateCollector>();
@@ -27,10 +27,10 @@ public class CellUpdateCollector {
 		return current.get();
 	}
 
-	public void addCellUpdate(NSheet sheet,int row, int column) {
+	public void addCellUpdate(SSheet sheet,int row, int column) {
 		addCellUpdate(sheet,row,column,row,column);
 	}
-	public void addCellUpdate(NSheet sheet,int row, int column, int lastRow, int lastColumn) {
+	public void addCellUpdate(SSheet sheet,int row, int column, int lastRow, int lastColumn) {
 		if(last!=null && last.getSheet() == sheet && last.getRow() == row && last.getColumn()==column
 				&& last.getLastRow() == lastRow && last.getLastColumn() == lastColumn){
 			return;

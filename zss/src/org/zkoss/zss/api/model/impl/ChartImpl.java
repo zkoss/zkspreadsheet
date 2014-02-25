@@ -18,9 +18,9 @@ package org.zkoss.zss.api.model.impl;
 
 import org.zkoss.zss.api.SheetAnchor;
 import org.zkoss.zss.api.model.Chart;
-import org.zkoss.zss.ngmodel.NChart;
-import org.zkoss.zss.ngmodel.NSheet;
-import org.zkoss.zss.ngmodel.NViewAnchor;
+import org.zkoss.zss.model.SChart;
+import org.zkoss.zss.model.SSheet;
+import org.zkoss.zss.model.ViewAnchor;
 /**
  * 
  * @author dennis
@@ -28,10 +28,10 @@ import org.zkoss.zss.ngmodel.NViewAnchor;
  */
 public class ChartImpl implements Chart{
 	
-	private ModelRef<NSheet> _sheetRef;
-	private ModelRef<NChart> _chartRef;
+	private ModelRef<SSheet> _sheetRef;
+	private ModelRef<SChart> _chartRef;
 	
-	public ChartImpl(ModelRef<NSheet> sheetRef, ModelRef<NChart> chartRef) {
+	public ChartImpl(ModelRef<SSheet> sheetRef, ModelRef<SChart> chartRef) {
 		this._sheetRef = sheetRef;
 		this._chartRef = chartRef;
 	}
@@ -61,7 +61,7 @@ public class ChartImpl implements Chart{
 		return true;
 	}
 	
-	public NChart getNative() {
+	public SChart getNative() {
 		return _chartRef.get();
 	}
 	
@@ -71,7 +71,7 @@ public class ChartImpl implements Chart{
 	
 	@Override
 	public SheetAnchor getAnchor() {
-		NViewAnchor anchor = getNative().getAnchor();
+		ViewAnchor anchor = getNative().getAnchor();
 		return anchor==null?null:SheetImpl.toSheetAnchor(_sheetRef.get(), anchor);
 	}
 }

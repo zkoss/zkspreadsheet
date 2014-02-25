@@ -19,8 +19,8 @@ package org.zkoss.zss.api.model.impl;
 import org.zkoss.zss.api.UnitUtil;
 import org.zkoss.zss.api.model.Color;
 import org.zkoss.zss.api.model.Font;
-import org.zkoss.zss.ngmodel.NBook;
-import org.zkoss.zss.ngmodel.NFont;
+import org.zkoss.zss.model.SBook;
+import org.zkoss.zss.model.SFont;
 /**
  * 
  * @author dennis
@@ -28,20 +28,20 @@ import org.zkoss.zss.ngmodel.NFont;
  */
 public class FontImpl implements Font{
 	
-	protected ModelRef<NBook> _bookRef;
-	protected ModelRef<NFont> _fontRef;
+	protected ModelRef<SBook> _bookRef;
+	protected ModelRef<SFont> _fontRef;
 	
-	public FontImpl(ModelRef<NBook> book, ModelRef<NFont> font) {
+	public FontImpl(ModelRef<SBook> book, ModelRef<SFont> font) {
 		this._bookRef = book;
 		this._fontRef = font;
 	}
 	public String getFontName() {
 		return getNative().getName();
 	}
-	public NFont getNative() {
+	public SFont getNative() {
 		return _fontRef.get();
 	}
-	public ModelRef<NFont> getRef(){
+	public ModelRef<SFont> getRef(){
 		return _fontRef;
 	}
 	

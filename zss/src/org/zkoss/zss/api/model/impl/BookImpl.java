@@ -20,8 +20,8 @@ import java.util.concurrent.locks.ReadWriteLock;
 
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.Sheet;
-import org.zkoss.zss.ngmodel.NBook;
-import org.zkoss.zss.ngmodel.NSheet;
+import org.zkoss.zss.model.SBook;
+import org.zkoss.zss.model.SSheet;
 /**
  * 
  * @author dennis
@@ -29,12 +29,12 @@ import org.zkoss.zss.ngmodel.NSheet;
  */
 public class BookImpl implements Book{
 
-	private ModelRef<NBook> _bookRef;
+	private ModelRef<SBook> _bookRef;
 	private BookType _type;
 	
-	public BookImpl(ModelRef<NBook> ref){
+	public BookImpl(ModelRef<SBook> ref){
 		this._bookRef = ref;
-		NBook book = ref.get();
+		SBook book = ref.get();
 		/*TODO zss 3.5*/
 		_type = BookType.XLSX;
 //		if (book instanceof HSSFBookImpl) {
@@ -46,16 +46,16 @@ public class BookImpl implements Book{
 //		}
 	}
 
-	public NBook getNative() {
+	public SBook getNative() {
 		return _bookRef.get();
 	}
 	
 	@Override
-	public NBook getInternalBook(){
+	public SBook getInternalBook(){
 		return _bookRef.get();
 	}
 	
-	public ModelRef<NBook> getRef(){
+	public ModelRef<SBook> getRef(){
 		return _bookRef;
 	}
 
@@ -102,14 +102,14 @@ public class BookImpl implements Book{
 	}
 	
 	public SheetImpl getSheetAt(int index){
-		NSheet sheet = getNative().getSheet(index);
-		return new SheetImpl(_bookRef,new SimpleRef<NSheet>(sheet));
+		SSheet sheet = getNative().getSheet(index);
+		return new SheetImpl(_bookRef,new SimpleRef<SSheet>(sheet));
 	}
 	
 	public SheetImpl getSheet(String name){
-		NSheet sheet = getNative().getSheetByName(name);
+		SSheet sheet = getNative().getSheetByName(name);
 		
-		return sheet==null?null:new SheetImpl(_bookRef,new SimpleRef<NSheet>(sheet));
+		return sheet==null?null:new SheetImpl(_bookRef,new SimpleRef<SSheet>(sheet));
 	}
 
 	

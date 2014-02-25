@@ -33,10 +33,10 @@ import org.zkoss.zss.api.model.impl.EditableFontImpl;
 import org.zkoss.zss.api.model.impl.EnumUtil;
 import org.zkoss.zss.api.model.impl.FontImpl;
 import org.zkoss.zss.api.model.impl.SimpleRef;
-import org.zkoss.zss.ngmodel.NBook;
-import org.zkoss.zss.ngmodel.NColor;
-import org.zkoss.zss.ngmodel.NFont;
-import org.zkoss.zss.ngmodel.util.FontMatcher;
+import org.zkoss.zss.model.SBook;
+import org.zkoss.zss.model.SColor;
+import org.zkoss.zss.model.SFont;
+import org.zkoss.zss.model.util.FontMatcher;
 /**
  * 
  * @author dennis
@@ -56,7 +56,7 @@ import org.zkoss.zss.ngmodel.util.FontMatcher;
 	 * @return the new cell style
 	 */
 	public EditableCellStyle createCellStyle(CellStyle src){
-		NBook book = (NBook)((BookImpl)_book).getNative();
+		SBook book = (SBook)((BookImpl)_book).getNative();
 		EditableCellStyle style = new EditableCellStyleImpl(((BookImpl)_book).getRef(),new SimpleRef(book.createCellStyle(true)));
 		if(src!=null){
 			((EditableCellStyleImpl)style).copyAttributeFrom(src);
@@ -65,8 +65,8 @@ import org.zkoss.zss.ngmodel.util.FontMatcher;
 	}
 
 	public EditableFont createFont(Font src) {
-		NBook book = (NBook)((BookImpl)_book).getNative();
-		NFont font = book.createFont(true);
+		SBook book = (SBook)((BookImpl)_book).getNative();
+		SFont font = book.createFont(true);
 
 		EditableFont nf = new EditableFontImpl(((BookImpl)_book).getRef(),new SimpleRef(font));
 		if(src!=null){
@@ -79,14 +79,14 @@ import org.zkoss.zss.ngmodel.util.FontMatcher;
 	public Color createColorFromHtmlColor(String htmlColor) {
 		Book book = _book;
 		return new ColorImpl(((BookImpl) book).getRef(),
-				new SimpleRef<NColor>(((BookImpl) book).getNative().createColor(htmlColor)));
+				new SimpleRef<SColor>(((BookImpl) book).getNative().createColor(htmlColor)));
 		
 	}
 
 	public Font findFont(Boldweight boldweight, Color color,
 			int fontHeightPoints, String fontName, boolean italic,
 			boolean strikeout, TypeOffset typeOffset, Underline underline) {
-		NBook book = ((BookImpl) _book).getNative();
+		SBook book = ((BookImpl) _book).getNative();
 
 		FontMatcher fm = new FontMatcher();
 		fm.setBoldweight(EnumUtil.toFontBoldweight(boldweight));
@@ -98,10 +98,10 @@ import org.zkoss.zss.ngmodel.util.FontMatcher;
 		fm.setTypeOffset(EnumUtil.toFontTypeOffset(typeOffset));
 		fm.setUnderline(EnumUtil.toFontUnderline(underline));
 		
-		NFont font = book.searchFont(fm);
+		SFont font = book.searchFont(fm);
 		
 		return font == null ? null : new FontImpl(((BookImpl) _book).getRef(),
-				new SimpleRef<NFont>(font));
+				new SimpleRef<SFont>(font));
 	}
 
 	

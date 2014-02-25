@@ -17,7 +17,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.api.model.impl;
 
 import org.zkoss.zss.api.model.Hyperlink;
-import org.zkoss.zss.ngmodel.NHyperlink;
+import org.zkoss.zss.model.SHyperlink;
 
 /**
  * 
@@ -26,10 +26,10 @@ import org.zkoss.zss.ngmodel.NHyperlink;
  */
 public class HyperlinkImpl implements Hyperlink{
 
-	private ModelRef<NHyperlink> _linkRef;
+	private ModelRef<SHyperlink> _linkRef;
 	private String _label;
 
-	public HyperlinkImpl(ModelRef<NHyperlink> linkRef,String label) {
+	public HyperlinkImpl(ModelRef<SHyperlink> linkRef,String label) {
 		this._linkRef = linkRef;
 		this._label = label;
 	}
@@ -59,7 +59,7 @@ public class HyperlinkImpl implements Hyperlink{
 		return true;
 	}
 
-	public NHyperlink getNative() {
+	public SHyperlink getNative() {
 		return _linkRef.get();
 	}
 	

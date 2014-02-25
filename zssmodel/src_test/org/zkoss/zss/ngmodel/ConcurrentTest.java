@@ -19,7 +19,10 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.zkoss.util.Locales;
-import org.zkoss.zss.ngmodel.impl.BookImpl;
+import org.zkoss.zss.model.SBook;
+import org.zkoss.zss.model.SBooks;
+import org.zkoss.zss.model.SSheet;
+import org.zkoss.zss.model.impl.BookImpl;
 
 @Ignore
 public class ConcurrentTest {
@@ -122,12 +125,12 @@ public class ConcurrentTest {
 	
 	@Test
 	public void testConcurrentRead(){
-		NBook book = NBooks.createBook("test");
+		SBook book = SBooks.createBook("test");
 		int sheetNo = 5;
 		int rowNo = 1000;
 		int columnNo = 50;
 		for(int s=0;s<sheetNo;s++){
-			NSheet sheet = book.createSheet("Sheet"+s);
+			SSheet sheet = book.createSheet("Sheet"+s);
 			for(int i=0;i<rowNo;i++){
 				for(int j=0;j<columnNo;j++){
 					sheet.getCell(i, j).setValue("("+i+","+j+")");
@@ -146,11 +149,11 @@ public class ConcurrentTest {
 	}
 	
 	static class MyCurrentRead1 implements Callable<Object>{
-		NBook book;
+		SBook book;
 		int sheetNo;
 		int rowNo;
 		int columnNo;
-		public MyCurrentRead1(NBook book, int sheetNo, int rowNo, int columnNo){
+		public MyCurrentRead1(SBook book, int sheetNo, int rowNo, int columnNo){
 			this.book = book;
 			this.sheetNo = sheetNo;
 			this.rowNo = rowNo;
@@ -160,7 +163,7 @@ public class ConcurrentTest {
 		@Override
 		public Object call() throws Exception {
 			for(int s=0;s<sheetNo;s++){
-				NSheet sheet = book.getSheetByName("Sheet"+s);
+				SSheet sheet = book.getSheetByName("Sheet"+s);
 				for(int i=0;i<rowNo;i++){
 					Object obj = sheet.getRow(i);
 					for(int j=0;j<columnNo;j++){

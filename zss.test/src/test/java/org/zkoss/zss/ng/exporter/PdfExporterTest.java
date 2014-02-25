@@ -14,17 +14,17 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.zkoss.zss.Setup;
 import org.zkoss.zss.Util;
+import org.zkoss.zss.model.SBook;
+import org.zkoss.zss.model.SBooks;
+import org.zkoss.zss.model.SCell;
+import org.zkoss.zss.model.SFont;
+import org.zkoss.zss.model.SRichText;
+import org.zkoss.zss.model.SSheet;
+import org.zkoss.zss.model.SFont.Boldweight;
+import org.zkoss.zss.model.SFont.Underline;
 import org.zkoss.zss.model.impl.pdf.PdfExporter;
 import org.zkoss.zss.ngapi.NImporter;
 import org.zkoss.zss.ngapi.impl.imexp.ExcelImportFactory;
-import org.zkoss.zss.ngmodel.NBook;
-import org.zkoss.zss.ngmodel.NBooks;
-import org.zkoss.zss.ngmodel.NCell;
-import org.zkoss.zss.ngmodel.NFont;
-import org.zkoss.zss.ngmodel.NFont.Boldweight;
-import org.zkoss.zss.ngmodel.NFont.Underline;
-import org.zkoss.zss.ngmodel.NRichText;
-import org.zkoss.zss.ngmodel.NSheet;
 
 public class PdfExporterTest {
 	
@@ -45,22 +45,22 @@ public class PdfExporterTest {
 
 	@Test
 	public void richTextTest() {
-		NBook book = NBooks.createBook("rich");
-		NSheet sheet = book.createSheet("first");
-		NCell cell = sheet.getCell(0, 0);
+		SBook book = SBooks.createBook("rich");
+		SSheet sheet = book.createSheet("first");
+		SCell cell = sheet.getCell(0, 0);
 		
-		NRichText rText = cell.setupRichTextValue();
-		NFont font1 = book.createFont(true);
+		SRichText rText = cell.setupRichTextValue();
+		SFont font1 = book.createFont(true);
 		font1.setColor(book.createColor("#0000FF"));
 		font1.setStrikeout(true);
 		rText.addSegment("abc", font1);
 		
-		NFont font2 = book.createFont(true);
+		SFont font2 = book.createFont(true);
 		font2.setColor(book.createColor("#FF0000"));
 		font2.setBoldweight(Boldweight.BOLD);
 		rText.addSegment("123", font2);
 		
-		NFont font3 = book.createFont(true);
+		SFont font3 = book.createFont(true);
 		font3.setColor(book.createColor("#C78548"));
 		font3.setUnderline(Underline.SINGLE);
 		rText.addSegment("xyz", font3);
@@ -92,7 +92,7 @@ public class PdfExporterTest {
 	//@Ignore("manual test only")
 	@Test
 	public void exportPdfTest() {
-		NBook book = importBook("book/PrintSetup.xlsx");
+		SBook book = importBook("book/PrintSetup.xlsx");
 		File temp = Setup.getTempFile("pdfExportTest",".pdf");
 		exportBook(book, temp);
 		Util.open(temp);
@@ -101,16 +101,16 @@ public class PdfExporterTest {
 	@Ignore("not fixed yet")
 	@Test
 	public void zss529Test() {
-		NBook book = importBook("book/taubman-nobreak.xlsx");
+		SBook book = importBook("book/taubman-nobreak.xlsx");
 		File temp = Setup.getTempFile("pdfExportTest",".pdf");
 		exportBook(book, temp);
 		Util.open(temp);
 	}
 	
-	private NBook importBook(String path) {
+	private SBook importBook(String path) {
 		NImporter importer = new ExcelImportFactory().createImporter();
 		InputStream is  = PdfExporterTest.class.getResourceAsStream(path);
-		NBook book = null;
+		SBook book = null;
 		try {
 			book = importer.imports(is, "PDFBook");
 		} catch (IOException e) {
@@ -125,7 +125,7 @@ public class PdfExporterTest {
 		return book;
 	}
 	
-	private void exportBook(NBook book, File file) {
+	private void exportBook(SBook book, File file) {
 		
 		PdfExporter exporter = new PdfExporter();
 		exporter.enableGridLines(false);

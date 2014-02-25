@@ -18,7 +18,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.ui.sys;
 
-import org.zkoss.zss.ngmodel.NSheet;
+import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.Widget;
 
@@ -65,7 +65,7 @@ public interface WidgetHandler{
 	 * handler should take care this method and load corresponding widgets, which in the block , to client side.
 	 * this method will be invoked by spreadsheet, you should not call this method directly.
 	 */
-	public void onLoadOnDemand(NSheet sheet,int left,int top,int right,int bottom);
+	public void onLoadOnDemand(SSheet sheet,int left,int top,int right,int bottom);
 	
 	/**
 	 * invalidate this handle, which means all widget in client side will be remove, and need to re-drew.
@@ -84,12 +84,12 @@ public interface WidgetHandler{
 	 * @Deprecated since 3.5 
 	 */
 	@Deprecated
-	public void updateWidgets(NSheet sheet, int left, int top, int right, int bottom);
+	public void updateWidgets(SSheet sheet, int left, int top, int right, int bottom);
 	
 	/**
 	 * Redraw widget
 	 * @param sheet
 	 * @param widgetId
 	 */
-	public void updateWidget(NSheet sheet, String widgetId);
+	public void updateWidget(SSheet sheet, String widgetId);
 }

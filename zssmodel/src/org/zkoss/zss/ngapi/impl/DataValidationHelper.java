@@ -3,28 +3,28 @@ package org.zkoss.zss.ngapi.impl;
 import java.util.Date;
 
 import org.zkoss.util.Locales;
-import org.zkoss.zss.ngmodel.NCell;
-import org.zkoss.zss.ngmodel.NCell.CellType;
-import org.zkoss.zss.ngmodel.NDataValidation;
-import org.zkoss.zss.ngmodel.NDataValidation.ValidationType;
-import org.zkoss.zss.ngmodel.NSheet;
-import org.zkoss.zss.ngmodel.impl.FormulaResultCellValue;
-import org.zkoss.zss.ngmodel.sys.CalendarUtil;
-import org.zkoss.zss.ngmodel.sys.EngineFactory;
-import org.zkoss.zss.ngmodel.sys.formula.FormulaEngine;
-import org.zkoss.zss.ngmodel.sys.formula.FormulaEvaluationContext;
-import org.zkoss.zss.ngmodel.sys.formula.FormulaExpression;
-import org.zkoss.zss.ngmodel.sys.formula.FormulaParseContext;
-import org.zkoss.zss.ngmodel.sys.input.InputEngine;
-import org.zkoss.zss.ngmodel.sys.input.InputParseContext;
-import org.zkoss.zss.ngmodel.sys.input.InputResult;
+import org.zkoss.zss.model.SCell;
+import org.zkoss.zss.model.SDataValidation;
+import org.zkoss.zss.model.SSheet;
+import org.zkoss.zss.model.SCell.CellType;
+import org.zkoss.zss.model.SDataValidation.ValidationType;
+import org.zkoss.zss.model.impl.FormulaResultCellValue;
+import org.zkoss.zss.model.sys.CalendarUtil;
+import org.zkoss.zss.model.sys.EngineFactory;
+import org.zkoss.zss.model.sys.formula.FormulaEngine;
+import org.zkoss.zss.model.sys.formula.FormulaEvaluationContext;
+import org.zkoss.zss.model.sys.formula.FormulaExpression;
+import org.zkoss.zss.model.sys.formula.FormulaParseContext;
+import org.zkoss.zss.model.sys.input.InputEngine;
+import org.zkoss.zss.model.sys.input.InputParseContext;
+import org.zkoss.zss.model.sys.input.InputResult;
 
 public class DataValidationHelper {
 
-	private final NDataValidation validation;
-	private final NSheet sheet;
+	private final SDataValidation validation;
+	private final SSheet sheet;
 	
-	public DataValidationHelper(NDataValidation validation) {
+	public DataValidationHelper(SDataValidation validation) {
 		this.validation = validation;
 		this.sheet = validation.getSheet();
 	}
@@ -168,7 +168,7 @@ public class DataValidationHelper {
 			return false;
 		}
 		if(validation.hasReferToCellList()){
-			for(NCell cell:validation.getReferToCellList()){
+			for(SCell cell:validation.getReferToCellList()){
 				Object val = cell.getValue();
 				if(value.equals(val)){
 					return true;

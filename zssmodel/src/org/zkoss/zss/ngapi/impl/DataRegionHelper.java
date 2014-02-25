@@ -1,10 +1,10 @@
 package org.zkoss.zss.ngapi.impl;
 
+import org.zkoss.zss.model.CellRegion;
+import org.zkoss.zss.model.SCell;
+import org.zkoss.zss.model.SRow;
+import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.ngapi.NRange;
-import org.zkoss.zss.ngmodel.CellRegion;
-import org.zkoss.zss.ngmodel.NCell;
-import org.zkoss.zss.ngmodel.NRow;
-import org.zkoss.zss.ngmodel.NSheet;
 
 /**
  * To help search the data region
@@ -65,7 +65,7 @@ import org.zkoss.zss.ngmodel.NSheet;
 		}
 	}	
 	
-	private CellRegion getRowCurrentRegion(NSheet sheet,int topRow, int btmRow) {
+	private CellRegion getRowCurrentRegion(SSheet sheet,int topRow, int btmRow) {
 		int minc = 0;
 		int maxc = 0;
 		int minr = topRow;
@@ -91,7 +91,7 @@ import org.zkoss.zss.ngmodel.NSheet;
 		return new CellRegion(minr, minc, maxr, maxc);
 	}
 	
-	private static int[] getCellMinMax(NSheet sheet, int row, int col) {
+	private static int[] getCellMinMax(SSheet sheet, int row, int col) {
 		CellRegion rng = sheet.getMergedRegion(row,col);
 		if(rng==null){
 			rng = new CellRegion(row,col,row,col);
@@ -100,11 +100,11 @@ import org.zkoss.zss.ngmodel.NSheet;
 		final int l = rng.getColumn();
 		final int b = rng.getLastRow();
 		final int r = rng.getLastColumn();
-		final NCell cell = sheet.getCell(t, l);
+		final SCell cell = sheet.getCell(t, l);
 		return isBlank(cell) ? null : new int[] {l, t, r, b};
 	}
 	
-	public static boolean isOneCell(NSheet sheet, CellRegion rng) {
+	public static boolean isOneCell(SSheet sheet, CellRegion rng) {
 		if (rng.isSingle()) {
 			return true;
 		}
@@ -136,12 +136,12 @@ import org.zkoss.zss.ngmodel.NSheet;
 	 * @param col starting cell's column index
 	 * @return
 	 */
-	/*package*/ static CellRegion findCurrentRegion(NSheet sheet, int row, int col) {
+	/*package*/ static CellRegion findCurrentRegion(SSheet sheet, int row, int col) {
 		int minNonBlankColumn = col;
 		int maxNonBlankColumn = col;
 		int minNonBlankRow = Integer.MAX_VALUE;
 		int maxNonBlankRow = -1;
-		final NRow roworg = sheet.getRow(row);
+		final SRow roworg = sheet.getRow(row);
 		final int[] leftTopRightBottom = getRowMinMax(sheet, roworg, minNonBlankColumn, maxNonBlankColumn);
 		if (leftTopRightBottom != null) {
 			minNonBlankColumn = leftTopRightBottom[0];
@@ -158,7 +158,7 @@ import org.zkoss.zss.ngmodel.NSheet;
 		do {
 			//for row above
 			if (!stopFindingUp) {
-				final NRow rowu = sheet.getRow(rowUp);
+				final SRow rowu = sheet.getRow(rowUp);
 				final int[] upperRowLeftTopRightBottom = getRowMinMax(sheet, rowu, minNonBlankColumn, maxNonBlankColumn);
 				if (upperRowLeftTopRightBottom != null) {
 					if (minNonBlankColumn != upperRowLeftTopRightBottom[0] || maxNonBlankColumn != upperRowLeftTopRightBottom[2]) {  //minc or maxc changed!
@@ -181,7 +181,7 @@ import org.zkoss.zss.ngmodel.NSheet;
 
 			//for row below
 			if (!stopFindingDown) {
-				final NRow rowd = sheet.getRow(rowDown);
+				final SRow rowd = sheet.getRow(rowDown);
 				final int[] downRowLeftTopRightBottom = getRowMinMax(sheet, rowd, minNonBlankColumn, maxNonBlankColumn);
 				if (downRowLeftTopRightBottom != null) {
 					if (minNonBlankColumn != downRowLeftTopRightBottom[0] || maxNonBlankColumn != downRowLeftTopRightBottom[2]) { //minc and maxc changed
@@ -208,7 +208,7 @@ import org.zkoss.zss.ngmodel.NSheet;
 	}
 	
 	//[0]: left, [1]: top, [2]: right, [3]: bottom; null mean blank row
-	private static int[] getRowMinMax(NSheet sheet, NRow rowobj, int minc, int maxc) {
+	private static int[] getRowMinMax(SSheet sheet, SRow rowobj, int minc, int maxc) {
 		if (rowobj.isNull()) { //check if no cell at all!
 			return null;
 		}
@@ -284,13 +284,13 @@ import org.zkoss.zss.ngmodel.NSheet;
 	}	
 	
 	//returns the largest square range of this sheet that contains non-blank cells
-	private CellRegion getLargestRange(NSheet sheet) {
+	private CellRegion getLargestRange(SSheet sheet) {
 		int t = Math.max(0, sheet.getStartRowIndex());//to ignore -1 (no row)
 		int b = sheet.getEndRowIndex();
 		//top row
 		int minr = -1;
 		for(int r = t; r <= b && minr < 0; ++r) {
-			final NRow rowobj = sheet.getRow(r);
+			final SRow rowobj = sheet.getRow(r);
 			if (!rowobj.isNull()) {
 				int ll = sheet.getStartCellIndex(r);
 				if (ll < 0) { //empty row
@@ -298,7 +298,7 @@ import org.zkoss.zss.ngmodel.NSheet;
 				}
 				int rr = sheet.getEndCellIndex(r);
 				for(int c = ll; c <= rr; ++c) {
-					final NCell cell = sheet.getCell(r,c);
+					final SCell cell = sheet.getCell(r,c);
 					if (!isBlank(cell)) { //first no blank row
 						minr = r;
 						break;
@@ -309,7 +309,7 @@ import org.zkoss.zss.ngmodel.NSheet;
 		//bottom row
 		int maxr = -1;
 		for(int r = b; r >= minr && maxr < 0; --r) {
-			final NRow rowobj = sheet.getRow(r);
+			final SRow rowobj = sheet.getRow(r);
 			if (!rowobj.isNull()) {
 				int ll = sheet.getStartCellIndex(r);
 				if (ll < 0) { //empty row
@@ -317,7 +317,7 @@ import org.zkoss.zss.ngmodel.NSheet;
 				}
 				int rr = sheet.getEndCellIndex(r);
 				for(int c = ll; c <= rr; ++c) {
-					final NCell cell = sheet.getCell(r, c);
+					final SCell cell = sheet.getCell(r, c);
 					if (!isBlank(cell)) { //first no blank row
 						maxr = r;
 						break;
@@ -328,7 +328,7 @@ import org.zkoss.zss.ngmodel.NSheet;
 		//left col
 		int minc = Integer.MAX_VALUE;
 		for(int r = minr; r <= maxr; ++r) {
-			final NRow rowobj = sheet.getRow(r);
+			final SRow rowobj = sheet.getRow(r);
 			if (!rowobj.isNull()) {
 				int ll = sheet.getStartCellIndex(r);
 				if (ll < 0) { //empty row
@@ -336,7 +336,7 @@ import org.zkoss.zss.ngmodel.NSheet;
 				}
 				int rr = sheet.getEndCellIndex(r);
 				for(int c = ll; c < minc && c <= rr; ++c) {
-					final NCell cell = sheet.getCell(r,c);
+					final SCell cell = sheet.getCell(r,c);
 					if (!isBlank(cell)) { //first no blank row
 						minc = c;
 						break;
@@ -347,7 +347,7 @@ import org.zkoss.zss.ngmodel.NSheet;
 		//right col
 		int maxc = -1;
 		for(int r = minr; r <= maxr; ++r) {
-			final NRow rowobj = sheet.getRow(r);
+			final SRow rowobj = sheet.getRow(r);
 			if (!rowobj.isNull()) {
 				int ll = sheet.getStartCellIndex(r);
 				if (ll < 0) { //empty row
@@ -355,7 +355,7 @@ import org.zkoss.zss.ngmodel.NSheet;
 				}
 				int rr =  sheet.getEndCellIndex(r);
 				for(int c = rr; c > maxc && c >= ll; --c) {
-					final NCell cell = sheet.getCell(r, c);
+					final SCell cell = sheet.getCell(r, c);
 					if (!isBlank(cell)) { //first no blank row
 						maxc = c;
 						break;

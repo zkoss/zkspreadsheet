@@ -15,12 +15,26 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.zkoss.image.AImage;
 import org.zkoss.util.Locales;
+import org.zkoss.zss.model.CellRegion;
+import org.zkoss.zss.model.ErrorValue;
+import org.zkoss.zss.model.InvalidateModelOpException;
+import org.zkoss.zss.model.ModelEvent;
+import org.zkoss.zss.model.ModelEventListener;
+import org.zkoss.zss.model.ModelEvents;
+import org.zkoss.zss.model.SBook;
+import org.zkoss.zss.model.SBooks;
+import org.zkoss.zss.model.SCell;
+import org.zkoss.zss.model.SCellStyle;
+import org.zkoss.zss.model.SHyperlink;
+import org.zkoss.zss.model.SPicture;
+import org.zkoss.zss.model.SSheet;
+import org.zkoss.zss.model.ViewAnchor;
+import org.zkoss.zss.model.SCell.CellType;
+import org.zkoss.zss.model.SHyperlink.HyperlinkType;
+import org.zkoss.zss.model.SPicture.Format;
+import org.zkoss.zss.model.impl.BookImpl;
 import org.zkoss.zss.ngapi.*;
 import org.zkoss.zss.ngapi.impl.imexp.ExcelExportFactory.Type;
-import org.zkoss.zss.ngmodel.NCell.CellType;
-import org.zkoss.zss.ngmodel.NHyperlink.HyperlinkType;
-import org.zkoss.zss.ngmodel.NPicture.Format;
-import org.zkoss.zss.ngmodel.impl.BookImpl;
 
 public class RangeTest {
 
@@ -36,8 +50,8 @@ public class RangeTest {
 	@Test
 	public void testGetRange(){
 		
-		NBook book = NBooks.createBook("book1");
-		NSheet sheet1 = book.createSheet("Sheet1");
+		SBook book = SBooks.createBook("book1");
+		SSheet sheet1 = book.createSheet("Sheet1");
 		
 		
 		NRange r1 = NRanges.range(sheet1);
@@ -63,11 +77,11 @@ public class RangeTest {
 	
 	@Test
 	public void testGeneralCellValue1(){
-		NBook book = NBooks.createBook("book1");
-		NSheet sheet = book.createSheet("Sheet 1");
+		SBook book = SBooks.createBook("book1");
+		SSheet sheet = book.createSheet("Sheet 1");
 		Date now = new Date();
 		ErrorValue err = new ErrorValue(ErrorValue.INVALID_FORMULA);
-		NCell cell = sheet.getCell(1, 1);
+		SCell cell = sheet.getCell(1, 1);
 		
 		Assert.assertEquals(CellType.BLANK, cell.getType());
 		Assert.assertNull(cell.getValue());
@@ -117,11 +131,11 @@ public class RangeTest {
 	
 	@Test
 	public void testGeneralCellValue2(){
-		NBook book = NBooks.createBook("book1");
-		NSheet sheet = book.createSheet("Sheet 1");
+		SBook book = SBooks.createBook("book1");
+		SSheet sheet = book.createSheet("Sheet 1");
 		Date now = new Date();
 		ErrorValue err = new ErrorValue(ErrorValue.INVALID_FORMULA);
-		NCell cell = sheet.getCell(1, 1);
+		SCell cell = sheet.getCell(1, 1);
 		
 		Assert.assertEquals(CellType.BLANK, cell.getType());
 		Assert.assertNull(cell.getValue());
@@ -167,14 +181,14 @@ public class RangeTest {
 	
 	@Test
 	public void testFormulaDependency(){
-		NBook book = NBooks.createBook("book1");
-		NSheet sheet = book.createSheet("Sheet 1");
+		SBook book = SBooks.createBook("book1");
+		SSheet sheet = book.createSheet("Sheet 1");
 		
 		NRanges.range(sheet,0,0).setEditText("999");
 		NRanges.range(sheet,0,1).setValue("=SUM(A1)");
 		
 		
-		NCell cell = sheet.getCell(0, 0);
+		SCell cell = sheet.getCell(0, 0);
 		Assert.assertEquals(CellType.NUMBER, cell.getType());
 		Assert.assertEquals(999, cell.getNumberValue().intValue());
 		
@@ -228,8 +242,8 @@ C	3	6	9	=SUM(E9:F9)
  */
 	@Test
 	public void testAutoFilterRange(){
-		NBook book = NBooks.createBook("book1");
-		NSheet sheet = book.createSheet("Sheet 1");
+		SBook book = SBooks.createBook("book1");
+		SSheet sheet = book.createSheet("Sheet 1");
 		
 		NRange range = NRanges.range(sheet,"D4").findAutoFilterRange();
 		
@@ -308,16 +322,16 @@ C	3	6	9	=SUM(E9:F9)
 	
 	@Test
 	public void addPicture(){
-		NBook book = NBooks.createBook("book1");
-		NSheet sheet = book.createSheet("Picture");
+		SBook book = SBooks.createBook("book1");
+		SSheet sheet = book.createSheet("Picture");
 		
 		assertEquals(0, sheet.getPictures().size());
 		
 		try {
 			AImage zklogo = new AImage(RangeTest.class.getResource("zklogo.png"));
 			
-			NViewAnchor anchor = new NViewAnchor(0, 1, zklogo.getWidth()/2, zklogo.getHeight()/2);
-			NPicture picture = NRanges.range(sheet).addPicture(anchor, zklogo.getByteData(), NPicture.Format.PNG);
+			ViewAnchor anchor = new ViewAnchor(0, 1, zklogo.getWidth()/2, zklogo.getHeight()/2);
+			SPicture picture = NRanges.range(sheet).addPicture(anchor, zklogo.getByteData(), SPicture.Format.PNG);
 			
 			assertEquals(1, sheet.getPictures().size());
 			assertEquals(Format.PNG, picture.getFormat());
@@ -332,16 +346,16 @@ C	3	6	9	=SUM(E9:F9)
 	
 	@Test
 	public void deletePicture(){
-		NBook book = NBooks.createBook("book1");
-		NSheet sheet = book.createSheet("Picture");
+		SBook book = SBooks.createBook("book1");
+		SSheet sheet = book.createSheet("Picture");
 		
 		assertEquals(0, sheet.getPictures().size());
 		
 		try {
 			AImage zklogo = new AImage(RangeTest.class.getResource("zklogo.png"));
 			
-			NViewAnchor anchor = new NViewAnchor(0, 1, zklogo.getWidth()/2, zklogo.getHeight()/2);
-			NPicture picture = NRanges.range(sheet).addPicture(anchor, zklogo.getByteData(), NPicture.Format.PNG);
+			ViewAnchor anchor = new ViewAnchor(0, 1, zklogo.getWidth()/2, zklogo.getHeight()/2);
+			SPicture picture = NRanges.range(sheet).addPicture(anchor, zklogo.getByteData(), SPicture.Format.PNG);
 			
 			assertEquals(1, sheet.getPictures().size());
 			assertEquals(Format.PNG, picture.getFormat());
@@ -359,22 +373,22 @@ C	3	6	9	=SUM(E9:F9)
 	
 	@Test
 	public void movePicture(){
-		NBook book = NBooks.createBook("book1");
-		NSheet sheet = book.createSheet("Picture");
+		SBook book = SBooks.createBook("book1");
+		SSheet sheet = book.createSheet("Picture");
 		
 		assertEquals(0, sheet.getPictures().size());
 		
 		try {
 			AImage zklogo = new AImage(RangeTest.class.getResource("zklogo.png"));
 			
-			NViewAnchor anchor = new NViewAnchor(0, 1, zklogo.getWidth()/2, zklogo.getHeight()/2);
-			NPicture picture = NRanges.range(sheet).addPicture(anchor, zklogo.getByteData(), NPicture.Format.PNG);
+			ViewAnchor anchor = new ViewAnchor(0, 1, zklogo.getWidth()/2, zklogo.getHeight()/2);
+			SPicture picture = NRanges.range(sheet).addPicture(anchor, zklogo.getByteData(), SPicture.Format.PNG);
 			
 			assertEquals(1, sheet.getPictures().size());
 			assertEquals(Format.PNG, picture.getFormat());
 			assertEquals(zklogo.getWidth()/2, picture.getAnchor().getWidth());
 			
-			NViewAnchor newAnchor = new NViewAnchor(3, 4, zklogo.getWidth()/2, zklogo.getHeight()/2);
+			ViewAnchor newAnchor = new ViewAnchor(3, 4, zklogo.getWidth()/2, zklogo.getHeight()/2);
 			NRanges.range(sheet).movePicture(picture, newAnchor);
 			assertEquals(3, picture.getAnchor().getRowIndex());
 			assertEquals(4, picture.getAnchor().getColumnIndex());
@@ -388,9 +402,9 @@ C	3	6	9	=SUM(E9:F9)
 	
 	@Test
 	public void testDeleteSheet(){
-		NBook book = NBooks.createBook("book1");
-		NSheet sheet1 = book.createSheet("Sheet1");
-		NSheet sheet2 = book.createSheet("Sheet2");
+		SBook book = SBooks.createBook("book1");
+		SSheet sheet1 = book.createSheet("Sheet1");
+		SSheet sheet2 = book.createSheet("Sheet2");
 		
 		sheet1.getCell("A1").setValue(11);
 		sheet1.getCell("B1").setValue("=A1");
@@ -405,12 +419,12 @@ C	3	6	9	=SUM(E9:F9)
 	
 	@Test
 	public void testSetHyperlink(){
-		NBook book = NBooks.createBook("book1");
-		NSheet sheet1 = book.createSheet("Sheet1");
+		SBook book = SBooks.createBook("book1");
+		SSheet sheet1 = book.createSheet("Sheet1");
 		NRange range = NRanges.range(sheet1,"A1:B2");
 		range.setHyperlink(HyperlinkType.URL, "http://www.google.com", "Google");
 		
-		NHyperlink link = range.getHyperlink();
+		SHyperlink link = range.getHyperlink();
 		Assert.assertEquals(HyperlinkType.URL, link.getType());
 		Assert.assertEquals("http://www.google.com", link.getAddress());
 		Assert.assertEquals("Google", link.getLabel());
@@ -426,9 +440,9 @@ C	3	6	9	=SUM(E9:F9)
 	
 	@Test
 	public void testSetStyle(){
-		NBook book = NBooks.createBook("book1");
-		NSheet sheet1 = book.createSheet("Sheet1");
-		NCellStyle style1 = book.createCellStyle(true);
+		SBook book = SBooks.createBook("book1");
+		SSheet sheet1 = book.createSheet("Sheet1");
+		SCellStyle style1 = book.createCellStyle(true);
 		
 		NRanges.range(sheet1,"A1:B2").setCellStyle(style1);
 		Assert.assertEquals(style1, NRanges.range(sheet1,"A1").getCellStyle());

@@ -17,12 +17,12 @@ import org.zkoss.zss.api.Exporters;
 import org.zkoss.zss.api.Importers;
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.Sheet;
-import org.zkoss.zss.ngmodel.NCell;
-import org.zkoss.zss.ngmodel.NSheet;
-import org.zkoss.zss.ngmodel.sys.EngineFactory;
-import org.zkoss.zss.ngmodel.sys.format.FormatContext;
-import org.zkoss.zss.ngmodel.sys.format.FormatEngine;
-import org.zkoss.zss.ngmodel.sys.format.FormatResult;
+import org.zkoss.zss.model.SCell;
+import org.zkoss.zss.model.SSheet;
+import org.zkoss.zss.model.sys.EngineFactory;
+import org.zkoss.zss.model.sys.format.FormatContext;
+import org.zkoss.zss.model.sys.format.FormatEngine;
+import org.zkoss.zss.model.sys.format.FormatResult;
 
 /**
  * a helper for testing
@@ -119,8 +119,8 @@ public class Util {
 	}
 	
 	public static String getFormatHTMLColor(Sheet sheet, int row, int col) {
-		NSheet xSheet = sheet.getInternalSheet();
-		NCell cell = xSheet.getCell(row,col);
+		SSheet xSheet = sheet.getInternalSheet();
+		SCell cell = xSheet.getCell(row,col);
 		FormatEngine engine = EngineFactory.getInstance().createFormatEngine();
 		FormatResult r = engine.format(cell, new FormatContext(Locales.getCurrent()));
 		return  r.getColor()!=null?r.getColor().getHtmlColor():null;

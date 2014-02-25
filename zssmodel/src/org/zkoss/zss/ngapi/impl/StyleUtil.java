@@ -18,14 +18,14 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.ngapi.impl;
 
-import org.zkoss.zss.ngmodel.NBook;
-import org.zkoss.zss.ngmodel.NCell;
-import org.zkoss.zss.ngmodel.NCellStyle;
-import org.zkoss.zss.ngmodel.NColor;
-import org.zkoss.zss.ngmodel.NFont;
-import org.zkoss.zss.ngmodel.NSheet;
-import org.zkoss.zss.ngmodel.util.CellStyleMatcher;
-import org.zkoss.zss.ngmodel.util.FontMatcher;
+import org.zkoss.zss.model.SBook;
+import org.zkoss.zss.model.SCell;
+import org.zkoss.zss.model.SCellStyle;
+import org.zkoss.zss.model.SColor;
+import org.zkoss.zss.model.SFont;
+import org.zkoss.zss.model.SSheet;
+import org.zkoss.zss.model.util.CellStyleMatcher;
+import org.zkoss.zss.model.util.FontMatcher;
 /**
  * A utility class to help spreadsheet set style of a cell
  * @author Dennis.Chen
@@ -34,18 +34,18 @@ import org.zkoss.zss.ngmodel.util.FontMatcher;
 public class StyleUtil {
 //	private static final Log log = Log.lookup(NStyles.class);
 	
-	public static NCellStyle cloneCellStyle(NCell cell) {
-		final NCellStyle destination = cell.getSheet().getBook().createCellStyle(cell.getCellStyle(), true);
+	public static SCellStyle cloneCellStyle(SCell cell) {
+		final SCellStyle destination = cell.getSheet().getBook().createCellStyle(cell.getCellStyle(), true);
 		return destination;
 	}
 	
-	public static void setFontColor(NSheet sheet, int row, int col, String color/*,HashMap<Integer,NCellStyle> cache*/){
-		final NCell cell = sheet.getCell(row,col);
-		final NBook book = sheet.getBook();
-		final NCellStyle orgStyle = cell.getCellStyle();
-		NFont orgFont = orgStyle.getFont();
-		final NColor orgColor = orgFont.getColor();
-		final NColor newColor = book.createColor(color);
+	public static void setFontColor(SSheet sheet, int row, int col, String color/*,HashMap<Integer,NCellStyle> cache*/){
+		final SCell cell = sheet.getCell(row,col);
+		final SBook book = sheet.getBook();
+		final SCellStyle orgStyle = cell.getCellStyle();
+		SFont orgFont = orgStyle.getFont();
+		final SColor orgColor = orgFont.getColor();
+		final SColor newColor = book.createColor(color);
 		if (orgColor == newColor || orgColor != null && orgColor.equals(newColor)) {
 			return;
 		}
@@ -59,11 +59,11 @@ public class StyleUtil {
 		FontMatcher fontmatcher = new FontMatcher(orgFont);
 		fontmatcher.setColor(color);
 		
-		NFont font = book.searchFont(fontmatcher);
+		SFont font = book.searchFont(fontmatcher);
 		
 		
 		
-		NCellStyle style = null;
+		SCellStyle style = null;
 		if(font!=null){//search it since we have existed font
 			CellStyleMatcher matcher = new CellStyleMatcher(orgStyle);
 			matcher.setFont(font);
@@ -85,34 +85,34 @@ public class StyleUtil {
 	}
 	
 	
-	public static void setFillColor(NSheet sheet, int row, int col, String htmlColor){
-		final NBook book = sheet.getBook();
-		final NCell cell = sheet.getCell(row,col);
-		final NCellStyle orgStyle = cell.getCellStyle();
-		final NColor orgColor = orgStyle.getFillColor();
-		final NColor newColor = book.createColor(htmlColor);
+	public static void setFillColor(SSheet sheet, int row, int col, String htmlColor){
+		final SBook book = sheet.getBook();
+		final SCell cell = sheet.getCell(row,col);
+		final SCellStyle orgStyle = cell.getCellStyle();
+		final SColor orgColor = orgStyle.getFillColor();
+		final SColor newColor = book.createColor(htmlColor);
 		if (orgColor == newColor || orgColor != null  && orgColor.equals(newColor)) { //no change, skip
 			return;
 		}
 		
 		CellStyleMatcher matcher = new CellStyleMatcher(orgStyle);
 		matcher.setFillColor(htmlColor);
-		matcher.setFillPattern(NCellStyle.FillPattern.SOLID_FOREGROUND);
+		matcher.setFillPattern(SCellStyle.FillPattern.SOLID_FOREGROUND);
 		
-		NCellStyle style = book.searchCellStyle(matcher);
+		SCellStyle style = book.searchCellStyle(matcher);
 		if(style==null){
 			style = cloneCellStyle(cell);
 			style.setFillColor(newColor);
-			style.setFillPattern(NCellStyle.FillPattern.SOLID_FOREGROUND);
+			style.setFillPattern(SCellStyle.FillPattern.SOLID_FOREGROUND);
 		}
 		cell.setCellStyle(style);
 		
 	}
 	
-	public static void setTextWrap(NSheet sheet,int row,int col,boolean wrap){
-		final NBook book = sheet.getBook();
-		final NCell cell = sheet.getCell(row,col);
-		final NCellStyle orgStyle = cell.getCellStyle();
+	public static void setTextWrap(SSheet sheet,int row,int col,boolean wrap){
+		final SBook book = sheet.getBook();
+		final SCell cell = sheet.getCell(row,col);
+		final SCellStyle orgStyle = cell.getCellStyle();
 		final boolean textWrap = orgStyle.isWrapText();
 		if (wrap == textWrap) { //no change, skip
 			return;
@@ -120,7 +120,7 @@ public class StyleUtil {
 		
 		CellStyleMatcher matcher = new CellStyleMatcher(orgStyle);
 		matcher.setWrapText(wrap);
-		NCellStyle style = book.searchCellStyle(matcher);
+		SCellStyle style = book.searchCellStyle(matcher);
 		if(style==null){
 			style  = cloneCellStyle(cell);
 			style.setWrapText(wrap);
@@ -128,11 +128,11 @@ public class StyleUtil {
 		cell.setCellStyle(style);
 	}
 	
-	public static void setFontHeightPoints(NSheet sheet,int row,int col,int fontHeightPoints){
-		final NCell cell = sheet.getCell(row,col);
-		final NBook book = sheet.getBook();
-		final NCellStyle orgStyle = cell.getCellStyle();
-		NFont orgFont = orgStyle.getFont();
+	public static void setFontHeightPoints(SSheet sheet,int row,int col,int fontHeightPoints){
+		final SCell cell = sheet.getCell(row,col);
+		final SBook book = sheet.getBook();
+		final SCellStyle orgStyle = cell.getCellStyle();
+		SFont orgFont = orgStyle.getFont();
 		
 		final int orgSize = orgFont.getHeightPoints();
 		if (orgSize == fontHeightPoints) { //no change, skip
@@ -142,9 +142,9 @@ public class StyleUtil {
 		FontMatcher fontmatcher = new FontMatcher(orgFont);
 		fontmatcher.setHeightPoints(fontHeightPoints);
 		
-		NFont font = book.searchFont(fontmatcher);
+		SFont font = book.searchFont(fontmatcher);
 		
-		NCellStyle style = null;
+		SCellStyle style = null;
 		if(font!=null){//search it since we have existed font
 			CellStyleMatcher matcher = new CellStyleMatcher(orgStyle);
 			matcher.setFont(font);
@@ -161,11 +161,11 @@ public class StyleUtil {
 		cell.setCellStyle(style);
 	}
 	
-	public static void setFontStrikethrough(NSheet sheet,int row,int col, boolean strikeout){
-		final NCell cell = sheet.getCell(row,col);
-		final NBook book = sheet.getBook();
-		final NCellStyle orgStyle = cell.getCellStyle();
-		NFont orgFont = orgStyle.getFont();
+	public static void setFontStrikethrough(SSheet sheet,int row,int col, boolean strikeout){
+		final SCell cell = sheet.getCell(row,col);
+		final SBook book = sheet.getBook();
+		final SCellStyle orgStyle = cell.getCellStyle();
+		SFont orgFont = orgStyle.getFont();
 		
 		final boolean orgStrikeout = orgFont.isStrikeout();
 		if (orgStrikeout == strikeout) { //no change, skip
@@ -175,9 +175,9 @@ public class StyleUtil {
 		FontMatcher fontmatcher = new FontMatcher(orgFont);
 		fontmatcher.setStrikeout(strikeout);
 		
-		NFont font = book.searchFont(fontmatcher);
+		SFont font = book.searchFont(fontmatcher);
 		
-		NCellStyle style = null;
+		SCellStyle style = null;
 		if(font!=null){//search it since we have existed font
 			CellStyleMatcher matcher = new CellStyleMatcher(orgStyle);
 			matcher.setFont(font);
@@ -195,11 +195,11 @@ public class StyleUtil {
 		
 	}
 	
-	public static void setFontName(NSheet sheet,int row,int col,String name){
-		final NCell cell = sheet.getCell(row,col);
-		final NBook book = sheet.getBook();
-		final NCellStyle orgStyle = cell.getCellStyle();
-		NFont orgFont = orgStyle.getFont();
+	public static void setFontName(SSheet sheet,int row,int col,String name){
+		final SCell cell = sheet.getCell(row,col);
+		final SBook book = sheet.getBook();
+		final SCellStyle orgStyle = cell.getCellStyle();
+		SFont orgFont = orgStyle.getFont();
 		
 		final String orgName = orgFont.getName();
 		if (orgName.equals(name)) { //no change, skip
@@ -209,9 +209,9 @@ public class StyleUtil {
 		FontMatcher fontmatcher = new FontMatcher(orgFont);
 		fontmatcher.setName(name);
 		
-		NFont font = book.searchFont(fontmatcher);
+		SFont font = book.searchFont(fontmatcher);
 		
-		NCellStyle style = null;
+		SCellStyle style = null;
 		if(font!=null){//search it since we have existed font
 			CellStyleMatcher matcher = new CellStyleMatcher(orgStyle);
 			matcher.setFont(font);
@@ -235,33 +235,33 @@ public class StyleUtil {
 	public static final short BORDER_EDGE_LEFT			= 0x08;
 	public static final short BORDER_EDGE_ALL			= BORDER_EDGE_BOTTOM|BORDER_EDGE_RIGHT|BORDER_EDGE_TOP|BORDER_EDGE_LEFT;
 	
-	public static void setBorder(NSheet sheet,int row,int col, String color, NCellStyle.BorderType linestyle){
+	public static void setBorder(SSheet sheet,int row,int col, String color, SCellStyle.BorderType linestyle){
 		setBorder(sheet,row,col, color, linestyle, BORDER_EDGE_ALL);
 	}
 	
-	public static void setBorderTop(NSheet sheet,int row,int col,String color, NCellStyle.BorderType linestyle){
+	public static void setBorderTop(SSheet sheet,int row,int col,String color, SCellStyle.BorderType linestyle){
 		setBorder(sheet,row,col, color, linestyle, BORDER_EDGE_TOP);
 	}
-	public static void setBorderLeft(NSheet sheet,int row,int col,String color, NCellStyle.BorderType linestyle){
+	public static void setBorderLeft(SSheet sheet,int row,int col,String color, SCellStyle.BorderType linestyle){
 		setBorder(sheet,row,col, color, linestyle, BORDER_EDGE_LEFT);
 	}
-	public static void setBorderBottom(NSheet sheet,int row,int col,String color, NCellStyle.BorderType linestyle){
+	public static void setBorderBottom(SSheet sheet,int row,int col,String color, SCellStyle.BorderType linestyle){
 		setBorder(sheet,row,col, color, linestyle, BORDER_EDGE_BOTTOM);
 	}
-	public static void setBorderRight(NSheet sheet,int row,int col,String color, NCellStyle.BorderType linestyle){
+	public static void setBorderRight(SSheet sheet,int row,int col,String color, SCellStyle.BorderType linestyle){
 		setBorder(sheet,row,col, color, linestyle, BORDER_EDGE_RIGHT);
 	}
 	
-	public static void setBorder(NSheet sheet,int row,int col, String htmlColor, NCellStyle.BorderType lineStyle, short at){
-		final NBook book = sheet.getBook();
-		final NCell cell = sheet.getCell(row,col);
-		final NCellStyle orgStyle = cell.getCellStyle();
+	public static void setBorder(SSheet sheet,int row,int col, String htmlColor, SCellStyle.BorderType lineStyle, short at){
+		final SBook book = sheet.getBook();
+		final SCell cell = sheet.getCell(row,col);
+		final SCellStyle orgStyle = cell.getCellStyle();
 		//ZSS-464 try to search existed matched style
-		NCellStyle style = null;
-		final NColor color = book.createColor(htmlColor);
-		boolean hasBorder = lineStyle != NCellStyle.BorderType.NONE;
+		SCellStyle style = null;
+		final SColor color = book.createColor(htmlColor);
+		boolean hasBorder = lineStyle != SCellStyle.BorderType.NONE;
 		if(htmlColor!=null){
-			final NCellStyle oldstyle = cell.getCellStyle();
+			final SCellStyle oldstyle = cell.getCellStyle();
 			CellStyleMatcher matcher = new CellStyleMatcher(oldstyle);
 			if((at & BORDER_EDGE_LEFT)!=0) {
 				if(hasBorder)
@@ -335,13 +335,13 @@ public class StyleUtil {
 //		System.out.println(">>"+sb.toString());
 //	}
 	
-	public static void setFontBoldWeight(NSheet sheet,int row,int col,NFont.Boldweight boldWeight){
-		final NCell cell = sheet.getCell(row,col);
-		final NBook book = sheet.getBook();
-		final NCellStyle orgStyle = cell.getCellStyle();
-		NFont orgFont = orgStyle.getFont();
+	public static void setFontBoldWeight(SSheet sheet,int row,int col,SFont.Boldweight boldWeight){
+		final SCell cell = sheet.getCell(row,col);
+		final SBook book = sheet.getBook();
+		final SCellStyle orgStyle = cell.getCellStyle();
+		SFont orgFont = orgStyle.getFont();
 		
-		final NFont.Boldweight orgBoldWeight = orgFont.getBoldweight();
+		final SFont.Boldweight orgBoldWeight = orgFont.getBoldweight();
 		if (orgBoldWeight.equals(boldWeight)) { //no change, skip
 			return;
 		}
@@ -349,9 +349,9 @@ public class StyleUtil {
 		FontMatcher fontmatcher = new FontMatcher(orgFont);
 		fontmatcher.setBoldweight(boldWeight);
 		
-		NFont font = book.searchFont(fontmatcher);
+		SFont font = book.searchFont(fontmatcher);
 		
-		NCellStyle style = null;
+		SCellStyle style = null;
 		if(font!=null){//search it since we have existed font
 			CellStyleMatcher matcher = new CellStyleMatcher(orgStyle);
 			matcher.setFont(font);
@@ -368,11 +368,11 @@ public class StyleUtil {
 		cell.setCellStyle(style);
 	}
 	
-	public static void setFontItalic(NSheet sheet, int row, int col, boolean italic) {
-		final NCell cell = sheet.getCell(row,col);
-		final NBook book = sheet.getBook();
-		final NCellStyle orgStyle = cell.getCellStyle();
-		NFont orgFont = orgStyle.getFont();
+	public static void setFontItalic(SSheet sheet, int row, int col, boolean italic) {
+		final SCell cell = sheet.getCell(row,col);
+		final SBook book = sheet.getBook();
+		final SCellStyle orgStyle = cell.getCellStyle();
+		SFont orgFont = orgStyle.getFont();
 		
 		final boolean orgItalic = orgFont.isItalic();
 		if (orgItalic == italic) { //no change, skip
@@ -382,9 +382,9 @@ public class StyleUtil {
 		FontMatcher fontmatcher = new FontMatcher(orgFont);
 		fontmatcher.setItalic(italic);
 		
-		NFont font = book.searchFont(fontmatcher);
+		SFont font = book.searchFont(fontmatcher);
 		
-		NCellStyle style = null;
+		SCellStyle style = null;
 		if(font!=null){//search it since we have existed font
 			CellStyleMatcher matcher = new CellStyleMatcher(orgStyle);
 			matcher.setFont(font);
@@ -402,13 +402,13 @@ public class StyleUtil {
 		
 	}
 	
-	public static void setFontUnderline(NSheet sheet,int row,int col, NFont.Underline underline){
-		final NCell cell = sheet.getCell(row,col);
-		final NBook book = sheet.getBook();
-		final NCellStyle orgStyle = cell.getCellStyle();
-		NFont orgFont = orgStyle.getFont();
+	public static void setFontUnderline(SSheet sheet,int row,int col, SFont.Underline underline){
+		final SCell cell = sheet.getCell(row,col);
+		final SBook book = sheet.getBook();
+		final SCellStyle orgStyle = cell.getCellStyle();
+		SFont orgFont = orgStyle.getFont();
 		
-		final NFont.Underline orgUnderline = orgFont.getUnderline();
+		final SFont.Underline orgUnderline = orgFont.getUnderline();
 		if (orgUnderline.equals(underline)) { //no change, skip
 			return;
 		}
@@ -416,9 +416,9 @@ public class StyleUtil {
 		FontMatcher fontmatcher = new FontMatcher(orgFont);
 		fontmatcher.setUnderline(underline);
 		
-		NFont font = book.searchFont(fontmatcher);
+		SFont font = book.searchFont(fontmatcher);
 		
-		NCellStyle style = null;
+		SCellStyle style = null;
 		if(font!=null){//search it since we have existed font
 			CellStyleMatcher matcher = new CellStyleMatcher(orgStyle);
 			matcher.setFont(font);
@@ -435,18 +435,18 @@ public class StyleUtil {
 		cell.setCellStyle(style);
 	}
 	
-	public static void setTextHAlign(NSheet sheet,int row,int col, NCellStyle.Alignment align){
-		final NBook book = sheet.getBook();
-		final NCell cell = sheet.getCell(row,col);
-		final NCellStyle orgStyle = cell.getCellStyle();
-		final NCellStyle.Alignment orgAlign = orgStyle.getAlignment();
+	public static void setTextHAlign(SSheet sheet,int row,int col, SCellStyle.Alignment align){
+		final SBook book = sheet.getBook();
+		final SCell cell = sheet.getCell(row,col);
+		final SCellStyle orgStyle = cell.getCellStyle();
+		final SCellStyle.Alignment orgAlign = orgStyle.getAlignment();
 		if (align.equals(orgAlign)) { //no change, skip
 			return;
 		}
 		
 		CellStyleMatcher matcher = new CellStyleMatcher(orgStyle);
 		matcher.setAlignment(align);
-		NCellStyle style = book.searchCellStyle(matcher);
+		SCellStyle style = book.searchCellStyle(matcher);
 		if(style==null){
 			style = cloneCellStyle(cell);
 			style.setAlignment(align);
@@ -454,18 +454,18 @@ public class StyleUtil {
 		cell.setCellStyle(style);
 	}
 	
-	public static void setTextVAlign(NSheet sheet,int row,int col, NCellStyle.VerticalAlignment valign){
-		final NBook book = sheet.getBook();
-		final NCell cell = sheet.getCell(row,col);
-		final NCellStyle orgStyle = cell.getCellStyle();
-		final NCellStyle.VerticalAlignment orgValign = orgStyle.getVerticalAlignment();
+	public static void setTextVAlign(SSheet sheet,int row,int col, SCellStyle.VerticalAlignment valign){
+		final SBook book = sheet.getBook();
+		final SCell cell = sheet.getCell(row,col);
+		final SCellStyle orgStyle = cell.getCellStyle();
+		final SCellStyle.VerticalAlignment orgValign = orgStyle.getVerticalAlignment();
 		if (valign.equals(orgValign)) { //no change, skip
 			return;
 		}
 
 		CellStyleMatcher matcher = new CellStyleMatcher(orgStyle);
 		matcher.setVerticalAlignment(valign);
-		NCellStyle style = book.searchCellStyle(matcher);
+		SCellStyle style = book.searchCellStyle(matcher);
 		if(style==null){
 			style = cloneCellStyle(cell);
 			style.setVerticalAlignment(valign);
@@ -474,10 +474,10 @@ public class StyleUtil {
 
 	}
 	
-	public static void setDataFormat(NSheet sheet, int row, int col, String format/*,HashMap<Integer,CellStyle> cache*/) {
-		final NBook book = sheet.getBook();
-		final NCell cell = sheet.getCell(row,col);
-		final NCellStyle orgStyle = cell.getCellStyle();
+	public static void setDataFormat(SSheet sheet, int row, int col, String format/*,HashMap<Integer,CellStyle> cache*/) {
+		final SBook book = sheet.getBook();
+		final SCell cell = sheet.getCell(row,col);
+		final SCellStyle orgStyle = cell.getCellStyle();
 		final String orgFormat = orgStyle.getDataFormat();
 		if (format == orgFormat || (format!=null && format.equals(orgFormat))) { //no change, skip
 			return;
@@ -491,7 +491,7 @@ public class StyleUtil {
 		CellStyleMatcher matcher = new CellStyleMatcher(orgStyle);
 
 		matcher.setDataFormat(format);
-		NCellStyle style = book.searchCellStyle(matcher);
+		SCellStyle style = book.searchCellStyle(matcher);
 		if(style==null){
 			style = cloneCellStyle(cell);
 			style.setDataFormat(format);

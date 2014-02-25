@@ -19,8 +19,8 @@ package org.zkoss.zss.ngapi.impl.imexp;
 import java.io.*;
 import java.net.URL;
 
+import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.ngapi.NImporter;
-import org.zkoss.zss.ngmodel.NBook;
 
 /**
  * 
@@ -30,7 +30,7 @@ import org.zkoss.zss.ngmodel.NBook;
 public abstract class AbstractImporter implements NImporter{
 
 	@Override
-	public NBook imports(File file, String bookName) throws IOException {
+	public SBook imports(File file, String bookName) throws IOException {
 		InputStream is = null;
 		try{
 			is = new BufferedInputStream(new FileInputStream(file));
@@ -47,7 +47,7 @@ public abstract class AbstractImporter implements NImporter{
 	}
 
 	@Override
-	public NBook imports(URL url, String bookName) throws IOException {
+	public SBook imports(URL url, String bookName) throws IOException {
 		InputStream is = null;
 		try {
 			is = url.openStream();

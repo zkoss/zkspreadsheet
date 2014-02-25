@@ -20,9 +20,9 @@ import java.util.Date;
 
 import org.zkoss.zss.api.impl.RangeImpl;
 import org.zkoss.zss.api.model.CellData;
+import org.zkoss.zss.model.SCell;
+import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.ngapi.NRange;
-import org.zkoss.zss.ngmodel.NCell;
-import org.zkoss.zss.ngmodel.NSheet;
 /**
  * 
  * @author dennis
@@ -32,7 +32,7 @@ public class CellDataImpl implements CellData{
 
 	private RangeImpl _range;
 	
-	private NCell _cell;
+	private SCell _cell;
 	private boolean _cellInit;
 	
 	public CellDataImpl(RangeImpl range) {
@@ -55,7 +55,7 @@ public class CellDataImpl implements CellData{
 		}
 		_cellInit = true;
 		NRange x = _range.getNative();
-		NSheet sheet = x.getSheet();
+		SSheet sheet = x.getSheet();
 		
 		_cell = sheet.getCell(x.getRow(),x.getColumn());
 	}
@@ -72,7 +72,7 @@ public class CellDataImpl implements CellData{
 		return toCellType(_cell.getFormulaResultType());
 	}
 	
-	private CellType toCellType(NCell.CellType type){
+	private CellType toCellType(SCell.CellType type){
 		switch(type){
 		case BLANK:
 			return CellType.BLANK;

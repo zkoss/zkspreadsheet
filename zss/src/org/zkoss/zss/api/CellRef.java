@@ -18,7 +18,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.api;
 
-import org.zkoss.zss.ngmodel.CellRegion;
+import org.zkoss.zss.model.CellRegion;
 
 /**
  * A class that represents a cell position with 2 value : row and column

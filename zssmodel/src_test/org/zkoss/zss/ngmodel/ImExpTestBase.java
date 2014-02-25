@@ -6,19 +6,30 @@ import java.net.URL;
 import java.text.DateFormat;
 import java.util.Locale;
 
-import org.zkoss.zss.ngmodel.NAutoFilter.FilterOp;
-import org.zkoss.zss.ngmodel.NAutoFilter.NFilterColumn;
-import org.zkoss.zss.ngmodel.NCellStyle.Alignment;
-import org.zkoss.zss.ngmodel.NCellStyle.BorderType;
-import org.zkoss.zss.ngmodel.NCellStyle.FillPattern;
-import org.zkoss.zss.ngmodel.NCellStyle.VerticalAlignment;
-import org.zkoss.zss.ngmodel.NDataValidation.ErrorStyle;
-import org.zkoss.zss.ngmodel.NDataValidation.OperatorType;
-import org.zkoss.zss.ngmodel.NDataValidation.ValidationType;
-import org.zkoss.zss.ngmodel.NPicture.Format;
-import org.zkoss.zss.ngmodel.NChart.*;
-import org.zkoss.zss.ngmodel.NFont.TypeOffset;
-import org.zkoss.zss.ngmodel.chart.NGeneralChartData;
+import org.zkoss.zss.model.ErrorValue;
+import org.zkoss.zss.model.SAutoFilter;
+import org.zkoss.zss.model.SBook;
+import org.zkoss.zss.model.SCell;
+import org.zkoss.zss.model.SCellStyle;
+import org.zkoss.zss.model.SChart;
+import org.zkoss.zss.model.SDataValidation;
+import org.zkoss.zss.model.SFont;
+import org.zkoss.zss.model.SHyperlink;
+import org.zkoss.zss.model.SPicture;
+import org.zkoss.zss.model.SSheet;
+import org.zkoss.zss.model.SAutoFilter.FilterOp;
+import org.zkoss.zss.model.SAutoFilter.NFilterColumn;
+import org.zkoss.zss.model.SCellStyle.Alignment;
+import org.zkoss.zss.model.SCellStyle.BorderType;
+import org.zkoss.zss.model.SCellStyle.FillPattern;
+import org.zkoss.zss.model.SCellStyle.VerticalAlignment;
+import org.zkoss.zss.model.SChart.*;
+import org.zkoss.zss.model.SDataValidation.ErrorStyle;
+import org.zkoss.zss.model.SDataValidation.OperatorType;
+import org.zkoss.zss.model.SDataValidation.ValidationType;
+import org.zkoss.zss.model.SFont.TypeOffset;
+import org.zkoss.zss.model.SPicture.Format;
+import org.zkoss.zss.model.chart.SGeneralChartData;
 
 /**
  * Common test cases for importer & exporter.
@@ -35,83 +46,83 @@ public class ImExpTestBase {
 	protected URL FILTER_IMPORT_FILE_UNDER_TEST = ImporterTest.class.getResource("book/filter.xlsx");
 	protected static String DEFAULT_BOOK_NAME = "PoiBook";
 	
-	protected void hyperlinkTest(NBook book) {
-		NSheet sheet = book.getSheetByName("Style");
-		NCell cell = sheet.getCell("B31");
-		NHyperlink link = cell.getHyperlink();
+	protected void hyperlinkTest(SBook book) {
+		SSheet sheet = book.getSheetByName("Style");
+		SCell cell = sheet.getCell("B31");
+		SHyperlink link = cell.getHyperlink();
 		
 		assertEquals("http://www.zkoss.org/", link.getAddress());
 		assertEquals("", link.getLabel());
-		assertEquals(NHyperlink.HyperlinkType.URL, link.getType());
+		assertEquals(SHyperlink.HyperlinkType.URL, link.getType());
 	}
 	
-	protected void sheetTest(NBook book) {
+	protected void sheetTest(SBook book) {
 		assertEquals(8, book.getNumOfSheet());
 
-		NSheet sheet1 = book.getSheetByName("Value");
+		SSheet sheet1 = book.getSheetByName("Value");
 		assertEquals("Value", sheet1.getSheetName());
 		assertEquals(20, sheet1.getDefaultRowHeight());
 		assertEquals(64, sheet1.getDefaultColumnWidth());
 		
-		NSheet sheet2 = book.getSheetByName("Style");
+		SSheet sheet2 = book.getSheetByName("Style");
 		assertEquals("Style", sheet2.getSheetName());
-		NSheet sheet3 = book.getSheetByName("NamedRange");
+		SSheet sheet3 = book.getSheetByName("NamedRange");
 		assertEquals("NamedRange", sheet3.getSheetName());
 	}	
 	
 	
-	protected void sheetProtectionTest(NBook book) {
+	protected void sheetProtectionTest(SBook book) {
 		assertFalse(book.getSheetByName("Value").isProtected());
 		assertTrue(book.getSheetByName("sheet-protection").isProtected());
 	}
 	
 	
-	protected void sheetNamedRangeTest(NBook book) {
+	protected void sheetNamedRangeTest(SBook book) {
 		assertEquals(2, book.getNumOfName());
 		assertEquals("NamedRange!$B$2:$D$3", book.getNameByName("TestRange1").getRefersToFormula());
 		assertEquals("NamedRange!$F$2", book.getNameByName("RangeMerged").getRefersToFormula());
 	}
 
 	
-	protected void cellValueTest(NBook book) {
-		NSheet sheet = book.getSheetByName("Value");
+	protected void cellValueTest(SBook book) {
+		SSheet sheet = book.getSheetByName("Value");
 		//text
-		assertEquals(NCell.CellType.STRING, sheet.getCell(0,1).getType());
+		assertEquals(SCell.CellType.STRING, sheet.getCell(0,1).getType());
 		assertEquals("B1", sheet.getCell(0,1).getStringValue());
 		assertEquals("C1", sheet.getCell(0,2).getStringValue());
 		assertEquals("D1", sheet.getCell(0,3).getStringValue());
 		
 		//number
-		assertEquals(NCell.CellType.NUMBER, sheet.getCell(1,1).getType());
+		assertEquals(SCell.CellType.NUMBER, sheet.getCell(1,1).getType());
 		assertEquals(123, sheet.getCell(1,1).getNumberValue().intValue());
 		assertEquals(123.45, sheet.getCell(1,2).getNumberValue().doubleValue(), 0.01);
 		
 		//date
-		assertEquals(NCell.CellType.NUMBER, sheet.getCell(2,1).getType());
+		assertEquals(SCell.CellType.NUMBER, sheet.getCell(2,1).getType());
 		assertEquals(41618, sheet.getCell(2,1).getNumberValue().intValue());
 		assertEquals("Dec 10, 2013", DateFormat.getDateInstance(DateFormat.MEDIUM, Locale.US).format(sheet.getCell(2,1).getDateValue()));
 		assertEquals(0.61, sheet.getCell(2,2).getNumberValue().doubleValue(), 0.01);
 		assertEquals("2:44:10 PM", DateFormat.getTimeInstance (DateFormat.MEDIUM, Locale.US).format(sheet.getCell(2,2).getDateValue()));
 		
 		//formula
-		assertEquals(NCell.CellType.FORMULA, sheet.getCell(3,1).getType());
+		assertEquals(SCell.CellType.FORMULA, sheet.getCell(3,1).getType());
 		assertEquals("SUM(10,20)", sheet.getCell(3,1).getFormulaValue());
 		assertEquals("ISBLANK(B1)", sheet.getCell(3,2).getFormulaValue());
 		assertEquals("B1", sheet.getCell(3,3).getFormulaValue());
 		
 		//error
-		assertEquals(NCell.CellType.ERROR, sheet.getCell(4,1).getType());
+		assertEquals(SCell.CellType.ERROR, sheet.getCell(4,1).getType());
 		assertEquals(ErrorValue.INVALID_NAME, sheet.getCell(4,1).getErrorValue().getCode());
 		assertEquals(ErrorValue.INVALID_VALUE, sheet.getCell(4,2).getErrorValue().getCode());
 		
 		//blank
-		assertEquals(NCell.CellType.BLANK, sheet.getCell(5,1).getType());
+		assertEquals(SCell.CellType.BLANK, sheet.getCell(5,1).getType());
 		assertEquals("", sheet.getCell(5,1).getStringValue());
 	}
 	
 	
-	protected void cellStyleTest(NBook book){
-		NSheet sheet = book.getSheetByName("Style");
+	protected void cellStyleTest(SBook book){
+		SSheet sheet = book.getSheetByName("Style");
 		assertEquals(true, sheet.getCell(24, 1).getCellStyle().isWrapText());
 		//alignment
 		assertEquals(VerticalAlignment.TOP, sheet.getCell(26, 1).getCellStyle().getVerticalAlignment());
@@ -134,14 +145,14 @@ public class ImExpTestBase {
 		assertEquals(FillPattern.SOLID_FOREGROUND, sheet.getCell(37, 1).getCellStyle().getFillPattern());
 		assertEquals(FillPattern.ALT_BARS, sheet.getCell(37, 2).getCellStyle().getFillPattern());
 		
-		NSheet protectedSheet = book.getSheetByName("sheet-protection");
+		SSheet protectedSheet = book.getSheetByName("sheet-protection");
 		assertEquals(true, protectedSheet.getCell(0, 0).getCellStyle().isLocked());
 		assertEquals(false, protectedSheet.getCell(1, 0).getCellStyle().isLocked());
 	}
 
 	
-	protected void cellBorderTest(NBook book){
-		NSheet sheet = book.getSheetByName("cell-border");
+	protected void cellBorderTest(SBook book){
+		SSheet sheet = book.getSheetByName("cell-border");
 		assertEquals(BorderType.NONE, sheet.getCell(2, 0).getCellStyle().getBorderBottom());
 		assertEquals(BorderType.THIN, sheet.getCell(2, 1).getCellStyle().getBorderBottom());
 		assertEquals(BorderType.THIN, sheet.getCell(2, 2).getCellStyle().getBorderTop());
@@ -159,24 +170,24 @@ public class ImExpTestBase {
 	}
 
 	
-	protected void cellFontNameTest(NBook book){
-		NSheet sheet = book.getSheetByName("Style");
+	protected void cellFontNameTest(SBook book){
+		SSheet sheet = book.getSheetByName("Style");
 		assertEquals("Arial", sheet.getCell(3, 0).getCellStyle().getFont().getName());
 		assertEquals("Arial Black", sheet.getCell(3, 1).getCellStyle().getFont().getName());
 		assertEquals("Calibri", sheet.getCell(3, 2).getCellStyle().getFont().getName());
 	}
 	
 	
-	protected void cellFontStyleTest(NBook book){
-		NSheet sheet = book.getSheetByName("Style");
-		assertEquals(NFont.Boldweight.BOLD, sheet.getCell(9, 0).getCellStyle().getFont().getBoldweight());
+	protected void cellFontStyleTest(SBook book){
+		SSheet sheet = book.getSheetByName("Style");
+		assertEquals(SFont.Boldweight.BOLD, sheet.getCell(9, 0).getCellStyle().getFont().getBoldweight());
 		assertTrue(sheet.getCell(9, 1).getCellStyle().getFont().isItalic());
 		assertTrue(sheet.getCell(9, 2).getCellStyle().getFont().isStrikeout());
-		assertEquals(NFont.Underline.SINGLE, sheet.getCell(9, 3).getCellStyle().getFont().getUnderline());
-		assertEquals(NFont.Underline.DOUBLE, sheet.getCell(9, 4).getCellStyle().getFont().getUnderline());
-		assertEquals(NFont.Underline.SINGLE_ACCOUNTING, sheet.getCell(9, 5).getCellStyle().getFont().getUnderline());
-		assertEquals(NFont.Underline.DOUBLE_ACCOUNTING, sheet.getCell(9, 6).getCellStyle().getFont().getUnderline());
-		assertEquals(NFont.Underline.NONE, sheet.getCell(9, 7).getCellStyle().getFont().getUnderline());
+		assertEquals(SFont.Underline.SINGLE, sheet.getCell(9, 3).getCellStyle().getFont().getUnderline());
+		assertEquals(SFont.Underline.DOUBLE, sheet.getCell(9, 4).getCellStyle().getFont().getUnderline());
+		assertEquals(SFont.Underline.SINGLE_ACCOUNTING, sheet.getCell(9, 5).getCellStyle().getFont().getUnderline());
+		assertEquals(SFont.Underline.DOUBLE_ACCOUNTING, sheet.getCell(9, 6).getCellStyle().getFont().getUnderline());
+		assertEquals(SFont.Underline.NONE, sheet.getCell(9, 7).getCellStyle().getFont().getUnderline());
 		
 		//height
 		assertEquals(8, sheet.getCell(6, 0).getCellStyle().getFont().getHeightPoints());
@@ -189,8 +200,8 @@ public class ImExpTestBase {
 	}
 	
 	
-	protected void cellFontColorTest(NBook book){
-		NSheet sheet = book.getSheetByName("Style");
+	protected void cellFontColorTest(SBook book){
+		SSheet sheet = book.getSheetByName("Style");
 		assertEquals("#000000", sheet.getCell(0, 0).getCellStyle().getFont().getColor().getHtmlColor());
 		assertEquals("#ff0000", sheet.getCell(1, 0).getCellStyle().getFont().getColor().getHtmlColor());
 		assertEquals("#00ff00", sheet.getCell(1, 1).getCellStyle().getFont().getColor().getHtmlColor());
@@ -198,19 +209,19 @@ public class ImExpTestBase {
 	}
 	
 	
-	protected void rowTest(NBook book){
-		NSheet sheet = book.getSheetByName("Style");
+	protected void rowTest(SBook book){
+		SSheet sheet = book.getSheetByName("Style");
 		assertEquals(28, sheet.getRow(0).getHeight());
 		assertEquals(20, sheet.getRow(1).getHeight());
 		//style
-		NCellStyle rowStyle1 = sheet.getRow(34).getCellStyle();
+		SCellStyle rowStyle1 = sheet.getRow(34).getCellStyle();
 		assertEquals("#0000ff",rowStyle1.getFont().getColor().getHtmlColor());
 		assertEquals(12,rowStyle1.getFont().getHeightPoints());
-		NCellStyle rowStyle2 = sheet.getRow(35).getCellStyle();
+		SCellStyle rowStyle2 = sheet.getRow(35).getCellStyle();
 		assertEquals(true,rowStyle2.getFont().isItalic());
 		assertEquals(14,rowStyle2.getFont().getHeightPoints());		
 		
-		NSheet rowSheet = book.getSheetByName("column-row");
+		SSheet rowSheet = book.getSheetByName("column-row");
 		assertTrue(rowSheet.getRow(9).isHidden());
 		assertTrue(rowSheet.getRow(10).isHidden());
 	}
@@ -221,8 +232,8 @@ public class ImExpTestBase {
 	 * 18.8.30 numFmt (Number Format) 
 	 */
 	
-	protected void cellFormatTest(NBook book){
-		NSheet sheet = book.getSheetByName("Format");
+	protected void cellFormatTest(SBook book){
+		SSheet sheet = book.getSheetByName("Format");
 		assertEquals("#,##0.00", sheet.getCell(1, 1).getCellStyle().getDataFormat());
 		assertEquals("\"NT$\"#,##0.00", sheet.getCell(1, 2).getCellStyle().getDataFormat());
 		assertEquals("m/d/yyyy", sheet.getCell(1, 4).getCellStyle().getDataFormat());
@@ -236,10 +247,10 @@ public class ImExpTestBase {
 	}
 
 
-	protected void columnTest(NBook book){
-		NSheet sheet = book.getSheetByName("column-row");
+	protected void columnTest(SBook book){
+		SSheet sheet = book.getSheetByName("column-row");
 		//column style
-		assertEquals(NFont.Boldweight.BOLD, sheet.getColumn(0).getCellStyle().getFont().getBoldweight());
+		assertEquals(SFont.Boldweight.BOLD, sheet.getColumn(0).getCellStyle().getFont().getBoldweight());
 		//width
 		assertEquals(228, sheet.getColumn(0).getWidth()); 
 		assertEquals(100, sheet.getColumn(1).getWidth());
@@ -256,14 +267,14 @@ public class ImExpTestBase {
 	 * import last column that only has column width change but has all empty cells 
 	 */
 	
-	protected void lastChangedColumnTest(NBook book){
-		NSheet sheet = book.getSheetByName("column-row");
+	protected void lastChangedColumnTest(SBook book){
+		SSheet sheet = book.getSheetByName("column-row");
 		assertEquals(110, sheet.getColumn(13).getWidth());
 	}
 	
 	
-	protected void viewInfoTest(NBook book){
-		NSheet sheet = book.getSheetByName("column-row");
+	protected void viewInfoTest(SBook book){
+		SSheet sheet = book.getSheetByName("column-row");
 		assertEquals(3, sheet.getViewInfo().getNumOfRowFreeze());
 		assertEquals(1, sheet.getViewInfo().getNumOfColumnFreeze());
 		
@@ -273,8 +284,8 @@ public class ImExpTestBase {
 	}
 
 	
-	protected void mergedTest(NBook book){
-		NSheet sheet = book.getSheetByName("cell-border");
+	protected void mergedTest(SBook book){
+		SSheet sheet = book.getSheetByName("cell-border");
 		assertEquals(4, sheet.getMergedRegions().size());
 		assertEquals("C31:D33", sheet.getMergedRegions().get(0).getReferenceString());
 		assertEquals("B31:B33", sheet.getMergedRegions().get(1).getReferenceString());
@@ -282,26 +293,26 @@ public class ImExpTestBase {
 		assertEquals("B28:C28", sheet.getMergedRegions().get(3).getReferenceString());
 	}	
 	
-	protected void areaChart(NBook book){
-		NSheet sheet = book.getSheetByName("Area");
-		NChart areaChart = sheet.getChart(0);
+	protected void areaChart(SBook book){
+		SSheet sheet = book.getSheetByName("Area");
+		SChart areaChart = sheet.getChart(0);
 		assertEquals(NChartType.AREA,areaChart.getType());
 		
 		//a chart locating in one column and one row test
 		assertEquals(493, areaChart.getAnchor().getWidth());
 		assertEquals(283, areaChart.getAnchor().getHeight());
 		
-		NGeneralChartData chartData = (NGeneralChartData)areaChart.getData();
+		SGeneralChartData chartData = (SGeneralChartData)areaChart.getData();
 		assertEquals(8, chartData.getNumOfCategory());
 		
-		NChart area3dChart = sheet.getChart(1);
+		SChart area3dChart = sheet.getChart(1);
 		assertEquals(NChartGrouping.STANDARD, area3dChart.getGrouping());
 		assertEquals(NChartLegendPosition.BOTTOM, area3dChart.getLegendPosition());
 	}
 	
-	protected void barChart(NBook book){
-		NSheet sheet = book.getSheetByName("Bar");
-		NChart barChart = sheet.getChart(0);
+	protected void barChart(SBook book){
+		SSheet sheet = book.getSheetByName("Bar");
+		SChart barChart = sheet.getChart(0);
 		
 		assertEquals(NChartType.BAR,barChart.getType());
 		
@@ -316,7 +327,7 @@ public class ImExpTestBase {
 		assertEquals(NChartLegendPosition.RIGHT, barChart.getLegendPosition());
 		
 		//data
-		NGeneralChartData chartData = (NGeneralChartData)barChart.getData();
+		SGeneralChartData chartData = (SGeneralChartData)barChart.getData();
 		assertEquals(3, chartData.getNumOfCategory());
 		assertEquals("Internet Explorer", chartData.getCategory(0));
 		assertEquals("Chrome", chartData.getCategory(1));
@@ -335,16 +346,16 @@ public class ImExpTestBase {
 		assertEquals(0.2809, chartData.getSeries(2).getValue(1));
 		assertEquals(0.2273, chartData.getSeries(2).getValue(2));
 		
-		NChart barChart3D = sheet.getChart(1);
+		SChart barChart3D = sheet.getChart(1);
 		assertEquals(true, barChart3D.isThreeD());
 	}
 	
-	public void bubbleChart(NBook book){
-		NSheet sheet = book.getSheetByName("Bubble");
-		NChart bubbleChart = sheet.getChart(0);
+	public void bubbleChart(SBook book){
+		SSheet sheet = book.getSheetByName("Bubble");
+		SChart bubbleChart = sheet.getChart(0);
 		assertEquals(NChartType.BUBBLE, bubbleChart.getType());
 		
-		NGeneralChartData chartData = (NGeneralChartData)bubbleChart.getData();
+		SGeneralChartData chartData = (SGeneralChartData)bubbleChart.getData();
 		assertEquals(0, chartData.getNumOfCategory());
 		assertEquals(2, chartData.getNumOfSeries());
 		assertEquals("String Literal Title", chartData.getSeries(0).getName());
@@ -354,61 +365,61 @@ public class ImExpTestBase {
 		assertEquals(5, chartData.getSeries(0).getNumOfZValue());
 	}
 	
-	public void columnChart(NBook book){
-		NSheet sheet = book.getSheetByName("Column");
-		NChart columnChart = sheet.getChart(0);
+	public void columnChart(SBook book){
+		SSheet sheet = book.getSheetByName("Column");
+		SChart columnChart = sheet.getChart(0);
 		assertEquals(NChartType.COLUMN,columnChart.getType());
 		assertEquals(NBarDirection.VERTICAL, columnChart.getBarDirection());
 		assertEquals(NChartLegendPosition.TOP, columnChart.getLegendPosition());
 		
-		NGeneralChartData chartData = (NGeneralChartData)columnChart.getData();
+		SGeneralChartData chartData = (SGeneralChartData)columnChart.getData();
 		assertEquals(4, chartData.getNumOfCategory());
 		
-		NChart column3dChart = sheet.getChart(1);
+		SChart column3dChart = sheet.getChart(1);
 		assertEquals(NChartGrouping.STACKED, column3dChart.getGrouping());
 	}
 	
-	public void doughnutChart(NBook book){
-		NSheet sheet = book.getSheetByName("Doughnut");
-		NChart doughnutChart = sheet.getChart(0);
+	public void doughnutChart(SBook book){
+		SSheet sheet = book.getSheetByName("Doughnut");
+		SChart doughnutChart = sheet.getChart(0);
 		assertEquals(NChartType.DOUGHNUT, doughnutChart.getType());
 		
-		NGeneralChartData chartData = (NGeneralChartData)doughnutChart.getData();
+		SGeneralChartData chartData = (SGeneralChartData)doughnutChart.getData();
 		assertEquals(8, chartData.getNumOfCategory());
 	}
 	
-	public void lineChart(NBook book){
-		NSheet sheet = book.getSheetByName("Line");
-		NChart lineChart = sheet.getChart(0);
+	public void lineChart(SBook book){
+		SSheet sheet = book.getSheetByName("Line");
+		SChart lineChart = sheet.getChart(0);
 		assertEquals(NChartType.LINE, lineChart.getType());
-		NGeneralChartData chartData = (NGeneralChartData)lineChart.getData();
+		SGeneralChartData chartData = (SGeneralChartData)lineChart.getData();
 		assertEquals(3, chartData.getNumOfSeries());
 		
-		NChart line3dChart = sheet.getChart(1);
+		SChart line3dChart = sheet.getChart(1);
 		assertEquals(true, line3dChart.isThreeD());
-		chartData = (NGeneralChartData)line3dChart.getData();
+		chartData = (SGeneralChartData)line3dChart.getData();
 		assertEquals(3, chartData.getNumOfSeries());
 	}
 	
-	public void pieChart(NBook book){
-		NSheet sheet = book.getSheetByName("Pie");
-		NChart pieChart = sheet.getChart(0);
+	public void pieChart(SBook book){
+		SSheet sheet = book.getSheetByName("Pie");
+		SChart pieChart = sheet.getChart(0);
 		assertEquals(NChartType.PIE, pieChart.getType());
 		assertEquals(null,pieChart.getTitle());
-		NGeneralChartData chartData = (NGeneralChartData)pieChart.getData();
+		SGeneralChartData chartData = (SGeneralChartData)pieChart.getData();
 		assertEquals(1, chartData.getNumOfSeries());
 		
-		NChart pie3dChart = sheet.getChart(1);
+		SChart pie3dChart = sheet.getChart(1);
 		assertEquals(NChartType.PIE, pie3dChart.getType());
 		assertEquals(true, pie3dChart.isThreeD());
 	}
 	
-	public void scatterChart(NBook book){
-		NSheet sheet = book.getSheetByName("Scatter");
-		NChart scatterChart = sheet.getChart(0);
+	public void scatterChart(SBook book){
+		SSheet sheet = book.getSheetByName("Scatter");
+		SChart scatterChart = sheet.getChart(0);
 		assertEquals(NChartType.SCATTER, scatterChart.getType());
 		
-		NGeneralChartData chartData = (NGeneralChartData)scatterChart.getData();
+		SGeneralChartData chartData = (SGeneralChartData)scatterChart.getData();
 		assertEquals(3, chartData.getNumOfSeries());
 		assertEquals("Internet Explorer", chartData.getSeries(0).getName());
 		assertEquals(0.3427, chartData.getSeries(0).getYValue(0));
@@ -421,15 +432,15 @@ public class ImExpTestBase {
 	}
 
 
-	protected void picture(NBook book) {
-		NSheet sheet1 = book.getSheet(0);
+	protected void picture(SBook book) {
+		SSheet sheet1 = book.getSheet(0);
 		assertEquals(2,sheet1.getPictures().size());
-		NPicture zkLogo = sheet1.getPicture(0);
+		SPicture zkLogo = sheet1.getPicture(0);
 		assertEquals(Format.PNG, zkLogo.getFormat());
 		assertEquals(450, zkLogo.getAnchor().getWidth());
 		assertEquals(320, zkLogo.getAnchor().getHeight());
 		
-		NPicture zssBanner = sheet1.getPicture(1);
+		SPicture zssBanner = sheet1.getPicture(1);
 		assertEquals(Format.PNG, zssBanner.getFormat());
 		assertEquals(275, zssBanner.getAnchor().getWidth());
 		assertEquals(75, zssBanner.getAnchor().getHeight());
@@ -437,14 +448,14 @@ public class ImExpTestBase {
 	}
 
 
-	protected void validation(NBook book) {
-		NSheet validationSheet = book.getSheetByName("Validation");
+	protected void validation(SBook book) {
+		SSheet validationSheet = book.getSheetByName("Validation");
 		assertEquals(7, validationSheet.getDataValidations().size());
 		
-		NDataValidation noValidation  = validationSheet.getDataValidation(0, 1);
+		SDataValidation noValidation  = validationSheet.getDataValidation(0, 1);
 		assertNull(noValidation);
 	
-		NDataValidation one2Ten  = validationSheet.getDataValidation(1, 1);
+		SDataValidation one2Ten  = validationSheet.getDataValidation(1, 1);
 		assertEquals(ErrorStyle.STOP, one2Ten.getErrorStyle());
 		assertEquals(OperatorType.BETWEEN, one2Ten.getOperatorType());
 		assertEquals(ValidationType.INTEGER, one2Ten.getValidationType());
@@ -462,7 +473,7 @@ public class ImExpTestBase {
 		assertEquals(true, one2Ten.isShowErrorBox());
 		assertEquals(true, one2Ten.isShowPromptBox());
 		
-		NDataValidation fourGrades  = validationSheet.getDataValidation(2, 1);
+		SDataValidation fourGrades  = validationSheet.getDataValidation(2, 1);
 		assertEquals(ValidationType.LIST, fourGrades.getValidationType());
 		assertEquals(ErrorStyle.WARNING, fourGrades.getErrorStyle());
 		assertEquals("$C$3:$F$3", fourGrades.getValue1Formula());
@@ -474,27 +485,27 @@ public class ImExpTestBase {
 		assertEquals("D", fourGrades.getValue1(3).toString());
 		assertEquals(false, fourGrades.isShowDropDownArrow());
 		
-		NDataValidation dayAfter2014  = validationSheet.getDataValidation(3, 1);
+		SDataValidation dayAfter2014  = validationSheet.getDataValidation(3, 1);
 		assertEquals(ErrorStyle.INFO, dayAfter2014.getErrorStyle());
 		
-		NDataValidation lengthEquals10  = validationSheet.getDataValidation(4, 1);
+		SDataValidation lengthEquals10  = validationSheet.getDataValidation(4, 1);
 		assertEquals(ErrorStyle.STOP, lengthEquals10.getErrorStyle());
 		
-		NDataValidation limitedColors  = validationSheet.getDataValidation(5, 1);
+		SDataValidation limitedColors  = validationSheet.getDataValidation(5, 1);
 		assertEquals(ValidationType.LIST, limitedColors.getValidationType());
 		assertEquals("\"red, blue, green\"", limitedColors.getValue1Formula());
 		assertEquals(true, limitedColors.isShowDropDownArrow());
 		
-		NDataValidation custom  = validationSheet.getDataValidation(6, 1);
+		SDataValidation custom  = validationSheet.getDataValidation(6, 1);
 		assertEquals(ValidationType.FORMULA, custom.getValidationType());
 		
-		NDataValidation decimalRange  = validationSheet.getDataValidation(7, 1);
+		SDataValidation decimalRange  = validationSheet.getDataValidation(7, 1);
 		assertEquals(ValidationType.DECIMAL, decimalRange.getValidationType());
 	}
 
 
-	protected void autoFilter(NBook book) {
-		NAutoFilter filter1 = book.getSheetByName("1 column").getAutoFilter();
+	protected void autoFilter(SBook book) {
+		SAutoFilter filter1 = book.getSheetByName("1 column").getAutoFilter();
 		assertEquals("B1:D10", filter1.getRegion().getReferenceString());
 		assertEquals(1, filter1.getFilterColumns().size());
 		assertEquals(FilterOp.VALUES, filter1.getFilterColumn(1, false).getOperator());
@@ -503,7 +514,7 @@ public class ImExpTestBase {
 		assertTrue(filter1.getFilterColumn(1, false).getCriteria1().contains("Davolio"));
 		
 		
-		NAutoFilter filter2 = book.getSheetByName("2 columns").getAutoFilter();
+		SAutoFilter filter2 = book.getSheetByName("2 columns").getAutoFilter();
 		assertEquals("A1:C21", filter2.getRegion().getReferenceString());
 		assertEquals(2, filter2.getFilterColumns().size());
 		
@@ -520,7 +531,7 @@ public class ImExpTestBase {
 		assertTrue(secondFilterColumn.getCriteria1().contains("Blue"));
 		assertTrue(secondFilterColumn.getCriteria1().contains("Black"));
 		
-		NAutoFilter noCriteriaFilter = book.getSheetByName("no criteria").getAutoFilter();
+		SAutoFilter noCriteriaFilter = book.getSheetByName("no criteria").getAutoFilter();
 		assertEquals("B2:D11", noCriteriaFilter.getRegion().getReferenceString());
 		assertEquals(0, noCriteriaFilter.getFilterColumns().size());
 	}

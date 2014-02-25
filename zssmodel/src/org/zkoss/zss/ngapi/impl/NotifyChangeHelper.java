@@ -4,8 +4,9 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-import org.zkoss.zss.ngmodel.*;
-import org.zkoss.zss.ngmodel.impl.AbstractBookAdv;
+
+import org.zkoss.zss.model.*;
+import org.zkoss.zss.model.impl.AbstractBookAdv;
 
 /*package*/ class NotifyChangeHelper{
 
@@ -22,51 +23,51 @@ import org.zkoss.zss.ngmodel.impl.AbstractBookAdv;
 	}
 	
 	
-	public void notifySheetAutoFilterChange(NSheet sheet) {
+	public void notifySheetAutoFilterChange(SSheet sheet) {
 		((AbstractBookAdv) sheet.getBook())
 				.sendModelEvent(ModelEvents.createModelEvent(
 						ModelEvents.ON_AUTOFILTER_CHANGE, sheet));
 	}
 
-	public void notifySheetFreezeChange(NSheet sheet) {
+	public void notifySheetFreezeChange(SSheet sheet) {
 		((AbstractBookAdv) sheet.getBook())
 				.sendModelEvent(ModelEvents.createModelEvent(
 						ModelEvents.ON_FREEZE_CHANGE, sheet));
 	}
 	
-	public void notifySheetPictureAdd(NSheet sheet, String id){
+	public void notifySheetPictureAdd(SSheet sheet, String id){
 		((AbstractBookAdv) sheet.getBook()).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_PICTURE_ADD, 
 				sheet, ModelEvents.createDataMap(ModelEvents.PARAM_OBJECT_ID, id)));
 	}
 
-	public void notifySheetPictureDelete(NSheet sheet, String id) {
+	public void notifySheetPictureDelete(SSheet sheet, String id) {
 		((AbstractBookAdv) sheet.getBook()).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_PICTURE_DELETE, 
 				sheet, ModelEvents.createDataMap(ModelEvents.PARAM_OBJECT_ID, id)));
 	}
 
-	public void notifySheetPictureMove(NSheet sheet, String id) {
+	public void notifySheetPictureMove(SSheet sheet, String id) {
 		((AbstractBookAdv) sheet.getBook()).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_PICTURE_UPDATE, 
 				sheet, ModelEvents.createDataMap(ModelEvents.PARAM_OBJECT_ID, id)));
 	}
 
-	public void notifySheetChartAdd(NSheet sheet, String id){
+	public void notifySheetChartAdd(SSheet sheet, String id){
 		((AbstractBookAdv) sheet.getBook()).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_CHART_ADD, 
 				sheet, ModelEvents.createDataMap(ModelEvents.PARAM_OBJECT_ID, id)));
 	}
 	
-	public void notifySheetChartDelete(NSheet sheet, String id){
+	public void notifySheetChartDelete(SSheet sheet, String id){
 		((AbstractBookAdv) sheet.getBook()).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_CHART_DELETE, 
 				sheet, ModelEvents.createDataMap(ModelEvents.PARAM_OBJECT_ID, id)));
 	}
 	
-	public void notifySheetChartUpdate(NSheet sheet, String id){
+	public void notifySheetChartUpdate(SSheet sheet, String id){
 		((AbstractBookAdv) sheet.getBook()).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_CHART_UPDATE, 
 				sheet, ModelEvents.createDataMap(ModelEvents.PARAM_OBJECT_ID, id)));
 	}
 	
 	public void notifyMergeRemove(Set<SheetRegion> toRemove) {
 		for(SheetRegion notify:toRemove){//remove the final remove list
-			NBook book = notify.getSheet().getBook();
+			SBook book = notify.getSheet().getBook();
 			System.out.println(">>> Notify remove merge "+notify.getReferenceString());
 			((AbstractBookAdv) book).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_MERGE_DELETE,notify.getSheet(),
 					notify.getRegion()));
@@ -75,7 +76,7 @@ import org.zkoss.zss.ngmodel.impl.AbstractBookAdv;
 	
 	public void notifyMergeAdd(Set<SheetRegion> toAdd) {
 		for(SheetRegion notify:toAdd){
-			NBook book = notify.getSheet().getBook();
+			SBook book = notify.getSheet().getBook();
 			System.out.println(">>> Notify add merge "+notify.getReferenceString());
 			((AbstractBookAdv) book).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_MERGE_ADD,notify.getSheet(),
 					notify.getRegion()));
@@ -88,53 +89,53 @@ import org.zkoss.zss.ngmodel.impl.AbstractBookAdv;
 		}
 	}
 	public void notifyCellChange(SheetRegion notify) {
-		NBook book = notify.getSheet().getBook();
+		SBook book = notify.getSheet().getBook();
 		System.out.println(">>> Notify update cell "+notify.getReferenceString());
 		((AbstractBookAdv) book).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_CELL_CONTENT_CHANGE,notify.getSheet(),
 				notify.getRegion()));
 	}
 	
-	public void notifySheetDelete(NBook book,NSheet deletedSheet,int deletedIndex){
+	public void notifySheetDelete(SBook book,SSheet deletedSheet,int deletedIndex){
 		((AbstractBookAdv) book).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_SHEET_DELETE,book,
 				ModelEvents.createDataMap(ModelEvents.PARAM_SHEET,deletedSheet,ModelEvents.PARAM_INDEX,deletedIndex)));
 	}
 	
-	public void notifySheetCreate(NSheet sheet){
+	public void notifySheetCreate(SSheet sheet){
 		((AbstractBookAdv) sheet.getBook()).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_SHEET_CREATE,sheet));
 	}
 	
-	public void notifySheetNameChange(NSheet sheet,String oldName){
+	public void notifySheetNameChange(SSheet sheet,String oldName){
 		((AbstractBookAdv) sheet.getBook()).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_SHEET_NAME_CHANGE,sheet,
 				ModelEvents.createDataMap(ModelEvents.PARAM_OLD_NAME,oldName)));
 	}
 	
-	public void notifySheetReorder(NSheet sheet,int oldIdx){
+	public void notifySheetReorder(SSheet sheet,int oldIdx){
 		((AbstractBookAdv) sheet.getBook()).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_SHEET_ORDER_CHANGE,sheet,
 				ModelEvents.createDataMap(ModelEvents.PARAM_OLD_INDEX,oldIdx)));
 	}
 
-	public void notifyDataValidationChange(NSheet sheet, String validationId) {
+	public void notifyDataValidationChange(SSheet sheet, String validationId) {
 		((AbstractBookAdv) sheet.getBook()).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_DATA_VALIDATION_CONTENT_CHANGE,sheet,
 				ModelEvents.createDataMap(ModelEvents.PARAM_OBJECT_ID,validationId)));
 	}
 
-	public void notifyChartChange(NSheet sheet, String chartId) {
+	public void notifyChartChange(SSheet sheet, String chartId) {
 		((AbstractBookAdv) sheet.getBook()).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_CHART_CONTENT_CHANGE,sheet,
 				ModelEvents.createDataMap(ModelEvents.PARAM_OBJECT_ID,chartId)));
 	}
 
-	public void notifyCustomEvent(String customEventName, NSheet sheet,
+	public void notifyCustomEvent(String customEventName, SSheet sheet,
 			Object data) {
 		((AbstractBookAdv) sheet.getBook()).sendModelEvent(ModelEvents.createModelEvent(customEventName,sheet,
 				ModelEvents.createDataMap(ModelEvents.PARAM_CUSTOM_DATA,data)));
 	}
 
-	public void notifyDisplayGirdline(NSheet sheet, boolean show) {
+	public void notifyDisplayGirdline(SSheet sheet, boolean show) {
 		((AbstractBookAdv) sheet.getBook()).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_DISPLAY_GRIDLINE_CHANGE,sheet,
 				ModelEvents.createDataMap(ModelEvents.PARAM_ENABLED,show)));
 	}
 	
-	public void notifyProtectSheet(NSheet sheet, boolean protect) {
+	public void notifyProtectSheet(SSheet sheet, boolean protect) {
 		((AbstractBookAdv) sheet.getBook()).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_PROTECT_SHEET_CHANGE,sheet,
 				ModelEvents.createDataMap(ModelEvents.PARAM_ENABLED,protect)));
 	}
@@ -152,7 +153,7 @@ import org.zkoss.zss.ngmodel.impl.AbstractBookAdv;
 				eventName = update.isInserted() ? ModelEvents.ON_COLUMN_INSERT : ModelEvents.ON_COLUMN_DELETE;
 				region = new CellRegion(0, update.getIndex(), 0, update.getLastIndex());
 			}
-			NSheet sheet = update.getSheet();
+			SSheet sheet = update.getSheet();
 			ModelEvent event = ModelEvents.createModelEvent(eventName, sheet, region);
 			((AbstractBookAdv)sheet.getBook()).sendModelEvent(event);
 		}

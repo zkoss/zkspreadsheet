@@ -17,32 +17,37 @@ import org.junit.Before;
 import org.junit.Test;
 import org.zkoss.poi.ss.util.CellReference;
 import org.zkoss.util.Locales;
+import org.zkoss.zss.model.CellRegion;
+import org.zkoss.zss.model.SBook;
+import org.zkoss.zss.model.SBooks;
+import org.zkoss.zss.model.SDataValidation;
+import org.zkoss.zss.model.SSheet;
+import org.zkoss.zss.model.SCell.CellType;
+import org.zkoss.zss.model.SCellStyle.Alignment;
+import org.zkoss.zss.model.SCellStyle.BorderType;
+import org.zkoss.zss.model.SCellStyle.FillPattern;
+import org.zkoss.zss.model.SChart.NChartType;
+import org.zkoss.zss.model.SDataValidation.OperatorType;
+import org.zkoss.zss.model.SDataValidation.ValidationType;
+import org.zkoss.zss.model.SFont.Boldweight;
+import org.zkoss.zss.model.SFont.TypeOffset;
+import org.zkoss.zss.model.SFont.Underline;
+import org.zkoss.zss.model.SHyperlink.HyperlinkType;
+import org.zkoss.zss.model.SPicture.Format;
+import org.zkoss.zss.model.chart.SGeneralChartData;
+import org.zkoss.zss.model.chart.SSeries;
+import org.zkoss.zss.model.impl.AbstractBookSeriesAdv;
+import org.zkoss.zss.model.impl.AbstractCellAdv;
+import org.zkoss.zss.model.impl.AbstractSheetAdv;
+import org.zkoss.zss.model.impl.BookImpl;
+import org.zkoss.zss.model.impl.RefImpl;
+import org.zkoss.zss.model.impl.SheetImpl;
+import org.zkoss.zss.model.sys.dependency.DependencyTable;
+import org.zkoss.zss.model.sys.dependency.Ref;
+import org.zkoss.zss.model.util.CellStyleMatcher;
+import org.zkoss.zss.model.util.FontMatcher;
 import org.zkoss.zss.ngapi.NRanges;
 import org.zkoss.zss.ngapi.impl.DataValidationHelper;
-import org.zkoss.zss.ngmodel.NCell.CellType;
-import org.zkoss.zss.ngmodel.NCellStyle.Alignment;
-import org.zkoss.zss.ngmodel.NCellStyle.BorderType;
-import org.zkoss.zss.ngmodel.NCellStyle.FillPattern;
-import org.zkoss.zss.ngmodel.NChart.NChartType;
-import org.zkoss.zss.ngmodel.NDataValidation.OperatorType;
-import org.zkoss.zss.ngmodel.NDataValidation.ValidationType;
-import org.zkoss.zss.ngmodel.NFont.Boldweight;
-import org.zkoss.zss.ngmodel.NFont.TypeOffset;
-import org.zkoss.zss.ngmodel.NFont.Underline;
-import org.zkoss.zss.ngmodel.NHyperlink.HyperlinkType;
-import org.zkoss.zss.ngmodel.NPicture.Format;
-import org.zkoss.zss.ngmodel.chart.NGeneralChartData;
-import org.zkoss.zss.ngmodel.chart.NSeries;
-import org.zkoss.zss.ngmodel.impl.AbstractBookSeriesAdv;
-import org.zkoss.zss.ngmodel.impl.AbstractCellAdv;
-import org.zkoss.zss.ngmodel.impl.BookImpl;
-import org.zkoss.zss.ngmodel.impl.AbstractSheetAdv;
-import org.zkoss.zss.ngmodel.impl.RefImpl;
-import org.zkoss.zss.ngmodel.impl.SheetImpl;
-import org.zkoss.zss.ngmodel.sys.dependency.DependencyTable;
-import org.zkoss.zss.ngmodel.sys.dependency.Ref;
-import org.zkoss.zss.ngmodel.util.CellStyleMatcher;
-import org.zkoss.zss.ngmodel.util.FontMatcher;
 
 public class ValidationTest {
 
@@ -52,22 +57,22 @@ public class ValidationTest {
 		SheetImpl.DEBUG = true;
 	}
 	
-	protected NSheet initialDataGrid(NSheet sheet){
+	protected SSheet initialDataGrid(SSheet sheet){
 		return sheet;
 	}
 
 	
 	@Test
 	public void testDataValidation(){
-		NBook book = NBooks.createBook("book1");
-		NSheet sheet1 = initialDataGrid(book.createSheet("Sheet1"));
+		SBook book = SBooks.createBook("book1");
+		SSheet sheet1 = initialDataGrid(book.createSheet("Sheet1"));
 		sheet1.getCell(0, 0).setValue(1D);
 		sheet1.getCell(0, 1).setValue(2D);
 		sheet1.getCell(0, 2).setValue(3D);
 		
-		NDataValidation dv1 = sheet1.addDataValidation(new CellRegion(1,1));
-		NDataValidation dv2 = sheet1.addDataValidation(new CellRegion(1,2));
-		NDataValidation dv3 = sheet1.addDataValidation(new CellRegion(1,3));
+		SDataValidation dv1 = sheet1.addDataValidation(new CellRegion(1,1));
+		SDataValidation dv2 = sheet1.addDataValidation(new CellRegion(1,2));
+		SDataValidation dv3 = sheet1.addDataValidation(new CellRegion(1,3));
 		//LIST
 		dv1.setValidationType(ValidationType.LIST);
 		dv1.setFormula("A1:C1");
@@ -150,8 +155,8 @@ public class ValidationTest {
 	
 	@Test
 	public void testDataValidationHelperInteger(){
-		NBook book = NBooks.createBook("book1");
-		NSheet sheet1 = initialDataGrid(book.createSheet("Sheet1"));
+		SBook book = SBooks.createBook("book1");
+		SSheet sheet1 = initialDataGrid(book.createSheet("Sheet1"));
 		sheet1.getCell(0, 0).setValue(1D);//min
 		sheet1.getCell(0, 1).setValue(3D);//max
 		NRanges.range(sheet1,0,2).setEditText("2013/1/1");//day start
@@ -169,7 +174,7 @@ public class ValidationTest {
 		Assert.assertEquals("14:00", NRanges.range(sheet1,0,5).getCellFormatText());
 		
 		
-		NDataValidation dv1 = sheet1.addDataValidation(new CellRegion(1,1));
+		SDataValidation dv1 = sheet1.addDataValidation(new CellRegion(1,1));
 		//test any
 		Assert.assertTrue(new DataValidationHelper(dv1).validate("123", "General"));
 		
@@ -226,13 +231,13 @@ public class ValidationTest {
 	
 	@Test
 	public void testDataValidationHelperDecimal(){
-		NBook book = NBooks.createBook("book1");
-		NSheet sheet1 = initialDataGrid(book.createSheet("Sheet1"));
+		SBook book = SBooks.createBook("book1");
+		SSheet sheet1 = initialDataGrid(book.createSheet("Sheet1"));
 		sheet1.getCell(0, 0).setValue(1D);//min
 		sheet1.getCell(0, 1).setValue(2D);//max SUM(A1:A2)
 		
 		
-		NDataValidation dv1 = sheet1.addDataValidation(new CellRegion(1,1));
+		SDataValidation dv1 = sheet1.addDataValidation(new CellRegion(1,1));
 		
 		
 		//test integer
@@ -287,13 +292,13 @@ public class ValidationTest {
 	
 	@Test
 	public void testDataValidationHelperTextlength(){
-		NBook book = NBooks.createBook("book1");
-		NSheet sheet1 = initialDataGrid(book.createSheet("Sheet1"));
+		SBook book = SBooks.createBook("book1");
+		SSheet sheet1 = initialDataGrid(book.createSheet("Sheet1"));
 		sheet1.getCell(0, 0).setValue(1D);//min
 		sheet1.getCell(0, 1).setValue(2D);//max SUM(A1:A2)
 		
 		
-		NDataValidation dv1 = sheet1.addDataValidation(new CellRegion(1,1));
+		SDataValidation dv1 = sheet1.addDataValidation(new CellRegion(1,1));
 		
 		
 		//test integer
@@ -347,15 +352,15 @@ public class ValidationTest {
 	
 	@Test
 	public void testDataValidationHelperDate(){
-		NBook book = NBooks.createBook("book1");
-		NSheet sheet1 = initialDataGrid(book.createSheet("Sheet1"));
+		SBook book = SBooks.createBook("book1");
+		SSheet sheet1 = initialDataGrid(book.createSheet("Sheet1"));
 		NRanges.range(sheet1,0,0).setEditText("2013/1/10");//day start
 		NRanges.range(sheet1,0,1).setEditText("2013/2/1");//day end
 		NRanges.range(sheet1,0,2).setEditText("12:00");//time start
 		NRanges.range(sheet1,0,3).setEditText("14:00");//time end
 		
 		
-		NDataValidation dv1 = sheet1.addDataValidation(new CellRegion(1,1));
+		SDataValidation dv1 = sheet1.addDataValidation(new CellRegion(1,1));
 		
 		
 		//test integer
@@ -409,13 +414,13 @@ public class ValidationTest {
 	
 	@Test
 	public void testDataValidationHelperTime(){
-		NBook book = NBooks.createBook("book1");
-		NSheet sheet1 = initialDataGrid(book.createSheet("Sheet1"));
+		SBook book = SBooks.createBook("book1");
+		SSheet sheet1 = initialDataGrid(book.createSheet("Sheet1"));
 		NRanges.range(sheet1,0,0).setEditText("12:00");//time start
 		NRanges.range(sheet1,0,1).setEditText("14:00");//time end
 		
 		
-		NDataValidation dv1 = sheet1.addDataValidation(new CellRegion(1,1));
+		SDataValidation dv1 = sheet1.addDataValidation(new CellRegion(1,1));
 		
 		
 		//test integer
@@ -470,8 +475,8 @@ public class ValidationTest {
 	
 	@Test
 	public void testDataValidationHelperList(){
-		NBook book = NBooks.createBook("book1");
-		NSheet sheet1 = initialDataGrid(book.createSheet("Sheet1"));
+		SBook book = SBooks.createBook("book1");
+		SSheet sheet1 = initialDataGrid(book.createSheet("Sheet1"));
 		NRanges.range(sheet1,0,0).setEditText("A");
 		NRanges.range(sheet1,0,1).setEditText("B");
 		NRanges.range(sheet1,0,2).setEditText("C");
@@ -482,7 +487,7 @@ public class ValidationTest {
 		NRanges.range(sheet1,2,1).setEditText("2013/1/2");
 		NRanges.range(sheet1,2,2).setEditText("2013/1/3");
 		
-		NDataValidation dv0 = sheet1.addDataValidation(new CellRegion(0,3));
+		SDataValidation dv0 = sheet1.addDataValidation(new CellRegion(0,3));
 		
 		String dateFormat = "yyyy/m/d";
 		String numberFormat = "General";
@@ -525,8 +530,8 @@ public class ValidationTest {
 	}
 	@Test
 	public void testDataValidationHelperFormula(){
-		NBook book = NBooks.createBook("book1");
-		NSheet sheet1 = initialDataGrid(book.createSheet("Sheet1"));
+		SBook book = SBooks.createBook("book1");
+		SSheet sheet1 = initialDataGrid(book.createSheet("Sheet1"));
 		NRanges.range(sheet1,0,0).setEditText("A");
 		NRanges.range(sheet1,0,1).setEditText("B");
 		NRanges.range(sheet1,0,2).setEditText("C");
@@ -540,7 +545,7 @@ public class ValidationTest {
 		NRanges.range(sheet1,2,2).setEditText("2013/1/3");
 		NRanges.range(sheet1,2,3).setEditText("2013/1/4");
 		
-		NDataValidation dv0 = sheet1.addDataValidation(new CellRegion(0,4));
+		SDataValidation dv0 = sheet1.addDataValidation(new CellRegion(0,4));
 		
 		String dateFormat = "yyyy/m/d";
 		String numberFormat = "General";

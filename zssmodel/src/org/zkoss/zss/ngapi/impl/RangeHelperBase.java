@@ -1,18 +1,18 @@
 package org.zkoss.zss.ngapi.impl;
 
 import org.zkoss.util.Locales;
+import org.zkoss.zss.model.SCell;
+import org.zkoss.zss.model.SSheet;
+import org.zkoss.zss.model.SCell.CellType;
+import org.zkoss.zss.model.sys.EngineFactory;
+import org.zkoss.zss.model.sys.format.FormatContext;
+import org.zkoss.zss.model.sys.format.FormatEngine;
+import org.zkoss.zss.model.sys.formula.FormulaEngine;
 import org.zkoss.zss.ngapi.NRange;
-import org.zkoss.zss.ngmodel.NCell;
-import org.zkoss.zss.ngmodel.NSheet;
-import org.zkoss.zss.ngmodel.NCell.CellType;
-import org.zkoss.zss.ngmodel.sys.EngineFactory;
-import org.zkoss.zss.ngmodel.sys.format.FormatContext;
-import org.zkoss.zss.ngmodel.sys.format.FormatEngine;
-import org.zkoss.zss.ngmodel.sys.formula.FormulaEngine;
 
 public class RangeHelperBase {
 	protected final NRange range;
-	protected final NSheet sheet;
+	protected final SSheet sheet;
 	private FormatEngine formatEngine;
 	private FormulaEngine formulaEngine;
 	
@@ -21,7 +21,7 @@ public class RangeHelperBase {
 		this.sheet = range.getSheet();
 	}
 
-	public static boolean isBlank(NCell cell){
+	public static boolean isBlank(SCell cell){
 		return cell==null || cell.isNull()||cell.getType() == CellType.BLANK;
 	}
 	
@@ -32,7 +32,7 @@ public class RangeHelperBase {
 		return formatEngine;
 	}
 	
-	public String getFormattedText(NCell cell){
+	public String getFormattedText(SCell cell){
 		return getFormatEngine().format(cell, new FormatContext(Locales.getCurrent())).getText();
 	}
 	

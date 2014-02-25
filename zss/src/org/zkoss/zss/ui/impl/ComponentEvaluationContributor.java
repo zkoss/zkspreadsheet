@@ -26,8 +26,8 @@ import org.zkoss.xel.VariableResolver;
 import org.zkoss.xel.XelException;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Page;
-import org.zkoss.zss.ngmodel.NBook;
-import org.zkoss.zss.ngmodel.sys.formula.EvaluationContributor;
+import org.zkoss.zss.model.SBook;
+import org.zkoss.zss.model.sys.formula.EvaluationContributor;
 /**
  * To contribute function and variable
  * @author dennis
@@ -40,7 +40,7 @@ public class ComponentEvaluationContributor implements EvaluationContributor,Ser
 		this.comp = comp;
 	}
 	
-	private boolean isBelowDesktopScope(NBook book){
+	private boolean isBelowDesktopScope(SBook book){
 		String scope = book.getShareScope();
 		return scope==null||"desktop".equals(scope);
 	}
@@ -56,7 +56,7 @@ public class ComponentEvaluationContributor implements EvaluationContributor,Ser
 	}
 	
 	@Override
-	public FunctionMapper getFunctionMaper(NBook book) {
+	public FunctionMapper getFunctionMaper(SBook book) {
 		if(!checkAlive() && !isBelowDesktopScope(book)){
 			//should contribute any thing if the scope large then desktop
 			return null;			
@@ -78,7 +78,7 @@ public class ComponentEvaluationContributor implements EvaluationContributor,Ser
 	}
 
 	@Override
-	public VariableResolver getVariableResolver(NBook book) {
+	public VariableResolver getVariableResolver(SBook book) {
 		if(!checkAlive() &&!isBelowDesktopScope(book)){
 			//should contribute any thing if the scope large then desktop
 			return null;			

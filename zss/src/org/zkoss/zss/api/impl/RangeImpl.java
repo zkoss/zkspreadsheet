@@ -48,19 +48,19 @@ import org.zkoss.zss.api.model.impl.ModelRef;
 import org.zkoss.zss.api.model.impl.PictureImpl;
 import org.zkoss.zss.api.model.impl.SheetImpl;
 import org.zkoss.zss.api.model.impl.SimpleRef;
+import org.zkoss.zss.model.CellRegion;
+import org.zkoss.zss.model.InvalidateFormulaException;
+import org.zkoss.zss.model.SBook;
+import org.zkoss.zss.model.SCell;
+import org.zkoss.zss.model.SCellStyle;
+import org.zkoss.zss.model.SChart;
+import org.zkoss.zss.model.SHyperlink;
+import org.zkoss.zss.model.SPicture;
+import org.zkoss.zss.model.SSheet;
+import org.zkoss.zss.model.ViewAnchor;
 import org.zkoss.zss.ngapi.NRange;
 import org.zkoss.zss.ngapi.NRanges;
 import org.zkoss.zss.ngapi.impl.imexp.BookHelper;
-import org.zkoss.zss.ngmodel.CellRegion;
-import org.zkoss.zss.ngmodel.InvalidateFormulaException;
-import org.zkoss.zss.ngmodel.NBook;
-import org.zkoss.zss.ngmodel.NCell;
-import org.zkoss.zss.ngmodel.NCellStyle;
-import org.zkoss.zss.ngmodel.NChart;
-import org.zkoss.zss.ngmodel.NHyperlink;
-import org.zkoss.zss.ngmodel.NPicture;
-import org.zkoss.zss.ngmodel.NSheet;
-import org.zkoss.zss.ngmodel.NViewAnchor;
 
 /**
  * 1.Range is not handling the protection issue, if you have handle it yourself before calling the api(by calling {@code #isProtected()})
@@ -257,8 +257,8 @@ public class RangeImpl implements Range{
 	
 	private boolean visitCell(CellVisitor visitor,int r, int c){
 		boolean ignore = false;
-		NSheet sheet = _range.getSheet();
-		NCell cell = sheet.getCell(r,c);
+		SSheet sheet = _range.getSheet();
+		SCell cell = sheet.getCell(r,c);
 		if(cell.isNull()){
 			if(ignore){
 				return true;
@@ -538,8 +538,8 @@ public class RangeImpl implements Range{
 	}
 	
 	public Hyperlink getCellHyperlink(){ 
-		NHyperlink l = _range.getHyperlink();
-		return l==null?null:new HyperlinkImpl(new SimpleRef<NHyperlink>(l),getCellEditText());
+		SHyperlink l = _range.getHyperlink();
+		return l==null?null:new HyperlinkImpl(new SimpleRef<SHyperlink>(l),getCellEditText());
 	}
 	
 	public void setSheetName(String name){ 
@@ -562,11 +562,11 @@ public class RangeImpl implements Range{
 		_range.setValue(value);
 	}
 	
-	private ModelRef<NBook> getBookRef(){
+	private ModelRef<SBook> getBookRef(){
 		return ((BookImpl)getBook()).getRef();
 	}
 	
-	private ModelRef<NSheet> getSheetRef(){
+	private ModelRef<SSheet> getSheetRef(){
 		return ((SheetImpl)getSheet()).getRef();
 	}
 	
@@ -577,14 +577,14 @@ public class RangeImpl implements Range{
 	 * @return cell style if cell is exist, the check row style and column cell style if cell not found, if row and column style is not exist, then return default style of sheet
 	 */
 	public CellStyle getCellStyle() {
-		NCellStyle style = _range.getCellStyle();
-		return new CellStyleImpl(getBookRef(), new SimpleRef<NCellStyle>(style));		
+		SCellStyle style = _range.getCellStyle();
+		return new CellStyleImpl(getBookRef(), new SimpleRef<SCellStyle>(style));		
 	}
 
 	
 	public Picture addPicture(SheetAnchor anchor,byte[] image,Format format){
-		NPicture picture = _range.addPicture(SheetImpl.toViewAnchor(_range.getSheet(), anchor), image, EnumUtil.toPictureFormat(format));
-		return new PictureImpl(new SimpleRef<NSheet>(_range.getSheet()), new SimpleRef<NPicture>(picture));
+		SPicture picture = _range.addPicture(SheetImpl.toViewAnchor(_range.getSheet(), anchor), image, EnumUtil.toPictureFormat(format));
+		return new PictureImpl(new SimpleRef<SSheet>(_range.getSheet()), new SimpleRef<SPicture>(picture));
 	}
 	
 	public void deletePicture(Picture picture){
@@ -596,10 +596,10 @@ public class RangeImpl implements Range{
 	}
 	
 	public Chart addChart(SheetAnchor anchor,Type type, Grouping grouping, LegendPosition pos){
-		NChart chart =  _range.addChart(new NViewAnchor(anchor.getRow(), anchor.getColumn(), DEFAULT_CHART_WIDTH, DEFAULT_CHART_HEIGHT), 
+		SChart chart =  _range.addChart(new ViewAnchor(anchor.getRow(), anchor.getColumn(), DEFAULT_CHART_WIDTH, DEFAULT_CHART_HEIGHT), 
 				EnumUtil.toChartType(type), EnumUtil.toChartGrouping(grouping),
 				EnumUtil.toLegendPosition(pos), EnumUtil.isThreeDimentionalChart(type));
-		return new ChartImpl(new SimpleRef<NSheet>(_range.getSheet()), new SimpleRef<NChart>(chart));
+		return new ChartImpl(new SimpleRef<SSheet>(_range.getSheet()), new SimpleRef<SChart>(chart));
 	}
 	
 	
@@ -618,7 +618,7 @@ public class RangeImpl implements Range{
 	}
 	
 	public Sheet createSheet(String name){
-		NSheet sheet = _range.createSheet(name);
+		SSheet sheet = _range.createSheet(name);
 		return new SheetImpl(getBookRef(),new SimpleRef(sheet));
 	}
 	

@@ -22,9 +22,9 @@ package org.zkoss.zss.ui.sys;
 //import org.zkoss.poi.ss.usermodel.Picture;
 //import org.zkoss.poi.ss.usermodel.ZssChartX;
 //import org.zkoss.zss.model.sys.XSheet;
-import org.zkoss.zss.ngmodel.NChart;
-import org.zkoss.zss.ngmodel.NPicture;
-import org.zkoss.zss.ngmodel.NSheet;
+import org.zkoss.zss.model.SChart;
+import org.zkoss.zss.model.SPicture;
+import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.ui.Spreadsheet;
 
 /**
@@ -52,19 +52,19 @@ public interface WidgetLoader {
 	 * indicate the selected sheet of a spreadsheet is changed.   
 	 * @param sheet
 	 */
-	public void onSheetSelected(NSheet sheet);
+	public void onSheetSelected(SSheet sheet);
 	
 	/**
 	 * indicate the sheet is dis-selected
 	 * @param sheet
 	 */
-	public void onSheetClean(NSheet sheet);
+	public void onSheetClean(SSheet sheet);
 	
 	/**
 	 * indicate the sheet's freeze panel is changed.
 	 * @param sheet
 	 */
-	public void onSheetFreeze(NSheet sheet);
+	public void onSheetFreeze(SSheet sheet);
 	
 	/**
 	 * call when spreadsheet try to load a block of cell to client side. 
@@ -73,18 +73,18 @@ public interface WidgetLoader {
 	 */
 	//public void onLoadOnDeman(String sheetid,int left,int top,int right,int bottom);
 
-	public void addChartWidget(NSheet sheet, NChart chart);
-	public void deleteChartWidget(NSheet sheet, String chartId); // ZSS-358: keep chart ID for notifying; must assume that chart data was gone.
-	public void updateChartWidget(NSheet sheet, NChart chart);
+	public void addChartWidget(SSheet sheet, SChart chart);
+	public void deleteChartWidget(SSheet sheet, String chartId); // ZSS-358: keep chart ID for notifying; must assume that chart data was gone.
+	public void updateChartWidget(SSheet sheet, SChart chart);
 	
-	public void addPictureWidget(NSheet sheet, NPicture picture);
-	public void deletePictureWidget(NSheet sheet, String pictureId); // ZSS-397: picture data is gone after deleting
-	public void updatePictureWidget(NSheet sheet, NPicture picture);
+	public void addPictureWidget(SSheet sheet, SPicture picture);
+	public void deletePictureWidget(SSheet sheet, String pictureId); // ZSS-397: picture data is gone after deleting
+	public void updatePictureWidget(SSheet sheet, SPicture picture);
 
 	//ZSS-455 Chart/Image doesn't move location after change column/row width/height
 	//ZSS-306 a chart doesn't shrink its size when deleting rows or columns it overlaps
-	public void onColumnChange(NSheet sheet, int left, int right);
-	public void onRowChange(NSheet sheet, int top, int bottom);
+	public void onColumnChange(SSheet sheet, int left, int right);
+	public void onRowChange(SSheet sheet, int top, int bottom);
 	
 	
 }

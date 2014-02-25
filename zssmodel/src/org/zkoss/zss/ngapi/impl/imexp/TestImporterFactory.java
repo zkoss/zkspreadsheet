@@ -23,30 +23,30 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.zkoss.zss.model.CellRegion;
+import org.zkoss.zss.model.SBook;
+import org.zkoss.zss.model.SBooks;
+import org.zkoss.zss.model.SCell;
+import org.zkoss.zss.model.SCellStyle;
+import org.zkoss.zss.model.SCellValue;
+import org.zkoss.zss.model.SChart;
+import org.zkoss.zss.model.SDataValidation;
+import org.zkoss.zss.model.SSheet;
+import org.zkoss.zss.model.ViewAnchor;
+import org.zkoss.zss.model.SCellStyle.Alignment;
+import org.zkoss.zss.model.SCellStyle.BorderType;
+import org.zkoss.zss.model.SCellStyle.FillPattern;
+import org.zkoss.zss.model.SCellStyle.VerticalAlignment;
+import org.zkoss.zss.model.SChart.NChartLegendPosition;
+import org.zkoss.zss.model.SChart.NChartType;
+import org.zkoss.zss.model.SDataValidation.ValidationType;
+import org.zkoss.zss.model.SPicture.Format;
+import org.zkoss.zss.model.chart.SGeneralChartData;
+import org.zkoss.zss.model.chart.SSeries;
 import org.zkoss.zss.ngapi.ImporterFactory;
 import org.zkoss.zss.ngapi.NImporter;
 import org.zkoss.zss.ngapi.NRanges;
 import org.zkoss.zss.ngapi.impl.StyleUtil;
-import org.zkoss.zss.ngmodel.CellRegion;
-import org.zkoss.zss.ngmodel.NBook;
-import org.zkoss.zss.ngmodel.NBooks;
-import org.zkoss.zss.ngmodel.NCell;
-import org.zkoss.zss.ngmodel.NCellStyle;
-import org.zkoss.zss.ngmodel.NCellStyle.Alignment;
-import org.zkoss.zss.ngmodel.NCellStyle.BorderType;
-import org.zkoss.zss.ngmodel.NCellStyle.FillPattern;
-import org.zkoss.zss.ngmodel.NCellStyle.VerticalAlignment;
-import org.zkoss.zss.ngmodel.NCellValue;
-import org.zkoss.zss.ngmodel.NChart;
-import org.zkoss.zss.ngmodel.NChart.NChartLegendPosition;
-import org.zkoss.zss.ngmodel.NChart.NChartType;
-import org.zkoss.zss.ngmodel.NDataValidation;
-import org.zkoss.zss.ngmodel.NDataValidation.ValidationType;
-import org.zkoss.zss.ngmodel.NPicture.Format;
-import org.zkoss.zss.ngmodel.NSheet;
-import org.zkoss.zss.ngmodel.NViewAnchor;
-import org.zkoss.zss.ngmodel.chart.NGeneralChartData;
-import org.zkoss.zss.ngmodel.chart.NSeries;
 /**
  * 
  * @author dennis
@@ -54,21 +54,21 @@ import org.zkoss.zss.ngmodel.chart.NSeries;
  */
 public class TestImporterFactory implements ImporterFactory{
 
-	static NBook book;//test test share
+	static SBook book;//test test share
 	
 	@Override
 	public NImporter createImporter() {
 		return new AbstractImporter() {
 			
 			@Override
-			public NBook imports(InputStream is, String bookName) throws IOException {
+			public SBook imports(InputStream is, String bookName) throws IOException {
 //				if(book!=null){
 //					return book;
 //				}
 //				book = NBooks.createBook(bookName);
 //				book.setShareScope("application");
 				
-				NBook book = NBooks.createBook(bookName);
+				SBook book = SBooks.createBook(bookName);
 				
 //				buildTest(book);
 				
@@ -93,19 +93,19 @@ public class TestImporterFactory implements ImporterFactory{
 				return book;
 			}
 			
-			private void buildTest(NBook book) {
-				NSheet sheet1 = book.createSheet("Test");
+			private void buildTest(SBook book) {
+				SSheet sheet1 = book.createSheet("Test");
 				sheet1.getCell("A1").setValue(12);
 				sheet1.getCell("B1").setValue(34);
 				sheet1.getCell("C1").setValue("=SUM(A1:B1)");
 			}
-			private void buildSheetRename(NBook book) {
-				NSheet sheet1 = book.createSheet("SheetRename1");
+			private void buildSheetRename(SBook book) {
+				SSheet sheet1 = book.createSheet("SheetRename1");
 				sheet1.getCell("A1").setValue(1);
 				sheet1.getCell("B1").setValue(2);
 				sheet1.getCell("C1").setValue("=SUM(A1:B1)");
 				sheet1.getCell("D1").setValue("=SUM(SheetRename1!A1:B1)");
-				NSheet sheet2 = book.createSheet("SheetRename2");
+				SSheet sheet2 = book.createSheet("SheetRename2");
 				sheet2.getCell("A1").setValue(3);
 				sheet2.getCell("B1").setValue(4);
 				sheet2.getCell("C1").setValue("=SUM(A1:B1)");
@@ -113,14 +113,14 @@ public class TestImporterFactory implements ImporterFactory{
 				sheet2.getCell("E1").setValue("=SUM(SheetRename2!A1:B1)");
 			}
 			
-			private void buildCopyPaste(NBook book) {
-				NSheet sheet1 = book.createSheet("CopyPaste");
+			private void buildCopyPaste(SBook book) {
+				SSheet sheet1 = book.createSheet("CopyPaste");
 				
-				NCellStyle totalStyle = book.createCellStyle(true);
+				SCellStyle totalStyle = book.createCellStyle(true);
 				totalStyle.setDataFormat("#,000.0");
 				totalStyle.setBorderBottom(BorderType.MEDIUM,book.createColor("#FF0000"));
 				
-				NCellStyle headerStyle = book.createCellStyle(true);
+				SCellStyle headerStyle = book.createCellStyle(true);
 				headerStyle.setFillColor(book.createColor("#AAAAAA"));
 				headerStyle.setFillPattern(FillPattern.SOLID_FOREGROUND);
 				headerStyle.setAlignment(Alignment.CENTER);
@@ -171,17 +171,17 @@ public class TestImporterFactory implements ImporterFactory{
 				sheet1.getCell("G8").setCellStyle(totalStyle);
 
 				
-				NChart chart = sheet1.addChart(NChartType.LINE, new NViewAnchor(0, 9, 600, 400));
+				SChart chart = sheet1.addChart(NChartType.LINE, new ViewAnchor(0, 9, 600, 400));
 				chart.setLegendPosition(NChartLegendPosition.RIGHT);
-				NGeneralChartData data = (NGeneralChartData)chart.getData();
+				SGeneralChartData data = (SGeneralChartData)chart.getData();
 				data.setCategoriesFormula("D5:D8");
 				data.addSeries().setFormula("E4", "E5:E8");
 				data.addSeries().setFormula("F4", "F5:F8");
 				data.addSeries().setFormula("G4", "G5:G8");
 				
 			}
-			private void buildMove(NBook book) {
-				NSheet sheet = book.createSheet("Move");
+			private void buildMove(SBook book) {
+				SSheet sheet = book.createSheet("Move");
 				
 				sheet.getCell("A1").setValue(3);
 				
@@ -191,8 +191,8 @@ public class TestImporterFactory implements ImporterFactory{
 				sheet.getCell("G1").setValue("=C3");
 				sheet.getCell("G10").setValue("=C3");
 			}
-			private void buildMerge(NBook book) {
-				NSheet sheet = book.createSheet("Merge");
+			private void buildMerge(SBook book) {
+				SSheet sheet = book.createSheet("Merge");
 				
 				sheet.getCell("A1").setValue("ABC");
 				
@@ -218,7 +218,7 @@ public class TestImporterFactory implements ImporterFactory{
 				
 				sheet.addMergedRegion(new CellRegion("D4:F5"));
 				
-				NCellStyle style = book.createCellStyle(true);
+				SCellStyle style = book.createCellStyle(true);
 				style.setFillPattern(FillPattern.SOLID_FOREGROUND);
 				style.setFillColor(book.createColor("#FF0000"));
 				sheet.getCell("D4").setCellStyle(style);
@@ -241,8 +241,8 @@ public class TestImporterFactory implements ImporterFactory{
 				sheet.getCell("D11").setValue("D11");
 				
 			}
-			private void buildAutoFilter(NBook book) {
-				NSheet sheet = book.createSheet("AutoFilter");
+			private void buildAutoFilter(SBook book) {
+				SSheet sheet = book.createSheet("AutoFilter");
 				sheet.getCell("D7").setValue("A");
 				sheet.getCell("D8").setValue("B");
 				sheet.getCell("D9").setValue("C");
@@ -280,8 +280,8 @@ public class TestImporterFactory implements ImporterFactory{
 				NRanges.range(sheet,"D7").enableAutoFilter(true);
 
 			}
-			private void buildValidation(NBook book) {
-				NSheet sheet1 = book.createSheet("Data Validtaion");
+			private void buildValidation(SBook book) {
+				SSheet sheet1 = book.createSheet("Data Validtaion");
 				
 				NRanges.range(sheet1,"A1").setEditText("A");
 				NRanges.range(sheet1,"B1").setEditText("B");
@@ -293,7 +293,7 @@ public class TestImporterFactory implements ImporterFactory{
 				NRanges.range(sheet1,"B3").setEditText("2013/1/2");
 				NRanges.range(sheet1,"C3").setEditText("2013/1/3");
 				
-				NDataValidation dv0 = sheet1.addDataValidation(new CellRegion("D1"));
+				SDataValidation dv0 = sheet1.addDataValidation(new CellRegion("D1"));
 				sheet1.getCell("E1").setValue("<A1:C1");
 				dv0.setValidationType(ValidationType.LIST);
 				dv0.setShowPromptBox(true);
@@ -306,7 +306,7 @@ public class TestImporterFactory implements ImporterFactory{
 				sheet1.addDataValidation(new CellRegion("F1:K1"),dv0);//test multiple place)
 				sheet1.getCell("L1").setValue("<F1:K1 by A1:C1");
 				
-				NDataValidation dv1 = sheet1.addDataValidation(new CellRegion("D2"));
+				SDataValidation dv1 = sheet1.addDataValidation(new CellRegion("D2"));
 				sheet1.getCell("E2").setValue("<A2:C2");
 				dv1.setValidationType(ValidationType.LIST);
 				dv1.setFormula("A2:C2");
@@ -315,14 +315,14 @@ public class TestImporterFactory implements ImporterFactory{
 				dv1.setShowDropDownArrow(true);
 				
 				
-				NDataValidation dv2 = sheet1.addDataValidation(new CellRegion("D3"));
+				SDataValidation dv2 = sheet1.addDataValidation(new CellRegion("D3"));
 				sheet1.getCell("E3").setValue("<A3:C3");
 				dv2.setValidationType(ValidationType.LIST);
 				dv2.setFormula("A3:C3");
 				dv2.setShowDropDownArrow(true);
 				dv2.setShowErrorBox(true);
 				
-				NDataValidation dv3 = sheet1.addDataValidation(new CellRegion("D4"));
+				SDataValidation dv3 = sheet1.addDataValidation(new CellRegion("D4"));
 				sheet1.getCell("E4").setValue("<A1:C3");
 				dv3.setValidationType(ValidationType.LIST);
 				dv3.setFormula("A1:C3");
@@ -331,16 +331,16 @@ public class TestImporterFactory implements ImporterFactory{
 				
 			}
 
-			private void buildFreeze(NBook book) {
-				NSheet sheet = book.createSheet("Freeze");
+			private void buildFreeze(SBook book) {
+				SSheet sheet = book.createSheet("Freeze");
 				
 				sheet.getViewInfo().setNumOfColumnFreeze(5);
 				sheet.getViewInfo().setNumOfRowFreeze(7);
 //				sheet.addPicture(Format.JPG, getTestImageData(), new NViewAnchor(3, 3, 600, 300));
 			}
 
-			private void buildChartSheet(NBook book) {
-				NSheet sheet = book.createSheet("Chart");
+			private void buildChartSheet(SBook book) {
+				SSheet sheet = book.createSheet("Chart");
 				
 				sheet.getViewInfo().setNumOfRowFreeze(6);
 				
@@ -359,7 +359,7 @@ public class TestImporterFactory implements ImporterFactory{
 				sheet.getCell(5, 0).setValue("E");
 				sheet.getCell(6, 0).setValue("F");
 				
-				NCellStyle style = book.createCellStyle(true);
+				SCellStyle style = book.createCellStyle(true);
 				style.setDataFormat("yyyy/m/d");
 				sheet.getCell(1, 7).setValue(newDate("2013/1/1"));
 				sheet.getCell(1, 7).setCellStyle(style);
@@ -417,56 +417,56 @@ public class TestImporterFactory implements ImporterFactory{
 				sheet.getCell(6, 6).setValue(3);
 				
 				
-				NChart chart = sheet.addChart(NChartType.PIE, new NViewAnchor(1, 12, 300, 200));
+				SChart chart = sheet.addChart(NChartType.PIE, new ViewAnchor(1, 12, 300, 200));
 				buildChartData(chart);
 				chart.setLegendPosition(NChartLegendPosition.RIGHT);
 				
-				chart = sheet.addChart(NChartType.PIE, new NViewAnchor(1, 18, 300, 200));
+				chart = sheet.addChart(NChartType.PIE, new ViewAnchor(1, 18, 300, 200));
 				buildChartData(chart);
 				chart.setTitle("Another Title");
 				chart.setThreeD(true);
 				
-				chart = sheet.addChart(NChartType.BAR, new NViewAnchor(12, 0, 300, 200));
+				chart = sheet.addChart(NChartType.BAR, new ViewAnchor(12, 0, 300, 200));
 				buildChartData(chart);
 				chart.setLegendPosition(NChartLegendPosition.BOTTOM);
 				
-				chart = sheet.addChart(NChartType.BAR, new NViewAnchor(12, 6, 300, 200));
+				chart = sheet.addChart(NChartType.BAR, new ViewAnchor(12, 6, 300, 200));
 				buildChartData(chart);
 				chart.setThreeD(true);
 				
-				chart = sheet.addChart(NChartType.COLUMN, new NViewAnchor(12, 12, 300, 200));
+				chart = sheet.addChart(NChartType.COLUMN, new ViewAnchor(12, 12, 300, 200));
 				buildChartData(chart);
 				chart.setLegendPosition(NChartLegendPosition.LEFT);
 				
-				chart = sheet.addChart(NChartType.COLUMN, new NViewAnchor(12, 18, 300, 200));
+				chart = sheet.addChart(NChartType.COLUMN, new ViewAnchor(12, 18, 300, 200));
 				buildChartData(chart);
 				chart.setThreeD(true);
 				
-				chart = sheet.addChart(NChartType.DOUGHNUT, new NViewAnchor(12, 18, 300, 200));
+				chart = sheet.addChart(NChartType.DOUGHNUT, new ViewAnchor(12, 18, 300, 200));
 				buildChartData(chart);
 				chart.setLegendPosition(NChartLegendPosition.RIGHT);
 				
 				
-				chart = sheet.addChart(NChartType.LINE, new NViewAnchor(24, 0, 300, 200));
+				chart = sheet.addChart(NChartType.LINE, new ViewAnchor(24, 0, 300, 200));
 				buildChartData(chart);
 				chart.setLegendPosition(NChartLegendPosition.TOP);
 				
-				chart = sheet.addChart(NChartType.LINE, new NViewAnchor(24, 6, 300, 200));
+				chart = sheet.addChart(NChartType.LINE, new ViewAnchor(24, 6, 300, 200));
 				buildChartData(chart);
 				chart.setThreeD(true);
 				
-				chart = sheet.addChart(NChartType.AREA, new NViewAnchor(24, 12, 300, 200));
+				chart = sheet.addChart(NChartType.AREA, new ViewAnchor(24, 12, 300, 200));
 				buildChartData(chart);
 				
-				chart = sheet.addChart(NChartType.SCATTER, new NViewAnchor(36, 0, 300, 200));
+				chart = sheet.addChart(NChartType.SCATTER, new ViewAnchor(36, 0, 300, 200));
 				buildScatterChartData(chart);
 				chart.setLegendPosition(NChartLegendPosition.RIGHT);
 				
-				chart = sheet.addChart(NChartType.BUBBLE, new NViewAnchor(36, 6, 300, 200));
+				chart = sheet.addChart(NChartType.BUBBLE, new ViewAnchor(36, 6, 300, 200));
 				buildBubbleChartData(chart);
 				chart.setLegendPosition(NChartLegendPosition.RIGHT);
 //				
-				chart = sheet.addChart(NChartType.STOCK, new NViewAnchor(36, 12, 600, 200));
+				chart = sheet.addChart(NChartType.STOCK, new ViewAnchor(36, 12, 600, 200));
 				buildStockChartData(chart);
 				
 				
@@ -482,10 +482,10 @@ public class TestImporterFactory implements ImporterFactory{
 				return null;
 			}
 
-			private void buildStockChartData(NChart chart){//X,Y
-				NGeneralChartData data = (NGeneralChartData)chart.getData();
+			private void buildStockChartData(SChart chart){//X,Y
+				SGeneralChartData data = (SGeneralChartData)chart.getData();
 				data.setCategoriesFormula("H2:H7");
-				NSeries series = data.addSeries();//volumn
+				SSeries series = data.addSeries();//volumn
 				series.setFormula("B1", "B2:B7");
 				series = data.addSeries();
 				series.setFormula("C1", "C2:C7");//open
@@ -497,26 +497,26 @@ public class TestImporterFactory implements ImporterFactory{
 				series.setFormula("F1", "F2:F7");//close
 			}
 			
-			private void buildBubbleChartData(NChart chart){//X,Y
-				NGeneralChartData data = (NGeneralChartData)chart.getData();
-				NSeries series = data.addSeries();
+			private void buildBubbleChartData(SChart chart){//X,Y
+				SGeneralChartData data = (SGeneralChartData)chart.getData();
+				SSeries series = data.addSeries();
 				series.setXYZFormula("A3", "B2:G2", "B3:G3", "B5:G5");
 				series = data.addSeries();
 				series.setXYZFormula("A4", "B2:G2", "B4:G4", "B5:G5");
 			}
 			
-			private void buildScatterChartData(NChart chart){//X,Y
-				NGeneralChartData data = (NGeneralChartData)chart.getData();
-				NSeries series = data.addSeries();
+			private void buildScatterChartData(SChart chart){//X,Y
+				SGeneralChartData data = (SGeneralChartData)chart.getData();
+				SSeries series = data.addSeries();
 				series.setXYFormula("A3", "B2:G2", "B3:G3");
 				series = data.addSeries();
 				series.setXYFormula("A4", "B2:G2", "B4:G4");
 			}			
 			
-			private void buildChartData(NChart chart){
-				NGeneralChartData data = (NGeneralChartData)chart.getData();
+			private void buildChartData(SChart chart){
+				SGeneralChartData data = (SGeneralChartData)chart.getData();
 				data.setCategoriesFormula("A2:A4");//A,B,C
-				NSeries series = data.addSeries();
+				SSeries series = data.addSeries();
 				series.setXYFormula("A1", "B2:B4", null);
 				series = data.addSeries();
 				series.setXYFormula("\"Series 2\"", "C2:C4", null);
@@ -524,8 +524,8 @@ public class TestImporterFactory implements ImporterFactory{
 				series.setXYFormula(null, "D2:D4", null);
 			}
 
-			private void buildNormalSheet(NBook book) {
-				NSheet sheet = book.createSheet("Sheet 1");
+			private void buildNormalSheet(SBook book) {
+				SSheet sheet = book.createSheet("Sheet 1");
 				sheet.getColumn(0).setWidth(120);
 				sheet.getColumn(1).setWidth(120);
 				sheet.getColumn(2).setWidth(120);
@@ -542,8 +542,8 @@ public class TestImporterFactory implements ImporterFactory{
 				sheet.getRow(16).setHidden(true);
 				sheet.getRow(18).setHidden(true);
 				
-				NCellStyle style;
-				NCell cell;
+				SCellStyle style;
+				SCell cell;
 				SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 				Date now = new Date();
 				Date dayonly = null;

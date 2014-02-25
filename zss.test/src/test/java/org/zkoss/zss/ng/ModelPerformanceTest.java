@@ -16,6 +16,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.Locale;
 import java.util.Set;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -27,19 +28,19 @@ import org.zkoss.poi.xssf.usermodel.XSSFRow;
 import org.zkoss.poi.xssf.usermodel.XSSFSheet;
 import org.zkoss.poi.xssf.usermodel.XSSFWorkbook;
 import org.zkoss.util.Locales;
+import org.zkoss.zss.model.SBook;
+import org.zkoss.zss.model.SCell;
+import org.zkoss.zss.model.SSheet;
+import org.zkoss.zss.model.impl.AbstractBookSeriesAdv;
+import org.zkoss.zss.model.impl.RefImpl;
+import org.zkoss.zss.model.sys.dependency.DependencyTable;
+import org.zkoss.zss.model.sys.dependency.Ref;
 //import org.zkoss.zss.engine.RefSheet;
 //import org.zkoss.zss.model.sys.XBook;
 //import org.zkoss.zss.model.sys.XSheet;
 //import org.zkoss.zss.model.sys.impl.BookHelper;
 //import org.zkoss.zss.model.sys.impl.XSSFBookImpl;
 import org.zkoss.zss.ngapi.impl.imexp.ExcelImportFactory;
-import org.zkoss.zss.ngmodel.NBook;
-import org.zkoss.zss.ngmodel.NCell;
-import org.zkoss.zss.ngmodel.NSheet;
-import org.zkoss.zss.ngmodel.impl.AbstractBookSeriesAdv;
-import org.zkoss.zss.ngmodel.impl.RefImpl;
-import org.zkoss.zss.ngmodel.sys.dependency.DependencyTable;
-import org.zkoss.zss.ngmodel.sys.dependency.Ref;
 
 /**
  * @author Pao
@@ -123,7 +124,7 @@ public class ModelPerformanceTest {
 		try {
 			is = file.openStream();
 			if(type == NG_MODEL) {
-				NBook book = new ExcelImportFactory().createImporter().imports(is, bookName);
+				SBook book = new ExcelImportFactory().createImporter().imports(is, bookName);
 				book.getBookSeries().setAutoFormulaCacheClean(false);//in performance, we don't allow to clear automatically
 				return book;
 			} else if(type == WORKBOOK_MODEL) {
@@ -149,13 +150,13 @@ public class ModelPerformanceTest {
 
 	private void evaluation(boolean ngmodel, Object model, double firstColumnValue) {
 		if(ngmodel) {
-			NBook book = (NBook)model;
-			NSheet sheet = book.getSheet(0);
+			SBook book = (SBook)model;
+			SSheet sheet = book.getSheet(0);
 			// get all values except first column
 			for(int r = 0; r < ROW_COUNT; ++r) {
 				double expected = firstColumnValue;
 				for(int c = 1; c < COL_COUNT; ++c) {
-					NCell cell = sheet.getCell(r, c);
+					SCell cell = sheet.getCell(r, c);
 					cell.clearFormulaResultCache();
 					double v = cell.getNumberValue();
 					Assert.assertEquals(expected, v, 0.0000001);
@@ -188,8 +189,8 @@ public class ModelPerformanceTest {
 
 	private void modifyFirstColumn(boolean ngmodel, Object model, double firstColumnValue) {
 		if(ngmodel) {
-			NBook book = (NBook)model;
-			NSheet sheet = book.getSheet(0);
+			SBook book = (SBook)model;
+			SSheet sheet = book.getSheet(0);
 			for(int r = 0; r < ROW_COUNT; ++r) {
 				sheet.getCell(r, 0).setNumberValue(firstColumnValue);
 			}
@@ -212,7 +213,7 @@ public class ModelPerformanceTest {
 	
 	private void searchDependencies(int type, Object model) {
 		if(type == NG_MODEL) {
-			NBook book = (NBook)model;
+			SBook book = (SBook)model;
 			AbstractBookSeriesAdv series = (AbstractBookSeriesAdv)book.getBookSeries();
 			DependencyTable table = series.getDependencyTable();
 			String bookName = book.getBookName();

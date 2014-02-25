@@ -10,13 +10,13 @@ import org.zkoss.zss.*;
 import org.zkoss.zss.api.AreaRef;
 import org.zkoss.zss.api.model.*;
 import org.zkoss.zss.api.model.Chart.Type;
+import org.zkoss.zss.model.*;
+import org.zkoss.zss.model.SChart.NChartGrouping;
+import org.zkoss.zss.model.SChart.NChartLegendPosition;
+import org.zkoss.zss.model.SChart.NChartType;
+import org.zkoss.zss.model.chart.*;
 import org.zkoss.zss.ngapi.*;
 import org.zkoss.zss.ngapi.impl.imexp.*;
-import org.zkoss.zss.ngmodel.*;
-import org.zkoss.zss.ngmodel.NChart.NChartGrouping;
-import org.zkoss.zss.ngmodel.NChart.NChartLegendPosition;
-import org.zkoss.zss.ngmodel.NChart.NChartType;
-import org.zkoss.zss.ngmodel.chart.*;
 import org.zkoss.zssex.api.ChartDataUtil;
 
 public class ChartPictureTest extends ChartPictureTestBase {
@@ -105,18 +105,18 @@ public class ChartPictureTest extends ChartPictureTestBase {
 	
 	@Test
 	public void addCustomChartData(){
-		NBook book = loadBook(this.getClass().getResourceAsStream("book/insert-charts.xlsx"));
-		NSheet sheet = book.getSheetByName("chart-image");
+		SBook book = loadBook(this.getClass().getResourceAsStream("book/insert-charts.xlsx"));
+		SSheet sheet = book.getSheetByName("chart-image");
 		
 		assertEquals(0, sheet.getCharts().size());
-		NViewAnchor anchor = new NViewAnchor(2, 5, 600, 400);
-		NChart chart = NRanges.range(sheet).addChart(anchor, NChartType.BAR, NChartGrouping.STANDARD, NChartLegendPosition.RIGHT, false);
+		ViewAnchor anchor = new ViewAnchor(2, 5, 600, 400);
+		SChart chart = NRanges.range(sheet).addChart(anchor, NChartType.BAR, NChartGrouping.STANDARD, NChartLegendPosition.RIGHT, false);
 		assertEquals(1, sheet.getCharts().size());
 		
-		NGeneralChartData chartData = (NGeneralChartData)chart.getData();
+		SGeneralChartData chartData = (SGeneralChartData)chart.getData();
 		chartData.setCategoriesFormula(new SheetRegion(sheet, "B4:D4").getReferenceString());
 		for (int row = 4; row <= 6; row++){
-			NSeries series = chartData.addSeries();
+			SSeries series = chartData.addSeries();
 			SheetRegion nameRegion = new SheetRegion(sheet, row, 0);
 			SheetRegion valueRegion = new SheetRegion(sheet, row, 1, row, 3);
 			series.setFormula(nameRegion.getReferenceString(), valueRegion.getReferenceString());
@@ -146,15 +146,15 @@ public class ChartPictureTest extends ChartPictureTestBase {
 	 */
 	@Test
 	public void addBarChart(){
-		NBook book = loadBook(this.getClass().getResourceAsStream("book/insert-charts.xlsx"));
-		NSheet sheet = book.getSheetByName("chart-image");
+		SBook book = loadBook(this.getClass().getResourceAsStream("book/insert-charts.xlsx"));
+		SSheet sheet = book.getSheetByName("chart-image");
 		
 		assertEquals(0, sheet.getCharts().size());
-		NViewAnchor anchor = new NViewAnchor(2, 5, 600, 400);
-		NChart chart = NRanges.range(sheet, "A4:D7").addChart(anchor, NChartType.BAR, NChartGrouping.STANDARD, NChartLegendPosition.RIGHT, false);
+		ViewAnchor anchor = new ViewAnchor(2, 5, 600, 400);
+		SChart chart = NRanges.range(sheet, "A4:D7").addChart(anchor, NChartType.BAR, NChartGrouping.STANDARD, NChartLegendPosition.RIGHT, false);
 
 		assertEquals(1, sheet.getCharts().size());
-		NGeneralChartData nChartData = (NGeneralChartData)chart.getData();
+		SGeneralChartData nChartData = (SGeneralChartData)chart.getData();
 		assertEquals(3, nChartData.getNumOfCategory());
 		assertEquals("Internet Explorer", nChartData.getCategory(0));
 		assertEquals("Chrome", nChartData.getCategory(1));
@@ -181,15 +181,15 @@ public class ChartPictureTest extends ChartPictureTestBase {
 	 */
 	@Test
 	public void addColumnChart(){
-		NBook book = loadBook(this.getClass().getResourceAsStream("book/insert-charts.xlsx"));
-		NSheet sheet = book.getSheetByName("chart-image");
+		SBook book = loadBook(this.getClass().getResourceAsStream("book/insert-charts.xlsx"));
+		SSheet sheet = book.getSheetByName("chart-image");
 		
 		assertEquals(0, sheet.getCharts().size());
-		NViewAnchor anchor = new NViewAnchor(2, 5, 600, 400);
-		NChart chart = NRanges.range(sheet, "A4:D9").addChart(anchor, NChartType.COLUMN, NChartGrouping.STANDARD, NChartLegendPosition.RIGHT, false);
+		ViewAnchor anchor = new ViewAnchor(2, 5, 600, 400);
+		SChart chart = NRanges.range(sheet, "A4:D9").addChart(anchor, NChartType.COLUMN, NChartGrouping.STANDARD, NChartLegendPosition.RIGHT, false);
 
 		assertEquals(1, sheet.getCharts().size());
-		NGeneralChartData nChartData = (NGeneralChartData)chart.getData();
+		SGeneralChartData nChartData = (SGeneralChartData)chart.getData();
 		assertEquals(5, nChartData.getNumOfCategory());
 		assertEquals("January 2012", nChartData.getCategory(0));
 		assertEquals("February 2012", nChartData.getCategory(1));
@@ -215,15 +215,15 @@ public class ChartPictureTest extends ChartPictureTestBase {
 	
 	@Test
 	public void addColumnChartMissingCategory(){
-		NBook book = loadBook(this.getClass().getResourceAsStream("book/insert-charts.xlsx"));
-		NSheet sheet = book.getSheetByName("chart-image");
+		SBook book = loadBook(this.getClass().getResourceAsStream("book/insert-charts.xlsx"));
+		SSheet sheet = book.getSheetByName("chart-image");
 		
 		assertEquals(0, sheet.getCharts().size());
-		NViewAnchor anchor = new NViewAnchor(2, 5, 600, 400);
-		NChart chart = NRanges.range(sheet, "B4:D9").addChart(anchor, NChartType.COLUMN, NChartGrouping.STANDARD, NChartLegendPosition.RIGHT, false);
+		ViewAnchor anchor = new ViewAnchor(2, 5, 600, 400);
+		SChart chart = NRanges.range(sheet, "B4:D9").addChart(anchor, NChartType.COLUMN, NChartGrouping.STANDARD, NChartLegendPosition.RIGHT, false);
 		assertEquals(1, sheet.getCharts().size());
 
-		NGeneralChartData nChartData = (NGeneralChartData)chart.getData();
+		SGeneralChartData nChartData = (SGeneralChartData)chart.getData();
 		assertEquals(0, nChartData.getNumOfCategory());
 		assertEquals(3, nChartData.getNumOfSeries());
 		assertEquals(0.3427, nChartData.getSeries(0).getValue(0));
@@ -243,15 +243,15 @@ public class ChartPictureTest extends ChartPictureTestBase {
 	
 	@Test
 	public void addColumnChartMissingSeriesName(){
-		NBook book = loadBook(this.getClass().getResourceAsStream("book/insert-charts.xlsx"));
-		NSheet sheet = book.getSheetByName("chart-image");
+		SBook book = loadBook(this.getClass().getResourceAsStream("book/insert-charts.xlsx"));
+		SSheet sheet = book.getSheetByName("chart-image");
 		
 		assertEquals(0, sheet.getCharts().size());
-		NViewAnchor anchor = new NViewAnchor(2, 5, 600, 400);
-		NChart chart = NRanges.range(sheet, "A5:D9").addChart(anchor, NChartType.COLUMN, NChartGrouping.STANDARD, NChartLegendPosition.RIGHT, false);
+		ViewAnchor anchor = new ViewAnchor(2, 5, 600, 400);
+		SChart chart = NRanges.range(sheet, "A5:D9").addChart(anchor, NChartType.COLUMN, NChartGrouping.STANDARD, NChartLegendPosition.RIGHT, false);
 		assertEquals(1, sheet.getCharts().size());
 
-		NGeneralChartData nChartData = (NGeneralChartData)chart.getData();
+		SGeneralChartData nChartData = (SGeneralChartData)chart.getData();
 		assertEquals(5, nChartData.getNumOfCategory());
 		assertEquals("January 2012", nChartData.getCategory(0));
 		assertEquals("February 2012", nChartData.getCategory(1));
@@ -277,15 +277,15 @@ public class ChartPictureTest extends ChartPictureTestBase {
 	 */
 	@Test
 	public void addScatterChart(){
-		NBook book = loadBook(this.getClass().getResourceAsStream("book/insert-charts.xlsx"));
-		NSheet sheet = book.getSheetByName("chart-image");
+		SBook book = loadBook(this.getClass().getResourceAsStream("book/insert-charts.xlsx"));
+		SSheet sheet = book.getSheetByName("chart-image");
 		
 		assertEquals(0, sheet.getCharts().size());
-		NViewAnchor anchor = new NViewAnchor(2, 5, 600, 400);
-		NChart chart = NRanges.range(sheet, "A4:D9").addChart(anchor, NChartType.SCATTER, NChartGrouping.STANDARD, NChartLegendPosition.RIGHT, false);
+		ViewAnchor anchor = new ViewAnchor(2, 5, 600, 400);
+		SChart chart = NRanges.range(sheet, "A4:D9").addChart(anchor, NChartType.SCATTER, NChartGrouping.STANDARD, NChartLegendPosition.RIGHT, false);
 		assertEquals(1, sheet.getCharts().size());
 		
-		NGeneralChartData nChartData = (NGeneralChartData)chart.getData();
+		SGeneralChartData nChartData = (SGeneralChartData)chart.getData();
 		assertEquals(0, nChartData.getNumOfCategory());
 		assertEquals(3, nChartData.getNumOfSeries());
 		assertEquals("January 2012", nChartData.getSeries(0).getValue(0));
@@ -312,15 +312,15 @@ public class ChartPictureTest extends ChartPictureTestBase {
 	 */
 	@Test
 	public void addScatterChart2(){
-		NBook book = loadBook(this.getClass().getResourceAsStream("book/insert-charts.xlsx"));
-		NSheet sheet = book.getSheetByName("chart-image");
+		SBook book = loadBook(this.getClass().getResourceAsStream("book/insert-charts.xlsx"));
+		SSheet sheet = book.getSheetByName("chart-image");
 		
 		assertEquals(0, sheet.getCharts().size());
-		NViewAnchor anchor = new NViewAnchor(30, 5, 600, 400);
-		NChart chart = NRanges.range(sheet,"A30:B39").addChart(anchor, NChartType.SCATTER, NChartGrouping.STANDARD, NChartLegendPosition.RIGHT, false);
+		ViewAnchor anchor = new ViewAnchor(30, 5, 600, 400);
+		SChart chart = NRanges.range(sheet,"A30:B39").addChart(anchor, NChartType.SCATTER, NChartGrouping.STANDARD, NChartLegendPosition.RIGHT, false);
 
 		assertEquals(1, sheet.getCharts().size());
-		NGeneralChartData nChartData = (NGeneralChartData)chart.getData();
+		SGeneralChartData nChartData = (SGeneralChartData)chart.getData();
 		assertEquals(0, nChartData.getNumOfCategory());
 		assertEquals(1, nChartData.getNumOfSeries());
 
@@ -343,15 +343,15 @@ public class ChartPictureTest extends ChartPictureTestBase {
 	 */
 	@Test
 	public void addScatterChart3(){
-		NBook book = loadBook(this.getClass().getResourceAsStream("book/insert-charts.xlsx"));
-		NSheet sheet = book.getSheetByName("chart-image");
+		SBook book = loadBook(this.getClass().getResourceAsStream("book/insert-charts.xlsx"));
+		SSheet sheet = book.getSheetByName("chart-image");
 		
 		assertEquals(0, sheet.getCharts().size());
-		NViewAnchor anchor = new NViewAnchor(30, 5, 600, 400);
-		NChart chart = NRanges.range(sheet, "A30:B32").addChart(anchor, NChartType.SCATTER, NChartGrouping.STANDARD, NChartLegendPosition.RIGHT, false);
+		ViewAnchor anchor = new ViewAnchor(30, 5, 600, 400);
+		SChart chart = NRanges.range(sheet, "A30:B32").addChart(anchor, NChartType.SCATTER, NChartGrouping.STANDARD, NChartLegendPosition.RIGHT, false);
 
 		assertEquals(1, sheet.getCharts().size());
-		NGeneralChartData nChartData = (NGeneralChartData)chart.getData();
+		SGeneralChartData nChartData = (SGeneralChartData)chart.getData();
 		assertEquals(0, nChartData.getNumOfCategory());
 		assertEquals(2, nChartData.getNumOfSeries());
 
@@ -361,12 +361,12 @@ public class ChartPictureTest extends ChartPictureTestBase {
 	
 	@Test
 	public void deleteChart(){
-		NBook book = loadBook(this.getClass().getResourceAsStream("book/insert-charts.xlsx"));
-		NSheet sheet = book.getSheetByName("chart-image");
+		SBook book = loadBook(this.getClass().getResourceAsStream("book/insert-charts.xlsx"));
+		SSheet sheet = book.getSheetByName("chart-image");
 		
 		assertEquals(0, sheet.getCharts().size());
-		NViewAnchor anchor = new NViewAnchor(2, 5, 600, 400);
-		NChart chart = NRanges.range(sheet, "A4:D9").addChart(anchor, NChartType.COLUMN, NChartGrouping.STANDARD, NChartLegendPosition.RIGHT, false);
+		ViewAnchor anchor = new ViewAnchor(2, 5, 600, 400);
+		SChart chart = NRanges.range(sheet, "A4:D9").addChart(anchor, NChartType.COLUMN, NChartGrouping.STANDARD, NChartLegendPosition.RIGHT, false);
 		assertEquals(1, sheet.getCharts().size());
 		
 		NRanges.range(sheet).deleteChart(chart);
@@ -375,26 +375,26 @@ public class ChartPictureTest extends ChartPictureTestBase {
 	
 	@Test
 	public void moveChart(){
-		NBook book = loadBook(this.getClass().getResourceAsStream("book/insert-charts.xlsx"));
-		NSheet sheet = book.getSheetByName("chart-image");
+		SBook book = loadBook(this.getClass().getResourceAsStream("book/insert-charts.xlsx"));
+		SSheet sheet = book.getSheetByName("chart-image");
 		
 		assertEquals(0, sheet.getCharts().size());
-		NViewAnchor anchor = new NViewAnchor(2, 5, 600, 400);
-		NChart chart = NRanges.range(sheet, "A4:D9").addChart(anchor, NChartType.COLUMN, NChartGrouping.STANDARD, NChartLegendPosition.RIGHT, false);
+		ViewAnchor anchor = new ViewAnchor(2, 5, 600, 400);
+		SChart chart = NRanges.range(sheet, "A4:D9").addChart(anchor, NChartType.COLUMN, NChartGrouping.STANDARD, NChartLegendPosition.RIGHT, false);
 		assertEquals(1, sheet.getCharts().size());
 		assertEquals(2, chart.getAnchor().getRowIndex());
 		assertEquals(5, chart.getAnchor().getColumnIndex());
 		
-		NRanges.range(sheet).moveChart(chart, new NViewAnchor(5, 8, 700, 500));
+		NRanges.range(sheet).moveChart(chart, new ViewAnchor(5, 8, 700, 500));
 		assertEquals(5, chart.getAnchor().getRowIndex());
 		assertEquals(8, chart.getAnchor().getColumnIndex());
 	}
 	
 	
 	//TODO use ImExpTestUtil.loadBook()
-	public static NBook loadBook(InputStream is) {
+	public static SBook loadBook(InputStream is) {
 		NImporter importer = new ExcelImportFactory().createImporter();
-		NBook book = null;
+		SBook book = null;
 		try {
 			book = importer.imports(is, "book");
 		} catch (IOException e) {
@@ -413,7 +413,7 @@ public class ChartPictureTest extends ChartPictureTestBase {
 	static public String DEFAULT_EXPORT_FILE_NAME_XLSX = "exported.xlsx";
 	static public String DEFAULT_EXPORT_FILE_NAME_XLS = "exported.xls";
 	
-	public static File write(NBook book, org.zkoss.zss.ngapi.impl.imexp.ExcelExportFactory.Type type) {
+	public static File write(SBook book, org.zkoss.zss.ngapi.impl.imexp.ExcelExportFactory.Type type) {
 		if (type.equals(ExcelExportFactory.Type.XLSX)){
 			return writeBookToFile(book, new File(DEFAULT_EXPORT_TARGET_PATH + DEFAULT_EXPORT_FILE_NAME_XLSX), type);
 		}else{
@@ -421,7 +421,7 @@ public class ChartPictureTest extends ChartPictureTestBase {
 		}
 	}
 	
-	public static File writeBookToFile(NBook book, File outFile, org.zkoss.zss.ngapi.impl.imexp.ExcelExportFactory.Type type) {
+	public static File writeBookToFile(SBook book, File outFile, org.zkoss.zss.ngapi.impl.imexp.ExcelExportFactory.Type type) {
 		try {
 			outFile = new File(DEFAULT_EXPORT_TARGET_PATH + outFile.getName());
 			outFile.createNewFile();

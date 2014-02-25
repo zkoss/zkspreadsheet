@@ -19,8 +19,7 @@ package org.zkoss.zss.ui.event;
 import org.zkoss.poi.ss.usermodel.Sheet;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zss.ngmodel.NSheet;
-//import org.zkoss.zss.model.Sheet;
+import org.zkoss.zss.model.SSheet;
 
 /**
  * Event about header update
@@ -32,14 +31,14 @@ public class HeaderUpdateEvent extends Event{
 //	static public final int TOP_HEADER = 0;
 //	static public final int LEFT_HEADER = 1;
 	
-	private NSheet _sheet;
+	private SSheet _sheet;
 	private HedaerType _type;
 	private HeaderAction _action;
 	private int _index;
 	private boolean _hidden;
 	private int _size;
 
-	public HeaderUpdateEvent(String name, Component target,NSheet sheet, HedaerType type, HeaderAction acton,int index, int size, boolean hidden) {
+	public HeaderUpdateEvent(String name, Component target,SSheet sheet, HedaerType type, HeaderAction acton,int index, int size, boolean hidden) {
 		super(name, target, size);
 		_sheet = sheet;
 		this._type = type;
@@ -57,7 +56,7 @@ public class HeaderUpdateEvent extends Event{
 	 * get Sheet
 	 * @return sheet 
 	 */
-	public NSheet getSheet(){
+	public SSheet getSheet(){
 		return _sheet;
 	}
 	

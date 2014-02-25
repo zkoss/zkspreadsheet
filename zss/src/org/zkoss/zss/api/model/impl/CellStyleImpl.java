@@ -18,9 +18,9 @@ package org.zkoss.zss.api.model.impl;
 
 import org.zkoss.zss.api.model.CellStyle;
 import org.zkoss.zss.api.model.Color;
-import org.zkoss.zss.ngmodel.NBook;
-import org.zkoss.zss.ngmodel.NCellStyle;
-import org.zkoss.zss.ngmodel.NColor;
+import org.zkoss.zss.model.SBook;
+import org.zkoss.zss.model.SCellStyle;
+import org.zkoss.zss.model.SColor;
 //import org.zkoss.zss.model.sys.XBook;
 //import org.zkoss.zss.model.sys.impl.BookHelper;
 /**
@@ -30,20 +30,20 @@ import org.zkoss.zss.ngmodel.NColor;
  */
 public class CellStyleImpl implements CellStyle{
 	
-	protected ModelRef<NBook> _bookRef;
-	protected ModelRef<NCellStyle> _styleRef;
+	protected ModelRef<SBook> _bookRef;
+	protected ModelRef<SCellStyle> _styleRef;
 	
 	protected FontImpl _font;
 	
-	public CellStyleImpl(ModelRef<NBook> book,ModelRef<NCellStyle> style) {
+	public CellStyleImpl(ModelRef<SBook> book,ModelRef<SCellStyle> style) {
 		this._bookRef = book;
 		this._styleRef = style;
 	}
 	
-	public NCellStyle getNative(){
+	public SCellStyle getNative(){
 		return _styleRef.get();
 	}
-	public ModelRef<NCellStyle> getRef(){
+	public ModelRef<SCellStyle> getRef(){
 		return _styleRef;
 	}
 	
@@ -90,7 +90,7 @@ public class CellStyleImpl implements CellStyle{
 	}
 	
 	public ColorImpl getFillColor() {
-		NColor srcColor = getNative().getFillColor();
+		SColor srcColor = getNative().getFillColor();
 		return new ColorImpl(_bookRef,new SimpleRef(srcColor));
 	}
 
@@ -127,19 +127,19 @@ public class CellStyleImpl implements CellStyle{
 	}
 
 	public Color getBorderTopColor(){
-		return new ColorImpl(_bookRef,new SimpleRef<NColor>(getNative().getBorderTopColor()));
+		return new ColorImpl(_bookRef,new SimpleRef<SColor>(getNative().getBorderTopColor()));
 	}
 
 	public Color getBorderLeftColor(){
-		return new ColorImpl(_bookRef,new SimpleRef<NColor>(getNative().getBorderLeftColor()));
+		return new ColorImpl(_bookRef,new SimpleRef<SColor>(getNative().getBorderLeftColor()));
 	}
 
 	public Color getBorderBottomColor(){
-		return new ColorImpl(_bookRef,new SimpleRef<NColor>(getNative().getBorderBottomColor()));
+		return new ColorImpl(_bookRef,new SimpleRef<SColor>(getNative().getBorderBottomColor()));
 	}
 
 	public Color getBorderRightColor(){
-		return new ColorImpl(_bookRef,new SimpleRef<NColor>(getNative().getBorderRightColor()));
+		return new ColorImpl(_bookRef,new SimpleRef<SColor>(getNative().getBorderRightColor()));
 	}
 	
 	public String getDataFormat(){

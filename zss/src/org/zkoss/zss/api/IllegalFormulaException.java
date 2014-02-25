@@ -16,7 +16,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.api;
 
-import org.zkoss.zss.ngmodel.InvalidateFormulaException;
+import org.zkoss.zss.model.InvalidateFormulaException;
 
 /**
  * Indicate an illegal formula exception

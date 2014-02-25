@@ -20,8 +20,8 @@ import org.zkoss.zss.api.UnitUtil;
 import org.zkoss.zss.api.model.Color;
 import org.zkoss.zss.api.model.EditableFont;
 import org.zkoss.zss.api.model.Font;
-import org.zkoss.zss.ngmodel.NBook;
-import org.zkoss.zss.ngmodel.NFont;
+import org.zkoss.zss.model.SBook;
+import org.zkoss.zss.model.SFont;
 /**
  * 
  * @author dennis
@@ -30,7 +30,7 @@ import org.zkoss.zss.ngmodel.NFont;
 public class EditableFontImpl extends FontImpl implements EditableFont{
 	
 
-	public EditableFontImpl(ModelRef<NBook> book, ModelRef<NFont> font) {
+	public EditableFontImpl(ModelRef<SBook> book, ModelRef<SFont> font) {
 		super(book,font);
 	}
 	
@@ -59,8 +59,8 @@ public class EditableFontImpl extends FontImpl implements EditableFont{
 	}
 	
 	public void copyAttributeFrom(Font src) {
-		NFont sfont = ((FontImpl)src).getNative();
-		NFont font = getNative();
+		SFont sfont = ((FontImpl)src).getNative();
+		SFont font = getNative();
 		font.setBoldweight(sfont.getBoldweight());
 		font.setColor(sfont.getColor());
 		font.setHeightPoints(sfont.getHeightPoints());

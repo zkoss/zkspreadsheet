@@ -16,10 +16,10 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.api.model;
 
-import org.zkoss.zss.ngmodel.chart.NChartData;
+import org.zkoss.zss.model.chart.SChartData;
 
 /**
- * This interface provides the access to the underlying data object ({@link NChartData}) of a chart.
+ * This interface provides the access to the underlying data object ({@link SChartData}) of a chart.
  * @author dennis
  * @since 3.0.0
  */
@@ -29,5 +29,5 @@ public interface ChartData {
 	 * Get the internal chart data
 	 * @since 3.5.0
 	 */
-	public NChartData getInternalChartData();
+	public SChartData getInternalChartData();
 }

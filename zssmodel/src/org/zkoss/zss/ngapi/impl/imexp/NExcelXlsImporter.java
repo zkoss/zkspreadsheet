@@ -24,10 +24,10 @@ import org.zkoss.poi.hssf.record.chart.*;
 import org.zkoss.poi.hssf.usermodel.*;
 import org.zkoss.poi.hssf.usermodel.HSSFChart.HSSFSeries;
 import org.zkoss.poi.ss.usermodel.*;
-import org.zkoss.zss.ngmodel.*;
-import org.zkoss.zss.ngmodel.NChart.NChartLegendPosition;
-import org.zkoss.zss.ngmodel.NChart.NChartType;
-import org.zkoss.zss.ngmodel.chart.*;
+import org.zkoss.zss.model.*;
+import org.zkoss.zss.model.SChart.NChartLegendPosition;
+import org.zkoss.zss.model.SChart.NChartType;
+import org.zkoss.zss.model.chart.*;
 
 /**
  * 
@@ -63,11 +63,11 @@ public class NExcelXlsImporter extends AbstractExcelImporter{
 	 * {@inheritDoc}
 	 */
 	@Override
-	protected void importColumn(Sheet poiSheet, NSheet sheet) {
+	protected void importColumn(Sheet poiSheet, SSheet sheet) {
 		int lastChangedColumnIndex = getLastChangedColumnIndex(poiSheet);
 		for (int c=0 ; c <= lastChangedColumnIndex ; c++){
 			//reference Spreadsheet.updateColWidth()
-			NColumn col = sheet.getColumn(c);
+			SColumn col = sheet.getColumn(c);
 			int width = XUtils.getWidthAny(poiSheet, c, CHRACTER_WIDTH);
 			boolean hidden = poiSheet.isColumnHidden(c);
 			col.setHidden(hidden);
@@ -82,12 +82,12 @@ public class NExcelXlsImporter extends AbstractExcelImporter{
 		}
 	}
 
-	private void importChart(List<ZssChartX> poiCharts, Sheet poiSheet, NSheet sheet) {
+	private void importChart(List<ZssChartX> poiCharts, Sheet poiSheet, SSheet sheet) {
 		//reference ChartHelper.drawHSSFChart()
 		for (ZssChartX zssChart : poiCharts){
 			final HSSFChart hssfChart = (HSSFChart)zssChart.getChartInfo();
 			NChartType type = convertChartType(hssfChart);
-			NChart chart = null;
+			SChart chart = null;
 			if (type == null){ //ignore unsupported charts
 				continue;
 			}
@@ -96,13 +96,13 @@ public class NExcelXlsImporter extends AbstractExcelImporter{
 			
 			switch(type){
 				case SCATTER:
-					importXySeries(Arrays.asList(hssfChart.getSeries()), (NGeneralChartData)chart.getData());
+					importXySeries(Arrays.asList(hssfChart.getSeries()), (SGeneralChartData)chart.getData());
 					break;
 				case BUBBLE:
-					importXyzSeries(Arrays.asList(hssfChart.getSeries()), (NGeneralChartData)chart.getData());
+					importXyzSeries(Arrays.asList(hssfChart.getSeries()), (SGeneralChartData)chart.getData());
 					break;
 				default:
-					importSeries(Arrays.asList(hssfChart.getSeries()), (NGeneralChartData)chart.getData());
+					importSeries(Arrays.asList(hssfChart.getSeries()), (SGeneralChartData)chart.getData());
 			}
 			
 			if (getChartTitle(hssfChart) != null){
@@ -170,7 +170,7 @@ public class NExcelXlsImporter extends AbstractExcelImporter{
 	 * @return
 	 */
 	@Override
-	protected void importDrawings(Sheet poiSheet, NSheet sheet) {
+	protected void importDrawings(Sheet poiSheet, SSheet sheet) {
 		/**
 		 * A list of POI chart wrapper loaded during import.
 		 */
@@ -260,7 +260,7 @@ public class NExcelXlsImporter extends AbstractExcelImporter{
 	 * @param seriesList
 	 * @param chartData
 	 */
-	private void importSeries(List<HSSFSeries> seriesList, NGeneralChartData chartData) {
+	private void importSeries(List<HSSFSeries> seriesList, SGeneralChartData chartData) {
 		HSSFSeries firstSeries = null;
 		if ((firstSeries = seriesList.get(0))!=null){
 			chartData.setCategoriesFormula(getCategoryFormula(firstSeries.getDataCategoryLabels()));
@@ -269,7 +269,7 @@ public class NExcelXlsImporter extends AbstractExcelImporter{
 			HSSFSeries sourceSeries = seriesList.get(i);
 			String nameExpression = getTitleFormula(sourceSeries, i);			
 			String xValueExpression = getValueFormula(sourceSeries.getDataValues());
-			NSeries series = chartData.addSeries();
+			SSeries series = chartData.addSeries();
 			series.setFormula(nameExpression, xValueExpression);
 		}
 	}
@@ -279,25 +279,25 @@ public class NExcelXlsImporter extends AbstractExcelImporter{
 	 * @param seriesList
 	 * @param chartData
 	 */
-	private void importXySeries(List<HSSFSeries> seriesList, NGeneralChartData chartData) {
+	private void importXySeries(List<HSSFSeries> seriesList, SGeneralChartData chartData) {
 		for (int i =0 ;  i< seriesList.size() ; i++){
 			HSSFSeries sourceSeries = seriesList.get(i);
 			String nameExpression = getTitleFormula(sourceSeries, i);		
 			String xValueExpression = getValueFormula(sourceSeries.getDataCategoryLabels());
 			String yValueExpression = getValueFormula(sourceSeries.getDataValues());
-			NSeries series = chartData.addSeries();
+			SSeries series = chartData.addSeries();
 			series.setXYFormula(nameExpression, xValueExpression, yValueExpression);
 		}
 	}
 	
-	private void importXyzSeries(List<HSSFSeries> seriesList, NGeneralChartData chartData) {
+	private void importXyzSeries(List<HSSFSeries> seriesList, SGeneralChartData chartData) {
 		for (int i =0 ;  i< seriesList.size() ; i++){
 			HSSFSeries sourceSeries = seriesList.get(i);
 			String nameExpression = getTitleFormula(sourceSeries, i);		
 			String xValueExpression = getValueFormula(sourceSeries.getDataCategoryLabels());
 			String yValueExpression = getValueFormula(sourceSeries.getDataValues());
 			String zValueExpression = getValueFormula(sourceSeries.getDataSecondaryCategoryLabels());
-			NSeries series = chartData.addSeries();
+			SSeries series = chartData.addSeries();
 			series.setXYZFormula(nameExpression, xValueExpression, yValueExpression, zValueExpression);
 		}
 	}
@@ -363,7 +363,7 @@ public class NExcelXlsImporter extends AbstractExcelImporter{
 	}
 
 	@Override
-	protected void importValidation(Sheet poiSheet, NSheet sheet) {
+	protected void importValidation(Sheet poiSheet, SSheet sheet) {
 		// unsupported features
 	}
 }

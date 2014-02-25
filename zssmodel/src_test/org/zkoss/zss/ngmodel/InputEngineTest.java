@@ -12,11 +12,11 @@ import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.zkoss.util.Locales;
-import org.zkoss.zss.ngmodel.NCell.CellType;
-import org.zkoss.zss.ngmodel.sys.EngineFactory;
-import org.zkoss.zss.ngmodel.sys.input.InputEngine;
-import org.zkoss.zss.ngmodel.sys.input.InputParseContext;
-import org.zkoss.zss.ngmodel.sys.input.InputResult;
+import org.zkoss.zss.model.SCell.CellType;
+import org.zkoss.zss.model.sys.EngineFactory;
+import org.zkoss.zss.model.sys.input.InputEngine;
+import org.zkoss.zss.model.sys.input.InputParseContext;
+import org.zkoss.zss.model.sys.input.InputResult;
 
 public class InputEngineTest {
 

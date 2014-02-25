@@ -13,8 +13,8 @@ Copyright (C) 2010 Potix Corporation. All Rights Reserved.
 
 package org.zkoss.zss.ngapi.impl;
 
-import org.zkoss.zss.ngmodel.CellRegion;
-import org.zkoss.zss.ngmodel.NSheet;
+import org.zkoss.zss.model.CellRegion;
+import org.zkoss.zss.model.SSheet;
 
 /**
  * A pair of reference areas indicate the changes of the merge area. 
@@ -22,10 +22,10 @@ import org.zkoss.zss.ngmodel.NSheet;
  * @author dennischen
  */
 public class MergeUpdate {
-	final private NSheet _sheet;
+	final private SSheet _sheet;
 	final private CellRegion _orgMerge; //original merge range
 	final private CellRegion _merge; //merge range changed
-	public MergeUpdate(NSheet sheet, CellRegion orgMerge, CellRegion merge) {
+	public MergeUpdate(SSheet sheet, CellRegion orgMerge, CellRegion merge) {
 		this._sheet = sheet;
 		this._orgMerge = orgMerge;
 		this._merge = merge;
@@ -38,7 +38,7 @@ public class MergeUpdate {
 		return _merge;
 	}
 	
-	public NSheet getSheet(){
+	public SSheet getSheet(){
 		return _sheet;
 	}
 	@Override

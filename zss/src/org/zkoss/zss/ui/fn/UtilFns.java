@@ -22,7 +22,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.zkoss.zss.api.AreaRef;
-import org.zkoss.zss.ngmodel.NSheet;
+import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.impl.MergeMatrixHelper;
 import org.zkoss.zss.ui.sys.SpreadsheetCtrl;
@@ -86,7 +86,7 @@ public class UtilFns {
 		int row_top = getRowBegin(ss).intValue();
 		int row_bottom = getRowEnd(ss).intValue();
 		
-		NSheet sheet = ss.getSelectedXSheet();
+		SSheet sheet = ss.getSelectedXSheet();
 		MergeMatrixHelper mmhelper = ((SpreadsheetCtrl)ss.getExtraCtrl()).getMergeMatrixHelper(sheet);
 		Set blocks = mmhelper.getRangesByColumn(max);
 		Iterator iter = blocks.iterator();

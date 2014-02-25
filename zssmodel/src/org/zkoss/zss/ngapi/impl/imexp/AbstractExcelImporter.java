@@ -24,21 +24,21 @@ import org.zkoss.poi.ss.usermodel.*;
 import org.zkoss.poi.ss.util.CellRangeAddress;
 import org.zkoss.poi.xssf.usermodel.XSSFCellStyle;
 import org.zkoss.poi.xssf.usermodel.XSSFRichTextString;
-import org.zkoss.zss.ngmodel.*;
-import org.zkoss.zss.ngmodel.NAutoFilter.FilterOp;
-import org.zkoss.zss.ngmodel.NAutoFilter.NFilterColumn;
-import org.zkoss.zss.ngmodel.NCellStyle.Alignment;
-import org.zkoss.zss.ngmodel.NCellStyle.BorderType;
-import org.zkoss.zss.ngmodel.NCellStyle.FillPattern;
-import org.zkoss.zss.ngmodel.NCellStyle.VerticalAlignment;
-import org.zkoss.zss.ngmodel.NFont.TypeOffset;
-import org.zkoss.zss.ngmodel.NFont.Underline;
-import org.zkoss.zss.ngmodel.NHyperlink.HyperlinkType;
-import org.zkoss.zss.ngmodel.NPicture.Format;
+import org.zkoss.zss.model.*;
+import org.zkoss.zss.model.SAutoFilter.FilterOp;
+import org.zkoss.zss.model.SAutoFilter.NFilterColumn;
+import org.zkoss.zss.model.SCellStyle.Alignment;
+import org.zkoss.zss.model.SCellStyle.BorderType;
+import org.zkoss.zss.model.SCellStyle.FillPattern;
+import org.zkoss.zss.model.SCellStyle.VerticalAlignment;
+import org.zkoss.zss.model.SFont.TypeOffset;
+import org.zkoss.zss.model.SFont.Underline;
+import org.zkoss.zss.model.SHyperlink.HyperlinkType;
+import org.zkoss.zss.model.SPicture.Format;
 
 /**
  * Contains common importing behavior for both XLSX and XLS. Spreadsheet
- * {@link NBook} model including following information: Book: name Sheet: name,
+ * {@link SBook} model including following information: Book: name Sheet: name,
  * (default) column width, (default) row height, hidden row (column), row
  * (column) style, freeze, merge, protection, named range , gridline display
  * Cell: type, value, font with color and style, type offset(normal or
@@ -61,14 +61,14 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 	 */
 	public static final int CHRACTER_WIDTH = 7;
 	/**
-	 * <poi CellStyle index, {@link NCellStyle} object> Keep track of imported
+	 * <poi CellStyle index, {@link SCellStyle} object> Keep track of imported
 	 * style during importing to avoid creating duplicated style objects.
 	 */
-	protected Map<Short, NCellStyle> importedStyle = new HashMap<Short, NCellStyle>();
-	/** <poi Font index, {@link NFont} object> **/
-	protected Map<Short, NFont> importedFont = new HashMap<Short, NFont>();
+	protected Map<Short, SCellStyle> importedStyle = new HashMap<Short, SCellStyle>();
+	/** <poi Font index, {@link SFont} object> **/
+	protected Map<Short, SFont> importedFont = new HashMap<Short, SFont>();
 	/** target book model */
-	protected NBook book;
+	protected SBook book;
 	/** source POI book */
 	protected Workbook workbook;
 	/**
@@ -76,12 +76,12 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 	 * objects: book, sheet, defined name, cells, chart, pictures, validation.
 	 */
 	@Override
-	public NBook imports(InputStream is, String bookName) throws IOException {
+	public SBook imports(InputStream is, String bookName) throws IOException {
 
 		workbook = createPoiBook(is);
-		book = NBooks.createBook(bookName);
+		book = SBooks.createBook(bookName);
 
-		NBookSeries bookSeries = book.getBookSeries();
+		SBookSeries bookSeries = book.getBookSeries();
 		boolean isCacheClean = bookSeries.isAutoFormulaCacheClean();
 		try {
 			bookSeries.setAutoFormulaCacheClean(false);// disable it to avoid
@@ -95,7 +95,7 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 			}
 			importNamedRange();
 			for (int i = 0; i < numberOfSheet; i++) {
-				NSheet sheet = book.getSheet(i);
+				SSheet sheet = book.getSheet(i);
 				Sheet poiSheet = workbook.getSheetAt(i);
 				for (Row poiRow : poiSheet) {
 					importRow(poiRow, sheet);
@@ -122,7 +122,7 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 	 * @param poiSheet
 	 * @param sheet
 	 */
-	abstract protected void importColumn(Sheet poiSheet, NSheet sheet);
+	abstract protected void importColumn(Sheet poiSheet, SSheet sheet);
 
 	/**
 	 * If in same column: anchorWidthInFirstColumn + anchor width in
@@ -159,7 +159,7 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 				continue;
 			}
 
-			NName namedRange = null;
+			SName namedRange = null;
 			if (definedName.getSheetIndex() == -1) {// workbook scope
 				namedRange = book.createName(definedName.getNameName());
 			} else {
@@ -180,8 +180,8 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 	/*
 	 * import sheet scope content from POI Sheet.
 	 */
-	protected NSheet importSheet(Sheet poiSheet) {
-		NSheet sheet = book.createSheet(poiSheet.getSheetName());
+	protected SSheet importSheet(Sheet poiSheet) {
+		SSheet sheet = book.createSheet(poiSheet.getSheetName());
 		sheet.setDefaultRowHeight(UnitUtil.twipToPx(poiSheet.getDefaultRowHeight()));
 		// reference XUtils.getDefaultColumnWidthInPx()
 		int defaultWidth = UnitUtil.defaultColumnWidthToPx(poiSheet.getDefaultColumnWidth(), CHRACTER_WIDTH);
@@ -193,12 +193,12 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 		sheet.getViewInfo().setColumnBreaks(poiSheet.getColumnBreaks());
 		sheet.getViewInfo().setRowBreaks(poiSheet.getRowBreaks());
 
-		NHeader header = sheet.getViewInfo().getHeader();
+		SHeader header = sheet.getViewInfo().getHeader();
 		header.setCenterText(poiSheet.getHeader().getCenter());
 		header.setLeftText(poiSheet.getHeader().getLeft());
 		header.setRightText(poiSheet.getHeader().getRight());
 
-		NFooter footer = sheet.getViewInfo().getFooter();
+		SFooter footer = sheet.getViewInfo().getFooter();
 		footer.setCenterText(poiSheet.getFooter().getCenter());
 		footer.setLeftText(poiSheet.getFooter().getLeft());
 		footer.setRightText(poiSheet.getFooter().getRight());
@@ -218,7 +218,7 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 		return sheet;
 	}
 
-	protected void importMergedRegions(Sheet poiSheet, NSheet sheet) {
+	protected void importMergedRegions(Sheet poiSheet, SSheet sheet) {
 		// merged cells
 		// reference RangeImpl.getMergeAreas()
 		int nMerged = poiSheet.getNumMergedRegions();
@@ -228,12 +228,12 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 		}
 	}
 
-	abstract protected void importDrawings(Sheet poiSheet, NSheet sheet);
+	abstract protected void importDrawings(Sheet poiSheet, SSheet sheet);
 
-	abstract protected void importValidation(Sheet poiSheet, NSheet sheet);
+	abstract protected void importValidation(Sheet poiSheet, SSheet sheet);
 
-	protected NRow importRow(Row poiRow, NSheet sheet) {
-		NRow row = sheet.getRow(poiRow.getRowNum());
+	protected SRow importRow(Row poiRow, SSheet sheet) {
+		SRow row = sheet.getRow(poiRow.getRowNum());
 		row.setHeight(UnitUtil.twipToPx(poiRow.getHeight()));
 		row.setCustomHeight(poiRow.isCustomHeight());
 		row.setHidden(poiRow.getZeroHeight());
@@ -249,9 +249,9 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 		return row;
 	}
 
-	protected NCell importCell(Cell poiCell, int row, NSheet sheet) {
+	protected SCell importCell(Cell poiCell, int row, SSheet sheet) {
 
-		NCell cell = sheet.getCell(row, poiCell.getColumnIndex());
+		SCell cell = sheet.getCell(row, poiCell.getColumnIndex());
 		cell.setCellStyle(importCellStyle(poiCell.getCellStyle()));
 
 		switch (poiCell.getCellType()) {
@@ -261,7 +261,7 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 		case Cell.CELL_TYPE_STRING:
 			RichTextString poiRichTextString = poiCell.getRichStringCellValue();
 			if (poiRichTextString != null && poiRichTextString.numFormattingRuns() > 0) {
-				NRichText richText = cell.setupRichTextValue();
+				SRichText richText = cell.setupRichTextValue();
 				String cellValue = poiRichTextString.getString();
 				for (int i = 0; i < poiRichTextString.numFormattingRuns(); i++) {
 					int nextFormattingRunIndex = (i + 1) >= poiRichTextString.numFormattingRuns() ? cellValue.length() : poiRichTextString.getIndexOfFormattingRun(i + 1);
@@ -291,7 +291,7 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 		
 		Hyperlink poiHyperlink = poiCell.getHyperlink();
 		if (poiHyperlink != null) {
-			NHyperlink hyperlink = cell.setupHyperlink();
+			SHyperlink hyperlink = cell.setupHyperlink();
 			hyperlink.setType(toZssHyperlinkType(poiHyperlink.getType()));
 			hyperlink.setAddress(poiHyperlink.getAddress());
 			hyperlink.setLabel(poiHyperlink.getLabel());
@@ -306,15 +306,15 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 	 * 
 	 * @param poiCellStyle
 	 */
-	protected NCellStyle importCellStyle(CellStyle poiCellStyle) {
-		NCellStyle cellStyle = null;
+	protected SCellStyle importCellStyle(CellStyle poiCellStyle) {
+		SCellStyle cellStyle = null;
 		short idx = poiCellStyle.getIndex();
 		if ((cellStyle = importedStyle.get(idx)) == null) {
 			cellStyle = book.createCellStyle(true);
 			importedStyle.put(idx, cellStyle);
 			String dataFormat = poiCellStyle.getRawDataFormatString();
 			if(dataFormat==null){//just in case
-				dataFormat = NCellStyle.FORMAT_GENERAL;
+				dataFormat = SCellStyle.FORMAT_GENERAL;
 			}
 			if(!poiCellStyle.isBuiltinDataFormat()){
 				cellStyle.setDirectDataFormat(dataFormat);
@@ -345,8 +345,8 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 		return cellStyle;
 	}
 
-	protected NFont importFont(CellStyle poiCellStyle) {
-		NFont font = null;
+	protected SFont importFont(CellStyle poiCellStyle) {
+		SFont font = null;
 		if (importedFont.containsKey(poiCellStyle.getFontIndex())) {
 			font = importedFont.get(poiCellStyle.getFontIndex());
 		} else {
@@ -355,9 +355,9 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 			// font
 			font.setName(poiFont.getFontName());
 			if (poiFont.getBoldweight() == Font.BOLDWEIGHT_BOLD) {
-				font.setBoldweight(NFont.Boldweight.BOLD);
+				font.setBoldweight(SFont.Boldweight.BOLD);
 			} else {
-				font.setBoldweight(NFont.Boldweight.NORMAL);
+				font.setBoldweight(SFont.Boldweight.NORMAL);
 			}
 			font.setItalic(poiFont.getItalic());
 			font.setStrikeout(poiFont.getStrikeout());
@@ -370,7 +370,7 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 		return font;
 	}
 
-	protected NHyperlink.HyperlinkType toZssHyperlinkType(int type) {
+	protected SHyperlink.HyperlinkType toZssHyperlinkType(int type) {
 		switch (type) {
 		case Hyperlink.LINK_DOCUMENT:
 			return HyperlinkType.DOCUMENT;
@@ -384,8 +384,8 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 		}
 	}
 
-	protected NFont toZssFont(Font poiFont) {
-		NFont font = null;
+	protected SFont toZssFont(Font poiFont) {
+		SFont font = null;
 		if (importedFont.containsKey(poiFont.getIndex())) {
 			font = importedFont.get(poiFont.getIndex());
 		} else {
@@ -393,9 +393,9 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 			// font
 			font.setName(poiFont.getFontName());
 			if (poiFont.getBoldweight() == Font.BOLDWEIGHT_BOLD) {
-				font.setBoldweight(NFont.Boldweight.BOLD);
+				font.setBoldweight(SFont.Boldweight.BOLD);
 			} else {
-				font.setBoldweight(NFont.Boldweight.NORMAL);
+				font.setBoldweight(SFont.Boldweight.NORMAL);
 			}
 			font.setItalic(poiFont.getItalic());
 			font.setStrikeout(poiFont.getStrikeout());
@@ -408,70 +408,70 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 		return font;
 	}
 
-	protected NPrintSetup.PaperSize toZssPaperSize(short paperSize) {
+	protected SPrintSetup.PaperSize toZssPaperSize(short paperSize) {
 		switch (paperSize) {
 		case PrintSetup.A3_PAPERSIZE:
-			return NPrintSetup.PaperSize.A3;
+			return SPrintSetup.PaperSize.A3;
 		case PrintSetup.A4_EXTRA_PAPERSIZE:
-			return NPrintSetup.PaperSize.A4_EXTRA;
+			return SPrintSetup.PaperSize.A4_EXTRA;
 		case PrintSetup.A4_PAPERSIZE:
-			return NPrintSetup.PaperSize.A4;
+			return SPrintSetup.PaperSize.A4;
 		case PrintSetup.A4_PLUS_PAPERSIZE:
-			return NPrintSetup.PaperSize.A4_PLUS;
+			return SPrintSetup.PaperSize.A4_PLUS;
 		case PrintSetup.A4_ROTATED_PAPERSIZE:
-			return NPrintSetup.PaperSize.A4_ROTATED;
+			return SPrintSetup.PaperSize.A4_ROTATED;
 		case PrintSetup.A4_SMALL_PAPERSIZE:
-			return NPrintSetup.PaperSize.A4_SMALL;
+			return SPrintSetup.PaperSize.A4_SMALL;
 		case PrintSetup.A4_TRANSVERSE_PAPERSIZE:
-			return NPrintSetup.PaperSize.A4_TRANSVERSE;
+			return SPrintSetup.PaperSize.A4_TRANSVERSE;
 		case PrintSetup.A5_PAPERSIZE:
-			return NPrintSetup.PaperSize.A5;
+			return SPrintSetup.PaperSize.A5;
 		case PrintSetup.B4_PAPERSIZE:
-			return NPrintSetup.PaperSize.B4;
+			return SPrintSetup.PaperSize.B4;
 		case PrintSetup.B5_PAPERSIZE:
-			return NPrintSetup.PaperSize.B5;
+			return SPrintSetup.PaperSize.B5;
 		case PrintSetup.ELEVEN_BY_SEVENTEEN_PAPERSIZE:
-			return NPrintSetup.PaperSize.ELEVEN_BY_SEVENTEEN;
+			return SPrintSetup.PaperSize.ELEVEN_BY_SEVENTEEN;
 		case PrintSetup.ENVELOPE_10_PAPERSIZE:
-			return NPrintSetup.PaperSize.ENVELOPE_10;
+			return SPrintSetup.PaperSize.ENVELOPE_10;
 		case PrintSetup.ENVELOPE_9_PAPERSIZE:
-			return NPrintSetup.PaperSize.ENVELOPE_9;
+			return SPrintSetup.PaperSize.ENVELOPE_9;
 		case PrintSetup.ENVELOPE_C3_PAPERSIZE:
-			return NPrintSetup.PaperSize.ENVELOPE_C3;
+			return SPrintSetup.PaperSize.ENVELOPE_C3;
 		case PrintSetup.ENVELOPE_C4_PAPERSIZE:
-			return NPrintSetup.PaperSize.ENVELOPE_C4;
+			return SPrintSetup.PaperSize.ENVELOPE_C4;
 		case PrintSetup.ENVELOPE_C5_PAPERSIZE:
-			return NPrintSetup.PaperSize.ENVELOPE_C5;
+			return SPrintSetup.PaperSize.ENVELOPE_C5;
 		case PrintSetup.ENVELOPE_C6_PAPERSIZE:
-			return NPrintSetup.PaperSize.ENVELOPE_C6;
+			return SPrintSetup.PaperSize.ENVELOPE_C6;
 		case PrintSetup.ENVELOPE_DL_PAPERSIZE:
-			return NPrintSetup.PaperSize.ENVELOPE_DL;
+			return SPrintSetup.PaperSize.ENVELOPE_DL;
 		case PrintSetup.ENVELOPE_MONARCH_PAPERSIZE:
-			return NPrintSetup.PaperSize.ENVELOPE_MONARCH;
+			return SPrintSetup.PaperSize.ENVELOPE_MONARCH;
 		case PrintSetup.EXECUTIVE_PAPERSIZE:
-			return NPrintSetup.PaperSize.EXECUTIVE;
+			return SPrintSetup.PaperSize.EXECUTIVE;
 		case PrintSetup.FOLIO8_PAPERSIZE:
-			return NPrintSetup.PaperSize.FOLIO8;
+			return SPrintSetup.PaperSize.FOLIO8;
 		case PrintSetup.LEDGER_PAPERSIZE:
-			return NPrintSetup.PaperSize.LEDGER;
+			return SPrintSetup.PaperSize.LEDGER;
 		case PrintSetup.LETTER_PAPERSIZE:
-			return NPrintSetup.PaperSize.LETTER;
+			return SPrintSetup.PaperSize.LETTER;
 		case PrintSetup.LETTER_ROTATED_PAPERSIZE:
-			return NPrintSetup.PaperSize.LETTER_ROTATED;
+			return SPrintSetup.PaperSize.LETTER_ROTATED;
 		case PrintSetup.LETTER_SMALL_PAGESIZE:
-			return NPrintSetup.PaperSize.LETTER_SMALL;
+			return SPrintSetup.PaperSize.LETTER_SMALL;
 		case PrintSetup.NOTE8_PAPERSIZE:
-			return NPrintSetup.PaperSize.NOTE8;
+			return SPrintSetup.PaperSize.NOTE8;
 		case PrintSetup.QUARTO_PAPERSIZE:
-			return NPrintSetup.PaperSize.QUARTO;
+			return SPrintSetup.PaperSize.QUARTO;
 		case PrintSetup.STATEMENT_PAPERSIZE:
-			return NPrintSetup.PaperSize.STATEMENT;
+			return SPrintSetup.PaperSize.STATEMENT;
 		case PrintSetup.TABLOID_PAPERSIZE:
-			return NPrintSetup.PaperSize.TABLOID;
+			return SPrintSetup.PaperSize.TABLOID;
 		case PrintSetup.TEN_BY_FOURTEEN_PAPERSIZE:
-			return NPrintSetup.PaperSize.TEN_BY_FOURTEEN;
+			return SPrintSetup.PaperSize.TEN_BY_FOURTEEN;
 		default:
-			return NPrintSetup.PaperSize.A4;
+			return SPrintSetup.PaperSize.A4;
 		}
 	}
 
@@ -481,16 +481,16 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 	protected Underline convertUnderline(byte underline) {
 		switch (underline) {
 		case Font.U_SINGLE:
-			return NFont.Underline.SINGLE;
+			return SFont.Underline.SINGLE;
 		case Font.U_DOUBLE:
-			return NFont.Underline.DOUBLE;
+			return SFont.Underline.DOUBLE;
 		case Font.U_SINGLE_ACCOUNTING:
-			return NFont.Underline.SINGLE_ACCOUNTING;
+			return SFont.Underline.SINGLE_ACCOUNTING;
 		case Font.U_DOUBLE_ACCOUNTING:
-			return NFont.Underline.DOUBLE_ACCOUNTING;
+			return SFont.Underline.DOUBLE_ACCOUNTING;
 		case Font.U_NONE:
 		default:
-			return NFont.Underline.NONE;
+			return SFont.Underline.NONE;
 		}
 	}
 
@@ -640,10 +640,10 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 		}
 	}
 
-	protected NViewAnchor toViewAnchor(Sheet poiSheet, ClientAnchor clientAnchor) {
+	protected ViewAnchor toViewAnchor(Sheet poiSheet, ClientAnchor clientAnchor) {
 		int width = getAnchorWidthInPx(clientAnchor, poiSheet);
 		int height = getAnchorHeightInPx(clientAnchor, poiSheet);
-		NViewAnchor viewAnchor = new NViewAnchor(clientAnchor.getRow1(), clientAnchor.getCol1(), width, height);
+		ViewAnchor viewAnchor = new ViewAnchor(clientAnchor.getRow1(), clientAnchor.getCol1(), width, height);
 		viewAnchor.setXOffset(getXoffsetInPixel(clientAnchor, poiSheet));
 		viewAnchor.setYOffset(getYoffsetInPixel(clientAnchor, poiSheet));
 		return viewAnchor;
@@ -653,7 +653,7 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 
 	abstract protected int getYoffsetInPixel(ClientAnchor clientAnchor, Sheet poiSheet);
 
-	protected void importPicture(List<Picture> poiPictures, Sheet poiSheet, NSheet sheet) {
+	protected void importPicture(List<Picture> poiPictures, Sheet poiSheet, SSheet sheet) {
 		for (Picture picture : poiPictures) {
 			Format format = Format.valueOfFileExtension(picture.getPictureData().suggestFileExtension());
 			if (format != null) {
@@ -675,11 +675,11 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 	 * @param poiSheet source POI sheet
 	 * @param sheet destination sheet
 	 */
-	private void importAutoFilter(Sheet poiSheet, NSheet sheet) {
+	private void importAutoFilter(Sheet poiSheet, SSheet sheet) {
 		AutoFilter poiAutoFilter = poiSheet.getAutoFilter();
 		if (poiAutoFilter != null) {
 			CellRangeAddress filteringRange = poiAutoFilter.getRangeAddress();
-			NAutoFilter autoFilter = sheet.createAutoFilter(new CellRegion(filteringRange.formatAsString()));
+			SAutoFilter autoFilter = sheet.createAutoFilter(new CellRegion(filteringRange.formatAsString()));
 			int numberOfColumn = filteringRange.getLastColumn() - filteringRange.getFirstColumn() + 1;
 			for (int i = 0; i < numberOfColumn; i++) {
 				FilterColumn srcColumn = poiAutoFilter.getFilterColumn(i);

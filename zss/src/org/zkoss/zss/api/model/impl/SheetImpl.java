@@ -24,35 +24,35 @@ import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.Chart;
 import org.zkoss.zss.api.model.Picture;
 import org.zkoss.zss.api.model.Sheet;
-import org.zkoss.zss.ngmodel.NBook;
-import org.zkoss.zss.ngmodel.NChart;
-import org.zkoss.zss.ngmodel.NPicture;
-import org.zkoss.zss.ngmodel.NSheet;
-import org.zkoss.zss.ngmodel.NViewAnchor;
+import org.zkoss.zss.model.SBook;
+import org.zkoss.zss.model.SChart;
+import org.zkoss.zss.model.SPicture;
+import org.zkoss.zss.model.SSheet;
+import org.zkoss.zss.model.ViewAnchor;
 /**
  * 
  * @author dennis
  * @since 3.0.0
  */
 public class SheetImpl implements Sheet{
-	private ModelRef<NSheet> _sheetRef;
-	private ModelRef<NBook> _bookRef;
+	private ModelRef<SSheet> _sheetRef;
+	private ModelRef<SBook> _bookRef;
 	private Book _book;
-	public SheetImpl(ModelRef<NBook> book,ModelRef<NSheet> sheet){
+	public SheetImpl(ModelRef<SBook> book,ModelRef<SSheet> sheet){
 		this._bookRef = book;
 		this._sheetRef = sheet;
 	}
 	
-	public NSheet getNative(){
+	public SSheet getNative(){
 		return _sheetRef.get();
 	}
 	
 	@Override
-	public NSheet getInternalSheet(){
+	public SSheet getInternalSheet(){
 		return _sheetRef.get();
 	}
 	
-	public ModelRef<NSheet> getRef(){
+	public ModelRef<SSheet> getRef(){
 		return _sheetRef;
 	}
 	
@@ -118,8 +118,8 @@ public class SheetImpl implements Sheet{
 		Book book = getBook();
 		List<Chart> charts = new ArrayList<Chart>();
 		
-		for(NChart chart:getNative().getCharts()){
-			charts.add(new ChartImpl(_sheetRef, new SimpleRef<NChart>(chart)));
+		for(SChart chart:getNative().getCharts()){
+			charts.add(new ChartImpl(_sheetRef, new SimpleRef<SChart>(chart)));
 		}
 		return charts;
 	}
@@ -128,8 +128,8 @@ public class SheetImpl implements Sheet{
 	public List<Picture> getPictures(){
 		List<Picture> pictures = new ArrayList<Picture>();
 
-		for(NPicture pic:getNative().getPictures()){
-			pictures.add(new PictureImpl(_sheetRef, new SimpleRef<NPicture>(pic)));
+		for(SPicture pic:getNative().getPictures()){
+			pictures.add(new PictureImpl(_sheetRef, new SimpleRef<SPicture>(pic)));
 		}
 		return pictures;
 	}
@@ -175,7 +175,7 @@ public class SheetImpl implements Sheet{
 	/**
 	 * Utility method, internal use only
 	 */
-	public static NViewAnchor toViewAnchor(NSheet sheet,SheetAnchor anchor){
+	public static ViewAnchor toViewAnchor(SSheet sheet,SheetAnchor anchor){
 		int row = anchor.getRow();
 		int column = anchor.getColumn();
 		int x1 = anchor.getXOffset();
@@ -216,14 +216,14 @@ public class SheetImpl implements Sheet{
 			}
 		}
 
-		NViewAnchor av = new NViewAnchor(row, column, x1, y1 ,w, h);
+		ViewAnchor av = new ViewAnchor(row, column, x1, y1 ,w, h);
 		return av;
 	}
 	
 	/**
 	 * Utility method, internal use only
 	 */
-	public static SheetAnchor toSheetAnchor(NSheet sheet,NViewAnchor anchor){
+	public static SheetAnchor toSheetAnchor(SSheet sheet,ViewAnchor anchor){
 		int row = anchor.getRowIndex();
 		int column = anchor.getColumnIndex();
 		int x1 = anchor.getXOffset();

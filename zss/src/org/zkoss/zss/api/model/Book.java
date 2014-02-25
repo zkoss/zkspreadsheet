@@ -18,7 +18,7 @@ package org.zkoss.zss.api.model;
 
 import java.util.concurrent.locks.ReadWriteLock;
 
-import org.zkoss.zss.ngmodel.NBook;
+import org.zkoss.zss.model.SBook;
 
 /**
  * This interface provides entry to access Spreadsheet's data model.  
@@ -45,7 +45,7 @@ public interface Book {
 	 * Note : operate on internal object will not automatically update Spreadsheet   
 	 * @return
 	 */
-	public NBook getInternalBook();
+	public SBook getInternalBook();
 	
 	/**
 	 * Gets the object for synchronized a book.

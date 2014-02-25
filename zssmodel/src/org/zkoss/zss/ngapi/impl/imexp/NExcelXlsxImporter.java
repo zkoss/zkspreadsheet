@@ -32,16 +32,16 @@ import org.zkoss.poi.ss.util.CellRangeAddress;
 import org.zkoss.poi.xssf.model.ExternalLink;
 import org.zkoss.poi.xssf.usermodel.*;
 import org.zkoss.poi.xssf.usermodel.charts.*;
-import org.zkoss.zss.ngmodel.*;
-import org.zkoss.zss.ngmodel.NChart.NBarDirection;
-import org.zkoss.zss.ngmodel.NChart.NChartGrouping;
-import org.zkoss.zss.ngmodel.NChart.NChartLegendPosition;
-import org.zkoss.zss.ngmodel.NChart.NChartType;
-import org.zkoss.zss.ngmodel.NDataValidation.ErrorStyle;
-import org.zkoss.zss.ngmodel.NDataValidation.OperatorType;
-import org.zkoss.zss.ngmodel.NDataValidation.ValidationType;
-import org.zkoss.zss.ngmodel.chart.*;
-import org.zkoss.zss.ngmodel.sys.formula.FormulaEngine;
+import org.zkoss.zss.model.*;
+import org.zkoss.zss.model.SChart.NBarDirection;
+import org.zkoss.zss.model.SChart.NChartGrouping;
+import org.zkoss.zss.model.SChart.NChartLegendPosition;
+import org.zkoss.zss.model.SChart.NChartType;
+import org.zkoss.zss.model.SDataValidation.ErrorStyle;
+import org.zkoss.zss.model.SDataValidation.OperatorType;
+import org.zkoss.zss.model.SDataValidation.ValidationType;
+import org.zkoss.zss.model.chart.*;
+import org.zkoss.zss.model.sys.formula.FormulaEngine;
 /**
  * Specific importing behavior for XLSX.
  * 
@@ -93,7 +93,7 @@ public class NExcelXlsxImporter extends AbstractExcelImporter{
 	 * </x:cols> 
 	 */
 	@Override
-	protected void importColumn(Sheet poiSheet, NSheet sheet) {
+	protected void importColumn(Sheet poiSheet, SSheet sheet) {
 		CTWorksheet worksheet = ((XSSFSheet)poiSheet).getCTWorksheet();
 		if(worksheet.sizeOfColsArray()<=0){
 			return;
@@ -104,7 +104,7 @@ public class NExcelXlsxImporter extends AbstractExcelImporter{
 			CTCol ctCol = colsArray.getColArray(i);
 			//max is 16384
 			
-			NColumnArray columnArray = sheet.setupColumnArray((int)ctCol.getMin()-1, (int)ctCol.getMax()-1);
+			SColumnArray columnArray = sheet.setupColumnArray((int)ctCol.getMin()-1, (int)ctCol.getMax()-1);
 			boolean hidden = ctCol.getHidden();
 			int columnIndex = (int)ctCol.getMin()-1;
 			
@@ -124,13 +124,13 @@ public class NExcelXlsxImporter extends AbstractExcelImporter{
 	 * Not import X & Y axis title because {@link XSSFCategoryAxis} doesn't provide API to get title. 
 	 * Reference ChartHelper.drawXSSFChart()
 	 */
-	private void importChart(List<ZssChartX> poiCharts, Sheet poiSheet, NSheet sheet) {
+	private void importChart(List<ZssChartX> poiCharts, Sheet poiSheet, SSheet sheet) {
 		
 		for (ZssChartX zssChart : poiCharts){
 			XSSFChart xssfChart = (XSSFChart)zssChart.getChart();
-			NViewAnchor viewAnchor = toViewAnchor(poiSheet, xssfChart.getPreferredSize());
+			ViewAnchor viewAnchor = toViewAnchor(poiSheet, xssfChart.getPreferredSize());
 
-			NChart chart = null;
+			SChart chart = null;
 			CategoryData categoryData = null;
 			//reference ChartHelper.drawXSSFChart()
 			switch(xssfChart.getChartType()){
@@ -160,7 +160,7 @@ public class NExcelXlsxImporter extends AbstractExcelImporter{
 					chart = sheet.addChart(NChartType.BUBBLE, viewAnchor);
 					
 					XYZData xyzData = new XSSFBubbleChartData(xssfChart);
-					importXyzSeries(xyzData.getSeries(), (NGeneralChartData)chart.getData());
+					importXyzSeries(xyzData.getSeries(), (SGeneralChartData)chart.getData());
 					break;
 				case Column:
 					chart = sheet.addChart(NChartType.COLUMN, viewAnchor);
@@ -198,7 +198,7 @@ public class NExcelXlsxImporter extends AbstractExcelImporter{
 					chart = sheet.addChart(NChartType.SCATTER, viewAnchor);
 					
 					XYData xyData =  new XSSFScatChartData(xssfChart);
-					importXySeries(xyData.getSeries(), (NGeneralChartData)chart.getData());
+					importXySeries(xyData.getSeries(), (SGeneralChartData)chart.getData());
 					break;
 //				case Stock:
 //					chart = sheet.addChart(NChartType.STOCK, viewAnchor);
@@ -215,7 +215,7 @@ public class NExcelXlsxImporter extends AbstractExcelImporter{
 			chart.setThreeD(xssfChart.isSetView3D());
 			chart.setLegendPosition(convertLengendPosition(xssfChart.getOrCreateLegend().getPosition()));
 			if (categoryData != null){
-				importSeries(categoryData.getSeries(), (NGeneralChartData)chart.getData());
+				importSeries(categoryData.getSeries(), (SGeneralChartData)chart.getData());
 			}
 		}
 	}
@@ -227,7 +227,7 @@ public class NExcelXlsxImporter extends AbstractExcelImporter{
 	 * @param seriesList source chart data
 	 * @param chartData destination chart data
 	 */
-	private void importSeries(List<? extends CategoryDataSerie> seriesList, NGeneralChartData chartData) {
+	private void importSeries(List<? extends CategoryDataSerie> seriesList, SGeneralChartData chartData) {
 		CategoryDataSerie firstSeries = null;
 		if ((firstSeries = seriesList.get(0))!=null){
 			chartData.setCategoriesFormula(getValueFormula(firstSeries.getCategories()));
@@ -236,15 +236,15 @@ public class NExcelXlsxImporter extends AbstractExcelImporter{
 			CategoryDataSerie sourceSeries = seriesList.get(i);
 			String nameExpression = getTitleFormula(sourceSeries.getTitle(), i);			
 			String xValueExpression = getValueFormula(sourceSeries.getValues());
-			NSeries series = chartData.addSeries();
+			SSeries series = chartData.addSeries();
 			series.setFormula(nameExpression, xValueExpression);
 		}
 	}
 	
-	private void importXySeries(List<? extends XYDataSerie> seriesList, NGeneralChartData chartData) {
+	private void importXySeries(List<? extends XYDataSerie> seriesList, SGeneralChartData chartData) {
 		for (int i =0 ;  i< seriesList.size() ; i++){
 			XYDataSerie sourceSeries = seriesList.get(i);
-			NSeries series = chartData.addSeries();
+			SSeries series = chartData.addSeries();
 			series.setXYFormula(getTitleFormula(sourceSeries.getTitle(), i), 
 								getValueFormula(sourceSeries.getXs()), 
 								getValueFormula(sourceSeries.getYs()));
@@ -256,7 +256,7 @@ public class NExcelXlsxImporter extends AbstractExcelImporter{
 	 * @param seriesList
 	 * @param chart
 	 */
-	private void importXyzSeries(List<? extends XYZDataSerie> seriesList, NGeneralChartData chartData) {
+	private void importXyzSeries(List<? extends XYZDataSerie> seriesList, SGeneralChartData chartData) {
 		for (int i =0 ;  i< seriesList.size() ; i++){
 			XYZDataSerie sourceSeries = seriesList.get(i);
 			//reference to ChartHelper.prepareTitle()
@@ -265,7 +265,7 @@ public class NExcelXlsxImporter extends AbstractExcelImporter{
 			String yValueExpression = getValueFormula(sourceSeries.getYs());
 			String zValueExpression = getValueFormula(sourceSeries.getZs());	
 			
-			NSeries series = chartData.addSeries();
+			SSeries series = chartData.addSeries();
 			series.setXYZFormula(nameExpression, xValueExpression, yValueExpression, zValueExpression);
 		}
 	}
@@ -365,7 +365,7 @@ public class NExcelXlsxImporter extends AbstractExcelImporter{
 	 * reference DrawingManagerImpl.initXSSFDrawings()
 	 */
 	@Override
-	protected void importDrawings(Sheet poiSheet, NSheet sheet) {
+	protected void importDrawings(Sheet poiSheet, SSheet sheet) {
 		/**
 		 * A list of POI chart wrapper loaded during import.
 		 */
@@ -488,7 +488,7 @@ public class NExcelXlsxImporter extends AbstractExcelImporter{
 	 * Reference BookHelper.validate()
 	 */
 	@Override
-	protected void importValidation(Sheet poiSheet, NSheet sheet) {
+	protected void importValidation(Sheet poiSheet, SSheet sheet) {
 		for (DataValidation poiValidation : poiSheet.getDataValidations()){
 			
 			CellRangeAddress[] cellRangeAddresses = poiValidation.getRegions().getCellRangeAddresses();
@@ -497,7 +497,7 @@ public class NExcelXlsxImporter extends AbstractExcelImporter{
 				 * According to ISO/IEC 29500-1 \ 18.18.76  ST_Sqref (Reference Sequence) and A.2 
 				 * Its XML Schema indicates it's a required attribute, so CellRangeAddresses must have at least one address. 
 				 */
-				NDataValidation dataValidation = sheet.addDataValidation(new CellRegion(cellRangeAddr.formatAsString()));
+				SDataValidation dataValidation = sheet.addDataValidation(new CellRegion(cellRangeAddr.formatAsString()));
 				
 				DataValidationConstraint poiConstraint = poiValidation.getValidationConstraint();
 				// getExplicitListValues() will be represented as formula1

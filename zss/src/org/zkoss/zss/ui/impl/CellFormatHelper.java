@@ -19,26 +19,26 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.ui.impl;
 
 import org.zkoss.util.Locales;
-import org.zkoss.zss.ngmodel.NBook;
-import org.zkoss.zss.ngmodel.NCell;
-import org.zkoss.zss.ngmodel.NCell.CellType;
-import org.zkoss.zss.ngmodel.NCellStyle;
-import org.zkoss.zss.ngmodel.NCellStyle.Alignment;
-import org.zkoss.zss.ngmodel.NCellStyle.BorderType;
-import org.zkoss.zss.ngmodel.NCellStyle.FillPattern;
-import org.zkoss.zss.ngmodel.NCellStyle.VerticalAlignment;
-import org.zkoss.zss.ngmodel.NColor;
-import org.zkoss.zss.ngmodel.NFont;
-import org.zkoss.zss.ngmodel.NFont.Boldweight;
-import org.zkoss.zss.ngmodel.NFont.Underline;
-import org.zkoss.zss.ngmodel.NHyperlink;
-import org.zkoss.zss.ngmodel.NRichText;
-import org.zkoss.zss.ngmodel.NRichText.Segment;
-import org.zkoss.zss.ngmodel.NSheet;
-import org.zkoss.zss.ngmodel.sys.EngineFactory;
-import org.zkoss.zss.ngmodel.sys.format.FormatContext;
-import org.zkoss.zss.ngmodel.sys.format.FormatEngine;
-import org.zkoss.zss.ngmodel.sys.format.FormatResult;
+import org.zkoss.zss.model.SBook;
+import org.zkoss.zss.model.SCell;
+import org.zkoss.zss.model.SCellStyle;
+import org.zkoss.zss.model.SColor;
+import org.zkoss.zss.model.SFont;
+import org.zkoss.zss.model.SHyperlink;
+import org.zkoss.zss.model.SRichText;
+import org.zkoss.zss.model.SSheet;
+import org.zkoss.zss.model.SCell.CellType;
+import org.zkoss.zss.model.SCellStyle.Alignment;
+import org.zkoss.zss.model.SCellStyle.BorderType;
+import org.zkoss.zss.model.SCellStyle.FillPattern;
+import org.zkoss.zss.model.SCellStyle.VerticalAlignment;
+import org.zkoss.zss.model.SFont.Boldweight;
+import org.zkoss.zss.model.SFont.Underline;
+import org.zkoss.zss.model.SRichText.Segment;
+import org.zkoss.zss.model.sys.EngineFactory;
+import org.zkoss.zss.model.sys.format.FormatContext;
+import org.zkoss.zss.model.sys.format.FormatEngine;
+import org.zkoss.zss.model.sys.format.FormatResult;
 
 /**
  * @author Dennis.Chen
@@ -49,16 +49,16 @@ public class CellFormatHelper {
 	/**
 	 * cell to get the format, could be null.
 	 */
-	private NCell _cell;
+	private SCell _cell;
 	
 	/**
 	 * cell style, could be null
 	 */
-	private NCellStyle _cellStyle;
+	private SCellStyle _cellStyle;
 
-	private NSheet _sheet;
+	private SSheet _sheet;
 	
-	private NBook _book;
+	private SBook _book;
 
 	private int _row;
 
@@ -72,7 +72,7 @@ public class CellFormatHelper {
 
 	private FormatEngine _formatEngine;
 	
-	public CellFormatHelper(NSheet sheet, int row, int col, MergeMatrixHelper mmhelper) {
+	public CellFormatHelper(SSheet sheet, int row, int col, MergeMatrixHelper mmhelper) {
 		_sheet = sheet;
 		_book = _sheet.getBook(); 
 		_row = row;
@@ -90,7 +90,7 @@ public class CellFormatHelper {
 		//String bgColor = BookHelper.indexToRGB(_book, style.getFillForegroundColor());
 		//ZSS-34 cell background color does not show in excel
 		//20110819, henrichen: if fill pattern is NO_FILL, shall not show the cell background color
-		String fillColor = _cellStyle.getFillPattern() != NCellStyle.FillPattern.NO_FILL ? 
+		String fillColor = _cellStyle.getFillPattern() != SCellStyle.FillPattern.NO_FILL ? 
 			_cellStyle.getFillColor().getHtmlColor() : null;
 		if (fillColor != null) {
 			sb.append("background-color:").append(fillColor).append(";");
@@ -117,7 +117,7 @@ public class CellFormatHelper {
 			hitMerge = true;
 			bottom = rect.getLastRow();
 		}
-		NCellStyle nextStyle = _sheet.getCell(bottom,_col).getCellStyle();
+		SCellStyle nextStyle = _sheet.getCell(bottom,_col).getCellStyle();
 		
 		if (nextStyle != null){
 			BorderType bb = nextStyle.getBorderBottom();
@@ -182,7 +182,7 @@ public class CellFormatHelper {
 			hitMerge = true;
 			right = rect.getLastColumn();
 		}
-		NCellStyle nextStyle = _sheet.getCell(_row,right).getCellStyle();
+		SCellStyle nextStyle = _sheet.getCell(_row,right).getCellStyle();
 		if (nextStyle != null){
 			BorderType bb = nextStyle.getBorderRight();
 			String color = nextStyle.getBorderRightColor().getHtmlColor();
@@ -256,7 +256,7 @@ public class CellFormatHelper {
 		return true;
 	}
 	
-	public static String getFontCSSStyle(NCell cell, NFont font) {
+	public static String getFontCSSStyle(SCell cell, SFont font) {
 		final StringBuffer sb = new StringBuffer();
 		
 		String fontName = font.getName();
@@ -314,7 +314,7 @@ public class CellFormatHelper {
 				break;
 			}
 			
-			final NFont font = _cellStyle.getFont();
+			final SFont font = _cellStyle.getFont();
 			
 			//sb.append(BookHelper.getFontCSSStyle(_book, font));
 			sb.append(getFontCSSStyle(_cell, font));
@@ -323,7 +323,7 @@ public class CellFormatHelper {
 			final FormatResult ft = _formatEngine.format(_cell, new FormatContext(Locales.getCurrent()));
 			final boolean isRichText = ft.isRichText();
 			if (!isRichText) {
-				final NColor color = ft.getColor();
+				final SColor color = ft.getColor();
 				if(color!=null){
 					final String htmlColor = color.getHtmlColor();
 					sb.append("color:").append(htmlColor).append(";");
@@ -337,8 +337,8 @@ public class CellFormatHelper {
 	
 	/* given alignment and cell type, return real alignment */
 	//Halignment determined by style alignment, text format and value type  
-	public static Alignment getRealAlignment(NCell cell) {
-		NCellStyle style = cell.getCellStyle();
+	public static Alignment getRealAlignment(SCell cell) {
+		SCellStyle style = cell.getCellStyle();
 		CellType type = cell.getType();
 		Alignment align = style.getAlignment();
 		if (align == Alignment.GENERAL) {
@@ -363,8 +363,8 @@ public class CellFormatHelper {
 		return align;
 	}
 	
-	public static String getTextCSSStyle(NCell cell) {
-		final NCellStyle style = cell.getCellStyle();
+	public static String getTextCSSStyle(SCell cell) {
+		final SCellStyle style = cell.getCellStyle();
 
 		final StringBuffer sb = new StringBuffer();
 		Alignment textHAlign = getRealAlignment(cell);
@@ -409,16 +409,16 @@ public class CellFormatHelper {
 	/**
 	 * Gets Cell text by given row and column, it handling
 	 */
-	static public String getRichCellHtmlText(NSheet sheet, int row,int column){
-		final NCell cell = sheet.getCell(row, column);
+	static public String getRichCellHtmlText(SSheet sheet, int row,int column){
+		final SCell cell = sheet.getCell(row, column);
 		String text = "";
 		if (!cell.isNull()) {
 			boolean wrap = cell.getCellStyle().isWrapText();
 			
 			final FormatResult ft = EngineFactory.getInstance().createFormatEngine().format(cell, new FormatContext(Locales.getCurrent()));
 			if (ft.isRichText()) {
-				final NRichText rstr = ft.getRichText();
-				final NHyperlink hlink = cell.getHyperlink();
+				final SRichText rstr = ft.getRichText();
+				final SHyperlink hlink = cell.getHyperlink();
 				if (hlink == null) {
 					text = getRichTextHtml(rstr, wrap, true);
 				} else {
@@ -426,7 +426,7 @@ public class CellFormatHelper {
 				}
 			} else {
 				text = escapeText(ft.getText(), wrap, true);
-				final NHyperlink hlink = cell.getHyperlink();
+				final SHyperlink hlink = cell.getHyperlink();
 				if (hlink != null) {
 					text = getHyperlinkHtml(text, hlink);
 				}				
@@ -437,7 +437,7 @@ public class CellFormatHelper {
 		return text;
 	}
 	
-	private static String getHyperlinkHtml(String label, NHyperlink link) {
+	private static String getHyperlinkHtml(String label, SHyperlink link) {
 		String addr = escapeText(link.getAddress(), false, false); //TODO escape something?
 		if (label == null) {
 			label = escapeText(link.getLabel(), false, false);
@@ -454,7 +454,7 @@ public class CellFormatHelper {
 		return sb.toString();		
 	}
 	
-	private static String getRichTextHtml(NRichText text, boolean wrap, boolean multiline) {
+	private static String getRichTextHtml(SRichText text, boolean wrap, boolean multiline) {
 		StringBuilder sb = new StringBuilder();
 		for(Segment seg:text.getSegments()){
 			sb.append("<span style=\"")
@@ -466,7 +466,7 @@ public class CellFormatHelper {
 		return sb.toString();
 	}
 	
-	private static String getFontCSSStyle(NFont font) {
+	private static String getFontCSSStyle(SFont font) {
 		final StringBuffer sb = new StringBuffer();
 		
 		String fontName = font.getName();
@@ -479,9 +479,9 @@ public class CellFormatHelper {
 			sb.append("color:").append(textColor).append(";");
 		}
 
-		final NFont.Underline fontUnderline = font.getUnderline(); 
+		final SFont.Underline fontUnderline = font.getUnderline(); 
 		final boolean strikeThrough = font.isStrikeout();
-		boolean isUnderline = fontUnderline == NFont.Underline.SINGLE || fontUnderline == NFont.Underline.SINGLE_ACCOUNTING;
+		boolean isUnderline = fontUnderline == SFont.Underline.SINGLE || fontUnderline == SFont.Underline.SINGLE_ACCOUNTING;
 		if (strikeThrough || isUnderline) {
 			sb.append("text-decoration:");
 			if (strikeThrough)
@@ -491,9 +491,9 @@ public class CellFormatHelper {
 			sb.append(";");
 		}
 
-		final NFont.Boldweight weight = font.getBoldweight();
+		final SFont.Boldweight weight = font.getBoldweight();
 		
-		sb.append("font-weight:").append(weight==NFont.Boldweight.BOLD?"bold":"normal").append(";");
+		sb.append("font-weight:").append(weight==SFont.Boldweight.BOLD?"bold":"normal").append(";");
 		
 		final boolean italic = font.isItalic();
 		if (italic)
@@ -508,15 +508,15 @@ public class CellFormatHelper {
 	/**
 	 * Gets Cell text by given row and column
 	 */
-	static public String getCellHtmlText(NSheet sheet, int row,int column){
-		final NCell cell = sheet.getCell(row, column);
+	static public String getCellHtmlText(SSheet sheet, int row,int column){
+		final SCell cell = sheet.getCell(row, column);
 		String text = "";
 		if (cell != null) {
 			boolean wrap = cell.getCellStyle().isWrapText();
 			
 			final FormatResult ft = EngineFactory.getInstance().createFormatEngine().format(cell, new FormatContext(Locales.getCurrent()));
 			if (ft.isRichText()) {
-				final NRichText rstr = ft.getRichText();
+				final SRichText rstr = ft.getRichText();
 				text = rstr.getText();
 			} else {
 				text = ft.getText();

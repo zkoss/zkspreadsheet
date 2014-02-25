@@ -26,8 +26,8 @@ import org.zkoss.zss.api.Importer;
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.impl.BookImpl;
 import org.zkoss.zss.api.model.impl.SimpleRef;
+import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.ngapi.NImporter;
-import org.zkoss.zss.ngmodel.NBook;
 
 /**
  * 
@@ -48,7 +48,7 @@ public class ImporterImpl implements Importer{
 		if(bookName == null){
 			throw new IllegalArgumentException("null book name");
 		}
-		return new BookImpl(new SimpleRef<NBook>(_importer.imports(is, bookName)));
+		return new BookImpl(new SimpleRef<SBook>(_importer.imports(is, bookName)));
 	}
 
 

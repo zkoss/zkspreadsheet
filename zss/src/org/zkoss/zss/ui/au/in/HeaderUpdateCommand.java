@@ -26,7 +26,7 @@ import org.zkoss.zk.mesg.MZk;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.event.Events;
-import org.zkoss.zss.ngmodel.NSheet;
+import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.event.HeaderUpdateEvent;
 import org.zkoss.zss.ui.event.HeaderAction;
@@ -61,7 +61,7 @@ public class HeaderUpdateCommand extends AbstractCommand implements Command {
 	
 	private void processTopHeader(Spreadsheet spreadsheet, Map data){
 		String sheetId = (String) data.get("sheetId");
-		NSheet sheet = spreadsheet.getSelectedXSheet();
+		SSheet sheet = spreadsheet.getSelectedXSheet();
 		if(!sheet.getId().equals(sheetId)) {
 			return;
 		}
@@ -89,7 +89,7 @@ public class HeaderUpdateCommand extends AbstractCommand implements Command {
 	
 	private void processLeftHeader(Spreadsheet spreadsheet, Map data){
 		String sheetId = (String) data.get("sheetId");
-		NSheet sheet = spreadsheet.getSelectedXSheet();
+		SSheet sheet = spreadsheet.getSelectedXSheet();
 		if(!sheet.getId().equals(sheetId)) {
 			return;
 		}

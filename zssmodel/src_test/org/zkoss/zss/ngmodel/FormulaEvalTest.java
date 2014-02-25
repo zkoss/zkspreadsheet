@@ -16,26 +16,34 @@ import java.io.InputStream;
 import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.Set;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.zkoss.util.Locales;
+import org.zkoss.zss.model.CellRegion;
+import org.zkoss.zss.model.ErrorValue;
+import org.zkoss.zss.model.SBook;
+import org.zkoss.zss.model.SBooks;
+import org.zkoss.zss.model.SCell;
+import org.zkoss.zss.model.SSheet;
+import org.zkoss.zss.model.SheetRegion;
+import org.zkoss.zss.model.SCell.CellType;
+import org.zkoss.zss.model.impl.AbstractBookSeriesAdv;
+import org.zkoss.zss.model.impl.BookSeriesBuilderImpl;
+import org.zkoss.zss.model.impl.NameRefImpl;
+import org.zkoss.zss.model.impl.RefImpl;
+import org.zkoss.zss.model.sys.EngineFactory;
+import org.zkoss.zss.model.sys.dependency.DependencyTable;
+import org.zkoss.zss.model.sys.dependency.Ref;
+import org.zkoss.zss.model.sys.formula.FormulaEngine;
+import org.zkoss.zss.model.sys.formula.FormulaExpression;
+import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 import org.zkoss.zss.ngapi.NImporter;
 import org.zkoss.zss.ngapi.NRange;
 import org.zkoss.zss.ngapi.NRanges;
 import org.zkoss.zss.ngapi.impl.imexp.ExcelImportFactory;
-import org.zkoss.zss.ngmodel.NCell.CellType;
-import org.zkoss.zss.ngmodel.impl.AbstractBookSeriesAdv;
-import org.zkoss.zss.ngmodel.impl.BookSeriesBuilderImpl;
-import org.zkoss.zss.ngmodel.impl.NameRefImpl;
-import org.zkoss.zss.ngmodel.impl.RefImpl;
-import org.zkoss.zss.ngmodel.sys.EngineFactory;
-import org.zkoss.zss.ngmodel.sys.dependency.DependencyTable;
-import org.zkoss.zss.ngmodel.sys.dependency.Ref;
-import org.zkoss.zss.ngmodel.sys.formula.FormulaEngine;
-import org.zkoss.zss.ngmodel.sys.formula.FormulaExpression;
-import org.zkoss.zss.ngmodel.sys.formula.FormulaParseContext;
 
 /**
  * @author Pao
@@ -52,8 +60,8 @@ public class FormulaEvalTest {
 
 	@Test
 	public void testBasicEvaluation() {
-		NBook book = NBooks.createBook("book1");
-		NSheet sheet1 = book.createSheet("Sheet1");
+		SBook book = SBooks.createBook("book1");
+		SSheet sheet1 = book.createSheet("Sheet1");
 		sheet1.getCell(0, 0).setFormulaValue("SUM(C1:C10)");
 		sheet1.getCell(0, 1).setNumberValue(55.0);
 		sheet1.getCell(1, 0).setFormulaValue("AVERAGE(Sheet2!C1:C10)");
@@ -61,7 +69,7 @@ public class FormulaEvalTest {
 		for(int r = 0; r < 10; ++r) {
 			sheet1.getCell(r, 2).setValue(r + 1);
 		}
-		NSheet sheet2 = book.createSheet("Sheet2");
+		SSheet sheet2 = book.createSheet("Sheet2");
 		for(int r = 0; r < 10; ++r) {
 			sheet2.getCell(r, 2).setValue(r + 1);
 		}
@@ -75,10 +83,10 @@ public class FormulaEvalTest {
 
 	@Test
 	public void testBasicEvaluation2() {
-		NBook book = NBooks.createBook("book1");
-		NSheet sheet1 = book.createSheet("Sheet1");
-		NSheet sheet2 = book.createSheet("Sheet2");
-		NSheet sheetA = book.createSheet("SheetA");
+		SBook book = SBooks.createBook("book1");
+		SSheet sheet1 = book.createSheet("Sheet1");
+		SSheet sheet2 = book.createSheet("Sheet2");
+		SSheet sheetA = book.createSheet("SheetA");
 
 		// cells in sheet1
 		// basic formula
@@ -136,7 +144,7 @@ public class FormulaEvalTest {
 		String[] expected = new String[]{"HELLO!!!", "ZK!!!", "45.0", "22.5", "67.5", "4.5", "0.0", "10.0",
 				"45.0", "45.0", "450.0", (450 * 6) + ".0", "30.0", "#NAME?"};
 		for(int i = 0; i <= 99; ++i) {
-			NCell cell = sheet1.getCell(i, 0);
+			SCell cell = sheet1.getCell(i, 0);
 			if(cell.isNull()) {
 				break;
 			}
@@ -161,8 +169,8 @@ public class FormulaEvalTest {
 	@Test
 	public void testFormulaDependencyTracking() {
 
-		NBook book = NBooks.createBook("book1");
-		NSheet sheet1 = book.createSheet("Sheet1");
+		SBook book = SBooks.createBook("book1");
+		SSheet sheet1 = book.createSheet("Sheet1");
 		book.createSheet("Sheet2");
 		book.createSheet("Sheet3");
 		DependencyTable table = ((AbstractBookSeriesAdv)book.getBookSeries()).getDependencyTable();
@@ -213,10 +221,10 @@ public class FormulaEvalTest {
 	@Test
 	public void testFormulaDependencyTrackingWithExternalBook() {
 
-		NBook book1 = NBooks.createBook("book1");
-		NSheet sheetA = book1.createSheet("SheetA");
-		NBook book2 = NBooks.createBook("book2");
-		NSheet sheetB = book2.createSheet("SheetB");
+		SBook book1 = SBooks.createBook("book1");
+		SSheet sheetA = book1.createSheet("SheetA");
+		SBook book2 = SBooks.createBook("book2");
+		SSheet sheetB = book2.createSheet("SheetB");
 		getCell(sheetA, "A1").setFormulaValue("A2 + 1");
 		getCell(sheetA, "A2").setNumberValue(1.0);
 		getCell(sheetA, "A3").setFormulaValue("SUM(NameA)");
@@ -309,7 +317,7 @@ public class FormulaEvalTest {
 		Assert.assertEquals(ErrorValue.INVALID_NAME, getCell(sheetB, "B4").getErrorValue().getCode());
 	}
 	
-	private NCell getCell(NSheet sheet, String ref) {
+	private SCell getCell(SSheet sheet, String ref) {
 		CellRegion region = new CellRegion(ref);
 		return sheet.getCell(region.getRow(), region.getColumn());
 	}
@@ -342,14 +350,14 @@ public class FormulaEvalTest {
 	
 	@Test
 	public void testEvalAndModifyNormal(){
-		NBook book = NBooks.createBook("book1");
+		SBook book = SBooks.createBook("book1");
 		book.getBookSeries().setAutoFormulaCacheClean(true);
 		DependencyTable table = ((AbstractBookSeriesAdv)book.getBookSeries()).getDependencyTable();
 		
-		NSheet sheet1 = book.createSheet("Sheet1");
-		NSheet sheet2 = book.createSheet("Sheet2");
+		SSheet sheet1 = book.createSheet("Sheet1");
+		SSheet sheet2 = book.createSheet("Sheet2");
 
-		NCell cell = sheet1.getCell(0, 0);
+		SCell cell = sheet1.getCell(0, 0);
 		cell.setFormulaValue("Sheet2!A1");
 		
 		Assert.assertEquals(CellType.FORMULA, cell.getType());
@@ -429,13 +437,13 @@ public class FormulaEvalTest {
 	
 	@Test
 	public void testEvalNoRef(){
-		NBook book = NBooks.createBook("book1");
+		SBook book = SBooks.createBook("book1");
 		book.getBookSeries().setAutoFormulaCacheClean(true);
 		DependencyTable table = ((AbstractBookSeriesAdv)book.getBookSeries()).getDependencyTable();
 		
-		NSheet sheet1 = book.createSheet("Sheet1");
+		SSheet sheet1 = book.createSheet("Sheet1");
 
-		NCell cell = sheet1.getCell(0, 0);
+		SCell cell = sheet1.getCell(0, 0);
 		cell.setFormulaValue("Sheet2!A1");
 		
 		Assert.assertEquals(CellType.FORMULA, cell.getType());
@@ -454,7 +462,7 @@ public class FormulaEvalTest {
 		Assert.assertEquals(0, ref.getLastColumn());
 		
 		
-		NSheet sheet2 = book.createSheet("Sheet2");
+		SSheet sheet2 = book.createSheet("Sheet2");
 		//should clear all for any sheet state change.
 		
 		Assert.assertEquals(CellType.FORMULA, cell.getType());
@@ -468,8 +476,8 @@ public class FormulaEvalTest {
 
 	@Test
 	public void testClearFormulaDependency() {
-		NBook book = NBooks.createBook("book1");
-		NSheet sheet1 = book.createSheet("Sheet1");
+		SBook book = SBooks.createBook("book1");
+		SSheet sheet1 = book.createSheet("Sheet1");
 		DependencyTable table = ((AbstractBookSeriesAdv)book.getBookSeries()).getDependencyTable();
 
 		// initial test
@@ -526,7 +534,7 @@ public class FormulaEvalTest {
 
 	}
 
-	public NBook getBook(String path, String bookName) {
+	public SBook getBook(String path, String bookName) {
 		InputStream is = null;
 		try {
 			is = FormulaEvalTest.class.getResourceAsStream(path);
@@ -548,32 +556,32 @@ public class FormulaEvalTest {
 
 	@Test
 	public void testArrayValue() {
-		NBook book = getBook("book/formula-eval.xlsx", "Book1");
+		SBook book = getBook("book/formula-eval.xlsx", "Book1");
 		Assert.assertNotNull(book);
-		NSheet sheet = book.getSheetByName("array");
+		SSheet sheet = book.getSheetByName("array");
 		Assert.assertNotNull(sheet);
 
 		// check formula
 		int c = 2;
 		for(int r = 1; r <= 6; ++r) { // C2:C7
-			NCell cell = sheet.getCell(r, c);
+			SCell cell = sheet.getCell(r, c);
 			Assert.assertEquals("A2:A6", cell.getFormulaValue());
 		}
 
 		// check value
 		c = 0;
 		for(int r = 1; r <= 5; ++r) { // A2:A6
-			NCell cell = sheet.getCell(r, c);
+			SCell cell = sheet.getCell(r, c);
 			Assert.assertEquals(r, cell.getNumberValue().intValue());
 		}
 		c = 2;
 		for(int r = 1; r <= 5; ++r) { // C2:C6
-			NCell cell = sheet.getCell(r, c);
+			SCell cell = sheet.getCell(r, c);
 			Assert.assertEquals(r, cell.getNumberValue().intValue());
 		}
 
 		// check C7
-		NCell C7 = sheet.getCell(6, 2);
+		SCell C7 = sheet.getCell(6, 2);
 		Assert.assertEquals(CellType.ERROR, C7.getFormulaResultType());
 		Assert.assertEquals(ErrorValue.INVALID_VALUE, C7.getErrorValue().getCode());
 	}
@@ -581,13 +589,13 @@ public class FormulaEvalTest {
 	@Test
 	@Ignore
 	public void testArrayFormula() {
-		NBook book = getBook("book/formula-eval.xlsx", "Book1");
-		NSheet sheet = book.getSheetByName("array");
+		SBook book = getBook("book/formula-eval.xlsx", "Book1");
+		SSheet sheet = book.getSheetByName("array");
 		Assert.assertNotNull(book);
 		Assert.assertNotNull(sheet);
 
 		// check eval. value
-		NCell e2 = sheet.getCell(1, 4);
+		SCell e2 = sheet.getCell(1, 4);
 		Assert.assertFalse(e2.isNull());
 		Assert.assertEquals(CellType.NUMBER, e2.getFormulaResultType());
 		Assert.assertEquals(11, e2.getNumberValue().intValue());
@@ -595,20 +603,20 @@ public class FormulaEvalTest {
 	
 	@Test
 	public void testExternalBookReference() {
-		NBook book1, book2, book3;
-		NSheet sheet1, sheet2;
+		SBook book1, book2, book3;
+		SSheet sheet1, sheet2;
 		
 		// direct creation
-		book1 = NBooks.createBook("Book1");
-		book2 = NBooks.createBook("Book2");
+		book1 = SBooks.createBook("Book1");
+		book2 = SBooks.createBook("Book2");
 		book1.createSheet("external").getCell(0, 1).setFormulaValue("SUM(3 + [Book2]ref!C6 - 3)"); // B1
 		book2.createSheet("ref").getCell(5, 2).setNumberValue(5.0);	// C6
 		testExternalBookReference(book1, book2);
 		
 		// direct creation - complex 
-		book1 = NBooks.createBook("Book1");
-		book2 = NBooks.createBook("Book2");
-		book3 = NBooks.createBook("Book3");
+		book1 = SBooks.createBook("Book1");
+		book2 = SBooks.createBook("Book2");
+		book3 = SBooks.createBook("Book3");
 		sheet1 = book1.createSheet("external");
 		sheet1.getCell(0, 1).setFormulaValue(" SUM(external:another!K1) + SUM( [Book2]ref!A1:A2 , [Book3]sheet1:sheet3!C1 ) + B2 - another!B3 "); // [Book1]external!B1
 		// same book + same sheet
@@ -637,19 +645,19 @@ public class FormulaEvalTest {
 		testExternalBookReference(book1, book2);
 	}
 
-	public void testExternalBookReference(NBook... books) {
+	public void testExternalBookReference(SBook... books) {
 		Assert.assertTrue(books.length >= 2);
-		NBook book1 = books[0];
+		SBook book1 = books[0];
 
 		// update book series
-		for(NBook book : books) {
+		for(SBook book : books) {
 			Assert.assertNotNull(book);
 		}
 		new BookSeriesBuilderImpl().buildBookSeries(books); 
 
 		// check evaluated value of B1
-		NSheet sheet = book1.getSheetByName("external");
-		NCell b1 = sheet.getCell(0, 1);
+		SSheet sheet = book1.getSheetByName("external");
+		SCell b1 = sheet.getCell(0, 1);
 		Assert.assertFalse(b1.isNull());
 		Assert.assertEquals(CellType.NUMBER, b1.getFormulaResultType());
 		Assert.assertEquals(5, b1.getNumberValue().intValue());
@@ -659,11 +667,11 @@ public class FormulaEvalTest {
 	public void testFormulaMove() {
 
 		FormulaEngine engine = EngineFactory.getInstance().createFormulaEngine();
-		NBook book1 = NBooks.createBook("Book1");
-		NSheet sheetA = book1.createSheet("SheetA");
-		NSheet sheetB = book1.createSheet("SheetB");
-		NBook book2 = NBooks.createBook("Book2");
-		NSheet book2SheetA = book2.createSheet("SheetA");
+		SBook book1 = SBooks.createBook("Book1");
+		SSheet sheetA = book1.createSheet("SheetA");
+		SSheet sheetB = book1.createSheet("SheetB");
+		SBook book2 = SBooks.createBook("Book2");
+		SSheet book2SheetA = book2.createSheet("SheetA");
 		book2.createSheet("SheetB");
 		new BookSeriesBuilderImpl().buildBookSeries(book1, book2);
 		
@@ -736,7 +744,7 @@ public class FormulaEvalTest {
 		testFormulaMove(engine, sheetA, "SUM(E3:C5)", new SheetRegion(sheetA, "C3:E5"), 2, 2, "SUM(E5:G7)");
 	}
 
-	private void testFormulaMove(FormulaEngine engine, NSheet sheet, String f, SheetRegion region, int rowOffset, int colOffset, String expected) {
+	private void testFormulaMove(FormulaEngine engine, SSheet sheet, String f, SheetRegion region, int rowOffset, int colOffset, String expected) {
 		FormulaParseContext context = new FormulaParseContext(sheet, null);
 		FormulaExpression expr = engine.move(f, region, rowOffset, colOffset, context);
 		Assert.assertFalse(expr.hasError());
@@ -746,11 +754,11 @@ public class FormulaEvalTest {
 	@Test
 	public void testFormulaShrink() {
 		FormulaEngine engine = EngineFactory.getInstance().createFormulaEngine();
-		NBook book1 = NBooks.createBook("Book1");
-		NSheet sheetA = book1.createSheet("SheetA");
-		NSheet sheetB = book1.createSheet("SheetB");
-		NBook book2 = NBooks.createBook("Book2");
-		NSheet book2SheetA = book2.createSheet("SheetA");
+		SBook book1 = SBooks.createBook("Book1");
+		SSheet sheetA = book1.createSheet("SheetA");
+		SSheet sheetB = book1.createSheet("SheetB");
+		SBook book2 = SBooks.createBook("Book2");
+		SSheet book2SheetA = book2.createSheet("SheetA");
 		new BookSeriesBuilderImpl().buildBookSeries(book1, book2);
 
 		// the formula contains 3 region in current sheet
@@ -809,7 +817,7 @@ public class FormulaEvalTest {
 		testFormulaShrink("SUM(G3:I5)", sheetA, "G1:L1", null, false, "SUM(G2:I4)", engine);
 	}
 
-	private void testFormulaShrink(String formula, NSheet formulaSheet, String region, NSheet regionSheet, boolean hrizontal, String expected, FormulaEngine engine) {
+	private void testFormulaShrink(String formula, SSheet formulaSheet, String region, SSheet regionSheet, boolean hrizontal, String expected, FormulaEngine engine) {
 		if(regionSheet == null) {
 			regionSheet = formulaSheet;
 		}
@@ -822,11 +830,11 @@ public class FormulaEvalTest {
 	@Test
 	public void testFormulaExtend() {
 		FormulaEngine engine = EngineFactory.getInstance().createFormulaEngine();
-		NBook book1 = NBooks.createBook("Book1");
-		NSheet sheetA = book1.createSheet("SheetA");
-		NSheet sheetB = book1.createSheet("SheetB");
-		NBook book2 = NBooks.createBook("Book2");
-		NSheet book2SheetA = book2.createSheet("SheetA");
+		SBook book1 = SBooks.createBook("Book1");
+		SSheet sheetA = book1.createSheet("SheetA");
+		SSheet sheetB = book1.createSheet("SheetB");
+		SBook book2 = SBooks.createBook("Book2");
+		SSheet book2SheetA = book2.createSheet("SheetA");
 		new BookSeriesBuilderImpl().buildBookSeries(book1, book2);
 
 		// the formula contains 3 region in current sheet
@@ -883,7 +891,7 @@ public class FormulaEvalTest {
 		testFormulaExtend("SUM(I3:G5)", sheetA, "G1:L1", null, false, "SUM(G4:I6)", engine);
 	}
 	
-	private void testFormulaExtend(String formula, NSheet formulaSheet, String region, NSheet regionSheet, boolean hrizontal, String expected, FormulaEngine engine) {
+	private void testFormulaExtend(String formula, SSheet formulaSheet, String region, SSheet regionSheet, boolean hrizontal, String expected, FormulaEngine engine) {
 		if(regionSheet == null) {
 			regionSheet = formulaSheet;
 		}
@@ -896,8 +904,8 @@ public class FormulaEvalTest {
 	@Test
 	public void testFormulaShift() {
 		FormulaEngine engine = EngineFactory.getInstance().createFormulaEngine();
-		NBook book1 = NBooks.createBook("Book1");
-		NSheet sheetA = book1.createSheet("SheetA");
+		SBook book1 = SBooks.createBook("Book1");
+		SSheet sheetA = book1.createSheet("SheetA");
 		
 		String f = "SUM(B2,B3:C4,Sheet1!B5:D7,Sheet2:Sheet3!B8:E11,[Book2.xlsx]Sheet1!E11:G13)";
 		// no shift
@@ -935,7 +943,7 @@ public class FormulaEvalTest {
 		testFormulaShift(engine, sheetA, "SUM(H6:G11)", 2, 3, "SUM(J8:K13)");
 	}
 	
-	private void testFormulaShift(FormulaEngine engine, NSheet sheet, String formula, int rowOffset, int columnOffset, String expected) {
+	private void testFormulaShift(FormulaEngine engine, SSheet sheet, String formula, int rowOffset, int columnOffset, String expected) {
 		FormulaParseContext context = new FormulaParseContext(sheet, null);
 		FormulaExpression expr = engine.shift(formula, rowOffset, columnOffset, context);
 		Assert.assertFalse(expr.hasError());
@@ -945,8 +953,8 @@ public class FormulaEvalTest {
 	@Test
 	public void testFormulaTranspose() {
 		FormulaEngine engine = EngineFactory.getInstance().createFormulaEngine();
-		NBook book1 = NBooks.createBook("Book1");
-		NSheet sheetA = book1.createSheet("SheetA");
+		SBook book1 = SBooks.createBook("Book1");
+		SSheet sheetA = book1.createSheet("SheetA");
 
 		// normal
 		String f = "SUM(G6,Sheet1!G6,Sheet2:Sheet3!G6:I7,[Book2.xlsx]Sheet1!G6:H11)";
@@ -977,7 +985,7 @@ public class FormulaEvalTest {
 		testFormulaTranspose(engine, sheetA, "SUM(H6:G11)", "C5", "SUM(D9:I10)");
 	}
 	
-	private String testFormulaTranspose(FormulaEngine engine, NSheet sheet, String formula, String origin, String expected) {
+	private String testFormulaTranspose(FormulaEngine engine, SSheet sheet, String formula, String origin, String expected) {
 		SheetRegion o = new SheetRegion(sheet, origin);
 		FormulaParseContext context = new FormulaParseContext(sheet, null);
 		FormulaExpression expr = engine.transpose(formula, o.getRow(), o.getColumn(), context);
@@ -990,15 +998,15 @@ public class FormulaEvalTest {
 	@Test
 	public void testFormulaRenameSheet() {
 		FormulaEngine engine = EngineFactory.getInstance().createFormulaEngine();
-		NBook bookA = NBooks.createBook("BookA");
-		NSheet sheetX = bookA.createSheet("SheetX");
-		NSheet sheet1 = bookA.createSheet("Sheet1");
-		NSheet sheet2 = bookA.createSheet("Sheet2");
+		SBook bookA = SBooks.createBook("BookA");
+		SSheet sheetX = bookA.createSheet("SheetX");
+		SSheet sheet1 = bookA.createSheet("Sheet1");
+		SSheet sheet2 = bookA.createSheet("Sheet2");
 		bookA.createSheet("Sheet3");
 		bookA.createSheet("Sheet4");
-		NSheet sheet5 = bookA.createSheet("Sheet5");
+		SSheet sheet5 = bookA.createSheet("Sheet5");
 		bookA.createSheet("Sheet6");
-		NBook bookB = NBooks.createBook("BookB.xlsx");
+		SBook bookB = SBooks.createBook("BookB.xlsx");
 		bookB.createSheet("Sheet1");
 		new BookSeriesBuilderImpl().buildBookSeries(bookA, bookB);
 
@@ -1030,7 +1038,7 @@ public class FormulaEvalTest {
 		testFormulaRenameSheet(engine, sheet1, f, bookB, "Sheet1", null, "SUM(A1,Sheet1!A1,Sheet2:Sheet5!A1,Sheet6!A1,'[BookB.xlsx]#REF'!A1)");
 	}
 	
-	private void testFormulaRenameSheet(FormulaEngine engine, NSheet formulaSheet, String formula, NBook targetBook, String oldSheetName, String newSheetName, String expected) {
+	private void testFormulaRenameSheet(FormulaEngine engine, SSheet formulaSheet, String formula, SBook targetBook, String oldSheetName, String newSheetName, String expected) {
 		FormulaParseContext context = new FormulaParseContext(formulaSheet, null);
 		FormulaExpression expr = engine.renameSheet(formula, targetBook, oldSheetName, newSheetName, context);
 		Assert.assertFalse(expr.hasError());

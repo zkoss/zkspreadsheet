@@ -1,12 +1,12 @@
 package org.zkoss.zss.ngapi.impl;
 
+import org.zkoss.zss.model.*;
+import org.zkoss.zss.model.SCell.CellType;
+import org.zkoss.zss.model.chart.*;
 import org.zkoss.zss.ngapi.NRange;
-import org.zkoss.zss.ngmodel.*;
-import org.zkoss.zss.ngmodel.NCell.CellType;
-import org.zkoss.zss.ngmodel.chart.*;
 
 /**
- * Fill {@link NChartData} with series according to a selection. One series could be determined by row or column. 
+ * Fill {@link SChartData} with series according to a selection. One series could be determined by row or column. 
  * @author Hawk
  *
  */
@@ -17,12 +17,12 @@ public class ChartDataHelper extends RangeHelperBase {
 		super(range);
 	}
 
-	public void fillChartData(NChart chart) {
+	public void fillChartData(SChart chart) {
 		//avoid extreme large selection
 		if (range.isWholeSheet() || range.isWholeColumn() || range.isWholeRow()){
 			return;
 		}
-		NGeneralChartData chartData = (NGeneralChartData)chart.getData();
+		SGeneralChartData chartData = (SGeneralChartData)chart.getData();
 		CellRegion selection = new CellRegion(range.getRow(), range.getColumn(), range.getLastRow(), range.getLastColumn());
 		switch (chart.getType()) {
 		case AREA:
@@ -42,7 +42,7 @@ public class ChartDataHelper extends RangeHelperBase {
 		}
 	}
 	
-	private void fillXYData(CellRegion selection, NGeneralChartData chartData) {
+	private void fillXYData(CellRegion selection, SGeneralChartData chartData) {
 		CellRegion dataArea = getChartDataRange(selection);
 		int firstDataColumn = dataArea.getColumn();
 		int firstDataRow = dataArea.getRow();
@@ -71,7 +71,7 @@ public class ChartDataHelper extends RangeHelperBase {
 					nameExpression = new SheetRegion(sheet, new CellRegion(selection.getRow(), seriesIndex, nameRow, seriesIndex) ).getReferenceString();
 				}
 				String yValueExpression =new SheetRegion(sheet, new CellRegion(dataArea.getRow(), seriesIndex, dataArea.getLastRow(), seriesIndex)).getReferenceString();
-				NSeries series = chartData.addSeries();
+				SSeries series = chartData.addSeries();
 				series.setXYFormula(nameExpression, xValueExpression, yValueExpression );
 			}
 		}else{
@@ -94,7 +94,7 @@ public class ChartDataHelper extends RangeHelperBase {
 					nameExpression = new SheetRegion(sheet, new CellRegion(seriesIndex, selection.getColumn(), seriesIndex, nameCol) ).getReferenceString();
 				}
 				String yValueExpression =new SheetRegion(sheet, new CellRegion(seriesIndex, dataArea.getColumn(), seriesIndex, dataArea.getLastColumn())).getReferenceString();
-				NSeries series = chartData.addSeries();
+				SSeries series = chartData.addSeries();
 				series.setXYFormula(nameExpression, xValueExpression, yValueExpression );
 			}
 		}
@@ -108,7 +108,7 @@ public class ChartDataHelper extends RangeHelperBase {
 	 * @param anchor
 	 * @return
 	 */
-	private void fillCategoryData(CellRegion selection, NGeneralChartData chartData) {
+	private void fillCategoryData(CellRegion selection, SGeneralChartData chartData) {
 		CellRegion dataArea = getChartDataRange(selection);
 		int firstDataColumn = dataArea.getColumn();
 		int firstDataRow = dataArea.getRow();
@@ -127,7 +127,7 @@ public class ChartDataHelper extends RangeHelperBase {
 					nameExpression = new SheetRegion(sheet, new CellRegion(selection.getRow(), seriesIndex, nameRow, seriesIndex) ).getReferenceString();
 				}
 				String xValueExpression =new SheetRegion(sheet, new CellRegion(dataArea.getRow(), seriesIndex, dataArea.getLastRow(), seriesIndex)).getReferenceString();
-				NSeries series = chartData.addSeries();
+				SSeries series = chartData.addSeries();
 				series.setFormula(nameExpression, xValueExpression );
 			}
 		}else{ //category by column, value by row
@@ -143,7 +143,7 @@ public class ChartDataHelper extends RangeHelperBase {
 					nameExpression = new SheetRegion(sheet, new CellRegion(seriesIndex, selection.getColumn(), seriesIndex, nameColumn) ).getReferenceString();
 				}
 				String xValueExpression =new SheetRegion(sheet, new CellRegion(seriesIndex, dataArea.getColumn(), seriesIndex, dataArea.getLastColumn())).getReferenceString();
-				NSeries series = chartData.addSeries();
+				SSeries series = chartData.addSeries();
 				series.setFormula(nameExpression, xValueExpression );
 			}
 		}
@@ -156,12 +156,12 @@ public class ChartDataHelper extends RangeHelperBase {
 	 * @return
 	 */
 	private CellRegion getChartDataRange(CellRegion selection) {
-		NSheet sheet = range.getSheet();
+		SSheet sheet = range.getSheet();
 		// assume can't find number cell, use last cell as value
 		int colIdx = selection.getColumn();
 		int rowIdx = -1;
 		for (int r = selection.getLastRow(); r >= selection.getRow(); r--) {
-			NRow row = sheet.getRow(r);
+			SRow row = sheet.getRow(r);
 			if(row==null) continue;
 			int rCol = colIdx;
 			for (int c = selection.getLastColumn(); c >= rCol; c--) {
@@ -181,7 +181,7 @@ public class ChartDataHelper extends RangeHelperBase {
 				selection.getLastColumn());
 	}
 
-	private boolean isQualifiedCell(NCell cell) {
+	private boolean isQualifiedCell(SCell cell) {
 		if (cell == null)
 			return true;
 		CellType cellType = cell.getType();

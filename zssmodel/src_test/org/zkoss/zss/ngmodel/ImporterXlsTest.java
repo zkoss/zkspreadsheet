@@ -3,9 +3,13 @@ package org.zkoss.zss.ngmodel;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.*;
-import org.zkoss.zss.ngmodel.NChart.*;
-import org.zkoss.zss.ngmodel.NPicture.Format;
-import org.zkoss.zss.ngmodel.chart.NGeneralChartData;
+import org.zkoss.zss.model.SBook;
+import org.zkoss.zss.model.SChart;
+import org.zkoss.zss.model.SPicture;
+import org.zkoss.zss.model.SSheet;
+import org.zkoss.zss.model.SChart.*;
+import org.zkoss.zss.model.SPicture.Format;
+import org.zkoss.zss.model.chart.SGeneralChartData;
 
 public class ImporterXlsTest extends ImporterTest {
 
@@ -23,27 +27,27 @@ public class ImporterXlsTest extends ImporterTest {
 	
 	@Override
 	public void areaChart() {
-		NBook book = ImExpTestUtil.loadBook(CHART_IMPORT_FILE_UNDER_TEST, "Chart");
-		NSheet sheet = book.getSheetByName("Area");
-		NChart areaChart = sheet.getChart(0);
+		SBook book = ImExpTestUtil.loadBook(CHART_IMPORT_FILE_UNDER_TEST, "Chart");
+		SSheet sheet = book.getSheetByName("Area");
+		SChart areaChart = sheet.getChart(0);
 		assertEquals(NChartType.AREA,areaChart.getType());
 		
 		//a chart locating in one column and one row test
 		assertEquals(493, areaChart.getAnchor().getWidth());
 		assertEquals(283, areaChart.getAnchor().getHeight());
 		
-		NGeneralChartData chartData = (NGeneralChartData)areaChart.getData();
+		SGeneralChartData chartData = (SGeneralChartData)areaChart.getData();
 		assertEquals(8, chartData.getNumOfCategory());
 		
-		NChart area3dChart = sheet.getChart(1);
+		SChart area3dChart = sheet.getChart(1);
 		assertEquals(571, area3dChart.getAnchor().getWidth());
 	}
 	
 	@Override
 	public void barChart() {
-		NBook book = ImExpTestUtil.loadBook(CHART_IMPORT_FILE_UNDER_TEST, "Chart");
-		NSheet sheet = book.getSheetByName("Bar");
-		NChart barChart = sheet.getChart(0);
+		SBook book = ImExpTestUtil.loadBook(CHART_IMPORT_FILE_UNDER_TEST, "Chart");
+		SSheet sheet = book.getSheetByName("Bar");
+		SChart barChart = sheet.getChart(0);
 		
 		assertEquals(NChartType.BAR,barChart.getType());
 		
@@ -55,7 +59,7 @@ public class ImporterXlsTest extends ImporterTest {
 		assertEquals(false, barChart.isThreeD());
 		
 		//data
-		NGeneralChartData chartData = (NGeneralChartData)barChart.getData();
+		SGeneralChartData chartData = (SGeneralChartData)barChart.getData();
 		assertEquals(3, chartData.getNumOfCategory());
 		assertEquals("Internet Explorer", chartData.getCategory(0));
 		assertEquals("Chrome", chartData.getCategory(1));
@@ -74,70 +78,70 @@ public class ImporterXlsTest extends ImporterTest {
 		assertEquals(0.2809, chartData.getSeries(2).getValue(1));
 		assertEquals(0.2273, chartData.getSeries(2).getValue(2));
 		
-		NChart barChart3D = sheet.getChart(1);
+		SChart barChart3D = sheet.getChart(1);
 		assertEquals(true, barChart3D.isThreeD());
 	}
 	
 	@Override
 	public void bubbleChart() {
-		NBook book = ImExpTestUtil.loadBook(CHART_IMPORT_FILE_UNDER_TEST, "Chart");
+		SBook book = ImExpTestUtil.loadBook(CHART_IMPORT_FILE_UNDER_TEST, "Chart");
 		bubbleChart(book);
 	}
 	
 	@Override
 	public void columnChart() {
-		NBook book = ImExpTestUtil.loadBook(CHART_IMPORT_FILE_UNDER_TEST, "Chart");
-		NSheet sheet = book.getSheetByName("Column");
-		NChart columnChart = sheet.getChart(0);
+		SBook book = ImExpTestUtil.loadBook(CHART_IMPORT_FILE_UNDER_TEST, "Chart");
+		SSheet sheet = book.getSheetByName("Column");
+		SChart columnChart = sheet.getChart(0);
 		assertEquals(NChartType.COLUMN,columnChart.getType());
 		
-		NGeneralChartData chartData = (NGeneralChartData)columnChart.getData();
+		SGeneralChartData chartData = (SGeneralChartData)columnChart.getData();
 		assertEquals(4, chartData.getNumOfCategory());
 		
-		NChart column3dChart = sheet.getChart(1);
-		NGeneralChartData chart3dData = (NGeneralChartData)column3dChart.getData();
+		SChart column3dChart = sheet.getChart(1);
+		SGeneralChartData chart3dData = (SGeneralChartData)column3dChart.getData();
 		assertEquals(4, chart3dData.getNumOfCategory());
 	}
 	
 	@Override
 	public void doughnutChart() {
-		NBook book = ImExpTestUtil.loadBook(CHART_IMPORT_FILE_UNDER_TEST, "Chart");
+		SBook book = ImExpTestUtil.loadBook(CHART_IMPORT_FILE_UNDER_TEST, "Chart");
 		doughnutChart(book);
 	}
 	
 	@Override
 	public void lineChart() {
-		NBook book = ImExpTestUtil.loadBook(CHART_IMPORT_FILE_UNDER_TEST, "Chart");
+		SBook book = ImExpTestUtil.loadBook(CHART_IMPORT_FILE_UNDER_TEST, "Chart");
 		lineChart(book);
 	}
 	
 	@Override
 	public void pieChart() {
-		NBook book = ImExpTestUtil.loadBook(CHART_IMPORT_FILE_UNDER_TEST, "Chart");
+		SBook book = ImExpTestUtil.loadBook(CHART_IMPORT_FILE_UNDER_TEST, "Chart");
 		pieChart(book);
 	}
 	
 	@Override
 	public void scatterChart() {
-		NBook book = ImExpTestUtil.loadBook(CHART_IMPORT_FILE_UNDER_TEST, "Chart");
+		SBook book = ImExpTestUtil.loadBook(CHART_IMPORT_FILE_UNDER_TEST, "Chart");
 		scatterChart(book);
 	}
 	
 	@Override
 	public void picture(){
-		NBook book = ImExpTestUtil.loadBook(PICTURE_IMPORT_FILE_UNDER_TEST, "Picture");
+		SBook book = ImExpTestUtil.loadBook(PICTURE_IMPORT_FILE_UNDER_TEST, "Picture");
 		picture(book);
 		
-		NSheet sheet2 = book.getSheet(1);
+		SSheet sheet2 = book.getSheet(1);
 		assertEquals(2,sheet2.getPictures().size());
 		
-		NPicture flowerJpg = sheet2.getPicture(0);
+		SPicture flowerJpg = sheet2.getPicture(0);
 		assertEquals(Format.JPG, flowerJpg.getFormat());
 		assertEquals(569, flowerJpg.getAnchor().getWidth());
 		assertEquals(427, flowerJpg.getAnchor().getHeight());
 		
 		//different spec in XLS, GIF pictures are treated as PNG
-		NPicture rainbowGif = sheet2.getPicture(1);
+		SPicture rainbowGif = sheet2.getPicture(1);
 		assertEquals(Format.PNG, rainbowGif.getFormat());
 		assertEquals(613, rainbowGif.getAnchor().getWidth());
 		assertEquals(345, rainbowGif.getAnchor().getHeight());

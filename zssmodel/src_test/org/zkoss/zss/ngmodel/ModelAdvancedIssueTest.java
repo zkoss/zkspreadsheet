@@ -18,31 +18,36 @@ import org.junit.Before;
 import org.junit.Test;
 import org.zkoss.poi.ss.util.CellReference;
 import org.zkoss.util.Locales;
+import org.zkoss.zss.model.CellRegion;
+import org.zkoss.zss.model.SBook;
+import org.zkoss.zss.model.SBooks;
+import org.zkoss.zss.model.SCell;
+import org.zkoss.zss.model.SSheet;
+import org.zkoss.zss.model.SAutoFilter.FilterOp;
+import org.zkoss.zss.model.SAutoFilter.NFilterColumn;
+import org.zkoss.zss.model.SCell.CellType;
+import org.zkoss.zss.model.SCellStyle.Alignment;
+import org.zkoss.zss.model.SCellStyle.BorderType;
+import org.zkoss.zss.model.SCellStyle.FillPattern;
+import org.zkoss.zss.model.SChart.NChartType;
+import org.zkoss.zss.model.SDataValidation.ValidationType;
+import org.zkoss.zss.model.SFont.Boldweight;
+import org.zkoss.zss.model.SFont.TypeOffset;
+import org.zkoss.zss.model.SFont.Underline;
+import org.zkoss.zss.model.SHyperlink.HyperlinkType;
+import org.zkoss.zss.model.SPicture.Format;
+import org.zkoss.zss.model.chart.SGeneralChartData;
+import org.zkoss.zss.model.chart.SSeries;
+import org.zkoss.zss.model.impl.AbstractBookSeriesAdv;
+import org.zkoss.zss.model.impl.AbstractCellAdv;
+import org.zkoss.zss.model.impl.BookImpl;
+import org.zkoss.zss.model.impl.RefImpl;
+import org.zkoss.zss.model.impl.SheetImpl;
+import org.zkoss.zss.model.sys.dependency.DependencyTable;
+import org.zkoss.zss.model.sys.dependency.Ref;
+import org.zkoss.zss.model.util.CellStyleMatcher;
+import org.zkoss.zss.model.util.FontMatcher;
 import org.zkoss.zss.ngapi.NRanges;
-import org.zkoss.zss.ngmodel.NAutoFilter.FilterOp;
-import org.zkoss.zss.ngmodel.NAutoFilter.NFilterColumn;
-import org.zkoss.zss.ngmodel.NCell.CellType;
-import org.zkoss.zss.ngmodel.NCellStyle.Alignment;
-import org.zkoss.zss.ngmodel.NCellStyle.BorderType;
-import org.zkoss.zss.ngmodel.NCellStyle.FillPattern;
-import org.zkoss.zss.ngmodel.NChart.NChartType;
-import org.zkoss.zss.ngmodel.NDataValidation.ValidationType;
-import org.zkoss.zss.ngmodel.NFont.Boldweight;
-import org.zkoss.zss.ngmodel.NFont.TypeOffset;
-import org.zkoss.zss.ngmodel.NFont.Underline;
-import org.zkoss.zss.ngmodel.NHyperlink.HyperlinkType;
-import org.zkoss.zss.ngmodel.NPicture.Format;
-import org.zkoss.zss.ngmodel.chart.NGeneralChartData;
-import org.zkoss.zss.ngmodel.chart.NSeries;
-import org.zkoss.zss.ngmodel.impl.AbstractBookSeriesAdv;
-import org.zkoss.zss.ngmodel.impl.AbstractCellAdv;
-import org.zkoss.zss.ngmodel.impl.BookImpl;
-import org.zkoss.zss.ngmodel.impl.RefImpl;
-import org.zkoss.zss.ngmodel.impl.SheetImpl;
-import org.zkoss.zss.ngmodel.sys.dependency.DependencyTable;
-import org.zkoss.zss.ngmodel.sys.dependency.Ref;
-import org.zkoss.zss.ngmodel.util.CellStyleMatcher;
-import org.zkoss.zss.ngmodel.util.FontMatcher;
 
 public class ModelAdvancedIssueTest {
 
@@ -52,15 +57,15 @@ public class ModelAdvancedIssueTest {
 		SheetImpl.DEBUG = true;
 	}
 	
-	protected NSheet initialDataGrid(NSheet sheet){
+	protected SSheet initialDataGrid(SSheet sheet){
 		return sheet;
 	}
 
 	@Test
 	public void testModelCellDependencyAfterMove(){
-		NBook book = NBooks.createBook("book1");
+		SBook book = SBooks.createBook("book1");
 		book.getBookSeries().setAutoFormulaCacheClean(true);
-		NSheet sheet1 = initialDataGrid(book.createSheet("Sheet1"));
+		SSheet sheet1 = initialDataGrid(book.createSheet("Sheet1"));
 		
 		sheet1.getCell("A1").setValue(12);
 		sheet1.getCell("B1").setValue(34);
@@ -131,7 +136,7 @@ public class ModelAdvancedIssueTest {
 	
 	}
 
-	private Ref getLastRef(NCell cell) {
+	private Ref getLastRef(SCell cell) {
 		try {
 			Method method = cell.getClass().getDeclaredMethod("getRef", null);
 			method.setAccessible(true);

@@ -18,12 +18,12 @@ package org.zkoss.zss.ngapi.impl.imexp;
 
 import java.io.*;
 
+import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.ngapi.NExporter;
-import org.zkoss.zss.ngmodel.NBook;
 
 public abstract class AbstractExporter implements NExporter, Serializable{
 	@Override
-	public void export(NBook book, File file) throws IOException {
+	public void export(SBook book, File file) throws IOException {
 		OutputStream os = null;
 		try{
 			os = new FileOutputStream(file);

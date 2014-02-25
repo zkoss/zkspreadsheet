@@ -12,10 +12,10 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.zkoss.zss.Setup;
 import org.zkoss.zss.Util;
+import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.impl.html.HtmlExporter;
 import org.zkoss.zss.ngapi.NImporter;
 import org.zkoss.zss.ngapi.impl.imexp.ExcelImportFactory;
-import org.zkoss.zss.ngmodel.NBook;
 
 public class HtmlExporterTest {
 	
@@ -37,16 +37,16 @@ public class HtmlExporterTest {
 	@Ignore("manual test only")
 	@Test
 	public void exportHtml() {
-		NBook book = importBook("book/simpleChart.xlsx");
+		SBook book = importBook("book/simpleChart.xlsx");
 		File temp = Setup.getTempFile("htmlExportTest",".html");
 		exportBook(book, temp);
 		Util.open(temp);
 	}
 	
-	private NBook importBook(String path) {
+	private SBook importBook(String path) {
 		NImporter importer = new ExcelImportFactory().createImporter();
 		InputStream is  = PdfExporterTest.class.getResourceAsStream(path);
-		NBook book = null;
+		SBook book = null;
 		try {
 			book = importer.imports(is, "PDFBook");
 		} catch (IOException e) {
@@ -61,7 +61,7 @@ public class HtmlExporterTest {
 		return book;
 	}
 	
-	private void exportBook(NBook book, File file) {
+	private void exportBook(SBook book, File file) {
 		
 		HtmlExporter exporter = new HtmlExporter();
 		try {

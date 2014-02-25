@@ -23,9 +23,9 @@ import java.util.concurrent.locks.ReadWriteLock;
 
 import org.zkoss.poi.ss.usermodel.*;
 import org.zkoss.poi.ss.util.CellRangeAddress;
-import org.zkoss.zss.ngmodel.*;
-import org.zkoss.zss.ngmodel.NCell.CellType;
-import org.zkoss.zss.ngmodel.NRichText.Segment;
+import org.zkoss.zss.model.*;
+import org.zkoss.zss.model.SCell.CellType;
+import org.zkoss.zss.model.SRichText.Segment;
 
 /**
  * Common exporting behavior for both XLSX and XLS.
@@ -43,21 +43,21 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 	 * The map stores the exported {@link CellStyle} during exporting, so that
 	 * we can reuse them for exporting other cells.
 	 */
-	protected Map<NCellStyle, CellStyle> styleTable = new HashMap<NCellStyle, CellStyle>();
-	protected Map<NFont, Font> fontTable = new HashMap<NFont, Font>();
-	protected Map<NColor, Color> colorTable = new HashMap<NColor, Color>();
+	protected Map<SCellStyle, CellStyle> styleTable = new HashMap<SCellStyle, CellStyle>();
+	protected Map<SFont, Font> fontTable = new HashMap<SFont, Font>();
+	protected Map<SColor, Color> colorTable = new HashMap<SColor, Color>();
 
-	abstract protected void exportColumnArray(NSheet sheet, Sheet poiSheet, NColumnArray columnArr);
+	abstract protected void exportColumnArray(SSheet sheet, Sheet poiSheet, SColumnArray columnArr);
 
 	abstract protected Workbook createPoiBook();
 
-	abstract protected void exportChart(NSheet sheet, Sheet poiSheet);
+	abstract protected void exportChart(SSheet sheet, Sheet poiSheet);
 
-	abstract protected void exportPicture(NSheet sheet, Sheet poiSheet);
+	abstract protected void exportPicture(SSheet sheet, Sheet poiSheet);
 
-	abstract protected void exportValidation(NSheet sheet, Sheet poiSheet);
+	abstract protected void exportValidation(SSheet sheet, Sheet poiSheet);
 
-	abstract protected void exportAutoFilter(NSheet sheet, Sheet poiSheet);
+	abstract protected void exportAutoFilter(SSheet sheet, Sheet poiSheet);
 
 	/**
 	 * Export the model according to reversed depended order: book, sheet,
@@ -68,19 +68,19 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 	 * Pictures depend on cells.
 	 */
 	@Override
-	public void export(NBook book, OutputStream fos) throws IOException {
+	public void export(SBook book, OutputStream fos) throws IOException {
 		ReadWriteLock lock = book.getBookSeries().getLock();
 		lock.readLock().lock();
 
 		try {
 			workbook = createPoiBook();
 
-			for (NSheet sheet : book.getSheets()) {
+			for (SSheet sheet : book.getSheets()) {
 				exportSheet(sheet);
 			}
 			exportNamedRange(book);
 			for (int n = 0; n < book.getSheets().size(); n++) {
-				NSheet sheet = book.getSheet(n);
+				SSheet sheet = book.getSheet(n);
 				Sheet poiSheet = workbook.getSheetAt(n);
 				exportRowColumn(sheet, poiSheet);
 				exportMergedRegions(sheet, poiSheet);
@@ -96,9 +96,9 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 		}
 	}
 
-	protected void exportNamedRange(NBook book) {
+	protected void exportNamedRange(SBook book) {
 
-		for (NName name : book.getNames()) {
+		for (SName name : book.getNames()) {
 			Name poiName = workbook.createName();
 			poiName.setNameName(name.getName());
 			String sheetName = name.getRefersToSheetName();
@@ -109,7 +109,7 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 		}
 	}
 
-	protected void exportSheet(NSheet sheet) {
+	protected void exportSheet(SSheet sheet) {
 		Sheet poiSheet = workbook.createSheet(sheet.getSheetName());
 
 		// refer to BookHelper#setFreezePanel
@@ -150,7 +150,7 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 
 	}
 
-	protected void exportMergedRegions(NSheet sheet, Sheet poiSheet) {
+	protected void exportMergedRegions(SSheet sheet, Sheet poiSheet) {
 		// consistent with importer, read from last merged region
 		for (int i = sheet.getNumOfMergedRegion() - 1; i >= 0; i--) {
 			CellRegion region = sheet.getMergedRegion(i);
@@ -158,23 +158,23 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 		}
 	}
 
-	protected void exportRowColumn(NSheet sheet, Sheet poiSheet) {
+	protected void exportRowColumn(SSheet sheet, Sheet poiSheet) {
 		// export rows
-		Iterator<NRow> rowIterator = sheet.getRowIterator();
+		Iterator<SRow> rowIterator = sheet.getRowIterator();
 		while (rowIterator.hasNext()) {
-			NRow row = rowIterator.next();
+			SRow row = rowIterator.next();
 			exportRow(sheet, poiSheet, row);
 		}
 
 		// export columns
-		Iterator<NColumnArray> columnArrayIterator = sheet.getColumnArrayIterator();
+		Iterator<SColumnArray> columnArrayIterator = sheet.getColumnArrayIterator();
 		while (columnArrayIterator.hasNext()) {
-			NColumnArray columnArr = columnArrayIterator.next();
+			SColumnArray columnArr = columnArrayIterator.next();
 			exportColumnArray(sheet, poiSheet, columnArr);
 		}
 	}
 
-	protected void exportRow(NSheet sheet, Sheet poiSheet, NRow row) {
+	protected void exportRow(SSheet sheet, Sheet poiSheet, SRow row) {
 		Row poiRow = poiSheet.createRow(row.getIndex());
 
 		if (row.isHidden()) {
@@ -188,22 +188,22 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 			}
 		}
 
-		NCellStyle rowStyle = row.getCellStyle();
+		SCellStyle rowStyle = row.getCellStyle();
 		CellStyle poiRowStyle = toPOICellStyle(rowStyle);
 		poiRow.setRowStyle(poiRowStyle);
 
 		// Export Cell
-		Iterator<NCell> cellIterator = sheet.getCellIterator(row.getIndex());
+		Iterator<SCell> cellIterator = sheet.getCellIterator(row.getIndex());
 		while (cellIterator.hasNext()) {
-			NCell cell = cellIterator.next();
+			SCell cell = cellIterator.next();
 			exportCell(poiRow, cell);
 		}
 	}
 
-	protected void exportCell(Row poiRow, NCell cell) {
+	protected void exportCell(Row poiRow, SCell cell) {
 		Cell poiCell = poiRow.createCell(cell.getColumnIndex());
 
-		NCellStyle cellStyle = cell.getCellStyle();
+		SCellStyle cellStyle = cell.getCellStyle();
 		poiCell.setCellStyle(toPOICellStyle(cellStyle));
 
 		switch (cell.getType()) {
@@ -236,13 +236,13 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 		case STRING:
 			poiCell.setCellType(Cell.CELL_TYPE_STRING);
 			if(cell.isRichTextValue()) {
-				NRichText richText = cell.getRichTextValue();
+				SRichText richText = cell.getRichTextValue();
 				CreationHelper helper = workbook.getCreationHelper();
 				RichTextString poiRichTextString = helper.createRichTextString(richText.getText());
 				int start = 0;
 				int end = 0;
 				for(Segment sg : richText.getSegments()) {
-					NFont font = sg.getFont();
+					SFont font = sg.getFont();
 					int len = sg.getText().length();
 					end += len;
 					poiRichTextString.applyFont(start, end, toPOIFont(font));
@@ -256,7 +256,7 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 		default:
 		}
 		
-		NHyperlink hyperlink = cell.getHyperlink();
+		SHyperlink hyperlink = cell.getHyperlink();
 		if (hyperlink != null) {
 			CreationHelper helper = workbook.getCreationHelper();
 			Hyperlink poiHyperlink = helper.createHyperlink(ExporterEnumUtil.toPoiHyperlinkType(hyperlink.getType()));
@@ -266,7 +266,7 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 		}
 	}
 
-	protected CellStyle toPOICellStyle(NCellStyle cellStyle) {
+	protected CellStyle toPOICellStyle(SCellStyle cellStyle) {
 		// instead of creating a new style, use old one if exist
 		CellStyle poiCellStyle = styleTable.get(cellStyle);
 		if (poiCellStyle != null) {
@@ -317,7 +317,7 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 
 	}
 
-	protected Color toPOIColor(NColor color) {
+	protected Color toPOIColor(SColor color) {
 		Color poiColor = colorTable.get(color);
 
 		if (poiColor != null) {
@@ -335,7 +335,7 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 	 * @param font
 	 * @return
 	 */
-	protected Font toPOIFont(NFont font) {
+	protected Font toPOIFont(SFont font) {
 
 		Font poiFont = fontTable.get(font);
 		if (poiFont != null) {

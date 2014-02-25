@@ -10,8 +10,8 @@ import org.zkoss.zss.api.model.*;
 import org.zkoss.zss.api.model.Chart.Grouping;
 import org.zkoss.zss.api.model.Chart.LegendPosition;
 import org.zkoss.zss.api.model.impl.ChartImpl;
-import org.zkoss.zss.ngmodel.*;
-import org.zkoss.zss.ngmodel.NChart.NChartType;
+import org.zkoss.zss.model.*;
+import org.zkoss.zss.model.SChart.NChartType;
 
 /**
  * all method implementation to test chart & picture operation
@@ -65,7 +65,7 @@ public class ChartPictureTestBase {
 		Sheet sheet = workbook.getSheet("chart-image");
 		Chart chart = SheetOperationUtil.addChart(Ranges.range(sheet, 4,1,14,1),  Chart.Type.LINE, Grouping.STANDARD, LegendPosition.TOP);
 		assertEquals(1, sheet.getCharts().size());
-		NChart nchart = ((ChartImpl)chart).getNative();
+		SChart nchart = ((ChartImpl)chart).getNative();
 		assertEquals(nchart.getType(), NChartType.LINE);
 	}
 	

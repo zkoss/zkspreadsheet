@@ -20,7 +20,7 @@ import java.io.*;
 
 import org.zkoss.poi.POIXMLDocument;
 import org.zkoss.poi.poifs.filesystem.POIFSFileSystem;
-import org.zkoss.zss.ngmodel.NBook;
+import org.zkoss.zss.model.SBook;
 /**
  * 
  * @author dennis
@@ -30,7 +30,7 @@ import org.zkoss.zss.ngmodel.NBook;
 public class NExcelImportAdapter extends AbstractImporter{
 
 	@Override
-	public NBook imports(InputStream is, String bookName) throws IOException {
+	public SBook imports(InputStream is, String bookName) throws IOException {
 		if(!is.markSupported()) {
 			is = new PushbackInputStream(is, 8);
 		}

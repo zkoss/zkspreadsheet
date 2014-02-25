@@ -5,13 +5,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.zkoss.zss.model.CellRegion;
+import org.zkoss.zss.model.InvalidateModelOpException;
+import org.zkoss.zss.model.SCell;
+import org.zkoss.zss.model.SCellStyle;
+import org.zkoss.zss.model.SSheet;
+import org.zkoss.zss.model.SCellStyle.BorderType;
 import org.zkoss.zss.ngapi.NRange;
-import org.zkoss.zss.ngmodel.CellRegion;
-import org.zkoss.zss.ngmodel.InvalidateModelOpException;
-import org.zkoss.zss.ngmodel.NCell;
-import org.zkoss.zss.ngmodel.NCellStyle;
-import org.zkoss.zss.ngmodel.NCellStyle.BorderType;
-import org.zkoss.zss.ngmodel.NSheet;
 
 public class MergeHelper extends RangeHelperBase{
 
@@ -101,17 +101,17 @@ public class MergeHelper extends RangeHelperBase{
 		}
 	}
 	
-	private void merge0(NSheet sheet, int tRow, int lCol, int bRow, int rCol) {
+	private void merge0(SSheet sheet, int tRow, int lCol, int bRow, int rCol) {
 		if(tRow==bRow && lCol==rCol)
 			return;
 //		final List<MergeChange> changes = new ArrayList<MergeChange>();
 //		final Set<CellRegion> all = new HashSet<CellRegion>();
 //		final Set<CellRegion> last = new HashSet<CellRegion>();
 		//find the left most non-blank cell.
-		NCell target = null;
+		SCell target = null;
 		for(int r = tRow; target == null && r <= bRow; ++r) {
 			for(int c = lCol; c <= rCol; ++c) {
-				final NCell cell = sheet.getCell(r, c);
+				final SCell cell = sheet.getCell(r, c);
 				if (!isBlank(cell)) {
 					target = cell;
 					break;
@@ -119,7 +119,7 @@ public class MergeHelper extends RangeHelperBase{
 			}
 		}
 		
-		NCellStyle style = null;
+		SCellStyle style = null;
 		if (target != null) { //found the target
 			final int tgtRow = target.getRowIndex();
 			final int tgtCol = target.getColumnIndex();
@@ -134,7 +134,7 @@ public class MergeHelper extends RangeHelperBase{
 //					all.addAll(info.getAffected());
 //				}
 			}
-			final NCellStyle source = target.getCellStyle();
+			final SCellStyle source = target.getCellStyle();
 			style = source.equals(sheet.getBook().getDefaultCellStyle()) ? null : sheet.getBook().createCellStyle(source,true);
 			if (style != null) {
 //				style.cloneStyleFrom(source);
@@ -146,7 +146,7 @@ public class MergeHelper extends RangeHelperBase{
 			}
 			//1st row (exclude 1st cell)
 			for (int c = lCol + 1; c <= rCol; ++c) {
-				final NCell cell = sheet.getCell(tRow, c);
+				final SCell cell = sheet.getCell(tRow, c);
 				cell.setCellStyle(style); //set all cell in the merged range to CellStyle of the target minus border
 				cell.setValue(null);
 //				final Set<Ref>[] refs = BookHelper.setCellValue(cell, (RichTextString) null);
@@ -158,7 +158,7 @@ public class MergeHelper extends RangeHelperBase{
 			//2nd row and after
 			for(int r = tRow+1; r <= bRow; ++r) {
 				for(int c = lCol; c <= rCol; ++c) {
-					final NCell cell = sheet.getCell(r, c);
+					final SCell cell = sheet.getCell(r, c);
 					cell.setCellStyle(style); //set all cell in the merged range to CellStyle of the target minus border
 					cell.setValue(null);
 //					final Set<Ref>[] refs = BookHelper.setCellValue(cell, (RichTextString) null);

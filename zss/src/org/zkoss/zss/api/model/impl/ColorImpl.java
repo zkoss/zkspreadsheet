@@ -17,8 +17,8 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.api.model.impl;
 
 import org.zkoss.zss.api.model.Color;
-import org.zkoss.zss.ngmodel.NBook;
-import org.zkoss.zss.ngmodel.NColor;
+import org.zkoss.zss.model.SBook;
+import org.zkoss.zss.model.SColor;
 /**
  * 
  * @author dennis
@@ -26,10 +26,10 @@ import org.zkoss.zss.ngmodel.NColor;
  */
 public class ColorImpl implements Color{
 
-	private ModelRef<NBook> _bookRef;
-	private ModelRef<NColor> _colorRef;
+	private ModelRef<SBook> _bookRef;
+	private ModelRef<SColor> _colorRef;
 
-	public ColorImpl(ModelRef<NBook> book, ModelRef<NColor> color) {
+	public ColorImpl(ModelRef<SBook> book, ModelRef<SColor> color) {
 		this._bookRef = book;
 		this._colorRef = color;
 	}
@@ -59,13 +59,13 @@ public class ColorImpl implements Color{
 		return true;
 	}
 
-	public NColor getNative() {
+	public SColor getNative() {
 		return _colorRef.get();
 	}
-	public ModelRef<NColor> getRef(){
+	public ModelRef<SColor> getRef(){
 		return _colorRef;
 	}
-	public ModelRef<NBook> getBookRef(){
+	public ModelRef<SBook> getBookRef(){
 		return _bookRef;
 	}
 

@@ -20,8 +20,8 @@ import org.zkoss.zss.api.model.CellStyle;
 import org.zkoss.zss.api.model.Color;
 import org.zkoss.zss.api.model.EditableCellStyle;
 import org.zkoss.zss.api.model.Font;
-import org.zkoss.zss.ngmodel.NBook;
-import org.zkoss.zss.ngmodel.NCellStyle;
+import org.zkoss.zss.model.SBook;
+import org.zkoss.zss.model.SCellStyle;
 /**
  * 
  * @author dennis
@@ -29,7 +29,7 @@ import org.zkoss.zss.ngmodel.NCellStyle;
  */
 public class EditableCellStyleImpl extends CellStyleImpl implements EditableCellStyle{
 	
-	public EditableCellStyleImpl(ModelRef<NBook> book,ModelRef<NCellStyle> style) {
+	public EditableCellStyleImpl(ModelRef<SBook> book,ModelRef<SCellStyle> style) {
 		super(book,style);
 	}
 	

@@ -1,10 +1,10 @@
 package org.zkoss.zss.ngapi.impl;
 
-import org.zkoss.zss.ngmodel.NBookSeries;
+import org.zkoss.zss.model.SBookSeries;
 
 /*package*/ class RefHelperBase {
-	final protected NBookSeries bookSeries;
-	public RefHelperBase(NBookSeries bookSeries) {
+	final protected SBookSeries bookSeries;
+	public RefHelperBase(SBookSeries bookSeries) {
 		this.bookSeries = bookSeries;
 	}
 }
