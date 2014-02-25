@@ -993,14 +993,18 @@ public class SheetImpl extends AbstractSheetAdv {
 		//TODO zss 3.5 move to  movecellhelper
 		//check merge overlaps and contains
 		CellRegion srcRegion = new CellRegion(rowIdx,columnIdx,lastRowIdx,lastColumnIdx);
+		Collection<CellRegion> containsMerge = getContainsMergedRegions(srcRegion);
 		Collection<CellRegion> overlapsMerge = getOverlapsMergedRegions(srcRegion,true);
 		if(overlapsMerge.size()>0){
 			throw new InvalidateModelOpException("Can't move "+srcRegion.getReferenceString()+" which overlaps merge area "+overlapsMerge.iterator().next().getReferenceString());
 		}
 		CellRegion targetRegion = new CellRegion(rowIdx+rowOffset,columnIdx+columnOffset,lastRowIdx+rowOffset,lastColumnIdx+columnOffset);
-		if(getOverlapsMergedRegions(targetRegion,false).size()>0){
-			throw new InvalidateModelOpException("Can't move to "+targetRegion.getReferenceString()+" which overlaps merge area");
-		}
+		//to backward compatible with old spec, we should auto ummerge the target area
+//		overlapsMerge = getOverlapsMergedRegions(targetRegion,true); 
+//		if(overlapsMerge.size()>0){
+//			throw new InvalidateModelOpException("Can't move to "+targetRegion.getReferenceString()+" which overlaps merge area");
+//		}
+		this.removeMergedRegion(targetRegion, true);
 		
 		
 		boolean reverseYDir = rowOffset>0;
@@ -1046,7 +1050,6 @@ public class SheetImpl extends AbstractSheetAdv {
 						+ rowOffset, columnIdx + columnOffset, lastRowIdx
 						+ rowOffset, lastColumnIdx + columnOffset));
 		
-		Collection<CellRegion> containsMerge = getContainsMergedRegions(srcRegion);
 		//shift the merge
 		mergedRegions.removeAll(containsMerge);
 		for(CellRegion merge:containsMerge){

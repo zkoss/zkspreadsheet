@@ -87,23 +87,16 @@ public class MergeHelper extends RangeHelperBase{
 		List<CellRegion> overlaps = sheet.getOverlapsMergedRegions(new CellRegion(tRow,lCol,bRow,rCol),false); 
 		
 		if(overlaps.size()>0){
-			throw new InvalidateModelOpException("can't merge an overlapped region "+overlaps.get(0).getReferenceString()+", unmerge it first");
+			//to backward comparable to old sepc. we should unmerge it
+//			throw new InvalidateModelOpException("can't merge an overlapped region "+overlaps.get(0).getReferenceString()+", unmerge it first");
+			unmerge(true);
 		}
 		
 		if (across) {
-//			final Set<CellRegion> toEval = new HashSet<CellRegion>();
-//			final Set<CellRegion> affected = new HashSet<CellRegion>();
-//			final List<MergeChange> changes = new ArrayList<MergeChange>();
 			for(int r = tRow; r <= bRow; ++r) {
-//				final ChangeInfo info = merge0(sheet, r, lCol, r, rCol);
 				merge0(sheet, r, lCol, r, rCol);
-//				changes.addAll(info.getMergeChanges());
-//				toEval.addAll(info.getToEval());
-//				affected.addAll(info.getAffected());
 			}
-//			return new ChangeInfo(toEval, affected, changes);
 		} else {
-//			return merge0(sheet, tRow, lCol, bRow, rCol);
 			merge0(sheet, tRow, lCol, bRow, rCol);
 		}
 	}
