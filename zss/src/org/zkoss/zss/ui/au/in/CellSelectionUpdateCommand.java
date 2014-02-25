@@ -34,7 +34,6 @@ import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.event.CellSelectionAction;
 import org.zkoss.zss.ui.event.CellSelectionType;
 import org.zkoss.zss.ui.event.CellSelectionUpdateEvent;
-import org.zkoss.zss.ui.impl.XUtils;
 import org.zkoss.zss.ui.sys.SpreadsheetInCtrl;
 /**
  * A Command (client to server) for handling cell selection
@@ -54,7 +53,7 @@ public class CellSelectionUpdateCommand extends AbstractCommand implements Comma
 		String sheetId= (String) data.get("sheetId");
 		
 		Sheet sheet = ((Spreadsheet) comp).getSelectedSheet();
-		if (!XUtils.getSheetUuid(sheet).equals(sheetId))
+		if (!getSheetUuid(sheet).equals(sheetId))
 			return;
 		
 		final SBook book = ((SheetImpl)sheet).getNative().getBook();

@@ -25,15 +25,14 @@ import org.zkoss.zk.mesg.MZk;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zss.api.SheetAnchor;
+import org.zkoss.zss.api.model.Book.BookType;
 import org.zkoss.zss.api.model.Chart;
 import org.zkoss.zss.api.model.Picture;
 import org.zkoss.zss.api.model.Sheet;
-import org.zkoss.zss.api.model.Book.BookType;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.event.Events;
-import org.zkoss.zss.ui.event.WidgetUpdateEvent;
 import org.zkoss.zss.ui.event.WidgetAction;
-import org.zkoss.zss.ui.impl.XUtils;
+import org.zkoss.zss.ui.event.WidgetUpdateEvent;
 
 /**
  * @author sam
@@ -54,7 +53,7 @@ public class WidgetUpdateCommand extends AbstractCommand implements Command {
 		Sheet sheet = ((Spreadsheet) comp).getSelectedSheet();
 		
 		String sheetId= (String) data.get("sheetId");
-		if (!XUtils.getSheetUuid(sheet).equals(sheetId))
+		if (!getSheetUuid(sheet).equals(sheetId))
 			return;
 		
 		// ZSS-113: chart modification only support Excel 2007 format

@@ -15,17 +15,14 @@ package org.zkoss.zss.ui.event;
 
 import java.util.Map;
 
+import org.zkoss.zk.au.AuRequest;
+import org.zkoss.zk.au.AuRequests;
+import org.zkoss.zk.ui.Component;
 import org.zkoss.zss.api.model.Hyperlink.HyperlinkType;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.api.model.impl.EnumUtil;
 import org.zkoss.zss.api.model.impl.SheetImpl;
-import org.zkoss.zk.au.AuRequest;
-import org.zkoss.zk.au.AuRequests;
-import org.zkoss.zk.ui.Component;
-import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.MouseEvent;
 import org.zkoss.zss.ui.Spreadsheet;
-import org.zkoss.zss.ui.impl.XUtils;
 
 /**
  * Event when end user click on the hyperlink of a cell (used with onCellHyperlink event).

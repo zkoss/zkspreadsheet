@@ -32,7 +32,6 @@ import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.event.HeaderMouseEvent;
 import org.zkoss.zss.ui.event.HedaerType;
-import org.zkoss.zss.ui.impl.XUtils;
 
 /**
  * A Command (client to server) for handling user(client) start editing a cell

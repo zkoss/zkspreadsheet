@@ -28,10 +28,9 @@ import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.ui.Spreadsheet;
-import org.zkoss.zss.ui.event.HeaderUpdateEvent;
 import org.zkoss.zss.ui.event.HeaderAction;
+import org.zkoss.zss.ui.event.HeaderUpdateEvent;
 import org.zkoss.zss.ui.event.HedaerType;
-import org.zkoss.zss.ui.impl.XUtils;
 import org.zkoss.zss.ui.sys.SpreadsheetInCtrl;
 
 

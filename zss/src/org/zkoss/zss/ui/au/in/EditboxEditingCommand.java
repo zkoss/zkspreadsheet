@@ -21,15 +21,14 @@ package org.zkoss.zss.ui.au.in;
 import java.util.Map;
 
 import org.zkoss.lang.Objects;
-import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zk.au.AuRequest;
 import org.zkoss.zk.mesg.MZk;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.event.Events;
+import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.event.EditboxEditingEvent;
-import org.zkoss.zss.ui.impl.XUtils;
 
 /**
  * A Command (client to server) ...means the client is editing...
@@ -53,7 +52,7 @@ public class EditboxEditingCommand extends AbstractCommand implements Command {
 		String clienttxt = (String) data.get("clienttxt");
 
 		Sheet sheet = ((Spreadsheet) comp).getSelectedSheet();
-		if (!XUtils.getSheetUuid(sheet).equals(sheetId))
+		if (!getSheetUuid(sheet).equals(sheetId))
 			return;
 		EditboxEditingEvent event = new EditboxEditingEvent(org.zkoss.zss.ui.event.Events.ON_EDITBOX_EDITING, comp, sheet, row,col, clienttxt);
 		Events.postEvent(event);

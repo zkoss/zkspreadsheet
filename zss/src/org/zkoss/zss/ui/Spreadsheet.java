@@ -4613,7 +4613,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			result.put("val", "");
 			result.put("et", editingType);
 
-			smartUpdate("dataUpdateStop", new Object[] { token,	XUtils.getSheetUuid(sheet), result});
+			smartUpdate("dataUpdateStop", new Object[] { token,	getSheetUuid(sheet), result});
 		} catch (RuntimeException x) {
 			if (x instanceof IllegalFormulaException) {
 				showFormulaErrorThenRetry((IllegalFormulaException)x, token, sheet, rowIdx, colIdx, value, editingType);
@@ -4624,6 +4624,10 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 				throw x;
 			}
 		}
+	}
+	
+	private static String getSheetUuid(Sheet sheet){
+		return sheet.getInternalSheet().getId();
 	}
 
 	private void processStartEditing0(String token, Sheet sheet, int row, int col, Object value, boolean useEditValue, String editingType) {
@@ -4637,7 +4641,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			if (useEditValue) { //shall use edit value from server
 				result.put("server", true); 
 			}
-			smartUpdate("dataUpdateStart", new Object[] { token, XUtils.getSheetUuid(sheet), result});
+			smartUpdate("dataUpdateStart", new Object[] { token, getSheetUuid(sheet), result});
 		} catch (RuntimeException x) {
 			processCancelEditing0(token, sheet, row, col, false, editingType);
 			throw x;
@@ -4652,7 +4656,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		result.put("val", "");
 		result.put("sk", skipMove);
 		result.put("et", editingType);
-		smartUpdate("dataUpdateCancel", new Object[] { token, XUtils.getSheetUuid(sheet), result});
+		smartUpdate("dataUpdateCancel", new Object[] { token, getSheetUuid(sheet), result});
 	}
 
 	private void processRetryEditing0(String token, Sheet sheet, int row, int col, Object value, String editingType) {
@@ -4664,7 +4668,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			result.put("type", "retryedit");
 			result.put("val", value);
 			result.put("et", editingType);
-			smartUpdate("dataUpdateRetry", new Object[] { "", XUtils.getSheetUuid(sheet), result});
+			smartUpdate("dataUpdateRetry", new Object[] { "", getSheetUuid(sheet), result});
 		} catch (RuntimeException x) {
 			processCancelEditing0(token, sheet, row, col, false, editingType);
 			throw x;

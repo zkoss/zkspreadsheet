@@ -265,10 +265,10 @@ public class XUtils {
 //		return ((SheetCtrl)sheet).getUuid();
 //	}
 //	
-	public static String getSheetUuid(Sheet sheet){
-		
-		return (((SheetImpl)sheet).getNative()).getId();
-	}
+//	public static String getSheetUuid(Sheet sheet){
+//		
+//		return (((SheetImpl)sheet).getNative()).getId();
+//	}
 //	
 //	/**
 //	 * Returns the {@link XSheet} of the specified uuid; null if id not exists.
@@ -287,22 +287,22 @@ public class XUtils {
 //		return null;
 //	}
 //	
-	/**
-	 * Returns the {@link XSheet} of the specified uuid; null if id not exists.
-	 * @param book the book the contains the {@link XSheet}
-	 * @param uuid the sheet uuid
-	 * @return the {@link XSheet} of the specified uuid; null if id not exists.
-	 */
-	public static Sheet getSheetByUuid(Book book, String uuid) {
-		int count = book.getNumberOfSheets();
-		for(int j = 0; j < count; ++j) {
-			Sheet sheet = book.getSheetAt(j);
-			if (uuid.equals(getSheetUuid(sheet))) {
-				return sheet;
-			}
-		}
-		return null;
-	}
+//	/**
+//	 * Returns the {@link XSheet} of the specified uuid; null if id not exists.
+//	 * @param book the book the contains the {@link XSheet}
+//	 * @param uuid the sheet uuid
+//	 * @return the {@link XSheet} of the specified uuid; null if id not exists.
+//	 */
+//	public static Sheet getSheetByUuid(Book book, String uuid) {
+//		int count = book.getNumberOfSheets();
+//		for(int j = 0; j < count; ++j) {
+//			Sheet sheet = book.getSheetAt(j);
+//			if (uuid.equals(getSheetUuid(sheet))) {
+//				return sheet;
+//			}
+//		}
+//		return null;
+//	}
 //		
 //	
 //	

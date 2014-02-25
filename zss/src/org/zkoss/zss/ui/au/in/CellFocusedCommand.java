@@ -30,7 +30,6 @@ import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.event.CellEvent;
-import org.zkoss.zss.ui.impl.XUtils;
 import org.zkoss.zss.ui.sys.SpreadsheetInCtrl;
 
 /**
@@ -53,7 +52,7 @@ public class CellFocusedCommand extends AbstractCommand implements Command {
 		int col = (Integer) data.get("col");
 		
 		Sheet sheet = ((Spreadsheet) comp).getSelectedSheet();
-		if (!XUtils.getSheetUuid(sheet).equals(sheetId))
+		if (!getSheetUuid(sheet).equals(sheetId))
 			return;
 
 		SpreadsheetInCtrl ctrl = ((SpreadsheetInCtrl) ((Spreadsheet) comp).getExtraCtrl());

@@ -33,7 +33,6 @@ import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.event.CellSelectionEvent;
 import org.zkoss.zss.ui.event.CellSelectionType;
-import org.zkoss.zss.ui.impl.XUtils;
 import org.zkoss.zss.ui.sys.SpreadsheetInCtrl;
 
 
@@ -57,7 +56,7 @@ public class CellSelectionCommand extends AbstractCommand implements Command {
 		
 		Sheet sheet = ((Spreadsheet)comp).getSelectedSheet();
 		
-		if(!XUtils.getSheetUuid(sheet).equals(sheetId))
+		if(!getSheetUuid(sheet).equals(sheetId))
 			return;
 		
 		//TODO request shall send back maxcol/maxrow (do it in client side)

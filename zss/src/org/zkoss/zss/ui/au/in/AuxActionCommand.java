@@ -29,7 +29,6 @@ import org.zkoss.zss.ui.AuxAction;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.event.AuxActionEvent;
 import org.zkoss.zss.ui.event.Events;
-import org.zkoss.zss.ui.impl.XUtils;
 
 /**
  * @author sam
@@ -61,7 +60,7 @@ public class AuxActionCommand extends AbstractCommand implements Command {
 		if ("sheet".equals(tag) && spreadsheet.getSBook() != null) {
 			String sheetId = (String) data.get("sheetId");
 			//don't get form spreadsheet, it (should be)is possible doing on non-selected sheet
-			sheet = XUtils.getSheetByUuid(spreadsheet.getBook(), sheetId);
+			sheet = getSheetByUuid(spreadsheet.getBook(), sheetId);
 			
 			if(sheet==null){
 				//not found, it is possible been deleted.?

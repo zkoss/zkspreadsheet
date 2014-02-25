@@ -32,9 +32,8 @@ import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zss.api.AreaRef;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.ui.Spreadsheet;
-import org.zkoss.zss.ui.event.CellMouseEvent;
 import org.zkoss.zss.ui.event.CellFilterEvent;
-import org.zkoss.zss.ui.impl.XUtils;
+import org.zkoss.zss.ui.event.CellMouseEvent;
 
 /**
  * A Command (client to server) for handling user(client) start editing a cell
@@ -72,7 +71,7 @@ public class CellMouseCommand extends AbstractCommand implements Command {
 		
 		Spreadsheet spreadsheet = (Spreadsheet) comp;
 		Sheet sheet = ((Spreadsheet) comp).getSelectedSheet();
-		if (!XUtils.getSheetUuid(sheet).equals(sheetId))
+		if (!getSheetUuid(sheet).equals(sheetId))
 			return;
 		
 		if ("lc".equals(type)) {
