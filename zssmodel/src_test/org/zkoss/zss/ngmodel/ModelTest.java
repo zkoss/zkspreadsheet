@@ -3179,15 +3179,18 @@ public class ModelTest {
 			Assert.fail();
 		}catch(InvalidateModelOpException x){}
 		
-		try{
-			sheet1.moveCell(new CellRegion("A1:C3"), 0,3);//target overlap
-			Assert.fail();
-		}catch(InvalidateModelOpException x){}
 		
-		sheet1.moveCell(new CellRegion("A1:C3"), 4, 1);
+		sheet1.moveCell(new CellRegion("A1:C3"), 0,3);//target overlap
+		//it unmerge the target and then move source
+		Assert.assertEquals(1, sheet1.getNumOfMergedRegion());
+		Assert.assertEquals("E2:F3", sheet1.getMergedRegions().get(0).getReferenceString());
+		
+
+		
+		sheet1.moveCell(new CellRegion("D1:F3"), 4, -2);
 		
 		Assert.assertEquals("A", sheet1.getCell("B5").getValue());
-		Assert.assertEquals(2, sheet1.getNumOfMergedRegion());
+		Assert.assertEquals(1, sheet1.getNumOfMergedRegion());
 		Assert.assertEquals("C6:D7", sheet1.getMergedRegion(5, 2).getReferenceString());
 		Assert.assertEquals("C6:D7", sheet1.getMergedRegion("C6").getReferenceString());
 		Assert.assertEquals("C6:D7", sheet1.getMergedRegion("C7").getReferenceString());
