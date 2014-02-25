@@ -32,7 +32,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import org.zkoss.json.JSONArray;
 import org.zkoss.json.JSONObject;
 import org.zkoss.lang.Classes;
@@ -185,7 +184,6 @@ import org.zkoss.zss.ui.sys.SpreadsheetInCtrl;
 import org.zkoss.zss.ui.sys.SpreadsheetOutCtrl;
 import org.zkoss.zss.ui.sys.WidgetHandler;
 import org.zkoss.zss.ui.sys.WidgetLoader;
-import org.zkoss.zul.Label;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.impl.XulElement;
 
@@ -3493,9 +3491,13 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 
 			// update surround cell
 			int top = row;
-			bottom = bottom + size - 1;
+			bottom = top + size - 1;
 			bottom = bottom >= _maxRows - 1 ? _maxRows - 1 : bottom;
-			updateCell(sheet, rect.getColumn(), top, rect.getLastColumn(), bottom);
+			int left = rect.getColumn();
+			int right = rect.getLastColumn();
+			
+			log.debug("update cells when insert row " + row + ",size:" + size + ":" + left + "," + top + "," + right + "," + bottom);
+			updateCell(sheet, left, top, right, bottom);
 			
 			// ZSS-404: must update cell in freeze panels (previous range is only for data block)
 			int colFreeze = getSelectedSheetColumnfreeze();

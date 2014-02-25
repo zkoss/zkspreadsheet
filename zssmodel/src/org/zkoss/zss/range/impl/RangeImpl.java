@@ -1360,13 +1360,8 @@ public class RangeImpl implements SRange {
 		}
 		
 		public void doNotify(){
-			if(refNotifySet.size()>0){
-				handleRefNotifyContentChange(bookSeries,refNotifySet);
-			}
-			if(cellNotifySet.size()>0){
-				handleCellNotifyContentChange(cellNotifySet);
-			}
 			
+			// FIXME updates need timestamp
 			// according to ZSS-354, we should:
 			// 1. remove merged cells 2. insert/delete row/column 3. add merged cells
 			if(mergeRemoveNotifySet.size()>0){
@@ -1377,6 +1372,13 @@ public class RangeImpl implements SRange {
 			}
 			if(mergeAddNotifySet.size()>0){
 				handleMergeAddNotifyChange(mergeAddNotifySet);
+			}
+			
+			if(refNotifySet.size()>0){
+				handleRefNotifyContentChange(bookSeries,refNotifySet);
+			}
+			if(cellNotifySet.size()>0){
+				handleCellNotifyContentChange(cellNotifySet);
 			}
 		}
 	}	
