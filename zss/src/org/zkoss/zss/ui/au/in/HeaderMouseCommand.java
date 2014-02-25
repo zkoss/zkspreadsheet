@@ -50,7 +50,7 @@ public class HeaderMouseCommand extends AbstractCommand implements Command {
 			throw new UiException(MZk.ILLEGAL_REQUEST_WRONG_DATA, new Object[] {Objects.toString(data), this});
 
 		String sheetId = (String) data.get("sheetId");
-		SSheet sheet = ((Spreadsheet)comp).getSelectedXSheet();
+		SSheet sheet = ((Spreadsheet)comp).getSelectedSSheet();
 		if(!sheet.getId().equals(sheetId)) {
 			return;
 		}

@@ -43,7 +43,7 @@ public class PictureComposer extends SelectorComposer<Component> {
 			AImage image = new AImage(WebApps.getCurrent().getResource("/range/zklogo.png"));
 			ViewAnchor anchor = new ViewAnchor(ss.getSelection().getRow(), ss.getSelection().getColumn(), image.getWidth(), image.getHeight());
 
-			SRanges.range(ss.getSelectedXSheet()).addPicture(anchor, image.getByteData(), SPicture.Format.PNG);
+			SRanges.range(ss.getSelectedSSheet()).addPicture(anchor, image.getByteData(), SPicture.Format.PNG);
 			refreshPictureList();
 		}catch(IOException e){
 			System.out.println("cannot add a picture for "+ e);
@@ -54,7 +54,7 @@ public class PictureComposer extends SelectorComposer<Component> {
 	@Listen("onClick = #deleteButton")
 	public void delete() {
 		if (pictureListbox.getSelectedItem() != null){
-			SRanges.range(ss.getSelectedXSheet()).deletePicture((SPicture)pictureListbox.getSelectedItem().getValue());
+			SRanges.range(ss.getSelectedSSheet()).deletePicture((SPicture)pictureListbox.getSelectedItem().getValue());
 			refreshPictureList();
 		}
 	}
@@ -65,14 +65,14 @@ public class PictureComposer extends SelectorComposer<Component> {
 			
 			SPicture picture = (SPicture) pictureListbox.getSelectedItem().getValue();
 			ViewAnchor anchor = new ViewAnchor(toRowBox.getValue(), toColumnBox.getValue(), picture.getAnchor().getWidth(), picture.getAnchor().getHeight());
-			SRanges.range(ss.getSelectedXSheet()).movePicture(picture, anchor);
+			SRanges.range(ss.getSelectedSSheet()).movePicture(picture, anchor);
 			refreshPictureList();
 		}
 	}
 	
 	private void refreshPictureList(){
 		pictureList.clear();
-		pictureList.addAll(ss.getSelectedXSheet().getPictures());
+		pictureList.addAll(ss.getSelectedSSheet().getPictures());
 		pictureListbox.setModel(pictureList);
 	}
 	

@@ -88,7 +88,7 @@ public class CellFetchCommandHelper{
 		
 		_spreadsheet = ((Spreadsheet)comp);
 		if(_spreadsheet.isInvalidated()) return;//since it is invalidate, i don't need to update
-		final SSheet selSheet = _spreadsheet.getSelectedXSheet();
+		final SSheet selSheet = _spreadsheet.getSelectedSSheet();
 		final String sheetId = (String) data.get("sheetId");
 		if (selSheet == null || !sheetId.equals(selSheet.getId())) { //not current selected sheet, skip.
 			return;
@@ -102,7 +102,7 @@ public class CellFetchCommandHelper{
 		_rowHelper = _ctrl.getRowPositionHelper(sheetId);
 		_colHelper = _ctrl.getColumnPositionHelper(sheetId);
 		
-		SSheet sheet = _spreadsheet.getSelectedXSheet();
+		SSheet sheet = _spreadsheet.getSelectedSSheet();
 		if(!sheet.getId().equals(sheetId)) return;
 		
 		_mergeMatrix = _ctrl.getMergeMatrixHelper(sheet);

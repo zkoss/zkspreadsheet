@@ -53,7 +53,7 @@ public class FetchActiveRangeCommand extends AbstractCommand implements Command 
 		int top = (Integer) data.get("top");
 		int bottom = (Integer) data.get("bottom");
 		
-		SSheet sheet = spreadsheet.getSelectedXSheet();
+		SSheet sheet = spreadsheet.getSelectedSSheet();
 		
 		if (sheetId.equals(sheet.getId())) {
 			final SpreadsheetCtrl spreadsheetCtrl = ((SpreadsheetCtrl) spreadsheet.getExtraCtrl());

@@ -58,7 +58,7 @@ public class AuxActionCommand extends AbstractCommand implements Command {
 		}
 		
 		//old code logic refer to ActionCommand in 2.6.0
-		if ("sheet".equals(tag) && spreadsheet.getXBook() != null) {
+		if ("sheet".equals(tag) && spreadsheet.getSBook() != null) {
 			String sheetId = (String) data.get("sheetId");
 			//don't get form spreadsheet, it (should be)is possible doing on non-selected sheet
 			sheet = XUtils.getSheetByUuid(spreadsheet.getBook(), sheetId);

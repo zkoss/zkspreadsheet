@@ -61,7 +61,7 @@ public class HeaderUpdateCommand extends AbstractCommand implements Command {
 	
 	private void processTopHeader(Spreadsheet spreadsheet, Map data){
 		String sheetId = (String) data.get("sheetId");
-		SSheet sheet = spreadsheet.getSelectedXSheet();
+		SSheet sheet = spreadsheet.getSelectedSSheet();
 		if(!sheet.getId().equals(sheetId)) {
 			return;
 		}
@@ -89,7 +89,7 @@ public class HeaderUpdateCommand extends AbstractCommand implements Command {
 	
 	private void processLeftHeader(Spreadsheet spreadsheet, Map data){
 		String sheetId = (String) data.get("sheetId");
-		SSheet sheet = spreadsheet.getSelectedXSheet();
+		SSheet sheet = spreadsheet.getSelectedSSheet();
 		if(!sheet.getId().equals(sheetId)) {
 			return;
 		}
