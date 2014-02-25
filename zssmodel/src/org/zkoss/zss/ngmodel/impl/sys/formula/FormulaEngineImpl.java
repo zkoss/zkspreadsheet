@@ -242,7 +242,7 @@ public class FormulaEngineImpl implements FormulaEngine {
 					evalCtxMap.put(bookName, new EvalContext(evalBook, we));
 
 					// aggregate built-in functions and user defined functions
-					NFunctionResolver resolver = NFunctionResolverFactory.getFunctionResolver();
+					NFunctionResolver resolver = NFunctionResolverFactory.createFunctionResolver();
 					UDFFinder zkUDFF = resolver.getUDFFinder(); // ZK user defined function finder
 					if(zkUDFF != null) {
 						IndexedUDFFinder bookUDFF = (IndexedUDFFinder)evalBook.getUDFFinder(); // book contained built-in function finder
@@ -367,7 +367,7 @@ public class FormulaEngineImpl implements FormulaEngine {
 		if(xelContext == null) {
 
 			// create function resolver
-			NFunctionResolver resolver = NFunctionResolverFactory.getFunctionResolver();
+			NFunctionResolver resolver = NFunctionResolverFactory.createFunctionResolver();
 
 			// apply POI dependency tracker for defined name resolving
 			DependencyTracker tracker = resolver.getDependencyTracker();

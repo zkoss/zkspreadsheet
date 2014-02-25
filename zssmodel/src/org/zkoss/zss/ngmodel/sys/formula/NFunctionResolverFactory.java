@@ -11,28 +11,40 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
  */
 package org.zkoss.zss.ngmodel.sys.formula;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import org.zkoss.lang.Library;
 import org.zkoss.zss.ngmodel.impl.sys.formula.NFunctionResolverImpl;
-import org.zkoss.zss.ngmodel.impl.sys.formula.ex.NFunctionResolverEx;
 
 /**
  * A factory of formula function resolver.
  * @author Pao
  */
 public class NFunctionResolverFactory {
+	static private Logger logger = Logger.getLogger(NFunctionResolverFactory.class.getName());
 
-	private static boolean EE_EDITION = true; // FIXME zss 3.5
-
-	private final static NFunctionResolver resolver;
-
+	private static Class<?> functionResolverClazz;
 	static {
-		if(EE_EDITION) {
-			resolver = new NFunctionResolverEx();
-		} else {
-			resolver = new NFunctionResolverImpl();
+		String clz = Library.getProperty("org.zkoss.zss.model.FunctionResolver.class");
+		if(clz!=null){
+			try {
+				functionResolverClazz = Class.forName(clz);
+			} catch(Exception e) {
+				logger.log(Level.WARNING, e.getMessage(), e);
+			}			
 		}
 	}
 
-	public static NFunctionResolver getFunctionResolver() {
-		return resolver;
+	public static NFunctionResolver createFunctionResolver() {
+		try {
+			if(functionResolverClazz != null) {
+				return (NFunctionResolver)functionResolverClazz.newInstance();
+			}
+		} catch(Exception e) {
+			logger.log(Level.WARNING, e.getMessage(), e);
+			functionResolverClazz = null;
+		}
+		return new NFunctionResolverImpl();
 	}
 }
