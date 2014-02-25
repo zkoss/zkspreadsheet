@@ -26,6 +26,7 @@ public class CommentImpl extends AbstractCommentAdv {
 	private static final long serialVersionUID = 1L;
 	private Object text;
 	private String author;
+	private boolean visible = true;
 	
 	@Override
 	public String getText() {
@@ -57,6 +58,15 @@ public class CommentImpl extends AbstractCommentAdv {
 	}
 
 	@Override
+	public boolean isVisible() {
+		return visible;
+	}
+	@Override
+	public void setVisible(boolean visible) {
+		this.visible = visible;
+	}
+
+	@Override
 	public String getAuthor() {
 		return author;
 	}
@@ -70,6 +80,7 @@ public class CommentImpl extends AbstractCommentAdv {
 	public AbstractCommentAdv clone() {
 		CommentImpl comment = new CommentImpl();
 		comment.setAuthor(author);
+		comment.setVisible(visible);
 		if(this.text instanceof NRichText){
 			comment.setRichText(((AbstractRichTextAdv)text).clone());
 		}else if(this.text instanceof String){

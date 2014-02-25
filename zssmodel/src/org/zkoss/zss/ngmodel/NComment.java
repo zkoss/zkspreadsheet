@@ -22,6 +22,9 @@ package org.zkoss.zss.ngmodel;
  */
 public interface NComment {
 
+	public boolean isVisible();
+	public void setVisible(boolean visible);
+	
 	public String getText();
 	public void setText(String text);
 	
