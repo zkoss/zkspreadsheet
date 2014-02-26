@@ -241,19 +241,7 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 		case STRING:
 			poiCell.setCellType(Cell.CELL_TYPE_STRING);
 			if(cell.isRichTextValue()) {
-				SRichText richText = cell.getRichTextValue();
-				CreationHelper helper = workbook.getCreationHelper();
-				RichTextString poiRichTextString = helper.createRichTextString(richText.getText());
-				int start = 0;
-				int end = 0;
-				for(Segment sg : richText.getSegments()) {
-					SFont font = sg.getFont();
-					int len = sg.getText().length();
-					end += len;
-					poiRichTextString.applyFont(start, end, toPOIFont(font));
-					start += len;
-				}
-				poiCell.setCellValue(poiRichTextString);
+				poiCell.setCellValue(toPOIRichText(cell.getRichTextValue()));
 			} else {
 				poiCell.setCellValue(cell.getStringValue());
 			}
@@ -269,6 +257,48 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 			poiHyperlink.setLabel(hyperlink.getLabel());
 			poiCell.setHyperlink(poiHyperlink);
 		}
+		
+		SComment comment = cell.getComment();
+		if (comment != null) {
+			// Refer to the POI Official Tutorial
+			// http://poi.apache.org/spreadsheet/quick-guide.html#CellComments
+			CreationHelper helper = workbook.getCreationHelper();
+			Drawing drawing = poiCell.getSheet().createDrawingPatriarch();
+			ClientAnchor anchor = helper.createClientAnchor();
+			anchor.setCol1(poiCell.getColumnIndex());
+			anchor.setCol2(poiCell.getColumnIndex() + 1);
+			anchor.setRow1(poiRow.getRowNum());
+			anchor.setRow2(poiRow.getRowNum() + 3);
+			Comment poiComment = drawing.createCellComment(anchor);
+			SRichText richText = comment.getRichText();
+			if (richText != null) {
+				poiComment.setString(toPOIRichText(richText));
+			} else {
+				poiComment.setString(helper.createRichTextString(comment.getText()));
+			}
+			poiComment.setAuthor(comment.getAuthor());
+			poiComment.setVisible(comment.isVisible());
+			poiCell.setCellComment(poiComment);
+		}	
+	}
+	
+	protected RichTextString toPOIRichText(SRichText richText) {
+
+		CreationHelper helper = workbook.getCreationHelper();
+
+		RichTextString poiRichTextString = helper.createRichTextString(richText.getText());
+
+		int start = 0;
+		int end = 0;
+		for (Segment sg : richText.getSegments()) {
+			SFont font = sg.getFont();
+			int len = sg.getText().length();
+			end += len;
+			poiRichTextString.applyFont(start, end, toPOIFont(font));
+			start += len;
+		}
+
+		return poiRichTextString;
 	}
 
 	protected CellStyle toPOICellStyle(SCellStyle cellStyle) {

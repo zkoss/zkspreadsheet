@@ -25,6 +25,8 @@ public interface SComment {
 	public boolean isVisible();
 	public void setVisible(boolean visible);
 	
+	public boolean isRichText(); 
+	
 	public String getText();
 	public void setText(String text);
 	

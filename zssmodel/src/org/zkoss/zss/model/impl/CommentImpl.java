@@ -91,4 +91,9 @@ public class CommentImpl extends AbstractCommentAdv {
 		return comment;
 	}
 
+	@Override
+	public boolean isRichText() {
+		return text instanceof SRichText;
+	}
+
 }
