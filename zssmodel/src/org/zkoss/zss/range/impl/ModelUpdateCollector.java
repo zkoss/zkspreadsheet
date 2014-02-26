@@ -49,18 +49,26 @@ public class ModelUpdateCollector {
 	private ModelUpdate getLast(){
 		return (updates==null||updates.size()==0)?null:updates.get(updates.size()-1);
 	}
+	private void removeLast(){
+		if(updates!=null && updates.size()>0){
+			updates.remove(updates.size()-1);
+		}
+	}
 
 	public void addRefs(Set<Ref> dependents) {
-		ModelUpdate u = getLast();
+		ModelUpdate last = getLast();
 		//optimal, merge refs, add to refs if it is just previous update
-		if(u!=null){
-			if(u.getType()==UpdateType.REFS){
-				((Set)u.getData()).addAll(dependents);
+		if(last!=null){
+			if(last.getType()==UpdateType.REFS){
+				((Set)last.getData()).addAll(dependents);
 				return;
-			}else if(u.getType()==UpdateType.REF){
+			}else if(last.getType()==UpdateType.REF){
 				 Set data = new LinkedHashSet();
-				 data.add((Ref)u.getData());
+				 data.add((Ref)last.getData());
 				 data.addAll(dependents);
+				 
+				 removeLast();
+				 
 				 addModelUpdate(new ModelUpdate(UpdateType.REFS, data));
 				 return;
 			}
@@ -69,16 +77,19 @@ public class ModelUpdateCollector {
 	}
 
 	public void addRef(Ref ref) {
-		ModelUpdate u = getLast();
+		ModelUpdate last = getLast();
 		//optimal, merge refs, add to refs if it is just previous update
-		if(u!=null){
-			if(u.getType()==UpdateType.REFS){
-				((Set)u.getData()).add(ref);
+		if(last!=null){
+			if(last.getType()==UpdateType.REFS){
+				((Set)last.getData()).add(ref);
 				return;
-			}else if(u.getType()==UpdateType.REF){
-				 Set data = new LinkedHashSet();
-				 data.add((Ref)u.getData());
+			}else if(last.getType()==UpdateType.REF){
+				 Set<Ref> data = new LinkedHashSet<Ref>();
+				 data.add((Ref)last.getData());
 				 data.add(ref);
+				 
+				 removeLast();
+				 
 				 addModelUpdate(new ModelUpdate(UpdateType.REFS, data));
 				 return;
 			}
@@ -88,30 +99,35 @@ public class ModelUpdateCollector {
 
 	public void addCellUpdate(SSheet sheet, int row, int column, int lastRow,
 			int lastColumn) {
-		ModelUpdate u = getLast();
+		ModelUpdate last = getLast();
 		//optimal, check if it is in previous refs, ref
-		if(u!=null){
-			if(u.getType()==UpdateType.REFS){
+		if(last!=null){
+			if(last.getType()==UpdateType.REFS){
 				String bookName = sheet.getBook().getBookName();
 				String sheetName = sheet.getSheetName();
-				if(((Set)u.getData()).contains(new RefImpl(bookName,sheetName,row,column,lastRow,lastColumn))){
+				if(((Set)last.getData()).contains(new RefImpl(bookName,sheetName,row,column,lastRow,lastColumn))){
 					//ignore if it is in previous refs
 					return;
 				}
-			}else if(u.getType()==UpdateType.REF){
+			}else if(last.getType()==UpdateType.REF){
 				String bookName = sheet.getBook().getBookName();
 				String sheetName = sheet.getSheetName();
-				if(((Ref)u.getData()).equals(new RefImpl(bookName,sheetName,row,column,lastRow,lastColumn))){
+				if(((Ref)last.getData()).equals(new RefImpl(bookName,sheetName,row,column,lastRow,lastColumn))){
 					//ignore if it is in previous refs
 					return;
 				}
-			}else if(u.getType()==UpdateType.CELL){
+			}else if(last.getType()==UpdateType.CELLS){
 				SheetRegion data = new SheetRegion(sheet,row,column,lastRow,lastColumn);
-				SheetRegion prev = (SheetRegion)u.getData(); 
-				if(prev.getSheet().equals(data.getSheet()) && prev.getRegion().contains(data.getRegion())){
-					//ignore if it is inside previous cell
-					return;
-				}
+				((Set<SheetRegion>)last.getData()).add(data); 
+				return;
+			}else if(last.getType()==UpdateType.CELL){
+				Set<SheetRegion> data = new LinkedHashSet<SheetRegion>();
+				data.add((SheetRegion)last.getData());
+				data.add(new SheetRegion(sheet,row,column,lastRow,lastColumn));
+				 
+				removeLast();
+				
+				addModelUpdate(new ModelUpdate(UpdateType.CELLS, data));
 			}
 		}
 		addModelUpdate(new ModelUpdate(UpdateType.CELL, new SheetRegion(sheet,

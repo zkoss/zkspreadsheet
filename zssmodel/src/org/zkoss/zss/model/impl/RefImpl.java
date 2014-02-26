@@ -39,7 +39,7 @@ public class RefImpl implements Ref, Serializable {
 
 	public RefImpl(String bookName, String sheetName, int row, int column,
 			int lastRow, int lastColumn) {
-		this(RefType.AREA, bookName, sheetName, null, row, column, lastRow,lastColumn);
+		this((row==lastRow&&column==lastColumn)?RefType.CELL:RefType.AREA, bookName, sheetName, null, row, column, lastRow,lastColumn);
 	}
 
 	public RefImpl(String bookName, String sheetName, int row, int column) {
@@ -48,7 +48,7 @@ public class RefImpl implements Ref, Serializable {
 
 	public RefImpl(String bookName, String sheetName, String lastSheetName, int row, int column,
 			int lastRow, int lastColumn) {
-		this(RefType.AREA, bookName, sheetName, lastSheetName, row, column, lastRow,lastColumn);
+		this((row==lastRow&&column==lastColumn)?RefType.CELL:RefType.AREA, bookName, sheetName, lastSheetName, row, column, lastRow,lastColumn);
 	}
 
 	public RefImpl(String bookName, String sheetName, String lastSheetName, int row, int column) {

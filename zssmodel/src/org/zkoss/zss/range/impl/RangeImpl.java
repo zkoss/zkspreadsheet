@@ -1319,6 +1319,9 @@ public class RangeImpl implements SRange {
 				case CELL:
 					handleCellNotifyContentChange((SheetRegion)update.getData());
 					break;
+				case CELLS:
+					handleCellNotifyContentChange((Set<SheetRegion>)update.getData());
+					break;
 				case REF:
 					handleRefNotifyContentChange(bookSeries,(Ref)update.getData());
 					break;

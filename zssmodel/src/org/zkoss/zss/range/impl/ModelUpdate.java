@@ -2,7 +2,7 @@ package org.zkoss.zss.range.impl;
 
 public class ModelUpdate {
 	public static enum UpdateType{
-		REF, REFS, CELL, MERGE, INSERT_DELETE
+		REF, REFS, CELL, CELLS, MERGE, INSERT_DELETE
 	}
 	
 	final UpdateType type;
@@ -20,4 +20,11 @@ public class ModelUpdate {
 	public Object getData(){
 		return data;
 	}
+
+	@Override
+	public String toString() {
+		return "ModelUpdate [type=" + type + ", data=" + data + "]";
+	}
+	
+	
 }

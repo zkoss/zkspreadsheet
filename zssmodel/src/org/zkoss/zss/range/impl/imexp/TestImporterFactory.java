@@ -70,7 +70,7 @@ public class TestImporterFactory implements SImporterFactory{
 				
 				SBook book = SBooks.createBook(bookName);
 				
-//				buildTest(book);
+				buildInsertDeleteTest(book);
 				
 				buildSheetRename(book);
 				
@@ -98,6 +98,16 @@ public class TestImporterFactory implements SImporterFactory{
 				sheet1.getCell("A1").setValue(12);
 				sheet1.getCell("B1").setValue(34);
 				sheet1.getCell("C1").setValue("=SUM(A1:B1)");
+			}
+			private void buildInsertDeleteTest(SBook book) {
+				SSheet sheet1 = book.createSheet("Insert Delete");
+				sheet1.getCell("C10").setValue(1);
+				sheet1.getCell("D10").setValue(2);
+				sheet1.getCell("E10").setValue(3);
+				sheet1.getCell("F10").setValue(4);
+				sheet1.getCell("G10").setValue(5);
+				
+				sheet1.getCell("H10").setValue("=SUM(C10:G10)");
 			}
 			private void buildSheetRename(SBook book) {
 				SSheet sheet1 = book.createSheet("SheetRename1");
