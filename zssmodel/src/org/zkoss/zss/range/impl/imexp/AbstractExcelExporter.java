@@ -73,6 +73,11 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 		lock.readLock().lock();
 
 		try {
+			// clear cache for reuse
+			styleTable.clear();
+			fontTable.clear();
+			colorTable.clear();
+			
 			workbook = createPoiBook();
 
 			for (SSheet sheet : book.getSheets()) {

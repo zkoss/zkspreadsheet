@@ -77,6 +77,10 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 	 */
 	@Override
 	public SBook imports(InputStream is, String bookName) throws IOException {
+		
+		// clear cache for reuse
+		importedStyle.clear();
+		importedFont.clear();
 
 		workbook = createPoiBook(is);
 		book = SBooks.createBook(bookName);
