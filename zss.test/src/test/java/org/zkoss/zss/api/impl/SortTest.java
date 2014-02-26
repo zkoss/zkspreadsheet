@@ -305,17 +305,13 @@ public class SortTest {
 	
 	//Corner cases ---------------------------------------------------------
 	
-	@Test
+	@Test(expected=IllegalArgumentException.class)
 	public void invalidRange(){
 		Book book = Util.loadBook(this,"book/excelsortsample.xls");
 		Sheet sheet = book.getSheet("SampleData");
 		//selection contains blank rows
 		// Sort By ID
 		Ranges.range(sheet, "A1:A1").sort(Ranges.range(sheet, "A1:A11"), true, null, null, false, null, null, false, null, true, false, false);
-		// no sorting, nothing change
-		for(int i = 1; i <=10 ; i++) {
-			assertEquals(String.valueOf(i), Ranges.range(sheet,i, 0).getCellFormatText());
-		}
 	}
 	
 	/**

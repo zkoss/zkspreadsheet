@@ -47,12 +47,8 @@ public class SortHelper extends RangeHelperBase {
 	 */
 	public void sort(SRange key1, boolean descending1, SortDataOption dataOption1, SRange key2, boolean descending2, SortDataOption dataOption2, SRange key3,
 			boolean descending3, SortDataOption dataOption3, int header, boolean matchCase, boolean sortByRows) {
-		try{
-			sortingRegion = findSortingRegion(header, sortByRows);
-		}catch (IllegalArgumentException e) {
-			// row & column indexes are illegal to form a region, cannot sort
-			return;
-		}
+		checkMergedRegions(sortByRows);
+		sortingRegion = findSortingRegion(header, sortByRows);
 		int keyCount = 0;
 		if (key1 != null) {
 			++keyCount;
@@ -103,6 +99,34 @@ public class SortHelper extends RangeHelperBase {
 		// restore merged regions
 		for (CellRegion r : mergedRegionAfterSorting){
 			sheet.addMergedRegion(r);
+		}
+	}
+
+	/*
+	 * If merged regions inside selected range meets the following conditions, cancel sorting:
+	 *  1. When sorting "top to bottom", selected range cannot contain any cell that is merged across rows. 
+	 *  For "left to right", merged cells across columns are not allowed.
+	 *  2. Selected range cannot have any cell that contains part of merged cells
+	 */
+	private void checkMergedRegions(boolean sortByRows) {
+		//Merged cells should not exceed selected cells scope.
+		CellRegion selection = new CellRegion(getRow(), getColumn(), getLastRow(), getLastColumn());
+		for (CellRegion region: sheet.getMergedRegions()){
+			if (selection.contains(region)){
+				if (sortByRows){  //merged cells cannot across columns
+					if (region.getColumn() != region.getLastColumn()){
+						throw new InvalidateModelOpException("Cannot sort a range that conains merged cells across columns.");
+					}
+				}else{ //merged cells cannot across rows
+					if (region.getRow() != region.getLastRow()){
+						throw new InvalidateModelOpException("Cannot sort a range that conains merged cells across rows.");
+					}
+				}
+			}else{
+				if (selection.overlaps(region)){
+					throw new InvalidateModelOpException("Cannot sort a range that conains part of merged cells.");
+				}
+			}
 		}
 	}
 

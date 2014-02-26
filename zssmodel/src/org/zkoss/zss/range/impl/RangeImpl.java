@@ -1494,27 +1494,8 @@ public class RangeImpl implements SRange {
 		new ModelUpdateTask() {			
 			@Override
 			Object doInvokePhase() {
-				//Merged cells should not exceed selected cells scope.
-				CellRegion selection = new CellRegion(_row, _column, _lastRow, _lastColumn);
-				for (CellRegion region: getSheet().getMergedRegions()){
-					if (selection.contains(region)){
-						if (sortByRows){  //merged cells cannot across columns
-							if (region.getColumn() != region.getLastColumn()){
-								throw new InvalidateModelOpException("Cannot sort a range that conains merged cells across columns.");
-							}
-						}else{ //merged cells cannot across rows
-							if (region.getRow() != region.getLastRow()){
-								throw new InvalidateModelOpException("Cannot sort a range that conains merged cells across rows.");
-							}
-						}
-					}else{
-						if (selection.overlaps(region)){
-							throw new InvalidateModelOpException("Cannot sort a range that conains part of merged cells.");
-						}
-					}
-				}
-				new SortHelper(RangeImpl.this).sort(key1, descending1, dataOption1, key2, 
-						descending2, dataOption2, key3, descending3, dataOption3, hasHeader, matchCase, sortByRows);
+				new SortHelper(RangeImpl.this).sort(key1, descending1, dataOption1, key2, descending2, dataOption2,
+					key3, descending3, dataOption3, hasHeader, matchCase, sortByRows);
 				return null;
 			}
 
