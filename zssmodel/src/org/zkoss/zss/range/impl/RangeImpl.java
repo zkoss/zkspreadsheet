@@ -31,6 +31,7 @@ import org.zkoss.zss.model.SChart.ChartType;
 import org.zkoss.zss.model.SHyperlink.HyperlinkType;
 import org.zkoss.zss.model.impl.*;
 import org.zkoss.zss.model.sys.EngineFactory;
+import org.zkoss.zss.model.sys.dependency.DependencyTable;
 import org.zkoss.zss.model.sys.dependency.Ref;
 import org.zkoss.zss.model.sys.format.*;
 import org.zkoss.zss.model.sys.input.*;
@@ -171,8 +172,8 @@ public class RangeImpl implements SRange {
 	 * @param visitor
 	 */
 	private void travelCells(CellVisitor visitor) {
-
-		UpdateCollectorWrap updateWrap = new UpdateCollectorWrap(getBookSeries());
+		//don't use updateWrap's notify, update whole range at once, to prevent update separately
+		ModelUpdateWrapper updateWrap = new ModelUpdateWrapper(getBookSeries(),false);
 		try{
 			for (EffectedRegion r : rangeRefs) {
 				CellRegion region = r.region;
@@ -190,7 +191,17 @@ public class RangeImpl implements SRange {
 		}finally{
 			updateWrap.doFinially();
 		}
-		updateWrap.doNotify();
+		
+		//don't use updateWrap's notify, update whole range at once, to prevent update separately
+		SBookSeries bookSeries = getSheet().getBook().getBookSeries();
+		DependencyTable table = ((AbstractBookSeriesAdv)bookSeries).getDependencyTable();
+		for (EffectedRegion r : rangeRefs) {
+			CellRegion region = r.region;
+			handleCellNotifyContentChange(new SheetRegion(r.sheet,r.region));
+			handleRefNotifyContentChange(bookSeries, table.getDependents(new RefImpl(r.sheet.getBook().getBookName(),r.sheet.getSheetName(),
+					region.getRow(),region.getColumn(),region.getLastRow(),region.getLastColumn())));
+			
+		}
 	}
 
 	private void handleRefNotifyContentChange(SBookSeries bookSeries,Set<Ref> notifySet) {
@@ -1271,7 +1282,7 @@ public class RangeImpl implements SRange {
 		
 		@Override
 		public Object invoke() {
-			UpdateCollectorWrap updateWrap = new UpdateCollectorWrap(getBookSeries());
+			ModelUpdateWrapper updateWrap = new ModelUpdateWrapper(getBookSeries(),true);
 			Object result = null;
 			try{
 				result = doInvokePhase();
@@ -1286,7 +1297,7 @@ public class RangeImpl implements SRange {
 		}
 	}
 	
-	private class UpdateCollectorWrap {
+	private class ModelUpdateWrapper {
 		SBookSeries bookSeries;
 		
 		List<ModelUpdate> modelUpdates;
@@ -1296,17 +1307,18 @@ public class RangeImpl implements SRange {
 		
 		FormulaCacheCleaner oldClearer;
 		
-		public UpdateCollectorWrap(SBookSeries bookSeries){
+		public ModelUpdateWrapper(SBookSeries bookSeries,boolean collectUpdate){
 			this.bookSeries = bookSeries;
 			
-			oldCollector = ModelUpdateCollector.setCurrent(modelUpdateCollector = new ModelUpdateCollector());
+			oldCollector = ModelUpdateCollector.setCurrent(collectUpdate?modelUpdateCollector = new ModelUpdateCollector():null);
 
 			oldClearer = FormulaCacheCleaner.setCurrent(new FormulaCacheCleaner(bookSeries));
 		}
 		
 		public void doFinially(){
-			modelUpdates = modelUpdateCollector.getModelUpdates();
-			
+			if(modelUpdateCollector!=null){
+				modelUpdates = modelUpdateCollector.getModelUpdates();
+			}
 			ModelUpdateCollector.setCurrent(oldCollector);
 			FormulaCacheCleaner.setCurrent(oldClearer);
 		}
