@@ -22,15 +22,18 @@ public class SortHelper extends RangeHelperBase {
 	public static final int SORT_HEADER_NO  = 0;
 	public static final int SORT_HEADER_YES = 1;
 	private CellRegion sortingRegion; //a region contains only data to sort without headers
+	private List<CellRegion> mergedRegionBeforeSorting = new LinkedList<CellRegion>(); //merged regions which sorting region contains
+	private List<CellRegion> mergedRegionAfterSorting = new LinkedList<CellRegion>(); //merged regions changed by sorting
 	
 	public SortHelper(SRange range) {
 		super(range);
 	}
 	
 	/**
-	 * 
-	 * @param key1
-	 * @param descending1
+	 * Major procedure for sorting a selected range:
+	 * record merged region, sort, unmerge merged regions, restore merged region
+	 * @param key1 the range that contains first keys to sort 
+	 * @param descending1 the order to sort first key
 	 * @param dataOption1 BookHelper.SORT_TEXT_AS_NUMBERS, BookHelper.SORT_NORMAL_DEFAULT
 	 * @param key2
 	 * @param descending2
@@ -40,7 +43,7 @@ public class SortHelper extends RangeHelperBase {
 	 * @param dataOption3
 	 * @param header
 	 * @param matchCase
-	 * @param sortByRows
+	 * @param sortByRows sort by keys in rows, true means "left to right", and false means "top to bottom"
 	 */
 	public void sort(SRange key1, boolean descending1, SortDataOption dataOption1, SRange key2, boolean descending2, SortDataOption dataOption2, SRange key3,
 			boolean descending3, SortDataOption dataOption3, int header, boolean matchCase, boolean sortByRows) {
@@ -81,7 +84,34 @@ public class SortHelper extends RangeHelperBase {
 		}
 		validateKeyIndexes(keyIndexes, sortByRows);
 		
-		final List<SortKey> sortKeys = new ArrayList<SortKey>(sortByRows ? sortingRegion.getColumnCount() : sortingRegion.getRowCount());
+		//keep merged regions
+		for(CellRegion r : sheet.getMergedRegions()){
+			if (sortingRegion.contains(r)){
+				mergedRegionBeforeSorting.add(r);
+			}
+		}
+		//collect keys upon specified row (column) index
+		final List<SortKey> sortKeys = collectKeys(sortByRows, keyCount, dataOptions, keyIndexes);
+		
+		Collections.sort(sortKeys, new KeyComparator(descs, matchCase));
+		sheet.removeMergedRegion(sortingRegion, true);
+		if (sortByRows){
+			repositionColumns(sortKeys);
+		}else{
+			repositionRows(sortKeys);
+		}
+		// restore merged regions
+		for (CellRegion r : mergedRegionAfterSorting){
+			sheet.addMergedRegion(r);
+		}
+	}
+
+	/*
+	 * collect keys and original row (column) index upon user-specified key row (column) index for sorting
+	 */
+	private List<SortKey> collectKeys(boolean sortByRows, int keyCount,
+			final SortDataOption[] dataOptions, final int[] keyIndexes) {
+		List<SortKey> sortKeys = new ArrayList<SortKey>(sortByRows ? sortingRegion.getColumnCount() : sortingRegion.getRowCount());
 		if (sortByRows) { //keyIndex contains row index
 			for (int columnIndex = sortingRegion.getColumn(); columnIndex <= sortingRegion.getLastColumn(); ++columnIndex) {
 				Object[] values = new Object[keyCount];
@@ -91,11 +121,7 @@ public class SortHelper extends RangeHelperBase {
 				SortKey sortKey = new SortKey(columnIndex, values);
 				sortKeys.add(sortKey);
 			}
-			if (!sortKeys.isEmpty()) {
-				Collections.sort(sortKeys, new KeyComparator(descs, matchCase));
-				repositionColumns(sortKeys);
-			}
-		} else { //sortByColumn, default case , keyIndex contains column index
+		} else { //sortByColumn, default case, keyIndex contains column index
 			for (int rowIndex = sortingRegion.getRow(); rowIndex <= sortingRegion.getLastRow(); ++rowIndex) {
 				final SRow row = sheet.getRow(rowIndex);
 				if (row.isNull()) {
@@ -108,13 +134,11 @@ public class SortHelper extends RangeHelperBase {
 				final SortKey sortKey = new SortKey(rowIndex, values);
 				sortKeys.add(sortKey);
 			}
-			if (!sortKeys.isEmpty()) {
-				Collections.sort(sortKeys, new KeyComparator(descs, matchCase));
-				repositionRows(sortKeys);
-			}
 		}
+		return sortKeys;
 	}
 	
+
 	/*
 	 * find the region that only contains data to sort without headers, blank rows and columns.
 	 */
@@ -182,20 +206,23 @@ public class SortHelper extends RangeHelperBase {
 		//copy original columns in a buffer
 		for(Iterator<SortKey> it = sortKeys.iterator(); it.hasNext();columnBufferIndex++) {
 			SortKey sortKey = it.next();
-			int oldColumnNum = sortKey.getIndex();
-			int newColumnNum = sortingRegion.getColumn() + columnBufferIndex;
+			int oldColumnIndex = sortKey.getIndex();
+			int newColumnIndex = sortingRegion.getColumn() + columnBufferIndex;
 			CellBuffer[] cellBuffer = new CellBuffer[cellCount];
 			for (int r=0 ; r < cellCount ; r++){
-				cellBuffer[r] = CellBuffer.bufferAll(sheet.getCell(sortingRegion.getRow()+r, oldColumnNum));
+				cellBuffer[r] = CellBuffer.bufferAll(sheet.getCell(sortingRegion.getRow()+r, oldColumnIndex));
 			}
-			sortResults.add(new SortResult(oldColumnNum, newColumnNum, cellBuffer));
+			sortResults.add(new SortResult(oldColumnIndex, newColumnIndex, cellBuffer));
+			// move merged regions upon new column index
+			for (CellRegion r : mergedRegionBeforeSorting){
+				if (r.getColumn() == oldColumnIndex){
+					int columnOffset = newColumnIndex - oldColumnIndex;
+					mergedRegionAfterSorting.add(new CellRegion(r.getRow(), r.getColumn()+columnOffset, r.getLastRow(), r.getLastColumn()+columnOffset));
+				}
+			}
 		}
 		//copy cells to sorted new index
 		for (SortResult result : sortResults){
-			//skip sorting result with unchanged index
-			if (result.oldIndex == result.newIndex){
-				continue;
-			}
 			for (int r = 0 ; r < result.cellBuffer.length ; r++){
 				SCell cellProxy = getProxyInstance(sheet.getCell(sortingRegion.getRow()+r, result.newIndex), 
 						new SheetRegion(sheet, sortingRegion), 0, result.newIndex-result.oldIndex);
@@ -216,20 +243,23 @@ public class SortHelper extends RangeHelperBase {
 		//copy original rows in a buffer
 		for(Iterator<SortKey> it = sortKeys.iterator(); it.hasNext();rowBufferIndex++) {
 			SortKey sortKey = it.next();
-			int oldRowNum = sortKey.getIndex();
-			int newRowNum = sortingRegion.getRow() + rowBufferIndex;
+			int oldRowIndex = sortKey.getIndex();
+			int newRowIndex = sortingRegion.getRow() + rowBufferIndex;
 			CellBuffer[] cellBuffer = new CellBuffer[cellCount];
 			for (int c=0 ; c < cellCount ; c++){
-				cellBuffer[c] = CellBuffer.bufferAll(sheet.getCell(oldRowNum, sortingRegion.getColumn()+c));
+				cellBuffer[c] = CellBuffer.bufferAll(sheet.getCell(oldRowIndex, sortingRegion.getColumn()+c));
 			}
-			sortResults.add(new SortResult(oldRowNum, newRowNum, cellBuffer));
+			sortResults.add(new SortResult(oldRowIndex, newRowIndex, cellBuffer));
+			// move merged regions upon new row index
+			for (CellRegion r : mergedRegionBeforeSorting){
+				if (r.getRow() == oldRowIndex){
+					int rowOffset = newRowIndex - oldRowIndex;
+					mergedRegionAfterSorting.add(new CellRegion(r.getRow()+rowOffset, r.getColumn(), r.getLastRow()+rowOffset, r.getLastColumn()));
+				}
+			}
 		}
 		//copy cells to sorted new index
 		for (SortResult result : sortResults){
-			//skip sorting result with unchanged index
-			if (result.oldIndex == result.newIndex){
-				continue;
-			}
 			for (int c = 0 ; c < result.cellBuffer.length ; c++){
 				SCell cellProxy = getProxyInstance(sheet.getCell(result.newIndex, sortingRegion.getColumn()+c), 
 						new SheetRegion(sheet, sortingRegion), result.newIndex-result.oldIndex, 0);
