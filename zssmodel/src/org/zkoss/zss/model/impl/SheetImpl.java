@@ -818,11 +818,15 @@ public class SheetImpl extends AbstractSheetAdv {
 	
 	private void shiftAfterCellInsert(int rowIdx, int columnIdx, int lastRowIdx,
 			int lastColumnIdx, boolean horizontal) {
+		// TODO handle merged cells
+		
 		extendFormula(new CellRegion(rowIdx, columnIdx, lastRowIdx, lastColumnIdx),horizontal);
 	}
 	
 	private void shiftAfterCellDelete(int rowIdx, int columnIdx, int lastRowIdx,
 			int lastColumnIdx, boolean horizontal) {
+		// TODO handle merged cells
+		
 		shrinkFormula(new CellRegion(rowIdx, columnIdx, lastRowIdx, lastColumnIdx),horizontal);
 	}
 	

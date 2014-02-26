@@ -5,10 +5,11 @@ public class ModelUpdate {
 		REF, REFS, CELL, MERGE, INSERT_DELETE
 	}
 	
-	UpdateType type;
-	Object data;
+	final UpdateType type;
+	final Object data;
 	
 	public ModelUpdate(UpdateType type,Object data){
+		this.type = type;
 		this.data = data;
 	}
 	
@@ -18,9 +19,5 @@ public class ModelUpdate {
 	
 	public Object getData(){
 		return data;
-	}
-	
-	public void setData(Object data){
-		this.data = data;
 	}
 }
