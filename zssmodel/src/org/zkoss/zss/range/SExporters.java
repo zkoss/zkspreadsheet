@@ -18,7 +18,10 @@ package org.zkoss.zss.range;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
+import org.zkoss.lang.Library;
 import org.zkoss.zss.range.impl.imexp.ExcelExportFactory;
 import org.zkoss.zss.range.impl.imexp.ExcelExportFactory.Type;
 
@@ -28,7 +31,8 @@ import org.zkoss.zss.range.impl.imexp.ExcelExportFactory.Type;
  * @sicne 3.5.0
  */
 public class SExporters {
-
+	
+	static private Logger logger = Logger.getLogger(SExporters.class.getName());
 	static private HashMap<String,SExporterFactory> factories = new LinkedHashMap<String, SExporterFactory>();
 	
 	static{
@@ -36,6 +40,20 @@ public class SExporters {
 		register("excel",new ExcelExportFactory(Type.XLSX));
 		register("xlsx",new ExcelExportFactory(Type.XLSX));
 		register("xls",new ExcelExportFactory(Type.XLS));
+		
+		// ex exporter registration
+		String clzs = Library.getProperty("org.zkoss.zssex.model.default.ExporterFactory.class");
+		if(clzs!=null){
+			try {
+				String[] exporters = clzs.split(",");
+				for(String exporter : exporters) {
+					String[] keyValue = exporter.split("=");
+					register(keyValue[0], (SExporterFactory)Class.forName(keyValue[1]).newInstance());
+				}
+			} catch(Exception e) {
+				logger.log(Level.WARNING, e.getMessage(), e);
+			}
+		}
 	}
 	
 	/**
