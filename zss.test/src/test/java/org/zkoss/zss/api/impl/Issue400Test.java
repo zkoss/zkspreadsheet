@@ -44,6 +44,8 @@ import org.zkoss.zss.api.model.Font;
 import org.zkoss.zss.api.model.Hyperlink;
 import org.zkoss.zss.api.model.Hyperlink.HyperlinkType;
 import org.zkoss.zss.api.model.Sheet;
+import org.zkoss.zss.model.SComment;
+import org.zkoss.zss.model.SSheet;
 
 /**
  * ZSS-408.
@@ -750,7 +752,7 @@ public class Issue400Test {
 	public void testZSS418() throws IOException {
 		Book book = Util.loadBook(this,"book/418-comment.xlsx");
 		Sheet sheet = book.getSheetAt(0);
-		XSSFSheet ps = (XSSFSheet)sheet.getInternalSheet();
+		SSheet ps = sheet.getInternalSheet();
 		
 		// check original comments
 		String[] refs = {"C3", "D3", "E3", "F3", "H3", "I3", "C4", "C5", "C6", "C8", "C9"};
@@ -824,13 +826,13 @@ public class Issue400Test {
 		testZSS418_0(ps, refs, txts);
 	}
 	
-	public void testZSS418_0(XSSFSheet sheet, String[] refs, String[] texts) {
+	public void testZSS418_0(SSheet sheet, String[] refs, String[] texts) {
 		for(int i = 0; i < refs.length; ++i) {
-			XSSFComment comment = POIUtil.getComment(sheet, refs[i]);
+			SComment comment = sheet.getCell(refs[i]).getComment();
 			String text = texts[i];
 			if(text != null) {
 				Assert.assertNotNull(comment);
-				Assert.assertEquals(texts[i], comment.getString().getString());
+				Assert.assertEquals(texts[i], comment.getRichText().getText());
 			} else {
 				Assert.assertNull(comment);
 			}

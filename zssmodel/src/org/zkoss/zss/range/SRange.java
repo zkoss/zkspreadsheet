@@ -228,24 +228,21 @@ public interface SRange {
 
 	/**
 	 * Sort this Range per the specified parameters
-	 * @param rng1 key1 for sorting
-	 * @param desc1 true to do descending sort; false to do ascending sort for key1. 
-	 * @param rng2 key2 for sorting
-	 * @param type PivotTable sorting type(byLabel or byValue); not implemented yet
-	 * @param desc2 true to do descending sort; false to do ascending sort for key2.
-	 * @param rng3 key3 for sorting
-	 * @param desc3 true to do descending sort; false to do ascending sort for key3.
-	 * @param header whether sort range includes header
-	 * @param orderCustom index of custom order list; not implemented yet 
+	 * @param key1 key1 for sorting
+	 * @param descending1 true to do descending sort; false to do ascending sort for key1. 
+	 * @param dataOption1 see numeric String as number or not for key1.
+	 * @param key2 key2 for sorting
+	 * @param descending2 true to do descending sort; false to do ascending sort for key2.
+	 * @param dataOption2 see numeric String as number or not for key2.
+	 * @param key3 key3 for sorting
+	 * @param descending3 true to do descending sort; false to do ascending sort for key3.
+	 * @param dataOption3 see numeric String as number or not for key3.
+	 * @param hasHeader whether sort range includes header
 	 * @param matchCase true to match the string cases; false to ignore string cases
 	 * @param sortByRows true to sort by rows(change columns orders); false to sort by columns(change row orders). 
-	 * @param sortMethod special sorting method
-	 * @param dataOption1 see numeric String as number or not for key1.
-	 * @param dataOption2 see numeric String as number or not for key2.
-	 * @param dataOption3 see numeric String as number or not for key3.
 	 */
-	public void sort(SRange rng1, boolean desc1, SRange rng2, int type, boolean desc2, SRange rng3, boolean desc3, int header, int orderCustom,
-			boolean matchCase, boolean sortByRows, int sortMethod, SortDataOption dataOption1, SortDataOption dataOption2, SortDataOption dataOption3);
+	public void sort(SRange key1, boolean descending1, SortDataOption dataOption1, SRange key2, boolean descending2, SortDataOption dataOption2, SRange key3, boolean descending3, SortDataOption dataOption3,
+			int hasHeader, boolean matchCase, boolean sortByRows);
 
 	/**
 	 * Merge this range into a merged cell.
@@ -320,7 +317,7 @@ public interface SRange {
 //	 * @param col column index relative to this Range(note that it is 0-based)
 //	 * @return the range that contains the cell specified in row, col (relative to this Range).
 //	 */
-//	public NRange getCells(int row, int col);
+//	public SRange getCells(int row, int col);
 	
 	/**
 	 * Sets a Style object to this Range.

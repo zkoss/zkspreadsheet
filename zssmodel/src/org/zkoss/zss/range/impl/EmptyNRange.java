@@ -11,7 +11,6 @@ import org.zkoss.zss.model.SChart.ChartType;
 import org.zkoss.zss.model.SHyperlink.HyperlinkType;
 import org.zkoss.zss.model.SPicture.Format;
 import org.zkoss.zss.range.*;
-import org.zkoss.zss.range.SRange.SortDataOption;
 
 /**
  * the empty range implementation that do nothing
@@ -416,10 +415,9 @@ import org.zkoss.zss.range.SRange.SortDataOption;
 	}
 
 	@Override
-	public void sort(SRange rng1, boolean desc1, SRange rng2, int type, boolean desc2,
-			SRange rng3, boolean desc3, int header, int orderCustom, boolean matchCase,
-			boolean sortByRows, int sortMethod, SortDataOption dataOption1, SortDataOption dataOption2,
-			SortDataOption dataOption3) {
+	public void sort(SRange key1, boolean descending1, SortDataOption dataOption1, SRange key2, boolean descending2,
+			SortDataOption dataOption2, SRange key3, boolean descending3, SortDataOption dataOption3, int hasHeader,
+			boolean matchCase, boolean sortByRows) {
 		
 	}
 

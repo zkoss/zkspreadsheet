@@ -12,11 +12,14 @@ Copyright (C) 2014 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.range.impl;
 
 import java.util.Iterator;
+
 import org.zkoss.zss.model.SCell;
 import org.zkoss.zss.model.SCellStyle;
 import org.zkoss.zss.model.SColumn;
+import org.zkoss.zss.model.SColumnArray;
 import org.zkoss.zss.model.SRow;
 import org.zkoss.zss.model.impl.AbstractCellAdv;
+import org.zkoss.zss.model.impl.AbstractColumnArrayAdv;
 import org.zkoss.zss.model.impl.AbstractRowAdv;
 import org.zkoss.zss.range.SRange;
 import org.zkoss.zss.range.SRange.DeleteShift;
@@ -118,18 +121,18 @@ public class InsertDeleteHelper extends RangeHelperBase {
 
 	private void copyColumnStyle(int srcColumnIdx, int columnIdx, int lastColumnIdx) {
 		// copy column *local* style/height
-		SColumn srcColumn = sheet.getColumn(srcColumnIdx);
-		if(!srcColumn.isNull()) {
+		SColumnArray srcColumnArray = sheet.getColumnArray(srcColumnIdx);
+		if(srcColumnArray!=null) {
 			for(int c = columnIdx; c <= lastColumnIdx; ++c) {
 				SColumn row = sheet.getColumn(c);
 				// style
-				SCellStyle style = ((AbstractRowAdv)srcColumn).getCellStyle(true);
+				SCellStyle style = ((AbstractColumnArrayAdv)srcColumnArray).getCellStyle(true);
 				if(style != null) {
 					row.setCellStyle(style);
 				}
 				// height
-				if(srcColumn.isCustomWidth()) { // according to Excel behavior
-					row.setWidth(srcColumn.getWidth());
+				if(srcColumnArray.isCustomWidth()) { // according to Excel behavior
+					row.setWidth(srcColumnArray.getWidth());
 					row.setCustomWidth(true);
 				}
 			}

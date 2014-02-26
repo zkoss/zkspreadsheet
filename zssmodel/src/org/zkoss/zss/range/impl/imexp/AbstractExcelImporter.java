@@ -77,6 +77,10 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 	 */
 	@Override
 	public SBook imports(InputStream is, String bookName) throws IOException {
+		
+		// clear cache for reuse
+		importedStyle.clear();
+		importedFont.clear();
 
 		workbook = createPoiBook(is);
 		book = SBooks.createBook(bookName);
@@ -262,12 +266,7 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 			RichTextString poiRichTextString = poiCell.getRichStringCellValue();
 			if (poiRichTextString != null && poiRichTextString.numFormattingRuns() > 0) {
 				SRichText richText = cell.setupRichTextValue();
-				String cellValue = poiRichTextString.getString();
-				for (int i = 0; i < poiRichTextString.numFormattingRuns(); i++) {
-					int nextFormattingRunIndex = (i + 1) >= poiRichTextString.numFormattingRuns() ? cellValue.length() : poiRichTextString.getIndexOfFormattingRun(i + 1);
-					final String content = cellValue.substring(poiRichTextString.getIndexOfFormattingRun(i), nextFormattingRunIndex);
-					richText.addSegment(content, toZssFont(getPoiFontFromRichText(workbook, poiRichTextString, i)));
-				}
+				importRichText(poiRichTextString, richText);
 			} else {
 				cell.setStringValue(poiCell.getStringCellValue());
 			}
@@ -297,8 +296,30 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 			hyperlink.setLabel(poiHyperlink.getLabel());
 			cell.setHyperlink(hyperlink);
 		}
+		
+		Comment poiComment = poiCell.getCellComment();
+		if(poiComment != null) {
+			SComment comment = cell.setupComment();
+			comment.setAuthor(poiComment.getAuthor());
+			comment.setVisible(poiComment.isVisible());
+			RichTextString poiRichTextString = poiComment.getString();
+			if (poiRichTextString != null && poiRichTextString.numFormattingRuns() > 0) {			
+				importRichText(poiComment.getString(), comment.setupRichText());
+			} else {
+				comment.setText(poiComment.toString());
+			}
+		}
 
 		return cell;
+	}
+	
+	protected void importRichText(RichTextString poiRichTextString, SRichText richText) {
+		String cellValue = poiRichTextString.getString();
+		for (int i = 0; i < poiRichTextString.numFormattingRuns(); i++) {
+			int nextFormattingRunIndex = (i + 1) >= poiRichTextString.numFormattingRuns() ? cellValue.length() : poiRichTextString.getIndexOfFormattingRun(i + 1);
+			final String content = cellValue.substring(poiRichTextString.getIndexOfFormattingRun(i), nextFormattingRunIndex);
+			richText.addSegment(content, toZssFont(getPoiFontFromRichText(workbook, poiRichTextString, i)));
+		}
 	}
 
 	/**
