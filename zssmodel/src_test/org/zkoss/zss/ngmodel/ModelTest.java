@@ -61,6 +61,7 @@ import org.zkoss.zss.model.sys.dependency.DependencyTable;
 import org.zkoss.zss.model.sys.dependency.Ref;
 import org.zkoss.zss.model.util.CellStyleMatcher;
 import org.zkoss.zss.model.util.FontMatcher;
+import org.zkoss.zss.model.util.Validations;
 import org.zkoss.zss.range.SRanges;
 
 public class ModelTest {
@@ -3324,6 +3325,65 @@ public class ModelTest {
 			sheet.removeMergedRegion(expected, true);
 		} else {
 			Assert.assertTrue(sheet.getMergedRegions().isEmpty());
+		}
+	}
+	
+	@Test
+	public void testCellRegionDiff() {
+		CellRegion r1 = new CellRegion("C3:F6");
+		
+		CellRegion rightBottom = new CellRegion("E4:H7");
+		CellRegion[] rr1 = {new CellRegion("C3:F3"), new CellRegion("C4:D6")};
+		List<CellRegion> cc1 = r1.diff(rightBottom);
+		testDiff_0(rr1, cc1.toArray(new CellRegion[cc1.size()]));
+		
+		CellRegion rightTop = new CellRegion("E2:H3");
+		CellRegion[] rr2 = {new CellRegion("C4:F6"), new CellRegion("C3:D3")};
+		List<CellRegion> cc2 = r1.diff(rightTop);
+		testDiff_0(rr2, cc2.toArray(new CellRegion[cc2.size()]));
+		
+		CellRegion leftTop = new CellRegion("B2:E4");
+		CellRegion[] rr3 = {new CellRegion("C5:F6"), new CellRegion("F3:F4")};
+		List<CellRegion> cc3 = r1.diff(leftTop);
+		testDiff_0(rr3, cc3.toArray(new CellRegion[cc3.size()]));
+		
+		CellRegion leftBottom = new CellRegion("B6:E7");
+		CellRegion[] rr4 = {new CellRegion("C3:F5"), new CellRegion("F6")};
+		List<CellRegion> cc4 = r1.diff(leftBottom);
+		testDiff_0(rr4, cc4.toArray(new CellRegion[cc4.size()]));	
+		
+		CellRegion crossMiddleVertical = new CellRegion("E1:E8");
+		CellRegion[] rr5 = {new CellRegion("C3:D6"), new CellRegion("F3:F6")};
+		List<CellRegion> cc5 = r1.diff(crossMiddleVertical);
+		testDiff_0(rr5, cc5.toArray(new CellRegion[cc5.size()]));
+		
+		CellRegion crossMiddleHorizontal = new CellRegion("A5:G5");
+		CellRegion[] rr6 = {new CellRegion("C3:F4"), new CellRegion("C6:F6")};
+		List<CellRegion> cc6 = r1.diff(crossMiddleHorizontal);
+		testDiff_0(rr6, cc6.toArray(new CellRegion[cc6.size()]));
+		
+		CellRegion top = new CellRegion("C2:F3");
+		CellRegion[] rr7 = {new CellRegion("C4:F6")};
+		List<CellRegion> cc7 = r1.diff(top);
+		testDiff_0(rr7, cc7.toArray(new CellRegion[cc7.size()]));
+		
+		CellRegion right = new CellRegion("F3:G6");
+		CellRegion[] rr8 = {new CellRegion("C3:E6")};
+		List<CellRegion> cc8 = r1.diff(right);
+		testDiff_0(rr8, cc8.toArray(new CellRegion[cc8.size()]));
+		
+		CellRegion center = new CellRegion("D4:E5");
+		CellRegion[] rr9 = {new CellRegion("C3:F3"), new CellRegion("C6:F6"), new CellRegion("C4:C5"), new CellRegion("F4:F5")};
+		List<CellRegion> cc9 = r1.diff(center);
+		testDiff_0(rr9, cc9.toArray(new CellRegion[cc9.size()]));
+	}
+	
+	private void testDiff_0(CellRegion[] expected, CellRegion[] actual) {
+		
+		Assert.assertEquals(expected.length, actual.length);
+		
+		for(int i = 0; i < actual.length; i++) {
+			Assert.assertEquals(expected[i], actual[i]);
 		}
 	}
 }

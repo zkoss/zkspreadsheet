@@ -17,6 +17,8 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.zkoss.poi.ss.util.AreaReference;
 import org.zkoss.poi.ss.util.CellReference;
@@ -169,6 +171,45 @@ public class CellRegion implements Serializable {
 	
 	public static int convertColumnStringToIndex(String colRef){
 		return CellReference.convertColStringToIndex(colRef);
+	}
+	
+	public List<CellRegion> diff(CellRegion target) {
+		List<CellRegion> result = new ArrayList<CellRegion>();
+		
+		if(!this.overlaps(target)) {
+			result.add(this);
+		} else {
+			
+			CellRegion overlapRegion = new CellRegion(
+					Math.max(this.row, target.row),
+					Math.max(this.column, target.column), 
+					Math.min(this.lastRow, target.lastRow), 
+					Math.min(this.lastColumn, target.lastColumn));
+			
+			if(!overlapRegion.equals(this)) {
+				// Top
+				if(overlapRegion.row - this.row > 0) {
+					result.add(new CellRegion(this.row, this.column, overlapRegion.row - 1, this.lastColumn));
+				}
+				
+				// Bottom
+				if(this.lastRow - overlapRegion.lastRow > 0) {
+					result.add(new CellRegion(overlapRegion.lastRow + 1, this.column, this.lastRow, this.lastColumn));
+				}
+				
+				// Left
+				if(overlapRegion.column - this.column > 0) {
+					result.add(new CellRegion(overlapRegion.row, this.column, overlapRegion.lastRow, overlapRegion.column - 1));
+				}
+				
+				// Right
+				if(this.lastColumn - overlapRegion.lastColumn > 0) {
+					result.add(new CellRegion(overlapRegion.row, this.lastColumn, overlapRegion.lastRow, this.lastColumn));
+				}
+			}
+		}
+		
+		return result;
 	}
 
 }
