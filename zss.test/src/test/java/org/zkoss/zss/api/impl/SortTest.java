@@ -5,15 +5,11 @@ import static org.junit.Assert.assertEquals;
 import java.io.IOException;
 import java.util.*;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.zkoss.zss.Setup;
-import org.zkoss.zss.Util;
+import org.junit.*;
+import org.zkoss.zss.*;
 import org.zkoss.zss.api.*;
-import org.zkoss.zss.api.model.Book;
-import org.zkoss.zss.api.model.Sheet;
+import org.zkoss.zss.api.model.*;
+import org.zkoss.zss.model.InvalidateModelOpException;
 
 public class SortTest {
 	
@@ -37,7 +33,7 @@ public class SortTest {
 	 * Sort with 1 column.
 	 */
 	@Test
-	public void simpleSort(){
+	public void sortOneColumn(){
 		Book workbook = Util.loadBook(this,"book/blank.xlsx");
 		Sheet sheet1 = workbook.getSheet("Sheet1");
 		int[] rands = new int[100];
@@ -54,7 +50,7 @@ public class SortTest {
 	
 	@Test
 	public void sortWithBlankRows(){
-		Book book = Util.loadBook(this,"book/excelsortsample.xls");
+		Book book = Util.loadBook(this,"book/excelsortsample.xlsx");
 		Sheet sheet = book.getSheet("SampleData");
 		//selection contains blank rows
 		// Sort By ID
@@ -69,9 +65,7 @@ public class SortTest {
 		assertEquals("State", Ranges.range(sheet, "G1").getCellFormatText());
 		assertEquals("ZipCode", Ranges.range(sheet, "H1").getCellFormatText());
 		
-		// Data
-		
-		// ID
+		// validate ID
 		for(int i = 10; i > 0; i--) {
 			assertEquals(String.valueOf(i), Ranges.range(sheet, 11 - i, 0).getCellFormatText());
 		}
@@ -191,7 +185,123 @@ public class SortTest {
 		}
 	}
 	
-	//TODO merged case
+	/**
+	 * Selection contains merged cells.
+	 */
+	@Test
+	public void sortWithMergedCells(){
+		Book book = Util.loadBook(this,"book/excelsortsample.xlsx");
+		Sheet sheet = book.getSheet("Merged");
+		// Sort By ID
+		Ranges.range(sheet, "A1:I11").sort(Ranges.range(sheet, "A1:A11"), true, null, null, false, null, null, false, null, true, false, false);
+		
+		// Header
+		assertEquals("81647", Ranges.range(sheet, "H2").getCellFormatText());
+		assertEquals("78701", Ranges.range(sheet, "H3").getCellFormatText());
+		assertEquals("24631", Ranges.range(sheet, "H4").getCellFormatText());
+		assertEquals(true, Ranges.range(sheet, "H1:I1").isMergedCell());
+		assertEquals(true, Ranges.range(sheet, "H2:I2").isMergedCell());
+		assertEquals(true, Ranges.range(sheet, "H3:I3").isMergedCell());
+		
+		assertEquals(true, Ranges.range(sheet, "E9:F9").isMergedCell());
+		assertEquals(true, Ranges.range(sheet, "E10:F10").isMergedCell());
+		assertEquals(true, Ranges.range(sheet, "E11:F11").isMergedCell());
+	}
+	
+	/**
+	 * Selection overlaps part of merged cells.
+	 * column E:F and H:I in A1:I11 are merged. We select A1:H11 on purpose to cover part of merged cells.
+	 */
+	@Test(expected = InvalidateModelOpException.class)
+	public void sortWithPartOfMergedCells(){
+		Book book = Util.loadBook(this,"book/excelsortsample.xlsx");
+		Sheet sheet = book.getSheet("Merged");
+		//selection contains blank rows
+		// Sort By ID
+		Ranges.range(sheet, "A1:H11").sort(Ranges.range(sheet, "A1:A11"), true, null, null, false, null, null, false, null, true, false, false);
+		
+	}
+	
+	/**
+	 * some cells are merged and some are not in selection.
+	 * After sorting, merged cells should be kept as merged.
+	 */
+	@Test
+	public void sortMixedMergedCells(){
+		Book book = Util.loadBook(this,"book/excelsortsample.xlsx");
+		Sheet sheet = book.getSheet("Merged");
+		
+		assertEquals(false, Ranges.range(sheet, "K2:L2").isMergedCell());
+		assertEquals(false, Ranges.range(sheet, "K3:L3").isMergedCell());
+		assertEquals(false, Ranges.range(sheet, "K4:L4").isMergedCell());
+		assertEquals(false, Ranges.range(sheet, "K5:L5").isMergedCell());
+		assertEquals(false, Ranges.range(sheet, "K6:L6").isMergedCell());
+		assertEquals(true, Ranges.range(sheet, "K7:L7").isMergedCell());
+		assertEquals(true, Ranges.range(sheet, "K8:L8").isMergedCell());
+		assertEquals(true, Ranges.range(sheet, "K9:L9").isMergedCell());
+		assertEquals(true, Ranges.range(sheet, "K10:L10").isMergedCell());
+		assertEquals(true, Ranges.range(sheet, "K11:L11").isMergedCell());
+		
+		Ranges.range(sheet, "K2:L11").sort(false);
+		
+		assertEquals("1", Ranges.range(sheet, "K2").getCellFormatText());
+		assertEquals("2", Ranges.range(sheet, "K3").getCellFormatText());
+		assertEquals("3", Ranges.range(sheet, "K4").getCellFormatText());
+		assertEquals("4", Ranges.range(sheet, "K5").getCellFormatText());
+		assertEquals("5", Ranges.range(sheet, "K6").getCellFormatText());
+		
+		assertEquals(true, Ranges.range(sheet, "K2:L2").isMergedCell());
+		assertEquals(true, Ranges.range(sheet, "K3:L3").isMergedCell());
+		assertEquals(true, Ranges.range(sheet, "K4:L4").isMergedCell());
+		assertEquals(true, Ranges.range(sheet, "K5:L5").isMergedCell());
+		assertEquals(true, Ranges.range(sheet, "K6:L6").isMergedCell());
+		assertEquals(false, Ranges.range(sheet, "K7:L7").isMergedCell());
+		assertEquals(false, Ranges.range(sheet, "K8:L8").isMergedCell());
+		assertEquals(false, Ranges.range(sheet, "K9:L9").isMergedCell());
+		assertEquals(false, Ranges.range(sheet, "K10:L10").isMergedCell());
+		assertEquals(false, Ranges.range(sheet, "K11:L11").isMergedCell());
+		
+	}
+	
+	 
+	@Test
+	public void sortMixedMergedCellsLeft2Right(){
+		Book book = Util.loadBook(this,"book/excelsortsample.xlsx");
+		Sheet sheet = book.getSheet("Merged");
+		Ranges.range(sheet, "A16:G21").sort(false, true, false, true, null);
+		
+		assertEquals("Apr", Ranges.range(sheet, "B16").getCellFormatText());
+		assertEquals("Feb", Ranges.range(sheet, "C16").getCellFormatText());
+		assertEquals("Jan", Ranges.range(sheet, "D16").getCellFormatText());
+		assertEquals("Jun", Ranges.range(sheet, "E16").getCellFormatText());
+		assertEquals("Mar", Ranges.range(sheet, "F16").getCellFormatText());
+		assertEquals("May", Ranges.range(sheet, "G16").getCellFormatText());
+		
+		assertEquals(true, Ranges.range(sheet, "B16:B17").isMergedCell());
+		assertEquals(false, Ranges.range(sheet, "C16:C17").isMergedCell());
+		assertEquals(false, Ranges.range(sheet, "D16:D17").isMergedCell());
+		assertEquals(true, Ranges.range(sheet, "E16:E17").isMergedCell());
+		assertEquals(false, Ranges.range(sheet, "F16:F17").isMergedCell());
+		assertEquals(true, Ranges.range(sheet, "G16:G17").isMergedCell());
+		
+		
+	}
+	
+	@Test(expected = InvalidateModelOpException.class)
+	public void sortMergeAcrossRows(){
+		Book book = Util.loadBook(this,"book/excelsortsample.xlsx");
+		Sheet sheet = book.getSheet("Merged");
+		
+		Ranges.range(sheet, "N2:N9").sort(false);
+	}
+	
+	
+	@Test(expected = InvalidateModelOpException.class)
+	public void sortPartOfMergedCells(){
+		Book book = Util.loadBook(this,"book/excelsortsample.xlsx");
+		Sheet sheet = book.getSheet("Merged");
+		Ranges.range(sheet, "K2:K11").sort(false);
+	}
 	
 	//Corner cases ---------------------------------------------------------
 	
