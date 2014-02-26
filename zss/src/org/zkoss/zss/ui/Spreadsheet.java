@@ -3426,8 +3426,9 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			right = right >= _maxColumns - 1 ? _maxColumns - 1 : right;
 			int top = rect.getRow();
 			int bottom = rect.getLastRow();
-			
-			log.debug("update cells when insert column " + col + ",size:" + size + ":" + left + "," + top + "," + right + "," + bottom);
+			if(log.debugable()){
+				log.debug("update cells when insert column " + col + ",size:" + size + ":" + left + "," + top + "," + right + "," + bottom);
+			}
 			updateCell(sheet, left, top, right, bottom);
 			
 			// ZSS-404: must update cell in freeze panels (previous range is only for data block)
