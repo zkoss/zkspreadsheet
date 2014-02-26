@@ -23,15 +23,15 @@ import org.zkoss.zss.model.SSheet;
  */
 public class MergeUpdate {
 	final private SSheet _sheet;
-	final private CellRegion _orgMerge; //original merge range
+	final private CellRegion _origMerge; //original merge range
 	final private CellRegion _merge; //merge range changed
-	public MergeUpdate(SSheet sheet, CellRegion orgMerge, CellRegion merge) {
+	public MergeUpdate(SSheet sheet, CellRegion origMerge, CellRegion merge) {
 		this._sheet = sheet;
-		this._orgMerge = orgMerge;
+		this._origMerge = origMerge;
 		this._merge = merge;
 	}
-	public CellRegion getOrgMerge() {
-		return _orgMerge;
+	public CellRegion getOrigMerge() {
+		return _origMerge;
 	}
 
 	public CellRegion getMerge() {
@@ -47,7 +47,7 @@ public class MergeUpdate {
 		int result = 1;
 		result = prime * result + ((_merge == null) ? 0 : _merge.hashCode());
 		result = prime * result
-				+ ((_orgMerge == null) ? 0 : _orgMerge.hashCode());
+				+ ((_origMerge == null) ? 0 : _origMerge.hashCode());
 		result = prime * result + ((_sheet == null) ? 0 : _sheet.hashCode());
 		return result;
 	}
@@ -65,10 +65,10 @@ public class MergeUpdate {
 				return false;
 		} else if (!_merge.equals(other._merge))
 			return false;
-		if (_orgMerge == null) {
-			if (other._orgMerge != null)
+		if (_origMerge == null) {
+			if (other._origMerge != null)
 				return false;
-		} else if (!_orgMerge.equals(other._orgMerge))
+		} else if (!_origMerge.equals(other._origMerge))
 			return false;
 		if (_sheet == null) {
 			if (other._sheet != null)

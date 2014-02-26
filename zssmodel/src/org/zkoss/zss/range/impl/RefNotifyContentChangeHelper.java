@@ -1,16 +1,16 @@
 package org.zkoss.zss.range.impl;
 
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.SBookSeries;
 import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.model.SheetRegion;
 import org.zkoss.zss.model.sys.dependency.ObjectRef;
-import org.zkoss.zss.model.sys.dependency.Ref;
 import org.zkoss.zss.model.sys.dependency.ObjectRef.ObjectType;
+import org.zkoss.zss.model.sys.dependency.Ref;
 import org.zkoss.zss.model.sys.dependency.Ref.RefType;
 
 /*package*/ class RefNotifyContentChangeHelper extends RefHelperBase{
@@ -19,8 +19,20 @@ import org.zkoss.zss.model.sys.dependency.Ref.RefType;
 	public RefNotifyContentChangeHelper(SBookSeries bookSeries) {
 		super(bookSeries);
 	}
+	public void notifyContentChange(Ref notify) {
+		if (notify.getType() == RefType.CELL || notify.getType() == RefType.AREA) {
+			handleCellRef(notify);
+		} else if (notify.getType() == RefType.OBJECT) {
+			if(((ObjectRef)notify).getObjectType()==ObjectType.CHART){
+				handleChartRef((ObjectRef)notify);
+			}else if(((ObjectRef)notify).getObjectType()==ObjectType.DATA_VALIDATION){
+				handleDataValidationRef((ObjectRef)notify);
+			}
+		} else {// TODO another
 
-	public void notifyContentChange(HashSet<Ref> notifySet) {
+		}
+	}
+	public void notifyContentChange(Set<Ref> notifySet) {
 		Map<String,Ref> chartDependents  = new LinkedHashMap<String, Ref>();
 		Map<String,Ref> validationDependents  = new LinkedHashMap<String, Ref>();	
 		

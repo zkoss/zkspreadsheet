@@ -193,9 +193,13 @@ public class RangeImpl implements SRange {
 		updateWrap.doNotify();
 	}
 
-	private void handleRefNotifyContentChange(SBookSeries bookSeries,HashSet<Ref> notifySet) {
+	private void handleRefNotifyContentChange(SBookSeries bookSeries,Set<Ref> notifySet) {
 		// notify changes
 		new RefNotifyContentChangeHelper(bookSeries).notifyContentChange(notifySet);
+	}
+	private void handleRefNotifyContentChange(SBookSeries bookSeries,Ref notify) {
+		// notify changes
+		new RefNotifyContentChangeHelper(bookSeries).notifyContentChange(notify);
 	}
 
 	private boolean euqlas(Object obj1, Object obj2) {
@@ -1285,98 +1289,55 @@ public class RangeImpl implements SRange {
 	private class UpdateCollectorWrap {
 		SBookSeries bookSeries;
 		
-		LinkedHashSet<Ref> refNotifySet;
-		LinkedHashSet<SheetRegion> mergeRemoveNotifySet;
-		LinkedHashSet<SheetRegion> mergeAddNotifySet;
-		LinkedHashSet<SheetRegion> cellNotifySet;
-		List<InsertDeleteUpdate> insertDeleteNotifySet;
+		List<ModelUpdate> modelUpdates;
 		
-		RefUpdateCollector refCtx;
-		MergeUpdateCollector mergeUpdateCtx;
-		CellUpdateCollector cellUpdateCtx;
-		InsertDeleteUpdateCollector insertDeleteUpdateCtx;
-		
-		RefUpdateCollector oldRefCtx;
-		MergeUpdateCollector oldMergeUpdateCtx;
-		CellUpdateCollector oldCellUpdateCtx;
-		InsertDeleteUpdateCollector oldInsertDeleteUpdateCtx;
+		ModelUpdateCollector modelUpdateCollector;
+		ModelUpdateCollector oldCollector;
 		
 		FormulaCacheCleaner oldClearer;
 		
 		public UpdateCollectorWrap(SBookSeries bookSeries){
 			this.bookSeries = bookSeries;
 			
-			refNotifySet = new LinkedHashSet<Ref>();
-			mergeRemoveNotifySet = new LinkedHashSet<SheetRegion>();
-			mergeAddNotifySet = new LinkedHashSet<SheetRegion>();
-			cellNotifySet = new LinkedHashSet<SheetRegion>();		
-			insertDeleteNotifySet = new ArrayList<InsertDeleteUpdate>();
-			
-			oldRefCtx = RefUpdateCollector.setCurrent(refCtx = new RefUpdateCollector());
-			oldMergeUpdateCtx = MergeUpdateCollector.setCurrent(mergeUpdateCtx = new MergeUpdateCollector());
-			oldCellUpdateCtx = CellUpdateCollector.setCurrent(cellUpdateCtx = new CellUpdateCollector());
-			oldInsertDeleteUpdateCtx = InsertDeleteUpdateCollector.setCurrent(insertDeleteUpdateCtx = new InsertDeleteUpdateCollector());
+			oldCollector = ModelUpdateCollector.setCurrent(modelUpdateCollector = new ModelUpdateCollector());
 
 			oldClearer = FormulaCacheCleaner.setCurrent(new FormulaCacheCleaner(bookSeries));
 		}
 		
 		public void doFinially(){
+			modelUpdates = modelUpdateCollector.getModelUpdates();
 			
-			Set<Ref> refs = refCtx.getRefs();
-			Set<SheetRegion> cells = new LinkedHashSet<SheetRegion>();
-			
-			//remove the duplicate update between cell and refs
-			for(SheetRegion region:cellUpdateCtx.getCellUpdates()){
-				String bookName = region.getSheet().getBook().getBookName();
-				String sheetName = region.getSheet().getSheetName();
-				Ref ref = new RefImpl(bookName,sheetName,region.getRow(),region.getColumn());
-				if(refs.contains(ref)){
-					continue;
-				}
-				cells.add(region);
-			}
-			
-			refNotifySet.addAll(refs);
-			cellNotifySet.addAll(cells);
-			insertDeleteNotifySet.addAll(insertDeleteUpdateCtx.getInsertDeleteUpdates());
-			for(MergeUpdate mu:mergeUpdateCtx.getMergeUpdates()){
-				SheetRegion remove = mu.getOrgMerge()==null?null:new SheetRegion(mu.getSheet(),mu.getOrgMerge());
-				SheetRegion add = mu.getMerge()==null?null:new SheetRegion(mu.getSheet(),mu.getMerge());
-				if(remove!=null){
-					mergeRemoveNotifySet.add(remove);
-					mergeAddNotifySet.remove(remove);
-				}
-				if(add!=null){
-					mergeAddNotifySet.add(add);
-					mergeRemoveNotifySet.remove(add);
-				}
-			}
-			
-			RefUpdateCollector.setCurrent(oldRefCtx);
-			MergeUpdateCollector.setCurrent(oldMergeUpdateCtx);
-			CellUpdateCollector.setCurrent(oldCellUpdateCtx);
+			ModelUpdateCollector.setCurrent(oldCollector);
 			FormulaCacheCleaner.setCurrent(oldClearer);
-			InsertDeleteUpdateCollector.setCurrent(oldInsertDeleteUpdateCtx);
 		}
 		
 		public void doNotify(){
-			if(refNotifySet.size()>0){
-				handleRefNotifyContentChange(bookSeries,refNotifySet);
-			}
-			if(cellNotifySet.size()>0){
-				handleCellNotifyContentChange(cellNotifySet);
-			}
-			
-			// according to ZSS-354, we should:
-			// 1. remove merged cells 2. insert/delete row/column 3. add merged cells
-			if(mergeRemoveNotifySet.size()>0){
-				handleMergeRemoveNotifyChange(mergeRemoveNotifySet);
-			}
-			if(insertDeleteNotifySet.size()>0){
-				handleInsertDeleteNotifyChange(insertDeleteNotifySet);
-			}
-			if(mergeAddNotifySet.size()>0){
-				handleMergeAddNotifyChange(mergeAddNotifySet);
+			if(modelUpdates==null)
+				return;
+			for(ModelUpdate update:modelUpdates){
+				switch(update.getType()){
+				case CELL:
+					handleCellNotifyContentChange((SheetRegion)update.getData());
+					break;
+				case REF:
+					handleRefNotifyContentChange(bookSeries,(Ref)update.getData());
+					break;
+				case REFS:
+					handleRefNotifyContentChange(bookSeries,(Set<Ref>)update.getData());
+					break;
+				case MERGE:
+					MergeUpdate mu = (MergeUpdate)update.getData();
+					if(mu.getOrigMerge()!=null){
+						handleMergeRemoveNotifyChange(new SheetRegion(mu.getSheet(),mu.getOrigMerge()));
+					}
+					if(mu.getMerge()!=null){
+						handleMergeAddNotifyChange(new SheetRegion(mu.getSheet(),mu.getMerge()));
+					}
+					break;
+				case INSERT_DELETE:
+					handleInsertDeleteNotifyChange(((InsertDeleteUpdate)update.getData()));
+					break;
+				}				
 			}
 		}
 	}	
@@ -1393,19 +1354,31 @@ public class RangeImpl implements SRange {
 		}.doInWriteLock(getLock());
 	}
 	
-	public void handleMergeRemoveNotifyChange(Set<SheetRegion> mergeNotifySet) {
+	private void handleMergeRemoveNotifyChange(SheetRegion mergeNotify) {
+		new NotifyChangeHelper().notifyMergeRemove(mergeNotify);
+	}
+	private void handleMergeRemoveNotifyChange(Set<SheetRegion> mergeNotifySet) {
 		new NotifyChangeHelper().notifyMergeRemove(mergeNotifySet);
 	}
 
-	public void handleMergeAddNotifyChange(Set<SheetRegion> mergeNotifySet) {
+	private void handleMergeAddNotifyChange(SheetRegion mergeNotify) {
+		new NotifyChangeHelper().notifyMergeAdd(mergeNotify);
+	}
+	private void handleMergeAddNotifyChange(Set<SheetRegion> mergeNotifySet) {
 		new NotifyChangeHelper().notifyMergeAdd(mergeNotifySet);
 	}
-
-	public void handleCellNotifyContentChange(Set<SheetRegion> cellNotifySet) {
+	
+	private void handleCellNotifyContentChange(SheetRegion cellNotify) {
+		new NotifyChangeHelper().notifyCellChange(cellNotify);
+	}
+	private void handleCellNotifyContentChange(Set<SheetRegion> cellNotifySet) {
 		new NotifyChangeHelper().notifyCellChange(cellNotifySet);
 	}
 	
-	public void handleInsertDeleteNotifyChange(List<InsertDeleteUpdate> insertDeleteNofitySet) {
+	private void handleInsertDeleteNotifyChange(InsertDeleteUpdate insertDeleteNofity) {
+		new NotifyChangeHelper().notifyInsertDelete(insertDeleteNofity);
+	}
+	private void handleInsertDeleteNotifyChange(List<InsertDeleteUpdate> insertDeleteNofitySet) {
 		new NotifyChangeHelper().notifyInsertDelete(insertDeleteNofitySet);
 	}
 
