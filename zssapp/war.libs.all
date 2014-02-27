@@ -21,6 +21,7 @@ itext.jar
 zpoi.jar
 zpoiex.jar
 zss.jar
+zssmodel.jar
 zssex.jar
 zsspdf.jar
 zsshtml.jar

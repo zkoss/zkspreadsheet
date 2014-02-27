@@ -20,6 +20,7 @@ commons-digester.jar
 itext.jar
 zpoi.jar
 zss.jar
+zssmodel.jar
 zssex.nosrc.jar
 zpoiex.jar
 zsspdf.jar

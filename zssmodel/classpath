@@ -4,3 +4,5 @@ $ZSS/dist/lib/zweb.jar
 $ZSS/dist/lib/zul.jar
 $ZSS/dist/lib/zkplus.jar
 $ZSS/dist/lib/zpoi.jar
+$ZSS/dist/lib/ext/ooxml-schemas.jar
+$ZSS/dist/lib/ext/xmlbeans.jar

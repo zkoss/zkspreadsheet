@@ -8,6 +8,7 @@ $ZSS/dist/lib/zweb.jar
 $ZSS/dist/lib/zkex.jar
 $ZSS/dist/lib/zss.jar
 $ZSS/dist/lib/zpoi.jar
+$ZSS/dist/lib/zssmodel.jar
 $ZSS/dist/lib/ext/opencsv.jar
 $ZSS/dist/lib/ext/commons-math.jar
 $ZSS/dist/lib/ext/ooxml-schemas.jar

@@ -19,6 +19,7 @@ commons-digester.jar
 itext.jar
 zpoi.jar
 zss.jar
+zssmodel.jar
 opencsv.jar
 commons-math.jar
 ooxml-schemas.jar
