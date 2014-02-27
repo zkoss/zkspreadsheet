@@ -33,8 +33,6 @@ import org.zkoss.poi.xssf.model.ExternalLink;
 import org.zkoss.poi.xssf.usermodel.*;
 import org.zkoss.poi.xssf.usermodel.charts.*;
 import org.zkoss.zss.model.*;
-import org.zkoss.zss.model.SChart.BarDirection;
-import org.zkoss.zss.model.SChart.ChartLegendPosition;
 import org.zkoss.zss.model.SChart.ChartType;
 import org.zkoss.zss.model.SDataValidation.ErrorStyle;
 import org.zkoss.zss.model.SDataValidation.OperatorType;
@@ -136,24 +134,24 @@ public class ExcelXlsxImporter extends AbstractExcelImporter{
 				case Area:
 					chart = sheet.addChart(ChartType.AREA, viewAnchor);
 					categoryData = new XSSFAreaChartData(xssfChart);
-					chart.setGrouping(convertGrouping(((XSSFAreaChartData)categoryData).getGrouping()));
+					chart.setGrouping(PoiEnumConversion.toChartGrouping(((XSSFAreaChartData)categoryData).getGrouping()));
 					break;
 				case Area3D:
 					chart = sheet.addChart(ChartType.AREA, viewAnchor);
 					categoryData = new XSSFArea3DChartData(xssfChart);
-					chart.setGrouping(convertGrouping(((XSSFArea3DChartData)categoryData).getGrouping()));
+					chart.setGrouping(PoiEnumConversion.toChartGrouping(((XSSFArea3DChartData)categoryData).getGrouping()));
 					break;
 				case Bar:
 					chart = sheet.addChart(ChartType.BAR, viewAnchor);
 					categoryData = new XSSFBarChartData(xssfChart);
-					chart.setBarDirection(convertBarDirection(((XSSFBarChartData)categoryData).getBarDirection()));
-					chart.setGrouping(convertGrouping(((XSSFBarChartData)categoryData).getGrouping()));
+					chart.setBarDirection(PoiEnumConversion.toBarDirection(((XSSFBarChartData)categoryData).getBarDirection()));
+					chart.setGrouping(PoiEnumConversion.toChartGrouping(((XSSFBarChartData)categoryData).getGrouping()));
 					break;
 				case Bar3D:
 					chart = sheet.addChart(ChartType.BAR, viewAnchor);
 					categoryData = new XSSFBar3DChartData(xssfChart);
-					chart.setBarDirection(convertBarDirection(((XSSFBar3DChartData)categoryData).getBarDirection()));
-					chart.setGrouping(convertGrouping(((XSSFBar3DChartData)categoryData).getGrouping()));
+					chart.setBarDirection(PoiEnumConversion.toBarDirection(((XSSFBar3DChartData)categoryData).getBarDirection()));
+					chart.setGrouping(PoiEnumConversion.toChartGrouping(((XSSFBar3DChartData)categoryData).getGrouping()));
 					break;
 				case Bubble:
 					chart = sheet.addChart(ChartType.BUBBLE, viewAnchor);
@@ -164,14 +162,14 @@ public class ExcelXlsxImporter extends AbstractExcelImporter{
 				case Column:
 					chart = sheet.addChart(ChartType.COLUMN, viewAnchor);
 					categoryData = new XSSFColumnChartData(xssfChart);
-					chart.setBarDirection(convertBarDirection(((XSSFColumnChartData)categoryData).getBarDirection()));
-					chart.setGrouping(convertGrouping(((XSSFColumnChartData)categoryData).getGrouping()));
+					chart.setBarDirection(PoiEnumConversion.toBarDirection(((XSSFColumnChartData)categoryData).getBarDirection()));
+					chart.setGrouping(PoiEnumConversion.toChartGrouping(((XSSFColumnChartData)categoryData).getGrouping()));
 					break;
 				case Column3D:
 					chart = sheet.addChart(ChartType.COLUMN, viewAnchor);
 					categoryData = new XSSFColumn3DChartData(xssfChart);
-					chart.setBarDirection(convertBarDirection(((XSSFColumn3DChartData)categoryData).getBarDirection()));
-					chart.setGrouping(convertGrouping(((XSSFColumn3DChartData)categoryData).getGrouping()));
+					chart.setBarDirection(PoiEnumConversion.toBarDirection(((XSSFColumn3DChartData)categoryData).getBarDirection()));
+					chart.setGrouping(PoiEnumConversion.toChartGrouping(((XSSFColumn3DChartData)categoryData).getGrouping()));
 					break;
 				case Doughnut:
 					chart = sheet.addChart(ChartType.DOUGHNUT, viewAnchor);
@@ -212,7 +210,7 @@ public class ExcelXlsxImporter extends AbstractExcelImporter{
 				chart.setTitle(xssfChart.getTitle().getString());
 			}
 			chart.setThreeD(xssfChart.isSetView3D());
-			chart.setLegendPosition(convertLengendPosition(xssfChart.getOrCreateLegend().getPosition()));
+			chart.setLegendPosition(PoiEnumConversion.toLengendPosition(xssfChart.getOrCreateLegend().getPosition()));
 			if (categoryData != null){
 				importSeries(categoryData.getSeries(), (SGeneralChartData)chart.getData());
 			}
@@ -318,46 +316,6 @@ public class ExcelXlsxImporter extends AbstractExcelImporter{
 		}
 	}
 	
-	
-	private ChartLegendPosition convertLengendPosition(LegendPosition position){
-		switch(position){
-		case BOTTOM:
-			return ChartLegendPosition.BOTTOM;
-		case LEFT:
-			return ChartLegendPosition.LEFT;
-		case TOP:
-			return ChartLegendPosition.TOP;
-		case TOP_RIGHT:
-			return ChartLegendPosition.TOP_RIGHT;
-		case RIGHT:
-		default:
-			return ChartLegendPosition.RIGHT;
-		}
-		
-	}
-	private BarDirection convertBarDirection(ChartDirection direction){
-		switch(direction){
-		case VERTICAL:
-			return BarDirection.VERTICAL;
-		case HORIZONTAL:
-		default:
-			return BarDirection.HORIZONTAL;
-		}
-	}
-	
-	private org.zkoss.zss.model.SChart.ChartGrouping convertGrouping(ChartGrouping grouping){
-		switch(grouping){
-		case STACKED:
-			return org.zkoss.zss.model.SChart.ChartGrouping.STACKED;
-		case PERCENT_STACKED:
-			return org.zkoss.zss.model.SChart.ChartGrouping.PERCENT_STACKED;
-		case CLUSTERED:
-			return org.zkoss.zss.model.SChart.ChartGrouping.CLUSTERED;
-		case STANDARD:
-		default:
-			return org.zkoss.zss.model.SChart.ChartGrouping.STANDARD;
-		}
-	}
 	
 	/*
 	 * import drawings which include charts and pictures.
@@ -501,12 +459,12 @@ public class ExcelXlsxImporter extends AbstractExcelImporter{
 				DataValidationConstraint poiConstraint = poiValidation.getValidationConstraint();
 				// getExplicitListValues() will be represented as formula1
 				dataValidation.setFormula(poiConstraint.getFormula1(), poiConstraint.getFormula2());
-				dataValidation.setOperatorType(toOperatorType(poiConstraint.getOperator()));
-				dataValidation.setValidationType(toValidationType(poiConstraint.getValidationType()));
+				dataValidation.setOperatorType(PoiEnumConversion.toOperatorType(poiConstraint.getOperator()));
+				dataValidation.setValidationType(PoiEnumConversion.toValidationType(poiConstraint.getValidationType()));
 				
 				dataValidation.setEmptyCellAllowed(poiValidation.getEmptyCellAllowed());
 				dataValidation.setErrorBox(poiValidation.getErrorBoxTitle(), poiValidation.getErrorBoxText());
-				dataValidation.setErrorStyle(toErrorStyle(poiValidation.getErrorStyle()));
+				dataValidation.setErrorStyle(PoiEnumConversion.toErrorStyle(poiValidation.getErrorStyle()));
 				dataValidation.setPromptBox(poiValidation.getPromptBoxTitle(), poiValidation.getPromptBoxText());
 				if (poiConstraint.getValidationType() == DataValidationConstraint.ValidationType.LIST){
 					/* 
@@ -520,62 +478,6 @@ public class ExcelXlsxImporter extends AbstractExcelImporter{
 				dataValidation.setShowErrorBox(poiValidation.getShowErrorBox());
 				dataValidation.setShowPromptBox(poiValidation.getShowPromptBox());
 			}
-		}
-	}
-	
-	private ErrorStyle toErrorStyle(int errorStyle){
-		switch(errorStyle){
-			case DataValidation.ErrorStyle.INFO:
-				return ErrorStyle.INFO;
-			case DataValidation.ErrorStyle.WARNING:
-				return ErrorStyle.WARNING;
-			case DataValidation.ErrorStyle.STOP:
-			default:
-					return ErrorStyle.STOP;
-		}
-	}
-	
-	private OperatorType toOperatorType(int poiOperator){
-		switch(poiOperator){
-			case DataValidationConstraint.OperatorType.EQUAL:
-				return OperatorType.EQUAL;
-			case DataValidationConstraint.OperatorType.GREATER_OR_EQUAL:
-				return OperatorType.GREATER_OR_EQUAL;
-			case DataValidationConstraint.OperatorType.GREATER_THAN:
-				return OperatorType.GREATER_THAN;
-			case DataValidationConstraint.OperatorType.LESS_OR_EQUAL:
-				return OperatorType.LESS_OR_EQUAL;
-			case DataValidationConstraint.OperatorType.LESS_THAN:
-				return OperatorType.LESS_THAN;
-			case DataValidationConstraint.OperatorType.NOT_BETWEEN:
-				return OperatorType.NOT_BETWEEN;
-			case DataValidationConstraint.OperatorType.NOT_EQUAL:
-				return OperatorType.NOT_EQUAL;
-			case DataValidationConstraint.OperatorType.BETWEEN:
-			default:
-				return OperatorType.BETWEEN;
-		}
-	}
-	
-	private ValidationType toValidationType(int validationType){
-		switch(validationType){
-			case DataValidationConstraint.ValidationType.TIME:
-				return ValidationType.TIME;
-			case DataValidationConstraint.ValidationType.TEXT_LENGTH:
-				return ValidationType.TEXT_LENGTH;
-			case DataValidationConstraint.ValidationType.LIST:
-				return ValidationType.LIST;
-			case DataValidationConstraint.ValidationType.INTEGER:
-				return ValidationType.INTEGER;
-			case DataValidationConstraint.ValidationType.FORMULA:
-				return ValidationType.FORMULA;
-			case DataValidationConstraint.ValidationType.DECIMAL:
-				return ValidationType.DECIMAL;
-			case DataValidationConstraint.ValidationType.DATE:
-				return ValidationType.DATE;
-			case DataValidationConstraint.ValidationType.ANY:
-			default:
-				return ValidationType.ANY;
 		}
 	}
 }

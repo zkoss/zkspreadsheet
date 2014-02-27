@@ -147,22 +147,6 @@ public class ExcelXlsImporter extends AbstractExcelImporter{
 		return null;
 	}
 	
-	private ChartLegendPosition toLengendPosition(int positionType){
-		switch (positionType) {
-		case LegendRecord.TYPE_BOTTOM:
-			return ChartLegendPosition.BOTTOM;
-		case LegendRecord.TYPE_CORNER:
-			return ChartLegendPosition.TOP_RIGHT;
-		case LegendRecord.TYPE_LEFT:
-			return ChartLegendPosition.LEFT;
-		case LegendRecord.TYPE_TOP:
-			return ChartLegendPosition.TOP;
-		case LegendRecord.TYPE_RIGHT:
-		case LegendRecord.TYPE_UNDOCKED:
-		default:
-			return ChartLegendPosition.RIGHT;
-		}
-	}
 
 	/**
 	 * reference DrawingManagerImpl.initHSSFDrawings()
