@@ -12,7 +12,7 @@ Copyright (C) 2014 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.range.impl;
 
 import java.util.Iterator;
-
+import org.zkoss.zss.model.CellRegion;
 import org.zkoss.zss.model.SCell;
 import org.zkoss.zss.model.SCellStyle;
 import org.zkoss.zss.model.SColumn;
@@ -43,9 +43,13 @@ public class InsertDeleteHelper extends RangeHelperBase {
 		if(isWholeRow()) { // ignore insert direction
 			sheet.deleteRow(getRow(), getLastRow());
 
+			// TODO shrink chart size (picture's size won't be changed in Excel)
+			
 		} else if(isWholeColumn()) { // ignore insert direction
 			sheet.deleteColumn(getColumn(), getLastColumn());
 
+			// TODO shrink chart size (picture's size won't be changed in Excel)
+			
 		} else if(shift != DeleteShift.DEFAULT) { // do nothing if "DEFAULT", it's according to XRange.delete() spec.
 			sheet.deleteCell(getRow(), getColumn(), getLastRow(), getLastColumn(), shift == DeleteShift.LEFT);
 		}
@@ -57,6 +61,7 @@ public class InsertDeleteHelper extends RangeHelperBase {
 		// insert row/column/cell
 		if(isWholeRow()) { // ignore insert direction
 			sheet.insertRow(getRow(), getLastRow());
+			
 			// copy style/formal/size
 			if(copyOrigin == InsertCopyOrigin.FORMAT_LEFT_ABOVE) {
 				if(getRow() - 1 >= 0) {
@@ -67,6 +72,9 @@ public class InsertDeleteHelper extends RangeHelperBase {
 					copyRowStyle(getLastRow() + 1, getRow(), getLastRow());
 				}
 			}
+			
+			// TODO extend chart size (picture's size won't be changed in Excel) 
+			
 		} else if(isWholeColumn()) { // ignore insert direction
 			sheet.insertColumn(getColumn(), getLastColumn());
 
@@ -80,13 +88,37 @@ public class InsertDeleteHelper extends RangeHelperBase {
 					copyColumnStyle(getLastColumn() + 1, getColumn(), getLastColumn());
 				}
 			}
+			
+			// TODO extend chart size (picture's size won't be changed in Excel)
 
 		} else if(shift != InsertShift.DEFAULT) { // do nothing if "DEFAULT", it's according to XRange.insert() spec.
 			sheet.insertCell(getRow(), getColumn(), getLastRow(), getLastColumn(), shift == InsertShift.RIGHT);
-			// TODO copy formal/style >>> in SheetImpl
+
+			// copy style/formal/size
+			if(shift == InsertShift.RIGHT) { // horizontal
+				if(copyOrigin == InsertCopyOrigin.FORMAT_LEFT_ABOVE) {
+					if(getColumn() - 1 >= 0) {
+						copyCellStyleFromColumn(getColumn() - 1);
+					}
+				} else if(copyOrigin == InsertCopyOrigin.FORMAT_RIGHT_BELOW) {
+					if(getLastColumn() + 1 <= sheet.getBook().getMaxColumnIndex()) {
+						copyCellStyleFromColumn(getLastColumn() + 1);
+					}
+				}
+			} else { // vertical
+				if(copyOrigin == InsertCopyOrigin.FORMAT_LEFT_ABOVE) {
+					if(getRow() - 1 >= 0) {
+						copyCellStyleFromRow(getRow() - 1);
+					}
+				} else if(copyOrigin == InsertCopyOrigin.FORMAT_RIGHT_BELOW) {
+					if(getLastRow() + 1 <= sheet.getBook().getMaxRowIndex()) {
+						copyCellStyleFromRow(getLastRow() + 1);
+					}
+				}
+			}
 		}
 	}
-
+	
 	private void copyRowStyle(int srcRowIdx, int rowIdx, int lastRowIdx) {
 		// copy row *local* style/height
 		SRow srcRow = sheet.getRow(srcRowIdx);
@@ -147,6 +179,52 @@ public class InsertDeleteHelper extends RangeHelperBase {
 				SCellStyle cellStyle = ((AbstractCellAdv)srcCell).getCellStyle(true);
 				if(cellStyle != null) {
 					for(int c = columnIdx; c <= lastColumnIdx; ++c) {
+						sheet.getCell(r, c).setCellStyle(cellStyle);
+					}
+				}
+			}
+		}
+	}
+
+	private void copyCellStyleFromRow(int rowIndex) {
+		// skip null cells
+		Iterator<SCell> cellsInRow = sheet.getCellIterator(rowIndex);
+		while(cellsInRow.hasNext()) {
+			SCell srcCell = cellsInRow.next();
+			// skip out of boundary cells
+			int c = srcCell.getColumnIndex();
+			if(c < getColumn()) {
+				continue;
+			} else if(c > getLastColumn()) {
+				break;
+			}
+			// copy style
+			SCellStyle cellStyle = ((AbstractCellAdv)srcCell).getCellStyle(true);
+			if(cellStyle != null) {
+				for(int r = getRow(); r <= getLastRow(); ++r) {
+					sheet.getCell(r, c).setCellStyle(cellStyle);
+				}
+			}
+		}
+	}
+
+	private void copyCellStyleFromColumn(int srcColumnIdx) {
+		// skip null cells
+		Iterator<SRow> srcRows = sheet.getRowIterator();
+		while(srcRows.hasNext()) {
+			// skip out of boundary cells
+			int r = srcRows.next().getIndex();
+			if(r < getRow()) {
+				continue;
+			} else if(r > getLastRow()) {
+				break;
+			}
+			// copy style if cell existed
+			SCell srcCell = sheet.getCell(r, srcColumnIdx);
+			if(!srcCell.isNull()) {
+				SCellStyle cellStyle = ((AbstractCellAdv)srcCell).getCellStyle(true);
+				if(cellStyle != null) {
+					for(int c = getColumn(); c <= getLastColumn(); ++c) {
 						sheet.getCell(r, c).setCellStyle(cellStyle);
 					}
 				}

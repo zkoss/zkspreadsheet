@@ -756,8 +756,11 @@ public class SheetImpl extends AbstractSheetAdv {
 			Collection<AbstractRowAdv> effectedRows = rows.subValues(rowIdx,lastRowIdx);
 			for(AbstractRowAdv row:effectedRows){
 				row.insertCell(columnIdx,columnSize);
-			}	
-		}else{
+			}
+			
+			// notify affected region update
+			ModelUpdateUtil.addCellUpdate(this, rowIdx, columnIdx, lastRowIdx, getBook().getMaxColumnIndex());
+		}else{ // vertical
 			int maxSize = getBook().getMaxRowSize();
 			Collection<AbstractRowAdv> effectedRows = rows.descendingSubValues(rowIdx,Integer.MAX_VALUE);
 			for(AbstractRowAdv row: new ArrayList<AbstractRowAdv>(effectedRows)){//to aovid concurrent modify
@@ -771,7 +774,9 @@ public class SheetImpl extends AbstractSheetAdv {
 					row.moveCellTo(target,columnIdx,lastColumnIdx,0);
 				}
 			}
-
+			
+			// notify affected region update
+			ModelUpdateUtil.addCellUpdate(this, rowIdx, columnIdx, getBook().getMaxRowIndex(), lastColumnIdx);
 		}
 		
 		shiftAfterCellInsert(rowIdx, columnIdx, lastRowIdx,lastColumnIdx,horizontal);
@@ -798,8 +803,11 @@ public class SheetImpl extends AbstractSheetAdv {
 			Collection<AbstractRowAdv> effected = rows.subValues(rowIdx,lastRowIdx);
 			for(AbstractRowAdv row:effected){
 				row.deleteCell(columnIdx,columnSize);
-			}	
-		}else{
+			}
+			
+			// notify affected region update
+			ModelUpdateUtil.addCellUpdate(this, rowIdx, columnIdx, lastRowIdx, getBook().getMaxColumnIndex());
+		}else{ // vertical
 			Collection<AbstractRowAdv> effectedRows = rows.subValues(rowIdx,lastRowIdx);
 			for(AbstractRowAdv row:effectedRows){
 				row.clearCell(columnIdx,lastColumnIdx);
@@ -810,6 +818,9 @@ public class SheetImpl extends AbstractSheetAdv {
 				AbstractRowAdv target = getOrCreateRow(row.getIndex()-rowSize);
 				row.moveCellTo(target,columnIdx,lastColumnIdx,0);
 			}
+			
+			// notify affected region update
+			ModelUpdateUtil.addCellUpdate(this, rowIdx, columnIdx, getBook().getMaxRowIndex(), lastColumnIdx);
 		}
 		
 		shiftAfterCellDelete(rowIdx, columnIdx, lastRowIdx,lastColumnIdx,horizontal);
@@ -818,14 +829,64 @@ public class SheetImpl extends AbstractSheetAdv {
 	
 	private void shiftAfterCellInsert(int rowIdx, int columnIdx, int lastRowIdx,
 			int lastColumnIdx, boolean horizontal) {
-		// TODO handle merged cells
+		
+		// handle merged cells
+		// move merged cells only if they are contained in affected region
+		// and unmerge others if they are overlapped with affected region 
+		if(horizontal) {
+			// find merge cells in affected region and remove them
+			int size = lastColumnIdx - columnIdx + 1;
+			CellRegion affectedRegion = new CellRegion(rowIdx, columnIdx, lastRowIdx, book.getMaxColumnIndex());
+			List<CellRegion> toShift = getContainsMergedRegions(affectedRegion);
+			removeMergedRegion(affectedRegion, true); // including contained and overlapped
+			for(CellRegion r : toShift) { // only add contained back, to simulate shifting
+				addMergedRegion(new CellRegion(r.row, r.column + size, r.lastRow, r.lastColumn + size));
+			}
+
+		} else { // vertical
+			
+			// find merge cells in affected region and remove them
+			int size = lastRowIdx - rowIdx + 1;
+			CellRegion affectedRegion = new CellRegion(rowIdx, columnIdx, book.getMaxRowIndex(), lastColumnIdx);
+			List<CellRegion> toShift = getContainsMergedRegions(affectedRegion);
+			removeMergedRegion(affectedRegion, true); // including contained and overlapped
+			for(CellRegion r : toShift) { // only add contained back, to simulate shifting
+				addMergedRegion(new CellRegion(r.row + size, r.column, r.lastRow + size, r.lastColumn));
+			}
+		}
 		
 		extendFormula(new CellRegion(rowIdx, columnIdx, lastRowIdx, lastColumnIdx),horizontal);
 	}
 	
 	private void shiftAfterCellDelete(int rowIdx, int columnIdx, int lastRowIdx,
 			int lastColumnIdx, boolean horizontal) {
-		// TODO handle merged cells
+		
+		// handle merged cells
+		// unmerge every merged cells overlapped with delete region
+		removeMergedRegion(new CellRegion(rowIdx, columnIdx, lastRowIdx, lastColumnIdx), true);
+		// move merged cells only if they are contained in affected region
+		// and unmerge others if they are overlapped with affected region 
+		if(horizontal) {
+			// find merge cells in affected region and remove them
+			int size = lastColumnIdx - columnIdx + 1;
+			CellRegion affectedRegion = new CellRegion(rowIdx, lastColumnIdx, lastRowIdx, book.getMaxColumnIndex());
+			List<CellRegion> toShift = getContainsMergedRegions(affectedRegion);
+			removeMergedRegion(affectedRegion, true); // including contained and overlapped
+			for(CellRegion r : toShift) { // only add contained back, to simulate shifting
+				addMergedRegion(new CellRegion(r.row, r.column - size, r.lastRow, r.lastColumn - size));
+			}
+
+		} else { // vertical
+			
+			// find merge cells in affected region and remove them
+			int size = lastRowIdx - rowIdx + 1;
+			CellRegion affectedRegion = new CellRegion(lastRowIdx, columnIdx, book.getMaxRowIndex(), lastColumnIdx);
+			List<CellRegion> toShift = getContainsMergedRegions(affectedRegion);
+			removeMergedRegion(affectedRegion, true); // including contained and overlapped
+			for(CellRegion r : toShift) { // only add contained back, to simulate shifting
+				addMergedRegion(new CellRegion(r.row - size, r.column, r.lastRow - size, r.lastColumn));
+			}
+		}
 		
 		shrinkFormula(new CellRegion(rowIdx, columnIdx, lastRowIdx, lastColumnIdx),horizontal);
 	}
