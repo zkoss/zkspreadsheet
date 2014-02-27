@@ -158,12 +158,29 @@ public class RangeImpl implements SRange {
 		}
 	}
 
-	static abstract class CellVisitor {
+	private abstract class CellVisitor {
 		/**
 		 * @param cell
 		 * @return true if continue the visit next cell
 		 */
 		abstract boolean visit(SCell cell);
+		
+		public void afterVisitAll(){}
+	}
+	
+	private abstract class CellVisitorForUpdate extends CellVisitor{
+		@Override
+		public void afterVisitAll(){
+			SBookSeries bookSeries = getSheet().getBook().getBookSeries();
+			DependencyTable table = ((AbstractBookSeriesAdv)bookSeries).getDependencyTable();
+			for (EffectedRegion r : rangeRefs) {
+				CellRegion region = r.region;
+				handleCellNotifyContentChange(new SheetRegion(r.sheet,r.region));
+				handleRefNotifyContentChange(bookSeries, table.getDependents(new RefImpl(r.sheet.getBook().getBookName(),r.sheet.getSheetName(),
+						region.getRow(),region.getColumn(),region.getLastRow(),region.getLastColumn())));
+				
+			}
+		}
 	}
 	
 
@@ -193,15 +210,7 @@ public class RangeImpl implements SRange {
 		}
 		
 		//don't use updateWrap's notify, update whole range at once, to prevent update separately
-		SBookSeries bookSeries = getSheet().getBook().getBookSeries();
-		DependencyTable table = ((AbstractBookSeriesAdv)bookSeries).getDependencyTable();
-		for (EffectedRegion r : rangeRefs) {
-			CellRegion region = r.region;
-			handleCellNotifyContentChange(new SheetRegion(r.sheet,r.region));
-			handleRefNotifyContentChange(bookSeries, table.getDependents(new RefImpl(r.sheet.getBook().getBookName(),r.sheet.getSheetName(),
-					region.getRow(),region.getColumn(),region.getLastRow(),region.getLastColumn())));
-			
-		}
+		visitor.afterVisitAll();
 	}
 
 	private void handleRefNotifyContentChange(SBookSeries bookSeries,Set<Ref> notifySet) {
@@ -224,7 +233,7 @@ public class RangeImpl implements SRange {
 	}
 	@Override
 	public void setValue(final Object value) {
-		new CellVisitorTask(new CellVisitor() {
+		new CellVisitorTask(new CellVisitorForUpdate() {
 			public boolean visit(SCell cell) {
 				Object cellval = cell.getValue();
 				if (!euqlas(cellval, value)) {
@@ -237,7 +246,7 @@ public class RangeImpl implements SRange {
 	
 	@Override
 	public void clearContents() {
-		new CellVisitorTask(new CellVisitor() {
+		new CellVisitorTask(new CellVisitorForUpdate() {
 			public boolean visit(SCell cell) {
 				if (!cell.isNull()) {
 					cell.setHyperlink(null);
@@ -267,7 +276,7 @@ public class RangeImpl implements SRange {
 		final InputEngine ie = EngineFactory.getInstance().createInputEngine();
 		final ResultWrap<InputResult> input = new ResultWrap<InputResult>();
 		final ResultWrap<HyperlinkType> hyperlinkType = new ResultWrap<HyperlinkType>();
-		new CellVisitorTask(new CellVisitor() {
+		new CellVisitorTask(new CellVisitorForUpdate() {
 			public boolean visit(SCell cell) {
 				InputResult result;
 				if((result = input.get())==null){
@@ -659,7 +668,7 @@ public class RangeImpl implements SRange {
 
 	@Override
 	public void setCellStyle(final SCellStyle style) {
-		new CellVisitorTask(new CellVisitor() {
+		new CellVisitorTask(new CellVisitorForUpdate() {
 			public boolean visit(SCell cell) {
 				cell.setCellStyle(style);
 				return true;
@@ -849,7 +858,7 @@ public class RangeImpl implements SRange {
 	@Override
 	public void setHyperlink(final HyperlinkType linkType,final String address,
 			final String display) {
-		new CellVisitorTask(new CellVisitor() {
+		new CellVisitorTask(new CellVisitorForUpdate() {
 			public boolean visit(SCell cell) {
 				SHyperlink link = cell.setupHyperlink();
 				link.setType(linkType);
