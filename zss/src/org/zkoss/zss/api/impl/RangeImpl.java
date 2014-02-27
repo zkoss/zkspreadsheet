@@ -693,14 +693,14 @@ public class RangeImpl implements Range{
 	/**
 	 * Notify this range has been changed.
 	 */
+	@Override
 	public void notifyChange(){ 
 		_range.notifyChange();
 	}
 	
+	@Override
 	public void notifyChange(String[] variables){
-		throw new UnsupportedOperationException("not implment yet");/* zss 3.5 
-		((XBook)getBook().getPoiBook()).notifyChange(variables);
-		*/
+		_range.notifyChange(variables);
 	}
 	
 	@Override

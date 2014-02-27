@@ -367,15 +367,29 @@ public class RangeImpl implements SRange {
 	@Override
 	public void notifyChange() {
 		SBookSeries bookSeries = getBookSeries();
+		DependencyTable table = ((AbstractBookSeriesAdv)bookSeries).getDependencyTable();
 		LinkedHashSet<Ref> notifySet = new LinkedHashSet<Ref>();
+		FormulaCacheCleaner cacheCleaner = new FormulaCacheCleaner(bookSeries);
 		for (EffectedRegion r : rangeRefs) {
 			String bookName = r.sheet.getBook().getBookName();
 			String sheetName = r.sheet.getSheetName();
 			CellRegion region = r.region;
 			Ref ref = new RefImpl(bookName, sheetName, region.row, region.column,region.lastRow,region.lastColumn);
+			cacheCleaner.clearByPrecedent(ref);
 			notifySet.add(ref);
+			notifySet.addAll(table.getDependents(new RefImpl(r.sheet.getBook().getBookName(),r.sheet.getSheetName(),
+					region.getRow(),region.getColumn(),region.getLastRow(),region.getLastColumn())));
+			
 		}
 		handleRefNotifyContentChange(bookSeries,notifySet);
+	}
+	
+	public void notifyChange(String[] variables){
+		SBookSeries bookSeries = getBookSeries();
+		DependencyTable table = ((AbstractBookSeriesAdv)bookSeries).getDependencyTable();
+		LinkedHashSet<Ref> notifySet = new LinkedHashSet<Ref>();
+		FormulaCacheCleaner cacheCleaner = new FormulaCacheCleaner(bookSeries);
+		
 	}
 	
 	@Override

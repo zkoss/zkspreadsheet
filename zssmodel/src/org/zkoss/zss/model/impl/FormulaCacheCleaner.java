@@ -1,5 +1,6 @@
 package org.zkoss.zss.model.impl;
 
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.zkoss.zss.model.SBookSeries;
@@ -37,9 +38,9 @@ public class FormulaCacheCleaner {
 
 	public void clearByPrecedent(Ref precedent) {
 		DependencyTable table = ((AbstractBookSeriesAdv)bookSeries).getDependencyTable();
-		Set<Ref> dependents = table.getDependents(precedent);
-		if(dependents.size()>0){
-			clear(dependents);
-		}
+		Set<Ref> dependents = new LinkedHashSet<Ref>();
+		dependents.add(precedent);
+		dependents.addAll(table.getDependents(precedent));
+		clear(dependents);
 	}
 }

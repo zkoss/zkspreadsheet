@@ -21,7 +21,7 @@ import org.zkoss.zss.model.sys.dependency.Ref.RefType;
 	}
 	public void notifyContentChange(Ref notify) {
 		if (notify.getType() == RefType.CELL || notify.getType() == RefType.AREA) {
-			handleCellRef(notify);
+			handleAreaRef(notify);
 		} else if (notify.getType() == RefType.OBJECT) {
 			if(((ObjectRef)notify).getObjectType()==ObjectType.CHART){
 				handleChartRef((ObjectRef)notify);
@@ -41,7 +41,7 @@ import org.zkoss.zss.model.sys.dependency.Ref.RefType;
 			System.out.println(">>> Notify Dependent Change : "+notify);
 			//clear the dependent's formula cache since the precedent is changed.
 			if (notify.getType() == RefType.CELL || notify.getType() == RefType.AREA) {
-				handleCellRef(notify);
+				handleAreaRef(notify);
 			} else if (notify.getType() == RefType.OBJECT) {
 				if(((ObjectRef)notify).getObjectType()==ObjectType.CHART){
 					chartDependents.put(((ObjectRef)notify).getObjectIdPath()[0], notify);
@@ -80,7 +80,7 @@ import org.zkoss.zss.model.sys.dependency.Ref.RefType;
 		notifyHelper.notifyDataValidationChange(sheet,ids[0]);
 	}
 
-	private void handleCellRef(Ref notify) {
+	private void handleAreaRef(Ref notify) {
 		SBook book = bookSeries.getBook(notify.getBookName());
 		if(book==null) return;
 		SSheet sheet = book.getSheetByName(notify.getSheetName());

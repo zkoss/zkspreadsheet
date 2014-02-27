@@ -362,8 +362,12 @@ import org.zkoss.zss.range.*;
 
 	@Override
 	public void notifyChange() {
-		
 
+	}
+	
+	@Override
+	public void notifyChange(String[] variables){
+		
 	}
 
 	@Override

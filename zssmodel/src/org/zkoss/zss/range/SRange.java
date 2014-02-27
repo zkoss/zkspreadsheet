@@ -671,6 +671,12 @@ public interface SRange {
 	public void notifyChange();
 	
 	/**
+	 * Notify the variables in this range has been changed.
+	 * @param variables
+	 */
+	public void notifyChange(String[] variables);
+	
+	/**
 	 * Set the freeze panel
 	 * @param numOfRow the number of row to freeze, 0 means no freeze
 	 * @param numOfColumn the number of column to freeze, 0 means no freeze
