@@ -425,4 +425,9 @@ import org.zkoss.zss.range.*;
 		
 	}
 
+	@Override
+	public void clearAll() {
+			
+	}
+
 }

@@ -284,6 +284,12 @@ public interface Range {
 	 * Clears styles
 	 */
 	public void clearStyles();
+	
+	/**
+	 * Clears contents, styles and unmerge this range.
+	 * @Since 3.5.0
+	 */
+	public void clearAll();
 
 	/**
 	 * Pastes to destination

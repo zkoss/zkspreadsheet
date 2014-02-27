@@ -542,14 +542,7 @@ public class CellOperationUtil {
 			return;
 
 		//use batch-runner to run multiple range operation
-		range.sync(new RangeRunner() {
-			public void run(Range range) {
-				range.clearContents();// it removes value and formula only
-				range.clearStyles();
-				range.unmerge(); // dont' forget to unmerge the cell as well (ZSS-512)
-				//TODO clear hyperlink
-			}
-		});
+		range.clearAll();
 	}
 
 	/**

@@ -706,5 +706,10 @@ public interface SRange {
 	public SCellStyle getCellStyle();
 
 	public boolean isSheetProtected();
+
+	/**
+	 * Clear data contains, style and unmerge this range 
+	 */
+	public void clearAll();
 	
 }

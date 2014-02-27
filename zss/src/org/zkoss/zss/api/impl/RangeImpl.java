@@ -185,6 +185,10 @@ public class RangeImpl implements Range{
 		_range.clearContents();
 	}
 	
+	public void clearAll() { 
+		_range.clearAll();
+	}
+	
 	public Sheet getSheet(){
 		return _sharedCtx.getSheet();
 	}

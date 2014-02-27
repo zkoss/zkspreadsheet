@@ -290,6 +290,29 @@ public class RangeImpl implements SRange {
 			}
 		}).doInWriteLock(getLock());
 	}
+	
+	@Override
+	public void clearAll() {
+		new ReadWriteTask() {
+			@Override
+			public Object invoke() {
+				SBookSeries bookSeries = getSheet().getBook().getBookSeries();
+				DependencyTable table = ((AbstractBookSeriesAdv)bookSeries).getDependencyTable();
+				//clear cells instance directly (not just clear it's data, but it instance directly)
+				for (EffectedRegion r : rangeRefs) {
+					CellRegion region = r.region;
+					r.sheet.clearCell(region);
+					
+					handleCellNotifyContentChange(new SheetRegion(r.sheet,r.region));
+					handleRefNotifyContentChange(bookSeries, table.getDependents(new RefImpl(r.sheet.getBook().getBookName(),r.sheet.getSheetName(),
+							region.getRow(),region.getColumn(),region.getLastRow(),region.getLastColumn())));
+				}
+				
+				unmerge();
+				return null;
+			}
+		}.doInWriteLock(getLock());
+	}
 
 	static class ResultWrap<T> {
 		T obj;
