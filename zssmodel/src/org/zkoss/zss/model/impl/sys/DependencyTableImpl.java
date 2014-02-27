@@ -217,4 +217,17 @@ public class DependencyTableImpl extends DependencyTableAdv {
 		DependencyTableImpl another = (DependencyTableImpl)dependencyTable;
 		map.putAll(another.map);
 	}
+	
+	@Override
+	public Set<Ref> searchPrecedents(RefFilter filter){
+		Set<Ref> precedents = new LinkedHashSet<Ref>();
+		for(Entry<Ref, Set<Ref>> entry : map.entrySet()) {
+			for(Ref pre : entry.getValue()) {
+				if(filter.accept(pre)) {
+					precedents.add(pre);
+				}
+			}
+		}
+		return precedents;
+	}
 }

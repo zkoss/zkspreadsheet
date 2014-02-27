@@ -16,27 +16,61 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.range.impl;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.locks.ReadWriteLock;
 
 import org.zkoss.lang.Strings;
 import org.zkoss.util.Locales;
-import org.zkoss.zss.model.*;
+import org.zkoss.zss.model.CellRegion;
+import org.zkoss.zss.model.InvalidateModelOpException;
+import org.zkoss.zss.model.PasteOption;
+import org.zkoss.zss.model.SAutoFilter;
 import org.zkoss.zss.model.SAutoFilter.FilterOp;
+import org.zkoss.zss.model.SBook;
+import org.zkoss.zss.model.SBookSeries;
+import org.zkoss.zss.model.SCell;
 import org.zkoss.zss.model.SCell.CellType;
+import org.zkoss.zss.model.SCellStyle;
 import org.zkoss.zss.model.SCellStyle.BorderType;
+import org.zkoss.zss.model.SChart;
 import org.zkoss.zss.model.SChart.ChartGrouping;
 import org.zkoss.zss.model.SChart.ChartLegendPosition;
 import org.zkoss.zss.model.SChart.ChartType;
+import org.zkoss.zss.model.SColumn;
+import org.zkoss.zss.model.SDataValidation;
+import org.zkoss.zss.model.SHyperlink;
 import org.zkoss.zss.model.SHyperlink.HyperlinkType;
-import org.zkoss.zss.model.impl.*;
+import org.zkoss.zss.model.SPicture;
+import org.zkoss.zss.model.SRow;
+import org.zkoss.zss.model.SSheet;
+import org.zkoss.zss.model.SSheetViewInfo;
+import org.zkoss.zss.model.SheetRegion;
+import org.zkoss.zss.model.ViewAnchor;
+import org.zkoss.zss.model.impl.AbstractBookSeriesAdv;
+import org.zkoss.zss.model.impl.AbstractSheetAdv;
+import org.zkoss.zss.model.impl.FormulaCacheCleaner;
+import org.zkoss.zss.model.impl.RefImpl;
 import org.zkoss.zss.model.sys.EngineFactory;
 import org.zkoss.zss.model.sys.dependency.DependencyTable;
+import org.zkoss.zss.model.sys.dependency.DependencyTable.RefFilter;
+import org.zkoss.zss.model.sys.dependency.NameRef;
 import org.zkoss.zss.model.sys.dependency.Ref;
-import org.zkoss.zss.model.sys.format.*;
-import org.zkoss.zss.model.sys.input.*;
-import org.zkoss.zss.model.util.*;
-import org.zkoss.zss.range.*;
+import org.zkoss.zss.model.sys.dependency.Ref.RefType;
+import org.zkoss.zss.model.sys.format.FormatContext;
+import org.zkoss.zss.model.sys.format.FormatEngine;
+import org.zkoss.zss.model.sys.input.InputEngine;
+import org.zkoss.zss.model.sys.input.InputParseContext;
+import org.zkoss.zss.model.sys.input.InputResult;
+import org.zkoss.zss.model.util.ReadWriteTask;
+import org.zkoss.zss.model.util.Validations;
+import org.zkoss.zss.range.SRange;
+import org.zkoss.zss.range.SRanges;
 import org.zkoss.zss.range.impl.autofill.AutoFillHelper;
 /**
  * Only those methods that set cell data, cell style, row (column) style, width, height, and hidden consider 3-D references. 
@@ -366,29 +400,72 @@ public class RangeImpl implements SRange {
 
 	@Override
 	public void notifyChange() {
-		SBookSeries bookSeries = getBookSeries();
-		DependencyTable table = ((AbstractBookSeriesAdv)bookSeries).getDependencyTable();
-		LinkedHashSet<Ref> notifySet = new LinkedHashSet<Ref>();
-		FormulaCacheCleaner cacheCleaner = new FormulaCacheCleaner(bookSeries);
-		for (EffectedRegion r : rangeRefs) {
-			String bookName = r.sheet.getBook().getBookName();
-			String sheetName = r.sheet.getSheetName();
-			CellRegion region = r.region;
-			Ref ref = new RefImpl(bookName, sheetName, region.row, region.column,region.lastRow,region.lastColumn);
-			cacheCleaner.clearByPrecedent(ref);
-			notifySet.add(ref);
-			notifySet.addAll(table.getDependents(new RefImpl(r.sheet.getBook().getBookName(),r.sheet.getSheetName(),
-					region.getRow(),region.getColumn(),region.getLastRow(),region.getLastColumn())));
-			
-		}
-		handleRefNotifyContentChange(bookSeries,notifySet);
+		new ReadWriteTask(){
+			@Override
+			public Object invoke() {
+				SBookSeries bookSeries = getBookSeries();
+				DependencyTable table = ((AbstractBookSeriesAdv)bookSeries).getDependencyTable();
+				LinkedHashSet<Ref> notifySet = new LinkedHashSet<Ref>();
+				FormulaCacheCleaner cacheCleaner = new FormulaCacheCleaner(bookSeries);
+				for (EffectedRegion r : rangeRefs) {
+					String bookName = r.sheet.getBook().getBookName();
+					String sheetName = r.sheet.getSheetName();
+					CellRegion region = r.region;
+					Ref pre = new RefImpl(bookName, sheetName, region.row, region.column,region.lastRow,region.lastColumn);
+					cacheCleaner.clearByPrecedent(pre);
+					notifySet.add(pre);
+					notifySet.addAll(table.getDependents(pre));
+				}
+				handleRefNotifyContentChange(bookSeries,notifySet);
+				return null;
+			}
+		
+		}.doInWriteLock(getLock());//we will clear formula cache, so need to use write lock
 	}
 	
-	public void notifyChange(String[] variables){
+	public void notifyChange(final String[] variables){
 		SBookSeries bookSeries = getBookSeries();
 		DependencyTable table = ((AbstractBookSeriesAdv)bookSeries).getDependencyTable();
 		LinkedHashSet<Ref> notifySet = new LinkedHashSet<Ref>();
 		FormulaCacheCleaner cacheCleaner = new FormulaCacheCleaner(bookSeries);
+		new ReadWriteTask(){
+			@Override
+			public Object invoke() {
+				SBookSeries bookSeries = getBookSeries();
+				DependencyTable table = ((AbstractBookSeriesAdv)bookSeries).getDependencyTable();
+				LinkedHashSet<Ref> notifySet = new LinkedHashSet<Ref>();
+				FormulaCacheCleaner cacheCleaner = new FormulaCacheCleaner(bookSeries);
+				for (EffectedRegion r : rangeRefs) {
+					final String bookName = r.sheet.getBook().getBookName();
+					String sheetName = r.sheet.getSheetName();
+					for(final String var:variables){
+						Set<Ref> precedents = table.searchPrecedents(new RefFilter() {
+							@Override
+							public boolean accept(Ref ref) {
+								//search name that has var prefix, (we use NAME to achieve var binding)
+								if(ref.getBookName().equals(bookName) && ref.getType()==RefType.NAME){
+									String refNameName = ((NameRef)ref).getNameName();
+									if(refNameName.equals(var) || refNameName.startsWith(var+".")){
+										return true;
+									}
+								}
+								return false;
+							}
+						});
+						
+						for(Ref pre:precedents){
+							cacheCleaner.clearByPrecedent(pre);
+							notifySet.add(pre);
+							notifySet.addAll(table.getDependents(pre));
+						}
+						
+					}
+				}
+				handleRefNotifyContentChange(bookSeries,notifySet);
+				return null;
+			}
+		
+		}.doInWriteLock(getLock());//we will clear formula cache, so need to use write lock		
 		
 	}
 	

@@ -30,12 +30,17 @@ import java.util.Set;
  */
 public interface DependencyTable {
 
+	public interface RefFilter{
+		public boolean accept(Ref ref);
+	}
+	
 	public Set<Ref> getDependents(Ref precedent);
 	public Set<Ref> getDirectDependents(Ref precedent);
 	
 	public void add(Ref dependant, Ref precedent);
 	
 	public void clearDependents(Ref dependant);
+	public Set<Ref> searchPrecedents(RefFilter filter);
 	
 //	to merge dependency for book series.
 //	public void mergeTable(DependencyTable another);
