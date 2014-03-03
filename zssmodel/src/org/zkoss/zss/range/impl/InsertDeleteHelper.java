@@ -12,12 +12,13 @@ Copyright (C) 2014 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.range.impl;
 
 import java.util.Iterator;
-import org.zkoss.zss.model.CellRegion;
 import org.zkoss.zss.model.SCell;
 import org.zkoss.zss.model.SCellStyle;
+import org.zkoss.zss.model.SChart;
 import org.zkoss.zss.model.SColumn;
 import org.zkoss.zss.model.SColumnArray;
 import org.zkoss.zss.model.SRow;
+import org.zkoss.zss.model.ViewAnchor;
 import org.zkoss.zss.model.impl.AbstractCellAdv;
 import org.zkoss.zss.model.impl.AbstractColumnArrayAdv;
 import org.zkoss.zss.model.impl.AbstractRowAdv;
@@ -41,14 +42,18 @@ public class InsertDeleteHelper extends RangeHelperBase {
 
 		// insert row/column/cell
 		if(isWholeRow()) { // ignore insert direction
+			
+			// shrink chart size (picture's size won't be changed in Excel)
+			// before delete rows (delete rows will make chart move)
+			shrinkChartHeight();
 			sheet.deleteRow(getRow(), getLastRow());
-
-			// TODO shrink chart size (picture's size won't be changed in Excel)
 			
 		} else if(isWholeColumn()) { // ignore insert direction
-			sheet.deleteColumn(getColumn(), getLastColumn());
 
-			// TODO shrink chart size (picture's size won't be changed in Excel)
+			// shrink chart size (picture's size won't be changed in Excel)
+			// before delete columns (delete columns will make chart move)
+			shrinkChartWidth();
+			sheet.deleteColumn(getColumn(), getLastColumn());
 			
 		} else if(shift != DeleteShift.DEFAULT) { // do nothing if "DEFAULT", it's according to XRange.delete() spec.
 			sheet.deleteCell(getRow(), getColumn(), getLastRow(), getLastColumn(), shift == DeleteShift.LEFT);
@@ -73,7 +78,8 @@ public class InsertDeleteHelper extends RangeHelperBase {
 				}
 			}
 			
-			// TODO extend chart size (picture's size won't be changed in Excel) 
+			// extend chart size (picture's size won't be changed in Excel)
+			extendChartHeight();
 			
 		} else if(isWholeColumn()) { // ignore insert direction
 			sheet.insertColumn(getColumn(), getLastColumn());
@@ -89,7 +95,8 @@ public class InsertDeleteHelper extends RangeHelperBase {
 				}
 			}
 			
-			// TODO extend chart size (picture's size won't be changed in Excel)
+			// extend chart size (picture's size won't be changed in Excel)
+			extendChartWidth();
 
 		} else if(shift != InsertShift.DEFAULT) { // do nothing if "DEFAULT", it's according to XRange.insert() spec.
 			sheet.insertCell(getRow(), getColumn(), getLastRow(), getLastColumn(), shift == InsertShift.RIGHT);
@@ -118,7 +125,7 @@ public class InsertDeleteHelper extends RangeHelperBase {
 			}
 		}
 	}
-	
+
 	private void copyRowStyle(int srcRowIdx, int rowIdx, int lastRowIdx) {
 		// copy row *local* style/height
 		SRow srcRow = sheet.getRow(srcRowIdx);
@@ -228,6 +235,84 @@ public class InsertDeleteHelper extends RangeHelperBase {
 						sheet.getCell(r, c).setCellStyle(cellStyle);
 					}
 				}
+			}
+		}
+	}
+
+	private void shrinkChartWidth() {
+		for(SChart chart : sheet.getCharts()) {
+			ViewAnchor anchor = chart.getAnchor();
+			int col = anchor.getColumnIndex();
+			ViewAnchor rightBottomAnchor = anchor.getRightBottomAnchor(sheet);
+			int lastCol = rightBottomAnchor.getColumnIndex();
+			if((col <= getColumn() && getColumn() <= lastCol) || (col <= getLastColumn() && getLastColumn() <= lastCol)) {
+				int shrunkWidth = 0;
+				for(int c = (getColumn() > col ? getColumn() : col); c <= getLastColumn() && c <= lastCol; ++c) {
+					if(c != lastCol) {
+						shrunkWidth += sheet.getColumn(c).getWidth();
+					} else {
+						shrunkWidth += rightBottomAnchor.getXOffset(); // fit to last
+					} 
+				}
+				if(anchor.getWidth() > shrunkWidth) {
+					anchor.setWidth(anchor.getWidth() - shrunkWidth);
+					new NotifyChangeHelper().notifySheetChartUpdate(sheet, chart.getId());
+				}
+			}
+		}
+	}
+
+	private void shrinkChartHeight() {
+		for(SChart chart : sheet.getCharts()) {
+			ViewAnchor anchor = chart.getAnchor();
+			int row = anchor.getRowIndex();
+			ViewAnchor rightBottomAnchor = anchor.getRightBottomAnchor(sheet);
+			int lastRow = rightBottomAnchor.getRowIndex();
+			if((row <= getRow() && getRow() <= lastRow) || (row <= getLastRow() && getLastRow() <= lastRow)) {
+				int shrunkHeight = 0;
+				for(int r = (getRow() > row ? getRow() : row); r <= getLastRow() && r <= lastRow; ++r) {
+					if(r != lastRow) {
+						shrunkHeight += sheet.getRow(r).getHeight();
+					} else {
+						shrunkHeight += rightBottomAnchor.getYOffset();	// fit to last
+					}
+				}
+				if(anchor.getHeight() > shrunkHeight) {
+					anchor.setHeight(anchor.getHeight() - shrunkHeight);
+					new NotifyChangeHelper().notifySheetChartUpdate(sheet, chart.getId());
+				}
+			}
+		}
+	}
+
+	private void extendChartWidth() {
+		int size = 0;
+		for(int r = getColumn(); r <= getLastColumn(); ++r) {
+			size += sheet.getColumn(r).getWidth();
+		}
+		for(SChart chart : sheet.getCharts()) {
+			ViewAnchor anchor = chart.getAnchor();
+			int col = anchor.getColumnIndex();
+			int lastCol = anchor.getRightBottomAnchor(sheet).getColumnIndex();
+			if(col <= getColumn() && getColumn() <= lastCol) {
+				anchor.setWidth(anchor.getWidth() + size);
+				new NotifyChangeHelper().notifySheetChartUpdate(sheet, chart.getId());
+			}
+		}
+	}
+
+	private void extendChartHeight() {
+		int size = 0;
+		for(int r = getRow(); r <= getLastRow(); ++r) {
+			size += sheet.getRow(r).getHeight();
+		}
+		for(SChart chart : sheet.getCharts()) {
+			ViewAnchor anchor = chart.getAnchor();
+			int row = anchor.getRowIndex();
+			int lastRow = anchor.getRightBottomAnchor(sheet).getRowIndex();
+			if(row <= getRow() && getRow() <= lastRow) {
+				anchor.setHeight(anchor.getHeight() + size);
+				new NotifyChangeHelper().notifySheetChartUpdate(sheet, chart.getId());
 			}
 		}
 	}
