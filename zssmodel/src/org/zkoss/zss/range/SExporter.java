@@ -26,13 +26,13 @@ import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.model.SheetRegion;
 
 /**
- * An exporter to export a book to a out stream or file
+ * An exporter to export a book to a output stream or file.
  * @author dennis
  * @since 3.5.0
  */
 public interface SExporter {
 	/**
-	 * Export book
+	 * Export a book
 	 * @param book the book to export
 	 * @param fos the output stream to store data
 	 * @throws IOException
@@ -40,7 +40,7 @@ public interface SExporter {
 	public void export(SBook book, OutputStream fos) throws IOException;
 	
 	/**
-	 * Export book
+	 * Export a book
 	 * @param book the book to export
 	 * @param fos the output file to store data
 	 * @throws IOException

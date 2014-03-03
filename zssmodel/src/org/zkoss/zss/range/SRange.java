@@ -25,10 +25,10 @@ import org.zkoss.zss.model.SChart.ChartLegendPosition;
 import org.zkoss.zss.model.SChart.ChartType;
 import org.zkoss.zss.model.SHyperlink.HyperlinkType;
 import org.zkoss.zss.model.SPicture.Format;
-import org.zkoss.zss.range.SRange.SortDataOption;
 /**
- * The most useful api to manipulate a book
- *  
+ * The main API to manipulate a book.
+ * Represent one or more cells, a row, a column, a selection of a block of cells. 
+ * You can use this class to perform most user operations. 
  * @author dennis
  * @since 3.5.0
  */
@@ -214,20 +214,20 @@ public interface SRange {
 	public SRange pasteSpecial(SRange dstRange, PasteType pasteType, PasteOperation pasteOp, boolean skipBlanks, boolean transpose);
 	
 	/**
-	 * Insert this Range. 
+	 * Insert cells of this Range. 
 	 * @param shift can be {@link #SHIFT_DEFAULT}, {{@link #SHIFT_DOWN}, or {@link #SHIFT_RIGHT}.
 	 * @param copyOrigin from where to copy the format to the insert area({@link #FORMAT_LEFTABOVE} /{@link #FORMAT_RIGHTBELOW})
 	 */
 	public void insert(InsertShift shift, InsertCopyOrigin copyOrigin);
 	
 	/**
-	 * Delete this Range. 
+	 * Delete cells of this Range. 
 	 * @param shift can be {@link #SHIFT_DEFAULT}, {{@link #SHIFT_UP}, or {@link #SHIFT_LEFT}.
 	 */
 	public void delete(DeleteShift shift);
 
 	/**
-	 * Sort this Range per the specified parameters
+	 * Sort this Range according the specified parameters
 	 * @param key1 key1 for sorting
 	 * @param descending1 true to do descending sort; false to do ascending sort for key1. 
 	 * @param dataOption1 see numeric String as number or not for key1.
@@ -245,13 +245,13 @@ public interface SRange {
 			int hasHeader, boolean matchCase, boolean sortByRows);
 
 	/**
-	 * Merge this range into a merged cell.
+	 * Merge cells of this range into a merged cell.
 	 * @param across true to merge cells in each row; default to false.
 	 */
 	public void merge(boolean across);
 
 	/**
-	 * Un-merge merged cell in this range area to separated cells.
+	 * Un-merge a merged cell in this range to separated cells.
 	 */
 	public void unmerge();
 	
@@ -261,18 +261,16 @@ public interface SRange {
 //	public void borderAround(BorderStyle lineStyle, String color);
 
 	/**
-	 * Adds/Remove border of all cell within this range per the specified border index.
-	 * @param borderIndex one of {@link #BORDER_EDGE_BOTTOM},{@link #BORDER_EDGE_RIGHT},{@link #BORDER_EDGE_TOP},
-	 * {@link #BORDER_EDGE_LEFT},{@link #BORDER_INSIDE_HORIZONTAL},{@link #BORDER_INSIDE_VERTICAL},{@link #BORDER_DIAGONAL_DOWN},
-	 * {@link #BORDER_DIAGONAL_UP},{@link #BORDER_FULL},{@link #BORDER_OUTLINE},{@link #BORDER_INSIDE},{@link #BORDER_DIAGONAL}
- 	 * @param lineStyle border line style, one of {@link BorderStyle} 
+	 * Adds/Remove border of all cells within this range upon the specified border type.
+	 * @param borderIndex one of {@link ApplyBorderType}
+ 	 * @param lineStyle border line style, one of {@link SCellStyle.BorderStyle} 
 	 * @param color color in HTML format; i.e., #rrggbb.
 	 */
 	public void setBorders(ApplyBorderType borderIndex, SCellStyle.BorderType lineStyle, String color);
 
 	/**
-	 * Move this range to a new place as specified by nRow(negative value to move up; 
-	 * positive value to move down) and nCol(negative value to move left; positive value to move right)
+	 * Move this range to a new place as specified by row offset (negative value to move up; 
+	 * positive value to move down) and column offset(negative value to move left; positive value to move right)
 	 * @param nRow how many rows to move this range
 	 * @param nCol how many columns to move this range
 	 */
