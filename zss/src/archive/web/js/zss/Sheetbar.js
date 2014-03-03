@@ -433,7 +433,6 @@ zss.SheetpanelCave = zk.$extends(zk.Widget, {
 			btnWidth = 30; //button size, TODO: rm hard-code: jq(this.hlayout.$n().firstChild).width() get wrong value;
 		if (width > btnWidth)
 			this.sheetSelector.setWidth((width - btnWidth) + 'px');
-		return r;
 	},
 	onClickAddSheet: function () {
 		this._wgt.fireSheetAction("add");

@@ -181,7 +181,8 @@ zss.Toolbar = zk.$extends(zul.layout.North, {
 	//	ZSS-177
 	setFlexSize_: function(sz, isFlexMin) {
 		var sz = this.$supers(zss.Toolbar, 'setFlexSize_', arguments),
-			sh = sz.height,
+			ss = this.$n('real').style,//to compitiable with ZK7		
+			sh = ss.height,
 			$cv = jq(this.$n('cave'));
 		if (sh && $cv.height() != sh) {
 			$cv.height(sh + 'px');
