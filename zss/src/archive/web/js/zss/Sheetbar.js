@@ -130,7 +130,6 @@ zss.SheetMenupopup = zk.$extends(zul.menu.Menupopup, {
 });
 
 zss.SheetTab = zk.$extends(zul.tab.Tab, {
-	widgetName: 'SheetTab',
 	$o: zk.$void, //owner, fellows relationship no needed
 	$init: function (arg, wgt) {
 		this.$supers(zss.SheetTab, '$init', [arg]);
@@ -231,7 +230,6 @@ zss.SheetTab = zk.$extends(zul.tab.Tab, {
 });
 
 zss.SheetSelector = zk.$extends(zul.tab.Tabbox, {
-	widgetName: 'SheetSelector',
 	$o: zk.$void,
 	$init: function (wgt, menu) {
 		this.$supers(zss.SheetSelector, '$init', []);
@@ -459,7 +457,7 @@ zss.Sheetbar = zk.$extends(zul.layout.South, {
 		this.$supers(zss.Sheetbar, '$init', []);
 		this._wgt = wgt;
 		this.setBorder(0);
-		this.setSize('24px');
+		this.setSize('32px');
 		
 		this.appendChild(this.cave = new zss.SheetpanelCave(wgt));
 		
