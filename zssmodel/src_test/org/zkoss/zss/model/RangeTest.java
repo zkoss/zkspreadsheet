@@ -1,4 +1,4 @@
-package org.zkoss.zss.ngmodel;
+package org.zkoss.zss.model;
 
 import static org.junit.Assert.*;
 
@@ -227,9 +227,9 @@ public class RangeTest {
 		Assert.assertEquals(2, a0counter.intValue());
 		Assert.assertEquals(0, unknowcounter.intValue());
 		
-		SRanges.range(sheet,0,0).setEditText("777");//same value should just ignore change and return
-		Assert.assertEquals(2, b0counter.intValue());
-		Assert.assertEquals(2, a0counter.intValue());
+		SRanges.range(sheet,0,0).setEditText("777");//in last update, set edit text is always notify cell change
+		Assert.assertEquals(3, b0counter.intValue());
+		Assert.assertEquals(3, a0counter.intValue());
 		Assert.assertEquals(0, unknowcounter.intValue());
 		
 		

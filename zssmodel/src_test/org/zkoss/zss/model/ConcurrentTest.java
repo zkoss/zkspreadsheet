@@ -1,4 +1,4 @@
-package org.zkoss.zss.ngmodel;
+package org.zkoss.zss.model;
 
 import java.util.ArrayList;
 import java.util.Collection;

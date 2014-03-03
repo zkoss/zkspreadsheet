@@ -1,4 +1,4 @@
-package org.zkoss.zss.ngmodel;
+package org.zkoss.zss.model;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
