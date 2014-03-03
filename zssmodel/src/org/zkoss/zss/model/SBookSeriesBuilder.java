@@ -35,7 +35,7 @@ public abstract class SBookSeriesBuilder {
 		if(_instance==null){
 			synchronized(SBookSeriesBuilder.class){
 				if(_instance==null){
-					String clz = Library.getProperty("org.zkoss.zss.api.BookSeriesBuilder.class");
+					String clz = Library.getProperty("org.zkoss.zss.model.BookSeriesBuilder.class");
 					if (!Strings.isEmpty(clz)) {
 						try {
 							_instance = (SBookSeriesBuilder) Classes.forNameByThread(clz).newInstance();
@@ -46,11 +46,11 @@ public abstract class SBookSeriesBuilder {
 						_instance = new SBookSeriesBuilder() {
 							@Override
 							public void buildBookSeries(Set<SBook> books) {
-								throw new RuntimeException("not implemented");
+								throw new UnsupportedOperationException("not implemented in this edition");
 							}
 							@Override
 							public void buildBookSeries(SBook[] books) {
-								throw new RuntimeException("not implemented");
+								throw new UnsupportedOperationException("not implemented in this edition");
 							}
 						};
 					}
