@@ -1,5 +1,17 @@
 <zk>
-	<spreadsheet src="/TestFile2007.xlsx" maxrows="200" maxcolumns="40" width="100%"
+	<button onClick="export2007()">Export to Excel 2007</button>
+	<spreadsheet id="ss" src="/TestFile2007.xlsx" maxrows="200" maxcolumns="40" width="100%"
 		height="100%" showContextMenu="true" showSheetbar="true" showToolbar="true"
 		apply="zss.testapp.SpreadSheetComposer" ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e"/>
+	<zscript><![CDATA[
+	import java.io.ByteArrayOutputStream;
+	
+	public void export2007() {
+		Book wb = ss.getBook();
+	    Exporter c = Exporters.getExporter("excel");
+	    ByteArrayOutputStream out = new ByteArrayOutputStream();
+	    c.export(wb, out);
+	    Filedownload.save(out.toByteArray(), "application/file", wb.getBookName());
+	}
+]]></zscript>
 </zk>
