@@ -264,7 +264,7 @@ zss.ToolbarbuttonSeparator = zk.$extends(zul.wgt.Toolbarbutton, {
 	domTextStyleAttr_: function () {
 		var u = zk.ajaxURI('/web/zss/img/sep.gif', {au: true});
 		return zUtl.appendAttr("style", 'background:url(' + u + 
-				') repeat-y scroll 0 0 transparent;height: 16px;width:2px;padding:2px 0;');
+				') repeat-y scroll 0 0 transparent;height: 20px;width:2px;padding:2px 0;');
 	},
 	getSclass: function () {
 		return 'zstbtn-sep';
