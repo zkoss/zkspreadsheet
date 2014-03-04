@@ -184,7 +184,7 @@ zss.Toolbar = zk.$extends(zul.layout.North, {
 			ss = this.$n('real').style,//to compitiable with ZK7		
 			sh = ss.height,
 			$cv = jq(this.$n('cave'));
-		if (sh && $cv.height() != sh) {
+		if (sh && $cv.height() != parseInt(sh)) {
 			$cv.height(sh + 'px');
 		}
 		return sz;

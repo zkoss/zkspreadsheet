@@ -308,8 +308,7 @@ zss.FormulabarWestCave = zk.$extends(zk.Widget, {
 	},
 	setFlexSize_: function(sz) {
 		var size = this.$supers(zss.FormulabarWestCave, 'setFlexSize_', arguments),
-			ss = this.$n().style,//to compitiable with ZK7
-			total = ss.width;
+			total = this.$n().clientWidth; //to compitiable with ZK7
 		//TODO: fine tune IE6/IE7 namebox width/height
 		this._namebox.setWidth(jq.px(total - this.$n('btns').clientWidth));
 	}
@@ -383,11 +382,11 @@ zss.FormulabarCenterCave = zk.$extends(zk.Widget, {
    	},
 	setFlexSize_: function(sz) {
 		var size = this.$supers(zss.FormulabarCenterCave, 'setFlexSize_', arguments),
-			ss = this.$n().style,//to compitiable with ZK7
+			ss = this.$n(),//to compitiable with ZK7
 			editor = this.editor,
 			btn = this.$n('expandbtn');
-		editor.setWidth(jq.px(ss.width - btn.clientWidth));
-		editor.setHeight(jq.px(ss.height - zk(editor.$n()).sumStyles('tb', jq.borders)));
+		editor.setWidth(jq.px(ss.clientWidth - btn.clientWidth));
+		editor.setHeight(jq.px(ss.clientHeight - zk(editor.$n()).sumStyles('tb', jq.borders)));
    	}
 });
 
