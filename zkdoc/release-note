@@ -73,6 +73,7 @@ ZK Spreadsheet 2.6.0
 	ZSS-219 Problem with org.zkoss.zss.ui.Spreadsheet.focusTo
 	ZSS-541 date autofill timestamp is incorrect
 	ZSS-547 Sheet index (31) is out of range (0..30) error when deleting sheets in a workbook
+	ZSS-572 Incorrect formula throws an exception
 
 ZK Spreadsheet 2.5.0
 *Features:   

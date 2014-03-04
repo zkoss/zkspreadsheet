@@ -29,6 +29,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.logging.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -60,15 +61,8 @@ import org.zkoss.poi.hssf.util.PaneInformation;
 import org.zkoss.poi.ss.SpreadsheetVersion;
 import org.zkoss.poi.ss.format.CellFormat;
 import org.zkoss.poi.ss.format.Formatters;
-import org.zkoss.poi.ss.formula.FormulaParser;
-import org.zkoss.poi.ss.formula.FormulaParsingWorkbook;
-import org.zkoss.poi.ss.formula.FormulaRenderer;
-import org.zkoss.poi.ss.formula.FormulaType;
-import org.zkoss.poi.ss.formula.LazyAreaEval;
-import org.zkoss.poi.ss.formula.PtgShifter;
-import org.zkoss.poi.ss.formula.eval.AreaEval;
-import org.zkoss.poi.ss.formula.eval.ArrayEval;
-import org.zkoss.poi.ss.formula.eval.ValueEval;
+import org.zkoss.poi.ss.formula.*;
+import org.zkoss.poi.ss.formula.eval.*;
 import org.zkoss.poi.ss.formula.ptg.Area3DPtg;
 import org.zkoss.poi.ss.formula.ptg.AreaPtgBase;
 import org.zkoss.poi.ss.formula.ptg.Ptg;
@@ -139,6 +133,7 @@ import org.zkoss.zss.model.Range;
 import org.zkoss.zss.model.Worksheet;
 import org.zkoss.zss.ui.impl.Styles;
 
+
 /**
  * Internal User only. Helper class to handle the two version of Books.
  * @author henrichen
@@ -203,6 +198,8 @@ public final class BookHelper {
 	public final static int FILL_GROWTH_TREND = 0x100; //multiplicative relation
 	public final static int FILL_LINER_TREND = 0x200; //additive relation
 	public final static int FILL_SERIES = FILL_LINER_TREND;
+	
+	private static final Logger logger = Logger.getLogger(BookHelper.class.getName());
 	
 	public static RefBook getRefBook(Book book) {
 		return book instanceof HSSFBookImpl ? 
@@ -472,6 +469,16 @@ public final class BookHelper {
 			//set back into Cell formula record(update value and cachedFormulaResultType)
 			setCellValue(cell, cv);
 			return cv;
+		}catch(Exception e){ //handle all runtime exceptions happened in evaluating formulas, hawk
+			if(e instanceof FormulaParseException){
+				setCellValue(cell, CellValue.getError(ErrorEval.REF_INVALID.getErrorCode()));
+				return CellValue.getError(ErrorEval.REF_INVALID.getErrorCode());
+			}else{
+				//call getCellFormula() here will cause IllegalStateException.
+				logger.log(Level.SEVERE, "error evaluating formula at "+new CellReference(cell.getRowIndex(),cell.getColumnIndex()).formatAsString(), e);
+				setCellValue(cell, CellValue.getError(ErrorEval.VALUE_INVALID.getErrorCode()));
+				return CellValue.getError(ErrorEval.VALUE_INVALID.getErrorCode());
+			}
 		} finally {
 			XelContextHolder.setXelContext(old);
 		}
