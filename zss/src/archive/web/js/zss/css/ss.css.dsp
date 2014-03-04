@@ -1075,8 +1075,9 @@
 	background: url(${c:encodeURL('~./zss/img/toolbarbtn-ctr.gif')}) 0 -500px;
 }
 .zsformulabar-expandbtn .z-toolbarbutton-content {
-	width: 20px;
-	height: 17px;
+	display: inline-block;
+	width: 24px;
+	height: 21px;
 	padding: 2px;
 	background: url(${c:encodeURL('~./zss/img/arrow-270-small.png')}) no-repeat 4px 2px transparent;
 	<c:if test="${c:browser('ie6-')}">
