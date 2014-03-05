@@ -1310,7 +1310,7 @@ public final class BookHelper {
 	}
 	
 	//[0]:last, [1]:all
-	private static Set<Ref>[] getBothDependents(Cell cell) {
+	public static Set<Ref>[] getBothDependents(Cell cell) {
 		final Worksheet sheet = (Worksheet) cell.getSheet();
 		final Book book = (Book) sheet.getWorkbook();
 		final RefSheet refSheet = getRefSheet(book, sheet);

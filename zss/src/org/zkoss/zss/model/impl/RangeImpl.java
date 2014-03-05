@@ -13,63 +13,20 @@ Copyright (C) 2010 Potix Corporation. All Rights Reserved.
 
 package org.zkoss.zss.model.impl;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
 import org.zkoss.lang.Strings;
 import org.zkoss.poi.ss.SpreadsheetVersion;
-import org.zkoss.poi.ss.usermodel.AutoFilter;
-import org.zkoss.poi.ss.usermodel.BorderStyle;
-import org.zkoss.poi.ss.usermodel.Cell;
-import org.zkoss.poi.ss.usermodel.CellStyle;
-import org.zkoss.poi.ss.usermodel.CellValue;
-import org.zkoss.poi.ss.usermodel.Chart;
-import org.zkoss.poi.ss.usermodel.ClientAnchor;
-import org.zkoss.poi.ss.usermodel.DataValidation;
-import org.zkoss.poi.ss.usermodel.FilterColumn;
-import org.zkoss.poi.ss.usermodel.FormulaError;
-import org.zkoss.poi.ss.usermodel.Hyperlink;
-import org.zkoss.poi.ss.usermodel.Picture;
-import org.zkoss.poi.ss.usermodel.RichTextString;
-import org.zkoss.poi.ss.usermodel.Row;
-import org.zkoss.poi.ss.usermodel.Sheet;
-import org.zkoss.poi.ss.usermodel.Workbook;
-import org.zkoss.poi.ss.usermodel.ZssContext;
-import org.zkoss.poi.ss.usermodel.charts.ChartData;
-import org.zkoss.poi.ss.usermodel.charts.ChartGrouping;
-import org.zkoss.poi.ss.usermodel.charts.ChartType;
-import org.zkoss.poi.ss.usermodel.charts.LegendPosition;
+import org.zkoss.poi.ss.usermodel.*;
+import org.zkoss.poi.ss.usermodel.charts.*;
 import org.zkoss.poi.ss.util.CellRangeAddress;
 import org.zkoss.poi.xssf.usermodel.XSSFChartX;
 import org.zkoss.zk.ui.UiException;
-import org.zkoss.zk.ui.event.EventQueue;
-import org.zkoss.zss.engine.Ref;
-import org.zkoss.zss.engine.RefBook;
-import org.zkoss.zss.engine.RefSheet;
+import org.zkoss.zss.engine.*;
 import org.zkoss.zss.engine.event.SSDataEvent;
-import org.zkoss.zss.engine.impl.AreaRefImpl;
-import org.zkoss.zss.engine.impl.CellRefImpl;
-import org.zkoss.zss.engine.impl.ChangeInfo;
-import org.zkoss.zss.engine.impl.MergeChange;
-import org.zkoss.zss.engine.impl.RefAddr;
-import org.zkoss.zss.engine.impl.RefSheetImpl;
-import org.zkoss.zss.model.Areas;
-import org.zkoss.zss.model.Book;
-import org.zkoss.zss.model.FormatText;
-import org.zkoss.zss.model.Range;
-import org.zkoss.zss.model.Ranges;
-import org.zkoss.zss.model.Worksheet;
+import org.zkoss.zss.engine.impl.*;
+import org.zkoss.zss.model.*;
 import org.zkoss.zul.Messagebox;
 /**
  * Implementation of {@link Range} which plays a facade to operate on the spreadsheet data models
@@ -1306,11 +1263,41 @@ public class RangeImpl implements Range {
 	
 	public void notifyChange() {
 		synchronized (_sheet) {
-			if (_refs != null && !_refs.isEmpty()) {
-				final Book book = (Book) _sheet.getWorkbook();
-				BookHelper.notifyCellChanges(book, _refs);
+			if(_refs == null || _refs.isEmpty()){
+				return;
+			}
+			for(Ref ref : _refs) {
+				final int tRow = ref.getTopRow();
+				final int lCol = ref.getLeftCol();
+				final int bRow = ref.getBottomRow();
+				final int rCol = ref.getRightCol();
+				final RefSheet refSheet = ref.getOwnerSheet();
+				final Worksheet sheet = BookHelper.getSheet(_sheet, refSheet);
+				final Book book = sheet.getBook();
+				final Set<Ref> all = new HashSet<Ref>();
+				final Set<Ref> last = new HashSet<Ref>();
+				for(int row = tRow; row <= bRow; ++row) {
+					for (int col = lCol; col <= rCol; ++col) {
+						final Cell cell = BookHelper.getCell(sheet, row, col);
+						if(cell==null){
+							continue;
+						}
+						Set<Ref>[] refs = BookHelper.getBothDependents(cell);
+						last.addAll(refs[0]);
+						all.addAll(refs[1]);
+					}
+				}
+				
+				if (!all.isEmpty() || !all.isEmpty()) {
+					BookHelper.reevaluateAndNotify(book, all,last);
+				}
 			}
 		}
+	}
+	
+	@Override
+	public void notifyChange(String[] variables) {
+		_sheet.getBook().notifyChange(variables);
 	}
 	
 	@Override

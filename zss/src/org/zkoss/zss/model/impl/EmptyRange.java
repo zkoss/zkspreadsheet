@@ -370,4 +370,9 @@ public class EmptyRange implements Range {
 	@Override
 	public void notifyChange() {
 	}
+	
+	@Override
+	public void notifyChange(String[] variables) {
+		
+	}
 }

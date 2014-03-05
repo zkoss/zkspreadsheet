@@ -615,4 +615,10 @@ public interface Range {
 	 * @since 2.6
 	 */
 	public void notifyChange();
+	
+	/**
+	 * Notify the whole book of specified variables change. Then spreadsheet will re-evaluate those cells that reference to these variables.
+	 * @param variables changed variables 
+	 */
+	public void notifyChange(String[] variables);
 }

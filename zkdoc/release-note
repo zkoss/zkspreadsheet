@@ -75,6 +75,7 @@ ZK Spreadsheet 2.6.0
 	ZSS-547 Sheet index (31) is out of range (0..30) error when deleting sheets in a workbook
 	ZSS-572 Incorrect formula throws an exception
 	ZSS-575 Cannot edit a formula with non-existed named range
+	ZSS-569 Range.notifyChange can't update formula value
 
 ZK Spreadsheet 2.5.0
 *Features:   
