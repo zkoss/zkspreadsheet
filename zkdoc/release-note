@@ -4,6 +4,7 @@ ZK Spreadsheet 3.5.0
   
 *Bugs:
   ZSS-350 When using cell validation with cell list, the drop-down list won't update after the referred cells changed
+  ZSS-581 Formula lost to update after rename 2 sheet
   
 ** Upgrade Notes
   * Following api are removed
