@@ -40,8 +40,7 @@ public class RefBeanComposer extends SelectorComposer<Component> {
 	public void update() {
 		updateAssetsBean();
 		//notify spreadsheet about the bean's change
-//		Ranges.range(ss.getSelectedSheet()).notifyChange(new String[] {"myBean"} );
-		Ranges.range(ss.getSelectedSheet()).notifyChange();
+		Ranges.range(ss.getSelectedSheet()).notifyChange(new String[] {"myBean"} );
 	}
 
 	/**
