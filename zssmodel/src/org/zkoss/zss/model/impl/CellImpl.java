@@ -210,7 +210,7 @@ public class CellImpl extends AbstractCellAdv {
 		FormulaExpression expr = fe.parse(formula, new FormulaParseContext(this,null));//for test error, no need to build dependency
 		if(expr.hasError()){	
 			String msg = expr.getErrorMessage();
-			throw new InvalidateFormulaException(msg==null?"The formula contains error":msg);
+			throw new InvalidateFormulaException(msg==null?"The formula ="+formula+" contains error":msg);
 		}
 		
 		if(getType()==CellType.FORMULA){

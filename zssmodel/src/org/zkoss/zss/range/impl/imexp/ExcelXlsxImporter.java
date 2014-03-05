@@ -305,7 +305,12 @@ public class ExcelXlsxImporter extends AbstractExcelImporter{
 						expression.append("\"\"");
 					}
 				}else{
-					expression.append(value.toString());
+					//ZSS-577 it is possible a string array
+					if(dataSource.isNumeric()){
+						expression.append(value.toString());
+					}else{
+						expression.append("\"").append(value).append("\"");
+					}
 				}
 				if (i != count-1){
 					expression.append(",");
