@@ -294,8 +294,11 @@ public class ExcelXlsxImporter extends AbstractExcelImporter{
 		if (dataSource.isReference()){
 			return dataSource.getFormulaString();
 		}else{
-			StringBuilder expression = new StringBuilder("{");
 			int count = dataSource.getPointCount();
+			if(count<=0){
+				return null;
+			}
+			StringBuilder expression = new StringBuilder("{");
 			for (int i = 0; i < count; ++i) {
 				Object value = dataSource.getPointAt(i); //Number or String
 				if (value == null){
