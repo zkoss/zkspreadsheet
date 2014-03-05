@@ -1,0 +1,30 @@
+<zk>
+	
+	<groupbox title="2007">
+	<button onClick="export2007()">Export to Excel </button>
+	<spreadsheet id="ss2007" src="/issue/575-name.xlsx" maxrows="200" maxcolumns="40" width="80%"
+		height="600px" showContextMenu="true" showSheetbar="true" showToolbar="true" showFormulabar="true"/>
+	</groupbox>
+
+	<groupbox title="2003">
+	<button onClick="export2003()">Export to Excel </button>
+	<spreadsheet id="ss2003" src="/issue/575-name.xls" maxrows="200" maxcolumns="40" width="80%"
+		height="600px" showContextMenu="true" showSheetbar="true" showToolbar="true" showFormulabar="true"/>
+	<zscript><![CDATA[
+	import java.io.ByteArrayOutputStream;
+	
+	public void export2007() {
+		export(ss2007.getBook());
+	}
+	public void export2003() {
+		export(ss2003.getBook());
+	}
+	public void export(Book book){
+		Exporter c = Exporters.getExporter("excel");
+	    ByteArrayOutputStream out = new ByteArrayOutputStream();
+	    c.export(book, out);
+	    Filedownload.save(out.toByteArray(), "application/file", wb.getBookName());
+	}
+	]]></zscript>
+	</groupbox>
+</zk>
