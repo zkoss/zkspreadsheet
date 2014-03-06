@@ -29,8 +29,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -124,6 +122,7 @@ import org.zkoss.poi.xssf.usermodel.XSSFFont;
 import org.zkoss.poi.xssf.usermodel.XSSFRichTextString;
 import org.zkoss.poi.xssf.usermodel.XSSFSheet;
 import org.zkoss.poi.xssf.usermodel.XSSFWorkbook;
+import org.zkoss.util.logging.Log;
 import org.zkoss.xel.FunctionMapper;
 import org.zkoss.xel.VariableResolver;
 import org.zkoss.xel.XelContext;
@@ -209,7 +208,7 @@ public final class BookHelper {
 	public final static int FILL_LINER_TREND = 0x200; //additive relation
 	public final static int FILL_SERIES = FILL_LINER_TREND;
 	
-	private static final Logger logger = Logger.getLogger(BookHelper.class.getName());
+	private static final Log logger = Log.lookup(BookHelper.class.getName());
 	
 	public static RefBook getRefBook(XBook book) {
 		return book instanceof HSSFBookImpl ? 
@@ -516,7 +515,7 @@ public final class BookHelper {
 				setCellValue(cell, CellValue.getError(ErrorEval.REF_INVALID.getErrorCode()));
 				return CellValue.getError(ErrorEval.REF_INVALID.getErrorCode());
 			}else{
-				logger.log(Level.SEVERE, "error evaluating formula: "+cell.getCellFormula()+" at "+Ranges.getCellRefString(cell.getRowIndex(),cell.getColumnIndex()), e);
+				logger.error("error evaluating formula: "+cell.getCellFormula()+" at "+Ranges.getCellRefString(cell.getRowIndex(),cell.getColumnIndex()), e);
 				setCellValue(cell, CellValue.getError(ErrorEval.VALUE_INVALID.getErrorCode()));
 				return CellValue.getError(ErrorEval.VALUE_INVALID.getErrorCode());
 			}
