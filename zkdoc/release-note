@@ -5,6 +5,7 @@ ZK Spreadsheet 3.5.0
 *Bugs:
   ZSS-350 When using cell validation with cell list, the drop-down list won't update after the referred cells changed
   ZSS-581 Formula lost to update after rename 2 sheet
+  ZSS-583 NullPointerException when the sheet has hyperlinks with empty URL
   
 ** Upgrade Notes
   * Following api are removed
