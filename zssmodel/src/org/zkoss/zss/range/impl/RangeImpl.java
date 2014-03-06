@@ -349,10 +349,11 @@ public class RangeImpl implements SRange {
 				
 				Object cellval = cell.getValue();
 				Object resultVal = result.getValue();
-				String format = result.getFormat();
-				if (euqlas(cellval, resultVal)) {
+				
+				if (cell.getType()==result.getType() && euqlas(cellval, resultVal)) {
 					return true;
 				}
+				String format = result.getFormat();
 				
 				switch (result.getType()) {
 				case BLANK:
