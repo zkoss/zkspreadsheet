@@ -281,10 +281,9 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 		
 		Hyperlink poiHyperlink = poiCell.getHyperlink();
 		if (poiHyperlink != null) {
-			SHyperlink hyperlink = cell.setupHyperlink();
-			hyperlink.setType(PoiEnumConversion.toHyperlinkType(poiHyperlink.getType()));
-			hyperlink.setAddress(poiHyperlink.getAddress());
-			hyperlink.setLabel(poiHyperlink.getLabel());
+			String addr = poiHyperlink.getAddress();
+			String label = poiHyperlink.getLabel();
+			SHyperlink hyperlink = cell.setupHyperlink(PoiEnumConversion.toHyperlinkType(poiHyperlink.getType()),addr==null?"":addr,label==null?"":label);
 			cell.setHyperlink(hyperlink);
 		}
 		

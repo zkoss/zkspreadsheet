@@ -15,6 +15,9 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 }}IS_RIGHT
 */
 package org.zkoss.zss.model.impl;
+
+import org.zkoss.zss.model.util.Validations;
+
 /**
  * 
  * @author dennis
@@ -28,8 +31,8 @@ public class HyperlinkImpl extends AbstractHyperlinkAdv {
 	private String address;
 	private String label;
 	
-	public HyperlinkImpl(){}
 	public HyperlinkImpl(HyperlinkType type,String address, String label){
+		Validations.argNotNull(type,address);
 		this.type = type;
 		this.address = address;
 		this.label = label;
@@ -39,12 +42,14 @@ public class HyperlinkImpl extends AbstractHyperlinkAdv {
 		return type;
 	}
 	public void setType(HyperlinkType type) {
+		Validations.argNotNull(type);
 		this.type = type;
 	}
 	public String getAddress() {
 		return address;
 	}
 	public void setAddress(String address) {
+		Validations.argNotNull(address);
 		this.address = address;
 	}
 	public String getLabel() {

@@ -374,10 +374,7 @@ public class RangeImpl implements SRange {
 				case STRING:
 					cell.setStringValue((String) resultVal);
 					if(hyperlinkType.get()!=null){
-						SHyperlink link = cell.setupHyperlink();
-						link.setType(hyperlinkType.get());
-						link.setAddress((String)resultVal);
-						link.setLabel((String)resultVal);
+						cell.setupHyperlink(hyperlinkType.get(),(String)resultVal,(String)resultVal);
 					}
 					break;
 				case ERROR:
@@ -974,10 +971,7 @@ public class RangeImpl implements SRange {
 			final String display) {
 		new CellVisitorTask(new CellVisitorForUpdate() {
 			public boolean visit(SCell cell) {
-				SHyperlink link = cell.setupHyperlink();
-				link.setType(linkType);
-				link.setAddress(address);
-				link.setLabel(display);
+				SHyperlink link = cell.setupHyperlink(linkType,address,display);
 				
 				String text = display;
 				while(text.startsWith("=")){

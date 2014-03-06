@@ -160,10 +160,7 @@ public class ExporterTest extends ImExpTestBase {
 		SBook book = SBooks.createBook("hyperlink");
 		SSheet sheet = book.createSheet("link");
 		SCell cell = sheet.getCell(0, 0);
-		SHyperlink hyperlink = cell.setupHyperlink();
-		hyperlink.setAddress("http://www.zkoss.org/download/zkspreadsheet");
-		hyperlink.setLabel("Download ZK Spreadsheet");
-		hyperlink.setType(SHyperlink.HyperlinkType.URL);
+		SHyperlink hyperlink = cell.setupHyperlink(SHyperlink.HyperlinkType.URL,"http://www.zkoss.org/download/zkspreadsheet","Download ZK Spreadsheet");
 
 		cell.setStringValue("Go to ZK Spreadsheet Download Page");
 
@@ -185,10 +182,7 @@ public class ExporterTest extends ImExpTestBase {
 		font3.setUnderline(Underline.SINGLE);
 		rText.addSegment("xyz", font3);
 		
-		SHyperlink linkB4 = cellB4.setupHyperlink();
-		linkB4.setAddress("http://www.yahoo.com.tw/");
-		linkB4.setLabel("Hyperlink Label B4");
-		linkB4.setType(SHyperlink.HyperlinkType.URL);
+		SHyperlink linkB4 = cellB4.setupHyperlink(SHyperlink.HyperlinkType.URL,"http://www.yahoo.com.tw/","Hyperlink Label B4");
 		
 		ImExpTestUtil.write(book, ExcelExportFactory.Type.XLSX);
 	}

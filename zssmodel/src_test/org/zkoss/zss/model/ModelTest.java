@@ -2329,7 +2329,7 @@ public class ModelTest {
 		sheet.getCell(4, 1).setDateValue(now);
 		sheet.getCell(5, 1).setErrorValue(new ErrorValue(ErrorValue.INVALID_NAME));
 		
-		sheet.getCell(5, 1).setupHyperlink().setType(HyperlinkType.URL);
+		sheet.getCell(5, 1).setupHyperlink(HyperlinkType.URL,"httt://www.zkoss.org",null);
 		
 		sheet.getCell(5, 0).setupRichTextValue().addSegment("ABC",book.getDefaultFont());
 		
