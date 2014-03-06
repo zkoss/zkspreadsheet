@@ -1,7 +1,7 @@
-<zk>
-<button onClick="export()">Export to Excel</button>
-	<spreadsheet id="ss" src="/TestFile2007.xlsx" maxVisibleRows="200" maxVisibleColumns="40" width="100%"
-		height="100%" showContextMenu="true" showSheetbar="true" showToolbar="true" 
+<vbox hflex="1" vflex="1">
+	<button onClick="export()">Export to Excel</button>
+	<spreadsheet id="ss" src="/TestFile2007.xlsx" maxVisibleRows="200" maxVisibleColumns="40"
+		hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
 		showFormulabar="true"/>
 	<zscript><![CDATA[
 	import java.io.ByteArrayOutputStream;
@@ -14,4 +14,4 @@
 	    Filedownload.save(out.toByteArray(), "application/file", wb.getBookName());
 	}
 	]]></zscript>		
-</zk>
+</vbox>

@@ -1,0 +1,22 @@
+<vbox hflex="1" vflex="1">
+	<hbox>
+		<button onClick="deleteColumn()">Delete Column</button>
+		<button onClick="deleteRow()">Delete Row</button>
+	</hbox>
+	<spreadsheet id="ss" src="/issue3/book/587-gridline.xlsx" maxVisibleRows="200" maxVisibleColumns="40"
+		hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
+		showFormulabar="true"/>
+	<zscript><![CDATA[
+	import java.io.ByteArrayOutputStream;
+	
+	public void deleteColumn() throws java.io.IOException {
+		Sheet sheet = ss.getSelectedSheet();
+		Ranges.range(sheet,"A1:B1").toColumnRange().delete(org.zkoss.zss.api.Range.DeleteShift.DEFAULT);
+	}
+	public void deleteRow() throws java.io.IOException {
+		Sheet sheet = ss.getSelectedSheet();
+		Ranges.range(sheet,"A1:A2").toRowRange().delete(org.zkoss.zss.api.Range.DeleteShift.DEFAULT);
+	}
+	
+	]]></zscript>		
+</vbox>

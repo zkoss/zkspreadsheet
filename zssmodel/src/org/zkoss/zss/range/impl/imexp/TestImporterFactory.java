@@ -100,12 +100,18 @@ public class TestImporterFactory implements SImporterFactory{
 			
 			private void buildTest(SBook book) {
 				SSheet sheet1 = book.createSheet("Sheet1");
-				SSheet sheet2 = book.createSheet("Sheet2");
-				SSheet sheet3 = book.createSheet("Sheet3");
-				
-				sheet1.getCell("A1").setValue("=Sheet2!A1");
-				sheet2.getCell("A1").setValue("=Sheet3!A1");
-				sheet3.getCell("A1").setValue("3");
+				SChart chart = sheet1.addChart(ChartType.LINE, new ViewAnchor(0, 9, 600, 400));
+				chart.setLegendPosition(ChartLegendPosition.RIGHT);
+				SGeneralChartData data = (SGeneralChartData)chart.getData();
+				sheet1.getCell("A1").setValue("A");
+				sheet1.getCell("B1").setValue("B");
+				sheet1.getCell("C1").setValue("C");
+				sheet1.getCell("A2").setValue("KK");
+				sheet1.getCell("A3").setValue(1);
+				sheet1.getCell("B3").setValue(2);
+				sheet1.getCell("C3").setValue(3);
+				data.setCategoriesFormula("A1:C1");
+				data.addSeries().setFormula("A2", "Sheet1!A3:C3");
 			}
 			private void buildInsertDeleteTest(SBook book) {
 				SSheet sheet1 = book.createSheet("Insert Delete");

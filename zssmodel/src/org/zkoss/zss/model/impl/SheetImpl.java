@@ -481,30 +481,25 @@ public class SheetImpl extends AbstractSheetAdv {
 		for(AbstractRowAdv row:exceeds){
 			row.destroy();
 		}
-		
+		Map<String,Object> dataBefore = shiftBeforeRowInsert(rowIdx,lastRowIdx);
 		ModelUpdateUtil.addInsertDeleteUpdate(this, true, true, rowIdx, lastRowIdx);
-		shiftAfterRowInsert(rowIdx,lastRowIdx);
+		shiftAfterRowInsert(dataBefore,rowIdx,lastRowIdx);
 	}
 	
-	@Override
-	public void deleteRow(int rowIdx, int lastRowIdx) {
-		checkOrphan();
-		if(rowIdx>lastRowIdx){
-			throw new IllegalArgumentException(rowIdx+">"+lastRowIdx);
-		}
-		
-		//clear before move relation
-		for(AbstractRowAdv row:rows.subValues(rowIdx,lastRowIdx)){
-			row.destroy();
-		}
-		int size = lastRowIdx-rowIdx+1;
-		rows.delete(rowIdx, size);
-		
-		ModelUpdateUtil.addInsertDeleteUpdate(this, false, true, rowIdx, lastRowIdx);
-		shiftAfterRowDelete(rowIdx,lastRowIdx);
-	}	
-	
-	private void shiftAfterRowInsert(int rowIdx, int lastRowIdx) {
+	private Map<String, Object> shiftBeforeRowInsert(int rowIdx, int lastRowIdx) {
+		Map<String,Object> dataBefore = new HashMap<String, Object>();
+		// handling merged regions shift
+		// find merge cells in affected region and remove them
+		CellRegion affectedRegion = new CellRegion(rowIdx, 0, book.getMaxRowIndex(), book.getMaxColumnIndex());
+		List<CellRegion> toExtend = getOverlapsMergedRegions(affectedRegion, true);
+		List<CellRegion> toShift = getContainsMergedRegions(affectedRegion);
+		removeMergedRegion(affectedRegion, true);
+		dataBefore.put("toExtend", toExtend);
+		dataBefore.put("toShift", toShift);
+		return dataBefore;
+	}
+
+	private void shiftAfterRowInsert(Map<String, Object> dataBefore, int rowIdx, int lastRowIdx) {
 		// handling pic location shift
 		int size = lastRowIdx - rowIdx+1;
 		for (AbstractPictureAdv pic : pictures) {
@@ -524,16 +519,13 @@ public class SheetImpl extends AbstractSheetAdv {
 		}
 		
 		// handling merged regions shift
-		// find merge cells in affected region and remove them
-		CellRegion affectedRegion = new CellRegion(rowIdx, 0, book.getMaxRowIndex(), book.getMaxColumnIndex());
-		List<CellRegion> toExtend = getOverlapsMergedRegions(affectedRegion, true);
-		List<CellRegion> toShiftOnly = getContainsMergedRegions(affectedRegion);
-		removeMergedRegion(affectedRegion, true);
+		List<CellRegion> toExtend = (List<CellRegion>)dataBefore.get("toExtend");
+		List<CellRegion> toShift = (List<CellRegion>)dataBefore.get("toShift");
 		// extend/move removed merged cells, then add them back
 		for(CellRegion r : toExtend) {
 			addMergedRegion(new CellRegion(r.row, r.column, r.lastRow + size, r.lastColumn));
 		}
-		for(CellRegion r : toShiftOnly) {
+		for(CellRegion r : toShift) {
 			addMergedRegion(new CellRegion(r.row + size, r.column, r.lastRow + size, r.lastColumn));
 		}
 		
@@ -567,10 +559,36 @@ public class SheetImpl extends AbstractSheetAdv {
 		}
 		
 		extendFormula(new CellRegion(rowIdx,0,lastRowIdx,book.getMaxColumnIndex()), false);
+	}	
+	
+	@Override
+	public void deleteRow(int rowIdx, int lastRowIdx) {
+		checkOrphan();
+		if(rowIdx>lastRowIdx){
+			throw new IllegalArgumentException(rowIdx+">"+lastRowIdx);
+		}
+		
+		//clear before move relation
+		for(AbstractRowAdv row:rows.subValues(rowIdx,lastRowIdx)){
+			row.destroy();
+		}
+		int size = lastRowIdx-rowIdx+1;
+		rows.delete(rowIdx, size);
+		Map<String,Object> dataBefore = shiftBeforeRowDelete(rowIdx,lastRowIdx);
+		ModelUpdateUtil.addInsertDeleteUpdate(this, false, true, rowIdx, lastRowIdx);
+		shiftAfterRowDelete(dataBefore,rowIdx,lastRowIdx);
+	}	
+	
+	private Map<String, Object> shiftBeforeRowDelete(int rowIdx, int lastRowIdx) {
+		Map<String,Object> dataBefore = new HashMap<String,Object>();
+		CellRegion affectedRegion = new CellRegion(rowIdx, 0, book.getMaxRowIndex(), book.getMaxColumnIndex());
+		List<CellRegion> toShrink = getOverlapsMergedRegions(affectedRegion, false);
+		removeMergedRegion(affectedRegion, true);
+		dataBefore.put("toShrink", toShrink);
+		return dataBefore;
 	}
-	
-	
-	private void shiftAfterRowDelete(int rowIdx, int lastRowIdx) {
+
+	private void shiftAfterRowDelete(Map<String, Object> dataBefore, int rowIdx, int lastRowIdx) {
 		//handling pic shift
 		int size = lastRowIdx - rowIdx+1;
 		for(AbstractPictureAdv pic:pictures){
@@ -596,10 +614,7 @@ public class SheetImpl extends AbstractSheetAdv {
 		}
 		
 		// handling merged regions shift
-		// find merge cells in affected region and remove them
-		CellRegion affectedRegion = new CellRegion(rowIdx, 0, book.getMaxRowIndex(), book.getMaxColumnIndex());
-		List<CellRegion> toShrink = getOverlapsMergedRegions(affectedRegion, false);
-		removeMergedRegion(affectedRegion, true);
+		List<CellRegion> toShrink = (List<CellRegion>)dataBefore.get("toShrink");
 		// shrink/move removed merged cells, then add them back
 		for(CellRegion r : toShrink) {
 			CellRegion shrank = shrinkRow(r, rowIdx, lastRowIdx);
@@ -652,87 +667,6 @@ public class SheetImpl extends AbstractSheetAdv {
 			b = c - 1; //
 		}
 		return (b >= a) ? new int[]{a, b} : null;
-	}
-	
-	private void shiftAfterColumnInsert(int columnIdx, int lastColumnIdx) {
-		int size = lastColumnIdx - columnIdx+1;
-		// handling pic shift
-		for (AbstractPictureAdv pic : pictures) {
-			ViewAnchor anchor = pic.getAnchor();
-			int idx = anchor.getColumnIndex();
-			if (idx >= columnIdx) {
-				anchor.setColumnIndex(idx + size);
-			}
-		}
-		// handling chart shift
-		for (AbstractChartAdv chart : charts) {
-			ViewAnchor anchor = chart.getAnchor();
-			int idx = anchor.getColumnIndex();
-			if (idx >= columnIdx) {
-				anchor.setColumnIndex(idx + size);
-			}
-		}
-		
-		// handling merged regions shift
-		// find merge cells in affected region and remove them
-		CellRegion affectedRegion = new CellRegion(0, columnIdx, book.getMaxRowIndex(), book.getMaxColumnIndex());
-		List<CellRegion> toExtend = getOverlapsMergedRegions(affectedRegion, true);
-		List<CellRegion> toShiftOnly = getContainsMergedRegions(affectedRegion);
-		removeMergedRegion(affectedRegion, true);
-		// extend/move removed merged cells, then add them back
-		for(CellRegion r : toExtend) {
-			addMergedRegion(new CellRegion(r.row, r.column, r.lastRow, r.lastColumn + size));
-		}
-		for(CellRegion r : toShiftOnly) {
-			addMergedRegion(new CellRegion(r.row, r.column + size, r.lastRow, r.lastColumn + size));
-		}
-
-		//TODO shift data validation?
-		
-		extendFormula(new CellRegion(0,columnIdx,book.getMaxRowIndex(),lastColumnIdx), true);
-		
-	}
-	private void shiftAfterColumnDelete(int columnIdx,int lastColumnIdx) {
-		int size = lastColumnIdx - columnIdx+1;
-		//handling pic shift
-		for(AbstractPictureAdv pic:pictures){
-			ViewAnchor anchor = pic.getAnchor();
-			int idx = anchor.getColumnIndex();
-			if(idx >= columnIdx+size){
-				anchor.setColumnIndex(idx-size);
-			}else if(idx >= columnIdx){
-				anchor.setColumnIndex(columnIdx);//as excel's rule
-				anchor.setXOffset(0);
-			}
-		}
-		//handling chart shift
-		for(AbstractChartAdv chart:charts){
-			ViewAnchor anchor = chart.getAnchor();
-			int idx = anchor.getColumnIndex();
-			if(idx >= columnIdx+size){
-				anchor.setColumnIndex(idx-size);
-			}else if(idx >= columnIdx){
-				anchor.setColumnIndex(columnIdx);//as excel's rule
-				anchor.setXOffset(0);
-			}
-		}
-		
-		// handling merged regions shift
-		// find merge cells in affected region and remove them
-		CellRegion affectedRegion = new CellRegion(0, columnIdx, book.getMaxRowIndex(), book.getMaxColumnIndex());
-		List<CellRegion> toShrink = getOverlapsMergedRegions(affectedRegion, false);
-		removeMergedRegion(affectedRegion, true);
-		// shrink/move removed merged cells, then add them back
-		for(CellRegion r : toShrink) {
-			CellRegion shrank = shrinkColumn(r, columnIdx, lastColumnIdx);
-			if(shrank != null) {
-				addMergedRegion(shrank);
-			}
-		}
-
-		//TODO shift data validation?
-
-		shrinkFormula(new CellRegion(0,columnIdx,book.getMaxRowIndex(),lastColumnIdx), true);
 	}
 	
 	@Override
@@ -957,10 +891,60 @@ public class SheetImpl extends AbstractSheetAdv {
 		for(AbstractRowAdv row:rows.values()){
 			row.insertCell(columnIdx,size);
 		}
-		
+		Map<String,Object> dataBefore = shiftBeforeColumnInsert(columnIdx,lastColumnIdx);
 		ModelUpdateUtil.addInsertDeleteUpdate(this, true, false, columnIdx, lastColumnIdx);
-		shiftAfterColumnInsert(columnIdx,lastColumnIdx);
+		shiftAfterColumnInsert(dataBefore,columnIdx,lastColumnIdx);
 	}
+	
+	private Map<String, Object> shiftBeforeColumnInsert(int columnIdx,
+			int lastColumnIdx) {
+		Map<String,Object> dataBefore = new HashMap<String, Object>();
+		// handling merged regions shift
+		// find merge cells in affected region and remove them
+		CellRegion affectedRegion = new CellRegion(0, columnIdx, book.getMaxRowIndex(), book.getMaxColumnIndex());
+		List<CellRegion> toExtend = getOverlapsMergedRegions(affectedRegion, true);
+		List<CellRegion> toShift = getContainsMergedRegions(affectedRegion);
+		removeMergedRegion(affectedRegion, true);
+		dataBefore.put("toExtend", toExtend);
+		dataBefore.put("toShift", toShift);
+		return dataBefore;
+	}
+
+	private void shiftAfterColumnInsert(Map<String, Object> dataBefore, int columnIdx, int lastColumnIdx) {
+		int size = lastColumnIdx - columnIdx+1;
+		// handling pic shift
+		for (AbstractPictureAdv pic : pictures) {
+			ViewAnchor anchor = pic.getAnchor();
+			int idx = anchor.getColumnIndex();
+			if (idx >= columnIdx) {
+				anchor.setColumnIndex(idx + size);
+			}
+		}
+		// handling chart shift
+		for (AbstractChartAdv chart : charts) {
+			ViewAnchor anchor = chart.getAnchor();
+			int idx = anchor.getColumnIndex();
+			if (idx >= columnIdx) {
+				anchor.setColumnIndex(idx + size);
+			}
+		}
+		
+		// handling merged regions shift
+		List<CellRegion> toExtend = (List<CellRegion>)dataBefore.get("toExtend");
+		List<CellRegion> toShift = (List<CellRegion>)dataBefore.get("toShift");
+		// extend/move removed merged cells, then add them back
+		for(CellRegion r : toExtend) {
+			addMergedRegion(new CellRegion(r.row, r.column, r.lastRow, r.lastColumn + size));
+		}
+		for(CellRegion r : toShift) {
+			addMergedRegion(new CellRegion(r.row, r.column + size, r.lastRow, r.lastColumn + size));
+		}
+
+		//TODO shift data validation?
+		
+		extendFormula(new CellRegion(0,columnIdx,book.getMaxRowIndex(),lastColumnIdx), true);
+		
+	}	
 	
 	private void insertAndSplitColumnArray(int columnIdx,int size){
 				
@@ -1061,10 +1045,62 @@ public class SheetImpl extends AbstractSheetAdv {
 		for(AbstractRowAdv row:rows.values()){
 			row.deleteCell(columnIdx,size);
 		}
-		
+		Map<String,Object> dataBefore = shiftBeforeColumnDelete(columnIdx,lastColumnIdx);
 		ModelUpdateUtil.addInsertDeleteUpdate(this, false, false, columnIdx, lastColumnIdx);
-		shiftAfterColumnDelete(columnIdx,lastColumnIdx);
+		shiftAfterColumnDelete(dataBefore,columnIdx,lastColumnIdx);
 	}
+	
+	private Map<String,Object> shiftBeforeColumnDelete(int columnIdx,int lastColumnIdx) {
+		Map<String,Object> dataBefore = new HashMap<String,Object>();
+		
+		// handling merged regions shift
+		// find merge cells in affected region and remove them
+		CellRegion affectedRegion = new CellRegion(0, columnIdx, book.getMaxRowIndex(), book.getMaxColumnIndex());
+		List<CellRegion> toShrink = getOverlapsMergedRegions(affectedRegion, false);
+		removeMergedRegion(affectedRegion, true);
+		dataBefore.put("toShrink", toShrink);
+		
+		return dataBefore;
+	}
+	private void shiftAfterColumnDelete(Map<String,Object> dataBefore, int columnIdx,int lastColumnIdx) {
+		int size = lastColumnIdx - columnIdx+1;
+		//handling pic shift
+		for(AbstractPictureAdv pic:pictures){
+			ViewAnchor anchor = pic.getAnchor();
+			int idx = anchor.getColumnIndex();
+			if(idx >= columnIdx+size){
+				anchor.setColumnIndex(idx-size);
+			}else if(idx >= columnIdx){
+				anchor.setColumnIndex(columnIdx);//as excel's rule
+				anchor.setXOffset(0);
+			}
+		}
+		//handling chart shift
+		for(AbstractChartAdv chart:charts){
+			ViewAnchor anchor = chart.getAnchor();
+			int idx = anchor.getColumnIndex();
+			if(idx >= columnIdx+size){
+				anchor.setColumnIndex(idx-size);
+			}else if(idx >= columnIdx){
+				anchor.setColumnIndex(columnIdx);//as excel's rule
+				anchor.setXOffset(0);
+			}
+		}
+		
+		// handling merged regions shift
+		List<CellRegion> toShrink = (List<CellRegion>)dataBefore.get("toShrink");
+		// shrink/move removed merged cells, then add them back
+		for(CellRegion r : toShrink) {
+			CellRegion shrank = shrinkColumn(r, columnIdx, lastColumnIdx);
+			if(shrank != null) {
+				addMergedRegion(shrank);
+			}
+		}
+
+		//TODO shift data validation?
+
+		shrinkFormula(new CellRegion(0,columnIdx,book.getMaxRowIndex(),lastColumnIdx), true);
+	}	
 	
 	private void deleteAndShrinkColumnArray(int columnIdx,int size){
 

@@ -162,6 +162,7 @@ import org.zkoss.zss.model.impl.AbstractBookAdv;
 			eventName = update.isInserted() ? ModelEvents.ON_COLUMN_INSERT : ModelEvents.ON_COLUMN_DELETE;
 			region = new CellRegion(0, update.getIndex(), 0, update.getLastIndex());
 		}
+		System.out.println(">>>>>Notify InsertDelete "+eventName+":"+region.getReferenceString());
 		SSheet sheet = update.getSheet();
 		ModelEvent event = ModelEvents.createModelEvent(eventName, sheet, region);
 		((AbstractBookAdv)sheet.getBook()).sendModelEvent(event);
