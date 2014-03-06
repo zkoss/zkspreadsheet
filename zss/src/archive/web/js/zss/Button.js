@@ -687,9 +687,9 @@ if (zk.feature.pe) {
 					cnt = this.$supers(zss.ColorbuttonEx, 'domContent_', arguments),
 					color = this.getColor();
 				cnt = cnt + '<div id="' + uid + '-color" class="zstbtn-color" style="background:' 
-					+ this.getColor() + ';"></div><div id="' + uid + '-pp" style="display:none;" class="z-colorbtn-pp">' +
-					'<div id="' + uid + '-palette-btn" class="z-colorbox-palette-btn"></div><div id="' + 
-					uid + '-picker-btn" class="z-colorbox-picker-btn"></div>';//Note. use Colorbox's "z-colorbtn-pp"
+					+ this.getColor() + ';"></div><div id="' + uid + '-pp" style="display:none;" class="z-colorbtn-pp z-menu-popup">' +
+					'<div id="' + uid + '-palette-btn" class="z-menu-paletteicon"></div><div id="' + 
+					uid + '-picker-btn" class="z-menu-pickericon"></div>';//Note. use Colorbox's "z-colorbtn-pp"
 				for (var w = this.firstChild; w; w = w.nextSibling) {
 					cnt += w.redrawHTML_();
 				}
