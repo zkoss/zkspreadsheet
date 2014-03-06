@@ -1,3 +1,19 @@
+/*
+
+{{IS_NOTE
+	Purpose:
+		
+	Description:
+		
+	History:
+		2014/2/24 , Created by Hawk
+}}IS_NOTE
+
+Copyright (C) 2013 Potix Corporation. All Rights Reserved.
+
+{{IS_RIGHT
+}}IS_RIGHT
+ */
 package org.zkoss.zss.range.impl;
 
 import java.io.Serializable;
@@ -13,14 +29,16 @@ import org.zkoss.zss.range.SRange.SortDataOption;
 
 /**
  * Manipulate cells according to sorting criteria and options.
+ * If sorting regions contains blank cells, it will ignore it. It only sort those cells with data.
  * @author Hawk
- *
+ * @since 3.5
  */
 //porting implementation from BookHelper.sort()
 public class SortHelper extends RangeHelperBase {
 
 	public static final int SORT_HEADER_NO  = 0;
 	public static final int SORT_HEADER_YES = 1;
+	static final Double ZERO = new Double(0);
 	private CellRegion sortingRegion; //a region contains only data to sort without headers
 	private List<CellRegion> mergedRegionBeforeSorting = new LinkedList<CellRegion>(); //merged regions which sorting region contains
 	private List<CellRegion> mergedRegionAfterSorting = new LinkedList<CellRegion>(); //merged regions changed by sorting
@@ -49,6 +67,9 @@ public class SortHelper extends RangeHelperBase {
 			boolean descending3, SortDataOption dataOption3, int header, boolean matchCase, boolean sortByRows) {
 		checkMergedRegions(sortByRows);
 		sortingRegion = findSortingRegion(header, sortByRows);
+		if (sortingRegion == null){ //invalid sorting region, do not sort
+			return;
+		}
 		int keyCount = 0;
 		if (key1 != null) {
 			++keyCount;
@@ -102,7 +123,7 @@ public class SortHelper extends RangeHelperBase {
 		}
 	}
 
-	/*
+	/**
 	 * If merged regions inside selected range meets the following conditions, cancel sorting:
 	 *  1. When sorting "top to bottom", selected range cannot contain any cell that is merged across rows. 
 	 *  For "left to right", merged cells across columns are not allowed.
@@ -130,7 +151,7 @@ public class SortHelper extends RangeHelperBase {
 		}
 	}
 
-	/*
+	/**
 	 * collect keys and original row (column) index upon user-specified key row (column) index for sorting
 	 */
 	private List<SortKey> collectKeys(boolean sortByRows, int keyCount,
@@ -163,8 +184,9 @@ public class SortHelper extends RangeHelperBase {
 	}
 	
 
-	/*
+	/**
 	 * find the region that only contains data to sort without headers, blank rows and columns.
+	 * @return null for invalid sorting region
 	 */
 	private CellRegion findSortingRegion(int header, boolean sortByRows) {
 		int row = getRow();
@@ -178,6 +200,7 @@ public class SortHelper extends RangeHelperBase {
 				row++;
 			}
 		}
+		//TODO users might intentionally want blank cells to be sorted, so ignore blanks cells might be incorrect
 		//ignore blanks rows and columns
 		row = Math.max(row, sheet.getStartRowIndex());
 		lastRow = Math.min(lastRow, sheet.getEndRowIndex());
@@ -193,6 +216,10 @@ public class SortHelper extends RangeHelperBase {
 			lastColumn = Math.min(lastColumn, nonBlankLastColumn);
 		}
 		
+		if ((row > lastRow || column > lastColumn)
+				|| (row < 0 || lastRow < 0 || column < 0 || lastColumn < 0)) {
+			return null;
+		}
 		sortingRegion = new CellRegion(row, column, lastRow, lastColumn);
 		return sortingRegion;
 	}
@@ -292,7 +319,7 @@ public class SortHelper extends RangeHelperBase {
 		}
 	}
 	
-	/*
+	/**
 	 * Store index change and cell data after sorting
 	 */
 	class SortResult{
@@ -312,14 +339,14 @@ public class SortHelper extends RangeHelperBase {
 		}
 	}
 	
-	//convert cell value upon data option
+	//convert cell value upon data option 
 	private Object getCellValue(SCell cell, SortDataOption dataOption) {
 		Object val = cell.getValue();
 		if (val instanceof String && dataOption == SortDataOption.TEXT_AS_NUMBERS) {
 			try {
 				val = new Double((String)val);
 			} catch(NumberFormatException ex) {
-				val = new Double(0);//ignore
+				val = ZERO;
 			}
 		}
 		return val;
@@ -360,9 +387,9 @@ public class SortHelper extends RangeHelperBase {
 		private int compare(Object[] values1, Object[] values2) {
 			final int len = values1.length;
 			for(int j = 0; j < len; ++j) {
-				int p = compareValue(values1[j], values2[j], _descs[j]);
-				if (p != 0) {
-					return p;
+				int result = compareValue(values1[j], values2[j], _descs[j]);
+				if (result != 0) {
+					return result;
 				}
 			}
 			return 0;

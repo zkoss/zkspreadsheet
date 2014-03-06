@@ -305,13 +305,21 @@ public class SortTest {
 	
 	//Corner cases ---------------------------------------------------------
 	
-	@Test(expected=IllegalArgumentException.class)
+	/*
+	 * Invalid range, do not sort.
+	 */
+	@Test
 	public void invalidRange(){
-		Book book = Util.loadBook(this,"book/excelsortsample.xls");
+		Book book = Util.loadBook(this,"book/excelsortsample.xlsx");
 		Sheet sheet = book.getSheet("SampleData");
-		//selection contains blank rows
-		// Sort By ID
+		assertEquals("1", Ranges.range(sheet, "A2").getCellFormatText());
+		assertEquals("2", Ranges.range(sheet, "A3").getCellFormatText());
+		assertEquals("3", Ranges.range(sheet, "A4").getCellFormatText());
+		// Sort By ID in descending order
 		Ranges.range(sheet, "A1:A1").sort(Ranges.range(sheet, "A1:A11"), true, null, null, false, null, null, false, null, true, false, false);
+		assertEquals("1", Ranges.range(sheet, "A2").getCellFormatText());
+		assertEquals("2", Ranges.range(sheet, "A3").getCellFormatText());
+		assertEquals("3", Ranges.range(sheet, "A4").getCellFormatText());
 	}
 	
 	/**
@@ -320,7 +328,7 @@ public class SortTest {
 	 */
 	@Test
 	public void extremeLargeSelectionRange(){
-		Book book = Util.loadBook(this,"book/excelsortsample.xls");
+		Book book = Util.loadBook(this,"book/excelsortsample.xlsx");
 		Sheet sheet = book.getSheet("SampleData");
 		// Sort By ID
 		long startTime = Calendar.getInstance().getTimeInMillis();
