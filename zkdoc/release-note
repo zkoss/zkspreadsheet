@@ -6,6 +6,8 @@ ZK Spreadsheet 3.5.0
   ZSS-350 When using cell validation with cell list, the drop-down list won't update after the referred cells changed
   ZSS-581 Formula lost to update after rename 2 sheet
   ZSS-583 NullPointerException when the sheet has hyperlinks with empty URL
+  ZSS-582 Can't display chart after rename the sheet name to dot(.)
+  ZSS-587 wrong gridline display after delete column
   
 ** Upgrade Notes
   * Following api are removed
