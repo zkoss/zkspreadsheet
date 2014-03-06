@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<taglib>
+    <uri>http://www.zkoss.org/zss/essentials/custom</uri>
+    <description>
+        User defined functions.
+    </description>
+    <import>
+        <import-name>MyCustomFunctions</import-name>
+        <import-class>zss.testapp.MyCustomFunctions</import-class>
+    </import>
+ 
+    <function>
+        <name>MYEXCHANGE</name>
+        <function-class>zss.testapp.MyCustomFunctions
+        </function-class>
+        <function-signature>double exchange(double,double);</function-signature>
+        <description>
+            Exchange one money to another one according to specified exchange rate.
+        </description>
+    </function>
+</taglib>
