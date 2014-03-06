@@ -1275,6 +1275,7 @@ public class RangeImpl implements Range {
 				final Worksheet sheet = BookHelper.getSheet(_sheet, refSheet);
 				final Book book = sheet.getBook();
 				final Set<Ref> all = new HashSet<Ref>();
+				all.add(ref);
 				final Set<Ref> last = new HashSet<Ref>();
 				for(int row = tRow; row <= bRow; ++row) {
 					for (int col = lCol; col <= rCol; ++col) {
@@ -1288,8 +1289,8 @@ public class RangeImpl implements Range {
 					}
 				}
 				
-				if (!all.isEmpty() || !all.isEmpty()) {
-					BookHelper.reevaluateAndNotify(book, all,last);
+				if (!last.isEmpty() || !all.isEmpty()) {
+					BookHelper.reevaluateAndNotify(book, last, all);
 				}
 			}
 		}
