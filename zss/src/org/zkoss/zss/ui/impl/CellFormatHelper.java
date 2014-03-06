@@ -438,7 +438,7 @@ public class CellFormatHelper {
 	}
 	
 	private static String getHyperlinkHtml(String label, SHyperlink link) {
-		String addr = escapeText(link.getAddress(), false, false); //TODO escape something?
+		String addr = escapeText(link.getAddress()==null?"":link.getAddress(), false, false); //TODO escape something?
 		if (label == null) {
 			label = escapeText(link.getLabel(), false, false);
 		}
