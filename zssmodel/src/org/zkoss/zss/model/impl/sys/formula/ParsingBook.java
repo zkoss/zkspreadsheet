@@ -16,8 +16,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.zkoss.poi.ss.SpreadsheetVersion;
 import org.zkoss.poi.ss.formula.EvaluationName;
@@ -29,6 +27,7 @@ import org.zkoss.poi.ss.formula.FormulaType;
 import org.zkoss.poi.ss.formula.ptg.NamePtg;
 import org.zkoss.poi.ss.formula.ptg.NameXPtg;
 import org.zkoss.poi.ss.formula.ptg.Ptg;
+import org.zkoss.util.logging.Log;
 import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.sys.formula.FormulaEngine;
 
@@ -37,7 +36,7 @@ import org.zkoss.zss.model.sys.formula.FormulaEngine;
  * @author Pao
  */
 public class ParsingBook implements FormulaParsingWorkbook, FormulaRenderingWorkbook {
-	private static final Logger logger = Logger.getLogger(ParsingBook.class.getName());
+	private static final Log logger = Log.lookup(ParsingBook.class.getName());
 
 	private SBook book;
 	// defined names
@@ -132,7 +131,7 @@ public class ParsingBook implements FormulaParsingWorkbook, FormulaRenderingWork
 		} catch(NumberFormatException e) {
 			// do nothing
 		} catch(IndexOutOfBoundsException e) {
-			logger.log(Level.WARNING, e.getMessage(), e);
+			logger.warning(e.getMessage(), e);
 		}
 
 		// otherwise, it should be a book name already and just return itself.

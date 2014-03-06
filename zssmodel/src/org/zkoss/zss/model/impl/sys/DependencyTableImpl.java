@@ -8,9 +8,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Queue;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
+import org.zkoss.util.logging.Log;
 import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.SBookSeries;
 import org.zkoss.zss.model.SSheet;
@@ -35,7 +34,7 @@ import org.zkoss.zss.model.sys.dependency.Ref.RefType;
  */
 public class DependencyTableImpl extends DependencyTableAdv {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(DependencyTableImpl.class.getName());
+	private static final Log logger = Log.lookup(DependencyTableImpl.class.getName());
 	private static final EnumSet<RefType> regionTypes = EnumSet.of(RefType.BOOK, RefType.SHEET, RefType.AREA,
 			RefType.CELL);
 
@@ -239,7 +238,7 @@ public class DependencyTableImpl extends DependencyTableAdv {
 	public void merge(DependencyTableAdv dependencyTable) {
 		if(!(dependencyTable instanceof DependencyTableImpl)) {
 			// just in case
-			logger.log(Level.SEVERE, "can't merge different type of dependency table: " + dependencyTable.getClass().getName());
+			logger.error("can't merge different type of dependency table: " + dependencyTable.getClass().getName());
 			return;
 		}
 

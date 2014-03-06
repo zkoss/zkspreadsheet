@@ -11,10 +11,9 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
  */
 package org.zkoss.zss.model.sys.formula;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.zkoss.lang.Library;
+import org.zkoss.util.logging.Log;
 import org.zkoss.zss.model.impl.sys.formula.FunctionResolverImpl;
 
 /**
@@ -22,7 +21,7 @@ import org.zkoss.zss.model.impl.sys.formula.FunctionResolverImpl;
  * @author Pao
  */
 public class FunctionResolverFactory {
-	static private Logger logger = Logger.getLogger(FunctionResolverFactory.class.getName());
+	private static final Log logger = Log.lookup(FunctionResolverFactory.class.getName());
 
 	private static Class<?> functionResolverClazz;
 	static {
@@ -31,7 +30,7 @@ public class FunctionResolverFactory {
 			try {
 				functionResolverClazz = Class.forName(clz);
 			} catch(Exception e) {
-				logger.log(Level.WARNING, e.getMessage(), e);
+				logger.error(e.getMessage(), e);
 			}			
 		}
 	}
@@ -42,7 +41,7 @@ public class FunctionResolverFactory {
 				return (FunctionResolver)functionResolverClazz.newInstance();
 			}
 		} catch(Exception e) {
-			logger.log(Level.WARNING, e.getMessage(), e);
+			logger.error(e.getMessage(), e);
 			functionResolverClazz = null;
 		}
 		return new FunctionResolverImpl();

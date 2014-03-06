@@ -17,8 +17,6 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.zkoss.poi.ss.formula.CollaboratingWorkbooksEnvironment;
 import org.zkoss.poi.ss.formula.DependencyTracker;
@@ -62,6 +60,7 @@ import org.zkoss.poi.ss.formula.ptg.RefPtgBase;
 import org.zkoss.poi.ss.formula.udf.UDFFinder;
 import org.zkoss.poi.util.LittleEndianOutput;
 import org.zkoss.poi.xssf.model.IndexedUDFFinder;
+import org.zkoss.util.logging.Log;
 import org.zkoss.xel.FunctionMapper;
 import org.zkoss.xel.VariableResolver;
 import org.zkoss.xel.XelContext;
@@ -95,9 +94,8 @@ import org.zkoss.zss.model.sys.formula.EvaluationResult.ResultType;
 public class FormulaEngineImpl implements FormulaEngine {
 
 	public final static String KEY_EVALUATORS = "$ZSS_EVALUATORS$";
-	public static boolean EE_EDITION = true; // FIXME zss 3.5
 
-	private final static Logger logger = Logger.getLogger(FormulaEngineImpl.class.getName());
+	private static final Log logger = Log.lookup(FormulaEngineImpl.class.getName());
 
 	private Map<EvaluationWorkbook, XelContext> xelContexts = new HashMap<EvaluationWorkbook, XelContext>();
 	
@@ -136,10 +134,10 @@ public class FormulaEngineImpl implements FormulaEngine {
 			Ref singleRef = tokens.length == 1 ? toDenpendRef(context, parsingBook, tokens[0]) : null;
 			expr = new FormulaExpressionImpl(renderedFormula, singleRef);
 		} catch(FormulaParseException e) {
-			logger.log(Level.INFO, e.getMessage() + " when parsing " + formula);
+			logger.info(e.getMessage() + " when parsing " + formula);
 			expr = new FormulaExpressionImpl(formula, null, true,e.getMessage());
 		} catch(Exception e) {
-			logger.log(Level.SEVERE, e.getMessage() + " when parsing " + formula, e);
+			logger.error(e.getMessage() + " when parsing " + formula, e);
 			expr = new FormulaExpressionImpl(formula, null, true,e.getMessage());
 		}
 
@@ -206,7 +204,7 @@ public class FormulaEngineImpl implements FormulaEngine {
 						aptg.getLastRow(), aptg.getLastColumn());
 			}
 		} catch(Exception e) {
-			logger.log(Level.SEVERE, e.getMessage(), e);
+			logger.error(e.getMessage(), e);
 		}
 		return null;
 	}
@@ -274,15 +272,15 @@ public class FormulaEngineImpl implements FormulaEngine {
 			}
 
 		} catch(NotImplementedException e) {
-			logger.log(Level.INFO, e.getMessage() + " when eval " + expr.getFormulaString());
+			logger.info(e.getMessage() + " when eval " + expr.getFormulaString());
 			result = new EvaluationResultImpl(ResultType.ERROR, new ErrorValue(ErrorValue.INVALID_NAME, e.getMessage()));
 		} catch(FormulaParseException e) {
 			// we skip evaluation if formula has parsing error
 			// so if still occurring formula parsing exception, it should be a bug 
-			logger.log(Level.SEVERE, e.getMessage() + " when eval " + expr.getFormulaString());
+			logger.error(e.getMessage() + " when eval " + expr.getFormulaString());
 			result = new EvaluationResultImpl(ResultType.ERROR, new ErrorValue(ErrorValue.INVALID_FORMULA, e.getMessage()));
 		} catch(Exception e) {
-			logger.log(Level.SEVERE, e.getMessage() + " when eval " + expr.getFormulaString(), e);
+			logger.error(e.getMessage() + " when eval " + expr.getFormulaString(), e);
 			result = new EvaluationResultImpl(ResultType.ERROR, new ErrorValue(ErrorValue.INVALID_FORMULA, e.getMessage()));
 		}
 		return result;
@@ -425,7 +423,7 @@ public class FormulaEngineImpl implements FormulaEngine {
 				// do nothing if not existed
 				EvalContext ctx = map.get(book.getBookName());
 				if(ctx == null) {
-					logger.log(Level.WARNING, "clear a non-existed book? >> " + book.getBookName());
+					logger.warning("clear a non-existed book? >> " + book.getBookName());
 					return;
 				}
 
@@ -442,7 +440,7 @@ public class FormulaEngineImpl implements FormulaEngine {
 				map.clear(); // just in case
 			}
 		} catch(Exception e) {
-			logger.log(Level.SEVERE, e.getMessage(), e);
+			logger.error(e.getMessage(), e);
 		}
 	}
 
@@ -602,7 +600,7 @@ public class FormulaEngineImpl implements FormulaEngine {
 			expr = new FormulaExpressionImpl(renderedFormula, singleRef);
 
 		} catch(FormulaParseException e) {
-			logger.log(Level.INFO, e.getMessage());
+			logger.info(e.getMessage());
 			expr = new FormulaExpressionImpl(formula, null, true, e.getMessage());
 		}
 		return expr;
