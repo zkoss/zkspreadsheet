@@ -932,7 +932,7 @@ zss.ColorMenu = zk.$extends(zss.Menu, {
 });
 zk.copy(zss.ColorMenu.prototype, AbstractPopupHandler);
 
-zss.ColorMenuContentHandler = zk.$extends(zk.Object, {
+zss.ColorMenuContentHandler = zk.$extends(zk.Widget, {
 	$init: function(wgt, content) {
 		this._wgt = wgt;
 		this._content = content;
