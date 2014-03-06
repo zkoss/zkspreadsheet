@@ -272,5 +272,11 @@ public class ParsingBook implements FormulaParsingWorkbook, FormulaRenderingWork
 			return new NamePtg(nameIndex);
 		}
 	}
+	
+	//to compatible with zss-575 in 3.0
+	@Override
+	public boolean isAllowedDeferredNamePtg() {
+		return true;
+	}
 
 }
