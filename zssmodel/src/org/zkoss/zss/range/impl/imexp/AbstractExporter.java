@@ -18,7 +18,10 @@ package org.zkoss.zss.range.impl.imexp;
 
 import java.io.*;
 
+import org.zkoss.zss.model.CellRegion;
 import org.zkoss.zss.model.SBook;
+import org.zkoss.zss.model.SSheet;
+import org.zkoss.zss.model.SheetRegion;
 import org.zkoss.zss.range.SExporter;
 
 public abstract class AbstractExporter implements SExporter, Serializable{
@@ -37,5 +40,13 @@ public abstract class AbstractExporter implements SExporter, Serializable{
 				}
 			}
 		}
+	}
+
+	public void export(SSheet sheet, OutputStream fos) throws IOException{
+		throw new UnsupportedOperationException("doesn't support this api");
+	}
+
+	public void export(SheetRegion sheetRegion, OutputStream fos) throws IOException{
+		throw new UnsupportedOperationException("doesn't support this api");
 	}
 }

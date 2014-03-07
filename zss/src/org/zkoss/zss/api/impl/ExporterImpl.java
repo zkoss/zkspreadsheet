@@ -26,6 +26,9 @@ import org.zkoss.zss.api.Exporter;
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.api.model.impl.BookImpl;
+import org.zkoss.zss.api.model.impl.SheetImpl;
+import org.zkoss.zss.model.CellRegion;
+import org.zkoss.zss.model.SheetRegion;
 import org.zkoss.zss.range.SExporter;
 
 /**
@@ -58,11 +61,14 @@ public class ExporterImpl implements Exporter {
 			}
 		}
 	}
+	@Deprecated
 	public void export(Sheet sheet, OutputStream fos) throws IOException{
-		throw new UnsupportedOperationException("Not implement");
+		_exporter.export(((SheetImpl)sheet).getNative(), fos);
 	}
+	@Deprecated
 	public void export(Sheet sheet,AreaRef selection,OutputStream fos) throws IOException{
-		throw new UnsupportedOperationException("Not implement");
+		_exporter.export(new SheetRegion(((SheetImpl) sheet).getNative(),
+				selection.getRow(), selection.getColumn(), selection.getLastRow(), selection.getLastColumn()), fos);
 	}
 //	@Override
 //	public boolean isSupportHeadings() {

@@ -840,7 +840,7 @@ public class SheetImpl extends AbstractSheetAdv {
 		checkOrphan();
 		sheet.checkOrphan();
 		if(!getBook().equals(sheet.getBook())){
-			throw new UnsupportedOperationException("the source book is different");
+			throw new InvalidateModelOpException("the source book is different");
 		}
 		
 		

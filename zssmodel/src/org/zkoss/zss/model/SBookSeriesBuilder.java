@@ -46,11 +46,11 @@ public abstract class SBookSeriesBuilder {
 						_instance = new SBookSeriesBuilder() {
 							@Override
 							public void buildBookSeries(Set<SBook> books) {
-								throw new UnsupportedOperationException("not implemented in this edition");
+								throw new UnsupportedOperationException("not supported in this edition");
 							}
 							@Override
 							public void buildBookSeries(SBook[] books) {
-								throw new UnsupportedOperationException("not implemented in this edition");
+								throw new UnsupportedOperationException("not supported in this edition");
 							}
 						};
 					}

@@ -547,7 +547,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	 * @exception UnsupportedOperationException if this method is called.
 	 */
 	public void setDraggable(String draggable) {
-		throw new UnsupportedOperationException();
+		throw new UnsupportedOperationException("doesn't support to be draggable");
 	}
 
 	/**

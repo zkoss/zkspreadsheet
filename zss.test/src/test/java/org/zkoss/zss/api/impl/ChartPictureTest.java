@@ -7,6 +7,7 @@ import java.util.Locale;
 
 import org.junit.*;
 import org.zkoss.zss.*;
+import org.zkoss.zss.Setup;
 import org.zkoss.zss.api.AreaRef;
 import org.zkoss.zss.api.model.*;
 import org.zkoss.zss.api.model.Chart.Type;

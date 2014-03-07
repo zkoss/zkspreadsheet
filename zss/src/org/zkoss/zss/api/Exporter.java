@@ -54,7 +54,10 @@ public interface Exporter {
 	 * @param sheet the sheet to export
 	 * @param fos the output stream to store data
 	 * @throws IOException
+	 * 
+	 * @deprecated since 3.5.0
 	 */
+	@Deprecated
 	public void export(Sheet sheet, OutputStream fos) throws IOException;
 	/**
 	 * Export selection of sheet
@@ -64,7 +67,10 @@ public interface Exporter {
 	 * @param selection the selection to export
 	 * @param fos the output stream to store data
 	 * @throws IOException
+	 * 
+	 * @deprecated since 3.5.0
 	 */
+	@Deprecated
 	public void export(Sheet sheet,AreaRef selection,OutputStream fos) throws IOException;
 
 //  even html exporter doesn't support to disable heading yet

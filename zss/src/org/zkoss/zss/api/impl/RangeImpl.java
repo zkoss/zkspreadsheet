@@ -666,7 +666,7 @@ public class RangeImpl implements Range{
 	
 	
 	private void api4Internal(){
-		throw new UnsupportedOperationException("not implment yet");/* zss 3.5 
+		/* zss 3.5 
 		_range.notifyDeleteFriendFocus(null);//by Spreadsheet
 		_range.notifyMoveFriendFocus(null);//
 		*/
@@ -677,7 +677,7 @@ public class RangeImpl implements Range{
 	
 	
 	private void apiNoOneUse(){
-		throw new UnsupportedOperationException("not implment yet");/* zss 3.5 
+		/* zss 3.5 
 		_range.getCount();
 		_range.getCurrentRegion();
 		_range.getDependents();
