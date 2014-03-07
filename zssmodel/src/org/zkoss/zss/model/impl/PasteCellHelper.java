@@ -78,7 +78,8 @@ import org.zkoss.zss.range.impl.StyleUtil;
 		CellRegion srcRegion = src.getRegion();
 		if(handleMerge){
 			Collection<CellRegion> srcOverlaps = srcSheet.getOverlapsMergedRegions(srcRegion,true);
-			if(srcOverlaps.size()>0){
+			//zss-401 , allow overlap when cuting, it will unmerge the overlaps
+			if(srcOverlaps.size()>0 && !option.isCut()){
 				throw new InvalidateModelOpException("Can't copy "+srcRegion.getReferenceString()+" which overlaps merge area "+srcOverlaps.iterator().next().getReferenceString());
 			}
 		}
@@ -248,10 +249,6 @@ import org.zkoss.zss.range.impl.StyleUtil;
 
 	private void clearMergeRegion(SheetRegion src) {
 		src.getSheet().removeMergedRegion(src.getRegion(), true);
-		
-//		for(CellRegion merge:getOverlapsMergedRegions(src.getRegion(),false)){
-//			src.getSheet().removeMergedRegion(merge);
-//		}
 	}
 
 
