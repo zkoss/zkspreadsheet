@@ -110,7 +110,10 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 			if(sheetName!=null){
 				poiName.setSheetIndex(workbook.getSheetIndex(sheetName));
 			}
-			poiName.setRefersToFormula(name.getRefersToFormula());
+			//zss-214, to tolerate the name refers to formula error (#REF!!$A$1:$I$18)
+			if(!name.isFormulaParsingError()){
+				poiName.setRefersToFormula(name.getRefersToFormula());
+			}
 		}
 	}
 
