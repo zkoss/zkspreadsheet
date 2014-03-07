@@ -1365,10 +1365,8 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 	showRowHeaderMenu: function (pageX, pageY) {
 		var show = this._wgt.isShowContextMenu();
 		if (show) {
-			var x = pageX + 5,
-				menu = this.getRowHeaderMenupopup();
-			menu.open(null, [x, pageY]);
-			this.openStyleMenupopup(x, menu);
+			var menu = this.getRowHeaderMenupopup();
+			this.openStyleMenupopup(pageX, pageY, menu);
 		}
 	},
 	getColumnHeaderMenupopup: function () {
@@ -1384,10 +1382,8 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 	showColumnHeaderMenu: function (pageX, pageY) {
 		var show = this._wgt.isShowContextMenu();
 		if (show) {
-			var x = pageX + 5,
-				menu = this.getColumnHeaderMenupopup();
-			menu.open(null, [x, pageY]);
-			this.openStyleMenupopup(x, menu);
+			var menu = this.getColumnHeaderMenupopup();
+			this.openStyleMenupopup(pageX, pageY, menu);
 		}
 	},
 	getCellMenupopup: function () {
@@ -1403,10 +1399,8 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 	showCellContextMenu: function (pageX, pageY) {
 		var show = this._wgt.isShowContextMenu();
 		if (show) {
-			var x = pageX + 5,
-				menu = this.getCellMenupopup();
-			menu.open(null, [x, pageY]);
-			this.openStyleMenupopup(x, menu);
+			var menu = this.getCellMenupopup();
+			this.openStyleMenupopup(pageX, pageY, menu);
 		}
 	},
 	setActionDisabled: function (actions) {
@@ -1430,9 +1424,15 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			}
 		}
 	},
-	openStyleMenupopup: function (x, refPop) {
-		var y = zk.parseInt(jq(refPop.$n()).css('top')) - 70;//70: space between menupopup
-		this.getStyleMenupopup().open(null, [x, y < 0 ? 0 : y]);
+	openStyleMenupopup: function (x, y, refPop) {
+		x += 5;
+		y = y < 0 ? 0 : y;
+		
+		var p = this.getStyleMenupopup();
+		p.getMenuContainer().appendChild(refPop);
+		p.open(null, [x, y]);
+		
+		refPop.setVisible(true);
 	},
 	runAfterMouseClick: function (fn) {
 		var fns = this._afterMouseClick;

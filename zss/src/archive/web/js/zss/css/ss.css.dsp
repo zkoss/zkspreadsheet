@@ -1388,12 +1388,32 @@
 	background: #F5F5F5;	
 }
 
-.zsstylepanel .z-popup-cl .z-popup-cnt {
+.zsstylepanel  {
+	background-color: transparent;
+	background-image: none;
+	box-shadow: none;
+	-moz-box-shadow: none;
+	-webkit-box-shadow: none;
+	border: none;
+}
+
+.zsstylepanel .z-div {
+	border: 1px solid #cfcfcf;
+}
+
+.zsstylepanel .z-popup-content {
 	padding: 0;
 }
 
 .zsstylepanel-toolbar {
 	border: 0;
+}
+
+.zsstylepanel-menu {
+	margin-top: 30px;
+	position: relative;
+	left: 0px;
+	top: 0px;
 }
 
 <%-- Colorbutton --%>

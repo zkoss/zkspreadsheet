@@ -1086,6 +1086,9 @@ zss.Menupopup = zk.$extends(zul.menu.Menupopup, {
 		if (wgt) {//fake focus
 			wgt.focus(false);
 		}
+	},
+	zsync: function () {
+		// skip shadow
 	}
 }, {
 	_rmActive: function (wgt) {
@@ -1160,6 +1163,9 @@ zss.StylePanel = zk.$extends(zul.wgt.Popup, {
 			fontSize = btns[1],
 			b;
 		
+		var styleContainer = new zul.wgt.Div();
+		this.appendChild(styleContainer);
+		
 		wgt.listen({onAuxAction: this.proxy(this._closeStylePanel)});
 		fontFamily.setWidth('75px');
 		
@@ -1167,14 +1173,20 @@ zss.StylePanel = zk.$extends(zul.wgt.Popup, {
 		while (b = btns.shift()) {
 			tb.appendChild(b);
 		}
-		this.appendChild(tb);
+		styleContainer.appendChild(tb);
 		
 		tb = new zul.wgt.Toolbar({sclass: 'zsstylepanel-toolbar'});
 		btns = builder.addAll(['fontColor', 'fillColor', 'border', 'verticalAlign', 'horizontalAlign']).build();
 		while (b = btns.shift()) {
 			tb.appendChild(b);
 		}
-		this.appendChild(tb);
+		styleContainer.appendChild(tb);
+		
+		this._menuContainer = new zul.wgt.Div({sclass: 'zsstylepanel-menu'});
+		this.appendChild(this._menuContainer); // The 3rd child is menu container
+	},
+	getMenuContainer: function() {
+		return this._menuContainer;
 	},
 	setDisabled: function (actions) {
 		for (var n = this.firstChild; n; n = n.nextSibling) {//toolbars
