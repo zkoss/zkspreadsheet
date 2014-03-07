@@ -34,11 +34,9 @@ public abstract class AbstractBookAdv implements SBook,EvaluationContributorCont
 	public abstract void sendModelEvent(ModelEvent event);
 	
 	/*package*/ abstract String nextObjId(String type);
-	
-//	/*package*/ abstract void onModelInternalEvent(ModelInternalEvent event);
-//	
-//	/*package*/ abstract void sendModelInternalEvent(ModelInternalEvent event);
 
 	/*package*/ abstract void setBookSeries(SBookSeries bookSeries);
+
+	public abstract String getId();
 
 }

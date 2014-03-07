@@ -22,7 +22,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
+/**
+ * To dispatch model event
+ * @author Dennis
+ *
+ */
 public class ModelEventDispatcher implements ModelEventListener {
 	private static final long serialVersionUID = 1L;
 	private Map<String, List<ModelEventListener>> _listeners = new HashMap<String, List<ModelEventListener>>(8);

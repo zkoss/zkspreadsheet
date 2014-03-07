@@ -30,9 +30,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.zkoss.lang.Objects;
 import org.zkoss.poi.ss.SpreadsheetVersion;
+import org.zkoss.util.logging.Log;
 import org.zkoss.zss.model.InvalidateModelOpException;
 import org.zkoss.zss.model.ModelEvent;
 import org.zkoss.zss.model.ModelEventListener;
+import org.zkoss.zss.model.ModelEventUnreachableException;
 import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.SBookSeries;
 import org.zkoss.zss.model.SCell;
@@ -60,6 +62,8 @@ import org.zkoss.zss.model.util.Validations;
  */
 public class BookImpl extends AbstractBookAdv{
 	private static final long serialVersionUID = 1L;
+	
+	private static final Log logger = Log.lookup(BookImpl.class);
 
 	private final String bookName;
 	
@@ -84,9 +88,9 @@ public class BookImpl extends AbstractBookAdv{
 	private final int maxRowSize = SpreadsheetVersion.EXCEL2007.getMaxRows();
 	private final int maxColumnSize = SpreadsheetVersion.EXCEL2007.getMaxColumns();
 	
-	private EventListenerAdaptor eventListenerAdaptor;
-	
 	private transient HashMap<String,Object> attributes;
+	
+	private final List<ModelEventListener> listeners = new LinkedList<ModelEventListener>();
 	
 	private EvaluationContributor evalContributor;
 	
@@ -105,8 +109,6 @@ public class BookImpl extends AbstractBookAdv{
 		colors.put(ColorImpl.BLUE,ColorImpl.BLUE);
 		
 		bookId = ((char)('a'+random.nextInt(26))) + Long.toString(/*System.currentTimeMillis()+*/bookCount.getAndIncrement(), Character.MAX_RADIX) ;
-		
-		eventListenerAdaptor = new EventListenerAdaptorImpl();
 	}
 	
 	@Override
@@ -191,7 +193,17 @@ public class BookImpl extends AbstractBookAdv{
 //	}
 	@Override
 	public void sendModelEvent(ModelEvent event){
-		eventListenerAdaptor.sendModelEvent(event);
+		Iterator<ModelEventListener> ls = listeners.iterator();
+		ModelEventListener l;
+		while(ls.hasNext()){
+			l = ls.next();
+			try{
+				l.onEvent(event);
+			}catch(ModelEventUnreachableException x){
+				logger.info("a listener is not rechable "+x.getMessage());
+				ls.remove();
+			}
+		}
 	}
 	
 	@Override
@@ -507,11 +519,13 @@ public class BookImpl extends AbstractBookAdv{
 
 	@Override
 	public void addEventListener(ModelEventListener listener){
-		eventListenerAdaptor.addEventListener(listener);
+		if(!listeners.contains(listener)){
+			listeners.add(listener);
+		}
 	}
 	@Override
 	public void removeEventListener(ModelEventListener listener){
-		eventListenerAdaptor.removeEventListener(listener);
+		listeners.remove(listener);
 	}
 
 	@Override
@@ -656,22 +670,15 @@ public class BookImpl extends AbstractBookAdv{
 		if(!Objects.equals(this.shareScope,scope)){
 			
 			if("disable".equals(scope)){
-				eventListenerAdaptor.clear();
+				listeners.clear();
 				return;
 			}
 			
-			if(eventListenerAdaptor.size()>0){
+			if(listeners.size()>0){
 				throw new IllegalStateException("can't change share scope after registed any listener");
 			}
 			
 			this.shareScope = scope;
-			eventListenerAdaptor.clear();
-			
-			if(scope!=null){
-				eventListenerAdaptor = new EventQueueListenerAdaptorImpl(scope, bookId);
-			}else{
-				eventListenerAdaptor = new EventListenerAdaptorImpl();
-			}
 		}
 	}
 
@@ -705,4 +712,8 @@ public class BookImpl extends AbstractBookAdv{
 		return getMaxColumnSize()-1;
 	}
 
+	@Override 
+	public String getId(){
+		return bookId; 
+	}
 }

@@ -32,6 +32,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.locks.ReadWriteLock;
+
 import org.zkoss.json.JSONArray;
 import org.zkoss.json.JSONObject;
 import org.zkoss.lang.Classes;
@@ -75,6 +77,8 @@ import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.WebApp;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
+import org.zkoss.zk.ui.event.EventQueue;
+import org.zkoss.zk.ui.event.EventQueues;
 import org.zkoss.zk.ui.ext.AfterCompose;
 import org.zkoss.zk.ui.ext.render.DynamicMedia;
 import org.zkoss.zk.ui.sys.ContentRenderer;
@@ -115,6 +119,7 @@ import org.zkoss.zss.model.SAutoFilter.NFilterColumn;
 import org.zkoss.zss.model.SCell.CellType;
 import org.zkoss.zss.model.SCellStyle.Alignment;
 import org.zkoss.zss.model.SCellStyle.VerticalAlignment;
+import org.zkoss.zss.model.impl.AbstractBookAdv;
 import org.zkoss.zss.model.sys.formula.EvaluationContributorContainer;
 //import org.zkoss.zss.model.sys.XBook;
 //import org.zkoss.zss.model.sys.XImporter;
@@ -327,7 +332,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	private Map _columnTitles;
 	private Map _rowTitles;
 
-	private InnerDataListener _dataListener = new InnerDataListener();
+	private ModelEventToQueueAdapter _modelEventListener = new ModelEventToQueueAdapter();
 	
 	private InnerVariableResolver _variableResolver = new InnerVariableResolver();
 	private InnerFunctionMapper _functionMapper = new InnerFunctionMapper();
@@ -703,7 +708,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		if (_book != null) {
 			_book.getBookSeries().getLock().writeLock().lock();
 			try{
-				_book.removeEventListener(_dataListener);
+				_modelEventListener.unregisterBookQueue(_book);
 				if(isBelowDesktopScope(_book) && _book instanceof EvaluationContributorContainer
 						&& ((EvaluationContributorContainer)_book).getEvaluationContributor() instanceof ComponentEvaluationContributor){
 					((EvaluationContributorContainer)_book).setEvaluationContributor(null);
@@ -725,7 +730,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		if (_book != null) {
 			_book.getBookSeries().getLock().writeLock().lock();
 			try{
-				_book.removeEventListener(_dataListener);
+				_modelEventListener.unregisterBookQueue(_book);
 				if(isBelowDesktopScope(_book) && _book instanceof EvaluationContributorContainer
 						&& ((EvaluationContributorContainer)_book).getEvaluationContributor() instanceof ComponentEvaluationContributor){
 					((EvaluationContributorContainer)_book).setEvaluationContributor(null);
@@ -758,7 +763,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		_book = book;
 		if (_book != null) {
 			_book.getBookSeries().getLock().writeLock().lock();
-			_book.addEventListener(_dataListener);
+			_modelEventListener.registerBookQueue(_book);
 			try{
 				if(isBelowDesktopScope(_book) && _book instanceof EvaluationContributorContainer 
 						&& ((EvaluationContributorContainer)_book).getEvaluationContributor()==null){
@@ -2049,11 +2054,85 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	}
 
 	
+	private class ModelEventToQueueAdapter implements ModelEventListener,EventListener<Event>{
+		private static final long serialVersionUID = 1L;
+		private QueueModelEventListener _listener = new QueueModelEventListener();
+		/**
+		 * list Model event, publish it to queue
+		 */
+		@Override
+		public void onEvent(ModelEvent event) {
+			//push to queue
+			SBook book = event.getBook();
+			String scope = getScope(book);
+			String queueName = getQueueName(book);
+			EventQueue<Event> queue = EventQueues.lookup(queueName, scope,false);
+			if(queue==null)
+				return;
+			queue.publish(new Event("onModelEvent",null,event));
+		}
+		
+		/**
+		 * listen queue-event, call internal data model event listener
+		 */
+		@Override
+		public void onEvent(Event event) throws Exception {
+			ModelEvent me = (ModelEvent)event.getData();
+			_listener.onEvent(me);
+		}
+		
+		String getQueueName(SBook book){
+			return "zssModel_"+((AbstractBookAdv)book).getId();
+		}
+		
+		String getScope(SBook book){
+			String scope = book.getShareScope();
+			if(scope==null){
+				scope = "desktop";
+			}
+			return scope;
+		}
+		
+		void registerBookQueue(SBook book){
+			ReadWriteLock lock = book.getBookSeries().getLock();
+			try{
+				lock.writeLock().lock();
+				String scope = getScope(book);
+				String queueName = getQueueName(book);
+				EventQueue<Event> queue = EventQueues.lookup(queueName, scope,true);
+				queue.subscribe(this);
+				book.addEventListener(this);
+			}finally{
+				lock.writeLock().unlock();
+			}
+		}
+		void unregisterBookQueue(SBook book){
+			ReadWriteLock lock = book.getBookSeries().getLock();
+			try{
+				lock.writeLock().lock();
+				book.removeEventListener(this);
+				
+				String scope = getScope(book);
+				String queueName = getQueueName(book);
+				EventQueue<Event> queue = EventQueues.lookup(queueName, scope,false);
+				if(queue!=null){
+					queue.unsubscribe(this);
+				}				
+			}finally{
+				lock.writeLock().unlock();
+			}
+		}
+
+	}
+	
+	
+	
+	
 	/* DataListener to handle sheet data event */
-	private class InnerDataListener extends ModelEventDispatcher{
+	private class QueueModelEventListener extends ModelEventDispatcher{
 		private static final long serialVersionUID = 20100330164021L;
 
-		public InnerDataListener() {
+		public QueueModelEventListener() {
 			addEventListener(ModelEvents.ON_SHEET_ORDER_CHANGE, new ModelEventListener() {
 				@Override
 				public void onEvent(ModelEvent event){
