@@ -137,23 +137,9 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 	protected void importNamedRange() {
 		for (int i = 0; i < workbook.getNumberOfNames(); i++) {
 			Name definedName = workbook.getNameAt(i);
-			if (definedName.isFunctionName() // ignore defined name of
-												// functions, they are macro
-												// functions that we don't
-												// support
-					|| definedName.getRefersToFormula() == null) { // ignore
-																	// defined
-																	// name with
-																	// null
-																	// formula,
-																	// don't
-																	// know when
-																	// will have
-																	// this case
-
+			if(skipName(definedName)){
 				continue;
 			}
-
 			SName namedRange = null;
 			if (definedName.getSheetIndex() == -1) {// workbook scope
 				namedRange = book.createName(definedName.getNameName());
@@ -162,6 +148,23 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 			}
 			namedRange.setRefersToFormula(definedName.getRefersToFormula());
 		}
+	}
+
+	protected boolean skipName(Name definedName) {
+		String namename = definedName.getNameName();
+		if(namename==null){
+			return true;
+		}
+		// ignore defined name of functions, they are macro functions that we don't support
+		if (definedName.isFunctionName()){
+			return true;
+		}
+		
+		if(definedName.getRefersToFormula() == null) { // ignore defined name with null formula, don't know when will have this case
+			return true;
+		}
+		
+		return false;
 	}
 
 	/**

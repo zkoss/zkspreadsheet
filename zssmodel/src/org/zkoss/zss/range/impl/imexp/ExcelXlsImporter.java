@@ -350,4 +350,16 @@ public class ExcelXlsImporter extends AbstractExcelImporter{
 	protected void importValidation(Sheet poiSheet, SSheet sheet) {
 		// unsupported features
 	}
+	
+	@Override
+	protected boolean skipName(Name definedName) {
+		boolean r = super.skipName(definedName);
+		if(r)
+			return r;
+		if(((HSSFName)definedName).isBuiltInName()){
+			return true;
+		}
+		
+		return false;
+	}
 }

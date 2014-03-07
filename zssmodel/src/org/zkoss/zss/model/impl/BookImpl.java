@@ -287,7 +287,7 @@ public class BookImpl extends AbstractBookAdv{
 			throw new InvalidateModelOpException("name '"+name+"' is not legal");
 		}
 		if(getNameByName(name,sheetName)!=null){
-			throw new InvalidateModelOpException("name '"+name+"' "+(sheetName==null?"":"'"+sheetName+"'")+" is dpulicated");
+			throw new InvalidateModelOpException("name '"+name+"' "+(sheetName==null?"":" in '"+sheetName+"'")+" is dpulicated");
 		}
 		if(sheetName!=null && getSheetByName(sheetName)==null){
 			throw new InvalidateModelOpException("no such sheet "+sheetName);

@@ -488,5 +488,16 @@ public class ExcelXlsxImporter extends AbstractExcelImporter{
 			}
 		}
 	}
+	
+	@Override
+	protected boolean skipName(Name definedName) {
+		boolean r = super.skipName(definedName);
+		if(r)
+			return r;
+		if(((XSSFName)definedName).isBuiltInName()){
+			return true;
+		}
+		return false;
+	}
 }
  

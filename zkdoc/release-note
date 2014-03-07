@@ -8,6 +8,7 @@ ZK Spreadsheet 3.5.0
   ZSS-583 NullPointerException when the sheet has hyperlinks with empty URL
   ZSS-582 Can't display chart after rename the sheet name to dot(.)
   ZSS-587 wrong gridline display after delete column
+  ZSS-588 get exception when import xls
   
 ** Upgrade Notes
   * Following api are removed
