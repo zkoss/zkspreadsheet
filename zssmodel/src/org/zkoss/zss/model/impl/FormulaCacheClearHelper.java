@@ -3,6 +3,7 @@ package org.zkoss.zss.model.impl;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.zkoss.util.logging.Log;
 import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.SBookSeries;
 import org.zkoss.zss.model.SCell;
@@ -17,6 +18,9 @@ import org.zkoss.zss.model.sys.dependency.Ref.RefType;
 
 /*package*/ class FormulaCacheClearHelper {
 	final SBookSeries bookSeries;
+	
+	private static final Log logger = Log.lookup(FormulaCacheClearHelper.class.getName());
+	
 	public FormulaCacheClearHelper(SBookSeries bookSeries) {
 		this.bookSeries = bookSeries;
 	}
@@ -24,7 +28,9 @@ import org.zkoss.zss.model.sys.dependency.Ref.RefType;
 	public void clear(Set<Ref> refs) {
 		// clear formula cache
 		for (Ref ref : refs) {
-			System.out.println(">>>Clear Formula Cache: "+ref);
+			if(logger.debugable()){
+				logger.debug("Clear Formula Cache: "+ref);
+			}
 			//clear the dependent's formula cache since the precedent is changed.
 			if (ref.getType() == RefType.CELL || ref.getType() == RefType.AREA) {
 				handleAreaRef(ref);

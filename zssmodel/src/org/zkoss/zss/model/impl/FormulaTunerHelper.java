@@ -4,6 +4,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
+import org.zkoss.util.logging.Log;
 import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.SBookSeries;
 import org.zkoss.zss.model.SCell;
@@ -22,7 +23,10 @@ import org.zkoss.zss.model.sys.dependency.Ref.RefType;
 import org.zkoss.zss.model.sys.formula.FormulaEngine;
 import org.zkoss.zss.model.sys.formula.FormulaExpression;
 import org.zkoss.zss.model.sys.formula.FormulaParseContext;
-
+/**
+ * 
+ * @author Dennis
+ */
 /*package*/ class FormulaTunerHelper {
 	final SBookSeries bookSeries;
 
@@ -38,7 +42,6 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 		
 		for (Ref dependent : dependents) {
 			if (dependent.getType() == RefType.CELL) {
-				System.out.println(">>>Move Sheet Cell Formula: "+dependent);
 				moveCellRef(sheetRegion,dependent,rowOffset,columnOffset);
 			} else if (dependent.getType() == RefType.OBJECT) {
 				if(((ObjectRef)dependent).getObjectType()==ObjectType.CHART){
@@ -75,14 +78,12 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 		if(catExpr!=null){
 			exprAfter = engine.move(catExpr, sheetRegion, rowOffset, columnOffset, new FormulaParseContext(sheet, null));//null ref, no trace dependence here
 			if(!exprAfter.hasError() && !catExpr.equals(exprAfter.getFormulaString())){
-				System.out.println(">>>cat "+catExpr+" to "+exprAfter.hasError());
 				data.setCategoriesFormula(exprAfter.getFormulaString());
 			}
 		}
 		
 		for(int i=0;i<data.getNumOfSeries();i++){
 			SSeries series = data.getSeries(i);
-			System.out.println(">>>move series "+series.getId());
 			String nameExpr = series.getNameFormula();
 			String xvalExpr = series.getXValuesFormula();
 			String yvalExpr = series.getYValuesFormula();
@@ -93,7 +94,6 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 			if(nameExpr!=null){
 				exprAfter = engine.move(nameExpr, sheetRegion, rowOffset, columnOffset, new FormulaParseContext(sheet, null));//null ref, no trace dependence here
 				if(!exprAfter.hasError()){
-					System.out.println(">>>nameExpr "+nameExpr+" to "+exprAfter.getFormulaString());
 					dirty |= !nameExpr.equals(exprAfter.getFormulaString()); 
 					nameExpr = exprAfter.getFormulaString();
 					
@@ -102,7 +102,6 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 			if(xvalExpr!=null){
 				exprAfter = engine.move(xvalExpr, sheetRegion, rowOffset, columnOffset, new FormulaParseContext(sheet, null));//null ref, no trace dependence here
 				if(!exprAfter.hasError()){
-					System.out.println(">>>xvalExpr "+xvalExpr+" to "+exprAfter.getFormulaString());
 					dirty |= !xvalExpr.equals(exprAfter.getFormulaString());
 					xvalExpr = exprAfter.getFormulaString();
 					
@@ -111,7 +110,6 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 			if(yvalExpr!=null){
 				exprAfter = engine.move(yvalExpr, sheetRegion, rowOffset, columnOffset, new FormulaParseContext(sheet, null));//null ref, no trace dependence here
 				if(!exprAfter.hasError()){
-					System.out.println(">>>yvalExpr "+yvalExpr+" to "+exprAfter.getFormulaString());
 					dirty |= !yvalExpr.equals(exprAfter.getFormulaString());
 					yvalExpr = exprAfter.getFormulaString();
 					
@@ -120,7 +118,6 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 			if(zvalExpr!=null){
 				exprAfter = engine.move(zvalExpr, sheetRegion, rowOffset, columnOffset, new FormulaParseContext(sheet, null));//null ref, no trace dependence here
 				if(!exprAfter.hasError()){
-					System.out.println(">>>zvalExpr "+zvalExpr+" to "+exprAfter.getFormulaString());
 					dirty |= !zvalExpr.equals(exprAfter.getFormulaString());
 					zvalExpr = exprAfter.getFormulaString();
 				}
@@ -128,7 +125,6 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 			if(dirty){
 				series.setXYZFormula(nameExpr, xvalExpr, yvalExpr, zvalExpr);
 			}
-			System.out.println(">>>end move series "+series.getId());
 		}
 		
 		ModelUpdateUtil.addRefUpdate(dependent);
@@ -136,7 +132,6 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 	}
 	private void moveDataValidationRef(SheetRegion sheetRegion,ObjectRef dependent,int rowOffset, int columnOffset) {
 		//TODO zss 3.5
-		throw new UnsupportedOperationException("not implement yet");
 //		NBook book = bookSeries.getBook(dependent.getBookName());
 //		if(book==null) return;
 //		NSheet sheet = book.getSheetByName(dependent.getSheetName());
@@ -184,7 +179,6 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 		Map<String,Ref> validationDependents  = new LinkedHashMap<String, Ref>();
 				
 		for (Ref dependent : dependents) {
-			System.out.println(">>>Extend Sheet Formula: "+dependent);
 			if (dependent.getType() == RefType.CELL) {
 				extendCellRef(sheetRegion,dependent,horizontal);
 			} else if (dependent.getType() == RefType.OBJECT) {
@@ -206,7 +200,6 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 	}
 	private void extendChartRef(SheetRegion sheetRegion,ObjectRef dependent, boolean horizontal) {
 		//TODO zss 3.5
-		throw new UnsupportedOperationException("not implement yet");
 //		NBook book = bookSeries.getBook(dependent.getBookName());
 //		if(book==null) return;
 //		NSheet sheet = book.getSheetByName(dependent.getSheetName());
@@ -219,7 +212,6 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 	}
 	private void extendDataValidationRef(SheetRegion sheetRegion,ObjectRef dependent, boolean horizontal) {
 		//TODO zss 3.5
-		throw new UnsupportedOperationException("not implement yet");
 //		NBook book = bookSeries.getBook(dependent.getBookName());
 //		if(book==null) return;
 //		NSheet sheet = book.getSheetByName(dependent.getSheetName());
@@ -249,7 +241,6 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 			cell.setFormulaValue(exprAfter.getFormulaString());
 			//don't need to notify cell change, cell will do
 		}
-		System.out.println(">>>>"+expr+" extend to "+exprAfter.getFormulaString());
 	}	
 
 	public void shrink(SheetRegion sheetRegion,Set<Ref> dependents, boolean horizontal) {
@@ -258,7 +249,6 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 		Map<String,Ref> chartDependents  = new LinkedHashMap<String, Ref>();
 		Map<String,Ref> validationDependents  = new LinkedHashMap<String, Ref>();		
 		for (Ref dependent : dependents) {
-			System.out.println(">>>Shrink Sheet Formula: "+dependent);
 			if (dependent.getType() == RefType.CELL) {
 				shrinkCellRef(sheetRegion,dependent,horizontal);
 			} else if (dependent.getType() == RefType.OBJECT) {
@@ -280,7 +270,6 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 	}
 	private void shrinkChartRef(SheetRegion sheetRegion,ObjectRef dependent, boolean horizontal) {
 		//TODO zss 3.5
-		throw new UnsupportedOperationException("not implement yet");
 //		NBook book = bookSeries.getBook(dependent.getBookName());
 //		if(book==null) return;
 //		NSheet sheet = book.getSheetByName(dependent.getSheetName());
@@ -293,7 +282,6 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 	}
 	private void shrinkDataValidationRef(SheetRegion sheetRegion,ObjectRef dependent, boolean horizontal) {
 		//TODO zss 3.5
-		throw new UnsupportedOperationException("not implement yet");
 //		NBook book = bookSeries.getBook(dependent.getBookName());
 //		if(book==null) return;
 //		NSheet sheet = book.getSheetByName(dependent.getSheetName());
@@ -323,7 +311,6 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 			cell.setFormulaValue(exprAfter.getFormulaString());
 			//don't need to notify cell change, cell will do
 		}
-		System.out.println(">>>>"+expr+" shrink to "+exprAfter.getFormulaString());
 	}
 
 	public void renameSheet(SBook book, String oldName, String newName,
@@ -333,7 +320,6 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 		Map<String,Ref> chartDependents  = new LinkedHashMap<String, Ref>();
 		Map<String,Ref> validationDependents  = new LinkedHashMap<String, Ref>();		
 		for (Ref dependent : dependents) {
-			System.out.println(">>>Rename Sheet Formula: "+dependent);
 			if (dependent.getType() == RefType.CELL) {
 				renameSheetCellRef(book,oldName,newName,dependent);
 			} else if (dependent.getType() == RefType.OBJECT) {
@@ -382,14 +368,12 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 		if(catExpr!=null){
 			exprAfter = engine.renameSheet(catExpr, bookOfSheet, oldName, newName,new FormulaParseContext(sheet, null));//null ref, no trace dependence here
 			if(!exprAfter.hasError()){
-				System.out.println(">>>cat "+catExpr+" to "+exprAfter.getFormulaString());
 				data.setCategoriesFormula(exprAfter.getFormulaString());
 			}
 		}
 		
 		for(int i=0;i<data.getNumOfSeries();i++){
 			SSeries series = data.getSeries(i);
-			System.out.println(">rename series "+series.getId());
 			String nameExpr = series.getNameFormula();
 			String xvalExpr = series.getXValuesFormula();
 			String yvalExpr = series.getYValuesFormula();
@@ -397,33 +381,28 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 			if(nameExpr!=null){
 				exprAfter = engine.renameSheet(nameExpr, bookOfSheet, oldName, newName,new FormulaParseContext(sheet, null));//null ref, no trace dependence here
 				if(!exprAfter.hasError()){
-					System.out.println(">>>nameExpr "+nameExpr+" to "+exprAfter.getFormulaString());
 					nameExpr = exprAfter.getFormulaString();
 				}
 			}
 			if(xvalExpr!=null){
 				exprAfter = engine.renameSheet(xvalExpr, bookOfSheet, oldName, newName,new FormulaParseContext(sheet, null));//null ref, no trace dependence here
 				if(!exprAfter.hasError()){
-					System.out.println(">>>xvalExpr "+xvalExpr+" to "+exprAfter.getFormulaString());
 					xvalExpr = exprAfter.getFormulaString();
 				}
 			}
 			if(yvalExpr!=null){
 				exprAfter = engine.renameSheet(yvalExpr, bookOfSheet, oldName, newName,new FormulaParseContext(sheet, null));//null ref, no trace dependence here
 				if(!exprAfter.hasError()){
-					System.out.println(">>>yvalExpr "+yvalExpr+" to "+exprAfter.getFormulaString());
 					yvalExpr = exprAfter.getFormulaString();
 				}
 			}
 			if(zvalExpr!=null){
 				exprAfter = engine.renameSheet(zvalExpr, bookOfSheet, oldName, newName,new FormulaParseContext(sheet, null));//null ref, no trace dependence here
 				if(!exprAfter.hasError()){
-					System.out.println(">>>zvalExpr "+zvalExpr+" to "+exprAfter.getFormulaString());
 					zvalExpr = exprAfter.getFormulaString();
 				}
 			}
 			series.setXYZFormula(nameExpr, xvalExpr, yvalExpr, zvalExpr);
-			System.out.println(">end reanme series "+series.getId());
 		}
 		
 		ModelUpdateUtil.addRefUpdate(dependent);
@@ -432,7 +411,6 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 	
 	private void renameSheetDataValidationRef(SBook bookOfSheet, String oldName, String newName,ObjectRef dependent) {
 		//TODO zss 3.5
-		throw new UnsupportedOperationException("not implement yet");
 //		NBook book = bookSeries.getBook(dependent.getBookName());
 //		if(book==null) return;
 //		NSheet sheet = book.getSheetByName(dependent.getSheetName());
@@ -471,7 +449,5 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 		
 		cell.setFormulaValue(exprAfter.getFormulaString());
 		//don't need to notify cell change, cell will do
-		
-		System.out.println(">>>>"+expr+" rename to "+exprAfter.getFormulaString());
 	}	
 }

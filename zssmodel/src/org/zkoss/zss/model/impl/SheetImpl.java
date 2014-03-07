@@ -29,6 +29,7 @@ import java.util.SortedMap;
 
 import org.zkoss.poi.ss.util.CellReference;
 import org.zkoss.poi.ss.util.WorkbookUtil;
+import org.zkoss.util.logging.Log;
 import org.zkoss.zss.model.CellRegion;
 import org.zkoss.zss.model.InvalidateModelOpException;
 import org.zkoss.zss.model.SAutoFilter;
@@ -58,6 +59,8 @@ import org.zkoss.zss.model.util.Validations;
  */
 public class SheetImpl extends AbstractSheetAdv {
 	private static final long serialVersionUID = 1L;
+	private static final Log logger = Log.lookup(SheetImpl.class);
+			
 	private AbstractBookAdv book;
 	private String name;
 	private final String id;
@@ -201,11 +204,11 @@ public class SheetImpl extends AbstractSheetAdv {
 				prev = array;
 			}
 		}catch(RuntimeException x){
-			System.out.println(">>>>>>>>>>>>>>>>");
-			for(AbstractColumnArrayAdv array:columnArrays.values()){
-				System.out.println(">>>>"+array.getIndex()+":"+array.getLastIndex());
+			if(logger.debugable()){
+				for(AbstractColumnArrayAdv array:columnArrays.values()){
+					logger.debug("ColumnArray "+array.getIndex()+":"+array.getLastIndex());
+				}
 			}
-			System.out.println(">>>>>>>>>>>>>>>>");
 			throw x;
 		}
 		
