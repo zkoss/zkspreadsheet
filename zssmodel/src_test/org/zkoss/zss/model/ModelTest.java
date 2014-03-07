@@ -14,6 +14,7 @@ import java.util.concurrent.locks.ReadWriteLock;
 import junit.framework.Assert;
 
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.zkoss.poi.ss.util.CellReference;
 import org.zkoss.util.Locales;
@@ -66,10 +67,14 @@ import org.zkoss.zss.range.SRanges;
 
 public class ModelTest {
 
+	
+	@BeforeClass
+	static public void beforeClass() {
+		Setup.touch();
+	}
 	@Before
 	public void beforeTest() {
 		Locales.setThreadLocal(Locale.TAIWAN);
-		SheetImpl.DEBUG = true;
 	}
 	
 	protected SSheet initialDataGrid(SSheet sheet){

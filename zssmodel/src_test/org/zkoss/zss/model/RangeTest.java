@@ -40,6 +40,7 @@ public class RangeTest {
 
 	@BeforeClass
 	static public void beforeClass() {
+		Setup.touch();
 	}
 	
 	@Before

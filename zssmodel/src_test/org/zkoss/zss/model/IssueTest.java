@@ -7,6 +7,7 @@ import java.util.Locale;
 import junit.framework.Assert;
 
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.zkoss.util.Locales;
 import org.zkoss.zss.model.impl.AbstractBookSeriesAdv;
@@ -18,11 +19,13 @@ import org.zkoss.zss.model.sys.dependency.Ref;
 import org.zkoss.zss.range.SRanges;
 
 public class IssueTest {
-
+	@BeforeClass
+	static public void beforeClass() {
+		Setup.touch();
+	}
 	@Before
 	public void beforeTest() {
 		Locales.setThreadLocal(Locale.TAIWAN);
-		SheetImpl.DEBUG = true;
 	}
 	
 	@Test 

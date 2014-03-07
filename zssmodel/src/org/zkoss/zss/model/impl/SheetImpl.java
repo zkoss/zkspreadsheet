@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
 
+import org.zkoss.lang.Library;
 import org.zkoss.poi.ss.util.CellReference;
 import org.zkoss.poi.ss.util.WorkbookUtil;
 import org.zkoss.util.logging.Log;
@@ -182,12 +183,16 @@ public class SheetImpl extends AbstractSheetAdv {
 //	}
 	
 	/**internal use only for developing/test state, should remove when stable*/
-	public static boolean DEBUG = false;
+	private static boolean COLUMN_ARRAY_CHECK = false;
+	static{
+		if("true".equalsIgnoreCase(Library.getProperty("org.zkoss.zss.model.internal.CollumnArrayCheck"))){
+			COLUMN_ARRAY_CHECK = true;
+		}
+	}
 	
 	private void checkColumnArrayStatus(){
-		if(!DEBUG) //only check in dev 
+		if(!COLUMN_ARRAY_CHECK) //only check in dev 
 			return;
-		
 		AbstractColumnArrayAdv prev = null;
 		try{
 			for(AbstractColumnArrayAdv array:columnArrays.values()){
@@ -204,10 +209,9 @@ public class SheetImpl extends AbstractSheetAdv {
 				prev = array;
 			}
 		}catch(RuntimeException x){
-			if(logger.debugable()){
-				for(AbstractColumnArrayAdv array:columnArrays.values()){
-					logger.debug("ColumnArray "+array.getIndex()+":"+array.getLastIndex());
-				}
+			logger.error(x.getMessage(),x);
+			for(AbstractColumnArrayAdv array:columnArrays.values()){
+				logger.info("ColumnArray "+array.getIndex()+":"+array.getLastIndex());
 			}
 			throw x;
 		}

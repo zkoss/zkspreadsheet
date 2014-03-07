@@ -54,7 +54,6 @@ public class ModelAdvancedIssueTest {
 	@Before
 	public void beforeTest() {
 		Locales.setThreadLocal(Locale.TAIWAN);
-		SheetImpl.DEBUG = true;
 	}
 	
 	protected SSheet initialDataGrid(SSheet sheet){

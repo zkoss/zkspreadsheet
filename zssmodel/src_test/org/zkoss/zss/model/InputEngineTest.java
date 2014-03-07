@@ -25,6 +25,7 @@ public class InputEngineTest {
 	
 	@BeforeClass
 	public static void init(){
+		Setup.touch();
 		inputEngine = EngineFactory.getInstance().createInputEngine();
 		inputParseContext = new InputParseContext(Locale.US);
 	}

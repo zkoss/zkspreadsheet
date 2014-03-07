@@ -27,7 +27,10 @@ public class FormatEngineTest {
 
 	static private FormatContext formatContext;
 	static private FormatEngine formatEngine;
-	
+	@BeforeClass
+	static public void beforeClass() {
+		Setup.touch();
+	}	
 	private SCell cell;
 	
 	@BeforeClass

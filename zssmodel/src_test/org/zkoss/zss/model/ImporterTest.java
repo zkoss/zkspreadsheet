@@ -25,7 +25,10 @@ public class ImporterTest extends ImExpTestBase {
 	
 	private SImporter importer;
 	 
-	
+	@BeforeClass
+	static public void beforeClass() {
+		Setup.touch();
+	}	
 	
 	@Before
 	public void beforeTest(){
