@@ -274,6 +274,10 @@ public class FormulaEngineImpl implements FormulaEngine {
 		} catch(NotImplementedException e) {
 			logger.info(e.getMessage() + " when eval " + expr.getFormulaString());
 			result = new EvaluationResultImpl(ResultType.ERROR, new ErrorValue(ErrorValue.INVALID_NAME, e.getMessage()));
+		} catch(EvaluationException e) { 
+			logger.warning(e.getMessage() + " when eval " + expr.getFormulaString());
+			ErrorEval error = e.getErrorEval();
+			result = new EvaluationResultImpl(ResultType.ERROR, error==null?new ErrorValue(ErrorValue.INVALID_FORMULA, e.getMessage()):error);
 		} catch(FormulaParseException e) {
 			// we skip evaluation if formula has parsing error
 			// so if still occurring formula parsing exception, it should be a bug 
@@ -337,7 +341,7 @@ public class FormulaEngineImpl implements FormulaEngine {
 			Object v = getResolvedValue(ve);
 			return new EvaluationResultImpl(ResultType.SUCCESS, v);
 		} else {
-			throw new Exception("no matched type: " + value); // FIXME
+			throw new EvaluationException(null, "no matched type: " + value); // FIXME
 		}
 	}
 
@@ -348,6 +352,8 @@ public class FormulaEngineImpl implements FormulaEngine {
 			return ((NumberEval)value).getNumberValue();
 		} else if(value instanceof BlankEval) {
 			return "";
+		} else if(value instanceof ErrorEval) {//ZSS-591 Get console exception after delete sheet
+			return ((ErrorEval)value).getErrorCode();
 		} else {
 			throw new EvaluationException(null, "no matched type: " + value); // FIXME
 		}
