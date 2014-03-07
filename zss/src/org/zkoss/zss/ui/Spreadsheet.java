@@ -880,24 +880,31 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	 * @param name	the name of spreadsheet to be selected.
 	 */
 	public void setSelectedSheet(String name) {
-		setSelectedSheet0(name);
+		boolean update = setSelectedSheet0(name);
 		
 		//TODO: think if this is correct or not
 		// the call of onSheetSelected must after invalidate,
 		// because i must let invalidate clean lastcellblock first
-		afterSheetSelected();
-		invalidate();
+		if(update){
+			afterSheetSelected();
+			invalidate();
+		}
 	}
 	
-	private void setSelectedSheet0(String name) {
+	/**
+	 * @return true if selected another sheet
+	 */
+	private boolean setSelectedSheet0(String name) {
 		final SBook book = getSBook();
 		if (book == null) {
-			return;
+			return false;
 		}
-		
+		boolean update = false;
 		//Note. check whether if the sheet has remove or not
 		if (_selectedSheet != null && book.getSheetIndex(_selectedSheet) == -1) {
 			cleanSelectedSheet();
+			//_selectedSheet become null after clean
+			update = true;
 		}
 
 		if (_selectedSheet == null || !_selectedSheet.getSheetName().equals(name)) {
@@ -908,7 +915,9 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			cleanSelectedSheet();
 			
 			_selectedSheet = sheet;
+			update = true;
 		}
+		return update;
 	}
 	
 	/*
@@ -918,7 +927,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			int left, int top, int right, int bottom
 			/*, int highlightLeft, int highlightTop, int highlightRight, int highlightBottom,
 			int rowfreeze, int colfreeze*/) {
-		setSelectedSheet0(name);
+		boolean update = setSelectedSheet0(name);
 		if (row >= 0 && col >= 0) {
 			this.setCellFocusDirectly(new CellRef(row, col));
 		} else {
@@ -929,7 +938,9 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		} else {
 			this.setSelectionDirectly(new AreaRef(0, 0, 0, 0));
 		}
-		afterSheetSelected();
+		if(update){
+			afterSheetSelected();
+		}
 		
 		updateSheetAttributes(cacheInClient/*, rowfreeze, colfreeze*/);
 	}
