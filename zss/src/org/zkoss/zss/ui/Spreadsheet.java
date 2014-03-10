@@ -32,7 +32,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.locks.ReadWriteLock;
 
 import org.zkoss.json.JSONArray;
 import org.zkoss.json.JSONObject;
@@ -664,9 +663,14 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	private FriendFocusHelper getFriendFocusHelper(){
 		FriendFocusHelper helper = null;
 		if(_book!=null){
-			helper = (FriendFocusHelper) _book.getAttribute(FRIEND_FOCUS_KEY);
-			if(helper==null){
-				_book.setAttribute(FRIEND_FOCUS_KEY, helper = new FriendFocusHelper());
+			_book.getBookSeries().getLock().writeLock().lock();
+			try{
+				helper = (FriendFocusHelper) _book.getAttribute(FRIEND_FOCUS_KEY);
+				if(helper==null){
+					_book.setAttribute(FRIEND_FOCUS_KEY, helper = new FriendFocusHelper());
+				}
+			}finally{
+				_book.getBookSeries().getLock().writeLock().unlock();
 			}
 		}
 		return helper;
@@ -713,6 +717,8 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 						&& ((EvaluationContributorContainer)_book).getEvaluationContributor() instanceof ComponentEvaluationContributor){
 					((EvaluationContributorContainer)_book).setEvaluationContributor(null);
 				}
+				//delete self focus that stores in the book.
+				deleteSelfEditorFocus();
 			}finally{
 				_book.getBookSeries().getLock().writeLock().unlock();
 			}
@@ -763,8 +769,8 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		_book = book;
 		if (_book != null) {
 			_book.getBookSeries().getLock().writeLock().lock();
-			_modelEventListener.registerBookQueue(_book);
 			try{
+				_modelEventListener.registerBookQueue(_book);
 				if(isBelowDesktopScope(_book) && _book instanceof EvaluationContributorContainer 
 						&& ((EvaluationContributorContainer)_book).getEvaluationContributor()==null){
 					((EvaluationContributorContainer)_book).setEvaluationContributor(new ComponentEvaluationContributor(this));
@@ -2093,34 +2099,21 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			return scope;
 		}
 		
-		void registerBookQueue(SBook book){
-			ReadWriteLock lock = book.getBookSeries().getLock();
-			try{
-				lock.writeLock().lock();
-				String scope = getScope(book);
-				String queueName = getQueueName(book);
-				EventQueue<Event> queue = EventQueues.lookup(queueName, scope,true);
-				queue.subscribe(this);
-				book.addEventListener(this);
-			}finally{
-				lock.writeLock().unlock();
-			}
+		void registerBookQueue(SBook book){//was protected in lock already
+			String scope = getScope(book);
+			String queueName = getQueueName(book);
+			EventQueue<Event> queue = EventQueues.lookup(queueName, scope,true);
+			queue.subscribe(this);
+			book.addEventListener(this);
 		}
-		void unregisterBookQueue(SBook book){
-			ReadWriteLock lock = book.getBookSeries().getLock();
-			try{
-				lock.writeLock().lock();
-				book.removeEventListener(this);
-				
-				String scope = getScope(book);
-				String queueName = getQueueName(book);
-				EventQueue<Event> queue = EventQueues.lookup(queueName, scope,false);
-				if(queue!=null){
-					queue.unsubscribe(this);
-				}				
-			}finally{
-				lock.writeLock().unlock();
-			}
+		void unregisterBookQueue(SBook book){//was protected in lock already
+			book.removeEventListener(this);
+			String scope = getScope(book);
+			String queueName = getQueueName(book);
+			EventQueue<Event> queue = EventQueues.lookup(queueName, scope,false);
+			if(queue!=null){
+				queue.unsubscribe(this);
+			}				
 		}
 
 	}

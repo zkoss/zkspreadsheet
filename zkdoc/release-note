@@ -11,6 +11,7 @@ ZK Spreadsheet 3.5.0
   ZSS-588 get exception when import xls
   ZSS-590 Chart shows to another sheet after delete sheet
   ZSS-591 Get console exception after delete sheet
+  ZSS-593 Spreadsheet doesn't be released immediately after close tab in collaboration
   
 ** Upgrade Notes
   * Following api are removed
