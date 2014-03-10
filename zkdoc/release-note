@@ -12,7 +12,7 @@ ZK Spreadsheet 3.5.0
   ZSS-590 Chart shows to another sheet after delete sheet
   ZSS-591 Get console exception after delete sheet
   ZSS-593 Spreadsheet doesn't be released immediately after close tab in collaboration
-  ZSS-594 js error when insert/delete row/column in freeze column/row panel
+  ZSS-594 wrong display when insert/delete row/column in freeze column/row panel
   
 ** Upgrade Notes
   * Following api are removed
