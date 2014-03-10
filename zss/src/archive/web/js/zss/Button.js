@@ -1669,13 +1669,13 @@ zss.ButtonBuilder = zk.$extends(zk.Object, {
 	fontFamily: function () {
 		return new zss.FontFamilyCombobox({
 			$action: 'fontFamily',
-			width: '105px'
+			width: '115px'
 		}, this._wgt);
 	},
 	fontSize: function () {
 		return new zss.FontSizeCombobox({
 			$action: 'fontSize',
-			width: '45px'
+			width: '55px'
 		}, this._wgt);
 	},
 	fontBold: function () {

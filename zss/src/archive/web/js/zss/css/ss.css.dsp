@@ -1169,7 +1169,8 @@
 
 .zstbtn .z-toolbarbutton-content {
 	overflow: hidden;
-	display: block;
+	display: inline-block;
+	width: 100%;
 }
 
 <c:if test="${c:browser('ie6-')}">
@@ -1178,7 +1179,8 @@
 }
 .zstbtn .z-toolbarbutton-content {
 	overflow: visible;
-	display: block;
+	display: inline-block;
+	width: 100%;
 }
 .zschktbtn {
 	font-size: 0;
@@ -1222,10 +1224,10 @@
 
 .z-toolbarbutton-over .zstbtn-cave {
 	padding: 2px 1px 2px 0;
-	border-left: 1px solid #79B9E0;
 }
 
 .zstbtn-cave-over {
+	border-left: 1px solid #79B9E0;
 	background:#A4D4FD;
 	<c:if test="${c:isGecko()}">
 		background-image: -moz-linear-gradient(top, #D1EDFF, #A4D4FD);
@@ -1243,7 +1245,7 @@
 }
 
 <c:if test="${c:browser('ie6-')}">
-.zstbtn .z-toolbarbutton-body,
+.zstbtn .z-toolbarbutton-content,
 .zstbtn .zstbtn-cave  {
 	font-size: 0;
 }
@@ -1252,6 +1254,7 @@
 .zstbtn-arrow {
 	width: 10px;
 	height: 16px;
+	margin-top: 3px;
 	background: url(${c:encodeURL('~./zss/img/arrow-down.gif')}) no-repeat;
 	<c:if test="${c:browser('ie6-')}">
 		font-size: 0;
@@ -1262,10 +1265,11 @@
 	border: 0;
 	padding: 1px 0;
 	cursor: default;
+	width: 2px;
 }
 
 .zstbtn-sep .z-toolbarbutton-content {
-	display: block;
+	display: inline-block;
 	border: 0;
 	padding: 0 1px;
 }
@@ -1367,7 +1371,8 @@
 }
 
 .zschktbtn .z-toolbarbutton-content {
-	display: block;
+	display: inline-block;
+	width: 36px;
 }
 .zschktbtn img {
 	position: absolute;
