@@ -634,6 +634,9 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	private void releaseBook(){
 		if (_book != null) {
 			_book.unsubscribe(_dataListener);
+			//ZSS-593 Spreadsheet doesn't be released immediately after close tab in collaboration
+			deleteSelfEditorFocus();
+			
 			_book.removeVariableResolver(_variableResolver);
 			_book.removeFunctionMapper(_functionMapper);
 			_book = null;
