@@ -65,6 +65,8 @@ public class InsertDeleteHelper extends RangeHelperBase {
 
 		// insert row/column/cell
 		if(isWholeRow()) { // ignore insert direction
+			//TODO don't allow to insert across freeze, or will get js exception
+			
 			sheet.insertRow(getRow(), getLastRow());
 			
 			// copy style/formal/size
@@ -82,6 +84,7 @@ public class InsertDeleteHelper extends RangeHelperBase {
 			extendChartHeight();
 			
 		} else if(isWholeColumn()) { // ignore insert direction
+			//TODO don't allow to insert across freeze, or will get js exception
 			sheet.insertColumn(getColumn(), getLastColumn());
 
 			// copy style/formal/size

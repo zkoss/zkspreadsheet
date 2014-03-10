@@ -566,8 +566,19 @@ public class SheetImpl extends AbstractSheetAdv {
 		}
 		
 		extendFormula(new CellRegion(rowIdx,0,lastRowIdx,book.getMaxColumnIndex()), false);
+		
+		//shift freeze panel
+		int freezeIdx = viewInfo.getNumOfRowFreeze()-1;
+		if(freezeIdx>=rowIdx){
+			if(freezeIdx<lastRowIdx){
+				freezeIdx += freezeIdx-rowIdx + 1;
+			}else{
+				freezeIdx += lastRowIdx-rowIdx + 1;
+			}
+			viewInfo.setNumOfRowFreeze(freezeIdx<0?0:freezeIdx+1);
+		}
 	}	
-	
+
 	@Override
 	public void deleteRow(int rowIdx, int lastRowIdx) {
 		checkOrphan();
@@ -633,6 +644,17 @@ public class SheetImpl extends AbstractSheetAdv {
 		//TODO shift data validation?
 		
 		shrinkFormula(new CellRegion(rowIdx,0,lastRowIdx,book.getMaxColumnIndex()), false);
+		
+		//shift freeze panel
+		int freezeIdx = viewInfo.getNumOfRowFreeze()-1;
+		if(freezeIdx>=rowIdx){
+			if(freezeIdx<lastRowIdx){
+				freezeIdx = rowIdx-1;
+			}else{
+				freezeIdx -= lastRowIdx-rowIdx + 1;
+			}
+			viewInfo.setNumOfRowFreeze(freezeIdx<0?0:freezeIdx+1);
+		}		
 		
 	}
 	
@@ -951,6 +973,16 @@ public class SheetImpl extends AbstractSheetAdv {
 		
 		extendFormula(new CellRegion(0,columnIdx,book.getMaxRowIndex(),lastColumnIdx), true);
 		
+		//shift freeze panel
+		int freezeIdx = viewInfo.getNumOfColumnFreeze()-1;
+		if(freezeIdx>=columnIdx){
+			if(freezeIdx<lastColumnIdx){
+				freezeIdx += freezeIdx-columnIdx + 1;
+			}else{
+				freezeIdx += lastColumnIdx-columnIdx + 1;
+			}
+			viewInfo.setNumOfColumnFreeze(freezeIdx<0?0:freezeIdx+1);
+		}		
 	}	
 	
 	private void insertAndSplitColumnArray(int columnIdx,int size){
@@ -1107,6 +1139,17 @@ public class SheetImpl extends AbstractSheetAdv {
 		//TODO shift data validation?
 
 		shrinkFormula(new CellRegion(0,columnIdx,book.getMaxRowIndex(),lastColumnIdx), true);
+		
+		//shift freeze panel
+		int freezeIdx = viewInfo.getNumOfColumnFreeze()-1;
+		if(freezeIdx>=columnIdx){
+			if(freezeIdx<lastColumnIdx){
+				freezeIdx = columnIdx-1;
+			}else{
+				freezeIdx -= lastColumnIdx-columnIdx + 1;
+			}
+			viewInfo.setNumOfColumnFreeze(freezeIdx<0?0:freezeIdx+1);
+		}				
 	}	
 	
 	private void deleteAndShrinkColumnArray(int columnIdx,int size){
