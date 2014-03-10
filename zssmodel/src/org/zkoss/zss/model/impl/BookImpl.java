@@ -88,9 +88,9 @@ public class BookImpl extends AbstractBookAdv{
 	private final int maxRowSize = SpreadsheetVersion.EXCEL2007.getMaxRows();
 	private final int maxColumnSize = SpreadsheetVersion.EXCEL2007.getMaxColumns();
 	
-	private transient HashMap<String,Object> attributes;
-	
 	private final List<ModelEventListener> listeners = new LinkedList<ModelEventListener>();
+	
+	private HashMap<String,Object> attributes;
 	
 	private EvaluationContributor evalContributor;
 	

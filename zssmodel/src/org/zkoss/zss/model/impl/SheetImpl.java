@@ -91,7 +91,7 @@ public class SheetImpl extends AbstractSheetAdv {
 	
 	private final SPrintSetup printSetup = new PrintSetupImpl();
 	
-	private transient HashMap<String,Object> attributes;
+	private HashMap<String,Object> attributes;
 	private int defaultColumnWidth = 64; //in pixel
 	private int defaultRowHeight = 20;//in pixel
 	
