@@ -38,9 +38,9 @@ public class ShortMonthData extends CircularData { //ZSS-69
 		final Pair key = new Pair(locale, Integer.valueOf(type));
 		ShortMonthData value = (ShortMonthData) _monthData.get(key);
 		if (value == null) { //create and cache
-			DateFormatSymbols symbols = DateFormatSymbols.getInstance(locale);
+			DateFormatSymbols symbols = new DateFormatSymbols(locale);
 			if (symbols == null) {
-				symbols = DateFormatSymbols.getInstance(Locale.US);
+				symbols = new DateFormatSymbols(Locale.US);
 			}
 			String[] month13 = symbols.getShortMonths();
 			String[] month12 = new String[12];
