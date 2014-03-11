@@ -1395,6 +1395,7 @@
 
 .zsstylepanel  {
 	background-color: transparent;
+	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#00000000,endColorstr=#00000000)"; /* IE8 */
 	background-image: none;
 	box-shadow: none;
 	-moz-box-shadow: none;
@@ -1402,7 +1403,7 @@
 	border: none;
 }
 
-.zsstylepanel .z-div {
+.zsstylepanel-upper {
 	border: 1px solid #cfcfcf;
 }
 
@@ -1415,7 +1416,8 @@
 }
 
 .zsstylepanel-menu {
-	margin-top: 30px;
+	margin-top: 15px;
+	margin-right: 60px;
 	position: relative;
 	left: 0px;
 	top: 0px;

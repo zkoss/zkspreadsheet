@@ -1358,7 +1358,6 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			var wgt = this._wgt;
 			p = this._rowHeaderMenupopup = new zss.MenupopupFactory(wgt).rowHeader();
 			p.setDisabled(wgt.getActionDisabled());
-			this.appendChild(p);
 		}
 		return p;
 	},
@@ -1375,7 +1374,6 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			var wgt = this._wgt;
 			p = this._columnHeaderMenupopup = new zss.MenupopupFactory(this._wgt).columnHeader();
 			p.setDisabled(wgt.getActionDisabled());
-			this.appendChild(p);
 		}
 		return p;
 	},
@@ -1392,7 +1390,6 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			var wgt = this._wgt;
 			p = this._cellMenupopup = new zss.MenupopupFactory(wgt).cell();
 			p.setDisabled(wgt.getActionDisabled());
-			this.appendChild(p);
 		}
 		return p;
 	},
@@ -1426,13 +1423,18 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 	},
 	openStyleMenupopup: function (x, y, refPop) {
 		x += 5;
+		y -= 85;
 		y = y < 0 ? 0 : y;
 		
 		var p = this.getStyleMenupopup();
 		p.getMenuContainer().appendChild(refPop);
+		// make menu visible before style menu showing
+		// for calculating correct height
+		jq(refPop.$n()).css('display', 'block');
 		p.open(null, [x, y]);
 		
 		refPop.setVisible(true);
+		
 	},
 	runAfterMouseClick: function (fn) {
 		var fns = this._afterMouseClick;

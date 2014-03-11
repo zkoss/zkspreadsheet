@@ -1163,13 +1163,13 @@ zss.StylePanel = zk.$extends(zul.wgt.Popup, {
 			fontSize = btns[1],
 			b;
 		
-		var styleContainer = new zul.wgt.Div();
+		var styleContainer = new zul.wgt.Div({sclass: 'zsstylepanel-upper'});
 		this.appendChild(styleContainer);
 		
 		wgt.listen({onAuxAction: this.proxy(this._closeStylePanel)});
-		fontFamily.setWidth('75px');
+		fontFamily.setWidth('85px');
 		
-		fontSize.setWidth('48px');
+		fontSize.setWidth('58px');
 		while (b = btns.shift()) {
 			tb.appendChild(b);
 		}
