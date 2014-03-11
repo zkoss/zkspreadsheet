@@ -181,4 +181,26 @@ public class EvalSheet implements EvaluationSheet {
 
 	}
 
+	//ZSS-596 Possible memory leak when formula evaluation
+	//implement hashCode and equals, use identity to implement equals
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((sheet == null) ? 0 : sheet.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		EvalSheet other = (EvalSheet) obj;
+		
+		return sheet == other.sheet;
+	}
 }
