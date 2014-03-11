@@ -42,6 +42,7 @@ ZK Spreadsheet 3.0.2
   ZSS-547 Sheet index (31) is out of range (0..30) error when deleting sheets in a workbook
   ZSS-569 Range.notifyChange can't update formula value
   ZSS-593 Spreadsheet doesn't be released immediately after close tab in collaboration
+  ZSS-596 Possible memory leak when formula evaluation
   
 ** Upgrade Notes
   
