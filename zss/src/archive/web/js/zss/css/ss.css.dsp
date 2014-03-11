@@ -1167,10 +1167,21 @@
 	padding: 1px 0;
 }
 
+.zstbtn {
+	height: 28px;
+	padding-top: 0;
+	padding-bottom: 0;
+}
+
+.zstbtn-real {
+	margin-right: 4px;
+}
+
 .zstbtn .z-toolbarbutton-content {
 	overflow: hidden;
 	display: inline-block;
 	width: 100%;
+	height: 26px;
 }
 
 <c:if test="${c:browser('ie6-')}">
@@ -1194,8 +1205,8 @@
 	position: absolute;
 	top: 0;
 	right: 0;
-	height: 16px;
-	padding: 2px 1px;
+	height: 26px;
+	padding: 0;
 	width: 10px;
 }
 
@@ -1214,7 +1225,7 @@
 }
 
 .zstbtn-seld .zstbtn-cave {
-	padding: 1px;
+	padding: 0;
 }
 
 .z-toolbarbutton-over .z-toolbarbutton-content {
@@ -1252,9 +1263,9 @@
 </c:if>
 
 .zstbtn-arrow {
-	width: 10px;
+	width: 9px;
+	margin-top: 6px;
 	height: 16px;
-	margin-top: 3px;
 	background: url(${c:encodeURL('~./zss/img/arrow-down.gif')}) no-repeat;
 	<c:if test="${c:browser('ie6-')}">
 		font-size: 0;
