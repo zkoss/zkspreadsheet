@@ -23,10 +23,8 @@ import org.zkoss.poi.ss.usermodel.*;
 
 /**
  *
- * Utility methods that involves POI or ZSS model.
+ * Utility methods that involves POI model.
  */
-//copied from ZSS project to make ng-model run.
-//We should remove it after integrating with ZSS.
 public class ImExpUtils {
 
 	public static int getWidthAny(Sheet poiSheet,int col, int charWidth){

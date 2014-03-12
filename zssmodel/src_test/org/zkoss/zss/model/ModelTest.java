@@ -1,4 +1,4 @@
-package org.zkoss.zss.ngmodel;
+package org.zkoss.zss.model;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -14,6 +14,7 @@ import java.util.concurrent.locks.ReadWriteLock;
 import junit.framework.Assert;
 
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.zkoss.poi.ss.util.CellReference;
 import org.zkoss.util.Locales;
@@ -66,10 +67,14 @@ import org.zkoss.zss.range.SRanges;
 
 public class ModelTest {
 
+	
+	@BeforeClass
+	static public void beforeClass() {
+		Setup.touch();
+	}
 	@Before
 	public void beforeTest() {
 		Locales.setThreadLocal(Locale.TAIWAN);
-		SheetImpl.DEBUG = true;
 	}
 	
 	protected SSheet initialDataGrid(SSheet sheet){
@@ -2329,7 +2334,7 @@ public class ModelTest {
 		sheet.getCell(4, 1).setDateValue(now);
 		sheet.getCell(5, 1).setErrorValue(new ErrorValue(ErrorValue.INVALID_NAME));
 		
-		sheet.getCell(5, 1).setupHyperlink().setType(HyperlinkType.URL);
+		sheet.getCell(5, 1).setupHyperlink(HyperlinkType.URL,"httt://www.zkoss.org",null);
 		
 		sheet.getCell(5, 0).setupRichTextValue().addSegment("ABC",book.getDefaultFont());
 		

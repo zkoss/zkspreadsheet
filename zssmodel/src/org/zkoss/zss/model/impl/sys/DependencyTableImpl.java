@@ -8,9 +8,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Queue;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
+import org.zkoss.util.logging.Log;
 import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.SBookSeries;
 import org.zkoss.zss.model.SSheet;
@@ -35,7 +34,7 @@ import org.zkoss.zss.model.sys.dependency.Ref.RefType;
  */
 public class DependencyTableImpl extends DependencyTableAdv {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(DependencyTableImpl.class.getName());
+	private static final Log logger = Log.lookup(DependencyTableImpl.class.getName());
 	private static final EnumSet<RefType> regionTypes = EnumSet.of(RefType.BOOK, RefType.SHEET, RefType.AREA,
 			RefType.CELL);
 
@@ -77,12 +76,18 @@ public class DependencyTableImpl extends DependencyTableAdv {
 		Set<Ref> result = new LinkedHashSet<Ref>();
 		Queue<Ref> queue = new LinkedList<Ref>();
 		queue.add(precedent);
-
+		RefType precedentType = precedent.getType();
 		while(!queue.isEmpty()) {
 			Ref p = queue.remove();
 			for(Entry<Ref, Set<Ref>> entry : map.entrySet()) {
 				Ref target = entry.getKey();
 				if(!result.contains(target)) {
+					//ZSS-581, should also match to precedent (especially for larger scope ref).
+					if((precedentType==RefType.BOOK || precedentType==RefType.SHEET) && isMatched(target, precedent)) {
+						result.add(target);
+						queue.add(target);
+						continue;
+					}
 					for(Ref pre : entry.getValue()) {
 						if(isMatched(pre, p)) {
 							result.add(target);
@@ -100,9 +105,15 @@ public class DependencyTableImpl extends DependencyTableAdv {
 	public Set<Ref> getDirectDependents(Ref precedent) {
 		// search direct dependents 
 		Set<Ref> result = new LinkedHashSet<Ref>();
+		RefType precedentType = precedent.getType();
 		for(Entry<Ref, Set<Ref>> entry : map.entrySet()) {
 			Ref target = entry.getKey();
 			if(!result.contains(target)) {
+				//ZSS-581, should also match to precedent (especially for larger scope ref).
+				if((precedentType==RefType.BOOK || precedentType==RefType.SHEET) && isMatched(target, precedent)) {
+					result.add(target);
+					continue;
+				}
 				for(Ref pre : entry.getValue()) {
 					if(isMatched(pre, precedent)) {
 						result.add(target);
@@ -134,7 +145,7 @@ public class DependencyTableImpl extends DependencyTableAdv {
 
 		// anyone is a book, matched immediately
 		if(a.getType() == RefType.BOOK || b.getType() == RefType.BOOK) {
-			return true;
+			return isBookIntersected(a,b);
 		}
 
 		// check sheets are intersected or not
@@ -149,13 +160,31 @@ public class DependencyTableImpl extends DependencyTableAdv {
 
 		// anyone is a sheet, matched immediately
 		if(a.getType() == RefType.SHEET || b.getType() == RefType.SHEET) {
-			return true;
+			return isSheetIntersected(a,b);
 		}
 
 		// Okay, they only can be area or cell now!
 		// check overlapped or not
 		return isIntersected(a.getColumn(), a.getRow(), a.getLastColumn(), a.getLastRow(), b.getColumn(),
 				b.getRow(), b.getLastColumn(), b.getLastRow());
+	}
+
+	private boolean isSheetIntersected(Ref a, Ref b) {
+		if(a.getType()==RefType.SHEET){
+			return a.getSheetName().equals(b.getSheetName());
+		}else if(b.getType()==RefType.SHEET){
+			return b.getSheetName().equals(a.getSheetName());
+		}
+		return false;
+	}
+
+	private boolean isBookIntersected(Ref a, Ref b) {
+		if(a.getType()==RefType.BOOK){
+			return a.getBookName().equals(b.getBookName());
+		}else if(b.getType()==RefType.BOOK){
+			return b.getBookName().equals(a.getBookName());
+		}
+		return false;
 	}
 
 	private boolean isBothNotExist(int[] aSheetIndexes, int[] bSheetIndexes) {
@@ -209,7 +238,7 @@ public class DependencyTableImpl extends DependencyTableAdv {
 	public void merge(DependencyTableAdv dependencyTable) {
 		if(!(dependencyTable instanceof DependencyTableImpl)) {
 			// just in case
-			logger.log(Level.SEVERE, "can't merge different type of dependency table: " + dependencyTable.getClass().getName());
+			logger.error("can't merge different type of dependency table: " + dependencyTable.getClass().getName());
 			return;
 		}
 
@@ -229,5 +258,14 @@ public class DependencyTableImpl extends DependencyTableAdv {
 			}
 		}
 		return precedents;
+	}
+	
+	public void dump(){
+		for(Entry<Ref, Set<Ref>> entry : map.entrySet()) {
+			System.out.println("["+entry.getKey()+"] depends on");
+			for(Ref ref:entry.getValue()){
+				System.out.println("\t+["+ref+"]");
+			}
+		}
 	}
 }

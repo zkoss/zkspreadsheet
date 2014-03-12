@@ -25,12 +25,7 @@ import org.zkoss.poi.xssf.usermodel.XSSFAutoFilter.XSSFFilterColumn;
 import org.zkoss.poi.xssf.usermodel.charts.*;
 import org.zkoss.zss.model.*;
 import org.zkoss.zss.model.SAutoFilter.NFilterColumn;
-import org.zkoss.zss.model.SChart.BarDirection;
-import org.zkoss.zss.model.SChart.ChartLegendPosition;
-import org.zkoss.zss.model.SDataValidation.ErrorStyle;
-import org.zkoss.zss.model.SDataValidation.OperatorType;
 import org.zkoss.zss.model.SDataValidation.ValidationType;
-import org.zkoss.zss.model.SPicture.Format;
 import org.zkoss.zss.model.chart.*;
 /**
  * 
@@ -80,20 +75,8 @@ public class ExcelXlsxExporter extends AbstractExcelExporter {
 	@Override
 	protected void exportPicture(SSheet sheet, Sheet poiSheet) {
 		for (SPicture picture : sheet.getPictures()){
-			int poiPictureIndex = workbook.addPicture(picture.getData(), toPoiPictureFormat(picture.getFormat()));
+			int poiPictureIndex = workbook.addPicture(picture.getData(), PoiEnumConversion.toPoiPictureFormat(picture.getFormat()));
 			poiSheet.createDrawingPatriarch().createPicture(toClientAnchor(picture.getAnchor(), sheet), poiPictureIndex);
-		}
-	}
-	
-	private int toPoiPictureFormat(Format format){
-		switch(format){
-		case GIF:
-			return XSSFWorkbook.PICTURE_TYPE_GIF;
-		case JPG:
-			return Workbook.PICTURE_TYPE_JPEG;
-		case PNG:
-		default:
-			return Workbook.PICTURE_TYPE_PNG;
 		}
 	}
 	
@@ -109,21 +92,21 @@ public class ExcelXlsxExporter extends AbstractExcelExporter {
 			case AREA:
 				if (chart.isThreeD()){
 					categoryData = new XSSFArea3DChartData();
-					((XSSFArea3DChartData)categoryData).setGrouping(toPoiGrouping(chart.getGrouping()));
+					((XSSFArea3DChartData)categoryData).setGrouping(PoiEnumConversion.toPoiGrouping(chart.getGrouping()));
 				}else{
 					categoryData = new XSSFAreaChartData();
-					((XSSFAreaChartData)categoryData).setGrouping(toPoiGrouping(chart.getGrouping()));
+					((XSSFAreaChartData)categoryData).setGrouping(PoiEnumConversion.toPoiGrouping(chart.getGrouping()));
 				}
 				break;
 			case BAR:
 				if (chart.isThreeD()){
 					categoryData = new XSSFBar3DChartData();				
-					((XSSFBar3DChartData)categoryData).setGrouping(toPoiGrouping(chart.getGrouping()));
-					((XSSFBar3DChartData)categoryData).setBarDirection(toPoiBarDirection(chart.getBarDirection()));
+					((XSSFBar3DChartData)categoryData).setGrouping(PoiEnumConversion.toPoiGrouping(chart.getGrouping()));
+					((XSSFBar3DChartData)categoryData).setBarDirection(PoiEnumConversion.toPoiBarDirection(chart.getBarDirection()));
 				}else{
 					categoryData = new XSSFBarChartData();
-					((XSSFBarChartData)categoryData).setGrouping(toPoiGrouping(chart.getGrouping()));
-					((XSSFBarChartData)categoryData).setBarDirection(toPoiBarDirection(chart.getBarDirection()));
+					((XSSFBarChartData)categoryData).setGrouping(PoiEnumConversion.toPoiGrouping(chart.getGrouping()));
+					((XSSFBarChartData)categoryData).setBarDirection(PoiEnumConversion.toPoiBarDirection(chart.getBarDirection()));
 				}
 				break;
 			case BUBBLE:
@@ -134,12 +117,12 @@ public class ExcelXlsxExporter extends AbstractExcelExporter {
 			case COLUMN:
 				if (chart.isThreeD()){
 					categoryData = new XSSFColumn3DChartData();
-					((XSSFColumn3DChartData)categoryData).setGrouping(toPoiGrouping(chart.getGrouping()));
-					((XSSFColumn3DChartData)categoryData).setBarDirection(toPoiBarDirection(chart.getBarDirection()));
+					((XSSFColumn3DChartData)categoryData).setGrouping(PoiEnumConversion.toPoiGrouping(chart.getGrouping()));
+					((XSSFColumn3DChartData)categoryData).setBarDirection(PoiEnumConversion.toPoiBarDirection(chart.getBarDirection()));
 				}else{
 					categoryData = new XSSFColumnChartData();
-					((XSSFColumnChartData)categoryData).setGrouping(toPoiGrouping(chart.getGrouping()));
-					((XSSFColumnChartData)categoryData).setBarDirection(toPoiBarDirection(chart.getBarDirection()));
+					((XSSFColumnChartData)categoryData).setGrouping(PoiEnumConversion.toPoiGrouping(chart.getGrouping()));
+					((XSSFColumnChartData)categoryData).setBarDirection(PoiEnumConversion.toPoiBarDirection(chart.getBarDirection()));
 				}
 				break;
 			case DOUGHNUT:
@@ -192,7 +175,7 @@ public class ExcelXlsxExporter extends AbstractExcelExporter {
 		}
 		if (chart.getLegendPosition() != null) {
 			ChartLegend legend = poiChart.getOrCreateLegend();
-			legend.setPosition(toPoiLegendPosition(chart.getLegendPosition()));
+			legend.setPosition(PoiEnumConversion.toPoiLegendPosition(chart.getLegendPosition()));
 		}
 		ChartAxis bottomAxis = null;
 		switch(chart.getType()) {
@@ -442,55 +425,13 @@ public class ExcelXlsxExporter extends AbstractExcelExporter {
 		};
 	}
 	
-	private ChartGrouping toPoiGrouping(org.zkoss.zss.model.SChart.ChartGrouping grouping){
-		switch(grouping){
-			case CLUSTERED:
-				return ChartGrouping.CLUSTERED;
-			case PERCENT_STACKED:
-				return ChartGrouping.PERCENT_STACKED;
-			case STACKED:
-				return ChartGrouping.STACKED;
-			case STANDARD:
-			default:
-				return ChartGrouping.STANDARD;
-		}
-	}
-	
-	private ChartDirection toPoiBarDirection(BarDirection direction){
-		switch(direction){
-			case VERTICAL:
-				return ChartDirection.VERTICAL;
-			case HORIZONTAL:
-			default:
-				return ChartDirection.HORIZONTAL;
-		}
-		
-	}
-	
-	private LegendPosition toPoiLegendPosition(ChartLegendPosition position){
-		switch(position){
-			case BOTTOM:
-				return LegendPosition.BOTTOM;
-			case TOP:
-				return LegendPosition.TOP;
-			case TOP_RIGHT:
-				return LegendPosition.TOP_RIGHT;
-			case LEFT:
-				return LegendPosition.LEFT;
-			case RIGHT:
-			default:
-				return LegendPosition.RIGHT;
-			
-		}
-	}
-
 	/**
 	 * According to {@link ValidationType}, FORMULA means custom validation.
 	 */
 	@Override
 	protected void exportValidation(SSheet sheet, Sheet poiSheet) {
 		for (SDataValidation validation : sheet.getDataValidations()){
-			int operatorType = toPoiOperatorType(validation.getOperatorType());
+			int operatorType = PoiEnumConversion.toPoiOperatorType(validation.getOperatorType());
 			String formula1 = validation.getValue1Formula();
 			String formula2 = validation.getValue2Formula();
 			DataValidationConstraint constraint = null;
@@ -530,7 +471,7 @@ public class ExcelXlsxExporter extends AbstractExcelExporter {
 			poiValidation.setEmptyCellAllowed(validation.isEmptyCellAllowed());
 			poiValidation.setSuppressDropDownArrow(validation.isShowDropDownArrow());
 			
-			poiValidation.setErrorStyle(toPoiErrorStyle(validation.getErrorStyle()));
+			poiValidation.setErrorStyle(PoiEnumConversion.toPoiErrorStyle(validation.getErrorStyle()));
 			poiValidation.createErrorBox(validation.getErrorBoxTitle(), validation.getErrorBoxText());
 			poiValidation.setShowErrorBox(validation.isShowErrorBox());
 			
@@ -541,40 +482,6 @@ public class ExcelXlsxExporter extends AbstractExcelExporter {
 		}
 	}
 	
-	private int toPoiOperatorType(OperatorType type){
-		switch (type) {
-			case NOT_EQUAL:
-				return DataValidationConstraint.OperatorType.NOT_EQUAL;
-			case NOT_BETWEEN:	
-				return DataValidationConstraint.OperatorType.NOT_BETWEEN;
-			case LESS_THAN:
-				return DataValidationConstraint.OperatorType.LESS_THAN;
-			case LESS_OR_EQUAL:
-				return DataValidationConstraint.OperatorType.LESS_OR_EQUAL;
-			case GREATER_THAN:
-				return DataValidationConstraint.OperatorType.GREATER_THAN;
-			case GREATER_OR_EQUAL:
-				return DataValidationConstraint.OperatorType.GREATER_OR_EQUAL;
-			case EQUAL:
-				return DataValidationConstraint.OperatorType.EQUAL;
-			case BETWEEN:
-			default:
-				return DataValidationConstraint.OperatorType.BETWEEN;
-		}
-	}
-	
-	private int toPoiErrorStyle(ErrorStyle style){
-		switch(style){
-		case INFO:
-			return DataValidation.ErrorStyle.INFO;
-		case WARNING:
-			return DataValidation.ErrorStyle.WARNING;
-		case STOP:
-		default:
-			return DataValidation.ErrorStyle.STOP;
-		}
-	}
-
 	/**
 	 * See Javadoc at {@link AbstractExcelImporter} importAutoFilter().
 	 */
@@ -600,7 +507,7 @@ public class ExcelXlsxExporter extends AbstractExcelExporter {
 				if (srcFilterColumn.getCriteria1()!=null){
 					criteria2 = srcFilterColumn.getCriteria2().toArray(new String[0]);
 				}
-				destFilterColumn.setProperties(criteria1, ExporterEnumUtil.toPoiFilterOperator(srcFilterColumn.getOperator()),
+				destFilterColumn.setProperties(criteria1, PoiEnumConversion.toPoiFilterOperator(srcFilterColumn.getOperator()),
 						criteria2, srcFilterColumn.isShowButton());
 			}
 		}

@@ -4,6 +4,16 @@ ZK Spreadsheet 3.5.0
   
 *Bugs:
   ZSS-350 When using cell validation with cell list, the drop-down list won't update after the referred cells changed
+  ZSS-581 Formula lost to update after rename 2 sheet
+  ZSS-583 NullPointerException when the sheet has hyperlinks with empty URL
+  ZSS-582 Can't display chart after rename the sheet name to dot(.)
+  ZSS-587 wrong gridline display after delete column
+  ZSS-588 get exception when import xls
+  ZSS-590 Chart shows to another sheet after delete sheet
+  ZSS-591 Get console exception after delete sheet
+  ZSS-593 Spreadsheet doesn't be released immediately after close tab in collaboration
+  ZSS-594 wrong display when insert/delete row/column in freeze column/row panel
+  ZSS-596 Possible memory leak when formula evaluation
   
 ** Upgrade Notes
   * Following api are removed
@@ -19,6 +29,7 @@ ZK Spreadsheet 3.5.0
     * Book.getSync() : we use a new ReadWriteSync, you can get the lock by getLock()  
     * CellStyle.getBackgroundColor() : use getFillColor()
     * EditableCellStyle.setBackgroundColor : use setFillColor()
+    * Exporter.export(Sheet sheet, OutputStream fos) and export(Sheet sheet,AreaRef selection,OutputStream fos)
 
 
  ------------
@@ -30,6 +41,8 @@ ZK Spreadsheet 3.0.2
   ZSS-541 date autofill timestamp is incorrect
   ZSS-547 Sheet index (31) is out of range (0..30) error when deleting sheets in a workbook
   ZSS-569 Range.notifyChange can't update formula value
+  ZSS-593 Spreadsheet doesn't be released immediately after close tab in collaboration
+  ZSS-596 Possible memory leak when formula evaluation
   
 ** Upgrade Notes
   

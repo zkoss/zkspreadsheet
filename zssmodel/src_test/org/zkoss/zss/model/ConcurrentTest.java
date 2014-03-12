@@ -1,4 +1,4 @@
-package org.zkoss.zss.ngmodel;
+package org.zkoss.zss.model;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -16,6 +16,7 @@ import java.util.concurrent.FutureTask;
 import junit.framework.Assert;
 
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.zkoss.util.Locales;
@@ -26,7 +27,10 @@ import org.zkoss.zss.model.impl.BookImpl;
 
 @Ignore
 public class ConcurrentTest {
-
+	@BeforeClass
+	static public void beforeClass() {
+		Setup.touch();
+	}
 	@Before
 	public void beforeTest() {
 		Locales.setThreadLocal(Locale.TAIWAN);

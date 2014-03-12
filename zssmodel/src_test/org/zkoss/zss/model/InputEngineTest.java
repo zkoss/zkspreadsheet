@@ -1,4 +1,4 @@
-package org.zkoss.zss.ngmodel;
+package org.zkoss.zss.model;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -25,6 +25,7 @@ public class InputEngineTest {
 	
 	@BeforeClass
 	public static void init(){
+		Setup.touch();
 		inputEngine = EngineFactory.getInstance().createInputEngine();
 		inputParseContext = new InputParseContext(Locale.US);
 	}

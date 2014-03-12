@@ -246,4 +246,10 @@ public final class EvalBook implements EvaluationWorkbook, FormulaParsingWorkboo
 	public EvaluationName getOrCreateName(String name, int sheetIndex) {
 		return parsingBook.getOrCreateName(name, sheetIndex);
 	}
+
+	//to compatible with zss-575 in 3.0
+	@Override
+	public boolean isAllowedDeferredNamePtg() {
+		return true;
+	}
 }

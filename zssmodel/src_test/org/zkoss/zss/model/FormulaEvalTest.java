@@ -9,7 +9,7 @@
 
 Copyright (C) 2013 Potix Corporation. All Rights Reserved.
  */
-package org.zkoss.zss.ngmodel;
+package org.zkoss.zss.model;
 
 import java.io.Closeable;
 import java.io.InputStream;
@@ -19,6 +19,7 @@ import java.util.Set;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.zkoss.util.Locales;
@@ -51,7 +52,10 @@ import org.zkoss.zss.range.impl.imexp.ExcelImportFactory;
 public class FormulaEvalTest {
 
 	private SImporter importer;
-
+	@BeforeClass
+	static public void beforeClass() {
+		Setup.touch();
+	}
 	@Before
 	public void beforeTest() {
 		importer= new ExcelImportFactory().createImporter();

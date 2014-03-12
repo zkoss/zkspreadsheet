@@ -1,0 +1,20 @@
+<vbox hflex="1" vflex="1">
+	<label multiline="true">
+	1.delete row 7, the remain rows should keep red
+	</label>
+	<hbox>
+		<button onClick='deleteRow()'>Delete row</button>
+	</hbox>
+	<spreadsheet id="ss" src="/issue3/book/blank.xlsx" maxVisibleRows="200" maxVisibleColumns="40"
+		hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
+		showFormulabar="true"/>
+	<zscript><![CDATA[
+	Sheet sheet = ss.getSelectedSheet();
+	Ranges.range(sheet,"E7:H10").merge(false);
+	CellOperationUtil.applyBackgroundColor(Ranges.range(sheet,"E7:H10"),"#FF0000");
+	public void deleteRow(){
+		CellOperationUtil.deleteRow(Ranges.range(sheet,"7"));
+	}
+	
+	]]></zscript>		
+</vbox>

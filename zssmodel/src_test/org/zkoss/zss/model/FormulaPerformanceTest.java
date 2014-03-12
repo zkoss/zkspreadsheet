@@ -9,10 +9,11 @@
 
 Copyright (C) 2013 Potix Corporation. All Rights Reserved.
  */
-package org.zkoss.zss.ngmodel;
+package org.zkoss.zss.model;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.zkoss.poi.ss.usermodel.CellValue;
@@ -39,7 +40,10 @@ public class FormulaPerformanceTest {
 	private static final double EPSILON = 0.0000001;
 
 	private XSSFFormulaEvaluator evaluator;
-
+	@BeforeClass
+	static public void beforeClass() {
+		Setup.touch();
+	}
 	@Before
 	public void before() {
 		memoryInit = -1;

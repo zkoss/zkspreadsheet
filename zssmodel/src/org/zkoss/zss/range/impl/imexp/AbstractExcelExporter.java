@@ -110,7 +110,10 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 			if(sheetName!=null){
 				poiName.setSheetIndex(workbook.getSheetIndex(sheetName));
 			}
-			poiName.setRefersToFormula(name.getRefersToFormula());
+			//zss-214, to tolerate the name refers to formula error (#REF!!$A$1:$I$18)
+			if(!name.isFormulaParsingError()){
+				poiName.setRefersToFormula(name.getRefersToFormula());
+			}
 		}
 	}
 
@@ -150,7 +153,7 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 		poiSheet.setMargin(Sheet.BottomMargin, UnitUtil.pxToInche(sheet.getPrintSetup().getBottomMargin()));
 
 		// Print Setup Information
-		poiSheet.getPrintSetup().setPaperSize(ExporterEnumUtil.toPoiPaperSize(sheet.getPrintSetup().getPaperSize()));
+		poiSheet.getPrintSetup().setPaperSize(PoiEnumConversion.toPoiPaperSize(sheet.getPrintSetup().getPaperSize()));
 		poiSheet.getPrintSetup().setLandscape(sheet.getPrintSetup().isLandscape());
 
 	}
@@ -252,7 +255,7 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 		SHyperlink hyperlink = cell.getHyperlink();
 		if (hyperlink != null) {
 			CreationHelper helper = workbook.getCreationHelper();
-			Hyperlink poiHyperlink = helper.createHyperlink(ExporterEnumUtil.toPoiHyperlinkType(hyperlink.getType()));
+			Hyperlink poiHyperlink = helper.createHyperlink(PoiEnumConversion.toPoiHyperlinkType(hyperlink.getType()));
 			poiHyperlink.setAddress(hyperlink.getAddress());
 			poiHyperlink.setLabel(hyperlink.getLabel());
 			poiCell.setHyperlink(poiHyperlink);
@@ -311,28 +314,28 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 		poiCellStyle = workbook.createCellStyle();
 
 		/* Bottom Border */
-		poiCellStyle.setBorderBottom(ExporterEnumUtil.toPoiBorderType(cellStyle.getBorderBottom()));
+		poiCellStyle.setBorderBottom(PoiEnumConversion.toPoiBorderType(cellStyle.getBorderBottom()));
 
 		BookHelper.setBottomBorderColor(poiCellStyle, toPOIColor(cellStyle.getBorderBottomColor()));
 
 		/* Left Border */
-		poiCellStyle.setBorderLeft(ExporterEnumUtil.toPoiBorderType(cellStyle.getBorderLeft()));
+		poiCellStyle.setBorderLeft(PoiEnumConversion.toPoiBorderType(cellStyle.getBorderLeft()));
 		BookHelper.setLeftBorderColor(poiCellStyle, toPOIColor(cellStyle.getBorderLeftColor()));
 
 		/* Right Border */
-		poiCellStyle.setBorderRight(ExporterEnumUtil.toPoiBorderType(cellStyle.getBorderRight()));
+		poiCellStyle.setBorderRight(PoiEnumConversion.toPoiBorderType(cellStyle.getBorderRight()));
 		BookHelper.setRightBorderColor(poiCellStyle, toPOIColor(cellStyle.getBorderRightColor()));
 
 		/* Top Border */
-		poiCellStyle.setBorderTop(ExporterEnumUtil.toPoiBorderType(cellStyle.getBorderTop()));
+		poiCellStyle.setBorderTop(PoiEnumConversion.toPoiBorderType(cellStyle.getBorderTop()));
 		BookHelper.setTopBorderColor(poiCellStyle, toPOIColor(cellStyle.getBorderTopColor()));
 
 		/* Fill Foreground Color */
 		BookHelper.setFillForegroundColor(poiCellStyle, toPOIColor(cellStyle.getFillColor()));
 
-		poiCellStyle.setFillPattern(ExporterEnumUtil.toPoiFillPattern(cellStyle.getFillPattern()));
-		poiCellStyle.setAlignment(ExporterEnumUtil.toPoiAlignment(cellStyle.getAlignment()));
-		poiCellStyle.setVerticalAlignment(ExporterEnumUtil.toPoiVerticalAlignment(cellStyle.getVerticalAlignment()));
+		poiCellStyle.setFillPattern(PoiEnumConversion.toPoiFillPattern(cellStyle.getFillPattern()));
+		poiCellStyle.setAlignment(PoiEnumConversion.toPoiHorizontalAlignment(cellStyle.getAlignment()));
+		poiCellStyle.setVerticalAlignment(PoiEnumConversion.toPoiVerticalAlignment(cellStyle.getVerticalAlignment()));
 		poiCellStyle.setWrapText(cellStyle.isWrapText());
 		poiCellStyle.setLocked(cellStyle.isLocked());
 		poiCellStyle.setHidden(cellStyle.isHidden());
@@ -378,14 +381,14 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 		}
 
 		poiFont = workbook.createFont();
-		poiFont.setBoldweight(ExporterEnumUtil.toPoiBoldweight(font.getBoldweight()));
+		poiFont.setBoldweight(PoiEnumConversion.toPoiBoldweight(font.getBoldweight()));
 		poiFont.setStrikeout(font.isStrikeout());
 		poiFont.setItalic(font.isItalic());
 		BookHelper.setFontColor(workbook, poiFont, toPOIColor(font.getColor()));
 		poiFont.setFontHeightInPoints((short) font.getHeightPoints());
 		poiFont.setFontName(font.getName());
-		poiFont.setTypeOffset(ExporterEnumUtil.toPoiTypeOffset(font.getTypeOffset()));
-		poiFont.setUnderline(ExporterEnumUtil.toPoiUnderline(font.getUnderline()));
+		poiFont.setTypeOffset(PoiEnumConversion.toPoiTypeOffset(font.getTypeOffset()));
+		poiFont.setUnderline(PoiEnumConversion.toPoiUnderline(font.getUnderline()));
 
 		// put into table
 		fontTable.put(font, poiFont);

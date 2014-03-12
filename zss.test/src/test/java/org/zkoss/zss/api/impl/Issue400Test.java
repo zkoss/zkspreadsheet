@@ -1083,7 +1083,7 @@ public class Issue400Test {
 		Hyperlink link = r.getCellHyperlink();
 		Assert.assertNotNull(link);
 		Assert.assertEquals("248.371.5093", link.getLabel());
-		Assert.assertEquals(null, link.getAddress());
+		Assert.assertEquals("", link.getAddress());//address never null in 3.5
 		Assert.assertEquals(HyperlinkType.DOCUMENT, link.getType());
 		
 		r.setCellHyperlink(HyperlinkType.EMAIL, "mailto:xyz@a.b.c", "a mail");

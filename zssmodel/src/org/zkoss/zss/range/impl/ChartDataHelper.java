@@ -38,7 +38,7 @@ public class ChartDataHelper extends RangeHelperBase {
 			fillXYData(selection, chartData);
 			break;
 		default:
-			throw new UnsupportedOperationException();
+			throw new UnsupportedOperationException("unknow chart type "+chart.getType());
 		}
 	}
 	

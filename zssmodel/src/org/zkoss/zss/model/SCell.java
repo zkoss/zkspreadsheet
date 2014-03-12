@@ -17,6 +17,8 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.model;
 
 import java.util.Date;
+
+import org.zkoss.zss.model.SHyperlink.HyperlinkType;
 /**
  * 
  * @author dennis
@@ -86,8 +88,8 @@ public interface SCell extends FormulaContent{
 	 */
 	public void setHyperlink(SHyperlink hyperlink);
 	
-	/** set a empty hyperlinkt*/
-	public SHyperlink setupHyperlink();
+	/** setup a hyperlink*/
+	public SHyperlink setupHyperlink(HyperlinkType type,String address,String label);
 
 //	boolean isReadonly();
 //	

@@ -16,10 +16,8 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.model.sys;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import org.zkoss.lang.Library;
+import org.zkoss.util.logging.Log;
 import org.zkoss.zss.model.impl.sys.CalendarUtilImpl;
 import org.zkoss.zss.model.impl.sys.DependencyTableImpl;
 import org.zkoss.zss.model.impl.sys.FormatEngineImpl;
@@ -36,7 +34,7 @@ import org.zkoss.zss.model.sys.input.InputEngine;
  */
 public class EngineFactory {
 
-	static private Logger logger = Logger.getLogger(EngineFactory.class.getName());
+	private static final Log logger = Log.lookup(EngineFactory.class.getName());
 	
 	static private EngineFactory instance;
 	
@@ -68,7 +66,7 @@ public class EngineFactory {
 			try {
 				formulaEnginClazz = Class.forName(clz);
 			} catch(Exception e) {
-				logger.log(Level.WARNING, e.getMessage(), e);
+				logger.error(e.getMessage(), e);
 			}			
 		}
 		
@@ -80,7 +78,7 @@ public class EngineFactory {
 				return (FormulaEngine)formulaEnginClazz.newInstance();
 			}
 		} catch(Exception e) {
-			logger.log(Level.WARNING, e.getMessage(), e);
+			logger.error(e.getMessage(), e);
 			formulaEnginClazz = null;
 		}
 		return new FormulaEngineImpl();

@@ -1,4 +1,4 @@
-package org.zkoss.zss.ngmodel;
+package org.zkoss.zss.model;
 
 import static org.junit.Assert.*;
 
@@ -25,7 +25,10 @@ public class ImporterTest extends ImExpTestBase {
 	
 	private SImporter importer;
 	 
-	
+	@BeforeClass
+	static public void beforeClass() {
+		Setup.touch();
+	}	
 	
 	@Before
 	public void beforeTest(){

@@ -124,9 +124,12 @@ public class GeneralChartDataImpl extends ChartDataAdv implements SGeneralChartD
 		
 		clearFormulaDependency();
 		
-		//TODO dependency tracking on chart
-		FormulaEngine fe = EngineFactory.getInstance().createFormulaEngine();
-		catFormula = fe.parse(expr, new FormulaParseContext(chart.getSheet(),getRef()));
+		if(expr!=null){
+			FormulaEngine fe = EngineFactory.getInstance().createFormulaEngine();
+			catFormula = fe.parse(expr, new FormulaParseContext(chart.getSheet(),getRef()));
+		}else{
+			catFormula = null;
+		}
 	}
 
 	@Override

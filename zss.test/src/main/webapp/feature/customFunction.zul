@@ -1,0 +1,31 @@
+<?xel-method prefix="zss" name="EXCHANGE"
+    class="zss.testapp.MyCustomFunctions"  
+    signature="double exchange(double,double)"?>
+<?xel-method prefix="zss" name="MYSUBTOTAL"
+    class="zss.testapp.MyCustomFunctions"  
+    signature="org.zkoss.poi.ss.formula.eval.ValueEval mySubtotal(org.zkoss.poi.ss.formula.eval.ValueEval[], int, int)"?>
+<?xel-method prefix="zss" name="CHAIN"
+    class="zss.testapp.MyCustomFunctions"  
+    signature="org.zkoss.poi.ss.formula.eval.ValueEval chain(org.zkoss.poi.ss.formula.eval.ValueEval[], int, int)"?>
+<?taglib uri="/WEB-INF/tld/function.tld" prefix="zss" ?>
+<zk>
+	<groupbox title="2007" height="600px">
+		<button onClick="export()">Export to Excel</button>
+		<zscript><![CDATA[
+		import java.io.ByteArrayOutputStream;
+		public void export() {
+			Book wb = ss.getBook();
+			Exporter c = Exporters.getExporter("excel");
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
+			c.export(wb, out);
+			Filedownload.save(out.toByteArray(), "application/file", wb.getBookName());
+		}
+	]]></zscript>
+		<spreadsheet id="ss" src="/feature/customFunction.xlsx" width="100%" height="80%"
+			showContextMenu="true" showSheetbar="true" showToolbar="true" showFormulabar="true"/>
+	</groupbox>
+	<groupbox title="2003" height="600px">
+		<spreadsheet id="ss2003" src="/feature/customFunction.xls" width="100%" height="80%"
+			showContextMenu="true" showSheetbar="true" showToolbar="true" showFormulabar="true"/>
+	</groupbox>
+</zk>

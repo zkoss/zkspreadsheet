@@ -1,4 +1,4 @@
-package org.zkoss.zss.ngmodel;
+package org.zkoss.zss.model;
 
 import java.awt.Color;
 import java.util.Calendar;
@@ -27,7 +27,10 @@ public class FormatEngineTest {
 
 	static private FormatContext formatContext;
 	static private FormatEngine formatEngine;
-	
+	@BeforeClass
+	static public void beforeClass() {
+		Setup.touch();
+	}	
 	private SCell cell;
 	
 	@BeforeClass

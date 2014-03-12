@@ -1,5 +1,17 @@
-<zk>
-	<spreadsheet src="/TestFile2007.xlsx" maxVisibleRows="200" maxVisibleColumns="40" width="100%"
-		height="100%" showContextMenu="true" showSheetbar="true" showToolbar="true" 
+<vbox hflex="1" vflex="1">
+	<button onClick="export()">Export to Excel</button>
+	<spreadsheet id="ss" src="/TestFile2007.xlsx" maxVisibleRows="200" maxVisibleColumns="40"
+		hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
 		showFormulabar="true"/>
-</zk>
+	<zscript><![CDATA[
+	import java.io.ByteArrayOutputStream;
+	
+	public void export() throws java.io.IOException {
+		Book wb = ss.getBook();
+	    Exporter c = Exporters.getExporter("excel");
+	    ByteArrayOutputStream out = new ByteArrayOutputStream();
+	    c.export(wb, out);
+	    Filedownload.save(out.toByteArray(), "application/file", wb.getBookName());
+	}
+	]]></zscript>		
+</vbox>

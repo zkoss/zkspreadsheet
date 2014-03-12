@@ -32,6 +32,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import org.zkoss.json.JSONArray;
 import org.zkoss.json.JSONObject;
 import org.zkoss.lang.Classes;
@@ -75,6 +76,8 @@ import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.WebApp;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
+import org.zkoss.zk.ui.event.EventQueue;
+import org.zkoss.zk.ui.event.EventQueues;
 import org.zkoss.zk.ui.ext.AfterCompose;
 import org.zkoss.zk.ui.ext.render.DynamicMedia;
 import org.zkoss.zk.ui.sys.ContentRenderer;
@@ -115,6 +118,7 @@ import org.zkoss.zss.model.SAutoFilter.NFilterColumn;
 import org.zkoss.zss.model.SCell.CellType;
 import org.zkoss.zss.model.SCellStyle.Alignment;
 import org.zkoss.zss.model.SCellStyle.VerticalAlignment;
+import org.zkoss.zss.model.impl.AbstractBookAdv;
 import org.zkoss.zss.model.sys.formula.EvaluationContributorContainer;
 //import org.zkoss.zss.model.sys.XBook;
 //import org.zkoss.zss.model.sys.XImporter;
@@ -327,7 +331,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	private Map _columnTitles;
 	private Map _rowTitles;
 
-	private InnerDataListener _dataListener = new InnerDataListener();
+	private ModelEventToQueueAdapter _modelEventListener = new ModelEventToQueueAdapter();
 	
 	private InnerVariableResolver _variableResolver = new InnerVariableResolver();
 	private InnerFunctionMapper _functionMapper = new InnerFunctionMapper();
@@ -547,7 +551,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	 * @exception UnsupportedOperationException if this method is called.
 	 */
 	public void setDraggable(String draggable) {
-		throw new UnsupportedOperationException();
+		throw new UnsupportedOperationException("doesn't support to be draggable");
 	}
 
 	/**
@@ -659,9 +663,14 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	private FriendFocusHelper getFriendFocusHelper(){
 		FriendFocusHelper helper = null;
 		if(_book!=null){
-			helper = (FriendFocusHelper) _book.getAttribute(FRIEND_FOCUS_KEY);
-			if(helper==null){
-				_book.setAttribute(FRIEND_FOCUS_KEY, helper = new FriendFocusHelper());
+			_book.getBookSeries().getLock().writeLock().lock();
+			try{
+				helper = (FriendFocusHelper) _book.getAttribute(FRIEND_FOCUS_KEY);
+				if(helper==null){
+					_book.setAttribute(FRIEND_FOCUS_KEY, helper = new FriendFocusHelper());
+				}
+			}finally{
+				_book.getBookSeries().getLock().writeLock().unlock();
 			}
 		}
 		return helper;
@@ -703,11 +712,13 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		if (_book != null) {
 			_book.getBookSeries().getLock().writeLock().lock();
 			try{
-				_book.removeEventListener(_dataListener);
+				_modelEventListener.unregisterBookQueue(_book);
 				if(isBelowDesktopScope(_book) && _book instanceof EvaluationContributorContainer
 						&& ((EvaluationContributorContainer)_book).getEvaluationContributor() instanceof ComponentEvaluationContributor){
 					((EvaluationContributorContainer)_book).setEvaluationContributor(null);
 				}
+				//delete self focus that stores in the book.
+				deleteSelfEditorFocus();
 			}finally{
 				_book.getBookSeries().getLock().writeLock().unlock();
 			}
@@ -725,7 +736,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		if (_book != null) {
 			_book.getBookSeries().getLock().writeLock().lock();
 			try{
-				_book.removeEventListener(_dataListener);
+				_modelEventListener.unregisterBookQueue(_book);
 				if(isBelowDesktopScope(_book) && _book instanceof EvaluationContributorContainer
 						&& ((EvaluationContributorContainer)_book).getEvaluationContributor() instanceof ComponentEvaluationContributor){
 					((EvaluationContributorContainer)_book).setEvaluationContributor(null);
@@ -758,8 +769,8 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		_book = book;
 		if (_book != null) {
 			_book.getBookSeries().getLock().writeLock().lock();
-			_book.addEventListener(_dataListener);
 			try{
+				_modelEventListener.registerBookQueue(_book);
 				if(isBelowDesktopScope(_book) && _book instanceof EvaluationContributorContainer 
 						&& ((EvaluationContributorContainer)_book).getEvaluationContributor()==null){
 					((EvaluationContributorContainer)_book).setEvaluationContributor(new ComponentEvaluationContributor(this));
@@ -880,24 +891,31 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	 * @param name	the name of spreadsheet to be selected.
 	 */
 	public void setSelectedSheet(String name) {
-		setSelectedSheet0(name);
+		boolean update = setSelectedSheet0(name);
 		
 		//TODO: think if this is correct or not
 		// the call of onSheetSelected must after invalidate,
 		// because i must let invalidate clean lastcellblock first
-		afterSheetSelected();
-		invalidate();
+		if(update){
+			afterSheetSelected();
+			invalidate();
+		}
 	}
 	
-	private void setSelectedSheet0(String name) {
+	/**
+	 * @return true if selected another sheet
+	 */
+	private boolean setSelectedSheet0(String name) {
 		final SBook book = getSBook();
 		if (book == null) {
-			return;
+			return false;
 		}
-		
+		boolean update = false;
 		//Note. check whether if the sheet has remove or not
 		if (_selectedSheet != null && book.getSheetIndex(_selectedSheet) == -1) {
 			cleanSelectedSheet();
+			//_selectedSheet become null after clean
+			update = true;
 		}
 
 		if (_selectedSheet == null || !_selectedSheet.getSheetName().equals(name)) {
@@ -908,7 +926,9 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			cleanSelectedSheet();
 			
 			_selectedSheet = sheet;
+			update = true;
 		}
+		return update;
 	}
 	
 	/*
@@ -918,7 +938,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			int left, int top, int right, int bottom
 			/*, int highlightLeft, int highlightTop, int highlightRight, int highlightBottom,
 			int rowfreeze, int colfreeze*/) {
-		setSelectedSheet0(name);
+		boolean update = setSelectedSheet0(name);
 		if (row >= 0 && col >= 0) {
 			this.setCellFocusDirectly(new CellRef(row, col));
 		} else {
@@ -929,7 +949,9 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		} else {
 			this.setSelectionDirectly(new AreaRef(0, 0, 0, 0));
 		}
-		afterSheetSelected();
+		if(update){
+			afterSheetSelected();
+		}
 		
 		updateSheetAttributes(cacheInClient/*, rowfreeze, colfreeze*/);
 	}
@@ -2038,11 +2060,72 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	}
 
 	
+	private class ModelEventToQueueAdapter implements ModelEventListener,EventListener<Event>{
+		private static final long serialVersionUID = 1L;
+		private QueueModelEventListener _listener = new QueueModelEventListener();
+		/**
+		 * list Model event, publish it to queue
+		 */
+		@Override
+		public void onEvent(ModelEvent event) {
+			//push to queue
+			SBook book = event.getBook();
+			String scope = getScope(book);
+			String queueName = getQueueName(book);
+			EventQueue<Event> queue = EventQueues.lookup(queueName, scope,false);
+			if(queue==null)
+				return;
+			queue.publish(new Event("onModelEvent",null,event));
+		}
+		
+		/**
+		 * listen queue-event, call internal data model event listener
+		 */
+		@Override
+		public void onEvent(Event event) throws Exception {
+			ModelEvent me = (ModelEvent)event.getData();
+			_listener.onEvent(me);
+		}
+		
+		String getQueueName(SBook book){
+			return "zssModel_"+((AbstractBookAdv)book).getId();
+		}
+		
+		String getScope(SBook book){
+			String scope = book.getShareScope();
+			if(scope==null){
+				scope = "desktop";
+			}
+			return scope;
+		}
+		
+		void registerBookQueue(SBook book){//was protected in lock already
+			String scope = getScope(book);
+			String queueName = getQueueName(book);
+			EventQueue<Event> queue = EventQueues.lookup(queueName, scope,true);
+			queue.subscribe(this);
+			book.addEventListener(this);
+		}
+		void unregisterBookQueue(SBook book){//was protected in lock already
+			book.removeEventListener(this);
+			String scope = getScope(book);
+			String queueName = getQueueName(book);
+			EventQueue<Event> queue = EventQueues.lookup(queueName, scope,false);
+			if(queue!=null){
+				queue.unsubscribe(this);
+			}				
+		}
+
+	}
+	
+	
+	
+	
 	/* DataListener to handle sheet data event */
-	private class InnerDataListener extends ModelEventDispatcher{
+	private class QueueModelEventListener extends ModelEventDispatcher{
 		private static final long serialVersionUID = 20100330164021L;
 
-		public InnerDataListener() {
+		public QueueModelEventListener() {
 			addEventListener(ModelEvents.ON_SHEET_ORDER_CHANGE, new ModelEventListener() {
 				@Override
 				public void onEvent(ModelEvent event){

@@ -1,4 +1,4 @@
-package org.zkoss.zss.ngmodel;
+package org.zkoss.zss.model;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -54,7 +54,6 @@ public class ValidationTest {
 	@Before
 	public void beforeTest() {
 		Locales.setThreadLocal(Locale.TAIWAN);
-		SheetImpl.DEBUG = true;
 	}
 	
 	protected SSheet initialDataGrid(SSheet sheet){

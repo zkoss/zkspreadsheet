@@ -31,6 +31,7 @@ import org.zkoss.zss.model.SComment;
 import org.zkoss.zss.model.SHyperlink;
 import org.zkoss.zss.model.SRichText;
 import org.zkoss.zss.model.SSheet;
+import org.zkoss.zss.model.SHyperlink.HyperlinkType;
 import org.zkoss.zss.model.sys.EngineFactory;
 import org.zkoss.zss.model.sys.dependency.Ref;
 import org.zkoss.zss.model.sys.formula.FormulaEngine;
@@ -211,12 +212,15 @@ public abstract class AbstractCellAdv implements SCell,LinkedModelObject,Seriali
 	}
 	
 	@Override
-	public SHyperlink setupHyperlink(){
+	public SHyperlink setupHyperlink(HyperlinkType type,String address,String label){
 		SHyperlink hyperlink = getHyperlink();
 		if(hyperlink!=null){
+			hyperlink.setType(type);
+			hyperlink.setAddress(address);
+			hyperlink.setLabel(label);
 			return hyperlink;
 		}
-		setHyperlink(hyperlink = new HyperlinkImpl());
+		setHyperlink(hyperlink = new HyperlinkImpl(type,address,label));
 		return hyperlink;
 	}
 	@Override

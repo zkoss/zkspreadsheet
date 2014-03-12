@@ -1,4 +1,4 @@
-package org.zkoss.zss.ngmodel;
+package org.zkoss.zss.model;
 
 import static org.junit.Assert.assertEquals;
 
@@ -18,7 +18,10 @@ import org.zkoss.zss.range.impl.imexp.ExcelExportFactory;
 
 public class ExporterXlsTest extends ExporterTest {
 
-
+	@BeforeClass
+	static public void beforeClass() {
+		Setup.touch();
+	}
 	@Before
 	public void setupTestFile(){
 		IMPORT_FILE_UNDER_TEST = ImporterTest.class.getResource("book/import.xls");

@@ -20,7 +20,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import org.zkoss.zss.model.CellRegion;
 import org.zkoss.zss.model.SBook;
+import org.zkoss.zss.model.SSheet;
+import org.zkoss.zss.model.SheetRegion;
 
 /**
  * An exporter to export a book to a out stream or file
@@ -43,4 +46,22 @@ public interface SExporter {
 	 * @throws IOException
 	 */
 	public void export(SBook book, File file) throws IOException;
+
+	/**
+	 * Export sheet to output-stream, note : not all implementation support this operation
+	 * @param sheet
+	 * @param fos
+	 * @deprecated 
+	 */
+	//create this for compatibility
+	public void export(SSheet sheet, OutputStream fos) throws IOException;
+
+	/**
+	 * Export sheet to output-stream, note : not all implementation support this operation
+	 * @param sheet
+	 * @param fos
+	 * @deprecated 
+	 */
+	//create this for compatibility
+	public void export(SheetRegion sheetRegion, OutputStream fos) throws IOException;
 }

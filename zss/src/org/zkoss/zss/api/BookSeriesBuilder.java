@@ -22,6 +22,9 @@ import org.zkoss.lang.Classes;
 import org.zkoss.lang.Library;
 import org.zkoss.lang.Strings;
 import org.zkoss.zss.api.model.Book;
+import org.zkoss.zss.api.model.impl.BookImpl;
+import org.zkoss.zss.model.SBook;
+import org.zkoss.zss.model.SBookSeriesBuilder;
 
 /**
  * The book series builder which accepts multiple {@link Book} objects makes each of them can reference cells from other books.
@@ -37,31 +40,32 @@ public abstract class BookSeriesBuilder {
 		if(_instance==null){
 			synchronized(BookSeriesBuilder.class){
 				if(_instance==null){
-					String clz = Library.getProperty("org.zkoss.zss.api.BookSeriesBuilder.class");
-					if (!Strings.isEmpty(clz)) {
-						try {
-							_instance = (BookSeriesBuilder) Classes.forNameByThread(clz).newInstance();
-						} catch (Exception e) {
-							throw new RuntimeException(e.getMessage(),e);
-						}
-					}else{
-						_instance = new BookSeriesBuilder() {
-							@Override
-							public void buildBookSeries(Set<Book> books) {
-								throw new RuntimeException("not implemented");
-							}
-							@Override
-							public void buildBookSeries(Book[] books) {
-								throw new RuntimeException("not implemented");
-							}
-						};
-					}
+					_instance = new BookSeriesBuilderWrap();
 				}
 			}
 		}
 		return _instance;
 	}
 	
+	static class BookSeriesBuilderWrap extends BookSeriesBuilder{
+
+		public void buildBookSeries(Set<Book> books){
+			buildBookSeries(books.toArray(new Book[books.size()]));
+		}
+		
+		public void buildBookSeries(Book... books){
+			if(books == null){
+				throw new IllegalArgumentException("books is null");
+			}
+			SBook[] xbooks = new SBook[books.length];
+			
+			for(int i=0;i<xbooks.length;i++){
+				xbooks[i] = ((BookImpl)books[i]).getNative();
+			}
+			SBookSeriesBuilder.getInstance().buildBookSeries(xbooks);
+		}
+
+	}
 	
 	abstract public void buildBookSeries(Set<Book> books);
 	abstract public void buildBookSeries(Book... books);

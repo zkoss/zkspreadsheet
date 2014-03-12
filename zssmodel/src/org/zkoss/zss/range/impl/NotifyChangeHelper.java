@@ -5,11 +5,14 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.zkoss.util.logging.Log;
 import org.zkoss.zss.model.*;
 import org.zkoss.zss.model.impl.AbstractBookAdv;
 
 /*package*/ class NotifyChangeHelper{
 
+	private static final Log logger = Log.lookup(NotifyChangeHelper.class.getName());
+	
 	public void notifyRowColumnSizeChange(HashSet<SheetRegion> notifySet) {
 		for (SheetRegion notify : notifySet) {
 			notifyRowColumnSizeChange(notify);
@@ -72,7 +75,9 @@ import org.zkoss.zss.model.impl.AbstractBookAdv;
 	}
 	public void notifyMergeRemove(SheetRegion notify) {
 		SBook book = notify.getSheet().getBook();
-		System.out.println(">>> Notify remove merge "+notify.getReferenceString());
+		if(logger.debugable()){
+			logger.debug("Notify remove merge "+notify.getReferenceString());
+		}
 		((AbstractBookAdv) book).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_MERGE_DELETE,notify.getSheet(),
 				notify.getRegion()));
 	}
@@ -84,7 +89,9 @@ import org.zkoss.zss.model.impl.AbstractBookAdv;
 	}
 	public void notifyMergeAdd(SheetRegion notify) {
 		SBook book = notify.getSheet().getBook();
-		System.out.println(">>> Notify add merge "+notify.getReferenceString());
+		if(logger.debugable()){
+			logger.debug("Notify add merge "+notify.getReferenceString());
+		}
 		((AbstractBookAdv) book).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_MERGE_ADD,notify.getSheet(),
 				notify.getRegion()));
 	}
@@ -96,52 +103,81 @@ import org.zkoss.zss.model.impl.AbstractBookAdv;
 	}
 	public void notifyCellChange(SheetRegion notify) {
 		SBook book = notify.getSheet().getBook();
-		System.out.println(">>> Notify update cell "+notify.getReferenceString());
+		if(logger.debugable()){
+			logger.debug("Notify cell change "+notify.getReferenceString());
+		}
 		((AbstractBookAdv) book).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_CELL_CONTENT_CHANGE,notify.getSheet(),
 				notify.getRegion()));
 	}
 	
 	public void notifySheetDelete(SBook book,SSheet deletedSheet,int deletedIndex){
+		if(logger.debugable()){
+			logger.debug("Notify sheet delete "+deletedSheet.getSheetName()+":"+deletedIndex);
+		}
 		((AbstractBookAdv) book).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_SHEET_DELETE,book,
 				ModelEvents.createDataMap(ModelEvents.PARAM_SHEET,deletedSheet,ModelEvents.PARAM_INDEX,deletedIndex)));
 	}
 	
 	public void notifySheetCreate(SSheet sheet){
+		if(logger.debugable()){
+			logger.debug("Notify sheet create "+sheet.getSheetName());
+		}
 		((AbstractBookAdv) sheet.getBook()).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_SHEET_CREATE,sheet));
 	}
 	
 	public void notifySheetNameChange(SSheet sheet,String oldName){
+		if(logger.debugable()){
+			logger.debug("Notify sheet name change "+oldName+" to "+sheet.getSheetName());
+		}
 		((AbstractBookAdv) sheet.getBook()).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_SHEET_NAME_CHANGE,sheet,
 				ModelEvents.createDataMap(ModelEvents.PARAM_OLD_NAME,oldName)));
 	}
 	
 	public void notifySheetReorder(SSheet sheet,int oldIdx){
+		if(logger.debugable()){
+			logger.debug("Notify sheet reorder "+oldIdx+" to "+sheet.getBook().getSheetIndex(sheet));
+		}
 		((AbstractBookAdv) sheet.getBook()).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_SHEET_ORDER_CHANGE,sheet,
 				ModelEvents.createDataMap(ModelEvents.PARAM_OLD_INDEX,oldIdx)));
 	}
 
 	public void notifyDataValidationChange(SSheet sheet, String validationId) {
+		if(logger.debugable()){
+			logger.debug("Notify data validation change"+validationId);
+		}
 		((AbstractBookAdv) sheet.getBook()).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_DATA_VALIDATION_CONTENT_CHANGE,sheet,
 				ModelEvents.createDataMap(ModelEvents.PARAM_OBJECT_ID,validationId)));
 	}
 
 	public void notifyChartChange(SSheet sheet, String chartId) {
+		if(logger.debugable()){
+			logger.debug("Notify chart change "+chartId);
+		}
 		((AbstractBookAdv) sheet.getBook()).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_CHART_CONTENT_CHANGE,sheet,
 				ModelEvents.createDataMap(ModelEvents.PARAM_OBJECT_ID,chartId)));
 	}
 
 	public void notifyCustomEvent(String customEventName, SSheet sheet,
 			Object data) {
+		if(logger.debugable()){
+			logger.debug("Notify custom event "+customEventName+":"+data);
+		}
 		((AbstractBookAdv) sheet.getBook()).sendModelEvent(ModelEvents.createModelEvent(customEventName,sheet,
 				ModelEvents.createDataMap(ModelEvents.PARAM_CUSTOM_DATA,data)));
 	}
 
 	public void notifyDisplayGirdline(SSheet sheet, boolean show) {
+		if(logger.debugable()){
+			logger.debug("Notify display gridline "+show);
+		}
 		((AbstractBookAdv) sheet.getBook()).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_DISPLAY_GRIDLINE_CHANGE,sheet,
 				ModelEvents.createDataMap(ModelEvents.PARAM_ENABLED,show)));
 	}
 	
 	public void notifyProtectSheet(SSheet sheet, boolean protect) {
+		if(logger.debugable()){
+			logger.debug("Notify protect sheet "+sheet.getSheetName()+":"+protect);
+		}
 		((AbstractBookAdv) sheet.getBook()).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_PROTECT_SHEET_CHANGE,sheet,
 				ModelEvents.createDataMap(ModelEvents.PARAM_ENABLED,protect)));
 	}
@@ -161,6 +197,9 @@ import org.zkoss.zss.model.impl.AbstractBookAdv;
 		} else {
 			eventName = update.isInserted() ? ModelEvents.ON_COLUMN_INSERT : ModelEvents.ON_COLUMN_DELETE;
 			region = new CellRegion(0, update.getIndex(), 0, update.getLastIndex());
+		}
+		if(logger.debugable()){
+			logger.debug("Notify InsertDelete "+eventName+":"+region.getReferenceString());
 		}
 		SSheet sheet = update.getSheet();
 		ModelEvent event = ModelEvents.createModelEvent(eventName, sheet, region);

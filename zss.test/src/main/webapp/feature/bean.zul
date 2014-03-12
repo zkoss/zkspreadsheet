@@ -1,0 +1,57 @@
+<?variable-resolver class="zss.testapp.MyBeanResolver"?>
+<zk>
+	<tabbox>
+		<tabs>
+			<tab>2007</tab>
+			<tab>2003</tab>
+		</tabs>
+		<tabpanels>
+			<tabpanel>
+				<window hflex="1" height="600px" apply="zss.testapp.RefBeanComposer">
+					<hlayout hflex="1" vflex="1">
+						<spreadsheet id="ss" src="/feature/bean.xlsx" maxrows="200" maxcolumns="40"
+							showFormulabar="true" showContextMenu="true" showToolbar="true" showSheetbar="true" hflex="1"
+							vflex="1" width="100%">
+						</spreadsheet>
+						<groupbox width="250px">
+							<caption label="Update Report" />
+							<grid vflex="1" hflex="1">
+								<columns>
+									<column width="100px" />
+									<column />
+								</columns>
+								<rows>
+									<row>
+										Liquid Assets:
+										<doublebox id="liquidBox" value="${myBean.liquidAssets}" />
+									</row>
+									<row>
+										Fund and Investment:
+										<doublebox id="fundBox" value="${myBean.fundInvestment}" />
+									</row>
+									<row>
+										Fixed Assets:
+										<doublebox id="fixedBox" value="${myBean.fixedAssets}" />
+									</row>
+									<row>
+										Intangible Asset:
+										<doublebox id="intangibleBox"
+											value="${myBean.intangibleAsset}" />
+									</row>
+									<row>
+										Other Assets:
+										<doublebox id="otherBox" value="${myBean.otherAssets}" />
+									</row>
+								</rows>
+							</grid>
+						</groupbox>
+					</hlayout>
+				</window>
+			</tabpanel>
+			<tabpanel>
+		<spreadsheet id="ss2003" src="/feature/bean.xls" maxrows="200" maxcolumns="40"  width="800px" height="800px"
+		showFormulabar="true" showContextMenu="true" showToolbar="true" showSheetbar="true"/>
+			</tabpanel>
+		</tabpanels>
+	</tabbox>
+</zk>

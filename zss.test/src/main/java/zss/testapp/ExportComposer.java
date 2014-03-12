@@ -25,8 +25,8 @@ public class ExportComposer extends SelectorComposer<Component> {
 
 	private static final long serialVersionUID = 1L;
 	
-//	Exporter pdfExporter = Exporters.getExporter("pdf"); //FIXME temporarily unavailable
-//	Exporter htmlExporter = Exporters.getExporter("html"); //FIXME temporarily unavailable
+	Exporter pdfExporter = Exporters.getExporter("pdf");
+	Exporter htmlExporter = Exporters.getExporter("html");
 	
 	@Wire("#source")
 	private Spreadsheet srcSpreadsheet;
@@ -202,7 +202,6 @@ public class ExportComposer extends SelectorComposer<Component> {
 		Filedownload.save(file, "application/excel");
 	}
 
-	/*
 	@Listen("onClick = button[label='Export PDF']")
 	public void toPdf() throws IOException{
 
@@ -219,5 +218,4 @@ public class ExportComposer extends SelectorComposer<Component> {
 		htmlExporter.export(srcSpreadsheet.getBook(), fos);
 		Filedownload.save(file, "text/html");
 	}
-	*/
 }

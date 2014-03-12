@@ -1,4 +1,4 @@
-package org.zkoss.zss.ngmodel;
+package org.zkoss.zss.model;
 
 import static org.junit.Assert.assertEquals;
 
@@ -12,7 +12,10 @@ import org.zkoss.zss.model.SPicture.Format;
 import org.zkoss.zss.model.chart.SGeneralChartData;
 
 public class ImporterXlsTest extends ImporterTest {
-
+	@BeforeClass
+	static public void beforeClass() {
+		Setup.touch();
+	}
 	@Before
 	public void setupTestFile(){
 		IMPORT_FILE_UNDER_TEST = ImporterTest.class.getResource("book/import.xls");
