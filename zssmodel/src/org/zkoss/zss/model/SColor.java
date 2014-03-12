@@ -16,7 +16,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.model;
 /**
- * 
+ * A color which might relate to a text or a border.
  * @author dennis
  * @since 3.5.0
  */

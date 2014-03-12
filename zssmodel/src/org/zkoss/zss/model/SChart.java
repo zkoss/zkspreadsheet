@@ -18,7 +18,7 @@ package org.zkoss.zss.model;
 
 import org.zkoss.zss.model.chart.SChartData;
 /**
- * 
+ * Represents a chart in a sheet.
  * @author dennis
  * @since 3.5.0
  */

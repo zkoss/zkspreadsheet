@@ -26,7 +26,7 @@ import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.model.SheetRegion;
 
 /**
- * An exporter to export a book to a output stream or file.
+ * An exporter can export a book model to a output stream or file.
  * @author dennis
  * @since 3.5.0
  */

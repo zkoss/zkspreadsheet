@@ -17,7 +17,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.model;
 
 /**
- * 
+ * Represent style information e.g. alignment, border, format pattern, font, color, fill pattern, wrap text, and hidden status. It may associate with a book or cells.
  * @author dennis
  * @since 3.5.0
  */

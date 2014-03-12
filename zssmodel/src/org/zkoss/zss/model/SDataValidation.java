@@ -19,7 +19,7 @@ package org.zkoss.zss.model;
 import java.util.List;
 
 /**
- * 
+ * This class stores the restrictions on what data can or should be entered in a cell.
  * @author dennis
  * @since 3.5.0
  */

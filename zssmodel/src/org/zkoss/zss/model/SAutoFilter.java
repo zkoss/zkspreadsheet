@@ -20,7 +20,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 /**
- * 
+ * Contains autofilter's setting.
  * @author Dennis
  * @since 3.5.0
  */

@@ -18,7 +18,7 @@ package org.zkoss.zss.model;
 
 import java.util.List;
 /**
- * 
+ * A rich text can have multiple styles in a cell.
  * @author dennis
  * @since 3.5.0
  */

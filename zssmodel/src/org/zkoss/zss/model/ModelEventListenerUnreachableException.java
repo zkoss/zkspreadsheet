@@ -1,6 +1,6 @@
 package org.zkoss.zss.model;
 /**
- * Indicated the Listener is not reachable, which mean, book could remove the listener if it catch this exception when send event
+ * Indicated the listener is not reachable, which means book could remove the listener if it catches this exception when sending event
  * @author Dennis
  * @since 3.5.0
  */

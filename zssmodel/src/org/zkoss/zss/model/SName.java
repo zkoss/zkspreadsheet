@@ -18,7 +18,7 @@ package org.zkoss.zss.model;
 
 
 /**
- * 
+ * A named range (or defined name) which refer to a region.
  * @author dennis
  * @since 3.5.0
  */

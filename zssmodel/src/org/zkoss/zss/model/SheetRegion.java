@@ -21,7 +21,7 @@ import java.io.Serializable;
 import org.zkoss.poi.ss.util.AreaReference;
 import org.zkoss.poi.ss.util.CellReference;
 /**
- * Indicates a immutable region of cells in a sheet
+ * Indicates a immutable region of cells in a sheet. It contains a {@link CellRegion} which specifies the area.
  * @author Dennis
  * @since 3.5.0
  */
