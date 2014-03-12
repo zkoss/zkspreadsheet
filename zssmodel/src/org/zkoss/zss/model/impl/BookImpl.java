@@ -34,7 +34,7 @@ import org.zkoss.util.logging.Log;
 import org.zkoss.zss.model.InvalidateModelOpException;
 import org.zkoss.zss.model.ModelEvent;
 import org.zkoss.zss.model.ModelEventListener;
-import org.zkoss.zss.model.ModelEventUnreachableException;
+import org.zkoss.zss.model.ModelEventListenerUnreachableException;
 import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.SBookSeries;
 import org.zkoss.zss.model.SCell;
@@ -63,77 +63,80 @@ import org.zkoss.zss.model.util.Validations;
 public class BookImpl extends AbstractBookAdv{
 	private static final long serialVersionUID = 1L;
 	
-	private static final Log logger = Log.lookup(BookImpl.class);
+	private static final Log _logger = Log.lookup(BookImpl.class);
 
-	private final String bookName;
+	private final String _bookName;
 	
-	private String shareScope;
+	private String _shareScope;
 	
-	private SBookSeries bookSeries;
+	private SBookSeries _bookSeries;
 	
-	private final List<AbstractSheetAdv> sheets = new LinkedList<AbstractSheetAdv>();
-	private List<AbstractNameAdv> names;
+	private final List<AbstractSheetAdv> _sheets = new LinkedList<AbstractSheetAdv>();
+	private List<AbstractNameAdv> _names;
 	
-	private final List<AbstractCellStyleAdv> cellStyles = new LinkedList<AbstractCellStyleAdv>();
-	private final AbstractCellStyleAdv defaultCellStyle;
-	private final List<AbstractFontAdv> fonts = new LinkedList<AbstractFontAdv>();
-	private final AbstractFontAdv defaultFont;
-	private final HashMap<AbstractColorAdv,AbstractColorAdv> colors = new LinkedHashMap<AbstractColorAdv,AbstractColorAdv>();
+	private final List<AbstractCellStyleAdv> _cellStyles = new LinkedList<AbstractCellStyleAdv>();
+	private final AbstractCellStyleAdv _defaultCellStyle;
+	private final List<AbstractFontAdv> _fonts = new LinkedList<AbstractFontAdv>();
+	private final AbstractFontAdv _defaultFont;
+	private final HashMap<AbstractColorAdv,AbstractColorAdv> _colors = new LinkedHashMap<AbstractColorAdv,AbstractColorAdv>();
 	
-	private final static Random random = new Random(System.currentTimeMillis());
-	private final static AtomicInteger bookCount = new AtomicInteger();
-	private final String bookId;
+	private final static Random _random = new Random(System.currentTimeMillis());
+	private final static AtomicInteger _bookCount = new AtomicInteger();
+	private final String _bookId;
 	
-	private final HashMap<String,AtomicInteger> objIdCounter = new HashMap<String,AtomicInteger>();
-	private final int maxRowSize = SpreadsheetVersion.EXCEL2007.getMaxRows();
-	private final int maxColumnSize = SpreadsheetVersion.EXCEL2007.getMaxColumns();
+	private final HashMap<String,AtomicInteger> _objIdCounter = new HashMap<String,AtomicInteger>();
+	private final int _maxRowSize = SpreadsheetVersion.EXCEL2007.getMaxRows();
+	private final int _maxColumnSize = SpreadsheetVersion.EXCEL2007.getMaxColumns();
 	
-	private final List<ModelEventListener> listeners = new LinkedList<ModelEventListener>();
+	private final List<ModelEventListener> _listeners = new LinkedList<ModelEventListener>();
 	
-	private HashMap<String,Object> attributes;
+	private HashMap<String,Object> _attributes;
 	
-	private EvaluationContributor evalContributor;
+	private EvaluationContributor _evalContributor;
 	
+	/**
+	 * the sheet which is destroying now.
+	 */
 	/*package*/ final static ThreadLocal<SSheet> destroyingSheet = new ThreadLocal<SSheet>(); 
 	
 	public BookImpl(String bookName){
 		Validations.argNotNull(bookName);
-		this.bookName = bookName;
-		bookSeries = new SimpleBookSeriesImpl(this);
-		fonts.add(defaultFont = new FontImpl());
-		cellStyles.add(defaultCellStyle = new CellStyleImpl(defaultFont));
-		colors.put(ColorImpl.WHITE,ColorImpl.WHITE);
-		colors.put(ColorImpl.BLACK,ColorImpl.BLACK);
-		colors.put(ColorImpl.RED,ColorImpl.RED);
-		colors.put(ColorImpl.GREEN,ColorImpl.GREEN);
-		colors.put(ColorImpl.BLUE,ColorImpl.BLUE);
+		this._bookName = bookName;
+		_bookSeries = new SimpleBookSeriesImpl(this);
+		_fonts.add(_defaultFont = new FontImpl());
+		_cellStyles.add(_defaultCellStyle = new CellStyleImpl(_defaultFont));
+		_colors.put(ColorImpl.WHITE,ColorImpl.WHITE);
+		_colors.put(ColorImpl.BLACK,ColorImpl.BLACK);
+		_colors.put(ColorImpl.RED,ColorImpl.RED);
+		_colors.put(ColorImpl.GREEN,ColorImpl.GREEN);
+		_colors.put(ColorImpl.BLUE,ColorImpl.BLUE);
 		
-		bookId = ((char)('a'+random.nextInt(26))) + Long.toString(/*System.currentTimeMillis()+*/bookCount.getAndIncrement(), Character.MAX_RADIX) ;
+		_bookId = ((char)('a'+_random.nextInt(26))) + Long.toString(/*System.currentTimeMillis()+*/_bookCount.getAndIncrement(), Character.MAX_RADIX) ;
 	}
 	
 	@Override
 	public SBookSeries getBookSeries(){
-		return bookSeries;
+		return _bookSeries;
 	}
 	
 	@Override
 	public String getBookName(){
-		return bookName;
+		return _bookName;
 	}
 	
 	@Override
 	public SSheet getSheet(int i){
-		return sheets.get(i);
+		return _sheets.get(i);
 	}
 	
 	@Override
 	public int getNumOfSheet(){
-		return sheets.size();
+		return _sheets.size();
 	}
 	
 	@Override
 	public SSheet getSheetByName(String name){
-		for(SSheet sheet:sheets){
+		for(SSheet sheet:_sheets){
 			if(sheet.getSheetName().equalsIgnoreCase(name)){
 				return sheet;
 			}
@@ -143,7 +146,7 @@ public class BookImpl extends AbstractBookAdv{
 	
 	@Override
 	public SSheet getSheetById(String id){
-		for(SSheet sheet:sheets){
+		for(SSheet sheet:_sheets){
 			if(sheet.getId().equals(id)){
 				return sheet;
 			}
@@ -152,12 +155,12 @@ public class BookImpl extends AbstractBookAdv{
 	}
 	
 	protected void checkOwnership(SSheet sheet){
-		if(!sheets.contains(sheet)){
+		if(!_sheets.contains(sheet)){
 			throw new IllegalStateException("doesn't has ownership "+ sheet);
 		}
 	}
 	protected void checkOwnership(SName name){
-		if(names==null || !names.contains(name)){
+		if(_names==null || !_names.contains(name)){
 			throw new IllegalStateException("doesn't has ownership "+ name);
 		}
 	}
@@ -193,14 +196,14 @@ public class BookImpl extends AbstractBookAdv{
 //	}
 	@Override
 	public void sendModelEvent(ModelEvent event){
-		Iterator<ModelEventListener> ls = listeners.iterator();
+		Iterator<ModelEventListener> ls = _listeners.iterator();
 		ModelEventListener l;
 		while(ls.hasNext()){
 			l = ls.next();
 			try{
 				l.onEvent(event);
-			}catch(ModelEventUnreachableException x){
-				logger.info("a listener is not rechable "+x.getMessage());
+			}catch(ModelEventListenerUnreachableException x){
+				_logger.info("a listener is not rechable "+x.getMessage());
 				ls.remove();
 			}
 		}
@@ -213,11 +216,11 @@ public class BookImpl extends AbstractBookAdv{
 	
 	@Override
 	String nextObjId(String type){
-		StringBuilder sb = new StringBuilder(bookId);
+		StringBuilder sb = new StringBuilder(_bookId);
 		sb.append("_").append(type).append("_");
-		AtomicInteger i = objIdCounter.get(type);
+		AtomicInteger i = _objIdCounter.get(type);
 		if(i==null){
-			objIdCounter.put(type, i = new AtomicInteger(0));
+			_objIdCounter.put(type, i = new AtomicInteger(0));
 		}
 		sb.append(i.getAndIncrement());
 		return sb.toString();
@@ -232,7 +235,7 @@ public class BookImpl extends AbstractBookAdv{
 
 		AbstractSheetAdv sheet = new SheetImpl(this,nextObjId("sheet"));
 		sheet.setSheetName(name);
-		sheets.add(sheet);
+		_sheets.add(sheet);
 		
 		if(src instanceof AbstractSheetAdv){
 			((AbstractSheetAdv)src).copyTo(sheet);
@@ -318,8 +321,8 @@ public class BookImpl extends AbstractBookAdv{
 			destroyingSheet.set(null);
 		}
 		String oldName = sheet.getSheetName();
-		int index = sheets.indexOf(sheet);
-		sheets.remove(index);
+		int index = _sheets.indexOf(sheet);
+		_sheets.remove(index);
 		
 		//create formula cache for any sheet, sheet name, position change
 		EngineFactory.getInstance().createFormulaEngine().clearCache(new FormulaClearContext(this));
@@ -335,22 +338,22 @@ public class BookImpl extends AbstractBookAdv{
 	@Override
 	public void moveSheetTo(SSheet sheet, int index) {
 		checkOwnership(sheet);
-		if(index<0|| index>=sheets.size()){
-			throw new InvalidateModelOpException("new position out of bound "+sheets.size() +"<>" +index);
+		if(index<0|| index>=_sheets.size()){
+			throw new InvalidateModelOpException("new position out of bound "+_sheets.size() +"<>" +index);
 		}
-		int oldindex = sheets.indexOf(sheet);
+		int oldindex = _sheets.indexOf(sheet);
 		if(oldindex==index){
 			return;
 		}
-		sheets.remove(oldindex);
-		sheets.add(index, (AbstractSheetAdv)sheet);
+		_sheets.remove(oldindex);
+		_sheets.add(index, (AbstractSheetAdv)sheet);
 		
 		//create formula cache for any sheet, sheet name, position change
 		EngineFactory.getInstance().createFormulaEngine().clearCache(new FormulaClearContext(this));
 	}
 
 	public void dump(StringBuilder builder) {
-		for(AbstractSheetAdv sheet:sheets){
+		for(AbstractSheetAdv sheet:_sheets){
 			if(sheet instanceof SheetImpl){
 				((SheetImpl)sheet).dump(builder);
 			}else{
@@ -361,7 +364,7 @@ public class BookImpl extends AbstractBookAdv{
 
 	@Override
 	public SCellStyle getDefaultCellStyle() {
-		return defaultCellStyle;
+		return _defaultCellStyle;
 	}
 
 	@Override
@@ -374,13 +377,13 @@ public class BookImpl extends AbstractBookAdv{
 		if(src!=null){
 			Validations.argInstance(src, AbstractCellStyleAdv.class);
 		}
-		AbstractCellStyleAdv style = new CellStyleImpl(defaultFont);
+		AbstractCellStyleAdv style = new CellStyleImpl(_defaultFont);
 		if(src!=null){
 			style.copyFrom(src);
 		}
 		
 		if(inStyleTable){
-			cellStyles.add(style);
+			_cellStyles.add(style);
 		}
 		
 		return style;
@@ -388,7 +391,7 @@ public class BookImpl extends AbstractBookAdv{
 	
 	@Override
 	public SCellStyle searchCellStyle(CellStyleMatcher matcher) {
-		for(SCellStyle style:cellStyles){
+		for(SCellStyle style:_cellStyles){
 			if(matcher.match(style)){
 				return style;
 			}
@@ -399,7 +402,7 @@ public class BookImpl extends AbstractBookAdv{
 	
 	@Override
 	public SFont getDefaultFont() {
-		return defaultFont;
+		return _defaultFont;
 	}
 
 	@Override
@@ -418,7 +421,7 @@ public class BookImpl extends AbstractBookAdv{
 		}
 		
 		if(inFontTable){
-			fonts.add(font);
+			_fonts.add(font);
 		}
 		
 		return font;
@@ -426,7 +429,7 @@ public class BookImpl extends AbstractBookAdv{
 	
 	@Override
 	public SFont searchFont(FontMatcher matcher) {
-		for(SFont font:fonts){
+		for(SFont font:_fonts){
 			if(matcher.match(font)){
 				return font;
 			}
@@ -436,25 +439,25 @@ public class BookImpl extends AbstractBookAdv{
 	
 	@Override
 	public int getMaxRowSize() {
-		return maxRowSize;
+		return _maxRowSize;
 	}
 
 	@Override
 	public int getMaxColumnSize() {
-		return maxColumnSize;
+		return _maxColumnSize;
 	}
 
 	@Override
 	public void optimizeCellStyle() {
 		HashMap<String,SCellStyle> stylePool = new LinkedHashMap<String,SCellStyle>();
-		cellStyles.clear();
-		fonts.clear();
+		_cellStyles.clear();
+		_fonts.clear();
 		
 		SCellStyle defaultStyle = getDefaultCellStyle();
 		SFont defaultFont = getDefaultFont();
 		stylePool.put(((AbstractCellStyleAdv)defaultStyle).getStyleKey(), defaultStyle);
 		
-		for(SSheet sheet:sheets){
+		for(SSheet sheet:_sheets){
 			Iterator<SRow> rowIter = sheet.getRowIterator(); 
 			while(rowIter.hasNext()){
 				SRow row = rowIter.next();
@@ -473,12 +476,12 @@ public class BookImpl extends AbstractBookAdv{
 			}
 		}
 		
-		cellStyles.addAll((Collection)stylePool.values());
+		_cellStyles.addAll((Collection)stylePool.values());
 		String key;
 		HashMap<String,SFont> fontPool = new LinkedHashMap<String,SFont>();
 		
 		fontPool.put(((AbstractFontAdv)defaultFont).getStyleKey(), defaultFont);
-		for(SCellStyle style:cellStyles){
+		for(SCellStyle style:_cellStyles){
 			SFont font = style.getFont();
 			key = ((AbstractFontAdv)font).getStyleKey();
 			if(fontPool.get(key)==null){
@@ -486,19 +489,19 @@ public class BookImpl extends AbstractBookAdv{
 			}
 		}
 		
-		fonts.addAll((Collection)fontPool.values());
+		_fonts.addAll((Collection)fontPool.values());
 		
-		colors.clear();//color is immutable, just clear it.
+		_colors.clear();//color is immutable, just clear it.
 	}
 	
 	
 	@SuppressWarnings("unchecked")
 	public List<SCellStyle> getCellStyleTable(){
-		return Collections.unmodifiableList((List)cellStyles);
+		return Collections.unmodifiableList((List)_cellStyles);
 	}
 	@SuppressWarnings("unchecked")
 	public List<SFont> getFontTable(){
-		return Collections.unmodifiableList((List)fonts);
+		return Collections.unmodifiableList((List)_fonts);
 	}
 	
 	private SCellStyle hitStyle(SCellStyle defaultStyle,SCellStyle currSytle,
@@ -519,39 +522,39 @@ public class BookImpl extends AbstractBookAdv{
 
 	@Override
 	public void addEventListener(ModelEventListener listener){
-		if(!listeners.contains(listener)){
-			listeners.add(listener);
+		if(!_listeners.contains(listener)){
+			_listeners.add(listener);
 		}
 	}
 	@Override
 	public void removeEventListener(ModelEventListener listener){
-		listeners.remove(listener);
+		_listeners.remove(listener);
 	}
 
 	@Override
 	public Object getAttribute(String name) {
-		return attributes==null?null:attributes.get(name);
+		return _attributes==null?null:_attributes.get(name);
 	}
 
 	@Override
 	public Object setAttribute(String name, Object value) {
-		if(attributes==null){
-			attributes = new HashMap<String, Object>();
+		if(_attributes==null){
+			_attributes = new HashMap<String, Object>();
 		}
-		return attributes.put(name, value);
+		return _attributes.put(name, value);
 	}
 
 	@Override
 	public Map<String, Object> getAttributes() {
-		return attributes==null?Collections.EMPTY_MAP:Collections.unmodifiableMap(attributes);
+		return _attributes==null?Collections.EMPTY_MAP:Collections.unmodifiableMap(_attributes);
 	}
 
 	@Override
 	public SColor createColor(byte r, byte g, byte b) {
 		AbstractColorAdv newcolor = new ColorImpl(r,g,b);
-		AbstractColorAdv color = colors.get(newcolor);//reuse the existed color object
+		AbstractColorAdv color = _colors.get(newcolor);//reuse the existed color object
 		if(color==null){
-			colors.put(newcolor, color = newcolor);
+			_colors.put(newcolor, color = newcolor);
 		}
 		return color;
 	}
@@ -559,9 +562,9 @@ public class BookImpl extends AbstractBookAdv{
 	@Override
 	public SColor createColor(String htmlColor) {
 		AbstractColorAdv newcolor = new ColorImpl(htmlColor);
-		AbstractColorAdv color = colors.get(newcolor);//reuse the existed color object
+		AbstractColorAdv color = _colors.get(newcolor);//reuse the existed color object
 		if(color==null){
-			colors.put(newcolor, color = newcolor);
+			_colors.put(newcolor, color = newcolor);
 		}
 		return color;
 	}
@@ -569,7 +572,7 @@ public class BookImpl extends AbstractBookAdv{
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public List<SSheet> getSheets() {
-		return Collections.unmodifiableList((List)sheets);
+		return Collections.unmodifiableList((List)_sheets);
 	}
 	@Override
 	public SName createName(String namename) {
@@ -583,11 +586,11 @@ public class BookImpl extends AbstractBookAdv{
 		name.setName(namename);
 		name.setApplyToSheetName(sheetName);
 		
-		if(names==null){
-			names = new LinkedList<AbstractNameAdv>();
+		if(_names==null){
+			_names = new LinkedList<AbstractNameAdv>();
 		}
 		
-		names.add(name);
+		_names.add(name);
 		
 //		sendEvent(ModelEvents.ON_NAME_ADDED, 
 //				ModelEvents.PARAM_SHEET, sheet);
@@ -617,8 +620,8 @@ public class BookImpl extends AbstractBookAdv{
 		
 		((AbstractNameAdv)name).destroy();
 		
-		int index = names.indexOf(name);
-		names.remove(index);
+		int index = _names.indexOf(name);
+		_names.remove(index);
 		
 //		sendEvent(ModelEvents.ON_NAME_DELETED, 
 //				ModelEvents.PARAM_NAME, sheet,
@@ -627,15 +630,15 @@ public class BookImpl extends AbstractBookAdv{
 
 	@Override
 	public int getNumOfName() {
-		return names==null?0:names.size();
+		return _names==null?0:_names.size();
 	}
 
 	@Override
 	public SName getName(int idx) {
-		if(names==null){
+		if(_names==null){
 			throw new ArrayIndexOutOfBoundsException(idx);
 		}
-		return names.get(idx);
+		return _names.get(idx);
 	}
 
 	@Override
@@ -643,9 +646,9 @@ public class BookImpl extends AbstractBookAdv{
 		return getNameByName(namename,null);
 	}
 	public SName getNameByName(String namename,String sheetName) {
-		if(names==null)
+		if(_names==null)
 			return null;
-		for(SName name:names){
+		for(SName name:_names){
 			if((sheetName==null || sheetName.equals(name.getApplyToSheetName())) 
 					&& name.getName().equalsIgnoreCase(namename)){
 				return name;
@@ -657,49 +660,49 @@ public class BookImpl extends AbstractBookAdv{
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public List<SName> getNames() {
-		return names==null?Collections.EMPTY_LIST:Collections.unmodifiableList((List)names);
+		return _names==null?Collections.EMPTY_LIST:Collections.unmodifiableList((List)_names);
 	}
 
 	@Override
 	public int getSheetIndex(SSheet sheet) {
-		return sheets.indexOf(sheet);
+		return _sheets.indexOf(sheet);
 	}
 
 	@Override
 	public void setShareScope(String scope) {
-		if(!Objects.equals(this.shareScope,scope)){
+		if(!Objects.equals(this._shareScope,scope)){
 			
 			if("disable".equals(scope)){
-				listeners.clear();
+				_listeners.clear();
 				return;
 			}
 			
-			if(listeners.size()>0){
+			if(_listeners.size()>0){
 				throw new IllegalStateException("can't change share scope after registed any listener");
 			}
 			
-			this.shareScope = scope;
+			this._shareScope = scope;
 		}
 	}
 
 	@Override
 	public String getShareScope() {
-		return shareScope;
+		return _shareScope;
 	}
 
 	@Override
 	void setBookSeries(SBookSeries bookSeries) {
-		this.bookSeries = bookSeries;
+		this._bookSeries = bookSeries;
 	}
 
 	@Override
 	public EvaluationContributor getEvaluationContributor() {
-		return evalContributor;
+		return _evalContributor;
 	}
 
 	@Override
 	public void setEvaluationContributor(EvaluationContributor contributor) {
-		this.evalContributor = contributor;
+		this._evalContributor = contributor;
 	}
 
 	@Override
@@ -714,6 +717,6 @@ public class BookImpl extends AbstractBookAdv{
 
 	@Override 
 	public String getId(){
-		return bookId; 
+		return _bookId; 
 	}
 }

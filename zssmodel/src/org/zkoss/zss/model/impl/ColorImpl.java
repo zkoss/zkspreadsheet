@@ -26,7 +26,7 @@ import org.zkoss.zss.model.SColor;
  */
 public class ColorImpl extends AbstractColorAdv {
 	private static final long serialVersionUID = 1L;
-	private final byte[] rgb;
+	private final byte[] _rgb;
 
 	public static final AbstractColorAdv WHITE = new ColorImpl("#FFFFFF");
 	public static final AbstractColorAdv BLACK = new ColorImpl("#000000");
@@ -40,11 +40,11 @@ public class ColorImpl extends AbstractColorAdv {
 		} else if (rgb.length != 3) {
 			throw new IllegalArgumentException("wrong rgb length");
 		}
-		this.rgb = rgb;
+		this._rgb = rgb;
 	}
 
 	public ColorImpl(byte r, byte g, byte b) {
-		this.rgb = new byte[] { r, g, b };
+		this._rgb = new byte[] { r, g, b };
 	}
 
 	public ColorImpl(String htmlColor) {
@@ -58,7 +58,7 @@ public class ColorImpl extends AbstractColorAdv {
 		final byte r = (byte) (red & 0xff);
 		final byte g = (byte) (green & 0xff);
 		final byte b = (byte) (blue & 0xff);
-		this.rgb = new byte[] { r, g, b };
+		this._rgb = new byte[] { r, g, b };
 	}
 	
 	private static final char HEX[] = {
@@ -68,7 +68,7 @@ public class ColorImpl extends AbstractColorAdv {
 	@Override
 	public String getHtmlColor() {
 		StringBuilder sb = new StringBuilder("#");
-		for(byte c:rgb){
+		for(byte c:_rgb){
 			int n = c & 0xff;
 			sb.append(HEX[n/16]);//high
 			sb.append(HEX[n%16]);//low
@@ -78,8 +78,8 @@ public class ColorImpl extends AbstractColorAdv {
 
 	@Override
 	public byte[] getRGB() {
-		byte[] c = new byte[rgb.length];
-		System.arraycopy(rgb, 0, c, 0, rgb.length);
+		byte[] c = new byte[_rgb.length];
+		System.arraycopy(_rgb, 0, c, 0, _rgb.length);
 		return c;
 	}
 
@@ -87,7 +87,7 @@ public class ColorImpl extends AbstractColorAdv {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + Arrays.hashCode(rgb);
+		result = prime * result + Arrays.hashCode(_rgb);
 		return result;
 	}
 
@@ -100,7 +100,7 @@ public class ColorImpl extends AbstractColorAdv {
 		if (getClass() != obj.getClass())
 			return false;
 		ColorImpl other = (ColorImpl) obj;
-		if (!Arrays.equals(rgb, other.rgb))
+		if (!Arrays.equals(_rgb, other._rgb))
 			return false;
 		return true;
 	}

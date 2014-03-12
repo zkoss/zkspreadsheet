@@ -32,104 +32,104 @@ public class FontImpl extends AbstractFontAdv {
 	/**
      * By default, Microsoft Office Excel 2007 uses the Calibry font in font size 11
      */
-	private String fontName = "Calibri";
+	private String _fontName = "Calibri";
 	
 	 /**
      * By default, Microsoft Office Excel 2007 uses the Calibry font in font size 11
      */
-	private int fontHeightPoint = 11;
+	private int _fontHeightPoint = 11;
 	
-	private SColor fontColor = ColorImpl.BLACK;
+	private SColor _fontColor = ColorImpl.BLACK;
 	
-	private Boldweight fontBoldweight = Boldweight.NORMAL;
+	private Boldweight _fontBoldweight = Boldweight.NORMAL;
 	
-	private boolean fontItalic = false;
-	private boolean fontStrikeout = false;
-	private TypeOffset fontTypeOffset = TypeOffset.NONE;
-	private Underline fontUnderline = Underline.NONE;
+	private boolean _fontItalic = false;
+	private boolean _fontStrikeout = false;
+	private TypeOffset _fontTypeOffset = TypeOffset.NONE;
+	private Underline _fontUnderline = Underline.NONE;
 
 	@Override
 	public String getName() {
-		return fontName;
+		return _fontName;
 	}
 
 	@Override
 	public void setName(String fontName) {
-		this.fontName = fontName;
+		this._fontName = fontName;
 	}
 
 	@Override
 	public SColor getColor() {
-		return fontColor;
+		return _fontColor;
 	}
 
 	@Override
 	public void setColor(SColor fontColor) {
 		Validations.argNotNull(fontColor);
-		this.fontColor = fontColor;
+		this._fontColor = fontColor;
 	}
 
 	@Override
 	public Boldweight getBoldweight() {
-		return fontBoldweight;
+		return _fontBoldweight;
 	}
 
 	@Override
 	public void setBoldweight(Boldweight fontBoldweight) {
 		Validations.argNotNull(fontBoldweight);
-		this.fontBoldweight = fontBoldweight;
+		this._fontBoldweight = fontBoldweight;
 	}
 
 	@Override
 	public int getHeightPoints() {
-		return fontHeightPoint;
+		return _fontHeightPoint;
 	}
 
 	@Override
 	public void setHeightPoints(int fontHeightPoint) {
-		this.fontHeightPoint = fontHeightPoint;
+		this._fontHeightPoint = fontHeightPoint;
 	}
 
 	@Override
 	public boolean isItalic() {
-		return fontItalic;
+		return _fontItalic;
 	}
 
 	@Override
 	public void setItalic(boolean fontItalic) {
-		this.fontItalic = fontItalic;
+		this._fontItalic = fontItalic;
 	}
 
 	@Override
 	public boolean isStrikeout() {
-		return fontStrikeout;
+		return _fontStrikeout;
 	}
 
 	@Override
 	public void setStrikeout(boolean fontStrikeout) {
-		this.fontStrikeout = fontStrikeout;
+		this._fontStrikeout = fontStrikeout;
 	}
 
 	@Override
 	public TypeOffset getTypeOffset() {
-		return fontTypeOffset;
+		return _fontTypeOffset;
 	}
 
 	@Override
 	public void setTypeOffset(TypeOffset fontTypeOffset) {
 		Validations.argNotNull(fontTypeOffset);
-		this.fontTypeOffset = fontTypeOffset;
+		this._fontTypeOffset = fontTypeOffset;
 	}
 
 	@Override
 	public Underline getUnderline() {
-		return fontUnderline;
+		return _fontUnderline;
 	}
 
 	@Override
 	public void setUnderline(Underline fontUnderline) {
 		Validations.argNotNull(fontUnderline);
-		this.fontUnderline = fontUnderline;
+		this._fontUnderline = fontUnderline;
 	}
 
 	
@@ -153,14 +153,14 @@ public class FontImpl extends AbstractFontAdv {
 	@Override
 	String getStyleKey() {
 		StringBuilder sb = new StringBuilder();
-		sb.append(fontName)
-		.append(".").append(fontColor.getHtmlColor())
-		.append(".").append(fontBoldweight.ordinal())
-		.append(".").append(fontHeightPoint)
-		.append(".").append(fontItalic?"T":"F")
-		.append(".").append(fontStrikeout?"T":"F")
-		.append(".").append(fontTypeOffset.ordinal())
-		.append(".").append(fontUnderline.ordinal());
+		sb.append(_fontName)
+		.append(".").append(_fontColor.getHtmlColor())
+		.append(".").append(_fontBoldweight.ordinal())
+		.append(".").append(_fontHeightPoint)
+		.append(".").append(_fontItalic?"T":"F")
+		.append(".").append(_fontStrikeout?"T":"F")
+		.append(".").append(_fontTypeOffset.ordinal())
+		.append(".").append(_fontUnderline.ordinal());
 		return sb.toString();
 	}
 }

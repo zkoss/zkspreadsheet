@@ -1,3 +1,19 @@
+/*
+
+{{IS_NOTE
+	Purpose:
+		
+	Description:
+		
+	History:
+		
+}}IS_NOTE
+
+Copyright (C) 2013 Potix Corporation. All Rights Reserved.
+
+{{IS_RIGHT
+}}IS_RIGHT
+*/
 package org.zkoss.zss.range.impl;
 
 import java.util.Collections;
@@ -12,46 +28,50 @@ import org.zkoss.zss.model.SheetRegion;
 import org.zkoss.zss.model.impl.RefImpl;
 import org.zkoss.zss.model.sys.dependency.Ref;
 import org.zkoss.zss.range.impl.ModelUpdate.UpdateType;
-
+/**
+ * 
+ * @author Dennis
+ * @since 3.5.0
+ */
 public class ModelUpdateCollector {
-	static ThreadLocal<ModelUpdateCollector> current = new ThreadLocal<ModelUpdateCollector>();
+	static ThreadLocal<ModelUpdateCollector> _current = new ThreadLocal<ModelUpdateCollector>();
 
-	private List<ModelUpdate> updates;
+	private List<ModelUpdate> _updates;
 
 	public ModelUpdateCollector() {
 	}
 
 	public static ModelUpdateCollector setCurrent(ModelUpdateCollector ctx) {
-		ModelUpdateCollector old = current.get();
-		current.set(ctx);
+		ModelUpdateCollector old = _current.get();
+		_current.set(ctx);
 		return old;
 	}
 
 	public static ModelUpdateCollector getCurrent() {
-		return current.get();
+		return _current.get();
 	}
 
 	public void addModelUpdate(ModelUpdate mu) {
-		if (updates == null) {
-			updates = new LinkedList<ModelUpdate>();
+		if (_updates == null) {
+			_updates = new LinkedList<ModelUpdate>();
 		}
-		updates.add(mu);
+		_updates.add(mu);
 	}
 
 	public List<ModelUpdate> getModelUpdates() {
 		
-		if(updates==null){
+		if(_updates==null){
 			return Collections.EMPTY_LIST;
 		}
-		return Collections.unmodifiableList(updates);
+		return Collections.unmodifiableList(_updates);
 	}
 	
 	private ModelUpdate getLast(){
-		return (updates==null||updates.size()==0)?null:updates.get(updates.size()-1);
+		return (_updates==null||_updates.size()==0)?null:_updates.get(_updates.size()-1);
 	}
 	private void removeLast(){
-		if(updates!=null && updates.size()>0){
-			updates.remove(updates.size()-1);
+		if(_updates!=null && _updates.size()>0){
+			_updates.remove(_updates.size()-1);
 		}
 	}
 

@@ -34,39 +34,39 @@ import org.zkoss.zss.model.sys.dependency.Ref.RefType;
  */
 public class DependencyTableImpl extends DependencyTableAdv {
 	private static final long serialVersionUID = 1L;
-	private static final Log logger = Log.lookup(DependencyTableImpl.class.getName());
-	private static final EnumSet<RefType> regionTypes = EnumSet.of(RefType.BOOK, RefType.SHEET, RefType.AREA,
+	private static final Log _logger = Log.lookup(DependencyTableImpl.class.getName());
+	private static final EnumSet<RefType> _regionTypes = EnumSet.of(RefType.BOOK, RefType.SHEET, RefType.AREA,
 			RefType.CELL);
 
 	/** Map<dependant, precedent> */
-	private Map<Ref, Set<Ref>> map = new LinkedHashMap<Ref, Set<Ref>>();
-	private SBookSeries books;
+	private Map<Ref, Set<Ref>> _map = new LinkedHashMap<Ref, Set<Ref>>();
+	private SBookSeries _books;
 
 	public DependencyTableImpl() {
 	}
 
 	@Override
 	public void setBookSeries(SBookSeries series) {
-		this.books = series;
+		this._books = series;
 	}
 
 	@Override
 	public void add(Ref dependant, Ref precedent) {
-		Set<Ref> precedents = map.get(dependant);
+		Set<Ref> precedents = _map.get(dependant);
 		if(precedents == null) {
 			precedents = new LinkedHashSet<Ref>();
-			map.put(dependant, precedents);
+			_map.put(dependant, precedents);
 		}
 		precedents.add(precedent);
 	}
 
 	public void clear() {
-		map.clear();
+		_map.clear();
 	}
 
 	@Override
 	public void clearDependents(Ref dependant) {
-		map.remove(dependant);
+		_map.remove(dependant);
 	}
 
 	@Override
@@ -79,7 +79,7 @@ public class DependencyTableImpl extends DependencyTableAdv {
 		RefType precedentType = precedent.getType();
 		while(!queue.isEmpty()) {
 			Ref p = queue.remove();
-			for(Entry<Ref, Set<Ref>> entry : map.entrySet()) {
+			for(Entry<Ref, Set<Ref>> entry : _map.entrySet()) {
 				Ref target = entry.getKey();
 				if(!result.contains(target)) {
 					//ZSS-581, should also match to precedent (especially for larger scope ref).
@@ -106,7 +106,7 @@ public class DependencyTableImpl extends DependencyTableAdv {
 		// search direct dependents 
 		Set<Ref> result = new LinkedHashSet<Ref>();
 		RefType precedentType = precedent.getType();
-		for(Entry<Ref, Set<Ref>> entry : map.entrySet()) {
+		for(Entry<Ref, Set<Ref>> entry : _map.entrySet()) {
 			Ref target = entry.getKey();
 			if(!result.contains(target)) {
 				//ZSS-581, should also match to precedent (especially for larger scope ref).
@@ -126,7 +126,7 @@ public class DependencyTableImpl extends DependencyTableAdv {
 	}	
 
 	private boolean isMatched(Ref a, Ref b) {
-		if(regionTypes.contains(a.getType()) && regionTypes.contains(b.getType())) {
+		if(_regionTypes.contains(a.getType()) && _regionTypes.contains(b.getType())) {
 			return isIntersected(a, b);
 		} else {
 			return a.equals(b);
@@ -150,7 +150,7 @@ public class DependencyTableImpl extends DependencyTableAdv {
 
 		// check sheets are intersected or not
 		// just assume 3D reference
-		SBook book = books.getBook(a.getBookName());
+		SBook book = _books.getBook(a.getBookName());
 		int[] aSheetIndexes = getSheetIndex(book, a);
 		int[] bSheetIndexes = getSheetIndex(book, b);
 		if(!a.getSheetName().equals(b.getSheetName()) &&
@@ -224,7 +224,7 @@ public class DependencyTableImpl extends DependencyTableAdv {
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		for(Entry<Ref, Set<Ref>> entry : map.entrySet()) {
+		for(Entry<Ref, Set<Ref>> entry : _map.entrySet()) {
 			Ref target = entry.getKey();
 			sb.append(target).append('\n');
 			for(Ref pre : entry.getValue()) {
@@ -238,19 +238,19 @@ public class DependencyTableImpl extends DependencyTableAdv {
 	public void merge(DependencyTableAdv dependencyTable) {
 		if(!(dependencyTable instanceof DependencyTableImpl)) {
 			// just in case
-			logger.error("can't merge different type of dependency table: " + dependencyTable.getClass().getName());
+			_logger.error("can't merge different type of dependency table: " + dependencyTable.getClass().getName());
 			return;
 		}
 
 		// simply, just put everything in
 		DependencyTableImpl another = (DependencyTableImpl)dependencyTable;
-		map.putAll(another.map);
+		_map.putAll(another._map);
 	}
 	
 	@Override
 	public Set<Ref> searchPrecedents(RefFilter filter){
 		Set<Ref> precedents = new LinkedHashSet<Ref>();
-		for(Entry<Ref, Set<Ref>> entry : map.entrySet()) {
+		for(Entry<Ref, Set<Ref>> entry : _map.entrySet()) {
 			for(Ref pre : entry.getValue()) {
 				if(filter.accept(pre)) {
 					precedents.add(pre);
@@ -261,7 +261,7 @@ public class DependencyTableImpl extends DependencyTableAdv {
 	}
 	
 	public void dump(){
-		for(Entry<Ref, Set<Ref>> entry : map.entrySet()) {
+		for(Entry<Ref, Set<Ref>> entry : _map.entrySet()) {
 			System.out.println("["+entry.getKey()+"] depends on");
 			for(Ref ref:entry.getValue()){
 				System.out.println("\t+["+ref+"]");

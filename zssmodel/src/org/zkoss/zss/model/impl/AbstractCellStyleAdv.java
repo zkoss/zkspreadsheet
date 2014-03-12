@@ -27,6 +27,9 @@ import org.zkoss.zss.model.SCellStyle;
 public abstract class AbstractCellStyleAdv implements SCellStyle,Serializable{
 	private static final long serialVersionUID = 1L;
 	
+	/**
+	 * gets the string key of this style, the key should combine all the style value in short string as possible
+	 */
 	abstract String getStyleKey();
 
 }

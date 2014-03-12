@@ -8,51 +8,51 @@ import org.zkoss.zss.model.CellRegion;
 /**
  * The auto fitler implement
  * @author dennis
- *
+ * @since 3.5.0
  */
 public class AutoFilterImpl extends AbstractAutoFilterAdv {
 	private static final long serialVersionUID = 1L;
 	
-	private final CellRegion region;
+	private final CellRegion _region;
 	
-	private final TreeMap<Integer,NFilterColumn> columns;
+	private final TreeMap<Integer,NFilterColumn> _columns;
 
 	public AutoFilterImpl(CellRegion region){
-		this.region = region;
-		columns = new TreeMap<Integer,NFilterColumn>();
+		this._region = region;
+		_columns = new TreeMap<Integer,NFilterColumn>();
 	}
 	
 	@Override
 	public CellRegion getRegion() {
-		return region;
+		return _region;
 	}
 
 	@Override
 	public Collection<NFilterColumn> getFilterColumns() {
-		return Collections.unmodifiableCollection(columns.values());
+		return Collections.unmodifiableCollection(_columns.values());
 	}
 
 	@Override
 	public NFilterColumn getFilterColumn(int index, boolean create) {
-		NFilterColumn col = columns.get(index);
+		NFilterColumn col = _columns.get(index);
 		if(col==null && create){
-			int s = region.getLastColumn()-region.getColumn()+1; 
+			int s = _region.getLastColumn()-_region.getColumn()+1; 
 			if(index>=s){
 				throw new IllegalStateException("the column index "+index+" >= "+s);
 			}
-			columns.put(index, col=new FilterColumnImpl(index));
+			_columns.put(index, col=new FilterColumnImpl(index));
 		}
 		return col;
 	}
 
 	@Override
 	public void clearFilterColumn(int index) {
-		columns.remove(index);
+		_columns.remove(index);
 	}
 	
 	@Override
 	public void clearFilterColumns() {
-		columns.clear();
+		_columns.clear();
 	}
 
 }

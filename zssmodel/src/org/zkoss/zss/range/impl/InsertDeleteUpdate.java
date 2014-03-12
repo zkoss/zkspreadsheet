@@ -18,49 +18,49 @@ import org.zkoss.zss.model.SSheet;
  * @author Pao
  */
 public class InsertDeleteUpdate {
-	private SSheet sheet;
-	private boolean inserted;
-	private boolean row;
-	private int index;
-	private int lastIndex;
+	private SSheet _sheet;
+	private boolean _inserted;
+	private boolean _row;
+	private int _index;
+	private int _lastIndex;
 
 	public InsertDeleteUpdate(SSheet sheet, boolean inserted, boolean row, int index, int lastIndex) {
-		this.sheet = sheet;
-		this.inserted = inserted;
-		this.row = row;
-		this.index = index;
-		this.lastIndex = lastIndex;
+		this._sheet = sheet;
+		this._inserted = inserted;
+		this._row = row;
+		this._index = index;
+		this._lastIndex = lastIndex;
 	}
 
 	public SSheet getSheet() {
-		return sheet;
+		return _sheet;
 	}
 
 	public boolean isInserted() {
-		return inserted;
+		return _inserted;
 	}
 
 	public boolean isRow() {
-		return row;
+		return _row;
 	}
 
 	public int getIndex() {
-		return index;
+		return _index;
 	}
 
 	public int getLastIndex() {
-		return lastIndex;
+		return _lastIndex;
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + index;
-		result = prime * result + (inserted ? 1231 : 1237);
-		result = prime * result + lastIndex;
-		result = prime * result + (row ? 1231 : 1237);
-		result = prime * result + ((sheet == null) ? 0 : sheet.hashCode());
+		result = prime * result + _index;
+		result = prime * result + (_inserted ? 1231 : 1237);
+		result = prime * result + _lastIndex;
+		result = prime * result + (_row ? 1231 : 1237);
+		result = prime * result + ((_sheet == null) ? 0 : _sheet.hashCode());
 		return result;
 	}
 
@@ -73,18 +73,18 @@ public class InsertDeleteUpdate {
 		if(getClass() != obj.getClass())
 			return false;
 		InsertDeleteUpdate other = (InsertDeleteUpdate)obj;
-		if(index != other.index)
+		if(_index != other._index)
 			return false;
-		if(inserted != other.inserted)
+		if(_inserted != other._inserted)
 			return false;
-		if(lastIndex != other.lastIndex)
+		if(_lastIndex != other._lastIndex)
 			return false;
-		if(row != other.row)
+		if(_row != other._row)
 			return false;
-		if(sheet == null) {
-			if(other.sheet != null)
+		if(_sheet == null) {
+			if(other._sheet != null)
 				return false;
-		} else if(!sheet.equals(other.sheet))
+		} else if(!_sheet.equals(other._sheet))
 			return false;
 		return true;
 	}

@@ -29,48 +29,44 @@ import org.zkoss.zss.model.impl.sys.DependencyTableAdv;
 import org.zkoss.zss.model.sys.EngineFactory;
 import org.zkoss.zss.model.sys.dependency.DependencyTable;
 /**
- * 
+ * the default and one-book book-series
  * @author dennis
  * @since 3.5.0
  */
 public class SimpleBookSeriesImpl extends AbstractBookSeriesAdv {
 	private static final long serialVersionUID = 1L;
 	
-	final private AbstractBookAdv book;
-	List<SBook> array;
+	final private AbstractBookAdv _book;
 	
-	final private DependencyTable dependencyTable;
+	final private DependencyTable _dependencyTable;
 	
-	final private ReadWriteLock lock = new ReentrantReadWriteLock();
+	final private ReadWriteLock _lock = new ReentrantReadWriteLock();
 	
-	private transient Map<String, Object> attributes;
+	private Map<String, Object> _attributes;
 	
 	public SimpleBookSeriesImpl(AbstractBookAdv book){
-		this.book = book;
-		dependencyTable = EngineFactory.getInstance().createDependencyTable();
-		((DependencyTableAdv)dependencyTable).setBookSeries(this);
+		this._book = book;
+		_dependencyTable = EngineFactory.getInstance().createDependencyTable();
+		((DependencyTableAdv)_dependencyTable).setBookSeries(this);
 	}
 	@Override
 	public SBook getBook(String name) {
-		return book.getBookName().equals(name)?book:null;
+		return _book.getBookName().equals(name)?_book:null;
 	}
 
 	@Override
 	public DependencyTable getDependencyTable() {
-		return dependencyTable;
+		return _dependencyTable;
 	}
 	@Override
 	public ReadWriteLock getLock() {
-		return lock;
+		return _lock;
 	}
 	@Override
 	public List<SBook> getBooks() {
-		if(array!=null){
-			return array;
-		}
-		array = new ArrayList<SBook>(1);
-		array.add(book);
-		return array = Collections.unmodifiableList(array);
+		List<SBook> books = new ArrayList<SBook>(1);
+		books.add(_book);
+		return Collections.unmodifiableList(books);
 	}
 
 	@Override
@@ -94,9 +90,9 @@ public class SimpleBookSeriesImpl extends AbstractBookSeriesAdv {
 	}
 	
 	private Map<String, Object> getAttributeMap() {
-		if(attributes == null) {
-			attributes = new LinkedHashMap<String, Object>();
+		if(_attributes == null) {
+			_attributes = new LinkedHashMap<String, Object>();
 		}
-		return attributes;
+		return _attributes;
 	}
 }

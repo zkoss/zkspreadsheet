@@ -1,4 +1,4 @@
-/* NBook.java
+/* SBook.java
 
 {{IS_NOTE
 	Purpose:

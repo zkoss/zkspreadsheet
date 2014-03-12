@@ -60,71 +60,71 @@ import org.zkoss.zss.model.util.Validations;
  */
 public class SheetImpl extends AbstractSheetAdv {
 	private static final long serialVersionUID = 1L;
-	private static final Log logger = Log.lookup(SheetImpl.class);
+	private static final Log _logger = Log.lookup(SheetImpl.class);
 			
-	private AbstractBookAdv book;
-	private String name;
-	private final String id;
+	private AbstractBookAdv _book;
+	private String _name;
+	private final String _id;
 	
-	private String password;
+	private String _password;
 	
-	private SAutoFilter autoFilter;
+	private SAutoFilter _autoFilter;
 	
-	private final IndexPool<AbstractRowAdv> rows = new IndexPool<AbstractRowAdv>(){
+	private final IndexPool<AbstractRowAdv> _rows = new IndexPool<AbstractRowAdv>(){
 		private static final long serialVersionUID = 1L;
 		@Override
 		void resetIndex(int newidx, AbstractRowAdv obj) {
 			obj.setIndex(newidx);
 		}};
 //	private final BiIndexPool<ColumnAdv> columns = new BiIndexPool<ColumnAdv>();
-	private final ColumnArrayPool columnArrays = new ColumnArrayPool();
+	private final ColumnArrayPool _columnArrays = new ColumnArrayPool();
 	
 	
-	private final List<AbstractPictureAdv> pictures = new LinkedList<AbstractPictureAdv>();
-	private final List<AbstractChartAdv> charts = new LinkedList<AbstractChartAdv>();
-	private final List<AbstractDataValidationAdv> dataValidations = new LinkedList<AbstractDataValidationAdv>();
+	private final List<AbstractPictureAdv> _pictures = new LinkedList<AbstractPictureAdv>();
+	private final List<AbstractChartAdv> _charts = new LinkedList<AbstractChartAdv>();
+	private final List<AbstractDataValidationAdv> _dataValidations = new LinkedList<AbstractDataValidationAdv>();
 	
-	private final List<CellRegion> mergedRegions = new LinkedList<CellRegion>();
+	private final List<CellRegion> _mergedRegions = new LinkedList<CellRegion>();
 	
 	//to store some lowpriority view info
-	private final SSheetViewInfo viewInfo = new SheetViewInfoImpl();
+	private final SSheetViewInfo _viewInfo = new SheetViewInfoImpl();
 	
-	private final SPrintSetup printSetup = new PrintSetupImpl();
+	private final SPrintSetup _printSetup = new PrintSetupImpl();
 	
-	private HashMap<String,Object> attributes;
-	private int defaultColumnWidth = 64; //in pixel
-	private int defaultRowHeight = 20;//in pixel
+	private HashMap<String,Object> _attributes;
+	private int _defaultColumnWidth = 64; //in pixel
+	private int _defaultRowHeight = 20;//in pixel
 	
 	public SheetImpl(AbstractBookAdv book,String id){
-		this.book = book;
-		this.id = id;
+		this._book = book;
+		this._id = id;
 	}
 	
 	protected void checkOwnership(SPicture picture){
-		if(!pictures.contains(picture)){
+		if(!_pictures.contains(picture)){
 			throw new IllegalStateException("doesn't has ownership "+ picture);
 		}
 	}
 	
 	protected void checkOwnership(SChart chart){
-		if(!charts.contains(chart)){
+		if(!_charts.contains(chart)){
 			throw new IllegalStateException("doesn't has ownership "+ chart);
 		}
 	}
 	
 	protected void checkOwnership(SDataValidation validation){
-		if(!dataValidations.contains(validation)){
+		if(!_dataValidations.contains(validation)){
 			throw new IllegalStateException("doesn't has ownership "+ validation);
 		}
 	}
 	
 	public SBook getBook() {
 		checkOrphan();
-		return book;
+		return _book;
 	}
 
 	public String getSheetName() {
-		return name;
+		return _name;
 	}
 
 	public SRow getRow(int rowIdx) {
@@ -132,7 +132,7 @@ public class SheetImpl extends AbstractSheetAdv {
 	}
 	@Override
 	AbstractRowAdv getRow(int rowIdx, boolean proxy) {
-		AbstractRowAdv rowObj = rows.get(rowIdx);
+		AbstractRowAdv rowObj = _rows.get(rowIdx);
 		if(rowObj != null){
 			return rowObj;
 		}
@@ -140,14 +140,14 @@ public class SheetImpl extends AbstractSheetAdv {
 	}
 	@Override
 	AbstractRowAdv getOrCreateRow(int rowIdx){
-		AbstractRowAdv rowObj = rows.get(rowIdx);
+		AbstractRowAdv rowObj = _rows.get(rowIdx);
 		if(rowObj == null){
 			checkOrphan();
 			if(rowIdx > getBook().getMaxRowIndex()){
 				throw new IllegalStateException("can't create the row that exceeds max row size "+getBook().getMaxRowIndex());
 			}
 			rowObj = new RowImpl(this,rowIdx);
-			rows.put(rowIdx, rowObj);
+			_rows.put(rowIdx, rowObj);
 		}
 		return rowObj;
 	}
@@ -166,10 +166,10 @@ public class SheetImpl extends AbstractSheetAdv {
 	}
 	@Override
 	public SColumnArray getColumnArray(int columnIdx) {
-		if(columnArrays.hasLastKey(columnIdx)){
+		if(_columnArrays.hasLastKey(columnIdx)){
 			return null;
 		}
-		SortedMap<Integer, AbstractColumnArrayAdv> submap = columnArrays.lastSubMap(columnIdx);
+		SortedMap<Integer, AbstractColumnArrayAdv> submap = _columnArrays.lastSubMap(columnIdx);
 		
 		return submap.size()>0?submap.get(submap.firstKey()):null;
 	}
@@ -195,7 +195,7 @@ public class SheetImpl extends AbstractSheetAdv {
 			return;
 		AbstractColumnArrayAdv prev = null;
 		try{
-			for(AbstractColumnArrayAdv array:columnArrays.values()){
+			for(AbstractColumnArrayAdv array:_columnArrays.values()){
 				//check the existed data
 				if(prev==null){
 					if(array.getIndex()!=0){
@@ -209,9 +209,9 @@ public class SheetImpl extends AbstractSheetAdv {
 				prev = array;
 			}
 		}catch(RuntimeException x){
-			logger.error(x.getMessage(),x);
-			for(AbstractColumnArrayAdv array:columnArrays.values()){
-				logger.info("ColumnArray "+array.getIndex()+":"+array.getLastIndex());
+			_logger.error(x.getMessage(),x);
+			for(AbstractColumnArrayAdv array:_columnArrays.values()){
+				_logger.info("ColumnArray "+array.getIndex()+":"+array.getLastIndex());
 			}
 			throw x;
 		}
@@ -227,26 +227,26 @@ public class SheetImpl extends AbstractSheetAdv {
 		int start1,end1;
 		start1 = end1 = -1;
 		
-		AbstractColumnArrayAdv ov = columnArrays.overlap(index,lastIndex); 
+		AbstractColumnArrayAdv ov = _columnArrays.overlap(index,lastIndex); 
 		if(ov!=null){
 			throw new IllegalStateException("Can't setup an overlapped column array "+index+","+lastIndex +" overlppaed "+ov);
 		}
 		
 		
-		if(columnArrays.size()==0){
+		if(_columnArrays.size()==0){
 			start1 = 0;
 		}else{
-			start1 = columnArrays.lastLastKey()+1;
+			start1 = _columnArrays.lastLastKey()+1;
 		}
 		end1 = index-1;
 		
 		AbstractColumnArrayAdv array;
 		if(start1<=end1 && end1>-1){
 			array = new ColumnArrayImpl(this, start1, end1);
-			columnArrays.put(array);
+			_columnArrays.put(array);
 		}
 		array = new ColumnArrayImpl(this, index, lastIndex);
-		columnArrays.put(array);
+		_columnArrays.put(array);
 		
 		checkColumnArrayStatus();
 		return array;
@@ -268,10 +268,10 @@ public class SheetImpl extends AbstractSheetAdv {
 		start1 = end1 = start2 = end2 = -1;
 		
 		if(contains==null){
-			if(columnArrays.size()==0){//no data
+			if(_columnArrays.size()==0){//no data
 				start1 = 0;
 			}else{//out of existed array
-				start1 = columnArrays.lastLastKey()+1;
+				start1 = _columnArrays.lastLastKey()+1;
 			}
 			end1 = columnIdx-1;
 		}else{
@@ -291,12 +291,12 @@ public class SheetImpl extends AbstractSheetAdv {
 		AbstractColumnArrayAdv array = null;
 		AbstractColumnArrayAdv prev = null;
 		if(contains!=null){
-			columnArrays.remove(contains);
+			_columnArrays.remove(contains);
 		}
 		//
 		if(start2<=end2 && end2>-1){
 			prev =new ColumnArrayImpl(this, start2, end2);
-			columnArrays.put(prev);
+			_columnArrays.put(prev);
 			if(contains!=null){
 				prev.setCellStyle(contains.getCellStyle());
 				prev.setHidden(contains.isHidden());
@@ -305,7 +305,7 @@ public class SheetImpl extends AbstractSheetAdv {
 		}
 		
 		array = new ColumnArrayImpl(this, columnIdx, columnIdx);
-		columnArrays.put(array);
+		_columnArrays.put(array);
 		if(contains!=null){
 			array.setCellStyle(contains.getCellStyle());
 			array.setHidden(contains.isHidden());
@@ -314,7 +314,7 @@ public class SheetImpl extends AbstractSheetAdv {
 		
 		if(start1<=end1 && end1>-1){
 			prev =new ColumnArrayImpl(this, start1, end1);
-			columnArrays.put(prev);
+			_columnArrays.put(prev);
 			if(contains!=null){
 				prev.setCellStyle(contains.getCellStyle());
 				prev.setHidden(contains.isHidden());
@@ -359,19 +359,19 @@ public class SheetImpl extends AbstractSheetAdv {
 	}
 
 	public int getStartRowIndex() {
-		return rows.firstKey();
+		return _rows.firstKey();
 	}
 
 	public int getEndRowIndex() {
-		return rows.lastKey();
+		return _rows.lastKey();
 	}
 	
 	public int getStartColumnIndex() {
-		return columnArrays.size()>0?columnArrays.firstFirstKey():-1;
+		return _columnArrays.size()>0?_columnArrays.firstFirstKey():-1;
 	}
 
 	public int getEndColumnIndex() {
-		return columnArrays.size()>0?columnArrays.lastLastKey():-1;
+		return _columnArrays.size()>0?_columnArrays.lastLastKey():-1;
 	}
 
 	public int getStartCellIndex(int rowIdx) {
@@ -396,7 +396,7 @@ public class SheetImpl extends AbstractSheetAdv {
 	@Override
 	void setSheetName(String name) {
 		checkLegalSheetName(name);
-		this.name = name;
+		this._name = name;
 	}
 	
 
@@ -464,7 +464,7 @@ public class SheetImpl extends AbstractSheetAdv {
 		int columnStart = Math.min(columnIdx, columnIdx2);
 		int columnEnd = Math.max(columnIdx, columnIdx2);
 		
-		Collection<AbstractRowAdv> effected = rows.subValues(rowStart,rowEnd);
+		Collection<AbstractRowAdv> effected = _rows.subValues(rowStart,rowEnd);
 		for(AbstractRowAdv row:effected){
 			row.clearCell(columnStart, columnEnd);
 		}
@@ -477,13 +477,13 @@ public class SheetImpl extends AbstractSheetAdv {
 			throw new IllegalArgumentException(rowIdx+">"+lastRowIdx);
 		}
 		int size = lastRowIdx-rowIdx+1;
-		rows.insert(rowIdx, size);
+		_rows.insert(rowIdx, size);
 
 		//destroy the row that exceed the max size
 		int maxSize = getBook().getMaxRowSize();
-		Collection<AbstractRowAdv> exceeds = new ArrayList<AbstractRowAdv>(rows.subValues(maxSize, Integer.MAX_VALUE));
+		Collection<AbstractRowAdv> exceeds = new ArrayList<AbstractRowAdv>(_rows.subValues(maxSize, Integer.MAX_VALUE));
 		if(exceeds.size()>0){
-			rows.trim(maxSize);
+			_rows.trim(maxSize);
 		}
 		for(AbstractRowAdv row:exceeds){
 			row.destroy();
@@ -497,7 +497,7 @@ public class SheetImpl extends AbstractSheetAdv {
 		Map<String,Object> dataBefore = new HashMap<String, Object>();
 		// handling merged regions shift
 		// find merge cells in affected region and remove them
-		CellRegion affectedRegion = new CellRegion(rowIdx, 0, book.getMaxRowIndex(), book.getMaxColumnIndex());
+		CellRegion affectedRegion = new CellRegion(rowIdx, 0, _book.getMaxRowIndex(), _book.getMaxColumnIndex());
 		List<CellRegion> toExtend = getOverlapsMergedRegions(affectedRegion, true);
 		List<CellRegion> toShift = getContainsMergedRegions(affectedRegion);
 		removeMergedRegion(affectedRegion, true);
@@ -509,7 +509,7 @@ public class SheetImpl extends AbstractSheetAdv {
 	private void shiftAfterRowInsert(Map<String, Object> dataBefore, int rowIdx, int lastRowIdx) {
 		// handling pic location shift
 		int size = lastRowIdx - rowIdx+1;
-		for (AbstractPictureAdv pic : pictures) {
+		for (AbstractPictureAdv pic : _pictures) {
 			ViewAnchor anchor = pic.getAnchor();
 			int idx = anchor.getRowIndex();
 			if (idx >= rowIdx) {
@@ -517,7 +517,7 @@ public class SheetImpl extends AbstractSheetAdv {
 			}
 		}
 		// handling chart location shift
-		for (AbstractChartAdv chart : charts) {
+		for (AbstractChartAdv chart : _charts) {
 			ViewAnchor anchor = chart.getAnchor();
 			int idx = anchor.getRowIndex();
 			if (idx >= rowIdx) {
@@ -537,7 +537,7 @@ public class SheetImpl extends AbstractSheetAdv {
 		}
 		
 		//TODO shift data validation?
-		for(AbstractDataValidationAdv validation:dataValidations){
+		for(AbstractDataValidationAdv validation:_dataValidations){
 			//TODO zss 3.5
 //			int idx =0;
 //			Set<CellRegion> remove = new HashSet<CellRegion>();
@@ -565,17 +565,17 @@ public class SheetImpl extends AbstractSheetAdv {
 			
 		}
 		
-		extendFormula(new CellRegion(rowIdx,0,lastRowIdx,book.getMaxColumnIndex()), false);
+		extendFormula(new CellRegion(rowIdx,0,lastRowIdx,_book.getMaxColumnIndex()), false);
 		
 		//shift freeze panel
-		int freezeIdx = viewInfo.getNumOfRowFreeze()-1;
+		int freezeIdx = _viewInfo.getNumOfRowFreeze()-1;
 		if(freezeIdx>=rowIdx){
 			if(freezeIdx<lastRowIdx){
 				freezeIdx += freezeIdx-rowIdx + 1;
 			}else{
 				freezeIdx += lastRowIdx-rowIdx + 1;
 			}
-			viewInfo.setNumOfRowFreeze(freezeIdx<0?0:freezeIdx+1);
+			_viewInfo.setNumOfRowFreeze(freezeIdx<0?0:freezeIdx+1);
 		}
 	}	
 
@@ -587,11 +587,11 @@ public class SheetImpl extends AbstractSheetAdv {
 		}
 		
 		//clear before move relation
-		for(AbstractRowAdv row:rows.subValues(rowIdx,lastRowIdx)){
+		for(AbstractRowAdv row:_rows.subValues(rowIdx,lastRowIdx)){
 			row.destroy();
 		}
 		int size = lastRowIdx-rowIdx+1;
-		rows.delete(rowIdx, size);
+		_rows.delete(rowIdx, size);
 		Map<String,Object> dataBefore = shiftBeforeRowDelete(rowIdx,lastRowIdx);
 		ModelUpdateUtil.addInsertDeleteUpdate(this, false, true, rowIdx, lastRowIdx);
 		shiftAfterRowDelete(dataBefore,rowIdx,lastRowIdx);
@@ -599,7 +599,7 @@ public class SheetImpl extends AbstractSheetAdv {
 	
 	private Map<String, Object> shiftBeforeRowDelete(int rowIdx, int lastRowIdx) {
 		Map<String,Object> dataBefore = new HashMap<String,Object>();
-		CellRegion affectedRegion = new CellRegion(rowIdx, 0, book.getMaxRowIndex(), book.getMaxColumnIndex());
+		CellRegion affectedRegion = new CellRegion(rowIdx, 0, _book.getMaxRowIndex(), _book.getMaxColumnIndex());
 		List<CellRegion> toShrink = getOverlapsMergedRegions(affectedRegion, false);
 		removeMergedRegion(affectedRegion, true);
 		dataBefore.put("toShrink", toShrink);
@@ -609,7 +609,7 @@ public class SheetImpl extends AbstractSheetAdv {
 	private void shiftAfterRowDelete(Map<String, Object> dataBefore, int rowIdx, int lastRowIdx) {
 		//handling pic shift
 		int size = lastRowIdx - rowIdx+1;
-		for(AbstractPictureAdv pic:pictures){
+		for(AbstractPictureAdv pic:_pictures){
 			ViewAnchor anchor = pic.getAnchor();
 			int idx = anchor.getRowIndex();
 			if(idx >= rowIdx+size){
@@ -620,7 +620,7 @@ public class SheetImpl extends AbstractSheetAdv {
 			}
 		}
 		//handling pic shift
-		for(AbstractChartAdv chart:charts){
+		for(AbstractChartAdv chart:_charts){
 			ViewAnchor anchor = chart.getAnchor();
 			int idx = anchor.getRowIndex();
 			if(idx >= rowIdx+size){
@@ -643,17 +643,17 @@ public class SheetImpl extends AbstractSheetAdv {
 
 		//TODO shift data validation?
 		
-		shrinkFormula(new CellRegion(rowIdx,0,lastRowIdx,book.getMaxColumnIndex()), false);
+		shrinkFormula(new CellRegion(rowIdx,0,lastRowIdx,_book.getMaxColumnIndex()), false);
 		
 		//shift freeze panel
-		int freezeIdx = viewInfo.getNumOfRowFreeze()-1;
+		int freezeIdx = _viewInfo.getNumOfRowFreeze()-1;
 		if(freezeIdx>=rowIdx){
 			if(freezeIdx<lastRowIdx){
 				freezeIdx = rowIdx-1;
 			}else{
 				freezeIdx -= lastRowIdx-rowIdx + 1;
 			}
-			viewInfo.setNumOfRowFreeze(freezeIdx<0?0:freezeIdx+1);
+			_viewInfo.setNumOfRowFreeze(freezeIdx<0?0:freezeIdx+1);
 		}		
 		
 	}
@@ -716,7 +716,7 @@ public class SheetImpl extends AbstractSheetAdv {
 		int columnSize = lastColumnIdx - columnIdx+1;
 		int rowSize = lastRowIdx - rowIdx +1; 
 		if(horizontal){
-			Collection<AbstractRowAdv> effectedRows = rows.subValues(rowIdx,lastRowIdx);
+			Collection<AbstractRowAdv> effectedRows = _rows.subValues(rowIdx,lastRowIdx);
 			for(AbstractRowAdv row:effectedRows){
 				row.insertCell(columnIdx,columnSize);
 			}
@@ -725,7 +725,7 @@ public class SheetImpl extends AbstractSheetAdv {
 			ModelUpdateUtil.addCellUpdate(this, rowIdx, columnIdx, lastRowIdx, getBook().getMaxColumnIndex());
 		}else{ // vertical
 			int maxSize = getBook().getMaxRowSize();
-			Collection<AbstractRowAdv> effectedRows = rows.descendingSubValues(rowIdx,Integer.MAX_VALUE);
+			Collection<AbstractRowAdv> effectedRows = _rows.descendingSubValues(rowIdx,Integer.MAX_VALUE);
 			for(AbstractRowAdv row: new ArrayList<AbstractRowAdv>(effectedRows)){//to aovid concurrent modify
 				//move the cell down to target row
 				int idx = row.getIndex()+rowSize;
@@ -763,7 +763,7 @@ public class SheetImpl extends AbstractSheetAdv {
 		int rowSize = lastRowIdx - rowIdx +1; 
 		
 		if(horizontal){
-			Collection<AbstractRowAdv> effected = rows.subValues(rowIdx,lastRowIdx);
+			Collection<AbstractRowAdv> effected = _rows.subValues(rowIdx,lastRowIdx);
 			for(AbstractRowAdv row:effected){
 				row.deleteCell(columnIdx,columnSize);
 			}
@@ -771,11 +771,11 @@ public class SheetImpl extends AbstractSheetAdv {
 			// notify affected region update
 			ModelUpdateUtil.addCellUpdate(this, rowIdx, columnIdx, lastRowIdx, getBook().getMaxColumnIndex());
 		}else{ // vertical
-			Collection<AbstractRowAdv> effectedRows = rows.subValues(rowIdx,lastRowIdx);
+			Collection<AbstractRowAdv> effectedRows = _rows.subValues(rowIdx,lastRowIdx);
 			for(AbstractRowAdv row:effectedRows){
 				row.clearCell(columnIdx,lastColumnIdx);
 			}
-			effectedRows = rows.subValues(rowIdx+rowSize,Integer.MAX_VALUE);
+			effectedRows = _rows.subValues(rowIdx+rowSize,Integer.MAX_VALUE);
 			for(AbstractRowAdv row: new ArrayList<AbstractRowAdv>(effectedRows)){//to aovid concurrent modify
 				//move the cell up
 				AbstractRowAdv target = getOrCreateRow(row.getIndex()-rowSize);
@@ -799,7 +799,7 @@ public class SheetImpl extends AbstractSheetAdv {
 		if(horizontal) {
 			// find merge cells in affected region and remove them
 			int size = lastColumnIdx - columnIdx + 1;
-			CellRegion affectedRegion = new CellRegion(rowIdx, columnIdx, lastRowIdx, book.getMaxColumnIndex());
+			CellRegion affectedRegion = new CellRegion(rowIdx, columnIdx, lastRowIdx, _book.getMaxColumnIndex());
 			List<CellRegion> toShift = getContainsMergedRegions(affectedRegion);
 			removeMergedRegion(affectedRegion, true); // including contained and overlapped
 			for(CellRegion r : toShift) { // only add contained back, to simulate shifting
@@ -810,7 +810,7 @@ public class SheetImpl extends AbstractSheetAdv {
 			
 			// find merge cells in affected region and remove them
 			int size = lastRowIdx - rowIdx + 1;
-			CellRegion affectedRegion = new CellRegion(rowIdx, columnIdx, book.getMaxRowIndex(), lastColumnIdx);
+			CellRegion affectedRegion = new CellRegion(rowIdx, columnIdx, _book.getMaxRowIndex(), lastColumnIdx);
 			List<CellRegion> toShift = getContainsMergedRegions(affectedRegion);
 			removeMergedRegion(affectedRegion, true); // including contained and overlapped
 			for(CellRegion r : toShift) { // only add contained back, to simulate shifting
@@ -832,7 +832,7 @@ public class SheetImpl extends AbstractSheetAdv {
 		if(horizontal) {
 			// find merge cells in affected region and remove them
 			int size = lastColumnIdx - columnIdx + 1;
-			CellRegion affectedRegion = new CellRegion(rowIdx, lastColumnIdx, lastRowIdx, book.getMaxColumnIndex());
+			CellRegion affectedRegion = new CellRegion(rowIdx, lastColumnIdx, lastRowIdx, _book.getMaxColumnIndex());
 			List<CellRegion> toShift = getContainsMergedRegions(affectedRegion);
 			removeMergedRegion(affectedRegion, true); // including contained and overlapped
 			for(CellRegion r : toShift) { // only add contained back, to simulate shifting
@@ -843,7 +843,7 @@ public class SheetImpl extends AbstractSheetAdv {
 			
 			// find merge cells in affected region and remove them
 			int size = lastRowIdx - rowIdx + 1;
-			CellRegion affectedRegion = new CellRegion(lastRowIdx, columnIdx, book.getMaxRowIndex(), lastColumnIdx);
+			CellRegion affectedRegion = new CellRegion(lastRowIdx, columnIdx, _book.getMaxRowIndex(), lastColumnIdx);
 			List<CellRegion> toShift = getContainsMergedRegions(affectedRegion);
 			removeMergedRegion(affectedRegion, true); // including contained and overlapped
 			for(CellRegion r : toShift) { // only add contained back, to simulate shifting
@@ -917,7 +917,7 @@ public class SheetImpl extends AbstractSheetAdv {
 		int size = lastColumnIdx - columnIdx + 1;
 		insertAndSplitColumnArray(columnIdx,size);
 		
-		for(AbstractRowAdv row:rows.values()){
+		for(AbstractRowAdv row:_rows.values()){
 			row.insertCell(columnIdx,size);
 		}
 		Map<String,Object> dataBefore = shiftBeforeColumnInsert(columnIdx,lastColumnIdx);
@@ -930,7 +930,7 @@ public class SheetImpl extends AbstractSheetAdv {
 		Map<String,Object> dataBefore = new HashMap<String, Object>();
 		// handling merged regions shift
 		// find merge cells in affected region and remove them
-		CellRegion affectedRegion = new CellRegion(0, columnIdx, book.getMaxRowIndex(), book.getMaxColumnIndex());
+		CellRegion affectedRegion = new CellRegion(0, columnIdx, _book.getMaxRowIndex(), _book.getMaxColumnIndex());
 		List<CellRegion> toExtend = getOverlapsMergedRegions(affectedRegion, true);
 		List<CellRegion> toShift = getContainsMergedRegions(affectedRegion);
 		removeMergedRegion(affectedRegion, true);
@@ -942,7 +942,7 @@ public class SheetImpl extends AbstractSheetAdv {
 	private void shiftAfterColumnInsert(Map<String, Object> dataBefore, int columnIdx, int lastColumnIdx) {
 		int size = lastColumnIdx - columnIdx+1;
 		// handling pic shift
-		for (AbstractPictureAdv pic : pictures) {
+		for (AbstractPictureAdv pic : _pictures) {
 			ViewAnchor anchor = pic.getAnchor();
 			int idx = anchor.getColumnIndex();
 			if (idx >= columnIdx) {
@@ -950,7 +950,7 @@ public class SheetImpl extends AbstractSheetAdv {
 			}
 		}
 		// handling chart shift
-		for (AbstractChartAdv chart : charts) {
+		for (AbstractChartAdv chart : _charts) {
 			ViewAnchor anchor = chart.getAnchor();
 			int idx = anchor.getColumnIndex();
 			if (idx >= columnIdx) {
@@ -971,17 +971,17 @@ public class SheetImpl extends AbstractSheetAdv {
 
 		//TODO shift data validation?
 		
-		extendFormula(new CellRegion(0,columnIdx,book.getMaxRowIndex(),lastColumnIdx), true);
+		extendFormula(new CellRegion(0,columnIdx,_book.getMaxRowIndex(),lastColumnIdx), true);
 		
 		//shift freeze panel
-		int freezeIdx = viewInfo.getNumOfColumnFreeze()-1;
+		int freezeIdx = _viewInfo.getNumOfColumnFreeze()-1;
 		if(freezeIdx>=columnIdx){
 			if(freezeIdx<lastColumnIdx){
 				freezeIdx += freezeIdx-columnIdx + 1;
 			}else{
 				freezeIdx += lastColumnIdx-columnIdx + 1;
 			}
-			viewInfo.setNumOfColumnFreeze(freezeIdx<0?0:freezeIdx+1);
+			_viewInfo.setNumOfColumnFreeze(freezeIdx<0?0:freezeIdx+1);
 		}		
 	}	
 	
@@ -992,13 +992,13 @@ public class SheetImpl extends AbstractSheetAdv {
 		int start1,end1,start2,end2;
 		start1 = end1 = start2 = end2 = -1;
 		
-		if(columnArrays.hasLastKey(columnIdx)){//no data
+		if(_columnArrays.hasLastKey(columnIdx)){//no data
 			return;
 		}
 		
 		List<AbstractColumnArrayAdv> shift = new LinkedList<AbstractColumnArrayAdv>();
 		
-		for(AbstractColumnArrayAdv array:columnArrays.lastSubMap(columnIdx).values()){
+		for(AbstractColumnArrayAdv array:_columnArrays.lastSubMap(columnIdx).values()){
 			if(array.getIndex()<=columnIdx && array.getLastIndex()>=columnIdx){
 				contains = array;
 			}
@@ -1007,12 +1007,12 @@ public class SheetImpl extends AbstractSheetAdv {
 			}
 		}
 		for(AbstractColumnArrayAdv array:shift){
-			columnArrays.remove(array);
+			_columnArrays.remove(array);
 			
 			array.setIndex(array.getIndex()+size);
 			array.setLastIndex(array.getLastIndex()+size);
 			
-			columnArrays.put(array);
+			_columnArrays.put(array);
 		}
 		
 		if(contains==null){//doesn't need to do anything
@@ -1032,11 +1032,11 @@ public class SheetImpl extends AbstractSheetAdv {
 		AbstractColumnArrayAdv array = null;
 		AbstractColumnArrayAdv prev = null;
 		
-		columnArrays.remove(contains);
+		_columnArrays.remove(contains);
 		//
 		if(start2<=end2 && end2>-1){
 			prev =new ColumnArrayImpl(this, start2, end2);
-			columnArrays.put(prev);
+			_columnArrays.put(prev);
 			if(contains!=null){
 				prev.setCellStyle(contains.getCellStyle());
 				prev.setHidden(contains.isHidden());
@@ -1045,12 +1045,12 @@ public class SheetImpl extends AbstractSheetAdv {
 		}
 		
 		array = new ColumnArrayImpl(this, columnIdx, columnIdx+size-1);
-		columnArrays.put(array);
+		_columnArrays.put(array);
 		//don't need to copy the property from contains to new inserted array, keep it default.
 		
 		if(start1<=end1 && end1>-1){
 			prev =new ColumnArrayImpl(this, start1, end1);
-			columnArrays.put(prev);
+			_columnArrays.put(prev);
 			if(contains!=null){
 				prev.setCellStyle(contains.getCellStyle());
 				prev.setHidden(contains.isHidden());
@@ -1060,9 +1060,9 @@ public class SheetImpl extends AbstractSheetAdv {
 		
 		//destroy the cell that exceeds the max size
 		int maxSize = getBook().getMaxColumnSize();
-		Collection<AbstractColumnArrayAdv> exceeds = new ArrayList<AbstractColumnArrayAdv>(columnArrays.firstSubValues(maxSize, Integer.MAX_VALUE));
+		Collection<AbstractColumnArrayAdv> exceeds = new ArrayList<AbstractColumnArrayAdv>(_columnArrays.firstSubValues(maxSize, Integer.MAX_VALUE));
 		if(exceeds.size()>0){
-			columnArrays.trim(maxSize);
+			_columnArrays.trim(maxSize);
 		}
 		for(AbstractColumnArrayAdv ca:exceeds){
 			ca.destroy();
@@ -1081,7 +1081,7 @@ public class SheetImpl extends AbstractSheetAdv {
 		int size = lastColumnIdx - columnIdx + 1;
 		deleteAndShrinkColumnArray(columnIdx,size);
 		
-		for(AbstractRowAdv row:rows.values()){
+		for(AbstractRowAdv row:_rows.values()){
 			row.deleteCell(columnIdx,size);
 		}
 		Map<String,Object> dataBefore = shiftBeforeColumnDelete(columnIdx,lastColumnIdx);
@@ -1094,7 +1094,7 @@ public class SheetImpl extends AbstractSheetAdv {
 		
 		// handling merged regions shift
 		// find merge cells in affected region and remove them
-		CellRegion affectedRegion = new CellRegion(0, columnIdx, book.getMaxRowIndex(), book.getMaxColumnIndex());
+		CellRegion affectedRegion = new CellRegion(0, columnIdx, _book.getMaxRowIndex(), _book.getMaxColumnIndex());
 		List<CellRegion> toShrink = getOverlapsMergedRegions(affectedRegion, false);
 		removeMergedRegion(affectedRegion, true);
 		dataBefore.put("toShrink", toShrink);
@@ -1104,7 +1104,7 @@ public class SheetImpl extends AbstractSheetAdv {
 	private void shiftAfterColumnDelete(Map<String,Object> dataBefore, int columnIdx,int lastColumnIdx) {
 		int size = lastColumnIdx - columnIdx+1;
 		//handling pic shift
-		for(AbstractPictureAdv pic:pictures){
+		for(AbstractPictureAdv pic:_pictures){
 			ViewAnchor anchor = pic.getAnchor();
 			int idx = anchor.getColumnIndex();
 			if(idx >= columnIdx+size){
@@ -1115,7 +1115,7 @@ public class SheetImpl extends AbstractSheetAdv {
 			}
 		}
 		//handling chart shift
-		for(AbstractChartAdv chart:charts){
+		for(AbstractChartAdv chart:_charts){
 			ViewAnchor anchor = chart.getAnchor();
 			int idx = anchor.getColumnIndex();
 			if(idx >= columnIdx+size){
@@ -1138,23 +1138,23 @@ public class SheetImpl extends AbstractSheetAdv {
 
 		//TODO shift data validation?
 
-		shrinkFormula(new CellRegion(0,columnIdx,book.getMaxRowIndex(),lastColumnIdx), true);
+		shrinkFormula(new CellRegion(0,columnIdx,_book.getMaxRowIndex(),lastColumnIdx), true);
 		
 		//shift freeze panel
-		int freezeIdx = viewInfo.getNumOfColumnFreeze()-1;
+		int freezeIdx = _viewInfo.getNumOfColumnFreeze()-1;
 		if(freezeIdx>=columnIdx){
 			if(freezeIdx<lastColumnIdx){
 				freezeIdx = columnIdx-1;
 			}else{
 				freezeIdx -= lastColumnIdx-columnIdx + 1;
 			}
-			viewInfo.setNumOfColumnFreeze(freezeIdx<0?0:freezeIdx+1);
+			_viewInfo.setNumOfColumnFreeze(freezeIdx<0?0:freezeIdx+1);
 		}				
 	}	
 	
 	private void deleteAndShrinkColumnArray(int columnIdx,int size){
 
-		if(columnArrays.hasLastKey(columnIdx)){//no data
+		if(_columnArrays.hasLastKey(columnIdx)){//no data
 			return;
 		}
 		
@@ -1165,7 +1165,7 @@ public class SheetImpl extends AbstractSheetAdv {
 		List<AbstractColumnArrayAdv> right = new LinkedList<AbstractColumnArrayAdv>();
 		
 		int lastColumnIdx = columnIdx+size-1;
-		for(AbstractColumnArrayAdv array:columnArrays.lastSubMap(columnIdx).values()){
+		for(AbstractColumnArrayAdv array:_columnArrays.lastSubMap(columnIdx).values()){
 			int arrIdx = array.getIndex();
 			int arrLastIdx = array.getLastIndex();
 			if(arrIdx<columnIdx && arrLastIdx > lastColumnIdx){//array large and contain delete column
@@ -1184,35 +1184,35 @@ public class SheetImpl extends AbstractSheetAdv {
 			
 		}
 		for(AbstractColumnArrayAdv array:contains){
-			columnArrays.remove(array);
+			_columnArrays.remove(array);
 			array.setLastIndex(array.getLastIndex()-size);
-			columnArrays.put(array);
+			_columnArrays.put(array);
 		}
 		for(AbstractColumnArrayAdv array:leftOver){
-			columnArrays.remove(array);
+			_columnArrays.remove(array);
 			array.setLastIndex(columnIdx-1);//shrink trail
-			columnArrays.put(array);
+			_columnArrays.put(array);
 		}
 		for(AbstractColumnArrayAdv array:remove){
-			columnArrays.remove(array);
+			_columnArrays.remove(array);
 		}
 		for(AbstractColumnArrayAdv array:rightOver){
 			int arrIdx = array.getIndex();
 			int arrLastIdx = array.getLastIndex();
 			
-			columnArrays.remove(array);
+			_columnArrays.remove(array);
 			array.setIndex(columnIdx);//shrink head and move trail
 			array.setLastIndex(columnIdx + arrLastIdx-lastColumnIdx -1); 
-			columnArrays.put(array);
+			_columnArrays.put(array);
 		}
 		for(AbstractColumnArrayAdv array:right){
 			int arrIdx = array.getIndex();
 			int arrLastIdx = array.getLastIndex();
 			
-			columnArrays.remove(array);
+			_columnArrays.remove(array);
 			array.setIndex(arrIdx-size);//shrink head and move trail
 			array.setLastIndex(arrLastIdx-size); 
-			columnArrays.put(array);
+			_columnArrays.put(array);
 		}	
 
 		checkColumnArrayStatus();
@@ -1303,11 +1303,11 @@ public class SheetImpl extends AbstractSheetAdv {
 						+ rowOffset, lastColumnIdx + columnOffset));
 		
 		//shift the merge
-		mergedRegions.removeAll(containsMerge);
+		_mergedRegions.removeAll(containsMerge);
 		for(CellRegion merge:containsMerge){
 			CellRegion newMerge = new CellRegion(merge.getRow() + rowOffset,merge.getColumn()+ columnOffset,
 					merge.getLastRow()+rowOffset,merge.getLastColumn()+columnOffset);
-			mergedRegions.add(newMerge);
+			_mergedRegions.add(newMerge);
 			ModelUpdateUtil.addMergeUpdate(this,merge, newMerge);
 		}
 		
@@ -1364,52 +1364,52 @@ public class SheetImpl extends AbstractSheetAdv {
 	}
 
 	public void checkOrphan(){
-		if(book==null){
+		if(_book==null){
 			throw new IllegalStateException("doesn't connect to parent");
 		}
 	}
 	@Override
 	public void destroy(){
 		checkOrphan();
-		for(AbstractColumnArrayAdv column:columnArrays.values()){
+		for(AbstractColumnArrayAdv column:_columnArrays.values()){
 			column.destroy();
 		}
-		columnArrays.clear();
-		for(AbstractRowAdv row:rows.values()){
+		_columnArrays.clear();
+		for(AbstractRowAdv row:_rows.values()){
 			row.destroy();
 		}
-		rows.clear();
-		for(AbstractChartAdv chart:charts){
+		_rows.clear();
+		for(AbstractChartAdv chart:_charts){
 			chart.destroy();
 		}
-		charts.clear();
-		for(AbstractPictureAdv picture:pictures){
+		_charts.clear();
+		for(AbstractPictureAdv picture:_pictures){
 			picture.destroy();
 		}
-		pictures.clear();
-		for(AbstractDataValidationAdv validation:dataValidations){
+		_pictures.clear();
+		for(AbstractDataValidationAdv validation:_dataValidations){
 			validation.destroy();
 		}
-		dataValidations.clear();
+		_dataValidations.clear();
 		
-		book = null;
+		_book = null;
 		//TODO all 
 		
 	}
 
 	public String getId() {
-		return id;
+		return _id;
 	}
 
 	public SPicture addPicture(Format format, byte[] data,ViewAnchor anchor) {
 		checkOrphan();
-		AbstractPictureAdv pic = new PictureImpl(this,book.nextObjId("pic"), format, data,anchor);
-		pictures.add(pic);
+		AbstractPictureAdv pic = new PictureImpl(this,_book.nextObjId("pic"), format, data,anchor);
+		_pictures.add(pic);
 		return pic;
 	}
 	
 	public SPicture getPicture(String picid){
-		for(SPicture pic:pictures){
+		for(SPicture pic:_pictures){
 			if(pic.getId().equals(picid)){
 				return pic;
 			}
@@ -1421,36 +1421,36 @@ public class SheetImpl extends AbstractSheetAdv {
 		checkOrphan();
 		checkOwnership(picture);
 		((AbstractPictureAdv)picture).destroy();
-		pictures.remove(picture);
+		_pictures.remove(picture);
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public List<SPicture> getPictures() {
-		return Collections.unmodifiableList((List)pictures);
+		return Collections.unmodifiableList((List)_pictures);
 	}
 	
 	
 	@Override
 	public int getNumOfPicture() {
-		return pictures.size();
+		return _pictures.size();
 	}
 
 	@Override
 	public SPicture getPicture(int idx) {
-		return pictures.get(idx);
+		return _pictures.get(idx);
 	}
 	
 	@Override
 	public SChart addChart(SChart.ChartType type,ViewAnchor anchor) {
 		checkOrphan();
-		AbstractChartAdv pic = new ChartImpl(this, book.nextObjId("chart"), type, anchor);
-		charts.add(pic);
+		AbstractChartAdv pic = new ChartImpl(this, _book.nextObjId("chart"), type, anchor);
+		_charts.add(pic);
 		return pic;
 	}
 	@Override
 	public SChart getChart(String picid){
-		for(SChart pic:charts){
+		for(SChart pic:_charts){
 			if(pic.getId().equals(picid)){
 				return pic;
 			}
@@ -1462,36 +1462,36 @@ public class SheetImpl extends AbstractSheetAdv {
 		checkOrphan();
 		checkOwnership(chart);
 		((AbstractChartAdv)chart).destroy();
-		charts.remove(chart);
+		_charts.remove(chart);
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public List<SChart> getCharts() {
-		return Collections.unmodifiableList((List)charts);
+		return Collections.unmodifiableList((List)_charts);
 	}
 
 	@Override
 	public int getNumOfChart() {
-		return charts.size();
+		return _charts.size();
 	}
 
 	@Override
 	public SChart getChart(int idx) {
-		return charts.get(idx);
+		return _charts.get(idx);
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public List<CellRegion> getMergedRegions() {
-		return Collections.unmodifiableList((List)mergedRegions);
+		return Collections.unmodifiableList((List)_mergedRegions);
 	}
 
 	@Override
 	public void removeMergedRegion(CellRegion region,boolean removeOverlaps) {
-		for(CellRegion r:new ArrayList<CellRegion>(mergedRegions)){
+		for(CellRegion r:new ArrayList<CellRegion>(_mergedRegions)){
 			if((removeOverlaps && region.overlaps(r)) || region.contains(r)){
-				mergedRegions.remove(r);
+				_mergedRegions.remove(r);
 				ModelUpdateUtil.addMergeUpdate(this,r, null);
 			}
 		}
@@ -1503,19 +1503,19 @@ public class SheetImpl extends AbstractSheetAdv {
 		if(region.isSingle()){
 			return;
 		}
-		for(CellRegion r:mergedRegions){
+		for(CellRegion r:_mergedRegions){
 			if(r.overlaps(region)){
 				throw new InvalidateModelOpException("the region is overlapped "+r+":"+region);
 			}
 		}
-		mergedRegions.add(region);
+		_mergedRegions.add(region);
 		ModelUpdateUtil.addMergeUpdate(this,null, region);
 	}
 
 	@Override
 	public List<CellRegion> getOverlapsMergedRegions(CellRegion region,boolean excludeContains){
 		List<CellRegion> list =new LinkedList<CellRegion>(); 
-		for(CellRegion r:mergedRegions){
+		for(CellRegion r:_mergedRegions){
 			if(excludeContains && region.contains(r))
 				continue;
 			if(r.overlaps(region)){
@@ -1527,7 +1527,7 @@ public class SheetImpl extends AbstractSheetAdv {
 	@Override
 	public List<CellRegion> getContainsMergedRegions(CellRegion region) {
 		List<CellRegion> list =new LinkedList<CellRegion>(); 
-		for(CellRegion r:mergedRegions){
+		for(CellRegion r:_mergedRegions){
 			if(region.contains(r)){
 				list.add(r);
 			}
@@ -1547,7 +1547,7 @@ public class SheetImpl extends AbstractSheetAdv {
 	}
 	@Override
 	public CellRegion getMergedRegion(int row, int column) {
-		for(CellRegion r:mergedRegions){
+		for(CellRegion r:_mergedRegions){
 			if(r.contains(row, column)){
 				return r;
 			}
@@ -1557,32 +1557,32 @@ public class SheetImpl extends AbstractSheetAdv {
 
 	@Override
 	public Object getAttribute(String name) {
-		return attributes==null?null:attributes.get(name);
+		return _attributes==null?null:_attributes.get(name);
 	}
 
 	@Override
 	public Object setAttribute(String name, Object value) {
-		if(attributes==null){
-			attributes = new HashMap<String, Object>();
+		if(_attributes==null){
+			_attributes = new HashMap<String, Object>();
 		}
-		return attributes.put(name, value);
+		return _attributes.put(name, value);
 	}
 
 	@Override
 	public Map<String, Object> getAttributes() {
-		return attributes==null?Collections.EMPTY_MAP:Collections.unmodifiableMap(attributes);
+		return _attributes==null?Collections.EMPTY_MAP:Collections.unmodifiableMap(_attributes);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public Iterator<SRow> getRowIterator() {
-		return Collections.unmodifiableCollection((Collection)rows.values()).iterator();
+		return Collections.unmodifiableCollection((Collection)_rows.values()).iterator();
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public Iterator<SColumnArray> getColumnArrayIterator() {
-		return Collections.unmodifiableCollection((Collection)columnArrays.values()).iterator();
+		return Collections.unmodifiableCollection((Collection)_columnArrays.values()).iterator();
 	}
 	
 
@@ -1616,58 +1616,58 @@ public class SheetImpl extends AbstractSheetAdv {
 	
 	@Override
 	public int getDefaultRowHeight() {
-		return defaultRowHeight;
+		return _defaultRowHeight;
 	}
 
 	@Override
 	public int getDefaultColumnWidth() {
-		return defaultColumnWidth;
+		return _defaultColumnWidth;
 	}
 
 	@Override
 	public void setDefaultRowHeight(int height) {
-		defaultRowHeight = height;
+		_defaultRowHeight = height;
 	}
 
 	@Override
 	public void setDefaultColumnWidth(int width) {
-		defaultColumnWidth = width;
+		_defaultColumnWidth = width;
 	}
 
 
 	@Override
 	public int getNumOfMergedRegion() {
-		return mergedRegions.size();
+		return _mergedRegions.size();
 	}
 
 	@Override
 	public CellRegion getMergedRegion(int idx) {
-		return mergedRegions.get(idx);
+		return _mergedRegions.get(idx);
 	}
 
 	@Override
 	public boolean isProtected() {
-		return password!=null;
+		return _password!=null;
 	}
 
 	@Override
 	public void setPassword(String password) {
-		this.password = password;
+		this._password = password;
 	}
 	
 	@Override
 	public String getPassword() {
-		return this.password;
+		return this._password;
 	}
 
 	@Override
 	public SSheetViewInfo getViewInfo(){
-		return viewInfo;
+		return _viewInfo;
 	}
 	
 	@Override
 	public SPrintSetup getPrintSetup(){
-		return printSetup;
+		return _printSetup;
 	}
 	
 	@Override
@@ -1677,9 +1677,9 @@ public class SheetImpl extends AbstractSheetAdv {
 	public SDataValidation addDataValidation(CellRegion region,SDataValidation src) {
 		checkOrphan();
 		Validations.argInstance(src, AbstractDataValidationAdv.class);
-		AbstractDataValidationAdv validation = new DataValidationImpl(this, book.nextObjId("valid"));
+		AbstractDataValidationAdv validation = new DataValidationImpl(this, _book.nextObjId("valid"));
 		validation.setRegion(region);
-		dataValidations.add(validation);
+		_dataValidations.add(validation);
 		if(src!=null){
 			validation.copyFrom((AbstractDataValidationAdv)src);
 		}
@@ -1687,7 +1687,7 @@ public class SheetImpl extends AbstractSheetAdv {
 	}
 	@Override
 	public SDataValidation getDataValidation(String validationid){
-		for(SDataValidation validation:dataValidations){
+		for(SDataValidation validation:_dataValidations){
 			if(validation.getId().equals(validationid)){
 				return validation;
 			}
@@ -1699,27 +1699,27 @@ public class SheetImpl extends AbstractSheetAdv {
 		checkOrphan();
 		checkOwnership(validationid);
 		((AbstractDataValidationAdv)validationid).destroy();
-		dataValidations.remove(validationid);
+		_dataValidations.remove(validationid);
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public List<SDataValidation> getDataValidations() {
-		return Collections.unmodifiableList((List)dataValidations);
+		return Collections.unmodifiableList((List)_dataValidations);
 	}
 
 	@Override
 	public int getNumOfDataValidation() {
-		return dataValidations.size();
+		return _dataValidations.size();
 	}
 
 	@Override
 	public SDataValidation getDataValidation(int idx) {
-		return dataValidations.get(idx);
+		return _dataValidations.get(idx);
 	}
 	
 	@Override
 	public SDataValidation getDataValidation(int rowIdx,int columnIdx) {
-		for(SDataValidation validation:dataValidations){
+		for(SDataValidation validation:_dataValidations){
 			CellRegion region = validation.getRegion();
 			if(region.contains(rowIdx, columnIdx)){
 				return validation;
@@ -1730,14 +1730,14 @@ public class SheetImpl extends AbstractSheetAdv {
 
 	@Override
 	public SAutoFilter getAutoFilter() {
-		return autoFilter;
+		return _autoFilter;
 	}
 
 	@Override
 	public SAutoFilter createAutoFilter(CellRegion region) {
 		Validations.argNotNull(region);
 		
-		autoFilter = new AutoFilterImpl(region);
+		_autoFilter = new AutoFilterImpl(region);
 		final int left = region.getColumn();
         final int top = region.getRow();
         final int right = region.getLastColumn();
@@ -1754,24 +1754,24 @@ public class SheetImpl extends AbstractSheetAdv {
 	        if (t == top && l <= right && l >= left) { // to be add filter column to hide button
 	        	for(int c = l; c < r; ++c) {
 		        	final int colId = c - left; 
-		        	final NFilterColumn col = autoFilter.getFilterColumn(colId, true);
+		        	final NFilterColumn col = _autoFilter.getFilterColumn(colId, true);
 		        	col.setProperties(FilterOp.AND, null, null, false);
 	        	}
 	        }
 		}
 		
 		
-		return autoFilter;
+		return _autoFilter;
 	}
 	
 	@Override
 	public void deleteAutoFilter() {
-		autoFilter = null;
+		_autoFilter = null;
 	}
 
 	@Override
 	public void clearAutoFilter() {
-		autoFilter = null;
+		_autoFilter = null;
 	}
 
 

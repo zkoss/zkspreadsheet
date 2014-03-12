@@ -31,16 +31,16 @@ import org.zkoss.zss.model.util.Validations;
 public class RichTextImpl extends AbstractRichTextAdv {
 	private static final long serialVersionUID = 1L;
 
-	List<SegmentImpl> segments = new LinkedList<SegmentImpl>();
+	List<SegmentImpl> _segments = new LinkedList<SegmentImpl>();
 
 
 	@Override
 	public String getText() {
-		if (segments.size() == 0) {
+		if (_segments.size() == 0) {
 			return "";
 		}
 		StringBuilder sb = new StringBuilder();
-		for (Segment s : segments) {
+		for (Segment s : _segments) {
 			sb.append(s.getText());
 		}
 		return sb.toString();
@@ -49,33 +49,33 @@ public class RichTextImpl extends AbstractRichTextAdv {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public List<Segment> getSegments() {
-		return Collections.unmodifiableList((List) segments);
+		return Collections.unmodifiableList((List) _segments);
 	}
 
 	@Override
 	public void addSegment(String text, SFont font) {
 		Validations.argNotNull(text,font);
 		if("".equals(text)) return;
-		segments.add(new SegmentImpl(text, font));
+		_segments.add(new SegmentImpl(text, font));
 	}
 
 	@Override
 	public void clearSegments() {
-		segments.clear();
+		_segments.clear();
 	}
 
 	@Override
 	public SFont getFont() {
-		if (segments.size() == 0) {
+		if (_segments.size() == 0) {
 			return null;
 		}
-		return segments.get(0).getFont();
+		return _segments.get(0).getFont();
 	}
 
 	@Override
 	public AbstractRichTextAdv clone() {
 		RichTextImpl richText = new RichTextImpl();
-		for(Segment s:segments){
+		for(Segment s:_segments){
 			richText.addSegment(s.getText(), s.getFont());
 		}
 		return richText;

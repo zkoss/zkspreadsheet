@@ -1,3 +1,19 @@
+/*
+
+{{IS_NOTE
+	Purpose:
+		
+	Description:
+		
+	History:
+		
+}}IS_NOTE
+
+Copyright (C) 2013 Potix Corporation. All Rights Reserved.
+
+{{IS_RIGHT
+}}IS_RIGHT
+*/
 package org.zkoss.zss.model.impl;
 
 import java.util.Collection;
@@ -24,24 +40,28 @@ import org.zkoss.zss.model.sys.formula.FormulaExpression;
 import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 import org.zkoss.zss.model.util.Validations;
 import org.zkoss.zss.range.impl.StyleUtil;
-
+/**
+ * 
+ * @author Dennis
+ * @since 3.5.0
+ */
 /*package*/ class PasteCellHelper {
 
-	private final SSheet destSheet;
-	private final SBook book;
-	private final SCellStyle defaultStyle;
+	private final SSheet _destSheet;
+	private final SBook _book;
+	private final SCellStyle _defaultStyle;
 	public PasteCellHelper(SSheet destSheet){
-		this.destSheet = destSheet;
-		this.book = destSheet.getBook();
-		defaultStyle = book.getDefaultCellStyle();
+		this._destSheet = destSheet;
+		this._book = destSheet.getBook();
+		_defaultStyle = _book.getDefaultCellStyle();
 	}
 	
 	public CellRegion pasteCell(SheetRegion src, CellRegion dest, PasteOption option) {
 		Validations.argNotNull(src);
 		Validations.argNotNull(dest);
 		SSheet srcSheet = src.getSheet();
-		boolean sameSheet = srcSheet == destSheet;
-		if(!sameSheet && srcSheet.getBook()!= book){
+		boolean sameSheet = srcSheet == _destSheet;
+		if(!sameSheet && srcSheet.getBook()!= _book){
 			throw new IllegalArgumentException("the src sheet must be in the same book");
 		}
 		if(option==null){
@@ -70,7 +90,7 @@ import org.zkoss.zss.range.impl.StyleUtil;
 							dest.getRow(),dest.getColumn()+srcColCount -1 + colMultipleOffset);
 					pasteColumnWidth(widthBuffer,destRegion);
 			}
-			return new CellRegion(0,dest.getColumn(),destSheet.getBook().getMaxRowIndex(),dest.getColumn()+srcColCount*colMultiple-1);
+			return new CellRegion(0,dest.getColumn(),_destSheet.getBook().getMaxRowIndex(),dest.getColumn()+srcColCount*colMultiple-1);
 		}
 		PasteType pasteType = option.getPasteType();
 		boolean handleMerge = shouldHandleMerge(pasteType);
@@ -278,9 +298,9 @@ import org.zkoss.zss.range.impl.StyleUtil;
 //				//unmerge the overlaps
 //				destSheet.removeMergedRegion(overlap);
 //			}
-			destSheet.removeMergedRegion(newMerge, true);
+			_destSheet.removeMergedRegion(newMerge, true);
 			
-			destSheet.addMergedRegion(newMerge);
+			_destSheet.addMergedRegion(newMerge);
 		}
 	}
 
@@ -289,7 +309,7 @@ import org.zkoss.zss.range.impl.StyleUtil;
 		int col = dest.getColumn();
 		int lastColumn = dest.getLastColumn();
 		for (int c = col; c <= lastColumn;c++){
-			destSheet.getColumn(c).setWidth(widthBuffer[c-col]);
+			_destSheet.getColumn(c).setWidth(widthBuffer[c-col]);
 		}
 	}
 	
@@ -307,15 +327,15 @@ import org.zkoss.zss.range.impl.StyleUtil;
 				}
 				
 				//unmerge region if it is overlaps and not at first cell
-				CellRegion region = destSheet.getMergedRegion(r, c);
+				CellRegion region = _destSheet.getMergedRegion(r, c);
 				if(region!=null && (region.getRow()!=r || region.getColumn()!=c)){
-					destSheet.removeMergedRegion(region, true);
+					_destSheet.removeMergedRegion(region, true);
 				}
 				
-				SCell destCell = destSheet.getCell(r,c);
+				SCell destCell = _destSheet.getCell(r,c);
 				if(buffer==null){
 					if(!destCell.isNull()){
-						destSheet.clearCell(destCell.getRowIndex(), destCell.getColumnIndex(), destCell.getRowIndex(), destCell.getColumnIndex());
+						_destSheet.clearCell(destCell.getRowIndex(), destCell.getColumnIndex(), destCell.getRowIndex(), destCell.getColumnIndex());
 						continue;
 					}
 					continue;
@@ -367,18 +387,18 @@ import org.zkoss.zss.range.impl.StyleUtil;
 		SCellStyle destStyle = destCell.getCellStyle();
 		String destFormat = destStyle.getDataFormat();
 		if(!destFormat.equals(srcFormat)){
-			StyleUtil.setDataFormat(destSheet, destCell.getRowIndex(), destCell.getColumnIndex(), srcFormat);
+			StyleUtil.setDataFormat(_destSheet, destCell.getRowIndex(), destCell.getColumnIndex(), srcFormat);
 		}
 	}
 
 	private void pasteStyle(CellBuffer buffer, SCell destCell, boolean pasteBorder) {
-		if(destCell.getCellStyle()==defaultStyle && buffer.getStyle()==defaultStyle){
+		if(destCell.getCellStyle()==_defaultStyle && buffer.getStyle()==_defaultStyle){
 			return;
 		}
 		if(pasteBorder){
 			destCell.setCellStyle(buffer.getStyle());
 		}else{
-			SCellStyle newStyle = book.createCellStyle(buffer.getStyle(), true);
+			SCellStyle newStyle = _book.createCellStyle(buffer.getStyle(), true);
 			SCellStyle destStyle = destCell.getCellStyle();
 			//keep original border
 			newStyle.setBorderBottom(destStyle.getBorderBottom());
@@ -402,9 +422,9 @@ import org.zkoss.zss.range.impl.StyleUtil;
 			if(formula!=null){
 				FormulaEngine engine = getFormulaEignin();
 				
-				FormulaExpression expr = engine.shift(formula,rowOffset, columnOffset,new FormulaParseContext(destSheet, null));//no dependency
+				FormulaExpression expr = engine.shift(formula,rowOffset, columnOffset,new FormulaParseContext(_destSheet, null));//no dependency
 				if(!expr.hasError() && transpose){
-					expr = engine.transpose(expr.getFormulaString(),rowOrigin, columnOrigin,new FormulaParseContext(destSheet, null));
+					expr = engine.transpose(expr.getFormulaString(),rowOrigin, columnOrigin,new FormulaParseContext(_destSheet, null));
 				}
 				
 				if(!expr.hasError()){

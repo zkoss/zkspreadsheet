@@ -20,9 +20,9 @@ import org.zkoss.zss.model.sys.dependency.Ref.RefType;
  */
 /*package*/ class RefNotifyContentChangeHelper extends RefHelperBase{
 
-	private static final Log logger = Log.lookup(RefNotifyContentChangeHelper.class);
+	private static final Log _logger = Log.lookup(RefNotifyContentChangeHelper.class);
 			
-	NotifyChangeHelper notifyHelper = new NotifyChangeHelper();
+	private NotifyChangeHelper _notifyHelper = new NotifyChangeHelper();
 	public RefNotifyContentChangeHelper(SBookSeries bookSeries) {
 		super(bookSeries);
 	}
@@ -45,8 +45,8 @@ import org.zkoss.zss.model.sys.dependency.Ref.RefType;
 		
 		// clear formula cache
 		for (Ref notify : notifySet) {
-			if(logger.debugable()){
-				logger.debug("Notify Dependent Change : "+notify);
+			if(_logger.debugable()){
+				_logger.debug("Notify Dependent Change : "+notify);
 			}
 			//clear the dependent's formula cache since the precedent is changed.
 			if (notify.getType() == RefType.CELL || notify.getType() == RefType.AREA) {
@@ -76,7 +76,7 @@ import org.zkoss.zss.model.sys.dependency.Ref.RefType;
 		SSheet sheet = book.getSheetByName(notify.getSheetName());
 		if(sheet==null) return;
 		String[] ids = notify.getObjectIdPath();
-		notifyHelper.notifyChartChange(sheet,ids[0]);
+		_notifyHelper.notifyChartChange(sheet,ids[0]);
 				
 	}
 	
@@ -86,7 +86,7 @@ import org.zkoss.zss.model.sys.dependency.Ref.RefType;
 		SSheet sheet = book.getSheetByName(notify.getSheetName());
 		if(sheet==null) return;
 		String[] ids = notify.getObjectIdPath();
-		notifyHelper.notifyDataValidationChange(sheet,ids[0]);
+		_notifyHelper.notifyDataValidationChange(sheet,ids[0]);
 	}
 
 	private void handleAreaRef(Ref notify) {
@@ -94,6 +94,6 @@ import org.zkoss.zss.model.sys.dependency.Ref.RefType;
 		if(book==null) return;
 		SSheet sheet = book.getSheetByName(notify.getSheetName());
 		if(sheet==null) return;
-		notifyHelper.notifyCellChange(new SheetRegion(sheet,notify.getRow(),notify.getColumn(),notify.getLastRow(),notify.getLastColumn()));
+		_notifyHelper.notifyCellChange(new SheetRegion(sheet,notify.getRow(),notify.getColumn(),notify.getLastRow(),notify.getLastColumn()));
 	}
 }

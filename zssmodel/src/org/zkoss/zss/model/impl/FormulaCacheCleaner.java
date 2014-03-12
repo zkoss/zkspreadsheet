@@ -14,30 +14,30 @@ import org.zkoss.zss.model.sys.dependency.Ref;
  */
 public class FormulaCacheCleaner {
 
-	static ThreadLocal<FormulaCacheCleaner>  current = new ThreadLocal<FormulaCacheCleaner>();
+	static private ThreadLocal<FormulaCacheCleaner>  _current = new ThreadLocal<FormulaCacheCleaner>();
 	
-	final private SBookSeries bookSeries;
+	final private SBookSeries _bookSeries;
 	
 	public FormulaCacheCleaner(SBookSeries bookSeries){
-		this.bookSeries = bookSeries;
+		this._bookSeries = bookSeries;
 	}
 
 	public static FormulaCacheCleaner setCurrent(FormulaCacheCleaner ctx){
-		FormulaCacheCleaner old = current.get();
-		current.set(ctx);
+		FormulaCacheCleaner old = _current.get();
+		_current.set(ctx);
 		return old;
 	}
 	
 	public static FormulaCacheCleaner getCurrent(){
-		return current.get();
+		return _current.get();
 	}
 	
 	public void clear(Set<Ref> dependents){
-		new FormulaCacheClearHelper(bookSeries).clear(dependents);
+		new FormulaCacheClearHelper(_bookSeries).clear(dependents);
 	}
 
 	public void clearByPrecedent(Ref precedent) {
-		DependencyTable table = ((AbstractBookSeriesAdv)bookSeries).getDependencyTable();
+		DependencyTable table = ((AbstractBookSeriesAdv)_bookSeries).getDependencyTable();
 		Set<Ref> dependents = new LinkedHashSet<Ref>();
 		dependents.add(precedent);
 		dependents.addAll(table.getDependents(precedent));

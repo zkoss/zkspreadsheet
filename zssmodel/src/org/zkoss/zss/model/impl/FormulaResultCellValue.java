@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.Collection;
 
 import org.zkoss.zss.model.ErrorValue;
-import org.zkoss.zss.model.SCellValue;
 import org.zkoss.zss.model.SCell.CellType;
 import org.zkoss.zss.model.sys.formula.EvaluationResult;
 import org.zkoss.zss.model.sys.formula.EvaluationResult.ResultType;
@@ -14,7 +13,7 @@ import org.zkoss.zss.model.sys.formula.EvaluationResult.ResultType;
  * @author dennis
  *
  */
-public class FormulaResultCellValue extends SCellValue implements Serializable {
+public class FormulaResultCellValue extends CellValue implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	public FormulaResultCellValue(EvaluationResult result) {

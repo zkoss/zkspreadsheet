@@ -25,57 +25,57 @@ import org.zkoss.zss.model.ViewAnchor;
  */
 public class PictureImpl extends AbstractPictureAdv {
 
-	String id;
-	Format format;
-	ViewAnchor anchor;
-	byte[] data;
-	AbstractSheetAdv sheet;
+	private String _id;
+	private Format _format;
+	private ViewAnchor _anchor;
+	private byte[] _data;
+	private AbstractSheetAdv _sheet;
 
 	public PictureImpl(AbstractSheetAdv sheet, String id, Format format,
 			byte[] data, ViewAnchor anchor) {
-		this.sheet = sheet;
-		this.id = id;
-		this.format = format;
-		this.data = data;
-		this.anchor = anchor;
+		this._sheet = sheet;
+		this._id = id;
+		this._format = format;
+		this._data = data;
+		this._anchor = anchor;
 	}
 	@Override
 	public SSheet getSheet(){
 		checkOrphan();
-		return sheet;
+		return _sheet;
 	}
 	@Override
 	public String getId() {
-		return id;
+		return _id;
 	}
 	@Override
 	public Format getFormat() {
-		return format;
+		return _format;
 	}
 	@Override
 	public ViewAnchor getAnchor() {
-		return anchor;
+		return _anchor;
 	}
 
 	@Override
 	public void setAnchor(ViewAnchor anchor){
-		this.anchor = anchor;
+		this._anchor = anchor;
 	}
 	
 	@Override
 	public byte[] getData() {
-		return data;
+		return _data;
 	}
 
 	@Override
 	public void destroy() {
 		checkOrphan();
-		sheet = null;
+		_sheet = null;
 	}
 
 	@Override
 	public void checkOrphan() {
-		if (sheet == null) {
+		if (_sheet == null) {
 			throw new IllegalStateException("doesn't connect to parent");
 		}
 	}

@@ -26,7 +26,6 @@ import org.zkoss.zss.model.ErrorValue;
 import org.zkoss.zss.model.InvalidateModelOpException;
 import org.zkoss.zss.model.SCell;
 import org.zkoss.zss.model.SCellStyle;
-import org.zkoss.zss.model.SCellValue;
 import org.zkoss.zss.model.SComment;
 import org.zkoss.zss.model.SHyperlink;
 import org.zkoss.zss.model.SRichText;

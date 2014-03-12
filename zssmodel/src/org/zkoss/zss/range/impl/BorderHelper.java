@@ -1,3 +1,19 @@
+/*
+
+{{IS_NOTE
+	Purpose:
+		
+	Description:
+		
+	History:
+		
+}}IS_NOTE
+
+Copyright (C) 2013 Potix Corporation. All Rights Reserved.
+
+{{IS_RIGHT
+}}IS_RIGHT
+*/
 package org.zkoss.zss.range.impl;
 
 import org.zkoss.zss.model.SBook;
@@ -8,7 +24,11 @@ import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.model.SCellStyle.BorderType;
 import org.zkoss.zss.range.SRange;
 import org.zkoss.zss.range.SRange.ApplyBorderType;
-
+/**
+ * 
+ * @author Dennis
+ * @since 3.5.0
+ */
 public class BorderHelper extends RangeHelperBase {
 
 	static final short TOP = 0x01;

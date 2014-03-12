@@ -20,7 +20,6 @@ import java.lang.ref.WeakReference;
 
 import org.zkoss.zss.model.CellRegion;
 import org.zkoss.zss.model.SCellStyle;
-import org.zkoss.zss.model.SCellValue;
 import org.zkoss.zss.model.SColumnArray;
 import org.zkoss.zss.model.SComment;
 import org.zkoss.zss.model.SHyperlink;
@@ -37,23 +36,23 @@ import org.zkoss.zss.model.util.Validations;
  */
 class CellProxy extends AbstractCellAdv {
 	private static final long serialVersionUID = 1L;
-	private WeakReference<AbstractSheetAdv> sheetRef;
-	private int rowIdx;
-	private int columnIdx;
-	AbstractCellAdv proxy;
+	private WeakReference<AbstractSheetAdv> _sheetRef;
+	private int _rowIdx;
+	private int _columnIdx;
+	AbstractCellAdv _proxy;
 
 	public CellProxy(AbstractSheetAdv sheet, int row, int column) {
-		this.sheetRef = new WeakReference<AbstractSheetAdv>(sheet);
-		this.rowIdx = row;
-		this.columnIdx = column;
+		this._sheetRef = new WeakReference<AbstractSheetAdv>(sheet);
+		this._rowIdx = row;
+		this._columnIdx = column;
 	}
 
 	@Override
 	public SSheet getSheet() {
-		if(proxy!=null){
-			return proxy.getSheet();
+		if(_proxy!=null){
+			return _proxy.getSheet();
 		}
-		AbstractSheetAdv sheet = sheetRef.get();
+		AbstractSheetAdv sheet = _sheetRef.get();
 		if (sheet == null) {
 			throw new IllegalStateException(
 					"proxy sheet target lost, you should't keep this instance");
@@ -62,8 +61,8 @@ class CellProxy extends AbstractCellAdv {
 	}
 
 	private void loadProxy() {
-		if (proxy == null) {
-			proxy = (AbstractCellAdv) ((AbstractSheetAdv)getSheet()).getCell(rowIdx, columnIdx, false);
+		if (_proxy == null) {
+			_proxy = (AbstractCellAdv) ((AbstractSheetAdv)getSheet()).getCell(_rowIdx, _columnIdx, false);
 		}
 	}
 
@@ -71,73 +70,73 @@ class CellProxy extends AbstractCellAdv {
 	public boolean isNull() {
 		loadProxy();
 		//if any data in data grid and it is not null, you should handle it.
-		if(proxy==null){
+		if(_proxy==null){
 			return true;
 		}else{
-			return proxy.isNull();
+			return _proxy.isNull();
 		}
 	}
 
 	@Override
 	public CellType getType() {
 		loadProxy();
-		if(proxy==null){
+		if(_proxy==null){
 			return CellType.BLANK;
 		}else{
-			return  proxy.getType();
+			return  _proxy.getType();
 		}
 	}
 
 	@Override
 	public int getRowIndex() {
 		loadProxy();
-		return proxy == null ? rowIdx : proxy.getRowIndex();
+		return _proxy == null ? _rowIdx : _proxy.getRowIndex();
 	}
 
 	@Override
 	public int getColumnIndex() {
 		loadProxy();
-		return proxy == null ? columnIdx : proxy.getColumnIndex();
+		return _proxy == null ? _columnIdx : _proxy.getColumnIndex();
 	}
 
 	@Override
 	public void setFormulaValue(String formula) {
 		loadProxy();
-		if (proxy == null) {
-			proxy = (AbstractCellAdv) ((AbstractRowAdv) ((AbstractSheetAdv)getSheet()).getOrCreateRow(
-					rowIdx)).getOrCreateCell(columnIdx);
-			proxy.setFormulaValue(formula);
-		} else if (proxy != null) {
-			proxy.setFormulaValue(formula);
+		if (_proxy == null) {
+			_proxy = (AbstractCellAdv) ((AbstractRowAdv) ((AbstractSheetAdv)getSheet()).getOrCreateRow(
+					_rowIdx)).getOrCreateCell(_columnIdx);
+			_proxy.setFormulaValue(formula);
+		} else if (_proxy != null) {
+			_proxy.setFormulaValue(formula);
 		}
 	}
 	
 	@Override
 	public void setValue(Object value) {
 		loadProxy();
-		if (proxy == null && value != null) {
-			proxy = (AbstractCellAdv) ((AbstractRowAdv) ((AbstractSheetAdv)getSheet()).getOrCreateRow(
-					rowIdx)).getOrCreateCell(columnIdx);
-			proxy.setValue(value);
-		} else if (proxy != null) {
-			proxy.setValue(value);
+		if (_proxy == null && value != null) {
+			_proxy = (AbstractCellAdv) ((AbstractRowAdv) ((AbstractSheetAdv)getSheet()).getOrCreateRow(
+					_rowIdx)).getOrCreateCell(_columnIdx);
+			_proxy.setValue(value);
+		} else if (_proxy != null) {
+			_proxy.setValue(value);
 		}
 	}
 
 	@Override
 	public Object getValue() {
 		loadProxy();
-		if(proxy==null){
+		if(_proxy==null){
 			return null;
 		}else{
-			return  proxy.getValue();
+			return  _proxy.getValue();
 		}
 	}
 
 	@Override
 	public String getReferenceString() {
 		loadProxy();
-		return proxy == null ? new CellRegion(rowIdx, columnIdx).getReferenceString() : proxy.getReferenceString();
+		return _proxy == null ? new CellRegion(_rowIdx, _columnIdx).getReferenceString() : _proxy.getReferenceString();
 	}
 
 	@Override
@@ -148,19 +147,19 @@ class CellProxy extends AbstractCellAdv {
 	@Override
 	public SCellStyle getCellStyle(boolean local) {
 		loadProxy();
-		if (proxy != null) {
-			return proxy.getCellStyle(local);
+		if (_proxy != null) {
+			return _proxy.getCellStyle(local);
 		}
 		if (local)
 			return null;
 		AbstractSheetAdv sheet =  ((AbstractSheetAdv)getSheet());
-		AbstractRowAdv row = (AbstractRowAdv) sheet.getRow(rowIdx, false);
+		AbstractRowAdv row = (AbstractRowAdv) sheet.getRow(_rowIdx, false);
 		SCellStyle style = null;
 		if (row != null) {
 			style = row.getCellStyle(true);
 		}
 		if (style == null) {
-			AbstractColumnArrayAdv carr = (AbstractColumnArrayAdv)sheet.getColumnArray(columnIdx);
+			AbstractColumnArrayAdv carr = (AbstractColumnArrayAdv)sheet.getColumnArray(_columnIdx);
 			if (carr != null) {
 				style = carr.getCellStyle(true);
 			}
@@ -174,44 +173,44 @@ class CellProxy extends AbstractCellAdv {
 	@Override
 	public void setCellStyle(SCellStyle cellStyle) {
 		loadProxy();
-		if (proxy == null) {
-			proxy = (AbstractCellAdv) ((AbstractRowAdv)  ((AbstractSheetAdv)getSheet()).getOrCreateRow(
-					rowIdx)).getOrCreateCell(columnIdx);
+		if (_proxy == null) {
+			_proxy = (AbstractCellAdv) ((AbstractRowAdv)  ((AbstractSheetAdv)getSheet()).getOrCreateRow(
+					_rowIdx)).getOrCreateCell(_columnIdx);
 		}
-		proxy.setCellStyle(cellStyle);
+		_proxy.setCellStyle(cellStyle);
 	}
 
 	@Override
 	public CellType getFormulaResultType() {
 		loadProxy();
-		return proxy == null ? null : proxy.getFormulaResultType();
+		return _proxy == null ? null : _proxy.getFormulaResultType();
 	}
 
 	@Override
 	public void clearValue() {
 		loadProxy();
-		if (proxy != null)
-			proxy.clearValue();
+		if (_proxy != null)
+			_proxy.clearValue();
 	}
 
 	@Override
 	public void clearFormulaResultCache() {
 		loadProxy();
-		if (proxy != null)
-			proxy.clearFormulaResultCache();
+		if (_proxy != null)
+			_proxy.clearFormulaResultCache();
 	}
 
 	@Override
 	protected void evalFormula() {
 		loadProxy();
-		if (proxy != null)
-			proxy.evalFormula();
+		if (_proxy != null)
+			_proxy.evalFormula();
 	}
 
 	@Override
 	protected Object getValue(boolean eval) {
 		loadProxy();
-		return proxy == null ? null : proxy.getValue(eval);
+		return _proxy == null ? null : _proxy.getValue(eval);
 	}
 
 	@Override
@@ -227,39 +226,39 @@ class CellProxy extends AbstractCellAdv {
 	@Override
 	public SHyperlink getHyperlink() {
 		loadProxy();
-		return proxy == null ? null : proxy.getHyperlink();
+		return _proxy == null ? null : _proxy.getHyperlink();
 	}
 
 	@Override
 	public void setHyperlink(SHyperlink hyperlink) {
 		loadProxy();
-		if (proxy == null) {
-			proxy = (AbstractCellAdv) ((AbstractRowAdv)  ((AbstractSheetAdv)getSheet()).getOrCreateRow(
-					rowIdx)).getOrCreateCell(columnIdx);
+		if (_proxy == null) {
+			_proxy = (AbstractCellAdv) ((AbstractRowAdv)  ((AbstractSheetAdv)getSheet()).getOrCreateRow(
+					_rowIdx)).getOrCreateCell(_columnIdx);
 		}
-		proxy.setHyperlink(hyperlink);
+		_proxy.setHyperlink(hyperlink);
 	}
 	
 	@Override
 	public SComment getComment() {
 		loadProxy();
-		return proxy == null ? null : proxy.getComment();
+		return _proxy == null ? null : _proxy.getComment();
 	}
 
 	@Override
 	public void setComment(SComment comment) {
 		loadProxy();
-		if (proxy == null) {
-			proxy = (AbstractCellAdv) ((AbstractRowAdv)  ((AbstractSheetAdv)getSheet()).getOrCreateRow(
-					rowIdx)).getOrCreateCell(columnIdx);
+		if (_proxy == null) {
+			_proxy = (AbstractCellAdv) ((AbstractRowAdv)  ((AbstractSheetAdv)getSheet()).getOrCreateRow(
+					_rowIdx)).getOrCreateCell(_columnIdx);
 		}
-		proxy.setComment(comment);
+		_proxy.setComment(comment);
 	}
 
 	@Override
 	public boolean isFormulaParsingError() {
 		loadProxy();
-		return proxy == null ? false : proxy.isFormulaParsingError();
+		return _proxy == null ? false : _proxy.isFormulaParsingError();
 	}
 
 	@Override

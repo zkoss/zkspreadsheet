@@ -43,119 +43,119 @@ import org.zkoss.zss.model.sys.formula.EvaluationResult.ResultType;
  */
 public class SeriesImpl implements SSeries,Serializable,LinkedModelObject{
 	private static final long serialVersionUID = 1L;
-	private FormulaExpression nameExpr;
-	private FormulaExpression valueExpr;
-	private FormulaExpression yValueExpr;
-	private FormulaExpression zValueExpr;
+	private FormulaExpression _nameExpr;
+	private FormulaExpression _valueExpr;
+	private FormulaExpression _yValueExpr;
+	private FormulaExpression _zValueExpr;
 	
-	private AbstractChartAdv chart;
-	private final String id;
+	private AbstractChartAdv _chart;
+	private final String _id;
 	
-	private Object evalNameResult;
-	private Object evalValuesResult;
-	private Object evalYValuesResult;
-	private Object evalZValuesResult;
+	private Object _evalNameResult;
+	private Object _evalValuesResult;
+	private Object _evalYValuesResult;
+	private Object _evalZValuesResult;
 	
-	private boolean evaluated = false;
+	private boolean _evaluated = false;
 	
 	/*package*/ void evalFormula(){
-		if(!evaluated){
+		if(!_evaluated){
 			FormulaEngine fe = EngineFactory.getInstance().createFormulaEngine();
-			SSheet sheet = chart.getSheet();
-			if(nameExpr!=null){
-				EvaluationResult result = fe.evaluate(nameExpr,new FormulaEvaluationContext(sheet));
+			SSheet sheet = _chart.getSheet();
+			if(_nameExpr!=null){
+				EvaluationResult result = fe.evaluate(_nameExpr,new FormulaEvaluationContext(sheet));
 
 				Object val = result.getValue();
 				if(result.getType() == ResultType.SUCCESS){
-					evalNameResult = val;
+					_evalNameResult = val;
 				}else if(result.getType() == ResultType.ERROR){
-					evalNameResult = (val instanceof ErrorValue)?val:new ErrorValue(ErrorValue.INVALID_VALUE);
+					_evalNameResult = (val instanceof ErrorValue)?val:new ErrorValue(ErrorValue.INVALID_VALUE);
 				}
 				
 			}
-			if(valueExpr!=null){
-				EvaluationResult result = fe.evaluate(valueExpr,new FormulaEvaluationContext(sheet));
+			if(_valueExpr!=null){
+				EvaluationResult result = fe.evaluate(_valueExpr,new FormulaEvaluationContext(sheet));
 				Object val = result.getValue();
 				if(result.getType() == ResultType.SUCCESS){
-					evalValuesResult = val;
+					_evalValuesResult = val;
 				}else if(result.getType() == ResultType.ERROR){
-					evalValuesResult = (val instanceof ErrorValue)?val:new ErrorValue(ErrorValue.INVALID_VALUE);
+					_evalValuesResult = (val instanceof ErrorValue)?val:new ErrorValue(ErrorValue.INVALID_VALUE);
 				}
 			}
-			if(yValueExpr!=null){
-				EvaluationResult result = fe.evaluate(yValueExpr,new FormulaEvaluationContext(sheet));
+			if(_yValueExpr!=null){
+				EvaluationResult result = fe.evaluate(_yValueExpr,new FormulaEvaluationContext(sheet));
 				Object val = result.getValue();
 				if(result.getType() == ResultType.SUCCESS){
-					evalYValuesResult = val;
+					_evalYValuesResult = val;
 				}else if(result.getType() == ResultType.ERROR){
-					evalYValuesResult = (val instanceof ErrorValue)?val:new ErrorValue(ErrorValue.INVALID_VALUE);
+					_evalYValuesResult = (val instanceof ErrorValue)?val:new ErrorValue(ErrorValue.INVALID_VALUE);
 				}
 			}
-			if(zValueExpr!=null){
-				EvaluationResult result = fe.evaluate(zValueExpr,new FormulaEvaluationContext(sheet));
+			if(_zValueExpr!=null){
+				EvaluationResult result = fe.evaluate(_zValueExpr,new FormulaEvaluationContext(sheet));
 				Object val = result.getValue();
 				if(result.getType() == ResultType.SUCCESS){
-					evalZValuesResult = val;
+					_evalZValuesResult = val;
 				}else if(result.getType() == ResultType.ERROR){
-					evalZValuesResult = (val instanceof ErrorValue)?val:new ErrorValue(ErrorValue.INVALID_VALUE);
+					_evalZValuesResult = (val instanceof ErrorValue)?val:new ErrorValue(ErrorValue.INVALID_VALUE);
 				}
 			}
-			evaluated = true;
+			_evaluated = true;
 		}
 	}
 	
 	public SeriesImpl(AbstractChartAdv chart,String id){
-		this.chart = chart;
-		this.id = id;
+		this._chart = chart;
+		this._id = id;
 	}
 	
 	@Override
 	public String getId(){
-		return id;
+		return _id;
 	}
 	
 	@Override
 	public String getName() {
 		evalFormula();
-		return evalNameResult==null?null:(evalNameResult instanceof ErrorValue)?((ErrorValue)evalNameResult).getErrorString():evalNameResult.toString();
+		return _evalNameResult==null?null:(_evalNameResult instanceof ErrorValue)?((ErrorValue)_evalNameResult).getErrorString():_evalNameResult.toString();
 	}
 	@Override
 	public int getNumOfValue(){
 		evalFormula();
-		return EvaluationUtil.sizeOf(evalValuesResult);
+		return EvaluationUtil.sizeOf(_evalValuesResult);
 	}
 	@Override
 	public Object getValue(int index) {
 		evalFormula();
-		if(index>=EvaluationUtil.sizeOf(evalValuesResult)){
+		if(index>=EvaluationUtil.sizeOf(_evalValuesResult)){
 			return null;
 		}
-		return EvaluationUtil.valueOf(evalValuesResult,index);
+		return EvaluationUtil.valueOf(_evalValuesResult,index);
 	}
 	@Override
 	public int getNumOfYValue(){
 		evalFormula();
-		return EvaluationUtil.sizeOf(evalYValuesResult);
+		return EvaluationUtil.sizeOf(_evalYValuesResult);
 	}
 	@Override
 	public Object getYValue(int index) {
 		evalFormula();
-		if(index>=EvaluationUtil.sizeOf(evalYValuesResult)){
+		if(index>=EvaluationUtil.sizeOf(_evalYValuesResult)){
 			return null;
 		}
-		return EvaluationUtil.valueOf(evalYValuesResult,index);
+		return EvaluationUtil.valueOf(_evalYValuesResult,index);
 	}
 	public int getNumOfZValue(){
 		evalFormula();
-		return EvaluationUtil.sizeOf(evalZValuesResult);
+		return EvaluationUtil.sizeOf(_evalZValuesResult);
 	}
 	@Override
 	public Object getZValue(int index) {
 		evalFormula();
-		if(index>=EvaluationUtil.sizeOf(evalZValuesResult)){
+		if(index>=EvaluationUtil.sizeOf(_evalZValuesResult)){
 			return null;
 		}
-		return EvaluationUtil.valueOf(evalZValuesResult,index);
+		return EvaluationUtil.valueOf(_evalZValuesResult,index);
 	}
 	
 	@Override
@@ -169,48 +169,48 @@ public class SeriesImpl implements SSeries,Serializable,LinkedModelObject{
 	@Override
 	public void setXYZFormula(String nameExpression,String xValueExpression, String yValueExpression,String zValueExpression){
 		checkOrphan();
-		evaluated = false;
+		_evaluated = false;
 		clearFormulaDependency();
 		
 		FormulaEngine fe = EngineFactory.getInstance().createFormulaEngine();
-		SSheet sheet = chart.getSheet();
+		SSheet sheet = _chart.getSheet();
 		Ref ref = getRef();
 		if(nameExpression!=null){
-			nameExpr = fe.parse(nameExpression, new FormulaParseContext(sheet,ref));
+			_nameExpr = fe.parse(nameExpression, new FormulaParseContext(sheet,ref));
 		}else{
-			nameExpr = null;
+			_nameExpr = null;
 		}
 		if(xValueExpression!=null){
-			valueExpr = fe.parse(xValueExpression, new FormulaParseContext(sheet,ref));
+			_valueExpr = fe.parse(xValueExpression, new FormulaParseContext(sheet,ref));
 		}else{
-			valueExpr = null;
+			_valueExpr = null;
 		}
 		if(yValueExpression!=null){
-			yValueExpr = fe.parse(yValueExpression, new FormulaParseContext(sheet,ref));
+			_yValueExpr = fe.parse(yValueExpression, new FormulaParseContext(sheet,ref));
 		}else{
-			yValueExpr = null;
+			_yValueExpr = null;
 		}
 		if(zValueExpression!=null){
-			zValueExpr = fe.parse(zValueExpression, new FormulaParseContext(sheet,ref));
+			_zValueExpr = fe.parse(zValueExpression, new FormulaParseContext(sheet,ref));
 		}else{
-			zValueExpr = null;
+			_zValueExpr = null;
 		}
 	}
 	
 	@Override
 	public boolean isFormulaParsingError() {
 		boolean r = false;
-		if(nameExpr!=null){
-			r |= nameExpr.hasError();
+		if(_nameExpr!=null){
+			r |= _nameExpr.hasError();
 		}
-		if(!r && valueExpr!=null){
-			r |= valueExpr.hasError();
+		if(!r && _valueExpr!=null){
+			r |= _valueExpr.hasError();
 		}
-		if(!r && yValueExpr!=null){
-			r |= yValueExpr.hasError();
+		if(!r && _yValueExpr!=null){
+			r |= _yValueExpr.hasError();
 		}
-		if(!r && zValueExpr!=null){
-			r |= zValueExpr.hasError();
+		if(!r && _zValueExpr!=null){
+			r |= _zValueExpr.hasError();
 		}
 		
 		return r;
@@ -218,39 +218,39 @@ public class SeriesImpl implements SSeries,Serializable,LinkedModelObject{
 
 	@Override
 	public String getNameFormula() {
-		return nameExpr==null?null:nameExpr.getFormulaString();
+		return _nameExpr==null?null:_nameExpr.getFormulaString();
 	}
 
 	@Override
 	public String getValuesFormula() {
-		return valueExpr==null?null:valueExpr.getFormulaString();
+		return _valueExpr==null?null:_valueExpr.getFormulaString();
 	}
 
 	@Override
 	public String getYValuesFormula() {
-		return yValueExpr==null?null:yValueExpr.getFormulaString();
+		return _yValueExpr==null?null:_yValueExpr.getFormulaString();
 	}
 	
 	@Override
 	public String getZValuesFormula() {
-		return zValueExpr==null?null:zValueExpr.getFormulaString();
+		return _zValueExpr==null?null:_zValueExpr.getFormulaString();
 	}
 
 	@Override
 	public void clearFormulaResultCache() {
-		evaluated = false;
-		evalNameResult = evalValuesResult = evalYValuesResult = evalZValuesResult = null;		
+		_evaluated = false;
+		_evalNameResult = _evalValuesResult = _evalYValuesResult = _evalZValuesResult = null;		
 	}
 	
 	private void clearFormulaDependency() {
-		if(nameExpr!=null || valueExpr!=null || yValueExpr!=null || zValueExpr!=null){
-			((AbstractBookSeriesAdv) chart.getSheet().getBook().getBookSeries())
+		if(_nameExpr!=null || _valueExpr!=null || _yValueExpr!=null || _zValueExpr!=null){
+			((AbstractBookSeriesAdv) _chart.getSheet().getBook().getBookSeries())
 					.getDependencyTable().clearDependents(getRef());
 		}
 	}
 	
 	private Ref getRef(){
-		return new ObjectRefImpl(chart,new String[]{chart.getId(),id});
+		return new ObjectRefImpl(_chart,new String[]{_chart.getId(),_id});
 	}
 	
 	@Override
@@ -258,12 +258,12 @@ public class SeriesImpl implements SSeries,Serializable,LinkedModelObject{
 		checkOrphan();
 		clearFormulaDependency();
 		clearFormulaResultCache();
-		chart = null;
+		_chart = null;
 	}
 
 	@Override
 	public void checkOrphan() {
-		if(chart==null){
+		if(_chart==null){
 			throw new IllegalStateException("doesn't connect to parent");
 		}
 	}

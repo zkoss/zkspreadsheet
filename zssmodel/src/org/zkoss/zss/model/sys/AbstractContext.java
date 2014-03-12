@@ -24,21 +24,21 @@ import java.util.Locale;
  */
 public abstract class AbstractContext {
 
-	Locale locale;
+	Locale _locale;
 
 	public AbstractContext() {
-		this.locale = Locale.getDefault();
+		this._locale = Locale.getDefault();
 	}
 
 	public AbstractContext(Locale locale) {
-		this.locale = locale;
+		this._locale = locale;
 	}
 
 	public Locale getLocale() {
-		return locale;
+		return _locale;
 	}
 
 	public void setLocale(Locale locale) {
-		this.locale = locale;
+		this._locale = locale;
 	}
 }

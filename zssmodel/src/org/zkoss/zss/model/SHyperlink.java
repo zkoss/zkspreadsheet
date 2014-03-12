@@ -24,14 +24,14 @@ public interface SHyperlink {
 	public enum HyperlinkType {
 		URL(1), DOCUMENT(2), EMAIL(3), FILE(4);
 		
-		private int value;
+		private int _value;
 		
 		HyperlinkType(int value) {
-			this.value = value;
+			this._value = value;
 		}
 		
 		public int getValue(){
-			return value;
+			return _value;
 		}
 	}
 

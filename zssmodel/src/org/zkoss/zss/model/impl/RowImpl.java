@@ -32,8 +32,8 @@ import org.zkoss.zss.model.util.Validations;
 public class RowImpl extends AbstractRowAdv {
 	private static final long serialVersionUID = 1L;
 
-	private AbstractSheetAdv sheet;
-	private int index;
+	private AbstractSheetAdv _sheet;
+	private int _index;
 	
 	private final IndexPool<AbstractCellAdv> cells = new IndexPool<AbstractCellAdv>(){
 		private static final long serialVersionUID = 1L;
@@ -51,20 +51,20 @@ public class RowImpl extends AbstractRowAdv {
 	private boolean customHeight = false;
 
 	public RowImpl(AbstractSheetAdv sheet, int index) {
-		this.sheet = sheet;
-		this.index = index;
+		this._sheet = sheet;
+		this._index = index;
 	}
 
 	@Override
 	public SSheet getSheet() {
 		checkOrphan();
-		return sheet;
+		return _sheet;
 	}
 
 	@Override
 	public int getIndex() {
 		checkOrphan();
-		return index;
+		return _index;
 	}
 
 	@Override
@@ -79,7 +79,7 @@ public class RowImpl extends AbstractRowAdv {
 			return cellObj;
 		}
 		checkOrphan();
-		return proxy ? new CellProxy(sheet, getIndex(), columnIdx) : null;
+		return proxy ? new CellProxy(_sheet, getIndex(), columnIdx) : null;
 	}
 
 	@Override
@@ -154,7 +154,7 @@ public class RowImpl extends AbstractRowAdv {
 
 	@Override
 	public void checkOrphan() {
-		if (sheet == null) {
+		if (_sheet == null) {
 			throw new IllegalStateException("doesn't connect to parent");
 		}
 	}
@@ -165,7 +165,7 @@ public class RowImpl extends AbstractRowAdv {
 		for (AbstractCellAdv cell : cells.values()) {
 			cell.destroy();
 		}
-		sheet = null;
+		_sheet = null;
 	}
 
 	@Override
@@ -179,7 +179,7 @@ public class RowImpl extends AbstractRowAdv {
 			return cellStyle;
 		}
 		checkOrphan();
-		return sheet.getBook().getDefaultCellStyle();
+		return _sheet.getBook().getDefaultCellStyle();
 	}
 
 	@Override
@@ -230,8 +230,8 @@ public class RowImpl extends AbstractRowAdv {
 
 	@Override
 	void setIndex(int newidx) {
-		int oldIdx = index;
-		this.index = newidx;
+		int oldIdx = _index;
+		this._index = newidx;
 		for(AbstractCellAdv cell:cells.values()){
 			cell.setRow(oldIdx,this);//set this row again to trigger rebuildFormulaDependency
 		}

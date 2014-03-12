@@ -29,9 +29,9 @@ import org.zkoss.zss.model.sys.dependency.Ref;
  */
 public class FormulaClearContext extends AbstractContext {
 
-	private final SBook book;
-	private final SSheet sheet;
-	private final SCell cell;
+	private final SBook _book;
+	private final SSheet _sheet;
+	private final SCell _cell;
 
 	public FormulaClearContext(SCell cell) {
 		this(cell.getSheet().getBook(), cell.getSheet(), cell);
@@ -46,20 +46,20 @@ public class FormulaClearContext extends AbstractContext {
 	}
 
 	private FormulaClearContext(SBook book, SSheet sheet, SCell cell) {
-		this.book = book;
-		this.sheet = sheet;
-		this.cell = cell;
+		this._book = book;
+		this._sheet = sheet;
+		this._cell = cell;
 	}
 
 	public SBook getBook() {
-		return book;
+		return _book;
 	}
 
 	public SSheet getSheet() {
-		return sheet;
+		return _sheet;
 	}
 
 	public SCell getCell() {
-		return cell;
+		return _cell;
 	}
 }

@@ -42,36 +42,36 @@ public class ErrorValue implements Serializable{
     //TODO zss 3.5 this value is not in zpoi
     public static final byte INVALID_FORMULA = 0x7f;
 	
-	private byte code;
-	private String message;
+	private byte _code;
+	private String _message;
 
 	public ErrorValue(byte code) {
 		this(code, null);
 	}
 
 	public ErrorValue(byte code, String message) {
-		this.code = code;
-		this.message = message;
+		this._code = code;
+		this._message = message;
 	}
 
 	public byte getCode() {
-		return code;
+		return _code;
 	}
 
 	public void setCode(byte code) {
-		this.code = code;
+		this._code = code;
 	}
 
 	public String getMessage() {
-		return message;
+		return _message;
 	}
 
 	public void setMessage(String message) {
-		this.message = message;
+		this._message = message;
 	}
 	
 	public String getErrorString(){
-		return getErrorString(code);
+		return getErrorString(_code);
 	}
 	
 	public String toString(){

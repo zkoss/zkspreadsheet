@@ -27,39 +27,39 @@ public class HyperlinkImpl extends AbstractHyperlinkAdv {
 
 	private static final long serialVersionUID = 1L;
 	
-	private HyperlinkType type;
-	private String address;
-	private String label;
+	private HyperlinkType _type;
+	private String _address;
+	private String _label;
 	
 	public HyperlinkImpl(HyperlinkType type,String address, String label){
 		Validations.argNotNull(type,address);
-		this.type = type;
-		this.address = address;
-		this.label = label;
+		this._type = type;
+		this._address = address;
+		this._label = label;
 	}
 	
 	public HyperlinkType getType() {
-		return type;
+		return _type;
 	}
 	public void setType(HyperlinkType type) {
 		Validations.argNotNull(type);
-		this.type = type;
+		this._type = type;
 	}
 	public String getAddress() {
-		return address;
+		return _address;
 	}
 	public void setAddress(String address) {
 		Validations.argNotNull(address);
-		this.address = address;
+		this._address = address;
 	}
 	public String getLabel() {
-		return label;
+		return _label;
 	}
 	public void setLabel(String label) {
-		this.label = label;
+		this._label = label;
 	}
 	@Override
 	public AbstractHyperlinkAdv clone() {
-		return new HyperlinkImpl(type,address,label);
+		return new HyperlinkImpl(_type,_address,_label);
 	}
 }

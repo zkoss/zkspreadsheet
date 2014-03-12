@@ -25,7 +25,6 @@ import org.zkoss.zss.model.InvalidateFormulaException;
 import org.zkoss.zss.model.InvalidateModelOpException;
 import org.zkoss.zss.model.SBookSeries;
 import org.zkoss.zss.model.SCellStyle;
-import org.zkoss.zss.model.SCellValue;
 import org.zkoss.zss.model.SColumnArray;
 import org.zkoss.zss.model.SComment;
 import org.zkoss.zss.model.SHyperlink;
@@ -48,36 +47,36 @@ import org.zkoss.zss.model.util.Validations;
  */
 public class CellImpl extends AbstractCellAdv {
 	private static final long serialVersionUID = 1L;
-	private AbstractRowAdv row;
-	private int index;
-	private SCellValue localValue = null;
-	private AbstractCellStyleAdv cellStyle;
-	transient private FormulaResultCellValue formulaResultValue;// cache
+	private AbstractRowAdv _row;
+	private int _index;
+	private CellValue _localValue = null;
+	private AbstractCellStyleAdv _cellStyle;
+	transient private FormulaResultCellValue _formulaResultValue;// cache
 	
 	
 	//use another object to reduce object reference size
-	private OptFields opts;
+	private OptFields _opts;
 	
 	private static class OptFields implements Serializable{
-		private AbstractHyperlinkAdv hyperlink;
-		private AbstractCommentAdv comment;
+		private AbstractHyperlinkAdv _hyperlink;
+		private AbstractCommentAdv _comment;
 	}
 
 	private OptFields getOpts(boolean create){
-		if(opts==null && create){
-			opts = new OptFields();
+		if(_opts==null && create){
+			_opts = new OptFields();
 		}
-		return opts;
+		return _opts;
 	}
 
 	public CellImpl(AbstractRowAdv row, int index) {
-		this.row = row;
-		this.index = index;
+		this._row = row;
+		this._index = index;
 	}
 
 	@Override
 	public CellType getType() {
-		SCellValue val = getCellValue();
+		CellValue val = getCellValue();
 		return val==null?CellType.BLANK:val.getType();
 	}
 
@@ -89,13 +88,13 @@ public class CellImpl extends AbstractCellAdv {
 	@Override
 	public int getRowIndex() {
 		checkOrphan();
-		return row.getIndex();
+		return _row.getIndex();
 	}
 
 	@Override
 	public int getColumnIndex() {
 		checkOrphan();
-		return index;
+		return _index;
 	}
 
 	@Override
@@ -105,7 +104,7 @@ public class CellImpl extends AbstractCellAdv {
 
 	@Override
 	public void checkOrphan() {
-		if (row == null) {
+		if (_row == null) {
 			throw new IllegalStateException("doesn't connect to parent");
 		}
 	}
@@ -113,14 +112,14 @@ public class CellImpl extends AbstractCellAdv {
 	@Override
 	public SSheet getSheet() {
 		checkOrphan();
-		return row.getSheet();
+		return _row.getSheet();
 	}
 
 	@Override
 	public void destroy() {
 		checkOrphan();
 		clearValue();
-		row = null;
+		_row = null;
 	}
 
 	@Override
@@ -130,23 +129,23 @@ public class CellImpl extends AbstractCellAdv {
 
 	@Override
 	public SCellStyle getCellStyle(boolean local) {
-		if (local || cellStyle != null) {
-			return cellStyle;
+		if (local || _cellStyle != null) {
+			return _cellStyle;
 		}
 		checkOrphan();
-		cellStyle = (AbstractCellStyleAdv) row.getCellStyle(true);
-		AbstractSheetAdv sheet = (AbstractSheetAdv)row.getSheet();
-		if (cellStyle == null) {
+		_cellStyle = (AbstractCellStyleAdv) _row.getCellStyle(true);
+		AbstractSheetAdv sheet = (AbstractSheetAdv)_row.getSheet();
+		if (_cellStyle == null) {
 			SColumnArray array = sheet.getColumnArray(getColumnIndex());
 			if(array!=null){
-				cellStyle = (AbstractCellStyleAdv)((AbstractColumnArrayAdv)array).getCellStyle(true);
+				_cellStyle = (AbstractCellStyleAdv)((AbstractColumnArrayAdv)array).getCellStyle(true);
 			}
 		}
-		if (cellStyle == null) {
-			cellStyle = (AbstractCellStyleAdv) sheet.getBook()
+		if (_cellStyle == null) {
+			_cellStyle = (AbstractCellStyleAdv) sheet.getBook()
 					.getDefaultCellStyle();
 		}
-		return cellStyle;
+		return _cellStyle;
 	}
 
 	@Override
@@ -154,18 +153,18 @@ public class CellImpl extends AbstractCellAdv {
 		if(cellStyle!=null){
 			Validations.argInstance(cellStyle, AbstractCellStyleAdv.class);
 		}
-		this.cellStyle = (AbstractCellStyleAdv) cellStyle;
+		this._cellStyle = (AbstractCellStyleAdv) cellStyle;
 		addCellUpdate();
 	}
 
 	@Override
 	protected void evalFormula() {
-		if (formulaResultValue == null) {
-			SCellValue val = getCellValue();
+		if (_formulaResultValue == null) {
+			CellValue val = getCellValue();
 			if(val!=null &&  val.getType() == CellType.FORMULA){
 				FormulaEngine fe = EngineFactory.getInstance()
 						.createFormulaEngine();
-				formulaResultValue = new FormulaResultCellValue(fe.evaluate((FormulaExpression) val.getValue(),
+				_formulaResultValue = new FormulaResultCellValue(fe.evaluate((FormulaExpression) val.getValue(),
 						new FormulaEvaluationContext(this)));
 			}
 		}
@@ -176,7 +175,7 @@ public class CellImpl extends AbstractCellAdv {
 		checkType(CellType.FORMULA);
 		evalFormula();
 
-		return formulaResultValue.getCellType();
+		return _formulaResultValue.getCellType();
 	}
 
 	@Override
@@ -238,12 +237,12 @@ public class CellImpl extends AbstractCellAdv {
 
 	@Override
 	public void clearFormulaResultCache() {
-		if(formulaResultValue!=null){			
+		if(_formulaResultValue!=null){			
 			//only clear when there is a formula result, or poi will do full cache scan to clean blank.
 			EngineFactory.getInstance().createFormulaEngine().clearCache(new FormulaClearContext(this));
 		}
 		
-		formulaResultValue = null;
+		_formulaResultValue = null;
 	}
 	
 	@Override
@@ -263,10 +262,10 @@ public class CellImpl extends AbstractCellAdv {
 
 	@Override
 	public Object getValue(boolean evaluatedVal) {
-		SCellValue val = getCellValue();
+		CellValue val = getCellValue();
 		if (evaluatedVal && val!=null && val.getType() == CellType.FORMULA) {
 			evalFormula();
-			return this.formulaResultValue.getValue();
+			return this._formulaResultValue.getValue();
 		}
 		return val==null?null:val.getValue();
 	}
@@ -275,14 +274,14 @@ public class CellImpl extends AbstractCellAdv {
 		return string != null && string.startsWith("=") && string.length() > 1;
 	}
 	
-	private SCellValue getCellValue(){
+	private CellValue getCellValue(){
 		checkOrphan();
-		return localValue;
+		return _localValue;
 	}
 	
-	private void setCellValue(SCellValue value){
+	private void setCellValue(CellValue value){
 		checkOrphan();
-		this.localValue = value!=null&&value.getType()==CellType.BLANK?null:value;
+		this._localValue = value!=null&&value.getType()==CellType.BLANK?null:value;
 		
 		//clear the dependent's formula result cache
 		SBookSeries bookSeries = getSheet().getBook().getBookSeries();
@@ -296,7 +295,7 @@ public class CellImpl extends AbstractCellAdv {
 	
 	@Override
 	public void setValue(Object newVal) {
-		SCellValue oldVal = getCellValue();
+		CellValue oldVal = getCellValue();
 		if( (oldVal==null && newVal==null) ||
 			(oldVal != null && valueEuqals(oldVal.getValue(),newVal))) {
 			return;
@@ -337,7 +336,7 @@ public class CellImpl extends AbstractCellAdv {
 		}
 
 		
-		SCellValue newCellVal = new InnerCellValue(newType,newVal);
+		CellValue newCellVal = new InnerCellValue(newType,newVal);
 		//should't clear dependency if new type is formula, it clear the dependency already when eval
 		clearValueForSet(oldVal!=null && oldVal.getType()==CellType.FORMULA && newType !=CellType.FORMULA);
 		
@@ -350,32 +349,32 @@ public class CellImpl extends AbstractCellAdv {
 	@Override
 	public SHyperlink getHyperlink() {
 		OptFields opts = getOpts(false);
-		return opts==null?null:opts.hyperlink;
+		return opts==null?null:opts._hyperlink;
 	}
 
 	@Override
 	public void setHyperlink(SHyperlink hyperlink) {
 		Validations.argInstance(hyperlink, AbstractHyperlinkAdv.class);
-		getOpts(true).hyperlink = (AbstractHyperlinkAdv)hyperlink;
+		getOpts(true)._hyperlink = (AbstractHyperlinkAdv)hyperlink;
 		addCellUpdate();
 	}
 	
 	@Override
 	public SComment getComment() {
 		OptFields opts = getOpts(false);
-		return opts==null?null:opts.comment;
+		return opts==null?null:opts._comment;
 	}
 
 	@Override
 	public void setComment(SComment comment) {
 		Validations.argInstance(comment, AbstractCommentAdv.class);
-		getOpts(true).comment = (AbstractCommentAdv)comment;
+		getOpts(true)._comment = (AbstractCommentAdv)comment;
 		addCellUpdate();
 	}
 	
 	@Override
 	void setIndex(int newidx) {
-		if(this.index==newidx){
+		if(this._index==newidx){
 			return;
 		}
 		
@@ -386,7 +385,7 @@ public class CellImpl extends AbstractCellAdv {
 			((AbstractBookSeriesAdv) getSheet().getBook().getBookSeries())
 				.getDependencyTable().clearDependents(getRef());
 		}
-		this.index = newidx;
+		this._index = newidx;
 		if(formula!=null){
 			FormulaEngine fe = EngineFactory.getInstance().createFormulaEngine();
 			fe.parse(formula, new FormulaParseContext(this ,getRef()));//rebuild the expression to make new dependency with current row,column
@@ -395,7 +394,7 @@ public class CellImpl extends AbstractCellAdv {
 	
 	@Override
 	void setRow(int oldRowIdx, AbstractRowAdv row){
-		if(oldRowIdx==row.getIndex() && this.row==row){
+		if(oldRowIdx==row.getIndex() && this._row==row){
 			return;
 		}
 		
@@ -408,7 +407,7 @@ public class CellImpl extends AbstractCellAdv {
 			Ref oldRef = new RefImpl(sheet.getBook().getBookName(),sheet.getSheetName(),oldRowIdx,getColumnIndex());
 			((AbstractBookSeriesAdv) getSheet().getBook().getBookSeries()).getDependencyTable().clearDependents(oldRef);
 		}
-		this.row = row;
+		this._row = row;
 		if(formula!=null){
 			FormulaEngine fe = EngineFactory.getInstance().createFormulaEngine();
 			fe.parse(formula, new FormulaParseContext(this ,getRef()));//rebuild the expression to make new dependency with current row,column
@@ -420,7 +419,7 @@ public class CellImpl extends AbstractCellAdv {
 		return new RefImpl(this);
 	}
 	
-	private static class InnerCellValue extends SCellValue{
+	private static class InnerCellValue extends CellValue{
 		private static final long serialVersionUID = 1L;
 		private InnerCellValue(CellType type, Object value){
 			super(type,value);

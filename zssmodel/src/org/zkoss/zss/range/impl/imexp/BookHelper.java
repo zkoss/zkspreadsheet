@@ -25,6 +25,7 @@ import org.zkoss.poi.xssf.usermodel.*;
 
 /**
  * Helper for XSSF and HSSF book handling
+ * @author Hawk, Kuro
  */
 //copies from ZSS project
 public final class BookHelper {

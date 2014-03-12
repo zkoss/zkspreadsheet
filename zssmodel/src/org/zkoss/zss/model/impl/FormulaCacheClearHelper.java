@@ -17,12 +17,12 @@ import org.zkoss.zss.model.sys.dependency.ObjectRef.ObjectType;
 import org.zkoss.zss.model.sys.dependency.Ref.RefType;
 
 /*package*/ class FormulaCacheClearHelper {
-	final SBookSeries bookSeries;
+	private final SBookSeries _bookSeries;
 	
 	private static final Log logger = Log.lookup(FormulaCacheClearHelper.class.getName());
 	
 	public FormulaCacheClearHelper(SBookSeries bookSeries) {
-		this.bookSeries = bookSeries;
+		this._bookSeries = bookSeries;
 	}
 
 	public void clear(Set<Ref> refs) {
@@ -46,7 +46,7 @@ import org.zkoss.zss.model.sys.dependency.Ref.RefType;
 		}
 	}
 	private void handleChartRef(ObjectRef ref) {
-		SBook book = bookSeries.getBook(ref.getBookName());
+		SBook book = _bookSeries.getBook(ref.getBookName());
 		if(book==null) return;
 		SSheet sheet = book.getSheetByName(ref.getSheetName());
 		if(sheet==null) return;
@@ -57,7 +57,7 @@ import org.zkoss.zss.model.sys.dependency.Ref.RefType;
 		}
 	}
 	private void handleDataValidationRef(ObjectRef ref) {
-		SBook book = bookSeries.getBook(ref.getBookName());
+		SBook book = _bookSeries.getBook(ref.getBookName());
 		if(book==null) return;
 		SSheet sheet = book.getSheetByName(ref.getSheetName());
 		if(sheet==null) return;
@@ -69,7 +69,7 @@ import org.zkoss.zss.model.sys.dependency.Ref.RefType;
 	}
 
 	private void handleAreaRef(Ref ref) {
-		SBook book = bookSeries.getBook(ref.getBookName());
+		SBook book = _bookSeries.getBook(ref.getBookName());
 		if(book==null) return;
 		SSheet sheet = book.getSheetByName(ref.getSheetName());
 		if(sheet==null) return;

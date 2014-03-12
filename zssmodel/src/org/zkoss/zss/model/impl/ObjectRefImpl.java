@@ -28,39 +28,39 @@ public class ObjectRefImpl extends RefImpl implements ObjectRef{
 
 	private static final long serialVersionUID = 1L;
 	
-	private final String[] objectIdPath; 
+	private final String[] _objectIdPath; 
 	
-	private final ObjectType objType;
+	private final ObjectType _objType;
 	
 	public ObjectRefImpl(AbstractChartAdv chart,String[] objectIdPath){
 		super(RefType.OBJECT,chart.getSheet().getBook().getBookName(),chart.getSheet().getSheetName(), null,-1,-1,-1,-1);
-		this.objectIdPath = objectIdPath;
-		objType = ObjectType.CHART;
+		this._objectIdPath = objectIdPath;
+		_objType = ObjectType.CHART;
 	}
 	public ObjectRefImpl(AbstractChartAdv chart,String objectId){
 		super(RefType.OBJECT,chart.getSheet().getBook().getBookName(),chart.getSheet().getSheetName(), null,-1,-1,-1,-1);
-		this.objectIdPath = new String[]{objectId};
-		objType = ObjectType.CHART;
+		this._objectIdPath = new String[]{objectId};
+		_objType = ObjectType.CHART;
 	}
 	
 	public ObjectRefImpl(AbstractDataValidationAdv validation,String objectId){
 		super(RefType.OBJECT,validation.getSheet().getBook().getBookName(),validation.getSheet().getSheetName(), null,-1,-1,-1,-1);
-		this.objectIdPath = new String[]{objectId};
-		objType = ObjectType.DATA_VALIDATION;
+		this._objectIdPath = new String[]{objectId};
+		_objType = ObjectType.DATA_VALIDATION;
 	}
 
 	@Override
 	public String getObjectId() {
-		return objectIdPath[objectIdPath.length-1];
+		return _objectIdPath[_objectIdPath.length-1];
 	}
 
 	@Override
 	public String[] getObjectIdPath() {
-		return objectIdPath;
+		return _objectIdPath;
 	}
 	@Override
 	public ObjectType getObjectType() {
-		return objType;
+		return _objType;
 	}
 
 	@Override
@@ -71,8 +71,8 @@ public class ObjectRefImpl extends RefImpl implements ObjectRef{
 				+ ((bookName == null) ? 0 : bookName.hashCode());
 		result = prime * result
 				+ ((sheetName == null) ? 0 : sheetName.hashCode());
-		result = prime * result + ((objType == null) ? 0 : objType.hashCode());
-		result = prime * result + Arrays.hashCode(objectIdPath);
+		result = prime * result + ((_objType == null) ? 0 : _objType.hashCode());
+		result = prime * result + Arrays.hashCode(_objectIdPath);
 		return result;
 	}
 	
@@ -96,9 +96,9 @@ public class ObjectRefImpl extends RefImpl implements ObjectRef{
 				return false;
 		} else if (!sheetName.equals(other.sheetName))
 			return false;
-		if (objType != other.objType)
+		if (_objType != other._objType)
 			return false;
-		if (!Arrays.equals(objectIdPath, other.objectIdPath))
+		if (!Arrays.equals(_objectIdPath, other._objectIdPath))
 			return false;
 
 		return true;
@@ -106,8 +106,8 @@ public class ObjectRefImpl extends RefImpl implements ObjectRef{
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder(super.toString());
-		sb.append(objType);
-		for(String id:objectIdPath){
+		sb.append(_objType);
+		for(String id:_objectIdPath){
 			sb.append(":").append(id);
 		}
 		return sb.toString();

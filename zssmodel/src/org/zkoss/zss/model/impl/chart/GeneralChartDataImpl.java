@@ -46,69 +46,69 @@ public class GeneralChartDataImpl extends ChartDataAdv implements SGeneralChartD
 
 	private static final long serialVersionUID = 1L;
 
-	private FormulaExpression catFormula;
+	private FormulaExpression _catFormula;
 	
-	final private List<SeriesImpl> serieses = new LinkedList<SeriesImpl>();
-	private AbstractChartAdv chart;
-	final private String id;
+	final private List<SeriesImpl> _serieses = new LinkedList<SeriesImpl>();
+	private AbstractChartAdv _chart;
+	final private String _id;
 	
-	private Object evalResult;
+	private Object _evalResult;
 	
-	private boolean evaluated = false;
+	private boolean _evaluated = false;
 	
-	private int seriesCount = 0;
+	private int _seriesCount = 0;
 	
 	public GeneralChartDataImpl(AbstractChartAdv chart,String id){
-		this.chart = chart;
-		this.id = id;
+		this._chart = chart;
+		this._id = id;
 	}
 	
 	public SChart getChart(){
-		return chart;
+		return _chart;
 	}
 	
 	/*package*/ void evalFormula(){
-		if(!evaluated){
-			if(catFormula!=null){
+		if(!_evaluated){
+			if(_catFormula!=null){
 				FormulaEngine fe = EngineFactory.getInstance().createFormulaEngine();
-				EvaluationResult result = fe.evaluate(catFormula,new FormulaEvaluationContext(chart.getSheet()));
+				EvaluationResult result = fe.evaluate(_catFormula,new FormulaEvaluationContext(_chart.getSheet()));
 				Object val = result.getValue();
 				if(result.getType() == ResultType.SUCCESS){
-					evalResult = val;
+					_evalResult = val;
 				}else if(result.getType() == ResultType.ERROR){
-					evalResult = (val instanceof ErrorValue)?val:new ErrorValue(ErrorValue.INVALID_NAME);
+					_evalResult = (val instanceof ErrorValue)?val:new ErrorValue(ErrorValue.INVALID_NAME);
 				}
 			}
 			//TODO
-			evaluated = true;
+			_evaluated = true;
 		}
 	}
 	
 	public int getNumOfSeries() {
-		return serieses.size();
+		return _serieses.size();
 	}
 	public SSeries getSeries(int i) {
-		return serieses.get(i);
+		return _serieses.get(i);
 	}
 	public int getNumOfCategory() {
 		evalFormula();
-		return EvaluationUtil.sizeOf(evalResult);
+		return EvaluationUtil.sizeOf(_evalResult);
 	}
 	public Object getCategory(int i) {
 		evalFormula();
-		if(i>=EvaluationUtil.sizeOf(evalResult)){
+		if(i>=EvaluationUtil.sizeOf(_evalResult)){
 			return null;
 		}
-		return EvaluationUtil.valueOf(evalResult,i);
+		return EvaluationUtil.valueOf(_evalResult,i);
 	}
 	public SSeries addSeries() {
-		SeriesImpl series = new SeriesImpl(chart,chart.getId() + "-series" + (seriesCount++));
-		serieses.add(series);
+		SeriesImpl series = new SeriesImpl(_chart,_chart.getId() + "-series" + (_seriesCount++));
+		_serieses.add(series);
 		return series;
 	}
 	
 	protected void checkOwnership(SSeries series){
-		if(!serieses.contains(series)){
+		if(!_serieses.contains(series)){
 			throw new IllegalStateException("doesn't has ownership "+ series);
 		}
 	}
@@ -116,50 +116,50 @@ public class GeneralChartDataImpl extends ChartDataAdv implements SGeneralChartD
 	public void removeSeries(SSeries series) {
 		checkOwnership(series);
 		((SeriesImpl)series).destroy();
-		serieses.remove(series);
+		_serieses.remove(series);
 	}
 	public void setCategoriesFormula(String expr) {
 		checkOrphan();
-		evaluated = false;
+		_evaluated = false;
 		
 		clearFormulaDependency();
 		
 		if(expr!=null){
 			FormulaEngine fe = EngineFactory.getInstance().createFormulaEngine();
-			catFormula = fe.parse(expr, new FormulaParseContext(chart.getSheet(),getRef()));
+			_catFormula = fe.parse(expr, new FormulaParseContext(_chart.getSheet(),getRef()));
 		}else{
-			catFormula = null;
+			_catFormula = null;
 		}
 	}
 
 	@Override
 	public String getCategoriesFormula() {
-		return catFormula==null?null:catFormula.getFormulaString();
+		return _catFormula==null?null:_catFormula.getFormulaString();
 	}
 
 	@Override
 	public void clearFormulaResultCache() {
-		evalResult = null;
-		evaluated = false;
-		for(SeriesImpl series:serieses){
+		_evalResult = null;
+		_evaluated = false;
+		for(SeriesImpl series:_serieses){
 			series.clearFormulaResultCache();
 		}
 	}
 	
 	@Override
 	public boolean isFormulaParsingError() {
-		return catFormula==null?false:catFormula.hasError();
+		return _catFormula==null?false:_catFormula.hasError();
 	}
 	
 	private void clearFormulaDependency(){
-		if(catFormula!=null){
-			((AbstractBookSeriesAdv) chart.getSheet().getBook().getBookSeries())
+		if(_catFormula!=null){
+			((AbstractBookSeriesAdv) _chart.getSheet().getBook().getBookSeries())
 					.getDependencyTable().clearDependents(getRef());
 		}
 	}
 	
 	private Ref getRef(){
-		return new ObjectRefImpl(chart,new String[]{chart.getId(),id});
+		return new ObjectRefImpl(_chart,new String[]{_chart.getId(),_id});
 	}
 
 	@Override
@@ -167,15 +167,15 @@ public class GeneralChartDataImpl extends ChartDataAdv implements SGeneralChartD
 		checkOrphan();
 		clearFormulaDependency();
 		clearFormulaResultCache();
-		for(SeriesImpl series:serieses){
+		for(SeriesImpl series:_serieses){
 			series.destroy();
 		}
-		chart = null;
+		_chart = null;
 	}
 
 	@Override
 	public void checkOrphan() {
-		if(chart==null){
+		if(_chart==null){
 			throw new IllegalStateException("doesn't connect to parent");
 		}
 	}

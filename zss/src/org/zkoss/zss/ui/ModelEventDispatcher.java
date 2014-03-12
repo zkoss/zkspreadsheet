@@ -15,17 +15,20 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 }}IS_RIGHT
 */
 
-package org.zkoss.zss.model;
+package org.zkoss.zss.ui;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.zkoss.zss.model.ModelEvent;
+import org.zkoss.zss.model.ModelEventListener;
+
 /**
  * To dispatch model event
  * @author Dennis
- *
+ * @since 3.5.0
  */
 public class ModelEventDispatcher implements ModelEventListener {
 	private static final long serialVersionUID = 1L;

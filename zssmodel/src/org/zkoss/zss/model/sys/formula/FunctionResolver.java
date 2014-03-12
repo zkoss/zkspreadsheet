@@ -22,7 +22,7 @@ import org.zkoss.xel.FunctionMapper;
  * @author henrichen
  */
 public interface FunctionResolver {
-	public static final String CLASS = "org.zkoss.zss.formula.FunctionResolver.class";
+//	public static final String CLASS = "org.zkoss.zss.formula.FunctionResolver.class";
 
 	/**
 	 * Return the associated {@link UDFFinder}.

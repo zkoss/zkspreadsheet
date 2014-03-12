@@ -31,8 +31,8 @@ import org.zkoss.zss.range.impl.imexp.ExcelExportFactory.Type;
  */
 public class SExporters {
 	
-	private static final Log logger = Log.lookup(SExporters.class.getName());
-	static private HashMap<String,SExporterFactory> factories = new LinkedHashMap<String, SExporterFactory>();
+	private static final Log _logger = Log.lookup(SExporters.class.getName());
+	static private HashMap<String,SExporterFactory> _factories = new LinkedHashMap<String, SExporterFactory>();
 	
 	static{
 		//default registration
@@ -50,7 +50,7 @@ public class SExporters {
 					register(keyValue[0], (SExporterFactory)Class.forName(keyValue[1]).newInstance());
 				}
 			} catch(Exception e) {
-				logger.error(e.getMessage(), e);
+				_logger.error(e.getMessage(), e);
 			}
 		}
 	}
@@ -68,7 +68,7 @@ public class SExporters {
 	 * @param name the exporter name
 	 */
 	static final synchronized public SExporter getExporter(String name){
-		SExporterFactory factory = factories.get(name);
+		SExporterFactory factory = _factories.get(name);
 		if(factory!=null){
 			return factory.createExporter();
 		}
@@ -82,6 +82,6 @@ public class SExporters {
 	 * @param factory the exporter factory
 	 */
 	static final synchronized public void register(String name,SExporterFactory factory){
-		factories.put(name, factory);
+		_factories.put(name, factory);
 	}
 }

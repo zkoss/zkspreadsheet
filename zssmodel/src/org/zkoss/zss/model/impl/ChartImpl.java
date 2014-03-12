@@ -29,85 +29,85 @@ import org.zkoss.zss.model.impl.chart.UnsupportedChartDataImpl;
  */
 public class ChartImpl extends AbstractChartAdv {
 	private static final long serialVersionUID = 1L;
-	String id;
-	ChartType type;
-	ViewAnchor anchor;
-	ChartDataAdv data;
-	String title;
-	String xAxisTitle;
-	String yAxisTitle;
-	AbstractSheetAdv sheet;
+	private String _id;
+	private ChartType _type;
+	private ViewAnchor _anchor;
+	private ChartDataAdv _data;
+	private String _title;
+	private String _xAxisTitle;
+	private String _yAxisTitle;
+	private AbstractSheetAdv _sheet;
 	
-	ChartLegendPosition legendPosition;
-	ChartGrouping grouping;
-	BarDirection direction;
+	private ChartLegendPosition _legendPosition;
+	private ChartGrouping _grouping;
+	private BarDirection _direction;
 	
-	boolean threeD;
+	private boolean _ThreeD;
 	
 	public ChartImpl(AbstractSheetAdv sheet,String id,ChartType type,ViewAnchor anchor){
-		this.sheet = sheet;
-		this.id = id;
-		this.type = type;
-		this.anchor = anchor;
-		this.data = createChartData(type);
+		this._sheet = sheet;
+		this._id = id;
+		this._type = type;
+		this._anchor = anchor;
+		this._data = createChartData(type);
 		
 		switch(type){//default initialization
 		case BAR:
-			direction = BarDirection.HORIZONTAL;
+			_direction = BarDirection.HORIZONTAL;
 			break;
 		case COLUMN:
-			direction = BarDirection.VERTICAL;
+			_direction = BarDirection.VERTICAL;
 			break;
 		}
 	}
 	@Override
 	public SSheet getSheet(){
 		checkOrphan();
-		return sheet;
+		return _sheet;
 	}
 	@Override
 	public String getId() {
-		return id;
+		return _id;
 	}
 	@Override
 	public ViewAnchor getAnchor() {
-		return anchor;
+		return _anchor;
 	}
 	@Override
 	public void setAnchor(ViewAnchor anchor) {
-		this.anchor = anchor;		
+		this._anchor = anchor;		
 	}
 	@Override
 	public ChartType getType(){
-		return type;
+		return _type;
 	}
 	@Override
 	public SChartData getData() {
-		return data;
+		return _data;
 	}
 	@Override
 	public String getTitle() {
-		return title;
+		return _title;
 	}
 	@Override
 	public void setTitle(String title) {
-		this.title = title;
+		this._title = title;
 	}
 	@Override
 	public String getXAxisTitle() {
-		return xAxisTitle;
+		return _xAxisTitle;
 	}
 	@Override
 	public void setXAxisTitle(String xAxisTitle) {
-		this.xAxisTitle = xAxisTitle;
+		this._xAxisTitle = xAxisTitle;
 	}
 	@Override
 	public String getYAxisTitle() {
-		return yAxisTitle;
+		return _yAxisTitle;
 	}
 	@Override
 	public void setYAxisTitle(String yAxisTitle) {
-		this.yAxisTitle = yAxisTitle;
+		this._yAxisTitle = yAxisTitle;
 	}
 
 	private ChartDataAdv createChartData(ChartType type){
@@ -121,7 +121,7 @@ public class ChartImpl extends AbstractChartAdv {
 		case SCATTER://xy , reuse category
 		case BUBBLE://xyz , reuse category
 		case STOCK://stock, reuse category			
-			return new GeneralChartDataImpl(this,id+"-data");
+			return new GeneralChartDataImpl(this,_id+"-data");
 			
 		//not supported	
 		case OF_PIE:
@@ -138,44 +138,44 @@ public class ChartImpl extends AbstractChartAdv {
 		
 		((ChartDataAdv)getData()).destroy();
 		
-		sheet = null;
+		_sheet = null;
 	}
 	@Override
 	public void checkOrphan() {
-		if (sheet == null) {
+		if (_sheet == null) {
 			throw new IllegalStateException("doesn't connect to parent");
 		}
 	}
 	@Override
 	public void setLegendPosition(ChartLegendPosition pos) {
-		this.legendPosition = pos;
+		this._legendPosition = pos;
 	}
 	@Override
 	public ChartLegendPosition getLegendPosition() {
-		return legendPosition;
+		return _legendPosition;
 	}
 	@Override
 	public void setGrouping(ChartGrouping grouping) {
-		this.grouping = grouping;
+		this._grouping = grouping;
 	}
 	@Override
 	public ChartGrouping getGrouping() {
-		return grouping;
+		return _grouping;
 	}
 	@Override
 	public BarDirection getBarDirection() {
-		return direction;
+		return _direction;
 	}
 	public void setBarDirection(BarDirection direction){
-		this.direction = direction;
+		this._direction = direction;
 	}
 	@Override
 	public boolean isThreeD() {
-		return threeD;
+		return _ThreeD;
 	}
 	@Override
 	public void setThreeD(boolean threeD) {
-		this.threeD = threeD;
+		this._ThreeD = threeD;
 	}
 	
 }

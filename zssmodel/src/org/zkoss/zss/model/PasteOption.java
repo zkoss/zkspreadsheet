@@ -26,32 +26,32 @@ public class PasteOption {
 		NONE/* = BookHelper.PASTEOP_NONE;*/
 	}
 	
-	boolean skipBlank = false;
-	boolean cut = false;
-	boolean transpose = false;
+	private boolean _skipBlank = false;
+	private boolean _cut = false;
+	private boolean _transpose = false;
 	
-	PasteType pasteType = PasteType.ALL;
-	PasteOperation pasteOperation = PasteOperation.NONE;
+	private PasteType _pasteType = PasteType.ALL;
+	private PasteOperation _pasteOperation = PasteOperation.NONE;
 	
 	public boolean isSkipBlank() {
-		return skipBlank;
+		return _skipBlank;
 	}
 	public void setSkipBlank(boolean skipBlank) {
-		this.skipBlank = skipBlank;
+		this._skipBlank = skipBlank;
 	}
 	public PasteType getPasteType() {
-		return pasteType;
+		return _pasteType;
 	}
 	public void setPasteType(PasteType pasteType) {
 		Validations.argNotNull(pasteType);
-		this.pasteType = pasteType;
+		this._pasteType = pasteType;
 	}
 	public PasteOperation getPasteOperation() {
-		return pasteOperation;
+		return _pasteOperation;
 	}
 	public void setPasteOperation(PasteOperation pasteOperation) {
 		Validations.argNotNull(pasteOperation);
-		this.pasteOperation = pasteOperation;
+		this._pasteOperation = pasteOperation;
 	}
 	
 	/** 
@@ -59,20 +59,20 @@ public class PasteOption {
 	 * @return
 	 */
 	public boolean isCut() {
-		return cut;
+		return _cut;
 	}
 	/**
 	 * Set true to enable cutting source region after paste
 	 * @param cut
 	 */
 	public void setCut(boolean cut) {
-		this.cut = cut;
+		this._cut = cut;
 	}
 	public boolean isTranspose() {
-		return transpose;
+		return _transpose;
 	}
 	public void setTranspose(boolean transpose) {
-		this.transpose = transpose;
+		this._transpose = transpose;
 	}
 	
 	

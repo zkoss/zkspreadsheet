@@ -1,3 +1,19 @@
+/*
+
+{{IS_NOTE
+	Purpose:
+		
+	Description:
+		
+	History:
+		
+}}IS_NOTE
+
+Copyright (C) 2013 Potix Corporation. All Rights Reserved.
+
+{{IS_RIGHT
+}}IS_RIGHT
+*/
 package org.zkoss.zss.model.impl.sys;
 
 import java.util.Locale;
@@ -8,10 +24,14 @@ import org.zkoss.zss.model.SCell.CellType;
 import org.zkoss.zss.model.sys.input.InputEngine;
 import org.zkoss.zss.model.sys.input.InputParseContext;
 import org.zkoss.zss.model.sys.input.InputResult;
-
+/**
+ * 
+ * @author Hawk
+ * @since 3.5.0
+ */
 public class InputEngineImpl implements InputEngine{
 
-	static private DateInputMask dateInputMask = new DateInputMask();
+	static private DateInputMask _dateInputMask = new DateInputMask();
 
 	@Override
 	public InputResult parseInput(String editText, String formatPattern, InputParseContext context) {
@@ -87,7 +107,7 @@ public class InputEngineImpl implements InputEngine{
 	}
 
 	private Object[] parseEditTextToDateOrString(String txt, Locale locale) {
-		final Object[] results = dateInputMask.parseDateInput(txt, locale); 
+		final Object[] results = _dateInputMask.parseDateInput(txt, locale); 
 		if (results[0] instanceof String) { 
 			return new Object[] {CellType.STRING, results[0]}; 
 		} else { // result[0] is Date

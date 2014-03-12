@@ -1,3 +1,19 @@
+/*
+
+{{IS_NOTE
+	Purpose:
+		
+	Description:
+		
+	History:
+		
+}}IS_NOTE
+
+Copyright (C) 2013 Potix Corporation. All Rights Reserved.
+
+{{IS_RIGHT
+}}IS_RIGHT
+*/
 package org.zkoss.zss.model.impl;
 
 import java.util.ArrayList;
@@ -6,36 +22,40 @@ import java.util.List;
 
 import org.zkoss.zss.model.SFont;
 import org.zkoss.zss.model.SRichText;
-
+/**
+ * 
+ * @author Dennis
+ * @since 3.5.0
+ */
 public class ReadOnlyRichTextImpl extends AbstractRichTextAdv {
 
 	private static final long serialVersionUID = 1L;
-	private List<Segment> segments;
+	private List<Segment> _segments;
 	
-	private SRichText richText;
+	private SRichText _richText;
 
 	public ReadOnlyRichTextImpl(String text, SFont font) {
-		segments = new ArrayList<Segment>(1);
-		segments.add(new SegmentImpl(text,font));
+		_segments = new ArrayList<Segment>(1);
+		_segments.add(new SegmentImpl(text,font));
 	}
 	public ReadOnlyRichTextImpl(SRichText richText) {
-		this.richText = richText;
+		this._richText = richText;
 	}
 
 	@Override
 	public String getText() {
-		return richText==null?segments.get(0).getText():richText.getText();
+		return _richText==null?_segments.get(0).getText():_richText.getText();
 	}
 
 	@Override
 	public SFont getFont() {
-		return richText==null?segments.get(0).getFont():richText.getFont();
+		return _richText==null?_segments.get(0).getFont():_richText.getFont();
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Segment> getSegments() {
-		return richText==null?Collections.unmodifiableList(segments):richText.getSegments();
+		return _richText==null?Collections.unmodifiableList(_segments):_richText.getSegments();
 	}
 
 	@Override
@@ -49,7 +69,7 @@ public class ReadOnlyRichTextImpl extends AbstractRichTextAdv {
 	}
 	@Override
 	public AbstractRichTextAdv clone() {
-		return richText==null?new ReadOnlyRichTextImpl(segments.get(0).getText(),segments.get(0).getFont()):new ReadOnlyRichTextImpl(richText);
+		return _richText==null?new ReadOnlyRichTextImpl(_segments.get(0).getText(),_segments.get(0).getFont()):new ReadOnlyRichTextImpl(_richText);
 	}
 
 }

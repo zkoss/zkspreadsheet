@@ -7,22 +7,22 @@ import org.zkoss.zss.model.SRichText.Segment;
 
 class SegmentImpl implements Segment, Serializable {
 	private static final long serialVersionUID = 1L;
-	private String text;
-	private SFont font;
+	private String _text;
+	private SFont _font;
 
 	SegmentImpl(String text, SFont font) {
-		this.text = text;
-		this.font = font;
+		this._text = text;
+		this._font = font;
 	}
 
 	@Override
 	public String getText() {
-		return text;
+		return _text;
 	}
 
 	@Override
 	public SFont getFont() {
-		return font;
+		return _font;
 	}
 
 }

@@ -37,26 +37,26 @@ import org.zkoss.zss.model.sys.dependency.DependencyTable;
 public class BookSeriesImpl extends AbstractBookSeriesAdv {
 	private static final long serialVersionUID = 1L;
 	
-	final private HashMap<String,AbstractBookAdv> books;
+	final private HashMap<String,AbstractBookAdv> _books;
 	
-	final private DependencyTable dependencyTable;
+	final private DependencyTable _dependencyTable;
 	
-	final private ReadWriteLock lock = new ReentrantReadWriteLock();
+	final private ReadWriteLock _lock = new ReentrantReadWriteLock();
 	
-	private transient Map<String, Object> attributes;
+	private Map<String, Object> _attributes;
 
 	public BookSeriesImpl(AbstractBookAdv... books){
-		this.books = new LinkedHashMap<String, AbstractBookAdv>(1);
-		dependencyTable = EngineFactory.getInstance().createDependencyTable();
-		((DependencyTableAdv)dependencyTable).setBookSeries(this);
+		this._books = new LinkedHashMap<String, AbstractBookAdv>(1);
+		_dependencyTable = EngineFactory.getInstance().createDependencyTable();
+		((DependencyTableAdv)_dependencyTable).setBookSeries(this);
 		for(AbstractBookAdv book:books){
-			this.books.put(book.getBookName(), book);
+			this._books.put(book.getBookName(), book);
 			
 			if(book.getBookSeries().isAutoFormulaCacheClean()){//if any book auto
-				this.autoFormulaCacheClean = true;
+				this.setAutoFormulaCacheClean(true);
 			}
 			
-			((DependencyTableAdv) dependencyTable)
+			((DependencyTableAdv) _dependencyTable)
 					.merge((DependencyTableAdv) ((AbstractBookSeriesAdv) book
 							.getBookSeries()).getDependencyTable());
 			book.setBookSeries(this);
@@ -64,37 +64,37 @@ public class BookSeriesImpl extends AbstractBookSeriesAdv {
 	}
 	@Override
 	public SBook getBook(String name) {
-		return books.get(name);
+		return _books.get(name);
 	}
 
 	@Override
 	public DependencyTable getDependencyTable() {
-		return dependencyTable;
+		return _dependencyTable;
 	}
 	@Override
 	public ReadWriteLock getLock() {
-		return lock;
+		return _lock;
 	}
 	@Override
 	public List<SBook> getBooks() {
-		return Collections.unmodifiableList(new ArrayList<SBook>(books.values()));
+		return Collections.unmodifiableList(new ArrayList<SBook>(_books.values()));
 	}
 	
 	@Override
 	public Object getAttribute(String name) {
-		return attributes==null?null:attributes.get(name);
+		return _attributes==null?null:_attributes.get(name);
 	}
 
 	@Override
 	public Object setAttribute(String name, Object value) {
-		if(attributes==null){
-			attributes = new HashMap<String, Object>();
+		if(_attributes==null){
+			_attributes = new HashMap<String, Object>();
 		}
-		return attributes.put(name, value);
+		return _attributes.put(name, value);
 	}
 
 	@Override
 	public Map<String, Object> getAttributes() {
-		return attributes==null?Collections.EMPTY_MAP:Collections.unmodifiableMap(attributes);
+		return _attributes==null?Collections.EMPTY_MAP:Collections.unmodifiableMap(_attributes);
 	}
 }

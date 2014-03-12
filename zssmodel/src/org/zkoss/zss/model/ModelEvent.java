@@ -21,19 +21,19 @@ import java.util.Map;
 
 /**
  * @author dennis
- *
+ * @since 3.5.0
  */
 public class ModelEvent {
-private String name;
+	private String _name;
 	
 	private Map<String,Object> data;
 	
 	public ModelEvent(String name){
-		this.name = name;
+		this._name = name;
 	}
 	
 	public ModelEvent(String name,Map<String,Object> data){
-		this.name = name;
+		this._name = name;
 		this.data = new HashMap<String, Object>(data);
 	}
 	
@@ -42,7 +42,7 @@ private String name;
 	}
 
 	public String getName() {
-		return name;
+		return _name;
 	}
 
 	public SBook getBook() {

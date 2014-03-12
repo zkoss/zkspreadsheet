@@ -26,6 +26,10 @@ import org.zkoss.zss.model.SFont;
  */
 public abstract class AbstractFontAdv implements SFont,Serializable{
 	private static final long serialVersionUID = 1L;
+	
+	/**
+	 * gets the string key of this font, the key should combine all the style value in short string as possible
+	 */
 	abstract String getStyleKey();
 
 }

@@ -24,67 +24,67 @@ import org.zkoss.zss.model.SRichText;
  */
 public class CommentImpl extends AbstractCommentAdv {
 	private static final long serialVersionUID = 1L;
-	private Object text;
-	private String author;
-	private boolean visible = true;
+	private Object _text;
+	private String _author;
+	private boolean _visible = true;
 	
 	@Override
 	public String getText() {
-		return text instanceof String?(String)text:null;
+		return _text instanceof String?(String)_text:null;
 	}
 
 	@Override
 	public void setText(String text) {
-		this.text = text;
+		this._text = text;
 	}
 
 	@Override
 	public void setRichText(SRichText text) {
-		this.text = text;
+		this._text = text;
 	}
 
 	@Override
 	public SRichText setupRichText() {
-		if(this.text instanceof SRichText){
-			return (SRichText)this.text;
+		if(this._text instanceof SRichText){
+			return (SRichText)this._text;
 		}
-		this.text = new RichTextImpl();
-		return (SRichText)this.text;
+		this._text = new RichTextImpl();
+		return (SRichText)this._text;
 	}
 
 	@Override
 	public SRichText getRichText() {
-		return text instanceof SRichText?(SRichText)text:null;
+		return _text instanceof SRichText?(SRichText)_text:null;
 	}
 
 	@Override
 	public boolean isVisible() {
-		return visible;
+		return _visible;
 	}
 	@Override
 	public void setVisible(boolean visible) {
-		this.visible = visible;
+		this._visible = visible;
 	}
 
 	@Override
 	public String getAuthor() {
-		return author;
+		return _author;
 	}
 
 	@Override
 	public void setAuthor(String author) {
-		this.author = author;
+		this._author = author;
 	}
 
 	@Override
 	public AbstractCommentAdv clone() {
 		CommentImpl comment = new CommentImpl();
-		comment.setAuthor(author);
-		comment.setVisible(visible);
-		if(this.text instanceof SRichText){
-			comment.setRichText(((AbstractRichTextAdv)text).clone());
-		}else if(this.text instanceof String){
-			comment.setText((String)text);
+		comment.setAuthor(_author);
+		comment.setVisible(_visible);
+		if(this._text instanceof SRichText){
+			comment.setRichText(((AbstractRichTextAdv)_text).clone());
+		}else if(this._text instanceof String){
+			comment.setText((String)_text);
 		}
 		
 		
@@ -93,7 +93,7 @@ public class CommentImpl extends AbstractCommentAdv {
 
 	@Override
 	public boolean isRichText() {
-		return text instanceof SRichText;
+		return _text instanceof SRichText;
 	}
 
 }

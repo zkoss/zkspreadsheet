@@ -1,5 +1,6 @@
 /*
 
+
 {{IS_NOTE
 	Purpose:
 		
@@ -23,75 +24,79 @@ import java.util.TreeSet;
 import org.zkoss.zss.model.SFooter;
 import org.zkoss.zss.model.SHeader;
 import org.zkoss.zss.model.SSheetViewInfo;
-
+/**
+ * 
+ * @author Dennis
+ * @since 3.5.0
+ */
 public class SheetViewInfoImpl implements SSheetViewInfo, Serializable {
 	private static final long serialVersionUID = 1L;
-	private boolean displayGridline = true;
+	private boolean _displayGridline = true;
 	
-	private int rowFreeze = 0;
-	private int columnFreeze = 0;
+	private int _rowFreeze = 0;
+	private int _columnFreeze = 0;
 
-	private SHeader header;
+	private SHeader _header;
 	
-	private SFooter footer;
+	private SFooter _footer;
 	
-	private TreeSet<Integer> rowBreaks;
-	private TreeSet<Integer> columnBreaks;
+	private TreeSet<Integer> _rowBreaks;
+	private TreeSet<Integer> _columnBreaks;
 	
 	
 	@Override
 	public boolean isDisplayGridline() {
-		return displayGridline;
+		return _displayGridline;
 	}
 
 	@Override
 	public void setDisplayGridline(boolean enable) {
-		displayGridline = enable;
+		_displayGridline = enable;
 	}
 
 	@Override
 	public int getNumOfRowFreeze() {
-		return rowFreeze;
+		return _rowFreeze;
 	}
 
 	@Override
 	public int getNumOfColumnFreeze() {
-		return columnFreeze;
+		return _columnFreeze;
 	}
 
 	@Override
 	public void setNumOfRowFreeze(int num) {
-		rowFreeze = num;
+		_rowFreeze = num;
 	}
 
 	@Override
 	public void setNumOfColumnFreeze(int num) {
-		columnFreeze = num;
+		_columnFreeze = num;
 	}
 
 	@Override
 	public SHeader getHeader() {
-		if(header==null){
-			header = new HeaderFooterImpl();
+		if(_header==null){
+			_header = new HeaderFooterImpl();
 		}
-		return header;
+		return _header;
 	}
 
 	@Override
 	public SFooter getFooter() {
-		if(footer==null){
-			footer = new HeaderFooterImpl();
+		if(_footer==null){
+			_footer = new HeaderFooterImpl();
 		}
-		return footer;
+		return _footer;
 	}
 
 	@Override
 	public int[] getRowBreaks() {
-		if(rowBreaks==null){
+		if(_rowBreaks==null){
 			return new int[0];
 		}
-		int[] arr = new int[rowBreaks.size()];
-		Iterator<Integer> iter = rowBreaks.iterator();
+		int[] arr = new int[_rowBreaks.size()];
+		Iterator<Integer> iter = _rowBreaks.iterator();
 		for(int i=0;i<arr.length;i++){
 			arr[i] = iter.next();
 		}
@@ -100,38 +105,38 @@ public class SheetViewInfoImpl implements SSheetViewInfo, Serializable {
 
 	@Override
 	public void setRowBreaks(int[] breaks) {
-		if(rowBreaks!=null)
-			rowBreaks.clear();
+		if(_rowBreaks!=null)
+			_rowBreaks.clear();
 		else
-			rowBreaks = new TreeSet<Integer>();
+			_rowBreaks = new TreeSet<Integer>();
 		if(breaks!=null){
 			for(int i:breaks){
-				rowBreaks.add(i);
+				_rowBreaks.add(i);
 			}
 		}
 	}
 	
 	public void addRowBreak(int row){
-		if(rowBreaks==null)
-			rowBreaks = new TreeSet<Integer>();
+		if(_rowBreaks==null)
+			_rowBreaks = new TreeSet<Integer>();
 		
-		rowBreaks.add(row);
+		_rowBreaks.add(row);
 	}
 	
 	public void addColumnBreak(int column){
-		if(columnBreaks==null)
-			columnBreaks = new TreeSet<Integer>();
+		if(_columnBreaks==null)
+			_columnBreaks = new TreeSet<Integer>();
 		
-		columnBreaks.add(column);
+		_columnBreaks.add(column);
 	}
 
 	@Override
 	public int[] getColumnBreaks() {
-		if(columnBreaks==null){
+		if(_columnBreaks==null){
 			return new int[0];
 		}
-		int[] arr = new int[columnBreaks.size()];
-		Iterator<Integer> iter = columnBreaks.iterator();
+		int[] arr = new int[_columnBreaks.size()];
+		Iterator<Integer> iter = _columnBreaks.iterator();
 		for(int i=0;i<arr.length;i++){
 			arr[i] = iter.next();
 		}
@@ -140,13 +145,13 @@ public class SheetViewInfoImpl implements SSheetViewInfo, Serializable {
 
 	@Override
 	public void setColumnBreaks(int[] breaks) {
-		if(rowBreaks!=null)
-			columnBreaks.clear();
+		if(_rowBreaks!=null)
+			_columnBreaks.clear();
 		else
-			columnBreaks = new TreeSet<Integer>();
+			_columnBreaks = new TreeSet<Integer>();
 		if(breaks!=null){
 			for(int i:breaks){
-				columnBreaks.add(i);
+				_columnBreaks.add(i);
 			}
 		}
 	}

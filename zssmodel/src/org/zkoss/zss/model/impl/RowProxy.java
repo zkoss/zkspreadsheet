@@ -31,17 +31,17 @@ import org.zkoss.zss.model.util.Validations;
 class RowProxy extends AbstractRowAdv{
 	private static final long serialVersionUID = 1L;
 	
-	private final WeakReference<AbstractSheetAdv> sheetRef;
-	private final int index;
-	AbstractRowAdv proxy;
+	private final WeakReference<AbstractSheetAdv> _sheetRef;
+	private final int _index;
+	AbstractRowAdv _proxy;
 	
 	public RowProxy(AbstractSheetAdv sheet, int index) {
-		this.sheetRef = new WeakReference(sheet);
-		this.index = index;
+		this._sheetRef = new WeakReference(sheet);
+		this._index = index;
 	}
 	@Override
 	public SSheet getSheet(){
-		AbstractSheetAdv sheet = sheetRef.get();
+		AbstractSheetAdv sheet = _sheetRef.get();
 		if(sheet==null){
 			throw new IllegalStateException("proxy target lost, you should't keep this instance");
 		}
@@ -49,32 +49,32 @@ class RowProxy extends AbstractRowAdv{
 	}
 	
 	protected void loadProxy(){
-		if(proxy==null){
-			proxy = (AbstractRowAdv)((AbstractSheetAdv)getSheet()).getRow(index,false);
+		if(_proxy==null){
+			_proxy = (AbstractRowAdv)((AbstractSheetAdv)getSheet()).getRow(_index,false);
 		}
 	}
 	
 	public int getIndex() {
 		loadProxy();
-		return proxy==null?index:proxy.getIndex();
+		return _proxy==null?_index:_proxy.getIndex();
 	}
 
 
 	public boolean isNull() {
 		loadProxy();
-		return proxy==null?true:proxy.isNull();
+		return _proxy==null?true:_proxy.isNull();
 	}
 
 
 	public int getStartCellIndex() {
 		loadProxy();
-		return proxy==null?-1:proxy.getStartCellIndex();
+		return _proxy==null?-1:_proxy.getStartCellIndex();
 	}
 
 
 	public int getEndCellIndex() {
 		loadProxy();
-		return proxy==null?-1:proxy.getEndCellIndex();
+		return _proxy==null?-1:_proxy.getEndCellIndex();
 	}
 	
 	public SCellStyle getCellStyle() {
@@ -83,8 +83,8 @@ class RowProxy extends AbstractRowAdv{
 
 	public SCellStyle getCellStyle(boolean local) {
 		loadProxy();
-		if(proxy!=null){
-			return proxy.getCellStyle(local);
+		if(_proxy!=null){
+			return _proxy.getCellStyle(local);
 		}
 		return local?null:getSheet().getBook().getDefaultCellStyle();
 	}
@@ -92,10 +92,10 @@ class RowProxy extends AbstractRowAdv{
 	public void setCellStyle(SCellStyle cellStyle) {
 		Validations.argNotNull(cellStyle);
 		loadProxy();
-		if(proxy==null){
-			proxy = (AbstractRowAdv)((AbstractSheetAdv)getSheet()).getOrCreateRow(index);
+		if(_proxy==null){
+			_proxy = (AbstractRowAdv)((AbstractSheetAdv)getSheet()).getOrCreateRow(_index);
 		}
-		proxy.setCellStyle(cellStyle);
+		_proxy.setCellStyle(cellStyle);
 	}
 	
 	@Override
@@ -131,8 +131,8 @@ class RowProxy extends AbstractRowAdv{
 	@Override
 	public int getHeight() {
 		loadProxy();
-		if (proxy != null) {
-			return proxy.getHeight();
+		if (_proxy != null) {
+			return _proxy.getHeight();
 		}
 		return getSheet().getDefaultRowHeight();
 	}
@@ -140,8 +140,8 @@ class RowProxy extends AbstractRowAdv{
 	@Override
 	public boolean isHidden() {
 		loadProxy();
-		if (proxy != null) {
-			return proxy.isHidden();
+		if (_proxy != null) {
+			return _proxy.isHidden();
 		}
 		return false;
 	}
@@ -149,39 +149,39 @@ class RowProxy extends AbstractRowAdv{
 	@Override
 	public void setHeight(int width) {
 		loadProxy();
-		if (proxy == null) {
-			proxy = (AbstractRowAdv)((AbstractSheetAdv)getSheet()).getOrCreateRow(index);
+		if (_proxy == null) {
+			_proxy = (AbstractRowAdv)((AbstractSheetAdv)getSheet()).getOrCreateRow(_index);
 		}
-		proxy.setHeight(width);
+		_proxy.setHeight(width);
 	}
 
 	@Override
 	public void setHidden(boolean hidden) {
 		loadProxy();
-		if (proxy == null) {
-			proxy = (AbstractRowAdv)((AbstractSheetAdv)getSheet()).getOrCreateRow(index);
+		if (_proxy == null) {
+			_proxy = (AbstractRowAdv)((AbstractSheetAdv)getSheet()).getOrCreateRow(_index);
 		}
-		proxy.setHidden(hidden);
+		_proxy.setHidden(hidden);
 	}
 	
 	@Override
 	public boolean isCustomHeight() {
 		loadProxy();
-		if (proxy != null) {
-			return proxy.isCustomHeight();
+		if (_proxy != null) {
+			return _proxy.isCustomHeight();
 		}
 		return false;
 	}
 	@Override
 	public void setCustomHeight(boolean custom) {
 		loadProxy();
-		proxy.setCustomHeight(custom);
+		_proxy.setCustomHeight(custom);
 	}
 	@Override
 	public Iterator<AbstractCellAdv> getCellIterator(boolean reverse) {
 		loadProxy();
-		if (proxy != null) {
-			return proxy.getCellIterator(reverse);
+		if (_proxy != null) {
+			return _proxy.getCellIterator(reverse);
 		}
 		return Collections.EMPTY_LIST.iterator();
 	}

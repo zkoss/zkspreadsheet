@@ -28,14 +28,14 @@ import org.zkoss.zss.model.sys.dependency.Ref;
 public class RefImpl implements Ref, Serializable {
 
 	private static final long serialVersionUID = 1L;
-	final private RefType type;
+	final private RefType _type;
 	final protected String bookName;
 	final protected String sheetName;
 	final protected String lastSheetName;
-	final private int row;
-	final private int column;
-	final private int lastRow;
-	final private int lastColumn;
+	final private int _row;
+	final private int _column;
+	final private int _lastRow;
+	final private int _lastColumn;
 
 	public RefImpl(String bookName, String sheetName, int row, int column,
 			int lastRow, int lastColumn) {
@@ -78,19 +78,19 @@ public class RefImpl implements Ref, Serializable {
 
 	protected RefImpl(RefType type, String bookName, String sheetName, String lastSheetName,
 			int row, int column, int lastRow, int lastColumn) {
-		this.type = type;
+		this._type = type;
 		this.bookName = bookName;
 		this.sheetName = sheetName;
 		this.lastSheetName = lastSheetName;
-		this.row = row;
-		this.column = column;
-		this.lastRow = lastRow;
-		this.lastColumn = lastColumn;
+		this._row = row;
+		this._column = column;
+		this._lastRow = lastRow;
+		this._lastColumn = lastColumn;
 	}
 
 	@Override
 	public RefType getType() {
-		return type;
+		return _type;
 	}
 
 	@Override
@@ -110,22 +110,22 @@ public class RefImpl implements Ref, Serializable {
 
 	@Override
 	public int getRow() {
-		return row;
+		return _row;
 	}
 
 	@Override
 	public int getColumn() {
-		return column;
+		return _column;
 	}
 
 	@Override
 	public int getLastRow() {
-		return lastRow;
+		return _lastRow;
 	}
 
 	@Override
 	public int getLastColumn() {
-		return lastColumn;
+		return _lastColumn;
 	}
 
 	@Override
@@ -134,15 +134,15 @@ public class RefImpl implements Ref, Serializable {
 		int result = 1;
 		result = prime * result
 				+ ((bookName == null) ? 0 : bookName.hashCode());
-		result = prime * result + column;
-		result = prime * result + lastColumn;
-		result = prime * result + lastRow;
-		result = prime * result + row;
+		result = prime * result + _column;
+		result = prime * result + _lastColumn;
+		result = prime * result + _lastRow;
+		result = prime * result + _row;
 		result = prime * result
 				+ ((sheetName == null) ? 0 : sheetName.hashCode());
 		result = prime * result
 				+ ((lastSheetName == null) ? 0 : lastSheetName.hashCode());
-		result = prime * result + ((type == null) ? 0 : type.hashCode());
+		result = prime * result + ((_type == null) ? 0 : _type.hashCode());
 		return result;
 	}
 
@@ -161,13 +161,13 @@ public class RefImpl implements Ref, Serializable {
 				return false;
 		} else if (!bookName.equals(other.bookName))
 			return false;
-		if (column != other.column)
+		if (_column != other._column)
 			return false;
-		if (lastColumn != other.lastColumn)
+		if (_lastColumn != other._lastColumn)
 			return false;
-		if (lastRow != other.lastRow)
+		if (_lastRow != other._lastRow)
 			return false;
-		if (row != other.row)
+		if (_row != other._row)
 			return false;
 		if (sheetName == null) {
 			if (other.sheetName != null)
@@ -179,7 +179,7 @@ public class RefImpl implements Ref, Serializable {
 				return false;
 		} else if (!lastSheetName.equals(other.lastSheetName))
 			return false;
-		if (type != other.type)
+		if (_type != other._type)
 			return false;
 		return true;
 	}
@@ -187,11 +187,11 @@ public class RefImpl implements Ref, Serializable {
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		switch (type) {
+		switch (_type) {
 		case AREA:
-			sb.insert(0,":"+ new CellRegion(lastRow, lastColumn).getReferenceString());
+			sb.insert(0,":"+ new CellRegion(_lastRow, _lastColumn).getReferenceString());
 		case CELL:
-			sb.insert(0, new CellRegion(row, column).getReferenceString());
+			sb.insert(0, new CellRegion(_row, _column).getReferenceString());
 		case SHEET:
 			if(lastSheetName != null) {
 				sb.insert(0, sheetName + ":" + lastSheetName + "!");

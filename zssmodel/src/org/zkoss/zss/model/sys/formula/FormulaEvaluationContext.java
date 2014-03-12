@@ -30,11 +30,11 @@ import org.zkoss.zss.model.sys.AbstractContext;
  */
 public class FormulaEvaluationContext extends AbstractContext {
 
-	private final SBook book;
-	private final SSheet sheet;
-	private final SCell cell;
-	private FunctionMapper functionMapper;
-	private VariableResolver vairableResolver;
+	private final SBook _book;
+	private final SSheet _sheet;
+	private final SCell _cell;
+	private FunctionMapper _functionMapper;
+	private VariableResolver _vairableResolver;
 
 	public FormulaEvaluationContext(SCell cell) {
 		this(cell.getSheet().getBook(), cell.getSheet(), cell);
@@ -49,34 +49,34 @@ public class FormulaEvaluationContext extends AbstractContext {
 	}
 
 	private FormulaEvaluationContext(SBook book, SSheet sheet, SCell cell) {
-		this.book = book;
-		this.sheet = sheet;
-		this.cell = cell;
+		this._book = book;
+		this._sheet = sheet;
+		this._cell = cell;
 		EvaluationContributor contributor = book instanceof EvaluationContributorContainer? 
 				((EvaluationContributorContainer)book).getEvaluationContributor():null;
 		if(contributor!=null){
-			functionMapper = contributor.getFunctionMaper(book);
-			vairableResolver = contributor.getVariableResolver(book);
+			_functionMapper = contributor.getFunctionMaper(book);
+			_vairableResolver = contributor.getVariableResolver(book);
 		}
 	}
 
 	public SBook getBook() {
-		return book;
+		return _book;
 	}
 
 	public SSheet getSheet() {
-		return sheet;
+		return _sheet;
 	}
 
 	public SCell getCell() {
-		return cell;
+		return _cell;
 	}
 	
 	public FunctionMapper getFunctionMapper() {
-		return functionMapper;
+		return _functionMapper;
 	}
 	
 	public VariableResolver getVariableResolver() {
-		return vairableResolver;
+		return _vairableResolver;
 	}
 }

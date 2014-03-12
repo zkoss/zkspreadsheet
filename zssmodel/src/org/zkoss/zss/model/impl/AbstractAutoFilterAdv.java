@@ -1,3 +1,19 @@
+/*
+
+{{IS_NOTE
+	Purpose:
+		
+	Description:
+		
+	History:
+		
+}}IS_NOTE
+
+Copyright (C) 2013 Potix Corporation. All Rights Reserved.
+
+{{IS_RIGHT
+}}IS_RIGHT
+*/
 package org.zkoss.zss.model.impl;
 
 import java.io.Serializable;
@@ -9,51 +25,55 @@ import java.util.Set;
 
 import org.zkoss.zss.model.SAutoFilter;
 
-
+/**
+ * 
+ * @author Dennis
+ * @since 3.5.0
+ */
 public abstract class AbstractAutoFilterAdv implements SAutoFilter,Serializable{
 	private static final long serialVersionUID = 1L;
 
 	public static class FilterColumnImpl implements NFilterColumn, Serializable{
 		private static final long serialVersionUID = 1L;
-		int index;
-		List<String> filters;
-		Set criteria1;
-		Set criteria2;
-		Boolean showButton;
-		FilterOp op = FilterOp.AND;
+		private int _index;
+		private List<String> _filters;
+		private Set _criteria1;
+		private Set _criteria2;
+		private Boolean _showButton;
+		private FilterOp _op = FilterOp.AND;
 		
 		public FilterColumnImpl(int index){
-			this.index = index;
+			this._index = index;
 		}
 		
 		@Override
 		public int getIndex() {
-			return index;
+			return _index;
 		}
 
 		@Override
 		public List<String> getFilters() {
-			return filters==null?Collections.EMPTY_LIST:Collections.unmodifiableList(filters);
+			return _filters==null?Collections.EMPTY_LIST:Collections.unmodifiableList(_filters);
 		}
 
 		@Override
 		public Set getCriteria1() {
-			return criteria1==null?Collections.EMPTY_SET:Collections.unmodifiableSet(criteria1);
+			return _criteria1==null?Collections.EMPTY_SET:Collections.unmodifiableSet(_criteria1);
 		}
 
 		@Override
 		public Set getCriteria2() {
-			return criteria2==null?Collections.EMPTY_SET:Collections.unmodifiableSet(criteria2);
+			return _criteria2==null?Collections.EMPTY_SET:Collections.unmodifiableSet(_criteria2);
 		}
 
 		@Override
 		public boolean isShowButton() {
-			return showButton==null?true:showButton.booleanValue();
+			return _showButton==null?true:_showButton.booleanValue();
 		}
 
 		@Override
 		public FilterOp getOperator() {
-			return op;
+			return _op;
 		}
 
 		private Set getCriteriaSet(Object criteria) {
@@ -72,10 +92,10 @@ public abstract class AbstractAutoFilterAdv implements SAutoFilter,Serializable{
 		@Override
 		public void setProperties(FilterOp filterOp, Object criteria1,
 				Object criteria2, Boolean showButton) {
-			this.op = filterOp;
-			this.criteria1 = getCriteriaSet(criteria1);
-			this.criteria2 = getCriteriaSet(criteria2);
-			boolean blank1 = this.criteria1.contains("=");
+			this._op = filterOp;
+			this._criteria1 = getCriteriaSet(criteria1);
+			this._criteria2 = getCriteriaSet(criteria2);
+			boolean blank1 = this._criteria1.contains("=");
 			if(showButton!=null){
 				showButton = showButton;
 			}
@@ -83,7 +103,7 @@ public abstract class AbstractAutoFilterAdv implements SAutoFilter,Serializable{
 			
 			
 			if (criteria1 == null) { //remove filtering
-				filters = null;
+				_filters = null;
 				return;
 			}
 			
@@ -91,15 +111,15 @@ public abstract class AbstractAutoFilterAdv implements SAutoFilter,Serializable{
 			switch(filterOp) {
 			case VALUES:
 				
-				filters =  new LinkedList<String>();
+				_filters =  new LinkedList<String>();
 				
-				for(Object obj:this.criteria1){
+				for(Object obj:this._criteria1){
 					if(obj instanceof String){
-						filters.add((String)obj);
+						_filters.add((String)obj);
 					}
 				}
-				if(filters.size()==0){
-					filters = null;
+				if(_filters.size()==0){
+					_filters = null;
 				}
 				
 //				final String[] filters = (String[]) criteria1;
