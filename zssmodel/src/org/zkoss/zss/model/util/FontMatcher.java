@@ -31,7 +31,7 @@ import org.zkoss.zss.model.SFont;
 public class FontMatcher {
 
 	
-	Map<Property,Object> criteria = new LinkedHashMap<Property, Object>();
+	Map<Property,Object> _criteria = new LinkedHashMap<Property, Object>();
 	
 	private enum Property {
 		
@@ -60,68 +60,68 @@ public class FontMatcher {
 	}
 	
 	public void setColor(String color) {
-		criteria.put(Property.Color, color);
+		_criteria.put(Property.Color, color);
 	}
 	
 	public void setName(String name) {
-		criteria.put(Property.Name, name);
+		_criteria.put(Property.Name, name);
 	}
 	
 	public void setBoldweight(SFont.Boldweight boldweight) {
-		criteria.put(Property.Boldweight, boldweight);
+		_criteria.put(Property.Boldweight, boldweight);
 	}
 	
 	public void setHeightPoints(int height) {
-		criteria.put(Property.HeightPoints, height);
+		_criteria.put(Property.HeightPoints, height);
 	}
 	
 	public void setItalic(boolean italic) {
-		criteria.put(Property.Italic, italic);
+		_criteria.put(Property.Italic, italic);
 	}
 	
 	public void setStrikeout(boolean strikeout) {
-		criteria.put(Property.Strikeout, strikeout);
+		_criteria.put(Property.Strikeout, strikeout);
 	}
 	
 	public void setTypeOffset(SFont.TypeOffset typeOffset) {
-		criteria.put(Property.TypeOffset, typeOffset);
+		_criteria.put(Property.TypeOffset, typeOffset);
 	}
 	
 	public void setUnderline(SFont.Underline underline) {
-		criteria.put(Property.Underline, underline);
+		_criteria.put(Property.Underline, underline);
 	}
 
 	//remove api
 
 	public void removeColor() {
-		criteria.remove(Property.Color);
+		_criteria.remove(Property.Color);
 	}
 	public void removeName() {
-		criteria.remove(Property.Name);
+		_criteria.remove(Property.Name);
 	}
 	public void removeBoldweight() {
-		criteria.remove(Property.Boldweight);
+		_criteria.remove(Property.Boldweight);
 	}
 	public void removeHeightPoints() {
-		criteria.remove(Property.HeightPoints);
+		_criteria.remove(Property.HeightPoints);
 	}
 	public void removeItalic() {
-		criteria.remove(Property.Italic);
+		_criteria.remove(Property.Italic);
 	}
 	public void removeStrikeout() {
-		criteria.remove(Property.Strikeout);
+		_criteria.remove(Property.Strikeout);
 	}
 	public void removeTypeOffset() {
-		criteria.remove(Property.TypeOffset);
+		_criteria.remove(Property.TypeOffset);
 	}
 	public void removeUnderline() {
-		criteria.remove(Property.Underline);
+		_criteria.remove(Property.Underline);
 	}
 
 	
 	
 	public boolean match(SFont style){
-		for(Entry<Property,Object> e:criteria.entrySet()){
+		for(Entry<Property,Object> e:_criteria.entrySet()){
 			switch(e.getKey()){
 			case Color:
 				if(!htmlColorEuqlas(e.getValue(),style.getColor().getHtmlColor())){

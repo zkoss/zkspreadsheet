@@ -25,12 +25,13 @@ import org.zkoss.poi.ss.util.CellReference;
 
 
 /**
- * A region of cells, it doesn't relates to a sheet
+ * A immutable region of cells, it doesn't relates to a sheet
  * @author dennis
  * @since 3.5.0
  */
 public class CellRegion implements Serializable {
 	private static final long serialVersionUID = 1L;
+	
 	final public int row;
 	final public int column;
 	final public int lastRow;

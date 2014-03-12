@@ -1,3 +1,19 @@
+/*
+
+{{IS_NOTE
+	Purpose:
+		
+	Description:
+		
+	History:
+		
+}}IS_NOTE
+
+Copyright (C) 2013 Potix Corporation. All Rights Reserved.
+
+{{IS_RIGHT
+}}IS_RIGHT
+*/
 package org.zkoss.zss.model;
 
 import java.io.Serializable;
@@ -5,19 +21,19 @@ import java.io.Serializable;
 import org.zkoss.poi.ss.util.AreaReference;
 import org.zkoss.poi.ss.util.CellReference;
 /**
- * Indicates a region of cells in a sheet
+ * Indicates a immutable region of cells in a sheet
  * @author Dennis
  * @since 3.5.0
  */
 public class SheetRegion implements Serializable{
 	private static final long serialVersionUID = 1L;
 
-	final SSheet sheet;
-	final CellRegion region;
+	private final SSheet _sheet;
+	private final CellRegion _region;
 	
 	public SheetRegion(SSheet sheet,CellRegion region){
-		this.sheet = sheet;
-		this.region = region;
+		this._sheet = sheet;
+		this._region = region;
 	}
 	public SheetRegion(SSheet sheet,int row, int column){
 		this(sheet,new CellRegion(row,column));
@@ -46,54 +62,54 @@ public class SheetRegion implements Serializable{
 		if(lastColumn==-1){
 			lastColumn = sheet.getBook().getMaxColumnIndex();
 		}
-		this.sheet = sheet;
-		this.region = new CellRegion(Math.min(row, lastRow), Math.min(column,
+		this._sheet = sheet;
+		this._region = new CellRegion(Math.min(row, lastRow), Math.min(column,
 				lastColumn), Math.max(row, lastRow), Math.max(column,
 				lastColumn));
 	}
 	
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append(sheet.getSheetName()).append("!").append(region.toString());
+		sb.append(_sheet.getSheetName()).append("!").append(_region.toString());
 		return sb.toString();
 	}
 	
 	public SSheet getSheet(){
-		return sheet;
+		return _sheet;
 	}
 	
 	public CellRegion getRegion(){
-		return region;
+		return _region;
 	}
 	
 	public int getRow() {
-		return region.row;
+		return _region.row;
 	}
 
 	public int getColumn() {
-		return region.column;
+		return _region.column;
 	}
 
 	public int getLastRow() {
-		return region.lastRow;
+		return _region.lastRow;
 	}
 
 	public int getLastColumn() {
-		return region.lastColumn;
+		return _region.lastColumn;
 	}
 	
 	public int getRowCount(){
-		return region.getRowCount();
+		return _region.getRowCount();
 	}
 	public int getColumnCount(){
-		return region.getColumnCount();
+		return _region.getColumnCount();
 	}
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((region == null) ? 0 : region.hashCode());
-		result = prime * result + ((sheet == null) ? 0 : sheet.hashCode());
+		result = prime * result + ((_region == null) ? 0 : _region.hashCode());
+		result = prime * result + ((_sheet == null) ? 0 : _sheet.hashCode());
 		return result;
 	}
 	@Override
@@ -105,25 +121,25 @@ public class SheetRegion implements Serializable{
 		if (getClass() != obj.getClass())
 			return false;
 		SheetRegion other = (SheetRegion) obj;
-		if (region == null) {
-			if (other.region != null)
+		if (_region == null) {
+			if (other._region != null)
 				return false;
-		} else if (!region.equals(other.region))
+		} else if (!_region.equals(other._region))
 			return false;
-		if (sheet == null) {
-			if (other.sheet != null)
+		if (_sheet == null) {
+			if (other._sheet != null)
 				return false;
-		} else if (!sheet.equals(other.sheet))
+		} else if (!_sheet.equals(other._sheet))
 			return false;
 		return true;
 	}
 	
 	public String getReferenceString(){
-		if(region.isSingle()){
-			return new CellReference(sheet.getSheetName(),region.getRow(), region.getColumn(),false,false).formatAsString();
+		if(_region.isSingle()){
+			return new CellReference(_sheet.getSheetName(),_region.getRow(), _region.getColumn(),false,false).formatAsString();
 		}else{
-			return new AreaReference(new CellReference(sheet.getSheetName(),region.getRow(), region.getColumn(),false,false), 
-				new CellReference(sheet.getSheetName(), region.getLastRow(),region.getLastColumn(),false,false)).formatAsString();
+			return new AreaReference(new CellReference(_sheet.getSheetName(),_region.getRow(), _region.getColumn(),false,false), 
+				new CellReference(_sheet.getSheetName(), _region.getLastRow(),_region.getLastColumn(),false,false)).formatAsString();
 		}
 	}
 	

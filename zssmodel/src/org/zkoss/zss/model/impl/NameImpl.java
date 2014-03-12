@@ -29,42 +29,42 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
  */
 public class NameImpl extends AbstractNameAdv {
 
-	private final String id;
-	private AbstractBookAdv book;
-	private String name;
+	private final String _id;
+	private AbstractBookAdv _book;
+	private String _name;
 	
-	private String applyToSheetName;
+	private String _applyToSheetName;
 	
-	private String refersToExpr;
+	private String _refersToExpr;
 	
-	private CellRegion refersToCellRegion;
-	private String refersTopSheetName;
+	private CellRegion _refersToCellRegion;
+	private String _refersTopSheetName;
 	
-	private boolean isParsingError;
+	private boolean _isParsingError;
 	
 	public NameImpl(AbstractBookAdv book, String id) {
-		this.book = book;
-		this.id = id;
+		this._book = book;
+		this._id = id;
 	}
 
 	@Override
 	public String getName() {
-		return name;
+		return _name;
 	}
 
 	@Override
 	public String getRefersToSheetName() {
-		return refersTopSheetName;
+		return _refersTopSheetName;
 	}
 
 	@Override
 	public CellRegion getRefersToCellRegion() {
-		return refersToCellRegion;
+		return _refersToCellRegion;
 	}
 
 	@Override
 	public String getRefersToFormula() {
-		return refersToExpr;
+		return _refersToExpr;
 	}
 
 	@Override
@@ -72,24 +72,24 @@ public class NameImpl extends AbstractNameAdv {
 		checkOrphan();
 		clearFormulaDependency();
 		clearFormulaResultCache();
-		book = null;
+		_book = null;
 	}
 
 	@Override
 	public void checkOrphan() {
-		if(book==null){
+		if(_book==null){
 			throw new IllegalStateException("doesn't connect to parent");
 		}
 	}
 
 	@Override
 	void setName(String newname) {
-		name = newname;
+		_name = newname;
 	}
 
 	@Override
 	public String getId() {
-		return id;
+		return _id;
 	}
 
 	@Override
@@ -97,39 +97,39 @@ public class NameImpl extends AbstractNameAdv {
 		checkOrphan();
 		
 		clearFormulaDependency();
-		this.refersToExpr = refersToExpr;
-		refersTopSheetName = null;
-		refersToCellRegion = null;
+		this._refersToExpr = refersToExpr;
+		_refersTopSheetName = null;
+		_refersToCellRegion = null;
 		//TODO support function as Excel (POI)
 		
 		//use formula engine to keep dependency info
 		FormulaEngine fe = EngineFactory.getInstance().createFormulaEngine();
-		FormulaExpression expr = fe.parse(refersToExpr, new FormulaParseContext(book.getSheet(0),new NameRefImpl(this)));
+		FormulaExpression expr = fe.parse(refersToExpr, new FormulaParseContext(_book.getSheet(0),new NameRefImpl(this)));
 		if(expr.hasError()){
-			isParsingError = true;
+			_isParsingError = true;
 		}else if(expr.isRefersTo()){
-			refersTopSheetName = expr.getRefersToSheetName();
-			refersToCellRegion = expr.getRefersToCellRegion();
+			_refersTopSheetName = expr.getRefersToSheetName();
+			_refersToCellRegion = expr.getRefersToCellRegion();
 		}
 		
 	}
 	
 	@Override
 	public boolean isFormulaParsingError() {
-		return isParsingError;
+		return _isParsingError;
 	}
 
 	private void clearFormulaDependency() {
-		if(refersToExpr!=null){
+		if(_refersToExpr!=null){
 			Ref ref = new NameRefImpl(this);
-			((AbstractBookSeriesAdv)book.getBookSeries()).getDependencyTable().clearDependents(ref);
+			((AbstractBookSeriesAdv)_book.getBookSeries()).getDependencyTable().clearDependents(ref);
 		}
 	}
 
 	@Override
 	public AbstractBookAdv getBook() {
 		checkOrphan();
-		return book;
+		return _book;
 	}
 
 	@Override
@@ -139,11 +139,11 @@ public class NameImpl extends AbstractNameAdv {
 
 	@Override
 	public String getApplyToSheetName() {
-		return applyToSheetName;
+		return _applyToSheetName;
 	}
 
 	@Override
 	void setApplyToSheetName(String sheetName) {
-		applyToSheetName = sheetName;
+		_applyToSheetName = sheetName;
 	}
 }

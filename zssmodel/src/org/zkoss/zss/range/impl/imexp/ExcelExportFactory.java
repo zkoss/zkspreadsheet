@@ -30,15 +30,15 @@ public class ExcelExportFactory implements SExporterFactory{
 		XLS,XLSX;
 	}
 	
-	Type type;
+	private Type _type;
 	
 	public ExcelExportFactory(Type type){
-		this.type = type;
+		this._type = type;
 	}
 	
 	@Override
 	public SExporter createExporter() {
-		if (type == Type.XLSX){
+		if (_type == Type.XLSX){
 			return new ExcelXlsxExporter();
 		}else{
 			return new ExcelXlsExporter();

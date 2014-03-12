@@ -28,26 +28,26 @@ import org.zkoss.zss.model.util.Validations;
 public class ColumnArrayImpl extends AbstractColumnArrayAdv {
 	private static final long serialVersionUID = 1L;
 
-	private AbstractSheetAdv sheet;
-	private AbstractCellStyleAdv cellStyle;
+	private AbstractSheetAdv _sheet;
+	private AbstractCellStyleAdv _cellStyle;
 	
-	private Integer width;
-	private boolean hidden = false;
-	private boolean customWidth = false;
+	private Integer _width;
+	private boolean _hidden = false;
+	private boolean _customWidth = false;
 
-	int index;
-	int lastIndex;
+	int _index;
+	int _lastIndex;
 	
 	public ColumnArrayImpl(AbstractSheetAdv sheet, int index, int lastIndex) {
-		this.sheet = sheet;
-		this.index = index;
-		this.lastIndex = lastIndex;
+		this._sheet = sheet;
+		this._index = index;
+		this._lastIndex = lastIndex;
 	}
 
 	@Override
 	public int getIndex() {
 		checkOrphan();
-		return index;
+		return _index;
 	}
 
 
@@ -60,7 +60,7 @@ public class ColumnArrayImpl extends AbstractColumnArrayAdv {
 
 	@Override
 	public void checkOrphan() {
-		if (sheet == null) {
+		if (_sheet == null) {
 			throw new IllegalStateException("doesn't connect to parent");
 		}
 	}
@@ -68,13 +68,13 @@ public class ColumnArrayImpl extends AbstractColumnArrayAdv {
 	@Override
 	public void destroy() {
 		checkOrphan();
-		sheet = null;
+		_sheet = null;
 	}
 
 	@Override
 	public SSheet getSheet() {
 		checkOrphan();
-		return sheet;
+		return _sheet;
 	}
 
 	@Override
@@ -84,24 +84,24 @@ public class ColumnArrayImpl extends AbstractColumnArrayAdv {
 
 	@Override
 	public SCellStyle getCellStyle(boolean local) {
-		if (local || cellStyle != null) {
-			return cellStyle;
+		if (local || _cellStyle != null) {
+			return _cellStyle;
 		}
 		checkOrphan();
-		return sheet.getBook().getDefaultCellStyle();
+		return _sheet.getBook().getDefaultCellStyle();
 	}
 
 	@Override
 	public void setCellStyle(SCellStyle cellStyle) {
 		Validations.argNotNull(cellStyle);
 		Validations.argInstance(cellStyle, AbstractCellStyleAdv.class);
-		this.cellStyle = (AbstractCellStyleAdv) cellStyle;
+		this._cellStyle = (AbstractCellStyleAdv) cellStyle;
 	}
 
 	@Override
 	public int getWidth() {
-		if(width!=null){
-			return width.intValue();
+		if(_width!=null){
+			return _width.intValue();
 		}
 		checkOrphan();
 		return getSheet().getDefaultColumnWidth();
@@ -109,32 +109,32 @@ public class ColumnArrayImpl extends AbstractColumnArrayAdv {
 
 	@Override
 	public boolean isHidden() {
-		return hidden;
+		return _hidden;
 	}
 
 	@Override
 	public void setWidth(int width) {
-		this.width = Integer.valueOf(width);
+		this._width = Integer.valueOf(width);
 	}
 
 	@Override
 	public void setHidden(boolean hidden) {
-		this.hidden = hidden;
+		this._hidden = hidden;
 	}
 
 	@Override
 	public int getLastIndex() {
-		return lastIndex;
+		return _lastIndex;
 	}
 
 	@Override
 	void setIndex(int index) {
-		this.index = index;
+		this._index = index;
 	}
 
 	@Override
 	void setLastIndex(int lastIndex) {
-		this.lastIndex = lastIndex;
+		this._lastIndex = lastIndex;
 	}
 	
 	public String toString(){
@@ -145,12 +145,12 @@ public class ColumnArrayImpl extends AbstractColumnArrayAdv {
 
 	@Override
 	public boolean isCustomWidth() {
-		return customWidth;
+		return _customWidth;
 	}
 
 	@Override
 	public void setCustomWidth(boolean custom) {
-		customWidth = custom;
+		_customWidth = custom;
 	}
 
 }

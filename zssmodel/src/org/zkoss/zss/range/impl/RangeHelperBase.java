@@ -1,3 +1,19 @@
+/*
+
+{{IS_NOTE
+	Purpose:
+		
+	Description:
+		
+	History:
+		
+}}IS_NOTE
+
+Copyright (C) 2013 Potix Corporation. All Rights Reserved.
+
+{{IS_RIGHT
+}}IS_RIGHT
+*/
 package org.zkoss.zss.range.impl;
 
 import org.zkoss.util.Locales;
@@ -9,12 +25,16 @@ import org.zkoss.zss.model.sys.format.FormatContext;
 import org.zkoss.zss.model.sys.format.FormatEngine;
 import org.zkoss.zss.model.sys.formula.FormulaEngine;
 import org.zkoss.zss.range.SRange;
-
+/**
+ * 
+ * @author Dennis
+ * @since 3.5.0
+ */
 public class RangeHelperBase {
 	protected final SRange range;
 	protected final SSheet sheet;
-	private FormatEngine formatEngine;
-	private FormulaEngine formulaEngine;
+	private FormatEngine _formatEngine;
+	private FormulaEngine _formulaEngine;
 	
 	public RangeHelperBase(SRange range){
 		this.range = range;
@@ -26,10 +46,10 @@ public class RangeHelperBase {
 	}
 	
 	protected FormatEngine getFormatEngine(){
-		if(formatEngine==null){
-			formatEngine = EngineFactory.getInstance().createFormatEngine();
+		if(_formatEngine==null){
+			_formatEngine = EngineFactory.getInstance().createFormatEngine();
 		}
-		return formatEngine;
+		return _formatEngine;
 	}
 	
 	public String getFormattedText(SCell cell){
@@ -37,10 +57,10 @@ public class RangeHelperBase {
 	}
 	
 	protected FormulaEngine getFormulaEngine(){
-		if (formulaEngine == null){
-			formulaEngine = EngineFactory.getInstance().createFormulaEngine();
+		if (_formulaEngine == null){
+			_formulaEngine = EngineFactory.getInstance().createFormulaEngine();
 		}
-		return formulaEngine;
+		return _formulaEngine;
 	}
 	
 	public int getRow() {

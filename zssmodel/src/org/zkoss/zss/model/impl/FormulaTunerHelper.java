@@ -1,3 +1,19 @@
+/*
+
+{{IS_NOTE
+	Purpose:
+		
+	Description:
+		
+	History:
+		
+}}IS_NOTE
+
+Copyright (C) 2013 Potix Corporation. All Rights Reserved.
+
+{{IS_RIGHT
+}}IS_RIGHT
+*/
 package org.zkoss.zss.model.impl;
 
 import java.util.LinkedHashMap;
@@ -26,12 +42,13 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 /**
  * 
  * @author Dennis
+ * @since 3.5.0
  */
 /*package*/ class FormulaTunerHelper {
-	final SBookSeries bookSeries;
+	private final SBookSeries _bookSeries;
 
 	public FormulaTunerHelper(SBookSeries bookSeries) {
-		this.bookSeries = bookSeries;
+		this._bookSeries = bookSeries;
 	}
 
 	public void move(SheetRegion sheetRegion,Set<Ref> dependents,int rowOffset, int columnOffset) {
@@ -61,7 +78,7 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 		}
 	}
 	private void moveChartRef(SheetRegion sheetRegion,ObjectRef dependent,int rowOffset, int columnOffset) {
-		SBook book = bookSeries.getBook(dependent.getBookName());
+		SBook book = _bookSeries.getBook(dependent.getBookName());
 		if(book==null) return;
 		SSheet sheet = book.getSheetByName(dependent.getSheetName());
 		if(sheet==null) return;
@@ -144,7 +161,7 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 	}
 
 	private void moveCellRef(SheetRegion sheetRegion,Ref dependent,int rowOffset, int columnOffset) {
-		SBook book = bookSeries.getBook(dependent.getBookName());
+		SBook book = _bookSeries.getBook(dependent.getBookName());
 		if(book==null) return;
 		SSheet sheet = book.getSheetByName(dependent.getSheetName());
 		if(sheet==null) return;
@@ -224,7 +241,7 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 	}
 
 	private void extendCellRef(SheetRegion sheetRegion,Ref dependent, boolean horizontal) {
-		SBook book = bookSeries.getBook(dependent.getBookName());
+		SBook book = _bookSeries.getBook(dependent.getBookName());
 		if(book==null) return;
 		SSheet sheet = book.getSheetByName(dependent.getSheetName());
 		if(sheet==null) return;
@@ -294,7 +311,7 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 	}
 
 	private void shrinkCellRef(SheetRegion sheetRegion,Ref dependent, boolean horizontal) {
-		SBook book = bookSeries.getBook(dependent.getBookName());
+		SBook book = _bookSeries.getBook(dependent.getBookName());
 		if(book==null) return;
 		SSheet sheet = book.getSheetByName(dependent.getSheetName());
 		if(sheet==null) return;
@@ -342,7 +359,7 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 	}	
 	
 	private void renameSheetChartRef(SBook bookOfSheet, String oldName, String newName,ObjectRef dependent) {
-		SBook book = bookSeries.getBook(dependent.getBookName());
+		SBook book = _bookSeries.getBook(dependent.getBookName());
 		if(book==null) return;
 		SSheet sheet = book.getSheetByName(dependent.getSheetName());
 		if(sheet==null){//the sheet was renamed., get form newname if possible
@@ -423,7 +440,7 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 	}
 
 	private void renameSheetCellRef(SBook bookOfSheet, String oldName, String newName,Ref dependent) {
-		SBook book = bookSeries.getBook(dependent.getBookName());
+		SBook book = _bookSeries.getBook(dependent.getBookName());
 		if(book==null) return;
 		SSheet sheet = book.getSheetByName(dependent.getSheetName());
 		if(sheet==null){//the sheet was renamed., get form newname if possible

@@ -27,14 +27,14 @@ public class NameRefImpl extends RefImpl implements NameRef{
 	private static final long serialVersionUID = 1L;
 	 
 	
-	private final String nameName;
+	private final String _nameName;
 	
 	public NameRefImpl(AbstractNameAdv name){
 		this(name.getBook().getBookName(),name.getApplyToSheetName(),name.getName());
 	}
 	public NameRefImpl(String bookName, String sheetName, String nameName){
 		super(RefType.NAME,bookName,sheetName, null, -1,-1,-1,-1);
-		this.nameName = nameName;
+		this._nameName = nameName;
 	}
 
 	
@@ -48,7 +48,7 @@ public class NameRefImpl extends RefImpl implements NameRef{
 		result = prime * result
 				+ ((sheetName == null) ? 0 : sheetName.hashCode());
 		result = prime * result
-				+ ((nameName == null) ? 0 : nameName.hashCode());
+				+ ((_nameName == null) ? 0 : _nameName.hashCode());
 		return result;
 	}
 	@Override
@@ -68,10 +68,10 @@ public class NameRefImpl extends RefImpl implements NameRef{
 				return false;
 		} else if (!sheetName.equals(other.sheetName))
 			return false;
-		if (nameName == null) {
-			if (other.nameName != null)
+		if (_nameName == null) {
+			if (other._nameName != null)
 				return false;
-		} else if (!nameName.equals(other.nameName))
+		} else if (!_nameName.equals(other._nameName))
 			return false;
 		return true;
 	}
@@ -81,13 +81,13 @@ public class NameRefImpl extends RefImpl implements NameRef{
 		if(sheetName!=null){
 			sb.append(sheetName).append(":");
 		}
-		sb.append(nameName);
+		sb.append(_nameName);
 		return sb.toString();
 	}
 	
 	@Override
 	public String getNameName() {
-		return nameName;
+		return _nameName;
 	}
 
 }

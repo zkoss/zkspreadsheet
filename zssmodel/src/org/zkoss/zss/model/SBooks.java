@@ -1,4 +1,4 @@
-/* NBooks.java
+/* SBooks.java
 
 {{IS_NOTE
 	Purpose:
@@ -24,6 +24,11 @@ import org.zkoss.zss.model.impl.BookImpl;
  */
 public class SBooks {
 
+	/**
+	 * Create a book with the bookName
+	 * @param bookName
+	 * @return the book instance
+	 */
 	public static SBook createBook(String bookName){
 		SBook book = new BookImpl(bookName);
 		return book;

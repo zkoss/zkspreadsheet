@@ -35,21 +35,21 @@ import org.zkoss.zss.model.SSheet;
  */
 public final class EvalBook implements EvaluationWorkbook, FormulaParsingWorkbook /* implements parsing book for ugly typecast in POI OperationEvaluationContext.getDynamicReference() */ {
 
-	private SBook nbook;
-	private IndexedUDFFinder udfFinder = new IndexedUDFFinder(UDFFinder.DEFAULT);
-	private ParsingBook parsingBook; // create new one when parsing new formula
+	private SBook _nbook;
+	private IndexedUDFFinder _udfFinder = new IndexedUDFFinder(UDFFinder.DEFAULT);
+	private ParsingBook _parsingBook; // create new one when parsing new formula
 
 	public EvalBook(SBook book) {
-		this.nbook = book;
+		this._nbook = book;
 		createParsingBook(); // just in case
 	}
 
 	private void createParsingBook() {
-		this.parsingBook = new ParsingBook(nbook);
+		this._parsingBook = new ParsingBook(_nbook);
 	}
 
 	public SBook getNBook() {
-		return nbook;
+		return _nbook;
 	}
 
 	public Ptg[] getFormulaTokens(EvaluationCell cell) {
@@ -60,7 +60,7 @@ public final class EvalBook implements EvaluationWorkbook, FormulaParsingWorkboo
 
 	public Ptg[] getFormulaTokens(int sheetIndex, String formula) {
 		createParsingBook(); // create new parsing book before parsing formula
-		return FormulaParser.parse(formula, parsingBook, FormulaType.CELL, sheetIndex);
+		return FormulaParser.parse(formula, _parsingBook, FormulaType.CELL, sheetIndex);
 	}
 
 	public EvaluationName getName(String name, int sheetIndex) {
@@ -68,16 +68,16 @@ public final class EvalBook implements EvaluationWorkbook, FormulaParsingWorkboo
 		SName nname = null;
 		if(sheetIndex < 0) {
 			// find defined name from book
-			nname = nbook.getNameByName(name);
+			nname = _nbook.getNameByName(name);
 		} else {
 			// find defined name from sheet
-			SSheet sheet = nbook.getSheet(sheetIndex);
+			SSheet sheet = _nbook.getSheet(sheetIndex);
 			if(sheet != null) {
-				nname = nbook.getNameByName(name, sheet.getSheetName());
+				nname = _nbook.getNameByName(name, sheet.getSheetName());
 			}
 		}
 		if(nname != null) {
-			int index = nbook.getNames().indexOf(nname);
+			int index = _nbook.getNames().indexOf(nname);
 			return new EvalName(name, index, nname.getRefersToFormula(), sheetIndex);
 		} else {
 			return null;
@@ -86,9 +86,9 @@ public final class EvalBook implements EvaluationWorkbook, FormulaParsingWorkboo
 
 	public EvaluationName getName(NamePtg namePtg) {
 		// find defined name from book
-		String name = parsingBook.getNameText(namePtg);
+		String name = _parsingBook.getNameText(namePtg);
 		if(name != null) {
-			SName nname = nbook.getNameByName(name);
+			SName nname = _nbook.getNameByName(name);
 			if(nname != null) {
 				return new EvalName(name, namePtg.getIndex(), nname.getRefersToFormula(), -1);
 			}
@@ -101,11 +101,11 @@ public final class EvalBook implements EvaluationWorkbook, FormulaParsingWorkboo
 	}
 
 	public UDFFinder getUDFFinder() {
-		return udfFinder;
+		return _udfFinder;
 	}
 
 	public EvaluationSheet getSheet(int sheetIndex) {
-		SSheet sheet = nbook.getSheet(sheetIndex);
+		SSheet sheet = _nbook.getSheet(sheetIndex);
 		return sheet != null ? new EvalSheet(sheet) : null;
 	}
 
@@ -113,31 +113,31 @@ public final class EvalBook implements EvaluationWorkbook, FormulaParsingWorkboo
 		// return sheet index (not external sheet index)
 		if(evalSheet instanceof EvalSheet) {
 			SSheet sheet = ((EvalSheet)evalSheet).getNSheet();
-			return nbook.getSheetIndex(sheet);
+			return _nbook.getSheetIndex(sheet);
 		}
 		return -1;
 	}
 
 	public int getSheetIndex(String sheetName) {
-		SSheet sheet = nbook.getSheetByName(sheetName);
-		return sheet != null ? nbook.getSheetIndex(sheet) : -1;
+		SSheet sheet = _nbook.getSheetByName(sheetName);
+		return sheet != null ? _nbook.getSheetIndex(sheet) : -1;
 	}
 
 	// ** below was added by ZPOI **
 
 	public String getSheetName(int sheetIndex) {
-		SSheet sheet = nbook.getSheet(sheetIndex);
+		SSheet sheet = _nbook.getSheet(sheetIndex);
 		return sheet != null ? sheet.getSheetName() : null;
 	}
 
 	public ExternalSheet getExternalSheet(int externSheetIndex) {
-		return parsingBook.getExternalSheet(externSheetIndex);
+		return _parsingBook.getExternalSheet(externSheetIndex);
 	}
 
 	public String resolveNameXText(NameXPtg n) {
 		// check function name by function finder including built-in function
-		String name = parsingBook.resolveNameXText(n);
-		FreeRefFunction function = udfFinder.findFunction(name);
+		String name = _parsingBook.resolveNameXText(n);
+		FreeRefFunction function = _udfFinder.findFunction(name);
 		return function != null ? name : null;
 	}
 
@@ -145,7 +145,7 @@ public final class EvalBook implements EvaluationWorkbook, FormulaParsingWorkboo
 	 * @return the sheet index of the sheet with the given external index.
 	 */
 	public int convertFromExternSheetIndex(int externSheetIndex) {
-		ExternalSheet sheet = parsingBook.getAnyExternalSheet(externSheetIndex);
+		ExternalSheet sheet = _parsingBook.getAnyExternalSheet(externSheetIndex);
 		if(sheet != null) {
 			if(sheet.getWorkbookName() == null) { // must be same book
 				return getSheetIndex(sheet.getSheetName());
@@ -155,7 +155,7 @@ public final class EvalBook implements EvaluationWorkbook, FormulaParsingWorkboo
 	}
 
 	public int convertLastIndexFromExternSheetIndex(int externSheetIndex) {
-		ExternalSheet sheet = parsingBook.getAnyExternalSheet(externSheetIndex);
+		ExternalSheet sheet = _parsingBook.getAnyExternalSheet(externSheetIndex);
 		if(sheet != null) {
 			if(sheet.getWorkbookName() == null) { // must be same book
 				return getSheetIndex(sheet.getLastSheetName());
@@ -194,7 +194,7 @@ public final class EvalBook implements EvaluationWorkbook, FormulaParsingWorkboo
 
 		public Ptg[] getNameDefinition() {
 			// DON'T clear parsing cache here, because of we still evaluate formula here
-			return FormulaParser.parse(refersToFormula, parsingBook, FormulaType.NAMEDRANGE, sheetIndex);
+			return FormulaParser.parse(refersToFormula, _parsingBook, FormulaType.NAMEDRANGE, sheetIndex);
 		}
 
 		public String getNameText() {
@@ -219,32 +219,32 @@ public final class EvalBook implements EvaluationWorkbook, FormulaParsingWorkboo
 
 	@Override
 	public NameXPtg getNameXPtg(String name) {
-		return parsingBook.getNameXPtg(name);
+		return _parsingBook.getNameXPtg(name);
 	}
 
 	@Override
 	public int getExternalSheetIndex(String sheetName) {
-		return parsingBook.getExternalSheetIndex(sheetName);
+		return _parsingBook.getExternalSheetIndex(sheetName);
 	}
 
 	@Override
 	public int getExternalSheetIndex(String workbookName, String sheetName) {
-		return parsingBook.getExternalSheetIndex(workbookName, sheetName);
+		return _parsingBook.getExternalSheetIndex(workbookName, sheetName);
 	}
 
 	@Override
 	public SpreadsheetVersion getSpreadsheetVersion() {
-		return parsingBook.getSpreadsheetVersion();
+		return _parsingBook.getSpreadsheetVersion();
 	}
 
 	@Override
 	public String getBookNameFromExternalLinkIndex(String externalLinkIndex) {
-		return parsingBook.getBookNameFromExternalLinkIndex(externalLinkIndex);
+		return _parsingBook.getBookNameFromExternalLinkIndex(externalLinkIndex);
 	}
 
 	@Override
 	public EvaluationName getOrCreateName(String name, int sheetIndex) {
-		return parsingBook.getOrCreateName(name, sheetIndex);
+		return _parsingBook.getOrCreateName(name, sheetIndex);
 	}
 
 	//to compatible with zss-575 in 3.0

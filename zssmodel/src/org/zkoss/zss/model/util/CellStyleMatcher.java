@@ -33,7 +33,7 @@ import org.zkoss.zss.model.SFont;
 public class CellStyleMatcher {
 
 	
-	Map<Property,Object> criteria = new LinkedHashMap<Property, Object>();
+	Map<Property,Object> _criteria = new LinkedHashMap<Property, Object>();
 	
 	private enum Property {
 		Alignment,
@@ -114,39 +114,39 @@ public class CellStyleMatcher {
 	}
 	
 	public void setDataFormat(String fmt) {
-		criteria.put(Property.DataFormat, fmt);
+		_criteria.put(Property.DataFormat, fmt);
 	}
 
 	public void setFontColor(String color) {
-		criteria.put(Property.FontColor, color);
+		_criteria.put(Property.FontColor, color);
 	}
 	
 	public void setFontName(String name) {
-		criteria.put(Property.FontName, name);
+		_criteria.put(Property.FontName, name);
 	}
 	
 	public void setFontBoldweight(SFont.Boldweight boldweight) {
-		criteria.put(Property.FontBoldweight, boldweight);
+		_criteria.put(Property.FontBoldweight, boldweight);
 	}
 	
 	public void setFontHeightPoints(int height) {
-		criteria.put(Property.FontHeightPoints, height);
+		_criteria.put(Property.FontHeightPoints, height);
 	}
 	
 	public void setFontItalic(boolean italic) {
-		criteria.put(Property.FontItalic, italic);
+		_criteria.put(Property.FontItalic, italic);
 	}
 	
 	public void setFontStrikeout(boolean strikeout) {
-		criteria.put(Property.FontStrikeout, strikeout);
+		_criteria.put(Property.FontStrikeout, strikeout);
 	}
 	
 	public void setFontTypeOffset(SFont.TypeOffset typeOffset) {
-		criteria.put(Property.FontTypeOffset, typeOffset);
+		_criteria.put(Property.FontTypeOffset, typeOffset);
 	}
 	
 	public void setFontUnderline(SFont.Underline underline) {
-		criteria.put(Property.FontUnderline, underline);
+		_criteria.put(Property.FontUnderline, underline);
 	}
 	
 	public void setFont(SFont font) {
@@ -171,23 +171,23 @@ public class CellStyleMatcher {
 	}
 
 	public void setHidden(boolean hidden) {
-		criteria.put(Property.Hidden, hidden);
+		_criteria.put(Property.Hidden, hidden);
 	}
 
 	public void setLocked(boolean locked) {
-		criteria.put(Property.Locked, locked);
+		_criteria.put(Property.Locked, locked);
 	}
 
 	public void setAlignment(SCellStyle.Alignment align) {
-		criteria.put(Property.Alignment, align);
+		_criteria.put(Property.Alignment, align);
 	}
 
 	public void setWrapText(boolean wrapped) {
-		criteria.put(Property.WrapText, wrapped);
+		_criteria.put(Property.WrapText, wrapped);
 	}
 
 	public void setVerticalAlignment(SCellStyle.VerticalAlignment align) {
-		criteria.put(Property.VerticalAlignment, align);
+		_criteria.put(Property.VerticalAlignment, align);
 	}
 
 //	public void setRotation(short rotation) {
@@ -199,92 +199,92 @@ public class CellStyleMatcher {
 //	}
 
 	public void setBorderRight(SCellStyle.BorderType border) {
-		criteria.put(Property.BorderRight, border);
+		_criteria.put(Property.BorderRight, border);
 	}
 
 	public void setBorderTop(SCellStyle.BorderType border) {
-		criteria.put(Property.BorderTop,border );
+		_criteria.put(Property.BorderTop,border );
 	}
 
 	public void setBorderBottom(SCellStyle.BorderType border) {
-		criteria.put(Property.BorderBottom, border);
+		_criteria.put(Property.BorderBottom, border);
 	}
 	public void setBorderLeft(SCellStyle.BorderType border) {
-		criteria.put(Property.BorderLeft, border);
+		_criteria.put(Property.BorderLeft, border);
 	}
 
 	public void setBorderLeftColor(String htmlcolor) {
-		criteria.put(Property.BorderLeftColor,htmlcolor );
+		_criteria.put(Property.BorderLeftColor,htmlcolor );
 	}
 
 	public void setBorderRightColor(String htmlcolor) {
-		criteria.put(Property.BorderRightColor, htmlcolor);
+		_criteria.put(Property.BorderRightColor, htmlcolor);
 	}
 
 	public void setBorderTopColor(String htmlcolor) {
-		criteria.put(Property.BorderTopColor,htmlcolor);
+		_criteria.put(Property.BorderTopColor,htmlcolor);
 	}
 
 	public void setBorderBottomColor(String htmlcolor) {
-		criteria.put(Property.BorderBottomColor,htmlcolor );
+		_criteria.put(Property.BorderBottomColor,htmlcolor );
 	}
 
 	public void setFillPattern(SCellStyle.FillPattern fp) {
-		criteria.put(Property.FillPattern,fp );
+		_criteria.put(Property.FillPattern,fp );
 	}
 
 	public void setFillColor(String htmlcolor) {
-		criteria.put(Property.FillColor, htmlcolor);
+		_criteria.put(Property.FillColor, htmlcolor);
 	}
 
 	//remove api
 	public void removeDataFormat() {
-		criteria.remove(Property.DataFormat);
+		_criteria.remove(Property.DataFormat);
 	}
 
 	public void removeFontColor() {
-		criteria.remove(Property.FontColor);
+		_criteria.remove(Property.FontColor);
 	}
 	public void removeFontName() {
-		criteria.remove(Property.FontName);
+		_criteria.remove(Property.FontName);
 	}
 	public void removeFontBoldweight() {
-		criteria.remove(Property.FontBoldweight);
+		_criteria.remove(Property.FontBoldweight);
 	}
 	public void removeFontHeightPoints() {
-		criteria.remove(Property.FontHeightPoints);
+		_criteria.remove(Property.FontHeightPoints);
 	}
 	public void removeFontItalic() {
-		criteria.remove(Property.FontItalic);
+		_criteria.remove(Property.FontItalic);
 	}
 	public void removeFontStrikeout() {
-		criteria.remove(Property.FontStrikeout);
+		_criteria.remove(Property.FontStrikeout);
 	}
 	public void removeFontTypeOffset() {
-		criteria.remove(Property.FontTypeOffset);
+		_criteria.remove(Property.FontTypeOffset);
 	}
 	public void removeFontUnderline() {
-		criteria.remove(Property.FontUnderline);
+		_criteria.remove(Property.FontUnderline);
 	}
 
 	public void removeHidden() {
-		criteria.remove(Property.Hidden);
+		_criteria.remove(Property.Hidden);
 	}
 
 	public void removeLocked(){
-		criteria.remove(Property.Locked);
+		_criteria.remove(Property.Locked);
 	}
 
 	public void removeAlignment(){
-		criteria.remove(Property.Alignment);
+		_criteria.remove(Property.Alignment);
 	}
 
 	public void removeWrapText(){
-		criteria.remove(Property.WrapText);
+		_criteria.remove(Property.WrapText);
 	}
 
 	public void removeVerticalAlignment(){
-		criteria.remove(Property.VerticalAlignment);
+		_criteria.remove(Property.VerticalAlignment);
 	}
 
 //	public void removeRotation(){
@@ -296,42 +296,42 @@ public class CellStyleMatcher {
 //	}
 
 	public void removeBorderRight(){
-		criteria.remove(Property.BorderRight);
+		_criteria.remove(Property.BorderRight);
 	}
 
 	public void removeBorderTop(){
-		criteria.remove(Property.BorderTop);
+		_criteria.remove(Property.BorderTop);
 	}
 
 	public void removeBorderBottom(){
-		criteria.remove(Property.BorderBottom);
+		_criteria.remove(Property.BorderBottom);
 	}
 	public void removeBorderLeft(){
-		criteria.remove(Property.BorderLeft);
+		_criteria.remove(Property.BorderLeft);
 	}
 
 	public void removeBorderLeftColor(){
-		criteria.remove(Property.BorderLeftColor);
+		_criteria.remove(Property.BorderLeftColor);
 	}
 
 	public void removeBorderRightColor(){
-		criteria.remove(Property.BorderRightColor);
+		_criteria.remove(Property.BorderRightColor);
 	}
 
 	public void removeBorderTopColor(){
-		criteria.remove(Property.BorderTopColor);
+		_criteria.remove(Property.BorderTopColor);
 	}
 
 	public void removeBorderBottomColor(){
-		criteria.remove(Property.BorderBottomColor);
+		_criteria.remove(Property.BorderBottomColor);
 	}
 
 	public void removeFillPattern(){
-		criteria.remove(Property.FillPattern);
+		_criteria.remove(Property.FillPattern);
 	}
 
 	public void removeFillColor(){
-		criteria.remove(Property.FillColor);
+		_criteria.remove(Property.FillColor);
 	}
 
 //	public void removeFillForegroundColor(){
@@ -339,7 +339,7 @@ public class CellStyleMatcher {
 //	}
 	
 	public boolean match(SCellStyle style){
-		for(Entry<Property,Object> e:criteria.entrySet()){
+		for(Entry<Property,Object> e:_criteria.entrySet()){
 			switch(e.getKey()){
 			case Alignment:
 				if(!equals(e.getValue(),style.getAlignment())){

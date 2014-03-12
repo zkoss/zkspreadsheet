@@ -28,190 +28,190 @@ import org.zkoss.zss.model.util.Validations;
 public class CellStyleImpl extends AbstractCellStyleAdv {
 	private static final long serialVersionUID = 1L;
 
-	private AbstractFontAdv font;
-	private SColor fillColor = ColorImpl.WHITE;
-	private FillPattern fillPattern = FillPattern.NO_FILL;
-	private Alignment alignment = Alignment.GENERAL;
-	private VerticalAlignment verticalAlignment = VerticalAlignment.BOTTOM;
-	private boolean wrapText = false;
+	private AbstractFontAdv _font;
+	private SColor _fillColor = ColorImpl.WHITE;
+	private FillPattern _fillPattern = FillPattern.NO_FILL;
+	private Alignment _alignment = Alignment.GENERAL;
+	private VerticalAlignment _verticalAlignment = VerticalAlignment.BOTTOM;
+	private boolean _wrapText = false;
 
-	private BorderType borderLeft = BorderType.NONE;
-	private BorderType borderTop = BorderType.NONE;
-	private BorderType borderRight = BorderType.NONE;
-	private BorderType borderBottom = BorderType.NONE;
-	private SColor borderTopColor = ColorImpl.BLACK;
-	private SColor borderLeftColor = ColorImpl.BLACK;
-	private SColor borderBottomColor = ColorImpl.BLACK;
-	private SColor borderRightColor = ColorImpl.BLACK;
+	private BorderType _borderLeft = BorderType.NONE;
+	private BorderType _borderTop = BorderType.NONE;
+	private BorderType _borderRight = BorderType.NONE;
+	private BorderType _borderBottom = BorderType.NONE;
+	private SColor _borderTopColor = ColorImpl.BLACK;
+	private SColor _borderLeftColor = ColorImpl.BLACK;
+	private SColor _borderBottomColor = ColorImpl.BLACK;
+	private SColor _borderRightColor = ColorImpl.BLACK;
 
-	private String dataFormat = FORMAT_GENERAL;
-	private boolean directFormat = false;
-	private boolean locked = true;// default locked as excel.
-	private boolean hidden = false;
+	private String _dataFormat = FORMAT_GENERAL;
+	private boolean _directFormat = false;
+	private boolean _locked = true;// default locked as excel.
+	private boolean _hidden = false;
 
 	public CellStyleImpl(AbstractFontAdv font){
-		this.font = font;
+		this._font = font;
 	}
 	
 	public SFont getFont(){
-		return font;
+		return _font;
 	}
 	
 	public void setFont(SFont font){
 		Validations.argInstance(font, AbstractFontAdv.class);
-		this.font = (AbstractFontAdv)font;
+		this._font = (AbstractFontAdv)font;
 	}
 
 	@Override
 	public SColor getFillColor() {
-		return fillColor;
+		return _fillColor;
 	}
 
 	@Override
 	public void setFillColor(SColor fillColor) {
 		Validations.argNotNull(fillColor);
-		this.fillColor = fillColor;
+		this._fillColor = fillColor;
 	}
 
 	@Override
 	public FillPattern getFillPattern() {
-		return fillPattern;
+		return _fillPattern;
 	}
 
 	@Override
 	public void setFillPattern(FillPattern fillPattern) {
 		Validations.argNotNull(fillPattern);
-		this.fillPattern = fillPattern;
+		this._fillPattern = fillPattern;
 	}
 
 	@Override
 	public Alignment getAlignment() {
-		return alignment;
+		return _alignment;
 	}
 
 	@Override
 	public void setAlignment(Alignment alignment) {
 		Validations.argNotNull(alignment);
-		this.alignment = alignment;
+		this._alignment = alignment;
 	}
 
 	@Override
 	public VerticalAlignment getVerticalAlignment() {
-		return verticalAlignment;
+		return _verticalAlignment;
 	}
 
 	@Override
 	public void setVerticalAlignment(VerticalAlignment verticalAlignment) {
 		Validations.argNotNull(verticalAlignment);
-		this.verticalAlignment = verticalAlignment;
+		this._verticalAlignment = verticalAlignment;
 	}
 
 	@Override
 	public boolean isWrapText() {
-		return wrapText;
+		return _wrapText;
 	}
 
 	@Override
 	public void setWrapText(boolean wrapText) {
-		this.wrapText = wrapText;
+		this._wrapText = wrapText;
 	}
 
 	@Override
 	public BorderType getBorderLeft() {
-		return borderLeft;
+		return _borderLeft;
 	}
 
 	@Override
 	public void setBorderLeft(BorderType borderLeft) {
 		Validations.argNotNull(borderLeft);
-		this.borderLeft = borderLeft;
+		this._borderLeft = borderLeft;
 	}
 
 	@Override
 	public BorderType getBorderTop() {
-		return borderTop;
+		return _borderTop;
 	}
 
 	@Override
 	public void setBorderTop(BorderType borderTop) {
 		Validations.argNotNull(borderTop);
-		this.borderTop = borderTop;
+		this._borderTop = borderTop;
 	}
 
 	@Override
 	public BorderType getBorderRight() {
-		return borderRight;
+		return _borderRight;
 	}
 
 	@Override
 	public void setBorderRight(BorderType borderRight) {
 		Validations.argNotNull(borderRight);
-		this.borderRight = borderRight;
+		this._borderRight = borderRight;
 	}
 
 	@Override
 	public BorderType getBorderBottom() {
-		return borderBottom;
+		return _borderBottom;
 	}
 
 	@Override
 	public void setBorderBottom(BorderType borderBottom){
 		Validations.argNotNull(borderBottom);
-		this.borderBottom = borderBottom;
+		this._borderBottom = borderBottom;
 	}
 
 	@Override
 	public SColor getBorderTopColor() {
-		return borderTopColor;
+		return _borderTopColor;
 	}
 
 	@Override
 	public void setBorderTopColor(SColor borderTopColor) {
 		Validations.argNotNull(borderTopColor);
-		this.borderTopColor = borderTopColor;
+		this._borderTopColor = borderTopColor;
 	}
 
 	@Override
 	public SColor getBorderLeftColor() {
-		return borderLeftColor;
+		return _borderLeftColor;
 	}
 
 	@Override
 	public void setBorderLeftColor(SColor borderLeftColor) {
 		Validations.argNotNull(borderLeftColor);
-		this.borderLeftColor = borderLeftColor;
+		this._borderLeftColor = borderLeftColor;
 	}
 
 	@Override
 	public SColor getBorderBottomColor() {
-		return borderBottomColor;
+		return _borderBottomColor;
 	}
 
 	@Override
 	public void setBorderBottomColor(SColor borderBottomColor) {
 		Validations.argNotNull(borderBottomColor);
-		this.borderBottomColor = borderBottomColor;
+		this._borderBottomColor = borderBottomColor;
 	}
 
 	@Override
 	public SColor getBorderRightColor() {
-		return borderRightColor;
+		return _borderRightColor;
 	}
 
 	@Override
 	public void setBorderRightColor(SColor borderRightColor) {
 		Validations.argNotNull(borderRightColor);
-		this.borderRightColor = borderRightColor;
+		this._borderRightColor = borderRightColor;
 	}
 
 	@Override
 	public String getDataFormat() {
-		return dataFormat;
+		return _dataFormat;
 	}
 	
 	@Override
 	public boolean isDirectDataFormat(){
-		return directFormat;
+		return _directFormat;
 	}
 
 	@Override
@@ -220,34 +220,34 @@ public class CellStyleImpl extends AbstractCellStyleAdv {
 		if(dataFormat==null || "".equals(dataFormat.trim())){
 			dataFormat = FORMAT_GENERAL;
 		}
-		this.dataFormat = dataFormat;
-		directFormat = false;
+		this._dataFormat = dataFormat;
+		_directFormat = false;
 	}
 	
 	@Override
 	public void setDirectDataFormat(String dataFormat){
 		setDataFormat(dataFormat);
-		directFormat = true;
+		_directFormat = true;
 	}
 
 	@Override
 	public boolean isLocked() {
-		return locked;
+		return _locked;
 	}
 
 	@Override
 	public void setLocked(boolean locked) {
-		this.locked = locked;
+		this._locked = locked;
 	}
 
 	@Override
 	public boolean isHidden() {
-		return hidden;
+		return _hidden;
 	}
 
 	@Override
 	public void setHidden(boolean hidden) {
-		this.hidden = hidden;
+		this._hidden = hidden;
 	}
 
 	@Override
@@ -280,23 +280,23 @@ public class CellStyleImpl extends AbstractCellStyleAdv {
 	@Override
 	String getStyleKey() {
 		StringBuilder sb = new StringBuilder();
-		sb.append(font.getStyleKey())
-		.append(".").append(fillPattern.ordinal())
-		.append(".").append(fillColor.getHtmlColor())
-		.append(".").append(alignment.ordinal())
-		.append(".").append(verticalAlignment.ordinal())
-		.append(".").append(wrapText?"T":"F")
-		.append(".").append(borderLeft.ordinal())
-		.append(".").append(borderLeftColor.getHtmlColor())
-		.append(".").append(borderRight.ordinal())
-		.append(".").append(borderRightColor.getHtmlColor())
-		.append(".").append(borderTop.ordinal())
-		.append(".").append(borderTopColor.getHtmlColor())
-		.append(".").append(borderBottom.ordinal())
-		.append(".").append(borderBottomColor.getHtmlColor())
-		.append(".").append(dataFormat)
-		.append(".").append(locked?"T":"F")
-		.append(".").append(hidden?"T":"F");
+		sb.append(_font.getStyleKey())
+		.append(".").append(_fillPattern.ordinal())
+		.append(".").append(_fillColor.getHtmlColor())
+		.append(".").append(_alignment.ordinal())
+		.append(".").append(_verticalAlignment.ordinal())
+		.append(".").append(_wrapText?"T":"F")
+		.append(".").append(_borderLeft.ordinal())
+		.append(".").append(_borderLeftColor.getHtmlColor())
+		.append(".").append(_borderRight.ordinal())
+		.append(".").append(_borderRightColor.getHtmlColor())
+		.append(".").append(_borderTop.ordinal())
+		.append(".").append(_borderTopColor.getHtmlColor())
+		.append(".").append(_borderBottom.ordinal())
+		.append(".").append(_borderBottomColor.getHtmlColor())
+		.append(".").append(_dataFormat)
+		.append(".").append(_locked?"T":"F")
+		.append(".").append(_hidden?"T":"F");
 		return sb.toString();
 	}
 

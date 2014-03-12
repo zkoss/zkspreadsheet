@@ -1,3 +1,19 @@
+/*
+
+{{IS_NOTE
+	Purpose:
+		
+	Description:
+		
+	History:
+		
+}}IS_NOTE
+
+Copyright (C) 2013 Potix Corporation. All Rights Reserved.
+
+{{IS_RIGHT
+}}IS_RIGHT
+*/
 package org.zkoss.zss.model.impl.sys;
 
 import java.text.Format;
@@ -16,7 +32,11 @@ import org.zkoss.zss.model.sys.EngineFactory;
 import org.zkoss.zss.model.sys.format.FormatContext;
 import org.zkoss.zss.model.sys.format.FormatEngine;
 import org.zkoss.zss.model.sys.format.FormatResult;
-
+/**
+ * 
+ * @author Hawk
+ * @since 3.5.0
+ */
 public class FormatEngineImpl implements FormatEngine {
 
 	@Override

@@ -1,27 +1,48 @@
-package org.zkoss.zss.model;
+/*
+
+{{IS_NOTE
+	Purpose:
+		
+	Description:
+		
+	History:
+		
+}}IS_NOTE
+
+Copyright (C) 2013 Potix Corporation. All Rights Reserved.
+
+{{IS_RIGHT
+}}IS_RIGHT
+*/
+package org.zkoss.zss.model.impl;
 
 import java.io.Serializable;
 
+import org.zkoss.zss.model.SCell;
 import org.zkoss.zss.model.SCell.CellType;
-
-public class SCellValue implements Serializable {
+/**
+ * 
+ * @author Dennis
+ * @since 3.5.0
+ */
+public class CellValue implements Serializable {
 	private static final long serialVersionUID = 1L;
 	protected CellType cellType;
 	protected Object value;
-	public SCellValue(String value){
+	public CellValue(String value){
 		this(CellType.STRING,value);
 	}
-	public SCellValue(Double number){
+	public CellValue(Double number){
 		this(CellType.NUMBER,number);
 	}
-	public SCellValue(Boolean bool){
+	public CellValue(Boolean bool){
 		this(CellType.BOOLEAN,bool);
 	}
-	public SCellValue(){
+	public CellValue(){
 		this(CellType.BLANK,null);
 	}
 	
-	protected SCellValue(CellType type, Object value){
+	protected CellValue(CellType type, Object value){
 		this.cellType = value==null?CellType.BLANK:type;
 		this.value = value;
 	}

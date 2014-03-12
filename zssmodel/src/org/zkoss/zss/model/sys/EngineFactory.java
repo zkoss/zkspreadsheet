@@ -34,25 +34,25 @@ import org.zkoss.zss.model.sys.input.InputEngine;
  */
 public class EngineFactory {
 
-	private static final Log logger = Log.lookup(EngineFactory.class.getName());
+	private static final Log _logger = Log.lookup(EngineFactory.class.getName());
 	
-	static private EngineFactory instance;
+	static private EngineFactory _instance;
 	
-	static private CalendarUtil calendarUtil = new CalendarUtilImpl();
+	static private CalendarUtil _calendarUtil = new CalendarUtilImpl();
 
 	private EngineFactory() {
 	}
 
 	public static EngineFactory getInstance() {
-		if (instance == null) {
+		if (_instance == null) {
 			synchronized (EngineFactory.class) {
-				if (instance == null) {
+				if (_instance == null) {
 					// TODO from config
-					instance = new EngineFactory();
+					_instance = new EngineFactory();
 				}
 			}
 		}
-		return instance;
+		return _instance;
 	}
 
 	public InputEngine createInputEngine() {
@@ -66,7 +66,7 @@ public class EngineFactory {
 			try {
 				formulaEnginClazz = Class.forName(clz);
 			} catch(Exception e) {
-				logger.error(e.getMessage(), e);
+				_logger.error(e.getMessage(), e);
 			}			
 		}
 		
@@ -78,7 +78,7 @@ public class EngineFactory {
 				return (FormulaEngine)formulaEnginClazz.newInstance();
 			}
 		} catch(Exception e) {
-			logger.error(e.getMessage(), e);
+			_logger.error(e.getMessage(), e);
 			formulaEnginClazz = null;
 		}
 		return new FormulaEngineImpl();
@@ -93,7 +93,7 @@ public class EngineFactory {
 	}
 	
 	public CalendarUtil getCalendarUtil(){
-		return calendarUtil;
+		return _calendarUtil;
 	}
 
 }

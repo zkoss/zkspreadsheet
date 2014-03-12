@@ -1,5 +1,25 @@
-package org.zkoss.zss.range.impl;
+/*
 
+{{IS_NOTE
+	Purpose:
+		
+	Description:
+		
+	History:
+		
+}}IS_NOTE
+
+Copyright (C) 2013 Potix Corporation. All Rights Reserved.
+
+{{IS_RIGHT
+}}IS_RIGHT
+*/
+package org.zkoss.zss.range.impl;
+/**
+ * 
+ * @author Dennis
+ * @since 3.5.0
+ */
 public class ModelUpdate {
 	public static enum UpdateType{
 		REF, REFS, CELL, CELLS, MERGE, INSERT_DELETE

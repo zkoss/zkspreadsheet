@@ -31,8 +31,7 @@ public class SImporters {
 	static{
 		//default registration
 		register("excel",new ExcelImportFactory());
-		//TODO zss 3.5 remove test
-		register("test",new TestImporterFactory());
+//		register("test",new TestImporterFactory());
 	}
 	
 	/**

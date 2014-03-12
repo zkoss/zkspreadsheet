@@ -98,7 +98,6 @@ import org.zkoss.zss.api.model.impl.SimpleRef;
 import org.zkoss.zss.model.CellRegion;
 import org.zkoss.zss.model.InvalidateModelOpException;
 import org.zkoss.zss.model.ModelEvent;
-import org.zkoss.zss.model.ModelEventDispatcher;
 import org.zkoss.zss.model.ModelEventListener;
 import org.zkoss.zss.model.ModelEvents;
 import org.zkoss.zss.model.SAutoFilter;
@@ -577,12 +576,11 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			try {
 				SImporter importer = _importer;
 				if (importer == null) {
-					//TODO zss 3.5 remove this
-					if("true".equals(Executions.getCurrent().getParameter("zsstest"))){
-						importer = SImporters.getImporter("test");
-					}else{
+//					if("true".equals(Executions.getCurrent().getParameter("zsstest"))){
+//						importer = SImporters.getImporter("test");
+//					}else{
 						importer = SImporters.getImporter();
-					}
+//					}
 					
 				}
 

@@ -19,98 +19,102 @@ package org.zkoss.zss.model.impl;
 import java.io.Serializable;
 
 import org.zkoss.zss.model.SPrintSetup;
-
+/**
+ * 
+ * @author Dennis
+ * @since 3.5.0
+ */
 public class PrintSetupImpl implements SPrintSetup,Serializable {
 	private static final long serialVersionUID = 1L;
-	private boolean printGridline = false; 
-	private int headerMargin;
-	private int footerMargin;
-	private int leftMargin;
-	private int rightMargin;
-	private int topMargin;
-	private int bottomMargin;
+	private boolean _printGridline = false; 
+	private int _headerMargin;
+	private int _footerMargin;
+	private int _leftMargin;
+	private int _rightMargin;
+	private int _topMargin;
+	private int _bottomMargin;
 	
-	private boolean landscape = false;
+	private boolean _landscape = false;
 	// private short scale = 100;
-	private PaperSize paperSize = PaperSize.A4;
+	private PaperSize _paperSize = PaperSize.A4;
 	
 	
 	@Override
 	public boolean isPrintGridlines() {
-		return printGridline;
+		return _printGridline;
 	}
 
 	@Override
 	public void setPrintGridlines(boolean enable) {
-		printGridline = enable;
+		_printGridline = enable;
 	}
 
 	public int getHeaderMargin() {
-		return headerMargin;
+		return _headerMargin;
 	}
 
 	public void setHeaderMargin(int headerMargin) {
-		this.headerMargin = headerMargin;
+		this._headerMargin = headerMargin;
 	}
 
 	public int getFooterMargin() {
-		return footerMargin;
+		return _footerMargin;
 	}
 
 	public void setFooterMargin(int footerMargin) {
-		this.footerMargin = footerMargin;
+		this._footerMargin = footerMargin;
 	}
 
 	public int getLeftMargin() {
-		return leftMargin;
+		return _leftMargin;
 	}
 
 	public void setLeftMargin(int leftMargin) {
-		this.leftMargin = leftMargin;
+		this._leftMargin = leftMargin;
 	}
 
 	public int getRightMargin() {
-		return rightMargin;
+		return _rightMargin;
 	}
 
 	public void setRightMargin(int rightMargin) {
-		this.rightMargin = rightMargin;
+		this._rightMargin = rightMargin;
 	}
 
 	public int getTopMargin() {
-		return topMargin;
+		return _topMargin;
 	}
 
 	public void setTopMargin(int topMargin) {
-		this.topMargin = topMargin;
+		this._topMargin = topMargin;
 	}
 
 	public int getBottomMargin() {
-		return bottomMargin;
+		return _bottomMargin;
 	}
 
 	public void setBottomMargin(int bottomMargin) {
-		this.bottomMargin = bottomMargin;
+		this._bottomMargin = bottomMargin;
 	}
 
 	@Override
 	public void setPaperSize(PaperSize size) {
-		this.paperSize = size;
+		this._paperSize = size;
 	}
 
 	@Override
 	public PaperSize getPaperSize() {
-		return paperSize;
+		return _paperSize;
 	}
 
 	@Override
 	public void setLandscape(boolean landscape) {
-		this.landscape = landscape;
+		this._landscape = landscape;
 	}
 
 	@Override
 	public boolean isLandscape() {
-		return landscape;
+		return _landscape;
 	}
 
 //	@Override

@@ -1,4 +1,4 @@
-/* NBookSeries.java
+/*
 
 {{IS_NOTE
 	Purpose:

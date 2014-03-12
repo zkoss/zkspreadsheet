@@ -22,7 +22,7 @@ import org.zkoss.zss.model.sys.formula.FunctionResolver;
  */
 public class FunctionResolverImpl implements FunctionResolver {
 
-	private DependencyTracker tracker = new DependencyTrackerImpl();
+	private DependencyTracker _tracker = new DependencyTrackerImpl();
 
 	public FunctionResolverImpl() {
 	}
@@ -39,7 +39,7 @@ public class FunctionResolverImpl implements FunctionResolver {
 
 	@Override
 	public DependencyTracker getDependencyTracker() {
-		return tracker;
+		return _tracker;
 	}
 
 }

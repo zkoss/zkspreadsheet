@@ -28,17 +28,17 @@ import org.zkoss.zss.model.sys.dependency.DependencyTable;
 public abstract class AbstractBookSeriesAdv implements SBookSeries,Serializable{
 	private static final long serialVersionUID = 1L;
 
-	protected boolean autoFormulaCacheClean = false;//default off
+	private boolean _autoFormulaCacheClean = false;//default off
 	
 	public abstract DependencyTable getDependencyTable();
 
 	@Override
 	public boolean isAutoFormulaCacheClean() {
-		return autoFormulaCacheClean;
+		return _autoFormulaCacheClean;
 	}
 	@Override
 	public void setAutoFormulaCacheClean(boolean autoFormulaCacheClean) {
-		this.autoFormulaCacheClean = autoFormulaCacheClean;
+		this._autoFormulaCacheClean = autoFormulaCacheClean;
 	}
 	
 	

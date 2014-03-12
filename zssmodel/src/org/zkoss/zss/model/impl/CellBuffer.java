@@ -1,3 +1,19 @@
+/*
+
+{{IS_NOTE
+	Purpose:
+		
+	Description:
+		
+	History:
+		
+}}IS_NOTE
+
+Copyright (C) 2013 Potix Corporation. All Rights Reserved.
+
+{{IS_RIGHT
+}}IS_RIGHT
+*/
 package org.zkoss.zss.model.impl;
 
 import org.zkoss.zss.model.SCell;
@@ -9,72 +25,73 @@ import org.zkoss.zss.model.SCell.CellType;
 /**
  * a help class to hold cell data and apply to another
  * @author Dennis
+ * @since 3.5.0
  */
 public class CellBuffer {
 	
-	boolean nullFlag = true;;
+	private boolean _null = true;;
 	
-	CellType type;
-	Object value;
-	String formula;
-	SCellStyle style;
+	private CellType _type;
+	private Object _value;
+	private String _formula;
+	private SCellStyle _style;
 	
-	SComment comment;
-	SDataValidation validation;
-	SHyperlink hyperlink;
+	private SComment _comment;
+	private SDataValidation _validation;
+	private SHyperlink _hyperlink;
 	
 	public CellBuffer(){
 	}
 	
 	public boolean isNull(){
-		return nullFlag;
+		return _null;
 	}
 	
-	public void setNull(boolean nullFlag){
-		this.nullFlag = nullFlag;
+	public void setNull(boolean isNull){
+		this._null = isNull;
 	}
 	
 	public CellType getType() {
-		return type;
+		return _type;
 	}
 	public void setType(CellType type) {
-		this.type = type;
+		this._type = type;
 	}
 	public Object getValue() {
-		return value;
+		return _value;
 	}
 	public void setValue(Object value) {
-		this.value = value;
+		this._value = value;
 	}
 	public String getFormula() {
-		return formula;
+		return _formula;
 	}
 	public void setFormula(String formula) {
-		this.formula = formula;
+		this._formula = formula;
 	}
 	public SCellStyle getStyle() {
-		return style;
+		return _style;
 	}
 	public void setStyle(SCellStyle style) {
-		this.style = style;
+		this._style = style;
 	}
 	public SComment getComment() {
-		return comment;
+		return _comment;
 	}
 	public void setComment(SComment comment) {
-		this.comment = comment;
+		this._comment = comment;
 	}
 	public SDataValidation getValidation() {
-		return validation;
+		return _validation;
 	}
 	public void setValidation(SDataValidation validation) {
-		this.validation = validation;
+		this._validation = validation;
 	}
 	public SHyperlink getHyperlink(){
-		return hyperlink;
+		return _hyperlink;
 	}
 	public void setHyperlink(SHyperlink hyperlink){
-		this.hyperlink = hyperlink;
+		this._hyperlink = hyperlink;
 	}
 	
 	public static CellBuffer bufferAll(SCell cell){

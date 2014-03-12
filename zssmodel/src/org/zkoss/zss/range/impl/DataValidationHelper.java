@@ -1,3 +1,19 @@
+/*
+
+{{IS_NOTE
+	Purpose:
+		
+	Description:
+		
+	History:
+		
+}}IS_NOTE
+
+Copyright (C) 2013 Potix Corporation. All Rights Reserved.
+
+{{IS_RIGHT
+}}IS_RIGHT
+*/
 package org.zkoss.zss.range.impl;
 
 import java.util.Date;
@@ -18,15 +34,19 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 import org.zkoss.zss.model.sys.input.InputEngine;
 import org.zkoss.zss.model.sys.input.InputParseContext;
 import org.zkoss.zss.model.sys.input.InputResult;
-
+/**
+ * 
+ * @author Dennis
+ * @since 3.5.0
+ */
 public class DataValidationHelper {
 
-	private final SDataValidation validation;
-	private final SSheet sheet;
+	private final SDataValidation _validation;
+	private final SSheet _sheet;
 	
 	public DataValidationHelper(SDataValidation validation) {
-		this.validation = validation;
-		this.sheet = validation.getSheet();
+		this._validation = validation;
+		this._sheet = validation.getSheet();
 	}
 
 	public boolean validate(String editText, String dataformat) {
@@ -38,14 +58,14 @@ public class DataValidationHelper {
 	
 	public boolean validate(CellType cellType, Object value) {
 		//allow any value => no need to do validation
-		ValidationType vtype = validation.getValidationType();
+		ValidationType vtype = _validation.getValidationType();
 		if (vtype == ValidationType.ANY) { //can be any value, meaning no validation
 			return true;
 		}
 		//ignore empty and value is empty
 		if (vtype!=ValidationType.TEXT_LENGTH 
 				&& (value == null || (value instanceof String && ((String)value).length() == 0))) {
-			if (validation.isEmptyCellAllowed()) {
+			if (_validation.isEmptyCellAllowed()) {
 				return true;
 			}
 		}
@@ -54,11 +74,11 @@ public class DataValidationHelper {
 			
 			FormulaEngine engine = EngineFactory.getInstance().createFormulaEngine();
 			
-			FormulaExpression expr = engine.parse((String)value, new FormulaParseContext(sheet, null));
+			FormulaExpression expr = engine.parse((String)value, new FormulaParseContext(_sheet, null));
 			if(expr.hasError()){
 				return false;
 			}
-			FormulaResultCellValue result = new FormulaResultCellValue(engine.evaluate(expr, new FormulaEvaluationContext(sheet)));
+			FormulaResultCellValue result = new FormulaResultCellValue(engine.evaluate(expr, new FormulaEvaluationContext(_sheet)));
 			
 			value = result.getValue();
 			cellType = result.getCellType();
@@ -126,15 +146,15 @@ public class DataValidationHelper {
 			return false;
 		}
 		
-		Object value1 = validation.getValue1(0);
+		Object value1 = _validation.getValue1(0);
 		if (!(value1 instanceof Number)) { //type does not match
 			return false;
 		}
-		Object value2 = validation.getValue2(0);
+		Object value2 = _validation.getValue2(0);
 		double v1 = ((Number)value1).doubleValue();
 		double v = value.doubleValue();
 		double v2;
-		switch(validation.getOperatorType()) {
+		switch(_validation.getOperatorType()) {
 		case BETWEEN:
 			if (!(value2 instanceof Number)) { //type does not match
 				return false;
@@ -167,17 +187,17 @@ public class DataValidationHelper {
 		if (value == null) {
 			return false;
 		}
-		if(validation.hasReferToCellList()){
-			for(SCell cell:validation.getReferToCellList()){
+		if(_validation.hasReferToCellList()){
+			for(SCell cell:_validation.getReferToCellList()){
 				Object val = cell.getValue();
 				if(value.equals(val)){
 					return true;
 				}
 			}
 		}else{
-			int size = validation.getNumOfValue1();
+			int size = _validation.getNumOfValue1();
 			for(int i=0;i<size;i++){
-				Object val = validation.getValue1(i);
+				Object val = _validation.getValue1(i);
 				if(value.equals(val)){
 					return true;
 				}

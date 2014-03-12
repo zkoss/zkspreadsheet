@@ -18,7 +18,7 @@ package org.zkoss.zss.model;
 /**
  * Indicate the object might has formula content
  * @author dennis
- * @sicne 3.5.0
+ * @since 3.5.0
  */
 public interface FormulaContent {
 

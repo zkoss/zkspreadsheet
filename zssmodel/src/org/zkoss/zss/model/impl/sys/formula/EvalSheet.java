@@ -20,21 +20,25 @@ import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.SCell;
 import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.model.SCell.CellType;
-
+/**
+ * 
+ * @author Pao
+ * @since 3.5.0
+ */
 public class EvalSheet implements EvaluationSheet {
 
-	private SSheet sheet;
+	private SSheet _sheet;
 
 	public EvalSheet(SSheet sheet) {
-		this.sheet = sheet;
+		this._sheet = sheet;
 	}
 	
 	public SSheet getNSheet() {
-		return sheet;
+		return _sheet;
 	}
 
 	public EvaluationCell getCell(int rowIndex, int columnIndex) {
-		SCell cell = sheet.getCell(rowIndex, columnIndex);
+		SCell cell = _sheet.getCell(rowIndex, columnIndex);
 		return cell != null ? new EvalCell(cell) : null;
 	}
 
@@ -187,7 +191,7 @@ public class EvalSheet implements EvaluationSheet {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((sheet == null) ? 0 : sheet.hashCode());
+		result = prime * result + ((_sheet == null) ? 0 : _sheet.hashCode());
 		return result;
 	}
 
@@ -201,6 +205,6 @@ public class EvalSheet implements EvaluationSheet {
 			return false;
 		EvalSheet other = (EvalSheet) obj;
 		
-		return sheet == other.sheet;
+		return _sheet == other._sheet;
 	}
 }

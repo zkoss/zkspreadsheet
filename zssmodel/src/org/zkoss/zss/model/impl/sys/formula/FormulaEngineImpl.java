@@ -95,9 +95,9 @@ public class FormulaEngineImpl implements FormulaEngine {
 
 	public final static String KEY_EVALUATORS = "$ZSS_EVALUATORS$";
 
-	private static final Log logger = Log.lookup(FormulaEngineImpl.class.getName());
+	private static final Log _logger = Log.lookup(FormulaEngineImpl.class.getName());
 
-	private Map<EvaluationWorkbook, XelContext> xelContexts = new HashMap<EvaluationWorkbook, XelContext>();
+	private Map<EvaluationWorkbook, XelContext> _xelContexts = new HashMap<EvaluationWorkbook, XelContext>();
 	
 	// for POI formula evaluator
 	protected final static IStabilityClassifier noCacheClassifier = new IStabilityClassifier() {
@@ -134,10 +134,10 @@ public class FormulaEngineImpl implements FormulaEngine {
 			Ref singleRef = tokens.length == 1 ? toDenpendRef(context, parsingBook, tokens[0]) : null;
 			expr = new FormulaExpressionImpl(renderedFormula, singleRef);
 		} catch(FormulaParseException e) {
-			logger.info(e.getMessage() + " when parsing " + formula);
+			_logger.info(e.getMessage() + " when parsing " + formula);
 			expr = new FormulaExpressionImpl(formula, null, true,e.getMessage());
 		} catch(Exception e) {
-			logger.error(e.getMessage() + " when parsing " + formula, e);
+			_logger.error(e.getMessage() + " when parsing " + formula, e);
 			expr = new FormulaExpressionImpl(formula, null, true,e.getMessage());
 		}
 
@@ -204,7 +204,7 @@ public class FormulaEngineImpl implements FormulaEngine {
 						aptg.getLastRow(), aptg.getLastColumn());
 			}
 		} catch(Exception e) {
-			logger.error(e.getMessage(), e);
+			_logger.error(e.getMessage(), e);
 		}
 		return null;
 	}
@@ -272,19 +272,19 @@ public class FormulaEngineImpl implements FormulaEngine {
 			}
 
 		} catch(NotImplementedException e) {
-			logger.info(e.getMessage() + " when eval " + expr.getFormulaString());
+			_logger.info(e.getMessage() + " when eval " + expr.getFormulaString());
 			result = new EvaluationResultImpl(ResultType.ERROR, new ErrorValue(ErrorValue.INVALID_NAME, e.getMessage()));
 		} catch(EvaluationException e) { 
-			logger.warning(e.getMessage() + " when eval " + expr.getFormulaString());
+			_logger.warning(e.getMessage() + " when eval " + expr.getFormulaString());
 			ErrorEval error = e.getErrorEval();
 			result = new EvaluationResultImpl(ResultType.ERROR, error==null?new ErrorValue(ErrorValue.INVALID_FORMULA, e.getMessage()):error);
 		} catch(FormulaParseException e) {
 			// we skip evaluation if formula has parsing error
 			// so if still occurring formula parsing exception, it should be a bug 
-			logger.error(e.getMessage() + " when eval " + expr.getFormulaString());
+			_logger.error(e.getMessage() + " when eval " + expr.getFormulaString());
 			result = new EvaluationResultImpl(ResultType.ERROR, new ErrorValue(ErrorValue.INVALID_FORMULA, e.getMessage()));
 		} catch(Exception e) {
-			logger.error(e.getMessage() + " when eval " + expr.getFormulaString(), e);
+			_logger.error(e.getMessage() + " when eval " + expr.getFormulaString(), e);
 			result = new EvaluationResultImpl(ResultType.ERROR, new ErrorValue(ErrorValue.INVALID_FORMULA, e.getMessage()));
 		}
 		return result;
@@ -368,7 +368,7 @@ public class FormulaEngineImpl implements FormulaEngine {
 	}
 
 	private XelContext getXelContextForResolving(FormulaEvaluationContext context, EvaluationWorkbook evalBook, WorkbookEvaluator evaluator) {
-		XelContext xelContext = xelContexts.get(evalBook);
+		XelContext xelContext = _xelContexts.get(evalBook);
 		if(xelContext == null) {
 
 			// create function resolver
@@ -401,7 +401,7 @@ public class FormulaEngineImpl implements FormulaEngine {
 			// create XEL context
 			xelContext = new SimpleXelContext(variableResolver, functionMapper);
 			xelContext.setAttribute("zkoss.zss.CellType", Object.class);
-			xelContexts.put(evalBook, xelContext);
+			_xelContexts.put(evalBook, xelContext);
 		}
 		return xelContext;
 	}
@@ -429,7 +429,7 @@ public class FormulaEngineImpl implements FormulaEngine {
 				// do nothing if not existed
 				EvalContext ctx = map.get(book.getBookName());
 				if(ctx == null) {
-					logger.warning("clear a non-existed book? >> " + book.getBookName());
+					_logger.warning("clear a non-existed book? >> " + book.getBookName());
 					return;
 				}
 
@@ -446,7 +446,7 @@ public class FormulaEngineImpl implements FormulaEngine {
 				map.clear(); // just in case
 			}
 		} catch(Exception e) {
-			logger.error(e.getMessage(), e);
+			_logger.error(e.getMessage(), e);
 		}
 	}
 
@@ -606,7 +606,7 @@ public class FormulaEngineImpl implements FormulaEngine {
 			expr = new FormulaExpressionImpl(renderedFormula, singleRef);
 
 		} catch(FormulaParseException e) {
-			logger.info(e.getMessage());
+			_logger.info(e.getMessage());
 			expr = new FormulaExpressionImpl(formula, null, true, e.getMessage());
 		}
 		return expr;

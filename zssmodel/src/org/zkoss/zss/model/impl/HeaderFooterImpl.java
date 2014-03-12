@@ -1,3 +1,19 @@
+/*
+
+{{IS_NOTE
+	Purpose:
+		
+	Description:
+		
+	History:
+		
+}}IS_NOTE
+
+Copyright (C) 2013 Potix Corporation. All Rights Reserved.
+
+{{IS_RIGHT
+}}IS_RIGHT
+*/
 package org.zkoss.zss.model.impl;
 
 import java.io.Serializable;
@@ -6,30 +22,35 @@ import org.zkoss.zss.model.SFooter;
 import org.zkoss.zss.model.SHeader;
 
 
-
+/**
+ * 
+ * @author Dennis
+ * @since 3.5.0
+ */
 public class HeaderFooterImpl implements SHeader,SFooter,Serializable{
 
 	private static final long serialVersionUID = 1L;
 	
-	String leftText = "";
-	String rightText = "";
-	String centerText = "";
+	private String _leftText = "";
+	private String _rightText = "";
+	private String _centerText = "";
+	
 	public String getLeftText() {
-		return leftText;
+		return _leftText;
 	}
 	public void setLeftText(String leftText) {
-		this.leftText = leftText;
+		this._leftText = leftText;
 	}
 	public String getRightText() {
-		return rightText;
+		return _rightText;
 	}
 	public void setRightText(String rightText) {
-		this.rightText = rightText;
+		this._rightText = rightText;
 	}
 	public String getCenterText() {
-		return centerText;
+		return _centerText;
 	}
 	public void setCenterText(String centerText) {
-		this.centerText = centerText;
+		this._centerText = centerText;
 	}
 }
