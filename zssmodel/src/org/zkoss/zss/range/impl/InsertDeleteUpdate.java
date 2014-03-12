@@ -16,6 +16,7 @@ import org.zkoss.zss.model.SSheet;
 /**
  * a range of row/column indicates insert/delete changes.
  * @author Pao
+ * @since 3.5.0
  */
 public class InsertDeleteUpdate {
 	private SSheet _sheet;

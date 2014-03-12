@@ -1,5 +1,10 @@
 package org.zkoss.zss.model.util;
 
+/**
+ * 
+ * @author dennis
+ * @since 3.5.0
+ */
 public class Strings {
 
 	

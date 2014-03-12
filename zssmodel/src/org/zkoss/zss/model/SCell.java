@@ -26,6 +26,9 @@ import org.zkoss.zss.model.SHyperlink.HyperlinkType;
  */
 public interface SCell extends FormulaContent{
 
+	/**
+	 * @since 3.5.0
+	 */
 	public enum CellType {
 		BLANK(3),
 		STRING(1),

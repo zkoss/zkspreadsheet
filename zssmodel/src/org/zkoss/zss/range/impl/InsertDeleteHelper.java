@@ -30,6 +30,7 @@ import org.zkoss.zss.range.SRange.InsertShift;
 /**
  * A helper to perform insert/delete row/column/cells.
  * @author Pao
+ * @since 3.5.0
  */
 public class InsertDeleteHelper extends RangeHelperBase {
 

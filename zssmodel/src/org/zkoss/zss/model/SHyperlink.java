@@ -21,6 +21,9 @@ package org.zkoss.zss.model;
  * @since 3.5.0
  */
 public interface SHyperlink {
+	/**
+	 * @since 3.5.0
+	 */
 	public enum HyperlinkType {
 		URL(1), DOCUMENT(2), EMAIL(3), FILE(4);
 		

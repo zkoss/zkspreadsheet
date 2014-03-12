@@ -43,7 +43,7 @@ import org.zkoss.zss.range.SRange.FillType;
 /**
  * To help data filling.
  * @author Dennis
- *
+ * @since 3.5.0
  */
 //the code was migrated from original BookHelper.fill series method.
 public class AutoFillHelper {

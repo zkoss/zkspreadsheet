@@ -24,6 +24,9 @@ import java.util.List;
  * @since 3.5.0
  */
 public interface SDataValidation extends FormulaContent{
+	/**
+	 * @since 3.5.0
+	 */
 	public enum ErrorStyle {
 		STOP((byte)0x00), WARNING((byte)0x01), INFO((byte)0x02);
 		
@@ -37,11 +40,18 @@ public interface SDataValidation extends FormulaContent{
 		}
 	}
 	
+	/**
+	 * @since 3.5.0
+	 */
 	public enum ValidationType {
 		ANY, INTEGER, DECIMAL, LIST, 
 		DATE, TIME, TEXT_LENGTH, FORMULA;
 
 	}
+	
+	/**
+	 * @since 3.5.0
+	 */
 	public enum OperatorType{
 		BETWEEN, NOT_BETWEEN, EQUAL, NOT_EQUAL, 
 		GREATER_THAN, LESS_THAN, GREATER_OR_EQUAL, LESS_OR_EQUAL;

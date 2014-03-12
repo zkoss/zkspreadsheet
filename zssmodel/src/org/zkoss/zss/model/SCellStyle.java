@@ -27,6 +27,7 @@ public interface SCellStyle {
 	
 	/**
 	 * The background color fill pattern
+	 * @since 3.5.0
 	 */
 	public enum FillPattern {
 		NO_FILL, SOLID_FOREGROUND, FINE_DOTS, ALT_BARS, SPARSE_DOTS, THICK_HORZ_BANDS, THICK_VERT_BANDS, THICK_BACKWARD_DIAG, THICK_FORWARD_DIAG, BIG_SPOTS, BRICKS, THIN_HORZ_BANDS, THIN_VERT_BANDS, THIN_BACKWARD_DIAG, THIN_FORWARD_DIAG, SQUARES, DIAMONDS, LESS_DOTS, LEAST_DOTS
@@ -34,7 +35,7 @@ public interface SCellStyle {
 
 	/**
 	 * The horizontal alignment
-	 *
+	 * @since 3.5.0
 	 */
 	public enum Alignment {
 		GENERAL, LEFT, CENTER, RIGHT, FILL, JUSTIFY, CENTER_SELECTION
@@ -42,6 +43,7 @@ public interface SCellStyle {
 
 	/**
 	 * The vertical alignment
+	 * @since 3.5.0
 	 */
 	public enum VerticalAlignment {
 		TOP, CENTER, BOTTOM, JUSTIFY
@@ -49,6 +51,7 @@ public interface SCellStyle {
 
 	/**
 	 * The border type
+	 * @since 3.5.0
 	 */
 	public enum BorderType {
 		NONE, THIN, MEDIUM, DASHED, HAIR, THICK, DOUBLE, DOTTED, MEDIUM_DASHED, DASH_DOT, MEDIUM_DASH_DOT, DASH_DOT_DOT, MEDIUM_DASH_DOT_DOT, SLANTED_DASH_DOT;

@@ -26,8 +26,8 @@ import org.zkoss.zss.model.SChart.ChartType;
 import org.zkoss.zss.model.SHyperlink.HyperlinkType;
 import org.zkoss.zss.model.SPicture.Format;
 /**
- * The main API to manipulate a book.
- * Represent one or more cells, a row, a column, a selection of a block of cells. 
+ * The main API to manipulate Spreadsheet's book model.
+ * It may represent one or more cells, a row, a column, or a selection of a block of cells. 
  * You can use this class to perform most user operations. 
  * @author dennis
  * @since 3.5.0

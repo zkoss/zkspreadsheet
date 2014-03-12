@@ -24,6 +24,9 @@ import org.zkoss.zss.model.chart.SChartData;
  */
 public interface SChart {
 
+	/**
+	 * @since 3.5.0
+	 */
 	public enum ChartType{
 		AREA,
 		BAR,
@@ -39,6 +42,9 @@ public interface SChart {
 		SURFACE
 	}
 	
+	/**
+	 * @since 3.5.0
+	 */
 	public enum ChartGrouping {
 		STANDARD,
 		STACKED,
@@ -46,6 +52,9 @@ public interface SChart {
 		CLUSTERED; //bar only
 	}
 	
+	/**
+	 * @since 3.5.0
+	 */
 	public enum ChartLegendPosition {
 		BOTTOM,
 		LEFT,
@@ -53,6 +62,10 @@ public interface SChart {
 		TOP,
 		TOP_RIGHT
 	}
+	
+	/**
+	 * @since 3.5.0
+	 */
 	public enum BarDirection {
 		HORIZONTAL, //horizontal, bar chart
 		VERTICAL; //vertical, column chart

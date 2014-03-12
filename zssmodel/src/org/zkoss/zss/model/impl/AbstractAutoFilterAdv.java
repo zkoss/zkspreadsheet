@@ -33,6 +33,9 @@ import org.zkoss.zss.model.SAutoFilter;
 public abstract class AbstractAutoFilterAdv implements SAutoFilter,Serializable{
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * @since 3.5.0
+	 */
 	public static class FilterColumnImpl implements NFilterColumn, Serializable{
 		private static final long serialVersionUID = 1L;
 		private int _index;

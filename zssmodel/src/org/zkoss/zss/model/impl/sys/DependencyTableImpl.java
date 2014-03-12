@@ -31,6 +31,7 @@ import org.zkoss.zss.model.sys.dependency.Ref.RefType;
 /**
  * Default implementation of dependency table.
  * @author Pao
+ * @since 3.5.0
  */
 public class DependencyTableImpl extends DependencyTableAdv {
 	private static final long serialVersionUID = 1L;

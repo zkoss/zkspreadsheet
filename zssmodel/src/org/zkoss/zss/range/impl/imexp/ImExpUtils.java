@@ -23,8 +23,9 @@ import org.zkoss.poi.ss.usermodel.*;
 
 /**
  *
- * Utility methods that involves POI model.
+ * Utility methods that involve read or write POI model.
  * @author Hawk
+ * @since 3.5.0
  */
 public class ImExpUtils {
 

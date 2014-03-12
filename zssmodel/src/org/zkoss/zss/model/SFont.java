@@ -22,11 +22,17 @@ package org.zkoss.zss.model;
  * @since 3.5.0
  */
 public interface SFont {
+	/**
+	 * @since 3.5.0
+	 */
 	public enum TypeOffset{
 		NONE, 
 		SUPER, 
 		SUB
 	}
+	/**
+	 * @since 3.5.0
+	 */
 	public enum Underline{
 		NONE,
 		SINGLE,
@@ -35,6 +41,9 @@ public interface SFont {
 		DOUBLE_ACCOUNTING
 	}
 	
+	/**
+	 * @since 3.5.0
+	 */
 	public enum Boldweight{
 		NORMAL,
 		BOLD

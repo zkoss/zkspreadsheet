@@ -22,7 +22,9 @@ package org.zkoss.zss.model;
  * @since 3.5.0
  */
 public interface SPrintSetup {
-	
+	/**
+	 * @since 3.5.0
+	 */
 	public enum PaperSize {
 	    /** US Letter 8 1/2 x 11 in */
 	    LETTER,

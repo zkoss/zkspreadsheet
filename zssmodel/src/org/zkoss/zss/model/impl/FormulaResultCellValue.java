@@ -11,7 +11,7 @@ import org.zkoss.zss.model.sys.formula.EvaluationResult.ResultType;
 /**
  * the formula result cell value
  * @author dennis
- *
+ * @since 3.5.0
  */
 public class FormulaResultCellValue extends CellValue implements Serializable {
 	private static final long serialVersionUID = 1L;

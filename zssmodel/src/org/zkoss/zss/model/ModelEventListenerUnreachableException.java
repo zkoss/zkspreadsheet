@@ -2,7 +2,7 @@ package org.zkoss.zss.model;
 /**
  * Indicated the Listener is not reachable, which mean, book could remove the listener if it catch this exception when send event
  * @author Dennis
- *
+ * @since 3.5.0
  */
 public class ModelEventListenerUnreachableException extends RuntimeException {
 	private static final long serialVersionUID = 1L;

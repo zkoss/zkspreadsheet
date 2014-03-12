@@ -24,7 +24,7 @@ import org.zkoss.zss.range.SRange;
 /**
  * Fill {@link SChartData} with series according to a selection. One series could be determined by row or column. 
  * @author Hawk
- *
+ * @since 3.5.0
  */
 //implementation references org.zkoss.zssex.api.ChartDataUtil
 public class ChartDataHelper extends RangeHelperBase {

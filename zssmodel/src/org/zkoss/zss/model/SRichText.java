@@ -23,7 +23,9 @@ import java.util.List;
  * @since 3.5.0
  */
 public interface SRichText {
-
+	/**
+	 * @since 3.5.0
+	 */
 	public interface Segment {
 		public String getText();	
 		public SFont getFont();

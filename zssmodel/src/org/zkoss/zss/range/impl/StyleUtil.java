@@ -29,7 +29,7 @@ import org.zkoss.zss.model.util.FontMatcher;
 /**
  * A utility class to help spreadsheet set style of a cell
  * @author Dennis.Chen
- *
+ * @since 3.5.0
  */
 public class StyleUtil {
 //	private static final Log log = Log.lookup(NStyles.class);

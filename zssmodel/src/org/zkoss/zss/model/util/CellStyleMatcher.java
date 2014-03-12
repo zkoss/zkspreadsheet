@@ -28,7 +28,7 @@ import org.zkoss.zss.model.SFont;
 
 /**
  * @author dennis
- * 
+ * @since 3.5.0
  */
 public class CellStyleMatcher {
 

@@ -26,6 +26,11 @@ import java.util.Set;
  */
 public interface SAutoFilter {
 
+	/**
+	 * 
+	 * @author Dennis
+	 * @since 3.5.0
+	 */
 	public interface NFilterColumn{
 		/**
 		 * the column index in the auto filter
@@ -47,6 +52,11 @@ public interface SAutoFilter {
 
 	}
 	
+	/**
+	 * 
+	 * @author Dennis
+	 * @since 3.5.0
+	 */
 	public enum FilterOp{
 		AND, BOTTOM10, BOTOOM10_PERCENT, OR, TOP10, TOP10_PERCENT, VALUES;
 	}

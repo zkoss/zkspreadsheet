@@ -23,7 +23,9 @@ import org.zkoss.zss.model.SCell.CellType;
  * @since 3.5.0
  */
 public interface EvaluationResult {
-
+	/**
+	 * @since 3.5.0
+	 */
 	public enum ResultType{
 		SUCCESS,ERROR
 	}

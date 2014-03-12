@@ -31,7 +31,7 @@ import org.zkoss.zss.range.SRange.SortDataOption;
  * Manipulate cells according to sorting criteria and options.
  * If sorting regions contains blank cells, it will ignore it. It only sort those cells with data.
  * @author Hawk
- * @since 3.5
+ * @since 3.5.0
  */
 //porting implementation from BookHelper.sort()
 public class SortHelper extends RangeHelperBase {
@@ -321,6 +321,7 @@ public class SortHelper extends RangeHelperBase {
 	
 	/**
 	 * Store index change and cell data after sorting
+	 * @since 3.5.0
 	 */
 	class SortResult{
 		int oldIndex;
@@ -460,7 +461,7 @@ public class SortHelper extends RangeHelperBase {
 	/**
 	 * Move the formula before setting to real cell.
 	 * @author Hawk
-	 *
+	 * @since 3.5.0
 	 */
 	class FormulaMovingCell implements InvocationHandler{
 		private final SCell proxiedCell;
