@@ -134,6 +134,7 @@
 	text-align: left;
 	width: 49px; /* colWidth - 2*cellPadding - 1 , 1 is border*/
 	overflow: hidden;
+	line-height: normal; /*zss-598, reset to avoid zk's effect*/
 	<c:if test="${c:browser('ie7-') || c:browser('ie6-')}">
 		position: absolute;
 		zoom: 1;

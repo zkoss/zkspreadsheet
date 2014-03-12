@@ -14,6 +14,7 @@ ZK Spreadsheet 3.5.0
   ZSS-593 Spreadsheet doesn't be released immediately after close tab in collaboration
   ZSS-594 wrong display when insert/delete row/column in freeze column/row panel
   ZSS-596 Possible memory leak when formula evaluation
+  ZSS-598 Cell doesn't display correctly
   
 ** Upgrade Notes
   * Following api are removed
