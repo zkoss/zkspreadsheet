@@ -20,22 +20,22 @@ package org.zkoss.zss.model;
  * @author dennis
  * @since 3.5.0
  */
-public class InvalidateFormulaException extends InvalidateModelOpException {
+public class InvalidFormulaException extends InvalidModelOpException {
 	private static final long serialVersionUID = 1L;
 
-	public InvalidateFormulaException() {
+	public InvalidFormulaException() {
 		super();
 	}
 
-	public InvalidateFormulaException(String message, Throwable cause) {
+	public InvalidFormulaException(String message, Throwable cause) {
 		super(message, cause);
 	}
 
-	public InvalidateFormulaException(String message) {
+	public InvalidFormulaException(String message) {
 		super(message);
 	}
 
-	public InvalidateFormulaException(Throwable cause) {
+	public InvalidFormulaException(Throwable cause) {
 		super(cause);
 	}
 

@@ -17,7 +17,7 @@ import org.zkoss.image.AImage;
 import org.zkoss.util.Locales;
 import org.zkoss.zss.model.CellRegion;
 import org.zkoss.zss.model.ErrorValue;
-import org.zkoss.zss.model.InvalidateModelOpException;
+import org.zkoss.zss.model.InvalidModelOpException;
 import org.zkoss.zss.model.ModelEvent;
 import org.zkoss.zss.model.ModelEventListener;
 import org.zkoss.zss.model.ModelEvents;
@@ -116,7 +116,7 @@ public class RangeTest {
 		try{
 			SRanges.range(sheet,1,1).setEditText("=SUM)((999)");
 			Assert.fail("not here");
-		}catch(InvalidateModelOpException x){
+		}catch(InvalidModelOpException x){
 			//old value
 			Assert.assertEquals(CellType.FORMULA, cell.getType());
 			Assert.assertEquals(CellType.NUMBER, cell.getFormulaResultType());
@@ -168,7 +168,7 @@ public class RangeTest {
 		try{
 			SRanges.range(sheet,1,1).setValue("=SUM)((999)");
 			Assert.fail("not here");
-		}catch(InvalidateModelOpException x){
+		}catch(InvalidModelOpException x){
 			Assert.assertEquals(CellType.FORMULA, cell.getType());
 			Assert.assertEquals(CellType.NUMBER, cell.getFormulaResultType());
 			Assert.assertEquals("SUM(999)", cell.getFormulaValue());

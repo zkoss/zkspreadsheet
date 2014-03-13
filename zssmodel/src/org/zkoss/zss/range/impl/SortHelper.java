@@ -136,16 +136,16 @@ public class SortHelper extends RangeHelperBase {
 			if (selection.contains(region)){
 				if (sortByRows){  //merged cells cannot across columns
 					if (region.getColumn() != region.getLastColumn()){
-						throw new InvalidateModelOpException("Cannot sort a range that conains merged cells across columns.");
+						throw new InvalidModelOpException("Cannot sort a range that conains merged cells across columns.");
 					}
 				}else{ //merged cells cannot across rows
 					if (region.getRow() != region.getLastRow()){
-						throw new InvalidateModelOpException("Cannot sort a range that conains merged cells across rows.");
+						throw new InvalidModelOpException("Cannot sort a range that conains merged cells across rows.");
 					}
 				}
 			}else{
 				if (selection.overlaps(region)){
-					throw new InvalidateModelOpException("Cannot sort a range that conains part of merged cells.");
+					throw new InvalidModelOpException("Cannot sort a range that conains part of merged cells.");
 				}
 			}
 		}

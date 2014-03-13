@@ -48,7 +48,7 @@ import org.zkoss.zss.api.model.impl.PictureImpl;
 import org.zkoss.zss.api.model.impl.SheetImpl;
 import org.zkoss.zss.api.model.impl.SimpleRef;
 import org.zkoss.zss.model.CellRegion;
-import org.zkoss.zss.model.InvalidateFormulaException;
+import org.zkoss.zss.model.InvalidFormulaException;
 import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.SCell;
 import org.zkoss.zss.model.SCellStyle;
@@ -508,7 +508,7 @@ public class RangeImpl implements Range{
 	public void setCellEditText(String editText){ 
 		try{
 			_range.setEditText(editText);
-		}catch(InvalidateFormulaException x){
+		}catch(InvalidFormulaException x){
 			throw new IllegalFormulaException(x.getMessage(),x);
 		}
 	}

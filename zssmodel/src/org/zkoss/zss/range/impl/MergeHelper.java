@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.zkoss.zss.model.CellRegion;
-import org.zkoss.zss.model.InvalidateModelOpException;
+import org.zkoss.zss.model.InvalidModelOpException;
 import org.zkoss.zss.model.SCell;
 import org.zkoss.zss.model.SCellStyle;
 import org.zkoss.zss.model.SSheet;

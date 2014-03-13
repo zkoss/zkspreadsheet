@@ -28,7 +28,7 @@ import java.util.concurrent.locks.ReadWriteLock;
 import org.zkoss.lang.Strings;
 import org.zkoss.util.Locales;
 import org.zkoss.zss.model.CellRegion;
-import org.zkoss.zss.model.InvalidateModelOpException;
+import org.zkoss.zss.model.InvalidModelOpException;
 import org.zkoss.zss.model.PasteOption;
 import org.zkoss.zss.model.SAutoFilter;
 import org.zkoss.zss.model.SAutoFilter.FilterOp;
@@ -805,7 +805,7 @@ public class RangeImpl implements SRange {
 	public void fill(final SRange dstRange, final FillType fillType) {
 		SSheet sheet = getSheet();
 		if(!dstRange.getSheet().equals(sheet)){
-			throw new InvalidateModelOpException("the source sheet and destination sheet aren't the same");
+			throw new InvalidModelOpException("the source sheet and destination sheet aren't the same");
 		}
 		new ModelUpdateTask() {
 			@Override
@@ -1079,7 +1079,7 @@ public class RangeImpl implements SRange {
 				SBook book = getBook();
 				int sheetCount;
 				if((sheetCount = book.getNumOfSheet())<=1){
-					throw new InvalidateModelOpException("can't delete last sheet ");
+					throw new InvalidModelOpException("can't delete last sheet ");
 				}
 				
 				SSheet toDelete = getSheet();

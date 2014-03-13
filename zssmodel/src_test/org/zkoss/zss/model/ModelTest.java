@@ -20,7 +20,7 @@ import org.zkoss.poi.ss.util.CellReference;
 import org.zkoss.util.Locales;
 import org.zkoss.zss.model.CellRegion;
 import org.zkoss.zss.model.ErrorValue;
-import org.zkoss.zss.model.InvalidateModelOpException;
+import org.zkoss.zss.model.InvalidModelOpException;
 import org.zkoss.zss.model.SAutoFilter;
 import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.SBooks;
@@ -300,7 +300,7 @@ public class ModelTest {
 		try{
 			SSheet sheet = initialDataGrid(book.createSheet("Sheet2"));
 			Assert.fail("should get exception");
-		}catch(InvalidateModelOpException x){}
+		}catch(InvalidModelOpException x){}
 		
 		Assert.assertEquals(2, book.getNumOfSheet());
 		Assert.assertEquals(sheet1, book.getSheet(0));
@@ -385,7 +385,7 @@ public class ModelTest {
 		
 		try{
 		book.moveSheetTo(sheet1, 3);
-		}catch(InvalidateModelOpException x){}//ownership
+		}catch(InvalidModelOpException x){}//ownership
 		
 		
 		
@@ -1822,7 +1822,7 @@ public class ModelTest {
 		try{
 			cell.setValue("=)))(999)");
 			Assert.fail("not here");
-		}catch(InvalidateModelOpException x){
+		}catch(InvalidModelOpException x){
 			Assert.assertEquals(CellType.FORMULA, cell.getType());
 			Assert.assertEquals(CellType.NUMBER, cell.getFormulaResultType());
 			Assert.assertEquals("SUM(999)", cell.getFormulaValue());
@@ -1957,7 +1957,7 @@ public class ModelTest {
 		try{
 			cell.setFormulaValue("[(999)");
 			Assert.fail("not here");
-		}catch(InvalidateModelOpException x){
+		}catch(InvalidModelOpException x){
 			Assert.assertEquals(CellType.FORMULA, cell.getType());
 			Assert.assertEquals(CellType.NUMBER, cell.getFormulaResultType());
 			Assert.assertEquals("SUM(999)", cell.getFormulaValue());
@@ -2246,11 +2246,11 @@ public class ModelTest {
 		try{
 			sheet.addMergedRegion(new CellRegion(0,0,1,1));
 			Assert.fail();
-		}catch(InvalidateModelOpException x){}
+		}catch(InvalidModelOpException x){}
 		try{
 			sheet.addMergedRegion(new CellRegion(1,1,2,2));
 			Assert.fail();
-		}catch(InvalidateModelOpException x){}
+		}catch(InvalidModelOpException x){}
 		
 		
 		sheet = initialDataGrid(book.createSheet("Sheet 2"));
@@ -2440,7 +2440,7 @@ public class ModelTest {
 		try{
 			book.createName("test1");
 			Assert.fail();
-		}catch(InvalidateModelOpException e){}
+		}catch(InvalidModelOpException e){}
 		SName name2 = book.createName("test2");
 		
 		Assert.assertEquals(2, book.getNumOfName());
@@ -3208,7 +3208,7 @@ public class ModelTest {
 		try{
 			sheet1.moveCell(new CellRegion("A1:C2"), 1,1);//source overlap
 			Assert.fail();
-		}catch(InvalidateModelOpException x){}
+		}catch(InvalidModelOpException x){}
 		
 		
 		sheet1.moveCell(new CellRegion("A1:C3"), 0,3);//target overlap
