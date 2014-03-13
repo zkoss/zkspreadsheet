@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import org.zkoss.poi.ss.formula.CollaboratingWorkbooksEnvironment;
 import org.zkoss.poi.ss.formula.DependencyTracker;
@@ -105,10 +106,50 @@ public class FormulaEngineImpl implements FormulaEngine {
 			return true;
 		}
 	};
+	
+	private static Pattern _areaPattern = Pattern.compile("\\([.[^\\(\\)]]*\\)");//match (A1,B1,C1)
+	
+	
+	public static void main(String args[]){
+		System.out.println("true:"+isAreaFormula("(A1,B1,C1)"));
+		System.out.println("false:"+isAreaFormula("(A1,SUM(B1,C1))"));
+		System.out.println("false:"+isAreaFormula("(A1+B1)/(C1+D1)"));
+		System.out.println("false:"+isAreaFormula("A1,B1,C1"));
+		System.out.println("false:"+isAreaFormula("SUM(A1,B1,C1)"));
+		System.out.println("false:"+isAreaFormula("A1+B1,C1"));
+		System.out.println("false:"+isAreaFormula("A1+B1+C1"));
+	}
+	
+	private static boolean isAreaFormula(String formula){
+		return _areaPattern.matcher(formula).matches();
+		
+	}
 
+	public FormulaExpression parseAreaFormula(String formula, FormulaParseContext context) {
+		formula = formula.trim();
+		if(!isAreaFormula(formula)){
+			return null;
+		}
+		if(formula.startsWith("(")){
+			formula = formula.substring(1);
+		}
+		if(formula.endsWith(")")){
+			formula = formula.substring(formula.length()-1);
+		}
+		
+		String[] formulasStrings = formula.split(",");
+		
+		
+		
+		return null;
+	}
 	@Override
 	public FormulaExpression parse(String formula, FormulaParseContext context) {
-		FormulaExpression expr = null;
+		FormulaExpression expr;
+//		expr = parseAreaFormula(formula,context);
+//		if(expr!=null){
+//			return expr;
+//		}
 		try {
 			// adapt and parse
 			SBook book = context.getBook();
@@ -132,7 +173,9 @@ public class FormulaEngineImpl implements FormulaEngine {
 			// render formula, detect region and create result
 			String renderedFormula = renderFormula(parsingBook, formula, tokens);
 			Ref singleRef = tokens.length == 1 ? toDenpendRef(context, parsingBook, tokens[0]) : null;
-			expr = new FormulaExpressionImpl(renderedFormula, singleRef);
+			Ref[] refs = singleRef==null ? null :
+				(singleRef.getType() == RefType.AREA || singleRef.getType() == RefType.CELL ?new Ref[]{singleRef}:null);
+			expr = new FormulaExpressionImpl(renderedFormula, refs);
 		} catch(FormulaParseException e) {
 			_logger.info(e.getMessage() + " when parsing " + formula);
 			expr = new FormulaExpressionImpl(formula, null, true,e.getMessage());
@@ -453,21 +496,32 @@ public class FormulaEngineImpl implements FormulaEngine {
 	protected static class FormulaExpressionImpl implements FormulaExpression, Serializable {
 		private static final long serialVersionUID = -8532826169759927711L;
 		private String formula;
-		private Ref ref;
+		private Ref[] refs;
 		private boolean error;
 		private String errorMessage;
 
 		/**
 		 * @param ref resolved reference if formula has only one parsed token
 		 */
-		public FormulaExpressionImpl(String formula, Ref ref) {
-			this(formula,ref,false,null);
+		public FormulaExpressionImpl(String formula, Ref[] refs) {
+			this(formula,refs,false,null);
 		}
-		public FormulaExpressionImpl(String formula, Ref ref, boolean error, String errorMessage) {
+		public FormulaExpressionImpl(String formula, Ref[] refs, boolean error, String errorMessage) {
 			this.formula = formula;
-			this.ref = ref;
+			if(refs!=null){
+				for(Ref ref:refs){
+					if( ref.getType() == RefType.AREA || ref.getType() == RefType.CELL){
+						continue;
+					}
+					this.error = true;
+					this.errorMessage = errorMessage==null?"wrong area reference":errorMessage;
+					return;
+				}
+			}
+			this.refs = refs;
 			this.error = error;
 			this.errorMessage = errorMessage;
+			
 		}
 
 		@Override
@@ -486,31 +540,14 @@ public class FormulaEngineImpl implements FormulaEngine {
 		}
 
 		@Override
-		public boolean isRefersTo() {
-			return ref != null && (ref.getType() == RefType.AREA || ref.getType() == RefType.CELL);
+		public boolean isAreaRefs() {
+			return refs != null && refs.length>0;
 		}
 		
 		@Override
-		public String getRefersToBookName() {
-			return isRefersTo() ? ref.getBookName() : null;
+		public Ref[] getAreaRefs() {
+			return refs;
 		}
-		
-		@Override
-		public String getRefersToSheetName() {
-			return isRefersTo() ? ref.getSheetName() : null;
-		}
-		
-		@Override
-		public String getRefersToLastSheetName() {
-			return isRefersTo() ? ref.getLastSheetName() : null;
-		}
-
-		@Override
-		public CellRegion getRefersToCellRegion() {
-			return isRefersTo() ? new CellRegion(ref.getRow(), ref.getColumn(), ref.getLastRow(),
-					ref.getLastColumn()) : null;
-		}
-
 	}
 
 	protected static class EvaluationResultImpl implements EvaluationResult {
@@ -603,7 +640,9 @@ public class FormulaEngineImpl implements FormulaEngine {
 			// render formula, detect region and create result
 			String renderedFormula = modified ? FormulaRenderer.toFormulaString(parsingBook, tokens) : formula;
 			Ref singleRef = tokens.length == 1 ? toDenpendRef(context, parsingBook, tokens[0]) : null;
-			expr = new FormulaExpressionImpl(renderedFormula, singleRef);
+			Ref[] refs = singleRef==null ? null :
+				(singleRef.getType() == RefType.AREA || singleRef.getType() == RefType.CELL ?new Ref[]{singleRef}:null);
+			expr = new FormulaExpressionImpl(renderedFormula, refs);
 
 		} catch(FormulaParseException e) {
 			_logger.info(e.getMessage());
