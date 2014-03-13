@@ -3423,6 +3423,50 @@ public class ModelTest {
 //		Assert.assertEquals(0D, series.getValue(1));
 		
 	}
+	@Test
+	public void testMultipleAreaShift() {
+		SBook book = SBooks.createBook("book1");
+		book.getBookSeries().setAutoFormulaCacheClean(true);
+		SSheet sheet1 = book.createSheet("Sheet1");
+		SSheet sheet2 = book.createSheet("Sheet2");
+		book.createName("SingleValueName").setRefersToFormula("Sheet1!$A$1");
+		book.createName("SingleName").setRefersToFormula("Sheet1!$A$1:$A$3");
+		book.createName("MultipleName").setRefersToFormula("Sheet1!$A$1,Sheet1!$A$3");
+		sheet1.getCell("A1").setValue(1);
+		sheet1.getCell("A2").setValue(2);
+		sheet1.getCell("A3").setValue(3);
+		
+		sheet2.getCell("A5").setValue(5);
+		sheet2.getCell("A6").setValue(6);
+		
+		sheet1.getCell("D2").setValue("=SUM(A1,A3,Sheet2!A5:A6)");
+		Assert.assertEquals(15D, sheet1.getCell("D2").getValue());
+		
+		sheet1.getCell("D3").setValue("=(A1,A3,Sheet2!A5:A6)");
+		Assert.assertEquals("#VALUE!", sheet1.getCell("D3").getErrorValue().getErrorString());
+		
+		
+		SRanges.range(sheet1,"D2:D3").copy(SRanges.range(sheet1,"D22"));
+		Assert.assertEquals("SUM(A21,A23,Sheet2!A25:A26)", sheet1.getCell("D22").getFormulaValue());
+		sheet1.getCell("A21").setValue(3);
+		sheet1.getCell("A23").setValue(6);
+		sheet2.getCell("A25").setValue(1);
+		sheet2.getCell("A26").setValue(2);
+		Assert.assertEquals(12D, sheet1.getCell("D22").getValue());
+		
+		Assert.assertEquals("(A21,A23,Sheet2!A25:A26)", sheet1.getCell("D23").getFormulaValue());
+		Assert.assertEquals("#VALUE!", sheet1.getCell("D23").getErrorValue().getErrorString());
+		
+		
+//		SRanges.range(sheet1,"A1:A3").move(2, 0);		
+//		
+//		Assert.assertEquals("SUM(A3,A5,Sheet2!A5:A6)", sheet1.getCell("D2").getFormulaValue());
+//		sheet1.getCell("A3").setValue(3);
+//		Assert.assertEquals(17D, sheet1.getCell("D2").getValue());
+//		
+//		Assert.assertEquals("(A3,A5,Sheet2!A5:A6)", sheet1.getCell("D3").getFormulaValue());
+//		Assert.assertEquals("#VALUE!", sheet1.getCell("D3").getErrorValue().getErrorString());
+	}
 	
 	@Test
 	public void testMultipleAreaEvalOfChart() {

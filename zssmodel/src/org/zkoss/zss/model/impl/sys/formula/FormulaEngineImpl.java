@@ -667,6 +667,33 @@ public class FormulaEngineImpl implements FormulaEngine {
 
 	}
 	
+	private FormulaExpression adjustMultipleArea(String formula, FormulaParseContext context, FormulaAdjuster adjuster) {
+		if(!isMultipleAreaFormula(formula)){
+			return null;
+		}
+		StringBuilder sb = new StringBuilder("(");
+		//handle multiple area
+		String[] fs = unwrapeAreaFormula(formula); 
+		List<Ref> areaRefs = new LinkedList<Ref>();
+		for(int i=0;i<fs.length;i++){
+			if(i>0){
+				sb.append(",");
+			}
+			FormulaExpression expr = adjust(fs[i], context, adjuster);
+			if(expr.hasError()){
+				return new FormulaExpressionImpl(formula, null,true,expr.getErrorMessage());
+			}
+			sb.append(expr.getFormulaString());
+			if(expr.isAreaRefs()){
+				for(Ref ref:expr.getAreaRefs()){
+					areaRefs.add(ref);
+				}
+			}
+		}
+		sb.append(")");
+		return new FormulaExpressionImpl(sb.toString(),areaRefs.size()==0?null:areaRefs.toArray(new Ref[areaRefs.size()]));
+	}
+	
 	/**
 	 * adjust formula through specific adjuster
 	 */
@@ -792,7 +819,8 @@ public class FormulaEngineImpl implements FormulaEngine {
 
 	@Override
 	public FormulaExpression shift(String formula, final int rowOffset, final int columnOffset, FormulaParseContext context) {
-		return adjust(formula, context, new FormulaAdjuster() {
+		formula = formula.trim();
+		FormulaAdjuster shiftAdjuster = new FormulaAdjuster() {
 			@Override
 			public boolean process(String formula, int sheetIndex, Ptg[] tokens, ParsingBook parsingBook, FormulaParseContext context) {
 				
@@ -839,7 +867,12 @@ public class FormulaEngineImpl implements FormulaEngine {
 					return false;
 				}
 			}
-		});
+		};
+		FormulaExpression result = adjustMultipleArea(formula, context, shiftAdjuster);
+		if(result!=null){
+			return result;
+		}
+		return adjust(formula, context, shiftAdjuster);
 	}
 	
 	private boolean isValidRowIndex(SBook book, int rowIndex) {
@@ -852,7 +885,8 @@ public class FormulaEngineImpl implements FormulaEngine {
 
 	@Override
 	public FormulaExpression transpose(String formula, final int rowOrigin, final int columnOrigin, FormulaParseContext context) {
-		return adjust(formula, context, new FormulaAdjuster() {
+		formula = formula.trim();
+		FormulaAdjuster shiftAdjuster = new FormulaAdjuster() {
 			@Override
 			public boolean process(String formula, int sheetIndex, Ptg[] tokens, ParsingBook parsingBook, FormulaParseContext context) {
 
@@ -919,7 +953,13 @@ public class FormulaEngineImpl implements FormulaEngine {
 				}
 				return true;
 			}
-		});
+		};
+		
+		FormulaExpression result = adjustMultipleArea(formula, context, shiftAdjuster);
+		if(result!=null){
+			return result;
+		}
+		return adjust(formula, context, shiftAdjuster);
 	}
 
 	@Override
