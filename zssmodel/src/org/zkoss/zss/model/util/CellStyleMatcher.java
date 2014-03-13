@@ -17,16 +17,14 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 
 package org.zkoss.zss.model.util;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 
-import org.zkoss.zss.model.SBook;
-import org.zkoss.zss.model.SCellStyle;
-import org.zkoss.zss.model.SFont;
+import org.zkoss.zss.model.*;
 
 
 /**
+ * This class can be used to match a {@link SCellStyle} with a criteria.
  * @author dennis
  * @since 3.5.0
  */
@@ -73,6 +71,9 @@ public class CellStyleMatcher {
 
 	
 	public CellStyleMatcher(){}
+	/**
+	 * Create a style matcher with an existing cell style as the criteria 
+	 */
 	public CellStyleMatcher(SCellStyle criteria){
 		setAlignment(criteria.getAlignment());
 		setVerticalAlignment(criteria.getVerticalAlignment());
@@ -338,6 +339,10 @@ public class CellStyleMatcher {
 //		criteria.remove(Property.FillForegroundColor);
 //	}
 	
+	/**
+	 * 
+	 * @return returns TRUE if specified cell style matches the matcher's criteria
+	 */
 	public boolean match(SCellStyle style){
 		for(Entry<Property,Object> e:_criteria.entrySet()){
 			switch(e.getKey()){

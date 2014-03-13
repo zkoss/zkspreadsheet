@@ -18,7 +18,7 @@ package org.zkoss.zss.model.chart;
 
 import org.zkoss.zss.model.FormulaContent;
 /**
- * 
+ * A series of chart data.
  * @author dennis
  * @since 3.5.0
  */
@@ -33,14 +33,13 @@ public interface SSeries extends FormulaContent{
 	
 	//for Scatter, xy chart
 	/**
-	 * Gets the num of x value, the result is same as {@link #getNumOfValue()}
+	 * Gets the number of x value, the result is same as {@link #getNumOfValue()}
 	 * @return
 	 */
 	public int getNumOfXValue();
+	
 	/**
-	 * Gets the x value, the result is same as {@link #getValue(int)}
-	 * @param index
-	 * @return
+	 * @return returns the x value specifed by the index, the result is same as {@link #getValue(int)}
 	 */
 	public Object getXValue(int index);
 	public int getNumOfYValue();

@@ -28,7 +28,7 @@ public interface FormulaContent {
 	public void clearFormulaResultCache();
 	
 	/**
-	 * @return true if has parsing error, false if no error or not a formula content
+	 * @return returns TRUE if it has parsing error, FALSE if no error found or not a formula content
 	 */
 	public boolean isFormulaParsingError();
 	

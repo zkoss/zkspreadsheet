@@ -16,7 +16,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.model;
 /**
- * 
+ * It stores first and last column index of a group of column that has same width and cell style.
  * @author Dennis
  * @since 3.5.0
  */
