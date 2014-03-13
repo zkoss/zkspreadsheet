@@ -434,14 +434,14 @@ public interface SRange {
 //	public XAreas getAreas();
 	
 	/**
-	 * Returns a {@link SRange} that represent all columns of the 1st selected area of this Range. Note that only the 1st selected area is considered if this Range is a multiple-selected Range. 
-	 * @return a {@link SRange} that represent all columns of this Range.
+	 * Returns a {@link SRange} that represent columns of the 1st selected area of this Range. Note that only the 1st selected area is considered if this Range is a multiple-selected Range. 
+	 * @return a {@link SRange} that represent columns of this Range and contains all rows of the column
 	 */
 	public SRange getColumns();
 	
 	/**
-	 * Returns a {@link SRange} that represent all rows of the 1st selected area of this Range. Note that only the 1st selected area is considered if this Range is a multiple-selected Range. 
-	 * @return a {@link SRange} that represent all rows of this Range.
+	 * Returns a {@link SRange} that represent rows of the 1st selected area of this Range. Note that only the 1st selected area is considered if this Range is a multiple-selected Range. 
+	 * @return a {@link SRange} that represent rows of this Range, and contains all columns of the rows
 	 */
 	public SRange getRows();
 

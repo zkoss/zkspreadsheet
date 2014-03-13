@@ -732,7 +732,8 @@ public class FormulaEngineImpl implements FormulaEngine {
 	
 	@Override
 	public FormulaExpression move(String formula, final SheetRegion region, final int rowOffset, final int columnOffset, FormulaParseContext context) {
-		return adjust(formula, context, new FormulaAdjuster() {
+		formula = formula.trim();
+		FormulaAdjuster shiftAdjuster = new FormulaAdjuster() {
 			@Override
 			public boolean process(String formula, int sheetIndex, Ptg[] tokens, ParsingBook parsingBook, FormulaParseContext context) {
 				// move formula, limit to bound if dest. is out; if first and last both out on bound, it will be "#REF!"
@@ -750,7 +751,12 @@ public class FormulaEngineImpl implements FormulaEngine {
 						parsingBook.getSpreadsheetVersion());
 				return shifter.adjustFormula(tokens, sheetIndex);
 			}
-		});
+		};
+		FormulaExpression result = adjustMultipleArea(formula, context, shiftAdjuster);
+		if(result!=null){
+			return result;
+		}
+		return adjust(formula, context, shiftAdjuster);
 	}
 
 	@Override
@@ -964,7 +970,8 @@ public class FormulaEngineImpl implements FormulaEngine {
 
 	@Override
 	public FormulaExpression renameSheet(String formula, final SBook targetBook, final String oldSheetName, final String newSheetName, FormulaParseContext context) {
-		return adjust(formula, context, new FormulaAdjuster() {
+		formula = formula.trim();
+		FormulaAdjuster shiftAdjuster = new FormulaAdjuster() {
 			@Override
 			public boolean process(String formula, int formulaSheetIndex, Ptg[] tokens, ParsingBook parsingBook, FormulaParseContext context) {
 				if(newSheetName != null) {
@@ -994,7 +1001,12 @@ public class FormulaEngineImpl implements FormulaEngine {
 				}
 				return true;
 			}
-		});
+		};
+		FormulaExpression result = adjustMultipleArea(formula, context, shiftAdjuster);
+		if(result!=null){
+			return result;
+		}
+		return adjust(formula, context, shiftAdjuster);
 	}
 	
 	private static class DeletedSheet3DPtg extends OperandPtg implements WorkbookDependentFormula {

@@ -64,6 +64,9 @@ import org.zkoss.zss.model.sys.dependency.Ref;
 import org.zkoss.zss.model.util.CellStyleMatcher;
 import org.zkoss.zss.model.util.FontMatcher;
 import org.zkoss.zss.model.util.Validations;
+import org.zkoss.zss.range.SRange.DeleteShift;
+import org.zkoss.zss.range.SRange.InsertCopyOrigin;
+import org.zkoss.zss.range.SRange.InsertShift;
 import org.zkoss.zss.range.SRanges;
 
 public class ModelTest {
@@ -3445,7 +3448,7 @@ public class ModelTest {
 		sheet1.getCell("D3").setValue("=(A1,A3,Sheet2!A5:A6)");
 		Assert.assertEquals("#VALUE!", sheet1.getCell("D3").getErrorValue().getErrorString());
 		
-		
+		//shift
 		SRanges.range(sheet1,"D2:D3").copy(SRanges.range(sheet1,"D22"));
 		Assert.assertEquals("SUM(A21,A23,Sheet2!A25:A26)", sheet1.getCell("D22").getFormulaValue());
 		sheet1.getCell("A21").setValue(3);
@@ -3457,15 +3460,57 @@ public class ModelTest {
 		Assert.assertEquals("(A21,A23,Sheet2!A25:A26)", sheet1.getCell("D23").getFormulaValue());
 		Assert.assertEquals("#VALUE!", sheet1.getCell("D23").getErrorValue().getErrorString());
 		
+		//move
+		SRanges.range(sheet1,"A1:A3").move(2, 0);		
 		
-//		SRanges.range(sheet1,"A1:A3").move(2, 0);		
-//		
-//		Assert.assertEquals("SUM(A3,A5,Sheet2!A5:A6)", sheet1.getCell("D2").getFormulaValue());
-//		sheet1.getCell("A3").setValue(3);
-//		Assert.assertEquals(17D, sheet1.getCell("D2").getValue());
-//		
-//		Assert.assertEquals("(A3,A5,Sheet2!A5:A6)", sheet1.getCell("D3").getFormulaValue());
-//		Assert.assertEquals("#VALUE!", sheet1.getCell("D3").getErrorValue().getErrorString());
+		Assert.assertEquals("SUM(A3,A5,Sheet2!A5:A6)", sheet1.getCell("D2").getFormulaValue());
+		sheet1.getCell("A3").setValue(3);
+		Assert.assertEquals(17D, sheet1.getCell("D2").getValue());
+		
+		Assert.assertEquals("(A3,A5,Sheet2!A5:A6)", sheet1.getCell("D3").getFormulaValue());
+		Assert.assertEquals("#VALUE!", sheet1.getCell("D3").getErrorValue().getErrorString());
+		
+		//insert
+		SRanges.range(sheet1,"A4").getRows().insert(InsertShift.DEFAULT, InsertCopyOrigin.FORMAT_NONE);		
+		
+		Assert.assertEquals("SUM(A3,A6,Sheet2!A5:A6)", sheet1.getCell("D2").getFormulaValue());
+		sheet1.getCell("A4").setValue(3);
+		Assert.assertEquals(17D, sheet1.getCell("D2").getValue());
+		sheet1.getCell("A6").setValue(5);
+		Assert.assertEquals(19D, sheet1.getCell("D2").getValue());
+		
+		Assert.assertEquals("(A3,A6,Sheet2!A5:A6)", sheet1.getCell("D3").getFormulaValue());
+		Assert.assertEquals("#VALUE!", sheet1.getCell("D3").getErrorValue().getErrorString());
+		
+		
+		//delete
+		SRanges.range(sheet1,"A4:A5").getRows().delete(DeleteShift.DEFAULT);		
+		
+		Assert.assertEquals("SUM(A3,A4,Sheet2!A5:A6)", sheet1.getCell("D2").getFormulaValue());
+		sheet1.getCell("A4").setValue(3);
+		Assert.assertEquals(17D, sheet1.getCell("D2").getValue());
+		
+		Assert.assertEquals("(A3,A4,Sheet2!A5:A6)", sheet1.getCell("D3").getFormulaValue());
+		Assert.assertEquals("#VALUE!", sheet1.getCell("D3").getErrorValue().getErrorString());
+		
+		//rename
+		SRanges.range(sheet2).setSheetName("XYZ");
+		
+		Assert.assertEquals("SUM(A3,A4,XYZ!A5:A6)", sheet1.getCell("D2").getFormulaValue());
+		sheet2.getCell("A5").setValue(1);
+		Assert.assertEquals(13D, sheet1.getCell("D2").getValue());
+		
+		Assert.assertEquals("(A3,A4,XYZ!A5:A6)", sheet1.getCell("D3").getFormulaValue());
+		Assert.assertEquals("#VALUE!", sheet1.getCell("D3").getErrorValue().getErrorString());
+		
+		//delete
+		SRanges.range(sheet2).deleteSheet();
+		
+		Assert.assertEquals("SUM(A3,A4,'#REF'!A5:A6)", sheet1.getCell("D2").getFormulaValue());
+		Assert.assertEquals("#REF!", sheet1.getCell("D2").getErrorValue().getErrorString());
+		
+		Assert.assertEquals("(A3,A4,'#REF'!A5:A6)", sheet1.getCell("D3").getFormulaValue());
+		Assert.assertEquals("#VALUE!", sheet1.getCell("D3").getErrorValue().getErrorString());		
 	}
 	
 	@Test
