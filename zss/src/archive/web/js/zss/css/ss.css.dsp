@@ -10,6 +10,8 @@
 	background:#FFFFFF;
 	overflow:hidden;
 	border:1px solid #D8D8D8;
+	box-sizing:border-box;
+	-moz-box-sizing: border-box;
 }
 
 .zscave {
@@ -1469,6 +1471,10 @@
 .zstbtabpanel {
 	background: #EEEEEE;
 	padding: 0;
+}
+
+.zssheettab.z-tab-selected .zssheettab-text{
+	color: #333;
 }
 
 .z-initing {

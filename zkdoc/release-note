@@ -16,6 +16,7 @@ ZK Spreadsheet 3.5.0
   ZSS-596 Possible memory leak when formula evaluation
   ZSS-598 Cell doesn't display correctly
   ZSS-601 Once I use right click context menu on sheet bar, it will never work again
+  ZSS-605 Spreadsheet doesn't fit in screen with hflex, vflex is 1 and show scroll bar  
   
 ** Upgrade Notes
   * Following api are removed
