@@ -13,8 +13,10 @@ package org.zkoss.zss.model.impl.sys.formula;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -109,83 +111,109 @@ public class FormulaEngineImpl implements FormulaEngine {
 	
 	private static Pattern _areaPattern = Pattern.compile("\\([.[^\\(\\)]]*\\)");//match (A1,B1,C1)
 	
-	
-	public static void main(String args[]){
-		System.out.println("true:"+isAreaFormula("(A1,B1,C1)"));
-		System.out.println("false:"+isAreaFormula("(A1,SUM(B1,C1))"));
-		System.out.println("false:"+isAreaFormula("(A1+B1)/(C1+D1)"));
-		System.out.println("false:"+isAreaFormula("A1,B1,C1"));
-		System.out.println("false:"+isAreaFormula("SUM(A1,B1,C1)"));
-		System.out.println("false:"+isAreaFormula("A1+B1,C1"));
-		System.out.println("false:"+isAreaFormula("A1+B1+C1"));
-	}
-	
-	private static boolean isAreaFormula(String formula){
+	private static boolean isMultipleAreaFormula(String formula){
 		return _areaPattern.matcher(formula).matches();
 		
 	}
-
-	public FormulaExpression parseAreaFormula(String formula, FormulaParseContext context) {
-		formula = formula.trim();
-		if(!isAreaFormula(formula)){
-			return null;
-		}
+	
+	private String[] unwrapeAreaFormula(String formula){
 		if(formula.startsWith("(")){
 			formula = formula.substring(1);
 		}
 		if(formula.endsWith(")")){
-			formula = formula.substring(formula.length()-1);
+			formula = formula.substring(0,formula.length()-1);
 		}
-		
 		String[] formulasStrings = formula.split(",");
+		return formulasStrings;
+	}
+
+
+	private FormulaExpression parseMultipleAreaFormula(String formula, FormulaParseContext context) {
+		if(!isMultipleAreaFormula(formula)){
+			return null;
+		}
+		FormulaExpression[] result = parse0(unwrapeAreaFormula(formula),context);
 		
-		
-		
-		return null;
+		List<Ref> areaRefs = new LinkedList<Ref>(); 
+		for(FormulaExpression expr:result){
+			if(expr.hasError()){
+				return new FormulaExpressionImpl(formula, null, true,expr.getErrorMessage());
+			}
+			for(Ref ref:expr.getAreaRefs()){
+				areaRefs.add(ref);
+			}
+		}
+		return new FormulaExpressionImpl(formula, areaRefs.toArray(new Ref[areaRefs.size()]));
 	}
 	@Override
 	public FormulaExpression parse(String formula, FormulaParseContext context) {
-		FormulaExpression expr;
-//		expr = parseAreaFormula(formula,context);
-//		if(expr!=null){
-//			return expr;
-//		}
+		formula = formula.trim();
+		FormulaExpression expr = parseMultipleAreaFormula(formula,context);
+		if(expr!=null){
+			return expr;
+		}
+		return parse0(new String[]{formula},context)[0];
+	}
+
+	private FormulaExpression[] parse0(String[] formulas, FormulaParseContext context) {
+		LinkedList<FormulaExpression> result = new LinkedList<FormulaExpression>();
+		Ref dependant = context.getDependent();
+		LinkedList<Ref> precednets = dependant!=null?new LinkedList<Ref>():null;
 		try {
 			// adapt and parse
 			SBook book = context.getBook();
 			ParsingBook parsingBook = new ParsingBook(book);
 			int sheetIndex = parsingBook.getExternalSheetIndex(null, context.getSheet().getSheetName());
-			Ptg[] tokens = FormulaParser.parse(formula, parsingBook, FormulaType.CELL, sheetIndex); // current sheet index in parsing is always 0
-
-			// dependency tracking if necessary
-			Ref dependant = context.getDependent();
-			if(dependant != null) {
-				AbstractBookSeriesAdv series = (AbstractBookSeriesAdv)book.getBookSeries();
-				DependencyTableAdv table = (DependencyTableAdv)series.getDependencyTable();
-				for(Ptg ptg : tokens) {
-					Ref precedent = toDenpendRef(context, parsingBook, ptg);
-					if(precedent != null) {
-						table.add(dependant, precedent);
+			
+			AbstractBookSeriesAdv series = (AbstractBookSeriesAdv)book.getBookSeries();
+			DependencyTableAdv table = (DependencyTableAdv)series.getDependencyTable();
+			
+			boolean error = false;
+			
+			for(String formula:formulas){
+				try{
+					Ptg[] tokens = FormulaParser.parse(formula, parsingBook, FormulaType.CELL, sheetIndex); // current sheet index in parsing is always 0
+					if(dependant!=null){
+						for(Ptg ptg : tokens) {
+							Ref precedent = toDenpendRef(context, parsingBook, ptg);
+							if(precedent != null) {
+								precednets.add(precedent);
+							}
+						}
 					}
+					
+					// render formula, detect region and create result
+					String renderedFormula = renderFormula(parsingBook, formula, tokens);
+					Ref singleRef = tokens.length == 1 ? toDenpendRef(context, parsingBook, tokens[0]) : null;
+					Ref[] refs = singleRef==null ? null :
+						(singleRef.getType() == RefType.AREA || singleRef.getType() == RefType.CELL ?new Ref[]{singleRef}:null);
+					result.add(new FormulaExpressionImpl(renderedFormula, refs));
+					
+					
+				}catch(FormulaParseException e) {
+					_logger.info(e.getMessage() + " when parsing " + formula);
+					result.add(new FormulaExpressionImpl(formula, null, true,e.getMessage()));
+					error = true;
+				} catch(Exception e) {
+					_logger.error(e.getMessage() + " when parsing " + formula, e);
+					result.add(new FormulaExpressionImpl(formula, null, true,e.getMessage()));
+					error = true;
 				}
 			}
-
-			// render formula, detect region and create result
-			String renderedFormula = renderFormula(parsingBook, formula, tokens);
-			Ref singleRef = tokens.length == 1 ? toDenpendRef(context, parsingBook, tokens[0]) : null;
-			Ref[] refs = singleRef==null ? null :
-				(singleRef.getType() == RefType.AREA || singleRef.getType() == RefType.CELL ?new Ref[]{singleRef}:null);
-			expr = new FormulaExpressionImpl(renderedFormula, refs);
-		} catch(FormulaParseException e) {
-			_logger.info(e.getMessage() + " when parsing " + formula);
-			expr = new FormulaExpressionImpl(formula, null, true,e.getMessage());
+			
+			// dependency tracking if no error and necessary
+			if(!error && dependant != null) {
+				for(Ref precedent:precednets){
+					table.add(dependant, precedent);
+				}
+			}
 		} catch(Exception e) {
-			_logger.error(e.getMessage() + " when parsing " + formula, e);
-			expr = new FormulaExpressionImpl(formula, null, true,e.getMessage());
+			_logger.error(e.getMessage() + " when parsing " + Arrays.asList(formulas), e);
+			result.clear();
+			result.add(new FormulaExpressionImpl(Arrays.asList(formulas).toString(), null, true,e.getMessage()));
 		}
-
-		return expr;
-	}
+		return result.toArray(new FormulaExpression[result.size()]);
+	}	
 	
 	protected String renderFormula(ParsingBook parsingBook, String formula, Ptg[] tokens) {
 		boolean hit = false; // only render if necessary
@@ -260,7 +288,7 @@ public class FormulaEngineImpl implements FormulaEngine {
 		if(expr.hasError()) {
 			return new EvaluationResultImpl(ResultType.ERROR, new ErrorValue(ErrorValue.INVALID_FORMULA));
 		}
-
+		
 		EvaluationResult result = null;
 		try {
 
@@ -340,10 +368,24 @@ public class FormulaEngineImpl implements FormulaEngine {
 		int currentSheetIndex = book.getSheetIndex(context.getSheet());
 		SCell cell = context.getCell();
 		ValueEval value = null;
+		boolean multipleArea = isMultipleAreaFormula(expr.getFormulaString());
 		if(cell == null || cell.isNull()) {
 			// evaluation formula directly
-			value = evaluator.evaluate(currentSheetIndex, expr.getFormulaString(), true);
+			if(multipleArea){
+				String[] formulas = unwrapeAreaFormula(expr.getFormulaString());
+				List<ValueEval> evals = new ArrayList<ValueEval>(formulas.length);
+				for(String f:formulas){
+					value = evaluator.evaluate(currentSheetIndex, f, true);
+					evals.add(value);
+				}
+				value = new ValuesEval(evals.toArray(new ValueEval[evals.size()]));
+			}else{
+				value = evaluator.evaluate(currentSheetIndex, expr.getFormulaString(), true);
+			}
 		} else {
+			if(multipleArea){//is multipleArea formula in cell, should return #VALUE!
+				return new EvaluationResultImpl(ResultType.ERROR, new ErrorValue(ErrorValue.INVALID_VALUE));
+			}
 			EvaluationCell evalCell = evalBook.getSheet(currentSheetIndex).getCell(cell.getRowIndex(),
 					cell.getColumnIndex());
 			value = evaluator.evaluate(evalCell);
@@ -353,38 +395,8 @@ public class FormulaEngineImpl implements FormulaEngine {
 		if(value instanceof ErrorEval) {
 			int code = ((ErrorEval)value).getErrorCode();
 			return new EvaluationResultImpl(ResultType.ERROR, new ErrorValue((byte)code));
-		} else if(value instanceof BlankEval) {
-			return new EvaluationResultImpl(ResultType.SUCCESS, "");
-		} else if(value instanceof StringEval) {
-			return new EvaluationResultImpl(ResultType.SUCCESS, ((StringEval)value).getStringValue());
-		} else if(value instanceof NumberEval) {
-			return new EvaluationResultImpl(ResultType.SUCCESS, ((NumberEval)value).getNumberValue());
-		} else if(value instanceof BoolEval) {
-			return new EvaluationResultImpl(ResultType.SUCCESS, ((BoolEval)value).getBooleanValue());
-		} else if(value instanceof ValuesEval) {
-			ValueEval[] values = ((ValuesEval)value).getValueEvals();
-			Object[] array = new Object[values.length];
-			for(int i = 0; i < values.length; ++i) {
-				array[i] = getResolvedValue(values[i]);
-			}
-			return new EvaluationResultImpl(ResultType.SUCCESS, array);
-		} else if(value instanceof AreaEval) {
-			// covert all values into an array
-			List<Object> list = new ArrayList<Object>();
-			AreaEval area = (AreaEval)value;
-			for(int r = 0; r < area.getHeight(); ++r) {
-				for(int c = 0; c < area.getWidth(); ++c) {
-					ValueEval v = area.getValue(r, c);
-					list.add(getResolvedValue(v));
-				}
-			}
-			return new EvaluationResultImpl(ResultType.SUCCESS, list);
-		} else if(value instanceof RefEval) {
-			ValueEval ve = ((RefEval)value).getInnerValueEval();
-			Object v = getResolvedValue(ve);
-			return new EvaluationResultImpl(ResultType.SUCCESS, v);
 		} else {
-			throw new EvaluationException(null, "no matched type: " + value); // FIXME
+			return new EvaluationResultImpl(ResultType.SUCCESS, getResolvedValue(value));
 		}
 	}
 
@@ -395,6 +407,30 @@ public class FormulaEngineImpl implements FormulaEngine {
 			return ((NumberEval)value).getNumberValue();
 		} else if(value instanceof BlankEval) {
 			return "";
+		} else if(value instanceof BoolEval) {
+			return ((BoolEval)value).getBooleanValue();
+		} else if(value instanceof ValuesEval) {
+			ValueEval[] values = ((ValuesEval)value).getValueEvals();
+			Object[] array = new Object[values.length];
+			for(int i = 0; i < values.length; ++i) {
+				array[i] = getResolvedValue(values[i]);
+			}
+			return array;
+		} else if(value instanceof AreaEval) {
+			// covert all values into an array
+			List<Object> list = new ArrayList<Object>();
+			AreaEval area = (AreaEval)value;
+			for(int r = 0; r < area.getHeight(); ++r) {
+				for(int c = 0; c < area.getWidth(); ++c) {
+					ValueEval v = area.getValue(r, c);
+					list.add(getResolvedValue(v));
+				}
+			}
+			return list;
+		} else if(value instanceof RefEval) {
+			ValueEval ve = ((RefEval)value).getInnerValueEval();
+			Object v = getResolvedValue(ve);
+			return v;
 		} else if(value instanceof ErrorEval) {//ZSS-591 Get console exception after delete sheet
 			return ((ErrorEval)value).getErrorCode();
 		} else {

@@ -58,6 +58,7 @@ import org.zkoss.zss.model.impl.AbstractSheetAdv;
 import org.zkoss.zss.model.impl.BookImpl;
 import org.zkoss.zss.model.impl.RefImpl;
 import org.zkoss.zss.model.impl.SheetImpl;
+import org.zkoss.zss.model.impl.chart.GeneralChartDataImpl;
 import org.zkoss.zss.model.sys.dependency.DependencyTable;
 import org.zkoss.zss.model.sys.dependency.Ref;
 import org.zkoss.zss.model.util.CellStyleMatcher;
@@ -3331,6 +3332,82 @@ public class ModelTest {
 		} else {
 			Assert.assertTrue(sheet.getMergedRegions().isEmpty());
 		}
+	}
+	
+	@Test
+	public void testMultipleAreaEval() {
+		SBook book = SBooks.createBook("book1");
+		book.getBookSeries().setAutoFormulaCacheClean(true);
+		SSheet sheet1 = book.createSheet("Sheet1");
+		SSheet sheet2 = book.createSheet("Sheet2");
+		book.createName("SingleValueName").setRefersToFormula("Sheet1!$A$1");
+		book.createName("SingleName").setRefersToFormula("Sheet1!$A$1:$A$3");
+		book.createName("MultipleName").setRefersToFormula("Sheet1!$A$1,Sheet1!$A$3");
+		sheet1.getCell("A1").setValue(1);
+		sheet1.getCell("A2").setValue(2);
+		sheet1.getCell("A3").setValue(3);
+		sheet2.getCell("A5").setValue(5);
+		sheet2.getCell("A6").setValue(6);
+		
+		sheet1.getCell("D2").setValue("=SUM(A1,A3,Sheet2!A5:A6)");
+		Assert.assertEquals(15D, sheet1.getCell("D2").getValue());
+		
+		sheet1.getCell("D3").setValue("=(A1,A3,Sheet2!A5:A6)");
+		Assert.assertEquals("#VALUE!", sheet1.getCell("D3").getErrorValue().getErrorString());
+		
+		sheet1.getCell("D4").setValue("=SUM(SingleValueName)");
+		Assert.assertEquals(1D, sheet1.getCell("D4").getValue());
+		
+		sheet1.getCell("D5").setValue("=SingleValueName");
+		Assert.assertEquals(1D, sheet1.getCell("D5").getValue());
+		
+		sheet1.getCell("D6").setValue("=SUM(SingleName)");
+		Assert.assertEquals(6D, sheet1.getCell("D6").getValue());
+		
+		
+		//the poi parser can handle =SUM(MultipleName) and get java.lang.IllegalStateException: evaluation stack not empty
+//		sheet1.getCell("D7").setValue("=SUM(MultipleName)");
+//		Assert.assertEquals(4D, sheet1.getCell("D7").getValue());
+		
+		//the poi parser can handle =SUM(MultipleName) and get java.lang.IllegalStateException: evaluation stack not empty
+//		sheet1.getCell("D8").setValue("=MultipleName");
+//		Assert.assertEquals("#VALUE!", sheet1.getCell("D8").getErrorValue().getErrorString());
+	}
+	
+	@Test
+	public void testMultipleAreaEvalOfChart() {
+		SBook book = SBooks.createBook("book1");
+		book.getBookSeries().setAutoFormulaCacheClean(true);
+		SSheet sheet1 = book.createSheet("Sheet1");
+		SSheet sheet2 = book.createSheet("Sheet2");
+		book.createName("SingleValueName").setRefersToFormula("Sheet1!$A$1");
+		book.createName("SingleName").setRefersToFormula("Sheet1!$A$1:$A$3");
+		book.createName("MultipleName").setRefersToFormula("Sheet1!$A$1,Sheet1!$A$3");
+		sheet1.getCell("A1").setValue(1);
+		sheet1.getCell("A2").setValue(2);
+		sheet1.getCell("A3").setValue(3);
+		sheet2.getCell("A5").setValue(5);
+		sheet2.getCell("A6").setValue(6);
+		
+		sheet1.getCell("B1").setValue("A");
+		sheet1.getCell("B3").setValue("B");
+	
+		SChart p1 = sheet1.addChart(SChart.ChartType.PIE, new ViewAnchor(6,6, 600,400));
+		
+		SGeneralChartData data = (SGeneralChartData)p1.getData();
+		data.setCategoriesFormula("(Sheet1!$B$1,Sheet1!$B$3)");
+		
+		Assert.assertEquals(2, data.getNumOfCategory());
+		Assert.assertEquals("A", data.getCategory(0));
+		Assert.assertEquals("B", data.getCategory(1));
+		
+		
+		SSeries series = data.addSeries();
+		series.setFormula(null, "(A1,A3)");
+		Assert.assertEquals(2, series.getNumOfValue());
+		Assert.assertEquals(1D, series.getValue(0));
+		Assert.assertEquals(3D, series.getValue(1));
+		
 	}
 	
 	@Test
