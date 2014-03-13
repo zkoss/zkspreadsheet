@@ -936,9 +936,9 @@ public class RangeImpl implements SRange {
 			public Object invoke() {
 				for (EffectedRegion r : _rangeRefs) {
 					SSheet sheet = r.sheet;
-					if(sheet.getViewInfo().isDisplayGridline()!=show){
-						sheet.getViewInfo().setDisplayGridline(show);
-						new NotifyChangeHelper().notifyDisplayGirdline(sheet,show);
+					if(sheet.getViewInfo().isDisplayGridlines()!=show){
+						sheet.getViewInfo().setDisplayGridlines(show);
+						new NotifyChangeHelper().notifyDisplayGridlines(sheet,show);
 					}
 				}
 				return null;

@@ -2242,7 +2242,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 					onMergeDelete(event);
 				}
 			});
-			addEventListener(ModelEvents.ON_DISPLAY_GRIDLINE_CHANGE, new ModelEventListener() {
+			addEventListener(ModelEvents.ON_DISPLAY_GRIDLINES_CHANGE, new ModelEventListener() {
 				@Override
 				public void onEvent(ModelEvent event) {
 					onDisplayGridlines(event);
@@ -3906,7 +3906,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 
 		boolean hiderow = isHiderowhead();
 		boolean hidecol = isHidecolumnhead();
-		boolean showgrid = sheet.getViewInfo().isDisplayGridline();
+		boolean showgrid = sheet.getViewInfo().isDisplayGridlines();
 
 		int th = hidecol ? 1 : this.getTopheadheight();
 		int lw = hiderow ? 1 : this.getLeftheadwidth();
@@ -4348,7 +4348,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			((WidgetLoader) list.get(i)).onSheetSelected(_selectedSheet);
 		}
 		//setup gridline
-		setDisplayGridlines(_selectedSheet.getViewInfo().isDisplayGridline());
+		setDisplayGridlines(_selectedSheet.getViewInfo().isDisplayGridlines());
 		setProtectSheet(_selectedSheet.isProtected());
 		
 		//register collaborated focus

@@ -187,7 +187,7 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 		// reference FreezeInfoLoaderImpl.getRowFreeze()
 		sheet.getViewInfo().setNumOfRowFreeze(BookHelper.getRowFreeze(poiSheet));
 		sheet.getViewInfo().setNumOfColumnFreeze(BookHelper.getColumnFreeze(poiSheet));
-		sheet.getViewInfo().setDisplayGridline(poiSheet.isDisplayGridlines());
+		sheet.getViewInfo().setDisplayGridlines(poiSheet.isDisplayGridlines());
 		sheet.getViewInfo().setColumnBreaks(poiSheet.getColumnBreaks());
 		sheet.getViewInfo().setRowBreaks(poiSheet.getRowBreaks());
 

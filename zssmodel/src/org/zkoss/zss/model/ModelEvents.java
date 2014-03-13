@@ -51,7 +51,7 @@ public class ModelEvents {
 	public static final String ON_MERGE_ADD = "onMergeAdd";
 	public static final String ON_MERGE_DELETE = "onMergeDelete";
 	
-	public static final String ON_DISPLAY_GRIDLINE_CHANGE = "onDisplayGridlineChange";
+	public static final String ON_DISPLAY_GRIDLINES_CHANGE = "onDisplayGridlinesChange";
 	public static final String ON_PROTECT_SHEET_CHANGE = "onProtectSheetChange";
 	
 	public static final String ON_ROW_INSERT = "onRowInsert";
