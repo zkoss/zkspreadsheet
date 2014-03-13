@@ -18,6 +18,7 @@ package org.zkoss.zss.api;
 
 import java.util.HashMap;
 
+import org.zkoss.util.Locales;
 import org.zkoss.zss.api.Range.ApplyBorderType;
 import org.zkoss.zss.api.Range.AutoFillType;
 import org.zkoss.zss.api.Range.DeleteShift;
@@ -41,6 +42,8 @@ import org.zkoss.zss.api.model.Hyperlink.HyperlinkType;
 import org.zkoss.zss.api.model.impl.EnumUtil;
 import org.zkoss.zss.api.model.impl.SheetImpl;
 import org.zkoss.zss.model.SSheet;
+import org.zkoss.zss.model.sys.EngineFactory;
+import org.zkoss.zss.model.sys.format.FormatContext;
 import org.zkoss.zss.range.impl.StyleUtil;
 
 /**
@@ -330,8 +333,6 @@ public class CellOperationUtil {
 	public static CellStyleApplier getDataFormatApplier(final String format) {
 		return new CellStyleApplier() {
 			public void apply(Range range) {
-				//TODO zss 3.5 should transfer the format by locale if it is build in
-				
 				//ZSS 464, efficient implement
 				StyleUtil.setDataFormat(((SheetImpl)range.getSheet()).getNative(),range.getRow(),range.getColumn(),format);
 				range.notifyChange();

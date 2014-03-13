@@ -65,7 +65,7 @@ public class FormatEngineImpl implements FormatEngine {
 	public FormatResult format(String format, Object value, FormatContext context){
 		return format0(format,false,value,context);
 	}
-	public FormatResult format0(String format, boolean direct,Object value, FormatContext context){
+	private FormatResult format0(String format, boolean direct,Object value, FormatContext context){
 		ZssContext old = ZssContext.getThreadLocal();
 		try{
 			ZssContext zssContext = old==null?new ZssContext(context.getLocale(),-1): new ZssContext(context.getLocale(),old.getTwoDigitYearUpperBound());
@@ -96,16 +96,24 @@ public class FormatEngineImpl implements FormatEngine {
 			ZssContext.setThreadLocal(old);
 		}
 	}
+	
+	@Override
+	public String getLocalizedFormat(String format, FormatContext context){
+		return getFormat0(format,false,context);
+	}
 	@Override
 	public String getFormat(SCell cell, FormatContext context){
+		return getFormat0(cell.getCellStyle().getDataFormat(), cell.getCellStyle().isDirectDataFormat(),context);
+	}
+	
+	private String getFormat0(String format, boolean direct, FormatContext context){
 		ZssContext old = ZssContext.getThreadLocal();
 		try{
 			ZssContext zssContext = old==null?new ZssContext(context.getLocale(),-1): new ZssContext(context.getLocale(),old.getTwoDigitYearUpperBound());
 			ZssContext.setThreadLocal(zssContext);
-			String format = cell.getCellStyle().getDataFormat();
 			//Have to transfer format that depends on locale
 			//for example, m/d/yyyy will transfer to yyyy/m/d in TW
-			if(!cell.getCellStyle().isDirectDataFormat()){
+			if(!direct){
 				int i = BuiltinFormats.getBuiltinFormat(format);
 				if(i>=0){
 					format = BuiltinFormats.getBuiltinFormat(i, context.getLocale());
