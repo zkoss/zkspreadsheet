@@ -396,7 +396,16 @@ public class FormulaEngineImpl implements FormulaEngine {
 			int code = ((ErrorEval)value).getErrorCode();
 			return new EvaluationResultImpl(ResultType.ERROR, new ErrorValue((byte)code));
 		} else {
-			return new EvaluationResultImpl(ResultType.SUCCESS, getResolvedValue(value));
+			try{
+				return new EvaluationResultImpl(ResultType.SUCCESS, getResolvedValue(value));
+			}catch(EvaluationException x){
+				//error when resolve value.
+				if(x.getErrorEval()!=null){//ZSS-591 Get console exception after delete sheet
+					return new EvaluationResultImpl(ResultType.ERROR, new ErrorValue((byte)x.getErrorEval().getErrorCode()));
+				}else{
+					throw x;
+				}
+			}
 		}
 	}
 
@@ -431,8 +440,8 @@ public class FormulaEngineImpl implements FormulaEngine {
 			ValueEval ve = ((RefEval)value).getInnerValueEval();
 			Object v = getResolvedValue(ve);
 			return v;
-		} else if(value instanceof ErrorEval) {//ZSS-591 Get console exception after delete sheet
-			return ((ErrorEval)value).getErrorCode();
+		} else if(value instanceof ErrorEval) {
+			throw new EvaluationException((ErrorEval)value);
 		} else {
 			throw new EvaluationException(null, "no matched type: " + value); // FIXME
 		}

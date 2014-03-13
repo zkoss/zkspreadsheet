@@ -3373,6 +3373,56 @@ public class ModelTest {
 //		sheet1.getCell("D8").setValue("=MultipleName");
 //		Assert.assertEquals("#VALUE!", sheet1.getCell("D8").getErrorValue().getErrorString());
 	}
+	@Test
+	public void testMultipleAreaEvalOfLoop() {
+		SBook book = SBooks.createBook("book1");
+		book.getBookSeries().setAutoFormulaCacheClean(true);
+		SSheet sheet1 = book.createSheet("Sheet1");
+		SSheet sheet2 = book.createSheet("Sheet2");
+		book.createName("SingleValueName").setRefersToFormula("Sheet1!$A$1");
+		book.createName("SingleName").setRefersToFormula("Sheet1!$A$1:$A$3");
+		book.createName("MultipleName").setRefersToFormula("Sheet1!$A$1,Sheet1!$A$3");
+		sheet1.getCell("A1").setValue(1);
+		sheet1.getCell("A2").setValue(2);
+		sheet1.getCell("A3").setValue(3);
+		sheet2.getCell("A5").setValue(5);
+		sheet2.getCell("A6").setValue(6);
+		sheet1.getCell("B1").setValue("A");
+		sheet1.getCell("B3").setValue("B");		
+		
+		//loop
+		sheet1.getCell("C1").setValue("=C2");
+		sheet1.getCell("C2").setValue("=C3");
+		sheet1.getCell("C3").setValue("=C1");
+		
+		Assert.assertEquals("#N/A", sheet1.getCell("C1").getErrorValue().getErrorString());
+		Assert.assertEquals("#N/A", sheet1.getCell("C2").getErrorValue().getErrorString());
+		Assert.assertEquals("#N/A", sheet1.getCell("C3").getErrorValue().getErrorString());
+		
+		sheet1.getCell("D2").setValue("=SUM(A1,D2,Sheet2!A5:A6)");
+		Assert.assertEquals("#N/A", sheet1.getCell("D2").getErrorValue().getErrorString());
+		
+		sheet1.getCell("D3").setValue("=(A1,D3,Sheet2!A5:A6)");
+		Assert.assertEquals("#VALUE!", sheet1.getCell("D3").getErrorValue().getErrorString());
+		
+		
+		SChart p1 = sheet1.addChart(SChart.ChartType.PIE, new ViewAnchor(6,6, 600,400));
+		
+		SGeneralChartData data = (SGeneralChartData)p1.getData();
+		data.setCategoriesFormula("(Sheet1!$B$1,Sheet1!$B$3)");
+		
+		Assert.assertEquals(2, data.getNumOfCategory());
+		Assert.assertEquals("A", data.getCategory(0));
+		Assert.assertEquals("B", data.getCategory(1));
+		
+		
+		SSeries series = data.addSeries();
+		series.setFormula(null, "(C1,C3)");
+		Assert.assertEquals(0, series.getNumOfValue());
+//		Assert.assertEquals(0D, series.getValue(0));
+//		Assert.assertEquals(0D, series.getValue(1));
+		
+	}
 	
 	@Test
 	public void testMultipleAreaEvalOfChart() {
@@ -3407,6 +3457,8 @@ public class ModelTest {
 		Assert.assertEquals(2, series.getNumOfValue());
 		Assert.assertEquals(1D, series.getValue(0));
 		Assert.assertEquals(3D, series.getValue(1));
+		
+		
 		
 	}
 	
