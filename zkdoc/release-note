@@ -15,6 +15,7 @@ ZK Spreadsheet 3.5.0
   ZSS-594 wrong display when insert/delete row/column in freeze column/row panel
   ZSS-596 Possible memory leak when formula evaluation
   ZSS-598 Cell doesn't display correctly
+  ZSS-601 Once I use right click context menu on sheet bar, it will never work again
   
 ** Upgrade Notes
   * Following api are removed
