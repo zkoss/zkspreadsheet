@@ -1,0 +1,5 @@
+<vbox hflex="1" vflex="1">
+	<spreadsheet id="ss" src="/issue3/book/577-chart.xlsx" maxVisibleRows="200" maxVisibleColumns="40"
+		hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
+		showFormulabar="true" />	
+</vbox>
