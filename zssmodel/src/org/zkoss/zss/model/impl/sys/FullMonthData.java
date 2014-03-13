@@ -18,8 +18,7 @@ package org.zkoss.zss.model.impl.sys;
 import java.text.DateFormatSymbols;
 import java.util.Locale;
 
-import org.zkoss.util.CacheMap;
-import org.zkoss.util.Pair;
+import org.zkoss.util.*;
 
 /**
  * @author henrichen
@@ -38,9 +37,9 @@ public class FullMonthData extends CircularData { //ZSS-69
 		final Pair key = new Pair(locale, Integer.valueOf(type));
 		FullMonthData value = (FullMonthData) _monthData.get(key);
 		if (value == null) { //create and cache
-			DateFormatSymbols symbols = DateFormatSymbols.getInstance(locale);
+			DateFormatSymbols symbols = new DateFormatSymbols(locale);
 			if (symbols == null) {
-				symbols = DateFormatSymbols.getInstance(Locale.US);
+				symbols = new DateFormatSymbols(Locale.US);
 			}
 			String[] month13 = symbols.getMonths();
 			String[] month12 = new String[12];

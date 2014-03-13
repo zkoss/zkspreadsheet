@@ -38,9 +38,9 @@ public class ShortWeekData extends CircularData { //ZSS-69
 		final Pair key = new Pair(locale, Integer.valueOf(type));
 		ShortWeekData value = (ShortWeekData) _weekData.get(key);
 		if (value == null) { //create and cache
-			DateFormatSymbols symbols = DateFormatSymbols.getInstance(locale);
+			DateFormatSymbols symbols = new DateFormatSymbols(locale);
 			if (symbols == null) {
-				symbols = DateFormatSymbols.getInstance(Locale.US);
+				symbols = new DateFormatSymbols(Locale.US);
 			}
 			String[] week8 = symbols.getShortWeekdays();
 			String[] week7 = new String[7];
