@@ -78,6 +78,7 @@ public class DateInputTest {
 		Assert.assertEquals("2013/10/25", r.getCellEditText());
 		
 		// special format the will cause get format text depends on current locale
+		CellOperationUtil.applyDataFormat(r, "General"); // reset it
 		CellOperationUtil.applyDataFormat(r, "m/d/yyyy");
 		//TW
 		Setup.setZssLocale(Locale.TAIWAN);
@@ -115,6 +116,7 @@ public class DateInputTest {
 		Assert.assertEquals("2013/10/25", r.getCellEditText());
 		
 		// special format the will cause get format text depends on current locale
+		CellOperationUtil.applyDataFormat(r, "General"); // reset it
 		CellOperationUtil.applyDataFormat(r, "yyyy/m/d"); // when transfer to special m/d/yyyy
 		//TW
 		Setup.setZssLocale(Locale.TAIWAN);
@@ -124,16 +126,16 @@ public class DateInputTest {
 		Assert.assertEquals("2013/10/25", r.getCellEditText());// edit always depends on local
 		//US
 		Setup.setZssLocale(Locale.US);
-		Assert.assertEquals("m/d/yyyy", r.getCellDataFormat());
+		Assert.assertEquals("yyyy/m/d", r.getCellStyle().getDataFormat());
 		//*** display depends on locale ***//
-		Assert.assertEquals("10/25/2013", r.getCellFormatText());// display depends on locale
+		Assert.assertEquals("2013/10/25", r.getCellFormatText());// display without local
 		Assert.assertEquals(CellType.NUMERIC, r.getCellData().getType());
 		Assert.assertEquals("10/25/2013", r.getCellEditText());// edit always depends on local
 		//UK
 		Setup.setZssLocale(Locale.UK);
-		Assert.assertEquals("dd-mm-yyyy", r.getCellDataFormat());
+		Assert.assertEquals("yyyy/m/d", r.getCellStyle().getDataFormat());
 		//*** display depends on locale ***//
-		Assert.assertEquals("25-10-2013", r.getCellFormatText());// display depends on locale
+		Assert.assertEquals("2013/10/25", r.getCellFormatText());// display without local
 		Assert.assertEquals(CellType.NUMERIC, r.getCellData().getType());
 		Assert.assertEquals("25-10-2013", r.getCellEditText());// edit always depends on local		
 	}
