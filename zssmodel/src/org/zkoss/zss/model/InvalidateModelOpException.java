@@ -16,7 +16,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.model;
 /**
- * 
+ * This exception is thrown when you perform an unreasonable operation on the model.
  * @author dennis
  * @since 3.5.0
  */

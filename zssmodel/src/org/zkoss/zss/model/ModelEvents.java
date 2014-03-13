@@ -21,7 +21,7 @@ import java.util.Map;
 
 
 /**
- * 
+ * A collection of factory method that help you create {@link ModelEvent}.
  * @author dennis
  * @since 3.5.0
  */

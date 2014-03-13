@@ -16,7 +16,7 @@ import org.zkoss.zss.model.sys.dependency.Ref.RefType;
 /**
  * 
  * @author Dennis
- *
+ * @since 3.5.0
  */
 /*package*/ class RefNotifyContentChangeHelper extends RefHelperBase{
 

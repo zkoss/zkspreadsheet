@@ -12,7 +12,7 @@ import java.util.Map.Entry;
 /**
  * to lo/high (firstIdx/lastIdx) index the column array
  * @author dennis
- *
+ * @since 3.5.0
  */
 /*package*/ class ColumnArrayPool implements Serializable{
 

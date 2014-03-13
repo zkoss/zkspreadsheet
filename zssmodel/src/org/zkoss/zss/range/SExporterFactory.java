@@ -17,7 +17,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.range;
 
 /**
- * Factory for exporter
+ * The interface defines factory methods for exporters.
  * @author dennis
  * @since 3.5.0
  */

@@ -18,7 +18,7 @@ package org.zkoss.zss.model;
 
 import java.io.Serializable;
 /**
- * 
+ * An error result of a evaluated formula.
  * @author dennis
  * @since 3.5.0
  */

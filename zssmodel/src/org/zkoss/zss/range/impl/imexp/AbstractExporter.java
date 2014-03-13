@@ -18,12 +18,16 @@ package org.zkoss.zss.range.impl.imexp;
 
 import java.io.*;
 
-import org.zkoss.zss.model.CellRegion;
 import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.model.SheetRegion;
 import org.zkoss.zss.range.SExporter;
 
+/**
+ * Defines common behaviors for an exporter.
+ * @author dennis
+ * @since 3.5.0
+ */
 public abstract class AbstractExporter implements SExporter, Serializable{
 	@Override
 	public void export(SBook book, File file) throws IOException {

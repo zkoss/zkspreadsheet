@@ -2,7 +2,10 @@ package org.zkoss.zss.model;
 
 import org.zkoss.zss.model.util.Validations;
 
-
+/**
+ * 
+ * @since 3.5.0
+ */
 public class PasteOption {
 
 	public enum PasteType{

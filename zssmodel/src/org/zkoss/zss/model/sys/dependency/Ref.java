@@ -6,7 +6,9 @@ package org.zkoss.zss.model.sys.dependency;
  * @since 3.5.0
  */
 public interface Ref {
-
+	/**
+	 * @since 3.5.0
+	 */
 	public enum RefType {
 		CELL, AREA, SHEET, BOOK, NAME, OBJECT 
 	}

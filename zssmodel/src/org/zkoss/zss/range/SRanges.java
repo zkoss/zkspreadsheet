@@ -25,7 +25,7 @@ import org.zkoss.zss.model.SheetRegion;
 import org.zkoss.zss.range.impl.RangeImpl;
 
 /**
- * To get the range.
+ * A collection of factory methods to create a {@link SRange} object.
  * @author dennis
  * @since 3.5.0
  */

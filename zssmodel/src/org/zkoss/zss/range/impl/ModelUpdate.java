@@ -21,6 +21,9 @@ package org.zkoss.zss.range.impl;
  * @since 3.5.0
  */
 public class ModelUpdate {
+	/**
+	 * @since 3.5.0
+	 */
 	public static enum UpdateType{
 		REF, REFS, CELL, CELLS, MERGE, INSERT_DELETE
 	}

@@ -34,6 +34,7 @@ import org.zkoss.zss.model.sys.formula.FormulaEngine;
 /**
  * A pseudo formula parsing workbook for parsing only.
  * @author Pao
+ * @since 3.5.0
  */
 public class ParsingBook implements FormulaParsingWorkbook, FormulaRenderingWorkbook {
 	private static final Log logger = Log.lookup(ParsingBook.class.getName());

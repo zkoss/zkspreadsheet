@@ -20,6 +20,7 @@ import org.zkoss.zss.model.SSheet;
  * A pair of reference areas indicate the changes of the merge area. 
  * @author henrichen
  * @author dennischen
+ * @since 3.5.0
  */
 public class MergeUpdate {
 	final private SSheet _sheet;

@@ -30,6 +30,9 @@ import java.util.Set;
  */
 public interface DependencyTable {
 
+	/**
+	 * @since 3.5.0
+	 */
 	public interface RefFilter{
 		public boolean accept(Ref ref);
 	}

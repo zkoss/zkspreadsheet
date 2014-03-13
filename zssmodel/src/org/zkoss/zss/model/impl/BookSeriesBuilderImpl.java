@@ -21,7 +21,7 @@ import java.util.Set;
 import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.SBookSeriesBuilder;
 /**
- * 
+ * A default implementation
  * @author Dennis
  * @since 3.5.0
  */

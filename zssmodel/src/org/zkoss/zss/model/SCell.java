@@ -18,14 +18,18 @@ package org.zkoss.zss.model;
 
 import java.util.Date;
 
+import org.zkoss.poi.ss.usermodel.CellStyle;
 import org.zkoss.zss.model.SHyperlink.HyperlinkType;
 /**
- * 
+ * Represent a cell of a sheet in a Spreadsheet. A cell contains value and style ({@link CellStyle}), and its type is one of {@link CellType}.
  * @author dennis
  * @since 3.5.0
  */
 public interface SCell extends FormulaContent{
 
+	/**
+	 * @since 3.5.0
+	 */
 	public enum CellType {
 		BLANK(3),
 		STRING(1),

@@ -19,11 +19,14 @@ package org.zkoss.zss.model;
 import java.util.List;
 
 /**
- * 
+ * This class stores the restrictions on what data can or should be entered in a cell.
  * @author dennis
  * @since 3.5.0
  */
 public interface SDataValidation extends FormulaContent{
+	/**
+	 * @since 3.5.0
+	 */
 	public enum ErrorStyle {
 		STOP((byte)0x00), WARNING((byte)0x01), INFO((byte)0x02);
 		
@@ -37,11 +40,18 @@ public interface SDataValidation extends FormulaContent{
 		}
 	}
 	
+	/**
+	 * @since 3.5.0
+	 */
 	public enum ValidationType {
 		ANY, INTEGER, DECIMAL, LIST, 
 		DATE, TIME, TEXT_LENGTH, FORMULA;
 
 	}
+	
+	/**
+	 * @since 3.5.0
+	 */
 	public enum OperatorType{
 		BETWEEN, NOT_BETWEEN, EQUAL, NOT_EQUAL, 
 		GREATER_THAN, LESS_THAN, GREATER_OR_EQUAL, LESS_OR_EQUAL;

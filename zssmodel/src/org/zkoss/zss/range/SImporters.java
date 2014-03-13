@@ -21,9 +21,9 @@ import java.util.LinkedHashMap;
 
 import org.zkoss.zss.range.impl.imexp.*;
 /**
- * Get importers by registered name
+ * This class contains utility methods to register the importer factory and get a importer by registered name.
  * @author dennis
- *
+ * @since 3.5.0
  */
 public class SImporters {
 	static private HashMap<String,SImporterFactory> factories = new LinkedHashMap<String, SImporterFactory>();

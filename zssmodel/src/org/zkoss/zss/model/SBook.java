@@ -23,6 +23,7 @@ import org.zkoss.zss.model.util.CellStyleMatcher;
 import org.zkoss.zss.model.util.FontMatcher;
 
 /**
+ * The root of Spreadsheet's data model which contains sheets.
  * @author dennis
  * @since 3.5.0
  */
