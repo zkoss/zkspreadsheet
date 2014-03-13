@@ -9,7 +9,7 @@ import org.junit.*;
 import org.zkoss.zss.*;
 import org.zkoss.zss.api.*;
 import org.zkoss.zss.api.model.*;
-import org.zkoss.zss.model.InvalidateModelOpException;
+import org.zkoss.zss.model.InvalidModelOpException;
 
 public class SortTest {
 	
@@ -212,7 +212,7 @@ public class SortTest {
 	 * Selection overlaps part of merged cells.
 	 * column E:F and H:I in A1:I11 are merged. We select A1:H11 on purpose to cover part of merged cells.
 	 */
-	@Test(expected = InvalidateModelOpException.class)
+	@Test(expected = InvalidModelOpException.class)
 	public void sortWithPartOfMergedCells(){
 		Book book = Util.loadBook(this,"book/excelsortsample.xlsx");
 		Sheet sheet = book.getSheet("Merged");
@@ -287,7 +287,7 @@ public class SortTest {
 		
 	}
 	
-	@Test(expected = InvalidateModelOpException.class)
+	@Test(expected = InvalidModelOpException.class)
 	public void sortMergeAcrossRows(){
 		Book book = Util.loadBook(this,"book/excelsortsample.xlsx");
 		Sheet sheet = book.getSheet("Merged");
@@ -296,7 +296,7 @@ public class SortTest {
 	}
 	
 	
-	@Test(expected = InvalidateModelOpException.class)
+	@Test(expected = InvalidModelOpException.class)
 	public void sortPartOfMergedCells(){
 		Book book = Util.loadBook(this,"book/excelsortsample.xlsx");
 		Sheet sheet = book.getSheet("Merged");

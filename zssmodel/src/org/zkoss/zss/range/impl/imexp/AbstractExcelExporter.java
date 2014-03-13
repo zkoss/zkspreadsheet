@@ -125,7 +125,7 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 		int freezeCol = sheet.getViewInfo().getNumOfColumnFreeze();
 		poiSheet.createFreezePane(freezeCol <= 0 ? 0 : freezeCol, freezeRow <= 0 ? 0 : freezeRow);
 
-		poiSheet.setDisplayGridlines(sheet.getViewInfo().isDisplayGridline());
+		poiSheet.setDisplayGridlines(sheet.getViewInfo().isDisplayGridlines());
 
 		if (sheet.isProtected()) {
 			poiSheet.protectSheet(""); // without password

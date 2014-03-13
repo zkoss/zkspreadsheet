@@ -31,7 +31,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.zkoss.lang.Objects;
 import org.zkoss.poi.ss.SpreadsheetVersion;
 import org.zkoss.util.logging.Log;
-import org.zkoss.zss.model.InvalidateModelOpException;
+import org.zkoss.zss.model.InvalidModelOpException;
 import org.zkoss.zss.model.ModelEvent;
 import org.zkoss.zss.model.ModelEventListener;
 import org.zkoss.zss.model.ModelEventListenerUnreachableException;
@@ -290,22 +290,22 @@ public class BookImpl extends AbstractBookAdv{
 
 	private void checkLegalSheetName(String name) {
 		if(Strings.isBlank(name)){
-			throw new InvalidateModelOpException("sheet name '"+name+"' is not legal");
+			throw new InvalidModelOpException("sheet name '"+name+"' is not legal");
 		}
 		if(getSheetByName(name)!=null){
-			throw new InvalidateModelOpException("sheet name '"+name+"' is duplicated");
+			throw new InvalidModelOpException("sheet name '"+name+"' is duplicated");
 		}
 	}
 	
 	private void checkLegalNameName(String name,String sheetName) {
 		if(Strings.isBlank(name)){
-			throw new InvalidateModelOpException("name '"+name+"' is not legal");
+			throw new InvalidModelOpException("name '"+name+"' is not legal");
 		}
 		if(getNameByName(name,sheetName)!=null){
-			throw new InvalidateModelOpException("name '"+name+"' "+(sheetName==null?"":" in '"+sheetName+"'")+" is dpulicated");
+			throw new InvalidModelOpException("name '"+name+"' "+(sheetName==null?"":" in '"+sheetName+"'")+" is dpulicated");
 		}
 		if(sheetName!=null && getSheetByName(sheetName)==null){
-			throw new InvalidateModelOpException("no such sheet "+sheetName);
+			throw new InvalidModelOpException("no such sheet "+sheetName);
 		}
 		//TODO zss 3.5
 	}
@@ -339,7 +339,7 @@ public class BookImpl extends AbstractBookAdv{
 	public void moveSheetTo(SSheet sheet, int index) {
 		checkOwnership(sheet);
 		if(index<0|| index>=_sheets.size()){
-			throw new InvalidateModelOpException("new position out of bound "+_sheets.size() +"<>" +index);
+			throw new InvalidModelOpException("new position out of bound "+_sheets.size() +"<>" +index);
 		}
 		int oldindex = _sheets.indexOf(sheet);
 		if(oldindex==index){

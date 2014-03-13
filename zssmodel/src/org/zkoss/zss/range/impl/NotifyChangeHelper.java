@@ -17,7 +17,6 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.range.impl;
 
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -186,11 +185,11 @@ import org.zkoss.zss.model.impl.AbstractBookAdv;
 				ModelEvents.createDataMap(ModelEvents.PARAM_CUSTOM_DATA,data)));
 	}
 
-	public void notifyDisplayGirdline(SSheet sheet, boolean show) {
+	public void notifyDisplayGridlines(SSheet sheet, boolean show) {
 		if(_logger.debugable()){
-			_logger.debug("Notify display gridline "+show);
+			_logger.debug("Notify display gridlines "+show);
 		}
-		((AbstractBookAdv) sheet.getBook()).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_DISPLAY_GRIDLINE_CHANGE,sheet,
+		((AbstractBookAdv) sheet.getBook()).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_DISPLAY_GRIDLINES_CHANGE,sheet,
 				ModelEvents.createDataMap(ModelEvents.PARAM_ENABLED,show)));
 	}
 	

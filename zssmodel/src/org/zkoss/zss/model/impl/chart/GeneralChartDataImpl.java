@@ -20,7 +20,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.zkoss.zss.model.ErrorValue;
-import org.zkoss.zss.model.InvalidateModelOpException;
+import org.zkoss.zss.model.InvalidModelOpException;
 import org.zkoss.zss.model.SChart;
 import org.zkoss.zss.model.chart.SGeneralChartData;
 import org.zkoss.zss.model.chart.SSeries;

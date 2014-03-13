@@ -30,9 +30,9 @@ public interface SSheetViewInfo {
 
 	public void setNumOfColumnFreeze(int num);
 
-	public boolean isDisplayGridline();
+	public boolean isDisplayGridlines();
 
-	public void setDisplayGridline(boolean enable);
+	public void setDisplayGridlines(boolean enable);
 	
 	public SHeader getHeader();
 	

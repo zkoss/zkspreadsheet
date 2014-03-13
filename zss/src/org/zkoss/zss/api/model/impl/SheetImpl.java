@@ -98,7 +98,7 @@ public class SheetImpl implements Sheet{
 	}
 
 	public boolean isDisplayGridlines() {
-		return getNative().getViewInfo().isDisplayGridline();
+		return getNative().getViewInfo().isDisplayGridlines();
 	}
 
 	public String getSheetName() {

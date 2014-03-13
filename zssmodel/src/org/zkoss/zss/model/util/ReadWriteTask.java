@@ -19,15 +19,24 @@ package org.zkoss.zss.model.util;
 import java.util.concurrent.locks.ReadWriteLock;
 
 /**
- * Use this task utility to help you developing you application to concurrently access book model
+ * Use this class to help you concurrently access book model safely. 
+ * Usage: implement your model-accessing logic in invoke() method.
  * 
  * @author dennis
  * @since 3.5.0
  */
 public abstract class ReadWriteTask {
 	
+	/**
+	 * The method will be invoked after acquiring a read-write lock and release the lock after invocation. 
+	 * So implement your model-accessing logic in this method.
+	 * @return depends on your logic
+	 */
 	abstract public Object invoke();
 	
+	/**
+	 * Call invoke() after acquiring a write lock, and then release it. 
+	 */
 	public Object doInWriteLock(ReadWriteLock lock){
 		lock.writeLock().lock();
 		try{
@@ -45,6 +54,10 @@ public abstract class ReadWriteTask {
 //			lock.writeLock().unlock();
 //		}
 //	}
+	
+	/**
+	 * Call invoke() after acquiring a read lock, and then release it. 
+	 */
 	public Object doInReadLock(ReadWriteLock lock){
 		lock.readLock().lock();
 		try{

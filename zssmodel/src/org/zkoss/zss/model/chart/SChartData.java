@@ -16,14 +16,15 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.model.chart;
 
-import org.zkoss.zss.model.FormulaContent;
-import org.zkoss.zss.model.SBook;
-import org.zkoss.zss.model.SChart;
+import org.zkoss.zss.model.*;
 /**
- * 
+ * An object that can be used to get {@link SChart}. 
  * @author dennis
  * @since 3.5.0
  */
 public interface SChartData extends FormulaContent{
+	/**
+	 * @return the chart that contains the chart data.
+	 */
 	public SChart getChart();
 }

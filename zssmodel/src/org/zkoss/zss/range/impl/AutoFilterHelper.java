@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.zkoss.zss.model.CellRegion;
-import org.zkoss.zss.model.InvalidateModelOpException;
+import org.zkoss.zss.model.InvalidModelOpException;
 import org.zkoss.zss.model.SAutoFilter;
 import org.zkoss.zss.model.SCell;
 import org.zkoss.zss.model.SRow;
@@ -67,7 +67,7 @@ import org.zkoss.zss.range.SRanges;
 				filter = sheet.createAutoFilter(region);
 				update = true;
 			}else{
-				throw new InvalidateModelOpException("can't find any data in range");
+				throw new InvalidModelOpException("can't find any data in range");
 			}
 		}
 		return filter;
@@ -82,7 +82,7 @@ import org.zkoss.zss.range.SRanges;
 			if(region!=null){
 				filter = sheet.createAutoFilter(region);
 			}else{
-				throw new InvalidateModelOpException("can't find any data in range");
+				throw new InvalidModelOpException("can't find any data in range");
 			}
 		}
 		

@@ -26,7 +26,7 @@ import org.zkoss.zss.model.SPrintSetup;
  */
 public class PrintSetupImpl implements SPrintSetup,Serializable {
 	private static final long serialVersionUID = 1L;
-	private boolean _printGridline = false; 
+	private boolean _printGridlines = false; 
 	private int _headerMargin;
 	private int _footerMargin;
 	private int _leftMargin;
@@ -41,12 +41,12 @@ public class PrintSetupImpl implements SPrintSetup,Serializable {
 	
 	@Override
 	public boolean isPrintGridlines() {
-		return _printGridline;
+		return _printGridlines;
 	}
 
 	@Override
 	public void setPrintGridlines(boolean enable) {
-		_printGridline = enable;
+		_printGridlines = enable;
 	}
 
 	public int getHeaderMargin() {

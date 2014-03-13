@@ -31,7 +31,7 @@ import org.zkoss.zss.model.SSheetViewInfo;
  */
 public class SheetViewInfoImpl implements SSheetViewInfo, Serializable {
 	private static final long serialVersionUID = 1L;
-	private boolean _displayGridline = true;
+	private boolean _displayGridlines = true;
 	
 	private int _rowFreeze = 0;
 	private int _columnFreeze = 0;
@@ -45,13 +45,13 @@ public class SheetViewInfoImpl implements SSheetViewInfo, Serializable {
 	
 	
 	@Override
-	public boolean isDisplayGridline() {
-		return _displayGridline;
+	public boolean isDisplayGridlines() {
+		return _displayGridlines;
 	}
 
 	@Override
-	public void setDisplayGridline(boolean enable) {
-		_displayGridline = enable;
+	public void setDisplayGridlines(boolean enable) {
+		_displayGridlines = enable;
 	}
 
 	@Override

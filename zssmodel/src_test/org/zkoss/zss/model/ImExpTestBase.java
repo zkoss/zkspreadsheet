@@ -279,8 +279,8 @@ public class ImExpTestBase {
 		assertEquals(1, sheet.getViewInfo().getNumOfColumnFreeze());
 		
 		//grid line display
-		assertTrue(sheet.getViewInfo().isDisplayGridline());
-		assertFalse(book.getSheetByName("cell-border").getViewInfo().isDisplayGridline());
+		assertTrue(sheet.getViewInfo().isDisplayGridlines());
+		assertFalse(book.getSheetByName("cell-border").getViewInfo().isDisplayGridlines());
 	}
 
 	

@@ -17,14 +17,14 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 
 package org.zkoss.zss.model.util;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 
 import org.zkoss.zss.model.SFont;
 
 
 /**
+ * This class can be used to match a {@link SFont} with a criteria.
  * @author dennis
  * @since 3.5.0
  */
@@ -47,6 +47,9 @@ public class FontMatcher {
 
 	
 	public FontMatcher(){}
+	/**
+	 * Create a font matcher with a specified font as the criteria 
+	 */
 	public FontMatcher(SFont criteria){
 		setColor(criteria.getColor().getHtmlColor());
 		setName(criteria.getName());

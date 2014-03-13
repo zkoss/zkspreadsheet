@@ -21,7 +21,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.zkoss.zss.model.CellRegion;
-import org.zkoss.zss.model.InvalidateModelOpException;
+import org.zkoss.zss.model.InvalidModelOpException;
 import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.SCell;
 import org.zkoss.zss.model.SCellStyle;
@@ -76,9 +76,9 @@ import org.zkoss.zss.range.impl.StyleUtil;
 		
 		if(option.getPasteType()==PasteType.COLUMN_WIDTHS){
 			if(option.isCut()){
-				throw new InvalidateModelOpException("can't do cut when copying column width");
+				throw new InvalidModelOpException("can't do cut when copying column width");
 			}else if(option.isTranspose()){
-				throw new InvalidateModelOpException("can't do transport when copying column width");
+				throw new InvalidModelOpException("can't do transport when copying column width");
 			}
 			int[] widthBuffer = prepareColumnWidth(src);
 			int srcColCount = widthBuffer.length;
@@ -100,7 +100,7 @@ import org.zkoss.zss.range.impl.StyleUtil;
 			Collection<CellRegion> srcOverlaps = srcSheet.getOverlapsMergedRegions(srcRegion,true);
 			//zss-401 , allow overlap when cuting, it will unmerge the overlaps
 			if(srcOverlaps.size()>0 && !option.isCut()){
-				throw new InvalidateModelOpException("Can't copy "+srcRegion.getReferenceString()+" which overlaps merge area "+srcOverlaps.iterator().next().getReferenceString());
+				throw new InvalidModelOpException("Can't copy "+srcRegion.getReferenceString()+" which overlaps merge area "+srcOverlaps.iterator().next().getReferenceString());
 			}
 		}
 		

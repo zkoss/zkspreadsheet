@@ -32,7 +32,7 @@ import org.zkoss.poi.ss.util.CellReference;
 import org.zkoss.poi.ss.util.WorkbookUtil;
 import org.zkoss.util.logging.Log;
 import org.zkoss.zss.model.CellRegion;
-import org.zkoss.zss.model.InvalidateModelOpException;
+import org.zkoss.zss.model.InvalidModelOpException;
 import org.zkoss.zss.model.SAutoFilter;
 import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.SCell;
@@ -338,7 +338,7 @@ public class SheetImpl extends AbstractSheetAdv {
 	public SCell getCell(String cellRef) {
 		CellRegion region = new CellRegion(cellRef);
 		if(!region.isSingle()){
-			throw new InvalidateModelOpException("not a single ref "+cellRef);
+			throw new InvalidModelOpException("not a single ref "+cellRef);
 		}
 		return getCell(region.getRow(),region.getColumn(),true);
 	}
@@ -404,9 +404,9 @@ public class SheetImpl extends AbstractSheetAdv {
 		try{
 			WorkbookUtil.validateSheetName(name);
 		}catch(IllegalArgumentException x){
-			throw new InvalidateModelOpException(x.getMessage());
+			throw new InvalidModelOpException(x.getMessage());
 		}catch(Exception x){
-			throw new InvalidateModelOpException("The sheet name "+name+" is not allowed");
+			throw new InvalidModelOpException("The sheet name "+name+" is not allowed");
 		}
 	}
 //	@Override
@@ -862,7 +862,7 @@ public class SheetImpl extends AbstractSheetAdv {
 		checkOrphan();
 		sheet.checkOrphan();
 		if(!getBook().equals(sheet.getBook())){
-			throw new InvalidateModelOpException("the source book is different");
+			throw new InvalidModelOpException("the source book is different");
 		}
 		
 		
@@ -1232,12 +1232,12 @@ public class SheetImpl extends AbstractSheetAdv {
 		
 		if(rowIdx<0 || columnIdx<0 || 
 				rowIdx > lastRowIdx || lastRowIdx > maxRow || columnIdx>lastColumnIdx || lastColumnIdx>maxCol){
-			throw new InvalidateModelOpException(new CellRegion(rowIdx,columnIdx,lastRowIdx,lastColumnIdx).getReferenceString()+" is illegal");
+			throw new InvalidModelOpException(new CellRegion(rowIdx,columnIdx,lastRowIdx,lastColumnIdx).getReferenceString()+" is illegal");
 		}
 		
 		if(rowIdx+rowOffset<0 || columnIdx+columnOffset<0 || 
 				lastRowIdx+rowOffset > maxRow|| lastColumnIdx+columnOffset > maxCol){
-			throw new InvalidateModelOpException(new CellRegion(rowIdx,columnIdx,lastRowIdx,lastColumnIdx).getReferenceString()+" can't move to offset "+rowOffset+","+columnOffset);
+			throw new InvalidModelOpException(new CellRegion(rowIdx,columnIdx,lastRowIdx,lastColumnIdx).getReferenceString()+" can't move to offset "+rowOffset+","+columnOffset);
 		}
 		
 		//TODO optimal for whole row, whole column
@@ -1248,7 +1248,7 @@ public class SheetImpl extends AbstractSheetAdv {
 		Collection<CellRegion> containsMerge = getContainsMergedRegions(srcRegion);
 		Collection<CellRegion> overlapsMerge = getOverlapsMergedRegions(srcRegion,true);
 		if(overlapsMerge.size()>0){
-			throw new InvalidateModelOpException("Can't move "+srcRegion.getReferenceString()+" which overlaps merge area "+overlapsMerge.iterator().next().getReferenceString());
+			throw new InvalidModelOpException("Can't move "+srcRegion.getReferenceString()+" which overlaps merge area "+overlapsMerge.iterator().next().getReferenceString());
 		}
 		CellRegion targetRegion = new CellRegion(rowIdx+rowOffset,columnIdx+columnOffset,lastRowIdx+rowOffset,lastColumnIdx+columnOffset);
 		//to backward compatible with old spec, we should auto ummerge the target area
@@ -1505,7 +1505,7 @@ public class SheetImpl extends AbstractSheetAdv {
 		}
 		for(CellRegion r:_mergedRegions){
 			if(r.overlaps(region)){
-				throw new InvalidateModelOpException("the region is overlapped "+r+":"+region);
+				throw new InvalidModelOpException("the region is overlapped "+r+":"+region);
 			}
 		}
 		_mergedRegions.add(region);
@@ -1541,7 +1541,7 @@ public class SheetImpl extends AbstractSheetAdv {
 	public CellRegion getMergedRegion(String cellRef) {
 		CellRegion region = new CellRegion(cellRef);
 		if(!region.isSingle()){
-			throw new InvalidateModelOpException("not a single ref "+cellRef);
+			throw new InvalidModelOpException("not a single ref "+cellRef);
 		}
 		return getMergedRegion(region.getRow(),region.getColumn());
 	}
