@@ -1,0 +1,21 @@
+<zk>
+	<tabbox>
+		<tabs>
+			<tab>589-hidden-row.xlsx</tab>
+			<tab>589-hiddenRowColumn.xlsx</tab>
+		</tabs>
+		<tabpanels>
+			<tabpanel>
+				<spreadsheet id="sheet" src="/issue3/book/589-hidden-row.xlsx" width="100%"
+					height="600px" maxVisibleRows="100" maxVisibleColumns="40" showSheetbar="true"
+					showToolbar="true" showContextMenu="true" />
+			</tabpanel>
+			<tabpanel>
+				<spreadsheet src="/issue3/book/589-hiddenRowColumn.xlsx" width="100%" height="600px"
+					maxVisibleRows="100" maxVisibleColumns="40" showSheetbar="true" showToolbar="true"
+					showContextMenu="true" />
+			</tabpanel>
+		</tabpanels>
+	</tabbox>
+
+</zk>
