@@ -11,47 +11,24 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.app.ui;
 
-import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.util.Map;
-import java.util.Set;
+import java.io.*;
 
-import org.zkoss.lang.Classes;
 import org.zkoss.lang.Strings;
 import org.zkoss.util.logging.Log;
 import org.zkoss.util.media.AMedia;
-import org.zkoss.zk.ui.Component;
-import org.zkoss.zk.ui.Execution;
-import org.zkoss.zk.ui.Executions;
-import org.zkoss.zk.ui.WebApps;
-import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.EventListener;
+import org.zkoss.zk.ui.*;
+import org.zkoss.zk.ui.event.*;
 import org.zkoss.zk.ui.select.annotation.Wire;
-import org.zkoss.zss.api.Importer;
-import org.zkoss.zss.api.Importers;
-import org.zkoss.zss.api.Ranges;
-import org.zkoss.zss.api.AreaRef;
-import org.zkoss.zss.api.model.Book;
-import org.zkoss.zss.api.model.Sheet;
-import org.zkoss.zss.app.repository.BookInfo;
-import org.zkoss.zss.app.repository.BookRepository;
-import org.zkoss.zss.app.repository.BookRepositoryFactory;
+import org.zkoss.zss.api.*;
+import org.zkoss.zss.api.model.*;
+import org.zkoss.zss.api.model.Book.BookType;
+import org.zkoss.zss.app.repository.*;
 import org.zkoss.zss.app.repository.impl.BookUtil;
-import org.zkoss.zss.app.ui.dlg.DlgCallbackEvent;
-import org.zkoss.zss.app.ui.dlg.OpenManageBookCtrl;
-import org.zkoss.zss.app.ui.dlg.SaveBookAsCtrl;
-import org.zkoss.zss.ui.AuxAction;
-import org.zkoss.zss.ui.Spreadsheet;
-import org.zkoss.zss.ui.UserActionContext;
-import org.zkoss.zss.ui.UserActionHandler;
-import org.zkoss.zss.ui.UserActionManager;
-import org.zkoss.zss.ui.Version;
+import org.zkoss.zss.app.ui.dlg.*;
+import org.zkoss.zss.ui.*;
 import org.zkoss.zss.ui.event.Events;
 import org.zkoss.zss.ui.impl.DefaultUserActionManagerCtrl;
 import org.zkoss.zss.ui.sys.UndoableActionManager;
-import org.zkoss.zss.ui.sys.UserActionManagerCtrl;
-import org.zkoss.zss.ui.sys.SpreadsheetCtrl;
 import org.zkoss.zul.Filedownload;
 
 /**
@@ -349,7 +326,8 @@ public class AppCtrl extends CtrlBase<Component>{
 		File file;
 		try {
 			file = BookUtil.saveBookToWorkingFolder(loadedBook);
-			Filedownload.save(new AMedia(name, null, "application/vnd.ms-excel", file, true));
+			//default Excel exporter exports XLSX 
+			Filedownload.save(new AMedia(name, null, "application/vnd.ms-excel.12", file, true));
 		} catch (IOException e) {
 			log.error(e.getMessage(),e);
 			UiUtil.showWarnMessage("Can't export the book");
