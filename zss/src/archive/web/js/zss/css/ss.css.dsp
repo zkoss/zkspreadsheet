@@ -1480,3 +1480,7 @@
 .z-initing {
 	background-image: url('http://www.zkoss.org/zk/img/${s:encodeWithZSS("zsspowered.png")}');
 }
+
+.zss-color-popup {
+	display: none;
+}

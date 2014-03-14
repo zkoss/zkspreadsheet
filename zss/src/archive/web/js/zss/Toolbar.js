@@ -66,7 +66,7 @@ zss.ToolbarTabpanel = zk.$extends(zul.tab.Tabpanel, {
 		var tb = this.toolbar;
 		if (!tb) {
 			tb = this.toolbar = new zss.ResizeableToolbar(this._wgt);
-			var btns = new zss.ButtonBuilder(this._wgt).addAll(this._actions).build();
+			var btns = new zss.ButtonBuilder(this._wgt, tb).addAll(this._actions).build();
 			for (var i = 0, len = btns.length; i < len; i++) {
 				var b = btns[i];
 				if (b)
