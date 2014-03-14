@@ -1,4 +1,4 @@
-<vbox hflex="1" vflex="1">
+<vlayout hflex="1" vflex="1">
 	<button onClick="export()">Export to Excel</button>
 	<spreadsheet id="ss" src="/TestFile2007.xlsx" maxVisibleRows="200" maxVisibleColumns="40"
 		hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
@@ -14,4 +14,4 @@
 	    Filedownload.save(out.toByteArray(), "application/file", wb.getBookName());
 	}
 	]]></zscript>		
-</vbox>
+</vlayout>
