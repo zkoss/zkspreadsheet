@@ -1201,7 +1201,7 @@ zss.StylePanel = zk.$extends(zul.wgt.Popup, {
 		styleContainer.appendChild(tb);
 		
 		tb = new zul.wgt.Toolbar({sclass: 'zsstylepanel-toolbar'});
-		btns = builder.addAll(['fontColor', 'fillColor', 'border', 'verticalAlign', 'horizontalAlign']).build();
+		btns = builder.addAll(['fontColor', 'fillColor', 'border', 'verticalAlign', 'horizontalAlign','wrapText']).build();
 		while (b = btns.shift()) {
 			tb.appendChild(b);
 		}
