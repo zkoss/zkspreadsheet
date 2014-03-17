@@ -16,12 +16,14 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.model;
 /**
- * 
+ * A picture in a sheet.
  * @author dennis
  * @since 3.5.0
  */
 public interface SPicture {
-
+	/**
+	 * @since 3.5.0
+	 */
 	public enum Format{
 		DIB,
 		EMF,

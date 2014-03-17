@@ -38,7 +38,7 @@ public class NameImpl extends AbstractNameAdv {
 	private String _refersToExpr;
 	
 	private CellRegion _refersToCellRegion;
-	private String _refersTopSheetName;
+	private String _refersToSheetName;
 	
 	private boolean _isParsingError;
 	
@@ -54,7 +54,7 @@ public class NameImpl extends AbstractNameAdv {
 
 	@Override
 	public String getRefersToSheetName() {
-		return _refersTopSheetName;
+		return _refersToSheetName;
 	}
 
 	@Override
@@ -98,7 +98,7 @@ public class NameImpl extends AbstractNameAdv {
 		
 		clearFormulaDependency();
 		this._refersToExpr = refersToExpr;
-		_refersTopSheetName = null;
+		_refersToSheetName = null;
 		_refersToCellRegion = null;
 		//TODO support function as Excel (POI)
 		
@@ -107,9 +107,11 @@ public class NameImpl extends AbstractNameAdv {
 		FormulaExpression expr = fe.parse(refersToExpr, new FormulaParseContext(_book.getSheet(0),new NameRefImpl(this)));
 		if(expr.hasError()){
 			_isParsingError = true;
-		}else if(expr.isRefersTo()){
-			_refersTopSheetName = expr.getRefersToSheetName();
-			_refersToCellRegion = expr.getRefersToCellRegion();
+		}else if(expr.isAreaRefs()){
+			//TODO, should care all the refs
+			Ref[] refs = expr.getAreaRefs();
+			_refersToSheetName = refs[0].getSheetName();
+			_refersToCellRegion = new CellRegion(refs[0].getRow(),refs[0].getColumn(),refs[0].getLastRow(),refs[0].getLastColumn());
 		}
 		
 	}

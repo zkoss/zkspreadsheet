@@ -96,7 +96,7 @@ import org.zkoss.zss.api.model.impl.BookImpl;
 import org.zkoss.zss.api.model.impl.SheetImpl;
 import org.zkoss.zss.api.model.impl.SimpleRef;
 import org.zkoss.zss.model.CellRegion;
-import org.zkoss.zss.model.InvalidateModelOpException;
+import org.zkoss.zss.model.InvalidModelOpException;
 import org.zkoss.zss.model.ModelEvent;
 import org.zkoss.zss.model.ModelEventListener;
 import org.zkoss.zss.model.ModelEvents;
@@ -2242,7 +2242,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 					onMergeDelete(event);
 				}
 			});
-			addEventListener(ModelEvents.ON_DISPLAY_GRIDLINE_CHANGE, new ModelEventListener() {
+			addEventListener(ModelEvents.ON_DISPLAY_GRIDLINES_CHANGE, new ModelEventListener() {
 				@Override
 				public void onEvent(ModelEvent event) {
 					onDisplayGridlines(event);
@@ -3906,7 +3906,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 
 		boolean hiderow = isHiderowhead();
 		boolean hidecol = isHidecolumnhead();
-		boolean showgrid = sheet.getViewInfo().isDisplayGridline();
+		boolean showgrid = sheet.getViewInfo().isDisplayGridlines();
 
 		int th = hidecol ? 1 : this.getTopheadheight();
 		int lw = hiderow ? 1 : this.getLeftheadwidth();
@@ -4348,7 +4348,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			((WidgetLoader) list.get(i)).onSheetSelected(_selectedSheet);
 		}
 		//setup gridline
-		setDisplayGridlines(_selectedSheet.getViewInfo().isDisplayGridline());
+		setDisplayGridlines(_selectedSheet.getViewInfo().isDisplayGridlines());
 		setProtectSheet(_selectedSheet.isProtected());
 		
 		//register collaborated focus
@@ -4643,7 +4643,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		});
 	}
 	
-	private void showInvalidateModelOpErrorThenRetry(InvalidateModelOpException ex, final String token, final Sheet sheet, final int rowIdx,final int colIdx, final Object value, final String editingType) {
+	private void showInvalidateModelOpErrorThenRetry(InvalidModelOpException ex, final String token, final Sheet sheet, final int rowIdx,final int colIdx, final Object value, final String editingType) {
 		String title = Labels.getLabel("zss.msg.warn_title");
 		String msg = Labels.getLabel("zss.msg.invalidate_model_op_error",new Object[]{ex.getMessage()});
 		Messagebox.show(msg, title, Messagebox.OK, Messagebox.EXCLAMATION, new EventListener() {
@@ -4701,8 +4701,8 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		} catch (RuntimeException x) {
 			if (x instanceof IllegalFormulaException) {
 				showFormulaErrorThenRetry((IllegalFormulaException)x, token, sheet, rowIdx, colIdx, value, editingType);
-			} else if (x instanceof InvalidateModelOpException){
-				showInvalidateModelOpErrorThenRetry((InvalidateModelOpException)x, token, sheet, rowIdx, colIdx, value, editingType);
+			} else if (x instanceof InvalidModelOpException){
+				showInvalidateModelOpErrorThenRetry((InvalidModelOpException)x, token, sheet, rowIdx, colIdx, value, editingType);
 			} else {
 				processCancelEditing0(token, sheet, rowIdx, colIdx, false, editingType);
 				throw x;

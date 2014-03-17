@@ -19,6 +19,8 @@ package org.zkoss.zss.range.impl.imexp;
 
 /**
  * Various unit conversion methods.
+ * @author Hawk
+ * @since 3.5.0
  */
 //copied from ZSS.
 public class UnitUtil {

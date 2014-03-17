@@ -20,16 +20,21 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 /**
- * 
+ * Contains autofilter's setting.
  * @author Dennis
  * @since 3.5.0
  */
 public interface SAutoFilter {
 
+	/**
+	 * A filter column contains information for filtering, e.g. criteria.
+	 * A filter column only exists when users apply a criteria on a column. 
+	 * @author Dennis
+	 * @since 3.5.0
+	 */
 	public interface NFilterColumn{
 		/**
-		 * the column index in the auto filter
-		 * @return
+		 * @return the nth column (1st column in the filter range is 0)
 		 */
 		int getIndex();
 		
@@ -47,6 +52,11 @@ public interface SAutoFilter {
 
 	}
 	
+	/**
+	 * 
+	 * @author Dennis
+	 * @since 3.5.0
+	 */
 	public enum FilterOp{
 		AND, BOTTOM10, BOTOOM10_PERCENT, OR, TOP10, TOP10_PERCENT, VALUES;
 	}

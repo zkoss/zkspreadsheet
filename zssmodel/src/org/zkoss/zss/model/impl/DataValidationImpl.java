@@ -347,13 +347,14 @@ public class DataValidationImpl extends AbstractDataValidationAdv {
 	
 	@Override
 	public List<SCell> getReferToCellList(){
-		if(_value1Expr!=null && _value1Expr.isRefersTo()){
+		if(_value1Expr!=null && _value1Expr.isAreaRefs()){
 			List<SCell> list = new LinkedList<SCell>();
 			SBookSeries bookSeries = _sheet.getBook().getBookSeries(); 
 			
-			String bookName = _sheet.getBook().getBookName();//TODO zss 3.5 from expr
-			String sheetName = _value1Expr.getRefersToSheetName();
-			CellRegion region = _value1Expr.getRefersToCellRegion();
+			Ref areaRef = _value1Expr.getAreaRefs()[0];
+			String bookName =  areaRef.getBookName();
+			String sheetName = areaRef.getSheetName();
+			CellRegion region = new CellRegion(areaRef.getRow(),areaRef.getColumn(),areaRef.getLastRow(),areaRef.getLastColumn());
 			
 			SBook book = bookSeries.getBook(bookName);
 			if(book==null){
@@ -375,7 +376,7 @@ public class DataValidationImpl extends AbstractDataValidationAdv {
 
 	@Override
 	public boolean hasReferToCellList() {
-		return _value1Expr!=null && _value1Expr.isRefersTo();
+		return _value1Expr!=null && _value1Expr.isAreaRefs();
 	}
 
 	@Override

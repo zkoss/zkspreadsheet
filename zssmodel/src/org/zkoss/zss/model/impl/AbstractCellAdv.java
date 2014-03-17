@@ -23,7 +23,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.zkoss.zss.model.ErrorValue;
-import org.zkoss.zss.model.InvalidateModelOpException;
+import org.zkoss.zss.model.InvalidModelOpException;
 import org.zkoss.zss.model.SCell;
 import org.zkoss.zss.model.SCellStyle;
 import org.zkoss.zss.model.SComment;

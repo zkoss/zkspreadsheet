@@ -31,10 +31,17 @@ public class ViewAnchor implements Serializable {
 	private int yOffset;
 	private int width;
 	private int height;
+	/**
+	 * Create a view anchor with indexes for left-top corner cell, width, and height.
+	 */
 	public ViewAnchor(int rowIndex, int columnIndex, int width, int height) {
 		this(rowIndex,columnIndex,0,0,width,height);
 		
 	}
+	
+	/**
+	 * Create a view anchor with indexes for left-top corner cell, x and y offset in the cell, width, and height.
+	 */
 	public ViewAnchor(int rowIndex, int columnIndex, int xOffset, int yOffset,
 			int width, int height) {
 		this.rowIndex = rowIndex;
@@ -108,9 +115,7 @@ public class ViewAnchor implements Serializable {
 	}
 	
 	/**
-	 * Return the right-bottom anchor which depends on sheet with 0 height and width. 
-	 * @param sheet
-	 * @return
+	 * @return Returns the right-bottom anchor which depends on sheet with 0 height and width. 
 	 */
 	public ViewAnchor getRightBottomAnchor(SSheet sheet){
 		

@@ -27,7 +27,7 @@ import java.util.regex.Pattern;
 import org.zkoss.lang.Strings;
 import org.zkoss.util.Locales;
 import org.zkoss.zss.model.CellRegion;
-import org.zkoss.zss.model.InvalidateModelOpException;
+import org.zkoss.zss.model.InvalidModelOpException;
 import org.zkoss.zss.model.SCell;
 import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.model.PasteOption;
@@ -43,7 +43,7 @@ import org.zkoss.zss.range.SRange.FillType;
 /**
  * To help data filling.
  * @author Dennis
- *
+ * @since 3.5.0
  */
 //the code was migrated from original BookHelper.fill series method.
 public class AutoFillHelper {
@@ -83,7 +83,7 @@ public class AutoFillHelper {
 			return;
 		}
 		//FILL_INVALID
-		throw new InvalidateModelOpException("Destination range must include source range and can be fill in one direction only"); 
+		throw new InvalidModelOpException("Destination range must include source range and can be fill in one direction only"); 
 	}
 	private static int getShortWeekIndex(String x, Locale locale) { //ZSS-69
 		return ShortWeekData.getInstance(CircularData.NORMAL, locale).getIndex(x);

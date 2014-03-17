@@ -20,7 +20,7 @@ import org.zkoss.poi.ss.util.CellReference;
 import org.zkoss.util.Locales;
 import org.zkoss.zss.model.CellRegion;
 import org.zkoss.zss.model.ErrorValue;
-import org.zkoss.zss.model.InvalidateModelOpException;
+import org.zkoss.zss.model.InvalidModelOpException;
 import org.zkoss.zss.model.SAutoFilter;
 import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.SBooks;
@@ -58,11 +58,15 @@ import org.zkoss.zss.model.impl.AbstractSheetAdv;
 import org.zkoss.zss.model.impl.BookImpl;
 import org.zkoss.zss.model.impl.RefImpl;
 import org.zkoss.zss.model.impl.SheetImpl;
+import org.zkoss.zss.model.impl.chart.GeneralChartDataImpl;
 import org.zkoss.zss.model.sys.dependency.DependencyTable;
 import org.zkoss.zss.model.sys.dependency.Ref;
 import org.zkoss.zss.model.util.CellStyleMatcher;
 import org.zkoss.zss.model.util.FontMatcher;
 import org.zkoss.zss.model.util.Validations;
+import org.zkoss.zss.range.SRange.DeleteShift;
+import org.zkoss.zss.range.SRange.InsertCopyOrigin;
+import org.zkoss.zss.range.SRange.InsertShift;
 import org.zkoss.zss.range.SRanges;
 
 public class ModelTest {
@@ -296,7 +300,7 @@ public class ModelTest {
 		try{
 			SSheet sheet = initialDataGrid(book.createSheet("Sheet2"));
 			Assert.fail("should get exception");
-		}catch(InvalidateModelOpException x){}
+		}catch(InvalidModelOpException x){}
 		
 		Assert.assertEquals(2, book.getNumOfSheet());
 		Assert.assertEquals(sheet1, book.getSheet(0));
@@ -381,7 +385,7 @@ public class ModelTest {
 		
 		try{
 		book.moveSheetTo(sheet1, 3);
-		}catch(InvalidateModelOpException x){}//ownership
+		}catch(InvalidModelOpException x){}//ownership
 		
 		
 		
@@ -1818,7 +1822,7 @@ public class ModelTest {
 		try{
 			cell.setValue("=)))(999)");
 			Assert.fail("not here");
-		}catch(InvalidateModelOpException x){
+		}catch(InvalidModelOpException x){
 			Assert.assertEquals(CellType.FORMULA, cell.getType());
 			Assert.assertEquals(CellType.NUMBER, cell.getFormulaResultType());
 			Assert.assertEquals("SUM(999)", cell.getFormulaValue());
@@ -1953,7 +1957,7 @@ public class ModelTest {
 		try{
 			cell.setFormulaValue("[(999)");
 			Assert.fail("not here");
-		}catch(InvalidateModelOpException x){
+		}catch(InvalidModelOpException x){
 			Assert.assertEquals(CellType.FORMULA, cell.getType());
 			Assert.assertEquals(CellType.NUMBER, cell.getFormulaResultType());
 			Assert.assertEquals("SUM(999)", cell.getFormulaValue());
@@ -2242,11 +2246,11 @@ public class ModelTest {
 		try{
 			sheet.addMergedRegion(new CellRegion(0,0,1,1));
 			Assert.fail();
-		}catch(InvalidateModelOpException x){}
+		}catch(InvalidModelOpException x){}
 		try{
 			sheet.addMergedRegion(new CellRegion(1,1,2,2));
 			Assert.fail();
-		}catch(InvalidateModelOpException x){}
+		}catch(InvalidModelOpException x){}
 		
 		
 		sheet = initialDataGrid(book.createSheet("Sheet 2"));
@@ -2436,7 +2440,7 @@ public class ModelTest {
 		try{
 			book.createName("test1");
 			Assert.fail();
-		}catch(InvalidateModelOpException e){}
+		}catch(InvalidModelOpException e){}
 		SName name2 = book.createName("test2");
 		
 		Assert.assertEquals(2, book.getNumOfName());
@@ -3204,7 +3208,7 @@ public class ModelTest {
 		try{
 			sheet1.moveCell(new CellRegion("A1:C2"), 1,1);//source overlap
 			Assert.fail();
-		}catch(InvalidateModelOpException x){}
+		}catch(InvalidModelOpException x){}
 		
 		
 		sheet1.moveCell(new CellRegion("A1:C3"), 0,3);//target overlap
@@ -3331,6 +3335,220 @@ public class ModelTest {
 		} else {
 			Assert.assertTrue(sheet.getMergedRegions().isEmpty());
 		}
+	}
+	
+	@Test
+	public void testMultipleAreaEval() {
+		SBook book = SBooks.createBook("book1");
+		book.getBookSeries().setAutoFormulaCacheClean(true);
+		SSheet sheet1 = book.createSheet("Sheet1");
+		SSheet sheet2 = book.createSheet("Sheet2");
+		book.createName("SingleValueName").setRefersToFormula("Sheet1!$A$1");
+		book.createName("SingleName").setRefersToFormula("Sheet1!$A$1:$A$3");
+		book.createName("MultipleName").setRefersToFormula("Sheet1!$A$1,Sheet1!$A$3");
+		sheet1.getCell("A1").setValue(1);
+		sheet1.getCell("A2").setValue(2);
+		sheet1.getCell("A3").setValue(3);
+		sheet2.getCell("A5").setValue(5);
+		sheet2.getCell("A6").setValue(6);
+		
+		sheet1.getCell("D2").setValue("=SUM(A1,A3,Sheet2!A5:A6)");
+		Assert.assertEquals(15D, sheet1.getCell("D2").getValue());
+		
+		sheet1.getCell("D3").setValue("=(A1,A3,Sheet2!A5:A6)");
+		Assert.assertEquals("#VALUE!", sheet1.getCell("D3").getErrorValue().getErrorString());
+		
+		sheet1.getCell("D4").setValue("=SUM(SingleValueName)");
+		Assert.assertEquals(1D, sheet1.getCell("D4").getValue());
+		
+		sheet1.getCell("D5").setValue("=SingleValueName");
+		Assert.assertEquals(1D, sheet1.getCell("D5").getValue());
+		
+		sheet1.getCell("D6").setValue("=SUM(SingleName)");
+		Assert.assertEquals(6D, sheet1.getCell("D6").getValue());
+		
+		
+		//the poi parser can handle =SUM(MultipleName) and get java.lang.IllegalStateException: evaluation stack not empty
+//		sheet1.getCell("D7").setValue("=SUM(MultipleName)");
+//		Assert.assertEquals(4D, sheet1.getCell("D7").getValue());
+		
+		//the poi parser can handle =SUM(MultipleName) and get java.lang.IllegalStateException: evaluation stack not empty
+//		sheet1.getCell("D8").setValue("=MultipleName");
+//		Assert.assertEquals("#VALUE!", sheet1.getCell("D8").getErrorValue().getErrorString());
+	}
+	@Test
+	public void testMultipleAreaEvalOfLoop() {
+		SBook book = SBooks.createBook("book1");
+		book.getBookSeries().setAutoFormulaCacheClean(true);
+		SSheet sheet1 = book.createSheet("Sheet1");
+		SSheet sheet2 = book.createSheet("Sheet2");
+		book.createName("SingleValueName").setRefersToFormula("Sheet1!$A$1");
+		book.createName("SingleName").setRefersToFormula("Sheet1!$A$1:$A$3");
+		book.createName("MultipleName").setRefersToFormula("Sheet1!$A$1,Sheet1!$A$3");
+		sheet1.getCell("A1").setValue(1);
+		sheet1.getCell("A2").setValue(2);
+		sheet1.getCell("A3").setValue(3);
+		sheet2.getCell("A5").setValue(5);
+		sheet2.getCell("A6").setValue(6);
+		sheet1.getCell("B1").setValue("A");
+		sheet1.getCell("B3").setValue("B");		
+		
+		//loop
+		sheet1.getCell("C1").setValue("=C2");
+		sheet1.getCell("C2").setValue("=C3");
+		sheet1.getCell("C3").setValue("=C1");
+		
+		Assert.assertEquals("#N/A", sheet1.getCell("C1").getErrorValue().getErrorString());
+		Assert.assertEquals("#N/A", sheet1.getCell("C2").getErrorValue().getErrorString());
+		Assert.assertEquals("#N/A", sheet1.getCell("C3").getErrorValue().getErrorString());
+		
+		sheet1.getCell("D2").setValue("=SUM(A1,D2,Sheet2!A5:A6)");
+		Assert.assertEquals("#N/A", sheet1.getCell("D2").getErrorValue().getErrorString());
+		
+		sheet1.getCell("D3").setValue("=(A1,D3,Sheet2!A5:A6)");
+		Assert.assertEquals("#VALUE!", sheet1.getCell("D3").getErrorValue().getErrorString());
+		
+		
+		SChart p1 = sheet1.addChart(SChart.ChartType.PIE, new ViewAnchor(6,6, 600,400));
+		
+		SGeneralChartData data = (SGeneralChartData)p1.getData();
+		data.setCategoriesFormula("(Sheet1!$B$1,Sheet1!$B$3)");
+		
+		Assert.assertEquals(2, data.getNumOfCategory());
+		Assert.assertEquals("A", data.getCategory(0));
+		Assert.assertEquals("B", data.getCategory(1));
+		
+		
+		SSeries series = data.addSeries();
+		series.setFormula(null, "(C1,C3)");
+		Assert.assertEquals(0, series.getNumOfValue());
+//		Assert.assertEquals(0D, series.getValue(0));
+//		Assert.assertEquals(0D, series.getValue(1));
+		
+	}
+	@Test
+	public void testMultipleAreaShift() {
+		SBook book = SBooks.createBook("book1");
+		book.getBookSeries().setAutoFormulaCacheClean(true);
+		SSheet sheet1 = book.createSheet("Sheet1");
+		SSheet sheet2 = book.createSheet("Sheet2");
+		book.createName("SingleValueName").setRefersToFormula("Sheet1!$A$1");
+		book.createName("SingleName").setRefersToFormula("Sheet1!$A$1:$A$3");
+		book.createName("MultipleName").setRefersToFormula("Sheet1!$A$1,Sheet1!$A$3");
+		sheet1.getCell("A1").setValue(1);
+		sheet1.getCell("A2").setValue(2);
+		sheet1.getCell("A3").setValue(3);
+		
+		sheet2.getCell("A5").setValue(5);
+		sheet2.getCell("A6").setValue(6);
+		
+		sheet1.getCell("D2").setValue("=SUM(A1,A3,Sheet2!A5:A6)");
+		Assert.assertEquals(15D, sheet1.getCell("D2").getValue());
+		
+		sheet1.getCell("D3").setValue("=(A1,A3,Sheet2!A5:A6)");
+		Assert.assertEquals("#VALUE!", sheet1.getCell("D3").getErrorValue().getErrorString());
+		
+		//shift
+		SRanges.range(sheet1,"D2:D3").copy(SRanges.range(sheet1,"D22"));
+		Assert.assertEquals("SUM(A21,A23,Sheet2!A25:A26)", sheet1.getCell("D22").getFormulaValue());
+		sheet1.getCell("A21").setValue(3);
+		sheet1.getCell("A23").setValue(6);
+		sheet2.getCell("A25").setValue(1);
+		sheet2.getCell("A26").setValue(2);
+		Assert.assertEquals(12D, sheet1.getCell("D22").getValue());
+		
+		Assert.assertEquals("(A21,A23,Sheet2!A25:A26)", sheet1.getCell("D23").getFormulaValue());
+		Assert.assertEquals("#VALUE!", sheet1.getCell("D23").getErrorValue().getErrorString());
+		
+		//move
+		SRanges.range(sheet1,"A1:A3").move(2, 0);		
+		
+		Assert.assertEquals("SUM(A3,A5,Sheet2!A5:A6)", sheet1.getCell("D2").getFormulaValue());
+		sheet1.getCell("A3").setValue(3);
+		Assert.assertEquals(17D, sheet1.getCell("D2").getValue());
+		
+		Assert.assertEquals("(A3,A5,Sheet2!A5:A6)", sheet1.getCell("D3").getFormulaValue());
+		Assert.assertEquals("#VALUE!", sheet1.getCell("D3").getErrorValue().getErrorString());
+		
+		//insert
+		SRanges.range(sheet1,"A4").getRows().insert(InsertShift.DEFAULT, InsertCopyOrigin.FORMAT_NONE);		
+		
+		Assert.assertEquals("SUM(A3,A6,Sheet2!A5:A6)", sheet1.getCell("D2").getFormulaValue());
+		sheet1.getCell("A4").setValue(3);
+		Assert.assertEquals(17D, sheet1.getCell("D2").getValue());
+		sheet1.getCell("A6").setValue(5);
+		Assert.assertEquals(19D, sheet1.getCell("D2").getValue());
+		
+		Assert.assertEquals("(A3,A6,Sheet2!A5:A6)", sheet1.getCell("D3").getFormulaValue());
+		Assert.assertEquals("#VALUE!", sheet1.getCell("D3").getErrorValue().getErrorString());
+		
+		
+		//delete
+		SRanges.range(sheet1,"A4:A5").getRows().delete(DeleteShift.DEFAULT);		
+		
+		Assert.assertEquals("SUM(A3,A4,Sheet2!A5:A6)", sheet1.getCell("D2").getFormulaValue());
+		sheet1.getCell("A4").setValue(3);
+		Assert.assertEquals(17D, sheet1.getCell("D2").getValue());
+		
+		Assert.assertEquals("(A3,A4,Sheet2!A5:A6)", sheet1.getCell("D3").getFormulaValue());
+		Assert.assertEquals("#VALUE!", sheet1.getCell("D3").getErrorValue().getErrorString());
+		
+		//rename
+		SRanges.range(sheet2).setSheetName("XYZ");
+		
+		Assert.assertEquals("SUM(A3,A4,XYZ!A5:A6)", sheet1.getCell("D2").getFormulaValue());
+		sheet2.getCell("A5").setValue(1);
+		Assert.assertEquals(13D, sheet1.getCell("D2").getValue());
+		
+		Assert.assertEquals("(A3,A4,XYZ!A5:A6)", sheet1.getCell("D3").getFormulaValue());
+		Assert.assertEquals("#VALUE!", sheet1.getCell("D3").getErrorValue().getErrorString());
+		
+		//delete
+		SRanges.range(sheet2).deleteSheet();
+		
+		Assert.assertEquals("SUM(A3,A4,'#REF'!A5:A6)", sheet1.getCell("D2").getFormulaValue());
+		Assert.assertEquals("#REF!", sheet1.getCell("D2").getErrorValue().getErrorString());
+		
+		Assert.assertEquals("(A3,A4,'#REF'!A5:A6)", sheet1.getCell("D3").getFormulaValue());
+		Assert.assertEquals("#VALUE!", sheet1.getCell("D3").getErrorValue().getErrorString());		
+	}
+	
+	@Test
+	public void testMultipleAreaEvalOfChart() {
+		SBook book = SBooks.createBook("book1");
+		book.getBookSeries().setAutoFormulaCacheClean(true);
+		SSheet sheet1 = book.createSheet("Sheet1");
+		SSheet sheet2 = book.createSheet("Sheet2");
+		book.createName("SingleValueName").setRefersToFormula("Sheet1!$A$1");
+		book.createName("SingleName").setRefersToFormula("Sheet1!$A$1:$A$3");
+		book.createName("MultipleName").setRefersToFormula("Sheet1!$A$1,Sheet1!$A$3");
+		sheet1.getCell("A1").setValue(1);
+		sheet1.getCell("A2").setValue(2);
+		sheet1.getCell("A3").setValue(3);
+		sheet2.getCell("A5").setValue(5);
+		sheet2.getCell("A6").setValue(6);
+		
+		sheet1.getCell("B1").setValue("A");
+		sheet1.getCell("B3").setValue("B");
+	
+		SChart p1 = sheet1.addChart(SChart.ChartType.PIE, new ViewAnchor(6,6, 600,400));
+		
+		SGeneralChartData data = (SGeneralChartData)p1.getData();
+		data.setCategoriesFormula("(Sheet1!$B$1,Sheet1!$B$3)");
+		
+		Assert.assertEquals(2, data.getNumOfCategory());
+		Assert.assertEquals("A", data.getCategory(0));
+		Assert.assertEquals("B", data.getCategory(1));
+		
+		
+		SSeries series = data.addSeries();
+		series.setFormula(null, "(A1,A3)");
+		Assert.assertEquals(2, series.getNumOfValue());
+		Assert.assertEquals(1D, series.getValue(0));
+		Assert.assertEquals(3D, series.getValue(1));
+		
+		
+		
 	}
 	
 	@Test

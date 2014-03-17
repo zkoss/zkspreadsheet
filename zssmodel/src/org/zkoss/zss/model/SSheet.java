@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * A sheet of a book. It's the main class you can manipulate rows, columns, cells, pictures, charts, and data validation.
  * @author dennis
  * @since 3.5.0
  */

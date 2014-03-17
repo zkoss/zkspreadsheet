@@ -16,9 +16,8 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.model;
 
-import java.util.Iterator;
 /**
- * 
+ * A row of a sheet.
  * @author dennis
  * @since 3.5.0
  */

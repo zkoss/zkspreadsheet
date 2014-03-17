@@ -17,7 +17,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.model;
 
 /**
- * 
+ * Store those visual statuses of a sheet, e.g. freeze status of row (column), or grid-line display.  
  * @author dennis
  * @since 3.5.0
  */
@@ -30,9 +30,9 @@ public interface SSheetViewInfo {
 
 	public void setNumOfColumnFreeze(int num);
 
-	public boolean isDisplayGridline();
+	public boolean isDisplayGridlines();
 
-	public void setDisplayGridline(boolean enable);
+	public void setDisplayGridlines(boolean enable);
 	
 	public SHeader getHeader();
 	

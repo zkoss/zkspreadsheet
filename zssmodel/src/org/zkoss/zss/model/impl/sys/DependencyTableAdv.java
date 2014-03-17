@@ -18,7 +18,7 @@ import org.zkoss.zss.model.sys.dependency.DependencyTable;
 
 /**
  * @author Pao
- * @since 3.5
+ * @since 3.5.0
  */
 public abstract class DependencyTableAdv implements DependencyTable, Serializable {
 	private static final long serialVersionUID = 1L;

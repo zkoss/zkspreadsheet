@@ -25,7 +25,9 @@ import org.zkoss.zss.range.SExporter;
  * @since 3.5.0
  */
 public class ExcelExportFactory implements SExporterFactory{
-
+	/**
+	 * @since 3.5.0
+	 */
 	public enum Type{
 		XLS,XLSX;
 	}

@@ -16,6 +16,11 @@ import org.zkoss.zss.model.sys.dependency.Ref;
 import org.zkoss.zss.model.sys.dependency.ObjectRef.ObjectType;
 import org.zkoss.zss.model.sys.dependency.Ref.RefType;
 
+/**
+ * 
+ * @author dennis
+ * @since 3.5.0
+ */
 /*package*/ class FormulaCacheClearHelper {
 	private final SBookSeries _bookSeries;
 	

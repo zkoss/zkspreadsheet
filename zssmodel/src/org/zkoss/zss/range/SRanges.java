@@ -17,7 +17,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.range;
 
 import org.zkoss.zss.model.CellRegion;
-import org.zkoss.zss.model.InvalidateModelOpException;
+import org.zkoss.zss.model.InvalidModelOpException;
 import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.SName;
 import org.zkoss.zss.model.SSheet;
@@ -25,7 +25,7 @@ import org.zkoss.zss.model.SheetRegion;
 import org.zkoss.zss.range.impl.RangeImpl;
 
 /**
- * To get the range.
+ * A collection of factory methods to create a {@link SRange} object.
  * @author dennis
  * @since 3.5.0
  */
@@ -63,12 +63,12 @@ public class SRanges {
 		SBook book = sheet.getBook();
 		SName n = book.getNameByName(name);
 		if(n==null){
-			throw new InvalidateModelOpException("can't find name "+name);
+			throw new InvalidModelOpException("can't find name "+name);
 		}
 		sheet = book.getSheetByName(n.getRefersToSheetName());
 		CellRegion region = n.getRefersToCellRegion();
 		if(sheet==null || region==null){
-			throw new InvalidateModelOpException("bad name "+name+ " : "+n.getRefersToFormula());
+			throw new InvalidModelOpException("bad name "+name+ " : "+n.getRefersToFormula());
 		}
 		
 		return new RangeImpl(sheet,region.row,region.column,region.lastRow,region.lastColumn);

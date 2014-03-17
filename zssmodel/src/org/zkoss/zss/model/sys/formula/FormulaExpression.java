@@ -17,6 +17,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.model.sys.formula;
 
 import org.zkoss.zss.model.CellRegion;
+import org.zkoss.zss.model.sys.dependency.Ref;
 
 /**
  * 
@@ -43,12 +44,7 @@ public interface FormulaExpression {
 	
 	//parsing result for Name
 	
-	boolean isRefersTo();
-
-	String getRefersToBookName();
+	boolean isAreaRefs();
 	
-	String getRefersToSheetName();
-	String getRefersToLastSheetName();
-	
-	CellRegion getRefersToCellRegion();
+	Ref[] getAreaRefs();
 }

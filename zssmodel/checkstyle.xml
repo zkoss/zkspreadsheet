@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<!DOCTYPE module PUBLIC
+    "-//Puppy Crawl//DTD Check Configuration 1.2//EN"
+    "http://www.puppycrawl.com/dtds/configuration_1_2.dtd">
+<!--
+	maven-checkstyle-plugin's custom configuration.
+	Generated report is under target\site by default.
+	Contains rules to check following things:
+	* format for @since
+	* file header existence 
+ -->    
+<module name="Checker">
+	<module name="Header">
+		<property name="header" value="/*\n\n{{IS_NOTE" />
+		<property name="fileExtensions" value="java" />
+	</module>
+	<module name="TreeWalker">
+		<module name="JavadocType">
+			<property name="scope" value="public" />
+		</module>
+		<module name="WriteTag">
+			<property name="tag" value="@since" />
+			<property name="tagFormat" value="\d.\d.\d" />
+			<!-- ignore if tag exists -->
+			<property name="tagSeverity" value="ignore" />
+		</module>
+	</module>
+</module>

@@ -6,7 +6,9 @@ package org.zkoss.zss.model.sys.dependency;
  * @since 3.5.0
  */
 public interface ObjectRef extends Ref{
-	
+	/**
+	 * @since 3.5.0
+	 */
 	public enum ObjectType{
 		CHART, DATA_VALIDATION
 	}

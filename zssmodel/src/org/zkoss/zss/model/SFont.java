@@ -17,16 +17,22 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.model;
 
 /**
- * 
+ * Represents a font used in cells.
  * @author dennis
  * @since 3.5.0
  */
 public interface SFont {
+	/**
+	 * @since 3.5.0
+	 */
 	public enum TypeOffset{
 		NONE, 
 		SUPER, 
 		SUB
 	}
+	/**
+	 * @since 3.5.0
+	 */
 	public enum Underline{
 		NONE,
 		SINGLE,
@@ -35,6 +41,9 @@ public interface SFont {
 		DOUBLE_ACCOUNTING
 	}
 	
+	/**
+	 * @since 3.5.0
+	 */
 	public enum Boldweight{
 		NORMAL,
 		BOLD

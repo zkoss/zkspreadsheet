@@ -22,7 +22,7 @@ import org.zkoss.zss.api.IllegalOpArgumentException;
 import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.Sheet;
-import org.zkoss.zss.model.InvalidateModelOpException;
+import org.zkoss.zss.model.InvalidModelOpException;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.UserActionContext;
 import org.zkoss.zss.ui.UserActionHandler;
@@ -61,7 +61,7 @@ public abstract class AbstractHandler implements UserActionHandler{
 		}catch(IllegalOpArgumentException x){
 			showInfoMessage(Labels.getLabel("zss.actionhandler.msg.illegal_range_operation")+" : "+x.getMessage());
 			return true;
-		}catch(InvalidateModelOpException x){
+		}catch(InvalidModelOpException x){
 			showInfoMessage(Labels.getLabel("zss.actionhandler.msg.illegal_range_operation")+" : "+x.getMessage());
 			return true;
 		}

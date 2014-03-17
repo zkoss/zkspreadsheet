@@ -1,6 +1,6 @@
 ZK Spreadsheet 3.5.0
 *Features:
-  
+  ZSS-606 Support to handle multiple-area formula
   
 *Bugs:
   ZSS-350 When using cell validation with cell list, the drop-down list won't update after the referred cells changed
@@ -15,6 +15,8 @@ ZK Spreadsheet 3.5.0
   ZSS-594 wrong display when insert/delete row/column in freeze column/row panel
   ZSS-596 Possible memory leak when formula evaluation
   ZSS-598 Cell doesn't display correctly
+  ZSS-585 Java SE 5 Compliance
+  ZSS-577 Can't display chart correctly
   ZSS-601 Once I use right click context menu on sheet bar, it will never work again
   ZSS-605 Spreadsheet doesn't fit in screen with hflex, vflex is 1 and show scroll bar  
   
@@ -46,6 +48,7 @@ ZK Spreadsheet 3.0.2
   ZSS-569 Range.notifyChange can't update formula value
   ZSS-593 Spreadsheet doesn't be released immediately after close tab in collaboration
   ZSS-596 Possible memory leak when formula evaluation
+  ZSS-585 Java SE 5 Compliance
   
 ** Upgrade Notes
   

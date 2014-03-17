@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.concurrent.locks.ReadWriteLock;
 
 /**
+ * It contains multiple {@link SBook} objects so that formulas in them can reference to cells of another book.
  * @author dennis
  * @since 3.5.0
  */

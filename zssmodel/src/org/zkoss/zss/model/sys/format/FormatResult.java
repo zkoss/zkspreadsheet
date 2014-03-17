@@ -15,16 +15,15 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 }}IS_RIGHT
 */
 package org.zkoss.zss.model.sys.format;
+import java.text.Format;
+import org.zkoss.zss.model.SColor;
+import org.zkoss.zss.model.SRichText;
+
 /**
  * 
  * @author dennis
  * @since 3.5.0
  */
-import java.text.Format;
-
-import org.zkoss.zss.model.SColor;
-import org.zkoss.zss.model.SRichText;
-
 public interface FormatResult {
 
 	/**

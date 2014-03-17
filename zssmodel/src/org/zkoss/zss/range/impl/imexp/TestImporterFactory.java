@@ -70,10 +70,10 @@ public class TestImporterFactory implements SImporterFactory{
 				
 				SBook book = SBooks.createBook(bookName);
 				
-				buildTest(book);
-				if(true){
-					return book;
-				}
+//				buildTest(book);
+//				if(true){
+//					return book;
+//				}
 				
 				buildInsertDeleteTest(book);
 				

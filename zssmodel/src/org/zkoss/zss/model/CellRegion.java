@@ -25,7 +25,10 @@ import org.zkoss.poi.ss.util.CellReference;
 
 
 /**
- * A immutable region of cells, it doesn't relates to a sheet
+ * An immutable object that represents a block of cells with 4 indexes which are first and last row index, first and last column index.
+ * It doesn't relate to a sheet. 
+ * You can use it to compare with another cell region, like diff(), equals(), contains(), or overlaps(). 
+ * These methods compare 2 regions by their 4 indexes.
  * @author dennis
  * @since 3.5.0
  */
@@ -38,10 +41,16 @@ public class CellRegion implements Serializable {
 	final public int lastColumn;
 	
 
+	/**
+	 * Create a region which only contains 1 cell. 
+	 */
 	public CellRegion(int row, int column) {
 		this(row, column, row, column);
 	}
-
+	
+	/**
+	 * create a region with cell reference, e.g. "A1:B2" 
+	 */
 	public CellRegion(String areaReference) {
 		AreaReference ref = new AreaReference(areaReference);
 		int row = ref.getFirstCell().getRow();
@@ -56,6 +65,9 @@ public class CellRegion implements Serializable {
 		checkLegal();
 	}
 	
+	/**
+	 * @return a cell reference string it might be A1:B2 for multiple cells or A1 for one cell.
+	 */
 	public String getReferenceString(){
 		AreaReference ref = new AreaReference(new CellReference(row,column),new CellReference(lastRow,lastColumn));
 		return isSingle()?ref.getFirstCell().formatAsString():ref.formatAsString();
@@ -68,6 +80,9 @@ public class CellRegion implements Serializable {
 		}
 	}
 
+	/**
+	 * Create a region with 4 indexes
+	 */
 	public CellRegion(int row, int column, int lastRow, int lastColumn) {
 		this.row = row;
 		this.column = column;
@@ -76,19 +91,32 @@ public class CellRegion implements Serializable {
 		checkLegal();
 	}
 
+	/**
+	 * @return return TRUE if this region only contains 1 cell, otherwise returns FALSE
+	 */
 	public boolean isSingle() {
 		return row == lastRow && column == lastColumn;
 	}
 
+	/**
+	 * @return returns TRUE if this region contains (or equals to) the cell specified by row and column index, otherwise returns FALSE 
+	 */
 	public boolean contains(int row, int column) {
 		return row >= this.row && row <= this.lastRow && column >= this.column
 				&& column <= this.lastColumn;
 	}
+	
+	/**
+	 * @return returns TRUE if this region contains (or equals to) specified region, otherwise returns FALSE 
+	 */
 	public boolean contains(CellRegion region) {
 		return contains(region.row, region.column)
 				&& contains(region.lastRow, region.lastColumn); 
 	}
 
+	/**
+	 * @return returns TRUE if this region overlaps specified region, otherwise returns FALSE 
+	 */
 	public boolean overlaps(CellRegion region) {
 		return overlaps0(this,region) || overlaps0(region,this);
 	}
@@ -100,6 +128,9 @@ public class CellRegion implements Serializable {
 			    (r1.row <= r2.lastRow));
 	}
 	
+	/**
+	 * @return returns TRUE if this region refers to the same scope as specified region, otherwise returns FALSE 
+	 */
 	public boolean equals(int row, int column, int lastRow, int lastColumn){
 		return this.row == row && this.column==column && this.lastRow==lastRow && this.lastColumn == lastColumn;
 	}
@@ -174,6 +205,10 @@ public class CellRegion implements Serializable {
 		return CellReference.convertColStringToIndex(colRef);
 	}
 	
+	/**
+	 * @return returns a list of regions that exclude the part which overlaps this region. 
+	 * If this region's area equals to specified region, returned list contains nothing. 
+	 */
 	public List<CellRegion> diff(CellRegion target) {
 		List<CellRegion> result = new ArrayList<CellRegion>();
 		

@@ -16,14 +16,14 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.api;
 
-import org.zkoss.zss.model.InvalidateFormulaException;
+import org.zkoss.zss.model.InvalidFormulaException;
 
 /**
  * Indicate an illegal formula exception
  * @author dennis
  * @since 3.0.0
  */
-public class IllegalFormulaException extends InvalidateFormulaException{
+public class IllegalFormulaException extends InvalidFormulaException{
 	private static final long serialVersionUID = 1L;
 	public IllegalFormulaException() {
 		super();

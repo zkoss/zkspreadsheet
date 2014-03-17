@@ -13,10 +13,13 @@ package org.zkoss.zss.model.impl.sys.formula;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import org.zkoss.poi.ss.formula.CollaboratingWorkbooksEnvironment;
 import org.zkoss.poi.ss.formula.DependencyTracker;
@@ -105,44 +108,112 @@ public class FormulaEngineImpl implements FormulaEngine {
 			return true;
 		}
 	};
+	
+	private static Pattern _areaPattern = Pattern.compile("\\([.[^\\(\\)]]*\\)");//match (A1,B1,C1)
+	
+	private static boolean isMultipleAreaFormula(String formula){
+		return _areaPattern.matcher(formula).matches();
+		
+	}
+	
+	private String[] unwrapeAreaFormula(String formula){
+		if(formula.startsWith("(")){
+			formula = formula.substring(1);
+		}
+		if(formula.endsWith(")")){
+			formula = formula.substring(0,formula.length()-1);
+		}
+		String[] formulasStrings = formula.split(",");
+		return formulasStrings;
+	}
 
+
+	private FormulaExpression parseMultipleAreaFormula(String formula, FormulaParseContext context) {
+		if(!isMultipleAreaFormula(formula)){
+			return null;
+		}
+		FormulaExpression[] result = parse0(unwrapeAreaFormula(formula),context);
+		
+		List<Ref> areaRefs = new LinkedList<Ref>(); 
+		for(FormulaExpression expr:result){
+			if(expr.hasError()){
+				return new FormulaExpressionImpl(formula, null, true,expr.getErrorMessage());
+			}
+			for(Ref ref:expr.getAreaRefs()){
+				areaRefs.add(ref);
+			}
+		}
+		return new FormulaExpressionImpl(formula, areaRefs.toArray(new Ref[areaRefs.size()]));
+	}
 	@Override
 	public FormulaExpression parse(String formula, FormulaParseContext context) {
-		FormulaExpression expr = null;
+		formula = formula.trim();
+		FormulaExpression expr = parseMultipleAreaFormula(formula,context);
+		if(expr!=null){
+			return expr;
+		}
+		return parse0(new String[]{formula},context)[0];
+	}
+
+	private FormulaExpression[] parse0(String[] formulas, FormulaParseContext context) {
+		LinkedList<FormulaExpression> result = new LinkedList<FormulaExpression>();
+		Ref dependant = context.getDependent();
+		LinkedList<Ref> precednets = dependant!=null?new LinkedList<Ref>():null;
 		try {
 			// adapt and parse
 			SBook book = context.getBook();
 			ParsingBook parsingBook = new ParsingBook(book);
 			int sheetIndex = parsingBook.getExternalSheetIndex(null, context.getSheet().getSheetName());
-			Ptg[] tokens = FormulaParser.parse(formula, parsingBook, FormulaType.CELL, sheetIndex); // current sheet index in parsing is always 0
-
-			// dependency tracking if necessary
-			Ref dependant = context.getDependent();
-			if(dependant != null) {
-				AbstractBookSeriesAdv series = (AbstractBookSeriesAdv)book.getBookSeries();
-				DependencyTableAdv table = (DependencyTableAdv)series.getDependencyTable();
-				for(Ptg ptg : tokens) {
-					Ref precedent = toDenpendRef(context, parsingBook, ptg);
-					if(precedent != null) {
-						table.add(dependant, precedent);
+			
+			AbstractBookSeriesAdv series = (AbstractBookSeriesAdv)book.getBookSeries();
+			DependencyTableAdv table = (DependencyTableAdv)series.getDependencyTable();
+			
+			boolean error = false;
+			
+			for(String formula:formulas){
+				try{
+					Ptg[] tokens = FormulaParser.parse(formula, parsingBook, FormulaType.CELL, sheetIndex); // current sheet index in parsing is always 0
+					if(dependant!=null){
+						for(Ptg ptg : tokens) {
+							Ref precedent = toDenpendRef(context, parsingBook, ptg);
+							if(precedent != null) {
+								precednets.add(precedent);
+							}
+						}
 					}
+					
+					// render formula, detect region and create result
+					String renderedFormula = renderFormula(parsingBook, formula, tokens);
+					Ref singleRef = tokens.length == 1 ? toDenpendRef(context, parsingBook, tokens[0]) : null;
+					Ref[] refs = singleRef==null ? null :
+						(singleRef.getType() == RefType.AREA || singleRef.getType() == RefType.CELL ?new Ref[]{singleRef}:null);
+					result.add(new FormulaExpressionImpl(renderedFormula, refs));
+					
+					
+				}catch(FormulaParseException e) {
+					_logger.info(e.getMessage() + " when parsing " + formula);
+					result.add(new FormulaExpressionImpl(formula, null, true,e.getMessage()));
+					error = true;
+				} catch(Exception e) {
+					_logger.error(e.getMessage() + " when parsing " + formula, e);
+					result.add(new FormulaExpressionImpl(formula, null, true,e.getMessage()));
+					error = true;
 				}
 			}
-
-			// render formula, detect region and create result
-			String renderedFormula = renderFormula(parsingBook, formula, tokens);
-			Ref singleRef = tokens.length == 1 ? toDenpendRef(context, parsingBook, tokens[0]) : null;
-			expr = new FormulaExpressionImpl(renderedFormula, singleRef);
-		} catch(FormulaParseException e) {
-			_logger.info(e.getMessage() + " when parsing " + formula);
-			expr = new FormulaExpressionImpl(formula, null, true,e.getMessage());
+			
+			// dependency tracking if no error and necessary
+			if(!error && dependant != null) {
+				for(Ref precedent:precednets){
+					table.add(dependant, precedent);
+				}
+			}
 		} catch(Exception e) {
-			_logger.error(e.getMessage() + " when parsing " + formula, e);
-			expr = new FormulaExpressionImpl(formula, null, true,e.getMessage());
+			_logger.error(e.getMessage() + " when parsing " + Arrays.asList(formulas), e);
+			result.clear();
+			result.add(new FormulaExpressionImpl(Arrays.asList(formulas).toString(), null, true,e.getMessage()));
 		}
-
-		return expr;
-	}
+		return result.toArray(new FormulaExpression[result.size()]);
+	}	
 	
 	protected String renderFormula(ParsingBook parsingBook, String formula, Ptg[] tokens) {
 		boolean hit = false; // only render if necessary
@@ -217,7 +288,7 @@ public class FormulaEngineImpl implements FormulaEngine {
 		if(expr.hasError()) {
 			return new EvaluationResultImpl(ResultType.ERROR, new ErrorValue(ErrorValue.INVALID_FORMULA));
 		}
-
+		
 		EvaluationResult result = null;
 		try {
 
@@ -297,10 +368,24 @@ public class FormulaEngineImpl implements FormulaEngine {
 		int currentSheetIndex = book.getSheetIndex(context.getSheet());
 		SCell cell = context.getCell();
 		ValueEval value = null;
+		boolean multipleArea = isMultipleAreaFormula(expr.getFormulaString());
 		if(cell == null || cell.isNull()) {
 			// evaluation formula directly
-			value = evaluator.evaluate(currentSheetIndex, expr.getFormulaString(), true);
+			if(multipleArea){
+				String[] formulas = unwrapeAreaFormula(expr.getFormulaString());
+				List<ValueEval> evals = new ArrayList<ValueEval>(formulas.length);
+				for(String f:formulas){
+					value = evaluator.evaluate(currentSheetIndex, f, true);
+					evals.add(value);
+				}
+				value = new ValuesEval(evals.toArray(new ValueEval[evals.size()]));
+			}else{
+				value = evaluator.evaluate(currentSheetIndex, expr.getFormulaString(), true);
+			}
 		} else {
+			if(multipleArea){//is multipleArea formula in cell, should return #VALUE!
+				return new EvaluationResultImpl(ResultType.ERROR, new ErrorValue(ErrorValue.INVALID_VALUE));
+			}
 			EvaluationCell evalCell = evalBook.getSheet(currentSheetIndex).getCell(cell.getRowIndex(),
 					cell.getColumnIndex());
 			value = evaluator.evaluate(evalCell);
@@ -310,38 +395,17 @@ public class FormulaEngineImpl implements FormulaEngine {
 		if(value instanceof ErrorEval) {
 			int code = ((ErrorEval)value).getErrorCode();
 			return new EvaluationResultImpl(ResultType.ERROR, new ErrorValue((byte)code));
-		} else if(value instanceof BlankEval) {
-			return new EvaluationResultImpl(ResultType.SUCCESS, "");
-		} else if(value instanceof StringEval) {
-			return new EvaluationResultImpl(ResultType.SUCCESS, ((StringEval)value).getStringValue());
-		} else if(value instanceof NumberEval) {
-			return new EvaluationResultImpl(ResultType.SUCCESS, ((NumberEval)value).getNumberValue());
-		} else if(value instanceof BoolEval) {
-			return new EvaluationResultImpl(ResultType.SUCCESS, ((BoolEval)value).getBooleanValue());
-		} else if(value instanceof ValuesEval) {
-			ValueEval[] values = ((ValuesEval)value).getValueEvals();
-			Object[] array = new Object[values.length];
-			for(int i = 0; i < values.length; ++i) {
-				array[i] = getResolvedValue(values[i]);
-			}
-			return new EvaluationResultImpl(ResultType.SUCCESS, array);
-		} else if(value instanceof AreaEval) {
-			// covert all values into an array
-			List<Object> list = new ArrayList<Object>();
-			AreaEval area = (AreaEval)value;
-			for(int r = 0; r < area.getHeight(); ++r) {
-				for(int c = 0; c < area.getWidth(); ++c) {
-					ValueEval v = area.getValue(r, c);
-					list.add(getResolvedValue(v));
+		} else {
+			try{
+				return new EvaluationResultImpl(ResultType.SUCCESS, getResolvedValue(value));
+			}catch(EvaluationException x){
+				//error when resolve value.
+				if(x.getErrorEval()!=null){//ZSS-591 Get console exception after delete sheet
+					return new EvaluationResultImpl(ResultType.ERROR, new ErrorValue((byte)x.getErrorEval().getErrorCode()));
+				}else{
+					throw x;
 				}
 			}
-			return new EvaluationResultImpl(ResultType.SUCCESS, list);
-		} else if(value instanceof RefEval) {
-			ValueEval ve = ((RefEval)value).getInnerValueEval();
-			Object v = getResolvedValue(ve);
-			return new EvaluationResultImpl(ResultType.SUCCESS, v);
-		} else {
-			throw new EvaluationException(null, "no matched type: " + value); // FIXME
 		}
 	}
 
@@ -352,8 +416,32 @@ public class FormulaEngineImpl implements FormulaEngine {
 			return ((NumberEval)value).getNumberValue();
 		} else if(value instanceof BlankEval) {
 			return "";
-		} else if(value instanceof ErrorEval) {//ZSS-591 Get console exception after delete sheet
-			return ((ErrorEval)value).getErrorCode();
+		} else if(value instanceof BoolEval) {
+			return ((BoolEval)value).getBooleanValue();
+		} else if(value instanceof ValuesEval) {
+			ValueEval[] values = ((ValuesEval)value).getValueEvals();
+			Object[] array = new Object[values.length];
+			for(int i = 0; i < values.length; ++i) {
+				array[i] = getResolvedValue(values[i]);
+			}
+			return array;
+		} else if(value instanceof AreaEval) {
+			// covert all values into an array
+			List<Object> list = new ArrayList<Object>();
+			AreaEval area = (AreaEval)value;
+			for(int r = 0; r < area.getHeight(); ++r) {
+				for(int c = 0; c < area.getWidth(); ++c) {
+					ValueEval v = area.getValue(r, c);
+					list.add(getResolvedValue(v));
+				}
+			}
+			return list;
+		} else if(value instanceof RefEval) {
+			ValueEval ve = ((RefEval)value).getInnerValueEval();
+			Object v = getResolvedValue(ve);
+			return v;
+		} else if(value instanceof ErrorEval) {
+			throw new EvaluationException((ErrorEval)value);
 		} else {
 			throw new EvaluationException(null, "no matched type: " + value); // FIXME
 		}
@@ -453,21 +541,32 @@ public class FormulaEngineImpl implements FormulaEngine {
 	protected static class FormulaExpressionImpl implements FormulaExpression, Serializable {
 		private static final long serialVersionUID = -8532826169759927711L;
 		private String formula;
-		private Ref ref;
+		private Ref[] refs;
 		private boolean error;
 		private String errorMessage;
 
 		/**
 		 * @param ref resolved reference if formula has only one parsed token
 		 */
-		public FormulaExpressionImpl(String formula, Ref ref) {
-			this(formula,ref,false,null);
+		public FormulaExpressionImpl(String formula, Ref[] refs) {
+			this(formula,refs,false,null);
 		}
-		public FormulaExpressionImpl(String formula, Ref ref, boolean error, String errorMessage) {
+		public FormulaExpressionImpl(String formula, Ref[] refs, boolean error, String errorMessage) {
 			this.formula = formula;
-			this.ref = ref;
+			if(refs!=null){
+				for(Ref ref:refs){
+					if( ref.getType() == RefType.AREA || ref.getType() == RefType.CELL){
+						continue;
+					}
+					this.error = true;
+					this.errorMessage = errorMessage==null?"wrong area reference":errorMessage;
+					return;
+				}
+			}
+			this.refs = refs;
 			this.error = error;
 			this.errorMessage = errorMessage;
+			
 		}
 
 		@Override
@@ -486,31 +585,14 @@ public class FormulaEngineImpl implements FormulaEngine {
 		}
 
 		@Override
-		public boolean isRefersTo() {
-			return ref != null && (ref.getType() == RefType.AREA || ref.getType() == RefType.CELL);
+		public boolean isAreaRefs() {
+			return refs != null && refs.length>0;
 		}
 		
 		@Override
-		public String getRefersToBookName() {
-			return isRefersTo() ? ref.getBookName() : null;
+		public Ref[] getAreaRefs() {
+			return refs;
 		}
-		
-		@Override
-		public String getRefersToSheetName() {
-			return isRefersTo() ? ref.getSheetName() : null;
-		}
-		
-		@Override
-		public String getRefersToLastSheetName() {
-			return isRefersTo() ? ref.getLastSheetName() : null;
-		}
-
-		@Override
-		public CellRegion getRefersToCellRegion() {
-			return isRefersTo() ? new CellRegion(ref.getRow(), ref.getColumn(), ref.getLastRow(),
-					ref.getLastColumn()) : null;
-		}
-
 	}
 
 	protected static class EvaluationResultImpl implements EvaluationResult {
@@ -585,6 +667,33 @@ public class FormulaEngineImpl implements FormulaEngine {
 
 	}
 	
+	private FormulaExpression adjustMultipleArea(String formula, FormulaParseContext context, FormulaAdjuster adjuster) {
+		if(!isMultipleAreaFormula(formula)){
+			return null;
+		}
+		StringBuilder sb = new StringBuilder("(");
+		//handle multiple area
+		String[] fs = unwrapeAreaFormula(formula); 
+		List<Ref> areaRefs = new LinkedList<Ref>();
+		for(int i=0;i<fs.length;i++){
+			if(i>0){
+				sb.append(",");
+			}
+			FormulaExpression expr = adjust(fs[i], context, adjuster);
+			if(expr.hasError()){
+				return new FormulaExpressionImpl(formula, null,true,expr.getErrorMessage());
+			}
+			sb.append(expr.getFormulaString());
+			if(expr.isAreaRefs()){
+				for(Ref ref:expr.getAreaRefs()){
+					areaRefs.add(ref);
+				}
+			}
+		}
+		sb.append(")");
+		return new FormulaExpressionImpl(sb.toString(),areaRefs.size()==0?null:areaRefs.toArray(new Ref[areaRefs.size()]));
+	}
+	
 	/**
 	 * adjust formula through specific adjuster
 	 */
@@ -603,7 +712,9 @@ public class FormulaEngineImpl implements FormulaEngine {
 			// render formula, detect region and create result
 			String renderedFormula = modified ? FormulaRenderer.toFormulaString(parsingBook, tokens) : formula;
 			Ref singleRef = tokens.length == 1 ? toDenpendRef(context, parsingBook, tokens[0]) : null;
-			expr = new FormulaExpressionImpl(renderedFormula, singleRef);
+			Ref[] refs = singleRef==null ? null :
+				(singleRef.getType() == RefType.AREA || singleRef.getType() == RefType.CELL ?new Ref[]{singleRef}:null);
+			expr = new FormulaExpressionImpl(renderedFormula, refs);
 
 		} catch(FormulaParseException e) {
 			_logger.info(e.getMessage());
@@ -621,7 +732,8 @@ public class FormulaEngineImpl implements FormulaEngine {
 	
 	@Override
 	public FormulaExpression move(String formula, final SheetRegion region, final int rowOffset, final int columnOffset, FormulaParseContext context) {
-		return adjust(formula, context, new FormulaAdjuster() {
+		formula = formula.trim();
+		FormulaAdjuster shiftAdjuster = new FormulaAdjuster() {
 			@Override
 			public boolean process(String formula, int sheetIndex, Ptg[] tokens, ParsingBook parsingBook, FormulaParseContext context) {
 				// move formula, limit to bound if dest. is out; if first and last both out on bound, it will be "#REF!"
@@ -639,7 +751,12 @@ public class FormulaEngineImpl implements FormulaEngine {
 						parsingBook.getSpreadsheetVersion());
 				return shifter.adjustFormula(tokens, sheetIndex);
 			}
-		});
+		};
+		FormulaExpression result = adjustMultipleArea(formula, context, shiftAdjuster);
+		if(result!=null){
+			return result;
+		}
+		return adjust(formula, context, shiftAdjuster);
 	}
 
 	@Override
@@ -708,7 +825,8 @@ public class FormulaEngineImpl implements FormulaEngine {
 
 	@Override
 	public FormulaExpression shift(String formula, final int rowOffset, final int columnOffset, FormulaParseContext context) {
-		return adjust(formula, context, new FormulaAdjuster() {
+		formula = formula.trim();
+		FormulaAdjuster shiftAdjuster = new FormulaAdjuster() {
 			@Override
 			public boolean process(String formula, int sheetIndex, Ptg[] tokens, ParsingBook parsingBook, FormulaParseContext context) {
 				
@@ -755,7 +873,12 @@ public class FormulaEngineImpl implements FormulaEngine {
 					return false;
 				}
 			}
-		});
+		};
+		FormulaExpression result = adjustMultipleArea(formula, context, shiftAdjuster);
+		if(result!=null){
+			return result;
+		}
+		return adjust(formula, context, shiftAdjuster);
 	}
 	
 	private boolean isValidRowIndex(SBook book, int rowIndex) {
@@ -768,7 +891,8 @@ public class FormulaEngineImpl implements FormulaEngine {
 
 	@Override
 	public FormulaExpression transpose(String formula, final int rowOrigin, final int columnOrigin, FormulaParseContext context) {
-		return adjust(formula, context, new FormulaAdjuster() {
+		formula = formula.trim();
+		FormulaAdjuster shiftAdjuster = new FormulaAdjuster() {
 			@Override
 			public boolean process(String formula, int sheetIndex, Ptg[] tokens, ParsingBook parsingBook, FormulaParseContext context) {
 
@@ -835,12 +959,19 @@ public class FormulaEngineImpl implements FormulaEngine {
 				}
 				return true;
 			}
-		});
+		};
+		
+		FormulaExpression result = adjustMultipleArea(formula, context, shiftAdjuster);
+		if(result!=null){
+			return result;
+		}
+		return adjust(formula, context, shiftAdjuster);
 	}
 
 	@Override
 	public FormulaExpression renameSheet(String formula, final SBook targetBook, final String oldSheetName, final String newSheetName, FormulaParseContext context) {
-		return adjust(formula, context, new FormulaAdjuster() {
+		formula = formula.trim();
+		FormulaAdjuster shiftAdjuster = new FormulaAdjuster() {
 			@Override
 			public boolean process(String formula, int formulaSheetIndex, Ptg[] tokens, ParsingBook parsingBook, FormulaParseContext context) {
 				if(newSheetName != null) {
@@ -870,7 +1001,12 @@ public class FormulaEngineImpl implements FormulaEngine {
 				}
 				return true;
 			}
-		});
+		};
+		FormulaExpression result = adjustMultipleArea(formula, context, shiftAdjuster);
+		if(result!=null){
+			return result;
+		}
+		return adjust(formula, context, shiftAdjuster);
 	}
 	
 	private static class DeletedSheet3DPtg extends OperandPtg implements WorkbookDependentFormula {

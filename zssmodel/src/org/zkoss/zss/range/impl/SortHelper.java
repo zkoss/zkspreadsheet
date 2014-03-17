@@ -31,7 +31,7 @@ import org.zkoss.zss.range.SRange.SortDataOption;
  * Manipulate cells according to sorting criteria and options.
  * If sorting regions contains blank cells, it will ignore it. It only sort those cells with data.
  * @author Hawk
- * @since 3.5
+ * @since 3.5.0
  */
 //porting implementation from BookHelper.sort()
 public class SortHelper extends RangeHelperBase {
@@ -136,16 +136,16 @@ public class SortHelper extends RangeHelperBase {
 			if (selection.contains(region)){
 				if (sortByRows){  //merged cells cannot across columns
 					if (region.getColumn() != region.getLastColumn()){
-						throw new InvalidateModelOpException("Cannot sort a range that conains merged cells across columns.");
+						throw new InvalidModelOpException("Cannot sort a range that conains merged cells across columns.");
 					}
 				}else{ //merged cells cannot across rows
 					if (region.getRow() != region.getLastRow()){
-						throw new InvalidateModelOpException("Cannot sort a range that conains merged cells across rows.");
+						throw new InvalidModelOpException("Cannot sort a range that conains merged cells across rows.");
 					}
 				}
 			}else{
 				if (selection.overlaps(region)){
-					throw new InvalidateModelOpException("Cannot sort a range that conains part of merged cells.");
+					throw new InvalidModelOpException("Cannot sort a range that conains part of merged cells.");
 				}
 			}
 		}
@@ -321,6 +321,7 @@ public class SortHelper extends RangeHelperBase {
 	
 	/**
 	 * Store index change and cell data after sorting
+	 * @since 3.5.0
 	 */
 	class SortResult{
 		int oldIndex;
@@ -460,7 +461,7 @@ public class SortHelper extends RangeHelperBase {
 	/**
 	 * Move the formula before setting to real cell.
 	 * @author Hawk
-	 *
+	 * @since 3.5.0
 	 */
 	class FormulaMovingCell implements InvocationHandler{
 		private final SCell proxiedCell;

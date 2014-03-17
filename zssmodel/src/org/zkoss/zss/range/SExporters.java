@@ -25,7 +25,7 @@ import org.zkoss.zss.range.impl.imexp.ExcelExportFactory;
 import org.zkoss.zss.range.impl.imexp.ExcelExportFactory.Type;
 
 /**
- * Get Exporter by registered name
+ * A class that you can get an exporter by registered name and register an exporter.
  * @author dennis
  * @sicne 3.5.0
  */
@@ -64,7 +64,7 @@ public class SExporters {
 	}
 	
 	/**
-	 * Gets the registered export by name
+	 * Gets the registered exporter by name
 	 * @param name the exporter name
 	 */
 	static final synchronized public SExporter getExporter(String name){

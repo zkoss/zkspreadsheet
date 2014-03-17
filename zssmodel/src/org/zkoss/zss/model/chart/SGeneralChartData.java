@@ -16,7 +16,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.model.chart;
 /**
- * 
+ * The main object to access the data in a chart including series and categories.
  * @author dennis
  * @since 3.5.0
  */

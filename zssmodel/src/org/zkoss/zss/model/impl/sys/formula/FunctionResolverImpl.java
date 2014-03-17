@@ -19,6 +19,7 @@ import org.zkoss.zss.model.sys.formula.FunctionResolver;
 /**
  * A default function resolver.
  * @author Pao
+ * @since 3.5.0
  */
 public class FunctionResolverImpl implements FunctionResolver {
 
