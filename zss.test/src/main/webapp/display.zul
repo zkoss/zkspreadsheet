@@ -1,5 +1,8 @@
 <vlayout hflex="1" vflex="1">
-	<button onClick="export()">Export to Excel</button>
+	<hlayout>
+		<button onClick="export()">Export to Excel</button>
+		<button onClick="ss.invalidate()">Invalidate()</button>
+	</hlayout>
 	<spreadsheet id="ss" src="/TestFile2007.xlsx" maxVisibleRows="200" maxVisibleColumns="40"
 		hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
 		showFormulabar="true"/>

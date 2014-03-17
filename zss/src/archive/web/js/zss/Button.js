@@ -416,21 +416,43 @@ zss.Toolbarbutton = zk.$extends(zul.wgt.Toolbarbutton, {
 	},
 	domContent_: function () {
 		var cnt = this.$supers(zss.Toolbarbutton, 'domContent_', arguments);
-		if (this.getPopup()) {
+		var pp = this._pp; 
+		if (pp) {
+			var pphtml = this.popupDomContent_();
 			var uid = this.uuid,
 				scls = this._getSclass();
 			return '<div id="' + uid + '-real" class="' + scls + '-real">' + 
 				cnt + '</div><div id="' + uid + '-cave" class="' + 
-				scls +'-cave"><div class="' + scls +'-arrow"></div></div>';
+				scls +'-cave"><div class="' + scls +'-arrow"></div>'+
+				pphtml + '</div>';
 		} else {
 			return cnt;
 		}
+	},
+	popupDomContent_:function (){//provide popup dom content for draw
+		var pp = this._pp; 
+		if (pp) {
+			var pphtml = [];
+			if(pp.parent){//it has been rendered, have to draw it too.
+				pp.redraw(pphtml);
+				pphtml = pphtml.join('');
+			}else{
+				pphtml = '';
+			}
+		}
+		return pphtml;
 	},
 	_getSclass: function () {
 		return 'zstbtn';
 	},
 	getSclass: function () {
 		return 'zstbtn-' + this.get$action() + ' ' + this._getSclass();
+	},
+	redraw: function (out) {
+		//override original to use <a, it cause problem in the <a in <a case when redarw in domContent_
+		out.push('<div', this.domAttrs_(), '><span id="', this.uuid, '-cnt"',
+				this.domTextStyleAttr_(), 'class="', this.$s('content'), '">',
+				this.domContent_(), '</span></div>');		
 	}
 }, {
 	_rmActive: function (wgt) {
@@ -681,6 +703,9 @@ if (zk.feature.pe) {
 			insertChildHTML_: function (child, before, desktop) {
 				jq(this.$n('pp')).append(child.redrawHTML_()); //color palette and color picker
 				child.bind(desktop);
+			},
+			popupDomContent_:function (){//override toolbarbutton, color picker draw pp dom at another location
+				return '';
 			},
 			domContent_: function () {
 				var uid = this.uuid,
