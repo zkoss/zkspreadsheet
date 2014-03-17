@@ -18,7 +18,10 @@ ZK Spreadsheet 3.5.0
   ZSS-585 Java SE 5 Compliance
   ZSS-577 Can't display chart correctly
   ZSS-601 Once I use right click context menu on sheet bar, it will never work again
-  ZSS-605 Spreadsheet doesn't fit in screen with hflex, vflex is 1 and show scroll bar  
+  ZSS-605 Spreadsheet doesn't fit in screen with hflex, vflex is 1 and show scroll bar
+  ZSS-602 Horizontal alignment dropdown in context menu doesn't show any items after one click on it
+  ZSS-603 Color dropdown in context menu displays incorrectly after I click it one time
+  ZSS-604 After change cell alignment twice times will cause right click event doesn't show context menu
   
 ** Upgrade Notes
   * Following api are removed
