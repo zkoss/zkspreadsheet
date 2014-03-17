@@ -362,4 +362,9 @@ public class ExcelXlsImporter extends AbstractExcelImporter{
 		
 		return false;
 	}
+	
+	@Override
+	protected void setBookType(SBook book){
+		book.setAttribute(BOOK_TYPE_KEY, "xls");
+	}
 }

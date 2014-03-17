@@ -22,6 +22,7 @@ import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.SSheet;
+import org.zkoss.zss.range.impl.imexp.AbstractExcelImporter;
 /**
  * 
  * @author dennis
@@ -35,15 +36,10 @@ public class BookImpl implements Book{
 	public BookImpl(ModelRef<SBook> ref){
 		this._bookRef = ref;
 		SBook book = ref.get();
-		/*TODO zss 3.5*/
-		_type = BookType.XLSX;
-//		if (book instanceof HSSFBookImpl) {
-//			_type = BookType.XLS;
-//		} else if (book instanceof XSSFBookImpl) {
-//			_type = BookType.XLSX;
-//		} else {
-//			throw new IllegalArgumentException("unknow book type "+book);
-//		}
+		
+		//ZSS-610, get the information that stored in book's attibute when importing
+		String bookType = AbstractExcelImporter.getBookType(book);
+		_type = "xls".equalsIgnoreCase(bookType)?BookType.XLS:BookType.XLSX;
 	}
 
 	public SBook getNative() {

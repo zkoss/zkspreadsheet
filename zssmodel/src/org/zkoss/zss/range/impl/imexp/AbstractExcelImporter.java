@@ -62,6 +62,10 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 	protected SBook book;
 	/** source POI book */
 	protected Workbook workbook;
+	
+	/** book type key for book attribute **/
+	protected static String BOOK_TYPE_KEY = "$ZSS.BOOKTYPE$";
+	
 	/**
 	 * Import the model according to reversed dependency order among model
 	 * objects: book, sheet, defined name, cells, chart, pictures, validation.
@@ -75,6 +79,8 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 
 		workbook = createPoiBook(is);
 		book = SBooks.createBook(bookName);
+		
+		setBookType(book);
 
 		SBookSeries bookSeries = book.getBookSeries();
 		boolean isCacheClean = bookSeries.isAutoFormulaCacheClean();
@@ -109,6 +115,17 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 	}
 
 	abstract protected Workbook createPoiBook(InputStream is) throws IOException;
+	
+	
+	abstract protected void setBookType(SBook book);
+	/**
+	 * Gets the book-type information ("xls" or "xlsx"), return null if not found
+	 * @param book
+	 * @return
+	 */
+	public static String getBookType(SBook book){
+		return (String)book.getAttribute(BOOK_TYPE_KEY);
+	}
 
 	/**
 	 * When a column is hidden with default width, we don't import the width for

@@ -16,6 +16,7 @@ ZK Spreadsheet 3.5.0
   ZSS-596 Possible memory leak when formula evaluation
   ZSS-585 Java SE 5 Compliance
   ZSS-577 Can't display chart correctly
+  ZSS-610 Can't get correct book type.
   
 ** Upgrade Notes
   * Following api are removed
