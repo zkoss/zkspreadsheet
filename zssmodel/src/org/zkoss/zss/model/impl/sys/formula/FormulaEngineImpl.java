@@ -19,8 +19,8 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.zkoss.poi.ss.formula.CollaboratingWorkbooksEnvironment;
 import org.zkoss.poi.ss.formula.DependencyTracker;
 import org.zkoss.poi.ss.formula.EvaluationCell;
@@ -68,7 +68,6 @@ import org.zkoss.xel.FunctionMapper;
 import org.zkoss.xel.VariableResolver;
 import org.zkoss.xel.XelContext;
 import org.zkoss.xel.util.SimpleXelContext;
-import org.zkoss.zss.model.CellRegion;
 import org.zkoss.zss.model.ErrorValue;
 import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.SCell;
@@ -110,6 +109,7 @@ public class FormulaEngineImpl implements FormulaEngine {
 	};
 	
 	private static Pattern _areaPattern = Pattern.compile("\\([.[^\\(\\)]]*\\)");//match (A1,B1,C1)
+	private static Pattern _searchPattern = Pattern.compile("\\s*((?:(?:'[^!\\(]+'!)|(?:[^'!,\\(]+!))?(?:[$\\w]+:)?[$\\w]+)"); // for search area reference 
 	
 	private static boolean isMultipleAreaFormula(String formula){
 		return _areaPattern.matcher(formula).matches();
@@ -117,14 +117,12 @@ public class FormulaEngineImpl implements FormulaEngine {
 	}
 	
 	private String[] unwrapeAreaFormula(String formula){
-		if(formula.startsWith("(")){
-			formula = formula.substring(1);
+		List<String> areaStrings = new ArrayList<String>();
+		Matcher m = _searchPattern.matcher(formula);
+		while(m.find()) {
+			areaStrings.add(m.group(1));
 		}
-		if(formula.endsWith(")")){
-			formula = formula.substring(0,formula.length()-1);
-		}
-		String[] formulasStrings = formula.split(",");
-		return formulasStrings;
+		return areaStrings.toArray(new String[0]);
 	}
 
 

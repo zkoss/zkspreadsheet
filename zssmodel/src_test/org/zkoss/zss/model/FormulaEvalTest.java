@@ -16,7 +16,6 @@ import java.io.InputStream;
 import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.Set;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -1048,4 +1047,46 @@ public class FormulaEvalTest {
 		Assert.assertFalse(expr.hasError());
 		Assert.assertEquals(expected, expr.getFormulaString());
 	}
+	
+	
+	@Test 
+	public void testParsingMultipleAreaFormula() {
+		
+		SBook bookA = SBooks.createBook("BookA");
+		SSheet sheet1 = bookA.createSheet("Sheet1");
+		FormulaParseContext context = new FormulaParseContext(sheet1, null);
+		FormulaEngine engine = EngineFactory.getInstance().createFormulaEngine();
+
+		// normal cases
+		String f = "(A1,A2,A3,A2:B3,SheetX!C4,[BookB]Sheet2!D5:E6)";
+		String[] expected = new String[]{
+				"BookA:Sheet1!A1",
+				"BookA:Sheet1!A2",
+				"BookA:Sheet1!A3",
+				"BookA:Sheet1!A2:B3",
+				"BookA:SheetX!C4",
+				"BookB:Sheet2!D5:E6"};
+		testParsingMultipleAreaFormula(engine, context, f, expected);
+
+		// special cases
+		f = "(A2:B3,'Sheet,2'!A1 ,'[B,A.xlsx]Sheet1'!$H$2, '[Book2]Sh,,e,e,t,2'!A1,'[Book3]She''et3'!$A$1:B$2)";
+		expected = new String[]{
+				"BookA:Sheet1!A2:B3",
+				"BookA:Sheet,2!A1",
+				"B,A.xlsx:Sheet1!H2",
+				"Book2:Sh,,e,e,t,2!A1",
+				"Book3:She'et3!A1:B2"};
+		testParsingMultipleAreaFormula(engine, context, f, expected);
+	}
+	
+	private void testParsingMultipleAreaFormula(FormulaEngine engine, FormulaParseContext ctx, String formula, String... expectedAreas) {
+		FormulaExpression expr = engine.parse(formula, ctx);
+		Assert.assertFalse(expr.hasError());
+		Ref[] areas = expr.getAreaRefs();
+		Assert.assertEquals(expectedAreas.length, areas.length);
+		for(int i = 0; i < expectedAreas.length; ++i) {
+			Assert.assertEquals(expectedAreas[i], areas[i].toString());
+		}
+	}
+	
 }
