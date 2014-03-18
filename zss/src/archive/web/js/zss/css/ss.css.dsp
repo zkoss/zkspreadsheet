@@ -10,6 +10,8 @@
 	background:#FFFFFF;
 	overflow:hidden;
 	border:1px solid #D8D8D8;
+	box-sizing:border-box;
+	-moz-box-sizing: border-box;
 }
 
 .zscave {
@@ -134,6 +136,7 @@
 	text-align: left;
 	width: 49px; /* colWidth - 2*cellPadding - 1 , 1 is border*/
 	overflow: hidden;
+	line-height: normal; /*zss-598, reset to avoid zk's effect*/
 	<c:if test="${c:browser('ie7-') || c:browser('ie6-')}">
 		position: absolute;
 		zoom: 1;
@@ -1013,7 +1016,7 @@
         -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#FEFEFE', EndColorStr='#E4ECF7')"; /* IE8 */
 }
 
-.zsformulabar-okbtn .z-toolbarbutton-cnt, .zsformulabar-cancelbtn .z-toolbarbutton-cnt {
+.zsformulabar-okbtn .z-toolbarbutton-content, .zsformulabar-cancelbtn .z-toolbarbutton-content {
 	width: 20px;
 	height: 17px;
 	font-size: 14px;
@@ -1028,7 +1031,7 @@
 		font-family: Lucida Sans Unicode;
 	</c:if>
 }
-.zsformulabar-insertbtn .z-toolbarbutton-cnt {
+.zsformulabar-insertbtn .z-toolbarbutton-content {
 	font-size: 14px;
 	font-style: italic;
 	text-align: center;
@@ -1039,9 +1042,9 @@
 		padding-bottom: 3px;
 	</c:if>
 }
-.zsformulabar-insertbtn .zsformulabar-insertbtn-body-over .z-toolbarbutton-cnt,
-.zsformulabar-okbtn .zsformulabar-okbtn-body-over .z-toolbarbutton-cnt,
-.zsformulabar-cancelbtn .zsformulabar-cancelbtn-body-over .z-toolbarbutton-cnt {
+.zsformulabar-insertbtn .zsformulabar-insertbtn-body-over .z-toolbarbutton-content,
+.zsformulabar-okbtn .zsformulabar-okbtn-body-over .z-toolbarbutton-content,
+.zsformulabar-cancelbtn .zsformulabar-cancelbtn-body-over .z-toolbarbutton-content {
 	padding-top: 0;
 	padding-bottom: 4px;
 	<c:if test="${c:browser('ie') and not c:browser('ie11')}">
@@ -1074,16 +1077,17 @@
 .zsformulabar-expandbtn-body-over {
 	background: url(${c:encodeURL('~./zss/img/toolbarbtn-ctr.gif')}) 0 -500px;
 }
-.zsformulabar-expandbtn .z-toolbarbutton-cnt {
-	width: 20px;
-	height: 17px;
+.zsformulabar-expandbtn .z-toolbarbutton-content {
+	display: inline-block;
+	width: 24px;
+	height: 21px;
 	padding: 2px;
 	background: url(${c:encodeURL('~./zss/img/arrow-270-small.png')}) no-repeat 4px 2px transparent;
 	<c:if test="${c:browser('ie6-')}">
 		background-image: url(${c:encodeURL('~./zss/img/arrow-270-small.gif')});
 	</c:if>	
 }
-.zsformulabar-expandbtn-expanded .z-toolbarbutton-cnt {
+.zsformulabar-expandbtn-expanded .z-toolbarbutton-content {
 	background: url(${c:encodeURL('~./zss/img/arrow-090-small.png')}) no-repeat 4px 2px transparent;
 	<c:if test="${c:browser('ie6-')}">
 		background-image: url(${c:encodeURL('~./zss/img/arrow-090-small.gif')});
@@ -1166,16 +1170,31 @@
 	padding: 1px 0;
 }
 
-.zstbtn .z-toolbarbutton-cnt {
+.zstbtn {
+	height: 28px;
+	padding-top: 0;
+	padding-bottom: 0;
+}
+
+.zstbtn-real {
+	margin-right: 4px;
+}
+
+.zstbtn .z-toolbarbutton-content {
 	overflow: hidden;
+	display: inline-block;
+	width: 100%;
+	height: 26px;
 }
 
 <c:if test="${c:browser('ie6-')}">
 .zstbtn .zstbtn-cave {
 	margin-right: -12px;
 }
-.zstbtn .z-toolbarbutton-cnt {
+.zstbtn .z-toolbarbutton-content {
 	overflow: visible;
+	display: inline-block;
+	width: 100%;
 }
 .zschktbtn {
 	font-size: 0;
@@ -1189,8 +1208,8 @@
 	position: absolute;
 	top: 0;
 	right: 0;
-	height: 16px;
-	padding: 2px 1px;
+	height: 26px;
+	padding: 0;
 	width: 10px;
 }
 
@@ -1202,27 +1221,27 @@
 	cursor: pointer;
 }
 
-.zstbtn-seld .z-toolbarbutton-cnt {
+.zstbtn-seld .z-toolbarbutton-content {
 	background: #FCDE9A;
 	padding: 1px;
 	border: 1px solid #B7C6C9;
 }
 
 .zstbtn-seld .zstbtn-cave {
-	padding: 1px;
+	padding: 0;
 }
 
-.z-toolbarbutton-over .z-toolbarbutton-cnt {
+.z-toolbarbutton-over .z-toolbarbutton-content {
 	padding: 2px;
 	border: 0;
 }
 
 .z-toolbarbutton-over .zstbtn-cave {
 	padding: 2px 1px 2px 0;
-	border-left: 1px solid #79B9E0;
 }
 
 .zstbtn-cave-over {
+	border-left: 1px solid #79B9E0;
 	background:#A4D4FD;
 	<c:if test="${c:isGecko()}">
 		background-image: -moz-linear-gradient(top, #D1EDFF, #A4D4FD);
@@ -1240,14 +1259,15 @@
 }
 
 <c:if test="${c:browser('ie6-')}">
-.zstbtn .z-toolbarbutton-body,
+.zstbtn .z-toolbarbutton-content,
 .zstbtn .zstbtn-cave  {
 	font-size: 0;
 }
 </c:if>
 
 .zstbtn-arrow {
-	width: 10px;
+	width: 9px;
+	margin-top: 6px;
 	height: 16px;
 	background: url(${c:encodeURL('~./zss/img/arrow-down.gif')}) no-repeat;
 	<c:if test="${c:browser('ie6-')}">
@@ -1259,9 +1279,11 @@
 	border: 0;
 	padding: 1px 0;
 	cursor: default;
+	width: 2px;
 }
 
-.zstbtn-sep .z-toolbarbutton-body {
+.zstbtn-sep .z-toolbarbutton-content {
+	display: inline-block;
 	border: 0;
 	padding: 0 1px;
 }
@@ -1362,6 +1384,10 @@
 	</c:if>
 }
 
+.zschktbtn .z-toolbarbutton-content {
+	display: inline-block;
+	width: 36px;
+}
 .zschktbtn img {
 	position: absolute;
 	right: 3px;
@@ -1381,12 +1407,34 @@
 	background: #F5F5F5;	
 }
 
-.zsstylepanel .z-popup-cl .z-popup-cnt {
+.zsstylepanel  {
+	background-color: transparent;
+	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#00000000,endColorstr=#00000000)"; /* IE8 */
+	background-image: none;
+	box-shadow: none;
+	-moz-box-shadow: none;
+	-webkit-box-shadow: none;
+	border: none;
+}
+
+.zsstylepanel-upper {
+	border: 1px solid #cfcfcf;
+}
+
+.zsstylepanel .z-popup-content {
 	padding: 0;
 }
 
 .zsstylepanel-toolbar {
 	border: 0;
+}
+
+.zsstylepanel-menu {
+	margin-top: 15px;
+	margin-right: 60px;
+	position: relative;
+	left: 0px;
+	top: 0px;
 }
 
 <%-- Colorbutton --%>
@@ -1423,6 +1471,10 @@
 .zstbtabpanel {
 	background: #EEEEEE;
 	padding: 0;
+}
+
+.zssheettab.z-tab-selected .zssheettab-text{
+	color: #333;
 }
 
 .z-initing {

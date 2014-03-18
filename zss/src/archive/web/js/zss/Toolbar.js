@@ -66,7 +66,7 @@ zss.ToolbarTabpanel = zk.$extends(zul.tab.Tabpanel, {
 		var tb = this.toolbar;
 		if (!tb) {
 			tb = this.toolbar = new zss.ResizeableToolbar(this._wgt);
-			var btns = new zss.ButtonBuilder(this._wgt).addAll(this._actions).build();
+			var btns = new zss.ButtonBuilder(this._wgt, tb).addAll(this._actions).build();
 			for (var i = 0, len = btns.length; i < len; i++) {
 				var b = btns[i];
 				if (b)
@@ -181,9 +181,10 @@ zss.Toolbar = zk.$extends(zul.layout.North, {
 	//	ZSS-177
 	setFlexSize_: function(sz, isFlexMin) {
 		var sz = this.$supers(zss.Toolbar, 'setFlexSize_', arguments),
-			sh = sz.height,
+			ss = this.$n('real').style,//to compitiable with ZK7		
+			sh = ss.height,
 			$cv = jq(this.$n('cave'));
-		if (sh && $cv.height() != sh) {
+		if (sh && $cv.height() != parseInt(sh)) {
 			$cv.height(sh + 'px');
 		}
 		return sz;

@@ -25,30 +25,24 @@ zss.SheetMenupopup = zk.$extends(zul.menu.Menupopup, {
 		var sheet = this.sheet = wgt.sheetCtrl,
 			del = this.deleteSheet = new zss.Menuitem({
 				$action: 'deleteSheet',
-				label: msgzss.action.deleteSheet, 
-				onClick: 
-				this.proxy(this.onClickDeleteSheet)
+				label: msgzss.action.deleteSheet
 			}, wgt),
 			rename = this.renameSheet = new zss.Menuitem({
 				$action: 'renameSheet',
-				label: msgzss.action.renameSheet, 
-				onClick: this.proxy(this.onClickRenameSheet)
+				label: msgzss.action.renameSheet
 			}, wgt),
 			protect = this.protectSheet = new zss.Menuitem({
 				$action: 'protectSheet',
 				label: msgzss.action.protectSheet, 
-				checkmark: true, 
-				onClick: this.proxy(this.onClickProtectSheet)
+				checkmark: true
 			}, wgt),
 			moveLeft = this.moveLeft = new zss.Menuitem({
 				$action: 'moveSheetLeft',
-				label: msgzss.action.moveSheetLeft, 
-				onClick: this.proxy(this.onClickMoveSheetLeft)
-			}),
+				label: msgzss.action.moveSheetLeft
+			}, wgt),
 			moveRight = this.moveRight = new zss.Menuitem({
 				$action: 'moveSheetRight',
-				label: msgzss.action.moveSheetRight, 
-				onClick: this.proxy(this.onClickMoveSheetRight)
+				label: msgzss.action.moveSheetRight
 			}, wgt);
 		
 		this.appendChild(del);
@@ -87,6 +81,18 @@ zss.SheetMenupopup = zk.$extends(zul.menu.Menupopup, {
 	},
 	setProtectSheetCheckmark: function (b) {
 		this.protectSheet.setChecked(b);
+	},
+	bind_: function () {
+		this.$supers(zss.SheetMenupopup, 'bind_', arguments);
+		
+		// ZSS-601: listen onClick here, not just attach listener to menu item
+		// ZK replace DOM every time when using IE version less than 11
+		// so, it will invoke unbind_() first then bind_()
+		this.moveRight.listen({'onClick': this.proxy(this.onClickMoveSheetRight)});
+		this.moveLeft.listen({'onClick': this.proxy(this.onClickMoveSheetLeft)});
+		this.protectSheet.listen({'onClick': this.proxy(this.onClickProtectSheet)});
+		this.renameSheet.listen({'onClick': this.proxy(this.onClickRenameSheet)});
+		this.deleteSheet.listen({'onClick': this.proxy(this.onClickDeleteSheet)});
 	},
 	unbind_: function () {
 		this.deleteSheet.unlisten({'onClick': this.proxy(this.onClickDeleteSheet)});
@@ -130,7 +136,6 @@ zss.SheetMenupopup = zk.$extends(zul.menu.Menupopup, {
 });
 
 zss.SheetTab = zk.$extends(zul.tab.Tab, {
-	widgetName: 'SheetTab',
 	$o: zk.$void, //owner, fellows relationship no needed
 	$init: function (arg, wgt) {
 		this.$supers(zss.SheetTab, '$init', [arg]);
@@ -231,18 +236,19 @@ zss.SheetTab = zk.$extends(zul.tab.Tab, {
 });
 
 zss.SheetSelector = zk.$extends(zul.tab.Tabbox, {
-	widgetName: 'SheetSelector',
 	$o: zk.$void,
 	$init: function (wgt, menu) {
 		this.$supers(zss.SheetSelector, '$init', []);
 		this._wgt = wgt;
-		this._context = menu;
+		// ZSS-601: don't register context menu on Tabbox, just on Tab
+		// and _context field should be a UUID string
+		this._menu = menu; 
 		this.setSheetLabels(wgt.getSheetLabels());
 	},
 	setSheetLabels: function (labels) {
 		var wgt = this._wgt,
 			tabs = this.tabs,
-			menu = this._context,
+			menu = this._menu,
 			selTab = null,
 			clkFn = this.proxy(this._onSelectSheet);
 		if (tabs)
@@ -384,7 +390,7 @@ zss.SheetSelector = zk.$extends(zul.tab.Tabbox, {
 		}
 	},
 	setProtectSheetCheckmark: function (b) {
-		this._context.setProtectSheetCheckmark(b);
+		this._menu.setProtectSheetCheckmark(b);
 	},
 	setDisabled: function (b) {
 		var cur = !!this._disd;
@@ -433,7 +439,6 @@ zss.SheetpanelCave = zk.$extends(zk.Widget, {
 			btnWidth = 30; //button size, TODO: rm hard-code: jq(this.hlayout.$n().firstChild).width() get wrong value;
 		if (width > btnWidth)
 			this.sheetSelector.setWidth((width - btnWidth) + 'px');
-		return r;
 	},
 	onClickAddSheet: function () {
 		this._wgt.fireSheetAction("add");
@@ -460,7 +465,7 @@ zss.Sheetbar = zk.$extends(zul.layout.South, {
 		this.$supers(zss.Sheetbar, '$init', []);
 		this._wgt = wgt;
 		this.setBorder(0);
-		this.setSize('24px');
+		this.setSize('32px');
 		
 		this.appendChild(this.cave = new zss.SheetpanelCave(wgt));
 		

@@ -1358,17 +1358,14 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			var wgt = this._wgt;
 			p = this._rowHeaderMenupopup = new zss.MenupopupFactory(wgt).rowHeader();
 			p.setDisabled(wgt.getActionDisabled());
-			this.appendChild(p);
 		}
 		return p;
 	},
 	showRowHeaderMenu: function (pageX, pageY) {
 		var show = this._wgt.isShowContextMenu();
 		if (show) {
-			var x = pageX + 5,
-				menu = this.getRowHeaderMenupopup();
-			menu.open(null, [x, pageY]);
-			this.openStyleMenupopup(x, menu);
+			var menu = this.getRowHeaderMenupopup();
+			this.openStyleMenupopup(pageX, pageY, menu);
 		}
 	},
 	getColumnHeaderMenupopup: function () {
@@ -1377,17 +1374,14 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			var wgt = this._wgt;
 			p = this._columnHeaderMenupopup = new zss.MenupopupFactory(this._wgt).columnHeader();
 			p.setDisabled(wgt.getActionDisabled());
-			this.appendChild(p);
 		}
 		return p;
 	},
 	showColumnHeaderMenu: function (pageX, pageY) {
 		var show = this._wgt.isShowContextMenu();
 		if (show) {
-			var x = pageX + 5,
-				menu = this.getColumnHeaderMenupopup();
-			menu.open(null, [x, pageY]);
-			this.openStyleMenupopup(x, menu);
+			var menu = this.getColumnHeaderMenupopup();
+			this.openStyleMenupopup(pageX, pageY, menu);
 		}
 	},
 	getCellMenupopup: function () {
@@ -1396,17 +1390,14 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			var wgt = this._wgt;
 			p = this._cellMenupopup = new zss.MenupopupFactory(wgt).cell();
 			p.setDisabled(wgt.getActionDisabled());
-			this.appendChild(p);
 		}
 		return p;
 	},
 	showCellContextMenu: function (pageX, pageY) {
 		var show = this._wgt.isShowContextMenu();
 		if (show) {
-			var x = pageX + 5,
-				menu = this.getCellMenupopup();
-			menu.open(null, [x, pageY]);
-			this.openStyleMenupopup(x, menu);
+			var menu = this.getCellMenupopup();
+			this.openStyleMenupopup(pageX, pageY, menu);
 		}
 	},
 	setActionDisabled: function (actions) {
@@ -1430,9 +1421,20 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			}
 		}
 	},
-	openStyleMenupopup: function (x, refPop) {
-		var y = zk.parseInt(jq(refPop.$n()).css('top')) - 70;//70: space between menupopup
-		this.getStyleMenupopup().open(null, [x, y < 0 ? 0 : y]);
+	openStyleMenupopup: function (x, y, refPop) {
+		x += 5;
+		y -= 85;
+		y = y < 0 ? 0 : y;
+		
+		var p = this.getStyleMenupopup();
+		p.getMenuContainer().appendChild(refPop);
+		// make menu visible before style menu showing
+		// for calculating correct height
+		jq(refPop.$n()).css('display', 'block');
+		p.open(null, [x, y]);
+		
+		refPop.setVisible(true);
+		
 	},
 	runAfterMouseClick: function (fn) {
 		var fns = this._afterMouseClick;

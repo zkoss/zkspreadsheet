@@ -264,7 +264,7 @@ zss.ToolbarbuttonSeparator = zk.$extends(zul.wgt.Toolbarbutton, {
 	domTextStyleAttr_: function () {
 		var u = zk.ajaxURI('/web/zss/img/sep.gif', {au: true});
 		return zUtl.appendAttr("style", 'background:url(' + u + 
-				') repeat-y scroll 0 0 transparent;height: 16px;width:2px;padding:2px 0;');
+				') repeat-y scroll 0 0 transparent;height: 20px;width:2px;padding:2px 0;');
 	},
 	getSclass: function () {
 		return 'zstbtn-sep';
@@ -277,7 +277,6 @@ zss.Toolbarbutton = zk.$extends(zul.wgt.Toolbarbutton, {
 	/**
 	 * The menupopup of the Toolbarbutton
 	 */
-	//_pp: null,
 	$init: function (props, wgt) {
 		this.$supers(zss.Toolbarbutton, '$init', [props]);
 		this._wgt = wgt;
@@ -303,11 +302,6 @@ zss.Toolbarbutton = zk.$extends(zul.wgt.Toolbarbutton, {
 		} else {
 			this.$supers(zss.Toolbarbutton, 'setDisabled', arguments);
 		}
-		if (this._pp) {
-			//ZSS-483, the menupopup's DOM elemets don't exist after re-rendering.
-			//remove the popup from children to avoid errors thrown during "unbind" phase
-			this.removeChild(this._pp);
-		}
 	},
 	setImage: function (v) {
 		if (!this._defaultImage) {
@@ -315,20 +309,14 @@ zss.Toolbarbutton = zk.$extends(zul.wgt.Toolbarbutton, {
 		}
 		this.$supers(zss.Toolbarbutton, 'setImage', arguments);
 	},
-	setPopup: function (popup) {
-		if (popup.open) {
-			this._pp = popup;
-		}
-		this.$supers(zss.Toolbarbutton, 'setPopup', arguments);
-	},
 	/**
 	 * @param boolean true set UI selected effect, set false to remove
 	 * @param zss.Menuitem the menuitem that selected
 	 */
 	setSelectedEffect: function (seld, menuitem) {
-		var pp = this._pp,
-			$n = jq(this.$n()),
-			src = null;
+		var pp = this.getPopup();
+		var $n = jq(this.$n());
+		var src = null;
 		if (seld && pp && menuitem) {
 			var src = menuitem.getImage();
 			this._seldImage = src;
@@ -380,11 +368,8 @@ zss.Toolbarbutton = zk.$extends(zul.wgt.Toolbarbutton, {
 		var	cv = this.$n('cave'),
 			taget = evt.domTarget;
 		if(!this.isDisabled() && cv && jq.isAncestor(cv, taget)) {
-			var pp = this._pp;
+			var pp = this._smartFellow(this.getPopup());
 			if (pp) {
-				if (!pp.parent) {//menupopup not render yet
-					this.appendChild(pp);
-				}
 				pp.open(this, null, 'after_start');	
 			}
 		} else {
@@ -521,41 +506,58 @@ zss.DisplayGridlinesCheckbutton = zk.$extends(zss.CheckableToolbarButton, {
 	}
 });
 
+
 if (zk.feature.pe) {
 	zk.load('zkex.inp', null, function () { 
+		
+		// customized color popup for spreadsheet
+		zss.ColorPopup = zk.$extends(zkex.inp.Colorbox, {
+				_visible: false,
+				_ref: null,
+				$init: function (ref) {
+					this.$supers(zss.ColorPopup, '$init', []);
+					this._ref = ref;
+				},
+				adjustPosition_: function() {
+					// adjust popup position to ref. widget
+					if(this._ref && this._ref.$n) {
+						zk(this.$n('pp')).position(this._ref.$n(), this._getPosition());
+					}
+				},
+				open: function() {
+					this.openPopup();
+					this.adjustPosition_();
+				},
+				openPalette: function() {
+					this.$supers(zss.ColorPopup, 'openPalette', arguments);
+					this.adjustPosition_();
+				},
+				openPicker: function() {
+					this.$supers(zss.ColorPopup, 'openPicker', arguments);
+					this.adjustPosition_();
+				},
+				shallStackup_: function() {
+					return false; // disable stack up
+				},
+				_syncShadow: function(target) {
+					// disable shadow
+				},
+				_hideShadow: function(target) {
+					// disable shadow
+				}
+			}
+		);
+		
 		zss.ColorbuttonEx = zk.$extends(zss.Toolbarbutton, {
 			_color: '#000000', /*default color*/
-			$init: function (props, wgt) {
+			$init: function (props, wgt, popupHolder) {
 				this.$supers(zss.ColorbuttonEx, '$init', [props]);
-				
-				var thispt = zss.ColorbuttonEx.prototype,
-					superpt = zkex.inp.Colorbox.prototype;
-				
-				if (!superpt.openPalette && superpt.$class.$copyf) {//ZSS-217
-					superpt.$class.$copyf();
-					superpt.$class.$copied = true;
-				}
-				
-				thispt._$openPopup = superpt.openPopup;
-				thispt._$closePopup = superpt.closePopup;//need customize closePopup
-				thispt.openPalette = superpt.openPalette;
-				thispt.closePalette = superpt.closePalette;
-				thispt.openPicker = superpt.openPicker;
-				thispt.closePicker = superpt.closePicker;
-				thispt._$onHide = superpt.onHide;//need customize onHide
-				thispt._getPosition = superpt._getPosition;
-				thispt._syncPopupPosition = superpt._syncPopupPosition;
-				thispt._syncShadow = superpt._syncShadow;
-				thispt._hideShadow = superpt._hideShadow;
-				
 				this._wgt = wgt;
-				this._currColor = new zkex.inp.Color();
-				
-				this._picker = new zkex.inp.Colorpicker({_wgt: this});
-				this._palette = new zkex.inp.Colorpalette({_wgt: this});
-				this._palette.open = this.proxy(this.openPopup);
-					
-				this.setPopup(this._palette);//default open color palette
+				this._colorPopup = new zss.ColorPopup(this);
+				this.setPopup(this._colorPopup);
+				if(popupHolder) {
+					popupHolder.appendChild(this._colorPopup);
+				}
 			},
 			$define: {
 				/** Sets the image URI.
@@ -583,94 +585,25 @@ if (zk.feature.pe) {
 						c.style.backgroundColor = hex;
 				}
 			},
-			openPopup: function () {
-				this._open = true;
-				this._$openPopup();
-			},
-			closePopup: function () {
-				this._open = false;
-				this._$closePopup();
-				jq(this.$n()).removeClass('z-toolbarbutton-over');
-			},
-			onHide: function () {
-				this._$onHide();
-				jq(this.$n()).removeClass('z-toolbarbutton-over');
-				// ZSS-468: when clicking outside of popup, it will fire hide event.
-				// But hide function of Colorbox won't close its own popup, popup is only closed when closed palette.
-				// In result, the Colorbox's popup will cover the toolbar button, so we needs to close palette manually.
-				this.closePalette(true);
-			},
 			bind_: function () {
 				this.$supers(zss.ColorbuttonEx, 'bind_', arguments);
-				
-				var paletteBtn = this.$n('palette-btn'),
-					pickerBtn = this.$n('picker-btn'),
-					sf = this;
-				if (paletteBtn) {
-					this.domListen_(paletteBtn, 'onClick', 'openPalette');
+
+				if(this._colorPopup) {
+					this._colorPopup.listen({onChange: this.proxy(this.onChange)});
 				}
-				if (pickerBtn) {
-					this.domListen_(pickerBtn, 'onClick', function () {
-						var picker = sf._picker,
-							n = picker.$n();
-						if (!n) {
-							sf.appendChild(picker);
-						}
-						sf.openPicker();
-					});
-				}
-				zWatch.listen({onFloatUp: this});
 			},
 			unbind_: function () {
-				var paletteBtn = this.$n('palette-btn');
-				if (paletteBtn) {
-					this.domUnlisten_(paletteBtn, 'onClick', 'openPalette');
+				if(this._colorPopup) {
+					this._colorPopup.unlisten({onChange: this.proxy(this.onChange)});
 				}
-				jq(this.$n('picker-btn')).unbind();
-				zWatch.unlisten({onFloatUp: this});
-				this.$supers(zss.ColorbuttonEx, 'unbind_', arguments);
-			},
-			onFloatUp: function (ctl) {
-				if (this._open) {
-					var wgt = ctl.origin;
-					for (var floatFound; wgt; wgt = wgt.parent) {
-						if (wgt == this) {
-							return;
-						}
-					}
-					this.closePopup();
-				}
-			},
-			appnedPopup_: function () {
-				this.appendChild(this._picker);
-				this.appendChild(this._palette);
 				
-				var paletteBtn = this.$n('palette-btn'),
-					pickerBtn = this.$n('picker-btn');
-				if (pickerBtn) {
-					this.domListen_(pickerBtn, 'onClick', 'openPicker');
-				}
-				if (paletteBtn) {
-					this.domListen_(paletteBtn, 'onClick', 'openPalette');
-				}
-			},
-			isFireOnClick_: function (evt) {
-				var taget = evt.domTarget,
-					paletteBtn = this.$n('palette-btn'),
-					pickerBtn = this.$n('picker-btn');
-					pick = this._picker.$n(),
-					palette = this._palette.$n();
-				if (taget == paletteBtn || taget == pickerBtn || 
-					(pick != null && jq.isAncestor(pick, taget)) || 
-					(palette != null && jq.isAncestor(palette, taget))) {
-					return false;
-				}
-				return !this.isClickDisabled() && !this.isDisabled();
+				this.$supers(zss.ColorbuttonEx, 'unbind_', arguments);
 			},
 			doKeyDown_: zk.$void,
 			doKeyUp_: zk.$void,
 			doKeyPress_: zk.$void,
-			onChange: function (hex) {//invoke from Color Palette, not from event
+			onChange: function (evt) { //invoke from Color Palette, not from event
+				var hex = evt.data.color;
 				this.setColor(hex);
 				this.fire('onClick');
 				var wgt = this._wgt;
@@ -678,23 +611,19 @@ if (zk.feature.pe) {
 					wgt.focus(false);
 				}
 			},
-			insertChildHTML_: function (child, before, desktop) {
-				jq(this.$n('pp')).append(child.redrawHTML_()); //color palette and color picker
-				child.bind(desktop);
-			},
 			domContent_: function () {
-				var uid = this.uuid,
-					cnt = this.$supers(zss.ColorbuttonEx, 'domContent_', arguments),
-					color = this.getColor();
-				cnt = cnt + '<div id="' + uid + '-color" class="zstbtn-color" style="background:' 
-					+ this.getColor() + ';"></div><div id="' + uid + '-pp" style="display:none;" class="z-colorbtn-pp">' +
-					'<div id="' + uid + '-palette-btn" class="z-colorbox-palette-btn"></div><div id="' + 
-					uid + '-picker-btn" class="z-colorbox-picker-btn"></div>';//Note. use Colorbox's "z-colorbtn-pp"
-				for (var w = this.firstChild; w; w = w.nextSibling) {
-					cnt += w.redrawHTML_();
-				}
-				cnt += '</div>';
-				return cnt;
+				var uuid = this.uuid;
+				var cnt = this.$supers(zss.ColorbuttonEx, 'domContent_', arguments);
+
+				var out = new Array();
+				out.push(cnt);
+				out.push('<div id="' + uuid + '-color" class="zstbtn-color" style="background:' 
+					+ this.getColor() + ';"></div>');
+				
+				return out.join('');
+			},
+			shallStackup_: function () {
+				return false;
 			}
 		});
 	})
@@ -932,7 +861,7 @@ zss.ColorMenu = zk.$extends(zss.Menu, {
 });
 zk.copy(zss.ColorMenu.prototype, AbstractPopupHandler);
 
-zss.ColorMenuContentHandler = zk.$extends(zk.Object, {
+zss.ColorMenuContentHandler = zk.$extends(zk.Widget, {
 	$init: function(wgt, content) {
 		this._wgt = wgt;
 		this._content = content;
@@ -1086,6 +1015,9 @@ zss.Menupopup = zk.$extends(zul.menu.Menupopup, {
 		if (wgt) {//fake focus
 			wgt.focus(false);
 		}
+	},
+	zsync: function () {
+		// skip shadow
 	}
 }, {
 	_rmActive: function (wgt) {
@@ -1154,27 +1086,36 @@ zss.StylePanel = zk.$extends(zul.wgt.Popup, {
 		
 		var	self = this,
 			tb = new zul.wgt.Toolbar({sclass: 'zsstylepanel-toolbar'}),
-			builder = new zss.ButtonBuilder(wgt),
+			builder = new zss.ButtonBuilder(wgt, this),
 			btns = builder.addAll(['fontFamily', 'fontSize', 'fontBold', 'fontItalic']).build(),
 			fontFamily = btns[0],
 			fontSize = btns[1],
 			b;
 		
-		wgt.listen({onAuxAction: this.proxy(this._closeStylePanel)});
-		fontFamily.setWidth('75px');
+		var styleContainer = new zul.wgt.Div({sclass: 'zsstylepanel-upper'});
+		this.appendChild(styleContainer);
 		
-		fontSize.setWidth('48px');
+		wgt.listen({onAuxAction: this.proxy(this._closeStylePanel)});
+		fontFamily.setWidth('85px');
+		
+		fontSize.setWidth('58px');
 		while (b = btns.shift()) {
 			tb.appendChild(b);
 		}
-		this.appendChild(tb);
+		styleContainer.appendChild(tb);
 		
 		tb = new zul.wgt.Toolbar({sclass: 'zsstylepanel-toolbar'});
-		btns = builder.addAll(['fontColor', 'fillColor', 'border', 'verticalAlign', 'horizontalAlign']).build();
+		btns = builder.addAll(['fontColor', 'fillColor', 'border', 'verticalAlign', 'horizontalAlign','wrapText']).build();
 		while (b = btns.shift()) {
 			tb.appendChild(b);
 		}
-		this.appendChild(tb);
+		styleContainer.appendChild(tb);
+		
+		this._menuContainer = new zul.wgt.Div({sclass: 'zsstylepanel-menu'});
+		this.appendChild(this._menuContainer); // The 3rd child is menu container
+	},
+	getMenuContainer: function() {
+		return this._menuContainer;
 	},
 	setDisabled: function (actions) {
 		for (var n = this.firstChild; n; n = n.nextSibling) {//toolbars
@@ -1581,9 +1522,16 @@ zss.ButtonBuilder = zk.$extends(zk.Object, {
 	/**
 	 * @param zss.Spreadsheet
 	 */
-	$init: function (wgt) {
+	$init: function (wgt, popupHolder) {
 		this._wgt = wgt;
+		this._popupHodler = popupHolder;
 		this.contents = [];
+	},
+	applyHolder: function (popup) {
+		if(this._popupHodler) {
+			this._popupHodler.appendChild(popup);
+		}
+		return popup;
 	},
 	/**
 	 * @param String
@@ -1643,9 +1591,9 @@ zss.ButtonBuilder = zk.$extends(zk.Object, {
 		return newActionToolbarbutton(this._wgt, 'exportPDF', '/web/zss/img/document-pdf.png');
 	},
 	paste: function () {
-		var wgt = this._wgt,
-			b = newActionToolbarbutton(wgt, 'paste', '/web/zss/img/clipboard-paste.png');
-		b.setPopup(new zss.MenupopupFactory(wgt).paste());
+		var wgt = this._wgt;
+		var b = newActionToolbarbutton(wgt, 'paste', '/web/zss/img/clipboard-paste.png');
+		b.setPopup(this.applyHolder(new zss.MenupopupFactory(wgt).paste()));
 		return b;
 	},
 	cut: function () {
@@ -1657,13 +1605,13 @@ zss.ButtonBuilder = zk.$extends(zk.Object, {
 	fontFamily: function () {
 		return new zss.FontFamilyCombobox({
 			$action: 'fontFamily',
-			width: '105px'
+			width: '115px'
 		}, this._wgt);
 	},
 	fontSize: function () {
 		return new zss.FontSizeCombobox({
 			$action: 'fontSize',
-			width: '45px'
+			width: '55px'
 		}, this._wgt);
 	},
 	fontBold: function () {
@@ -1778,7 +1726,7 @@ zss.ButtonBuilder = zk.$extends(zk.Object, {
 	},
 	border: function () {
 		var wgt = this._wgt,
-			pp = new zss.MenupopupFactory(wgt).border(),
+			pp = this.applyHolder(new zss.MenupopupFactory(wgt).border()),
 			b = new zss.Toolbarbutton({
 				$action: 'border',
 				tooltiptext: msgzss.action.border,
@@ -1810,7 +1758,7 @@ zss.ButtonBuilder = zk.$extends(zk.Object, {
 					wgt.fireToolbarAction('fillColor', {color: this.getColor(), tRow: s.top, lCol: s.left, bRow: s.bottom, rCol: s.right});	
 				}
 			}
-		}, wgt);
+		}, wgt, this._popupHodler);
 	},
 	fontColor: function () {
 		var wgt = this._wgt;
@@ -1827,12 +1775,12 @@ zss.ButtonBuilder = zk.$extends(zk.Object, {
 					wgt.fireToolbarAction('fontColor', {color: this.getColor(), tRow: s.top, lCol: s.left, bRow: s.bottom, rCol: s.right});
 				}
 			}
-		}, wgt);
+		}, wgt, this._popupHodler);
 	},
 	verticalAlign: function () {
 		var wgt = this._wgt,
 			b = newActionToolbarbutton(wgt, 'verticalAlign', '/web/zss/img/edit-vertical-alignment-top.png'),
-			p = new zss.MenupopupFactory(wgt).verticalAlign(),
+			p = this.applyHolder(new zss.MenupopupFactory(wgt).verticalAlign()),
 			item = p.firstChild,
 			fn = function (evt) {
 				var sheet = wgt.sheetCtrl;
@@ -1873,7 +1821,7 @@ zss.ButtonBuilder = zk.$extends(zk.Object, {
 	horizontalAlign: function () {
 		var wgt = this._wgt,
 			b = newActionToolbarbutton(wgt, 'horizontalAlign', '/web/zss/img/edit-alignment.png'),
-			p = new zss.MenupopupFactory(wgt).horizontalAlign(),
+			p = this.applyHolder(new zss.MenupopupFactory(wgt).horizontalAlign()),
 			item = p.firstChild,
 			fn = function (evt) {
 				var sheet = wgt.sheetCtrl;
@@ -1935,20 +1883,20 @@ zss.ButtonBuilder = zk.$extends(zk.Object, {
 	mergeAndCenter: function () {
 		var wgt = this._wgt,
 			b = newActionToolbarbutton(wgt, 'mergeAndCenter', null, true);
-		b.setPopup(new zss.MenupopupFactory(wgt).mergeAndCenter());
+		b.setPopup(this.applyHolder(new zss.MenupopupFactory(wgt).mergeAndCenter()));
 		return b;
 	},
 	insert: function () {
 		var wgt = this._wgt,
 			b = newActionToolbarbutton(wgt, 'insert', '/web/zss/img/document-insert.png');
-		b.setPopup(new zss.MenupopupFactory(wgt).insert());
+		b.setPopup(this.applyHolder(new zss.MenupopupFactory(wgt).insert()));
 		b.setClickDisabled(true);
 		return b;
 	},
 	del: function () {
 		var wgt = this._wgt,
 			b = newActionToolbarbutton(wgt, 'del', '/web/zss/img/document-hf-delete-footer.png');
-		b.setPopup(new zss.MenupopupFactory(wgt).del());
+		b.setPopup(this.applyHolder(new zss.MenupopupFactory(wgt).del()));
 		b.setClickDisabled(true);
 		return b;
 	},
@@ -1962,28 +1910,28 @@ zss.ButtonBuilder = zk.$extends(zk.Object, {
 		var wgt = this._wgt,
 			b = newActionToolbarbutton(wgt, 'columnChart', null, true);
 		b.setClickDisabled(true);
-		b.setPopup(new zss.MenupopupFactory(wgt).columnChart());
+		b.setPopup(this.applyHolder(new zss.MenupopupFactory(wgt).columnChart()));
 		return b;
 	},
 	lineChart: function () {
 		var wgt = this._wgt,
 			b = newActionToolbarbutton(wgt, 'lineChart', null, true);
 		b.setClickDisabled(true);
-		b.setPopup(new zss.MenupopupFactory(wgt).lineChart());
+		b.setPopup(this.applyHolder(new zss.MenupopupFactory(wgt).lineChart()));
 		return b;
 	},
 	pieChart: function () {
 		var wgt = this._wgt,
 			b = newActionToolbarbutton(wgt, 'pieChart', null, true);
 		b.setClickDisabled(true);
-		b.setPopup(new zss.MenupopupFactory(wgt).pieChart());
+		b.setPopup(this.applyHolder(new zss.MenupopupFactory(wgt).pieChart()));
 		return b;
 	},
 	barChart: function () {
 		var wgt = this._wgt,
 			b = newActionToolbarbutton(wgt, 'barChart', null, true);
 		b.setClickDisabled(true);
-		b.setPopup(new zss.MenupopupFactory(wgt).barChart());
+		b.setPopup(this.applyHolder(new zss.MenupopupFactory(wgt).barChart()));
 		return b;
 	},
 	areaChart: function () {
@@ -1997,7 +1945,7 @@ zss.ButtonBuilder = zk.$extends(zk.Object, {
 		var wgt = this._wgt,
 			b = newActionToolbarbutton(wgt, 'otherChart', null, true);
 		b.setClickDisabled(true);
-		b.setPopup(new zss.MenupopupFactory(wgt).otherChart());
+		b.setPopup(this.applyHolder(new zss.MenupopupFactory(wgt).otherChart()));
 		return b;
 	},
 	hyperlink: function () {
@@ -2007,13 +1955,13 @@ zss.ButtonBuilder = zk.$extends(zk.Object, {
 		var wgt = this._wgt,
 			b = newActionToolbarbutton(wgt, 'clear', '/web/zss/img/broom.png');
 		b.setClickDisabled(true);
-		b.setPopup(new zss.MenupopupFactory(wgt).clear());
+		b.setPopup(this.applyHolder(new zss.MenupopupFactory(wgt).clear()));
 		return b;
 	},
 	sortAndFilter: function () {
 		var wgt = this._wgt,
 			b = newActionToolbarbutton(wgt, 'sortAndFilter', '/web/zss/img/sort-filter.png');
-		b.setPopup(new zss.MenupopupFactory(wgt).sortAndFilter());
+		b.setPopup(this.applyHolder(new zss.MenupopupFactory(wgt).sortAndFilter()));
 		b.setClickDisabled(true);
 		return b;
 	},

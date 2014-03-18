@@ -5,7 +5,7 @@
 	<groupId>org.zkoss.poi</groupId>
 	<artifactId>zpoi</artifactId>
 	<properties>
-		<zk.version>6.5.4</zk.version>
+		<zk.version>7.0.1</zk.version>
 		<commons-logging.version>1.1.1</commons-logging.version>
 		<log4j.version>1.2.13</log4j.version>
 		<dom4j.version>1.6.1</dom4j.version>
