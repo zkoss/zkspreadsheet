@@ -330,7 +330,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	private Map _columnTitles;
 	private Map _rowTitles;
 
-	private ModelEventToQueueAdapter _modelEventListener = new ModelEventToQueueAdapter();
+	private ModelEventListener _modelEventListener = new InnerModelEventDispatcher();
 	
 	private InnerVariableResolver _variableResolver = new InnerVariableResolver();
 	private InnerFunctionMapper _functionMapper = new InnerFunctionMapper();
@@ -710,7 +710,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		if (_book != null) {
 			_book.getBookSeries().getLock().writeLock().lock();
 			try{
-				_modelEventListener.unregisterBookQueue(_book);
+				_book.removeEventListener(_modelEventListener);
 				if(isBelowDesktopScope(_book) && _book instanceof EvaluationContributorContainer
 						&& ((EvaluationContributorContainer)_book).getEvaluationContributor() instanceof ComponentEvaluationContributor){
 					((EvaluationContributorContainer)_book).setEvaluationContributor(null);
@@ -734,7 +734,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		if (_book != null) {
 			_book.getBookSeries().getLock().writeLock().lock();
 			try{
-				_modelEventListener.unregisterBookQueue(_book);
+				_book.removeEventListener(_modelEventListener);
 				if(isBelowDesktopScope(_book) && _book instanceof EvaluationContributorContainer
 						&& ((EvaluationContributorContainer)_book).getEvaluationContributor() instanceof ComponentEvaluationContributor){
 					((EvaluationContributorContainer)_book).setEvaluationContributor(null);
@@ -768,7 +768,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		if (_book != null) {
 			_book.getBookSeries().getLock().writeLock().lock();
 			try{
-				_modelEventListener.registerBookQueue(_book);
+				_book.addEventListener(_modelEventListener);
 				if(isBelowDesktopScope(_book) && _book instanceof EvaluationContributorContainer 
 						&& ((EvaluationContributorContainer)_book).getEvaluationContributor()==null){
 					((EvaluationContributorContainer)_book).setEvaluationContributor(new ComponentEvaluationContributor(this));
@@ -2056,74 +2056,12 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		}
 
 	}
-
-	
-	private class ModelEventToQueueAdapter implements ModelEventListener,EventListener<Event>{
-		private static final long serialVersionUID = 1L;
-		private QueueModelEventListener _listener = new QueueModelEventListener();
-		/**
-		 * list Model event, publish it to queue
-		 */
-		@Override
-		public void onEvent(ModelEvent event) {
-			//push to queue
-			SBook book = event.getBook();
-			String scope = getScope(book);
-			String queueName = getQueueName(book);
-			EventQueue<Event> queue = EventQueues.lookup(queueName, scope,false);
-			if(queue==null)
-				return;
-			queue.publish(new Event("onModelEvent",null,event));
-		}
-		
-		/**
-		 * listen queue-event, call internal data model event listener
-		 */
-		@Override
-		public void onEvent(Event event) throws Exception {
-			ModelEvent me = (ModelEvent)event.getData();
-			_listener.onEvent(me);
-		}
-		
-		String getQueueName(SBook book){
-			return "zssModel_"+((AbstractBookAdv)book).getId();
-		}
-		
-		String getScope(SBook book){
-			String scope = book.getShareScope();
-			if(scope==null){
-				scope = "desktop";
-			}
-			return scope;
-		}
-		
-		void registerBookQueue(SBook book){//was protected in lock already
-			String scope = getScope(book);
-			String queueName = getQueueName(book);
-			EventQueue<Event> queue = EventQueues.lookup(queueName, scope,true);
-			queue.subscribe(this);
-			book.addEventListener(this);
-		}
-		void unregisterBookQueue(SBook book){//was protected in lock already
-			book.removeEventListener(this);
-			String scope = getScope(book);
-			String queueName = getQueueName(book);
-			EventQueue<Event> queue = EventQueues.lookup(queueName, scope,false);
-			if(queue!=null){
-				queue.unsubscribe(this);
-			}				
-		}
-
-	}
-	
-	
-	
 	
 	/* DataListener to handle sheet data event */
-	private class QueueModelEventListener extends ModelEventDispatcher{
+	private class InnerModelEventDispatcher extends ModelEventDispatcher{
 		private static final long serialVersionUID = 20100330164021L;
 
-		public QueueModelEventListener() {
+		public InnerModelEventDispatcher() {
 			addEventListener(ModelEvents.ON_SHEET_ORDER_CHANGE, new ModelEventListener() {
 				@Override
 				public void onEvent(ModelEvent event){

@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.zkoss.zss.model.EventQueueModelEventListener;
 import org.zkoss.zss.model.ModelEvent;
 import org.zkoss.zss.model.ModelEventListener;
 
@@ -30,7 +31,7 @@ import org.zkoss.zss.model.ModelEventListener;
  * @author Dennis
  * @since 3.5.0
  */
-public class ModelEventDispatcher implements ModelEventListener {
+public class ModelEventDispatcher implements EventQueueModelEventListener {
 	private static final long serialVersionUID = 1L;
 	private Map<String, List<ModelEventListener>> _listeners = new HashMap<String, List<ModelEventListener>>(8);
 

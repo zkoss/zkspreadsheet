@@ -19,6 +19,7 @@ package org.zkoss.zss.model.impl;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -31,10 +32,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.zkoss.lang.Objects;
 import org.zkoss.poi.ss.SpreadsheetVersion;
 import org.zkoss.util.logging.Log;
+import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zk.ui.event.EventListener;
+import org.zkoss.zk.ui.event.EventQueue;
+import org.zkoss.zk.ui.event.EventQueues;
+import org.zkoss.zss.model.EventQueueModelEventListener;
 import org.zkoss.zss.model.InvalidModelOpException;
 import org.zkoss.zss.model.ModelEvent;
 import org.zkoss.zss.model.ModelEventListener;
-import org.zkoss.zss.model.ModelEventListenerUnreachableException;
 import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.SBookSeries;
 import org.zkoss.zss.model.SCell;
@@ -88,7 +93,8 @@ public class BookImpl extends AbstractBookAdv{
 	private final int _maxRowSize = SpreadsheetVersion.EXCEL2007.getMaxRows();
 	private final int _maxColumnSize = SpreadsheetVersion.EXCEL2007.getMaxColumns();
 	
-	private final List<ModelEventListener> _listeners = new LinkedList<ModelEventListener>();
+	private EventListenerAdaptor _listeners;
+	private EventListenerAdaptor _queueListeners;
 	
 	private HashMap<String,Object> _attributes;
 	
@@ -164,48 +170,14 @@ public class BookImpl extends AbstractBookAdv{
 			throw new IllegalStateException("doesn't has ownership "+ name);
 		}
 	}
-	
-//	protected String suggestSheetName(String basename){
-//		int i = 1;
-//		HashSet<String> names = new HashSet<String>();
-//		for(NSheet sheet:sheets){
-//			names.add(sheet.getSheetName());
-//		}
-//		String name = basename==null?"Sheet 1":basename;
-//		while(names.contains(name)){
-//			name = basename + " "+i++;
-//		};
-//		return name;
-//	}
-	
-//	@Override
-//	void onModelInternalEvent(ModelInternalEvent event){
-//		//implicitly deliver to sheet
-//		for(AbstractSheetAdv sheet:sheets){
-//			sheet.onModelInternalEvent(event);
-//		}
-//	}
-	
-//	@Override
-//	public void sendModelInternalEvent(ModelInternalEvent event){
-//		//publish event to the series.
-//		for(NBook book:getBookSeries().getBooks()){
-//			((AbstractBookAdv)book).onModelInternalEvent(event);
-//		}
-//		//TODO some internal event could consider to set it to external(model-event)?
-//	}
+
 	@Override
 	public void sendModelEvent(ModelEvent event){
-		Iterator<ModelEventListener> ls = _listeners.iterator();
-		ModelEventListener l;
-		while(ls.hasNext()){
-			l = ls.next();
-			try{
-				l.onEvent(event);
-			}catch(ModelEventListenerUnreachableException x){
-				_logger.info("a listener is not rechable "+x.getMessage());
-				ls.remove();
-			}
+		if(_listeners!=null){
+			_listeners.sendModelEvent(event);
+		}
+		if(_queueListeners!=null){
+			_queueListeners.sendModelEvent(event);
 		}
 	}
 	
@@ -522,13 +494,32 @@ public class BookImpl extends AbstractBookAdv{
 
 	@Override
 	public void addEventListener(ModelEventListener listener){
-		if(!_listeners.contains(listener)){
-			_listeners.add(listener);
+		if(listener instanceof EventQueueModelEventListener){
+			if(_queueListeners==null){
+				String scope = getShareScope();
+				if(scope==null){
+					scope = "desktop";//default desktop
+				}
+				_queueListeners = new EventQueueListenerAdaptor(scope,getId());
+			}
+			_queueListeners.addEventListener(listener);
+		}else{
+			if(_listeners==null){
+				_listeners = new DirectEventListenerAdaptor();
+			}
+			_listeners.addEventListener(listener);
 		}
 	}
 	@Override
 	public void removeEventListener(ModelEventListener listener){
-		_listeners.remove(listener);
+		if(listener instanceof EventQueueModelEventListener && _queueListeners!=null){
+			_queueListeners.removeEventListener(listener);
+			if(_queueListeners.size()==0){
+				_queueListeners = null;//clean up, so user can change share-scope then.
+			}
+		}else if(_listeners!=null){
+			_listeners.removeEventListener(listener);
+		}
 	}
 
 	@Override
@@ -673,12 +664,17 @@ public class BookImpl extends AbstractBookAdv{
 		if(!Objects.equals(this._shareScope,scope)){
 			
 			if("disable".equals(scope)){
-				_listeners.clear();
+				if(_listeners!=null){
+					_listeners.clear();
+				}
+				if(_queueListeners!=null){
+					_queueListeners.clear();
+				}
 				return;
 			}
 			
-			if(_listeners.size()>0){
-				throw new IllegalStateException("can't change share scope after registed any listener");
+			if(_queueListeners!=null && _queueListeners.size()>0){
+				throw new IllegalStateException("can't change share scope after registed any queue model event listener");
 			}
 			
 			this._shareScope = scope;
