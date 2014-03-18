@@ -24,7 +24,7 @@ LOCAL_RELEASE_PATH = "/tmp"
 REMOTE_RELEASE_PATH = "//10.1.3.252/potix/rd"
 MOUNTED_RELEASE_PATH = LOCAL_RELEASE_PATH+"/potix-rd/"
 
-ZSS_PROJECT_LIST = ['zss', 'zssex', 'zsshtml', 'zssjsf','zssjsp','zsspdf']
+ZSS_PROJECT_LIST = ['zss','zssmodel', 'zssex', 'zsshtml', 'zssjsf','zssjsp','zsspdf']
 ZPOI_PROJECT_LIST = ['zpoi', 'zpoiex']
 
 

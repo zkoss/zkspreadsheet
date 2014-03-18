@@ -1,5 +1,6 @@
 zcommon.jar
 zel.jar
+zml.jar
 zweb.jar
 zk.jar
 zkbind.jar
@@ -27,3 +28,5 @@ xmlbeans.jar
 dom4j.jar
 stax-api.jar
 commons-codec.jar
+slf4j-api.jar
+slf4j-jdk14.jar
