@@ -32,6 +32,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.locks.ReadWriteLock;
 
 import org.zkoss.json.JSONArray;
 import org.zkoss.json.JSONObject;
@@ -1569,8 +1570,21 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	}
 	
 	protected void renderProperties(ContentRenderer renderer) throws IOException {
+		SBook book = getSBook();
+		if(book==null){
+			renderProperties0(renderer);
+		}else{
+			ReadWriteLock lock = book.getBookSeries().getLock();
+			lock.writeLock().lock();//have to use write lock because of formula evaluation is not thread safe
+			try{
+				renderProperties0(renderer);
+			}finally{
+				lock.writeLock().unlock();
+			}
+		}
+	}
+	protected void renderProperties0(ContentRenderer renderer) throws IOException {
 		super.renderProperties(renderer);
-		
 		//I18N labels, must set first
 		//TODO review this part 
 //		Map<String, String> labels = getLabels();

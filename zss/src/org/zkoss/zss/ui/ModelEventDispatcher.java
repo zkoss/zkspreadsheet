@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.locks.ReadWriteLock;
 
 import org.zkoss.zss.model.EventQueueModelEventListener;
 import org.zkoss.zss.model.ModelEvent;
@@ -38,12 +39,18 @@ public class ModelEventDispatcher implements EventQueueModelEventListener {
 	//--ModelEventListener--//
 	@Override
 	public void onEvent(ModelEvent event) {
-		final String name = event.getName();
-		final List<ModelEventListener> list = _listeners.get(name);
-		if (list != null) {
-			for(ModelEventListener listener : list) {
-				listener.onEvent(event);
+		ReadWriteLock lock = event.getBook().getBookSeries().getLock();
+		lock.writeLock().lock();//have to use write lock because of formula evaluation is not thread safe
+		try{
+			final String name = event.getName();
+			final List<ModelEventListener> list = _listeners.get(name);
+			if (list != null) {
+				for(ModelEventListener listener : list) {
+					listener.onEvent(event);
+				}
 			}
+		}finally{
+			lock.writeLock().unlock();
 		}
 	}
 

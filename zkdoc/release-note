@@ -24,6 +24,8 @@ ZK Spreadsheet 3.5.0
   ZSS-604 After change cell alignment twice times will cause right click event doesn't show context menu
   ZSS-610 Can't get correct book type.
   ZSS-613 Duplicated Event-Queue Event when set sharescope to application
+  ZSS-618 Bad performance when setting hug among of data in collaboration mode
+
   
 ** Upgrade Notes
   * Following api are removed
