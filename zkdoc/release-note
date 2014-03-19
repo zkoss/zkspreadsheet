@@ -25,6 +25,7 @@ ZK Spreadsheet 3.5.0
   ZSS-610 Can't get correct book type.
   ZSS-613 Duplicated Event-Queue Event when set sharescope to application
   ZSS-618 Bad performance when setting hug among of data in collaboration mode
+  ZSS-619 Wrong evaluation result after insert/delete
 
   
 ** Upgrade Notes

@@ -50,8 +50,10 @@ import org.zkoss.zss.model.SheetRegion;
 import org.zkoss.zss.model.SAutoFilter.FilterOp;
 import org.zkoss.zss.model.SAutoFilter.NFilterColumn;
 import org.zkoss.zss.model.SPicture.Format;
+import org.zkoss.zss.model.sys.EngineFactory;
 import org.zkoss.zss.model.sys.dependency.DependencyTable;
 import org.zkoss.zss.model.sys.dependency.Ref;
+import org.zkoss.zss.model.sys.formula.FormulaClearContext;
 import org.zkoss.zss.model.util.Validations;
 /**
  * 
@@ -488,6 +490,11 @@ public class SheetImpl extends AbstractSheetAdv {
 		for(AbstractRowAdv row:exceeds){
 			row.destroy();
 		}
+		//ZSS-619, should clear formula for entire effected region
+		//here we clear whole sheet because of we don't have a efficient way to get the effected cell in the effected region
+		//NOTE, in current formula-engine, it clears all formula cache in non-cell case.
+		EngineFactory.getInstance().createFormulaEngine().clearCache(new FormulaClearContext(this));
+		
 		Map<String,Object> dataBefore = shiftBeforeRowInsert(rowIdx,lastRowIdx);
 		ModelUpdateUtil.addInsertDeleteUpdate(this, true, true, rowIdx, lastRowIdx);
 		shiftAfterRowInsert(dataBefore,rowIdx,lastRowIdx);
@@ -592,6 +599,10 @@ public class SheetImpl extends AbstractSheetAdv {
 		}
 		int size = lastRowIdx-rowIdx+1;
 		_rows.delete(rowIdx, size);
+		
+		//ZSS-619, should clear formula for entire effected region
+		EngineFactory.getInstance().createFormulaEngine().clearCache(new FormulaClearContext(this));
+		
 		Map<String,Object> dataBefore = shiftBeforeRowDelete(rowIdx,lastRowIdx);
 		ModelUpdateUtil.addInsertDeleteUpdate(this, false, true, rowIdx, lastRowIdx);
 		shiftAfterRowDelete(dataBefore,rowIdx,lastRowIdx);
@@ -721,6 +732,9 @@ public class SheetImpl extends AbstractSheetAdv {
 				row.insertCell(columnIdx,columnSize);
 			}
 			
+			//ZSS-619, should clear formula for entire effected region
+			EngineFactory.getInstance().createFormulaEngine().clearCache(new FormulaClearContext(this));
+			
 			// notify affected region update
 			ModelUpdateUtil.addCellUpdate(this, rowIdx, columnIdx, lastRowIdx, getBook().getMaxColumnIndex());
 		}else{ // vertical
@@ -737,6 +751,9 @@ public class SheetImpl extends AbstractSheetAdv {
 					row.moveCellTo(target,columnIdx,lastColumnIdx,0);
 				}
 			}
+			
+			//ZSS-619, should clear formula for entire effected region
+			EngineFactory.getInstance().createFormulaEngine().clearCache(new FormulaClearContext(this));
 			
 			// notify affected region update
 			ModelUpdateUtil.addCellUpdate(this, rowIdx, columnIdx, getBook().getMaxRowIndex(), lastColumnIdx);
@@ -768,6 +785,9 @@ public class SheetImpl extends AbstractSheetAdv {
 				row.deleteCell(columnIdx,columnSize);
 			}
 			
+			//ZSS-619, should clear formula for entire effected region
+			EngineFactory.getInstance().createFormulaEngine().clearCache(new FormulaClearContext(this));
+			
 			// notify affected region update
 			ModelUpdateUtil.addCellUpdate(this, rowIdx, columnIdx, lastRowIdx, getBook().getMaxColumnIndex());
 		}else{ // vertical
@@ -781,6 +801,9 @@ public class SheetImpl extends AbstractSheetAdv {
 				AbstractRowAdv target = getOrCreateRow(row.getIndex()-rowSize);
 				row.moveCellTo(target,columnIdx,lastColumnIdx,0);
 			}
+			
+			//ZSS-619, should clear formula for entire effected region
+			EngineFactory.getInstance().createFormulaEngine().clearCache(new FormulaClearContext(this));
 			
 			// notify affected region update
 			ModelUpdateUtil.addCellUpdate(this, rowIdx, columnIdx, getBook().getMaxRowIndex(), lastColumnIdx);
@@ -920,6 +943,10 @@ public class SheetImpl extends AbstractSheetAdv {
 		for(AbstractRowAdv row:_rows.values()){
 			row.insertCell(columnIdx,size);
 		}
+		
+		//ZSS-619, should clear formula for entire effected region
+		EngineFactory.getInstance().createFormulaEngine().clearCache(new FormulaClearContext(this));
+		
 		Map<String,Object> dataBefore = shiftBeforeColumnInsert(columnIdx,lastColumnIdx);
 		ModelUpdateUtil.addInsertDeleteUpdate(this, true, false, columnIdx, lastColumnIdx);
 		shiftAfterColumnInsert(dataBefore,columnIdx,lastColumnIdx);
@@ -1084,6 +1111,10 @@ public class SheetImpl extends AbstractSheetAdv {
 		for(AbstractRowAdv row:_rows.values()){
 			row.deleteCell(columnIdx,size);
 		}
+		
+		//ZSS-619, should clear formula for entire effected region
+		EngineFactory.getInstance().createFormulaEngine().clearCache(new FormulaClearContext(this));
+		
 		Map<String,Object> dataBefore = shiftBeforeColumnDelete(columnIdx,lastColumnIdx);
 		ModelUpdateUtil.addInsertDeleteUpdate(this, false, false, columnIdx, lastColumnIdx);
 		shiftAfterColumnDelete(dataBefore,columnIdx,lastColumnIdx);

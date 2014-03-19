@@ -17,6 +17,9 @@ import org.zkoss.zss.model.impl.sys.DependencyTableImpl;
 import org.zkoss.zss.model.sys.dependency.DependencyTable;
 import org.zkoss.zss.model.sys.dependency.Ref;
 import org.zkoss.zss.range.SRanges;
+import org.zkoss.zss.range.SRange.DeleteShift;
+import org.zkoss.zss.range.SRange.InsertCopyOrigin;
+import org.zkoss.zss.range.SRange.InsertShift;
 
 public class IssueTest {
 	@BeforeClass
@@ -76,7 +79,7 @@ public class IssueTest {
 		sheet3.getCell("A1").setValue("3");
 		
 		DependencyTable table = ((AbstractBookSeriesAdv)book.getBookSeries()).getDependencyTable();
-		((DependencyTableImpl)table).dump();
+//		((DependencyTableImpl)table).dump();
 		
 		List<Ref> refs = new ArrayList<Ref>(table.getDirectDependents(new RefImpl(book.getBookName())));
 		Assert.assertEquals(2, refs.size());
@@ -164,5 +167,213 @@ public class IssueTest {
 		sheet1.getCell("A1").setValue(20D);
 		Assert.assertEquals(20D, sheet1.getCell("A2").getValue());
 		
+	}
+	
+	@Test 
+	public void testZSS619_rowInsert(){
+		SBook book = SBooks.createBook("book1");
+		book.getBookSeries().setAutoFormulaCacheClean(true);
+		SSheet sheet1 = book.createSheet("Sheet1");
+		
+		sheet1.getCell("E4").setValue("=E4");
+		Assert.assertEquals("#N/A", sheet1.getCell("E4").getErrorValue().getErrorString());
+		
+		sheet1.getCell("E4").setValue("=A1");
+		
+		Assert.assertEquals(0D, sheet1.getCell("E4").getValue());
+		
+		SRanges.range(sheet1,"4").insert(InsertShift.DEFAULT, InsertCopyOrigin.FORMAT_NONE);
+		
+		sheet1.getCell("A1").setValue(20);
+		Assert.assertEquals("A1", sheet1.getCell("E5").getFormulaValue());
+		Assert.assertEquals(20D, sheet1.getCell("E5").getValue());
+		
+		
+		Assert.assertTrue(sheet1.getCell("E4").isNull());
+		
+		sheet1.getCell("E4").setValue("=E4");
+		Assert.assertEquals("#N/A", sheet1.getCell("E4").getErrorValue().getErrorString());
+	}
+	
+	@Test 
+	public void testZSS619_rowDelete(){
+		SBook book = SBooks.createBook("book1");
+		book.getBookSeries().setAutoFormulaCacheClean(true);
+		SSheet sheet1 = book.createSheet("Sheet1");
+		
+		sheet1.getCell("E4").setValue("=E4");
+		Assert.assertEquals("#N/A", sheet1.getCell("E4").getErrorValue().getErrorString());
+		
+		sheet1.getCell("E4").setValue("=A1");
+		
+		Assert.assertEquals(0D, sheet1.getCell("E4").getValue());
+		
+		SRanges.range(sheet1,"2").delete(DeleteShift.DEFAULT);
+		
+		sheet1.getCell("A1").setValue(20);
+		Assert.assertEquals("A1", sheet1.getCell("E3").getFormulaValue());
+		Assert.assertEquals(20D, sheet1.getCell("E3").getValue());
+		
+		
+		Assert.assertTrue(sheet1.getCell("E4").isNull());
+		
+		sheet1.getCell("E4").setValue("=E4");
+		Assert.assertEquals("#N/A", sheet1.getCell("E4").getErrorValue().getErrorString());
+	}
+	
+	@Test 
+	public void testZSS619_columnInsert(){
+		SBook book = SBooks.createBook("book1");
+		book.getBookSeries().setAutoFormulaCacheClean(true);
+		SSheet sheet1 = book.createSheet("Sheet1");
+		
+		sheet1.getCell("E4").setValue("=E4");
+		Assert.assertEquals("#N/A", sheet1.getCell("E4").getErrorValue().getErrorString());
+		
+		sheet1.getCell("E4").setValue("=A1");
+		
+		Assert.assertEquals(0D, sheet1.getCell("E4").getValue());
+		
+		SRanges.range(sheet1,"E").insert(InsertShift.DEFAULT, InsertCopyOrigin.FORMAT_NONE);
+		
+		sheet1.getCell("A1").setValue(20);
+		Assert.assertEquals("A1", sheet1.getCell("F4").getFormulaValue());
+		Assert.assertEquals(20D, sheet1.getCell("F4").getValue());
+		
+		
+		Assert.assertTrue(sheet1.getCell("E4").isNull());
+		
+		sheet1.getCell("E4").setValue("=E4");
+		Assert.assertEquals("#N/A", sheet1.getCell("E4").getErrorValue().getErrorString());
+	}
+	
+	@Test 
+	public void testZSS619_columnDelete(){
+		SBook book = SBooks.createBook("book1");
+		book.getBookSeries().setAutoFormulaCacheClean(true);
+		SSheet sheet1 = book.createSheet("Sheet1");
+		
+		sheet1.getCell("E4").setValue("=E4");
+		Assert.assertEquals("#N/A", sheet1.getCell("E4").getErrorValue().getErrorString());
+		
+		sheet1.getCell("E4").setValue("=A1");
+		
+		Assert.assertEquals(0D, sheet1.getCell("E4").getValue());
+		
+		SRanges.range(sheet1,"B").delete(DeleteShift.DEFAULT);
+		
+		sheet1.getCell("A1").setValue(20);
+		Assert.assertEquals("A1", sheet1.getCell("D4").getFormulaValue());
+		Assert.assertEquals(20D, sheet1.getCell("D4").getValue());
+		
+		
+		Assert.assertTrue(sheet1.getCell("E4").isNull());
+		
+		sheet1.getCell("E4").setValue("=E4");
+		Assert.assertEquals("#N/A", sheet1.getCell("E4").getErrorValue().getErrorString());
+	}
+	
+	@Test 
+	public void testZSS619_cellInsertV(){
+		SBook book = SBooks.createBook("book1");
+		book.getBookSeries().setAutoFormulaCacheClean(true);
+		SSheet sheet1 = book.createSheet("Sheet1");
+		
+		sheet1.getCell("E4").setValue("=E4");
+		Assert.assertEquals("#N/A", sheet1.getCell("E4").getErrorValue().getErrorString());
+		
+		sheet1.getCell("E4").setValue("=A1");
+		
+		Assert.assertEquals(0D, sheet1.getCell("E4").getValue());
+		
+		SRanges.range(sheet1,"E4").insert(InsertShift.DOWN, InsertCopyOrigin.FORMAT_NONE);
+		
+		sheet1.getCell("A1").setValue(20);
+		Assert.assertEquals("A1", sheet1.getCell("E5").getFormulaValue());
+		Assert.assertEquals(20D, sheet1.getCell("E5").getValue());
+		
+		
+		Assert.assertTrue(sheet1.getCell("E4").isNull());
+		
+		sheet1.getCell("E4").setValue("=E4");
+		Assert.assertEquals("#N/A", sheet1.getCell("E4").getErrorValue().getErrorString());
+	}
+	
+	@Test 
+	public void testZSS619_cellDeleteV(){
+		SBook book = SBooks.createBook("book1");
+		book.getBookSeries().setAutoFormulaCacheClean(true);
+		SSheet sheet1 = book.createSheet("Sheet1");
+		
+		sheet1.getCell("E4").setValue("=E4");
+		Assert.assertEquals("#N/A", sheet1.getCell("E4").getErrorValue().getErrorString());
+		
+		sheet1.getCell("E4").setValue("=A1");
+		
+		Assert.assertEquals(0D, sheet1.getCell("E4").getValue());
+		
+		SRanges.range(sheet1,"E2").delete(DeleteShift.UP);
+		
+		sheet1.getCell("A1").setValue(20);
+		Assert.assertEquals("A1", sheet1.getCell("E3").getFormulaValue());
+		Assert.assertEquals(20D, sheet1.getCell("E3").getValue());
+		
+		
+		Assert.assertTrue(sheet1.getCell("E4").isNull());
+		
+		sheet1.getCell("E4").setValue("=E4");
+		Assert.assertEquals("#N/A", sheet1.getCell("E4").getErrorValue().getErrorString());
+	}
+	
+	@Test 
+	public void testZSS619_cellInsertH(){
+		SBook book = SBooks.createBook("book1");
+		book.getBookSeries().setAutoFormulaCacheClean(true);
+		SSheet sheet1 = book.createSheet("Sheet1");
+		
+		sheet1.getCell("E4").setValue("=E4");
+		Assert.assertEquals("#N/A", sheet1.getCell("E4").getErrorValue().getErrorString());
+		
+		sheet1.getCell("E4").setValue("=A1");
+		
+		Assert.assertEquals(0D, sheet1.getCell("E4").getValue());
+		
+		SRanges.range(sheet1,"E4").insert(InsertShift.RIGHT, InsertCopyOrigin.FORMAT_NONE);
+		
+		sheet1.getCell("A1").setValue(20);
+		Assert.assertEquals("A1", sheet1.getCell("F4").getFormulaValue());
+		Assert.assertEquals(20D, sheet1.getCell("F4").getValue());
+		
+		
+		Assert.assertTrue(sheet1.getCell("E4").isNull());
+		
+		sheet1.getCell("E4").setValue("=E4");
+		Assert.assertEquals("#N/A", sheet1.getCell("E4").getErrorValue().getErrorString());
+	}
+	
+	@Test 
+	public void testZSS619_cellDeleteH(){
+		SBook book = SBooks.createBook("book1");
+		book.getBookSeries().setAutoFormulaCacheClean(true);
+		SSheet sheet1 = book.createSheet("Sheet1");
+		
+		sheet1.getCell("E4").setValue("=E4");
+		Assert.assertEquals("#N/A", sheet1.getCell("E4").getErrorValue().getErrorString());
+		
+		sheet1.getCell("E4").setValue("=A1");
+		
+		Assert.assertEquals(0D, sheet1.getCell("E4").getValue());
+		
+		SRanges.range(sheet1,"B4").delete(DeleteShift.LEFT);
+		
+		sheet1.getCell("A1").setValue(20);
+		Assert.assertEquals("A1", sheet1.getCell("D4").getFormulaValue());
+		Assert.assertEquals(20D, sheet1.getCell("D4").getValue());
+		
+		
+		Assert.assertTrue(sheet1.getCell("E4").isNull());
+		
+		sheet1.getCell("E4").setValue("=E4");
+		Assert.assertEquals("#N/A", sheet1.getCell("E4").getErrorValue().getErrorString());
 	}
 }
