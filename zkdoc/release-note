@@ -26,6 +26,7 @@ ZK Spreadsheet 3.5.0
   ZSS-613 Duplicated Event-Queue Event when set sharescope to application
   ZSS-618 Bad performance when setting hug among of data in collaboration mode
   ZSS-619 Wrong evaluation result after insert/delete
+  ZSS-620 Large response data when update a big region with same style
 
   
 ** Upgrade Notes
