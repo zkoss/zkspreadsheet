@@ -10,6 +10,7 @@ ZK Spreadsheet 3.0.2
   ZSS-596 Possible memory leak when formula evaluation
   ZSS-585 Java SE 5 Compliance
   ZSS-589 Hidden rows are still displayed in IE
+  ZSS-617 After spreadsheet loads a book, a mask is blocking the sheet
   
 ** Upgrade Notes
   

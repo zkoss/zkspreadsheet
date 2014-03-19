@@ -2732,19 +2732,16 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		HeaderPositionHelper helper = helpers.getHelper(sheetId);
 		
 		if (helper == null) {
-			final int defaultColSize = sheet.getDefaultColumnWidth();
-			final int defaultColSize256 = defaultColSize * 256; 
 			final int charWidth = getDefaultCharWidth();
-			final int defaultColSizeInPx = XUtils.defaultColumnWidthToPx(defaultColSize, charWidth);
+			final int defaultColSizeInPx = XUtils.defaultColumnWidthToPx(sheet.getDefaultColumnWidth(), charWidth);
 			List<HeaderPositionInfo> infos = new ArrayList<HeaderPositionInfo>();
 			int maxcol = BookHelper.getMaxConfiguredColumn(sheet);
-			for(int j=0; j <= maxcol; ++j) {
-				final boolean hidden = sheet.isColumnHidden(j); //whether this column is hidden
-				final int fileColumnWidth = sheet.getColumnWidth(j); //file column width
-				if (fileColumnWidth != defaultColSize256 || hidden) {
-					final int colwidth = fileColumnWidth != defaultColSize256 ? 
-							XUtils.fileChar256ToPx(fileColumnWidth, charWidth) : defaultColSizeInPx; 
-					infos.add(new HeaderPositionInfo(j, colwidth, _custColId.next(), hidden, true));
+			for(int columnIndex=0; columnIndex <= maxcol; ++columnIndex) {
+				final boolean hidden = sheet.isColumnHidden(columnIndex); //whether this column is hidden
+				if (sheet.isCustomColumn(columnIndex) || hidden) {
+					final int fileColumnWidth = sheet.getColumnWidth(columnIndex); //file column width
+					final int colWidthPixel = XUtils.fileChar256ToPx(fileColumnWidth, charWidth); 
+					infos.add(new HeaderPositionInfo(columnIndex, colWidthPixel, _custColId.next(), hidden, true));
 				}
 			}
 
