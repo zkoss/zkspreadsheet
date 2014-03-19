@@ -9,7 +9,7 @@
 
 Copyright (C) 2013 Potix Corporation. All Rights Reserved.
  */
-package org.zkoss.zss.ng;
+package org.zkoss.zss.model;
 
 import java.io.Closeable;
 import java.io.InputStream;

@@ -1,4 +1,4 @@
-package org.zkoss.zss.ng.exporter;
+package org.zkoss.zss.model.exporter;
 
 import java.io.File;
 import java.io.FileOutputStream;
