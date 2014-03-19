@@ -64,6 +64,9 @@ zss.Row = zk.$extends(zk.Widget, {
 			bRow = d.bRow;
 		if (tRow != undefined && bRow != undefined 
 			&& this.r != undefined && this.r >= tRow && this.r <= bRow) {
+			if (this.sheet.custRowHeight.isHidden(this.r)){ //not update height for hidden rows
+				return;
+			}
 			this._updateWrapRowHeight();
 		}
 	},
@@ -82,7 +85,7 @@ zss.Row = zk.$extends(zk.Widget, {
 					autoHeight = Math.max(autoHeight,  this.wrapedCells[i].getTextHeight());
 				}
 			}
-		}
+		}//if no wrapped cells, we might need to reduce row height
 		
 		if (jq(this.$n()).height() == autoHeight)
 			return;//equals to current row height, no need to change

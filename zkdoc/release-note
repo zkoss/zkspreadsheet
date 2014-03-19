@@ -9,6 +9,7 @@ ZK Spreadsheet 3.0.2
   ZSS-593 Spreadsheet doesn't be released immediately after close tab in collaboration
   ZSS-596 Possible memory leak when formula evaluation
   ZSS-585 Java SE 5 Compliance
+  ZSS-589 Hidden rows are still displayed in IE
   
 ** Upgrade Notes
   
