@@ -309,8 +309,12 @@ public class CellOperationUtil {
 		applyCellStyle(range, getFontColorApplier(color));
 	}
 	
-
+	@Deprecated
 	public static CellStyleApplier getBackgroundColorApplier(final Color color) {
+		return getFillColorApplier(color);
+	}
+	
+	public static CellStyleApplier getFillColorApplier(final Color color) {
 		return new CellStyleApplier() {
 				public void apply(Range range) {
 					StyleUtil.setFillColor(((SheetImpl)range.getSheet()).getNative(),range.getRow(),range.getColumn(),color.getHtmlColor());
@@ -322,12 +326,23 @@ public class CellOperationUtil {
 	/**
 	 * Apply backgound-color to cells in the range
 	 * @param range the range to be applied
+	 * @param htmlColor the color by html color syntax(#rgb-hex-code, e.x #FF00FF)
+	 * @Deprecated since 3.5.0 use {@link #applyFillColor(Range, String)}
+	 */
+	@Deprecated
+	public static void applyBackgroundColor(Range range, final String htmlColor) {
+		applyFillColor(range,htmlColor);
+	}
+	
+	/**
+	 * Apply fill-color to cells in the range
+	 * @param range the range to be applied
 	 * @param htmlColor the color by html color syntax(#rgb-hex-code, e.x #FF00FF) 
 	 */
-	public static void applyBackgroundColor(Range range, final String htmlColor) {
+	public static void applyFillColor(Range range, final String htmlColor) {
 		final Color color = range.getCellStyleHelper().createColorFromHtmlColor(htmlColor);
-		applyCellStyle(range,getBackgroundColorApplier(color));
-	}
+		applyCellStyle(range,getFillColorApplier(color));
+	}	
 	
 	
 	public static CellStyleApplier getDataFormatApplier(final String format) {

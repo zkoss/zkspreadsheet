@@ -53,7 +53,7 @@ public class FillColorHandler extends AbstractProtectedHandler {
 		UndoableActionManager uam = ctx.getSpreadsheet().getUndoableActionManager();
 		uam.doAction(new CellStyleAction(Labels.getLabel("zss.undo.cellStyle"),sheet, selection.getRow(), selection.getColumn(), 
 				selection.getLastRow(), selection.getLastColumn(), 
-				CellOperationUtil.getBackgroundColorApplier(range
+				CellOperationUtil.getFillColorApplier(range
 					.getCellStyleHelper().createColorFromHtmlColor(color))));
 		return true;
 	}
