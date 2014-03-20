@@ -102,9 +102,10 @@ public class ExcelXlsxImporter extends AbstractExcelImporter{
 			//max is 16384
 			
 			SColumnArray columnArray = sheet.setupColumnArray((int)ctCol.getMin()-1, (int)ctCol.getMax()-1);
+			columnArray.setCustomWidth(ctCol.getCustomWidth());
+			
 			boolean hidden = ctCol.getHidden();
 			int columnIndex = (int)ctCol.getMin()-1;
-			
 			columnArray.setHidden(hidden);
 			if (hidden == false){
 				//when CT_Col is hidden with default width, We don't import the width for it's 0.  
