@@ -8,6 +8,7 @@ import java.util.List;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.zkoss.zss.Setup;
 import org.zkoss.zss.Util;
@@ -16,6 +17,7 @@ import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.Sheet;
 
+@Ignore("manually")
 public class PerformanceTest {
 	
 	@BeforeClass
@@ -42,23 +44,31 @@ public class PerformanceTest {
 	}
 	public void test(int loop,boolean dumpTime,boolean dumpMemory) throws Exception {
 		System.out.println(">>JDK:"+System.getProperty("java.runtime.version"));
+
+		String bookPath = "book/performance.xlsx";
+		
 		if(dumpMemory){
 			showMemoryUsage(">>>Init:"); // init
 		}
-		
-		long start = System.currentTimeMillis();
-		Book book = Util.loadBook(this,"book/blank.xlsx");
-		Sheet sheet = book.getSheet("Sheet1");
-		if(dumpTime){
-			System.out.println("(First) Load Book Time: " + (System.currentTimeMillis() - start));
+		long start;
+		Book book;
+		Sheet sheet;
+		for(int i=0;i<2;i++){
+			start = System.currentTimeMillis();
+			book = Util.loadBook(this,bookPath);
+			sheet = book.getSheet("Sheet1");
+			if(dumpTime){
+				System.out.println("("+(i+1)+").Preload Book Time: " + (System.currentTimeMillis() - start));
+			}
+			
+			book = null;
+			sheet = null;
+			
+			if(dumpMemory){
+				showMemoryUsage(">>>After Load ("+(i+1)+").book:"); // after load 1st book
+			}
 		}
 		
-		book = null;
-		sheet = null;
-		
-		if(dumpMemory){
-			showMemoryUsage(">>>After Load 1st book:"); // after load 1st book
-		}
 		
 		start = System.currentTimeMillis();
 		book = Util.loadBook(this,"book/performance.xlsx");
