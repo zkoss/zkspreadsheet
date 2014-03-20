@@ -1371,7 +1371,11 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 			//fix the IE sometime doesn't load bottom/right block after init/switch sheet/invalidate
 			setTimeout(function(){
 				sheet.activeBlock.loadForVisible();
+				
+				// ZSS-600: create style context menu after initialized
+				sheet.getStyleMenupopup();
 			},25);
+			
 		} else {
 			setTimeout(function () {
 				zss.Spreadsheet.initLaterAfterCssReady(sheet);

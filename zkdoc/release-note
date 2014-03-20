@@ -27,6 +27,7 @@ ZK Spreadsheet 3.5.0
   ZSS-618 Bad performance when setting hug among of data in collaboration mode
   ZSS-619 Wrong evaluation result after insert/delete
   ZSS-620 Large response data when update a big region with same style
+  ZSS-600 First time right click shows empty context menu
 
   
 ** Upgrade Notes
