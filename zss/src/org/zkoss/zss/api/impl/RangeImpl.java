@@ -195,7 +195,7 @@ public class RangeImpl implements Range{
 
  
 	public void clearStyles() {
-		setCellStyle(null);//will use default book cell style		
+		_range.clearCellStyles();	
 	}
 
 	public void setCellStyle(final CellStyle nstyle) { 

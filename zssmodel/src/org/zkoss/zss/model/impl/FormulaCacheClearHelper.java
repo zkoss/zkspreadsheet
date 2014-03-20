@@ -79,11 +79,45 @@ import org.zkoss.zss.model.sys.dependency.Ref.RefType;
 		SSheet sheet = book.getSheetByName(ref.getSheetName());
 		if(sheet==null) return;
 		
-		for(int r = ref.getRow();r<=ref.getLastRow();r++){
-			for(int c = ref.getColumn();c<=ref.getLastColumn();c++){
-				SCell cell = ((AbstractSheetAdv)sheet).getCell(r,c,false);
-				if(cell!=null){
-					cell.clearFormulaResultCache();
+		boolean wholeRow = ref.getColumn()==0 && ref.getLastColumn()>=book.getMaxColumnIndex();
+		boolean wholeColumn = ref.getRow()==0 && ref.getLastRow()>=book.getMaxRowIndex();
+		boolean wholeSheet = wholeRow && wholeColumn;
+		
+		if(wholeSheet){
+			Iterator<SRow> rows = sheet.getRowIterator();
+			while(rows.hasNext()){
+				Iterator<SCell> cells = sheet.getCellIterator(rows.next().getIndex());
+				while(cells.hasNext()){
+					cells.next().clearFormulaResultCache();
+				}
+			}
+		}else if(wholeRow){
+			//from column 0 to max
+			for(int r = ref.getRow();r<=ref.getLastRow();r++){
+				Iterator<SCell> cells = sheet.getCellIterator(r);
+				while(cells.hasNext()){
+					cells.next().clearFormulaResultCache();
+				}
+			}
+		}else if(wholeColumn){
+			//from row 0 to max
+			Iterator<SRow> rows = sheet.getRowIterator();
+			while(rows.hasNext()){
+				int r = rows.next().getIndex();
+				for(int c = ref.getColumn();c<=ref.getLastColumn();c++){
+					SCell cell = ((AbstractSheetAdv)sheet).getCell(r,c,false);
+					if(cell!=null){
+						cell.clearFormulaResultCache();
+					}
+				}
+			}
+		}else{
+			for(int r = ref.getRow();r<=ref.getLastRow();r++){
+				for(int c = ref.getColumn();c<=ref.getLastColumn();c++){
+					SCell cell = ((AbstractSheetAdv)sheet).getCell(r,c,false);
+					if(cell!=null){
+						cell.clearFormulaResultCache();
+					}
 				}
 			}
 		}

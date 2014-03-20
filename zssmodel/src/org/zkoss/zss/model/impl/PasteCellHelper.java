@@ -17,8 +17,10 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.model.impl;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import org.zkoss.zss.model.CellRegion;
 import org.zkoss.zss.model.InvalidModelOpException;
@@ -197,6 +199,16 @@ import org.zkoss.zss.range.impl.StyleUtil;
 		return mergeBuffer;
 	}
 
+	private static Set<PasteType> handleStylePasteType = new HashSet<PasteType>(); 
+	static{
+		handleStylePasteType.add(PasteType.ALL);
+		handleStylePasteType.add(PasteType.ALL_EXCEPT_BORDERS);
+		handleStylePasteType.add(PasteType.FORMATS);
+		handleStylePasteType.add(PasteType.FORMULAS);
+		handleStylePasteType.add(PasteType.FORMULAS_AND_NUMBER_FORMATS);
+		handleStylePasteType.add(PasteType.VALUES);
+		handleStylePasteType.add(PasteType.VALUES_AND_NUMBER_FORMATS);
+	}
 
 	private CellBuffer[][] prepareCellBuffer(SheetRegion src, PasteOption option) {
 		int row = src.getRow();
@@ -214,14 +226,19 @@ import org.zkoss.zss.range.impl.StyleUtil;
 		for(int r = row; r <= lastRow;r++){
 			for(int c = column; c <= lastColumn;c++){
 				SCell srcCell = srcSheet.getCell(r,c);
-				if(srcCell.isNull()) //to avoid unnecessary create
+				PasteType pt = option.getPasteType(); 
+				boolean handleStyle = handleStylePasteType.contains(pt)
+						&& (srcSheet.getRow(r).getCellStyle(true) != null
+						|| srcSheet.getColumn(c).getCellStyle(true) != null);
+				
+				if(srcCell.isNull() && !handleStyle) //to avoid unnecessary create
 					continue;
 				
 				CellBuffer buffer = srcBuffer[transpose?c-column:r-row][transpose?r-row:c-column] = new CellBuffer();
 				
 				buffer.setType(srcCell.getType());
 				
-				switch(option.getPasteType()){
+				switch(pt){
 				case ALL:
 				case ALL_EXCEPT_BORDERS:
 					prepareValue(buffer,srcCell,true);

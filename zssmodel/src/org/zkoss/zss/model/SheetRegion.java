@@ -44,7 +44,7 @@ public class SheetRegion implements Serializable{
 	public SheetRegion(SSheet sheet,String areaReference){
 		
 		//regard to testcase 439, now range should support "1:2" -> means row 1 to 2 
-		AreaReference ref = new AreaReference(areaReference);
+		AreaReference ref = new AreaReference(areaReference,sheet.getBook().getMaxRowIndex());
 		int row = ref.getFirstCell().getRow();
 		int column = ref.getFirstCell().getCol();
 		int lastRow = ref.getLastCell().getRow();

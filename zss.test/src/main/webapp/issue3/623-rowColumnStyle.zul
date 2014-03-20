@@ -1,0 +1,40 @@
+<vbox hflex="1" vflex="1">
+	<label multiline="true">
+	
+	</label>
+	<hbox>
+		<button onClick='setFillColor("3:4","#FF0000")'>set Row(3:4) style to red</button>
+		<button onClick='setFillColor("D:F","#0000FF")'>set Column(D:F) style to blue</button>
+		<button onClick='setFillColor("D2:F5","#00FF00")'>set Column(D2:F5) style to green</button>
+		<button onClick='clearStyle("3:4")'>clear Row(3:4) style</button>
+		<button onClick='clearStyle("D:F")'>clear Column(D:F) style</button>
+		<button onClick='clearStyle("D2:F5")'>clear Column(D2:F5) style</button>
+		<button onClick='clearWholeStyle()'>clear All style</button>
+	</hbox>
+	<spreadsheet id="ss" src="/issue3/book/blank.xlsx" maxVisibleRows="200" maxVisibleColumns="40"
+		hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
+		showFormulabar="true" />
+	<zscript><![CDATA[
+	
+	public void setFillColor(String f,String color) {
+		org.zkoss.zss.model.SSheet sheet = ss.getSelectedSSheet();
+		
+		org.zkoss.zss.model.SCellStyle style =  sheet.getBook().createCellStyle(true);
+		style.setFillPattern(org.zkoss.zss.model.SCellStyle.FillPattern.SOLID_FOREGROUND);
+		style.setFillColor(sheet.getBook().createColor(color));
+		org.zkoss.zss.range.SRange range = org.zkoss.zss.range.SRanges.range(sheet,f);
+		range.setCellStyle(style);
+	}
+	public void clearStyle(String f) {
+		org.zkoss.zss.model.SSheet sheet = ss.getSelectedSSheet();
+		org.zkoss.zss.range.SRange range = org.zkoss.zss.range.SRanges.range(sheet,f);
+		range.clearCellStyles();
+	}
+	public void clearWholeStyle() {
+		org.zkoss.zss.model.SSheet sheet = ss.getSelectedSSheet();
+		org.zkoss.zss.range.SRange range = org.zkoss.zss.range.SRanges.range(sheet,"A1").getColumns().getRows();
+		range.clearCellStyles();
+	}
+	
+	]]></zscript>		
+</vbox>

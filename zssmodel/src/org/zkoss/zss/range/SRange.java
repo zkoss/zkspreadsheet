@@ -324,6 +324,11 @@ public interface SRange {
 	public void setCellStyle(SCellStyle style);
 	
 	/**
+	 * Clear the cell styles of this Range
+	 */
+	public void clearCellStyles();
+	
+	/**
 	 * Perform an auto fill on the specified destination Range. Note the given destination Range
 	 * must include this source Range.
 	 * @param dstRange destination range to do the auto fill. Note the given destination Range must include this source Range

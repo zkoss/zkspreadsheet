@@ -184,7 +184,6 @@ public class RowImpl extends AbstractRowAdv {
 
 	@Override
 	public void setCellStyle(SCellStyle cellStyle) {
-		Validations.argNotNull(cellStyle);
 		Validations.argInstance(cellStyle, CellStyleImpl.class);
 		this.cellStyle = (CellStyleImpl) cellStyle;
 	}

@@ -83,6 +83,10 @@ public class RangeHelperBase {
 		return range.isWholeRow();
 	}
 	
+	public boolean isWholeSheet(){
+		return range.isWholeSheet();
+	}
+	
 	public boolean isWholeColumn() {
 		return range.isWholeColumn();
 	}

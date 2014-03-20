@@ -106,6 +106,10 @@ public class RangeImpl implements SRange {
 		addRangeRef(sheet, tRow, lCol, bRow, rCol);
 	}
 	
+	public RangeImpl(SSheet sheet, CellRegion region) {
+		addRangeRef(sheet, region.getRow(), region.getColumn(), region.getLastRow(), region.getLastColumn());
+	}
+	
 	private RangeImpl(Collection<SheetRegion> regions) {
 		for(SheetRegion region:regions){
 			addRangeRef(region.getSheet(), region.getRow(), region.getColumn(), region.getLastRow(), region.getLastColumn());
@@ -290,7 +294,7 @@ public class RangeImpl implements SRange {
 			}
 		}).doInWriteLock(getLock());
 	}
-	
+
 	@Override
 	public void clearAll() {
 		new ReadWriteTask() {
@@ -302,6 +306,7 @@ public class RangeImpl implements SRange {
 				for (EffectedRegion r : _rangeRefs) {
 					CellRegion region = r.region;
 					r.sheet.clearCell(region);
+					new SetCellStyleHelper(new RangeImpl(r.sheet,r.region)).clearCellStyle();
 					
 					handleCellNotifyContentChange(new SheetRegion(r.sheet,r.region));
 					handleRefNotifyContentChange(bookSeries, table.getDependents(new RefImpl(r.sheet.getBook().getBookName(),r.sheet.getSheetName(),
@@ -424,24 +429,33 @@ public class RangeImpl implements SRange {
 		new ReadWriteTask(){
 			@Override
 			public Object invoke() {
-				SBookSeries bookSeries = getBookSeries();
-				DependencyTable table = ((AbstractBookSeriesAdv)bookSeries).getDependencyTable();
-				LinkedHashSet<Ref> notifySet = new LinkedHashSet<Ref>();
-				FormulaCacheCleaner cacheCleaner = new FormulaCacheCleaner(bookSeries);
-				for (EffectedRegion r : _rangeRefs) {
-					String bookName = r.sheet.getBook().getBookName();
-					String sheetName = r.sheet.getSheetName();
-					CellRegion region = r.region;
-					Ref pre = new RefImpl(bookName, sheetName, region.row, region.column,region.lastRow,region.lastColumn);
-					cacheCleaner.clearByPrecedent(pre);
-					notifySet.add(pre);
-					notifySet.addAll(table.getDependents(pre));
-				}
-				handleRefNotifyContentChange(bookSeries,notifySet);
+				notifyChangeInLock(true);
 				return null;
 			}
 		
 		}.doInWriteLock(getLock());//we will clear formula cache, so need to use write lock
+	}
+	
+	private void notifyChangeInLock(boolean notifyDependent){
+		SBookSeries bookSeries = getBookSeries();
+		DependencyTable table = ((AbstractBookSeriesAdv)bookSeries).getDependencyTable();
+		LinkedHashSet<Ref> notifySet = new LinkedHashSet<Ref>();
+		FormulaCacheCleaner cacheCleaner = new FormulaCacheCleaner(bookSeries);
+		for (EffectedRegion r : _rangeRefs) {
+			SBook book = r.sheet.getBook();
+			String bookName = book.getBookName();
+			String sheetName = r.sheet.getSheetName();
+			CellRegion region = r.region;
+			Ref pre = new RefImpl(bookName, sheetName, region.row, region.column,region.lastRow,region.lastColumn);
+			cacheCleaner.clearByPrecedent(pre);
+			notifySet.add(pre);
+			boolean wholeSheet = region.row==0 && region.lastRow>=book.getMaxRowIndex() 
+					&& region.column==0 && region.lastColumn>=book.getMaxColumnIndex();
+			if(notifyDependent && !wholeSheet){
+				notifySet.addAll(table.getDependents(pre));
+			}
+		}
+		handleRefNotifyContentChange(bookSeries,notifySet);
 	}
 	
 	public void notifyChange(final String[] variables){
@@ -780,13 +794,30 @@ public class RangeImpl implements SRange {
 
 	@Override
 	public void setCellStyle(final SCellStyle style) {
-		new CellVisitorTask(new CellVisitorForUpdate() {
-			public boolean visit(SCell cell) {
-				cell.setCellStyle(style);
-				return true;
+		new ReadWriteTask(){
+			@Override
+			public Object invoke() {
+				for (EffectedRegion r : _rangeRefs) {
+					new SetCellStyleHelper(new RangeImpl(r.sheet,r.region)).setCellStyle(style);	
+				}
+				notifyChangeInLock(false);
+				return null;
 			}
-		}).doInWriteLock(getLock());
+		}.doInWriteLock(getLock());
 	}
+	@Override
+	public void clearCellStyles() {
+		new ReadWriteTask(){
+			@Override
+			public Object invoke() {
+				for (EffectedRegion r : _rangeRefs) {
+					new SetCellStyleHelper(new RangeImpl(r.sheet,r.region)).clearCellStyle();	
+				}
+				notifyChangeInLock(false);
+				return null;
+			}
+		}.doInWriteLock(getLock());
+	}	
 	
 	@Override
 	public SCellStyle getCellStyle() {

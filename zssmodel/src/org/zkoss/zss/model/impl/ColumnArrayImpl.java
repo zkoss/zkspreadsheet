@@ -93,7 +93,6 @@ public class ColumnArrayImpl extends AbstractColumnArrayAdv {
 
 	@Override
 	public void setCellStyle(SCellStyle cellStyle) {
-		Validations.argNotNull(cellStyle);
 		Validations.argInstance(cellStyle, AbstractCellStyleAdv.class);
 		this._cellStyle = (AbstractCellStyleAdv) cellStyle;
 	}

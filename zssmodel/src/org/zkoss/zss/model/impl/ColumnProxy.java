@@ -87,7 +87,6 @@ class ColumnProxy implements SColumn {
 
 	@Override
 	public void setCellStyle(SCellStyle cellStyle) {
-		Validations.argNotNull(cellStyle);
 		loadProxy(true);
 		_proxy.setCellStyle(cellStyle);
 	}
