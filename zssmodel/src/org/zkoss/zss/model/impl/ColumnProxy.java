@@ -75,6 +75,15 @@ class ColumnProxy implements SColumn {
 		}
 		return getSheet().getBook().getDefaultCellStyle();
 	}
+	
+	@Override
+	public SCellStyle getCellStyle(boolean local) {
+		loadProxy(false);
+		if (_proxy != null) {
+			return _proxy.getCellStyle(local);
+		}
+		return local?null:getSheet().getBook().getDefaultCellStyle();
+	}
 
 	@Override
 	public void setCellStyle(SCellStyle cellStyle) {

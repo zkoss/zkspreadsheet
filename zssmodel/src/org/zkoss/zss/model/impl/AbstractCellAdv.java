@@ -71,7 +71,6 @@ public abstract class AbstractCellAdv implements SCell,LinkedModelObject,Seriali
 	
 	/*package*/ abstract void evalFormula();
 	/*package*/ abstract Object getValue(boolean evaluatedVal);
-	public abstract SCellStyle getCellStyle(boolean local);
 	
 	@Override
 	public Object getValue(){

@@ -29,8 +29,6 @@ import org.zkoss.zss.model.SRow;
  */
 public abstract class AbstractRowAdv implements SRow,LinkedModelObject,Serializable{
 	private static final long serialVersionUID = 1L;
-
-	public abstract SCellStyle getCellStyle(boolean local);
 	
 	/*package*/ abstract AbstractCellAdv getCell(int columnIdx, boolean proxy);
 

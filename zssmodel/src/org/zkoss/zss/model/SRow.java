@@ -28,9 +28,23 @@ public interface SRow {
 	public int getIndex();
 //	public String asString();
 	public boolean isNull();
+	
+	/**
+	 * Get the cell style, it always looks forward the sheet's style if local style is null.
+	 * @see #getCellStyle(boolean)
+	 */
 	public SCellStyle getCellStyle();
 	
-	//editable
+	/**
+	 * Get the cell style locally or look forward the sheet's style.
+	 * @param local true to get the local style only, 
+	 */
+	public SCellStyle getCellStyle(boolean local);
+	
+	/**
+	 * Set the cell style, give the cell-style to set a local one or null to clean local one
+	 * @param cellStyle the style to set, null to clean local style
+	 */
 	public void setCellStyle(SCellStyle cellStyle);
 	
 	public int getHeight();
