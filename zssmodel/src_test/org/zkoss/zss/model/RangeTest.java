@@ -1,15 +1,12 @@
 package org.zkoss.zss.model;
 
 import static org.junit.Assert.*;
-
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 import java.util.concurrent.atomic.AtomicInteger;
-
 import junit.framework.Assert;
-
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -25,6 +22,7 @@ import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.SBooks;
 import org.zkoss.zss.model.SCell;
 import org.zkoss.zss.model.SCellStyle;
+import org.zkoss.zss.model.SChart.ChartType;
 import org.zkoss.zss.model.SHyperlink;
 import org.zkoss.zss.model.SPicture;
 import org.zkoss.zss.model.SSheet;
@@ -32,9 +30,12 @@ import org.zkoss.zss.model.ViewAnchor;
 import org.zkoss.zss.model.SCell.CellType;
 import org.zkoss.zss.model.SHyperlink.HyperlinkType;
 import org.zkoss.zss.model.SPicture.Format;
-import org.zkoss.zss.model.impl.BookImpl;
+import org.zkoss.zss.model.chart.SGeneralChartData;
+import org.zkoss.zss.model.chart.SSeries;
 import org.zkoss.zss.range.*;
-import org.zkoss.zss.range.impl.imexp.ExcelExportFactory.Type;
+import org.zkoss.zss.range.SRange.DeleteShift;
+import org.zkoss.zss.range.SRange.InsertCopyOrigin;
+import org.zkoss.zss.range.SRange.InsertShift;
 
 public class RangeTest {
 
@@ -453,5 +454,94 @@ C	3	6	9	=SUM(E9:F9)
 		Assert.assertEquals(book.getDefaultCellStyle(), SRanges.range(sheet1,"C1").getCellStyle());
 		Assert.assertEquals(book.getDefaultCellStyle(), SRanges.range(sheet1,"C2").getCellStyle());
 		
+	}
+	
+	@Test
+	public void testShiftChartFormula() {
+		SBook book = SBooks.createBook("Book1");
+		SSheet sheet = book.createSheet("Sheet1");
+		SChart chart = sheet.addChart(ChartType.LINE, new ViewAnchor(0, 0, 100, 100));
+		SGeneralChartData data = (SGeneralChartData)chart.getData();
+		
+		String nameF = "Sheet1:A1";
+		String areaF = "Sheet1:A2:A3";
+		data.setCategoriesFormula(areaF);
+		SSeries series = data.addSeries();
+		series.setXYZFormula(nameF, areaF, areaF, areaF);
+
+		// extend
+		SRanges.range(sheet, "3").getRows().insert(InsertShift.DEFAULT, InsertCopyOrigin.FORMAT_NONE); // whole row
+		areaF = "Sheet1:A2:A4";
+		assertEquals(areaF, data.getCategoriesFormula());
+		assertEquals(nameF, series.getNameFormula());
+		assertEquals(areaF, series.getXValuesFormula());
+		assertEquals(areaF, series.getYValuesFormula());
+		assertEquals(areaF, series.getZValuesFormula());
+		
+		// shrink
+		SRanges.range(sheet, "A3:A4").delete(DeleteShift.UP); // area
+		areaF = "Sheet1:A2:A2";
+		assertEquals(areaF, data.getCategoriesFormula());
+		assertEquals(nameF, series.getNameFormula());
+		assertEquals(areaF, series.getXValuesFormula());
+		assertEquals(areaF, series.getYValuesFormula());
+		assertEquals(areaF, series.getZValuesFormula());
+		
+		// move series name
+		SRanges.range(sheet, "1").getRows().insert(InsertShift.DEFAULT, InsertCopyOrigin.FORMAT_NONE);
+		nameF = "Sheet1:A2";
+		areaF = "Sheet1:A3:A3";
+		assertEquals(areaF, data.getCategoriesFormula());
+		assertEquals(nameF, series.getNameFormula());
+		assertEquals(areaF, series.getXValuesFormula());
+		assertEquals(areaF, series.getYValuesFormula());
+		assertEquals(areaF, series.getZValuesFormula());
+ 
+		// change data to column direction
+		nameF = "Sheet1:A1";
+		areaF = "Sheet1:B1:F1";
+		data.setCategoriesFormula(areaF);
+		series.setXYZFormula(nameF, areaF, areaF, areaF);
+		
+		// extend
+		SRanges.range(sheet, "C:D").getColumns().insert(InsertShift.DEFAULT, InsertCopyOrigin.FORMAT_NONE); // whole column
+		areaF = "Sheet1:B1:H1";
+		assertEquals(areaF, data.getCategoriesFormula());
+		assertEquals(nameF, series.getNameFormula());
+		assertEquals(areaF, series.getXValuesFormula());
+		assertEquals(areaF, series.getYValuesFormula());
+		assertEquals(areaF, series.getZValuesFormula());
+		
+		// shrink
+		SRanges.range(sheet, "B1:F1").delete(DeleteShift.LEFT);
+		areaF = "Sheet1:B1:C1";
+		assertEquals(areaF, data.getCategoriesFormula());
+		assertEquals(nameF, series.getNameFormula());
+		assertEquals(areaF, series.getXValuesFormula());
+		assertEquals(areaF, series.getYValuesFormula());
+		assertEquals(areaF, series.getZValuesFormula());
+
+		// move series name in column direction
+		SRanges.range(sheet, "A1:C1").insert(InsertShift.RIGHT, InsertCopyOrigin.FORMAT_NONE);
+		nameF = "Sheet1:D1";
+		areaF = "Sheet1:E1:F1";
+		assertEquals(areaF, data.getCategoriesFormula());
+		assertEquals(nameF, series.getNameFormula());
+		assertEquals(areaF, series.getXValuesFormula());
+		assertEquals(areaF, series.getYValuesFormula());
+		assertEquals(areaF, series.getZValuesFormula());
+
+		
+		// special cases
+		
+		// delete all
+		SRanges.range(sheet, "B1:F1").delete(DeleteShift.LEFT);
+		nameF = "Sheet1:#REF!";
+		areaF = "Sheet1:#REF!";
+		assertEquals(areaF, data.getCategoriesFormula());
+		assertEquals(nameF, series.getNameFormula());
+		assertEquals(areaF, series.getXValuesFormula());
+		assertEquals(areaF, series.getYValuesFormula());
+		assertEquals(areaF, series.getZValuesFormula());
 	}
 }

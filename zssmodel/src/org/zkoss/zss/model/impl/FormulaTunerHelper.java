@@ -19,8 +19,6 @@ package org.zkoss.zss.model.impl;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
-
-import org.zkoss.util.logging.Log;
 import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.SBookSeries;
 import org.zkoss.zss.model.SCell;
@@ -175,7 +173,7 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 		FormulaEngine engine = getFormulaEngine();
 		FormulaExpression exprAfter = engine.move(expr, sheetRegion, rowOffset, columnOffset, new FormulaParseContext(cell, null));//null ref, no trace dependence here
 		
-		if(!expr.equals(exprAfter)){
+		if(!expr.equals(exprAfter.getFormulaString())){
 			cell.setFormulaValue(exprAfter.getFormulaString());
 			//don't need to notify cell change, cell will do
 		}
@@ -215,17 +213,83 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 			extendDataValidationRef(sheetRegion,(ObjectRef)dependent,horizontal);
 		}		
 	}
-	private void extendChartRef(SheetRegion sheetRegion,ObjectRef dependent, boolean horizontal) {
-		//TODO zss 3.5
-//		NBook book = bookSeries.getBook(dependent.getBookName());
-//		if(book==null) return;
-//		NSheet sheet = book.getSheetByName(dependent.getSheetName());
-//		if(sheet==null) return;
-//		String[] ids = dependent.getObjectIdPath();
-//		NChart chart = sheet.getChart(ids[0]);
-//		if(chart!=null){
-//			chart.getData().clearFormulaResultCache();
-//		}
+
+	private void extendChartRef(SheetRegion sheetRegion, ObjectRef dependent, boolean horizontal) {
+		SBook book = _bookSeries.getBook(dependent.getBookName());
+		if(book == null) {
+			return;
+		}
+		SSheet sheet = book.getSheetByName(dependent.getSheetName());
+		if(sheet == null) {
+			return;
+		}
+		SChart chart = sheet.getChart(dependent.getObjectIdPath()[0]);
+		if(chart == null) {
+			return;
+		}
+		SChartData d = chart.getData();
+		if(!(d instanceof SGeneralChartData)) {
+			return;
+		}
+		SGeneralChartData data = (SGeneralChartData)d;
+		FormulaEngine engine = getFormulaEngine();
+		FormulaParseContext context = new FormulaParseContext(sheet, null);
+		
+		// extend series formula
+		for(int i = 0; i < data.getNumOfSeries(); ++i) {
+			SSeries series = data.getSeries(i);
+			if(series != null) {
+				boolean changed = false;
+				series.clearFormulaResultCache();
+				String nf = series.getNameFormula();
+				String xf = series.getXValuesFormula();
+				String yf = series.getYValuesFormula();
+				String zf = series.getZValuesFormula();
+				if(nf != null) {
+					FormulaExpression expr2 = engine.extend(nf, sheetRegion, horizontal, context);
+					if(!expr2.hasError() && !nf.equals(expr2.getFormulaString())) {
+						nf = expr2.getFormulaString();
+						changed = true;
+					}
+				}
+				if(xf != null) {
+					FormulaExpression expr2 = engine.extend(xf, sheetRegion, horizontal, context);
+					if(!expr2.hasError() && !xf.equals(expr2.getFormulaString())) {
+						xf = expr2.getFormulaString();
+						changed = true;
+					}
+				}
+				if(yf != null) {
+					FormulaExpression expr2 = engine.extend(yf, sheetRegion, horizontal, context);
+					if(!expr2.hasError() && !yf.equals(expr2.getFormulaString())) {
+						yf = expr2.getFormulaString();
+						changed = true;
+					}
+				}
+				if(zf != null) {
+					FormulaExpression expr2 = engine.extend(zf, sheetRegion, horizontal, context);
+					if(!expr2.hasError() && !zf.equals(expr2.getFormulaString())) {
+						zf = expr2.getFormulaString();
+						changed = true;
+					}
+				}
+				if(changed) {
+					series.setXYZFormula(nf, xf, yf, zf);
+				}
+			}
+		}
+		
+		// extend categories formula
+		String expr = data.getCategoriesFormula();
+		if(expr != null) {
+			FormulaExpression exprAfter = engine.extend(expr, sheetRegion,horizontal, context);
+			if(!exprAfter.hasError() && !expr.equals(exprAfter.getFormulaString())) {
+				data.setCategoriesFormula(exprAfter.getFormulaString());
+			}
+		}
+		
+		// notify chart change
+		ModelUpdateUtil.addRefUpdate(dependent);
 	}
 	private void extendDataValidationRef(SheetRegion sheetRegion,ObjectRef dependent, boolean horizontal) {
 		//TODO zss 3.5
@@ -254,7 +318,7 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 		
 		FormulaEngine engine = getFormulaEngine();
 		FormulaExpression exprAfter = engine.extend(expr, sheetRegion,horizontal, new FormulaParseContext(sheet, null));//null ref, no trace dependence here
-		if(!expr.equals(exprAfter)){
+		if(!expr.equals(exprAfter.getFormulaString())){
 			cell.setFormulaValue(exprAfter.getFormulaString());
 			//don't need to notify cell change, cell will do
 		}
@@ -286,16 +350,81 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 		}		
 	}
 	private void shrinkChartRef(SheetRegion sheetRegion,ObjectRef dependent, boolean horizontal) {
-		//TODO zss 3.5
-//		NBook book = bookSeries.getBook(dependent.getBookName());
-//		if(book==null) return;
-//		NSheet sheet = book.getSheetByName(dependent.getSheetName());
-//		if(sheet==null) return;
-//		String[] ids = dependent.getObjectIdPath();
-//		NChart chart = sheet.getChart(ids[0]);
-//		if(chart!=null){
-//			chart.getData().clearFormulaResultCache();
-//		}
+		SBook book = _bookSeries.getBook(dependent.getBookName());
+		if(book == null) {
+			return;
+		}
+		SSheet sheet = book.getSheetByName(dependent.getSheetName());
+		if(sheet == null) {
+			return;
+		}
+		SChart chart = sheet.getChart(dependent.getObjectIdPath()[0]);
+		if(chart == null) {
+			return;
+		}
+		SChartData d = chart.getData();
+		if(!(d instanceof SGeneralChartData)) {
+			return;
+		}
+		SGeneralChartData data = (SGeneralChartData)d;
+		FormulaEngine engine = getFormulaEngine();
+		FormulaParseContext context = new FormulaParseContext(sheet, null);
+		
+		// shrink series formula
+		for(int i = 0; i < data.getNumOfSeries(); ++i) {
+			SSeries series = data.getSeries(i);
+			if(series != null) {
+				boolean changed = false;
+				series.clearFormulaResultCache();
+				String nf = series.getNameFormula();
+				String xf = series.getXValuesFormula();
+				String yf = series.getYValuesFormula();
+				String zf = series.getZValuesFormula();
+				if(nf != null) {
+					FormulaExpression expr2 = engine.shrink(nf, sheetRegion, horizontal, context);
+					if(!expr2.hasError() && !nf.equals(expr2.getFormulaString())) {
+						nf = expr2.getFormulaString();
+						changed = true;
+					}
+				}
+				if(xf != null) {
+					FormulaExpression expr2 = engine.shrink(xf, sheetRegion, horizontal, context);
+					if(!expr2.hasError() && !xf.equals(expr2.getFormulaString())) {
+						xf = expr2.getFormulaString();
+						changed = true;
+					}
+				}
+				if(yf != null) {
+					FormulaExpression expr2 = engine.shrink(yf, sheetRegion, horizontal, context);
+					if(!expr2.hasError() && !yf.equals(expr2.getFormulaString())) {
+						yf = expr2.getFormulaString();
+						changed = true;
+					}
+				}
+				if(zf != null) {
+					FormulaExpression expr2 = engine.shrink(zf, sheetRegion, horizontal, context);
+					if(!expr2.hasError() && !zf.equals(expr2.getFormulaString())) {
+						zf = expr2.getFormulaString();
+						changed = true;
+					}
+				}
+				if(changed) {
+					series.setXYZFormula(nf, xf, yf, zf);
+				}
+			}
+		}
+		
+		// shrink categories formula
+		String expr = data.getCategoriesFormula();
+		if(expr != null) {
+			FormulaExpression exprAfter = engine.shrink(expr, sheetRegion,horizontal, context);
+			if(!exprAfter.hasError() && !expr.equals(exprAfter.getFormulaString())) {
+				data.setCategoriesFormula(exprAfter.getFormulaString());
+			}
+		}
+		
+		// notify chart change
+		ModelUpdateUtil.addRefUpdate(dependent);
 	}
 	private void shrinkDataValidationRef(SheetRegion sheetRegion,ObjectRef dependent, boolean horizontal) {
 		//TODO zss 3.5
@@ -324,7 +453,7 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 		
 		FormulaEngine engine = getFormulaEngine();
 		FormulaExpression exprAfter = engine.shrink(expr, sheetRegion, horizontal, new FormulaParseContext(sheet, null));//null ref, no trace dependence here
-		if(!expr.equals(exprAfter)){
+		if(!expr.equals(exprAfter.getFormulaString())){
 			cell.setFormulaValue(exprAfter.getFormulaString());
 			//don't need to notify cell change, cell will do
 		}
