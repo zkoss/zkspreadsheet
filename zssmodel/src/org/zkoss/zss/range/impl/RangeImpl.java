@@ -284,37 +284,85 @@ public class RangeImpl implements SRange {
 	
 	@Override
 	public void clearContents() {
-		new CellVisitorTask(new CellVisitorForUpdate() {
-			public boolean visit(SCell cell) {
-				if (!cell.isNull()) {
-					cell.setHyperlink(null);
-					cell.clearValue();
-				}
-				return true;
+		new ModelManipulationTask() {
+			@Override
+			protected boolean isCollectModelUpdate(){
+				//it notify change at once for all the cell in the range
+				return false;
 			}
-		}).doInWriteLock(getLock());
+			@Override
+			protected Object doInvoke() {
+				SBookSeries bookSeries = getSheet().getBook().getBookSeries();
+				DependencyTable table = ((AbstractBookSeriesAdv)bookSeries).getDependencyTable();
+				//clear cells instance directly (not just clear it's data, but it instance directly)
+				for (EffectedRegion r : _rangeRefs) {
+					SBook book = r.sheet.getBook();
+					CellRegion region = r.region;
+					new ClearCellHelper(new RangeImpl(r.sheet,r.region)).clearCellContent();
+					
+					handleCellNotifyContentChange(new SheetRegion(r.sheet,r.region));
+					
+					boolean wholeSheet = region.row==0 && region.lastRow>=book.getMaxRowIndex() 
+							&& region.column==0 && region.lastColumn>=book.getMaxColumnIndex();
+					if(!wholeSheet){//no need to notify again if it is whole sheet already
+						handleRefNotifyContentChange(bookSeries, table.getDependents(new RefImpl(r.sheet.getBook().getBookName(),r.sheet.getSheetName(),
+							region.row,region.column,region.lastRow,region.lastColumn)));
+					}
+				}
+				return null;
+			}
+		}.doInWriteLock(getLock());
 	}
+	
+	@Override
+	public void clearCellStyles() {
+		new ModelManipulationTask() {
+			@Override
+			protected boolean isCollectModelUpdate(){
+				//it notify change at once for all the cell in the range
+				return false;
+			}
+			@Override
+			protected Object doInvoke() {
+				for (EffectedRegion r : _rangeRefs) {
+					new ClearCellHelper(new RangeImpl(r.sheet,r.region)).clearCellStyle();
+					handleCellNotifyContentChange(new SheetRegion(r.sheet,r.region));
+				}
+				return null;
+			}
+		}.doInWriteLock(getLock());
+	}	
 
 	@Override
 	public void clearAll() {
-		new ReadWriteTask() {
+		new ModelManipulationTask() {
 			@Override
-			public Object invoke() {
+			protected boolean isCollectModelUpdate(){
+				//it notify change at once for all the cell in the range
+				return false;
+			}
+			@Override
+			protected Object doInvoke() {
 				SBookSeries bookSeries = getSheet().getBook().getBookSeries();
 				DependencyTable table = ((AbstractBookSeriesAdv)bookSeries).getDependencyTable();
 				//clear cells instance directly (not just clear it's data, but it instance directly)
 				for (EffectedRegion r : _rangeRefs) {
 					CellRegion region = r.region;
 					r.sheet.clearCell(region);
-					new SetCellStyleHelper(new RangeImpl(r.sheet,r.region)).clearCellStyle();
+					
+					//we still need to handle the row/column style case.
+					new ClearCellHelper(new RangeImpl(r.sheet,r.region)).clearCellStyle();
 					
 					handleCellNotifyContentChange(new SheetRegion(r.sheet,r.region));
 					handleRefNotifyContentChange(bookSeries, table.getDependents(new RefImpl(r.sheet.getBook().getBookName(),r.sheet.getSheetName(),
 							region.getRow(),region.getColumn(),region.getLastRow(),region.getLastColumn())));
 				}
-				
-				unmerge();
 				return null;
+			}
+			@Override
+			protected void doAfterNotify(){
+				//it's clear all, unmerge the cells
+				unmerge();
 			}
 		}.doInWriteLock(getLock());
 	}
@@ -686,9 +734,9 @@ public class RangeImpl implements SRange {
 
 	public SRange pasteSpecial0(final SRange dstRange, final PasteOption option) {
 		final ResultWrap<CellRegion> effectedRegion = new ResultWrap<CellRegion>();
-		return (SRange)new ModelUpdateTask(){
+		return (SRange)new ModelManipulationTask(){
 			@Override
-			Object doInvokePhase() {
+			protected Object doInvoke() {
 				CellRegion effected = dstRange.getSheet().pasteCell(new SheetRegion(getSheet(),getRow(),getColumn(),getLastRow(),getLastColumn()), 
 						new CellRegion(dstRange.getRow(),dstRange.getColumn(),dstRange.getLastRow(),dstRange.getLastColumn()),
 						option);
@@ -696,7 +744,7 @@ public class RangeImpl implements SRange {
 				return new RangeImpl(getSheet(),effected.getRow(),effected.getColumn(),effected.getLastRow(),effected.getLastColumn());
 			}
 			@Override
-			void doNotifyPhase() {
+			protected void doBeforeNotify() {
 				if(option.getPasteType()==PasteOption.PasteType.COLUMN_WIDTHS){
 					CellRegion effected = effectedRegion.get();
 					new NotifyChangeHelper().notifyRowColumnSizeChange(new SheetRegion(dstRange.getSheet(),effected));
@@ -709,54 +757,46 @@ public class RangeImpl implements SRange {
 
 	@Override
 	public void insert(final InsertShift shift, final InsertCopyOrigin copyOrigin) {
-		new ModelUpdateTask() {
+		new ModelManipulationTask() {
 			@Override
-			Object doInvokePhase() {
+			protected Object doInvoke() {
 				new InsertDeleteHelper(RangeImpl.this).insert(shift, copyOrigin);
 				return null;
 			}
-			@Override
-			void doNotifyPhase() {}
 		}.doInWriteLock(getLock());
 	}
 
 	@Override
 	public void delete(final DeleteShift shift) {
-		new ModelUpdateTask() {
+		new ModelManipulationTask() {
 			@Override
-			Object doInvokePhase() {
+			protected Object doInvoke() {
 				new InsertDeleteHelper(RangeImpl.this).delete(shift);
 				return null;
 			}
-			@Override
-			void doNotifyPhase() {}
 		}.doInWriteLock(getLock());
 	}
 
 	@Override
 	public void merge(final boolean across) {
-		new ModelUpdateTask(){
+		new ModelManipulationTask(){
 			@Override
-			Object doInvokePhase() {
+			protected Object doInvoke() {
 				new MergeHelper(RangeImpl.this).merge(across);
 				return null;
 			}
-			@Override
-			void doNotifyPhase() {}
 			
 		}.doInWriteLock(getLock());
 	}
 
 	@Override
 	public void unmerge() {
-		new ModelUpdateTask(){
+		new ModelManipulationTask(){
 			@Override
-			Object doInvokePhase() {
+			protected Object doInvoke() {
 				new MergeHelper(RangeImpl.this).unmerge(true);
 				return null;
 			}
-			@Override
-			void doNotifyPhase() {}
 			
 		}.doInWriteLock(getLock());
 	}
@@ -764,14 +804,12 @@ public class RangeImpl implements SRange {
 	@Override
 	public void setBorders(final ApplyBorderType borderType,final BorderType lineStyle,
 			final String color) {
-		new ModelUpdateTask(){
+		new ModelManipulationTask(){
 			@Override
-			Object doInvokePhase() {
+			protected Object doInvoke() {
 				new BorderHelper(RangeImpl.this).applyBorder(borderType,lineStyle,color);
 				return null;
 			}
-			@Override
-			void doNotifyPhase() {}
 			
 		}.doInWriteLock(getLock());
 		
@@ -779,15 +817,13 @@ public class RangeImpl implements SRange {
 
 	@Override
 	public void move(final int nRow, final int nCol) {
-		new ModelUpdateTask(){
+		new ModelManipulationTask(){
 			@Override
-			Object doInvokePhase() {
+			protected Object doInvoke() {
 				SSheet sheet = getSheet();
 				sheet.moveCell(getRow(), getColumn(), getLastRow(), getLastColumn(), nRow, nCol); 
 				return null;
 			}
-			@Override
-			void doNotifyPhase() {}
 			
 		}.doInWriteLock(getLock());
 	}
@@ -799,19 +835,6 @@ public class RangeImpl implements SRange {
 			public Object invoke() {
 				for (EffectedRegion r : _rangeRefs) {
 					new SetCellStyleHelper(new RangeImpl(r.sheet,r.region)).setCellStyle(style);	
-				}
-				notifyChangeInLock(false);
-				return null;
-			}
-		}.doInWriteLock(getLock());
-	}
-	@Override
-	public void clearCellStyles() {
-		new ReadWriteTask(){
-			@Override
-			public Object invoke() {
-				for (EffectedRegion r : _rangeRefs) {
-					new SetCellStyleHelper(new RangeImpl(r.sheet,r.region)).clearCellStyle();	
 				}
 				notifyChangeInLock(false);
 				return null;
@@ -838,15 +861,13 @@ public class RangeImpl implements SRange {
 		if(!dstRange.getSheet().equals(sheet)){
 			throw new InvalidModelOpException("the source sheet and destination sheet aren't the same");
 		}
-		new ModelUpdateTask() {
+		new ModelManipulationTask() {
 			@Override
-			Object doInvokePhase() {
+			protected Object doInvoke() {
 				autoFillInLock(new CellRegion(getRow(),getColumn(),getLastRow(),getLastColumn()),
 						new CellRegion(dstRange.getRow(),dstRange.getColumn(),dstRange.getLastRow(),dstRange.getLastColumn()), fillType);
 				return null;
 			}
-			@Override
-			void doNotifyPhase() {}
 		}.doInWriteLock(getLock());
 	}
 	
@@ -857,57 +878,49 @@ public class RangeImpl implements SRange {
 
 	@Override
 	public void fillDown() {
-		new ModelUpdateTask() {
+		new ModelManipulationTask() {
 			@Override
-			Object doInvokePhase() {
+			protected Object doInvoke() {
 				autoFillInLock(new CellRegion(getRow(),getColumn(),getRow(),getLastColumn()),
 						new CellRegion(getRow(),getColumn(),getLastRow(),getLastColumn()), FillType.COPY);
 				return null;
 			}
-			@Override
-			void doNotifyPhase() {}
 		}.doInWriteLock(getLock());
 	}
 
 	@Override
 	public void fillLeft() {
-		new ModelUpdateTask() {
+		new ModelManipulationTask() {
 			@Override
-			Object doInvokePhase() {
+			protected Object doInvoke() {
 				autoFillInLock(new CellRegion(getRow(),getLastColumn(),getLastRow(),getLastColumn()),
 						new CellRegion(getRow(),getColumn(),getLastRow(),getLastColumn()), FillType.COPY);
 				return null;
 			}
-			@Override
-			void doNotifyPhase() {}
 		}.doInWriteLock(getLock());
 	}
 
 	@Override
 	public void fillRight() {
-		new ModelUpdateTask() {
+		new ModelManipulationTask() {
 			@Override
-			Object doInvokePhase() {
+			protected Object doInvoke() {
 				autoFillInLock(new CellRegion(getRow(),getColumn(),getLastRow(),getColumn()),
 						new CellRegion(getRow(),getColumn(),getLastRow(),getLastColumn()), FillType.COPY);
 				return null;
 			}
-			@Override
-			void doNotifyPhase() {}
 		}.doInWriteLock(getLock());
 	}
 
 	@Override
 	public void fillUp() {
-		new ModelUpdateTask() {
+		new ModelManipulationTask() {
 			@Override
-			Object doInvokePhase() {
+			protected Object doInvoke() {
 				autoFillInLock(new CellRegion(getLastRow(),getColumn(),getLastRow(),getLastColumn()),
 						new CellRegion(getRow(),getColumn(),getLastRow(),getLastColumn()), FillType.COPY);
 				return null;
 			}
-			@Override
-			void doNotifyPhase() {}
 		}.doInWriteLock(getLock());
 	}
 
@@ -1104,9 +1117,9 @@ public class RangeImpl implements SRange {
 		final ResultWrap<SSheet> toDeleteSheet = new ResultWrap<SSheet>();
 		final ResultWrap<Integer> toDeleteIndex = new ResultWrap<Integer>();
 		//it just handle the first ref
-		new ModelUpdateTask() {			
+		new ModelManipulationTask() {			
 			@Override
-			public Object doInvokePhase() {
+			protected Object doInvoke() {
 				SBook book = getBook();
 				int sheetCount;
 				if((sheetCount = book.getNumOfSheet())<=1){
@@ -1126,7 +1139,7 @@ public class RangeImpl implements SRange {
 			}
 
 			@Override
-			void doNotifyPhase() {
+			protected void doBeforeNotify() {
 				if(toDeleteSheet.get()!=null){
 					new NotifyChangeHelper().notifySheetDelete(getBook(), toDeleteSheet.get(), toDeleteIndex.get());
 				}
@@ -1138,9 +1151,9 @@ public class RangeImpl implements SRange {
 	public SSheet createSheet(final String name) {
 		final ResultWrap<SSheet> resultSheet = new ResultWrap<SSheet>();
 		//it just handle the first ref
-		return (SSheet)new ModelUpdateTask() {			
+		return (SSheet)new ModelManipulationTask() {			
 			@Override
-			public Object doInvokePhase() {
+			protected Object doInvoke() {
 				SBook book = getBook();
 				SSheet sheet;
 				if (Strings.isBlank(name)) {
@@ -1153,7 +1166,7 @@ public class RangeImpl implements SRange {
 			}
 
 			@Override
-			void doNotifyPhase() {
+			protected void doBeforeNotify() {
 				if(resultSheet.get()!=null){
 					new NotifyChangeHelper().notifySheetCreate(resultSheet.get());
 				}
@@ -1183,9 +1196,9 @@ public class RangeImpl implements SRange {
 		//it just handle the first ref
 		final ResultWrap<SSheet> resultSheet = new ResultWrap<SSheet>();
 		final ResultWrap<String> oldName = new ResultWrap<String>();
-		new ModelUpdateTask() {			
+		new ModelManipulationTask() {			
 			@Override
-			public Object doInvokePhase() {
+			protected Object doInvoke() {
 				SBook book = getBook();
 				SSheet sheet = getSheet();
 				String old = sheet.getSheetName();
@@ -1199,7 +1212,7 @@ public class RangeImpl implements SRange {
 			}
 
 			@Override
-			void doNotifyPhase() {
+			protected void doBeforeNotify() {
 				if(resultSheet.get()!=null){
 					new NotifyChangeHelper().notifySheetNameChange(resultSheet.get(),oldName.get());
 				}
@@ -1212,9 +1225,9 @@ public class RangeImpl implements SRange {
 		//it just handle the first ref
 		final ResultWrap<SSheet> resultSheet = new ResultWrap<SSheet>();
 		final ResultWrap<Integer> oldIdx = new ResultWrap<Integer>();
-		new ModelUpdateTask() {			
+		new ModelManipulationTask() {			
 			@Override
-			public Object doInvokePhase() {
+			protected Object doInvoke() {
 				SBook book = getBook();
 				SSheet sheet = getSheet();
 				
@@ -1231,7 +1244,7 @@ public class RangeImpl implements SRange {
 			}
 
 			@Override
-			void doNotifyPhase() {
+			protected void doBeforeNotify() {
 				if(resultSheet.get()!=null){
 					new NotifyChangeHelper().notifySheetReorder(resultSheet.get(),oldIdx.get());
 				}
@@ -1423,25 +1436,44 @@ public class RangeImpl implements SRange {
 			task.doInReadLock(getLock());
 		}
 	}
-	
-	private abstract class ModelUpdateTask extends ReadWriteTask{
+	/**
+	 * The class that handle the common action when you manipulate the model.
+	 * 1. the formula cache cleaner
+	 * 2. the model update collector
+	 *
+	 */
+	private abstract class ModelManipulationTask extends ReadWriteTask{
 		
-		abstract Object doInvokePhase();
-		abstract void doNotifyPhase();
+		protected abstract Object doInvoke();
+		
+		protected void doBeforeNotify(){
+			//do nothing by default
+		}
+		protected void doAfterNotify(){
+			//do nothing by default
+		}
+		
+		/**
+		 * return info about this task should collect model update or not, return false
+		 * @return true by default
+		 */
+		protected boolean isCollectModelUpdate(){
+			return true;
+		}
 		
 		@Override
 		public Object invoke() {
-			ModelUpdateWrapper updateWrap = new ModelUpdateWrapper(getBookSeries(),true);
+			ModelUpdateWrapper updateWrap = new ModelUpdateWrapper(getBookSeries(),isCollectModelUpdate());
 			Object result = null;
 			try{
-				result = doInvokePhase();
+				result = doInvoke();
 			}finally{
 				updateWrap.doFinially();
 			}
 
-			doNotifyPhase();
+			doBeforeNotify();
 			updateWrap.doNotify();
-			
+			doAfterNotify();
 			return result;
 		}
 	}
@@ -1456,6 +1488,10 @@ public class RangeImpl implements SRange {
 		
 		FormulaCacheCleaner oldClearer;
 		
+		/**
+		 * @param bookSeries
+		 * @param collectUpdate should collect model update or not
+		 */
 		public ModelUpdateWrapper(SBookSeries bookSeries,boolean collectUpdate){
 			this.bookSeries = bookSeries;
 			
@@ -1626,16 +1662,16 @@ public class RangeImpl implements SRange {
 	public void sort(final SRange key1, final boolean descending1, final SortDataOption dataOption1, final SRange key2, final boolean descending2,
 			final SortDataOption dataOption2, final SRange key3, final boolean descending3, final SortDataOption dataOption3,
 			final int hasHeader, final boolean matchCase,final boolean sortByRows) {
-		new ModelUpdateTask() {			
+		new ModelManipulationTask() {			
 			@Override
-			Object doInvokePhase() {
+			protected Object doInvoke() {
 				new SortHelper(RangeImpl.this).sort(key1, descending1, dataOption1, key2, descending2, dataOption2,
 					key3, descending3, dataOption3, hasHeader, matchCase, sortByRows);
 				return null;
 			}
 
 			@Override
-			void doNotifyPhase() {}
+			protected void doBeforeNotify() {}
 		}.doInWriteLock(getLock());			
 	}
 	

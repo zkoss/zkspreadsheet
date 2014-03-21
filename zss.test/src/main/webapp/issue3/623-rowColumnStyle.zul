@@ -9,7 +9,9 @@
 		<button onClick='clearStyle("3:4")'>clear Row(3:4) style</button>
 		<button onClick='clearStyle("D:F")'>clear Column(D:F) style</button>
 		<button onClick='clearStyle("D2:F5")'>clear Column(D2:F5) style</button>
-		<button onClick='clearWholeStyle()'>clear All style</button>
+		<button onClick='clearWhole(0)'>clear All </button>
+		<button onClick='clearWhole(1)'>clear All content</button>
+		<button onClick='clearWhole(2)'>clear All style</button>
 	</hbox>
 	<spreadsheet id="ss" src="/issue3/book/blank.xlsx" maxVisibleRows="200" maxVisibleColumns="40"
 		hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
@@ -24,16 +26,29 @@
 		style.setFillColor(sheet.getBook().createColor(color));
 		org.zkoss.zss.range.SRange range = org.zkoss.zss.range.SRanges.range(sheet,f);
 		range.setCellStyle(style);
+		if(!range.isWholeRow() && !range.isWholeColumn()){
+			range.setEditText("A");//fill data for clear test
+		}
 	}
 	public void clearStyle(String f) {
 		org.zkoss.zss.model.SSheet sheet = ss.getSelectedSSheet();
 		org.zkoss.zss.range.SRange range = org.zkoss.zss.range.SRanges.range(sheet,f);
 		range.clearCellStyles();
 	}
-	public void clearWholeStyle() {
+	public void clearWhole(int action) {
 		org.zkoss.zss.model.SSheet sheet = ss.getSelectedSSheet();
 		org.zkoss.zss.range.SRange range = org.zkoss.zss.range.SRanges.range(sheet,"A1").getColumns().getRows();
-		range.clearCellStyles();
+		switch(action){
+		case 0:
+			range.clearAll();
+			break;
+		case 1:
+			range.clearContents();
+			break;
+		case 2:
+			range.clearCellStyles();
+			break;
+		}
 	}
 	
 	]]></zscript>		
