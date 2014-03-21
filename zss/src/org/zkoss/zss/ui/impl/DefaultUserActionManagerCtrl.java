@@ -36,7 +36,9 @@ import org.zkoss.zss.api.model.CellStyle.Alignment;
 import org.zkoss.zss.api.model.CellStyle.VerticalAlignment;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.api.model.CellStyle.BorderType;
+import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.ui.AuxAction;
+import org.zkoss.zss.ui.CellSelectionType;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.UserActionContext;
 import org.zkoss.zss.ui.UserActionContext.Clipboard;
@@ -366,6 +368,7 @@ public class DefaultUserActionManagerCtrl implements UserActionManagerCtrl,UserA
 		Sheet sheet = spreadsheet.getSelectedSheet();
 		String action = "";
 		AreaRef selection;
+		AreaRef uiSelection = spreadsheet.getSelection();
 		Map extraData = null;
 		if(Events.ON_CTRL_KEY.equals(nm)){
 			//respect zss key-even't selection 
@@ -380,7 +383,7 @@ public class DefaultUserActionManagerCtrl implements UserActionManagerCtrl,UserA
 			action = evt.getAction();
 			extraData = new HashMap(evt.getExtraData());
 		}else{
-			selection = spreadsheet.getSelection();
+			selection = uiSelection;
 		}
 		
 		if(extraData==null){
@@ -390,9 +393,18 @@ public class DefaultUserActionManagerCtrl implements UserActionManagerCtrl,UserA
 		AreaRef visibleSelection = new AreaRef(selection.getRow(), selection.getColumn(), Math.min(
 		spreadsheet.getMaxVisibleRows(), selection.getLastRow()), Math.min(
 					    spreadsheet.getMaxVisibleColumns(), selection.getLastColumn()));
+		CellSelectionType _selectionType;
+		
+		SBook sbook = book.getInternalBook();
+		
+		boolean wholeRow = uiSelection.getColumn()==0 && uiSelection.getLastColumn()>=sbook.getMaxColumnIndex();
+		boolean wholeColumn = uiSelection.getRow()==0 && uiSelection.getLastRow()>=sbook.getMaxRowIndex();
+		boolean wholeSheet = wholeRow&&wholeColumn;
+		
+		_selectionType = wholeSheet?CellSelectionType.ALL:wholeRow?CellSelectionType.ROW:wholeColumn?CellSelectionType.COLUMN:CellSelectionType.CELL;
 		
 		if(Events.ON_AUX_ACTION.equals(nm)){
-			UserActionContextImpl ctx = new UserActionContextImpl(_sparedsheet,event,book,sheet,visibleSelection,extraData,Category.AUXACTION.getName(),action);
+			UserActionContextImpl ctx = new UserActionContextImpl(_sparedsheet,event,book,sheet,visibleSelection,_selectionType,extraData,Category.AUXACTION.getName(),action);
 			dispatchAuxAction(ctx);//aux action
 		}else if(Events.ON_SHEET_SELECT.equals(nm)){
 			
@@ -405,7 +417,7 @@ public class DefaultUserActionManagerCtrl implements UserActionManagerCtrl,UserA
 		}else if(Events.ON_CTRL_KEY.equals(nm)){
 			KeyEvent kevt = (KeyEvent)event;
 			
-			UserActionContextImpl ctx = new UserActionContextImpl(_sparedsheet,event,book,sheet,visibleSelection,extraData,Category.KEYSTROKE.getName(),action);
+			UserActionContextImpl ctx = new UserActionContextImpl(_sparedsheet,event,book,sheet,visibleSelection,_selectionType,extraData,Category.KEYSTROKE.getName(),action);
 			
 			boolean r = dispatchKeyAction(ctx);
 			if(r){
@@ -535,16 +547,19 @@ public class DefaultUserActionManagerCtrl implements UserActionManagerCtrl,UserA
 		Book _book;
 		Sheet _sheet;
 		AreaRef _selection;
+		CellSelectionType _selectionType;
 		Map<String,Object> _data;
+		
 		String _category;
 		String _action;
 		Event _event;
-		public UserActionContextImpl(Spreadsheet ss,Event event,Book book,Sheet sheet,AreaRef selection,Map<String,Object> data,
+		public UserActionContextImpl(Spreadsheet ss,Event event,Book book,Sheet sheet,AreaRef selection,CellSelectionType selectionType,Map<String,Object> data,
 				String category,String action){
 			this._spreadsheet = ss;
 			this._sheet = sheet;
 			this._book = book;
 			this._selection = selection;
+			this._selectionType = selectionType;
 			this._data = data;
 			this._category = category;
 			this._action = action;
@@ -572,6 +587,10 @@ public class DefaultUserActionManagerCtrl implements UserActionManagerCtrl,UserA
 		@Override
 		public AreaRef getSelection() {
 			return _selection;
+		}
+		
+		public CellSelectionType getSelectionType(){
+			return _selectionType;
 		}
 
 		@Override

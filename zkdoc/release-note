@@ -38,6 +38,7 @@ ZK Spreadsheet 3.5.0
 
   * Following api are changed
     * addChart() : It will add the chart directly from the selected area/data in the range
+    * CellSelectionType is moved from org.zkoss.zss.ui.event to org.zkoss.zss.ui
 
   * Following api are deprecated
     * Range.SyncLevel and Range.setSyncLevel() :  It is always synchronized on Book by a read-write lock.  

@@ -14,7 +14,10 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 {{IS_RIGHT
 }}IS_RIGHT
 */
-package org.zkoss.zss.ui.event;
+package org.zkoss.zss.ui;
+
+import org.zkoss.zss.ui.event.CellSelectionEvent;
+import org.zkoss.zss.ui.event.CellSelectionUpdateEvent;
 
 /**
  * Cell selection type about {@link CellSelectionEvent} and {@link CellSelectionUpdateEvent}

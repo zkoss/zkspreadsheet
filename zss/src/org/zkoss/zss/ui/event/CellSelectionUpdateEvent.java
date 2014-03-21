@@ -20,6 +20,7 @@ package org.zkoss.zss.ui.event;
 
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zss.api.model.Sheet;
+import org.zkoss.zss.ui.CellSelectionType;
 /**
  * Event about selection update of cells
  * @author Dennis.Chen

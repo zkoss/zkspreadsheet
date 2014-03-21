@@ -30,9 +30,9 @@ import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.api.model.impl.SheetImpl;
 import org.zkoss.zss.model.SBook;
+import org.zkoss.zss.ui.CellSelectionType;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.event.CellSelectionEvent;
-import org.zkoss.zss.ui.event.CellSelectionType;
 import org.zkoss.zss.ui.sys.SpreadsheetInCtrl;
 
 

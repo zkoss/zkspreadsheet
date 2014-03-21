@@ -21,6 +21,7 @@ package org.zkoss.zss.ui.event;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zss.api.model.Sheet;
+import org.zkoss.zss.ui.CellSelectionType;
 
 /**
  * Event class about selection of cell

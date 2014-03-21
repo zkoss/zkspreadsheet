@@ -38,6 +38,11 @@ public interface UserActionContext {
 	
 	public AreaRef getSelection(); //may be highlight area
 	
+	/**
+	 * @since 3.5.0
+	 */
+	public CellSelectionType getSelectionType();
+	
 	public Object getData(String key);
 	
 	public String getCategory();
