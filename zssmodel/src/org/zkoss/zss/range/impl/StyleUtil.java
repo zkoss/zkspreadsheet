@@ -21,6 +21,7 @@ package org.zkoss.zss.range.impl;
 import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.SCell;
 import org.zkoss.zss.model.SCellStyle;
+import org.zkoss.zss.model.SCellStyleHolder;
 import org.zkoss.zss.model.SColor;
 import org.zkoss.zss.model.SFont;
 import org.zkoss.zss.model.SSheet;
@@ -36,6 +37,10 @@ public class StyleUtil {
 	
 	public static SCellStyle cloneCellStyle(SCell cell) {
 		final SCellStyle destination = cell.getSheet().getBook().createCellStyle(cell.getCellStyle(), true);
+		return destination;
+	}
+	public static SCellStyle cloneCellStyle(SBook book,SCellStyle style) {
+		final SCellStyle destination = book.createCellStyle(style, true);
 		return destination;
 	}
 	
@@ -85,10 +90,8 @@ public class StyleUtil {
 	}
 	
 	
-	public static void setFillColor(SSheet sheet, int row, int col, String htmlColor){
-		final SBook book = sheet.getBook();
-		final SCell cell = sheet.getCell(row,col);
-		final SCellStyle orgStyle = cell.getCellStyle();
+	public static void setFillColor(SBook book,SCellStyleHolder holder, String htmlColor){
+		final SCellStyle orgStyle = holder.getCellStyle();
 		final SColor orgColor = orgStyle.getFillColor();
 		final SColor newColor = book.createColor(htmlColor);
 		if (orgColor == newColor || orgColor != null  && orgColor.equals(newColor)) { //no change, skip
@@ -101,11 +104,11 @@ public class StyleUtil {
 		
 		SCellStyle style = book.searchCellStyle(matcher);
 		if(style==null){
-			style = cloneCellStyle(cell);
+			style = cloneCellStyle(book,style);
 			style.setFillColor(newColor);
 			style.setFillPattern(SCellStyle.FillPattern.SOLID_FOREGROUND);
 		}
-		cell.setCellStyle(style);
+		holder.setCellStyle(style);
 		
 	}
 	

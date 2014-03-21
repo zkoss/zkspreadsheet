@@ -25,7 +25,7 @@ import org.zkoss.zss.model.SHyperlink.HyperlinkType;
  * @author dennis
  * @since 3.5.0
  */
-public interface SCell extends FormulaContent{
+public interface SCell extends SCellStyleHolder,FormulaContent{
 
 	/**
 	 * @since 3.5.0
@@ -79,24 +79,6 @@ public interface SCell extends FormulaContent{
 	public int getColumnIndex();
 	
 	public String getReferenceString();
-	
-	/**
-	 * Get the cell style, it always looks forward the row, column and sheet's style local style is null.
-	 * @see #getCellStyle(boolean)
-	 */
-	public SCellStyle getCellStyle();
-	
-	/**
-	 * Set the cell style, give the cell-style to set a local one or null to clean local one
-	 * @param cellStyle the style to set, null to clean local style
-	 */
-	public void setCellStyle(SCellStyle cellStyle);
-	
-	/**
-	 * Get the cell style locally or look forward the row, column and sheet's style.
-	 * @param local true to get the local style only, 
-	 */
-	public SCellStyle getCellStyle(boolean local);
 	
 	public SHyperlink getHyperlink();
 	

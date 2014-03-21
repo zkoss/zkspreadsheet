@@ -723,6 +723,10 @@ public class RangeImpl implements Range{
 	public String asString() {
 		return Ranges.getAreaRefString(getSheet(), getRow(),getColumn(),getLastRow(),getLastColumn());
 	}
+	@Override
+	public SRange getInternalRange() {
+		return _range;
+	}
 		
 
 }

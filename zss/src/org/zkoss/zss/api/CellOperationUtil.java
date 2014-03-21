@@ -45,6 +45,7 @@ import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.model.sys.EngineFactory;
 import org.zkoss.zss.model.sys.format.FormatContext;
 import org.zkoss.zss.range.impl.StyleUtil;
+import org.zkoss.zss.range.impl.WholeStyleUtil;
 
 /**
  * The utility to help UI to deal with user's cell operation of a {@link Range}.
@@ -308,9 +309,15 @@ public class CellOperationUtil {
 	}
 	
 	public static CellStyleApplier getFillColorApplier(final Color color) {
-		return new CellStyleApplier() {
+		return new CellStyleApplierEx() {
 				public void apply(Range range) {
-					StyleUtil.setFillColor(((SheetImpl)range.getSheet()).getNative(),range.getRow(),range.getColumn(),color.getHtmlColor());
+					SSheet sheet = range.getSheet().getInternalSheet();
+					StyleUtil.setFillColor(sheet.getBook(),sheet.getCell(range.getRow(),range.getColumn()),color.getHtmlColor());
+				}
+
+				@Override
+				public void applyWhole(Range wholeRange) {
+					WholeStyleUtil.setFillColor(wholeRange.getInternalRange(), color.getHtmlColor());
 				}
 		};
 	}
@@ -398,6 +405,13 @@ public class CellOperationUtil {
 		/** apply style to new cell**/
 		public void apply(Range cellRange);
 	}
+	/**
+	 * Interface for help apply whole row,column style
+	 */
+	public interface CellStyleApplierEx extends CellStyleApplier{
+		/** apply style to new cell**/
+		public void applyWhole(Range cellRange);
+	}
 	
 	/**
 	 * Apply style according to the cell style applier
@@ -411,24 +425,29 @@ public class CellOperationUtil {
 		// font)
 		if(range.isProtected())
 			return;
-		range.visit(new CellVisitor() {
-			@Override
-			public boolean visit(Range cellRange) {
-				// set the apply
-				applyer.apply(cellRange);
-				return true;
-			}
-
-			@Override
-			public boolean ignoreIfNotExist(int row, int column) {
-				return false;
-			}
-
-			@Override
-			public boolean createIfNotExist(int row, int column) {
-				return true;
-			}
-		});
+		
+		if(applyer instanceof CellStyleApplierEx && (range.isWholeRow() || range.isWholeColumn())){
+			((CellStyleApplierEx)applyer).applyWhole(range);
+		}else{
+			range.visit(new CellVisitor() {
+				@Override
+				public boolean visit(Range cellRange) {
+					// set the apply
+					applyer.apply(cellRange);
+					return true;
+				}
+	
+				@Override
+				public boolean ignoreIfNotExist(int row, int column) {
+					return false;
+				}
+	
+				@Override
+				public boolean createIfNotExist(int row, int column) {
+					return true;
+				}
+			});
+		}
 		range.notifyChange();
 	}
 	

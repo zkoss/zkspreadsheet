@@ -39,6 +39,7 @@ import org.zkoss.zss.api.model.Hyperlink.HyperlinkType;
 import org.zkoss.zss.api.model.Picture;
 import org.zkoss.zss.api.model.Picture.Format;
 import org.zkoss.zss.api.model.Sheet;
+import org.zkoss.zss.range.SRange;
 
 /**
  * Range can represent a cell, a row, a column, a selection of cells containing one or 
@@ -781,4 +782,11 @@ public interface Range {
 	 * @since 3.5.0
 	 */
 	public void updateChart(Chart chart);
+	
+	
+	/**
+	 * Get internal range implementation
+	 * @since 3.5.0
+	 */
+	public SRange getInternalRange();
 }
