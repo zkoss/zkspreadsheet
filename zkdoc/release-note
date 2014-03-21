@@ -77,6 +77,7 @@ ZK Spreadsheet 2.6.0
 	ZSS-575 Cannot edit a formula with non-existed named range
 	ZSS-569 Range.notifyChange can't update formula value
 	ZSS-286 Focused Cell is getting completely white in IE10
+	ZSS-621 Delete the cell with a shared formula and export, spreadsheet cannot load the file back correctly
 
 ZK Spreadsheet 2.5.0
 *Features:   

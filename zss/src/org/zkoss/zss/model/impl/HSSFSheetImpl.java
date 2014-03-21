@@ -16,10 +16,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
 import org.zkoss.lang.Classes;
 import org.zkoss.lang.Library;
 import org.zkoss.poi.hssf.model.HSSFFormulaParser;
@@ -32,8 +32,10 @@ import org.zkoss.poi.hssf.record.NameRecord;
 import org.zkoss.poi.hssf.record.NoteRecord;
 import org.zkoss.poi.hssf.record.Record;
 import org.zkoss.poi.hssf.record.RecordBase;
+import org.zkoss.poi.hssf.record.SharedFormulaRecord;
 import org.zkoss.poi.hssf.record.aggregates.DataValidityTable;
 import org.zkoss.poi.hssf.record.aggregates.RecordAggregate.RecordVisitor;
+import org.zkoss.poi.hssf.record.aggregates.RowRecordsAggregate;
 import org.zkoss.poi.ss.formula.ptg.Ptg;
 import org.zkoss.poi.hssf.usermodel.HSSFCell;
 import org.zkoss.poi.hssf.usermodel.HSSFCellHelper;
@@ -57,8 +59,10 @@ import org.zkoss.poi.ss.usermodel.Picture;
 import org.zkoss.poi.ss.usermodel.PivotTable;
 import org.zkoss.poi.ss.usermodel.Row;
 import org.zkoss.poi.ss.usermodel.DataValidationConstraint.ValidationType;
+import org.zkoss.poi.ss.util.AreaReference;
 import org.zkoss.poi.ss.util.CellRangeAddress;
 import org.zkoss.poi.ss.util.CellRangeAddressList;
+import org.zkoss.poi.ss.util.CellReference;
 import org.zkoss.zss.model.Book;
 import org.zkoss.zss.model.Range;
 import org.zkoss.zss.model.Worksheet;
@@ -1314,5 +1318,26 @@ public class HSSFSheetImpl extends HSSFSheet implements SheetCtrl, Worksheet {
 	@Override
 	public void whenRenameSheet(String oldname, String newname) {
 		getSheetCtrl().whenRenameSheet(oldname, newname);
+	}
+
+	@Override
+	public List<AreaReference> getSharedFormulaReferences() {
+		final List<AreaReference> references = new LinkedList<AreaReference>();
+		InternalSheet internalSheet = this._helper.getInternalSheet();
+		RowRecordsAggregate rowRecords = internalSheet.getRowsAggregate();
+		rowRecords.visitContainedRecords(new RecordVisitor() {
+			@Override
+			public void visitRecord(Record r) {
+				if(r.getSid() != SharedFormulaRecord.sid) {
+					return;
+				}
+				SharedFormulaRecord sfr = (SharedFormulaRecord)r;
+				CellReference first = new CellReference(sfr.getFirstRow(), sfr.getFirstColumn());
+				CellReference last = new CellReference(sfr.getLastRow(), sfr.getLastColumn());
+				references.add(new AreaReference(first, last));
+				// Note that there is a shared formula recode if and only if > 5 cells shared same formula in Excel 
+			}
+		});
+		return references;
 	}
 }

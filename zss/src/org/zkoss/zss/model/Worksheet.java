@@ -13,11 +13,11 @@ Copyright (C) 2010 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.model;
 
 import java.util.List;
-
 import org.zkoss.poi.ss.usermodel.Chart;
 import org.zkoss.poi.ss.usermodel.DataValidation;
 import org.zkoss.poi.ss.usermodel.Picture;
 import org.zkoss.poi.ss.usermodel.PivotTable;
+import org.zkoss.poi.ss.util.AreaReference;
 
 /**
  * ZK Spreadsheet sheet.
@@ -54,4 +54,9 @@ public interface Worksheet extends org.zkoss.poi.ss.usermodel.Sheet {
      * @return
      */
     public List<PivotTable> getPivotTables();
+    
+    /**
+     * @return a list contains shared formula references, never null.
+     */
+    public List<AreaReference> getSharedFormulaReferences();
 }

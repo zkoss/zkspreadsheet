@@ -12,26 +12,28 @@ Copyright (C) 2010 Potix Corporation. All Rights Reserved.
 
 package org.zkoss.zss.model.impl;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
-
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellFormula;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComment;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCommentList;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPane;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRow;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetView;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetViews;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellFormulaType;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPaneState;
 import org.zkoss.lang.Classes;
 import org.zkoss.lang.Library;
@@ -48,8 +50,8 @@ import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.poi.ss.usermodel.CellStyle;
 import org.zkoss.poi.ss.usermodel.Chart;
 import org.zkoss.poi.ss.usermodel.Picture;
-import org.zkoss.poi.ss.usermodel.PivotTable;
 import org.zkoss.poi.ss.usermodel.Row;
+import org.zkoss.poi.ss.util.AreaReference;
 import org.zkoss.poi.ss.util.CellRangeAddress;
 import org.zkoss.poi.ss.util.CellReference;
 import org.zkoss.poi.xssf.model.CommentsTable;
@@ -1261,5 +1263,21 @@ public class XSSFSheetImpl extends XSSFSheet implements SheetCtrl, Worksheet {
 				}
 			}
 		}
+	}
+
+	@Override
+	public List<AreaReference> getSharedFormulaReferences() {
+		List<AreaReference> references = new LinkedList<AreaReference>();
+		List<CTRow> rows = worksheet.getSheetData().getRowList();
+		for(CTRow row : rows) {
+			List<CTCell> cells = row.getCList();
+			for(CTCell cell : cells) {
+				CTCellFormula f = cell.getF();
+				if(f != null && f.getT() == STCellFormulaType.SHARED && f.isSetRef()) {
+					references.add(new AreaReference(f.getRef()));
+				}
+			}
+		}
+		return references;
 	}
 }	
