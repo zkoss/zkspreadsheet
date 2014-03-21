@@ -12,6 +12,7 @@ ZK Spreadsheet 3.0.2
   ZSS-589 Hidden rows are still displayed in IE
   ZSS-617 After spreadsheet loads a book, a mask is blocking the sheet
   ZSS-612 Cannot sort files name value in ZSS app "Open Book Dialog"
+  ZSS-616 Selection box is displayed at wrong position
   
 ** Upgrade Notes
   
