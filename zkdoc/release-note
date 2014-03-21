@@ -28,6 +28,9 @@ ZK Spreadsheet 3.5.0
   ZSS-619 Wrong evaluation result after insert/delete
   ZSS-620 Large response data when update a big region with same style
   ZSS-600 First time right click shows empty context menu
+  ZSS-589 Hidden rows are still displayed in IE
+  ZSS-617 After spreadsheet loads a book, a mask is blocking the sheet
+  ZSS-612 Cannot sort files name value in ZSS app "Open Book Dialog"
 
   
 ** Upgrade Notes
