@@ -1,6 +1,7 @@
 package org.zkoss.zss.api.impl;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Locale;
@@ -9,6 +10,9 @@ import org.junit.*;
 import org.zkoss.poi.ss.usermodel.ErrorConstants;
 import org.zkoss.zss.*;
 import org.zkoss.zss.api.*;
+import org.zkoss.zss.api.Range.DeleteShift;
+import org.zkoss.zss.api.Range.InsertCopyOrigin;
+import org.zkoss.zss.api.Range.InsertShift;
 import org.zkoss.zss.api.model.*;
 
 /**
@@ -202,4 +206,111 @@ public class Issue500Test {
 		Assert.assertEquals(new Double(3.0), Ranges.range(book.getSheetAt(1), "F1").getCellValue()); 
 		// NOTE, there should not be any exception
 	}
+	
+	@Test
+	public void testZSS592() {
+		Book book = Util.loadBook(this, "book/blank.xlsx");
+		Sheet sheet = book.getSheet("Sheet1");
+		
+		String[] columns = {"A", "B", "C", "D", "E"};
+		
+		Ranges.range(sheet).setFreezePanel(5, 5);
+		// ======= Insert
+		for(int i = 1; i < 6; i++) {
+			try {
+				Ranges.range(sheet, i+":"+i).toRowRange().insert(InsertShift.DEFAULT, InsertCopyOrigin.FORMAT_LEFT_ABOVE);
+			} catch(IllegalOpArgumentException e) {
+				continue;
+			}
+			fail(); // if doesn't continue, it fail!
+		}
+		
+		for(int i = 1; i < 6; i++) {
+			try {
+				Ranges.range(sheet, columns[i-1]+":"+columns[i-1]).toColumnRange().insert(InsertShift.DEFAULT, InsertCopyOrigin.FORMAT_LEFT_ABOVE);
+			} catch(IllegalOpArgumentException e) {
+				continue;
+			}
+			fail(); // if doesn't continue, it fail!
+		}
+		
+		// ======= Delete
+		for(int i = 1; i < 6; i++) {
+			try {
+				Ranges.range(sheet, i+":"+i).toRowRange().delete(DeleteShift.DEFAULT);
+			} catch(IllegalOpArgumentException e) {
+				continue;
+			}
+			fail(); // if doesn't continue, it fail!
+		}
+		
+		for(int i = 1; i < 6; i++) {
+			try {
+				Ranges.range(sheet, columns[i-1]+":"+columns[i-1]).toColumnRange().delete(DeleteShift.DEFAULT);
+			} catch(IllegalOpArgumentException e) {
+				continue;
+			}
+			fail(); // if doesn't continue, it fail!
+		}
+		
+	}
+	
+	@Test
+	public void testZSS595_Row() {
+		Book book = Util.loadBook(this, "book/blank.xlsx");
+		Sheet sheet = book.getSheet("Sheet1");
+		Ranges.range(sheet).setFreezePanel(5, 0);
+		
+		// === Insert
+		for(int i = 1; i < 6; i++) {
+			try {
+				Ranges.range(sheet, i+":6").toRowRange().insert(InsertShift.DEFAULT, InsertCopyOrigin.FORMAT_LEFT_ABOVE);
+			} catch(IllegalOpArgumentException e) {
+				continue;
+			}
+			fail(); // if doesn't continue, it fail!
+		}
+		
+		// == Delete
+		for(int i = 1; i < 6; i++) {
+			try {
+				Ranges.range(sheet, i+":6").toRowRange().delete(DeleteShift.DEFAULT);
+			} catch(IllegalOpArgumentException e) {
+				continue;
+			}
+			fail(); // if doesn't continue, it fail!
+		}
+	}
+	
+	@Test
+	public void testZSS595_Column() {
+		Book book = Util.loadBook(this, "book/blank.xlsx");
+		Sheet sheet = book.getSheet("Sheet1");
+		
+		String[] columns = {"A", "B", "C", "D", "E"};
+		Ranges.range(sheet).setFreezePanel(0, 5);
+		
+		// === Insert
+		for(int i = 1; i < 6; i++) {
+			try {
+				Ranges.range(sheet, columns[i-1]+":G").toColumnRange().insert(InsertShift.DEFAULT, InsertCopyOrigin.FORMAT_LEFT_ABOVE);
+			} catch(IllegalOpArgumentException e) {
+				continue;
+			}
+			fail(); // if doesn't continue, it fail!
+		}
+		
+		// == Delete
+		for(int i = 1; i < 6; i++) {
+			try {
+				Ranges.range(sheet, columns[i-1]+":G").toColumnRange().delete(DeleteShift.DEFAULT);
+			} catch(IllegalOpArgumentException e) {
+				continue;
+			}
+			fail(); // if doesn't continue, it fail!
+		}
+
+	}
+	
+	
 }
