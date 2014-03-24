@@ -44,10 +44,8 @@ public class StyleUtil {
 		return destination;
 	}
 	
-	public static void setFontColor(SSheet sheet, int row, int col, String color/*,HashMap<Integer,NCellStyle> cache*/){
-		final SCell cell = sheet.getCell(row,col);
-		final SBook book = sheet.getBook();
-		final SCellStyle orgStyle = cell.getCellStyle();
+	public static void setFontColor(SBook book,SCellStyleHolder holder, String color/*,HashMap<Integer,NCellStyle> cache*/){
+		final SCellStyle orgStyle = holder.getCellStyle();
 		SFont orgFont = orgStyle.getFont();
 		final SColor orgColor = orgFont.getColor();
 		final SColor newColor = book.createColor(color);
@@ -79,10 +77,10 @@ public class StyleUtil {
 		}
 		
 		if(style==null){
-			style = cloneCellStyle(cell);
+			style = cloneCellStyle(book,orgStyle);
 			style.setFont(font);
 		}
-		cell.setCellStyle(style);
+		holder.setCellStyle(style);
 		
 //		if(cache!=null){
 //			cache.put((int)orgStyle.getIndex(), style);
@@ -129,10 +127,8 @@ public class StyleUtil {
 		holder.setCellStyle(style);
 	}
 	
-	public static void setFontHeightPoints(SSheet sheet,int row,int col,int fontHeightPoints){
-		final SCell cell = sheet.getCell(row,col);
-		final SBook book = sheet.getBook();
-		final SCellStyle orgStyle = cell.getCellStyle();
+	public static void setFontHeightPoints(SBook book,SCellStyleHolder holder,int fontHeightPoints){
+		final SCellStyle orgStyle = holder.getCellStyle();
 		SFont orgFont = orgStyle.getFont();
 		
 		final int orgSize = orgFont.getHeightPoints();
@@ -156,16 +152,14 @@ public class StyleUtil {
 		}
 		
 		if(style==null){
-			style = cloneCellStyle(cell);
+			style = cloneCellStyle(book,orgStyle);
 			style.setFont(font);
 		}
-		cell.setCellStyle(style);
+		holder.setCellStyle(style);
 	}
 	
-	public static void setFontStrikethrough(SSheet sheet,int row,int col, boolean strikeout){
-		final SCell cell = sheet.getCell(row,col);
-		final SBook book = sheet.getBook();
-		final SCellStyle orgStyle = cell.getCellStyle();
+	public static void setFontStrikethrough(SBook book,SCellStyleHolder holder, boolean strikeout){
+		final SCellStyle orgStyle = holder.getCellStyle();
 		SFont orgFont = orgStyle.getFont();
 		
 		final boolean orgStrikeout = orgFont.isStrikeout();
@@ -189,17 +183,15 @@ public class StyleUtil {
 		}
 		
 		if(style==null){
-			style = cloneCellStyle(cell);
+			style = cloneCellStyle(book,orgStyle);
 			style.setFont(font);
 		}
-		cell.setCellStyle(style);
+		holder.setCellStyle(style);
 		
 	}
 	
-	public static void setFontName(SSheet sheet,int row,int col,String name){
-		final SCell cell = sheet.getCell(row,col);
-		final SBook book = sheet.getBook();
-		final SCellStyle orgStyle = cell.getCellStyle();
+	public static void setFontName(SBook book,SCellStyleHolder holder,String name){
+		final SCellStyle orgStyle = holder.getCellStyle();
 		SFont orgFont = orgStyle.getFont();
 		
 		final String orgName = orgFont.getName();
@@ -223,10 +215,10 @@ public class StyleUtil {
 		}
 		
 		if(style==null){
-			style = cloneCellStyle(cell);
+			style = cloneCellStyle(book,orgStyle);
 			style.setFont(font);
 		}
-		cell.setCellStyle(style);
+		holder.setCellStyle(style);
 		
 	}
 	
@@ -334,10 +326,8 @@ public class StyleUtil {
 //		System.out.println(">>"+sb.toString());
 //	}
 	
-	public static void setFontBoldWeight(SSheet sheet,int row,int col,SFont.Boldweight boldWeight){
-		final SCell cell = sheet.getCell(row,col);
-		final SBook book = sheet.getBook();
-		final SCellStyle orgStyle = cell.getCellStyle();
+	public static void setFontBoldWeight(SBook book,SCellStyleHolder holder,SFont.Boldweight boldWeight){
+		final SCellStyle orgStyle = holder.getCellStyle();
 		SFont orgFont = orgStyle.getFont();
 		
 		final SFont.Boldweight orgBoldWeight = orgFont.getBoldweight();
@@ -361,16 +351,14 @@ public class StyleUtil {
 		}
 		
 		if(style==null){
-			style = cloneCellStyle(cell);
+			style = cloneCellStyle(book,orgStyle);
 			style.setFont(font);
 		}
-		cell.setCellStyle(style);
+		holder.setCellStyle(style);
 	}
 	
-	public static void setFontItalic(SSheet sheet, int row, int col, boolean italic) {
-		final SCell cell = sheet.getCell(row,col);
-		final SBook book = sheet.getBook();
-		final SCellStyle orgStyle = cell.getCellStyle();
+	public static void setFontItalic(SBook book,SCellStyleHolder holder, boolean italic) {
+		final SCellStyle orgStyle = holder.getCellStyle();
 		SFont orgFont = orgStyle.getFont();
 		
 		final boolean orgItalic = orgFont.isItalic();
@@ -394,17 +382,15 @@ public class StyleUtil {
 		}
 		
 		if(style==null){
-			style = cloneCellStyle(cell);
+			style = cloneCellStyle(book,orgStyle);
 			style.setFont(font);
 		}
-		cell.setCellStyle(style);
+		holder.setCellStyle(style);
 		
 	}
 	
-	public static void setFontUnderline(SSheet sheet,int row,int col, SFont.Underline underline){
-		final SCell cell = sheet.getCell(row,col);
-		final SBook book = sheet.getBook();
-		final SCellStyle orgStyle = cell.getCellStyle();
+	public static void setFontUnderline(SBook book,SCellStyleHolder holder, SFont.Underline underline){
+		final SCellStyle orgStyle = holder.getCellStyle();
 		SFont orgFont = orgStyle.getFont();
 		
 		final SFont.Underline orgUnderline = orgFont.getUnderline();
@@ -428,10 +414,10 @@ public class StyleUtil {
 		}
 		
 		if(style==null){
-			style = cloneCellStyle(cell);
+			style = cloneCellStyle(book,orgStyle);
 			style.setFont(font);
 		}
-		cell.setCellStyle(style);
+		holder.setCellStyle(style);
 	}
 	
 	public static void setTextHAlign(SBook book,SCellStyleHolder holder, SCellStyle.Alignment align){

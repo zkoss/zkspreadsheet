@@ -137,5 +137,65 @@ public class WholeStyleUtil {
 			public void applyStyle(SCellStyleHolder holder) {
 				StyleUtil.setDataFormat(wholeRange.getSheet().getBook(), holder, format);
 			}});
+	}
+
+	public static void setFontName(final SRange wholeRange,final String fontName) {
+		setWholeStyle(wholeRange,new StyleApplyer(){
+			@Override
+			public void applyStyle(SCellStyleHolder holder) {
+				StyleUtil.setFontName(wholeRange.getSheet().getBook(), holder, fontName);
+			}});
+	}
+
+	public static void setFontHeightPoints(final SRange wholeRange,
+			final int fontHeightPoints) {
+		setWholeStyle(wholeRange,new StyleApplyer(){
+			@Override
+			public void applyStyle(SCellStyleHolder holder) {
+				StyleUtil.setFontHeightPoints(wholeRange.getSheet().getBook(), holder, fontHeightPoints);
+			}});
+	}
+
+	public static void setFontBoldWeight(final SRange wholeRange,
+			final org.zkoss.zss.model.SFont.Boldweight fontBoldweight) {
+		setWholeStyle(wholeRange,new StyleApplyer(){
+			@Override
+			public void applyStyle(SCellStyleHolder holder) {
+				StyleUtil.setFontBoldWeight(wholeRange.getSheet().getBook(), holder, fontBoldweight);
+			}});
+	}
+
+	public static void setFontItalic(final SRange wholeRange,final boolean italic) {
+		setWholeStyle(wholeRange,new StyleApplyer(){
+			@Override
+			public void applyStyle(SCellStyleHolder holder) {
+				StyleUtil.setFontItalic(wholeRange.getSheet().getBook(), holder, italic);
+			}});
+	}
+
+	public static void setFontStrikethrough(final SRange wholeRange,
+			final boolean strikeout) {
+		setWholeStyle(wholeRange,new StyleApplyer(){
+			@Override
+			public void applyStyle(SCellStyleHolder holder) {
+				StyleUtil.setFontStrikethrough(wholeRange.getSheet().getBook(), holder, strikeout);
+			}});
+	}
+
+	public static void setFontUnderline(final SRange wholeRange,
+			final org.zkoss.zss.model.SFont.Underline fontUnderline) {
+		setWholeStyle(wholeRange,new StyleApplyer(){
+			@Override
+			public void applyStyle(SCellStyleHolder holder) {
+				StyleUtil.setFontUnderline(wholeRange.getSheet().getBook(), holder, fontUnderline);
+			}});
+	}
+
+	public static void setFontColor(final SRange wholeRange, final String htmlColor) {
+		setWholeStyle(wholeRange,new StyleApplyer(){
+			@Override
+			public void applyStyle(SCellStyleHolder holder) {
+				StyleUtil.setFontColor(wholeRange.getSheet().getBook(), holder, htmlColor);
+			}});
 	}	
 }

@@ -142,10 +142,15 @@ public class CellOperationUtil {
 	}
 
 	public static CellStyleApplier getFontNameApplier(final String fontName){
-		return new CellStyleApplier() {
+		return new CellStyleApplierEx() {
 			public void apply(Range range) {
 				//ZSS 464, efficient implementation
-				StyleUtil.setFontName(((SheetImpl)range.getSheet()).getNative(),range.getRow(),range.getColumn(),fontName);
+				SSheet sheet = range.getSheet().getInternalSheet();
+				StyleUtil.setFontName(sheet.getBook(),sheet.getCell(range.getRow(),range.getColumn()),fontName);
+			}
+			@Override
+			public void applyWhole(Range wholeRange) {
+				WholeStyleUtil.setFontName(wholeRange.getInternalRange(),fontName);
 			}
 		};
 	}
@@ -200,22 +205,33 @@ public class CellOperationUtil {
 	public static CellStyleApplier getFontHeightPointsApplier(final int fontHeightPoints) {
 		//fontHeightPoints = pt;
 		final int fpx = UnitUtil.pointToPx(fontHeightPoints);
-		return new CellStyleApplier() {
+		return new CellStyleApplierEx() {
 			public void apply(Range range) {
-				StyleUtil.setFontHeightPoints(((SheetImpl)range.getSheet()).getNative(),range.getRow(),range.getColumn(),fontHeightPoints);
+				SSheet sheet = range.getSheet().getInternalSheet();
+				StyleUtil.setFontHeightPoints(sheet.getBook(),sheet.getCell(range.getRow(),range.getColumn()),fontHeightPoints);
 				int px = range.getSheet().getRowHeight(range.getRow());//rowHeight in px
 				if(fpx>px){
 					range.setRowHeight(fpx+4);//4 is padding
 				}
 			}
+			@Override
+			public void applyWhole(Range wholeRange) {
+				WholeStyleUtil.setFontHeightPoints(wholeRange.getInternalRange(),fontHeightPoints);
+			}
 		};
 	}
 
 	public static CellStyleApplier getFontBoldweightApplier(final Boldweight boldweight) {
-		return  new CellStyleApplier() {
+		return  new CellStyleApplierEx() {
 			public void apply(Range range) {
 				//ZSS 464, efficient implement
-				StyleUtil.setFontBoldWeight(((SheetImpl)range.getSheet()).getNative(),range.getRow(),range.getColumn(),EnumUtil.toFontBoldweight(boldweight));
+				SSheet sheet = range.getSheet().getInternalSheet();
+				StyleUtil.setFontBoldWeight(sheet.getBook(),sheet.getCell(range.getRow(),range.getColumn()),EnumUtil.toFontBoldweight(boldweight));
+			}
+			
+			@Override
+			public void applyWhole(Range wholeRange) {
+				WholeStyleUtil.setFontBoldWeight(wholeRange.getInternalRange(),EnumUtil.toFontBoldweight(boldweight));
 			}
 		};
 	}
@@ -230,10 +246,15 @@ public class CellOperationUtil {
 	}
 
 	public static CellStyleApplier getFontItalicApplier(final boolean italic) {
-		return new CellStyleApplier() {
+		return new CellStyleApplierEx() {
 			public void apply(Range range) {
 				//ZSS 464, efficient implement
-				StyleUtil.setFontItalic(((SheetImpl)range.getSheet()).getNative(),range.getRow(),range.getColumn(),italic);
+				SSheet sheet = range.getSheet().getInternalSheet();
+				StyleUtil.setFontItalic(sheet.getBook(),sheet.getCell(range.getRow(),range.getColumn()),italic);
+			}
+			@Override
+			public void applyWhole(Range wholeRange) {
+				WholeStyleUtil.setFontItalic(wholeRange.getInternalRange(),italic);
 			}
 		};
 	}
@@ -248,10 +269,15 @@ public class CellOperationUtil {
 
 	
 	public static CellStyleApplier getFontStrikeoutApplier(final boolean strikeout) {
-		return new CellStyleApplier() {
+		return new CellStyleApplierEx() {
 			public void apply(Range range) {
 				//ZSS 464, efficient implement
-				StyleUtil.setFontStrikethrough(((SheetImpl)range.getSheet()).getNative(),range.getRow(),range.getColumn(),strikeout);
+				SSheet sheet = range.getSheet().getInternalSheet();
+				StyleUtil.setFontStrikethrough(sheet.getBook(),sheet.getCell(range.getRow(),range.getColumn()),strikeout);
+			}
+			@Override
+			public void applyWhole(Range wholeRange) {
+				WholeStyleUtil.setFontStrikethrough(wholeRange.getInternalRange(),strikeout);
 			}
 		};
 	}
@@ -266,10 +292,15 @@ public class CellOperationUtil {
 	
 	
 	public static CellStyleApplier getFontUnderlineApplier(final Underline underline) {
-		return new CellStyleApplier() {
+		return new CellStyleApplierEx() {
 			public void apply(Range range) {
 				//ZSS 464, efficient implement
-				StyleUtil.setFontUnderline(((SheetImpl)range.getSheet()).getNative(),range.getRow(),range.getColumn(),EnumUtil.toFontUnderline(underline));
+				SSheet sheet = range.getSheet().getInternalSheet();
+				StyleUtil.setFontUnderline(sheet.getBook(),sheet.getCell(range.getRow(),range.getColumn()),EnumUtil.toFontUnderline(underline));
+			}
+			@Override
+			public void applyWhole(Range wholeRange) {
+				WholeStyleUtil.setFontUnderline(wholeRange.getInternalRange(), EnumUtil.toFontUnderline(underline));
 			}
 		};
 	}
@@ -284,11 +315,16 @@ public class CellOperationUtil {
 	}
 	
 	public static CellStyleApplier getFontColorApplier(final Color color) {
-		return new CellStyleApplier() {
+		return new CellStyleApplierEx() {
 //			private HashMap<Integer,org.zkoss.poi.ss.usermodel.CellStyle> _cache = new HashMap<Integer,org.zkoss.poi.ss.usermodel.CellStyle>();
 			public void apply(Range range) {
 				//ZSS 464, efficient implement
-				StyleUtil.setFontColor(((SheetImpl)range.getSheet()).getNative(),range.getRow(),range.getColumn(),color.getHtmlColor());
+				SSheet sheet = range.getSheet().getInternalSheet();
+				StyleUtil.setFontColor(sheet.getBook(),sheet.getCell(range.getRow(),range.getColumn()),color.getHtmlColor());
+			}
+			@Override
+			public void applyWhole(Range wholeRange) {
+				WholeStyleUtil.setFontColor(wholeRange.getInternalRange(), color.getHtmlColor());
 			}
 		};
 	}
