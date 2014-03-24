@@ -723,25 +723,9 @@ public class XRangeImpl implements XRange {
 				default:
 				case SHIFT_DEFAULT:
 					if (ref.isWholeRow()) {
-						// ZSS:592: Doesn't support inserting/deleting row/columns when current range cross freeze panel
-						if(checkInCornerFreezePanel()) {
-							throw new IllegalOpArgumentException("Doesn't support deleting rows/columns operation when current range covers the corner frozen panes");
-						}
-						// ZSS:595: Doesn't support inserting/deleting when current range cross freeze panel
-						if(checkCrossTopFreezePanel()) {
-							throw new IllegalOpArgumentException("Doesn't support deleting rows when current range cross the freeze panes line");
-						}
 						final ChangeInfo info = BookHelper.deleteRows(sheet, ref.getTopRow(), ref.getRowCount());
 						notifyMergeChange(refBook, info, ref, SSDataEvent.ON_RANGE_DELETE, SSDataEvent.MOVE_V);
 					} else if (ref.isWholeColumn()) {
-						// ZSS:592: Doesn't support inserting/deleting row/columns when current range cross freeze panel
-						if(checkInCornerFreezePanel()) {
-							throw new IllegalOpArgumentException("Doesn't support deleting rows/columns operation when current range covers the corner frozen panes");
-						}
-						// ZSS:595: Doesn't support inserting/deleting when current range cross freeze panel
-						if(checkCrossLeftFreezePanel()) {
-							throw new IllegalOpArgumentException("Doesn't support deleting columns when current range cross the freeze panes line");
-						}
 						final ChangeInfo info = BookHelper.deleteColumns(sheet, ref.getLeftCol(), ref.getColumnCount());
 						notifyMergeChange(refBook, info, ref, SSDataEvent.ON_RANGE_DELETE, SSDataEvent.MOVE_H);
 					}
@@ -782,25 +766,9 @@ public class XRangeImpl implements XRange {
 				default:
 				case SHIFT_DEFAULT:
 					if (ref.isWholeRow()) {
-						// ZSS:592: Doesn't support inserting/deleting row/columns when current range cross freeze panel
-						if(checkInCornerFreezePanel()) {
-							throw new IllegalOpArgumentException("Doesn't support inserting rows/columns operation when current range covers the corner frozen panes");
-						}
-						// ZSS:595: Doesn't support inserting/deleting when current range cross freeze panel
-						if(checkCrossTopFreezePanel()) {
-							throw new IllegalOpArgumentException("Doesn't support inserting rows when current range cross the freeze panes line");
-						}
 						final ChangeInfo info = BookHelper.insertRows(sheet, ref.getTopRow(), ref.getRowCount(), copyOrigin);
 						notifyMergeChange(refBook, info, ref, SSDataEvent.ON_RANGE_INSERT, SSDataEvent.MOVE_V);
 					} else if (ref.isWholeColumn()) {
-						// ZSS:592: Doesn't support inserting/deleting row/columns when current range cross freeze panel
-						if(checkInCornerFreezePanel()) {
-							throw new IllegalOpArgumentException("Doesn't support inserting rows/columns operation when current range covers the corner frozen panes");
-						}
-						// ZSS:595: Doesn't support inserting/deleting when current range cross freeze panel
-						if(checkCrossLeftFreezePanel()) {
-							throw new IllegalOpArgumentException("Doesn't support inserting columns when current range cross the freeze panes line");
-						}
 						final ChangeInfo info = BookHelper.insertColumns(sheet, ref.getLeftCol(), ref.getColumnCount(), copyOrigin);
 						notifyMergeChange(refBook, info, ref, SSDataEvent.ON_RANGE_INSERT, SSDataEvent.MOVE_H);
 					}
