@@ -404,7 +404,7 @@ import org.zkoss.zss.range.impl.StyleUtil;
 		SCellStyle destStyle = destCell.getCellStyle();
 		String destFormat = destStyle.getDataFormat();
 		if(!destFormat.equals(srcFormat)){
-			StyleUtil.setDataFormat(_destSheet, destCell.getRowIndex(), destCell.getColumnIndex(), srcFormat);
+			StyleUtil.setDataFormat(_destSheet.getBook(), destCell, srcFormat);
 		}
 	}
 

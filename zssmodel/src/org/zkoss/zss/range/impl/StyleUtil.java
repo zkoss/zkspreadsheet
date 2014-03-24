@@ -112,10 +112,8 @@ public class StyleUtil {
 		
 	}
 	
-	public static void setTextWrap(SSheet sheet,int row,int col,boolean wrap){
-		final SBook book = sheet.getBook();
-		final SCell cell = sheet.getCell(row,col);
-		final SCellStyle orgStyle = cell.getCellStyle();
+	public static void setTextWrap(SBook book,SCellStyleHolder holder,boolean wrap){
+		final SCellStyle orgStyle = holder.getCellStyle();
 		final boolean textWrap = orgStyle.isWrapText();
 		if (wrap == textWrap) { //no change, skip
 			return;
@@ -125,10 +123,10 @@ public class StyleUtil {
 		matcher.setWrapText(wrap);
 		SCellStyle style = book.searchCellStyle(matcher);
 		if(style==null){
-			style  = cloneCellStyle(cell);
+			style  = cloneCellStyle(book,orgStyle);
 			style.setWrapText(wrap);
 		}
-		cell.setCellStyle(style);
+		holder.setCellStyle(style);
 	}
 	
 	public static void setFontHeightPoints(SSheet sheet,int row,int col,int fontHeightPoints){
@@ -238,34 +236,32 @@ public class StyleUtil {
 	public static final short BORDER_EDGE_LEFT			= 0x08;
 	public static final short BORDER_EDGE_ALL			= BORDER_EDGE_BOTTOM|BORDER_EDGE_RIGHT|BORDER_EDGE_TOP|BORDER_EDGE_LEFT;
 	
-	public static void setBorder(SSheet sheet,int row,int col, String color, SCellStyle.BorderType linestyle){
-		setBorder(sheet,row,col, color, linestyle, BORDER_EDGE_ALL);
+	public static void setBorder(SBook book,SCellStyleHolder holder, String color, SCellStyle.BorderType linestyle){
+		setBorder(book,holder, color, linestyle, BORDER_EDGE_ALL);
 	}
 	
-	public static void setBorderTop(SSheet sheet,int row,int col,String color, SCellStyle.BorderType linestyle){
-		setBorder(sheet,row,col, color, linestyle, BORDER_EDGE_TOP);
+	public static void setBorderTop(SBook book,SCellStyleHolder holder,String color, SCellStyle.BorderType linestyle){
+		setBorder(book,holder, color, linestyle, BORDER_EDGE_TOP);
 	}
-	public static void setBorderLeft(SSheet sheet,int row,int col,String color, SCellStyle.BorderType linestyle){
-		setBorder(sheet,row,col, color, linestyle, BORDER_EDGE_LEFT);
+	public static void setBorderLeft(SBook book,SCellStyleHolder holder,String color, SCellStyle.BorderType linestyle){
+		setBorder(book,holder, color, linestyle, BORDER_EDGE_LEFT);
 	}
-	public static void setBorderBottom(SSheet sheet,int row,int col,String color, SCellStyle.BorderType linestyle){
-		setBorder(sheet,row,col, color, linestyle, BORDER_EDGE_BOTTOM);
+	public static void setBorderBottom(SBook book,SCellStyleHolder holder,String color, SCellStyle.BorderType linestyle){
+		setBorder(book,holder, color, linestyle, BORDER_EDGE_BOTTOM);
 	}
-	public static void setBorderRight(SSheet sheet,int row,int col,String color, SCellStyle.BorderType linestyle){
-		setBorder(sheet,row,col, color, linestyle, BORDER_EDGE_RIGHT);
+	public static void setBorderRight(SBook book,SCellStyleHolder holder,String color, SCellStyle.BorderType linestyle){
+		setBorder(book,holder, color, linestyle, BORDER_EDGE_RIGHT);
 	}
 	
-	public static void setBorder(SSheet sheet,int row,int col, String htmlColor, SCellStyle.BorderType lineStyle, short at){
-		final SBook book = sheet.getBook();
-		final SCell cell = sheet.getCell(row,col);
-		final SCellStyle orgStyle = cell.getCellStyle();
+	public static void setBorder(SBook book,SCellStyleHolder holder, String htmlColor, SCellStyle.BorderType lineStyle, short at){
+		
+		final SCellStyle orgStyle = holder.getCellStyle();
 		//ZSS-464 try to search existed matched style
 		SCellStyle style = null;
 		final SColor color = book.createColor(htmlColor);
 		boolean hasBorder = lineStyle != SCellStyle.BorderType.NONE;
 		if(htmlColor!=null){
-			final SCellStyle oldstyle = cell.getCellStyle();
-			CellStyleMatcher matcher = new CellStyleMatcher(oldstyle);
+			CellStyleMatcher matcher = new CellStyleMatcher(orgStyle);
 			if((at & BORDER_EDGE_LEFT)!=0) {
 				if(hasBorder)
 					matcher.setBorderLeftColor(htmlColor);
@@ -302,7 +298,7 @@ public class StyleUtil {
 		}
 		
 		if(style==null){
-			style = cloneCellStyle(cell);
+			style = cloneCellStyle(book,orgStyle);
 			if((at & BORDER_EDGE_LEFT)!=0) {
 				if(hasBorder)
 					style.setBorderLeftColor(color);
@@ -325,7 +321,7 @@ public class StyleUtil {
 			}
 		}
 		
-		cell.setCellStyle(style);
+		holder.setCellStyle(style);
 	}
 	
 //	private static void debugStyle(String msg,int row, int col, Workbook book, NCellStyle style){
@@ -438,10 +434,8 @@ public class StyleUtil {
 		cell.setCellStyle(style);
 	}
 	
-	public static void setTextHAlign(SSheet sheet,int row,int col, SCellStyle.Alignment align){
-		final SBook book = sheet.getBook();
-		final SCell cell = sheet.getCell(row,col);
-		final SCellStyle orgStyle = cell.getCellStyle();
+	public static void setTextHAlign(SBook book,SCellStyleHolder holder, SCellStyle.Alignment align){
+		final SCellStyle orgStyle = holder.getCellStyle();
 		final SCellStyle.Alignment orgAlign = orgStyle.getAlignment();
 		if (align.equals(orgAlign)) { //no change, skip
 			return;
@@ -451,16 +445,14 @@ public class StyleUtil {
 		matcher.setAlignment(align);
 		SCellStyle style = book.searchCellStyle(matcher);
 		if(style==null){
-			style = cloneCellStyle(cell);
+			style = cloneCellStyle(book,orgStyle);
 			style.setAlignment(align);
 		}
-		cell.setCellStyle(style);
+		holder.setCellStyle(style);
 	}
 	
-	public static void setTextVAlign(SSheet sheet,int row,int col, SCellStyle.VerticalAlignment valign){
-		final SBook book = sheet.getBook();
-		final SCell cell = sheet.getCell(row,col);
-		final SCellStyle orgStyle = cell.getCellStyle();
+	public static void setTextVAlign(SBook book,SCellStyleHolder holder, SCellStyle.VerticalAlignment valign){
+		final SCellStyle orgStyle = holder.getCellStyle();
 		final SCellStyle.VerticalAlignment orgValign = orgStyle.getVerticalAlignment();
 		if (valign.equals(orgValign)) { //no change, skip
 			return;
@@ -470,39 +462,28 @@ public class StyleUtil {
 		matcher.setVerticalAlignment(valign);
 		SCellStyle style = book.searchCellStyle(matcher);
 		if(style==null){
-			style = cloneCellStyle(cell);
+			style = cloneCellStyle(book,orgStyle);
 			style.setVerticalAlignment(valign);
 		}
-		cell.setCellStyle(style);
+		holder.setCellStyle(style);
 
 	}
 	
-	public static void setDataFormat(SSheet sheet, int row, int col, String format/*,HashMap<Integer,CellStyle> cache*/) {
-		final SBook book = sheet.getBook();
-		final SCell cell = sheet.getCell(row,col);
-		final SCellStyle orgStyle = cell.getCellStyle();
+	public static void setDataFormat(SBook book,SCellStyleHolder holder, String format) {
+		final SCellStyle orgStyle = holder.getCellStyle();
 		final String orgFormat = orgStyle.getDataFormat();
 		if (format == orgFormat || (format!=null && format.equals(orgFormat))) { //no change, skip
 			return;
 		}
-//		NCellStyle hitStyle = cache==null?null:cache.get((int)orgStyle.getIndex());
-//		if(hitStyle!=null){
-//			cell.setCellStyle(hitStyle);
-//			return;
-//		}
-//		
+
 		CellStyleMatcher matcher = new CellStyleMatcher(orgStyle);
 
 		matcher.setDataFormat(format);
 		SCellStyle style = book.searchCellStyle(matcher);
 		if(style==null){
-			style = cloneCellStyle(cell);
+			style = cloneCellStyle(book,orgStyle);
 			style.setDataFormat(format);
 		}
-		cell.setCellStyle(style);
-//		if(cache!=null){
-//			cache.put((int)orgStyle.getIndex(), style);
-//		}
-		
+		holder.setCellStyle(style);
 	}
 }

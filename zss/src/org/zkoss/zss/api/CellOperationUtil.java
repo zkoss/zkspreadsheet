@@ -345,12 +345,19 @@ public class CellOperationUtil {
 	
 	
 	public static CellStyleApplier getDataFormatApplier(final String format) {
-		return new CellStyleApplier() {
+		return new CellStyleApplierEx() {
 			public void apply(Range range) {
 				//ZSS 464, efficient implement
-				StyleUtil.setDataFormat(((SheetImpl)range.getSheet()).getNative(),range.getRow(),range.getColumn(),format);
+				SSheet sheet = range.getSheet().getInternalSheet();
+				StyleUtil.setDataFormat(sheet.getBook(),sheet.getCell(range.getRow(),range.getColumn()),format);
 			}
+
+			@Override
+			public void applyWhole(Range wholeRange) {
+				WholeStyleUtil.setDataFormat(wholeRange.getInternalRange(), format);
+			}			
 		};
+		
 	}
 	
 	/**
@@ -363,10 +370,16 @@ public class CellOperationUtil {
 	}
 
 	public static CellStyleApplier getAligmentApplier(final Alignment alignment){
-		return new CellStyleApplier() {
+		return new CellStyleApplierEx() {
 			public void apply(Range range) {
 				//ZSS 464, efficient implement
-				StyleUtil.setTextHAlign(((SheetImpl)range.getSheet()).getNative(),range.getRow(),range.getColumn(),EnumUtil.toStyleAlignemnt(alignment));
+				SSheet sheet = range.getSheet().getInternalSheet();
+				StyleUtil.setTextHAlign(sheet.getBook(),sheet.getCell(range.getRow(),range.getColumn()),EnumUtil.toStyleAlignemnt(alignment));
+			}
+			
+			@Override
+			public void applyWhole(Range wholeRange) {
+				WholeStyleUtil.setTextHAlign(wholeRange.getInternalRange(), EnumUtil.toStyleAlignemnt(alignment));
 			}
 		};
 	}
@@ -381,10 +394,16 @@ public class CellOperationUtil {
 	}
 
 	public static CellStyleApplier getVerticalAligmentApplier(final VerticalAlignment alignment){
-		return new CellStyleApplier() {
+		return new CellStyleApplierEx() {
 			public void apply(Range range) {
 				//ZSS 464, efficient implement
-				StyleUtil.setTextVAlign(((SheetImpl)range.getSheet()).getNative(),range.getRow(),range.getColumn(),EnumUtil.toStyleVerticalAlignemnt(alignment));
+				SSheet sheet = range.getSheet().getInternalSheet();
+				StyleUtil.setTextVAlign(sheet.getBook(),sheet.getCell(range.getRow(),range.getColumn()),EnumUtil.toStyleVerticalAlignemnt(alignment));
+			}
+			
+			@Override
+			public void applyWhole(Range wholeRange) {
+				WholeStyleUtil.setTextVAlign(wholeRange.getInternalRange(), EnumUtil.toStyleVerticalAlignemnt(alignment));
 			}
 		};
 	}
@@ -509,10 +528,16 @@ public class CellOperationUtil {
 	}
 	
 	public static CellStyleApplier getWrapTextApplier(final boolean wraptext) {
-		return new CellStyleApplier() {
+		return new CellStyleApplierEx() {
 			public void apply(Range range) {
-				StyleUtil.setTextWrap(((SheetImpl)range.getSheet()).getNative(),range.getRow(),range.getColumn(),wraptext);
+				SSheet sheet = range.getSheet().getInternalSheet();
+				StyleUtil.setTextWrap(sheet.getBook(),sheet.getCell(range.getRow(),range.getColumn()),wraptext);
 			}
+
+			@Override
+			public void applyWhole(Range wholeRange) {
+				WholeStyleUtil.setTextWrap(wholeRange.getInternalRange(), wraptext);
+			}			
 		};
 	}
 	

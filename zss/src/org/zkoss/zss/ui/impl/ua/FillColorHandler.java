@@ -43,6 +43,11 @@ public class FillColorHandler extends AbstractProtectedHandler {
 		AreaRef selection = ctx.getSelection();
 		CellSelectionType type = ctx.getSelectionType();
 		Range range = Ranges.range(sheet, selection);
+		if(range.isProtected()){
+			showProtectMessage();
+			return true;
+		}		
+		//zss-623, extends to row,column area
 		switch(type){
 		case ROW:
 			range = range.toRowRange();
@@ -51,7 +56,8 @@ public class FillColorHandler extends AbstractProtectedHandler {
 			range = range.toColumnRange();
 			break;
 		case ALL:
-			range = range.toColumnRange().toRowRange();
+			//we don't allow to set whole sheet style, use column range instead 
+			range = range.toColumnRange();
 		}
 		selection = new AreaRef(range.getRow(),range.getColumn(),range.getLastRow(),range.getLastColumn());
 		String color = getColor(ctx);

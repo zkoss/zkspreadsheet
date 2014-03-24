@@ -36,15 +36,17 @@ public class BorderHelper extends RangeHelperBase {
 	static final short LEFT = 0x04;
 	static final short RIGHT = 0x08;
 	
-	final int maxRowIndex;
-	final int maxColumnIndex;
+	private final int _maxRowIndex;
+	private final int _maxColumnIndex;
+	private final SBook _book;
+	
 	final static String BLACK = "#000000";
 	
 	public BorderHelper(SRange range) {
 		super(range);
-		SBook book = range.getSheet().getBook();
-		maxRowIndex = book.getMaxRowIndex();
-		maxColumnIndex = book.getMaxColumnIndex();
+		_book = range.getSheet().getBook();
+		_maxRowIndex = _book.getMaxRowIndex();
+		_maxColumnIndex = _book.getMaxColumnIndex();
 	}
 
 	public void applyBorder(ApplyBorderType borderType, BorderType lineStyle,
@@ -140,7 +142,7 @@ public class BorderHelper extends RangeHelperBase {
 			at -= StyleUtil.BORDER_EDGE_RIGHT;
 		}
 		
-		StyleUtil.setBorder(sheet, r, c, borderColor, lineStyle,at);	
+		StyleUtil.setBorder(_book, sheet.getCell(r, c), borderColor, lineStyle,at);	
 		
 	}
 	
@@ -157,7 +159,7 @@ public class BorderHelper extends RangeHelperBase {
 			at -= StyleUtil.BORDER_EDGE_RIGHT;
 		}
 		
-		StyleUtil.setBorder(sheet, r, c, borderColor, lineStyle,at);
+		StyleUtil.setBorder(_book, sheet.getCell(r, c), borderColor, lineStyle,at);
 	}
 	
 	private void handleInsideHorizontal(SSheet sheet, int r, int c, BorderType lineStyle,
@@ -174,7 +176,7 @@ public class BorderHelper extends RangeHelperBase {
 			at -= StyleUtil.BORDER_EDGE_TOP;
 		}
 		
-		StyleUtil.setBorder(sheet, r, c, borderColor, lineStyle,at);
+		StyleUtil.setBorder(_book, sheet.getCell(r, c), borderColor, lineStyle,at);
 	}
 
 	private void handleOutline(SSheet sheet, int r, int c,
@@ -200,7 +202,7 @@ public class BorderHelper extends RangeHelperBase {
 			resetBorderLeft(sheet,r,c+1,lineStyle,borderColor);
 			at |= StyleUtil.BORDER_EDGE_RIGHT;
 		}
-		StyleUtil.setBorder(sheet, r, c, borderColor, lineStyle,at);
+		StyleUtil.setBorder(_book, sheet.getCell(r, c), borderColor, lineStyle,at);
 		
 	}
 
@@ -209,7 +211,7 @@ public class BorderHelper extends RangeHelperBase {
 		//left border when LEFT
 		if((location&LEFT)!=0){
 			resetBorderRight(sheet,r,c-1,lineStyle,borderColor);
-			StyleUtil.setBorder(sheet, r, c, borderColor, lineStyle,StyleUtil.BORDER_EDGE_LEFT);
+			StyleUtil.setBorder(_book, sheet.getCell(r, c), borderColor, lineStyle,StyleUtil.BORDER_EDGE_LEFT);
 		}
 	}
 
@@ -218,7 +220,7 @@ public class BorderHelper extends RangeHelperBase {
 		//top border when TOP
 		if((location&TOP)!=0){
 			resetBorderBottom(sheet,r-1,c,lineStyle,borderColor);
-			StyleUtil.setBorder(sheet, r, c, borderColor, lineStyle,StyleUtil.BORDER_EDGE_TOP);
+			StyleUtil.setBorder(_book, sheet.getCell(r, c), borderColor, lineStyle,StyleUtil.BORDER_EDGE_TOP);
 		}
 	}
 
@@ -227,7 +229,7 @@ public class BorderHelper extends RangeHelperBase {
 		//right border when RIGHT
 		if((location&RIGHT)!=0){
 			resetBorderLeft(sheet,r,c+1,lineStyle,borderColor);
-			StyleUtil.setBorder(sheet, r, c, borderColor, lineStyle,StyleUtil.BORDER_EDGE_RIGHT);
+			StyleUtil.setBorder(_book, sheet.getCell(r, c), borderColor, lineStyle,StyleUtil.BORDER_EDGE_RIGHT);
 		}
 	}
 
@@ -236,7 +238,7 @@ public class BorderHelper extends RangeHelperBase {
 		//bottom border when BOTTOM
 		if((location&BOTTOM)!=0){
 			resetBorderTop(sheet,r+1,c,lineStyle,borderColor);
-			StyleUtil.setBorder(sheet, r, c, borderColor, lineStyle,StyleUtil.BORDER_EDGE_BOTTOM);
+			StyleUtil.setBorder(_book, sheet.getCell(r, c), borderColor, lineStyle,StyleUtil.BORDER_EDGE_BOTTOM);
 		}
 		
 	}
@@ -265,11 +267,11 @@ public class BorderHelper extends RangeHelperBase {
 		at |= StyleUtil.BORDER_EDGE_TOP;
 		at |= StyleUtil.BORDER_EDGE_RIGHT;
 		at |= StyleUtil.BORDER_EDGE_BOTTOM;
-		StyleUtil.setBorder(sheet, r, c, borderColor, lineStyle,at);
+		StyleUtil.setBorder(_book, sheet.getCell(r, c), borderColor, lineStyle,at);
 	}
 
 	private boolean isOutOfBoundCell(SSheet sheet, int r, int c){
-		return (r<0|| c<0 || r>maxRowIndex || c>maxColumnIndex);
+		return (r<0|| c<0 || r>_maxRowIndex || c>_maxColumnIndex);
 	}
 	
 	private boolean resetBorderTop(SSheet sheet,int r, int c,BorderType borderType,String borderColor){
@@ -291,7 +293,7 @@ public class BorderHelper extends RangeHelperBase {
 		if(borderType.equals(bType) && borderColor.equals(bColor)){
 			return false;
 		}
-		StyleUtil.setBorder(sheet, r, c,BLACK, SCellStyle.BorderType.NONE,StyleUtil.BORDER_EDGE_TOP);
+		StyleUtil.setBorder(_book, sheet.getCell(r, c),BLACK, SCellStyle.BorderType.NONE,StyleUtil.BORDER_EDGE_TOP);
 		return true;
 	}
 	private boolean resetBorderBottom(SSheet sheet,int r, int c,BorderType borderType,String borderColor){
@@ -314,7 +316,7 @@ public class BorderHelper extends RangeHelperBase {
 			return false;
 		}
 		
-		StyleUtil.setBorder(sheet, r, c,BLACK, SCellStyle.BorderType.NONE,StyleUtil.BORDER_EDGE_BOTTOM);
+		StyleUtil.setBorder(_book, sheet.getCell(r, c),BLACK, SCellStyle.BorderType.NONE,StyleUtil.BORDER_EDGE_BOTTOM);
 		
 		return true;
 	}
@@ -337,7 +339,7 @@ public class BorderHelper extends RangeHelperBase {
 		if(borderType.equals(bType) && borderColor.equals(bColor)){
 			return false;
 		}
-		StyleUtil.setBorder(sheet, r, c,BLACK, SCellStyle.BorderType.NONE,StyleUtil.BORDER_EDGE_LEFT);
+		StyleUtil.setBorder(_book, sheet.getCell(r, c),BLACK, SCellStyle.BorderType.NONE,StyleUtil.BORDER_EDGE_LEFT);
 		return true;
 	}
 	private boolean resetBorderRight(SSheet sheet,int r, int c,BorderType borderType,String borderColor){
@@ -359,7 +361,7 @@ public class BorderHelper extends RangeHelperBase {
 		if(borderType.equals(bType) && borderColor.equals(bColor)){
 			return false;
 		}
-		StyleUtil.setBorder(sheet, r, c,BLACK, SCellStyle.BorderType.NONE,StyleUtil.BORDER_EDGE_RIGHT);
+		StyleUtil.setBorder(_book, sheet.getCell(r, c),BLACK, SCellStyle.BorderType.NONE,StyleUtil.BORDER_EDGE_RIGHT);
 		return true;
 	}
 }

@@ -108,7 +108,7 @@ import org.zkoss.zss.model.util.FontMatcher;
 	//TODO ZSS-424 get exception when undo after save
 	@Override
 	public boolean isAvailable(CellStyle style) {
-		//always available in new model.
+		//always available in new 3.5 zss model.
 		return true;
 	}
 }

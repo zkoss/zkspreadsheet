@@ -439,7 +439,7 @@ public class RangeImpl implements SRange {
 				String oldFormat = cell.getCellStyle().getDataFormat();
 				if(format!=null && SCellStyle.FORMAT_GENERAL.equals(oldFormat)){
 					//if there is a suggested format and old format is not general
-					StyleUtil.setDataFormat(cell.getSheet(), cell.getRowIndex(), cell.getColumnIndex(), format);
+					StyleUtil.setDataFormat(cell.getSheet().getBook(), cell, format);
 				}
 				return true;
 			}

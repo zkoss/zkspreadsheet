@@ -1,4 +1,4 @@
-/* StyleUtil.java
+/* WholeStyleUtil.java
 
 {{IS_NOTE
 	Purpose:
@@ -29,7 +29,7 @@ import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.range.SRange;
 
 /**
- * A utility class to help spreadsheet set style of a cell
+ * A utility class to help spreadsheet set style of a row, column and cell
  * @author Dennis.Chen
  * @since 3.5.0
  */
@@ -102,6 +102,40 @@ public class WholeStyleUtil {
 			@Override
 			public void applyStyle(SCellStyleHolder holder) {
 				StyleUtil.setFillColor(wholeRange.getSheet().getBook(), holder, htmlColor);
+			}});
+	}
+
+	public static void setTextHAlign(final SRange wholeRange,
+			final org.zkoss.zss.model.SCellStyle.Alignment hAlignment) {
+		setWholeStyle(wholeRange,new StyleApplyer(){
+			@Override
+			public void applyStyle(SCellStyleHolder holder) {
+				StyleUtil.setTextHAlign(wholeRange.getSheet().getBook(), holder, hAlignment);
+			}});
+	}
+
+	public static void setTextVAlign(final SRange wholeRange, 
+			final org.zkoss.zss.model.SCellStyle.VerticalAlignment vAlignment) {
+		setWholeStyle(wholeRange,new StyleApplyer(){
+			@Override
+			public void applyStyle(SCellStyleHolder holder) {
+				StyleUtil.setTextVAlign(wholeRange.getSheet().getBook(), holder, vAlignment);
+			}});
+	}
+
+	public static void setTextWrap(final SRange wholeRange, final boolean wraptext) {
+		setWholeStyle(wholeRange,new StyleApplyer(){
+			@Override
+			public void applyStyle(SCellStyleHolder holder) {
+				StyleUtil.setTextWrap(wholeRange.getSheet().getBook(), holder, wraptext);
+			}});
+	}
+
+	public static void setDataFormat(final SRange wholeRange, final String format) {
+		setWholeStyle(wholeRange,new StyleApplyer(){
+			@Override
+			public void applyStyle(SCellStyleHolder holder) {
+				StyleUtil.setDataFormat(wholeRange.getSheet().getBook(), holder, format);
 			}});
 	}	
 }

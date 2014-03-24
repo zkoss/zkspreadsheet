@@ -25,6 +25,7 @@ import org.zkoss.zss.api.AreaRef;
 import org.zkoss.zss.api.Range.ApplyBorderType;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.api.model.CellStyle.BorderType;
+import org.zkoss.zss.ui.CellSelectionType;
 import org.zkoss.zss.ui.UserActionContext;
 import org.zkoss.zss.ui.impl.undo.CellBorderAction;
 import org.zkoss.zss.ui.sys.UndoableActionManager;
@@ -47,6 +48,23 @@ public class ApplyBorderHandler extends AbstractProtectedHandler {
 		Sheet sheet = ctx.getSheet();
 		AreaRef selection = ctx.getSelection();
 		Range range = Ranges.range(sheet, selection);
+		if(range.isProtected()){
+			showProtectMessage();
+			return true;
+		}
+		//zss-623, Border doesn't support to handle row/column style, can't extends it to whole row,whole style
+//		CellSelectionType type = ctx.getSelectionType();
+//		switch(type){
+//		case ROW:
+//			range = range.toRowRange();
+//			break;
+//		case COLUMN:
+//			range = range.toColumnRange();
+//			break;
+//		case ALL:
+//			range = range.toColumnRange().toRowRange();
+//		}
+//		selection = new AreaRef(range.getRow(),range.getColumn(),range.getLastRow(),range.getLastColumn());
 		
 		String color = getColor(ctx);
 		
