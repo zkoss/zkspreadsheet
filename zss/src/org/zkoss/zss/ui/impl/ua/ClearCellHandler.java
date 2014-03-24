@@ -59,18 +59,18 @@ public class ClearCellHandler extends AbstractProtectedHandler {
 			return true;
 		}		
 		//TODO support zss-623, the implementation of ClearCellAction doesn't support we do this here
-//		switch(type){
-//		case ROW:
-//			range = range.toRowRange();
-//			break;
-//		case COLUMN:
-//			range = range.toColumnRange();
-//			break;
-//		case ALL:
-//			//we don't allow to set whole sheet style, use column range instead 
-//			range = range.toColumnRange();
-//		}
-//		selection = new AreaRef(range.getRow(),range.getColumn(),range.getLastRow(),range.getLastColumn());
+		switch(type){
+		case ROW:
+			range = range.toRowRange();
+			break;
+		case COLUMN:
+			range = range.toColumnRange();
+			break;
+		case ALL:
+			//we don't allow to set whole sheet style, use column range instead 
+			range = range.toColumnRange();
+		}
+		selection = new AreaRef(range.getRow(),range.getColumn(),range.getLastRow(),range.getLastColumn());
 		
 		String label = null;
 		switch (_type) {
