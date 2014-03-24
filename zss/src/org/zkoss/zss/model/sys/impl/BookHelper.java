@@ -84,7 +84,6 @@ import org.zkoss.poi.ss.usermodel.BuiltinFormats;
 import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.poi.ss.usermodel.CellStyle;
 import org.zkoss.poi.ss.usermodel.CellValue;
-import org.zkoss.poi.ss.usermodel.Chart;
 import org.zkoss.poi.ss.usermodel.Color;
 import org.zkoss.poi.ss.usermodel.CreationHelper;
 import org.zkoss.poi.ss.usermodel.DataFormatter;
@@ -1331,12 +1330,18 @@ public final class BookHelper {
 		//same type and value, return!
 		if (sameTypeAndValue(cell, Cell.CELL_TYPE_FORMULA, value))
 			return null;
-		//remove formula cell and crete a blank one
+		//remove formula cell and create a blank one
 		removeFormula(cell, true);
 		//set value into cell model
 		cell.setCellFormula(value);
 		//notify to update cache
 		return getBothDependents(cell); 
+	}
+	public static void setCellFormulaForImport(Cell cell, String value) {
+		//remove formula cell and create a blank one
+		removeFormula(cell, true);
+		//set value into cell model
+		cell.setCellFormula(value); 
 	}
 	
 	public static Set<Ref>[] setCellHyperlink(Cell cell, int linkTarget, String address) {

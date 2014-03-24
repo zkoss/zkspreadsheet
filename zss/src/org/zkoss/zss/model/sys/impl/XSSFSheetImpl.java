@@ -18,6 +18,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -25,14 +26,18 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellFormula;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCol;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCols;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComment;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTHyperlink;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPane;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRow;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetView;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetViews;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellFormulaType;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPaneState;
 import org.zkoss.lang.Classes;
 import org.zkoss.lang.Library;
@@ -69,6 +74,7 @@ import org.zkoss.poi.xssf.usermodel.XSSFRow;
 import org.zkoss.poi.xssf.usermodel.XSSFRowHelper;
 import org.zkoss.poi.xssf.usermodel.XSSFSheet;
 import org.zkoss.poi.xssf.usermodel.XSSFWorkbook;
+import org.zkoss.zss.api.AreaRef;
 import org.zkoss.zss.model.sys.XBook;
 import org.zkoss.zss.model.sys.XRange;
 import org.zkoss.zss.model.sys.XSheet;
@@ -1397,5 +1403,21 @@ public class XSSFSheetImpl extends XSSFSheet implements SheetCtrl, XSheet {
 			max = Math.max(max, (int) colArray.getMax()-1);//in CT col it is 1base, -1 to 0base.
 		}
 		return max;
+	}
+	
+	@Override
+	public List<AreaRef> getSharedFormulaReferences() {
+		List<AreaRef> references = new LinkedList<AreaRef>();
+		List<CTRow> rows = worksheet.getSheetData().getRowList();
+		for(CTRow row : rows) {
+			List<CTCell> cells = row.getCList();
+			for(CTCell cell : cells) {
+				CTCellFormula f = cell.getF();
+				if(f != null && f.getT() == STCellFormulaType.SHARED && f.isSetRef()) {
+					references.add(new AreaRef(f.getRef()));
+				}
+			}
+		}
+		return references;
 	}
 }	

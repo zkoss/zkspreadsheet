@@ -13,9 +13,9 @@ Copyright (C) 2010 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.model.sys.impl;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -32,8 +32,10 @@ import org.zkoss.poi.hssf.record.NameRecord;
 import org.zkoss.poi.hssf.record.NoteRecord;
 import org.zkoss.poi.hssf.record.Record;
 import org.zkoss.poi.hssf.record.RecordBase;
+import org.zkoss.poi.hssf.record.SharedFormulaRecord;
 import org.zkoss.poi.hssf.record.aggregates.DataValidityTable;
 import org.zkoss.poi.hssf.record.aggregates.RecordAggregate.RecordVisitor;
+import org.zkoss.poi.hssf.record.aggregates.RowRecordsAggregate;
 import org.zkoss.poi.ss.formula.ptg.Ptg;
 import org.zkoss.poi.hssf.usermodel.HSSFCell;
 import org.zkoss.poi.hssf.usermodel.HSSFCellHelper;
@@ -61,6 +63,7 @@ import org.zkoss.poi.ss.usermodel.Row;
 import org.zkoss.poi.ss.usermodel.DataValidationConstraint.ValidationType;
 import org.zkoss.poi.ss.util.CellRangeAddress;
 import org.zkoss.poi.ss.util.CellRangeAddressList;
+import org.zkoss.zss.api.AreaRef;
 import org.zkoss.zss.model.sys.XBook;
 import org.zkoss.zss.model.sys.XRange;
 import org.zkoss.zss.model.sys.XSheet;
@@ -1357,4 +1360,22 @@ public class HSSFSheetImpl extends HSSFSheet implements SheetCtrl, XSheet {
     	return getSheet().getMaxConfiguredColumn();
     }
 
+	@Override
+	public List<AreaRef> getSharedFormulaReferences() {
+		final List<AreaRef> references = new LinkedList<AreaRef>();
+		InternalSheet internalSheet = this._helper.getInternalSheet();
+		RowRecordsAggregate rowRecords = internalSheet.getRowsAggregate();
+		rowRecords.visitContainedRecords(new RecordVisitor() {
+			@Override
+			public void visitRecord(Record r) {
+				if(r.getSid() != SharedFormulaRecord.sid) {
+					return;
+				}
+				SharedFormulaRecord sfr = (SharedFormulaRecord)r;
+				references.add(new AreaRef(sfr.getFirstRow(), sfr.getFirstColumn(), sfr.getLastRow(), sfr.getLastColumn()));
+				// Note that there is a shared formula recode if and only if > 5 cells shared same formula in Excel 
+			}
+		});
+		return references;
+	}
 }

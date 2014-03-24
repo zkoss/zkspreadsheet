@@ -19,6 +19,7 @@ import org.zkoss.poi.ss.usermodel.DataValidation;
 import org.zkoss.poi.ss.usermodel.Drawing;
 import org.zkoss.poi.ss.usermodel.Picture;
 import org.zkoss.poi.ss.usermodel.PivotTable;
+import org.zkoss.zss.api.AreaRef;
 
 /**
  * ZK Spreadsheet sheet.
@@ -59,4 +60,8 @@ public interface XSheet extends org.zkoss.poi.ss.usermodel.Sheet {
 	// ZSS-397: remove drawing part
 	void removeDrawingPatriarch(Drawing drawing);
 
+    /**
+     * @return a list contains shared formula references, never null.
+     */
+    public List<AreaRef> getSharedFormulaReferences();
 }
