@@ -78,6 +78,7 @@ ZK Spreadsheet 2.6.0
 	ZSS-569 Range.notifyChange can't update formula value
 	ZSS-286 Focused Cell is getting completely white in IE10
 	ZSS-621 Delete the cell with a shared formula and export, spreadsheet cannot load the file back correctly
+	ZSS-624 Copy a row on top of itself, get an error
 
 ZK Spreadsheet 2.5.0
 *Features:   

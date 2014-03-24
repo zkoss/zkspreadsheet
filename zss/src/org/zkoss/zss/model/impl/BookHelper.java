@@ -32,7 +32,6 @@ import java.util.Set;
 import java.util.logging.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellFormula;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColor;
@@ -1786,7 +1785,14 @@ public final class BookHelper {
 	}
 	
 	//[0]:last, [1]:all
+	@SuppressWarnings("unchecked")
 	private static Set<Ref>[] copyCellFormula(Cell dstCell, Cell srcCell, boolean transpose) {
+		// ZSS-624, it should not copy and paste to the "same cell" when copying "formula"
+		// because we remove formula first and won't get the original formula later
+		if(dstCell.equals(srcCell)) {
+			return new Set[]{Collections.EMPTY_SET, Collections.EMPTY_SET};
+		}
+		
 		//remove formula cell and create a blank one
 		removeFormula(dstCell, true);
 		

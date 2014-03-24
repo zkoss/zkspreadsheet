@@ -1,0 +1,64 @@
+<zk>
+	<vlayout width="100%" height="100%">
+		<hbox>
+			<vbox align="end">
+				<hlayout>
+					<label>A1 </label> 
+					<button label="copy" onClick='copy("A1", Range.PASTE_ALL);'></button>
+					<button label="copy formula only" onClick='copy("A1", Range.PASTE_FORMULAS);'></button>
+					<button label="copy value only" onClick='copy("A1", Range.PASTE_VALUES);'></button>
+				</hlayout>
+				<hlayout>
+					<label>A2:B2 </label> 
+					<button label="copy" onClick='copy("A2:B2", Range.PASTE_ALL);'></button>
+					<button label="copy formula only" onClick='copy("A2:B2", Range.PASTE_FORMULAS);'></button>
+					<button label="copy value only" onClick='copy("A2:B2", Range.PASTE_VALUES);'></button>
+				</hlayout>
+				<hlayout>
+					<label>A3:B3 to A3:D3 </label> 
+					<button label="copy" onClick='copy("A3:B3", Range.PASTE_ALL, "A3:D3");'></button>
+					<button label="copy formula only" onClick='copy("A3:B3", Range.PASTE_FORMULAS, "A3:D3");'></button>
+					<button label="copy value only" onClick='copy("A3:B3", Range.PASTE_VALUES, "A3:D3");'></button>
+				</hlayout>
+			</vbox>
+			<label pre="true"><![CDATA[
+if copy a cell with formula to itself,
+it will cause a error message and exception
+
+reproducing steps:
+	1. copy A1
+	2. paste to A1
+			]]></label>
+		<button label="export" onClick="export(ss.getBook());"></button>
+		</hbox>
+		<spreadsheet id="ss" src="/issue/blank.xlsx" maxrows="200" maxcolumns="40"
+			hflex="1" vflex="1" ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e"
+			showContextMenu="true" showSheetbar="true" showToolbar="true" showFormulabar="true" />
+	</vlayout>
+	
+	<zscript><![CDATA[
+	import java.io.*;
+	import org.zkoss.poi.ss.*;
+	
+	Ranges.range(ss.getBook().getSheetAt(0), "A1").setEditText("=SUM(1+2+3)");
+	Ranges.range(ss.getBook().getSheetAt(0), "B2").setEditText("=SUM(1+2+3)");
+	Ranges.range(ss.getBook().getSheetAt(0), "B3").setEditText("=SUM(1+2+3)");
+	
+	public void copy(String ref, int pasteType) {
+		copy(ref, pasteType, ref);
+	}
+	public void copy(String ref, int pasteType, String destRef) {
+		Range dest = Ranges.range(ss.getBook().getSheetAt(0), destRef);
+		Ranges.range(ss.getBook().getSheetAt(0), ref).pasteSpecial(dest, pasteType, Range.PASTEOP_NONE, false, false);
+	}
+	
+	public void export(Book book) {
+		if(book == null) { return; }
+		Exporter c = Exporters.getExporter("excel");
+	    ByteArrayOutputStream out = new ByteArrayOutputStream();
+	    c.export(book, out);
+	    String name = book.getSpreadsheetVersion() == SpreadsheetVersion.EXCEL2007 ? "exported.xlsx" : "exported.xls";
+	    Filedownload.save(out.toByteArray(), "application/file", name);
+	}
+	]]></zscript>
+</zk>
