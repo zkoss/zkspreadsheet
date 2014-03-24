@@ -174,10 +174,16 @@ public class CellRegion implements Serializable {
 		return true;
 	}
 
+	/**
+	 * @return first row index
+	 */
 	public int getRow() {
 		return row;
 	}
 
+	/**
+	 * @return first column index
+	 */
 	public int getColumn() {
 		return column;
 	}

@@ -57,27 +57,31 @@ public interface SCell extends SCellStyleHolder,FormulaContent{
 	
 	public CellType getFormulaResultType();
 	
-//	/**
-//	 * Get the cell type, it is same as {@link #getCellValue()}, {@link NCellValue#getCellType()}
-//	 * @return
-//	 */
+	/**
+	 * @return the cell type
+	 */
 	public CellType getType();
-//	/**
-//	 * Get the cell value, it is same as {@link #getCellValue()}, {@link NCellValue#getCellType()}
-//	 * @return
-//	 */
+	/**
+	 * @return cell value.
+	 */
 	public Object getValue();
 	
 	public void setValue(Object value);
 //	public NCellValue getCellValue();
 	
-	
+	/**
+	 * Because you always get a not-null cell object, use this method to judge the cell is really null or not.
+	 * @return TRUE if this cell is really null which means it have not been created.
+	 */
 	public boolean isNull();
 	
 	public int getRowIndex();
 	
 	public int getColumnIndex();
 	
+	/**
+	 * @return cell reference like A1
+	 */
 	public String getReferenceString();
 	
 	public SHyperlink getHyperlink();
@@ -111,7 +115,7 @@ public interface SCell extends SCellStyleHolder,FormulaContent{
 	public SRichText setupRichTextValue();
 	
 	/**
-	 * Return the rich text value. if this cell is a simple string value, it will return a readonly rich-text which wraps string-value and current font.
+	 * Return the rich text value. if this cell is a simple string value, it will return a read-only rich-text which wraps string-value and current font.
 	 * @return
 	 */
 	public SRichText getRichTextValue();
@@ -122,10 +126,14 @@ public interface SCell extends SCellStyleHolder,FormulaContent{
 	public boolean isRichTextValue();
 	
 	/**
-	 * set formula as string without '=', ex: SUM(A1:B2)
+	 * set formula with string without '=', e.g. SUM(A1:B2)
 	 * @param fromula
 	 */
 	public void setFormulaValue(String formula);
+	
+	/**
+	 * @return returns formula string without '=', e.g. SUM(A1:B2)
+	 */
 	public String getFormulaValue();
 	
 	public void setNumberValue(Double number);

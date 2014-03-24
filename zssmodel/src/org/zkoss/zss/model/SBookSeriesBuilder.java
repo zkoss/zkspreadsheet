@@ -23,6 +23,7 @@ import org.zkoss.lang.Library;
 import org.zkoss.lang.Strings;
 
 /**
+ * A utility class that build a book series that allow external book references can work.
  * @author dennis
  * @since 3.5.0
  */
@@ -30,6 +31,9 @@ public abstract class SBookSeriesBuilder {
 	
 	private static SBookSeriesBuilder _instance;
 	
+	/**
+	 * @return a builder used to build a book series
+	 */
 	public static SBookSeriesBuilder getInstance(){
 		
 		if(_instance==null){
@@ -60,7 +64,14 @@ public abstract class SBookSeriesBuilder {
 		return _instance;
 	}
 	
-	
+	/**
+	 * Build a book series that allow external book references can work among specified books
+	 * @param books books that have external reference to other books
+	 */
 	abstract public void buildBookSeries(Set<SBook> books);
+	
+	/**
+	 * @see #buildBookSeries(Set) 
+	 */
 	abstract public void buildBookSeries(SBook... books);
 }

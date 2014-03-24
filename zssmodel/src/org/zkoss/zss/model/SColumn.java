@@ -17,7 +17,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.model;
 
 /**
- * A column of a sheet.
+ * A column of a sheet. But you cannot get cells from it. You should get cell via {@link SSheet#getCell(int, int)}. 
  * @author dennis
  * @since 3.5.0
  */
@@ -25,6 +25,10 @@ public interface SColumn extends SCellStyleHolder{
 
 	public int getIndex();
 	public SSheet getSheet();
+
+	/**
+	 * @return TRUE if this is a blank column whose cells has no data, otherwise returns FALSE.
+	 */
 	public boolean isNull();
 	
 	public int getWidth();

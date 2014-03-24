@@ -24,7 +24,7 @@ import org.zkoss.util.logging.Log;
 import org.zkoss.zss.model.*;
 import org.zkoss.zss.model.impl.AbstractBookAdv;
 /**
- * 
+ * A helper class that encapsulate details of sending model events.
  * @author Dennis
  * @since 3.5.0
  */

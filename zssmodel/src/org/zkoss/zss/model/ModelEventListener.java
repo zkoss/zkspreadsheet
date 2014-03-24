@@ -26,5 +26,9 @@ import java.io.Serializable;
  */
 public interface ModelEventListener extends Serializable{
 
+	/**
+	 * Override this method to handle the model event.
+	 * @param event
+	 */
 	public void onEvent(ModelEvent event);
 }

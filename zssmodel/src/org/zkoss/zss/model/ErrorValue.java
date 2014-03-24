@@ -58,6 +58,10 @@ public class ErrorValue implements Serializable{
 		return _code;
 	}
 
+	/**
+	 * Set error code.
+	 * @param code should be one of public byte constant in this class
+	 */
 	public void setCode(byte code) {
 		this._code = code;
 	}
@@ -70,6 +74,9 @@ public class ErrorValue implements Serializable{
 		this._message = message;
 	}
 	
+	/**
+	 * @return might be #NULL!, #NAME?, or #NUM! etc...
+	 */
 	public String getErrorString(){
 		return getErrorString(_code);
 	}

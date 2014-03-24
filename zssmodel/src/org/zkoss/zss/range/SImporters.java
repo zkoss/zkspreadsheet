@@ -55,6 +55,11 @@ public class SImporters {
 		throw new IllegalStateException("can find any importer named "+name);
 	}
 	
+	/**
+	 * Register a importer factory by its name which is also used to get it back.
+	 * @param name name of the importer factory which is used to get it
+	 * @param factory the importer factory you want to register
+	 */
 	static final synchronized public void register(String name,SImporterFactory factory){
 		factories.put(name, factory);
 	}

@@ -16,7 +16,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.model;
 /**
- * 
+ * The exception is thrown when encountering an invalid formula.
  * @author dennis
  * @since 3.5.0
  */

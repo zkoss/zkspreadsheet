@@ -68,9 +68,12 @@ public interface SBookSeries {
 	public Map<String,Object> getAttributes();
 	
 	/**
-	 * Get the auto formula cache clean, default false.
+	 * @return return the flag that indicate formula cache will be cleared automatically or not, default is FALSE.
 	 */
 	public boolean isAutoFormulaCacheClean();
 	
+	/**
+	 * @see #isAutoFormulaCacheClean()
+	 */
 	public void setAutoFormulaCacheClean(boolean enable);
 }

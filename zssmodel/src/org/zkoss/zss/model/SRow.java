@@ -25,15 +25,25 @@ public interface SRow extends SCellStyleHolder{
 
 	public SSheet getSheet();
 	
+	/**
+	 * @return 0-based row index
+	 */
 	public int getIndex();
 //	public String asString();
 	public boolean isNull();
 	
+	/**
+	 * @return height in pixels
+	 */
 	public int getHeight();
 	public boolean isHidden();
 	public boolean isCustomHeight();
 	
 	public void setHeight(int height);
 	public void setHidden(boolean hidden);
+	
+	/**
+	 * @param custom TRUE, if the height is set by users and is not calculated by system automatically
+	 */
 	public void setCustomHeight(boolean custom);
 }

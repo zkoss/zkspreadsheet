@@ -105,21 +105,51 @@ public class ModelEvents {
 	public static ModelEvent createModelEvent(String name, SBook book){
 		return createModelEvent0(name,book,null,null,null);
 	}
+	
+	/**
+	 * Create a model event.
+	 * @param name event name, can be one constant of {@link ModelEvents}
+	 * @param book the book where the event happens
+	 * @param data event-related data
+	 * @return a model event
+	 */
 	public static ModelEvent createModelEvent(String name, SBook book,Map data){
 		return createModelEvent0(name,book,null,null,data);
 	}
+	
+	/**
+	 * @see #createModelEvent(String, SBook, Map) 
+	 */
 	public static ModelEvent createModelEvent(String name, SSheet sheet){
 		return createModelEvent0(name,sheet.getBook(),sheet,null,null);
 	}
+	
+	/**
+	 * @see #createModelEvent(String, SBook, Map) 
+	 */
 	public static ModelEvent createModelEvent(String name, SSheet sheet,Map data){
 		return createModelEvent0(name,sheet.getBook(),sheet,null,data);
 	}
+	
+	/**
+	 * @see #createModelEvent(String, SBook, Map) 
+	 */
 	public static ModelEvent createModelEvent(String name, SSheet sheet,CellRegion region){
 		return createModelEvent0(name,sheet.getBook(),sheet,region,null);
 	}
+	
+	/**
+	 * @see #createModelEvent(String, SBook, Map) 
+	 */
 	public static ModelEvent createModelEvent(String name, SSheet sheet,CellRegion region,Map data){
 		return createModelEvent0(name,sheet.getBook(),sheet,region,data);
 	}
+	
+	/**
+	 * A utility method that help you create data map, e.g. createDataMap(ModelEvents.PARAM_CUSTOM_DATA, data)
+	 * @param data
+	 * @return a map that contains the data you pass in
+	 */
 	public static Map createDataMap(Object... data){
 		if(data!=null){
 			if(data.length%2 != 0){

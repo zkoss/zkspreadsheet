@@ -39,35 +39,71 @@ public interface SSheet {
 	 */
 	public String getSheetName();
 	
+	/**
+	 * @return an iterator of existing rows excluding those blank rows
+	 */
 	public Iterator<SRow> getRowIterator();
+	
+	/**
+	 * @return an iterator of existing columns excluding those blank columns
+	 */
 	public Iterator<SColumn> getColumnIterator();
 	public Iterator<SColumnArray> getColumnArrayIterator();
+	
 	/**
-	 * Set up a column array, if any array are overlapped, it throws IllegalStateException.
-	 * If you setup a column array that is not continue, (for example, 0-2, 5-6), then it will create a continue array automatically.(3-4 in the example) 
-	 * @param colunmIdx 
-	 * @param lastColumnIdx
+	 * Set up a column array, if one array range overlaps another, it throws IllegalStateException.
+	 * If you setup a column array that is not continuous, (for example, 0~2, 5~6), then it will create a missing column array automatically
+	 * to make them continuous.(3~4 in the example). 
+	 * @param colunmIdx index of the starting column
+	 * @param lastColumnIdx index of the end column
 	 * @return the new created column array
 	 */
 	public SColumnArray setupColumnArray(int colunmIdx,int lastColumnIdx);	
 	public Iterator<SCell> getCellIterator(int row);
 	
-	
+	/**
+	 * @return default row height in pixels
+	 */
 	public int getDefaultRowHeight();
+	
+	/**
+	 * @return default column width in pixels
+	 */
 	public int getDefaultColumnWidth();
 	
+	/**
+	 * set default row height in pixels 
+	 */
 	public void setDefaultRowHeight(int height);
+	
+	/**
+	 * set default column width in pixels 
+	 */
 	public void setDefaultColumnWidth(int width);
 	
 	
 	public SRow getRow(int rowIdx);
 	
+	/**
+	 * @see #setupColumnArray
+	 */
 	SColumnArray getColumnArray(int columnIdx);
 	public SColumn getColumn(int columnIdx);
 	
+	/**
+	 * 
+	 * This method always returns not-null cell object. Use {@link SCell#isNull()} to know it's null (blank) or not.
+	 */
 	public SCell getCell(int rowIdx, int columnIdx);
-	public SCell getCell(String cellRefString);
 	
+	/**
+	 * @return return a cell with specified cell reference, e.g. A2, B3. Area reference, A1:A2, is not acceptable.
+	 * @see #getCell(int, int) 
+	 */
+	public SCell getCell(String cellRefString);
+	/**
+	 * @return interal sheet object ID
+	 */
 	public String getId();
 	
 	public SSheetViewInfo getViewInfo();
@@ -82,19 +118,72 @@ public interface SSheet {
 	
 //	public void clearRow(int rowIdx, int rowIdx2);
 //	public void clearColumn(int columnIdx,int columnIdx2);
+	/**
+	 * @see #clearCell(CellRegion)
+	 */
 	public void clearCell(int rowIdx, int columnIdx,int lastRowIdx,int lastColumnIdx);
+	
+	/**
+	 * Clear cells in specified region
+	 */
 	public void clearCell(CellRegion region);
 	
+	/**
+	 * Move a region of cells specified by 4 indexes.
+	 * @see #moveCell(CellRegion, int, int)
+	 */
 	public void moveCell(int rowIdx, int columnIdx,int lastRowIdx,int lastColumnIdx, int rowOffset, int columnOffset);
+	
+	/**
+	 * Move one or more cells.
+	 * @param region the region of cells to move
+	 * @param rowOffset positive number to move down, negative to move up
+	 * @param columnOffset positive number to move right, negative to move left
+	 */
 	public void moveCell(CellRegion region, int rowOffset, int columnOffset);
 	
+	/**
+	 * insert rows specified by first and last index 
+	 */
 	public void insertRow(int rowIdx, int lastRowIdx);
+	
+	/**
+	 * delete rows specified by first and last index 
+	 */
 	public void deleteRow(int rowIdx, int lastRowIdx);
+	
+	/**
+	 * insert columns specified by first and last index 
+	 */
 	public void insertColumn(int columnIdx, int lastColumnIdx);
+	
+	/**
+	 * delete columns specified by first and last index 
+	 */
 	public void deleteColumn(int columnIdx, int lastColumnIdx);
+	
+	/**
+	 * @see #insertCell(CellRegion, boolean)
+	 */
 	public void insertCell(int rowIdx,int columnIdx,int lastRowIndex, int lastColumnIndex,boolean horizontal);
+	
+	/**
+	 * Insert a region of cells and shift existing cells.
+	 * @param region the region of cells to insert
+	 * @param horizontal TRUE for shifting right, FALSE for shifting down
+	 */
 	public void insertCell(CellRegion region,boolean horizontal);
+	
+	/**
+	 * Delete a region of cells and shift existing cells.
+	 * @param region the region of cells to delete
+	 * @param horizontal TRUE for shifting left, FALSE for shifting up
+	 */
 	public void deleteCell(CellRegion region,boolean horizontal);
+	
+	/**
+	 * @see #deleteCell(CellRegion, boolean) 
+	 */
 	public void deleteCell(int rowIdx,int columnIdx,int lastRowIndex, int lastColumnIndex,boolean horizontal);
 	
 	public SPicture addPicture(SPicture.Format format, byte[] data, ViewAnchor anchor);
@@ -133,6 +222,7 @@ public interface SSheet {
 	 * @return the regions that overlaps
 	 */
 	public List<CellRegion> getOverlapsMergedRegions(CellRegion region, boolean excludeContains);
+	
 	/**
 	 * Get the merged region that are contained by region.
 	 * @return the regions that are contained

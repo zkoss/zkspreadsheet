@@ -17,7 +17,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.range;
 
 /**
- * The interface defines factory methods for importers
+ * The interface defines factory methods for importers.
  * @author dennis
  * @since 3.5.0
  */

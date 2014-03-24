@@ -134,6 +134,9 @@ public class SheetRegion implements Serializable{
 		return true;
 	}
 	
+	/**
+	 * @return a cell reference, e.g. Sheet1!A1, or Sheet2!A1:B2 
+	 */
 	public String getReferenceString(){
 		if(_region.isSingle()){
 			return new CellReference(_sheet.getSheetName(),_region.getRow(), _region.getColumn(),false,false).formatAsString();

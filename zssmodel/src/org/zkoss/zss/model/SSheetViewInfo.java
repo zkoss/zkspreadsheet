@@ -38,11 +38,35 @@ public interface SSheetViewInfo {
 	
 	public SFooter getFooter();
 	
-
+	/**
+	 * @return row indexes of all the horizontal page breaks
+	 * @see #setRowBreaks(int[])
+	 */
 	public int[] getRowBreaks();
+
+	/**
+	 * @see #getRowBreaks()
+	 */
 	public void setRowBreaks(int[] breaks);
+	
+	/**
+	 * @see #getRowBreaks()
+	 */
 	public void addRowBreak(int rowIdx);
+	
+	/**
+	 * @return column indexes of all the vertical page breaks
+	 * @see #setColumnBreaks(int[])
+	 */
 	public int[] getColumnBreaks();
+	
+	/**
+	 * @see #getColumnBreaks()
+	 */
 	public void setColumnBreaks(int[] breaks);
+	
+	/**
+	 * @see #getColumnBreaks()
+	 */
 	public void addColumnBreak(int columnIdx);
 }

@@ -210,12 +210,19 @@ public interface SBook {
 	 */
 	public Map<String,Object> getAttributes();
 	
+	/**
+	 * Create a defined name on specified sheet 
+	 * @return created defined name 
+	 */
 	public SName createName(String name,String applyToSheetName);
 	public SName createName(String name);
 	
 	public void setNameName(SName name,String newname, String applyToSheetName);
 	public void setNameName(SName name,String newname);
 	
+	/**
+	 * Delete a defined name 
+	 */
 	public void deleteName(SName name);
 	
 	public int getNumOfName();

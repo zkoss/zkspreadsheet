@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * The event will be sent when there is an operation performed on a book model. It could also contain a operation-related data.
  * @author dennis
  * @since 3.5.0
  */

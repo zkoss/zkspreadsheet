@@ -40,6 +40,9 @@ public interface SAutoFilter {
 		
 		public List<String> getFilters();
 		
+		/**
+		 * @return main criteria used on a column
+		 */
 		public Set getCriteria1();
 
 		public Set getCriteria2();

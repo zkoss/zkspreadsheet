@@ -59,6 +59,9 @@ public class ViewAnchor implements Serializable {
 		return rowIndex;
 	}
 
+	/**
+	 * set the left-top cell's row index
+	 */
 	public void setRowIndex(int rowIndex) {
 		this.rowIndex = rowIndex;
 	}
@@ -70,12 +73,16 @@ public class ViewAnchor implements Serializable {
 		return columnIndex;
 	}
 
+	/**
+	 * set the left-top cell's column index
+	 */
 	public void setColumnIndex(int columnIndex) {
 		this.columnIndex = columnIndex;
 	}
 
 	/**
-	 * The offset is larger if the anchor's position is more to the right of the cell's left border. 
+	 * The x offset to left border of the anchor's left-top cell.
+	 * The offset is larger if the anchor's position is closer to the right of the cell. 
 	 * @return the x coordinate within the anchor's left-top cell.
 	 */
 	public int getXOffset() {
@@ -87,7 +94,8 @@ public class ViewAnchor implements Serializable {
 	}
 
 	/**
-	 * The offset is larger if the anchor's position is more to the bottom of the cell's top border.
+	 * The y offset to top border of the anchor's left-top cell.
+	 * The offset is larger if the anchor's position is closer to the bottom of the cell.
 	 * @return the y coordinate within the anchor's left-top cell.
 	 */
 	public int getYOffset() {
@@ -98,24 +106,40 @@ public class ViewAnchor implements Serializable {
 		this.yOffset = yOffset;
 	}
 
+	/**
+	 * Width of the anchor, in pixels.
+	 * @return Width of the anchor
+	 */
 	public int getWidth() {
 		return width;
 	}
 
+	/**
+	 * Set width of the anchor in pixels.
+	 * @param width the width of the anchor in pixels.
+	 */
 	public void setWidth(int width) {
 		this.width = width;
 	}
 
+	/**
+	 * @return height the height of the anchor in pixels.
+	 */
 	public int getHeight() {
 		return height;
 	}
 
+	/**
+	 * set the height of the anchor in pixels.
+	 * @param height height of the anchor in pixels
+	 */
 	public void setHeight(int height) {
 		this.height = height;
 	}
 	
 	/**
-	 * @return Returns the right-bottom anchor which depends on sheet with 0 height and width. 
+	 * @return Returns the right-bottom anchor with 0 height and width based on the anchor. 
+	 * Its offset is calculated depending on a sheet's row height and column width. 
 	 */
 	public ViewAnchor getRightBottomAnchor(SSheet sheet){
 		
