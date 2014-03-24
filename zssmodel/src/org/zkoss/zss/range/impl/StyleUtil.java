@@ -102,7 +102,7 @@ public class StyleUtil {
 		
 		SCellStyle style = book.searchCellStyle(matcher);
 		if(style==null){
-			style = cloneCellStyle(book,style);
+			style = cloneCellStyle(book,orgStyle);
 			style.setFillColor(newColor);
 			style.setFillPattern(SCellStyle.FillPattern.SOLID_FOREGROUND);
 		}

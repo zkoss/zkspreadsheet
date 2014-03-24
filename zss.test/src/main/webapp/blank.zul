@@ -1,5 +1,20 @@
-<zk>
-	<spreadsheet id="ss" src="/issue3/book/blank.xlsx" maxVisibleRows="200" maxVisibleColumns="40" width="100%"
-		height="100%" showContextMenu="true" showSheetbar="true" showToolbar="true" 
-		showFormulabar="true"/>		
-</zk>
+<vlayout hflex="1" vflex="1">
+	<hlayout>
+		<button onClick="export()">Export to Excel</button>
+		<button onClick="ss.invalidate()">Invalidate()</button>
+	</hlayout>
+	<spreadsheet id="ss" src="/issue3/book/blank.xlsx" maxVisibleRows="200" maxVisibleColumns="40"
+		hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
+		showFormulabar="true"/>
+	<zscript><![CDATA[
+	import java.io.ByteArrayOutputStream;
+	
+	public void export() throws java.io.IOException {
+		Book wb = ss.getBook();
+	    Exporter c = Exporters.getExporter("excel");
+	    ByteArrayOutputStream out = new ByteArrayOutputStream();
+	    c.export(wb, out);
+	    Filedownload.save(out.toByteArray(), "application/file", wb.getBookName());
+	}
+	]]></zscript>		
+</vlayout>

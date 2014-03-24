@@ -133,8 +133,8 @@ public abstract class Abstract2DCellDataStyleAction extends AbstractUndoableActi
 		int destLastColumn = getReservedDestLastColumn();
 		Sheet destSheet = getReservedDestSheet();
 		
-		_srcOldReserve = ReserveUtil.reserve(srcSheet, srcRow, srcColumn, srcLastRow, srcLastColumn, _reserveType);
-		_destOldReserve = ReserveUtil.reserve(destSheet, destRow, destColumn, destLastRow, destLastColumn, _reserveType);
+		_srcOldReserve = ReserveUtil.reserve(srcSheet.getInternalSheet(), srcRow, srcColumn, srcLastRow, srcLastColumn, _reserveType);
+		_destOldReserve = ReserveUtil.reserve(destSheet.getInternalSheet(), destRow, destColumn, destLastRow, destLastColumn, _reserveType);
 		
 		applyAction();
 	}

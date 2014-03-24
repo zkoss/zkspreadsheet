@@ -499,7 +499,7 @@ public interface Range {
 	/**
 	 * Gets the first cell(top-left) style of this range
 	 * 
-	 * @return cell style if cell is exist, the check row style and column cell style if cell not found, if row and column style is not exist, then return default style of sheet
+	 * @return cell-style of this cell, if this cell doesn't has cell-style, it will check row/column's cell-style and then sheet's default cell-style 
 	 */
 	public CellStyle getCellStyle();
 	

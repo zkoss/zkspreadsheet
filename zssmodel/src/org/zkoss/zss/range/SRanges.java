@@ -53,6 +53,16 @@ public class SRanges {
 		return new RangeImpl(sheet,region.getRow(),region.getColumn(),region.getLastRow(),region.getLastColumn());
 	}
 	
+	/** Returns the associated {@link SRange} of the specified {@link SSheet} and cell-region 
+	 *  
+	 * @param sheet the {@link SSheet} the Range will refer to.
+	 * @param the cellRegion
+	 * @return the associated {@link SRange} of the specified {@link SSheet} and the cell-region 
+	 */
+	public static SRange range(SSheet sheet, CellRegion region){
+		return new RangeImpl(sheet,region);
+	}	
+	
 	/** Returns the associated {@link SRange} of the specified name of a NamedRange (e.g. "MyRange");
 	 * 
 	 * @param sheet the {@link SSheet} the Range will refer to.

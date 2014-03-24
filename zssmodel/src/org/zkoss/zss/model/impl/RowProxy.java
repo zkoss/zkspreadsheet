@@ -90,7 +90,6 @@ class RowProxy extends AbstractRowAdv{
 	}
 	
 	public void setCellStyle(SCellStyle cellStyle) {
-		Validations.argNotNull(cellStyle);
 		loadProxy();
 		if(_proxy==null){
 			_proxy = (AbstractRowAdv)((AbstractSheetAdv)getSheet()).getOrCreateRow(_index);

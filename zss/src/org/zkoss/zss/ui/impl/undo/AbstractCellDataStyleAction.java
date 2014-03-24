@@ -81,7 +81,7 @@ public abstract class AbstractCellDataStyleAction extends AbstractUndoableAction
 		int lastColumn = getReservedLastColumn();
 		Sheet sheet = getReservedSheet();
 		
-		_oldReserve = ReserveUtil.reserve(sheet, row, column, lastRow, lastColumn, _reserveType);
+		_oldReserve = ReserveUtil.reserve(sheet.getInternalSheet(), row, column, lastRow, lastColumn, _reserveType);
 		
 		if(_newReserve!=null){//reuse the style
 			_newReserve.restore();
@@ -116,7 +116,7 @@ public abstract class AbstractCellDataStyleAction extends AbstractUndoableAction
 		Sheet sheet = getReservedSheet();
 		//keep last new style, so if redo-again, we will reuse it.
 		
-		_newReserve = ReserveUtil.reserve(sheet, row, column, lastRow, lastColumn, _reserveType);
+		_newReserve = ReserveUtil.reserve(sheet.getInternalSheet(), row, column, lastRow, lastColumn, _reserveType);
 		
 		_oldReserve.restore();
 		_oldReserve = null;
