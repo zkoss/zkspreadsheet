@@ -393,15 +393,17 @@ public class DefaultUserActionManagerCtrl implements UserActionManagerCtrl,UserA
 		AreaRef visibleSelection = new AreaRef(selection.getRow(), selection.getColumn(), Math.min(
 		spreadsheet.getMaxVisibleRows(), selection.getLastRow()), Math.min(
 					    spreadsheet.getMaxVisibleColumns(), selection.getLastColumn()));
-		CellSelectionType _selectionType;
+		CellSelectionType _selectionType = CellSelectionType.CELL;
 		
-		SBook sbook = book.getInternalBook();
-		
-		boolean wholeRow = uiSelection.getColumn()==0 && uiSelection.getLastColumn()>=sbook.getMaxColumnIndex();
-		boolean wholeColumn = uiSelection.getRow()==0 && uiSelection.getLastRow()>=sbook.getMaxRowIndex();
-		boolean wholeSheet = wholeRow&&wholeColumn;
-		
-		_selectionType = wholeSheet?CellSelectionType.ALL:wholeRow?CellSelectionType.ROW:wholeColumn?CellSelectionType.COLUMN:CellSelectionType.CELL;
+		//book could be null after close -> new book
+		SBook sbook = book==null?null:book.getInternalBook();
+		if(sbook!=null){
+			boolean wholeRow = uiSelection.getColumn()==0 && uiSelection.getLastColumn()>=sbook.getMaxColumnIndex();
+			boolean wholeColumn = uiSelection.getRow()==0 && uiSelection.getLastRow()>=sbook.getMaxRowIndex();
+			boolean wholeSheet = wholeRow&&wholeColumn;
+			
+			_selectionType = wholeSheet?CellSelectionType.ALL:wholeRow?CellSelectionType.ROW:wholeColumn?CellSelectionType.COLUMN:CellSelectionType.CELL;
+		}
 		
 		if(Events.ON_AUX_ACTION.equals(nm)){
 			UserActionContextImpl ctx = new UserActionContextImpl(_sparedsheet,event,book,sheet,visibleSelection,_selectionType,extraData,Category.AUXACTION.getName(),action);
