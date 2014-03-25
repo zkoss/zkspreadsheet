@@ -74,6 +74,7 @@ ZK Spreadsheet 3.0.2
   ZSS-616 Selection box is displayed at wrong position
   ZSS-622 Spreadsheet toolbar function not work correctly if creating the instance at runtime
   ZSS-621 Delete the cell with a shared formula and export, spreadsheet cannot load the file back correctly
+  ZSS-624 Copy a row on top of itself, get an error
   
 ** Upgrade Notes
   

@@ -8,6 +8,8 @@ import java.util.Locale;
 import org.junit.*;
 import org.zkoss.zss.*;
 import org.zkoss.zss.api.*;
+import org.zkoss.zss.api.Range.PasteOperation;
+import org.zkoss.zss.api.Range.PasteType;
 import org.zkoss.zss.api.model.*;
 
 /**
@@ -96,4 +98,18 @@ public class Issue600Test {
 		}
 	}
 	
+	@Test
+	public void testZSS624() {
+		Book book = Util.loadBook(this, "book/blank.xlsx");
+		Sheet sheet = book.getSheetAt(0);
+		Ranges.range(sheet, "B1").setCellEditText("=SUM(1+2+3)");
+		assertEquals("=SUM(1+2+3)", Ranges.range(sheet, "B1").getCellEditText());
+		
+		Ranges.range(sheet, "B1").paste(Ranges.range(sheet, "B1"));
+		Ranges.range(sheet, "A1:B1").paste(Ranges.range(sheet, "A1:B1"));
+		Ranges.range(sheet, "A1:B1").paste(Ranges.range(sheet, "A1:D1"));
+		
+		Ranges.range(sheet, "B1").pasteSpecial(Ranges.range(sheet, "B1"), PasteType.VALUES, PasteOperation.NONE, false, false);
+		assertEquals("6", Ranges.range(sheet, "B1").getCellEditText());
+	}
 }

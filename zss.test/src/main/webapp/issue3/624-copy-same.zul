@@ -1,0 +1,67 @@
+<zk>
+	<vlayout width="100%" height="100%">
+		<hbox>
+			<vbox align="end">
+				<hlayout>
+					<label>A1 </label> 
+					<button label="copy" onClick='copy("A1", org.zkoss.zss.api.Range.PasteType.ALL);'></button>
+					<button label="copy formula only" onClick='copy("A1", org.zkoss.zss.api.Range.PasteType.FORMULAS);'></button>
+					<button label="copy value only" onClick='copy("A1", org.zkoss.zss.api.Range.PasteType.VALUES);'></button>
+				</hlayout>
+				<hlayout>
+					<label>A2:B2 </label> 
+					<button label="copy" onClick='copy("A2:B2", org.zkoss.zss.api.Range.PasteType.ALL);'></button>
+					<button label="copy formula only" onClick='copy("A2:B2", org.zkoss.zss.api.Range.PasteType.FORMULAS);'></button>
+					<button label="copy value only" onClick='copy("A2:B2", org.zkoss.zss.api.Range.PasteType.VALUES);'></button>
+				</hlayout>
+				<hlayout>
+					<label>A3:B3 to A3:D3 </label> 
+					<button label="copy" onClick='copy("A3:B3", org.zkoss.zss.api.Range.PasteType.ALL, "A3:D3");'></button>
+					<button label="copy formula only" onClick='copy("A3:B3", org.zkoss.zss.api.Range.PasteType.FORMULAS, "A3:D3");'></button>
+					<button label="copy value only" onClick='copy("A3:B3", org.zkoss.zss.api.Range.PasteType.VALUES, "A3:D3");'></button>
+				</hlayout>
+			</vbox>
+			<label pre="true"><![CDATA[
+if copy a cell with formula to itself,
+it will cause a error message and exception
+
+reproducing steps:
+	1. copy A1
+	2. paste to A1
+			]]></label>
+		<button label="export" onClick="export(ss.getBook());"></button>
+		</hbox>
+		<spreadsheet id="ss" src="/issue/blank.xlsx" maxrows="200" maxcolumns="40"
+			hflex="1" vflex="1" ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e"
+			showContextMenu="true" showSheetbar="true" showToolbar="true" showFormulabar="true" />
+	</vlayout>
+	
+	<zscript><![CDATA[
+	import java.io.*;
+	import org.zkoss.poi.ss.*;
+	import org.zkoss.zss.api.Range.PasteType;
+	import org.zkoss.zss.api.Range.PasteOperation;
+	import org.zkoss.zss.api.model.Book.BookType;
+	
+	Ranges.range(ss.getBook().getSheetAt(0), "A1").setCellEditText("=SUM(1+2+3)");
+	Ranges.range(ss.getBook().getSheetAt(0), "B2").setCellEditText("=SUM(1+2+3)");
+	Ranges.range(ss.getBook().getSheetAt(0), "B3").setCellEditText("=SUM(1+2+3)");
+	
+	public void copy(String ref, PasteType pasteType) {
+		copy(ref, pasteType, ref);
+	}
+	public void copy(String ref, PasteType pasteType, String destRef) {
+		Range dest = Ranges.range(ss.getBook().getSheetAt(0), destRef);
+		Ranges.range(ss.getBook().getSheetAt(0), ref).pasteSpecial(dest, pasteType, PasteOperation.NONE, false, false);
+	}
+	
+	public void export(Book book) throws Exception {
+		if(book == null) { return; }
+		Exporter c = Exporters.getExporter("excel");
+	    ByteArrayOutputStream out = new ByteArrayOutputStream();
+	    c.export(book, out);
+	    String name = book.getType() == BookType.XLSX ? "exported.xlsx" : "exported.xls";
+	    Filedownload.save(out.toByteArray(), "application/file", name);
+	}
+	]]></zscript>
+</zk>
