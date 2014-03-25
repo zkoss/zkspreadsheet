@@ -38,6 +38,7 @@ ZK Spreadsheet 3.5.0
   ZSS-608 Copy a single cell to a merge cell cause unexpected result
   ZSS-622 Spreadsheet toolbar function not work correctly if creating the instance at runtime
   ZSS-626 Formula result is not correct after insert/delete cells
+  ZSS-627 Paste format doesn't work
   
 ** Upgrade Notes
   * Following api are removed

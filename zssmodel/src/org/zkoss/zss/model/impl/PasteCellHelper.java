@@ -388,7 +388,8 @@ import org.zkoss.zss.range.impl.StyleUtil;
 					buffer.applyComment(destCell);
 					break;
 				case FORMATS:
-					pasteFormat(buffer,destCell);
+					//paste format should paste all style
+					pasteStyle(buffer,destCell,true);
 					break;
 				case FORMULAS_AND_NUMBER_FORMATS:
 					pasteFormat(buffer,destCell);
