@@ -22,9 +22,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 import org.zkoss.zss.api.IllegalFormulaException;
 import org.zkoss.zss.api.Ranges;
@@ -85,17 +86,17 @@ public class ReserveUtil {
 	
 	private static void reserveCell(ReservedResult result,boolean reserveContent, boolean reserveStyle) {
 		SSheet sheet = result.getSheet();
-		Map<Integer,ReservedRow> reservedRows = new LinkedHashMap<Integer, ReservedRow>();
+		Map<Integer,ReservedRow> reservedRows = new TreeMap<Integer, ReservedRow>();
 		for(int r = result.getRow();r<=result.getLastRow();r++){
 			SRow row = sheet.getRow(r);
-			if(row.isNull()){
+			if(row.isNull() && !reserveStyle){
 				continue;
 			}
 			ReservedRow reservedRow = new ReservedRow(r);
 			reservedRows.put(r, reservedRow);
 			for(int c = result.getColumn();c<=result.getLastColumn();c++){
 				SCell cell = sheet.getCell(r,c);
-				if(cell.isNull()){
+				if(cell.isNull() && !reserveStyle){
 					continue;
 				}
 				ReservedCell rcell = new ReservedCell(c);
@@ -117,10 +118,10 @@ public class ReserveUtil {
 
 	private static void reserveWholeColumn(ReservedResult result,boolean reserveContent, boolean reserveStyle) {
 		SSheet sheet = result.getSheet();
-		Map<Integer,ReservedRow> reservedRows = new LinkedHashMap<Integer, ReservedRow>();
+		Map<Integer,ReservedRow> reservedRows = new TreeMap<Integer, ReservedRow>();
 		for(int r = result.getRow();r<=result.getLastRow();r++){
 			SRow row = sheet.getRow(r);
-			if(row.isNull()){
+			if(row.isNull() && !reserveStyle){
 				continue;
 			}
 			ReservedRow reservedRow = new ReservedRow(r);
@@ -133,13 +134,12 @@ public class ReserveUtil {
 				reservedRow.setHeight(row.getHeight());				
 			}
 			
+			HashSet<Integer> cellProcessed = new HashSet<Integer>();
+			
 			Iterator<SCell> cellIter = sheet.getCellIterator(r);
 			
 			while(cellIter.hasNext()){
 				SCell cell = cellIter.next();
-				if(cell.isNull()){
-					continue;
-				}
 				ReservedCell rcell = new ReservedCell(cell.getColumnIndex());
 				reservedRow.addCell(rcell);
 				
@@ -151,8 +151,30 @@ public class ReserveUtil {
 				if(reserveStyle){
 					SCellStyle style = cell.getCellStyle(true);
 					rcell.setStyle(style);
-				}				
+				}
+				
+				cellProcessed.add(cell.getColumnIndex());
 			}
+			
+			//has to reserve the style on the row/column across cell to avoid row/column style conflict on null cell
+			if(reserveStyle){
+				Iterator<SColumn> columns = sheet.getColumnIterator();
+				while(columns.hasNext()){
+					SColumn column = columns.next();
+					if(cellProcessed.contains(column.getIndex())){
+						continue;
+					}
+					if(column.getCellStyle(true)!=null){
+						SCell cell = sheet.getCell(r, column.getIndex());
+						ReservedCell rcell = new ReservedCell(cell.getColumnIndex());
+						reservedRow.addCell(rcell);
+						SCellStyle style = cell.getCellStyle(true);
+						rcell.setStyle(style);
+					}
+				}
+			}
+			
+			
 		}
 		result.setRowsInfo(reservedRows);
 		
@@ -165,9 +187,7 @@ public class ReserveUtil {
 		if(reserveStyle){
 			for(int c=result.getColumn();c<=result.getLastColumn();c++){
 				SColumn col = sheet.getColumn(c);
-				if(col.isNull()){
-					continue;
-				}
+
 				ReservedColumn reservedColumn = new ReservedColumn(col.getIndex());
 				reservedColumns.put(col.getIndex(), reservedColumn);
 				
@@ -178,7 +198,7 @@ public class ReserveUtil {
 			}
 		}
 		
-		Map<Integer,ReservedRow> reservedRows = new LinkedHashMap<Integer, ReservedRow>(result.getLastRow()-result.getRow()+1);
+		Map<Integer,ReservedRow> reservedRows = new TreeMap<Integer, ReservedRow>();
 		
 		Iterator<SRow> rowIter = sheet.getRowIterator();
 		
@@ -190,7 +210,7 @@ public class ReserveUtil {
 			
 			for(int c=result.getColumn();c<=result.getLastColumn();c++){
 				SCell cell = sheet.getCell(r,c);
-				if(cell.isNull()){
+				if(cell.isNull() && !reserveStyle){
 					continue;
 				}
 				ReservedCell rcell = new ReservedCell(cell.getColumnIndex());
@@ -221,15 +241,14 @@ public class ReserveUtil {
 			SColumn col = colIter.next();
 			ReservedColumn reservedColumn = new ReservedColumn(col.getIndex());
 			reservedColumns.put(col.getIndex(), reservedColumn);
-			if(reserveStyle){
-				SCellStyle style = col.getCellStyle(true);
-				reservedColumn.setStyle(style);
-				reservedColumn.setCustomWidth(col.isCustomWidth());
-				reservedColumn.setWidth(col.getWidth());
-			}
+			
+			SCellStyle style = col.getCellStyle(true);
+			reservedColumn.setStyle(style);
+			reservedColumn.setCustomWidth(col.isCustomWidth());
+			reservedColumn.setWidth(col.getWidth());
 		}
 		
-		Map<Integer,ReservedRow> reservedRows = new LinkedHashMap<Integer, ReservedRow>(result.getLastRow()-result.getRow()+1);
+		Map<Integer,ReservedRow> reservedRows = new TreeMap<Integer, ReservedRow>();
 		
 		Iterator<SRow> rowIter = sheet.getRowIterator();
 		
@@ -248,7 +267,7 @@ public class ReserveUtil {
 			
 			for(int c=result.getColumn();c<=result.getLastColumn();c++){
 				SCell cell = sheet.getCell(r,c);
-				if(cell.isNull()){
+				if(cell.isNull() && !reserveStyle){
 					continue;
 				}
 				ReservedCell rcell = new ReservedCell(cell.getColumnIndex());
@@ -384,12 +403,13 @@ public class ReserveUtil {
 			
 			//clear content, and we will restore it back later.
 			//following, it just clear whole area , it waste time because of reservation area will fill back. 
-			tempRange = SRanges.range(_sheet,_row,_column,_lastRow,_lastColumn);
+			SRange targetRange = SRanges.range(_sheet,_row,_column,_lastRow,_lastColumn);
 			if(reserveContent){
-				tempRange.clearContents();
+				targetRange.clearContents();
 			}
-			if(reserveStyle){
-				tempRange.clearCellStyles();
+			
+			if(reserveStyle && (isWholeRow() || isWholeColumn())){
+				targetRange.clearCellStyles();
 			}
 			
 			//start to restore
@@ -399,7 +419,6 @@ public class ReserveUtil {
 					column.setCellStyle(rcol.getStyle());
 					column.setCustomWidth(rcol.isCustomWidth());
 					column.setWidth(rcol.getWidth());
-					
 				}
 			}
 			
@@ -427,6 +446,10 @@ public class ReserveUtil {
 						}
 					}
 				}
+			}
+			
+			if(reserveStyle){
+				targetRange.notifyChange();
 			}
 			
 			//restore merge area
@@ -491,7 +514,7 @@ public class ReserveUtil {
 		
 		public void addCell(ReservedCell cell){
 			if(cells==null){
-				cells = new LinkedHashMap<Integer, ReservedCell>();
+				cells = new TreeMap<Integer, ReservedCell>();
 			}
 			cells.put(cell.getColumnIndex(), cell);
 		}

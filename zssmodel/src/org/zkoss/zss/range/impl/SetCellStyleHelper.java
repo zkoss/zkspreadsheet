@@ -69,6 +69,8 @@ public class SetCellStyleHelper extends RangeHelperBase{
 			SRow row = sheet.getRow(r);
 			row.setCellStyle(style);
 			
+			HashSet<Integer> cellProcessed = new HashSet<Integer>();
+			
 			Iterator<SCell> cells = sheet.getCellIterator(r);
 			while(cells.hasNext()){
 				SCell cell = cells.next();
@@ -76,6 +78,20 @@ public class SetCellStyleHelper extends RangeHelperBase{
 				if(cell.getCellStyle(true)!=null ||
 						sheet.getColumn(cell.getColumnIndex()).getCellStyle(true)!=null){
 					cell.setCellStyle(style);
+				}
+				
+				cellProcessed.add(cell.getColumnIndex());
+			}
+			
+			//has to force set the style on the row/column across cell to avoid row/column style conflict on null cell
+			Iterator<SColumn> columns = sheet.getColumnIterator();
+			while(columns.hasNext()){
+				SColumn column = columns.next();
+				if(cellProcessed.contains(column.getIndex())){
+					continue;
+				}
+				if(column.getCellStyle(true)!=null){
+					sheet.getCell(r, column.getIndex()).setCellStyle(style);
 				}
 			}
 		}
