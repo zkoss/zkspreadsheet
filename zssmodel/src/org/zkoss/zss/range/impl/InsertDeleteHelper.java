@@ -12,12 +12,15 @@ Copyright (C) 2014 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.range.impl;
 
 import java.util.Iterator;
+
+import org.zkoss.zss.model.InvalidModelOpException;
 import org.zkoss.zss.model.SCell;
 import org.zkoss.zss.model.SCellStyle;
 import org.zkoss.zss.model.SChart;
 import org.zkoss.zss.model.SColumn;
 import org.zkoss.zss.model.SColumnArray;
 import org.zkoss.zss.model.SRow;
+import org.zkoss.zss.model.SSheetViewInfo;
 import org.zkoss.zss.model.ViewAnchor;
 import org.zkoss.zss.model.impl.AbstractCellAdv;
 import org.zkoss.zss.model.impl.AbstractColumnArrayAdv;
@@ -39,10 +42,19 @@ public class InsertDeleteHelper extends RangeHelperBase {
 	}
 
 	public void delete(DeleteShift shift) {
-		// just process on the first sheet even this range over multiple sheets
+		// just process on the first sheet even this range over multiple sheetsl
 
 		// insert row/column/cell
 		if(isWholeRow()) { // ignore insert direction
+			
+			// ZSS:592: Doesn't support inserting/deleting row/columns when current range cross freeze panel
+			if(checkInCornerFreezePanel()) {
+				throw new InvalidModelOpException("Doesn't support deleting rows/columns operation when current range covers the corner frozen panes");
+			}
+			// ZSS:595: Doesn't support inserting/deleting when current range cross freeze panel
+			if(checkCrossTopFreezePanel()) {
+				throw new InvalidModelOpException("Doesn't support deleting rows when current range cross the freeze panes line");
+			}
 			
 			// shrink chart size (picture's size won't be changed in Excel)
 			// before delete rows (delete rows will make chart move)
@@ -50,6 +62,15 @@ public class InsertDeleteHelper extends RangeHelperBase {
 			sheet.deleteRow(getRow(), getLastRow());
 			
 		} else if(isWholeColumn()) { // ignore insert direction
+			
+			// ZSS:592: Doesn't support inserting/deleting row/columns when current range cross freeze panel
+			if(checkInCornerFreezePanel()) {
+				throw new InvalidModelOpException("Doesn't support deleting rows/columns operation when current range covers the corner frozen panes");
+			}
+			// ZSS:595: Doesn't support inserting/deleting when current range cross freeze panel
+			if(checkCrossLeftFreezePanel()) {
+				throw new InvalidModelOpException("Doesn't support deleting columns when current range cross the freeze panes line");
+			}
 
 			// shrink chart size (picture's size won't be changed in Excel)
 			// before delete columns (delete columns will make chart move)
@@ -63,10 +84,18 @@ public class InsertDeleteHelper extends RangeHelperBase {
 
 	public void insert(InsertShift shift, InsertCopyOrigin copyOrigin) {
 		// just process on the first sheet even this range over multiple sheets
-
+		
 		// insert row/column/cell
 		if(isWholeRow()) { // ignore insert direction
-			//TODO don't allow to insert across freeze, or will get js exception
+			
+			// ZSS:592: Doesn't support inserting/deleting row/columns when current range cross freeze panel
+			if(checkInCornerFreezePanel()) {
+				throw new InvalidModelOpException("Doesn't support inserting rows/columns when current range covers the corner frozen panes");
+			}
+			// ZSS:595: Doesn't support inserting/deleting row/columns when current range cross freeze panel
+			if(checkCrossTopFreezePanel()) {
+				throw new InvalidModelOpException("Doesn't support inserting rows when current range cross the freeze panes line");
+			}
 			
 			sheet.insertRow(getRow(), getLastRow());
 			
@@ -85,7 +114,16 @@ public class InsertDeleteHelper extends RangeHelperBase {
 			extendChartHeight();
 			
 		} else if(isWholeColumn()) { // ignore insert direction
-			//TODO don't allow to insert across freeze, or will get js exception
+			
+			// ZSS:592: Doesn't support inserting/deleting row/columns when current range cross freeze panel
+			if(checkInCornerFreezePanel()) {
+				throw new InvalidModelOpException("Doesn't support inserting rows/columns when current range covers the corner frozen panes");
+			}
+			// ZSS:595: Doesn't support inserting/deleting row/columns when current range cross freeze panel
+			if(checkCrossLeftFreezePanel()) {
+				throw new InvalidModelOpException("Doesn't support inserting columns when current range cross the freeze panes line");
+			}
+			
 			sheet.insertColumn(getColumn(), getLastColumn());
 
 			// copy style/formal/size
@@ -319,5 +357,42 @@ public class InsertDeleteHelper extends RangeHelperBase {
 				new NotifyChangeHelper().notifySheetChartUpdate(sheet, chart.getId());
 			}
 		}
+	}
+
+	private boolean checkInCornerFreezePanel() {
+		SSheetViewInfo viewInfo = sheet.getViewInfo();
+		int fzr = viewInfo.getNumOfRowFreeze();	// it's number
+		int fzc = viewInfo.getNumOfColumnFreeze();
+		// check there is corner freeze panel first
+		if(fzr > 0 && fzc > 0) {
+			// check range
+			if(getRow() < fzr && getColumn() < fzc) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	private boolean checkCrossTopFreezePanel() {
+		SSheetViewInfo viewInfo = sheet.getViewInfo();
+		int fzr = viewInfo.getNumOfRowFreeze();
+		if(fzr > 0) {
+			if(getRow() < fzr && getLastRow() >= fzr) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	private boolean checkCrossLeftFreezePanel() {
+		SSheetViewInfo viewInfo = sheet.getViewInfo();
+		int fzc = viewInfo.getNumOfColumnFreeze();
+		if(fzc > 0) {
+			// check range
+			if(getColumn() < fzc && getLastColumn() >= fzc) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

@@ -1,0 +1,23 @@
+<zk>
+	<tabbox hflex="1" vflex="1">
+		<tabs>
+			<tab>XLSX</tab>
+			<tab id="xlsTab">XLS</tab>
+		</tabs>
+		<tabpanels>
+			<tabpanel>
+				<spreadsheet src="/issue3/book/589-hidden-row.xlsx" width="100%"
+					height="100%" maxVisibleRows="200" maxVisibleColumns="40" showSheetbar="true"
+					showToolbar="true" showContextMenu="true" />
+			</tabpanel>
+			<tabpanel fulfill="xlsTab.onClick">
+				<spreadsheet src="/issue3/book/589-hidden-row.xls" width="100%"
+					height="100%" maxVisibleRows="200" maxVisibleColumns="40" showSheetbar="true"
+					showToolbar="true" showContextMenu="true" />
+			</tabpanel>
+		</tabpanels>
+	</tabbox>
+
+</zk>
+
+

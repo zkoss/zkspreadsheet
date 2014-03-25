@@ -113,6 +113,23 @@ import org.zkoss.zss.range.impl.StyleUtil;
 			mergeBuffer = prepareMergeRegionBuffer(src,option);
 		}
 		
+		if(option.isCut()){
+			//clear the src's value and merge
+			clearCell(src);
+			clearMergeRegion(src);
+		}
+		
+		// ZSS-608: Special Case - Copy a single cell to a merge cell
+		if(srcRegion.isSingle()) {
+			for(CellRegion mergedRegion : _destSheet.getMergedRegions()) {
+				if(dest.equals(mergedRegion)) {
+					CellRegion destRegion = new CellRegion(dest.getRow(),dest.getColumn(),dest.getRow(),dest.getColumn());
+					pasteCells(srcBuffer,destRegion,option,rowOffset,columnOffset);
+					return dest;
+				}
+			}
+		}
+		
 		int srcColCount = srcBuffer[0].length;
 		int srcRowCount = srcBuffer.length;
 		
@@ -123,12 +140,6 @@ import org.zkoss.zss.range.impl.StyleUtil;
 		boolean wrongMultiple = wrongRowMultiple||wrongColMultiple;
 		int rowMultiple = destRowCount<=1||wrongMultiple?1:destRowCount/srcRowCount;
 		int colMultiple = destColCount<=1||wrongMultiple?1:destColCount/srcColCount;
-
-		if(option.isCut()){
-			//clear the src's value and merge
-			clearCell(src);
-			clearMergeRegion(src);
-		}
 
 		for(int i=0;i<rowMultiple;i++){
 			for(int j=0;j<colMultiple;j++){

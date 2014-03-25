@@ -476,10 +476,17 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		}
 	},
 	fireProcessWrap_: function () {
-		var r = this._wrapRange;
-		if (r != undefined) {
-			this.fire('onProcessWrap', {tRow: r.tRow, bRow: r.bRow});
-			delete this._wrapRange;
+		if (this._wgt.isSheetCSSReady()){
+			var r = this._wrapRange;
+			if (r != undefined) {
+				this.fire('onProcessWrap', {tRow: r.tRow, bRow: r.bRow});
+				delete this._wrapRange;
+			}
+		}else{
+			var self = this; 
+			setTimeout(function(){
+						self.fireProcessWrap_();
+						},25);
 		}
 	},
 	//TODO: change to fire 'onSelectedSheet' evt

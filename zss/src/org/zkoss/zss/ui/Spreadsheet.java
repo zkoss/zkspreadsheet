@@ -2849,7 +2849,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 				SColumnArray columnArray = iter.next();
 				final boolean hidden = columnArray.isHidden(); //whether this column is hidden
 				final int columnWidth = columnArray.getWidth();//column width
-				if (columnWidth != defaultColSize || hidden) { 
+				if (columnArray.isCustomWidth() || hidden) { 
 					for(int i = columnArray.getIndex(); i <= columnArray.getLastIndex();i++){
 						infos.add(new HeaderPositionInfo(i, columnWidth, _custColId.next(), hidden, true));
 					}

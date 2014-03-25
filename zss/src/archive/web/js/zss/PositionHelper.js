@@ -369,6 +369,19 @@ zss.PositionHelper = zk.$extends(zk.Object, {
 	},
 	getDefaultSize: function(){
 		return this.size;
+	},
+	/**
+	 * @param rowColumnIndex row or column index
+	 * @return return "hidden" value in position helper of specified row (or column).
+	 * If no position helper exists, return FALSE.  
+	 */
+	isHidden: function(rowColumnIndex){
+		var metaInfo =  this.getMeta(rowColumnIndex);
+		if (metaInfo == null){
+			return false;
+		}else{
+			return metaInfo[3];
+		}
 	}
 });
 })();
