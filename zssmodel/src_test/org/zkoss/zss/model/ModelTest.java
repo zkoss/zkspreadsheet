@@ -272,20 +272,18 @@ public class ModelTest {
 		sregion = new SheetRegion(sheet1,"B:C");
 		
 		//Too bad, we poi's implementation always use 65535 to be the maxRow Number 
-		Assert.assertEquals("Sheet1!B1:C65536", sregion.getReferenceString());
+		Assert.assertEquals("Sheet1!B1:C1048576", sregion.getReferenceString());
 		Assert.assertEquals(0, sregion.getRow());
 		Assert.assertEquals(1, sregion.getColumn());
-//		Assert.assertEquals(sheet1.getBook().getMaxRowIndex(), sregion.getLastRow());
-		Assert.assertEquals(65535, sregion.getLastRow());
+		Assert.assertEquals(sheet1.getBook().getMaxRowIndex(), sregion.getLastRow());
 		Assert.assertEquals(2, sregion.getLastColumn());
 		
 		
 		sregion = new SheetRegion(sheet1,"C:B");
-		Assert.assertEquals("Sheet1!B1:C65536", sregion.getReferenceString());
+		Assert.assertEquals("Sheet1!B1:C1048576", sregion.getReferenceString());
 		Assert.assertEquals(0, sregion.getRow());
 		Assert.assertEquals(1, sregion.getColumn());
-//		Assert.assertEquals(sheet1.getBook().getMaxRowIndex(), sregion.getLastRow());
-		Assert.assertEquals(65535, sregion.getLastRow());
+		Assert.assertEquals(sheet1.getBook().getMaxRowIndex(), sregion.getLastRow());
 		Assert.assertEquals(2, sregion.getLastColumn());
 	}
 	
