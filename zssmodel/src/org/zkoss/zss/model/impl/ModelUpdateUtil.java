@@ -20,6 +20,7 @@ import java.util.Set;
 
 import org.zkoss.zss.model.CellRegion;
 import org.zkoss.zss.model.SBookSeries;
+import org.zkoss.zss.model.SCell;
 import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.model.sys.dependency.DependencyTable;
 import org.zkoss.zss.model.sys.dependency.Ref;
@@ -62,7 +63,9 @@ import org.zkoss.zss.range.impl.ModelUpdateCollector;
 			collector.addRef(ref);
 		}
 	}
-	
+	/*package*/ static void addCellUpdate(SSheet sheet,SCell cell){
+		addCellUpdate(sheet,cell.getRowIndex(),cell.getColumnIndex());
+	}
 	/*package*/ static void addCellUpdate(SSheet sheet,int row,int column){
 		addCellUpdate(sheet,row,column,row,column);
 	}

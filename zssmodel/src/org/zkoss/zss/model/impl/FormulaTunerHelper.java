@@ -19,6 +19,7 @@ package org.zkoss.zss.model.impl;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
+
 import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.SBookSeries;
 import org.zkoss.zss.model.SCell;
@@ -94,6 +95,9 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 			exprAfter = engine.move(catExpr, sheetRegion, rowOffset, columnOffset, new FormulaParseContext(sheet, null));//null ref, no trace dependence here
 			if(!exprAfter.hasError() && !catExpr.equals(exprAfter.getFormulaString())){
 				data.setCategoriesFormula(exprAfter.getFormulaString());
+			}else{
+				//zss-626, has to clear cache and notify ref update
+				data.clearFormulaResultCache();
 			}
 		}
 		
@@ -139,6 +143,9 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 			}
 			if(dirty){
 				series.setXYZFormula(nameExpr, xvalExpr, yvalExpr, zvalExpr);
+			}else{
+				//zss-626, has to clear cache and notify ref update
+				series.clearFormulaResultCache();
 			}
 		}
 		
@@ -176,6 +183,10 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 		if(!expr.equals(exprAfter.getFormulaString())){
 			cell.setFormulaValue(exprAfter.getFormulaString());
 			//don't need to notify cell change, cell will do
+		}else{
+			//zss-626, has to clear cache and notify ref update
+			cell.clearFormulaResultCache();
+			ModelUpdateUtil.addRefUpdate(dependent);
 		}
 	}
 
@@ -275,6 +286,9 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 				}
 				if(changed) {
 					series.setXYZFormula(nf, xf, yf, zf);
+				}else{
+					//zss-626, has to clear cache and notify ref update
+					series.clearFormulaResultCache();
 				}
 			}
 		}
@@ -285,6 +299,9 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 			FormulaExpression exprAfter = engine.extend(expr, sheetRegion,horizontal, context);
 			if(!exprAfter.hasError() && !expr.equals(exprAfter.getFormulaString())) {
 				data.setCategoriesFormula(exprAfter.getFormulaString());
+			}else{
+				//zss-626, has to clear cache and notify ref update
+				data.clearFormulaResultCache();
 			}
 		}
 		
@@ -321,6 +338,10 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 		if(!expr.equals(exprAfter.getFormulaString())){
 			cell.setFormulaValue(exprAfter.getFormulaString());
 			//don't need to notify cell change, cell will do
+		}else{
+			//zss-626, has to clear cache and notify ref update
+			cell.clearFormulaResultCache();
+			ModelUpdateUtil.addRefUpdate(dependent);
 		}
 	}	
 
@@ -410,6 +431,9 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 				}
 				if(changed) {
 					series.setXYZFormula(nf, xf, yf, zf);
+				}else{
+					//zss-626, has to clear cache and notify ref update
+					series.clearFormulaResultCache();
 				}
 			}
 		}
@@ -420,6 +444,9 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 			FormulaExpression exprAfter = engine.shrink(expr, sheetRegion,horizontal, context);
 			if(!exprAfter.hasError() && !expr.equals(exprAfter.getFormulaString())) {
 				data.setCategoriesFormula(exprAfter.getFormulaString());
+			}else{
+				//zss-626, has to clear cache and notify ref update
+				data.clearFormulaResultCache();
 			}
 		}
 		
@@ -456,6 +483,10 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 		if(!expr.equals(exprAfter.getFormulaString())){
 			cell.setFormulaValue(exprAfter.getFormulaString());
 			//don't need to notify cell change, cell will do
+		}else{
+			//zss-626, has to clear cache and notify ref update
+			cell.clearFormulaResultCache();
+			ModelUpdateUtil.addRefUpdate(dependent);
 		}
 	}
 

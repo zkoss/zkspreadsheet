@@ -376,4 +376,59 @@ public class IssueTest {
 		sheet1.getCell("E4").setValue("=E4");
 		Assert.assertEquals("#N/A", sheet1.getCell("E4").getErrorValue().getErrorString());
 	}
+	
+	
+	@Test 
+	public void testZSS626_cellDeleteH(){
+		SBook book = SBooks.createBook("book1");
+		book.getBookSeries().setAutoFormulaCacheClean(true);
+		SSheet sheet1 = book.createSheet("Sheet1");
+		
+		sheet1.getCell("C1").setValue(1);
+		sheet1.getCell("C2").setValue(2);
+		sheet1.getCell("C3").setValue(3);
+		
+		sheet1.getCell("A1").setValue("=SUM(C1:C3)");
+		
+		Assert.assertEquals(6D, sheet1.getCell("A1").getValue());
+		
+		SRanges.range(sheet1,"B1:B2").delete(DeleteShift.LEFT);
+		
+		Assert.assertEquals(1D, sheet1.getCell("B1").getValue());
+		Assert.assertEquals(2D, sheet1.getCell("B2").getValue());
+		
+		Assert.assertEquals(null, sheet1.getCell("C1").getValue());
+		Assert.assertEquals(null, sheet1.getCell("C2").getValue());
+		Assert.assertEquals(3D, sheet1.getCell("C3").getValue());
+		
+		
+		Assert.assertEquals(3D, sheet1.getCell("A1").getValue());
+	}
+	
+	@Test 
+	public void testZSS626_cellInsertH(){
+		SBook book = SBooks.createBook("book1");
+		book.getBookSeries().setAutoFormulaCacheClean(true);
+		SSheet sheet1 = book.createSheet("Sheet1");
+		
+		sheet1.getCell("C1").setValue(1);
+		sheet1.getCell("C2").setValue(2);
+		sheet1.getCell("C3").setValue(3);
+		
+		sheet1.getCell("A1").setValue("=SUM(C1:C3)");
+		
+		Assert.assertEquals(6D, sheet1.getCell("A1").getValue());
+		
+		SRanges.range(sheet1,"B1:B2").insert(InsertShift.RIGHT,InsertCopyOrigin.FORMAT_NONE);
+		
+		Assert.assertEquals(1D, sheet1.getCell("D1").getValue());
+		Assert.assertEquals(2D, sheet1.getCell("D2").getValue());
+		
+		Assert.assertEquals(null, sheet1.getCell("C1").getValue());
+		Assert.assertEquals(null, sheet1.getCell("C2").getValue());
+		Assert.assertEquals(3D, sheet1.getCell("C3").getValue());
+		
+		
+		Assert.assertEquals(3D, sheet1.getCell("A1").getValue());
+	}
 }
