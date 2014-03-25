@@ -36,6 +36,7 @@ ZK Spreadsheet 3.5.0
   ZSS-592 Insert row/column on freeze panel with Range API is a illegal operation but doesn't get any information from server and cause js error
   ZSS-595 Perform insert row operation on rows cover freezed row and non-freezed row will cause js error
   ZSS-608 Copy a single cell to a merge cell cause unexpected result
+  ZSS-622 Spreadsheet toolbar function not work correctly if creating the instance at runtime
   
 ** Upgrade Notes
   * Following api are removed
@@ -71,6 +72,7 @@ ZK Spreadsheet 3.0.2
   ZSS-617 After spreadsheet loads a book, a mask is blocking the sheet
   ZSS-612 Cannot sort files name value in ZSS app "Open Book Dialog"
   ZSS-616 Selection box is displayed at wrong position
+  ZSS-622 Spreadsheet toolbar function not work correctly if creating the instance at runtime
   
 ** Upgrade Notes
   

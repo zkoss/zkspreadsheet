@@ -387,6 +387,8 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 				processStopEditing((String) data[0], (StopEditingEvent) data[1], (String) data[2]);
 			}
 		});
+		
+		initComponentActionHandler();
 	}
 	
 	/**
@@ -5056,7 +5058,6 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 
 	@Override
 	public void afterCompose() {		
-		initComponentActionHandler();
 	}
 	
 	@Override
