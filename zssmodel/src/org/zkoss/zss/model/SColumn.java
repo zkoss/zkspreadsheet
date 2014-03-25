@@ -21,7 +21,7 @@ package org.zkoss.zss.model;
  * @author dennis
  * @since 3.5.0
  */
-public interface SColumn extends SCellStyleHolder{
+public interface SColumn extends CellStyleHolder{
 
 	public int getIndex();
 	public SSheet getSheet();

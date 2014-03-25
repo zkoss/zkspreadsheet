@@ -25,7 +25,7 @@ import org.zkoss.zss.model.SHyperlink.HyperlinkType;
  * @author dennis
  * @since 3.5.0
  */
-public interface SCell extends SCellStyleHolder,FormulaContent{
+public interface SCell extends CellStyleHolder,FormulaContent{
 
 	/**
 	 * @since 3.5.0

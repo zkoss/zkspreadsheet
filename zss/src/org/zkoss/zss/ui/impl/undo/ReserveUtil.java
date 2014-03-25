@@ -32,7 +32,7 @@ import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.model.CellRegion;
 import org.zkoss.zss.model.SCell;
 import org.zkoss.zss.model.SCellStyle;
-import org.zkoss.zss.model.SCellStyleHolder;
+import org.zkoss.zss.model.CellStyleHolder;
 import org.zkoss.zss.model.SColumn;
 import org.zkoss.zss.model.SRow;
 import org.zkoss.zss.model.SSheet;

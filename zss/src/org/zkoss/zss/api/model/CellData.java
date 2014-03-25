@@ -89,6 +89,12 @@ public interface CellData {
 	
 	/**
 	 * 
+	 * @return the string object that represent the formula of this cell
+	 */
+	public String getFormulaValue();
+	
+	/**
+	 * 
 	 * @return the boolean object of this cell
 	 */
 	public Boolean getBooleanValue();

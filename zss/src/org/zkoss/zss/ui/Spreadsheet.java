@@ -77,18 +77,16 @@ import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.WebApp;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
-import org.zkoss.zk.ui.event.EventQueue;
-import org.zkoss.zk.ui.event.EventQueues;
 import org.zkoss.zk.ui.ext.AfterCompose;
 import org.zkoss.zk.ui.ext.render.DynamicMedia;
 import org.zkoss.zk.ui.sys.ContentRenderer;
 import org.zkoss.zk.ui.util.DesktopCleanup;
+import org.zkoss.zss.api.AreaRef;
 import org.zkoss.zss.api.CellOperationUtil;
+import org.zkoss.zss.api.CellRef;
 import org.zkoss.zss.api.IllegalFormulaException;
 import org.zkoss.zss.api.Importer;
-import org.zkoss.zss.api.CellRef;
 import org.zkoss.zss.api.Range;
-import org.zkoss.zss.api.AreaRef;
 import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.impl.ImporterImpl;
 import org.zkoss.zss.api.model.Book;
@@ -102,32 +100,21 @@ import org.zkoss.zss.model.ModelEvent;
 import org.zkoss.zss.model.ModelEventListener;
 import org.zkoss.zss.model.ModelEvents;
 import org.zkoss.zss.model.SAutoFilter;
+import org.zkoss.zss.model.SAutoFilter.NFilterColumn;
 import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.SCell;
+import org.zkoss.zss.model.SCell.CellType;
 import org.zkoss.zss.model.SCellStyle;
+import org.zkoss.zss.model.SCellStyle.Alignment;
+import org.zkoss.zss.model.SCellStyle.VerticalAlignment;
 import org.zkoss.zss.model.SChart;
-import org.zkoss.zss.model.SColumn;
 import org.zkoss.zss.model.SColumnArray;
 import org.zkoss.zss.model.SDataValidation;
 import org.zkoss.zss.model.SFont;
 import org.zkoss.zss.model.SPicture;
 import org.zkoss.zss.model.SRow;
 import org.zkoss.zss.model.SSheet;
-import org.zkoss.zss.model.ViewAnchor;
-import org.zkoss.zss.model.SAutoFilter.NFilterColumn;
-import org.zkoss.zss.model.SCell.CellType;
-import org.zkoss.zss.model.SCellStyle.Alignment;
-import org.zkoss.zss.model.SCellStyle.VerticalAlignment;
-import org.zkoss.zss.model.impl.AbstractBookAdv;
 import org.zkoss.zss.model.sys.formula.EvaluationContributorContainer;
-//import org.zkoss.zss.model.sys.XBook;
-//import org.zkoss.zss.model.sys.XImporter;
-//import org.zkoss.zss.model.sys.XRange;
-//import org.zkoss.zss.model.sys.XRanges;
-//import org.zkoss.zss.model.sys.XSheet;
-//import org.zkoss.zss.model.sys.impl.BookCtrl;
-//import org.zkoss.zss.model.sys.impl.ExcelImporter;
-//import org.zkoss.zss.model.sys.impl.SheetCtrl;
 import org.zkoss.zss.range.SImporter;
 import org.zkoss.zss.range.SImporters;
 import org.zkoss.zss.range.SRange;
@@ -152,40 +139,39 @@ import org.zkoss.zss.ui.event.StartEditingEvent;
 import org.zkoss.zss.ui.event.StopEditingEvent;
 import org.zkoss.zss.ui.impl.ActiveRangeHelper;
 import org.zkoss.zss.ui.impl.CellFormatHelper;
-import org.zkoss.zss.ui.impl.Focus;
-import org.zkoss.zss.ui.impl.HeaderPositionHelper;
-import org.zkoss.zss.ui.impl.HeaderPositionHelper.HeaderPositionInfo;
-import org.zkoss.zss.ui.impl.JSONObj;
-import org.zkoss.zss.ui.impl.MergeAggregation;
-import org.zkoss.zss.ui.impl.MergeAggregation.MergeIndex;
-import org.zkoss.zss.ui.impl.undo.AggregatedAction;
-import org.zkoss.zss.ui.impl.undo.CellEditTextAction;
-import org.zkoss.zss.ui.impl.undo.HideHeaderAction;
-import org.zkoss.zss.ui.impl.undo.ResizeHeaderAction;
 import org.zkoss.zss.ui.impl.ComponentEvaluationContributor;
 import org.zkoss.zss.ui.impl.DefaultUserActionManagerCtrl;
 import org.zkoss.zss.ui.impl.DummyDataValidationHandler;
 import org.zkoss.zss.ui.impl.DummyFreezeInfoLoader;
 import org.zkoss.zss.ui.impl.DummyUndoableActionManager;
+import org.zkoss.zss.ui.impl.Focus;
+import org.zkoss.zss.ui.impl.HeaderPositionHelper;
+import org.zkoss.zss.ui.impl.HeaderPositionHelper.HeaderPositionInfo;
+import org.zkoss.zss.ui.impl.JSONObj;
 import org.zkoss.zss.ui.impl.JavaScriptValue;
+import org.zkoss.zss.ui.impl.MergeAggregation;
+import org.zkoss.zss.ui.impl.MergeAggregation.MergeIndex;
 import org.zkoss.zss.ui.impl.MergeMatrixHelper;
 import org.zkoss.zss.ui.impl.MergedRect;
 import org.zkoss.zss.ui.impl.SequenceId;
 import org.zkoss.zss.ui.impl.SimpleCellDisplayLoader;
 import org.zkoss.zss.ui.impl.StringAggregation;
-import org.zkoss.zss.ui.impl.Styles;
 import org.zkoss.zss.ui.impl.VoidWidgetHandler;
 import org.zkoss.zss.ui.impl.XUtils;
+import org.zkoss.zss.ui.impl.undo.AggregatedAction;
+import org.zkoss.zss.ui.impl.undo.CellEditTextAction;
+import org.zkoss.zss.ui.impl.undo.HideHeaderAction;
+import org.zkoss.zss.ui.impl.undo.ResizeHeaderAction;
 import org.zkoss.zss.ui.sys.CellDisplayLoader;
+import org.zkoss.zss.ui.sys.DataValidationHandler;
 import org.zkoss.zss.ui.sys.FreezeInfoLoader;
 import org.zkoss.zss.ui.sys.SpreadsheetCtrl;
 import org.zkoss.zss.ui.sys.SpreadsheetCtrl.CellAttribute;
-import org.zkoss.zss.ui.sys.DataValidationHandler;
+import org.zkoss.zss.ui.sys.SpreadsheetInCtrl;
+import org.zkoss.zss.ui.sys.SpreadsheetOutCtrl;
 import org.zkoss.zss.ui.sys.UndoableAction;
 import org.zkoss.zss.ui.sys.UndoableActionManager;
 import org.zkoss.zss.ui.sys.UserActionManagerCtrl;
-import org.zkoss.zss.ui.sys.SpreadsheetInCtrl;
-import org.zkoss.zss.ui.sys.SpreadsheetOutCtrl;
 import org.zkoss.zss.ui.sys.WidgetHandler;
 import org.zkoss.zss.ui.sys.WidgetLoader;
 import org.zkoss.zul.Messagebox;
@@ -579,12 +565,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			try {
 				SImporter importer = _importer;
 				if (importer == null) {
-//					if("true".equals(Executions.getCurrent().getParameter("zsstest"))){
-//						importer = SImporters.getImporter("test");
-//					}else{
-						importer = SImporters.getImporter();
-//					}
-					
+					importer = SImporters.getImporter();
 				}
 
 				SBook book = null;
@@ -681,7 +662,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		if (_selectedSheet != null && getSBook().getSheetIndex(_selectedSheet) != -1  && _selfEditorFocus != null) {
 			final SRange rng = SRanges.range(_selectedSheet);
 			getFriendFocusHelper().removeFocus(_selfEditorFocus);
-			rng.notifyCustomEvent(ON_MODEL_FRIEND_FOCUS_DELETE,_selfEditorFocus,false);//zss 3.5 false?
+			rng.notifyCustomEvent(ON_MODEL_FRIEND_FOCUS_DELETE,_selfEditorFocus,true);
 			_selfEditorFocus = null;
 		}
 	}
@@ -695,11 +676,11 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 				_selfEditorFocus.setPosition(row, column);
 			}
 			final SRange rng = SRanges.range(_selectedSheet);
-			rng.notifyCustomEvent(ON_MODEL_FRIEND_FOCUS_MOVE,_selfEditorFocus,false);//zss 3.5 false?
+			rng.notifyCustomEvent(ON_MODEL_FRIEND_FOCUS_MOVE,_selfEditorFocus,true);
 		}
 		syncFriendFocus();
 	}
-	private EventListener _focusListener = null;
+	private EventListener<Event> _focusListener = null;
 
 	private UserActionManagerCtrl _actionManagerCtrl;
 
@@ -2169,20 +2150,6 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 					onAutoFilterChange(event);
 				}
 			});
-			/* TODO zss 3.5
-			addEventListener(SSDataEvent.ON_RANGE_DELETE, new EventListener() {
-				@Override
-				public void onEvent(Event event) throws Exception {
-					onRangeDelete((SSDataEvent)event);
-				}
-			});
-			addEventListener(SSDataEvent.ON_MERGE_CHANGE, new EventListener() {
-				@Override
-				public void onEvent(Event event) throws Exception {
-					onMergeChange((SSDataEvent)event);
-				}
-			});
-			*/
 			addEventListener(ModelEvents.ON_MERGE_ADD, new ModelEventListener() {
 				@Override
 				public void onEvent(ModelEvent event) {
@@ -2245,14 +2212,6 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 					onPictureUpdate(event);
 				}
 			});
-			/* TODO zss 3.5
-			addEventListener(SSDataEvent.ON_WIDGET_CHANGE, new EventListener() {
-				@Override
-				public void onEvent(Event event) throws Exception {
-					onWidgetChange((SSDataEvent)event);
-				}
-			});
-			*/
 			addEventListener(ModelEvents.ON_FREEZE_CHANGE, new ModelEventListener() {
 				@Override
 				public void onEvent(ModelEvent event){
@@ -2291,7 +2250,6 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			SSheet delSheet = event.getSheet();
 			//TODO zss 3.5 clear active client cache and active range record
 			
-			
 			if(delSheet == getSelectedSSheet()){
 				int delIndex = (Integer)event.getData(ModelEvents.PARAM_INDEX);
 				//the sheet that selected is deleted, re select another
@@ -2306,11 +2264,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			}
 			org.zkoss.zk.ui.event.Events.postEvent(new SheetDeleteEvent(Events.ON_AFTER_SHEET_DELETE, Spreadsheet.this, delSheet.getSheetName()));
 		}
-		/* zss 3.5
-		private XSheet getSheet(Ref rng) {
-			return XUtils.getSheetByRefSheet(_book, rng.getOwnerSheet()); 
-		}
-		*/
+		
 		private void onFriendFocusMove(ModelEvent event) {
 			SSheet sheet = event.getSheet();
 			if (!getSelectedSSheet().equals(sheet)){
@@ -2378,17 +2332,6 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			}
 		}
 		
-		/*TODO zss 3.5
-		private void onWidgetChange(SSDataEvent event) {
-			final Ref rng = event.getRef();
-			final XSheet sheet = getSheet(rng);
-			final int left = rng.getLeftCol();
-			final int top = rng.getTopRow();
-			final int right = rng.getRightCol();
-			final int bottom = rng.getBottomRow();
-			updateWidget(sheet, left, top, right, bottom);
-		}
-		*/
 		private void onCellContentChange(ModelEvent event) {
 			final SSheet sheet = event.getSheet();
 			final CellRegion region = event.getRegion();

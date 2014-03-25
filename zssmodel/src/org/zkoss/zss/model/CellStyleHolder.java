@@ -4,7 +4,7 @@ package org.zkoss.zss.model;
  * @author Dennis
  * @since 3.5.0
  */
-public interface SCellStyleHolder {
+public interface CellStyleHolder {
 	/**
 	 * Get the style, if it doesn't has local style, it will possible look up it's parent's style
 	 * @see #getCellStyle(boolean)

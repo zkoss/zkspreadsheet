@@ -23,7 +23,7 @@ import java.util.Iterator;
 
 import org.zkoss.zss.model.InvalidModelOpException;
 import org.zkoss.zss.model.SCell;
-import org.zkoss.zss.model.SCellStyleHolder;
+import org.zkoss.zss.model.CellStyleHolder;
 import org.zkoss.zss.model.SColumn;
 import org.zkoss.zss.model.SRow;
 import org.zkoss.zss.model.SSheet;
@@ -37,7 +37,7 @@ import org.zkoss.zss.range.SRange;
 public class WholeStyleUtil {
 
 	public interface StyleApplyer {
-		public void applyStyle(SCellStyleHolder holder);
+		public void applyStyle(CellStyleHolder holder);
 	};
 	
 	public static void setWholeStyle(SRange range, StyleApplyer applyer){
@@ -116,7 +116,7 @@ public class WholeStyleUtil {
 	public static void setFillColor(final SRange wholeRange, final String htmlColor) {
 		setWholeStyle(wholeRange,new StyleApplyer(){
 			@Override
-			public void applyStyle(SCellStyleHolder holder) {
+			public void applyStyle(CellStyleHolder holder) {
 				StyleUtil.setFillColor(wholeRange.getSheet().getBook(), holder, htmlColor);
 			}});
 	}
@@ -125,7 +125,7 @@ public class WholeStyleUtil {
 			final org.zkoss.zss.model.SCellStyle.Alignment hAlignment) {
 		setWholeStyle(wholeRange,new StyleApplyer(){
 			@Override
-			public void applyStyle(SCellStyleHolder holder) {
+			public void applyStyle(CellStyleHolder holder) {
 				StyleUtil.setTextHAlign(wholeRange.getSheet().getBook(), holder, hAlignment);
 			}});
 	}
@@ -134,7 +134,7 @@ public class WholeStyleUtil {
 			final org.zkoss.zss.model.SCellStyle.VerticalAlignment vAlignment) {
 		setWholeStyle(wholeRange,new StyleApplyer(){
 			@Override
-			public void applyStyle(SCellStyleHolder holder) {
+			public void applyStyle(CellStyleHolder holder) {
 				StyleUtil.setTextVAlign(wholeRange.getSheet().getBook(), holder, vAlignment);
 			}});
 	}
@@ -142,7 +142,7 @@ public class WholeStyleUtil {
 	public static void setTextWrap(final SRange wholeRange, final boolean wraptext) {
 		setWholeStyle(wholeRange,new StyleApplyer(){
 			@Override
-			public void applyStyle(SCellStyleHolder holder) {
+			public void applyStyle(CellStyleHolder holder) {
 				StyleUtil.setTextWrap(wholeRange.getSheet().getBook(), holder, wraptext);
 			}});
 	}
@@ -150,7 +150,7 @@ public class WholeStyleUtil {
 	public static void setDataFormat(final SRange wholeRange, final String format) {
 		setWholeStyle(wholeRange,new StyleApplyer(){
 			@Override
-			public void applyStyle(SCellStyleHolder holder) {
+			public void applyStyle(CellStyleHolder holder) {
 				StyleUtil.setDataFormat(wholeRange.getSheet().getBook(), holder, format);
 			}});
 	}
@@ -158,7 +158,7 @@ public class WholeStyleUtil {
 	public static void setFontName(final SRange wholeRange,final String fontName) {
 		setWholeStyle(wholeRange,new StyleApplyer(){
 			@Override
-			public void applyStyle(SCellStyleHolder holder) {
+			public void applyStyle(CellStyleHolder holder) {
 				StyleUtil.setFontName(wholeRange.getSheet().getBook(), holder, fontName);
 			}});
 	}
@@ -167,7 +167,7 @@ public class WholeStyleUtil {
 			final int fontHeightPoints) {
 		setWholeStyle(wholeRange,new StyleApplyer(){
 			@Override
-			public void applyStyle(SCellStyleHolder holder) {
+			public void applyStyle(CellStyleHolder holder) {
 				StyleUtil.setFontHeightPoints(wholeRange.getSheet().getBook(), holder, fontHeightPoints);
 			}});
 	}
@@ -176,7 +176,7 @@ public class WholeStyleUtil {
 			final org.zkoss.zss.model.SFont.Boldweight fontBoldweight) {
 		setWholeStyle(wholeRange,new StyleApplyer(){
 			@Override
-			public void applyStyle(SCellStyleHolder holder) {
+			public void applyStyle(CellStyleHolder holder) {
 				StyleUtil.setFontBoldWeight(wholeRange.getSheet().getBook(), holder, fontBoldweight);
 			}});
 	}
@@ -184,7 +184,7 @@ public class WholeStyleUtil {
 	public static void setFontItalic(final SRange wholeRange,final boolean italic) {
 		setWholeStyle(wholeRange,new StyleApplyer(){
 			@Override
-			public void applyStyle(SCellStyleHolder holder) {
+			public void applyStyle(CellStyleHolder holder) {
 				StyleUtil.setFontItalic(wholeRange.getSheet().getBook(), holder, italic);
 			}});
 	}
@@ -193,7 +193,7 @@ public class WholeStyleUtil {
 			final boolean strikeout) {
 		setWholeStyle(wholeRange,new StyleApplyer(){
 			@Override
-			public void applyStyle(SCellStyleHolder holder) {
+			public void applyStyle(CellStyleHolder holder) {
 				StyleUtil.setFontStrikethrough(wholeRange.getSheet().getBook(), holder, strikeout);
 			}});
 	}
@@ -202,7 +202,7 @@ public class WholeStyleUtil {
 			final org.zkoss.zss.model.SFont.Underline fontUnderline) {
 		setWholeStyle(wholeRange,new StyleApplyer(){
 			@Override
-			public void applyStyle(SCellStyleHolder holder) {
+			public void applyStyle(CellStyleHolder holder) {
 				StyleUtil.setFontUnderline(wholeRange.getSheet().getBook(), holder, fontUnderline);
 			}});
 	}
@@ -210,7 +210,7 @@ public class WholeStyleUtil {
 	public static void setFontColor(final SRange wholeRange, final String htmlColor) {
 		setWholeStyle(wholeRange,new StyleApplyer(){
 			@Override
-			public void applyStyle(SCellStyleHolder holder) {
+			public void applyStyle(CellStyleHolder holder) {
 				StyleUtil.setFontColor(wholeRange.getSheet().getBook(), holder, htmlColor);
 			}});
 	}	

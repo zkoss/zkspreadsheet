@@ -164,6 +164,12 @@ public class CellDataImpl implements CellData{
 		initCell();
 		return _cell.getStringValue();
 	}
+	
+	@Override
+	public String getFormulaValue() {
+		initCell();
+		return _cell.getFormulaValue();
+	}
 
 	@Override
 	public Boolean getBooleanValue() {

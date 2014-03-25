@@ -21,7 +21,7 @@ package org.zkoss.zss.model;
  * @author dennis
  * @since 3.5.0
  */
-public interface SRow extends SCellStyleHolder{
+public interface SRow extends CellStyleHolder{
 
 	public SSheet getSheet();
 	

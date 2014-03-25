@@ -27,18 +27,8 @@ import org.zkoss.zss.model.SBook;
  */
 public interface Book {
 	public enum BookType {
-		//EXCEL_2003, EXCEL_2007
 		XLS, XLSX
 	}
-
-	/**
-	 * Gets the poi book object 
-	 * @return the poi book object
-	 * 
-	 */
-	/*TODO zss 3.5
-	public Workbook getPoiBook();
-	*/
 	
 	/** 
 	 * get the internal model object to do advanced operation <br/>

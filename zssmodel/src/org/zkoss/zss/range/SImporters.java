@@ -31,7 +31,6 @@ public class SImporters {
 	static{
 		//default registration
 		register("excel",new ExcelImportFactory());
-//		register("test",new TestImporterFactory());
 	}
 	
 	/**

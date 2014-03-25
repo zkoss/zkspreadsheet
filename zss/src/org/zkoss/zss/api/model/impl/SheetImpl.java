@@ -147,14 +147,6 @@ public class SheetImpl implements Sheet{
 		return getNative().getPrintSetup().isPrintGridlines();
 	}
 
-	/*TODO zss 3.5
-	@Override
-	@Deprecated
-	public org.zkoss.poi.ss.usermodel.Sheet getPoiSheet() {
-		return null;
-	}
-	*/
-
 	@Override
 	public int getRowHeight(int row) {
 		return getNative().getRow(row).getHeight();

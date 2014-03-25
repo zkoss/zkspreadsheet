@@ -648,48 +648,6 @@ public class RangeImpl implements Range{
 		r.setRowHeight(heightPx, isCustom);
 	}
 	
-	//api that need special object wrap
-	
-	
-	private void apiSpecialWrapObject(){
-
-//		range.getFormatText();//FormatText
-//		range.getHyperlink();//Hyperlink
-//		
-//		range.getRichEditText();//RichTextString
-//		range.getText();//RichTextString (what is the difference of getRichEditText)
-//		
-		
-//		range.validate("");//DataValidation
-		
-	}
-	
-	
-	private void api4Internal(){
-		/* zss 3.5 
-		_range.notifyDeleteFriendFocus(null);//by Spreadsheet
-		_range.notifyMoveFriendFocus(null);//
-		*/
-	}
-	
-	
-	//API of range that no one use it.
-	
-	
-	private void apiNoOneUse(){
-		/* zss 3.5 
-		_range.getCount();
-		_range.getCurrentRegion();
-		_range.getDependents();
-		_range.getDirectDependents();
-		_range.getPrecedents();
-		
-		_range.isCustomHeight();
-		
-		//range.pasteSpecial(pasteType, pasteOp, SkipBlanks, transpose);
-		 */
-	}
-	
 	public String toString(){
 		return Ranges.getAreaRefString(getSheet(), getRow(),getColumn(),getLastRow(),getLastColumn());
 	}

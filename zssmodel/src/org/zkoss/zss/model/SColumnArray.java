@@ -20,7 +20,7 @@ package org.zkoss.zss.model;
  * @author Dennis
  * @since 3.5.0
  */
-public interface SColumnArray extends SCellStyleHolder{
+public interface SColumnArray extends CellStyleHolder{
 
 	public int getIndex();
 	public int getLastIndex();

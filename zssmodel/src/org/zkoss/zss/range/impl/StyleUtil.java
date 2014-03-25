@@ -21,7 +21,7 @@ package org.zkoss.zss.range.impl;
 import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.SCell;
 import org.zkoss.zss.model.SCellStyle;
-import org.zkoss.zss.model.SCellStyleHolder;
+import org.zkoss.zss.model.CellStyleHolder;
 import org.zkoss.zss.model.SColor;
 import org.zkoss.zss.model.SFont;
 import org.zkoss.zss.model.SSheet;
@@ -44,7 +44,7 @@ public class StyleUtil {
 		return destination;
 	}
 	
-	public static void setFontColor(SBook book,SCellStyleHolder holder, String color/*,HashMap<Integer,NCellStyle> cache*/){
+	public static void setFontColor(SBook book,CellStyleHolder holder, String color/*,HashMap<Integer,NCellStyle> cache*/){
 		final SCellStyle orgStyle = holder.getCellStyle();
 		SFont orgFont = orgStyle.getFont();
 		final SColor orgColor = orgFont.getColor();
@@ -88,7 +88,7 @@ public class StyleUtil {
 	}
 	
 	
-	public static void setFillColor(SBook book,SCellStyleHolder holder, String htmlColor){
+	public static void setFillColor(SBook book,CellStyleHolder holder, String htmlColor){
 		final SCellStyle orgStyle = holder.getCellStyle();
 		final SColor orgColor = orgStyle.getFillColor();
 		final SColor newColor = book.createColor(htmlColor);
@@ -110,7 +110,7 @@ public class StyleUtil {
 		
 	}
 	
-	public static void setTextWrap(SBook book,SCellStyleHolder holder,boolean wrap){
+	public static void setTextWrap(SBook book,CellStyleHolder holder,boolean wrap){
 		final SCellStyle orgStyle = holder.getCellStyle();
 		final boolean textWrap = orgStyle.isWrapText();
 		if (wrap == textWrap) { //no change, skip
@@ -127,7 +127,7 @@ public class StyleUtil {
 		holder.setCellStyle(style);
 	}
 	
-	public static void setFontHeightPoints(SBook book,SCellStyleHolder holder,int fontHeightPoints){
+	public static void setFontHeightPoints(SBook book,CellStyleHolder holder,int fontHeightPoints){
 		final SCellStyle orgStyle = holder.getCellStyle();
 		SFont orgFont = orgStyle.getFont();
 		
@@ -158,7 +158,7 @@ public class StyleUtil {
 		holder.setCellStyle(style);
 	}
 	
-	public static void setFontStrikethrough(SBook book,SCellStyleHolder holder, boolean strikeout){
+	public static void setFontStrikethrough(SBook book,CellStyleHolder holder, boolean strikeout){
 		final SCellStyle orgStyle = holder.getCellStyle();
 		SFont orgFont = orgStyle.getFont();
 		
@@ -190,7 +190,7 @@ public class StyleUtil {
 		
 	}
 	
-	public static void setFontName(SBook book,SCellStyleHolder holder,String name){
+	public static void setFontName(SBook book,CellStyleHolder holder,String name){
 		final SCellStyle orgStyle = holder.getCellStyle();
 		SFont orgFont = orgStyle.getFont();
 		
@@ -228,24 +228,24 @@ public class StyleUtil {
 	public static final short BORDER_EDGE_LEFT			= 0x08;
 	public static final short BORDER_EDGE_ALL			= BORDER_EDGE_BOTTOM|BORDER_EDGE_RIGHT|BORDER_EDGE_TOP|BORDER_EDGE_LEFT;
 	
-	public static void setBorder(SBook book,SCellStyleHolder holder, String color, SCellStyle.BorderType linestyle){
+	public static void setBorder(SBook book,CellStyleHolder holder, String color, SCellStyle.BorderType linestyle){
 		setBorder(book,holder, color, linestyle, BORDER_EDGE_ALL);
 	}
 	
-	public static void setBorderTop(SBook book,SCellStyleHolder holder,String color, SCellStyle.BorderType linestyle){
+	public static void setBorderTop(SBook book,CellStyleHolder holder,String color, SCellStyle.BorderType linestyle){
 		setBorder(book,holder, color, linestyle, BORDER_EDGE_TOP);
 	}
-	public static void setBorderLeft(SBook book,SCellStyleHolder holder,String color, SCellStyle.BorderType linestyle){
+	public static void setBorderLeft(SBook book,CellStyleHolder holder,String color, SCellStyle.BorderType linestyle){
 		setBorder(book,holder, color, linestyle, BORDER_EDGE_LEFT);
 	}
-	public static void setBorderBottom(SBook book,SCellStyleHolder holder,String color, SCellStyle.BorderType linestyle){
+	public static void setBorderBottom(SBook book,CellStyleHolder holder,String color, SCellStyle.BorderType linestyle){
 		setBorder(book,holder, color, linestyle, BORDER_EDGE_BOTTOM);
 	}
-	public static void setBorderRight(SBook book,SCellStyleHolder holder,String color, SCellStyle.BorderType linestyle){
+	public static void setBorderRight(SBook book,CellStyleHolder holder,String color, SCellStyle.BorderType linestyle){
 		setBorder(book,holder, color, linestyle, BORDER_EDGE_RIGHT);
 	}
 	
-	public static void setBorder(SBook book,SCellStyleHolder holder, String htmlColor, SCellStyle.BorderType lineStyle, short at){
+	public static void setBorder(SBook book,CellStyleHolder holder, String htmlColor, SCellStyle.BorderType lineStyle, short at){
 		
 		final SCellStyle orgStyle = holder.getCellStyle();
 		//ZSS-464 try to search existed matched style
@@ -326,7 +326,7 @@ public class StyleUtil {
 //		System.out.println(">>"+sb.toString());
 //	}
 	
-	public static void setFontBoldWeight(SBook book,SCellStyleHolder holder,SFont.Boldweight boldWeight){
+	public static void setFontBoldWeight(SBook book,CellStyleHolder holder,SFont.Boldweight boldWeight){
 		final SCellStyle orgStyle = holder.getCellStyle();
 		SFont orgFont = orgStyle.getFont();
 		
@@ -357,7 +357,7 @@ public class StyleUtil {
 		holder.setCellStyle(style);
 	}
 	
-	public static void setFontItalic(SBook book,SCellStyleHolder holder, boolean italic) {
+	public static void setFontItalic(SBook book,CellStyleHolder holder, boolean italic) {
 		final SCellStyle orgStyle = holder.getCellStyle();
 		SFont orgFont = orgStyle.getFont();
 		
@@ -389,7 +389,7 @@ public class StyleUtil {
 		
 	}
 	
-	public static void setFontUnderline(SBook book,SCellStyleHolder holder, SFont.Underline underline){
+	public static void setFontUnderline(SBook book,CellStyleHolder holder, SFont.Underline underline){
 		final SCellStyle orgStyle = holder.getCellStyle();
 		SFont orgFont = orgStyle.getFont();
 		
@@ -420,7 +420,7 @@ public class StyleUtil {
 		holder.setCellStyle(style);
 	}
 	
-	public static void setTextHAlign(SBook book,SCellStyleHolder holder, SCellStyle.Alignment align){
+	public static void setTextHAlign(SBook book,CellStyleHolder holder, SCellStyle.Alignment align){
 		final SCellStyle orgStyle = holder.getCellStyle();
 		final SCellStyle.Alignment orgAlign = orgStyle.getAlignment();
 		if (align.equals(orgAlign)) { //no change, skip
@@ -437,7 +437,7 @@ public class StyleUtil {
 		holder.setCellStyle(style);
 	}
 	
-	public static void setTextVAlign(SBook book,SCellStyleHolder holder, SCellStyle.VerticalAlignment valign){
+	public static void setTextVAlign(SBook book,CellStyleHolder holder, SCellStyle.VerticalAlignment valign){
 		final SCellStyle orgStyle = holder.getCellStyle();
 		final SCellStyle.VerticalAlignment orgValign = orgStyle.getVerticalAlignment();
 		if (valign.equals(orgValign)) { //no change, skip
@@ -455,7 +455,7 @@ public class StyleUtil {
 
 	}
 	
-	public static void setDataFormat(SBook book,SCellStyleHolder holder, String format) {
+	public static void setDataFormat(SBook book,CellStyleHolder holder, String format) {
 		final SCellStyle orgStyle = holder.getCellStyle();
 		final String orgFormat = orgStyle.getDataFormat();
 		if (format == orgFormat || (format!=null && format.equals(orgFormat))) { //no change, skip

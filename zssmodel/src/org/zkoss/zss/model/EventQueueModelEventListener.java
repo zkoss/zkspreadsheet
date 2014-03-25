@@ -19,7 +19,7 @@ package org.zkoss.zss.model;
 
 
 /**
- * A model event listener that listen model event thought event queue (not from model directly)
+ * A model event listener that listen model event through event queue (not from model directly).
  * @author dennis
  * @since 3.5.0
  */

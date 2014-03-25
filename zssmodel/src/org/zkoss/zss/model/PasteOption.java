@@ -3,7 +3,7 @@ package org.zkoss.zss.model;
 import org.zkoss.zss.model.util.Validations;
 
 /**
- * This class contains various paste options used for "paste special".
+ * This class contains various paste options used for {@link SSheet#pasteCell(SheetRegion, CellRegion, PasteOption)}.
  * @since 3.5.0
  */
 public class PasteOption {

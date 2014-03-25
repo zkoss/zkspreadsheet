@@ -108,15 +108,6 @@ public class BookImpl implements Book{
 		return sheet==null?null:new SheetImpl(_bookRef,new SimpleRef<SSheet>(sheet));
 	}
 
-	
-	/*TODO zss 3.5
-	@Override
-	@Deprecated
-	public Workbook getPoiBook() {
-		return null;
-	}
-	*/
-
 	@Override
 	public void setShareScope(String scope) {
 		getNative().setShareScope(scope);
