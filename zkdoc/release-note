@@ -41,6 +41,7 @@ ZK Spreadsheet 3.5.0
   ZSS-626 Formula result is not correct after insert/delete cells
   ZSS-627 Paste format doesn't work
   ZSS-633 Importer doesn't import custom column width for XLS format
+  ZSS-635 Set row height or column width with empty value will cause NPE
   
 ** Upgrade Notes
   * Following api are removed
