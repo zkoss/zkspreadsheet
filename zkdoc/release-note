@@ -40,6 +40,7 @@ ZK Spreadsheet 3.5.0
   ZSS-622 Spreadsheet toolbar function not work correctly if creating the instance at runtime
   ZSS-626 Formula result is not correct after insert/delete cells
   ZSS-627 Paste format doesn't work
+  ZSS-633 Importer doesn't import custom column width for XLS format
   
 ** Upgrade Notes
   * Following api are removed
