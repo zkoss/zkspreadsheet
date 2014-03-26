@@ -47,7 +47,11 @@ public class SExporters {
 				String[] exporters = clzs.split(",");
 				for(String exporter : exporters) {
 					String[] keyValue = exporter.split("=");
-					register(keyValue[0], (SExporterFactory)Class.forName(keyValue[1]).newInstance());
+					try{
+						register(keyValue[0], (SExporterFactory)Class.forName(keyValue[1]).newInstance());
+					}catch(ClassNotFoundException e){
+						_logger.warning("Can't find class for "+keyValue[0]+":"+e.getMessage());
+					}
 				}
 			} catch(Exception e) {
 				_logger.error(e.getMessage(), e);

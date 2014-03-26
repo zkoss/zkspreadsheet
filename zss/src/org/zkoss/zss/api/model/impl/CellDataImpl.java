@@ -150,30 +150,45 @@ public class CellDataImpl implements CellData{
 	@Override
 	public Double getDoubleValue() {
 		initCell();
+		if(CellType.BLANK.equals(getType())){//to compatible with 3.0 (XRangeImpl)
+			return null;
+		}
 		return _cell.getNumberValue().doubleValue();
 	}
 
 	@Override
 	public Date getDateValue() {
 		initCell();
+		if(CellType.BLANK.equals(getType())){//to compatible with 3.0 (XRangeImpl)
+			return null;
+		}
 		return _cell.getDateValue();
 	}
 
 	@Override
 	public String getStringValue() {
 		initCell();
+		if(CellType.BLANK.equals(getType())){//to compatible with 3.0 (XRangeImpl)
+			return null;
+		}
 		return _cell.getStringValue();
 	}
 	
 	@Override
 	public String getFormulaValue() {
 		initCell();
+		if(CellType.BLANK.equals(getType())){//to compatible with 3.0 (XRangeImpl)
+			return null;
+		}
 		return _cell.getFormulaValue();
 	}
 
 	@Override
 	public Boolean getBooleanValue() {
 		initCell();
+		if(CellType.BLANK.equals(getType())){//to compatible with 3.0 (XRangeImpl)
+			return null;
+		}
 		return _cell.getBooleanValue();
 	}
 }

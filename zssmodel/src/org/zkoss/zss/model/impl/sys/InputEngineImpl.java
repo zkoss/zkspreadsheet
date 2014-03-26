@@ -37,12 +37,17 @@ public class InputEngineImpl implements InputEngine{
 	public InputResult parseInput(String editText, String formatPattern, InputParseContext context) {
 		InputResultImpl result = null;
 		if (editText != null) {
-			Object[] convertedResult = editTextToValue(editText, formatPattern, context.getLocale());
 			result = new InputResultImpl();
-			result.setType((CellType)convertedResult[0]);
-			result.setValue(convertedResult[1]);
-			if(convertedResult.length>2){//with format
-				result.setFormat((String)convertedResult[2]);
+			if("".equals(editText)){ //to compatible with 3.0, a blank string should become a blank input, not empty string
+				result.setType(CellType.BLANK);
+				result.setValue(null);
+			}else{
+				Object[] convertedResult = editTextToValue(editText, formatPattern, context.getLocale());
+				result.setType((CellType)convertedResult[0]);
+				result.setValue(convertedResult[1]);
+				if(convertedResult.length>2){//with format
+					result.setFormat((String)convertedResult[2]);
+				}
 			}
 		}
 		return result;

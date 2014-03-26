@@ -46,14 +46,13 @@ public abstract class AbstractCellAdv implements SCell,LinkedModelObject,Seriali
 	private static final long serialVersionUID = 1L;
 	
 	protected void checkType(CellType... types){
-		Set<CellType> set = new LinkedHashSet<CellType>();
+		CellType type = getType();
 		for(CellType t:types){
-			set.add(t);
+			if(t.equals(type)){
+				return;
+			}
 		}
-		
-		if(!set.contains(getType())){
-			throw new IllegalStateException("is "+getType()+", not the one of "+Arrays.asList(types));
-		}
+		throw new IllegalStateException("is "+getType()+", not the one of "+Arrays.asList(types));
 	}
 	protected void checkFormulaResultType(CellType... types){
 		if(!getType().equals(CellType.FORMULA)){
@@ -125,6 +124,10 @@ public abstract class AbstractCellAdv implements SCell,LinkedModelObject,Seriali
 
 	@Override
 	public Date getDateValue() {
+		//compatible with 3.0(poi)
+		if (CellType.BLANK.equals(getType())) {
+            return null;
+        }
 		Number num = getNumberValue();
 		return EngineFactory.getInstance().getCalendarUtil().doubleValueToDate(num.doubleValue());
 	}
