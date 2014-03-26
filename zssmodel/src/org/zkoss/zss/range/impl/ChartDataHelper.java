@@ -117,12 +117,11 @@ public class ChartDataHelper extends RangeHelperBase {
 	}
 
 	/**
-	 * 
-	 * @param sheet
-	 * @param selection
-	 * @param type
-	 * @param anchor
-	 * @return
+	 * We find the data area that only contain numeric data first from selection range excluding left and top headers. 
+	 * Then, we determine which side is category by comparing row count with column counts.
+	 * The side having larger count is treated as the category.
+	 * For example, if selection is 4 columns * 10 rows, there will be 10 categories and 3 data series.
+	 * One column to the left of data area is category column.
 	 */
 	private void fillCategoryData(CellRegion selection, SGeneralChartData chartData) {
 		CellRegion dataArea = getChartDataRange(selection);
@@ -166,7 +165,7 @@ public class ChartDataHelper extends RangeHelperBase {
 	}
 	
 	/**
-	 * Find a range of cells with only numeric value (or formula) inside selection. Skip those top and left side text headers.
+	 * Find a range of cells that has only numeric value (or formula) inside selection. Skip those top and left side text headers.
 	 * @param sheet
 	 * @param selection
 	 * @return

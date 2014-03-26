@@ -243,6 +243,9 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 		}
 	}
 
+	/**
+	 * Drawings includes charts and pictures. 
+	 */
 	abstract protected void importDrawings(Sheet poiSheet, SSheet sheet);
 
 	abstract protected void importValidation(Sheet poiSheet, SSheet sheet);
