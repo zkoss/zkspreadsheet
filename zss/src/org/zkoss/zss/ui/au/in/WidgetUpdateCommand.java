@@ -56,13 +56,6 @@ public class WidgetUpdateCommand extends AbstractCommand implements Command {
 		if (!getSheetUuid(sheet).equals(sheetId))
 			return;
 		
-		// ZSS-113: chart modification only support Excel 2007 format
-		String widgetType = (String)data.get("wgtType");
-		if("chart".equals(widgetType) && sheet.getBook().getType() != BookType.XLSX) {
-			showInfoMessage(Labels.getLabel("zss.msg.operation_not_supported_with_2003"));
-			return;
-		}
-		
 		String act = (String) data.get("action");
 		WidgetAction action = null;
 		if("move".equals(act)){

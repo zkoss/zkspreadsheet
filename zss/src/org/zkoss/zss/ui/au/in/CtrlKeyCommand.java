@@ -92,12 +92,6 @@ public class CtrlKeyCommand extends AbstractCommand implements Command {
 			}
 			
 		} else if ("chart".equals(widgetType)) {
-			// ZSS-113: chart modification only support Excel 2007 format
-			 if(sheet.getBook().getType() != BookType.XLSX) {
-				 showInfoMessage(Labels.getLabel("zss.msg.operation_not_supported_with_2003"));
-				 return;
-			 }
-			
 			for(Chart c:sheet.getCharts()){
 				if(c.getId().equals(id)){
 					widgetData = c;

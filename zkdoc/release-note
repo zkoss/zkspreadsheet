@@ -2,6 +2,7 @@ ZK Spreadsheet 3.5.0
 *Features:
   ZSS-606 Support to handle multiple-area formula
   ZSS-623 Support handling row/column style
+  ZSS-634 Support chart and picture operation for XLS format
   
 *Bugs:
   ZSS-350 When using cell validation with cell list, the drop-down list won't update after the referred cells changed
