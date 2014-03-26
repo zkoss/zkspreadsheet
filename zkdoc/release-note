@@ -42,6 +42,7 @@ ZK Spreadsheet 3.5.0
   ZSS-627 Paste format doesn't work
   ZSS-633 Importer doesn't import custom column width for XLS format
   ZSS-635 Set row height or column width with empty value will cause NPE
+  ZSS-636 Insert a chart with all blank cells, but the chart contains value
   
 ** Upgrade Notes
   * Following api are removed
