@@ -128,8 +128,8 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 	}
 
 	/**
-	 * When a column is hidden with default width, we don't import the width for
-	 * it's 0.
+	 * When a column is hidden with default width, we don't import the width for it's 0. 
+	 * We also don't import the width that equals to default width for optimization.
 	 * 
 	 * @param poiSheet
 	 * @param sheet
