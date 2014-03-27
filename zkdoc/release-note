@@ -47,6 +47,7 @@ ZK Spreadsheet 3.5.0
   ZSS-640 cells with formula in freeze panels didn't be update after changing refered cells
   ZSS-637 Cannot export XLS format
   ZSS-631 Cannot drag fill with merge cell
+  ZSS-643 Wrong cell value and display after undo
   
 ** Upgrade Notes
   * Following api are removed

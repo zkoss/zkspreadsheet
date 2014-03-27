@@ -34,6 +34,7 @@ import org.zkoss.zss.model.SCell;
 import org.zkoss.zss.model.SCellStyle;
 import org.zkoss.zss.model.CellStyleHolder;
 import org.zkoss.zss.model.SColumn;
+import org.zkoss.zss.model.SHyperlink;
 import org.zkoss.zss.model.SRow;
 import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.model.SCell.CellType;
@@ -574,28 +575,53 @@ public class ReserveUtil {
 	
 	public static class ReservedCellContent {
 
+		CellType _type;
 		String _editText;
+		Object _value;
+		SHyperlink _link;
 		
-		public ReservedCellContent(String editText){
-			this._editText = editText;
+		public ReservedCellContent(CellType type){
+			this._type = type;
 		}
 		
 		public void apply(SRange range){
-			try{
-				range.setEditText(_editText);
-			}catch(IllegalFormulaException x){};//eat in this mode
+			//range hyperlink api will change string value, so have to set before set value
+			
+			SCell cell = range.getSheet().getCell(range.getRow(), range.getColumn());
+			if(_link!=null){
+				cell.setupHyperlink(_link.getType(), _link.getAddress(), _link.getLabel());
+			}
+			
+			//following code will notify cell (and it's dependency) change
+			if(CellType.FORMULA.equals(_type)){
+				try{
+					range.setEditText(_editText);
+				}catch(IllegalFormulaException x){};//eat in this mode
+			}else{
+				range.setValue(_value);
+			}
+			
+			
 		}
 		
 		public static ReservedCellContent reserve(SCell cell){
-			if(cell.isNull() || cell.getType()==CellType.BLANK){
+			CellType type = cell.getType();
+			if(cell.isNull() || CellType.BLANK.equals(type)){
 				return null;
 			}
 			
-			//can't just keep the value directly, keep formula object will lost the dependency after revert
-			String editText = SRanges.range(cell.getSheet(),cell.getRowIndex(),cell.getColumnIndex()).getEditText();
-
+			ReservedCellContent cc = new ReservedCellContent(cell.getType());
+			
+			if(CellType.FORMULA.equals(type)){
+				//for the formula case, we have to keep the formula string and set back to let dependency tracking work
+				cc._editText = SRanges.range(cell.getSheet(),cell.getRowIndex(),cell.getColumnIndex()).getEditText();
+			}else{
+				cc._value = cell.getValue();
+			}
+			cc._link = cell.getHyperlink();
+			
 			//TODO handle other data someday(hyperlink, comment)
-			return new ReservedCellContent(editText);
+			return cc;
 		}
 	}
 }
