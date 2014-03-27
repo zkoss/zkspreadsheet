@@ -2740,7 +2740,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			int maxcol = BookHelper.getMaxConfiguredColumn(sheet);
 			for(int columnIndex=0; columnIndex <= maxcol; ++columnIndex) {
 				final boolean hidden = sheet.isColumnHidden(columnIndex); //whether this column is hidden
-				if (sheet.isCustomColumn(columnIndex) || hidden) {
+				if (sheet.isColumnCustom(columnIndex) || hidden) {
 					final int fileColumnWidth = sheet.getColumnWidth(columnIndex); //file column width
 					final int colWidthPixel = XUtils.fileChar256ToPx(fileColumnWidth, charWidth); 
 					infos.add(new HeaderPositionInfo(columnIndex, colWidthPixel, _custColId.next(), hidden, true));
