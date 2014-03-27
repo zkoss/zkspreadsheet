@@ -1,0 +1,39 @@
+<zk>
+	<vlayout width="100%" height="100%">
+		<hlayout>
+			<button label="export" onClick="export(ss.getBook());"></button>
+			<label pre="true"><![CDATA[reproducing steps:
+1. let Sheet2 C3 be 1
+2. freeze at Sheet1 B2
+3. let Sheet1 A1, B1, A2 and B2 all be formula =Sheet2!C3
+4. change Sheet2 C3 to 2
+5. only B2 has been updated]]></label>
+		</hlayout>
+		<spreadsheet id="ss" src="/issue/blank.xlsx" maxrows="200" maxcolumns="40"
+			hflex="1" vflex="1" ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e"
+			showContextMenu="true" showSheetbar="true" showToolbar="true" showFormulabar="true" />
+	</vlayout>
+	
+	<zscript><![CDATA[
+	import java.io.*;
+	import org.zkoss.poi.ss.*;
+	import org.zkoss.zss.api.model.Book.BookType;
+	
+	Book book = ss.getBook();
+	Ranges.range(book.getSheet("Sheet2"), "C3").setCellEditText("1");
+	Ranges.range(book.getSheet("Sheet1")).setFreezePanel(1,1);
+	Ranges.range(book.getSheet("Sheet1"), "A1").setCellEditText("=Sheet2!C3");
+	Ranges.range(book.getSheet("Sheet1"), "B1").setCellEditText("=Sheet2!C3");
+	Ranges.range(book.getSheet("Sheet1"), "A2").setCellEditText("=Sheet2!C3");
+	Ranges.range(book.getSheet("Sheet1"), "B2").setCellEditText("=Sheet2!C3");
+	
+	public void export(Book book) throws Exception {
+		if(book == null) { return; }
+		Exporter c = Exporters.getExporter("excel");
+	    ByteArrayOutputStream out = new ByteArrayOutputStream();
+	    c.export(book, out);
+	    String name = book.getType() == BookType.XLSX ? "exported.xlsx" : "exported.xls";
+	    Filedownload.save(out.toByteArray(), "application/file", name);
+	}
+	]]></zscript>
+</zk>

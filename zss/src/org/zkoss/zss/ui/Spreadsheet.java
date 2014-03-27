@@ -2714,8 +2714,10 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		final int loadRight = rect.getLastColumn();
 		final int loadBottom = rect.getLastRow();
 		
-		final int frRow = getSelectedSheetRowfreeze();
-		final int frCol = getSelectedSheetColumnfreeze();
+		// ZSS-639: use corresponding sheet, not current selected sheet
+		FreezeInfoLoader fil = getFreezeInfoLoader();
+		final int frRow = fil.getRowFreeze(sheet);
+		final int frCol = fil.getColumnFreeze(sheet);
 		
 		final int frTop = top <= frRow ? top : -1;
 		final int frBottom = frRow;
