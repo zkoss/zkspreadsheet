@@ -48,6 +48,7 @@ ZK Spreadsheet 3.5.0
   ZSS-637 Cannot export XLS format
   ZSS-631 Cannot drag fill with merge cell
   ZSS-643 Wrong cell value and display after undo
+  ZSS-642 Spreadsheet throws an exception when exporting PDF with charts
   
 ** Upgrade Notes
   * Following api are removed
