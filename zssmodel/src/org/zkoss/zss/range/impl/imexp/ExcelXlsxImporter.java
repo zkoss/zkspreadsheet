@@ -96,6 +96,7 @@ public class ExcelXlsxImporter extends AbstractExcelImporter{
 			return;
 		}
 		
+		int defaultWidth = UnitUtil.defaultColumnWidthToPx(poiSheet.getDefaultColumnWidth(), CHRACTER_WIDTH);
 		CTCols colsArray = worksheet.getColsArray(0);
 		for (int i = 0; i < colsArray.sizeOfColArray(); i++) {
 			CTCol ctCol = colsArray.getColArray(i);
@@ -107,9 +108,10 @@ public class ExcelXlsxImporter extends AbstractExcelImporter{
 			boolean hidden = ctCol.getHidden();
 			int columnIndex = (int)ctCol.getMin()-1;
 			columnArray.setHidden(hidden);
-			if (hidden == false){
+			int width = ImExpUtils.getWidthAny(poiSheet, columnIndex, CHRACTER_WIDTH);
+			if (!(hidden || width == defaultWidth)){
 				//when CT_Col is hidden with default width, We don't import the width for it's 0.  
-				columnArray.setWidth(ImExpUtils.getWidthAny(poiSheet, columnIndex, CHRACTER_WIDTH));
+				columnArray.setWidth(width);
 			}
 			CellStyle columnStyle = poiSheet.getColumnStyle(columnIndex);
 			if (columnStyle != null){

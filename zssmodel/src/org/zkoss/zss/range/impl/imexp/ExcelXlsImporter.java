@@ -65,14 +65,18 @@ public class ExcelXlsImporter extends AbstractExcelImporter{
 	@Override
 	protected void importColumn(Sheet poiSheet, SSheet sheet) {
 		int lastChangedColumnIndex = getLastChangedColumnIndex(poiSheet);
+		int defaultWidth = sheet.getDefaultColumnWidth();
 		for (int index=0 ; index <= lastChangedColumnIndex ; index++){
 			//reference Spreadsheet.updateColWidth()
 			SColumn column = sheet.getColumn(index);
-			column.setHidden(poiSheet.isColumnHidden(index));
+			boolean hidden = poiSheet.isColumnHidden(index);
+			column.setHidden(hidden);
 			boolean isCustomWidth = poiSheet.isColumnCustom(index);
 			column.setCustomWidth(isCustomWidth);
-			if(isCustomWidth){
-				column.setWidth(ImExpUtils.getWidthAny(poiSheet, index, CHRACTER_WIDTH));
+			int width = ImExpUtils.getWidthAny(poiSheet, index, CHRACTER_WIDTH);
+			//optimization, avoid creating column arrays
+			if(!(hidden || width == defaultWidth)){
+				column.setWidth(width);
 			}
 			CellStyle columnStyle = poiSheet.getColumnStyle(index); 
 			if (columnStyle != null){
