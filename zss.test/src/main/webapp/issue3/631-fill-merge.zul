@@ -1,0 +1,38 @@
+<zk>
+	<vlayout width="100%" height="100%">
+		<hbox>
+			<vbox align="end">
+				<hlayout>
+					<label>A1 </label> 
+					<button label="fill down" onClick='filldown();'></button>
+					<button label="fill up" onClick='fillup();'></button>
+				</hlayout>
+			</vbox>
+			<label pre="true"><![CDATA[
+
+			]]></label>
+		</hbox>
+		<spreadsheet id="ss" src="/issue3/book/631-fill-merge.xlsx" maxrows="200" maxcolumns="40"
+			hflex="1" vflex="1" ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e"
+			showContextMenu="true" showSheetbar="true" showToolbar="true" showFormulabar="true" />
+	</vlayout>
+	
+	<zscript><![CDATA[
+	import org.zkoss.zss.range.*;
+	import org.zkoss.zss.range.SRange.FillType;
+	import org.zkoss.zss.model.*;
+	                  
+	SSheet sheet = ss.getSelectedSSheet();
+	                  
+	void filldown(){
+		SRanges.range(sheet,"C7:D7").fill(SRanges.range(sheet,"C7:D14"),FillType.DEFAULT);
+		SRanges.range(sheet,"F7:H8").fill(SRanges.range(sheet,"F7:H14"),FillType.DEFAULT);
+		SRanges.range(sheet,"J7:L8").fill(SRanges.range(sheet,"J7:L14"),FillType.DEFAULT);
+	}
+	void fillup(){
+		SRanges.range(sheet,"C7:D7").fill(SRanges.range(sheet,"C3:D7"),FillType.DEFAULT);
+		SRanges.range(sheet,"F7:H8").fill(SRanges.range(sheet,"F3:H8"),FillType.DEFAULT);
+		SRanges.range(sheet,"J7:L8").fill(SRanges.range(sheet,"J3:L8"),FillType.DEFAULT);
+	}
+	]]></zscript>
+</zk>

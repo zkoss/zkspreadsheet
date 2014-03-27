@@ -804,6 +804,10 @@ public class AutoFillHelper {
 		}
 		//handle special copy only case (two consecutive same type of row)
 		handleSpecialCopyStep(stepChunks, rowCount, colCount);
+		
+		//ZSS-631 copy entire row at once to handle merge issue
+		sheet.pasteCell(new SheetRegion(sheet,srctRow,srclCol,srcbRow,srcrCol), 
+				new CellRegion(srcbRow + 1,srclCol,dstbRow,srcrCol), pasteOption);
 		for(int c = srclCol, j = 0; c <= srcrCol; ++c) {
 			final StepChunk stepChunk = stepChunks[j++];
 			for(int srcIndex = 0, r = srcbRow + 1; r <= dstbRow; ++r, ++srcIndex) {
@@ -814,7 +818,6 @@ public class AutoFillHelper {
 					sheet.clearCell(new CellRegion(r,c));
 				} else {
 					Object value = stepChunk.getStep(index).next(srcCell);
-					sheet.pasteCell(new SheetRegion(sheet,srcrow,c), new CellRegion(r,c), pasteOption);
 					applyStepValue(srcCell,sheet.getCell(r,c),value);
 				}
 			}
@@ -855,6 +858,10 @@ public class AutoFillHelper {
 		}
 		//handle special copy only case (two consecutive same type of row)
 		handleSpecialCopyStep(stepChunks, rowCount, colCount);
+		//ZSS-631 copy entire row at once to handle merge issue
+		sheet.pasteCell(new SheetRegion(sheet,srctRow,srclCol,srcbRow,srcrCol), 
+				new CellRegion(dsttRow,srclCol,srctRow - 1,srcrCol), pasteOption);
+		
 		for(int c = srclCol, j = 0; c <= srcrCol; ++c) {
 			final StepChunk stepChunk = stepChunks[j++];
 			for(int srcIndex = 0, r = srctRow - 1; r >= dsttRow; --r, ++srcIndex) {
@@ -865,7 +872,6 @@ public class AutoFillHelper {
 					sheet.clearCell(new CellRegion(r,c));
 				} else {
 					Object value = stepChunk.getStep(index).next(srcCell);
-					sheet.pasteCell(new SheetRegion(sheet,srcrow,c), new CellRegion(r,c), pasteOption);
 					applyStepValue(srcCell, sheet.getCell(r,c),value);
 				}
 			}
@@ -897,6 +903,11 @@ public class AutoFillHelper {
 		}
 		//handle special copy only case (two consecutive same type of row)
 		handleSpecialCopyStep(stepChunks, colCount, rowCount);
+		
+		//ZSS-631 copy entire row at once to handle merge issue
+		sheet.pasteCell(new SheetRegion(sheet,srctRow,srclCol,srcbRow,srcrCol), 
+				new CellRegion(srctRow, srcrCol+1, srcbRow, dstrCol), pasteOption);
+		
 		for(int r = srctRow, j = 0; r <= srcbRow; ++r) {
 			final StepChunk stepChunk = stepChunks[j++];
 			for(int srcIndex = 0, c = srcrCol + 1; c <= dstrCol; ++c, ++srcIndex) {
@@ -908,7 +919,6 @@ public class AutoFillHelper {
 				} else {
 					
 					Object value = stepChunk.getStep(index).next(srcCell);
-					sheet.pasteCell(new SheetRegion(sheet,r,srccol), new CellRegion(r,c), pasteOption);
 					applyStepValue(srcCell,sheet.getCell(r,c),value);
 				}
 			}
@@ -940,6 +950,11 @@ public class AutoFillHelper {
 		}
 		//handle special copy only case (two consecutive same type of row)
 		handleSpecialCopyStep(stepChunks, colCount, rowCount);
+		
+		//ZSS-631 copy entire row at once to handle merge issue
+		sheet.pasteCell(new SheetRegion(sheet,srctRow,srclCol,srcbRow,srcrCol), 
+				new CellRegion(srctRow, dstlCol, srcbRow, srclCol-1), pasteOption);
+		
 		for(int r = srctRow, j = 0; r <= srcbRow; ++r) {
 			final StepChunk stepChunk = stepChunks[j++];
 			for(int srcIndex = 0, c = srclCol - 1; c >= dstlCol; --c, ++srcIndex) {
@@ -950,7 +965,6 @@ public class AutoFillHelper {
 					sheet.clearCell(new CellRegion(r, c));
 				} else {
 					Object value = stepChunk.getStep(index).next(srcCell);
-					sheet.pasteCell(new SheetRegion(sheet,r,srccol), new CellRegion(r,c), pasteOption);
 					applyStepValue(srcCell,sheet.getCell(r,c),value);
 				}
 			}
