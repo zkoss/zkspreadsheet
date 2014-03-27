@@ -114,7 +114,8 @@ public class DataValidationHelper {
 				break;
 			// String length type
 			case TEXT_LENGTH:
-				if (!isString(value) || !validateOperation(Integer.valueOf(value == null ? 0 : ((String)value).length()))) {
+				if ((value!=null && !isString(value))
+					|| !validateOperation(Integer.valueOf(value == null ? 0 : ((String)value).length()))) {
 					success = false;
 				}
 				break;

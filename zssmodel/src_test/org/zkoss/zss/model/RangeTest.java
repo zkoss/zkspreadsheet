@@ -126,8 +126,8 @@ public class RangeTest {
 		}
 
 		SRanges.range(sheet,1,1).setEditText("");
-		Assert.assertEquals(CellType.STRING, cell.getType());
-		Assert.assertEquals("",cell.getValue());		
+		Assert.assertEquals(CellType.BLANK, cell.getType());
+		Assert.assertEquals(null,cell.getValue());		
 		
 	}
 	
