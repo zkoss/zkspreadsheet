@@ -8,10 +8,10 @@
 	
 	public void export() throws java.io.IOException {
 		Book wb = ss.getBook();
-	    Exporter c = Exporters.getExporter("excel");
+	    Exporter c = Exporters.getExporter("excel"); //use XLSX exporter, XLS exporter doesn't export charts
 	    ByteArrayOutputStream out = new ByteArrayOutputStream();
 	    c.export(wb, out);
-	    Filedownload.save(out.toByteArray(), "application/file", wb.getBookName());
+	    Filedownload.save(out.toByteArray(), "application/file", wb.getBookName()+"x");
 	}
 	]]></zscript>	
 </zk>

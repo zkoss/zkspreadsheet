@@ -112,7 +112,7 @@ public class ExcelXlsImporter extends AbstractExcelImporter{
 				chart.setTitle(hssfChart.getChartTitle());
 			}
 			chart.setThreeD(hssfChart.getChart3D() != null);
-			
+			//TODO no API to get chart grouping
 			/*
 			 * TODO import legend position.
 			 * HSSFChart.getLegendPos() always returns a fixed value (7) which doesn't correspond to real legend position. 

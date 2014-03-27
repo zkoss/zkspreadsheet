@@ -570,6 +570,9 @@ public class PoiEnumConversion {
 	//There is no format information on POI's Picture class
 
 	public static org.zkoss.poi.ss.usermodel.charts.ChartGrouping toPoiGrouping(ChartGrouping grouping){
+		if (grouping == null){ //no API to read grouping from XLS, so chart might have null grouping to export
+			return org.zkoss.poi.ss.usermodel.charts.ChartGrouping.STANDARD;
+		}
 		switch(grouping){
 			case CLUSTERED:
 				return org.zkoss.poi.ss.usermodel.charts.ChartGrouping.CLUSTERED;

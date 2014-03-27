@@ -45,6 +45,7 @@ ZK Spreadsheet 3.5.0
   ZSS-636 Insert a chart with all blank cells, but the chart contains value
   ZSS-639 a formula refer to one cell at other sheet with freeze panel. change the refered cell cause JS error
   ZSS-640 cells with formula in freeze panels didn't be update after changing refered cells
+  ZSS-637 Cannot export XLS format
   
 ** Upgrade Notes
   * Following api are removed

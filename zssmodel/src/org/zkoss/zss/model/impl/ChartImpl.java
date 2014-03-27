@@ -22,6 +22,7 @@ import org.zkoss.zss.model.chart.SChartData;
 import org.zkoss.zss.model.impl.chart.ChartDataAdv;
 import org.zkoss.zss.model.impl.chart.GeneralChartDataImpl;
 import org.zkoss.zss.model.impl.chart.UnsupportedChartDataImpl;
+import org.zkoss.zss.model.util.Validations;
 /**
  * 
  * @author dennis
@@ -51,6 +52,8 @@ public class ChartImpl extends AbstractChartAdv {
 		this._anchor = anchor;
 		this._data = createChartData(type);
 		
+		Validations.argNotNull(anchor);
+		
 		switch(type){//default initialization
 		case BAR:
 			_direction = BarDirection.HORIZONTAL;
@@ -75,6 +78,7 @@ public class ChartImpl extends AbstractChartAdv {
 	}
 	@Override
 	public void setAnchor(ViewAnchor anchor) {
+		Validations.argNotNull(anchor);
 		this._anchor = anchor;		
 	}
 	@Override
