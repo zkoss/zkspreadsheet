@@ -49,36 +49,39 @@ public class Issue541Test {
 		TimeZone.setDefault(oldTimeZone);
 	}
 	
-	
+	/**
+	 * For auto fill:
+	 * Notice that row count (column count) of destination range should be a multiple of source range.  
+	 */
 	@Test
 	public void testFill(){
 		Book book = Util.loadBook(this,"book/541-daylightsave.xlsx");
 		Sheet sheet = book.getSheetAt(0);
-		autoFill(sheet,"A2","A2:A12");
+		autoFill(sheet,"A2","A2:A11");
 		autoFill(sheet,"B12","B2:B12");
-		autoFill(sheet,"C2:C3","C2:C12");
-		autoFill(sheet,"D2:D3","D2:D12");
-		autoFill(sheet,"E2","E2:E12");
-		autoFill(sheet,"F2:F3","F2:F12");
-		autoFill(sheet,"G2:G3","G2:G12");
-		autoFill(sheet,"H2","H2:H12");
-		autoFill(sheet,"I2:I3","I2:I12");
-		autoFill(sheet,"J2:J3","J2:J12");
-		autoFill(sheet,"K2:K3","K2:K12");
-		autoFill(sheet,"L2:L3","L2:L12");
+		autoFill(sheet,"C2:C3","C2:C11");
+		autoFill(sheet,"D2:D3","D2:D11");
+		autoFill(sheet,"E2","E2:E11");
+		autoFill(sheet,"F2:F3","F2:F11");
+		autoFill(sheet,"G2:G3","G2:G11");
+		autoFill(sheet,"H2","H2:H11");
+		autoFill(sheet,"I2:I3","I2:I11");
+		autoFill(sheet,"J2:J3","J2:J11");
+		autoFill(sheet,"K2:K3","K2:K11");
+		autoFill(sheet,"L2:L3","L2:L11");
 		
-		checkValue(sheet,"A2:A12","A15:A25");
+		checkValue(sheet,"A2:A11","A15:A24");
 		checkValue(sheet,"B2:B12","B15:B25");
-		checkValue(sheet,"C2:C12","C15:C25");
-		checkValue(sheet,"D2:D12","D15:D25");
-		checkValue(sheet,"E2:E12","E15:E25");
-		checkValue(sheet,"F2:F12","F15:F25");
-		checkValue(sheet,"G2:G12","G15:G25");
-		checkValue(sheet,"H2:H12","H15:H25");
-		checkValue(sheet,"I2:I12","I15:I25");
-		checkValue(sheet,"J2:J12","J15:J25");
-		checkValue(sheet,"K2:K12","K15:K25");
-		checkValue(sheet,"L2:L12","L15:L25");
+		checkValue(sheet,"C2:C11","C15:C24");
+		checkValue(sheet,"D2:D11","D15:D24");
+		checkValue(sheet,"E2:E11","E15:E24");
+		checkValue(sheet,"F2:F11","F15:F24");
+		checkValue(sheet,"G2:G11","G15:G24");
+		checkValue(sheet,"H2:H11","H15:H24");
+		checkValue(sheet,"I2:I11","I15:I24");
+		checkValue(sheet,"J2:J11","J15:J24");
+		checkValue(sheet,"K2:K11","K15:K24");
+		checkValue(sheet,"L2:L11","L15:L24");
 		
 	}
 	
@@ -139,4 +142,9 @@ public class Issue541Test {
 		return text;
 	}
 	
+	@Test
+	public void pasteAutoRepeat(){
+		Book book = Util.loadBook(this,"book/blank.xlsx");
+		Sheet sheet = book.getSheetAt(0);
+	}
 }
