@@ -806,8 +806,12 @@ public class AutoFillHelper {
 		handleSpecialCopyStep(stepChunks, rowCount, colCount);
 		
 		//ZSS-631 copy entire row at once to handle merge issue
-		sheet.pasteCell(new SheetRegion(sheet,srctRow,srclCol,srcbRow,srcrCol), 
-				new CellRegion(srcbRow + 1,srclCol,dstbRow,srcrCol), pasteOption);
+		int dstRowDiffCount = dstRef.getRowCount()-rowCount;
+		int pastebRow =  dstbRow - (dstRowDiffCount<=rowCount?0:dstRowDiffCount%rowCount);
+		if(pastebRow >= srcbRow + rowCount){
+			sheet.pasteCell(new SheetRegion(sheet,srctRow,srclCol,srcbRow,srcrCol), 
+				new CellRegion(srcbRow + 1,srclCol,pastebRow,srcrCol), pasteOption);
+		}
 		for(int c = srclCol, j = 0; c <= srcrCol; ++c) {
 			final StepChunk stepChunk = stepChunks[j++];
 			for(int srcIndex = 0, r = srcbRow + 1; r <= dstbRow; ++r, ++srcIndex) {
@@ -859,8 +863,14 @@ public class AutoFillHelper {
 		//handle special copy only case (two consecutive same type of row)
 		handleSpecialCopyStep(stepChunks, rowCount, colCount);
 		//ZSS-631 copy entire row at once to handle merge issue
-		sheet.pasteCell(new SheetRegion(sheet,srctRow,srclCol,srcbRow,srcrCol), 
-				new CellRegion(dsttRow,srclCol,srctRow - 1,srcrCol), pasteOption);
+		int dstRowDiffCount = dstRef.getRowCount()-rowCount;
+		int pastetRow =  dsttRow + (dstRowDiffCount<=rowCount?0:dstRowDiffCount%rowCount);
+		if(pastetRow <= srctRow - rowCount){
+			//only past when the range is not overlapped
+			sheet.pasteCell(new SheetRegion(sheet,srctRow,srclCol,srcbRow,srcrCol), 
+					new CellRegion(pastetRow,srclCol,srctRow - 1,srcrCol), pasteOption);
+		}
+		
 		
 		for(int c = srclCol, j = 0; c <= srcrCol; ++c) {
 			final StepChunk stepChunk = stepChunks[j++];
@@ -905,9 +915,12 @@ public class AutoFillHelper {
 		handleSpecialCopyStep(stepChunks, colCount, rowCount);
 		
 		//ZSS-631 copy entire row at once to handle merge issue
-		sheet.pasteCell(new SheetRegion(sheet,srctRow,srclCol,srcbRow,srcrCol), 
-				new CellRegion(srctRow, srcrCol+1, srcbRow, dstrCol), pasteOption);
-		
+		int dstColDiffCount = dstRef.getColumnCount()-colCount;
+		int pasterCol =  dstrCol - (dstColDiffCount<=colCount?0:dstColDiffCount%colCount);
+		if(pasterCol >= srcrCol + colCount){
+			sheet.pasteCell(new SheetRegion(sheet,srctRow,srclCol,srcbRow,srcrCol), 
+				new CellRegion(srctRow, srcrCol+1, srcbRow, pasterCol), pasteOption);
+		}
 		for(int r = srctRow, j = 0; r <= srcbRow; ++r) {
 			final StepChunk stepChunk = stepChunks[j++];
 			for(int srcIndex = 0, c = srcrCol + 1; c <= dstrCol; ++c, ++srcIndex) {
@@ -952,8 +965,12 @@ public class AutoFillHelper {
 		handleSpecialCopyStep(stepChunks, colCount, rowCount);
 		
 		//ZSS-631 copy entire row at once to handle merge issue
-		sheet.pasteCell(new SheetRegion(sheet,srctRow,srclCol,srcbRow,srcrCol), 
-				new CellRegion(srctRow, dstlCol, srcbRow, srclCol-1), pasteOption);
+		int dstColDiffCount = dstRef.getColumnCount()-colCount;
+		int pastelCol =  dstlCol + (dstColDiffCount<=colCount?0:dstColDiffCount%colCount);
+		if(pastelCol <= srclCol - colCount){
+			sheet.pasteCell(new SheetRegion(sheet,srctRow,srclCol,srcbRow,srcrCol), 
+				new CellRegion(srctRow, pastelCol, srcbRow, srclCol-1), pasteOption);
+		}
 		
 		for(int r = srctRow, j = 0; r <= srcbRow; ++r) {
 			final StepChunk stepChunk = stepChunks[j++];

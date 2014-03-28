@@ -2,10 +2,13 @@
 	<vlayout width="100%" height="100%">
 		<hbox>
 			<vbox align="end">
-				<hlayout>
-					<label>A1 </label> 
+				<hlayout> 
 					<button label="fill down" onClick='filldown();'></button>
 					<button label="fill up" onClick='fillup();'></button>
+				</hlayout>
+				<hlayout> 
+					<button label="fill down 2" onClick='filldown2();'></button>
+					<button label="fill up 2" onClick='fillup2();'></button>
 				</hlayout>
 			</vbox>
 			<label pre="true"><![CDATA[
@@ -34,5 +37,15 @@
 		SRanges.range(sheet,"F7:H8").fill(SRanges.range(sheet,"F3:H8"),FillType.DEFAULT);
 		SRanges.range(sheet,"J7:L8").fill(SRanges.range(sheet,"J3:L8"),FillType.DEFAULT);
 	}
+	void filldown2(){
+		SRanges.range(sheet,"C7:D7").fill(SRanges.range(sheet,"C7:D15"),FillType.DEFAULT);
+		SRanges.range(sheet,"F7:H8").fill(SRanges.range(sheet,"F7:H15"),FillType.DEFAULT);
+		SRanges.range(sheet,"J7:L8").fill(SRanges.range(sheet,"J7:L15"),FillType.DEFAULT);
+	}
+	void fillup2(){
+		SRanges.range(sheet,"C7:D7").fill(SRanges.range(sheet,"C2:D7"),FillType.DEFAULT);
+		SRanges.range(sheet,"F7:H8").fill(SRanges.range(sheet,"F2:H8"),FillType.DEFAULT);
+		SRanges.range(sheet,"J7:L8").fill(SRanges.range(sheet,"J2:L8"),FillType.DEFAULT);
+	}	
 	]]></zscript>
 </zk>

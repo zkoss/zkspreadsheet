@@ -3,9 +3,12 @@
 		<hbox>
 			<vbox align="end">
 				<hlayout>
-					<label>A1 </label> 
 					<button label="fill right" onClick='fillright();'></button>
 					<button label="fill left" onClick='fillleft();'></button>
+				</hlayout>
+				<hlayout>
+					<button label="fill right2" onClick='fillright2();'></button>
+					<button label="fill left2" onClick='fillleft2();'></button>
 				</hlayout>
 			</vbox>
 			<label pre="true"><![CDATA[
@@ -35,5 +38,15 @@
 		SRanges.range(sheet,"G8:H10").fill(SRanges.range(sheet,"C8:H10"),FillType.DEFAULT);
 		SRanges.range(sheet,"G13:H15").fill(SRanges.range(sheet,"C13:H15"),FillType.DEFAULT);
 	}
+	void fillright2(){
+		SRanges.range(sheet,"G4:G5").fill(SRanges.range(sheet,"G4:M5"),FillType.DEFAULT);
+		SRanges.range(sheet,"G8:H10").fill(SRanges.range(sheet,"G8:M10"),FillType.DEFAULT);
+		SRanges.range(sheet,"G13:H15").fill(SRanges.range(sheet,"G13:M15"),FillType.DEFAULT);
+	}
+	void fillleft2(){
+		SRanges.range(sheet,"G4:G5").fill(SRanges.range(sheet,"B4:G5"),FillType.DEFAULT);
+		SRanges.range(sheet,"G8:H10").fill(SRanges.range(sheet,"B8:H10"),FillType.DEFAULT);
+		SRanges.range(sheet,"G13:H15").fill(SRanges.range(sheet,"B13:H15"),FillType.DEFAULT);
+	}	
 	]]></zscript>
 </zk>
