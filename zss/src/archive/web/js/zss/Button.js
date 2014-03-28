@@ -1083,7 +1083,8 @@ zss.StylePanel = zk.$extends(zul.wgt.Popup, {
 		if (zk.ie6_)
 			this.setWidth('186px');
 		this._wgt = wgt;
-		
+		//ZSS-630 in zk 7 and IE 9
+		this.zssPartner = true;
 		var	self = this,
 			tb = new zul.wgt.Toolbar({sclass: 'zsstylepanel-toolbar'}),
 			builder = new zss.ButtonBuilder(wgt, this),

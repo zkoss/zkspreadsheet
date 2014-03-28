@@ -1161,6 +1161,16 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 			// #ZSS-253: check the widget which got focus is associated with spreadsheet or not
 			// also check its parent until null
 			var w = zk.currentFocus;
+			
+			//ZSS-630 in zk 7 and IE 9, the timing of menupop is different and currentFocus of menupop is null. 
+			//has to get it back by dom manually
+			if(!w){
+				var fdom = document.activeElement;
+				if(fdom){
+					w = zk.Widget.$(fdom);
+				}
+			}
+			
 			while(w) {
 				if(w.zssPartner) {	//if a wdiget has zssPartner flag and set to true, gain focus back
 					sheet.dp.gainFocus(false); // fake focus

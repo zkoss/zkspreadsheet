@@ -49,6 +49,7 @@ ZK Spreadsheet 3.5.0
   ZSS-631 Cannot drag fill with merge cell
   ZSS-643 Wrong cell value and display after undo
   ZSS-642 Spreadsheet throws an exception when exporting PDF with charts
+  ZSS-630 when setting font style via context menu, first click doesn't work
   
 ** Upgrade Notes
   * Following api are removed

@@ -1480,6 +1480,13 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			col,
 			md1 = zkS._getMouseData(evt, this.comp),
 			mdstr = "";
+		
+		//ZSS-630 mark to hold focus
+		this.innerClicking++;
+		setTimeout(function() {
+			if (sheet.innerClicking > 0) sheet.innerClicking--;
+		}, 0);
+		
 		//Click on Cell
 		if ((cmp = zkS.parentByZSType(elm, "SCell", 0)) != null) {
 			var cellcmp = cmp,
