@@ -190,7 +190,7 @@
           <boolProp name="TransactionController.parent">false</boolProp>
         </TransactionController>
         <hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="performance.zul" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="/zss.test/performance.zul" enabled="true">
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" enabled="true">
               <collectionProp name="Arguments.arguments"/>
             </elementProp>
@@ -226,7 +226,7 @@
                 </elementProp>
                 <elementProp name="User-Agent" elementType="Header">
                   <stringProp name="Header.name">User-Agent</stringProp>
-                  <stringProp name="Header.value">Mozilla/5.0 (Windows NT 6.1; WOW64; rv:27.0) Gecko/20100101 Firefox/27.0</stringProp>
+                  <stringProp name="Header.value">Mozilla/5.0 (Windows NT 6.1; WOW64; rv:28.0) Gecko/20100101 Firefox/28.0</stringProp>
                 </elementProp>
                 <elementProp name="Accept-Encoding" elementType="Header">
                   <stringProp name="Header.name">Accept-Encoding</stringProp>
@@ -265,14 +265,14 @@
                 <elementProp name="uuid_0" elementType="HTTPArgument">
                   <boolProp name="HTTPArgument.always_encode">false</boolProp>
                   <stringProp name="Argument.name">uuid_0</stringProp>
-                  <stringProp name="Argument.value">zk_comp_4</stringProp>
+                  <stringProp name="Argument.value">zk_comp_8</stringProp>
                   <stringProp name="Argument.metadata">=</stringProp>
                   <boolProp name="HTTPArgument.use_equals">true</boolProp>
                 </elementProp>
                 <elementProp name="data_0" elementType="HTTPArgument">
                   <boolProp name="HTTPArgument.always_encode">true</boolProp>
                   <stringProp name="Argument.name">data_0</stringProp>
-                  <stringProp name="Argument.value">{&quot;sheetId&quot;:&quot;r1_sheet_0&quot;,&quot;top&quot;:51,&quot;left&quot;:0,&quot;right&quot;:39,&quot;bottom&quot;:111}</stringProp>
+                  <stringProp name="Argument.value">{&quot;sheetId&quot;:&quot;f1_sheet_0&quot;,&quot;top&quot;:51,&quot;left&quot;:0,&quot;right&quot;:39,&quot;bottom&quot;:111}</stringProp>
                   <stringProp name="Argument.metadata">=</stringProp>
                   <boolProp name="HTTPArgument.use_equals">true</boolProp>
                 </elementProp>
@@ -285,13 +285,13 @@
                 <elementProp name="uuid_1" elementType="HTTPArgument">
                   <boolProp name="HTTPArgument.always_encode">false</boolProp>
                   <stringProp name="Argument.name">uuid_1</stringProp>
-                  <stringProp name="Argument.value">zk_comp_4</stringProp>
+                  <stringProp name="Argument.value">zk_comp_8</stringProp>
                   <stringProp name="Argument.metadata">=</stringProp>
                 </elementProp>
                 <elementProp name="data_1" elementType="HTTPArgument">
                   <boolProp name="HTTPArgument.always_encode">true</boolProp>
                   <stringProp name="Argument.name">data_1</stringProp>
-                  <stringProp name="Argument.value">{&quot;sheetId&quot;:&quot;zk_comp_4&quot;,&quot;dpWidth&quot;:2560,&quot;dpHeight&quot;:10000,&quot;viewWidth&quot;:1005,&quot;viewHeight&quot;:620,&quot;blockLeft&quot;:0,&quot;blockTop&quot;:0,&quot;blockRight&quot;:20,&quot;blockBottom&quot;:30,&quot;fetchLeft&quot;:-1,&quot;fetchTop&quot;:-1,&quot;fetchWidth&quot;:-1,&quot;fetchHeight&quot;:-1,&quot;rangeLeft&quot;:0,&quot;rangeTop&quot;:0,&quot;rangeRight&quot;:39,&quot;rangeBottom&quot;:50}</stringProp>
+                  <stringProp name="Argument.value">{&quot;sheetId&quot;:&quot;zk_comp_8&quot;,&quot;dpWidth&quot;:2560,&quot;dpHeight&quot;:10000,&quot;viewWidth&quot;:1005,&quot;viewHeight&quot;:616,&quot;blockLeft&quot;:0,&quot;blockTop&quot;:0,&quot;blockRight&quot;:20,&quot;blockBottom&quot;:29,&quot;fetchLeft&quot;:-1,&quot;fetchTop&quot;:-1,&quot;fetchWidth&quot;:-1,&quot;fetchHeight&quot;:-1,&quot;rangeLeft&quot;:0,&quot;rangeTop&quot;:0,&quot;rangeRight&quot;:39,&quot;rangeBottom&quot;:50}</stringProp>
                   <stringProp name="Argument.metadata">=</stringProp>
                 </elementProp>
               </collectionProp>
@@ -328,11 +328,11 @@
                 </elementProp>
                 <elementProp name="ZK-SID" elementType="Header">
                   <stringProp name="Header.name">ZK-SID</stringProp>
-                  <stringProp name="Header.value">1859</stringProp>
+                  <stringProp name="Header.value">8185</stringProp>
                 </elementProp>
                 <elementProp name="User-Agent" elementType="Header">
                   <stringProp name="Header.name">User-Agent</stringProp>
-                  <stringProp name="Header.value">Mozilla/5.0 (Windows NT 6.1; WOW64; rv:27.0) Gecko/20100101 Firefox/27.0</stringProp>
+                  <stringProp name="Header.value">Mozilla/5.0 (Windows NT 6.1; WOW64; rv:28.0) Gecko/20100101 Firefox/28.0</stringProp>
                 </elementProp>
                 <elementProp name="Pragma" elementType="Header">
                   <stringProp name="Header.name">Pragma</stringProp>
@@ -374,14 +374,14 @@
                 <elementProp name="uuid_0" elementType="HTTPArgument">
                   <boolProp name="HTTPArgument.always_encode">false</boolProp>
                   <stringProp name="Argument.name">uuid_0</stringProp>
-                  <stringProp name="Argument.value">zk_comp_4</stringProp>
+                  <stringProp name="Argument.value">zk_comp_8</stringProp>
                   <stringProp name="Argument.metadata">=</stringProp>
                   <boolProp name="HTTPArgument.use_equals">true</boolProp>
                 </elementProp>
                 <elementProp name="data_0" elementType="HTTPArgument">
                   <boolProp name="HTTPArgument.always_encode">true</boolProp>
                   <stringProp name="Argument.name">data_0</stringProp>
-                  <stringProp name="Argument.value">{&quot;sheetId&quot;:&quot;zk_comp_4&quot;,&quot;dpWidth&quot;:2560,&quot;dpHeight&quot;:10000,&quot;viewWidth&quot;:1005,&quot;viewHeight&quot;:621,&quot;blockLeft&quot;:0,&quot;blockTop&quot;:0,&quot;blockRight&quot;:20,&quot;blockBottom&quot;:30,&quot;fetchLeft&quot;:-1,&quot;fetchTop&quot;:-1,&quot;fetchWidth&quot;:-1,&quot;fetchHeight&quot;:-1,&quot;rangeLeft&quot;:0,&quot;rangeTop&quot;:0,&quot;rangeRight&quot;:39,&quot;rangeBottom&quot;:111}</stringProp>
+                  <stringProp name="Argument.value">{&quot;sheetId&quot;:&quot;zk_comp_8&quot;,&quot;dpWidth&quot;:2560,&quot;dpHeight&quot;:10000,&quot;viewWidth&quot;:1005,&quot;viewHeight&quot;:617,&quot;blockLeft&quot;:0,&quot;blockTop&quot;:0,&quot;blockRight&quot;:20,&quot;blockBottom&quot;:29,&quot;fetchLeft&quot;:-1,&quot;fetchTop&quot;:-1,&quot;fetchWidth&quot;:-1,&quot;fetchHeight&quot;:-1,&quot;rangeLeft&quot;:0,&quot;rangeTop&quot;:0,&quot;rangeRight&quot;:39,&quot;rangeBottom&quot;:111}</stringProp>
                   <stringProp name="Argument.metadata">=</stringProp>
                   <boolProp name="HTTPArgument.use_equals">true</boolProp>
                 </elementProp>
@@ -394,13 +394,13 @@
                 <elementProp name="uuid_1" elementType="HTTPArgument">
                   <boolProp name="HTTPArgument.always_encode">false</boolProp>
                   <stringProp name="Argument.name">uuid_1</stringProp>
-                  <stringProp name="Argument.value">zk_comp_4</stringProp>
+                  <stringProp name="Argument.value">zk_comp_8</stringProp>
                   <stringProp name="Argument.metadata">=</stringProp>
                 </elementProp>
                 <elementProp name="data_1" elementType="HTTPArgument">
                   <boolProp name="HTTPArgument.always_encode">true</boolProp>
                   <stringProp name="Argument.name">data_1</stringProp>
-                  <stringProp name="Argument.value">{&quot;sheetId&quot;:&quot;zk_comp_4&quot;,&quot;dpWidth&quot;:2560,&quot;dpHeight&quot;:10000,&quot;viewWidth&quot;:1005,&quot;viewHeight&quot;:621,&quot;blockLeft&quot;:0,&quot;blockTop&quot;:0,&quot;blockRight&quot;:20,&quot;blockBottom&quot;:30,&quot;fetchLeft&quot;:-1,&quot;fetchTop&quot;:-1,&quot;fetchWidth&quot;:-1,&quot;fetchHeight&quot;:-1,&quot;rangeLeft&quot;:0,&quot;rangeTop&quot;:0,&quot;rangeRight&quot;:39,&quot;rangeBottom&quot;:111}</stringProp>
+                  <stringProp name="Argument.value">{&quot;sheetId&quot;:&quot;zk_comp_8&quot;,&quot;dpWidth&quot;:2560,&quot;dpHeight&quot;:10000,&quot;viewWidth&quot;:1005,&quot;viewHeight&quot;:617,&quot;blockLeft&quot;:0,&quot;blockTop&quot;:0,&quot;blockRight&quot;:20,&quot;blockBottom&quot;:29,&quot;fetchLeft&quot;:-1,&quot;fetchTop&quot;:-1,&quot;fetchWidth&quot;:-1,&quot;fetchHeight&quot;:-1,&quot;rangeLeft&quot;:0,&quot;rangeTop&quot;:0,&quot;rangeRight&quot;:39,&quot;rangeBottom&quot;:111}</stringProp>
                   <stringProp name="Argument.metadata">=</stringProp>
                 </elementProp>
               </collectionProp>
@@ -437,11 +437,11 @@
                 </elementProp>
                 <elementProp name="ZK-SID" elementType="Header">
                   <stringProp name="Header.name">ZK-SID</stringProp>
-                  <stringProp name="Header.value">1860</stringProp>
+                  <stringProp name="Header.value">8186</stringProp>
                 </elementProp>
                 <elementProp name="User-Agent" elementType="Header">
                   <stringProp name="Header.name">User-Agent</stringProp>
-                  <stringProp name="Header.value">Mozilla/5.0 (Windows NT 6.1; WOW64; rv:27.0) Gecko/20100101 Firefox/27.0</stringProp>
+                  <stringProp name="Header.value">Mozilla/5.0 (Windows NT 6.1; WOW64; rv:28.0) Gecko/20100101 Firefox/28.0</stringProp>
                 </elementProp>
                 <elementProp name="Pragma" elementType="Header">
                   <stringProp name="Header.name">Pragma</stringProp>
@@ -463,7 +463,7 @@
             </HeaderManager>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="onClick" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Set 1" enabled="true">
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" enabled="true">
               <collectionProp name="Arguments.arguments">
                 <elementProp name="dtid" elementType="HTTPArgument">
@@ -490,7 +490,7 @@
                 <elementProp name="data_0" elementType="HTTPArgument">
                   <boolProp name="HTTPArgument.always_encode">true</boolProp>
                   <stringProp name="Argument.name">data_0</stringProp>
-                  <stringProp name="Argument.value">{&quot;pageX&quot;:43,&quot;pageY&quot;:11,&quot;which&quot;:1,&quot;x&quot;:38,&quot;y&quot;:11}</stringProp>
+                  <stringProp name="Argument.value">{&quot;pageX&quot;:16,&quot;pageY&quot;:14,&quot;which&quot;:1,&quot;x&quot;:11,&quot;y&quot;:14}</stringProp>
                   <stringProp name="Argument.metadata">=</stringProp>
                   <boolProp name="HTTPArgument.use_equals">true</boolProp>
                 </elementProp>
@@ -528,11 +528,11 @@
                 </elementProp>
                 <elementProp name="ZK-SID" elementType="Header">
                   <stringProp name="Header.name">ZK-SID</stringProp>
-                  <stringProp name="Header.value">1861</stringProp>
+                  <stringProp name="Header.value">8187</stringProp>
                 </elementProp>
                 <elementProp name="User-Agent" elementType="Header">
                   <stringProp name="Header.name">User-Agent</stringProp>
-                  <stringProp name="Header.value">Mozilla/5.0 (Windows NT 6.1; WOW64; rv:27.0) Gecko/20100101 Firefox/27.0</stringProp>
+                  <stringProp name="Header.value">Mozilla/5.0 (Windows NT 6.1; WOW64; rv:28.0) Gecko/20100101 Firefox/28.0</stringProp>
                 </elementProp>
                 <elementProp name="Pragma" elementType="Header">
                   <stringProp name="Header.name">Pragma</stringProp>
@@ -554,7 +554,7 @@
             </HeaderManager>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="onClick" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Set 1" enabled="true">
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" enabled="true">
               <collectionProp name="Arguments.arguments">
                 <elementProp name="dtid" elementType="HTTPArgument">
@@ -581,7 +581,7 @@
                 <elementProp name="data_0" elementType="HTTPArgument">
                   <boolProp name="HTTPArgument.always_encode">true</boolProp>
                   <stringProp name="Argument.name">data_0</stringProp>
-                  <stringProp name="Argument.value">{&quot;pageX&quot;:57,&quot;pageY&quot;:15,&quot;which&quot;:1,&quot;x&quot;:52,&quot;y&quot;:15}</stringProp>
+                  <stringProp name="Argument.value">{&quot;pageX&quot;:30,&quot;pageY&quot;:14,&quot;which&quot;:1,&quot;x&quot;:25,&quot;y&quot;:14}</stringProp>
                   <stringProp name="Argument.metadata">=</stringProp>
                   <boolProp name="HTTPArgument.use_equals">true</boolProp>
                 </elementProp>
@@ -619,11 +619,11 @@
                 </elementProp>
                 <elementProp name="ZK-SID" elementType="Header">
                   <stringProp name="Header.name">ZK-SID</stringProp>
-                  <stringProp name="Header.value">1862</stringProp>
+                  <stringProp name="Header.value">8188</stringProp>
                 </elementProp>
                 <elementProp name="User-Agent" elementType="Header">
                   <stringProp name="Header.name">User-Agent</stringProp>
-                  <stringProp name="Header.value">Mozilla/5.0 (Windows NT 6.1; WOW64; rv:27.0) Gecko/20100101 Firefox/27.0</stringProp>
+                  <stringProp name="Header.value">Mozilla/5.0 (Windows NT 6.1; WOW64; rv:28.0) Gecko/20100101 Firefox/28.0</stringProp>
                 </elementProp>
                 <elementProp name="Pragma" elementType="Header">
                   <stringProp name="Header.name">Pragma</stringProp>
@@ -645,7 +645,7 @@
             </HeaderManager>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="onClick" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Set 40" enabled="true">
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" enabled="true">
               <collectionProp name="Arguments.arguments">
                 <elementProp name="dtid" elementType="HTTPArgument">
@@ -665,14 +665,14 @@
                 <elementProp name="uuid_0" elementType="HTTPArgument">
                   <boolProp name="HTTPArgument.always_encode">false</boolProp>
                   <stringProp name="Argument.name">uuid_0</stringProp>
-                  <stringProp name="Argument.value">zk_comp_3</stringProp>
+                  <stringProp name="Argument.value">zk_comp_4</stringProp>
                   <stringProp name="Argument.metadata">=</stringProp>
                   <boolProp name="HTTPArgument.use_equals">true</boolProp>
                 </elementProp>
                 <elementProp name="data_0" elementType="HTTPArgument">
                   <boolProp name="HTTPArgument.always_encode">true</boolProp>
                   <stringProp name="Argument.name">data_0</stringProp>
-                  <stringProp name="Argument.value">{&quot;pageX&quot;:48,&quot;pageY&quot;:6,&quot;which&quot;:1,&quot;x&quot;:43,&quot;y&quot;:6}</stringProp>
+                  <stringProp name="Argument.value">{&quot;pageX&quot;:99,&quot;pageY&quot;:9,&quot;which&quot;:1,&quot;x&quot;:35,&quot;y&quot;:9}</stringProp>
                   <stringProp name="Argument.metadata">=</stringProp>
                   <boolProp name="HTTPArgument.use_equals">true</boolProp>
                 </elementProp>
@@ -710,11 +710,11 @@
                 </elementProp>
                 <elementProp name="ZK-SID" elementType="Header">
                   <stringProp name="Header.name">ZK-SID</stringProp>
-                  <stringProp name="Header.value">1865</stringProp>
+                  <stringProp name="Header.value">8189</stringProp>
                 </elementProp>
                 <elementProp name="User-Agent" elementType="Header">
                   <stringProp name="Header.name">User-Agent</stringProp>
-                  <stringProp name="Header.value">Mozilla/5.0 (Windows NT 6.1; WOW64; rv:27.0) Gecko/20100101 Firefox/27.0</stringProp>
+                  <stringProp name="Header.value">Mozilla/5.0 (Windows NT 6.1; WOW64; rv:28.0) Gecko/20100101 Firefox/28.0</stringProp>
                 </elementProp>
                 <elementProp name="Pragma" elementType="Header">
                   <stringProp name="Header.name">Pragma</stringProp>
@@ -736,7 +736,7 @@
             </HeaderManager>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="onClick" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Set 40" enabled="true">
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" enabled="true">
               <collectionProp name="Arguments.arguments">
                 <elementProp name="dtid" elementType="HTTPArgument">
@@ -756,14 +756,14 @@
                 <elementProp name="uuid_0" elementType="HTTPArgument">
                   <boolProp name="HTTPArgument.always_encode">false</boolProp>
                   <stringProp name="Argument.name">uuid_0</stringProp>
-                  <stringProp name="Argument.value">zk_comp_3</stringProp>
+                  <stringProp name="Argument.value">zk_comp_4</stringProp>
                   <stringProp name="Argument.metadata">=</stringProp>
                   <boolProp name="HTTPArgument.use_equals">true</boolProp>
                 </elementProp>
                 <elementProp name="data_0" elementType="HTTPArgument">
                   <boolProp name="HTTPArgument.always_encode">true</boolProp>
                   <stringProp name="Argument.name">data_0</stringProp>
-                  <stringProp name="Argument.value">{&quot;pageX&quot;:48,&quot;pageY&quot;:6,&quot;which&quot;:1,&quot;x&quot;:43,&quot;y&quot;:6}</stringProp>
+                  <stringProp name="Argument.value">{&quot;pageX&quot;:99,&quot;pageY&quot;:9,&quot;which&quot;:1,&quot;x&quot;:35,&quot;y&quot;:9}</stringProp>
                   <stringProp name="Argument.metadata">=</stringProp>
                   <boolProp name="HTTPArgument.use_equals">true</boolProp>
                 </elementProp>
@@ -801,11 +801,11 @@
                 </elementProp>
                 <elementProp name="ZK-SID" elementType="Header">
                   <stringProp name="Header.name">ZK-SID</stringProp>
-                  <stringProp name="Header.value">1866</stringProp>
+                  <stringProp name="Header.value">8190</stringProp>
                 </elementProp>
                 <elementProp name="User-Agent" elementType="Header">
                   <stringProp name="Header.name">User-Agent</stringProp>
-                  <stringProp name="Header.value">Mozilla/5.0 (Windows NT 6.1; WOW64; rv:27.0) Gecko/20100101 Firefox/27.0</stringProp>
+                  <stringProp name="Header.value">Mozilla/5.0 (Windows NT 6.1; WOW64; rv:28.0) Gecko/20100101 Firefox/28.0</stringProp>
                 </elementProp>
                 <elementProp name="Pragma" elementType="Header">
                   <stringProp name="Header.name">Pragma</stringProp>
@@ -827,7 +827,7 @@
             </HeaderManager>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="onClick" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Set 100" enabled="true">
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" enabled="true">
               <collectionProp name="Arguments.arguments">
                 <elementProp name="dtid" elementType="HTTPArgument">
@@ -847,14 +847,14 @@
                 <elementProp name="uuid_0" elementType="HTTPArgument">
                   <boolProp name="HTTPArgument.always_encode">false</boolProp>
                   <stringProp name="Argument.name">uuid_0</stringProp>
-                  <stringProp name="Argument.value">zk_comp_3</stringProp>
+                  <stringProp name="Argument.value">zk_comp_5</stringProp>
                   <stringProp name="Argument.metadata">=</stringProp>
                   <boolProp name="HTTPArgument.use_equals">true</boolProp>
                 </elementProp>
                 <elementProp name="data_0" elementType="HTTPArgument">
                   <boolProp name="HTTPArgument.always_encode">true</boolProp>
                   <stringProp name="Argument.name">data_0</stringProp>
-                  <stringProp name="Argument.value">{&quot;pageX&quot;:48,&quot;pageY&quot;:6,&quot;which&quot;:1,&quot;x&quot;:43,&quot;y&quot;:6}</stringProp>
+                  <stringProp name="Argument.value">{&quot;pageX&quot;:174,&quot;pageY&quot;:10,&quot;which&quot;:1,&quot;x&quot;:44,&quot;y&quot;:10}</stringProp>
                   <stringProp name="Argument.metadata">=</stringProp>
                   <boolProp name="HTTPArgument.use_equals">true</boolProp>
                 </elementProp>
@@ -892,11 +892,11 @@
                 </elementProp>
                 <elementProp name="ZK-SID" elementType="Header">
                   <stringProp name="Header.name">ZK-SID</stringProp>
-                  <stringProp name="Header.value">1867</stringProp>
+                  <stringProp name="Header.value">8191</stringProp>
                 </elementProp>
                 <elementProp name="User-Agent" elementType="Header">
                   <stringProp name="Header.name">User-Agent</stringProp>
-                  <stringProp name="Header.value">Mozilla/5.0 (Windows NT 6.1; WOW64; rv:27.0) Gecko/20100101 Firefox/27.0</stringProp>
+                  <stringProp name="Header.value">Mozilla/5.0 (Windows NT 6.1; WOW64; rv:28.0) Gecko/20100101 Firefox/28.0</stringProp>
                 </elementProp>
                 <elementProp name="Pragma" elementType="Header">
                   <stringProp name="Header.name">Pragma</stringProp>
@@ -918,7 +918,7 @@
             </HeaderManager>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="onClick" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Set 100" enabled="true">
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" enabled="true">
               <collectionProp name="Arguments.arguments">
                 <elementProp name="dtid" elementType="HTTPArgument">
@@ -938,14 +938,14 @@
                 <elementProp name="uuid_0" elementType="HTTPArgument">
                   <boolProp name="HTTPArgument.always_encode">false</boolProp>
                   <stringProp name="Argument.name">uuid_0</stringProp>
-                  <stringProp name="Argument.value">zk_comp_3</stringProp>
+                  <stringProp name="Argument.value">zk_comp_5</stringProp>
                   <stringProp name="Argument.metadata">=</stringProp>
                   <boolProp name="HTTPArgument.use_equals">true</boolProp>
                 </elementProp>
                 <elementProp name="data_0" elementType="HTTPArgument">
                   <boolProp name="HTTPArgument.always_encode">true</boolProp>
                   <stringProp name="Argument.name">data_0</stringProp>
-                  <stringProp name="Argument.value">{&quot;pageX&quot;:48,&quot;pageY&quot;:6,&quot;which&quot;:1,&quot;x&quot;:43,&quot;y&quot;:6}</stringProp>
+                  <stringProp name="Argument.value">{&quot;pageX&quot;:174,&quot;pageY&quot;:10,&quot;which&quot;:1,&quot;x&quot;:44,&quot;y&quot;:10}</stringProp>
                   <stringProp name="Argument.metadata">=</stringProp>
                   <boolProp name="HTTPArgument.use_equals">true</boolProp>
                 </elementProp>
@@ -983,11 +983,11 @@
                 </elementProp>
                 <elementProp name="ZK-SID" elementType="Header">
                   <stringProp name="Header.name">ZK-SID</stringProp>
-                  <stringProp name="Header.value">1868</stringProp>
+                  <stringProp name="Header.value">8192</stringProp>
                 </elementProp>
                 <elementProp name="User-Agent" elementType="Header">
                   <stringProp name="Header.name">User-Agent</stringProp>
-                  <stringProp name="Header.value">Mozilla/5.0 (Windows NT 6.1; WOW64; rv:27.0) Gecko/20100101 Firefox/27.0</stringProp>
+                  <stringProp name="Header.value">Mozilla/5.0 (Windows NT 6.1; WOW64; rv:28.0) Gecko/20100101 Firefox/28.0</stringProp>
                 </elementProp>
                 <elementProp name="Pragma" elementType="Header">
                   <stringProp name="Header.name">Pragma</stringProp>
@@ -1009,7 +1009,7 @@
             </HeaderManager>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="onClick" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Set 200" enabled="true">
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" enabled="true">
               <collectionProp name="Arguments.arguments">
                 <elementProp name="dtid" elementType="HTTPArgument">
@@ -1029,14 +1029,14 @@
                 <elementProp name="uuid_0" elementType="HTTPArgument">
                   <boolProp name="HTTPArgument.always_encode">false</boolProp>
                   <stringProp name="Argument.name">uuid_0</stringProp>
-                  <stringProp name="Argument.value">zk_comp_3</stringProp>
+                  <stringProp name="Argument.value">zk_comp_6</stringProp>
                   <stringProp name="Argument.metadata">=</stringProp>
                   <boolProp name="HTTPArgument.use_equals">true</boolProp>
                 </elementProp>
                 <elementProp name="data_0" elementType="HTTPArgument">
                   <boolProp name="HTTPArgument.always_encode">true</boolProp>
                   <stringProp name="Argument.name">data_0</stringProp>
-                  <stringProp name="Argument.value">{&quot;pageX&quot;:48,&quot;pageY&quot;:6,&quot;which&quot;:1,&quot;x&quot;:43,&quot;y&quot;:6}</stringProp>
+                  <stringProp name="Argument.value">{&quot;pageX&quot;:230,&quot;pageY&quot;:15,&quot;which&quot;:1,&quot;x&quot;:27,&quot;y&quot;:15}</stringProp>
                   <stringProp name="Argument.metadata">=</stringProp>
                   <boolProp name="HTTPArgument.use_equals">true</boolProp>
                 </elementProp>
@@ -1074,11 +1074,11 @@
                 </elementProp>
                 <elementProp name="ZK-SID" elementType="Header">
                   <stringProp name="Header.name">ZK-SID</stringProp>
-                  <stringProp name="Header.value">1869</stringProp>
+                  <stringProp name="Header.value">8193</stringProp>
                 </elementProp>
                 <elementProp name="User-Agent" elementType="Header">
                   <stringProp name="Header.name">User-Agent</stringProp>
-                  <stringProp name="Header.value">Mozilla/5.0 (Windows NT 6.1; WOW64; rv:27.0) Gecko/20100101 Firefox/27.0</stringProp>
+                  <stringProp name="Header.value">Mozilla/5.0 (Windows NT 6.1; WOW64; rv:28.0) Gecko/20100101 Firefox/28.0</stringProp>
                 </elementProp>
                 <elementProp name="Pragma" elementType="Header">
                   <stringProp name="Header.name">Pragma</stringProp>
@@ -1100,7 +1100,7 @@
             </HeaderManager>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="onClick" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Set 200" enabled="true">
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" enabled="true">
               <collectionProp name="Arguments.arguments">
                 <elementProp name="dtid" elementType="HTTPArgument">
@@ -1120,14 +1120,14 @@
                 <elementProp name="uuid_0" elementType="HTTPArgument">
                   <boolProp name="HTTPArgument.always_encode">false</boolProp>
                   <stringProp name="Argument.name">uuid_0</stringProp>
-                  <stringProp name="Argument.value">zk_comp_3</stringProp>
+                  <stringProp name="Argument.value">zk_comp_6</stringProp>
                   <stringProp name="Argument.metadata">=</stringProp>
                   <boolProp name="HTTPArgument.use_equals">true</boolProp>
                 </elementProp>
                 <elementProp name="data_0" elementType="HTTPArgument">
                   <boolProp name="HTTPArgument.always_encode">true</boolProp>
                   <stringProp name="Argument.name">data_0</stringProp>
-                  <stringProp name="Argument.value">{&quot;pageX&quot;:48,&quot;pageY&quot;:6,&quot;which&quot;:1,&quot;x&quot;:43,&quot;y&quot;:6}</stringProp>
+                  <stringProp name="Argument.value">{&quot;pageX&quot;:230,&quot;pageY&quot;:15,&quot;which&quot;:1,&quot;x&quot;:27,&quot;y&quot;:15}</stringProp>
                   <stringProp name="Argument.metadata">=</stringProp>
                   <boolProp name="HTTPArgument.use_equals">true</boolProp>
                 </elementProp>
@@ -1165,11 +1165,11 @@
                 </elementProp>
                 <elementProp name="ZK-SID" elementType="Header">
                   <stringProp name="Header.name">ZK-SID</stringProp>
-                  <stringProp name="Header.value">1870</stringProp>
+                  <stringProp name="Header.value">8194</stringProp>
                 </elementProp>
                 <elementProp name="User-Agent" elementType="Header">
                   <stringProp name="Header.name">User-Agent</stringProp>
-                  <stringProp name="Header.value">Mozilla/5.0 (Windows NT 6.1; WOW64; rv:27.0) Gecko/20100101 Firefox/27.0</stringProp>
+                  <stringProp name="Header.value">Mozilla/5.0 (Windows NT 6.1; WOW64; rv:28.0) Gecko/20100101 Firefox/28.0</stringProp>
                 </elementProp>
                 <elementProp name="Pragma" elementType="Header">
                   <stringProp name="Header.name">Pragma</stringProp>
@@ -1191,7 +1191,7 @@
             </HeaderManager>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="onClick" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Set 500" enabled="true">
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" enabled="true">
               <collectionProp name="Arguments.arguments">
                 <elementProp name="dtid" elementType="HTTPArgument">
@@ -1211,14 +1211,14 @@
                 <elementProp name="uuid_0" elementType="HTTPArgument">
                   <boolProp name="HTTPArgument.always_encode">false</boolProp>
                   <stringProp name="Argument.name">uuid_0</stringProp>
-                  <stringProp name="Argument.value">zk_comp_3</stringProp>
+                  <stringProp name="Argument.value">zk_comp_7</stringProp>
                   <stringProp name="Argument.metadata">=</stringProp>
                   <boolProp name="HTTPArgument.use_equals">true</boolProp>
                 </elementProp>
                 <elementProp name="data_0" elementType="HTTPArgument">
                   <boolProp name="HTTPArgument.always_encode">true</boolProp>
                   <stringProp name="Argument.name">data_0</stringProp>
-                  <stringProp name="Argument.value">{&quot;pageX&quot;:49,&quot;pageY&quot;:6,&quot;which&quot;:1,&quot;x&quot;:44,&quot;y&quot;:6}</stringProp>
+                  <stringProp name="Argument.value">{&quot;pageX&quot;:299,&quot;pageY&quot;:17,&quot;which&quot;:1,&quot;x&quot;:23,&quot;y&quot;:17}</stringProp>
                   <stringProp name="Argument.metadata">=</stringProp>
                   <boolProp name="HTTPArgument.use_equals">true</boolProp>
                 </elementProp>
@@ -1256,11 +1256,11 @@
                 </elementProp>
                 <elementProp name="ZK-SID" elementType="Header">
                   <stringProp name="Header.name">ZK-SID</stringProp>
-                  <stringProp name="Header.value">1871</stringProp>
+                  <stringProp name="Header.value">8195</stringProp>
                 </elementProp>
                 <elementProp name="User-Agent" elementType="Header">
                   <stringProp name="Header.name">User-Agent</stringProp>
-                  <stringProp name="Header.value">Mozilla/5.0 (Windows NT 6.1; WOW64; rv:27.0) Gecko/20100101 Firefox/27.0</stringProp>
+                  <stringProp name="Header.value">Mozilla/5.0 (Windows NT 6.1; WOW64; rv:28.0) Gecko/20100101 Firefox/28.0</stringProp>
                 </elementProp>
                 <elementProp name="Pragma" elementType="Header">
                   <stringProp name="Header.name">Pragma</stringProp>
@@ -1282,7 +1282,7 @@
             </HeaderManager>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="onClick" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Set 500" enabled="true">
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" enabled="true">
               <collectionProp name="Arguments.arguments">
                 <elementProp name="dtid" elementType="HTTPArgument">
@@ -1302,14 +1302,14 @@
                 <elementProp name="uuid_0" elementType="HTTPArgument">
                   <boolProp name="HTTPArgument.always_encode">false</boolProp>
                   <stringProp name="Argument.name">uuid_0</stringProp>
-                  <stringProp name="Argument.value">zk_comp_3</stringProp>
+                  <stringProp name="Argument.value">zk_comp_7</stringProp>
                   <stringProp name="Argument.metadata">=</stringProp>
                   <boolProp name="HTTPArgument.use_equals">true</boolProp>
                 </elementProp>
                 <elementProp name="data_0" elementType="HTTPArgument">
                   <boolProp name="HTTPArgument.always_encode">true</boolProp>
                   <stringProp name="Argument.name">data_0</stringProp>
-                  <stringProp name="Argument.value">{&quot;pageX&quot;:49,&quot;pageY&quot;:6,&quot;which&quot;:1,&quot;x&quot;:44,&quot;y&quot;:6}</stringProp>
+                  <stringProp name="Argument.value">{&quot;pageX&quot;:299,&quot;pageY&quot;:17,&quot;which&quot;:1,&quot;x&quot;:23,&quot;y&quot;:17}</stringProp>
                   <stringProp name="Argument.metadata">=</stringProp>
                   <boolProp name="HTTPArgument.use_equals">true</boolProp>
                 </elementProp>
@@ -1347,193 +1347,11 @@
                 </elementProp>
                 <elementProp name="ZK-SID" elementType="Header">
                   <stringProp name="Header.name">ZK-SID</stringProp>
-                  <stringProp name="Header.value">1872</stringProp>
+                  <stringProp name="Header.value">8196</stringProp>
                 </elementProp>
                 <elementProp name="User-Agent" elementType="Header">
                   <stringProp name="Header.name">User-Agent</stringProp>
-                  <stringProp name="Header.value">Mozilla/5.0 (Windows NT 6.1; WOW64; rv:27.0) Gecko/20100101 Firefox/27.0</stringProp>
-                </elementProp>
-                <elementProp name="Pragma" elementType="Header">
-                  <stringProp name="Header.name">Pragma</stringProp>
-                  <stringProp name="Header.value">no-cache</stringProp>
-                </elementProp>
-                <elementProp name="Cache-Control" elementType="Header">
-                  <stringProp name="Header.name">Cache-Control</stringProp>
-                  <stringProp name="Header.value">no-cache</stringProp>
-                </elementProp>
-                <elementProp name="Accept-Encoding" elementType="Header">
-                  <stringProp name="Header.name">Accept-Encoding</stringProp>
-                  <stringProp name="Header.value">gzip, deflate</stringProp>
-                </elementProp>
-                <elementProp name="Referer" elementType="Header">
-                  <stringProp name="Header.name">Referer</stringProp>
-                  <stringProp name="Header.value">http://127.0.0.1:8080/zss.test/performance.zul</stringProp>
-                </elementProp>
-              </collectionProp>
-            </HeaderManager>
-            <hashTree/>
-          </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="onClick" enabled="true">
-            <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" enabled="true">
-              <collectionProp name="Arguments.arguments">
-                <elementProp name="dtid" elementType="HTTPArgument">
-                  <boolProp name="HTTPArgument.always_encode">false</boolProp>
-                  <stringProp name="Argument.name">dtid</stringProp>
-                  <stringProp name="Argument.value">${dtid}</stringProp>
-                  <stringProp name="Argument.metadata">=</stringProp>
-                  <boolProp name="HTTPArgument.use_equals">true</boolProp>
-                </elementProp>
-                <elementProp name="cmd_0" elementType="HTTPArgument">
-                  <boolProp name="HTTPArgument.always_encode">false</boolProp>
-                  <stringProp name="Argument.name">cmd_0</stringProp>
-                  <stringProp name="Argument.value">onClick</stringProp>
-                  <stringProp name="Argument.metadata">=</stringProp>
-                  <boolProp name="HTTPArgument.use_equals">true</boolProp>
-                </elementProp>
-                <elementProp name="uuid_0" elementType="HTTPArgument">
-                  <boolProp name="HTTPArgument.always_encode">false</boolProp>
-                  <stringProp name="Argument.name">uuid_0</stringProp>
-                  <stringProp name="Argument.value">zk_comp_3</stringProp>
-                  <stringProp name="Argument.metadata">=</stringProp>
-                  <boolProp name="HTTPArgument.use_equals">true</boolProp>
-                </elementProp>
-                <elementProp name="data_0" elementType="HTTPArgument">
-                  <boolProp name="HTTPArgument.always_encode">true</boolProp>
-                  <stringProp name="Argument.name">data_0</stringProp>
-                  <stringProp name="Argument.value">{&quot;pageX&quot;:49,&quot;pageY&quot;:6,&quot;which&quot;:1,&quot;x&quot;:44,&quot;y&quot;:6}</stringProp>
-                  <stringProp name="Argument.metadata">=</stringProp>
-                  <boolProp name="HTTPArgument.use_equals">true</boolProp>
-                </elementProp>
-              </collectionProp>
-            </elementProp>
-            <stringProp name="HTTPSampler.domain"></stringProp>
-            <stringProp name="HTTPSampler.port"></stringProp>
-            <stringProp name="HTTPSampler.connect_timeout"></stringProp>
-            <stringProp name="HTTPSampler.response_timeout"></stringProp>
-            <stringProp name="HTTPSampler.protocol">http</stringProp>
-            <stringProp name="HTTPSampler.contentEncoding">UTF-8</stringProp>
-            <stringProp name="HTTPSampler.path">/zss.test/zkau</stringProp>
-            <stringProp name="HTTPSampler.method">POST</stringProp>
-            <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
-            <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
-            <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
-            <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
-            <boolProp name="HTTPSampler.monitor">false</boolProp>
-            <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
-          </HTTPSamplerProxy>
-          <hashTree>
-            <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager" enabled="true">
-              <collectionProp name="HeaderManager.headers">
-                <elementProp name="Content-Type" elementType="Header">
-                  <stringProp name="Header.name">Content-Type</stringProp>
-                  <stringProp name="Header.value">application/x-www-form-urlencoded;charset=UTF-8</stringProp>
-                </elementProp>
-                <elementProp name="Accept-Language" elementType="Header">
-                  <stringProp name="Header.name">Accept-Language</stringProp>
-                  <stringProp name="Header.value">zh-tw,zh;q=0.8,en-us;q=0.5,en;q=0.3</stringProp>
-                </elementProp>
-                <elementProp name="Accept" elementType="Header">
-                  <stringProp name="Header.name">Accept</stringProp>
-                  <stringProp name="Header.value">text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8</stringProp>
-                </elementProp>
-                <elementProp name="ZK-SID" elementType="Header">
-                  <stringProp name="Header.name">ZK-SID</stringProp>
-                  <stringProp name="Header.value">1873</stringProp>
-                </elementProp>
-                <elementProp name="User-Agent" elementType="Header">
-                  <stringProp name="Header.name">User-Agent</stringProp>
-                  <stringProp name="Header.value">Mozilla/5.0 (Windows NT 6.1; WOW64; rv:27.0) Gecko/20100101 Firefox/27.0</stringProp>
-                </elementProp>
-                <elementProp name="Pragma" elementType="Header">
-                  <stringProp name="Header.name">Pragma</stringProp>
-                  <stringProp name="Header.value">no-cache</stringProp>
-                </elementProp>
-                <elementProp name="Cache-Control" elementType="Header">
-                  <stringProp name="Header.name">Cache-Control</stringProp>
-                  <stringProp name="Header.value">no-cache</stringProp>
-                </elementProp>
-                <elementProp name="Accept-Encoding" elementType="Header">
-                  <stringProp name="Header.name">Accept-Encoding</stringProp>
-                  <stringProp name="Header.value">gzip, deflate</stringProp>
-                </elementProp>
-                <elementProp name="Referer" elementType="Header">
-                  <stringProp name="Header.name">Referer</stringProp>
-                  <stringProp name="Header.value">http://127.0.0.1:8080/zss.test/performance.zul</stringProp>
-                </elementProp>
-              </collectionProp>
-            </HeaderManager>
-            <hashTree/>
-          </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="onClick" enabled="true">
-            <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" enabled="true">
-              <collectionProp name="Arguments.arguments">
-                <elementProp name="dtid" elementType="HTTPArgument">
-                  <boolProp name="HTTPArgument.always_encode">false</boolProp>
-                  <stringProp name="Argument.name">dtid</stringProp>
-                  <stringProp name="Argument.value">${dtid}</stringProp>
-                  <stringProp name="Argument.metadata">=</stringProp>
-                  <boolProp name="HTTPArgument.use_equals">true</boolProp>
-                </elementProp>
-                <elementProp name="cmd_0" elementType="HTTPArgument">
-                  <boolProp name="HTTPArgument.always_encode">false</boolProp>
-                  <stringProp name="Argument.name">cmd_0</stringProp>
-                  <stringProp name="Argument.value">onClick</stringProp>
-                  <stringProp name="Argument.metadata">=</stringProp>
-                  <boolProp name="HTTPArgument.use_equals">true</boolProp>
-                </elementProp>
-                <elementProp name="uuid_0" elementType="HTTPArgument">
-                  <boolProp name="HTTPArgument.always_encode">false</boolProp>
-                  <stringProp name="Argument.name">uuid_0</stringProp>
-                  <stringProp name="Argument.value">zk_comp_3</stringProp>
-                  <stringProp name="Argument.metadata">=</stringProp>
-                  <boolProp name="HTTPArgument.use_equals">true</boolProp>
-                </elementProp>
-                <elementProp name="data_0" elementType="HTTPArgument">
-                  <boolProp name="HTTPArgument.always_encode">true</boolProp>
-                  <stringProp name="Argument.name">data_0</stringProp>
-                  <stringProp name="Argument.value">{&quot;pageX&quot;:49,&quot;pageY&quot;:6,&quot;which&quot;:1,&quot;x&quot;:44,&quot;y&quot;:6}</stringProp>
-                  <stringProp name="Argument.metadata">=</stringProp>
-                  <boolProp name="HTTPArgument.use_equals">true</boolProp>
-                </elementProp>
-              </collectionProp>
-            </elementProp>
-            <stringProp name="HTTPSampler.domain"></stringProp>
-            <stringProp name="HTTPSampler.port"></stringProp>
-            <stringProp name="HTTPSampler.connect_timeout"></stringProp>
-            <stringProp name="HTTPSampler.response_timeout"></stringProp>
-            <stringProp name="HTTPSampler.protocol">http</stringProp>
-            <stringProp name="HTTPSampler.contentEncoding">UTF-8</stringProp>
-            <stringProp name="HTTPSampler.path">/zss.test/zkau</stringProp>
-            <stringProp name="HTTPSampler.method">POST</stringProp>
-            <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
-            <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
-            <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
-            <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
-            <boolProp name="HTTPSampler.monitor">false</boolProp>
-            <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
-          </HTTPSamplerProxy>
-          <hashTree>
-            <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager" enabled="true">
-              <collectionProp name="HeaderManager.headers">
-                <elementProp name="Content-Type" elementType="Header">
-                  <stringProp name="Header.name">Content-Type</stringProp>
-                  <stringProp name="Header.value">application/x-www-form-urlencoded;charset=UTF-8</stringProp>
-                </elementProp>
-                <elementProp name="Accept-Language" elementType="Header">
-                  <stringProp name="Header.name">Accept-Language</stringProp>
-                  <stringProp name="Header.value">zh-tw,zh;q=0.8,en-us;q=0.5,en;q=0.3</stringProp>
-                </elementProp>
-                <elementProp name="Accept" elementType="Header">
-                  <stringProp name="Header.name">Accept</stringProp>
-                  <stringProp name="Header.value">text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8</stringProp>
-                </elementProp>
-                <elementProp name="ZK-SID" elementType="Header">
-                  <stringProp name="Header.name">ZK-SID</stringProp>
-                  <stringProp name="Header.value">1874</stringProp>
-                </elementProp>
-                <elementProp name="User-Agent" elementType="Header">
-                  <stringProp name="Header.name">User-Agent</stringProp>
-                  <stringProp name="Header.value">Mozilla/5.0 (Windows NT 6.1; WOW64; rv:27.0) Gecko/20100101 Firefox/27.0</stringProp>
+                  <stringProp name="Header.value">Mozilla/5.0 (Windows NT 6.1; WOW64; rv:28.0) Gecko/20100101 Firefox/28.0</stringProp>
                 </elementProp>
                 <elementProp name="Pragma" elementType="Header">
                   <stringProp name="Header.name">Pragma</stringProp>
@@ -1558,6 +1376,38 @@
         </hashTree>
       </hashTree>
       <ResultCollector guiclass="TableVisualizer" testclass="ResultCollector" testname="View Results in Table" enabled="true">
+        <boolProp name="ResultCollector.error_logging">false</boolProp>
+        <objProp>
+          <name>saveConfig</name>
+          <value class="SampleSaveConfiguration">
+            <time>true</time>
+            <latency>true</latency>
+            <timestamp>true</timestamp>
+            <success>true</success>
+            <label>true</label>
+            <code>true</code>
+            <message>true</message>
+            <threadName>true</threadName>
+            <dataType>true</dataType>
+            <encoding>false</encoding>
+            <assertions>true</assertions>
+            <subresults>true</subresults>
+            <responseData>false</responseData>
+            <samplerData>false</samplerData>
+            <xml>false</xml>
+            <fieldNames>false</fieldNames>
+            <responseHeaders>false</responseHeaders>
+            <requestHeaders>false</requestHeaders>
+            <responseDataOnError>false</responseDataOnError>
+            <saveAssertionResultsFailureMessage>false</saveAssertionResultsFailureMessage>
+            <assertionsResultsToSave>0</assertionsResultsToSave>
+            <bytes>true</bytes>
+          </value>
+        </objProp>
+        <stringProp name="filename"></stringProp>
+      </ResultCollector>
+      <hashTree/>
+      <ResultCollector guiclass="SummaryReport" testclass="ResultCollector" testname="Summary Report" enabled="true">
         <boolProp name="ResultCollector.error_logging">false</boolProp>
         <objProp>
           <name>saveConfig</name>

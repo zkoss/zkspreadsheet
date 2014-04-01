@@ -1,21 +1,12 @@
-<vlayout hflex="1" vflex="1">
+<vlayout hflex="1" vflex="1" apply="zss.testapp.PerformanceComposer">
 	<hlayout>
-		<button onClick="setValue()">Set Value</button>
+		<button id="btn1" >Set 1</button>
+		<button id="btn40" >Set 40</button>
+		<button id="btn100" >Set 100</button>
+		<button id="btn200" >Set 200</button>
+		<button id="btn500" >Set 500</button>
 	</hlayout>
 	<spreadsheet id="ss" src="/performance.xlsx" maxVisibleRows="500" maxVisibleColumns="40"
 		width="1024px" height="800px" showContextMenu="true" showSheetbar="true" showToolbar="true" 
 		showFormulabar="true"/>
-	<zscript><![CDATA[
-
-	public void setValue(){
-	    Sheet sheet = ss.getBook().getSheetAt(0);
-		for(int i = 0; i < 40; i++) {
-			for(int j = 0; j < 10; j++) {
-				Range range = Ranges.range(sheet, i, j);
-				range.setCellValue(range.getCellData().getDoubleValue() + 5);
-			}
-		}
-		System.out.println(">>> set value");
-	}
-	]]></zscript>		
 </vlayout>
