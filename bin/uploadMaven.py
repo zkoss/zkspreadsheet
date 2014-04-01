@@ -41,7 +41,6 @@ def mountRemoteFolder():
 
 # initialize zss, zpoi version from released file names
 def initProjectVersion():
-	#officialVersionRe = 
 	global isFreshlyVersion
 	if os.path.exists(LOCAL_RELEASE_PATH+ZSS_MAVEN_PATH+'proprietary'):
 		isFreshlyVersion = False
@@ -54,18 +53,14 @@ def initProjectVersion():
 	global ZPOI_VERSION 
 	global ZSS_VERSION 
 	if (isFreshlyVersion):
-		freshlyVersionRegExpr = re.compile("(\d\.)+FL\.(\d)+")
-		ZPOI_VERSION = freshlyVersionRegExpr.search(zpoiBundleFileName).group(0)
-		print("zpoi version: "+ZPOI_VERSION)
-		ZSS_VERSION = freshlyVersionRegExpr.search(zssBundleFileName).group(0)
-		print("zss version: "+ZSS_VERSION)
+		versionRegExpr = re.compile("(\d\.)+FL\.(\d)+")
 	else:
-		officialVersionRegExpr = re.compile("\d\.(\d)+\.(\d)+")
-		ZPOI_VERSION = officialVersionRegExpr.search(zpoiBundleFileName).group(0)
-		print("zpoi version: "+ZPOI_VERSION)
-		ZSS_VERSION = officialVersionRegExpr.search(zssBundleFileName).group(0)
-		print("zss version: "+ZSS_VERSION)
-		
+		versionRegExpr = re.compile("\d\.(\d)+\.(\d)+")
+	ZPOI_VERSION = versionRegExpr.search(zpoiBundleFileName).group(0)
+	ZSS_VERSION = versionRegExpr.search(zssBundleFileName).group(0)
+	print("zpoi version: "+ZPOI_VERSION)
+	print("zss version: "+ZSS_VERSION)
+
 
 # upload to potix release server
 def uploadMavenBundle():
@@ -73,12 +68,12 @@ def uploadMavenBundle():
 		bundleFileName = projectName+"-"+getProjectVersion(projectName)+"-bundle.jar"
 		shutil.copyfile(getBundleFilePath(projectName)+bundleFileName, getBundleFileTargetFolder(projectName)+"/"+bundleFileName)
 		print("copied "+bundleFileName )
-	#copy proprietary bundle files 
+	#copy proprietary bundle files into zss project maven folder
 	global isFreshlyVersion
 	if (not isFreshlyVersion):
 		for projectName in ZSS_PROJECT_LIST+ZPOI_PROJECT_LIST:
 			bundleFileName = projectName+"-"+getProjectVersion(projectName)+"-bundle.jar"
-			shutil.copyfile(getProprietaryFilePath(projectName)+bundleFileName, getProprietaryFileTargetFolder(projectName)+"/"+bundleFileName)
+			shutil.copyfile(getProprietaryFilePath("projectName")+bundleFileName, getProprietaryFileTargetFolder("zss")+"/"+bundleFileName)
 			print("copied "+bundleFileName )
 		
 def createArtifactFolder():
@@ -98,7 +93,7 @@ def getBundleFileTargetFolder(projectName):
 	return MOUNTED_RELEASE_PATH+projectName+'/releases/'+getProjectVersion(projectName)+'/maven'
 
 def getProprietaryFileTargetFolder(projectName):
-	return MOUNTED_RELEASE_PATH+projectName+'/releases/'+getProjectVersion(projectName)+'/maven/proprietary'
+	return MOUNTED_RELEASE_PATH+projectName+'/releases/'+getProjectVersion(projectName)+'/maven/proprietary/EE'
 
 def getProjectVersion(projectName):
 	if projectName in ZSS_PROJECT_LIST:
