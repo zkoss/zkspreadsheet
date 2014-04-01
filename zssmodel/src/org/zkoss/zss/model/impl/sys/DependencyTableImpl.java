@@ -199,10 +199,10 @@ public class DependencyTableImpl extends DependencyTableAdv {
 	}
 
 	private int[] getSheetIndex(SBook book, Ref ref) {
-		SSheet sheet = book.getSheetByName(ref.getSheetName());
-		int a = sheet != null ? book.getSheetIndex(sheet) : -1;
-		sheet = book.getSheetByName(ref.getLastSheetName());
-		int b = sheet != null ? book.getSheetIndex(sheet) : a;
+		String sn = ref.getSheetName();
+		String lsn = ref.getLastSheetName();
+		int a = book.getSheetIndex(sn);
+		int b = (lsn==null||lsn.equals(sn))?a:book.getSheetIndex(lsn);
 		return new int[]{a, b}; // Excel always adjust 3D formula to ascending, we assume this too.
 	}
 

@@ -658,6 +658,18 @@ public class BookImpl extends AbstractBookAdv{
 	public int getSheetIndex(SSheet sheet) {
 		return _sheets.indexOf(sheet);
 	}
+	
+	@Override
+	public int getSheetIndex(String sheetName) {
+		int i=0;
+		for(SSheet sheet:_sheets){
+			if(sheet.getSheetName().equals(sheetName)){
+				return i;
+			}
+			i++;
+		}
+		return -1;
+	}
 
 	@Override
 	public void setShareScope(String scope) {

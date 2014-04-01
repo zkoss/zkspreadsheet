@@ -80,11 +80,11 @@ public class PerformanceTest {
 		if(dumpMemory){
 			showMemoryUsage(">>>After Load 2nd book:"); // after load second book
 		}
-		
+		int rows = 500;
 		for(int times = 0; times < loop; times++) {
 			
 			start = System.currentTimeMillis();
-			for(int i = 0; i < 500; i++) {
+			for(int i = 0; i < rows; i++) {
 				for(int j = 0; j < 10; j++) {
 					assertEquals(String.valueOf((i+1)+times*5), Ranges.range(sheet, i, j).getCellFormatText());
 				}
@@ -100,7 +100,7 @@ public class PerformanceTest {
 			}
 			
 			start = System.currentTimeMillis();
-			for(int i = 0; i < 500; i++) {
+			for(int i = 0; i < rows; i++) {
 				for(int j = 0; j < 10; j++) {
 					Range range = Ranges.range(sheet, i, j);
 					range.setCellValue(range.getCellData().getDoubleValue() + 5);
@@ -114,7 +114,7 @@ public class PerformanceTest {
 			}
 			
 			start = System.currentTimeMillis();
-			for(int i = 0; i < 500; i++) {
+			for(int i = 0; i < rows; i++) {
 				for(int j = 0; j < 10; j++) {
 					assertEquals(String.valueOf((i+1+(times+1)*5)), Ranges.range(sheet, i, j).getCellFormatText());
 				}

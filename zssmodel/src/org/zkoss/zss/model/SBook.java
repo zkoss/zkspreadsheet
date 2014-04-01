@@ -55,6 +55,14 @@ public interface SBook {
 	public int getSheetIndex(SSheet sheet);
 	
 	/**
+	 * Get the index of sheet
+	 * @param sheet the sheet
+	 * @return the index
+	 * @since 3.5.1
+	 */
+	public int getSheetIndex(String sheetName);
+	
+	/**
 	 * Get the number of sheet
 	 * @return the number of sheet
 	 */
