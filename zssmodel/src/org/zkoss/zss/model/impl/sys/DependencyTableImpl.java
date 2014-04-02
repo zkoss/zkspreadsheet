@@ -4,6 +4,7 @@ import java.util.EnumSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Queue;
@@ -41,6 +42,7 @@ public class DependencyTableImpl extends DependencyTableAdv {
 
 	/** Map<dependant, precedent> */
 	private Map<Ref, Set<Ref>> _map = new LinkedHashMap<Ref, Set<Ref>>();
+	private Map<Ref, Set<Ref>> _evaledMap = new LinkedHashMap<Ref, Set<Ref>>();
 	private SBookSeries _books;
 
 	public DependencyTableImpl() {
@@ -63,16 +65,34 @@ public class DependencyTableImpl extends DependencyTableAdv {
 
 	public void clear() {
 		_map.clear();
+		_evaledMap.clear();
 	}
 
 	@Override
 	public void clearDependents(Ref dependant) {
 		_map.remove(dependant);
+		_evaledMap.remove(dependant);
 	}
 
 	@Override
 	public Set<Ref> getDependents(Ref precedent) {
-
+		return getDependents(precedent,_map);
+	}
+	
+	@Override
+	public Set<Ref> getEvaluatedDependents(Ref precedent) {
+		return getDependents(precedent,_evaledMap);
+	}
+	
+	@Override
+	public void setEvaluated(Ref dependent){
+		Set<Ref> precedents = _map.get(dependent);
+		if(precedents!=null){
+			_evaledMap.put(dependent, precedents);
+		}
+	}
+	
+	private Set<Ref> getDependents(Ref precedent,Map<Ref, Set<Ref>> base) {
 		// search dependents and their dependents recursively
 		Set<Ref> result = new LinkedHashSet<Ref>();
 		Queue<Ref> queue = new LinkedList<Ref>();
@@ -80,7 +100,7 @@ public class DependencyTableImpl extends DependencyTableAdv {
 		RefType precedentType = precedent.getType();
 		while(!queue.isEmpty()) {
 			Ref p = queue.remove();
-			for(Entry<Ref, Set<Ref>> entry : _map.entrySet()) {
+			for(Entry<Ref, Set<Ref>> entry : base.entrySet()) {
 				Ref target = entry.getKey();
 				if(!result.contains(target)) {
 					//ZSS-581, should also match to precedent (especially for larger scope ref).
@@ -246,6 +266,7 @@ public class DependencyTableImpl extends DependencyTableAdv {
 		// simply, just put everything in
 		DependencyTableImpl another = (DependencyTableImpl)dependencyTable;
 		_map.putAll(another._map);
+		_evaledMap.putAll(another._evaledMap);
 	}
 	
 	@Override

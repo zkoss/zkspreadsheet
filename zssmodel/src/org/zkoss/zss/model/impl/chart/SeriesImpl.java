@@ -62,8 +62,9 @@ public class SeriesImpl implements SSeries,Serializable,LinkedModelObject{
 		if(!_evaluated){
 			FormulaEngine fe = EngineFactory.getInstance().createFormulaEngine();
 			SSheet sheet = _chart.getSheet();
+			Ref ref = getRef();
 			if(_nameExpr!=null){
-				EvaluationResult result = fe.evaluate(_nameExpr,new FormulaEvaluationContext(sheet));
+				EvaluationResult result = fe.evaluate(_nameExpr,new FormulaEvaluationContext(sheet,ref));
 
 				Object val = result.getValue();
 				if(result.getType() == ResultType.SUCCESS){
@@ -74,7 +75,7 @@ public class SeriesImpl implements SSeries,Serializable,LinkedModelObject{
 				
 			}
 			if(_valueExpr!=null){
-				EvaluationResult result = fe.evaluate(_valueExpr,new FormulaEvaluationContext(sheet));
+				EvaluationResult result = fe.evaluate(_valueExpr,new FormulaEvaluationContext(sheet,ref));
 				Object val = result.getValue();
 				if(result.getType() == ResultType.SUCCESS){
 					_evalValuesResult = val;
@@ -83,7 +84,7 @@ public class SeriesImpl implements SSeries,Serializable,LinkedModelObject{
 				}
 			}
 			if(_yValueExpr!=null){
-				EvaluationResult result = fe.evaluate(_yValueExpr,new FormulaEvaluationContext(sheet));
+				EvaluationResult result = fe.evaluate(_yValueExpr,new FormulaEvaluationContext(sheet,ref));
 				Object val = result.getValue();
 				if(result.getType() == ResultType.SUCCESS){
 					_evalYValuesResult = val;
@@ -92,7 +93,7 @@ public class SeriesImpl implements SSeries,Serializable,LinkedModelObject{
 				}
 			}
 			if(_zValueExpr!=null){
-				EvaluationResult result = fe.evaluate(_zValueExpr,new FormulaEvaluationContext(sheet));
+				EvaluationResult result = fe.evaluate(_zValueExpr,new FormulaEvaluationContext(sheet,ref));
 				Object val = result.getValue();
 				if(result.getType() == ResultType.SUCCESS){
 					_evalZValuesResult = val;

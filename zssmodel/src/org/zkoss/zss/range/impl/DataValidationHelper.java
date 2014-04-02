@@ -78,7 +78,7 @@ public class DataValidationHelper {
 			if(expr.hasError()){
 				return false;
 			}
-			FormulaResultCellValue result = new FormulaResultCellValue(engine.evaluate(expr, new FormulaEvaluationContext(_sheet)));
+			FormulaResultCellValue result = new FormulaResultCellValue(engine.evaluate(expr, new FormulaEvaluationContext(_sheet, null)));
 			
 			value = result.getValue();
 			cellType = result.getCellType();

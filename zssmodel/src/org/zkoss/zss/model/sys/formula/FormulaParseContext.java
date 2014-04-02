@@ -28,7 +28,7 @@ import org.zkoss.zss.model.sys.dependency.Ref;
  * @since 3.5.0
  */
 public class FormulaParseContext extends AbstractContext {
-	private final Ref dependent;
+	private final Ref _dependent;
 
 	private final SBook _book;
 	private final SSheet _sheet;
@@ -49,11 +49,11 @@ public class FormulaParseContext extends AbstractContext {
 		this._book = book;
 		this._sheet = sheet;
 		this._cell = cell;
-		this.dependent = dependent;
+		this._dependent = dependent;
 	}
 
 	public Ref getDependent() {
-		return dependent;
+		return _dependent;
 	}
 
 	public SBook getBook() {

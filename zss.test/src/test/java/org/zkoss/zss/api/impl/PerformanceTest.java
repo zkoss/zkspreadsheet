@@ -23,6 +23,7 @@ public class PerformanceTest {
 	@BeforeClass
 	public static void setUpLibrary() throws Exception {
 		Setup.touch();
+		System.out.println(">>JDK:"+System.getProperty("java.runtime.version"));
 	}
 	
 	@Before
@@ -36,15 +37,21 @@ public class PerformanceTest {
 	
 	@Test
 	public void testMemory() throws Exception {
-		test(10,false,true);
+//		test(10,500,1,false,true);
+//		test(10,500,40,false,true);
+//		test(10,500,100,false,true);
+//		test(10,500,200,false,true);
+		test(10,500,500,false,true);
 	}
 	@Test
 	public void testTime() throws Exception {
-		test(1,true,false);
+//		test(1,500,1,true,false);
+//		test(1,500,40,true,false);
+//		test(1,500,100,true,false);
+//		test(1,500,200,true,false);
+		test(1,500,500,true,false);
 	}
-	public void test(int loop,boolean dumpTime,boolean dumpMemory) throws Exception {
-		System.out.println(">>JDK:"+System.getProperty("java.runtime.version"));
-
+	public void test(int loop, int setRows, int evalRows,boolean dumpTime,boolean dumpMemory) throws Exception {
 		String bookPath = "book/performance.xlsx";
 		
 		if(dumpMemory){
@@ -71,7 +78,7 @@ public class PerformanceTest {
 		
 		
 		start = System.currentTimeMillis();
-		book = Util.loadBook(this,"book/performance.xlsx");
+		book = Util.loadBook(this,bookPath);
 		sheet = book.getSheet("Sheet1");
 		if(dumpTime){
 			System.out.println("Load Book Time: " + (System.currentTimeMillis() - start));
@@ -80,11 +87,10 @@ public class PerformanceTest {
 		if(dumpMemory){
 			showMemoryUsage(">>>After Load 2nd book:"); // after load second book
 		}
-		int rows = 500;
-		for(int times = 0; times < loop; times++) {
-			
+
+		for(int times = 0; times < loop; times++) {			
 			start = System.currentTimeMillis();
-			for(int i = 0; i < rows; i++) {
+			for(int i = 0; i < evalRows; i++) {
 				for(int j = 0; j < 10; j++) {
 					assertEquals(String.valueOf((i+1)+times*5), Ranges.range(sheet, i, j).getCellFormatText());
 				}
@@ -100,7 +106,7 @@ public class PerformanceTest {
 			}
 			
 			start = System.currentTimeMillis();
-			for(int i = 0; i < rows; i++) {
+			for(int i = 0; i < setRows; i++) {
 				for(int j = 0; j < 10; j++) {
 					Range range = Ranges.range(sheet, i, j);
 					range.setCellValue(range.getCellData().getDoubleValue() + 5);
@@ -114,7 +120,7 @@ public class PerformanceTest {
 			}
 			
 			start = System.currentTimeMillis();
-			for(int i = 0; i < rows; i++) {
+			for(int i = 0; i < evalRows; i++) {
 				for(int j = 0; j < 10; j++) {
 					assertEquals(String.valueOf((i+1+(times+1)*5)), Ranges.range(sheet, i, j).getCellFormatText());
 				}

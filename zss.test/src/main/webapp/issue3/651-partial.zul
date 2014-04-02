@@ -1,0 +1,15 @@
+<zk>
+	<vlayout width="100%" height="100%">
+		<hlayout>
+			<label pre="true"><![CDATA[
+1.change E3 value to 100, G11,12 and chart should change too, switch to Sheet2 , G11, 12, and chart should change too
+2.change E3 value to 200, check again
+3.Reload page, insert column B, check H10,11,12's formula, they should be shifted. switch to Sheet 2, G10,11,12's formula shoulde be shifted
+4.Reload page, insert column B, change F3 to 100, H10,11,12 and chart shoulde change, switch to Sheet2 , G11, 12, and chart should change too
+5,Redo insert row 1 on step 3,4
+			]]></label>
+		</hlayout>
+		<spreadsheet id="ss" src="/issue3/book/651-partial.xlsx" maxrows="200" maxcolumns="40"
+			hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" showFormulabar="true" />
+	</vlayout>
+</zk>

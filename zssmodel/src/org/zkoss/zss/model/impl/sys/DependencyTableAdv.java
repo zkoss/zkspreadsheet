@@ -12,9 +12,11 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.model.impl.sys;
 
 import java.io.Serializable;
+import java.util.Set;
 
 import org.zkoss.zss.model.SBookSeries;
 import org.zkoss.zss.model.sys.dependency.DependencyTable;
+import org.zkoss.zss.model.sys.dependency.Ref;
 
 /**
  * @author Pao

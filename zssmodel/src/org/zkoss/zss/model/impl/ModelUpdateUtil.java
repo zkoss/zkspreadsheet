@@ -42,7 +42,7 @@ import org.zkoss.zss.range.impl.ModelUpdateCollector;
 		//get table when collector and clearer is not ignored (in import case, we should ignore clear cahche)
 		if(collector!=null || clearer!=null || bookSeries.isAutoFormulaCacheClean()){
 			DependencyTable table = ((AbstractBookSeriesAdv)bookSeries).getDependencyTable();
-			dependents = table.getDependents(precedent); 
+			dependents = table.getEvaluatedDependents(precedent); 
 		}
 		addRefUpdate(precedent);
 		if(dependents!=null && dependents.size()>0){

@@ -286,13 +286,14 @@ public class FormulaEngineImpl implements FormulaEngine {
 		if(expr.hasError()) {
 			return new EvaluationResultImpl(ResultType.ERROR, new ErrorValue(ErrorValue.INVALID_FORMULA));
 		}
-		
+		Ref dependant = context.getDependent();
 		EvaluationResult result = null;
 		try {
 
 			// get evaluation context from book series
 			SBook book = context.getBook();
 			AbstractBookSeriesAdv bookSeries = (AbstractBookSeriesAdv)book.getBookSeries();
+			DependencyTableAdv table = (DependencyTableAdv)bookSeries.getDependencyTable();			
 			Map<String, EvalContext> evalCtxMap = (Map<String, EvalContext>)bookSeries
 					.getAttribute(KEY_EVALUATORS);
 
@@ -339,7 +340,9 @@ public class FormulaEngineImpl implements FormulaEngine {
 			} finally {
 				setXelContext(oldXelCtx);
 			}
-
+			if(dependant!=null){
+				table.setEvaluated(dependant);
+			}
 		} catch(NotImplementedException e) {
 			_logger.info(e.getMessage() + " when eval " + expr.getFormulaString());
 			result = new EvaluationResultImpl(ResultType.ERROR, new ErrorValue(ErrorValue.INVALID_NAME, e.getMessage()));

@@ -318,9 +318,10 @@ public class DataValidationImpl extends AbstractDataValidationAdv {
 	
 	/*package*/ void evalFormula(){
 		if(!_evaluated){
+			Ref ref = getRef();
 			FormulaEngine fe = EngineFactory.getInstance().createFormulaEngine();
 			if(_value1Expr!=null){
-				EvaluationResult result = fe.evaluate(_value1Expr,new FormulaEvaluationContext(_sheet));
+				EvaluationResult result = fe.evaluate(_value1Expr,new FormulaEvaluationContext(_sheet,ref));
 
 				Object val = result.getValue();
 				if(result.getType() == ResultType.SUCCESS){
@@ -331,7 +332,7 @@ public class DataValidationImpl extends AbstractDataValidationAdv {
 				
 			}
 			if(_value2Expr!=null){
-				EvaluationResult result = fe.evaluate(_value2Expr,new FormulaEvaluationContext(_sheet));
+				EvaluationResult result = fe.evaluate(_value2Expr,new FormulaEvaluationContext(_sheet,ref));
 
 				Object val = result.getValue();
 				if(result.getType() == ResultType.SUCCESS){

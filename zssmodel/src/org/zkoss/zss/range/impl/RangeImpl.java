@@ -214,7 +214,7 @@ public class RangeImpl implements SRange {
 			for (EffectedRegion r : _rangeRefs) {
 				CellRegion region = r.region;
 				handleCellNotifyContentChange(new SheetRegion(r.sheet,r.region));
-				handleRefNotifyContentChange(bookSeries, table.getDependents(new RefImpl(r.sheet.getBook().getBookName(),r.sheet.getSheetName(),
+				handleRefNotifyContentChange(bookSeries, table.getEvaluatedDependents(new RefImpl(r.sheet.getBook().getBookName(),r.sheet.getSheetName(),
 						region.getRow(),region.getColumn(),region.getLastRow(),region.getLastColumn())));
 				
 			}
@@ -305,7 +305,7 @@ public class RangeImpl implements SRange {
 					boolean wholeSheet = region.row==0 && region.lastRow>=book.getMaxRowIndex() 
 							&& region.column==0 && region.lastColumn>=book.getMaxColumnIndex();
 					if(!wholeSheet){//no need to notify again if it is whole sheet already
-						handleRefNotifyContentChange(bookSeries, table.getDependents(new RefImpl(r.sheet.getBook().getBookName(),r.sheet.getSheetName(),
+						handleRefNotifyContentChange(bookSeries, table.getEvaluatedDependents(new RefImpl(r.sheet.getBook().getBookName(),r.sheet.getSheetName(),
 							region.row,region.column,region.lastRow,region.lastColumn)));
 					}
 				}
@@ -354,7 +354,7 @@ public class RangeImpl implements SRange {
 					new ClearCellHelper(new RangeImpl(r.sheet,r.region)).clearCellStyle();
 					
 					handleCellNotifyContentChange(new SheetRegion(r.sheet,r.region));
-					handleRefNotifyContentChange(bookSeries, table.getDependents(new RefImpl(r.sheet.getBook().getBookName(),r.sheet.getSheetName(),
+					handleRefNotifyContentChange(bookSeries, table.getEvaluatedDependents(new RefImpl(r.sheet.getBook().getBookName(),r.sheet.getSheetName(),
 							region.getRow(),region.getColumn(),region.getLastRow(),region.getLastColumn())));
 				}
 				return null;
@@ -500,7 +500,7 @@ public class RangeImpl implements SRange {
 			boolean wholeSheet = region.row==0 && region.lastRow>=book.getMaxRowIndex() 
 					&& region.column==0 && region.lastColumn>=book.getMaxColumnIndex();
 			if(notifyDependent && !wholeSheet){
-				notifySet.addAll(table.getDependents(pre));
+				notifySet.addAll(table.getEvaluatedDependents(pre));
 			}
 		}
 		handleRefNotifyContentChange(bookSeries,notifySet);
@@ -539,7 +539,7 @@ public class RangeImpl implements SRange {
 						for(Ref pre:precedents){
 							cacheCleaner.clearByPrecedent(pre);
 							notifySet.add(pre);
-							notifySet.addAll(table.getDependents(pre));
+							notifySet.addAll(table.getEvaluatedDependents(pre));
 						}
 						
 					}

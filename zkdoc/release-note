@@ -1,4 +1,16 @@
+
+
 ZK Spreadsheet 3.5.0
+*Features:
+  ZSS-651 Need to enhance performance for partial evaluation
+  
+*Bugs:
+  
+** Upgrade Notes
+
+
+ ------------
+ZK Spreadsheet 3.5.0 RC
 *Features:
   ZSS-606 Support to handle multiple-area formula
   ZSS-623 Support handling row/column style

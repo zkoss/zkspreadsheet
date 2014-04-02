@@ -31,7 +31,9 @@ import org.zkoss.zss.model.SHyperlink;
 import org.zkoss.zss.model.SRichText;
 import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.model.SCell.CellType;
+import org.zkoss.zss.model.impl.sys.DependencyTableAdv;
 import org.zkoss.zss.model.sys.EngineFactory;
+import org.zkoss.zss.model.sys.dependency.DependencyTable;
 import org.zkoss.zss.model.sys.dependency.Ref;
 import org.zkoss.zss.model.sys.formula.FormulaClearContext;
 import org.zkoss.zss.model.sys.formula.FormulaEngine;
@@ -165,7 +167,7 @@ public class CellImpl extends AbstractCellAdv {
 				FormulaEngine fe = EngineFactory.getInstance()
 						.createFormulaEngine();
 				_formulaResultValue = new FormulaResultCellValue(fe.evaluate((FormulaExpression) val.getValue(),
-						new FormulaEvaluationContext(this)));
+						new FormulaEvaluationContext(this,getRef())));
 			}
 		}
 	}
@@ -341,7 +343,7 @@ public class CellImpl extends AbstractCellAdv {
 		clearValueForSet(oldVal!=null && oldVal.getType()==CellType.FORMULA && newType !=CellType.FORMULA);
 		
 		setCellValue(newCellVal);
-		addCellUpdate();
+//		addCellUpdate();// no need to add CellUpdate, setCellValue already add ref update for this cell.
 	}
 
 	
@@ -380,15 +382,22 @@ public class CellImpl extends AbstractCellAdv {
 		
 		CellType type = getType();
 		String formula = null;
+		DependencyTable table = null;
 		if(type == CellType.FORMULA){
 			formula = getFormulaValue();
-			((AbstractBookSeriesAdv) getSheet().getBook().getBookSeries())
-				.getDependencyTable().clearDependents(getRef());
+			//clear the old dependency
+			Ref oldRef = getRef();
+			table = ((AbstractBookSeriesAdv) getSheet().getBook().getBookSeries()).getDependencyTable(); 
+			table.clearDependents(oldRef);
 		}
 		this._index = newidx;
 		if(formula!=null){
 			FormulaEngine fe = EngineFactory.getInstance().createFormulaEngine();
-			fe.parse(formula, new FormulaParseContext(this ,getRef()));//rebuild the expression to make new dependency with current row,column
+			Ref ref = getRef();
+			fe.parse(formula, new FormulaParseContext(this ,ref));//rebuild the expression to make new dependency with current row,column
+			if(_formulaResultValue!=null){
+				table.setEvaluated(ref);
+			}
 		}
 	}
 	
@@ -400,17 +409,23 @@ public class CellImpl extends AbstractCellAdv {
 		
 		CellType type = getType();
 		String formula = null;
+		DependencyTable table = null;
 		if(type == CellType.FORMULA){
 			formula = getFormulaValue();
 			//clear the old dependency
 			SSheet sheet = getSheet();
 			Ref oldRef = new RefImpl(sheet.getBook().getBookName(),sheet.getSheetName(),oldRowIdx,getColumnIndex());
-			((AbstractBookSeriesAdv) getSheet().getBook().getBookSeries()).getDependencyTable().clearDependents(oldRef);
+			table = ((AbstractBookSeriesAdv) getSheet().getBook().getBookSeries()).getDependencyTable(); 
+			table.clearDependents(oldRef);
 		}
 		this._row = row;
 		if(formula!=null){
 			FormulaEngine fe = EngineFactory.getInstance().createFormulaEngine();
-			fe.parse(formula, new FormulaParseContext(this ,getRef()));//rebuild the expression to make new dependency with current row,column
+			Ref ref = getRef();
+			fe.parse(formula, new FormulaParseContext(this ,ref));//rebuild the expression to make new dependency with current row,column
+			if(_formulaResultValue!=null){
+				table.setEvaluated(ref);
+			}
 		}
 	}
 	

@@ -71,7 +71,7 @@ public class GeneralChartDataImpl extends ChartDataAdv implements SGeneralChartD
 		if(!_evaluated){
 			if(_catFormula!=null){
 				FormulaEngine fe = EngineFactory.getInstance().createFormulaEngine();
-				EvaluationResult result = fe.evaluate(_catFormula,new FormulaEvaluationContext(_chart.getSheet()));
+				EvaluationResult result = fe.evaluate(_catFormula,new FormulaEvaluationContext(_chart.getSheet(),getRef()));
 				Object val = result.getValue();
 				if(result.getType() == ResultType.SUCCESS){
 					_evalResult = val;

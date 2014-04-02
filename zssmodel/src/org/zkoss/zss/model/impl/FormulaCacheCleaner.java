@@ -40,7 +40,7 @@ public class FormulaCacheCleaner {
 		DependencyTable table = ((AbstractBookSeriesAdv)_bookSeries).getDependencyTable();
 		Set<Ref> dependents = new LinkedHashSet<Ref>();
 		dependents.add(precedent);
-		dependents.addAll(table.getDependents(precedent));
+		dependents.addAll(table.getEvaluatedDependents(precedent));
 		clear(dependents);
 	}
 }
