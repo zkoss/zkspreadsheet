@@ -17,7 +17,7 @@ import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.Sheet;
 
-//@Ignore("manually")
+@Ignore("manually")
 public class PerformanceTest {
 	
 	@BeforeClass
