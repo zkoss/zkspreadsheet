@@ -878,6 +878,32 @@ public abstract class ActionHandler {
 		}
 	}
 	
+	protected void doCutImpl(Rect selection) {
+		Book srcBook = _clipboard.book;
+		Book targetBook = _spreadsheet.getBook();
+		if (targetBook != null && targetBook.equals(srcBook)) {
+			final Worksheet srcSheet = _clipboard.sourceSheet;
+			boolean validSheet = srcBook.getSheetIndex(srcSheet) >= 0;
+			if (!validSheet) {
+				clearClipboard();
+				return;
+			}
+
+			// check protection first
+			final Rect srcRect = _clipboard.sourceRect;
+			if (isProtected(srcRect.getTop(), srcRect.getLeft(), srcRect.getBottom(), srcRect.getRight(), srcSheet)) {
+				showProtectMessage();
+			} else {
+				Range src = Ranges.range(srcSheet, srcRect.getTop(), srcRect.getLeft(), srcRect.getBottom(), srcRect.getRight());
+				Range dest = Ranges.range(_spreadsheet.getSelectedSheet(), selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight());
+				src.copy(dest, true);
+				// clear
+				_clipboard = null;
+				_spreadsheet.setHighlight(null);
+			}
+		}
+	}
+	
 	/**
 	 * @param pasteType
 	 * @param pasteOperation
@@ -894,6 +920,11 @@ public abstract class ActionHandler {
 				clearClipboard();
 				return;
 			}
+
+			// ZSS-650: doesn't support cutting when pasted special, throw exception ASAP 
+			if (_clipboard.type == Clipboard.Type.CUT) {
+				throw new UiException("Cannot support paste special for cut");
+			}
 			
 			final Rect srcRect = _clipboard.sourceRect;
 			Range rng = Utils.pasteSpecial(srcSheet,
@@ -906,17 +937,6 @@ public abstract class ActionHandler {
 					pasteType, 
 					pasteOperation, 
 					skipBlank, transpose);
-			
-			if (_clipboard.type == Clipboard.Type.CUT) {
-				Ranges
-				.range(srcSheet, srcRect.getTop(), srcRect.getLeft(), srcRect.getBottom(), srcRect.getRight())
-				.clearContents();
-				
-				clearStyleImp(srcRect, srcSheet);
-				
-				_clipboard = null;//clear used clipboard
-				_spreadsheet.setHighlight(null);
-			}
 			
 			if (rng != null) {
 				_spreadsheet.setSelection(new Rect(rng.getColumn(), rng.getRow(), 
@@ -983,7 +1003,11 @@ public abstract class ActionHandler {
 		Worksheet sheet = _spreadsheet.getSelectedSheet();
 		if (sheet != null && _clipboard != null && isValidSelection(selection)) {
 			if (!isProtected(selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight(), sheet)) {
-				doPasteImpl(selection, Range.PASTE_ALL, Range.PASTEOP_NONE, false, false);
+				if(_clipboard.type == Clipboard.Type.CUT) { // ZSS-650: check cut or copy here
+					doCutImpl(selection);
+				} else {
+					doPasteImpl(selection, Range.PASTE_ALL, Range.PASTEOP_NONE, false, false);
+				}
 			} else {
 				showProtectMessage();
 			}

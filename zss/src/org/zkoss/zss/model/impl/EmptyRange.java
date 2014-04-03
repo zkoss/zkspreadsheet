@@ -375,4 +375,9 @@ public class EmptyRange implements Range {
 	public void notifyChange(String[] variables) {
 		
 	}
+	
+	@Override
+	public Range copy(Range dstRange, boolean cut) {
+		return null;
+	}
 }

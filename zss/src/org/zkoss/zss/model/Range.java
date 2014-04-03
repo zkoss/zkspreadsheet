@@ -175,6 +175,13 @@ public interface Range {
 	public void setEditText(String txt);
 
 	/**
+	 * cut the selected range and paste to destination range.
+	 * @param dstRange
+	 * @return the real destination range.
+	 */
+	public Range copy(Range dstRange, boolean cut);
+	
+	/**
 	 * Copy data from this range to the specified destination range.
 	 * @param dstRange the destination range.
 	 * @return the real destination range.

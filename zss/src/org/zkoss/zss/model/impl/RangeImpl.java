@@ -784,16 +784,53 @@ public class RangeImpl implements Range {
 			}
 		}
 	}
+	
 	@Override
 	public Range copy(Range dstRange) {
+		return copy(dstRange,false);
+	}
+	
+	@Override
+	public Range copy(Range dstRange, boolean cut) {
 		final Worksheet[] sheets = getLockSheets(dstRange); //enforce lock sequence
 		synchronized(sheets[0]) { //enforce lock sequence
 			synchronized(sheets[1]) {
-				final Ref ref = paste0(dstRange, Range.PASTE_ALL, Range.PASTEOP_NONE, false, false);
-				return ref == null ? null : new RangeImpl(ref, BookHelper.getSheet(_sheet, ref.getOwnerSheet()));
+				Range pasteRange = copy0(dstRange);
+				if(!cut) {
+					return pasteRange;
+				}
+				
+				Ref srcRef = _refs.iterator().next();
+				final Ref dstRef = ((RangeImpl)pasteRange).getRefs().iterator().next();
+				OverlapState state = getOverlapState(dstRef, srcRef);
+				
+				if(state == OverlapState.INCLUDED_OUTSIDE || state == OverlapState.INCLUDED_INSIDE) {
+					return pasteRange;
+				}
+				
+				List<Ref> areas = removeIntersect(dstRef, srcRef);
+				if(areas.isEmpty()) { // no overlap, clear all source
+					clearContents();
+					setStyle(null);
+					unMerge();
+				} else { // clear area contents
+					for(Ref area : areas) {
+						Range range = new RangeImpl(area, BookHelper.getSheet(_sheet, area.getOwnerSheet()));
+						range.clearContents();
+						range.setStyle(null);
+						range.unMerge();
+					}
+				}
+				return pasteRange;
 			}
 		}
 	}
+	
+	private Range copy0(Range dstRange) {
+		final Ref ref = paste0(dstRange, Range.PASTE_ALL, Range.PASTEOP_NONE, false, false);
+		return ref == null ? null : new RangeImpl(ref, BookHelper.getSheet(_sheet, ref.getOwnerSheet()));
+	}
+	
 	private Ref paste0(Range dstRange, int pasteType, int pasteOp, boolean skipBlanks, boolean transpose) {
 		if (_refs != null && !_refs.isEmpty() && !((RangeImpl)dstRange).getRefs().isEmpty()) {
 			//check if follow the copy rule
@@ -807,6 +844,17 @@ public class RangeImpl implements Range {
 			int srcRowCount = ref1.getRowCount();
 			int srcColCount = ref1.getColumnCount();
 			final Ref dstRef = ((RangeImpl)dstRange).getRefs().iterator().next();
+			
+			// ZSS-650: transpose paste on overlap area is a illegal operation
+			if(transpose) { 
+				final int dstRightCol = srcColCount > dstRef.getColumnCount() ? dstRef.getLeftCol() + srcColCount - 1 : dstRef.getRightCol();
+				final int dstBottomRow = srcRowCount > dstRef.getRowCount() ? dstRef.getBottomRow() + srcRowCount - 1 : dstRef.getBottomRow();
+				final Ref extendedDstRef = ((RangeImpl) Ranges.range(dstRange.getSheet(), dstRef.getTopRow(), dstRef.getLeftCol(), dstBottomRow, dstRightCol)).getRefs().iterator().next();
+				if(getOverlapState(ref1, extendedDstRef) != OverlapState.NOT_OVERLAP) {
+					throw new UiException("Cannot transpose paste to overlapped range");
+				}
+			}
+			
 			final Set<Ref> toEval = new HashSet<Ref>();
 			final Set<Ref> affected = new HashSet<Ref>();
 			final List<MergeChange> mergeChanges = new ArrayList<MergeChange>();
@@ -858,7 +906,173 @@ public class RangeImpl implements Range {
 		}
 		return null;
 	}
+	
+	public static enum OverlapState {
+		NOT_OVERLAP,ON_RIGHT_BOTTOM, ON_LEFT_BOTTOM, ON_LEFT_TOP, ON_RIGHT_TOP, INCLUDED_INSIDE, INCLUDED_OUTSIDE,
+		ON_TOP, ON_BOTTOM, ON_RIGHT, ON_LEFT;
+	}
+	
+	// is cell (row,col) is inside the ref area?
+	private boolean isInside(Ref ref, int row, int col) {
+		return row >= ref.getTopRow() && row <= ref.getBottomRow() && col >= ref.getLeftCol() && col <= ref.getRightCol();
+	}
 
+	public OverlapState getOverlapState(Ref ref1, Ref ref2) {
+		
+		if(ref1.getOwnerSheet() != ref2.getOwnerSheet()) {
+			return OverlapState.NOT_OVERLAP; // not the same sheet
+		}
+		
+		final int ref1_Height = ref1.getRowCount();
+		final int ref1_Width = ref1.getColumnCount();
+		final int ref2_Height = ref2.getRowCount();
+		final int ref2_Width = ref2.getColumnCount();
+		
+		// if ref2 is bigger than ref1, pass ref argument reversely.
+		if(ref2_Height > ref1_Height && ref2_Width > ref1_Width) {
+			if(getOverlapState(ref2, ref1) == OverlapState.INCLUDED_INSIDE) {
+				return OverlapState.INCLUDED_OUTSIDE;
+			}
+		} else {
+			
+			final boolean topLeftInRef = isInside(ref1, ref2.getTopRow(), ref2.getLeftCol());
+			final boolean topRightInRef = isInside(ref1, ref2.getTopRow(), ref2.getRightCol());
+			final boolean bottomLeftInRef = isInside(ref1, ref2.getBottomRow(), ref2.getLeftCol());
+			final boolean bottomRightInRef = isInside(ref1, ref2.getBottomRow(), ref2.getRightCol());
+			
+			// if the diagonal are inside, it will be the included case.
+			if(topLeftInRef && bottomRightInRef) {
+				return OverlapState.INCLUDED_INSIDE;
+			}
+			
+			// if two points inside, they will be first four case.
+			// then only one point inside, they will be last four case. 
+			if(bottomRightInRef && topRightInRef) {
+				return OverlapState.ON_LEFT; 
+			} else if(bottomLeftInRef && topLeftInRef) {
+				return OverlapState.ON_RIGHT;
+			} else if(topRightInRef && topLeftInRef) {
+				return OverlapState.ON_BOTTOM;
+			} else if(bottomRightInRef && bottomLeftInRef) {
+				return OverlapState.ON_TOP;
+			} else if (topLeftInRef) {
+				return OverlapState.ON_RIGHT_BOTTOM; // right bottom
+			} else if(topRightInRef) {
+				return OverlapState.ON_LEFT_BOTTOM; // left bottom
+			} else if(bottomLeftInRef) {
+				return OverlapState.ON_RIGHT_TOP; // right top
+			} else if(bottomRightInRef) {
+				return OverlapState.ON_LEFT_TOP; // left top
+			}
+		}
+		
+		return OverlapState.NOT_OVERLAP; // default is not overlap
+		
+	}
+	
+	/**
+	 * get the intersection of a & b
+	 * assume a and b are in the same sheet
+	 * @return a intersection ref area (null if not overlap or unsupported case)
+	 */
+	public Ref intersect(Ref a, Ref b) {
+		
+		// get overlap state
+		final OverlapState result = getOverlapState(a, b);
+		
+		final int aLeftCol = a.getLeftCol();
+		final int aRightCol = a.getRightCol();
+		final int aTopRow = a.getTopRow();
+		final int aBottomRow = a.getBottomRow();
+		
+		final int bLeftCol = b.getLeftCol();
+		final int bRightCol = b.getRightCol();
+		final int bTopRow = b.getTopRow();
+		final int bBottomRow = b.getBottomRow();
+		
+		switch(result) {
+			case ON_RIGHT_BOTTOM: // right bottom
+				return new AreaRefImpl(bTopRow, bLeftCol, aBottomRow, aRightCol, a.getOwnerSheet());
+			case ON_LEFT_BOTTOM: // left bottom
+				return new AreaRefImpl(bTopRow, aLeftCol, aBottomRow, bRightCol, a.getOwnerSheet());
+			case ON_LEFT_TOP: // left top
+				return new AreaRefImpl(aTopRow, aLeftCol, bBottomRow, bRightCol, a.getOwnerSheet());
+			case ON_RIGHT_TOP: // right top
+				return new AreaRefImpl(aTopRow, bLeftCol, bBottomRow, aRightCol, a.getOwnerSheet());
+			case INCLUDED_INSIDE: // ref2 inside ref1
+				return b;
+			case INCLUDED_OUTSIDE: // ref1 inside ref2
+				return a;
+			default: // not overlap, right, bottom, left..other case
+				return null;
+		}
+	}
+	
+	/**
+	 * remove "a intersect b" from "b" and split "b" into areas list  .
+	 * assume a and b are in the same sheet.
+	 * ignore "included" case.
+	 * @return a list of complement areas
+	 */
+	public List<Ref> removeIntersect(Ref a, Ref b) {
+		
+		final OverlapState result = getOverlapState(a, b);
+		
+		List<Ref> resultSet = new ArrayList<Ref>(); // add ref in counter-clockwise
+		if(result == OverlapState.NOT_OVERLAP) {
+			return resultSet;
+		}
+		
+		final int aLeftCol = a.getLeftCol();
+		final int aRightCol = a.getRightCol();
+		final int aTopRow = a.getTopRow();
+		final int aBottomRow = a.getBottomRow();
+		
+		final int bLeftCol = b.getLeftCol();
+		final int bRightCol = b.getRightCol();
+		final int bTopRow = b.getTopRow();
+		final int bBottomRow = b.getBottomRow();
+		
+		switch(result) {
+			case ON_RIGHT_BOTTOM: // right bottom
+				resultSet.add(new AreaRefImpl(bTopRow, aRightCol+1, aBottomRow, bRightCol, b.getOwnerSheet())); // Q1
+				resultSet.add(new AreaRefImpl(aBottomRow+1, bLeftCol, bBottomRow, aRightCol, b.getOwnerSheet())); // Q3
+				resultSet.add(new AreaRefImpl(aBottomRow+1, aRightCol+1, bBottomRow, bRightCol, b.getOwnerSheet())); // Q4
+				break;
+			case ON_LEFT_BOTTOM: // left bottom
+				resultSet.add(new AreaRefImpl(bTopRow, bLeftCol, aBottomRow, aLeftCol-1, b.getOwnerSheet())); // Q2
+				resultSet.add(new AreaRefImpl(aBottomRow+1, bLeftCol, bBottomRow, aLeftCol-1, b.getOwnerSheet())); // Q3 
+				resultSet.add(new AreaRefImpl(aBottomRow+1, aLeftCol, bBottomRow, bRightCol, b.getOwnerSheet())); // Q4
+				break;
+			case ON_LEFT_TOP: // left top
+				resultSet.add(new AreaRefImpl(bTopRow, aLeftCol, aTopRow-1, bRightCol, b.getOwnerSheet())); // Q1
+				resultSet.add(new AreaRefImpl(bTopRow, bLeftCol, aTopRow-1, aLeftCol-1, b.getOwnerSheet())); // Q2
+				resultSet.add(new AreaRefImpl(aTopRow, bLeftCol, bBottomRow, aLeftCol-1, b.getOwnerSheet())); // Q3
+				break;
+			case ON_RIGHT_TOP: // right top
+				resultSet.add(new AreaRefImpl(bTopRow, bRightCol, aTopRow-1, bRightCol, b.getOwnerSheet())); // Q1
+				resultSet.add(new AreaRefImpl(bTopRow, bLeftCol, aTopRow-1, aRightCol, b.getOwnerSheet())); // Q2
+				resultSet.add(new AreaRefImpl(aTopRow, aRightCol+1, bBottomRow, bRightCol, b.getOwnerSheet())); // Q4
+				break;
+			case ON_RIGHT:
+				resultSet.add(new AreaRefImpl(aTopRow, aRightCol+1, aBottomRow, bRightCol, b.getOwnerSheet()));
+				break;
+			case ON_LEFT:
+				resultSet.add(new AreaRefImpl(aTopRow, bLeftCol, aBottomRow, aLeftCol-1, b.getOwnerSheet()));
+				break;
+			case ON_TOP:
+				resultSet.add(new AreaRefImpl(bTopRow, bLeftCol, aTopRow-1, bRightCol, b.getOwnerSheet()));
+				break;
+			case ON_BOTTOM:
+				resultSet.add(new AreaRefImpl(aBottomRow+1, aLeftCol, bBottomRow, aRightCol, b.getOwnerSheet()));
+				break;
+			default:
+				break; // do nothing
+		}
+		
+		return resultSet;
+	}
+	
 	@Override
 	public void borderAround(BorderStyle lineStyle, String color) {
 		setBorders(BookHelper.BORDER_OUTLINE, lineStyle, color);
