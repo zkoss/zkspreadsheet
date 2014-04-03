@@ -1,0 +1,42 @@
+<zk>
+	<vlayout width="100%" height="100%">
+		<hlayout>
+			<button label="copy:skip blanks" onClick="paste();" />
+		</hlayout>
+		<spreadsheet id="ss" src="/issue/650-overlap.xlsx" maxrows="200" maxcolumns="40"
+			hflex="1" vflex="1" ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e"
+			showContextMenu="true" showSheetbar="true" showToolbar="true" showFormulabar="true" />
+	</vlayout>
+	<zscript><![CDATA[
+
+		import org.zkoss.zss.ui.Spreadsheet;
+		import org.zkoss.zss.ui.Rect;	
+		
+		Ranges.range(ss.getSelectedSheet(), "A1").setEditText("A");
+		Ranges.range(ss.getSelectedSheet(), "A2").setEditText("B");
+		Ranges.range(ss.getSelectedSheet(), "A3").setEditText("C");
+		
+		public void copy() {
+			Rect selectedRect = ss.getSelection();
+			Range range = Ranges.range(ss.getSelectedSheet(),
+					selectedRect.getTop(), selectedRect.getLeft(),
+					selectedRect.getBottom(), selectedRect.getRight());
+			//save user selection range
+			ss.setAttribute("KEY_SOURCE_RANGE", range);
+			ss.setAttribute("KEY_SOURCE_RECT", selectedRect);
+			
+			ss.setHighlight(ss.getSelection());
+		}
+		
+		public void paste() {
+			Rect srcRect = ss.getHighlight();
+			if (srcRect != null) {
+				Range srcRange = Ranges.range(ss.getSelectedSheet(), srcRect.getTop(), srcRect.getLeft(), srcRect.getBottom(), srcRect.getRight());
+				Rect dstRect = ss.getSelection();
+				Range dst = Ranges.range(ss.getSelectedSheet(), dstRect.getTop(), dstRect.getLeft(), dstRect.getBottom(), dstRect.getRight());
+				boolean skipBlanks = true;
+				srcRange.pasteSpecial(dst, Range.PASTE_ALL, Range.PASTEOP_NONE, skipBlanks, false);
+			};
+		}
+	]]></zscript>
+</zk>
