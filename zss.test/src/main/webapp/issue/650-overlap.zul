@@ -12,10 +12,6 @@
 		import org.zkoss.zss.ui.Spreadsheet;
 		import org.zkoss.zss.ui.Rect;	
 		
-		Ranges.range(ss.getSelectedSheet(), "A1").setEditText("A");
-		Ranges.range(ss.getSelectedSheet(), "A2").setEditText("B");
-		Ranges.range(ss.getSelectedSheet(), "A3").setEditText("C");
-		
 		public void copy() {
 			Rect selectedRect = ss.getSelection();
 			Range range = Ranges.range(ss.getSelectedSheet(),

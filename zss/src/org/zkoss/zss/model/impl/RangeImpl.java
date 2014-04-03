@@ -1402,7 +1402,8 @@ public class RangeImpl implements Range {
 						}
 
 						// update blank map
-						if(!hitBlank && cell != null && cell.getCellType() == Cell.CELL_TYPE_BLANK) { // cell is blank
+						boolean isBlank = cell != null && cell.getCellType() == Cell.CELL_TYPE_BLANK;
+						if(!hitBlank && (isBlank || cell == null)) { // ZSS-650: null as blank cell here
 							blankMap.add(hitBlankKey);
 						}
 
