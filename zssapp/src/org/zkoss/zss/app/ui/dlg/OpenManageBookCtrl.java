@@ -13,8 +13,11 @@ package org.zkoss.zss.app.ui.dlg;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,6 +40,7 @@ import org.zkoss.zul.Fileupload;
 import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Window;
+import org.zkoss.zul.event.ListDataEvent;
 
 /**
  * 
@@ -196,4 +200,41 @@ public class OpenManageBookCtrl extends DlgCtrlBase{
 			}
 		});
 	}
+	
+	static private class MapAttrComparator implements Comparator<Map<String, Object>>, Serializable {
+		private static final long serialVersionUID = -2889285276678010655L;
+		private final boolean _asc;
+		private final String _attr;
+		
+		public MapAttrComparator(boolean asc,String attr) {
+			_asc = asc;
+			_attr = attr;
+		}
+
+		@Override
+		public int compare(Map<String, Object> o1, Map<String, Object> o2) {
+			if(_asc){
+				return o1.get(_attr).toString().compareTo(o2.get(_attr).toString());
+			}else{
+				return o2.get(_attr).toString().compareTo(o1.get(_attr).toString());
+			}
+		}
+	}
+	
+	public Comparator<Map<String, Object>> getBookNameDescComparator() {
+		return new MapAttrComparator(false, "name");
+	}
+
+	public Comparator<Map<String, Object>> getBookNameAscComparator() {
+		return new MapAttrComparator(true, "name");
+	}
+
+	public Comparator<Map<String, Object>> getBookDateDescComparator() {
+		return new MapAttrComparator(false, "lastmodify");
+	}
+
+	public Comparator<Map<String, Object>> getBookDateAscComparator() {
+		return new MapAttrComparator(true, "lastmodify");
+	}
+	
 }

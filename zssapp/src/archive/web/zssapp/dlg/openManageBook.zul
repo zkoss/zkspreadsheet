@@ -4,8 +4,8 @@
 		<vlayout spacing="5" hflex="min" vflex="min">
 			<listbox id="bookList" rows="8" width="400px">
 				<listhead>
-					<listheader label="Name" align="left"/>
-					<listheader label="Last modified date" width="150px" align="center"/>
+					<listheader label="Name" align="left" sortAscending="${openBookDlg$composer.bookNameAscComparator}" sortDescending="${openBookDlg$composer.bookNameDescComparator}"/>
+					<listheader label="Last modified date" width="150px" align="center" sortAscending="${openBookDlg$composer.bookDateAscComparator}" sortDescending="${openBookDlg$composer.bookDateDescComparator}" />
 				</listhead>
 				<template name="model">
 					<listitem forward="onDoubleClick=bookList.onDoubleClick">
