@@ -5,6 +5,7 @@ ZK Spreadsheet 3.5.0
   ZSS-651 Need to enhance performance for partial evaluation
   
 *Bugs:
+  ZSS-652 Cut Formula shouldn't be shifted when it is not in cut range
   
 ** Upgrade Notes
 

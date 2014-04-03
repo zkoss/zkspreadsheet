@@ -16,6 +16,7 @@ import org.zkoss.zss.model.impl.SheetImpl;
 import org.zkoss.zss.model.impl.sys.DependencyTableImpl;
 import org.zkoss.zss.model.sys.dependency.DependencyTable;
 import org.zkoss.zss.model.sys.dependency.Ref;
+import org.zkoss.zss.range.SRange;
 import org.zkoss.zss.range.SRanges;
 import org.zkoss.zss.range.SRange.DeleteShift;
 import org.zkoss.zss.range.SRange.InsertCopyOrigin;
@@ -431,4 +432,60 @@ public class IssueTest {
 		
 		Assert.assertEquals(3D, sheet1.getCell("A1").getValue());
 	}
+	
+	@Test 
+	public void testZSS652(){//test cut
+		SBook book = SBooks.createBook("book1");
+		book.getBookSeries().setAutoFormulaCacheClean(true);
+		SSheet sheet1 = book.createSheet("Sheet1");
+		
+		sheet1.getCell("A1").setValue(1);
+		sheet1.getCell("B2").setValue(2);
+		sheet1.getCell("C3").setValue("=A1");
+		sheet1.getCell("D3").setValue("=B2");
+		
+		SRange range = SRanges.range(sheet1,"B2:D3");
+		range.copy(SRanges.range(sheet1,"E2"),true);
+		
+		Assert.assertEquals("A1", sheet1.getCell("F3").getFormulaValue());
+		Assert.assertEquals(1D, sheet1.getCell("F3").getValue());
+		Assert.assertEquals("E2", sheet1.getCell("G3").getFormulaValue());
+		Assert.assertEquals(2D, sheet1.getCell("G3").getValue());
+		
+		
+		sheet1.getCell("A1").setValue(4);
+		sheet1.getCell("E2").setValue(6);
+		sheet1.getCell("B2").setValue(5);
+		
+		Assert.assertEquals(4D, sheet1.getCell("F3").getValue());
+		Assert.assertEquals(6D, sheet1.getCell("G3").getValue());
+	}
+	
+	@Test 
+	public void testZSS652_1(){//test copy
+		SBook book = SBooks.createBook("book1");
+		book.getBookSeries().setAutoFormulaCacheClean(true);
+		SSheet sheet1 = book.createSheet("Sheet1");
+		
+		sheet1.getCell("A1").setValue(1);
+		sheet1.getCell("B2").setValue(2);
+		sheet1.getCell("C3").setValue("=A1");
+		sheet1.getCell("D3").setValue("=B2");
+		
+		SRange range = SRanges.range(sheet1,"B2:D3");
+		range.copy(SRanges.range(sheet1,"E2"),false);
+		
+		Assert.assertEquals("D1", sheet1.getCell("F3").getFormulaValue());
+		Assert.assertEquals(0D, sheet1.getCell("F3").getValue());
+		Assert.assertEquals("E2", sheet1.getCell("G3").getFormulaValue());
+		Assert.assertEquals(2D, sheet1.getCell("G3").getValue());
+		
+		sheet1.getCell("D1").setValue(3);
+		sheet1.getCell("A1").setValue(4);
+		sheet1.getCell("E2").setValue(6);
+		sheet1.getCell("B2").setValue(5);
+		
+		Assert.assertEquals(3D, sheet1.getCell("F3").getValue());
+		Assert.assertEquals(6D, sheet1.getCell("G3").getValue());
+	}	
 }

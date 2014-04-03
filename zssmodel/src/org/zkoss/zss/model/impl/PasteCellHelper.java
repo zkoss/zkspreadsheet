@@ -112,11 +112,12 @@ import org.zkoss.zss.range.impl.StyleUtil;
 		if(handleMerge){
 			mergeBuffer = prepareMergeRegionBuffer(src,option);
 		}
-		
+		SheetRegion cutFrom = null;
 		if(option.isCut()){
 			//clear the src's value and merge
 			clearCell(src);
 			clearMergeRegion(src);
+			cutFrom = src;
 		}
 		
 		// ZSS-608: Special Case - Copy a single cell to a merge cell
@@ -124,7 +125,7 @@ import org.zkoss.zss.range.impl.StyleUtil;
 			for(CellRegion mergedRegion : _destSheet.getMergedRegions()) {
 				if(dest.equals(mergedRegion)) {
 					CellRegion destRegion = new CellRegion(dest.getRow(),dest.getColumn(),dest.getRow(),dest.getColumn());
-					pasteCells(srcBuffer,destRegion,option,rowOffset,columnOffset);
+					pasteCells(srcBuffer,destRegion,cutFrom,option,rowOffset,columnOffset);
 					return dest;
 				}
 			}
@@ -148,7 +149,7 @@ import org.zkoss.zss.range.impl.StyleUtil;
 				CellRegion destRegion = new CellRegion(dest.getRow()+rowMultpleOffset,dest.getColumn()+colMultipleOffset,
 						dest.getRow()+srcRowCount+ -1 + rowMultpleOffset,
 						dest.getColumn()+srcColCount -1 + colMultipleOffset);
-				pasteCells(srcBuffer,destRegion,option,rowOffset+rowMultpleOffset,columnOffset+colMultipleOffset);
+				pasteCells(srcBuffer,destRegion,cutFrom,option,rowOffset+rowMultpleOffset,columnOffset+colMultipleOffset);
 				
 				if(mergeBuffer!=null && mergeBuffer.size()>0){
 					pasteMergeRegion(mergeBuffer,rowOffset+rowMultpleOffset,columnOffset+colMultipleOffset);
@@ -341,7 +342,7 @@ import org.zkoss.zss.range.impl.StyleUtil;
 		}
 	}
 	
-	private void pasteCells(CellBuffer[][] srcBuffer, CellRegion destRegion,PasteOption option, int rowOffset,int columnOffset) {
+	private void pasteCells(CellBuffer[][] srcBuffer, CellRegion destRegion,SheetRegion cutFrom,PasteOption option, int rowOffset,int columnOffset) {
 		int row = destRegion.getRow();
 		int col = destRegion.getColumn();
 		int lastRow = destRegion.getLastRow();
@@ -371,14 +372,14 @@ import org.zkoss.zss.range.impl.StyleUtil;
 				
 				switch(option.getPasteType()){
 				case ALL:
-					pasteValue(buffer,destCell,true,rowOffset,columnOffset,transpose,row,col);
+					pasteValue(buffer,destCell,cutFrom,true,rowOffset,columnOffset,transpose,row,col);
 					pasteStyle(buffer,destCell,true);//border,comment
 					buffer.applyHyperlink(destCell);
 					buffer.applyComment(destCell);
 					buffer.applyValidation(destCell);
 					break;
 				case ALL_EXCEPT_BORDERS:
-					pasteValue(buffer,destCell,true,rowOffset,columnOffset,transpose,row,col);
+					pasteValue(buffer,destCell,cutFrom,true,rowOffset,columnOffset,transpose,row,col);
 					pasteStyle(buffer,destCell,false);//border,comment
 					buffer.applyHyperlink(destCell);
 					buffer.applyComment(destCell);
@@ -394,14 +395,14 @@ import org.zkoss.zss.range.impl.StyleUtil;
 				case FORMULAS_AND_NUMBER_FORMATS:
 					pasteFormat(buffer,destCell);
 				case FORMULAS:
-					pasteValue(buffer,destCell,true,rowOffset,columnOffset,transpose,row,col);
+					pasteValue(buffer,destCell,cutFrom,true,rowOffset,columnOffset,transpose,row,col);
 					break;
 				case VALIDATAION:
 					buffer.applyValidation(destCell);
 				case VALUES_AND_NUMBER_FORMATS:
 					pasteFormat(buffer,destCell);
 				case VALUES:
-					pasteValue(buffer,destCell);
+					pasteValue(buffer,destCell,cutFrom);
 					break;
 				case COLUMN_WIDTHS:
 					break;				
@@ -442,16 +443,21 @@ import org.zkoss.zss.range.impl.StyleUtil;
 		}
 	}
 
-	private void pasteValue(CellBuffer buffer, SCell destCell) {
-		pasteValue(buffer,destCell,false,-1,-1,false,-1,-1);
+	private void pasteValue(CellBuffer buffer, SCell destCell,SheetRegion cutFrom) {
+		pasteValue(buffer,destCell,cutFrom,false,-1,-1,false,-1,-1);
 	}
-	private void pasteValue(CellBuffer buffer, SCell destCell, boolean pasteFormula, int rowOffset,int columnOffset, boolean transpose, int rowOrigin, int columnOrigin) {
+	private void pasteValue(CellBuffer buffer, SCell destCell,SheetRegion cutFrom, boolean pasteFormula, int rowOffset,int columnOffset, boolean transpose, int rowOrigin, int columnOrigin) {
 		if(pasteFormula){
 			String formula = buffer.getFormula();
 			if(formula!=null){
 				FormulaEngine engine = getFormulaEignin();
 				
-				FormulaExpression expr = engine.shift(formula,rowOffset, columnOffset,new FormulaParseContext(_destSheet, null));//no dependency
+				FormulaExpression expr;
+				if(cutFrom!=null){
+					expr = engine.move(formula,cutFrom,rowOffset, columnOffset,new FormulaParseContext(_destSheet, null));//no dependency
+				}else{
+					expr = engine.shift(formula,rowOffset, columnOffset,new FormulaParseContext(_destSheet, null));//no dependency
+				}
 				if(!expr.hasError() && transpose){
 					expr = engine.transpose(expr.getFormulaString(),rowOrigin, columnOrigin,new FormulaParseContext(_destSheet, null));
 				}
