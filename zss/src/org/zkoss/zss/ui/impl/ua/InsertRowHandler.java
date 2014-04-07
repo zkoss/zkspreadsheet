@@ -48,6 +48,14 @@ public class InsertRowHandler extends AbstractProtectedHandler {
 		if(checkInCornerFreezePanel(range)){
 			throw new IllegalOpArgumentException(Labels.getLabel("zss.msg.operation_not_supported_with_freeze_panel"));
 		}
+		// work around for ZSS-586: don't allow insert rows when select whole visible rows
+		int row = range.getRow();
+		int lastRow = range.getLastRow();
+		int maxVisibleRows = ctx.getSpreadsheet().getMaxVisibleRows();
+		if(lastRow - row + 1 == maxVisibleRows) {
+			throw new IllegalOpArgumentException(Labels.getLabel("zss.msg.operation_not_supported_with_all_row"));
+		}
+		
 		UndoableActionManager uam = ctx.getSpreadsheet().getUndoableActionManager();
 		uam.doAction(new InsertCellAction(Labels.getLabel("zss.undo.insertRow"),sheet, range.getRow(), range.getColumn(), 
 				range.getLastRow(), range.getLastColumn(), 

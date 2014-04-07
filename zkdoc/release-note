@@ -63,6 +63,7 @@ ZK Spreadsheet 3.5.0 RC
   ZSS-643 Wrong cell value and display after undo
   ZSS-642 Spreadsheet throws an exception when exporting PDF with charts
   ZSS-630 when setting font style via context menu, first click doesn't work
+  ZSS-586 Select all then insert row cause javascript error (insert column work fines)
   
 ** Upgrade Notes
   * Following api are removed
