@@ -65,6 +65,7 @@ ZK Spreadsheet 3.5.0 RC
   ZSS-630 when setting font style via context menu, first click doesn't work
   ZSS-586 Select all then insert row cause javascript error (insert column work fines)
   ZSS-553 "clear style" and "clear all" can unmerge cells, but undo can't merge them back
+  ZSS-481 Undo doesn't work correctly when delete a row with merged cell
   
 ** Upgrade Notes
   * Following api are removed
