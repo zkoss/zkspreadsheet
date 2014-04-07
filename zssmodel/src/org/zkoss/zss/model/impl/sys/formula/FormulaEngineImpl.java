@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import org.zkoss.poi.ss.formula.CollaboratingWorkbooksEnvironment;
 import org.zkoss.poi.ss.formula.DependencyTracker;
 import org.zkoss.poi.ss.formula.EvaluationCell;
@@ -75,6 +76,7 @@ import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.model.SheetRegion;
 import org.zkoss.zss.model.impl.AbstractBookSeriesAdv;
 import org.zkoss.zss.model.impl.NameRefImpl;
+import org.zkoss.zss.model.impl.NonSerializableHolder;
 import org.zkoss.zss.model.impl.RefImpl;
 import org.zkoss.zss.model.impl.sys.DependencyTableAdv;
 import org.zkoss.zss.model.sys.dependency.Ref;
@@ -293,9 +295,10 @@ public class FormulaEngineImpl implements FormulaEngine {
 			// get evaluation context from book series
 			SBook book = context.getBook();
 			AbstractBookSeriesAdv bookSeries = (AbstractBookSeriesAdv)book.getBookSeries();
-			DependencyTableAdv table = (DependencyTableAdv)bookSeries.getDependencyTable();			
-			Map<String, EvalContext> evalCtxMap = (Map<String, EvalContext>)bookSeries
+			DependencyTableAdv table = (DependencyTableAdv)bookSeries.getDependencyTable();	
+			NonSerializableHolder<Map<String, EvalContext>> holder = (NonSerializableHolder<Map<String, EvalContext>>)bookSeries
 					.getAttribute(KEY_EVALUATORS);
+			Map<String, EvalContext> evalCtxMap = holder == null?null:holder.getObject();
 
 			// get evaluation context or create new one if not existed
 			if(evalCtxMap == null) {
@@ -320,7 +323,7 @@ public class FormulaEngineImpl implements FormulaEngine {
 				}
 				CollaboratingWorkbooksEnvironment.setup(bookNames.toArray(new String[0]),
 						evaluators.toArray(new WorkbookEvaluator[0]));
-				bookSeries.setAttribute(KEY_EVALUATORS, evalCtxMap);
+				bookSeries.setAttribute(KEY_EVALUATORS, new NonSerializableHolder<Map<String, EvalContext>>(evalCtxMap));
 			}
 			// check again
 			EvalContext ctx = evalCtxMap.get(book.getBookName());
@@ -505,7 +508,9 @@ public class FormulaEngineImpl implements FormulaEngine {
 
 			// take evaluators from book series
 			AbstractBookSeriesAdv bookSeries = (AbstractBookSeriesAdv)book.getBookSeries();
-			Map<String, EvalContext> map = (Map<String, EvalContext>)bookSeries.getAttribute(KEY_EVALUATORS);
+			NonSerializableHolder<Map<String, EvalContext>> holder = (NonSerializableHolder<Map<String, EvalContext>>)bookSeries
+					.getAttribute(KEY_EVALUATORS);
+			Map<String, EvalContext> map = holder == null?null:holder.getObject();
 
 			// do nothing if not existed
 			if(map == null) {
