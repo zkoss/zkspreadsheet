@@ -488,4 +488,43 @@ public class IssueTest {
 		Assert.assertEquals(3D, sheet1.getCell("F3").getValue());
 		Assert.assertEquals(6D, sheet1.getCell("G3").getValue());
 	}	
+	
+	@Test 
+	public void testZSS655(){
+		SBook book = SBooks.createBook("book1");
+		book.getBookSeries().setAutoFormulaCacheClean(true);
+		SSheet sheet1 = book.createSheet("Sheet1");
+		
+		book.createName("Test").setRefersToFormula("A1:B2");
+		SRanges.range(sheet1,"A1").setValue(1);
+		SRanges.range(sheet1,"B1").setValue(2);
+		
+		SRanges.range(sheet1,"C3").setEditText("=SUM(Test)");
+		
+		Assert.assertEquals(3D, sheet1.getCell("C3").getValue());
+		
+		SRanges.range(sheet1,"B1").setValue(3);
+		Assert.assertEquals(4D, sheet1.getCell("C3").getValue());//fail on this line
+		
+	}
+	
+	@Test 
+	public void testZSS655_further(){
+		SBook book = SBooks.createBook("book1");
+		book.getBookSeries().setAutoFormulaCacheClean(true);
+		SSheet sheet1 = book.createSheet("Sheet1");
+		
+		SRanges.range(sheet1,"C3").setEditText("=SUM(Test)");
+		
+		book.createName("Test").setRefersToFormula("A1:B2");
+		SRanges.range(sheet1,"A1").setValue(1);
+		SRanges.range(sheet1,"B1").setValue(2);
+		
+		
+		Assert.assertEquals(3D, sheet1.getCell("C3").getValue());
+		
+		SRanges.range(sheet1,"B1").setValue(3);
+		Assert.assertEquals(4D, sheet1.getCell("C3").getValue());//fail on this line
+		
+	}
 }

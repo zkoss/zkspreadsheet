@@ -6,6 +6,7 @@ ZK Spreadsheet 3.5.0
   
 *Bugs:
   ZSS-652 Cut Formula shouldn't be shifted when it is not in cut range
+  ZSS-655 Formula that contains Name doesn't update
   
 ** Upgrade Notes
 

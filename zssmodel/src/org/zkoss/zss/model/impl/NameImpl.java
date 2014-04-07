@@ -20,6 +20,7 @@ import org.zkoss.zss.model.CellRegion;
 import org.zkoss.zss.model.sys.EngineFactory;
 import org.zkoss.zss.model.sys.dependency.Ref;
 import org.zkoss.zss.model.sys.formula.FormulaEngine;
+import org.zkoss.zss.model.sys.formula.FormulaEvaluationContext;
 import org.zkoss.zss.model.sys.formula.FormulaExpression;
 import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 /**
@@ -104,10 +105,16 @@ public class NameImpl extends AbstractNameAdv {
 		
 		//use formula engine to keep dependency info
 		FormulaEngine fe = EngineFactory.getInstance().createFormulaEngine();
-		FormulaExpression expr = fe.parse(refersToExpr, new FormulaParseContext(_book.getSheet(0),new NameRefImpl(this)));
+		Ref ref = new NameRefImpl(this);
+		FormulaExpression expr = fe.parse(refersToExpr, new FormulaParseContext(_book.getSheet(0),ref));
 		if(expr.hasError()){
 			_isParsingError = true;
 		}else if(expr.isAreaRefs()){
+			
+			//ZSS-655, should eval each name to force it be notified in dependency
+			//we don't create result here
+			fe.evaluate(expr,new FormulaEvaluationContext(_book.getSheet(0), ref));
+			
 			//TODO, should care all the refs
 			Ref[] refs = expr.getAreaRefs();
 			_refersToSheetName = refs[0].getSheetName();
