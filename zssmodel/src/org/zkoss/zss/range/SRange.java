@@ -715,4 +715,9 @@ public interface SRange {
 	 */
 	public void clearAll();
 	
+	/**
+	 * Create a {@link SName} that refer to this range.
+	 * @param nameName name of the {@link SName} that you can refer in formulas.
+	 */
+	public void createName(String nameName);
 }

@@ -685,6 +685,8 @@ public class RangeImpl implements Range{
 	public SRange getInternalRange() {
 		return _range;
 	}
-		
-
+	@Override
+	public void createName(String nameName) {
+		_range.createName(nameName);
+	}
 }

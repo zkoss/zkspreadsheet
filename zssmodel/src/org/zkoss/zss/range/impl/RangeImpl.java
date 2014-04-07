@@ -51,11 +51,14 @@ import org.zkoss.zss.model.SRow;
 import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.model.SSheetViewInfo;
 import org.zkoss.zss.model.SheetRegion;
+import org.zkoss.zss.model.SName;
 import org.zkoss.zss.model.ViewAnchor;
 import org.zkoss.zss.model.impl.AbstractBookSeriesAdv;
 import org.zkoss.zss.model.impl.AbstractSheetAdv;
+import org.zkoss.zss.model.impl.AbstractNameAdv;
 import org.zkoss.zss.model.impl.FormulaCacheCleaner;
 import org.zkoss.zss.model.impl.RefImpl;
+import org.zkoss.zss.model.impl.NameRefImpl;
 import org.zkoss.zss.model.sys.EngineFactory;
 import org.zkoss.zss.model.sys.dependency.DependencyTable;
 import org.zkoss.zss.model.sys.dependency.DependencyTable.RefFilter;
@@ -1673,6 +1676,38 @@ public class RangeImpl implements SRange {
 			@Override
 			protected void doBeforeNotify() {}
 		}.doInWriteLock(getLock());			
+	}
+
+	@Override
+	public void createName(final String nameName) {
+		new ReadWriteTask() {
+			@Override
+			public Object invoke() {
+				createNameInLock(nameName);
+				return null;
+			}
+		}.doInWriteLock(getLock());
+	}
+	
+	private void createNameInLock(String nameName) {
+		final SSheet sht = getSheet();
+		final String sn = sht.getSheetName();
+		final org.zkoss.poi.ss.util.AreaReference af = new org.zkoss.poi.ss.util.AreaReference(
+				new org.zkoss.poi.ss.util.CellReference(sn,getRow(),getColumn(),true,true), 
+				new org.zkoss.poi.ss.util.CellReference(sn,getLastRow(),getLastColumn(),true,true));
+		final String refers = af.formatAsString();
+		final SName name = getBook().createName(nameName);
+		name.setRefersToFormula(refers);
+		
+		// Some formula might have referred to the {@link Name} by the specified nameName already; 
+		// have to notify those cells.
+		final AbstractBookSeriesAdv series = (AbstractBookSeriesAdv) getBookSeries();
+		final DependencyTable table = series.getDependencyTable();
+		handleRefNotifyContentChange(series, table.getEvaluatedDependents(new NameRefImpl((AbstractNameAdv)name)));
+		
+		// Notify change of the associated range of this name
+		// TODO: createName does not change contents of the associated range, do I have to notifyChange? 
+		SRanges.rangeByName(sht, nameName).notifyChange();
 	}
 	
 	private static final SRange EMPTY_RANGE = new EmptyNRange();

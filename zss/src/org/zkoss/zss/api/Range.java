@@ -789,4 +789,11 @@ public interface Range {
 	 * @since 3.5.0
 	 */
 	public SRange getInternalRange();
+	
+	/**
+	 * Create a {@link Name} that refer to this range.
+	 * @param nameName name of the {@link Name} that you can refer in formulas.
+	 * @since 3.5.0
+	 */
+	public void createName(String nameName);
 }
