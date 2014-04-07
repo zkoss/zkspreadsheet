@@ -1704,10 +1704,6 @@ public class RangeImpl implements SRange {
 		final AbstractBookSeriesAdv series = (AbstractBookSeriesAdv) getBookSeries();
 		final DependencyTable table = series.getDependencyTable();
 		handleRefNotifyContentChange(series, table.getEvaluatedDependents(new NameRefImpl((AbstractNameAdv)name)));
-		
-		// Notify change of the associated range of this name
-		// TODO: createName does not change contents of the associated range, do I have to notifyChange? 
-		SRanges.rangeByName(sht, nameName).notifyChange();
 	}
 	
 	private static final SRange EMPTY_RANGE = new EmptyNRange();

@@ -434,4 +434,8 @@ import org.zkoss.zss.range.*;
 	public void clearCellStyles() {		
 	}
 
+	@Override
+	public void createName(String nameName) {
+		
+	}
 }
