@@ -64,6 +64,7 @@ ZK Spreadsheet 3.5.0 RC
   ZSS-642 Spreadsheet throws an exception when exporting PDF with charts
   ZSS-630 when setting font style via context menu, first click doesn't work
   ZSS-586 Select all then insert row cause javascript error (insert column work fines)
+  ZSS-553 "clear style" and "clear all" can unmerge cells, but undo can't merge them back
   
 ** Upgrade Notes
   * Following api are removed

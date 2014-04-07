@@ -53,7 +53,8 @@ public class ClearCellAction extends AbstractCellDataStyleAction {
 		case CONTENT:
 			return RESERVE_CONTENT;
 		case STYLE:
-			return RESERVE_STYLE;
+			// ZSS-553: According to ZSS-298 - we remove merge when clear style, so we need to reserve merge when clear cell style.
+			return RESERVE_STYLE | RESERVE_MERGE;
 		case ALL:
 			return RESERVE_ALL;
 		}
