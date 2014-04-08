@@ -1016,6 +1016,18 @@ zss.Menupopup = zk.$extends(zul.menu.Menupopup, {
 			wgt.focus(false);
 		}
 	},
+	onFloatUp: function (ctl) {
+		// ZSS-654: there are dual popup menu, so they will trigger each other's onFloatUp() cause them both be disappeared
+		if (!this.isVisible()) {
+			return;
+		}
+		
+		if(this._wgt && this.isOpen() && zUtl.isAncestor(ctl.origin, this)) {
+			return;
+		}
+		
+		this.$supers(zss.Menupopup, 'onFloatUp', arguments);
+	},
 	zsync: function () {
 		// skip shadow
 	}
@@ -1131,29 +1143,14 @@ zss.StylePanel = zk.$extends(zul.wgt.Popup, {
 	_closeStylePanel: function () {
 		this.close({sendOnOpen:true});
 	},
-	//override: spreadsheet's menuitem will trigger onFloatUp, cause StylePanel disapper
 	onFloatUp: function (ctl) {
-		if (!this.isVisible()) 
+		// ZSS-654: there are dual popup menu, so they will trigger each other's onFloatUp() cause them both be disappeared
+		if (!this.isVisible()) {
 			return;
+		}
 		
-		var	c = ctl.origin,
-			wgt = this._wgt,//spreadsheet
-			sheet = wgt.sheetCtrl;
-		if (sheet) {
-			var p = sheet.getCellMenupopup();
-			if (p && p.isOpen() && zUtl.isAncestor(p, c)) {
-				return;
-			}
-			
-			p = sheet.getColumnHeaderMenupopup();
-			if (p && p.isOpen() && zUtl.isAncestor(p, c)) {
-				return;
-			}
-			
-			p = sheet.getRowHeaderMenupopup();
-			if (p && p.isOpen() && zUtl.isAncestor(p, c)) {
-				return;
-			}
+		if(this._wgt && this._wgt.sheetCtrl && this.isOpen() && zUtl.isAncestor(ctl.origin, this)) {
+			return;
 		}
 		
 		this.$supers(zss.StylePanel, 'onFloatUp', arguments);

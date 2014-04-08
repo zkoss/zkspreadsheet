@@ -1434,14 +1434,22 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		y = y < 0 ? 0 : y;
 		
 		var p = this.getStyleMenupopup();
-		p.getMenuContainer().appendChild(refPop);
-		// make menu visible before style menu showing
-		// for calculating correct height
-		jq(refPop.$n()).css('display', 'block');
-		p.open(null, [x, y]);
+		var fn = function() {
+			p.getMenuContainer().appendChild(refPop);
+			// make menu visible before style menu showing
+			// for calculating correct height
+			jq(refPop.$n()).css('display', 'block');
+			p.open(null, [x, y]);
+			
+			refPop.setVisible(true);
+		}
 		
-		refPop.setVisible(true);
-		
+		if(zk.ie < 11) {
+			// ZSS-654: popup's close() has 50ms delay if using IE < 11 in Popup.js afterCloseAnima_()
+			setTimeout(fn, 50);
+		} else {
+			fn();
+		}
 	},
 	runAfterMouseClick: function (fn) {
 		var fns = this._afterMouseClick;
