@@ -544,4 +544,118 @@ C	3	6	9	=SUM(E9:F9)
 		assertEquals(areaF, series.getYValuesFormula());
 		assertEquals(areaF, series.getZValuesFormula());
 	}
+
+	@Test
+	public void testCreateName(){
+		SBook book = SBooks.createBook("book1");
+		SSheet sheet = book.createSheet("Sheet 1");
+
+		SRange rngA1 = SRanges.range(sheet,0,0); //A1
+		rngA1.createName("TestA1"); //TestA1 is Name of range A1
+		
+		rngA1.setEditText("999");
+		SRanges.range(sheet,0,1).setValue("=SUM(TestA1)"); //B1
+		
+		
+		SCell cell = sheet.getCell(0, 0); //A1
+		Assert.assertEquals(CellType.NUMBER, cell.getType());
+		Assert.assertEquals(999, cell.getNumberValue().intValue());
+		
+		cell = sheet.getCell(0, 1); //B1
+		Assert.assertEquals(CellType.FORMULA, cell.getType());
+		Assert.assertEquals(CellType.NUMBER, cell.getFormulaResultType());
+		Assert.assertEquals("SUM(TestA1)", cell.getFormulaValue());
+		Assert.assertEquals(999D, cell.getValue());
+		
+		final AtomicInteger a0counter = new AtomicInteger(0);
+		final AtomicInteger b0counter = new AtomicInteger(0);
+		final AtomicInteger unknowcounter = new AtomicInteger(0);
+		
+		book.addEventListener(new ModelEventListener() {
+			public void onEvent(ModelEvent event) {
+				if(event.getName().equals(ModelEvents.ON_CELL_CONTENT_CHANGE)){
+					CellRegion region = event.getRegion();
+					if(region.getRow()==0&&region.getColumn()==0){
+						a0counter.incrementAndGet();
+					}else if(region.getRow()==0&&region.getColumn()==1){
+						b0counter.incrementAndGet();
+					}else{
+						unknowcounter.incrementAndGet();
+					}
+				}
+			}
+		});
+		
+		SRanges.range(sheet,0,0).setEditText("888");
+		Assert.assertEquals(1, b0counter.intValue());
+		Assert.assertEquals(1, a0counter.intValue());
+		Assert.assertEquals(0, unknowcounter.intValue());
+		
+		SRanges.range(sheet,0,0).setEditText("777");
+		Assert.assertEquals(2, b0counter.intValue());
+		Assert.assertEquals(2, a0counter.intValue());
+		Assert.assertEquals(0, unknowcounter.intValue());
+		
+		SRanges.range(sheet,0,0).setEditText("777");//in last update, set edit text is always notify cell change
+		Assert.assertEquals(3, b0counter.intValue());
+		Assert.assertEquals(3, a0counter.intValue());
+		Assert.assertEquals(0, unknowcounter.intValue());
+	}
+
+	@Test
+	public void testCreateNameLater(){
+		SBook book = SBooks.createBook("book1");
+		SSheet sheet = book.createSheet("Sheet 1");
+
+		SRange rngA1 = SRanges.range(sheet,0,0); //A1
+		rngA1.setEditText("999");
+		SRanges.range(sheet,0,1).setValue("=SUM(TestA1)"); //B1, TestA1 not yet created
+
+		//Create name later
+		rngA1.createName("TestA1"); //TestA1 is Name of range A1
+
+		SCell cell = sheet.getCell(0, 0); //A1
+		Assert.assertEquals(CellType.NUMBER, cell.getType());
+		Assert.assertEquals(999, cell.getNumberValue().intValue());
+		
+		cell = sheet.getCell(0, 1); //B1
+		Assert.assertEquals(CellType.FORMULA, cell.getType());
+		Assert.assertEquals(CellType.NUMBER, cell.getFormulaResultType());
+		Assert.assertEquals("SUM(TestA1)", cell.getFormulaValue());
+		Assert.assertEquals(999D, cell.getValue());
+		
+		final AtomicInteger a0counter = new AtomicInteger(0);
+		final AtomicInteger b0counter = new AtomicInteger(0);
+		final AtomicInteger unknowcounter = new AtomicInteger(0);
+		
+		book.addEventListener(new ModelEventListener() {
+			public void onEvent(ModelEvent event) {
+				if(event.getName().equals(ModelEvents.ON_CELL_CONTENT_CHANGE)){
+					CellRegion region = event.getRegion();
+					if(region.getRow()==0&&region.getColumn()==0){
+						a0counter.incrementAndGet();
+					}else if(region.getRow()==0&&region.getColumn()==1){
+						b0counter.incrementAndGet();
+					}else{
+						unknowcounter.incrementAndGet();
+					}
+				}
+			}
+		});
+		
+		SRanges.range(sheet,0,0).setEditText("888");
+		Assert.assertEquals(1, b0counter.intValue());
+		Assert.assertEquals(1, a0counter.intValue());
+		Assert.assertEquals(0, unknowcounter.intValue());
+		
+		SRanges.range(sheet,0,0).setEditText("777");
+		Assert.assertEquals(2, b0counter.intValue());
+		Assert.assertEquals(2, a0counter.intValue());
+		Assert.assertEquals(0, unknowcounter.intValue());
+		
+		SRanges.range(sheet,0,0).setEditText("777");//in last update, set edit text is always notify cell change
+		Assert.assertEquals(3, b0counter.intValue());
+		Assert.assertEquals(3, a0counter.intValue());
+		Assert.assertEquals(0, unknowcounter.intValue());
+	}
 }
