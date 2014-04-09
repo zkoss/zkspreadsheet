@@ -16,13 +16,13 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
  */
 package org.zkoss.zss.range.impl.imexp;
 
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.util.*;
 import java.util.concurrent.locks.ReadWriteLock;
 
 import org.zkoss.poi.ss.usermodel.*;
 import org.zkoss.poi.ss.util.CellRangeAddress;
+import org.zkoss.util.logging.Log;
 import org.zkoss.zss.model.*;
 import org.zkoss.zss.model.SCell.CellType;
 import org.zkoss.zss.model.SRichText.Segment;
@@ -46,6 +46,8 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 	protected Map<SCellStyle, CellStyle> styleTable = new HashMap<SCellStyle, CellStyle>();
 	protected Map<SFont, Font> fontTable = new HashMap<SFont, Font>();
 	protected Map<SColor, Color> colorTable = new HashMap<SColor, Color>();
+	
+    private static final Log _logger = Log.lookup(AbstractExcelExporter.class.getName());
 
 	abstract protected void exportColumnArray(SSheet sheet, Sheet poiSheet, SColumnArray columnArr);
 
@@ -255,10 +257,15 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 		SHyperlink hyperlink = cell.getHyperlink();
 		if (hyperlink != null) {
 			CreationHelper helper = workbook.getCreationHelper();
-			Hyperlink poiHyperlink = helper.createHyperlink(PoiEnumConversion.toPoiHyperlinkType(hyperlink.getType()));
-			poiHyperlink.setAddress(hyperlink.getAddress());
-			poiHyperlink.setLabel(hyperlink.getLabel());
-			poiCell.setHyperlink(poiHyperlink);
+			try{
+				Hyperlink poiHyperlink = helper.createHyperlink(PoiEnumConversion.toPoiHyperlinkType(hyperlink.getType()));
+				poiHyperlink.setAddress(hyperlink.getAddress());
+				poiHyperlink.setLabel(hyperlink.getLabel());
+				poiCell.setHyperlink(poiHyperlink);
+			}catch (Exception e) {
+				_logger.warning("Cannot export a hyperlink: "+hyperlink.getAddress(),e);
+			}
+			
 		}
 		
 		SComment comment = cell.getComment();

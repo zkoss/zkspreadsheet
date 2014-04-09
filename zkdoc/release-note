@@ -8,6 +8,7 @@ ZK Spreadsheet 3.5.0
   ZSS-652 Cut Formula shouldn't be shifted when it is not in cut range
   ZSS-655 Formula that contains Name doesn't update
   ZSS-654 if I directly right click on different cell in IE 8 and 9, the context menu often close automatically
+  ZSS-644 Fail to export to XLSX format when the book has a hyperlink with invalid URI
   
 ** Upgrade Notes
 
