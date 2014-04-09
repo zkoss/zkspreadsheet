@@ -26,6 +26,7 @@ import org.zkoss.util.logging.Log;
 import org.zkoss.zss.model.*;
 import org.zkoss.zss.model.SCell.CellType;
 import org.zkoss.zss.model.SRichText.Segment;
+import org.zkoss.zss.model.impl.sys.formula.FormulaEngineImpl;
 
 /**
  * Common exporting behavior for both XLSX and XLS.
@@ -47,7 +48,7 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 	protected Map<SFont, Font> fontTable = new HashMap<SFont, Font>();
 	protected Map<SColor, Color> colorTable = new HashMap<SColor, Color>();
 	
-    private static final Log _logger = Log.lookup(AbstractExcelExporter.class.getName());
+	private static final Log _logger = Log.lookup(AbstractExcelExporter.class.getName());
 
 	abstract protected void exportColumnArray(SSheet sheet, Sheet poiSheet, SColumnArray columnArr);
 
@@ -104,18 +105,26 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 	}
 
 	protected void exportNamedRange(SBook book) {
-
 		for (SName name : book.getNames()) {
 			Name poiName = workbook.createName();
-			poiName.setNameName(name.getName());
-			String sheetName = name.getRefersToSheetName();
-			if(sheetName!=null){
-				poiName.setSheetIndex(workbook.getSheetIndex(sheetName));
+			try{
+				poiName.setNameName(name.getName());
+				String sheetName = name.getRefersToSheetName();
+				if(sheetName!=null){
+					poiName.setSheetIndex(workbook.getSheetIndex(sheetName));
+				}
+				//zss-214, to tolerate the name refers to formula error (#REF!!$A$1:$I$18)
+				if(!name.isFormulaParsingError()){
+					poiName.setRefersToFormula(name.getRefersToFormula());
+				}
+			}catch (Exception e) {
+				_logger.warning("Cannot export a name range: "+name.getName(),e);
+			}finally{
+				if (poiName.getNameName()!=null){
+					workbook.removeName(poiName.getNameName());
+				}
 			}
-			//zss-214, to tolerate the name refers to formula error (#REF!!$A$1:$I$18)
-			if(!name.isFormulaParsingError()){
-				poiName.setRefersToFormula(name.getRefersToFormula());
-			}
+			
 		}
 	}
 
