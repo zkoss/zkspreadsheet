@@ -119,7 +119,6 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 				}
 			}catch (Exception e) {
 				_logger.warning("Cannot export a name range: "+name.getName(),e);
-			}finally{
 				if (poiName.getNameName()!=null){
 					workbook.removeName(poiName.getNameName());
 				}
