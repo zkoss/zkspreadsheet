@@ -71,7 +71,7 @@ public class NameRefImpl extends RefImpl implements NameRef{
 		if (_nameName == null) {
 			if (other._nameName != null)
 				return false;
-		} else if (!_nameName.equals(other._nameName))
+		} else if (!_nameName.equalsIgnoreCase(other._nameName))
 			return false;
 		return true;
 	}

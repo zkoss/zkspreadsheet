@@ -1678,11 +1678,12 @@ public class RangeImpl implements SRange {
 		}.doInWriteLock(getLock());			
 	}
 
+	//ZSS-294
 	@Override
 	public void createName(final String nameName) {
-		new ReadWriteTask() {
+		new ModelManipulationTask() {			
 			@Override
-			public Object invoke() {
+			protected Object doInvoke() {
 				createNameInLock(nameName);
 				return null;
 			}

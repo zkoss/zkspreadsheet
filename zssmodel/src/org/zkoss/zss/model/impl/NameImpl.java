@@ -97,6 +97,7 @@ public class NameImpl extends AbstractNameAdv {
 	public void setRefersToFormula(String refersToExpr) {
 		checkOrphan();
 		
+		boolean newCreated = _refersToExpr == null; //ZSS-294
 		clearFormulaDependency();
 		this._refersToExpr = refersToExpr;
 		_refersToSheetName = null;
@@ -119,6 +120,11 @@ public class NameImpl extends AbstractNameAdv {
 			Ref[] refs = expr.getAreaRefs();
 			_refersToSheetName = refs[0].getSheetName();
 			_refersToCellRegion = new CellRegion(refs[0].getRow(),refs[0].getColumn(),refs[0].getLastRow(),refs[0].getLastColumn());
+			
+			//ZSS-294, should clear dependents that have referenced to this new created Name
+			if (newCreated) {
+				ModelUpdateUtil.handlePrecedentUpdate(_book.getBookSeries(), ref);
+			}
 		}
 		
 	}
