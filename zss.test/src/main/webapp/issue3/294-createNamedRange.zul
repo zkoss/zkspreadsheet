@@ -1,6 +1,6 @@
 <zk>
 	<vbox hflex="1" vflex="1">
-		<button label="create named range 'mya1' " onClick='createNamedRange()'/>
+		<button label="create named range 'testa1' " onClick='createNamedRange()'/>
 		<button label="list named range" onClick="listNamedRange()"/>
 		<groupbox title="name list:">
 			<label id="nameList">(none)</label>
@@ -9,7 +9,7 @@
 		Procedure 1: Create named range before a formula
 			1. create named range
 			2. enter 10 in A1
-			3. enter =sum(mya1) in B1
+			3. enter =sum(testa1) in B1
 			4. validate B1
 			5. change A1 to 20
 			6. validate B1
@@ -18,7 +18,7 @@
 		<label multiline="true">
 		Procedure 2: Create named range after a formula
 			1. enter 10 in A1
-			2. enter =sum(mya1) in B1
+			2. enter =sum(testa1) in B1
 			3. create named range
 			4. validate B1
 			5. change A1 to 20
@@ -33,7 +33,7 @@
 		import org.zkoss.zss.model.*;
 		 
 		public void createNamedRange(){
-			Ranges.range(ss.getSelectedSheet(), 0, 0).createName("mya1");
+			Ranges.range(ss.getSelectedSheet(), 0, 0).createName("testa1");
 		}
 		
 		public void listNamedRange(){
