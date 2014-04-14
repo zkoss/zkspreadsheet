@@ -118,6 +118,7 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 					poiName.setRefersToFormula(name.getRefersToFormula());
 				}
 			}catch (Exception e) {
+				//ZSS-645 catch the exception happens when a book has a named range referring to an external book in XLS
 				_logger.warning("Cannot export a name range: "+name.getName(),e);
 				if (poiName.getNameName()!=null){
 					workbook.removeName(poiName.getNameName());
@@ -271,6 +272,7 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 				poiHyperlink.setLabel(hyperlink.getLabel());
 				poiCell.setHyperlink(poiHyperlink);
 			}catch (Exception e) {
+				//ZSS-644 catch the exception happens when a hyperlink has an invalid URI in XLSX
 				_logger.warning("Cannot export a hyperlink: "+hyperlink.getAddress(),e);
 			}
 			
