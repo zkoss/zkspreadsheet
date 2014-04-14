@@ -10,6 +10,7 @@ ZK Spreadsheet 3.5.0
   ZSS-654 if I directly right click on different cell in IE 8 and 9, the context menu often close automatically
   ZSS-644 Fail to export to XLSX format when the book has a hyperlink with invalid URI
   ZSS-645 Fail to export to XLS format when the book has a named range referring to an external book
+  ZSS-294 cannot create a named range
   
 ** Upgrade Notes
 
