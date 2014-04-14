@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<zk>
+	<vbox hflex="1">
+		<button label="create named range 'mya1' " onClick='createNamedRange("mya1")'/>
+		<button label="create named range 'c' " onClick='createNamedRange("c")'/>
+		<button label="create named range 'a1a' " onClick='createNamedRange("a1a")'/>
+		<button label="create named range '中文' " onClick='createNamedRange("中文")'/>
+		<button label="list named range" onClick="listNamedRange()"/>
+		
+		<groupbox title="name list:">
+			<label id="nameList">(none)</label>
+		</groupbox>
+		<label multiline="true">
+		Procedure 1: Create named range with a valid cell reference address 'mya1'
+			1. press "create named range 'mya1'"
+			2. should see exception dialog: "name 'mya1' is not legal: cannot be a cell reference"
+		</label>
+		
+		<label multiline="true">
+		Procedure 2: Create named range with illegal name 'c'
+			1. press "create named range 'c'"
+			2. should see exception dialog: "name 'c' is not legal: cannot be 'C', 'c', 'R', or 'r'"
+		</label>
+		<label multiline="true">
+		Procedure 3: Create named range with a legal name 'a1a'
+			1. press "create named range 'a1a'" 
+			2. enter 10 in A1
+			3. enter =sum(a1a) in B1
+			4. validate B1
+			5. change A1 to 20
+			6. validate B1
+		</label>
+		<label multiline="true">
+		Procedure 4: Create named range with a legal name 'a1a' AGAIN
+			1. press "create named range 'a1a'" 
+			2. should see exception dialog: "name 'a1a' is duplicated"
+		</label>
+		<label multiline="true">
+		Procedure 5: Create named range with a legal chinese name '中文'
+			1. press "create named range '中文'" 
+			2. enter 10 in A1
+			3. enter =sum(中文) in B1
+			4. validate B1
+			5. change A1 to 20
+			6. validate B1
+		</label>
+		<spreadsheet id="ss" src="/issue3/book/blank.xlsx" hflex="1" vflex="1" height="200px"
+			maxVisibleRows="100" maxVisibleColumns="20" showToolbar="true" showFormulabar="true"
+			showSheetbar="true" showContextMenu="true">
+		</spreadsheet>
+		<zscript><![CDATA[
+		import org.zkoss.zss.api.*;
+		import org.zkoss.zss.model.*;
+		 
+		public void createNamedRange(String ref){
+			Ranges.range(ss.getSelectedSheet(), 0, 0).createName(ref);
+		}
+		public void listNamedRange(){
+			String names = "";
+			for (SName name : ss.getBook().getInternalBook().getNames()){
+				names += name.getName()+"("+name.getRefersToFormula()+")"+"\n";
+			}
+			nameList.setValue(names);
+			
+		}
+	]]></zscript>
+	</vbox>
+</zk>

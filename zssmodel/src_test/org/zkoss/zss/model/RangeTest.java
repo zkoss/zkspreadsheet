@@ -658,4 +658,26 @@ C	3	6	9	=SUM(E9:F9)
 		Assert.assertEquals(3, a0counter.intValue());
 		Assert.assertEquals(0, unknowcounter.intValue());
 	}
+
+	@Test
+	public void testValidNameRange(){
+		SBook book = SBooks.createBook("book1");
+		SSheet sheet = book.createSheet("Sheet 1");
+		SRange rngA1 = SRanges.range(sheet,0,0); //A1
+
+		//Create name "TestA1"
+		rngA1.createName("TestA1"); //TestA1 is Name of range A1
+		SName testa1 = book.getNameByName("TESTA1");
+		Assert.assertNotNull(testa1);
+		Assert.assertEquals("TestA1", testa1.getName());
+
+		//Create name "MyA1"
+		try {
+			rngA1.createName("MyA1"); //MayA1 is a valid cell reference address and cannot be the Name of range A1
+			Assert.assertTrue("Should not come here! \"MyA1\" is a valid Cell reference address and should throw exception", false);
+		} catch(Exception ex) {
+			Assert.assertTrue(ex.getMessage(), true);
+		}
+	}
+
 }

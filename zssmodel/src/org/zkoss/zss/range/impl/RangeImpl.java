@@ -1693,10 +1693,18 @@ public class RangeImpl implements SRange {
 	private void createNameInLock(String nameName) {
 		final SSheet sht = getSheet();
 		final String sn = sht.getSheetName();
-		final org.zkoss.poi.ss.util.AreaReference af = new org.zkoss.poi.ss.util.AreaReference(
-				new org.zkoss.poi.ss.util.CellReference(sn,getRow(),getColumn(),true,true), 
-				new org.zkoss.poi.ss.util.CellReference(sn,getLastRow(),getLastColumn(),true,true));
-		final String refers = af.formatAsString();
+		final int c1 = getColumn(), c2 = getLastColumn(), r1 = getRow(), r2 = getLastRow();
+		
+		String refers = null;
+		if (c1 == c2 && r1 == r2) {
+			final org.zkoss.poi.ss.util.CellReference cf = new org.zkoss.poi.ss.util.CellReference(sn, r1, c1, true, true);
+			refers = cf.formatAsString();
+		} else {
+			final org.zkoss.poi.ss.util.AreaReference af = new org.zkoss.poi.ss.util.AreaReference(
+					new org.zkoss.poi.ss.util.CellReference(sn,getRow(),c1,true,true), 
+					new org.zkoss.poi.ss.util.CellReference(sn,getLastRow(),getLastColumn(),true,true));
+			refers = af.formatAsString();
+		}
 		final SName name = getBook().createName(nameName);
 		name.setRefersToFormula(refers);
 		

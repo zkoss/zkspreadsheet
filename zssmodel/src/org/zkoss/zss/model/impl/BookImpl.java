@@ -273,13 +273,67 @@ public class BookImpl extends AbstractBookAdv{
 		if(Strings.isBlank(name)){
 			throw new InvalidModelOpException("name '"+name+"' is not legal");
 		}
-		if(getNameByName(name,sheetName)!=null){
-			throw new InvalidModelOpException("name '"+name+"' "+(sheetName==null?"":" in '"+sheetName+"'")+" is dpulicated");
+		if(getNameByName(name,sheetName)!=null){ //must be unique in the scope
+			throw new InvalidModelOpException("name '"+name+"' "+(sheetName==null?"":" in '"+sheetName+"'")+" is duplicated");
 		}
 		if(sheetName!=null && getSheetByName(sheetName)==null){
 			throw new InvalidModelOpException("no such sheet "+sheetName);
 		}
-		//TODO zss 3.5
+		//ZSS-660: valid name
+		//@see  http://office.microsoft.com/en-us/excel-help/define-and-use-names-in-formulas-HA010147120.aspx
+		//length must less than or equals to 255
+		if (name.length() > 255) {
+			throw new InvalidModelOpException("name '"+name+"' is not legal: cannot exceed 255 characters");
+		}
+		
+		//1st character must be a letter, underscore, or backslash
+		char c1 = name.charAt(0);
+		if (!Character.isLetter(c1) && c1 != '_' && c1 != '\\') {
+			throw new InvalidModelOpException("name '"+name+"' is not legal: first character must be a letter, an underscore, or a backslash");
+		}
+		
+		boolean invalid = c1 == '_' || c1 == '\\'; //impossible be a valid cell reference
+		int colIndex = invalid ? -2 : Character.getNumericValue(c1) - 9;
+		if (!invalid) {
+			invalid = colIndex < 0;
+		}
+		int rowIndex = -1;
+		//remaining characters must be letters, digits, periods, or underscores.
+		for (int j = 1, len = name.length(); j < len; ++j) {
+			char ch = name.charAt(j);
+			if (Character.isLetter(ch)) { //analyze colIndex
+				if (invalid) continue;  
+				if (rowIndex >= 0) { //letter -> digit -> letter
+					invalid = true;
+					continue;
+				}
+				int c = Character.getNumericValue(ch) - 9;
+				if (c < 0) {
+					invalid = true;
+					continue;
+				}
+				colIndex = colIndex * 26 + c;
+			} else if (Character.isDigit(ch)) { //analyze rowIndex
+				if (invalid) continue; 
+				if (rowIndex < 0) {
+					rowIndex = Character.getNumericValue(ch);
+				} else {
+					rowIndex = rowIndex * 10 + Character.getNumericValue(ch);
+				}
+			} else if (ch != '.' && ch != '_') {
+				throw new InvalidModelOpException("name '"+name+"' is not legal: the character '"+ ch+ "' at index "+ j + " must be a letter, a digit, an underscore, or a period");
+			}
+		}
+		
+		//cannot be a valid cell reference address
+		if (!invalid && colIndex >= 0 && colIndex <= getMaxColumnSize() && rowIndex >= 0 && rowIndex < getMaxRowSize()) {
+			throw new InvalidModelOpException("name '"+name+"' is not legal: cannot be a cell reference");
+		}
+			
+		//cannot be 'C' or 'R'
+		if (name.equalsIgnoreCase("C") || name.equalsIgnoreCase("R")) {
+			throw new InvalidModelOpException("name '"+name+"' is not legal: cannot be 'C', 'c', 'R', or 'r'");
+		}
 	}
 
 	@Override
@@ -640,7 +694,7 @@ public class BookImpl extends AbstractBookAdv{
 		if(_names==null)
 			return null;
 		for(SName name:_names){
-			if((sheetName==null || sheetName.equals(name.getApplyToSheetName())) 
+			if((sheetName==null || sheetName.equalsIgnoreCase(name.getApplyToSheetName())) 
 					&& name.getName().equalsIgnoreCase(namename)){
 				return name;
 			}
