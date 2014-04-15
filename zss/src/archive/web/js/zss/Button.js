@@ -998,6 +998,7 @@ zss.Menupopup = zk.$extends(zul.menu.Menupopup, {
 	$init: function (wgt) {
 		this.$supers(zss.Menupopup, '$init', []);
 		this._wgt = wgt;
+		this.z$rod0 = false; //ZSS-658 turn off ZK EE ROD to avoid only rendering a div
 	},
 	setDisabled: function (actions) {
 		var chd = this.firstChild;
