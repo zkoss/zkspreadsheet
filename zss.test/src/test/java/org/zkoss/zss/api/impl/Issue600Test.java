@@ -11,6 +11,7 @@ import org.zkoss.zss.api.*;
 import org.zkoss.zss.api.Range.PasteOperation;
 import org.zkoss.zss.api.Range.PasteType;
 import org.zkoss.zss.api.model.*;
+import org.zkoss.zss.model.InvalidModelOpException;
 
 /**
  * @author Hawk
@@ -111,5 +112,48 @@ public class Issue600Test {
 		
 		Ranges.range(sheet, "B1").pasteSpecial(Ranges.range(sheet, "B1"), PasteType.VALUES, PasteOperation.NONE, false, false);
 		assertEquals("6", Ranges.range(sheet, "B1").getCellEditText());
+	}
+	
+	@Test
+	public void testZSS660InvalidNamedRange(){
+		Book book = Util.loadBook(this, "book/blank.xlsx");
+		Sheet sheet = book.getSheetAt(0);
+		String invalidNameList[] = {"1A", "123", "A1", "c", "mya1", "have space", buildStringByLength(256)};
+		int invalidCount = 0;
+		for (String invalidName : invalidNameList){
+			try{
+				Ranges.range(sheet, "A1").createName(invalidName);
+				fail(invalidName+" shall not be a valid name for a named range.");
+			}catch (InvalidModelOpException e) {
+				invalidCount++;
+			}
+		}
+		
+		assertEquals(invalidCount, invalidNameList.length);
+	}
+	
+	private String buildStringByLength(int length){
+		StringBuilder name = new StringBuilder();
+		for (int i =0 ; i <length ; i++){
+			name.append("a");
+		}
+		return name.toString();
+	}
+	
+	@Test
+	public void testZSS660NamedRange(){
+		Book book = Util.loadBook(this, "book/blank.xlsx");
+		Sheet sheet = book.getSheetAt(0);
+		String nameList[] = {"_a1", "\\a1", "a.b", "中文", "myname", buildStringByLength(255)};
+		for (String validName : nameList){
+			Ranges.range(sheet, "A1").createName(validName);
+		}
+		assertEquals(nameList.length, book.getInternalBook().getNames().size());
+		try{
+			Ranges.range(sheet, "A1").createName("MYNAME");
+			fail("Should not create a duplicated named range: MYNAME ");
+		}catch (InvalidModelOpException e) {
+			//catch to avoid test failure
+		}
 	}
 }
