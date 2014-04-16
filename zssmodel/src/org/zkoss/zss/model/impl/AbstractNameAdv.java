@@ -28,7 +28,6 @@ public abstract class AbstractNameAdv implements SName,LinkedModelObject,Seriali
 
 	private static final long serialVersionUID = 1L;
 
-	/*package*/ abstract void setName(String newname);
-	/*package*/ abstract void setApplyToSheetName(String sheetName);
+	/*package*/ abstract void setName(String newname, String applyToSheetName);
 
 }

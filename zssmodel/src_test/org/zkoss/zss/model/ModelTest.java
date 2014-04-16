@@ -3607,4 +3607,44 @@ public class ModelTest {
 			Assert.assertEquals(expected[i], actual[i]);
 		}
 	}
+	
+	
+	@Test
+	public void testNameModify() {
+		SBook book = SBooks.createBook("book1");
+		book.getBookSeries().setAutoFormulaCacheClean(true);
+		book.createSheet("Sheet0");
+		SSheet sheet1 = book.createSheet("Sheet1");
+		
+		sheet1.getCell("A1").setValue(1);
+		sheet1.getCell("B1").setValue(2);
+		sheet1.getCell("A2").setValue(3);
+		sheet1.getCell("B2").setValue(4);
+		
+		SName name = book.createName("FOO");
+		name.setRefersToFormula("Sheet1!A1:B1");
+		
+		sheet1.getCell("C1").setValue("=SUM(FOO)");
+		
+		Assert.assertEquals(3D, sheet1.getCell("C1").getValue());
+		
+		name.setRefersToFormula("Sheet1!A2:B2");
+		Assert.assertEquals(7D, sheet1.getCell("C1").getValue());
+		
+		sheet1.getCell("A2").setValue(5);
+		sheet1.getCell("B2").setValue(6);
+		Assert.assertEquals(11D, sheet1.getCell("C1").getValue());
+		
+		book.setNameName(name, "BAR");
+		Assert.assertEquals("#NAME?", sheet1.getCell("C1").getErrorValue().getErrorString());
+		
+		
+		sheet1.getCell("C1").setValue("=SUM(BAR)");
+		Assert.assertEquals(11D, sheet1.getCell("C1").getValue());
+		
+		sheet1.getCell("A2").setValue(7);
+		sheet1.getCell("B2").setValue(8);
+		Assert.assertEquals(15D, sheet1.getCell("C1").getValue());
+	}
+	
 }

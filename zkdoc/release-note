@@ -12,6 +12,7 @@ ZK Spreadsheet 3.5.0
   ZSS-645 Fail to export to XLS format when the book has a named range referring to an external book
   ZSS-294 cannot create a named range
   ZSS-658 Right click on cell only show style menupopup
+  ZSS-661 Formula is incorrect after rename Name or it's refersTo region.
   
 ** Upgrade Notes
 
