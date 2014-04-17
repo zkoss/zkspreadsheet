@@ -96,6 +96,7 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 				exportPicture(sheet, poiSheet);
 				exportValidation(sheet, poiSheet);
 				exportAutoFilter(sheet, poiSheet);
+				exportSheetProtection(sheet, poiSheet);
 			}
 
 			workbook.write(fos);
@@ -413,4 +414,29 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 		return poiFont;
 	}
 
+	/**
+	 * POI SheetProtection.
+	 * @param sheet destination sheet
+	 * @param poiSheet source POI sheet
+	 */
+	private void exportSheetProtection(SSheet sheet, Sheet poiSheet) {
+		SSheetProtection ssp = sheet.getSheetProtection();
+		SheetProtection sp = poiSheet.getSheetProtection();
+		
+	    sp.setAutoFilter(ssp.isAutoFilter());
+	    sp.setDeleteColumns(ssp.isDeleteColumns());
+	    sp.setDeleteRows(ssp.isDeleteRows());
+	    sp.setFormatCells(ssp.isFormatCells());
+	    sp.setFormatColumns(ssp.isFormatColumns());
+	    sp.setFormatRows(ssp.isFormatRows());
+	    sp.setInsertColumns(ssp.isInsertColumns());
+	    sp.setInsertHyperlinks(ssp.isInsertHyperlinks());
+	    sp.setInsertRows(ssp.isInsertRows());
+	    sp.setPivotTables(ssp.isPivotTables());
+	    sp.setSort(ssp.isSort());
+	    sp.setObjects(ssp.isObjects());
+	    sp.setScenarios(ssp.isScenarios());
+	    sp.setSelectLockedCells(ssp.isSelectLockedCells());
+	    sp.setSelectUnlockedCells(ssp.isSelectUnlockedCells());
+	}
 }

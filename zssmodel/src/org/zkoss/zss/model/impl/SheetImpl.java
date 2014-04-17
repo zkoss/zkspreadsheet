@@ -39,6 +39,7 @@ import org.zkoss.zss.model.SCell;
 import org.zkoss.zss.model.SChart;
 import org.zkoss.zss.model.SColumn;
 import org.zkoss.zss.model.SColumnArray;
+import org.zkoss.zss.model.SSheetProtection;
 import org.zkoss.zss.model.SDataValidation;
 import org.zkoss.zss.model.SPicture;
 import org.zkoss.zss.model.SPrintSetup;
@@ -71,6 +72,8 @@ public class SheetImpl extends AbstractSheetAdv {
 	private String _password;
 	
 	private SAutoFilter _autoFilter;
+	
+	private SSheetProtection _sheetProtection;
 	
 	private final IndexPool<AbstractRowAdv> _rows = new IndexPool<AbstractRowAdv>(){
 		private static final long serialVersionUID = 1L;
@@ -1809,5 +1812,13 @@ public class SheetImpl extends AbstractSheetAdv {
 	@Override
 	public CellRegion pasteCell(SheetRegion src, CellRegion dest, PasteOption option) {
 		return new PasteCellHelper(this).pasteCell(src,dest,option);
+	}
+	
+	@Override
+	public SSheetProtection getSheetProtection() {
+		if (_sheetProtection == null) {
+			_sheetProtection = new SheetProtectionImpl();
+		}
+		return _sheetProtection;
 	}
 }
