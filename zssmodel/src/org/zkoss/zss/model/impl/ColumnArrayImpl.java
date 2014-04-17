@@ -51,13 +51,6 @@ public class ColumnArrayImpl extends AbstractColumnArrayAdv {
 	}
 
 
-//	@Override
-//	void onModelInternalEvent(ModelInternalEvent event) {
-//		// TODO Auto-generated method stub
-//
-//	}
-
-
 	@Override
 	public void checkOrphan() {
 		if (_sheet == null) {

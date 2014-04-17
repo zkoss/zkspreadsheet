@@ -627,18 +627,13 @@ public class BookImpl extends AbstractBookAdv{
 	public SName createName(String namename,String sheetName) {
 		checkLegalNameName(namename,sheetName);
 
-		AbstractNameAdv name = new NameImpl(this,nextObjId("name"));
-		name.setName(namename);
-		name.setApplyToSheetName(sheetName);
+		AbstractNameAdv name = new NameImpl(this,nextObjId("name"),namename,sheetName);
 		
 		if(_names==null){
 			_names = new LinkedList<AbstractNameAdv>();
 		}
 		
 		_names.add(name);
-		
-//		sendEvent(ModelEvents.ON_NAME_ADDED, 
-//				ModelEvents.PARAM_SHEET, sheet);
 		return name;
 	}
 
@@ -650,13 +645,18 @@ public class BookImpl extends AbstractBookAdv{
 		checkLegalNameName(newname,sheetName);
 		checkOwnership(name);
 		
-		String oldname = name.getRefersToSheetName();
-		((AbstractNameAdv)name).setName(newname);
-		((AbstractNameAdv)name).setApplyToSheetName(sheetName);
+		//create formula cache for name, currently, we can just clear all of book.
+		EngineFactory.getInstance().createFormulaEngine().clearCache(new FormulaClearContext(this));
 		
-//		sendEvent(ModelEvents.ON_NAME_RENAMED, 
-//				ModelEvents.PARAM_SHEET, sheet,
-//				ModelEvents.PARAM_SHEET_OLD_NAME, oldname);
+		//notify the (old) name is change before update name
+		ModelUpdateUtil.handlePrecedentUpdate(getBookSeries(),new NameRefImpl((AbstractNameAdv)name));
+		
+		((AbstractNameAdv)name).setName(newname,sheetName);
+		//don't need to notify new name precedent update, since Name handle it itself
+		
+		
+		//TODO should we rename formula that contains this name automatically ?
+//		renameNameFormula(oldname,newname);
 	}
 
 	@Override

@@ -79,7 +79,6 @@ public class GeneralChartDataImpl extends ChartDataAdv implements SGeneralChartD
 					_evalResult = (val instanceof ErrorValue)?val:new ErrorValue(ErrorValue.INVALID_NAME);
 				}
 			}
-			//TODO
 			_evaluated = true;
 		}
 	}

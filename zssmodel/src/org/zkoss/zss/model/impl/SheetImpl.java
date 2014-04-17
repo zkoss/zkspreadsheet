@@ -414,16 +414,6 @@ public class SheetImpl extends AbstractSheetAdv {
 			throw new InvalidModelOpException("The sheet name "+name+" is not allowed");
 		}
 	}
-//	@Override
-//	void onModelInternalEvent(ModelInternalEvent event) {
-//		for(AbstractRowAdv row:rows.values()){
-//			row.onModelInternalEvent(event);
-//		}
-//		for(AbstractColumnArrayAdv column:columnArrays.values()){
-//			column.onModelInternalEvent(event);
-//		}
-//		//TODO to other object
-//	}
 	
 //	public void clearRow(int rowIdx, int rowIdx2) {
 //		int start = Math.min(rowIdx, rowIdx2);

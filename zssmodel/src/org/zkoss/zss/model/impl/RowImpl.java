@@ -106,12 +106,6 @@ public class RowImpl extends AbstractRowAdv {
 		return cells.lastKey();
 	}
 
-//	@Override
-//	protected void onModelInternalEvent(ModelInternalEvent event) {
-//		// TODO Auto-generated method stub
-//
-//	}
-
 	@Override
 	public void clearCell(int start, int end) {
 		// clear before move relation
