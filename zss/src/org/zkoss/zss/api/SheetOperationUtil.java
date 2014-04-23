@@ -38,7 +38,7 @@ public class SheetOperationUtil {
 	 * @param range the range to toggle
 	 */
 	public static void toggleAutoFilter(Range range) {
-		if(range.isProtected())
+		if(range.isProtected() && !range.getSheetProtection().isAutoFilterAllowed())
 			return;
 		range.enableAutoFilter(!range.isAutoFilterEnabled());
 	}
@@ -48,7 +48,7 @@ public class SheetOperationUtil {
 	 * @param range the range to reset
 	 */
 	public static void resetAutoFilter(Range range) {
-		if(range.isProtected())
+		if(range.isProtected() && !range.getSheetProtection().isAutoFilterAllowed())
 			return;
 		range.resetAutoFilter();
 	}
@@ -58,7 +58,7 @@ public class SheetOperationUtil {
 	 * @param range the range to apply
 	 */
 	public static void applyAutoFilter(Range range) {
-		if(range.isProtected())
+		if(range.isProtected() && !range.getSheetProtection().isAutoFilterAllowed())
 			return;
 		range.applyAutoFilter();
 	}
@@ -95,7 +95,7 @@ public class SheetOperationUtil {
 	 * @param format the image format
 	 */
 	public static Picture addPicture(Range range, SheetAnchor anchor, byte[] binary, Format format){
-		if(range.isProtected())
+		if(range.isProtected() && !range.getSheetProtection().isObjectsEditable())
 			return null;
 		return range.addPicture(anchor, binary, format);
 	}
@@ -131,7 +131,7 @@ public class SheetOperationUtil {
 	 * @param columnIndex destination column index, 0-based
 	 */
 	public static void movePicture(Range range, Picture picture, int rowIndex, int columnIndex){
-		if(range.isProtected())
+		if(range.isProtected() && !range.getSheetProtection().isObjectsEditable())
 			return;
 		if (hasPicture(range, picture)){
 			SheetAnchor fromAnchor = picture.getAnchor();
@@ -156,7 +156,7 @@ public class SheetOperationUtil {
 	 */
 	public static void deletePicture(Range range, Picture picture){
 		
-		if(range.isProtected())
+		if(range.isProtected() && !range.getSheetProtection().isObjectsEditable())
 			return;
 		if (hasPicture(range, picture)){
 			range.deletePicture(picture);
@@ -203,7 +203,7 @@ public class SheetOperationUtil {
 	 */
 	public static Chart addChart(Range range, SheetAnchor anchor, Chart.Type type, Chart.Grouping grouping,
 			Chart.LegendPosition pos) {
-		if (range.isProtected())
+		if(range.isProtected() && !range.getSheetProtection().isObjectsEditable())
 			return null;
 		return range.addChart(anchor,type, grouping, pos);
 	}
@@ -232,7 +232,7 @@ public class SheetOperationUtil {
 	 * @param columnIndex destination column index, 0-based.
 	 */
 	public static void moveChart(Range range, Chart chart, int rowIndex, int columnIndex){
-		if(range.isProtected())
+		if(range.isProtected() && !range.getSheetProtection().isObjectsEditable())
 			return;
 		if (hasChart(range, chart)){
 			SheetAnchor fromAnchor = chart.getAnchor();
@@ -256,7 +256,7 @@ public class SheetOperationUtil {
 	 * @param chart the chart to delete.
 	 */
 	public static void deleteChart(Range range, Chart chart){
-		if(range.isProtected())
+		if(range.isProtected() && !range.getSheetProtection().isObjectsEditable())
 			return;
 		if (hasChart(range, chart)){
 			range.deleteChart(chart);

@@ -48,7 +48,8 @@ public class ApplyBorderHandler extends AbstractProtectedHandler {
 		Sheet sheet = ctx.getSheet();
 		AreaRef selection = ctx.getSelection();
 		Range range = Ranges.range(sheet, selection);
-		if(range.isProtected()){
+		//ZSS-576: EnhancedProtection
+		if (range.isProtected() && !range.getSheetProtection().isFormatCellsAllowed()) {
 			showProtectMessage();
 			return true;
 		}

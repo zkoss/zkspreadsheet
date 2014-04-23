@@ -51,9 +51,28 @@ public class VerticalAlignHandler extends AbstractProtectedHandler {
 		AreaRef selection = ctx.getSelection();
 		CellSelectionType type = ctx.getSelectionType();
 		Range range = Ranges.range(sheet, selection);
-		if(range.isProtected()){
-			showProtectMessage();
-			return true;
+		//ZSS-576
+		if(range.isProtected()) {
+			switch(type) {
+			case ROW:
+				if (!range.getSheetProtection().isFormatRowsAllowed()) {
+					showProtectMessage();
+					return true;
+				}
+				break;
+			case COLUMN:
+			case ALL:
+				if (!range.getSheetProtection().isFormatColumnsAllowed()) {
+					showProtectMessage();
+					return true;
+				}
+				break;
+			case CELL:
+				if (!range.getSheetProtection().isFormatCellsAllowed()) {
+					showProtectMessage();
+					return true;
+				}
+			}
 		}		
 		//zss-623, extends to row,column area
 		switch(type){

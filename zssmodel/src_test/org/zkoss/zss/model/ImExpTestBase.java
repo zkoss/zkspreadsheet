@@ -57,7 +57,7 @@ public class ImExpTestBase {
 	}
 	
 	protected void sheetTest(SBook book) {
-		assertEquals(8, book.getNumOfSheet());
+		assertEquals(10, book.getNumOfSheet());
 
 		SSheet sheet1 = book.getSheetByName("Value");
 		assertEquals("Value", sheet1.getSheetName());
@@ -74,7 +74,49 @@ public class ImExpTestBase {
 	protected void sheetProtectionTest(SBook book) {
 		assertFalse(book.getSheetByName("Value").isProtected());
 		assertTrue(book.getSheetByName("sheet-protection").isProtected());
-	}
+		
+		SSheet protectAll = book.getSheetByName("sheet-protection-all"); 
+		assertTrue(protectAll.isProtected());
+		assertEquals(0x00, protectAll.getHashedPassword());
+		
+		SSheetProtection sp = protectAll.getSheetProtection();
+		assertTrue(sp.isAutoFilter());
+		assertTrue(sp.isDeleteColumns());
+		assertTrue(sp.isDeleteRows());
+		assertTrue(sp.isFormatCells());
+		assertTrue(sp.isFormatColumns());
+		assertTrue(sp.isFormatRows());
+		assertTrue(sp.isInsertColumns());
+		assertTrue(sp.isInsertHyperlinks());
+		assertTrue(sp.isInsertRows());
+		assertTrue(sp.isObjects());
+		assertTrue(sp.isPivotTables());
+		assertTrue(sp.isScenarios());
+		assertTrue(sp.isSelectLockedCells());
+		assertTrue(sp.isSelectUnlockedCells());
+		assertTrue(sp.isSort());
+		
+		SSheet protectNone = book.getSheetByName("sheet-protection-none"); 
+		assertTrue(protectNone.isProtected());
+		assertEquals((short)0xcc1a, protectNone.getHashedPassword()); //"abc"
+
+		sp = protectNone.getSheetProtection();
+		assertFalse(sp.isAutoFilter());
+		assertFalse(sp.isDeleteColumns());
+		assertFalse(sp.isDeleteRows());
+		assertFalse(sp.isFormatCells());
+		assertFalse(sp.isFormatColumns());
+		assertFalse(sp.isFormatRows());
+		assertFalse(sp.isInsertColumns());
+		assertFalse(sp.isInsertHyperlinks());
+		assertFalse(sp.isInsertRows());
+		assertFalse(sp.isObjects());
+		assertFalse(sp.isPivotTables());
+		assertFalse(sp.isScenarios());
+		assertFalse(sp.isSelectLockedCells());
+		assertFalse(sp.isSelectUnlockedCells());
+		assertFalse(sp.isSort());
+}
 	
 	
 	protected void sheetNamedRangeTest(SBook book) {

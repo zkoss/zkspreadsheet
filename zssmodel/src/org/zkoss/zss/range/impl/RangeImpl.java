@@ -25,6 +25,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.locks.ReadWriteLock;
 
+import org.zkoss.poi.ss.util.WorkbookUtil;
+ 
 import org.zkoss.lang.Strings;
 import org.zkoss.util.Locales;
 import org.zkoss.zss.model.CellRegion;
@@ -49,6 +51,7 @@ import org.zkoss.zss.model.SHyperlink.HyperlinkType;
 import org.zkoss.zss.model.SPicture;
 import org.zkoss.zss.model.SRow;
 import org.zkoss.zss.model.SSheet;
+import org.zkoss.zss.model.SSheetProtection;
 import org.zkoss.zss.model.SSheetViewInfo;
 import org.zkoss.zss.model.SheetRegion;
 import org.zkoss.zss.model.SName;
@@ -167,7 +170,7 @@ public class RangeImpl implements SRange {
 	@Override
 	public SSheet getSheet() {
 		if(_rangeRefs.size()<=0){
-			throw new IllegalStateException("can find any effected range");
+			throw new IllegalStateException("can't find any effected sheet or range");
 		}
 		return _rangeRefs.get(0).sheet;
 	}
@@ -995,20 +998,13 @@ public class RangeImpl implements SRange {
 	}
 
 	@Override
+	@Deprecated
 	public void protectSheet(final String password) {
 		new ReadWriteTask() {			
 			@Override
 			public Object invoke() {
-				for (EffectedRegion r : _rangeRefs) {
-					SSheet sheet = r.sheet;
-					if(sheet.isProtected() && password==null){
-						sheet.setPassword(null);
-						new NotifyChangeHelper().notifyProtectSheet(sheet,false);
-					}else if(!sheet.isProtected() && password!=null){
-						sheet.setPassword(password);
-						new NotifyChangeHelper().notifyProtectSheet(sheet,true);
-					}
-				}
+				//20140423, henrichen: apply only to the first sheet 
+				setPasswordInLock(getSheet(), password);
 				return null;
 			}
 		}.doInWriteLock(getLock());
@@ -1611,7 +1607,8 @@ public class RangeImpl implements SRange {
 	}
 	
 	@Override
-	public SChart addChart(final ViewAnchor anchor, final ChartType type,	final ChartGrouping grouping, final ChartLegendPosition pos, final boolean isThreeD) {
+	public SChart addChart(final ViewAnchor anchor, final ChartType type,	
+			final ChartGrouping grouping, final ChartLegendPosition pos, final boolean isThreeD) {
 		return (SChart) new ReadWriteTask() {			
 			@Override
 			public Object invoke() {
@@ -1716,4 +1713,141 @@ public class RangeImpl implements SRange {
 	}
 	
 	private static final SRange EMPTY_RANGE = new EmptyNRange();
+	
+	//ZSS-576
+	//Refer #isAnyCellProtected() which checks ALL regions while this method
+	//checks only the first region.
+	@Override
+	public boolean isProtected() {
+		return (Boolean)new ReadWriteTask() {
+			@Override
+			public Object invoke() {
+				//20140423, henrichen: we check only first Sheet
+				EffectedRegion r = _rangeRefs.isEmpty() ? null : _rangeRefs.get(0);
+				if (r != null) {
+					SSheet sheet = r.sheet;
+					if(sheet.isProtected()){
+						CellRegion region = r.region;
+						for (int i = region.row; i <= region.lastRow; i++) {
+							for (int j = region.column; j <= region.lastColumn; j++) {
+								SCellStyle style = r.sheet.getCell(i, j).getCellStyle();
+								//as long as one is protected and locked, return true
+								if(style.isLocked()) { 
+									return true;
+								}
+							}
+						}
+					}
+				}
+				return false;
+			}
+		}.doInReadLock(getLock());
+	}
+	
+	@Override
+	public void protectSheet(final String password,  
+		final boolean allowSelectingLockedCells, final boolean allowSelectingUnlockedCells,  
+		final boolean allowFormattingCells, final boolean allowFormattingColumns, final boolean allowFormattingRows, 
+		final boolean allowInsertColumns, final boolean allowInsertRows, final boolean allowInsertingHyperlinks,
+		final boolean allowDeletingColumns, final boolean allowDeletingRows, 
+		final boolean allowSorting, final boolean allowFiltering, final boolean allowUsingPivotTables, 
+		final boolean drawingObjects, final boolean scenarios) {
+		final String pass0 = password == null ? "" : password;
+		new ReadWriteTask() {			
+			@Override
+			public Object invoke() {
+				//20140423, henrichen: apply only to the first sheet
+				protectSheetInLock(getSheet(), pass0,  
+						allowSelectingLockedCells, allowSelectingUnlockedCells,  
+						allowFormattingCells, allowFormattingColumns, allowFormattingRows, 
+						allowInsertColumns, allowInsertRows, allowInsertingHyperlinks,
+						allowDeletingColumns, allowDeletingRows, 
+						allowSorting, allowFiltering, allowUsingPivotTables, 
+						drawingObjects, scenarios);
+				return null;
+			}
+		}.doInWriteLock(getLock());
+	}
+	
+	//ZSS-576
+	@Override
+	public void unprotectSheet(final String password) {
+		if (!getSheet().isProtected()) return;
+		new ReadWriteTask() {			
+			@Override
+			public Object invoke() {
+				//20140423, henrichen: apply only to the first sheet
+				unprotectSheetInLock(getSheet(), password);
+				return null;
+			}
+		}.doInWriteLock(getLock());
+		
+	}
+	
+	private void protectSheetInLock(SSheet sht, String password,  
+			boolean allowSelectingLockedCells, boolean allowSelectingUnlockedCells,  
+			boolean allowFormattingCells, boolean allowFormattingColumns, boolean allowFormattingRows, 
+			boolean allowInsertColumns, boolean allowInsertRows, boolean allowInsertingHyperlinks,
+			boolean allowDeletingColumns, boolean allowDeletingRows, 
+			boolean allowSorting, boolean allowFiltering, boolean allowUsingPivotTables, 
+			boolean drawingObjects, boolean scenarios) {
+		
+		//check password
+		if (sht.isProtected()) {
+			final short hashpass = sht.getHashedPassword();
+			final short inputpass = WorkbookUtil.hashPassword(password);
+			if (inputpass != hashpass) {
+				return;
+			}
+		}
+		final SSheetProtection sp = sht.getSheetProtection();
+		sp.setSelectLockedCells(allowSelectingLockedCells);
+		sp.setSelectUnlockedCells(allowSelectingUnlockedCells);
+		sp.setFormatCells(allowFormattingCells);
+		sp.setFormatColumns(allowFormattingColumns);
+		sp.setFormatRows(allowFormattingRows);
+		sp.setInsertColumns(allowInsertColumns);
+		sp.setInsertRows(allowInsertRows);
+		sp.setInsertHyperlinks(allowInsertingHyperlinks);
+		sp.setDeleteColumns(allowDeletingColumns);
+		sp.setDeleteRows(allowDeletingRows);
+		sp.setSort(allowSorting);
+		sp.setAutoFilter(allowFiltering);
+		sp.setPivotTables(allowUsingPivotTables);
+		sp.setObjects(drawingObjects);
+		sp.setScenarios(scenarios);
+		
+		setPasswordInLock(sht, password);
+	}
+	
+	private void unprotectSheetInLock(SSheet sht, String password) {
+		final short hashpass = sht.getHashedPassword();
+		if (hashpass != 0) {
+			if (password == null || password.isEmpty()) {
+				//TODO: fire event to open the password dialog; refer updateChart()
+				return;
+			}
+			//check password
+			final short inputpass = WorkbookUtil.hashPassword(password);
+			if (inputpass != hashpass) {
+				throw new InvalidModelOpException("The password you supplied is not correct. Verify that the CAPS LOCK key is off and be sure to use the correct capitalization.");
+			}
+		}
+		setPasswordInLock(sht, null);
+	}
+	
+	private void setPasswordInLock(SSheet sheet, String password) {
+		if(sheet.isProtected() && password==null){
+			sheet.setPassword(null);
+			new NotifyChangeHelper().notifyProtectSheet(sheet,false);
+		}else if(!sheet.isProtected() && password!=null){
+			sheet.setPassword(password);
+			new NotifyChangeHelper().notifyProtectSheet(sheet,true);
+		}
+	}
+
+	@Override
+	public SSheetProtection getSheetProtection() {
+		return getSheet().getSheetProtection();
+	}
 }

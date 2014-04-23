@@ -231,9 +231,14 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 
 		sheet.setPassword(poiSheet.getProtect()?"":null);
 		
+		//import hashed password directly
+		importPassword(poiSheet, sheet);
+		
 		return sheet;
 	}
 
+	abstract protected void importPassword(Sheet poiSheet, SSheet sheet);
+	
 	protected void importMergedRegions(Sheet poiSheet, SSheet sheet) {
 		// merged cells
 		// reference RangeImpl.getMergeAreas()
@@ -489,7 +494,7 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 	 * @param sheet destination sheet
 	 */
 	private void importSheetProtection(Sheet poiSheet, SSheet sheet) {
-		SheetProtection sp = poiSheet.getSheetProtection();
+		SheetProtection sp = poiSheet.getOrCreateSheetProtection();
 		SSheetProtection ssp = sheet.getSheetProtection();
 		
 	    ssp.setAutoFilter(sp.isAutoFilter());

@@ -57,7 +57,7 @@ public class ImporterTest extends ImExpTestBase {
 		}
 		
 		assertEquals("XSSFBook", book.getBookName());
-		assertEquals(8, book.getNumOfSheet());
+		assertEquals(10, book.getNumOfSheet());
 	}
 	
 	@Test
@@ -70,7 +70,7 @@ public class ImporterTest extends ImExpTestBase {
 		}
 		
 		assertEquals("XSSFBook", book.getBookName());
-		assertEquals(8, book.getNumOfSheet());
+		assertEquals(10, book.getNumOfSheet());
 	}
 	
 	@Test
@@ -83,7 +83,7 @@ public class ImporterTest extends ImExpTestBase {
 		}
 		
 		assertEquals("XSSFBook", book.getBookName());
-		assertEquals(8, book.getNumOfSheet());
+		assertEquals(10, book.getNumOfSheet());
 	}
 	
 	//content

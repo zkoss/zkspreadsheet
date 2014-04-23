@@ -17,6 +17,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.range.impl.imexp;
 
 import org.zkoss.poi.hssf.usermodel.HSSFWorkbook;
+import org.zkoss.poi.hssf.usermodel.HSSFSheet;
 import org.zkoss.poi.ss.SpreadsheetVersion;
 import org.zkoss.poi.ss.usermodel.*;
 import org.zkoss.zss.model.*;
@@ -65,4 +66,14 @@ public class ExcelXlsExporter extends AbstractExcelExporter {
 		// not support in XLS
 	}
 
+	/**
+	 * Export hashed password directly to poiSheet.
+	 */
+	@Override
+	protected void exportPassword(SSheet sheet, Sheet poiSheet) {
+		short hashpass = sheet.getHashedPassword();
+		if (hashpass != 0) {
+			((HSSFSheet)poiSheet).setPasswordHash(hashpass);
+		}
+	}
 }

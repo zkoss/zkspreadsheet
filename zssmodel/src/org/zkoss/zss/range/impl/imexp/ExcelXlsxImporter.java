@@ -507,5 +507,11 @@ public class ExcelXlsxImporter extends AbstractExcelImporter{
 	protected void setBookType(SBook book){
 		book.setAttribute(BOOK_TYPE_KEY, "xlsx");
 	}
+
+	@Override
+	protected void importPassword(Sheet poiSheet, SSheet sheet) {
+		short hashpass = ((XSSFSheet)poiSheet).getPasswordHash(); 
+		sheet.setHashedPassword(hashpass);
+	}
 }
  

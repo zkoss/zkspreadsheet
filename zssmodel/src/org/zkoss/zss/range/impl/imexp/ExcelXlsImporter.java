@@ -24,6 +24,7 @@ import org.zkoss.poi.hssf.record.chart.*;
 import org.zkoss.poi.hssf.usermodel.*;
 import org.zkoss.poi.hssf.usermodel.HSSFChart.HSSFSeries;
 import org.zkoss.poi.ss.usermodel.*;
+import org.zkoss.poi.xssf.usermodel.XSSFSheet;
 import org.zkoss.zss.model.*;
 import org.zkoss.zss.model.SChart.ChartLegendPosition;
 import org.zkoss.zss.model.SChart.ChartType;
@@ -369,5 +370,11 @@ public class ExcelXlsImporter extends AbstractExcelImporter{
 	@Override
 	protected void setBookType(SBook book){
 		book.setAttribute(BOOK_TYPE_KEY, "xls");
+	}
+
+	@Override
+	protected void importPassword(Sheet poiSheet, SSheet sheet) {
+		short hashpass = ((HSSFSheet)poiSheet).getPasswordHash(); 
+		sheet.setHashedPassword(hashpass);
 	}
 }

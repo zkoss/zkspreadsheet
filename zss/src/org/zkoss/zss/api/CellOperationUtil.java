@@ -478,7 +478,8 @@ public class CellOperationUtil {
 		// use use cell visitor to visit cells respectively
 		// use BOOK level lock because we will create BOOK level Object (style,
 		// font)
-		if(range.isProtected())
+		// ZSS-576
+		if(range.isProtected() && !range.getSheetProtection().isFormatCellsAllowed())
 			return;
 		
 		if(applyer instanceof CellStyleApplierEx && (range.isWholeRow() || range.isWholeColumn())){
@@ -514,7 +515,8 @@ public class CellOperationUtil {
 	 * @param htmlColor the color of border(#rgb-hex-code, e.x #FF00FF) 
 	 */
 	public static void applyBorder(Range range,ApplyBorderType applyType,BorderType borderType,String htmlColor){
-		if(range.isProtected())
+		//ZSS-576
+		if(range.isProtected() && !range.getSheetProtection().isFormatCellsAllowed())
 			return;
 		//use range api directly,
 		range.applyBorders(applyType, borderType, htmlColor);
@@ -588,7 +590,8 @@ public class CellOperationUtil {
 	
 	
 	public static void applyHyperlink(Range range,HyperlinkType type,String address,String label) {
-		if(range.isProtected())
+		//ZSS-576
+		if(range.isProtected() && !range.getSheetProtection().isInsertHyperlinksAllowed())
 			return;
 		
 		range.setCellHyperlink(type, address, label);
@@ -612,7 +615,8 @@ public class CellOperationUtil {
 	 * @param range the range to be cleared
 	 */
 	public static void clearStyles(Range range) {
-		if(range.isProtected())
+		//ZSS-576
+		if(range.isProtected() && !range.getSheetProtection().isFormatCellsAllowed())
 			return;
 		range.clearStyles();
 		range.unmerge(); // don't forge to unmerge the cell as well (ZSS-298)
@@ -638,8 +642,14 @@ public class CellOperationUtil {
 	 */
 	public static void insert(Range range, InsertShift shift,
 			InsertCopyOrigin copyOrigin) {
-		if(range.isProtected())
-			return;
+		if(range.isProtected()) {
+			if (InsertShift.RIGHT.equals(shift)) { //RIGHT
+				if (!range.getSheetProtection().isInsertColumnsAllowed())
+					return;
+			} else if (!range.getSheetProtection().isInsertRowsAllowed()) { //DOWN or DEFAULT
+				return;
+			}
+		}
 		range.insert(shift, copyOrigin);
 	}
 	
@@ -665,8 +675,15 @@ public class CellOperationUtil {
 	 * @param shift the shift direction when deleting.
 	 */
 	public static void delete(Range range, DeleteShift shift) {
-		if(range.isProtected())
-			return;
+		//ZSS-576
+		if(range.isProtected()) { 
+			if (DeleteShift.LEFT.equals(shift)) { //LEFT
+				if (!range.getSheetProtection().isDeleteColumnsAllowed())
+					return;
+			} else if (!range.getSheetProtection().isDeleteRowsAllowed()) { //UP or DEFAULT
+				return;
+			}
+		}
 		range.delete(shift);
 	}
 	
@@ -692,7 +709,7 @@ public class CellOperationUtil {
 	 * @param desc true for descent, false for ascent
 	 */
 	public static void sort(Range range, boolean desc) {
-		if(range.isProtected())
+		if(range.isProtected() && !range.getSheetProtection().isSortAllowed())
 			return;
 		range.sort(desc);
 	}
@@ -709,7 +726,7 @@ public class CellOperationUtil {
 			boolean matchCase, 
 			boolean sortByRows 
 			) {
-		if(range.isProtected())
+		if(range.isProtected() && !range.getSheetProtection().isSortAllowed())
 			return;
 		range.sort(index1,desc1,dataOption1,index2,desc2,dataOption2,index3,desc3,dataOption3,header,matchCase,sortByRows);
 	}
@@ -719,8 +736,12 @@ public class CellOperationUtil {
 	 * @param range the range to hide
 	 */
 	public static void hide(Range range) {
-		if (range.isProtected())
-			return;
+		if (range.isProtected()) {
+			if (range.isWholeColumn() && !range.getSheetProtection().isFormatColumnsAllowed())
+				return;
+			if (range.isWholeRow() && !range.getSheetProtection().isFormatRowsAllowed())
+				return;
+		}
 		range.setHidden(true);
 	}
 	/**
@@ -728,8 +749,12 @@ public class CellOperationUtil {
 	 * @param range the range to un-hide
 	 */
 	public static void unhide(Range range) {
-		if (range.isProtected())
-			return;
+		if (range.isProtected()) {
+			if (range.isWholeColumn() && !range.getSheetProtection().isFormatColumnsAllowed())
+				return;
+			if (range.isWholeRow() && !range.getSheetProtection().isFormatRowsAllowed())
+				return;
+		}
 		range.setHidden(false);
 	}
 	
@@ -740,7 +765,11 @@ public class CellOperationUtil {
 	 * @param colOffset the column offset
 	 */
 	public static void shift(Range range, int rowOffset, int colOffset) {
+		//ZSS-576 
 		if(range.isProtected())
+			return;
+		final Range dstrange = range.toCellRange(rowOffset, colOffset);
+		if(dstrange.isProtected())
 			return;
 		range.shift(rowOffset, colOffset);
 	}

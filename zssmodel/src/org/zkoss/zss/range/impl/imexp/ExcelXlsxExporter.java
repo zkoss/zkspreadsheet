@@ -513,4 +513,14 @@ public class ExcelXlsxExporter extends AbstractExcelExporter {
 		}
 	}
 	
+	/**
+	 * Export hashed password directly to poiSheet.
+	 */
+	@Override
+	protected void exportPassword(SSheet sheet, Sheet poiSheet) {
+		short hashpass = sheet.getHashedPassword();
+		if (hashpass != 0) {
+			((XSSFSheet)poiSheet).setPasswordHash(hashpass);
+		}
+	}
 }

@@ -28,9 +28,21 @@ public class HideHeaderHandler extends AbstractProtectedHandler {
 		Sheet sheet = ctx.getSheet();
 		AreaRef selection = ctx.getSelection();
 		Range range = Ranges.range(sheet, selection);
-		if(range.isProtected()){
-			showProtectMessage();
-			return true;
+		//ZSS-576
+		if(range.isProtected()) {
+			switch(_type) {
+			case COLUMN:
+				if (!range.getSheetProtection().isFormatColumnsAllowed()) {
+					showProtectMessage();
+					return true;
+				}
+				break;
+			case ROW:
+				if (!range.getSheetProtection().isFormatRowsAllowed()) {
+					showProtectMessage();
+					return true;
+				}
+			}
 		}
 		
 		//ZSS-504, to prevent user's operation 

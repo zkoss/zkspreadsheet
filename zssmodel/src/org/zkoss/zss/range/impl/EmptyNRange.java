@@ -389,6 +389,11 @@ import org.zkoss.zss.range.*;
 	}
 
 	@Override
+	public boolean isProtected() {
+		return false;
+	}
+	
+	@Override
 	public boolean isSheetProtected() {
 		
 		return false;
@@ -437,5 +442,25 @@ import org.zkoss.zss.range.*;
 	@Override
 	public void createName(String nameName) {
 		
+	}
+	
+	@Override
+	public void protectSheet(String password,  
+			boolean allowSelectingLockedCells, boolean allowSelectingUnlockedCells,  
+			boolean allowFormattingCells, boolean allowFormattingColumns, boolean allowFormattingRows, 
+			boolean allowInsertColumns, boolean allowInsertRows, boolean allowInsertingHyperlinks,
+			boolean allowDeletingColumns, boolean allowDeletingRows, 
+			boolean allowSorting, boolean allowFiltering, boolean allowUsingPivotTables, 
+			boolean drawingObjects, boolean scenarios) {
+	}
+	
+	@Override
+	public void unprotectSheet(String password) {
+		
+	}
+	
+	@Override
+	public SSheetProtection getSheetProtection() {
+		return null;
 	}
 }

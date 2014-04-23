@@ -16,7 +16,19 @@ ZK Spreadsheet 3.5.0
   ZSS-641 Desktop not found if I submit the form.
   
 ** Upgrade Notes
-
+  * Following api are deprecated
+    * Range.protectSheet(String password): Use the new 
+      Range.protectSheet(String password,  
+        boolean allowSelectingLockedCells, boolean allowSelectingUnlockedCells,  
+        boolean allowFormattingCells, boolean allowFormattingColumns, boolean allowFormattingRows, 
+        boolean allowInsertColumns, boolean allowInsertRows, boolean allowInsertingHyperlinks,
+        boolean allowDeletingColumns, boolean allowDeletingRows, 
+        boolean allowSorting, boolean allowFiltering, boolean allowUsingPivotTables, 
+        boolean drawingObjects, boolean scenarios) 
+        
+      API instead to protect the sheet with more protection options; use the new
+      Range.unprotectSheet(String password) to unprotect the sheet; use the new
+      Range.getSheetProtection() to tell the current protection options.
 
  ------------
 ZK Spreadsheet 3.5.0 RC

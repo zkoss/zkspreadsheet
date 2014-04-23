@@ -282,10 +282,15 @@ public interface SSheet {
 	public void setPassword(String password);
 	
 	/**
-	 * Gets the password
+	 * Internal Use only.
 	 * @return
 	 */
-	public String getPassword();
+	public short getHashedPassword();
+	
+	/**
+	 * Internal User only.
+	 */
+	public void setHashedPassword(short hashpass);
 	
 	/**
 	 * Gets the auto filter information if there is.

@@ -37,6 +37,7 @@ import org.zkoss.zss.api.model.Hyperlink.HyperlinkType;
 import org.zkoss.zss.api.model.Picture;
 import org.zkoss.zss.api.model.Picture.Format;
 import org.zkoss.zss.api.model.Sheet;
+import org.zkoss.zss.api.model.SheetProtection;
 import org.zkoss.zss.api.model.impl.BookImpl;
 import org.zkoss.zss.api.model.impl.CellDataImpl;
 import org.zkoss.zss.api.model.impl.CellStyleImpl;
@@ -47,6 +48,7 @@ import org.zkoss.zss.api.model.impl.ModelRef;
 import org.zkoss.zss.api.model.impl.PictureImpl;
 import org.zkoss.zss.api.model.impl.SheetImpl;
 import org.zkoss.zss.api.model.impl.SimpleRef;
+import org.zkoss.zss.api.model.impl.SheetProtectionImpl;
 import org.zkoss.zss.model.CellRegion;
 import org.zkoss.zss.model.InvalidFormulaException;
 import org.zkoss.zss.model.SBook;
@@ -56,13 +58,17 @@ import org.zkoss.zss.model.SChart;
 import org.zkoss.zss.model.SHyperlink;
 import org.zkoss.zss.model.SPicture;
 import org.zkoss.zss.model.SSheet;
+import org.zkoss.zss.model.SSheetProtection;
 import org.zkoss.zss.model.ViewAnchor;
 import org.zkoss.zss.range.SRange;
 import org.zkoss.zss.range.SRanges;
 import org.zkoss.zss.range.impl.imexp.BookHelper;
 
 /**
- * 1.Range is not handling the protection issue, if you have handle it yourself before calling the api(by calling {@code #isProtected()})
+ * 1.Range does not handle the protection issue. By calling 
+ * {@link #isSheetProtected} and {@link #getSheetProtection}, you can handle
+ * it easily.
+ *  
  * @author dennis
  * @since 3.0.0
  */
@@ -156,7 +162,13 @@ public class RangeImpl implements Range{
 		return true;
 	}
 
+	@Override
 	public boolean isProtected() {
+		return _range.isProtected();
+	}
+	
+	@Override
+	public boolean isSheetProtected() {
 		return _range.isSheetProtected();
 	}	
 
@@ -470,7 +482,7 @@ public class RangeImpl implements Range{
 		_range.applyAutoFilter();
 	}
 	
-	/** enable sheet protection and apply a password**/
+	@Deprecated
 	public void protectSheet(String password){ 
 		_range.protectSheet(password);
 	}
@@ -688,5 +700,35 @@ public class RangeImpl implements Range{
 	@Override
 	public void createName(String nameName) {
 		_range.createName(nameName);
+	}
+	@Override
+	public void protectSheet(String password,
+			boolean allowSelectingLockedCells,
+			boolean allowSelectingUnlockedCells, boolean allowFormattingCells,
+			boolean allowFormattingColumns, boolean allowFormattingRows,
+			boolean allowInsertColumns, boolean allowInsertRows,
+			boolean allowInsertingHyperlinks, boolean allowDeletingColumns,
+			boolean allowDeletingRows, boolean allowSorting,
+			boolean allowFiltering, boolean allowUsingPivotTables,
+			boolean drawingObjects, boolean scenarios) {
+		_range.protectSheet(password,
+				allowSelectingLockedCells,
+				allowSelectingUnlockedCells, allowFormattingCells,
+				allowFormattingColumns, allowFormattingRows,
+				allowInsertColumns, allowInsertRows,
+				allowInsertingHyperlinks, allowDeletingColumns,
+				allowDeletingRows, allowSorting,
+				allowFiltering, allowUsingPivotTables,
+				drawingObjects, scenarios);
+	}
+	@Override
+	public void unprotectSheet(String password) {
+		_range.unprotectSheet(password);
+	}
+
+	@Override
+	public SheetProtection getSheetProtection() {
+		SSheetProtection ssp = _range.getSheetProtection();
+		return new SheetProtectionImpl(new SimpleRef<SSheet>(_range.getSheet()), new SimpleRef<SSheetProtection>(ssp));
 	}
 }

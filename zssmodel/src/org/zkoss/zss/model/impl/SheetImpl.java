@@ -69,7 +69,8 @@ public class SheetImpl extends AbstractSheetAdv {
 	private String _name;
 	private final String _id;
 	
-	private String _password;
+	private boolean _protected; //whether this sheet is protected
+	private short _password; //hashed password
 	
 	private SAutoFilter _autoFilter;
 	
@@ -1671,16 +1672,18 @@ public class SheetImpl extends AbstractSheetAdv {
 
 	@Override
 	public boolean isProtected() {
-		return _password!=null;
+		return _protected;
 	}
 
 	@Override
 	public void setPassword(String password) {
-		this._password = password;
+		_protected = password != null;
+		this._password = 
+			password == null || password.isEmpty() ? 0 : WorkbookUtil.hashPassword(password);
 	}
 	
 	@Override
-	public String getPassword() {
+	public short getHashedPassword() {
 		return this._password;
 	}
 
@@ -1810,5 +1813,10 @@ public class SheetImpl extends AbstractSheetAdv {
 			_sheetProtection = new SheetProtectionImpl();
 		}
 		return _sheetProtection;
+	}
+
+	@Override
+	public void setHashedPassword(short hashpass) {
+		_password = hashpass;
 	}
 }

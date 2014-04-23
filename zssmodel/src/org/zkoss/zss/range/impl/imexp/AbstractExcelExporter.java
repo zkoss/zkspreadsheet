@@ -62,6 +62,7 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 
 	abstract protected void exportAutoFilter(SSheet sheet, Sheet poiSheet);
 
+	abstract protected void exportPassword(SSheet sheet, Sheet poiSheet);
 	/**
 	 * Export the model according to reversed depended order: book, sheet,
 	 * defined name, cells, chart, pictures, validation. Because named ranges
@@ -96,7 +97,6 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 				exportPicture(sheet, poiSheet);
 				exportValidation(sheet, poiSheet);
 				exportAutoFilter(sheet, poiSheet);
-				exportSheetProtection(sheet, poiSheet);
 			}
 
 			workbook.write(fos);
@@ -139,8 +139,10 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 
 		poiSheet.setDisplayGridlines(sheet.getViewInfo().isDisplayGridlines());
 
+		exportSheetProtection(sheet, poiSheet);
 		if (sheet.isProtected()) {
-			poiSheet.protectSheet(""); // without password
+			poiSheet.protectSheet(""); // without password; set hashed password directly later
+			exportPassword(sheet, poiSheet);
 		}
 
 		poiSheet.setDefaultRowHeight((short) UnitUtil.pxToTwip(sheet.getDefaultRowHeight()));
@@ -421,7 +423,7 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 	 */
 	private void exportSheetProtection(SSheet sheet, Sheet poiSheet) {
 		SSheetProtection ssp = sheet.getSheetProtection();
-		SheetProtection sp = poiSheet.getSheetProtection();
+		SheetProtection sp = poiSheet.getOrCreateSheetProtection();
 		
 	    sp.setAutoFilter(ssp.isAutoFilter());
 	    sp.setDeleteColumns(ssp.isDeleteColumns());

@@ -680,4 +680,102 @@ C	3	6	9	=SUM(E9:F9)
 		}
 	}
 
+	@Test
+	public void testProtectSheet(){
+		SBook book = SBooks.createBook("book1");
+		SSheet sheet = book.createSheet("Sheet 1");
+		SRange rngA1 = SRanges.range(sheet,0,0); //A1
+
+		//protectSheet with all options set to true on "Sheet 1"
+		rngA1.protectSheet("abc", true, true, true, true, true, true, true, true, true, true, true, true, true, true, true);
+		SSheetProtection ssp = rngA1.getSheetProtection();
+		
+		Assert.assertTrue("protected", rngA1.isSheetProtected());
+		
+		Assert.assertTrue("AutoFilter", ssp.isAutoFilter());
+		Assert.assertTrue("DeleteColumns", ssp.isDeleteColumns());
+		Assert.assertTrue("DeleteRows", ssp.isDeleteRows());
+		Assert.assertTrue("FormatCells", ssp.isFormatCells());
+		Assert.assertTrue("FormatColumns", ssp.isFormatColumns());
+		Assert.assertTrue("FormatRows", ssp.isFormatRows());
+		Assert.assertTrue("InsertColumns", ssp.isInsertColumns());
+		Assert.assertTrue("InsertHyperlinks", ssp.isInsertHyperlinks());
+		Assert.assertTrue("InsertRows", ssp.isInsertRows());
+		Assert.assertTrue("Objects", ssp.isObjects());
+		Assert.assertTrue("PivotTables", ssp.isPivotTables());
+		Assert.assertTrue("Scenarios", ssp.isScenarios());
+		Assert.assertTrue("SelectLockedCells", ssp.isSelectLockedCells());
+		Assert.assertTrue("SelectUnlockedCells", ssp.isSelectUnlockedCells());
+		Assert.assertTrue("Sort", ssp.isSort());
+
+		//incorrect password, so it is not possible to change the protection options
+		rngA1.protectSheet("abcd", false, false, false, false, false, false, false, false, false, false, false, false, false, false, false);
+
+		Assert.assertTrue("protected", rngA1.isSheetProtected());
+		
+		Assert.assertTrue("AutoFilter", ssp.isAutoFilter());
+		Assert.assertTrue("DeleteColumns", ssp.isDeleteColumns());
+		Assert.assertTrue("DeleteRows", ssp.isDeleteRows());
+		Assert.assertTrue("FormatCells", ssp.isFormatCells());
+		Assert.assertTrue("FormatColumns", ssp.isFormatColumns());
+		Assert.assertTrue("FormatRows", ssp.isFormatRows());
+		Assert.assertTrue("InsertColumns", ssp.isInsertColumns());
+		Assert.assertTrue("InsertHyperlinks", ssp.isInsertHyperlinks());
+		Assert.assertTrue("InsertRows", ssp.isInsertRows());
+		Assert.assertTrue("Objects", ssp.isObjects());
+		Assert.assertTrue("PivotTables", ssp.isPivotTables());
+		Assert.assertTrue("Scenarios", ssp.isScenarios());
+		Assert.assertTrue("SelectLockedCells", ssp.isSelectLockedCells());
+		Assert.assertTrue("SelectUnlockedCells", ssp.isSelectUnlockedCells());
+		Assert.assertTrue("Sort", ssp.isSort());
+		
+		//correct password, option is changed
+		rngA1.protectSheet("abc", false, false, false, false, false, false, false, false, false, false, false, false, false, false, false);
+
+		Assert.assertTrue("protected", rngA1.isSheetProtected());
+		
+		Assert.assertFalse("AutoFilter", ssp.isAutoFilter());
+		Assert.assertFalse("DeleteColumns", ssp.isDeleteColumns());
+		Assert.assertFalse("DeleteRows", ssp.isDeleteRows());
+		Assert.assertFalse("FormatCells", ssp.isFormatCells());
+		Assert.assertFalse("FormatColumns", ssp.isFormatColumns());
+		Assert.assertFalse("FormatRows", ssp.isFormatRows());
+		Assert.assertFalse("InsertColumns", ssp.isInsertColumns());
+		Assert.assertFalse("InsertHyperlinks", ssp.isInsertHyperlinks());
+		Assert.assertFalse("InsertRows", ssp.isInsertRows());
+		Assert.assertFalse("Objects", ssp.isObjects());
+		Assert.assertFalse("PivotTables", ssp.isPivotTables());
+		Assert.assertFalse("Scenarios", ssp.isScenarios());
+		Assert.assertFalse("SelectLockedCells", ssp.isSelectLockedCells());
+		Assert.assertFalse("SelectUnlockedCells", ssp.isSelectUnlockedCells());
+		Assert.assertFalse("Sort", ssp.isSort());
+		
+		//unprotect with incorrect password; shall throw exception
+		try {
+			rngA1.unprotectSheet("abcd");
+			Assert.assertTrue("Should not come here! \"abcd\" is not the correct password", false);
+		}  catch(Exception ex) {
+			Assert.assertTrue(ex.getMessage(), true);
+		}
+		
+		//unprotect with correct password
+		rngA1.unprotectSheet("abc");
+		Assert.assertFalse("protected", rngA1.isSheetProtected());
+		
+		Assert.assertFalse("AutoFilter", ssp.isAutoFilter());
+		Assert.assertFalse("DeleteColumns", ssp.isDeleteColumns());
+		Assert.assertFalse("DeleteRows", ssp.isDeleteRows());
+		Assert.assertFalse("FormatCells", ssp.isFormatCells());
+		Assert.assertFalse("FormatColumns", ssp.isFormatColumns());
+		Assert.assertFalse("FormatRows", ssp.isFormatRows());
+		Assert.assertFalse("InsertColumns", ssp.isInsertColumns());
+		Assert.assertFalse("InsertHyperlinks", ssp.isInsertHyperlinks());
+		Assert.assertFalse("InsertRows", ssp.isInsertRows());
+		Assert.assertFalse("Objects", ssp.isObjects());
+		Assert.assertFalse("PivotTables", ssp.isPivotTables());
+		Assert.assertFalse("Scenarios", ssp.isScenarios());
+		Assert.assertFalse("SelectLockedCells", ssp.isSelectLockedCells());
+		Assert.assertFalse("SelectUnlockedCells", ssp.isSelectUnlockedCells());
+		Assert.assertFalse("Sort", ssp.isSort());
+	}
 }

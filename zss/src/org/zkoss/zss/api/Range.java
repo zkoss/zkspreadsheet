@@ -39,6 +39,7 @@ import org.zkoss.zss.api.model.Hyperlink.HyperlinkType;
 import org.zkoss.zss.api.model.Picture;
 import org.zkoss.zss.api.model.Picture.Format;
 import org.zkoss.zss.api.model.Sheet;
+import org.zkoss.zss.api.model.SheetProtection;
 import org.zkoss.zss.range.SRange;
 
 /**
@@ -543,12 +544,18 @@ public interface Range {
 	 * ==================================================
 	 */
 	
-	
 	/**
+	 * @deprecated use {@link #protectSheet(String password,  
+	 *		boolean allowSelectingLockedCells, boolean allowSelectingUnlockedCells,  
+	 *		boolean allowFormattingCells, boolean allowFormattingColumns, boolean allowFormattingRows, 
+	 *		boolean allowInsertColumns, boolean allowInsertRows, boolean allowInsertingHyperlinks,
+	 *		boolean allowDeletingColumns, boolean allowDeletingRows, 
+	 *		boolean allowSorting, boolean allowFiltering, 
+	 *		boolean allowUsingPivotTables, boolean drawingObjects, boolean scenarios)} instead
 	 * Enable sheet protection and apply a password, or null to disable protection
-	 **/
+	 */
 	public void protectSheet(String password);
-	
+
 	/**
 	 * Displays sheet grid-lines or not
 	 * @param enable true to display
@@ -593,7 +600,8 @@ public interface Range {
 	public int getSheetOrder();
 	
 	/**
-	 * @return ture if sheet is protected
+	 * @return true if the specified range is protected; i.e. sheet is protected
+	 * and some cells in the range are locked
 	 */
 	public boolean isProtected();
 	
@@ -796,4 +804,66 @@ public interface Range {
 	 * @since 3.5.0
 	 */
 	public void createName(String nameName);
+	
+	/**
+	 * @return true if the sheet is protected
+	 * @since 3.5.0
+	 */
+	public boolean isSheetProtected();
+	
+	/**
+	 * Protect a {@link Sheet} so that it cannot be modified. You can call 
+	 * this method on a protected sheet to change its allowed options if the 
+	 * same password is supplied; otherwise, it is ignored. A protected sheet
+	 * can be unprotected by calling {@link #unprotectSheet(String password)}.
+	 * 
+	 * change the protection options; make sure provide 
+	 * @param password a case-sensitive password for the sheet; null or empty string means protect the sheet without password.
+	 * @param allowSelectingLockedCells true to allow select locked cells; default to true.
+	 * @param allowSelectingUnlockedCells true to allow select unlocked cells; default to true.
+	 * @param allowFormattingCells true to allow user to format any cell on the protected sheet; default false.
+	 * @param allowFormattingColumns true to allow user to format any columns on the protected sheet; default false.
+	 * @param allowFormattingRows true to allow user to format any rows on the protected sheet; default false.
+	 * @param allowInsertColumns true to allow user to insert columns on the protected sheet; default false.
+	 * @param allowInsertRows true to allow user to insert rows on the protected sheet; default false.
+	 * @param allowInsertingHyperlinks true to allow user to insert hyperlinks on the protected sheet; default false.
+	 * @param allowDeletingColumns true to allow user to delete columns on the protected sheet; default false.
+	 * @param allowDeletingRows true to allow user to delete rows on the protected sheet; default false.
+	 * @param allowSorting true to allow user to sort on the protected sheet; default false.
+	 * @param allowFiltering true to allow user to set filters on the protected sheet; default false.
+	 * @param allowUsingPivotTables true to allow user to use pivot table reports on the protected sheet; default false.
+	 * @param drawingObjects true to protect objects; default to false.
+	 * @param scenarios true to protect scenarios; default to true.
+	 * 
+	 * @see #unprotectSheet(String password)
+	 * @see #isProtected()
+	 * @since 3.5.0
+	 */
+	public void protectSheet(String password,  
+			boolean allowSelectingLockedCells, boolean allowSelectingUnlockedCells,  
+			boolean allowFormattingCells, boolean allowFormattingColumns, boolean allowFormattingRows, 
+			boolean allowInsertColumns, boolean allowInsertRows, boolean allowInsertingHyperlinks,
+			boolean allowDeletingColumns, boolean allowDeletingRows, 
+			boolean allowSorting, boolean allowFiltering, 
+			boolean allowUsingPivotTables, boolean drawingObjects, boolean scenarios);
+	
+	/**
+	 * Removes protection from a sheet. This method has no effect if the sheet 
+	 * isn't protected.
+	 * @param password a case-sensitive password used to unprotect the sheet. If
+	 * the sheet isn't protected with a password, this argument is ignored. If you
+	 * omit this argument for a sheet that is protected with a password, you'll
+	 * be prompted for the password.
+	 * @since 3.5.0 
+	 */
+	public void unprotectSheet(String password);
+	
+	/**
+	 * Gets {@link SheetProtection} which tells what are allowed operations for 
+	 * a protected sheet of this range.
+	 * @return
+	 * @since 3.5.0
+	 */
+	public SheetProtection getSheetProtection();
+
 }

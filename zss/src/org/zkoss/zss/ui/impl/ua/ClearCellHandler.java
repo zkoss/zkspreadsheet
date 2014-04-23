@@ -54,10 +54,31 @@ public class ClearCellHandler extends AbstractProtectedHandler {
 		AreaRef selection = ctx.getSelection();
 		CellSelectionType type = ctx.getSelectionType();
 		Range range = Ranges.range(sheet, selection);
+		//ZSS-576
 		if(range.isProtected()){
-			showProtectMessage();
-			return true;
-		}		
+			switch(type) {
+			case ROW:
+				if (range.getSheetProtection().isFormatRowsAllowed()) { 
+					showProtectMessage();
+					return true;
+				}
+				break;
+			case COLUMN:
+			case ALL:
+				if (!range.getSheetProtection().isFormatColumnsAllowed()) {
+					showProtectMessage();
+					return true;
+				}
+				break;
+			case CELL:
+				if (!range.getSheetProtection().isFormatCellsAllowed()) {
+					showProtectMessage();
+					return true;
+				}
+				break;
+			}
+		}
+
 		//TODO support zss-623, the implementation of ClearCellAction doesn't support we do this here
 		switch(type){
 		case ROW:
