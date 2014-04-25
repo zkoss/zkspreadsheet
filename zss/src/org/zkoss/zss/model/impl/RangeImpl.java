@@ -329,7 +329,7 @@ public class RangeImpl implements Range {
 							setValue((Number)val): //number
 							setValue((Date)val); //date
 						if (values.length > 2 && values[2] != null) {
-							setDateFormat((String) values[2]);
+							setDataFormat((String) values[2]);
 						}
 						break;
 					case Cell.CELL_TYPE_ERROR:
@@ -344,7 +344,7 @@ public class RangeImpl implements Range {
 		}
 	}
 	
-	private void setDateFormat(String formatString) {
+	private void setDataFormat(String formatString) {
 		for(Ref ref : _refs) {
 			final int tRow = ref.getTopRow();
 			final int lCol = ref.getLeftCol();

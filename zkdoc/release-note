@@ -81,6 +81,7 @@ ZK Spreadsheet 2.6.0
 	ZSS-624 Copy a row on top of itself, get an error
 	ZSS-650 if destination are overlaps source area, copy and cut cells will be incorrect
 	ZSS-653 Invalid formula causes spreadsheet crash under IE 8
+	ZSS-629 Should handle special number input that will set number format such as number with thousand separator
 
 ZK Spreadsheet 2.5.0
 *Features:   
