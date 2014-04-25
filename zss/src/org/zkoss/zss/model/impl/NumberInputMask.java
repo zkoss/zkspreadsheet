@@ -190,6 +190,11 @@ public class NumberInputMask {
 				parenPos = j;
 				--len;
 				negative = true;
+			} else if (c == '-' || c == '+') {
+				signPos = j;
+				if (c == '-') {
+					negative = true;
+				}
 			} else {
 				return aStringResult;
 			}
@@ -271,11 +276,13 @@ public class NumberInputMask {
 				format = "0.00E+00";
 			} else if (percent) {
 				format = decimal ? "0.00%" : "0%";
-				val /= 100;
 			} else if (withCurrency) {
 				format = decimal ? "$#,##0.00_);[Red]($#,##0.00)" : "$#,##0_);[Red]($#,##0)"; 
 			} else if (commaPos > 0) {
 				format = decimal ? "#,##0.00" : "#,##0"; 
+			}
+			if (percent) {
+				val /= 100;
 			}
 			if (negative) {
 				val = -val;
