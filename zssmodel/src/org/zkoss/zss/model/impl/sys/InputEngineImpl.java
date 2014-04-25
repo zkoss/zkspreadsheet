@@ -32,6 +32,7 @@ import org.zkoss.zss.model.sys.input.InputResult;
 public class InputEngineImpl implements InputEngine{
 
 	static private DateInputMask _dateInputMask = new DateInputMask();
+	static private NumberInputMask _numberInputMask = new NumberInputMask();
 
 	@Override
 	public InputResult parseInput(String editText, String formatPattern, InputParseContext context) {
@@ -90,25 +91,33 @@ public class InputEngineImpl implements InputEngine{
 	}
 
 	private Object[] parseEditTextToDoubleDateOrString(String txt, Locale locale) {
-		//TODO prepare a NumberInputMask that will set number format if input with comma thousand separator.
-		//		final Locale locale = ZssContext.getCurrent().getLocale(); //ZSS-67
-		final char dot = Formatters.getDecimalSeparator(locale);
-		final char comma = Formatters.getGroupingSeparator(locale);
-		String txt0 = txt;
-		if (dot != '.' || comma != ',') {
-			final int dotPos = txt.lastIndexOf(dot);
-			txt0 = txt.replace(comma, ',');
-			if (dotPos >= 0) {
-				txt0 = txt0.substring(0, dotPos)+'.'+txt0.substring(dotPos+1);
-			}
-		}
-
-		try {
-			final Double val = Double.parseDouble(txt0);
-			return new Object[] {CellType.NUMBER, val}; //double
-		} catch (NumberFormatException ex) {
+		//ZSS-629: Accept numbers with comma thousand separators.
+		final Object[] results = _numberInputMask.parseNumberInput(txt, locale);
+		if (results[0] instanceof String) { 
 			return parseEditTextToDateOrString(txt, locale);
+		} else { //result[0] is number
+			return results;
 		}
+		
+//		//TODO prepare a NumberInputMask that will set number format if input with comma thousand separator.
+//		//		final Locale locale = ZssContext.getCurrent().getLocale(); //ZSS-67
+//		final char dot = Formatters.getDecimalSeparator(locale);
+//		final char comma = Formatters.getGroupingSeparator(locale);
+//		String txt0 = txt;
+//		if (dot != '.' || comma != ',') {
+//			final int dotPos = txt.lastIndexOf(dot);
+//			txt0 = txt.replace(comma, ',');
+//			if (dotPos >= 0) {
+//				txt0 = txt0.substring(0, dotPos)+'.'+txt0.substring(dotPos+1);
+//			}
+//		}
+//
+//		try {
+//			final Double val = Double.parseDouble(txt0);
+//			return new Object[] {CellType.NUMBER, val}; //double
+//		} catch (NumberFormatException ex) {
+//			return parseEditTextToDateOrString(txt, locale);
+//		}
 	}
 
 	private Object[] parseEditTextToDateOrString(String txt, Locale locale) {
