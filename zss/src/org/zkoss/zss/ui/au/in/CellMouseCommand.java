@@ -75,14 +75,14 @@ public class CellMouseCommand implements Command {
 			|| (("af".equals(type) || "dv".equals(type)) && data.size() != 10))
 			throw new UiException(MZk.ILLEGAL_REQUEST_WRONG_DATA, new Object[] {Objects.toString(data), this});
 		
-		int shx = (Integer) data.get("shx");//x offset against spreadsheet
-		int shy = (Integer) data.get("shy");
+		int shx = AuDataUtil.getInt(data, "shx");//ZSS-440//x offset against spreadsheet
+		int shy = AuDataUtil.getInt(data, "shy");//ZSS-440
 		int key = parseKeys((String) data.get("key"));
 		String sheetId = (String) data.get("sheetId");
 		int row = (Integer) data.get("row");
 		int col = (Integer) data.get("col");
-		int mx = (Integer) data.get("mx");//x offset against body
-		int my = (Integer) data.get("my");
+		int mx = AuDataUtil.getInt(data, "mx");//ZSS-440, //x offset against body
+		int my = AuDataUtil.getInt(data, "my");//ZSS-440
 		
 		Spreadsheet spreadsheet = (Spreadsheet) comp;
 		Worksheet sheet = ((Spreadsheet) comp).getSelectedSheet();

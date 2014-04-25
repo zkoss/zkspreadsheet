@@ -67,7 +67,7 @@ public class HeaderCommand implements Command {
 		int index = (Integer) data.get("index");
 		
 		if("size".equals(event)){
-			int newsize = (Integer) data.get("newsize");
+			int newsize = AuDataUtil.getInt(data, "newsize"); //ZSS-440
 			int id = (Integer) data.get("id");
 			boolean hidden = (Boolean) data.get("hidden");
 			((SpreadsheetInCtrl)spreadsheet.getExtraCtrl()).setColumnSize(sheetId, index, newsize,id, hidden);
@@ -91,7 +91,7 @@ public class HeaderCommand implements Command {
 		String event = (String) data.get("event");
 		int index = (Integer) data.get("index");
 		if("size".equals(event)){
-			int newsize = (Integer) data.get("newsize");
+			int newsize = AuDataUtil.getInt(data, "newsize"); //ZSS-440
 			int id = (Integer) data.get("id");
 			boolean hidden = (Boolean) data.get("hidden");
 			boolean isCustom= (Boolean) data.get("custom");

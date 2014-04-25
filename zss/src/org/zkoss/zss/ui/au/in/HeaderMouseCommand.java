@@ -55,13 +55,13 @@ public class HeaderMouseCommand implements Command {
 			return;
 		}
 		String type = (String) data.get("type");//x offset against spreadsheet
-		int shx = (Integer) data.get("shx");//x offset against spreadsheet
-		int shy = (Integer) data.get("shy");
+		int shx = AuDataUtil.getInt(data, "shx"); //ZSS-440 //x offset against spreadsheet
+		int shy = AuDataUtil.getInt(data, "shy"); //ZSS-440
 		int key = parseKeys((String) data.get("key"));
 		int row = (Integer) data.get("row");
 		int col = (Integer) data.get("col");
-		int mx = (Integer) data.get("mx");//x offset against body
-		int my = (Integer) data.get("my");
+		int mx = AuDataUtil.getInt(data, "mx");//ZSS-440 //x offset against body
+		int my = AuDataUtil.getInt(data, "my");//ZSS-440
 		
 		
 		if ("lc".equals(type)) {
