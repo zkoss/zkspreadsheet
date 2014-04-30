@@ -6,6 +6,7 @@ ZK Spreadsheet 2.6.0
 	ZSS-527 Enter formula with bad syntax, would like "bad" formula to remain in cell
 	ZSS-544 Support ignore row break and column break when export PDF
 	ZSS-475 Select shift and down arrow, scroll the screen automatically
+	ZSS-665 Smart number input handling
 
 *Bug
 	ZSS-171 Input "=" on cell shall not append cell reference
@@ -81,7 +82,6 @@ ZK Spreadsheet 2.6.0
 	ZSS-624 Copy a row on top of itself, get an error
 	ZSS-650 if destination are overlaps source area, copy and cut cells will be incorrect
 	ZSS-653 Invalid formula causes spreadsheet crash under IE 8
-	ZSS-629 Should handle special number input that will set number format such as number with thousand separator
 	ZSS-440 IE10 resizing column (java.lang.Double cannot be cast to java.lang.Integer)
 
 ZK Spreadsheet 2.5.0

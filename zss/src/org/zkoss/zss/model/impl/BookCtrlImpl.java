@@ -12,16 +12,13 @@ Copyright (C) 2010 Potix Corporation. All Rights Reserved.
 
 package org.zkoss.zss.model.impl;
 
-import java.util.Collections;
 import java.util.Iterator;
-import java.util.List;
 import java.util.WeakHashMap;
 
-import org.zkoss.poi.ss.usermodel.PivotCache;
-import org.zkoss.poi.ss.util.AreaReference;
 import org.zkoss.zss.engine.RefBook;
 import org.zkoss.zss.engine.impl.RefBookImpl;
 import org.zkoss.zss.model.Book;
+import org.zkoss.zss.model.NumberInputMask;
 import org.zkoss.zss.ui.Focus;
 
 /**
@@ -72,5 +69,10 @@ public class BookCtrlImpl implements BookCtrl {
 				it.remove();
 			}
 		}
+	}
+	
+	@Override
+	public NumberInputMask getNumberInputMask() {
+		return new NumberInputMaskImpl();
 	}
 }

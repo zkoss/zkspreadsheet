@@ -18,6 +18,7 @@ import org.zkoss.poi.ss.usermodel.PivotCache;
 import org.zkoss.poi.ss.util.AreaReference;
 import org.zkoss.zss.engine.RefBook;
 import org.zkoss.zss.model.Book;
+import org.zkoss.zss.model.NumberInputMask;
 
 /**
  * Book controls (Internal Use only).
@@ -49,4 +50,9 @@ public interface BookCtrl {
 	public void removeFocus(Object focus);
 	
 	public boolean containsFocus(Object focus);
+	
+	/**
+	 * @since 2.6.0
+	 */
+	public NumberInputMask getNumberInputMask();
 }

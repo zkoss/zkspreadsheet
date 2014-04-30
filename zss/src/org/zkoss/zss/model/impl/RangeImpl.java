@@ -283,8 +283,8 @@ public class RangeImpl implements Range {
 				final RefSheet refSheet = ref.getOwnerSheet();
 				final Cell cell = getCell(tRow, lCol, refSheet);
 				
-				final Object[] values = BookHelper.editTextToValue(txt, cell);
 				final Worksheet sheet = BookHelper.getSheet(_sheet, refSheet);
+				final Object[] values = BookHelper.editTextToValue(sheet.getBook(), txt, cell);
 				
 				final int cellType = values == null ? -1 : ((Integer)values[0]).intValue();
 				final Object value = values == null ? null : values[1];
@@ -305,8 +305,8 @@ public class RangeImpl implements Range {
 				final RefSheet refSheet = ref.getOwnerSheet();
 				final Cell cell = getCell(tRow, lCol, refSheet);
 				
-				final Object[] values = BookHelper.editTextToValue(txt, cell);
 				final Worksheet sheet = BookHelper.getSheet(_sheet, refSheet);
+				final Object[] values = BookHelper.editTextToValue(sheet.getBook(), txt, cell);
 				
 				final int cellType = values == null ? -1 : ((Integer)values[0]).intValue();
 				final Object value = values == null ? null : values[1];

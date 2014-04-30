@@ -32,6 +32,7 @@ import java.util.Set;
 import java.util.logging.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellFormula;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColor;
@@ -128,6 +129,7 @@ import org.zkoss.zss.engine.impl.MergeChange;
 import org.zkoss.zss.engine.impl.RefSheetImpl;
 import org.zkoss.zss.model.Book;
 import org.zkoss.zss.model.BookSeries;
+import org.zkoss.zss.model.NumberInputMask;
 import org.zkoss.zss.model.Range;
 import org.zkoss.zss.model.Worksheet;
 import org.zkoss.zss.ui.impl.Styles;
@@ -1367,11 +1369,11 @@ public final class BookHelper {
 	private static boolean isStringFormat(String formatStr) {
 		return "@".equals(formatStr); //TODO, shall prepare a reqular expression match check!
 	}
-	public static Object[] editTextToValue(String txt, Cell cell) {
+	public static Object[] editTextToValue(Book book, String txt, Cell cell) {
 		if (txt != null) {
 			final String formatStr = cell == null ? 
 					null : cell.getCellStyle().getDataFormatString();
-			return editTextToValue(txt, formatStr);
+			return editTextToValue(book, txt, formatStr);
 		}
 		return null;
 		
@@ -1383,7 +1385,7 @@ public final class BookHelper {
 	 * @return object array with the value type in 0(an Integer), 
 	 * 		the value in 1(an Object), and the format in 2(a String)   
 	 */
-	public static Object[] editTextToValue(String txt, String formatStr) {
+	public static Object[] editTextToValue(Book book, String txt, String formatStr) {
 		if (txt != null) {
 			//bug #300:	Numbers in Text-cells are not treated as text (leading zero is removed)
 			if (formatStr != null) {
@@ -1405,15 +1407,15 @@ public final class BookHelper {
 					new Object[] {Integer.valueOf(Cell.CELL_TYPE_STRING), txt}: //string
 					new Object[] {Integer.valueOf(Cell.CELL_TYPE_ERROR), new Byte(err)}; //error
 			} else {
-	            return parseEditTextToDoubleDateOrString(txt); //ZSS-67
+	            return parseEditTextToDoubleDateOrString((BookCtrl) book, txt); //ZSS-67
 			}
 		}
 		return null;
 	}
-	private static Object[] parseEditTextToDoubleDateOrString(String txt) {
+	private static Object[] parseEditTextToDoubleDateOrString(BookCtrl bookCtrl, String txt) {
 		//ZSS-629: Accept numbers with comma thousand separators.
 		final Locale locale = ZssContext.getCurrent().getLocale(); //ZSS-67
-		final Object[] results = new NumberInputMask().parseNumberInput(txt, locale);
+		final Object[] results = bookCtrl.getNumberInputMask().parseNumberInput(txt, locale);
 		if (results[0] instanceof String) { 
 			return parseEditTextToDateOrString(txt);
 		} else { //result[0] is number
@@ -4903,7 +4905,7 @@ public final class BookHelper {
 	}
 
 	private static CellValue getEvalValue(Worksheet sheet, String txt) {
-		final Object[] values = BookHelper.editTextToValue(txt, (String)null);
+		final Object[] values = BookHelper.editTextToValue(sheet.getBook(), txt, (String)null);
 		int cellType = values == null ? -1 : ((Integer)values[0]).intValue();
 		Object value = values == null ? null : values[1];
 		return getCellValue(sheet, cellType, value);

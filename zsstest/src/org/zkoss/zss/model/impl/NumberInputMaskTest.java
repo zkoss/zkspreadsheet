@@ -12,6 +12,7 @@ import java.util.Locale;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.zkoss.zss.model.NumberInputMask;
 
 /**
  * @author henri
@@ -142,7 +143,7 @@ public class NumberInputMaskTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
-		_formater = new NumberInputMask();
+		_formater = new org.zkoss.zssex.model.impl.NumberInputMaskImpl();
 	}
 
 	/**
