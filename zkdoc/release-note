@@ -3,6 +3,7 @@
 ZK Spreadsheet 3.5.0
 *Features:
   ZSS-651 Need to enhance performance for partial evaluation
+  ZSS-665 Smart number input handling
   
 *Bugs:
   ZSS-652 Cut Formula shouldn't be shifted when it is not in cut range
@@ -14,7 +15,6 @@ ZK Spreadsheet 3.5.0
   ZSS-658 Right click on cell only show style menupopup
   ZSS-661 Formula is incorrect after rename Name or it's refersTo region.
   ZSS-641 Desktop not found if I submit the form.
-  ZSS-629 Should handle special number input that will set number format such as number with thousand separator
   
 ** Upgrade Notes
   * Following api are deprecated

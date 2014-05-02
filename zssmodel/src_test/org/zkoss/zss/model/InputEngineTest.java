@@ -70,177 +70,43 @@ public class InputEngineTest {
 		Assert.assertEquals(CellType.ERROR,result.getType());
 		Assert.assertTrue(result.getValue() instanceof Byte);
 	}
-	
+
 	@Test
 	public void numericType(){
-		//separator without decimal
-		String[] editTexts = new String[] {"1,234,5678", "123,45678"};
-		for (String editText : editTexts) {
-			InputResult result = inputEngine.parseInput(editText, "", inputParseContext);
-			Assert.assertEquals(CellType.NUMBER,result.getType());
-			Assert.assertTrue(result.getValue() instanceof Double);
-			Assert.assertEquals(12345678.0, ((Double)result.getValue()).doubleValue());
-			Assert.assertEquals("#,##0", result.getFormat());
+		final Object OK[][] = {
+				{"123456", 123456, null},
+				{"-123456", -123456, null},
+				{"1E+10", 1E+10, null},
+				{"-1E+10", -1E+10, null},
+				{"1.23456", 1.23456, null},
+				{"-1.23456", -1.23456, null},
+				{"1E-25", 1E-25, null},
+				{"-1E-25", -1E-25, null},
+				{"0.025689", 0.025689, null},
+				{"-0.025689", -0.025689, null},
+		};
+		//legal case
+		for (int j = 0;  j < OK.length; ++j) {
+			Object[] item = OK[j];
+			InputResult result = inputEngine.parseInput((String)item[0],  "", inputParseContext);
+			Assert.assertEquals((String) item[0] + "->" + j, CellType.NUMBER,result.getType());
+			Assert.assertTrue((String) item[0] + "->" + j, result.getValue() instanceof Double);
+			Assert.assertEquals((String) item[0] + "->" + j, ((Number) item[1]).doubleValue(), ((Double)result.getValue()).doubleValue(), 0.000000000000001);
+			Assert.assertEquals((String) item[0] + "->" + j, (String) item[2], result.getFormat());
 		}
 		
-		//one parentheses with comma are legal as negative
-		editTexts = new String[] {"(123,4567)"};
-		for (String editText : editTexts) {
-			InputResult result = inputEngine.parseInput(editText, "", inputParseContext);
-			Assert.assertEquals(CellType.NUMBER,result.getType());
-			Assert.assertTrue(result.getValue() instanceof Double);
-			Assert.assertEquals(-1234567.0, ((Double)result.getValue()).doubleValue());
-			Assert.assertEquals("#,##0", result.getFormat());
-		}
-		
-		//separator with decimal
-		editTexts = new String[] {"1,234,567.0", "1,234,567.12", "12,4567.123"};
-		for (String editText : editTexts) {
-			InputResult result = inputEngine.parseInput(editText, "", inputParseContext);
-			Assert.assertEquals(CellType.NUMBER,result.getType());
-			Assert.assertTrue(result.getValue() instanceof Double);
-			Assert.assertEquals("#,##0.00", result.getFormat());
-		}
-		
-		//separator distance must > 3 digits(not legal)
-		editTexts = new String[] {"1,234,57", "12,456,81.9", "123,45E10"};
-		for (String editText : editTexts) {
-			InputResult result = inputEngine.parseInput(editText, "", inputParseContext);
-			Assert.assertEquals(CellType.STRING,result.getType());
-			Assert.assertTrue(result.getValue() instanceof String);
-			Assert.assertNull(result.getFormat());
-		}
-		
-		//percentage without decimal
-		editTexts = new String[] {"%-123", "-123%", "%(123)", "(123)%", "(%123)", "(123%)", "-((123)%)"};
-		for (String editText : editTexts) {
-			InputResult result = inputEngine.parseInput(editText, "", inputParseContext);
-			Assert.assertEquals(editText, CellType.NUMBER,result.getType());
-			Assert.assertTrue(result.getValue() instanceof Double);
-			Assert.assertEquals(-1.23, ((Double)result.getValue()).doubleValue());
-			Assert.assertEquals("0%", result.getFormat());
-		}
-		
-		//percentage with decimal
-		editTexts = new String[] {"%123.", "123.1%", "123.12%", "123.123%"};
-		for (String editText : editTexts) {
-			InputResult result = inputEngine.parseInput(editText, "", inputParseContext);
-			Assert.assertEquals(CellType.NUMBER,result.getType());
-			Assert.assertTrue(result.getValue() instanceof Double);
-			Assert.assertEquals("0.00%", result.getFormat());
-		}
-		
-		//two parentheses(not legal)
-		editTexts = new String[] {"%((123))", "((123))%", "((%123))", "((123%))", "-(%(123))"};
-		for (String editText : editTexts) {
-			InputResult result = inputEngine.parseInput(editText, "", inputParseContext);
-			Assert.assertEquals(CellType.STRING,result.getType());
-			Assert.assertTrue(result.getValue() instanceof String);
-			Assert.assertNull(result.getFormat());
-		}
-		
-		//one parentheses are legal as negative
-		editTexts = new String[] {"(123)"};
-		for (String editText : editTexts) {
-			InputResult result = inputEngine.parseInput(editText, "", inputParseContext);
-			Assert.assertEquals(CellType.NUMBER,result.getType());
-			Assert.assertTrue(result.getValue() instanceof Double);
-			Assert.assertEquals(-123.0, ((Double)result.getValue()).doubleValue());
-			Assert.assertNull(result.getFormat());
-		}
-		
-		//sign and parentheses are legal
-		editTexts = new String[] {"-(123)", "-+(123)", "+-(123)", "---(123)"};
-		for (String editText : editTexts) {
-			InputResult result = inputEngine.parseInput(editText, "", inputParseContext);
-			Assert.assertEquals(CellType.NUMBER,result.getType());
-			Assert.assertTrue(result.getValue() instanceof Double);
-			Assert.assertEquals(-123.0, ((Double)result.getValue()).doubleValue());
-			Assert.assertNull(result.getFormat());
-		}
-
-		//sign and parentheses are legal
-		editTexts = new String[] {"+(123)", "++(123)", "--(123)", "-+-(123)"};
-		for (String editText : editTexts) {
-			InputResult result = inputEngine.parseInput(editText, "", inputParseContext);
-			Assert.assertEquals(CellType.NUMBER,result.getType());
-			Assert.assertTrue(result.getValue() instanceof Double);
-			Assert.assertEquals(123.0, ((Double)result.getValue()).doubleValue());
-			Assert.assertNull(result.getFormat());
-		}
-
-		//sign and multiple parentheses are legal
-		editTexts = new String[] {"+((123))", "++(((123)))", "--((((123))))", "-+-(((((123)))))"};
-		for (String editText : editTexts) {
-			InputResult result = inputEngine.parseInput(editText, "", inputParseContext);
-			Assert.assertEquals(CellType.NUMBER,result.getType());
-			Assert.assertTrue(result.getValue() instanceof Double);
-			Assert.assertEquals(123.0, ((Double)result.getValue()).doubleValue());
-			Assert.assertNull(result.getFormat());
-		}
-
-		//sign and parentheses and thousand seperators (not legal)
-		editTexts = new String[] {"+(1,234)", "++(1,234)", "--(1,234)", "-+-(1,234)"};
-		for (String editText : editTexts) {
-			InputResult result = inputEngine.parseInput(editText, "", inputParseContext);
-			Assert.assertEquals(CellType.STRING,result.getType());
-			Assert.assertTrue(result.getValue() instanceof String);
-			Assert.assertNull(result.getFormat());
-		}
-
-		//currency without decimal
-		editTexts = new String[] {"$1234567", "$1,234,567", "$123,4567", "$1234567"};
-		for (String editText : editTexts) {
-			InputResult result = inputEngine.parseInput(editText, "", inputParseContext);
-			Assert.assertEquals(CellType.NUMBER,result.getType());
-			Assert.assertTrue(result.getValue() instanceof Double);
-			Assert.assertEquals(1234567.0, ((Double)result.getValue()).doubleValue());
-			Assert.assertEquals("$#,##0_);[Red]($#,##0)", result.getFormat());
-		}
-		
-		//currency with decimal
-		editTexts = new String[] {"$1234567.89", "$1,234,567.89", "$123,4567.89", "$1234567.89"};
-		for (String editText : editTexts) {
-			InputResult result = inputEngine.parseInput(editText, "", inputParseContext);
-			Assert.assertEquals(CellType.NUMBER,result.getType());
-			Assert.assertEquals(1234567.89, ((Double)result.getValue()).doubleValue());
-			Assert.assertEquals("$#,##0.00_);[Red]($#,##0.00)", result.getFormat());
-		}
-		
-		//currency with decimal
-		editTexts = new String[] {"$(1234567.89)", "-$1234567.89", "($1,234,567.89)", "$(123,4567.89)", "-$123,4567.89", "$-123,4567.89"};
-		for (String editText : editTexts) {
-			InputResult result = inputEngine.parseInput(editText, "", inputParseContext);
-			Assert.assertEquals(CellType.NUMBER,result.getType());
-			Assert.assertEquals(-1234567.89, ((Double)result.getValue()).doubleValue());
-			Assert.assertEquals("$#,##0.00_);[Red]($#,##0.00)", result.getFormat());
-		}
-		
-		//scientific
-		editTexts = new String[] {"1234567E1", "1,234567E1", "123,4567E1", "1234567E1", "1,234,567E1"};
-		for (String editText : editTexts) {
-			InputResult result = inputEngine.parseInput(editText, "", inputParseContext);
-			Assert.assertEquals(CellType.NUMBER,result.getType());
-			Assert.assertEquals(12345670.0, ((Double)result.getValue()).doubleValue());
-			Assert.assertEquals("0.00E+00", result.getFormat());
-		}
-
-		//scientific mixed with currency/parenthesis
-		editTexts = new String[] {"(1,234567E1)", "-123,4567E1", "-$1234567E1", "($1,234,567E1)", "$(1,234,567E1)"};
-		for (String editText : editTexts) {
-			InputResult result = inputEngine.parseInput(editText, "", inputParseContext);
-			Assert.assertEquals(CellType.NUMBER,result.getType());
-			Assert.assertEquals(-12345670.0, ((Double)result.getValue()).doubleValue());
-			Assert.assertEquals("0.00E+00", result.getFormat());
-		}
-    
-	    //exponential mixed with percent
-		editTexts = new String[] {"(1,234567E1)%", "%(1,234567E1)"};
-		for (String editText : editTexts) {
-			InputResult result = inputEngine.parseInput(editText, "", inputParseContext);
-			Assert.assertEquals(editText, CellType.NUMBER,result.getType());
-			Assert.assertEquals(editText, -123456.70, ((Double)result.getValue()).doubleValue());
-			Assert.assertEquals(editText, "0.00E+00", result.getFormat());
+		final String FAIL[] = {
+			"a123", 
+			"e123", 
+			"12 23",
+		};
+		//illegal case (a String)
+		for (int j = 0; j < FAIL.length; ++j) {
+			String item = FAIL[j];
+			InputResult result = inputEngine.parseInput(item, "", inputParseContext);
+			Assert.assertEquals(item + "->" + j, CellType.STRING,result.getType());
+			Assert.assertTrue(item + "->" + j, result.getValue() instanceof String);
+			Assert.assertNull(item + "->" + j, result.getFormat());
 		}
 	}
 	

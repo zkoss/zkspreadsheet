@@ -55,16 +55,40 @@ public class EngineFactory {
 		return _instance;
 	}
 
+	static InputEngine _inputEngine;
+	static Class<?> inputEngineClazz;
+	static {
+		String clz = Library.getProperty("org.zkoss.zss.model.InputEngine.class");
+		if(clz!=null){
+			try {
+				inputEngineClazz = Class.forName(clz);
+			} catch(Exception e) {
+				_logger.error(e.getMessage(), e);
+			}			
+		}
+		
+	}
 	public InputEngine createInputEngine() {
-		return new InputEngineImpl();
+		if (_inputEngine == null) {
+			try {
+				if(inputEngineClazz != null) {
+					return (_inputEngine = (InputEngine)inputEngineClazz.newInstance());
+				}
+			} catch(Exception e) {
+				_logger.error(e.getMessage(), e);
+				inputEngineClazz = null;
+			}
+			_inputEngine = new InputEngineImpl();
+		}
+		return _inputEngine;
 	}
 
-	static Class<?> formulaEnginClazz;
+	static Class<?> formulaEngineClazz;
 	static {
 		String clz = Library.getProperty("org.zkoss.zss.model.FormulaEngine.class");
 		if(clz!=null){
 			try {
-				formulaEnginClazz = Class.forName(clz);
+				formulaEngineClazz = Class.forName(clz);
 			} catch(Exception e) {
 				_logger.error(e.getMessage(), e);
 			}			
@@ -74,12 +98,12 @@ public class EngineFactory {
 	
 	public FormulaEngine createFormulaEngine() {
 		try {
-			if(formulaEnginClazz != null) {
-				return (FormulaEngine)formulaEnginClazz.newInstance();
+			if(formulaEngineClazz != null) {
+				return (FormulaEngine)formulaEngineClazz.newInstance();
 			}
 		} catch(Exception e) {
 			_logger.error(e.getMessage(), e);
-			formulaEnginClazz = null;
+			formulaEngineClazz = null;
 		}
 		return new FormulaEngineImpl();
 	}
