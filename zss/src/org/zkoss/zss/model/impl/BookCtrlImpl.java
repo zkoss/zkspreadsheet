@@ -14,6 +14,9 @@ package org.zkoss.zss.model.impl;
 
 import java.util.Iterator;
 import java.util.WeakHashMap;
+import java.util.Locale;
+
+import org.zkoss.poi.ss.format.CellFormat;
 
 import org.zkoss.zss.engine.RefBook;
 import org.zkoss.zss.engine.impl.RefBookImpl;
@@ -74,5 +77,10 @@ public class BookCtrlImpl implements BookCtrl {
 	@Override
 	public NumberInputMask getNumberInputMask() {
 		return new NumberInputMaskImpl();
+	}
+	
+	@Override
+	public CellFormat getCellFormat(String formatStr, Locale locale) {
+		return CellFormat.getInstance(formatStr == null ? "" : formatStr, locale);
 	}
 }

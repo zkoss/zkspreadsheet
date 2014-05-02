@@ -1016,8 +1016,8 @@ public final class BookHelper {
 	public static FormatTextImpl getFormatText(Cell cell) {
 		int cellType = cell.getCellType();
         final String formatStr = cell.getCellStyle().getDataFormatString();
+		final Book book = (Book)cell.getSheet().getWorkbook();
 		if (cellType == Cell.CELL_TYPE_FORMULA) {
-			final Book book = (Book)cell.getSheet().getWorkbook();
 			final CellValue cv = BookHelper.evaluate(book, cell);
 			cellType = cv.getCellType();
 //			final Hyperlink hyperlink = cv.getEvalHyperlink();
@@ -1030,8 +1030,8 @@ public final class BookHelper {
 				return new FormatTextImpl(cell.getRichStringCellValue());
 			}
 		}
-	
-		final CellFormat format = CellFormat.getInstance(formatStr == null ? "" : formatStr, ZssContext.getCurrent().getLocale()); //ZSS-68
+		
+		final CellFormat format = ((BookCtrl)book).getCellFormat(formatStr, ZssContext.getCurrent().getLocale()); 
 		return new FormatTextImpl(format.apply(cell));
 	}
 

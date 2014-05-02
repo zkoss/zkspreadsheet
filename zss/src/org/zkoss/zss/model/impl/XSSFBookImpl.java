@@ -18,6 +18,7 @@ import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.Locale;
 
 import org.openxmlformats.schemas.officeDocument.x2006.docPropsVTypes.CTVariant;
 import org.openxmlformats.schemas.officeDocument.x2006.docPropsVTypes.CTVector;
@@ -34,6 +35,7 @@ import org.zkoss.poi.ss.formula.SheetNameFormatter;
 import org.zkoss.poi.ss.formula.WorkbookEvaluator;
 import org.zkoss.poi.ss.formula.ptg.Ptg;
 import org.zkoss.poi.ss.formula.udf.UDFFinder;
+import org.zkoss.poi.ss.format.CellFormat;
 import org.zkoss.poi.ss.usermodel.Color;
 import org.zkoss.poi.ss.usermodel.Font;
 import org.zkoss.poi.ss.usermodel.FormulaEvaluator;
@@ -440,5 +442,10 @@ public class XSSFBookImpl extends XSSFWorkbook implements Book, BookCtrl {
 	@Override
 	public NumberInputMask getNumberInputMask() {
 		return getBookCtrl().getNumberInputMask();
+	}
+	
+	@Override
+	public CellFormat getCellFormat(String formatStr, Locale locale) {
+		return getBookCtrl().getCellFormat(formatStr, locale);
 	}
 }

@@ -1301,6 +1301,7 @@ public class RangeImpl implements Range {
 		final Set<Ref> affected = new HashSet<Ref>();
 		affected.add(dstRef.isWholeColumn() ? dstRef : new AreaRefImpl(0, dstlCol, maxrow, dstRef.getRightCol(), dstRefSheet));
 		BookHelper.notifySizeChanges(book, affected);
+		BookHelper.notifyCellChanges(book, affected); //ZSS-666
 	}
 	
 	private Ref copyRef(Ref srcRef, int colRepeat, int rowRepeat, Ref dstRef, int pasteType, int pasteOp, boolean skipBlanks, boolean transpose, ChangeInfo info) {
@@ -1470,9 +1471,10 @@ public class RangeImpl implements Range {
 				final int rCol = ref.getRightCol();
 				final Worksheet sheet = BookHelper.getSheet(_sheet, refSheet);
 				final Set<Ref> all = BookHelper.setColumnWidth(sheet, lCol, rCol, char256);
-				if (all != null) {
-					final Book book = (Book) _sheet.getWorkbook();
+				final Book book = (Book) _sheet.getWorkbook();
+				if (!all.isEmpty()) {
 					BookHelper.notifySizeChanges(book, all);
+					BookHelper.notifyCellChanges(book, all); //ZSS-666
 				}
 			}
 		}

@@ -12,13 +12,15 @@ Copyright (C) 2010 Potix Corporation. All Rights Reserved.
 
 package org.zkoss.zss.model.impl;
 
-import java.util.List;
+import java.util.Locale;
 
-import org.zkoss.poi.ss.usermodel.PivotCache;
-import org.zkoss.poi.ss.util.AreaReference;
+import org.zkoss.poi.ss.format.CellFormat;
+
 import org.zkoss.zss.engine.RefBook;
 import org.zkoss.zss.model.Book;
 import org.zkoss.zss.model.NumberInputMask;
+
+
 
 /**
  * Book controls (Internal Use only).
@@ -55,4 +57,9 @@ public interface BookCtrl {
 	 * @since 2.6.0
 	 */
 	public NumberInputMask getNumberInputMask();
+	
+	/**
+	 * @since 2.6.0
+	 */
+	public CellFormat getCellFormat(String formatStr, Locale locale);
 }

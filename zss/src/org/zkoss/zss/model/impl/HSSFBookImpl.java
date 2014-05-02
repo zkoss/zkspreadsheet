@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.Locale;
 
 import org.zkoss.lang.Classes;
 import org.zkoss.lang.Library;
@@ -32,6 +33,7 @@ import org.zkoss.poi.ss.SpreadsheetVersion;
 import org.zkoss.poi.ss.formula.WorkbookEvaluator;
 import org.zkoss.poi.ss.formula.ptg.Ptg;
 import org.zkoss.poi.ss.formula.udf.UDFFinder;
+import org.zkoss.poi.ss.format.CellFormat;
 import org.zkoss.poi.ss.usermodel.Color;
 import org.zkoss.poi.ss.usermodel.Font;
 import org.zkoss.poi.ss.usermodel.FormulaEvaluator;
@@ -363,5 +365,10 @@ public class HSSFBookImpl extends HSSFWorkbook implements Book, BookCtrl {
 	@Override
 	public NumberInputMask getNumberInputMask() {
 		return getBookCtrl().getNumberInputMask();
+	}
+	
+	@Override
+	public CellFormat getCellFormat(String formatStr, Locale locale) {
+		return getBookCtrl().getCellFormat(formatStr, locale);
 	}
 }
