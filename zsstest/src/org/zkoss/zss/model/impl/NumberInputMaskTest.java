@@ -22,7 +22,6 @@ public class NumberInputMaskTest {
 	NumberInputMask _formater;
 
 	private static final Object OK[][] = {
-		
 		//thousand separator
 		{"1,234,5678", 12345678.0, "#,##0"},
 		{"123,45678", 12345678.0, "#,##0"},
@@ -100,6 +99,12 @@ public class NumberInputMaskTest {
 		{"123,4567E1", 12345670, "0.00E+00"},
 		{"1234567E1", 12345670, "0.00E+00"},
 		{"1,234,567E1", 12345670, "0.00E+00"},
+		{"+1.23456789E-112", 1.23456789E-112, "0.00E+00"},
+		{"-1.23456789E-112", -1.23456789E-112, "0.00E+00"},
+		{"1E+12", 1E+12, "0.00E+00"},
+		{"-1E-11", -1E-11, "0.00E+00"},
+		{"1.E+12", 1E+12, "0.00E+00"},
+		{"-1.E-11", -1E-11, "0.00E+00"},
 		
 		//scientific with currency/parenthesis/percent
 		{"(1,234567E1)", -12345670, "0.00E+00"},
@@ -109,6 +114,7 @@ public class NumberInputMaskTest {
 		{"$(1,234,567E1)", -12345670, "0.00E+00"},
 		{"(1,234567E1)%", -123456.70, "0.00E+00"},
 		{"%(1,234567E1)", -123456.70, "0.00E+00"},
+		
 	};
 	
 	private static final String FAIL[] = {
@@ -135,7 +141,14 @@ public class NumberInputMaskTest {
 		
 		//currency and percent not allowed 
 		"$(123)%", 
-		"$(123E1)%", 
+		"$(123E1)%",
+		
+		//empty in the number
+		"+1.23456789E -112",
+		"-1.23456789E +112",
+		"+1.23456789 E-112",
+		"-1.23456789 E+112",
+
 	};
 	
 	/**
