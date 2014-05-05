@@ -22,6 +22,14 @@ public class NumberInputMaskTest {
 	NumberInputMask _formater;
 
 	private static final Object OK[][] = {
+		//simple case
+		{"1", 1., null},
+		{"123", 123., null},
+		{"-123", -123., null},
+		{"-123.", -123., null},
+		{"+123", 123., null},
+		{"+123.", 123., null},
+		
 		//thousand separator
 		{"1,234,5678", 12345678.0, "#,##0"},
 		{"123,45678", 12345678.0, "#,##0"},
@@ -33,6 +41,8 @@ public class NumberInputMaskTest {
 		
 		
 		//percent without decimal
+		{"1%", 0.01, "0%"},
+		{"%1", 0.01, "0%"},
 		{"%123", 1.23, "0%"},
 		{"123%", 1.23, "0%"},
     
@@ -118,6 +128,16 @@ public class NumberInputMaskTest {
 	};
 	
 	private static final String FAIL[] = {
+		//simple case
+		"",
+		"+",
+		"-",
+		"%",
+		",",
+		".",
+		"a1",
+		"1e",
+		
 		//separator distance must >= 3
 		"1,234,57", 
 		"12,456,81.9", 
