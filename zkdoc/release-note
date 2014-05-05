@@ -7,6 +7,7 @@ ZK Spreadsheet 2.6.0
 	ZSS-544 Support ignore row break and column break when export PDF
 	ZSS-475 Select shift and down arrow, scroll the screen automatically
 	ZSS-665 Smart number input handling
+	ZSS-666 Smart number "General" formatting
 
 *Bug
 	ZSS-171 Input "=" on cell shall not append cell reference
