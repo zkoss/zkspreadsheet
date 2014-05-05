@@ -15,6 +15,7 @@ ZK Spreadsheet 3.5.0
   ZSS-658 Right click on cell only show style menupopup
   ZSS-661 Formula is incorrect after rename Name or it's refersTo region.
   ZSS-641 Desktop not found if I submit the form.
+  ZSS-662 Paste large text into a cell, visible area of the worksheet moves to the left
   
 ** Upgrade Notes
   * Following api are deprecated
