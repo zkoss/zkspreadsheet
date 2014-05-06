@@ -656,6 +656,7 @@ public class RangeImpl implements SRange {
 			}
 		}
 		new NotifyChangeHelper().notifyRowColumnSizeChange(notifySet);
+		new NotifyChangeHelper().notifyCellChange(notifySet); //ZSS-666
 	}
 
 	@Override

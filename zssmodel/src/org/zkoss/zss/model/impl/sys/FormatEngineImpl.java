@@ -32,6 +32,8 @@ import org.zkoss.zss.model.sys.EngineFactory;
 import org.zkoss.zss.model.sys.format.FormatContext;
 import org.zkoss.zss.model.sys.format.FormatEngine;
 import org.zkoss.zss.model.sys.format.FormatResult;
+import org.zkoss.zss.range.impl.imexp.AbstractExcelImporter;
+import org.zkoss.zss.range.impl.imexp.UnitUtil;
 /**
  * 
  * @author Hawk
@@ -59,13 +61,20 @@ public class FormatEngineImpl implements FormatEngine {
 		}else if(type==CellType.ERROR){
 			return new FormatResultImpl(cell.getErrorValue().getErrorString(),null);//no color as well
 		}
-		return format0(cell.getCellStyle().getDataFormat(), cell.getCellStyle().isDirectDataFormat(), cell.getValue(), context);
+		final int cellWidth = getCellWidth256(cell) >> 8;
+		return format0(cell.getCellStyle().getDataFormat(), cell.getCellStyle().isDirectDataFormat(), cell.getValue(), context, cellWidth);
 	}
 	@Override
-	public FormatResult format(String format, Object value, FormatContext context){
-		return format0(format,false,value,context);
+	public FormatResult format(String format, Object value, FormatContext context, int cellWidth){
+		return format0(format,false,value,context,cellWidth);
 	}
-	private FormatResult format0(String format, boolean direct,Object value, FormatContext context){
+
+	//ZSS-666
+	protected CellFormat getCellFormat(String formatStr, Locale locale) {
+		return CellFormat.getInstance(formatStr, locale);
+	}
+	
+	private FormatResult format0(String format, boolean direct,Object value, FormatContext context, int cellWidth){
 		ZssContext old = ZssContext.getThreadLocal();
 		try{
 			ZssContext zssContext = old==null?new ZssContext(context.getLocale(),-1): new ZssContext(context.getLocale(),old.getTwoDigitYearUpperBound());
@@ -81,7 +90,7 @@ public class FormatEngineImpl implements FormatEngine {
 			}
 			format = normalizeFormat(format);
 			
-			CellFormat formatter = CellFormat.getInstance(format, context.getLocale());
+			CellFormat formatter = getCellFormat(format, context.getLocale()); //ZSS-666
 			Format javaFormat = null;
 			if(value instanceof Number){//provide format object for further use
 				javaFormat = DataFormatter.getJavaFormat(((Number)value).doubleValue(),format,context.getLocale());
@@ -91,7 +100,7 @@ public class FormatEngineImpl implements FormatEngine {
 				value = EngineFactory.getInstance().getCalendarUtil().doubleValueToDate((Double)value);
 				dateFromatted = true;
 			}
-			return new FormatResultImpl(formatter.apply(value), javaFormat, dateFromatted);
+			return new FormatResultImpl(formatter.apply(value, cellWidth), javaFormat, dateFromatted);
 		}finally{
 			ZssContext.setThreadLocal(old);
 		}
@@ -212,5 +221,13 @@ public class FormatEngineImpl implements FormatEngine {
 			return ((Number)value).intValue() ==  ((Number)value).doubleValue();
 		}
 		return false;
+	}
+	
+	//ZSS-666
+	//get column width form  pixel to char256
+	public static int getCellWidth256(SCell cell) {
+		//1 border + 2 * padding(2px) => 5
+		final int px = cell.getSheet().getColumn(cell.getColumnIndex()).getWidth() - 5;
+		return UnitUtil.pxToFileChar256(px, AbstractExcelImporter.CHRACTER_WIDTH);
 	}
 }

@@ -49,6 +49,6 @@ public interface FormatEngine {
 	 * Format the value
 	 * @see #getLocalizedFormat(String, FormatContext)
 	 */
-	FormatResult format(String format, Object value, FormatContext ctx);
+	FormatResult format(String format, Object value, FormatContext ctx, int cellWidth);
 	
 }

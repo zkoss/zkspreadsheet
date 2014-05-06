@@ -112,8 +112,32 @@ public class EngineFactory {
 		return new DependencyTableImpl();
 	}
 	
+	static FormatEngine _formatEngine;
+	static Class<?> formatEngineClazz;
+	static {
+		String clz = Library.getProperty("org.zkoss.zss.model.FormatEngine.class");
+		if(clz!=null){
+			try {
+				formatEngineClazz = Class.forName(clz);
+			} catch(Exception e) {
+				_logger.error(e.getMessage(), e);
+			}			
+		}
+		
+	}
 	public FormatEngine createFormatEngine() {
-		return new FormatEngineImpl();
+		if (_formatEngine == null) {
+			try {
+				if(formatEngineClazz != null) {
+					return (_formatEngine = (FormatEngine)formatEngineClazz.newInstance());
+				}
+			} catch(Exception e) {
+				_logger.error(e.getMessage(), e);
+				formatEngineClazz = null;
+			}
+			_formatEngine = new FormatEngineImpl();
+		}
+		return _formatEngine;
 	}
 	
 	public CalendarUtil getCalendarUtil(){
