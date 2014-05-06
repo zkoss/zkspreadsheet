@@ -4,6 +4,7 @@ ZK Spreadsheet 3.5.0
 *Features:
   ZSS-651 Need to enhance performance for partial evaluation
   ZSS-665 Smart number input handling
+  ZSS-666 Smart number "General" formatting
   
 *Bugs:
   ZSS-652 Cut Formula shouldn't be shifted when it is not in cut range
