@@ -35,7 +35,7 @@ import org.zkoss.zss.ui.sys.UndoableActionManager;
  * @author dennis
  *
  */
-public class FillColorHandler extends AbstractProtectedHandler {
+public class FillColorHandler extends AbstractCellHandler {
 
 	@Override
 	protected boolean processAction(UserActionContext ctx) {
@@ -44,28 +44,10 @@ public class FillColorHandler extends AbstractProtectedHandler {
 		CellSelectionType type = ctx.getSelectionType();
 		Range range = Ranges.range(sheet, selection);
 		//ZSS-576
-		if(range.isProtected()) {
-			switch(type) {
-			case ROW:
-				if (!range.getSheetProtection().isFormatRowsAllowed()) {
-					showProtectMessage();
-					return true;
-				}
-				break;
-			case COLUMN:
-			case ALL:
-				if (!range.getSheetProtection().isFormatColumnsAllowed()) {
-					showProtectMessage();
-					return true;
-				}
-				break;
-			case CELL:
-				if (!range.getSheetProtection().isFormatCellsAllowed()) {
-					showProtectMessage();
-					return true;
-				}
-			}
-		}		
+		if (range.isProtected() && !range.getSheetProtection().isFormatCellsAllowed()) {
+			showProtectMessage();
+			return true;
+		}
 		//zss-623, extends to row,column area
 		switch(type){
 		case ROW:

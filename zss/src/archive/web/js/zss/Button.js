@@ -1124,12 +1124,16 @@ zss.StylePanel = zk.$extends(zul.wgt.Popup, {
 			tb.appendChild(b);
 		}
 		styleContainer.appendChild(tb);
+		this._styleContainer = styleContainer;
 		
 		this._menuContainer = new zul.wgt.Div({sclass: 'zsstylepanel-menu'});
 		this.appendChild(this._menuContainer); // The 3rd child is menu container
 	},
 	getMenuContainer: function() {
 		return this._menuContainer;
+	},
+	getStyleContainer: function() {
+		return this._styleContainer;
 	},
 	setDisabled: function (actions) {
 		for (var n = this.firstChild; n; n = n.nextSibling) {//toolbars

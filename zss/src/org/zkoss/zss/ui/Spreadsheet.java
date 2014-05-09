@@ -91,6 +91,7 @@ import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.impl.ImporterImpl;
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.Sheet;
+import org.zkoss.zss.api.model.SheetProtection;
 import org.zkoss.zss.api.model.impl.BookImpl;
 import org.zkoss.zss.api.model.impl.SheetImpl;
 import org.zkoss.zss.api.model.impl.SimpleRef;
@@ -961,6 +962,8 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			smartUpdate("columnWidth", getColumnwidth());
 			
 			smartUpdate("displayGridlines", !_hideGridlines);
+			refreshAllowedOptions();
+			updateUnlockInfo();
 			smartUpdate("protect", _protectSheet);
 			
 			// generate customized row & column information
@@ -1632,8 +1635,22 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		if (_hideGridlines) {
 			renderer.render("displayGridlines", !_hideGridlines);
 		}
-		if (_protectSheet)
+		if (_protectSheet) {
+			final SheetProtection sheetProtection = Ranges.range(getSelectedSheet()).getSheetProtection();
+			renderer.render("allowSelectLockedCells", sheetProtection.isSelectLockedCellsAllowed());
+			renderer.render("allowSelectUnlockedCells", sheetProtection.isSelectUnlockedCellsAllowed());
+			renderer.render("allowFormatCells", sheetProtection.isFormatCellsAllowed());
+			renderer.render("allowFormatColumns", sheetProtection.isFormatColumnsAllowed());
+			renderer.render("allowFormatRows", sheetProtection.isFormatRowsAllowed());
+			renderer.render("allowAutoFilter", sheetProtection.isAutoFilterAllowed());
+			renderer.render("objectEditable", sheetProtection.isObjectsEditable());
+			if (!sheetProtection.isSelectLockedCellsAllowed() &&
+					sheetProtection.isSelectUnlockedCellsAllowed()) {
+				JSONObject unlockInfo = createUnlockInfo(getSelectedSheet());
+				renderer.render("unlockInfo", unlockInfo);
+			}
 			renderer.render("protect", _protectSheet);
+		}
 		
 		renderer.render("topPanelHeight", isHidecolumnhead() ? 1 : this.getTopheadheight());
 		renderer.render("leftPanelWidth", isHiderowhead() ? 1 : this.getLeftheadwidth());
@@ -1945,6 +1962,10 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	private void setProtectSheet(boolean protect) {
 		if (_protectSheet != protect) {
 			_protectSheet = protect;
+			if (protect) {
+				refreshAllowedOptions();
+				updateUnlockInfo();
+			}
 			smartUpdate("protect", protect);
 			
 			refreshToolbarDisabled();
@@ -2344,6 +2365,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			final int right = region.getLastColumn();
 			int bottom = region.getLastRow();
 			updateCell(sheet, left, top, right, bottom);
+			updateUnlockInfo();
 			org.zkoss.zk.ui.event.Events.postEvent(new CellAreaEvent(
 					Events.ON_AFTER_CELL_CHANGE, Spreadsheet.this, new SheetImpl(new SimpleRef<SBook>(sheet.getBook()),new SimpleRef<SSheet>(sheet))
 					,top, left, bottom,right));
@@ -2416,6 +2438,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 					loader.onColumnChange(sheet, widgetLeft, widgetRight);
 				}
 			}
+			updateUnlockInfo();
 		}
 		
 		/*
@@ -3419,6 +3442,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 
 			//update inserted column widths
 			updateColWidths(sheet, col, size); 
+			
 		}
 
 		private void updateRowHeights(SSheet sheet, int row, int n) {
@@ -4255,6 +4279,8 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		moveSelfEditorFocus(getSelectedSheetId(),cf.getRow(),cf.getColumn());
 		
 		refreshToolbarDisabled();
+		refreshAllowedOptions();
+		updateUnlockInfo();
 	}
 	
 	public String getSelectedSheetName() {
@@ -5128,6 +5154,9 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 //			}
 			
 			smartUpdate("maxColumns", getMaxVisibleColumns());
+			// 20140514, RaymondChao: unlock info records until max visible column,
+			// so it needs to update when max visible column changed.
+			updateUnlockInfo();
 		}
 	}
 	
@@ -5184,6 +5213,121 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 					convertToDisabledActionJSON(getUserActionManagerCtrl()
 							.getSupportedUserAction(getSelectedSheet())));
 		}
+	}
+	
+	private void refreshAllowedOptions(){
+		final SheetProtection sheetProtection = Ranges.range(getSelectedSheet()).getSheetProtection();
+		smartUpdate("allowSelectLockedCells", sheetProtection.isSelectLockedCellsAllowed());
+		smartUpdate("allowSelectUnlockedCells", sheetProtection.isSelectUnlockedCellsAllowed());
+		smartUpdate("allowFormatCells", sheetProtection.isFormatCellsAllowed());
+		smartUpdate("allowFormatColumns", sheetProtection.isFormatColumnsAllowed());
+		smartUpdate("allowFormatRows", sheetProtection.isFormatRowsAllowed());
+		smartUpdate("allowAutoFilter", sheetProtection.isAutoFilterAllowed());
+		smartUpdate("objectEditable", sheetProtection.isObjectsEditable());
+	}
+	
+	/*
+	 *  Update unlock info including rows, cols and cells. 
+	 */
+	private void updateUnlockInfo() {
+		final SheetProtection sheetProtection = Ranges.range(getSelectedSheet()).getSheetProtection();
+		if (!sheetProtection.isSelectLockedCellsAllowed() &&
+				sheetProtection.isSelectUnlockedCellsAllowed()) {
+			JSONObject unlockInfo = createUnlockInfo(getSelectedSheet());
+			smartUpdate("unlockInfo", unlockInfo);
+		}
+	}
+	
+	/*
+	 *  Unlock info:
+	 *  chs: unlock columns
+	 *  rhs: unlock rows
+	 *  cs: unlock cells
+	 */
+	private JSONObject createUnlockInfo(Sheet sheet) {
+		final SSheet ssheet = sheet.getInternalSheet();
+		final int startColumn = ssheet.getStartColumnIndex(),
+				// 20140513, RaymondChao: use getMaxVisibleColumns() instead of ssheet.getEndColumnIndex()
+				// for better performance, because getEndColumnIndex() could be 16384.
+				endColumn = getMaxVisibleColumns(),
+				startRow = ssheet.getStartRowIndex(),
+				endRow = ssheet.getEndRowIndex();
+				
+		JSONObject attrs = new JSONObject();
+		JSONArray rows = new JSONArray(),
+				columns = new JSONArray(),
+				cells = new JSONArray();
+		
+		if (startColumn != -1) {
+			// 20140513, RaymondChao: group unlocked columns to improve the performance.
+			int start = -1;
+			for (int i = startColumn; i <= endColumn; i++) {
+				if (ssheet.getColumn(i).getCellStyle().isLocked()) {
+					if (start != -1) {
+						columns.add(createUnlockGroup(start, i - 1));
+						start = -1;
+					}
+				} else {
+					if (start == -1) {
+						start = i;
+					}
+				}
+			}
+			if (start != -1) {
+				columns.add(createUnlockGroup(start, endColumn));
+			}
+		}
+		
+		if (startRow != -1) {
+			
+			for (int i = startRow; i <= endRow; i++) {
+				if (!ssheet.getRow(i).getCellStyle().isLocked())
+					rows.add(i);
+
+				final int firstColumn = sheet.getFirstColumn(i),
+					lastColumn = sheet.getLastColumn(i);
+				if (firstColumn == -1)
+					continue;
+				int start = -1;
+				JSONObject row = new JSONObject();
+				JSONArray data = new JSONArray();
+				row.put("i", i);
+				// 20140513, RaymondChao: group unlocked cells to improve the performance.
+				for (int j = firstColumn; j <= lastColumn; j++) {
+					if (Ranges.range(sheet, i, j).getCellStyle().isLocked()) {
+						if (start != -1) {
+							data.add(createUnlockGroup(start, j - 1));
+							start = -1;
+						}
+					} else {
+						if (start == -1) {
+							start = j;
+						}
+					}
+				}
+				if (start != -1) {
+					data.add(createUnlockGroup(start, lastColumn));
+				}
+				row.put("data", data);
+				cells.add(row);
+			}
+		}
+		attrs.put("chs", columns);
+		attrs.put("rhs", rows);
+		attrs.put("cs", cells);
+		return attrs;
+	}
+	
+	/*
+	 *  Unlocked group info:
+	 *  start: start index of unlocked group
+	 *  end: end index of unlocked group
+	 */
+	private JSONObject createUnlockGroup(int start, int end) {
+		JSONObject group = new JSONObject();
+		group.put("start", start);
+		group.put("end", end);
+		return group;
 	}
 	
 

@@ -121,5 +121,10 @@ public abstract class AbstractCellDataStyleAction extends AbstractUndoableAction
 		_oldReserve.restore();
 		_oldReserve = null;
 	}
+	
+	@Override
+	protected boolean isSheetProtected(){
+		return super.isSheetProtected() && !Ranges.range(_sheet).getSheetProtection().isFormatCellsAllowed();
+	}
 
 }

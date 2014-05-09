@@ -455,8 +455,8 @@ import org.zkoss.zss.range.*;
 	}
 	
 	@Override
-	public void unprotectSheet(String password) {
-		
+	public boolean unprotectSheet(String password) {
+		return false;
 	}
 	
 	@Override

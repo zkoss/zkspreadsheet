@@ -34,7 +34,7 @@ import org.zkoss.zss.ui.sys.UndoableActionManager;
  * @author dennis
  *
  */
-public class ApplyBorderHandler extends AbstractProtectedHandler {
+public class ApplyBorderHandler extends AbstractCellHandler {
 
 	private final ApplyBorderType _applyType;
 	private final BorderType _borderType;

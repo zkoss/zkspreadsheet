@@ -18,6 +18,8 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.ui.impl.undo;
 
+import org.zkoss.lang.Objects;
+import org.zkoss.util.resource.Labels;
 import org.zkoss.zss.api.CellOperationUtil;
 import org.zkoss.zss.api.IllegalFormulaException;
 import org.zkoss.zss.api.Range;
@@ -81,4 +83,15 @@ public class InsertCellAction extends AbstractUndoableAction {
 		}
 		_doFlag = false;
 	}
+
+	@Override
+	protected boolean isSheetProtected(){
+		final Range range = Ranges.range(_sheet);
+		return super.isSheetProtected() && 
+				!(Objects.equals(Labels.getLabel("zss.undo.insertColumn"), getLabel()) &&
+						range.getSheetProtection().isInsertColumnsAllowed()) &&
+				!(Objects.equals(Labels.getLabel("zss.undo.insertRow"), getLabel()) &&
+						range.getSheetProtection().isInsertRowsAllowed());
+	}
+
 }

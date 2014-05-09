@@ -95,4 +95,12 @@ public class ResizeHeaderAction extends AbstractUndoableAction {
 			_oldSizes = null;
 		}
 	}
+	
+	@Override
+	protected boolean isSheetProtected() {
+		final Range range = Ranges.range(_sheet);
+		return super.isSheetProtected() &&
+				!(_type == Type.COLUMN && range.getSheetProtection().isFormatColumnsAllowed()) &&
+				!(_type == Type.ROW && range.getSheetProtection().isFormatRowsAllowed());
+	}
 }

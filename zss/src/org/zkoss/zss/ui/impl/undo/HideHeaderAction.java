@@ -22,6 +22,7 @@ import org.zkoss.zss.api.CellOperationUtil;
 import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.model.Sheet;
+import org.zkoss.zss.ui.impl.undo.ResizeHeaderAction.Type;
 /**
  * 
  * @author dennis
@@ -113,4 +114,13 @@ public class HideHeaderAction extends AbstractUndoableAction {
 			_oldHiddens = null;
 		}
 	}
+
+	@Override
+	protected boolean isSheetProtected() {
+		final Range range = Ranges.range(_sheet);
+		return super.isSheetProtected() &&
+				!(_type == Type.COLUMN && range.getSheetProtection().isFormatColumnsAllowed()) &&
+				!(_type == Type.ROW && range.getSheetProtection().isFormatRowsAllowed());
+	}
+
 }

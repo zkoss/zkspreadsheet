@@ -34,7 +34,7 @@ import org.zkoss.zss.ui.sys.UndoableActionManager;
  * @author dennis
  * 
  */
-public class ClearCellHandler extends AbstractProtectedHandler {
+public class ClearCellHandler extends AbstractHandler {
 	ClearCellAction.Type _type;
 
 	public ClearCellHandler(Type type) {

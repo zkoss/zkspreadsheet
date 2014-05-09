@@ -24,6 +24,7 @@ import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.AreaRef;
 import org.zkoss.zss.api.Range.InsertCopyOrigin;
 import org.zkoss.zss.api.Range.InsertShift;
+import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.ui.UserActionContext;
 import org.zkoss.zss.ui.impl.undo.InsertCellAction;
@@ -33,7 +34,7 @@ import org.zkoss.zss.ui.sys.UndoableActionManager;
  * @author dennis
  *
  */
-public class InsertRowHandler extends AbstractProtectedHandler {
+public class InsertRowHandler extends AbstractHandler {
 
 	/* (non-Javadoc)
 	 * @see org.zkoss.zss.ui.sys.ua.impl.AbstractHandler#processAction(org.zkoss.zss.ui.UserActionContext)
@@ -62,6 +63,13 @@ public class InsertRowHandler extends AbstractProtectedHandler {
 				InsertShift.DOWN, InsertCopyOrigin.FORMAT_LEFT_ABOVE)); // ZSS-404, Excel default behavior is left or above 
 		ctx.clearClipboard();
 		return true;
+	}
+
+	@Override
+	public boolean isEnabled(Book book, Sheet sheet) {
+		final Range range = Ranges.range(sheet);
+		return book != null && sheet != null && ( !sheet.isProtected() ||
+				range.getSheetProtection().isInsertRowsAllowed());
 	}
 
 }

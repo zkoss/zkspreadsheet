@@ -278,12 +278,32 @@ public class SheetOperationUtil {
 		return false;
 	}
 	
-	public static void protectSheet(Range range, String password,String newpasswrod) {
+	public static void protectSheet(Range range, String password, String newpasswrod) {
 		//TODO the spec?
 //		if (range.isProtected())
 //			return;
 		
 		range.protectSheet(newpasswrod);
+	}
+	
+	public static void protectSheet(Range range, String password,  
+			boolean allowSelectingLockedCells, boolean allowSelectingUnlockedCells,  
+			boolean allowFormattingCells, boolean allowFormattingColumns, boolean allowFormattingRows, 
+			boolean allowInsertColumns, boolean allowInsertRows, boolean allowInsertingHyperlinks,
+			boolean allowDeletingColumns, boolean allowDeletingRows, 
+			boolean allowSorting, boolean allowFiltering, boolean allowUsingPivotTables, 
+			boolean drawingObjects, boolean scenarios) {
+	
+		range.protectSheet(password, allowSelectingLockedCells, allowSelectingUnlockedCells,  
+				allowFormattingCells, allowFormattingColumns, allowFormattingRows, 
+				allowInsertColumns, allowInsertRows, allowInsertingHyperlinks,
+				allowDeletingColumns, allowDeletingRows, 
+				allowSorting, allowFiltering, allowUsingPivotTables, 
+				drawingObjects, scenarios);
+	}
+	
+	public static boolean unprotectSheet(Range range, String password) {
+		return range.unprotectSheet(password);
 	}
 
 	/**

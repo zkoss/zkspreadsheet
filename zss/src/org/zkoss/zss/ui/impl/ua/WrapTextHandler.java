@@ -31,7 +31,7 @@ import org.zkoss.zss.ui.sys.UndoableActionManager;
  * @author dennis
  *
  */
-public class WrapTextHandler extends AbstractProtectedHandler {
+public class WrapTextHandler extends AbstractCellHandler {
 
 	/* (non-Javadoc)
 	 * @see org.zkoss.zss.ui.sys.ua.impl.AbstractHandler#processAction(org.zkoss.zss.ui.UserActionContext)

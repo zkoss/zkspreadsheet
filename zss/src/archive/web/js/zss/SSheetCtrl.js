@@ -130,6 +130,26 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 		return ts;
 	}
 
+	function groupContains(group, index) {
+		if (!group || group.length == 0)
+			return false;
+		return searchGroup(group, index, 0, group.length - 1);
+	}
+
+	// use binary search for better performance
+	function searchGroup(group, key, min, max) {
+		if (max < min)
+			return false;
+		var mid = max + min / 2;
+		if (group[mid].start > key) {
+			return searchGroup(group, key, min, mid - 1);
+		} else if (group[mid].end < key) {
+			return searchGroup(group, key, mid + 1, max);
+		} else {
+			return true;
+		}
+	}
+
 /**
  *  SSheetCtrl controls spreadsheet
  *  
@@ -1120,6 +1140,9 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 				col = cell.merl;
 			}
 			
+			if (!cell.isSelectable())
+				return;	
+
 			if (this._shiftMouseSelection(evt, row, col, zss.SEL.CELL))
 				return;			
 			sheet.dp.moveFocus(row, col, false, true, false, true);
@@ -1149,6 +1172,9 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 				elm = cell.comp;
 				this._lastmdelm = elm;
 			}
+			if (!cell.isSelectable())
+				return;	
+
 			if (this._shiftMouseSelection(evt, row, col, zss.SEL.CELL))
 				return;			
 			sheet.dp.moveFocus(row, col, false, true, false, true);
@@ -1251,11 +1277,16 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			var type = (cmp.getAttribute('zs.t') == "SLheader") ? zss.Header.VER : zss.Header.HOR,
 				row, col, onsel,	//process select row or column
 				ls = this.selArea.lastRange,
-				header = evt.target;
+				header = evt.target,
+				wgt = this._wgt;
 			this._lastmdstr = "h";
 			if (type == zss.Header.HOR) {
 				row = -1;
 				col = header.index;
+
+				if (!this.isHeaderSelectable(col, type))
+					return;
+
 				if(col >= ls.left && col <= ls.right &&
 					ls.top == 0 && ls.bottom == this.maxRows - 1) {
 					onsel = true;
@@ -1263,6 +1294,10 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			} else {
 				row = header.index;
 				col = -1;
+
+				if (!this.isHeaderSelectable(row, type))
+					return;
+
 				if(row >= ls.top && row <= ls.bottom &&
 					ls.left == 0 && ls.right == this.maxCols - 1) {
 					onsel = true;
@@ -1433,9 +1468,19 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		y -= 85;
 		y = y < 0 ? 0 : y;
 		
-		var p = this.getStyleMenupopup();
+		var p = this.getStyleMenupopup(),
+			wgt = this._wgt;
 		var fn = function() {
 			p.getMenuContainer().appendChild(refPop);
+
+			// 20140509, RaymondChao: set style container visibility to hidden
+			// so that menu container's position will be located at the pointer
+			if (wgt.isProtect() && !wgt.allowFormatCells) {
+				jq(p.getStyleContainer()).css('visibility', 'hidden');
+			} else {
+				jq(p.getStyleContainer()).css('visibility', 'visible');
+			}
+
 			// make menu visible before style menu showing
 			// for calculating correct height
 			jq(refPop.$n()).css('display', 'block');
@@ -2364,7 +2409,10 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 					bottom = cell.merb;
 			}
 		}
-		
+
+		if (!this.isRangeSelectable(left, top, right, bottom))
+			return;
+
 		var selRange = new zss.Range(left, top, right, bottom);
 		this.state == zss.SSheetCtrl.START_EDIT ? 
 				this.fire('onCellSelection', {left: left, top: top, right: right, bottom: bottom}) : this.deferFireCellSelection(left, top, right, bottom);
@@ -2390,6 +2438,87 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 
 		if (!noTrigger)
 			this._prepareCopy(); //feature #26: Support copy/paste value to local Excel
+	},
+	/**
+	 * Check if the range is selectable
+	 */
+	isRangeSelectable: function (left, top, right, bottom) {
+		var wgt = this._wgt;
+		if (!wgt.isProtect() || wgt.allowSelectLockedCells)
+			return true;
+
+		if (!wgt.allowSelectUnlockedCells)
+			return false;
+
+		for (var i = top; i <= bottom; i++)
+			for (var j = left; j <= right; j++) {
+			if (this.isCellLocked(i, j))
+				return false;
+		}
+		return true;
+	},
+	/**
+	 * Returns whether the header is selectable
+	 * @param int index header index
+	 * @param string type header type
+	 */
+	isHeaderSelectable: function (index, type) {
+		var wgt = this._wgt;
+
+		if (!wgt.isProtect() || wgt.allowSelectLockedCells)
+			return true;
+
+		if (!wgt.allowSelectUnlockedCells)
+			return false;
+
+		if (!wgt.unlockInfo)
+			return false;
+
+		if (type == zss.Header.HOR) {
+			if (groupContains(wgt.unlockInfo.chs, index)) {
+				return true;
+			}
+		} else {
+			var rhs = wgt.unlockInfo.rhs;
+			for (var prop in rhs) {
+				if (rhs[prop] == index)
+					return true;
+			}
+		}
+		return false;
+	},
+	/** 
+	 * Returns whether the cell is locked
+	 * @param int row row index
+	 * @param int col column index
+	 * <p>Please note that it only works when sheet is protected and
+	 *    is only allowed to select unlocked cells.</p>
+	 */
+	isCellLocked: function (row, col) {
+		var unlockInfo = this._wgt.unlockInfo;
+
+		if (!unlockInfo)
+			return true;
+
+		if (groupContains(unlockInfo.chs, col))
+			return false;
+
+		for (var prop in unlockInfo.rhs) {
+			if (unlockInfo.rhs[prop] == row) {
+				return false;
+			}
+		}
+
+
+		for (var prop in unlockInfo.cs) {
+			if (unlockInfo.cs[prop].i == row) {
+				if (groupContains(unlockInfo.cs[prop].data, col)) {
+					return false;
+				}
+			}
+		}
+
+		return true;
 	},
 	//feature #26: Support copy/paste value to local Excel
 	_prepareCopy: function () {
@@ -2755,11 +2884,14 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		this.sp.scrollToVisible(destRow, destCol);
 		this.activeBlock.loadCell(destRow, destCol, 5); // just load one cell, it'll load a whole rectangle block. see DataPanel.moveFocus() 
 		
-		if (left != ls.left || top != ls.top || right != ls.right || bottom != ls.bottom){
+		if (left != ls.left || top != ls.top || right != ls.right || bottom != ls.bottom) {
 			this.moveCellSelection(left, top, right, bottom, true);
-			var ls = this.getLastSelection();
-			this.selType = seltype;
-			this._sendOnCellSelection(seltype, ls.left, ls.top, ls.right, ls.bottom);
+			var newls = this.getLastSelection();
+			if (newls.left != ls.left || newls.top != ls.top ||
+				newls.right != ls.right || newls.bottom != ls.bottom) {
+				this.selType = seltype;
+				this._sendOnCellSelection(seltype, newls.left, newls.top, newls.right, newls.bottom);
+			}
 		}
 	},
 	/**
@@ -3074,7 +3206,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 				'<div id="', uuid, '-select" class="zsselect" zs.t="SSelect"><div id="', uuid, '-selecti" class="zsselecti" zs.t="SSelInner"></div><div class="zsseldot" zs.t="SSelDot"></div></div>',
 				'<div id="', uuid, '-selchg" class="zsselchg" zs.t="SSelChg"><div id="', uuid, '-selchgi" class="zsselchgi"></div></div>',
 				'<div id="', uuid, '-focmark" class="zsfocmark" zs.t="SFocus"><div id="', uuid, '-focmarki" class="zsfocmarki"></div></div>',
-				'<div id="', uuid, '-highlight" class="zshighlight" zs.t="SHighlight"><div id="', uuid, '-highlighti" ,class="zshighlighti" zs.t="SHlInner"></div></div>',
+				'<div id="', uuid, '-highlight" class="zshighlight" zs.t="SHighlight"><div id="', uuid, '-highlighti" class="zshighlighti" zs.t="SHlInner"></div></div>',
 				'</div><div id="', uuid, '-wp" class="zswidgetpanel" zs.t="SWidgetpanel"></div><div id="', uuid, '-pp" class="zspopuppanel"></div></div>');
 		
 		if (topPanel)

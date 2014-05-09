@@ -433,7 +433,9 @@ zss.Header = zk.$extends(zk.Widget, {
 		}
 		
 		//ZSS-407 Shouldn't allow to drag row/column size in protected sheet
-		if(this.sheet._wgt.isProtect()){
+		if(this.sheet._wgt.isProtect() &&
+			!(this.type == zss.Header.HOR && this.sheet._wgt.allowFormatColumns) && 
+			!(this.type == zss.Header.VER && this.sheet._wgt.allowFormatRows)) {
 			return;//don't drag when protection
 		}
 		

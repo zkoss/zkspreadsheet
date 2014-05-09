@@ -1772,17 +1772,15 @@ public class RangeImpl implements SRange {
 	
 	//ZSS-576
 	@Override
-	public void unprotectSheet(final String password) {
-		if (!getSheet().isProtected()) return;
-		new ReadWriteTask() {			
+	public boolean unprotectSheet(final String password) {
+		if (!getSheet().isProtected()) return true;
+		return (Boolean) new ReadWriteTask() {
 			@Override
 			public Object invoke() {
 				//20140423, henrichen: apply only to the first sheet
-				unprotectSheetInLock(getSheet(), password);
-				return null;
+				return unprotectSheetInLock(getSheet(), password);
 			}
 		}.doInWriteLock(getLock());
-		
 	}
 	
 	private void protectSheetInLock(SSheet sht, String password,  
@@ -1821,20 +1819,20 @@ public class RangeImpl implements SRange {
 		setPasswordInLock(sht, password);
 	}
 	
-	private void unprotectSheetInLock(SSheet sht, String password) {
+	private boolean unprotectSheetInLock(SSheet sht, String password) {
 		final short hashpass = sht.getHashedPassword();
 		if (hashpass != 0) {
-			if (password == null || password.isEmpty()) {
-				//TODO: fire event to open the password dialog; refer updateChart()
-				return;
-			}
-			//check password
-			final short inputpass = WorkbookUtil.hashPassword(password);
-			if (inputpass != hashpass) {
-				throw new InvalidModelOpException("The password you supplied is not correct. Verify that the CAPS LOCK key is off and be sure to use the correct capitalization.");
+			// check password
+			if (password == null || password.isEmpty() || WorkbookUtil.hashPassword(password) != hashpass) {
+				return false;
 			}
 		}
 		setPasswordInLock(sht, null);
+		final SSheetProtection sp = sht.getSheetProtection();
+		// 20140513, RaymondChao: excel behavior, objects and scenarios were set false after unprotected.
+		sp.setObjects(false);
+		sp.setScenarios(false);
+		return true;
 	}
 	
 	private void setPasswordInLock(SSheet sheet, String password) {
