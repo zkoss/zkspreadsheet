@@ -106,7 +106,7 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 				importDrawings(poiSheet, sheet);
 				importValidation(poiSheet, sheet);
 				importAutoFilter(poiSheet, sheet);
-				importSheetProtection(poiSheet, sheet);
+				importSheetProtection(poiSheet, sheet); //ZSS-576
 			}
 		} finally {
 			book.getBookSeries().setAutoFormulaCacheClean(isCacheClean);
@@ -493,7 +493,7 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 	 * @param poiSheet source POI sheet
 	 * @param sheet destination sheet
 	 */
-	private void importSheetProtection(Sheet poiSheet, SSheet sheet) {
+	private void importSheetProtection(Sheet poiSheet, SSheet sheet) { //ZSS-576
 		SheetProtection sp = poiSheet.getOrCreateSheetProtection();
 		SSheetProtection ssp = sheet.getSheetProtection();
 		

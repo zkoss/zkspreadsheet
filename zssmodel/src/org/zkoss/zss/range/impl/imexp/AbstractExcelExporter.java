@@ -139,7 +139,7 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 
 		poiSheet.setDisplayGridlines(sheet.getViewInfo().isDisplayGridlines());
 
-		exportSheetProtection(sheet, poiSheet);
+		exportSheetProtection(sheet, poiSheet); //ZSS-576
 		if (sheet.isProtected()) {
 			poiSheet.protectSheet(""); // without password; set hashed password directly later
 			exportPassword(sheet, poiSheet);
@@ -421,7 +421,7 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 	 * @param sheet destination sheet
 	 * @param poiSheet source POI sheet
 	 */
-	private void exportSheetProtection(SSheet sheet, Sheet poiSheet) {
+	private void exportSheetProtection(SSheet sheet, Sheet poiSheet) { //ZSS-576
 		SSheetProtection ssp = sheet.getSheetProtection();
 		SheetProtection sp = poiSheet.getOrCreateSheetProtection();
 		
