@@ -22,6 +22,7 @@ import org.zkoss.poi.ss.util.NumberToGeneralTextConverter;
 public class ToGeneralTextTest {
 	//when column width is 12 characters
 	private static final Object VAL12[][] = {
+		{1234, "1234"},
 		{-38277.429999999935, "-38277.43"},
 		{-38277.430000999935, "-38277.43"},
 		{-38277.430009999935, "-38277.43001"},
@@ -96,7 +97,7 @@ public class ToGeneralTextTest {
 		{-1.23456789012345E+21, "-1E+21"},
 	};
 	
-	//when column width is 6 characters
+	//when column width is 3 characters
 	private static final Object VAL3[][] = {
 		{-38277.429999999935, "###"},
 		{-38277.430000999935, "###"},
