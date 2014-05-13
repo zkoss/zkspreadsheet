@@ -56,6 +56,7 @@ import org.zkoss.zss.model.SSheetViewInfo;
 import org.zkoss.zss.model.SheetRegion;
 import org.zkoss.zss.model.SName;
 import org.zkoss.zss.model.ViewAnchor;
+import org.zkoss.zss.model.ErrorValue;
 import org.zkoss.zss.model.impl.AbstractBookSeriesAdv;
 import org.zkoss.zss.model.impl.AbstractSheetAdv;
 import org.zkoss.zss.model.impl.AbstractNameAdv;
@@ -438,6 +439,8 @@ public class RangeImpl implements SRange {
 					}
 					break;
 				case ERROR:
+					cell.setErrorValue(ErrorValue.valueOf(((Byte)resultVal).byteValue())); //ZSS-672
+					break;
 				default:
 					cell.setValue(resultVal);
 				}

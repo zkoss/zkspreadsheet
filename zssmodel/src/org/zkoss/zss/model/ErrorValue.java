@@ -17,6 +17,9 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.model;
 
 import java.io.Serializable;
+import java.util.Map;
+import java.util.HashMap;
+
 /**
  * An error result of a evaluated formula.
  * @author dennis
@@ -41,6 +44,32 @@ public class ErrorValue implements Serializable{
     
     //TODO zss 3.5 this value is not in zpoi
     public static final byte INVALID_FORMULA = 0x7f;
+	
+    //ZSS-672
+	public static final ErrorValue NULL  = new ErrorValue(ERROR_NULL, "#NULL!");
+	public static final ErrorValue DIV0 = new ErrorValue(ERROR_DIV_0, "#DIV/0!");
+	public static final ErrorValue VALUE = new ErrorValue(INVALID_VALUE, "#VALUE!");
+	public static final ErrorValue REF = new ErrorValue(ERROR_REF, "#REF!");
+	public static final ErrorValue NAME = new ErrorValue(INVALID_NAME, "#NAME?");
+	public static final ErrorValue NUM = new ErrorValue(ERROR_NUM, "#NUM!");
+	public static final ErrorValue NA = new ErrorValue(ERROR_NA, "#N/A");
+	public static final ErrorValue FORMULA = new ErrorValue(INVALID_FORMULA, "#N/A");//TODO
+	 
+	private static final Map<Byte, ErrorValue> ERR_MAP = new HashMap<Byte, ErrorValue>(16);
+	static {
+		ERR_MAP.put(NULL._code, NULL);
+		ERR_MAP.put(DIV0._code, DIV0);
+		ERR_MAP.put(VALUE._code, VALUE);
+		ERR_MAP.put(REF._code, REF);
+		ERR_MAP.put(NAME._code, NAME);
+		ERR_MAP.put(NUM._code, NUM);
+		ERR_MAP.put(NA._code, NA);
+		ERR_MAP.put(FORMULA._code, FORMULA);
+	}
+	public static ErrorValue valueOf(byte code) {
+		final ErrorValue v = ERR_MAP.get(code);
+		return v == null ? ErrorValue.NA : v; //unknown code are interpreted into #N/A
+	}
 	
 	private byte _code;
 	private String _message;

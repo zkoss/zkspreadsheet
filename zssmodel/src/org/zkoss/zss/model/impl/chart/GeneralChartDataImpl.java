@@ -76,7 +76,7 @@ public class GeneralChartDataImpl extends ChartDataAdv implements SGeneralChartD
 				if(result.getType() == ResultType.SUCCESS){
 					_evalResult = val;
 				}else if(result.getType() == ResultType.ERROR){
-					_evalResult = (val instanceof ErrorValue)?val:new ErrorValue(ErrorValue.INVALID_NAME);
+					_evalResult = (val instanceof ErrorValue)?val: ErrorValue.valueOf(ErrorValue.INVALID_NAME); //ZSS-672
 				}
 			}
 			_evaluated = true;

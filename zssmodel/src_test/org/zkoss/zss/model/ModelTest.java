@@ -1784,7 +1784,7 @@ public class ModelTest {
 		SBook book = SBooks.createBook("book1");
 		SSheet sheet = initialDataGrid(book.createSheet("Sheet 1"));
 		Date now = new Date();
-		ErrorValue err = new ErrorValue(ErrorValue.INVALID_FORMULA);
+		ErrorValue err = ErrorValue.valueOf(ErrorValue.INVALID_FORMULA);
 		SCell cell = sheet.getCell(1, 1);
 		
 		Assert.assertEquals(CellType.BLANK, cell.getType());
@@ -1875,7 +1875,7 @@ public class ModelTest {
 		SBook book = SBooks.createBook("book1");
 		SSheet sheet = initialDataGrid(book.createSheet("Sheet 1"));
 		Date now = new Date();
-		ErrorValue err = new ErrorValue(ErrorValue.INVALID_FORMULA);
+		ErrorValue err = ErrorValue.valueOf(ErrorValue.INVALID_FORMULA);
 		SCell cell = sheet.getCell(1, 1);
 		
 		Assert.assertEquals(CellType.BLANK, cell.getType());
@@ -1918,7 +1918,7 @@ public class ModelTest {
 		SBook book = SBooks.createBook("book1");
 		SSheet sheet = initialDataGrid(book.createSheet("Sheet 1"));
 		Date now = new Date();
-		ErrorValue err = new ErrorValue(ErrorValue.INVALID_FORMULA);
+		ErrorValue err = ErrorValue.valueOf(ErrorValue.INVALID_FORMULA);
 		SCell cell = sheet.getCell(1, 1);
 		
 		Assert.assertEquals(CellType.BLANK, cell.getType());
@@ -2334,7 +2334,7 @@ public class ModelTest {
 		sheet.getCell(2, 1).setupRichTextValue().addSegment("ABC", book.getDefaultFont());
 		sheet.getCell(3, 1).setNumberValue(99D);
 		sheet.getCell(4, 1).setDateValue(now);
-		sheet.getCell(5, 1).setErrorValue(new ErrorValue(ErrorValue.INVALID_NAME));
+		sheet.getCell(5, 1).setErrorValue(ErrorValue.valueOf(ErrorValue.INVALID_NAME));
 		
 		sheet.getCell(5, 1).setupHyperlink(HyperlinkType.URL,"httt://www.zkoss.org",null);
 		

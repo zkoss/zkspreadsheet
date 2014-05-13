@@ -70,7 +70,7 @@ public class SeriesImpl implements SSeries,Serializable,LinkedModelObject{
 				if(result.getType() == ResultType.SUCCESS){
 					_evalNameResult = val;
 				}else if(result.getType() == ResultType.ERROR){
-					_evalNameResult = (val instanceof ErrorValue)?val:new ErrorValue(ErrorValue.INVALID_VALUE);
+					_evalNameResult = (val instanceof ErrorValue)?val: ErrorValue.valueOf(ErrorValue.INVALID_VALUE);
 				}
 				
 			}
@@ -80,7 +80,7 @@ public class SeriesImpl implements SSeries,Serializable,LinkedModelObject{
 				if(result.getType() == ResultType.SUCCESS){
 					_evalValuesResult = val;
 				}else if(result.getType() == ResultType.ERROR){
-					_evalValuesResult = (val instanceof ErrorValue)?val:new ErrorValue(ErrorValue.INVALID_VALUE);
+					_evalValuesResult = (val instanceof ErrorValue)?val: ErrorValue.valueOf(ErrorValue.INVALID_VALUE);
 				}
 			}
 			if(_yValueExpr!=null){
@@ -89,7 +89,7 @@ public class SeriesImpl implements SSeries,Serializable,LinkedModelObject{
 				if(result.getType() == ResultType.SUCCESS){
 					_evalYValuesResult = val;
 				}else if(result.getType() == ResultType.ERROR){
-					_evalYValuesResult = (val instanceof ErrorValue)?val:new ErrorValue(ErrorValue.INVALID_VALUE);
+					_evalYValuesResult = (val instanceof ErrorValue)?val: ErrorValue.valueOf(ErrorValue.INVALID_VALUE);
 				}
 			}
 			if(_zValueExpr!=null){
@@ -98,7 +98,7 @@ public class SeriesImpl implements SSeries,Serializable,LinkedModelObject{
 				if(result.getType() == ResultType.SUCCESS){
 					_evalZValuesResult = val;
 				}else if(result.getType() == ResultType.ERROR){
-					_evalZValuesResult = (val instanceof ErrorValue)?val:new ErrorValue(ErrorValue.INVALID_VALUE);
+					_evalZValuesResult = (val instanceof ErrorValue)?val: ErrorValue.valueOf(ErrorValue.INVALID_VALUE);
 				}
 			}
 			_evaluated = true;

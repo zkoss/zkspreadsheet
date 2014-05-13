@@ -286,7 +286,7 @@ public class FormulaEngineImpl implements FormulaEngine {
 
 		// by pass if expression is invalid format
 		if(expr.hasError()) {
-			return new EvaluationResultImpl(ResultType.ERROR, new ErrorValue(ErrorValue.INVALID_FORMULA));
+			return new EvaluationResultImpl(ResultType.ERROR,  ErrorValue.valueOf(ErrorValue.INVALID_FORMULA));
 		}
 		Ref dependant = context.getDependent();
 		EvaluationResult result = null;
@@ -388,7 +388,7 @@ public class FormulaEngineImpl implements FormulaEngine {
 			}
 		} else {
 			if(multipleArea){//is multipleArea formula in cell, should return #VALUE!
-				return new EvaluationResultImpl(ResultType.ERROR, new ErrorValue(ErrorValue.INVALID_VALUE));
+				return new EvaluationResultImpl(ResultType.ERROR, ErrorValue.valueOf(ErrorValue.INVALID_VALUE));
 			}
 			EvaluationCell evalCell = evalBook.getSheet(currentSheetIndex).getCell(cell.getRowIndex(),
 					cell.getColumnIndex());
@@ -398,14 +398,14 @@ public class FormulaEngineImpl implements FormulaEngine {
 		// convert to result
 		if(value instanceof ErrorEval) {
 			int code = ((ErrorEval)value).getErrorCode();
-			return new EvaluationResultImpl(ResultType.ERROR, new ErrorValue((byte)code));
+			return new EvaluationResultImpl(ResultType.ERROR, ErrorValue.valueOf((byte)code));
 		} else {
 			try{
 				return new EvaluationResultImpl(ResultType.SUCCESS, getResolvedValue(value));
 			}catch(EvaluationException x){
 				//error when resolve value.
 				if(x.getErrorEval()!=null){//ZSS-591 Get console exception after delete sheet
-					return new EvaluationResultImpl(ResultType.ERROR, new ErrorValue((byte)x.getErrorEval().getErrorCode()));
+					return new EvaluationResultImpl(ResultType.ERROR, ErrorValue.valueOf((byte)x.getErrorEval().getErrorCode()));
 				}else{
 					throw x;
 				}
