@@ -1,5 +1,3 @@
-
-
 ZK Spreadsheet 3.5.0
 *Features:
   ZSS-651 Need to enhance performance for partial evaluation
@@ -18,6 +16,7 @@ ZK Spreadsheet 3.5.0
   ZSS-661 Formula is incorrect after rename Name or it's refersTo region.
   ZSS-641 Desktop not found if I submit the form.
   ZSS-662 Paste large text into a cell, visible area of the worksheet moves to the left
+  ZSS-672 Input #NAME? shall be deemed as an Error value
   
 ** Upgrade Notes
   * Following api are deprecated

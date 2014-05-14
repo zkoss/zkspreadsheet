@@ -22,7 +22,7 @@ public class FormulaResultCellValue extends CellValue implements Serializable {
 		if (type == ResultType.ERROR) {
 			cellType = CellType.ERROR;
 			value = (val instanceof ErrorValue) ? (ErrorValue) val
-					: new ErrorValue(ErrorValue.INVALID_VALUE);
+					: ErrorValue.valueOf(ErrorValue.INVALID_VALUE);
 		} else if (type == ResultType.SUCCESS) {
 			setByValue(val);
 		}

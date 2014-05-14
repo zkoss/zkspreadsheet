@@ -82,7 +82,7 @@ public class RangeTest {
 		SBook book = SBooks.createBook("book1");
 		SSheet sheet = book.createSheet("Sheet 1");
 		Date now = new Date();
-		ErrorValue err = new ErrorValue(ErrorValue.INVALID_FORMULA);
+		ErrorValue err = ErrorValue.valueOf(ErrorValue.INVALID_FORMULA);
 		SCell cell = sheet.getCell(1, 1);
 		
 		Assert.assertEquals(CellType.BLANK, cell.getType());
@@ -136,7 +136,7 @@ public class RangeTest {
 		SBook book = SBooks.createBook("book1");
 		SSheet sheet = book.createSheet("Sheet 1");
 		Date now = new Date();
-		ErrorValue err = new ErrorValue(ErrorValue.INVALID_FORMULA);
+		ErrorValue err = ErrorValue.valueOf(ErrorValue.INVALID_FORMULA);
 		SCell cell = sheet.getCell(1, 1);
 		
 		Assert.assertEquals(CellType.BLANK, cell.getType());

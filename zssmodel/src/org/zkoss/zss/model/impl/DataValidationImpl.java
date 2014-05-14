@@ -327,7 +327,7 @@ public class DataValidationImpl extends AbstractDataValidationAdv {
 				if(result.getType() == ResultType.SUCCESS){
 					_evalValue1Result = val;
 				}else if(result.getType() == ResultType.ERROR){
-					_evalValue1Result = (val instanceof ErrorValue)?val:new ErrorValue(ErrorValue.INVALID_VALUE);
+					_evalValue1Result = (val instanceof ErrorValue)?val: ErrorValue.valueOf(ErrorValue.INVALID_VALUE);
 				}
 				
 			}
@@ -338,7 +338,7 @@ public class DataValidationImpl extends AbstractDataValidationAdv {
 				if(result.getType() == ResultType.SUCCESS){
 					_evalValue2Result = val;
 				}else if(result.getType() == ResultType.ERROR){
-					_evalValue2Result = (val instanceof ErrorValue)?val:new ErrorValue(ErrorValue.INVALID_VALUE);
+					_evalValue2Result = (val instanceof ErrorValue)?val: ErrorValue.valueOf(ErrorValue.INVALID_VALUE);
 				}
 				
 			}

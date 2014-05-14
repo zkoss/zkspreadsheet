@@ -32,6 +32,7 @@ public class FormatEngineTest {
 		Setup.touch();
 	}	
 	private SCell cell;
+	private int cellWidth;
 	
 	@BeforeClass
 	public static void init(){
@@ -43,6 +44,7 @@ public class FormatEngineTest {
 	public void beforeTest(){
 		cell = createCell();
 		Locales.setThreadLocal(Locale.TAIWAN);
+		cellWidth = FormatEngineImpl.getCellWidth256(cell) >> 8;
 	}
 	
 	
@@ -52,7 +54,7 @@ public class FormatEngineTest {
 	public void positiveNumber(){
 		cell.setValue(new Integer(123456789));
 		cell.getCellStyle().setDataFormat("0.00_);[red](0.00)");
-		FormatResult result = formatEngine.format(cell.getCellStyle().getDataFormat(),cell.getValue(), formatContext);
+		FormatResult result = formatEngine.format(cell.getCellStyle().getDataFormat(),cell.getValue(), formatContext, cellWidth);
 		Assert.assertEquals("123456789.00 ", result.getText());
 	}
 	
@@ -60,7 +62,7 @@ public class FormatEngineTest {
 	public void negativeNumber(){
 		cell.setValue(new Integer(-123456789));
 		cell.getCellStyle().setDataFormat("0.00_);[red](0.00)");
-		FormatResult result = formatEngine.format(cell.getCellStyle().getDataFormat(),cell.getValue(), formatContext);
+		FormatResult result = formatEngine.format(cell.getCellStyle().getDataFormat(),cell.getValue(), formatContext, cellWidth);
 		Assert.assertEquals("(123456789.00)", result.getText());
 	}
 
@@ -68,7 +70,7 @@ public class FormatEngineTest {
 	public void thousandSeparator(){
 		cell.setValue(new Integer(123456789));
 		cell.getCellStyle().setDataFormat("#,##0.00_);(#,##0.00)");
-		FormatResult result = formatEngine.format(cell.getCellStyle().getDataFormat(),cell.getValue(), formatContext);
+		FormatResult result = formatEngine.format(cell.getCellStyle().getDataFormat(),cell.getValue(), formatContext, cellWidth);
 		Assert.assertEquals("123,456,789.00 ", result.getText());
 	
 	}
@@ -77,7 +79,7 @@ public class FormatEngineTest {
 	public void scaleBy1000(){
 		cell.setValue(new Integer(12000));
 		cell.getCellStyle().setDataFormat("#.0,");
-		FormatResult result = formatEngine.format(cell.getCellStyle().getDataFormat(),cell.getValue(), formatContext);
+		FormatResult result = formatEngine.format(cell.getCellStyle().getDataFormat(),cell.getValue(), formatContext, cellWidth);
 		Assert.assertEquals("12.0", result.getText());
 	}
 
@@ -87,7 +89,7 @@ public class FormatEngineTest {
 	public void currency(){
 		cell.setValue(new Double(-1234567890));
 		cell.getCellStyle().setDataFormat("$#,##0.00_);($#,##0.00)");
-		FormatResult result = formatEngine.format(cell.getCellStyle().getDataFormat(),cell.getValue(), formatContext);
+		FormatResult result = formatEngine.format(cell.getCellStyle().getDataFormat(),cell.getValue(), formatContext, cellWidth);
 		Assert.assertEquals("($1,234,567,890.00)", result.getText());
 	}
 	
@@ -97,7 +99,7 @@ public class FormatEngineTest {
 	public void accounting(){
 		cell.setValue(new Double(1234567890));
 		cell.getCellStyle().setDataFormat("_-\"NT$\"* #,##0.00_ ;_-\"NT$\"* -#,##0.00 ;_-\"NT$\"* \"-\"??_ ;_-@_ ");
-		FormatResult result = formatEngine.format(cell.getCellStyle().getDataFormat(),cell.getValue(), formatContext);
+		FormatResult result = formatEngine.format(cell.getCellStyle().getDataFormat(),cell.getValue(), formatContext, cellWidth);
 		Assert.assertEquals(" NT$1,234,567,890.00 ", result.getText());
 	}
 	
@@ -112,7 +114,7 @@ public class FormatEngineTest {
 		
 		cell.setValue(calendar.getTime());
 		cell.getCellStyle().setDataFormat("yyyy/m/d");
-		FormatResult result = formatEngine.format(cell.getCellStyle().getDataFormat(),cell.getDateValue(), formatContext);
+		FormatResult result = formatEngine.format(cell.getCellStyle().getDataFormat(),cell.getDateValue(), formatContext, cellWidth);
 		Assert.assertEquals("2013/9/3", result.getText());
 	}
 	
@@ -125,7 +127,7 @@ public class FormatEngineTest {
 		
 		cell.setValue(calendar.getTime());
 		cell.getCellStyle().setDataFormat("yyyy/mm/dd");
-		FormatResult result = formatEngine.format(cell.getCellStyle().getDataFormat(),cell.getDateValue(), formatContext);
+		FormatResult result = formatEngine.format(cell.getCellStyle().getDataFormat(),cell.getDateValue(), formatContext, cellWidth);
 		Assert.assertEquals("2013/09/03", result.getText());
 	}
 	
@@ -138,7 +140,7 @@ public class FormatEngineTest {
 		
 		cell.setValue(calendar.getTime());
 		cell.getCellStyle().setDataFormat("yy/mmm/ddd");
-		FormatResult result = formatEngine.format(cell.getCellStyle().getDataFormat(),cell.getValue(), formatContext);
+		FormatResult result = formatEngine.format(cell.getCellStyle().getDataFormat(),cell.getValue(), formatContext, cellWidth);
 		Assert.assertEquals("13/Sep/Tue", result.getText());
 	}	
 		
@@ -151,7 +153,7 @@ public class FormatEngineTest {
 		
 		cell.setValue(calendar.getTime());
 		cell.getCellStyle().setDataFormat("yy/mmmm/dddd");
-		FormatResult result = formatEngine.format(cell.getCellStyle().getDataFormat(),cell.getDateValue(), formatContext);
+		FormatResult result = formatEngine.format(cell.getCellStyle().getDataFormat(),cell.getDateValue(), formatContext, cellWidth);
 		Assert.assertEquals("13/September/Tuesday", result.getText());
 	}		
 	
@@ -166,7 +168,7 @@ public class FormatEngineTest {
 
 		cell.setValue(calendar.getTime());
 		cell.getCellStyle().setDataFormat("yyyy/m/d h:mm;@");
-		FormatResult result = formatEngine.format(cell.getCellStyle().getDataFormat(),cell.getDateValue(), formatContext);
+		FormatResult result = formatEngine.format(cell.getCellStyle().getDataFormat(),cell.getDateValue(), formatContext, cellWidth);
 		Assert.assertEquals("2013/10/30 0:00", result.getText());
 	}
 
@@ -179,7 +181,7 @@ public class FormatEngineTest {
 		calendar.set(Calendar.DAY_OF_MONTH, 30);
 		cell.setValue(calendar.getTime());
 		cell.getCellStyle().setDataFormat("yyyy/mmm/ddd");
-		FormatResult result = formatEngine.format(cell.getCellStyle().getDataFormat(),cell.getDateValue(), new FormatContext(Locale.TAIWAN));
+		FormatResult result = formatEngine.format(cell.getCellStyle().getDataFormat(),cell.getDateValue(), new FormatContext(Locale.TAIWAN), cellWidth);
 		Assert.assertEquals("2013/十月/星期三", result.getText());
 	}
 	
@@ -194,7 +196,7 @@ public class FormatEngineTest {
 
 		cell.setValue(calendar.getTime());
 		cell.getCellStyle().setDataFormat("h:mm:ss AM/PM;@");
-		FormatResult result = formatEngine.format(cell.getCellStyle().getDataFormat(),cell.getDateValue(), formatContext);
+		FormatResult result = formatEngine.format(cell.getCellStyle().getDataFormat(),cell.getDateValue(), formatContext, cellWidth);
 		Assert.assertEquals("11:10:50 AM", result.getText());
 	}
 
@@ -207,7 +209,7 @@ public class FormatEngineTest {
 
 		cell.setValue(calendar.getTime());
 		cell.getCellStyle().setDataFormat("a/p");
-		FormatResult result = formatEngine.format(cell.getCellStyle().getDataFormat(),cell.getValue(), formatContext);
+		FormatResult result = formatEngine.format(cell.getCellStyle().getDataFormat(),cell.getValue(), formatContext, cellWidth);
 		Assert.assertEquals("a/p", result.getText());
 	}
 	
@@ -215,15 +217,15 @@ public class FormatEngineTest {
 	public void elapsedTime(){
 		cell.setValue(new Double(2.46585648148148));
 		cell.getCellStyle().setDataFormat("[h]");
-		FormatResult result1 = formatEngine.format(cell.getCellStyle().getDataFormat(),cell.getValue(), formatContext);
+		FormatResult result1 = formatEngine.format(cell.getCellStyle().getDataFormat(),cell.getValue(), formatContext, cellWidth);
 		Assert.assertEquals("59", result1.getText());
 		
 		cell.getCellStyle().setDataFormat("[m]");
-		FormatResult result2 = formatEngine.format(cell.getCellStyle().getDataFormat(),cell.getValue(), formatContext);
+		FormatResult result2 = formatEngine.format(cell.getCellStyle().getDataFormat(),cell.getValue(), formatContext, cellWidth);
 		Assert.assertEquals("3550", result2.getText());
 		
 		cell.getCellStyle().setDataFormat("[s]");
-		FormatResult result3 = formatEngine.format(cell.getCellStyle().getDataFormat(),cell.getValue(), formatContext);
+		FormatResult result3 = formatEngine.format(cell.getCellStyle().getDataFormat(),cell.getValue(), formatContext, cellWidth);
 		Assert.assertEquals("213049", result3.getText());
 	}
 	
@@ -233,7 +235,7 @@ public class FormatEngineTest {
 	public void percentage(){
 		cell.setValue(new Double(0.98585));
 		cell.getCellStyle().setDataFormat("0.00%");
-		FormatResult result = formatEngine.format(cell.getCellStyle().getDataFormat(),cell.getValue(), formatContext);
+		FormatResult result = formatEngine.format(cell.getCellStyle().getDataFormat(),cell.getValue(), formatContext, cellWidth);
 		Assert.assertEquals("98.59%", result.getText());
 	}
 	
@@ -242,7 +244,7 @@ public class FormatEngineTest {
 	public void fraction(){
 		cell.setValue(new Double(0.330858961));
 		cell.getCellStyle().setDataFormat("# ???/???");
-		FormatResult result = formatEngine.format(cell.getCellStyle().getDataFormat(),cell.getValue(), formatContext);
+		FormatResult result = formatEngine.format(cell.getCellStyle().getDataFormat(),cell.getValue(), formatContext, cellWidth);
 		Assert.assertEquals(" 312/943", result.getText());
 	}
 	
@@ -250,7 +252,7 @@ public class FormatEngineTest {
 	public void fractionHundredths(){
 		cell.setValue(new Double(0.3));
 		cell.getCellStyle().setDataFormat("# ??/100");
-		FormatResult result = formatEngine.format(cell.getCellStyle().getDataFormat(),cell.getValue(), formatContext);
+		FormatResult result = formatEngine.format(cell.getCellStyle().getDataFormat(),cell.getValue(), formatContext, cellWidth);
 		Assert.assertEquals(" 30/100", result.getText());
 	}
 	
@@ -260,7 +262,7 @@ public class FormatEngineTest {
 	public void scientific(){
 		cell.setValue(new Double(123456789));
 		cell.getCellStyle().setDataFormat("0.00E+00");
-		FormatResult result = formatEngine.format(cell.getCellStyle().getDataFormat(),cell.getValue(), formatContext);
+		FormatResult result = formatEngine.format(cell.getCellStyle().getDataFormat(),cell.getValue(), formatContext, cellWidth);
 		Assert.assertEquals("1.23E+08", result.getText());
 	}
 	
@@ -270,7 +272,7 @@ public class FormatEngineTest {
 	public void text(){
 		cell.setValue(new Double(123456789));
 		cell.getCellStyle().setDataFormat("@");
-		FormatResult result = formatEngine.format(cell.getCellStyle().getDataFormat(),cell.getValue(), formatContext);
+		FormatResult result = formatEngine.format(cell.getCellStyle().getDataFormat(),cell.getValue(), formatContext, cellWidth);
 		Assert.assertEquals("123456789", result.getText());
 	}
 	
@@ -280,7 +282,7 @@ public class FormatEngineTest {
 	public void zipCode(){
 		cell.setValue(new Double(156769884));
 		cell.getCellStyle().setDataFormat("0000000-0");
-		FormatResult result = formatEngine.format(cell.getCellStyle().getDataFormat(),cell.getValue(), formatContext);
+		FormatResult result = formatEngine.format(cell.getCellStyle().getDataFormat(),cell.getValue(), formatContext, cellWidth);
 		Assert.assertEquals("15676988-4", result.getText());
 	}
 	
@@ -288,7 +290,7 @@ public class FormatEngineTest {
 	public void phone(){
 		cell.setValue(new Double(21234567));
 		cell.getCellStyle().setDataFormat("[<=9999999]###-####;(0#) ###-####");
-		FormatResult result = formatEngine.format(cell.getCellStyle().getDataFormat(),cell.getValue(), formatContext);
+		FormatResult result = formatEngine.format(cell.getCellStyle().getDataFormat(),cell.getValue(), formatContext, cellWidth);
 		Assert.assertEquals("(02) 123-4567", result.getText());
 	}
 	
@@ -298,7 +300,7 @@ public class FormatEngineTest {
 	public void color(){
 		cell.setValue(new Integer(12000));
 		cell.getCellStyle().setDataFormat("[red]#.0,");
-		FormatResult result = formatEngine.format(cell.getCellStyle().getDataFormat(),cell.getValue(), formatContext);
+		FormatResult result = formatEngine.format(cell.getCellStyle().getDataFormat(),cell.getValue(), formatContext, cellWidth);
 		Assert.assertEquals(ColorImpl.RED, result.getColor());
 	}
 	
@@ -309,7 +311,7 @@ public class FormatEngineTest {
 	public void generalFormat(){
 		cell.setValue(new Double(-1234567890));
 		cell.getCellStyle().setDataFormat("General");
-		FormatResult result = formatEngine.format(cell.getCellStyle().getDataFormat(),cell.getValue(), formatContext);
+		FormatResult result = formatEngine.format(cell.getCellStyle().getDataFormat(),cell.getValue(), formatContext, cellWidth);
 		Assert.assertEquals("-1234567890", result.getText());
 	}
 	

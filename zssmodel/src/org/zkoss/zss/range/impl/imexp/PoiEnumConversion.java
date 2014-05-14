@@ -748,24 +748,7 @@ public class PoiEnumConversion {
 	//POI has no way to set validation type
 
 	public static ErrorValue toErrorCode(byte errorCellValue) {
-		switch (errorCellValue) {
-		case ErrorConstants.ERROR_DIV_0:
-			return new ErrorValue(ErrorValue.ERROR_DIV_0);
-		case ErrorConstants.ERROR_NA:
-			return new ErrorValue(ErrorValue.ERROR_NA);
-		case ErrorConstants.ERROR_NAME:
-			return new ErrorValue(ErrorValue.INVALID_NAME);
-		case ErrorConstants.ERROR_NULL:
-			return new ErrorValue(ErrorValue.ERROR_NULL);
-		case ErrorConstants.ERROR_NUM:
-			return new ErrorValue(ErrorValue.ERROR_NUM);
-		case ErrorConstants.ERROR_REF:
-			return new ErrorValue(ErrorValue.ERROR_REF);
-		case ErrorConstants.ERROR_VALUE:
-			return new ErrorValue(ErrorValue.INVALID_VALUE);
-		default:
-			// TODO log it
-			return new ErrorValue(ErrorValue.INVALID_NAME);
-		}
+		//ZSS-672
+		return ErrorValue.valueOf(errorCellValue);
 	}
 }
