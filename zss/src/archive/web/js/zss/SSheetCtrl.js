@@ -140,7 +140,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 	function searchGroup(group, key, min, max) {
 		if (max < min)
 			return false;
-		var mid = max + min / 2;
+		var mid = Math.floor((min + max) / 2);
 		if (group[mid].start > key) {
 			return searchGroup(group, key, min, mid - 1);
 		} else if (group[mid].end < key) {
@@ -1139,8 +1139,8 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 				row = cell.mert;
 				col = cell.merl;
 			}
-			
-			if (!cell.isSelectable())
+			cell = this.getCell(row, col);
+			if (!cell || !cell.isSelectable())
 				return;	
 
 			if (this._shiftMouseSelection(evt, row, col, zss.SEL.CELL))
@@ -1172,7 +1172,8 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 				elm = cell.comp;
 				this._lastmdelm = elm;
 			}
-			if (!cell.isSelectable())
+			cell = this.getCell(row, col);
+			if (!cell || !cell.isSelectable())
 				return;	
 
 			if (this._shiftMouseSelection(evt, row, col, zss.SEL.CELL))

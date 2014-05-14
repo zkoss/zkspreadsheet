@@ -520,7 +520,7 @@ zss.DataPanel = zk.$extends(zk.Object, {
 		var sheet = this.sheet,
 			cell = sheet.getCell(row, col);
 		
-		if (!cell.isSelectable())
+		if (!cell || !cell.isSelectable())
 			return false;	
 
 		var cellcmp = cell.comp,
@@ -885,10 +885,9 @@ zss.DataPanel = zk.$extends(zk.Object, {
 			newPos = {row: sheet.maxRows - 1, col: sheet.maxCols};
 		}
 		do {
-			do {
-				newPos = fn.call(this, newPos);
-			} while (this.sheet.isCellLocked(newPos.row, newPos.col));
-		} while (sheet.custRowHeight.isHidden(newPos.row) || sheet.custColWidth.isHidden(newPos.col));
+			newPos = fn.call(this, newPos);
+		} while (this.sheet.isCellLocked(newPos.row, newPos.col) || 
+			sheet.custRowHeight.isHidden(newPos.row) || sheet.custColWidth.isHidden(newPos.col));
 
 		return newPos;
 	},
