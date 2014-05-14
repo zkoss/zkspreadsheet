@@ -5156,7 +5156,9 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			smartUpdate("maxColumns", getMaxVisibleColumns());
 			// 20140514, RaymondChao: unlock info records until max visible column,
 			// so it needs to update when max visible column changed.
-			updateUnlockInfo();
+			if (getSelectedSheet() != null) {
+				updateUnlockInfo();
+			}
 		}
 	}
 	
