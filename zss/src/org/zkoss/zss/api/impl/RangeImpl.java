@@ -722,8 +722,8 @@ public class RangeImpl implements Range{
 				drawingObjects, scenarios);
 	}
 	@Override
-	public void unprotectSheet(String password) {
-		_range.unprotectSheet(password);
+	public boolean unprotectSheet(String password) {
+		return _range.unprotectSheet(password);
 	}
 
 	@Override

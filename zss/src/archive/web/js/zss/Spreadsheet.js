@@ -371,8 +371,20 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 		 * @return boolean
 		 */
 		protect: function (v) {
-			if (this.sheetCtrl) {
-				this.sheetCtrl.fireProtectSheet(v);
+			var sheetCtrl = this.sheetCtrl;
+			if (sheetCtrl) {
+				sheetCtrl.fireProtectSheet(v);
+				var ls = sheetCtrl.getLastSelection();
+				if (v) {
+					if (!sheetCtrl.isRangeSelectable(ls.left, ls.top, ls.right, ls.bottom)) {
+						sheetCtrl.hideCellFocus();
+						sheetCtrl.hideCellSelection();
+					}
+				} else {
+					var pos = sheetCtrl.getLastFocus();
+					sheetCtrl.moveCellFocus(pos.row, pos.column, true);
+					sheetCtrl.showCellSelection();
+				}
 			}
 			if (this._sheetBar) {
 				this._sheetBar.getSheetSelector().setProtectSheetCheckmark(v);
@@ -970,7 +982,8 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 	 * @param string type
 	 */
 	fireCellEvt: function (type, shx, shy, mousemeta, row, col, mx, my, field) {
-		if ('af'==type && this.sheetCtrl._wgt.isProtect()){ //forbid using filter under protection
+		if ('af'==type && this.isProtect() &&
+			!this.sheetCtrl._wgt.allowAutoFilter) { //forbid using filter under protection
 			return;
 		}
 		

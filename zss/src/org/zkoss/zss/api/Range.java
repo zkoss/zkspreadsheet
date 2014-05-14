@@ -856,7 +856,7 @@ public interface Range {
 	 * be prompted for the password.
 	 * @since 3.5.0 
 	 */
-	public void unprotectSheet(String password);
+	public boolean unprotectSheet(String password);
 	
 	/**
 	 * Gets {@link SheetProtection} which tells what are allowed operations for 

@@ -23,7 +23,7 @@ import org.zkoss.zss.model.SSheetProtection;
  *
  */
 public class SheetProtectionImpl implements SSheetProtection {
-	// bit poistion match xls native record so don't change them.
+	// bit position match xls native record so don't change them.
 	private static final int OBJECTS        = 0x01;
 	private static final int SCENARIOS 		= 0x02;
 	private static final int FORMAT_CELLS 	= 0x04;

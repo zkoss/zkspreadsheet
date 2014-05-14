@@ -237,6 +237,15 @@ zss.Cell = zk.$extends(zk.Widget, {
 		this.sheet._doMousedblclick(evt);
 	},
 	/**
+	 * Returns whether cell is selectable or not
+	 * @return boolean
+	 */
+	isSelectable: function () {
+		var wgt = this.sheet._wgt;
+		return !wgt.isProtect() || wgt.allowSelectLockedCells || 
+			(wgt.allowSelectUnlockedCells && !this.isLocked());
+	},
+	/**
 	 * Returns whether cell locked or not
 	 * @return boolean
 	 */
@@ -506,12 +515,6 @@ zss.Cell = zk.$extends(zk.Widget, {
 		this.block = this.lock = null;
 		
 		this.$supers(zss.Cell, 'unbind_', arguments);
-	},
-	doMouseDown_: function (evt) {
-		this.sheet._doMousedown(evt);
-	},
-	doMouseUp_: function (evt) {
-		this.sheet._doMouseup(evt);
 	},
 	/**
 	 * When cells after this cell changed, may effect this cell's overflow

@@ -1,0 +1,15 @@
+<?page title="ZSS576 Sheet Protection" contentType="text/html;charset=UTF-8"?>
+<window height="100%" width="100%" apply="zss.testapp.issue.ZSS576Composer">
+	<vlayout>
+		<label multiline="true">
+			1. Focus and selection should be allowed only inside the greed area in Sheet "Test1".
+			2. Make a selection and click "Clear All" or "Clear Style", the selection should be unselectable.
+			3. Switch to "Test2" then go back to "Test1", and do step 1.
+			3. Sort and Insert Hyperlink should only work in the greed area in Sheet "Test2".
+			4. Move focus should not crash or slower in Sheet "All Unlock cell".
+		</label>
+		<spreadsheet id="ss" src="/sheetProtection.xlsx" showToolbar="true" showFormulabar="true" showSheetbar="true" showContextMenu="true"
+			maxVisibleRows="200" maxVisibleColumns="40" width="100%" height="450px">
+		</spreadsheet>
+	</vlayout>
+</window>

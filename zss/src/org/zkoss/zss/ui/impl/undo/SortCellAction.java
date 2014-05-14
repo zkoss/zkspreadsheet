@@ -102,4 +102,9 @@ public class SortCellAction extends AbstractCellDataStyleAction {
 					_header, _matchCase, _sortByRows);
 		}
 	}
+	
+	@Override
+	protected boolean isSheetProtected(){
+		return super.isSheetProtected() && !Ranges.range(_sheet).getSheetProtection().isSortAllowed();
+	}
 }

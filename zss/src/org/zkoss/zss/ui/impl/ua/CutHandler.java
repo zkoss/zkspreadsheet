@@ -20,7 +20,7 @@ import org.zkoss.zss.api.AreaRef;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.ui.UserActionContext;
 
-public class CutHandler extends AbstractProtectedHandler {
+public class CutHandler extends AbstractHandler {
 
 	@Override
 	protected boolean processAction(UserActionContext ctx) {

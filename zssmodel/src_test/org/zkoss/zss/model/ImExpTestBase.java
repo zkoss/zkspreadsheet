@@ -116,6 +116,27 @@ public class ImExpTestBase {
 		assertFalse(sp.isSelectLockedCells());
 		assertFalse(sp.isSelectUnlockedCells());
 		assertFalse(sp.isSort());
+		
+		// test unprotect sheet
+		SSheet validationNone = book.getSheetByName("validation"); 
+		assertFalse(validationNone.isProtected());
+
+		sp = validationNone.getSheetProtection();
+		assertFalse(sp.isAutoFilter());
+		assertFalse(sp.isDeleteColumns());
+		assertFalse(sp.isDeleteRows());
+		assertFalse(sp.isFormatCells());
+		assertFalse(sp.isFormatColumns());
+		assertFalse(sp.isFormatRows());
+		assertFalse(sp.isInsertColumns());
+		assertFalse(sp.isInsertHyperlinks());
+		assertFalse(sp.isInsertRows());
+		assertFalse(sp.isObjects());
+		assertFalse(sp.isPivotTables());
+		assertFalse(sp.isScenarios());
+		assertTrue(sp.isSelectLockedCells());
+		assertTrue(sp.isSelectUnlockedCells());
+		assertFalse(sp.isSort());
 }
 	
 	

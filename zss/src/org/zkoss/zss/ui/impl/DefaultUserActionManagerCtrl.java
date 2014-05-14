@@ -30,6 +30,8 @@ import org.zkoss.lang.Strings;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zss.api.AreaRef;
+import org.zkoss.zss.api.Range;
+import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.Range.ApplyBorderType;
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.CellStyle.Alignment;
@@ -49,8 +51,9 @@ import org.zkoss.zss.ui.event.CellSelectionAction;
 import org.zkoss.zss.ui.event.CellSelectionUpdateEvent;
 import org.zkoss.zss.ui.event.Events;
 import org.zkoss.zss.ui.event.KeyEvent;
+import org.zkoss.zss.ui.impl.ua.AbstractHandler;
 import org.zkoss.zss.ui.impl.ua.AbstractBookHandler;
-import org.zkoss.zss.ui.impl.ua.AbstractProtectedHandler;
+import org.zkoss.zss.ui.impl.ua.AbstractCellHandler;
 import org.zkoss.zss.ui.impl.ua.AddSheetHandler;
 import org.zkoss.zss.ui.impl.ua.ApplyBorderHandler;
 import org.zkoss.zss.ui.impl.ua.ClearCellHandler;
@@ -219,17 +222,41 @@ public class DefaultUserActionManagerCtrl implements UserActionManagerCtrl,UserA
 		
 		
 		//for enable some menu folder, do nothing
-		UserActionHandler folderhandler = new AbstractProtectedHandler() {
+		UserActionHandler folderhandler = new AbstractHandler() {
 			@Override
 			protected boolean processAction(UserActionContext ctx) {
 				return false;
 			}
 		};
-		registerHandler(category, AuxAction.VERTICAL_ALIGN.getAction(), folderhandler);
-		registerHandler(category, AuxAction.HORIZONTAL_ALIGN.getAction(), folderhandler);
+		
+		//for enable cell format menu folder, do nothing
+		UserActionHandler cellfolderhandler = new AbstractCellHandler() {
+			@Override
+			protected boolean processAction(UserActionContext ctx) {
+				return false;
+			}
+		};
+		
+		//for enable sort and filter menu folder, do nothing
+		UserActionHandler sortfolderhandler = new AbstractHandler() {
+			@Override
+			protected boolean processAction(UserActionContext ctx) {
+				return false;
+			}
+			
+			@Override
+			public boolean isEnabled(Book book, Sheet sheet) {
+				final Range range = Ranges.range(sheet);
+				return book != null && sheet != null && ( !sheet.isProtected() ||
+						range.getSheetProtection().isSortAllowed());
+			}
+		};
+		
+		registerHandler(category, AuxAction.VERTICAL_ALIGN.getAction(), cellfolderhandler);
+		registerHandler(category, AuxAction.HORIZONTAL_ALIGN.getAction(), cellfolderhandler);
 		registerHandler(category, AuxAction.INSERT.getAction(), folderhandler);
 		registerHandler(category, AuxAction.DELETE.getAction(), folderhandler);
-		registerHandler(category, AuxAction.SORT_AND_FILTER.getAction(), folderhandler);
+		registerHandler(category, AuxAction.SORT_AND_FILTER.getAction(), sortfolderhandler);
 		registerHandler(category, AuxAction.CLEAR.getAction(), folderhandler);
 		
 		

@@ -776,7 +776,7 @@ public interface SRange {
 	 * omit this argument for a sheet that is protected with a password, you'll
 	 * be prompted for the password. 
 	 */
-	public void unprotectSheet(String password);
+	public boolean unprotectSheet(String password);
 	
 	/**
 	 * Gets {@link SSheetProtection} protection options that tells what are 

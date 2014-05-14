@@ -473,8 +473,9 @@ zss.DataPanel = zk.$extends(zk.Object, {
 	* @param {boolean} noslevt don't send onCellSelection Event to server side
 	*/
 	moveFocus: function(row, col, scroll, selection, noevt, noslevt) {
-		var sheet = this.sheet;
-		var lastFocus = sheet.getLastFocus();
+		var sheet = this.sheet,
+			lastFocus = sheet.getLastFocus();
+
 		if (sheet && !sheet.editingFormulaInfo) {
 			// ZSS-370: don't stop editing if target position is same as current focus cell 
 			if(lastFocus.row != row || lastFocus.column != col) {
@@ -519,8 +520,9 @@ zss.DataPanel = zk.$extends(zk.Object, {
 		var sheet = this.sheet,
 			cell = sheet.getCell(row, col);
 		
-		if (!cell)
+		if (!cell.isSelectable())
 			return false;	
+
 		var cellcmp = cell.comp,
 			ml = cell.merl,
 			mt = cell.mert;//this cell is merged by a left cell. cellcmp.ctrl.merl;
@@ -685,11 +687,17 @@ zss.DataPanel = zk.$extends(zk.Object, {
 			col = pos.column;
 		if (row < 0 || col < 0) return;
 
-		var nextcol = sheet.maxCols - 1,
-			custColWidth = sheet.custColWidth,
-			newcol = custColWidth.getDecUnhidden(nextcol, nextcol > col ? col : 0); //search backward
+		if (!sheet._wgt.isProtect() || sheet._wgt.allowSelectLockedCells) {
+			var nextcol = sheet.maxCols - 1,
+				custColWidth = sheet.custColWidth;
+			col = custColWidth.getDecUnhidden(nextcol, nextcol > col ? col : 0); //search backward
+		} else {
+			var newpos = this._getShiftPos(row, col, 'end');
+			row = newpos.row;
+			col = newpos.col;
+		}
 
-		this.moveFocus(row, newcol, true, true);
+		this.moveFocus(row, col, true, true);
 	},
 	/**
 	 * Move to the first column 
@@ -705,11 +713,16 @@ zss.DataPanel = zk.$extends(zk.Object, {
 			col = pos.column;
 		if (row < 0 || col < 0) return;
 		
-		var prevcol = 0,
-			custColWidth = sheet.custColWidth,
-			newcol = custColWidth.getIncUnhidden(prevcol, col < (sheet.maxCols - 1) ? col : (sheet.maxCols - 1)); //search forward
-
-		this.moveFocus(row, newcol, true, true);
+		if (!sheet._wgt.isProtect() || sheet._wgt.allowSelectLockedCells) {
+			var prevcol = 0,
+				custColWidth = sheet.custColWidth;
+			col = custColWidth.getIncUnhidden(prevcol, col < (sheet.maxCols - 1) ? col : (sheet.maxCols - 1)); //search forward
+		} else {
+			var newpos = this._getShiftPos(row, col, 'home');
+			row = newpos.row;
+			col = newpos.col;
+		}
+		this.moveFocus(row, col, true, true);
 	},
 	/**
 	 * Move up
@@ -724,14 +737,20 @@ zss.DataPanel = zk.$extends(zk.Object, {
 			row = pos.row,
 			col = pos.column;
 		if (row < 0 || col < 0) return;
-		if (row > 0) {
-			var prevrow = row - 1,
-				custRowHeight = sheet.custRowHeight,
-				newrow = prevrow > 0 ? 
-						custRowHeight.getDecUnhidden(prevrow, 0) : //search upward
-						custRowHeight.getIncUnhidden(prevrow, row); //search downward
-			if (newrow >= 0)
-				row = newrow;
+		if (!sheet._wgt.isProtect() || sheet._wgt.allowSelectLockedCells) {
+			if (row > 0) {
+				var prevrow = row - 1,
+					custRowHeight = sheet.custRowHeight,
+					newrow = prevrow > 0 ? 
+							custRowHeight.getDecUnhidden(prevrow, 0) : //search upward
+							custRowHeight.getIncUnhidden(prevrow, row); //search downward
+				if (newrow >= 0)
+					row = newrow;
+			}
+		} else {
+			var newpos = this._getShiftPos(row, col, 'up');
+			row = newpos.row;
+			col = newpos.col;
 		}
 		
 		this.moveFocus(row, col, true, true);
@@ -756,14 +775,21 @@ zss.DataPanel = zk.$extends(zk.Object, {
 			if (zkS.t(mb))
 				row = mb;
 		}
-		if (row < sheet.maxRows - 1) {
-			var nextrow = row + 1,
-				custRowHeight = sheet.custRowHeight,
-				newrow = nextrow < (sheet.maxRows - 1) ? 
-					custRowHeight.getIncUnhidden(nextrow, sheet.maxRows - 1): //search downward
-					custRowHeight.getDecUnhidden(nextrow, row); //search upward
-			if (newrow >= 0)
-				row = newrow;
+
+		if (!sheet._wgt.isProtect() || sheet._wgt.allowSelectLockedCells) {
+			if (row < sheet.maxRows - 1) {
+				var nextrow = row + 1,
+					custRowHeight = sheet.custRowHeight,
+					newrow = nextrow < (sheet.maxRows - 1) ? 
+						custRowHeight.getIncUnhidden(nextrow, sheet.maxRows - 1): //search downward
+						custRowHeight.getDecUnhidden(nextrow, row); //search upward
+				if (newrow >= 0)
+					row = newrow;
+			}
+		} else {
+			var newpos = this._getShiftPos(row, col, 'down');
+			row = newpos.row;
+			col = newpos.col;
 		}
 
 		this.moveFocus(row, col, true, true);
@@ -781,14 +807,20 @@ zss.DataPanel = zk.$extends(zk.Object, {
 			row = r ? r : pos.row,
 			col = c ? c : pos.column;
 		if (row < 0 || col < 0) return;
-		if (col > 0) {
-			var prevcol = col - 1,
-			custColWidth = sheet.custColWidth,
-			newcol = prevcol > 0 ? 
-					custColWidth.getDecUnhidden(prevcol, 0) : //search backward
-					custColWidth.getIncUnhidden(prevcol, col); //search foreward
-			if (newcol >= 0)
-				col = newcol;
+		if (!sheet._wgt.isProtect() || sheet._wgt.allowSelectLockedCells) {
+			if (col > 0) {
+				var prevcol = col - 1,
+				custColWidth = sheet.custColWidth,
+				newcol = prevcol > 0 ? 
+						custColWidth.getDecUnhidden(prevcol, 0) : //search backward
+						custColWidth.getIncUnhidden(prevcol, col); //search foreward
+				if (newcol >= 0)
+					col = newcol;
+			}
+		} else {
+			var newpos = this._getShiftPos(row, col, 'left');
+			row = newpos.row;
+			col = newpos.col;
 		}
 		this.moveFocus(row, col, true, true);
 	},
@@ -805,23 +837,124 @@ zss.DataPanel = zk.$extends(zk.Object, {
 			row = r ? r : pos.row,
 			col = c ? c : pos.column;
 		if(row < 0 || col < 0) return;
-		
+
 		var cell = sheet.getCell(row, col);
 		if (cell) {
 			var mr = cell.merr;
 			if(zkS.t(mr))
 				col = mr;
 		}
-		if (col < sheet.maxCols - 1) {
-			var nextcol = col + 1,
-				custColWidth = sheet.custColWidth,
-				newcol = nextcol < (sheet.maxCols - 1) ? 
-					custColWidth.getIncUnhidden(nextcol, sheet.maxCols - 1): //search foreward
-					custColWidth.getDecUnhidden(nextcol, col); //search backward
-			if (newcol >= 0)
-				col = newcol;
+		
+		if (!sheet._wgt.isProtect() || sheet._wgt.allowSelectLockedCells) {
+			if (col < sheet.maxCols - 1) {
+				var nextcol = col + 1,
+					custColWidth = sheet.custColWidth,
+					newcol = nextcol < (sheet.maxCols - 1) ? 
+						custColWidth.getIncUnhidden(nextcol, sheet.maxCols - 1): //search foreward
+						custColWidth.getDecUnhidden(nextcol, col); //search backward
+				if (newcol >= 0)
+					col = newcol;
+			}
+		} else {
+			var newpos = this._getShiftPos(row, col, 'right');
+			row = newpos.row;
+			col = newpos.col;
 		}
 		this.moveFocus(row, col, true, true);
+	},
+	// Get the unlock and unhidden cell's position when in sheet protection
+	_getShiftPos: function(row, col, key) {
+		var sheet = this.sheet,
+			newPos = {row: row, col: col},
+			fn = function() {return newPos};
+		if (key == 'up') {
+			fn = this._shiftUp;
+		} else if (key == 'down') {
+			fn = this._shiftDown;
+		} else if (key == 'left') {
+			fn = this._shiftLeft;
+		} else if (key == 'right') {
+			fn = this._shiftRight;
+		} else if (key == 'home') {
+			// 20140509, RaymondChao: move to the first column, shift right until matched.
+			newPos = {row: 0, col: -1};
+			fn = this._shiftRight;
+		} else if (key == 'end') {
+			// 20140509, RaymondChao: move to the end of the maximum column, shift left until matched.
+			fn = this._shiftLeft;
+			newPos = {row: sheet.maxRows - 1, col: sheet.maxCols};
+		}
+		do {
+			do {
+				newPos = fn.call(this, newPos);
+			} while (this.sheet.isCellLocked(newPos.row, newPos.col));
+		} while (sheet.custRowHeight.isHidden(newPos.row) || sheet.custColWidth.isHidden(newPos.col));
+
+		return newPos;
+	},
+	/*
+	 *      ^  ^
+	 *      |  |
+	 *   ^  |  |
+	 *   |  |  |
+	 *   |  | [X]
+     *   |  | 
+     *   |  | 
+	 */
+	_shiftUp: function (pos) {
+		var newpos = {row: pos.row - 1, col: pos.col},
+			sheet = this.sheet;
+		if (newpos.row < 0) {
+			newpos.row = sheet.maxRows - 1;
+			newpos.col = newpos.col > 0 ? newpos.col - 1 : sheet.maxCols - 1;
+		}
+		return newpos;
+	},
+	/*
+	 *       |  |
+	 *       |  |
+	 *   [X] |  |
+	 *    |  |  |
+     *    |  |  V
+     *    |  |
+     *    V  V 
+	 */
+	_shiftDown: function (pos) {
+		var newpos = {row: pos.row + 1, col: pos.col},
+			sheet = this.sheet;
+		if (newpos.row >= sheet.maxRows) {
+			newpos.row = 0;
+			newpos.col = newpos.col < sheet.maxCols - 1 ? newpos.col + 1 : 0;
+		}
+		return newpos;
+	},
+	/*
+     *       <-------
+	 *   <-----------
+	 *   <-----[X]
+	 */
+	_shiftLeft: function (pos) {
+		var newpos = {row: pos.row, col: pos.col - 1},
+			sheet = this.sheet;
+		if (newpos.col < 0) {
+			newpos.col = sheet.maxCols - 1;
+			newpos.row = newpos.row > 0 ? newpos.row - 1 : sheet.maxRows - 1;
+		}
+		return newpos;
+	},
+	/*
+	 *      [X]----->
+	 *   ----------->
+	 *   ------->
+	 */
+	_shiftRight: function (pos) {
+		var newpos = {row: pos.row, col: pos.col + 1},
+			sheet = this.sheet;
+		if (newpos.col >= sheet.maxCols) {
+			newpos.col = 0;
+			newpos.row = newpos.row < sheet.maxRows - 1 ? newpos.row + 1 : 0;
+		}
+		return newpos;
 	}
 });
 })();

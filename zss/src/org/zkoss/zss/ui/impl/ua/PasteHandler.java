@@ -28,7 +28,7 @@ import org.zkoss.zss.ui.impl.undo.CutCellAction;
 import org.zkoss.zss.ui.impl.undo.PasteCellAction;
 import org.zkoss.zss.ui.sys.UndoableActionManager;
 
-public class PasteHandler extends AbstractProtectedHandler {
+public class PasteHandler extends AbstractHandler {
 
 	@Override
 	protected boolean processAction(UserActionContext ctx) {

@@ -709,8 +709,9 @@ public class CellOperationUtil {
 	 * @param desc true for descent, false for ascent
 	 */
 	public static void sort(Range range, boolean desc) {
-		if(range.isProtected() && !range.getSheetProtection().isSortAllowed())
+		if(range.isProtected() && !range.getSheetProtection().isSortAllowed()) {
 			return;
+		}
 		range.sort(desc);
 	}
 	

@@ -6,13 +6,14 @@ import org.zkoss.zss.api.IllegalOpArgumentException;
 import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.AreaRef;
+import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.ui.UserActionContext;
 import org.zkoss.zss.ui.impl.undo.HideHeaderAction;
 import org.zkoss.zss.ui.impl.undo.HideHeaderAction.Type;
 import org.zkoss.zss.ui.sys.UndoableActionManager;
 
-public class HideHeaderHandler extends AbstractProtectedHandler {
+public class HideHeaderHandler extends AbstractHandler {
 	final HideHeaderAction.Type _type;
 	final boolean _hide;
 	
@@ -72,4 +73,18 @@ public class HideHeaderHandler extends AbstractProtectedHandler {
 		return true;
 	}
 
+	@Override
+	public boolean isEnabled(Book book, Sheet sheet) {
+		final Range range = Ranges.range(sheet);
+		boolean allowed = false;
+		switch(_type){
+		case COLUMN:
+			allowed = range.getSheetProtection().isFormatColumnsAllowed();
+			break;
+		case ROW:
+			allowed = range.getSheetProtection().isFormatRowsAllowed();
+			break;
+		}
+		return book != null && sheet != null && (!sheet.isProtected() || allowed);
+	}
 }

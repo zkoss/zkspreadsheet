@@ -751,12 +751,7 @@ C	3	6	9	=SUM(E9:F9)
 		Assert.assertFalse("Sort", ssp.isSort());
 		
 		//unprotect with incorrect password; shall throw exception
-		try {
-			rngA1.unprotectSheet("abcd");
-			Assert.assertTrue("Should not come here! \"abcd\" is not the correct password", false);
-		}  catch(Exception ex) {
-			Assert.assertTrue(ex.getMessage(), true);
-		}
+		Assert.assertFalse(rngA1.unprotectSheet("abcd"));
 		
 		//unprotect with correct password
 		rngA1.unprotectSheet("abc");
