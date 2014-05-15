@@ -85,6 +85,7 @@ ZK Spreadsheet 2.6.0
 	ZSS-653 Invalid formula causes spreadsheet crash under IE 8
 	ZSS-440 IE10 resizing column (java.lang.Double cannot be cast to java.lang.Integer)
 	ZSS-662 Paste large text into a cell, visible area of the worksheet moves to the left
+	ZSS-501 Click check mark of formula bar after entering a value, all cells become unable to edit
 
 ZK Spreadsheet 2.5.0
 *Features:   
