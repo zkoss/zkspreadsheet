@@ -1836,31 +1836,28 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			this._skipress = true;
 		}
 	},
-	_doKeyup: function(evt) { //feature #161: Support copy&paste from clipboard to a cell
-		//if(this._skipress) delete this._skipress;
-		//check CTRL-V and do the copy on the sheet!
-		if (evt.ctrlKey && evt.keyCode == 86) {
-			var wgt = this._wgt,
-				sl = this,
-				//ZSS-169
-				fn = function () {
-					if (!wgt._doPasteFromServer) {//do paste from client when server doesn't do it
-						var focustag = sl.dp.focustag,
-							value = jq(focustag).val(),
-							pos = sl.dp._speedCopy(value);
-						
-						//Note. _speedCopy will fire edit cmd to server, set selection after response
-						if (pos)
-							wgt._onResponseCallback.push(function () {
-								sl._doCellSelection(pos.left, pos.top, pos.right, pos.bottom);
-							});
-					}	
-				};
-			if (wgt._sendAu) {//flag that indicate ZK send Au request. (cannot use zAu.processing(), it may be null since ZK use timeout to send request) 
-				wgt._onResponseCallback.push(fn); 
-			} else {
-				fn();
-			}
+	//feature #161: Support copy&paste from clipboard to a cell
+	pasteToSheet: function () {
+		var wgt = this._wgt,
+			sl = this,
+			//ZSS-169
+			fn = function () {
+				if (!wgt._doPasteFromServer) {//do paste from client when server doesn't do it
+					var focustag = sl.dp.focustag,
+						value = jq(focustag).val(),
+						pos = sl.dp._speedCopy(value);
+					
+					//Note. _speedCopy will fire edit cmd to server, set selection after response
+					if (pos)
+						wgt._onResponseCallback.push(function () {
+							sl._doCellSelection(pos.left, pos.top, pos.right, pos.bottom);
+						});
+				}	
+			};
+		if (wgt._sendAu) {//flag that indicate ZK send Au request. (cannot use zAu.processing(), it may be null since ZK use timeout to send request) 
+			wgt._onResponseCallback.push(fn); 
+		} else {
+			fn();
 		}
 	},
 	/**

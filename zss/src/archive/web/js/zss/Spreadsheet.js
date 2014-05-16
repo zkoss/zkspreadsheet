@@ -192,6 +192,16 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 			//jq(scroll).css('overflow-y', 'hidden');
 		}
 	}
+
+	// 20140509, RaymondChao: ZK does not handle command key in mac, workaround is
+	// converting the metaKey to ctrlKey. It should be removed when ZK fixes it.
+	function _convertKeyEvent (evt) {
+		if (zk.mac && evt.metaKey) {
+			evt.ctrlKey = true;
+			evt.data.ctrlKey = true;
+		}
+		return evt;
+	}
 	
 /**
  * Spreadsheet is a is a rich ZK Component to handle EXCEL like behavior
@@ -916,7 +926,7 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 			//ZSS-169
 			fn = function () {
 			if (sf._ctrlPasteDown) {//set selection after keyup
-				sf._afterKeyUpCallback = function () {
+				sf._afterPasteCallback = function () {
 					sheet._cmdSelection(v);
 				};
 			} else {
@@ -1273,6 +1283,7 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 		this.$supers('sendAU_', arguments);
 	},
 	doKeyDown_: function (evt) {
+		evt = _convertKeyEvent(evt);
 		var sheet = this.sheetCtrl;
 		if (sheet) {
 			sheet._doKeydown(evt);
@@ -1307,41 +1318,48 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 					//Widget.js will stop event, if onCtrlKey reg ctrl + c and ctrl + v. restart the event
 					evt.domStopped = false;
 				}
+				var that = this;
+				//do the copy on the sheet!
+				// 20140509, RaymondChao: focustag's value becames empty when paste twice or more times without setTimeout.
+				setTimeout(function(){ that.doPaste(); }, 0);
 			}
 		}
 		//avoid onCtrlKey to be eat in editing mode.
 	},
 	doKeyPress_: function (evt) {
+		evt = _convertKeyEvent(evt);
 		if (this.sheetCtrl)
 			this.sheetCtrl._doKeypress(evt);
 		this.$supers('doKeyPress_', arguments);
 	},
-	//feature#161: Support copy&paste from clipboard to a cell
 	doKeyUp_: function (evt) {
 		this.$supers('doKeyUp_', arguments);
+		this._ctrlPasteDown = false;
+	},
+	//feature#161: Support copy&paste from clipboard to a cell
+	doPaste: function () {
+		if (!this._ctrlPasteDown)
+			return;
+
 		var sl = this,
 			sheet = this.sheetCtrl,
 			clearFn = function () {
 				sl._doPasteFromServer = false;
 			};
 		if (sheet && sheet.state == zss.SSheetCtrl.FOCUSED) {
-			sheet._doKeyup(evt);
+			sheet.pasteToSheet();
 			//ZSS-169
-			var fn = this._afterKeyUpCallback;
+			var fn = this._afterPasteCallback;
 			if (fn) {
 				fn();
-				delete this._afterKeyUpCallback;
+				delete this._afterPasteCallback;
 			}
 		}
-		this._ctrlPasteDown = false;
-		
 		// #ZSS-327: only clear the flag when copy-paste (i.e "ctrl+v") 
-		if (evt.ctrlKey && evt.keyCode == 86) {
-			if (this._sendAu) {//au processing, reset _doPasteFromServer on after response
-				this._onResponseCallback.push(clearFn);
-			} else {
-				clearFn();
-			}
+		if (this._sendAu) {//au processing, reset _doPasteFromServer on after response
+			this._onResponseCallback.push(clearFn);
+		} else {
+			clearFn();
 		}
 	},
 	linkTo: function (href, type, evt) {

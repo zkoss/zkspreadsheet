@@ -17,6 +17,7 @@ ZK Spreadsheet 3.5.0
   ZSS-641 Desktop not found if I submit the form.
   ZSS-662 Paste large text into a cell, visible area of the worksheet moves to the left
   ZSS-672 Input #NAME? shall be deemed as an Error value
+  ZSS-656 Copy-paste from clipboard to ZSS not working for Mac OS
   
 ** Upgrade Notes
   * Following api are deprecated
