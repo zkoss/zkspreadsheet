@@ -63,6 +63,27 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 				jq(n).css('height', jq.px0(sh));
 		}
 	}
+	
+	function blurEditor(wgt) {
+		var sheet = wgt.sheet;
+		if (sheet) {
+			//setTimeout(function () {
+			// ZSS-674: stay focused if formulabar's ok/cancel btn was pressed down.
+			if (sheet.shallIgnoreBlur) {
+				wgt.focus();
+				sheet.shallIgnoreBlur = false;
+			} else if (sheet.isSwitchingFocus) {
+				// 20140519, RaymondChao: when change focus between editors, spreadsheet could have no focus as below
+				// formulabar editor blur -> ( no focus ) -> editbox focus
+				// need to add isSwitchingFocus flag to determine the situation
+				sheet.isSwitchingFocus = false;
+			} else if (!sheet._wgt.hasFocus()) {
+				sheet.dp.stopEditing(sheet.innerClicking > 0 ? "refocus" : "lostfocus");
+			}
+			//}, 300);//ZSS-161: if click on cancel button: set timeout to change evt order: cancel btn click evt -> blur evt  
+			wgt.isFocused = false;
+		}
+	}
 
 	/**
 	 * Returns cell reference
@@ -293,17 +314,11 @@ zss.FormulabarEditor = zk.$extends(zul.inp.InputWidget, {
    			if(sheet.state != zss.SSheetCtrl.EDITING) {
    				sheet._wgt.focus(100);
    			}
+   			this.isFocused = true;
    		}
    	},
    	doBlur_: function () {
-	   	var sheet = this.sheet;
-	   	if (sheet) {
-	   		setTimeout(function () {
-	   			if (!sheet._wgt.hasFocus()) {
-	   				sheet.dp.stopEditing(sheet.innerClicking > 0 ? "refocus" : "lostfocus");
-	   			}
-	   		}, 300);//ZSS-161: if click on cancel button: set timeout to change evt order: cancel btn click evt -> blur evt  
-	   	}
+   		blurEditor(this);
    	},
    	_onContentsChanged: function (evt) {
    		var sheet = this.sheet;
@@ -361,6 +376,9 @@ zss.FormulabarEditor = zk.$extends(zul.inp.InputWidget, {
 				sheet.dp.moveFocus(row == -1 ? 0 : row, col == -1 ? 0 : col);
 				evt.stop();
 			} else if (sheet.state == zss.SSheetCtrl.EDITING) {
+				if (!this.isFocused) {
+					sheet.isSwitchingFocus = true;
+				}
 				var info = sheet.editingFormulaInfo;
 				if (info && info.moveCell) {//re-eval editing formula info
 					sheet.editingFormulaInfo = getEditingFormulaInfo('formulabarEditing', this.$n('real'));
@@ -515,21 +533,20 @@ zss.Editbox = zk.$extends(zul.inp.InputWidget, {
 	},
 	doFocus_: function () {
 		this._editing = true;
+		if (this.sheet) {
+			this.isFocused = true;
+		}
 	},
 	doBlur_: function () {
-	   	var sheet = this.sheet;
-	   	if (sheet) {
-	   		setTimeout(function () {
-	   			if (!sheet._wgt.hasFocus()) {
-	   				sheet.dp.stopEditing(sheet.innerClicking > 0 ? "refocus" : "lostfocus");
-	   			}
-	   		}, 300);//ZSS-161: if click on cancel button: set timeout to change evt order: cancel btn click evt -> blur evt  
-	   	}
+		blurEditor(this);
 	},
 	doMouseDown_: function (evt) {
 		var sheet = this.sheet;
 		if (sheet) {
 			if (sheet.state == zss.SSheetCtrl.EDITING) {
+				if (!this.isFocused) {
+					sheet.isSwitchingFocus = true;
+				}
 				var info = sheet.editingFormulaInfo;
 				if (info && info.moveCell) {//re-eval editing formula info
 					sheet.editingFormulaInfo = getEditingFormulaInfo(this._type, this.$n());
