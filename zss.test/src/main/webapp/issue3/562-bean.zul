@@ -5,6 +5,10 @@
 				showFormulabar="true" showContextMenu="true" showToolbar="true" showSheetbar="true" 
 				hflex="1" vflex="1" width="100%" >
 			</spreadsheet>
+			<vlayout width="250px">
+			<label>
+			In cell C3, enter formula "=assetsBean.list", you should see #VALUE!.
+			</label>
 			<groupbox width="250px">
 				<caption label="Update Report" />
 				<grid vflex="1" hflex="1">
@@ -36,6 +40,7 @@
 					</rows>
 				</grid>
 			</groupbox>
+			</vlayout>
 		</hlayout>
 	</window>
 </zk>

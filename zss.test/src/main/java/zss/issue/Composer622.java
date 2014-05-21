@@ -10,7 +10,6 @@ import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zul.*;
 
-@SuppressWarnings("serial")
 public class Composer622 extends SelectorComposer<Window>{
 
 	private static final long serialVersionUID = -257374661283941797L;
