@@ -18,6 +18,7 @@ ZK Spreadsheet 3.5.0
   ZSS-662 Paste large text into a cell, visible area of the worksheet moves to the left
   ZSS-672 Input #NAME? shall be deemed as an Error value
   ZSS-656 Copy-paste from clipboard to ZSS not working for Mac OS
+  ZSS-674 Edit a cell but do not leave, hit save, changes not saved
   ZSS-670 A dot is replaced with colon in a formula causes exported Excel file corruption under German (Polish) locale
   
 ** Upgrade Notes
