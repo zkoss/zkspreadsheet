@@ -20,6 +20,7 @@ ZK Spreadsheet 3.5.0
   ZSS-656 Copy-paste from clipboard to ZSS not working for Mac OS
   ZSS-674 Edit a cell but do not leave, hit save, changes not saved
   ZSS-670 A dot is replaced with colon in a formula causes exported Excel file corruption under German (Polish) locale
+  ZSS-562 IllegalArgumentException showed when referencing a Spring bean that contains List type properties
   
 ** Upgrade Notes
   * Following api are deprecated
