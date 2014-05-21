@@ -1601,5 +1601,10 @@ public class FormulaTest extends FormulaTestBase {
 		testVLOOKUP(book);
 	}
 
+	@Test
+	public void testJIS() {
+		Book book = Util.loadBook(this,"TestFile2007-Formula.xlsx");
+		testJIS(book);
+	}
 }
 

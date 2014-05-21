@@ -2367,5 +2367,10 @@ public class FormulaTestBase {
 		assertEquals("0.70", Ranges.range(sheet, "B133").getFormatText().getCellFormatResult().text);
 	}
 
+	// #NAME?
+	protected void testJIS(Book book) {
+		Worksheet sheet = book.getWorksheet("formula-text");
+		assertEquals("#NAME?", Ranges.range(sheet, "B75").getFormatText().getCellFormatResult().text);
+	}
 }
 
