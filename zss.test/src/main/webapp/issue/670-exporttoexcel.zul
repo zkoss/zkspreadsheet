@@ -1,0 +1,20 @@
+<?page title="ZSS Export to Excel File Format" contentType="text/html;charset=UTF-8"?>
+<window width="100" height="100%"
+	apply="zss.issue.B670_ExportToExcelComposer">
+	<label pre="true">
+	ZSS export with GERMAN locale:
+	1. Click the "Set formula with Range" button(or "Set formula" button ).
+	2. Click "Export to Excel" button to export.
+	3. Cell A3 should show 0; if you see #VALUE! then it is a bug.
+	4. Input 10 into cell A1, you should see cell A3 changed from 0 to 8. If not, it is a bug.
+	</label>
+	<hbox>
+		<button id="setFormula">Set formula</button>
+		<button id="setFormulaWithRange">Set formula with Range</button>
+		<button id="exportBtn" label="Export to Excel"></button>
+	</hbox>
+	<spreadsheet id="spreadsheet"
+		src="/issue/blank.xlsx" maxrows="200" maxcolumns="40"
+		vflex="1" width="100%">
+	</spreadsheet>
+</window>
