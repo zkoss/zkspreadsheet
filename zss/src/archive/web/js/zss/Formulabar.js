@@ -230,8 +230,10 @@ zss.FormulabarWestCave = zk.$extends(zk.Widget, {
 		var nb = this._namebox = new zss.Namebox(wgt);
 		this.appendChild(nb);
 		
-		var cancelBtn = this._cancelBtn = new zss.FormulabarButton({label: '✗', sclass: 'zsformulabar-cancelbtn', 'onClick': this.proxy(this._onClickCancelBtn)}),
-			okBtn = this._okBtn = new zss.FormulabarButton({label: '✓', sclass: 'zsformulabar-okbtn', 'onClick': this.proxy(this._onClickOKBtn)}),
+		var cancelBtn = this._cancelBtn = new zss.FormulabarButton({label: '✗', sclass: 'zsformulabar-cancelbtn',
+				'onClick': this.proxy(this._onClickCancelBtn), 'onMouseDown': this.proxy(this._onMouseDownBtn)}),
+			okBtn = this._okBtn = new zss.FormulabarButton({label: '✓', sclass: 'zsformulabar-okbtn',
+				'onClick': this.proxy(this._onClickOKBtn), 'onMouseDown': this.proxy(this._onMouseDownBtn)}),
 			formulaBtn = this._formulaBtn = new zss.FormulabarButton({label: 'f(x)', sclass: 'zsformulabar-insertbtn', 'onClick': this.proxy(this._onClickInsertFormulabar)});
 		cancelBtn.setVisible(false);
 		okBtn.setVisible(false);
@@ -257,8 +259,10 @@ zss.FormulabarWestCave = zk.$extends(zk.Widget, {
 			sheet.unlisten({'onStartEditing': this.proxy(this._onStartEditing)});
 			sheet.unlisten({'onStopEditing': this.proxy(this._onStopEditing)});
 		}
-		this._cancelBtn.unlisten({'onClick': this.proxy(this._onClickCancelBtn)});
-		this._okBtn.unlisten({'onClick': this.proxy(this._onClickOKBtn)});
+		this._cancelBtn.unlisten({'onClick': this.proxy(this._onClickCancelBtn),
+			'onMouseDown': this.proxy(this._onMouseDownBtn)});
+		this._okBtn.unlisten({'onClick': this.proxy(this._onClickOKBtn),
+			'onMouseDown': this.proxy(this._onMouseDownBtn)});
 		this._formulaBtn.unlisten({'onClick': this.proxy(this._onClickInsertFormulabar)});
 		
 		this._wgt = this._cancelBtn = this._okBtn = this._formulaBtn = null; 
@@ -282,7 +286,7 @@ zss.FormulabarWestCave = zk.$extends(zk.Widget, {
 	_onClickOKBtn: function () {
 		var sheet = this.sheet;
 		if (sheet) {
-			sheet.dp.stopEditing();
+			sheet.dp.stopEditing('refocus'); // ZSS-501
 			this._onStopEditing();
 		}
 	},
@@ -292,6 +296,12 @@ zss.FormulabarWestCave = zk.$extends(zk.Widget, {
 		if (sheet) {
 			var s = sheet.getLastSelection();
 			wgt.fireToolbarAction('insertFunction', {tRow: s.top, lCol: s.left, bRow: s.bottom, rCol: s.right});
+		}
+	},
+	_onMouseDownBtn: function () {
+		var sheet = this.sheet;
+		if (sheet) {
+			sheet.shallIgnoreBlur = true;
 		}
 	},
 	getNamebox: function () {
