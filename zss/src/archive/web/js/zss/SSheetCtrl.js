@@ -3026,14 +3026,17 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		var //scrollSize = zss.Spreadsheet.scrollWidth, 
 			sp = sheet.sp,
 			spcmp = sp.comp,
+			frozenColWidth = sheet.custColWidth.getStartPixel(sheet.frozenCol + 1),
+			frozenRowHeight = sheet.custRowHeight.getStartPixel(sheet.frozenRow + 1),
 			scrollLeft = spcmp.scrollLeft,
 			scrollTop = spcmp.scrollTop,
 			custColWidth = sheet.custColWidth,
 			custRowHeight = sheet.custRowHeight,
 			viewWidth = spcmp.clientWidth -  sheet.leftWidth,
 			viewHeight = spcmp.clientHeight - sheet.topHeight,	
-			left = custColWidth.getCellIndex(scrollLeft)[0],
-			top = custRowHeight.getCellIndex(scrollTop)[0],
+			// ZSS-664: ignore frozen columns and rows
+			left = custColWidth.getCellIndex(scrollLeft + frozenColWidth)[0],
+			top = custRowHeight.getCellIndex(scrollTop + frozenRowHeight)[0],
 			right = custColWidth.getCellIndex(scrollLeft + viewWidth)[0],
 			bottom = custRowHeight.getCellIndex(scrollTop + viewHeight)[0];
 
