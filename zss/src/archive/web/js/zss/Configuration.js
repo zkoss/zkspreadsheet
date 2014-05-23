@@ -35,3 +35,8 @@ zss.SCROLL_DIR = { // ZSS-475: add direction enum. for scrolling to visible
 	HORIZONTAL: "horizontal",
 	VERTICAL: "vertical"
 };
+zss.SCROLL_POS = { // ZSS-664: add position enum. for scrolling to position
+	NONE: 'none',
+	TOP: 'top',
+	BOTTOM: 'bottom'
+};
