@@ -182,10 +182,15 @@ zss.ScrollPanel = zk.$extends(zk.Object, {
 	 * scroll a row, col or cell to visible
 	 * @param {Object} cell cell ctrl
 	 */
-	scrollToVisible: function (row, col, cell, direction) { // ZSS-475: add direction parameter
+	scrollToVisible: function (row, col, cell, direction, pos) { // ZSS-475: add direction parameter
+																// ZSS-664: add position parameter
 		
 		if(direction == undefined || direction == null) {
 			direction = zss.SCROLL_DIR.BOTH; 
+		}
+
+		if (!pos) {
+			pos = zss.SCROLL_POS.NONE;
 		}
 		
 		//zss-219, scrollToVisible should able to not depends on cell dom instance
@@ -259,10 +264,11 @@ zss.ScrollPanel = zk.$extends(zk.Object, {
 			}
 		}
 		if (zkS.t(row) && !moveonfr) {
-			if(((sh - th) < (h - fh)) || (t-th) < (st+fh)){ 
+			if (((sh - th < h - fh || t - th < st + fh) && pos != zss.SCROLL_POS.BOTTOM) ||
+				pos == zss.SCROLL_POS.TOP) { 
 				lst = t-th - fh;
 				dirty = true;
-			} else if(st + sh < t + h) {//top large then scroll panel bottom
+			} else if (st + sh < t + h || pos == zss.SCROLL_POS.BOTTOM) {//top large then scroll panel bottom
 				lst = t+h - sh;
 				dirty = true;
 			}

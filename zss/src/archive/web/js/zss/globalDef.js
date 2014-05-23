@@ -17,6 +17,11 @@
 		HORIZONTAL: "horizontal",
 		VERTICAL: "vertical"
 	};
+	zss.SCROLL_POS = { // ZSS-664: add position enum. for scrolling to position
+		NONE: 'none',
+		TOP: 'top',
+		BOTTOM: 'bottom'
+	};
 	zss.clientCopy = {
 			maxRowCount: 400,
 			maxColumnCount: 40
