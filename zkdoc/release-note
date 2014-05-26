@@ -24,6 +24,7 @@ ZK Spreadsheet 3.5.0
   ZSS-664 page down/up move by page size, not 100 rows
   ZSS-679 Edit objects option in sheet protection is inconsistent when save to excel
   ZSS-680 ZSS App always save to xlsx format.
+  ZSS-677 AbstractExcelImporter doesn't reuse imported font
   
 ** Upgrade Notes
   * Following api are deprecated

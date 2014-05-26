@@ -387,46 +387,42 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 
 	protected SFont importFont(CellStyle poiCellStyle) {
 		SFont font = null;
-		if (importedFont.containsKey(poiCellStyle.getFontIndex())) {
-			font = importedFont.get(poiCellStyle.getFontIndex());
+		final short fontIndex = poiCellStyle.getFontIndex();
+		if (importedFont.containsKey(fontIndex)) {
+			font = importedFont.get(fontIndex);
 		} else {
-			Font poiFont = workbook.getFontAt(poiCellStyle.getFontIndex());
-			font = book.createFont(true);
-			// font
-			font.setName(poiFont.getFontName());
-			if (poiFont.getBoldweight() == Font.BOLDWEIGHT_BOLD) {
-				font.setBoldweight(SFont.Boldweight.BOLD);
-			} else {
-				font.setBoldweight(SFont.Boldweight.NORMAL);
-			}
-			font.setItalic(poiFont.getItalic());
-			font.setStrikeout(poiFont.getStrikeout());
-			font.setUnderline(PoiEnumConversion.toUnderline(poiFont.getUnderline()));
-
-			font.setHeightPoints(poiFont.getFontHeightInPoints());
-			font.setTypeOffset(PoiEnumConversion.toTypeOffset(poiFont.getTypeOffset()));
-			font.setColor(book.createColor(BookHelper.getFontHTMLColor(workbook, poiFont)));
+			Font poiFont = workbook.getFontAt(fontIndex);
+			font = createZssFont(poiFont);
+			importedFont.put(fontIndex, font); //ZSS-677
 		}
 		return font;
 	}
 
 	protected SFont toZssFont(Font poiFont) {
 		SFont font = null;
-		if (importedFont.containsKey(poiFont.getIndex())) {
-			font = importedFont.get(poiFont.getIndex());
+		final short fontIndex = poiFont.getIndex();
+		if (importedFont.containsKey(fontIndex)) {
+			font = importedFont.get(fontIndex);
 		} else {
-			font = book.createFont(true);
-			// font
-			font.setName(poiFont.getFontName());
-			font.setBoldweight(PoiEnumConversion.toBoldweight(poiFont.getBoldweight()));
-			font.setItalic(poiFont.getItalic());
-			font.setStrikeout(poiFont.getStrikeout());
-			font.setUnderline(PoiEnumConversion.toUnderline(poiFont.getUnderline()));
-
-			font.setHeightPoints(poiFont.getFontHeightInPoints());
-			font.setTypeOffset(PoiEnumConversion.toTypeOffset(poiFont.getTypeOffset()));
-			font.setColor(book.createColor(BookHelper.getFontHTMLColor(workbook, poiFont)));
+			font = createZssFont(poiFont);
+			importedFont.put(fontIndex, font); //ZSS-677
 		}
+		return font;
+	}
+	
+	protected SFont createZssFont(Font poiFont) {
+		SFont font = book.createFont(true);
+		// font
+		font.setName(poiFont.getFontName());
+		font.setBoldweight(PoiEnumConversion.toBoldweight(poiFont.getBoldweight()));
+		font.setItalic(poiFont.getItalic());
+		font.setStrikeout(poiFont.getStrikeout());
+		font.setUnderline(PoiEnumConversion.toUnderline(poiFont.getUnderline()));
+
+		font.setHeightPoints(poiFont.getFontHeightInPoints());
+		font.setTypeOffset(PoiEnumConversion.toTypeOffset(poiFont.getTypeOffset()));
+		font.setColor(book.createColor(BookHelper.getFontHTMLColor(workbook, poiFont)));
+		
 		return font;
 	}
 
