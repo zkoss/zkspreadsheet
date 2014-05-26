@@ -22,6 +22,7 @@ import java.util.List;
 import org.zkoss.zss.api.Exporters;
 import org.zkoss.zss.api.Importers;
 import org.zkoss.zss.api.model.Book;
+import org.zkoss.zss.api.model.Book.BookType;
 import org.zkoss.zss.app.repository.BookInfo;
 import org.zkoss.zss.app.repository.BookRepository;
 import org.zkoss.zss.app.ui.UiUtil;
@@ -70,7 +71,19 @@ public class SimpleRepository implements BookRepository{
 			//write to temp file first to avoid write error damage original file 
 			File temp = File.createTempFile("temp", f.getName());
 			fos = new FileOutputStream(temp);
-			Exporters.getExporter().export(book, fos);
+			//ZSS-680: ZSS app always save to xlsx format
+			String type = "excel";
+			switch(book.getType()) {
+			case XLS:
+				type = "xls";
+				break;
+			case XLSX:
+				//fall down
+			default:
+				type = "xlsx";
+				break;
+			}
+			Exporters.getExporter(type).export(book, fos);
 			
 			fos.close();
 			fos = null;
