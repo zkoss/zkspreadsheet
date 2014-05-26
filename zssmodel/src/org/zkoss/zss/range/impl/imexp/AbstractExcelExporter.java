@@ -143,6 +143,9 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 		if (sheet.isProtected()) {
 			poiSheet.protectSheet(""); // without password; set hashed password directly later
 			exportPassword(sheet, poiSheet);
+		} else {
+			//ZSS-679
+			poiSheet.protectSheet(null);
 		}
 
 		poiSheet.setDefaultRowHeight((short) UnitUtil.pxToTwip(sheet.getDefaultRowHeight()));
