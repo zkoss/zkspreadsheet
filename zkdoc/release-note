@@ -22,6 +22,7 @@ ZK Spreadsheet 3.5.0
   ZSS-670 A dot is replaced with colon in a formula causes exported Excel file corruption under German (Polish) locale
   ZSS-562 IllegalArgumentException showed when referencing a Spring bean that contains List type properties
   ZSS-664 page down/up move by page size, not 100 rows
+  ZSS-679 Edit objects option in sheet protection is inconsistent when save to excel
   
 ** Upgrade Notes
   * Following api are deprecated
