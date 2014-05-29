@@ -730,7 +730,8 @@ zss.Editbox = zk.$extends(zul.inp.InputWidget, {
 			}
 		};
 
-		if (!zk.safari && (!zk.ie /*|| zk.ie >= 11*/)) fun();//safari must run after timeout
+		// ZSS-683: zk.safari is not true on Chrome since ZK 7.0.1
+		if (!zk.safari && !zk.chrome && (!zk.ie /*|| zk.ie >= 11*/)) fun();//safari must run after timeout
 		setTimeout(function(){
 			//issue 228: ie focus event need after show
 			if (zk.ie /*&& zk.ie < 11*/) {
@@ -739,7 +740,7 @@ zss.Editbox = zk.$extends(zul.inp.InputWidget, {
 			if (!noFocus) {
 				$edit.focus();
 				//issue 230: IE cursor position is not at the text end when press F2
-				if (zk.safari || (zk.ie /*&& zk.ie < 11*/)) fun();
+				if (zk.safari || zk.chrome || (zk.ie /*&& zk.ie < 11*/)) fun();
 			}
 		}, 25);	
 		this.autoAdjust(true);
