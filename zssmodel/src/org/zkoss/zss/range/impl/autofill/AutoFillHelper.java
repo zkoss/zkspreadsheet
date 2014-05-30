@@ -25,6 +25,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.zkoss.lang.Strings;
+import org.zkoss.poi.ss.usermodel.ZssContext;
 import org.zkoss.util.Locales;
 import org.zkoss.zss.model.CellRegion;
 import org.zkoss.zss.model.InvalidModelOpException;
@@ -174,7 +175,7 @@ public class AutoFillHelper {
     }
 
 	private int getDateTimeSubType(SCell cell) {
-		FormatResult result = getFormatEngine().format(cell, new FormatContext(Locales.getCurrent()));
+		FormatResult result = getFormatEngine().format(cell, new FormatContext(ZssContext.getCurrent().getLocale()));
 		Format format = result.getFormater();
         if (result.isDateFormatted() && format instanceof SimpleDateFormat){
         	//check if a pure time format
@@ -192,7 +193,7 @@ public class AutoFillHelper {
 			int b = 0, e = 0;
 			CellType prevtype = null;
 			int subType = -1;
-			final Locale locale = Locales.getCurrent(); //ZSS-69
+			final Locale locale = ZssContext.getCurrent().getLocale(); //ZSS-69
 			for (int j = 0; j < srcCells.length; ++j) {
 				final SCell cell = srcCells[j];
 				final CellType type = cell.isNull() ? CellType.BLANK : cell.getType();
@@ -276,7 +277,7 @@ public class AutoFillHelper {
 				}
 				break;
 			case STRING:
-				final Locale locale = Locales.getCurrent(); //ZSS-69 locale aware then US when drag-fill
+				final Locale locale = ZssContext.getCurrent().getLocale(); //ZSS-69 locale aware then US when drag-fill
 				switch(subType) {
 				default:
 				case Step.BLANK:
@@ -335,7 +336,7 @@ public class AutoFillHelper {
 		parts[j++]= cal.get(Calendar.MONTH);
 		parts[j++]= cal.get(Calendar.DAY_OF_MONTH);
 		
-		FormatResult result = getFormatEngine().format(srcCell, new FormatContext(Locales.getCurrent()));
+		FormatResult result = getFormatEngine().format(srcCell, new FormatContext(ZssContext.getCurrent().getLocale()));
 		Format format = result.getFormater();
         if (result.isDateFormatted() && format instanceof SimpleDateFormat){
         	final String pattern1 = ((SimpleDateFormat)format).toPattern();

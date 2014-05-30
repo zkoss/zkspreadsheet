@@ -18,6 +18,7 @@ package org.zkoss.zss.model.impl;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Locale;
 
 import org.zkoss.zss.model.CellRegion;
 import org.zkoss.zss.model.ErrorValue;
@@ -205,10 +206,19 @@ public class CellImpl extends AbstractCellAdv {
 	
 	@Override
 	public void setFormulaValue(String formula) {
+		//ZSS-565: enforce internal US locale
+		setFormulaValue(formula, Locale.US);
+	}
+	
+	// ZSS-565: Support input with Swedish locale into Formula
+	@Override
+	public void setFormulaValue(String formula, Locale locale) {
 		checkOrphan();
 		Validations.argNotNull(formula);
 		FormulaEngine fe = EngineFactory.getInstance().createFormulaEngine();
-		FormulaExpression expr = fe.parse(formula, new FormulaParseContext(this,null));//for test error, no need to build dependency
+		FormulaParseContext formulaCtx = 
+				new FormulaParseContext(this.getSheet().getBook(),this.getSheet(),this,null,locale);
+		FormulaExpression expr = fe.parse(formula, formulaCtx);//for test error, no need to build dependency
 		if(expr.hasError()){	
 			String msg = expr.getErrorMessage();
 			throw new InvalidFormulaException(msg==null?"The formula ="+formula+" contains error":msg);
@@ -219,7 +229,9 @@ public class CellImpl extends AbstractCellAdv {
 		}
 		
 		//parse again, this will create new dependency
-		expr = fe.parse(formula, new FormulaParseContext(this ,getRef()));
+		formulaCtx = 
+			new FormulaParseContext(this.getSheet().getBook(),this.getSheet(),this,getRef(),locale);
+		expr = fe.parse(formula, formulaCtx);
 		setValue(expr);
 	}
 	

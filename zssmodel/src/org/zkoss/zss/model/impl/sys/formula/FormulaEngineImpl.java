@@ -31,6 +31,7 @@ import org.zkoss.poi.ss.formula.EvaluationWorkbook.ExternalSheet;
 import org.zkoss.poi.ss.formula.ExternSheetReferenceToken;
 import org.zkoss.poi.ss.formula.FormulaParseException;
 import org.zkoss.poi.ss.formula.FormulaParser;
+import org.zkoss.poi.ss.formula.FormulaParsingWorkbook;
 import org.zkoss.poi.ss.formula.FormulaRenderer;
 import org.zkoss.poi.ss.formula.FormulaRenderingWorkbook;
 import org.zkoss.poi.ss.formula.FormulaType;
@@ -172,7 +173,7 @@ public class FormulaEngineImpl implements FormulaEngine {
 			
 			for(String formula:formulas){
 				try{
-					Ptg[] tokens = FormulaParser.parse(formula, parsingBook, FormulaType.CELL, sheetIndex); // current sheet index in parsing is always 0
+					Ptg[] tokens = parse(formula, parsingBook, sheetIndex, context); // current sheet index in parsing is always 0
 					if(dependant!=null){
 						for(Ptg ptg : tokens) {
 							Ref precedent = toDenpendRef(context, parsingBook, ptg);
@@ -183,7 +184,7 @@ public class FormulaEngineImpl implements FormulaEngine {
 					}
 					
 					// render formula, detect region and create result
-					String renderedFormula = renderFormula(parsingBook, formula, tokens);
+					String renderedFormula = renderFormula(parsingBook, formula, tokens, false);
 					Ref singleRef = tokens.length == 1 ? toDenpendRef(context, parsingBook, tokens[0]) : null;
 					Ref[] refs = singleRef==null ? null :
 						(singleRef.getType() == RefType.AREA || singleRef.getType() == RefType.CELL ?new Ref[]{singleRef}:null);
@@ -215,7 +216,12 @@ public class FormulaEngineImpl implements FormulaEngine {
 		return result.toArray(new FormulaExpression[result.size()]);
 	}	
 	
-	protected String renderFormula(ParsingBook parsingBook, String formula, Ptg[] tokens) {
+	protected Ptg[] parse(String formula, FormulaParsingWorkbook book, int sheetIndex, FormulaParseContext context) {
+		return FormulaParser.parse(formula, book, FormulaType.CELL, sheetIndex);
+	}
+	
+	protected String renderFormula(ParsingBook parsingBook, String formula, Ptg[] tokens, boolean always) {
+		if (always) return FormulaRenderer.toFormulaString(parsingBook, tokens);
 		boolean hit = false; // only render if necessary
 		for(Ptg token : tokens) {
 			// check it is a external book reference or not
@@ -716,7 +722,8 @@ public class FormulaEngineImpl implements FormulaEngine {
 			boolean modified = adjuster.process(formula, sheetIndex, tokens, parsingBook, context);
 			
 			// render formula, detect region and create result
-			String renderedFormula = modified ? FormulaRenderer.toFormulaString(parsingBook, tokens) : formula;
+			String renderedFormula = modified ? 
+					renderFormula(parsingBook, formula, tokens, true) : formula;
 			Ref singleRef = tokens.length == 1 ? toDenpendRef(context, parsingBook, tokens[0]) : null;
 			Ref[] refs = singleRef==null ? null :
 				(singleRef.getType() == RefType.AREA || singleRef.getType() == RefType.CELL ?new Ref[]{singleRef}:null);

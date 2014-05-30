@@ -20,6 +20,7 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedHashSet;
+import java.util.Locale;
 import java.util.Set;
 
 import org.zkoss.zss.model.ErrorValue;
@@ -237,4 +238,7 @@ public abstract class AbstractCellAdv implements SCell,LinkedModelObject,Seriali
 	/*package*/ abstract void setIndex(int newidx);
 	/*package*/ abstract void setRow(int oldRowIdx, AbstractRowAdv row);
 	/*package*/ abstract Ref getRef();
+
+	//ZSS-565: Support input with Swedish locale into formula 
+	public abstract void setFormulaValue(String formula, Locale locale);
 }

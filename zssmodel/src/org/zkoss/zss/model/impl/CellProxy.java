@@ -17,6 +17,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.model.impl;
 
 import java.lang.ref.WeakReference;
+import java.util.Locale;
 
 import org.zkoss.zss.model.CellRegion;
 import org.zkoss.zss.model.SCellStyle;
@@ -110,7 +111,20 @@ class CellProxy extends AbstractCellAdv {
 			_proxy.setFormulaValue(formula);
 		}
 	}
-	
+
+	//ZSS-565: Support input with Swedish locale into Formula
+	@Override
+	public void setFormulaValue(String formula, Locale locale) {
+		loadProxy();
+		if (_proxy == null) {
+			_proxy = (AbstractCellAdv) ((AbstractRowAdv) ((AbstractSheetAdv)getSheet()).getOrCreateRow(
+					_rowIdx)).getOrCreateCell(_columnIdx);
+			_proxy.setFormulaValue(formula, locale);
+		} else if (_proxy != null) {
+			_proxy.setFormulaValue(formula, locale);
+		}
+	}
+
 	@Override
 	public void setValue(Object value) {
 		loadProxy();

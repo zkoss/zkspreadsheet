@@ -16,6 +16,8 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
  */
 package org.zkoss.zss.model.sys.formula;
 
+import java.util.Locale;
+
 import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.SCell;
 import org.zkoss.zss.model.SSheet;
@@ -46,6 +48,12 @@ public class FormulaParseContext extends AbstractContext {
 	}
 	public FormulaParseContext(SBook book, SSheet sheet, SCell cell,
 			Ref dependent) {
+		this(book, sheet, cell, dependent, Locale.US); //ZSS-565: internal Locale is US
+	}
+	//ZSS-565: Support input number of Swedish locale into Formula
+	public FormulaParseContext(SBook book, SSheet sheet, SCell cell,
+			Ref dependent, Locale locale) {
+		super(locale);
 		this._book = book;
 		this._sheet = sheet;
 		this._cell = cell;

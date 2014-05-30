@@ -18,6 +18,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
  */
 package org.zkoss.zss.ui.impl;
 
+import org.zkoss.poi.ss.usermodel.ZssContext;
 import org.zkoss.util.Locales;
 import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.SCell;
@@ -320,7 +321,7 @@ public class CellFormatHelper {
 			sb.append(getFontCSSStyle(_cell, font));
 
 			//condition color
-			final FormatResult ft = _formatEngine.format(_cell, new FormatContext(Locales.getCurrent()));
+			final FormatResult ft = _formatEngine.format(_cell, new FormatContext(ZssContext.getCurrent().getLocale()));
 			final boolean isRichText = ft.isRichText();
 			if (!isRichText) {
 				final SColor color = ft.getColor();
@@ -398,12 +399,12 @@ public class CellFormatHelper {
 	}
 	
 	public String getCellFormattedText(){
-		final FormatResult ft = _formatEngine.format(_cell, new FormatContext(Locales.getCurrent()));
+		final FormatResult ft = _formatEngine.format(_cell, new FormatContext(ZssContext.getCurrent().getLocale()));
 		return ft.getText();
 	}
 	
 	public String getCellEditText(){
-		return _formatEngine.getEditText(_cell, new FormatContext(Locales.getCurrent()));
+		return _formatEngine.getEditText(_cell, new FormatContext(ZssContext.getCurrent().getLocale()));
 	}
 	
 	/**
@@ -415,7 +416,7 @@ public class CellFormatHelper {
 		if (!cell.isNull()) {
 			boolean wrap = cell.getCellStyle().isWrapText();
 			
-			final FormatResult ft = EngineFactory.getInstance().createFormatEngine().format(cell, new FormatContext(Locales.getCurrent()));
+			final FormatResult ft = EngineFactory.getInstance().createFormatEngine().format(cell, new FormatContext(ZssContext.getCurrent().getLocale()));
 			if (ft.isRichText()) {
 				final SRichText rstr = ft.getRichText();
 				final SHyperlink hlink = cell.getHyperlink();
@@ -514,7 +515,7 @@ public class CellFormatHelper {
 		if (cell != null) {
 			boolean wrap = cell.getCellStyle().isWrapText();
 			
-			final FormatResult ft = EngineFactory.getInstance().createFormatEngine().format(cell, new FormatContext(Locales.getCurrent()));
+			final FormatResult ft = EngineFactory.getInstance().createFormatEngine().format(cell, new FormatContext(ZssContext.getCurrent().getLocale()));
 			if (ft.isRichText()) {
 				final SRichText rstr = ft.getRichText();
 				text = rstr.getText();

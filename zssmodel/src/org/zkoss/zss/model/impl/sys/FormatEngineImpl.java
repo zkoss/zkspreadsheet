@@ -161,7 +161,7 @@ public class FormatEngineImpl implements FormatEngine {
 			case ERROR:
 				return cell.getErrorValue().getErrorString();
 			case FORMULA:
-				return "="+cell.getFormulaValue();
+				return "="+getFormulaEditText(cell); //ZSS-565
 			case NUMBER:
 				final double val = cell.getNumberValue().doubleValue();
 				
@@ -229,5 +229,10 @@ public class FormatEngineImpl implements FormatEngine {
 		//1 border + 2 * padding(2px) => 5
 		final int px = cell.getSheet().getColumn(cell.getColumnIndex()).getWidth() - 5;
 		return UnitUtil.pxToFileChar256(px, AbstractExcelImporter.CHRACTER_WIDTH);
+	}
+	
+	//ZSS-565
+	protected String getFormulaEditText(SCell cell) {
+		return cell.getFormulaValue();
 	}
 }

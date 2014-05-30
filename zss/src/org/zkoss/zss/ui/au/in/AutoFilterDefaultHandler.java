@@ -31,6 +31,7 @@ import java.util.TreeSet;
 import org.zkoss.json.JSONArray;
 import org.zkoss.lang.Objects;
 import org.zkoss.lang.Strings;
+import org.zkoss.poi.ss.usermodel.ZssContext;
 import org.zkoss.util.Locales;
 import org.zkoss.zss.api.AreaRef;
 import org.zkoss.zss.api.model.Sheet;
@@ -122,7 +123,7 @@ import org.zkoss.zss.ui.Spreadsheet;
 		for (int i = top; i <= bottom; i++) {
 			final SCell c = worksheet.getCell(i, columnIndex);
 			if (!c.isNull() && c.getType() != CellType.BLANK) {
-				FormatResult fr = fe.format(c, new FormatContext(Locales.getCurrent()));
+				FormatResult fr = fe.format(c, new FormatContext(ZssContext.getCurrent().getLocale()));
 				String displaytxt = fr.getText();
 				Object val = displaytxt;
 				if(c.getType()==CellType.NUMBER && fr.isDateFormatted()){

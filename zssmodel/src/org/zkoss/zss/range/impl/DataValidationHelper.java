@@ -18,7 +18,7 @@ package org.zkoss.zss.range.impl;
 
 import java.util.Date;
 
-import org.zkoss.util.Locales;
+import org.zkoss.poi.ss.usermodel.ZssContext;
 import org.zkoss.zss.model.SCell;
 import org.zkoss.zss.model.SDataValidation;
 import org.zkoss.zss.model.SSheet;
@@ -52,7 +52,7 @@ public class DataValidationHelper {
 	public boolean validate(String editText, String dataformat) {
 		final InputEngine ie = EngineFactory.getInstance().createInputEngine();
 		final InputResult result = ie.parseInput(editText == null ? ""
-				: editText, dataformat, new InputParseContext(Locales.getCurrent()));
+				: editText, dataformat, new InputParseContext(ZssContext.getCurrent().getLocale()));
 		return validate(result.getType(),result.getValue());
 	}
 	

@@ -22,11 +22,12 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.concurrent.locks.ReadWriteLock;
 
+import org.zkoss.poi.ss.usermodel.ZssContext;
 import org.zkoss.poi.ss.util.WorkbookUtil;
- 
 import org.zkoss.lang.Strings;
 import org.zkoss.util.Locales;
 import org.zkoss.zss.model.CellRegion;
@@ -60,6 +61,7 @@ import org.zkoss.zss.model.ErrorValue;
 import org.zkoss.zss.model.impl.AbstractBookSeriesAdv;
 import org.zkoss.zss.model.impl.AbstractSheetAdv;
 import org.zkoss.zss.model.impl.AbstractNameAdv;
+import org.zkoss.zss.model.impl.AbstractCellAdv;
 import org.zkoss.zss.model.impl.FormulaCacheCleaner;
 import org.zkoss.zss.model.impl.RefImpl;
 import org.zkoss.zss.model.impl.NameRefImpl;
@@ -395,10 +397,13 @@ public class RangeImpl implements SRange {
 		final ResultWrap<HyperlinkType> hyperlinkType = new ResultWrap<HyperlinkType>();
 		new CellVisitorTask(new CellVisitorForUpdate() {
 			public boolean visit(SCell cell) {
+				//ZSS-565: Support input with Swedish locale into formula
+				Locale locale = ZssContext.getCurrent().getLocale();
+
 				InputResult result;
 				if((result = input.get())==null){
 					result = ie.parseInput(editText == null ? ""
-						: editText, cell.getCellStyle().getDataFormat(), new InputParseContext(Locales.getCurrent()));
+						: editText, cell.getCellStyle().getDataFormat(), new InputParseContext(locale));
 					input.set(result);
 					
 					//check if a hyperlink
@@ -423,7 +428,7 @@ public class RangeImpl implements SRange {
 					cell.setBooleanValue((Boolean) resultVal);
 					break;
 				case FORMULA:
-					cell.setFormulaValue((String) resultVal);
+					((AbstractCellAdv)cell).setFormulaValue((String) resultVal, locale); //ZSS-565
 					break;
 				case NUMBER:
 					if(resultVal instanceof Date){
@@ -474,7 +479,7 @@ public class RangeImpl implements SRange {
 			@Override
 			public boolean visit(SCell cell) {
 				FormatEngine fe = EngineFactory.getInstance().createFormatEngine();
-				r.set(fe.getEditText(cell, new FormatContext(Locales.getCurrent())));		
+				r.set(fe.getEditText(cell, new FormatContext(ZssContext.getCurrent().getLocale())));		
 				return false;
 			}
 		}).doInReadLock(getLock());
@@ -1281,7 +1286,7 @@ public class RangeImpl implements SRange {
 			@Override
 			public boolean visit(SCell cell) {
 				FormatEngine fe = EngineFactory.getInstance().createFormatEngine();
-				r.set(fe.format(cell, new FormatContext(Locales.getCurrent())).getText());		
+				r.set(fe.format(cell, new FormatContext(ZssContext.getCurrent().getLocale())).getText());		
 				return false;
 			}
 		}).doInReadLock(getLock());
@@ -1295,7 +1300,7 @@ public class RangeImpl implements SRange {
 			@Override
 			public boolean visit(SCell cell) {
 				FormatEngine fe = EngineFactory.getInstance().createFormatEngine();
-				r.set(fe.getFormat(cell, new FormatContext(Locales.getCurrent())));		
+				r.set(fe.getFormat(cell, new FormatContext(ZssContext.getCurrent().getLocale())));		
 				return false;
 			}
 		}).doInReadLock(getLock());

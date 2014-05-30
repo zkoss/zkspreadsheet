@@ -11,6 +11,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import org.zkoss.poi.ss.usermodel.ZssContext;
 import org.zkoss.util.Locales;
 import org.zkoss.zss.api.Exporter;
 import org.zkoss.zss.api.Exporters;
@@ -122,7 +123,7 @@ public class Util {
 		SSheet xSheet = sheet.getInternalSheet();
 		SCell cell = xSheet.getCell(row,col);
 		FormatEngine engine = EngineFactory.getInstance().createFormatEngine();
-		FormatResult r = engine.format(cell, new FormatContext(Locales.getCurrent()));
+		FormatResult r = engine.format(cell, new FormatContext(ZssContext.getCurrent().getLocale()));
 		return  r.getColor()!=null?r.getColor().getHtmlColor():null;
 	}
 }

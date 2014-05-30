@@ -16,6 +16,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.range.impl;
 
+import org.zkoss.poi.ss.usermodel.ZssContext;
 import org.zkoss.util.Locales;
 import org.zkoss.zss.model.SCell;
 import org.zkoss.zss.model.SSheet;
@@ -53,7 +54,7 @@ public class RangeHelperBase {
 	}
 	
 	public String getFormattedText(SCell cell){
-		return getFormatEngine().format(cell, new FormatContext(Locales.getCurrent())).getText();
+		return getFormatEngine().format(cell, new FormatContext(ZssContext.getCurrent().getLocale())).getText();
 	}
 	
 	protected FormulaEngine getFormulaEngine(){
