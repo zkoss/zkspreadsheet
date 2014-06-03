@@ -64,13 +64,18 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 		}
 	}
 	
-	function blurEditor(wgt) {
+	function blurEditor (wgt) {
 		var sheet = wgt.sheet;
 		if (sheet) {
 			//setTimeout(function () {
 			// ZSS-674: stay focused if formulabar's ok/cancel btn was pressed down.
 			if (sheet.shallIgnoreBlur) {
-				wgt.focus();
+				if (!zk.gecko) {
+					wgt.focus();
+				} else {
+					// 20140603, RaymondChao: firefox needs setTimeout to refocus when blur.
+					setTimeout(function () {wgt.focus()});
+				}
 				sheet.shallIgnoreBlur = false;
 			} else if (sheet.isSwitchingFocus) {
 				// 20140519, RaymondChao: when change focus between editors, spreadsheet could have no focus as below

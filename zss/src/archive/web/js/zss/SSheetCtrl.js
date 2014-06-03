@@ -2196,9 +2196,11 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			clearTimeout(id);
 		}
 		this._fireCellSelectionId = setTimeout(function () {
-			self.fire('onCellSelection', {left: left, top: top, right: right, bottom: bottom});
 			//ZSS 171
+			// 20140603, RaymondChao: disable skip before fire onCellSelection to prevent
+			// editbox skiping to insert cell reference select at the first time
 			self._skipInsertCellRef = false;
+			self.fire('onCellSelection', {left: left, top: top, right: right, bottom: bottom});
 		}, 50);
 	},
 	/**
