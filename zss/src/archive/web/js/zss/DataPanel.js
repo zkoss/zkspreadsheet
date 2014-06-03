@@ -483,14 +483,16 @@ zss.DataPanel = zk.$extends(zk.Object, {
 			}
 		} else { //when editing formula, always set focus back to editor
 			
-			var sf = this;
-			setTimeout(function () {
+			//var sf = this;
+			//setTimeout(function () {
 				var info = sheet.editingFormulaInfo;
 				if (info) {
 					info.moveCell = true;
-					sf.getEditor(info.type).focus();
+					//sf.getEditor(info.type).focus();
+					// ZSS-674: use flag instead of setTimeout
+					sheet.shallIgnoreBlur = true;
 				}
-			});
+			//});
 		}
 		var fzr = sheet.frozenRow,
 			fzc = sheet.frozenCol,
