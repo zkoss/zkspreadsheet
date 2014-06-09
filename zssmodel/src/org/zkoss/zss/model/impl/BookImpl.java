@@ -651,12 +651,30 @@ public class BookImpl extends AbstractBookAdv{
 		//notify the (old) name is change before update name
 		ModelUpdateUtil.handlePrecedentUpdate(getBookSeries(),new NameRefImpl((AbstractNameAdv)name));
 		
+		final String oldName = name.getName(); // ZSS-661
 		((AbstractNameAdv)name).setName(newname,sheetName);
 		//don't need to notify new name precedent update, since Name handle it itself
 		
-		
-		//TODO should we rename formula that contains this name automatically ?
-//		renameNameFormula(oldname,newname);
+		//Rename formula that contains this name
+		renameNameFormula(name, oldName, newname); // ZSS-661
+	}
+	
+	private void renameNameFormula(SName name, String oldName, String newName) {
+		AbstractBookSeriesAdv bs = (AbstractBookSeriesAdv)getBookSeries();
+		FormulaTunerHelper tuner = new FormulaTunerHelper(bs);
+		DependencyTable dt = bs.getDependencyTable();
+		final 
+		Ref ref = new NameRefImpl(name.getBook().getBookName(),name.getApplyToSheetName(), oldName); //old name
+		Set<Ref> dependents = dt.getDirectDependents(ref);
+		if(dependents.size()>0){
+			//clear the dependents dependency before rename it's Name name
+			for(Ref dependent:dependents){
+				dt.clearDependents(dependent);
+			}
+			
+			//rebuild the the formula by tuner
+			tuner.renameName(this, oldName, newName, dependents);
+		}
 	}
 
 	@Override

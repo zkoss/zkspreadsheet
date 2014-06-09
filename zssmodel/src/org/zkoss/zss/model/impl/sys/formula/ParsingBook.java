@@ -51,6 +51,18 @@ public class ParsingBook implements FormulaParsingWorkbook, FormulaRenderingWork
 		this.book = book;
 	}
 
+	// ZSS-661
+	public void renameName(int sheetIndex, String oldName, String newName) {
+		final String sidx = String.valueOf(sheetIndex);
+		String oldkey = toKey(sidx, oldName);
+		final Integer index = name2index.remove(oldkey);
+		if (index != null) {
+			String key = toKey(sidx, newName);
+			name2index.put(key, index);
+			index2name.set(index, newName);
+		}
+	}
+	
 	@Override
 	public EvaluationName getName(String name, int sheetIndex) {
 		return getOrCreateName(name, sheetIndex);

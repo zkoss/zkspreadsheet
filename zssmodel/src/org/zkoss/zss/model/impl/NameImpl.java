@@ -73,7 +73,7 @@ public class NameImpl extends AbstractNameAdv {
 	@Override
 	public void destroy() {
 		checkOrphan();
-		clearFormulaDependency();
+		clearFormulaDependency(_name); // ZSS-661
 		clearFormulaResultCache();
 		_book = null;
 	}
@@ -88,9 +88,9 @@ public class NameImpl extends AbstractNameAdv {
 	@Override
 	void setName(String newname, String applyToSheetName) {
 		checkOrphan();
-		_name = newname;
 		_applyToSheetName = applyToSheetName;
-		parseAndEvalFormula();
+		parseAndEvalFormula(_name, newname); // ZSS-661
+		_name = newname;
 	}
 
 	@Override
@@ -102,11 +102,11 @@ public class NameImpl extends AbstractNameAdv {
 	public void setRefersToFormula(String refersToExpr) {
 		checkOrphan();
 		_refersToExpr = refersToExpr;
-		parseAndEvalFormula();
+		parseAndEvalFormula(_name, _name); // nameName not changed
 	}
 	
-	/*package*/ void parseAndEvalFormula(){
-		clearFormulaDependency();
+	/*package*/ void parseAndEvalFormula(String oldName, String newName){ //ZSS-661
+		clearFormulaDependency(oldName);
 
 		_refersToSheetName = null;
 		_refersToCellRegion = null;
@@ -114,7 +114,7 @@ public class NameImpl extends AbstractNameAdv {
 		if(_refersToExpr!=null){
 			//use formula engine to keep dependency info
 			FormulaEngine fe = EngineFactory.getInstance().createFormulaEngine();
-			Ref ref = getRef();
+			Ref ref = getRef(newName); // ZSS-661
 			_refersToExprFormula = fe.parse(_refersToExpr, new FormulaParseContext(_book.getSheet(0),ref));
 			if(!_refersToExprFormula.hasError() && _refersToExprFormula.isAreaRefs()){
 				//ZSS-655, should eval each name to force it be notified in dependency (for evaluated dependent)
@@ -137,9 +137,9 @@ public class NameImpl extends AbstractNameAdv {
 		return _refersToExprFormula==null?false:_refersToExprFormula.hasError();
 	}
 
-	private void clearFormulaDependency() {
+	private void clearFormulaDependency(String nameName) {
 		if(_refersToExprFormula!=null){
-			Ref ref = getRef();
+			Ref ref = getRef(nameName); // ZSS-661
 			((AbstractBookSeriesAdv)_book.getBookSeries()).getDependencyTable().clearDependents(ref);
 		}
 	}
@@ -160,7 +160,7 @@ public class NameImpl extends AbstractNameAdv {
 		return _applyToSheetName;
 	}
 	
-	private Ref getRef(){
-		return new NameRefImpl(this);
+	private Ref getRef(String nameName) { // ZSS-661
+		return new NameRefImpl(this.getBook().getBookName(),this.getApplyToSheetName(),nameName);
 	}
 }

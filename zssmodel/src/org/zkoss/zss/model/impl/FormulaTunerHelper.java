@@ -627,4 +627,39 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 		cell.setFormulaValue(exprAfter.getFormulaString());
 		//don't need to notify cell change, cell will do
 	}	
+
+	// ZSS-661
+	public void renameName(SBook book, String oldName, String newName,
+			Set<Ref> dependents) {
+		for (Ref dependent : dependents) {
+			if (dependent.getType() == RefType.CELL) {
+				renameNameCellRef(book, oldName, newName, dependent);
+			}
+		}
+	}	
+
+	private void renameNameCellRef(SBook bookOfSheet, String oldName, String newName, Ref dependent) {
+		SBook book = _bookSeries.getBook(dependent.getBookName());
+		if (book == null) return;
+		SSheet sheet = book.getSheetByName(dependent.getSheetName());
+		if (sheet == null) return;
+		SCell cell = sheet.getCell(dependent.getRow(), dependent.getColumn());
+		if(cell.getType() != CellType.FORMULA)
+			return;//impossible
+		
+		/*
+		 * for Name rename case, we should always update formula to make new 
+		 * dependency, shouln't ignore if the formula string is the same
+		 * Note, in other move cell case, we could ignore to set same formula string
+		 */
+		String expr = cell.getFormulaValue();
+		
+		FormulaEngine engine = getFormulaEngine();
+		FormulaExpression exprAfter = 
+				engine.renameName(expr, bookOfSheet, oldName, newName, new FormulaParseContext(cell, null));
+		
+		cell.setFormulaValue(exprAfter.getFormulaString());
+		//don't need to notify cell change, cell will do
+	}	
+
 }

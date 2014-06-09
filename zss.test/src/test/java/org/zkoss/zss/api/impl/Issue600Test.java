@@ -16,6 +16,9 @@ import org.zkoss.zss.api.model.impl.BookImpl;
 import org.zkoss.zss.api.model.impl.SimpleRef;
 import org.zkoss.zss.model.InvalidModelOpException;
 import org.zkoss.zss.model.SBook;
+import org.zkoss.zss.model.SBooks;
+import org.zkoss.zss.model.SName;
+import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.range.SExporter;
 import org.zkoss.zss.range.impl.imexp.ExcelXlsExporter;
 import org.zkoss.zss.range.impl.imexp.ExcelXlsxExporter;
@@ -165,6 +168,43 @@ public class Issue600Test {
 		}
 	}
 	
+	@Test 
+	public void testZSS661ModifyName() {
+		SBook book = SBooks.createBook("book1");
+		book.getBookSeries().setAutoFormulaCacheClean(true);
+		book.createSheet("Sheet0");
+		SSheet sheet1 = book.createSheet("Sheet1");
+		
+		sheet1.getCell("A1").setValue(1);
+		sheet1.getCell("B1").setValue(2);
+		sheet1.getCell("A2").setValue(3);
+		sheet1.getCell("B2").setValue(4);
+		
+		SName name = book.createName("FOO");
+		name.setRefersToFormula("Sheet1!A1:B1");
+		
+		sheet1.getCell("C1").setValue("=SUM(FOO)");
+		
+		Assert.assertEquals(3D, sheet1.getCell("C1").getValue());
+		
+		name.setRefersToFormula("Sheet1!A2:B2");
+		Assert.assertEquals(7D, sheet1.getCell("C1").getValue());//shouldn't fail
+		
+		sheet1.getCell("A2").setValue(5);
+		sheet1.getCell("B2").setValue(6);
+		Assert.assertEquals(11D, sheet1.getCell("C1").getValue());
+		
+		book.setNameName(name, "BAR"); // formula that use FOO should be changed accordingly
+		Assert.assertEquals(11D, sheet1.getCell("C1").getValue());
+		
+		sheet1.getCell("A2").setValue(7);
+		sheet1.getCell("B2").setValue(8);
+		Assert.assertEquals(15D, sheet1.getCell("C1").getValue());		
+
+		sheet1.getCell("C1").setValue("=SUM(FOO)");
+		Assert.assertEquals("#NAME?", sheet1.getCell("C1").getErrorValue().getErrorString());//shouldn't fail
+	}
+	
 	@Test
 	public void testZSS685ImportStyle(){
 		Object[] books = _loadBooks(this, "book/685-StyleOverflow.xlsx");
@@ -183,7 +223,7 @@ public class Issue600Test {
 		}
 	}
 	
-	public static Object[] _loadBooks(Object base,String respath) {
+	private static Object[] _loadBooks(Object base,String respath) {
 		if(base==null){
 			base = Util.class;
 		}

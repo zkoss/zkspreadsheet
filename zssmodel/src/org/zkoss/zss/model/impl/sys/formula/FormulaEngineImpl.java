@@ -73,6 +73,7 @@ import org.zkoss.xel.util.SimpleXelContext;
 import org.zkoss.zss.model.ErrorValue;
 import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.SCell;
+import org.zkoss.zss.model.SName;
 import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.model.SheetRegion;
 import org.zkoss.zss.model.impl.AbstractBookSeriesAdv;
@@ -1012,6 +1013,25 @@ public class FormulaEngineImpl implements FormulaEngine {
 						}
 					}
 				}
+				return true;
+			}
+		};
+		FormulaExpression result = adjustMultipleArea(formula, context, shiftAdjuster);
+		if(result!=null){
+			return result;
+		}
+		return adjust(formula, context, shiftAdjuster);
+	}
+	
+	@Override
+	// ZSS-661
+	public FormulaExpression renameName(String formula, final SBook targetBook, final String oldName, final String newName, FormulaParseContext context) {
+		formula = formula.trim();
+		FormulaAdjuster shiftAdjuster = new FormulaAdjuster() {
+			@Override
+			public boolean process(String formula, int sheetIndex, Ptg[] tokens, ParsingBook parsingBook, FormulaParseContext context) {
+				// NamePtg refer to Name via index; simply rename the mapping in parsingBook
+				parsingBook.renameName(sheetIndex, oldName, newName);
 				return true;
 			}
 		};

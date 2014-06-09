@@ -70,6 +70,9 @@ public interface FormulaEngine {
 	public FormulaExpression renameSheet(String formula, SBook book, String oldName,String newName,
 			FormulaParseContext context);
 	
+	public FormulaExpression renameName(String formula, SBook book, String oldName,String newName,
+			FormulaParseContext context);
+	
 	public EvaluationResult evaluate(FormulaExpression expr, FormulaEvaluationContext context);
 
 	public void clearCache(FormulaClearContext context);
