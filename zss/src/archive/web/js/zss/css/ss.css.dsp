@@ -524,14 +524,15 @@
 
 .zsedit {
 	font-family: Calibri;
-	font-size: 11px;
+	font-size: 15px;
 	position: absolute;
 	z-index: 4;
 	border: none;
 	display: none;
 	background-color: white;
-	overflow: auto;
+	overflow: hidden;
 	border-bottom:1px #777777 solid;
+	white-space: pre-wrap;
 }
 
 .zsfocus{
@@ -1109,9 +1110,8 @@
 	position: relative;
 	top: 0;
 	left: 0;
-	/* ZSS-205: hide scrollbar and disable resize */
+	/* ZSS-205: hide scrollbar*/
 	overflow: hidden; 
-	resize: none;
 	white-space: pre-wrap;
 	word-wrap: break-word;
 	word-break: break-all;

@@ -19,36 +19,206 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 
 (function () {
 
-	function newLine(n) {
-		var sel = zk(n).getSelectionRange();	
-		if (sel[0] > sel[1]) {
-			var t = sel[1];
-			sel[1] = sel[0];
-			sel[0] = t;
-		}
-		var str = n.value,
-			len = str.length,
-			str1 = str.substring(0, sel[0]); 
-		str = str1 +'\n'+ str.substring(sel[1], len);
-		n.value = str;
-		
-		var pos = sel[0];
-		if (n.setSelectionRange) { 
-			pos = zk.opera ? pos + 2 : pos + 1;
-			n.setSelectionRange(pos, pos);
-		} else if (n.createTextRange) {//IE
-			var range = n.createTextRange(),
-				i = -1;
-			pos = pos + 1;
-			while((i = str1.indexOf('\n',i+1)) >= 0) {
-				pos--;
+	var supportGetSelection =
+			typeof window.getSelection == 'function',
+		supportDocumentSelection =
+			document.selection && document.selection.type != 'Control', // IE
+		newLine = function () {
+			if (supportGetSelection) {
+				return function (node) {
+					var selection = window.getSelection(),
+						range = selection.getRangeAt(0),
+						br = createBrNode();
+					range.deleteContents();
+					range.insertNode(br);
+					range.setStartAfter(br);
+					range.setEndAfter(br);
+					selection.removeAllRanges();
+					selection.addRange(range);
+				};
+			} else if (supportDocumentSelection) {
+				return function (node) {
+					var range = document.selection.createRange(),
+						textRange = document.body.createTextRange();
+					textRange.setEndPoint('StartToStart', range);
+					textRange.setEndPoint('EndToEnd', range);
+					// insert a span to index caret to the new line in IE8
+					textRange.pasteHTML("<br><span class=\"caret-positioner\"></span>");
+					textRange.moveStart('character', 1);
+				};
+			} else {
+				return jq.noop;
 			}
-			range.move('character', pos);
-			range.select();
-		}
+		}(),
+		// Returns the range's text offset including br tags.
+		getTextOffset = function () {
+			if (supportGetSelection) {
+				return function (range, countBr) {
+					return range.toString().length + 
+						// count br as line break
+						(countBr ? range.cloneContents().querySelectorAll('br').length : 0);
+				};
+			} else if (supportDocumentSelection) {
+				return function (range, countBr) {
+					var count = 0;
+					if (countBr) {
+						var brs = range.htmlText.match(/<br\s*\/?>/gi);
+						if (brs) {
+							// count br as line break
+							count = brs.length;
+						}
+					}
+					return range.text.length + count;
+				}
+			} else {
+				return function () {
+					return 0;
+				};
+			}
+		}(),
+		/** Returns the selection range's text offset of the specified element. The offset is returned as a two-element array,
+		 * where the first item is the start offset, and the second item is the end offset (excluding).
+		 * <p>If an exception occurs, [0, 0] is returned.
+		 * @param node the specified element which is selected
+	 	 * @param countBr whether to count <br> as text "\n" (optional)
+		 * @return Array a two-element array representing the selection range offset of the specified element
+		 */
+		getSelectionRange = function () {
+			if (supportGetSelection) {
+				return function (node, countBr) {
+					try {
+						var range = window.getSelection().getRangeAt(0),
+							startRange = range.cloneRange(),
+							endRange = range.cloneRange();
+						startRange.selectNodeContents(node);
+						endRange.selectNodeContents(node);
+						startRange.setStart(node, 0);
+						startRange.setEnd(range.startContainer, range.startOffset);
+						endRange.setStart(node, 0);
+						endRange.setEnd(range.endContainer, range.endOffset);
+						return [getTextOffset(startRange, countBr), getTextOffset(endRange, countBr)];
+					} catch (e) {
+						return [0, 0];
+					}
+				};
+			} else if (supportDocumentSelection) {
+				return function (node, countBr) {
+					try {
+						var range = document.selection.createRange(),
+							startRange = document.body.createTextRange(),
+							endRange = document.body.createTextRange();
+						startRange.moveToElementText(node);
+						startRange.setEndPoint('EndToStart', range);
+						endRange.moveToElementText(node);
+						endRange.setEndPoint('EndToEnd', range);
+						return [getTextOffset(startRange, countBr), getTextOffset(endRange, countBr)];
+					} catch (e) {
+						return [0, 0];
+					}
+				};
+			} else {
+				return function () {
+					return [0, 0]
+				};
+			}
+		}(),
+		placeCaretAtEnd = function () {
+			if (supportGetSelection) {
+				return function (node) {
+					var selection = window.getSelection(),
+						range;
+					if (selection.rangeCount > 0)
+						selection.removeAllRanges();
+					range = document.createRange();
+					range.selectNodeContents(node);
+					range.setStart(range.endContainer, range.endOffset);
+					selection.addRange(range);
+				};
+			} else if (supportDocumentSelection) {
+				return function (node) {
+					var textRange = document.body.createTextRange();
+					textRange.moveToElementText(node);
+					textRange.moveStart('Character', getTextOffset(textRange, true));
+					textRange.select();
+				};
+			} else {
+				return jq.noop;
+			}
+		}(),
+		complementHTML = function () {
+			if (zk.webkit) { 
+				return function (node) {
+					node.appendChild(createBrNode());
+				};
+			} else if (zk.gecko) {
+				return function (node) {
+					var lastChild = node.lastChild;
+					// 20140609, RaymondChao: firefox needs to append <br type="_moz"> to display a new empty line at the end
+					if (lastChild && lastChild.nodeName.toLowerCase() == 'br' && jq(lastChild).attr('type') != '_moz') {
+						var br = createBrNode();
+						jq(br).attr('type', '_moz');
+						node.appendChild(br);
+					}
+				};
+			} else {
+				return jq.noop;
+			}
+		}(),
+		appendBrNode = function () {
+			if (zk.webkit) { 
+				return function (node) {
+					var lastChild = node.lastChild;
+					// 20140606, RaymondChao: in webkit, contenteditable div should insert an additional <br> in the end,
+					// or it would need to press alt+enter two times to get a new line.
+					if (!lastChild || lastChild.nodeName.toLowerCase() != 'br') {
+						node.appendChild(createBrNode());
+					}
+				};
+			} else {
+				return jq.noop;
+			}
+		}(),
+		stripBrNode = function () {
+			if (zk.webkit) { 
+				return function (node) {
+					var lastChild = node.lastChild;
+					// remove the redundant <br> inserted by appendBrNode()
+					if (lastChild && lastChild.nodeName.toLowerCase() == 'br') {
+						node.removeChild(lastChild);
+					}
+				};
+			} else if (zk.gecko) {
+				return function (node) {
+					var lastChild = node.lastChild;
+					// remove the redundant <br> inserted by appendBrNode()
+					if (lastChild && lastChild.nodeName.toLowerCase() == 'br' && jq(lastChild).attr('type') == '_moz') {
+						node.removeChild(lastChild);
+					}
+				}
+			} else {
+				return jq.noop;
+			}
+		}();
+
+	// convert node to string, to replace <br> with "\n"
+	function br2nl (n) {
+		var duplicateNode = n.cloneNode(true),
+			$duplicateNode = jq(duplicateNode);
+		stripBrNode(duplicateNode);
+		$duplicateNode.find('br').after("\n").remove();
+		return $duplicateNode.text();
+	}
+
+	// convert string to html, and replace "\n" with <br> node.
+	function nl2br (value) {
+		return jq.parseHTML(value.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>'));
+	}
+
+	function createBrNode () {
+		return document.createElement('br');
 	}
 	
-	function syncEditorHeight(n) {
+	function syncEditorHeight (n) {
 		var ch = n.clientHeight,
 			cw = n.clientWidth,
 			sw = n.scrollWidth,
@@ -105,12 +275,12 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 	 * @param Object n the editor DOM element
 	 * @param array p the text cursor position (optional)
 	 */
-	function getEditingFormulaInfo(type, n, p) {
-		var p = p || zk(n).getSelectionRange(),
+	function getEditingFormulaInfo(type, node, position) {
+		var p = position || getSelectionRange(node),
 			tp = type || 'inlineEditing',
 			start = p[0],
 			end = p[1],
-			v = n.value,
+			v = jq(node).text(),
 			firstChar = v.charAt(0);
 		if (firstChar && firstChar == '=') {
 			if (start != end) { //text has selection, need to replace cell reference
@@ -144,7 +314,8 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
    		var info = sheet.editingFormulaInfo,
 			start = info.start,
 			end = info.end,
-			v = n.value,
+			$n = jq(n),
+			v = $n.text(),
 			c1 = sheet.getCell(tRow, lCol),
 			c2 = tRow == bRow && lCol == rCol ? null : sheet.getCell(bRow, rCol),
 			ref = c1.ref;
@@ -154,16 +325,16 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 		if (!start) {
 			ref = '=' + ref; 
 		}
-		n.value = v.substring(0, start) + ref + v.substring(end, v.length);
-		sheet.inlineEditor.setValue(n.value);
+		$n.text(v.substring(0, start) + ref + v.substring(end, v.length));
+		sheet.inlineEditor.setValue($n.text());
 		end = start + ref.length;
 		info.end = end;
 		if (zk.ie && zk.ie < 11) { 
 			setTimeout(function () {
-				zk(n).setSelectionRange(end, end);
+				placeCaretAtEnd(n);
 			});
 		} else {
-			zk(n).setSelectionRange(end, end);
+			placeCaretAtEnd(n);
 		}
 	}
 
@@ -228,20 +399,19 @@ zss.FormulabarEditor = zk.$extends(zul.inp.InputWidget, {
 			return;
 		}
 		
-		var n = this.$n(); // it's outer element
-		var textarea = this.$n('real');
+		var n = this.$n(), // it's outer element
 
-		// adjust target position
-		// and check position is most-top or bottom
-		p = p != undefined ? p : zk(textarea).getSelectionRange()[1];
+			// adjust target position
+			// and check position is most-top or bottom
+			p = p != undefined ? p : getSelectionRange(this.getInputNode(), true)[1];
 		if (p <= 0) { // scroll to most-top
-			jq(n).scrollTop(0); // ZSS-205: scroll the parent, don't move the TEXTAREA
+			jq(n).scrollTop(0); // ZSS-205: scroll the parent, don't move the input
 			return;
 		}
 		
 		// ZSS-205: scroll to specific position
-		var textHeight = this.getTextHeight(textarea.value.substring(0, p));
-		var sp = textHeight - this.getLineHeight();
+		var textHeight = this.getTextHeight(this.getValue().substring(0, p)),
+			sp = textHeight - this.getLineHeight();
 		jq(n).scrollTop(sp);
    	},
    	/** one line height in formula editor */
@@ -254,12 +424,16 @@ zss.FormulabarEditor = zk.$extends(zul.inp.InputWidget, {
    		return this._lineHeight;
    	},
    	/** get specific text height in formula editor */
-   	getTextHeight: function(text) {
-		var support = this.$n('support');
-		support.value = text;
-		var height = support.scrollHeight;
-		support.value = null; // clear
-		return height;
+   	getTextHeight: function (text) {
+   		var support = this.$n('support'),
+   			$support = jq(support),
+   			height;
+   		$support.text(text);
+   		// 20140609, RaymondChao: it's need an additional <br> if text ends with \n 
+   		support.appendChild(createBrNode());
+   		height = support.scrollHeight;
+   		$support.text('') // clear
+   		return height;
    	},
    	/**
    	 * Sets the value of formula editor
@@ -267,32 +441,33 @@ zss.FormulabarEditor = zk.$extends(zul.inp.InputWidget, {
    	 * @string string value
    	 * @param int pos the text cursor position
    	 */
-   	setValue: function (v, pos) {
-   		var n = this.$n();
-	   	var textarea = this.$n('real');
-	   	textarea.value = v;
+   	setValue: function (value, pos) {
+   		var n = this.$n(),
+   			input = this.getInputNode(),
+   			$input= jq(input);
+   		$input.html(nl2br(value));
+   		complementHTML(input);
    		if (this.isRealVisible()) {
-   			
    			// ZSS-205: reset height to parent's height before sync. editor's height with scroll height
-   			jq(textarea).css('height', jq.px0(n.clientHeight - 3 /* top padding */ ));
-   	   		syncEditorHeight(textarea);
+   			$input.css('height', jq.px0(n.clientHeight - 3 /* top padding */ ));
+   	   		syncEditorHeight(input);
    	   		
-   	   		this.syncEditorPosition(pos != undefined ? pos : textarea.value.length);
+   	   		this.syncEditorPosition(pos !== undefined ? pos : value.length);
    		}
    	},
    	getValue: function () {
-   		return this.$n('real').value;
+   		return br2nl(this.getInputNode());
    	},
    	newLine: function () {
-   		newLine(this.$n('real'));
+   		newLine(this.getInputNode());
    	},
    	/**
    	 * Focus on editor
    	 */
    	focus: function () {
-   		var n = this.$n('real');
-   		if (zk(n).isRealVisible(true))
-   			n.focus();
+   		var input = this.getInputNode();
+   		if (zk(input).isRealVisible(true))
+   			input.focus();
    	},
    	doFocus_: function () {
    		var sheet = this.sheet;
@@ -300,7 +475,7 @@ zss.FormulabarEditor = zk.$extends(zul.inp.InputWidget, {
    			var info = sheet.editingFormulaInfo;
    			if (info) {
    				if (!info.moveCell) {//focus back by user's mouse evt, re-eval editing formula info
-   					sheet.editingFormulaInfo = getEditingFormulaInfo('formulabarEditing', this.$n('real'));
+   					sheet.editingFormulaInfo = getEditingFormulaInfo('formulabarEditing', this.getInputNode());
    				} else {
    					//focus back to editor while move cell, do nothing
    				}
@@ -348,7 +523,7 @@ zss.FormulabarEditor = zk.$extends(zul.inp.InputWidget, {
    				var info = sheet.editingFormulaInfo;
    				if (info && 'formulabarEditing' == info.type && !sheet._skipInsertCellRef) {
    					var d = evt.data;
-   					insertCellRef(sheet, this.$n('real'), d.top, d.left, d.bottom, d.right);
+   					insertCellRef(sheet, this.getInputNode(), d.top, d.left, d.bottom, d.right);
    				}
    			}
    		}
@@ -377,7 +552,7 @@ zss.FormulabarEditor = zk.$extends(zul.inp.InputWidget, {
 				}
 				var info = sheet.editingFormulaInfo;
 				if (info && info.moveCell) {//re-eval editing formula info
-					sheet.editingFormulaInfo = getEditingFormulaInfo('formulabarEditing', this.$n('real'));
+					sheet.editingFormulaInfo = getEditingFormulaInfo('formulabarEditing', this.getInputNode());
 				}
 			}
 		}
@@ -386,6 +561,7 @@ zss.FormulabarEditor = zk.$extends(zul.inp.InputWidget, {
 		var sheet = this.sheet;
 		if (sheet) {
 			sheet._doKeydown(evt);
+			appendBrNode(this.getInputNode());
 		}
 	},
 	afterKeyDown_: function (evt, simulated) {//must eat the event, otherwise cause delete key evt doesn't work correctly
@@ -394,35 +570,34 @@ zss.FormulabarEditor = zk.$extends(zul.inp.InputWidget, {
 		var sheet = this.sheet,
 			keycode = evt.keyCode;
 		if (sheet && sheet.state == zss.SSheetCtrl.EDITING) {
-			var n = this.$n('real'),
-				p = zk(n).getSelectionRange(),
-				end = p[1],
-				v = n.value,
+			var input = this.getInputNode(),
+				position = getSelectionRange(input),
+				value = this.getValue(),
 				info = sheet.editingFormulaInfo;
-			syncEditorHeight(n); // ZSS-205: doesn't need to reset height here
-			this.syncEditorPosition(end);
-			sheet.inlineEditor.setValue(v);
-			this._wgt.fire('onEditboxEditing', {token: '', sheetId: sheet.serverSheetId, row:this.row, col:this.col,  clienttxt: n.value});
+			syncEditorHeight(input); // ZSS-205: doesn't need to reset height here
+			this.syncEditorPosition();
+			sheet.inlineEditor.setValue(value);
+			this._wgt.fire('onEditboxEditing', {token: '', sheetId: sheet.serverSheetId, row:this.row, col:this.col,  clienttxt: value});
 			
-			if (!v) {
+			if (!value) {
 				sheet.editingFormulaInfo = null;
 				return;
 			}
 			
-			var tp = 'formulabarEditing';
+			var type = 'formulabarEditing';
 			if (info) {
-				info.type = tp;
+				info.type = type;
 				if (info.moveCell) {
 					if (info.end != end) { //means keyboard input new charcater
-						sheet.editingFormulaInfo = getEditingFormulaInfo(tp, n, p);
+						sheet.editingFormulaInfo = getEditingFormulaInfo(type, input, position);
 					} else {
 						//no new charcater, remian the same editing info, do nothing.
 					}
 				} else {
-					sheet.editingFormulaInfo = getEditingFormulaInfo(tp, n, p);
+					sheet.editingFormulaInfo = getEditingFormulaInfo(type, input, position);
 				}
 			} else {
-				sheet.editingFormulaInfo = getEditingFormulaInfo(tp, n, p);
+				sheet.editingFormulaInfo = getEditingFormulaInfo(type, input, position);
 			}
 		}
 	},
@@ -431,7 +606,7 @@ zss.FormulabarEditor = zk.$extends(zul.inp.InputWidget, {
    	setWidth: function (v) {
    		this.$supers(zss.FormulabarEditor, 'setWidth', arguments);
    		
-   		// ZSS-205: textarea should be adjusted to sync. editor
+   		// ZSS-205: input should be adjusted to sync. editor
    		// should subtract padding (left and right are both 3px)
    		// and scrollbar width according to browsers
    		var w = this.$n().clientWidth - 6; // 6px is padding
@@ -439,27 +614,30 @@ zss.FormulabarEditor = zk.$extends(zul.inp.InputWidget, {
    		if(w < 0) {
    			w = 0;
    		}
-   		jq(this.$n('real')).css('width', jq.px(w));
-   		jq(this.$n('support')).css('width', jq.px(w)); // must sync. with textarea
+   		jq(this.getInputNode()).css('width', jq.px(w));
+   		jq(this.$n('support')).css('width', jq.px(w)); // must sync. with input
    	},
    	setHeight: function (v) {
    		this.$supers(zss.FormulabarEditor, 'setHeight', arguments);
    		
-   		// ZSS-205: textarea should be adjusted to sync. editor
-   		var textarea = this.$n('real');
-   		var n = this.$n();
-		jq(textarea).css('height', jq.px0(n.clientHeight - 3 /* top padding */ )); // reset height to parent's height before sync. editor's height with scroll height
-   		syncEditorHeight(textarea);
+   		// ZSS-205: input should be adjusted to sync. editor
+   		var input = this.getInputNode(),
+   			n = this.$n();
+		jq(input).css('height', jq.px0(n.clientHeight - 3 /* top padding */ )); // reset height to parent's height before sync. editor's height with scroll height
+   		syncEditorHeight(input);
    		this.syncEditorPosition();
    	},
    	redrawHTML_: function () {
    		var uid = this.uuid,
    			zcls = this.getZclass();
    		// ZSS-205: add a support element for calculating scroll position 
-   		return '<div id="' + uid + '" class="' + zcls + '"><textarea id="' + uid + '-real" class="' + zcls + '-real">' + this._areaText() + '</textarea><div id="' + uid + '-wrap-support" class="' + zcls + '-wrap-support"><textarea id="' + uid + '-support" class="' + zcls + '-support"></textarea></div></div>';
+   		return '<div id="' + uid + '" class="' + zcls + '"><div id="' + uid + '-real" class="' + zcls + '-real" contentEditable="true">' + this._areaText() + '</div><div id="' + uid + '-wrap-support" class="' + zcls + '-wrap-support"><div id="' + uid + '-support" class="' + zcls + '-support" contentEditable="true"></div></div></div>';
    	},
    	getZclass: function () {
    		return 'zsformulabar-editor';
+   	},
+   	getInputNode: function () {
+   		return this.$n('real');
    	}
 });
 
@@ -519,9 +697,7 @@ zss.Editbox = zk.$extends(zul.inp.InputWidget, {
    						formulabarEditor = sheet.formulabarEditor;
    					insertCellRef(sheet, this.comp, d.top, d.left, d.bottom, d.right);
    					if (formulabarEditor) {
-   						var n = this.comp,
-   							v = n.value;
-   						formulabarEditor.setValue(v);
+   						formulabarEditor.setValue(this.getValue());
    					}
    				}
    			}
@@ -558,6 +734,7 @@ zss.Editbox = zk.$extends(zul.inp.InputWidget, {
 			evt.stop();
 		else {
 			this.sheet._doKeydown(evt);
+			appendBrNode(this.comp);
 			var keycode = evt.keyCode;
 			switch (keycode) {
 			case 35: //End
@@ -609,11 +786,11 @@ zss.Editbox = zk.$extends(zul.inp.InputWidget, {
 				value = sheet.inlineEditor.getValue(),
 				keycode = evt.keyCode,
 				info = sheet.editingFormulaInfo,
-				n = this.comp,
-				p = zk(n).getSelectionRange(),
-				end = p[1];
+				input = this.comp,
+				position = getSelectionRange(input);
+				end = position[1];
 			if (formulabarEditor) {
-				formulabarEditor.setValue(value, end);
+				formulabarEditor.setValue(value, getSelectionRange(input, true)[1]);
 			}
 			sheet._wgt.fire('onEditboxEditing', {token: '', sheetId: sheet.serverSheetId, row:this.row, col:this.col, clienttxt: value});
 			
@@ -622,20 +799,20 @@ zss.Editbox = zk.$extends(zul.inp.InputWidget, {
 				return;
 			}
 			
-			var tp = this._type;
+			var type = this._type;
 			if (info) {
-				info.type = tp;
+				info.type = type;
 				if (info.moveCell) {
 					if (info.end != end) { //means keyboard input new charcater
-						sheet.editingFormulaInfo = getEditingFormulaInfo(tp, n, p);
+						sheet.editingFormulaInfo = getEditingFormulaInfo(type, input, position);
 					} else {
 						//no new charcater, remian the same editing info, do nothing.
 					}
 				} else {
-					sheet.editingFormulaInfo = getEditingFormulaInfo(tp, n, p);
+					sheet.editingFormulaInfo = getEditingFormulaInfo(type, input, position);
 				}
 			} else {
-				sheet.editingFormulaInfo = getEditingFormulaInfo(tp, n, p);
+				sheet.editingFormulaInfo = getEditingFormulaInfo(type, input, position);
 			}
 		}
 	},
@@ -656,7 +833,9 @@ zss.Editbox = zk.$extends(zul.inp.InputWidget, {
 		if (this.disabled) {
 			return;
 		}
-		this.comp.value = v;
+		var input = this.comp;
+		jq(input).html(nl2br(v));
+		complementHTML(input)
 		this.autoAdjust(true);
 	},
 	_startEditing: function (noFocus) {
@@ -664,14 +843,14 @@ zss.Editbox = zk.$extends(zul.inp.InputWidget, {
 		if (sheet) {
 			this._editing = !noFocus;
 			var formulabarEditor = sheet.formulabarEditor,
-				n = this.comp,
-				v = n.value;
+				input = this.comp,
+				value = this.getValue();
 			if (formulabarEditor) {
-				formulabarEditor.setValue(v);
+				formulabarEditor.setValue(value);
 			}
-			if ('=' == v.charAt(0)) {
-				var p = v.length;
-				sheet.editingFormulaInfo = getEditingFormulaInfo(this._type, n, [p, p]);	
+			if ('=' == value.charAt(0)) {
+				var length = value.length;
+				sheet.editingFormulaInfo = getEditingFormulaInfo(this._type, input, [length, length]);
 			}
 		}
 	},
@@ -694,7 +873,7 @@ zss.Editbox = zk.$extends(zul.inp.InputWidget, {
 			editorcmp = this.comp,
 			$edit = jq(editorcmp);
 
-		editorcmp.value = value;
+		this.setValue(value);
 		var w = cellcmp.ctrl.overflowed ? (cellcmp.firstChild.offsetWidth + this.sheet.cellPad) : (cellcmp.offsetWidth);
 		var h = cellcmp.offsetHeight;
 		var $cell = cellcmp.ctrl;
@@ -715,7 +894,10 @@ zss.Editbox = zk.$extends(zul.inp.InputWidget, {
 		this.editingHeight = h;
 
 		//issue 228: firefox need set display block, but IE can not set this.
-		$edit.css({'width': jq.px0(w), 'height': jq.px0(h), 'left': jq.px(l), 'top': jq.px(t), 'line-height': jq.px0(sheet.lineHeight)});
+		$edit.css({'min-width': jq.px0(w), 'min-height': jq.px0(h), 'width': 'auto', 'height': 'auto',
+			// 20140605: limit the editbox inside the sheet
+			'max-width': jq.px0(sheet.spcmp.clientWidth - l), 'max-height': jq.px0(sheet.spcmp.clientHeight - t),
+			'left': jq.px(l), 'top': jq.px(t), 'line-height': jq.px0(sheet.lineHeight)});
 		if (!zk.ie || zk.ie >= 11)
 			$edit.css('display', 'block');
 		zcss.copyStyle(txtcmp, editorcmp, ["font-family","font-size","font-weight","font-style","color","text-decoration","text-align"],true);
@@ -724,19 +906,12 @@ zss.Editbox = zk.$extends(zul.inp.InputWidget, {
 		this._startEditing(noFocus);
    			
 		//move text cursor position to last
-		fun = function () {
-			var pos = editorcmp.value.length;
-			if (editorcmp.setSelectionRange) {
-				editorcmp.setSelectionRange(pos,pos);
-			} else if (editorcmp.createTextRange) {
-				var range = editorcmp.createTextRange();
-				range.move('character', pos);
-				range.select();
-			}
-		};
+		//fun = function () {
+		//	placeCaretAtEnd(editorcmp);
+		//};
 
 		// ZSS-683: zk.safari is not true on Chrome since ZK 7.0.1
-		if (!zk.safari && !zk.chrome && (!zk.ie /*|| zk.ie >= 11*/)) fun();//safari must run after timeout
+		//if (!zk.safari && !zk.chrome && (!zk.ie /*|| zk.ie >= 11*/)) fun();//safari must run after timeout
 		setTimeout(function(){
 			//issue 228: ie focus event need after show
 			if (zk.ie /*&& zk.ie < 11*/) {
@@ -744,8 +919,9 @@ zss.Editbox = zk.$extends(zul.inp.InputWidget, {
 			}
 			if (!noFocus) {
 				$edit.focus();
+				placeCaretAtEnd(editorcmp);
 				//issue 230: IE cursor position is not at the text end when press F2
-				if (zk.safari || zk.chrome || (zk.ie /*&& zk.ie < 11*/)) fun();
+				//if (zk.safari || zk.chrome || (zk.ie /*&& zk.ie < 11*/)) fun();
 			}
 		}, 25);	
 		this.autoAdjust(true);
@@ -753,7 +929,7 @@ zss.Editbox = zk.$extends(zul.inp.InputWidget, {
 	cancel: function () {
 		this._editing = false;
 		this.disable(true);
-		jq(this.comp).val('').css('display', 'none');
+		jq(this.comp).text('').css('display', 'none');
 		this.row = this.col = -1;
 	},
 	stop: function () {
@@ -762,13 +938,13 @@ zss.Editbox = zk.$extends(zul.inp.InputWidget, {
 		this._editing = false;
 		this.disable(true);
 		var editorcmp = this.comp,
-			str = editorcmp.value;
-		jq(editorcmp).val('').css('display', 'none');
+			str = this.getValue();
+		jq(editorcmp).text('').css('display', 'none');
 		this.row = this.col = -1;
 		return str;
 	},
 	getValue: function () {
-		return this.comp.value;
+		return br2nl(this.comp);
 	},
 	newLine: function () {
 		newLine(this.comp);
@@ -783,7 +959,7 @@ zss.Editbox = zk.$extends(zul.inp.InputWidget, {
 			if ((zk.ie && zk.ie < 11) || zk.safari || zk.opera)
 				w -= 2;
 			jq(editorcmp).css('width', jq.px0(w));
-		} else if (type=="h") {
+		} else if (type == "h") {
 			var custRowHeight = this.sheet.custRowHeight,
 				h = custRowHeight.getStartPixel(this.row + this.sh + 1) - custRowHeight.getStartPixel(this.row);
 			jq(editorcmp).css('height', jq.px0(h));
@@ -794,18 +970,18 @@ zss.Editbox = zk.$extends(zul.inp.InputWidget, {
 		setTimeout(function() {
 			var editorcmp = local.comp,
 				ch = editorcmp.clientHeight,
-				cw = editorcmp.clientWidth,
+			//	cw = editorcmp.clientWidth,
 				sw = editorcmp.scrollWidth,
-				sh = editorcmp.scrollHeight,
-				hsb = zkS._hasScrollBar(editorcmp),//has hor scrollbar
-				vsb = zkS._hasScrollBar(editorcmp, true);//has ver scrollbar
+				sh = editorcmp.scrollHeight;
+			//	hsb = zkS._hasScrollBar(editorcmp),//has hor scrollbar
+			//	vsb = zkS._hasScrollBar(editorcmp, true);//has ver scrollbar
 			
-			if (sh > ch + 3) {//3 is border
-				if (hsb && !vsb)
-					jq(editorcmp).css('height', jq.px0(sh + zss.Spreadsheet.scrollWidth));// extend height
-				else
-					jq(editorcmp).css('height', jq.px0(sh));
-			}
+			//if (sh > ch + 3) {//3 is border
+			//	if (hsb && !vsb)
+			//		jq(editorcmp).css('height', jq.px0(sh + zss.Spreadsheet.scrollWidth));// extend height
+			//	else
+			//		jq(editorcmp).css('height', jq.px0(sh));
+			//}
 			if (sh > ch + 3 || forceadj) {
 				var custColWidth = local.sheet.custColWidth,
 					custRowHeight = local.sheet.custRowHeight;
@@ -815,7 +991,7 @@ zss.Editbox = zk.$extends(zul.inp.InputWidget, {
 		}, 0);
 	},
 	redrawHTML_: function () {
-		return '<textarea id="' + this.uuid + '" class="zsedit" zs.t="SEditbox"></textarea>';
+		return '<div id="' + this.uuid + '" class="zsedit" zs.t="SEditbox" contentEditable="true"></div>';
 	}
 });
 })();
