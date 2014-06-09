@@ -4,7 +4,9 @@ ZK Spreadsheet 3.5.0
   ZSS-665 Smart number input handling
   ZSS-666 Smart number "General" formatting
   ZSS-576 Support Excel "Protect Sheet" allowed actions
-  
+  ZSS-565 Support input with Swedish locale into formula
+  ZSS-685 Do not import duplicate cell style
+
 *Bugs:
   ZSS-652 Cut Formula shouldn't be shifted when it is not in cut range
   ZSS-655 Formula that contains Name doesn't update
@@ -26,7 +28,6 @@ ZK Spreadsheet 3.5.0
   ZSS-680 ZSS App always save to xlsx format.
   ZSS-677 AbstractExcelImporter doesn't reuse imported font
   ZSS-683 Enter formula with bad syntax, would cause infinite error message window
-  ZSS-565 Support input with Swedish locale into formula
   
 ** Upgrade Notes
   * Following api are deprecated

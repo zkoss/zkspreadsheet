@@ -6,12 +6,20 @@ import java.io.*;
 import java.util.Locale;
 
 import org.junit.*;
+import org.zkoss.poi.ss.usermodel.Workbook;
 import org.zkoss.zss.*;
 import org.zkoss.zss.api.*;
 import org.zkoss.zss.api.Range.PasteOperation;
 import org.zkoss.zss.api.Range.PasteType;
 import org.zkoss.zss.api.model.*;
+import org.zkoss.zss.api.model.impl.BookImpl;
+import org.zkoss.zss.api.model.impl.SimpleRef;
 import org.zkoss.zss.model.InvalidModelOpException;
+import org.zkoss.zss.model.SBook;
+import org.zkoss.zss.range.SExporter;
+import org.zkoss.zss.range.impl.imexp.ExcelXlsExporter;
+import org.zkoss.zss.range.impl.imexp.ExcelXlsxExporter;
+import org.zkoss.zss.range.impl.imexp.ExcelXlsxImporter;
 
 /**
  * @author Hawk
@@ -155,5 +163,63 @@ public class Issue600Test {
 		}catch (InvalidModelOpException e) {
 			//catch to avoid test failure
 		}
+	}
+	
+	@Test
+	public void testZSS685ImportStyle(){
+		Object[] books = _loadBooks(this, "book/685-StyleOverflow.xlsx");
+		Book book = (Book) books[0];
+		Workbook wbookimp = (Workbook) books[1];
+		assertEquals(15982, wbookimp.getNumCellStyles());
+		SBook sbook = book.getInternalBook();
+		XlsxExporter exp = new XlsxExporter();
+		try {
+			exp.export(sbook, new ByteArrayOutputStream());
+			Workbook wbook = exp.getWorkbook();
+			assertEquals(268, wbook.getNumCellStyles());
+		} catch (IOException e) {
+			fail("Should export to byte array output stream without issue:\n");
+			e.printStackTrace();
+		}
+	}
+	
+	public static Object[] _loadBooks(Object base,String respath) {
+		if(base==null){
+			base = Util.class;
+		}
+		if(!(base instanceof Class)){
+			base = base.getClass();
+		}
+		
+		@SuppressWarnings("rawtypes")
+		final InputStream is = ((Class)base).getResourceAsStream(respath);
+		try {
+			int index = respath.lastIndexOf("/");
+			String bookName = index==-1?respath:respath.substring(index+1);
+			XlsxImporter imp = new XlsxImporter();
+			return new Object[] {new BookImpl(new SimpleRef<SBook>(imp.imports(is, bookName))), imp.getWorkbook()};
+		} catch (IOException e) {
+			throw new RuntimeException(e.getMessage(),e);
+		} finally {
+			if (is != null) {
+				try {
+					is.close();
+				} catch (IOException e) {
+				}
+			}
+		}
+	}
+}
+
+@SuppressWarnings("serial")
+final class XlsxExporter extends ExcelXlsxExporter {
+	public Workbook getWorkbook() {
+		return workbook;
+	}
+}
+
+final class XlsxImporter extends ExcelXlsxImporter {
+	public Workbook getWorkbook() {
+		return workbook;
 	}
 }

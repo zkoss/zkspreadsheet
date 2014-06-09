@@ -55,7 +55,7 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 	 * <poi CellStyle index, {@link SCellStyle} object> Keep track of imported
 	 * style during importing to avoid creating duplicated style objects.
 	 */
-	protected Map<Short, SCellStyle> importedStyle = new HashMap<Short, SCellStyle>();
+	protected Map<CellStyle, SCellStyle> importedStyle = new HashMap<CellStyle, SCellStyle>(); 	//ZSS-685
 	/** <poi Font index, {@link SFont} object> **/
 	protected Map<Short, SFont> importedFont = new HashMap<Short, SFont>();
 	/** target book model */
@@ -348,10 +348,10 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 	 */
 	protected SCellStyle importCellStyle(CellStyle poiCellStyle) {
 		SCellStyle cellStyle = null;
-		short idx = poiCellStyle.getIndex();
-		if ((cellStyle = importedStyle.get(idx)) == null) {
+//		short idx = poiCellStyle.getIndex(); // ZSS-685
+		if ((cellStyle = importedStyle.get(poiCellStyle)) == null) { // ZSS-685
 			cellStyle = book.createCellStyle(true);
-			importedStyle.put(idx, cellStyle);
+			importedStyle.put(poiCellStyle, cellStyle); // ZSS-685
 			String dataFormat = poiCellStyle.getRawDataFormatString();
 			if(dataFormat==null){//just in case
 				dataFormat = SCellStyle.FORMAT_GENERAL;
