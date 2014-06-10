@@ -86,7 +86,12 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 		if (wgt.isSheetCSSReady()) {
 			sheet.activeBlock.setVisible(true); //show cells
 			sheet._doSSInitLater(); //may show focus, process wrap height
-			wgt.focus();
+			if (!sheet.isSwitchingSheet) {
+				wgt.focus();
+			} else {
+				sheet.inlineEditor.updateInfo();
+				sheet.isSwitchingSheet = null;
+			}
 		} else {
 			setTimeout(function () {
 				doAfterCSSReady(sheet);

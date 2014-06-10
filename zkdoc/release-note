@@ -7,6 +7,7 @@ ZK Spreadsheet 3.5.0
   ZSS-565 Support input with Swedish locale into formula
   ZSS-685 Do not import duplicate cell style
   ZSS-684 Auto expand editing area's width when editing cell
+  ZSS-678 Support creating reference between two sheets
 
 *Bugs:
   ZSS-652 Cut Formula shouldn't be shifted when it is not in cut range
