@@ -6,7 +6,7 @@ ZK Spreadsheet 3.5.0
   ZSS-576 Support Excel "Protect Sheet" allowed actions
   ZSS-565 Support input with Swedish locale into formula
   ZSS-685 Do not import duplicate cell style
-  ZSS-684: Auto expand editing area's width when editing cell
+  ZSS-684 Auto expand editing area's width when editing cell
 
 *Bugs:
   ZSS-652 Cut Formula shouldn't be shifted when it is not in cut range
@@ -30,6 +30,7 @@ ZK Spreadsheet 3.5.0
   ZSS-677 AbstractExcelImporter doesn't reuse imported font
   ZSS-683 Enter formula with bad syntax, would cause infinite error message window
   ZSS-661 Formula is incorrect after rename Name or it's refersTo region.
+  ZSS-649 After delete row, NameRange doesn't update
   
 ** Upgrade Notes
   * Following api are deprecated

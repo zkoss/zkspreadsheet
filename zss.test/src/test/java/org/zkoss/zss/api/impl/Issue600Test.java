@@ -125,6 +125,125 @@ public class Issue600Test {
 		assertEquals("6", Ranges.range(sheet, "B1").getCellEditText());
 	}
 	
+	@Test 
+	public void testZSS649ModifyName() {
+		SBook book = SBooks.createBook("book1");
+		book.getBookSeries().setAutoFormulaCacheClean(true);
+		book.createSheet("Sheet0");
+		SSheet sheet1 = book.createSheet("Sheet1");
+		
+		sheet1.getCell("A1").setValue(1);
+		sheet1.getCell("B1").setValue(2);
+		sheet1.getCell("A2").setValue(3);
+		sheet1.getCell("B2").setValue(4);
+		
+		SName name = book.createName("FOO");
+		name.setRefersToFormula("Sheet1!A1:B2");
+		
+		sheet1.getCell("C1").setValue("=SUM(FOO)");
+		
+		Assert.assertEquals(10D, sheet1.getCell("C1").getValue());
+		
+		// test shrink
+		sheet1.deleteColumn(1, 1); // delete column B
+		Assert.assertEquals("Sheet1!A1:A2", name.getRefersToFormula());
+		Assert.assertEquals(4D, sheet1.getCell("B1").getValue());
+		
+		// test extend
+		sheet1.insertColumn(1, 1); // insert column B
+		Assert.assertEquals("Sheet1!A1:A2", name.getRefersToFormula());
+		Assert.assertEquals(4D, sheet1.getCell("C1").getValue());
+		
+		// test extend
+		sheet1.insertColumn(0, 0); // insert column A
+		Assert.assertEquals("Sheet1!B1:B2", name.getRefersToFormula());
+		Assert.assertEquals(4D, sheet1.getCell("D1").getValue());
+
+		// test shrink
+		sheet1.deleteColumn(0, 0); // delete column A
+		Assert.assertEquals("Sheet1!A1:A2", name.getRefersToFormula());
+		Assert.assertEquals(4D, sheet1.getCell("C1").getValue());
+
+		// test shrink
+		sheet1.deleteRow(1,  1); //  delete row 2
+		Assert.assertEquals("Sheet1!A1:A1", name.getRefersToFormula());
+		Assert.assertEquals(1D, sheet1.getCell("C1").getValue());
+
+		// test extend
+		sheet1.insertRow(0,  0); // insert row 1
+		Assert.assertEquals("Sheet1!A2:A2", name.getRefersToFormula());
+		Assert.assertEquals(1D, sheet1.getCell("C2").getValue());
+
+		// test rename sheet
+		book.setSheetName(sheet1, "SheetX");
+		Assert.assertEquals("SheetX!A2:A2", name.getRefersToFormula());
+		Assert.assertEquals(1D, sheet1.getCell("C2").getValue());
+		
+		sheet1.getCell("A1").setValue(1);
+		sheet1.getCell("B1").setValue(2);
+		sheet1.getCell("A2").setValue(3);
+		sheet1.getCell("B2").setValue(4);
+		
+		name.setRefersToFormula("SheetX!A1:B2");
+		Assert.assertEquals("SheetX!A1:B2", name.getRefersToFormula());
+		Assert.assertEquals(10D, sheet1.getCell("C2").getValue());
+		
+		// test extend
+		sheet1.insertColumn(1, 1); // insert column B
+		Assert.assertEquals("SheetX!A1:C2", name.getRefersToFormula());
+		Assert.assertEquals(10D, sheet1.getCell("D2").getValue());
+		
+		// test extend
+		sheet1.insertColumn(0, 0); // insert column A
+		Assert.assertEquals("SheetX!B1:D2", name.getRefersToFormula());
+		Assert.assertEquals(10D, sheet1.getCell("E2").getValue());
+
+		// test shrink
+		sheet1.deleteColumn(1, 1); // delete column B
+		Assert.assertEquals("SheetX!B1:C2", name.getRefersToFormula());
+		Assert.assertEquals(6D, sheet1.getCell("D2").getValue());
+		
+		// test move 
+		sheet1.moveCell(0, 0, 2, 2, 2, 4); // A1:C3 -> E3:G5
+		Assert.assertEquals("SheetX!F3:G4", name.getRefersToFormula());
+		Assert.assertEquals(6D, sheet1.getCell("D2").getValue());
+		
+		// test move
+		sheet1.moveCell(2, 6, 3, 6, 0, 1); // G3:G4 -> H3:H4
+		Assert.assertEquals("SheetX!F3:H4", name.getRefersToFormula());
+		Assert.assertEquals(6D, sheet1.getCell("D2").getValue());
+
+		// test move
+		sheet1.moveCell(2, 5, 2, 7, -1, 0); // F3:H3 -> F2:H2
+		Assert.assertEquals("SheetX!F2:H4", name.getRefersToFormula());
+		Assert.assertEquals(6D, sheet1.getCell("D2").getValue());
+		
+		// test move
+		sheet1.moveCell(2, 6, 2, 8, 1, 0); // F3:H3 -> F2:H2
+		Assert.assertEquals("SheetX!F2:H4", name.getRefersToFormula());
+		Assert.assertEquals(2D, sheet1.getCell("D2").getValue());
+
+		// test insert/delete cells
+		sheet1.getCell("A1").setValue(1);
+		sheet1.getCell("B1").setValue(2);
+		sheet1.getCell("A2").setValue(3);
+		sheet1.getCell("B2").setValue(4);
+		
+		name.setRefersToFormula("SheetX!A1:B2");
+		Assert.assertEquals("SheetX!A1:B2", name.getRefersToFormula());
+		Assert.assertEquals(10D, sheet1.getCell("D2").getValue());
+		
+		// insert B1:B2
+		sheet1.insertCell(0, 1, 1, 1, true); // A1:C2
+		Assert.assertEquals("SheetX!A1:C2", name.getRefersToFormula());
+		Assert.assertEquals(10D, sheet1.getCell("E2").getValue());
+		
+		// delete B1:B2
+		sheet1.deleteCell(0, 1, 1, 1, true); // A1:B2
+		Assert.assertEquals("SheetX!A1:B2", name.getRefersToFormula());
+		Assert.assertEquals(10D, sheet1.getCell("D2").getValue());
+	}
+	
 	@Test
 	public void testZSS660InvalidNamedRange(){
 		Book book = Util.loadBook(this, "book/blank.xlsx");

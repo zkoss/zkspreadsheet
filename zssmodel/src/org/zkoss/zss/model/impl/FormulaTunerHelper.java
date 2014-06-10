@@ -17,6 +17,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.model.impl;
 
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -24,6 +25,7 @@ import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.SBookSeries;
 import org.zkoss.zss.model.SCell;
 import org.zkoss.zss.model.SChart;
+import org.zkoss.zss.model.SName;
 import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.model.SheetRegion;
 import org.zkoss.zss.model.SCell.CellType;
@@ -31,6 +33,7 @@ import org.zkoss.zss.model.chart.SChartData;
 import org.zkoss.zss.model.chart.SGeneralChartData;
 import org.zkoss.zss.model.chart.SSeries;
 import org.zkoss.zss.model.sys.EngineFactory;
+import org.zkoss.zss.model.sys.dependency.NameRef;
 import org.zkoss.zss.model.sys.dependency.ObjectRef;
 import org.zkoss.zss.model.sys.dependency.Ref;
 import org.zkoss.zss.model.sys.dependency.ObjectRef.ObjectType;
@@ -55,25 +58,22 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 		//so we need to collect the dependent for only shift chart once
 		Map<String,Ref> chartDependents  = new LinkedHashMap<String, Ref>();
 		Map<String,Ref> validationDependents  = new LinkedHashMap<String, Ref>();
+		Set<Ref> cellDependents = new LinkedHashSet<Ref>(); //ZSS-649
+		Map<String,Ref> nameDependents = new LinkedHashMap<String, Ref>(); //ZSS-649
 		
-		for (Ref dependent : dependents) {
-			if (dependent.getType() == RefType.CELL) {
-				moveCellRef(sheetRegion,dependent,rowOffset,columnOffset);
-			} else if (dependent.getType() == RefType.OBJECT) {
-				if(((ObjectRef)dependent).getObjectType()==ObjectType.CHART){
-					chartDependents.put(((ObjectRef)dependent).getObjectIdPath()[0], dependent);
-				}else if(((ObjectRef)dependent).getObjectType()==ObjectType.DATA_VALIDATION){
-					validationDependents.put(((ObjectRef)dependent).getObjectIdPath()[0], dependent);
-				}
-			} else {// TODO another
-
-			}
+		splitDependents(dependents, cellDependents, chartDependents, validationDependents, nameDependents);
+		
+		for (Ref dependent : cellDependents) {
+			moveCellRef(sheetRegion,dependent,rowOffset,columnOffset);
 		}
 		for (Ref dependent : chartDependents.values()) {
 			moveChartRef(sheetRegion,(ObjectRef)dependent,rowOffset,columnOffset);
 		}
 		for (Ref dependent : validationDependents.values()) {
 			moveDataValidationRef(sheetRegion,(ObjectRef)dependent,rowOffset,columnOffset);
+		}
+		for (Ref dependent : nameDependents.values()) {
+			moveNameRef(sheetRegion,(NameRef)dependent,rowOffset,columnOffset);
 		}
 	}
 	private void moveChartRef(SheetRegion sheetRegion,ObjectRef dependent,int rowOffset, int columnOffset) {
@@ -189,6 +189,27 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 			ModelUpdateUtil.addRefUpdate(dependent);
 		}
 	}
+	//ZSS-649
+	private void moveNameRef(SheetRegion sheetRegion,NameRef dependent,int rowOffset, int columnOffset) {
+		SBook book = _bookSeries.getBook(dependent.getBookName());
+		if(book==null) return;
+		SName name = book.getNameByName(dependent.getNameName());
+		if(name==null) return;
+		SSheet sheet = book.getSheetByName(name.getRefersToSheetName());
+		if(sheet==null) return;
+		String expr = name.getRefersToFormula();
+		
+		FormulaEngine engine = getFormulaEngine();
+		FormulaExpression exprAfter = engine.move(expr, sheetRegion, rowOffset, columnOffset, new FormulaParseContext(sheet, null));//null ref, no trace dependence here
+		
+		if(!expr.equals(exprAfter.getFormulaString())){
+			name.setRefersToFormula(exprAfter.getFormulaString());
+			//don't need to notify name change, name will do
+		}else{
+			//zss-626, has to clear cache and notify ref update
+			ModelUpdateUtil.addRefUpdate(dependent);
+		}
+	}
 
 	private FormulaEngine engine;
 	private FormulaEngine getFormulaEngine() {
@@ -203,19 +224,13 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 		//so we need to collect the dependent for only shift chart once
 		Map<String,Ref> chartDependents  = new LinkedHashMap<String, Ref>();
 		Map<String,Ref> validationDependents  = new LinkedHashMap<String, Ref>();
-				
-		for (Ref dependent : dependents) {
-			if (dependent.getType() == RefType.CELL) {
-				extendCellRef(sheetRegion,dependent,horizontal);
-			} else if (dependent.getType() == RefType.OBJECT) {
-				if(((ObjectRef)dependent).getObjectType()==ObjectType.CHART){
-					chartDependents.put(((ObjectRef)dependent).getObjectIdPath()[0], dependent);
-				}else if(((ObjectRef)dependent).getObjectType()==ObjectType.DATA_VALIDATION){
-					validationDependents.put(((ObjectRef)dependent).getObjectIdPath()[0], dependent);
-				}
-			} else {// TODO another
-
-			}
+		Set<Ref> cellDependents = new LinkedHashSet<Ref>(); //ZSS-649
+		Map<String,Ref> nameDependents = new LinkedHashMap<String, Ref>(); //ZSS-649
+		
+		splitDependents(dependents, cellDependents, chartDependents, validationDependents, nameDependents);
+		
+		for (Ref dependent : cellDependents) {
+			extendCellRef(sheetRegion,dependent,horizontal);
 		}
 		for (Ref dependent : chartDependents.values()) {
 			extendChartRef(sheetRegion,(ObjectRef)dependent,horizontal);
@@ -223,6 +238,9 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 		for (Ref dependent : validationDependents.values()) {
 			extendDataValidationRef(sheetRegion,(ObjectRef)dependent,horizontal);
 		}		
+		for (Ref dependent : nameDependents.values()) {
+			extendNameRef(sheetRegion,(NameRef)dependent,horizontal);
+		}
 	}
 
 	private void extendChartRef(SheetRegion sheetRegion, ObjectRef dependent, boolean horizontal) {
@@ -343,32 +361,53 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 			cell.clearFormulaResultCache();
 			ModelUpdateUtil.addRefUpdate(dependent);
 		}
-	}	
+	}
 
-	public void shrink(SheetRegion sheetRegion,Set<Ref> dependents, boolean horizontal) {
+	//ZSS-649
+	private void extendNameRef(SheetRegion sheetRegion, NameRef dependent, boolean horizontal) {
+		SBook book = _bookSeries.getBook(dependent.getBookName());
+		if(book==null) return;
+		SName name = book.getNameByName(dependent.getNameName());
+		if (name == null) return;
+		SSheet sheet = book.getSheetByName(name.getRefersToSheetName());
+		if(sheet==null) return;
+		String expr = name.getRefersToFormula();
+		
+		FormulaEngine engine = getFormulaEngine();
+		FormulaExpression exprAfter = engine.extend(expr, sheetRegion,horizontal, new FormulaParseContext(sheet, null));//null ref, no trace dependence here
+		if(!expr.equals(exprAfter.getFormulaString())){
+			name.setRefersToFormula(exprAfter.getFormulaString());
+			//don't need to notify cell change, cell will do
+		}else{
+			
+			//zss-626, has to clear cache and notify ref update
+			ModelUpdateUtil.addRefUpdate(dependent);
+		}
+	}
+	
+	public void shrink(SheetRegion sheetRegion, Set<Ref> dependents, boolean horizontal) {
 		//because of the chart shifting is for all chart, but the input dependent is on series,
 		//so we need to collect the dependent for only shift chart once
 		Map<String,Ref> chartDependents  = new LinkedHashMap<String, Ref>();
-		Map<String,Ref> validationDependents  = new LinkedHashMap<String, Ref>();		
-		for (Ref dependent : dependents) {
-			if (dependent.getType() == RefType.CELL) {
-				shrinkCellRef(sheetRegion,dependent,horizontal);
-			} else if (dependent.getType() == RefType.OBJECT) {
-				if(((ObjectRef)dependent).getObjectType()==ObjectType.CHART){
-					chartDependents.put(((ObjectRef)dependent).getObjectIdPath()[0], dependent);
-				}else if(((ObjectRef)dependent).getObjectType()==ObjectType.DATA_VALIDATION){
-					validationDependents.put(((ObjectRef)dependent).getObjectIdPath()[0], dependent);
-				}
-			} else {// TODO another
-
-			}
+		Map<String,Ref> validationDependents  = new LinkedHashMap<String, Ref>();
+		Set<Ref> cellDependents = new LinkedHashSet<Ref>(); //ZSS-649
+		Map<String,Ref> nameDependents = new LinkedHashMap<String, Ref>(); //ZSS-649
+		
+		splitDependents(dependents, cellDependents, chartDependents, validationDependents, nameDependents);
+		
+		for (Ref dependent : cellDependents) {
+			shrinkCellRef(sheetRegion,dependent,horizontal);
 		}
 		for (Ref dependent : chartDependents.values()) {
 			shrinkChartRef(sheetRegion,(ObjectRef)dependent,horizontal);
 		}
 		for (Ref dependent : validationDependents.values()) {
 			shrinkDataValidationRef(sheetRegion,(ObjectRef)dependent,horizontal);
-		}		
+		}
+		//ZSS-649
+		for (Ref dependent : nameDependents.values()) {
+			shrinkNameRef(sheetRegion, (NameRef) dependent, horizontal);
+		}
 	}
 	private void shrinkChartRef(SheetRegion sheetRegion,ObjectRef dependent, boolean horizontal) {
 		SBook book = _bookSeries.getBook(dependent.getBookName());
@@ -490,24 +529,39 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 		}
 	}
 
+	//ZSS-649
+	private void shrinkNameRef(SheetRegion sheetRegion, NameRef dependent, boolean horizontal) {
+		SBook book = _bookSeries.getBook(dependent.getBookName());
+		if(book==null) return;
+		SName name = book.getNameByName(dependent.getNameName());
+		if(name==null) return;
+		SSheet sheet = book.getSheetByName(name.getRefersToSheetName());
+		if(sheet==null) return;
+		String expr = name.getRefersToFormula();
+		
+		FormulaEngine engine = getFormulaEngine();
+		FormulaExpression exprAfter = engine.shrink(expr, sheetRegion, horizontal, new FormulaParseContext(sheet, null));//null ref, no trace dependence here
+		if(!expr.equals(exprAfter.getFormulaString())){
+			name.setRefersToFormula(exprAfter.getFormulaString());
+			//don't need to notify name change, setRefersToFormula will do
+		}else{
+			ModelUpdateUtil.addRefUpdate(dependent);
+		}
+	}
+	
 	public void renameSheet(SBook book, String oldName, String newName,
 			Set<Ref> dependents) {
 		//because of the chart shifting is for all chart, but the input dependent is on series,
 		//so we need to collect the dependent for only shift chart once
 		Map<String,Ref> chartDependents  = new LinkedHashMap<String, Ref>();
-		Map<String,Ref> validationDependents  = new LinkedHashMap<String, Ref>();		
-		for (Ref dependent : dependents) {
-			if (dependent.getType() == RefType.CELL) {
-				renameSheetCellRef(book,oldName,newName,dependent);
-			} else if (dependent.getType() == RefType.OBJECT) {
-				if(((ObjectRef)dependent).getObjectType()==ObjectType.CHART){
-					chartDependents.put(((ObjectRef)dependent).getObjectIdPath()[0], dependent);
-				}else if(((ObjectRef)dependent).getObjectType()==ObjectType.DATA_VALIDATION){
-					validationDependents.put(((ObjectRef)dependent).getObjectIdPath()[0], dependent);
-				}
-			} else {// TODO another
-
-			}
+		Map<String,Ref> validationDependents  = new LinkedHashMap<String, Ref>();
+		Set<Ref> cellDependents = new LinkedHashSet<Ref>(); //ZSS-649
+		Map<String,Ref> nameDependents = new LinkedHashMap<String, Ref>(); //ZSS-649
+		
+		splitDependents(dependents, cellDependents, chartDependents, validationDependents, nameDependents);
+		
+		for (Ref dependent : cellDependents) {
+			renameSheetCellRef(book,oldName,newName,dependent);
 		}
 		for (Ref dependent : chartDependents.values()) {
 			renameSheetChartRef(book,oldName,newName,(ObjectRef)dependent);
@@ -515,7 +569,10 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 		for (Ref dependent : validationDependents.values()) {
 			renameSheetDataValidationRef(book,oldName,newName,(ObjectRef)dependent);
 		}	
-		
+		//ZSS-649
+		for (Ref dependent : nameDependents.values()) {
+			renameSheetNameRef(book,oldName,newName,(NameRef)dependent);
+		}
 	}	
 	
 	private void renameSheetChartRef(SBook bookOfSheet, String oldName, String newName,ObjectRef dependent) {
@@ -628,6 +685,34 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 		//don't need to notify cell change, cell will do
 	}	
 
+	//ZSS-649
+	private void renameSheetNameRef(SBook bookOfSheet, String oldName, String newName, NameRef dependent) {
+		SBook book = _bookSeries.getBook(dependent.getBookName());
+		if(book==null) return;
+		SName name = book.getNameByName(dependent.getNameName());
+		if(name==null) return;
+		SSheet sheet = book.getSheetByName(name.getRefersToSheetName());
+		if(sheet==null){//the sheet was renamed., get form newname if possible
+			if(oldName.equals(name.getRefersToSheetName())){
+				sheet = book.getSheetByName(newName);
+			}
+		}
+		if(sheet==null) return;
+		
+		/*
+		 * for sheet rename case, we should always update formula to make new dependency, shouln't ignore if the formula string is the same
+		 * Note, in other move cell case, we could ignore to set same formula string
+		 */
+		
+		String expr = name.getRefersToFormula();
+		
+		FormulaEngine engine = getFormulaEngine();
+		FormulaExpression exprAfter = engine.renameSheet(expr, bookOfSheet, oldName, newName, new FormulaParseContext(sheet, null));//null ref, no trace dependence here
+		
+		name.setRefersToFormula(exprAfter.getFormulaString());
+		//don't need to notify cell change, cell will do
+	}	
+	
 	// ZSS-661
 	public void renameName(SBook book, String oldName, String newName,
 			Set<Ref> dependents) {
@@ -660,6 +745,30 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 		
 		cell.setFormulaValue(exprAfter.getFormulaString());
 		//don't need to notify cell change, cell will do
-	}	
+	}
 
+	@SuppressWarnings("unused")
+	private void splitDependents(final Set<Ref> dependents,
+			final Set<Ref> cellDependents,
+			final Map<String, Ref> chartDependents,
+			final Map<String, Ref> validationDependents,
+			final Map<String, Ref> nameDependents) {
+		
+		for (Ref dependent : dependents) {
+			RefType type = dependent.getType();
+			if (type == RefType.CELL) {
+				cellDependents.add(dependent);
+			} else if (type == RefType.OBJECT) {
+				if(((ObjectRef)dependent).getObjectType()==ObjectType.CHART){
+					chartDependents.put(((ObjectRef)dependent).getObjectIdPath()[0], dependent);
+				}else if(((ObjectRef)dependent).getObjectType()==ObjectType.DATA_VALIDATION){
+					validationDependents.put(((ObjectRef)dependent).getObjectIdPath()[0], dependent);
+				}
+			} else if (type == RefType.NAME) { //ZSS-649
+				nameDependents.put(((NameRef)dependent).toString(), dependent);
+			} else {// TODO another
+
+			}
+		}
+	}
 }
