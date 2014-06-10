@@ -16,6 +16,8 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.model.impl;
 
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -33,6 +35,7 @@ import org.zkoss.zss.model.chart.SChartData;
 import org.zkoss.zss.model.chart.SGeneralChartData;
 import org.zkoss.zss.model.chart.SSeries;
 import org.zkoss.zss.model.sys.EngineFactory;
+import org.zkoss.zss.model.sys.dependency.DependencyTable;
 import org.zkoss.zss.model.sys.dependency.NameRef;
 import org.zkoss.zss.model.sys.dependency.ObjectRef;
 import org.zkoss.zss.model.sys.dependency.Ref;
@@ -206,6 +209,9 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 			name.setRefersToFormula(exprAfter.getFormulaString());
 			//don't need to notify name change, name will do
 		}else{
+			//zss-687, clear dependents's cache of NameRef
+			clearFormulaCache(dependent);
+			
 			//zss-626, has to clear cache and notify ref update
 			ModelUpdateUtil.addRefUpdate(dependent);
 		}
@@ -379,6 +385,8 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 			name.setRefersToFormula(exprAfter.getFormulaString());
 			//don't need to notify cell change, cell will do
 		}else{
+			//zss-687, clear dependents's cache of NameRef
+			clearFormulaCache(dependent);
 			
 			//zss-626, has to clear cache and notify ref update
 			ModelUpdateUtil.addRefUpdate(dependent);
@@ -545,6 +553,9 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 			name.setRefersToFormula(exprAfter.getFormulaString());
 			//don't need to notify name change, setRefersToFormula will do
 		}else{
+			//zss-687, clear dependents's cache of NameRef
+			clearFormulaCache(dependent);
+			
 			ModelUpdateUtil.addRefUpdate(dependent);
 		}
 	}
@@ -770,5 +781,110 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 
 			}
 		}
+	}
+
+	//ZSS-687
+	private void clearFormulaCache(NameRef precedent) {
+		Map<String,Ref> chartDependents  = new HashMap<String, Ref>();
+		Map<String,Ref> validationDependents  = new HashMap<String, Ref>();
+		Set<Ref> nameDependents  = new HashSet<Ref>();
+		AbstractBookSeriesAdv bs = (AbstractBookSeriesAdv) _bookSeries;
+		DependencyTable dt = bs.getDependencyTable();
+		
+		clearFormulaCache(precedent, dt, chartDependents, validationDependents, nameDependents);
+
+		for (Ref dependent : chartDependents.values()) {
+			clearFormulaCacheChartRef((ObjectRef)dependent);
+		}
+		for (Ref dependent : validationDependents.values()) {
+			clearFormulaCacheDataValidationRef((ObjectRef)dependent);
+		}		
+	}
+
+	// ZSS-687
+	private void clearFormulaCache(NameRef precedent,
+			DependencyTable dt, 
+			Map<String,Ref> chartDependents,
+			Map<String,Ref> validationDependents,
+			Set<Ref> nameDependents) {
+		
+		Set<Ref> dependents = dt.getDependents(precedent);
+		
+		for (Ref dependent : dependents) {
+			RefType type = dependent.getType(); 
+			if (type == RefType.CELL) {
+				clearFormulaCacheCellRef(dependent);
+			} else if (type == RefType.OBJECT) {
+				if(((ObjectRef)dependent).getObjectType()==ObjectType.CHART){
+					chartDependents.put(((ObjectRef)dependent).getObjectIdPath()[0], dependent);
+				}else if(((ObjectRef)dependent).getObjectType()==ObjectType.DATA_VALIDATION){
+					validationDependents.put(((ObjectRef)dependent).getObjectIdPath()[0], dependent);
+				}
+			} else if (type == RefType.NAME) {
+				if (!nameDependents.contains(dependent)) {
+					nameDependents.add(dependent);
+					// recursive back when NameRef depends on NameRef
+					clearFormulaCache((NameRef)dependent, dt, 
+						chartDependents, validationDependents, nameDependents); 
+				}
+			} else {// TODO another
+
+			}
+		}
+	}
+
+	// ZSS-687
+	private void clearFormulaCacheDataValidationRef(ObjectRef dependent) {
+		//TODO zss 3.5
+//		NBook book = bookSeries.getBook(dependent.getBookName());
+//		if(book==null) return;
+//		SSheet sheet = book.getSheetByName(dependent.getSheetName());
+//		if(sheet==null) return;
+//		String[] ids = dependent.getObjectIdPath();
+//		NDataValidation validation = sheet.getDataValidation(ids[0]);
+//		if(validation!=null){
+//			validation.clearFormulaResultCache();
+//			ModelUpdateUtil.addRefUpdate(dependent);
+//		}
+	}
+	
+	// ZSS-687
+	private void clearFormulaCacheChartRef(ObjectRef dependent) {
+		SBook book = _bookSeries.getBook(dependent.getBookName());
+		if(book == null) {
+			return;
+		}
+		SSheet sheet = book.getSheetByName(dependent.getSheetName());
+		if(sheet == null) {
+			return;
+		}
+		SChart chart = sheet.getChart(dependent.getObjectIdPath()[0]);
+		if(chart == null) {
+			return;
+		}
+		SChartData d = chart.getData();
+		if(!(d instanceof SGeneralChartData)) {
+			return;
+		}
+		SGeneralChartData data = (SGeneralChartData)d;
+
+		data.clearFormulaResultCache();
+		ModelUpdateUtil.addRefUpdate(dependent);
+	}
+
+	// ZSS-687
+	private void clearFormulaCacheCellRef(Ref dependent) {
+		SBook book = _bookSeries.getBook(dependent.getBookName());
+		if(book==null) return;
+		SSheet sheet = book.getSheetByName(dependent.getSheetName());
+		if(sheet==null) return;
+		SCell cell = sheet.getCell(dependent.getRow(),
+				dependent.getColumn());
+		if(cell.getType()!=CellType.FORMULA)
+			return;//impossible
+		
+		//zss-626, has to clear cache and notify ref update
+		cell.clearFormulaResultCache();
+		ModelUpdateUtil.addRefUpdate(dependent);
 	}
 }

@@ -31,6 +31,7 @@ ZK Spreadsheet 3.5.0
   ZSS-683 Enter formula with bad syntax, would cause infinite error message window
   ZSS-661 Formula is incorrect after rename Name or it's refersTo region.
   ZSS-649 After delete row, NameRange doesn't update
+  ZSS-687 Formula that refer to a NameRange does not update contents correctly
   
 ** Upgrade Notes
   * Following api are deprecated
