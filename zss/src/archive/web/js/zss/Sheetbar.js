@@ -208,9 +208,13 @@ zss.SheetTab = zk.$extends(zul.tab.Tab, {
 			this.startEditing();
 		}
 	},
-	doMouseDown_: function () {
+	doMouseDown_: function (event) {
 		//TODO: spreadsheet shall remain focus when mouse down on SheetTab
 		//eat event
+		var sheet = this._wgt.sheetCtrl;
+		if (sheet.editingFormulaInfo) {
+			sheet.isSwitchingSheet = true;
+		}
 	},
 	doMouseUp_: function () {
 		//eat event
@@ -285,12 +289,14 @@ zss.SheetSelector = zk.$extends(zul.tab.Tabbox, {
 		if (!tab.$instanceof(zss.SheetTab)) {
 			return;
 		}
+		this.doSelectSheet(tab.getSheetUuid(), this._wgt.sheetCtrl.isSwitchingSheet);
+	},
+	doSelectSheet: function (sheetId, ignoreStatus) {
 
 		var	wgt = this._wgt,
 			sheet = wgt.sheetCtrl,
-			currSheetId = wgt.getSheetId(),
-			targetSheetId = tab.getSheetUuid();
-		if (targetSheetId != currSheetId) {
+			currSheetId = wgt.getSheetId();
+		if (sheetId != currSheetId) {
 			var useCache = false,
 				row = -1, col = -1,
 				left = -1, top = -1, right = -1, bottom = -1,
@@ -309,10 +315,10 @@ zss.SheetSelector = zk.$extends(zul.tab.Tabbox, {
 			var cacheCtrl = wgt._cacheCtrl;
 			if (cacheCtrl) {
 				cacheCtrl.snap(currSheetId);//snapshot current sheet status
-				if (cacheCtrl.isCached(targetSheetId)) {
+				if (cacheCtrl.isCached(sheetId)) {
 					
 					//restore target sheet status: focus, selection etc..
-					var snapshop = cacheCtrl.getSnapshot(targetSheetId),
+					var snapshop = cacheCtrl.getSnapshot(sheetId),
 						visRng = snapshop.getVisibleRange(),
 						focus = snapshop.getFocus(),
 						sel = snapshop.getSelection(),
@@ -322,36 +328,36 @@ zss.SheetSelector = zk.$extends(zul.tab.Tabbox, {
 						frow = snapshop.getRowFreeze(),
 						fcol = snapshop.getColumnFreeze();
 					
-					if (focus) {
+					if (focus && !ignoreStatus) {
 						row = focus.row;
 						col = focus.column;
 					}
-					if (sel) {
+					if (sel && !ignoreStatus) {
 						left = sel.left;
 						top = sel.top;
 						right = sel.right;
 						bottom = sel.bottom;
 					}
-					if (hsel) { //highlight
+					if (hsel && !ignoreStatus) { //highlight
 						hleft = hsel.left;
 						htop = hsel.top;
 						hright = hsel.right;
 						hbottom = hsel.bottom;
 					}
-					if (dv) {
+					if (dv && !ignoreStatus) {
 						wgt.setDataValidations(dv);
 					} else if (wgt.setDataValidations) {
 						wgt.setDataValidations(null);
 					}
-					if (af) {
+					if (af && !ignoreStatus) {
 						wgt.setAutoFilter(af);
 					} else if (wgt.setAutoFilter) {
 						wgt.setAutoFilter(null);
 					}
-					wgt.setSheetId(targetSheetId, false, visRng);//replace widgets: cells, headers etc..
+					wgt.setSheetId(sheetId, false, visRng);//replace widgets: cells, headers etc..
 					
 					//restore sheet last focus/selection
-					if (row >= 0 && col >= 0) {
+					if (row >= 0 && col >= 0 && !ignoreStatus) {
 						sheet.moveCellFocus(row, col);
 						sheet.moveCellSelection(left, top, right, bottom);
 					}
@@ -366,7 +372,7 @@ zss.SheetSelector = zk.$extends(zul.tab.Tabbox, {
 			}
 			
 			wgt.fire('onSheetSelect', 
-				{sheetId: targetSheetId, cache: useCache, 
+				{sheetId: sheetId, cache: useCache, 
 				row: row, col: col, 
 				left: left, top: top, right: right, bottom: bottom,
 				hleft: hleft, htop: htop, hright: hright, hbottom: hbottom,

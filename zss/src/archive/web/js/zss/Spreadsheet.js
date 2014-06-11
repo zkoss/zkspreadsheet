@@ -849,7 +849,7 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 	 */
 	setCellFocus: function (v) {
 		var sheet = this.sheetCtrl;
-		if (!sheet) return;
+		if (!sheet || sheet.isSwitchingSheet) return;
 
 		if (this.isSheetCSSReady()) {
 			sheet._cmdCellFocus(v);
@@ -920,7 +920,7 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 	 */
 	setSelection: function (v) {
 		var sheet = this.sheetCtrl;
-		if (!sheet) return;
+		if (!sheet || sheet.isSwitchingSheet) return;
 		
 		var sf = this,
 			//ZSS-169

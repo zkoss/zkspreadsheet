@@ -522,17 +522,33 @@
 	height:100%;
 }
 
-.zsedit {
+.zsedit-info {
+	position: absolute;
+	display: none;
+	font-family: Tahoma, Arial, Helvetica, sans-serif;
+	font-weight: bold;
+	font-size: 12px;
+	white-space: pre-wrap;
+	padding: 4px 8px 2px 8px;
+	background-color: #FFDF25;
+	border-top-left-radius: 6px;
+	border-top-right-radius: 6px;
+	pointer-events: none;
+	z-index: 4;
+}
+
+.zsedit-real {
+	position: absolute;
 	font-family: Calibri;
 	font-size: 15px;
-	position: absolute;
-	z-index: 4;
 	border: none;
 	display: none;
 	background-color: white;
 	overflow: hidden;
-	border-bottom:1px #777777 solid;
+	border: 1px #777777 solid;
 	white-space: pre-wrap;
+	box-shadow: #777777 1px 1px 4px;
+	z-index: 4;
 }
 
 .zsfocus{

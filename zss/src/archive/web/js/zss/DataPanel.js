@@ -379,11 +379,20 @@ zss.DataPanel = zk.$extends(zk.Object, {
 
 			var data = this._wgt._cacheCtrl.getSelectedSheet(),
 				editor = inlineEditing ? this.sheet.inlineEditor : this.sheet.formulabarEditor,
-				value = editor.getValue(), 
+				value = editor.getValue(),
+				sheetId = editor.sheetId,
 				row = editor.row, 
 				col = editor.col, 
 				cell = sheet.getCell(row, col),
 				edit = cell ? cell.edit : null;
+
+			if (sheetId && sheetId != sheet.serverSheetId) {
+				var sheetBar = sheet._wgt._sheetBar,
+					sheetSelector = sheetBar ? sheetBar.getSheetSelector(): null;
+				if (sheetSelector) {
+					sheetSelector.doSelectSheet(sheetId);
+				}
+			}
 
 			if (edit != value) { //has to send back to server
 				var token = "";
@@ -555,7 +564,9 @@ zss.DataPanel = zk.$extends(zk.Object, {
 	 *  @param trigger should fire focustag.focus (if genFocus is call by a focustag listener for focus, then it is false 
 	 */
 	gainFocus: function (trigger) {
-		this.stopEditing("refocus");
+		if (!this.sheet.isSwitchingSheet) {
+			this.stopEditing("refocus");
+		}
 		this._gainFocus(trigger);
 	},
 	/* gain focus to the focus cell*/

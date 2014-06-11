@@ -239,22 +239,29 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 		if (sheet) {
 			// ZSS-674: stay focused if formulabar's ok/cancel btn was pressed down.
 			if (sheet.shallIgnoreBlur) {
-				if (!zk.gecko) {
-					wgt.focus();
-				} else {
-					// 20140603, RaymondChao: firefox needs setTimeout to refocus when blur.
-					setTimeout(function () {wgt.focus()});
-				}
+				focusWhenBlur(wgt);
 				sheet.shallIgnoreBlur = false;
 			} else if (sheet.isSwitchingFocus) {
 				// 20140519, RaymondChao: when change focus between editors, spreadsheet could have no focus as below
 				// formulabar editor blur -> ( no focus ) -> editbox focus
 				// need to add isSwitchingFocus flag to determine the situation
 				sheet.isSwitchingFocus = false;
+				wgt.isFocused = false;
+			} else if (sheet.isSwitchingSheet) {
+				focusWhenBlur(wgt);
 			} else if (!sheet._wgt.hasFocus()) {
 				sheet.dp.stopEditing(sheet.innerClicking > 0 ? "refocus" : "lostfocus");
+				wgt.isFocused = false;
 			}
-			wgt.isFocused = false;
+		}
+	}
+
+	function focusWhenBlur (wgt) {
+		if (!zk.gecko) {
+			wgt.focus();
+		} else {
+			// 20140603, RaymondChao: firefox needs setTimeout to refocus when blur.
+			setTimeout(function () {wgt.focus()});
 		}
 	}
 
@@ -318,15 +325,23 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 			v = $n.text(),
 			c1 = sheet.getCell(tRow, lCol),
 			c2 = tRow == bRow && lCol == rCol ? null : sheet.getCell(bRow, rCol),
-			ref = c1.ref;
+			ref = c1.ref,
+			editor = sheet.inlineEditor,
+			editorSheetId = editor.sheetId,
+			currentSheetId = sheet.serverSheetId;
 		if (c2) {
 			ref += (':' + c2.ref);
 		}
+
+		if (editorSheetId && editorSheetId != currentSheetId) {
+			ref = getSheetName(sheet, currentSheetId) + '!' + ref;
+		}
+
 		if (!start) {
 			ref = '=' + ref; 
 		}
 		$n.text(v.substring(0, start) + ref + v.substring(end, v.length));
-		sheet.inlineEditor.setValue($n.text());
+		editor.setValue($n.text());
 		end = start + ref.length;
 		info.end = end;
 		if (zk.ie && zk.ie < 11) { 
@@ -335,6 +350,30 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 			});
 		} else {
 			placeCaretAtEnd(n);
+		}
+	}
+
+	/**
+	 * Get sheet name
+	 * 
+	 * @param Object sheet the ({@link zss.SSheetCtrl})
+	 * @param string sheetId
+	 */
+	function getSheetName (sheet, sheetId) {
+		var labels = sheet._wgt.getSheetLabels();
+		for (var prop in labels) {
+			if (labels[prop]['id'] == sheetId) {
+				return quoteName(labels[prop]['name']);
+			}
+		}
+	}
+
+	// returns sheet name or surrounds name with single-quote if nessarery
+	function quoteName (name) {
+		if (/^[a-z_]+[a-z0-9_.]*$/i.test(name)) {
+			return name;
+		} else {
+			return "'" + name + "'";
 		}
 	}
 
@@ -493,7 +532,7 @@ zss.FormulabarEditor = zk.$extends(zul.inp.InputWidget, {
    	},
    	_onContentsChanged: function (evt) {
    		var sheet = this.sheet;
-   		if (sheet && this.isRealVisible()) {
+   		if (sheet && this.isRealVisible() && !sheet.editingFormulaInfo) {
    			var p = sheet.getLastFocus(),
    				c = sheet.getCell(p.row, p.column);
    			if (c) {
@@ -635,9 +674,6 @@ zss.FormulabarEditor = zk.$extends(zul.inp.InputWidget, {
    	},
    	getZclass: function () {
    		return 'zsformulabar-editor';
-   	},
-   	getInputNode: function () {
-   		return this.$n('real');
    	}
 });
 
@@ -659,7 +695,7 @@ zss.Editbox = zk.$extends(zul.inp.InputWidget, {
 	},
 	bind_: function () {
 		this.$supers(zss.Editbox, 'bind_', arguments);
-		this.comp = this.$n();
+		this.comp = this.getInputNode();
 		this.comp.ctrl = this;
 		
 		this.sheet.listen({'onStartEditing': this.proxy(this._onStartEditing)})
@@ -683,9 +719,13 @@ zss.Editbox = zk.$extends(zul.inp.InputWidget, {
 		return this._editing;
 	},
    	_onStartEditing: function (evt) {
-   		var d = evt.data;
+   		var d = evt.data,
+   			sheet = this.sheet;
    		this.row = d.row;
    		this.col = d.col;
+   		this.sheetId = sheet.serverSheetId;
+   		this.sheetName = getSheetName(sheet, this.sheetId);
+   		this.cellRef = sheet.getCell(this.row, this.col).ref;
    	},
 	_onCellSelection: function (evt) {
    		var sheet = this.sheet;
@@ -695,7 +735,7 @@ zss.Editbox = zk.$extends(zul.inp.InputWidget, {
    				if (info && 'inlineEditing' == info.type && !sheet._skipInsertCellRef) {
    					var d = evt.data,
    						formulabarEditor = sheet.formulabarEditor;
-   					insertCellRef(sheet, this.comp, d.top, d.left, d.bottom, d.right);
+   					insertCellRef(sheet, this.getInputNode(), d.top, d.left, d.bottom, d.right);
    					if (formulabarEditor) {
    						formulabarEditor.setValue(this.getValue());
    					}
@@ -721,7 +761,7 @@ zss.Editbox = zk.$extends(zul.inp.InputWidget, {
 				}
 				var info = sheet.editingFormulaInfo;
 				if (info && info.moveCell) {//re-eval editing formula info
-					sheet.editingFormulaInfo = getEditingFormulaInfo(this._type, this.$n());
+					sheet.editingFormulaInfo = getEditingFormulaInfo(this._type, this.getInputNode());
 				}
 			}
 		}
@@ -885,13 +925,16 @@ zss.Editbox = zk.$extends(zul.inp.InputWidget, {
 		t -= 1;//position adjust
 		w -= 1;
 		h -= 1;
+		l -= 1;
 		
-		if ((zk.ie /*&& zk.ie < 11*/) || zk.safari || zk.opera)
+		if (zk.safari || zk.opera)
 			//the display in different browser. 
 			w -= 2;
 
 		this.editingWidth = w;
 		this.editingHeight = h;
+		this.editingTop = t;
+		this.editingLeft = l;
 
 		//issue 228: firefox need set display block, but IE can not set this.
 		$edit.css({'min-width': jq.px0(w), 'min-height': jq.px0(h), 'width': 'auto', 'height': 'auto',
@@ -927,21 +970,25 @@ zss.Editbox = zk.$extends(zul.inp.InputWidget, {
 		this.autoAdjust(true);
 	},
 	cancel: function () {
+		this.clearStatus();
+	},
+	stop: function () {
+		var str = this.getValue();
+		this.clearStatus();
+		return str;
+	},
+	clearStatus: function () {
+		if (this.sheet) {
+			this.sheet.editingFormulaInfo = null;
+		}
 		this._editing = false;
 		this.disable(true);
 		jq(this.comp).text('').css('display', 'none');
+		jq(this.$n('info')).text('').css('display', 'none');
 		this.row = this.col = -1;
-	},
-	stop: function () {
-		if (this.sheet)
-			this.sheet.editingFormulaInfo = null;
-		this._editing = false;
-		this.disable(true);
-		var editorcmp = this.comp,
-			str = this.getValue();
-		jq(editorcmp).text('').css('display', 'none');
-		this.row = this.col = -1;
-		return str;
+		this.sheetId = null;
+		this.sheetName = null;
+		this.cellRef = null;
 	},
 	getValue: function () {
 		return br2nl(this.comp);
@@ -990,8 +1037,24 @@ zss.Editbox = zk.$extends(zul.inp.InputWidget, {
 			}			
 		}, 0);
 	},
+	updateInfo: function () {
+		var sheet = this.sheet,
+			info = this.$n('info'),
+			$info = jq(info),
+			label = '',
+			sheetId = this.sheetId;
+
+		if (sheetId && sheetId != sheet.serverSheetId) {
+			label = this.sheetName + '!' + this.cellRef;
+			$info.css('display', 'block');
+		} else {
+			$info.css('display', 'none');
+		}
+		$info.text(label);
+		$info.css({'left': this.editingLeft, 'top': jq.px(this.editingTop - info.offsetHeight)});
+	},
 	redrawHTML_: function () {
-		return '<div id="' + this.uuid + '" class="zsedit" zs.t="SEditbox" contentEditable="true"></div>';
+		return '<div id="' + this.uuid + '" class="zsedit"><div id="' + this.uuid + '-info" class="zsedit-info"></div><div id="' + this.uuid + '-real" class="zsedit-real" zs.t="SEditbox" contentEditable="true"></div></div>';
 	}
 });
 })();
