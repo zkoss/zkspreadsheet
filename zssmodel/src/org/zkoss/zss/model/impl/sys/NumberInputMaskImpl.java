@@ -18,6 +18,7 @@ package org.zkoss.zss.model.impl.sys;
 import java.util.Locale;
 
 import org.zkoss.poi.ss.format.Formatters;
+import org.zkoss.poi.ss.util.ToExcelNumberConverter;
 import org.zkoss.zss.model.SCell.CellType;
 
 /**
@@ -41,7 +42,8 @@ public class NumberInputMaskImpl implements org.zkoss.zss.model.sys.input.Number
 		}
 
 		try {
-			final Double val = Double.parseDouble(txt0);
+			// ZSS-691
+			final Double val = ToExcelNumberConverter.toExcelNumber(Double.parseDouble(txt0), false);
 			return new Object[] {CellType.NUMBER, val}; //double
 		} catch (NumberFormatException ex) {
 			return new Object[] {txt, null};

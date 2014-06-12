@@ -8,7 +8,8 @@ ZK Spreadsheet 3.5.0
   ZSS-685 Do not import duplicate cell style
   ZSS-684 Auto expand editing area's width when editing cell
   ZSS-678 Support creating reference between two sheets
-
+  ZSS-691 Support calculation in Excel's double precision
+  
 *Bugs:
   ZSS-652 Cut Formula shouldn't be shifted when it is not in cut range
   ZSS-655 Formula that contains Name doesn't update
