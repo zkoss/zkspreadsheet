@@ -942,7 +942,7 @@ zss.Editbox = zk.$extends(zul.inp.InputWidget, {
 		$edit.css({'min-width': jq.px0(w), 'min-height': jq.px0(h), 'width': 'auto', 'height': 'auto',
 			// 20140605: limit the editbox inside the sheet
 			'max-width': jq.px0(sheet.spcmp.clientWidth - l), 'max-height': jq.px0(sheet.spcmp.clientHeight - t),
-			'left': jq.px(l), 'top': jq.px(t), 'line-height': jq.px0(sheet.lineHeight)});
+			'left': jq.px(l), 'top': jq.px(t), 'line-height': sheet.lineHeight});
 		if (!zk.ie || zk.ie >= 11)
 			$edit.css('display', 'block');
 		zcss.copyStyle(txtcmp, editorcmp, ["font-family","font-size","font-weight","font-style","color","text-decoration","text-align"],true);

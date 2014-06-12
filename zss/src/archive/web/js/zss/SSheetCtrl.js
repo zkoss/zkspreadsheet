@@ -181,7 +181,8 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 	 * </ul>
 	 */
 	editingFormulaInfo: null,
-	lineHeight: 20, 
+	// ZSS-514: change default line hight to normal
+	lineHeight: 'normal', 
 	$init: function (wgt) {
 		this.$supers(zss.SSheetCtrl, '$init', []);
 		this._wgt = wgt;
