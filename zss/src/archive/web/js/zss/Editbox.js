@@ -559,9 +559,10 @@ zss.FormulabarEditor = zk.$extends(zul.inp.InputWidget, {
    			   	} else {
    			   	}
    			} else if (sheet.state == zss.SSheetCtrl.EDITING) {
-   				var info = sheet.editingFormulaInfo;
-   				if (info && 'formulabarEditing' == info.type && !sheet._skipInsertCellRef) {
-   					var d = evt.data;
+   				var info = sheet.editingFormulaInfo,
+   					d = evt.data,
+   					skipInsertCellRef = d.skipInsertCellRef;
+   				if (info && 'formulabarEditing' == info.type && !skipInsertCellRef) {
    					insertCellRef(sheet, this.getInputNode(), d.top, d.left, d.bottom, d.right);
    				}
    			}
@@ -731,10 +732,11 @@ zss.Editbox = zk.$extends(zul.inp.InputWidget, {
    		var sheet = this.sheet;
    		if (sheet) {
    			if (sheet.state == zss.SSheetCtrl.EDITING) {
-   				var info = sheet.editingFormulaInfo;
-   				if (info && 'inlineEditing' == info.type && !sheet._skipInsertCellRef) {
-   					var d = evt.data,
-   						formulabarEditor = sheet.formulabarEditor;
+   				var info = sheet.editingFormulaInfo,
+   					d = evt.data,
+   					skipInsertCellRef = d.skipInsertCellRef;
+   				if (info && 'inlineEditing' == info.type && !skipInsertCellRef) {
+   					var formulabarEditor = sheet.formulabarEditor;
    					insertCellRef(sheet, this.getInputNode(), d.top, d.left, d.bottom, d.right);
    					if (formulabarEditor) {
    						formulabarEditor.setValue(this.getValue());
