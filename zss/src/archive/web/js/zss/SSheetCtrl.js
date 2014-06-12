@@ -697,6 +697,8 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 					break;
 				}
 			}
+			//ZSS 171
+			this._skipInsertCellRef = false;
 			dp._startEditing(value, server, editType);
 			break;
 		case "stopedit":
@@ -2352,16 +2354,16 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 	},
 	deferFireCellSelection: function (left, top, right, bottom) {
 		var id = this._fireCellSelectionId,
-			self = this;
+			self = this,
+			skipInsertCellRef = this._skipInsertCellRef;
 		if (id) {
 			clearTimeout(id);
 		}
 		this._fireCellSelectionId = setTimeout(function () {
 			//ZSS 171
-			// 20140603, RaymondChao: disable skip before fire onCellSelection to prevent
-			// editbox skiping to insert cell reference select at the first time
-			self._skipInsertCellRef = false;
-			self.fire('onCellSelection', {left: left, top: top, right: right, bottom: bottom});
+			// 20140612, RaymondChao: it should skip insert cell reference when updating cell from server, so it needs to keep
+			// the flag when defer fire cell selection
+			self.fire('onCellSelection', {left: left, top: top, right: right, bottom: bottom, skipInsertCellRef: skipInsertCellRef});
 		}, 50);
 	},
 	/**
