@@ -33,6 +33,7 @@ ZK Spreadsheet 3.5.0
   ZSS-661 Formula is incorrect after rename Name or it's refersTo region.
   ZSS-649 After delete row, NameRange doesn't update
   ZSS-687 Formula that refer to a NameRange does not update contents correctly
+  ZSS-580 Edit a cell with big text size (bigger than 30) and text are wider than column cause overlap text
   
 ** Upgrade Notes
   * Following api are deprecated
