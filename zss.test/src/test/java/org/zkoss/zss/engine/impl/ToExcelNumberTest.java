@@ -5,18 +5,11 @@ package org.zkoss.zss.engine.impl;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.Locale;
-
 import junit.framework.Assert;
 
-import org.apache.poi.ss.util.NumberToTextConverter;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.zkoss.poi.ss.format.Formatters;
-import org.zkoss.poi.ss.util.ExpandedDouble;
-import org.zkoss.poi.ss.util.NormalisedDecimal;
-import org.zkoss.poi.ss.util.NumberToGeneralTextConverter;
 import org.zkoss.poi.ss.util.ToExcelNumberConverter;
 
 
@@ -99,31 +92,5 @@ public class ToExcelNumberTest {
 	}
 	public double toExcelNumber(double value, boolean rounding) {
 		return ToExcelNumberConverter.toExcelNumber(value, rounding);
-		
-//		long rawBits = Double.doubleToLongBits(value);
-//		boolean isNegative = rawBits < 0; // sign bit is in the same place for long and double
-//		if (isNegative) {
-//			rawBits &= 0x7FFFFFFFFFFFFFFFL;
-//		}
-//		if (rawBits == 0) {
-//			return isNegative ? -0.0 : 0.0;
-//		}
-//		ExpandedDouble ed = new ExpandedDouble(rawBits);
-//		if (ed.getBinaryExponent() < -1022) {
-//			// value is 'denormalised' which means it is less than 2^-1022
-//			// excel displays all these numbers as zero, even though calculations work OK
-//			return isNegative ? -0.0 : 0.0;
-//		}
-//		if (ed.getBinaryExponent() == 1024) {
-//			// This is where excel really gets it wrong
-//			// Special numbers like Infinity and NaN are interpreted according to
-//			// the standard rules below.
-//			isNegative = false; // except that the sign bit is ignored
-//		}
-//		NormalisedDecimal nd = ed.normaliseBaseTen();
-//		if (rounding) nd = nd.roundUnits();
-//		ExpandedDouble edx = nd.normaliseWholePartBaseTwo();
-//		double v = Double.longBitsToDouble(edx.toLongBits());
-//		return isNegative ? -v : v;
 	}
 }
