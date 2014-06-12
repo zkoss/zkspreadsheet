@@ -168,8 +168,9 @@ zss.SheetTab = zk.$extends(zul.tab.Tab, {
 		
 		var name = this.getLabel(),
 			text = this.textbox.getText();
-		if (!text)
-			return;
+		// ZSS-609: let component determine if the sheet name is legal
+		//if (!text)
+		//	return;
 		
 		if (name != text) {
 			var wgt = this._wgt;

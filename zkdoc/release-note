@@ -34,6 +34,7 @@ ZK Spreadsheet 3.5.0
   ZSS-649 After delete row, NameRange doesn't update
   ZSS-687 Formula that refer to a NameRange does not update contents correctly
   ZSS-514 if the font size is larger than 24, the text will overlap each other when using inline editor
+  ZSS-609 The input text box doesn't disappear when rename sheet bar with empty name and click another sheet
   
 ** Upgrade Notes
   * Following api are deprecated

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+609-empty-sheet-name.zul
+
+	Purpose:
+		
+	Description:
+		
+	History:
+		Thu, Jun 12, 2014  7:01:07 PM, Created by RaymondChao
+
+Copyright (C) 2014 Potix Corporation. All Rights Reserved.
+
+-->
+<window>
+	<label multiline="true">
+		1. rename Sheet1 to "" (empty)
+		2. click Sheet2
+		3. it should show warning and reset sheet name to "Sheet1"
+	</label>
+	<spreadsheet id="ss" src="/issue/blank.xlsx" 
+		showSheetbar="true" height="500px" width="500px">
+	</spreadsheet>
+</window>
