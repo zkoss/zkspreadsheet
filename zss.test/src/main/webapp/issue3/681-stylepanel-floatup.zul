@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+681-stylepanel-floatup.zul
+
+	Purpose:
+		
+	Description:
+		
+	History:
+		Tue, Jun 17, 2014  9:27:06 AM, Created by RaymondChao
+
+Copyright (C) 2014 Potix Corporation. All Rights Reserved.
+
+-->
+<window>
+	<label multiline="true">
+		1. right click on cell
+		2. press tab
+		3. the upper style panel and below context menu should both close
+	</label>
+	<spreadsheet id="ss" src="/issue/blank.xlsx" showContextMenu="true"
+		showSheetbar="true" height="500px" width="500px">
+	</spreadsheet>
+</window>

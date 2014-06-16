@@ -594,11 +594,24 @@ zss.DataPanel = zk.$extends(zk.Object, {
 		sheet.animateHighlight(true);
 
 		if (trigger && sheet.state == zss.SSheetCtrl.FOCUSED){ 
-			setTimeout(function () {
-				focustag.focus();
-				jq(focustag).select();
-			}, 0);
+			this.deferSelectFocustag();
 		}
+	},
+	// ZSS-681: defer focus textarea, it's necessary if on mouse down event
+	deferSelectFocustag: function () {
+		var self = this;
+		if (this.selectFocustagId) {
+			return;
+		}
+		this.selectFocustagId =
+			setTimeout(function () {
+				self.selectFocustag();
+				delete self.selectFocustagId;
+			}, 0);
+	},
+	selectFocustag: function () {
+		this.focustag.focus();
+		jq(this.focustag).select();
 	},
 	/* process focus lost */
 	_doFocusLost: function() {

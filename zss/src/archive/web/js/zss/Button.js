@@ -1017,7 +1017,7 @@ zss.Menupopup = zk.$extends(zul.menu.Menupopup, {
 			wgt.focus(false);
 		}
 	},
-	onFloatUp: function (ctl) {
+	/*onFloatUp: function (ctl) {
 		// ZSS-654: there are dual popup menu, so they will trigger each other's onFloatUp() cause them both be disappeared
 		if (!this.isVisible()) {
 			return;
@@ -1028,7 +1028,7 @@ zss.Menupopup = zk.$extends(zul.menu.Menupopup, {
 		}
 		
 		this.$supers(zss.Menupopup, 'onFloatUp', arguments);
-	},
+	},*/
 	zsync: function () {
 		// skip shadow
 	}
@@ -1088,6 +1088,10 @@ zss.Menupopup = zk.$extends(zul.menu.Menupopup, {
 			label: msgzss.action.borderColor,
 			color: '#000000'
 		},spreadsheet);
+	}
+
+	function triggerByMenupopup (menupopup, widget) {
+		return menupopup && menupopup.isOpen() && zUtl.isAncestor(menupopup, widget);
 	}
 	
 zss.StylePanel = zk.$extends(zul.wgt.Popup, {
@@ -1149,13 +1153,20 @@ zss.StylePanel = zk.$extends(zul.wgt.Popup, {
 		this.close({sendOnOpen:true});
 	},
 	onFloatUp: function (ctl) {
-		// ZSS-654: there are dual popup menu, so they will trigger each other's onFloatUp() cause them both be disappeared
 		if (!this.isVisible()) {
 			return;
 		}
-		
-		if(this._wgt && this._wgt.sheetCtrl && this.isOpen() && zUtl.isAncestor(ctl.origin, this)) {
-			return;
+
+		var origin = ctl.origin,
+			sheet = this._wgt.sheetCtrl;
+
+		if (sheet) {
+			var menupopups = [sheet.getCellMenupopup(), sheet.getColumnHeaderMenupopup(), sheet.getRowHeaderMenupopup()];
+			for (var i = menupopups.length - 1; i >= 0; i--) {
+				if (triggerByMenupopup(menupopups[i], origin)) {
+					return;
+				}
+			}
 		}
 		
 		this.$supers(zss.StylePanel, 'onFloatUp', arguments);
