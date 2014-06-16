@@ -290,4 +290,10 @@ public class DependencyTableImpl extends DependencyTableAdv {
 			}
 		}
 	}
+	
+	//ZSS-648
+	@Override
+	public Set<Ref> getDirectPrecedents(Ref dependent) {
+		return _map.get(dependent);
+	}
 }

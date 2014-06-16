@@ -23,10 +23,12 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.zkoss.zss.model.CellRegion;
 import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.SBookSeries;
 import org.zkoss.zss.model.SCell;
 import org.zkoss.zss.model.SChart;
+import org.zkoss.zss.model.SDataValidation;
 import org.zkoss.zss.model.SName;
 import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.model.SheetRegion;
@@ -155,17 +157,62 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 		ModelUpdateUtil.addRefUpdate(dependent);
 		
 	}
+	//ZSS-648
 	private void moveDataValidationRef(SheetRegion sheetRegion,ObjectRef dependent,int rowOffset, int columnOffset) {
-		//TODO zss 3.5
-//		NBook book = bookSeries.getBook(dependent.getBookName());
-//		if(book==null) return;
-//		NSheet sheet = book.getSheetByName(dependent.getSheetName());
-//		if(sheet==null) return;
-//		String[] ids = dependent.getObjectIdPath();
-//		NDataValidation validation = sheet.getDataValidation(ids[0]);
-//		if(validation!=null){
-//			validation.clearFormulaResultCache();
-//		}
+		SBook book = _bookSeries.getBook(dependent.getBookName());
+		if(book == null) {
+			return;
+		}
+		SSheet sheet = book.getSheetByName(dependent.getSheetName());
+		if(sheet == null) {
+			return;
+		}
+		SDataValidation validation = sheet.getDataValidation(dependent.getObjectIdPath()[0]);
+		if(validation == null) {
+			return;
+		}
+		FormulaEngine engine = getFormulaEngine();
+		
+		// update Validation's formula if any
+		String f1 = validation.getValue1Formula();
+		String f2 = validation.getValue2Formula();
+		boolean changed = false;
+		if (f1 != null) {
+			FormulaExpression exprf1 = engine.move(f1, sheetRegion, rowOffset, columnOffset, new FormulaParseContext(sheet, null));//null ref, no trace dependence here
+			if(!exprf1.hasError() && !f1.equals(exprf1.getFormulaString())) {
+				f1 = exprf1.getFormulaString();
+				changed = true;
+			}
+		}
+		if (f2 != null) {
+			FormulaExpression exprf2 = engine.move(f2, sheetRegion, rowOffset, columnOffset, new FormulaParseContext(sheet, null));//null ref, no trace dependence here
+			if(!exprf2.hasError() && !f2.equals(exprf2.getFormulaString())) {
+				f2 = exprf2.getFormulaString();
+				changed = true;
+			}
+		}
+		if (changed) {
+			validation.setFormula(f1,  f2); // this will update DependencyTable
+		} else {
+			validation.clearFormulaResultCache();
+		}
+		
+		// update Validation's region (sqref)
+		CellRegion region = validation.getRegion();
+		String sqref = region.getReferenceString();
+		
+		FormulaExpression expr2 = engine.move(sqref, sheetRegion, rowOffset, columnOffset, new FormulaParseContext(sheet, null)); //null ref, no trace dependence here
+		if(!expr2.hasError() && !sqref.equals(expr2.getFormulaString())) {
+			if ("#REF!".equals(expr2.getFormulaString())) { // should delete the region
+				sheet.deleteDataValidation(validation);
+			} else {
+				region = new CellRegion(expr2.getFormulaString());
+				((AbstractDataValidationAdv)validation).setRegion(region);
+			}
+		}
+
+		// notify chart change
+		ModelUpdateUtil.addRefUpdate(dependent);
 	}
 
 	private void moveCellRef(SheetRegion sheetRegion,Ref dependent,int rowOffset, int columnOffset) {
@@ -268,7 +315,6 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 		}
 		SGeneralChartData data = (SGeneralChartData)d;
 		FormulaEngine engine = getFormulaEngine();
-		FormulaParseContext context = new FormulaParseContext(sheet, null);
 		
 		// extend series formula
 		for(int i = 0; i < data.getNumOfSeries(); ++i) {
@@ -281,28 +327,28 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 				String yf = series.getYValuesFormula();
 				String zf = series.getZValuesFormula();
 				if(nf != null) {
-					FormulaExpression expr2 = engine.extend(nf, sheetRegion, horizontal, context);
+					FormulaExpression expr2 = engine.extend(nf, sheetRegion, horizontal, new FormulaParseContext(sheet, null));//null ref, no trace dependence here
 					if(!expr2.hasError() && !nf.equals(expr2.getFormulaString())) {
 						nf = expr2.getFormulaString();
 						changed = true;
 					}
 				}
 				if(xf != null) {
-					FormulaExpression expr2 = engine.extend(xf, sheetRegion, horizontal, context);
+					FormulaExpression expr2 = engine.extend(xf, sheetRegion, horizontal, new FormulaParseContext(sheet, null));//null ref, no trace dependence here
 					if(!expr2.hasError() && !xf.equals(expr2.getFormulaString())) {
 						xf = expr2.getFormulaString();
 						changed = true;
 					}
 				}
 				if(yf != null) {
-					FormulaExpression expr2 = engine.extend(yf, sheetRegion, horizontal, context);
+					FormulaExpression expr2 = engine.extend(yf, sheetRegion, horizontal, new FormulaParseContext(sheet, null));//null ref, no trace dependence here
 					if(!expr2.hasError() && !yf.equals(expr2.getFormulaString())) {
 						yf = expr2.getFormulaString();
 						changed = true;
 					}
 				}
 				if(zf != null) {
-					FormulaExpression expr2 = engine.extend(zf, sheetRegion, horizontal, context);
+					FormulaExpression expr2 = engine.extend(zf, sheetRegion, horizontal, new FormulaParseContext(sheet, null));//null ref, no trace dependence here
 					if(!expr2.hasError() && !zf.equals(expr2.getFormulaString())) {
 						zf = expr2.getFormulaString();
 						changed = true;
@@ -320,7 +366,7 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 		// extend categories formula
 		String expr = data.getCategoriesFormula();
 		if(expr != null) {
-			FormulaExpression exprAfter = engine.extend(expr, sheetRegion,horizontal, context);
+			FormulaExpression exprAfter = engine.extend(expr, sheetRegion,horizontal, new FormulaParseContext(sheet, null));//null ref, no trace dependence here
 			if(!exprAfter.hasError() && !expr.equals(exprAfter.getFormulaString())) {
 				data.setCategoriesFormula(exprAfter.getFormulaString());
 			}else{
@@ -332,17 +378,62 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 		// notify chart change
 		ModelUpdateUtil.addRefUpdate(dependent);
 	}
+	//ZSS-648
 	private void extendDataValidationRef(SheetRegion sheetRegion,ObjectRef dependent, boolean horizontal) {
-		//TODO zss 3.5
-//		NBook book = bookSeries.getBook(dependent.getBookName());
-//		if(book==null) return;
-//		NSheet sheet = book.getSheetByName(dependent.getSheetName());
-//		if(sheet==null) return;
-//		String[] ids = dependent.getObjectIdPath();
-//		NDataValidation validation = sheet.getDataValidation(ids[0]);
-//		if(validation!=null){
-//			validation.clearFormulaResultCache();
-//		}
+		SBook book = _bookSeries.getBook(dependent.getBookName());
+		if(book == null) {
+			return;
+		}
+		SSheet sheet = book.getSheetByName(dependent.getSheetName());
+		if(sheet == null) {
+			return;
+		}
+		SDataValidation validation = sheet.getDataValidation(dependent.getObjectIdPath()[0]);
+		if(validation == null) {
+			return;
+		}
+		FormulaEngine engine = getFormulaEngine();
+		
+		// update Validation's formula if any
+		String f1 = validation.getValue1Formula();
+		String f2 = validation.getValue2Formula();
+		boolean changed = false;
+		if (f1 != null) {
+			FormulaExpression exprf1 = engine.extend(f1, sheetRegion, horizontal, new FormulaParseContext(sheet, null));//null ref, no trace dependence here
+			if(!exprf1.hasError() && !f1.equals(exprf1.getFormulaString())) {
+				f1 = exprf1.getFormulaString();
+				changed = true;
+			}
+		}
+		if (f2 != null) {
+			FormulaExpression exprf2 = engine.extend(f2, sheetRegion, horizontal, new FormulaParseContext(sheet, null));//null ref, no trace dependence here
+			if(!exprf2.hasError() && !f2.equals(exprf2.getFormulaString())) {
+				f2 = exprf2.getFormulaString();
+				changed = true;
+			}
+		}
+		if (changed) {
+			validation.setFormula(f1,  f2); // this will update DependencyTable
+		} else {
+			validation.clearFormulaResultCache();
+		}
+		
+		// update Validation's region (sqref)
+		CellRegion region = validation.getRegion();
+		String sqref = region.getReferenceString();
+		
+		FormulaExpression expr2 = engine.extend(sqref, sheetRegion, horizontal, new FormulaParseContext(sheet, null));//null ref, no trace dependence here
+		if(!expr2.hasError() && !sqref.equals(expr2.getFormulaString())) {
+			if ("#REF!".equals(expr2.getFormulaString())) { // should delete the region
+				sheet.deleteDataValidation(validation);
+			} else {
+				region = new CellRegion(expr2.getFormulaString());
+				((AbstractDataValidationAdv)validation).setRegion(region);
+			}
+		}
+
+		// notify chart change
+		ModelUpdateUtil.addRefUpdate(dependent);
 	}
 
 	private void extendCellRef(SheetRegion sheetRegion,Ref dependent, boolean horizontal) {
@@ -436,7 +527,6 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 		}
 		SGeneralChartData data = (SGeneralChartData)d;
 		FormulaEngine engine = getFormulaEngine();
-		FormulaParseContext context = new FormulaParseContext(sheet, null);
 		
 		// shrink series formula
 		for(int i = 0; i < data.getNumOfSeries(); ++i) {
@@ -449,28 +539,28 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 				String yf = series.getYValuesFormula();
 				String zf = series.getZValuesFormula();
 				if(nf != null) {
-					FormulaExpression expr2 = engine.shrink(nf, sheetRegion, horizontal, context);
+					FormulaExpression expr2 = engine.shrink(nf, sheetRegion, horizontal, new FormulaParseContext(sheet, null));//null ref, no trace dependence here
 					if(!expr2.hasError() && !nf.equals(expr2.getFormulaString())) {
 						nf = expr2.getFormulaString();
 						changed = true;
 					}
 				}
 				if(xf != null) {
-					FormulaExpression expr2 = engine.shrink(xf, sheetRegion, horizontal, context);
+					FormulaExpression expr2 = engine.shrink(xf, sheetRegion, horizontal, new FormulaParseContext(sheet, null));//null ref, no trace dependence here
 					if(!expr2.hasError() && !xf.equals(expr2.getFormulaString())) {
 						xf = expr2.getFormulaString();
 						changed = true;
 					}
 				}
 				if(yf != null) {
-					FormulaExpression expr2 = engine.shrink(yf, sheetRegion, horizontal, context);
+					FormulaExpression expr2 = engine.shrink(yf, sheetRegion, horizontal, new FormulaParseContext(sheet, null));//null ref, no trace dependence here
 					if(!expr2.hasError() && !yf.equals(expr2.getFormulaString())) {
 						yf = expr2.getFormulaString();
 						changed = true;
 					}
 				}
 				if(zf != null) {
-					FormulaExpression expr2 = engine.shrink(zf, sheetRegion, horizontal, context);
+					FormulaExpression expr2 = engine.shrink(zf, sheetRegion, horizontal, new FormulaParseContext(sheet, null));//null ref, no trace dependence here
 					if(!expr2.hasError() && !zf.equals(expr2.getFormulaString())) {
 						zf = expr2.getFormulaString();
 						changed = true;
@@ -488,7 +578,7 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 		// shrink categories formula
 		String expr = data.getCategoriesFormula();
 		if(expr != null) {
-			FormulaExpression exprAfter = engine.shrink(expr, sheetRegion,horizontal, context);
+			FormulaExpression exprAfter = engine.shrink(expr, sheetRegion,horizontal, new FormulaParseContext(sheet, null));//null ref, no trace dependence here
 			if(!exprAfter.hasError() && !expr.equals(exprAfter.getFormulaString())) {
 				data.setCategoriesFormula(exprAfter.getFormulaString());
 			}else{
@@ -500,17 +590,62 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 		// notify chart change
 		ModelUpdateUtil.addRefUpdate(dependent);
 	}
+	//ZSS-648
 	private void shrinkDataValidationRef(SheetRegion sheetRegion,ObjectRef dependent, boolean horizontal) {
-		//TODO zss 3.5
-//		NBook book = bookSeries.getBook(dependent.getBookName());
-//		if(book==null) return;
-//		NSheet sheet = book.getSheetByName(dependent.getSheetName());
-//		if(sheet==null) return;
-//		String[] ids = dependent.getObjectIdPath();
-//		NDataValidation validation = sheet.getDataValidation(ids[0]);
-//		if(validation!=null){
-//			validation.clearFormulaResultCache();
-//		}
+		SBook book = _bookSeries.getBook(dependent.getBookName());
+		if(book == null) {
+			return;
+		}
+		SSheet sheet = book.getSheetByName(dependent.getSheetName());
+		if(sheet == null) {
+			return;
+		}
+		SDataValidation validation = sheet.getDataValidation(dependent.getObjectIdPath()[0]);
+		if(validation == null) {
+			return;
+		}
+		FormulaEngine engine = getFormulaEngine();
+		
+		// update Validation's formula if any
+		String f1 = validation.getValue1Formula();
+		String f2 = validation.getValue2Formula();
+		boolean changed = false;
+		if (f1 != null) {
+			FormulaExpression exprf1 = engine.shrink(f1, sheetRegion, horizontal, new FormulaParseContext(sheet, null));//null ref, no trace dependence here
+			if(!exprf1.hasError() && !f1.equals(exprf1.getFormulaString())) {
+				f1 = exprf1.getFormulaString();
+				changed = true;
+			}
+		}
+		if (f2 != null) {
+			FormulaExpression exprf2 = engine.shrink(f2, sheetRegion, horizontal, new FormulaParseContext(sheet, null));//null ref, no trace dependence here
+			if(!exprf2.hasError() && !f2.equals(exprf2.getFormulaString())) {
+				f2 = exprf2.getFormulaString();
+				changed = true;
+			}
+		}
+		if (changed) {
+			validation.setFormula(f1,  f2); // this will update DependencyTable
+		} else {
+			validation.clearFormulaResultCache();
+		}
+		
+		// update Validation's region (sqref)
+		CellRegion region = validation.getRegion();
+		String sqref = region.getReferenceString();
+		
+		FormulaExpression expr2 = engine.shrink(sqref, sheetRegion, horizontal, new FormulaParseContext(sheet, null));//null ref, no trace dependence here
+		if(!expr2.hasError() && !sqref.equals(expr2.getFormulaString())) {
+			if ("#REF!".equals(expr2.getFormulaString())) { // should delete the region
+				sheet.deleteDataValidation(validation);
+			} else {
+				region = new CellRegion(expr2.getFormulaString());
+				((AbstractDataValidationAdv)validation).setRegion(region);
+			}
+		}
+
+		// notify chart change
+		ModelUpdateUtil.addRefUpdate(dependent);
 	}
 
 	private void shrinkCellRef(SheetRegion sheetRegion,Ref dependent, boolean horizontal) {
@@ -655,16 +790,54 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 	}	
 	
 	private void renameSheetDataValidationRef(SBook bookOfSheet, String oldName, String newName,ObjectRef dependent) {
-		//TODO zss 3.5
-//		NBook book = bookSeries.getBook(dependent.getBookName());
-//		if(book==null) return;
-//		NSheet sheet = book.getSheetByName(dependent.getSheetName());
-//		if(sheet==null) return;
-//		String[] ids = dependent.getObjectIdPath();
-//		NDataValidation validation = sheet.getDataValidation(ids[0]);
-//		if(validation!=null){
-//			validation.clearFormulaResultCache();
-//		}
+		SBook book = _bookSeries.getBook(dependent.getBookName());
+		if(book == null) {
+			return;
+		}
+		SSheet sheet = book.getSheetByName(dependent.getSheetName());
+		if(sheet==null){//the sheet was renamed., get form newname if possible
+			if(oldName.equals(dependent.getSheetName())){
+				sheet = book.getSheetByName(newName);
+			}
+		}
+		if(sheet == null) {
+			return;
+		}
+		SDataValidation validation = sheet.getDataValidation(dependent.getObjectIdPath()[0]);
+		if(validation == null) {
+			return;
+		}
+		FormulaEngine engine = getFormulaEngine();
+		
+		// update Validation's formula if any
+		String f1 = validation.getValue1Formula();
+		String f2 = validation.getValue2Formula();
+		boolean changed = false;
+		if (f1 != null) {
+			FormulaExpression exprf1 = engine.renameSheet(f1, bookOfSheet, oldName, newName,new FormulaParseContext(sheet, null));//null ref, no trace dependence here
+			if(!exprf1.hasError() && !f1.equals(exprf1.getFormulaString())) {
+				f1 = exprf1.getFormulaString();
+				changed = true;
+			}
+		}
+		if (f2 != null) {
+			FormulaExpression exprf2 = engine.renameSheet(f2, bookOfSheet, oldName, newName,new FormulaParseContext(sheet, null));//null ref, no trace dependence here
+			if(!exprf2.hasError() && !f2.equals(exprf2.getFormulaString())) {
+				f2 = exprf2.getFormulaString();
+				changed = true;
+			}
+		}
+		if (changed) {
+			validation.setFormula(f1,  f2); // this will update DependencyTable
+		} else {
+			validation.clearFormulaResultCache();
+		}
+		
+		// update Validation's region (sqref)
+		((AbstractDataValidationAdv)validation).renameSheet(oldName, newName);
+
+		// notify chart change
+		ModelUpdateUtil.addRefUpdate(dependent);
 	}
 
 	private void renameSheetCellRef(SBook bookOfSheet, String oldName, String newName,Ref dependent) {
@@ -758,7 +931,6 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 		//don't need to notify cell change, cell will do
 	}
 
-	@SuppressWarnings("unused")
 	private void splitDependents(final Set<Ref> dependents,
 			final Set<Ref> cellDependents,
 			final Map<String, Ref> chartDependents,
@@ -833,19 +1005,23 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 		}
 	}
 
-	// ZSS-687
+	// ZSS-687, ZSS-648
 	private void clearFormulaCacheDataValidationRef(ObjectRef dependent) {
-		//TODO zss 3.5
-//		NBook book = bookSeries.getBook(dependent.getBookName());
-//		if(book==null) return;
-//		SSheet sheet = book.getSheetByName(dependent.getSheetName());
-//		if(sheet==null) return;
-//		String[] ids = dependent.getObjectIdPath();
-//		NDataValidation validation = sheet.getDataValidation(ids[0]);
-//		if(validation!=null){
-//			validation.clearFormulaResultCache();
-//			ModelUpdateUtil.addRefUpdate(dependent);
-//		}
+		SBook book = _bookSeries.getBook(dependent.getBookName());
+		if(book == null) {
+			return;
+		}
+		SSheet sheet = book.getSheetByName(dependent.getSheetName());
+		if(sheet == null) {
+			return;
+		}
+		SDataValidation validation = sheet.getDataValidation(dependent.getObjectIdPath()[0]);
+		if(validation == null) {
+			return;
+		}
+		
+		validation.clearFormulaResultCache();
+		ModelUpdateUtil.addRefUpdate(dependent);
 	}
 	
 	// ZSS-687

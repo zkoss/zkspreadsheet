@@ -28,4 +28,6 @@ public abstract class DependencyTableAdv implements DependencyTable, Serializabl
 	abstract public void setBookSeries(SBookSeries series);
 
 	abstract public void merge(DependencyTableAdv dependencyTable);
+	
+	abstract public Set<Ref> getDirectPrecedents(Ref dependent);
 }

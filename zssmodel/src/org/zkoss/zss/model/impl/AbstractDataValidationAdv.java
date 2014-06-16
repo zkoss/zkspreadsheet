@@ -35,4 +35,9 @@ public abstract class AbstractDataValidationAdv implements SDataValidation,Linke
 	 * @param src
 	 */
 	/*package*/ abstract void copyFrom(AbstractDataValidationAdv src);
+	
+	/**
+	 * When sheet name changed.
+	 */
+	abstract void renameSheet(String oldName, String newName); // ZSS-648
 }

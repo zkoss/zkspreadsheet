@@ -41,7 +41,7 @@ public interface DependencyTable {
 	public Set<Ref> getDirectDependents(Ref precedent);
 	public Set<Ref> getEvaluatedDependents(Ref precedent);	
 	
-	public void add(Ref dependant, Ref precedent);
+	public void add(Ref dependent, Ref precedent);
 	public void setEvaluated(Ref dependent);
 	
 	public void clearDependents(Ref dependant);

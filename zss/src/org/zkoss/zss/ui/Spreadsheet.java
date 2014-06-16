@@ -2385,10 +2385,12 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			final SSheet sheet = event.getSheet();
 			
 			final String objid = event.getObjectId();
-			SDataValidation validation = sheet.getDataValidation(objid);
-			if(validation!=null){
+// ZSS-648: the validation could have been deleted, must notify client side			
+//			SDataValidation validation = sheet.getDataValidation(objid);
+			
+//			if(validation!=null){
 				updateDataValidation(sheet, objid);
-			}
+//			}
 		}
 
 		private void onRowColumnInsertDelete(ModelEvent event) {

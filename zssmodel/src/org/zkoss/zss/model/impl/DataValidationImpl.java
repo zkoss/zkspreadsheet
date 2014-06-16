@@ -19,6 +19,7 @@ package org.zkoss.zss.model.impl;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import org.zkoss.zss.model.CellRegion;
 import org.zkoss.zss.model.ErrorValue;
@@ -27,6 +28,7 @@ import org.zkoss.zss.model.SBookSeries;
 import org.zkoss.zss.model.SCell;
 import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.model.sys.EngineFactory;
+import org.zkoss.zss.model.sys.dependency.DependencyTable;
 import org.zkoss.zss.model.sys.dependency.Ref;
 import org.zkoss.zss.model.sys.formula.EvaluationResult;
 import org.zkoss.zss.model.sys.formula.FormulaEngine;
@@ -35,6 +37,7 @@ import org.zkoss.zss.model.sys.formula.FormulaExpression;
 import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 import org.zkoss.zss.model.sys.formula.EvaluationResult.ResultType;
 import org.zkoss.zss.model.util.Validations;
+import org.zkoss.zss.model.impl.sys.DependencyTableAdv;
 /**
  * 
  * @author Dennis
@@ -90,7 +93,7 @@ public class DataValidationImpl extends AbstractDataValidationAdv {
 	@Override
 	public void destroy() {
 		checkOrphan();
-		clearFormulaDependency();
+		clearFormulaDependency(true);
 		clearFormulaResultCache();
 		_sheet = null;
 	}
@@ -184,9 +187,36 @@ public class DataValidationImpl extends AbstractDataValidationAdv {
 	}
 	
 	@Override
-	void setRegion(CellRegion region){
+	void setRegion(CellRegion region) { // ZSS-648
 		Validations.argNotNull(region);
+		if (region.equals(this._region)) return; // nothing change, let go
+		
+		// ZSS-648
+		// remove old ObjectRef
+		Ref dependent = getRef();
+		Ref dummy = getDummyRef();
+		SBook book = _sheet.getBook();
+		final DependencyTable dt = 
+				((AbstractBookSeriesAdv) book.getBookSeries()).getDependencyTable();
+		final Set<Ref> precedents = ((DependencyTableAdv)dt).getDirectPrecedents(dependent);
+		if (precedents != null) precedents.remove(dummy);
+		dt.clearDependents(dependent);
+		
+		// Add new ObjectRef into DependencyTable so we can extend/shrink/move
 		this._region = region;
+		dependent = getRef();  // new dependent because region have changed
+		
+		// ZSS-648
+		// prepare a dummy CellRef to enforce DataValidation reference dependency
+		dummy = getDummyRef();
+		if (dummy != null) dt.add(dependent, dummy);
+		
+		// restore dependent precedents relation
+		if (precedents != null) {
+			for (Ref precedent: precedents) {
+				dt.add(dependent, precedent);
+			}
+		}
 	}
 
 	@Override
@@ -274,15 +304,45 @@ public class DataValidationImpl extends AbstractDataValidationAdv {
 		return _value2Expr==null?null:_value2Expr.getFormulaString();
 	}
 
-	private void clearFormulaDependency() {
+	private void clearFormulaDependency(boolean all) { // ZSS-648
 		if(_value1Expr!=null || _value2Expr!=null){
+			Ref dependent = getRef();
+			DependencyTable dt = 
 			((AbstractBookSeriesAdv) _sheet.getBook().getBookSeries())
-					.getDependencyTable().clearDependents(getRef());
+					.getDependencyTable();
+			
+			dt.clearDependents(dependent);
+			
+			// ZSS-648
+			// must keep the region reference itself in DependencyTable; so add it back
+			if (!all) {
+				final Ref dummy = getDummyRef();
+				if (dummy != null) dt.add(dependent, dummy);
+			}
 		}
 	}
 	
 	private Ref getRef(){
 		return new ObjectRefImpl(this,_id);
+	}
+	
+	// ZSS-648
+	private Ref getRef(String sheetName) {
+		return new ObjectRefImpl(_sheet.getBook().getBookName(), sheetName, _id);
+	}
+	
+	// ZSS-648
+	private Ref getDummyRef() {
+		return _region == null ? null :
+			new RefImpl(_sheet.getBook().getBookName(), _sheet.getSheetName(), 
+				_region.row, _region.column, _region.lastRow, _region.lastColumn);
+	}
+	
+	// ZSS-648
+	private Ref getDummyRef(String sheetName) {
+		return _region == null ? null :
+			new RefImpl(_sheet.getBook().getBookName(), sheetName, 
+				_region.row, _region.column, _region.lastRow, _region.lastColumn);
 	}
 	
 	@Override
@@ -293,7 +353,8 @@ public class DataValidationImpl extends AbstractDataValidationAdv {
 	public void setFormula(String value1Expression, String value2Expression) {
 		checkOrphan();
 		_evaluated = false;
-		clearFormulaDependency();
+		clearFormulaDependency(false);
+		clearFormulaResultCache();
 		
 		FormulaEngine fe = EngineFactory.getInstance().createFormulaEngine();
 		
@@ -401,5 +462,36 @@ public class DataValidationImpl extends AbstractDataValidationAdv {
 					, srcImpl._value2Expr==null?null:srcImpl._value2Expr.getFormulaString());
 		}
 	}
-
+	
+	@Override
+	void renameSheet(String oldName, String newName) { //ZSS-648
+		Validations.argNotNull(oldName);
+		Validations.argNotNull(newName);
+		if (oldName.equals(newName)) return; // nothing change, let go
+		
+		// remove old ObjectRef
+		Ref dependent = getRef(oldName);
+		Ref dummy = getDummyRef(oldName);
+		SBook book = _sheet.getBook();
+		final DependencyTable dt = 
+				((AbstractBookSeriesAdv) book.getBookSeries()).getDependencyTable();
+		final Set<Ref> precedents = ((DependencyTableAdv)dt).getDirectPrecedents(dependent);
+		if (precedents != null) precedents.remove(dummy);
+		dt.clearDependents(dependent);
+		
+		// Add new ObjectRef into DependencyTable so we can extend/shrink/move
+		dependent = getRef(newName);  // new dependent because region have changed
+		
+		// ZSS-648
+		// prepare a dummy CellRef to enforce DataValidation reference dependency
+		dummy = getDummyRef(newName);
+		if (dummy != null) dt.add(dependent, dummy);
+		
+		// restore dependent precedents relation
+		if (precedents != null) {
+			for (Ref precedent: precedents) {
+				dt.add(dependent, precedent);
+			}
+		}
+	}
 }

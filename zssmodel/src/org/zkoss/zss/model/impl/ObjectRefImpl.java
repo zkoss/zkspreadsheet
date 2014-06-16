@@ -18,6 +18,7 @@ package org.zkoss.zss.model.impl;
 
 import java.util.Arrays;
 
+import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.model.sys.dependency.ObjectRef;
 /**
  * 
@@ -38,13 +39,16 @@ public class ObjectRefImpl extends RefImpl implements ObjectRef{
 		_objType = ObjectType.CHART;
 	}
 	public ObjectRefImpl(AbstractChartAdv chart,String objectId){
-		super(RefType.OBJECT,chart.getSheet().getBook().getBookName(),chart.getSheet().getSheetName(), null,-1,-1,-1,-1);
-		this._objectIdPath = new String[]{objectId};
-		_objType = ObjectType.CHART;
+		this(chart.getSheet().getBook().getBookName(),chart.getSheet().getSheetName(), objectId);
 	}
 	
 	public ObjectRefImpl(AbstractDataValidationAdv validation,String objectId){
-		super(RefType.OBJECT,validation.getSheet().getBook().getBookName(),validation.getSheet().getSheetName(), null,-1,-1,-1,-1);
+		this(validation.getSheet().getBook().getBookName(),validation.getSheet().getSheetName(), objectId);
+	}
+
+	//ZSS-648
+	public ObjectRefImpl(String bookName, String sheetName, String objectId){
+		super(RefType.OBJECT,bookName,sheetName, null,-1,-1,-1,-1);
 		this._objectIdPath = new String[]{objectId};
 		_objType = ObjectType.DATA_VALIDATION;
 	}
