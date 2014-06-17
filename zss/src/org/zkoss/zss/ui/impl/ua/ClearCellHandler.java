@@ -94,12 +94,12 @@ public class ClearCellHandler extends AbstractHandler {
 		selection = new AreaRef(range.getRow(),range.getColumn(),range.getLastRow(),range.getLastColumn());
 		
 		String label = null;
-		switch (_type) {
+		switch (_type) { //ZSS-692
 		case ALL:
-			label = Labels.getLabel("zss.undo.clearContents");
+			label = Labels.getLabel("zss.undo.clearAll");
 			break;
 		case CONTENT:
-			label = Labels.getLabel("zss.undo.clearAll");
+			label = Labels.getLabel("zss.undo.clearContents");
 			break;
 		case STYLE:
 			label = Labels.getLabel("zss.undo.clearStyles");
