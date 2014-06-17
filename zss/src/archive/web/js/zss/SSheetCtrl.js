@@ -1384,6 +1384,13 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 	_doMouserightclick : function (evt) {
 		if (this.isAsync())//wait async event, skip mouse click;
 			return;
+		var dataPanel = this.dp;
+		// ZSS-681: focus textarea before open stylepanel
+		if (typeof dataPanel.selectFocustagId == "number") {
+			dataPanel.selectFocustag();
+			window.clearTimeout(dataPanel.selectFocustagId);
+			delete dataPanel.selectFocustagId;
+		}
 		this._doMouseclick(evt, "rc");
 		evt.stop();//always stop right (context) click.
 	},
@@ -2571,12 +2578,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		}
 		if (this.state != zss.SSheetCtrl.FOCUSED)
 			return;
-		var focustag = this.dp.focustag;
-		focustag.value = result;
-		setTimeout(function () {
-			focustag.focus();
-			jq(focustag).select();
-		}, 0);
+		this.dp.deferSelectFocustag();
 	},
 	/**
 	 * Hides cell's selection area 
