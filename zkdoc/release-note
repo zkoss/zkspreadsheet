@@ -40,6 +40,7 @@ ZK Spreadsheet 3.5.0
   ZSS-648 Validation position doesn't shift up when delete rows shift up
   ZSS-681 Open context menu and press tab, the upper style panel should close
   ZSS-692 Label may be mismatched in ClearCellHandler class
+  ZSS-693 Sorting should shift formula accordingly
   
 ** Upgrade Notes
   * Following api are deprecated

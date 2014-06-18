@@ -47,7 +47,7 @@ import org.zkoss.zss.range.impl.StyleUtil;
  * @author Dennis
  * @since 3.5.0
  */
-/*package*/ class PasteCellHelper {
+public class PasteCellHelper { //ZSS-693: promote visibility
 
 	private final SSheet _destSheet;
 	private final SBook _book;
@@ -446,7 +446,8 @@ import org.zkoss.zss.range.impl.StyleUtil;
 	private void pasteValue(CellBuffer buffer, SCell destCell,SheetRegion cutFrom) {
 		pasteValue(buffer,destCell,cutFrom,false,-1,-1,false,-1,-1);
 	}
-	private void pasteValue(CellBuffer buffer, SCell destCell,SheetRegion cutFrom, boolean pasteFormula, int rowOffset,int columnOffset, boolean transpose, int rowOrigin, int columnOrigin) {
+	//ZSS-693: promote to public so SortHelper can use this
+	public void pasteValue(CellBuffer buffer, SCell destCell,SheetRegion cutFrom, boolean pasteFormula, int rowOffset,int columnOffset, boolean transpose, int rowOrigin, int columnOrigin) {
 		if(pasteFormula){
 			String formula = buffer.getFormula();
 			if(formula!=null){

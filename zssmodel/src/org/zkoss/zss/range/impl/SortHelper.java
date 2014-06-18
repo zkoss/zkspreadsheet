@@ -22,7 +22,9 @@ import java.util.*;
 
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zss.model.*;
+import org.zkoss.zss.model.SCell.CellType;
 import org.zkoss.zss.model.impl.CellBuffer;
+import org.zkoss.zss.model.impl.PasteCellHelper;
 import org.zkoss.zss.model.sys.formula.*;
 import org.zkoss.zss.range.*;
 import org.zkoss.zss.range.SRange.SortDataOption;
@@ -273,14 +275,18 @@ public class SortHelper extends RangeHelperBase {
 			}
 		}
 		//copy cells to sorted new index
+		final PasteCellHelper pasteHelper = new PasteCellHelper(sheet);
 		for (SortResult result : sortResults){
+			final int offset = result.newIndex-result.oldIndex;
+			if (offset == 0) continue;
 			for (int r = 0 ; r < result.cellBuffer.length ; r++){
-				SCell cellProxy = getProxyInstance(sheet.getCell(sortingRegion.getRow()+r, result.newIndex), 
-						new SheetRegion(sheet, sortingRegion), 0, result.newIndex-result.oldIndex);
-				result.cellBuffer[r].applyAll(cellProxy);
+				// ZSS-693
+				SCell cell = sheet.getCell(sortingRegion.getRow()+r, result.newIndex);
+				pasteToNewCell(pasteHelper, result.cellBuffer[r], cell, null, 0,  offset);
 			}
 		}
 	}
+	
 
 	/**
 	 * Change order of cells in row-wise according to sorting result. We might move them up or down.
@@ -310,12 +316,33 @@ public class SortHelper extends RangeHelperBase {
 			}
 		}
 		//copy cells to sorted new index
+		final PasteCellHelper pasteHelper = new PasteCellHelper(sheet);
 		for (SortResult result : sortResults){
+			final int offset = result.newIndex-result.oldIndex;
+			if (offset == 0) continue;
 			for (int c = 0 ; c < result.cellBuffer.length ; c++){
-				SCell cellProxy = getProxyInstance(sheet.getCell(result.newIndex, sortingRegion.getColumn()+c), 
-						new SheetRegion(sheet, sortingRegion), result.newIndex-result.oldIndex, 0);
-				result.cellBuffer[c].applyAll(cellProxy);
+				final int col = sortingRegion.getColumn()+c;
+				SCell cell = sheet.getCell(result.newIndex, col);
+				pasteToNewCell(pasteHelper, result.cellBuffer[c], cell, null, offset, 0);
 			}
+		}
+	}
+	
+	//ZSS-693
+	private void pasteToNewCell(PasteCellHelper helper, CellBuffer buffer, 
+			SCell cell, SheetRegion cutFrom, int rowOffset, int columnOffset) {
+		if(buffer.isNull()){
+			final int r = cell.getRowIndex();
+			final int c = cell.getColumnIndex();
+			cell.getSheet().clearCell(r, c, r, c);
+		}else{
+			helper.pasteValue(buffer,cell,cutFrom,
+					buffer.getType() == CellType.FORMULA,rowOffset,
+					columnOffset,false,0,0);
+			buffer.applyStyle(cell);
+			buffer.applyHyperlink(cell);
+			buffer.applyComment(cell);
+			//buffer.applyValidation(destCell); //20140618, henrichen: Sorting does not affect DataValidation
 		}
 	}
 	
