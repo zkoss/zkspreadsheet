@@ -11,7 +11,7 @@ import org.zkoss.zss.Setup;
 import org.zkoss.zss.Util;
 import org.zkoss.zss.api.model.Book;
 
-@Ignore
+
 public class Text2007IgnoredTest extends FormulaTestBase {
 	
 	@BeforeClass

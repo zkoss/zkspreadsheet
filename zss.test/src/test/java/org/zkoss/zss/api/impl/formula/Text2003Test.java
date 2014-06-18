@@ -187,4 +187,13 @@ public class Text2003Test extends FormulaTestBase {
 		Book book = Util.loadBook(this,"TestFile2003-Formula.xls");
 		testVALUE(book);
 	}
+	
+	// POI built-in VALUE function cannot parse time string.
+	// But our enhanced one can.
+	@Test
+	public void testVALUEWithTimeString()  {
+		Book book = Util.loadBook(this,"TestFile2003-Formula.xls");
+		testVALUEWithTimeString(book);
+	}
+
 }
