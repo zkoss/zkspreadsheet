@@ -40,7 +40,6 @@ import org.zkoss.zss.model.sys.formula.FormulaEngine;
 import org.zkoss.zss.model.sys.formula.FormulaExpression;
 import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 import org.zkoss.zss.model.util.Validations;
-import org.zkoss.zss.range.SRanges;
 import org.zkoss.zss.range.impl.StyleUtil;
 /**
  * 
@@ -133,7 +132,7 @@ public class PasteCellHelper { //ZSS-693: promote visibility
 					pasteCells(srcBuffer,destRegion,cutFrom,option,rowOffset,columnOffset);
 					if (option.isCut()) { //ZSS-696: if cut and paste, must unmerge
 						pasteDataValidations(srcVBuffer, src, dest, option); // ZSS-694: only when CUT and paste
-						SRanges.range(_destSheet, mergedRegion).unmerge(); // ZSS-696: should unmerge when cut and paste
+						_destSheet.removeMergedRegion(mergedRegion, true); // ZSS-696: should unmerge when cut and paste
 					}
 					return dest;
 				}
