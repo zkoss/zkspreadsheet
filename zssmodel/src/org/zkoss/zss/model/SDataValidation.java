@@ -17,6 +17,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.model;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * This class stores the restrictions on what data can or should be entered in a cell.
@@ -82,7 +83,10 @@ public interface SDataValidation extends FormulaContent{
 	public String getErrorBoxTitle();
 	public String getErrorBoxText();
 
-	public CellRegion getRegion();
+	public Set<CellRegion> getRegions();
+	public void setRegions(Set<CellRegion> regions);
+	public void addRegion(CellRegion region);
+	public void removeRegion(CellRegion region);
 	
 	public ValidationType getValidationType();
 	public void setValidationType(ValidationType type);

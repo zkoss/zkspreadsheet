@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -88,7 +89,7 @@ public class SheetImpl extends AbstractSheetAdv {
 	
 	private final List<AbstractPictureAdv> _pictures = new LinkedList<AbstractPictureAdv>();
 	private final List<AbstractChartAdv> _charts = new LinkedList<AbstractChartAdv>();
-	private final List<AbstractDataValidationAdv> _dataValidations = new LinkedList<AbstractDataValidationAdv>();
+	private final List<AbstractDataValidationAdv> _dataValidations = new ArrayList<AbstractDataValidationAdv>();
 	
 	private final List<CellRegion> _mergedRegions = new LinkedList<CellRegion>();
 	
@@ -537,35 +538,7 @@ public class SheetImpl extends AbstractSheetAdv {
 			addMergedRegion(new CellRegion(r.row + size, r.column, r.lastRow + size, r.lastColumn));
 		}
 		
-		//TODO shift data validation?
-		for(AbstractDataValidationAdv validation:_dataValidations){
-			//TODO zss 3.5
-//			int idx =0;
-//			Set<CellRegion> remove = new HashSet<CellRegion>();
-//			boolean dirty = false;
-//			for(CellRegion region:validation.getRegions()){
-//				//TODO
-//				CellRegion shifted = null; //TODO Shift
-//				if(shifted == null){
-//					remove.add(region);
-//				}else if(!shifted.equals(region)){
-//					validation.setRegion(idx, region);
-//					dirty = true;
-//				}
-//				idx++;
-//			}
-//			for(CellRegion r:remove){
-//				validation.removeRegion(r);
-//				dirty = true;
-//			}
-//			
-//			if(dirty){
-//				((AbstractBookAdv) book).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_DATA_VALIDATION_CONTENT_CHANGE,this,
-//					ModelEvents.createDataMap(ModelEvents.PARAM_OBJECT_ID,validation.getId())));
-//			}
-			
-		}
-		
+		//shift data validation will be done inside extendFormula
 		extendFormula(new CellRegion(rowIdx,0,lastRowIdx,_book.getMaxColumnIndex()), false);
 		
 		//shift freeze panel
@@ -1701,14 +1674,16 @@ public class SheetImpl extends AbstractSheetAdv {
 	public SDataValidation addDataValidation(CellRegion region) {
 		return addDataValidation(region,null);
 	}
-	public SDataValidation addDataValidation(CellRegion region,SDataValidation src) {
+	public SDataValidation addDataValidation(CellRegion region, SDataValidation src) {
 		checkOrphan();
 		Validations.argInstance(src, AbstractDataValidationAdv.class);
 		AbstractDataValidationAdv validation = new DataValidationImpl(this, _book.nextObjId("valid"));
-		validation.setRegion(region);
 		_dataValidations.add(validation);
 		if(src!=null){
 			validation.copyFrom((AbstractDataValidationAdv)src);
+		}
+		if (region!= null) {
+			validation.addRegion(region);
 		}
 		return validation;
 	}
@@ -1747,9 +1722,10 @@ public class SheetImpl extends AbstractSheetAdv {
 	@Override
 	public SDataValidation getDataValidation(int rowIdx,int columnIdx) {
 		for(SDataValidation validation:_dataValidations){
-			CellRegion region = validation.getRegion();
-			if(region.contains(rowIdx, columnIdx)){
-				return validation;
+			for (CellRegion regn : validation.getRegions()) {
+				if(regn.contains(rowIdx, columnIdx)){
+					return validation;
+				}
 			}
 		}
 		return null;

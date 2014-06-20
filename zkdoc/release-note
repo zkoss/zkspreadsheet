@@ -41,6 +41,7 @@ ZK Spreadsheet 3.5.0
   ZSS-681 Open context menu and press tab, the upper style panel should close
   ZSS-692 Label may be mismatched in ClearCellHandler class
   ZSS-693 Sorting should shift formula accordingly
+  ZSS-694 The Validation of a Cell should be pasted to the new range accordingly.
   
 ** Upgrade Notes
   * Following api are deprecated

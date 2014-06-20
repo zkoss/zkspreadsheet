@@ -16,12 +16,18 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.model.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.zkoss.zss.model.SCell;
 import org.zkoss.zss.model.SCellStyle;
 import org.zkoss.zss.model.SComment;
 import org.zkoss.zss.model.SDataValidation;
 import org.zkoss.zss.model.SHyperlink;
 import org.zkoss.zss.model.SCell.CellType;
+import org.zkoss.zss.model.CellRegion;
+import org.zkoss.zss.model.SSheet;
+
 /**
  * a help class to hold cell data and apply to another
  * @author Dennis
@@ -112,24 +118,6 @@ public class CellBuffer {
 			buffer.setValidation(cell.getSheet().getDataValidation(cell.getRowIndex(), cell.getColumnIndex()));
 		}
 		return buffer;
-	}
-
-	
-	public void applyAll(SCell cell){
-		if(isNull()){
-			cell.getSheet().clearCell(cell.getRowIndex(), cell.getColumnIndex(), cell.getRowIndex(), cell.getColumnIndex());
-		}else{
-			applyValue(cell);
-			applyStyle(cell);
-			applyHyperlink(cell);
-			applyComment(cell);
-			applyValidation(cell);
-		}
-	}
-
-	public void applyValidation(SCell destCell) {
-		SDataValidation srcValidation = getValidation();
-		//TODO, base on original validation data structure, it it very complicated to past a validation, consider to change the structure.
 	}
 	
 	public void applyStyle(SCell destCell) {

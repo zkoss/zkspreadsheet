@@ -20,8 +20,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.zkoss.zss.model.impl.SheetProtectionImpl;
-
 /**
  * A sheet of a book. It's the main class you can manipulate rows, columns, cells, pictures, charts, and data validation.
  * @author dennis

@@ -246,7 +246,7 @@ public class CellRegion implements Serializable {
 				
 				// Right
 				if(this.lastColumn - overlapRegion.lastColumn > 0) {
-					result.add(new CellRegion(overlapRegion.row, this.lastColumn, overlapRegion.lastRow, this.lastColumn));
+					result.add(new CellRegion(overlapRegion.row, overlapRegion.lastColumn + 1, overlapRegion.lastRow, this.lastColumn));
 				}
 			}
 		}
@@ -254,4 +254,20 @@ public class CellRegion implements Serializable {
 		return result;
 	}
 
+	
+	/**
+	 * @return returns the overlapping region between this region and the 
+	 * specified region; null if no overlapping.
+	 */
+	public CellRegion getOverlap(CellRegion target) {
+		final int row1 = Math.max(this.row, target.row);
+		final int row2 = Math.min(this.lastRow, target.lastRow);
+		if (row1 > row2) return null; // no overlapping
+		
+		final int col1 = Math.max(this.column, target.column); 
+		final int col2 = Math.min(this.lastColumn, target.lastColumn);
+		if (col1 > col2) return null; // no overlapping
+		
+		return new CellRegion(row1, col1, row2, col2);
+	}
 }

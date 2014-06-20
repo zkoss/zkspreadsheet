@@ -16,7 +16,9 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.model.impl;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -41,6 +43,7 @@ import org.zkoss.zss.model.sys.formula.FormulaEngine;
 import org.zkoss.zss.model.sys.formula.FormulaExpression;
 import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 import org.zkoss.zss.model.util.Validations;
+import org.zkoss.zss.range.SRanges;
 import org.zkoss.zss.range.impl.StyleUtil;
 /**
  * 
@@ -112,20 +115,28 @@ public class PasteCellHelper { //ZSS-693: promote visibility
 		if(handleMerge){
 			mergeBuffer = prepareMergeRegionBuffer(src,option);
 		}
+		
+		//the ValidationBuffer might be transported
+		List<ValidationBuffer> srcVBuffer = prepareValidationBuffer(src, option);
+		
 		SheetRegion cutFrom = null;
 		if(option.isCut()){
 			//clear the src's value and merge
 			clearCell(src);
 			clearMergeRegion(src);
 			cutFrom = src;
+			clearValidationRegion(srcSheet, srcRegion);
 		}
 		
 		// ZSS-608: Special Case - Copy a single cell to a merge cell
 		if(srcRegion.isSingle()) {
-			for(CellRegion mergedRegion : _destSheet.getMergedRegions()) {
-				if(dest.equals(mergedRegion)) {
+			for (CellRegion mergedRegion : _destSheet.getMergedRegions()) {
+				if (mergedRegion.contains(dest)) {
 					CellRegion destRegion = new CellRegion(dest.getRow(),dest.getColumn(),dest.getRow(),dest.getColumn());
 					pasteCells(srcBuffer,destRegion,cutFrom,option,rowOffset,columnOffset);
+					if (option.isCut()) { //ZSS-696: if cut and paste, must unmerge
+						pasteDataValidations(srcVBuffer, src, dest, option); // ZSS-694: only when CUT and paste
+					}
 					return dest;
 				}
 			}
@@ -150,6 +161,7 @@ public class PasteCellHelper { //ZSS-693: promote visibility
 						dest.getRow()+srcRowCount+ -1 + rowMultpleOffset,
 						dest.getColumn()+srcColCount -1 + colMultipleOffset);
 				pasteCells(srcBuffer,destRegion,cutFrom,option,rowOffset+rowMultpleOffset,columnOffset+colMultipleOffset);
+				pasteDataValidations(srcVBuffer, src, destRegion, option); // ZSS-694
 				
 				if(mergeBuffer!=null && mergeBuffer.size()>0){
 					pasteMergeRegion(mergeBuffer,rowOffset+rowMultpleOffset,columnOffset+colMultipleOffset);
@@ -162,7 +174,90 @@ public class PasteCellHelper { //ZSS-693: promote visibility
 				dest.getColumn()+srcColCount*colMultiple-1);
 	}
 	
-
+	// ZSS-694
+	List<ValidationBuffer> prepareValidationBuffer(SheetRegion src, PasteOption option) {
+		final PasteType type = option.getPasteType();
+		if (type != PasteType.ALL && type != PasteType.ALL_EXCEPT_BORDERS && type != PasteType.VALIDATAION)
+			return Collections.emptyList();
+		
+		boolean transpose = option.isTranspose();
+		SSheet srcSheet = src.getSheet();
+		CellRegion srcRegion = src.getRegion();
+		List<ValidationBuffer> vbs = new ArrayList<ValidationBuffer>();
+		for (SDataValidation dv : srcSheet.getDataValidations()) {
+			final Set<CellRegion> overlaps = new HashSet<CellRegion>();
+			for (CellRegion rgn : dv.getRegions()) {
+				CellRegion overlap = srcRegion.getOverlap(rgn);
+				if (overlap != null) {
+					overlaps.add(transpose ? 
+							new CellRegion(overlap.getColumn(), overlap.getRow(),
+									overlap.getLastColumn(), overlap.getLastRow()) : overlap);
+				}
+			}
+			if (overlaps.isEmpty()) continue;
+			vbs.add(new ValidationBuffer(dv, overlaps));
+		}
+		return vbs;
+	}
+	
+	// ZSS-694
+	private void pasteDataValidations(List<ValidationBuffer> vbs, 
+			SheetRegion src, CellRegion dst, PasteOption option) {
+		final PasteType type = option.getPasteType();
+		if (type != PasteType.ALL && type != PasteType.ALL_EXCEPT_BORDERS && type != PasteType.VALIDATAION)
+			return;
+		
+		if (vbs.isEmpty()) return;
+		
+		// paste to destination
+		final SSheet srcSheet = src.getSheet();
+		final int rowOffset = dst.getRow() - src.getRegion().getRow();
+		final int colOffset = dst.getColumn() - src.getRegion().getColumn();
+		for (ValidationBuffer vb : vbs) {
+			Set<CellRegion> destRegions = convertRegions(vb.regions, rowOffset, colOffset);
+			// clear Validation at destRegions 
+			for (CellRegion rgn : destRegions) {
+				clearValidationRegion(_destSheet, rgn);
+			}
+			
+			// past
+			SDataValidation dv = vb.validation;
+			// different sheets or the validation has been cut away from its owner sheet, make a copy
+			if (!srcSheet.equals(_destSheet) || dv.getSheet() == null) { 
+				dv = _destSheet.addDataValidation(null, dv);
+				((AbstractDataValidationAdv)dv).setRegions(destRegions);
+			} else { // same sheet, adjust regions
+				AbstractDataValidationAdv adv = ((AbstractDataValidationAdv)dv); 
+				for (CellRegion regn : destRegions) {
+					adv.addRegion(regn);
+				}
+			}
+		}
+	}
+	
+	// ZSS-694
+	private Set<CellRegion> convertRegions(Set<CellRegion> srcRegions, int rowOffset, int colOffset) {
+		Set<CellRegion> dstRegions = new HashSet<CellRegion>();
+		for (CellRegion rgn : srcRegions) {
+			final int row1 = rgn.getRow() + rowOffset;
+			final int col1 = rgn.getColumn() + colOffset;
+			final int row2 = rgn.getLastRow() + rowOffset;
+			final int col2 = rgn.getLastColumn() + colOffset;
+			dstRegions.add(new CellRegion(row1, col1, row2, col2));
+		}
+		return dstRegions;
+	}
+	
+	// ZSS-694
+	private final static class ValidationBuffer {
+		final SDataValidation validation;
+		final Set<CellRegion> regions;
+		ValidationBuffer(SDataValidation validation, Set<CellRegion> regions) {
+			this.validation  = validation;
+			this.regions = regions;
+		}
+	}
+	
 	FormulaEngine formulaEngine;
 	private FormulaEngine getFormulaEignin() {
 		if(formulaEngine == null){
@@ -296,6 +391,20 @@ public class PasteCellHelper { //ZSS-693: promote visibility
 	}
 
 
+	//ZSS-694: clear Validation
+	private void clearValidationRegion(SSheet srcSheet, CellRegion srcRegion) {
+		List<SDataValidation> dels = new ArrayList<SDataValidation>();
+		for (SDataValidation validation : srcSheet.getDataValidations()) {
+			validation.removeRegion(srcRegion);
+			if (validation.getRegions() == null) {
+				dels.add(validation);
+			}
+		}
+		for (SDataValidation validation : dels) {
+			srcSheet.deleteDataValidation(validation);
+		}
+	}
+	
 	private void clearMergeRegion(SheetRegion src) {
 		src.getSheet().removeMergedRegion(src.getRegion(), true);
 	}
@@ -376,14 +485,12 @@ public class PasteCellHelper { //ZSS-693: promote visibility
 					pasteStyle(buffer,destCell,true);//border,comment
 					buffer.applyHyperlink(destCell);
 					buffer.applyComment(destCell);
-					buffer.applyValidation(destCell);
 					break;
 				case ALL_EXCEPT_BORDERS:
 					pasteValue(buffer,destCell,cutFrom,true,rowOffset,columnOffset,transpose,row,col);
 					pasteStyle(buffer,destCell,false);//border,comment
 					buffer.applyHyperlink(destCell);
 					buffer.applyComment(destCell);
-					buffer.applyValidation(destCell);
 					break;
 				case COMMENTS:
 					buffer.applyComment(destCell);
@@ -398,7 +505,6 @@ public class PasteCellHelper { //ZSS-693: promote visibility
 					pasteValue(buffer,destCell,cutFrom,true,rowOffset,columnOffset,transpose,row,col);
 					break;
 				case VALIDATAION:
-					buffer.applyValidation(destCell);
 				case VALUES_AND_NUMBER_FORMATS:
 					pasteFormat(buffer,destCell);
 				case VALUES:

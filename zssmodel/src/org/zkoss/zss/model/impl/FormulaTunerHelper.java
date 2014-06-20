@@ -198,16 +198,20 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 		}
 		
 		// update Validation's region (sqref)
-		CellRegion region = validation.getRegion();
-		String sqref = region.getReferenceString();
-		
-		FormulaExpression expr2 = engine.move(sqref, sheetRegion, rowOffset, columnOffset, new FormulaParseContext(sheet, null)); //null ref, no trace dependence here
-		if(!expr2.hasError() && !sqref.equals(expr2.getFormulaString())) {
-			if ("#REF!".equals(expr2.getFormulaString())) { // should delete the region
-				sheet.deleteDataValidation(validation);
-			} else {
-				region = new CellRegion(expr2.getFormulaString());
-				((AbstractDataValidationAdv)validation).setRegion(region);
+		for (CellRegion region : validation.getRegions()) {
+			String sqref = region.getReferenceString();
+			
+			FormulaExpression expr2 = engine.move(sqref, sheetRegion, rowOffset, columnOffset, new FormulaParseContext(sheet, null)); //null ref, no trace dependence here
+			if(!expr2.hasError() && !sqref.equals(expr2.getFormulaString())) {
+				if ("#REF!".equals(expr2.getFormulaString())) { // should delete the region
+					((AbstractDataValidationAdv)validation).removeRegion(region);
+					if (validation.getRegions() == null) {
+						sheet.deleteDataValidation(validation);
+					}
+				} else {
+					region = new CellRegion(expr2.getFormulaString());
+					((AbstractDataValidationAdv)validation).addRegion(region);
+				}
 			}
 		}
 
@@ -419,20 +423,24 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 		}
 		
 		// update Validation's region (sqref)
-		CellRegion region = validation.getRegion();
-		String sqref = region.getReferenceString();
-		
-		FormulaExpression expr2 = engine.extend(sqref, sheetRegion, horizontal, new FormulaParseContext(sheet, null));//null ref, no trace dependence here
-		if(!expr2.hasError() && !sqref.equals(expr2.getFormulaString())) {
-			if ("#REF!".equals(expr2.getFormulaString())) { // should delete the region
-				sheet.deleteDataValidation(validation);
-			} else {
-				region = new CellRegion(expr2.getFormulaString());
-				((AbstractDataValidationAdv)validation).setRegion(region);
+		for (CellRegion region : validation.getRegions()) {
+			String sqref = region.getReferenceString();
+			
+			FormulaExpression expr2 = engine.extend(sqref, sheetRegion, horizontal, new FormulaParseContext(sheet, null));//null ref, no trace dependence here
+			if(!expr2.hasError() && !sqref.equals(expr2.getFormulaString())) {
+				if ("#REF!".equals(expr2.getFormulaString())) { // should delete the region
+					((AbstractDataValidationAdv)validation).removeRegion(region);
+					if (validation.getRegions() == null) {
+						sheet.deleteDataValidation(validation);
+					}
+				} else {
+					region = new CellRegion(expr2.getFormulaString());
+					((AbstractDataValidationAdv)validation).addRegion(region);
+				}
 			}
 		}
 
-		// notify chart change
+		// notify validation change
 		ModelUpdateUtil.addRefUpdate(dependent);
 	}
 
@@ -631,16 +639,20 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 		}
 		
 		// update Validation's region (sqref)
-		CellRegion region = validation.getRegion();
-		String sqref = region.getReferenceString();
-		
-		FormulaExpression expr2 = engine.shrink(sqref, sheetRegion, horizontal, new FormulaParseContext(sheet, null));//null ref, no trace dependence here
-		if(!expr2.hasError() && !sqref.equals(expr2.getFormulaString())) {
-			if ("#REF!".equals(expr2.getFormulaString())) { // should delete the region
-				sheet.deleteDataValidation(validation);
-			} else {
-				region = new CellRegion(expr2.getFormulaString());
-				((AbstractDataValidationAdv)validation).setRegion(region);
+		for (CellRegion region : validation.getRegions()) {
+			String sqref = region.getReferenceString();
+			
+			FormulaExpression expr2 = engine.shrink(sqref, sheetRegion, horizontal, new FormulaParseContext(sheet, null));//null ref, no trace dependence here
+			if(!expr2.hasError() && !sqref.equals(expr2.getFormulaString())) {
+				if ("#REF!".equals(expr2.getFormulaString())) { // should delete the region
+					((AbstractDataValidationAdv)validation).removeRegion(region);
+					if (validation.getRegions() == null) {
+						sheet.deleteDataValidation(validation);
+					}
+				} else {
+					region = new CellRegion(expr2.getFormulaString());
+					((AbstractDataValidationAdv)validation).addRegion(region);
+				}
 			}
 		}
 

@@ -463,10 +463,13 @@ public class ExcelXlsxExporter extends AbstractExcelExporter {
 				default:
 					continue;
 			}
-			CellRegion firstRegion = validation.getRegion();
+			final CellRangeAddressList rgnList = new CellRangeAddressList();
+			DataValidation poiValidation = 
+				poiSheet.getDataValidationHelper().createValidation(constraint, rgnList);
 			
-			DataValidation poiValidation = poiSheet.getDataValidationHelper().createValidation(constraint, 
-					new CellRangeAddressList(firstRegion.getRow(),firstRegion.getLastRow(), firstRegion.getColumn(), firstRegion.getLastColumn()));
+			for (CellRegion rgn : validation.getRegions()) {
+				rgnList.addCellRangeAddress(rgn.getRow(), rgn.getColumn(), rgn.getLastRow(), rgn.getLastColumn());
+			}
 			
 			poiValidation.setEmptyCellAllowed(validation.isEmptyCellAllowed());
 			poiValidation.setSuppressDropDownArrow(validation.isShowDropDownArrow());

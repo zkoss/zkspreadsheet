@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import java.io.*;
 import java.util.Locale;
+import java.util.Set;
 
 import org.junit.*;
 import org.zkoss.poi.ss.usermodel.Workbook;
@@ -14,9 +15,11 @@ import org.zkoss.zss.api.Range.PasteType;
 import org.zkoss.zss.api.model.*;
 import org.zkoss.zss.api.model.impl.BookImpl;
 import org.zkoss.zss.api.model.impl.SimpleRef;
+import org.zkoss.zss.model.CellRegion;
 import org.zkoss.zss.model.InvalidModelOpException;
 import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.SBooks;
+import org.zkoss.zss.model.SDataValidation;
 import org.zkoss.zss.model.SName;
 import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.range.SExporter;
@@ -379,7 +382,66 @@ public class Issue600Test {
 		Assert.assertEquals("SheetX!A1:B2", name.getRefersToFormula());
 		Assert.assertEquals(8D, sheet1.getCell("D2").getValue());
 	}
-	
+
+	@Test
+	public void testZSS694CopyValidation() {
+		Object[] books = _loadBooks(this, "book/694-copy-validation.xlsx");
+		Book book = (Book) books[0];
+		Sheet sheet = book.getSheet("Sheet1");
+		
+		// 1. Validation_1 in A1 and A3:B4
+		SSheet ssheet = sheet.getInternalSheet();
+		SDataValidation a1dv = ssheet.getDataValidation(0, 0); // validation in  a1
+		Set<CellRegion> a1regions = a1dv.getRegions();
+		Assert.assertEquals("Number of regions in Validation_1", 2, a1regions.size());
+		Assert.assertTrue("1st Validation_1 in A1", a1regions.contains(new CellRegion("a1"))); // a1
+		Assert.assertTrue("1st Validation_1 in A3:B4", a1regions.contains(new CellRegion("a3:b4"))); // a3:b4
+		
+		// 2. Validation_2 in D1:E2
+		SDataValidation d1dv = ssheet.getDataValidation(0, 3); // validation in  d1
+		Set<CellRegion> d1regions = d1dv.getRegions();
+		Assert.assertEquals("Number of regions Validation_2", 1, d1regions.size());
+		Assert.assertTrue("Validation_2 in D1:E2", d1regions.contains(new CellRegion("d1:e2"))); // d1:e2
+		
+		// 3. Cut A1 and paste to D1
+		Range a1 = Ranges.range(sheet, "a1");
+		a1.paste(Ranges.range(sheet, "d1"), true);
+		
+		// 3.1. Validation_1 no longer contains cell A1 but contains D1 and A3:B4 
+		a1regions = a1dv.getRegions();
+		Assert.assertEquals("Number of regions in Validation_1 after cut A1 to D1", 2, a1regions.size());
+		Assert.assertFalse("Validation_1 not in A1 after cut A1 to D1", a1regions.contains(new CellRegion("a1"))); // a1
+		Assert.assertTrue("Validation_1 in D1 after cut A1 to D1", a1regions.contains(new CellRegion("d1"))); // d1
+		Assert.assertTrue("Validation_1 in A3:B4 after cut A1 to D1", a1regions.contains(new CellRegion("a3:b4"))); // a3:b4
+		
+		// 3.2. Validation_2 no longer contains cell D1 but split to two regions: E1 and D2:E2 
+		d1regions = d1dv.getRegions();
+		Assert.assertEquals("Number of regions in Validation_2", 2, d1regions.size());
+		Assert.assertFalse("Validation_2 in D1", d1regions.contains(new CellRegion("d1"))); // d1
+		Assert.assertTrue("Validation_2 in E1", d1regions.contains(new CellRegion("e1"))); // e1
+		Assert.assertTrue("Validation_2 in D2:E2", d1regions.contains(new CellRegion("d2:e2"))); // d2:e2
+		
+		// 4. Cut B4 and paste to E2
+		Range b4 = Ranges.range(sheet, "b4");
+		b4.paste(Ranges.range(sheet, "e2"), true);
+		
+		// 4.1. Validaiton_1 no longer contains cell b4 but contains D1, A3:B3, A4, E2
+		a1regions = a1dv.getRegions();
+		Assert.assertEquals("Number of regions in Validation_1 after cut B4 to E2", 4, a1regions.size());
+		Assert.assertFalse("Validation_1 not in B4 after cut B4 to E2", a1regions.contains(new CellRegion("b4"))); // b4
+		Assert.assertTrue("Validation_1 in D1 after cut B4 to E2", a1regions.contains(new CellRegion("d1"))); // d1
+		Assert.assertTrue("Validation_1 in E2 after cut B4 to E2", a1regions.contains(new CellRegion("e2"))); // e2
+		Assert.assertTrue("Validation_1 in A4 after cut B4 to E2", a1regions.contains(new CellRegion("a4"))); // a4
+		Assert.assertTrue("Validation_1 in A3:B3 after cut B4 to E2", a1regions.contains(new CellRegion("a3:b3"))); // a3:b3
+		
+		// 4.2. Validation_2 no longer contains cell E2 but contains D2 and E1 
+		d1regions = d1dv.getRegions();
+		Assert.assertEquals("Number of regions in Validation_2", 2, d1regions.size());
+		Assert.assertFalse("Validation_2 in E2", d1regions.contains(new CellRegion("e2"))); // e2
+		Assert.assertTrue("Validation_2 in D2", d1regions.contains(new CellRegion("d2"))); // d2
+		Assert.assertTrue("Validation_2 in E1", d1regions.contains(new CellRegion("e1"))); // e1
+	}
+
 	private static Object[] _loadBooks(Object base,String respath) {
 		if(base==null){
 			base = Util.class;

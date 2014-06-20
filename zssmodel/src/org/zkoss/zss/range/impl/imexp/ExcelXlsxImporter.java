@@ -459,36 +459,38 @@ public class ExcelXlsxImporter extends AbstractExcelImporter{
 	protected void importValidation(Sheet poiSheet, SSheet sheet) {
 		for (DataValidation poiValidation : poiSheet.getDataValidations()){
 			
+			SDataValidation dataValidation = sheet.addDataValidation(null, null);
 			CellRangeAddress[] cellRangeAddresses = poiValidation.getRegions().getCellRangeAddresses();
-			for(CellRangeAddress cellRangeAddr:cellRangeAddresses){
-				/*
-				 * According to ISO/IEC 29500-1 \ 18.18.76  ST_Sqref (Reference Sequence) and A.2 
-				 * Its XML Schema indicates it's a required attribute, so CellRangeAddresses must have at least one address. 
+			DataValidationConstraint poiConstraint = poiValidation.getValidationConstraint();
+			// getExplicitListValues() will be represented as formula1
+			dataValidation.setFormula(poiConstraint.getFormula1(), poiConstraint.getFormula2());
+			dataValidation.setOperatorType(PoiEnumConversion.toOperatorType(poiConstraint.getOperator()));
+			dataValidation.setValidationType(PoiEnumConversion.toValidationType(poiConstraint.getValidationType()));
+			
+			dataValidation.setEmptyCellAllowed(poiValidation.getEmptyCellAllowed());
+			dataValidation.setErrorBox(poiValidation.getErrorBoxTitle(), poiValidation.getErrorBoxText());
+			dataValidation.setErrorStyle(PoiEnumConversion.toErrorStyle(poiValidation.getErrorStyle()));
+			dataValidation.setPromptBox(poiValidation.getPromptBoxTitle(), poiValidation.getPromptBoxText());
+			if (poiConstraint.getValidationType() == DataValidationConstraint.ValidationType.LIST){
+				/* 
+				 * According to ISO/IEC 29500-1 \ 18.3.1.32  dataValidation (Data Validation) 
+				 * Excel file contains reversed value against format specification . If not showing drop down, file contains 1 (true). If showing, 
+				 * attribute "showDropDown" won't exist and POI get false. But POI's API reverse its value again.
+				 * So we just directly accept the POI returned value.
 				 */
-				SDataValidation dataValidation = sheet.addDataValidation(new CellRegion(cellRangeAddr.formatAsString()));
-				
-				DataValidationConstraint poiConstraint = poiValidation.getValidationConstraint();
-				// getExplicitListValues() will be represented as formula1
-				dataValidation.setFormula(poiConstraint.getFormula1(), poiConstraint.getFormula2());
-				dataValidation.setOperatorType(PoiEnumConversion.toOperatorType(poiConstraint.getOperator()));
-				dataValidation.setValidationType(PoiEnumConversion.toValidationType(poiConstraint.getValidationType()));
-				
-				dataValidation.setEmptyCellAllowed(poiValidation.getEmptyCellAllowed());
-				dataValidation.setErrorBox(poiValidation.getErrorBoxTitle(), poiValidation.getErrorBoxText());
-				dataValidation.setErrorStyle(PoiEnumConversion.toErrorStyle(poiValidation.getErrorStyle()));
-				dataValidation.setPromptBox(poiValidation.getPromptBoxTitle(), poiValidation.getPromptBoxText());
-				if (poiConstraint.getValidationType() == DataValidationConstraint.ValidationType.LIST){
-					/* 
-					 * According to ISO/IEC 29500-1 \ 18.3.1.32  dataValidation (Data Validation) 
-					 * Excel file contains reversed value against format specification . If not showing drop down, file contains 1 (true). If showing, 
-					 * attribute "showDropDown" won't exist and POI get false. But POI's API reverse its value again.
-					 * So we just directly accept the POI returned value.
-					 */
-					dataValidation.setShowDropDownArrow(poiValidation.getSuppressDropDownArrow());
-				}
-				dataValidation.setShowErrorBox(poiValidation.getShowErrorBox());
-				dataValidation.setShowPromptBox(poiValidation.getShowPromptBox());
+				dataValidation.setShowDropDownArrow(poiValidation.getSuppressDropDownArrow());
 			}
+			dataValidation.setShowErrorBox(poiValidation.getShowErrorBox());
+			dataValidation.setShowPromptBox(poiValidation.getShowPromptBox());
+			/*
+			 * According to ISO/IEC 29500-1 \ 18.18.76  ST_Sqref (Reference Sequence) and A.2 
+			 * Its XML Schema indicates it's a required attribute, so CellRangeAddresses must have at least one address. 
+			 */
+			Set<CellRegion> regions = new HashSet<CellRegion>();
+			for(CellRangeAddress cellRangeAddr:cellRangeAddresses){
+				regions.add(new CellRegion(cellRangeAddr.formatAsString()));
+			}
+			dataValidation.setRegions(regions);
 		}
 	}
 	

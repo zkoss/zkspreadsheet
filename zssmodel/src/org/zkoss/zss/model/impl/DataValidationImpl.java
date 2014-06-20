@@ -16,7 +16,9 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.model.impl;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -58,7 +60,7 @@ public class DataValidationImpl extends AbstractDataValidationAdv {
 	private String _promptBoxText;
 	private String _errorBoxTitle;
 	private String _errorBoxText;
-	private CellRegion _region;
+	private Set<CellRegion> _regions;
 	private ValidationType _validationType = ValidationType.ANY;
 	private OperatorType _operatorType = OperatorType.BETWEEN;
 	
@@ -89,7 +91,7 @@ public class DataValidationImpl extends AbstractDataValidationAdv {
 			throw new IllegalStateException("doesn't connect to parent");
 		}
 	}
-
+	
 	@Override
 	public void destroy() {
 		checkOrphan();
@@ -182,40 +184,89 @@ public class DataValidationImpl extends AbstractDataValidationAdv {
 	}
 
 	@Override
-	public CellRegion getRegion() {
-		return _region;
+	public Set<CellRegion> getRegions() {
+		return _regions;
 	}
 	
 	@Override
-	void setRegion(CellRegion region) { // ZSS-648
+	public void addRegion(CellRegion region) { // ZSS-648
 		Validations.argNotNull(region);
-		if (region.equals(this._region)) return; // nothing change, let go
+		if (this._regions == null) {
+			this._regions = new HashSet<CellRegion>(2);
+		}
+		for (CellRegion regn : this._regions) {
+			if (regn.contains(region)) return; // already in this DataValidation, let go
+		}
+		
+		this._regions.add(region);
 		
 		// ZSS-648
-		// remove old ObjectRef
+		// Add new ObjectRef into DependencyTable so we can extend/shrink/move
 		Ref dependent = getRef();
-		Ref dummy = getDummyRef();
+		SBook book = _sheet.getBook();
+		final DependencyTable dt = 
+				((AbstractBookSeriesAdv) book.getBookSeries()).getDependencyTable();
+		// prepare a dummy CellRef to enforce DataValidation reference dependency
+		dt.add(dependent, newDummyRef(region));
+		
+		ModelUpdateUtil.addRefUpdate(dependent);
+	}
+	
+	@Override
+	public void removeRegion(CellRegion region) { // ZSS-694
+		Validations.argNotNull(region);
+		if (this._regions == null || this._regions.isEmpty()) return;
+		
+		List<CellRegion> newRegions = new ArrayList<CellRegion>();
+		List<CellRegion> delRegions = new ArrayList<CellRegion>();
+		for (CellRegion regn : this._regions) {
+			if (!regn.overlaps(region)) continue;
+			newRegions.addAll(regn.diff(region));
+			delRegions.add(regn);
+		}
+		
+		// no overlapping at all
+		if (newRegions.isEmpty() && delRegions.isEmpty()) {
+			return;
+		}
+
+		Ref dependent = getRef();
 		SBook book = _sheet.getBook();
 		final DependencyTable dt = 
 				((AbstractBookSeriesAdv) book.getBookSeries()).getDependencyTable();
 		final Set<Ref> precedents = ((DependencyTableAdv)dt).getDirectPrecedents(dependent);
-		if (precedents != null) precedents.remove(dummy);
 		dt.clearDependents(dependent);
 		
-		// Add new ObjectRef into DependencyTable so we can extend/shrink/move
-		this._region = region;
-		dependent = getRef();  // new dependent because region have changed
-		
-		// ZSS-648
-		// prepare a dummy CellRef to enforce DataValidation reference dependency
-		dummy = getDummyRef();
-		if (dummy != null) dt.add(dependent, dummy);
+		for (CellRegion regn : delRegions) {
+			this._regions.remove(regn);
+			precedents.remove(newDummyRef(regn));
+		}
 		
 		// restore dependent precedents relation
 		if (precedents != null) {
 			for (Ref precedent: precedents) {
 				dt.add(dependent, precedent);
 			}
+		}
+		
+		// add new split regions
+		for (CellRegion regn : newRegions) {
+			this._regions.add(regn);
+			dt.add(dependent, newDummyRef(regn));
+		}
+		
+		if (this._regions.isEmpty()) {
+			this._regions = null;
+		}
+		
+		ModelUpdateUtil.addRefUpdate(dependent);
+	}
+	
+	@Override
+	public void setRegions(Set<CellRegion> regions) {
+		_regions = new HashSet<CellRegion>(regions.size() * 4 / 3 + 1);
+		for (CellRegion rgn : regions) {
+			addRegion(rgn);
 		}
 	}
 
@@ -316,8 +367,9 @@ public class DataValidationImpl extends AbstractDataValidationAdv {
 			// ZSS-648
 			// must keep the region reference itself in DependencyTable; so add it back
 			if (!all) {
-				final Ref dummy = getDummyRef();
-				if (dummy != null) dt.add(dependent, dummy);
+				for (CellRegion regn : this._regions) {
+					dt.add(dependent, newDummyRef(regn));
+				}
 			}
 		}
 	}
@@ -332,17 +384,15 @@ public class DataValidationImpl extends AbstractDataValidationAdv {
 	}
 	
 	// ZSS-648
-	private Ref getDummyRef() {
-		return _region == null ? null :
-			new RefImpl(_sheet.getBook().getBookName(), _sheet.getSheetName(), 
-				_region.row, _region.column, _region.lastRow, _region.lastColumn);
+	private Ref newDummyRef(CellRegion regn) {
+		return new RefImpl(_sheet.getBook().getBookName(), _sheet.getSheetName(), 
+				regn.row, regn.column, regn.lastRow, regn.lastColumn);
 	}
 	
 	// ZSS-648
-	private Ref getDummyRef(String sheetName) {
-		return _region == null ? null :
-			new RefImpl(_sheet.getBook().getBookName(), sheetName, 
-				_region.row, _region.column, _region.lastRow, _region.lastColumn);
+	private Ref newDummyRef(String sheetName, CellRegion regn) {
+		return new RefImpl(_sheet.getBook().getBookName(), sheetName, 
+				regn.row, regn.column, regn.lastRow, regn.lastColumn);
 	}
 	
 	@Override
@@ -433,7 +483,7 @@ public class DataValidationImpl extends AbstractDataValidationAdv {
 			}
 			return list;
 		}
-		return Collections.EMPTY_LIST;
+		return Collections.emptyList();
 	}
 
 	@Override
@@ -471,21 +521,25 @@ public class DataValidationImpl extends AbstractDataValidationAdv {
 		
 		// remove old ObjectRef
 		Ref dependent = getRef(oldName);
-		Ref dummy = getDummyRef(oldName);
 		SBook book = _sheet.getBook();
 		final DependencyTable dt = 
 				((AbstractBookSeriesAdv) book.getBookSeries()).getDependencyTable();
 		final Set<Ref> precedents = ((DependencyTableAdv)dt).getDirectPrecedents(dependent);
-		if (precedents != null) precedents.remove(dummy);
+		if (precedents != null) {
+			for (CellRegion regn : this._regions) {
+				precedents.remove(newDummyRef(oldName, regn));
+			}
+		}
 		dt.clearDependents(dependent);
 		
 		// Add new ObjectRef into DependencyTable so we can extend/shrink/move
 		dependent = getRef(newName);  // new dependent because region have changed
 		
 		// ZSS-648
-		// prepare a dummy CellRef to enforce DataValidation reference dependency
-		dummy = getDummyRef(newName);
-		if (dummy != null) dt.add(dependent, dummy);
+		// prepare new dummy CellRef to enforce DataValidation reference dependency
+		for (CellRegion regn : this._regions) {
+			dt.add(dependent, newDummyRef(newName, regn));
+		}
 		
 		// restore dependent precedents relation
 		if (precedents != null) {
