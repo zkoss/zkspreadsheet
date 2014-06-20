@@ -440,6 +440,63 @@ public class Issue600Test {
 		Assert.assertFalse("Validation_2 in E2", d1regions.contains(new CellRegion("e2"))); // e2
 		Assert.assertTrue("Validation_2 in D2", d1regions.contains(new CellRegion("d2"))); // d2
 		Assert.assertTrue("Validation_2 in E1", d1regions.contains(new CellRegion("e1"))); // e1
+		
+		// 5. Copy E1 to Merged cell G1(G1:G4)
+		Range e1 = Ranges.range(sheet, "e1");
+		e1.paste(Ranges.range(sheet, "g1"));
+		
+		// Validation_2 still contains only D2 and E1 (copy and paste will not paste validation)
+		d1regions = d1dv.getRegions();
+		Assert.assertEquals("Number of regions in Validation_2", 2, d1regions.size());
+		Assert.assertTrue("Validation_2 in D2", d1regions.contains(new CellRegion("d2"))); // d2
+		Assert.assertTrue("Validation_2 in E1", d1regions.contains(new CellRegion("e1"))); // e1
+		Assert.assertFalse("Validation_2 in G1", d1regions.contains(new CellRegion("g1"))); // g1
+		
+		// 6. Cut E1 to Merged cell G1(G1:G4)
+		e1.paste(Ranges.range(sheet, "g1"), true);
+		
+		// 6.1. Validation_2 will be pasted to G1 which contains only D2 and G1; merged cell should be unmerged
+		d1regions = d1dv.getRegions();
+		Assert.assertEquals("Number of regions in Validation_2", 2, d1regions.size());
+		Assert.assertTrue("Validation_2 in D2", d1regions.contains(new CellRegion("d2"))); // d2
+		Assert.assertFalse("Validation_2 in E1", d1regions.contains(new CellRegion("e1"))); // e1
+		Assert.assertTrue("Validation_2 in G1", d1regions.contains(new CellRegion("g1"))); // g1
+	}
+
+	@Test
+	public void testZSS696CopyValidation() {
+		Object[] books = _loadBooks(this, "book/696-cut-paste-mergecell.xlsx");
+		Book book = (Book) books[0];
+		Sheet sheet = book.getSheet("Sheet1");
+		
+		// 1. Validation_2 in D1:E2
+		SSheet ssheet = sheet.getInternalSheet();
+		SDataValidation d1dv = ssheet.getDataValidation(0, 3); // validation in  d1
+		Set<CellRegion> d1regions = d1dv.getRegions();
+		Assert.assertEquals("Number of regions Validation_2", 1, d1regions.size());
+		Assert.assertTrue("Validation_2 in D1:E2", d1regions.contains(new CellRegion("d1:e2"))); // d1:e2
+
+		// 2. Copy E1 to Merged cell G1(G1:G4)
+		Range e1 = Ranges.range(sheet, "e1");
+		e1.paste(Ranges.range(sheet, "g1"));
+		
+		// 2.1 cannot copy paste Validation_2 to merged cell.
+		d1regions = d1dv.getRegions();
+		Assert.assertEquals("Number of regions in Validation_2", 1, d1regions.size());
+		Assert.assertTrue("Validation_2 in D1:E2", d1regions.contains(new CellRegion("d1:e2"))); // d1:e2
+		Assert.assertTrue("G1:G4 is a merged cell", Ranges.range(sheet, "g1:g4").isMergedCell());
+		
+		// 3. Cut E1 to Merged cell G1(G1:G4)
+		e1.paste(Ranges.range(sheet, "g1"), true);
+		
+		// 3.1. Validation_2 will be pasted to G1; D1, D2:E2, G1
+		d1regions = d1dv.getRegions();
+		Assert.assertEquals("Number of regions in Validation_2", 3, d1regions.size());
+		Assert.assertTrue("Validation_2 in D2", d1regions.contains(new CellRegion("d1"))); // d1
+		Assert.assertFalse("Validation_2 in E1", d1regions.contains(new CellRegion("e1"))); // e1
+		Assert.assertTrue("Validation_2 in E1", d1regions.contains(new CellRegion("d2:e2"))); // d2:e2
+		Assert.assertTrue("Validation_2 in G1", d1regions.contains(new CellRegion("g1"))); // g1
+		Assert.assertTrue("G1:G4 is an unmerged cell", !Ranges.range(sheet, "g1:g4").isMergedCell());
 	}
 
 	private static Object[] _loadBooks(Object base,String respath) {

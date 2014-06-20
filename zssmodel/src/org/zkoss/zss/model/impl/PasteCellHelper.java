@@ -29,10 +29,7 @@ import org.zkoss.zss.model.InvalidModelOpException;
 import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.SCell;
 import org.zkoss.zss.model.SCellStyle;
-import org.zkoss.zss.model.SColumn;
-import org.zkoss.zss.model.SComment;
 import org.zkoss.zss.model.SDataValidation;
-import org.zkoss.zss.model.SHyperlink;
 import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.model.PasteOption;
 import org.zkoss.zss.model.SheetRegion;
@@ -136,6 +133,7 @@ public class PasteCellHelper { //ZSS-693: promote visibility
 					pasteCells(srcBuffer,destRegion,cutFrom,option,rowOffset,columnOffset);
 					if (option.isCut()) { //ZSS-696: if cut and paste, must unmerge
 						pasteDataValidations(srcVBuffer, src, dest, option); // ZSS-694: only when CUT and paste
+						SRanges.range(_destSheet, mergedRegion).unmerge(); // ZSS-696: should unmerge when cut and paste
 					}
 					return dest;
 				}
