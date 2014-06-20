@@ -28,7 +28,7 @@ import org.zkoss.zss.api.model.Sheet;
  */
 public interface DataValidationHandler {
 	
-	public List<Map> loadDataValidtionJASON(Sheet sheet);
+	public List<Map<String, Object>> loadDataValidtionJASON(Sheet sheet);
 	
 	public boolean validate(Sheet sheet, final int row, final int col,
 			final String editText, final EventListener callback);

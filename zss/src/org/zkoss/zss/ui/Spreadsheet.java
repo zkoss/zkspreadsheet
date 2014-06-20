@@ -996,7 +996,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			smartUpdate("activeRange", activeRange);
 			
 			//handle Validation, must after render("activeRange"
-			List<Map> dvs = getDataValidationHandler().loadDataValidtionJASON(getSelectedSheet());
+			List<Map<String, Object>> dvs = getDataValidationHandler().loadDataValidtionJASON(getSelectedSheet());
 			if (dvs != null) {
 				smartUpdate("dataValidations", dvs);
 			} else {
@@ -1732,7 +1732,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		renderer.render("rowHeadHidden", _hideRowhead);
 		
 		//handle Validation, must after render("activeRange" ...)
-		List<Map> dvs = getDataValidationHandler().loadDataValidtionJASON(getSelectedSheet());
+		List<Map<String, Object>> dvs = getDataValidationHandler().loadDataValidtionJASON(getSelectedSheet());
 		if (dvs != null) {
 			renderer.render("dataValidations", dvs);
 		} else {
@@ -2710,7 +2710,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		//currently, we just update all validation (no suitable client api for now)
 		
 		//handle Validation, must after render("activeRange" ...)
-		List<Map> dvs = getDataValidationHandler().loadDataValidtionJASON(getSelectedSheet());
+		List<Map<String, Object>> dvs = getDataValidationHandler().loadDataValidtionJASON(getSelectedSheet());
 		if (dvs != null) {
 			smartUpdate("dataValidations", dvs);
 		} else {

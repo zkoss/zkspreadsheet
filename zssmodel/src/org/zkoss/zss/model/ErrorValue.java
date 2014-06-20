@@ -53,7 +53,7 @@ public class ErrorValue implements Serializable{
 	public static final ErrorValue NAME = new ErrorValue(INVALID_NAME, "#NAME?");
 	public static final ErrorValue NUM = new ErrorValue(ERROR_NUM, "#NUM!");
 	public static final ErrorValue NA = new ErrorValue(ERROR_NA, "#N/A");
-	public static final ErrorValue FORMULA = new ErrorValue(INVALID_FORMULA, "#N/A");//TODO
+	public static final ErrorValue FORMULA = new ErrorValue(INVALID_FORMULA, "#ERROR!");
 	 
 	private static final Map<Byte, ErrorValue> ERR_MAP = new HashMap<Byte, ErrorValue>(16);
 	static {
@@ -125,7 +125,7 @@ public class ErrorValue implements Serializable{
             case INVALID_NAME:  return "#NAME?";
             case ERROR_NUM:   return "#NUM!";
             case ERROR_NA:    return "#N/A";
-            case INVALID_FORMULA:    return "#N/A";//TODO
+            case INVALID_FORMULA:    return "#ERROR!"; // formula has error
         }
         return "#N/A";
 //        throw new IllegalArgumentException("Bad error code (" + errorCode + ")");

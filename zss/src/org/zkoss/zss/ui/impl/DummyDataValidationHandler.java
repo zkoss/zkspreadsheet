@@ -26,7 +26,7 @@ import org.zkoss.zss.ui.sys.DataValidationHandler;
 public class DummyDataValidationHandler implements DataValidationHandler {
 
 	@Override
-	public List<Map> loadDataValidtionJASON(Sheet sheet) {
+	public List<Map<String, Object>> loadDataValidtionJASON(Sheet sheet) {
 		return null;
 	}
 
