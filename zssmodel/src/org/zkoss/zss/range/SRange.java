@@ -16,6 +16,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.range;
 
+import java.util.List;
 import java.util.concurrent.locks.ReadWriteLock;
 
 import org.zkoss.zss.model.*;
@@ -23,6 +24,9 @@ import org.zkoss.zss.model.SAutoFilter.FilterOp;
 import org.zkoss.zss.model.SChart.ChartGrouping;
 import org.zkoss.zss.model.SChart.ChartLegendPosition;
 import org.zkoss.zss.model.SChart.ChartType;
+import org.zkoss.zss.model.SDataValidation.AlertStyle;
+import org.zkoss.zss.model.SDataValidation.OperatorType;
+import org.zkoss.zss.model.SDataValidation.ValidationType;
 import org.zkoss.zss.model.SHyperlink.HyperlinkType;
 import org.zkoss.zss.model.SPicture.Format;
 /**
@@ -786,4 +790,52 @@ public interface SRange {
 	 */
 	public SSheetProtection getSheetProtection();
 
+	/**
+	 * Add if not exist or modify an existing {@link SDataValidation} to this range.
+	 * @param validationType the type of this validation  
+	 * @param ignoreBlank true if blank values are permitted. 
+	 * @param operatorType the operator for this validation
+	 * @param inCellDropDown true if want to display dropdown list for acceptable values.
+	 * @param formula1 the value or expression associated with conditional format or data validation.
+	 * @param formula2 the 2nd part of a conditional format or data validation. Useful only when operatorType is BETWEEN or NOT_BETWEEN.
+	 * @param showInput true to show the input message.
+	 * @param inputTitle title for the data-validation input dialog box.
+	 * @param inputMessage message for the data-validation input dialog box.
+	 * @param showError true to show the error message.
+	 * @param alertStyle validation alert style.
+	 * @param errorTitle title of the data validation error dialog.
+	 * @param errorMessage data validation error message.
+	 * 
+	 * @See {@link #getValidation()}
+	 */
+	public void setValidation(
+			ValidationType validationType,
+			boolean ignoreBlank,
+			OperatorType operatorType,
+			boolean inCellDropDown,
+			String formula1,
+			String formula2,
+			
+			boolean showInput,
+			String inputTitle,
+			String inputMessage,
+			
+			boolean showError,
+			AlertStyle alertStyle,
+			String errorTitle,
+			String errorMessage);
+	
+	
+	/**
+	 * Gets {@link SDataValidation}s associated with this range; if more than 
+	 * one validation is present, will return at most two.
+	 * 
+	 * @see #setValidation(ValidationType, boolean, OperatorType, boolean, String, String, boolean, String, String, boolean, AlertStyle, String, String)
+	 */
+	public List<SDataValidation> getValidations();
+	
+	/**
+	 * Delete the {@link SDataValidation} associated in the specified range. 
+	 */
+	public void deleteValidation();
 }

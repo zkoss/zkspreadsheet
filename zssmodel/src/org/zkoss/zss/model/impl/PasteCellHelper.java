@@ -40,7 +40,6 @@ import org.zkoss.zss.model.sys.formula.FormulaEngine;
 import org.zkoss.zss.model.sys.formula.FormulaExpression;
 import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 import org.zkoss.zss.model.util.Validations;
-import org.zkoss.zss.range.SRanges;
 import org.zkoss.zss.range.impl.StyleUtil;
 /**
  * 
@@ -122,7 +121,7 @@ public class PasteCellHelper { //ZSS-693: promote visibility
 			clearCell(src);
 			clearMergeRegion(src);
 			cutFrom = src;
-			clearValidationRegion(srcSheet, srcRegion);
+			srcSheet.removeDataValidationRegion(srcRegion);
 		}
 		
 		// ZSS-608: Special Case - Copy a single cell to a merge cell
@@ -133,7 +132,7 @@ public class PasteCellHelper { //ZSS-693: promote visibility
 					pasteCells(srcBuffer,destRegion,cutFrom,option,rowOffset,columnOffset);
 					if (option.isCut()) { //ZSS-696: if cut and paste, must unmerge
 						pasteDataValidations(srcVBuffer, src, dest, option); // ZSS-694: only when CUT and paste
-						SRanges.range(_destSheet, mergedRegion).unmerge(); // ZSS-696: should unmerge when cut and paste
+						_destSheet.removeMergedRegion(mergedRegion, true); // ZSS-696: should unmerge when cut and paste
 					}
 					return dest;
 				}
@@ -215,7 +214,7 @@ public class PasteCellHelper { //ZSS-693: promote visibility
 			Set<CellRegion> destRegions = convertRegions(vb.regions, rowOffset, colOffset);
 			// clear Validation at destRegions 
 			for (CellRegion rgn : destRegions) {
-				clearValidationRegion(_destSheet, rgn);
+				_destSheet.removeDataValidationRegion(rgn);
 			}
 			
 			// past
@@ -385,21 +384,6 @@ public class PasteCellHelper { //ZSS-693: promote visibility
 			buffer.setFormula(srcCell.getFormulaValue());
 		}else{
 			buffer.setValue(srcCell.getValue());
-		}
-	}
-
-
-	//ZSS-694: clear Validation
-	private void clearValidationRegion(SSheet srcSheet, CellRegion srcRegion) {
-		List<SDataValidation> dels = new ArrayList<SDataValidation>();
-		for (SDataValidation validation : srcSheet.getDataValidations()) {
-			validation.removeRegion(srcRegion);
-			if (validation.getRegions() == null) {
-				dels.add(validation);
-			}
-		}
-		for (SDataValidation validation : dels) {
-			srcSheet.deleteDataValidation(validation);
 		}
 	}
 	

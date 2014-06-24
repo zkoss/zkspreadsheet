@@ -24,7 +24,7 @@ import org.zkoss.zss.model.SCellStyle.BorderType;
 import org.zkoss.zss.model.SCellStyle.FillPattern;
 import org.zkoss.zss.model.SCellStyle.VerticalAlignment;
 import org.zkoss.zss.model.SChart.*;
-import org.zkoss.zss.model.SDataValidation.ErrorStyle;
+import org.zkoss.zss.model.SDataValidation.AlertStyle;
 import org.zkoss.zss.model.SDataValidation.OperatorType;
 import org.zkoss.zss.model.SDataValidation.ValidationType;
 import org.zkoss.zss.model.SFont.TypeOffset;
@@ -519,48 +519,48 @@ public class ImExpTestBase {
 		assertNull(noValidation);
 	
 		SDataValidation one2Ten  = validationSheet.getDataValidation(1, 1);
-		assertEquals(ErrorStyle.STOP, one2Ten.getErrorStyle());
+		assertEquals(AlertStyle.STOP, one2Ten.getAlertStyle());
 		assertEquals(OperatorType.BETWEEN, one2Ten.getOperatorType());
 		assertEquals(ValidationType.INTEGER, one2Ten.getValidationType());
 		//error box
-		assertTrue(one2Ten.isShowErrorBox());
-		assertEquals("Sorry", one2Ten.getErrorBoxTitle());
-		assertEquals("1 - 10", one2Ten.getErrorBoxText());
+		assertTrue(one2Ten.isShowError());
+		assertEquals("Sorry", one2Ten.getErrorTitle());
+		assertEquals("1 - 10", one2Ten.getErrorMessage());
 		//prompt box
-		assertTrue(one2Ten.isShowPromptBox());
-		assertEquals("Notice", one2Ten.getPromptBoxTitle());
-		assertEquals("valid between 1 to 10", one2Ten.getPromptBoxText());
+		assertTrue(one2Ten.isShowInput());
+		assertEquals("Notice", one2Ten.getInputTitle());
+		assertEquals("valid between 1 to 10", one2Ten.getInputMessage());
 		
-		assertEquals(false, one2Ten.isShowDropDownArrow());
-		assertEquals(true, one2Ten.isEmptyCellAllowed());
-		assertEquals(true, one2Ten.isShowErrorBox());
-		assertEquals(true, one2Ten.isShowPromptBox());
+		assertEquals(false, one2Ten.isInCellDropdown());
+		assertEquals(true, one2Ten.isIgnoreBlank());
+		assertEquals(true, one2Ten.isShowError());
+		assertEquals(true, one2Ten.isShowInput());
 		
 		SDataValidation fourGrades  = validationSheet.getDataValidation(2, 1);
 		assertEquals(ValidationType.LIST, fourGrades.getValidationType());
-		assertEquals(ErrorStyle.WARNING, fourGrades.getErrorStyle());
-		assertEquals("$C$3:$F$3", fourGrades.getValue1Formula());
+		assertEquals(AlertStyle.WARNING, fourGrades.getAlertStyle());
+		assertEquals("$C$3:$F$3", fourGrades.getFormula1());
 		assertEquals(4, fourGrades.getNumOfValue1());
 		assertEquals(0, fourGrades.getNumOfValue2());
 		assertEquals("A", fourGrades.getValue1(0).toString());
 		assertEquals("B", fourGrades.getValue1(1).toString());
 		assertEquals("C", fourGrades.getValue1(2).toString());
 		assertEquals("D", fourGrades.getValue1(3).toString());
-		assertEquals(false, fourGrades.isShowDropDownArrow());
+		assertEquals(false, fourGrades.isInCellDropdown());
 		
 		SDataValidation dayAfter2014  = validationSheet.getDataValidation(3, 1);
-		assertEquals(ErrorStyle.INFO, dayAfter2014.getErrorStyle());
+		assertEquals(AlertStyle.INFO, dayAfter2014.getAlertStyle());
 		
 		SDataValidation lengthEquals10  = validationSheet.getDataValidation(4, 1);
-		assertEquals(ErrorStyle.STOP, lengthEquals10.getErrorStyle());
+		assertEquals(AlertStyle.STOP, lengthEquals10.getAlertStyle());
 		
 		SDataValidation limitedColors  = validationSheet.getDataValidation(5, 1);
 		assertEquals(ValidationType.LIST, limitedColors.getValidationType());
-		assertEquals("\"red, blue, green\"", limitedColors.getValue1Formula());
-		assertEquals(true, limitedColors.isShowDropDownArrow());
+		assertEquals("\"red, blue, green\"", limitedColors.getFormula1());
+		assertEquals(true, limitedColors.isInCellDropdown());
 		
 		SDataValidation custom  = validationSheet.getDataValidation(6, 1);
-		assertEquals(ValidationType.FORMULA, custom.getValidationType());
+		assertEquals(ValidationType.CUSTOM, custom.getValidationType());
 		
 		SDataValidation decimalRange  = validationSheet.getDataValidation(7, 1);
 		assertEquals(ValidationType.DECIMAL, decimalRange.getValidationType());

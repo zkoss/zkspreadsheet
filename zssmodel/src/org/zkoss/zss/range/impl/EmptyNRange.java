@@ -1,5 +1,7 @@
 package org.zkoss.zss.range.impl;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.locks.ReadWriteLock;
 
 import org.zkoss.zss.model.*;
@@ -8,6 +10,9 @@ import org.zkoss.zss.model.SCellStyle.BorderType;
 import org.zkoss.zss.model.SChart.ChartGrouping;
 import org.zkoss.zss.model.SChart.ChartLegendPosition;
 import org.zkoss.zss.model.SChart.ChartType;
+import org.zkoss.zss.model.SDataValidation.AlertStyle;
+import org.zkoss.zss.model.SDataValidation.OperatorType;
+import org.zkoss.zss.model.SDataValidation.ValidationType;
 import org.zkoss.zss.model.SHyperlink.HyperlinkType;
 import org.zkoss.zss.model.SPicture.Format;
 import org.zkoss.zss.range.*;
@@ -462,5 +467,26 @@ import org.zkoss.zss.range.*;
 	@Override
 	public SSheetProtection getSheetProtection() {
 		return null;
+	}
+
+	@Override
+	public void setValidation(ValidationType validationType,
+			boolean ignoreBlank, OperatorType operatorType,
+			boolean inCellDropDown, String formula1, String formula2,
+			boolean showInput, String inputTitle, String inputMessage,
+			boolean showError, AlertStyle alertStyle, String errorTitle,
+			String errorMessage) {
+		// do nothing
+	}
+
+	@Override
+	public List<SDataValidation> getValidations() {
+		// do nothing
+		return Collections.emptyList();
+	}
+	
+	@Override
+	public void deleteValidation() {
+		// do nothing
 	}
 }

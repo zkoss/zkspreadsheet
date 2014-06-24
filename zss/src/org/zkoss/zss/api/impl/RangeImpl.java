@@ -16,6 +16,8 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.api.impl;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.locks.ReadWriteLock;
 
 import org.zkoss.zss.api.CellVisitor;
@@ -38,6 +40,10 @@ import org.zkoss.zss.api.model.Picture;
 import org.zkoss.zss.api.model.Picture.Format;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.api.model.SheetProtection;
+import org.zkoss.zss.api.model.Validation;
+import org.zkoss.zss.api.model.Validation.AlertStyle;
+import org.zkoss.zss.api.model.Validation.OperatorType;
+import org.zkoss.zss.api.model.Validation.ValidationType;
 import org.zkoss.zss.api.model.impl.BookImpl;
 import org.zkoss.zss.api.model.impl.CellDataImpl;
 import org.zkoss.zss.api.model.impl.CellStyleImpl;
@@ -49,12 +55,14 @@ import org.zkoss.zss.api.model.impl.PictureImpl;
 import org.zkoss.zss.api.model.impl.SheetImpl;
 import org.zkoss.zss.api.model.impl.SimpleRef;
 import org.zkoss.zss.api.model.impl.SheetProtectionImpl;
+import org.zkoss.zss.api.model.impl.ValidationImpl;
 import org.zkoss.zss.model.CellRegion;
 import org.zkoss.zss.model.InvalidFormulaException;
 import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.SCell;
 import org.zkoss.zss.model.SCellStyle;
 import org.zkoss.zss.model.SChart;
+import org.zkoss.zss.model.SDataValidation;
 import org.zkoss.zss.model.SHyperlink;
 import org.zkoss.zss.model.SPicture;
 import org.zkoss.zss.model.SSheet;
@@ -730,5 +738,41 @@ public class RangeImpl implements Range{
 	public SheetProtection getSheetProtection() {
 		SSheetProtection ssp = _range.getSheetProtection();
 		return new SheetProtectionImpl(new SimpleRef<SSheet>(_range.getSheet()), new SimpleRef<SSheetProtection>(ssp));
+	}
+
+	@Override
+	public Validation validate(final String editText) {
+		SDataValidation dv = _range.validate(editText);
+		return new ValidationImpl(new SimpleRef<SDataValidation>(dv));
+	}
+
+	@Override
+	public void setValidation(ValidationType validationType,
+			boolean ignoreBlank, OperatorType operatorType,
+			boolean inCellDropDown, String formula1, String formula2,
+			boolean showInput, String inputTitle, String inputMessage,
+			boolean showError, AlertStyle alertStyle, String errorTitle,
+			String errorMessage) {
+		_range.setValidation(validationType.getNative(), 
+				ignoreBlank, operatorType.getNative(),
+				inCellDropDown, formula1, formula2,
+				showInput, inputTitle, inputMessage,
+				showError, alertStyle.getNative(), errorTitle,
+				errorMessage);
+	}
+
+	@Override
+	public List<Validation> getValidations() {
+		List<SDataValidation> dvs = _range.getValidations();
+		List<Validation> vs = new ArrayList<Validation>(dvs.size());
+		for (SDataValidation dv : dvs) {
+			vs.add(new ValidationImpl(new SimpleRef<SDataValidation>(dv)));
+		}
+		return vs;
+	}
+	
+	@Override
+	public void deleteValidation() {
+		_range.deleteValidation();
 	}
 }

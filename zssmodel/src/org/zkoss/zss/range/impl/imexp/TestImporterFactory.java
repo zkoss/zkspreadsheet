@@ -320,12 +320,14 @@ public class TestImporterFactory implements SImporterFactory{
 				SDataValidation dv0 = sheet1.addDataValidation(new CellRegion("D1"));
 				sheet1.getCell("E1").setValue("<A1:C1");
 				dv0.setValidationType(ValidationType.LIST);
-				dv0.setShowPromptBox(true);
-				dv0.setPromptBox("select form A1:C1", "you should select the value in A1:C1");
-				dv0.setShowErrorBox(true);
-				dv0.setErrorBox("Not in the list", "The value must in the list");
-				dv0.setShowDropDownArrow(true);
-				dv0.setFormula("A1:C1");
+				dv0.setShowInput(true);
+				dv0.setInputTitle("select form A1:C1");
+				dv0.setInputMessage("you should select the value in A1:C1");
+				dv0.setShowError(true);
+				dv0.setErrorTitle("Not in the list");
+				dv0.setErrorMessage("The value must in the list");
+				dv0.setInCellDropdown(true);
+				dv0.setFormula1("A1:C1");
 				
 				sheet1.addDataValidation(new CellRegion("F1:K1"),dv0);//test multiple place)
 				sheet1.getCell("L1").setValue("<F1:K1 by A1:C1");
@@ -333,25 +335,26 @@ public class TestImporterFactory implements SImporterFactory{
 				SDataValidation dv1 = sheet1.addDataValidation(new CellRegion("D2"));
 				sheet1.getCell("E2").setValue("<A2:C2");
 				dv1.setValidationType(ValidationType.LIST);
-				dv1.setFormula("A2:C2");
-				dv1.setShowErrorBox(true);
-				dv1.setErrorBox("Not in the list", "The value must in the list A2:C2");
-				dv1.setShowDropDownArrow(true);
+				dv1.setFormula1("A2:C2");
+				dv1.setShowError(true);
+				dv1.setErrorTitle("Not in the list");
+				dv1.setErrorMessage("The value must in the list A2:C2");
+				dv1.setInCellDropdown(true);
 				
 				
 				SDataValidation dv2 = sheet1.addDataValidation(new CellRegion("D3"));
 				sheet1.getCell("E3").setValue("<A3:C3");
 				dv2.setValidationType(ValidationType.LIST);
-				dv2.setFormula("A3:C3");
-				dv2.setShowDropDownArrow(true);
-				dv2.setShowErrorBox(true);
+				dv2.setFormula1("A3:C3");
+				dv2.setInCellDropdown(true);
+				dv2.setShowError(true);
 				
 				SDataValidation dv3 = sheet1.addDataValidation(new CellRegion("D4"));
 				sheet1.getCell("E4").setValue("<A1:C3");
 				dv3.setValidationType(ValidationType.LIST);
-				dv3.setFormula("A1:C3");
-				dv3.setShowDropDownArrow(true);
-				dv3.setShowErrorBox(true);
+				dv3.setFormula1("A1:C3");
+				dv3.setInCellDropdown(true);
+				dv3.setShowError(true);
 				
 			}
 

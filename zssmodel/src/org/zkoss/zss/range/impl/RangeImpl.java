@@ -47,6 +47,9 @@ import org.zkoss.zss.model.SChart.ChartLegendPosition;
 import org.zkoss.zss.model.SChart.ChartType;
 import org.zkoss.zss.model.SColumn;
 import org.zkoss.zss.model.SDataValidation;
+import org.zkoss.zss.model.SDataValidation.AlertStyle;
+import org.zkoss.zss.model.SDataValidation.OperatorType;
+import org.zkoss.zss.model.SDataValidation.ValidationType;
 import org.zkoss.zss.model.SHyperlink;
 import org.zkoss.zss.model.SHyperlink.HyperlinkType;
 import org.zkoss.zss.model.SPicture;
@@ -62,9 +65,11 @@ import org.zkoss.zss.model.impl.AbstractBookSeriesAdv;
 import org.zkoss.zss.model.impl.AbstractSheetAdv;
 import org.zkoss.zss.model.impl.AbstractNameAdv;
 import org.zkoss.zss.model.impl.AbstractCellAdv;
+import org.zkoss.zss.model.impl.DataValidationImpl;
 import org.zkoss.zss.model.impl.FormulaCacheCleaner;
 import org.zkoss.zss.model.impl.RefImpl;
 import org.zkoss.zss.model.impl.NameRefImpl;
+import org.zkoss.zss.model.impl.AbstractDataValidationAdv;
 import org.zkoss.zss.model.sys.EngineFactory;
 import org.zkoss.zss.model.sys.dependency.DependencyTable;
 import org.zkoss.zss.model.sys.dependency.DependencyTable.RefFilter;
@@ -1856,5 +1861,91 @@ public class RangeImpl implements SRange {
 	@Override
 	public SSheetProtection getSheetProtection() {
 		return getSheet().getSheetProtection();
+	}
+
+	@Override
+	public void setValidation(final ValidationType validationType,
+			final boolean ignoreBlank, final OperatorType operatorType,
+			final boolean inCellDropDown, final String formula1, final String formula2,
+			final boolean showInput, final String inputTitle, final String inputMessage,
+			final boolean showError, final AlertStyle alertStyle, final String errorTitle,
+			final String errorMessage) {
+		// empty validation
+		if (validationType == ValidationType.ANY 
+				&& inputTitle == null && inputMessage == null 
+				&& errorTitle == null && errorMessage == null) {
+			return;
+		}
+		new ReadWriteTask() {			
+			@Override
+			public Object invoke() {
+				setValidaitonInLock(validationType,
+						ignoreBlank, operatorType,
+						inCellDropDown, formula1, formula2,
+						showInput, inputTitle, inputMessage,
+						showError, alertStyle, errorTitle,
+						errorMessage);
+				return null;
+			}
+		}.doInWriteLock(getLock());
+	}
+			
+	private void setValidaitonInLock(ValidationType validationType,
+			boolean ignoreBlank, OperatorType operatorType,
+			boolean inCellDropDown, String formula1, String formula2,
+			boolean showInput, String inputTitle, String inputMessage,
+			boolean showError, AlertStyle alertStyle, String errorTitle,
+			String errorMessage) {
+		SDataValidation dv = getSheet().getDataValidation(getRow(), getColumn());
+		if (dv == null) {
+			dv = getSheet().addDataValidation(new CellRegion(getRow(), getColumn(), getLastRow(), getLastColumn()));
+		}
+		dv.setValidationType(validationType);
+		dv.setIgnoreBlank(ignoreBlank);
+		dv.setOperatorType(operatorType);
+		dv.setInCellDropdown(inCellDropDown);
+		dv.setFormula1(formula1);
+		dv.setFormula2(formula2);
+		dv.setShowInput(showInput);
+		dv.setInputTitle(inputTitle);
+		dv.setInputMessage(inputMessage);
+		dv.setShowError(showError);
+		dv.setAlertStyle(alertStyle);
+		dv.setErrorTitle(errorTitle);
+		dv.setErrorMessage(errorMessage);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<SDataValidation> getValidations() {
+		return (List<SDataValidation>) new ReadWriteTask() {
+			@Override
+			public Object invoke() {
+				final CellRegion region = new CellRegion(getRow(), getColumn(), getLastRow(), getLastColumn());
+				List<SDataValidation> results = new ArrayList<SDataValidation>();
+				for (SDataValidation dv: getSheet().getDataValidations()) {
+					for (CellRegion rgn : dv.getRegions()) {
+						if (rgn.overlaps(region)) {
+							results.add(dv);
+							break;
+						}
+					}
+					if (results.size() > 1) break;
+				}
+				return results;
+			}
+		}.doInReadLock(getLock());
+	}
+	
+	@Override
+	public void deleteValidation() {
+		new ReadWriteTask() {			
+			@Override
+			public Object invoke() {
+				getSheet().removeDataValidationRegion( 
+				  new CellRegion(getRow(), getColumn(), getLastRow(), getLastColumn()));
+				return null;
+			}
+		}.doInWriteLock(getLock());
 	}
 }

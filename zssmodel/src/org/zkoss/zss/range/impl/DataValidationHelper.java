@@ -65,7 +65,7 @@ public class DataValidationHelper {
 		//ignore empty and value is empty
 		if (vtype!=ValidationType.TEXT_LENGTH 
 				&& (value == null || (value instanceof String && ((String)value).length() == 0))) {
-			if (_validation.isEmptyCellAllowed()) {
+			if (_validation.isIgnoreBlank()) {
 				return true;
 			}
 		}
@@ -120,7 +120,7 @@ public class DataValidationHelper {
 				}
 				break;
 			// Formula ( 'Custom' ) type
-			case FORMULA:
+			case CUSTOM:
 				//zss 3.5 log it
 				success = false;
 //				throw new UnsupportedOperationException("Custom Validation is not supported yet!");
@@ -207,4 +207,5 @@ public class DataValidationHelper {
 		return false;
 	}
 
+	
 }

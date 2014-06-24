@@ -174,8 +174,8 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 		FormulaEngine engine = getFormulaEngine();
 		
 		// update Validation's formula if any
-		String f1 = validation.getValue1Formula();
-		String f2 = validation.getValue2Formula();
+		String f1 = validation.getFormula1();
+		String f2 = validation.getFormula2();
 		boolean changed = false;
 		if (f1 != null) {
 			FormulaExpression exprf1 = engine.move(f1, sheetRegion, rowOffset, columnOffset, new FormulaParseContext(sheet, null));//null ref, no trace dependence here
@@ -192,7 +192,8 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 			}
 		}
 		if (changed) {
-			validation.setFormula(f1,  f2); // this will update DependencyTable
+			validation.setFormula1(f1);
+			validation.setFormula2(f2); // this will update DependencyTable
 		} else {
 			validation.clearFormulaResultCache();
 		}
@@ -399,8 +400,8 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 		FormulaEngine engine = getFormulaEngine();
 		
 		// update Validation's formula if any
-		String f1 = validation.getValue1Formula();
-		String f2 = validation.getValue2Formula();
+		String f1 = validation.getFormula1();
+		String f2 = validation.getFormula2();
 		boolean changed = false;
 		if (f1 != null) {
 			FormulaExpression exprf1 = engine.extend(f1, sheetRegion, horizontal, new FormulaParseContext(sheet, null));//null ref, no trace dependence here
@@ -417,7 +418,8 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 			}
 		}
 		if (changed) {
-			validation.setFormula(f1,  f2); // this will update DependencyTable
+			validation.setFormula1(f1);
+			validation.setFormula2(f2); // this will update DependencyTable
 		} else {
 			validation.clearFormulaResultCache();
 		}
@@ -615,8 +617,8 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 		FormulaEngine engine = getFormulaEngine();
 		
 		// update Validation's formula if any
-		String f1 = validation.getValue1Formula();
-		String f2 = validation.getValue2Formula();
+		String f1 = validation.getFormula1();
+		String f2 = validation.getFormula2();
 		boolean changed = false;
 		if (f1 != null) {
 			FormulaExpression exprf1 = engine.shrink(f1, sheetRegion, horizontal, new FormulaParseContext(sheet, null));//null ref, no trace dependence here
@@ -633,7 +635,8 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 			}
 		}
 		if (changed) {
-			validation.setFormula(f1,  f2); // this will update DependencyTable
+			validation.setFormula1(f1);
+			validation.setFormula2(f2); // this will update DependencyTable
 		} else {
 			validation.clearFormulaResultCache();
 		}
@@ -822,8 +825,8 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 		FormulaEngine engine = getFormulaEngine();
 		
 		// update Validation's formula if any
-		String f1 = validation.getValue1Formula();
-		String f2 = validation.getValue2Formula();
+		String f1 = validation.getFormula1();
+		String f2 = validation.getFormula2();
 		boolean changed = false;
 		if (f1 != null) {
 			FormulaExpression exprf1 = engine.renameSheet(f1, bookOfSheet, oldName, newName,new FormulaParseContext(sheet, null));//null ref, no trace dependence here
@@ -840,7 +843,8 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 			}
 		}
 		if (changed) {
-			validation.setFormula(f1,  f2); // this will update DependencyTable
+			validation.setFormula1(f1);
+			validation.setFormula2(f2); // this will update DependencyTable
 		} else {
 			validation.clearFormulaResultCache();
 		}

@@ -238,6 +238,7 @@ public interface SSheet {
 	public int getNumOfDataValidation();
 	public SDataValidation getDataValidation(int idx);
 	public List<SDataValidation> getDataValidations();
+	public void removeDataValidationRegion(CellRegion region);
 	
 	/**
 	 * @param row

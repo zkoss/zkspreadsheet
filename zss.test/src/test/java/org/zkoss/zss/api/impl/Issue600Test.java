@@ -22,6 +22,7 @@ import org.zkoss.zss.model.SBooks;
 import org.zkoss.zss.model.SDataValidation;
 import org.zkoss.zss.model.SName;
 import org.zkoss.zss.model.SSheet;
+import org.zkoss.zss.model.impl.CellValue;
 import org.zkoss.zss.range.SExporter;
 import org.zkoss.zss.range.impl.imexp.ExcelXlsExporter;
 import org.zkoss.zss.range.impl.imexp.ExcelXlsxExporter;
@@ -383,6 +384,22 @@ public class Issue600Test {
 		Assert.assertEquals(8D, sheet1.getCell("D2").getValue());
 	}
 
+	@Test
+	public void testZSS693SortFormulaCells() {
+		Object[] books = _loadBooks(this, "book/693-sort-formula-cells.xlsx");
+		Book book = (Book) books[0];
+		Sheet sheet = book.getSheet("Sheet1");
+		
+		Range c1_10 = Ranges.range(sheet, "C1:C10");
+		c1_10.sort(false); // sort from a -> z
+		
+		for (int r = 0; r < 10; ++r) {
+			Object cv = Ranges.range(sheet, r, 2).getCellValue();
+			Object ev = Ranges.range(sheet, r, 4).getCellValue();
+			Assert.assertEquals("Compare E"+ (r+1) + "and C" + (r+1), ev, cv);
+		}
+	}
+	
 	@Test
 	public void testZSS694CopyValidation() {
 		Object[] books = _loadBooks(this, "book/694-copy-validation.xlsx");

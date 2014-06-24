@@ -51,22 +51,22 @@ public class DataValidationImpl extends AbstractDataValidationAdv {
 	private AbstractSheetAdv _sheet;
 	final private String _id;
 	
-	private ErrorStyle _errorStyle = ErrorStyle.STOP;//default stop
-	private boolean _emptyCellAllowed = true;//default true
-	private boolean _showDropDownArrow;
-	private boolean _showPromptBox;
-	private boolean _showErrorBox;
-	private String _promptBoxTitle;
-	private String _promptBoxText;
-	private String _errorBoxTitle;
-	private String _errorBoxText;
+	private AlertStyle _alertStyle = AlertStyle.STOP;//default stop
+	private boolean _ignoreBlank = true;//default true
+	private boolean _showInCellDropdown;
+	private boolean _showInput;
+	private boolean _showError;
+	private String _inputTitle;
+	private String _inputMessage;
+	private String _errorTitle;
+	private String _errorMessage;
 	private Set<CellRegion> _regions;
 	private ValidationType _validationType = ValidationType.ANY;
 	private OperatorType _operatorType = OperatorType.BETWEEN;
 	
 	
-	private FormulaExpression _value1Expr;
-	private FormulaExpression _value2Expr;
+	private FormulaExpression _formula1Expr;
+	private FormulaExpression _formula2Expr;
 	private Object _evalValue1Result;
 	private Object _evalValue2Result;
 	
@@ -75,6 +75,21 @@ public class DataValidationImpl extends AbstractDataValidationAdv {
 	public DataValidationImpl(AbstractSheetAdv sheet,String id){
 		this._sheet = sheet;
 		this._id = id;
+	}
+	
+	public boolean isEmpty() {
+		return _validationType == ValidationType.ANY
+				&& _inputTitle == null
+				&& _inputMessage == null
+				&& _errorTitle == null
+				&& _errorMessage == null;
+	}
+	
+	public DataValidationImpl(AbstractSheetAdv sheet, AbstractDataValidationAdv copyFrom) {
+		this(sheet, (String) null);
+		if (copyFrom != null) {
+			this.copyFrom(copyFrom);
+		}
 	}
 	
 	public String getId(){
@@ -101,86 +116,93 @@ public class DataValidationImpl extends AbstractDataValidationAdv {
 	}
 	
 	@Override
-	public ErrorStyle getErrorStyle() {
-		return _errorStyle;
+	public AlertStyle getAlertStyle() {
+		return _alertStyle;
 	}
 
 	@Override
-	public void setErrorStyle(ErrorStyle errorStyle) {
-		Validations.argNotNull(errorStyle);
-		this._errorStyle = errorStyle;
+	public void setAlertStyle(AlertStyle alertStyle) {
+		Validations.argNotNull(alertStyle);
+		this._alertStyle = alertStyle;
 	}
 
 	@Override
-	public void setEmptyCellAllowed(boolean allowed) {
-		this._emptyCellAllowed = allowed;
+	public void setIgnoreBlank(boolean allowed) {
+		this._ignoreBlank = allowed;
 	}
 
 	@Override
-	public boolean isEmptyCellAllowed() {
-		return _emptyCellAllowed;
+	public boolean isIgnoreBlank() {
+		return _ignoreBlank;
 	}
 
 	@Override
-	public void setShowDropDownArrow(boolean show) {
-		_showDropDownArrow = show;
+	public void setInCellDropdown(boolean show) {
+		_showInCellDropdown = show;
 	}
 
 	@Override
-	public boolean isShowDropDownArrow() {
-		return _showDropDownArrow;
+	public boolean isInCellDropdown() {
+		return _showInCellDropdown;
 	}
 
 	@Override
-	public void setShowPromptBox(boolean show) {
-		_showPromptBox = show;
+	public void setShowInput(boolean show) {
+		_showInput = show;
 	}
 
 	@Override
-	public boolean isShowPromptBox() {
-		return _showPromptBox;
+	public boolean isShowInput() {
+		return _showInput;
 	}
 
 	@Override
-	public void setShowErrorBox(boolean show) {
-		_showErrorBox = show;
+	public void setShowError(boolean show) {
+		_showError = show;
 	}
 
 	@Override
-	public boolean isShowErrorBox() {
-		return _showErrorBox;
+	public boolean isShowError() {
+		return _showError;
 	}
 
 	@Override
-	public void setPromptBox(String title, String text) {
-		_promptBoxTitle = title;
-		_promptBoxText = text;
+	public void setInputTitle(String title) {
+		_inputTitle = title;
+	}
+	@Override
+	public void setInputMessage(String message) {
+		_inputMessage = message;
 	}
 
 	@Override
-	public String getPromptBoxTitle() {
-		return _promptBoxTitle;
+	public String getInputTitle() {
+		return _inputTitle;
 	}
 
 	@Override
-	public String getPromptBoxText() {
-		return _promptBoxText;
+	public String getInputMessage() {
+		return _inputMessage;
 	}
 
 	@Override
-	public void setErrorBox(String title, String text) {
-		_errorBoxTitle = title;
-		_errorBoxText = text;
+	public void setErrorTitle(String title) {
+		_errorTitle = title;
+	}
+	
+	@Override
+	public void setErrorMessage(String text) {
+		_errorMessage = text;
 	}
 
 	@Override
-	public String getErrorBoxTitle() {
-		return _errorBoxTitle;
+	public String getErrorTitle() {
+		return _errorTitle;
 	}
 
 	@Override
-	public String getErrorBoxText() {
-		return _errorBoxText;
+	public String getErrorMessage() {
+		return _errorMessage;
 	}
 
 	@Override
@@ -295,11 +317,11 @@ public class DataValidationImpl extends AbstractDataValidationAdv {
 	@Override
 	public boolean isFormulaParsingError() {
 		boolean r = false;
-		if(_value1Expr!=null){
-			r |= _value1Expr.hasError();
+		if(_formula1Expr!=null){
+			r |= _formula1Expr.hasError();
 		}
-		if(!r && _value2Expr!=null){
-			r |= _value2Expr.hasError();
+		if(!r && _formula2Expr!=null){
+			r |= _formula2Expr.hasError();
 		}
 		return r;
 	}
@@ -341,22 +363,17 @@ public class DataValidationImpl extends AbstractDataValidationAdv {
 	}
 
 	@Override
-	public String getValueFormula() {
-		return getValue1Formula();
-	}
-	
-	@Override
-	public String getValue1Formula() {
-		return _value1Expr==null?null:_value1Expr.getFormulaString();
+	public String getFormula1() {
+		return _formula1Expr==null?null:_formula1Expr.getFormulaString();
 	}
 
 	@Override
-	public String getValue2Formula() {
-		return _value2Expr==null?null:_value2Expr.getFormulaString();
+	public String getFormula2() {
+		return _formula2Expr==null?null:_formula2Expr.getFormulaString();
 	}
 
 	private void clearFormulaDependency(boolean all) { // ZSS-648
-		if(_value1Expr!=null || _value2Expr!=null){
+		if(_formula1Expr!=null || _formula2Expr!=null){
 			Ref dependent = getRef();
 			DependencyTable dt = 
 			((AbstractBookSeriesAdv) _sheet.getBook().getBookSeries())
@@ -396,11 +413,7 @@ public class DataValidationImpl extends AbstractDataValidationAdv {
 	}
 	
 	@Override
-	public void setFormula(String valueExpression) {
-		setFormula(valueExpression,null);
-	}
-	@Override
-	public void setFormula(String value1Expression, String value2Expression) {
+	public void setFormula1(String formula1) {
 		checkOrphan();
 		_evaluated = false;
 		clearFormulaDependency(false);
@@ -409,15 +422,27 @@ public class DataValidationImpl extends AbstractDataValidationAdv {
 		FormulaEngine fe = EngineFactory.getInstance().createFormulaEngine();
 		
 		Ref ref = getRef();
-		if(value1Expression!=null){
-			_value1Expr = fe.parse(value1Expression, new FormulaParseContext(_sheet,ref));
+		if(formula1!=null){
+			_formula1Expr = fe.parse(formula1, new FormulaParseContext(_sheet,ref));
 		}else{
-			_value1Expr = null;
+			_formula1Expr = null;
 		}
-		if(value2Expression!=null){
-			_value2Expr = fe.parse(value2Expression, new FormulaParseContext(_sheet,ref));
+	}
+	
+	@Override
+	public void setFormula2(String formula2) {
+		checkOrphan();
+		_evaluated = false;
+		clearFormulaDependency(false);
+		clearFormulaResultCache();
+		
+		FormulaEngine fe = EngineFactory.getInstance().createFormulaEngine();
+		
+		Ref ref = getRef();
+		if(formula2!=null){
+			_formula1Expr = fe.parse(formula2, new FormulaParseContext(_sheet,ref));
 		}else{
-			_value2Expr = null;
+			_formula1Expr = null;
 		}
 	}
 
@@ -431,8 +456,8 @@ public class DataValidationImpl extends AbstractDataValidationAdv {
 		if(!_evaluated){
 			Ref ref = getRef();
 			FormulaEngine fe = EngineFactory.getInstance().createFormulaEngine();
-			if(_value1Expr!=null){
-				EvaluationResult result = fe.evaluate(_value1Expr,new FormulaEvaluationContext(_sheet,ref));
+			if(_formula1Expr!=null){
+				EvaluationResult result = fe.evaluate(_formula1Expr,new FormulaEvaluationContext(_sheet,ref));
 
 				Object val = result.getValue();
 				if(result.getType() == ResultType.SUCCESS){
@@ -442,8 +467,8 @@ public class DataValidationImpl extends AbstractDataValidationAdv {
 				}
 				
 			}
-			if(_value2Expr!=null){
-				EvaluationResult result = fe.evaluate(_value2Expr,new FormulaEvaluationContext(_sheet,ref));
+			if(_formula2Expr!=null){
+				EvaluationResult result = fe.evaluate(_formula2Expr,new FormulaEvaluationContext(_sheet,ref));
 
 				Object val = result.getValue();
 				if(result.getType() == ResultType.SUCCESS){
@@ -459,11 +484,11 @@ public class DataValidationImpl extends AbstractDataValidationAdv {
 	
 	@Override
 	public List<SCell> getReferToCellList(){
-		if(_value1Expr!=null && _value1Expr.isAreaRefs()){
+		if(_formula1Expr!=null && _formula1Expr.isAreaRefs()){
 			List<SCell> list = new LinkedList<SCell>();
 			SBookSeries bookSeries = _sheet.getBook().getBookSeries(); 
 			
-			Ref areaRef = _value1Expr.getAreaRefs()[0];
+			Ref areaRef = _formula1Expr.getAreaRefs()[0];
 			String bookName =  areaRef.getBookName();
 			String sheetName = areaRef.getSheetName();
 			CellRegion region = new CellRegion(areaRef.getRow(),areaRef.getColumn(),areaRef.getLastRow(),areaRef.getLastColumn());
@@ -488,28 +513,28 @@ public class DataValidationImpl extends AbstractDataValidationAdv {
 
 	@Override
 	public boolean hasReferToCellList() {
-		return _value1Expr!=null && _value1Expr.isAreaRefs();
+		return _formula1Expr!=null && _formula1Expr.isAreaRefs();
 	}
 
 	@Override
 	void copyFrom(AbstractDataValidationAdv src) {
 		Validations.argInstance(src, DataValidationImpl.class);
 		DataValidationImpl srcImpl = (DataValidationImpl)src;
-		_errorStyle = srcImpl._errorStyle;
-		_emptyCellAllowed = srcImpl._emptyCellAllowed;
-		_showDropDownArrow = srcImpl._showDropDownArrow;
-		_showPromptBox = srcImpl._showPromptBox;
-		_showErrorBox = srcImpl._showErrorBox;
-		_promptBoxTitle = srcImpl._promptBoxTitle;
-		_promptBoxText = srcImpl._promptBoxText;
-		_errorBoxTitle = srcImpl._errorBoxTitle;
-		_errorBoxText = srcImpl._errorBoxText;
+		_alertStyle = srcImpl._alertStyle;
+		_ignoreBlank = srcImpl._ignoreBlank;
+		_showInCellDropdown = srcImpl._showInCellDropdown;
+		_showInput = srcImpl._showInput;
+		_showError = srcImpl._showError;
+		_inputTitle = srcImpl._inputTitle;
+		_inputMessage = srcImpl._inputMessage;
+		_errorTitle = srcImpl._errorTitle;
+		_errorMessage = srcImpl._errorMessage;
 		_validationType = srcImpl._validationType;
 		_operatorType = srcImpl._operatorType;
 		
-		if(srcImpl._value1Expr!=null){
-			setFormula(srcImpl._value1Expr==null?null:srcImpl._value1Expr.getFormulaString()
-					, srcImpl._value2Expr==null?null:srcImpl._value2Expr.getFormulaString());
+		if(srcImpl._formula1Expr!=null){
+			setFormula1(srcImpl._formula1Expr==null?null:srcImpl._formula1Expr.getFormulaString());
+			setFormula2(srcImpl._formula2Expr==null?null:srcImpl._formula2Expr.getFormulaString());
 		}
 	}
 	

@@ -10,7 +10,8 @@ ZK Spreadsheet 3.5.0
   ZSS-678 Support creating reference between two sheets
   ZSS-691 Support calculation in Excel's double precision
   ZSS-459 VALUE function support smart input format
-  
+  ZSS-702 Fine tune DataValidation to hold multiple regions 
+ 
 *Bugs:
   ZSS-652 Cut Formula shouldn't be shifted when it is not in cut range
   ZSS-655 Formula that contains Name doesn't update
@@ -43,6 +44,7 @@ ZK Spreadsheet 3.5.0
   ZSS-693 Sorting should shift formula accordingly
   ZSS-694 The Validation of a Cell should be pasted to the new range accordingly.
   ZSS-696 Cut a single cell and Paste to a merged cell should unmerge the merged cell and paste to the left-top cell of the original merged cell
+  ZSS-675 Context menu does not close when left click inside the selection
   
 ** Upgrade Notes
   * Following api are deprecated

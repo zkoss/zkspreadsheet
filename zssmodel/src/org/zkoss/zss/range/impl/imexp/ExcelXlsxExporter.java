@@ -432,8 +432,8 @@ public class ExcelXlsxExporter extends AbstractExcelExporter {
 	protected void exportValidation(SSheet sheet, Sheet poiSheet) {
 		for (SDataValidation validation : sheet.getDataValidations()){
 			int operatorType = PoiEnumConversion.toPoiOperatorType(validation.getOperatorType());
-			String formula1 = validation.getValue1Formula();
-			String formula2 = validation.getValue2Formula();
+			String formula1 = validation.getFormula1();
+			String formula2 = validation.getFormula2();
 			DataValidationConstraint constraint = null;
 			switch(validation.getValidationType()){
 				case TIME:
@@ -452,7 +452,7 @@ public class ExcelXlsxExporter extends AbstractExcelExporter {
 				case INTEGER:
 					constraint = poiSheet.getDataValidationHelper().createIntegerConstraint(operatorType, formula1, formula2);
 					break;
-				case FORMULA: // custom
+				case CUSTOM: // custom
 					constraint = poiSheet.getDataValidationHelper().createCustomConstraint(formula1);
 					break;
 				case DECIMAL:
@@ -471,15 +471,15 @@ public class ExcelXlsxExporter extends AbstractExcelExporter {
 				rgnList.addCellRangeAddress(rgn.getRow(), rgn.getColumn(), rgn.getLastRow(), rgn.getLastColumn());
 			}
 			
-			poiValidation.setEmptyCellAllowed(validation.isEmptyCellAllowed());
-			poiValidation.setSuppressDropDownArrow(validation.isShowDropDownArrow());
+			poiValidation.setEmptyCellAllowed(validation.isIgnoreBlank());
+			poiValidation.setSuppressDropDownArrow(validation.isInCellDropdown());
 			
-			poiValidation.setErrorStyle(PoiEnumConversion.toPoiErrorStyle(validation.getErrorStyle()));
-			poiValidation.createErrorBox(validation.getErrorBoxTitle(), validation.getErrorBoxText());
-			poiValidation.setShowErrorBox(validation.isShowErrorBox());
+			poiValidation.setErrorStyle(PoiEnumConversion.toPoiErrorStyle(validation.getAlertStyle()));
+			poiValidation.createErrorBox(validation.getErrorTitle(), validation.getErrorMessage());
+			poiValidation.setShowErrorBox(validation.isShowError());
 			
-			poiValidation.createPromptBox(validation.getPromptBoxTitle(), validation.getPromptBoxText());
-			poiValidation.setShowPromptBox(validation.isShowPromptBox());
+			poiValidation.createPromptBox(validation.getInputTitle(), validation.getInputMessage());
+			poiValidation.setShowPromptBox(validation.isShowInput());
 			
 			poiSheet.addValidationData(poiValidation);
 		}

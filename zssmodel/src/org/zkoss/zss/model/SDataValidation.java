@@ -28,11 +28,11 @@ public interface SDataValidation extends FormulaContent{
 	/**
 	 * @since 3.5.0
 	 */
-	public enum ErrorStyle {
+	public enum AlertStyle {
 		STOP((byte)0x00), WARNING((byte)0x01), INFO((byte)0x02);
 		
 		private byte value;
-		ErrorStyle(byte value){
+		AlertStyle(byte value){
 			this.value = value;
 		}
 		
@@ -46,7 +46,7 @@ public interface SDataValidation extends FormulaContent{
 	 */
 	public enum ValidationType {
 		ANY, INTEGER, DECIMAL, LIST, 
-		DATE, TIME, TEXT_LENGTH, FORMULA;
+		DATE, TIME, TEXT_LENGTH, CUSTOM;
 
 	}
 	
@@ -60,28 +60,30 @@ public interface SDataValidation extends FormulaContent{
 	
 	public SSheet getSheet();
 	
-	public ErrorStyle getErrorStyle();
-	public void setErrorStyle(ErrorStyle errorStyle);
+	public AlertStyle getAlertStyle();
+	public void setAlertStyle(AlertStyle alertStyle);
 	
-	public void setEmptyCellAllowed(boolean allowed);
-	public boolean isEmptyCellAllowed();
+	public void setIgnoreBlank(boolean ignore);
+	public boolean isIgnoreBlank();
 	
-	public void setShowDropDownArrow(boolean show);
-	public boolean isShowDropDownArrow();
+	public void setInCellDropdown(boolean show);
+	public boolean isInCellDropdown();
 	
-	public void setShowPromptBox(boolean show);
-	public boolean isShowPromptBox();
+	public void setShowInput(boolean show);
+	public boolean isShowInput();
 
-	public void setShowErrorBox(boolean show);
-	public boolean isShowErrorBox();
+	public void setShowError(boolean show);
+	public boolean isShowError();
 
-	public void setPromptBox(String title, String text);
-	public String getPromptBoxTitle();
-	public String getPromptBoxText();
+	public void setInputTitle(String title);
+	public void setInputMessage(String message);
+	public String getInputTitle();
+	public String getInputMessage();
 
-	public void setErrorBox(String title, String text);
-	public String getErrorBoxTitle();
-	public String getErrorBoxText();
+	public void setErrorTitle(String title);
+	public void setErrorMessage(String message);
+	public String getErrorTitle();
+	public String getErrorMessage();
 
 	public Set<CellRegion> getRegions();
 	public void setRegions(Set<CellRegion> regions);
@@ -110,11 +112,10 @@ public interface SDataValidation extends FormulaContent{
 	public int getNumOfValue2();
 	public Object getValue2(int i);
 	
-	public String getValueFormula();
-	public String getValue1Formula();
-	public String getValue2Formula();
-	public void setFormula(String valueExpr);
-	public void setFormula(String value1Expr,String value2Expr);
+	public String getFormula1();
+	public String getFormula2();
+	public void setFormula1(String formula);
+	public void setFormula2(String formula);
 
 	public Object getId();
 }

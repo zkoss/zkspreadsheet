@@ -2559,7 +2559,7 @@ public class ModelTest {
 		SDataValidation dv3 = sheet1.addDataValidation(new CellRegion(1,3));
 		//LIST
 		dv1.setValidationType(ValidationType.LIST);
-		dv1.setFormula("A1:C1");
+		dv1.setFormula1("A1:C1");
 		
 		Assert.assertEquals(3, dv1.getNumOfValue1());
 		Assert.assertEquals(0, dv1.getNumOfValue2());
@@ -2569,14 +2569,16 @@ public class ModelTest {
 		
 		
 		dv2.setValidationType(ValidationType.INTEGER);
-		dv2.setFormula("A1","C1");
+		dv2.setFormula1("A1");
+		dv2.setFormula2("C1");
 		Assert.assertEquals(1, dv2.getNumOfValue1());
 		Assert.assertEquals(1, dv2.getNumOfValue2());
 		Assert.assertEquals(1D, dv2.getValue1(0));
 		Assert.assertEquals(3D, dv2.getValue2(0));
 		
 		dv3.setValidationType(ValidationType.INTEGER);
-		dv3.setFormula("AVERAGE(A1:C1)","SUM(A1:C1)");
+		dv3.setFormula1("AVERAGE(A1:C1)");
+		dv3.setFormula2("SUM(A1:C1)");
 		Assert.assertEquals(1, dv3.getNumOfValue1());
 		Assert.assertEquals(1, dv3.getNumOfValue2());
 		Assert.assertEquals(2D, dv3.getValue1(0));

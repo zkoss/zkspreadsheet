@@ -29,7 +29,7 @@ import org.zkoss.zss.model.SCellStyle.VerticalAlignment;
 import org.zkoss.zss.model.SChart.BarDirection;
 import org.zkoss.zss.model.SChart.ChartLegendPosition;
 import org.zkoss.zss.model.SChart.ChartGrouping;
-import org.zkoss.zss.model.SDataValidation.ErrorStyle;
+import org.zkoss.zss.model.SDataValidation.AlertStyle;
 import org.zkoss.zss.model.SDataValidation.OperatorType;
 import org.zkoss.zss.model.SDataValidation.ValidationType;
 import org.zkoss.zss.model.SFont.Boldweight;
@@ -699,7 +699,7 @@ public class PoiEnumConversion {
 		}
 	}
 
-	public static int toPoiErrorStyle(ErrorStyle style){
+	public static int toPoiErrorStyle(AlertStyle style){
 		switch(style){
 		case INFO:
 			return DataValidation.ErrorStyle.INFO;
@@ -711,15 +711,15 @@ public class PoiEnumConversion {
 		}
 	}
 	
-	public static ErrorStyle toErrorStyle(int errorStyle){
+	public static AlertStyle toErrorStyle(int errorStyle){
 		switch(errorStyle){
 			case DataValidation.ErrorStyle.INFO:
-				return ErrorStyle.INFO;
+				return AlertStyle.INFO;
 			case DataValidation.ErrorStyle.WARNING:
-				return ErrorStyle.WARNING;
+				return AlertStyle.WARNING;
 			case DataValidation.ErrorStyle.STOP:
 			default:
-					return ErrorStyle.STOP;
+					return AlertStyle.STOP;
 		}
 	}
 
@@ -735,7 +735,7 @@ public class PoiEnumConversion {
 			case DataValidationConstraint.ValidationType.INTEGER:
 				return ValidationType.INTEGER;
 			case DataValidationConstraint.ValidationType.FORMULA:
-				return ValidationType.FORMULA;
+				return ValidationType.CUSTOM;
 			case DataValidationConstraint.ValidationType.DECIMAL:
 				return ValidationType.DECIMAL;
 			case DataValidationConstraint.ValidationType.DATE:

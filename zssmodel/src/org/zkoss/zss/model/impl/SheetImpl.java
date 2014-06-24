@@ -1703,6 +1703,21 @@ public class SheetImpl extends AbstractSheetAdv {
 		((AbstractDataValidationAdv)validationid).destroy();
 		_dataValidations.remove(validationid);
 	}
+	
+	@Override
+	public void removeDataValidationRegion(CellRegion region) {
+		List<SDataValidation> dels = new ArrayList<SDataValidation>();
+		for (SDataValidation validation : getDataValidations()) {
+			validation.removeRegion(region);
+			if (validation.getRegions() == null) {
+				dels.add(validation);
+			}
+		}
+		for (SDataValidation validation : dels) {
+			deleteDataValidation(validation);
+		}
+	}
+
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public List<SDataValidation> getDataValidations() {

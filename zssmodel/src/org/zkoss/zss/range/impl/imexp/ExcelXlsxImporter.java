@@ -34,7 +34,7 @@ import org.zkoss.poi.xssf.usermodel.*;
 import org.zkoss.poi.xssf.usermodel.charts.*;
 import org.zkoss.zss.model.*;
 import org.zkoss.zss.model.SChart.ChartType;
-import org.zkoss.zss.model.SDataValidation.ErrorStyle;
+import org.zkoss.zss.model.SDataValidation.AlertStyle;
 import org.zkoss.zss.model.SDataValidation.OperatorType;
 import org.zkoss.zss.model.SDataValidation.ValidationType;
 import org.zkoss.zss.model.chart.*;
@@ -463,14 +463,17 @@ public class ExcelXlsxImporter extends AbstractExcelImporter{
 			CellRangeAddress[] cellRangeAddresses = poiValidation.getRegions().getCellRangeAddresses();
 			DataValidationConstraint poiConstraint = poiValidation.getValidationConstraint();
 			// getExplicitListValues() will be represented as formula1
-			dataValidation.setFormula(poiConstraint.getFormula1(), poiConstraint.getFormula2());
+			dataValidation.setFormula1(poiConstraint.getFormula1());
+			dataValidation.setFormula2(poiConstraint.getFormula2());
 			dataValidation.setOperatorType(PoiEnumConversion.toOperatorType(poiConstraint.getOperator()));
 			dataValidation.setValidationType(PoiEnumConversion.toValidationType(poiConstraint.getValidationType()));
 			
-			dataValidation.setEmptyCellAllowed(poiValidation.getEmptyCellAllowed());
-			dataValidation.setErrorBox(poiValidation.getErrorBoxTitle(), poiValidation.getErrorBoxText());
-			dataValidation.setErrorStyle(PoiEnumConversion.toErrorStyle(poiValidation.getErrorStyle()));
-			dataValidation.setPromptBox(poiValidation.getPromptBoxTitle(), poiValidation.getPromptBoxText());
+			dataValidation.setIgnoreBlank(poiValidation.getEmptyCellAllowed());
+			dataValidation.setErrorTitle(poiValidation.getErrorBoxTitle());
+			dataValidation.setErrorMessage(poiValidation.getErrorBoxText());
+			dataValidation.setAlertStyle(PoiEnumConversion.toErrorStyle(poiValidation.getErrorStyle()));
+			dataValidation.setInputTitle(poiValidation.getPromptBoxTitle());
+			dataValidation.setInputMessage(poiValidation.getPromptBoxText());
 			if (poiConstraint.getValidationType() == DataValidationConstraint.ValidationType.LIST){
 				/* 
 				 * According to ISO/IEC 29500-1 \ 18.3.1.32  dataValidation (Data Validation) 
@@ -478,10 +481,10 @@ public class ExcelXlsxImporter extends AbstractExcelImporter{
 				 * attribute "showDropDown" won't exist and POI get false. But POI's API reverse its value again.
 				 * So we just directly accept the POI returned value.
 				 */
-				dataValidation.setShowDropDownArrow(poiValidation.getSuppressDropDownArrow());
+				dataValidation.setInCellDropdown(poiValidation.getSuppressDropDownArrow());
 			}
-			dataValidation.setShowErrorBox(poiValidation.getShowErrorBox());
-			dataValidation.setShowPromptBox(poiValidation.getShowPromptBox());
+			dataValidation.setShowError(poiValidation.getShowErrorBox());
+			dataValidation.setShowInput(poiValidation.getShowPromptBox());
 			/*
 			 * According to ISO/IEC 29500-1 \ 18.18.76  ST_Sqref (Reference Sequence) and A.2 
 			 * Its XML Schema indicates it's a required attribute, so CellRangeAddresses must have at least one address. 
