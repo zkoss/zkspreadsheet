@@ -737,13 +737,15 @@ public class RangeImpl implements Range{
 	@Override
 	public SheetProtection getSheetProtection() {
 		SSheetProtection ssp = _range.getSheetProtection();
-		return new SheetProtectionImpl(new SimpleRef<SSheet>(_range.getSheet()), new SimpleRef<SSheetProtection>(ssp));
+		return ssp == null ?
+				null : new SheetProtectionImpl(new SimpleRef<SSheet>(_range.getSheet()), new SimpleRef<SSheetProtection>(ssp));
 	}
 
 	@Override
 	public Validation validate(final String editText) {
 		SDataValidation dv = _range.validate(editText);
-		return new ValidationImpl(new SimpleRef<SDataValidation>(dv));
+		return dv == null ? 
+				null : new ValidationImpl(new SimpleRef<SDataValidation>(dv));
 	}
 
 	@Override
