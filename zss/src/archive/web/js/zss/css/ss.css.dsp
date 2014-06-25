@@ -257,7 +257,7 @@
 }
 
 .zstopcelltxt {
-	font-size: 11px;
+	font-size: 12px;
 	text-align: center;
 	width: 49px;  /* colWidth - 2*cellPadding - 1 , 1 is border*/
 }
@@ -316,7 +316,7 @@
 	cursor : default;
 }
 .zsleftcelltxt {
-	font-size: 11px;
+	font-size: 12px;
 	height: 19px; /* rowHeight - 1, 1 is border */
 	text-align: center;
 	<c:if test="${c:browser('ie') and not c:browser('ie11')}">
@@ -340,7 +340,7 @@
 }
 .zsscrollinfoinner{
 	background-color:#E3ECF7;
-	font-family: Tahoma, Arial, Helvetica, sans-serif;
+	font-family: "Segoe UI", Tahoma, Thonburi, Arial, Verdana, sans-serif;
 	font-size:x-small;
 	padding-left:5px;
 	padding-right:5px;
@@ -360,7 +360,7 @@
 }
 .zsinfoinner{
 	background-color:#FFD5AD;
-	font-family: Tahoma, Arial, Helvetica, sans-serif;
+	font-family: "Segoe UI", Tahoma, Thonburi, Arial, Verdana, sans-serif;
 	font-size:small;
 	padding-left:5px;
 	padding-right:5px;
@@ -421,7 +421,7 @@
 .zsfocmarkl{
 	position: relative;
 	font-size: x-small;
-	font-family: Tahoma, Arial, Helvetica, sans-serif;
+	font-family: "Segoe UI", Tahoma, Thonburi, Arial, Verdana, sans-serif;
 	padding: 1px 3px;
 	top:-1px;
 }
@@ -525,7 +525,7 @@
 .zsedit-info {
 	position: absolute;
 	display: none;
-	font-family: Tahoma, Arial, Helvetica, sans-serif;
+	font-family: "Segoe UI", Tahoma, Thonburi, Arial, Verdana, sans-serif;
 	font-weight: bold;
 	font-size: 12px;
 	white-space: pre-wrap;
@@ -545,9 +545,8 @@
 	display: none;
 	background-color: white;
 	overflow: hidden;
-	border: 1px #777777 solid;
+	border: 1px #000000 solid;
 	white-space: pre-wrap;
-	box-shadow: #777777 1px 1px 4px;
 	z-index: 4;
 }
 
@@ -1119,7 +1118,8 @@
 }
 .zsformulabar-editor-real, .zsformulabar-editor-support {
 	border: 0;
-	font-size: 16px;
+	font-size: 12px;
+	line-height: 1.5;
 	padding: 3px 3px 0 3px; /* ZSS-205: make padding be consistent */
 	margin: 0; /* make sure zero margin (or Firefox will append 2px margin) */
 	font-family: arial,sans-serif;
@@ -1495,4 +1495,28 @@
 
 .z-initing {
 	background-image: url('http://www.zkoss.org/zk/img/${s:encodeWithZSS("zsspowered.png")}');
+}
+/* hide toolbar tab */
+.z-north .zstbtabpanel {
+	border-width: 0;
+}
+.zssheet .z-north .z-tabs {
+	display: none;
+}
+.zssheet .z-north .z-toolbar-tabs {
+	display: none;
+}
+/* change default font size to 12px */
+.z-toolbarbutton-content,
+.z-toolbar-content span {
+	font-size: 12px;
+}
+/* change default font family to Segoe UI */
+.z-toolbarbutton-content,
+.z-menu-text,
+.z-menuitem-text,
+.zssheettab-text,
+.zstopcell,
+.zsleftcell {
+	font-family: "Segoe UI", Tahoma, Thonburi, Arial, Verdana, sans-serif;
 }

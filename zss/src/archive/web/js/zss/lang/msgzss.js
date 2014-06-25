@@ -111,6 +111,7 @@ msgzss.action = {
 	clearFilter: 'Clear',
 	reapplyFilter: 'Reapply',
 	insertPicture: 'Insert Picture',
+	insertChart: 'Insert Chart',
 	columnChart: 'Column Chart',
 	columnChart3D: 'Column Chart 3D',
 	lineChart: 'Line Chart',
