@@ -677,6 +677,10 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 	loadForVisible: function (vrange) {
 		var local = this,
 			sheet = this.sheet;
+		if (!sheet) {
+			// the sheet may be null when switching spreadsheet demo
+			return false;
+		}
 		if (this.loadstate != zss.MainBlockCtrl.IDLE) { //waiting previous loading.
 			if (!this._loadVisibleOnResponse) {
 				this._loadVisibleOnResponse = true;

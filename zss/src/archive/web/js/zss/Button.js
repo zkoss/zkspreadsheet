@@ -1333,6 +1333,63 @@ zss.MenupopupFactory = zk.$extends(zk.Object, {
 		p.appendChild(newActionMenuitem(wgt, 'reapplyFilter', '/web/zss/img/funnel--arrow.png'));
 		return p;
 	},
+	insertChart: function () {
+		var wgt = this._wgt,
+			p = new zss.Menupopup(),
+			columnChartMenu = new zss.Menu({
+				label: msgzss.action.columnChart,
+				sclass: 'columnChart'
+			}),
+			lineChartMenu = new zss.Menu({
+				label: msgzss.action.lineChart,
+				sclass: 'lineChart'
+			}),
+			pieChartMenu = new zss.Menu({
+				label: msgzss.action.pieChart,
+				sclass: 'pieChart'
+			}),
+			barChartMenu = new zss.Menu({
+				label: msgzss.action.barChart,
+				sclass: 'barChart'
+			}),
+			otherChartMenu = new zss.Menu({
+				label: msgzss.action.otherChart,
+				sclass: 'otherChart'
+			}),
+			columnChartMP = new zss.Menupopup(),
+			lineChartMP = new zss.Menupopup(),
+			pieChartMP = new zss.Menupopup(),
+			barChartMP = new zss.Menupopup(),
+			otherChartMP = new zss.Menupopup();
+
+		columnChartMP.appendChild(newActionMenuitem(wgt, 'columnChart'));
+		columnChartMP.appendChild(newActionMenuitem(wgt, 'columnChart3D'));
+		columnChartMenu.appendChild(columnChartMP);
+		p.appendChild(columnChartMenu);
+
+		lineChartMP.appendChild(newActionMenuitem(wgt, 'lineChart'));
+		lineChartMP.appendChild(newActionMenuitem(wgt, 'lineChart3D'));
+		lineChartMenu.appendChild(lineChartMP);
+		p.appendChild(lineChartMenu);
+
+		pieChartMP.appendChild(newActionMenuitem(wgt, 'pieChart'));
+		pieChartMP.appendChild(newActionMenuitem(wgt, 'pieChart3D'));
+		pieChartMenu.appendChild(pieChartMP);
+		p.appendChild(pieChartMenu);
+
+		barChartMP.appendChild(newActionMenuitem(wgt, 'barChart'));
+		barChartMP.appendChild(newActionMenuitem(wgt, 'barChart3D'));
+		barChartMenu.appendChild(barChartMP);
+		p.appendChild(barChartMenu);
+
+		p.appendChild(newActionMenuitem(wgt, 'areaChart'));
+		p.appendChild(newActionMenuitem(wgt, 'scatterChart'));
+
+		otherChartMP.appendChild(newActionMenuitem(wgt, 'doughnutChart'));
+		otherChartMenu.appendChild(otherChartMP);
+		p.appendChild(otherChartMenu);
+		return p;
+	},
 	columnChart: function () {
 		var wgt = this._wgt,
 			p = new zss.Menupopup();
@@ -1489,7 +1546,8 @@ zss.Buttons = zk.$extends(zk.Object, {
 	          'verticalAlign', 'horizontalAlign', 'wrapText', 'mergeAndCenter', 'separator',
 	          'insert', 'del', 'format', 'separator',
 	          'autoSum', 'clear', 'sortAndFilter', 'separator',
-	          'protectSheet', 'gridlines'
+	          'protectSheet', 'gridlines', 'separator',
+	          'insertPicture', 'insertChart', 'hyperlink'
 	          ],
 	 INSERT_DEFAULT: ['insertPicture', 'separator',
 	                  'columnChart', 'lineChart', 'pieChart', 
@@ -1919,6 +1977,12 @@ zss.ButtonBuilder = zk.$extends(zk.Object, {
 	},
 	insertPicture: function () {
 		return newActionToolbarbutton(this._wgt, 'insertPicture', '/web/zss/img/image.png');
+	},
+	insertChart: function () {
+		var wgt = this._wgt,
+			b = newActionToolbarbutton(wgt, 'insertChart', '/web/zss/img/chart.png');
+		b.setPopup(this.applyHolder(new zss.MenupopupFactory(wgt).insertChart()));
+		return b;
 	},
 	columnChart: function () {
 		var wgt = this._wgt,

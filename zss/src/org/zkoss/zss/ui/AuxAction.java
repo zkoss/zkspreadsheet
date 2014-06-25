@@ -103,6 +103,7 @@ public enum AuxAction {
 	 CLEAR_FILTER("clearFilter"),
 	 REAPPLY_FILTER("reapplyFilter"),
 	 INSERT_PICTURE("insertPicture"),
+	 INSERT_CHART("insertChart"),
 	 COLUMN_CHART("columnChart"),
 	 COLUMN_CHART_3D("columnChart3D"),
 	 LINE_CHART("lineChart"),
