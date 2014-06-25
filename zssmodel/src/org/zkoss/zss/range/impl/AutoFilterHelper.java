@@ -109,9 +109,10 @@ import org.zkoss.zss.range.SRanges;
 			} else { //candidate to be shown (other FieldColumn might still hide this row!
 				final SRow rowobj = sheet.getRow(r);
 				if (rowobj.isHidden() && canUnhide(filter, fc, r, col1)) { //a hidden row and no other hidden filtering
-					final int left = sheet.getStartCellIndex(r);
-					final int right = sheet.getEndCellIndex(r);
-					final SRange rng = SRanges.range(sheet,r,left,r,right); 
+					// ZSS-646: we don't care about the columns at all; use 0.
+//					final int left = sheet.getStartCellIndex(r);
+//					final int right = sheet.getEndCellIndex(r);
+					final SRange rng = SRanges.range(sheet,r,0,r,0);  
 //					all.addAll(rng.getRefs());
 					rng.getRows().setHidden(false); //unhide row
 					
@@ -167,9 +168,10 @@ import org.zkoss.zss.range.SRanges;
 		for (int r = row; r <= row2; ++r) {
 			final SRow rowobj = sheet.getRow(r);
 			if (rowobj.isHidden()) { //a hidden row
-				final int left = sheet.getStartCellIndex(r);
-				final int right = sheet.getEndCellIndex(r);
-				final SRange rng = SRanges.range(sheet,r,left,r,right); 
+				//ZSS-646, we don't care about columns, use 0.
+				//final int left = sheet.getStartCellIndex(r);
+				//final int right = sheet.getEndCellIndex(r);
+				final SRange rng = SRanges.range(sheet,r,0,r,0); 
 //				all.addAll(rng.getRefs());
 				rng.getRows().setHidden(false); //unhide
 			}

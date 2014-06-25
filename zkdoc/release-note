@@ -45,6 +45,7 @@ ZK Spreadsheet 3.5.0
   ZSS-694 The Validation of a Cell should be pasted to the new range accordingly.
   ZSS-696 Cut a single cell and Paste to a merged cell should unmerge the merged cell and paste to the left-top cell of the original merged cell
   ZSS-675 Context menu does not close when left click inside the selection
+  ZSS-646 Apply filter incorrectly when contained merged cells
   
 ** Upgrade Notes
   * Following api are deprecated

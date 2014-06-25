@@ -16,6 +16,8 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.range.impl;
 
+import java.util.List;
+
 import org.zkoss.zss.model.CellRegion;
 import org.zkoss.zss.model.SCell;
 import org.zkoss.zss.model.SRow;
@@ -144,6 +146,28 @@ import org.zkoss.zss.range.SRange;
 		return false;
 	}
 	
+	//ZSS-646: apply filter incorrectly when contained merged cells
+	/*package*/ static int[] getNullRowMinMax(SSheet sheet, int row, int minc, int maxc) {
+		final CellRegion region = new CellRegion(row, minc, row, maxc);
+		final List<CellRegion> overlaps = sheet.getOverlapsMergedRegions(region, true);
+		int maxr = -1;
+		int minr = row;
+		for (CellRegion rng: overlaps) {
+			final int t = rng.getRow();
+			final int l = rng.getColumn();
+			final SCell cell = sheet.getCell(t, l);
+			if (isBlank(cell)) continue;
+			else {
+				final int b = rng.getLastRow();
+				final int r = rng.getLastColumn();
+				if (minc > l) minc = l;
+				if (minr > t) minr = t;
+				if (maxc < r) maxc = r;
+				if (maxr < b) maxr = b;
+			}
+		}
+		return maxr < 0 ? null : new int[] {minc, minr, maxc, maxr}; //l, t, r, b
+	}
 	/**
 	 * Search adjacent cells and return a range with non-blank cells based on a given cell.
 	 * It searches row by row to find minimal and maximal non-blank columns. 
@@ -165,9 +189,9 @@ import org.zkoss.zss.range.SRange;
 			maxNonBlankColumn = leftTopRightBottom[2];
 			maxNonBlankRow = leftTopRightBottom[3];
 		}
-		
+		row = Math.min(minNonBlankRow, row); //ZSS-646
 		int rowUp = row > 0 ? row - 1 : row;
-		int rowDown = row + 1;
+		int rowDown = row + 1; //ZSS-646 
 		
 		boolean stopFindingUp = rowUp == row;
 		boolean stopFindingDown = false;
@@ -175,7 +199,10 @@ import org.zkoss.zss.range.SRange;
 			//for row above
 			if (!stopFindingUp) {
 				final SRow rowu = sheet.getRow(rowUp);
-				final int[] upperRowLeftTopRightBottom = getRowMinMax(sheet, rowu, minNonBlankColumn, maxNonBlankColumn);
+				//ZSS-646: could be bottom row of vertical merged cell if rowu == null
+				final int[] upperRowLeftTopRightBottom = rowu.isNull() || sheet.getStartCellIndex(rowUp) < 0 ?
+						getNullRowMinMax(sheet, rowUp, minNonBlankColumn, maxNonBlankColumn) :
+						getRowMinMax(sheet, rowu, minNonBlankColumn, maxNonBlankColumn);
 				if (upperRowLeftTopRightBottom != null) {
 					if (minNonBlankColumn != upperRowLeftTopRightBottom[0] || maxNonBlankColumn != upperRowLeftTopRightBottom[2]) {  //minc or maxc changed!
 						stopFindingDown = false;
@@ -184,6 +211,9 @@ import org.zkoss.zss.range.SRange;
 					}
 					if (minNonBlankRow > upperRowLeftTopRightBottom[1]) {
 						minNonBlankRow = upperRowLeftTopRightBottom[1];
+					}
+					if (maxNonBlankRow < upperRowLeftTopRightBottom[3]) { //ZSS-646
+						maxNonBlankRow = upperRowLeftTopRightBottom[3];
 					}
 					if (rowUp > 0) {
 						--rowUp;
@@ -198,7 +228,9 @@ import org.zkoss.zss.range.SRange;
 			//for row below
 			if (!stopFindingDown) {
 				final SRow rowd = sheet.getRow(rowDown);
-				final int[] downRowLeftTopRightBottom = getRowMinMax(sheet, rowd, minNonBlankColumn, maxNonBlankColumn);
+				final int[] downRowLeftTopRightBottom = rowd.isNull() || sheet.getStartCellIndex(rowDown) < 0 ? 
+						getNullRowMinMax(sheet, rowDown, minNonBlankColumn, maxNonBlankColumn) :
+						getRowMinMax(sheet, rowd, minNonBlankColumn, maxNonBlankColumn);
 				if (downRowLeftTopRightBottom != null) {
 					if (minNonBlankColumn != downRowLeftTopRightBottom[0] || maxNonBlankColumn != downRowLeftTopRightBottom[2]) { //minc and maxc changed
 						stopFindingUp = false;
@@ -229,6 +261,10 @@ import org.zkoss.zss.range.SRange;
 			return null;
 		}
 		final int row = rowobj.getIndex();
+		//ZSS-646: when remove filter; row could exist but with no cell at all
+		if (sheet.getStartCellIndex(row) < 0) { 
+			return null;
+		}
 		int minr = row;
 		int maxr = row;
 		boolean allblank = true;
@@ -324,6 +360,8 @@ import org.zkoss.zss.range.SRange;
 		}
 		//bottom row
 		int maxr = -1;
+		final int sl = sheet.getStartColumnIndex();
+		final int sr = sheet.getEndColumnIndex();
 		for(int r = b; r >= minr && maxr < 0; --r) {
 			final SRow rowobj = sheet.getRow(r);
 			if (!rowobj.isNull()) {
@@ -338,6 +376,11 @@ import org.zkoss.zss.range.SRange;
 						maxr = r;
 						break;
 					}
+				}
+			} else { // could be bottom row of merged cell
+				int[] ltrb = getNullRowMinMax(sheet, r, sl, sr);
+				if (ltrb != null) {
+					maxr = ltrb[3];
 				}
 			}
 		}
@@ -373,7 +416,8 @@ import org.zkoss.zss.range.SRange;
 				for(int c = rr; c > maxc && c >= ll; --c) {
 					final SCell cell = sheet.getCell(r, c);
 					if (!isBlank(cell)) { //first no blank row
-						maxc = c;
+						CellRegion merged = sheet.getMergedRegion(r, c); //ZSS-646
+						maxc = merged == null ? c : merged.getLastColumn();
 						break;
 					}
 				}
