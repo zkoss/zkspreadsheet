@@ -675,6 +675,26 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 	 * @param zss.Range 
 	 */
 	loadForVisible: function (vrange) {
+		//ZSS-556: prepare filter button after loadForVisible
+		if (!this._loadForVisible(vrange)) {
+			var sheet = this.sheet;
+			if (sheet) {
+				var wgt = sheet._wgt,
+					af = wgt._autoFilter;
+				if (af != null && wgt.setAutoFilter) {
+					var rng = af.range,
+						l = rng.left,
+						t = rng.top,
+						r = rng.right;
+					if (!vrange) vrange = zss.SSheetCtrl._getVisibleRange(sheet);
+					if (t <= vrange.bottom && t >= vrange.top && l <= vrange.right && r >= vrange.left) { //overlap
+						wgt.setAutoFilter(af);
+					}
+				}
+			}
+		}
+	},
+	_loadForVisible: function (vrange) {
 		var local = this,
 			sheet = this.sheet;
 		if (!sheet) {

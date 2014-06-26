@@ -48,6 +48,7 @@ ZK Spreadsheet 3.5.0
   ZSS-646 Apply filter incorrectly when contained merged cells
   ZSS-704 Add one more value in the bottom cell of an autofilter column, press button does not list the new value
   ZSS-705 Failed on handle the case when merged cells are in the top row of AutoFilter
+  ZSS-556 Scroll then change sheet, make autofilter disappear
   
 ** Upgrade Notes
   * Following api are deprecated
