@@ -249,6 +249,7 @@ zss.SheetSelector = zk.$extends(zul.tab.Tabbox, {
 		// and _context field should be a UUID string
 		this._menu = menu; 
 		this.setSheetLabels(wgt.getSheetLabels());
+		this._orient = 'bottom';
 	},
 	setSheetLabels: function (labels) {
 		var wgt = this._wgt,
@@ -472,7 +473,7 @@ zss.Sheetbar = zk.$extends(zul.layout.South, {
 		this.$supers(zss.Sheetbar, '$init', []);
 		this._wgt = wgt;
 		this.setBorder(0);
-		this.setSize('32px');
+		this.setSize('28px');
 		
 		this.appendChild(this.cave = new zss.SheetpanelCave(wgt));
 		
