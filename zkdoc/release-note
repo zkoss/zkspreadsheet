@@ -46,6 +46,7 @@ ZK Spreadsheet 3.5.0
   ZSS-696 Cut a single cell and Paste to a merged cell should unmerge the merged cell and paste to the left-top cell of the original merged cell
   ZSS-675 Context menu does not close when left click inside the selection
   ZSS-646 Apply filter incorrectly when contained merged cells
+  ZSS-704 Add one more value in the bottom cell of an autofilter column, press button does not list the new value
   
 ** Upgrade Notes
   * Following api are deprecated
