@@ -100,7 +100,7 @@ public abstract class AbstractAutoFilterAdv implements SAutoFilter,Serializable{
 			this._criteria2 = getCriteriaSet(criteria2);
 			boolean blank1 = this._criteria1.contains("=");
 			if(showButton!=null){
-				showButton = showButton;
+				_showButton = showButton; // ZSS-705
 			}
 			
 			
@@ -124,21 +124,6 @@ public abstract class AbstractAutoFilterAdv implements SAutoFilter,Serializable{
 				if(_filters.size()==0){
 					_filters = null;
 				}
-				
-//				final String[] filters = (String[]) criteria1;
-				//remove old
-//				if (_ctfc.isSetFilters()) {
-//					_ctfc.unsetFilters();
-//				}
-				//TODO zss 3.5 WHAT is this?
-//				final CTFilters cflts = _ctfc.addNewFilters();
-//				if (blank1) {
-//					cflts.setBlank(blank1);
-//				}
-//				for(int j = 0; j < filters.length; ++j) {
-//					final CTFilter cflt = cflts.addNewFilter();
-//					cflt.setVal(filters[j]);
-//				}
 			}
 		}
 		

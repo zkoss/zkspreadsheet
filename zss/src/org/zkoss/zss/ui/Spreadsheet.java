@@ -1488,30 +1488,30 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			addrmap.put("right", right);
 			addrmap.put("bottom", addr.getLastRow());
 			
-			int offcol = -1;
 			final Collection<NFilterColumn> fcs = af.getFilterColumns();
 			final List<Map> fcsary = fcs != null ? new ArrayList<Map>(fcs.size()) : null;
 			if (fcsary != null) {
+				List<String> filters = null;
+				boolean on = true;
+				int field = 0;
 				for(int col = left; col <= right; ++col) {
 					final NFilterColumn fc = af.getFilterColumn(col - left,false);
-					final List<String> filters = fc != null ? fc.getFilters() : null;
-					final boolean on = fc != null ? fc.isShowButton() : true;
+					if (fc == null) {
+						on = true;
+						continue; //ZSS-705: no filterColumn; default on and skip
+					}
+					
+					if (on) { // ZSS-705: only when previous showButton is on
+						filters = fc.getFilters();
+						on = fc.isShowButton();
+						field = col - left + 1;
+					} // ZSS-705: if previous showButton is off; use previous field and filters(in merged cell case)
+					
 					Map fcmap = new HashMap();
 					fcmap.put("col", Integer.valueOf(col));
 					fcmap.put("filter", filters);
 					fcmap.put("on", on);
-					int field = col - left + 1;
-//					if (offcol >= 0 && on) { //pre button not shown and I am shown, the field number might be different!
-//						field = offcol - left + 1;
-//					}
 					fcmap.put("field", field);
-//					if (!on) {
-//						if (offcol < 0) { //first button off column
-//							offcol = col;
-//						}
-//					} else {
-//						offcol = -1;
-//					}
 					fcsary.add(fcmap);
 				}
 			}
