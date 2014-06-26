@@ -383,7 +383,7 @@ public class DataValidationImpl extends AbstractDataValidationAdv {
 			
 			// ZSS-648
 			// must keep the region reference itself in DependencyTable; so add it back
-			if (!all) {
+			if (!all && this._regions != null) {
 				for (CellRegion regn : this._regions) {
 					dt.add(dependent, newDummyRef(regn));
 				}
@@ -550,7 +550,7 @@ public class DataValidationImpl extends AbstractDataValidationAdv {
 		final DependencyTable dt = 
 				((AbstractBookSeriesAdv) book.getBookSeries()).getDependencyTable();
 		final Set<Ref> precedents = ((DependencyTableAdv)dt).getDirectPrecedents(dependent);
-		if (precedents != null) {
+		if (precedents != null && this._regions != null) {
 			for (CellRegion regn : this._regions) {
 				precedents.remove(newDummyRef(oldName, regn));
 			}
@@ -562,8 +562,10 @@ public class DataValidationImpl extends AbstractDataValidationAdv {
 		
 		// ZSS-648
 		// prepare new dummy CellRef to enforce DataValidation reference dependency
-		for (CellRegion regn : this._regions) {
-			dt.add(dependent, newDummyRef(newName, regn));
+		if (this._regions != null) {
+			for (CellRegion regn : this._regions) {
+				dt.add(dependent, newDummyRef(newName, regn));
+			}
 		}
 		
 		// restore dependent precedents relation
