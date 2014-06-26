@@ -36,6 +36,7 @@ import org.zkoss.util.Locales;
 import org.zkoss.zss.api.AreaRef;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.api.model.impl.SheetImpl;
+import org.zkoss.zss.model.CellRegion;
 import org.zkoss.zss.model.SAutoFilter;
 import org.zkoss.zss.model.SCell;
 import org.zkoss.zss.model.SSheet;
@@ -46,6 +47,7 @@ import org.zkoss.zss.model.sys.EngineFactory;
 import org.zkoss.zss.model.sys.format.FormatContext;
 import org.zkoss.zss.model.sys.format.FormatEngine;
 import org.zkoss.zss.model.sys.format.FormatResult;
+import org.zkoss.zss.model.impl.AbstractAutoFilterAdv;
 import org.zkoss.zss.range.SRange;
 import org.zkoss.zss.range.SRanges;
 import org.zkoss.zss.ui.Spreadsheet;
@@ -64,13 +66,23 @@ import org.zkoss.zss.ui.Spreadsheet;
 		SSheet worksheet = ((SheetImpl)sheet).getNative();
 		final SAutoFilter autoFilter = worksheet.getAutoFilter();
 		final NFilterColumn filterColumn = autoFilter.getFilterColumn(field - 1,false);
-		final String rangeAddr = autoFilter.getRegion().getReferenceString();
+		String rangeAddr = autoFilter.getRegion().getReferenceString();
 		final SRange range = SRanges.range(worksheet, rangeAddr);
 		
+		//ZSS-704: Note that scanRows() could provide new bottom
+		final int bottom = range.getLastRow();
+		Object[] results = scanRows(field, filterColumn, range, worksheet);
+		@SuppressWarnings("unchecked")
+		SortedSet<FilterRowInfo> orderedRowInfos = (SortedSet<FilterRowInfo>) results[0];
+		if (bottom != ((Integer) results[1]).intValue()) {
+			CellRegion region = new CellRegion(range.getRow(), range.getColumn(), bottom, range.getLastColumn()); 
+			rangeAddr = region.getReferenceString(); 
+		}
 		spreadsheet.smartUpdate("autoFilterPopup", 
-			convertFilterInfoToJSON(row, col, field, rangeAddr, scanRows(field, filterColumn, range, worksheet)));
+			convertFilterInfoToJSON(row, col, field, rangeAddr, orderedRowInfos));
 		
 		AreaRef filterArea = new AreaRef(rangeAddr);
+		
 		return filterArea;
 	}
 	
@@ -108,8 +120,10 @@ import org.zkoss.zss.ui.Spreadsheet;
 		data.put("select", selectAll ? "all" : select ? "mix" : "none"); 
 		return data;
 	}
-	
-	private SortedSet<FilterRowInfo> scanRows(int field, NFilterColumn fc, SRange range, SSheet worksheet) {
+
+	// ZSS-704
+	// [0]: SortedSet<FilterRowInfo>; [1]: new bottom
+	private Object[] scanRows(int field, NFilterColumn fc, SRange range, SSheet worksheet) {
 		SortedSet<FilterRowInfo> orderedRowInfos = new TreeSet<FilterRowInfo>(new FilterRowInfoComparator());
 		
 		blankRowInfo = new FilterRowInfo(BLANK_VALUE, "(Blanks)");
@@ -117,7 +131,7 @@ import org.zkoss.zss.ui.Spreadsheet;
 		boolean hasBlank = false;
 		boolean hasSelectedBlank = false;
 		final int top = range.getRow() + 1;
-		final int bottom = range.getLastRow();
+		int bottom = range.getLastRow();
 		final int columnIndex = range.getColumn() + field - 1;
 		FormatEngine fe = EngineFactory.getInstance().createFormatEngine();
 		for (int i = top; i <= bottom; i++) {
@@ -145,11 +159,93 @@ import org.zkoss.zss.ui.Spreadsheet;
 				}
 			}
 		}
+		//ZSS-704: user could have enter non-blank value along the filter, must add that into
+		final int left = range.getColumn();
+		final int right = range.getLastColumn();
+		for (int i = bottom+1; bottom < worksheet.getEndRowIndex(); ++i) {
+			final SCell c = worksheet.getCell(i, columnIndex);
+			if (!c.isNull() && c.getType() != CellType.BLANK) {
+				FormatResult fr = fe.format(c, new FormatContext(ZssContext.getCurrent().getLocale()));
+				String displaytxt = fr.getText();
+				Object val = displaytxt;
+				if(c.getType()==CellType.NUMBER && fr.isDateFormatted()){
+					val = c.getDateValue();
+				}
+				
+				FilterRowInfo rowInfo = new FilterRowInfo(val, displaytxt);
+				//ZSS-299
+				orderedRowInfos.add(rowInfo);
+				if (criteria1 == null || criteria1.isEmpty() || criteria1.contains(displaytxt)) { //selected
+					rowInfo.setSelected(true);
+				}
+			} else {
+				//really an empty cell?
+				int[] ltrb = getMergedMinMax(worksheet, i, columnIndex);
+				if (ltrb == null) {
+					if (neighborIsBlank(worksheet, left, right, i, columnIndex)) {
+						bottom = i - 1;
+						break;
+					}
+				} else {
+					i = ltrb[3];
+				}
+				if (!hasBlank) {
+					hasBlank = true;
+					boolean noFilterApplied = criteria1 == null || criteria1.isEmpty(); 
+					if (!hasSelectedBlank && (noFilterApplied || criteria1.contains("="))) { //"=" means blank is selected
+						blankRowInfo.setSelected(true);
+						hasSelectedBlank = true;
+					}
+				}
+			}
+		}
 		if (hasBlank) {
 			orderedRowInfos.add(blankRowInfo);
 		}
 		
-		return orderedRowInfos;
+		return new Object[] {orderedRowInfos, bottom};
+	}
+		
+	//ZSS-704
+	// return null if not merged cell or the merged cell is blank; return
+	// merged l, t, r, b if exists
+	private int[] getMergedMinMax(SSheet worksheet, int row, int col) {
+		CellRegion merged = worksheet.getMergedRegion(row, col);
+		if (merged == null) {
+			return null;
+		} else {
+			int l = merged.getColumn();
+			int t = merged.getRow();
+			final SCell c0 = worksheet.getCell(t, l);
+			if (!c0.isNull() && c0.getType() != CellType.BLANK) { // non empty merged cell
+				return new int[] {l, t, merged.getLastColumn(), merged.getLastRow()};
+			} else {
+				return null;
+			}
+		}
+	}
+	
+	//ZSS-704
+	// whether neighbor cell between left and right is blank.
+	private boolean neighborIsBlank(SSheet sheet, int left, int right, int row, int col) {
+		for (int j = left; j <= right; ++j) {
+			if (j == col) continue;
+			final SCell c = sheet.getCell(row, j);
+			if (!c.isNull() && c.getType() != CellType.BLANK) {
+				return false;
+			} else {
+				CellRegion merged = sheet.getMergedRegion(row, j);
+				if (merged != null) {
+					int l = merged.getColumn();
+					int t = merged.getRow();
+					final SCell c0 = sheet.getCell(t, l);
+					if (!c0.isNull() && c0.getType() != CellType.BLANK) {
+						return false;
+					}
+				}
+			}
+		}
+		return true;
 	}
 	
 //	private static boolean isHiddenRow(int rowIdx, XSheet worksheet) {
