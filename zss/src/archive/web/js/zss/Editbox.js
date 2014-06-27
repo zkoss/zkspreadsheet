@@ -237,6 +237,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 	function blurEditor (wgt) {
 		var sheet = wgt.sheet;
 		if (sheet) {
+			wgt.isFocused = false;
 			// ZSS-674: stay focused if formulabar's ok/cancel btn was pressed down.
 			if (sheet.shallIgnoreBlur) {
 				focusWhenBlur(wgt);
@@ -246,12 +247,10 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 				// formulabar editor blur -> ( no focus ) -> editbox focus
 				// need to add isSwitchingFocus flag to determine the situation
 				sheet.isSwitchingFocus = false;
-				wgt.isFocused = false;
 			} else if (sheet.isSwitchingSheet) {
 				focusWhenBlur(wgt);
 			} else if (!sheet._wgt.hasFocus()) {
 				sheet.dp.stopEditing(sheet.innerClicking > 0 ? "refocus" : "lostfocus");
-				wgt.isFocused = false;
 			}
 		}
 	}
