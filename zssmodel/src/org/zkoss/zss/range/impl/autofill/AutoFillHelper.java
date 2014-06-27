@@ -26,7 +26,6 @@ import java.util.regex.Pattern;
 
 import org.zkoss.lang.Strings;
 import org.zkoss.poi.ss.usermodel.ZssContext;
-import org.zkoss.util.Locales;
 import org.zkoss.zss.model.CellRegion;
 import org.zkoss.zss.model.InvalidModelOpException;
 import org.zkoss.zss.model.SCell;

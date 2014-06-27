@@ -37,6 +37,7 @@ import org.zkoss.zss.api.AreaRef;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.api.model.impl.SheetImpl;
 import org.zkoss.zss.model.CellRegion;
+import org.zkoss.zss.model.ErrorValue;
 import org.zkoss.zss.model.SAutoFilter;
 import org.zkoss.zss.model.SCell;
 import org.zkoss.zss.model.SSheet;
@@ -139,24 +140,25 @@ import org.zkoss.zss.ui.Spreadsheet;
 			if (!c.isNull() && c.getType() != CellType.BLANK) {
 				FormatResult fr = fe.format(c, new FormatContext(ZssContext.getCurrent().getLocale()));
 				String displaytxt = fr.getText();
-				Object val = displaytxt;
+				if(!hasBlank && displaytxt.trim().isEmpty()) { //ZSS-707: show as blank; then it is blank
+					hasBlank = true;
+					hasSelectedBlank = prepareBlankRow(criteria1, hasSelectedBlank);
+					continue;
+				}
+				
+				Object val = c.getValue(); // ZSS-707
 				if(c.getType()==CellType.NUMBER && fr.isDateFormatted()){
 					val = c.getDateValue();
 				}
-				
 				FilterRowInfo rowInfo = new FilterRowInfo(val, displaytxt);
 				//ZSS-299
 				orderedRowInfos.add(rowInfo);
 				if (criteria1 == null || criteria1.isEmpty() || criteria1.contains(displaytxt)) { //selected
 					rowInfo.setSelected(true);
 				}
-			} else {
+			} else if (!hasBlank){
 				hasBlank = true;
-				boolean noFilterApplied = criteria1 == null || criteria1.isEmpty(); 
-				if (!hasSelectedBlank && (noFilterApplied || criteria1.contains("="))) { //"=" means blank is selected
-					blankRowInfo.setSelected(true);
-					hasSelectedBlank = true;
-				}
+				hasSelectedBlank = prepareBlankRow(criteria1, hasSelectedBlank);
 			}
 		}
 		//ZSS-704: user could have enter non-blank value along the filter, must add that into
@@ -167,7 +169,13 @@ import org.zkoss.zss.ui.Spreadsheet;
 			if (!c.isNull() && c.getType() != CellType.BLANK) {
 				FormatResult fr = fe.format(c, new FormatContext(ZssContext.getCurrent().getLocale()));
 				String displaytxt = fr.getText();
-				Object val = displaytxt;
+				if(!hasBlank && displaytxt.trim().isEmpty()) { //ZSS-707: show as blank; then it is blank
+					hasBlank = true;
+					hasSelectedBlank = prepareBlankRow(criteria1, hasSelectedBlank);
+					continue;
+				}
+				
+				Object val = c.getValue(); // ZSS-707
 				if(c.getType()==CellType.NUMBER && fr.isDateFormatted()){
 					val = c.getDateValue();
 				}
@@ -191,11 +199,7 @@ import org.zkoss.zss.ui.Spreadsheet;
 				}
 				if (!hasBlank) {
 					hasBlank = true;
-					boolean noFilterApplied = criteria1 == null || criteria1.isEmpty(); 
-					if (!hasSelectedBlank && (noFilterApplied || criteria1.contains("="))) { //"=" means blank is selected
-						blankRowInfo.setSelected(true);
-						hasSelectedBlank = true;
-					}
+					hasSelectedBlank = prepareBlankRow(criteria1, hasSelectedBlank);
 				}
 			}
 		}
@@ -205,7 +209,16 @@ import org.zkoss.zss.ui.Spreadsheet;
 		
 		return new Object[] {orderedRowInfos, bottom};
 	}
-		
+
+	//ZSS-707
+	private boolean prepareBlankRow(Set criteria1, boolean hasSelectedBlank) {
+		boolean noFilterApplied = criteria1 == null || criteria1.isEmpty(); 
+		if (!hasSelectedBlank && (noFilterApplied || criteria1.contains("="))) { //"=" means blank is selected
+			blankRowInfo.setSelected(true);
+			return true;
+		}
+		return hasSelectedBlank;
+	}
 	//ZSS-704
 	// return null if not merged cell or the merged cell is blank; return
 	// merged l, t, r, b if exists
@@ -394,7 +407,7 @@ import org.zkoss.zss.ui.Spreadsheet;
 			if (val instanceof Date) {
 				return 1;
 			}
-			if (val instanceof Byte) { //error
+			if (val instanceof ErrorValue || val instanceof Byte) { //error, ZSS-707
 				return 5;
 			}
 			if (val instanceof Number) {

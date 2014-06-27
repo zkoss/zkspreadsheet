@@ -51,6 +51,7 @@ ZK Spreadsheet 3.5.0
   ZSS-556 Scroll then change sheet, make autofilter disappear
   ZSS-706 Open context menu, click between style popup and menu popop, the style popup does not close
   ZSS-555 Insert a row on the row with autofilter cause double autofilter
+  ZSS-707 The sorting order of AutoFilter dropdown is not correct.
   
 ** Upgrade Notes
   * Following api are deprecated
