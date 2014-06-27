@@ -1152,11 +1152,16 @@
 	left: -9000px; 
 }
 
+.zssheetbar,
 .zssheetselector .z-tabs-content,
 .zssheetselector .z-tab-hl,
 .zssheetselector .z-tab-hr,
 .zssheetselector .z-tab-hm {
 	background: #F9F9F9;
+}
+
+.zssheetselector .zstbtn-addSheet .z-toolbarbutton-content {
+	padding: 0 2px;
 }
 
 .zssheetselector .z-tab {
@@ -1522,9 +1527,7 @@
 .z-north .zstbtabpanel {
 	border-width: 0;
 }
-.zssheet .z-north .z-tabs {
-	display: none;
-}
+.zssheet .z-north .z-tabs,
 .zssheet .z-north .z-toolbar-tabs {
 	display: none;
 }

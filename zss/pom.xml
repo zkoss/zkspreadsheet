@@ -8,6 +8,7 @@
 		<zk.version>7.0.1</zk.version>
 		<zpoi.version>3.9.4-SNAPSHOT</zpoi.version>
 		<commons-math.version>2.2</commons-math.version>
+		<servlet.version>2.4</servlet.version>
 	</properties>
 	<version>3.5.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
@@ -71,6 +72,12 @@
 			<artifactId>commons-io</artifactId>
 			<version>1.3.2</version>
 			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>servlet-api</artifactId>
+			<version>${servlet.version}</version>
+			<scope>provided</scope>
 		</dependency>
 	</dependencies>
 	<build>
