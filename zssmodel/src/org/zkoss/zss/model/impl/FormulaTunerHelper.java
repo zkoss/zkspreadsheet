@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.zkoss.zss.model.CellRegion;
+import org.zkoss.zss.model.SAutoFilter;
 import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.SBookSeries;
 import org.zkoss.zss.model.SCell;
@@ -65,8 +66,9 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 		Map<String,Ref> validationDependents  = new LinkedHashMap<String, Ref>();
 		Set<Ref> cellDependents = new LinkedHashSet<Ref>(); //ZSS-649
 		Map<String,Ref> nameDependents = new LinkedHashMap<String, Ref>(); //ZSS-649
+		Set<Ref> filterDependents = new LinkedHashSet<Ref>(); //ZSS-555
 		
-		splitDependents(dependents, cellDependents, chartDependents, validationDependents, nameDependents);
+		splitDependents(dependents, cellDependents, chartDependents, validationDependents, nameDependents, filterDependents);
 		
 		for (Ref dependent : cellDependents) {
 			moveCellRef(sheetRegion,dependent,rowOffset,columnOffset);
@@ -79,6 +81,10 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 		}
 		for (Ref dependent : nameDependents.values()) {
 			moveNameRef(sheetRegion,(NameRef)dependent,rowOffset,columnOffset);
+		}
+		//ZSS-555
+		for (Ref dependent : filterDependents) {
+			moveFilterRef(sheetRegion,(ObjectRef)dependent,rowOffset,columnOffset);
 		}
 	}
 	private void moveChartRef(SheetRegion sheetRegion,ObjectRef dependent,int rowOffset, int columnOffset) {
@@ -157,6 +163,41 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 		ModelUpdateUtil.addRefUpdate(dependent);
 		
 	}
+	//ZSS-555
+	private void moveFilterRef(SheetRegion sheetRegion,ObjectRef dependent,int rowOffset, int columnOffset) {
+		SBook book = _bookSeries.getBook(dependent.getBookName());
+		if(book == null) {
+			return;
+		}
+		SSheet sheet = book.getSheetByName(dependent.getSheetName());
+		if(sheet == null) {
+			return;
+		}
+		SAutoFilter filter = sheet.getAutoFilter();
+		if(filter == null) {
+			return;
+		}
+		FormulaEngine engine = getFormulaEngine();
+		
+		// update AutoFilter's region
+		final CellRegion region = filter.getRegion();
+		final String area = region.getReferenceString();
+			
+		FormulaExpression expr2 = engine.move(area, sheetRegion, rowOffset, columnOffset, new FormulaParseContext(sheet, null)); //null ref, no trace dependence here
+		if(!expr2.hasError() && !area.equals(expr2.getFormulaString())) {
+			sheet.deleteAutoFilter();
+			if ("#REF!".equals(expr2.getFormulaString())) { // should delete the region
+				//delete
+			} else { //delete then add
+				final CellRegion region2 = new CellRegion(expr2.getFormulaString());
+				sheet.createAutoFilter(region2);
+			}
+		}
+
+		// notify filter change
+		ModelUpdateUtil.addRefUpdate(dependent);
+	}
+	
 	//ZSS-648
 	private void moveDataValidationRef(SheetRegion sheetRegion,ObjectRef dependent,int rowOffset, int columnOffset) {
 		SBook book = _bookSeries.getBook(dependent.getBookName());
@@ -284,8 +325,9 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 		Map<String,Ref> validationDependents  = new LinkedHashMap<String, Ref>();
 		Set<Ref> cellDependents = new LinkedHashSet<Ref>(); //ZSS-649
 		Map<String,Ref> nameDependents = new LinkedHashMap<String, Ref>(); //ZSS-649
+		Set<Ref> filterDependents = new LinkedHashSet<Ref>(); //ZSS-555
 		
-		splitDependents(dependents, cellDependents, chartDependents, validationDependents, nameDependents);
+		splitDependents(dependents, cellDependents, chartDependents, validationDependents, nameDependents, filterDependents);
 		
 		for (Ref dependent : cellDependents) {
 			extendCellRef(sheetRegion,dependent,horizontal);
@@ -299,6 +341,11 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 		for (Ref dependent : nameDependents.values()) {
 			extendNameRef(sheetRegion,(NameRef)dependent,horizontal);
 		}
+		//ZSS-555
+		for (Ref dependent : filterDependents) {
+			extendFilterRef(sheetRegion,(ObjectRef)dependent,horizontal);
+		}
+		
 	}
 
 	private void extendChartRef(SheetRegion sheetRegion, ObjectRef dependent, boolean horizontal) {
@@ -446,6 +493,40 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 		ModelUpdateUtil.addRefUpdate(dependent);
 	}
 
+	private void extendFilterRef(SheetRegion sheetRegion,ObjectRef dependent, boolean horizontal) {
+		SBook book = _bookSeries.getBook(dependent.getBookName());
+		if(book == null) {
+			return;
+		}
+		SSheet sheet = book.getSheetByName(dependent.getSheetName());
+		if(sheet == null) {
+			return;
+		}
+		SAutoFilter filter = sheet.getAutoFilter();
+		if(filter == null) {
+			return;
+		}
+		FormulaEngine engine = getFormulaEngine();
+		
+		// update AutoFilter's region
+		CellRegion region = filter.getRegion();
+		String area = region.getReferenceString();
+		
+		FormulaExpression expr2 = engine.extend(area, sheetRegion, horizontal, new FormulaParseContext(sheet, null));//null ref, no trace dependence here
+		if(!expr2.hasError() && !area.equals(expr2.getFormulaString())) {
+			sheet.deleteAutoFilter();
+			if ("#REF!".equals(expr2.getFormulaString())) { // should delete the region
+				// delete
+			} else { // delete than add
+				final CellRegion region2 = new CellRegion(expr2.getFormulaString());
+				sheet.createAutoFilter(region2);
+			}
+		}
+
+		// notify filter change
+		ModelUpdateUtil.addRefUpdate(dependent);
+	}
+	
 	private void extendCellRef(SheetRegion sheetRegion,Ref dependent, boolean horizontal) {
 		SBook book = _bookSeries.getBook(dependent.getBookName());
 		if(book==null) return;
@@ -501,8 +582,9 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 		Map<String,Ref> validationDependents  = new LinkedHashMap<String, Ref>();
 		Set<Ref> cellDependents = new LinkedHashSet<Ref>(); //ZSS-649
 		Map<String,Ref> nameDependents = new LinkedHashMap<String, Ref>(); //ZSS-649
+		Set<Ref> filterDependents = new LinkedHashSet<Ref>(); //ZSS-555
 		
-		splitDependents(dependents, cellDependents, chartDependents, validationDependents, nameDependents);
+		splitDependents(dependents, cellDependents, chartDependents, validationDependents, nameDependents, filterDependents);
 		
 		for (Ref dependent : cellDependents) {
 			shrinkCellRef(sheetRegion,dependent,horizontal);
@@ -516,6 +598,10 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 		//ZSS-649
 		for (Ref dependent : nameDependents.values()) {
 			shrinkNameRef(sheetRegion, (NameRef) dependent, horizontal);
+		}
+		//ZSS-555
+		for (Ref dependent : filterDependents) {
+			shrinkFilterRef(sheetRegion,(ObjectRef)dependent,horizontal);
 		}
 	}
 	private void shrinkChartRef(SheetRegion sheetRegion,ObjectRef dependent, boolean horizontal) {
@@ -663,6 +749,41 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 		ModelUpdateUtil.addRefUpdate(dependent);
 	}
 
+	//ZSS-555
+	private void shrinkFilterRef(SheetRegion sheetRegion,ObjectRef dependent, boolean horizontal) {
+		SBook book = _bookSeries.getBook(dependent.getBookName());
+		if(book == null) {
+			return;
+		}
+		SSheet sheet = book.getSheetByName(dependent.getSheetName());
+		if(sheet == null) {
+			return;
+		}
+		SAutoFilter filter = sheet.getAutoFilter();
+		if(filter == null) {
+			return;
+		}
+		FormulaEngine engine = getFormulaEngine();
+		
+		// update AutoFilter's region
+		CellRegion region = filter.getRegion();
+		String area = region.getReferenceString();
+		
+		FormulaExpression expr2 = engine.shrink(area, sheetRegion, horizontal, new FormulaParseContext(sheet, null));//null ref, no trace dependence here
+		if(!expr2.hasError() && !area.equals(expr2.getFormulaString())) {
+			sheet.deleteAutoFilter();
+			if ("#REF!".equals(expr2.getFormulaString())) { // should delete the region
+				//delete
+			} else { // delete then add
+				final CellRegion region2 = new CellRegion(expr2.getFormulaString());
+				sheet.createAutoFilter(region2);
+			}
+		}
+
+		// notify filter change
+		ModelUpdateUtil.addRefUpdate(dependent);
+	}
+
 	private void shrinkCellRef(SheetRegion sheetRegion,Ref dependent, boolean horizontal) {
 		SBook book = _bookSeries.getBook(dependent.getBookName());
 		if(book==null) return;
@@ -718,8 +839,9 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 		Map<String,Ref> validationDependents  = new LinkedHashMap<String, Ref>();
 		Set<Ref> cellDependents = new LinkedHashSet<Ref>(); //ZSS-649
 		Map<String,Ref> nameDependents = new LinkedHashMap<String, Ref>(); //ZSS-649
+		Set<Ref> filterDependents = new LinkedHashSet<Ref>(); //ZSS-555
 		
-		splitDependents(dependents, cellDependents, chartDependents, validationDependents, nameDependents);
+		splitDependents(dependents, cellDependents, chartDependents, validationDependents, nameDependents, filterDependents);
 		
 		for (Ref dependent : cellDependents) {
 			renameSheetCellRef(book,oldName,newName,dependent);
@@ -733,6 +855,10 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 		//ZSS-649
 		for (Ref dependent : nameDependents.values()) {
 			renameSheetNameRef(book,oldName,newName,(NameRef)dependent);
+		}
+		//ZSS-555
+		for (Ref dependent : filterDependents) {
+			renameSheetFilterRef(book,oldName,newName,(ObjectRef)dependent);
 		}
 	}	
 	
@@ -856,6 +982,33 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 		ModelUpdateUtil.addRefUpdate(dependent);
 	}
 
+	//ZSS-555
+	private void renameSheetFilterRef(SBook bookOfSheet, String oldName, String newName,ObjectRef dependent) {
+		SBook book = _bookSeries.getBook(dependent.getBookName());
+		if(book == null) {
+			return;
+		}
+		SSheet sheet = book.getSheetByName(dependent.getSheetName());
+		if(sheet==null){//the sheet was renamed., get form newname if possible
+			if(oldName.equals(dependent.getSheetName())){
+				sheet = book.getSheetByName(newName);
+			}
+		}
+		if(sheet == null) {
+			return;
+		}
+		SAutoFilter filter = sheet.getAutoFilter();
+		if(filter == null) {
+			return;
+		}
+		
+		// update AutoFilter's region
+		((AbstractAutoFilterAdv)filter).renameSheet(book, oldName, newName);
+
+		// notify filter change
+		ModelUpdateUtil.addRefUpdate(dependent);
+	}
+	
 	private void renameSheetCellRef(SBook bookOfSheet, String oldName, String newName,Ref dependent) {
 		SBook book = _bookSeries.getBook(dependent.getBookName());
 		if(book==null) return;
@@ -951,7 +1104,8 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 			final Set<Ref> cellDependents,
 			final Map<String, Ref> chartDependents,
 			final Map<String, Ref> validationDependents,
-			final Map<String, Ref> nameDependents) {
+			final Map<String, Ref> nameDependents,
+			final Set<Ref> filterDependents) {
 		
 		for (Ref dependent : dependents) {
 			RefType type = dependent.getType();
@@ -962,6 +1116,8 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 					chartDependents.put(((ObjectRef)dependent).getObjectIdPath()[0], dependent);
 				}else if(((ObjectRef)dependent).getObjectType()==ObjectType.DATA_VALIDATION){
 					validationDependents.put(((ObjectRef)dependent).getObjectIdPath()[0], dependent);
+				}else if(((ObjectRef)dependent).getObjectType()==ObjectType.AUTO_FILTER){
+					filterDependents.add(dependent);
 				}
 			} else if (type == RefType.NAME) { //ZSS-649
 				nameDependents.put(((NameRef)dependent).toString(), dependent);

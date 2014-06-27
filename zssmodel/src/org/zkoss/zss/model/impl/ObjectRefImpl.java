@@ -39,20 +39,20 @@ public class ObjectRefImpl extends RefImpl implements ObjectRef{
 		_objType = ObjectType.CHART;
 	}
 	public ObjectRefImpl(AbstractChartAdv chart,String objectId){
-		this(chart.getSheet().getBook().getBookName(),chart.getSheet().getSheetName(), objectId);
+		this(chart.getSheet().getBook().getBookName(),chart.getSheet().getSheetName(), objectId, ObjectType.CHART);
 	}
 	
 	public ObjectRefImpl(AbstractDataValidationAdv validation,String objectId){
-		this(validation.getSheet().getBook().getBookName(),validation.getSheet().getSheetName(), objectId);
+		this(validation.getSheet().getBook().getBookName(),validation.getSheet().getSheetName(), objectId, ObjectType.DATA_VALIDATION);
 	}
 
-	//ZSS-648
-	public ObjectRefImpl(String bookName, String sheetName, String objectId){
+	//ZSS-648, ZSS-555
+	public ObjectRefImpl(String bookName, String sheetName, String objectId, ObjectType type){
 		super(RefType.OBJECT,bookName,sheetName, null,-1,-1,-1,-1);
 		this._objectIdPath = new String[]{objectId};
-		_objType = ObjectType.DATA_VALIDATION;
+		_objType = type;
 	}
-
+	
 	@Override
 	public String getObjectId() {
 		return _objectIdPath[_objectIdPath.length-1];

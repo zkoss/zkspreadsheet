@@ -10,7 +10,7 @@ public interface ObjectRef extends Ref{
 	 * @since 3.5.0
 	 */
 	public enum ObjectType{
-		CHART, DATA_VALIDATION
+		CHART, DATA_VALIDATION, AUTO_FILTER
 	}
 	public ObjectType getObjectType();
 	public String getObjectId();

@@ -34,6 +34,8 @@ import org.zkoss.zss.model.sys.dependency.Ref.RefType;
 				handleChartRef((ObjectRef)notify);
 			}else if(((ObjectRef)notify).getObjectType()==ObjectType.DATA_VALIDATION){
 				handleDataValidationRef((ObjectRef)notify);
+			}else if(((ObjectRef)notify).getObjectType()==ObjectType.AUTO_FILTER){ // ZSS-555
+				handleAutoFilterRef((ObjectRef)notify);
 			}
 		} else {// TODO another
 
@@ -56,6 +58,8 @@ import org.zkoss.zss.model.sys.dependency.Ref.RefType;
 					chartDependents.put(((ObjectRef)notify).getObjectIdPath()[0], notify);
 				}else if(((ObjectRef)notify).getObjectType()==ObjectType.DATA_VALIDATION){
 					validationDependents.put(((ObjectRef)notify).getObjectIdPath()[0], notify);
+				}else if(((ObjectRef)notify).getObjectType()==ObjectType.AUTO_FILTER){
+					handleAutoFilterRef((ObjectRef)notify);
 				}
 			} else {// TODO another
 
@@ -87,6 +91,15 @@ import org.zkoss.zss.model.sys.dependency.Ref.RefType;
 		if(sheet==null) return;
 		String[] ids = notify.getObjectIdPath();
 		_notifyHelper.notifyDataValidationChange(sheet,ids[0]);
+	}
+
+	// ZSS-555
+	private void handleAutoFilterRef(ObjectRef notify) {
+		SBook book = bookSeries.getBook(notify.getBookName());
+		if(book==null) return;
+		SSheet sheet = book.getSheetByName(notify.getSheetName());
+		if(sheet==null) return;
+		_notifyHelper.notifySheetAutoFilterChange(sheet);
 	}
 
 	private void handleAreaRef(Ref notify) {

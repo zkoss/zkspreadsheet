@@ -18,7 +18,6 @@ package org.zkoss.zss.range.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -125,7 +124,6 @@ import org.zkoss.zss.range.SRanges;
 				
 		return filter;		
 	}
-	
 	
 	private boolean canUnhide(SAutoFilter af, NFilterColumn fc, int row, int col) {
 		final Collection<NFilterColumn> fltcs = af.getFilterColumns();

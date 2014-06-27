@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.zkoss.zss.model.SAutoFilter;
+import org.zkoss.zss.model.SBook;
 
 /**
  * 
@@ -32,7 +33,9 @@ import org.zkoss.zss.model.SAutoFilter;
  */
 public abstract class AbstractAutoFilterAdv implements SAutoFilter,Serializable{
 	private static final long serialVersionUID = 1L;
-
+	
+	public abstract void renameSheet(SBook book, String oldName, String newName); //ZSS-555
+	
 	/**
 	 * @since 3.5.0
 	 */
@@ -126,7 +129,5 @@ public abstract class AbstractAutoFilterAdv implements SAutoFilter,Serializable{
 				}
 			}
 		}
-		
-		
 	}
 }

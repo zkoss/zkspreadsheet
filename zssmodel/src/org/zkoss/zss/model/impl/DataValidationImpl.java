@@ -32,6 +32,7 @@ import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.model.sys.EngineFactory;
 import org.zkoss.zss.model.sys.dependency.DependencyTable;
 import org.zkoss.zss.model.sys.dependency.Ref;
+import org.zkoss.zss.model.sys.dependency.ObjectRef.ObjectType;
 import org.zkoss.zss.model.sys.formula.EvaluationResult;
 import org.zkoss.zss.model.sys.formula.FormulaEngine;
 import org.zkoss.zss.model.sys.formula.FormulaEvaluationContext;
@@ -397,7 +398,7 @@ public class DataValidationImpl extends AbstractDataValidationAdv {
 	
 	// ZSS-648
 	private Ref getRef(String sheetName) {
-		return new ObjectRefImpl(_sheet.getBook().getBookName(), sheetName, _id);
+		return new ObjectRefImpl(_sheet.getBook().getBookName(), sheetName, _id, ObjectType.DATA_VALIDATION);
 	}
 	
 	// ZSS-648

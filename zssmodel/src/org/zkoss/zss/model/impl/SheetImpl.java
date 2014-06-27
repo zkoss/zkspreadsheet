@@ -55,6 +55,7 @@ import org.zkoss.zss.model.SPicture.Format;
 import org.zkoss.zss.model.sys.EngineFactory;
 import org.zkoss.zss.model.sys.dependency.DependencyTable;
 import org.zkoss.zss.model.sys.dependency.Ref;
+import org.zkoss.zss.model.sys.dependency.ObjectRef.ObjectType;
 import org.zkoss.zss.model.sys.formula.FormulaClearContext;
 import org.zkoss.zss.model.util.Validations;
 /**
@@ -1778,12 +1779,43 @@ public class SheetImpl extends AbstractSheetAdv {
 	        }
 		}
 		
+		//ZSS-555
+		addIntoDependency(_autoFilter);
 		
 		return _autoFilter;
 	}
 	
+	//ZSS-555: add into dependency table
+	private void addIntoDependency(SAutoFilter filter) {
+		SBook book = getBook();
+		String bookName = book.getBookName();
+		String sheetName = getSheetName();
+		Ref dependent = new ObjectRefImpl(bookName, sheetName, "AUTO_FILTER", ObjectType.AUTO_FILTER);
+		CellRegion rgn = filter.getRegion();
+		final DependencyTable dt = 
+			((AbstractBookSeriesAdv) book.getBookSeries()).getDependencyTable();
+		// prepare a dummy CellRef to enforce AutoFilter reference dependency
+		Ref dummy = new RefImpl(bookName, sheetName, 
+				rgn.row, rgn.column, rgn.lastRow, rgn.lastColumn);
+		dt.add(dependent, dummy);
+		ModelUpdateUtil.addRefUpdate(dependent);
+	}
+	
+	//ZSS-555: delete from dependency table
+	private void deleteFromDependency() {
+		SBook book = getBook();
+		String bookName = book.getBookName();
+		String sheetName = getSheetName();
+		Ref dependent = new ObjectRefImpl(bookName, sheetName, "AUTO_FILTER", ObjectType.AUTO_FILTER);
+		DependencyTable dt = 
+			((AbstractBookSeriesAdv) book.getBookSeries()).getDependencyTable();
+			
+		dt.clearDependents(dependent);
+	}
+
 	@Override
 	public void deleteAutoFilter() {
+		deleteFromDependency();
 		_autoFilter = null;
 	}
 

@@ -2,9 +2,17 @@ package org.zkoss.zss.model.impl;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Set;
 import java.util.TreeMap;
 
 import org.zkoss.zss.model.CellRegion;
+import org.zkoss.zss.model.SBook;
+import org.zkoss.zss.model.SSheet;
+import org.zkoss.zss.model.impl.sys.DependencyTableAdv;
+import org.zkoss.zss.model.sys.dependency.DependencyTable;
+import org.zkoss.zss.model.sys.dependency.ObjectRef.ObjectType;
+import org.zkoss.zss.model.sys.dependency.Ref;
+import org.zkoss.zss.model.util.Validations;
 /**
  * The auto fitler implement
  * @author dennis
@@ -14,7 +22,6 @@ public class AutoFilterImpl extends AbstractAutoFilterAdv {
 	private static final long serialVersionUID = 1L;
 	
 	private final CellRegion _region;
-	
 	private final TreeMap<Integer,NFilterColumn> _columns;
 
 	public AutoFilterImpl(CellRegion region){
@@ -53,6 +60,31 @@ public class AutoFilterImpl extends AbstractAutoFilterAdv {
 	@Override
 	public void clearFilterColumns() {
 		_columns.clear();
-	}
+	}	
 
+	//ZSS-555
+	@Override
+	public void renameSheet(SBook book, String oldName, String newName) {
+		Validations.argNotNull(oldName);
+		Validations.argNotNull(newName);
+		if (oldName.equals(newName)) return; // nothing change, let go
+		
+		final String bookName = book.getBookName();
+		// remove old ObjectRef
+		Ref dependent = new ObjectRefImpl(bookName, oldName, "AUTO_FILTER", ObjectType.AUTO_FILTER);
+
+		final DependencyTable dt = 
+				((AbstractBookSeriesAdv) book.getBookSeries()).getDependencyTable();
+		dt.clearDependents(dependent);
+		
+		// Add new ObjectRef into DependencyTable so we can extend/shrink/move
+		dependent = new ObjectRefImpl(bookName, newName, "AUTO_FILTER", ObjectType.AUTO_FILTER);
+		
+		// prepare new dummy CellRef to enforce DataValidation reference dependency
+		if (this._region != null) {
+			Ref dummy = new RefImpl(bookName, newName, 
+				_region.row, _region.column, _region.lastRow, _region.lastColumn);
+			dt.add(dependent, dummy);
+		}
+	}
 }
