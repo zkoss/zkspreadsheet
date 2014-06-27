@@ -11,6 +11,7 @@ ZK Spreadsheet 3.5.0
   ZSS-691 Support calculation in Excel's double precision
   ZSS-459 VALUE function support smart input format
   ZSS-702 Fine tune DataValidation to hold multiple regions 
+  ZSS-708 Support theme customization
  
 *Bugs:
   ZSS-652 Cut Formula shouldn't be shifted when it is not in cut range
@@ -67,6 +68,13 @@ ZK Spreadsheet 3.5.0
       API instead to protect the sheet with more protection options; use the new
       Range.unprotectSheet(String password) to unprotect the sheet; use the new
       Range.getSheetProtection() to tell the current protection options.
+    * Customized theme can be registered using SpreadsheetThemes.register(themeName, displayName, priority) 
+      API. The user could switch to any registered themes by setting 'zsstheme=default' in cookie or
+      library property:
+      <library-property>
+        <name>org.zkoss.zss.theme.preferred</name>
+        <value>default</value>
+      </library-property>
 
  ------------
 ZK Spreadsheet 3.5.0 RC
