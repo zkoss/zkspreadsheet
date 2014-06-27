@@ -1447,10 +1447,16 @@
 	-moz-box-shadow: none;
 	-webkit-box-shadow: none;
 	border: none;
+	pointer-events: none;
 }
 
 .zsstylepanel-upper {
 	border: 1px solid #cfcfcf;
+}
+
+.zsstylepanel-upper,
+.zsstylepanel-menu {
+	pointer-events: auto;
 }
 
 .zsstylepanel .z-popup-content {

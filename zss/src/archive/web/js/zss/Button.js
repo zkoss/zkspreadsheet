@@ -1161,6 +1161,10 @@ zss.StylePanel = zk.$extends(zul.wgt.Popup, {
 			sheet = this._wgt.sheetCtrl;
 
 		if (sheet) {
+			// ZSS-607: close panel when click outside style popup or menu popup
+			if (zk.ie < 11 && origin == this) {
+				this._closeStylePanel();
+			}
 			var menupopups = [sheet.getCellMenupopup(), sheet.getColumnHeaderMenupopup(), sheet.getRowHeaderMenupopup()];
 			for (var i = menupopups.length - 1; i >= 0; i--) {
 				if (triggerByMenupopup(menupopups[i], origin)) {
