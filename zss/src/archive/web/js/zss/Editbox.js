@@ -323,7 +323,8 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 			$n = jq(n),
 			v = $n.text(),
 			c1 = sheet.getCell(tRow, lCol),
-			c2 = tRow == bRow && lCol == rCol ? null : sheet.getCell(bRow, rCol),
+			// ZSS-689: check if the selection is merged cell or range
+			c2 = c1.isInRange(bRow, rCol) ? null : sheet.getCell(bRow, rCol),
 			ref = c1.ref,
 			editor = sheet.inlineEditor,
 			editorSheetId = editor.sheetId,

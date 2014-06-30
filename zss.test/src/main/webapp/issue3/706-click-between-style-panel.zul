@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+706-click-between-style-panel.zul
+
+	Purpose:
+		
+	Description:
+		
+	History:
+		Thu, Jun 26, 2014  6:58:14 PM, Created by RaymondChao
+
+Copyright (C) 2014 Potix Corporation. All Rights Reserved.
+
+-->
+<window>
+	<label multiline="true">
+		1. right click on cell
+		2. click between style popup and menu popup
+		3. both style popup and menu popup should close
+	</label>
+	<spreadsheet src="/issue/blank.xlsx" showContextMenu="true" height="500px" width="800px">
+	</spreadsheet>
+</window>
