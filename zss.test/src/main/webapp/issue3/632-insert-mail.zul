@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+632-insert-mail.zul
+
+	Purpose:
+		
+	Description:
+		
+	History:
+		Mon, Jun 30, 2014  7:04:34 PM, Created by RaymondChao
+
+Copyright (C) 2014 Potix Corporation. All Rights Reserved.
+
+-->
+<window>
+	<label multiline="true">
+		1. insert a mailto link (john@abc.com) by toolbar button in A1
+		2. select A1, click "Insert Hyperlink" toolbar button
+		3. "E-mail Address" textbox contains the mailto link I just entered
+	</label>
+	<spreadsheet src="/issue/blank.xlsx" showToolbar="true" height="600px" width="800px" />
+</window>
+
