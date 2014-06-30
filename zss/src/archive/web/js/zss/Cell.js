@@ -599,6 +599,15 @@ zss.Cell = zk.$extends(zk.Widget, {
 		var	src = this.src;
 		this.ref = src.columnHeaders[this.c].t + src.rowHeaders[newrow].t;
 		this.r = newrow;
+	},
+	/**
+	 * Returns whether the cell is in range
+	 * @param int row index
+	 * @param int col index
+	 */
+	isInRange: function (row, col) {
+		return this.merid ? this.mert <= row && this.merb >= row && this.merl <= col && this.merr >= col:
+			this.r == row && this.c == col;
 	}
 });
 })();
