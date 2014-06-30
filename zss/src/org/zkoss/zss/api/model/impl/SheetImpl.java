@@ -181,13 +181,13 @@ public class SheetImpl implements Sheet{
 		int h = 0;
 		
 		if(row == lrow){
-			h = y2 - y1;
+			h = y2 - y1 + 1; //ZSS-578
 		}else{
 			for(int i = row ; i<=lrow; i++){
 				if(i == row){
 					h += sheet.getRow(i).getHeight()-y1;
 				}else if(i == lrow){
-					h += y2;
+					h += y2 + 1; //ZSS-578
 				}else{
 					h += sheet.getRow(i).getHeight();
 				}
@@ -195,13 +195,13 @@ public class SheetImpl implements Sheet{
 		}
 		
 		if(column == lcolumn){
-			w = x2 - x1;
+			w = x2 - x1 + 1; //ZSS-578
 		}else{
 			for(int i = column; i<=lcolumn; i++){
 				if(i == column){
 					w += sheet.getColumn(i).getWidth()-x1;
 				}else if(i == lcolumn){
-					w += x2;
+					w += x2 + 1; //ZSS-578
 				}else{
 					w += sheet.getColumn(i).getWidth();
 				}

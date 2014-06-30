@@ -726,12 +726,12 @@
 	border: 5px solid #E8FDFD;
 }
 
-.zswidget-chart img,.zswidget-img {
+.zswidget-chart img {
 	border: 1px solid #868686;
 }
-.zswidget-img {
-	border: 1px solid transparent;
-}
+//.zswidget-img { //ZSS-578: no border around picture
+//	border: 1px solid transparent;
+//}
 
 .zsbtn {
 	height:17px;

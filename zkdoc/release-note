@@ -56,6 +56,7 @@ ZK Spreadsheet 3.5.0
   ZSS-689 Edit cell formula and use mouse to select a merged cell, it will insert range
   ZSS-579 Undo doesn't notify toolbar button to change status
   ZSS-632 mailto link should not appear in web address textbox in "Insert Hyperlink" dialog
+  ZSS-578 Insert a picture at Range(0,0) and drag it left or top will cause null pointer exception
   
 ** Upgrade Notes
   * Following api are deprecated

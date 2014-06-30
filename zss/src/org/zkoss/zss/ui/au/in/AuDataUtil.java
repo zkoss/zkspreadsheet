@@ -32,7 +32,7 @@ import java.util.Map;
 		}else if(obj instanceof String){
 			return Integer.parseInt((String)obj);
 		}
-		throw new ClassCastException("cannot cast "+obj==null?null:obj.getClass()+" to Number");
+		throw new ClassCastException("cannot cast "+(obj==null?null:obj.getClass())+" to Number");
 	}
 	
 	public static String getString(Map data,String key){
