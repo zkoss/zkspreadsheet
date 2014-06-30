@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+579-undo-toolbarbutton.zul
+
+	Purpose:
+		
+	Description:
+		
+	History:
+		Mon, Jun 30, 2014  4:54:06 PM, Created by RaymondChao
+
+Copyright (C) 2014 Potix Corporation. All Rights Reserved.
+
+-->
+<window>
+	<label multiline="true">
+		1. click on C4
+		2. change style to bold (Ctrl+B)
+		3. toolbar button "Bold" change status to "On"
+		4. undo (Ctrl+Z)
+		5. toolbar button "Bold" doesn't change status to "Off"
+	</label>
+	<spreadsheet src="/issue3/book/579-undo-toolbarbutton.xlsx" height="600px" width="900px" showToolbar="true" />
+</window>
