@@ -545,7 +545,7 @@
 	display: none;
 	background-color: white;
 	overflow: hidden;
-	border: 1px #000000 solid;
+	border: 1px solid #000000;
 	white-space: pre-wrap;
 	z-index: 4;
 }
