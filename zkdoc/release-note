@@ -54,6 +54,7 @@ ZK Spreadsheet 3.5.0
   ZSS-555 Insert a row on the row with autofilter cause double autofilter
   ZSS-707 The sorting order of AutoFilter dropdown is not correct.
   ZSS-689 Edit cell formula and use mouse to select a merged cell, it will insert range
+  ZSS-579 Undo doesn't notify toolbar button to change status
   
 ** Upgrade Notes
   * Following api are deprecated

@@ -677,7 +677,8 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 				data = result,
 				cCtl = this._wgt._cacheCtrl,
 				cacheSheet = cCtl.getSheetBy(shtId),
-				selSheet = cCtl.getSelectedSheet();
+				selSheet = cCtl.getSelectedSheet(),
+				ls = this.getLastSelection();
 			if (cacheSheet) {
 				cacheSheet.update(data); // update cell model 
 				if (cacheSheet.id == selSheet.id) {//update current sheet
@@ -685,6 +686,10 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 					this.update_(data); // update cell DOM
 					wgt._triggerContentsChanged = true;
 				}
+			}
+			if (ls) {
+				// ZSS-579: fire onCellUpdate to notify toolbar button to change status
+				this.fire('onCellUpdate', ls);
 			}
 			break;
 		case "startedit":

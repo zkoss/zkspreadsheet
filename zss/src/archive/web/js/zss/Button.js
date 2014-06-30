@@ -1707,7 +1707,7 @@ zss.ButtonBuilder = zk.$extends(zk.Object, {
 		b.listen({onBind: function () {
 			var sheet = wgt.sheetCtrl;
 			if (sheet) {
-				sheet.listen({onCellSelection: fn});
+				sheet.listen({onCellSelection: fn, onCellUpdate: fn});
 			}
 		}});
 		b.listen({onClick: function () {
@@ -1735,7 +1735,7 @@ zss.ButtonBuilder = zk.$extends(zk.Object, {
 		b.listen({onBind: function () {
 			var sheet = wgt.sheetCtrl;
 			if (sheet) {
-				sheet.listen({onCellSelection: fn});
+				sheet.listen({onCellSelection: fn, onCellUpdate: fn});
 			}
 		}});
 		b.listen({onClick: function () {
@@ -1763,7 +1763,7 @@ zss.ButtonBuilder = zk.$extends(zk.Object, {
 		b.listen({onBind: function () {
 			var sheet = wgt.sheetCtrl;
 			if (sheet) {
-				sheet.listen({onCellSelection: fn});
+				sheet.listen({onCellSelection: fn, onCellUpdate: fn});
 			}
 		}});
 		b.listen({onClick: function () {
@@ -1790,7 +1790,7 @@ zss.ButtonBuilder = zk.$extends(zk.Object, {
 		b.listen({onBind: function () {
 			var sheet = wgt.sheetCtrl;
 			if (sheet) {
-				sheet.listen({onCellSelection: fn});
+				sheet.listen({onCellSelection: fn, onCellUpdate: fn});
 			}
 		}});
 		b.listen({onClick: function () {
@@ -1879,7 +1879,7 @@ zss.ButtonBuilder = zk.$extends(zk.Object, {
 		b.listen({onBind: function () {
 			var sheet = wgt.sheetCtrl;
 			if (sheet) {
-				sheet.listen({onCellSelection: fn});
+				sheet.listen({onCellSelection: fn, onCellUpdate: fn});
 			}
 		}});
 		for (;item; item = item.nextSibling) {
@@ -1920,7 +1920,7 @@ zss.ButtonBuilder = zk.$extends(zk.Object, {
 		b.listen({onBind: function () {
 			var sheet = wgt.sheetCtrl;
 			if (sheet) {
-				sheet.listen({onCellSelection: fn});
+				sheet.listen({onCellSelection: fn, onCellUpdate: fn});
 			}
 		}});
 		for (;item; item = item.nextSibling) {
@@ -1951,7 +1951,7 @@ zss.ButtonBuilder = zk.$extends(zk.Object, {
 		b.listen({onBind: function () {
 			var sheet = wgt.sheetCtrl;
 			if (sheet) {
-				sheet.listen({onCellSelection: fn});
+				sheet.listen({onCellSelection: fn, onCellUpdate: fn});
 			}
 		}});
 		return b;
