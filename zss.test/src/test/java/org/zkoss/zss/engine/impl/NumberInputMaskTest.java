@@ -190,15 +190,47 @@ public class NumberInputMaskTest {
 	@Test
 	public void testParseNumberInput() {
 		for(int j= 0; j < OK.length; ++j) {
-			Object[] result = _formater.parseNumberInput((String) OK[j][0], Locale.US);
-			assertTrue(OK[j][0]+"->"+j,  result[1] != null);
-			assertEquals(OK[j][0]+"->"+j, ((Number)OK[j][1]).doubleValue(), ((Number)result[1]).doubleValue(), 0.000000000000001);
-			assertEquals(OK[j][0]+"->"+j, OK[j][2], result.length > 2 ? (String) result[2] : null);
+			testOneOKNumber(OK[j][0]+"->"+j, ((Number)OK[j][1]).doubleValue(), (String) OK[j][2], (String) OK[j][0]);
 		}
 		for(int j= 0; j < FAIL.length; ++j) {
-			Object[] result = _formater.parseNumberInput(FAIL[j], Locale.US);
-			assertFalse(FAIL[j]+"->"+j, result[1] != null);
-			assertEquals(FAIL[j]+"->"+j, FAIL[j], (String)result[0]);
+			testOneFailNumber(FAIL[j]+"->"+j, FAIL[j]);
 		}
+	}
+	
+	@Test
+	public void testPercent1231() {
+		Object[] val = {"%123.1", 1.231, "0.00%"};
+		testOneOKNumber((String)val[0], ((Number)val[1]).doubleValue(), (String) val[2], (String) val[0]);
+	}
+	
+	@Test
+	public void testCommaPercentParentsesis() {
+		Object[] val = {"(1,234567E1)%", -123456.70, "0.00E+00"};
+		testOneOKNumber((String)val[0], ((Number)val[1]).doubleValue(), (String) val[2], (String) val[0]);
+	}
+	
+	@Test
+	public void testPercent1() {
+		Object[] val = {"%1", 0.01, "0%"};
+		testOneOKNumber((String)val[0], ((Number)val[1]).doubleValue(), (String) val[2], (String) val[0]);
+	}
+	
+	@Test
+	public void testSinglePercent() {
+		String input = "%";
+		testOneFailNumber(input, input);
+	}
+	
+	private void testOneOKNumber(String item, double expect, String expectFormat, String input) {
+		Object[] result = _formater.parseNumberInput(input, Locale.US);
+		assertTrue(item, result[1] != null);
+		assertEquals(item, expect, ((Number)result[1]).doubleValue(), 0.000000000000001);
+		assertEquals(item, expectFormat, result.length > 2 ? (String) result[2] : null);
+	}
+	
+	private void testOneFailNumber(String item, String input) {
+		Object[] result = _formater.parseNumberInput(input, Locale.US);
+		assertFalse(item, result[1] != null);
+		assertEquals(item, input, (String)result[0]);
 	}
 }
