@@ -107,6 +107,9 @@ public class ProtectSheetTest {
 		testEditObjects(book, book.getSheet("sheet13"));
 		// TODO edit scenarios test
 		// testEditScenarios(book, sheet);
+		
+		testNull(book, null);
+		testNull(null, null);
 	}
 	
 	private void testAllowAll(Book book, Sheet sheet) {
@@ -350,5 +353,19 @@ public class ProtectSheetTest {
         Assert.assertFalse(applyFilterHandler.isEnabled(book, sheet));
         Assert.assertFalse(cleanFilterHandler.isEnabled(book, sheet));
         Assert.assertFalse(reapplyFilterHandler.isEnabled(book, sheet));
+	}
+	
+	private void testNull(Book book, Sheet sheet) {
+		testProtectedhandler(book, sheet);
+		testFormatCellsHandler(book, sheet, false);
+        testFormatColumnsHandler(book, sheet, false);
+        testFormatRowsHandler(book, sheet, false);
+        testInsertColumnsHandler(book, sheet, false);
+        testInsertRowsHandler(book, sheet, false);
+        testHyperlinksHandler(book, sheet, false);
+        testDeleteColumnsHandler(book, sheet, false);
+        testDeleteRowsHandler(book, sheet, false);
+        testSortHandler(book, sheet, false);
+        testObjectsHandler(book, sheet, false);
 	}
 }

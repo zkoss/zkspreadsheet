@@ -67,9 +67,8 @@ public class InsertRowHandler extends AbstractHandler {
 
 	@Override
 	public boolean isEnabled(Book book, Sheet sheet) {
-		final Range range = Ranges.range(sheet);
-		return book != null && sheet != null && ( !sheet.isProtected() ||
-				range.getSheetProtection().isInsertRowsAllowed());
+		return book != null && sheet != null && (!sheet.isProtected() ||
+				Ranges.range(sheet).getSheetProtection().isInsertRowsAllowed());
 	}
 
 }
