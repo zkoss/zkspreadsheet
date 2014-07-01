@@ -441,9 +441,9 @@ public class DataValidationImpl extends AbstractDataValidationAdv {
 		
 		Ref ref = getRef();
 		if(formula2!=null){
-			_formula1Expr = fe.parse(formula2, new FormulaParseContext(_sheet,ref));
+			_formula2Expr = fe.parse(formula2, new FormulaParseContext(_sheet,ref));
 		}else{
-			_formula1Expr = null;
+			_formula2Expr = null;
 		}
 	}
 
