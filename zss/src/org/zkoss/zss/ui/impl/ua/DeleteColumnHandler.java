@@ -57,9 +57,8 @@ public class DeleteColumnHandler extends AbstractHandler {
 
 	@Override
 	public boolean isEnabled(Book book, Sheet sheet) {
-		final Range range = Ranges.range(sheet);
-		return book != null && sheet != null && ( !sheet.isProtected() ||
-				range.getSheetProtection().isDeleteColumnsAllowed());
+		return book != null && sheet != null && (!sheet.isProtected() ||
+				Ranges.range(sheet).getSheetProtection().isDeleteColumnsAllowed());
 	}
 
 }

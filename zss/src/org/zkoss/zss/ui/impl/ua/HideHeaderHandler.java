@@ -8,6 +8,7 @@ import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.AreaRef;
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.Sheet;
+import org.zkoss.zss.api.model.SheetProtection;
 import org.zkoss.zss.ui.UserActionContext;
 import org.zkoss.zss.ui.impl.undo.HideHeaderAction;
 import org.zkoss.zss.ui.impl.undo.HideHeaderAction.Type;
@@ -75,16 +76,22 @@ public class HideHeaderHandler extends AbstractHandler {
 
 	@Override
 	public boolean isEnabled(Book book, Sheet sheet) {
-		final Range range = Ranges.range(sheet);
+		if (book == null || sheet == null) {
+			return false;
+		}
+		if (!sheet.isProtected()) {
+			return true;
+		}
+		final SheetProtection sheetProtection = Ranges.range(sheet).getSheetProtection();
 		boolean allowed = false;
 		switch(_type){
 		case COLUMN:
-			allowed = range.getSheetProtection().isFormatColumnsAllowed();
+			allowed = sheetProtection.isFormatColumnsAllowed();
 			break;
 		case ROW:
-			allowed = range.getSheetProtection().isFormatRowsAllowed();
+			allowed = sheetProtection.isFormatRowsAllowed();
 			break;
 		}
-		return book != null && sheet != null && (!sheet.isProtected() || allowed);
+		return allowed;
 	}
 }
