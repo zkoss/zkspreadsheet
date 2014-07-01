@@ -12,6 +12,7 @@ ZK Spreadsheet 3.5.0
   ZSS-459 VALUE function support smart input format
   ZSS-702 Fine tune DataValidation to hold multiple regions 
   ZSS-708 Support theme customization
+  ZSS-703 Allow user to use use their own PivotTableHelper implementation
  
 *Bugs:
   ZSS-652 Cut Formula shouldn't be shifted when it is not in cut range
