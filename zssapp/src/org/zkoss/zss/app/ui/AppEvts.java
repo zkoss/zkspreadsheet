@@ -42,5 +42,8 @@ public class AppEvts {
 	
 	public static String ON_UNDO = "onUndo";
 	public static String ON_REDO = "onRedo";
-
+	
+	public static String ON_INSERT_PICTURE = "onInsertPicture";
+	public static String ON_INSERT_CHART = "onInsertChart";
+	public static String ON_INSERT_HYPERLINK = "onInsertHyperlink";
 }

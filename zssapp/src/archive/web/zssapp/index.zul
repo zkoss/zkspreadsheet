@@ -4,10 +4,8 @@
 	<window id="mainWin" hflex="1" vflex="1" apply="org.zkoss.zss.app.ui.AppCtrl">
 		<vlayout hflex="1" vflex="1" spacing="0">
 			<include hflex="1" src="~./zssapp/mainMenubar.zul" />
-			<spreadsheet id="ss" 
-				hflex="1" vflex="1" 
-				showToolbar="true" showFormulabar="true" showSheetbar="true" showContextMenu="true"
-				maxrows="200" maxcolumns="40"/>
+			<spreadsheet id="ss" hflex="1" vflex="1" maxrows="200" maxcolumns="40"
+				showToolbar="true" showFormulabar="true" showSheetbar="true" showContextMenu="true" />
 		</vlayout>
 	</window>
 </zk>

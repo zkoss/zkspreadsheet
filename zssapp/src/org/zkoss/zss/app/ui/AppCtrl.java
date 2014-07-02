@@ -13,15 +13,18 @@ package org.zkoss.zss.app.ui;
 
 import java.io.*;
 
+import org.zkoss.image.AImage;
 import org.zkoss.lang.Strings;
 import org.zkoss.util.logging.Log;
 import org.zkoss.util.media.AMedia;
+import org.zkoss.util.media.Media;
+import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.*;
 import org.zkoss.zk.ui.event.*;
 import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zss.api.*;
 import org.zkoss.zss.api.model.*;
-import org.zkoss.zss.api.model.Book.BookType;
+import org.zkoss.zss.api.model.Hyperlink.HyperlinkType;
 import org.zkoss.zss.app.repository.*;
 import org.zkoss.zss.app.repository.impl.BookUtil;
 import org.zkoss.zss.app.ui.dlg.*;
@@ -30,6 +33,7 @@ import org.zkoss.zss.ui.event.Events;
 import org.zkoss.zss.ui.impl.DefaultUserActionManagerCtrl;
 import org.zkoss.zss.ui.sys.UndoableActionManager;
 import org.zkoss.zul.Filedownload;
+import org.zkoss.zul.Fileupload;
 
 /**
  * 
@@ -384,6 +388,12 @@ public class AppCtrl extends CtrlBase<Component>{
 			doUndo();
 		}else if(AppEvts.ON_REDO.equals(event)){
 			doRedo();
+		} else if (AppEvts.ON_INSERT_PICTURE.equals(event)) {
+			doInsertPicture();
+		} else if (AppEvts.ON_INSERT_CHART.equals(event)) {
+			doInsertChart((String) data);
+		} else if (AppEvts.ON_INSERT_HYPERLINK.equals(event)) {
+			doInsertHyperlink();
 		}
 	}
 
@@ -416,5 +426,84 @@ public class AppCtrl extends CtrlBase<Component>{
 		pushAppEvent(AppEvts.ON_CHANGED_SPREADSHEET,ss);
 	}
 	
+	private void doInsertPicture() {
+		Fileupload.get(1,new EventListener<UploadEvent>() {
+			public void onEvent(UploadEvent event) throws Exception {
+				Media media = event.getMedia();
+				if(media == null){
+					return;
+				}
+				if(!(media instanceof AImage) || SheetOperationUtil.getPictureFormat((AImage)media)==null){
+					UiUtil.showWarnMessage(Labels.getLabel("zss.actionhandler.msg.cant_support_file", new Object[]{media==null?"":media.getName()}));
+					return;
+				}
+				final Sheet sheet = ss.getSelectedSheet();
+				final AreaRef selection = ss.getSelection();
+				Range range = Ranges.range(sheet, selection.getRow(), selection.getColumn(), selection.getLastRow(), selection.getLastColumn());
+				
+				SheetOperationUtil.addPicture(range,(AImage)media);
+				
+				return;
+			}
+		});
+	}
+	
+	private void doInsertChart(String type) {
+		AreaRef selection = ss.getSelection();
+		Range range = Ranges.range(ss.getSelectedSheet(), selection.getRow(),
+				selection.getColumn(), selection.getLastRow(),
+				selection.getLastColumn());
+		SheetAnchor anchor = SheetOperationUtil.toChartAnchor(range);
+		SheetOperationUtil.addChart(range,anchor, toChartType(type), Chart.Grouping.STANDARD, Chart.LegendPosition.RIGHT);
+	}
+	
+	private Chart.Type toChartType(String type) {
+		Chart.Type chartType;
+		if ("ColumnChart".equals(type)) {
+			chartType = Chart.Type.COLUMN;
+		} else if ("ColumnChart3D".equals(type)) {
+			chartType = Chart.Type.COLUMN_3D;
+		} else if ("LineChart".equals(type)) {
+			chartType = Chart.Type.LINE;
+		} else if ("LineChart3D".equals(type)) {
+			chartType = Chart.Type.LINE_3D;
+		} else if ("PieChart".equals(type)) {
+			chartType = Chart.Type.PIE;
+		} else if ("PieChart3D".equals(type)) {
+			chartType = Chart.Type.PIE_3D;
+		} else if ("BarChart".equals(type)) {
+			chartType = Chart.Type.BAR;
+		} else if ("BarChart3D".equals(type)) {
+			chartType = Chart.Type.BAR_3D;
+		} else if ("AreaChart".equals(type)) {
+			chartType = Chart.Type.AREA;
+		} else if ("AreaChart3D".equals(type)) {
+			chartType = Chart.Type.AREA_3D;
+		} else if ("ScatterChart".equals(type)) {
+			chartType = Chart.Type.SCATTER;
+		} else if ("DoughnutChart".equals(type)) {
+			chartType = Chart.Type.DOUGHNUT;
+		} else {
+			chartType = Chart.Type.LINE;
+		}
+		return chartType;
+	}
+	
+	private void doInsertHyperlink() {
+		final Sheet sheet = ss.getSelectedSheet();
+		final AreaRef selection = ss.getSelection();
+		final Range range = Ranges.range(sheet, selection);
+		Hyperlink link = range.getCellHyperlink();
+		String display = link == null ? range.getCellFormatText():link.getLabel();
+		String address = link == null ? null:link.getAddress();
+		HyperlinkCtrl.show(new EventListener<DlgCallbackEvent>(){
+			public void onEvent(DlgCallbackEvent event) throws Exception {
+				if(HyperlinkCtrl.ON_OK.equals(event.getName())){
+					final String address = (String) event.getData(HyperlinkCtrl.ARG_ADDRESS);
+					final String label = (String) event.getData(HyperlinkCtrl.ARG_DISPLAY);
+					CellOperationUtil.applyHyperlink(range, HyperlinkType.URL, address, label);
+				}
+			}}, address, display);
+	}
 	
 }

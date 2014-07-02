@@ -72,6 +72,8 @@ public class MainMenubarCtrl extends CtrlBase<Menubar> {
 	Menu freezeRows;
 	@Wire
 	Menu freezeCols;
+	@Wire
+	Menu insertMenu;
 	
 	
 	protected void onAppEvent(String event,Object data){
@@ -135,6 +137,9 @@ public class MainMenubarCtrl extends CtrlBase<Menubar> {
 			((Menuitem)comp).setDisabled(!isEE || disabled);
 		}
 		for(Component comp:Selectors.find(freezeCols, "menuitem")){
+			((Menuitem)comp).setDisabled(!isEE || disabled);
+		}
+		for(Component comp:Selectors.find(insertMenu, "menuitem")){
 			((Menuitem)comp).setDisabled(!isEE || disabled);
 		}
 	}
@@ -207,5 +212,20 @@ public class MainMenubarCtrl extends CtrlBase<Menubar> {
 	@Listen("onRedo=#mainMenubar")
 	public void onRedo(ForwardEvent event) {
 		pushAppEvent(AppEvts.ON_REDO);
+	}
+	
+	@Listen("onInsertPicture=#mainMenubar")
+	public void onInsertPicture(ForwardEvent event) {
+		pushAppEvent(AppEvts.ON_INSERT_PICTURE);
+	}
+	
+	@Listen("onInsertChart=#mainMenubar")
+	public void onInsertChart(ForwardEvent event) {
+		pushAppEvent(AppEvts.ON_INSERT_CHART, event.getData());
+	}
+	
+	@Listen("onInsertHyperlink=#mainMenubar")
+	public void onInsertHyperlink(ForwardEvent event) {
+		pushAppEvent(AppEvts.ON_INSERT_HYPERLINK);
 	}
 }
