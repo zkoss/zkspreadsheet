@@ -1215,6 +1215,7 @@
 
 .zstbtn-real {
 	margin-right: 4px;
+	font-size: 12px;
 }
 
 .zstbtn .z-toolbarbutton-content {
@@ -1410,6 +1411,11 @@
 	margin: 0 2px;
 }
 
+.zsfontfamily .z-combobox-input,
+.zsfontsize .z-combobox-input {
+	font-size: 12px;
+}
+
 .zstbtn-color {
 	width: 14px;
 	height: 3px;
@@ -1523,23 +1529,23 @@
 .z-initing {
 	background-image: url('http://www.zkoss.org/zk/img/${s:encodeWithZSS("zsspowered.png")}');
 }
+
 /* hide toolbar tab */
 .z-north .zstbtabpanel {
 	border-width: 0;
 }
+
 .zssheet .z-north .z-tabs,
 .zssheet .z-north .z-toolbar-tabs {
 	display: none;
 }
-/* change default font size to 12px */
-.z-toolbarbutton-content,
-.z-toolbar-content span {
-	font-size: 12px;
-}
+
 /* change default font family to Segoe UI */
-.z-toolbarbutton-content,
-.z-menu-text,
-.z-menuitem-text,
+.zstbtn-real,
+.zsfontfamily .z-combobox-input,
+.zsfontsize .z-combobox-input,
+[class^="zsmenu-"] .z-menu-text,
+[class^="zsmenuitem-"] .z-menuitem-text,
 .zssheettab-text,
 .zstopcell,
 .zsleftcell {
