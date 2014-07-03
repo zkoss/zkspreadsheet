@@ -249,7 +249,8 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 				sheet.isSwitchingFocus = false;
 			} else if (sheet.isSwitchingSheet) {
 				focusWhenBlur(wgt);
-			} else if (!sheet._wgt.hasFocus()) {
+			// ZSS-683: check if the editor is editing to prevent fire onStopEditing twice
+			} else if (!sheet._wgt.hasFocus() && wgt.isEditing()) {
 				sheet.dp.stopEditing(sheet.innerClicking > 0 ? "refocus" : "lostfocus");
 			}
 		}
@@ -379,6 +380,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 
 zss.FormulabarEditor = zk.$extends(zul.inp.InputWidget, {
 	widgetName: 'FormulabarEditor',
+	_editing: false,
 	row: -1,
 	col: -1,
    	$init: function (wgt) {
@@ -418,15 +420,19 @@ zss.FormulabarEditor = zk.$extends(zul.inp.InputWidget, {
    		if (sheet) {
    			sheet.inlineEditor.cancel();
    		}
-   		this.row = this.col = -1;
+   		this.clearStatus();
    	},
    	stop: function () {
-	   	var sheet = this.sheet;
-	   	if (sheet) {
-	   		sheet.inlineEditor.stop();
+   		var sheet = this.sheet;
+   		if (sheet) {
+   			sheet.inlineEditor.stop();
    		}
-   		this.row = this.col = -1;
+   		this.clearStatus();
    	},
+	clearStatus: function () {
+   		this.row = this.col = -1;
+   		this._editing = false;
+	},
    	/**
    	 * Sync editor top position base on text cursor position
    	 * 
@@ -510,6 +516,7 @@ zss.FormulabarEditor = zk.$extends(zul.inp.InputWidget, {
    	},
    	doFocus_: function () {
    		var sheet = this.sheet;
+   		this._editing = true;
    		if (sheet) {
    			var info = sheet.editingFormulaInfo;
    			if (info) {
@@ -541,6 +548,9 @@ zss.FormulabarEditor = zk.$extends(zul.inp.InputWidget, {
    				this.setValue(c.edit || '', 0);
    			}
    		}
+   	},
+   	isEditing: function () {
+   	   	return this._editing;
    	},
    	_onStartEditing: function (evt) {
    		var d = evt.data;

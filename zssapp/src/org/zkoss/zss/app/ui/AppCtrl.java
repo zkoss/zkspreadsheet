@@ -477,8 +477,6 @@ public class AppCtrl extends CtrlBase<Component>{
 			chartType = Chart.Type.BAR_3D;
 		} else if ("AreaChart".equals(type)) {
 			chartType = Chart.Type.AREA;
-		} else if ("AreaChart3D".equals(type)) {
-			chartType = Chart.Type.AREA_3D;
 		} else if ("ScatterChart".equals(type)) {
 			chartType = Chart.Type.SCATTER;
 		} else if ("DoughnutChart".equals(type)) {
