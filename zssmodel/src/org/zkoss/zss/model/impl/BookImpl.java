@@ -712,7 +712,9 @@ public class BookImpl extends AbstractBookAdv{
 		if(_names==null)
 			return null;
 		for(SName name:_names){
-			if((sheetName==null || sheetName.equalsIgnoreCase(name.getApplyToSheetName())) 
+			//ZSS-436
+			final String scopeSheetName = name.getApplyToSheetName();
+			if ((sheetName == scopeSheetName || (sheetName != null && sheetName.equalsIgnoreCase(scopeSheetName)))
 					&& name.getName().equalsIgnoreCase(namename)){
 				return name;
 			}
