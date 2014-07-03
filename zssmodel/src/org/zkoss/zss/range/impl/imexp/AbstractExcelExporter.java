@@ -109,11 +109,11 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 		for (SName name : book.getNames()) {
 			Name poiName = workbook.createName();
 			try{
-				poiName.setNameName(name.getName());
-				String sheetName = name.getRefersToSheetName();
+				String sheetName = name.getApplyToSheetName();//ZSS-699
 				if(sheetName!=null){
 					poiName.setSheetIndex(workbook.getSheetIndex(sheetName));
 				}
+				poiName.setNameName(name.getName()); //ZSS-699: execute after setSheetIndex() to avoid check duplicate name issue
 				//zss-214, to tolerate the name refers to formula error (#REF!!$A$1:$I$18)
 				if(!name.isFormulaParsingError()){
 					poiName.setRefersToFormula(name.getRefersToFormula());

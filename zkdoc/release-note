@@ -58,6 +58,7 @@ ZK Spreadsheet 3.5.0
   ZSS-579 Undo doesn't notify toolbar button to change status
   ZSS-632 mailto link should not appear in web address textbox in "Insert Hyperlink" dialog
   ZSS-578 Insert a picture at Range(0,0) and drag it left or top will cause null pointer exception
+  ZSS-699 Crash with medium xlsx file
   
 ** Upgrade Notes
   * Following api are deprecated
