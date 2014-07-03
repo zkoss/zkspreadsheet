@@ -15,6 +15,7 @@ package org.zkoss.zss.model.impl.sys;
 import java.text.AttributedCharacterIterator;
 import java.text.CharacterIterator;
 import java.text.DateFormat;
+import java.text.DateFormatSymbols;
 import java.util.Calendar;
 import java.util.Locale;
 import java.util.Map;
@@ -713,12 +714,21 @@ public class DateInputMask { //ZSS-67
 //		final ZssContext ctx = ZssContext.getCurrent();
 		final int twoDigitYearUpperBound = -1; //TODO always -1 in original implementation
 //		final Locale locale = ctx.getLocale();
+		//ZSS-379
+		final DateFormatSymbols symbols = new DateFormatSymbols(locale);
+		final String[] ampm = symbols.getAmPmStrings();
+		final String am = ampm[0];
+		final String pm = ampm[1];
+		String txt1 = txt;
+		txt1 = txt1.replaceFirst(am, "AM");
+		txt1 = txt1.replaceFirst(pm, "PM");
+		
 		final FormatInfo[] formatInfos = getFormatInfos(locale); 
 		for(int j = 0; j < formatInfos.length; ++j) {
 			final FormatInfo info = formatInfos[j]; 
-	        Matcher m = info.getMaskPattern().matcher(txt);
+	        Matcher m = info.getMaskPattern().matcher(txt1);
 	        if (m.matches()) {
-	        	return info.parseInput(txt, m, twoDigitYearUpperBound); 
+	        	return info.parseInput(txt1, m, twoDigitYearUpperBound); 
 	        }
 		}
 		return new Object[] {txt, null};
