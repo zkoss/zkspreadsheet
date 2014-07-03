@@ -113,14 +113,8 @@
 							forward='mainMenubar.onInsertChart(BarChart3D)' sclass="zsmenuitem-app appmenu" />
 					</menupopup>
 				</menu>
-				<menu label="${c:l('zssapp.mainMenu.insert.areaChart')}" sclass="zsmenu-app">
-					<menupopup>
-						<menuitem id="insertAreaChart" label="${c:l('zssapp.mainMenu.insert.areaChart')}"
-							forward='mainMenubar.onInsertChart(AreaChart)' sclass="zsmenuitem-app appmenu" />
-						<menuitem id="insertAreaChart3D" label="${c:l('zssapp.mainMenu.insert.areaChart')} 3D"
-							forward='mainMenubar.onInsertChart(AreaChart3D)' sclass="zsmenuitem-app appmenu" />
-					</menupopup>
-				</menu>
+				<menuitem id="insertAreaChart" label="${c:l('zssapp.mainMenu.insert.areaChart')}"
+					forward='mainMenubar.onInsertChart(AreaChart)' sclass="zsmenuitem-app appmenu" />
 				<menuitem id="insertScatterChart" label="${c:l('zssapp.mainMenu.insert.scatterChart')}"
 					forward='mainMenubar.onInsertChart(ScatterChart)' sclass="zsmenuitem-app appmenu" />
 				<menu label="${c:l('zssapp.mainMenu.insert.otherChart')}" sclass="zsmenu-app">
