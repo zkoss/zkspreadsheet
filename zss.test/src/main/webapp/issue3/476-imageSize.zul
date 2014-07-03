@@ -18,6 +18,15 @@
 	        }
 	        return imageByte;
     	}
+		public void export(Spreadsheet ss, String ext) {
+			Exporter exporter = Exporters.getExporter();
+			java.io.ByteArrayOutputStream os = new java.io.ByteArrayOutputStream();
+			exporter.export(ss.getBook(), os);
+			os.close();
+			org.zkoss.zul.Filedownload.save(os.toByteArray(),
+					"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "exported" + ext);
+		}
+		
 	</zscript>
 	<button id="inputPicture" label="Insert Picture">
 		<attribute name="onClick">
@@ -26,8 +35,8 @@
 			SheetOperationUtil.addPicture(Ranges.range(sheet,3, 8), decodeToByte(base64),Format.PNG, 100, 100);
 		</attribute>
 	</button>
-		
-	<spreadsheet id="source" src="/issue/blank.xlsx" maxVisibleRows="150" maxVisibleColumns="40"
+	xlsx <button label="export" onClick='export(source, ".xlsx");' /> 
+	<spreadsheet id="source" src="/issue/blank.xlsx" maxVisibleRows="100" maxVisibleColumns="40"
 			hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true"
 			ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e" />
 	</vbox>

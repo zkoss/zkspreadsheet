@@ -1,5 +1,17 @@
 <zk>
 	<window width="100%" height="100%">
+		<zscript><![CDATA[
+			import org.zkoss.zss.api.*;
+			public void export() {
+				Exporter exporter = Exporters.getExporter();
+				java.io.ByteArrayOutputStream os = new java.io.ByteArrayOutputStream();
+				exporter.export(ss.getBook(), os);
+				os.close();
+				org.zkoss.zul.Filedownload.save(os.toByteArray(),
+						"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "exported.xlsx");
+			}
+		]]></zscript>
+		<button label="export" onClick="export();" /> 
 		<spreadsheet id="ss" src="/issue3/book/430-export-formula.xlsx" hflex="1" vflex="1"
 			maxVisibleRows="500" maxVisibleColumns="100" showToolbar="true" showFormulabar="true"
 			showSheetbar="true" showContextMenu="true">
