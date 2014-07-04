@@ -38,6 +38,7 @@ import org.zkoss.zss.model.chart.SGeneralChartData;
 import org.zkoss.zss.model.chart.SSeries;
 import org.zkoss.zss.model.impl.AbstractBookSeriesAdv;
 import org.zkoss.zss.model.impl.AbstractCellAdv;
+import org.zkoss.zss.model.impl.AbstractDataValidationAdv;
 import org.zkoss.zss.model.impl.AbstractSheetAdv;
 import org.zkoss.zss.model.impl.BookImpl;
 import org.zkoss.zss.model.impl.RefImpl;
@@ -84,8 +85,7 @@ public class ValidationTest {
 		
 		
 		dv2.setValidationType(ValidationType.INTEGER);
-		dv2.setFormula1("A1");
-		dv2.setFormula2("C1");
+		((AbstractDataValidationAdv)dv2).setFormulas("A1", "C1");
 		Assert.assertEquals(1, dv2.getNumOfValue1());
 		Assert.assertEquals(1, dv2.getNumOfValue2());
 		Assert.assertEquals(1D, dv2.getValue1(0));
@@ -182,8 +182,7 @@ public class ValidationTest {
 		
 		//test integer
 		dv1.setValidationType(ValidationType.INTEGER);
-		dv1.setFormula1("1");
-		dv1.setFormula2("3");
+		((AbstractDataValidationAdv)dv1).setFormulas("1", "3");
 		dv1.setOperatorType(OperatorType.BETWEEN);
 		Assert.assertFalse(new DataValidationHelper(dv1).validate("1.3", "General"));//not integer
 		
@@ -244,8 +243,7 @@ public class ValidationTest {
 		
 		//test integer
 		dv1.setValidationType(ValidationType.DECIMAL);
-		dv1.setFormula1("A1");
-		dv1.setFormula2("SUM(A1:B1)");//1-3
+		((AbstractDataValidationAdv)dv1).setFormulas("A1", "SUM(A1:B1)");//1-3
 		dv1.setOperatorType(OperatorType.BETWEEN);
 		Assert.assertTrue(new DataValidationHelper(dv1).validate("1.3", "General"));//not integer
 		
@@ -306,8 +304,7 @@ public class ValidationTest {
 		
 		//test integer
 		dv1.setValidationType(ValidationType.TEXT_LENGTH);
-		dv1.setFormula1("A1");
-		dv1.setFormula2("SUM(A1:B1)");//1-3
+		((AbstractDataValidationAdv)dv1).setFormulas("A1", "SUM(A1:B1)");//1-3
 		dv1.setOperatorType(OperatorType.BETWEEN);
 		
 		Assert.assertTrue(new DataValidationHelper(dv1).validate("A", "General"));
@@ -369,8 +366,7 @@ public class ValidationTest {
 		
 		//test integer
 		dv1.setValidationType(ValidationType.DATE);
-		dv1.setFormula1("A1");
-		dv1.setFormula2("B1");//2013/1/10 - 2013/2/1
+		((AbstractDataValidationAdv)dv1).setFormulas("A1", "B1");//2013/1/10 - 2013/2/1
 		dv1.setOperatorType(OperatorType.BETWEEN);
 		String format = "yyyy/m/d";
 		Assert.assertTrue(new DataValidationHelper(dv1).validate("2013/1/10", format));
@@ -430,8 +426,7 @@ public class ValidationTest {
 		
 		//test integer
 		dv1.setValidationType(ValidationType.TIME);
-		dv1.setFormula1("A1");
-		dv1.setFormula2("B1");//12:00 - 14:00
+		((AbstractDataValidationAdv)dv1).setFormulas("A1", "B1");//12:00 - 14:00
 		dv1.setOperatorType(OperatorType.BETWEEN);
 		String format = "h:mm";
 		Assert.assertTrue(new DataValidationHelper(dv1).validate("12:00", format));

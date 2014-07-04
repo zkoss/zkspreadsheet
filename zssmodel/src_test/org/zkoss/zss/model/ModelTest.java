@@ -54,6 +54,7 @@ import org.zkoss.zss.model.chart.SGeneralChartData;
 import org.zkoss.zss.model.chart.SSeries;
 import org.zkoss.zss.model.impl.AbstractBookSeriesAdv;
 import org.zkoss.zss.model.impl.AbstractCellAdv;
+import org.zkoss.zss.model.impl.AbstractDataValidationAdv;
 import org.zkoss.zss.model.impl.AbstractSheetAdv;
 import org.zkoss.zss.model.impl.BookImpl;
 import org.zkoss.zss.model.impl.RefImpl;
@@ -2569,8 +2570,7 @@ public class ModelTest {
 		
 		
 		dv2.setValidationType(ValidationType.INTEGER);
-		dv2.setFormula1("A1");
-		dv2.setFormula2("C1");
+		((AbstractDataValidationAdv)dv2).setFormulas("A1", "C1");
 		Assert.assertEquals(1, dv2.getNumOfValue1());
 		Assert.assertEquals(1, dv2.getNumOfValue2());
 		Assert.assertEquals(1D, dv2.getValue1(0));
@@ -3638,7 +3638,7 @@ public class ModelTest {
 		Assert.assertEquals(11D, sheet1.getCell("C1").getValue());
 		
 		book.setNameName(name, "BAR");
-		Assert.assertEquals("#NAME?", sheet1.getCell("C1").getErrorValue().getErrorString());
+		Assert.assertEquals(11D, sheet1.getCell("C1").getValue());
 		
 		
 		sheet1.getCell("C1").setValue("=SUM(BAR)");

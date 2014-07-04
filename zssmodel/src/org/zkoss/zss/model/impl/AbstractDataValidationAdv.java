@@ -40,4 +40,11 @@ public abstract class AbstractDataValidationAdv implements SDataValidation,Linke
 	 * When sheet name changed.
 	 */
 	abstract void renameSheet(String oldName, String newName); // ZSS-648
+	
+	/**
+	 * Setup the two formulas.
+	 * @param formula1
+	 * @param formula2
+	 */
+	abstract public void setFormulas(String formula1, String formula2);
 }

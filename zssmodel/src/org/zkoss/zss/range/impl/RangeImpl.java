@@ -1904,8 +1904,7 @@ public class RangeImpl implements SRange {
 		dv.setIgnoreBlank(ignoreBlank);
 		dv.setOperatorType(operatorType);
 		dv.setInCellDropdown(inCellDropDown);
-		dv.setFormula1(formula1);
-		dv.setFormula2(formula2);
+		((AbstractDataValidationAdv)dv).setFormulas(formula1, formula2);
 		dv.setShowInput(showInput);
 		dv.setInputTitle(inputTitle);
 		dv.setInputMessage(inputMessage);

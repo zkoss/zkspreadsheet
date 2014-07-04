@@ -417,7 +417,7 @@ public class DataValidationImpl extends AbstractDataValidationAdv {
 	public void setFormula1(String formula1) {
 		checkOrphan();
 		_evaluated = false;
-		clearFormulaDependency(false);
+		clearFormulaDependency(false); // will clear formula
 		clearFormulaResultCache();
 		
 		FormulaEngine fe = EngineFactory.getInstance().createFormulaEngine();
@@ -432,14 +432,34 @@ public class DataValidationImpl extends AbstractDataValidationAdv {
 	
 	@Override
 	public void setFormula2(String formula2) {
+		setFormula1(_formula1Expr == null ? null : _formula1Expr.getFormulaString());
+		
+		FormulaEngine fe = EngineFactory.getInstance().createFormulaEngine();
+		
+		Ref ref = getRef();
+		if(formula2!=null){
+			_formula2Expr = fe.parse(formula2, new FormulaParseContext(_sheet,ref));
+		}else{
+			_formula2Expr = null;
+		}
+	}
+	
+	@Override
+	public void setFormulas(String formula1, String formula2) {
 		checkOrphan();
 		_evaluated = false;
-		clearFormulaDependency(false);
+		clearFormulaDependency(false); // will clear formula
 		clearFormulaResultCache();
 		
 		FormulaEngine fe = EngineFactory.getInstance().createFormulaEngine();
 		
 		Ref ref = getRef();
+		if(formula1!=null){
+			_formula1Expr = fe.parse(formula1, new FormulaParseContext(_sheet,ref));
+		}else{
+			_formula1Expr = null;
+		}
+		
 		if(formula2!=null){
 			_formula2Expr = fe.parse(formula2, new FormulaParseContext(_sheet,ref));
 		}else{
@@ -534,8 +554,8 @@ public class DataValidationImpl extends AbstractDataValidationAdv {
 		_operatorType = srcImpl._operatorType;
 		
 		if(srcImpl._formula1Expr!=null){
-			setFormula1(srcImpl._formula1Expr==null?null:srcImpl._formula1Expr.getFormulaString());
-			setFormula2(srcImpl._formula2Expr==null?null:srcImpl._formula2Expr.getFormulaString());
+			setFormulas(srcImpl._formula1Expr==null?null:srcImpl._formula1Expr.getFormulaString(), 
+						srcImpl._formula2Expr==null?null:srcImpl._formula2Expr.getFormulaString());
 		}
 	}
 	

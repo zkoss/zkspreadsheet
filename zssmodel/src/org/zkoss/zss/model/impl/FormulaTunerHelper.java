@@ -233,8 +233,7 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 			}
 		}
 		if (changed) {
-			validation.setFormula1(f1);
-			validation.setFormula2(f2); // this will update DependencyTable
+			((AbstractDataValidationAdv)validation).setFormulas(f1, f2);
 		} else {
 			validation.clearFormulaResultCache();
 		}
@@ -465,8 +464,7 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 			}
 		}
 		if (changed) {
-			validation.setFormula1(f1);
-			validation.setFormula2(f2); // this will update DependencyTable
+			((AbstractDataValidationAdv)validation).setFormulas(f1, f2);
 		} else {
 			validation.clearFormulaResultCache();
 		}
@@ -721,8 +719,7 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 			}
 		}
 		if (changed) {
-			validation.setFormula1(f1);
-			validation.setFormula2(f2); // this will update DependencyTable
+			((AbstractDataValidationAdv)validation).setFormulas(f1, f2);
 		} else {
 			validation.clearFormulaResultCache();
 		}
@@ -969,8 +966,7 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 			}
 		}
 		if (changed) {
-			validation.setFormula1(f1);
-			validation.setFormula2(f2); // this will update DependencyTable
+			((AbstractDataValidationAdv)validation).setFormulas(f1, f2);
 		} else {
 			validation.clearFormulaResultCache();
 		}
