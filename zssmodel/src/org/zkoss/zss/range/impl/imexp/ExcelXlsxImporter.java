@@ -38,6 +38,7 @@ import org.zkoss.zss.model.SDataValidation.AlertStyle;
 import org.zkoss.zss.model.SDataValidation.OperatorType;
 import org.zkoss.zss.model.SDataValidation.ValidationType;
 import org.zkoss.zss.model.chart.*;
+import org.zkoss.zss.model.impl.AbstractDataValidationAdv;
 import org.zkoss.zss.model.sys.formula.FormulaEngine;
 /**
  * Specific importing behavior for XLSX.
@@ -463,8 +464,7 @@ public class ExcelXlsxImporter extends AbstractExcelImporter{
 			CellRangeAddress[] cellRangeAddresses = poiValidation.getRegions().getCellRangeAddresses();
 			DataValidationConstraint poiConstraint = poiValidation.getValidationConstraint();
 			// getExplicitListValues() will be represented as formula1
-			dataValidation.setFormula1(poiConstraint.getFormula1());
-			dataValidation.setFormula2(poiConstraint.getFormula2());
+			((AbstractDataValidationAdv)dataValidation).setFormulas(poiConstraint.getFormula1(), poiConstraint.getFormula2());
 			dataValidation.setOperatorType(PoiEnumConversion.toOperatorType(poiConstraint.getOperator()));
 			dataValidation.setValidationType(PoiEnumConversion.toValidationType(poiConstraint.getValidationType()));
 			
@@ -518,5 +518,28 @@ public class ExcelXlsxImporter extends AbstractExcelImporter{
 		short hashpass = ((XSSFSheet)poiSheet).getPasswordHash(); 
 		sheet.setHashedPassword(hashpass);
 	}
+	
+	@Override
+	protected void importSheetProtection(Sheet poiSheet, SSheet sheet) { //ZSS-576
+		SheetProtection sp = poiSheet.getOrCreateSheetProtection();
+		SSheetProtection ssp = sheet.getSheetProtection();
+		
+	    ssp.setAutoFilter(sp.isAutoFilter());
+	    ssp.setDeleteColumns(sp.isDeleteColumns());
+	    ssp.setDeleteRows(sp.isDeleteRows());
+	    ssp.setFormatCells(sp.isFormatCells());
+	    ssp.setFormatColumns(sp.isFormatColumns());
+	    ssp.setFormatRows(sp.isFormatRows());
+	    ssp.setInsertColumns(sp.isInsertColumns());
+	    ssp.setInsertHyperlinks(sp.isInsertHyperlinks());
+	    ssp.setInsertRows(sp.isInsertRows());
+	    ssp.setPivotTables(sp.isPivotTables());
+	    ssp.setSort(sp.isSort());
+	    ssp.setObjects(sp.isObjects());
+	    ssp.setScenarios(sp.isScenarios());
+	    ssp.setSelectLockedCells(sp.isSelectLockedCells());
+	    ssp.setSelectUnlockedCells(sp.isSelectUnlockedCells());
+	}
+
 }
  

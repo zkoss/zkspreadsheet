@@ -489,24 +489,5 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 	 * @param poiSheet source POI sheet
 	 * @param sheet destination sheet
 	 */
-	private void importSheetProtection(Sheet poiSheet, SSheet sheet) { //ZSS-576
-		SheetProtection sp = poiSheet.getOrCreateSheetProtection();
-		SSheetProtection ssp = sheet.getSheetProtection();
-		
-	    ssp.setAutoFilter(sp.isAutoFilter());
-	    ssp.setDeleteColumns(sp.isDeleteColumns());
-	    ssp.setDeleteRows(sp.isDeleteRows());
-	    ssp.setFormatCells(sp.isFormatCells());
-	    ssp.setFormatColumns(sp.isFormatColumns());
-	    ssp.setFormatRows(sp.isFormatRows());
-	    ssp.setInsertColumns(sp.isInsertColumns());
-	    ssp.setInsertHyperlinks(sp.isInsertHyperlinks());
-	    ssp.setInsertRows(sp.isInsertRows());
-	    ssp.setPivotTables(sp.isPivotTables());
-	    ssp.setSort(sp.isSort());
-	    ssp.setObjects(sp.isObjects());
-	    ssp.setScenarios(sp.isScenarios());
-	    ssp.setSelectLockedCells(sp.isSelectLockedCells());
-	    ssp.setSelectUnlockedCells(sp.isSelectUnlockedCells());
-	}
+	abstract protected void importSheetProtection(Sheet poiSheet, SSheet sheet); //ZSS-576
 }

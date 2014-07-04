@@ -377,4 +377,36 @@ public class ExcelXlsImporter extends AbstractExcelImporter{
 		short hashpass = ((HSSFSheet)poiSheet).getPasswordHash(); 
 		sheet.setHashedPassword(hashpass);
 	}
+
+	// Objects and Scenarios are special in xls
+	// They have their independent records; exist only when sheet is protected
+	// 
+	// sheet  record  bits    results(whether checked)
+	// true   exist   false   false
+	// true   !exist  true    true
+	// true   exist   false   false
+	// false  !exist  true    false
+	@Override
+	protected void importSheetProtection(Sheet poiSheet, SSheet sheet) { //ZSS-576
+		SheetProtection sp = poiSheet.getOrCreateSheetProtection();
+		SSheetProtection ssp = sheet.getSheetProtection();
+		
+	    ssp.setAutoFilter(sp.isAutoFilter());
+	    ssp.setDeleteColumns(sp.isDeleteColumns());
+	    ssp.setDeleteRows(sp.isDeleteRows());
+	    ssp.setFormatCells(sp.isFormatCells());
+	    ssp.setFormatColumns(sp.isFormatColumns());
+	    ssp.setFormatRows(sp.isFormatRows());
+	    ssp.setInsertColumns(sp.isInsertColumns());
+	    ssp.setInsertHyperlinks(sp.isInsertHyperlinks());
+	    ssp.setInsertRows(sp.isInsertRows());
+	    ssp.setPivotTables(sp.isPivotTables());
+	    ssp.setSort(sp.isSort());
+	    
+	    ssp.setObjects(!sp.isObjects() ? false : poiSheet.getProtect());
+    	ssp.setScenarios(!sp.isScenarios() ? false : poiSheet.getProtect());
+	    
+	    ssp.setSelectLockedCells(sp.isSelectLockedCells());
+	    ssp.setSelectUnlockedCells(sp.isSelectUnlockedCells());
+	}
 }
