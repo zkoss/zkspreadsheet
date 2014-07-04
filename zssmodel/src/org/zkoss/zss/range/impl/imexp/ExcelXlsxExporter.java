@@ -464,12 +464,11 @@ public class ExcelXlsxExporter extends AbstractExcelExporter {
 					continue;
 			}
 			final CellRangeAddressList rgnList = new CellRangeAddressList();
-			DataValidation poiValidation = 
-				poiSheet.getDataValidationHelper().createValidation(constraint, rgnList);
-			
-			for (CellRegion rgn : validation.getRegions()) {
+			for (CellRegion rgn : validation.getRegions()) { // must prepare rgnList then create poiValidation
 				rgnList.addCellRangeAddress(rgn.getRow(), rgn.getColumn(), rgn.getLastRow(), rgn.getLastColumn());
 			}
+			DataValidation poiValidation = 
+				poiSheet.getDataValidationHelper().createValidation(constraint, rgnList);
 			
 			poiValidation.setEmptyCellAllowed(validation.isIgnoreBlank());
 			poiValidation.setSuppressDropDownArrow(validation.isInCellDropdown());
