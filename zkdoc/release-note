@@ -14,6 +14,7 @@ ZK Spreadsheet 3.5.0
   ZSS-708 Support theme customization
   ZSS-703 Allow user to use use their own PivotTableHelper implementation
   ZSS-713 Make a modern design theme as default
+  ZSS-714 When in collaboration edit, hover on other editor's current selection will show its name
  
 *Bugs:
   ZSS-652 Cut Formula shouldn't be shifted when it is not in cut range

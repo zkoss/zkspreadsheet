@@ -32,12 +32,18 @@ zss.FocusMarkCtrl = zk.$extends(zk.Object, {
 		this.column = pos.column;
 		
 		cmp.ctrl = this;
+		jq(cmp).bind('mouseenter', this.proxy(this._doMouseEnter));
+		jq(cmp).bind('mouseleave', this.proxy(this._doMouseLeave));
 	},
 	cleanup: function () {
 		this.invalid = true;
-
-		if (this.comp) this.comp.ctrl = null;
-		this.comp = this.sheet =  null;
+		if (this.comp) {
+			jq(this.comp).unbind('mouseenter', this.proxy(this._doMouseEnter));
+			jq(this.comp).unbind('mouseleave', this.proxy(this._doMouseLeave));
+			this.comp.ctrl = null;
+			this.comp = null;
+		}
+		this.sheet =  null;
 	},
 	/**
 	 * Locate the focus mark to cell
@@ -93,30 +99,43 @@ zss.FocusMarkCtrl = zk.$extends(zk.Object, {
 				bright = 1 - (0.299*rgbarr[1]+0.587*rgbarr[2]+0.114*rgbarr[3])/255;
 			}
 		}
-		if(color && label){
-			var left = comp.width()+1;
-			var lab = comp.children(".zsfocmarkl"); 
-			if(lab.length>0) {//already existed, just adjust left
-				lab.css({'left':left})
-				return;
-			}
-			lab = jq("<span class='zsfocmarkl'/>"); 
-			lab.text(label).css({'background-color':color,'left':left}).appendTo(comp);
-			lab.fadeOut(1800,function(){lab.detach()});
-			if(bright>0.5){
-				lab.addClass('zsfocmarkl-lite');
-				lab.removeClass('zsfocmarkl-dark');
-			}else{
-				lab.addClass('zsfocmarkl-dark');
-				lab.removeClass('zsfocmarkl-lite');
-			}
-		}
+		// ZSS-714: cache and update the infomation for latter use
+		this.color = color;
+		this.label = label;
+		this.bright = bright;
 	},
 	/**
 	 * Hide focus mark
 	 */
 	hideMark: function () {
 		this.comp.style.display = "none";
+	},
+	_doMouseEnter: function (evt) {
+		var color = this.color,
+			label = this.label,
+			sheet = this.sheet;
+		if (!sheet || !sheet._wgt.hasFocus()) {
+			return;
+		}
+		if (color && label) {
+			var $comp = jq(this.comp),
+				$lab = jq("<span class='zsfocmarkl'/>");
+			this.lab = $lab;
+			$lab.text(label).css({'background-color':color,'left':$comp.width() + 1}).appendTo($comp);
+			if (this.bright > 0.5) {
+				$lab.addClass('zsfocmarkl-lite');
+				$lab.removeClass('zsfocmarkl-dark');
+			} else {
+				$lab.addClass('zsfocmarkl-dark');
+				$lab.removeClass('zsfocmarkl-lite');
+			}
+		}
+	},
+	_doMouseLeave: function (evt) {
+		if (this.lab) {
+			this.lab.detach();
+			this.lab = null;
+		}
 	}
 });
 
