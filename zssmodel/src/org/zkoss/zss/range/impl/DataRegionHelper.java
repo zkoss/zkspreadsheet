@@ -190,7 +190,7 @@ import org.zkoss.zss.range.SRange;
 			ltrb = getNonBlankCell(sheet, row + 1, col);
 		}
 		
-		return ltrb == null ? null : findCurrentRegion0(sheet, ltrb[1], ltrb[0]);
+		return ltrb == null ? null : findCurrentRegion0(sheet, row, ltrb);
 	}
 	
 	private static int[] getNonBlankCell(SSheet sheet, int row, int col) {
@@ -210,13 +210,13 @@ import org.zkoss.zss.range.SRange;
 		return ltrb;
 	}
 	
-	private static CellRegion findCurrentRegion0(SSheet sheet, int row, int col) {
-		int minNonBlankColumn = col;
-		int maxNonBlankColumn = col;
-		int minNonBlankRow = Integer.MAX_VALUE;
-		int maxNonBlankRow = -1;
+	private static CellRegion findCurrentRegion0(SSheet sheet, int row, int[] ltrb) {
+		int minNonBlankColumn = ltrb[0];
+		int maxNonBlankColumn = ltrb[2];
+		int minNonBlankRow = ltrb[1];
+		int maxNonBlankRow = ltrb[3];
 		final SRow rowobj = sheet.getRow(row);
-		final int[] leftTopRightBottom = getRowMinMax(sheet, rowobj, col, col);
+		final int[] leftTopRightBottom = getRowMinMax(sheet, rowobj, minNonBlankColumn, maxNonBlankColumn);
 		if (leftTopRightBottom != null) {
 			minNonBlankColumn = leftTopRightBottom[0];
 			minNonBlankRow = leftTopRightBottom[1];
@@ -224,7 +224,6 @@ import org.zkoss.zss.range.SRange;
 			maxNonBlankRow = leftTopRightBottom[3];
 		}
 		
-		row = Math.min(minNonBlankRow, row); //ZSS-646
 		int rowUp = row > 0 ? row - 1 : row;
 		int rowDown = row + 1; //ZSS-646 
 		
@@ -282,11 +281,6 @@ import org.zkoss.zss.range.SRange;
 			}
 		} while(!stopFindingUp || !stopFindingDown);
 		
-		if (minNonBlankRow == Integer.MAX_VALUE && maxNonBlankRow < 0) { //all blanks in 9 cells!
-			return null;
-		}
-		minNonBlankRow = (minNonBlankRow == Integer.MAX_VALUE)? row: minNonBlankRow;
-		maxNonBlankRow = (maxNonBlankRow == -1)? row: maxNonBlankRow;
 		return new CellRegion(minNonBlankRow, minNonBlankColumn, maxNonBlankRow, maxNonBlankColumn);
 	}
 	
