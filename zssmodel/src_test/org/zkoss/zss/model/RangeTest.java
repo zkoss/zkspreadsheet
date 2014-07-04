@@ -277,7 +277,7 @@ C	3	6	9	=SUM(E9:F9)
 			Assert.assertNull("at "+loc,SRanges.range(sheet,loc).findAutoFilterRange());
 		}
 		
-		String inSideLoc[] = new String[]{"D7","D8","D9","E7","E8","E9","F7","F8","F9","G7","G8","G9"};
+		String inSideLoc[] = new String[]{"D7","D8","D9", "E7","E8","E9","F7","F8","F9","G7","G8","G9"};
 		for(String loc:inSideLoc){
 			range = SRanges.range(sheet,loc).findAutoFilterRange();
 			String at = "at "+loc;
@@ -288,36 +288,16 @@ C	3	6	9	=SUM(E9:F9)
 			Assert.assertEquals(at,6, range.getLastColumn());
 		}
 		
-		Object inCornerLoc[][] = new Object[][]{
-			new Object[]{"C6",-1,-1,0,0},//area, row,column,lastRow,lastColumn offset
-			new Object[]{"C7",0,-1,0,0},
-			new Object[]{"C9",0,-1,0,0},
-			new Object[]{"C10",0,-1,1,0},
-			
-			new Object[]{"H6",-1,0,0,1},
-			new Object[]{"H7",0,0,0,1},
-			new Object[]{"H9",0,0,0,1},
-			new Object[]{"H10",0,0,1,1},
-			
-			new Object[]{"D6",-1,0,0,0},
-			new Object[]{"E6",-1,0,0,0},
-			new Object[]{"F6",-1,0,0,0},
-			new Object[]{"G6",-1,0,0,0},
-			
-			new Object[]{"D10",0,0,1,0},
-			new Object[]{"E10",0,0,1,0},
-			new Object[]{"F10",0,0,1,0},
-			new Object[]{"G10",0,0,1,0}
-		};
+		String inCornerLoc[] = new String[] {"C6", "C7", "C9", "C10", "H6", "H7", "H9", "H10", "D6", "E6", "F6", "G6", "D10", "E10", "F10", "G10",};
 		
-		for(Object loc[]:inCornerLoc){
-			range = SRanges.range(sheet,(String)loc[0]).findAutoFilterRange();
-			String at = "at "+loc[0];
+		for(String loc:inCornerLoc){
+			range = SRanges.range(sheet,loc).findAutoFilterRange();
+			String at = "at "+loc;
 			Assert.assertNotNull(at,range);
-			Assert.assertEquals(at,6+(Integer)loc[1], range.getRow());
-			Assert.assertEquals(at,3+(Integer)loc[2], range.getColumn());
-			Assert.assertEquals(at,8+(Integer)loc[3], range.getLastRow());
-			Assert.assertEquals(at,6+(Integer)loc[4], range.getLastColumn());
+			Assert.assertEquals(at,6, range.getRow());
+			Assert.assertEquals(at,3, range.getColumn());
+			Assert.assertEquals(at,8, range.getLastRow());
+			Assert.assertEquals(at,6, range.getLastColumn());
 		}
 
 	}

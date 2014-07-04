@@ -177,18 +177,53 @@ import org.zkoss.zss.range.SRange;
 	 * @return
 	 */
 	/*package*/ static CellRegion findCurrentRegion(SSheet sheet, int row, int col) {
+		// check this row
+		int ltrb[] = getNonBlankCell(sheet, row, col);
+
+		// check previous row if need
+		if (ltrb == null && row > 0) {
+			ltrb = getNonBlankCell(sheet, row - 1, col);
+		}
+
+		// check next row if need 
+		if (ltrb == null) {
+			ltrb = getNonBlankCell(sheet, row + 1, col);
+		}
+		
+		return ltrb == null ? null : findCurrentRegion0(sheet, ltrb[1], ltrb[0]);
+	}
+	
+	private static int[] getNonBlankCell(SSheet sheet, int row, int col) {
+		final SRow rowObj = sheet.getRow(row);
+		return !isEmptyRow(sheet, rowObj) ?
+			getNonBlankCell0(sheet, row, col) : null; 
+	}
+	
+	private static int[] getNonBlankCell0(SSheet sheet, int row, int col) {
+		int[] ltrb = getCellMinMax(sheet, row, col);
+		if (ltrb == null && col > 0) { // check left col
+			ltrb = getCellMinMax(sheet, row, col - 1);
+		}
+		if (ltrb == null) { // check right col
+			ltrb = getCellMinMax(sheet, row, col + 1);
+		}
+		return ltrb;
+	}
+	
+	private static CellRegion findCurrentRegion0(SSheet sheet, int row, int col) {
 		int minNonBlankColumn = col;
 		int maxNonBlankColumn = col;
 		int minNonBlankRow = Integer.MAX_VALUE;
 		int maxNonBlankRow = -1;
-		final SRow roworg = sheet.getRow(row);
-		final int[] leftTopRightBottom = getRowMinMax(sheet, roworg, minNonBlankColumn, maxNonBlankColumn);
+		final SRow rowobj = sheet.getRow(row);
+		final int[] leftTopRightBottom = getRowMinMax(sheet, rowobj, col, col);
 		if (leftTopRightBottom != null) {
 			minNonBlankColumn = leftTopRightBottom[0];
 			minNonBlankRow = leftTopRightBottom[1];
 			maxNonBlankColumn = leftTopRightBottom[2];
 			maxNonBlankRow = leftTopRightBottom[3];
 		}
+		
 		row = Math.min(minNonBlankRow, row); //ZSS-646
 		int rowUp = row > 0 ? row - 1 : row;
 		int rowDown = row + 1; //ZSS-646 
@@ -255,16 +290,17 @@ import org.zkoss.zss.range.SRange;
 		return new CellRegion(minNonBlankRow, minNonBlankColumn, maxNonBlankRow, maxNonBlankColumn);
 	}
 	
+	private static boolean isEmptyRow(SSheet sheet, SRow rowobj) {
+		return rowobj.isNull() || sheet.getStartCellIndex(rowobj.getIndex()) < 0;
+	}
+	
 	//[0]: left, [1]: top, [2]: right, [3]: bottom; null mean blank row
 	private static int[] getRowMinMax(SSheet sheet, SRow rowobj, int minc, int maxc) {
-		if (rowobj.isNull()) { //check if no cell at all!
+		if (isEmptyRow(sheet, rowobj)) { //check if no cell at all!
 			return null;
 		}
+		
 		final int row = rowobj.getIndex();
-		//ZSS-646: when remove filter; row could exist but with no cell at all
-		if (sheet.getStartCellIndex(row) < 0) { 
-			return null;
-		}
 		int minr = row;
 		int maxr = row;
 		boolean allblank = true;
