@@ -13,6 +13,7 @@ ZK Spreadsheet 3.5.0
   ZSS-702 Fine tune DataValidation to hold multiple regions 
   ZSS-708 Support theme customization
   ZSS-703 Allow user to use use their own PivotTableHelper implementation
+  ZSS-713 Make a modern design theme as default
  
 *Bugs:
   ZSS-652 Cut Formula shouldn't be shifted when it is not in cut range
