@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<config>
+	<config-name>classic</config-name><!-- used to resolve dependency -->
+	<depends>zss</depends>
+	<version>
+		<version-class>org.zkoss.zss.theme.classic.Version</version-class>
+		<version-uid>1.0.0</version-uid>
+	</version>
+	<listener>
+		<listener-class>org.zkoss.zss.theme.classic.ClassicThemeWebAppInit</listener-class>
+	</listener>
+</config>
