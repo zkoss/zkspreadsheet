@@ -1563,6 +1563,8 @@
 
 .zssheettab:hover {
 	background: #E1E1E1;
+	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(enabled = false))";
+	filter: "progid:DXImageTransform.Microsoft.gradient(enabled = false))";
 }
 .zssheettab.z-tab-selected:hover {
 	background: #FFFFFF;
