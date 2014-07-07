@@ -187,7 +187,47 @@ public class ImporterTest extends ImExpTestBase {
 		SBook book = ImExpTestUtil.loadBook(IMPORT_FILE_UNDER_TEST, "XSSFBook");
 		cellFormatTest(book);
 	}
+	
+	/**
+	 * Under different locales, TW and US and DE, should import the same formula
+	 */
+	@Test
+	public void formulaNotDependLocaleTest(){
+		//Locale.TAIWAN
+		SBook book = ImExpTestUtil.loadBook(IMPORT_FILE_UNDER_TEST, "XSSFBook");
+		SSheet sheet = book.getSheetByName("Value");
+		assertEquals("zh_TW", Locales.getCurrent().toString());
+		
+		//formula
+		assertEquals(SCell.CellType.FORMULA, sheet.getCell(3,1).getType());
+		assertEquals("SUM(10,20)", sheet.getCell(3,1).getFormulaValue());
+		assertEquals("ISBLANK(B1)", sheet.getCell(3,2).getFormulaValue());
+		assertEquals("B1", sheet.getCell(3,3).getFormulaValue());
+		
+		//Locale.US
+		Locales.setThreadLocal(Locale.US);
+		book = ImExpTestUtil.loadBook(IMPORT_FILE_UNDER_TEST, "XSSFBook");
+		sheet = book.getSheetByName("Value");
+		assertEquals("en_US", Locales.getCurrent().toString());
 
+		//formula
+		assertEquals(SCell.CellType.FORMULA, sheet.getCell(3,1).getType());
+		assertEquals("SUM(10,20)", sheet.getCell(3,1).getFormulaValue());
+		assertEquals("ISBLANK(B1)", sheet.getCell(3,2).getFormulaValue());
+		assertEquals("B1", sheet.getCell(3,3).getFormulaValue());
+
+		//Locale.GERMAN
+		Locales.setThreadLocal(Locale.GERMANY);
+		book = ImExpTestUtil.loadBook(IMPORT_FILE_UNDER_TEST, "XSSFBook");
+		sheet = book.getSheetByName("Value");
+		assertEquals("de_DE", Locales.getCurrent().toString());
+
+		//formula
+		assertEquals(SCell.CellType.FORMULA, sheet.getCell(3,1).getType());
+		assertEquals("SUM(10,20)", sheet.getCell(3,1).getFormulaValue());
+		assertEquals("ISBLANK(B1)", sheet.getCell(3,2).getFormulaValue());
+		assertEquals("B1", sheet.getCell(3,3).getFormulaValue());
+	}
 	/**
 	 * Under different locales, TW and US, should import the same format pattern
 	 */

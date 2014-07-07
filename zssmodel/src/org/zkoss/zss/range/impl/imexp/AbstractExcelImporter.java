@@ -23,6 +23,7 @@ import org.zkoss.poi.hssf.usermodel.HSSFRichTextString;
 import org.zkoss.poi.ss.usermodel.*;
 import org.zkoss.poi.ss.util.CellRangeAddress;
 import org.zkoss.poi.xssf.usermodel.*;
+import org.zkoss.util.Locales;
 import org.zkoss.zss.model.*;
 import org.zkoss.zss.model.SAutoFilter.NFilterColumn;
 import org.zkoss.zss.model.SPicture.Format;
@@ -82,6 +83,8 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 		
 		setBookType(book);
 
+		//ZSS-715: Enforce internal Locale.US Locale so formula is in consistent internal format
+		Locale old = Locales.setThreadLocal(Locale.US);
 		SBookSeries bookSeries = book.getBookSeries();
 		boolean isCacheClean = bookSeries.isAutoFormulaCacheClean();
 		try {
@@ -110,6 +113,7 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 			}
 		} finally {
 			book.getBookSeries().setAutoFormulaCacheClean(isCacheClean);
+			Locales.setThreadLocal(old);
 		}
 
 		return book;

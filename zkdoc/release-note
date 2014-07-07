@@ -61,6 +61,7 @@ ZK Spreadsheet 3.5.0
   ZSS-632 mailto link should not appear in web address textbox in "Insert Hyperlink" dialog
   ZSS-578 Insert a picture at Range(0,0) and drag it left or top will cause null pointer exception
   ZSS-699 Crash with medium xlsx file
+  ZSS-715 InvalidFormulaException while importing an XLS file with formula in pt_BR Locale
   
 ** Upgrade Notes
   * Following api are deprecated
