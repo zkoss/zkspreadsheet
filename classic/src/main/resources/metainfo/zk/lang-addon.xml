@@ -1,0 +1,10 @@
+<language-addon>
+	<addon-name>classic</addon-name>
+	<depends>zss</depends>
+	<language-name>xul/html</language-name>
+
+	<version>
+		<version-class>org.zkoss.zss.theme.classic.Version</version-class>
+		<version-uid>1.0.0</version-uid>
+	</version>
+</language-addon>

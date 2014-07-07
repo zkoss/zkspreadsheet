@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bnd-LastModified: 1385448364029
+Build-Jdk: 1.6.0_38
+Built-By: RaymondChao
+Bundle-Description: The classic Theme
+Bundle-License: http://www.gnu.org/licenses/gpl.html
+Bundle-ManifestVersion: 2
+Bundle-Name: org.zkoss.zss.theme.classic
+Bundle-SymbolicName: classic
+Bundle-Version: 1.0.0
+Created-By: Apache Maven Bundle Plugin
+Export-Package: metainfo.zk;version="1.0.0"
+Import-Package: org.zkoss.zk.ui,org.zkoss.zk.ui.util,org.zkoss.zul.theme
+Tool: Bnd-1.50.0
