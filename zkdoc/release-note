@@ -15,6 +15,7 @@ ZK Spreadsheet 3.5.0
   ZSS-703 Allow user to use use their own PivotTableHelper implementation
   ZSS-713 Make a modern design theme as default
   ZSS-714 When in collaboration edit, hover on other editor's current selection will show its name
+  ZSS-716 Insert function which takes no arguments by "Insert Function" dialog will get wrong formula
  
 *Bugs:
   ZSS-652 Cut Formula shouldn't be shifted when it is not in cut range
