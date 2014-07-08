@@ -266,12 +266,12 @@ public class AppCtrl extends CtrlBase<Component>{
 					try {
 						selectedBookInfo = rep.saveAs(name, loadedBook);
 						pushAppEvent(AppEvts.ON_SAVED_BOOK,loadedBook);
+						UiUtil.showInfoMessage("Save book to "+selectedBookInfo.getName());
 						if(close){
 							doCloseBook();
 						}else{
 							updatePageInfo();
 						}
-						UiUtil.showInfoMessage("Save book to "+selectedBookInfo.getName());
 					} catch (IOException e) {
 						log.error(e.getMessage(),e);
 						UiUtil.showWarnMessage("Can't save book");
