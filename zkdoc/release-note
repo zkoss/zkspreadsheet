@@ -63,6 +63,7 @@ ZK Spreadsheet 3.5.0
   ZSS-699 Crash with medium xlsx file
   ZSS-715 InvalidFormulaException while importing an XLS file with formula in pt_BR Locale
   ZSS-716 Insert function which takes no arguments by "Insert Function" dialog will get wrong formula
+  ZSS-719 Insert bad formula may show unexpected error message
   
 ** Upgrade Notes
   * Following api are deprecated
