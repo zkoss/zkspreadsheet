@@ -340,7 +340,7 @@
 }
 .zsscrollinfoinner{
 	background-color:#E3ECF7;
-	font-family: "Tahoma, Arial, Helvetica, sans-serif;
+	font-family: Tahoma, Arial, Helvetica, sans-serif;
 	font-size:x-small;
 	padding-left:5px;
 	padding-right:5px;
