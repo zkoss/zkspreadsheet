@@ -6,7 +6,7 @@
 	<version>1.0.0-SNAPSHOT</version>
 	<properties>
 		<zk.version>7.0.2</zk.version>
-		<zss.version>3.5.0-SNAPSHOT</zss.version>
+		<zss.version>3.5.1-SNAPSHOT</zss.version>
 		<maven.build.timestamp.format>yyyy-MM-dd</maven.build.timestamp.format>
 		<packname>-${project.version}</packname>
 	</properties>
