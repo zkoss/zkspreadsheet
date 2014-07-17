@@ -1764,28 +1764,28 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			evt.stop();
 			break;
 		case 35: //End
-			var info = this.editingFormulaInfo;
-			if((!info || (info && !info.moveCell)) && this.state != zss.SSheetCtrl.FOCUSED) break; //editing
-			this.dp.moveEnd(evt);
-			evt.stop();
+			if (this.isAllowKeyNavigation()) {
+				this.dp.moveEnd(evt);
+				//evt.stop(); //ZSS-181
+			}
 			break;
 		case 36: //Home
-			var info = this.editingFormulaInfo;
-			if((!info || (info && !info.moveCell)) && this.state != zss.SSheetCtrl.FOCUSED) break;//editing
-			this.dp.moveHome(evt);
-			//evt.stop(); //ZSS-181
+			if (this.isAllowKeyNavigation()) {
+				this.dp.moveHome(evt);
+				//evt.stop(); //ZSS-181
+			}
 			break;
 		case 37: //Left
-			var info = this.editingFormulaInfo;
-			if((!info || (info && !info.moveCell)) && this.state != zss.SSheetCtrl.FOCUSED) break;//editing
-			this.dp.moveLeft(evt);
-			//evt.stop(); //ZSS-181
+			if (this.isAllowKeyNavigation()) {
+				this.dp.moveLeft(evt);
+				//evt.stop(); //ZSS-181
+			}
 			break;
 		case 38: //Up
-			var info = this.editingFormulaInfo;
-			if((!info || (info && !info.moveCell)) && this.state != zss.SSheetCtrl.FOCUSED) break;//editing
-			this.dp.moveUp(evt);
-			//evt.stop(); //ZSS-181
+			if (this.isAllowKeyNavigation()) {
+				this.dp.moveUp(evt);
+				//evt.stop(); //ZSS-181
+			}
 			break;
 		case 9://tab;
 			if (this.state == zss.SSheetCtrl.EDITING){
@@ -1805,15 +1805,16 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			break;
 		case 39: //Right
 			var info = this.editingFormulaInfo;
-			if ((!info || (info && !info.moveCell)) && this.state != zss.SSheetCtrl.FOCUSED) break;//editing
-			this.dp.moveRight(evt);
-			//evt.stop(); //ZSS-181
+			if (this.isAllowKeyNavigation()) {
+				this.dp.moveRight(evt);
+				//evt.stop(); //ZSS-181
+			}
 			break;
 		case 40: //Down
-			var info = this.editingFormulaInfo;
-			if ((!info || (info && !info.moveCell)) && this.state != zss.SSheetCtrl.FOCUSED) break;//editing
-			this.dp.moveDown(evt);
-			//evt.stop(); //ZSS-181
+			if (this.isAllowKeyNavigation()) {
+				this.dp.moveDown(evt);
+				//evt.stop(); //ZSS-181
+			}
 			break;
 		case 229: //ZSS-378 Chinese Input keyCode is always 229 in chrome/IE(8-10) (no spec.)
 			if(this.state == zss.SSheetCtrl.FOCUSED){//enter editing mode only when focused
@@ -1855,6 +1856,13 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		if (!isAsciiCharkey(keycode)) {
 			this._skipress = true;
 		}
+	},
+	isAllowKeyNavigation: function () {
+		var info = this.editingFormulaInfo;
+		if ((info && !info.moveCell) || this.state == zss.SSheetCtrl.FOCUSED || this.enableKeyNavigation) {
+			return true;
+		}
+		return false;
 	},
 	//feature #161: Support copy&paste from clipboard to a cell
 	pasteToSheet: function () {

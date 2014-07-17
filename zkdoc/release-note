@@ -1,3 +1,13 @@
+ZK Spreadsheet 3.5.1
+*Features:
+  ZSS-182 Fire stop editing by up ,down,right or left keys pressing
+
+*Bugs:
+
+** Upgrade Notes
+
+
+ ------------
 ZK Spreadsheet 3.5.0
 *Features:
   ZSS-651 Need to enhance performance for partial evaluation

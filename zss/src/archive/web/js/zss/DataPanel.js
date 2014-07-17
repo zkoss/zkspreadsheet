@@ -168,7 +168,7 @@ zss.DataPanel = zk.$extends(zk.Object, {
 			this._openEditbox(null, true); 
 		}
 		
-		sheet.fire('onStartEditing', {row: row, col: col, value: val});
+		sheet.fire('onStartEditing', {row: row, col: col, value: val, type: type});
 		sheet._wgt.fire('onStartEditing',
 				{token: "", sheetId: sheet.serverSheetId, row: row, col: col, clienttxt: val, type: type}, null, 25);
 		return true;

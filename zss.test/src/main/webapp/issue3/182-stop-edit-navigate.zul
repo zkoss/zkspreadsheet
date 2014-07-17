@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+182-stop-edit-navigate.zul
+
+	Purpose:
+		
+	Description:
+		
+	History:
+		Wed, Jul 16, 2014  3:45:46 PM, Created by RaymondChao
+
+Copyright (C) 2014 Potix Corporation. All Rights Reserved.
+
+-->
+<window>
+	<label multiline="true">
+		1. type "aaa" on cell C4
+		2. press up, down, left, right, home, end, page up or page down
+		3. it will navigate to other cells and C4 should contain "aaa"
+	</label>
+	<spreadsheet src="/issue/blank.xlsx" showFormulabar="true" height="500px" width="800px" maxVisibleRows="100">
+	</spreadsheet>
+</window>

@@ -737,6 +737,12 @@ zss.Editbox = zk.$extends(zul.inp.InputWidget, {
    		this.sheetId = sheet.serverSheetId;
    		this.sheetName = getSheetName(sheet, this.sheetId);
    		this.cellRef = sheet.getCell(this.row, this.col).ref;
+   		// ZSS-182: enable key navigation only when inline editing and
+   		// 1. start edit in an empty cell
+   		// 2. override the text in a cell
+   		if (d.type == 'inlineEditing' && (!d.value || d.value.length <= 1)) {
+   			sheet.enableKeyNavigation = true;
+   		}
    	},
 	_onCellSelection: function (evt) {
    		var sheet = this.sheet;
@@ -762,6 +768,10 @@ zss.Editbox = zk.$extends(zul.inp.InputWidget, {
 		}
 	},
 	doBlur_: function () {
+		var sheet = this.sheet;
+		if (sheet && sheet.enableKeyNavigation) {
+			sheet.enableKeyNavigation = null;
+		}
 		blurEditor(this);
 	},
 	doMouseDown_: function (evt) {
@@ -770,6 +780,9 @@ zss.Editbox = zk.$extends(zul.inp.InputWidget, {
 			if (sheet.state == zss.SSheetCtrl.EDITING) {
 				if (!this.isFocused) {
 					sheet.isSwitchingFocus = true;
+				}
+				if (sheet.enableKeyNavigation) {
+					sheet.enableKeyNavigation = null;
 				}
 				var info = sheet.editingFormulaInfo;
 				if (info && info.moveCell) {//re-eval editing formula info
@@ -990,8 +1003,12 @@ zss.Editbox = zk.$extends(zul.inp.InputWidget, {
 		return str;
 	},
 	clearStatus: function () {
-		if (this.sheet) {
-			this.sheet.editingFormulaInfo = null;
+		var sheet = this.sheet;
+		if (sheet) {
+			sheet.editingFormulaInfo = null;
+			if (sheet.enableKeyNavigation) {
+				sheet.enableKeyNavigation = null;
+			}
 		}
 		this._editing = false;
 		this.disable(true);
