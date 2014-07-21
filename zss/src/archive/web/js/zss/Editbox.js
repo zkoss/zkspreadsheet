@@ -64,13 +64,18 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 		}
 	}
 	
-	function blurEditor(wgt) {
+	function blurEditor (wgt) {
 		var sheet = wgt.sheet;
 		if (sheet) {
 			//setTimeout(function () {
 			// ZSS-674: stay focused if formulabar's ok/cancel btn was pressed down.
 			if (sheet.shallIgnoreBlur) {
-				wgt.focus();
+				if (!zk.gecko) {
+					wgt.focus();
+				} else {
+					// 20140603, RaymondChao: firefox needs setTimeout to refocus when blur.
+					setTimeout(function () {wgt.focus()});
+				}
 				sheet.shallIgnoreBlur = false;
 			} else if (sheet.isSwitchingFocus) {
 				// 20140519, RaymondChao: when change focus between editors, spreadsheet could have no focus as below
@@ -349,8 +354,10 @@ zss.FormulabarEditor = zk.$extends(zul.inp.InputWidget, {
    			   	} else {
    			   	}
    			} else if (sheet.state == zss.SSheetCtrl.EDITING) {
-   				var info = sheet.editingFormulaInfo;
-   				if (info && 'formulabarEditing' == info.type && !sheet._skipInsertCellRef) {
+   				var info = sheet.editingFormulaInfo,
+   					d = evt.data,
+   					skipInsertCellRef = d.skipInsertCellRef;
+   				if (info && 'formulabarEditing' == info.type && !skipInsertCellRef) {
    					var d = evt.data;
    					insertCellRef(sheet, this.$n('real'), d.top, d.left, d.bottom, d.right);
    				}
@@ -517,10 +524,11 @@ zss.Editbox = zk.$extends(zul.inp.InputWidget, {
    		var sheet = this.sheet;
    		if (sheet) {
    			if (sheet.state == zss.SSheetCtrl.EDITING) {
-   				var info = sheet.editingFormulaInfo;
-   				if (info && 'inlineEditing' == info.type && !sheet._skipInsertCellRef) {
-   					var d = evt.data,
-   						formulabarEditor = sheet.formulabarEditor;
+   				var info = sheet.editingFormulaInfo,
+   					d = evt.data,
+   					skipInsertCellRef = d.skipInsertCellRef;
+   				if (info && 'inlineEditing' == info.type && !skipInsertCellRef) {
+   					var formulabarEditor = sheet.formulabarEditor;
    					insertCellRef(sheet, this.comp, d.top, d.left, d.bottom, d.right);
    					if (formulabarEditor) {
    						var n = this.comp,

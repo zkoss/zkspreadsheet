@@ -671,6 +671,8 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 					break;
 				}
 			}
+			//ZSS 171
+			this._skipInsertCellRef = false;
 			dp._startEditing(value, server, editType);
 			break;
 		case "stopedit":
@@ -2191,14 +2193,16 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 	},
 	deferFireCellSelection: function (left, top, right, bottom) {
 		var id = this._fireCellSelectionId,
-			self = this;
+			self = this,
+			skipInsertCellRef = this._skipInsertCellRef;
 		if (id) {
 			clearTimeout(id);
 		}
 		this._fireCellSelectionId = setTimeout(function () {
-			self.fire('onCellSelection', {left: left, top: top, right: right, bottom: bottom});
 			//ZSS 171
-			self._skipInsertCellRef = false;
+			// 20140612, RaymondChao: it should skip insert cell reference when updating cell from server, so it needs to keep
+			// the flag when defer fire cell selection
+			self.fire('onCellSelection', {left: left, top: top, right: right, bottom: bottom, skipInsertCellRef: skipInsertCellRef});
 		}, 50);
 	},
 	/**
@@ -3026,14 +3030,17 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		var //scrollSize = zss.Spreadsheet.scrollWidth, 
 			sp = sheet.sp,
 			spcmp = sp.comp,
+			frozenColWidth = sheet.custColWidth.getStartPixel(sheet.frozenCol + 1),
+			frozenRowHeight = sheet.custRowHeight.getStartPixel(sheet.frozenRow + 1),
 			scrollLeft = spcmp.scrollLeft,
 			scrollTop = spcmp.scrollTop,
 			custColWidth = sheet.custColWidth,
 			custRowHeight = sheet.custRowHeight,
 			viewWidth = spcmp.clientWidth -  sheet.leftWidth,
 			viewHeight = spcmp.clientHeight - sheet.topHeight,	
-			left = custColWidth.getCellIndex(scrollLeft)[0],
-			top = custRowHeight.getCellIndex(scrollTop)[0],
+			// ZSS-664: ignore frozen columns and rows
+			left = custColWidth.getCellIndex(scrollLeft + frozenColWidth)[0],
+			top = custRowHeight.getCellIndex(scrollTop + frozenRowHeight)[0],
 			right = custColWidth.getCellIndex(scrollLeft + viewWidth)[0],
 			bottom = custRowHeight.getCellIndex(scrollTop + viewHeight)[0];
 

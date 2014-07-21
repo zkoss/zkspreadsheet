@@ -481,14 +481,16 @@ zss.DataPanel = zk.$extends(zk.Object, {
 			this.stopEditing("refocus");
 		} else { //when editing formula, always set focus back to editor
 			
-			var sf = this;
-			setTimeout(function () {
+			//var sf = this;
+			//setTimeout(function () {
 				var info = sheet.editingFormulaInfo;
 				if (info) {
 					info.moveCell = true;
-					sf.getEditor(info.type).focus();
+					//sf.getEditor(info.type).focus();
+					// ZSS-674: use flag instead of setTimeout
+					sheet.shallIgnoreBlur = true;
 				}
-			});
+			//});
 		}
 		var fzr = sheet.frozenRow,
 			fzc = sheet.frozenCol,
@@ -626,9 +628,25 @@ zss.DataPanel = zk.$extends(zk.Object, {
 			row = pos.row,
 			col = pos.column;
 		if (row < 0 || col < 0) return;
-		if (row > 0) {
-			//TODO: calculate the first row in previous page
-			var prevrow = row - sheet.pageKeySize;
+
+		if (row >= 0) {
+			var oldTop = zss.SSheetCtrl._getVisibleRange(sheet).top,
+				activeBlock = sheet.activeBlock,
+				frozenRow = sheet.frozenRow,
+				rowOffset = row > frozenRow ? row - oldTop: 0,
+				prevrow,
+				newTop;
+
+			// ZSS-664: scroll to previous page
+			sheet.sp.scrollToVisible(oldTop, -1, null, zss.SCROLL_DIR.VERTICAL, zss.SCROLL_POS.BOTTOM);
+			activeBlock.loadForVisible();
+
+			newTop = zss.SSheetCtrl._getVisibleRange(sheet).top;
+			prevrow = newTop + rowOffset;
+			
+			// ZSS-664: align the first row to the top after scrolled to previous page
+			sheet.sp.scrollToVisible(newTop, -1, null, zss.SCROLL_DIR.VERTICAL, zss.SCROLL_POS.TOP);
+
 			if (prevrow < 0)
 				prevrow = 0;
 			var custRowHeight = sheet.custRowHeight,
@@ -653,13 +671,23 @@ zss.DataPanel = zk.$extends(zk.Object, {
 		var	pos = sheet.getLastFocus(),
 			row = pos.row,
 			col = pos.column;
-		if(row <0 || col < 0) return;
+		if(row < 0 || col < 0) return;
 		
 		if (row < sheet.maxRows - 1) {
-			//TODO: calculate the first row of next page
-			var nextrow = row + sheet.pageKeySize;
-			if (nextrow > (sheet.maxRows - 1))
-				nextrow = sheet.maxRows - 1;
+			var oldRange = zss.SSheetCtrl._getVisibleRange(sheet),
+				activeBlock = sheet.activeBlock,
+				rowOffset = row > sheet.frozenRow ? row - oldRange.top : 0,
+				nextrow;
+
+			// ZSS-664: scroll to next page
+			sheet.sp.scrollToVisible(oldRange.bottom, -1, null, zss.SCROLL_DIR.VERTICAL, zss.SCROLL_POS.TOP);
+			activeBlock.loadForVisible();
+			
+			nextrow = zss.SSheetCtrl._getVisibleRange(sheet).top + rowOffset;
+			if (nextrow > sheet.maxRows - 1) {
+				return;
+			}
+
 			var custRowHeight = sheet.custRowHeight,
 				newrow = nextrow < (sheet.maxRows - 1) ? 
 					custRowHeight.getIncUnhidden(nextrow, sheet.maxRows - 1): //search downward
