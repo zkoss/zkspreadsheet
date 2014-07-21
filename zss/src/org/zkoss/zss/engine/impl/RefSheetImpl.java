@@ -1411,4 +1411,43 @@ public class RefSheetImpl implements RefSheet {
 			ref0.setWithIndirectPrecedent(withIndirectPrecedent);
 		}
 	}
+	
+	//ZSS-727
+	// return dependents and precedents associated with deletion of this sheet.
+	@SuppressWarnings("unchecked")
+	@Override
+	public Set<Ref>[] removeSelf() {
+		Set<Ref> precedents = new HashSet<Ref>();
+		Set<Ref> dependents = new HashSet<Ref>();
+		// for all Ref in this sheet
+		for (Ref ref : _ltrbIndex.values()) {
+			for (Ref precedent : ref.getPrecedents()) {
+				if (!this.equals(precedent.getOwnerSheet())) { // precedent on another sheet
+					precedents.add(precedent);
+					precedent.getDependents().remove(ref); // break the link
+				}
+			}
+			
+			for (Ref dependent : ref.getDependents()) {
+				if (!this.equals(dependent.getOwnerSheet())) { // dependent on another sheet
+					dependents.add(dependent); // to be converted into #REF! sheet
+					dependent.getPrecedents().remove(ref); // break the link
+					
+				}
+			}
+		}
+		
+		//clear orphan precedents
+		for (Ref ref : precedents) {
+			AbstractRefImpl.clearIfOrphanRef(ref);
+		}
+		
+		//clear orphan dependents
+		for (Ref ref : dependents) {
+			AbstractRefImpl.clearIfOrphanRef(ref);
+		}
+		
+		return new Set[] {dependents, precedents};
+	}
+
 }

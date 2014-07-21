@@ -1,0 +1,10 @@
+<window height="800px">
+	<label multiline="true">
+		1. Delete Sheet1.
+		2. Edit cell F3 of Sheet2 from =SUM(1,2) to =SUM(1,3)
+		3. If no exception; then it is OK.
+	</label>
+	<spreadsheet id="ss" src="/issue/727-delete-sheet.xlsx" width="100%"
+		height="80%" showContextMenu="true" showSheetbar="true" showToolbar="true" 
+		showFormulabar="true" />
+</window>

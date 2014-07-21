@@ -244,4 +244,11 @@ public interface RefSheet {
 	 * @param withIndirectPrecedent whether the reference contains indirect precedents.
 	 */
 	public void setRefWithIndirectPrecedent(int row, int col, boolean withIndirectPrecedent);
+
+	//ZSS-727: NPE when reevaluating a formula after deleting a sheet 
+	/**
+	 * About to delete this sheet so have to clear the Ref link.
+	 * @return the dependents(at [0]) and precedents(at [1]) associated with this deletion of this sheet.
+	 */
+	public Set<Ref>[] removeSelf();
 }

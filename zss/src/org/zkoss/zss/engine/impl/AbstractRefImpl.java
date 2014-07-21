@@ -80,7 +80,7 @@ public abstract class AbstractRefImpl implements Ref {
 		//ignore
 	}
 	
-	private boolean clearIfOrphanRef(Ref ref) {
+	/*package*/ static boolean clearIfOrphanRef(Ref ref) {
 		final Set<Ref> dependents = ref.getDependents();
 		if (dependents != null && !dependents.isEmpty()) {
 			return false; //not empty

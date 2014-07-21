@@ -2677,6 +2677,7 @@ public class RangeImpl implements Range {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void deleteSheet() {
 		synchronized (_sheet.getBook()) {
@@ -2690,17 +2691,25 @@ public class RangeImpl implements Range {
 						if (sheetCount == 1) {
 							Messagebox.show("A workbook must contain at least one visible worksheet");
 						}
+						
 						final String delSheetName = _sheet.getSheetName(); //must getName before remove
 						book.removeSheetAt(index);
+						
+						//ZSS-727
+						RefSheet refSheet = ref.getOwnerSheet();
+						Set<Ref>[] refs = refSheet.removeSelf(); 
+						Set<Ref> dependents = refs[0];
+						
 						final int newIndex =  index < (sheetCount - 1) ? index : (index - 1);
 						final String newSheetName = book.getSheetName(newIndex);
 						BookHelper.notifyDeleteSheet(ref, new Object[] {delSheetName, newSheetName});
+						reevaluateAndNotify(new Set[] {dependents, dependents});
 					}
 				}
 			}
 		}
 	}
-
+	
 	@Override
 	public boolean isCustomHeight() {
 		Ref ref = _refs != null && !_refs.isEmpty() ? _refs.iterator().next() : null;
