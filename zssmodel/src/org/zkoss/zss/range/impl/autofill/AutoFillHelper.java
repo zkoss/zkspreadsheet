@@ -812,6 +812,9 @@ public class AutoFillHelper {
 			sheet.pasteCell(new SheetRegion(sheet,srctRow,srclCol,srcbRow,srcrCol), 
 				new CellRegion(srcbRow + 1,srclCol,pastebRow,srcrCol), pasteOption);
 		}
+
+		if (!isPasteValue(pasteType)) return; //ZSS-722
+		
 		for(int c = srclCol, j = 0; c <= srcrCol; ++c) {
 			final StepChunk stepChunk = stepChunks[j++];
 			for(int srcIndex = 0, r = srcbRow + 1; r <= dstbRow; ++r, ++srcIndex) {
@@ -871,6 +874,7 @@ public class AutoFillHelper {
 					new CellRegion(pastetRow,srclCol,srctRow - 1,srcrCol), pasteOption);
 		}
 		
+		if (!isPasteValue(pasteType)) return; //ZSS-722
 		
 		for(int c = srclCol, j = 0; c <= srcrCol; ++c) {
 			final StepChunk stepChunk = stepChunks[j++];
@@ -921,6 +925,9 @@ public class AutoFillHelper {
 			sheet.pasteCell(new SheetRegion(sheet,srctRow,srclCol,srcbRow,srcrCol), 
 				new CellRegion(srctRow, srcrCol+1, srcbRow, pasterCol), pasteOption);
 		}
+		
+		if (!isPasteValue(pasteType)) return; //ZSS-722
+		
 		for(int r = srctRow, j = 0; r <= srcbRow; ++r) {
 			final StepChunk stepChunk = stepChunks[j++];
 			for(int srcIndex = 0, c = srcrCol + 1; c <= dstrCol; ++c, ++srcIndex) {
@@ -972,6 +979,8 @@ public class AutoFillHelper {
 				new CellRegion(srctRow, pastelCol, srcbRow, srclCol-1), pasteOption);
 		}
 		
+		if (!isPasteValue(pasteType)) return; //ZSS-722
+		
 		for(int r = srctRow, j = 0; r <= srcbRow; ++r) {
 			final StepChunk stepChunk = stepChunks[j++];
 			for(int srcIndex = 0, c = srclCol - 1; c >= dstlCol; --c, ++srcIndex) {
@@ -985,6 +994,19 @@ public class AutoFillHelper {
 					applyStepValue(srcCell,sheet.getCell(r,c),value);
 				}
 			}
+		}
+	}
+	
+	//ZSS-722: autoFill() with non-VALUE option should not copy value over.
+	private boolean isPasteValue(PasteType pasteType) {
+		switch(pasteType) {
+		case ALL:
+		case ALL_EXCEPT_BORDERS:
+		case VALUES:
+		case VALUES_AND_NUMBER_FORMATS:
+			return true;
+		default:
+			return false;
 		}
 	}
 	

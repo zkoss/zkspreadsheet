@@ -5,7 +5,8 @@ ZK Spreadsheet 3.5.1
   ZSS-688 Clone a sheet and add it to the current book
 
 *Bugs:
-
+  ZSS-722 autoFill() with non-VALUE option should not copy value over.
+  
 ** Upgrade Notes
 
 
