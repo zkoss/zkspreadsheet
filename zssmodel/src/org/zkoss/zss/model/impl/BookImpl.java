@@ -16,10 +16,11 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.model.impl;
 
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -32,15 +33,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.zkoss.lang.Objects;
 import org.zkoss.poi.ss.SpreadsheetVersion;
 import org.zkoss.util.logging.Log;
-import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.EventListener;
-import org.zkoss.zk.ui.event.EventQueue;
-import org.zkoss.zk.ui.event.EventQueues;
 import org.zkoss.zss.model.EventQueueModelEventListener;
 import org.zkoss.zss.model.InvalidModelOpException;
 import org.zkoss.zss.model.ModelEvent;
 import org.zkoss.zss.model.ModelEventListener;
-import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.SBookSeries;
 import org.zkoss.zss.model.SCell;
 import org.zkoss.zss.model.SCellStyle;
@@ -48,9 +44,10 @@ import org.zkoss.zss.model.SColor;
 import org.zkoss.zss.model.SColumnArray;
 import org.zkoss.zss.model.SFont;
 import org.zkoss.zss.model.SName;
+import org.zkoss.zss.model.SPicture;
+import org.zkoss.zss.model.SPictureData;
 import org.zkoss.zss.model.SRow;
 import org.zkoss.zss.model.SSheet;
-import org.zkoss.zss.model.SheetRegion;
 import org.zkoss.zss.model.sys.EngineFactory;
 import org.zkoss.zss.model.sys.dependency.DependencyTable;
 import org.zkoss.zss.model.sys.dependency.Ref;
@@ -99,6 +96,8 @@ public class BookImpl extends AbstractBookAdv{
 	private HashMap<String,Object> _attributes;
 	
 	private EvaluationContributor _evalContributor;
+	
+	private ArrayList<WeakReference<SPictureData>> _picDatas; //since 3.5.1
 	
 	/**
 	 * the sheet which is destroying now.
@@ -800,5 +799,39 @@ public class BookImpl extends AbstractBookAdv{
 	@Override 
 	public String getId(){
 		return _bookId; 
+	}
+	
+	@Override
+	public SPictureData addPictureData(SPicture.Format format, byte[] data) {
+		if (_picDatas == null) {
+			_picDatas = new ArrayList<WeakReference<SPictureData>>(4);
+		}
+		int index = _picDatas.size();
+		SPictureData picData = new PictureDataImpl(index, format, data);
+		WeakReference<SPictureData> ref = new WeakReference<SPictureData>(picData);
+		_picDatas.add(ref);
+		return picData;
+	}
+
+	@Override
+	public SPictureData getPictureData(int index) {
+		if (index < 0 || _picDatas == null || index >= _picDatas.size())
+			return null;
+		WeakReference<SPictureData> ref = _picDatas.get(index);
+		return ref == null ? null : ref.get();
+	}
+
+	@Override
+	public Collection<SPictureData> getPicturesDatas() {
+		if (_picDatas == null) return Collections.emptyList();
+		
+		final List<SPictureData> list = new ArrayList<SPictureData>(_picDatas.size());
+		for (WeakReference<SPictureData> ref : _picDatas) {
+			final SPictureData picData = ref == null ? null : ref.get();
+			if (picData != null) {
+				list.add(picData);
+			}
+		}
+		return list;
 	}
 }

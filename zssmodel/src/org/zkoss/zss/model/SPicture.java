@@ -72,4 +72,11 @@ public interface SPicture {
 	public ViewAnchor getAnchor();
 
 	void setAnchor(ViewAnchor anchor);
+	
+	/**
+	 * Returns the SPictureData
+	 * @since 3.5.1
+	 * @return
+	 */
+	public SPictureData getPictureData();
 }

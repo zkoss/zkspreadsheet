@@ -75,7 +75,7 @@ public class ExcelXlsxExporter extends AbstractExcelExporter {
 	@Override
 	protected void exportPicture(SSheet sheet, Sheet poiSheet) {
 		for (SPicture picture : sheet.getPictures()){
-			int poiPictureIndex = workbook.addPicture(picture.getData(), PoiEnumConversion.toPoiPictureFormat(picture.getFormat()));
+			int poiPictureIndex = exportedPicDataMap.get(picture.getPictureData().getIndex()); //ZSS-735
 			poiSheet.createDrawingPatriarch().createPicture(toClientAnchor(picture.getAnchor(), sheet), poiPictureIndex);
 		}
 	}

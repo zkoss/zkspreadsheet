@@ -63,6 +63,8 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 	protected SBook book;
 	/** source POI book */
 	protected Workbook workbook;
+	//ZSS-735, poiPictureData -> SPictureData index
+	protected Map<PictureData, Integer> importedPictureData = new HashMap<PictureData, Integer>(); 
 	
 	/** book type key for book attribute **/
 	protected static String BOOK_TYPE_KEY = "$ZSS.BOOKTYPE$";
@@ -444,12 +446,19 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 	abstract protected int getYoffsetInPixel(ClientAnchor clientAnchor, Sheet poiSheet);
 
 	protected void importPicture(List<Picture> poiPictures, Sheet poiSheet, SSheet sheet) {
-		for (Picture picture : poiPictures) {
-			Format format = Format.valueOfFileExtension(picture.getPictureData().suggestFileExtension());
-			if (format != null) {
-				sheet.addPicture(format, picture.getPictureData().getData(), toViewAnchor(poiSheet, picture.getClientAnchor()));
+		for (Picture poiPicture : poiPictures) {
+			PictureData poiPicData = poiPicture.getPictureData();
+			Integer picDataIx = importedPictureData.get(poiPicData); //ZSS-735
+			if (picDataIx != null) {
+				sheet.addPicture(picDataIx.intValue(), toViewAnchor(poiSheet, poiPicture.getClientAnchor()));
 			} else {
-				// TODO log we ignore a picture with unsupported format
+				Format format = Format.valueOfFileExtension(poiPicData.suggestFileExtension());
+				if (format != null) {
+					SPicture pic = sheet.addPicture(format, poiPicData.getData(), toViewAnchor(poiSheet, poiPicture.getClientAnchor()));
+					importedPictureData.put(poiPicData, pic.getPictureData().getIndex());
+				} else {
+					// TODO log we ignore a picture with unsupported format
+				}
 			}
 		}
 	}

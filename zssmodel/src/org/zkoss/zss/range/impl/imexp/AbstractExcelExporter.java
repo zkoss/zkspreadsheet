@@ -47,6 +47,8 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 	protected Map<SCellStyle, CellStyle> styleTable = new HashMap<SCellStyle, CellStyle>();
 	protected Map<SFont, Font> fontTable = new HashMap<SFont, Font>();
 	protected Map<SColor, Color> colorTable = new HashMap<SColor, Color>();
+	//ZSS-688: SPictureData index -> poi PictureData index
+	protected Map<Integer, Integer> exportedPicDataMap = new HashMap<Integer, Integer>(); 
 	
 	private static final Log _logger = Log.lookup(AbstractExcelExporter.class.getName());
 
@@ -88,6 +90,7 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 				exportSheet(sheet);
 			}
 			exportNamedRange(book);
+			exportPictureData(book); //ZSS-735
 			for (int n = 0; n < book.getSheets().size(); n++) {
 				SSheet sheet = book.getSheet(n);
 				Sheet poiSheet = workbook.getSheetAt(n);
@@ -102,6 +105,14 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 			workbook.write(fos);
 		} finally {
 			lock.readLock().unlock();
+		}
+	}
+	
+	//ZSS-735
+	protected void exportPictureData(SBook book) {
+		for (SPictureData picData : book.getPicturesDatas()) {
+			int poiIndex = workbook.addPicture(picData.getData(), PoiEnumConversion.toPoiPictureFormat(picData.getFormat()));
+			exportedPicDataMap.put(picData.getIndex(), poiIndex);
 		}
 	}
 

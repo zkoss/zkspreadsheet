@@ -16,6 +16,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.model.impl;
 
+import org.zkoss.zss.model.SPictureData;
 import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.model.ViewAnchor;
 /**
@@ -24,21 +25,41 @@ import org.zkoss.zss.model.ViewAnchor;
  * @since 3.5.0
  */
 public class PictureImpl extends AbstractPictureAdv {
+	private static final long serialVersionUID = -8176040020483451498L;
+
 
 	private String _id;
-	private Format _format;
+	
+	
+	private SPictureData _picData; //since 3.5.1
 	private ViewAnchor _anchor;
-	private byte[] _data;
 	private AbstractSheetAdv _sheet;
 
+	/** This constructor will create a {@link SPictureData} internally */
 	public PictureImpl(AbstractSheetAdv sheet, String id, Format format,
 			byte[] data, ViewAnchor anchor) {
 		this._sheet = sheet;
 		this._id = id;
-		this._format = format;
-		this._data = data;
 		this._anchor = anchor;
+		
+		_picData = _sheet.getBook().addPictureData(format, data);
 	}
+	
+	//ZSS-735
+	//since 3.5.1
+	/** This constructor use the existing picData in the {@SBook}. */
+	public PictureImpl(AbstractSheetAdv sheet, String id, int picDataIndex,
+			ViewAnchor anchor) {
+		this._sheet = sheet;
+		this._id = id;
+		this._anchor = anchor;
+		
+		final SPictureData picData = sheet.getBook().getPictureData(picDataIndex);
+		if (picData == null)
+			throw new IllegalStateException("Inexisting picture data index: "+picDataIndex);
+		_picData = picData;
+	}
+	
 	@Override
 	public SSheet getSheet(){
 		checkOrphan();
@@ -50,7 +71,7 @@ public class PictureImpl extends AbstractPictureAdv {
 	}
 	@Override
 	public Format getFormat() {
-		return _format;
+		return _picData.getFormat();
 	}
 	@Override
 	public ViewAnchor getAnchor() {
@@ -64,7 +85,7 @@ public class PictureImpl extends AbstractPictureAdv {
 	
 	@Override
 	public byte[] getData() {
-		return _data;
+		return _picData.getData();
 	}
 
 	@Override
@@ -78,5 +99,10 @@ public class PictureImpl extends AbstractPictureAdv {
 		if (_sheet == null) {
 			throw new IllegalStateException("doesn't connect to parent");
 		}
+	}
+	
+	@Override
+	public SPictureData getPictureData() {
+		return _picData;
 	}
 }

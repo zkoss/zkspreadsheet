@@ -186,7 +186,22 @@ public interface SSheet {
 	 */
 	public void deleteCell(int rowIdx,int columnIdx,int lastRowIndex, int lastColumnIndex,boolean horizontal);
 	
+	/** Add a picture into this sheet with raw picture data and format.
+	 * @param format picture format as specified in {@link SPicture.Format}
+	 * @param data raw byte data of the picture
+	 * @param anchor where to anchor this picture
+	 * @return the added {@link SPicture}
+	 */
 	public SPicture addPicture(SPicture.Format format, byte[] data, ViewAnchor anchor);
+	
+	/**
+	 * Add a picture into the sheet with known picture data index.
+	 * @param index {@link SPictureData} index
+	 * @param anchor where to anchor this picture
+	 * @return the {@link SPicture} added
+	 * @since 3.5.1
+	 */
+	public SPicture addPicture(int index, ViewAnchor anchor); 
 	public SPicture getPicture(String picid);
 	public void deletePicture(SPicture picture);
 	public int getNumOfPicture();

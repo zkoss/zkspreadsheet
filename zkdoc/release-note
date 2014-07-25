@@ -1,6 +1,8 @@
 ZK Spreadsheet 3.5.1
 *Features:
   ZSS-182 Fire stop editing by up ,down,right or left keys pressing
+  ZSS-735 Picture should reuse same PictureData
+  
 
 *Bugs:
 

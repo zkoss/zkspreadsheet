@@ -856,11 +856,11 @@ public class SheetImpl extends AbstractSheetAdv {
 			throw new InvalidModelOpException("the source book is different");
 		}
 		
-		
+
 		//can only clone on the begining.
 		
 		//TODO
-		throw new UnsupportedOperationException("not implement yet");
+		throw new UnsupportedOperationException("not implement yet");	
 	}
 
 	public void dump(StringBuilder builder) {
@@ -1406,6 +1406,16 @@ public class SheetImpl extends AbstractSheetAdv {
 		_pictures.add(pic);
 		return pic;
 	}
+	
+	//ZSS-735
+	//@since 3.5.1
+	public SPicture addPicture(int picDataIndex, ViewAnchor anchor) {
+		checkOrphan();
+		AbstractPictureAdv pic = new PictureImpl(this,_book.nextObjId("pic"), picDataIndex,anchor);
+		_pictures.add(pic);
+		return pic;
+	}
+
 	
 	public SPicture getPicture(String picid){
 		for(SPicture pic:_pictures){
