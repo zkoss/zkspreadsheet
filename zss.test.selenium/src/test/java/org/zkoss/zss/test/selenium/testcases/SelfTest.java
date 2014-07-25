@@ -4,10 +4,10 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
-import org.zkoss.zss.test.selenium.TestCaseBase;
+import org.zkoss.zss.test.selenium.TestcaseBase;
 
 @Ignore("for test zss.test.selenium self only")
-public class SelfTest extends TestCaseBase {
+public class SelfTest extends TestcaseBase{
 
 	@Test
 	public void testRegular() throws Exception{
