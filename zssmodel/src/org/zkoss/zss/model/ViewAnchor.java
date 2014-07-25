@@ -174,5 +174,11 @@ public class ViewAnchor implements Serializable {
 		}
 		return new ViewAnchor(lastRow, lastColumn, xOffsetInLastColumn, yOffsetInLastRow, 0, 0);
 	}
-
+	
+	//ZSS-688
+	//@since 3.5.1
+	public ViewAnchor cloneViewAnchor() {
+		return new ViewAnchor(this.rowIndex, this.columnIndex, 
+				this.xOffset, this.yOffset, this.width, this.height);
+	}
 }

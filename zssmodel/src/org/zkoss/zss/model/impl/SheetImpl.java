@@ -856,11 +856,64 @@ public class SheetImpl extends AbstractSheetAdv {
 			throw new InvalidModelOpException("the source book is different");
 		}
 		
-
+		//ZSS-688
 		//can only clone on the begining.
+		SheetImpl tgt = (SheetImpl) sheet;
 		
-		//TODO
-		throw new UnsupportedOperationException("not implement yet");	
+		//_book
+		//_name
+		//_id
+		
+		//_protected
+		tgt._protected = this._protected;
+		//_password
+		tgt._password = this._password;
+		//_mergedRegions
+		for (CellRegion rgn : this._mergedRegions) {
+			tgt._mergedRegions.add(new CellRegion(rgn.row, rgn.column, rgn.lastRow, rgn.lastColumn));
+		}
+		//_autoFilter
+		if (this._autoFilter != null) {
+			tgt._autoFilter = ((AutoFilterImpl)this._autoFilter).cloneAutoFilterImpl();
+			tgt.addIntoDependency(tgt._autoFilter);
+		}
+		//_sheetProtection
+		if (this._sheetProtection != null) {
+			tgt._sheetProtection =  ((SheetProtectionImpl)this._sheetProtection).cloneSheetProtectionImpl();
+		}
+		// _rows
+		for (AbstractRowAdv srcrow : this._rows.values()) {
+			AbstractRowAdv tgtrow = srcrow.cloneRow(tgt); 
+			tgt._rows.put(tgtrow.getIndex(), tgtrow);
+		}
+		//_columnArrays
+		for (AbstractColumnArrayAdv ca : this._columnArrays.values()) {
+			tgt._columnArrays.put(((ColumnArrayImpl)ca).cloneColumnArrayImpl(tgt));
+		}
+		//_pictures
+		for (AbstractPictureAdv pic : this._pictures) {
+			tgt._pictures.add(((PictureImpl)pic).clonePictureImpl(tgt));
+		}
+		//_charts
+		for (AbstractChartAdv chart : this._charts) {
+			tgt._charts.add(((ChartImpl)chart).cloneChartImpl(tgt));
+		}
+		//_dataValidations
+		for (AbstractDataValidationAdv dv : this._dataValidations) {
+			tgt._dataValidations.add(((DataValidationImpl)dv).cloneDataValidationImpl(tgt));
+		}
+		//_viewInfo
+		((SheetViewInfoImpl)tgt._viewInfo).copyFrom((SheetViewInfoImpl)this._viewInfo);
+		//_printSetup
+		((PrintSetupImpl)tgt._printSetup).copyFrom((PrintSetupImpl)this._printSetup);
+
+		//Do not clone runtime internal attributes map
+		//Map<String, Object> _attributes;
+		
+		//_defualtColumnWidth
+		tgt._defaultColumnWidth = this._defaultColumnWidth;
+		//_defaultRowHeight
+		tgt._defaultRowHeight = this._defaultRowHeight;
 	}
 
 	public void dump(StringBuilder builder) {

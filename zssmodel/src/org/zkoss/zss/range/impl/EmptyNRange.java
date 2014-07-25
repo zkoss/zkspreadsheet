@@ -489,4 +489,9 @@ import org.zkoss.zss.range.*;
 	public void deleteValidation() {
 		// do nothing
 	}
+
+	@Override
+	public SSheet cloneSheet(String name) {
+		return null;
+	}
 }

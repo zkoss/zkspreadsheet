@@ -266,4 +266,20 @@ public class RowImpl extends AbstractRowAdv {
 		sb.append("Row:").append(getIndex()).append(cells.keySet());
 		return sb.toString();
 	}
+	
+	//ZSS-688
+	/*package*/ AbstractRowAdv cloneRow(AbstractSheetAdv sheet) {
+		final RowImpl tgt = new RowImpl(sheet, this._index);
+		
+		for (AbstractCellAdv cell : this.cells.values()) {
+			tgt.cells.put(cell.getColumnIndex(), ((CellImpl)cell).cloneCell(tgt));
+		}
+
+		tgt.cellStyle = this.cellStyle;
+		tgt.height = this.height;
+		tgt.hidden = this.hidden;
+		tgt.customHeight = this.customHeight;
+		
+		return tgt;
+	}
 }

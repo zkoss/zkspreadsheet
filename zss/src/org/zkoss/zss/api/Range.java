@@ -706,6 +706,15 @@ public interface Range {
 	 */
 	public Sheet createSheet(String name);
 	
+	
+	/**
+	 * Clone this sheet; create a sheet and copy the contents of this sheet; then add to the end of the book. 
+	 * @param name the sheet name, it must not be the same as another sheet name in book of this range
+	 * @return the new created sheet
+	 * @since 3.5.1
+	 */
+	public Sheet cloneSheet(String name);
+	
 	/**
 	 * Set the freeze panel
 	 * @param rowfreeze the number of row to freeze, 0 means no freeze

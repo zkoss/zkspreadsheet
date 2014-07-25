@@ -127,4 +127,20 @@ public class PrintSetupImpl implements SPrintSetup,Serializable {
 //		return scale;
 //	}
 
+	//ZSS-688
+	//@since 3.5.1
+	/*package*/ void copyFrom(PrintSetupImpl src) {
+		
+		this._printGridlines = src._printGridlines; 
+		this._headerMargin = src._headerMargin;
+		this._footerMargin = src._footerMargin;
+		this._leftMargin = src._leftMargin;
+		this._rightMargin = src._rightMargin;
+		this._topMargin = src._topMargin;
+		this._bottomMargin = src._bottomMargin;
+		this._landscape = src._landscape;
+		
+		// private short scale = 100;
+		this._paperSize = src._paperSize;
+	}
 }

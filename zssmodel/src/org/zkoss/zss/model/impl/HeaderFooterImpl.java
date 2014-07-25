@@ -53,4 +53,15 @@ public class HeaderFooterImpl implements SHeader,SFooter,Serializable{
 	public void setCenterText(String centerText) {
 		this._centerText = centerText;
 	}
+	
+	//ZSS-688
+	//@since 3.5.1
+	/*package*/ HeaderFooterImpl cloneHeaderFooterImpl() {
+		final HeaderFooterImpl tgt = new HeaderFooterImpl();
+		tgt._leftText = this._leftText;
+		tgt._rightText = this._rightText;
+		tgt._centerText = this._centerText;
+		
+		return tgt;
+	}
 }

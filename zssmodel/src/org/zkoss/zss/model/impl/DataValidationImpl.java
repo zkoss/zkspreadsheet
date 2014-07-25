@@ -596,4 +596,42 @@ public class DataValidationImpl extends AbstractDataValidationAdv {
 			}
 		}
 	}
+
+	//ZSS-688
+	//@since 3.5.1
+	/*package*/ DataValidationImpl cloneDataValidationImpl(AbstractSheetAdv sheet) {
+		DataValidationImpl tgt = new DataValidationImpl(sheet, this._id); 
+
+		tgt._alertStyle = this._alertStyle;
+		tgt._ignoreBlank = this._ignoreBlank;
+		tgt._showInCellDropdown = this._showInCellDropdown;
+		tgt._showInput = this._showInput;
+		tgt._showError = this._showError;
+		tgt._inputTitle = this._inputTitle;
+		tgt._inputMessage = this._inputMessage;
+		tgt._errorTitle = this._errorTitle;
+		tgt._errorMessage = this._errorMessage;
+		tgt._validationType = this._validationType;
+		tgt._operatorType = this._operatorType;
+
+		if (this._regions != null) {
+			tgt._regions = new HashSet<CellRegion>(this._regions.size() * 4 / 3);
+			for (CellRegion rgn : this._regions) {
+				tgt._regions.add(new CellRegion(rgn.row, rgn.column, rgn.lastRow, rgn.lastColumn));
+			}
+		}
+		
+		final String f1 = getFormula1();
+		if (f1 != null) {
+			final String f2 = getFormula2();
+			setFormulas(f1, f2);
+		}
+
+		// Do NOT clone _evalValue1Result, _evalValue2Result, and _evaluated
+		//private Object _evalValue1Result;
+		//private Object _evalValue2Result;
+		//private boolean _evaluated;
+		
+		return tgt;
+	}
 }

@@ -145,4 +145,14 @@ public class ColumnArrayImpl extends AbstractColumnArrayAdv {
 		_customWidth = custom;
 	}
 
+	//ZSS-688
+	//@since 3.5.1
+	/*package*/ ColumnArrayImpl cloneColumnArrayImpl(AbstractSheetAdv sheet) {
+		final ColumnArrayImpl tgt = new ColumnArrayImpl(sheet, this._index, this._lastIndex);
+		tgt._width = this._width;
+		tgt._hidden = this._hidden;
+		tgt._customWidth = this._customWidth;
+		tgt._cellStyle = this._cellStyle;
+		return tgt;
+	}
 }

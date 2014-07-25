@@ -105,4 +105,11 @@ public class PictureImpl extends AbstractPictureAdv {
 	public SPictureData getPictureData() {
 		return _picData;
 	}
+	
+	//ZSS-688
+	//@since 3.5.1
+	/*package*/ PictureImpl clonePictureImpl(AbstractSheetAdv sheet) {
+		return new PictureImpl(sheet, this._id, this._picData.getIndex(),
+				this._anchor.cloneViewAnchor());
+	}
 }

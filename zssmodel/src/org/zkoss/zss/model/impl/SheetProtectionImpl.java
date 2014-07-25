@@ -264,4 +264,13 @@ public class SheetProtectionImpl implements SSheetProtection {
 	final private int setBoolean(int bit, int bits, boolean flag) {
 		return flag ? (bits | bit) : (bits & ~bit);
 	}
+
+	//ZSS-688
+	//@Since 3.5.1
+	/*package*/ SheetProtectionImpl cloneSheetProtectionImpl() {
+		final SheetProtectionImpl tgt = new SheetProtectionImpl();
+		tgt._bits = this._bits;
+		return tgt;
+	}
+	
 }

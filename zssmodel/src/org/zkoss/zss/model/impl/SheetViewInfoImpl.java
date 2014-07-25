@@ -155,6 +155,26 @@ public class SheetViewInfoImpl implements SSheetViewInfo, Serializable {
 			}
 		}
 	}
-	
-	
+
+	//ZSS-688
+	//@since 3.5.1
+	/*package*/ void copyFrom(SheetViewInfoImpl src) {
+		this._displayGridlines = src._displayGridlines;
+		this._rowFreeze = src._rowFreeze;
+		this._columnFreeze = src._columnFreeze;
+
+		if (src._header != null) {
+			this._header = ((HeaderFooterImpl)src._header).cloneHeaderFooterImpl();
+		}
+		if (src._footer != null) {
+			this._footer = ((HeaderFooterImpl)src._footer).cloneHeaderFooterImpl();
+		}
+		
+		if (src._rowBreaks != null) {
+			this._rowBreaks = new TreeSet<Integer>(src._rowBreaks);
+		}
+		if (src._columnBreaks != null) {
+			this._columnBreaks = new TreeSet<Integer>(src._columnBreaks);
+		}
+	}
 }

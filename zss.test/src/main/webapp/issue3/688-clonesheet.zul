@@ -1,0 +1,34 @@
+<vlayout hflex="1" vflex="1">
+	<label multiline="true">
+		1. Select a sheet
+		2. Press the "clone sheet" button.
+		3. Should see a cloned new sheet added to the end.
+		4. Select the new cloned sheet and check if it copied everything 
+	</label>
+	<hlayout>
+		<button onClick="export()">Export to Excel</button>
+		<button onClick="ss.invalidate()">Invalidate()</button>
+		<button onClick="cloneSheet()">Clone sheet</button>
+	</hlayout>
+	
+	<spreadsheet id="ss" src="/TestFile2007.xlsx" maxVisibleRows="200" maxVisibleColumns="40"
+		hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
+		showFormulabar="true"/>
+	<zscript><![CDATA[
+	import java.io.ByteArrayOutputStream;
+	
+	public void export() throws java.io.IOException {
+		Book wb = ss.getBook();
+	    Exporter c = Exporters.getExporter("excel");
+	    ByteArrayOutputStream out = new ByteArrayOutputStream();
+	    c.export(wb, out);
+	    Filedownload.save(out.toByteArray(), "application/file", wb.getBookName());
+	}
+	
+	public void cloneSheet() {
+		Sheet sh = ss.getSelectedSheet();
+		Range range = Ranges.range(sh);
+		range.cloneSheet(null);
+	}
+	]]></zscript>		
+</vlayout>

@@ -179,4 +179,21 @@ public class GeneralChartDataImpl extends ChartDataAdv implements SGeneralChartD
 		}
 	}
 
+	//ZSS-688
+	//@since 3.5.1
+	public void copyFrom(GeneralChartDataImpl src) {
+		final String expr = this.getCategoriesFormula();
+		if (expr != null) {
+			this.setCategoriesFormula(expr);
+		}
+		
+		for (SeriesImpl s : src._serieses) {
+			_serieses.add(s.cloneSeriesImpl(_chart));
+		}
+		_seriesCount = this._seriesCount;
+		
+		// do not copy _evalResult, _evaluated.
+		//private Object _evalResult;
+		//private boolean _evaluated = false;
+	}
 }

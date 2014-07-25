@@ -241,4 +241,8 @@ public abstract class AbstractCellAdv implements SCell,LinkedModelObject,Seriali
 
 	//ZSS-565: Support input with Swedish locale into formula 
 	public abstract void setFormulaValue(String formula, Locale locale);
+	
+	//ZSS-688
+	//@since 3.5.1
+	/*package*/ abstract AbstractCellAdv cloneCell(AbstractRowAdv row);
 }

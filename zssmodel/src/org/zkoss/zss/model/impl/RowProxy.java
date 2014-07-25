@@ -198,4 +198,14 @@ class RowProxy extends AbstractRowAdv{
 		sb.append("Row:").append(getIndex());
 		return sb.toString();
 	}
+	
+	//ZSS-688
+	//@since 3.5.1
+	/*package*/ AbstractRowAdv cloneRow(AbstractSheetAdv sheet) {
+		if (_proxy == null) {
+			return new 	RowProxy(sheet, this._index);
+		} else {
+			return _proxy.cloneRow(sheet);
+		}
+	}
 }

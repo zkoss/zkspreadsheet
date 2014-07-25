@@ -50,4 +50,7 @@ public abstract class AbstractRowAdv implements SRow,LinkedModelObject,Serializa
 	/*package*/ abstract void setIndex(int newidx);
 
 	/*package*/ abstract void moveCellTo(AbstractRowAdv target, int start, int end, int offset);
+	
+	//ZSS-688
+	/*package*/ abstract AbstractRowAdv cloneRow(AbstractSheetAdv sheet);
 }

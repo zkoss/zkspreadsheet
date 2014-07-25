@@ -23,7 +23,6 @@ import java.util.Locale;
 import org.zkoss.zss.model.CellRegion;
 import org.zkoss.zss.model.ErrorValue;
 import org.zkoss.zss.model.InvalidFormulaException;
-import org.zkoss.zss.model.InvalidModelOpException;
 import org.zkoss.zss.model.SBookSeries;
 import org.zkoss.zss.model.SCellStyle;
 import org.zkoss.zss.model.SColumnArray;
@@ -31,8 +30,6 @@ import org.zkoss.zss.model.SComment;
 import org.zkoss.zss.model.SHyperlink;
 import org.zkoss.zss.model.SRichText;
 import org.zkoss.zss.model.SSheet;
-import org.zkoss.zss.model.SCell.CellType;
-import org.zkoss.zss.model.impl.sys.DependencyTableAdv;
 import org.zkoss.zss.model.sys.EngineFactory;
 import org.zkoss.zss.model.sys.dependency.DependencyTable;
 import org.zkoss.zss.model.sys.dependency.Ref;
@@ -321,7 +318,8 @@ public class CellImpl extends AbstractCellAdv {
 			newType = CellType.BLANK;
 		} else if (newVal instanceof String) {
 			if (isFormula((String) newVal)) {
-				setFormulaValue(((String) newVal).substring(1));
+				// recursive back with newVal an instance of FromulaExpression
+				setFormulaValue(((String) newVal).substring(1)); 
 				return;// break;
 			} else {
 				newType = CellType.STRING;
@@ -457,5 +455,39 @@ public class CellImpl extends AbstractCellAdv {
 		StringBuilder sb = new StringBuilder();
 		sb.append("Cell:"+getReferenceString()+"[").append(getRowIndex()).append(",").append(getColumnIndex()).append("]");
 		return sb.toString();
+	}
+	
+	//ZSS-688
+	//@since 3.5.1
+	@Override
+	/*package*/ AbstractCellAdv cloneCell(AbstractRowAdv row) {
+		final CellImpl tgt = new CellImpl(row, this._index);
+		
+		if (_localValue != null) {
+			Object newVal = _localValue.getValue();
+			if (newVal instanceof SRichText) {
+				newVal = ((AbstractRichTextAdv)newVal).clone();
+			} else if (newVal instanceof FormulaExpression) {
+				newVal = "="+((FormulaExpression)newVal).getFormulaString();
+			}
+			tgt.setValue(newVal);
+		}
+		
+		tgt._cellStyle = this._cellStyle;
+		
+		// do not clone _formulaResultValue
+		//transient private FormulaResultCellValue _formulaResultValue;// cache
+		
+		if (this._opts != null) {
+			final OptFields opts = tgt.getOpts(true);
+			if (this._opts._comment != null) {
+				opts._comment = this._opts._comment.clone();
+			}
+			if (this._opts._hyperlink != null) {
+				opts._hyperlink = this._opts._hyperlink.clone();
+			}
+		}
+		
+		return tgt;
 	}
 }

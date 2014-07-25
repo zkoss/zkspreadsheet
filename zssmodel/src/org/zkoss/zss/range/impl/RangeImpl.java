@@ -1187,6 +1187,34 @@ public class RangeImpl implements SRange {
 		}.doInWriteLock(getLock());	
 	}
 	
+	@Override
+	public SSheet cloneSheet(final String name) {
+		final ResultWrap<SSheet> resultSheet = new ResultWrap<SSheet>();
+		//it just handle the first ref
+		return (SSheet)new ModelManipulationTask() {			
+			@Override
+			protected Object doInvoke() {
+				SBook book = getBook();
+				SSheet srcsheet = getSheet();
+				SSheet sheet;
+				if (Strings.isBlank(name)) {
+					sheet = book.createSheet(nextSheetName(), srcsheet);
+				} else {
+					sheet = book.createSheet(name, srcsheet);
+				}
+				resultSheet.set(sheet);
+				return sheet;
+			}
+
+			@Override
+			protected void doBeforeNotify() {
+				if(resultSheet.get()!=null){
+					new NotifyChangeHelper().notifySheetCreate(resultSheet.get());
+				}
+			}
+		}.doInWriteLock(getLock());	
+	}
+	
 	private String nextSheetName() {
 		SBook book = getBook();
 		Integer idx = (Integer)book.getAttribute("zss.nextSheetCount");

@@ -654,6 +654,13 @@ public interface SRange {
 	public SSheet createSheet(String name);
 	
 	/**
+	 * Clone sheet as specified in this Range.
+	 * @param name the name of the new created sheet; null would use defulat
+	 * "SheetX" name where X is the next sheet number.
+	 */
+	public SSheet cloneSheet(String name);
+	
+	/**
      * Set(Rename) the name of the sheet as specified in this Range.
 	 * @param name
 	 */

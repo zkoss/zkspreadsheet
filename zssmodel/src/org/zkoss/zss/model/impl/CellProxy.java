@@ -287,4 +287,15 @@ class CellProxy extends AbstractCellAdv {
 	protected Ref getRef(){
 		return new RefImpl(this);
 	}
+
+	//ZSS-688
+	//@since 3.5.1
+	@Override
+	/*package*/ AbstractCellAdv cloneCell(AbstractRowAdv row) {
+		if (_proxy == null) {
+			return new CellProxy((AbstractSheetAdv)row.getSheet(), row.getIndex(), this.getColumnIndex());
+		} else {
+			return _proxy.cloneCell(row);
+		}
+	}
 }

@@ -645,7 +645,12 @@ public class RangeImpl implements Range{
 		SSheet sheet = _range.createSheet(name);
 		return new SheetImpl(getBookRef(),new SimpleRef(sheet));
 	}
-	
+
+	public Sheet cloneSheet(String name){
+		SSheet sheet = _range.cloneSheet(name);
+		return new SheetImpl(getBookRef(),new SimpleRef(sheet));
+	}
+
 	public void deleteSheet(){
 		_range.deleteSheet();
 	}

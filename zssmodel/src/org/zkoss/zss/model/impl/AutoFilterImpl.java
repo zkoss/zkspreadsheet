@@ -2,10 +2,12 @@ package org.zkoss.zss.model.impl;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
 import org.zkoss.zss.model.CellRegion;
+import org.zkoss.zss.model.SAutoFilter;
 import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.model.impl.sys.DependencyTableAdv;
@@ -86,5 +88,20 @@ public class AutoFilterImpl extends AbstractAutoFilterAdv {
 				_region.row, _region.column, _region.lastRow, _region.lastColumn);
 			dt.add(dependent, dummy);
 		}
+	}
+	
+	//ZSS-688
+	//@since 3.5.1
+	/*package*/ AutoFilterImpl cloneAutoFilterImpl() {
+		final AutoFilterImpl tgt = 
+				new AutoFilterImpl(new CellRegion(this._region.row, this._region.column, this._region.lastRow, this._region.lastColumn));
+
+		for (SAutoFilter.NFilterColumn value : this._columns.values()) {
+			final FilterColumnImpl srccol = (FilterColumnImpl) value;
+			final FilterColumnImpl tgtcol = srccol.cloneFilterColumnImpl(); 
+			_columns.put(tgtcol.getIndex(), tgtcol);
+		}
+		
+		return tgt;
 	}
 }

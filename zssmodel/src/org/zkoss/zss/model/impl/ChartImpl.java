@@ -43,7 +43,7 @@ public class ChartImpl extends AbstractChartAdv {
 	private ChartGrouping _grouping;
 	private BarDirection _direction;
 	
-	private boolean _ThreeD;
+	private boolean _threeD;
 	
 	public ChartImpl(AbstractSheetAdv sheet,String id,ChartType type,ViewAnchor anchor){
 		this._sheet = sheet;
@@ -175,11 +175,29 @@ public class ChartImpl extends AbstractChartAdv {
 	}
 	@Override
 	public boolean isThreeD() {
-		return _ThreeD;
+		return _threeD;
 	}
 	@Override
 	public void setThreeD(boolean threeD) {
-		this._ThreeD = threeD;
+		this._threeD = threeD;
 	}
-	
+
+	//ZSS-688
+	//@since 3.5.1
+	/*package*/ ChartImpl cloneChartImpl(AbstractSheetAdv sheet) {
+		ChartImpl tgt = new ChartImpl(sheet,this._id,this._type, this._anchor.cloneViewAnchor());
+		if (tgt._data instanceof GeneralChartDataImpl) {
+			((GeneralChartDataImpl)tgt._data).copyFrom((GeneralChartDataImpl) this._data);
+		}
+		
+		tgt._title = this._title;
+		tgt._xAxisTitle = this._xAxisTitle;
+		tgt._yAxisTitle = this._yAxisTitle;
+		tgt._legendPosition = this._legendPosition;
+		tgt._grouping = this._grouping;
+		tgt._direction = this._direction;
+		tgt._threeD = this._threeD;
+		
+		return tgt;
+	}
 }

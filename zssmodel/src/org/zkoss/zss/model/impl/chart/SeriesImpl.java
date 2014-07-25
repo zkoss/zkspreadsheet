@@ -284,4 +284,25 @@ public class SeriesImpl implements SSeries,Serializable,LinkedModelObject{
 		return getValuesFormula();
 	}
 
+	//ZSS-688
+	//@since 3.5.1
+	public SeriesImpl cloneSeriesImpl(AbstractChartAdv chart) {
+		SeriesImpl tgt = new SeriesImpl(chart, this._id);
+
+		final String nexpr = this.getNameFormula();
+		final String vexpr = this.getValuesFormula();
+		final String yexpr = this.getYValuesFormula();
+		final String zexpr = this.getZValuesFormula();
+
+		tgt.setXYZFormula(nexpr, vexpr, yexpr, zexpr);
+
+		// do not clone _evalNameResult, _evalValueResult, _evalYValueRsult, _evalZValueResult, _evaluated
+		//private Object _evalNameResult;
+		//private Object _evalValuesResult;
+		//private Object _evalYValuesResult;
+		//private Object _evalZValuesResult;
+		//private boolean _evaluated = false;
+		
+		return tgt;
+	}
 }

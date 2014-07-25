@@ -129,5 +129,33 @@ public abstract class AbstractAutoFilterAdv implements SAutoFilter,Serializable{
 				}
 			}
 		}
+		
+		//ZSS-688
+		//@since 3.5.1
+		/*package*/ FilterColumnImpl cloneFilterColumnImpl() {
+			FilterColumnImpl tgt = new FilterColumnImpl(this._index);
+			if (this._filters != null) {
+				tgt._filters = new LinkedList<String>();
+				for (String f : this._filters) {
+					tgt._filters.add(f);
+				}
+			}
+			if (this._criteria1 != null) {
+				tgt._criteria1 = new HashSet();
+				for (Object c : this._criteria1) {
+					tgt._criteria1.add(c);
+				}
+			}
+			if (this._criteria2 != null) {
+				tgt._criteria2 = new HashSet();
+				for (Object c : this._criteria2) {
+					tgt._criteria2.add(c);
+				}
+			}
+			tgt._showButton = this._showButton;
+			tgt._op = this._op;
+			
+			return tgt;
+		}
 	}
 }
