@@ -41,7 +41,7 @@
 		</hlayout>
 		<spreadsheet id="ss" width="800px" height="600px" maxrows="35" onCellSelection="/*for bug of cell selection*/"
 		showToolbar="true"
-			maxcolumns="10" src="/issue3/book/221-autofilter.xlsx">
+			maxcolumns="10" src="/book/221-autofilter.xlsx">
 		</spreadsheet>
 	</window>
 </zk>

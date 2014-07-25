@@ -18,7 +18,7 @@
 	
 	<button label="export" onClick="export()"/>
 	<spreadsheet id="ss" 
-		src="/issue/415-export-comment.xls"
+		src="/book/415-export-comment.xls"
 		showToolbar="true" showFormulabar="true" width="100%" height="100%" showSheetbar="true" maxrows="100" maxcolumns="60">
 	</spreadsheet>
 </zk>

@@ -27,7 +27,7 @@
 			]]></zscript>
 		</hbox>
 		<spreadsheet id="ss"
-			src="/issue3/book/401-mergeAnotherSheet.xlsx" hflex="1" vflex="1"
+			src="/book/401-mergeAnotherSheet.xlsx" hflex="1" vflex="1"
 			maxVisibleRows="500" maxVisibleColumns="100" showToolbar="true"
 			showFormulabar="true" showSheetbar="true" showContextMenu="true">
 		</spreadsheet>		

@@ -10,7 +10,7 @@ Reproduce:
 			<button label="export sheet" onClick="export(1);"></button>
 			<button label="export selection" onClick="export(2);"></button>
 		</hlayout>
-		<spreadsheet id="ss" src="/issue3/book/320-pdf-with-pic.xlsx" hflex="1" vflex="1"
+		<spreadsheet id="ss" src="/book/320-pdf-with-pic.xlsx" hflex="1" vflex="1"
 			ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e"
 			maxrows="150" maxcolumns="50"
 			showFormulabar="true" showContextMenu="true" showSheetbar="true" showToolbar="true">

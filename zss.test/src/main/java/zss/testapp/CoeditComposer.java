@@ -35,7 +35,7 @@ public class CoeditComposer extends GenericForwardComposer {
 			if(book == null) { // initialize the shared Book
 				final Importer importer = Importers.getImporter("excel");
 				final InputStream is = Sessions.getCurrent().getWebApp()
-						.getResourceAsStream("/TestFile2007.xlsx");
+						.getResourceAsStream("/book/TestFile2007.xlsx");
 				book = importer.imports(is, "simple.xlsx");
 				book.setShareScope(EventQueues.APPLICATION); // share the work book in Application Scope
 			}

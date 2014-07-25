@@ -5,8 +5,6 @@ package org.zkoss.zss.engine.impl;
 
 import static org.junit.Assert.assertEquals;
 
-import junit.framework.Assert;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

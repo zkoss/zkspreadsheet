@@ -30,105 +30,105 @@ public class Info2007Test extends FormulaTestBase {
 	// ERROR.TYPE
 	@Test
 	public void testERRORTYPE() {
-		Book book = Util.loadBook(this,"TestFile2007-Formula.xlsx");
+		Book book = Util.loadBook("TestFile2007-Formula.xlsx");
 		testERRORTYPE(book);
 	}
 
 	// ISBLANK
 	@Test
 	public void testISBLANK() {
-		Book book = Util.loadBook(this,"TestFile2007-Formula.xlsx");
+		Book book = Util.loadBook("TestFile2007-Formula.xlsx");
 		testISBLANK(book);
 	}
 
 	// ISERR
 	@Test
 	public void testISERR() {
-		Book book = Util.loadBook(this,"TestFile2007-Formula.xlsx");
+		Book book = Util.loadBook("TestFile2007-Formula.xlsx");
 		testISERR(book);
 	}
 
 	// ISERROR
 	@Test
 	public void testISERROR() {
-		Book book = Util.loadBook(this,"TestFile2007-Formula.xlsx");
+		Book book = Util.loadBook("TestFile2007-Formula.xlsx");
 		testISERROR(book);
 	}
 
 	// ISEVEN
 	@Test
 	public void testISEVEN() {
-		Book book = Util.loadBook(this,"TestFile2007-Formula.xlsx");
+		Book book = Util.loadBook("TestFile2007-Formula.xlsx");
 		testISEVEN(book);
 	}
 
 	// ISLOGICAL
 	@Test
 	public void testISLOGICAL() {
-		Book book = Util.loadBook(this,"TestFile2007-Formula.xlsx");
+		Book book = Util.loadBook("TestFile2007-Formula.xlsx");
 		testISLOGICAL(book);
 	}
 
 	// ISNA
 	@Test
 	public void testISNA() {
-		Book book = Util.loadBook(this,"TestFile2007-Formula.xlsx");
+		Book book = Util.loadBook("TestFile2007-Formula.xlsx");
 		testISNA(book);
 	}
 
 	// ISNONTEXT
 	@Test
 	public void testISNONTEXT() {
-		Book book = Util.loadBook(this,"TestFile2007-Formula.xlsx");
+		Book book = Util.loadBook("TestFile2007-Formula.xlsx");
 		testISNONTEXT(book);
 	}
 
 	// ISNUMBER
 	@Test
 	public void testISNUMBER() {
-		Book book = Util.loadBook(this,"TestFile2007-Formula.xlsx");
+		Book book = Util.loadBook("TestFile2007-Formula.xlsx");
 		testISNUMBER(book);
 	}
 
 	// ISODD
 	@Test
 	public void testISODD() {
-		Book book = Util.loadBook(this,"TestFile2007-Formula.xlsx");
+		Book book = Util.loadBook("TestFile2007-Formula.xlsx");
 		testISODD(book);
 	}
 
 	// ISREF
 	@Test
 	public void testISREF() {
-		Book book = Util.loadBook(this,"TestFile2007-Formula.xlsx");
+		Book book = Util.loadBook("TestFile2007-Formula.xlsx");
 		testISREF(book);
 	}
 
 	// ISTEXT
 	@Test
 	public void testISTEXT() {
-		Book book = Util.loadBook(this,"TestFile2007-Formula.xlsx");
+		Book book = Util.loadBook("TestFile2007-Formula.xlsx");
 		testISTEXT(book);
 	}
 	
 	// N
 	@Test
 	public void testN() {
-		Book book = Util.loadBook(this,"TestFile2007-Formula.xlsx");
+		Book book = Util.loadBook("TestFile2007-Formula.xlsx");
 		testN(book);
 	}
 
 	// NA
 	@Test
 	public void testNA() {
-		Book book = Util.loadBook(this,"TestFile2007-Formula.xlsx");
+		Book book = Util.loadBook("TestFile2007-Formula.xlsx");
 		testNA(book);
 	}
 
 	// TYPE
 	@Test
 	public void testTYPE() {
-		Book book = Util.loadBook(this,"TestFile2007-Formula.xlsx");
+		Book book = Util.loadBook("TestFile2007-Formula.xlsx");
 		testTYPE(book);
 	}
 }

@@ -19,6 +19,6 @@ Copyright (C) 2014 Potix Corporation. All Rights Reserved.
 		2. select A1, click "Insert Hyperlink" toolbar button
 		3. "E-mail Address" textbox contains the mailto link I just entered
 	</label>
-	<spreadsheet src="/issue/blank.xlsx" showToolbar="true" height="600px" width="800px" />
+	<spreadsheet src="/book/blank.xlsx" showToolbar="true" height="600px" width="800px" />
 </window>
 

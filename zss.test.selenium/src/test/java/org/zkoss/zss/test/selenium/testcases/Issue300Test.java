@@ -2,9 +2,9 @@ package org.zkoss.zss.test.selenium.testcases;
 
 import org.junit.Test;
 import org.zkoss.zss.test.selenium.Setup;
-import org.zkoss.zss.test.selenium.ZSSTestcaseBase;
+import org.zkoss.zss.test.selenium.ZSSTestCaseBase;
 
-public class Issue300Test extends ZSSTestcaseBase {
+public class Issue300Test extends ZSSTestCaseBase {
 	
 	@Test
 	public void testZSS369_XLSX() throws Exception{

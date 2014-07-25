@@ -10,6 +10,7 @@ import org.zkoss.image.AImage;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.select.SelectorComposer;
 import org.zkoss.zk.ui.select.annotation.*;
+import org.zkoss.zss.Util;
 import org.zkoss.zss.api.*;
 import org.zkoss.zss.api.Range.ApplyBorderType;
 import org.zkoss.zss.api.model.*;
@@ -114,14 +115,14 @@ public class ExportComposer extends SelectorComposer<Component> {
 		
 		
 		SheetOperationUtil.addPicture(range(sheet,3, 8 ), 
-				new AImage(ExportComposer.class.getResource("zklogo.png")).getByteData(),
+				Util.getImage("zklogo.png").getByteData(),
 				Format.PNG, 100, 100);
 		SheetOperationUtil.addPicture(range(sheet,8,  8), 
-				new AImage(ExportComposer.class.getResource("zkessentials.png")).getByteData(),
+				Util.getImage("zkessentials.png").getByteData(),
 				Format.PNG, 300, 100);
 
 		SheetOperationUtil.addPicture(range(sheet,12, 8 ), 
-				new AImage(ExportComposer.class.getResource("zkstudio.png")).getByteData(),
+				Util.getImage("zkstudio.png").getByteData(),
 				Format.PNG, 300, 100);
 
 		

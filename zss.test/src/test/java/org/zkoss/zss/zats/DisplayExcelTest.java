@@ -12,7 +12,7 @@ import org.zkoss.zss.api.model.Sheet;
  * @author Hawk
  *
  */
-public class DisplayExcelTest extends SpreadsheetTestCaseBase{
+public class DisplayExcelTest extends SpreadsheetTestCaseBase {
 
 	protected DesktopAgent desktop; 
 	protected ComponentAgent zss ;

@@ -120,17 +120,18 @@ public class CellTextTest extends DisplayExcelTest{
 	@Test
 	public void testFontSize(){
 		Font font =getFont(sheet, 6, 0);
-		assertEquals(8, font.getFontHeight()/20);
+		// deprecated, use getFontHeightInPoint()
+		//assertEquals(8, font.getFontHeight()/20);
 		assertEquals(8, font.getFontHeightInPoint());
 		
 		font =getFont(sheet, 6, 1);
-		assertEquals(12, font.getFontHeight()/20);
+		assertEquals(12, font.getFontHeightInPoint());
 		
 		font =getFont(sheet, 6, 2);
-		assertEquals(28, font.getFontHeight()/20);
+		assertEquals(28, font.getFontHeightInPoint());
 		
 		font =getFont(sheet, 6, 3);
-		assertEquals(72, font.getFontHeight()/20);
+		assertEquals(36, font.getFontHeightInPoint());
 	}
 	
 	

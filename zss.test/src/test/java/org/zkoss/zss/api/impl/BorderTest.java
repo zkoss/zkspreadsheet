@@ -1,47 +1,21 @@
 package org.zkoss.zss.api.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-import static org.zkoss.zss.api.CellOperationUtil.applyFontBoldweight;
-import static org.zkoss.zss.api.Ranges.range;
-
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.Locale;
 
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
-import org.zkoss.poi.xssf.usermodel.XSSFComment;
-import org.zkoss.poi.xssf.usermodel.XSSFSheet;
 import org.zkoss.zss.AssertUtil;
-import org.zkoss.zss.POIUtil;
 import org.zkoss.zss.Setup;
 import org.zkoss.zss.Util;
-import org.zkoss.zss.api.BookSeriesBuilder;
 import org.zkoss.zss.api.CellOperationUtil;
-import org.zkoss.zss.api.Exporter;
-import org.zkoss.zss.api.Exporters;
-import org.zkoss.zss.api.Importers;
 import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.Range.ApplyBorderType;
-import org.zkoss.zss.api.Range.DeleteShift;
-import org.zkoss.zss.api.Range.InsertCopyOrigin;
-import org.zkoss.zss.api.Range.InsertShift;
 import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.model.Book;
-import org.zkoss.zss.api.model.CellData.CellType;
 import org.zkoss.zss.api.model.CellStyle.BorderType;
-import org.zkoss.zss.api.model.EditableCellStyle;
-import org.zkoss.zss.api.model.EditableFont;
-import org.zkoss.zss.api.model.Font;
-import org.zkoss.zss.api.model.Hyperlink;
-import org.zkoss.zss.api.model.Hyperlink.HyperlinkType;
 import org.zkoss.zss.api.model.Sheet;
 
 /**
@@ -67,10 +41,10 @@ public class BorderTest {
 	
 	@Test
 	public void testBorder() throws IOException {
-		testBorder(Util.loadBook(this, "book/bordercolor.xlsx"));
-		testBorder(Util.loadBook(this, "book/bordercolor.xls"));
-		testMakeBorder(Util.loadBook(this, "book/blank.xlsx"));
-		testMakeBorder(Util.loadBook(this, "book/blank.xls"));
+		testBorder(Util.loadBook("bordercolor.xlsx"));
+		testBorder(Util.loadBook("bordercolor.xls"));
+		testMakeBorder(Util.loadBook("blank.xlsx"));
+		testMakeBorder(Util.loadBook("blank.xls"));
 	}
 	
 	public void testMakeBorder(Book book) throws IOException {

@@ -34,7 +34,7 @@ public class SortTest {
 	 */
 	@Test
 	public void sortOneColumn(){
-		Book workbook = Util.loadBook(this,"book/blank.xlsx");
+		Book workbook = Util.loadBook("blank.xlsx");
 		Sheet sheet1 = workbook.getSheet("Sheet1");
 		int[] rands = new int[100];
 		for(int i = 0; i < 100; i++) {
@@ -50,7 +50,7 @@ public class SortTest {
 	
 	@Test
 	public void sortWithBlankRows(){
-		Book book = Util.loadBook(this,"book/excelsortsample.xlsx");
+		Book book = Util.loadBook("excelsortsample.xlsx");
 		Sheet sheet = book.getSheet("SampleData");
 		//selection contains blank rows
 		// Sort By ID
@@ -73,25 +73,25 @@ public class SortTest {
 	
 	@Test
 	public void testSortWithHeaderByID2003(){
-		Book book = Util.loadBook(this,"book/excelsortsample.xls");
+		Book book = Util.loadBook("excelsortsample.xls");
 		testSortWithHeaderByID(book);
 	}
 	
 	@Test
 	public void testSortWithHeaderByID2007(){
-		Book book = Util.loadBook(this,"book/excelsortsample.xlsx");
+		Book book = Util.loadBook("excelsortsample.xlsx");
 		testSortWithHeaderByID(book);
 	}
 	
 	@Test
 	public void testSortWithHeader2003(){
-		Book book = Util.loadBook(this,"book/excelsortsample.xls");
+		Book book = Util.loadBook("excelsortsample.xls");
 		testSortWithHeader(book);
 	}
 	
 	@Test
 	public void testSortWithHeader2007(){
-		Book book = Util.loadBook(this,"book/excelsortsample.xlsx");
+		Book book = Util.loadBook("excelsortsample.xlsx");
 		testSortWithHeader(book);
 	}
 	
@@ -101,44 +101,44 @@ public class SortTest {
 	 */
 	@Test
 	public void testSortWithHeaderByBirthYr_ZipCode_ID_2003(){
-		Book book = Util.loadBook(this,"book/excelsortsample.xls");
+		Book book = Util.loadBook("excelsortsample.xls");
 		testSortWithHeaderByBirthYr_ZipCode_ID(book);
 	}
 	
 	@Test
 	public void testSortWithHeaderByBirthYr_ZipCode_ID_2007(){
-		Book book = Util.loadBook(this,"book/excelsortsample.xlsx");
+		Book book = Util.loadBook("excelsortsample.xlsx");
 		testSortWithHeaderByBirthYr_ZipCode_ID(book);
 	}
 	
 	@Test
 	public void testSimpleSortWithNumberAndCharacterAndFormula2003(){
-		Book book = Util.loadBook(this,"book/excelsortsample.xls");
+		Book book = Util.loadBook("excelsortsample.xls");
 		testSimpleSortWithNumberAndCharacterAndFormula(book);
 	}
 	
 	@Test
 	public void testSimpleSortWithNumberAndCharacterAndFormula2007(){
-		Book book = Util.loadBook(this,"book/excelsortsample.xlsx");
+		Book book = Util.loadBook("excelsortsample.xlsx");
 		testSimpleSortWithNumberAndCharacterAndFormula(book);
 	}
 	
 	// sort by row
 	@Test
 	public void testSortByRowWithHeader2003(){
-		Book book = Util.loadBook(this,"book/excelsortsample.xls");
+		Book book = Util.loadBook("excelsortsample.xls");
 		testSortByRowWithHeader(book);
 	}
 	
 	@Test
 	public void testSortByRowWithHeader2007(){
-		Book book = Util.loadBook(this,"book/excelsortsample.xlsx");
+		Book book = Util.loadBook("excelsortsample.xlsx");
 		testSortByRowWithHeader(book);
 	}
 	
 	@Test
 	public void testSortByRow3Rows(){
-		Book book = Util.loadBook(this,"book/excelsortsample.xlsx");
+		Book book = Util.loadBook("excelsortsample.xlsx");
 		Setup.pushZssLocale(Locale.US);
 		try{
 		Sheet sheet = book.getSheet("Left2Right");
@@ -190,7 +190,7 @@ public class SortTest {
 	 */
 	@Test
 	public void sortWithMergedCells(){
-		Book book = Util.loadBook(this,"book/excelsortsample.xlsx");
+		Book book = Util.loadBook("excelsortsample.xlsx");
 		Sheet sheet = book.getSheet("Merged");
 		// Sort By ID
 		Ranges.range(sheet, "A1:I11").sort(Ranges.range(sheet, "A1:A11"), true, null, null, false, null, null, false, null, true, false, false);
@@ -214,7 +214,7 @@ public class SortTest {
 	 */
 	@Test(expected = InvalidModelOpException.class)
 	public void sortWithPartOfMergedCells(){
-		Book book = Util.loadBook(this,"book/excelsortsample.xlsx");
+		Book book = Util.loadBook("excelsortsample.xlsx");
 		Sheet sheet = book.getSheet("Merged");
 		//selection contains blank rows
 		// Sort By ID
@@ -228,7 +228,7 @@ public class SortTest {
 	 */
 	@Test
 	public void sortMixedMergedCells(){
-		Book book = Util.loadBook(this,"book/excelsortsample.xlsx");
+		Book book = Util.loadBook("excelsortsample.xlsx");
 		Sheet sheet = book.getSheet("Merged");
 		
 		assertEquals(false, Ranges.range(sheet, "K2:L2").isMergedCell());
@@ -266,7 +266,7 @@ public class SortTest {
 	 
 	@Test
 	public void sortMixedMergedCellsLeft2Right(){
-		Book book = Util.loadBook(this,"book/excelsortsample.xlsx");
+		Book book = Util.loadBook("excelsortsample.xlsx");
 		Sheet sheet = book.getSheet("Merged");
 		Ranges.range(sheet, "A16:G21").sort(false, true, false, true, null);
 		
@@ -289,7 +289,7 @@ public class SortTest {
 	
 	@Test(expected = InvalidModelOpException.class)
 	public void sortMergeAcrossRows(){
-		Book book = Util.loadBook(this,"book/excelsortsample.xlsx");
+		Book book = Util.loadBook("excelsortsample.xlsx");
 		Sheet sheet = book.getSheet("Merged");
 		
 		Ranges.range(sheet, "N2:N9").sort(false);
@@ -298,7 +298,7 @@ public class SortTest {
 	
 	@Test(expected = InvalidModelOpException.class)
 	public void sortPartOfMergedCells(){
-		Book book = Util.loadBook(this,"book/excelsortsample.xlsx");
+		Book book = Util.loadBook("excelsortsample.xlsx");
 		Sheet sheet = book.getSheet("Merged");
 		Ranges.range(sheet, "K2:K11").sort(false);
 	}
@@ -310,7 +310,7 @@ public class SortTest {
 	 */
 	@Test
 	public void invalidRange(){
-		Book book = Util.loadBook(this,"book/excelsortsample.xlsx");
+		Book book = Util.loadBook("excelsortsample.xlsx");
 		Sheet sheet = book.getSheet("SampleData");
 		assertEquals("1", Ranges.range(sheet, "A2").getCellFormatText());
 		assertEquals("2", Ranges.range(sheet, "A3").getCellFormatText());
@@ -328,7 +328,7 @@ public class SortTest {
 	 */
 	@Test
 	public void extremeLargeSelectionRange(){
-		Book book = Util.loadBook(this,"book/excelsortsample.xlsx");
+		Book book = Util.loadBook("excelsortsample.xlsx");
 		Sheet sheet = book.getSheet("SampleData");
 		// Sort By ID
 		long startTime = Calendar.getInstance().getTimeInMillis();

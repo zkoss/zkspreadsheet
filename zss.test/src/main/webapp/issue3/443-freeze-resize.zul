@@ -13,7 +13,7 @@
 			<button label="freze 10,10" onClick='Ranges.range(ss.getSelectedSheet()).setFreezePanel(10,10)'/>
 			<button label="setColumnWidth - B" onClick='Ranges.range(ss.getSelectedSheet(), "B1").setColumnWidth(250)'/>
 		</hbox>
-		<spreadsheet id="ss" src="/issue3/book/blank.xlsx"  hflex="1" vflex="1"
+		<spreadsheet id="ss" src="/book/blank.xlsx"  hflex="1" vflex="1"
 			ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e"
 			maxrows="1000" maxcolumns="400"
 			showFormulabar="true" showContextMenu="true" showSheetbar="true" showToolbar="true">

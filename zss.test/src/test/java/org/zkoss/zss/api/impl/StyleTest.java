@@ -3,12 +3,12 @@ package org.zkoss.zss.api.impl;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.zkoss.zss.api.CellOperationUtil.applyAlignment;
-import static org.zkoss.zss.api.CellOperationUtil.applyBackgroundColor;
 import static org.zkoss.zss.api.CellOperationUtil.applyBorder;
+import static org.zkoss.zss.api.CellOperationUtil.applyFillColor;
 import static org.zkoss.zss.api.CellOperationUtil.applyFontBoldweight;
 import static org.zkoss.zss.api.CellOperationUtil.applyFontColor;
 import static org.zkoss.zss.api.CellOperationUtil.applyFontItalic;
-import static org.zkoss.zss.api.CellOperationUtil.applyFontSize;
+import static org.zkoss.zss.api.CellOperationUtil.applyFontHeightPoints;
 import static org.zkoss.zss.api.CellOperationUtil.applyFontStrikeout;
 import static org.zkoss.zss.api.CellOperationUtil.applyFontUnderline;
 import static org.zkoss.zss.api.CellOperationUtil.applyVerticalAlignment;
@@ -23,7 +23,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.zkoss.poi.ss.usermodel.ZssContext;
 import org.zkoss.zss.Setup;
 import org.zkoss.zss.Util;
 import org.zkoss.zss.api.Range;
@@ -59,23 +58,23 @@ public class StyleTest {
 		Setup.popZssLocale();
 	}
 	
-	@Ignore("Border spec for test is not confirm yet") // FIXME
+	@Ignore("Border spec for test is not confirm yet")
 	@Test
 	public void testStyleExport2007() throws IOException {
 		Book book = Util.loadBook(this,"book/blank.xlsx");
 		testStyleExport(book, Setup.getTempFile());
 	}
 	
-	@Ignore("Border spec for test is not confirm yet") // FIXME
+	@Ignore("Border spec for test is not confirm yet")
 	@Test
 	public void testStyleExport2003() throws IOException {
-		Book book = Util.loadBook(this,"book/blank.xls");
+		Book book = Util.loadBook("blank.xls");
 		testStyleExport(book, Setup.getTempFile());
 	}
 	
 	@Test
 	public void testClearFontStyle() throws IOException {
-		Book book = Util.loadBook(this,"book/blank.xlsx");
+		Book book = Util.loadBook("blank.xlsx");
 		Sheet sheet = book.getSheet("Sheet1");
 		Range rA1 = range(sheet, "A1");
 		rA1.setCellEditText("Bold");
@@ -112,7 +111,7 @@ public class StyleTest {
 		
 		Range rF1 = range(sheet, "F1");
 		rF1.setCellEditText("background #00ff00");
-		applyBackgroundColor(rF1, "#00ff00");
+		applyFillColor(rF1, "#00ff00");
 		rF1.setColumnWidth(150);
 
 		Range rG1 = range(sheet, "G1");
@@ -127,7 +126,7 @@ public class StyleTest {
 		
 		range(sheet, 2, 0).setCellEditText("Browser Market");
 		range(sheet, 2,0 ,2,3).merge(false);
-		applyFontSize(range(sheet, 2,0 ,2,3), (short)16);
+		applyFontHeightPoints(range(sheet, 2,0 ,2,3), (short)16);
 		
 		range(sheet, 3, 0).setCellEditText("Month");
 		range(sheet, 3, 1).setCellEditText("IE");
@@ -170,7 +169,7 @@ public class StyleTest {
 		assertEquals("#ff0000", rE1.getCellStyle().getFont().getColor().getHtmlColor());
 		
 		rF1 = range(sheet, "F1");
-		assertEquals("#00ff00", rF1.getCellStyle().getBackgroundColor().getHtmlColor());
+		assertEquals("#00ff00", rF1.getCellStyle().getFillColor().getHtmlColor());
 		
 		rG1 = range(sheet, "G1");
 		assertEquals(CellStyle.Alignment.CENTER, rG1.getCellStyle().getAlignment());

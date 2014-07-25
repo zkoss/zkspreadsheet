@@ -7,7 +7,7 @@
 			<button label="invalidate" onClick="ss.invalidate()" />
 		</hlayout>
 		<spreadsheet id="ss"
-			src="/issue3/book/505-chartDisplay-simple.xls" hflex="1" vflex="1"
+			src="/book/505-chartDisplay-simple.xls" hflex="1" vflex="1"
 			maxrows="100" maxcolumns="50"
 			showFormulabar="true" showContextMenu="true" showSheetbar="true" showToolbar="true">
 		</spreadsheet>

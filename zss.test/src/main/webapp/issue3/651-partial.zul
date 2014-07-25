@@ -9,7 +9,7 @@
 5,Redo insert row 1 on step 3,4
 			]]></label>
 		</hlayout>
-		<spreadsheet id="ss" src="/issue3/book/651-partial.xlsx" maxrows="200" maxcolumns="40"
+		<spreadsheet id="ss" src="/book/651-partial.xlsx" maxrows="200" maxcolumns="40"
 			hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" showFormulabar="true" />
 	</vlayout>
 </zk>

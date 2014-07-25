@@ -1,6 +1,6 @@
 <zk>
 	<window width="100%" height="100%" style="padding: 20px" apply="zss.issue.WrapComposer">
-		<spreadsheet id="ss" src="/issue/241-wrap.xlsx" width="800px" height="500px"
+		<spreadsheet id="ss" src="/book/241-wrap.xlsx" width="800px" height="500px"
 			ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e" maxrows="100" maxcolumns="20" showToolbar="true" showFormulabar="true"
 			showSheetbar="true" showContextMenu="true">
 		</spreadsheet>

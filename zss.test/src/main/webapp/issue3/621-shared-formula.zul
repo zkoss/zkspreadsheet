@@ -8,7 +8,7 @@
 			<button label="load xlsx book" onClick='ss.setSrc("/issue3/book/621-shared-formula.xlsx");type.setValue("XLSX format");' />
 			<label id="type">XLSX format</label>
 		</hbox>
-		<spreadsheet id="ss" src="/issue3/book/621-shared-formula.xlsx" maxrows="200" maxcolumns="40"
+		<spreadsheet id="ss" src="/book/621-shared-formula.xlsx" maxrows="200" maxcolumns="40"
 			hflex="1" vflex="1" ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e"
 			showContextMenu="true" showSheetbar="true" showToolbar="true" showFormulabar="true" />
 		<hbox width="100%">

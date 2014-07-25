@@ -20,7 +20,7 @@ Copyright (C) 2014 Potix Corporation. All Rights Reserved.
 	3. The focus should stay in the same relative position.
 	</label>
 	<spreadsheet id="spreadsheet"
-		src="/issue/664-page-up-down.xlsx" maxrows="200" maxcolumns="40"
+		src="/book/664-page-up-down.xlsx" maxrows="200" maxcolumns="40"
 		vflex="1" width="100%">
 	</spreadsheet>
 </window>

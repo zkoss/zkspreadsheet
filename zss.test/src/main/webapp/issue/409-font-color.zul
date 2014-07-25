@@ -15,7 +15,7 @@
 	]]></zscript>
 	<button label="set Color" onClick="setColor()"/>
 	<spreadsheet id="ss" 
-		src="/issue/blank.xls"
+		src="/book/blank.xls"
 		showToolbar="true" showFormulabar="true" width="100%" height="100%" showSheetbar="true" maxrows="100" maxcolumns="60">
 	</spreadsheet>
 </zk>

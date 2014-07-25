@@ -11,7 +11,7 @@
 			<button label="focus J10" onClick='ss.focusTo(9,9)'/>
 			<button label="freeze E6" onClick='Ranges.range(ss.getSelectedSheet()).setFreezePanel(5,4)'/>
 		</hbox>
-		<spreadsheet id="ss" src="/issue3/book/blank.xlsx" hflex="1" vflex="1"
+		<spreadsheet id="ss" src="/book/blank.xlsx" hflex="1" vflex="1"
 			maxVisibleRows="2000" maxVisibleColumns="400" showToolbar="true" showFormulabar="true"
 			showSheetbar="true" showContextMenu="true">
 		</spreadsheet>

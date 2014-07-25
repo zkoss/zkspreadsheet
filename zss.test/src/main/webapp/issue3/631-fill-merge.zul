@@ -15,7 +15,7 @@
 
 			]]></label>
 		</hbox>
-		<spreadsheet id="ss" src="/issue3/book/631-fill-merge.xlsx" maxrows="200" maxcolumns="40"
+		<spreadsheet id="ss" src="/book/631-fill-merge.xlsx" maxrows="200" maxcolumns="40"
 			hflex="1" vflex="1" ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e"
 			showContextMenu="true" showSheetbar="true" showToolbar="true" showFormulabar="true" />
 	</vlayout>

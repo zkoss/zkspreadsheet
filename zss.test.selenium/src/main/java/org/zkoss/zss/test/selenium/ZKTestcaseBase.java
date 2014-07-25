@@ -2,8 +2,9 @@ package org.zkoss.zss.test.selenium;
 
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.RemoteWebDriver;
+import org.zkoss.zss.test.entity.ClientWidget;
 
-public class ZKTestcaseBase extends TestcaseBase{
+public class ZKTestCaseBase extends TestCaseBase {
 
 	
 	
@@ -17,10 +18,10 @@ public class ZKTestcaseBase extends TestcaseBase{
 	public void getTo(String url){
 		url = normalizeTestUrl(url);
 		
-		driver.get(url);
+		driver().get(url);
 		long t1 = System.currentTimeMillis();
 		while (true) {
-			boolean r = (Boolean)((RemoteWebDriver)driver).executeScript("return window.zk?true:false");
+			boolean r = (Boolean)((RemoteWebDriver)driver()).executeScript("return window.zk?true:false");
 			if(r) break;
 			if (zktimeout<=0 || System.currentTimeMillis() - t1 >= zktimeout){
 				throw new RuntimeException("zk is not ready after "+zktimeout+"ms");
@@ -29,10 +30,10 @@ public class ZKTestcaseBase extends TestcaseBase{
 				Thread.sleep(200);
 			} catch (InterruptedException e) {}
 		}
-		((RemoteWebDriver)driver).executeScript("zsstsDebug = "+Setup.isJsDebug()+";");
+		((RemoteWebDriver)driver()).executeScript("zsstsDebug = "+Setup.isJsDebug()+";");
 		
 		String agentJs = AgentScripts.instance().getScript();
-		((RemoteWebDriver)driver).executeScript(agentJs);
+		((RemoteWebDriver)driver()).executeScript(agentJs);
 		
 		
 	}
@@ -58,7 +59,7 @@ public class ZKTestcaseBase extends TestcaseBase{
 	Object executeFns(String fn, Object... parms) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("return zssts.").append(fn).append(".apply(zssts,arguments);");
-		return ((RemoteWebDriver)driver).executeScript(sb.toString(), parms);
+		return ((RemoteWebDriver)driver()).executeScript(sb.toString(), parms);
 	}
 	
 	public long getTripId(){
@@ -120,6 +121,17 @@ public class ZKTestcaseBase extends TestcaseBase{
 		WebElement elm = jqSelectSingle(selector);
 		long lt = getTripId();
 		elm.sendKeys(keyCode);
+		waitForTrip(lt, 1, Setup.getAuDelay());
+	}
+	
+	/**
+	 * send keycode to specific dom element.
+	 * @param selector
+	 * @param keyCode
+	 */
+	public void sendKeys(WebElement element, String keyCode) {
+		long lt = getTripId();
+		element.sendKeys(keyCode);
 		waitForTrip(lt, 1, Setup.getAuDelay());
 	}
 }

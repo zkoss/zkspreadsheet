@@ -4,7 +4,7 @@
 			<button label="Cut Merge Cell From Source to Destination" onClick="cut()" />
 			<button label="Go To Destination" onClick="goToDestSheet()" />
 		</hbox>
-		<spreadsheet id="ss" src="/issue3/book/401-cut-merged.xlsx"
+		<spreadsheet id="ss" src="/book/401-cut-merged.xlsx"
 			hflex="1" vflex="1" maxVisibleRows="500" maxVisibleColumns="100"
 			showToolbar="true" showFormulabar="true" showSheetbar="true"
 			showContextMenu="true">

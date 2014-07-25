@@ -23,7 +23,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 //import org.zkoss.poi.ss.usermodel.CellValue;
 import org.zkoss.poi.xssf.usermodel.XSSFCell;
-import org.zkoss.poi.xssf.usermodel.XSSFFormulaEvaluator;
+//import org.zkoss.poi.xssf.usermodel.XSSFFormulaEvaluator;
 import org.zkoss.poi.xssf.usermodel.XSSFRow;
 import org.zkoss.poi.xssf.usermodel.XSSFSheet;
 import org.zkoss.poi.xssf.usermodel.XSSFWorkbook;
@@ -50,14 +50,14 @@ public class ModelPerformanceTest {
 	private final static int ROW_COUNT = 1000;
 	private final static int COL_COUNT = 50;
 
-	private final static double EPSILON = 0.0000001;
+	//private final static double EPSILON = 0.0000001;
 
 	private final static URL file = ModelPerformanceTest.class.getResource("book/formula-1000x50.xlsx");
 	private final static int NG_MODEL = 0;
 	private final static int XBOOK_MODEL = 1;
 	private final static int WORKBOOK_MODEL = 2;
 	
-	private XSSFFormulaEvaluator evaluator;
+	//private XSSFFormulaEvaluator evaluator;
 	
 	@Before
 	public void before() {

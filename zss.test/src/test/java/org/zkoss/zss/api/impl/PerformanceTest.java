@@ -2,9 +2,6 @@ package org.zkoss.zss.api.impl;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -52,7 +49,7 @@ public class PerformanceTest {
 		test(1,500,500,true,false);
 	}
 	public void test(int loop, int setRows, int evalRows,boolean dumpTime,boolean dumpMemory) throws Exception {
-		String bookPath = "book/performance.xlsx";
+		String bookPath = "performance.xlsx";
 		
 		if(dumpMemory){
 			showMemoryUsage(">>>Init:"); // init
@@ -62,7 +59,7 @@ public class PerformanceTest {
 		Sheet sheet;
 		for(int i=0;i<2;i++){
 			start = System.currentTimeMillis();
-			book = Util.loadBook(this,bookPath);
+			book = Util.loadBook(bookPath);
 			sheet = book.getSheet("Sheet1");
 			if(dumpTime){
 				System.out.println("("+(i+1)+").Preload Book Time: " + (System.currentTimeMillis() - start));
@@ -78,7 +75,7 @@ public class PerformanceTest {
 		
 		
 		start = System.currentTimeMillis();
-		book = Util.loadBook(this,bookPath);
+		book = Util.loadBook(bookPath);
 		sheet = book.getSheet("Sheet1");
 		if(dumpTime){
 			System.out.println("Load Book Time: " + (System.currentTimeMillis() - start));

@@ -1,5 +1,5 @@
 <zk>
-	<spreadsheet src="/issue/statistics.xlsx" maxVisibleRows="150" maxVisibleColumns="40" width="100%"
+	<spreadsheet src="/book/statistics.xlsx" maxVisibleRows="150" maxVisibleColumns="40" width="100%"
 		height="50%" showContextMenu="true" showSheetbar="true" showToolbar="true"
 		ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e" />
 </zk>

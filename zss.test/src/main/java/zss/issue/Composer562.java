@@ -6,7 +6,6 @@ import org.zkoss.zk.ui.metainfo.ComponentInfo;
 import org.zkoss.zk.ui.select.SelectorComposer;
 import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
-import org.zkoss.zk.ui.select.annotation.WireVariable;
 import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zul.Doublebox;

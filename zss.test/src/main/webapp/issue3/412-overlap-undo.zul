@@ -7,7 +7,7 @@
 4.ctrl+Z to undo
 5.select A2 and unmerge
 	</label>
-		<spreadsheet id="ss" src="/issue3/book/412-overlap-undo.xls" hflex="1" vflex="1"
+		<spreadsheet id="ss" src="/book/412-overlap-undo.xls" hflex="1" vflex="1"
 			maxVisibleRows="500" maxVisibleColumns="100" showToolbar="true" showFormulabar="true"
 			showSheetbar="true" showContextMenu="true">
 		</spreadsheet>

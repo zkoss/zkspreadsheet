@@ -13,7 +13,7 @@
 			<button label="freeze" onClick="Ranges.range(ss.getSelectedSheet()).setFreezePanel(2,2);"></button>
 			<button label="export" onClick="export();"></button>
 		</hlayout>
-		<spreadsheet id="ss" src="/issue3/book/blank.xlsx"  hflex="1" vflex="1"
+		<spreadsheet id="ss" src="/book/blank.xlsx"  hflex="1" vflex="1"
 			ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e"
 			maxrows="150" maxcolumns="50"
 			showFormulabar="true" showContextMenu="true" showSheetbar="true" showToolbar="true">

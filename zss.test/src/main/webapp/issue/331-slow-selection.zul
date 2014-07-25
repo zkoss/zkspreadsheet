@@ -1,6 +1,6 @@
 <zk>
 	<window width="100%" height="100%">
-		<spreadsheet id="ss" src="/2000x400.xlsx" width="1500px" height="800px"
+		<spreadsheet id="ss" src="/book/2000x400.xlsx" width="1500px" height="800px"
 			ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e" showToolbar="true" showFormulabar="true" showSheetbar="true"
 			showContextMenu="true" maxrows="2000" maxcolumns="400">
 		</spreadsheet>
