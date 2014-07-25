@@ -1,7 +1,10 @@
 package org.zkoss.zss.test.selenium;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import junit.framework.Assert;
@@ -13,35 +16,33 @@ import org.junit.BeforeClass;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.Point;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.RemoteWebDriver;
-import org.zkoss.zss.test.entity.ClientWidget;
 import org.zkoss.zss.test.selenium.VisionAssert.FailAssertion;
 
-public class TestCaseBase {
+public class TestcaseBase {
 
-	protected static WebDriver driver;
-	private static Map<String,VisionAssert> helpers = new LinkedHashMap<String,VisionAssert>();
+	static WebDriver driver;
+	static Map<String,VisionAssert> helpers = new LinkedHashMap<String,VisionAssert>();
 	
 	VisionAssert visionAssert;
 	
 	@BeforeClass
-	public static void setup(){
+	public static void TestcaseBase_setup(){
 		driver = Setup.getDriver();
 	}
 	
 	@AfterClass
-	public static void tearDown(){
+	public static void TestcaseBase_teardown(){
 		driver.quit();
 	}
 	
 	@Before
-	public void beforeTest(){
+	public void TestccaseBase_BeforeTest(){
 		helpers.clear();
 	}
 	
 	@After
-	public void afterTest(){
+	public void TestccaseBase_afterTest(){
 		assertFinally();
 	}
 	
@@ -50,7 +51,7 @@ public class TestCaseBase {
 	}
 	
 	/**
-	 * Sets base name , it will use the caller's class and method as the basename
+	 * Sets base name , it will use the caller's calss and method as the basename
 	 */
 	public void basename(){
 		StackTraceElement[] elms = Thread.currentThread().getStackTrace();
@@ -134,27 +135,6 @@ public class TestCaseBase {
 		try {
 			Thread.sleep(ms);
 		} catch (InterruptedException e) {}
-	}
-	
-	public static Object eval(ClientWidget script) {
-		return eval(script.getResult());
-	}
-	
-	public WebElement getWebElement(ClientWidget script) {
-		script.call("$n");
-		WebElement element = (WebElement) eval("return " + script.toString());
-		if (element == null) {
-			throw new RuntimeException("can't find element.");
-		}
-		return element;
-	}
-
-	public static boolean is(String script) {
-		return (Boolean) eval(script);
-	}
-	
-	public static Object eval(String script, Object... args) {
-		return ((RemoteWebDriver)driver).executeScript(script, args);
 	}
 
 }
