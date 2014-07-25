@@ -221,6 +221,15 @@ public class NumberInputMaskTest {
 		testOneFailNumber(input, input);
 	}
 	
+	@Test
+	public void testLongCurrency() { //ZSS-726
+		String item = "NT$";
+		Object[] result = _formater.parseNumberInput(item, Locale.TAIWAN);
+		assertEquals("length of \""+item+"\"", 2, result.length);
+		assertEquals("result[0] of "+item, item, result[0]);
+		assertEquals("result[1] of "+item, null, result[1]);
+	}
+	
 	private void testOneOKNumber(String item, double expect, String expectFormat, String input) {
 		Object[] result = _formater.parseNumberInput(input, Locale.US);
 		assertTrue(item, result[1] != null);
