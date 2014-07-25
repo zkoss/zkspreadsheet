@@ -6,7 +6,7 @@
 		<button id="btn200" >Set 200</button>
 		<button id="btn500" >Set 500</button>
 	</hlayout>
-	<spreadsheet id="ss" src="/performance.xlsx" maxVisibleRows="500" maxVisibleColumns="40"
+	<spreadsheet id="ss" src="/book/performance.xlsx" maxVisibleRows="500" maxVisibleColumns="40"
 		width="1024px" height="800px" showContextMenu="true" showSheetbar="true" showToolbar="true" 
 		showFormulabar="true"/>
 </vlayout>

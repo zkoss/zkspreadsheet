@@ -8,9 +8,7 @@ import java.util.Locale;
 import org.junit.*;
 import org.zkoss.zss.*;
 import org.zkoss.zss.Setup;
-import org.zkoss.zss.api.AreaRef;
 import org.zkoss.zss.api.model.*;
-import org.zkoss.zss.api.model.Chart.Type;
 import org.zkoss.zss.model.*;
 import org.zkoss.zss.model.SChart.ChartGrouping;
 import org.zkoss.zss.model.SChart.ChartLegendPosition;
@@ -18,7 +16,6 @@ import org.zkoss.zss.model.SChart.ChartType;
 import org.zkoss.zss.model.chart.*;
 import org.zkoss.zss.range.*;
 import org.zkoss.zss.range.impl.imexp.*;
-import org.zkoss.zssex.api.ChartDataUtil;
 
 public class ChartPictureTest extends ChartPictureTestBase {
 
@@ -39,74 +36,74 @@ public class ChartPictureTest extends ChartPictureTestBase {
 	
 	@Test
 	public void testMovePicture2007() throws IOException {
-		Book book = Util.loadBook(this,"book/blank.xlsx");
+		Book book = Util.loadBook("blank.xlsx");
 		testMovePicture(book);
 	}
 	
 	@Test
 	public void testDeletePicture2007() throws IOException {
-		Book book = Util.loadBook(this,"book/blank.xlsx");
+		Book book = Util.loadBook("blank.xlsx");
 		testDeletePicture(book);
 	}
 
 	
 	@Test
 	public void testAddPicture2007() throws IOException {
-		Book book = Util.loadBook(this,"book/blank.xlsx");
+		Book book = Util.loadBook("blank.xlsx");
 		testAddPicture(book);
 	}
 	
 	@Test
 	public void testAddPicture2003() throws IOException {
-		Book book = Util.loadBook(this,"book/blank.xls");
+		Book book = Util.loadBook("blank.xls");
 		testAddPicture(book);
 	}
 	
 	@Test
 	public void testDeleteChart2007() throws IOException {
-		Book book = Util.loadBook(this,"book/insert-charts.xlsx");
+		Book book = Util.loadBook("insert-charts.xlsx");
 		testDeleteChart(book);
 	}
 	
 	@Test
 	public void testAddBarChart2007() throws IOException {
-		Book book = Util.loadBook(this,"book/insert-charts.xlsx");
+		Book book = Util.loadBook("insert-charts.xlsx");
 		testAddBarChart(book);
 	}
 	
 	@Test
 	public void testAddLineChart2007() throws IOException {
-		Book book = Util.loadBook(this,"book/insert-charts.xlsx");
+		Book book = Util.loadBook("insert-charts.xlsx");
 		testAddLineChart(book);
 	}
 	
 	@Test
 	public void testAddAreaChart2007() throws IOException {
-		Book book = Util.loadBook(this,"book/insert-charts.xlsx");
+		Book book = Util.loadBook("insert-charts.xlsx");
 		testAddAreaChart(book);
 	}
 	
 	@Test
 	public void testAddColumnChart2007() throws IOException {
-		Book book = Util.loadBook(this,"book/insert-charts.xlsx");
+		Book book = Util.loadBook("insert-charts.xlsx");
 		testAddColumnChart(book);
 	}
 	
 	@Test
 	public void testAddPieChart2007() throws IOException {
-		Book book = Util.loadBook(this,"book/insert-charts.xlsx");
+		Book book = Util.loadBook("insert-charts.xlsx");
 		testAddPieChart(book);
 	}
 	
 	@Test
 	public void testAddDoughnutChart2007() throws IOException {
-		Book book = Util.loadBook(this,"book/insert-charts.xlsx");
+		Book book = Util.loadBook("insert-charts.xlsx");
 		testAddDoughnutChart(book);
 	}
 	
 	@Test
 	public void addCustomChartData(){
-		SBook book = loadBook(this.getClass().getResourceAsStream("book/insert-charts.xlsx"));
+		SBook book = Util.loadInternalBook("insert-charts.xlsx");
 		SSheet sheet = book.getSheetByName("chart-image");
 		
 		assertEquals(0, sheet.getCharts().size());
@@ -147,7 +144,7 @@ public class ChartPictureTest extends ChartPictureTestBase {
 	 */
 	@Test
 	public void addBarChart(){
-		SBook book = loadBook(this.getClass().getResourceAsStream("book/insert-charts.xlsx"));
+		SBook book = Util.loadInternalBook("insert-charts.xlsx");
 		SSheet sheet = book.getSheetByName("chart-image");
 		
 		assertEquals(0, sheet.getCharts().size());
@@ -182,7 +179,7 @@ public class ChartPictureTest extends ChartPictureTestBase {
 	 */
 	@Test
 	public void addColumnChart(){
-		SBook book = loadBook(this.getClass().getResourceAsStream("book/insert-charts.xlsx"));
+		SBook book = Util.loadInternalBook("insert-charts.xlsx");
 		SSheet sheet = book.getSheetByName("chart-image");
 		
 		assertEquals(0, sheet.getCharts().size());
@@ -216,7 +213,7 @@ public class ChartPictureTest extends ChartPictureTestBase {
 	
 	@Test
 	public void addColumnChartMissingCategory(){
-		SBook book = loadBook(this.getClass().getResourceAsStream("book/insert-charts.xlsx"));
+		SBook book = Util.loadInternalBook("insert-charts.xlsx");
 		SSheet sheet = book.getSheetByName("chart-image");
 		
 		assertEquals(0, sheet.getCharts().size());
@@ -244,7 +241,7 @@ public class ChartPictureTest extends ChartPictureTestBase {
 	
 	@Test
 	public void addColumnChartMissingSeriesName(){
-		SBook book = loadBook(this.getClass().getResourceAsStream("book/insert-charts.xlsx"));
+		SBook book = Util.loadInternalBook("insert-charts.xlsx");
 		SSheet sheet = book.getSheetByName("chart-image");
 		
 		assertEquals(0, sheet.getCharts().size());
@@ -278,7 +275,7 @@ public class ChartPictureTest extends ChartPictureTestBase {
 	 */
 	@Test
 	public void addScatterChart(){
-		SBook book = loadBook(this.getClass().getResourceAsStream("book/insert-charts.xlsx"));
+		SBook book = Util.loadInternalBook("insert-charts.xlsx");
 		SSheet sheet = book.getSheetByName("chart-image");
 		
 		assertEquals(0, sheet.getCharts().size());
@@ -313,7 +310,7 @@ public class ChartPictureTest extends ChartPictureTestBase {
 	 */
 	@Test
 	public void addScatterChart2(){
-		SBook book = loadBook(this.getClass().getResourceAsStream("book/insert-charts.xlsx"));
+		SBook book = Util.loadInternalBook("insert-charts.xlsx");
 		SSheet sheet = book.getSheetByName("chart-image");
 		
 		assertEquals(0, sheet.getCharts().size());
@@ -344,7 +341,7 @@ public class ChartPictureTest extends ChartPictureTestBase {
 	 */
 	@Test
 	public void addScatterChart3(){
-		SBook book = loadBook(this.getClass().getResourceAsStream("book/insert-charts.xlsx"));
+		SBook book = Util.loadInternalBook("insert-charts.xlsx");
 		SSheet sheet = book.getSheetByName("chart-image");
 		
 		assertEquals(0, sheet.getCharts().size());
@@ -362,7 +359,7 @@ public class ChartPictureTest extends ChartPictureTestBase {
 	
 	@Test
 	public void deleteChart(){
-		SBook book = loadBook(this.getClass().getResourceAsStream("book/insert-charts.xlsx"));
+		SBook book = Util.loadInternalBook("insert-charts.xlsx");
 		SSheet sheet = book.getSheetByName("chart-image");
 		
 		assertEquals(0, sheet.getCharts().size());
@@ -376,7 +373,7 @@ public class ChartPictureTest extends ChartPictureTestBase {
 	
 	@Test
 	public void moveChart(){
-		SBook book = loadBook(this.getClass().getResourceAsStream("book/insert-charts.xlsx"));
+		SBook book = Util.loadInternalBook("insert-charts.xlsx");
 		SSheet sheet = book.getSheetByName("chart-image");
 		
 		assertEquals(0, sheet.getCharts().size());
@@ -391,25 +388,6 @@ public class ChartPictureTest extends ChartPictureTestBase {
 		assertEquals(8, chart.getAnchor().getColumnIndex());
 	}
 	
-	
-	//TODO use ImExpTestUtil.loadBook()
-	public static SBook loadBook(InputStream is) {
-		SImporter importer = new ExcelImportFactory().createImporter();
-		SBook book = null;
-		try {
-			book = importer.imports(is, "book");
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				is.close();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		return book;
-	}
 	static public String DEFAULT_EXPORT_TARGET_PATH = "./target/";
 	static public String DEFAULT_EXPORT_FILE_NAME_XLSX = "exported.xlsx";
 	static public String DEFAULT_EXPORT_FILE_NAME_XLS = "exported.xls";

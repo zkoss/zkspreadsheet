@@ -15,13 +15,12 @@ import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.Sheet;
 
 public class TimeTest {
-	
 	private static Book book;
 	
 	@BeforeClass
 	public static void setUpLibrary() throws Exception {
 		Setup.touch();
-		book = Util.loadBook(TimeTest.class, "TestFile2007-Format.xlsx");
+		book = Util.loadBook("TestFile2007-Format.xlsx");
 	}
 	
 	@Before

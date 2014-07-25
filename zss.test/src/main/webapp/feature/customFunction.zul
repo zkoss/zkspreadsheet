@@ -21,11 +21,11 @@
 			Filedownload.save(out.toByteArray(), "application/file", wb.getBookName());
 		}
 	]]></zscript>
-		<spreadsheet id="ss" src="/feature/customFunction.xlsx" width="100%" height="80%"
+		<spreadsheet id="ss" src="/book/customFunction.xlsx" width="100%" height="80%"
 			showContextMenu="true" showSheetbar="true" showToolbar="true" showFormulabar="true"/>
 	</groupbox>
 	<groupbox title="2003" height="600px">
-		<spreadsheet id="ss2003" src="/feature/customFunction.xls" width="100%" height="80%"
+		<spreadsheet id="ss2003" src="/book/customFunction.xls" width="100%" height="80%"
 			showContextMenu="true" showSheetbar="true" showToolbar="true" showFormulabar="true"/>
 	</groupbox>
 </zk>

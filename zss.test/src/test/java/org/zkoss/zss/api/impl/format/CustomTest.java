@@ -8,16 +8,12 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.zkoss.poi.ss.usermodel.RichTextString;
 import org.zkoss.zss.Setup;
 import org.zkoss.zss.Util;
 import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.Sheet;
 //import org.zkoss.zss.model.sys.impl.BookHelper;
-import org.zkoss.zss.ui.impl.CellFormatHelper;
-import org.zkoss.zss.ui.impl.MergeMatrixHelper;
-import org.zkoss.zss.ui.impl.XUtils;
 
 public class CustomTest {
 
@@ -26,7 +22,7 @@ public class CustomTest {
 	@BeforeClass
 	public static void setUpLibrary() throws Exception {
 		Setup.touch();
-		book = Util.loadBook(SpecialTest.class, "TestFile2007-Format.xlsx");
+		book = Util.loadBook("TestFile2007-Format.xlsx");
 	}
 	
 	@Before

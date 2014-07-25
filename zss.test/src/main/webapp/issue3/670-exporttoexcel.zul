@@ -12,7 +12,7 @@
 		<button id="exportBtn" label="Export then import to/from Excel"></button>
 	</hbox>
 	<spreadsheet id="spreadsheet"
-		src="/issue/blank.xlsx" maxrows="200" maxcolumns="40"
+		src="/book/blank.xlsx" maxrows="200" maxcolumns="40"
 		vflex="1" width="100%">
 	</spreadsheet>
 </window>

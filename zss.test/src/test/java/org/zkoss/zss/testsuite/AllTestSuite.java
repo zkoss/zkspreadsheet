@@ -5,9 +5,8 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
-@SuiteClasses({ UserModelTestSuite.class, EngineTestSuite.class,
-		SysTestSuite.class, APITestSuite.class, FormulaTestSuite.class,
-		FormatTestSuite.class})
+@SuiteClasses({ModelTestSuite.class, EngineTestSuite.class, APITestSuite.class,
+	FormulaTestSuite.class, FormatTestSuite.class, UITestSuite.class, ZatsTestSuite.class})
 public class AllTestSuite {
 
 }

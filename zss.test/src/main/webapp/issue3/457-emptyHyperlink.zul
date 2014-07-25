@@ -7,7 +7,7 @@
 			<button label="setHyperlink" onClick="setHyperlink()"></button>
 			
 		</hlayout>
-		<spreadsheet id="ss" src="/issue3/book/457-emptyHyperlink.xlsx"  hflex="1" vflex="1"
+		<spreadsheet id="ss" src="/book/457-emptyHyperlink.xlsx"  hflex="1" vflex="1"
 			maxrows="150" maxcolumns="50"
 			showFormulabar="true" showContextMenu="true" showSheetbar="true" showToolbar="true">
 		</spreadsheet>

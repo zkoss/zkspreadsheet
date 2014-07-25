@@ -18,7 +18,7 @@
 	
 	<button label="export" onClick="export()"/>
 	<spreadsheet id="ss" 
-		src="/issue/408-save-autofilter.xls"
+		src="/book/408-save-autofilter.xls"
 		showToolbar="true" showFormulabar="true" width="100%" height="100%" showSheetbar="true" maxrows="100" maxcolumns="60">
 	</spreadsheet>
 </zk>

@@ -16,7 +16,7 @@ reproduce steps:
 			<button label="4" onClick="run(4);" />
 		</hlayout>
 		<hlayout vflex="true">
-			<spreadsheet id="ss" src="/issue3/book/blank.xlsx"  hflex="1" vflex="true"
+			<spreadsheet id="ss" src="/book/blank.xlsx"  hflex="1" vflex="true"
 				ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e"
 				maxrows="500" maxcolumns="100"
 				showFormulabar="true" showContextMenu="true" showSheetbar="true" showToolbar="true">

@@ -11,19 +11,22 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import org.zkoss.image.AImage;
 import org.zkoss.poi.ss.usermodel.ZssContext;
-import org.zkoss.util.Locales;
 import org.zkoss.zss.api.Exporter;
 import org.zkoss.zss.api.Exporters;
 import org.zkoss.zss.api.Importers;
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.Sheet;
+import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.SCell;
 import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.model.sys.EngineFactory;
 import org.zkoss.zss.model.sys.format.FormatContext;
 import org.zkoss.zss.model.sys.format.FormatEngine;
 import org.zkoss.zss.model.sys.format.FormatResult;
+import org.zkoss.zss.range.SImporter;
+import org.zkoss.zss.range.impl.imexp.ExcelImportFactory;
 
 /**
  * a helper for testing
@@ -32,6 +35,8 @@ import org.zkoss.zss.model.sys.format.FormatResult;
  * 
  */
 public class Util {
+	static private String DEFAULT_IMPORT_PATH = "./src/main/webapp/book/";
+	static private String DEFAULT_IMG_PATH = "./src/main/webapp/img/";
 	
 	public static Book swap(Book book){
 		try{
@@ -51,6 +56,11 @@ public class Util {
 			throw new RuntimeException(e.getMessage(),e);
 		}
 	}
+	
+	public static Book loadBook(String path) {
+		return loadBook(new File(getAbsolutePath(path)));
+	}
+	
 	public static Book loadBook(Object base,String respath) {
 		if(base==null){
 			base = Util.class;
@@ -59,6 +69,7 @@ public class Util {
 			base = base.getClass();
 		}
 		
+		@SuppressWarnings("rawtypes")
 		final InputStream is = ((Class)base).getResourceAsStream(respath);
 		try {
 			int index = respath.lastIndexOf("/");
@@ -74,6 +85,30 @@ public class Util {
 				}
 			}
 		}
+	}
+	
+	public static SBook loadInternalBook(String path) {
+		SImporter importer = new ExcelImportFactory().createImporter();
+		SBook book = null;
+		try {
+			book = importer.imports(new File(getAbsolutePath(path)), "book");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return book;
+	}
+	
+	public static AImage getImage(String path) {
+		try {
+			return new AImage(new File(DEFAULT_IMG_PATH + path));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public static String getDefaultImportPath() {
+		return DEFAULT_IMPORT_PATH;
 	}
 
 	public static void export(Book workbook, File file) {
@@ -125,5 +160,13 @@ public class Util {
 		FormatEngine engine = EngineFactory.getInstance().createFormatEngine();
 		FormatResult r = engine.format(cell, new FormatContext(ZssContext.getCurrent().getLocale()));
 		return  r.getColor()!=null?r.getColor().getHtmlColor():null;
+	}
+	
+	public static String getAbsolutePath(String path) {
+		return DEFAULT_IMPORT_PATH + path;
+	}
+	
+	public static String getBookAbsolutePath(String path) {
+		return DEFAULT_IMPORT_PATH + path;
 	}
 }

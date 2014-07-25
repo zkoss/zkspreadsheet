@@ -20,12 +20,12 @@ public class AccountingTest {
 	@BeforeClass
 	public static void setUpLibrary() throws Exception {
 		Setup.touch();
-		book = Util.loadBook(AccountingTest.class, "TestFile2007-Format.xlsx");
 	}
 	
 	@Before
 	public void startUp() throws Exception {
 		Setup.pushZssLocale(Locale.TAIWAN);
+		book = Util.loadBook("TestFile2007-Format.xlsx");
 	}
 	
 	@After

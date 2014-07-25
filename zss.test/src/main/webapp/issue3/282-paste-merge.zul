@@ -15,7 +15,7 @@
 			<button label="6" onClick='ss.setSelectedSheet("cell")'/>
 			<button label="7" onClick='Ranges.range(ss.getSelectedSheet(),"A7:B7").paste(Ranges.range(ss.getSelectedSheet(),"A6"))'/>
 		</hbox>
-		<spreadsheet id="ss" src="/issue3/book/282-paste-merge.xlsx" hflex="1" vflex="1"
+		<spreadsheet id="ss" src="/book/282-paste-merge.xlsx" hflex="1" vflex="1"
 			maxVisibleRows="500" maxVisibleColumns="100" showToolbar="true" showFormulabar="true"
 			showSheetbar="true" showContextMenu="true">
 		</spreadsheet>

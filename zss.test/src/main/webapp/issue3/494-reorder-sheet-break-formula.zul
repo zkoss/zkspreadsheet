@@ -23,12 +23,12 @@ Reproduce:
 			</hlayout>
 		</hlayout>
 		<hlayout vflex="true">
-			<spreadsheet id="ss" src="/issue3/book/494-reorder-sheet-break-formula.xls"  hflex="1" vflex="true"
+			<spreadsheet id="ss" src="/book/494-reorder-sheet-break-formula.xls"  hflex="1" vflex="true"
 				ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e"
 				maxrows="500" maxcolumns="100"
 				showFormulabar="true" showContextMenu="true" showSheetbar="true" showToolbar="true">
 			</spreadsheet>
-			<spreadsheet id="ss1" src="/issue3/book/494-reorder-sheet-break-formula.xlsx"  hflex="1" vflex="true"
+			<spreadsheet id="ss1" src="/book/494-reorder-sheet-break-formula.xlsx"  hflex="1" vflex="true"
 				ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e"
 				maxrows="500" maxcolumns="100"
 				showFormulabar="true" showContextMenu="true" showSheetbar="true" showToolbar="true">

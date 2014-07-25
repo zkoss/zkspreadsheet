@@ -32,7 +32,7 @@ public class MathUnsupportedTest extends FormulaTestBase {
 	// #NAME?
 	@Test
 	public void testSERIESSUM()  {
-		Book book = Util.loadBook(this,"TestFile2007-Formula.xlsx");
+		Book book = Util.loadBook("TestFile2007-Formula.xlsx");
 		testSERIESSUM(book);
 	}
 

@@ -19,7 +19,7 @@ Copyright (C) 2014 Potix Corporation. All Rights Reserved.
 		2. press tab
 		3. the upper style panel and below context menu should both close
 	</label>
-	<spreadsheet id="ss" src="/issue/blank.xlsx" showContextMenu="true"
+	<spreadsheet id="ss" src="/book/blank.xlsx" showContextMenu="true"
 		showSheetbar="true" height="500px" width="500px">
 	</spreadsheet>
 </window>

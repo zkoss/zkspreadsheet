@@ -21,5 +21,5 @@ Copyright (C) 2014 Potix Corporation. All Rights Reserved.
 		4. undo (Ctrl+Z)
 		5. toolbar button "Bold" doesn't change status to "Off"
 	</label>
-	<spreadsheet src="/issue3/book/579-undo-toolbarbutton.xlsx" height="600px" width="900px" showToolbar="true" />
+	<spreadsheet src="/book/579-undo-toolbarbutton.xlsx" height="600px" width="900px" showToolbar="true" />
 </window>

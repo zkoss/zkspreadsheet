@@ -9,7 +9,7 @@
 				
 		</label>
 		</hbox>
-		<spreadsheet id="ss" src="/issue3/book/546-left-key.xlsx"
+		<spreadsheet id="ss" src="/book/546-left-key.xlsx"
 			maxrows="1000" maxcolumns="100" hflex="1" vflex="1"
 			ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e" showContextMenu="true"
 			showSheetbar="true" showToolbar="true" showFormulabar="true" />

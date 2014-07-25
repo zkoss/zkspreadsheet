@@ -1,6 +1,6 @@
 <zk>
 <button onClick="export()">Export to Excel</button>
-	<spreadsheet vflex="1" id="ss" src="/TestFile2003.xls" maxVisibleRows="200" maxVisibleColumns="40" width="100%"
+	<spreadsheet vflex="1" id="ss" src="/book/TestFile2003.xls" maxVisibleRows="200" maxVisibleColumns="40" width="100%"
 		height="100%" showContextMenu="true" showSheetbar="true" showToolbar="true" 
 		showFormulabar="true"/>
 	<zscript><![CDATA[

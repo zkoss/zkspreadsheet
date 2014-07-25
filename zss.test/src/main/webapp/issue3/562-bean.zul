@@ -1,7 +1,7 @@
 <zk>
 	<window hflex="1" vflex="1" apply="zss.issue.Composer562">
 		<hlayout hflex="1" vflex="1">
-			<spreadsheet id="ss" src="/issue3/book/562-bean.xlsx" maxrows="200" maxcolumns="40"
+			<spreadsheet id="ss" src="/book/562-bean.xlsx" maxrows="200" maxcolumns="40"
 				showFormulabar="true" showContextMenu="true" showToolbar="true" showSheetbar="true" 
 				hflex="1" vflex="1" width="100%" >
 			</spreadsheet>

@@ -36,7 +36,7 @@
 		</attribute>
 	</button>
 	xlsx <button label="export" onClick='export(source, ".xlsx");' /> 
-	<spreadsheet id="source" src="/issue/blank.xlsx" maxVisibleRows="100" maxVisibleColumns="40"
+	<spreadsheet id="source" src="/book/blank.xlsx" maxVisibleRows="100" maxVisibleColumns="40"
 			hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true"
 			ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e" />
 	</vbox>

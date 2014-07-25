@@ -18,15 +18,12 @@ package org.zkoss.zss.engine.impl;
 
 import java.util.Locale;
 
+import org.junit.Assert;
 import org.junit.Test;
-
-
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Test;
-import junit.framework.Assert;
 import org.zkoss.util.Locales;
-import org.zkoss.zss.model.Setup;
+import org.zkoss.zss.Setup;
 import org.zkoss.zss.model.sys.format.FormatContext;
 import org.zkoss.zss.model.sys.format.FormatEngine;
 import org.zkoss.zss.model.sys.format.FormatResult;

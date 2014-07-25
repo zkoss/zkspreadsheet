@@ -1,7 +1,6 @@
 package org.zkoss.zss.api.impl;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
@@ -11,7 +10,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.zkoss.poi.ss.usermodel.ZssContext;
 import org.zkoss.zss.AssertUtil;
 import org.zkoss.zss.Setup;
 import org.zkoss.zss.Util;
@@ -51,145 +49,145 @@ public class ShiftTest {
 	
 	@Test
 	public void testDeleteAndInsertRowMerge2003() throws IOException {
-		Book book = Util.loadBook(this,"book/shiftTest.xls");
+		Book book = Util.loadBook("shiftTest.xls");
 		testDeleteAndInsertRowMerge0(book);
 	}
 	
 	@Test
 	public void testDeleteAndInsertRowMerge2007() throws IOException {
-		Book book = Util.loadBook(this,"book/shiftTest.xlsx");
+		Book book = Util.loadBook("shiftTest.xlsx");
 		testDeleteAndInsertRowMerge0(book);
 	}
 	
 	@Test
 	public void testDeleteAndInsertRow2003() throws IOException {
-		Book book = Util.loadBook(this,"book/shiftTest.xls");
+		Book book = Util.loadBook("shiftTest.xls");
 		testDeleteAndInsertRow0(book, Setup.getTempFile());
 	}
 	
 	@Test
 	public void testDeleteAndInsertRow2007() throws IOException {
-		Book book = Util.loadBook(this,"book/shiftTest.xlsx");
+		Book book = Util.loadBook("shiftTest.xlsx");
 		testDeleteAndInsertRow0(book, Setup.getTempFile());
 	}
 	
 	@Test
 	public void testDeleteAndInsertColumnBeforeAndAfterExport2003() throws IOException {
-		Book book = Util.loadBook(this,"book/shiftTest.xls");
+		Book book = Util.loadBook("shiftTest.xls");
 		testDeleteAndInsertColumnBeforeAndAfterExport0(book, Setup.getTempFile());
 	}
 	
 	@Test
 	public void testDeleteAndInsertColumnBeforeAndAfterExport2007() throws IOException {
-		Book book = Util.loadBook(this,"book/shiftTest.xlsx");
+		Book book = Util.loadBook("shiftTest.xlsx");
 		testDeleteAndInsertColumnBeforeAndAfterExport0(book, Setup.getTempFile());
 	}
 	
 	@Test
 	public void testDeleteAndInsertColumnBefore2003() throws IOException {
-		Book book = Util.loadBook(this,"book/shiftTest.xls");
+		Book book = Util.loadBook("shiftTest.xls");
 		testDeleteAndInsertColumnBefore0(book, Setup.getTempFile());
 	}
 	
 	@Test
 	public void testDeleteAndInsertColumnBefore2007() throws IOException {
-		Book book = Util.loadBook(this,"book/shiftTest.xlsx");
+		Book book = Util.loadBook("shiftTest.xlsx");
 		testDeleteAndInsertColumnBefore0(book, Setup.getTempFile());
 	}
 
 	@Test
 	public void testShiftUpG4G6_2003() throws IOException {
-		Book book = Util.loadBook(this,"book/shiftTest.xls");
+		Book book = Util.loadBook("shiftTest.xls");
 		testShiftUpG4G6(book);
 	}
 	
 	@Test
 	public void testShiftUpG4G6_2007() throws IOException {
-		Book book = Util.loadBook(this,"book/shiftTest.xlsx");
+		Book book = Util.loadBook("shiftTest.xlsx");
 		testShiftUpG4G6(book);
 	}
 	
 	@Test
 	public void testShiftDownE4E5_2003() throws IOException {
-		Book book = Util.loadBook(this,"book/shiftTest.xlsx");
+		Book book = Util.loadBook("shiftTest.xlsx");
 		testShiftDownE4E5(book);
 	}
 	
 	@Test
 	public void testShiftDownE4E5_2007() throws IOException {
-		Book book = Util.loadBook(this,"book/shiftTest.xlsx");
+		Book book = Util.loadBook("shiftTest.xlsx");
 		testShiftDownE4E5(book);
 	}
 	
 	@Test
 	public void testShiftDownG3G5_2003() throws IOException {
-		Book book = Util.loadBook(this,"book/shiftTest.xls");
+		Book book = Util.loadBook("shiftTest.xls");
 		testShiftDownG3G5(book);
 	}
 	
 	@Test
 	public void testShiftDownG3G5_2007() throws IOException {
-		Book book = Util.loadBook(this,"book/shiftTest.xlsx");
+		Book book = Util.loadBook("shiftTest.xlsx");
 		testShiftDownG3G5(book);
 	}
 	
 	@Test
 	public void testShiftLeftE3E5_2003() throws IOException {
-		Book book = Util.loadBook(this,"book/shiftTest.xls");
+		Book book = Util.loadBook("shiftTest.xls");
 		testShiftLeftE3E5(book);
 	}
 	
 	@Test
 	public void testShiftLeftE3E5_2007() throws IOException {
-		Book book = Util.loadBook(this,"book/shiftTest.xlsx");
+		Book book = Util.loadBook("shiftTest.xlsx");
 		testShiftLeftE3E5(book);
 	}
 	
 	@Test
 	public void testShiftRightE3E5_2003() throws IOException {
-		Book book = Util.loadBook(this,"book/shiftTest.xls");
+		Book book = Util.loadBook("shiftTest.xls");
 		testShiftRightE3E5(book);
 	}
 	
 	@Test
 	public void testShiftRightE3E5_2007() throws IOException {
-		Book book = Util.loadBook(this,"book/shiftTest.xlsx");
+		Book book = Util.loadBook("shiftTest.xlsx");
 		testShiftRightE3E5(book);	
 	}
 	
 	@Test
 	public void testDeleteColumnE_2003() throws IOException {
-		Book book = Util.loadBook(this,"book/shiftTest.xls");
+		Book book = Util.loadBook("shiftTest.xls");
 		testDeleteColumnE(book);
 	}
 	
 	@Test
 	public void testDeleteColumnE_2007() throws IOException {
-		Book book = Util.loadBook(this,"book/shiftTest.xlsx");
+		Book book = Util.loadBook("shiftTest.xlsx");
 		testDeleteColumnE(book);
 	}
 	
 	@Test
 	public void testDeleteRow345_2003() throws IOException {
-		Book book = Util.loadBook(this,"book/shiftTest.xls");
+		Book book = Util.loadBook("shiftTest.xls");
 		testDeleteRow345(book);
 	}
 	
 	@Test
 	public void testDeleteRow345_2007() throws IOException {
-		Book book = Util.loadBook(this,"book/shiftTest.xlsx");
+		Book book = Util.loadBook("shiftTest.xlsx");
 		testDeleteRow345(book);
 	}
 	
 	@Test
 	public void testE3G5ShiftRow3Col3_2003() throws IOException {
-		Book book = Util.loadBook(this,"book/shiftTest.xls");
+		Book book = Util.loadBook("shiftTest.xls");
 		testE3G5ShiftRow3Col3(book);
 	}
 
 	@Test
 	public void testE3G5ShiftRow3Col3_2007() throws IOException {
-		Book book = Util.loadBook(this,"book/shiftTest.xlsx");
+		Book book = Util.loadBook("shiftTest.xlsx");
 		testE3G5ShiftRow3Col3(book);
 	}
 	

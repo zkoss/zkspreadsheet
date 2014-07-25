@@ -1,7 +1,7 @@
 <zk>
 	You should see all columns are narrow, but column N is wide
 	<window width="800px" height="800px">
-		<spreadsheet id="ss" src="/issue3/book/526-wrongWidth.xlsx" hflex="1" vflex="1"
+		<spreadsheet id="ss" src="/book/526-wrongWidth.xlsx" hflex="1" vflex="1"
 			maxVisibleRows="500" maxVisibleColumns="200" showToolbar="true" showFormulabar="true"
 			showSheetbar="true" showContextMenu="true" > 
 		</spreadsheet>

@@ -1,7 +1,6 @@
 package org.zkoss.zss.api.impl;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.util.Locale;
@@ -10,7 +9,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.zkoss.poi.ss.usermodel.ZssContext;
 import org.zkoss.zss.AssertUtil;
 import org.zkoss.zss.Setup;
 import org.zkoss.zss.Util;
@@ -53,109 +51,109 @@ public class CutAPITest {
 	
 	@Test
 	public void testCutPasteRepeatWithMergeIntoAnotherSheet2003() throws IOException {
-		Book book = Util.loadBook(this,"book/pasteTest.xls");
+		Book book = Util.loadBook("pasteTest.xls");
 		testCutPasteRepeatWithMergeIntoAnotherSheet0(book);
 	}
 	
 	@Test
 	public void testCutPasteRepeatWithMergeIntoAnotherSheet2007() throws IOException {
-		Book book = Util.loadBook(this,"book/pasteTest.xlsx");
+		Book book = Util.loadBook("pasteTest.xlsx");
 		testCutPasteRepeatWithMergeIntoAnotherSheet0(book);
 	}
 	
 	@Test
 	public void testCutPasteWithMergeOverlap2003() throws IOException {
-		Book book = Util.loadBook(this,"book/pasteTest.xls");
+		Book book = Util.loadBook("pasteTest.xls");
 		testCutPasteWithMergeOverlap0(book);
 	}
 	
 	@Test
 	public void testCutPasteWithMergeOverlap2007() throws IOException {
-		Book book = Util.loadBook(this,"book/pasteTest.xlsx");
+		Book book = Util.loadBook("pasteTest.xlsx");
 		testCutPasteWithMergeOverlap0(book);
 	}
 	
 	@Test
 	public void testCutPasteWithMerge2003() throws IOException {
-		Book book = Util.loadBook(this,"book/pasteTest.xls");
+		Book book = Util.loadBook("pasteTest.xls");
 		testCutPasteWithMerge0(book);
 	}
 	
 	@Test
 	public void testCutPasteWithMerge2007() throws IOException {
-		Book book = Util.loadBook(this,"book/pasteTest.xlsx");
+		Book book = Util.loadBook("pasteTest.xlsx");
 		testCutPasteWithMerge0(book);
 	}
 	
 	@Test
 	public void testCutPasteToLeftTop2003() throws IOException {
-		Book book = Util.loadBook(this,"book/pasteTest.xls");
+		Book book = Util.loadBook("pasteTest.xls");
 		testCutPasteToLeftTop0(book);
 	}
 	
 	@Test
 	public void testCutPasteToLeftTop2007() throws IOException {
-		Book book = Util.loadBook(this,"book/pasteTest.xlsx");
+		Book book = Util.loadBook("pasteTest.xlsx");
 		testCutPasteToLeftTop0(book);
 	}
 	
 	@Test
 	public void testCutPasteToRightBottom2003() throws IOException {
-		Book book = Util.loadBook(this,"book/pasteTest.xls");
+		Book book = Util.loadBook("pasteTest.xls");
 		testCutPasteToRightBottom0(book);
 	}
 	
 	@Test
 	public void testCutPasteToRightBottom2007() throws IOException {
-		Book book = Util.loadBook(this,"book/pasteTest.xlsx");
+		Book book = Util.loadBook("pasteTest.xlsx");
 		testCutPasteToRightBottom0(book);
 	}
 	
 	@Test
 	public void testCutPasteToLeft2003() throws IOException {
-		Book book = Util.loadBook(this,"book/pasteTest.xls");
+		Book book = Util.loadBook("pasteTest.xls");
 		testCutPasteToLeft0(book);
 	}
 	
 	@Test
 	public void testCutPasteToLeft2007() throws IOException {
-		Book book = Util.loadBook(this,"book/pasteTest.xlsx");
+		Book book = Util.loadBook("pasteTest.xlsx");
 		testCutPasteToLeft0(book);
 	}
 	
 	@Test
 	public void testCutPasteToTop2003() throws IOException {
-		Book book = Util.loadBook(this,"book/pasteTest.xls");
+		Book book = Util.loadBook("pasteTest.xls");
 		testCutPasteToTop0(book);
 	}
 	
 	@Test
 	public void testCutPasteToTop2007() throws IOException {
-		Book book = Util.loadBook(this,"book/pasteTest.xlsx");
+		Book book = Util.loadBook("pasteTest.xlsx");
 		testCutPasteToTop0(book);
 	}
 	
 	@Test
 	public void testCutPasteToOutsideInclude2003() throws IOException {
-		Book book = Util.loadBook(this,"book/pasteTest.xls");
+		Book book = Util.loadBook("pasteTest.xls");
 		testCutPasteToOutsideInclude0(book);
 	}
 	
 	@Test
 	public void testCutPasteToOutsideInclude2007() throws IOException {
-		Book book = Util.loadBook(this,"book/pasteTest.xlsx");
+		Book book = Util.loadBook("pasteTest.xlsx");
 		testCutPasteToOutsideInclude0(book);
 	}
 	
 	@Test
 	public void testCutPasteToAnotherSheet2003() throws IOException {
-		Book book = Util.loadBook(this,"book/pasteTest.xls");
+		Book book = Util.loadBook("pasteTest.xls");
 		testCutPasteToAnotherSheet0(book);
 	}
 	
 	@Test
 	public void testCutPasteToAnotherSheet2007() throws IOException {
-		Book book = Util.loadBook(this,"book/pasteTest.xlsx");
+		Book book = Util.loadBook("pasteTest.xlsx");
 		testCutPasteToAnotherSheet0(book);
 	}
 	

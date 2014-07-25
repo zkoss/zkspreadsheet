@@ -6,7 +6,7 @@
 				CellOperationUtil.applyBackgroundColor(Ranges.range(ss.getSelectedSheet(), "B6"), "#ff0000");
 			</attribute>
 		</button>
-		<spreadsheet id="ss" src="/issue3/book/278-BorderAppered.xlsx" width="800px" height="600px"
+		<spreadsheet id="ss" src="/book/278-BorderAppered.xlsx" width="800px" height="600px"
 			maxVisibleRows="500" maxVisibleColumns="100" showToolbar="true" showFormulabar="true"
 			showSheetbar="true" showContextMenu="true">
 		</spreadsheet>

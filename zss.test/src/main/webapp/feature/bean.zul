@@ -9,7 +9,7 @@
 			<tabpanel>
 				<window hflex="1" height="600px" apply="zss.testapp.RefBeanComposer">
 					<hlayout hflex="1" vflex="1">
-						<spreadsheet id="ss" src="/feature/bean.xlsx" maxrows="200" maxcolumns="40"
+						<spreadsheet id="ss" src="/book/bean.xlsx" maxrows="200" maxcolumns="40"
 							showFormulabar="true" showContextMenu="true" showToolbar="true" showSheetbar="true" hflex="1"
 							vflex="1" width="100%">
 						</spreadsheet>
@@ -49,7 +49,7 @@
 				</window>
 			</tabpanel>
 			<tabpanel>
-		<spreadsheet id="ss2003" src="/feature/bean.xls" maxrows="200" maxcolumns="40"  width="800px" height="800px"
+		<spreadsheet id="ss2003" src="/book/bean.xls" maxrows="200" maxcolumns="40"  width="800px" height="800px"
 		showFormulabar="true" showContextMenu="true" showToolbar="true" showSheetbar="true"/>
 			</tabpanel>
 		</tabpanels>

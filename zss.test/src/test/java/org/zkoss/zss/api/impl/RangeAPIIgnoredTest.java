@@ -14,7 +14,7 @@ public class RangeAPIIgnoredTest extends RangeAPITestBase {
 	// API shouldn't bind to UI directly
 	@Test
 	public void testDeleteAllSheet2003() throws IOException {
-		Book book = Util.loadBook(this,"book/blank.xls");
+		Book book = Util.loadBook("blank.xls");
 		testDeleteAllSheet(book);
 	}
 	
@@ -22,7 +22,7 @@ public class RangeAPIIgnoredTest extends RangeAPITestBase {
 	// API shouldn't bind to UI directly
 	@Test
 	public void testDeleteAllSheet2007() throws IOException {
-		Book book = Util.loadBook(this,"book/blank.xlsx");
+		Book book = Util.loadBook("blank.xlsx");
 		testDeleteAllSheet(book);
 	}
 

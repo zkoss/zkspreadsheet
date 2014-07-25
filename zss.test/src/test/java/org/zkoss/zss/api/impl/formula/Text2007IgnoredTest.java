@@ -5,7 +5,6 @@ import java.util.Locale;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.zkoss.zss.Setup;
 import org.zkoss.zss.Util;
@@ -33,7 +32,7 @@ public class Text2007IgnoredTest extends FormulaTestBase {
 	// #VALUE!
 	@Test
 	public void testVALUEWithTimeString()  {
-		Book book = Util.loadBook(this,"TestFile2007-Formula.xlsx");
+		Book book = Util.loadBook("TestFile2007-Formula.xlsx");
 		testVALUEWithTimeString(book);
 	}
 }

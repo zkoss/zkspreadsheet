@@ -1,7 +1,6 @@
 package org.zkoss.zss.api.impl;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.util.Locale;
@@ -11,7 +10,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.zkoss.poi.ss.usermodel.ZssContext;
 import org.zkoss.zss.AssertUtil;
 import org.zkoss.zss.Setup;
 import org.zkoss.zss.Util;
@@ -60,134 +58,134 @@ public class PasteTest {
 	@Ignore("in 3.5 we allow to do it")
 	@Test(expected = IllegalOpArgumentException.class)
 	public void testTransposePasteOverlap2007() throws IOException {
-		Book book = Util.loadBook(this,"book/pasteTest.xlsx");
+		Book book = Util.loadBook("pasteTest.xlsx");
 		testTransposePasteOverlap0(book);
 	}
 	
 	@Ignore("in 3.5 we allow to do it")
 	@Test(expected = IllegalOpArgumentException.class)
 	public void testTransposePasteOverlap2003() throws IOException {
-		Book book = Util.loadBook(this,"book/pasteTest.xls");
+		Book book = Util.loadBook("pasteTest.xls");
 		testTransposePasteOverlap0(book);
 	}
 	
 	@Test 
 	public void testPasteMergeTranspose2007() throws IOException {
-		Book book = Util.loadBook(this,"book/pasteTest.xlsx");
+		Book book = Util.loadBook("pasteTest.xlsx");
 		testPasteMergeTranspose0(book);
 	}
 	
 	@Test 
 	public void testPasteMergeTranspose2003() throws IOException {
-		Book book = Util.loadBook(this,"book/pasteTest.xls");
+		Book book = Util.loadBook("pasteTest.xls");
 		testPasteMergeTranspose0(book);
 	}
 	
 	@Test
 	public void testPasteMerge2007() throws IOException {
-		Book book = Util.loadBook(this,"book/pasteTest.xlsx");
+		Book book = Util.loadBook("pasteTest.xlsx");
 		testPasteMerge0(book);
 	}
 	
 	@Test
 	public void testPasteMerge2003() throws IOException {
-		Book book = Util.loadBook(this,"book/pasteTest.xls");
+		Book book = Util.loadBook("pasteTest.xls");
 		testPasteMerge0(book);
 	}
 	
 	@Test
 	public void testPasteToG10_2003() throws IOException {
-		Book book = Util.loadBook(this,"book/pasteTest.xls");
+		Book book = Util.loadBook("pasteTest.xls");
 		testPasteToG10(book);
 	}
 	
 	@Test
 	public void testPasteToG10_2007() throws IOException {
-		Book book = Util.loadBook(this,"book/pasteTest.xlsx");
+		Book book = Util.loadBook("pasteTest.xlsx");
 		testPasteToG10(book);
 	}
 	
 	@Test
 	public void testPasteToG12_2003() throws IOException {
-		Book book = Util.loadBook(this,"book/pasteTest.xls");
+		Book book = Util.loadBook("pasteTest.xls");
 		testPasteToG12(book);
 	}
 	
 	@Test
 	public void testPasteToG12_2007() throws IOException {
-		Book book = Util.loadBook(this,"book/pasteTest.xlsx");
+		Book book = Util.loadBook("pasteTest.xlsx");
 		testPasteToG12(book);
 	}
 	
 	@Test 
 	public void testPasteToI12_2003() throws IOException {
-		Book book = Util.loadBook(this,"book/pasteTest.xls");
+		Book book = Util.loadBook("pasteTest.xls");
 		testPasteToI12(book);
 	}
 	
 	@Test 
 	public void testPasteToI12_2007() throws IOException {
-		Book book = Util.loadBook(this,"book/pasteTest.xls");
+		Book book = Util.loadBook("pasteTest.xls");
 		testPasteToI12(book);
 	}
 	
 	@Test
 	public void testPasteRepeat2003() throws IOException {
-		Book book = Util.loadBook(this,"book/pasteTest.xls");
+		Book book = Util.loadBook("pasteTest.xls");
 		testPasteRepeat(book);
 	}
 	
 	@Test
 	public void testPasteRepeat2007() throws IOException {
-		Book book = Util.loadBook(this,"book/pasteTest.xlsx");
+		Book book = Util.loadBook("pasteTest.xlsx");
 		testPasteRepeat(book);
 	}
 	
 	@Test 
 	public void testPasteRepeatOverlap2003() throws IOException {
-		Book book = Util.loadBook(this,"book/pasteTest.xls");
+		Book book = Util.loadBook("pasteTest.xls");
 		testPasteRepeatOverlap(book);
 	}
 	
 	@Test 
 	public void testPasteRepeatOverlap2007() throws IOException {
-		Book book = Util.loadBook(this,"book/pasteTest.xlsx");
+		Book book = Util.loadBook("pasteTest.xlsx");
 		testPasteRepeatOverlap(book);
 	}
 	
 	@Test
 	public void testPasteRepeatToAnotherSheet2003() throws IOException {
-		Book book = Util.loadBook(this,"book/pasteTest.xls");
+		Book book = Util.loadBook("pasteTest.xls");
 		testPasteRepeatToAnotherSheet(book);
 	}
 	
 	@Test
 	public void testPasteRepeatToAnotherSheet2007() throws IOException {
-		Book book = Util.loadBook(this,"book/pasteTest.xlsx");
+		Book book = Util.loadBook("pasteTest.xlsx");
 		testPasteRepeatToAnotherSheet(book);
 	}
 	
 	@Test 
 	public void testPasteRepeatOverlapInclude2003() throws IOException {
-		Book book = Util.loadBook(this,"book/pasteTest.xls");
+		Book book = Util.loadBook("pasteTest.xls");
 		testPasteRepeatOverlapInclude(book);
 	}
 	
 	@Test 
 	public void testPasteRepeatOverlapInclude2007() throws IOException {
-		Book book = Util.loadBook(this,"book/pasteTest.xlsx");
+		Book book = Util.loadBook("pasteTest.xlsx");
 		testPasteRepeatOverlapInclude(book);
 	}
 	
 	@Test
 	public void pasteRepeatWithSkipBlankTrue2003() throws IOException {
-		Book book = Util.loadBook(this,"book/pasteTest.xls");
+		Book book = Util.loadBook("pasteTest.xls");
 		pasteRepeatWithSkipBlankTrue(book);
 	}
 	
 	@Test
 	public void pasteRepeatWithSkipBlankTrue2007() throws IOException {
-		Book book = Util.loadBook(this,"book/pasteTest.xlsx");
+		Book book = Util.loadBook("pasteTest.xlsx");
 		pasteRepeatWithSkipBlankTrue(book);
 	}
 	

@@ -30,7 +30,7 @@ public class Composer622 extends SelectorComposer<Window>{
 		ss.setShowSheetbar(true);
 		ss.setMaxVisibleRows(100);
 		ss.setMaxVisibleColumns(40);
-		Book loadedBook = importer.imports(new File(WebApps.getCurrent().getRealPath("/TestFile2007.xlsx")), "TestFile2007.xlsx");
+		Book loadedBook = importer.imports(new File(WebApps.getCurrent().getRealPath("/book/TestFile2007.xlsx")), "TestFile2007.xlsx");
 		ss.setBook(loadedBook);
 		ss.setParent(comp);
 //		ss.afterCompose(); 		

@@ -32,7 +32,7 @@ public class DateTimeUnSupportTest extends FormulaTestBase {
 	// #NAME?
 	@Test
 	public void testTIMEVALUE()  {
-		Book book = Util.loadBook(this,"TestFile2007-Formula.xlsx");
+		Book book = Util.loadBook("TestFile2007-Formula.xlsx");
 		testTIMEVALUE(book);
 	}
 

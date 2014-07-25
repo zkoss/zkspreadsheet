@@ -33,7 +33,7 @@ public class DateTime2007IgnoredTest extends FormulaTestBase {
 	// 1990/1/1 is Monday, but Excel think it is not work day.
 	@Test
 	public void test19900101IsNotWorkDayInExcel()  {
-		Book book = Util.loadBook(this,"TestFile2007-Formula.xlsx");
+		Book book = Util.loadBook("TestFile2007-Formula.xlsx");
 		test19900101IsNotWorkDayInExcel(book); // =NETWORKDAYS(DATE(1900,1,1),DATE(1900,1,1))
 	}
 	
@@ -41,7 +41,7 @@ public class DateTime2007IgnoredTest extends FormulaTestBase {
 	// different specification
 	@Test
 	public void testStartDateEmpty()  {
-		Book book = Util.loadBook(this,"TestFile2007-Formula.xlsx");
+		Book book = Util.loadBook("TestFile2007-Formula.xlsx");
 		testStartDateEmpty(book); // =NETWORKDAYS(B30,C30)
 		// B30 : blank
 		// C30 : 1990/1/2
@@ -50,7 +50,7 @@ public class DateTime2007IgnoredTest extends FormulaTestBase {
 	// #VALUE!
 	@Test
 	public void testEndDateEmpty()  {
-		Book book = Util.loadBook(this,"TestFile2007-Formula.xlsx");
+		Book book = Util.loadBook("TestFile2007-Formula.xlsx");
 		testEndDateEmpty(book); // =NETWORKDAYS(C30, B30)
 		// B30 : blank
 		// C30 : 1990/1/2

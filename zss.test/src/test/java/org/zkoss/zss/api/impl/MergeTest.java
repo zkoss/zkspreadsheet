@@ -1,7 +1,5 @@
 package org.zkoss.zss.api.impl;
 
-import static org.junit.Assert.assertTrue;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.Locale;
@@ -10,7 +8,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.zkoss.poi.ss.usermodel.ZssContext;
 import org.zkoss.zss.AssertUtil;
 import org.zkoss.zss.Setup;
 import org.zkoss.zss.Util;
@@ -38,25 +35,25 @@ public class MergeTest {
 	
 	@Test
 	public void testUnMerge2003() throws IOException {
-		Book book = Util.loadBook(this,"book/blank.xls");
+		Book book = Util.loadBook("blank.xls");
 		testUnMerge(book,Setup.getTempFile());
 	}
 	
 	@Test
 	public void testUnMerge2007() throws IOException {
-		Book book = Util.loadBook(this,"book/blank.xlsx");
+		Book book = Util.loadBook("blank.xlsx");
 		testUnMerge(book, Setup.getTempFile());
 	}
 	
 	@Test
 	public void testMerge2003() throws IOException {
-		Book book = Util.loadBook(this,"book/blank.xls");
+		Book book = Util.loadBook("blank.xls");
 		testMerge(book, Setup.getTempFile());
 	}
 	
 	@Test
 	public void testMerge2007() throws IOException {
-		Book book = Util.loadBook(this,"book/blank.xlsx");
+		Book book = Util.loadBook("blank.xlsx");
 		testMerge(book, Setup.getTempFile());
 	}
 	

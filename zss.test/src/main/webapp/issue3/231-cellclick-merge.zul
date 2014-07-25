@@ -7,7 +7,7 @@
 			
 		</hlayout>
 		
-		<spreadsheet id="ss" src="/issue3/book/blank.xlsx"  hflex="1" vflex="1"
+		<spreadsheet id="ss" src="/book/blank.xlsx"  hflex="1" vflex="1"
 			maxrows="150" maxcolumns="50"
 			showFormulabar="true" showContextMenu="true" showSheetbar="true" showToolbar="true"
 			onCellClick='onCellClick("click",event)' onCellRightClick='onCellClick("right",event)'

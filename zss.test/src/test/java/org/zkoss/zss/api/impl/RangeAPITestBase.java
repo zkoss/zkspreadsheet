@@ -12,7 +12,6 @@ import org.zkoss.zss.Util;
 import org.zkoss.zss.api.CellOperationUtil;
 import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.Ranges;
-import org.zkoss.zss.api.Range.AutoFillType;
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.Hyperlink;
 import org.zkoss.zss.api.model.Sheet;
@@ -164,7 +163,6 @@ public class RangeAPITestBase {
 		assertTrue(!rangeA1.getCellStyle().getFont().isStrikeout());
 	}
 	
-	// FIXME
 	protected void testHyperLink(Book workbook, File outFile) throws IOException {
 
 		Sheet sheet = workbook.getSheet("Sheet1");

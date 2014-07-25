@@ -24,7 +24,7 @@
 			<button label="focus to column 100" onClick='ss.focusTo(0,99)'/>
 			</hbox>
 		</vbox>
-		<spreadsheet id="ss" src="/issue3/book/blank.xlsx" hflex="1" vflex="1"
+		<spreadsheet id="ss" src="/book/blank.xlsx" hflex="1" vflex="1"
 			maxVisibleRows="10" maxVisibleColumns="5" showToolbar="true" showFormulabar="true"
 			showSheetbar="true" showContextMenu="true">
 		</spreadsheet>

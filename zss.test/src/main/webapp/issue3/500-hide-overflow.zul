@@ -17,7 +17,7 @@ Reproduce steps:
 			<button label="unhide row 10" onClick='Ranges.range(ss.getSelectedSheet(), "10").toRowRange().setHidden(false);' />
 		</hlayout>
 		<hlayout vflex="true">
-			<spreadsheet id="ss" src="/issue3/book/500-hide-overflow.xlsx"  hflex="1" vflex="1"
+			<spreadsheet id="ss" src="/book/500-hide-overflow.xlsx"  hflex="1" vflex="1"
 				ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e"
 				maxrows="500" maxcolumns="100"
 				showFormulabar="true" showContextMenu="true" showSheetbar="true" showToolbar="true">
