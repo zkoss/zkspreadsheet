@@ -91,7 +91,8 @@ ZK Spreadsheet 2.6.0
 	ZSS-659 JIS(text) function errors out.
 	ZSS-664 page down/up move by page size, not 100 rows
 	ZSS-727 NullPointerException is thrown when reevaluating a formula after deleting a sheet
-
+	ZSS-734 Exported file is corrupt after deleting a sheet
+	
 ZK Spreadsheet 2.5.0
 *Features:   
 	ZSS-124 Support import pivot table API
