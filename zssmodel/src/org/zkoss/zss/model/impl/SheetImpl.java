@@ -1770,6 +1770,11 @@ public class SheetImpl extends AbstractSheetAdv {
 	
 	@Override
 	public void removeDataValidationRegion(CellRegion region) {
+		deleteDataValidationRegion(region);
+	}
+	
+	@Override
+	public List<SDataValidation> deleteDataValidationRegion(CellRegion region) {
 		List<SDataValidation> dels = new ArrayList<SDataValidation>();
 		for (SDataValidation validation : getDataValidations()) {
 			validation.removeRegion(region);
@@ -1780,6 +1785,7 @@ public class SheetImpl extends AbstractSheetAdv {
 		for (SDataValidation validation : dels) {
 			deleteDataValidation(validation);
 		}
+		return dels;
 	}
 
 

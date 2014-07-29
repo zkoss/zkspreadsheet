@@ -253,7 +253,15 @@ public interface SSheet {
 	public int getNumOfDataValidation();
 	public SDataValidation getDataValidation(int idx);
 	public List<SDataValidation> getDataValidations();
+	@Deprecated
 	public void removeDataValidationRegion(CellRegion region);
+	/**
+	 * Delete data validations that are covered by the specified region.
+	 * @param region the cover region
+	 * @return the data validations deleted
+	 * @since 3.5.1
+	 */
+	public List<SDataValidation> deleteDataValidationRegion(CellRegion region);
 	
 	/**
 	 * @param row

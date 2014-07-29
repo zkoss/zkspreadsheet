@@ -1907,18 +1907,20 @@ public class RangeImpl implements SRange {
 		new ReadWriteTask() {			
 			@Override
 			public Object invoke() {
-				setValidaitonInLock(validationType,
+				SDataValidation dv = setValidaitonInLock(validationType,
 						ignoreBlank, operatorType,
 						inCellDropDown, formula1, formula2,
 						showInput, inputTitle, inputMessage,
 						showError, alertStyle, errorTitle,
 						errorMessage);
+				//ZSS-729
+				new NotifyChangeHelper().notifyDataValidationChange(getSheet(), (String)dv.getId());
 				return null;
 			}
 		}.doInWriteLock(getLock());
 	}
 			
-	private void setValidaitonInLock(ValidationType validationType,
+	private SDataValidation setValidaitonInLock(ValidationType validationType,
 			boolean ignoreBlank, OperatorType operatorType,
 			boolean inCellDropDown, String formula1, String formula2,
 			boolean showInput, String inputTitle, String inputMessage,
@@ -1940,6 +1942,8 @@ public class RangeImpl implements SRange {
 		dv.setAlertStyle(alertStyle);
 		dv.setErrorTitle(errorTitle);
 		dv.setErrorMessage(errorMessage);
+		
+		return dv;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -1969,8 +1973,12 @@ public class RangeImpl implements SRange {
 		new ReadWriteTask() {			
 			@Override
 			public Object invoke() {
-				getSheet().removeDataValidationRegion( 
+				List<SDataValidation> dvs = getSheet().deleteDataValidationRegion( 
 				  new CellRegion(getRow(), getColumn(), getLastRow(), getLastColumn()));
+				//ZSS-729
+				for (SDataValidation dv : dvs) {
+					new NotifyChangeHelper().notifyDataValidationChange(getSheet(), (String) dv.getId());
+				}
 				return null;
 			}
 		}.doInWriteLock(getLock());

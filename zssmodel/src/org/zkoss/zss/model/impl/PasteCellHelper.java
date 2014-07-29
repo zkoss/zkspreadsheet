@@ -121,7 +121,7 @@ public class PasteCellHelper { //ZSS-693: promote visibility
 			clearCell(src);
 			clearMergeRegion(src);
 			cutFrom = src;
-			srcSheet.removeDataValidationRegion(srcRegion);
+			srcSheet.deleteDataValidationRegion(srcRegion);
 		}
 		
 		// ZSS-608: Special Case - Copy a single cell to a merge cell
@@ -214,7 +214,7 @@ public class PasteCellHelper { //ZSS-693: promote visibility
 			Set<CellRegion> destRegions = convertRegions(vb.regions, rowOffset, colOffset);
 			// clear Validation at destRegions 
 			for (CellRegion rgn : destRegions) {
-				_destSheet.removeDataValidationRegion(rgn);
+				_destSheet.deleteDataValidationRegion(rgn);
 			}
 			
 			// past
