@@ -8,6 +8,7 @@ ZK Spreadsheet 3.5.1
   ZSS-722 autoFill() with non-VALUE option should not copy value over.
   ZSS-726 Error when typing a locale specific Currency symbol
   ZSS-729 Range.setValidation() with formula doesn't create a drop-down input
+  ZSS-728 Rich text format does not apply to the cell when import excel
   
 ** Upgrade Notes
   * Following api are deprecated

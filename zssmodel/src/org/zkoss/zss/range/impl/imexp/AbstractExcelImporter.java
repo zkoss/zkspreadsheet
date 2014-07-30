@@ -292,7 +292,7 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 			RichTextString poiRichTextString = poiCell.getRichStringCellValue();
 			if (poiRichTextString != null && poiRichTextString.numFormattingRuns() > 0) {
 				SRichText richText = cell.setupRichTextValue();
-				importRichText(poiRichTextString, richText);
+				importRichText(poiCell, poiRichTextString, richText);
 			} else {
 				cell.setStringValue(poiCell.getStringCellValue());
 			}
@@ -329,7 +329,7 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 			comment.setVisible(poiComment.isVisible());
 			RichTextString poiRichTextString = poiComment.getString();
 			if (poiRichTextString != null && poiRichTextString.numFormattingRuns() > 0) {			
-				importRichText(poiComment.getString(), comment.setupRichText());
+				importRichText(poiCell, poiComment.getString(), comment.setupRichText());
 			} else {
 				comment.setText(poiComment.toString());
 			}
@@ -338,12 +338,12 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 		return cell;
 	}
 	
-	protected void importRichText(RichTextString poiRichTextString, SRichText richText) {
+	protected void importRichText(Cell poiCell, RichTextString poiRichTextString, SRichText richText) {
 		String cellValue = poiRichTextString.getString();
 		for (int i = 0; i < poiRichTextString.numFormattingRuns(); i++) {
 			int nextFormattingRunIndex = (i + 1) >= poiRichTextString.numFormattingRuns() ? cellValue.length() : poiRichTextString.getIndexOfFormattingRun(i + 1);
 			final String content = cellValue.substring(poiRichTextString.getIndexOfFormattingRun(i), nextFormattingRunIndex);
-			richText.addSegment(content, toZssFont(getPoiFontFromRichText(workbook, poiRichTextString, i)));
+			richText.addSegment(content, toZssFont(getPoiFontFromRichText(workbook, poiCell, poiRichTextString, i)));
 		}
 	}
 
@@ -491,10 +491,16 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 		}
 	}
 
-	private org.zkoss.poi.ss.usermodel.Font getPoiFontFromRichText(Workbook book, RichTextString rstr, int run) {
+	private org.zkoss.poi.ss.usermodel.Font getPoiFontFromRichText(Workbook book,
+			Cell cell, RichTextString rstr, int run) {
 		org.zkoss.poi.ss.usermodel.Font font = rstr instanceof HSSFRichTextString ? book.getFontAt(((HSSFRichTextString) rstr).getFontOfFormattingRun(run)) : ((XSSFRichTextString) rstr)
-				.getFontOfFormattingRun(run);
-		return font == null ? book.getFontAt((short) 0) : font;
+				.getFontOfFormattingRun((XSSFWorkbook)book, run);
+		if (font == null) {
+			CellStyle style = cell.getCellStyle();
+			short fontIndex = style != null ? style.getFontIndex() : (short) 0;
+			return book.getFontAt(fontIndex); 
+		}
+		return font;
 	}
 
 	/**
