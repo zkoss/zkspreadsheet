@@ -59,49 +59,55 @@ public class SeriesImpl implements SSeries,Serializable,LinkedModelObject{
 	private boolean _evaluated = false;
 	
 	/*package*/ void evalFormula(){
-		if(!_evaluated){
-			FormulaEngine fe = EngineFactory.getInstance().createFormulaEngine();
-			SSheet sheet = _chart.getSheet();
-			Ref ref = getRef();
-			if(_nameExpr!=null){
-				EvaluationResult result = fe.evaluate(_nameExpr,new FormulaEvaluationContext(sheet,ref));
-
-				Object val = result.getValue();
-				if(result.getType() == ResultType.SUCCESS){
-					_evalNameResult = val;
-				}else if(result.getType() == ResultType.ERROR){
-					_evalNameResult = (val instanceof ErrorValue)?val: ErrorValue.valueOf(ErrorValue.INVALID_VALUE);
+		//ZSS-740
+		//20140730, henrichen: when share the same book, many users might 
+		//populate SeriesImpl simultaneously; must synchronize it.
+		if(_evaluated) return;
+		synchronized (this) {
+			if(!_evaluated){
+				FormulaEngine fe = EngineFactory.getInstance().createFormulaEngine();
+				SSheet sheet = _chart.getSheet();
+				Ref ref = getRef();
+				if(_nameExpr!=null){
+					EvaluationResult result = fe.evaluate(_nameExpr,new FormulaEvaluationContext(sheet,ref));
+	
+					Object val = result.getValue();
+					if(result.getType() == ResultType.SUCCESS){
+						_evalNameResult = val;
+					}else if(result.getType() == ResultType.ERROR){
+						_evalNameResult = (val instanceof ErrorValue)?val: ErrorValue.valueOf(ErrorValue.INVALID_VALUE);
+					}
+					
 				}
-				
-			}
-			if(_valueExpr!=null){
-				EvaluationResult result = fe.evaluate(_valueExpr,new FormulaEvaluationContext(sheet,ref));
-				Object val = result.getValue();
-				if(result.getType() == ResultType.SUCCESS){
-					_evalValuesResult = val;
-				}else if(result.getType() == ResultType.ERROR){
-					_evalValuesResult = (val instanceof ErrorValue)?val: ErrorValue.valueOf(ErrorValue.INVALID_VALUE);
+				if(_valueExpr!=null){
+					EvaluationResult result = fe.evaluate(_valueExpr,new FormulaEvaluationContext(sheet,ref));
+					Object val = result.getValue();
+					if(result.getType() == ResultType.SUCCESS){
+						_evalValuesResult = val;
+					}else if(result.getType() == ResultType.ERROR){
+						_evalValuesResult = (val instanceof ErrorValue)?val: ErrorValue.valueOf(ErrorValue.INVALID_VALUE);
+					}
 				}
-			}
-			if(_yValueExpr!=null){
-				EvaluationResult result = fe.evaluate(_yValueExpr,new FormulaEvaluationContext(sheet,ref));
-				Object val = result.getValue();
-				if(result.getType() == ResultType.SUCCESS){
-					_evalYValuesResult = val;
-				}else if(result.getType() == ResultType.ERROR){
-					_evalYValuesResult = (val instanceof ErrorValue)?val: ErrorValue.valueOf(ErrorValue.INVALID_VALUE);
+				if(_yValueExpr!=null){
+					EvaluationResult result = fe.evaluate(_yValueExpr,new FormulaEvaluationContext(sheet,ref));
+					Object val = result.getValue();
+					if(result.getType() == ResultType.SUCCESS){
+						_evalYValuesResult = val;
+					}else if(result.getType() == ResultType.ERROR){
+						_evalYValuesResult = (val instanceof ErrorValue)?val: ErrorValue.valueOf(ErrorValue.INVALID_VALUE);
+					}
 				}
-			}
-			if(_zValueExpr!=null){
-				EvaluationResult result = fe.evaluate(_zValueExpr,new FormulaEvaluationContext(sheet,ref));
-				Object val = result.getValue();
-				if(result.getType() == ResultType.SUCCESS){
-					_evalZValuesResult = val;
-				}else if(result.getType() == ResultType.ERROR){
-					_evalZValuesResult = (val instanceof ErrorValue)?val: ErrorValue.valueOf(ErrorValue.INVALID_VALUE);
+				if(_zValueExpr!=null){
+					EvaluationResult result = fe.evaluate(_zValueExpr,new FormulaEvaluationContext(sheet,ref));
+					Object val = result.getValue();
+					if(result.getType() == ResultType.SUCCESS){
+						_evalZValuesResult = val;
+					}else if(result.getType() == ResultType.ERROR){
+						_evalZValuesResult = (val instanceof ErrorValue)?val: ErrorValue.valueOf(ErrorValue.INVALID_VALUE);
+					}
 				}
+				_evaluated = true;
 			}
-			_evaluated = true;
 		}
 	}
 	

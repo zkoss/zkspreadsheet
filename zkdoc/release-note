@@ -12,6 +12,7 @@ ZK Spreadsheet 3.5.1
   ZSS-700 ConcurrentModificationException happened when testing with intensive formula test case
   ZSS-701 NullPointerException happened when testing with collaboration editing test case
   ZSS-739 IllegalStateException when testing with collaboration editing test case
+  ZSS-740 IndexOutOfBoundsException when testing with collaboration editing test
   
 ** Upgrade Notes
   * Following api are deprecated
