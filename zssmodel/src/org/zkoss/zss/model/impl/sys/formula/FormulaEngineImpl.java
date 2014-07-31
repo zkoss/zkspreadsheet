@@ -286,9 +286,8 @@ public class FormulaEngineImpl implements FormulaEngine {
 		}
 		return null;
 	}
-
+	
 	@Override
-	@SuppressWarnings("unchecked")
 	public EvaluationResult evaluate(FormulaExpression expr, FormulaEvaluationContext context) {
 
 		// by pass if expression is invalid format
@@ -303,35 +302,8 @@ public class FormulaEngineImpl implements FormulaEngine {
 			SBook book = context.getBook();
 			AbstractBookSeriesAdv bookSeries = (AbstractBookSeriesAdv)book.getBookSeries();
 			DependencyTableAdv table = (DependencyTableAdv)bookSeries.getDependencyTable();	
-			NonSerializableHolder<Map<String, EvalContext>> holder = (NonSerializableHolder<Map<String, EvalContext>>)bookSeries
-					.getAttribute(KEY_EVALUATORS);
-			Map<String, EvalContext> evalCtxMap = holder == null?null:holder.getObject();
-
-			// get evaluation context or create new one if not existed
-			if(evalCtxMap == null) {
-				evalCtxMap = new LinkedHashMap<String, FormulaEngineImpl.EvalContext>();
-				List<String> bookNames = new ArrayList<String>();
-				List<WorkbookEvaluator> evaluators = new ArrayList<WorkbookEvaluator>();
-				for(SBook nb : bookSeries.getBooks()) {
-					String bookName = nb.getBookName();
-					EvalBook evalBook = new EvalBook(nb);
-					WorkbookEvaluator we = new WorkbookEvaluator(evalBook, noCacheClassifier, null);
-					bookNames.add(bookName);
-					evaluators.add(we);
-					evalCtxMap.put(bookName, new EvalContext(evalBook, we));
-
-					// aggregate built-in functions and user defined functions
-					FunctionResolver resolver = FunctionResolverFactory.createFunctionResolver();
-					UDFFinder zkUDFF = resolver.getUDFFinder(); // ZK user defined function finder
-					if(zkUDFF != null) {
-						IndexedUDFFinder bookUDFF = (IndexedUDFFinder)evalBook.getUDFFinder(); // book contained built-in function finder
-						bookUDFF.insert(0, zkUDFF);
-					}
-				}
-				CollaboratingWorkbooksEnvironment.setup(bookNames.toArray(new String[0]),
-						evaluators.toArray(new WorkbookEvaluator[0]));
-				bookSeries.setAttribute(KEY_EVALUATORS, new NonSerializableHolder<Map<String, EvalContext>>(evalCtxMap));
-			}
+			Map<String, EvalContext> evalCtxMap = getEvalCtxMap(bookSeries);
+			
 			// check again
 			EvalContext ctx = evalCtxMap.get(book.getBookName());
 			if(ctx == null) { // just in case
@@ -371,6 +343,54 @@ public class FormulaEngineImpl implements FormulaEngine {
 		}
 		return result;
 	}
+
+	//20140731, henrichen: must synchronize the initialization of this context 
+	//map in collaboration cases 
+	//see http://en.wikipedia.org/wiki/Double-checked_locking#Usage_in_Java
+	private Map<String, EvalContext> getEvalCtxMap(AbstractBookSeriesAdv bookSeries) {
+		Map<String, EvalContext> evalCtxMap = getEvalCtxMap0(bookSeries);
+		
+		// get evaluation context or create new one if not existed
+		if(evalCtxMap == null) {
+			synchronized(bookSeries) {
+				evalCtxMap = getEvalCtxMap0(bookSeries);
+				if (evalCtxMap == null) {
+					evalCtxMap = new LinkedHashMap<String, FormulaEngineImpl.EvalContext>();
+					List<String> bookNames = new ArrayList<String>();
+					List<WorkbookEvaluator> evaluators = new ArrayList<WorkbookEvaluator>();
+					for(SBook nb : bookSeries.getBooks()) {
+						String bookName = nb.getBookName();
+						EvalBook evalBook = new EvalBook(nb);
+						WorkbookEvaluator we = new WorkbookEvaluator(evalBook, noCacheClassifier, null);
+						bookNames.add(bookName);
+						evaluators.add(we);
+						evalCtxMap.put(bookName, new EvalContext(evalBook, we));
+		
+						// aggregate built-in functions and user defined functions
+						FunctionResolver resolver = FunctionResolverFactory.createFunctionResolver();
+						UDFFinder zkUDFF = resolver.getUDFFinder(); // ZK user defined function finder
+						if(zkUDFF != null) {
+							IndexedUDFFinder bookUDFF = (IndexedUDFFinder)evalBook.getUDFFinder(); // book contained built-in function finder
+							bookUDFF.insert(0, zkUDFF);
+						}
+					}
+					CollaboratingWorkbooksEnvironment.setup(bookNames.toArray(new String[0]),
+							evaluators.toArray(new WorkbookEvaluator[0]));
+					//20140731, henrichen: NonSerializableHolder also works as a FinalWrapper so double check locking works
+					final Object holder = new NonSerializableHolder<Map<String, EvalContext>>(evalCtxMap);
+					bookSeries.setAttribute(KEY_EVALUATORS, holder);
+				}
+			}
+		}
+		return evalCtxMap;
+	}
+	private Map<String, EvalContext> getEvalCtxMap0(AbstractBookSeriesAdv bookSeries) {
+		@SuppressWarnings("unchecked")
+		final NonSerializableHolder<Map<String, EvalContext>> holder = 
+			(NonSerializableHolder<Map<String, EvalContext>>)bookSeries.getAttribute(KEY_EVALUATORS);
+		return holder == null ? null : holder.getObject();
+	}
+	
 
 	protected EvaluationResult evaluateFormula(FormulaExpression expr, FormulaEvaluationContext context, EvalBook evalBook, WorkbookEvaluator evaluator) throws FormulaParseException, Exception {
 

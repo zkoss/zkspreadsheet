@@ -59,8 +59,13 @@ public final class EvalBook implements EvaluationWorkbook, FormulaParsingWorkboo
 	}
 
 	public Ptg[] getFormulaTokens(int sheetIndex, String formula) {
-		createParsingBook(); // create new parsing book before parsing formula
-		return FormulaParser.parse(formula, _parsingBook, FormulaType.CELL, sheetIndex);
+		//20140731, henrichen: multi-thread accessing could cause thread-B to
+		// reset _parsingBook(createParsingBook()) while thread-A is doing 
+		// parse(...). So we have to synchronize this 
+		synchronized(this) {
+			createParsingBook(); // create new parsing book before parsing formula
+			return FormulaParser.parse(formula, _parsingBook, FormulaType.CELL, sheetIndex);
+		}
 	}
 
 	public EvaluationName getName(String name, int sheetIndex) {

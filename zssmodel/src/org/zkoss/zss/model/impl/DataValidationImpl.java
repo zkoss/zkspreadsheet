@@ -474,32 +474,37 @@ public class DataValidationImpl extends AbstractDataValidationAdv {
 	}
 	
 	/*package*/ void evalFormula(){
-		if(!_evaluated){
-			Ref ref = getRef();
-			FormulaEngine fe = EngineFactory.getInstance().createFormulaEngine();
-			if(_formula1Expr!=null){
-				EvaluationResult result = fe.evaluate(_formula1Expr,new FormulaEvaluationContext(_sheet,ref));
-
-				Object val = result.getValue();
-				if(result.getType() == ResultType.SUCCESS){
-					_evalValue1Result = val;
-				}else if(result.getType() == ResultType.ERROR){
-					_evalValue1Result = (val instanceof ErrorValue)?val: ErrorValue.valueOf(ErrorValue.INVALID_VALUE);
+		//20140731, henrichen: when share the same book, many users might 
+		//populate DataValidationImpl simultaneously; must synchronize it.
+		if(_evaluated) return;
+		synchronized (this) {
+			if(!_evaluated){
+				Ref ref = getRef();
+				FormulaEngine fe = EngineFactory.getInstance().createFormulaEngine();
+				if(_formula1Expr!=null){
+					EvaluationResult result = fe.evaluate(_formula1Expr,new FormulaEvaluationContext(_sheet,ref));
+	
+					Object val = result.getValue();
+					if(result.getType() == ResultType.SUCCESS){
+						_evalValue1Result = val;
+					}else if(result.getType() == ResultType.ERROR){
+						_evalValue1Result = (val instanceof ErrorValue)?val: ErrorValue.valueOf(ErrorValue.INVALID_VALUE);
+					}
+					
 				}
-				
-			}
-			if(_formula2Expr!=null){
-				EvaluationResult result = fe.evaluate(_formula2Expr,new FormulaEvaluationContext(_sheet,ref));
-
-				Object val = result.getValue();
-				if(result.getType() == ResultType.SUCCESS){
-					_evalValue2Result = val;
-				}else if(result.getType() == ResultType.ERROR){
-					_evalValue2Result = (val instanceof ErrorValue)?val: ErrorValue.valueOf(ErrorValue.INVALID_VALUE);
+				if(_formula2Expr!=null){
+					EvaluationResult result = fe.evaluate(_formula2Expr,new FormulaEvaluationContext(_sheet,ref));
+	
+					Object val = result.getValue();
+					if(result.getType() == ResultType.SUCCESS){
+						_evalValue2Result = val;
+					}else if(result.getType() == ResultType.ERROR){
+						_evalValue2Result = (val instanceof ErrorValue)?val: ErrorValue.valueOf(ErrorValue.INVALID_VALUE);
+					}
+					
 				}
-				
+				_evaluated = true;
 			}
-			_evaluated = true;
 		}
 	}
 	

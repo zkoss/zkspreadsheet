@@ -24,7 +24,10 @@ import java.io.Serializable;
  */
 public class NonSerializableHolder<T> implements Serializable{
 	private static final long serialVersionUID = 1L;
-	private transient T _noSer;
+	//20140731, henrichen: make final so works as a FinalWrapper on double check locking
+	//@see org.zkoss.zss.model.impl.sys.formula.FormulaEngineImpl#getEvalCtxMap()
+	//@see http://en.wikipedia.org/wiki/Double-checked_locking#Usage_in_Java
+	private final transient T _noSer; 
 	
 	public NonSerializableHolder(T noSer){
 		_noSer = noSer;

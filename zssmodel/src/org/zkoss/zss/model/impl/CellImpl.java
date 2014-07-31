@@ -159,13 +159,18 @@ public class CellImpl extends AbstractCellAdv {
 
 	@Override
 	protected void evalFormula() {
-		if (_formulaResultValue == null) {
-			CellValue val = getCellValue();
-			if(val!=null &&  val.getType() == CellType.FORMULA){
-				FormulaEngine fe = EngineFactory.getInstance()
-						.createFormulaEngine();
-				_formulaResultValue = new FormulaResultCellValue(fe.evaluate((FormulaExpression) val.getValue(),
-						new FormulaEvaluationContext(this,getRef())));
+		//20140731, henrichen: when share the same book, many users might 
+		//populate CellImpl simultaneously; must synchronize it.
+		if(_formulaResultValue != null) return;
+		synchronized (this) {
+			if (_formulaResultValue == null) {
+				CellValue val = getCellValue();
+				if(val!=null &&  val.getType() == CellType.FORMULA){
+					FormulaEngine fe = EngineFactory.getInstance()
+							.createFormulaEngine();
+					_formulaResultValue = new FormulaResultCellValue(fe.evaluate((FormulaExpression) val.getValue(),
+							new FormulaEvaluationContext(this,getRef())));
+				}
 			}
 		}
 	}
