@@ -2730,9 +2730,8 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		// should also update the left - 1, top - 1 part
 		top = top > 0 ? top - 1 : 0;
 		
-		//TODO zss 3.5, just found the logic here might be not correct, 
-		//the rect and select freeze should base on sheet, not selectedSheet
-		final AreaRef rect = getActiveRangeHelper().getArea(_selectedSheet);
+		//ZSS-701, ZSS-700
+		final AreaRef rect = getActiveRangeHelper().getArea(sheet); 
 		
 		final int loadLeft = rect.getColumn();
 		final int loadTop = rect.getRow();
@@ -2761,8 +2760,6 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		if (loadBottom < bottom) {
 			bottom = loadBottom; 
 		}
-		
-		//TODO: update freeze range
 		
 		// ZSS-393: update every panel separately
 		SpreadsheetCtrl spreadsheetCtrl = ((SpreadsheetCtrl) this.getExtraCtrl());
