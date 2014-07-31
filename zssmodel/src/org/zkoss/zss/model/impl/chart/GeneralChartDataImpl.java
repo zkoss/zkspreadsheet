@@ -68,18 +68,24 @@ public class GeneralChartDataImpl extends ChartDataAdv implements SGeneralChartD
 	}
 	
 	/*package*/ void evalFormula(){
-		if(!_evaluated){
-			if(_catFormula!=null){
-				FormulaEngine fe = EngineFactory.getInstance().createFormulaEngine();
-				EvaluationResult result = fe.evaluate(_catFormula,new FormulaEvaluationContext(_chart.getSheet(),getRef()));
-				Object val = result.getValue();
-				if(result.getType() == ResultType.SUCCESS){
-					_evalResult = val;
-				}else if(result.getType() == ResultType.ERROR){
-					_evalResult = (val instanceof ErrorValue)?val: ErrorValue.valueOf(ErrorValue.INVALID_NAME); //ZSS-672
+		//ZSS-739
+		//20140730, henrichen: when share the same book, many users might 
+		//populate GeneralChartDataImpl simultaneously; must synchronize it.
+		if(_evaluated) return;
+		synchronized (this) {
+			if(!_evaluated){
+				if(_catFormula!=null){
+					FormulaEngine fe = EngineFactory.getInstance().createFormulaEngine();
+					EvaluationResult result = fe.evaluate(_catFormula,new FormulaEvaluationContext(_chart.getSheet(),getRef()));
+					Object val = result.getValue();
+					if(result.getType() == ResultType.SUCCESS){
+						_evalResult = val;
+					}else if(result.getType() == ResultType.ERROR){
+						_evalResult = (val instanceof ErrorValue)?val: ErrorValue.valueOf(ErrorValue.INVALID_NAME); //ZSS-672
+					}
 				}
+				_evaluated = true;
 			}
-			_evaluated = true;
 		}
 	}
 	
