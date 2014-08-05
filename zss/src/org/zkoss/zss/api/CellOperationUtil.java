@@ -16,9 +16,6 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.api;
 
-import java.util.HashMap;
-
-import org.zkoss.util.Locales;
 import org.zkoss.zss.api.Range.ApplyBorderType;
 import org.zkoss.zss.api.Range.AutoFillType;
 import org.zkoss.zss.api.Range.DeleteShift;
@@ -27,23 +24,15 @@ import org.zkoss.zss.api.Range.InsertShift;
 import org.zkoss.zss.api.Range.PasteOperation;
 import org.zkoss.zss.api.Range.PasteType;
 import org.zkoss.zss.api.Range.SortDataOption;
-import org.zkoss.zss.api.model.CellStyle;
 import org.zkoss.zss.api.model.CellStyle.Alignment;
 import org.zkoss.zss.api.model.CellStyle.BorderType;
-import org.zkoss.zss.api.model.CellStyle.FillPattern;
 import org.zkoss.zss.api.model.CellStyle.VerticalAlignment;
 import org.zkoss.zss.api.model.Color;
-import org.zkoss.zss.api.model.EditableCellStyle;
-import org.zkoss.zss.api.model.EditableFont;
-import org.zkoss.zss.api.model.Font;
 import org.zkoss.zss.api.model.Font.Boldweight;
 import org.zkoss.zss.api.model.Font.Underline;
 import org.zkoss.zss.api.model.Hyperlink.HyperlinkType;
 import org.zkoss.zss.api.model.impl.EnumUtil;
-import org.zkoss.zss.api.model.impl.SheetImpl;
 import org.zkoss.zss.model.SSheet;
-import org.zkoss.zss.model.sys.EngineFactory;
-import org.zkoss.zss.model.sys.format.FormatContext;
 import org.zkoss.zss.range.impl.StyleUtil;
 import org.zkoss.zss.range.impl.WholeStyleUtil;
 
@@ -521,7 +510,6 @@ public class CellOperationUtil {
 		//use range api directly,
 		range.applyBorders(applyType, borderType, htmlColor);
 	}
-	
 	
 	/**
 	 * Toggle merge/unmerge of the range, if merging it will also set alignment to center

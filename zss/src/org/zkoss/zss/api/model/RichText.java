@@ -18,10 +18,6 @@ package org.zkoss.zss.api.model;
 
 import java.util.List;
 
-import org.zkoss.zss.api.model.Font.Boldweight;
-import org.zkoss.zss.api.model.Font.TypeOffset;
-import org.zkoss.zss.api.model.Font.Underline;
-
 /**
  * A rich text can have multiple segments which have different fonts for each one in a cell.
  * @author henrichen
