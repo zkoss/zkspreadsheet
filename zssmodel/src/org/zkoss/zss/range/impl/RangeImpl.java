@@ -52,7 +52,9 @@ import org.zkoss.zss.model.SDataValidation.OperatorType;
 import org.zkoss.zss.model.SDataValidation.ValidationType;
 import org.zkoss.zss.model.SHyperlink;
 import org.zkoss.zss.model.SHyperlink.HyperlinkType;
+import org.zkoss.zss.model.SFont;
 import org.zkoss.zss.model.SPicture;
+import org.zkoss.zss.model.SRichText;
 import org.zkoss.zss.model.SRow;
 import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.model.SSheetProtection;
@@ -65,6 +67,7 @@ import org.zkoss.zss.model.impl.AbstractBookSeriesAdv;
 import org.zkoss.zss.model.impl.AbstractSheetAdv;
 import org.zkoss.zss.model.impl.AbstractNameAdv;
 import org.zkoss.zss.model.impl.AbstractCellAdv;
+import org.zkoss.zss.model.impl.ColorImpl;
 import org.zkoss.zss.model.impl.DataValidationImpl;
 import org.zkoss.zss.model.impl.FormulaCacheCleaner;
 import org.zkoss.zss.model.impl.RefImpl;
@@ -81,6 +84,7 @@ import org.zkoss.zss.model.sys.format.FormatEngine;
 import org.zkoss.zss.model.sys.input.InputEngine;
 import org.zkoss.zss.model.sys.input.InputParseContext;
 import org.zkoss.zss.model.sys.input.InputResult;
+import org.zkoss.zss.model.util.FontMatcher;
 import org.zkoss.zss.model.util.ReadWriteTask;
 import org.zkoss.zss.model.util.Validations;
 import org.zkoss.zss.range.SRange;
@@ -283,6 +287,12 @@ public class RangeImpl implements SRange {
 		}
 		return false;
 	}
+	
+	@Override
+	public void setRichText(SRichText text) {
+		setValue(text);
+	}
+	
 	@Override
 	public void setValue(final Object value) {
 		new CellVisitorTask(new CellVisitorForUpdate() {
@@ -1980,6 +1990,42 @@ public class RangeImpl implements SRange {
 					new NotifyChangeHelper().notifyDataValidationChange(getSheet(), (String) dv.getId());
 				}
 				return null;
+			}
+		}.doInWriteLock(getLock());
+	}
+
+	@Override
+	public SFont getOrCreateFont(final SFont.Boldweight boldweight, 
+			final String htmlColor, final int fontHeight, final String fontName, 
+			final boolean italic, final boolean strikeout,
+			final SFont.TypeOffset typeOffset, final SFont.Underline underline) {
+		final SBook book = getBook(); 
+		return (SFont) new ReadWriteTask() {
+			@Override
+			public Object invoke() {
+				final FontMatcher fm = new FontMatcher();
+				fm.setBoldweight(boldweight);
+				fm.setColor(htmlColor);
+				fm.setHeightPoints(fontHeight);
+				fm.setName(fontName);
+				fm.setItalic(italic);
+				fm.setStrikeout(strikeout);
+				fm.setTypeOffset(typeOffset);
+				fm.setUnderline(underline);
+				
+				SFont font = book.searchFont(fm);
+				if (font == null) {
+					font = book.createFont(true);
+					font.setBoldweight(boldweight);
+					font.setColor(new ColorImpl(htmlColor));
+					font.setHeightPoints(fontHeight);
+					font.setName(fontName);
+					font.setItalic(italic);
+					font.setStrikeout(strikeout);
+					font.setTypeOffset(typeOffset);
+					font.setUnderline(underline);
+				}
+				return font;
 			}
 		}.doInWriteLock(getLock());
 	}

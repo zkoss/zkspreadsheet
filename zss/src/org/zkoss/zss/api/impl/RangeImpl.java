@@ -35,9 +35,15 @@ import org.zkoss.zss.api.model.Chart.Grouping;
 import org.zkoss.zss.api.model.Chart.LegendPosition;
 import org.zkoss.zss.api.model.Chart.Type;
 import org.zkoss.zss.api.model.Hyperlink;
+import org.zkoss.zss.api.model.Font.Boldweight;
+import org.zkoss.zss.api.model.Font.TypeOffset;
+import org.zkoss.zss.api.model.Font.Underline;
 import org.zkoss.zss.api.model.Hyperlink.HyperlinkType;
 import org.zkoss.zss.api.model.Picture;
 import org.zkoss.zss.api.model.Picture.Format;
+import org.zkoss.zss.api.model.Color;
+import org.zkoss.zss.api.model.Font;
+import org.zkoss.zss.api.model.RichText;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.api.model.SheetProtection;
 import org.zkoss.zss.api.model.Validation;
@@ -49,6 +55,7 @@ import org.zkoss.zss.api.model.impl.CellDataImpl;
 import org.zkoss.zss.api.model.impl.CellStyleImpl;
 import org.zkoss.zss.api.model.impl.ChartImpl;
 import org.zkoss.zss.api.model.impl.EnumUtil;
+import org.zkoss.zss.api.model.impl.FontImpl;
 import org.zkoss.zss.api.model.impl.HyperlinkImpl;
 import org.zkoss.zss.api.model.impl.ModelRef;
 import org.zkoss.zss.api.model.impl.PictureImpl;
@@ -63,11 +70,13 @@ import org.zkoss.zss.model.SCell;
 import org.zkoss.zss.model.SCellStyle;
 import org.zkoss.zss.model.SChart;
 import org.zkoss.zss.model.SDataValidation;
+import org.zkoss.zss.model.SFont;
 import org.zkoss.zss.model.SHyperlink;
 import org.zkoss.zss.model.SPicture;
 import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.model.SSheetProtection;
 import org.zkoss.zss.model.ViewAnchor;
+import org.zkoss.zss.model.util.FontMatcher;
 import org.zkoss.zss.range.SRange;
 import org.zkoss.zss.range.SRanges;
 import org.zkoss.zss.range.impl.imexp.BookHelper;
@@ -781,5 +790,22 @@ public class RangeImpl implements Range{
 	@Override
 	public void deleteValidation() {
 		_range.deleteValidation();
+	}
+
+	@Override
+	public void setRichText(RichText txt) {
+		_range.setRichText(((org.zkoss.zss.api.model.impl.RichTextImpl)txt).getNative());
+	}
+
+	@Override
+	public Font getOrCreateFont(Boldweight boldweight, Color color,
+			int fontHeight, String fontName, boolean italic, boolean strikeout,
+			TypeOffset typeOffset, Underline underline) {
+		SFont font = _range.getOrCreateFont(
+				EnumUtil.toFontBoldweight(boldweight), color.getHtmlColor(), 
+				fontHeight, fontName, italic, strikeout,
+				EnumUtil.toFontTypeOffset(typeOffset), 
+				EnumUtil.toFontUnderline(underline));
+		return new FontImpl(((BookImpl) getBook()).getRef(), new SimpleRef<SFont>(font));
 	}
 }

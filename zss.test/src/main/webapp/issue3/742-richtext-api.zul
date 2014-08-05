@@ -1,0 +1,62 @@
+<zk>
+Since 3.5.0
+<label multiline="true">
+1. Press "Create Rich Text" button.
+2. If you see richtext show in A1 and A2, then it is OK.
+3. Press "Export" button and open the exported file.
+4. You shall see the same richtext show in Excel.
+</label>
+	<button label="Create Rich Text" onClick="createRichText()" />
+	<button label="Export" onClick="export()" />
+	<spreadsheet id="ss" src="/book/742-richtext-api.xlsx" vflex="1"  maxVisibleRows="150"
+		maxVisibleColumns="40" showToolbar="true" showSheetbar="true" showFormulabar="true" width="600px"/>
+	<zscript><![CDATA[
+       	import java.io.ByteArrayOutputStream;
+       	import org.zkoss.zss.api.model.*;
+       	import org.zkoss.zss.api.model.impl.*;
+     	
+       	public void createRichText() {
+       		Range range = Ranges.range(ss.getSelectedSheet(), "A1");
+       		CellOperationUtil.applyWrapText(range, true);
+       		CellOperationUtil.applyFontName(range, "Century Gothic");
+       		CellOperationUtil.applyFontHeightPoints(range, 10);
+       		
+     		Book wb = ss.getBook();
+     		Font font = range.getCellStyle().getFont();
+     		Color redColor = range.getCellStyleHelper().createColorFromHtmlColor("#FF0000"); 
+     		Font fontRed = range.getOrCreateFont(
+     				font.getBoldweight(), redColor,
+     				font.getFontHeightInPoint(), font.getFontName(), 
+     				font.isItalic(), font.isStrikeout(),
+     				font.getTypeOffset(), font.getUnderline());
+     		Font fontStrikeout = range.getOrCreateFont(
+     				font.getBoldweight(), font.getColor(),
+     				font.getFontHeightInPoint(), font.getFontName(), 
+     				font.isItalic(), true,
+     				font.getTypeOffset(), font.getUnderline());
+     		Font fontStrikeoutBold = range.getOrCreateFont(
+     				Font.Boldweight.BOLD, font.getColor(),
+     				font.getFontHeightInPoint(), font.getFontName(), 
+     				font.isItalic(), true,
+     				font.getTypeOffset(), font.getUnderline());
+       		RichText txt = new RichTextImpl(wb);
+       		txt.addSegment("RTF within data cell\ne.g.\n", font);
+       		txt.addSegment("strike-through text, ", fontStrikeout);
+       		txt.addSegment("bold text", fontStrikeoutBold);
+       		txt.addSegment(" and ", font);
+       		txt.addSegment("colored text\n", fontRed);
+       		txt.addSegment("(background colored)", font);
+       		range.setRichText(txt);
+       		range.setColumnWidth((int)(44.14*7+5));
+       		range.setRowHeight((int)(54.0*96/72));
+       	}
+       	
+     	public void export() throws java.io.IOException {
+     		Book wb = ss.getBook();
+     	    Exporter c = Exporters.getExporter("excel");
+     	    ByteArrayOutputStream out = new ByteArrayOutputStream();
+     	    c.export(wb, out);
+     	    Filedownload.save(out.toByteArray(), "application/file", wb.getBookName());
+     	}
+	]]></zscript>
+</zk>

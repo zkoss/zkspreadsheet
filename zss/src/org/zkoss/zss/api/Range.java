@@ -39,6 +39,7 @@ import org.zkoss.zss.api.model.Hyperlink;
 import org.zkoss.zss.api.model.Hyperlink.HyperlinkType;
 import org.zkoss.zss.api.model.Picture;
 import org.zkoss.zss.api.model.Picture.Format;
+import org.zkoss.zss.api.model.RichText;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.api.model.SheetProtection;
 import org.zkoss.zss.api.model.Validation;
@@ -936,4 +937,23 @@ public interface Range {
 	 * Delete the {@link Validation} associated in the specified range. 
 	 */
 	public void deleteValidation();
+
+	//ZSS-742 Support API for input rich text
+	/**
+	 * Set into the left top cell of this Range the specified text.
+	 * @param text
+	 * @since 3.5.1
+	 */
+	public void setRichText(RichText text);
+	
+	/**
+	 * Get font if exists or create font if not exists from the book of this 
+	 * range and return it.
+	 * 
+	 * @return font of the specified font metrics
+	 * @since 3.5.1
+	 */
+	public Font getOrCreateFont(Boldweight boldweight, Color color,
+			int fontHeight, String fontName, boolean italic, boolean strikeout,
+			TypeOffset typeOffset, Underline underline);
 }

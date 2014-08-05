@@ -36,7 +36,7 @@ public interface SRichText {
 	
 	public List<Segment> getSegments();
 	
-	public void addSegment(String text,SFont font);
+	public void addSegment(String text, SFont font);
 	
 	public void clearSegments();
 	

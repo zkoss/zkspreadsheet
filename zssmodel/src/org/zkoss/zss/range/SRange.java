@@ -171,13 +171,14 @@ public interface SRange {
 //	 * Return the rich edit text of this Range.
 //	 * @return the rich edit text of this Range.
 //	 */
-//	public RichTextString getRichEditText();
-//	
-//	/**
-//	 * Set {@link RichTextString} as input by the end user.
-//	 * @param txt the RichTextString object
-//	 */
-//	public void setRichEditText(RichTextString txt);
+//	public SRichText getRichText();
+
+	//ZSS-742: Support API for input rich text
+	/**
+	 * Set rich text into the left top cell of this range. 
+	 * @since 3.5.1
+	 */
+	public void setRichText(SRichText txt);
 	
 	/**
 	 * Return the edit text of this Range.
@@ -845,4 +846,15 @@ public interface SRange {
 	 * Delete the {@link SDataValidation} associated in the specified range. 
 	 */
 	public void deleteValidation();
+	
+	/**
+	 * Get font if exists or create font if not exists from the book of this 
+	 * range and return it.
+	 * 
+	 * @return font of the specified font metrics
+	 * @since 3.5.1
+	 */
+	public SFont getOrCreateFont(SFont.Boldweight boldweight, String htmlColor,
+			int fontHeight, String fontName, boolean italic, boolean strikeout,
+			SFont.TypeOffset typeOffset, SFont.Underline underline);
 }

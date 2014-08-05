@@ -13,6 +13,9 @@ import org.zkoss.zss.model.SChart.ChartType;
 import org.zkoss.zss.model.SDataValidation.AlertStyle;
 import org.zkoss.zss.model.SDataValidation.OperatorType;
 import org.zkoss.zss.model.SDataValidation.ValidationType;
+import org.zkoss.zss.model.SFont.Boldweight;
+import org.zkoss.zss.model.SFont.TypeOffset;
+import org.zkoss.zss.model.SFont.Underline;
 import org.zkoss.zss.model.SHyperlink.HyperlinkType;
 import org.zkoss.zss.model.SPicture.Format;
 import org.zkoss.zss.range.*;
@@ -492,6 +495,18 @@ import org.zkoss.zss.range.*;
 
 	@Override
 	public SSheet cloneSheet(String name) {
+		return null;
+	}
+
+	@Override
+	public void setRichText(SRichText txt) {
+		// do nothing
+	}
+
+	@Override
+	public SFont getOrCreateFont(Boldweight boldweight, String htmlColor,
+			int fontHeight, String fontName, boolean italic, boolean strikeout,
+			TypeOffset typeOffset, Underline underline) {
 		return null;
 	}
 }
