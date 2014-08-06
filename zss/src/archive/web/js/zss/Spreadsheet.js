@@ -871,11 +871,11 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 	focus: function (trigger) {
 		if (zk.ie && zk.ie < 11) {
 			var self = this;
-			setTimeout(function () {
+			//setTimeout(function () {
 				var sht = self.sheetCtrl;
 				if (sht && sht._initiated)
 					sht.dp.gainFocus(trigger);
-			}, 0);
+			//}, 0);
 		} else if (this.sheetCtrl)
 			this.sheetCtrl.dp.gainFocus(trigger);
 	},
@@ -1180,6 +1180,12 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 	_doDataPanelBlur: function (evt) {
 		var sheet = this.sheetCtrl;
 		if (sheet.innerClicking <= 0 && sheet.state == zss.SSheetCtrl.FOCUSED) {
+			
+			// ZSS-737: focus is switching to textarea for pasting.
+			if (sheet.isPasteFromClipboard) {
+				sheet.dp.gainFocus(false); // fake focus
+				return;
+			}
 
 			// #ZSS-253: check the widget which got focus is associated with spreadsheet or not
 			// also check its parent until null
@@ -1318,6 +1324,10 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 					//Widget.js will stop event, if onCtrlKey reg ctrl + c and ctrl + v. restart the event
 					evt.domStopped = false;
 				}
+				var sheet = this.sheetCtrl;
+				// ZSS-737: prevent focus lost when focus to textarea.
+				sheet.isPasteFromClipboard = true;
+				sheet.dp.selectInputNode();
 				var that = this;
 				//do the copy on the sheet!
 				// 20140509, RaymondChao: focustag's value becames empty when paste twice or more times without setTimeout.

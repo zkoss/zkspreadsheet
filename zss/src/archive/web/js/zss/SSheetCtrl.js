@@ -1817,7 +1817,8 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			}
 			break;
 		case 229: //ZSS-378 Chinese Input keyCode is always 229 in chrome/IE(8-10) (no spec.)
-			if(this.state == zss.SSheetCtrl.FOCUSED){//enter editing mode only when focused
+			// ZSS-737: other browsers listen composition event to catch IME input.
+			if (zk.ie && zk.ie < 10 && this.state == zss.SSheetCtrl.FOCUSED) { //enter editing mode only when focused
 				this._enterEditing(evt);
 			}
 			break;
@@ -1871,7 +1872,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			//ZSS-169
 			fn = function () {
 				if (!wgt._doPasteFromServer) {//do paste from client when server doesn't do it
-					var focustag = sl.dp.focustag,
+					var focustag = sl.dp.getInputNode(),
 						value = jq(focustag).val(),
 						pos = sl.dp._speedCopy(value);
 					
@@ -1880,7 +1881,10 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 						wgt._onResponseCallback.push(function () {
 							sl._doCellSelection(pos.left, pos.top, pos.right, pos.bottom);
 						});
-				}	
+				}
+				if (sl.isPasteFromClipboard) {
+					sl.isPasteFromClipboard = null;
+				}
 			};
 		if (wgt._sendAu) {//flag that indicate ZK send Au request. (cannot use zAu.processing(), it may be null since ZK use timeout to send request) 
 			wgt._onResponseCallback.push(fn); 

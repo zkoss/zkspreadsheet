@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+737-ime-edit.zul
+
+	Purpose:
+		
+	Description:
+		
+	History:
+		Mon, Aug 04, 2014  2:41:08 PM, Created by RaymondChao
+
+Copyright (C) 2014 Potix Corporation. All Rights Reserved.
+
+-->
+<window>
+	<label multiline="true">
+		1. Focus on any cell and try type "王".
+		2. The first input "ㄨ" should not be missing.
+	</label>
+	<spreadsheet src="/book/blank.xlsx" height="500px" width="800px">
+	</spreadsheet>
+</window>

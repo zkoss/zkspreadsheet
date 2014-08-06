@@ -122,6 +122,28 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 				};
 			}
 		}(),
+		// Selects all the contents in the node.
+		selectText = function () {
+			if (supportGetSelection) {
+				return function (node) {
+					var selection = window.getSelection(),
+						range;
+					if (selection.rangeCount > 0)
+						selection.removeAllRanges();
+					range = document.createRange();
+					range.selectNodeContents(node);
+					selection.addRange(range);
+				};
+			} else if (supportDocumentSelection) {
+				return function (node) {
+					var textRange = document.body.createTextRange();
+					textRange.moveToElementText(node);
+					textRange.select();
+				};
+			} else {
+				return jq.noop;
+			}
+		}(),
 		placeCaretAtEnd = function () {
 			if (supportGetSelection) {
 				return function (node) {
@@ -708,12 +730,21 @@ zss.Editbox = zk.$extends(zul.inp.InputWidget, {
 		this.$supers(zss.Editbox, 'bind_', arguments);
 		this.comp = this.getInputNode();
 		this.comp.ctrl = this;
+
+		if (!zk.ie || zk.ie > 9) {
+			this.domListen_(this.comp, 'onCompositionStart');
+			this.domListen_(this.comp, 'onCompositionEnd');
+		}
 		
 		this.sheet.listen({'onStartEditing': this.proxy(this._onStartEditing)})
    			.listen({'onStopEditing': this.proxy(this.stop)})
    			.listen({'onCellSelection': this.proxy(this._onCellSelection)});
 	},
 	unbind_: function () {
+		if (!zk.ie || zk.ie > 9) {
+			this.domUnlisten_(this.comp, 'onCompositionStart');
+			this.domUnlisten_(this.comp, 'onCompositionEnd');
+		}
 		this.sheet.unlisten({'onStartEditing': this.proxy(this._onStartEditing)})
    			.unlisten({'onStopEditing': this.proxy(this.stop)})
    			.unlisten({'onCellSelection': this.proxy(this._onCellSelection)});
@@ -792,12 +823,22 @@ zss.Editbox = zk.$extends(zul.inp.InputWidget, {
 		}
 	},
 	doKeyPress_: function (evt) {
-		this.autoAdjust(true);
+		var sheet = this.sheet;
+		if (sheet.state == zss.SSheetCtrl.EDITING) {
+			this.autoAdjust(true);
+		} else {
+			sheet._wgt.doKeyPress_(evt);
+		}
 	},
 	doKeyDown_: function (evt) {
-		if (this.disabled)
+		var sheet = this.sheet;
+		if (sheet.state != zss.SSheetCtrl.EDITING) {
+			sheet._wgt.doKeyDown_(evt);
+			return;
+		}
+		if (this.disabled) {
 			evt.stop();
-		else {
+		} else {
 			this.sheet._doKeydown(evt);
 			appendBrNode(this.comp);
 			var keycode = evt.keyCode;
@@ -841,11 +882,32 @@ zss.Editbox = zk.$extends(zul.inp.InputWidget, {
 			}	
 		}
 	},
-	afterKeyDown_: function (evt, simulated) {//must eat the event, otherwise cause delete key evt doesn't work correctly
+	afterKeyDown_: function (evt, simulated) { //must eat the event, otherwise cause delete key evt doesn't work correctly
+		var sheet = this.sheet;
+		if (sheet.state != zss.SSheetCtrl.EDITING) {
+			sheet._wgt.afterKeyDown_(evt);
+		}
+	},
+	_doCompositionStart: function (evt) {
+		var sheet = this.sheet;
+		if (sheet.state == zss.SSheetCtrl.FOCUSED) {
+			if (zk.webkit) {
+				this.prepareComposition = true;
+			}
+			sheet._enterEditing(evt);
+		}
+	},
+	_doCompositionEnd: function (evt) {
+		if (this.prepareComposition) {
+			this.prepareComposition = null;
+		}
 	},
 	doKeyUp_: function (evt) {
 		var sheet = this.sheet;
-		if (sheet && sheet.state == zss.SSheetCtrl.EDITING) {
+		if (!sheet) {
+			return;
+		}
+		if (sheet.state == zss.SSheetCtrl.EDITING) {
 			var	sheet = this.sheet,
 				formulabarEditor = sheet.formulabarEditor,
 				value = sheet.inlineEditor.getValue(),
@@ -879,6 +941,8 @@ zss.Editbox = zk.$extends(zul.inp.InputWidget, {
 			} else {
 				sheet.editingFormulaInfo = getEditingFormulaInfo(type, input, position);
 			}
+		} else {
+			sheet._wgt.doKeyUp_(evt);
 		}
 	},
 	/**
@@ -966,8 +1030,8 @@ zss.Editbox = zk.$extends(zul.inp.InputWidget, {
 			// 20140605: limit the editbox inside the sheet
 			'max-width': jq.px0(sheet.spcmp.clientWidth - l), 'max-height': jq.px0(sheet.spcmp.clientHeight - t),
 			'left': jq.px(l), 'top': jq.px(t), 'line-height': sheet.lineHeight});
-		if (!zk.ie || zk.ie >= 11)
-			$edit.css('display', 'block');
+		//if (!zk.ie || zk.ie >= 11)
+		//	$edit.css('display', 'block');
 		zcss.copyStyle(txtcmp, editorcmp, ["font-family","font-size","font-weight","font-style","color","text-decoration","text-align"],true);
 		zcss.copyStyle(cellcmp, editorcmp, ["background-color"], true);
 
@@ -977,21 +1041,32 @@ zss.Editbox = zk.$extends(zul.inp.InputWidget, {
 		//fun = function () {
 		//	placeCaretAtEnd(editorcmp);
 		//};
+		if (!noFocus) {
+			// ZSS-737: do not move caret's position when prepare composition
+			if (this.prepareComposition) {
+				$edit.focus();
+			} else {
+				setTimeout(function() {
+					$edit.focus();
+					placeCaretAtEnd(editorcmp);
+				}, 25);
+			}
+		}
 
 		// ZSS-683: zk.safari is not true on Chrome since ZK 7.0.1
 		//if (!zk.safari && !zk.chrome && (!zk.ie /*|| zk.ie >= 11*/)) fun();//safari must run after timeout
-		setTimeout(function(){
+		//setTimeout(function(){
 			//issue 228: ie focus event need after show
-			if (zk.ie /*&& zk.ie < 11*/) {
-				$edit.show();
-			}
-			if (!noFocus) {
-				$edit.focus();
-				placeCaretAtEnd(editorcmp);
-				//issue 230: IE cursor position is not at the text end when press F2
-				//if (zk.safari || zk.chrome || (zk.ie /*&& zk.ie < 11*/)) fun();
-			}
-		}, 25);	
+			//if (zk.ie /*&& zk.ie < 11*/) {
+			//	$edit.show();
+			//}
+			//if (!noFocus) {
+			//	$edit.focus();
+			//	placeCaretAtEnd(editorcmp);
+			//	issue 230: IE cursor position is not at the text end when press F2
+			//	if (zk.safari || zk.chrome || (zk.ie /*&& zk.ie < 11*/)) fun();
+			//}
+		//}, 25);
 		this.autoAdjust(true);
 	},
 	cancel: function () {
@@ -1012,12 +1087,18 @@ zss.Editbox = zk.$extends(zul.inp.InputWidget, {
 		}
 		this._editing = false;
 		this.disable(true);
-		jq(this.comp).text('').css('display', 'none');
+		jq(this.comp).text('').css({'left': '-10005px', 'top': '-10005px'});
 		jq(this.$n('info')).text('').css('display', 'none');
 		this.row = this.col = -1;
 		this.sheetId = null;
 		this.sheetName = null;
 		this.cellRef = null;
+		if (this.prepareComposition) {
+			this.prepareComposition = null;
+		}
+	},
+	select: function() {
+		selectText(this.comp);
 	},
 	getValue: function () {
 		return br2nl(this.comp);
