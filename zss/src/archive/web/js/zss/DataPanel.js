@@ -27,7 +27,10 @@ zss.DataPanel = zk.$extends(zk.Object, {
 		this.$supers(zss.DataPanel, '$init', []);
 		var wgt = this._wgt = sheet._wgt,
 			dataPanel = sheet.$n('dp'),
-			focus  = this.focustag = sheet.$n('fo');
+			//focus  = this.focustag = sheet.$n('fo');
+			// ZSS-737: now we focus on inline editor's directly.
+			// sheet.$n('fo') are only used when do paste
+			focus = this.focustag = sheet.inlineEditor.getInputNode();
 
 		this.id = dataPanel.id;
 		this.sheet = sheet;
@@ -610,8 +613,19 @@ zss.DataPanel = zk.$extends(zk.Object, {
 			}, 0);
 	},
 	selectFocustag: function () {
-		this.focustag.focus();
-		jq(this.focustag).select();
+		var inlineEditor = this.sheet.inlineEditor;
+		inlineEditor.getInputNode().focus();
+		//jq(this.focustag).select();
+		inlineEditor.select();
+	},
+	// ZSS-737: it's used for pasting from clipboard as plain text.
+	getInputNode: function () {
+		return this.sheet.$n('fo');
+	},
+	selectInputNode: function () {
+		var inputNode = this.getInputNode();
+		inputNode.focus();
+		inputNode.select();
 	},
 	/* process focus lost */
 	_doFocusLost: function() {
