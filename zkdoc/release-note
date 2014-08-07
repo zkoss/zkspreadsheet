@@ -15,6 +15,7 @@ ZK Spreadsheet 3.5.1
   ZSS-739 IllegalStateException when testing with collaboration editing test case
   ZSS-740 IndexOutOfBoundsException when testing with collaboration editing test
   ZSS-737 Can't type Chinese/Korean character correctly
+  ZSS-744 Click toolbar button when inline editing does not stop editing in IE
   
 ** Upgrade Notes
   * Following api are deprecated
