@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+744-toolbarbutton-stopedit.zul
+
+	Purpose:
+		
+	Description:
+		
+	History:
+		Thu, Aug 07, 2014 10:26:42 AM, Created by RaymondChao
+
+Copyright (C) 2014 Potix Corporation. All Rights Reserved.
+
+-->
+<window>
+	<label multiline="true">
+		1. Focus A1 and type "AAA" in IE.
+		2. Click "bold" toolbar button.
+		3. Text in A1 should stop editing and update font weight to bold.
+	</label>
+	<spreadsheet showToolbar="true" src="/book/blank.xlsx" height="500px" width="800px">
+	</spreadsheet>
+</window>

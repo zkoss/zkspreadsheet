@@ -28,6 +28,10 @@ var AU = {au: true},
 				if (this._pp) {//fake spreadsheet focus
 					wgt.focus(false);
 				} else if (sheet) {
+					// ZSS-744: spreadsheet still has focus in IE when mouse down, need to force it to stop editing.
+					if (zk.ie) {
+						sheet.dp.stopEditing('refocus');
+					}
 					sheet._doMousedown(evt);
 				}
 			}
