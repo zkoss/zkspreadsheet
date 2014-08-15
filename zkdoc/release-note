@@ -16,6 +16,7 @@ ZK Spreadsheet 3.5.1
   ZSS-740 IndexOutOfBoundsException when testing with collaboration editing test
   ZSS-737 Can't type Chinese/Korean character correctly
   ZSS-744 Click toolbar button when inline editing does not stop editing in IE
+  ZSS-746 Excel complains Security Alert - Office File Validation on exported xls file
   
 ** Upgrade Notes
   * Following api are deprecated

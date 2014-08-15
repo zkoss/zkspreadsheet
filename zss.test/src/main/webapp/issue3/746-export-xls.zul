@@ -1,0 +1,21 @@
+<zk>
+Since 3.5.0
+<label multiline="true">
+1. Press "Export" button and open the exported file.
+2. You shall not see any warning popup window.
+</label>
+	<button label="Export" onClick="export()" />
+	<spreadsheet id="ss" src="/book/746-export-xls.xls" vflex="1"  maxVisibleRows="150"
+		maxVisibleColumns="40" showToolbar="true" showSheetbar="true" showFormulabar="true" width="600px"/>
+	<zscript><![CDATA[
+       	import java.io.ByteArrayOutputStream;
+     	
+     	public void export() throws java.io.IOException {
+     		Book wb = ss.getBook();
+     	    Exporter c = Exporters.getExporter("xls");
+     	    ByteArrayOutputStream out = new ByteArrayOutputStream();
+     	    c.export(wb, out);
+     	    Filedownload.save(out.toByteArray(), "application/file", wb.getBookName());
+     	}
+	]]></zscript>
+</zk>
