@@ -289,8 +289,18 @@ public class CellFormatHelper {
 		if (italic)
 			sb.append("font-style:").append("italic;");
 
-		final int fontSize = font.getHeightPoints();
+		//ZSS-748
+		int fontSize = font.getHeightPoints();
+		if (font.getTypeOffset() != SFont.TypeOffset.NONE) {
+			fontSize = (int) (0.7 * fontSize + 0.5) ;
+		}
 		sb.append("font-size:").append(fontSize).append("pt;");
+		
+		//ZSS-748
+		if (font.getTypeOffset() == SFont.TypeOffset.SUPER)
+			sb.append("vertical-align:").append("super;");
+		else if (font.getTypeOffset() == SFont.TypeOffset.SUB)
+			sb.append("vertical-align:").append("sub;");
 		return sb.toString();
 	}
 
@@ -499,10 +509,18 @@ public class CellFormatHelper {
 		final boolean italic = font.isItalic();
 		if (italic)
 			sb.append("font-style:").append("italic;");
-
 		
-		final int fontSize = font.getHeightPoints();
+		//ZSS-748
+		int fontSize = font.getHeightPoints();
+		if (font.getTypeOffset() != SFont.TypeOffset.NONE) {
+			fontSize = (int) (0.7 * fontSize + 0.5);
+		}
 		sb.append("font-size:").append(fontSize).append("pt;");
+		//ZSS-748
+		if (font.getTypeOffset() == SFont.TypeOffset.SUPER)
+			sb.append("vertical-align:").append("super;");
+		else if (font.getTypeOffset() == SFont.TypeOffset.SUB)
+			sb.append("vertical-align:").append("sub;");
 		return sb.toString();
 	}
 	

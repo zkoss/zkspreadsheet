@@ -472,4 +472,36 @@ public class StyleUtil {
 		}
 		holder.setCellStyle(style);
 	}
+
+	//ZSS-748
+	public static void setFontTypeOffset(SBook book,CellStyleHolder holder, SFont.TypeOffset offset){
+		final SCellStyle orgStyle = holder.getCellStyle();
+		SFont orgFont = orgStyle.getFont();
+		
+		final SFont.TypeOffset orgOffset = orgFont.getTypeOffset();
+		if (orgOffset.equals(offset)) { //no change, skip
+			return;
+		}
+		
+		FontMatcher fontmatcher = new FontMatcher(orgFont);
+		fontmatcher.setTypeOffset(offset);
+		
+		SFont font = book.searchFont(fontmatcher);
+		
+		SCellStyle style = null;
+		if(font!=null){//search it since we have existed font
+			CellStyleMatcher matcher = new CellStyleMatcher(orgStyle);
+			matcher.setFont(font);
+			style = book.searchCellStyle(matcher);
+		}else{
+			font = book.createFont(orgFont,true);
+			font.setTypeOffset(offset);
+		}
+		
+		if(style==null){
+			style = cloneCellStyle(book,orgStyle);
+			style.setFont(font);
+		}
+		holder.setCellStyle(style);
+	}
 }

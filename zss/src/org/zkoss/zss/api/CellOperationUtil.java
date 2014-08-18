@@ -30,6 +30,7 @@ import org.zkoss.zss.api.model.CellStyle.VerticalAlignment;
 import org.zkoss.zss.api.model.Color;
 import org.zkoss.zss.api.model.Font.Boldweight;
 import org.zkoss.zss.api.model.Font.Underline;
+import org.zkoss.zss.api.model.Font.TypeOffset;
 import org.zkoss.zss.api.model.Hyperlink.HyperlinkType;
 import org.zkoss.zss.api.model.impl.EnumUtil;
 import org.zkoss.zss.model.SSheet;
@@ -802,5 +803,30 @@ public class CellOperationUtil {
 	 */
 	public static void setColumnWidth(Range range, int widthPx) {
 		range.setColumnWidth(widthPx);
+	}
+
+
+	//ZSS-748
+	public static CellStyleApplier getFontTypeOffsetApplier(final TypeOffset offset) {
+		return new CellStyleApplierEx() {
+			public void apply(Range range) {
+				//ZSS 464, efficient implement
+				SSheet sheet = range.getSheet().getInternalSheet();
+				StyleUtil.setFontTypeOffset(sheet.getBook(),sheet.getCell(range.getRow(),range.getColumn()),EnumUtil.toFontTypeOffset(offset));
+			}
+			@Override
+			public void applyWhole(Range wholeRange) {
+				WholeStyleUtil.setFontTypeOffset(wholeRange.getInternalRange(), EnumUtil.toFontTypeOffset(offset));
+			}
+		};
+	}
+	
+	/**
+	 * Apply font typeOffset to cells in the range
+	 * @param range the range to be applied
+	 * @param offset font type offset (super, sub)
+	 */
+	public static void applyFontTypeOffset(Range range,final TypeOffset offset) {
+		applyCellStyle(range, getFontTypeOffsetApplier(offset));
 	}
 }

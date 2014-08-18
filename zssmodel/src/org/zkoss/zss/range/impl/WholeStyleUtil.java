@@ -214,4 +214,14 @@ public class WholeStyleUtil {
 				StyleUtil.setFontColor(wholeRange.getSheet().getBook(), holder, htmlColor);
 			}});
 	}	
+
+	//ZSS-748
+	public static void setFontTypeOffset(final SRange wholeRange,
+			final org.zkoss.zss.model.SFont.TypeOffset fontTypeOffset) {
+		setWholeStyle(wholeRange,new StyleApplyer(){
+			@Override
+			public void applyStyle(CellStyleHolder holder) {
+				StyleUtil.setFontTypeOffset(wholeRange.getSheet().getBook(), holder, fontTypeOffset);
+			}});
+	}
 }
