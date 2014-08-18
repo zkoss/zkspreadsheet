@@ -1066,6 +1066,25 @@ zss.Menupopup = zk.$extends(zul.menu.Menupopup, {
 		},wgt);
 	}
 	
+	function newRichTextEditActionMenuitem(wgt, action) {
+		return new zss.Menuitem({
+			$action: action,
+			label: msgzss.action[action],
+			onClick: function () {
+				var sheet = wgt.sheetCtrl;
+				if (sheet) {
+					var s = sheet.getLastSelection(),
+						tRow = s.top,
+						lCol = s.left,
+						bRow = s.bottom,
+						rCol = s.right;
+					sheet.triggerSelection(tRow, lCol, bRow, rCol);
+					wgt.fireToolbarAction(action, {tRow: tRow, lCol: lCol, bRow: bRow, rCol: rCol});
+				}
+			}
+		}, wgt);
+	}
+	
 	function newBorderActionMenuitem(wgt, colorWidget, action, image) {
 		return new zss.Menuitem({
 			$action: action,
@@ -1540,6 +1559,7 @@ zss.MenupopupFactory = zk.$extends(zk.Object, {
 		
 		p.appendChild(newActionMenuitem(wgt, 'formatCell'));
 		p.appendChild(newActionMenuitem(wgt, 'hyperlink'));
+		p.appendChild(newActionMenuitem(wgt, 'richTextEdit'));
 		return p;
 	},
 	style: function () {

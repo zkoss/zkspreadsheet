@@ -43,7 +43,6 @@ import org.zkoss.zss.api.model.Picture;
 import org.zkoss.zss.api.model.Picture.Format;
 import org.zkoss.zss.api.model.Color;
 import org.zkoss.zss.api.model.Font;
-import org.zkoss.zss.api.model.RichText;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.api.model.SheetProtection;
 import org.zkoss.zss.api.model.Validation;
@@ -793,8 +792,8 @@ public class RangeImpl implements Range{
 	}
 
 	@Override
-	public void setRichText(RichText txt) {
-		_range.setRichText(((org.zkoss.zss.api.model.impl.RichTextImpl)txt).getNative());
+	public void setRichText(String html) {
+		_range.setRichText(html);
 	}
 
 	@Override

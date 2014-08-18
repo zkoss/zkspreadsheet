@@ -499,7 +499,7 @@ import org.zkoss.zss.range.*;
 	}
 
 	@Override
-	public void setRichText(SRichText txt) {
+	public void setRichText(String html) {
 		// do nothing
 	}
 

@@ -199,6 +199,7 @@ Copyright (C) 2012 Potix Corporation. All Rights Reserved.
 				if (upStyle) {
 					var sId = v.s,
 						isId = v.is,
+						osId = v.os,
 						wrap = v.wp,
 						rbo = v.rb,
 						lock = v.l,
@@ -207,6 +208,7 @@ Copyright (C) 2012 Potix Corporation. All Rights Reserved.
 						fontSize = v.fs;
 					this.style = sId != undefined ? styles[sId] : '';
 					this.innerStyle = isId != undefined ? styles[isId] : '';
+					this.fontStyle = osId != undefined ? styles[osId] : '';
 					this.wrap = wrap != undefined;
 					//bug ZSS-56: Unlock a cell, protect sheet, cannot double click to edit the cell
 					this.lock = lock != undefined ? lock != 'f' : true;

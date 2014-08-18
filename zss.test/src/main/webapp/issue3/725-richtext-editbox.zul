@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+725-richtext-editbox.zul
+
+	Purpose:
+		
+	Description:
+		
+	History:
+		Mon, Aug 18, 2014 11:59:03 AM, Created by RaymondChao
+
+Copyright (C) 2014 Potix Corporation. All Rights Reserved.
+
+-->
+<zk>
+	<label multiline="true">
+		1. Open context menu and click "Rich Text Edit"
+		2. It provides a richtext editor for inline cell styles
+	</label>
+	<spreadsheet id="ss" src="/book/725-richtext-editbox.xlsx" vflex="1"  maxVisibleRows="150" showContextMenu="true"
+		maxVisibleColumns="40" showToolbar="true" showSheetbar="true" showFormulabar="true" width="600px"/>
+</zk>

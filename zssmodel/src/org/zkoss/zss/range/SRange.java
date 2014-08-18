@@ -178,7 +178,7 @@ public interface SRange {
 	 * Set rich text into the left top cell of this range. 
 	 * @since 3.5.1
 	 */
-	public void setRichText(SRichText txt);
+	public void setRichText(String html);
 	
 	/**
 	 * Return the edit text of this Range.

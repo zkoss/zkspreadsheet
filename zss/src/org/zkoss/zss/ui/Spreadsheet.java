@@ -3314,6 +3314,12 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 					int idx = styleAggregation.add(innerStyle);
 					attrs.put("is", idx);
 				}
+				// ZSS-725
+				String fontStyle = cfh.getFontHtmlStyle();
+				if (!Strings.isEmpty(fontStyle)) {
+					int idx = styleAggregation.add(fontStyle);
+					attrs.put("os", idx);
+				}
 				if (cfh.hasRightBorder()) {
 					attrs.put("rb", 1); 
 				}

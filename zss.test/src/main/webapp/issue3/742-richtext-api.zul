@@ -21,7 +21,8 @@ Since 3.5.0
        		CellOperationUtil.applyFontName(range, "Century Gothic");
        		CellOperationUtil.applyFontHeightPoints(range, 10);
        		
-     		Book wb = ss.getBook();
+      		/*
+      		Book wb = ss.getBook();
      		Font font = range.getCellStyle().getFont();
      		Color redColor = range.getCellStyleHelper().createColorFromHtmlColor("#FF0000"); 
      		Font fontRed = range.getOrCreateFont(
@@ -47,6 +48,12 @@ Since 3.5.0
        		txt.addSegment("colored text\n", fontRed);
        		txt.addSegment("(background colored)", font);
        		range.setRichText(txt);
+       		*/
+       		String html = "RTF within data cell<br/>e.g.<br/>" + 
+       			"<span style=\"text-decoration: line-through;\">strike-through text,</span>" +
+       			"<b> bold text</b> and <span style=\"color: #FF0000\">colored text<br/></span>" +
+       			"(background colored)";
+       		range.setRichText(html);
        		range.setColumnWidth((int)(44.14*7+5));
        		range.setRowHeight((int)(54.0*96/72));
        	}
