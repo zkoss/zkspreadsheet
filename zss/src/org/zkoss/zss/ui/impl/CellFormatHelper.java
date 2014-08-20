@@ -325,6 +325,33 @@ public class CellFormatHelper {
 				break;
 			}
 			
+			//final SFont font = _cellStyle.getFont();
+			
+			//sb.append(BookHelper.getFontCSSStyle(_book, font));
+			//sb.append(getFontCSSStyle(_cell, font));
+
+			//condition color
+			//final FormatResult ft = _formatEngine.format(_cell, new FormatContext(ZssContext.getCurrent().getLocale()));
+			//final boolean isRichText = ft.isRichText();
+			//if (!isRichText) {
+			//	final SColor color = ft.getColor();
+			//	if(color!=null){
+			//		final String htmlColor = color.getHtmlColor();
+			//		sb.append("color:").append(htmlColor).append(";");
+			//	}
+			//}
+
+			return sb.toString();
+		}
+		return "";
+	}
+	
+	// ZSS-725: separate inner and font style to avoid the conflict between
+	// vertical alignment, subscript and superscript.
+	public String getFontHtmlStyle() {
+		if (!_cell.isNull()) {
+			
+			final StringBuffer sb = new StringBuffer();
 			final SFont font = _cellStyle.getFont();
 			
 			//sb.append(BookHelper.getFontCSSStyle(_book, font));
@@ -448,6 +475,50 @@ public class CellFormatHelper {
 		return text;
 	}
 	
+	// ZSS-725
+	static public String getRichTextEditCellHtml(SSheet sheet, int row,int column){
+		final SCell cell = sheet.getCell(row, column);
+		String text = "";
+		if (!cell.isNull()) {
+			boolean wrap = cell.getCellStyle().isWrapText();
+			
+			final FormatResult ft = EngineFactory.getInstance().createFormatEngine().format(cell, new FormatContext(ZssContext.getCurrent().getLocale()));
+			if (ft.isRichText()) {
+				final SRichText rstr = ft.getRichText();
+				final SHyperlink hlink = cell.getHyperlink();
+				StringBuilder sb = new StringBuilder();
+				for(Segment seg: rstr.getSegments()) {
+					sb.append(getFontTextHtml(escapeText(seg.getText(), wrap, true), seg.getFont()));
+				}
+				
+				if (hlink == null) {
+					text = sb.toString();
+				} else {
+					text = getHyperlinkHtml(sb.toString(), hlink);						
+				}
+			} else {
+				text = escapeText(ft.getText(), wrap, true);
+				final SHyperlink hlink = cell.getHyperlink();
+				if (hlink != null) {
+					text = getHyperlinkHtml(text, hlink);
+				}
+				text = getFontTextHtml(text, cell.getCellStyle().getFont());
+			}
+		}
+		return text;
+	}
+	
+	// ZSS-725
+	static private String getFontTextHtml(String text, SFont font) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("<span style=\"")
+			.append(getFontCSSStyle(font, false))
+			.append("\">");
+		sb.append(text);
+		sb.append("</span>");
+		return sb.toString();
+	}
+	
 	private static String getHyperlinkHtml(String label, SHyperlink link) {
 		String addr = escapeText(link.getAddress()==null?"":link.getAddress(), false, false); //TODO escape something?
 		if (label == null) {
@@ -478,6 +549,11 @@ public class CellFormatHelper {
 	}
 	
 	private static String getFontCSSStyle(SFont font) {
+		return getFontCSSStyle(font, true);
+	}
+	
+	//ZSS-725
+	private static String getFontCSSStyle(SFont font, boolean resizeScript) {
 		final StringBuffer sb = new StringBuffer();
 		
 		String fontName = font.getName();
@@ -511,8 +587,9 @@ public class CellFormatHelper {
 			sb.append("font-style:").append("italic;");
 		
 		//ZSS-748
+		//ZSS-725
 		int fontSize = font.getHeightPoints();
-		if (font.getTypeOffset() != SFont.TypeOffset.NONE) {
+		if (resizeScript && font.getTypeOffset() != SFont.TypeOffset.NONE) {
 			fontSize = (int) (0.7 * fontSize + 0.5);
 		}
 		sb.append("font-size:").append(fontSize).append("pt;");

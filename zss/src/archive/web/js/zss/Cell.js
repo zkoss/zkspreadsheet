@@ -170,6 +170,7 @@ zss.Cell = zk.$extends(zk.Widget, {
 		
 		this.style = cellData.style;
 		this.innerStyle = cellData.innerStyle;
+		this.fontStyle = cellData.fontStyle;
 	},
 	getVerticalAlign: function () {
 		switch (this.valign) {
@@ -214,11 +215,13 @@ zss.Cell = zk.$extends(zk.Widget, {
 		return jq(this.getTextNode()).css('font-style') == 'italic';
 	},
 	isFontUnderline: function () {
-		var s = jq(this.$n('cave')).css('text-decoration');
+		// ZSS-725
+		var s = jq(this.$n('real')).css('text-decoration');
 		return s && s.indexOf('underline') >= 0;
 	},
 	isFontStrikeout: function () {
-		var s = jq(this.$n('cave')).css('text-decoration');
+		// ZSS-725
+		var s = jq(this.$n('real')).css('text-decoration');
 		return s && s.indexOf('line-through') >= 0;
 	},
 	doClick_: function (evt) {
@@ -262,6 +265,7 @@ zss.Cell = zk.$extends(zk.Widget, {
 			format = data.formatText,
 			st = this.style = data.style,
 			ist = this.innerStyle = data.innerStyle,
+			fst = this.fontStyle = data.fontStyle,
 			n = this.comp,
 			overflow = data.overflow,
 			cellType = data.cellType,
@@ -269,7 +273,8 @@ zss.Cell = zk.$extends(zk.Widget, {
 			txtChd = txt != this.text,
 			cave = this.$n('cave'),
 			prevWidth = cave.style.width,
-			fontSize = data.fontSize;
+			fontSize = data.fontSize,
+			real = this.$n('real');
 		var wrapChanged = this.wrap != data.wrap;
 		var fontSizeChanged = false;
 		if (fontSize != undefined) {
@@ -281,6 +286,7 @@ zss.Cell = zk.$extends(zk.Widget, {
 		if (prevWidth && (zk.ie6_ || zk.ie7_)) {//IE6/IE7 set overflow width at cave
 			cave.style.width = prevWidth;
 		}
+		real.style.cssText = fst;
 		
 		this.lock = data.lock;
 		this.wrap = data.wrap;
@@ -438,13 +444,15 @@ zss.Cell = zk.$extends(zk.Widget, {
 		var	uid = this.uuid,
 			text = this.text,
 			style = this.domStyle_(),
-			innerStyle = this.innerStyle;
-		
+			innerStyle = this.innerStyle,
+			fontStyle = this.fontStyle;
 		//IE6/IE7: vertical align need position:absolute;
 		return '<div id="' + uid + '" class="' + this.getZclass() + '" zs.t="SCell" '
 			+ (style ? 'style="' +  style + '"' : '') + '><div id="' + uid + '-cave" class="' +
 			this._getInnerClass() + '" ' + (innerStyle ? 'style="' + innerStyle + '"' : '') + 
-			'>' + '<div id="' + uid + '-real" class="zscelltxt-real '+(this.wrap?WRAP_TEXT_CLASS:'')+'">' + text + '</div>' + '</div></div>';
+			'>' + '<div id="' + uid + '-real" class="zscelltxt-real '+(this.wrap?WRAP_TEXT_CLASS:'') + '"' +
+			// ZSS-725
+			(fontStyle ? ' style="' + fontStyle + '"' : '') + '>' + text + '</div>' + '</div></div>';
 	},
 	getZIndex: function () {
 		if (zk.ie6_ || zk.ie7_)

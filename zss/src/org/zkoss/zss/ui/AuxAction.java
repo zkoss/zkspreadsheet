@@ -117,6 +117,7 @@ public enum AuxAction {
 	 DOUGHNUT_CHART("doughnutChart"),
 	 HYPERLINK("hyperlink"),
 	 INSERT_FUNCTION("insertFunction"),
+	 RICH_TEXT_EDIT("richTextEdit"),
 	 
 	 
 	 /* following are fold item only, doesn't send auxevent to server*/

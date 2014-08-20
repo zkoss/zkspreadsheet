@@ -1,0 +1,188 @@
+/* RichTextHelper.java
+
+	Purpose:
+		
+	Description:
+		
+	History:
+		Thu, Aug 14, 2014  2:13:06 PM, Created by RaymondChao
+
+Copyright (C) 2014 Potix Corporation. All Rights Reserved.
+
+*/
+package org.zkoss.zss.model.util;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Stack;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Element;
+import org.jsoup.nodes.Node;
+import org.jsoup.nodes.TextNode;
+import org.zkoss.util.Maps;
+import org.zkoss.zss.model.SFont;
+import org.zkoss.zss.model.SFont.Boldweight;
+import org.zkoss.zss.model.SFont.TypeOffset;
+import org.zkoss.zss.model.SFont.Underline;
+import org.zkoss.zss.model.SRichText;
+import org.zkoss.zss.model.impl.RichTextImpl;
+import org.zkoss.zss.range.SRange;
+
+/**
+ * 
+ * @author RaymondChao
+ * @since 3.5.1
+ */
+public class RichTextHelper {
+	private static final String NEW_LINE = "\u4a3a\u0000\u9f98";
+	private static final Pattern rgbPattern = 
+			Pattern.compile("rgb *\\( *([0-9]+), *([0-9]+), *([0-9]+) *\\)");
+	private SRange _range;
+	private Stack<SFont> _stack;
+	private SRichText _txt;
+	public RichTextHelper() {
+		
+	}
+	public SRichText parse(SRange range, String content) {
+		_range = range;
+		_stack = new Stack<SFont>();
+		_stack.push(range.getCellStyle().getFont());
+		_txt = new RichTextImpl();
+		// TODO no need to parse twice.
+		parseElement(Jsoup.parseBodyFragment(br2nl(content)).body());
+		return _txt;
+	}
+	
+	private void parseElement(Element element) {
+		SFont font = toFont(element);
+		_stack.push(font);
+		List<Node> nodes = element.childNodes();
+		for (Node node: nodes) {
+			if (node instanceof TextNode) {
+				TextNode textNode = (TextNode) node;
+				    // use NEW_LINE instead of new line to make sure it won't be treated as blank if
+					// TextNode only contains new line.
+				if (!textNode.isBlank()) {
+					_txt.addSegment(textNode.text().replaceAll(NEW_LINE, "\n"), font);
+				}
+			} else if (node instanceof Element) {
+				parseElement((Element) node);
+			}
+		}
+		_stack.pop();
+	}
+	
+	@SuppressWarnings("unchecked")
+	private SFont toFont(Element element) {
+		SFont fontBase = _stack.peek();
+		Boldweight boldweight = fontBase.getBoldweight();
+		String fontColor = fontBase.getColor().getHtmlColor();
+		int fontHeight = fontBase.getHeightPoints();
+		String fontName = fontBase.getName();
+		boolean isItalic = fontBase.isItalic();
+		boolean isStrikeout = fontBase.isStrikeout();
+		TypeOffset typeOffset = fontBase.getTypeOffset();
+		Underline underline = fontBase.getUnderline();
+		final Map<String, String> style = (Map<String, String>) Maps.parse(new HashMap<String, String>(),
+				element.attr("style").toLowerCase(), ':', ';', '"');
+		
+		if (style.containsKey("font-weight")) {
+			final String weight = style.get("font-weight");
+			if ("bold".equals(weight) || "700".equals(weight)) {
+				boldweight = Boldweight.BOLD;
+			} else {
+				boldweight = Boldweight.NORMAL;
+			}
+		}
+
+		if (style.containsKey("color")) {
+			final String color = style.get("color");
+			final Matcher rgbMatcher = rgbPattern.matcher(color);
+			if (rgbMatcher.matches()) {
+				fontColor = String.format("#%02x%02x%02x",
+					(byte) Integer.parseInt(rgbMatcher.group(1)),
+					(byte) Integer.parseInt(rgbMatcher.group(2)),
+					(byte) Integer.parseInt(rgbMatcher.group(3)));
+			} else if (color.startsWith("#")) {
+				fontColor = color; 
+			}
+		}
+		
+		if (style.containsKey("font-family")) {
+			fontName = style.get("font-family");
+		}
+		
+		if (style.containsKey("font-size")) {
+			final String size = style.get("font-size");
+			final int ptIndex = size.lastIndexOf("pt");
+			final int pxIndex = size.lastIndexOf("px");
+			if (ptIndex > 0) {
+				fontHeight = Integer.parseInt(size.substring(0, ptIndex));
+			} else if (pxIndex > 0) {
+				fontHeight = Integer.parseInt(size.substring(0, pxIndex)) * 72 / 96;
+			}
+		}
+		
+		if (style.containsKey("text-decoration")) {
+			final String decoration = style.get("text-decoration");
+			if (decoration.contains("underline")) {
+				underline = Underline.SINGLE;
+			}
+			if (decoration.contains("line-through")) {
+				isStrikeout = true;
+			} 
+			if (decoration.contains("none")) {
+				underline = Underline.NONE;
+				isStrikeout= false;
+			}
+		}
+		
+		if (style.containsKey("font-style")) {
+			final String fs = style.get("font-style");
+			if ("italic".equals(fs)) {
+				isItalic = true;
+			} else if ("normal".equals(fs)) {
+				isItalic = false;
+			}
+		}
+		
+		if ("b".equals(element.nodeName()) || "strong".equals(element.nodeName())) {
+			boldweight = Boldweight.BOLD;
+		} else if ("i".equals(element.nodeName()) || "em".equals(element.nodeName())) {
+			isItalic = true;
+		} else if ("u".equals(element.nodeName())) {
+			underline = Underline.SINGLE;
+		} else if ("sub".equals(element.nodeName())) {
+			typeOffset = TypeOffset.SUB;
+		} else if ("sup".equals(element.nodeName())) {
+			typeOffset = TypeOffset.SUPER;
+		}
+		
+		return _range.getOrCreateFont(
+			boldweight,
+			fontColor,
+			fontHeight,
+			fontName, 
+			isItalic,
+			isStrikeout,
+			typeOffset,
+			underline
+		);
+	}
+	private static String br2nl(String html) {
+		String text = html.replaceAll("\n", NEW_LINE);
+		Element body = Jsoup.parseBodyFragment(text).body();
+		if (body.childNodeSize() == 1 && body.childNode(0) instanceof TextNode) {
+			return text;
+		}
+		body.select("div").prepend(NEW_LINE);
+		body.select("br").append(NEW_LINE); 
+		body.select("p").append(NEW_LINE);
+		return body.html();
+	}
+}
+

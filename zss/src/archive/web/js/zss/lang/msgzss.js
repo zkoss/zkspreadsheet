@@ -134,5 +134,6 @@ msgzss.action = {
 	mathAndTrig: 'Math & Trig',
 	moreFunction: 'More Functions',
 	protectSheet: 'Protect Sheet',
-	gridlines: 'Gridlines'
+	gridlines: 'Gridlines',
+	richTextEdit: 'Rich Text Edit'
 };

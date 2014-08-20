@@ -86,6 +86,7 @@ import org.zkoss.zss.model.sys.input.InputParseContext;
 import org.zkoss.zss.model.sys.input.InputResult;
 import org.zkoss.zss.model.util.FontMatcher;
 import org.zkoss.zss.model.util.ReadWriteTask;
+import org.zkoss.zss.model.util.RichTextHelper;
 import org.zkoss.zss.model.util.Validations;
 import org.zkoss.zss.range.SRange;
 import org.zkoss.zss.range.SRanges;
@@ -289,8 +290,8 @@ public class RangeImpl implements SRange {
 	}
 	
 	@Override
-	public void setRichText(SRichText text) {
-		setValue(text);
+	public void setRichText(String html) {
+		setValue(new RichTextHelper().parse(this, html));
 	}
 	
 	@Override
