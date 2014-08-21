@@ -20,6 +20,7 @@ ZK Spreadsheet 3.5.1
   ZSS-746 Excel complains Security Alert - Office File Validation on exported xls file
   ZSS-748 Cell text can not display as subscript or superscript with rich text format
   ZSS-753 Cannot undo setRichText()
+  ZSS-754 The method Range.setValidation() doesn't have annotation @since 3.5.0
   
 ** Upgrade Notes
   * Following api are deprecated

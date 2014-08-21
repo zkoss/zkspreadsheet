@@ -905,6 +905,7 @@ public interface Range {
 	 * @param errorMessage data validation error message.
 	 * 
 	 * @See {@link #getValidation()}
+	 * @since 3.5.0
 	 */
 	public void setValidation(
 			ValidationType validationType,
@@ -929,11 +930,13 @@ public interface Range {
 	 * of this range; return null if no associated validation.
 	 * 
 	 * @see #setValidation(ValidationType, boolean, OperatorType, boolean, String, String, boolean, String, String, boolean, AlertStyle, String, String)
+	 * @since 3.5.0
 	 */
 	public List<Validation> getValidations();
 	
 	/**
-	 * Delete the {@link Validation} associated in the specified range. 
+	 * Delete the {@link Validation} associated in the specified range.
+	 * @since 3.5.0 
 	 */
 	public void deleteValidation();
 
