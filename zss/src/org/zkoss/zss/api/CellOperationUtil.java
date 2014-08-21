@@ -16,6 +16,8 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.api;
 
+import java.util.List;
+
 import org.zkoss.zss.api.Range.ApplyBorderType;
 import org.zkoss.zss.api.Range.AutoFillType;
 import org.zkoss.zss.api.Range.DeleteShift;
@@ -32,10 +34,17 @@ import org.zkoss.zss.api.model.Font.Boldweight;
 import org.zkoss.zss.api.model.Font.Underline;
 import org.zkoss.zss.api.model.Font.TypeOffset;
 import org.zkoss.zss.api.model.Hyperlink.HyperlinkType;
+import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.api.model.impl.EnumUtil;
+import org.zkoss.zss.model.SCell;
+import org.zkoss.zss.model.SRichText.Segment;
 import org.zkoss.zss.model.SSheet;
+import org.zkoss.zss.model.impl.AbstractRichTextAdv;
+import org.zkoss.zss.model.impl.AbstractCellAdv;
 import org.zkoss.zss.range.impl.StyleUtil;
 import org.zkoss.zss.range.impl.WholeStyleUtil;
+import org.zkoss.zss.ui.impl.undo.CellRichTextAction;
+import org.zkoss.zss.ui.sys.UndoableAction;
 
 /**
  * The utility to help UI to deal with user's cell operation of a {@link Range}.
@@ -152,6 +161,15 @@ public class CellOperationUtil {
 	public static void applyFontName(Range range,final String fontName){
 		applyCellStyle(range, getFontNameApplier(fontName));
 	}
+	//ZSS-752
+	public static CellStyleApplier getRichTextFontNameApplier(final String fontName) {
+		return new CellStyleApplier() {
+			public void apply(Range range) {
+				SSheet sheet = range.getSheet().getInternalSheet();
+				StyleUtil.setRichTextFontName(sheet.getBook(),sheet.getCell(range.getRow(),range.getColumn()),fontName);
+			}
+		};
+	}
 	
 	/**
 	 * @deprecated use {@link #applyFontHeightPoints(Range, int)}
@@ -210,6 +228,15 @@ public class CellOperationUtil {
 			}
 		};
 	}
+	//ZSS-752
+	public static CellStyleApplier getRichTextFontHeightPointsApplier(final int heightPoints) {
+		return new CellStyleApplier() {
+			public void apply(Range range) {
+				SSheet sheet = range.getSheet().getInternalSheet();
+				StyleUtil.setRichTextFontHeightPoints(sheet.getBook(),sheet.getCell(range.getRow(),range.getColumn()),heightPoints);
+			}
+		};
+	}
 
 	public static CellStyleApplier getFontBoldweightApplier(final Boldweight boldweight) {
 		return  new CellStyleApplierEx() {
@@ -234,6 +261,15 @@ public class CellOperationUtil {
 	public static void applyFontBoldweight(Range range,final Boldweight boldweight) {
 		applyCellStyle(range,getFontBoldweightApplier(boldweight));
 	}
+	//ZSS-752
+	public static CellStyleApplier getRichTextFontBoldweightApplier(final Boldweight boldweight) {
+		return new CellStyleApplier() {
+			public void apply(Range range) {
+				SSheet sheet = range.getSheet().getInternalSheet();
+				StyleUtil.setRichTextFontBoldweight(sheet.getBook(),sheet.getCell(range.getRow(),range.getColumn()),EnumUtil.toFontBoldweight(boldweight));
+			}
+		};
+	}
 
 	public static CellStyleApplier getFontItalicApplier(final boolean italic) {
 		return new CellStyleApplierEx() {
@@ -255,6 +291,15 @@ public class CellOperationUtil {
 	 */
 	public static void applyFontItalic(Range range, final boolean italic) {
 		applyCellStyle(range, getFontItalicApplier(italic));
+	}
+	//ZSS-752
+	public static CellStyleApplier getRichTextFontItalicApplier(final boolean italic) {
+		return new CellStyleApplier() {
+			public void apply(Range range) {
+				SSheet sheet = range.getSheet().getInternalSheet();
+				StyleUtil.setRichTextFontItalic(sheet.getBook(),sheet.getCell(range.getRow(),range.getColumn()),italic);
+			}
+		};
 	}
 
 	
@@ -278,6 +323,15 @@ public class CellOperationUtil {
 	 */
 	public static void applyFontStrikeout(Range range, final boolean strikeout) {
 		applyCellStyle(range, getFontStrikeoutApplier(strikeout));
+	}
+	//ZSS-752
+	public static CellStyleApplier getRichTextFontStrikeoutApplier(final boolean strikeout) {
+		return new CellStyleApplier() {
+			public void apply(Range range) {
+				SSheet sheet = range.getSheet().getInternalSheet();
+				StyleUtil.setRichTextFontStrikeout(sheet.getBook(),sheet.getCell(range.getRow(),range.getColumn()),strikeout);
+			}
+		};
 	}
 	
 	
@@ -303,6 +357,15 @@ public class CellOperationUtil {
 	public static void applyFontUnderline(Range range,final Underline underline) {
 		applyCellStyle(range, getFontUnderlineApplier(underline));
 	}
+	//ZSS-752
+	public static CellStyleApplier getRichTextFontUnderlineApplier(final Underline underline) {
+		return new CellStyleApplier() {
+			public void apply(Range range) {
+				SSheet sheet = range.getSheet().getInternalSheet();
+				StyleUtil.setRichTextFontUnderline(sheet.getBook(),sheet.getCell(range.getRow(),range.getColumn()),EnumUtil.toFontUnderline(underline));
+			}
+		};
+	}
 	
 	public static CellStyleApplier getFontColorApplier(final Color color) {
 		return new CellStyleApplierEx() {
@@ -327,6 +390,15 @@ public class CellOperationUtil {
 	public static void applyFontColor(Range range, final String htmlColor) {
 		final Color color = range.getCellStyleHelper().createColorFromHtmlColor(htmlColor);
 		applyCellStyle(range, getFontColorApplier(color));
+	}
+	//ZSS-752
+	public static CellStyleApplier getRichTextFontColorApplier(final Color color) {
+		return new CellStyleApplier() {
+			public void apply(Range range) {
+				SSheet sheet = range.getSheet().getInternalSheet();
+				StyleUtil.setRichTextFontColor(sheet.getBook(),sheet.getCell(range.getRow(),range.getColumn()),color.getHtmlColor());
+			}
+		};
 	}
 	
 	@Deprecated
@@ -820,7 +892,6 @@ public class CellOperationUtil {
 			}
 		};
 	}
-	
 	/**
 	 * Apply font typeOffset to cells in the range
 	 * @param range the range to be applied
@@ -828,5 +899,14 @@ public class CellOperationUtil {
 	 */
 	public static void applyFontTypeOffset(Range range,final TypeOffset offset) {
 		applyCellStyle(range, getFontTypeOffsetApplier(offset));
+	}
+	//ZSS-752
+	public static CellStyleApplier getRichTextFontTypeOffsetApplier(final TypeOffset offset) {
+		return new CellStyleApplier() {
+			public void apply(Range range) {
+				SSheet sheet = range.getSheet().getInternalSheet();
+				StyleUtil.setRichTextFontTypeOffset(sheet.getBook(),sheet.getCell(range.getRow(),range.getColumn()),EnumUtil.toFontTypeOffset(offset));
+			}
+		};
 	}
 }

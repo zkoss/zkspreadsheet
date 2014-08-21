@@ -24,7 +24,10 @@ import org.zkoss.zss.model.SCellStyle;
 import org.zkoss.zss.model.CellStyleHolder;
 import org.zkoss.zss.model.SColor;
 import org.zkoss.zss.model.SFont;
+import org.zkoss.zss.model.SRichText;
 import org.zkoss.zss.model.SSheet;
+import org.zkoss.zss.model.impl.AbstractCellAdv;
+import org.zkoss.zss.model.impl.RichTextImpl;
 import org.zkoss.zss.model.util.CellStyleMatcher;
 import org.zkoss.zss.model.util.FontMatcher;
 /**
@@ -503,5 +506,301 @@ public class StyleUtil {
 			style.setFont(font);
 		}
 		holder.setCellStyle(style);
+	}
+	
+	//ZSS-752
+	public static boolean setRichTextFontTypeOffset(SBook book, SCell cell, SFont.TypeOffset offset) {
+		final Object value = ((AbstractCellAdv)cell).isRichTextValue() ? cell.getValue() : null;
+		if (!(value instanceof SRichText)) return false;
+		
+		final SRichText text = (SRichText) value;
+		SRichText newText = new RichTextImpl();
+		boolean modified = false;
+		for (SRichText.Segment seg : text.getSegments()) {
+			SFont font = seg.getFont();
+			
+			final SFont.TypeOffset orgOffset = font.getTypeOffset();
+			if (!orgOffset.equals(offset)) { //changed, find the font
+				
+				// locate proper font
+				FontMatcher fontmatcher = new FontMatcher(font);
+				fontmatcher.setTypeOffset(offset);
+				
+				font = book.searchFont(fontmatcher);
+				if (font == null) {
+					font = book.createFont(font,true);
+					font.setTypeOffset(offset);
+				}
+				modified = true;
+			}
+			
+			newText.addSegment(seg.getText(), font);
+		}
+		
+		if (modified) {
+			cell.setValue(newText);
+			return true;
+		}
+		
+		return false;
+	}
+	
+	//ZSS-752
+	public static boolean setRichTextFontBoldweight(SBook book, SCell cell, SFont.Boldweight bold) {
+		final Object value = ((AbstractCellAdv)cell).isRichTextValue() ? cell.getValue() : null;
+		if (!(value instanceof SRichText)) return false;
+		
+		final SRichText text = (SRichText) value;
+		SRichText newText = new RichTextImpl();
+		boolean modified = false;
+		for (SRichText.Segment seg : text.getSegments()) {
+			SFont font = seg.getFont();
+			
+			final SFont.Boldweight orgBold = font.getBoldweight();
+			if (!orgBold.equals(bold)) { //changed, find the font
+				
+				// locate proper font
+				FontMatcher fontmatcher = new FontMatcher(font);
+				fontmatcher.setBoldweight(bold);
+				
+				font = book.searchFont(fontmatcher);
+				if (font == null) {
+					font = book.createFont(font,true);
+					font.setBoldweight(bold);
+				}
+				modified = true;
+			}
+			
+			newText.addSegment(seg.getText(), font);
+		}
+		
+		if (modified) {
+			cell.setValue(newText);
+			return true;
+		}
+		
+		return false;
+	}
+	
+	//ZSS-752
+	public static boolean setRichTextFontItalic(SBook book, SCell cell, boolean italic) {
+		final Object value = ((AbstractCellAdv)cell).isRichTextValue() ? cell.getValue() : null;
+		if (!(value instanceof SRichText)) return false;
+		
+		final SRichText text = (SRichText) value;
+		SRichText newText = new RichTextImpl();
+		boolean modified = false;
+		for (SRichText.Segment seg : text.getSegments()) {
+			SFont font = seg.getFont();
+			
+			final boolean orgItalic = font.isItalic();
+			if (orgItalic != italic) { //changed find the font
+
+				// locate proper font
+				FontMatcher fontmatcher = new FontMatcher(font);
+				fontmatcher.setItalic(italic);
+				
+				font = book.searchFont(fontmatcher);
+				if (font == null) {
+					font = book.createFont(font,true);
+					font.setItalic(italic);
+				}
+				modified = true;
+			}
+			
+			newText.addSegment(seg.getText(), font);
+		}
+		
+		if (modified) {
+			cell.setValue(newText);
+			return true;
+		}
+		
+		return false;
+	}
+
+	//ZSS-752
+	public static boolean setRichTextFontUnderline(SBook book, SCell cell, SFont.Underline underline) {
+		final Object value = ((AbstractCellAdv)cell).isRichTextValue() ? cell.getValue() : null;
+		if (!(value instanceof SRichText)) return false;
+		
+		final SRichText text = (SRichText) value;
+		SRichText newText = new RichTextImpl();
+		boolean modified = false;
+		for (SRichText.Segment seg : text.getSegments()) {
+			SFont font = seg.getFont();
+			
+			final SFont.Underline orgUnderline = font.getUnderline();
+			if (!orgUnderline.equals(underline)) { //changed, find the font
+
+				// locate proper font
+				FontMatcher fontmatcher = new FontMatcher(font);
+				fontmatcher.setUnderline(underline);
+				
+				font = book.searchFont(fontmatcher);
+				if (font == null) {
+					font = book.createFont(font,true);
+					font.setUnderline(underline);
+				}
+				modified = true;
+			}
+				
+			newText.addSegment(seg.getText(), font);
+		}
+		
+		if (modified) {
+			cell.setValue(newText);
+			return true;
+		}
+		
+		return false;
+	}
+
+	//ZSS-752
+	public static boolean setRichTextFontName(SBook book, SCell cell, String name) {
+		final Object value = ((AbstractCellAdv)cell).isRichTextValue() ? cell.getValue() : null;
+		if (!(value instanceof SRichText)) return false;
+		
+		final SRichText text = (SRichText) value;
+		SRichText newText = new RichTextImpl();
+		boolean modified = false;
+		for (SRichText.Segment seg : text.getSegments()) {
+			SFont font = seg.getFont();
+			
+			final String orgName = font.getName();
+			if (!orgName.equals(name)) { //changed, find the font
+
+				// locate proper font
+				FontMatcher fontmatcher = new FontMatcher(font);
+				fontmatcher.setName(name);
+				
+				font = book.searchFont(fontmatcher);
+				if (font == null) {
+					font = book.createFont(font,true);
+					font.setName(name);
+				}
+				modified = true;
+			}
+			
+			newText.addSegment(seg.getText(), font);
+		}
+		
+		if (modified) {
+			cell.setValue(newText);
+			return true;
+		}
+		
+		return false;
+	}
+
+	//ZSS-752
+	public static boolean setRichTextFontHeightPoints(SBook book, SCell cell, int heightPoints) {
+		final Object value = ((AbstractCellAdv)cell).isRichTextValue() ? cell.getValue() : null;
+		if (!(value instanceof SRichText)) return false;
+		
+		final SRichText text = (SRichText) value;
+		SRichText newText = new RichTextImpl();
+		boolean modified = false;
+		for (SRichText.Segment seg : text.getSegments()) {
+			SFont font = seg.getFont();
+			
+			final int orgHeightPoints = font.getHeightPoints();
+			if (orgHeightPoints != heightPoints) { //changed, find the font
+
+				// locate proper font
+				FontMatcher fontmatcher = new FontMatcher(font);
+				fontmatcher.setHeightPoints(heightPoints);
+				
+				font = book.searchFont(fontmatcher);
+				if (font == null) {
+					font = book.createFont(font,true);
+					font.setHeightPoints(heightPoints);
+				}
+				modified = true;
+			}
+			
+			newText.addSegment(seg.getText(), font);
+		}
+		
+		if (modified) {
+			cell.setValue(newText);
+			return true;
+		}
+		
+		return false;
+	}
+
+	//ZSS-752
+	public static boolean setRichTextFontStrikeout(SBook book, SCell cell, boolean strike) {
+		final Object value = ((AbstractCellAdv)cell).isRichTextValue() ? cell.getValue() : null;
+		if (!(value instanceof SRichText)) return false;
+		
+		final SRichText text = (SRichText) value;
+		SRichText newText = new RichTextImpl();
+		boolean modified = false;
+		for (SRichText.Segment seg : text.getSegments()) {
+			SFont font = seg.getFont();
+			
+			final boolean orgStrike = font.isStrikeout();
+			if (orgStrike != strike) { //change, find the font
+
+				// locate proper font
+				FontMatcher fontmatcher = new FontMatcher(font);
+				fontmatcher.setStrikeout(strike);
+				
+				font = book.searchFont(fontmatcher);
+				if (font == null) {
+					font = book.createFont(font,true);
+					font.setStrikeout(strike);
+				}
+				modified = true;
+			}
+			
+			newText.addSegment(seg.getText(), font);
+		}
+		
+		if (modified) {
+			cell.setValue(newText);
+			return true;
+		}
+		
+		return false;
+	}
+
+	//ZSS-752
+	public static boolean setRichTextFontColor(SBook book, SCell cell, String htmlColor) {
+		final Object value = ((AbstractCellAdv)cell).isRichTextValue() ? cell.getValue() : null;
+		if (!(value instanceof SRichText)) return false;
+		
+		final SColor newColor = book.createColor(htmlColor);
+		final SRichText text = (SRichText) value;
+		SRichText newText = new RichTextImpl();
+		boolean modified = false;
+		for (SRichText.Segment seg : text.getSegments()) {
+			SFont font = seg.getFont();
+			
+			final SColor orgColor = font.getColor();
+			if (orgColor != newColor && (orgColor == null || !orgColor.equals(newColor))) { //changed, find the font
+				// locate proper font
+				FontMatcher fontmatcher = new FontMatcher(font);
+				fontmatcher.setColor(htmlColor);
+				
+				font = book.searchFont(fontmatcher);
+				if (font == null) {
+					font = book.createFont(font,true);
+					font.setColor(newColor);
+				}
+				modified = true;
+			}
+			
+			newText.addSegment(seg.getText(), font);
+		}
+		
+		if (modified) {
+			cell.setValue(newText);
+			return true;
+		}
+		
+		return false;
 	}
 }

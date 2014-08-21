@@ -16,6 +16,9 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.ui.impl.ua;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zss.api.CellOperationUtil;
 import org.zkoss.zss.api.Range;
@@ -24,7 +27,10 @@ import org.zkoss.zss.api.AreaRef;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.ui.CellSelectionType;
 import org.zkoss.zss.ui.UserActionContext;
+import org.zkoss.zss.ui.impl.ActionHelper;
+import org.zkoss.zss.ui.impl.undo.AggregatedAction;
 import org.zkoss.zss.ui.impl.undo.FontStyleAction;
+import org.zkoss.zss.ui.sys.UndoableAction;
 import org.zkoss.zss.ui.sys.UndoableActionManager;
 
 /**
@@ -60,9 +66,15 @@ public class FontFamilyHandler extends AbstractCellHandler {
 		selection = new AreaRef(range.getRow(),range.getColumn(),range.getLastRow(),range.getLastColumn());
 		
 		UndoableActionManager uam = ctx.getSpreadsheet().getUndoableActionManager();
-		uam.doAction(new FontStyleAction(Labels.getLabel("zss.undo.fontStyle"),sheet, selection.getRow(), selection.getColumn(), 
-			selection.getLastRow(), selection.getLastColumn(), 
-			CellOperationUtil.getFontNameApplier(name)));
+
+		List<UndoableAction> actions = new ArrayList<UndoableAction>();
+		actions.add(new FontStyleAction("", sheet, selection.getRow(), selection.getColumn(), 
+				selection.getLastRow(), selection.getLastColumn(), 
+				CellOperationUtil.getFontNameApplier(name)));
+		ActionHelper.collectRichTextStyleActions(range, CellOperationUtil.getRichTextFontNameApplier(name), actions);
+		AggregatedAction action = new AggregatedAction(Labels.getLabel("zss.undo.fontStyle"), actions.toArray(new UndoableAction[actions.size()]));
+		
+		uam.doAction(action);
 		return true;
 	}
 
