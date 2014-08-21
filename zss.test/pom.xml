@@ -49,11 +49,6 @@ We also merge lots of POI test cases from a previous project &quot;zsstest&quot;
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.zkoss.zss</groupId>
-			<artifactId>zssex</artifactId>
-			<version>${zss.version}</version>
-		</dependency>
-		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.11</version>
@@ -85,6 +80,11 @@ We also merge lots of POI test cases from a previous project &quot;zsstest&quot;
 			<artifactId>zkex</artifactId>
 			<version>${zk.version}</version>
 		</dependency>	
+		<dependency>
+			<groupId>org.zkoss.zss</groupId>
+			<artifactId>zssex</artifactId>
+			<version>${zss.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>org.zkoss.zss</groupId>
 			<artifactId>zsspdf</artifactId>

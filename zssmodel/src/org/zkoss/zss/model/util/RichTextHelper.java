@@ -26,7 +26,6 @@ import org.jsoup.nodes.TextNode;
 import org.zkoss.util.Maps;
 import org.zkoss.zss.model.SCell;
 import org.zkoss.zss.model.SFont;
-import org.zkoss.zss.model.SHyperlink;
 import org.zkoss.zss.model.SFont.Boldweight;
 import org.zkoss.zss.model.SFont.TypeOffset;
 import org.zkoss.zss.model.SFont.Underline;
@@ -127,16 +126,6 @@ public class RichTextHelper {
 			} else if (pxIndex > 0) {
 				fontHeight = Integer.parseInt(size.substring(0, pxIndex)) * 72 / 96;
 			}
-		}
-		
-		if (style.containsKey("text-decoration")) {
-			final String decoration = style.get("text-decoration");
-			if (decoration.contains("underline")) {
-				underline = Underline.SINGLE;
-			}
-			if (decoration.contains("line-through")) {
-				isStrikeout = true;
-			} 
 		}
 		
 		if (style.containsKey("font-style")) {
