@@ -486,24 +486,13 @@ public class CellFormatHelper {
 			final FormatResult ft = EngineFactory.getInstance().createFormatEngine().format(cell, new FormatContext(ZssContext.getCurrent().getLocale()));
 			if (ft.isRichText()) {
 				final SRichText rstr = ft.getRichText();
-				final SHyperlink hlink = cell.getHyperlink();
 				StringBuilder sb = new StringBuilder();
 				for(Segment seg: rstr.getSegments()) {
 					sb.append(RichTextHelper.getFontTextHtml(escapeText(seg.getText(), wrap, true), seg.getFont()));
 				}
-				
-				if (hlink == null) {
-					text = sb.toString();
-				} else {
-					text = getHyperlinkHtml(sb.toString(), hlink);						
-				}
+				text = sb.toString();
 			} else {
-				text = escapeText(ft.getText(), wrap, true);
-				final SHyperlink hlink = cell.getHyperlink();
-				if (hlink != null) {
-					text = getHyperlinkHtml(text, hlink);
-				}
-				text = RichTextHelper.getFontTextHtml(text, cell.getCellStyle().getFont());
+				text = RichTextHelper.getFontTextHtml(escapeText(ft.getText(), wrap, true), cell.getCellStyle().getFont());
 			}
 		}
 		return text;
