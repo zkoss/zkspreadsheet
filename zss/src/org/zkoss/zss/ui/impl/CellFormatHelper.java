@@ -40,6 +40,7 @@ import org.zkoss.zss.model.sys.EngineFactory;
 import org.zkoss.zss.model.sys.format.FormatContext;
 import org.zkoss.zss.model.sys.format.FormatEngine;
 import org.zkoss.zss.model.sys.format.FormatResult;
+import org.zkoss.zss.model.util.RichTextHelper;
 
 /**
  * @author Dennis.Chen
@@ -488,7 +489,7 @@ public class CellFormatHelper {
 				final SHyperlink hlink = cell.getHyperlink();
 				StringBuilder sb = new StringBuilder();
 				for(Segment seg: rstr.getSegments()) {
-					sb.append(getFontTextHtml(escapeText(seg.getText(), wrap, true), seg.getFont()));
+					sb.append(RichTextHelper.getFontTextHtml(escapeText(seg.getText(), wrap, true), seg.getFont()));
 				}
 				
 				if (hlink == null) {
@@ -502,21 +503,10 @@ public class CellFormatHelper {
 				if (hlink != null) {
 					text = getHyperlinkHtml(text, hlink);
 				}
-				text = getFontTextHtml(text, cell.getCellStyle().getFont());
+				text = RichTextHelper.getFontTextHtml(text, cell.getCellStyle().getFont());
 			}
 		}
 		return text;
-	}
-	
-	// ZSS-725
-	static private String getFontTextHtml(String text, SFont font) {
-		StringBuilder sb = new StringBuilder();
-		sb.append("<span style=\"")
-			.append(getFontCSSStyle(font, false))
-			.append("\">");
-		sb.append(text);
-		sb.append("</span>");
-		return sb.toString();
 	}
 	
 	private static String getHyperlinkHtml(String label, SHyperlink link) {
@@ -549,57 +539,9 @@ public class CellFormatHelper {
 	}
 	
 	private static String getFontCSSStyle(SFont font) {
-		return getFontCSSStyle(font, true);
+		return RichTextHelper.getFontCSSStyle(font, true);
 	}
 	
-	//ZSS-725
-	private static String getFontCSSStyle(SFont font, boolean resizeScript) {
-		final StringBuffer sb = new StringBuffer();
-		
-		String fontName = font.getName();
-		if (fontName != null) {
-			sb.append("font-family:").append(fontName).append(";");
-		}
-		
-		String textColor = font.getColor().getHtmlColor();
-		if (textColor != null) {
-			sb.append("color:").append(textColor).append(";");
-		}
-
-		final SFont.Underline fontUnderline = font.getUnderline(); 
-		final boolean strikeThrough = font.isStrikeout();
-		boolean isUnderline = fontUnderline == SFont.Underline.SINGLE || fontUnderline == SFont.Underline.SINGLE_ACCOUNTING;
-		if (strikeThrough || isUnderline) {
-			sb.append("text-decoration:");
-			if (strikeThrough)
-				sb.append(" line-through");
-			if (isUnderline)	
-				sb.append(" underline");
-			sb.append(";");
-		}
-
-		final SFont.Boldweight weight = font.getBoldweight();
-		
-		sb.append("font-weight:").append(weight==SFont.Boldweight.BOLD?"bold":"normal").append(";");
-		
-		final boolean italic = font.isItalic();
-		if (italic)
-			sb.append("font-style:").append("italic;");
-		
-		//ZSS-748
-		//ZSS-725
-		int fontSize = font.getHeightPoints();
-		if (resizeScript && font.getTypeOffset() != SFont.TypeOffset.NONE) {
-			fontSize = (int) (0.7 * fontSize + 0.5);
-		}
-		sb.append("font-size:").append(fontSize).append("pt;");
-		//ZSS-748
-		if (font.getTypeOffset() == SFont.TypeOffset.SUPER)
-			sb.append("vertical-align:").append("super;");
-		else if (font.getTypeOffset() == SFont.TypeOffset.SUB)
-			sb.append("vertical-align:").append("sub;");
-		return sb.toString();
-	}
 	
 	/**
 	 * Gets Cell text by given row and column
@@ -623,24 +565,6 @@ public class CellFormatHelper {
 	}
 	
 	private static String escapeText(String text, boolean wrap, boolean multiline) {
-		final StringBuffer out = new StringBuffer();
-		for (int j = 0, tl = text.length(); j < tl; ++j) {
-			char cc = text.charAt(j);
-			switch (cc) {
-			case '&': out.append("&amp;"); break;
-			case '<': out.append("&lt;"); break;
-			case '>': out.append("&gt;"); break;
-			case ' ': out.append(wrap?" ":"&nbsp;"); break;
-			case '\n':
-				if (wrap && multiline) {
-					out.append("<br/>");
-					break;
-				}
-			default:
-				out.append(cc);
-			}
-		}
-		return out.toString();
+		return RichTextHelper.escapeText(text, wrap, multiline);
 	}
-
 }

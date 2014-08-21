@@ -295,6 +295,24 @@ public class RangeImpl implements SRange {
 	}
 	
 	@Override
+	public String getRichText() {
+		final ResultWrap<String> r = new ResultWrap<String>();
+		new CellVisitorTask(new CellVisitor() {
+			@Override
+			public boolean visit(SCell cell) {
+				if (cell.isRichTextValue()) {
+					final String html = RichTextHelper.getCellRichTextHtml(cell);
+					r.set(html);
+				} else {
+					r.set(null);
+				}
+				return false;
+			}
+		}).doInReadLock(getLock());
+		return r.get();
+	}
+	
+	@Override
 	public void setValue(final Object value) {
 		new CellVisitorTask(new CellVisitorForUpdate() {
 			public boolean visit(SCell cell) {

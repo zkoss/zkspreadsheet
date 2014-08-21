@@ -792,8 +792,13 @@ public class RangeImpl implements Range{
 	}
 
 	@Override
-	public void setRichText(String html) {
+	public void setCellRichText(String html) {
 		_range.setRichText(html);
+	}
+	
+	@Override
+	public String getCellRichText() {
+		return _range.getRichText();
 	}
 
 	@Override

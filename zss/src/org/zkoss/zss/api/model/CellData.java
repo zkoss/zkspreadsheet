@@ -138,4 +138,19 @@ public interface CellData {
 	 * @return false if the editText can't pass the validation
 	 */
 	public boolean validateEditText(String editText);
+	
+	//ZSS-725
+	/**
+	 * Sets the rich text in html format.
+	 * @since 3.5.1 
+	 */
+	public void setRichText(String html);
+	
+	
+	//ZSS-725
+	/**
+	 * @return rich text in html format; null if not a rich text.
+	 * @since 3.5.1
+	 */
+	public String getRichText();
 }

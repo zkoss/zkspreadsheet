@@ -167,11 +167,13 @@ public interface SRange {
 	 */
 	public SHyperlink getHyperlink();
 	
-//	/**
-//	 * Return the rich edit text of this Range.
-//	 * @return the rich edit text of this Range.
-//	 */
-//	public SRichText getRichText();
+	//ZSS-742
+	/**
+	 * Return the rich edit text of the left top cell of this Range.
+	 * @return the rich edit text of this Range.
+	 * @since 3.5.1
+	 */
+	public String getRichText();
 
 	//ZSS-742: Support API for input rich text
 	/**

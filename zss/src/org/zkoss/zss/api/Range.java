@@ -939,11 +939,18 @@ public interface Range {
 
 	//ZSS-742 Support API for input rich text
 	/**
-	 * Set into the left top cell of this Range the specified text.
+	 * Set into the left top cell of this Range the specified text in html format.
 	 * @param html
 	 * @since 3.5.1
 	 */
-	public void setRichText(String html);
+	public void setCellRichText(String html);
+	
+	//ZSS-742
+	/**
+	 * Returns text in html format; null if not a rich text.
+	 * @since 3.5.1
+	 */
+	public String getCellRichText();
 	
 	/**
 	 * Get font if exists or create font if not exists from the book of this 

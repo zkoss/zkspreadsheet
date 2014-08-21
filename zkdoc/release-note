@@ -19,6 +19,7 @@ ZK Spreadsheet 3.5.1
   ZSS-744 Click toolbar button when inline editing does not stop editing in IE
   ZSS-746 Excel complains Security Alert - Office File Validation on exported xls file
   ZSS-748 Cell text can not display as subscript or superscript with rich text format
+  ZSS-753 Cannot undo setRichText()
   
 ** Upgrade Notes
   * Following api are deprecated

@@ -21,6 +21,7 @@ import java.util.Date;
 import org.zkoss.zss.api.impl.RangeImpl;
 import org.zkoss.zss.api.model.CellData;
 import org.zkoss.zss.model.SCell;
+import org.zkoss.zss.model.SRichText;
 import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.range.SRange;
 /**
@@ -190,5 +191,16 @@ public class CellDataImpl implements CellData{
 			return null;
 		}
 		return _cell.getBooleanValue();
+	}
+
+	@Override
+	public void setRichText(String htmlString) {
+		_range.setCellRichText(htmlString);
+	}
+	
+
+	@Override
+	public String getRichText() {
+		return _range.getCellRichText();
 	}
 }

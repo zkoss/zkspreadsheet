@@ -209,7 +209,7 @@ public abstract class AbstractCellAdv implements SCell,LinkedModelObject,Seriali
 	
 	@Override 
 	public boolean isRichTextValue(){
-		Object val = getValue();
+		Object val = getValue(false);
 		return val instanceof SRichText;
 	}
 	
