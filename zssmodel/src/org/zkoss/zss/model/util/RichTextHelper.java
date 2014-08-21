@@ -55,8 +55,7 @@ public class RichTextHelper {
 		_stack = new Stack<SFont>();
 		_stack.push(range.getCellStyle().getFont());
 		_txt = new RichTextImpl();
-		// TODO no need to parse twice.
-		parseElement(Jsoup.parseBodyFragment(br2nl(content)).body());
+		parseElement(br2nl(content));
 		return _txt;
 	}
 	
@@ -138,10 +137,6 @@ public class RichTextHelper {
 			if (decoration.contains("line-through")) {
 				isStrikeout = true;
 			} 
-			if (decoration.contains("none")) {
-				underline = Underline.NONE;
-				isStrikeout= false;
-			}
 		}
 		
 		if (style.containsKey("font-style")) {
@@ -153,12 +148,24 @@ public class RichTextHelper {
 			}
 		}
 		
+		if (style.containsKey("text-decoration")) {
+			final String decoration = style.get("text-decoration");
+			if (decoration.contains("underline")) {
+				underline = Underline.SINGLE;
+			}
+			if (decoration.contains("line-through")) {
+				isStrikeout = true;
+			} 
+		}
+		
 		if ("b".equals(element.nodeName()) || "strong".equals(element.nodeName())) {
 			boldweight = Boldweight.BOLD;
 		} else if ("i".equals(element.nodeName()) || "em".equals(element.nodeName())) {
 			isItalic = true;
 		} else if ("u".equals(element.nodeName())) {
 			underline = Underline.SINGLE;
+		} else if ("strike".equals(element.nodeName())) {
+			isStrikeout = true;
 		} else if ("sub".equals(element.nodeName())) {
 			typeOffset = TypeOffset.SUB;
 		} else if ("sup".equals(element.nodeName())) {
@@ -176,16 +183,12 @@ public class RichTextHelper {
 			underline
 		);
 	}
-	private static String br2nl(String html) {
-		String text = html.replaceAll("\n", NEW_LINE);
-		Element body = Jsoup.parseBodyFragment(text).body();
-		if (body.childNodeSize() == 1 && body.childNode(0) instanceof TextNode) {
-			return text;
-		}
+	private static Element br2nl(String html) {
+		Element body = Jsoup.parseBodyFragment(html).body();
 		body.select("div").prepend(NEW_LINE);
-		body.select("br").append(NEW_LINE); 
+		body.select("br").append(NEW_LINE);
 		body.select("p").append(NEW_LINE);
-		return body.html();
+		return body;
 	}
 
 	//ZSS-725
@@ -223,16 +226,28 @@ public class RichTextHelper {
 	// ZSS-725
 	public static String getFontTextHtml(String text, SFont font) {
 		StringBuilder sb = new StringBuilder();
+		final String startTag;
+		final String endTag;
+		if (font.getTypeOffset() == SFont.TypeOffset.SUPER) {
+			startTag = "<sup>";
+			endTag = "</sup>";
+		} else if(font.getTypeOffset() == SFont.TypeOffset.SUB) {
+			startTag = "<sub>";
+			endTag = "</sub>";
+		} else {
+			startTag = "";
+			endTag = "";
+		}
 		sb.append("<span style=\"")
 			.append(getFontCSSStyle(font, false))
 			.append("\">");
-		sb.append(text);
+		sb.append(startTag).append(text).append(endTag);
 		sb.append("</span>");
 		return sb.toString();
 	}
 	
 	//ZSS-725
-	public static String getFontCSSStyle(SFont font, boolean resizeScript) {
+	public static String getFontCSSStyle(SFont font, boolean displayTypeOffset) {
 		final StringBuffer sb = new StringBuffer();
 		
 		String fontName = font.getName();
@@ -268,15 +283,17 @@ public class RichTextHelper {
 		//ZSS-748
 		//ZSS-725
 		int fontSize = font.getHeightPoints();
-		if (resizeScript && font.getTypeOffset() != SFont.TypeOffset.NONE) {
+		if (displayTypeOffset && font.getTypeOffset() != SFont.TypeOffset.NONE) {
 			fontSize = (int) (0.7 * fontSize + 0.5);
 		}
 		sb.append("font-size:").append(fontSize).append("pt;");
 		//ZSS-748
-		if (font.getTypeOffset() == SFont.TypeOffset.SUPER)
-			sb.append("vertical-align:").append("super;");
-		else if (font.getTypeOffset() == SFont.TypeOffset.SUB)
-			sb.append("vertical-align:").append("sub;");
+		if (displayTypeOffset) {
+			if (font.getTypeOffset() == SFont.TypeOffset.SUPER)
+				sb.append("vertical-align:").append("super;");
+			else if (font.getTypeOffset() == SFont.TypeOffset.SUB)
+				sb.append("vertical-align:").append("sub;");
+		}
 		return sb.toString();
 	}
 }
