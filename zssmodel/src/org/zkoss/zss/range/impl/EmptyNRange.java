@@ -504,6 +504,11 @@ import org.zkoss.zss.range.*;
 	}
 
 	@Override
+	public String getRichText() {
+		return null;
+	}
+	
+	@Override
 	public SFont getOrCreateFont(Boldweight boldweight, String htmlColor,
 			int fontHeight, String fontName, boolean italic, boolean strikeout,
 			TypeOffset typeOffset, Underline underline) {
