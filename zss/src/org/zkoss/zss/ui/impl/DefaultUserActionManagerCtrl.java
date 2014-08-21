@@ -72,6 +72,7 @@ import org.zkoss.zss.ui.impl.ua.FontFamilyHandler;
 import org.zkoss.zss.ui.impl.ua.FontItalicHandler;
 import org.zkoss.zss.ui.impl.ua.FontSizeHandler;
 import org.zkoss.zss.ui.impl.ua.FontStrikeoutHandler;
+import org.zkoss.zss.ui.impl.ua.FontTypeOffsetHandler;
 import org.zkoss.zss.ui.impl.ua.FontUnderlineHandler;
 import org.zkoss.zss.ui.impl.ua.HideHeaderHandler;
 import org.zkoss.zss.ui.impl.ua.HorizontalAlignHandler;
@@ -169,6 +170,7 @@ public class DefaultUserActionManagerCtrl implements UserActionManagerCtrl,UserA
 		registerHandler(category, AuxAction.FONT_ITALIC.getAction(), new FontItalicHandler());
 		registerHandler(category, AuxAction.FONT_UNDERLINE.getAction(), new FontUnderlineHandler());
 		registerHandler(category, AuxAction.FONT_STRIKE.getAction(), new FontStrikeoutHandler());
+		registerHandler(category, AuxAction.FONT_TYPEOFFSET.getAction(), new FontTypeOffsetHandler()); //ZSS-748
 		
 		
 		registerHandler(category, AuxAction.BORDER.getAction(), new ApplyBorderHandler(ApplyBorderType.EDGE_BOTTOM,BorderType.THIN));

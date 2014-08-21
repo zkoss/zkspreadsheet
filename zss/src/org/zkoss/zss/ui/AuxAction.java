@@ -53,6 +53,7 @@ public enum AuxAction {
 	 FONT_BOLD("fontBold"),
 	 FONT_ITALIC("fontItalic"),
 	 FONT_UNDERLINE("fontUnderline"),
+	 FONT_TYPEOFFSET("fontTypeOffset"), //ZSS-748
 	 FONT_STRIKE("fontStrike"),
 	 BORDER("border"),
 	 BORDER_BOTTOM("borderBottom"),
