@@ -44,10 +44,10 @@ public class Issue434Test {
 	
 	@Test
 	public void testBlank_InsertRow() throws IOException {
-		testBlank_InsertRow1(Util.loadBook("blank.xlsx"));
-		testBlank_InsertRow2(Util.loadBook("blank.xlsx"));
-		testBlank_InsertRow1(Util.loadBook("blank.xls"));
-		testBlank_InsertRow2(Util.loadBook("blank.xls"));
+		testBlank_InsertRow1(Util.loadBook(this, "book/blank.xlsx"));
+		testBlank_InsertRow2(Util.loadBook(this, "book/blank.xlsx"));
+		testBlank_InsertRow1(Util.loadBook(this, "book/blank.xls"));
+		testBlank_InsertRow2(Util.loadBook(this, "book/blank.xls"));
 	}
 	private void testBlank_InsertRow1(Book book) throws IOException {
 		Sheet sheet = book.getSheetAt(0);
@@ -98,10 +98,10 @@ public class Issue434Test {
 	
 	@Test
 	public void testCase1_InsertRow() throws IOException {
-		testCase1_InsertRow1(Util.loadBook("434-case1.xlsx"));
-		testCase1_InsertRow1(mergeForCase1(Util.loadBook("blank.xlsx")));
-		testCase1_InsertRow1(Util.loadBook("434-case1.xls"));
-		testCase1_InsertRow1(mergeForCase1(Util.loadBook("blank.xls")));
+		testCase1_InsertRow1(Util.loadBook(this, "book/434-case1.xlsx"));
+		testCase1_InsertRow1(mergeForCase1(Util.loadBook(this, "book/blank.xlsx")));
+		testCase1_InsertRow1(Util.loadBook(this, "book/434-case1.xls"));
+		testCase1_InsertRow1(mergeForCase1(Util.loadBook(this, "book/blank.xls")));
 	}
 	private void testCase1_InsertRow1(Book book) throws IOException {
 		Sheet sheet = book.getSheetAt(0);
@@ -132,10 +132,10 @@ public class Issue434Test {
 	
 	@Test
 	public void testBlank_DeleteRow() throws IOException {
-		testBlank_DeleteRow1(Util.loadBook("blank.xlsx"));
-		testBlank_DeleteRow2(Util.loadBook("blank.xlsx"));
-		testBlank_DeleteRow1(Util.loadBook("blank.xls"));
-		testBlank_DeleteRow2(Util.loadBook("blank.xls"));
+		testBlank_DeleteRow1(Util.loadBook(this, "book/blank.xlsx"));
+		testBlank_DeleteRow2(Util.loadBook(this, "book/blank.xlsx"));
+		testBlank_DeleteRow1(Util.loadBook(this, "book/blank.xls"));
+		testBlank_DeleteRow2(Util.loadBook(this, "book/blank.xls"));
 	}
 	private void testBlank_DeleteRow1(Book book) throws IOException {
 		Sheet sheet = book.getSheetAt(0);
@@ -188,10 +188,10 @@ public class Issue434Test {
 
 	@Test
 	public void testCase1_DeleteRow() throws IOException {
-		testCase1_DeleteRow1(Util.loadBook("434-case1.xlsx"));
-		testCase1_DeleteRow1(mergeForCase1(Util.loadBook("blank.xlsx")));
-		testCase1_DeleteRow1(Util.loadBook("434-case1.xls"));
-		testCase1_DeleteRow1(mergeForCase1(Util.loadBook("blank.xls")));
+		testCase1_DeleteRow1(Util.loadBook(this, "book/434-case1.xlsx"));
+		testCase1_DeleteRow1(mergeForCase1(Util.loadBook(this, "book/blank.xlsx")));
+		testCase1_DeleteRow1(Util.loadBook(this, "book/434-case1.xls"));
+		testCase1_DeleteRow1(mergeForCase1(Util.loadBook(this, "book/blank.xls")));
 	}
 	private void testCase1_DeleteRow1(Book book) throws IOException {
 		Sheet sheet = book.getSheetAt(0);
@@ -221,10 +221,10 @@ public class Issue434Test {
 	
 	@Test
 	public void testBlank_InserColumn() throws IOException {
-		testBlank_InserColumn1(Util.loadBook("blank.xlsx"));
-		testBlank_InserColumn2(Util.loadBook("blank.xlsx"));
-		testBlank_InserColumn1(Util.loadBook("blank.xls"));
-		testBlank_InserColumn2(Util.loadBook("blank.xls"));
+		testBlank_InserColumn1(Util.loadBook(this, "book/blank.xlsx"));
+		testBlank_InserColumn2(Util.loadBook(this, "book/blank.xlsx"));
+		testBlank_InserColumn1(Util.loadBook(this, "book/blank.xls"));
+		testBlank_InserColumn2(Util.loadBook(this, "book/blank.xls"));
 	}
 	private void testBlank_InserColumn1(Book book) throws IOException {
 		
@@ -276,10 +276,10 @@ public class Issue434Test {
 	
 	@Test
 	public void testBlank_DeleteColumn() throws IOException {
-		testBlank_DeleteColumn1(Util.loadBook("blank.xlsx"));
-		testBlank_DeleteColumn2(Util.loadBook("blank.xlsx"));
-		testBlank_DeleteColumn1(Util.loadBook("blank.xls"));
-		testBlank_DeleteColumn2(Util.loadBook("blank.xls"));
+		testBlank_DeleteColumn1(Util.loadBook(this, "book/blank.xlsx"));
+		testBlank_DeleteColumn2(Util.loadBook(this, "book/blank.xlsx"));
+		testBlank_DeleteColumn1(Util.loadBook(this, "book/blank.xls"));
+		testBlank_DeleteColumn2(Util.loadBook(this, "book/blank.xls"));
 	}
 	private void testBlank_DeleteColumn1(Book book) throws IOException {
 		Sheet sheet = book.getSheetAt(0);
@@ -332,10 +332,10 @@ public class Issue434Test {
 	
 	@Test
 	public void testCase1_InsertColumn() throws IOException {
-		testCase1_InsertColumn1(Util.loadBook("434-case1.xlsx"));
-		testCase1_InsertColumn1(mergeForCase1(Util.loadBook("blank.xlsx")));
-		testCase1_InsertColumn1(Util.loadBook("434-case1.xls"));
-		testCase1_InsertColumn1(mergeForCase1(Util.loadBook("blank.xls")));
+		testCase1_InsertColumn1(Util.loadBook(this, "book/434-case1.xlsx"));
+		testCase1_InsertColumn1(mergeForCase1(Util.loadBook(this, "book/blank.xlsx")));
+		testCase1_InsertColumn1(Util.loadBook(this, "book/434-case1.xls"));
+		testCase1_InsertColumn1(mergeForCase1(Util.loadBook(this, "book/blank.xls")));
 	}
 	private void testCase1_InsertColumn1(Book book) throws IOException {
 		Sheet sheet = book.getSheetAt(0);
@@ -362,10 +362,10 @@ public class Issue434Test {
 	}
 	@Test
 	public void testCase1_DeleteColumn() throws IOException {
-		testCase1_DeleteColumn1(Util.loadBook("434-case1.xlsx"));
-		testCase1_DeleteColumn1(mergeForCase1(Util.loadBook("blank.xlsx")));
-		testCase1_DeleteColumn1(Util.loadBook("434-case1.xls"));
-		testCase1_DeleteColumn1(mergeForCase1(Util.loadBook("blank.xls")));
+		testCase1_DeleteColumn1(Util.loadBook(this, "book/434-case1.xlsx"));
+		testCase1_DeleteColumn1(mergeForCase1(Util.loadBook(this, "book/blank.xlsx")));
+		testCase1_DeleteColumn1(Util.loadBook(this, "book/434-case1.xls"));
+		testCase1_DeleteColumn1(mergeForCase1(Util.loadBook(this, "book/blank.xls")));
 	}
 	
 	private Book mergeForCase1(Book book){
@@ -403,10 +403,10 @@ public class Issue434Test {
 	
 	@Test
 	public void testCase1_InsertRange() throws IOException {
-		testCase1_InsertRange1(Util.loadBook("434-case1.xlsx"));
-		testCase1_InsertRange1(mergeForCase1(Util.loadBook("blank.xlsx")));
-		testCase1_InsertRange1(Util.loadBook("434-case1.xls"));
-		testCase1_InsertRange1(mergeForCase1(Util.loadBook("blank.xls")));
+		testCase1_InsertRange1(Util.loadBook(this, "book/434-case1.xlsx"));
+		testCase1_InsertRange1(mergeForCase1(Util.loadBook(this, "book/blank.xlsx")));
+		testCase1_InsertRange1(Util.loadBook(this, "book/434-case1.xls"));
+		testCase1_InsertRange1(mergeForCase1(Util.loadBook(this, "book/blank.xls")));
 	}
 	private void testCase1_InsertRange1(Book book) throws IOException {
 		Sheet sheet = book.getSheetAt(0);
@@ -447,10 +447,10 @@ public class Issue434Test {
 	}
 	@Test
 	public void testCase1_DeleteRange() throws IOException {
-		testCase1_DeleteRange1(Util.loadBook("434-case1.xlsx"));
-		testCase1_DeleteRange1(mergeForCase1(Util.loadBook("blank.xlsx")));
-		testCase1_DeleteRange1(Util.loadBook("434-case1.xls"));
-		testCase1_DeleteRange1(mergeForCase1(Util.loadBook("blank.xls")));
+		testCase1_DeleteRange1(Util.loadBook(this, "book/434-case1.xlsx"));
+		testCase1_DeleteRange1(mergeForCase1(Util.loadBook(this, "book/blank.xlsx")));
+		testCase1_DeleteRange1(Util.loadBook(this, "book/434-case1.xls"));
+		testCase1_DeleteRange1(mergeForCase1(Util.loadBook(this, "book/blank.xls")));
 	}
 	private void testCase1_DeleteRange1(Book book) throws IOException {
 		Sheet sheet = book.getSheetAt(0);
@@ -480,8 +480,8 @@ public class Issue434Test {
 	
 	@Test
 	public void testBlank_MoveRange() throws IOException {
-		testBlank_MoveRange(Util.loadBook("blank.xlsx"));
-		testBlank_MoveRange(Util.loadBook("blank.xls"));
+		testBlank_MoveRange(Util.loadBook(this, "book/blank.xlsx"));
+		testBlank_MoveRange(Util.loadBook(this, "book/blank.xls"));
 	}
 	private void testBlank_MoveRange(Book book) throws IOException {
 		Sheet sheet = book.getSheetAt(0);
@@ -517,15 +517,15 @@ public class Issue434Test {
 	@Test
 	public void testCase1_MoveRange() throws IOException {
 		
-		testCase1_MoveRange1(Util.loadBook("434-case1.xlsx"));
-		testCase1_MoveRange1(mergeForCase1(Util.loadBook("blank.xlsx")));
-		testCase1_MoveRange1(Util.loadBook("434-case1.xls"));
-		testCase1_MoveRange1(mergeForCase1(Util.loadBook("blank.xls")));
+		testCase1_MoveRange1(Util.loadBook(this, "book/434-case1.xlsx"));
+		testCase1_MoveRange1(mergeForCase1(Util.loadBook(this, "book/blank.xlsx")));
+		testCase1_MoveRange1(Util.loadBook(this, "book/434-case1.xls"));
+		testCase1_MoveRange1(mergeForCase1(Util.loadBook(this, "book/blank.xls")));
 		
-		testCase1_MoveRange2(Util.loadBook("434-case1.xlsx"));
-		testCase1_MoveRange2(mergeForCase1(Util.loadBook("blank.xlsx")));
-		testCase1_MoveRange2(Util.loadBook("434-case1.xls"));
-		testCase1_MoveRange2(mergeForCase1(Util.loadBook("blank.xls")));
+		testCase1_MoveRange2(Util.loadBook(this, "book/434-case1.xlsx"));
+		testCase1_MoveRange2(mergeForCase1(Util.loadBook(this, "book/blank.xlsx")));
+		testCase1_MoveRange2(Util.loadBook(this, "book/434-case1.xls"));
+		testCase1_MoveRange2(mergeForCase1(Util.loadBook(this, "book/blank.xls")));
 	}
 	private void testCase1_MoveRange1(Book book) throws IOException {
 		Sheet sheet = book.getSheetAt(0);

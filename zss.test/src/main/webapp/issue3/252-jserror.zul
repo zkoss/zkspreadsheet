@@ -3,7 +3,7 @@
 		<label multiline="true">
 		1.right click on cell, you sound't get any js error
 		</label>
-		<spreadsheet id="ss" src="/book/blank.xlsx"  maxrows="200" maxcolumns="40" width="100%"
+		<spreadsheet id="ss" src="/issue3/book/blank.xlsx"  maxrows="200" maxcolumns="40" width="100%"
 		height="100%" showContextMenu="true" showToolbar="false" />
 
 	</window>

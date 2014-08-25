@@ -5,7 +5,7 @@
 			<button label="Export Excel" />
 		</hbox>
 
-		<spreadsheet id="source" src="/book/540-style.xlsx"
+		<spreadsheet id="source" src="/issue3/book/540-style.xlsx"
 			maxVisibleRows="100" maxVisibleColumns="30" hflex="1" vflex="1"
 			showContextMenu="true" showSheetbar="true" showToolbar="true"
 			showFormulabar="true" />

@@ -8,7 +8,7 @@
 		<button label="unfreeze " onClick='Ranges.range(ss.getSelectedSheet()).setFreezePanel(0,0)'/>
 		<button label="invalidate" onClick='ss.invalidate()'/>
 		</hbox>
-		<spreadsheet id="ss" src="/book/443-column-width.xlsx" hflex="1" vflex="1"
+		<spreadsheet id="ss" src="/issue3/book/443-column-width.xlsx" hflex="1" vflex="1"
 			maxVisibleRows="500" maxVisibleColumns="100" showToolbar="true" showFormulabar="true"
 			showSheetbar="true" showContextMenu="true">
 		</spreadsheet>

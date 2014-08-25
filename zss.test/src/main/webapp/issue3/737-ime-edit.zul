@@ -18,6 +18,6 @@ Copyright (C) 2014 Potix Corporation. All Rights Reserved.
 		1. Focus on any cell and try type "王".
 		2. The first input "ㄨ" should not be missing.
 	</label>
-	<spreadsheet src="/book/blank.xlsx" height="500px" width="800px">
+	<spreadsheet src="/issue3/book/blank.xlsx" height="500px" width="800px">
 	</spreadsheet>
 </window>

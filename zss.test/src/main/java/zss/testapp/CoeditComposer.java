@@ -12,6 +12,7 @@ Copyright (C) 2012 Potix Corporation. All Rights Reserved.
 package zss.testapp;
 
 import java.io.InputStream;
+
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Sessions;
 import org.zkoss.zk.ui.event.EventQueues;
@@ -29,6 +30,7 @@ public class CoeditComposer extends GenericForwardComposer {
 	private static int i = 0;
 	private Spreadsheet ss;
 
+	@SuppressWarnings("unchecked")
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
 		synchronized(CoeditComposer.class) {

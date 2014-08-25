@@ -21,7 +21,7 @@
 		}
 	}
 	]]></zscript>
-	<spreadsheet id="ss" src="/book/517-backgroundColor.xls" maxVisibleRows="200" maxVisibleColumns="40" width="100%"
+	<spreadsheet id="ss" src="/issue3/book/517-backgroundColor.xls" maxVisibleRows="200" maxVisibleColumns="40" width="100%"
 		height="80%" showContextMenu="true" showSheetbar="true" showToolbar="true" 
 		showFormulabar="true"/>
 </zk>

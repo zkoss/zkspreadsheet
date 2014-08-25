@@ -36,7 +36,7 @@ public class TextUnsupportedTest extends FormulaTestBase {
 	// #NAME?
 	@Test
 	public void testASC()  {
-		Book book = Util.loadBook("TestFile2007-Formula.xlsx");
+		Book book = Util.loadBook(this, "book/TestFile2007-Formula.xlsx");
 		testASC(book);
 	}
 	
@@ -49,42 +49,42 @@ public class TextUnsupportedTest extends FormulaTestBase {
 	// #NAME?
 	@Test
 	public void testLEFTB()  {
-		Book book = Util.loadBook("TestFile2007-Formula.xlsx");
+		Book book = Util.loadBook(this, "book/TestFile2007-Formula.xlsx");
 		testLEFTB(book);
 	}
 	
 	// #NAME?
 	@Test
 	public void testLENB()  {
-		Book book = Util.loadBook("TestFile2007-Formula.xlsx");
+		Book book = Util.loadBook(this, "book/TestFile2007-Formula.xlsx");
 		testLENB(book);
 	}
 	
 	// #NAME?
 	@Test
 	public void testMIDB()  {
-		Book book = Util.loadBook("TestFile2007-Formula.xlsx");
+		Book book = Util.loadBook(this, "book/TestFile2007-Formula.xlsx");
 		testMIDB(book);
 	}
 	
 	// #NAME?
 	@Test
 	public void testSEARCHB()  {
-		Book book = Util.loadBook("TestFile2007-Formula.xlsx");
+		Book book = Util.loadBook(this, "book/TestFile2007-Formula.xlsx");
 		testSEARCHB(book);
 	}
 	
 	// #NAME?
 	@Test
 	public void testREPLACEB()  {
-		Book book = Util.loadBook("TestFile2007-Formula.xlsx");
+		Book book = Util.loadBook(this, "book/TestFile2007-Formula.xlsx");
 		testREPLACEB(book);
 	}
 	
 	// #NAME?
 	@Test
 	public void testRIGHTB()  {
-		Book book = Util.loadBook("TestFile2007-Formula.xlsx");
+		Book book = Util.loadBook(this, "book/TestFile2007-Formula.xlsx");
 		testRIGHTB(book);
 	}
 

@@ -2,11 +2,10 @@ package org.zkoss.zss.model;
 
 import static org.junit.Assert.*;
 
-import java.io.File;
+import java.net.URL;
 import java.text.DateFormat;
 import java.util.Locale;
 
-import org.zkoss.zss.Util;
 import org.zkoss.zss.model.ErrorValue;
 import org.zkoss.zss.model.SAutoFilter;
 import org.zkoss.zss.model.SBook;
@@ -41,10 +40,10 @@ public class ImExpTestBase {
 	/**
 	 * We create all XLSX file with Excel 2007. (With 2010, it will have differences.) 
 	 */
-	protected File IMPORT_FILE_UNDER_TEST = new File(Util.getBookAbsolutePath("import.xlsx"));
-	protected File CHART_IMPORT_FILE_UNDER_TEST = new File(Util.getBookAbsolutePath("chart.xlsx"));
-	protected File PICTURE_IMPORT_FILE_UNDER_TEST = new File(Util.getBookAbsolutePath("picture.xlsx"));
-	protected File FILTER_IMPORT_FILE_UNDER_TEST = new File(Util.getBookAbsolutePath("filter.xlsx"));
+	protected URL IMPORT_FILE_UNDER_TEST = ImporterTest.class.getResource("book/import.xlsx");
+	protected URL CHART_IMPORT_FILE_UNDER_TEST = ImporterTest.class.getResource("book/chart.xlsx");
+	protected URL PICTURE_IMPORT_FILE_UNDER_TEST = ImporterTest.class.getResource("book/picture.xlsx");
+	protected URL FILTER_IMPORT_FILE_UNDER_TEST = ImporterTest.class.getResource("book/filter.xlsx");
 	protected static String DEFAULT_BOOK_NAME = "PoiBook";
 	
 	protected void hyperlinkTest(SBook book) {

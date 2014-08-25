@@ -4,7 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.*;
 
-import org.zkoss.zss.Util;
+import org.zkoss.image.AImage;
 import org.zkoss.zss.api.*;
 import org.zkoss.zss.api.model.*;
 import org.zkoss.zss.api.model.Chart.Grouping;
@@ -21,7 +21,7 @@ public class ChartPictureTestBase {
 	
 	protected void testDeletePicture(Book workbook) throws IOException {
 		Sheet sheet = workbook.getSheet("Sheet1");
-		Picture picture = SheetOperationUtil.addPicture(Ranges.range(sheet), Util.getImage("zklogo.png"));
+		Picture picture = SheetOperationUtil.addPicture(Ranges.range(sheet), new AImage(new File(ChartPictureTestBase.class.getResource("").getPath() + "book/zklogo.png")));
 		assertEquals(1, sheet.getPictures().size());
 		SheetOperationUtil.deletePicture(Ranges.range(sheet), picture);
 		assertEquals(0, sheet.getPictures().size());
@@ -29,7 +29,7 @@ public class ChartPictureTestBase {
 	
 	protected void testMovePicture(Book workbook) throws IOException {
 		Sheet sheet = workbook.getSheet("Sheet1");
-		Picture picture = SheetOperationUtil.addPicture(Ranges.range(sheet), Util.getImage("zklogo.png"));
+		Picture picture = SheetOperationUtil.addPicture(Ranges.range(sheet), new AImage(new File(ChartPictureTestBase.class.getResource("").getPath() + "book/zklogo.png")));
 		assertEquals(1, sheet.getPictures().size());
 		SheetOperationUtil.movePicture(Ranges.range(sheet), picture, 10, 30);
 		assertEquals(10 , picture.getAnchor().getRow());
@@ -38,7 +38,7 @@ public class ChartPictureTestBase {
 	
 	protected void testAddPicture(Book workbook) throws IOException {
 		Sheet sheet = workbook.getSheet("Sheet1");
-		Picture picture = SheetOperationUtil.addPicture(Ranges.range(sheet), Util.getImage("zklogo.png"));
+		Picture picture = SheetOperationUtil.addPicture(Ranges.range(sheet), new AImage(new File(ChartPictureTestBase.class.getResource("").getPath() + "book/zklogo.png")));
 		assertEquals(1, sheet.getPictures().size());
 		assertEquals(0 , picture.getAnchor().getRow());
 		assertEquals(0 , picture.getAnchor().getColumn());

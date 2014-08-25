@@ -19,7 +19,7 @@ Copyright (C) 2014 Potix Corporation. All Rights Reserved.
 		2. click Sheet2
 		3. it should show warning and reset sheet name to "Sheet1"
 	</label>
-	<spreadsheet id="ss" src="/book/blank.xlsx" 
+	<spreadsheet id="ss" src="/issue/book/blank.xlsx" 
 		showSheetbar="true" height="500px" width="500px">
 	</spreadsheet>
 </window>

@@ -13,7 +13,7 @@ Since 3.5.0
 	<button label="Add Validation with Array" onClick="addValidationWithArray()" />
 	<button label="Delete Validations" onClick="deleteValidations()" />
 	<button label="invalidate()" onClick="invalidate()" />
-	<spreadsheet id="ss" src="/book/729-validation.xlsx" vflex="1"  maxVisibleRows="150"
+	<spreadsheet id="ss" src="/issue3/book/729-validation.xlsx" vflex="1"  maxVisibleRows="150"
 		maxVisibleColumns="40" showToolbar="true" showSheetbar="true" showFormulabar="true" width="600px"/>
 	<zscript><![CDATA[
 	import org.zkoss.zss.api.*;

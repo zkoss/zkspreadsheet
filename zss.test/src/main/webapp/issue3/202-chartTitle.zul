@@ -25,7 +25,7 @@
 		<hbox>
 			<button label="Reset" onClick="resetLibrary()"></button>
 		</hbox>
-		<spreadsheet id="source" src="/book/202-chartTitle.xlsx" maxVisibleRows="150"
+		<spreadsheet id="source" src="/issue3/book/202-chartTitle.xlsx" maxVisibleRows="150"
 			maxVisibleColumns="40" hflex="1" vflex="1" showContextMenu="true" showSheetbar="true"
 			showToolbar="true" ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e" />
 	</vbox>

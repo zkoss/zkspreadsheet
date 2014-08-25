@@ -5,7 +5,7 @@ Since 3.5.0
 2. You shall not see any warning popup window.
 </label>
 	<button label="Export" onClick="export()" />
-	<spreadsheet id="ss" src="/book/746-export-xls.xls" vflex="1"  maxVisibleRows="150"
+	<spreadsheet id="ss" src="/issue3/book/746-export-xls.xls" vflex="1"  maxVisibleRows="150"
 		maxVisibleColumns="40" showToolbar="true" showSheetbar="true" showFormulabar="true" width="600px"/>
 	<zscript><![CDATA[
        	import java.io.ByteArrayOutputStream;

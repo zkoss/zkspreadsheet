@@ -47,8 +47,8 @@ public class Issue464Test {
 	
 	@Test
 	public void testApplyBorder() throws IOException {
-		testApplyBorder(Util.loadBook("blank.xls"));
-		testApplyBorder(Util.loadBook("blank.xlsx"));
+		testApplyBorder(Util.loadBook(this, "book/blank.xls"));
+		testApplyBorder(Util.loadBook(this, "book/blank.xlsx"));
 		
 	}
 	
@@ -249,8 +249,8 @@ public class Issue464Test {
 	//CELL STYLE
 	@Test
 	public void testApplyFillColor() throws IOException {
-		testApplyFillColor(Util.loadBook("blank.xls"));
-		testApplyFillColor(Util.loadBook("blank.xlsx"));
+		testApplyFillColor(Util.loadBook(this, "book/blank.xls"));
+		testApplyFillColor(Util.loadBook(this, "book/blank.xlsx"));
 	}
 	
 	private void testApplyFillColor(Book book) throws IOException {
@@ -301,8 +301,8 @@ public class Issue464Test {
 	
 	@Test
 	public void testApplyAlignment() throws IOException {
-		testApplyAlignment(Util.loadBook("blank.xls"));
-		testApplyAlignment(Util.loadBook("blank.xlsx"));
+		testApplyAlignment(Util.loadBook(this, "book/blank.xls"));
+		testApplyAlignment(Util.loadBook(this, "book/blank.xlsx"));
 	}
 	
 	private void testApplyAlignment(Book book) throws IOException {
@@ -354,8 +354,8 @@ public class Issue464Test {
 	
 	@Test
 	public void testApplyVerticalAlignment() throws IOException {
-		testApplyVerticalAlignment(Util.loadBook("blank.xls"));
-		testApplyVerticalAlignment(Util.loadBook("blank.xlsx"));
+		testApplyVerticalAlignment(Util.loadBook(this, "book/blank.xls"));
+		testApplyVerticalAlignment(Util.loadBook(this, "book/blank.xlsx"));
 	}
 	
 	private void testApplyVerticalAlignment(Book book) throws IOException {
@@ -407,8 +407,8 @@ public class Issue464Test {
 	
 	@Test
 	public void testApplyFormat() throws IOException {
-		testApplyFormat(Util.loadBook("blank.xls"));
-		testApplyFormat(Util.loadBook("blank.xlsx"));
+		testApplyFormat(Util.loadBook(this, "book/blank.xls"));
+		testApplyFormat(Util.loadBook(this, "book/blank.xlsx"));
 	}
 	
 	private void testApplyFormat(Book book) throws IOException {
@@ -459,8 +459,8 @@ public class Issue464Test {
 	
 	@Test
 	public void testApplyTextwrap() throws IOException {
-		testApplyTextwrap(Util.loadBook("blank.xls"));
-		testApplyTextwrap(Util.loadBook("blank.xlsx"));	
+		testApplyTextwrap(Util.loadBook(this, "book/blank.xls"));
+		testApplyTextwrap(Util.loadBook(this, "book/blank.xlsx"));	
 	}
 	private void testApplyTextwrap(Book book) throws IOException {
 		Sheet sheet = book.getSheetAt(0);
@@ -512,8 +512,8 @@ public class Issue464Test {
 	
 	@Test
 	public void testApplyFontName() throws IOException {
-		testApplyFontName(Util.loadBook("blank.xls"));
-		testApplyFontName(Util.loadBook("blank.xlsx"));
+		testApplyFontName(Util.loadBook(this, "book/blank.xls"));
+		testApplyFontName(Util.loadBook(this, "book/blank.xlsx"));
 		
 	}
 	
@@ -565,8 +565,8 @@ public class Issue464Test {
 	
 	@Test
 	public void testApplyFontSize() throws IOException {
-		testApplyFontSize(Util.loadBook("blank.xls"));
-		testApplyFontSize(Util.loadBook("blank.xlsx"));	
+		testApplyFontSize(Util.loadBook(this, "book/blank.xls"));
+		testApplyFontSize(Util.loadBook(this, "book/blank.xlsx"));	
 	}
 	private void testApplyFontSize(Book book) throws IOException {
 		Sheet sheet = book.getSheetAt(0);
@@ -617,8 +617,8 @@ public class Issue464Test {
 	
 	@Test
 	public void testApplyFontColor() throws IOException {
-		testApplyFontColor(Util.loadBook("blank.xls"));
-		testApplyFontColor(Util.loadBook("blank.xlsx"));	
+		testApplyFontColor(Util.loadBook(this, "book/blank.xls"));
+		testApplyFontColor(Util.loadBook(this, "book/blank.xlsx"));	
 	}
 	private void testApplyFontColor(Book book) throws IOException {
 		Sheet sheet = book.getSheetAt(0);
@@ -669,8 +669,8 @@ public class Issue464Test {
 	
 	@Test
 	public void testApplyFontBold() throws IOException {
-		testApplyFontBold(Util.loadBook("blank.xls"));
-		testApplyFontBold(Util.loadBook("blank.xlsx"));	
+		testApplyFontBold(Util.loadBook(this, "book/blank.xls"));
+		testApplyFontBold(Util.loadBook(this, "book/blank.xlsx"));	
 	}
 	private void testApplyFontBold(Book book) throws IOException {
 		Sheet sheet = book.getSheetAt(0);
@@ -721,8 +721,8 @@ public class Issue464Test {
 	
 	@Test
 	public void testApplyFontItalic() throws IOException {
-		testApplyFontItalic(Util.loadBook("blank.xls"));
-		testApplyFontItalic(Util.loadBook("blank.xlsx"));	
+		testApplyFontItalic(Util.loadBook(this, "book/blank.xls"));
+		testApplyFontItalic(Util.loadBook(this, "book/blank.xlsx"));	
 	}
 	private void testApplyFontItalic(Book book) throws IOException {
 		Sheet sheet = book.getSheetAt(0);
@@ -773,8 +773,8 @@ public class Issue464Test {
 	
 	@Test
 	public void testApplyFontStrike() throws IOException {
-		testApplyFontStrike(Util.loadBook("blank.xls"));
-		testApplyFontStrike(Util.loadBook("blank.xlsx"));	
+		testApplyFontStrike(Util.loadBook(this, "book/blank.xls"));
+		testApplyFontStrike(Util.loadBook(this, "book/blank.xlsx"));	
 	}
 	private void testApplyFontStrike(Book book) throws IOException {
 		Sheet sheet = book.getSheetAt(0);
@@ -825,8 +825,8 @@ public class Issue464Test {
 	
 	@Test
 	public void testApplyFontUnderline() throws IOException {
-		testApplyFontUnderline(Util.loadBook("blank.xls"));
-		testApplyFontUnderline(Util.loadBook("blank.xlsx"));	
+		testApplyFontUnderline(Util.loadBook(this, "book/blank.xls"));
+		testApplyFontUnderline(Util.loadBook(this, "book/blank.xlsx"));	
 	}
 	private void testApplyFontUnderline(Book book) throws IOException {
 		Sheet sheet = book.getSheetAt(0);

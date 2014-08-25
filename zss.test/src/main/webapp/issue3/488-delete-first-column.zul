@@ -28,7 +28,7 @@ Reproduce 2:
 			<button label="export" onClick="export();" /> 
 		</hbox>
 		
-		<spreadsheet id="ss" src="/book/488-delete-first-column.xlsx"  hflex="1" vflex="1"
+		<spreadsheet id="ss" src="/issue3/book/488-delete-first-column.xlsx"  hflex="1" vflex="1"
 			ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e"
 			maxrows="500" maxcolumns="100"
 			showFormulabar="true" showContextMenu="true" showSheetbar="true" showToolbar="true">

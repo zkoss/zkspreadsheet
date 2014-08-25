@@ -2,11 +2,8 @@ package org.zkoss.zss.model;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.File;
-
 import org.junit.*;
 import org.zkoss.zss.Setup;
-import org.zkoss.zss.Util;
 import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.SChart;
 import org.zkoss.zss.model.SPicture;
@@ -22,9 +19,9 @@ public class ImporterXlsTest extends ImporterTest {
 	}
 	@Before
 	public void setupTestFile(){
-		IMPORT_FILE_UNDER_TEST = new File(Util.getBookAbsolutePath("import.xls"));
-		CHART_IMPORT_FILE_UNDER_TEST = new File(Util.getBookAbsolutePath("chart.xls"));
-		PICTURE_IMPORT_FILE_UNDER_TEST = new File(Util.getBookAbsolutePath("picture.xls"));
+		IMPORT_FILE_UNDER_TEST = ImporterTest.class.getResource("book/import.xls");
+		CHART_IMPORT_FILE_UNDER_TEST = ImporterTest.class.getResource("book/chart.xls");
+		PICTURE_IMPORT_FILE_UNDER_TEST = ImporterTest.class.getResource("book/picture.xls");
 	}
 
 	@Override

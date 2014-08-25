@@ -61,20 +61,20 @@ public class StyleTest {
 	@Ignore("Border spec for test is not confirm yet")
 	@Test
 	public void testStyleExport2007() throws IOException {
-		Book book = Util.loadBook(this,"book/blank.xlsx");
+		Book book = Util.loadBook(this, "book/blank.xlsx");
 		testStyleExport(book, Setup.getTempFile());
 	}
 	
 	@Ignore("Border spec for test is not confirm yet")
 	@Test
 	public void testStyleExport2003() throws IOException {
-		Book book = Util.loadBook("blank.xls");
+		Book book = Util.loadBook(this, "book/blank.xls");
 		testStyleExport(book, Setup.getTempFile());
 	}
 	
 	@Test
 	public void testClearFontStyle() throws IOException {
-		Book book = Util.loadBook("blank.xlsx");
+		Book book = Util.loadBook(this, "book/blank.xlsx");
 		Sheet sheet = book.getSheet("Sheet1");
 		Range rA1 = range(sheet, "A1");
 		rA1.setCellEditText("Bold");

@@ -73,10 +73,10 @@ public class Issue400Test {
 	
 	@Test
 	public void testZSS400_2007() throws IOException {
-		testZSS400HyperlinkShift0(Util.loadBook("blank.xlsx"));
-		testZSS400HyperlinkShiftColumn(Util.loadBook("400-shift.xlsx"));
-		testZSS400HyperlinkShiftRow(Util.loadBook("400-shift.xlsx"));
-		testZSS400HyperlinkShiftBoth(Util.loadBook("400-shift.xlsx"));
+		testZSS400HyperlinkShift0(Util.loadBook(this, "book/blank.xlsx"));
+		testZSS400HyperlinkShiftColumn(Util.loadBook(this, "book/400-shift.xlsx"));
+		testZSS400HyperlinkShiftRow(Util.loadBook(this, "book/400-shift.xlsx"));
+		testZSS400HyperlinkShiftBoth(Util.loadBook(this, "book/400-shift.xlsx"));
 		
 	}
 	
@@ -307,12 +307,12 @@ public class Issue400Test {
 	
 	@Test
 	public void testZSS447_2003() throws IOException {
-		testZSS447(Util.loadBook("447-dateFormatDisplay.xls"));
+		testZSS447(Util.loadBook(this, "book/447-dateFormatDisplay.xls"));
 	}
 	
 	@Test
 	public void testZSS447_2007() throws IOException {
-		testZSS447(Util.loadBook("447-dateFormatDisplay.xlsx"));
+		testZSS447(Util.loadBook(this, "book/447-dateFormatDisplay.xlsx"));
 	}
 	
 	public void testZSS447(Book book) throws IOException {
@@ -397,7 +397,7 @@ public class Issue400Test {
 		
 		File target = Setup.getTempFile("zss437",".xlsx");
 		
-		Book workbook = Util.loadBook("blank.xlsx");
+		Book workbook = Util.loadBook(this, "book/blank.xlsx");
 		Sheet sheet = workbook.getSheet("Sheet1");
 		Range column0 = range(sheet, "A1");
 		Util.export(workbook, target);
@@ -423,8 +423,8 @@ public class Issue400Test {
 	@Test
 	public void testZSS426() throws IOException {
 		
-		final String filename = "426-swineFlu.xls";
-		Book book = Util.loadBook(filename);
+		final String filename = "book/book/426-swineFlu.xls";
+		Book book = Util.loadBook(this, filename);
 		
 		// export work book
     	Exporter exporter = Exporters.getExporter();
@@ -443,8 +443,8 @@ public class Issue400Test {
 	@Ignore
 	@Test
 	public void testZSS435() throws IOException {
-		final String filename = "blank.xlsx";
-		Book book = Util.loadBook(filename);
+		final String filename = "book/blank.xlsx";
+		Book book = Util.loadBook(this, filename);
 		
 		Sheet sheet = book.getSheet("Sheet1");
 		
@@ -464,8 +464,8 @@ public class Issue400Test {
 	@Test
 	public void testZSS408() throws IOException {
 		
-		final String filename = "408-save-autofilter.xls";
-		Book book = Util.loadBook(filename);
+		final String filename = "book/408-save-autofilter.xls";
+		Book book = Util.loadBook(this, filename);
 		
 		// export work book
     	Exporter exporter = Exporters.getExporter();
@@ -484,8 +484,8 @@ public class Issue400Test {
 	 */
 	@Test
 	public void testZSS414() throws IOException {
-		final String filename = "blank.xls";
-		Book book = Util.loadBook(filename);
+		final String filename = "book/blank.xls";
+		Book book = Util.loadBook(this, filename);
 		Sheet sheet1 = book.getSheet("Sheet1");
 		Range r = Ranges.range(sheet1, "C1");
 		r.setCellEditText("");
@@ -499,8 +499,8 @@ public class Issue400Test {
 	@Test
 	public void testZSS415() throws IOException {
 		
-		final String filename = "415-commentUnsupport.xls";
-		Book book = Util.loadBook(filename);
+		final String filename = "book/415-commentUnsupport.xls";
+		Book book = Util.loadBook(this, filename);
 		
 		// export work book
     	Exporter exporter = Exporters.getExporter();
@@ -515,8 +515,8 @@ public class Issue400Test {
 	@Test
 	public void testZSS425() throws IOException {
 		
-		final String filename = "425-updateStyle.xlsx";
-		Book book = Util.loadBook(filename);
+		final String filename = "book/425-updateStyle.xlsx";
+		Book book = Util.loadBook(this, filename);
 		
 		Range r = Ranges.range(book.getSheetAt(0),0,0);
 		
@@ -552,8 +552,8 @@ public class Issue400Test {
 	@Test
 	public void testZSS432() throws IOException {
 		
-//		Book book = Util.loadBook("blank.xlsx");
-		Book book = Util.loadBook("432.xlsx");
+//		Book book = Util.loadBook(this, "book/blank.xlsx");
+		Book book = Util.loadBook(this, "book/432.xlsx");
 		
 		Sheet sheet = Ranges.range(book.getSheetAt(0)).createSheet("newone");
 		
@@ -582,7 +582,7 @@ public class Issue400Test {
 	@Test
 	public void testZSS430() throws IOException {
 		
-		Book book = Util.loadBook("430-export-formula.xlsx");
+		Book book = Util.loadBook(this, "book/430-export-formula.xlsx");
 		Sheet sheet = book.getSheet("formula-math");
 		Assert.assertEquals("2.09", Ranges.range(sheet,"C7").getCellFormatText());
 		
@@ -605,7 +605,7 @@ public class Issue400Test {
 	@Test
 	public void testZSS429() throws IOException {
 		
-		Book book = Util.loadBook("429-autofilter.xlsx");
+		Book book = Util.loadBook(this, "book/429-autofilter.xlsx");
 		Sheet sheet = book.getSheetAt(0);
 		Assert.assertEquals("A", Ranges.range(sheet,"C4").getCellFormatText());
 		
@@ -631,12 +631,12 @@ public class Issue400Test {
 
 	@Test 
 	public void testZSS431() throws IOException {
-		testZSS431_0(Util.loadBook("431-freezepanel.xlsx"),7,4);
-		testZSS431_0(Util.loadBook("431-freezepanel.xlsx"),7,0);
-		testZSS431_0(Util.loadBook("431-freezepanel.xlsx"),0,4);
-		testZSS431_0(Util.loadBook("431-freezepanel.xls"),7,4);
-		testZSS431_0(Util.loadBook("431-freezepanel.xls"),7,0);
-		testZSS431_0(Util.loadBook("431-freezepanel.xls"),0,4);
+		testZSS431_0(Util.loadBook(this, "book/431-freezepanel.xlsx"),7,4);
+		testZSS431_0(Util.loadBook(this, "book/431-freezepanel.xlsx"),7,0);
+		testZSS431_0(Util.loadBook(this, "book/431-freezepanel.xlsx"),0,4);
+		testZSS431_0(Util.loadBook(this, "book/431-freezepanel.xls"),7,4);
+		testZSS431_0(Util.loadBook(this, "book/431-freezepanel.xls"),7,0);
+		testZSS431_0(Util.loadBook(this, "book/431-freezepanel.xls"),0,4);
 	}
 	
 	public void testZSS431_0(Book book,int row, int column) throws IOException {
@@ -670,8 +670,8 @@ public class Issue400Test {
 	@Test
 	public void testZSS439() throws IOException {
 		
-		final String filename = "439-rows.xlsx";
-		Book book = Util.loadBook(filename);
+		final String filename = "book/439-rows.xlsx";
+		Book book = Util.loadBook(this, filename);
 		
 		// fill text on 3 rows
 		Sheet sheet = book.getSheetAt(0);
@@ -695,7 +695,7 @@ public class Issue400Test {
 	@Test
 	public void testZSS412() throws IOException {
 		
-		Book book = Util.loadBook("412-overlap-undo.xls");
+		Book book = Util.loadBook(this, "book/412-overlap-undo.xls");
 		Sheet sheet = book.getSheetAt(0);
 		
 		Assert.assertEquals(1, sheet.getInternalSheet().getNumOfMergedRegion());
@@ -721,7 +721,7 @@ public class Issue400Test {
 	}
 	@Test
 	public void testZSS412_395_1() throws IOException {
-		Book book = Util.loadBook("blank.xls");
+		Book book = Util.loadBook(this, "book/blank.xls");
 		Sheet sheet = book.getSheetAt(0);
 		Range rangeA = Ranges.range(sheet, "H11:J13");
 		rangeA.merge(false); // merge a 3 x 3
@@ -747,7 +747,7 @@ public class Issue400Test {
 	
 	@Test
 	public void testZSS418() throws IOException {
-		Book book = Util.loadBook("418-comment.xlsx");
+		Book book = Util.loadBook(this, "book/418-comment.xlsx");
 		Sheet sheet = book.getSheetAt(0);
 		SSheet ps = sheet.getInternalSheet();
 		
@@ -839,7 +839,7 @@ public class Issue400Test {
 	@Test
 	public void testZSS446() throws Exception {
 		// load book
-		Book book = Util.loadBook("446-border.xlsx");
+		Book book = Util.loadBook(this, "book/446-border.xlsx");
 		
 
 		// print setting >> with grid lines 
@@ -861,7 +861,7 @@ public class Issue400Test {
 	 */
 	@Test
 	public void testZSS441(){
-		Book workbook = Util.loadBook("441-sum.xls");
+		Book workbook = Util.loadBook(this, "book/441-sum.xls");
 		Sheet sheet = workbook.getSheet("issue");
 		//sum an array row reference
 		Range sumResult = Ranges.range(sheet, "B3");
@@ -878,7 +878,7 @@ public class Issue400Test {
 	 */
 	@Test
 	public void testZSS441ArrayFormula(){
-		Book workbook = Util.loadBook("441-sum.xls");
+		Book workbook = Util.loadBook(this, "book/441-sum.xls");
 		Sheet sheet = workbook.getSheet("array");
 		//array formula
 		Range multiplyResult = Ranges.range(sheet, "C3");
@@ -910,7 +910,7 @@ public class Issue400Test {
 	
 	@Test
 	public void testZSS441ThreeDimensionalReference(){
-		Book workbook = Util.loadBook("441-sum.xls");
+		Book workbook = Util.loadBook(this, "book/441-sum.xls");
 		Sheet sheet = workbook.getSheet("3D");
 		Range sumResult = Ranges.range(sheet, "B1");
 		assertEquals(11, sumResult.getCellData().getDoubleValue().intValue());
@@ -922,8 +922,8 @@ public class Issue400Test {
 	
 	@Test
 	public void testZSS441ExternalBook(){
-		Book workbook = Util.loadBook("441-sum.xls");
-		Book anotherWorkbook = Util.loadBook("441-another.xls");
+		Book workbook = Util.loadBook(this, "book/441-sum.xls");
+		Book anotherWorkbook = Util.loadBook(this, "book/441-another.xls");
 		BookSeriesBuilder.getInstance().buildBookSeries(new Book[]{workbook, anotherWorkbook});
 		
 		Sheet sheet = workbook.getSheet("external");
@@ -933,7 +933,7 @@ public class Issue400Test {
 	
 	@Test
 	public void testZSS441FormulaInValidation(){
-		Book workbook = Util.loadBook("441-validation.xlsx");
+		Book workbook = Util.loadBook(this, "book/441-validation.xlsx");
 		Sheet sheet = workbook.getSheet("validation");
 		//A ~ D
 		Range validationCell = Ranges.range(sheet, "B3");
@@ -953,7 +953,7 @@ public class Issue400Test {
 
 	@Test
 	public void testZSS401(){
-		Book workbook = Util.loadBook("401-cut-merged.xlsx");
+		Book workbook = Util.loadBook(this, "book/401-cut-merged.xlsx");
 		Range srcRange = Ranges.range(workbook.getSheet("source"), "A1:C1");
 		Range destRange = Ranges.range(workbook.getSheet("destination"),"A2:C2");
 		
@@ -963,7 +963,7 @@ public class Issue400Test {
 	
 	@Test
 	public void testZSS401CutInSameSheet(){
-		Book workbook = Util.loadBook("401-cut-merged.xlsx");
+		Book workbook = Util.loadBook(this, "book/401-cut-merged.xlsx");
 		Range srcRange = Ranges.range(workbook.getSheet("source"), "A1:C1");
 		Range destRange = Ranges.range(workbook.getSheet("source"),"A2:C2");
 		
@@ -975,7 +975,7 @@ public class Issue400Test {
 	@Test
 	public void testZSS453(){
 		//uncomment in zss 3.5, test case invalidate
-//		Book workbook = Util.loadBook("453-emptyHyperlink.xlsx");
+//		Book workbook = Util.loadBook(this, "book/453-emptyHyperlink.xlsx");
 //		String correctHyperlink = "<a zs.t=\"SHyperlink\" z.t=\"1\" href=\"javascript:\" z.href=\"http://www.zkoss.org/\">zkoss</a>";
 //		assertEquals(correctHyperlink, XUtils.getRichCellHtmlText((XSheet)workbook.getPoiBook().getSheetAt(0),0,0));
 //		try{
@@ -987,7 +987,7 @@ public class Issue400Test {
 	
 	@Test
 	public void testZSS456(){
-		Book workbook = Util.loadBook("blank.xlsx");
+		Book workbook = Util.loadBook(this, "book/blank.xlsx");
 		Sheet sheet = workbook.getSheetAt(0);
 		Range target1 = Ranges.range(sheet, "B2:C3");
 		Range target2 = Ranges.range(sheet, "A1:D4");
@@ -1003,7 +1003,7 @@ public class Issue400Test {
 	
 	@Test
 	public void testZSS427(){
-		Book workbook = Util.loadBook("427-export.xlsx");
+		Book workbook = Util.loadBook(this, "book/427-export.xlsx");
 		File file = Setup.getTempFile("zss427",".pdf");
 		try{
 			FileOutputStream fos = new FileOutputStream(file);
@@ -1019,8 +1019,8 @@ public class Issue400Test {
 	
 	@Test
 	public void testZSS461(){
-		testZSS461(Util.loadBook("blank.xlsx"));
-		testZSS461(Util.loadBook("blank.xls"));
+		testZSS461(Util.loadBook(this, "book/blank.xlsx"));
+		testZSS461(Util.loadBook(this, "book/blank.xls"));
 	}
 
 	private void testZSS461(Book book){
@@ -1072,7 +1072,7 @@ public class Issue400Test {
 
 	@Test
 	public void testZSS457(){
-		testZSS457(Util.loadBook("457-emptyHyperlink.xlsx"));
+		testZSS457(Util.loadBook(this, "book/457-emptyHyperlink.xlsx"));
 	}
 	private void testZSS457(Book book){
 		Sheet sheet = book.getSheetAt(0);
@@ -1104,7 +1104,7 @@ public class Issue400Test {
 
 	@Test
 	public void testZSS465(){
-		Book book = Util.loadBook("465-exception.xls");
+		Book book = Util.loadBook(this, "book/465-exception.xls");
 		for(int i=0;i<book.getNumberOfSheets();i++){
 			Sheet sheet = book.getSheetAt(0);
 			sheet.getInternalSheet().getDataValidations();
@@ -1113,8 +1113,8 @@ public class Issue400Test {
 	
 	@Test
 	public void testZSS473(){
-		testZSS473(Util.loadBook("473-sheetname.xlsx"));
-		testZSS473(Util.loadBook("473-sheetname.xls"));
+		testZSS473(Util.loadBook(this, "book/473-sheetname.xlsx"));
+		testZSS473(Util.loadBook(this, "book/473-sheetname.xls"));
 	}
 	public void testZSS473(Book book){
 		
@@ -1209,8 +1209,8 @@ public class Issue400Test {
 	}
 	@Test
 	public void testZSS473_2(){
-		testZSS473_2(Util.loadBook("473-sheetname2.xlsx"));
-		testZSS473_2(Util.loadBook("473-sheetname2.xls"));
+		testZSS473_2(Util.loadBook(this, "book/473-sheetname2.xlsx"));
+		testZSS473_2(Util.loadBook(this, "book/473-sheetname2.xls"));
 	}
 	public void testZSS473_2(Book book){
 		
@@ -1239,7 +1239,7 @@ public class Issue400Test {
 	
 	@Test
 	public void testZSS482(){
-		testZSS482(Util.loadBook("482-renamesheet.xlsx"));
+		testZSS482(Util.loadBook(this, "book/482-renamesheet.xlsx"));
 	}
 	public void testZSS482(Book book){
 		Sheet sheet = book.getSheetAt(0);
@@ -1250,10 +1250,10 @@ public class Issue400Test {
 	
 	@Test
 	public void testZSS477(){
-		testZSS477_1(Util.loadBook("477-bordercolor.xlsx"));
-		testZSS477_1(Util.loadBook("477-bordercolor.xls"));
-		testZSS477_2(Util.loadBook("477-bordercolor.xlsx"));
-		testZSS477_2(Util.loadBook("477-bordercolor.xls"));
+		testZSS477_1(Util.loadBook(this, "book/477-bordercolor.xlsx"));
+		testZSS477_1(Util.loadBook(this, "book/477-bordercolor.xls"));
+		testZSS477_2(Util.loadBook(this, "book/477-bordercolor.xlsx"));
+		testZSS477_2(Util.loadBook(this, "book/477-bordercolor.xls"));
 	}
 	
 	public void testZSS477_1(Book book){
@@ -1380,8 +1380,8 @@ public class Issue400Test {
 	
 	@Test
 	public void testZSS498_Formula() { 
-		testZSS498_Formula(Util.loadBook("blank.xlsx"));
-		testZSS498_Formula(Util.loadBook("blank.xls"));
+		testZSS498_Formula(Util.loadBook(this, "book/blank.xlsx"));
+		testZSS498_Formula(Util.loadBook(this, "book/blank.xls"));
 	}
 	public void testZSS498_Formula(Book book) { 
 		Sheet sheet = book.getSheetAt(0);
@@ -1405,8 +1405,8 @@ public class Issue400Test {
 	
 	@Test
 	public void testZSS492_MoveSheet(){
-		testZSS492_MoveSheet(Util.loadBook("492-movesheet.xls"));
-		testZSS492_MoveSheet(Util.loadBook("492-movesheet.xlsx"));
+		testZSS492_MoveSheet(Util.loadBook(this, "book/492-movesheet.xls"));
+		testZSS492_MoveSheet(Util.loadBook(this, "book/492-movesheet.xlsx"));
 	}
 	
 	public void testZSS492_MoveSheet(Book book){	
@@ -1515,10 +1515,10 @@ public class Issue400Test {
 	// additional test case for ZSS-492
 	@Test
 	public void testZSS492_RenameSheet() { 
-		testZSS492_RenameSheet(Util.loadBook("492-movesheet.xlsx"), false);
-		testZSS492_RenameSheet(Util.loadBook("492-movesheet.xls"), false);
-		testZSS492_RenameSheet(Util.loadBook("492-movesheet.xlsx"), true);
-		testZSS492_RenameSheet(Util.loadBook("492-movesheet.xls"), true);
+		testZSS492_RenameSheet(Util.loadBook(this, "book/492-movesheet.xlsx"), false);
+		testZSS492_RenameSheet(Util.loadBook(this, "book/492-movesheet.xls"), false);
+		testZSS492_RenameSheet(Util.loadBook(this, "book/492-movesheet.xlsx"), true);
+		testZSS492_RenameSheet(Util.loadBook(this, "book/492-movesheet.xls"), true);
 	}
 	
 	public void testZSS492_RenameSheet(Book book, boolean reorder) {
@@ -1618,8 +1618,8 @@ public class Issue400Test {
 	
 	@Test
 	public void testZSS494() { 
-		testZSS494(Util.loadBook("494-reorder-sheet-break-formula.xlsx"));
-		testZSS494(Util.loadBook("494-reorder-sheet-break-formula.xls"));
+		testZSS494(Util.loadBook(this, "book/494-reorder-sheet-break-formula.xlsx"));
+		testZSS494(Util.loadBook(this, "book/494-reorder-sheet-break-formula.xls"));
 	}
 	
 	public void testZSS494(Book book) {

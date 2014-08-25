@@ -30,49 +30,49 @@ public class Logical2007Test extends FormulaTestBase {
 	// AND
 	@Test
 	public void testAND() {
-		Book book = Util.loadBook("TestFile2007-Formula.xlsx");
+		Book book = Util.loadBook(this, "book/TestFile2007-Formula.xlsx");
 		testAND(book);
 	}
 
 	// FALSE
 	@Test
 	public void testFALSE() {
-		Book book = Util.loadBook("TestFile2007-Formula.xlsx");
+		Book book = Util.loadBook(this, "book/TestFile2007-Formula.xlsx");
 		testFALSE(book);
 	}
 
 	// IF
 	@Test
 	public void testIF() {
-		Book book = Util.loadBook("TestFile2007-Formula.xlsx");
+		Book book = Util.loadBook(this, "book/TestFile2007-Formula.xlsx");
 		testIF(book);
 	}
 
 	// IFERROR
 	@Test
 	public void testIFERROR() {
-		Book book = Util.loadBook("TestFile2007-Formula.xlsx");
+		Book book = Util.loadBook(this, "book/TestFile2007-Formula.xlsx");
 		testIFERROR(book);
 	}
 
 	// NOT
 	@Test
 	public void testNOT() {
-		Book book = Util.loadBook("TestFile2007-Formula.xlsx");
+		Book book = Util.loadBook(this, "book/TestFile2007-Formula.xlsx");
 		testNOT(book);
 	}
 
 	// OR
 	@Test
 	public void testOR() {
-		Book book = Util.loadBook("TestFile2007-Formula.xlsx");
+		Book book = Util.loadBook(this, "book/TestFile2007-Formula.xlsx");
 		testOR(book);
 	}
 
 	// TRUE
 	@Test
 	public void testTRUE() {
-		Book book = Util.loadBook("TestFile2007-Formula.xlsx");
+		Book book = Util.loadBook(this, "book/TestFile2007-Formula.xlsx");
 		testTRUE(book);
 	}
 }

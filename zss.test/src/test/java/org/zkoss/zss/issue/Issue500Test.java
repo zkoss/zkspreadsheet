@@ -40,7 +40,7 @@ public class Issue500Test {
 	
 	@Test
 	public void testZSS502_2003(){
-		Book book = Util.loadBook("502-crossSheetReference.xls");
+		Book book = Util.loadBook(this, "book/502-crossSheetReference.xls");
 		Sheet sheet = book.getSheet("cell-reference");
 		Range referencingCell = Ranges.range(sheet, "C4");
 		assertEquals("=row!A1", referencingCell.getCellEditText());
@@ -54,7 +54,7 @@ public class Issue500Test {
 	
 	@Test
 	public void testZSS502_2007(){
-		Book book = Util.loadBook("502-crossSheetReference.xlsx");
+		Book book = Util.loadBook(this, "book/502-crossSheetReference.xlsx");
 		Sheet sheet = book.getSheet("cell-reference");
 		Range referencingCell = Ranges.range(sheet, "C4");
 		assertEquals("=row!A1", referencingCell.getCellEditText());
@@ -69,7 +69,7 @@ public class Issue500Test {
 	
 	@Test
 	public void testZSS502_NonExistingSheet2003(){
-		Book book = Util.loadBook("blank.xls");
+		Book book = Util.loadBook(this, "book/blank.xls");
 		Sheet sheet = book.getSheetAt(0);
 		Range cell = Ranges.range(sheet, "A1");
 		cell.setCellEditText("=nonExisted!B1");
@@ -79,7 +79,7 @@ public class Issue500Test {
 	
 	@Test
 	public void testZSS502_NonExistingSheet2007(){
-		Book book = Util.loadBook("blank.xlsx");
+		Book book = Util.loadBook(this, "book/blank.xlsx");
 		Sheet sheet = book.getSheetAt(0);
 		Range cell = Ranges.range(sheet, "A1");
 		cell.setCellEditText("=nonExisted!B1");
@@ -89,7 +89,7 @@ public class Issue500Test {
 	
 	@Test
 	public void testZSS510() {
-		Book book = Util.loadBook("blank.xlsx");
+		Book book = Util.loadBook(this, "book/blank.xlsx");
 		Sheet sheet = book.getSheetAt(0);
 		Range r = Ranges.range(sheet, "A1");
 		r.setCellEditText("Hello");
@@ -100,7 +100,7 @@ public class Issue500Test {
 	
 	@Test
 	public void testZSS511_LEFTB() {
-		Book book = Util.loadBook("511-REPLACEB-LEFTB.xlsx");
+		Book book = Util.loadBook(this, "book/511-REPLACEB-LEFTB.xlsx");
 		Sheet sheet = book.getSheet("LEFTB");
 		
 		assertEquals("#VALUE!", Ranges.range(sheet, "A1").getCellFormatText());
@@ -138,7 +138,7 @@ public class Issue500Test {
 	
 	@Test
 	public void testZSS511_REPLACEB() throws UnsupportedEncodingException {
-		Book book = Util.loadBook("511-REPLACEB-LEFTB.xlsx");
+		Book book = Util.loadBook(this, "book/511-REPLACEB-LEFTB.xlsx");
 		Sheet sheet = book.getSheet("REPLACEB");
 		assertEquals("A\u6E2C\u660E\u6708\u5149\u662F\u5B57\u4E32", Ranges.range(sheet, "A1").getCellFormatText());
 		assertEquals("A\u6E2C\u660E\u6708\u5149 \u5B57\u4E32", Ranges.range(sheet, "A2").getCellFormatText());
@@ -195,8 +195,8 @@ public class Issue500Test {
 	@Test
 	public void testZSS547_DeleteSheet() {
 		// there are Sheet1~4
-		testZSS547_DeleteSheet(Util.loadBook("547-sheet-index.xlsx"));
-		testZSS547_DeleteSheet(Util.loadBook("547-sheet-index.xls"));
+		testZSS547_DeleteSheet(Util.loadBook(this, "book/547-sheet-index.xlsx"));
+		testZSS547_DeleteSheet(Util.loadBook(this, "book/547-sheet-index.xls"));
 	}
 	
 	private void testZSS547_DeleteSheet(Book book) {
@@ -210,7 +210,7 @@ public class Issue500Test {
 	
 	@Test
 	public void testZSS592() {
-		Book book = Util.loadBook("blank.xlsx");
+		Book book = Util.loadBook(this, "book/blank.xlsx");
 		Sheet sheet = book.getSheet("Sheet1");
 		
 		String[] columns = {"A", "B", "C", "D", "E"};
@@ -258,7 +258,7 @@ public class Issue500Test {
 	
 	@Test
 	public void testZSS595_Row() {
-		Book book = Util.loadBook("blank.xlsx");
+		Book book = Util.loadBook(this, "book/blank.xlsx");
 		Sheet sheet = book.getSheet("Sheet1");
 		Ranges.range(sheet).setFreezePanel(5, 0);
 		
@@ -285,7 +285,7 @@ public class Issue500Test {
 	
 	@Test
 	public void testZSS595_Column() {
-		Book book = Util.loadBook("blank.xlsx");
+		Book book = Util.loadBook(this, "book/blank.xlsx");
 		Sheet sheet = book.getSheet("Sheet1");
 		
 		String[] columns = {"A", "B", "C", "D", "E"};

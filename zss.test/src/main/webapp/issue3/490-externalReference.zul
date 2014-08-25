@@ -2,7 +2,7 @@
 	<label multiline="true">move a sheet and verify all chart</label>
 	<button id="move" onClick="move()">Move current sheet to index:</button>
 	<intbox id="sheetIndex" value="0"></intbox>
-	<spreadsheet id="ss" src="/book/490-externalReference.xls" maxVisibleRows="200"
+	<spreadsheet id="ss" src="/issue3/book/490-externalReference.xls" maxVisibleRows="200"
 		maxVisibleColumns="40" width="100%" height="90%" showContextMenu="true" showSheetbar="true"
 		showToolbar="true" showFormulabar="true" />
 	<zscript><![CDATA[

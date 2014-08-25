@@ -1,8 +1,8 @@
 <zk>
-	<spreadsheet id="ss" src="/book/picture.xlsx" maxVisibleRows="50" maxVisibleColumns="20"
+	<spreadsheet id="ss" src="/import/book/picture.xlsx" maxVisibleRows="50" maxVisibleColumns="20"
 		width="100%" height="100%" showContextMenu="true" showSheetbar="true" showToolbar="true"
 		showFormulabar="true" />
-	<spreadsheet src="/book/picture.xls" maxVisibleRows="50" maxVisibleColumns="20"
+	<spreadsheet src="/import/book/picture.xls" maxVisibleRows="50" maxVisibleColumns="20"
 		width="100%" height="100%" showContextMenu="true" showSheetbar="true" showToolbar="true"
 		showFormulabar="true" />
 </zk>

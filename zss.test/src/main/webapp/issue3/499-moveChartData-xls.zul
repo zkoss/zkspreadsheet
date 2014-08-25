@@ -5,7 +5,7 @@
 		<button label="2. select sheet2" onClick='ss2003.setSelectedSheet("Sheet2")' />
 		<button label="3. select chart-image" onClick='ss2003.setSelectedSheet("chart-image")' />
 		</hbox>
-	<spreadsheet id="ss2003" src="/book/499-moveChartData.xls" maxVisibleRows="200" maxVisibleColumns="40"
+	<spreadsheet id="ss2003" src="/issue3/book/499-moveChartData.xls" maxVisibleRows="200" maxVisibleColumns="40"
 		showContextMenu="true" showSheetbar="true" showToolbar="true" 
 		showFormulabar="true"
 		hflex="1" vflex="1"/>

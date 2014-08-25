@@ -18,7 +18,7 @@
 				<button onClick="run(ss, 15)">1. change column A's width</button>
 			</hlayout>
 			
-			<spreadsheet id="ss" src="/book/515-deleteFreezeRow.xls" maxVisibleRows="200" maxVisibleColumns="40" hflex="1"
+			<spreadsheet id="ss" src="/issue3/book/515-deleteFreezeRow.xls" maxVisibleRows="200" maxVisibleColumns="40" hflex="1"
 				vflex="true" showContextMenu="true" showSheetbar="true" showToolbar="true" 
 				showFormulabar="true"/>
 		</vlayout>

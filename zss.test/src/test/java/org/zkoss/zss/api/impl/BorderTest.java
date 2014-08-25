@@ -41,10 +41,10 @@ public class BorderTest {
 	
 	@Test
 	public void testBorder() throws IOException {
-		testBorder(Util.loadBook("bordercolor.xlsx"));
-		testBorder(Util.loadBook("bordercolor.xls"));
-		testMakeBorder(Util.loadBook("blank.xlsx"));
-		testMakeBorder(Util.loadBook("blank.xls"));
+		testBorder(Util.loadBook(this, "book/bordercolor.xlsx"));
+		testBorder(Util.loadBook(this, "book/bordercolor.xls"));
+		testMakeBorder(Util.loadBook(this, "book/blank.xlsx"));
+		testMakeBorder(Util.loadBook(this, "book/blank.xls"));
 	}
 	
 	public void testMakeBorder(Book book) throws IOException {

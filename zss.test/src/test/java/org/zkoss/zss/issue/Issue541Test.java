@@ -49,7 +49,7 @@ public class Issue541Test {
 	 */
 	@Test
 	public void testFill(){
-		Book book = Util.loadBook("541-daylightsave.xlsx");
+		Book book = Util.loadBook(this, "book/541-daylightsave.xlsx");
 		Sheet sheet = book.getSheetAt(0);
 		autoFill(sheet,"A2","A2:A11");
 		autoFill(sheet,"B12","B2:B12");
@@ -138,7 +138,7 @@ public class Issue541Test {
 	
 	@Test
 	public void pasteAutoRepeat(){
-		Book book = Util.loadBook("blank.xlsx");
+		Book book = Util.loadBook(this, "book/blank.xlsx");
 		book.getSheetAt(0);
 	}
 }

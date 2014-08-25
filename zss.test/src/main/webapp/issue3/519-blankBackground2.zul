@@ -4,11 +4,11 @@
 	2. row 11 is green row and under red column G, but above red column D
 	</label>
 	<hbox hflex="1" vflex="1">
-	<spreadsheet src="/book/519-blankBackground2.xlsx" maxVisibleRows="200" maxVisibleColumns="40" 
+	<spreadsheet src="/issue3/book/519-blankBackground2.xlsx" maxVisibleRows="200" maxVisibleColumns="40" 
 		hflex="1" vflex="1"
 		showContextMenu="true" showSheetbar="true" showToolbar="true" 
 		showFormulabar="true"/>
-	<spreadsheet src="/book/519-blankBackground2.xls" maxVisibleRows="200" maxVisibleColumns="40" 
+	<spreadsheet src="/issue3/book/519-blankBackground2.xls" maxVisibleRows="200" maxVisibleColumns="40" 
 		hflex="1" vflex="1"
 		showContextMenu="true" showSheetbar="true" showToolbar="true" 
 		showFormulabar="true"/>

@@ -11,7 +11,8 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
  */
 package org.zkoss.zss.model;
 
-import java.io.File;
+import java.io.Closeable;
+import java.io.InputStream;
 import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.Set;
@@ -23,7 +24,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.zkoss.util.Locales;
 import org.zkoss.zss.Setup;
-import org.zkoss.zss.Util;
 import org.zkoss.zss.model.CellRegion;
 import org.zkoss.zss.model.ErrorValue;
 import org.zkoss.zss.model.SBook;
@@ -539,20 +539,30 @@ public class FormulaEvalTest {
 
 	}
 
-	private SBook getBook(String path, String bookName) {
-		File file = null;
+	public SBook getBook(String path, String bookName) {
+		InputStream is = null;
 		try {
-			file = new File(Util.getBookAbsolutePath(path));
-			return importer.imports(file, bookName);
+			is = FormulaEvalTest.class.getResourceAsStream(path);
+			return importer.imports(is, bookName);
 		} catch(Exception e) {
 			e.printStackTrace();
+		} finally {
+			close(is);
 		}
 		return null;
 	}
+	
+	public void close(Closeable r) {
+		try {
+			r.close();
+		} catch(Exception e) {
+		}
+	}
+
 
 	@Test
 	public void testArrayValue() {
-		SBook book = getBook("formula-eval.xlsx" , "Book1");
+		SBook book = getBook("book/formula-eval.xlsx" , "Book1");
 		Assert.assertNotNull(book);
 		SSheet sheet = book.getSheetByName("array");
 		Assert.assertNotNull(sheet);
@@ -585,7 +595,7 @@ public class FormulaEvalTest {
 	@Test
 	@Ignore
 	public void testArrayFormula() {
-		SBook book = getBook("formula-eval.xlsx", "Book1");
+		SBook book = getBook("book/formula-eval.xlsx", "Book1");
 		SSheet sheet = book.getSheetByName("array");
 		Assert.assertNotNull(book);
 		Assert.assertNotNull(sheet);
@@ -631,13 +641,13 @@ public class FormulaEvalTest {
 		testExternalBookReference(book1, book2, book3);
 
 		// 2007
-		book1 = getBook("formula-eval-external.xlsx", "Book1");
-		book2 = getBook("formula-eval.xlsx", "formula-eval.xlsx");
+		book1 = getBook("book/formula-eval-external.xlsx", "Book1");
+		book2 = getBook("book/formula-eval.xlsx", "formula-eval.xlsx");
 		testExternalBookReference(book1, book2);
 
 		// 2003
-		book1 = getBook("formula-eval-external.xls", "Book1");
-		book2 = getBook("formula-eval.xls", "formula-eval.xls");
+		book1 = getBook("book/formula-eval-external.xls", "Book1");
+		book2 = getBook("book/formula-eval.xls", "formula-eval.xls");
 		testExternalBookReference(book1, book2);
 	}
 

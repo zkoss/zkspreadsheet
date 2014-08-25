@@ -32,14 +32,14 @@ public class Math2007IgnoredTest extends FormulaTestBase {
 	// This should be check by human
 	@Test
 	public void testRANDBETWEEN()  {
-		Book book = Util.loadBook("TestFile2007-Formula.xlsx");
+		Book book = Util.loadBook(this, "book/TestFile2007-Formula.xlsx");
 		testRANDBETWEEN(book);
 	}
 	
 	// This should be check by human
 	@Test
 	public void testRAND()  {
-		Book book = Util.loadBook("TestFile2007-Formula.xlsx");
+		Book book = Util.loadBook(this, "book/TestFile2007-Formula.xlsx");
 		testRAND(book);
 	}
 }

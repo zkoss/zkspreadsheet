@@ -44,11 +44,11 @@ public class ExternalReferenceComposer extends SelectorComposer<Component>{
 		final Importer importer = Importers.getImporter("excel");
 
 		//prepare source book
-		final InputStream srcStream = Sessions.getCurrent().getWebApp().getResourceAsStream("/"+srcFileName); 
+		final InputStream srcStream = Sessions.getCurrent().getWebApp().getResourceAsStream("/book/"+srcFileName); 
 		final Book srcBook = importer.imports(srcStream, srcFileName);
 
 		//prepare destination book
-		final InputStream dstStream = Sessions.getCurrent().getWebApp().getResourceAsStream("/"+dstFileName); 
+		final InputStream dstStream = Sessions.getCurrent().getWebApp().getResourceAsStream("/book/"+dstFileName); 
 		final Book dstBook = importer.imports(dstStream, dstFileName);
 
 		//add both books into a BookSeries

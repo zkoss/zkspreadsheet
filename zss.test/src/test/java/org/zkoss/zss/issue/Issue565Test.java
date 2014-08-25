@@ -42,10 +42,10 @@ public class Issue565Test {
 	
 	@Test
 	public void testInputFormula(){
-		testInputFormulaTW(Util.loadBook("blank.xlsx"));
-		testInputFormulaTW(Util.loadBook("blank.xls"));
-		testInputFormulaDE(Util.loadBook("blank.xlsx"));
-		testInputFormulaDE(Util.loadBook("blank.xls"));
+		testInputFormulaTW(Util.loadBook(this, "book/blank.xlsx"));
+		testInputFormulaTW(Util.loadBook(this, "book/blank.xls"));
+		testInputFormulaDE(Util.loadBook(this, "book/blank.xlsx"));
+		testInputFormulaDE(Util.loadBook(this, "book/blank.xls"));
 	}
 	
 	public void testInputFormulaTW(Book book){

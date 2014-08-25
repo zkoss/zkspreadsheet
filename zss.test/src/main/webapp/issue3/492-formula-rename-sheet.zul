@@ -19,7 +19,7 @@ Reproduce:
 			<button label="run 2" onClick="run(2);" />
 		</hlayout>
 		
-		<spreadsheet id="ss" src="/book/492-formula-rename-sheet.xlsx"  hflex="1" vflex="1"
+		<spreadsheet id="ss" src="/issue3/book/492-formula-rename-sheet.xlsx"  hflex="1" vflex="1"
 			ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e"
 			maxrows="500" maxcolumns="100"
 			showFormulabar="true" showContextMenu="true" showSheetbar="true" showToolbar="true">

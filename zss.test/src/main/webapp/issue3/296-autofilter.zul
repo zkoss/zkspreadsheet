@@ -1,7 +1,7 @@
 <zk>
 	<window height="100%">
 		
-		<spreadsheet id="source" src="/book/296-autofilter.xlsx" maxVisibleRows="150" maxVisibleColumns="40"
+		<spreadsheet id="source" src="/issue3/book/296-autofilter.xlsx" maxVisibleRows="150" maxVisibleColumns="40"
 			width="100%" height="50%" showContextMenu="true" showSheetbar="true" showToolbar="true"
 			ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e" />
 	</window>

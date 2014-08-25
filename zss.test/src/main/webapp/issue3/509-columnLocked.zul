@@ -2,7 +2,7 @@
 	<label multiline="true">
 	only column C and D are not editable, other column should able to be edited.
 	</label>
-	<spreadsheet src="/book/509-ColumnLocked.xlsx" maxVisibleRows="200" maxVisibleColumns="40" width="100%"
+	<spreadsheet src="/issue3/book/509-ColumnLocked.xlsx" maxVisibleRows="200" maxVisibleColumns="40" width="100%"
 		height="80%" showContextMenu="true" showSheetbar="true" showToolbar="true" 
 		showFormulabar="true"/>
 </zk>

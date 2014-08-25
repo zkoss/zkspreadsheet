@@ -1,6 +1,6 @@
 <zk>
-	<spreadsheet src="/book/chart.xlsx" maxVisibleRows="40" maxVisibleColumns="30" width="100%"
+	<spreadsheet src="/import/book/chart.xlsx" maxVisibleRows="40" maxVisibleColumns="30" width="100%"
 		height="100%" showContextMenu="true" showSheetbar="true" showToolbar="true" showFormulabar="true" />
-	<spreadsheet src="/book/chart.xls" maxVisibleRows="40" maxVisibleColumns="30" width="100%"
+	<spreadsheet src="/import/book/chart.xls" maxVisibleRows="40" maxVisibleColumns="30" width="100%"
 		height="100%" showContextMenu="true" showSheetbar="true" showToolbar="true" showFormulabar="true" />
 </zk>

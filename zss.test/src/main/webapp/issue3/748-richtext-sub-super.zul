@@ -8,7 +8,7 @@ Since 3.5.0
 5. You shall see the same richtext, superscript, and subscript show in Excel.
 </label>
 	<button label="Export" onClick="export()" />
-	<spreadsheet id="ss" src="/book/748-richtext-sub-super.xlsx" vflex="1"  maxVisibleRows="150"
+	<spreadsheet id="ss" src="/issue3/book/748-richtext-sub-super.xlsx" vflex="1"  maxVisibleRows="150"
 		maxVisibleColumns="40" showToolbar="true" showSheetbar="true" showFormulabar="true" width="600px"/>
 	<zscript><![CDATA[
        	import java.io.ByteArrayOutputStream;

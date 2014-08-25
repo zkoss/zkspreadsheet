@@ -25,7 +25,7 @@ public class AccountingTest {
 	@Before
 	public void startUp() throws Exception {
 		Setup.pushZssLocale(Locale.TAIWAN);
-		book = Util.loadBook("TestFile2007-Format.xlsx");
+		book = Util.loadBook(AccountingTest.class, "book/TestFile2007-Format.xlsx");
 	}
 	
 	@After

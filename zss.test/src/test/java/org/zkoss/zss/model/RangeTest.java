@@ -2,6 +2,7 @@ package org.zkoss.zss.model;
 
 import static org.junit.Assert.*;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -14,7 +15,6 @@ import org.junit.Test;
 import org.zkoss.image.AImage;
 import org.zkoss.util.Locales;
 import org.zkoss.zss.Setup;
-import org.zkoss.zss.Util;
 import org.zkoss.zss.model.CellRegion;
 import org.zkoss.zss.model.ErrorValue;
 import org.zkoss.zss.model.InvalidModelOpException;
@@ -315,14 +315,21 @@ C	3	6	9	=SUM(E9:F9)
 		
 		assertEquals(0, sheet.getPictures().size());
 		
-		AImage zklogo = Util.getImage("zklogo.png");
-		
-		ViewAnchor anchor = new ViewAnchor(0, 1, zklogo.getWidth()/2, zklogo.getHeight()/2);
-		SPicture picture = SRanges.range(sheet).addPicture(anchor, zklogo.getByteData(), SPicture.Format.PNG);
-		
-		assertEquals(1, sheet.getPictures().size());
-		assertEquals(Format.PNG, picture.getFormat());
-		assertEquals(zklogo.getWidth()/2, picture.getAnchor().getWidth());
+		try {
+			AImage zklogo = new AImage(RangeTest.class.getResource("book/zklogo.png"));
+			
+			ViewAnchor anchor = new ViewAnchor(0, 1, zklogo.getWidth()/2, zklogo.getHeight()/2);
+			SPicture picture = SRanges.range(sheet).addPicture(anchor, zklogo.getByteData(), SPicture.Format.PNG);
+			
+			assertEquals(1, sheet.getPictures().size());
+			assertEquals(Format.PNG, picture.getFormat());
+			assertEquals(zklogo.getWidth()/2, picture.getAnchor().getWidth());
+			
+//			ImExpTestUtil.write(book, Type.XLSX); //human checking
+		} catch (IOException e) {
+			e.printStackTrace();
+			fail();
+		}
 	}
 	
 	@Test
@@ -332,17 +339,24 @@ C	3	6	9	=SUM(E9:F9)
 		
 		assertEquals(0, sheet.getPictures().size());
 		
-		AImage zklogo = Util.getImage("zklogo.png");
-		
-		ViewAnchor anchor = new ViewAnchor(0, 1, zklogo.getWidth()/2, zklogo.getHeight()/2);
-		SPicture picture = SRanges.range(sheet).addPicture(anchor, zklogo.getByteData(), SPicture.Format.PNG);
-		
-		assertEquals(1, sheet.getPictures().size());
-		assertEquals(Format.PNG, picture.getFormat());
-		assertEquals(zklogo.getWidth()/2, picture.getAnchor().getWidth());
-		
-		SRanges.range(sheet).deletePicture(picture);
-		assertEquals(0, sheet.getPictures().size());
+		try {
+			AImage zklogo = new AImage(RangeTest.class.getResource("book/zklogo.png"));
+			
+			ViewAnchor anchor = new ViewAnchor(0, 1, zklogo.getWidth()/2, zklogo.getHeight()/2);
+			SPicture picture = SRanges.range(sheet).addPicture(anchor, zklogo.getByteData(), SPicture.Format.PNG);
+			
+			assertEquals(1, sheet.getPictures().size());
+			assertEquals(Format.PNG, picture.getFormat());
+			assertEquals(zklogo.getWidth()/2, picture.getAnchor().getWidth());
+			
+			SRanges.range(sheet).deletePicture(picture);
+			assertEquals(0, sheet.getPictures().size());
+			
+//			ImExpTestUtil.write(book, Type.XLSX); //human checking
+		} catch (IOException e) {
+			e.printStackTrace();
+			fail();
+		}
 	}
 	
 	@Test
@@ -352,19 +366,26 @@ C	3	6	9	=SUM(E9:F9)
 		
 		assertEquals(0, sheet.getPictures().size());
 		
-		AImage zklogo = Util.getImage("zklogo.png");
-		
-		ViewAnchor anchor = new ViewAnchor(0, 1, zklogo.getWidth()/2, zklogo.getHeight()/2);
-		SPicture picture = SRanges.range(sheet).addPicture(anchor, zklogo.getByteData(), SPicture.Format.PNG);
-		
-		assertEquals(1, sheet.getPictures().size());
-		assertEquals(Format.PNG, picture.getFormat());
-		assertEquals(zklogo.getWidth()/2, picture.getAnchor().getWidth());
-		
-		ViewAnchor newAnchor = new ViewAnchor(3, 4, zklogo.getWidth()/2, zklogo.getHeight()/2);
-		SRanges.range(sheet).movePicture(picture, newAnchor);
-		assertEquals(3, picture.getAnchor().getRowIndex());
-		assertEquals(4, picture.getAnchor().getColumnIndex());
+		try {
+			AImage zklogo = new AImage(RangeTest.class.getResource("book/zklogo.png"));
+			
+			ViewAnchor anchor = new ViewAnchor(0, 1, zklogo.getWidth()/2, zklogo.getHeight()/2);
+			SPicture picture = SRanges.range(sheet).addPicture(anchor, zklogo.getByteData(), SPicture.Format.PNG);
+			
+			assertEquals(1, sheet.getPictures().size());
+			assertEquals(Format.PNG, picture.getFormat());
+			assertEquals(zklogo.getWidth()/2, picture.getAnchor().getWidth());
+			
+			ViewAnchor newAnchor = new ViewAnchor(3, 4, zklogo.getWidth()/2, zklogo.getHeight()/2);
+			SRanges.range(sheet).movePicture(picture, newAnchor);
+			assertEquals(3, picture.getAnchor().getRowIndex());
+			assertEquals(4, picture.getAnchor().getColumnIndex());
+			
+//			ImExpTestUtil.write(book, Type.XLSX); //human checking
+		} catch (IOException e) {
+			e.printStackTrace();
+			fail();
+		}
 	}
 	
 	@Test

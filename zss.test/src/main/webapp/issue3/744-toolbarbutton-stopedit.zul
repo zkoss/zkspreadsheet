@@ -19,6 +19,6 @@ Copyright (C) 2014 Potix Corporation. All Rights Reserved.
 		2. Click "bold" toolbar button.
 		3. Text in A1 should stop editing and update font weight to bold.
 	</label>
-	<spreadsheet showToolbar="true" src="/book/blank.xlsx" height="500px" width="800px">
+	<spreadsheet showToolbar="true" src="/issue3/book/blank.xlsx" height="500px" width="800px">
 	</spreadsheet>
 </window>
