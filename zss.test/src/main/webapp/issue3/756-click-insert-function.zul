@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+756-click-insert-function.zul
+
+	Purpose:
+		
+	Description:
+		
+	History:
+		Thu, Aug 28, 2014 10:58:31 AM, Created by RaymondChao
+
+Copyright (C) 2014 Potix Corporation. All Rights Reserved.
+
+-->
+<window>
+	<label multiline="true">
+		1. Click on f( x) button to show Insert Function Window.
+		2. Type "series" in Search textbox.
+		3. Click empty part of the listbox.
+		4. Should not show any js error.
+	</label>
+	<spreadsheet src="/issue3/book/blank.xlsx" showFormulabar="true" height="500px" width="800px">
+	</spreadsheet>
+</window>
