@@ -6,7 +6,7 @@ with a hidden merge cells
 2.select B2:D3 , the selection should be correctly 
 	</label>
 	
-		<spreadsheet id="ss" src="/book/330-hideMerge2.xlsx" width="1500px" height="800px"
+		<spreadsheet id="ss" src="/issue3/book/330-hideMerge2.xlsx" width="1500px" height="800px"
 			ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e" maxrows="500" maxcolumns="100" showToolbar="true" showFormulabar="true"
 			showSheetbar="true" showContextMenu="true">
 		</spreadsheet>

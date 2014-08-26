@@ -89,7 +89,7 @@ public class ProtectSheetTest {
 	
 	@Test
 	public void testActionHandler() throws IOException {
-		final Book book = Util.loadBook("576-protect-sheet.xlsx");
+		final Book book = Util.loadBook(this, "book/576-protect-sheet.xlsx");
 		testProtectAll(book, book.getSheet("sheet1"));
 		testAllowAll(book, book.getSheet("sheet2"));
 		testProtectAll(book, book.getSheet("sheet3"));

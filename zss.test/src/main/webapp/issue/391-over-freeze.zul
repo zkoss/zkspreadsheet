@@ -6,7 +6,7 @@
 			r.setFreezePanel(ss.getSelection().getRow(), ss.getSelection().getColumn());
 		]]></attribute>
 		</button>
-		<spreadsheet id="ss" src="/book/391-over-freeze.xlsx" width="1500px" height="800px"
+		<spreadsheet id="ss" src="/issue/book/391-over-freeze.xlsx" width="1500px" height="800px"
 			ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e" maxrows="500" maxcolumns="100" showToolbar="true" showFormulabar="true"
 			showSheetbar="true" showContextMenu="true">
 		</spreadsheet>

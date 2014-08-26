@@ -7,7 +7,7 @@
 			<button label="focus to AX100" onClick="ss.focusTo(99, 49)"></button>
 			<button label="export" onClick="export();"></button>
 		</hlayout>
-		<spreadsheet id="ss" src="/book/464-manystyle.xlsx"  hflex="1" vflex="1"
+		<spreadsheet id="ss" src="/issue3/book/464-manystyle.xlsx"  hflex="1" vflex="1"
 			maxrows="100" maxcolumns="50"
 			showFormulabar="true" showContextMenu="true" showSheetbar="true" showToolbar="true">
 		</spreadsheet>

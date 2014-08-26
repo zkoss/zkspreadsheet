@@ -43,7 +43,7 @@ public class ImporterTest extends ImExpTestBase {
 		InputStream streamUnderTest = null;
 		SBook book = null;
 		try {
-			book = importer.imports(new FileInputStream(IMPORT_FILE_UNDER_TEST), "XSSFBook");
+			book = importer.imports(IMPORT_FILE_UNDER_TEST.openStream(), "XSSFBook");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}finally{

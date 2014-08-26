@@ -4,7 +4,7 @@
 		<hlayout hflex="1" vflex="1">
 			<spreadsheet id="ss" hflex="1" vflex="1" showFormulabar="true" showContextMenu="true"
 				showToolbar="true" showSheetbar="true" maxVisibleRows="100" maxVisibleColumns="40"
-				src="/book/picture.xlsx" />
+				src="/range/book/picture.xlsx" />
 			<vlayout width="350px" vflex="1">
 				<groupbox hflex="1">
 					<caption label="Picture" />

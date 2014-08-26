@@ -19,6 +19,6 @@ Copyright (C) 2014 Potix Corporation. All Rights Reserved.
 		2. click between style popup and menu popup
 		3. both style popup and menu popup should close
 	</label>
-	<spreadsheet src="/book/blank.xlsx" showContextMenu="true" height="500px" width="800px">
+	<spreadsheet src="/issue3/book/blank.xlsx" showContextMenu="true" height="500px" width="800px">
 	</spreadsheet>
 </window>

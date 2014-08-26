@@ -1,5 +1,5 @@
 <zk>
-	<spreadsheet id="ss" src="/book/blank.xlsx" 
+	<spreadsheet id="ss" src="/issue/book/blank.xlsx" 
 		preloadRowSize="5" preloadColumnSize="5"
 		showSheetbar="true"
 		maxrows="1000" height="100%" width="100%"

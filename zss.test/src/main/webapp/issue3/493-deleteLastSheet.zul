@@ -3,7 +3,7 @@
 		<button id="deleteSheet" label="Delete Selected Sheet" onClick="deleteSheet()"/>
 		<spreadsheet showToolbar="true" showSheetbar="true"
 			id="spreadsheet" vflex="true" width="100%"
-			src="/book/blank.xlsx" maxcolumns="40" maxrows="200"></spreadsheet>
+			src="/issue3/book/blank.xlsx" maxcolumns="40" maxrows="200"></spreadsheet>
 		<zscript><![CDATA[
 			public void deleteSheet(){
 				Ranges.range(spreadsheet.getSelectedSheet()).deleteSheet();

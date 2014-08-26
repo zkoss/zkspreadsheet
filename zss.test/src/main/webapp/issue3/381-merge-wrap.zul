@@ -10,7 +10,7 @@
 			<button label="wrap B54" onClick='applyWrapText(Ranges.range(ss.getSelectedSheet(), "B54"))'/>
 			<button label="merge B54 to D56" onClick='Ranges.range(ss.getSelectedSheet(), "B54:D56").merge(false)'/>
 		</hbox>		
-		<spreadsheet id="ss" src="/book/381-merge-wrap.xlsx" hflex="1" vflex="1" selectedSheet="cell"
+		<spreadsheet id="ss" src="/issue3/book/381-merge-wrap.xlsx" hflex="1" vflex="1" selectedSheet="cell"
 			maxVisibleRows="500" maxVisibleColumns="100" showToolbar="true" showFormulabar="true"
 			showSheetbar="true" showContextMenu="true">
 		</spreadsheet>

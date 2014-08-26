@@ -32,28 +32,28 @@ public class FinancialUnsupportedTest extends FormulaTestBase {
 	// #NAME?
 	@Test
 	public void testLOGEST()  {
-		Book book = Util.loadBook("TestFile2007-Formula.xlsx");
+		Book book = Util.loadBook(this, "book/TestFile2007-Formula.xlsx");
 		testLOGEST(book);
 	}
 	
 	// #NAME?
 	@Test
 	public void testMIRR()  {
-		Book book = Util.loadBook("TestFile2007-Formula.xlsx");
+		Book book = Util.loadBook(this, "book/TestFile2007-Formula.xlsx");
 		testMIRR(book);
 	}
 	
 	// #NAME?
 	@Test
 	public void testISPMT()  {
-		Book book = Util.loadBook("TestFile2007-Formula.xlsx");
+		Book book = Util.loadBook(this, "book/TestFile2007-Formula.xlsx");
 		testISPMT(book);
 	}
 	
 	// #NAME?
 	@Test
 	public void testVDB()  {
-		Book book = Util.loadBook("TestFile2007-Formula.xlsx");
+		Book book = Util.loadBook(this, "book/TestFile2007-Formula.xlsx");
 		testVDB(book);
 	}
 }

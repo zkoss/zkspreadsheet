@@ -8,7 +8,7 @@
 		<button label="invalidate" onClick='ss.invalidate()'/>
 		</hbox>
 		
-		<spreadsheet id="ss" src="/book/10-chart.xlsx" hflex="1" vflex="1"
+		<spreadsheet id="ss" src="/issue3/book/10-chart.xlsx" hflex="1" vflex="1"
 			maxVisibleRows="500" maxVisibleColumns="200" showToolbar="true" showFormulabar="true"
 			showSheetbar="true" showContextMenu="true" selectedSheet="Sheet1">
 		</spreadsheet>

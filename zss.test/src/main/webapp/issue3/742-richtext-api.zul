@@ -8,7 +8,7 @@ Since 3.5.0
 </label>
 	<button label="Create Rich Text" onClick="createRichText()" />
 	<button label="Export" onClick="export()" />
-	<spreadsheet id="ss" src="/book/742-richtext-api.xlsx" vflex="1"  maxVisibleRows="150"
+	<spreadsheet id="ss" src="/issue3/book/742-richtext-api.xlsx" vflex="1"  maxVisibleRows="150"
 		maxVisibleColumns="40" showToolbar="true" showSheetbar="true" showFormulabar="true" width="600px"/>
 	<zscript><![CDATA[
        	import java.io.ByteArrayOutputStream;

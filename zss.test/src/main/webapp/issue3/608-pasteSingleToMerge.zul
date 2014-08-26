@@ -6,7 +6,7 @@
 		<button label="Copy A1 to C3:E5" onClick='Ranges.range(ss.getSelectedSheet(), "A1").paste(Ranges.range(ss.getSelectedSheet(), "C3:E5"), false)'/>
 		</hbox>
 		
-		<spreadsheet id="ss" src="/book/blank.xlsx" hflex="1" vflex="1"
+		<spreadsheet id="ss" src="/issue3/book/blank.xlsx" hflex="1" vflex="1"
 			maxVisibleRows="500" maxVisibleColumns="200" showToolbar="true" showFormulabar="true"
 			showSheetbar="true" showContextMenu="true" selectedSheet="Sheet1">
 		</spreadsheet>

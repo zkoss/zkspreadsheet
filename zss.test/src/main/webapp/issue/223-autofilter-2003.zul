@@ -1,6 +1,6 @@
 <zk>
 	<window width="100%" height="100%">
-		<spreadsheet id="ss" src="/book/223-autofilter-2003.xls" width="1500px" height="800px"
+		<spreadsheet id="ss" src="/issue/book/223-autofilter-2003.xls" width="1500px" height="800px"
 			ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e" maxrows="500" maxcolumns="100" showToolbar="true" showFormulabar="true"
 			showSheetbar="true" showContextMenu="true">
 		</spreadsheet>

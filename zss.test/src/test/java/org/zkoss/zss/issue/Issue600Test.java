@@ -50,9 +50,9 @@ public class Issue600Test {
 	@Test
 	public void testZSS610(){
 		Book book;
-		book = Util.loadBook("blank.xlsx");
+		book = Util.loadBook(this, "book/blank.xlsx");
 		Assert.assertEquals(Book.BookType.XLSX,book.getType());
-		book = Util.loadBook("blank.xls");
+		book = Util.loadBook(this, "book/blank.xls");
 		Assert.assertEquals(Book.BookType.XLS,book.getType());
 		
 		
@@ -60,8 +60,8 @@ public class Issue600Test {
 	
 	@Test
 	public void testZSS621() throws Exception {
-		testZSS621("621-shared-formula.xlsx");
-		testZSS621("621-shared-formula.xls");
+		testZSS621("book/621-shared-formula.xlsx");
+		testZSS621("book/621-shared-formula.xls");
 	}
 
 	public void testZSS621(String path) throws Exception {
@@ -72,7 +72,7 @@ public class Issue600Test {
 
 		// follow issue description
 		// 1. import a book
-		Book book = Util.loadBook(path);
+		Book book = Util.loadBook(this, path);
 		Sheet sheet = book.getSheetAt(0);
 		for (int i = 0; i < headers.length; ++i) {
 			assertEquals(headers[i], headerValues[i],
@@ -113,7 +113,7 @@ public class Issue600Test {
 	
 	@Test
 	public void testZSS624() {
-		Book book = Util.loadBook("blank.xlsx");
+		Book book = Util.loadBook(this, "book/blank.xlsx");
 		Sheet sheet = book.getSheetAt(0);
 		Ranges.range(sheet, "B1").setCellEditText("=SUM(1+2+3)");
 		assertEquals("=SUM(1+2+3)", Ranges.range(sheet, "B1").getCellEditText());
@@ -247,7 +247,7 @@ public class Issue600Test {
 	
 	@Test
 	public void testZSS660InvalidNamedRange(){
-		Book book = Util.loadBook("blank.xlsx");
+		Book book = Util.loadBook(this, "book/blank.xlsx");
 		Sheet sheet = book.getSheetAt(0);
 		String invalidNameList[] = {"1A", "123", "A1", "c", "mya1", "have space", buildStringByLength(256)};
 		int invalidCount = 0;
@@ -273,7 +273,7 @@ public class Issue600Test {
 	
 	@Test
 	public void testZSS660NamedRange(){
-		Book book = Util.loadBook("blank.xlsx");
+		Book book = Util.loadBook(this, "book/blank.xlsx");
 		Sheet sheet = book.getSheetAt(0);
 		String nameList[] = {"_a1", "\\a1", "a.b", "中文", "myname", buildStringByLength(255)};
 		for (String validName : nameList){

@@ -7,7 +7,6 @@ import org.zkoss.image.AImage;
 import org.zkoss.zk.ui.*;
 import org.zkoss.zk.ui.select.SelectorComposer;
 import org.zkoss.zk.ui.select.annotation.*;
-import org.zkoss.zss.Util;
 import org.zkoss.zss.model.*;
 import org.zkoss.zss.range.SRanges;
 import org.zkoss.zss.ui.Spreadsheet;
@@ -39,14 +38,17 @@ public class PictureComposer extends SelectorComposer<Component> {
 	}
 	
 	@Listen("onClick = #addButton")
-	public void add() throws IOException {
-		AImage image = Util.getImage("zklogo.png");
-		ViewAnchor anchor = new ViewAnchor(ss.getSelection().getRow(), ss.getSelection().getColumn(), image.getWidth(), image.getHeight());
+	public void add() {
+		try{ 
+			AImage image = new AImage(WebApps.getCurrent().getResource("/range/book/zklogo.png"));
+			ViewAnchor anchor = new ViewAnchor(ss.getSelection().getRow(), ss.getSelection().getColumn(), image.getWidth(), image.getHeight());
 
-		SRanges.range(ss.getSelectedSSheet()).addPicture(anchor, image.getByteData(), SPicture.Format.PNG);
-		refreshPictureList();
+			SRanges.range(ss.getSelectedSSheet()).addPicture(anchor, image.getByteData(), SPicture.Format.PNG);
+			refreshPictureList();
+		}catch(IOException e){
+			System.out.println("cannot add a picture for "+ e);
+		}
 	}
-	
 	
 	@Listen("onClick = #deleteButton")
 	public void delete() {

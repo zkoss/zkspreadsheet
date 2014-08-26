@@ -1,22 +1,22 @@
 <zk>
 	CE color picker:
-	<spreadsheet src="/book/blank.xlsx" maxVisibleRows="20" maxVisibleColumns="10" width="50%"
+	<spreadsheet src="/issue3/book/blank.xlsx" maxVisibleRows="20" maxVisibleColumns="10" width="50%"
 		height="40%" showToolbar="true" showContextMenu="true">
 			<custom-attributes org.zkoss.zss.colorPickerExUsed="false"/>
 	</spreadsheet>
 	<separator height="20px"/>
 	
 	Depends on zk.xml:
-	<spreadsheet src="/book/blank.xlsx" maxVisibleRows="20" maxVisibleColumns="10" width="50%"
+	<spreadsheet src="/issue3/book/blank.xlsx" maxVisibleRows="20" maxVisibleColumns="10" width="50%"
 		height="40%" showToolbar="true" showContextMenu="true"/>
 		
 	<separator height="20px"/>		
 	<window height="600px">
 		both CE color picker:
 		<custom-attributes org.zkoss.zss.colorPickerExUsed="false"/>
-		<spreadsheet src="/book/blank.xlsx" maxVisibleRows="20" maxVisibleColumns="10" width="50%"
+		<spreadsheet src="/issue3/book/blank.xlsx" maxVisibleRows="20" maxVisibleColumns="10" width="50%"
 		height="40%" showToolbar="true" showContextMenu="true"/>
-		<spreadsheet src="/book/blank.xlsx" maxVisibleRows="20" maxVisibleColumns="10" width="50%"
+		<spreadsheet src="/issue3/book/blank.xlsx" maxVisibleRows="20" maxVisibleColumns="10" width="50%"
 		height="40%" showToolbar="true" showContextMenu="true"/>
 	</window>
 	<script>

@@ -1,7 +1,7 @@
 
 <zk>
 	<window id="win" title="EL Variables" border="normal" height="100%">
-		<spreadsheet src="/book/el-variable.xlsx"
+		<spreadsheet src="/ng/book/el-variable.xlsx"
 			maxVisibleRows="250" maxVisibleColumns="40" width="100%"
 			height="100%" showContextMenu="true" showSheetbar="true"
 			showToolbar="true" showFormulabar="true" />

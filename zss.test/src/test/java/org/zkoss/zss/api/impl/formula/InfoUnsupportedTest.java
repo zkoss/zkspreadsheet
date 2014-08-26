@@ -32,14 +32,14 @@ public class InfoUnsupportedTest extends FormulaTestBase {
 	// #NAME?
 	@Test
 	public void testCELL()  {
-		Book book = Util.loadBook("TestFile2007-Formula.xlsx");
+		Book book = Util.loadBook(this, "book/TestFile2007-Formula.xlsx");
 		testCELL(book);
 	}
 	
 	// #NAME?
 	@Test
 	public void testINFO()  {
-		Book book = Util.loadBook("TestFile2007-Formula.xlsx");
+		Book book = Util.loadBook(this, "book/TestFile2007-Formula.xlsx");
 		testINFO(book);
 	}
 	

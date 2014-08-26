@@ -8,7 +8,7 @@
 		]]></attribute>
 	</label>
 	
-	<spreadsheet id="ss" src="/book/blank.xlsx"  vflex="true" width="100%"
+	<spreadsheet id="ss" src="/issue/book/blank.xlsx"  vflex="true" width="100%"
 		maxrows="1000" maxcolumns="100" 
 		showFormulabar="true" showContextMenu="true" showSheetbar="true" showToolbar="true">
 	</spreadsheet>

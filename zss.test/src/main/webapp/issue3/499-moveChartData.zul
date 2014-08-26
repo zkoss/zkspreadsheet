@@ -5,7 +5,7 @@
 		<button label="2. select sheet2" onClick='ss.setSelectedSheet("Sheet2")' />
 		<button label="3. select chart-image" onClick='ss.setSelectedSheet("chart-image")' />
 		</hbox>
-	<spreadsheet id="ss" src="/book/499-moveChartData.xlsx" maxVisibleRows="200" maxVisibleColumns="40" showContextMenu="true" showSheetbar="true" showToolbar="true" 
+	<spreadsheet id="ss" src="/issue3/book/499-moveChartData.xlsx" maxVisibleRows="200" maxVisibleColumns="40" showContextMenu="true" showSheetbar="true" showToolbar="true" 
 		hflex="1" vflex="1" showFormulabar="true"/>
 	<zscript><![CDATA[
 		public void insertOneRow(){

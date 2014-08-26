@@ -8,7 +8,7 @@
 		]]></attribute>
 	</button>
 
-	<spreadsheet id="ss" src="/book/blank.xlsx" maxVisibleRows="200" maxVisibleColumns="40"
+	<spreadsheet id="ss" src="/howto/book/blank.xlsx" maxVisibleRows="200" maxVisibleColumns="40"
 		hflex="1" vflex="1" 
 		showContextMenu="true" showSheetbar="true" showToolbar="true" 
 		showFormulabar="true"/>

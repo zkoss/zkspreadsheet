@@ -21,11 +21,11 @@
 	
 		<hbox hflex="1" vflex="1">
 
-			<spreadsheet src="/book/477-bordercolor.xls" id="ss1"
+			<spreadsheet src="/issue3/book/477-bordercolor.xls" id="ss1"
 				maxVisibleRows="100" maxVisibleColumns="10" hflex="1" vflex="1" 
 				showToolbar="true" showContextMenu="true">
 			</spreadsheet>
-			<spreadsheet src="/book/477-bordercolor.xlsx" id="ss2"
+			<spreadsheet src="/issue3/book/477-bordercolor.xlsx" id="ss2"
 				maxVisibleRows="100" maxVisibleColumns="10"  hflex="1" vflex="1"
 				showToolbar="true" showContextMenu="true" />
 			<separator height="20px" />

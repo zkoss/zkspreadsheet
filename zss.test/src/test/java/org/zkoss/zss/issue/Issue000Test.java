@@ -35,9 +35,9 @@ public class Issue000Test {
 	/**
 	 * Exception when exporting excel twice.
 	 */
-	@Test
+	@Test 
 	public void testZSS36() throws IOException {
-		Book workbook = Util.loadBook("blank.xlsx");
+		Book workbook = Util.loadBook(this, "book/blank.xlsx");
 		Util.export(workbook, Setup.getTempFile());
 		Util.export(workbook, Setup.getTempFile());
 	}

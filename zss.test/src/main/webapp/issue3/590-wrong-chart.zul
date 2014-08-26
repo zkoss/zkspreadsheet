@@ -6,7 +6,7 @@
 		<button onClick='deleteSheet("rowcolumn")'>Delete rowcolumn</button>
 		<button onClick='deleteSheet("chart-image")'>Delete chart-image</button>
 	</hbox>
-	<spreadsheet id="ss" src="/book/590-wrong-chart-all.xlsx" maxVisibleRows="200" maxVisibleColumns="40"
+	<spreadsheet id="ss" src="/issue3/book/590-wrong-chart-all.xlsx" maxVisibleRows="200" maxVisibleColumns="40"
 		hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
 		showFormulabar="true" selectedSheet="rowcolumn" />
 	<zscript><![CDATA[

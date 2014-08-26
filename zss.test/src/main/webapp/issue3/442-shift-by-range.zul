@@ -38,7 +38,7 @@
 			</hbox>
 		</vlayout>
 		<separator orient="horizontal" />
-		<spreadsheet id="ss" src="/book/442-shift-by-range.xlsx" hflex="1" vflex="1"
+		<spreadsheet id="ss" src="/issue3/book/442-shift-by-range.xlsx" hflex="1" vflex="1"
 			ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e" maxrows="500" maxcolumns="100" showToolbar="true" showFormulabar="true"
 			showSheetbar="true" showContextMenu="true">
 		</spreadsheet>

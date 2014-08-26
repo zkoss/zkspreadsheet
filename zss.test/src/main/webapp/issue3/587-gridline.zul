@@ -3,7 +3,7 @@
 		<button onClick="deleteColumn()">Delete Column</button>
 		<button onClick="deleteRow()">Delete Row</button>
 	</hbox>
-	<spreadsheet id="ss" src="/book/587-gridline.xlsx" maxVisibleRows="200" maxVisibleColumns="40"
+	<spreadsheet id="ss" src="/issue3/book/587-gridline.xlsx" maxVisibleRows="200" maxVisibleColumns="40"
 		hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
 		showFormulabar="true"/>
 	<zscript><![CDATA[

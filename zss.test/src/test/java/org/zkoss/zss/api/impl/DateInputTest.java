@@ -55,12 +55,12 @@ public class DateInputTest {
 	
 	@Test
 	public void testDateDisplaySpecia(){
-		testDateDisplaySpecial1(Util.loadBook("blank.xlsx"));
-		testDateDisplaySpecial1(Util.loadBook("blank.xls"));
-		testDateDisplaySpecial2(Util.loadBook("blank.xlsx"));
-		testDateDisplaySpecial2(Util.loadBook("blank.xls"));
-		testDateDisplaySpecial3(Util.loadBook("blank.xlsx"));
-		testDateDisplaySpecial3(Util.loadBook("blank.xls"));
+		testDateDisplaySpecial1(Util.loadBook(this, "book/blank.xlsx"));
+		testDateDisplaySpecial1(Util.loadBook(this, "book/blank.xls"));
+		testDateDisplaySpecial2(Util.loadBook(this, "book/blank.xlsx"));
+		testDateDisplaySpecial2(Util.loadBook(this, "book/blank.xls"));
+		testDateDisplaySpecial3(Util.loadBook(this, "book/blank.xlsx"));
+		testDateDisplaySpecial3(Util.loadBook(this, "book/blank.xls"));
 	}
 	public void testDateDisplaySpecial1(Book book){
 			
@@ -177,10 +177,10 @@ public class DateInputTest {
 	
 	@Test
 	public void testDateDisplayNormal(){
-		testDateDisplayNormal1(Util.loadBook("blank.xlsx"));
-		testDateDisplayNormal1(Util.loadBook("blank.xls"));
-		testDateDisplayNormal2(Util.loadBook("blank.xlsx"));
-		testDateDisplayNormal2(Util.loadBook("blank.xls"));
+		testDateDisplayNormal1(Util.loadBook(this, "book/blank.xlsx"));
+		testDateDisplayNormal1(Util.loadBook(this, "book/blank.xls"));
+		testDateDisplayNormal2(Util.loadBook(this, "book/blank.xlsx"));
+		testDateDisplayNormal2(Util.loadBook(this, "book/blank.xls"));
 	
 	}
 	public void testDateDisplayNormal1(Book book){	
@@ -264,8 +264,8 @@ public class DateInputTest {
 	
 	@Test
 	public void testDateInput(){
-		testDateInput1(Util.loadBook("blank.xlsx"));
-		testDateInput1(Util.loadBook("blank.xls"));
+		testDateInput1(Util.loadBook(this, "book/blank.xlsx"));
+		testDateInput1(Util.loadBook(this, "book/blank.xls"));
 	}
 	public void testDateInput1(Book book){
 		Sheet sheet = book.getSheetAt(0);
@@ -335,8 +335,8 @@ public class DateInputTest {
 	@Test
 	//ZSS-495
 	public void testInputDateObject(){
-		testInputDateObjectTW(Util.loadBook("blank.xlsx"));
-		testInputDateObjectUS(Util.loadBook("blank.xlsx"));
+		testInputDateObjectTW(Util.loadBook(this, "book/blank.xlsx"));
+		testInputDateObjectUS(Util.loadBook(this, "book/blank.xlsx"));
 	}
 	
 	public void testInputDateObjectTW(Book book){	

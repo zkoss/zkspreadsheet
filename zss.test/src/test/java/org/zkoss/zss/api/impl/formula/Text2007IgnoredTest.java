@@ -32,7 +32,7 @@ public class Text2007IgnoredTest extends FormulaTestBase {
 	// #VALUE!
 	@Test
 	public void testVALUEWithTimeString()  {
-		Book book = Util.loadBook("TestFile2007-Formula.xlsx");
+		Book book = Util.loadBook(this, "book/TestFile2007-Formula.xlsx");
 		testVALUEWithTimeString(book);
 	}
 }

@@ -5,7 +5,7 @@
 		3. Click save book, and reload.
 		4. You should still see "1111" and "2222" after refresh.
 	</label>
-	<spreadsheet id="spreadsheet" src="/book/674-save-focus-cell.xlsx" width="100%"
+	<spreadsheet id="spreadsheet" src="/issue/book/674-save-focus-cell.xlsx" width="100%"
 		height="80%" showContextMenu="true" showSheetbar="true" showToolbar="true" 
 		showFormulabar="true" />
 </window>

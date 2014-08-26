@@ -7,7 +7,6 @@ import java.util.Iterator;
 
 import org.junit.*;
 import org.zkoss.zss.Setup;
-import org.zkoss.zss.Util;
 import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.SBooks;
 import org.zkoss.zss.model.SCell;
@@ -24,9 +23,9 @@ public class ExporterXlsTest extends ExporterTest {
 	}
 	@Before
 	public void setupTestFile(){
-		IMPORT_FILE_UNDER_TEST = new File(Util.getBookAbsolutePath("import.xls"));
-		CHART_IMPORT_FILE_UNDER_TEST = new File(Util.getBookAbsolutePath("chart.xls"));
-		PICTURE_IMPORT_FILE_UNDER_TEST = new File(Util.getBookAbsolutePath("picture.xls"));
+		IMPORT_FILE_UNDER_TEST = ImporterTest.class.getResource("book/import.xls");
+		CHART_IMPORT_FILE_UNDER_TEST = ImporterTest.class.getResource("book/chart.xls");
+		PICTURE_IMPORT_FILE_UNDER_TEST = ImporterTest.class.getResource("book/picture.xls");
 		EXPORTER_TYPE = ExcelExportFactory.Type.XLS;
 	}
 	

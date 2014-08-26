@@ -35,25 +35,25 @@ public class MergeTest {
 	
 	@Test
 	public void testUnMerge2003() throws IOException {
-		Book book = Util.loadBook("blank.xls");
+		Book book = Util.loadBook(this, "book/blank.xls");
 		testUnMerge(book,Setup.getTempFile());
 	}
 	
 	@Test
 	public void testUnMerge2007() throws IOException {
-		Book book = Util.loadBook("blank.xlsx");
+		Book book = Util.loadBook(this, "book/blank.xlsx");
 		testUnMerge(book, Setup.getTempFile());
 	}
 	
 	@Test
 	public void testMerge2003() throws IOException {
-		Book book = Util.loadBook("blank.xls");
+		Book book = Util.loadBook(this, "book/blank.xls");
 		testMerge(book, Setup.getTempFile());
 	}
 	
 	@Test
 	public void testMerge2007() throws IOException {
-		Book book = Util.loadBook("blank.xlsx");
+		Book book = Util.loadBook(this, "book/blank.xlsx");
 		testMerge(book, Setup.getTempFile());
 	}
 	

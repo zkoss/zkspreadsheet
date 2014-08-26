@@ -35,6 +35,7 @@ import org.zkoss.zss.api.Range.PasteOperation;
 import org.zkoss.zss.api.Range.PasteType;
 import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.SheetOperationUtil;
+import org.zkoss.zss.api.impl.ShiftTest;
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.CellData.CellType;
 import org.zkoss.zss.api.model.Chart;
@@ -78,8 +79,8 @@ public class Issue200Test {
 	
 	@Test
 	public void testZSS291() throws IOException {
-		final String filename = "291-sort.xlsx";
-		Book workbook = Util.loadBook(filename);
+		final String filename = "book/291-sort.xlsx";
+		Book workbook = Util.loadBook(this, filename);
 		Sheet sheet = workbook.getSheet("cell");
 		Ranges.range(sheet, "B4:B8").sort(false);
 
@@ -92,8 +93,8 @@ public class Issue200Test {
 	
 	@Test 
 	public void testZSS280AddReapply(){
-		final String filename = "280-reapply.xlsx";
-		Book workbook = Util.loadBook(filename);
+		final String filename = "book/280-reapply.xlsx";
+		Book workbook = Util.loadBook(this, filename);
 		Sheet sheet = workbook.getSheet("cell-data");
 		
 		String filteredAreaReference = "A1";
@@ -124,8 +125,8 @@ public class Issue200Test {
 	
 	@Test 
 	public void testZSS280ModifyReapply(){
-		final String filename = "280-reapply.xlsx";
-		Book workbook = Util.loadBook(filename);
+		final String filename = "book/280-reapply.xlsx";
+		Book workbook = Util.loadBook(this, filename);
 		Sheet sheet = workbook.getSheet("cell-data");
 		
 		String filteredAreaReference = "A1";
@@ -153,8 +154,8 @@ public class Issue200Test {
 	
 	@Test
 	public void testZSS280Reapply2Filters(){
-		final String filename = "280-reapply.xlsx";
-		Book workbook = Util.loadBook(filename);
+		final String filename = "book/280-reapply.xlsx";
+		Book workbook = Util.loadBook(this, filename);
 		Sheet sheet = workbook.getSheet("cell-data");
 		
 		String selectedCell = "A1";
@@ -189,8 +190,8 @@ public class Issue200Test {
 
 	@Test 
 	public void testZSS280SelectBlankReapply(){
-		final String filename = "280-reapply.xlsx";
-		Book workbook = Util.loadBook(filename);
+		final String filename = "book/280-reapply.xlsx";
+		Book workbook = Util.loadBook(this, filename);
 		Sheet sheet = workbook.getSheet("cell-data");
 		
 		String selectedCell = "A1";
@@ -221,8 +222,8 @@ public class Issue200Test {
 	
 	@Test
 	public void testZSS280EnableDisable(){
-		final String filename = "280-reapply.xlsx";
-		Book workbook = Util.loadBook(filename);
+		final String filename = "book/280-reapply.xlsx";
+		Book workbook = Util.loadBook(this, filename);
 		Sheet sheet = workbook.getSheet("cell-data");
 		
 		String selectedCell = "A1";
@@ -247,8 +248,8 @@ public class Issue200Test {
 	
 	@Test
 	public void testZSS280Apply2Filters(){
-		final String filename = "280-reapply.xlsx";
-		Book workbook = Util.loadBook(filename);
+		final String filename = "book/280-reapply.xlsx";
+		Book workbook = Util.loadBook(this, filename);
 		Sheet sheet = workbook.getSheet("cell-data");
 		
 		String selectedCell = "A1";
@@ -275,8 +276,8 @@ public class Issue200Test {
 	
 	@Test
 	public void testZSS280ChangeCriteria(){
-		final String filename = "280-reapply.xlsx";
-		Book workbook = Util.loadBook(filename);
+		final String filename = "book/280-reapply.xlsx";
+		Book workbook = Util.loadBook(this, filename);
 		Sheet sheet = workbook.getSheet("cell-data");
 		
 		String selectedCell = "A1";
@@ -305,8 +306,8 @@ public class Issue200Test {
 	@Ignore("ZSS-271")
 	@Test
 	public void testZSS271() throws IOException {
-		final String filename = "271-engineering.xlsx";
-		Book workbook = Util.loadBook(filename);
+		final String filename = "book/271-engineering.xlsx";
+		Book workbook = Util.loadBook(this, filename);
 		Sheet sheet = workbook.getSheet("formula-engineering");
 		assertEquals("0.98", Ranges.range(sheet, "B3").getCellFormatText());
 		assertEquals("0.33", Ranges.range(sheet, "B5").getCellFormatText());
@@ -352,8 +353,8 @@ public class Issue200Test {
 	@Ignore("ZSS-272")
 	@Test
 	public void testZSS272() throws IOException {
-		final String filename = "272-conditionalFormatting.xls";
-		Book workbook = Util.loadBook(filename);
+		final String filename = "book/272-conditionalFormatting.xls";
+		Book workbook = Util.loadBook(this, filename);
 		
 		//shouldn't throw any exception
 		((HSSFSheet)workbook.getSheetAt(0).getInternalSheet()).getDataValidations();
@@ -362,8 +363,8 @@ public class Issue200Test {
 	@Ignore("ZSS-270")
 	@Test
 	public void testZSS270() throws IOException {
-		final String filename = "270-statistical.xlsx";
-		Book workbook = Util.loadBook(filename);
+		final String filename = "book/270-statistical.xlsx";
+		Book workbook = Util.loadBook(this, filename);
 		Sheet sheet = workbook.getSheet("formula-statistical");
 		 // AVEDEV
 		assertEquals("1.02", Ranges.range(sheet, "B3").getCellFormatText());
@@ -532,8 +533,8 @@ public class Issue200Test {
 	@Ignore("ZSS-262")
 	@Test
 	public void testZSS262() throws IOException {
-		final String filename = "blank.xlsx";
-		Book workbook = Util.loadBook(filename);
+		final String filename = "book/blank.xlsx";
+		Book workbook = Util.loadBook(this, filename);
 		Sheet sheet = workbook.getSheet("Sheet1");
 		Ranges.range(sheet, "A1").setCellEditText("1234.567");
 		Ranges.range(sheet, "B1").setCellEditText("DOLLAR(A1,2)");
@@ -543,8 +544,8 @@ public class Issue200Test {
 	@Ignore("ZSS-263")
 	@Test
 	public void testZSS263() throws IOException {
-		final String filename = "blank.xlsx";
-		Book workbook = Util.loadBook(filename);
+		final String filename = "book/blank.xlsx";
+		Book workbook = Util.loadBook(this, filename);
 		Sheet sheet = workbook.getSheet("Sheet1");
 		Ranges.range(sheet, "A1").setCellEditText("VALUE(\"16:48:00\")");
 		assertEquals("0.7", Ranges.range(sheet, "A1").getCellFormatText());
@@ -553,8 +554,8 @@ public class Issue200Test {
 	@Ignore("ZSS-264")
 	@Test
 	public void testZSS264() throws IOException {
-		final String filename = "264-text-formula.xlsx";
-		Book workbook = Util.loadBook(filename);
+		final String filename = "book/264-text-formula.xlsx";
+		Book workbook = Util.loadBook(this, filename);
 		Sheet sheet = workbook.getSheet("formula-text");
 		assertEquals("EXCEL", Ranges.range(sheet, "B3").getCellFormatText());
 		assertEquals("A", Ranges.range(sheet, "B5").getCellFormatText());
@@ -595,8 +596,8 @@ public class Issue200Test {
 	@Ignore("format text is wrong")
 	@Test
 	public void testZSS254() throws IOException {
-		final String filename = "254-accounting.xlsx";
-		Book workbook = Util.loadBook(filename);
+		final String filename = "book/254-accounting.xlsx";
+		Book workbook = Util.loadBook(this, filename);
 		Sheet sheet = workbook.getSheet("cell-data");
 		assertEquals("NT$1,234.56", Ranges.range(sheet, "C2").getCellFormatText());
 		
@@ -609,16 +610,16 @@ public class Issue200Test {
 	@SuppressWarnings("unused")
 	@Test
 	public void testZSS334() throws IOException {
-		Book book1 = Util.loadBook("334-book1.xlsx");
+		Book book1 = Util.loadBook(this, "book/334-book1.xlsx");
 		Sheet sheet1 = book1.getSheet("Sheet1");
 		Ranges.range(sheet1, "A1").setCellValue("123");
 		
-		Book book2 = Util.loadBook("334-book2.xlsx");
+		Book book2 = Util.loadBook(this, "book/334-book2.xlsx");
 		book2.getSheet("Sheet1");
 		
 		BookSeriesBuilder.getInstance().buildBookSeries(book1, book2);
 		
-		Book book3 = Util.loadBook("334-book3.xlsx");
+		Book book3 = Util.loadBook(this, "book/334-book3.xlsx");
 		Sheet sheet3 = book2.getSheet("Sheet1");
 	}
 	
@@ -627,10 +628,10 @@ public class Issue200Test {
 	 */
 	@Test
 	public void testZSS317() throws IOException {
-		final String filename = "317-exportImage.xlsx";
-		Book workbook = Util.loadBook(filename);
+		final String filename = "book/317-exportImage.xlsx";
+		Book workbook = Util.loadBook(this, filename);
 		Sheet sheet = workbook.getSheet("export1");
-		SheetOperationUtil.addPicture(Ranges.range(sheet), new AImage(new File(Util.getDefaultImportPath() + "zklogo.png")));
+		SheetOperationUtil.addPicture(Ranges.range(sheet), new AImage(new File(ShiftTest.class.getResource("").getPath() + "book/zklogo.png")));
 		Util.export(workbook, Setup.getTempFile());
 		Util.export(workbook, Setup.getTempFile());
 	}
@@ -640,8 +641,8 @@ public class Issue200Test {
 	 */
 	@Test
 	public void testZSS245() throws IOException {
-		final String filename = "blank.xlsx";
-		Book workbook = Util.loadBook(filename);
+		final String filename = "book/blank.xlsx";
+		Book workbook = Util.loadBook(this, filename);
 		Sheet sheet = workbook.getSheet("Sheet1");
 		Ranges.range(sheet, "A1").toRowRange().delete(DeleteShift.LEFT);
 	}
@@ -651,8 +652,8 @@ public class Issue200Test {
 	 */
 	@Test
 	public void testZSS355() throws IOException {
-		final String filename = "blank.xlsx";
-		Book workbook = Util.loadBook(filename);
+		final String filename = "book/blank.xlsx";
+		Book workbook = Util.loadBook(this, filename);
 		Sheet sheet = workbook.getSheet("Sheet1");
 		Ranges.range(sheet, "A1").setCellEditText("=NETWORKDAYS(DATE(2013,6,2),DATE(2013,6,1))");
 		assertEquals("#VALUE!", Ranges.range(sheet, "A1").getCellData().getFormatText());
@@ -663,8 +664,8 @@ public class Issue200Test {
 	 */
 	@Test
 	public void testZSS341() throws IOException {
-		final String filename = "blank.xlsx";
-		Book workbook = Util.loadBook(filename);
+		final String filename = "book/blank.xlsx";
+		Book workbook = Util.loadBook(this, filename);
 		Sheet sheet = workbook.getSheet("Sheet1");
 		
 		Ranges.range(sheet, "B11").setCellEditText("=AVERAGEIF(B12:E12,\"<23000\")");
@@ -686,8 +687,8 @@ public class Issue200Test {
 	 */
 	@Test
 	public void testZSS267() throws IOException {
-		final String filename = "blank.xlsx";
-		Book workbook = Util.loadBook(filename);
+		final String filename = "book/blank.xlsx";
+		Book workbook = Util.loadBook(this, filename);
 		Sheet sheet = workbook.getSheet("Sheet1");
 		
 		// DATE
@@ -764,8 +765,8 @@ public class Issue200Test {
 	 */
 	@Test
 	public void testZSS261() throws IOException {
-		final String filename = "math.xlsx";
-		Book workbook = Util.loadBook(filename);
+		final String filename = "book/math.xlsx";
+		Book workbook = Util.loadBook(this, filename);
 		Sheet sheet1 = workbook.getSheet("formula-math");
 		Range B104 = Ranges.range(sheet1, "B104");
 		assertEquals("#NAME?", B104.getCellData().getFormatText());
@@ -774,8 +775,8 @@ public class Issue200Test {
 	@Ignore("ZSS-265")
 	@Test
 	public void testZSS265() throws IOException {
-		final String filename = "266-info-formula.xlsx";
-		Book workbook = Util.loadBook(filename);
+		final String filename = "book/266-info-formula.xlsx";
+		Book workbook = Util.loadBook(this, filename);
 		Sheet sheet = workbook.getSheet("formula-info");
 		assertEquals("3", Ranges.range(sheet, "B3").getCellFormatText());
 		assertEquals("1", Ranges.range(sheet, "B5").getCellFormatText());
@@ -801,8 +802,8 @@ public class Issue200Test {
 	 */
 	@Test
 	public void testZSS266() throws IOException {
-		final String filename = "266-info-formula.xlsx";
-		Book workbook = Util.loadBook(filename);
+		final String filename = "book/266-info-formula.xlsx";
+		Book workbook = Util.loadBook(this, filename);
 		Sheet sheet1 = workbook.getSheet("formula-info");
 		Range B12 = Ranges.range(sheet1, "B12");
 		assertTrue(B12.getCellData().getBooleanValue());
@@ -813,8 +814,8 @@ public class Issue200Test {
 	 */
 	@Test
 	public void testZSS342_1() throws IOException {
-		final String filename = "blank.xlsx";
-		Book workbook = Util.loadBook(filename);
+		final String filename = "book/blank.xlsx";
+		Book workbook = Util.loadBook(this, filename);
 		Sheet sheet1 = workbook.getSheet("Sheet1");
 		Range A1 = Ranges.range(sheet1, "A1");
 		A1.setCellEditText("=ACCRINT()");
@@ -826,8 +827,8 @@ public class Issue200Test {
 	 */
 	@Test
 	public void testZSS342_2() throws IOException {
-		final String filename = "blank.xlsx";
-		Book workbook = Util.loadBook(filename);
+		final String filename = "book/blank.xlsx";
+		Book workbook = Util.loadBook(this, filename);
 		Sheet sheet1 = workbook.getSheet("Sheet1");
 		
 		try {
@@ -846,8 +847,8 @@ public class Issue200Test {
 	 */
 	@Test
 	public void testZSS255() throws IOException {
-		final String filename = "255-cell-data.xlsx";
-		Util.loadBook(filename);
+		final String filename = "book/255-cell-data.xlsx";
+		Util.loadBook(this, filename);
 	}
 	
 	/**
@@ -855,8 +856,8 @@ public class Issue200Test {
 	 */
 	@Test
 	public void testZSS260() throws IOException {
-		final String filename = "260-validation.xlsx";
-		Book workbook = Util.loadBook(filename);
+		final String filename = "book/260-validation.xlsx";
+		Book workbook = Util.loadBook(this, filename);
 		Sheet sheet1 = workbook.getSheet("Validation");
 		Range C3 = Ranges.range(sheet1, "C3");
 		C3.setCellEditText("2");
@@ -870,8 +871,8 @@ public class Issue200Test {
 	 */
 	@Test
 	public void testZSS275() {
-		final String filename = "pasteTest.xlsx";
-		Book workbook = Util.loadBook(filename);
+		final String filename = "book/pasteTest.xlsx";
+		Book workbook = Util.loadBook(this, filename);
 		Sheet sheet1 = workbook.getSheet("Sheet1");
 		Range rangeA = Ranges.range(sheet1, "H11:J13");
 		assertEquals(10, rangeA.getRow());
@@ -885,8 +886,8 @@ public class Issue200Test {
 	 */
 	@Test
 	public void testZSS395_1() {
-		final String filename = "pasteTest.xlsx";
-		Book workbook = Util.loadBook(filename);
+		final String filename = "book/pasteTest.xlsx";
+		Book workbook = Util.loadBook(this, filename);
 		Sheet sheet1 = workbook.getSheet("Sheet1");
 		Range rangeA = Ranges.range(sheet1, "H11:J13");
 		rangeA.merge(false); // merge a 3 x 3
@@ -904,8 +905,8 @@ public class Issue200Test {
 	 */
 	@Test
 	public void testZSS395_2() {
-		final String filename = "pasteTest.xlsx";
-		Book workbook = Util.loadBook(filename);
+		final String filename = "book/pasteTest.xlsx";
+		Book workbook = Util.loadBook(this, filename);
 		Sheet sheet1 = workbook.getSheet("Sheet1");
 		Range rangeA = Ranges.range(sheet1, "H11:J13");
 		rangeA.merge(false); // merge a 3 x 3
@@ -927,8 +928,8 @@ public class Issue200Test {
 	@Test
 	public void testZSS301() {
 		
-		final String filename = "pasteTest.xlsx";
-		Book workbook = Util.loadBook(filename);
+		final String filename = "book/pasteTest.xlsx";
+		Book workbook = Util.loadBook(this, filename);
 		
 		int SRC_TOP_ROW = 10;
 		int SRC_LEFT_COL = 7;
@@ -1008,8 +1009,8 @@ public class Issue200Test {
 	@Test
 	public void testZSS303() {
 		
-		final String filename = "shiftTest.xlsx";
-		Book workbook = Util.loadBook(filename);
+		final String filename = "book/shiftTest.xlsx";
+		Book workbook = Util.loadBook(this, filename);
 		
 		Sheet sheet1 = workbook.getSheet("Sheet1");
 		Range range_E = Ranges.range(sheet1, "E3:F3");
@@ -1041,8 +1042,8 @@ public class Issue200Test {
 	 */
 	@Test
 	public void testZSS298() {
-		final String filename = "pasteTest.xlsx";
-		Book workbook = Util.loadBook(filename);
+		final String filename = "book/pasteTest.xlsx";
+		Book workbook = Util.loadBook(this, filename);
 		Sheet sheet = workbook.getSheet("Sheet1");
 		Range range = Ranges.range(sheet, "H11:J13");
 		range.merge(false); // 1. merge
@@ -1056,8 +1057,8 @@ public class Issue200Test {
 	 */
 	@Test
 	public void testZSS326() throws IOException {
-		final String filename = "insert-charts.xlsx";
-		Book workbook = Util.loadBook(filename);
+		final String filename = "book/insert-charts.xlsx";
+		Book workbook = Util.loadBook(this, filename);
 		Sheet sheet = workbook.getSheet("chart-image");
 		// Insert chart 1, 2
 		Chart chart1 = SheetOperationUtil.addChart(Ranges.range(sheet,4,1,14,1), Chart.Type.LINE, Grouping.STANDARD, LegendPosition.TOP);
@@ -1076,8 +1077,8 @@ public class Issue200Test {
 	 */
 	@Test
 	public void testZSS290() {
-		final String filename = "290-merge.xls";
-		Book workbook = Util.loadBook(filename);
+		final String filename = "book/290-merge.xls";
+		Book workbook = Util.loadBook(this, filename);
 		Sheet sheet = workbook.getSheet("cell");
 		Range range = Ranges.range(sheet, "B5:D7");
 		range.merge(true);
@@ -1107,8 +1108,8 @@ public class Issue200Test {
 	@Test 
 	public void testZSS277() {
 		
-		final String filename = "pasteTest.xlsx";
-		Book workbook = Util.loadBook(filename);
+		final String filename = "book/pasteTest.xlsx";
+		Book workbook = Util.loadBook(this, filename);
 		
 		int SRC_TOP_ROW = 10;
 		int SRC_LEFT_COL = 7;
@@ -1179,8 +1180,8 @@ public class Issue200Test {
 	public void testPasteZSS300() {
 		
 		
-		final String filename = "pasteTest.xlsx";
-		Book workbook = Util.loadBook(filename);
+		final String filename = "book/pasteTest.xlsx";
+		Book workbook = Util.loadBook(this, filename);
 
 		int SRC_TOP_ROW = 10;
 		int SRC_LEFT_COL = 7;
@@ -1215,8 +1216,8 @@ public class Issue200Test {
 	@Test
 	public void testZSS389_1() {
 
-		final String filename = "shiftTest.xlsx";
-		Book workbook = Util.loadBook(filename);
+		final String filename = "book/shiftTest.xlsx";
+		Book workbook = Util.loadBook(this, filename);
 		
 		Sheet sheet1 = workbook.getSheet("Sheet1");
 		Range range_E3E5 = Ranges.range(sheet1, "E3:E5");
@@ -1243,8 +1244,8 @@ public class Issue200Test {
 	@Test
 	public void testZSS389_2() {
 		
-		final String filename = "shiftTest.xlsx";
-		Book workbook = Util.loadBook(filename);
+		final String filename = "book/shiftTest.xlsx";
+		Book workbook = Util.loadBook(this, filename);
 		
 		Sheet sheet1 = workbook.getSheet("Sheet1");
 		Range range_G3G5 = Ranges.range(sheet1, "G3:G5");
@@ -1273,8 +1274,8 @@ public class Issue200Test {
 	@Test
 	public void testZSS315_1() {
 		
-		final String filename = "pasteTest.xlsx";
-		Book workbook = Util.loadBook(filename);
+		final String filename = "book/pasteTest.xlsx";
+		Book workbook = Util.loadBook(this, filename);
 		
 		int SRC_TOP_ROW = 10;
 		int SRC_LEFT_COL = 7;
@@ -1324,8 +1325,8 @@ public class Issue200Test {
 	@Test
 	public void testZSS315_2() {
 		
-		final String filename = "pasteTest.xlsx";
-		Book workbook = Util.loadBook(filename);
+		final String filename = "book/pasteTest.xlsx";
+		Book workbook = Util.loadBook(this, filename);
 
 		int SRC_TOP_ROW = 10;
 		int SRC_LEFT_COL = 7;
@@ -1393,8 +1394,8 @@ public class Issue200Test {
 	@Test
 	public void testZSS179() throws IOException {
 
-		final String filename = "179-insertexception-simple.xlsx";//should also test non-simple one
-		Book book = Util.loadBook( filename);
+		final String filename = "book/179-insertexception-simple.xlsx";//should also test non-simple one
+		Book book = Util.loadBook(this, filename);
 
 		
 		Range r = Ranges.range(book.getSheetAt(0), "A1");
@@ -1427,8 +1428,8 @@ public class Issue200Test {
 	@Test
 	public void testZSS399() throws Exception {
 		// load book
-		final String filename = "399-pdf-gridline.xlsx";
-		Book book = Util.loadBook( filename);
+		final String filename = "book/399-pdf-gridline.xlsx";
+		Book book = Util.loadBook(this, filename);
 		
 
 		// print setting >> with grid lines 
@@ -1470,14 +1471,14 @@ public class Issue200Test {
 	
 	@Test
 	public void testZSS356() throws Exception {
-		Book book = Util.loadBook("356-enable-autofilter.xlsx");
+		Book book = Util.loadBook(this, "book/356-enable-autofilter.xlsx");
 		//shouldn't throw exception
 		Ranges.range(book.getSheetAt(0),"D18").enableAutoFilter(true);
 	}
 	
 	@Test
 	public void testZSS276() throws Exception {
-		Book book = Util.loadBook("276-format.xls");
+		Book book = Util.loadBook(this, "book/276-format.xls");
 		//shouldn't throw exception
 		Range r = Ranges.range(book.getSheetAt(0),"E2");
 		
@@ -1487,7 +1488,7 @@ public class Issue200Test {
 	
 	@Test
 	public void testZSS214() throws Exception {
-		Book book = Util.loadBook("214-npe-rename.xlsx");
+		Book book = Util.loadBook(this, "book/214-npe-rename.xlsx");
 		//shouldn't throw exception
 		Range r = Ranges.range(book.getSheet("sheet1"),"A1");
 		
@@ -1510,7 +1511,7 @@ public class Issue200Test {
 	
 	@Test
 	public void testZSS323() throws Exception {
-		Book book = Util.loadBook("blank.xlsx");
+		Book book = Util.loadBook(this, "book/blank.xlsx");
 		//shouldn't throw exception
 		Range r = Ranges.range(book.getSheetAt(0),"A1:D5");
 		
@@ -1519,7 +1520,7 @@ public class Issue200Test {
 		r.sort(false);
 		
 		
-		book = Util.loadBook("blank.xls");
+		book = Util.loadBook(this, "book/blank.xls");
 		//shouldn't throw exception
 		r = Ranges.range(book.getSheetAt(0),"A1:D5");
 		
@@ -1530,8 +1531,8 @@ public class Issue200Test {
 	
 	@Test
 	public void testZSS256() throws Exception {
-		testZSS256(Util.loadBook("256-rowcolumn.xlsx"));
-		testZSS256(Util.loadBook("256-rowcolumn.xls"));
+		testZSS256(Util.loadBook(this, "book/256-rowcolumn.xlsx"));
+		testZSS256(Util.loadBook(this, "book/256-rowcolumn.xls"));
 	}
 	
 	
@@ -1552,7 +1553,7 @@ public class Issue200Test {
 	
 	@Test
 	public void testZSS379() throws Exception {
-		Book book = Util.loadBook("blank.xlsx");
+		Book book = Util.loadBook(this, "book/blank.xlsx");
 		Range r = Ranges.range(book.getSheetAt(0),"A1");
 		
 		r.setCellEditText("0.7583333333333333");
@@ -1593,8 +1594,8 @@ public class Issue200Test {
 
 	@Test
 	public void testZSS322(){
-		testZSS322(Util.loadBook("blank.xlsx"));
-		testZSS322(Util.loadBook("blank.xls"));
+		testZSS322(Util.loadBook(this, "book/blank.xlsx"));
+		testZSS322(Util.loadBook(this, "book/blank.xls"));
 	}
 	private void testZSS322(Book book){
 		Sheet sheet = book.getSheetAt(0);

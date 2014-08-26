@@ -20,7 +20,7 @@ Additional test:
 			</label>
 		</hlayout>
 		<button label="freeze" onClick="Ranges.range(ss.getSelectedSheet()).setFreezePanel(ss.getSelection().getRow(), ss.getSelection().getColumn());" /> 
-		<spreadsheet id="ss" src="/book/448-filter-popup.xlsx"  width="1000px" vflex="true"
+		<spreadsheet id="ss" src="/issue3/book/448-filter-popup.xlsx"  width="1000px" vflex="true"
 			ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e"
 			maxrows="500" maxcolumns="50"
 			showFormulabar="true" showContextMenu="true" showSheetbar="true" showToolbar="true">

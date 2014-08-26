@@ -4,7 +4,7 @@
 		<button onClick="purple()">1. Set B4:J7 background to purple (#6600ff)</button>
 		<button onClick="white()">2. Set B4:J7 background to white (#ffffff)</button>
 	</hbox>
-	<spreadsheet id="ss" src="/book/516-setBackgroundWhite.xls" maxVisibleRows="200" maxVisibleColumns="40"
+	<spreadsheet id="ss" src="/issue3/book/516-setBackgroundWhite.xls" maxVisibleRows="200" maxVisibleColumns="40"
 		vflex="1" hflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
 		showFormulabar="true"/>
 	<zscript><![CDATA[

@@ -12,7 +12,7 @@
 			}
 		]]></zscript>
 		<button label="export" onClick="export();" /> 
-		<spreadsheet id="ss" src="/book/430-export-formula.xlsx" hflex="1" vflex="1"
+		<spreadsheet id="ss" src="/issue3/book/430-export-formula.xlsx" hflex="1" vflex="1"
 			maxVisibleRows="500" maxVisibleColumns="100" showToolbar="true" showFormulabar="true"
 			showSheetbar="true" showContextMenu="true">
 		</spreadsheet>

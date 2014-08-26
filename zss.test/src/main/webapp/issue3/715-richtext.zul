@@ -19,6 +19,6 @@ Copyright (C) 2014 Potix Corporation. All Rights Reserved.
 		2. 
 		3. 
 	</label>
-	<spreadsheet src="/book/715-richtext.xlsx" showContextMenu="true" height="500px" width="800px">
+	<spreadsheet src="/issue3/book/715-richtext.xlsx" showContextMenu="true" height="500px" width="800px">
 	</spreadsheet>
 </window>

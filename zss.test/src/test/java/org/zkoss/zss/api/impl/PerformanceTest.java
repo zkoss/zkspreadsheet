@@ -49,7 +49,7 @@ public class PerformanceTest {
 		test(1,500,500,true,false);
 	}
 	public void test(int loop, int setRows, int evalRows,boolean dumpTime,boolean dumpMemory) throws Exception {
-		String bookPath = "performance.xlsx";
+		String bookPath = "book/performance.xlsx";
 		
 		if(dumpMemory){
 			showMemoryUsage(">>>Init:"); // init
@@ -59,7 +59,7 @@ public class PerformanceTest {
 		Sheet sheet;
 		for(int i=0;i<2;i++){
 			start = System.currentTimeMillis();
-			book = Util.loadBook(bookPath);
+			book = Util.loadBook(this, bookPath);
 			sheet = book.getSheet("Sheet1");
 			if(dumpTime){
 				System.out.println("("+(i+1)+").Preload Book Time: " + (System.currentTimeMillis() - start));
@@ -75,7 +75,7 @@ public class PerformanceTest {
 		
 		
 		start = System.currentTimeMillis();
-		book = Util.loadBook(bookPath);
+		book = Util.loadBook(this, bookPath);
 		sheet = book.getSheet("Sheet1");
 		if(dumpTime){
 			System.out.println("Load Book Time: " + (System.currentTimeMillis() - start));

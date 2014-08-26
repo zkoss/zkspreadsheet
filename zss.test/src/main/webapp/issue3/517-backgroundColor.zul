@@ -45,7 +45,7 @@
 	}
 	
 	]]></zscript>
-	<spreadsheet id="ss" src="/book/517-backgroundColor.xls" maxVisibleRows="200" maxVisibleColumns="40" vflex="1"
+	<spreadsheet id="ss" src="/issue3/book/517-backgroundColor.xls" maxVisibleRows="200" maxVisibleColumns="40" vflex="1"
 		hflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
 		showFormulabar="true"/>
 	</vbox>

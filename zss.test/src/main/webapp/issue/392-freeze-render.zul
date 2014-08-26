@@ -3,7 +3,7 @@
 <zk>
 	<vbox width="100%" height="100%">
 		<button label="export" onClick="export();"></button>
-		<spreadsheet id="ss" src="/book/392-freeze-render.xlsx"  hflex="1" vflex="1"
+		<spreadsheet id="ss" src="/issue/book/392-freeze-render.xlsx"  hflex="1" vflex="1"
 			ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e"
 			maxrows="1000" maxcolumns="400"
 	 		preloadRowSize="5" preloadColumnSize="5"

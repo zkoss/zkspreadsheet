@@ -33,7 +33,7 @@ To test this issue, you have to start zss by add -Duser.timezone=America/New_Yor
 			<button label="Check K" onClick='main$composer.checkValue("K2:K12","K15:K25",self)'/>
 			<button label="Check L" onClick='main$composer.checkValue("L2:L12","L15:L25",self)'/>
 		</hbox>
-		<spreadsheet id="ss" src="/book/541-daylightsave.xlsx" width="100%" maxrows="200" maxcolumns="40" 
+		<spreadsheet id="ss" src="/issue/book/541-daylightsave.xlsx" width="100%" maxrows="200" maxcolumns="40" 
 			hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
 			showFormulabar="true" />
 	</vbox>

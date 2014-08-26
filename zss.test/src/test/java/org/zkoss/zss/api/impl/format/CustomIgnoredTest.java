@@ -23,7 +23,7 @@ public class CustomIgnoredTest {
 	@BeforeClass
 	public static void setUpLibrary() throws Exception {
 		Setup.touch();
-		book = Util.loadBook("TestFile2007-Format.xlsx");
+		book = Util.loadBook(SpecialTest.class, "book/TestFile2007-Format.xlsx");
 	}
 	
 	@Before

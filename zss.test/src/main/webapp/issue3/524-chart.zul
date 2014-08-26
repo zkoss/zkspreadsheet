@@ -8,10 +8,10 @@ org.zkoss.lang.Library.setProperty("org.zkoss.zss.chart.yAxisTick.font", "SansSe
 	</zscript>
 	<window hflex="1" vflex="1">
 		<label multiline="true">It should not throw any exception when selecting each sheet.</label>
-		<spreadsheet src="/book/524-chart.xlsx" maxVisibleRows="200" 
+		<spreadsheet src="/issue3/book/524-chart.xlsx" maxVisibleRows="200" 
 			maxVisibleColumns="20" width="100%"  vflex="1" showContextMenu="true" showSheetbar="true"
 			showToolbar="true" showFormulabar="true" />
-		<spreadsheet src="/book/524-chart.xls" maxVisibleRows="200" 
+		<spreadsheet src="/issue3/book/524-chart.xls" maxVisibleRows="200" 
 			maxVisibleColumns="20" width="100%"  vflex="1" showContextMenu="true" showSheetbar="true"
 			showToolbar="true" showFormulabar="true" />			
 	</window>

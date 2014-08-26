@@ -19,7 +19,7 @@
 			<button label="unhide" onClick='unhide(ss.getSelectedSheet());' />
 		</hlayout>
 		
-		<spreadsheet id="ss" src="/book/382-merge-hide.xlsx" hflex="1" vflex="1"
+		<spreadsheet id="ss" src="/issue3/book/382-merge-hide.xlsx" hflex="1" vflex="1"
 			maxVisibleRows="500" maxVisibleColumns="100" showToolbar="true" showFormulabar="true"
 			showSheetbar="true" showContextMenu="true">
 		</spreadsheet>

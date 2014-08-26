@@ -7,7 +7,7 @@
 			2. cannot focus on row frozen area (ex: CV1) & cannot focus on column frozen area (ex: A1000)
 		]]></attribute>
 	</label>
-	<spreadsheet id="ss" src="/book/420-bug-focus.xlsx" maxrows="1000" maxcolumns="100" vflex="true" width="100%" 
+	<spreadsheet id="ss" src="/issue/book/420-bug-focus.xlsx" maxrows="1000" maxcolumns="100" vflex="true" width="100%" 
 		showFormulabar="true" showContextMenu="true" showSheetbar="true" showToolbar="true"></spreadsheet>
 	<zscript>
 		<![CDATA[
