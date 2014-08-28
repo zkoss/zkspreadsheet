@@ -22,6 +22,7 @@ ZK Spreadsheet 3.5.1
   ZSS-753 Cannot undo setRichText()
   ZSS-754 The method Range.setValidation() doesn't have annotation @since 3.5.0
   ZSS-752 Failed to apply style to a cell with rich text correctly.
+  ZSS-756 Unexpected messagebox showed in the Insert Function Window
   
 ** Upgrade Notes
   * Following api are deprecated
