@@ -19,6 +19,7 @@ package org.zkoss.zss.model.impl;
 import java.io.Serializable;
 
 import org.zkoss.zss.model.SName;
+import org.zkoss.zss.model.sys.formula.FormulaExpression;
 /**
  * 
  * @author dennis
@@ -29,5 +30,20 @@ public abstract class AbstractNameAdv implements SName,LinkedModelObject,Seriali
 	private static final long serialVersionUID = 1L;
 
 	/*package*/ abstract void setName(String newname, String applyToSheetName);
+
+	//ZSS-747
+	/**
+	 * 
+	 * @return
+	 * @since 3.5.1
+	 */
+	abstract public FormulaExpression getRefersToFormulaExpression();
+	//ZSS-747
+	/**
+	 * 
+	 * @param refersExpr
+	 * @since 3.5.1
+	 */
+	abstract public void setRefersToFormula(FormulaExpression refersExpr);
 
 }

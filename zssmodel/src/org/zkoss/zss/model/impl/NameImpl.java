@@ -36,8 +36,6 @@ public class NameImpl extends AbstractNameAdv {
 	
 	private String _applyToSheetName;
 	
-	private String _refersToExpr;
-	
 	private FormulaExpression _refersToExprFormula;
 	
 	private CellRegion _refersToCellRegion;
@@ -88,9 +86,21 @@ public class NameImpl extends AbstractNameAdv {
 	@Override
 	void setName(String newname, String applyToSheetName) {
 		checkOrphan();
+		
+		boolean shouldEval = _refersToExprFormula != null 
+				&& (!equals0(_name, newname) || !equals0(_applyToSheetName, applyToSheetName));
+		
 		_applyToSheetName = applyToSheetName;
-		parseAndEvalFormula(_name, newname); // ZSS-661
+		
+		if (shouldEval) {
+			parseAndEvalFormula(_refersToExprFormula, _name, newname); // ZSS-661
+		}
+		
 		_name = newname;
+	}
+	
+	private boolean equals0(String n1, String n2) {
+		return n1 == n2 || (n1 != null && n1.equals(n2));
 	}
 
 	@Override
@@ -101,36 +111,45 @@ public class NameImpl extends AbstractNameAdv {
 	@Override
 	public void setRefersToFormula(String refersToExpr) {
 		checkOrphan();
-		_refersToExpr = refersToExpr;
-		parseAndEvalFormula(_name, _name); // nameName not changed
+		if (_refersToExprFormula == null) {
+			if (refersToExpr != null) {
+				parseAndEvalFormula(refersToExpr, _name, _name); // nameName not changed
+			}
+		} else if (!equals0(refersToExpr, _refersToExprFormula.getFormulaString())) {
+			parseAndEvalFormula(refersToExpr, _name, _name); // nameName not changed
+		}
 	}
 	
-	/*package*/ void parseAndEvalFormula(String oldName, String newName){ //ZSS-661
+	/*package*/ void parseAndEvalFormula(String refersToExpr, String oldName, String newName){ //ZSS-661
 		clearFormulaDependency(oldName);
 
 		_refersToSheetName = null;
 		_refersToCellRegion = null;
 		
-		if(_refersToExpr!=null){
+		if(refersToExpr!=null){
 			//use formula engine to keep dependency info
 			FormulaEngine fe = EngineFactory.getInstance().createFormulaEngine();
 			Ref ref = getRef(newName); // ZSS-661
-			_refersToExprFormula = fe.parse(_refersToExpr, new FormulaParseContext(_book.getSheet(0),ref));
-			if(!_refersToExprFormula.hasError() && _refersToExprFormula.isAreaRefs()){
-				//ZSS-655, should eval each name to force it be notified in dependency (for evaluated dependent)
-				//we don't care result here
-				fe.evaluate(_refersToExprFormula,new FormulaEvaluationContext(_book.getSheet(0), ref));
-				
-				//TODO, should care all the refs
-				Ref[] refs = _refersToExprFormula.getAreaRefs();
-				_refersToSheetName = refs[0].getSheetName();
-				_refersToCellRegion = new CellRegion(refs[0].getRow(),refs[0].getColumn(),refs[0].getLastRow(),refs[0].getLastColumn());				
-				
-				//ZSS-294, should clear dependents that have referenced to this new created Name
-				ModelUpdateUtil.handlePrecedentUpdate(_book.getBookSeries(), ref);
-			}
+			_refersToExprFormula = fe.parse(refersToExpr, new FormulaParseContext(_book.getSheet(0),ref));
+			evalPtgs(fe, ref);
 		}
-	}	
+	}
+	
+	private void evalPtgs(FormulaEngine fe, Ref ref) {
+		if(!_refersToExprFormula.hasError() && _refersToExprFormula.isAreaRefs()){
+			//ZSS-655, should eval each name to force it be notified in dependency (for evaluated dependent)
+			//we don't care result here
+			fe.evaluate(_refersToExprFormula,new FormulaEvaluationContext(_book.getSheet(0), ref));
+			
+			//TODO, should care all the refs
+			Ref[] refs = _refersToExprFormula.getAreaRefs();
+			_refersToSheetName = refs[0].getSheetName();
+			_refersToCellRegion = new CellRegion(refs[0].getRow(),refs[0].getColumn(),refs[0].getLastRow(),refs[0].getLastColumn());				
+			
+			//ZSS-294, should clear dependents that have referenced to this new created Name
+			ModelUpdateUtil.handlePrecedentUpdate(_book.getBookSeries(), ref);
+		}
+	}
 	
 	@Override
 	public boolean isFormulaParsingError() {
@@ -162,5 +181,42 @@ public class NameImpl extends AbstractNameAdv {
 	
 	private Ref getRef(String nameName) { // ZSS-661
 		return new NameRefImpl(this.getBook().getBookName(),this.getApplyToSheetName(),nameName);
+	}
+	
+	//ZSS-747
+	@Override
+	public FormulaExpression getRefersToFormulaExpression() {
+		return _refersToExprFormula;
+	}
+	
+	//ZSS-747
+	@Override
+	public void setRefersToFormula(FormulaExpression refersToExpr) {
+		checkOrphan();
+		if (_refersToExprFormula == null) {
+			if (refersToExpr != null) {
+				parseAndEvalFormula(refersToExpr, _name, _name); // nameName not changed
+			}
+		} else if (refersToExpr != null) {
+			if (!equals0(refersToExpr.getFormulaString(), _refersToExprFormula.getFormulaString())) {
+				parseAndEvalFormula(refersToExpr, _name, _name); // nameName not changed
+			}
+		} else {
+			parseAndEvalFormula(refersToExpr, _name, _name); // nameName not changed
+		}
+	}
+	/*package*/ void parseAndEvalFormula(FormulaExpression refersToExpr, String oldName, String newName){ //ZSS-661
+		clearFormulaDependency(oldName);
+
+		_refersToSheetName = null;
+		_refersToCellRegion = null;
+		
+		if(refersToExpr != null){
+			//use formula engine to keep dependency info
+			FormulaEngine fe = EngineFactory.getInstance().createFormulaEngine();
+			Ref ref = getRef(newName); // ZSS-661
+			fe.updateDependencyTable(refersToExpr, new FormulaParseContext(_book.getSheet(0),ref));
+			evalPtgs(fe, ref);
+		}
 	}
 }

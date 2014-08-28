@@ -415,33 +415,12 @@ public class DataValidationImpl extends AbstractDataValidationAdv {
 	
 	@Override
 	public void setFormula1(String formula1) {
-		checkOrphan();
-		_evaluated = false;
-		clearFormulaDependency(false); // will clear formula
-		clearFormulaResultCache();
-		
-		FormulaEngine fe = EngineFactory.getInstance().createFormulaEngine();
-		
-		Ref ref = getRef();
-		if(formula1!=null){
-			_formula1Expr = fe.parse(formula1, new FormulaParseContext(_sheet,ref));
-		}else{
-			_formula1Expr = null;
-		}
+		setFormulas(formula1, _formula2Expr == null ? null : _formula2Expr.getFormulaString());
 	}
 	
 	@Override
 	public void setFormula2(String formula2) {
-		setFormula1(_formula1Expr == null ? null : _formula1Expr.getFormulaString());
-		
-		FormulaEngine fe = EngineFactory.getInstance().createFormulaEngine();
-		
-		Ref ref = getRef();
-		if(formula2!=null){
-			_formula2Expr = fe.parse(formula2, new FormulaParseContext(_sheet,ref));
-		}else{
-			_formula2Expr = null;
-		}
+		setFormulas(_formula1Expr == null ? null : _formula1Expr.getFormulaString(), formula2);
 	}
 	
 	@Override
@@ -638,5 +617,72 @@ public class DataValidationImpl extends AbstractDataValidationAdv {
 		//private boolean _evaluated;
 		
 		return tgt;
+	}
+	
+	//ZSS-747
+	/**
+	 * 
+	 * @param fe1
+	 * @param fe2
+	 * @since 3.5.1
+	 */
+	public void setFormulas(FormulaExpression fe1, FormulaExpression fe2) {
+		checkOrphan();
+		_evaluated = false;
+		clearFormulaDependency(false); // will clear formula
+		clearFormulaResultCache();
+		
+		_formula1Expr = fe1;
+		_formula2Expr = fe2;
+
+		// update dependency table
+		FormulaEngine fe = EngineFactory.getInstance().createFormulaEngine();
+		
+		Ref ref = getRef();
+		FormulaParseContext context = new FormulaParseContext(_sheet,ref);
+		
+		if(fe1 != null) {
+			fe.updateDependencyTable(fe1, context);
+		}
+		if(fe2 != null) {
+			fe.updateDependencyTable(fe2, context);
+		}
+	}
+
+	//ZSS-747
+	/**
+	 * 
+	 * @return
+	 * @since 3.5.1
+	 */
+	public FormulaExpression getFormulaExpression1() {
+		return _formula1Expr;
+	}
+	//ZSS-747
+	/**
+	 * 
+	 * @return
+	 * @since 3.5.1
+	 */
+	public FormulaExpression getFormulaExpression2() {
+		return _formula2Expr;
+	}
+	//ZSS-747
+	/**
+	 * 
+	 * @param formula
+	 * @since 3.5.1
+	 */
+	public void setFormula1(FormulaExpression formula1) {
+		setFormulas(formula1, _formula2Expr);
+	}
+	//ZSS-747
+	/**
+	 * 
+	 * @param formula
+	 * @since 3.5.1
+	 */
+	public void setFormula2(FormulaExpression formula2) {
+		setFormulas(_formula1Expr, formula2);
 	}
 }

@@ -17,11 +17,9 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.model.impl;
 
 import java.io.Serializable;
-import java.util.List;
-import java.util.Set;
 
-import org.zkoss.zss.model.CellRegion;
 import org.zkoss.zss.model.SDataValidation;
+import org.zkoss.zss.model.sys.formula.FormulaExpression;
 /**
  * 
  * @author Dennis
@@ -47,4 +45,43 @@ public abstract class AbstractDataValidationAdv implements SDataValidation,Linke
 	 * @param formula2
 	 */
 	abstract public void setFormulas(String formula1, String formula2);
+	
+	//ZSS-747
+	/**
+	 * 
+	 * @param fe1
+	 * @param fe2
+	 * @since 3.5.1
+	 */
+	abstract public void setFormulas(FormulaExpression fe1, FormulaExpression fe2);
+
+	//ZSS-747
+	/**
+	 * 
+	 * @return
+	 * @since 3.5.1
+	 */
+	abstract public FormulaExpression getFormulaExpression1();
+	//ZSS-747
+	/**
+	 * 
+	 * @return
+	 * @since 3.5.1
+	 */
+	abstract public FormulaExpression getFormulaExpression2();
+	//ZSS-747
+	/**
+	 * 
+	 * @param formula
+	 * @since 3.5.1
+	 */
+	abstract public void setFormula1(FormulaExpression formula);
+	//ZSS-747
+	/**
+	 * 
+	 * @param formula
+	 * @since 3.5.1
+	 */
+	abstract public void setFormula2(FormulaExpression formula);
+
 }

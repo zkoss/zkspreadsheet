@@ -18,6 +18,7 @@ package org.zkoss.zss.model.sys.formula;
 
 import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.SheetRegion;
+import org.zkoss.zss.model.sys.dependency.Ref;
 
 /**
  * 
@@ -27,6 +28,7 @@ import org.zkoss.zss.model.SheetRegion;
 public interface FormulaEngine {
 	
 	String KEY_EXTERNAL_BOOK_NAMES = "$ZSS_EXTERNAL_BOOK_NAMES$";
+	String KEY_SHEET_INDEXES = "$ZSS_SHEET_INDEXES$";
 
 	public FormulaExpression parse(String formula, FormulaParseContext context);
 	
@@ -76,4 +78,106 @@ public interface FormulaEngine {
 	public EvaluationResult evaluate(FormulaExpression expr, FormulaEvaluationContext context);
 
 	public void clearCache(FormulaClearContext context);
+
+	//ZSS-747
+	/**
+	 * Shift the formula base on the offset
+	 * @param formula
+	 * @param rowOffset
+	 * @param columnOffset
+	 * @param context
+	 * @return
+	 * @since 3.5.1
+	 */
+	public FormulaExpression shiftPtgs(FormulaExpression fexpr, int rowOffset,int columnOffset, FormulaParseContext context);
+	
+	//ZSS-747
+	/**
+	 * Transpose the formula base one the origin
+	 * @param formula
+	 * @param rowOrigin
+	 * @param columnOrigin
+	 * @param context
+	 * @return
+	 * @since 3.5.1
+	 */
+	public FormulaExpression transposePtgs(FormulaExpression fexpr, int rowOrigin,int columnOrigin, FormulaParseContext context);
+	
+	//ZSS-747
+	/**
+	 * Shift the formula that care on sheet and region.
+	 * @param formula
+	 * @param srcRegion
+	 * @param rowOffset
+	 * @param columnOffset
+	 * @param context
+	 * @return
+	 * @since 3.5.1
+	 */
+	public FormulaExpression movePtgs(FormulaExpression fexpr, SheetRegion srcRegion, int rowOffset,int columnOffset,
+			FormulaParseContext context);
+	
+	//ZSS-747
+	/**
+	 * 
+	 * @param fexpr
+	 * @param srcRegion
+	 * @param hrizontal
+	 * @param context
+	 * @return
+	 * @since 3.5.1
+	 */
+	public FormulaExpression shrinkPtgs(FormulaExpression fexpr, SheetRegion srcRegion, boolean hrizontal,
+			FormulaParseContext context);
+	
+	//ZSS-747
+	/**
+	 * 
+	 * @param fexpr
+	 * @param srcRegion
+	 * @param hrizontal
+	 * @param context
+	 * @return
+	 * @since 3.5.1
+	 */
+	public FormulaExpression extendPtgs(FormulaExpression fexpr, SheetRegion srcRegion, boolean hrizontal,
+			FormulaParseContext context);
+	
+	//ZSS-747
+	/**
+	 * 
+	 * @param fexpr
+	 * @param book
+	 * @param oldName
+	 * @param newName
+	 * @param context
+	 * @return
+	 * @since 3.5.1
+	 */
+	public FormulaExpression renameSheetPtgs(FormulaExpression fexpr, SBook book, String oldName,String newName,
+			FormulaParseContext context);
+	
+	//ZSS-747
+	/**
+	 * 
+	 * @param fexpr
+	 * @param book
+	 * @param oldName
+	 * @param newName
+	 * @param context
+	 * @return
+	 * @since 3.5.1
+	 */
+	public FormulaExpression renameNamePtgs(FormulaExpression fexpr, SBook book, String oldName,String newName,
+			FormulaParseContext context);
+
+
+	//ZSS-747
+	/**
+	 * 
+	 * @param fexpr
+	 * @param context
+	 * @since 3.5.1
+	 */
+	public void updateDependencyTable(FormulaExpression fexpr, FormulaParseContext context);
 }

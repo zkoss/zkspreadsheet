@@ -24,6 +24,7 @@ import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.model.chart.SSeries;
 import org.zkoss.zss.model.impl.AbstractBookSeriesAdv;
 import org.zkoss.zss.model.impl.AbstractChartAdv;
+import org.zkoss.zss.model.impl.AbstractSeriesAdv;
 import org.zkoss.zss.model.impl.EvaluationUtil;
 import org.zkoss.zss.model.impl.LinkedModelObject;
 import org.zkoss.zss.model.impl.ObjectRefImpl;
@@ -41,7 +42,7 @@ import org.zkoss.zss.model.sys.formula.EvaluationResult.ResultType;
  * @author dennis
  * @since 3.5.0
  */
-public class SeriesImpl implements SSeries,Serializable,LinkedModelObject{
+public class SeriesImpl extends AbstractSeriesAdv implements SSeries,Serializable,LinkedModelObject{
 	private static final long serialVersionUID = 1L;
 	private FormulaExpression _nameExpr;
 	private FormulaExpression _valueExpr;
@@ -310,5 +311,59 @@ public class SeriesImpl implements SSeries,Serializable,LinkedModelObject{
 		//private boolean _evaluated = false;
 		
 		return tgt;
+	}
+	//ZSS-747
+	@Override
+	public FormulaExpression getNameFormulaExpression() {
+		return this._nameExpr;
+	}
+	//ZSS-747
+	@Override
+	public FormulaExpression getValuesFormulaExpression() {
+		return this._valueExpr;
+	}
+	//ZSS-747
+	@Override
+	public FormulaExpression getXValuesFormulaExpression() {
+		return getValuesFormulaExpression();
+	}
+	//ZSS-747
+	@Override
+	public FormulaExpression getYValuesFormulaExpression() {
+		return this._yValueExpr;
+	}
+	//ZSS-747
+	@Override
+	public FormulaExpression getZValuesFormulaExpression() {
+		return this._zValueExpr;
+	}
+	//ZSS-747
+	public void setXYZFormula(FormulaExpression nameExpr, FormulaExpression xValueExpr, FormulaExpression yValueExpr, FormulaExpression zValueExpr) {
+		checkOrphan();
+		_evaluated = false;
+		clearFormulaDependency();
+		
+		this._nameExpr = nameExpr;
+		this._valueExpr = xValueExpr;
+		this._yValueExpr = yValueExpr;
+		this._zValueExpr = zValueExpr;
+
+		// Update dependency table
+		FormulaEngine fe = EngineFactory.getInstance().createFormulaEngine();
+		SSheet sheet = _chart.getSheet();
+		Ref ref = getRef();
+		FormulaParseContext context = new FormulaParseContext(sheet, ref); 
+		if(nameExpr != null) {
+			fe.updateDependencyTable(nameExpr, context);
+		}
+		if(xValueExpr != null){
+			fe.updateDependencyTable(xValueExpr, context);
+		}
+		if(yValueExpr != null){
+			fe.updateDependencyTable(yValueExpr, context);
+		}
+		if(zValueExpr !=null){
+			fe.updateDependencyTable(zValueExpr, context);
+		}
 	}
 }

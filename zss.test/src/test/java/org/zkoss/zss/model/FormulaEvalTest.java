@@ -752,9 +752,99 @@ public class FormulaEvalTest {
 
 	private void testFormulaMove(FormulaEngine engine, SSheet sheet, String f, SheetRegion region, int rowOffset, int colOffset, String expected) {
 		FormulaParseContext context = new FormulaParseContext(sheet, null);
-		FormulaExpression expr = engine.move(f, region, rowOffset, colOffset, context);
+		FormulaExpression fexpr = engine.parse(f, context);
+		FormulaExpression expr = engine.movePtgs(fexpr, region, rowOffset, colOffset, context);
 		Assert.assertFalse(expr.hasError());
 		Assert.assertEquals(expected, expr.getFormulaString());
+	}
+	
+	//ZSS-747
+	@Test
+	public void testFormulaMovePtgs() {
+
+		FormulaEngine engine = EngineFactory.getInstance().createFormulaEngine();
+		SBook book1 = SBooks.createBook("Book1");
+		SSheet sheetA = book1.createSheet("SheetA");
+		SSheet sheetB = book1.createSheet("SheetB");
+		SBook book2 = SBooks.createBook("Book2");
+		SSheet book2SheetA = book2.createSheet("SheetA");
+		book2.createSheet("SheetB");
+		new BookSeriesBuilderImpl().buildBookSeries(book1, book2);
+		
+		final int maxRow = book1.getMaxRowSize();
+		final int maxColumn = book1.getMaxColumnSize();
+
+		// shift rows
+		String f = "SUM(C3:E5)+SUM(SheetA!C3:E5)+SUM(SheetB!C3:E5)";
+		testFormulaMovePtgs(engine, sheetA, f, new SheetRegion(sheetA, "C3:E5"), 2, 0,
+				"SUM(C5:E7)+SUM(SheetA!C5:E7)+SUM(SheetB!C3:E5)");
+		testFormulaMovePtgs(engine, sheetA, f, new SheetRegion(sheetA, "C3:E5"), -2, 0,
+				"SUM(C1:E3)+SUM(SheetA!C1:E3)+SUM(SheetB!C3:E5)");
+		// shift columns
+		testFormulaMovePtgs(engine, sheetA, f, new SheetRegion(sheetA, "C3:E5"), 0, 2,
+				"SUM(E3:G5)+SUM(SheetA!E3:G5)+SUM(SheetB!C3:E5)");
+		testFormulaMovePtgs(engine, sheetA, f, new SheetRegion(sheetA, "C3:E5"), 0, -2,
+				"SUM(A3:C5)+SUM(SheetA!A3:C5)+SUM(SheetB!C3:E5)");
+		// shift both
+		testFormulaMovePtgs(engine, sheetA, f, new SheetRegion(sheetA, "C3:E5"), 2, 2,
+				"SUM(E5:G7)+SUM(SheetA!E5:G7)+SUM(SheetB!C3:E5)");
+		testFormulaMovePtgs(engine, sheetA, f, new SheetRegion(sheetA, "C3:E5"), -2, -2,
+				"SUM(A1:C3)+SUM(SheetA!A1:C3)+SUM(SheetB!C3:E5)");
+		
+		// shift other sheet's region
+		testFormulaMovePtgs(engine, sheetA, f, new SheetRegion(sheetB, "C3:E5"), 2, 2,
+				"SUM(C3:E5)+SUM(SheetA!C3:E5)+SUM(SheetB!E5:G7)");
+		testFormulaMovePtgs(engine, sheetA, f, new SheetRegion(sheetB, "C3:E5"), -2, -2,
+				"SUM(C3:E5)+SUM(SheetA!C3:E5)+SUM(SheetB!A1:C3)");
+		
+		// out of bound, exceed min.
+		testFormulaMovePtgs(engine, sheetA, f, new SheetRegion(sheetA, "C3:E5"), -3, 0,
+				"SUM(C1:E2)+SUM(SheetA!C1:E2)+SUM(SheetB!C3:E5)");
+		testFormulaMovePtgs(engine, sheetA, f, new SheetRegion(sheetA, "C3:E5"), 0, -3,
+				"SUM(A3:B5)+SUM(SheetA!A3:B5)+SUM(SheetB!C3:E5)");
+		// out of bound, exceed max.
+		testFormulaMovePtgs(engine, sheetA, f, new SheetRegion(sheetA, "C3:E5"), maxRow-3, 0,
+				MessageFormat.format("SUM(C{0}:E{0})+SUM(SheetA!C{0}:E{0})+SUM(SheetB!C3:E5)", String.valueOf(maxRow))); // only last row exceeds 
+		testFormulaMovePtgs(engine, sheetA, f, new SheetRegion(sheetA, "C3:E5"), maxRow, 0,
+				"SUM(#REF!)+SUM(SheetA!#REF!)+SUM(SheetB!C3:E5)"); // first and last both exceed 
+		testFormulaMovePtgs(engine, sheetA, f, new SheetRegion(sheetA, "C3:E5"), 0, maxColumn-3,
+				MessageFormat.format("SUM({0}:{1})+SUM(SheetA!{0}:{1})+SUM(SheetB!C3:E5)", new CellRegion(2, maxColumn-1).getReferenceString(), new CellRegion(4, maxColumn-1).getReferenceString())); // only last column exceeds 
+		testFormulaMovePtgs(engine, sheetA, f, new SheetRegion(sheetA, "C3:E5"), 0, maxColumn,
+				"SUM(#REF!)+SUM(SheetA!#REF!)+SUM(SheetB!C3:E5)"); // first and last both exceed 
+		
+		// external book references
+		f = "SUM(A1:A3)+SUM(SheetA!A1:A3)+SUM([Book2]SheetA!A1:A3)+SUM([Book2]SheetB!A1:A3)";
+		testFormulaMovePtgs(engine, sheetA, f, new SheetRegion(sheetA, "A1:A3"), 2, 0,
+				"SUM(A3:A5)+SUM(SheetA!A3:A5)+SUM([Book2]SheetA!A1:A3)+SUM([Book2]SheetB!A1:A3)"); // shift in current book
+		testFormulaMovePtgs(engine, sheetA, f, new SheetRegion(book2SheetA, "A1:A3"), 2, 0,
+				"SUM(A1:A3)+SUM(SheetA!A1:A3)+SUM([Book2]SheetA!A3:A5)+SUM([Book2]SheetB!A1:A3)"); // shift in external book
+
+		// absolute formula only effect copy and auto-fill operation
+		// move, insert and delete operations still effect absolute formulas  
+		f = "SUM($C3:$E5)+SUM(C$3:E$5)+SUM($C$3:$E$5)";
+		testFormulaMovePtgs(engine, sheetA, f, new SheetRegion(sheetA, "C3:E5"), 2, 2,
+				"SUM($E5:$G7)+SUM(E$5:G$7)+SUM($E$5:$G$7)");
+		
+		// 3D reference, don't get any effected
+		f = "SUM(Sheet1:Sheet3!A1)";
+		testFormulaMovePtgs(engine, sheetA, f, new SheetRegion(sheetA, "A1:A1"), 2, 2, f);
+		
+		// intersection
+		f = "SUM(C3:E5)";
+		testFormulaMovePtgs(engine, sheetA, f, new SheetRegion(sheetA, "D3:E5"), 0, 1, "SUM(C3:F5)");
+		
+		// area direction
+		testFormulaMovePtgs(engine, sheetA, "SUM(C3:E5)", new SheetRegion(sheetA, "C3:E5"), 2, 2, "SUM(E5:G7)");
+		testFormulaMovePtgs(engine, sheetA, "SUM(E5:C3)", new SheetRegion(sheetA, "C3:E5"), 2, 2, "SUM(E5:G7)");
+		testFormulaMovePtgs(engine, sheetA, "SUM(C5:E3)", new SheetRegion(sheetA, "C3:E5"), 2, 2, "SUM(E5:G7)");
+		testFormulaMovePtgs(engine, sheetA, "SUM(E3:C5)", new SheetRegion(sheetA, "C3:E5"), 2, 2, "SUM(E5:G7)");
+	}
+	private void testFormulaMovePtgs(FormulaEngine engine, SSheet sheet, String f, SheetRegion region, int rowOffset, int colOffset, String expected) {
+		FormulaParseContext context = new FormulaParseContext(sheet, null);
+		FormulaExpression orgexpr = engine.parse(f, context);
+		FormulaExpression ptgexpr = engine.movePtgs(orgexpr, region, rowOffset, colOffset, context);
+		Assert.assertFalse(ptgexpr.hasError());
+		Assert.assertEquals(expected, ptgexpr.getFormulaString());
 	}
 	
 	@Test
@@ -828,7 +918,8 @@ public class FormulaEvalTest {
 			regionSheet = formulaSheet;
 		}
 		FormulaParseContext context = new FormulaParseContext(formulaSheet, null);
-		FormulaExpression expr = engine.shrink(formula, new SheetRegion(regionSheet, region), hrizontal, context);
+		FormulaExpression fexpr = engine.parse(formula, context);
+		FormulaExpression expr = engine.shrinkPtgs(fexpr, new SheetRegion(regionSheet, region), hrizontal, context);
 		Assert.assertFalse(expr.hasError());
 		Assert.assertEquals(expected, expr.getFormulaString());
 	}
@@ -902,9 +993,88 @@ public class FormulaEvalTest {
 			regionSheet = formulaSheet;
 		}
 		FormulaParseContext context = new FormulaParseContext(formulaSheet, null);
-		FormulaExpression expr = engine.extend(formula, new SheetRegion(regionSheet, region), hrizontal, context);
+		FormulaExpression fexpr = engine.parse(formula, context);
+		FormulaExpression expr = engine.extendPtgs(fexpr, new SheetRegion(regionSheet, region), hrizontal, context);
 		Assert.assertFalse(expr.hasError());
 		Assert.assertEquals(expected, expr.getFormulaString());
+	}
+
+	//ZSS-747
+	@Test
+	public void testFormulaExtendPtgs() {
+		FormulaEngine engine = EngineFactory.getInstance().createFormulaEngine();
+		SBook book1 = SBooks.createBook("Book1");
+		SSheet sheetA = book1.createSheet("SheetA");
+		SSheet sheetB = book1.createSheet("SheetB");
+		SBook book2 = SBooks.createBook("Book2");
+		SSheet book2SheetA = book2.createSheet("SheetA");
+		new BookSeriesBuilderImpl().buildBookSeries(book1, book2);
+
+		// the formula contains 3 region in current sheet
+		// target region won't cover region 1, complete cover region 2, and partial cover region 3
+		String f = "SUM(C3:E5)+SUM(G3:I5)+SUM(K3:M5)";
+		
+		// delete cells and shift up
+		boolean horizontal = false;
+		// source region at top
+		testFormulaExtendPtgs(f,sheetA, "G1:L1", null, horizontal, "SUM(C3:E5)+SUM(G4:I6)+SUM(K3:M5)", engine);
+		testFormulaExtendPtgs(f,sheetA, "G1:L2", null, horizontal, "SUM(C3:E5)+SUM(G5:I7)+SUM(K3:M5)", engine);
+		// source region overlapped
+		testFormulaExtendPtgs(f,sheetA, "G3:L3", null, horizontal, "SUM(C3:E5)+SUM(G4:I6)+SUM(K3:M5)", engine); // 1 row
+		testFormulaExtendPtgs(f,sheetA, "G4:L4", null, horizontal, "SUM(C3:E5)+SUM(G3:I6)+SUM(K3:M5)", engine); // 1 row
+		testFormulaExtendPtgs(f,sheetA, "G5:L5", null, horizontal, "SUM(C3:E5)+SUM(G3:I6)+SUM(K3:M5)", engine); // 1 row
+		testFormulaExtendPtgs(f,sheetA, "G2:L3", null, horizontal, "SUM(C3:E5)+SUM(G5:I7)+SUM(K3:M5)", engine); // 2 rows
+		testFormulaExtendPtgs(f,sheetA, "G2:L4", null, horizontal, "SUM(C3:E5)+SUM(G6:I8)+SUM(K3:M5)", engine); // 2 rows
+		testFormulaExtendPtgs(f,sheetA, "G4:L5", null, horizontal, "SUM(C3:E5)+SUM(G3:I7)+SUM(K3:M5)", engine); // 2 rows
+		testFormulaExtendPtgs(f,sheetA, "G3:L5", null, horizontal, "SUM(C3:E5)+SUM(G6:I8)+SUM(K3:M5)", engine); // 3 rows
+		// source region at bottom
+		testFormulaExtendPtgs(f,sheetA, "G6:L6", null, horizontal, f, engine);
+		// external sheet with external book
+		f = "SUM(A1:A3)+SUM(SheetA!A1:A3)+SUM(SheetB!A1:A3)+SUM([Book2]SheetA!A1:A3)";
+		testFormulaExtendPtgs(f,sheetA, "A2:A2", null, horizontal, "SUM(A1:A4)+SUM(SheetA!A1:A4)+SUM(SheetB!A1:A3)+SUM([Book2]SheetA!A1:A3)", engine); // on SheetA
+		testFormulaExtendPtgs(f,sheetB, "A2:A2", null, horizontal, "SUM(A1:A4)+SUM(SheetA!A1:A3)+SUM(SheetB!A1:A4)+SUM([Book2]SheetA!A1:A3)", engine); // on SheetB
+		testFormulaExtendPtgs(f,sheetB, "A2:A2", book2SheetA, horizontal, "SUM(A1:A3)+SUM(SheetA!A1:A3)+SUM(SheetB!A1:A3)+SUM([Book2]SheetA!A1:A4)", engine); // on Book2 SheetA
+		
+		// delete cells and shift left
+		f = "SUM(C3:E5)+SUM(C7:E9)+SUM(C11:E13)";
+		horizontal = true;
+		// source region at left
+		testFormulaExtendPtgs(f,sheetA, "A7:A12", null, horizontal, "SUM(C3:E5)+SUM(D7:F9)+SUM(C11:E13)", engine);
+		testFormulaExtendPtgs(f,sheetA, "A7:B12", null, horizontal, "SUM(C3:E5)+SUM(E7:G9)+SUM(C11:E13)", engine);
+		// source region overlapped
+		testFormulaExtendPtgs(f,sheetA, "C7:C12", null, horizontal, "SUM(C3:E5)+SUM(D7:F9)+SUM(C11:E13)", engine); // 1 column
+		testFormulaExtendPtgs(f,sheetA, "D7:D12", null, horizontal, "SUM(C3:E5)+SUM(C7:F9)+SUM(C11:E13)", engine); // 1 column
+		testFormulaExtendPtgs(f,sheetA, "E7:E12", null, horizontal, "SUM(C3:E5)+SUM(C7:F9)+SUM(C11:E13)", engine); // 1 column
+		testFormulaExtendPtgs(f,sheetA, "B7:C12", null, horizontal, "SUM(C3:E5)+SUM(E7:G9)+SUM(C11:E13)", engine); // 2 columns
+		testFormulaExtendPtgs(f,sheetA, "B7:D12", null, horizontal, "SUM(C3:E5)+SUM(F7:H9)+SUM(C11:E13)", engine); // 2 columns
+		testFormulaExtendPtgs(f,sheetA, "D7:E12", null, horizontal, "SUM(C3:E5)+SUM(C7:G9)+SUM(C11:E13)", engine); // 2 columns
+		testFormulaExtendPtgs(f,sheetA, "C7:E12", null, horizontal, "SUM(C3:E5)+SUM(F7:H9)+SUM(C11:E13)", engine); // 3 columns
+		// source region at right
+		testFormulaExtendPtgs(f,sheetA, "F7:F12", null, horizontal, f, engine);
+		// external sheet with external book
+		f = "SUM(A1:C1)+SUM(SheetA!A1:C1)+SUM(SheetB!A1:C1)+SUM([Book2]SheetA!A1:C1)";
+		testFormulaExtendPtgs(f,sheetA, "B1:B1", null, horizontal, "SUM(A1:D1)+SUM(SheetA!A1:D1)+SUM(SheetB!A1:C1)+SUM([Book2]SheetA!A1:C1)", engine); // on SheetA
+		testFormulaExtendPtgs(f,sheetB, "B1:B1", null, horizontal, "SUM(A1:D1)+SUM(SheetA!A1:C1)+SUM(SheetB!A1:D1)+SUM([Book2]SheetA!A1:C1)", engine); // on SheetB
+		testFormulaExtendPtgs(f,sheetA, "B1:B1", book2SheetA, horizontal, "SUM(A1:C1)+SUM(SheetA!A1:C1)+SUM(SheetB!A1:C1)+SUM([Book2]SheetA!A1:D1)", engine); // on Book2 SheetA
+		
+		// area direction
+		testFormulaExtendPtgs("SUM(G3:I5)", sheetA, "G1:L1", null, false, "SUM(G4:I6)", engine);
+		testFormulaExtendPtgs("SUM(I5:G3)", sheetA, "G1:L1", null, false, "SUM(G4:I6)", engine);
+		testFormulaExtendPtgs("SUM(G5:I3)", sheetA, "G1:L1", null, false, "SUM(G4:I6)", engine);
+		testFormulaExtendPtgs("SUM(I3:G5)", sheetA, "G1:L1", null, false, "SUM(G4:I6)", engine);
+	}
+	
+	//ZSS-747
+	private void testFormulaExtendPtgs(String formula, SSheet formulaSheet, String region, SSheet regionSheet, boolean hrizontal, String expected, FormulaEngine engine) {
+		if(regionSheet == null) {
+			regionSheet = formulaSheet;
+		}
+		FormulaParseContext context = new FormulaParseContext(formulaSheet, null);
+
+		FormulaExpression orgexpr = engine.parse(formula, context);
+		FormulaExpression ptgexpr = engine.extendPtgs(orgexpr, new SheetRegion(regionSheet, region), hrizontal, context);
+		Assert.assertFalse(ptgexpr.hasError());
+		Assert.assertEquals(expected, ptgexpr.getFormulaString());
 	}
 	
 	@Test
@@ -951,11 +1121,65 @@ public class FormulaEvalTest {
 	
 	private void testFormulaShift(FormulaEngine engine, SSheet sheet, String formula, int rowOffset, int columnOffset, String expected) {
 		FormulaParseContext context = new FormulaParseContext(sheet, null);
-		FormulaExpression expr = engine.shift(formula, rowOffset, columnOffset, context);
+		FormulaExpression fexpr = engine.parse(formula, context);
+		FormulaExpression expr = engine.shiftPtgs(fexpr, rowOffset, columnOffset, context);
 		Assert.assertFalse(expr.hasError());
 		Assert.assertEquals(expected, expr.getFormulaString());
 	}
-	
+
+	//ZSS-747
+	@Test
+	public void testFormulaShiftPtgs() {
+		FormulaEngine engine = EngineFactory.getInstance().createFormulaEngine();
+		SBook book1 = SBooks.createBook("Book1");
+		SSheet sheetA = book1.createSheet("SheetA");
+		
+		String f = "SUM(B2,B3:C4,Sheet1!B5:D7,Sheet2:Sheet3!B8:E11,[Book2.xlsx]Sheet1!E11:G13)";
+		// no shift
+		testFormulaShiftPtgs(engine, sheetA, f, 0, 0, f);
+		// row
+		testFormulaShiftPtgs(engine, sheetA, f, -1, 0, "SUM(B1,B2:C3,Sheet1!B4:D6,Sheet2:Sheet3!B7:E10,[Book2.xlsx]Sheet1!E10:G12)");
+		testFormulaShiftPtgs(engine, sheetA, f, 1, 0, "SUM(B3,B4:C5,Sheet1!B6:D8,Sheet2:Sheet3!B9:E12,[Book2.xlsx]Sheet1!E12:G14)");
+		testFormulaShiftPtgs(engine, sheetA, f, 2, 0, "SUM(B4,B5:C6,Sheet1!B7:D9,Sheet2:Sheet3!B10:E13,[Book2.xlsx]Sheet1!E13:G15)");
+		// column
+		testFormulaShiftPtgs(engine, sheetA, f, 0, -1, "SUM(A2,A3:B4,Sheet1!A5:C7,Sheet2:Sheet3!A8:D11,[Book2.xlsx]Sheet1!D11:F13)");
+		testFormulaShiftPtgs(engine, sheetA, f, 0, 1, "SUM(C2,C3:D4,Sheet1!C5:E7,Sheet2:Sheet3!C8:F11,[Book2.xlsx]Sheet1!F11:H13)");
+		testFormulaShiftPtgs(engine, sheetA, f, 0, 2, "SUM(D2,D3:E4,Sheet1!D5:F7,Sheet2:Sheet3!D8:G11,[Book2.xlsx]Sheet1!G11:I13)");
+		// both
+		testFormulaShiftPtgs(engine, sheetA, f, -1, -1, "SUM(A1,A2:B3,Sheet1!A4:C6,Sheet2:Sheet3!A7:D10,[Book2.xlsx]Sheet1!D10:F12)");
+		testFormulaShiftPtgs(engine, sheetA, f, 1, 2, "SUM(D3,D4:E5,Sheet1!D6:F8,Sheet2:Sheet3!D9:G12,[Book2.xlsx]Sheet1!G12:I14)");
+		testFormulaShiftPtgs(engine, sheetA, f, 2, 1, "SUM(C4,C5:D6,Sheet1!C7:E9,Sheet2:Sheet3!C10:F13,[Book2.xlsx]Sheet1!F13:H15)");
+		// out of bounds
+		testFormulaShiftPtgs(engine, sheetA, f, -2, 0, "SUM(#REF!,B1:C2,Sheet1!B3:D5,Sheet2:Sheet3!B6:E9,[Book2.xlsx]Sheet1!E9:G11)");
+		testFormulaShiftPtgs(engine, sheetA, f, 0, -2, "SUM(#REF!,#REF!,Sheet1!#REF!,Sheet2:Sheet3!#REF!,[Book2.xlsx]Sheet1!C11:E13)");
+		testFormulaShiftPtgs(engine, sheetA, f, -2, -2, "SUM(#REF!,#REF!,Sheet1!#REF!,Sheet2:Sheet3!#REF!,[Book2.xlsx]Sheet1!C9:E11)");
+		testFormulaShiftPtgs(engine, sheetA, f, book1.getMaxRowSize() - 10, 0, "SUM(B1048568,B1048569:C1048570,Sheet1!B1048571:D1048573,Sheet2:Sheet3!#REF!,[Book2.xlsx]Sheet1!#REF!)");
+		testFormulaShiftPtgs(engine, sheetA, f, 0, book1.getMaxColumnSize() - 4, "SUM(XFB2,XFB3:XFC4,Sheet1!XFB5:XFD7,Sheet2:Sheet3!#REF!,[Book2.xlsx]Sheet1!#REF!)");
+		
+		// absolute
+		testFormulaShiftPtgs(engine, sheetA, "SUM(B2,B$2,$B2,$B$2)", 1, 1, "SUM(C3,C$2,$B3,$B$2)"); // ref
+		testFormulaShiftPtgs(engine, sheetA, "SUM(B2:C3,$B2:C3,B$2:C3,B2:$C3,B2:C$3,$B$2:C3,B2:$C$3,$B2:$C3,B$2:C$3,B$2:$C3,$B$2:$C3,$B$2:C$3,$B2:$C$3,B$2:$C$3,$B$2:$C$3)",
+				1, 1, "SUM(C3:D4,$B3:D4,C$2:D4,C3:$C4,C3:D$3,$B$2:D4,C3:$C$3,$B3:$C4,C$2:D$3,C$2:$C4,$B$2:$C4,$B$2:D$3,$B3:$C$3,C$2:$C$3,$B$2:$C$3)"); // area
+		testFormulaShiftPtgs(engine, sheetA, "SUM($B2,B$3:C4,Sheet1!B5:$D7,Sheet2!B8:E$11,[Book2.xlsx]Sheet1!$E11:G$13)", 
+				1, 1, "SUM($B3,C$3:D5,Sheet1!C6:$D8,Sheet2!C9:F$11,[Book2.xlsx]Sheet1!$E12:H$13)");
+		
+		// area direction
+		testFormulaShiftPtgs(engine, sheetA, "SUM(G6:H11)", 2, 3, "SUM(J8:K13)");
+		testFormulaShiftPtgs(engine, sheetA, "SUM(H11:G6)", 2, 3, "SUM(J8:K13)");
+		testFormulaShiftPtgs(engine, sheetA, "SUM(G11:H6)", 2, 3, "SUM(J8:K13)");
+		testFormulaShiftPtgs(engine, sheetA, "SUM(H6:G11)", 2, 3, "SUM(J8:K13)");
+	}
+
+	//ZSS-747
+	private void testFormulaShiftPtgs(FormulaEngine engine, SSheet sheet, String formula, int rowOffset, int columnOffset, String expected) {
+		FormulaParseContext context = new FormulaParseContext(sheet, null);
+		FormulaExpression orgexpr = engine.parse(formula, context);
+		FormulaExpression ptgexpr = engine.shiftPtgs(orgexpr, rowOffset, columnOffset, context);
+		Assert.assertFalse(ptgexpr.hasError());
+		Assert.assertEquals(expected, ptgexpr.getFormulaString());
+	}
+
+
 	@Test
 	public void testFormulaTranspose() {
 		FormulaEngine engine = EngineFactory.getInstance().createFormulaEngine();
@@ -994,10 +1218,61 @@ public class FormulaEvalTest {
 	private String testFormulaTranspose(FormulaEngine engine, SSheet sheet, String formula, String origin, String expected) {
 		SheetRegion o = new SheetRegion(sheet, origin);
 		FormulaParseContext context = new FormulaParseContext(sheet, null);
-		FormulaExpression expr = engine.transpose(formula, o.getRow(), o.getColumn(), context);
+		FormulaExpression fexpr = engine.parse(formula, context);
+		FormulaExpression expr = engine.transposePtgs(fexpr, o.getRow(), o.getColumn(), context);
 		Assert.assertFalse(expr.hasError());
 		String actual = expr.getFormulaString();
 		Assert.assertEquals(expected, actual);
+		
+		return actual;
+	}
+
+	//ZSS-747
+	@Test
+	public void testFormulaTransposePtgs() {
+		FormulaEngine engine = EngineFactory.getInstance().createFormulaEngine();
+		SBook book1 = SBooks.createBook("Book1");
+		SSheet sheetA = book1.createSheet("SheetA");
+
+		// normal
+		String f = "SUM(G6,Sheet1!G6,Sheet2:Sheet3!G6:I7,[Book2.xlsx]Sheet1!G6:H11)";
+		String C5 = testFormulaTransposePtgs(engine, sheetA, f, "C5", "SUM(D9,Sheet1!D9,Sheet2:Sheet3!D9:E11,[Book2.xlsx]Sheet1!D9:I10)"); 
+		String D5 = testFormulaTransposePtgs(engine, sheetA, f, "D5", "SUM(E8,Sheet1!E8,Sheet2:Sheet3!E8:F10,[Book2.xlsx]Sheet1!E8:J9)"); 
+		String C6 = testFormulaTransposePtgs(engine, sheetA, f, "C6", "SUM(C10,Sheet1!C10,Sheet2:Sheet3!C10:D12,[Book2.xlsx]Sheet1!C10:H11)");
+		String D6 = testFormulaTransposePtgs(engine, sheetA, f, "D6", "SUM(D9,Sheet1!D9,Sheet2:Sheet3!D9:E11,[Book2.xlsx]Sheet1!D9:I10)");
+		// different origin positions
+		testFormulaTransposePtgs(engine, sheetA, f, "H2", "SUM(L1,Sheet1!L1,Sheet2:Sheet3!L1:M3,[Book2.xlsx]Sheet1!L1:Q2)"); 
+		testFormulaTransposePtgs(engine, sheetA, f, "K8", "SUM(I4,Sheet1!I4,Sheet2:Sheet3!I4:J6,[Book2.xlsx]Sheet1!I4:N5)");
+		testFormulaTransposePtgs(engine, sheetA, f, "F11", "SUM(A12,Sheet1!A12,Sheet2:Sheet3!A12:B14,[Book2.xlsx]Sheet1!A12:F13)");
+		// absolute
+		testFormulaTransposePtgs(engine, sheetA, "SUM(G12,G$12,$G12,$G$12)", "H2", "SUM(R1,G$12,$G12,$G$12)"); 
+		testFormulaTransposePtgs(engine, sheetA, "SUM(H9:J15,$H9:J15,H$9:J15,H9:$J15,H9:J$15,$H$9:J15,$H9:$J15,$H9:J$15,H$9:$J15,H$9:J$15,H9:$J$15,$H$9:$J15,$H$9:J$15,$H9:$J$15,H$9:$J$15,$H$9:$J$15)",
+				"K8", "SUM(L5:R7,L$5:R7,$L5:R7,L5:R$7,L5:$R7,$L$5:R7,$H9:$J15,$H9:J$15,H$9:$J15,H$9:J$15,L5:$R$7,$H$9:$J15,$H$9:J$15,$H9:$J$15,H$9:$J$15,$H$9:$J$15)");
+		testFormulaTransposePtgs(engine, sheetA, "SUM($G9,G$9:J15,Sheet1!G10:$J16,Sheet2:Sheet3!H11:L$12,[Book2.xlsx]Sheet1!$G9:O$10)",
+				"F11", "SUM($G9,$D12:J15,Sheet1!E12:K$15,Sheet2:Sheet3!F13:$G17,[Book2.xlsx]Sheet1!$G9:O$10)");
+
+		// transpose than shift
+		testFormulaShift(engine, sheetA, D5, 1, -1, C5);
+		testFormulaShift(engine, sheetA, C6, -1, 1, C5);
+		testFormulaShift(engine, sheetA, D6, 0, 0, C5);
+		
+		// area direction
+		testFormulaTransposePtgs(engine, sheetA, "SUM(G6:H11)", "C5", "SUM(D9:I10)");
+		testFormulaTransposePtgs(engine, sheetA, "SUM(H11:G6)", "C5", "SUM(D9:I10)");
+		testFormulaTransposePtgs(engine, sheetA, "SUM(G11:H6)", "C5", "SUM(D9:I10)");
+		testFormulaTransposePtgs(engine, sheetA, "SUM(H6:G11)", "C5", "SUM(D9:I10)");
+	}
+	
+	//ZSS-747
+	private String testFormulaTransposePtgs(FormulaEngine engine, SSheet sheet, String formula, String origin, String expected) {
+		SheetRegion o = new SheetRegion(sheet, origin);
+		FormulaParseContext context = new FormulaParseContext(sheet, null);
+		FormulaExpression orgexpr = engine.parse(formula, context);
+		FormulaExpression ptgexpr = engine.transposePtgs(orgexpr, o.getRow(), o.getColumn(), context);
+		Assert.assertFalse(ptgexpr.hasError());
+		String actual = ptgexpr.getFormulaString();
+		Assert.assertEquals(expected, actual);
+		
 		return actual;
 	}
 	
@@ -1025,7 +1300,7 @@ public class FormulaEvalTest {
 		testFormulaRenameSheet(engine, sheetX, f, bookA, "Sheet4", "sht4", f);
 		testFormulaRenameSheet(engine, sheetX, f, bookA, "Sheet5", "sht5", "SUM(Sheet1!A1,Sheet2:sht5!A1,Sheet6!A1,[BookB.xlsx]Sheet1!A1)");
 		testFormulaRenameSheet(engine, sheetX, f, bookA, "Sheet6", "sht6", "SUM(Sheet1!A1,Sheet2:Sheet5!A1,sht6!A1,[BookB.xlsx]Sheet1!A1)");
-
+		
 		// duplicate name
 		// modification should be successful but just fail to eval.
 		testFormulaRenameSheet(engine, sheetX, f, bookA, "Sheet1", "Sheet2", "SUM(Sheet2!A1,Sheet2:Sheet5!A1,Sheet6!A1,[BookB.xlsx]Sheet1!A1)");
@@ -1046,9 +1321,65 @@ public class FormulaEvalTest {
 	
 	private void testFormulaRenameSheet(FormulaEngine engine, SSheet formulaSheet, String formula, SBook targetBook, String oldSheetName, String newSheetName, String expected) {
 		FormulaParseContext context = new FormulaParseContext(formulaSheet, null);
-		FormulaExpression expr = engine.renameSheet(formula, targetBook, oldSheetName, newSheetName, context);
+		FormulaExpression fexpr = engine.parse(formula, context);
+		FormulaExpression expr = engine.renameSheetPtgs(fexpr, targetBook, oldSheetName, newSheetName, context);
 		Assert.assertFalse(expr.hasError());
 		Assert.assertEquals(expected, expr.getFormulaString());
+
+	}
+	
+	//ZSS-747
+	@Test
+	public void testFormulaRenameSheetPtgs() {
+		FormulaEngine engine = EngineFactory.getInstance().createFormulaEngine();
+		SBook bookA = SBooks.createBook("BookA");
+		SSheet sheetX = bookA.createSheet("SheetX");
+		SSheet sheet1 = bookA.createSheet("Sheet1");
+		SSheet sheet2 = bookA.createSheet("Sheet2");
+		bookA.createSheet("Sheet3");
+		bookA.createSheet("Sheet4");
+		SSheet sheet5 = bookA.createSheet("Sheet5");
+		bookA.createSheet("Sheet6");
+		SBook bookB = SBooks.createBook("BookB.xlsx");
+		bookB.createSheet("Sheet1");
+		new BookSeriesBuilderImpl().buildBookSeries(bookA, bookB);
+
+		String f = "SUM(Sheet1!A1,Sheet2:Sheet5!A1,Sheet6!A1,[BookB.xlsx]Sheet1!A1)";
+
+		// normal
+		testFormulaRenameSheetPtgs(engine, sheetX, f, bookA, "Sheet1", "sht1", "SUM(sht1!A1,Sheet2:Sheet5!A1,Sheet6!A1,[BookB.xlsx]Sheet1!A1)");
+		testFormulaRenameSheetPtgs(engine, sheetX, f, bookA, "Sheet2", "sht2", "SUM(Sheet1!A1,sht2:Sheet5!A1,Sheet6!A1,[BookB.xlsx]Sheet1!A1)");
+		testFormulaRenameSheetPtgs(engine, sheetX, f, bookA, "Sheet3", "sht3", f);
+		testFormulaRenameSheetPtgs(engine, sheetX, f, bookA, "Sheet4", "sht4", f);
+		testFormulaRenameSheetPtgs(engine, sheetX, f, bookA, "Sheet5", "sht5", "SUM(Sheet1!A1,Sheet2:sht5!A1,Sheet6!A1,[BookB.xlsx]Sheet1!A1)");
+		testFormulaRenameSheetPtgs(engine, sheetX, f, bookA, "Sheet6", "sht6", "SUM(Sheet1!A1,Sheet2:Sheet5!A1,sht6!A1,[BookB.xlsx]Sheet1!A1)");
+		
+		// duplicate name
+		// modification should be successful but just fail to eval.
+		testFormulaRenameSheetPtgs(engine, sheetX, f, bookA, "Sheet1", "Sheet2", "SUM(Sheet2!A1,Sheet2:Sheet5!A1,Sheet6!A1,[BookB.xlsx]Sheet1!A1)");
+		testFormulaRenameSheetPtgs(engine, sheetX, f, bookA, "Sheet2", "Sheet5", "SUM(Sheet1!A1,Sheet5!A1,Sheet6!A1,[BookB.xlsx]Sheet1!A1)"); // merge sheet range
+
+		// external book
+		testFormulaRenameSheetPtgs(engine, sheetX, f, bookB, "Sheet1", "sht1", "SUM(Sheet1!A1,Sheet2:Sheet5!A1,Sheet6!A1,[BookB.xlsx]sht1!A1)");
+		testFormulaRenameSheetPtgs(engine, sheetX, f, bookB, "Sheet2", "sht2", f);
+		
+		// delete sheet
+		// this spec. isn't compatible to Excel, Excel approach is more smart.
+		f = "SUM(A1,Sheet1!A1,Sheet2:Sheet5!A1,Sheet6!A1,[BookB.xlsx]Sheet1!A1)";
+		testFormulaRenameSheetPtgs(engine, sheet1, f, bookA, "Sheet1", null, "SUM(A1,'#REF'!A1,Sheet2:Sheet5!A1,Sheet6!A1,[BookB.xlsx]Sheet1!A1)");
+		testFormulaRenameSheetPtgs(engine, sheet2, f, bookA, "Sheet2", null, "SUM(A1,Sheet1!A1,'#REF'!A1,Sheet6!A1,[BookB.xlsx]Sheet1!A1)");
+		testFormulaRenameSheetPtgs(engine, sheet5, f, bookA, "Sheet5", null, "SUM(A1,Sheet1!A1,'#REF'!A1,Sheet6!A1,[BookB.xlsx]Sheet1!A1)");
+		testFormulaRenameSheetPtgs(engine, sheet1, f, bookB, "Sheet1", null, "SUM(A1,Sheet1!A1,Sheet2:Sheet5!A1,Sheet6!A1,'[BookB.xlsx]#REF'!A1)");
+	}
+
+	//ZSS-747
+	private void testFormulaRenameSheetPtgs(FormulaEngine engine, SSheet formulaSheet, String formula, SBook targetBook, String oldSheetName, String newSheetName, String expected) {
+		FormulaParseContext context = new FormulaParseContext(formulaSheet, null);
+		FormulaExpression orgexpr = engine.parse(formula, context);
+		FormulaExpression ptgexpr = engine.renameSheetPtgs(orgexpr, targetBook, oldSheetName, newSheetName, context);
+		Assert.assertFalse(ptgexpr.hasError());
+		Assert.assertEquals(expected, ptgexpr.getFormulaString());
+
 	}
 	
 	
@@ -1091,5 +1422,4 @@ public class FormulaEvalTest {
 			Assert.assertEquals(expectedAreas[i], areas[i].toString());
 		}
 	}
-	
 }

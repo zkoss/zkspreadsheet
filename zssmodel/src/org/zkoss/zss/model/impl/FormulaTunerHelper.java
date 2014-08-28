@@ -37,6 +37,7 @@ import org.zkoss.zss.model.SCell.CellType;
 import org.zkoss.zss.model.chart.SChartData;
 import org.zkoss.zss.model.chart.SGeneralChartData;
 import org.zkoss.zss.model.chart.SSeries;
+import org.zkoss.zss.model.impl.chart.AbstractGeneralChartDataAdv;
 import org.zkoss.zss.model.sys.EngineFactory;
 import org.zkoss.zss.model.sys.dependency.DependencyTable;
 import org.zkoss.zss.model.sys.dependency.NameRef;
@@ -101,11 +102,11 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 		FormulaExpression exprAfter;
 		SGeneralChartData data = (SGeneralChartData)d;
 
-		String catExpr = data.getCategoriesFormula();
+		FormulaExpression catExpr = ((AbstractGeneralChartDataAdv)data).getCategoriesFormulaExpression();
 		if(catExpr!=null){
-			exprAfter = engine.move(catExpr, sheetRegion, rowOffset, columnOffset, new FormulaParseContext(sheet, null));//null ref, no trace dependence here
-			if(!exprAfter.hasError() && !catExpr.equals(exprAfter.getFormulaString())){
-				data.setCategoriesFormula(exprAfter.getFormulaString());
+			exprAfter = engine.movePtgs(catExpr, sheetRegion, rowOffset, columnOffset, new FormulaParseContext(sheet, null));//null ref, no trace dependence here
+			if(!exprAfter.hasError() && !catExpr.getFormulaString().equals(exprAfter.getFormulaString())){
+				((AbstractGeneralChartDataAdv)data).setCategoriesFormula(exprAfter);
 			}else{
 				//zss-626, has to clear cache and notify ref update
 				data.clearFormulaResultCache();
@@ -114,46 +115,46 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 		
 		for(int i=0;i<data.getNumOfSeries();i++){
 			SSeries series = data.getSeries(i);
-			String nameExpr = series.getNameFormula();
-			String xvalExpr = series.getXValuesFormula();
-			String yvalExpr = series.getYValuesFormula();
-			String zvalExpr = series.getZValuesFormula();
+			FormulaExpression nameExpr = ((AbstractSeriesAdv)series).getNameFormulaExpression();
+			FormulaExpression xvalExpr = ((AbstractSeriesAdv)series).getXValuesFormulaExpression();
+			FormulaExpression yvalExpr = ((AbstractSeriesAdv)series).getYValuesFormulaExpression();
+			FormulaExpression zvalExpr = ((AbstractSeriesAdv)series).getZValuesFormulaExpression();
 			
 			boolean dirty = false;
 			
 			if(nameExpr!=null){
-				exprAfter = engine.move(nameExpr, sheetRegion, rowOffset, columnOffset, new FormulaParseContext(sheet, null));//null ref, no trace dependence here
+				exprAfter = engine.movePtgs(nameExpr, sheetRegion, rowOffset, columnOffset, new FormulaParseContext(sheet, null));//null ref, no trace dependence here
 				if(!exprAfter.hasError()){
-					dirty |= !nameExpr.equals(exprAfter.getFormulaString()); 
-					nameExpr = exprAfter.getFormulaString();
+					dirty |= !nameExpr.getFormulaString().equals(exprAfter.getFormulaString()); 
+					nameExpr = exprAfter;
 					
 				}
 			}
 			if(xvalExpr!=null){
-				exprAfter = engine.move(xvalExpr, sheetRegion, rowOffset, columnOffset, new FormulaParseContext(sheet, null));//null ref, no trace dependence here
+				exprAfter = engine.movePtgs(xvalExpr, sheetRegion, rowOffset, columnOffset, new FormulaParseContext(sheet, null));//null ref, no trace dependence here
 				if(!exprAfter.hasError()){
-					dirty |= !xvalExpr.equals(exprAfter.getFormulaString());
-					xvalExpr = exprAfter.getFormulaString();
+					dirty |= !xvalExpr.getFormulaString().equals(exprAfter.getFormulaString());
+					xvalExpr = exprAfter;
 					
 				}
 			}
 			if(yvalExpr!=null){
-				exprAfter = engine.move(yvalExpr, sheetRegion, rowOffset, columnOffset, new FormulaParseContext(sheet, null));//null ref, no trace dependence here
+				exprAfter = engine.movePtgs(yvalExpr, sheetRegion, rowOffset, columnOffset, new FormulaParseContext(sheet, null));//null ref, no trace dependence here
 				if(!exprAfter.hasError()){
-					dirty |= !yvalExpr.equals(exprAfter.getFormulaString());
-					yvalExpr = exprAfter.getFormulaString();
+					dirty |= !yvalExpr.getFormulaString().equals(exprAfter.getFormulaString());
+					yvalExpr = exprAfter;
 					
 				}
 			}
 			if(zvalExpr!=null){
-				exprAfter = engine.move(zvalExpr, sheetRegion, rowOffset, columnOffset, new FormulaParseContext(sheet, null));//null ref, no trace dependence here
+				exprAfter = engine.movePtgs(zvalExpr, sheetRegion, rowOffset, columnOffset, new FormulaParseContext(sheet, null));//null ref, no trace dependence here
 				if(!exprAfter.hasError()){
-					dirty |= !zvalExpr.equals(exprAfter.getFormulaString());
-					zvalExpr = exprAfter.getFormulaString();
+					dirty |= !zvalExpr.getFormulaString().equals(exprAfter.getFormulaString());
+					zvalExpr = exprAfter;
 				}
 			}
 			if(dirty){
-				series.setXYZFormula(nameExpr, xvalExpr, yvalExpr, zvalExpr);
+				((AbstractSeriesAdv)series).setXYZFormula(nameExpr, xvalExpr, yvalExpr, zvalExpr);
 			}else{
 				//zss-626, has to clear cache and notify ref update
 				series.clearFormulaResultCache();
@@ -182,8 +183,9 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 		// update AutoFilter's region
 		final CellRegion region = filter.getRegion();
 		final String area = region.getReferenceString();
-			
-		FormulaExpression expr2 = engine.move(area, sheetRegion, rowOffset, columnOffset, new FormulaParseContext(sheet, null)); //null ref, no trace dependence here
+		FormulaParseContext context = new FormulaParseContext(sheet, null); //null ref, no trace dependence here
+		FormulaExpression fexpr = engine.parse(area, context);
+		FormulaExpression expr2 = engine.movePtgs(fexpr, sheetRegion, rowOffset, columnOffset, context);
 		if(!expr2.hasError() && !area.equals(expr2.getFormulaString())) {
 			sheet.deleteAutoFilter();
 			if ("#REF!".equals(expr2.getFormulaString())) { // should delete the region
@@ -215,20 +217,21 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 		FormulaEngine engine = getFormulaEngine();
 		
 		// update Validation's formula if any
-		String f1 = validation.getFormula1();
-		String f2 = validation.getFormula2();
+		FormulaExpression f1 = ((AbstractDataValidationAdv)validation).getFormulaExpression1();
+		FormulaExpression f2 = ((AbstractDataValidationAdv)validation).getFormulaExpression2();
+
 		boolean changed = false;
 		if (f1 != null) {
-			FormulaExpression exprf1 = engine.move(f1, sheetRegion, rowOffset, columnOffset, new FormulaParseContext(sheet, null));//null ref, no trace dependence here
-			if(!exprf1.hasError() && !f1.equals(exprf1.getFormulaString())) {
-				f1 = exprf1.getFormulaString();
+			FormulaExpression exprf1 = engine.movePtgs(f1, sheetRegion, rowOffset, columnOffset, new FormulaParseContext(sheet, null));//null ref, no trace dependence here
+			if(!exprf1.hasError() && !f1.getFormulaString().equals(exprf1.getFormulaString())) {
+				f1 = exprf1;
 				changed = true;
 			}
 		}
 		if (f2 != null) {
-			FormulaExpression exprf2 = engine.move(f2, sheetRegion, rowOffset, columnOffset, new FormulaParseContext(sheet, null));//null ref, no trace dependence here
-			if(!exprf2.hasError() && !f2.equals(exprf2.getFormulaString())) {
-				f2 = exprf2.getFormulaString();
+			FormulaExpression exprf2 = engine.movePtgs(f2, sheetRegion, rowOffset, columnOffset, new FormulaParseContext(sheet, null));//null ref, no trace dependence here
+			if(!exprf2.hasError() && !f2.getFormulaString().equals(exprf2.getFormulaString())) {
+				f2 = exprf2;
 				changed = true;
 			}
 		}
@@ -241,8 +244,9 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 		// update Validation's region (sqref)
 		for (CellRegion region : validation.getRegions()) {
 			String sqref = region.getReferenceString();
-			
-			FormulaExpression expr2 = engine.move(sqref, sheetRegion, rowOffset, columnOffset, new FormulaParseContext(sheet, null)); //null ref, no trace dependence here
+			FormulaParseContext context = new FormulaParseContext(sheet, null); //null ref, no trace dependence here
+			FormulaExpression fexpr = engine.parse(sqref, context);
+			FormulaExpression expr2 = engine.movePtgs(fexpr, sheetRegion, rowOffset, columnOffset, context); //null ref, no trace dependence here
 			if(!expr2.hasError() && !sqref.equals(expr2.getFormulaString())) {
 				if ("#REF!".equals(expr2.getFormulaString())) { // should delete the region
 					((AbstractDataValidationAdv)validation).removeRegion(region);
@@ -270,13 +274,13 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 		if(cell.getType()!=CellType.FORMULA)
 			return;//impossible
 		
-		String expr = cell.getFormulaValue();
+		FormulaExpression expr = (FormulaExpression) ((AbstractCellAdv)cell).getValue(false);
 		
 		FormulaEngine engine = getFormulaEngine();
-		FormulaExpression exprAfter = engine.move(expr, sheetRegion, rowOffset, columnOffset, new FormulaParseContext(cell, null));//null ref, no trace dependence here
+		FormulaExpression exprAfter = engine.movePtgs(expr, sheetRegion, rowOffset, columnOffset, new FormulaParseContext(cell, null));//null ref, no trace dependence here
 		
-		if(!expr.equals(exprAfter.getFormulaString())){
-			cell.setFormulaValue(exprAfter.getFormulaString());
+		if(!expr.getFormulaString().equals(exprAfter.getFormulaString())){
+			cell.setValue(exprAfter);
 			//don't need to notify cell change, cell will do
 		}else{
 			//zss-626, has to clear cache and notify ref update
@@ -292,13 +296,13 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 		if(name==null) return;
 		SSheet sheet = book.getSheetByName(name.getRefersToSheetName());
 		if(sheet==null) return;
-		String expr = name.getRefersToFormula();
+		FormulaExpression expr = ((AbstractNameAdv)name).getRefersToFormulaExpression();
 		
 		FormulaEngine engine = getFormulaEngine();
-		FormulaExpression exprAfter = engine.move(expr, sheetRegion, rowOffset, columnOffset, new FormulaParseContext(sheet, null));//null ref, no trace dependence here
+		FormulaExpression exprAfter = engine.movePtgs(expr, sheetRegion, rowOffset, columnOffset, new FormulaParseContext(sheet, null));//null ref, no trace dependence here
 		
-		if(!expr.equals(exprAfter.getFormulaString())){
-			name.setRefersToFormula(exprAfter.getFormulaString());
+		if(!expr.getFormulaString().equals(exprAfter.getFormulaString())){
+			((AbstractNameAdv)name).setRefersToFormula(exprAfter);
 			//don't need to notify name change, name will do
 		}else{
 			//zss-687, clear dependents's cache of NameRef
@@ -373,40 +377,40 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 			if(series != null) {
 				boolean changed = false;
 				series.clearFormulaResultCache();
-				String nf = series.getNameFormula();
-				String xf = series.getXValuesFormula();
-				String yf = series.getYValuesFormula();
-				String zf = series.getZValuesFormula();
+				FormulaExpression nf = ((AbstractSeriesAdv)series).getNameFormulaExpression();
+				FormulaExpression xf = ((AbstractSeriesAdv)series).getXValuesFormulaExpression();
+				FormulaExpression yf = ((AbstractSeriesAdv)series).getYValuesFormulaExpression();
+				FormulaExpression zf = ((AbstractSeriesAdv)series).getZValuesFormulaExpression();
 				if(nf != null) {
-					FormulaExpression expr2 = engine.extend(nf, sheetRegion, horizontal, new FormulaParseContext(sheet, null));//null ref, no trace dependence here
-					if(!expr2.hasError() && !nf.equals(expr2.getFormulaString())) {
-						nf = expr2.getFormulaString();
+					FormulaExpression expr2 = engine.extendPtgs(nf, sheetRegion, horizontal, new FormulaParseContext(sheet, null));//null ref, no trace dependence here
+					if(!expr2.hasError() && !nf.getFormulaString().equals(expr2.getFormulaString())) {
+						nf = expr2;
 						changed = true;
 					}
 				}
 				if(xf != null) {
-					FormulaExpression expr2 = engine.extend(xf, sheetRegion, horizontal, new FormulaParseContext(sheet, null));//null ref, no trace dependence here
-					if(!expr2.hasError() && !xf.equals(expr2.getFormulaString())) {
-						xf = expr2.getFormulaString();
+					FormulaExpression expr2 = engine.extendPtgs(xf, sheetRegion, horizontal, new FormulaParseContext(sheet, null));//null ref, no trace dependence here
+					if(!expr2.hasError() && !xf.getFormulaString().equals(expr2.getFormulaString())) {
+						xf = expr2;
 						changed = true;
 					}
 				}
 				if(yf != null) {
-					FormulaExpression expr2 = engine.extend(yf, sheetRegion, horizontal, new FormulaParseContext(sheet, null));//null ref, no trace dependence here
-					if(!expr2.hasError() && !yf.equals(expr2.getFormulaString())) {
-						yf = expr2.getFormulaString();
+					FormulaExpression expr2 = engine.extendPtgs(yf, sheetRegion, horizontal, new FormulaParseContext(sheet, null));//null ref, no trace dependence here
+					if(!expr2.hasError() && !yf.getFormulaString().equals(expr2.getFormulaString())) {
+						yf = expr2;
 						changed = true;
 					}
 				}
 				if(zf != null) {
-					FormulaExpression expr2 = engine.extend(zf, sheetRegion, horizontal, new FormulaParseContext(sheet, null));//null ref, no trace dependence here
-					if(!expr2.hasError() && !zf.equals(expr2.getFormulaString())) {
-						zf = expr2.getFormulaString();
+					FormulaExpression expr2 = engine.extendPtgs(zf, sheetRegion, horizontal, new FormulaParseContext(sheet, null));//null ref, no trace dependence here
+					if(!expr2.hasError() && !zf.getFormulaString().equals(expr2.getFormulaString())) {
+						zf = expr2;
 						changed = true;
 					}
 				}
 				if(changed) {
-					series.setXYZFormula(nf, xf, yf, zf);
+					((AbstractSeriesAdv)series).setXYZFormula(nf, xf, yf, zf);
 				}else{
 					//zss-626, has to clear cache and notify ref update
 					series.clearFormulaResultCache();
@@ -415,11 +419,11 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 		}
 		
 		// extend categories formula
-		String expr = data.getCategoriesFormula();
+		FormulaExpression expr = ((AbstractGeneralChartDataAdv)data).getCategoriesFormulaExpression();
 		if(expr != null) {
-			FormulaExpression exprAfter = engine.extend(expr, sheetRegion,horizontal, new FormulaParseContext(sheet, null));//null ref, no trace dependence here
-			if(!exprAfter.hasError() && !expr.equals(exprAfter.getFormulaString())) {
-				data.setCategoriesFormula(exprAfter.getFormulaString());
+			FormulaExpression exprAfter = engine.extendPtgs(expr, sheetRegion,horizontal, new FormulaParseContext(sheet, null));//null ref, no trace dependence here
+			if(!exprAfter.hasError() && !expr.getFormulaString().equals(exprAfter.getFormulaString())) {
+				((AbstractGeneralChartDataAdv)data).setCategoriesFormula(exprAfter);
 			}else{
 				//zss-626, has to clear cache and notify ref update
 				data.clearFormulaResultCache();
@@ -446,20 +450,20 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 		FormulaEngine engine = getFormulaEngine();
 		
 		// update Validation's formula if any
-		String f1 = validation.getFormula1();
-		String f2 = validation.getFormula2();
+		FormulaExpression f1 = ((AbstractDataValidationAdv)validation).getFormulaExpression1();
+		FormulaExpression f2 = ((AbstractDataValidationAdv)validation).getFormulaExpression2();
 		boolean changed = false;
 		if (f1 != null) {
-			FormulaExpression exprf1 = engine.extend(f1, sheetRegion, horizontal, new FormulaParseContext(sheet, null));//null ref, no trace dependence here
-			if(!exprf1.hasError() && !f1.equals(exprf1.getFormulaString())) {
-				f1 = exprf1.getFormulaString();
+			FormulaExpression exprf1 = engine.extendPtgs(f1, sheetRegion, horizontal, new FormulaParseContext(sheet, null));//null ref, no trace dependence here
+			if(!exprf1.hasError() && !f1.getFormulaString().equals(exprf1.getFormulaString())) {
+				f1 = exprf1;
 				changed = true;
 			}
 		}
 		if (f2 != null) {
-			FormulaExpression exprf2 = engine.extend(f2, sheetRegion, horizontal, new FormulaParseContext(sheet, null));//null ref, no trace dependence here
-			if(!exprf2.hasError() && !f2.equals(exprf2.getFormulaString())) {
-				f2 = exprf2.getFormulaString();
+			FormulaExpression exprf2 = engine.extendPtgs(f2, sheetRegion, horizontal, new FormulaParseContext(sheet, null));//null ref, no trace dependence here
+			if(!exprf2.hasError() && !f2.getFormulaString().equals(exprf2.getFormulaString())) {
+				f2 = exprf2;
 				changed = true;
 			}
 		}
@@ -470,10 +474,11 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 		}
 		
 		// update Validation's region (sqref)
+		FormulaParseContext context = new FormulaParseContext(sheet, null); //null ref, no trace dependence here
 		for (CellRegion region : validation.getRegions()) {
 			String sqref = region.getReferenceString();
-			
-			FormulaExpression expr2 = engine.extend(sqref, sheetRegion, horizontal, new FormulaParseContext(sheet, null));//null ref, no trace dependence here
+			FormulaExpression fexpr = engine.parse(sqref, context);
+			FormulaExpression expr2 = engine.extendPtgs(fexpr, sheetRegion, horizontal, context);
 			if(!expr2.hasError() && !sqref.equals(expr2.getFormulaString())) {
 				if ("#REF!".equals(expr2.getFormulaString())) { // should delete the region
 					((AbstractDataValidationAdv)validation).removeRegion(region);
@@ -509,8 +514,9 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 		// update AutoFilter's region
 		CellRegion region = filter.getRegion();
 		String area = region.getReferenceString();
-		
-		FormulaExpression expr2 = engine.extend(area, sheetRegion, horizontal, new FormulaParseContext(sheet, null));//null ref, no trace dependence here
+		FormulaParseContext context = new FormulaParseContext(sheet, null);//null ref, no trace dependence here
+		FormulaExpression fexpr = engine.parse(area, context);
+		FormulaExpression expr2 = engine.extendPtgs(fexpr, sheetRegion, horizontal, context);//null ref, no trace dependence here
 		if(!expr2.hasError() && !area.equals(expr2.getFormulaString())) {
 			sheet.deleteAutoFilter();
 			if ("#REF!".equals(expr2.getFormulaString())) { // should delete the region
@@ -535,12 +541,12 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 		if(cell.getType()!=CellType.FORMULA)
 			return;//impossible
 		
-		String expr = cell.getFormulaValue();
+		FormulaExpression fexpr = (FormulaExpression) ((AbstractCellAdv)cell).getValue(false); //ZSS-747
 		
 		FormulaEngine engine = getFormulaEngine();
-		FormulaExpression exprAfter = engine.extend(expr, sheetRegion,horizontal, new FormulaParseContext(sheet, null));//null ref, no trace dependence here
-		if(!expr.equals(exprAfter.getFormulaString())){
-			cell.setFormulaValue(exprAfter.getFormulaString());
+		FormulaExpression exprAfter = engine.extendPtgs(fexpr, sheetRegion,horizontal, new FormulaParseContext(sheet, null));//null ref, no trace dependence here //ZSS-747
+		if(!fexpr.getFormulaString().equals(exprAfter.getFormulaString())){			
+			cell.setValue(exprAfter);
 			//don't need to notify cell change, cell will do
 		}else{
 			//zss-626, has to clear cache and notify ref update
@@ -557,12 +563,12 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 		if (name == null) return;
 		SSheet sheet = book.getSheetByName(name.getRefersToSheetName());
 		if(sheet==null) return;
-		String expr = name.getRefersToFormula();
-		
+		FormulaExpression expr = ((AbstractNameAdv)name).getRefersToFormulaExpression();
 		FormulaEngine engine = getFormulaEngine();
-		FormulaExpression exprAfter = engine.extend(expr, sheetRegion,horizontal, new FormulaParseContext(sheet, null));//null ref, no trace dependence here
-		if(!expr.equals(exprAfter.getFormulaString())){
-			name.setRefersToFormula(exprAfter.getFormulaString());
+		
+		FormulaExpression exprAfter = engine.extendPtgs(expr, sheetRegion,horizontal, new FormulaParseContext(sheet, null));//null ref, no trace dependence here
+		if(!expr.getFormulaString().equals(exprAfter.getFormulaString())){
+			((AbstractNameAdv)name).setRefersToFormula(exprAfter);
 			//don't need to notify cell change, cell will do
 		}else{
 			//zss-687, clear dependents's cache of NameRef
@@ -628,40 +634,40 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 			if(series != null) {
 				boolean changed = false;
 				series.clearFormulaResultCache();
-				String nf = series.getNameFormula();
-				String xf = series.getXValuesFormula();
-				String yf = series.getYValuesFormula();
-				String zf = series.getZValuesFormula();
+				FormulaExpression nf = ((AbstractSeriesAdv)series).getNameFormulaExpression();
+				FormulaExpression xf = ((AbstractSeriesAdv)series).getXValuesFormulaExpression();
+				FormulaExpression yf = ((AbstractSeriesAdv)series).getYValuesFormulaExpression();
+				FormulaExpression zf = ((AbstractSeriesAdv)series).getZValuesFormulaExpression();
 				if(nf != null) {
-					FormulaExpression expr2 = engine.shrink(nf, sheetRegion, horizontal, new FormulaParseContext(sheet, null));//null ref, no trace dependence here
-					if(!expr2.hasError() && !nf.equals(expr2.getFormulaString())) {
-						nf = expr2.getFormulaString();
+					FormulaExpression expr2 = engine.shrinkPtgs(nf, sheetRegion, horizontal, new FormulaParseContext(sheet, null));//null ref, no trace dependence here
+					if(!expr2.hasError() && !nf.getFormulaString().equals(expr2.getFormulaString())) {
+						nf = expr2;
 						changed = true;
 					}
 				}
 				if(xf != null) {
-					FormulaExpression expr2 = engine.shrink(xf, sheetRegion, horizontal, new FormulaParseContext(sheet, null));//null ref, no trace dependence here
-					if(!expr2.hasError() && !xf.equals(expr2.getFormulaString())) {
-						xf = expr2.getFormulaString();
+					FormulaExpression expr2 = engine.shrinkPtgs(xf, sheetRegion, horizontal, new FormulaParseContext(sheet, null));//null ref, no trace dependence here
+					if(!expr2.hasError() && !xf.getFormulaString().equals(expr2.getFormulaString())) {
+						xf = expr2;
 						changed = true;
 					}
 				}
 				if(yf != null) {
-					FormulaExpression expr2 = engine.shrink(yf, sheetRegion, horizontal, new FormulaParseContext(sheet, null));//null ref, no trace dependence here
-					if(!expr2.hasError() && !yf.equals(expr2.getFormulaString())) {
-						yf = expr2.getFormulaString();
+					FormulaExpression expr2 = engine.shrinkPtgs(yf, sheetRegion, horizontal, new FormulaParseContext(sheet, null));//null ref, no trace dependence here
+					if(!expr2.hasError() && !yf.getFormulaString().equals(expr2.getFormulaString())) {
+						yf = expr2;
 						changed = true;
 					}
 				}
 				if(zf != null) {
-					FormulaExpression expr2 = engine.shrink(zf, sheetRegion, horizontal, new FormulaParseContext(sheet, null));//null ref, no trace dependence here
-					if(!expr2.hasError() && !zf.equals(expr2.getFormulaString())) {
-						zf = expr2.getFormulaString();
+					FormulaExpression expr2 = engine.shrinkPtgs(zf, sheetRegion, horizontal, new FormulaParseContext(sheet, null));//null ref, no trace dependence here
+					if(!expr2.hasError() && !zf.getFormulaString().equals(expr2.getFormulaString())) {
+						zf = expr2;
 						changed = true;
 					}
 				}
 				if(changed) {
-					series.setXYZFormula(nf, xf, yf, zf);
+					((AbstractSeriesAdv)series).setXYZFormula(nf, xf, yf, zf);
 				}else{
 					//zss-626, has to clear cache and notify ref update
 					series.clearFormulaResultCache();
@@ -670,11 +676,11 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 		}
 		
 		// shrink categories formula
-		String expr = data.getCategoriesFormula();
+		FormulaExpression expr = ((AbstractGeneralChartDataAdv)data).getCategoriesFormulaExpression();
 		if(expr != null) {
-			FormulaExpression exprAfter = engine.shrink(expr, sheetRegion,horizontal, new FormulaParseContext(sheet, null));//null ref, no trace dependence here
-			if(!exprAfter.hasError() && !expr.equals(exprAfter.getFormulaString())) {
-				data.setCategoriesFormula(exprAfter.getFormulaString());
+			FormulaExpression exprAfter = engine.shrinkPtgs(expr, sheetRegion,horizontal, new FormulaParseContext(sheet, null));//null ref, no trace dependence here
+			if(!exprAfter.hasError() && !expr.getFormulaString().equals(exprAfter.getFormulaString())) {
+				((AbstractGeneralChartDataAdv)data).setCategoriesFormula(exprAfter);
 			}else{
 				//zss-626, has to clear cache and notify ref update
 				data.clearFormulaResultCache();
@@ -701,20 +707,20 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 		FormulaEngine engine = getFormulaEngine();
 		
 		// update Validation's formula if any
-		String f1 = validation.getFormula1();
-		String f2 = validation.getFormula2();
+		FormulaExpression f1 = ((AbstractDataValidationAdv)validation).getFormulaExpression1();
+		FormulaExpression f2 = ((AbstractDataValidationAdv)validation).getFormulaExpression2();
 		boolean changed = false;
 		if (f1 != null) {
-			FormulaExpression exprf1 = engine.shrink(f1, sheetRegion, horizontal, new FormulaParseContext(sheet, null));//null ref, no trace dependence here
-			if(!exprf1.hasError() && !f1.equals(exprf1.getFormulaString())) {
-				f1 = exprf1.getFormulaString();
+			FormulaExpression exprf1 = engine.shrinkPtgs(f1, sheetRegion, horizontal, new FormulaParseContext(sheet, null));//null ref, no trace dependence here
+			if(!exprf1.hasError() && !f1.getFormulaString().equals(exprf1.getFormulaString())) {
+				f1 = exprf1;
 				changed = true;
 			}
 		}
 		if (f2 != null) {
-			FormulaExpression exprf2 = engine.shrink(f2, sheetRegion, horizontal, new FormulaParseContext(sheet, null));//null ref, no trace dependence here
-			if(!exprf2.hasError() && !f2.equals(exprf2.getFormulaString())) {
-				f2 = exprf2.getFormulaString();
+			FormulaExpression exprf2 = engine.shrinkPtgs(f2, sheetRegion, horizontal, new FormulaParseContext(sheet, null));//null ref, no trace dependence here
+			if(!exprf2.hasError() && !f2.getFormulaString().equals(exprf2.getFormulaString())) {
+				f2 = exprf2;
 				changed = true;
 			}
 		}
@@ -727,8 +733,9 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 		// update Validation's region (sqref)
 		for (CellRegion region : validation.getRegions()) {
 			String sqref = region.getReferenceString();
-			
-			FormulaExpression expr2 = engine.shrink(sqref, sheetRegion, horizontal, new FormulaParseContext(sheet, null));//null ref, no trace dependence here
+			FormulaParseContext context = new FormulaParseContext(sheet, null); //null ref, no trace dependence here
+			FormulaExpression fexpr = engine.parse(sqref, context);
+			FormulaExpression expr2 = engine.shrinkPtgs(fexpr, sheetRegion, horizontal, new FormulaParseContext(sheet, null));//null ref, no trace dependence here
 			if(!expr2.hasError() && !sqref.equals(expr2.getFormulaString())) {
 				if ("#REF!".equals(expr2.getFormulaString())) { // should delete the region
 					((AbstractDataValidationAdv)validation).removeRegion(region);
@@ -765,8 +772,9 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 		// update AutoFilter's region
 		CellRegion region = filter.getRegion();
 		String area = region.getReferenceString();
-		
-		FormulaExpression expr2 = engine.shrink(area, sheetRegion, horizontal, new FormulaParseContext(sheet, null));//null ref, no trace dependence here
+		FormulaParseContext context = new FormulaParseContext(sheet, null); //null ref, no trace dependence here
+		FormulaExpression fexpr = engine.parse(area, context);
+		FormulaExpression expr2 = engine.shrinkPtgs(fexpr, sheetRegion, horizontal, context);//null ref, no trace dependence here
 		if(!expr2.hasError() && !area.equals(expr2.getFormulaString())) {
 			sheet.deleteAutoFilter();
 			if ("#REF!".equals(expr2.getFormulaString())) { // should delete the region
@@ -791,12 +799,12 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 		if(cell.getType()!=CellType.FORMULA)
 			return;//impossible
 		
-		String expr = cell.getFormulaValue();
+		FormulaExpression fexpr = (FormulaExpression) ((AbstractCellAdv)cell).getValue(false); //ZSS-747
 		
 		FormulaEngine engine = getFormulaEngine();
-		FormulaExpression exprAfter = engine.shrink(expr, sheetRegion, horizontal, new FormulaParseContext(sheet, null));//null ref, no trace dependence here
-		if(!expr.equals(exprAfter.getFormulaString())){
-			cell.setFormulaValue(exprAfter.getFormulaString());
+		FormulaExpression exprAfter = engine.shrinkPtgs(fexpr, sheetRegion, horizontal, new FormulaParseContext(sheet, null));//null ref, no trace dependence here
+		if(!fexpr.getFormulaString().equals(exprAfter.getFormulaString())){
+			cell.setValue(exprAfter);
 			//don't need to notify cell change, cell will do
 		}else{
 			//zss-626, has to clear cache and notify ref update
@@ -813,12 +821,12 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 		if(name==null) return;
 		SSheet sheet = book.getSheetByName(name.getRefersToSheetName());
 		if(sheet==null) return;
-		String expr = name.getRefersToFormula();
-		
+		FormulaExpression expr = ((AbstractNameAdv)name).getRefersToFormulaExpression();
 		FormulaEngine engine = getFormulaEngine();
-		FormulaExpression exprAfter = engine.shrink(expr, sheetRegion, horizontal, new FormulaParseContext(sheet, null));//null ref, no trace dependence here
-		if(!expr.equals(exprAfter.getFormulaString())){
-			name.setRefersToFormula(exprAfter.getFormulaString());
+		
+		FormulaExpression exprAfter = engine.shrinkPtgs(expr, sheetRegion, horizontal, new FormulaParseContext(sheet, null));//null ref, no trace dependence here
+		if(!expr.getFormulaString().equals(exprAfter.getFormulaString())){
+			((AbstractNameAdv)name).setRefersToFormula(exprAfter);
 			//don't need to notify name change, setRefersToFormula will do
 		}else{
 			//zss-687, clear dependents's cache of NameRef
@@ -881,46 +889,45 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 		 * for sheet rename case, we should always update formula to make new dependency, shouln't ignore if the formula string is the same
 		 * Note, in other move cell case, we could ignore to set same formula string
 		 */
-		
-		String catExpr = data.getCategoriesFormula();
+		FormulaExpression catExpr = ((AbstractGeneralChartDataAdv)data).getCategoriesFormulaExpression();
 		if(catExpr!=null){
-			exprAfter = engine.renameSheet(catExpr, bookOfSheet, oldName, newName,new FormulaParseContext(sheet, null));//null ref, no trace dependence here
+			exprAfter = engine.renameSheetPtgs(catExpr, bookOfSheet, oldName, newName,new FormulaParseContext(sheet, null));//null ref, no trace dependence here
 			if(!exprAfter.hasError()){
-				data.setCategoriesFormula(exprAfter.getFormulaString());
+				((AbstractGeneralChartDataAdv)data).setCategoriesFormula(exprAfter);
 			}
 		}
 		
 		for(int i=0;i<data.getNumOfSeries();i++){
 			SSeries series = data.getSeries(i);
-			String nameExpr = series.getNameFormula();
-			String xvalExpr = series.getXValuesFormula();
-			String yvalExpr = series.getYValuesFormula();
-			String zvalExpr = series.getZValuesFormula();
+			FormulaExpression nameExpr = ((AbstractSeriesAdv)series).getNameFormulaExpression();
+			FormulaExpression xvalExpr = ((AbstractSeriesAdv)series).getXValuesFormulaExpression();
+			FormulaExpression yvalExpr = ((AbstractSeriesAdv)series).getYValuesFormulaExpression();
+			FormulaExpression zvalExpr = ((AbstractSeriesAdv)series).getZValuesFormulaExpression();
 			if(nameExpr!=null){
-				exprAfter = engine.renameSheet(nameExpr, bookOfSheet, oldName, newName,new FormulaParseContext(sheet, null));//null ref, no trace dependence here
+				exprAfter = engine.renameSheetPtgs(nameExpr, bookOfSheet, oldName, newName,new FormulaParseContext(sheet, null));//null ref, no trace dependence here
 				if(!exprAfter.hasError()){
-					nameExpr = exprAfter.getFormulaString();
+					nameExpr = exprAfter;
 				}
 			}
 			if(xvalExpr!=null){
-				exprAfter = engine.renameSheet(xvalExpr, bookOfSheet, oldName, newName,new FormulaParseContext(sheet, null));//null ref, no trace dependence here
+				exprAfter = engine.renameSheetPtgs(xvalExpr, bookOfSheet, oldName, newName,new FormulaParseContext(sheet, null));//null ref, no trace dependence here
 				if(!exprAfter.hasError()){
-					xvalExpr = exprAfter.getFormulaString();
+					xvalExpr = exprAfter;
 				}
 			}
 			if(yvalExpr!=null){
-				exprAfter = engine.renameSheet(yvalExpr, bookOfSheet, oldName, newName,new FormulaParseContext(sheet, null));//null ref, no trace dependence here
+				exprAfter = engine.renameSheetPtgs(yvalExpr, bookOfSheet, oldName, newName,new FormulaParseContext(sheet, null));//null ref, no trace dependence here
 				if(!exprAfter.hasError()){
-					yvalExpr = exprAfter.getFormulaString();
+					yvalExpr = exprAfter;
 				}
 			}
 			if(zvalExpr!=null){
-				exprAfter = engine.renameSheet(zvalExpr, bookOfSheet, oldName, newName,new FormulaParseContext(sheet, null));//null ref, no trace dependence here
+				exprAfter = engine.renameSheetPtgs(zvalExpr, bookOfSheet, oldName, newName,new FormulaParseContext(sheet, null));//null ref, no trace dependence here
 				if(!exprAfter.hasError()){
-					zvalExpr = exprAfter.getFormulaString();
+					zvalExpr = exprAfter;
 				}
 			}
-			series.setXYZFormula(nameExpr, xvalExpr, yvalExpr, zvalExpr);
+			((AbstractSeriesAdv)series).setXYZFormula(nameExpr, xvalExpr, yvalExpr, zvalExpr);
 		}
 		
 		ModelUpdateUtil.addRefUpdate(dependent);
@@ -948,20 +955,20 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 		FormulaEngine engine = getFormulaEngine();
 		
 		// update Validation's formula if any
-		String f1 = validation.getFormula1();
-		String f2 = validation.getFormula2();
+		FormulaExpression f1 = ((AbstractDataValidationAdv)validation).getFormulaExpression1();
+		FormulaExpression f2 = ((AbstractDataValidationAdv)validation).getFormulaExpression2();
 		boolean changed = false;
 		if (f1 != null) {
-			FormulaExpression exprf1 = engine.renameSheet(f1, bookOfSheet, oldName, newName,new FormulaParseContext(sheet, null));//null ref, no trace dependence here
-			if(!exprf1.hasError() && !f1.equals(exprf1.getFormulaString())) {
-				f1 = exprf1.getFormulaString();
+			FormulaExpression exprf1 = engine.renameSheetPtgs(f1, bookOfSheet, oldName, newName,new FormulaParseContext(sheet, null));//null ref, no trace dependence here
+			if(!exprf1.hasError() && !f1.getFormulaString().equals(exprf1.getFormulaString())) {
+				f1 = exprf1;
 				changed = true;
 			}
 		}
 		if (f2 != null) {
-			FormulaExpression exprf2 = engine.renameSheet(f2, bookOfSheet, oldName, newName,new FormulaParseContext(sheet, null));//null ref, no trace dependence here
-			if(!exprf2.hasError() && !f2.equals(exprf2.getFormulaString())) {
-				f2 = exprf2.getFormulaString();
+			FormulaExpression exprf2 = engine.renameSheetPtgs(f2, bookOfSheet, oldName, newName,new FormulaParseContext(sheet, null));//null ref, no trace dependence here
+			if(!exprf2.hasError() && !f2.getFormulaString().equals(exprf2.getFormulaString())) {
+				f2 = exprf2;
 				changed = true;
 			}
 		}
@@ -1024,13 +1031,13 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 		 * for sheet rename case, we should always update formula to make new dependency, shouln't ignore if the formula string is the same
 		 * Note, in other move cell case, we could ignore to set same formula string
 		 */
-		
-		String expr = cell.getFormulaValue();
+
+		FormulaExpression expr = (FormulaExpression) ((AbstractCellAdv)cell).getValue(false);
 		
 		FormulaEngine engine = getFormulaEngine();
-		FormulaExpression exprAfter = engine.renameSheet(expr, bookOfSheet, oldName, newName,new FormulaParseContext(cell, null));//null ref, no trace dependence here
+		FormulaExpression exprAfter = engine.renameSheetPtgs(expr, bookOfSheet, oldName, newName,new FormulaParseContext(cell, null));//null ref, no trace dependence here
 		
-		cell.setFormulaValue(exprAfter.getFormulaString());
+		cell.setValue(exprAfter);
 		//don't need to notify cell change, cell will do
 	}	
 
@@ -1052,13 +1059,12 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 		 * for sheet rename case, we should always update formula to make new dependency, shouln't ignore if the formula string is the same
 		 * Note, in other move cell case, we could ignore to set same formula string
 		 */
-		
-		String expr = name.getRefersToFormula();
+		FormulaExpression expr = ((AbstractNameAdv)name).getRefersToFormulaExpression();
 		
 		FormulaEngine engine = getFormulaEngine();
-		FormulaExpression exprAfter = engine.renameSheet(expr, bookOfSheet, oldName, newName, new FormulaParseContext(sheet, null));//null ref, no trace dependence here
+		FormulaExpression exprAfter = engine.renameSheetPtgs(expr, bookOfSheet, oldName, newName, new FormulaParseContext(sheet, null));//null ref, no trace dependence here
 		
-		name.setRefersToFormula(exprAfter.getFormulaString());
+		((AbstractNameAdv)name).setRefersToFormula(exprAfter);
 		//don't need to notify cell change, cell will do
 	}	
 	
@@ -1086,13 +1092,13 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 		 * dependency, shouln't ignore if the formula string is the same
 		 * Note, in other move cell case, we could ignore to set same formula string
 		 */
-		String expr = cell.getFormulaValue();
+		FormulaExpression expr = (FormulaExpression) ((AbstractCellAdv)cell).getValue(false);
 		
 		FormulaEngine engine = getFormulaEngine();
 		FormulaExpression exprAfter = 
-				engine.renameName(expr, bookOfSheet, oldName, newName, new FormulaParseContext(cell, null));
+				engine.renameNamePtgs(expr, bookOfSheet, oldName, newName, new FormulaParseContext(cell, null));
 		
-		cell.setFormulaValue(exprAfter.getFormulaString());
+		cell.setValue(exprAfter);
 		//don't need to notify cell change, cell will do
 	}
 

@@ -510,7 +510,8 @@ public class SortHelper extends RangeHelperBase {
 		public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 			
 			if (method.getName().equals("setFormulaValue")){
-				FormulaExpression movedFormula = getFormulaEngine().move(args[0].toString(), srcRegion, rowOffset, columnOffset, context);
+				FormulaExpression fexpr = getFormulaEngine().parse(args[0].toString(), context);
+				FormulaExpression movedFormula = getFormulaEngine().movePtgs(fexpr, srcRegion, rowOffset, columnOffset, context);
 				proxiedCell.setFormulaValue(movedFormula.getFormulaString());
 				return null;
 			}

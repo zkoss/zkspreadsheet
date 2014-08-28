@@ -11,6 +11,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
  */
 package org.zkoss.zss.model.impl.sys.formula;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -40,26 +41,33 @@ public class ParsingBook implements FormulaParsingWorkbook, FormulaRenderingWork
 	private static final Log logger = Log.lookup(ParsingBook.class.getName());
 
 	private SBook book;
-	// defined names
-	private List<String> index2name = new ArrayList<String>();
-	private Map<String, Integer> name2index = new HashMap<String, Integer>();
-	// sheets
-	private List<ExternalSheet> index2sheet = new ArrayList<ExternalSheet>();
-	private Map<String, Integer> sheetName2index = new HashMap<String, Integer>(); // the name combine names of book, sheet 1 and sheet 2
+	// ZSS-747
+	private SheetIndexes _indexes;
 
 	public ParsingBook(SBook book) {
 		this.book = book;
+		//ZSS-747
+		synchronized (book) {
+			this._indexes = (SheetIndexes) book.getAttribute(FormulaEngine.KEY_SHEET_INDEXES);
+			if (this._indexes == null) {
+				this._indexes = new SheetIndexes();
+				book.setAttribute(FormulaEngine.KEY_SHEET_INDEXES, this._indexes);
+			}
+		}
 	}
 
 	// ZSS-661
 	public void renameName(int sheetIndex, String oldName, String newName) {
 		final String sidx = String.valueOf(sheetIndex);
 		String oldkey = toKey(sidx, oldName);
-		final Integer index = name2index.remove(oldkey);
-		if (index != null) {
-			String key = toKey(sidx, newName);
-			name2index.put(key, index);
-			index2name.set(index, newName);
+		//ZSS-747
+		synchronized (_indexes) {
+			final Integer index = _indexes.name2index.remove(oldkey);
+			if (index != null) {
+				String key = toKey(sidx, newName);
+				_indexes.name2index.put(key, index);
+				_indexes.index2name.set(index, newName);
+			}
 		}
 	}
 	
@@ -71,14 +79,17 @@ public class ParsingBook implements FormulaParsingWorkbook, FormulaRenderingWork
 	@Override
 	public NameXPtg getNameXPtg(String name) {
 		String key = toKey("", name);
-		Integer index = name2index.get(key);
-		if(index == null) {
-			// formula function name
-			index = index2name.size();
-			index2name.add(name);
-			name2index.put(key, index);
+		//ZSS-747
+		synchronized (_indexes) {
+			Integer index = _indexes.name2index.get(key);
+			if(index == null) {
+				// formula function name
+				index = _indexes.index2name.size();
+				_indexes.index2name.add(name);
+				_indexes.name2index.put(key, index);
+			}
+			return new NameXPtg(0, index);
 		}
-		return new NameXPtg(0, index);
 	}
 
 	@Override
@@ -90,17 +101,20 @@ public class ParsingBook implements FormulaParsingWorkbook, FormulaRenderingWork
 	public int getExternalSheetIndex(String workbookName, String sheetName) {
 		// directly get index if existed
 		String key = toKey(workbookName, sheetName);
-		Integer index = sheetName2index.get(key);
-		if(index == null) {
-			// create new index and check sheet name is 3D or not
-			index = index2sheet.size();
-			int p = sheetName.indexOf(':');
-			String name = p < 0 ? sheetName : sheetName.substring(0, p);
-			String lastName = p < 0 ? sheetName : sheetName.substring(p+1);
-			index2sheet.add(new ExternalSheet(workbookName, name, lastName));
-			sheetName2index.put(toKey(workbookName, sheetName), index);
+		//ZSS-747
+		synchronized (_indexes) {
+			Integer index = _indexes.sheetName2index.get(key);
+			if(index == null) {
+				// create new index and check sheet name is 3D or not
+				index = _indexes.index2sheet.size();
+				int p = sheetName.indexOf(':');
+				String name = p < 0 ? sheetName : sheetName.substring(0, p);
+				String lastName = p < 0 ? sheetName : sheetName.substring(p+1);
+				_indexes.index2sheet.add(new ExternalSheet(workbookName, name, lastName));
+				_indexes.sheetName2index.put(toKey(workbookName, sheetName), index);
+			}
+			return index;
 		}
-		return index;
 	}
 	
 	/**
@@ -117,8 +131,11 @@ public class ParsingBook implements FormulaParsingWorkbook, FormulaRenderingWork
 	 * @return the external sheet index or -1 if not found
 	 */
 	public int findExternalSheetIndex(String workbookName, String sheetName) {
-		Integer index = sheetName2index.get(toKey(workbookName, sheetName));
-		return index != null ? index : -1;
+		//ZSS-747
+		synchronized(_indexes) {
+			Integer index = _indexes.sheetName2index.get(toKey(workbookName, sheetName));
+			return index != null ? index : -1;
+		}
 	}
 
 	private String toKey(String... strings) {
@@ -154,33 +171,45 @@ public class ParsingBook implements FormulaParsingWorkbook, FormulaRenderingWork
 	@Override
 	public EvaluationName getOrCreateName(String name, int sheetIndex) {
 		String key = toKey(String.valueOf(sheetIndex), name);
-		Integer index = name2index.get(key);
-		if(index == null) {
-			index = index2name.size();
-			index2name.add(name);
-			name2index.put(key, index);
+		//ZSS-747
+		synchronized (_indexes) {
+			Integer index = _indexes.name2index.get(key);
+			if(index == null) {
+				index = _indexes.index2name.size();
+				_indexes.index2name.add(name);
+				_indexes.name2index.put(key, index);
+			}
+			EvaluationName n = new SimpleName(name, index, sheetIndex);
+			return n;
 		}
-		EvaluationName n = new SimpleName(name, index, sheetIndex);
-		return n;
 	}
 	
 	/* FormulaRenderingWorkbook */
 
 	@Override
 	public String getNameText(NamePtg namePtg) {
-		return index2name.get(namePtg.getIndex());
+		//ZSS-747
+		synchronized (_indexes) {
+			return _indexes.index2name.get(namePtg.getIndex());
+		}
 	}
 	
 	@Override
 	public String resolveNameXText(NameXPtg nameXPtg) {
-		return index2name.get(nameXPtg.getNameIndex());
+		//ZSS-747
+		synchronized (_indexes) {
+			return _indexes.index2name.get(nameXPtg.getNameIndex());
+		}
 	}
 	
 	/**
 	 * @return internal or external sheet.
 	 */
 	public ExternalSheet getAnyExternalSheet(int externSheetIndex) {
-		return index2sheet.get(externSheetIndex);
+		//ZSS-747
+		synchronized (_indexes) {
+			return _indexes.index2sheet.get(externSheetIndex);
+		}
 	}
 	
 	@Override
@@ -217,27 +246,33 @@ public class ParsingBook implements FormulaParsingWorkbook, FormulaRenderingWork
 		
 		// check every external sheet data and rename sheet if necessary
 		// rename as replacing by new external sheets (Note, the index should not be changed)
-		List<ExternalSheet> temp = new ArrayList<ExternalSheet>(index2sheet.size()); 
-		for(ExternalSheet extSheet : index2sheet) {
-			if((bookName == null && extSheet.getWorkbookName() == null)
-				|| (bookName != null && bookName.equals(extSheet.getWorkbookName()))) {
-				String sheet1 = oldName.equals(extSheet.getSheetName()) ? newName : extSheet.getSheetName();
-				String sheet2 = oldName.equals(extSheet.getLastSheetName()) ? newName : extSheet.getLastSheetName();
-				temp.add(new ExternalSheet(extSheet.getWorkbookName(), sheet1, sheet2));
-			} else {
-				temp.add(extSheet);
+		//ZSS-747
+		synchronized (_indexes) {
+			Map<String, Integer> sheetName2index = _indexes.sheetName2index;
+			List<ExternalSheet> index2sheet = _indexes.index2sheet;
+
+			List<ExternalSheet> temp = new ArrayList<ExternalSheet>(index2sheet.size()); 
+			for(ExternalSheet extSheet : index2sheet) {
+				if((bookName == null && extSheet.getWorkbookName() == null)
+					|| (bookName != null && bookName.equals(extSheet.getWorkbookName()))) {
+					String sheet1 = oldName.equals(extSheet.getSheetName()) ? newName : extSheet.getSheetName();
+					String sheet2 = oldName.equals(extSheet.getLastSheetName()) ? newName : extSheet.getLastSheetName();
+					temp.add(new ExternalSheet(extSheet.getWorkbookName(), sheet1, sheet2));
+				} else {
+					temp.add(extSheet);
+				}
 			}
-		}
-		index2sheet = temp;
+			_indexes.index2sheet = temp;
 		
-		// clear the map of external sheet name to index and rebuild it
-		sheetName2index.clear();
-		for(int i = 0; i < index2sheet.size(); ++i) {
-			String book = index2sheet.get(i).getWorkbookName();
-			String sheet1 = index2sheet.get(i).getSheetName();
-			String sheet2 = index2sheet.get(i).getLastSheetName();
-			String key = toKey(book, sheet1.equals(sheet2) ? (sheet1 + ":" + sheet2) : sheet1);
-			sheetName2index.put(key, i);
+			// clear the map of external sheet name to index and rebuild it
+			sheetName2index.clear();
+			for(int i = 0; i < index2sheet.size(); ++i) {
+				String book = index2sheet.get(i).getWorkbookName();
+				String sheet1 = index2sheet.get(i).getSheetName();
+				String sheet2 = index2sheet.get(i).getLastSheetName();
+				String key = toKey(book, sheet1.equals(sheet2) ? (sheet1 + ":" + sheet2) : sheet1);
+				sheetName2index.put(key, i);
+			}
 		}
 	}
 
@@ -290,5 +325,16 @@ public class ParsingBook implements FormulaParsingWorkbook, FormulaRenderingWork
 	public boolean isAllowedDeferredNamePtg() {
 		return true;
 	}
-
+	
+	//ZSS-747
+	private static class SheetIndexes implements Serializable {
+		private static final long serialVersionUID = 1L;
+		// defined names
+		private List<String> index2name = new ArrayList<String>();
+		private Map<String, Integer> name2index = new HashMap<String, Integer>();
+		// sheets
+		private List<ExternalSheet> index2sheet = new ArrayList<ExternalSheet>();
+		private Map<String, Integer> sheetName2index = new HashMap<String, Integer>(); // the name combine names of book, sheet 1 and sheet 2
+	}
 }
+

@@ -16,7 +16,6 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.model.impl;
 
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -97,7 +96,7 @@ public class BookImpl extends AbstractBookAdv{
 	
 	private EvaluationContributor _evalContributor;
 	
-	private ArrayList<WeakReference<SPictureData>> _picDatas; //since 3.5.1
+	private ArrayList<SPictureData> _picDatas; //since 3.5.1
 	
 	/**
 	 * the sheet which is destroying now.
@@ -804,12 +803,11 @@ public class BookImpl extends AbstractBookAdv{
 	@Override
 	public SPictureData addPictureData(SPicture.Format format, byte[] data) {
 		if (_picDatas == null) {
-			_picDatas = new ArrayList<WeakReference<SPictureData>>(4);
+			_picDatas = new ArrayList<SPictureData>(4);
 		}
 		int index = _picDatas.size();
 		SPictureData picData = new PictureDataImpl(index, format, data);
-		WeakReference<SPictureData> ref = new WeakReference<SPictureData>(picData);
-		_picDatas.add(ref);
+		_picDatas.add(picData);
 		return picData;
 	}
 
@@ -817,8 +815,7 @@ public class BookImpl extends AbstractBookAdv{
 	public SPictureData getPictureData(int index) {
 		if (index < 0 || _picDatas == null || index >= _picDatas.size())
 			return null;
-		WeakReference<SPictureData> ref = _picDatas.get(index);
-		return ref == null ? null : ref.get();
+		return _picDatas.get(index);
 	}
 
 	@Override
@@ -826,8 +823,7 @@ public class BookImpl extends AbstractBookAdv{
 		if (_picDatas == null) return Collections.emptyList();
 		
 		final List<SPictureData> list = new ArrayList<SPictureData>(_picDatas.size());
-		for (WeakReference<SPictureData> ref : _picDatas) {
-			final SPictureData picData = ref == null ? null : ref.get();
+		for (SPictureData picData : _picDatas) {
 			if (picData != null) {
 				list.add(picData);
 			}

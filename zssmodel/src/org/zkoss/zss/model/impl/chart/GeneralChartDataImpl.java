@@ -42,11 +42,11 @@ import org.zkoss.zss.model.sys.formula.EvaluationResult.ResultType;
  * @author dennis
  * @since 3.5.0
  */
-public class GeneralChartDataImpl extends ChartDataAdv implements SGeneralChartData{
+public class GeneralChartDataImpl extends AbstractGeneralChartDataAdv implements SGeneralChartData{
 
 	private static final long serialVersionUID = 1L;
 
-	private FormulaExpression _catFormula;
+	private FormulaExpression _catFormulaExpr;
 	
 	final private List<SeriesImpl> _serieses = new LinkedList<SeriesImpl>();
 	private AbstractChartAdv _chart;
@@ -74,9 +74,9 @@ public class GeneralChartDataImpl extends ChartDataAdv implements SGeneralChartD
 		if(_evaluated) return;
 		synchronized (this) {
 			if(!_evaluated){
-				if(_catFormula!=null){
+				if(_catFormulaExpr!=null){
 					FormulaEngine fe = EngineFactory.getInstance().createFormulaEngine();
-					EvaluationResult result = fe.evaluate(_catFormula,new FormulaEvaluationContext(_chart.getSheet(),getRef()));
+					EvaluationResult result = fe.evaluate(_catFormulaExpr,new FormulaEvaluationContext(_chart.getSheet(),getRef()));
 					Object val = result.getValue();
 					if(result.getType() == ResultType.SUCCESS){
 						_evalResult = val;
@@ -131,15 +131,15 @@ public class GeneralChartDataImpl extends ChartDataAdv implements SGeneralChartD
 		
 		if(expr!=null){
 			FormulaEngine fe = EngineFactory.getInstance().createFormulaEngine();
-			_catFormula = fe.parse(expr, new FormulaParseContext(_chart.getSheet(),getRef()));
+			_catFormulaExpr = fe.parse(expr, new FormulaParseContext(_chart.getSheet(),getRef()));
 		}else{
-			_catFormula = null;
+			_catFormulaExpr = null;
 		}
 	}
 
 	@Override
 	public String getCategoriesFormula() {
-		return _catFormula==null?null:_catFormula.getFormulaString();
+		return _catFormulaExpr==null?null:_catFormulaExpr.getFormulaString();
 	}
 
 	@Override
@@ -153,11 +153,11 @@ public class GeneralChartDataImpl extends ChartDataAdv implements SGeneralChartD
 	
 	@Override
 	public boolean isFormulaParsingError() {
-		return _catFormula==null?false:_catFormula.hasError();
+		return _catFormulaExpr==null?false:_catFormulaExpr.hasError();
 	}
 	
 	private void clearFormulaDependency(){
-		if(_catFormula!=null){
+		if(_catFormulaExpr!=null){
 			((AbstractBookSeriesAdv) _chart.getSheet().getBook().getBookSeries())
 					.getDependencyTable().clearDependents(getRef());
 		}
@@ -202,4 +202,34 @@ public class GeneralChartDataImpl extends ChartDataAdv implements SGeneralChartD
 		//private Object _evalResult;
 		//private boolean _evaluated = false;
 	}
+	
+	//ZSS-747
+	/**
+	 * 
+	 * @return
+	 * @since 3.5.1
+	 */
+	public FormulaExpression getCategoriesFormulaExpression() {
+		return _catFormulaExpr;  
+	}
+	//ZSS-747
+	/**
+	 * 
+	 * @param fexpr
+	 * @since 3.5.1
+	 */
+	public void setCategoriesFormula(FormulaExpression fexpr) {
+		checkOrphan();
+		_evaluated = false;
+		clearFormulaDependency();
+		
+		_catFormulaExpr = fexpr;
+		
+		//update dependency table
+		if(fexpr != null) {
+			FormulaEngine fe = EngineFactory.getInstance().createFormulaEngine();
+			fe.updateDependencyTable(fexpr, new FormulaParseContext(_chart.getSheet(),getRef()));
+		}
+	};
+
 }

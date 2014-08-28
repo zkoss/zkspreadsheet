@@ -279,7 +279,7 @@ public class RangeImpl implements SRange {
 		new RefNotifyContentChangeHelper(bookSeries).notifyContentChange(notify);
 	}
 
-	private boolean euqlas(Object obj1, Object obj2) {
+	private boolean equalObjects(Object obj1, Object obj2) {
 		if (obj1 == obj2) {
 			return true;
 		}
@@ -317,7 +317,7 @@ public class RangeImpl implements SRange {
 		new CellVisitorTask(new CellVisitorForUpdate() {
 			public boolean visit(SCell cell) {
 				Object cellval = cell.getValue();
-				if (!euqlas(cellval, value)) {
+				if (!equalObjects(cellval, value)) {
 					cell.setValue(value);
 				}
 				return true;
@@ -449,7 +449,7 @@ public class RangeImpl implements SRange {
 				Object cellval = cell.getValue();
 				Object resultVal = result.getValue();
 				
-				if (cell.getType()==result.getType() && euqlas(cellval, resultVal)) {
+				if (cell.getType()==result.getType() && equalObjects(cellval, resultVal)) {
 					return true;
 				}
 				String format = result.getFormat();

@@ -23,6 +23,7 @@ import java.util.Locale;
 import org.zkoss.zss.model.CellRegion;
 import org.zkoss.zss.model.ErrorValue;
 import org.zkoss.zss.model.InvalidFormulaException;
+import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.SBookSeries;
 import org.zkoss.zss.model.SCellStyle;
 import org.zkoss.zss.model.SColumnArray;
@@ -225,15 +226,7 @@ public class CellImpl extends AbstractCellAdv {
 			String msg = expr.getErrorMessage();
 			throw new InvalidFormulaException(msg==null?"The formula ="+formula+" contains error":msg);
 		}
-		
-		if(getType()==CellType.FORMULA){
-			clearValueForSet(true);
-		}
-		
-		//parse again, this will create new dependency
-		formulaCtx = 
-			new FormulaParseContext(this.getSheet().getBook(),this.getSheet(),this,getRef(),locale);
-		expr = fe.parse(formula, formulaCtx);
+		//ZSS-747. 20140828, henrichen: update dependency table in setValue()		
 		setValue(expr);
 	}
 	
@@ -354,14 +347,16 @@ public class CellImpl extends AbstractCellAdv {
 
 		
 		CellValue newCellVal = new InnerCellValue(newType,newVal);
-		//should't clear dependency if new type is formula, it clear the dependency already when eval
-		clearValueForSet(oldVal!=null && oldVal.getType()==CellType.FORMULA && newType !=CellType.FORMULA);
-		
+		//ZSS-747. 
+		//20140828, henrichen: clear if previous is a formula; update dependency table if a formula
+		clearValueForSet(oldVal!=null && oldVal.getType()==CellType.FORMULA);
+		if (newType == CellType.FORMULA) {
+			FormulaParseContext context = new FormulaParseContext(this, getRef());
+			EngineFactory.getInstance().createFormulaEngine().updateDependencyTable((FormulaExpression)newVal, context);
+		}
+			
 		setCellValue(newCellVal);
-//		addCellUpdate();// no need to add CellUpdate, setCellValue already add ref update for this cell.
 	}
-
-	
 
 	@Override
 	public SHyperlink getHyperlink() {

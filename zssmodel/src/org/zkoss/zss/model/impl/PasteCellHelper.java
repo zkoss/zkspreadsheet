@@ -256,7 +256,7 @@ public class PasteCellHelper { //ZSS-693: promote visibility
 	}
 	
 	FormulaEngine formulaEngine;
-	private FormulaEngine getFormulaEignin() {
+	private FormulaEngine getFormulaEngine() {
 		if(formulaEngine == null){
 			formulaEngine = EngineFactory.getInstance().createFormulaEngine();
 		}
@@ -539,20 +539,22 @@ public class PasteCellHelper { //ZSS-693: promote visibility
 		if(pasteFormula){
 			String formula = buffer.getFormula();
 			if(formula!=null){
-				FormulaEngine engine = getFormulaEignin();
+				FormulaEngine engine = getFormulaEngine();
 				
-				FormulaExpression expr;
+				FormulaParseContext context = new FormulaParseContext(_destSheet, null); //nodependency
+				FormulaExpression expr; 
+				FormulaExpression fexpr = engine.parse(formula, context);
 				if(cutFrom!=null){
-					expr = engine.move(formula,cutFrom,rowOffset, columnOffset,new FormulaParseContext(_destSheet, null));//no dependency
+					expr = engine.movePtgs(fexpr,cutFrom,rowOffset, columnOffset, context);//no dependency
 				}else{
-					expr = engine.shift(formula,rowOffset, columnOffset,new FormulaParseContext(_destSheet, null));//no dependency
+					expr = engine.shiftPtgs(fexpr,rowOffset, columnOffset, context);//no dependency
 				}
 				if(!expr.hasError() && transpose){
-					expr = engine.transpose(expr.getFormulaString(),rowOrigin, columnOrigin,new FormulaParseContext(_destSheet, null));
+					expr = engine.transposePtgs(expr, rowOrigin, columnOrigin, context);
 				}
 				
 				if(!expr.hasError()){
-					destCell.setFormulaValue(expr.getFormulaString());
+					destCell.setValue(expr);
 				}//ignore if get parsing error
 				return;
 			}
