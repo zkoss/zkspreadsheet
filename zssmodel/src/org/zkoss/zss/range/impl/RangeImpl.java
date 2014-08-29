@@ -446,12 +446,24 @@ public class RangeImpl implements SRange {
 					}
 				}
 				
-				Object cellval = cell.getValue();
+				//ZSS-750
 				Object resultVal = result.getValue();
-				
-				if (cell.getType()==result.getType() && equalObjects(cellval, resultVal)) {
-					return true;
+				if (cell.getType() == result.getType()) {
+					// 20140828, henrichen: getValue() will cause evalFormula(); costly.
+					if (result.getType() == CellType.FORMULA) {
+						FormatEngine fe = EngineFactory.getInstance().createFormatEngine();
+						String oldEditText = fe.getEditText(cell, new FormatContext(locale));		
+						if (editText.equals(oldEditText)) {
+							return true;
+						}
+					} else {
+						Object cellval = cell.getValue();
+						if (equalObjects(cellval, resultVal)) {
+							return true;
+						}
+					}
 				}
+				
 				String format = result.getFormat();
 				
 				switch (result.getType()) {
