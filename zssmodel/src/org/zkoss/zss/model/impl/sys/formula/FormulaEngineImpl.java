@@ -62,7 +62,6 @@ import org.zkoss.poi.ss.formula.ptg.NamePtg;
 import org.zkoss.poi.ss.formula.ptg.NameXPtg;
 import org.zkoss.poi.ss.formula.ptg.OperandPtg;
 import org.zkoss.poi.ss.formula.ptg.ParenthesisPtg;
-import org.zkoss.poi.ss.formula.ptg.ParseErrorPtg;
 import org.zkoss.poi.ss.formula.ptg.Ptg;
 import org.zkoss.poi.ss.formula.ptg.Ref3DPtg;
 import org.zkoss.poi.ss.formula.ptg.RefPtg;
@@ -248,20 +247,9 @@ public class FormulaEngineImpl implements FormulaEngine {
 	}
 	
 	protected String renderFormula(ParsingBook parsingBook, String formula, Ptg[] tokens, boolean always) {
-		if (always) return FormulaRenderer.toFormulaString(parsingBook, tokens);
-		boolean hit = false; // only render if necessary
-		for(Ptg token : tokens) {
-			// check it is a external book reference or not
-			if(token instanceof ExternSheetReferenceToken) {
-				ExternSheetReferenceToken externalRef = (ExternSheetReferenceToken)token;
-				ExternalSheet externalSheet = parsingBook.getExternalSheet(externalRef.getExternSheetIndex());
-				if(externalSheet != null) {
-					hit = true;
-					break;
-				}
-			}
-		}
-		return hit ? FormulaRenderer.toFormulaString(parsingBook, tokens) : formula;
+		return always ? 
+			FormulaRenderer.toFormulaString(parsingBook, tokens) :
+			FormulaRenderer.toFormulaEditText(parsingBook, tokens, formula);
 	}
 
 	protected Ref toDenpendRef(FormulaParseContext ctx, ParsingBook parsingBook, Ptg ptg) {
