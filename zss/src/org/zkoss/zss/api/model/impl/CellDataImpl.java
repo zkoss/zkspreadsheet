@@ -101,13 +101,17 @@ public class CellDataImpl implements CellData{
 		
 		CellType type = toCellType(_cell.getType());
 
-		//20140820, henrichen: will cause evaluation of the FORMULA; might
-		//  cost time; better defer evaluation until required.
+		//ZSS-743
+		//20140820, henrichen: getFormulaResultType() could cause evaluation of 
+		//  the FORMULA; might cost time; better defer evaluation until required.
 //		if(type==CellType.FORMULA){
 //			if(toCellType(_cell.getFormulaResultType())==CellType.ERROR){
 //				return CellType.ERROR;
 //			}
 //		}
+		if (_cell.isFormulaParsingError()) { // if an error formula
+			return CellType.ERROR;
+		}
 		return type;
 	}
 
