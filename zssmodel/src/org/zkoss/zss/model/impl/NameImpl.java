@@ -130,7 +130,7 @@ public class NameImpl extends AbstractNameAdv {
 			//use formula engine to keep dependency info
 			FormulaEngine fe = EngineFactory.getInstance().createFormulaEngine();
 			Ref ref = getRef(newName); // ZSS-661
-			_refersToExprFormula = fe.parse(refersToExpr, new FormulaParseContext(_book.getSheet(0),ref));
+			_refersToExprFormula = fe.parse(refersToExpr, new FormulaParseContext(_book.getSheet(0),ref)); //create dependency when parse
 			evalPtgs(fe, ref);
 		}
 	}
@@ -215,7 +215,7 @@ public class NameImpl extends AbstractNameAdv {
 			//use formula engine to keep dependency info
 			FormulaEngine fe = EngineFactory.getInstance().createFormulaEngine();
 			Ref ref = getRef(newName); // ZSS-661
-			fe.updateDependencyTable(refersToExpr, new FormulaParseContext(_book.getSheet(0),ref));
+			fe.updateDependencyTable(refersToExpr, new FormulaParseContext(_book.getSheet(0),ref)); //update dependency
 			evalPtgs(fe, ref);
 		}
 	}

@@ -179,8 +179,7 @@ public final class EvalBook implements EvaluationWorkbook, FormulaParsingWorkboo
 
 		private final String name;
 		private final int nameIndex;
-//		private String refersToFormula;
-		private FormulaExpression refersToFormulaExpression;
+		private FormulaExpression refersToFormulaExpression; //ZSS-759
 		private int sheetIndex;
 
 		//ZSS-759
@@ -205,7 +204,7 @@ public final class EvalBook implements EvaluationWorkbook, FormulaParsingWorkboo
 		public EvalName(String name, int nameIndex, FormulaExpression refersToFormula, int sheetIndex) {
 			this.name = name;
 			this.nameIndex = nameIndex;
-			this.refersToFormulaExpression = refersToFormula;
+			this.refersToFormulaExpression = refersToFormula; //ZSS-759
 			this.sheetIndex = sheetIndex;
 		}
 
