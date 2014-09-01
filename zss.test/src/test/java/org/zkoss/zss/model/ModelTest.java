@@ -3507,10 +3507,10 @@ public class ModelTest {
 		//delete
 		SRanges.range(sheet2).deleteSheet();
 		
-		Assert.assertEquals("SUM(A3,A4,'#REF'!A5:A6)", sheet1.getCell("D2").getFormulaValue());
+		Assert.assertEquals("SUM(A3,A4,#REF!A5:A6)", sheet1.getCell("D2").getFormulaValue());
 		Assert.assertEquals("#REF!", sheet1.getCell("D2").getErrorValue().getErrorString());
 		
-		Assert.assertEquals("(A3,A4,'#REF'!A5:A6)", sheet1.getCell("D3").getFormulaValue());
+		Assert.assertEquals("(A3,A4,#REF!A5:A6)", sheet1.getCell("D3").getFormulaValue());
 		Assert.assertEquals("#VALUE!", sheet1.getCell("D3").getErrorValue().getErrorString());		
 	}
 	

@@ -245,6 +245,24 @@ public class Issue600Test {
 		Assert.assertEquals(10D, sheet1.getCell("D2").getValue());
 	}
 	
+	@Test 
+	public void testZSS655NameUpdate() {
+		Book book = Util.loadBook(this, "book/blank.xlsx");
+		Sheet sheet1 = book.getSheetAt(0);
+		
+		Ranges.range(sheet1, "A1:B2").createName("Test");
+		Ranges.range(sheet1,"A1").setCellValue(Integer.valueOf(1));
+		Ranges.range(sheet1,"B1").setCellValue(Integer.valueOf(2));
+		
+		Range c3 = Ranges.range(sheet1,"C3"); 
+		c3.setCellEditText("=SUM(Test)");
+		
+		Assert.assertEquals(3D, c3.getCellValue());
+		
+		Ranges.range(sheet1,"B1").setCellValue(3);
+		Assert.assertEquals(4D, c3.getCellValue()); //fail on this line
+		
+	}	
 	@Test
 	public void testZSS660InvalidNamedRange(){
 		Book book = Util.loadBook(this, "book/blank.xlsx");
