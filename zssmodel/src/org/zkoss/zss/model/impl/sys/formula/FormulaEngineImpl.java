@@ -11,7 +11,6 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
  */
 package org.zkoss.zss.model.impl.sys.formula;
 
-import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,7 +21,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.Locale;
 
 import org.zkoss.poi.ss.formula.CollaboratingWorkbooksEnvironment;
 import org.zkoss.poi.ss.formula.DependencyTracker;
@@ -54,9 +52,11 @@ import org.zkoss.poi.ss.formula.eval.StringEval;
 import org.zkoss.poi.ss.formula.eval.ValueEval;
 import org.zkoss.poi.ss.formula.eval.ValuesEval;
 import org.zkoss.poi.ss.formula.ptg.Area3DPtg;
+import org.zkoss.poi.ss.formula.ptg.AreaErrPtg;
 import org.zkoss.poi.ss.formula.ptg.AreaPtg;
 import org.zkoss.poi.ss.formula.ptg.AreaPtgBase;
-import org.zkoss.poi.ss.formula.ptg.ArrayPtg;
+import org.zkoss.poi.ss.formula.ptg.DeletedArea3DPtg;
+import org.zkoss.poi.ss.formula.ptg.DeletedRef3DPtg;
 import org.zkoss.poi.ss.formula.ptg.FuncPtg;
 import org.zkoss.poi.ss.formula.ptg.NamePtg;
 import org.zkoss.poi.ss.formula.ptg.NameXPtg;
@@ -64,6 +64,7 @@ import org.zkoss.poi.ss.formula.ptg.OperandPtg;
 import org.zkoss.poi.ss.formula.ptg.ParenthesisPtg;
 import org.zkoss.poi.ss.formula.ptg.Ptg;
 import org.zkoss.poi.ss.formula.ptg.Ref3DPtg;
+import org.zkoss.poi.ss.formula.ptg.RefErrorPtg;
 import org.zkoss.poi.ss.formula.ptg.RefPtg;
 import org.zkoss.poi.ss.formula.ptg.RefPtgBase;
 import org.zkoss.poi.ss.formula.udf.UDFFinder;
@@ -77,7 +78,6 @@ import org.zkoss.xel.util.SimpleXelContext;
 import org.zkoss.zss.model.ErrorValue;
 import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.SCell;
-import org.zkoss.zss.model.SName;
 import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.model.SheetRegion;
 import org.zkoss.zss.model.impl.AbstractBookSeriesAdv;
@@ -85,7 +85,6 @@ import org.zkoss.zss.model.impl.NameRefImpl;
 import org.zkoss.zss.model.impl.NonSerializableHolder;
 import org.zkoss.zss.model.impl.RefImpl;
 import org.zkoss.zss.model.impl.sys.DependencyTableAdv;
-import org.zkoss.zss.model.sys.EngineFactory;
 import org.zkoss.zss.model.sys.dependency.DependencyTable;
 import org.zkoss.zss.model.sys.dependency.Ref;
 import org.zkoss.zss.model.sys.dependency.Ref.RefType;
@@ -152,7 +151,7 @@ public class FormulaEngineImpl implements FormulaEngine {
 			for(Ref ref:expr.getAreaRefs()){
 				areaRefs.add(ref);
 			}
-			Ptg[] ptgs = expr.getPtgs(context);
+			Ptg[] ptgs = expr.getPtgs();
 			for (int k = 0; k < ptgs.length; ++k) {
 				tokens.add(ptgs[k]);
 			}
@@ -175,7 +174,7 @@ public class FormulaEngineImpl implements FormulaEngine {
 		if (expr.hasError()) {
 			return expr;
 		}
-		Ptg[] ptgArray = expr.getPtgs(context);
+		Ptg[] ptgArray = expr.getPtgs();
 		Ref[] refArray = expr.getAreaRefs();
 		String renderedFormula = renderFormula(new ParsingBook(context.getBook()), expr.getFormulaString(), ptgArray, true);
 		return new FormulaExpressionImpl(renderedFormula, ptgArray, refArray, false, null, expr.isMultipleAreaFormula());
@@ -214,7 +213,7 @@ public class FormulaEngineImpl implements FormulaEngine {
 					Ref singleRef = tokens.length == 1 ? toDenpendRef(context, parsingBook, tokens[0]) : null;
 					Ref[] refs = singleRef==null ? null :
 						(singleRef.getType() == RefType.AREA || singleRef.getType() == RefType.CELL ?new Ref[]{singleRef}:null);
-					result.add(new FormulaExpressionImpl(formula, tokens, refs, false, null, multipleArea));
+					result.add(new FormulaExpressionImpl(renderedFormula, tokens, refs, false, null, multipleArea));
 					
 					
 				}catch(FormulaParseException e) {
@@ -425,7 +424,7 @@ public class FormulaEngineImpl implements FormulaEngine {
 				}
 				value = new ValuesEval(evals.toArray(new ValueEval[evals.size()]));
 			}else{
-				value = evaluator.evaluate(currentSheetIndex, expr.getFormulaString(), true);
+				value = evaluateFormulaExpression(evaluator, currentSheetIndex, expr, true); //ZSS-759
 			}
 		} else {
 			if(multipleArea){//is multipleArea formula in cell, should return #VALUE!
@@ -593,7 +592,7 @@ public class FormulaEngineImpl implements FormulaEngine {
 		private String errorMessage;
 
 		//ZSS-747
-		private transient Ptg[] ptgs;
+		private Ptg[] ptgs;
 		private boolean multipleArea;
 		
 		/**
@@ -669,12 +668,7 @@ public class FormulaEngineImpl implements FormulaEngine {
 		
 		//ZSS-747
 		@Override
-		public Ptg[] getPtgs(FormulaParseContext context) {
-			if (ptgs == null) { // when serialized back; lazy populate
-				FormulaParseContext context0 = new FormulaParseContext(context.getBook(), null);
-				FormulaExpression fe = EngineFactory.getInstance().createFormulaEngine().parse(formula, context0);
-				ptgs = fe.getPtgs(context0);
-			}
+		public Ptg[] getPtgs() {
 			return ptgs;
 		}
 		
@@ -775,7 +769,7 @@ public class FormulaEngineImpl implements FormulaEngine {
 					areaRefs.add(ref);
 				}
 			}
-			Ptg[] ptgs = expr.getPtgs(context);
+			Ptg[] ptgs = expr.getPtgs();
 			for (int k = 0; k < ptgs.length; ++k) {
 				tokens.add(ptgs[k]);
 			}
@@ -1100,7 +1094,7 @@ public class FormulaEngineImpl implements FormulaEngine {
 									|| (bookName != null && bookName.equals(es.getWorkbookName()))) {
 								// replace token if any sheet name is matched 
 								if(oldSheetName.equals(es.getSheetName()) || oldSheetName.equals(es.getLastSheetName())) {
-									tokens[i] = new DeletedSheet3DPtg(bookName, ptg);
+									tokens[i] = PtgShifter.createDeletedRef3d(bookName, ptg); //ZSS-759
 								}
 							}
 						}
@@ -1131,61 +1125,8 @@ public class FormulaEngineImpl implements FormulaEngine {
 			}
 		};
 	}
-	
-	private static class DeletedSheet3DPtg extends OperandPtg implements WorkbookDependentFormula {
-		private OperandPtg ptg;
-		private String bookName;
 
-		public DeletedSheet3DPtg(String bookName, Ptg ptg) {
-			if(ptg instanceof Ref3DPtg || ptg instanceof Area3DPtg) {
-				this.ptg = (OperandPtg)ptg;
-				this.bookName = bookName;
-			} else {
-				throw new IllegalArgumentException("must be Ref3dPtg or Area3DPtg");
-			}
-		}
-
-		@Override
-		public int getSize() {
-			return ptg.getSize();
-		}
-
-		@Override
-		public void write(LittleEndianOutput out) {
-			// do nothing
-		}
-
-		@Override
-		public String toFormulaString() {
-			return ptg.toFormulaString();
-		}
-
-		@Override
-		public byte getDefaultOperandClass() {
-			return ptg.getDefaultOperandClass();
-		}
-
-		@Override
-		public String toFormulaString(FormulaRenderingWorkbook book) {
-			StringBuffer sb = new StringBuffer();
-			if(bookName != null) {
-				SheetNameFormatter.appendFormat(sb, bookName, "#REF");
-			} else {
-				// because of the POI parser's limitation, it can't parse #REF!A1
-				// we use unusual '#REF' sheet name to represent a deleted sheet
-				SheetNameFormatter.appendFormat(sb, "#REF");
-				// sb.append("#REF"); // don't use SheetNameFormatter, it will add quote because of #
-			}
-			return sb.append('!').append(((ExternSheetReferenceToken)ptg).format2DRefAsString()).toString();
-		}
-
-		@Override
-		public String toInternalFormulaString(FormulaRenderingWorkbook book) {
-			throw new UnsupportedOperationException("unsupport internal formula string");
-		}
-	}
-
-	//ZSS-742
+	//ZSS-747
 	@Override
 	public FormulaExpression movePtgs(FormulaExpression fe, final SheetRegion region, final int rowOffset, final int columnOffset, FormulaParseContext context) {
 		return move(fe.getFormulaString(), region, rowOffset, columnOffset, context);
@@ -1239,11 +1180,16 @@ public class FormulaEngineImpl implements FormulaEngine {
 		AbstractBookSeriesAdv series = (AbstractBookSeriesAdv)book.getBookSeries();
 		DependencyTable table = series.getDependencyTable();
 		ParsingBook parsingBook = new ParsingBook(book);
-		for(Ptg ptg : fexpr.getPtgs(context)) {
+		for(Ptg ptg : fexpr.getPtgs()) {
 			Ref precedent = toDenpendRef(context, parsingBook, ptg);
 			if(precedent != null) {
 				table.add(dependent, precedent);
 			}
 		}
+	}
+	
+	//ZSS-759
+	protected ValueEval evaluateFormulaExpression(WorkbookEvaluator evaluator, int sheetIndex, FormulaExpression expr, boolean ignoreDereference) {
+		return evaluator.evaluate(sheetIndex, expr.getFormulaString(), ignoreDereference);
 	}
 }

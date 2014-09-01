@@ -20,6 +20,8 @@ import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.SCell;
 import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.model.SCell.CellType;
+import org.zkoss.zss.model.sys.formula.FormulaExpression;
+import org.zkoss.zss.model.impl.CellImpl;
 /**
  * 
  * @author Pao
@@ -42,7 +44,7 @@ public class EvalSheet implements EvaluationSheet {
 		return cell != null ? new EvalCell(cell) : null;
 	}
 
-	private class EvalCell implements EvaluationCell {
+	/*package*/ class EvalCell implements EvaluationCell {
 
 		private SCell cell;
 		private Key key;
@@ -141,6 +143,12 @@ public class EvalSheet implements EvaluationSheet {
 			if(!(obj instanceof EvaluationCell))
 				return false;
 			return key.equals(((EvaluationCell)obj).getIdentityKey());
+		}
+		
+		//ZSS-759
+		public FormulaExpression getFormulaExpression() {
+			return cell.getType() == CellType.FORMULA ? 
+					(FormulaExpression) ((CellImpl)cell).getValue(false) : null;
 		}
 	}
 

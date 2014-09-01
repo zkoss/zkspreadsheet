@@ -16,10 +16,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.model.sys.formula;
 
-import java.util.Locale;
-
 import org.zkoss.poi.ss.formula.ptg.Ptg;
-import org.zkoss.zss.model.CellRegion;
 import org.zkoss.zss.model.sys.dependency.Ref;
 
 /**
@@ -56,11 +53,12 @@ public interface FormulaExpression {
 	 * Returns the cached parsing things.
 	 * @since 3.5.1
 	 */
-	Ptg[] getPtgs(FormulaParseContext context);
+	Ptg[] getPtgs();
 
 	//ZSS-747
 	/**
-	 * Returns whether this is a multiple-area formula (used in char data)
+	 * Returns whether this is a multiple-area formula used in char data; 
+	 * e.g. (A1, B1, Sheet2!A1:B2).
 	 * @since 3.5.1
 	 */
 	boolean isMultipleAreaFormula();

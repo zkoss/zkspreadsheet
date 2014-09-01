@@ -28,6 +28,8 @@ import org.zkoss.poi.xssf.model.IndexedUDFFinder;
 import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.SName;
 import org.zkoss.zss.model.SSheet;
+import org.zkoss.zss.model.sys.formula.FormulaExpression;
+import org.zkoss.zss.model.impl.AbstractNameAdv;
 
 /**
  * modified from org.zkoss.poi.xssf.usermodel.XSSFEvaluationWorkbook
@@ -52,10 +54,10 @@ public final class EvalBook implements EvaluationWorkbook, FormulaParsingWorkboo
 		return _nbook;
 	}
 
+	//ZSS-759
 	public Ptg[] getFormulaTokens(EvaluationCell cell) {
-		String text = cell.getStringCellValue();
-		int sheetIndex = getSheetIndex(cell.getSheet());
-		return getFormulaTokens(sheetIndex, text);
+		FormulaExpression fexpr = ((EvalSheet.EvalCell)cell).getFormulaExpression();
+		return fexpr != null ? fexpr.getPtgs() : null;
 	}
 
 	public Ptg[] getFormulaTokens(int sheetIndex, String formula) {
@@ -83,7 +85,7 @@ public final class EvalBook implements EvaluationWorkbook, FormulaParsingWorkboo
 		}
 		if(nname != null) {
 			int index = _nbook.getNames().indexOf(nname);
-			return new EvalName(name, index, nname.getRefersToFormula(), sheetIndex);
+			return new EvalName(name, index, ((AbstractNameAdv)nname).getRefersToFormulaExpression(), sheetIndex); //ZSS-759
 		} else {
 			return null;
 		}
@@ -95,7 +97,7 @@ public final class EvalBook implements EvaluationWorkbook, FormulaParsingWorkboo
 		if(name != null) {
 			SName nname = _nbook.getNameByName(name);
 			if(nname != null) {
-				return new EvalName(name, namePtg.getIndex(), nname.getRefersToFormula(), -1);
+				return new EvalName(name, namePtg.getIndex(), ((AbstractNameAdv)nname).getRefersToFormulaExpression(), -1); //ZSS-759
 			}
 		}
 		return new EvalName(name, namePtg.getIndex(), null, -1);
@@ -177,19 +179,33 @@ public final class EvalBook implements EvaluationWorkbook, FormulaParsingWorkboo
 
 		private final String name;
 		private final int nameIndex;
-		private String refersToFormula;
+//		private String refersToFormula;
+		private FormulaExpression refersToFormulaExpression;
 		private int sheetIndex;
 
+		//ZSS-759
+//		/**
+//		 * @param name
+//		 * @param nameIndex
+//		 * @param refersToFormula
+//		 * @param sheetIndex sheet index; if -1, indicates whole book.
+//		 */
+//		public EvalName(String name, int nameIndex, String refersToFormula, int sheetIndex) {
+//			this.name = name;
+//			this.nameIndex = nameIndex;
+//			this.refersToFormula = refersToFormula;
+//			this.sheetIndex = sheetIndex;
+//		}
 		/**
 		 * @param name
 		 * @param nameIndex
 		 * @param refersToFormula
 		 * @param sheetIndex sheet index; if -1, indicates whole book.
 		 */
-		public EvalName(String name, int nameIndex, String refersToFormula, int sheetIndex) {
+		public EvalName(String name, int nameIndex, FormulaExpression refersToFormula, int sheetIndex) {
 			this.name = name;
 			this.nameIndex = nameIndex;
-			this.refersToFormula = refersToFormula;
+			this.refersToFormulaExpression = refersToFormula;
 			this.sheetIndex = sheetIndex;
 		}
 
@@ -197,18 +213,21 @@ public final class EvalBook implements EvaluationWorkbook, FormulaParsingWorkboo
 			return new NamePtg(nameIndex);
 		}
 
+		//ZSS-759
 		public Ptg[] getNameDefinition() {
 			// DON'T clear parsing cache here, because of we still evaluate formula here
-			return FormulaParser.parse(refersToFormula, _parsingBook, FormulaType.NAMEDRANGE, sheetIndex);
+			return refersToFormulaExpression != null ? 
+					refersToFormulaExpression.getPtgs() : null;
 		}
 
 		public String getNameText() {
 			return name;
 		}
 
+		//ZSS-759
 		public boolean hasFormula() {
 			// according to spec. 18.2.5 definedName (Defined Name)
-			return !isFunctionName() && refersToFormula != null && refersToFormula.length() > 0;
+			return !isFunctionName() && refersToFormulaExpression != null;
 		}
 
 		public boolean isFunctionName() {

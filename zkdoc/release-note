@@ -7,6 +7,7 @@ ZK Spreadsheet 3.5.1
   ZSS-725 Provide a richtext editor for inline cell styles
   ZSS-747 Cache formula parsing results
   ZSS-750 Optimize setEditText() to avoid set into the same cell with the same text
+  ZSS-759 Optimize evaluation to use the cached Ptg[]
 
 *Bugs:
   ZSS-722 autoFill() with non-VALUE option should not copy value over.
