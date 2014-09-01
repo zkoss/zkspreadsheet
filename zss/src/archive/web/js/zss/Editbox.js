@@ -998,6 +998,7 @@ zss.Editbox = zk.$extends(zul.inp.InputWidget, {
 		this.sh = 0;//height to show
 		var sheet = this.sheet,
 			txtcmp = cellcmp.lastChild,
+			fontcmp = txtcmp.lastChild,
 			editorcmp = this.comp,
 			$edit = jq(editorcmp);
 
@@ -1031,7 +1032,8 @@ zss.Editbox = zk.$extends(zul.inp.InputWidget, {
 			'left': jq.px(l), 'top': jq.px(t), 'line-height': sheet.lineHeight});
 		//if (!zk.ie || zk.ie >= 11)
 		//	$edit.css('display', 'block');
-		zcss.copyStyle(txtcmp, editorcmp, ["font-family","font-size","font-weight","font-style","color","text-decoration","text-align"],true);
+		zcss.copyStyle(txtcmp, editorcmp, ["text-align"], true);
+		zcss.copyStyle(fontcmp, editorcmp, ["font-family","font-size","font-weight","font-style","color","text-decoration"], true);
 		zcss.copyStyle(cellcmp, editorcmp, ["background-color"], true);
 
 		this._startEditing(noFocus);
