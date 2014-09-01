@@ -47,7 +47,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 					textRange.moveStart('character', 1);
 				};
 			} else {
-				return jq.noop;
+				return zk.$void;
 			}
 		}(),
 		// Returns the range's text offset including br tags.
@@ -69,7 +69,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 						}
 					}
 					return range.text.length + count;
-				}
+				};
 			} else {
 				return function () {
 					return 0;
@@ -118,7 +118,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 				};
 			} else {
 				return function () {
-					return [0, 0]
+					return [0, 0];
 				};
 			}
 		}(),
@@ -141,7 +141,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 					textRange.select();
 				};
 			} else {
-				return jq.noop;
+				return zk.$void;
 			}
 		}(),
 		placeCaretAtEnd = function () {
@@ -164,7 +164,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 					textRange.select();
 				};
 			} else {
-				return jq.noop;
+				return zk.$void;
 			}
 		}(),
 		complementHTML = function () {
@@ -183,7 +183,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 					}
 				};
 			} else {
-				return jq.noop;
+				return zk.$void;
 			}
 		}(),
 		appendBrNode = function () {
@@ -197,7 +197,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 					}
 				};
 			} else {
-				return jq.noop;
+				return zk.$void;
 			}
 		}(),
 		stripBrNode = function () {
@@ -216,9 +216,9 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 					if (lastChild && lastChild.nodeName.toLowerCase() == 'br' && jq(lastChild).attr('type') == '_moz') {
 						node.removeChild(lastChild);
 					}
-				}
+				};
 			} else {
-				return jq.noop;
+				return zk.$void;
 			}
 		}();
 
@@ -242,8 +242,8 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 	
 	function syncEditorHeight (n) {
 		var ch = n.clientHeight,
-			cw = n.clientWidth,
-			sw = n.scrollWidth,
+			//cw = n.clientWidth,
+			//sw = n.scrollWidth,
 			sh = n.scrollHeight,
 			hsb = zkS._hasScrollBar(n),//has hor scrollbar
 			vsb = zkS._hasScrollBar(n, true);//has ver scrollbar
@@ -283,7 +283,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 			wgt.focus();
 		} else {
 			// 20140603, RaymondChao: firefox needs setTimeout to refocus when blur.
-			setTimeout(function () {wgt.focus()});
+			setTimeout(function () {wgt.focus();});
 		}
 	}
 
@@ -385,8 +385,8 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 	function getSheetName (sheet, sheetId) {
 		var labels = sheet._wgt.getSheetLabels();
 		for (var prop in labels) {
-			if (labels[prop]['id'] == sheetId) {
-				return quoteName(labels[prop]['name']);
+			if (labels[prop].id == sheetId) {
+				return quoteName(labels[prop].name);
 			}
 		}
 	}
@@ -470,21 +470,21 @@ zss.FormulabarEditor = zk.$extends(zul.inp.InputWidget, {
 
 			// adjust target position
 			// and check position is most-top or bottom
-			p = p != undefined ? p : getSelectionRange(this.getInputNode(), true)[1];
-		if (p <= 0) { // scroll to most-top
+			pos = p !== undefined ? p : getSelectionRange(this.getInputNode(), true)[1];
+		if (pos <= 0) { // scroll to most-top
 			jq(n).scrollTop(0); // ZSS-205: scroll the parent, don't move the input
 			return;
 		}
 		
 		// ZSS-205: scroll to specific position
-		var textHeight = this.getTextHeight(this.getValue().substring(0, p)),
+		var textHeight = this.getTextHeight(this.getValue().substring(0, pos)),
 			sp = textHeight - this.getLineHeight();
 		jq(n).scrollTop(sp);
    	},
    	/** one line height in formula editor */
    	getLineHeight: function() {
    		// calculate once and keep the result
-   		if(this._lineHeight == undefined) {
+   		if(this._lineHeight === undefined) {
    			// use one char to simulate one line and get the height
    			this._lineHeight = this.getTextHeight('a');
    		}
@@ -499,7 +499,7 @@ zss.FormulabarEditor = zk.$extends(zul.inp.InputWidget, {
    		// 20140609, RaymondChao: it's need an additional <br> if text ends with \n 
    		support.appendChild(createBrNode());
    		height = support.scrollHeight;
-   		$support.text('') // clear
+   		$support.text(''); // clear
    		return height;
    	},
    	/**
@@ -719,7 +719,7 @@ zss.Editbox = zk.$extends(zul.inp.InputWidget, {
 	_type: 'inlineEditing',
 	$init: function (sheet) {
 		this.$supers(zss.Editbox, '$init', []);
-		var wgt = this._wgt = sheet._wgt;
+		this._wgt = sheet._wgt;
 		
 		this.sheet = sheet;
 		this.row = -1;
@@ -908,8 +908,7 @@ zss.Editbox = zk.$extends(zul.inp.InputWidget, {
 			return;
 		}
 		if (sheet.state == zss.SSheetCtrl.EDITING) {
-			var	sheet = this.sheet,
-				formulabarEditor = sheet.formulabarEditor,
+			var	formulabarEditor = sheet.formulabarEditor,
 				value = sheet.inlineEditor.getValue(),
 				keycode = evt.keyCode,
 				info = sheet.editingFormulaInfo,
@@ -964,7 +963,7 @@ zss.Editbox = zk.$extends(zul.inp.InputWidget, {
 		}
 		var input = this.comp;
 		jq(input).html(nl2br(v));
-		complementHTML(input)
+		complementHTML(input);
 		this.autoAdjust(true);
 	},
 	_startEditing: function (noFocus) {
@@ -999,6 +998,7 @@ zss.Editbox = zk.$extends(zul.inp.InputWidget, {
 		this.sh = 0;//height to show
 		var sheet = this.sheet,
 			txtcmp = cellcmp.lastChild,
+			fontcmp = txtcmp.lastChild,
 			editorcmp = this.comp,
 			$edit = jq(editorcmp);
 
@@ -1032,7 +1032,8 @@ zss.Editbox = zk.$extends(zul.inp.InputWidget, {
 			'left': jq.px(l), 'top': jq.px(t), 'line-height': sheet.lineHeight});
 		//if (!zk.ie || zk.ie >= 11)
 		//	$edit.css('display', 'block');
-		zcss.copyStyle(txtcmp, editorcmp, ["font-family","font-size","font-weight","font-style","color","text-decoration","text-align"],true);
+		zcss.copyStyle(txtcmp, editorcmp, ["text-align"], true);
+		zcss.copyStyle(fontcmp, editorcmp, ["font-family","font-size","font-weight","font-style","color","text-decoration"], true);
 		zcss.copyStyle(cellcmp, editorcmp, ["background-color"], true);
 
 		this._startEditing(noFocus);
