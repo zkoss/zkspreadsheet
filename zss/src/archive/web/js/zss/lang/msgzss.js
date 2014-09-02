@@ -20,6 +20,7 @@ msgzss.action = {
 	sheet: 'Sheet',
 	addSheet: 'Add sheet',
 	deleteSheet: 'Delete',
+	copySheet: 'Copy',
 	renameSheet: 'Rename',
 	moveSheetLeft: 'Move left',
 	moveSheetRight: 'Move right',

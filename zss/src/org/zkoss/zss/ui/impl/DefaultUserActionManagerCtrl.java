@@ -59,6 +59,7 @@ import org.zkoss.zss.ui.impl.ua.ApplyBorderHandler;
 import org.zkoss.zss.ui.impl.ua.ClearCellHandler;
 import org.zkoss.zss.ui.impl.ua.CloseBookHandler;
 import org.zkoss.zss.ui.impl.ua.CopyHandler;
+import org.zkoss.zss.ui.impl.ua.CopySheetHandler;
 import org.zkoss.zss.ui.impl.ua.CutHandler;
 import org.zkoss.zss.ui.impl.ua.DeleteCellLeftHandler;
 import org.zkoss.zss.ui.impl.ua.DeleteCellUpHandler;
@@ -153,6 +154,7 @@ public class DefaultUserActionManagerCtrl implements UserActionManagerCtrl,UserA
 		registerHandler(category, AuxAction.ADD_SHEET.getAction(), new AddSheetHandler());
 		registerHandler(category, AuxAction.DELETE_SHEET.getAction(), new DeleteSheetHandler());	
 		registerHandler(category, AuxAction.RENAME_SHEET.getAction(), new RenameSheetHandler());
+		registerHandler(category, AuxAction.COPY_SHEET.getAction(), new CopySheetHandler());
 		registerHandler(category, AuxAction.MOVE_SHEET_LEFT.getAction(), new MoveSheetHandler(true));
 		registerHandler(category, AuxAction.MOVE_SHEET_RIGHT.getAction(), new MoveSheetHandler(false));
 

@@ -16,6 +16,9 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.api;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.zkoss.image.AImage;
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.Chart;
@@ -396,6 +399,38 @@ public class SheetOperationUtil {
 					return;
 				}
 				range.deleteSheet();
+			}
+		});
+
+	}
+	
+	/**
+	 * Copy the sheet with the naming pattern "ORIGINAL_FILENAME (n)". 
+	 * @param range the range to be applied
+	 */
+	public static void CopySheet(Range range) {
+		range.sync(new RangeRunner() {
+			public void run(Range range) {
+				String prefix = range.getSheetName();
+				int num = 1;
+				String name = null;
+				
+				Pattern pattern = Pattern.compile("(.*) \\(([0-9]+)\\)$");
+				Matcher matcher = pattern.matcher(prefix);
+				if(matcher.find()) {
+					prefix = matcher.group(1);
+					num = Integer.parseInt(matcher.group(2));
+				}
+
+				for(int i = 0, length = range.getBook().getNumberOfSheets(); i <= length; i++) {
+					String n = prefix + " (" + ++num + ")";
+					if(range.getBook().getSheet(n) == null) {
+						name = n;
+						break;
+					}
+				}
+				
+				range.cloneSheet(name);
 			}
 		});
 

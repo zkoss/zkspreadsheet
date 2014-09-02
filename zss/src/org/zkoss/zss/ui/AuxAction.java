@@ -29,6 +29,7 @@ public enum AuxAction {
 	 ADD_SHEET("addSheet"),
 	 DELETE_SHEET("deleteSheet"),
 	 RENAME_SHEET("renameSheet"),
+	 COPY_SHEET("copySheet"),
 	 MOVE_SHEET_LEFT("moveSheetLeft"),
 	 MOVE_SHEET_RIGHT("moveSheetRight"),
 	 PROTECT_SHEET("protectSheet"),
