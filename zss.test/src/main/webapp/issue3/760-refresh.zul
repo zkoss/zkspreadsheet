@@ -1,0 +1,54 @@
+<zk>
+Since 3.5.1
+<label multiline="true">
+0. You should see A2 is 1.
+1. Click "setEditText("2") on A1" button to set number 2 on A1
+2. You should see A2 change to number 3 and A1 show number 2.
+3. Click "setEditText("3") on A1 with autoReferesh turned off" button to set number 3 on A1
+4. You should still see A2 show number 3 (no change) and A1 show number 2 (no change).
+5. Click "refresh(false) on A1" to refresh A1 cell only.
+6. You should now see A2 show number 3 (no change) and A1 changed to number 3.
+7. Click "refresh(true) on A1" to refresh both A1 cell and its dependants (which is A2).
+8. You should now see A2 change to number 4 and A1 show number 3 (no change). 
+</label>
+	<button label='setEditText("2") on A1' onClick="setEditText2A1()" />
+	<button label='setEditText("3") on A1 with autoRefresh turned off' onClick="setEditText3A1WithAutoRefreshOff()" />
+	<button label="refresh(false) on A1" onClick="refreshA1False()" />
+	<button label="refresh(true) on A1" onClick="refreshA1()" />
+	<button label="invalidate()" onClick="invalidate()" />
+	<spreadsheet id="ss" src="/issue3/book/760-refresh.xlsx" vflex="1"  maxVisibleRows="150"
+		maxVisibleColumns="40" showToolbar="true" showSheetbar="true" showFormulabar="true" width="600px"/>
+	<zscript><![CDATA[
+	import org.zkoss.zss.api.*;
+	import org.zkoss.zss.api.model.*;
+	
+	public void setEditText2A1() {
+		Range selectedRange = Ranges.range(ss.getSelectedSheet(), "A1");
+		selectedRange.setCellEditText("2");
+	}
+
+	public void setEditText3A1WithAutoRefreshOff() {
+		Range selectedRange = Ranges.range(ss.getSelectedSheet(), "A1");
+		boolean old = selectedRange.setAutoRefresh(false);
+		try {
+			selectedRange.setCellEditText("3");
+		} finally {
+			selectedRange.setAutoRefresh(old);
+		}
+	}
+	
+	public void refreshA1False() {
+		Range selectedRange = Ranges.range(ss.getSelectedSheet(), "A1");
+		selectedRange.refresh(false);
+	}
+	
+	public void refreshA1() {
+		Range selectedRange = Ranges.range(ss.getSelectedSheet(), "A1");
+		selectedRange.refresh(true);
+	}
+	
+	public void invalidate() {
+		ss.invalidate();
+	}
+]]></zscript>
+</zk>

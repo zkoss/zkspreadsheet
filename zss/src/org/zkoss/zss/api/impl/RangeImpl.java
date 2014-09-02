@@ -812,4 +812,14 @@ public class RangeImpl implements Range{
 				EnumUtil.toFontUnderline(underline));
 		return new FontImpl(((BookImpl) getBook()).getRef(), new SimpleRef<SFont>(font));
 	}
+
+	@Override
+	public void refresh(boolean includeDependants) {
+		_range.refresh(includeDependants);
+	}
+	
+	@Override
+	public boolean setAutoRefresh(boolean auto) {
+		return _range.setAutoRefresh(auto);
+	}
 }

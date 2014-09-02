@@ -8,6 +8,8 @@ ZK Spreadsheet 3.5.1
   ZSS-747 Cache formula parsing results
   ZSS-750 Optimize setEditText() to avoid set into the same cell with the same text
   ZSS-759 Optimize evaluation to use the cached Ptg[]
+  ZSS-751 Provide a new APIs which refresh the specified range.
+  ZSS-760 Provide control to avoid unnecessary auto update on setXxx()
 
 *Bugs:
   ZSS-722 autoFill() with non-VALUE option should not copy value over.

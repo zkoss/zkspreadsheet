@@ -514,4 +514,16 @@ import org.zkoss.zss.range.*;
 			TypeOffset typeOffset, Underline underline) {
 		return null;
 	}
+
+	@Override
+	public void refresh(boolean includeDependants) {
+		// do nothing
+		
+	}
+
+	@Override
+	public boolean setAutoRefresh(boolean auto) {
+		// always return true; and no way to change it
+		return true;
+	}
 }

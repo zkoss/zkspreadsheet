@@ -965,4 +965,21 @@ public interface Range {
 	public Font getOrCreateFont(Boldweight boldweight, Color color,
 			int fontHeight, String fontName, boolean italic, boolean strikeout,
 			TypeOffset typeOffset, Underline underline);
+
+	/**
+	 * Enforce evaluation(if not cached) and refresh UI of this range and its 
+	 * dependent cells if the includeDependents is true. 
+	 * @since 3.5.1
+	 */
+	public void refresh(boolean includeDependants);
+	
+	/**
+	 * Turn on(true)/off(false) of auto refresh of this range and return 
+	 * previous on/off status; default is true.
+	 * 
+	 * @param auto whether refresh automatically
+	 * @return previous status
+	 * @since 3.5.1
+	 */
+	public boolean setAutoRefresh(boolean auto);
 }

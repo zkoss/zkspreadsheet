@@ -29,7 +29,6 @@ import java.util.concurrent.locks.ReadWriteLock;
 import org.zkoss.poi.ss.usermodel.ZssContext;
 import org.zkoss.poi.ss.util.WorkbookUtil;
 import org.zkoss.lang.Strings;
-import org.zkoss.util.Locales;
 import org.zkoss.zss.model.CellRegion;
 import org.zkoss.zss.model.InvalidModelOpException;
 import org.zkoss.zss.model.PasteOption;
@@ -52,6 +51,7 @@ import org.zkoss.zss.model.SDataValidation.OperatorType;
 import org.zkoss.zss.model.SDataValidation.ValidationType;
 import org.zkoss.zss.model.SHyperlink;
 import org.zkoss.zss.model.SHyperlink.HyperlinkType;
+import org.zkoss.zss.model.ModelEvents;
 import org.zkoss.zss.model.SFont;
 import org.zkoss.zss.model.SPicture;
 import org.zkoss.zss.model.SRichText;
@@ -107,6 +107,7 @@ public class RangeImpl implements SRange {
 	private int _row = Integer.MAX_VALUE;
 	private int _lastColumn = Integer.MIN_VALUE;
 	private int _lastRow = Integer.MIN_VALUE;
+	private boolean _autoRefresh = true;
 
 	public RangeImpl(SBook book) {
 		this._book = book;
@@ -228,6 +229,8 @@ public class RangeImpl implements SRange {
 	private abstract class CellVisitorForUpdate extends CellVisitor{
 		@Override
 		public void afterVisitAll(){
+			if (!_autoRefresh) return; // do not auto refresh
+			
 			SBookSeries bookSeries = getSheet().getBook().getBookSeries();
 			DependencyTable table = ((AbstractBookSeriesAdv)bookSeries).getDependencyTable();
 			for (EffectedRegion r : _rangeRefs) {
@@ -2059,5 +2062,39 @@ public class RangeImpl implements SRange {
 				return font;
 			}
 		}.doInWriteLock(getLock());
+	}
+	
+	//ZSS-751
+	//Enforce cell evaluation(if not cached) and refresh UI of this range.
+	@Override
+	public void refresh(final boolean includeDependants) {
+		new ReadWriteTask() {
+			@Override
+			public Object invoke() {
+				SBookSeries bookSeries = null;
+				DependencyTable table = null;
+				if (includeDependants) {
+					bookSeries = getSheet().getBook().getBookSeries();
+					table = ((AbstractBookSeriesAdv)bookSeries).getDependencyTable();
+				}
+				for (EffectedRegion r : _rangeRefs) {
+					final CellRegion region = r.region;
+					handleCellNotifyContentChange(new SheetRegion(r.sheet, region));
+					if (includeDependants) {
+						handleRefNotifyContentChange(bookSeries, table.getEvaluatedDependents(new RefImpl(r.sheet.getBook().getBookName(),r.sheet.getSheetName(),
+							region.getRow(),region.getColumn(),region.getLastRow(),region.getLastColumn())));
+					}
+				}
+				return null;
+			}
+		}.doInReadLock(getLock());
+	}
+	
+	//ZSS-760
+	// control whether auto refresh the spreadsheet when part of cells is modified.
+	public boolean setAutoRefresh(boolean auto) {
+		final boolean previous = _autoRefresh;
+		_autoRefresh = auto;
+		return previous;
 	}
 }
