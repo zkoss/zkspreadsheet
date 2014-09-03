@@ -31,6 +31,10 @@ zss.SheetMenupopup = zk.$extends(zul.menu.Menupopup, {
 				$action: 'renameSheet',
 				label: msgzss.action.renameSheet
 			}, wgt),
+			copy = this.copySheet = new zss.Menuitem({
+				$action: 'copySheet',
+				label: msgzss.action.copySheet
+			}, wgt),
 			protect = this.protectSheet = new zss.Menuitem({
 				$action: 'protectSheet',
 				label: msgzss.action.protectSheet, 
@@ -47,6 +51,7 @@ zss.SheetMenupopup = zk.$extends(zul.menu.Menupopup, {
 		
 		this.appendChild(del);
 		this.appendChild(rename);
+		this.appendChild(copy);
 		this.appendChild(protect);
 		
 		this.appendChild(new zul.menu.Menuseparator());
@@ -70,6 +75,9 @@ zss.SheetMenupopup = zk.$extends(zul.menu.Menupopup, {
 				tab.startEditing();
 		}
 	},
+	onClickCopySheet: function() {
+		this._wgt.fireSheetAction('copy');
+	},
 	onClickProtectSheet: function () {
 		this._wgt.fireSheetAction('protect');
 	},
@@ -91,12 +99,14 @@ zss.SheetMenupopup = zk.$extends(zul.menu.Menupopup, {
 		this.moveRight.listen({'onClick': this.proxy(this.onClickMoveSheetRight)});
 		this.moveLeft.listen({'onClick': this.proxy(this.onClickMoveSheetLeft)});
 		this.protectSheet.listen({'onClick': this.proxy(this.onClickProtectSheet)});
+		this.copySheet.listen({'onClick': this.proxy(this.onClickCopySheet)});
 		this.renameSheet.listen({'onClick': this.proxy(this.onClickRenameSheet)});
 		this.deleteSheet.listen({'onClick': this.proxy(this.onClickDeleteSheet)});
 	},
 	unbind_: function () {
 		this.deleteSheet.unlisten({'onClick': this.proxy(this.onClickDeleteSheet)});
 		this.renameSheet.unlisten({'onClick': this.proxy(this.onClickRenameSheet)});
+		this.copySheet.unlisten({'onClick': this.proxy(this.onClickCopySheet)});
 		this.protectSheet.unlisten({'onClick': this.proxy(this.onClickProtectSheet)});
 		this.moveLeft.unlisten({'onClick': this.proxy(this.onClickMoveSheetLeft)});
 		this.moveRight.unlisten({'onClick': this.proxy(this.onClickMoveSheetRight)});
