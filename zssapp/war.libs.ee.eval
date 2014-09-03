@@ -19,6 +19,7 @@ commons-collections.jar
 commons-logging.jar
 commons-digester.jar
 itext.jar
+jsoup.jar
 zpoi.jar
 zss.jar
 zssmodel.jar
