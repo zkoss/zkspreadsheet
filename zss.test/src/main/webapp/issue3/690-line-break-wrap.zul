@@ -1,0 +1,10 @@
+<zk>
+Since 3.5.1
+<label multiline="true">
+1. enter "hello\nworld" into any one of the cell and press enter, then make sure this cell will get wrap-text on.
+(you must use "ctrl + enter" or "alt + enter" to get symbol "\n" in this case. it's not two words "\" and "n")
+2. afterward, make sure the height and width of focus mark is fine.
+3. press ctrl + z to make sure we can undo this action.
+</label>
+	<spreadsheet id="ss" vflex="1" src="/issue3/book/blank.xlsx" showToolbar="true" showSheetbar="true" showFormulabar="true" width="600px"/>
+</zk>

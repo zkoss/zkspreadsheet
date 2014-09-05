@@ -19,6 +19,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.ui.impl.undo;
 
 
+import org.zkoss.zss.api.CellOperationUtil;
 import org.zkoss.zss.api.IllegalFormulaException;
 import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.Ranges;
@@ -33,6 +34,7 @@ public abstract class AbstractEditTextAction extends AbstractUndoableAction {
 
 	private String[][] oldTexts = null;
 	private boolean[][] isRichTexts = null;
+	private boolean[][] isWrapTexts = null;
 	
 	public AbstractEditTextAction(String label,Sheet sheet,int row, int column, int lastRow,int lastColumn){
 		super(label,sheet,row,column,lastRow,lastColumn);
@@ -68,6 +70,7 @@ public abstract class AbstractEditTextAction extends AbstractUndoableAction {
 		Sheet sheet = getReservedSheet();
 		oldTexts = new String[lastRow-row+1][lastColumn-column+1];
 		isRichTexts = new boolean[lastRow-row+1][lastColumn-column+1];
+		isWrapTexts = new boolean[lastRow-row+1][lastColumn-column+1];
 		for(int i=row;i<=lastRow;i++){
 			for(int j=column;j<=lastColumn;j++){
 				Range r = Ranges.range(sheet,i,j);
@@ -76,6 +79,7 @@ public abstract class AbstractEditTextAction extends AbstractUndoableAction {
 					oldTexts[i-row][j-column] = null;
 				}else {
 					final String richText = d.getRichText();
+					isWrapTexts[i-row][j-column] = r.getCellStyle().isWrapText();
 					if (richText != null) {
 						isRichTexts[i-row][j-column] = true;
 						oldTexts[i-row][j-column] = richText;
@@ -128,6 +132,7 @@ public abstract class AbstractEditTextAction extends AbstractUndoableAction {
 			for(int j=column;j<=lastColumn;j++){
 				Range r = Ranges.range(sheet,i,j);
 				try{
+					CellOperationUtil.applyWrapText(r, isWrapTexts[i-row][j-column]);
 					if (isRichTexts[i-row][j-column]) {
 						r.setCellRichText(oldTexts[i-row][j-column]);
 					} else {

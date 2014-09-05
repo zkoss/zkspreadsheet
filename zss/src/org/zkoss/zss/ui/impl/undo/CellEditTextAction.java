@@ -18,6 +18,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.ui.impl.undo;
 
+import org.zkoss.zss.api.CellOperationUtil;
 import org.zkoss.zss.api.IllegalFormulaException;
 import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.Ranges;
@@ -49,6 +50,9 @@ public class CellEditTextAction extends AbstractEditTextAction {
 		if(_editText!=null && !protect){
 			Range r = Ranges.range(_sheet,_row,_column,_lastRow,_lastColumn);
 			r.setCellEditText(_editText);
+			
+			if(_editText.contains("\n"))
+				CellOperationUtil.applyWrapText(r, true);
 		}else{
 			for(int i=_row;i<=_lastRow;i++){
 				for(int j=_column;j<=_lastColumn;j++){
