@@ -888,7 +888,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			} else
 				this.triggerOverflowColumn_(null, col);// no need to invoke 
 			
-			this._syncColFocusAndSelection(col, col + size - 1);
+			this._syncColFocusAndSelection(col);
 		} else if (result.type == "row") {//jump to another bolck, not a neighbor
 			var row = result.row,
 				size = result.size,
@@ -919,7 +919,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 				block.reloadBlock("south");
 				lfv = false;
 			}
-			this._syncRowFocusAndSelection(row, row + size - 1);
+			this._syncRowFocusAndSelection(row);
 		}
 		
 		dp._fixSize(this.activeBlock);
@@ -2120,7 +2120,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		}
 
 		//sync focus and selection area
-		this._syncColFocusAndSelection(col, col);
+		this._syncColFocusAndSelection(col);
 
 		if (fireevent) {
 			this._wgt.fire('onHeaderUpdate', 
@@ -2141,26 +2141,26 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			}
 		}
 	},
-	_syncColFocusAndSelection: function(left, right) {
+	_syncColFocusAndSelection: function(left) {
 		var focPos = this.getLastFocus(),
 			fCol = focPos.column,
 			ls = this.getLastSelection(),
 			selL = ls.left,
 			selR = ls.right;
-		if (left <= fCol && fCol <= right)
+		if (left <= fCol)
 			this.moveCellFocus(focPos.row, fCol);
-		if (right >= selL && left <= selR)
+		if (left <= selR)
 			this.moveCellSelection(selL, ls.top, selR, ls.bottom);
 	},
-	_syncRowFocusAndSelection: function(top, bottom) {
+	_syncRowFocusAndSelection: function(top) {
 		var focPos = this.getLastFocus(),
 			fRow = focPos.row,
 			ls = this.getLastSelection(),
 			selT = ls.top,
 			selB = ls.bottom;
-		if (top <= fRow && fRow <= bottom)
+		if (top <= fRow)
 			this.moveCellFocus(fRow, focPos.column);
-		if (bottom >= selT && top <= selB)
+		if (top <= selB)
 			this.moveCellSelection(ls.left, selT, ls.right, selB);
 	},
 	_appendZSW: function(col, zsw) {
@@ -2295,7 +2295,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			this._wgt.syncWidgetPos(row, -1);
 		}
 		//sync focus and selection area
-		this._syncRowFocusAndSelection(row, row);
+		this._syncRowFocusAndSelection(row);
 		this.fire('onRowHeightChanged', {row: row});
 
 		if (fireevent) {
