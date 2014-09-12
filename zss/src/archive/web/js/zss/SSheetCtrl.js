@@ -1392,9 +1392,9 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		var dataPanel = this.dp;
 		// ZSS-681: focus textarea before open stylepanel
 		if (typeof dataPanel.selectFocustagId == "number") {
-			dataPanel.selectFocustag();
 			window.clearTimeout(dataPanel.selectFocustagId);
 			delete dataPanel.selectFocustagId;
+			dataPanel.selectFocustag();
 		}
 		this._doMouseclick(evt, "rc");
 		evt.stop();//always stop right (context) click.

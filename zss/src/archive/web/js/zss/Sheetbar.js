@@ -398,6 +398,11 @@ zss.SheetSelector = zk.$extends(zul.tab.Tabbox, {
 		var tab = this.tabs.firstChild;
 		for (;tab; tab = tab.nextSibling) {
 			if (sheetId == tab.getSheetUuid()) {
+				var sheet = this._wgt.sheetCtrl;
+				if (sheet) {
+					// ZSS-762: blur spreadsheet to prevent it refocuses to inline editor
+					sheet.dp._doFocusLost();
+				}
 				this.setSelectedTab(tab);
 				break;
 			}
