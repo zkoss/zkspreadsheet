@@ -31,6 +31,7 @@ ZK Spreadsheet 3.5.1
   ZSS-752 Failed to apply style to a cell with rich text correctly.
   ZSS-756 Unexpected messagebox showed in the Insert Function Window
   ZSS-743 Possible performance impact due to formula re-evaluation
+  ZSS-762 context menu on sheet bar may be closed when we right click on the inactive sheet tab
   
 ** Upgrade Notes
   * Following api are deprecated
