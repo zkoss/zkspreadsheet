@@ -40,8 +40,8 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 			if(keycode == _skey[i]) return true;
 		if (zk.opera && _opearKey.$contains(keycode))
 			return true;
-		//firefox fire + and ; with keycode 61 & 59
-		if(zk.gecko && (keycode == 61 || keycode == 59)) return true;
+		//firefox fire +(61) ;(59) -(173)
+		if(zk.gecko && (keycode == 61 || keycode == 59 || keycode == 173)) return true;
 		
 		return false;
 	}
