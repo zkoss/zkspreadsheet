@@ -32,6 +32,7 @@ ZK Spreadsheet 3.5.1
   ZSS-756 Unexpected messagebox showed in the Insert Function Window
   ZSS-743 Possible performance impact due to formula re-evaluation
   ZSS-762 context menu on sheet bar may be closed when we right click on the inactive sheet tab
+  ZSS-710 When rename sheet, cannot press "Delete" key to delete a character
   
 ** Upgrade Notes
   * Following api are deprecated

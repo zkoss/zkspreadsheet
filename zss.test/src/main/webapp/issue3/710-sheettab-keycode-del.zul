@@ -1,0 +1,10 @@
+<zk>
+Since 3.5.1
+<label multiline="true">
+1. double-click on the sheet tab "Sheet2" to start editing mode.
+2. make sure DELETE key works fine.
+3. make sure ESC key works fine.
+4. make sure ENTER key works fine.
+</label>
+	<spreadsheet id="ss" vflex="1" src="/issue3/book/blank.xlsx" showToolbar="true" showSheetbar="true" showFormulabar="true" width="600px"/>
+</zk>
