@@ -155,6 +155,12 @@ zss.SheetTab = zk.$extends(zul.tab.Tab, {
 			onBlur: this.proxy(this.onStopEditing), // ZSS-308: spec. changed > do rename process when blurring 
 			onOK: this.proxy(this.onStopEditing), // send by afterKeyDown_(), no matter event propagation is stopped
 			onCancel: this.proxy(this.onCancelEditing), // send by afterKeyDown_(), no matter event propagation is stopped
+			afterKeyDown_: this.proxy(function(evt){
+				// editing doesn't need to be handled by CtrlKey detection in zss.Spreadsheet
+				// here we let ESC(27) ENTER(13) to be handled by Spreadsheet in order to get onOK and Cancel behavior
+				if(!this.editing || evt.keyCode === 27 || evt.keyCode === 13)
+					this.$supers(zul.inp.InputWidget, 'afterKeyDown_', arguments);
+			}),
 			sclass: 'zssheettab-rename-textbox'
 		}));
 	},
