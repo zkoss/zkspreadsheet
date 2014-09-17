@@ -26,7 +26,9 @@ import org.zkoss.util.logging.Log;
 import org.zkoss.zss.model.*;
 import org.zkoss.zss.model.SCell.CellType;
 import org.zkoss.zss.model.SRichText.Segment;
+import org.zkoss.zss.model.impl.HeaderFooterImpl;
 import org.zkoss.zss.model.impl.sys.formula.FormulaEngineImpl;
+import org.zkoss.zss.model.util.Strings;
 
 /**
  * Common exporting behavior for both XLSX and XLS.
@@ -174,16 +176,88 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 		footer.setCenter(sheet.getViewInfo().getFooter().getCenterText());
 		footer.setRight(sheet.getViewInfo().getFooter().getRightText());
 
+		SPrintSetup sps = sheet.getPrintSetup();
+		
 		// Margin
-		poiSheet.setMargin(Sheet.LeftMargin, UnitUtil.pxToInche(sheet.getPrintSetup().getLeftMargin()));
-		poiSheet.setMargin(Sheet.RightMargin, UnitUtil.pxToInche(sheet.getPrintSetup().getRightMargin()));
-		poiSheet.setMargin(Sheet.TopMargin, UnitUtil.pxToInche(sheet.getPrintSetup().getTopMargin()));
-		poiSheet.setMargin(Sheet.BottomMargin, UnitUtil.pxToInche(sheet.getPrintSetup().getBottomMargin()));
+		poiSheet.setMargin(Sheet.LeftMargin, UnitUtil.pxToInche(sps.getLeftMargin()));
+		poiSheet.setMargin(Sheet.RightMargin, UnitUtil.pxToInche(sps.getRightMargin()));
+		poiSheet.setMargin(Sheet.TopMargin, UnitUtil.pxToInche(sps.getTopMargin()));
+		poiSheet.setMargin(Sheet.BottomMargin, UnitUtil.pxToInche(sps.getBottomMargin()));
+		poiSheet.setMargin(Sheet.HeaderMargin, UnitUtil.pxToInche(sps.getHeaderMargin()));
+		poiSheet.setMargin(Sheet.FooterMargin, UnitUtil.pxToInche(sps.getFooterMargin()));
 
 		// Print Setup Information
-		poiSheet.getPrintSetup().setPaperSize(PoiEnumConversion.toPoiPaperSize(sheet.getPrintSetup().getPaperSize()));
-		poiSheet.getPrintSetup().setLandscape(sheet.getPrintSetup().isLandscape());
+		PrintSetup poips = poiSheet.getPrintSetup();
+		
+		SHeader evenHeader = sps.getEvenHeader();
+		if (evenHeader != null) {
+			Header poiEvenHeader = poiSheet.getEvenHeader();
+			poiEvenHeader.setCenter(evenHeader.getCenterText());
+			poiEvenHeader.setLeft(evenHeader.getLeftText());
+			poiEvenHeader.setRight(evenHeader.getRightText());
+		}
+		SFooter evenFooter = sps.getEvenFooter();
+		if (evenFooter != null) {
+			Footer poiEvenFooter = poiSheet.getEvenFooter();
+			poiEvenFooter.setCenter(evenFooter.getCenterText());
+			poiEvenFooter.setLeft(evenFooter.getLeftText());
+			poiEvenFooter.setRight(evenFooter.getRightText());
+		}
+		SHeader firstHeader = sps.getFirstHeader();
+		if (firstHeader != null) {
+			Header poiFirstHeader = poiSheet.getFirstHeader();
+			poiFirstHeader.setCenter(firstHeader.getCenterText());
+			poiFirstHeader.setLeft(firstHeader.getLeftText());
+			poiFirstHeader.setRight(firstHeader.getRightText());
+		}
+		SFooter firstFooter = sps.getFirstFooter();
+		if (firstFooter != null) {
+			Footer poiFirstFooter = poiSheet.getFirstFooter();
+			poiFirstFooter.setCenter(firstFooter.getCenterText());
+			poiFirstFooter.setLeft(firstFooter.getLeftText());
+			poiFirstFooter.setRight(firstFooter.getRightText());
+		}
 
+		poiSheet.setAlignMargins(sps.isAlignWithMargins());
+		poips.setErrorsMode(sps.getErrorPrintMode());
+
+		poips.setFitHeight((short) sps.getFitHeight());
+		poips.setFitWidth((short) sps.getFitWidth());
+		
+		poiSheet.setHorizontallyCenter(sps.isHCenter());
+		poiSheet.setVerticallyCenter(sps.isVCenter());
+		poips.setLandscape(sps.isLandscape());
+		poips.setLeftToRight(sps.isLeftToRight());
+
+		int pageStart = sps.getPageStart();
+		poips.setUsePage(pageStart > 0);
+		poips.setPageStart((short) (pageStart > 0 ? pageStart : 0));
+		poips.setPaperSize(PoiEnumConversion.toPoiPaperSize(sps.getPaperSize()));
+		poips.setCommentsMode(sps.getCommentsMode());
+		poiSheet.setPrintGridlines(sps.isPrintGridlines());
+		poiSheet.setPrintHeadings(sps.isPrintHeadings());
+		poips.setScale((short)sps.getScale());
+		poiSheet.setScalWithDoc(sps.isScaleWithDoc());
+		poiSheet.setDiffOddEven(sps.isDifferentOddEvenPage());
+		poiSheet.setDiffFirst(sps.isDifferentFirstPage());
+		
+		int sheetIndex = workbook.getNumberOfSheets() - 1;
+		String area = sps.getPrintArea();
+		if (!Strings.isEmpty(area)) {
+			workbook.setPrintArea(sheetIndex, area);
+		}
+
+		final CellRegion rgn = sps.getRepeatingRowsTitle();
+		if (rgn != null) {
+			CellRangeAddress rowrng = new CellRangeAddress(rgn.getRow(), rgn.getLastRow(), -1, -1);
+			poiSheet.setRepeatingRows(rowrng);
+		}
+		
+		final CellRegion crgn= sps.getRepeatingColumnsTitle();
+		if (crgn != null) {
+			CellRangeAddress colrng = new CellRangeAddress(-1, -1, crgn.getColumn(), crgn.getLastColumn());
+			poiSheet.setRepeatingColumns(colrng);
+		}
 	}
 
 	protected void exportMergedRegions(SSheet sheet, Sheet poiSheet) {

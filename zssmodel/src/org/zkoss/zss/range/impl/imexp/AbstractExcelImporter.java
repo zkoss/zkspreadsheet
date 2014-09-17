@@ -27,6 +27,7 @@ import org.zkoss.util.Locales;
 import org.zkoss.zss.model.*;
 import org.zkoss.zss.model.SAutoFilter.NFilterColumn;
 import org.zkoss.zss.model.SPicture.Format;
+import org.zkoss.zss.model.impl.HeaderFooterImpl;
 
 /**
  * Contains common importing behavior for both XLSX and XLS. Spreadsheet
@@ -97,7 +98,7 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 			importExternalBookLinks();
 			int numberOfSheet = workbook.getNumberOfSheets();
 			for (int i = 0; i < numberOfSheet; i++) {
-				importSheet(workbook.getSheetAt(i));
+				importSheet(workbook.getSheetAt(i), i);
 			}
 			importNamedRange();
 			for (int i = 0; i < numberOfSheet; i++) {
@@ -202,7 +203,7 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 	/*
 	 * import sheet scope content from POI Sheet.
 	 */
-	protected SSheet importSheet(Sheet poiSheet) {
+	protected SSheet importSheet(Sheet poiSheet, int poiSheetIndex) {
 		SSheet sheet = book.createSheet(poiSheet.getSheetName());
 		sheet.setDefaultRowHeight(UnitUtil.twipToPx(poiSheet.getDefaultRowHeight()));
 		// reference XUtils.getDefaultColumnWidthInPx()
@@ -211,30 +212,106 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 		// reference FreezeInfoLoaderImpl.getRowFreeze()
 		sheet.getViewInfo().setNumOfRowFreeze(BookHelper.getRowFreeze(poiSheet));
 		sheet.getViewInfo().setNumOfColumnFreeze(BookHelper.getColumnFreeze(poiSheet));
-		sheet.getViewInfo().setDisplayGridlines(poiSheet.isDisplayGridlines());
+		sheet.getViewInfo().setDisplayGridlines(poiSheet.isDisplayGridlines()); // Note isDisplayGridlines() and isPrintGridlines() are different
 		sheet.getViewInfo().setColumnBreaks(poiSheet.getColumnBreaks());
 		sheet.getViewInfo().setRowBreaks(poiSheet.getRowBreaks());
 
+		SPrintSetup sps= sheet.getPrintSetup();
+		
 		SHeader header = sheet.getViewInfo().getHeader();
-		header.setCenterText(poiSheet.getHeader().getCenter());
-		header.setLeftText(poiSheet.getHeader().getLeft());
-		header.setRightText(poiSheet.getHeader().getRight());
+		if (header != null) {
+			header.setCenterText(poiSheet.getHeader().getCenter());
+			header.setLeftText(poiSheet.getHeader().getLeft());
+			header.setRightText(poiSheet.getHeader().getRight());
+			sps.setHeader(header);
+		}
 
 		SFooter footer = sheet.getViewInfo().getFooter();
-		footer.setCenterText(poiSheet.getFooter().getCenter());
-		footer.setLeftText(poiSheet.getFooter().getLeft());
-		footer.setRightText(poiSheet.getFooter().getRight());
+		if (footer != null) {
+			footer.setCenterText(poiSheet.getFooter().getCenter());
+			footer.setLeftText(poiSheet.getFooter().getLeft());
+			footer.setRightText(poiSheet.getFooter().getRight());
+			sps.setFooter(footer);
+		}
 
-		sheet.getPrintSetup().setBottomMargin(UnitUtil.incheToPx(poiSheet.getMargin(Sheet.BottomMargin)));
-		sheet.getPrintSetup().setTopMargin(UnitUtil.incheToPx(poiSheet.getMargin(Sheet.TopMargin)));
-		sheet.getPrintSetup().setLeftMargin(UnitUtil.incheToPx(poiSheet.getMargin(Sheet.LeftMargin)));
-		sheet.getPrintSetup().setRightMargin(UnitUtil.incheToPx(poiSheet.getMargin(Sheet.RightMargin)));
+		
+		Header poiEvenHeader = poiSheet.getEvenHeader();
+		if (poiEvenHeader != null) {
+			SHeader evenHeader = new HeaderFooterImpl();
+			evenHeader.setCenterText(poiEvenHeader.getCenter());
+			evenHeader.setLeftText(poiEvenHeader.getLeft());
+			evenHeader.setRightText(poiEvenHeader.getRight());
+			sps.setEvenHeader(evenHeader);
+		}
+		Footer poiEvenFooter = poiSheet.getEvenFooter();
+		if (poiEvenFooter != null) {
+			SFooter evenFooter = new HeaderFooterImpl();
+			evenFooter.setCenterText(poiEvenFooter.getCenter());
+			evenFooter.setLeftText(poiEvenFooter.getLeft());
+			evenFooter.setRightText(poiEvenFooter.getRight());
+			sps.setEvenFooter(evenFooter);
+		}
+		Header poiFirstHeader = poiSheet.getFirstHeader();
+		if (poiFirstHeader != null) {
+			SHeader firstHeader = new HeaderFooterImpl();
+			firstHeader.setCenterText(poiFirstHeader.getCenter());
+			firstHeader.setLeftText(poiFirstHeader.getLeft());
+			firstHeader.setRightText(poiFirstHeader.getRight());
+			sps.setFirstHeader(firstHeader);
+		}
+		Footer poiFirstFooter = poiSheet.getFirstFooter();
+		if (poiFirstFooter != null) {
+			SFooter firstFooter = new HeaderFooterImpl();
+			firstFooter.setCenterText(poiFirstFooter.getCenter());
+			firstFooter.setLeftText(poiFirstFooter.getLeft());
+			firstFooter.setRightText(poiFirstFooter.getRight());
+			sps.setFirstFooter(firstFooter);
+		}
 
-		sheet.getPrintSetup().setHeaderMargin(UnitUtil.incheToPx(poiSheet.getMargin(Sheet.HeaderMargin)));
-		sheet.getPrintSetup().setFooterMargin(UnitUtil.incheToPx(poiSheet.getMargin(Sheet.FooterMargin)));
-		sheet.getPrintSetup().setPaperSize(PoiEnumConversion.toPaperSize(poiSheet.getPrintSetup().getPaperSize()));
-		sheet.getPrintSetup().setLandscape(poiSheet.getPrintSetup().getLandscape());
+		PrintSetup poips = poiSheet.getPrintSetup();
+		
+		sps.setBottomMargin(UnitUtil.incheToPx(poiSheet.getMargin(Sheet.BottomMargin)));
+		sps.setTopMargin(UnitUtil.incheToPx(poiSheet.getMargin(Sheet.TopMargin)));
+		sps.setLeftMargin(UnitUtil.incheToPx(poiSheet.getMargin(Sheet.LeftMargin)));
+		sps.setRightMargin(UnitUtil.incheToPx(poiSheet.getMargin(Sheet.RightMargin)));
+		sps.setHeaderMargin(UnitUtil.incheToPx(poiSheet.getMargin(Sheet.HeaderMargin)));
+		sps.setFooterMargin(UnitUtil.incheToPx(poiSheet.getMargin(Sheet.FooterMargin)));
+		
+		sps.setAlignWithMargins(poiSheet.isAlignMargins());
+		sps.setErrorPrintMode(poips.getErrorsMode());
+		sps.setFitHeight(poips.getFitHeight());
+		sps.setFitWidth(poips.getFitWidth());
+		sps.setHCenter(poiSheet.getHorizontallyCenter());
+		sps.setLandscape(poips.getLandscape());
+		sps.setLeftToRight(poips.getLeftToRight());
+		sps.setPageStart(poips.getUsePage() ? poips.getPageStart() : 0);
+		sps.setPaperSize(PoiEnumConversion.toPaperSize(poips.getPaperSize()));
+		sps.setCommentsMode(poips.getCommentsMode());
+		sps.setPrintGridlines(poiSheet.isPrintGridlines());
+		sps.setPrintHeadings(poiSheet.isPrintHeadings());
+		
+		sps.setScale(poips.getScale());
+		sps.setScaleWithDoc(poiSheet.isScaleWithDoc());
+		sps.setDifferentOddEvenPage(poiSheet.isDiffOddEven());
+		sps.setDifferentFirstPage(poiSheet.isDiffFirst());
+		sps.setVCenter(poiSheet.getVerticallyCenter());
+		
+		Workbook poiBook = poiSheet.getWorkbook();
+		String area = poiBook.getPrintArea(poiSheetIndex);
+		if (area != null) {
+			sps.setPrintArea(area);
+		}
 
+		CellRangeAddress rowrng = poiSheet.getRepeatingRows();
+		if (rowrng != null) {
+			sps.setRepeatingRowsTitle(rowrng.getFirstRow(), rowrng.getLastRow());
+		}
+		
+		CellRangeAddress colrng = poiSheet.getRepeatingColumns();
+		if (colrng != null) {
+			sps.setRepeatingColumnsTitle(colrng.getFirstColumn(), colrng.getLastColumn());
+		}
+		
 		sheet.setPassword(poiSheet.getProtect()?"":null);
 		
 		//import hashed password directly

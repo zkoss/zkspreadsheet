@@ -110,11 +110,223 @@ public interface SPrintSetup {
 	public void setPaperSize(PaperSize size);
 	public PaperSize getPaperSize();
 	
+	/**
+	 * Set true to print in landscape orientation. 
+	 * @param landscape
+	 */
 	public void setLandscape(boolean landscape);
 	public boolean isLandscape();
 	
-	// TODO
-//	public void setScale(short scale);
-//	public short getScale();
+	/**
+	 * 
+	 * @param scale
+	 * @since 3.5.1
+	 */
+	public void setScale(int scale); // x100; e.g. 20 => 20%, 400 => 400%
+	public int getScale();
+
+	/**
+	 * Set general Header or odd page header.
+	 * @param header
+	 * @since 3.5.1
+	 */
+	public void setHeader(SHeader header);
+	public SHeader getHeader();
+
+	/**
+	 * Set even page footer; valid only if
+	 * {@link #isDifferentOddEvenPage()} is true.
+	 * 
+	 * @param header
+	 * @since 3.5.1
+	 */
+	public void setEvenHeader(SHeader header);
+	public SHeader getEvenHeader();
+
+	/**
+	 * Set first page footer; valid only if
+	 * {@link #isDifferentFirstPage()} is true.
+	 * 
+	 * @param header
+	 * @since 3.5.1
+	 */
+	public void setFirstHeader(SHeader header);
+	public SHeader getFirstHeader();
 	
+	/**
+	 * Set general footer or odd page footer. 
+	 * @param footer
+	 * @since 3.5.1
+	 */
+	public void setFooter(SFooter footer);
+	public SFooter getFooter();
+
+	/**
+	 * Set even page footer; valid only if
+	 * {@link #isDifferentOddEvenPage()} is true.
+	 * 
+	 * @param footer
+	 * @since 3.5.1
+	 */
+	public void setEvenFooter(SFooter footer);
+	public SFooter getEvenFooter();
+
+	/**
+	 * Set first page footer; valid only if 
+	 * {@link #isDifferentFirstPage()} is true.
+	 * 
+	 * @param footer
+	 * @since 3.5.1
+	 */
+	public void setFirstFooter(SFooter footer);
+	public SFooter getFirstFooter();
+	
+	/**
+	 * Set true to print even page with special header and footer for even
+	 * page; {@see #getEvenHeader()} and {@see #getEvenFooter()}.
+	 * @param flag
+	 * @since 3.5.1
+	 */
+	public void setDifferentOddEvenPage(boolean flag);
+	public boolean isDifferentOddEvenPage();
+	
+	/**
+	 * Set true to print first page with special header and footer for first
+	 * page; {@see #getFirstHeader()} and {@see #getFirstFooter()}.
+	 * 
+	 * @param flag
+	 * @since 3.5.1
+	 */
+	public void setDifferentFirstPage(boolean flag);
+	public boolean isDifferentFirstPage();
+	
+		
+	/**
+	 * Set true to scale header/footer with document.
+	 * @param flag
+	 * @since 3.5.1
+	 */
+	public void setScaleWithDoc(boolean flag);
+	public boolean isScaleWithDoc();
+	
+	/**
+	 * Set true to align header/footer with page margins.
+	 * @param flag
+	 * @since 3.5.1
+	 */
+	public void setAlignWithMargins(boolean flag);
+	public boolean isAlignWithMargins();
+	
+	/**
+	 * Set true to print sheet center horizontally on page.
+	 * @param center
+	 * @since 3.5.1
+	 */
+	public void setHCenter(boolean center);
+	public boolean isHCenter();
+
+	/**
+	 * Set true to print sheet center vertically on page.
+	 * @param vcenter
+	 * @since 3.5.1
+	 */
+	public void setVCenter(boolean vcenter);
+	public boolean isVCenter();
+	
+	/**
+	 * 
+	 * @param start
+	 * @since 3.5.1
+	 */
+	public void setPageStart(int start); // set starting page number
+	public int getPageStart();
+	
+	/**
+	 * Set the number of pages the sheet width 
+	 * is fit to. MUST be less than or equal to 32767. The value 0 means use 
+	 * as many pages as necessary to print the columns in the sheet.
+	 * @since 3.5.1
+	 */ 
+	public void setFitWidth(int numPages); 
+	public int getFitWidth();
+	
+	/**
+	 * Set the number of pages the sheet height 
+	 * is fit to. MUST be less than or equal to 32767. The value 0 means use 
+	 * as many pages as necessary to print the rows of the sheet.
+	 * @param pages
+	 * @since 3.5.1
+	 */
+	public void setFitHeight(int numPages); // fit sheet in how many pages of print page height;
+	public int getFitHeight();
+
+	/**
+	 * Set the print area as an area formula; e.g. A1:B2
+	 * @param formula
+	 * @since 3.5.1
+	 */
+	public void setPrintArea(String formula);
+	public String getPrintArea();
+	
+	/**
+	 * Set the first row of the repeat title rows for each top-to-bottom pages.
+	 * 
+	 * @param formula
+	 * @since 3.5.1
+	 */
+	public void setRepeatingRowsTitle(int firstRow, int lastRow);
+	public CellRegion getRepeatingRowsTitle();
+
+
+	/**
+	 * Set the first column of the repeat title columns for each left-to-right 
+	 * pages.
+	 * 
+	 * @param formula
+	 * @since 3.5.1
+	 */
+	public void setRepeatingColumnsTitle(int firstCol, int lastCol);
+	public CellRegion getRepeatingColumnsTitle();
+	
+	/**
+	 * Set true to also out row and column headings.
+	 * @param flag
+	 * @since 3.5.1
+	 */
+	public void setPrintHeadings(boolean flag);
+	public boolean isPrintHeadings();
+
+	/**
+	 * Set how to print comments:
+	 * 0: none
+	 * 1: at end of sheet
+	 * 2: as displayed on the sheet
+	 * @param mode
+	 * @since 3.5.1
+	 */
+	public void setCommentsMode(int mode);
+	public int getCommentsMode();
+	
+	/**
+	 * Set how to handle errors in the cell data;
+	 * 0: print errors as displayed on the sheet
+	 * 1: print errors as blank
+	 * 2: print errors as dashes ("--")
+	 * 3: print errors as "#N/A".
+	 * 
+	 * @param mode
+	 * @since 3.5.1
+	 */
+	public void setErrorPrintMode(int mode);
+	public int getErrorPrintMode();
+	
+	/**
+	 * Set true to output multiple pages in the order of left-to-right first 
+	 * and then top-to-bottom; false in the order of top-to-bottom first and
+	 * then left-to-right.
+	 * @param flag
+	 * @since 3.5.1
+	 */
+	public void setLeftToRight(boolean flag);
+	public boolean isLeftToRight();
 }

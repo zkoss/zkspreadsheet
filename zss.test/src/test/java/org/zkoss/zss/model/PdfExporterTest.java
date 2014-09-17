@@ -126,7 +126,6 @@ public class PdfExporterTest {
 	private void exportBook(SBook book, File file) {
 		
 		PdfExporter exporter = new PdfExporter();
-		exporter.enableGridLines(false);
 		try {
 			exporter.export(book, file);
 		} catch (IOException e) {
