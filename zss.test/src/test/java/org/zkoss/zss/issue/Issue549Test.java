@@ -2,28 +2,17 @@ package org.zkoss.zss.issue;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Locale;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.zkoss.zss.Setup;
 import org.zkoss.zss.Util;
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.model.SBook;
-import org.zkoss.zss.model.SBooks;
-import org.zkoss.zss.model.SCell;
-import org.zkoss.zss.model.SFont;
-import org.zkoss.zss.model.SRichText;
-import org.zkoss.zss.model.SSheet;
-import org.zkoss.zss.model.SFont.Boldweight;
-import org.zkoss.zss.model.SFont.Underline;
 import org.zkoss.zss.model.impl.pdf.PdfExporter;
-import org.zkoss.zss.range.SImporter;
-import org.zkoss.zss.range.impl.imexp.ExcelImportFactory;
 
 public class Issue549Test {
 	
@@ -42,6 +31,17 @@ public class Issue549Test {
 		Setup.popZssLocale();
 	}
 
+	@Test
+	public void exportLargeTextA1WrapNoGridBottom() {
+		Book book = Util.loadBook(this, "book/549-large-text-wrap-nogrid-pdf.xlsx");
+		
+		File temp = Setup.getTempFile("Issue549WrapNoGridBottomTest",".pdf");
+		
+		exportBook(book.getInternalBook(), temp);
+		
+		Util.open(temp);
+	}
+	
 	@Test
 	public void exportLargeTextA1WrapGridBottom() {
 		Book book = Util.loadBook(this, "book/549-large-text-wrap-grid-bottom-pdf.xlsx");
