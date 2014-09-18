@@ -13,6 +13,7 @@ ZK Spreadsheet 3.5.1
   ZSS-736 Add a new "copy sheet" option on sheet tab context dialog
   ZSS-690 Edit cell with text contains line break, it should apply "wrap-text" to the cell automatically
   ZSS-765 Import/export more printing setup parameters
+  ZSS-768 Support horizontal/vertical center-on-page when export to PDF
 
 *Bugs:
   ZSS-722 autoFill() with non-VALUE option should not copy value over.
