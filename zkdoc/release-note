@@ -16,6 +16,7 @@ ZK Spreadsheet 3.5.1
   ZSS-768 Support horizontal/vertical center-on-page when export to PDF
   ZSS-769 Support print heading when export to PDF
   ZSS-770 Support print repeating column/row titles when export to PDF.
+  ZSS-771 Support Left-to-Right then Top-to-Bottom paging when export to PDF.
 
 *Bugs:
   ZSS-722 autoFill() with non-VALUE option should not copy value over.
