@@ -165,33 +165,33 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 		}
 	}
 	
-	/**
-	 * Synchronize frozen area with top panel, left panel and corner panel
-	 */
-	function syncFrozenArea (sheet) {
-		var scroll = sheet.sp.comp,
-			corner = sheet.cp.comp,
-			currentWidth =  corner.offsetWidth,
-			maxWidth = scroll.clientWidth,
-			currentHeight = corner.offsetHeight,
-			maxHeight = scroll.clientHeight;
-		
-		if (currentWidth > maxWidth) {
-			var max = jq.px0(maxWidth),
-				left = sheet.lp.comp;
-			jq(corner).css('width', max);
-			jq(left).css('width', max);
-			//jq(scroll).css('overflow-x', 'hidden');
-		}
-
-		if (currentHeight > maxHeight) {
-			var height = jq.px0(maxHeight),
-				top = sheet.tp.comp;
-			jq(corner).css('height', height);
-			jq(top).css('height', height);
-			//jq(scroll).css('overflow-y', 'hidden');
-		}
-	}
+//	/**
+//	 * Synchronize frozen area with top panel, left panel and corner panel
+//	 */
+//	function syncFrozenArea (sheet) {
+//		var scroll = sheet.sp.comp,
+//			corner = sheet.cp.comp,
+//			currentWidth =  corner.offsetWidth,
+//			maxWidth = scroll.clientWidth,
+//			currentHeight = corner.offsetHeight,
+//			maxHeight = scroll.clientHeight;
+//		
+//		if (currentWidth > maxWidth) {
+//			var max = jq.px0(maxWidth),
+//				left = sheet.lp.comp;
+//			jq(corner).css('width', max);
+//			jq(left).css('width', max);
+//			//jq(scroll).css('overflow-x', 'hidden');
+//		}
+//
+//		if (currentHeight > maxHeight) {
+//			var height = jq.px0(maxHeight),
+//				top = sheet.tp.comp;
+//			jq(corner).css('height', height);
+//			jq(top).css('height', height);
+//			//jq(scroll).css('overflow-y', 'hidden');
+//		}
+//	}
 
 	// 20140509, RaymondChao: ZK does not handle command key in mac, workaround is
 	// converting the metaKey to ctrlKey. It should be removed when ZK fixes it.
@@ -1079,11 +1079,12 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 			var sheet = this.sheetCtrl;
 			if (!sheet) return;
 			
-			if (sheet._initiated)
-				syncFrozenArea(sheet);
-			else {
-				sheet.addSSInitLater(syncFrozenArea, sheet);
-			}
+//			Bug ZSS-766: the modification fix the issue. but it also causes other issue when 
+//			tiny size of width and height of browser window with frozen column and row. 
+//			sync size when the left/top/coner are large than scroll panel is unneccesary.  
+//			zk.afterMount(function(){
+//				syncFrozenArea(sheet);
+//			});
 		}	
 	},
 	/**

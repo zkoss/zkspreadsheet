@@ -41,6 +41,7 @@ ZK Spreadsheet 3.5.1
   ZSS-710 When rename sheet, cannot press "Delete" key to delete a character
   ZSS-755 Press minus key, '-', cannot enter editing mode in a cell under firefox
   ZSS-549 Enlarge a text to exceed its row height, the text will not be exported to PDF
+  ZSS-766 freeze panel is not working in IE10
   
 ** Upgrade Notes
   * Following api are deprecated
