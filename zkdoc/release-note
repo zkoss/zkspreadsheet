@@ -46,6 +46,7 @@ ZK Spreadsheet 3.5.1
   ZSS-774 Text line space is not consistent with Excel's printouts when export to PDF
   ZSS-529 exporting a sheet to PDF creates odd page breaks
   ZSS-195 When exporting a PDF the defined print areas for workbook pages are not honored.
+  ZSS-185 When exporting as a PDF the output of merged cells is incorrect with extra borders displayed within the merged cells
   
 ** Upgrade Notes
   * Following api are deprecated
