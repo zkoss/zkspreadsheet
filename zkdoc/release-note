@@ -43,6 +43,7 @@ ZK Spreadsheet 3.5.1
   ZSS-755 Press minus key, '-', cannot enter editing mode in a cell under firefox
   ZSS-549 Enlarge a text to exceed its row height, the text will not be exported to PDF
   ZSS-766 freeze panel is not working in IE10
+  ZSS-774 Text line space is not consistent with Excel's printouts when export to PDF
   
 ** Upgrade Notes
   * Following api are deprecated
