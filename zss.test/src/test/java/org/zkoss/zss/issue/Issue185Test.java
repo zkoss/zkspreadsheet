@@ -35,7 +35,7 @@ public class Issue185Test {
 	 * Test render long text that across the cell boundary
 	 */
 	@Test
-	public void exportMergeText() {
+	public void exportMergeBorder() {
 		Book book = Util.loadBook(this, "book/185-merge-border-pdf.xlsx");
 		
 		File temp = Setup.getTempFile("Issue185MergeBorderTest",".pdf");
