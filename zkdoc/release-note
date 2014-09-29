@@ -49,6 +49,7 @@ ZK Spreadsheet 3.5.1
   ZSS-195 When exporting a PDF the defined print areas for workbook pages are not honored.
   ZSS-185 When exporting as a PDF the output of merged cells is incorrect with extra borders displayed within the merged cells
   ZSS-320 Exported PDF file has big difference with original one in the Spreadsheet, when spreadsheet book has pictures
+  ZSS-178 Fail to export chart properly to pdf
   
 ** Upgrade Notes
   * Following api are deprecated
