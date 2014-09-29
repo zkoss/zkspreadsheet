@@ -37,12 +37,12 @@ public class PrintSetupImpl implements SPrintSetup,Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	private boolean _printGridlines = false; 
-	private int _headerMargin;
-	private int _footerMargin;
-	private int _leftMargin;
-	private int _rightMargin;
-	private int _topMargin;
-	private int _bottomMargin;
+	private double _headerMargin; //inches
+	private double _footerMargin; //inches
+	private double _leftMargin;	  //inches 	
+	private double _rightMargin;  //inches	
+	private double _topMargin;	  //inches
+	private double _bottomMargin; //inches
 	
 	private boolean _landscape = false;
 	private int _scale = 100;
@@ -88,51 +88,63 @@ public class PrintSetupImpl implements SPrintSetup,Serializable {
 		_printGridlines = enable;
 	}
 
-	public int getHeaderMargin() {
+	@Override
+	public double getHeaderMargin() {
 		return _headerMargin;
 	}
 
-	public void setHeaderMargin(int headerMargin) {
+	@Override
+	public void setHeaderMargin(double headerMargin) {
 		this._headerMargin = headerMargin;
 	}
 
-	public int getFooterMargin() {
+	@Override
+	public double getFooterMargin() {
 		return _footerMargin;
 	}
 
-	public void setFooterMargin(int footerMargin) {
+	@Override
+	public void setFooterMargin(double footerMargin) {
 		this._footerMargin = footerMargin;
 	}
 
-	public int getLeftMargin() {
+	@Override
+	public double getLeftMargin() {
 		return _leftMargin;
 	}
 
-	public void setLeftMargin(int leftMargin) {
+	@Override
+	public void setLeftMargin(double leftMargin) {
 		this._leftMargin = leftMargin;
 	}
 
-	public int getRightMargin() {
+	@Override
+	public double getRightMargin() {
 		return _rightMargin;
 	}
 
-	public void setRightMargin(int rightMargin) {
+	@Override
+	public void setRightMargin(double rightMargin) {
 		this._rightMargin = rightMargin;
 	}
 
-	public int getTopMargin() {
+	@Override
+	public double getTopMargin() {
 		return _topMargin;
 	}
 
-	public void setTopMargin(int topMargin) {
+	@Override
+	public void setTopMargin(double topMargin) {
 		this._topMargin = topMargin;
 	}
 
-	public int getBottomMargin() {
+	@Override
+	public double getBottomMargin() {
 		return _bottomMargin;
 	}
 
-	public void setBottomMargin(int bottomMargin) {
+	@Override
+	public void setBottomMargin(double bottomMargin) {
 		this._bottomMargin = bottomMargin;
 	}
 

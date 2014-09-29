@@ -179,12 +179,12 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 		SPrintSetup sps = sheet.getPrintSetup();
 		
 		// Margin
-		poiSheet.setMargin(Sheet.LeftMargin, UnitUtil.pxToInche(sps.getLeftMargin()));
-		poiSheet.setMargin(Sheet.RightMargin, UnitUtil.pxToInche(sps.getRightMargin()));
-		poiSheet.setMargin(Sheet.TopMargin, UnitUtil.pxToInche(sps.getTopMargin()));
-		poiSheet.setMargin(Sheet.BottomMargin, UnitUtil.pxToInche(sps.getBottomMargin()));
-		poiSheet.setMargin(Sheet.HeaderMargin, UnitUtil.pxToInche(sps.getHeaderMargin()));
-		poiSheet.setMargin(Sheet.FooterMargin, UnitUtil.pxToInche(sps.getFooterMargin()));
+		poiSheet.setMargin(Sheet.LeftMargin, sps.getLeftMargin());
+		poiSheet.setMargin(Sheet.RightMargin, sps.getRightMargin());
+		poiSheet.setMargin(Sheet.TopMargin, sps.getTopMargin());
+		poiSheet.setMargin(Sheet.BottomMargin, sps.getBottomMargin());
+		poiSheet.setMargin(Sheet.HeaderMargin, sps.getHeaderMargin());
+		poiSheet.setMargin(Sheet.FooterMargin, sps.getFooterMargin());
 
 		// Print Setup Information
 		PrintSetup poips = poiSheet.getPrintSetup();

@@ -270,12 +270,12 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 
 		PrintSetup poips = poiSheet.getPrintSetup();
 		
-		sps.setBottomMargin(UnitUtil.incheToPx(poiSheet.getMargin(Sheet.BottomMargin)));
-		sps.setTopMargin(UnitUtil.incheToPx(poiSheet.getMargin(Sheet.TopMargin)));
-		sps.setLeftMargin(UnitUtil.incheToPx(poiSheet.getMargin(Sheet.LeftMargin)));
-		sps.setRightMargin(UnitUtil.incheToPx(poiSheet.getMargin(Sheet.RightMargin)));
-		sps.setHeaderMargin(UnitUtil.incheToPx(poiSheet.getMargin(Sheet.HeaderMargin)));
-		sps.setFooterMargin(UnitUtil.incheToPx(poiSheet.getMargin(Sheet.FooterMargin)));
+		sps.setBottomMargin(poiSheet.getMargin(Sheet.BottomMargin));
+		sps.setTopMargin(poiSheet.getMargin(Sheet.TopMargin));
+		sps.setLeftMargin(poiSheet.getMargin(Sheet.LeftMargin));
+		sps.setRightMargin(poiSheet.getMargin(Sheet.RightMargin));
+		sps.setHeaderMargin(poiSheet.getMargin(Sheet.HeaderMargin));
+		sps.setFooterMargin(poiSheet.getMargin(Sheet.FooterMargin));
 		
 		sps.setAlignWithMargins(poiSheet.isAlignMargins());
 		sps.setErrorPrintMode(poips.getErrorsMode());

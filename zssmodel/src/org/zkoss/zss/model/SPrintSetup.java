@@ -94,18 +94,18 @@ public interface SPrintSetup {
 	public boolean isPrintGridlines();
 	public void setPrintGridlines(boolean enable);
 	
-	public int getHeaderMargin();
-	public void setHeaderMargin(int px);
-	public int getFooterMargin();
-	public void setFooterMargin(int px);
-	public int getLeftMargin();
-	public void setLeftMargin(int px);
-	public int getRightMargin();
-	public void setRightMargin(int px);
-	public int getTopMargin();
-	public void setTopMargin(int px);
-	public int getBottomMargin();
-	public void setBottomMargin(int px);
+	public double getHeaderMargin();
+	public void setHeaderMargin(double inches);
+	public double getFooterMargin();
+	public void setFooterMargin(double inches);
+	public double getLeftMargin();
+	public void setLeftMargin(double inches);
+	public double getRightMargin();
+	public void setRightMargin(double inches);
+	public double getTopMargin();
+	public void setTopMargin(double inches);
+	public double getBottomMargin();
+	public void setBottomMargin(double inches);
 	
 	public void setPaperSize(PaperSize size);
 	public PaperSize getPaperSize();
