@@ -1,4 +1,9 @@
 <zk>
+	<label multiline="true">
+		1. Focus on E7 and type "AAA".
+		2. Click "Bold" Button.
+		2. The text weight should be bold.
+	</label>
 	<window border="none" width="100%" height="100%" apply="zss.issue.Composer622">
 	</window>
 </zk>

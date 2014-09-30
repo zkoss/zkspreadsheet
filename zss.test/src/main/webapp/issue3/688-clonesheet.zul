@@ -9,6 +9,7 @@
 		<button onClick="export()">Export to Excel</button>
 		<button onClick="ss.invalidate()">Invalidate()</button>
 		<button onClick="cloneSheet()">Clone sheet</button>
+		<button onClick="selectNewSheet()">Select new sheet</button>
 	</hlayout>
 	
 	<spreadsheet id="ss" src="/issue3/book/TestFile2007.xlsx" maxVisibleRows="200" maxVisibleColumns="40"
@@ -29,6 +30,10 @@
 		Sheet sh = ss.getSelectedSheet();
 		Range range = Ranges.range(sh);
 		range.cloneSheet(null);
+	}
+	
+	public void selectNewSheet() {
+		ss.setSelectedSheet("Sheet1");
 	}
 	]]></zscript>		
 </vlayout>

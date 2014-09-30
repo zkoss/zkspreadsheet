@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+762-sheetbar-content-menu.zul
+
+	Purpose:
+		
+	Description:
+		
+	History:
+		Fri, Sep 12, 2014  6:26:36 PM, Created by RaymondChao
+
+Copyright (C) 2014 Potix Corporation. All Rights Reserved.
+
+-->
+<window>
+	<label multiline="true">
+1. right click on inactive sheet tab.
+2. see the context menu will disappear every two times.
+	</label>
+	<spreadsheet src="/issue3/book/blank.xlsx" showContextMenu="true" showSheetbar="true"
+		height="500px" width="800px">
+	</spreadsheet>
+</window>

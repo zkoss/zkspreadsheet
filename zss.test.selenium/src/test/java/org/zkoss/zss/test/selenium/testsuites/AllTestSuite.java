@@ -1,4 +1,4 @@
-package org.zkoss.zss.test.selenium.testsuites;
+/*package org.zkoss.zss.test.selenium.testsuites;
 import org.junit.extensions.cpsuite.ClasspathSuite;
 import org.junit.extensions.cpsuite.ClasspathSuite.ClassnameFilters;
 import org.junit.runner.RunWith;
@@ -8,4 +8,4 @@ import org.junit.runner.RunWith;
 	"org.zkoss.zss.test.selenium.testcases.*Test"})
 public class AllTestSuite {
 
-}
+}*/

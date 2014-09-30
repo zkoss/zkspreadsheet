@@ -5,6 +5,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Properties;
 
 import org.openqa.selenium.Dimension;
@@ -12,6 +14,9 @@ import org.openqa.selenium.Point;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.remote.RemoteWebDriver;
 
 public class Setup {
 
@@ -19,7 +24,9 @@ public class Setup {
 	
 	static{
 		//load default properties
-		File[] configFiles = new File[]{new File("./zss.test.selenium.properties"),new File("./zss.test.selenium.local.properties")};
+		File[] configFiles = new File[] {
+				new File("./zss.test.selenium.properties"),
+				new File("./zss.test.selenium.local.properties")};
 		InputStream is = null;
 		for(File f:configFiles){
 			try {
@@ -42,7 +49,7 @@ public class Setup {
 		//http://chromium.googlecode.com/, http://chromedriver.storage.googleapis.com/index.html
 		System.setProperty("webdriver.chrome.driver",config.getProperty("webdriver.chrome.driver"));
 	}
-	
+																																																																																																																																																																																	
 	public static String getConfig(String key){
 		return getConfig(key,"");
 	}
@@ -81,12 +88,22 @@ public class Setup {
 	}	
 	
 	
-	static public WebDriver getDriver(){
+	static public WebDriver getDriver() throws MalformedURLException{
 		return getChromeDriver();
 	}
 	
 	private static WebDriver getChromeDriver() {
 		ChromeDriver driver = new ChromeDriver();
+		String val = getConfig("zss.browserSize","0,0,1200,800");
+		String[] vals = val.split(",");
+		
+		driver.manage().window().setPosition(new Point(Integer.parseInt(vals[0]),Integer.parseInt(vals[1])));
+		driver.manage().window().setSize(new Dimension(Integer.parseInt(vals[2]), Integer.parseInt(vals[3])));
+		return driver;
+	}
+	
+	private static WebDriver getFirefoxDriver() {
+		FirefoxDriver driver = new FirefoxDriver();
 		String val = getConfig("zss.browserSize","0,0,1200,800");
 		String[] vals = val.split(",");
 		
@@ -123,9 +140,9 @@ public class Setup {
 		return new DefaultComparator(Integer.MAX_VALUE, Integer.MAX_VALUE, 10);//entire image
 	}
 
-	public static String getTestSiteUrlBase() {
-		return getConfig("zss.testSiteBaseUrl","http://localhost:8080/zss.test/");
-	}
+	//public static String getTestSiteUrlBase() {
+	//	return getConfig("zss.testSiteBaseUrl","http://localhost:8080/zss.test/");
+	//}
 
 	public static long getAuDelay() {
 		return getConfigAsLong("zss.auDelay",2000);

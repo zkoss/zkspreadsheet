@@ -1,9 +1,9 @@
 <zk>
 	<window width="100%" height="100%">
 	<label pre="true">
-	1. click any cell
-	2. edit in formula bar and click check mark.
-	3. all cells become unable to edit.
+	1. Click any cell
+	2. Edit in formula bar and click check mark.
+	3. All cells are still editable.
 	</label>
 		<spreadsheet id="ss" src="/issue3/book/blank.xlsx" width="100%" height="100%"
 			ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e" maxrows="200" maxcolumns="100" showToolbar="true" showFormulabar="true"

@@ -33,9 +33,6 @@ public class Composer622 extends SelectorComposer<Window>{
 		Book loadedBook = importer.imports(new File(WebApps.getCurrent().getRealPath("/book/TestFile2007.xlsx")), "TestFile2007.xlsx");
 		ss.setBook(loadedBook);
 		ss.setParent(comp);
-//		ss.afterCompose(); 		
-	}
-
-	
-	
+		//ss.afterCompose(); 		
+	}	
 }
