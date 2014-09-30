@@ -14,13 +14,26 @@ Copyright (C) 2014 Potix Corporation. All Rights Reserved.
 
 -->
 <window width="100" height="100%">
-	<label multiline="true">
-	1. Focus on C6.
-	2. Press page down and page up.
-	3. The focus should stay in the same relative position.
-	</label>
+	<hlayout>
+		<label multiline="true">
+		1. Focus on C6.
+		2. Press page down and page up.
+		3. The focus should stay in the same relative position.
+		</label>
+		<button label="showFocus" onClick="showLastFocus()"></button>
+		<label id="result" visible="false"></label>
+	</hlayout>
 	<spreadsheet id="spreadsheet"
 		src="/issue/book/664-page-up-down.xlsx" maxrows="200" maxcolumns="40"
 		vflex="1" width="100%">
 	</spreadsheet>
+		<zscript><![CDATA[
+		import org.zkoss.zss.api.*;
+		import org.zkoss.zss.model.*;
+		 
+		public void showLastFocus(){
+			result.setValue(spreadsheet.getCellFocus().asString());
+			result.setVisible(true);
+		}
+	]]></zscript>
 </window>

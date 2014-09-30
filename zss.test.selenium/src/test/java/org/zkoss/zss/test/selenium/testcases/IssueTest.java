@@ -4,9 +4,10 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.Keys;
 import org.zkoss.zss.test.selenium.Setup;
-import org.zkoss.zss.test.selenium.ZSSTestcaseBase;
+import org.zkoss.zss.test.selenium.ZSSTestCase;
 
-public class IssueTest extends ZSSTestcaseBase {
+@Ignore()
+public class IssueTest extends ZSSTestCase {
 	@Test
 	public void testZSS10() throws Exception{
 		basename();

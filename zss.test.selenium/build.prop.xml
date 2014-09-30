@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+	<property name="main.src" value="main/" />
+	<property name="test.src" value="test/" />
+	<property name="target.dir" value="target/" />
+	<!-- lib.dir also need to change the setting in surefire plugin in pom.xml -->
+	<property name="lib.dir" value="lib/" />
+	<property name="test.dir" value="${target.dir}/classes" />
+	<property name="report.dir" value="report/" />
+	<property name="dist.dir" value="${target.dir}/dist" />
+	<property name="jar.name" value="zts.jar" />
+	<property name="javadoc.dir" value="javadoc/" />
+	<property name="project.title" value="ZSS Selenium Testing" />
+	<property name="test.browser" value="" />
+	<property name="server" value="" />
+	<property name="test.case" value="Issue*Test" />
+</project>

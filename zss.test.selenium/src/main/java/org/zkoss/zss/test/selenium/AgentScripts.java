@@ -26,7 +26,10 @@ public class AgentScripts {
 	
 	
 	private void init() throws UnsupportedEncodingException, IOException {
-		InputStream is = AgentScripts.class.getResourceAsStream("agent.js");
+		InputStream is = getClass().getResourceAsStream("/agent.js");
+		if (is == null) {
+			System.out.println("null");
+		}
 		try{
 			staticJsContent = new String(Files.readAll(is),"UTF-8");
 		}finally{

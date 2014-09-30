@@ -8,7 +8,7 @@
 			3. Sort and Insert Hyperlink should only work in the greed area in Sheet "Test2".
 			4. Move focus should not crash or slower in Sheet "All Unlock cell".
 		</label>
-		<spreadsheet src="/issue3/book/sheetProtection.xlsx" showToolbar="true" showFormulabar="true" showSheetbar="true" showContextMenu="true"
+		<spreadsheet src="/issue3/book/576-sheet-protection.xlsx" showToolbar="true" showFormulabar="true" showSheetbar="true" showContextMenu="true"
 			maxVisibleRows="200" maxVisibleColumns="40" width="100%" height="450px">
 		</spreadsheet>
 	</vlayout>

@@ -1,6 +1,7 @@
 <zk>
 	<vlayout width="100%" height="100%">
 		<hlayout>
+			<button label="Change C3" onClick='Ranges.range(book.getSheet("Sheet2"), "C3").setCellEditText("2");'></button>
 			<button label="export" onClick="export(ss.getBook());"></button>
 			<label pre="true"><![CDATA[reproducing steps:
 1. let Sheet2 C3 be 1
@@ -30,10 +31,10 @@
 	public void export(Book book) throws Exception {
 		if(book == null) { return; }
 		Exporter c = Exporters.getExporter("excel");
-	    ByteArrayOutputStream out = new ByteArrayOutputStream();
-	    c.export(book, out);
-	    String name = book.getType() == BookType.XLSX ? "exported.xlsx" : "exported.xls";
-	    Filedownload.save(out.toByteArray(), "application/file", name);
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		c.export(book, out);
+		String name = book.getType() == BookType.XLSX ? "exported.xlsx" : "exported.xls";
+		Filedownload.save(out.toByteArray(), "application/file", name);
 	}
 	]]></zscript>
 </zk>

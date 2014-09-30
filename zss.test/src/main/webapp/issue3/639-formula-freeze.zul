@@ -1,13 +1,18 @@
 <zk>
 	<vlayout width="100%" height="100%">
-		<hlayout>
-			<button label="export" onClick="export(ss.getBook());"></button>
-			<label pre="true"><![CDATA[reproducing steps:
+		<label pre="true"><![CDATA[reproducing steps:
 1. freeze Sheet1 at C3
 2. change Sheet1 C3 to 1
 3. change Sheet2 A1 (or A3 or C1) to =Sheet1!C3
 4. chaneg Sheet1 C3 to 2
-5. switch to Sheet2 >>> JS error]]></label>
+5. switch to Sheet2 >>> JS error]]>
+		</label>
+		<hlayout>
+			<button label="Select Sheet2" onClick='ss.setSelectedSheet("Sheet2")'></button>
+			<button label="Insert Formula to A1" onClick='Ranges.range(book.getSheet("Sheet2"), "A1").setCellEditText("=Sheet1!C3")'></button>
+			<button label="Select Sheet1" onClick='ss.setSelectedSheet("Sheet1")'></button>
+			<button label="Change C3" onClick='Ranges.range(book.getSheet("Sheet1"), "C3").setCellEditText("2")'></button>
+			<button label="export" onClick="export(ss.getBook());"></button>
 		</hlayout>
 		<spreadsheet id="ss" src="/issue3/book/blank.xlsx" maxrows="200" maxcolumns="40"
 			hflex="1" vflex="1" ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e"
@@ -26,10 +31,10 @@
 	public void export(Book book) throws Exception {
 		if(book == null) { return; }
 		Exporter c = Exporters.getExporter("excel");
-	    ByteArrayOutputStream out = new ByteArrayOutputStream();
-	    c.export(book, out);
-	    String name = book.getType() == BookType.XLSX ? "exported.xlsx" : "exported.xls";
-	    Filedownload.save(out.toByteArray(), "application/file", name);
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		c.export(book, out);
+		String name = book.getType() == BookType.XLSX ? "exported.xlsx" : "exported.xls";
+		Filedownload.save(out.toByteArray(), "application/file", name);
 	}
 	]]></zscript>
 </zk>

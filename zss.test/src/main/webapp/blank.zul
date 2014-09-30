@@ -2,6 +2,7 @@
 	<hlayout>
 		<button onClick="export()">Export to Excel</button>
 		<button onClick="ss.invalidate()">Invalidate()</button>
+		<button onClick="ss.setMaxVisibleRows(999)"/>
 	</hlayout>
 	<spreadsheet id="ss" src="/book/blank.xlsx" maxVisibleRows="200" maxVisibleColumns="40"
 		hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 

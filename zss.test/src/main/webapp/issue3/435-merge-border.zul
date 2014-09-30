@@ -9,13 +9,31 @@ Steps:
 	3. C1 should have a bottom border but not
 			</label>
 		</hlayout>
-
+		<hlayout>
+			<button label="Merge B2:D4" onClick="merge()"></button>
+			<button label="Apply outside border" onClick="applyBorder()"></button>
+			<button label="Insert column" onClick="insertColumn()"></button>
+		</hlayout>
 		<spreadsheet id="ss" src="/issue3/book/blank.xlsx" width="1500px" height="800px"
 			ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e" maxrows="500" maxcolumns="100" showToolbar="true" showFormulabar="true"
 			showSheetbar="true" showContextMenu="true">
 		</spreadsheet>
 
 		<zscript><![CDATA[
+			import org.zkoss.zss.api.Range.ApplyBorderType;
+			import org.zkoss.zss.api.model.CellStyle.BorderType;
+			public void merge() {
+				Ranges.range(ss.getBook().getSheetAt(0), "B2:D4").merge(false);
+			}
+			public void applyBorder() {
+				CellOperationUtil.applyBorder(Ranges.range(ss.getBook().getSheetAt(0), "B2:D4"),
+						ApplyBorderType.OUTLINE,
+						BorderType.DASHED,
+						"#123456");
+			}
+			public void insertColumn() {
+				CellOperationUtil.insertColumn(Ranges.range(ss.getBook().getSheetAt(0), "C3"));
+			}
 		]]></zscript>
 	</window>
 </zk>

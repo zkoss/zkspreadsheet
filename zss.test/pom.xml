@@ -7,8 +7,8 @@
 	<properties>
 		<maven.build.timestamp.format>yyyy-MM-dd</maven.build.timestamp.format>
 		<packname>-0.0.1-SNAPSHOT-FL-${maven.build.timestamp}</packname>
-		<zk.version>7.0.3-Eval</zk.version><!-- Set version 655 here for test compatibility with 655  -->
-		<zss.version>3.6.0.FL.20140930-Eval</zss.version>
+		<zk.version>7.0.2-Eval</zk.version><!-- Set version 655 here for test compatibility with 655  -->
+		<zss.version>3.5.0-Eval</zss.version>
 	</properties>
 	<packaging>war</packaging>
 	<name>The ZK Spreadsheet Test Project</name>
@@ -90,19 +90,7 @@ We also merge lots of POI test cases from a previous project &quot;zsstest&quot;
 			<artifactId>zsshtml</artifactId>
 			<version>${zss.version}</version>
 		</dependency>
-		<dependency>
-			<groupId>cpsuite</groupId>
-			<artifactId>cpsuite</artifactId>
-			<version>1.2.6</version>
-			<scope>system</scope>
-    		<systemPath>${project.basedir}/lib/cpsuite-1.2.6.jar</systemPath>
-		</dependency>
-		
-		<dependency>
-			<groupId>org.zkoss.chart</groupId>
-			<artifactId>zkcharts</artifactId>
-			<version>1.3.0-SNAPSHOT</version>
-		</dependency>
+	
 	
 	</dependencies>
 	<build>

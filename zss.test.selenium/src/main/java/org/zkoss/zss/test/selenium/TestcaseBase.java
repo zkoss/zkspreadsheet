@@ -1,59 +1,95 @@
 package org.zkoss.zss.test.selenium;
 
 import java.io.File;
-import java.util.HashMap;
+import java.net.MalformedURLException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import junit.framework.Assert;
-
 import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.Rule;
+
+import static org.junit.Assert.fail;
+
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.rules.ExternalResource;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameter;
+import org.junit.runners.Parameterized.Parameters;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.Point;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.zkoss.zss.test.selenium.VisionAssert.FailAssertion;
+import org.zkoss.zss.test.selenium.entity.ClientWidget;
+import org.zkoss.zss.test.selenium.util.ConfigHelper;
 
-public class TestcaseBase {
+//@RunWith(Parameterized.class)
+public class TestCaseBase {
 
-	static WebDriver driver;
-	static Map<String,VisionAssert> helpers = new LinkedHashMap<String,VisionAssert>();
+	protected static WebDriver driver;
+	private static Map<String,VisionAssert> helpers = new LinkedHashMap<String,VisionAssert>();
+	protected static ConfigHelper configHelper = ConfigHelper.getInstance();
+	private static List<WebDriver> drivers;
 	
 	VisionAssert visionAssert;
+
+	@Parameters
+    public static Collection<Object[]> browsers() {
+    	Collection<Object[]> params = new ArrayList<Object[]>();
+    	drivers = configHelper.getBrowsersForLazy("all", "");
+    	for (WebDriver driver: drivers) {
+    		params.add(new Object[] {driver});
+    	}
+    	return params;
+    }
+	
+	//@Parameter // first data value (0) is default
+    //public /* NOT private */ WebDriver browser;
+	
+    //@Rule
+    //public ExternalResource externalResource = new ExternalResource() {
+    //    protected void before() throws Throwable {
+    //    	driver = browser;
+    //    }
+    //    protected void after() {
+    //    }
+    //};
 	
 	@BeforeClass
-	public static void TestcaseBase_setup(){
+	public static void setup() throws MalformedURLException {
+		//driver = configHelper.getBrowsersForLazy("all", "").get(0);
 		driver = Setup.getDriver();
 	}
-	
+
 	@AfterClass
-	public static void TestcaseBase_teardown(){
+	public static void tearDown() {
+		//configHelper.shutdown();
 		driver.quit();
 	}
 	
 	@Before
-	public void TestccaseBase_BeforeTest(){
-		helpers.clear();
+	public void beforeTest() {
 	}
 	
 	@After
-	public void TestccaseBase_afterTest(){
-		assertFinally();
+	public void afterTest() {
+		//assertFinally();
 	}
 	
-	public static WebDriver driver(){
+	public static WebDriver driver() {
 		return driver;
 	}
 	
 	/**
-	 * Sets base name , it will use the caller's calss and method as the basename
+	 * Sets base name , it will use the caller's class and method as the basename
 	 */
-	public void basename(){
+	public void basename() {
 		StackTraceElement[] elms = Thread.currentThread().getStackTrace();
 		StackTraceElement caller = elms[2];
 		String clzname = caller.getClassName();
@@ -115,7 +151,7 @@ public class TestcaseBase {
 			va.cleanFailAssertions();
 		}
 		if(fail.length()>0){
-			Assert.fail(fail.toString());
+			fail(fail.toString());
 		}
 	}
 	
@@ -135,6 +171,14 @@ public class TestcaseBase {
 		try {
 			Thread.sleep(ms);
 		} catch (InterruptedException e) {}
+	}
+	
+	public static Object eval(ClientWidget script) {
+		return eval(script.getResult());
+	}
+	
+	public static Object eval(String script, Object... args) {
+		return ((RemoteWebDriver)driver).executeScript(script, args);
 	}
 
 }
