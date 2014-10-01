@@ -465,8 +465,9 @@ public class PoiEnumConversion {
 		case CellStyle.ALIGN_RIGHT:
 			return Alignment.RIGHT;
 		case CellStyle.ALIGN_CENTER:
-		case CellStyle.ALIGN_CENTER_SELECTION:
 			return Alignment.CENTER;
+		case CellStyle.ALIGN_CENTER_SELECTION: //ZSS-779
+			return Alignment.CENTER_SELECTION;
 		case CellStyle.ALIGN_FILL:
 			return Alignment.FILL;
 		case CellStyle.ALIGN_JUSTIFY:

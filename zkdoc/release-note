@@ -51,6 +51,7 @@ ZK Spreadsheet 3.5.1
   ZSS-185 When exporting as a PDF the output of merged cells is incorrect with extra borders displayed within the merged cells
   ZSS-320 Exported PDF file has big difference with original one in the Spreadsheet, when spreadsheet book has pictures
   ZSS-178 Fail to export chart properly to pdf
+  ZSS-779 Text clipped when export center-across-selection cells to PDF
   
 ** Upgrade Notes
   * Following api are deprecated
