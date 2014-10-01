@@ -20,6 +20,7 @@ ZK Spreadsheet 3.5.1
   ZSS-772 Support render long text that across Cell boundary when export to PDF
   ZSS-773 Support rendering text in merged cell that across cell boundary when export to PDF
   ZSS-776 Support print double border when export to PDF
+  ZSS-775 Support scale page when export to PDF
   
 *Bugs:
   ZSS-722 autoFill() with non-VALUE option should not copy value over.
