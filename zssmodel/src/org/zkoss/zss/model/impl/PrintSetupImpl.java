@@ -179,8 +179,9 @@ public class PrintSetupImpl implements SPrintSetup,Serializable {
 	}
 
 	//ZSS-688
-	//@since 3.5.1
-	/*package*/ void copyFrom(PrintSetupImpl src) {
+	//@since 3.6.0
+	//internal use
+	public void copyFrom(PrintSetupImpl src) {
 		
 		this._printGridlines = src._printGridlines; 
 		this._headerMargin = src._headerMargin;

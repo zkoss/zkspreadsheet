@@ -22,7 +22,7 @@ import org.zkoss.zss.model.sys.formula.FormulaExpression;
  * Handle formula caching for chart category data.
  * 
  * @author henri
- * @since 3.5.1
+ * @since 3.6.0
  */
 public abstract class AbstractGeneralChartDataAdv extends ChartDataAdv {
 	public abstract FormulaExpression getCategoriesFormulaExpression();

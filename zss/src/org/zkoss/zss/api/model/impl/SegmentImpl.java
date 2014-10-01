@@ -21,7 +21,7 @@ import org.zkoss.zss.api.model.RichText;
 
 /**
  * @author henri
- * @since 3.5.1
+ * @since 3.6.0
  */
 class SegmentImpl implements RichText.Segment {
 	final private String text;

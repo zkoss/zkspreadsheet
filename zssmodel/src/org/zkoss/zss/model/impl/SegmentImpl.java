@@ -26,7 +26,7 @@ class SegmentImpl implements Segment, Serializable {
 	}
 
 	//ZSS-688
-	//@since 3.5.1
+	//@since 3.6.0
 	/*package*/ SegmentImpl cloneSegmentImpl() {
 		return new SegmentImpl(this._text, this._font);
 	}

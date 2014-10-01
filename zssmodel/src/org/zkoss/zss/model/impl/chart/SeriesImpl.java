@@ -292,7 +292,7 @@ public class SeriesImpl extends AbstractSeriesAdv implements SSeries,Serializabl
 	}
 
 	//ZSS-688
-	//@since 3.5.1
+	//@since 3.6.0
 	public SeriesImpl cloneSeriesImpl(AbstractChartAdv chart) {
 		SeriesImpl tgt = new SeriesImpl(chart, this._id);
 

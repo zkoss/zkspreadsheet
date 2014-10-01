@@ -186,7 +186,7 @@ public class GeneralChartDataImpl extends AbstractGeneralChartDataAdv implements
 	}
 
 	//ZSS-688
-	//@since 3.5.1
+	//@since 3.6.0
 	public void copyFrom(GeneralChartDataImpl src) {
 		final String expr = this.getCategoriesFormula();
 		if (expr != null) {
@@ -207,7 +207,7 @@ public class GeneralChartDataImpl extends AbstractGeneralChartDataAdv implements
 	/**
 	 * 
 	 * @return
-	 * @since 3.5.1
+	 * @since 3.6.0
 	 */
 	public FormulaExpression getCategoriesFormulaExpression() {
 		return _catFormulaExpr;  
@@ -216,7 +216,7 @@ public class GeneralChartDataImpl extends AbstractGeneralChartDataAdv implements
 	/**
 	 * 
 	 * @param fexpr
-	 * @since 3.5.1
+	 * @since 3.6.0
 	 */
 	public void setCategoriesFormula(FormulaExpression fexpr) {
 		checkOrphan();

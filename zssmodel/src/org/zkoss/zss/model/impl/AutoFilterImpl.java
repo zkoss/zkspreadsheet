@@ -91,7 +91,7 @@ public class AutoFilterImpl extends AbstractAutoFilterAdv {
 	}
 	
 	//ZSS-688
-	//@since 3.5.1
+	//@since 3.6.0
 	/*package*/ AutoFilterImpl cloneAutoFilterImpl() {
 		final AutoFilterImpl tgt = 
 				new AutoFilterImpl(new CellRegion(this._region.row, this._region.column, this._region.lastRow, this._region.lastColumn));

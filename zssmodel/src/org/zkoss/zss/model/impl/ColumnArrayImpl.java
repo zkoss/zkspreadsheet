@@ -146,7 +146,7 @@ public class ColumnArrayImpl extends AbstractColumnArrayAdv {
 	}
 
 	//ZSS-688
-	//@since 3.5.1
+	//@since 3.6.0
 	/*package*/ ColumnArrayImpl cloneColumnArrayImpl(AbstractSheetAdv sheet) {
 		final ColumnArrayImpl tgt = new ColumnArrayImpl(sheet, this._index, this._lastIndex);
 		tgt._width = this._width;

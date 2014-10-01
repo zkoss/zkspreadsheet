@@ -142,7 +142,7 @@ public interface CellData {
 	//ZSS-725
 	/**
 	 * Sets the rich text in html format.
-	 * @since 3.5.1 
+	 * @since 3.6.0 
 	 */
 	public void setRichText(String html);
 	
@@ -150,7 +150,7 @@ public interface CellData {
 	//ZSS-725
 	/**
 	 * @return rich text in html format; null if not a rich text.
-	 * @since 3.5.1
+	 * @since 3.6.0
 	 */
 	public String getRichText();
 }

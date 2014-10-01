@@ -21,7 +21,7 @@ import org.zkoss.zss.model.SPicture.Format;
 /**
  * Picture data in a picture.
  * @author henrichen
- * @since 3.5.1
+ * @since 3.6.0
  */
 public interface SPictureData {
 	public Format getFormat();

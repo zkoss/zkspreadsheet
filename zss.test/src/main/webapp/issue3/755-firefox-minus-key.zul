@@ -1,5 +1,5 @@
 <zk>
-Since 3.5.1
+Since 3.6.0
 <label multiline="true">
 1. (firefox only) enter "-" into cell B2, make sure it can be added in the edit mode.
 BTW. You should use key "-" on the keyboard main layout rather than on numeric keypad.

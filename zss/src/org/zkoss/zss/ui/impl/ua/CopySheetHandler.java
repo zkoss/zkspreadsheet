@@ -23,7 +23,7 @@ import org.zkoss.zss.ui.UserActionContext;
 
 /**
  * @author jerrychen
- * @since 3.5.1
+ * @since 3.6.0
  */
 public class CopySheetHandler extends AbstractBookHandler{
 

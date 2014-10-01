@@ -35,14 +35,14 @@ public abstract class AbstractNameAdv implements SName,LinkedModelObject,Seriali
 	/**
 	 * 
 	 * @return
-	 * @since 3.5.1
+	 * @since 3.6.0
 	 */
 	abstract public FormulaExpression getRefersToFormulaExpression();
 	//ZSS-747
 	/**
 	 * 
 	 * @param refersExpr
-	 * @since 3.5.1
+	 * @since 3.6.0
 	 */
 	abstract public void setRefersToFormula(FormulaExpression refersExpr);
 

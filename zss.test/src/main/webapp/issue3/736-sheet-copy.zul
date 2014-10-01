@@ -1,5 +1,5 @@
 <zk>
-Since 3.5.1
+Since 3.6.0
 <label multiline="true">
 1. Type "this is a good day" into cell A2 in Sheet1.
 2. Right click on sheet1 and choose copy. You will see there is a Sheet1 (2) shown at the end of sheet bar with the same value at A2 as Sheet1.

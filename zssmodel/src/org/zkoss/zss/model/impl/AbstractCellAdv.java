@@ -243,6 +243,6 @@ public abstract class AbstractCellAdv implements SCell,LinkedModelObject,Seriali
 	public abstract void setFormulaValue(String formula, Locale locale);
 	
 	//ZSS-688
-	//@since 3.5.1
+	//@since 3.6.0
 	/*package*/ abstract AbstractCellAdv cloneCell(AbstractRowAdv row);
 }

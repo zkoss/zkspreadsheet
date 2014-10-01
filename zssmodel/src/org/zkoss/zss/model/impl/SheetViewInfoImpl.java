@@ -157,7 +157,7 @@ public class SheetViewInfoImpl implements SSheetViewInfo, Serializable {
 	}
 
 	//ZSS-688
-	//@since 3.5.1
+	//@since 3.6.0
 	/*package*/ void copyFrom(SheetViewInfoImpl src) {
 		this._displayGridlines = src._displayGridlines;
 		this._rowFreeze = src._rowFreeze;

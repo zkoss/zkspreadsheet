@@ -21,11 +21,11 @@ import java.util.List;
 /**
  * A rich text can have multiple segments which have different fonts for each one in a cell.
  * @author henrichen
- * @since 3.5.1
+ * @since 3.6.0
  */
 public interface RichText {
 	/**
-	 * @since 3.5.1
+	 * @since 3.6.0
 	 */
 	public interface Segment {
 		public String getText();	

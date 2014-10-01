@@ -23,7 +23,7 @@ import org.zkoss.zss.model.SPictureData;
 /**
  * 
  * @author henrichen
- * @since 3.5.1
+ * @since 3.6.0
  */
 public class PictureDataImpl implements SPictureData, Serializable {
 	private static final long serialVersionUID = -8176040020483451498L;

@@ -171,14 +171,14 @@ public interface SRange {
 	/**
 	 * Return the rich edit text of the left top cell of this Range.
 	 * @return the rich edit text of this Range.
-	 * @since 3.5.1
+	 * @since 3.6.0
 	 */
 	public String getRichText();
 
 	//ZSS-742: Support API for input rich text
 	/**
 	 * Set rich text into the left top cell of this range. 
-	 * @since 3.5.1
+	 * @since 3.6.0
 	 */
 	public void setRichText(String html);
 	
@@ -854,7 +854,7 @@ public interface SRange {
 	 * range and return it.
 	 * 
 	 * @return font of the specified font metrics
-	 * @since 3.5.1
+	 * @since 3.6.0
 	 */
 	public SFont getOrCreateFont(SFont.Boldweight boldweight, String htmlColor,
 			int fontHeight, String fontName, boolean italic, boolean strikeout,
@@ -863,7 +863,7 @@ public interface SRange {
 	/**
 	 * Enforce evaluation(if not cached) and refresh UI of this range and its 
 	 * dependent cells if the includeDependents is true. 
-	 * @since 3.5.1
+	 * @since 3.6.0
 	 */
 	public void refresh(boolean includeDependants);
 
@@ -873,7 +873,7 @@ public interface SRange {
 	 * 
 	 * @param auto whether refresh automatically
 	 * @return previous status
-	 * @since 3.5.1
+	 * @since 3.6.0
 	 */
 	public boolean setAutoRefresh(boolean auto);
 }

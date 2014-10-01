@@ -59,7 +59,7 @@ public interface SBook {
 	 * Get the index of sheet
 	 * @param sheet the sheet
 	 * @return the index
-	 * @since 3.5.1
+	 * @since 3.6.0
 	 */
 	public int getSheetIndex(String sheetName);
 	
@@ -264,7 +264,7 @@ public interface SBook {
 	 * @param format picture format
 	 * @param data picture raw data
 	 * @return the created SPictureData
-	 * @since 3.5.1
+	 * @since 3.6.0
 	 */
 	public SPictureData addPictureData(SPicture.Format format, byte[] data);
 	
@@ -272,13 +272,13 @@ public interface SBook {
 	 * Get {@link SPictureData} of the specified index from this book; null if not exist
 	 * @param index
 	 * @return SPictureData of the specified index from this book; null if not exist
-	 * @since 3.5.1
+	 * @since 3.6.0
 	 */
 	public SPictureData getPictureData(int index);
 	
 	/**
 	 * Returns all {@link SPictureData} fo this book.
-	 * @since 3.5.1
+	 * @since 3.6.0
 	 */
 	public Collection<SPictureData> getPicturesDatas();
 }

@@ -55,7 +55,7 @@ public class HeaderFooterImpl implements SHeader,SFooter,Serializable{
 	}
 	
 	//ZSS-688
-	//@since 3.5.1
+	//@since 3.6.0
 	/*package*/ HeaderFooterImpl cloneHeaderFooterImpl() {
 		final HeaderFooterImpl tgt = new HeaderFooterImpl();
 		tgt._leftText = this._leftText;

@@ -75,7 +75,7 @@ public interface SPicture {
 	
 	/**
 	 * Returns the SPictureData
-	 * @since 3.5.1
+	 * @since 3.6.0
 	 * @return
 	 */
 	public SPictureData getPictureData();

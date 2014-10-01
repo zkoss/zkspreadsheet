@@ -120,7 +120,7 @@ public interface SPrintSetup {
 	/**
 	 * 
 	 * @param scale
-	 * @since 3.5.1
+	 * @since 3.6.0
 	 */
 	public void setScale(int scale); // x100; e.g. 20 => 20%, 400 => 400%
 	public int getScale();
@@ -128,7 +128,7 @@ public interface SPrintSetup {
 	/**
 	 * Set general Header or odd page header.
 	 * @param header
-	 * @since 3.5.1
+	 * @since 3.6.0
 	 */
 	public void setHeader(SHeader header);
 	public SHeader getHeader();
@@ -138,7 +138,7 @@ public interface SPrintSetup {
 	 * {@link #isDifferentOddEvenPage()} is true.
 	 * 
 	 * @param header
-	 * @since 3.5.1
+	 * @since 3.6.0
 	 */
 	public void setEvenHeader(SHeader header);
 	public SHeader getEvenHeader();
@@ -148,7 +148,7 @@ public interface SPrintSetup {
 	 * {@link #isDifferentFirstPage()} is true.
 	 * 
 	 * @param header
-	 * @since 3.5.1
+	 * @since 3.6.0
 	 */
 	public void setFirstHeader(SHeader header);
 	public SHeader getFirstHeader();
@@ -156,7 +156,7 @@ public interface SPrintSetup {
 	/**
 	 * Set general footer or odd page footer. 
 	 * @param footer
-	 * @since 3.5.1
+	 * @since 3.6.0
 	 */
 	public void setFooter(SFooter footer);
 	public SFooter getFooter();
@@ -166,7 +166,7 @@ public interface SPrintSetup {
 	 * {@link #isDifferentOddEvenPage()} is true.
 	 * 
 	 * @param footer
-	 * @since 3.5.1
+	 * @since 3.6.0
 	 */
 	public void setEvenFooter(SFooter footer);
 	public SFooter getEvenFooter();
@@ -176,7 +176,7 @@ public interface SPrintSetup {
 	 * {@link #isDifferentFirstPage()} is true.
 	 * 
 	 * @param footer
-	 * @since 3.5.1
+	 * @since 3.6.0
 	 */
 	public void setFirstFooter(SFooter footer);
 	public SFooter getFirstFooter();
@@ -185,7 +185,7 @@ public interface SPrintSetup {
 	 * Set true to print even page with special header and footer for even
 	 * page; {@see #getEvenHeader()} and {@see #getEvenFooter()}.
 	 * @param flag
-	 * @since 3.5.1
+	 * @since 3.6.0
 	 */
 	public void setDifferentOddEvenPage(boolean flag);
 	public boolean isDifferentOddEvenPage();
@@ -195,7 +195,7 @@ public interface SPrintSetup {
 	 * page; {@see #getFirstHeader()} and {@see #getFirstFooter()}.
 	 * 
 	 * @param flag
-	 * @since 3.5.1
+	 * @since 3.6.0
 	 */
 	public void setDifferentFirstPage(boolean flag);
 	public boolean isDifferentFirstPage();
@@ -204,7 +204,7 @@ public interface SPrintSetup {
 	/**
 	 * Set true to scale header/footer with document.
 	 * @param flag
-	 * @since 3.5.1
+	 * @since 3.6.0
 	 */
 	public void setScaleWithDoc(boolean flag);
 	public boolean isScaleWithDoc();
@@ -212,7 +212,7 @@ public interface SPrintSetup {
 	/**
 	 * Set true to align header/footer with page margins.
 	 * @param flag
-	 * @since 3.5.1
+	 * @since 3.6.0
 	 */
 	public void setAlignWithMargins(boolean flag);
 	public boolean isAlignWithMargins();
@@ -220,7 +220,7 @@ public interface SPrintSetup {
 	/**
 	 * Set true to print sheet center horizontally on page.
 	 * @param center
-	 * @since 3.5.1
+	 * @since 3.6.0
 	 */
 	public void setHCenter(boolean center);
 	public boolean isHCenter();
@@ -228,7 +228,7 @@ public interface SPrintSetup {
 	/**
 	 * Set true to print sheet center vertically on page.
 	 * @param vcenter
-	 * @since 3.5.1
+	 * @since 3.6.0
 	 */
 	public void setVCenter(boolean vcenter);
 	public boolean isVCenter();
@@ -236,7 +236,7 @@ public interface SPrintSetup {
 	/**
 	 * 
 	 * @param start
-	 * @since 3.5.1
+	 * @since 3.6.0
 	 */
 	public void setPageStart(int start); // set starting page number
 	public int getPageStart();
@@ -245,7 +245,7 @@ public interface SPrintSetup {
 	 * Set the number of pages the sheet width 
 	 * is fit to. MUST be less than or equal to 32767. The value 0 means use 
 	 * as many pages as necessary to print the columns in the sheet.
-	 * @since 3.5.1
+	 * @since 3.6.0
 	 */ 
 	public void setFitWidth(int numPages); 
 	public int getFitWidth();
@@ -255,7 +255,7 @@ public interface SPrintSetup {
 	 * is fit to. MUST be less than or equal to 32767. The value 0 means use 
 	 * as many pages as necessary to print the rows of the sheet.
 	 * @param pages
-	 * @since 3.5.1
+	 * @since 3.6.0
 	 */
 	public void setFitHeight(int numPages); // fit sheet in how many pages of print page height;
 	public int getFitHeight();
@@ -263,7 +263,7 @@ public interface SPrintSetup {
 	/**
 	 * Set the print area as an area formula; e.g. A1:B2
 	 * @param formula
-	 * @since 3.5.1
+	 * @since 3.6.0
 	 */
 	public void setPrintArea(String formula);
 	public String getPrintArea();
@@ -272,7 +272,7 @@ public interface SPrintSetup {
 	 * Set the first row of the repeat title rows for each top-to-bottom pages.
 	 * 
 	 * @param formula
-	 * @since 3.5.1
+	 * @since 3.6.0
 	 */
 	public void setRepeatingRowsTitle(int firstRow, int lastRow);
 	public CellRegion getRepeatingRowsTitle();
@@ -283,7 +283,7 @@ public interface SPrintSetup {
 	 * pages.
 	 * 
 	 * @param formula
-	 * @since 3.5.1
+	 * @since 3.6.0
 	 */
 	public void setRepeatingColumnsTitle(int firstCol, int lastCol);
 	public CellRegion getRepeatingColumnsTitle();
@@ -291,7 +291,7 @@ public interface SPrintSetup {
 	/**
 	 * Set true to also out row and column headings.
 	 * @param flag
-	 * @since 3.5.1
+	 * @since 3.6.0
 	 */
 	public void setPrintHeadings(boolean flag);
 	public boolean isPrintHeadings();
@@ -302,7 +302,7 @@ public interface SPrintSetup {
 	 * 1: at end of sheet
 	 * 2: as displayed on the sheet
 	 * @param mode
-	 * @since 3.5.1
+	 * @since 3.6.0
 	 */
 	public void setCommentsMode(int mode);
 	public int getCommentsMode();
@@ -315,7 +315,7 @@ public interface SPrintSetup {
 	 * 3: print errors as "#N/A".
 	 * 
 	 * @param mode
-	 * @since 3.5.1
+	 * @since 3.6.0
 	 */
 	public void setErrorPrintMode(int mode);
 	public int getErrorPrintMode();
@@ -325,7 +325,7 @@ public interface SPrintSetup {
 	 * and then top-to-bottom; false in the order of top-to-bottom first and
 	 * then left-to-right.
 	 * @param flag
-	 * @since 3.5.1
+	 * @since 3.6.0
 	 */
 	public void setLeftToRight(boolean flag);
 	public boolean isLeftToRight();

@@ -582,7 +582,7 @@ public class DataValidationImpl extends AbstractDataValidationAdv {
 	}
 
 	//ZSS-688
-	//@since 3.5.1
+	//@since 3.6.0
 	/*package*/ DataValidationImpl cloneDataValidationImpl(AbstractSheetAdv sheet) {
 		DataValidationImpl tgt = new DataValidationImpl(sheet, this._id); 
 
@@ -624,7 +624,7 @@ public class DataValidationImpl extends AbstractDataValidationAdv {
 	 * 
 	 * @param fe1
 	 * @param fe2
-	 * @since 3.5.1
+	 * @since 3.6.0
 	 */
 	public void setFormulas(FormulaExpression fe1, FormulaExpression fe2) {
 		checkOrphan();
@@ -653,7 +653,7 @@ public class DataValidationImpl extends AbstractDataValidationAdv {
 	/**
 	 * 
 	 * @return
-	 * @since 3.5.1
+	 * @since 3.6.0
 	 */
 	public FormulaExpression getFormulaExpression1() {
 		return _formula1Expr;
@@ -662,7 +662,7 @@ public class DataValidationImpl extends AbstractDataValidationAdv {
 	/**
 	 * 
 	 * @return
-	 * @since 3.5.1
+	 * @since 3.6.0
 	 */
 	public FormulaExpression getFormulaExpression2() {
 		return _formula2Expr;
@@ -671,7 +671,7 @@ public class DataValidationImpl extends AbstractDataValidationAdv {
 	/**
 	 * 
 	 * @param formula
-	 * @since 3.5.1
+	 * @since 3.6.0
 	 */
 	public void setFormula1(FormulaExpression formula1) {
 		setFormulas(formula1, _formula2Expr);
@@ -680,7 +680,7 @@ public class DataValidationImpl extends AbstractDataValidationAdv {
 	/**
 	 * 
 	 * @param formula
-	 * @since 3.5.1
+	 * @since 3.6.0
 	 */
 	public void setFormula2(FormulaExpression formula2) {
 		setFormulas(_formula1Expr, formula2);

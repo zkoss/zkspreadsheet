@@ -266,7 +266,7 @@ public class SheetProtectionImpl implements SSheetProtection {
 	}
 
 	//ZSS-688
-	//@Since 3.5.1
+	//@Since 3.6.0
 	/*package*/ SheetProtectionImpl cloneSheetProtectionImpl() {
 		final SheetProtectionImpl tgt = new SheetProtectionImpl();
 		tgt._bits = this._bits;

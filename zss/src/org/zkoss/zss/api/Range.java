@@ -711,7 +711,7 @@ public interface Range {
 	 * Clone this sheet; create a sheet and copy the contents of this sheet; then add to the end of the book. 
 	 * @param name the sheet name, it must not be the same as another sheet name in book of this range
 	 * @return the new created sheet
-	 * @since 3.5.1
+	 * @since 3.6.0
 	 */
 	public Sheet cloneSheet(String name);
 	
@@ -944,14 +944,14 @@ public interface Range {
 	/**
 	 * Set into the left top cell of this Range the specified text in html format.
 	 * @param html
-	 * @since 3.5.1
+	 * @since 3.6.0
 	 */
 	public void setCellRichText(String html);
 	
 	//ZSS-742
 	/**
 	 * Returns text in html format; null if not a rich text.
-	 * @since 3.5.1
+	 * @since 3.6.0
 	 */
 	public String getCellRichText();
 	
@@ -960,7 +960,7 @@ public interface Range {
 	 * range and return it.
 	 * 
 	 * @return font of the specified font metrics
-	 * @since 3.5.1
+	 * @since 3.6.0
 	 */
 	public Font getOrCreateFont(Boldweight boldweight, Color color,
 			int fontHeight, String fontName, boolean italic, boolean strikeout,
@@ -969,7 +969,7 @@ public interface Range {
 	/**
 	 * Enforce evaluation(if not cached) and refresh UI of this range and its 
 	 * dependent cells if the includeDependents is true. 
-	 * @since 3.5.1
+	 * @since 3.6.0
 	 */
 	public void refresh(boolean includeDependants);
 	
@@ -979,7 +979,7 @@ public interface Range {
 	 * 
 	 * @param auto whether refresh automatically
 	 * @return previous status
-	 * @since 3.5.1
+	 * @since 3.6.0
 	 */
 	public boolean setAutoRefresh(boolean auto);
 }

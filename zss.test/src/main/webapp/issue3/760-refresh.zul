@@ -1,5 +1,5 @@
 <zk>
-Since 3.5.1
+Since 3.6.0
 <label multiline="true">
 0. You should see A2 is 1.
 1. Click "setEditText("2") on A1" button to set number 2 on A1

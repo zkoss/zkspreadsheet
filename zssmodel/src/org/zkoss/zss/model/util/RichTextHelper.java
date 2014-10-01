@@ -37,7 +37,7 @@ import org.zkoss.zss.range.SRange;
 /**
  * 
  * @author RaymondChao
- * @since 3.5.1
+ * @since 3.6.0
  */
 public class RichTextHelper {
 	private static final String NEW_LINE = "\u4a3a\u0000\u9f98";

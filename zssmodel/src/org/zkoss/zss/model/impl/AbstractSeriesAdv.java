@@ -22,46 +22,46 @@ import org.zkoss.zss.model.chart.SSeries;
 /**
  * Handle formula caching for chart series data.
  * @author henri
- * @since 3.5.1
+ * @since 3.6.0
  */
 public abstract class AbstractSeriesAdv implements SSeries {
 
 	/**
-	 * @since 3.5.1
+	 * @since 3.6.0
 	 */
 	public abstract FormulaExpression getNameFormulaExpression();
 	
 	/**
 	 * 
 	 * @return
-	 * @since 3.5.1	 
+	 * @since 3.6.0	 
 	 */
 	public abstract FormulaExpression getValuesFormulaExpression();
 	
 	/**
 	 * 
 	 * @return
-	 * @since 3.5.1
+	 * @since 3.6.0
 	 */
 	public abstract FormulaExpression getXValuesFormulaExpression();
 	
 	/**
 	 * 
 	 * @return
-	 * @since 3.5.1
+	 * @since 3.6.0
 	 */
 	public abstract FormulaExpression getYValuesFormulaExpression();
 	
 	/**
 	 * 
 	 * @return
-	 * @since 3.5.1
+	 * @since 3.6.0
 	 */
 	public abstract FormulaExpression getZValuesFormulaExpression();
 
 	/**
 	 *
-	 * @since 3.5.1
+	 * @since 3.6.0
 	 */
 	public abstract void setXYZFormula(FormulaExpression nameExpr, FormulaExpression xValuesExpr, FormulaExpression yValuesExpr, FormulaExpression zValuesExpr);
 }

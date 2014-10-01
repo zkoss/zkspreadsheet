@@ -31,7 +31,7 @@ public class PictureImpl extends AbstractPictureAdv {
 	private String _id;
 	
 	
-	private SPictureData _picData; //since 3.5.1
+	private SPictureData _picData; //since 3.6.0
 	private ViewAnchor _anchor;
 	private AbstractSheetAdv _sheet;
 
@@ -46,7 +46,7 @@ public class PictureImpl extends AbstractPictureAdv {
 	}
 	
 	//ZSS-735
-	//since 3.5.1
+	//since 3.6.0
 	/** This constructor use the existing picData in the {@SBook}. */
 	public PictureImpl(AbstractSheetAdv sheet, String id, int picDataIndex,
 			ViewAnchor anchor) {
@@ -107,7 +107,7 @@ public class PictureImpl extends AbstractPictureAdv {
 	}
 	
 	//ZSS-688
-	//@since 3.5.1
+	//@since 3.6.0
 	/*package*/ PictureImpl clonePictureImpl(AbstractSheetAdv sheet) {
 		return new PictureImpl(sheet, this._id, this._picData.getIndex(),
 				this._anchor.cloneViewAnchor());

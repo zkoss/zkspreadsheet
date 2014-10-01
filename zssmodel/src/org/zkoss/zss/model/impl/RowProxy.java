@@ -200,7 +200,7 @@ class RowProxy extends AbstractRowAdv{
 	}
 	
 	//ZSS-688
-	//@since 3.5.1
+	//@since 3.6.0
 	/*package*/ AbstractRowAdv cloneRow(AbstractSheetAdv sheet) {
 		if (_proxy == null) {
 			return new 	RowProxy(sheet, this._index);

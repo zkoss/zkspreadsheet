@@ -183,7 +183,7 @@ public class ChartImpl extends AbstractChartAdv {
 	}
 
 	//ZSS-688
-	//@since 3.5.1
+	//@since 3.6.0
 	/*package*/ ChartImpl cloneChartImpl(AbstractSheetAdv sheet) {
 		ChartImpl tgt = new ChartImpl(sheet,this._id,this._type, this._anchor.cloneViewAnchor());
 		if (tgt._data instanceof GeneralChartDataImpl) {

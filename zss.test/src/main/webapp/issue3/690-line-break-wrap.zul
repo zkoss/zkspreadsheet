@@ -1,5 +1,5 @@
 <zk>
-Since 3.5.1
+Since 3.6.0
 <label multiline="true">
 1. enter "hello\nworld" into any one of the cell and press enter, then make sure this cell will get wrap-text on.
 (you must use "ctrl + enter" or "alt + enter" to get symbol "\n" in this case. it's not two words "\" and "n")

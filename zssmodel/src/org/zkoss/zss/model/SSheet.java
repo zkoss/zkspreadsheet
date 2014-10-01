@@ -199,7 +199,7 @@ public interface SSheet {
 	 * @param index {@link SPictureData} index
 	 * @param anchor where to anchor this picture
 	 * @return the {@link SPicture} added
-	 * @since 3.5.1
+	 * @since 3.6.0
 	 */
 	public SPicture addPicture(int index, ViewAnchor anchor); 
 	public SPicture getPicture(String picid);
@@ -259,7 +259,7 @@ public interface SSheet {
 	 * Delete data validations that are covered by the specified region.
 	 * @param region the cover region
 	 * @return the data validations deleted
-	 * @since 3.5.1
+	 * @since 3.6.0
 	 */
 	public List<SDataValidation> deleteDataValidationRegion(CellRegion region);
 	

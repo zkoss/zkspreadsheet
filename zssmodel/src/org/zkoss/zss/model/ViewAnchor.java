@@ -176,7 +176,7 @@ public class ViewAnchor implements Serializable {
 	}
 	
 	//ZSS-688
-	//@since 3.5.1
+	//@since 3.6.0
 	public ViewAnchor cloneViewAnchor() {
 		return new ViewAnchor(this.rowIndex, this.columnIndex, 
 				this.xOffset, this.yOffset, this.width, this.height);

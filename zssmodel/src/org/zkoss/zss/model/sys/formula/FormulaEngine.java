@@ -87,7 +87,7 @@ public interface FormulaEngine {
 	 * @param columnOffset
 	 * @param context
 	 * @return
-	 * @since 3.5.1
+	 * @since 3.6.0
 	 */
 	public FormulaExpression shiftPtgs(FormulaExpression fexpr, int rowOffset,int columnOffset, FormulaParseContext context);
 	
@@ -99,7 +99,7 @@ public interface FormulaEngine {
 	 * @param columnOrigin
 	 * @param context
 	 * @return
-	 * @since 3.5.1
+	 * @since 3.6.0
 	 */
 	public FormulaExpression transposePtgs(FormulaExpression fexpr, int rowOrigin,int columnOrigin, FormulaParseContext context);
 	
@@ -112,7 +112,7 @@ public interface FormulaEngine {
 	 * @param columnOffset
 	 * @param context
 	 * @return
-	 * @since 3.5.1
+	 * @since 3.6.0
 	 */
 	public FormulaExpression movePtgs(FormulaExpression fexpr, SheetRegion srcRegion, int rowOffset,int columnOffset,
 			FormulaParseContext context);
@@ -125,7 +125,7 @@ public interface FormulaEngine {
 	 * @param hrizontal
 	 * @param context
 	 * @return
-	 * @since 3.5.1
+	 * @since 3.6.0
 	 */
 	public FormulaExpression shrinkPtgs(FormulaExpression fexpr, SheetRegion srcRegion, boolean hrizontal,
 			FormulaParseContext context);
@@ -138,7 +138,7 @@ public interface FormulaEngine {
 	 * @param hrizontal
 	 * @param context
 	 * @return
-	 * @since 3.5.1
+	 * @since 3.6.0
 	 */
 	public FormulaExpression extendPtgs(FormulaExpression fexpr, SheetRegion srcRegion, boolean hrizontal,
 			FormulaParseContext context);
@@ -152,7 +152,7 @@ public interface FormulaEngine {
 	 * @param newName
 	 * @param context
 	 * @return
-	 * @since 3.5.1
+	 * @since 3.6.0
 	 */
 	public FormulaExpression renameSheetPtgs(FormulaExpression fexpr, SBook book, String oldName,String newName,
 			FormulaParseContext context);
@@ -166,7 +166,7 @@ public interface FormulaEngine {
 	 * @param newName
 	 * @param context
 	 * @return
-	 * @since 3.5.1
+	 * @since 3.6.0
 	 */
 	public FormulaExpression renameNamePtgs(FormulaExpression fexpr, SBook book, String oldName,String newName,
 			FormulaParseContext context);
@@ -177,7 +177,7 @@ public interface FormulaEngine {
 	 * 
 	 * @param fexpr
 	 * @param context
-	 * @since 3.5.1
+	 * @since 3.6.0
 	 */
 	public void updateDependencyTable(FormulaExpression fexpr, FormulaParseContext context);
 }

@@ -289,7 +289,7 @@ class CellProxy extends AbstractCellAdv {
 	}
 
 	//ZSS-688
-	//@since 3.5.1
+	//@since 3.6.0
 	@Override
 	/*package*/ AbstractCellAdv cloneCell(AbstractRowAdv row) {
 		if (_proxy == null) {

@@ -1,5 +1,5 @@
 <zk>
-Since 3.5.1
+Since 3.6.0
 <label multiline="true">
 1. keep browser window is small enough to show only 5 rows.
 2. make sure the corner and top panel work well after reload.

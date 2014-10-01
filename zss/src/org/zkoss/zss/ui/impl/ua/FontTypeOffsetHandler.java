@@ -35,8 +35,9 @@ import org.zkoss.zss.ui.sys.UndoableActionManager;
 import org.zkoss.zss.ui.sys.UndoableAction;
 
 /**
+ * Handle font super/sub operation.
  * @author henrichen
- * @since 3.5.1
+ * @since 3.6.0
  */
 public class FontTypeOffsetHandler extends AbstractCellHandler {
 

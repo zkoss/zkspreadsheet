@@ -51,7 +51,7 @@ public interface FormulaExpression {
 	//ZSS-747
 	/**
 	 * Returns the cached parsing things.
-	 * @since 3.5.1
+	 * @since 3.6.0
 	 */
 	Ptg[] getPtgs();
 
@@ -59,7 +59,7 @@ public interface FormulaExpression {
 	/**
 	 * Returns whether this is a multiple-area formula used in char data; 
 	 * e.g. (A1, B1, Sheet2!A1:B2).
-	 * @since 3.5.1
+	 * @since 3.6.0
 	 */
 	boolean isMultipleAreaFormula();
 }

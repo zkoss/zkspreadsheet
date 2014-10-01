@@ -96,7 +96,7 @@ public class BookImpl extends AbstractBookAdv{
 	
 	private EvaluationContributor _evalContributor;
 	
-	private ArrayList<SPictureData> _picDatas; //since 3.5.1
+	private ArrayList<SPictureData> _picDatas; //since 3.6.0
 	
 	/**
 	 * the sheet which is destroying now.

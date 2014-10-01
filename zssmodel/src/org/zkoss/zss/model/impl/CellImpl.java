@@ -458,7 +458,7 @@ public class CellImpl extends AbstractCellAdv {
 	}
 	
 	//ZSS-688
-	//@since 3.5.1
+	//@since 3.6.0
 	@Override
 	/*package*/ AbstractCellAdv cloneCell(AbstractRowAdv row) {
 		final CellImpl tgt = new CellImpl(row, this._index);

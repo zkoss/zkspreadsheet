@@ -1461,7 +1461,7 @@ public class SheetImpl extends AbstractSheetAdv {
 	}
 	
 	//ZSS-735
-	//@since 3.5.1
+	//@since 3.6.0
 	public SPicture addPicture(int picDataIndex, ViewAnchor anchor) {
 		checkOrphan();
 		AbstractPictureAdv pic = new PictureImpl(this,_book.nextObjId("pic"), picDataIndex,anchor);

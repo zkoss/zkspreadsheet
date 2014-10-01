@@ -51,7 +51,7 @@ public abstract class AbstractDataValidationAdv implements SDataValidation,Linke
 	 * 
 	 * @param fe1
 	 * @param fe2
-	 * @since 3.5.1
+	 * @since 3.6.0
 	 */
 	abstract public void setFormulas(FormulaExpression fe1, FormulaExpression fe2);
 
@@ -59,28 +59,28 @@ public abstract class AbstractDataValidationAdv implements SDataValidation,Linke
 	/**
 	 * 
 	 * @return
-	 * @since 3.5.1
+	 * @since 3.6.0
 	 */
 	abstract public FormulaExpression getFormulaExpression1();
 	//ZSS-747
 	/**
 	 * 
 	 * @return
-	 * @since 3.5.1
+	 * @since 3.6.0
 	 */
 	abstract public FormulaExpression getFormulaExpression2();
 	//ZSS-747
 	/**
 	 * 
 	 * @param formula
-	 * @since 3.5.1
+	 * @since 3.6.0
 	 */
 	abstract public void setFormula1(FormulaExpression formula);
 	//ZSS-747
 	/**
 	 * 
 	 * @param formula
-	 * @since 3.5.1
+	 * @since 3.6.0
 	 */
 	abstract public void setFormula2(FormulaExpression formula);
 
