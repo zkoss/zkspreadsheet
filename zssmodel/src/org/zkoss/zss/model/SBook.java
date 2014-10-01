@@ -131,6 +131,12 @@ public interface SBook {
 	public SCellStyle getDefaultCellStyle();
 
 	/**
+	 * Set the default style of this book
+	 * @since 3.6.0
+	 */
+	public void setDefaultCellStyle(SCellStyle cellStyle);
+	
+	/**
 	 *Create a cell style
 	 * @param inStyleTable if true, the new created style will be stored inside this book, 
 	 * then you can use {@link #searchCellStyle(CellStyleMatcher)} to search and reuse this style.

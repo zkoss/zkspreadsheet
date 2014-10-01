@@ -30,6 +30,7 @@ public class CellStyleImpl extends AbstractCellStyleAdv {
 
 	private AbstractFontAdv _font;
 	private SColor _fillColor = ColorImpl.WHITE;
+	private SColor _backColor = ColorImpl.WHITE;
 	private FillPattern _fillPattern = FillPattern.NO_FILL;
 	private Alignment _alignment = Alignment.GENERAL;
 	private VerticalAlignment _verticalAlignment = VerticalAlignment.BOTTOM;
@@ -322,5 +323,19 @@ public class CellStyleImpl extends AbstractCellStyleAdv {
 	public void setBorderBottom(BorderType borderBottom, SColor color) {
 		setBorderBottom(borderBottom);
 		setBorderBottomColor(color);
+	}
+
+	//ZSS-780
+	@Override
+	public SColor getBackgroundColor() {
+		// TODO Auto-generated method stub
+		return _backColor;
+	}
+
+	//ZSS-780
+	@Override
+	public void setBackgroundColor(SColor backColor) {
+		Validations.argNotNull(backColor);
+		this._backColor = backColor;
 	}
 }

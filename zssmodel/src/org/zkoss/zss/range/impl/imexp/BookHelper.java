@@ -375,7 +375,17 @@ public final class BookHelper {
 			((XSSFCellStyle)newCellStyle).setFillForegroundColor((XSSFColor)xlsColor);
 		}
 	}
-	
+
+	//ZSS-780
+	//since 3.6.0
+	public static void setFillBackgroundColor(CellStyle newCellStyle, Color xlsColor) {
+		if (newCellStyle instanceof HSSFCellStyle) {
+			((HSSFCellStyle)newCellStyle).setFillBackgroundColor((HSSFColor)xlsColor);
+		} else {
+			((XSSFCellStyle)newCellStyle).setFillBackgroundColor((XSSFColor)xlsColor);
+		}
+	}
+
 	public static void setFontColor(Workbook book, Font font, Color color) {
 		if (font instanceof HSSFFont) {
 			if (color instanceof HSSFColorExt) { //not palette color

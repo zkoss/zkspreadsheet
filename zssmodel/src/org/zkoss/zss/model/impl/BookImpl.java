@@ -76,7 +76,7 @@ public class BookImpl extends AbstractBookAdv{
 	private List<AbstractNameAdv> _names;
 	
 	private final List<AbstractCellStyleAdv> _cellStyles = new LinkedList<AbstractCellStyleAdv>();
-	private final AbstractCellStyleAdv _defaultCellStyle;
+	private AbstractCellStyleAdv _defaultCellStyle;
 	private final List<AbstractFontAdv> _fonts = new LinkedList<AbstractFontAdv>();
 	private final AbstractFontAdv _defaultFont;
 	private final HashMap<AbstractColorAdv,AbstractColorAdv> _colors = new LinkedHashMap<AbstractColorAdv,AbstractColorAdv>();
@@ -389,6 +389,13 @@ public class BookImpl extends AbstractBookAdv{
 	@Override
 	public SCellStyle getDefaultCellStyle() {
 		return _defaultCellStyle;
+	}
+	
+	@Override
+	public void setDefaultCellStyle(SCellStyle cellStyle) {
+		if (cellStyle == null) return;
+		_defaultCellStyle = (AbstractCellStyleAdv) cellStyle;
+		_cellStyles.set(0, _defaultCellStyle);
 	}
 
 	@Override

@@ -59,9 +59,15 @@ public interface SCellStyle {
 	
 	
 	/**
-	 * @return background-color
+	 * @return fill foreground-color
 	 */
 	public SColor getFillColor();
+
+	/**
+	 * @return fill background-color
+	 * @since 3.6.0
+	 */
+	public SColor getBackgroundColor();
 
 	/**
 	 * Gets the fill/background pattern <br/>
@@ -152,6 +158,8 @@ public interface SCellStyle {
 	
 
 	public void setFillColor(SColor fillColor);
+	
+	public void setBackgroundColor(SColor backColor); //ZSS-780
 
 	public void setFillPattern(FillPattern fillPattern);
 	

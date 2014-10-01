@@ -440,6 +440,9 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 
 		/* Fill Foreground Color */
 		BookHelper.setFillForegroundColor(poiCellStyle, toPOIColor(cellStyle.getFillColor()));
+		
+		/* Fill Background Color */
+		BookHelper.setFillBackgroundColor(poiCellStyle, toPOIColor(cellStyle.getBackgroundColor())); //ZSS-780
 
 		poiCellStyle.setFillPattern(PoiEnumConversion.toPoiFillPattern(cellStyle.getFillPattern()));
 		poiCellStyle.setAlignment(PoiEnumConversion.toPoiHorizontalAlignment(cellStyle.getAlignment()));

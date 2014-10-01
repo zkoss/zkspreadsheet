@@ -83,6 +83,7 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 
 		workbook = createPoiBook(is);
 		book = SBooks.createBook(bookName);
+		book.setDefaultCellStyle(importCellStyle(workbook.getCellStyleAt((short) 0), false)); //ZSS-780
 		
 		setBookType(book);
 
@@ -430,10 +431,13 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 	 * @param poiCellStyle
 	 */
 	protected SCellStyle importCellStyle(CellStyle poiCellStyle) {
+		return importCellStyle(poiCellStyle, true);
+	}
+	protected SCellStyle importCellStyle(CellStyle poiCellStyle, boolean inStyleTable) {
 		SCellStyle cellStyle = null;
 //		short idx = poiCellStyle.getIndex(); // ZSS-685
 		if ((cellStyle = importedStyle.get(poiCellStyle)) == null) { // ZSS-685
-			cellStyle = book.createCellStyle(true);
+			cellStyle = book.createCellStyle(inStyleTable);
 			importedStyle.put(poiCellStyle, cellStyle); // ZSS-685
 			String dataFormat = poiCellStyle.getRawDataFormatString();
 			if(dataFormat==null){//just in case
@@ -449,6 +453,7 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 			cellStyle.setAlignment(PoiEnumConversion.toHorizontalAlignment(poiCellStyle.getAlignment()));
 			cellStyle.setVerticalAlignment(PoiEnumConversion.toVerticalAlignment(poiCellStyle.getVerticalAlignment()));
 			cellStyle.setFillColor(book.createColor(BookHelper.colorToBackgroundHTML(workbook, poiCellStyle.getFillForegroundColorColor())));
+			cellStyle.setBackgroundColor(book.createColor(BookHelper.colorToBackgroundHTML(workbook, poiCellStyle.getFillBackgroundColorColor()))); //ZSS-780
 
 			cellStyle.setBorderLeft(PoiEnumConversion.toBorderType(poiCellStyle.getBorderLeft()));
 			cellStyle.setBorderTop(PoiEnumConversion.toBorderType(poiCellStyle.getBorderTop()));

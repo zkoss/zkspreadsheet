@@ -52,6 +52,7 @@ ZK Spreadsheet 3.6.0
   ZSS-320 Exported PDF file has big difference with original one in the Spreadsheet, when spreadsheet book has pictures
   ZSS-178 Fail to export chart properly to pdf
   ZSS-779 Text clipped when export center-across-selection cells to PDF
+  ZSS-780 Cell with background color should not print grid-line when export to PDF
   
 ** Upgrade Notes
   * Following api are deprecated
