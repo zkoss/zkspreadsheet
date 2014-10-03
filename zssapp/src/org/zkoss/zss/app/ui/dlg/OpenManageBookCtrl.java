@@ -181,7 +181,8 @@ public class OpenManageBookCtrl extends DlgCtrlBase{
 							bookInfo = rep.saveAs(name, book);
 							count++;
 						}catch(Exception x){
-							log.debug("exception when handling user upload file");
+							log.debug(x);
+							log.warning("exception when handling user upload file");
 						}finally{
 							if(is!=null){
 								is.close();
