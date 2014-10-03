@@ -90,7 +90,13 @@ We also merge lots of POI test cases from a previous project &quot;zsstest&quot;
 			<artifactId>zsshtml</artifactId>
 			<version>${zss.version}</version>
 		</dependency>
-	
+		<dependency>
+			<groupId>cpsuite</groupId>
+			<artifactId>cpsuite</artifactId>
+			<version>1.2.6</version>
+			<scope>system</scope>
+    		<systemPath>${project.basedir}/lib/cpsuite-1.2.6.jar</systemPath>
+		</dependency>
 	
 	</dependencies>
 	<build>
