@@ -403,7 +403,7 @@ public class Issue600Test {
 
 	@Test
 	public void testZSS693SortFormulaCells() {
-		Object[] books = _loadBooks(null, "book/693-sort-formula-cells.xlsx");
+		Object[] books = _loadBooks(this, "book/693-sort-formula-cells.xlsx");
 		Book book = (Book) books[0];
 		Sheet sheet = book.getSheet("Sheet1");
 		
@@ -419,7 +419,7 @@ public class Issue600Test {
 	
 	@Test
 	public void testZSS694CopyValidation() {
-		Object[] books = _loadBooks(null, "book/694-copy-validation.xlsx");
+		Object[] books = _loadBooks(this, "book/694-copy-validation.xlsx");
 		Book book = (Book) books[0];
 		Sheet sheet = book.getSheet("Sheet1");
 		
@@ -499,7 +499,7 @@ public class Issue600Test {
 
 	@Test
 	public void testZSS696CopyValidation() {
-		Object[] books = _loadBooks(null, "book/696-cut-paste-mergecell.xlsx");
+		Object[] books = _loadBooks(this, "book/696-cut-paste-mergecell.xlsx");
 		Book book = (Book) books[0];
 		Sheet sheet = book.getSheet("Sheet1");
 		

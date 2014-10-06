@@ -195,13 +195,31 @@ public class PrintSetupImpl implements SPrintSetup,Serializable {
 		this._scale = src._scale;
 		this._paperSize = src._paperSize;
 		
-		this._header = ((HeaderFooterImpl)src._header).cloneHeaderFooterImpl();
-		this._evenHeader = ((HeaderFooterImpl)src._evenHeader).cloneHeaderFooterImpl();
-		this._firstHeader = ((HeaderFooterImpl)src._firstHeader).cloneHeaderFooterImpl();
+		HeaderFooterImpl srcHF = (HeaderFooterImpl) src._header;
+		if (srcHF != null) {
+			this._header = srcHF.cloneHeaderFooterImpl();
+		}
+		srcHF = (HeaderFooterImpl) src._evenHeader;
+		if (srcHF != null) {
+			this._evenHeader = srcHF.cloneHeaderFooterImpl();
+		}
+		srcHF = (HeaderFooterImpl) src._firstHeader;
+		if (srcHF != null) {
+			this._firstHeader = srcHF.cloneHeaderFooterImpl();
+		}
 		
-		this._footer = ((HeaderFooterImpl)src._footer).cloneHeaderFooterImpl();
-		this._evenFooter = ((HeaderFooterImpl)src._evenFooter).cloneHeaderFooterImpl();;
-		this._firstFooter = ((HeaderFooterImpl)src._firstFooter).cloneHeaderFooterImpl();;
+		srcHF = (HeaderFooterImpl) src._footer;
+		if (srcHF != null) {
+			this._footer = srcHF.cloneHeaderFooterImpl();
+		}
+		srcHF = (HeaderFooterImpl) src._evenFooter;
+		if (srcHF != null) {
+			this._evenFooter = ((HeaderFooterImpl)src._evenFooter).cloneHeaderFooterImpl();;
+		}
+		srcHF = (HeaderFooterImpl) src._firstFooter;
+		if (srcHF != null) {
+			this._firstFooter = ((HeaderFooterImpl)src._firstFooter).cloneHeaderFooterImpl();;
+		}
 		
 		this._diffOddEven = src._diffOddEven;
 		this._diffFirst = src._diffFirst;

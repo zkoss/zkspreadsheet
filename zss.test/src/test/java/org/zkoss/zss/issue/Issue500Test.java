@@ -48,7 +48,7 @@ public class Issue500Test {
 
 		Ranges.range(book.getSheet("row")).deleteSheet();
 		
-		assertEquals("='#REF'!A1", referencingCell.getCellEditText());
+		assertEquals("=#REF!A1", referencingCell.getCellEditText());
 		assertEquals(ErrorConstants.getText(ErrorConstants.ERROR_REF), referencingCell.getCellFormatText());
 	}
 	
@@ -62,7 +62,7 @@ public class Issue500Test {
 
 		Ranges.range(book.getSheet("row")).deleteSheet();
 		
-		assertEquals("='#REF'!A1", referencingCell.getCellEditText());
+		assertEquals("=#REF!A1", referencingCell.getCellEditText());
 		assertEquals(ErrorConstants.getText(ErrorConstants.ERROR_REF), referencingCell.getCellFormatText());
 	}
 	

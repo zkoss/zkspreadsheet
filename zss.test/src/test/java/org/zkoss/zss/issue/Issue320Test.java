@@ -35,7 +35,7 @@ public class Issue320Test {
 	 * Test render long text that across the cell boundary
 	 */
 	@Test
-	public void exportPictureText() {
+	public void exportPicture() {
 		Book book = Util.loadBook(this, "book/320-picture-pdf.xlsx");
 		
 		File temp = Setup.getTempFile("Issue320PictureTest",".pdf");

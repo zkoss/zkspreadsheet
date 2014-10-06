@@ -423,7 +423,7 @@ public class Issue400Test {
 	@Test
 	public void testZSS426() throws IOException {
 		
-		final String filename = "book/book/426-swineFlu.xls";
+		final String filename = "book/426-swineFlu.xls";
 		Book book = Util.loadBook(this, filename);
 		
 		// export work book
