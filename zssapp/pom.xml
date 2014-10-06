@@ -4,7 +4,7 @@
 	<groupId>org.zkoss.zss</groupId>
 	<artifactId>zssapp</artifactId>
 	<properties>
-		<zk.version>7.0.3</zk.version>
+		<zk.version>7.0.3-Eval</zk.version>
 		<commons-lang.version>2.4</commons-lang.version>
 		<bsh.version>2.0b4</bsh.version>
 		<commons-fileupload.version>1.2.1</commons-fileupload.version>
@@ -35,7 +35,7 @@
 		</repository>
 		<repository>
 			<id>ZK Evaluation Repository</id>
-			<url>http://mavensync.zkoss.org/eval/</url>
+			<url>http://mavensync.zkoss.org/zk/ee-eval</url>
 		</repository>
 	</repositories>
 	<pluginRepositories>
@@ -104,7 +104,7 @@
 			<artifactId>zss</artifactId>
 			<version>${project.version}</version>
 		</dependency>
- 		<!-- ZSS EE dependencies
+ 		<!-- ZSS EE dependencies -->
 		<dependency>
 			<groupId>org.zkoss.zk</groupId>
 			<artifactId>zkex</artifactId>
@@ -125,7 +125,7 @@
 			<artifactId>zssex</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-		 -->
+		
 	</dependencies>
   <build>
 		<sourceDirectory>${project.basedir}/src/</sourceDirectory>
