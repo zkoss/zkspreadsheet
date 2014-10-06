@@ -188,34 +188,37 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 
 		// Print Setup Information
 		PrintSetup poips = poiSheet.getPrintSetup();
-		
-		SHeader evenHeader = sps.getEvenHeader();
-		if (evenHeader != null) {
-			Header poiEvenHeader = poiSheet.getEvenHeader();
-			poiEvenHeader.setCenter(evenHeader.getCenterText());
-			poiEvenHeader.setLeft(evenHeader.getLeftText());
-			poiEvenHeader.setRight(evenHeader.getRightText());
+		if (sps.isDifferentOddEvenPage()) {
+			SHeader evenHeader = sps.getEvenHeader();
+			if (evenHeader != null) {
+				Header poiEvenHeader = poiSheet.getEvenHeader();
+				poiEvenHeader.setCenter(evenHeader.getCenterText());
+				poiEvenHeader.setLeft(evenHeader.getLeftText());
+				poiEvenHeader.setRight(evenHeader.getRightText());
+			}
+			SFooter evenFooter = sps.getEvenFooter();
+			if (evenFooter != null) {
+				Footer poiEvenFooter = poiSheet.getEvenFooter();
+				poiEvenFooter.setCenter(evenFooter.getCenterText());
+				poiEvenFooter.setLeft(evenFooter.getLeftText());
+				poiEvenFooter.setRight(evenFooter.getRightText());
+			}
 		}
-		SFooter evenFooter = sps.getEvenFooter();
-		if (evenFooter != null) {
-			Footer poiEvenFooter = poiSheet.getEvenFooter();
-			poiEvenFooter.setCenter(evenFooter.getCenterText());
-			poiEvenFooter.setLeft(evenFooter.getLeftText());
-			poiEvenFooter.setRight(evenFooter.getRightText());
-		}
-		SHeader firstHeader = sps.getFirstHeader();
-		if (firstHeader != null) {
-			Header poiFirstHeader = poiSheet.getFirstHeader();
-			poiFirstHeader.setCenter(firstHeader.getCenterText());
-			poiFirstHeader.setLeft(firstHeader.getLeftText());
-			poiFirstHeader.setRight(firstHeader.getRightText());
-		}
-		SFooter firstFooter = sps.getFirstFooter();
-		if (firstFooter != null) {
-			Footer poiFirstFooter = poiSheet.getFirstFooter();
-			poiFirstFooter.setCenter(firstFooter.getCenterText());
-			poiFirstFooter.setLeft(firstFooter.getLeftText());
-			poiFirstFooter.setRight(firstFooter.getRightText());
+		if (sps.isDifferentFirstPage()) {
+			SHeader firstHeader = sps.getFirstHeader();
+			if (firstHeader != null) {
+				Header poiFirstHeader = poiSheet.getFirstHeader();
+				poiFirstHeader.setCenter(firstHeader.getCenterText());
+				poiFirstHeader.setLeft(firstHeader.getLeftText());
+				poiFirstHeader.setRight(firstHeader.getRightText());
+			}
+			SFooter firstFooter = sps.getFirstFooter();
+			if (firstFooter != null) {
+				Footer poiFirstFooter = poiSheet.getFirstFooter();
+				poiFirstFooter.setCenter(firstFooter.getCenterText());
+				poiFirstFooter.setLeft(firstFooter.getLeftText());
+				poiFirstFooter.setRight(firstFooter.getRightText());
+			}
 		}
 
 		poiSheet.setAlignMargins(sps.isAlignWithMargins());

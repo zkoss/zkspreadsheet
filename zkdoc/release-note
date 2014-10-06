@@ -22,6 +22,7 @@ ZK Spreadsheet 3.6.0
   ZSS-776 Support print double border when export to PDF
   ZSS-775 Support scale page when export to PDF
   ZSS-695 PDF exporter supports to shrink a sheet to fit a page
+  ZSS-778 Support print header and footer when export to PDF
   
 *Bugs:
   ZSS-722 autoFill() with non-VALUE option should not copy value over.

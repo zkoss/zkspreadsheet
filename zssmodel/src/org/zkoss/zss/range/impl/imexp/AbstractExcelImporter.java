@@ -235,38 +235,42 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 			sps.setFooter(footer);
 		}
 
+		if (poiSheet.isDiffOddEven()) {
+			Header poiEvenHeader = poiSheet.getEvenHeader();
+			if (poiEvenHeader != null) {
+				SHeader evenHeader = new HeaderFooterImpl();
+				evenHeader.setCenterText(poiEvenHeader.getCenter());
+				evenHeader.setLeftText(poiEvenHeader.getLeft());
+				evenHeader.setRightText(poiEvenHeader.getRight());
+				sps.setEvenHeader(evenHeader);
+			}
+			Footer poiEvenFooter = poiSheet.getEvenFooter();
+			if (poiEvenFooter != null) {
+				SFooter evenFooter = new HeaderFooterImpl();
+				evenFooter.setCenterText(poiEvenFooter.getCenter());
+				evenFooter.setLeftText(poiEvenFooter.getLeft());
+				evenFooter.setRightText(poiEvenFooter.getRight());
+				sps.setEvenFooter(evenFooter);
+			}
+		}
 		
-		Header poiEvenHeader = poiSheet.getEvenHeader();
-		if (poiEvenHeader != null) {
-			SHeader evenHeader = new HeaderFooterImpl();
-			evenHeader.setCenterText(poiEvenHeader.getCenter());
-			evenHeader.setLeftText(poiEvenHeader.getLeft());
-			evenHeader.setRightText(poiEvenHeader.getRight());
-			sps.setEvenHeader(evenHeader);
-		}
-		Footer poiEvenFooter = poiSheet.getEvenFooter();
-		if (poiEvenFooter != null) {
-			SFooter evenFooter = new HeaderFooterImpl();
-			evenFooter.setCenterText(poiEvenFooter.getCenter());
-			evenFooter.setLeftText(poiEvenFooter.getLeft());
-			evenFooter.setRightText(poiEvenFooter.getRight());
-			sps.setEvenFooter(evenFooter);
-		}
-		Header poiFirstHeader = poiSheet.getFirstHeader();
-		if (poiFirstHeader != null) {
-			SHeader firstHeader = new HeaderFooterImpl();
-			firstHeader.setCenterText(poiFirstHeader.getCenter());
-			firstHeader.setLeftText(poiFirstHeader.getLeft());
-			firstHeader.setRightText(poiFirstHeader.getRight());
-			sps.setFirstHeader(firstHeader);
-		}
-		Footer poiFirstFooter = poiSheet.getFirstFooter();
-		if (poiFirstFooter != null) {
-			SFooter firstFooter = new HeaderFooterImpl();
-			firstFooter.setCenterText(poiFirstFooter.getCenter());
-			firstFooter.setLeftText(poiFirstFooter.getLeft());
-			firstFooter.setRightText(poiFirstFooter.getRight());
-			sps.setFirstFooter(firstFooter);
+		if (poiSheet.isDiffFirst()) {
+			Header poiFirstHeader = poiSheet.getFirstHeader();
+			if (poiFirstHeader != null) {
+				SHeader firstHeader = new HeaderFooterImpl();
+				firstHeader.setCenterText(poiFirstHeader.getCenter());
+				firstHeader.setLeftText(poiFirstHeader.getLeft());
+				firstHeader.setRightText(poiFirstHeader.getRight());
+				sps.setFirstHeader(firstHeader);
+			}
+			Footer poiFirstFooter = poiSheet.getFirstFooter();
+			if (poiFirstFooter != null) {
+				SFooter firstFooter = new HeaderFooterImpl();
+				firstFooter.setCenterText(poiFirstFooter.getCenter());
+				firstFooter.setLeftText(poiFirstFooter.getLeft());
+				firstFooter.setRightText(poiFirstFooter.getRight());
+				sps.setFirstFooter(firstFooter);
+			}
 		}
 
 		PrintSetup poips = poiSheet.getPrintSetup();
