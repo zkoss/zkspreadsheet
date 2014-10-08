@@ -418,16 +418,13 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 	}
 
 	protected CellStyle toPOICellStyle(SCellStyle cellStyle) {
-		return toPOICellStyle(cellStyle, true);
-	}
-	protected CellStyle toPOICellStyle(SCellStyle cellStyle, boolean putInPoiTable) {
 		// instead of creating a new style, use old one if exist
 		CellStyle poiCellStyle = styleTable.get(cellStyle);
 		if (poiCellStyle != null) {
 			return poiCellStyle;
 		}
 
-		poiCellStyle = workbook.createCellStyle(putInPoiTable);
+		poiCellStyle = workbook.createCellStyle();
 
 		//set Border
 		short bottom = PoiEnumConversion.toPoiBorderType(cellStyle.getBorderBottom());
