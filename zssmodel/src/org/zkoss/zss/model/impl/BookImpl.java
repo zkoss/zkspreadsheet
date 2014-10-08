@@ -229,7 +229,6 @@ public class BookImpl extends AbstractBookAdv{
 		checkOwnership(sheet);
 		
 		String oldname = sheet.getSheetName();
-		((AbstractSheetAdv)sheet).setSheetName(newname);
 		
 		//create formula cache for any sheet, sheet name, position change
 		EngineFactory.getInstance().createFormulaEngine().clearCache(new FormulaClearContext(this));
@@ -238,6 +237,10 @@ public class BookImpl extends AbstractBookAdv{
 		ModelUpdateUtil.handlePrecedentUpdate(getBookSeries(),new RefImpl(this.getBookName(),oldname));
 		
 		renameSheetFormula(oldname,newname);
+
+		//ZSS-781: sheet name cannot be changed until after the renameSheetFormula() 
+		((AbstractSheetAdv)sheet).setSheetName(newname);
+		
 	}
 	
 	private void renameSheetFormula(String oldName, String newName){

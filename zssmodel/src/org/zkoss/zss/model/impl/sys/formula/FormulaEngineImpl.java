@@ -1075,14 +1075,8 @@ public class FormulaEngineImpl implements FormulaEngine {
 		return new FormulaAdjuster() {
 			@Override
 			public boolean process(int formulaSheetIndex, Ptg[] tokens, ParsingBook parsingBook, FormulaParseContext context) {
-				if(newSheetName != null) {
-					// parsed tokens has only external sheet index, not real sheet name
-					// the sheet names are kept in parsing book, so we just rename sheets in parsing book
-					// finally use such parsing book to re-render formula will get a renamed formula
-					parsingBook.renameSheet(targetBook.getBookName(), oldSheetName, newSheetName);
-					
-				} else { // if new sheet name is null, it indicates deleted sheet
-					
+				// if new sheet name is null, it indicates deleted sheet
+				if(newSheetName == null) {
 					// compare every token and replace it by deleted reference if necessary
 					String bookName = targetBook == context.getBook() ? null : targetBook.getBookName(); 
 					for(int i = 0; i < tokens.length; ++i) {

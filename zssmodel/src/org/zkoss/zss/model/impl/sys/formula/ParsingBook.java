@@ -97,8 +97,26 @@ public class ParsingBook implements FormulaParsingWorkbook, FormulaRenderingWork
 		return getExternalSheetIndex(null, sheetName);
 	}
 
+	//ZSS-781
+	private String[] splitSheetName(String sheetName) {
+		int p = sheetName.indexOf(':');
+		String name = p < 0 ? sheetName : sheetName.substring(0, p);
+		String lastName = p < 0 ? sheetName : sheetName.substring(p+1);
+		return name.equalsIgnoreCase(lastName) ? new String[] {name} : new String[] {name, lastName};  
+	}
+	
 	@Override
 	public int getExternalSheetIndex(String workbookName, String sheetName) {
+		String[] names = splitSheetName(sheetName);
+		String name;
+		String lastName;
+		if (names.length == 1) {
+			sheetName = name = lastName = names[0];
+		} else {
+			name = names[0];
+			lastName = names[1];
+		}
+		
 		// directly get index if existed
 		String key = toKey(workbookName, sheetName);
 		//ZSS-747
@@ -107,11 +125,8 @@ public class ParsingBook implements FormulaParsingWorkbook, FormulaRenderingWork
 			if(index == null) {
 				// create new index and check sheet name is 3D or not
 				index = _indexes.index2sheet.size();
-				int p = sheetName.indexOf(':');
-				String name = p < 0 ? sheetName : sheetName.substring(0, p);
-				String lastName = p < 0 ? sheetName : sheetName.substring(p+1);
 				_indexes.index2sheet.add(new ExternalSheet(workbookName, name, lastName));
-				_indexes.sheetName2index.put(toKey(workbookName, sheetName), index);
+				_indexes.sheetName2index.put(key, index);
 			}
 			return index;
 		}
@@ -125,12 +140,18 @@ public class ParsingBook implements FormulaParsingWorkbook, FormulaRenderingWork
 		return findExternalSheetIndex(null, sheetName);
 	}
 
+	private String normalizeSheetName(String sheetName) {
+		String[] names = splitSheetName(sheetName);
+		return names.length == 1 ? names[0] : sheetName;
+	}
+	
 	/**
 	 * @param workbookName book name or null
 	 * @param sheetName sheet name or 3D sheet name (e.g "Sheet1:Sheet3")
 	 * @return the external sheet index or -1 if not found
 	 */
 	public int findExternalSheetIndex(String workbookName, String sheetName) {
+		sheetName = normalizeSheetName(sheetName);
 		//ZSS-747
 		synchronized(_indexes) {
 			Integer index = _indexes.sheetName2index.get(toKey(workbookName, sheetName));
@@ -266,11 +287,12 @@ public class ParsingBook implements FormulaParsingWorkbook, FormulaRenderingWork
 		
 			// clear the map of external sheet name to index and rebuild it
 			sheetName2index.clear();
-			for(int i = 0; i < index2sheet.size(); ++i) {
-				String book = index2sheet.get(i).getWorkbookName();
-				String sheet1 = index2sheet.get(i).getSheetName();
-				String sheet2 = index2sheet.get(i).getLastSheetName();
-				String key = toKey(book, sheet1.equals(sheet2) ? (sheet1 + ":" + sheet2) : sheet1);
+			for(int i = 0, len = temp.size(); i < len; ++i) {
+				ExternalSheet esheet = temp.get(i); 
+				String book = esheet.getWorkbookName();
+				String sheet1 = esheet.getSheetName();
+				String sheet2 = esheet.getLastSheetName();
+				String key = toKey(book, !sheet1.equalsIgnoreCase(sheet2) ? (sheet1 + ":" + sheet2) : sheet1);
 				sheetName2index.put(key, i);
 			}
 		}
