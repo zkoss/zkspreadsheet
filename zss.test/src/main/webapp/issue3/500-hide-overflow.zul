@@ -7,6 +7,7 @@ Reproduce steps:
       the cell shouldn't still be appeared
   3. unhide the row
       the cell should still be overflow
+  4. shouldn't cause java exception.
 * Note that if row 15 has cell text over the row, it is another open issue. 
 		]]></label>
 		<hlayout>
@@ -16,7 +17,7 @@ Reproduce steps:
 			<button label="hide row 10" onClick='Ranges.range(ss.getSelectedSheet(), "10").toRowRange().setHidden(true);' />
 			<button label="unhide row 10" onClick='Ranges.range(ss.getSelectedSheet(), "10").toRowRange().setHidden(false);' />
 		</hlayout>
-		<hlayout vflex="true">
+		<hlayout vflex="true" hflex="true">
 			<spreadsheet id="ss" src="/issue3/book/500-hide-overflow.xlsx"  hflex="1" vflex="1"
 				ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e"
 				maxrows="500" maxcolumns="100"

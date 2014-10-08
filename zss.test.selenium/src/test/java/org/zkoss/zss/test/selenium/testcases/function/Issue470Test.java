@@ -26,8 +26,9 @@ public class Issue470Test extends ZSSTestCase {
 		click(xlsxSheetCtrl.getCell("D4"));
 		waitForTime(Setup.getTimeoutL0());
 		xlsxEditor.toWebElement().sendKeys("2");
-		waitForTime(Setup.getTimeoutL0());
+		waitForTime(Setup.getTimeoutL1());
 		click(xlsxSheetCtrl.getCell("E2"));
+		waitForTime(Setup.getTimeoutL1());
 		assertEquals("22", xlsxSheetCtrl.getCell("C2").getText());
 		
 		SpreadsheetWidget xlsSpreadsheet = getSpreadsheet("$ss2");
@@ -37,8 +38,9 @@ public class Issue470Test extends ZSSTestCase {
 		click(xlsSheetCtrl.getCell("D4"));
 		waitForTime(Setup.getTimeoutL0());
 		xlsEditor.toWebElement().sendKeys("2");
-		waitForTime(Setup.getTimeoutL0());
+		waitForTime(Setup.getTimeoutL1());
 		click(xlsSheetCtrl.getCell("E2"));
+		waitForTime(Setup.getTimeoutL1());
 		assertEquals("22", xlsSheetCtrl.getCell("C2").getText());
 	}
 	

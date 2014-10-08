@@ -31,6 +31,7 @@ public class Issue560Test extends ZSSTestCase {
 		editor.toWebElement().sendKeys("assetsBean.list");
 		waitForTime(Setup.getTimeoutL0());
 		click(sheetCtrl.getCell("C4"));
+		waitForTime(Setup.getTimeoutL1());
 		assertEquals("#VALUE!", cellC3.getText());
 	}
 	

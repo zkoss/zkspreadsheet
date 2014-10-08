@@ -35,6 +35,7 @@
 			SheetOperationUtil.addPicture(Ranges.range(sheet,3, 8), decodeToByte(base64),Format.PNG, 100, 100);
 		</attribute>
 	</button>
+	1. press "insert picture" and export it. make sure the picture in exported file looks fine as well.
 	xlsx <button label="export" onClick='export(source, ".xlsx");' /> 
 	<spreadsheet id="source" src="/issue3/book/blank.xlsx" maxVisibleRows="100" maxVisibleColumns="40"
 			hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true"

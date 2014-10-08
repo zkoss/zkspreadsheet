@@ -51,7 +51,7 @@
 		}
 		public void export(Spreadsheet s) {
 			Book book = s.getBook();
-			String fileName = (book.getType() == org.zkoss.zss.api.model.Book.BookType.EXCEL_2003) ? "exported.xls" : "exported.xlsx";
+			String fileName = (book.getType() == org.zkoss.zss.api.model.Book.BookType.XLS) ? "exported.xls" : "exported.xlsx";
 			Exporter exporter = Exporters.getExporter();
 			java.io.ByteArrayOutputStream os = new java.io.ByteArrayOutputStream();
 			exporter.export(book, os);
@@ -59,19 +59,5 @@
 			org.zkoss.zul.Filedownload.save(os.toByteArray(), "application/octet-stream", fileName);
 		}
 	]]></zscript>
-	
-	<script defer="true"><![CDATA[
-		(function() {
-			window.debug = {};
-			window.debug.ss = zk.Widget.$('$ss');
-			window.debug.ssc = debug.ss.sheetCtrl;
-			window.debug.dp = debug.ssc.dp;
-			window.debug.cc = debug.ss._cacheCtrl.getSelectedSheet();
-			window.debug.ss2 = zk.Widget.$('$ss');
-			window.debug.ssc2 = debug.ss2.sheetCtrl;
-			window.debug.dp2 = debug.ssc2.dp;
-			window.debug.cc2 = debug.ss2._cacheCtrl.getSelectedSheet();
-		})();
-	]]></script>
 
 </zk>

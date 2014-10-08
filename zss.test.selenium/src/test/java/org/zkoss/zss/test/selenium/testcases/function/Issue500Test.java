@@ -42,6 +42,7 @@ public class Issue500Test extends ZSSTestCase {
 		sendKeys(formulabarEditor, "BBB");
 		waitForTime(Setup.getTimeoutL0());
 		click(cellC4);
+		waitForTime(Setup.getTimeoutL2());
 		assertEquals("A1 is uneditable", "BBB", cellA1.getText());
 	}
 	

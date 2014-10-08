@@ -22,7 +22,7 @@ Reproduce:
 				<button label="Sheet2 move to last" onClick='Ranges.range(ss1.getBook().getSheet("Sheet2")).setSheetOrder(4);' />
 			</hlayout>
 		</hlayout>
-		<hlayout vflex="true">
+		<hlayout vflex="true" hflex="true">
 			<spreadsheet id="ss" src="/issue3/book/494-reorder-sheet-break-formula.xls"  hflex="1" vflex="true"
 				ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e"
 				maxrows="500" maxcolumns="100"
