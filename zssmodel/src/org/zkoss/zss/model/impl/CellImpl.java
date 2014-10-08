@@ -220,7 +220,7 @@ public class CellImpl extends AbstractCellAdv {
 		Validations.argNotNull(formula);
 		FormulaEngine fe = EngineFactory.getInstance().createFormulaEngine();
 		FormulaParseContext formulaCtx = 
-				new FormulaParseContext(this.getSheet().getBook(),this.getSheet(),this,null,locale);
+				new FormulaParseContext(this.getSheet().getBook(),this.getSheet(),this,this.getSheet().getSheetName(),null,locale);
 		FormulaExpression expr = fe.parse(formula, formulaCtx);//for test error, no need to build dependency
 		if(expr.hasError()){	
 			String msg = expr.getErrorMessage();

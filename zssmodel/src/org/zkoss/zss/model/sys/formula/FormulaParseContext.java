@@ -35,29 +35,37 @@ public class FormulaParseContext extends AbstractContext {
 	private final SBook _book;
 	private final SSheet _sheet;
 	private final SCell _cell;
+	private final String _sheetName;
 
 	public FormulaParseContext(SCell cell,Ref dependent) {
-		this(cell.getSheet().getBook(),cell.getSheet(),cell,dependent);
+		this(cell,cell.getSheet().getSheetName(),dependent);
+	}
+	public FormulaParseContext(SCell cell, String sheetName, Ref dependent) {
+		this(cell.getSheet().getBook(),cell.getSheet(),cell, sheetName, dependent);
 	}
 	public FormulaParseContext(SSheet sheet,Ref dependent) {
-		this(sheet.getBook(),sheet,null,dependent);
+		this(sheet,sheet.getSheetName(),dependent);
+	}
+	public FormulaParseContext(SSheet sheet, String sheetName, Ref dependent) {
+		this(sheet.getBook(),sheet,null,sheetName,dependent);
 	}
 	public FormulaParseContext(SBook book,Ref dependent) {
-		this(book,null,null,dependent);
+		this(book,null,null,null,dependent);
 		
 	}
-	public FormulaParseContext(SBook book, SSheet sheet, SCell cell,
+	public FormulaParseContext(SBook book, SSheet sheet, SCell cell, String sheetName,
 			Ref dependent) {
-		this(book, sheet, cell, dependent, Locale.US); //ZSS-565: internal Locale is US
+		this(book, sheet, cell, sheetName, dependent, Locale.US); //ZSS-565: internal Locale is US
 	}
 	//ZSS-565: Support input number of Swedish locale into Formula
-	public FormulaParseContext(SBook book, SSheet sheet, SCell cell,
+	public FormulaParseContext(SBook book, SSheet sheet, SCell cell, String sheetName,
 			Ref dependent, Locale locale) {
 		super(locale);
 		this._book = book;
 		this._sheet = sheet;
 		this._cell = cell;
 		this._dependent = dependent;
+		this._sheetName = sheetName;
 	}
 
 	public Ref getDependent() {
@@ -76,4 +84,7 @@ public class FormulaParseContext extends AbstractContext {
 		return _cell;
 	}
 
+	public String getSheetName() {
+		return _sheetName;
+	}
 }

@@ -38,7 +38,6 @@ import org.zkoss.zss.model.chart.SChartData;
 import org.zkoss.zss.model.chart.SGeneralChartData;
 import org.zkoss.zss.model.chart.SSeries;
 import org.zkoss.zss.model.impl.chart.AbstractGeneralChartDataAdv;
-import org.zkoss.zss.model.impl.sys.formula.ParsingBook;
 import org.zkoss.zss.model.sys.EngineFactory;
 import org.zkoss.zss.model.sys.dependency.DependencyTable;
 import org.zkoss.zss.model.sys.dependency.NameRef;
@@ -849,17 +848,6 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 		
 		splitDependents(dependents, cellDependents, chartDependents, validationDependents, nameDependents, filterDependents);
 		
-		//rename the sheet in parsing book
-		if (newName != null) {
-			// parsed tokens has only external sheet index, not real sheet name
-			// the sheet names are kept in parsing book, so we just rename 
-			// sheets in parsing book. 
-			// finally use such parsing book to re-render formula will get a 
-			// renamed formula
-			ParsingBook parsingBook = new ParsingBook(book);
-			parsingBook.renameSheet(book.getBookName(), oldName, newName);
-		}
-		
 		for (Ref dependent : cellDependents) {
 			renameSheetCellRef(book,oldName,newName,dependent);
 		}
@@ -882,11 +870,15 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 	private void renameSheetChartRef(SBook bookOfSheet, String oldName, String newName,ObjectRef dependent) {
 		SBook book = _bookSeries.getBook(dependent.getBookName());
 		if(book==null) return;
+		String sheetName = null;
 		SSheet sheet = book.getSheetByName(dependent.getSheetName());
 		if(sheet==null){//the sheet was renamed., get form newname if possible
 			if(oldName.equals(dependent.getSheetName())){
 				sheet = book.getSheetByName(newName);
+				sheetName = oldName;
 			}
+		} else {
+			sheetName = sheet.getSheetName();
 		}
 		if(sheet==null) return;
 		SChart chart =  sheet.getChart(dependent.getObjectIdPath()[0]);
@@ -903,7 +895,7 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 		 */
 		FormulaExpression catExpr = ((AbstractGeneralChartDataAdv)data).getCategoriesFormulaExpression();
 		if(catExpr!=null){
-			exprAfter = engine.renameSheetPtgs(catExpr, bookOfSheet, oldName, newName,new FormulaParseContext(sheet, null));//null ref, no trace dependence here
+			exprAfter = engine.renameSheetPtgs(catExpr, bookOfSheet, oldName, newName,new FormulaParseContext(sheet, sheetName, null));//null ref, no trace dependence here
 			if(!exprAfter.hasError()){
 				((AbstractGeneralChartDataAdv)data).setCategoriesFormula(exprAfter);
 			}
@@ -916,25 +908,25 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 			FormulaExpression yvalExpr = ((AbstractSeriesAdv)series).getYValuesFormulaExpression();
 			FormulaExpression zvalExpr = ((AbstractSeriesAdv)series).getZValuesFormulaExpression();
 			if(nameExpr!=null){
-				exprAfter = engine.renameSheetPtgs(nameExpr, bookOfSheet, oldName, newName,new FormulaParseContext(sheet, null));//null ref, no trace dependence here
+				exprAfter = engine.renameSheetPtgs(nameExpr, bookOfSheet, oldName, newName,new FormulaParseContext(sheet, sheetName, null));//null ref, no trace dependence here
 				if(!exprAfter.hasError()){
 					nameExpr = exprAfter;
 				}
 			}
 			if(xvalExpr!=null){
-				exprAfter = engine.renameSheetPtgs(xvalExpr, bookOfSheet, oldName, newName,new FormulaParseContext(sheet, null));//null ref, no trace dependence here
+				exprAfter = engine.renameSheetPtgs(xvalExpr, bookOfSheet, oldName, newName,new FormulaParseContext(sheet, sheetName, null));//null ref, no trace dependence here
 				if(!exprAfter.hasError()){
 					xvalExpr = exprAfter;
 				}
 			}
 			if(yvalExpr!=null){
-				exprAfter = engine.renameSheetPtgs(yvalExpr, bookOfSheet, oldName, newName,new FormulaParseContext(sheet, null));//null ref, no trace dependence here
+				exprAfter = engine.renameSheetPtgs(yvalExpr, bookOfSheet, oldName, newName,new FormulaParseContext(sheet, sheetName, null));//null ref, no trace dependence here
 				if(!exprAfter.hasError()){
 					yvalExpr = exprAfter;
 				}
 			}
 			if(zvalExpr!=null){
-				exprAfter = engine.renameSheetPtgs(zvalExpr, bookOfSheet, oldName, newName,new FormulaParseContext(sheet, null));//null ref, no trace dependence here
+				exprAfter = engine.renameSheetPtgs(zvalExpr, bookOfSheet, oldName, newName,new FormulaParseContext(sheet, sheetName, null));//null ref, no trace dependence here
 				if(!exprAfter.hasError()){
 					zvalExpr = exprAfter;
 				}
@@ -951,11 +943,15 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 		if(book == null) {
 			return;
 		}
+		String sheetName = null;
 		SSheet sheet = book.getSheetByName(dependent.getSheetName());
 		if(sheet==null){//the sheet was renamed., get form newname if possible
 			if(oldName.equals(dependent.getSheetName())){
 				sheet = book.getSheetByName(newName);
+				sheetName = oldName;
 			}
+		} else {
+			sheetName = sheet.getSheetName();
 		}
 		if(sheet == null) {
 			return;
@@ -971,14 +967,14 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 		FormulaExpression f2 = ((AbstractDataValidationAdv)validation).getFormulaExpression2();
 		boolean changed = false;
 		if (f1 != null) {
-			FormulaExpression exprf1 = engine.renameSheetPtgs(f1, bookOfSheet, oldName, newName,new FormulaParseContext(sheet, null));//null ref, no trace dependence here
+			FormulaExpression exprf1 = engine.renameSheetPtgs(f1, bookOfSheet, oldName, newName,new FormulaParseContext(sheet, sheetName, null));//null ref, no trace dependence here
 			if(!exprf1.hasError() && !f1.getFormulaString().equals(exprf1.getFormulaString())) {
 				f1 = exprf1;
 				changed = true;
 			}
 		}
 		if (f2 != null) {
-			FormulaExpression exprf2 = engine.renameSheetPtgs(f2, bookOfSheet, oldName, newName,new FormulaParseContext(sheet, null));//null ref, no trace dependence here
+			FormulaExpression exprf2 = engine.renameSheetPtgs(f2, bookOfSheet, oldName, newName,new FormulaParseContext(sheet, sheetName, null));//null ref, no trace dependence here
 			if(!exprf2.hasError() && !f2.getFormulaString().equals(exprf2.getFormulaString())) {
 				f2 = exprf2;
 				changed = true;
@@ -1027,11 +1023,15 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 	private void renameSheetCellRef(SBook bookOfSheet, String oldName, String newName,Ref dependent) {
 		SBook book = _bookSeries.getBook(dependent.getBookName());
 		if(book==null) return;
+		String sheetName = null;
 		SSheet sheet = book.getSheetByName(dependent.getSheetName());
 		if(sheet==null){//the sheet was renamed., get form newname if possible
 			if(oldName.equals(dependent.getSheetName())){
 				sheet = book.getSheetByName(newName);
+				sheetName = oldName;
 			}
+		} else {
+			sheetName = sheet.getSheetName();
 		}
 		if(sheet==null) return;
 		SCell cell = sheet.getCell(dependent.getRow(),
@@ -1047,7 +1047,7 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 		FormulaExpression expr = (FormulaExpression) ((AbstractCellAdv)cell).getValue(false);
 		
 		FormulaEngine engine = getFormulaEngine();
-		FormulaExpression exprAfter = engine.renameSheetPtgs(expr, bookOfSheet, oldName, newName,new FormulaParseContext(cell, null));//null ref, no trace dependence here
+		FormulaExpression exprAfter = engine.renameSheetPtgs(expr, bookOfSheet, oldName, newName,new FormulaParseContext(cell, sheetName, null));//null ref, no trace dependence here
 		
 		cell.setValue(exprAfter);
 		//don't need to notify cell change, cell will do
@@ -1059,11 +1059,15 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 		if(book==null) return;
 		SName name = book.getNameByName(dependent.getNameName());
 		if(name==null) return;
+		String sheetName = null;
 		SSheet sheet = book.getSheetByName(name.getRefersToSheetName());
 		if(sheet==null){//the sheet was renamed., get form newname if possible
 			if(oldName.equals(name.getRefersToSheetName())){
 				sheet = book.getSheetByName(newName);
+				sheetName = oldName;
 			}
+		} else {
+			sheetName = sheet.getSheetName();
 		}
 		if(sheet==null) return;
 		
@@ -1074,7 +1078,7 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 		FormulaExpression expr = ((AbstractNameAdv)name).getRefersToFormulaExpression();
 		
 		FormulaEngine engine = getFormulaEngine();
-		FormulaExpression exprAfter = engine.renameSheetPtgs(expr, bookOfSheet, oldName, newName, new FormulaParseContext(sheet, null));//null ref, no trace dependence here
+		FormulaExpression exprAfter = engine.renameSheetPtgs(expr, bookOfSheet, oldName, newName, new FormulaParseContext(sheet, sheetName, null));//null ref, no trace dependence here
 		
 		((AbstractNameAdv)name).setRefersToFormula(exprAfter);
 		//don't need to notify cell change, cell will do
