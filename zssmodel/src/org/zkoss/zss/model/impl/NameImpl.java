@@ -210,6 +210,7 @@ public class NameImpl extends AbstractNameAdv {
 
 		_refersToSheetName = null;
 		_refersToCellRegion = null;
+		_refersToExprFormula = refersToExpr; // refix ZSS-649
 		
 		if(refersToExpr != null){
 			//use formula engine to keep dependency info
