@@ -38,6 +38,7 @@ import org.zkoss.zss.model.chart.SChartData;
 import org.zkoss.zss.model.chart.SGeneralChartData;
 import org.zkoss.zss.model.chart.SSeries;
 import org.zkoss.zss.model.impl.chart.AbstractGeneralChartDataAdv;
+import org.zkoss.zss.model.impl.sys.formula.ParsingBook;
 import org.zkoss.zss.model.sys.EngineFactory;
 import org.zkoss.zss.model.sys.dependency.DependencyTable;
 import org.zkoss.zss.model.sys.dependency.NameRef;
@@ -847,6 +848,17 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 		Set<Ref> filterDependents = new LinkedHashSet<Ref>(); //ZSS-555
 		
 		splitDependents(dependents, cellDependents, chartDependents, validationDependents, nameDependents, filterDependents);
+		
+		//rename the sheet in parsing book
+		if (newName != null) {
+			// parsed tokens has only external sheet index, not real sheet name
+			// the sheet names are kept in parsing book, so we just rename 
+			// sheets in parsing book. 
+			// finally use such parsing book to re-render formula will get a 
+			// renamed formula
+			ParsingBook parsingBook = new ParsingBook(book);
+			parsingBook.renameSheet(book.getBookName(), oldName, newName);
+		}
 		
 		for (Ref dependent : cellDependents) {
 			renameSheetCellRef(book,oldName,newName,dependent);
