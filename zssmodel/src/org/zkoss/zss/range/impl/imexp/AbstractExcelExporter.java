@@ -87,6 +87,8 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 			colorTable.clear();
 			
 			workbook = createPoiBook();
+			CellStyle  cellStyle = toPOICellStyle(book.getDefaultCellStyle()); // put the default cellStyle
+			workbook.setDefaultCellStyle(cellStyle);
 
 			for (SSheet sheet : book.getSheets()) {
 				exportSheet(sheet);
@@ -416,43 +418,44 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 	}
 
 	protected CellStyle toPOICellStyle(SCellStyle cellStyle) {
+		return toPOICellStyle(cellStyle, true);
+	}
+	protected CellStyle toPOICellStyle(SCellStyle cellStyle, boolean putInPoiTable) {
 		// instead of creating a new style, use old one if exist
 		CellStyle poiCellStyle = styleTable.get(cellStyle);
 		if (poiCellStyle != null) {
 			return poiCellStyle;
 		}
 
-		poiCellStyle = workbook.createCellStyle();
+		poiCellStyle = workbook.createCellStyle(putInPoiTable);
 
-		/* Bottom Border */
-		poiCellStyle.setBorderBottom(PoiEnumConversion.toPoiBorderType(cellStyle.getBorderBottom()));
+		//set Border
+		short bottom = PoiEnumConversion.toPoiBorderType(cellStyle.getBorderBottom());
+		short left = PoiEnumConversion.toPoiBorderType(cellStyle.getBorderLeft());
+		short right = PoiEnumConversion.toPoiBorderType(cellStyle.getBorderRight());
+		short top = PoiEnumConversion.toPoiBorderType(cellStyle.getBorderTop());
+		Color bottomColor = toPOIColor(cellStyle.getBorderBottomColor());
+		Color leftColor = toPOIColor(cellStyle.getBorderLeftColor());
+		Color rightColor = toPOIColor(cellStyle.getBorderRightColor());
+		Color topColor = toPOIColor(cellStyle.getBorderTopColor());
+		poiCellStyle.setBorder(left, leftColor, top, topColor, right, rightColor, bottom, bottomColor);
 
-		BookHelper.setBottomBorderColor(poiCellStyle, toPOIColor(cellStyle.getBorderBottomColor()));
-
-		/* Left Border */
-		poiCellStyle.setBorderLeft(PoiEnumConversion.toPoiBorderType(cellStyle.getBorderLeft()));
-		BookHelper.setLeftBorderColor(poiCellStyle, toPOIColor(cellStyle.getBorderLeftColor()));
-
-		/* Right Border */
-		poiCellStyle.setBorderRight(PoiEnumConversion.toPoiBorderType(cellStyle.getBorderRight()));
-		BookHelper.setRightBorderColor(poiCellStyle, toPOIColor(cellStyle.getBorderRightColor()));
-
-		/* Top Border */
-		poiCellStyle.setBorderTop(PoiEnumConversion.toPoiBorderType(cellStyle.getBorderTop()));
-		BookHelper.setTopBorderColor(poiCellStyle, toPOIColor(cellStyle.getBorderTopColor()));
-
-		/* Fill Foreground Color */
-		BookHelper.setFillForegroundColor(poiCellStyle, toPOIColor(cellStyle.getFillColor()));
+		// fill
+		Color fillColor = toPOIColor(cellStyle.getFillColor());
+		Color backColor = toPOIColor(cellStyle.getBackgroundColor());
+		short pattern = PoiEnumConversion.toPoiFillPattern(cellStyle.getFillPattern());
+		poiCellStyle.setFill(fillColor, backColor, pattern);
 		
-		/* Fill Background Color */
-		BookHelper.setFillBackgroundColor(poiCellStyle, toPOIColor(cellStyle.getBackgroundColor())); //ZSS-780
-
-		poiCellStyle.setFillPattern(PoiEnumConversion.toPoiFillPattern(cellStyle.getFillPattern()));
-		poiCellStyle.setAlignment(PoiEnumConversion.toPoiHorizontalAlignment(cellStyle.getAlignment()));
-		poiCellStyle.setVerticalAlignment(PoiEnumConversion.toPoiVerticalAlignment(cellStyle.getVerticalAlignment()));
-		poiCellStyle.setWrapText(cellStyle.isWrapText());
-		poiCellStyle.setLocked(cellStyle.isLocked());
-		poiCellStyle.setHidden(cellStyle.isHidden());
+		//cell Alignment
+		short hAlign = PoiEnumConversion.toPoiHorizontalAlignment(cellStyle.getAlignment());
+		short vAlign = PoiEnumConversion.toPoiVerticalAlignment(cellStyle.getVerticalAlignment());
+		boolean wrapText = cellStyle.isWrapText();
+		poiCellStyle.setCellAlignment(hAlign, vAlign, wrapText);
+		
+		//protect
+		boolean locked = cellStyle.isLocked();
+		boolean hidden = cellStyle.isHidden();
+		poiCellStyle.setProtection(locked, hidden);
 
 		// refer from BookHelper#setDataFormat
 		DataFormat df = workbook.createDataFormat();
