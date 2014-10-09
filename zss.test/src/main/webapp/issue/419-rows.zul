@@ -1,6 +1,8 @@
 <zk>
 	<window width="100%" height="100%">
-		press F5 can load 419-rows.xlsx again. 
+		1. select whole row 9 and 10, then remove them.
+		<separator/>
+		2. export to excel and make sure excel donesn't show any error.
 		<button label="save and load 419-rows-2.xlsx">
 			<attribute name="onClick">
 			<![CDATA[

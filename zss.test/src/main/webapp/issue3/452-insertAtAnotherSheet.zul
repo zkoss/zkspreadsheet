@@ -8,52 +8,14 @@
 			<label multiline="true">
 				Insert rows at non-selected sheet:
 
-				1. Select Sheet2
-				2. Click the button to insert a row in Sheet1
+				1. press three buttons following the order.
+				2. you will see there is a new row above value "B".
 			</label>
 			<hbox>
 				<button label="Sheet2" onClick='ss.setSelectedSheet("Sheet2")' />
 				<button label="Insert row 2" onClick='insertRow("A2")' />
 				<button label="Sheet1" onClick='ss.setSelectedSheet("Sheet1")' />			
 			</hbox>
-			<hbox>
-				<button label="Invalidate" onClick='ss.invalidate()' />
-				<button label="reset book" onClick='resetBook()' />
-			</hbox>
-			<hbox>
-				<button label="Insert row 2" onClick='insertRow("A2")' />
-				<button label="Insert column 2" onClick='insertColumn("B1")' />
-				<button label="Delete row 2" onClick='deleteRow("A2")' />
-				<button label="Delete column 2" onClick='deleteColumn("B1")' />
-			</hbox>
-			<hbox>
-				<button label="Merge B1:C3" onClick='merge("B1:C3")' />
-				<button label="Unmerge B1:C3" onClick='unmerge("B1:C3")' />
-			</hbox>
-			<hbox>
-				<button label="delete chart" onClick='deleteChart()' />
-				<button label="delete picture" onClick='deletePicture()' />
-				<button label="move chart" onClick='moveChart()' />
-				<button label="move picture" onClick='movePicture()' />
-			</hbox>
-			<hbox>
-				<button label="set column B width" onClick='enlargeColumn("B1",100)' />
-				<button label="set Row 2 height" onClick='enlargeRow("A2",50)' />
-			</hbox>
-			<hbox>
-				<button label="set sheet 1" onClick='ss.setSelectedSheet("Sheet1")' />
-			
-			</hbox>
-
-			<label multiline="true">
-				3. select Sheet1 to verify 
-				
-				Expected:
-				one row inserted above row 2
-				
-				Actual:
-				nothing changed.
-			</label>
 		</vlayout>
 	</hlayout>
 	<zscript><![CDATA[

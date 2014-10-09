@@ -2,9 +2,9 @@
 	<window width="100%" height="100%">
 	<label multiline="true">
 Reproducing Steps:
-select "cell-border" sheet, select row 9 and increase it's height
-select "cell", do nothing
-select "cell-border" sheet again, select row 8 and increase it's height	
+select "sheet2" sheet, select row 9 and increase it's height
+select "sheet1", do nothing
+select "sheet2" sheet again, select row 8 and increase it's height	
 	</label>
 		<hbox>
 		<button label="invalidate" onClick='ss.invalidate()'/>
