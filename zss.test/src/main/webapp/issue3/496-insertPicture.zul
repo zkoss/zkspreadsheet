@@ -9,4 +9,11 @@
 	        .setFreezePanel(rIndex.getValue(), -1);
 		}
 	]]></zscript>
+	<label pre="true">
+		1. select "Sheet2"
+		2. open "insert Picture" dialog and click cancel to close dialog
+		3. select "chart-image" sheet
+		4. select "Sheet2" again
+		5. open "insert Picture" dialog shouldn't block the whole window.
+	</label>
 </zk>

@@ -2,7 +2,7 @@
 Since 3.5.0
 <label multiline="true">
 1. Press "Create Rich Text" button.
-2. If you see richtext show in A1 and A2, then it is OK.
+2. If you see richtext show in A1, then it is OK.
 3. Press "Export" button and open the exported file.
 4. You shall see the same richtext show in Excel.
 </label>
@@ -53,7 +53,7 @@ Since 3.5.0
        			"<span style=\"text-decoration: line-through;\">strike-through text,</span>" +
        			"<b> bold text</b> and <span style=\"color: #FF0000\">colored text<br/></span>" +
        			"(background colored)";
-       		range.setRichText(html);
+       		range.setCellRichText(html);
        		range.setColumnWidth((int)(44.14*7+5));
        		range.setRowHeight((int)(54.0*96/72));
        	}
