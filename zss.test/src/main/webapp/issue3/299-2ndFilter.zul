@@ -1,4 +1,8 @@
 <zk>
+	(ignore this case. zss spec doesn't support this function)
+	1. apply header1 filter to 1 only.
+	<separator/>
+	2. you should see there are only non-filtered values a,b,d in the filter menu for header2.
 	<window width="100%" height="100%">
 		<spreadsheet id="ss" src="/issue3/book/299-2ndFilter.xlsx" hflex="1" vflex="1"
 			ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e" maxrows="500" maxcolumns="100" showToolbar="true" showFormulabar="true"

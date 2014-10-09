@@ -5,6 +5,7 @@
 		<hlayout>
 			<button label="export" onClick="export();"></button>
 			<button label="setHyperlink" onClick="setHyperlink()"></button>
+			press "setHyperlink", make sure it will open a browser with a empty(or browser default) URL.
 			
 		</hlayout>
 		<spreadsheet id="ss" src="/issue3/book/457-emptyHyperlink.xlsx"  hflex="1" vflex="1"

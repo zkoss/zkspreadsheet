@@ -1,5 +1,8 @@
 <zk>
 	<window width="100%" height="100%">
+		1. select a column and then click "freeze".
+		<separator/>
+		2. select cell, if it takes a long time without response, that's a bug. 
 		<button label="freeze">
 			<attribute name="onClick">
 			<![CDATA[

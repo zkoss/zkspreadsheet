@@ -1,4 +1,7 @@
 <zk>
+	1. select E3:E5, shift it up, that's work.
+	<separator/>
+	2. select G3:G5, shift it up, that's work as well.
 	<window width="100%" height="100%">
 		<spreadsheet id="ss" src="/issue/book/389-shift.xlsx" width="1500px" height="800px"
 			ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e" maxrows="500" maxcolumns="100" showToolbar="true" showFormulabar="true"

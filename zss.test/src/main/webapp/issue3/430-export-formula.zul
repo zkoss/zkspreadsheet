@@ -1,4 +1,5 @@
 <zk>
+	export this book and open in Excel, make sure Excel doesn't show any error message.
 	<window width="100%" height="100%">
 		<zscript><![CDATA[
 			import org.zkoss.zss.api.*;

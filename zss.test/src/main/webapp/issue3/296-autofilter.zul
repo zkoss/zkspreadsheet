@@ -1,4 +1,5 @@
 <zk>
+	clicking the filter shouldn't show the menu in the cell protect mode.
 	<window height="100%">
 		
 		<spreadsheet id="source" src="/issue3/book/296-autofilter.xlsx" maxVisibleRows="150" maxVisibleColumns="40"
