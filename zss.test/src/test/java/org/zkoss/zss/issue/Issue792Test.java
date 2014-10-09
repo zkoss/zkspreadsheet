@@ -38,7 +38,7 @@ public class Issue792Test {
 	@Test
 	public void testCheckLegalName() {
 		try {
-			Book book = Util.loadBook(this, "book/790-legal-name-name.xlsx");
+			Book book = Util.loadBook(this, "book/792-legal-name-name.xlsx");
 			Assert.assertTrue(true);
 		} catch (Exception ex) {
 			Assert.assertTrue("Check Name name:" + ex.getMessage(), false);
