@@ -57,6 +57,7 @@ ZK Spreadsheet 3.6.0
   ZSS-779 Text clipped when export center-across-selection cells to PDF
   ZSS-780 Cell with background color should not print grid-line when export to PDF
   ZSS-781 ZSS doesn't update formula's cell reference of different sheet after renaming
+  ZSS-792 Fail to correctly check legal Name name
   
 ** Upgrade Notes
   * Following api are deprecated

@@ -320,6 +320,8 @@ public class BookImpl extends AbstractBookAdv{
 				}
 			} else if (ch != '.' && ch != '_') {
 				throw new InvalidModelOpException("name '"+name+"' is not legal: the character '"+ ch+ "' at index "+ j + " must be a letter, a digit, an underscore, or a period");
+			} else { //ZSS-792
+				invalid = true; // '.' or '-', impossible to be a valid cell reference
 			}
 		}
 		
