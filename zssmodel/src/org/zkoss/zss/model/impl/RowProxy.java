@@ -208,4 +208,13 @@ class RowProxy extends AbstractRowAdv{
 			return _proxy.cloneRow(sheet);
 		}
 	}
+	
+	public Iterator<AbstractCellAdv> getCellIterator(boolean reverse, int start, int end) {
+		loadProxy();
+		if (_proxy != null) {
+			return _proxy.getCellIterator(reverse, start, end);
+		}
+		return Collections.EMPTY_LIST.iterator();
+	}
+
 }

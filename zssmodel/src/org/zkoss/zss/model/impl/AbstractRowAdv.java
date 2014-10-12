@@ -53,4 +53,6 @@ public abstract class AbstractRowAdv implements SRow,LinkedModelObject,Serializa
 	
 	//ZSS-688
 	/*package*/ abstract AbstractRowAdv cloneRow(AbstractSheetAdv sheet);
+	
+	public abstract Iterator<AbstractCellAdv> getCellIterator(boolean reverse, int start, int end);
 }

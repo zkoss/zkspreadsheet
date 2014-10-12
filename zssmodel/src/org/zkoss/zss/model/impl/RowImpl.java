@@ -221,6 +221,13 @@ public class RowImpl extends AbstractRowAdv {
 		return Collections.unmodifiableCollection(reverse?cells.descendingValues():cells.values()).iterator();
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@Override
+	public Iterator<AbstractCellAdv> getCellIterator(boolean reverse, int start, int end) {
+		return Collections.unmodifiableCollection(reverse?cells.descendingSubValues(start, end):cells.subValues(start, end)).iterator();
+	}
+
+
 	@Override
 	void setIndex(int newidx) {
 		int oldIdx = _index;
