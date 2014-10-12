@@ -1107,12 +1107,12 @@ public class FormulaEngineImpl implements FormulaEngine {
 			}
 		};
 	}
-	//ZSS-790
+	// ZSS-661
 	@Override
 	public FormulaExpression renameName(String formula, final SBook targetBook, final String oldName, final String newName, FormulaParseContext context) {
 		return renameName(formula, targetBook, -1, oldName, newName, context);
 	}
-	// ZSS-661
+	//ZSS-790
 	@Override
 	public FormulaExpression renameName(String formula, final SBook targetBook, final int sheetIndex, final String oldName, final String newName, FormulaParseContext context) {
 		formula = formula.trim();
