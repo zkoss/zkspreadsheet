@@ -24,9 +24,11 @@ import org.zkoss.poi.ss.usermodel.BuiltinFormats;
 import org.zkoss.poi.ss.usermodel.DataFormatter;
 import org.zkoss.poi.ss.usermodel.ZssContext;
 import org.zkoss.poi.ss.util.NumberToTextConverter;
+import org.zkoss.zss.model.CellRegion;
 import org.zkoss.zss.model.SCell;
 import org.zkoss.zss.model.SCellStyle;
 import org.zkoss.zss.model.SCell.CellType;
+import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.model.impl.ReadOnlyRichTextImpl;
 import org.zkoss.zss.model.sys.EngineFactory;
 import org.zkoss.zss.model.sys.format.FormatContext;
@@ -227,7 +229,19 @@ public class FormatEngineImpl implements FormatEngine {
 	//get column width form  pixel to char256
 	public static int getCellWidth256(SCell cell) {
 		//1 border + 2 * padding(2px) => 5
-		final int px = cell.getSheet().getColumn(cell.getColumnIndex()).getWidth() - 5;
+		//ZSS-791
+		SSheet sheet = cell.getSheet();
+		CellRegion region = sheet.getMergedRegion(cell.getRowIndex(), cell.getColumnIndex());
+		int px = 0;
+		if (region != null) {
+			for (int col = region.getColumn(), endCol = region.getLastColumn(); 
+					col <= endCol; ++col) {
+				px += sheet.getColumn(col).getWidth();
+			}
+		} else {
+			px = sheet.getColumn(cell.getColumnIndex()).getWidth();
+		}
+		px -= 5;
 		return UnitUtil.pxToFileChar256(px, AbstractExcelImporter.CHRACTER_WIDTH);
 	}
 	
