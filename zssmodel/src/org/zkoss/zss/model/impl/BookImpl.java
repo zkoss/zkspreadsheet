@@ -663,10 +663,10 @@ public class BookImpl extends AbstractBookAdv{
 		//don't need to notify new name precedent update, since Name handle it itself
 		
 		//Rename formula that contains this name
-		renameNameFormula(name, oldName, newname); // ZSS-661
+		renameNameFormula(name, oldName, newname, sheetName); // ZSS-661
 	}
 	
-	private void renameNameFormula(SName name, String oldName, String newName) {
+	private void renameNameFormula(SName name, String oldName, String newName, String sheetName) {
 		AbstractBookSeriesAdv bs = (AbstractBookSeriesAdv)getBookSeries();
 		FormulaTunerHelper tuner = new FormulaTunerHelper(bs);
 		DependencyTable dt = bs.getDependencyTable();
@@ -679,8 +679,9 @@ public class BookImpl extends AbstractBookAdv{
 				dt.clearDependents(dependent);
 			}
 			
+			int sheetIndex = sheetName == null ? -1 : getSheetIndex(sheetName);
 			//rebuild the the formula by tuner
-			tuner.renameName(this, oldName, newName, dependents);
+			tuner.renameName(this, oldName, newName, dependents, sheetIndex);
 		}
 	}
 
@@ -715,7 +716,7 @@ public class BookImpl extends AbstractBookAdv{
 	public SName getNameByName(String namename) {
 		return getNameByName(namename,null);
 	}
-	public SName getNameByName(String namename,String sheetName) {
+	public SName getNameByName(String namename, String sheetName) {
 		if(_names==null)
 			return null;
 		for(SName name:_names){

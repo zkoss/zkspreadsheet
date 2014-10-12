@@ -168,7 +168,21 @@ public interface FormulaEngine {
 	 * @return
 	 * @since 3.6.0
 	 */
-	public FormulaExpression renameNamePtgs(FormulaExpression fexpr, SBook book, String oldName,String newName,
+	public FormulaExpression renameNamePtgs(FormulaExpression fexpr, SBook book, int sheetIndex, String oldName,String newName,
+			FormulaParseContext context);
+	//ZSS-790
+	/**
+	 * 
+	 * @param formula
+	 * @param book
+	 * @param sheetIndex
+	 * @param oldName
+	 * @param newName
+	 * @param context
+	 * @return
+	 * @since 3.6.0
+	 */
+	public FormulaExpression renameName(String formula, SBook book, int sheetIndex, String oldName,String newName,
 			FormulaParseContext context);
 
 

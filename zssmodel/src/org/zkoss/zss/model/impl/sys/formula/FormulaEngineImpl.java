@@ -217,11 +217,11 @@ public class FormulaEngineImpl implements FormulaEngine {
 					
 					
 				}catch(FormulaParseException e) {
-					_logger.info(e.getMessage() + " when parsing " + formula);
+					_logger.info(e.getMessage() + " when parsing " + formula + " at " + getReference(context));
 					result.add(new FormulaExpressionImpl(formula, null, null, true, e.getMessage(), multipleArea));
 					error = true;
 				} catch(Exception e) {
-					_logger.error(e.getMessage() + " when parsing " + formula, e);
+					_logger.error(e.getMessage() + " when parsing " + formula + " at " + getReference(context), e);
 					result.add(new FormulaExpressionImpl(formula, null, null, true, e.getMessage(), multipleArea));
 					error = true;
 				}
@@ -234,12 +234,16 @@ public class FormulaEngineImpl implements FormulaEngine {
 				}
 			}
 		} catch(Exception e) {
-			_logger.error(e.getMessage() + " when parsing " + Arrays.asList(formulas), e);
+			_logger.error(e.getMessage() + " when parsing " + Arrays.asList(formulas) + " at " + getReference(context), e);
 			result.clear();
 			result.add(new FormulaExpressionImpl(Arrays.asList(formulas).toString(), null, null, true,e.getMessage(), multipleArea));
 		}
 		return result.toArray(new FormulaExpression[result.size()]);
-	}	
+	}
+	
+	private String getReference(FormulaParseContext context) {
+		return "["+context.getBook().getBookName()+"]"+context.getSheet().getSheetName()+"!"+context.getCell();
+	}
 	
 	protected Ptg[] parse(String formula, FormulaParsingWorkbook book, int sheetIndex, FormulaParseContext context) {
 		return FormulaParser.parse(formula, book, FormulaType.CELL, sheetIndex);
@@ -1103,21 +1107,26 @@ public class FormulaEngineImpl implements FormulaEngine {
 			}
 		};
 	}
+	//ZSS-790
 	@Override
-	// ZSS-661
 	public FormulaExpression renameName(String formula, final SBook targetBook, final String oldName, final String newName, FormulaParseContext context) {
+		return renameName(formula, targetBook, -1, oldName, newName, context);
+	}
+	// ZSS-661
+	@Override
+	public FormulaExpression renameName(String formula, final SBook targetBook, final int sheetIndex, final String oldName, final String newName, FormulaParseContext context) {
 		formula = formula.trim();
-		FormulaAdjuster shiftAdjuster = getRenameNameAdjuster(oldName, newName);
+		FormulaAdjuster shiftAdjuster = getRenameNameAdjuster(sheetIndex, oldName, newName);
 		FormulaExpression result = adjustMultipleArea(formula, context, shiftAdjuster);
 		if(result!=null){
 			return result;
 		}
 		return adjust(formula, context, shiftAdjuster);
 	}
-	protected FormulaAdjuster getRenameNameAdjuster(final String oldName, final String newName) {
+	protected FormulaAdjuster getRenameNameAdjuster(final int sheetIndex, final String oldName, final String newName) {
 		return new FormulaAdjuster() {
 			@Override
-			public boolean process(int sheetIndex, Ptg[] tokens, ParsingBook parsingBook, FormulaParseContext context) {
+			public boolean process(int contextSheetIndex, Ptg[] tokens, ParsingBook parsingBook, FormulaParseContext context) {
 				// NamePtg refer to Name via index; simply rename the mapping in parsingBook
 				parsingBook.renameName(sheetIndex, oldName, newName);
 				return true;
@@ -1164,8 +1173,8 @@ public class FormulaEngineImpl implements FormulaEngine {
 
 	//ZSS-747
 	@Override
-	public FormulaExpression renameNamePtgs(FormulaExpression fe, final SBook targetBook, final String oldName, final String newName, FormulaParseContext context) {
-		return renameName(fe.getFormulaString(), targetBook, oldName, newName, context);
+	public FormulaExpression renameNamePtgs(FormulaExpression fe, final SBook targetBook, final int sheetIndex, final String oldName, final String newName, FormulaParseContext context) {
+		return renameName(fe.getFormulaString(), targetBook, sheetIndex, oldName, newName, context);
 	}
 	
 	//ZSS-747

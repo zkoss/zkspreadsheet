@@ -92,12 +92,27 @@ public final class EvalBook implements EvaluationWorkbook, FormulaParsingWorkboo
 	}
 
 	public EvaluationName getName(NamePtg namePtg) {
+		return getName(namePtg, -1);
+	}
+	public EvaluationName getName(NamePtg namePtg, int contextSheetIndex) {
 		// find defined name from book
-		String name = _parsingBook.getNameText(namePtg);
+		Object[] nameInfo = _parsingBook.getNameInfo(namePtg);
+		String name = (String) nameInfo[1];
+		int sheetIndex0 = ((Integer) nameInfo[0]).intValue(); 
 		if(name != null) {
-			SName nname = _nbook.getNameByName(name);
+			if (sheetIndex0 < 0) {
+				sheetIndex0 = contextSheetIndex;
+			}
+			String sheetName = sheetIndex0 >= 0 ? _nbook.getSheet(sheetIndex0).getSheetName() : null;
+			SName nname = _nbook.getNameByName(name, sheetName); // search Name in sheet scope
 			if(nname != null) {
-				return new EvalName(name, namePtg.getIndex(), ((AbstractNameAdv)nname).getRefersToFormulaExpression(), -1); //ZSS-759
+				return new EvalName(name, namePtg.getIndex(), ((AbstractNameAdv)nname).getRefersToFormulaExpression(), sheetIndex0); //ZSS-759
+			}
+			if (sheetName != null) { // cannot find in sheet scope; search book scope
+				nname = _nbook.getNameByName(name, null);
+				if (nname != null) {
+					return new EvalName(name, namePtg.getIndex(), ((AbstractNameAdv)nname).getRefersToFormulaExpression(), -1); //ZSS-759
+				}
 			}
 		}
 		return new EvalName(name, namePtg.getIndex(), null, -1);
@@ -274,5 +289,11 @@ public final class EvalBook implements EvaluationWorkbook, FormulaParsingWorkboo
 	@Override
 	public boolean isAllowedDeferredNamePtg() {
 		return true;
+	}
+	
+	//ZSS-790
+	@Override
+	public EvaluationName getName(String name, String sheetName) {
+		return _parsingBook.getName(name, sheetName);
 	}
 }

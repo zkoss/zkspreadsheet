@@ -1086,15 +1086,15 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 	
 	// ZSS-661
 	public void renameName(SBook book, String oldName, String newName,
-			Set<Ref> dependents) {
+			Set<Ref> dependents, int sheetIndex) {
 		for (Ref dependent : dependents) {
 			if (dependent.getType() == RefType.CELL) {
-				renameNameCellRef(book, oldName, newName, dependent);
+				renameNameCellRef(book, oldName, newName, dependent, sheetIndex);
 			}
 		}
 	}	
 
-	private void renameNameCellRef(SBook bookOfSheet, String oldName, String newName, Ref dependent) {
+	private void renameNameCellRef(SBook bookOfSheet, String oldName, String newName, Ref dependent, int sheetIndex) {
 		SBook book = _bookSeries.getBook(dependent.getBookName());
 		if (book == null) return;
 		SSheet sheet = book.getSheetByName(dependent.getSheetName());
@@ -1112,7 +1112,7 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 		
 		FormulaEngine engine = getFormulaEngine();
 		FormulaExpression exprAfter = 
-				engine.renameNamePtgs(expr, bookOfSheet, oldName, newName, new FormulaParseContext(cell, null));
+				engine.renameNamePtgs(expr, bookOfSheet, sheetIndex, oldName, newName, new FormulaParseContext(cell, null));
 		
 		cell.setValue(exprAfter);
 		//don't need to notify cell change, cell will do

@@ -30,6 +30,7 @@ import org.zkoss.poi.ss.formula.ptg.NameXPtg;
 import org.zkoss.poi.ss.formula.ptg.Ptg;
 import org.zkoss.util.logging.Log;
 import org.zkoss.zss.model.SBook;
+import org.zkoss.zss.model.SBookSeries;
 import org.zkoss.zss.model.sys.formula.FormulaEngine;
 
 /**
@@ -66,7 +67,7 @@ public class ParsingBook implements FormulaParsingWorkbook, FormulaRenderingWork
 			if (index != null) {
 				String key = toKey(sidx, newName);
 				_indexes.name2index.put(key, index);
-				_indexes.index2name.set(index, newName);
+				_indexes.index2name.set(index, new Object[] {Integer.valueOf(sheetIndex), newName});
 			}
 		}
 	}
@@ -85,7 +86,7 @@ public class ParsingBook implements FormulaParsingWorkbook, FormulaRenderingWork
 			if(index == null) {
 				// formula function name
 				index = _indexes.index2name.size();
-				_indexes.index2name.add(name);
+				_indexes.index2name.add(new Object[] {Integer.valueOf(-1), name});
 				_indexes.name2index.put(key, index);
 			}
 			return new NameXPtg(0, index);
@@ -197,7 +198,7 @@ public class ParsingBook implements FormulaParsingWorkbook, FormulaRenderingWork
 			Integer index = _indexes.name2index.get(key);
 			if(index == null) {
 				index = _indexes.index2name.size();
-				_indexes.index2name.add(name);
+				_indexes.index2name.add(new Object[] {Integer.valueOf(sheetIndex), name});
 				_indexes.name2index.put(key, index);
 			}
 			EvaluationName n = new SimpleName(name, index, sheetIndex);
@@ -209,6 +210,10 @@ public class ParsingBook implements FormulaParsingWorkbook, FormulaRenderingWork
 
 	@Override
 	public String getNameText(NamePtg namePtg) {
+		return (String) getNameInfo(namePtg)[1];
+	}
+	
+	public Object[] getNameInfo(NamePtg namePtg) {
 		//ZSS-747
 		synchronized (_indexes) {
 			return _indexes.index2name.get(namePtg.getIndex());
@@ -217,6 +222,10 @@ public class ParsingBook implements FormulaParsingWorkbook, FormulaRenderingWork
 	
 	@Override
 	public String resolveNameXText(NameXPtg nameXPtg) {
+		return (String) resolveNameXInfo(nameXPtg)[1];
+	}
+	
+	public Object[] resolveNameXInfo(NameXPtg nameXPtg) {
 		//ZSS-747
 		synchronized (_indexes) {
 			return _indexes.index2name.get(nameXPtg.getNameIndex());
@@ -352,11 +361,18 @@ public class ParsingBook implements FormulaParsingWorkbook, FormulaRenderingWork
 	private static class SheetIndexes implements Serializable {
 		private static final long serialVersionUID = 1L;
 		// defined names
-		private List<String> index2name = new ArrayList<String>();
+		private List<Object[]> index2name = new ArrayList<Object[]>(); // [0]: sheetIndex, [1]: nameName  
 		private Map<String, Integer> name2index = new HashMap<String, Integer>();
 		// sheets
 		private List<ExternalSheet> index2sheet = new ArrayList<ExternalSheet>();
 		private Map<String, Integer> sheetName2index = new HashMap<String, Integer>(); // the name combine names of book, sheet 1 and sheet 2
+	}
+	
+	//ZSS-790
+	@Override
+	public EvaluationName getName(String name, String sheetName) {
+		int sheetIndex = book.getSheetIndex(sheetName);
+		return getName(name, sheetIndex);
 	}
 }
 
