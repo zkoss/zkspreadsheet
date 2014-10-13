@@ -290,7 +290,7 @@ public class BookImpl extends AbstractBookAdv{
 			throw new InvalidModelOpException("name '"+name+"' is not legal: first character must be a letter, an underscore, or a backslash");
 		}
 		
-		boolean invalid = c1 == '_' || c1 == '\\'; //impossible be a valid cell reference
+		boolean invalid = c1 == '_' || c1 == '\\' || c1 == '?' || c1 == '.'; //impossible be a valid cell reference
 		int colIndex = invalid ? -2 : Character.getNumericValue(c1) - 9;
 		if (!invalid) {
 			invalid = colIndex < 0;
@@ -318,10 +318,10 @@ public class BookImpl extends AbstractBookAdv{
 				} else {
 					rowIndex = rowIndex * 10 + Character.getNumericValue(ch);
 				}
-			} else if (ch != '.' && ch != '_') {
+			} else if (ch != '.' && ch != '_' && ch != '?' && ch != '\\') {
 				throw new InvalidModelOpException("name '"+name+"' is not legal: the character '"+ ch+ "' at index "+ j + " must be a letter, a digit, an underscore, or a period");
 			} else { //ZSS-792
-				invalid = true; // '.' or '-', impossible to be a valid cell reference
+				invalid = true; // '.' or '-' or '?' or '\', impossible to be a valid cell reference
 			}
 		}
 		
