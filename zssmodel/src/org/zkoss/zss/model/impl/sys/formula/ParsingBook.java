@@ -213,6 +213,14 @@ public class ParsingBook implements FormulaParsingWorkbook, FormulaRenderingWork
 		return (String) getNameInfo(namePtg)[1];
 	}
 	
+	@Override
+	public String getFullNameText(NamePtg namePtg) {
+		Object[] info = getNameInfo(namePtg);
+		String nameName = (String) info[1];
+		int sheetIndex = ((Integer)info[0]).intValue();
+		return sheetIndex < 0 ? nameName : (book.getSheet(sheetIndex).getSheetName() + '!' + nameName);
+	}
+	
 	public Object[] getNameInfo(NamePtg namePtg) {
 		//ZSS-747
 		synchronized (_indexes) {
