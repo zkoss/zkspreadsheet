@@ -33,7 +33,7 @@ public class Issue792Test {
 	}
 
 	/**
-	 * Test render long text that across the cell boundary
+	 * Test check legal name
 	 */
 	@Test
 	public void testCheckLegalName() {
