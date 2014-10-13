@@ -319,7 +319,7 @@ public class BookImpl extends AbstractBookAdv{
 					rowIndex = rowIndex * 10 + Character.getNumericValue(ch);
 				}
 			} else if (ch != '.' && ch != '_' && ch != '?' && ch != '\\') {
-				throw new InvalidModelOpException("name '"+name+"' is not legal: the character '"+ ch+ "' at index "+ j + " must be a letter, a digit, an underscore, or a period");
+				throw new InvalidModelOpException("name '"+name+"' is not legal: the character '"+ ch+ "' at index "+ j + " must be a letter, a digit, an underscore, a period, a question mark, or a backslash");
 			} else { //ZSS-792
 				invalid = true; // '.' or '-' or '?' or '\', impossible to be a valid cell reference
 			}
