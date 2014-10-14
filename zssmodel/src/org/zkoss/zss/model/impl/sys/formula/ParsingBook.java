@@ -28,9 +28,9 @@ import org.zkoss.poi.ss.formula.FormulaType;
 import org.zkoss.poi.ss.formula.ptg.NamePtg;
 import org.zkoss.poi.ss.formula.ptg.NameXPtg;
 import org.zkoss.poi.ss.formula.ptg.Ptg;
+import org.zkoss.poi.ss.formula.ptg.TableNamePtg;
 import org.zkoss.util.logging.Log;
 import org.zkoss.zss.model.SBook;
-import org.zkoss.zss.model.SBookSeries;
 import org.zkoss.zss.model.sys.formula.FormulaEngine;
 
 /**
@@ -359,6 +359,54 @@ public class ParsingBook implements FormulaParsingWorkbook, FormulaRenderingWork
 		}
 	}
 	
+	//ZSS-796
+	/**
+	 * table name to represent named range
+	 * @since 3.6.0
+	 */
+	private class TableName implements EvaluationName {
+
+		private final String tableName;
+		private final String columnName;
+		private final int nameIndex;
+		private final boolean inTable;
+
+		/**
+		 * @param sheetIndex sheet index; if -1, indicates whole book.
+		 */
+		public TableName(String tableName, int nameIndex, String columnName, boolean inTable) {
+			this.tableName = tableName;
+			this.nameIndex = nameIndex;
+			this.columnName = columnName;
+			this.inTable = inTable;
+		}
+
+		public Ptg[] getNameDefinition() {
+			return FormulaParser.parse(tableName, ParsingBook.this, FormulaType.NAMEDRANGE, -1); //  ?FormulaType.ARRAY
+		}
+
+		public String getNameText() {
+			return tableName;
+		}
+
+		public boolean hasFormula() {
+			return false;
+		}
+
+		public boolean isFunctionName() {
+			return true;
+		}
+
+		public boolean isRange() {
+			return true;
+		}
+
+		public TableNamePtg createPtg() {
+			return new TableNamePtg(nameIndex, tableName, columnName, inTable);
+		}
+	}
+
+	
 	//to compatible with zss-575 in 3.0
 	@Override
 	public boolean isAllowedDeferredNamePtg() {
@@ -381,6 +429,25 @@ public class ParsingBook implements FormulaParsingWorkbook, FormulaRenderingWork
 	public EvaluationName getName(String name, String sheetName) {
 		int sheetIndex = book.getSheetIndex(sheetName);
 		return getName(name, sheetIndex);
+	}
+
+	//ZSS-796
+	@Override
+	public EvaluationName getTableName(String tableName, String columnName, int sheetIndex, int rowIdx, int colIdx) {
+		//TODO: find the real table name from book, sheetIdx, rowIdx, and colIdx
+		String tableName0 = tableName == null ? "" : tableName;
+		String key = toKey(String.valueOf(-1), tableName0);
+		//ZSS-747
+		synchronized (_indexes) {
+			Integer index = _indexes.name2index.get(key);
+			if(index == null) {
+				index = _indexes.index2name.size();
+				_indexes.index2name.add(new Object[] {Integer.valueOf(-1), tableName0});
+				_indexes.name2index.put(key, index);
+			}
+			EvaluationName n = new TableName(tableName0, index, columnName, tableName == null);
+			return n;
+		}
 	}
 }
 

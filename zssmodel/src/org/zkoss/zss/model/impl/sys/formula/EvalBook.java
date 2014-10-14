@@ -296,4 +296,10 @@ public final class EvalBook implements EvaluationWorkbook, FormulaParsingWorkboo
 	public EvaluationName getName(String name, String sheetName) {
 		return _parsingBook.getName(name, sheetName);
 	}
+
+	@Override
+	public EvaluationName getTableName(String tableName, String columnName,
+			int sheetIndex, int rowIdx, int colIdx) {
+		return _parsingBook.getTableName(tableName, columnName, sheetIndex, rowIdx, colIdx);
+	}
 }

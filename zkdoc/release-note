@@ -61,6 +61,7 @@ ZK Spreadsheet 3.6.0
   ZSS-790 Cannot handle formulas which refer to Name of the other sheets'
   ZSS-791 General number formatting should consider the merge cell width
   ZSS-795 '?' should be a legal character in defined Name
+  ZSS-796 Fail to load book with table formula
   
 ** Upgrade Notes
   * Following api are deprecated
