@@ -88,6 +88,10 @@ public class CellStyleImpl implements CellStyle{
 	public ColorImpl getBackgroundColor() {
 		return getFillColor();
 	}
+	public ColorImpl getBackColor() {
+		SColor srcColor = getNative().getBackColor();
+		return new ColorImpl(_bookRef,new SimpleRef(srcColor));
+	}
 	
 	public ColorImpl getFillColor() {
 		SColor srcColor = getNative().getFillColor();

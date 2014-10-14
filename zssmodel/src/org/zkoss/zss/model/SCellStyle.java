@@ -67,7 +67,7 @@ public interface SCellStyle {
 	 * @return fill background-color
 	 * @since 3.6.0
 	 */
-	public SColor getBackgroundColor();
+	public SColor getBackColor();
 
 	/**
 	 * Gets the fill/background pattern <br/>

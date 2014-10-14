@@ -456,8 +456,13 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 			cellStyle.setLocked(poiCellStyle.getLocked());
 			cellStyle.setAlignment(PoiEnumConversion.toHorizontalAlignment(poiCellStyle.getAlignment()));
 			cellStyle.setVerticalAlignment(PoiEnumConversion.toVerticalAlignment(poiCellStyle.getVerticalAlignment()));
-			cellStyle.setFillColor(book.createColor(BookHelper.colorToBackgroundHTML(workbook, poiCellStyle.getFillForegroundColorColor())));
-			cellStyle.setBackgroundColor(book.createColor(BookHelper.colorToBackgroundHTML(workbook, poiCellStyle.getFillBackgroundColorColor()))); //ZSS-780
+			Color fgColor = poiCellStyle.getFillForegroundColorColor();
+			Color bgColor = poiCellStyle.getFillBackgroundColorColor();
+			if (fgColor == null && bgColor != null) { //ZSS-797
+				fgColor = bgColor;
+			}
+			cellStyle.setFillColor(book.createColor(BookHelper.colorToBackgroundHTML(workbook, fgColor)));
+			cellStyle.setBackgroundColor(book.createColor(BookHelper.colorToBackgroundHTML(workbook, bgColor))); //ZSS-780
 
 			cellStyle.setBorderLeft(PoiEnumConversion.toBorderType(poiCellStyle.getBorderLeft()));
 			cellStyle.setBorderTop(PoiEnumConversion.toBorderType(poiCellStyle.getBorderTop()));

@@ -439,7 +439,7 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 
 		// fill
 		Color fillColor = toPOIColor(cellStyle.getFillColor());
-		Color backColor = toPOIColor(cellStyle.getBackgroundColor());
+		Color backColor = toPOIColor(cellStyle.getBackColor());
 		short pattern = PoiEnumConversion.toPoiFillPattern(cellStyle.getFillPattern());
 		poiCellStyle.setFill(fillColor, backColor, pattern);
 		

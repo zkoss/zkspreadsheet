@@ -327,7 +327,7 @@ public class CellStyleImpl extends AbstractCellStyleAdv {
 
 	//ZSS-780
 	@Override
-	public SColor getBackgroundColor() {
+	public SColor getBackColor() {
 		// TODO Auto-generated method stub
 		return _backColor;
 	}

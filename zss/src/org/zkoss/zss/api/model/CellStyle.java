@@ -64,7 +64,19 @@ public interface CellStyle {
 	 */
 	public Color getBackgroundColor();
 	
+	/**
+	 * 
+	 * @return fill foreground color
+	 * @since 3.5.0
+	 */
 	public Color getFillColor();
+	
+	/**
+	 * 
+	 * @return fill background color
+	 * @since 3.6.0
+	 */
+	public Color getBackColor();
 
 	/**
 	 * Gets the fill/background pattern <br/>
