@@ -63,6 +63,7 @@ ZK Spreadsheet 3.6.0
   ZSS-795 '?' should be a legal character in defined Name
   ZSS-796 Fail to load book with table formula
   ZSS-797 White background exported to become black background.
+  ZSS-798 "The document is not open." exception when export to PDF
   
 ** Upgrade Notes
   * Following api are deprecated
