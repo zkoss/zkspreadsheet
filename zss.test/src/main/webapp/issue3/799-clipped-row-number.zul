@@ -1,0 +1,9 @@
+<zk>
+Since 3.6.0
+<label multiline="true">
+1. Take a look of the row number of the sheet 
+2. If the number is not clipped; then it is OK.
+</label>
+	<spreadsheet id="ss" src="/issue3/book/799-clipped-row-number.xlsx" vflex="1"  maxVisibleRows="150"
+		maxVisibleColumns="40" showToolbar="true" showSheetbar="true" showFormulabar="true" width="600px"/>
+</zk>
