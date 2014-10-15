@@ -66,6 +66,7 @@ ZK Spreadsheet 3.6.0
   ZSS-798 "The document is not open." exception when export to PDF
   ZSS-799 Row number is clipped if load a spreadsheet whose default row height is greater than 20px
   ZSS-802 Fail to export Sheet with PrintArea.
+  ZSS-803 Support resolving formula Name.
   
 ** Upgrade Notes
   * Following api are deprecated
