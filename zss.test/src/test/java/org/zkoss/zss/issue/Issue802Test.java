@@ -1,6 +1,7 @@
 package org.zkoss.zss.issue;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Locale;
 
 import org.junit.After;
@@ -12,12 +13,8 @@ import org.zkoss.zss.Setup;
 import org.zkoss.zss.Util;
 import org.zkoss.zss.api.Exporters;
 import org.zkoss.zss.api.Importers;
-import org.zkoss.zss.api.Range;
-import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.model.Book;
-import org.zkoss.zss.api.model.CellData;
 import org.zkoss.zss.api.model.Sheet;
-import org.zkoss.zss.model.SCell.CellType;
 
 public class Issue802Test {
 	
@@ -38,26 +35,18 @@ public class Issue802Test {
 
 	/**
 	 * parse a defined name which contains question mark '?'
+	 * @throws IOException 
 	 */
 	@Test
-	public void parsingQuestionMarkName() {
-		try {
-			Book book = Util.loadBook(this, "book/802-print-area-export.xlsx");
-			
-			//export and test again
-			File temp = Setup.getTempFile();
-			Exporters.getExporter().export(book, temp);
-			book = Importers.getImporter().imports(temp, "test");
-
-//			Sheet sheet1 = book.getSheet("Sheet1");
-//			Range rngA2 = Ranges.range(sheet1, "A2");
-//			CellData a2 = rngA2.getCellData();
-//			Assert.assertEquals("Formula Type", CellData.CellType.FORMULA, a2.getType());
-//			Assert.assertEquals("Value a Number Type", CellData.CellType.NUMERIC, a2.getResultType());
-//			Assert.assertEquals("Value", 100d, a2.getDoubleValue(), 0d);
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			Assert.assertTrue("parsingExternName Failed: " + ex.getMessage(), false);
-		}
+	public void exportSheetWithPrintArea() throws IOException {
+		Book book = Util.loadBook(this, "book/802-print-area-export.xlsx");
+		
+		//export and test again
+		File temp = Setup.getTempFile();
+		Exporters.getExporter().export(book, temp);
+		book = Importers.getImporter().imports(temp, "test");
+		Sheet sheet1 = book.getSheetAt(0);
+		String printArea = sheet1.getInternalSheet().getPrintSetup().getPrintArea();
+		Assert.assertEquals("Print Area", "Sheet1!$B$2:$D$6", printArea);
 	}
 }
