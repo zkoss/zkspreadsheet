@@ -288,7 +288,7 @@
 }
 .zsleftcelltxt {
 	font-size: 12px;
-	height: 19px; /* rowHeight - 1, 1 is border */
+	/* height: 19px;*/ /* rowHeight - 1, 1 is border */
 	text-align: center;
 	<c:if test="${c:browser('ie') and not c:browser('ie11')}">
 		font-size: 10px;
