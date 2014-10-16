@@ -209,6 +209,42 @@ public class CellOperationUtil {
 	public static void applyFontHeightPoints(Range range, final int fontHeightPoints) {
 		applyCellStyle(range, getFontHeightPointsApplier(fontHeightPoints));
 	}
+	
+	/**
+	 * Detect the highest words in each row. It will change row height if needed.
+	 * @param range range to be detected
+	 */
+	public static void fitFontHeightPoints(Range range) {
+		
+		int row = range.getRow();
+		int endRow = range.getLastRow();
+		Sheet sheet = range.getSheet();
+		
+		for(;row <= endRow; row++) {
+			int highest = 0;
+			int col = range.getColumn();
+			int endCol = range.getLastColumn();
+			for(; col <= endCol; col++) {
+					
+				SCell c = range.getSheet().getInternalSheet().getCell(row, col);
+
+				int fpx = c.isRichTextValue() ? 
+							c.getRichTextValue().getHeightPoints() :
+								c.getCellStyle().getFont().getHeightPoints();
+				
+				if(fpx > highest)
+					highest = fpx;
+				
+			}
+			
+			int fpx = UnitUtil.pointToPx(highest);
+			int px = sheet.getRowHeight(row);
+			
+			if(fpx>px) {
+				Ranges.range(range.getSheet(), row, endCol).setRowHeight(fpx+4);//4 is padding
+			}
+		}
+	}
 
 	public static CellStyleApplier getFontHeightPointsApplier(final int fontHeightPoints) {
 		//fontHeightPoints = pt;
@@ -218,7 +254,7 @@ public class CellOperationUtil {
 				SSheet sheet = range.getSheet().getInternalSheet();
 				StyleUtil.setFontHeightPoints(sheet.getBook(),sheet.getCell(range.getRow(),range.getColumn()),fontHeightPoints);
 				int px = range.getSheet().getRowHeight(range.getRow());//rowHeight in px
-				if(fpx>px){
+				if(fpx>px) {
 					range.setRowHeight(fpx+4);//4 is padding
 				}
 			}

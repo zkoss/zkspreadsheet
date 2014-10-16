@@ -4121,6 +4121,10 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 				sb.append("border-bottom-width:0px;");
 				sb.append("}");
 
+				sb.append(name).append(" .zshr").append(cid).append("{");
+				sb.append("max-height:0px;");
+				sb.append("}");
+
 			} else {
 				sb.append(name).append(" .zsh").append(cid).append("{");
 				sb.append("height:").append(height).append("px;");
@@ -4135,6 +4139,10 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 				sb.append("height:").append(height).append("px;");
 				sb.append("line-height:").append(height).append("px;");
 				sb.append("border-bottom-width:1px;");
+				sb.append("}");
+
+				sb.append(name).append(" .zshr").append(cid).append("{");
+				sb.append("max-height:").append(height).append("px;");
 				sb.append("}");
 
 			}

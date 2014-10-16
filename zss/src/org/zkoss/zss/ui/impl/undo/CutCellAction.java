@@ -53,6 +53,9 @@ public class CutCellAction extends Abstract2DCellDataStyleAction {
 		Range src = Ranges.range(_sheet,_row,_column,_lastRow,_lastColumn);
 		Range dest = Ranges.range(_destSheet,_destRow,_destColumn,_destLastRow,_destLastColumn);
 		_pastedRange = CellOperationUtil.cut(src, dest);
+		
+		CellOperationUtil.fitFontHeightPoints(Ranges.range(_destSheet, dest.getRow(), dest.getColumn(),  
+				dest.getRow() + (_lastRow - _row), dest.getColumn() + (_lastColumn - _column)));
 	}
 		
 	@Override

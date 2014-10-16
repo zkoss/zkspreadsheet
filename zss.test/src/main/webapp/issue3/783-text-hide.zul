@@ -1,0 +1,28 @@
+<zk>
+Since 3.6.0
+<label multiline="true">
+1. make sure first line follow the order "top", "middle" and "bottom".
+2. make sure three lines have the wide, fit and tiny row height.
+3. press "test dynamic insert", you should see "ABC" appears at B2 and fits inside the cell.
+4. press "set sheet row height", you should see height of rows, except those changed four one, changed.  
+5. copy cell from A6:K26 to A28. you should see the row will changed to fit the font height.
+</label>
+	
+	<spreadsheet id="ss" vflex="1" hflex="1" src="/issue3/book/783-text-hide.xlsx" 
+		showToolbar="true" showSheetbar="true" showFormulabar="true" showContextMenu="true"
+		maxVisibleRows="100" maxVisibleColumns="100"/>
+		
+	<button label="test dynamic insert">
+		<attribute name="onClick"><![CDATA[
+			Range r = Ranges.range(ss.getSelectedSheet(), 1, 1);
+			r.setCellEditText("ABC");
+			CellOperationUtil.applyFontHeightPoints(r, 48);
+		]]></attribute>
+	</button>
+	
+	<button label="setSheetRowHeight">
+		<attribute name="onClick"><![CDATA[
+			ss.setRowheight(40);
+		]]></attribute>
+	</button>
+</zk>

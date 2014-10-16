@@ -40,4 +40,6 @@ public interface SRichText {
 	
 	public void clearSegments();
 	
+	public int getHeightPoints();
+	
 }

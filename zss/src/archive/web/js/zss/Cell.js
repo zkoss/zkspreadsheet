@@ -450,7 +450,7 @@ zss.Cell = zk.$extends(zk.Widget, {
 		return '<div id="' + uid + '" class="' + this.getZclass() + '" zs.t="SCell" '
 			+ (style ? 'style="' +  style + '"' : '') + '><div id="' + uid + '-cave" class="' +
 			this._getInnerClass() + '" ' + (innerStyle ? 'style="' + innerStyle + '"' : '') + 
-			'>' + '<div id="' + uid + '-real" class="zscelltxt-real '+(this.wrap?WRAP_TEXT_CLASS:'') + '"' +
+			'>' + '<div id="' + uid + '-real" class="' + this._getRealClass() + '"' +
 			// ZSS-725
 			(fontStyle ? ' style="' + fontStyle + '"' : '') + '>' + text + '</div>' + '</div></div>';
 	},
@@ -568,6 +568,15 @@ zss.Cell = zk.$extends(zk.Widget, {
 			cls += (' zswi' + wId);
 		return cls;
 	},
+	_getRealClass: function() {
+		var cls = 'zscelltxt-real ' + (this.wrap ? WRAP_TEXT_CLASS:''),
+			hId = this.zsh;
+
+		if(hId) 
+			cls += (' zshr' + hId);
+
+		return cls;
+	},
 	/**
 	 * Sets the width position index
 	 * @param int zsw the width position index
@@ -587,7 +596,8 @@ zss.Cell = zk.$extends(zk.Widget, {
 		if (zsh) {
 			this.zsh = zsh;
 			jq(this.comp).addClass("zshi" + zsh);
-			jq(this.cave).addClass("zshi" + zsh);	
+			jq(this.cave).addClass("zshi" + zsh);
+			jq(this.$n('real')).addClass("zshr" + zsh);
 		}
 	},
 	/**

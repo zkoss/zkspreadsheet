@@ -18,10 +18,14 @@ Copyright (C) 2014 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.ui.impl.undo;
 
+import org.zkoss.zss.api.CellOperationUtil;
 import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.Ranges;
+import org.zkoss.zss.api.UnitUtil;
 import org.zkoss.zss.api.CellOperationUtil.CellStyleApplier;
 import org.zkoss.zss.api.model.Sheet;
+import org.zkoss.zss.model.SRichText;
+import org.zkoss.zss.model.SRichText.Segment;
 /**
  * 
  * @author henrichen
@@ -48,8 +52,10 @@ public class CellRichTextAction extends AbstractEditTextAction {
 		boolean protect = isSheetProtected();
 		if(!protect){
 			Range r = Ranges.range(_sheet,_row,_column,_lastRow,_lastColumn);
-			if (_richText != null)
+			if (_richText != null) {
 				r.setCellRichText((String)_richText);
+				CellOperationUtil.fitFontHeightPoints(r);
+			}
 			else if (_applier != null)
 				_applier.apply(r);
 		}
