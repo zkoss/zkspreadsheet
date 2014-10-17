@@ -21,8 +21,6 @@ package org.zkoss.zss.ui.impl.undo;
 import org.zkoss.zss.api.CellOperationUtil;
 import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.AreaRef;
-import org.zkoss.zss.api.Range.PasteOperation;
-import org.zkoss.zss.api.Range.PasteType;
 import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.model.Sheet;
 
@@ -115,6 +113,10 @@ public class PasteCellAction extends AbstractCellDataStyleAction {
 		Range src = Ranges.range(_sheet, _row, _column, _lastRow, _lastColumn);
 		Range dest = Ranges.range(_destSheet, _destRow, _destColumn, _destLastRow, _destLastColumn);
 		_pastedRange = CellOperationUtil.paste(src, dest);
+		
+		CellOperationUtil.fitFontHeightPoints(Ranges.range(_destSheet, dest.getRow(), dest.getColumn(),
+				dest.getRow() + (_lastRow - _row), dest.getColumn() + (_lastColumn - _column)));
+			
 	}
 
 }

@@ -2234,10 +2234,12 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			zcss.setRule(name + " .zsh" + zsh, "height", "0px", createbefor, cssId);
 			zcss.setRule(name + " .zshi" + zsh, ["height", "border-bottom-width", "overflow"], ["0px", "0px", "hidden"], createbefor, cssId);//both zscell and zscelltxt
 			zcss.setRule(name + " .zslh" + zsh, ["height", "line-height", "border-bottom-width"], ["0px", "0px", "0px"], createbefor, cssId); // header has 1px border.
+			zcss.setRule(name + " .zshr" + zsh, ["max-height"], ["0px"], createbefor, cssId); // real in cell
 		} else {
 			zcss.setRule(name + " .zsh" + zsh, "height", height + "px", createbefor, cssId);
 			zcss.setRule(name + " .zshi" + zsh, ["height", "border-bottom-width", "overflow"], [cellheight + "px", "1px", ""], createbefor, cssId);//both zscell and zscelltxt
 			zcss.setRule(name + " .zslh" + zsh, ["height", "line-height", "border-bottom-width"], [height + "px", height + "px", "1px"], createbefor, cssId);
+			zcss.setRule(name + " .zshr" + zsh, ["max-height"], [height + "px"], createbefor, cssId); // real in cell
 		}
 		
 		//set merged cell height;

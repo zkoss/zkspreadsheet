@@ -22,6 +22,7 @@ import java.util.List;
 
 import org.zkoss.zss.model.SFont;
 import org.zkoss.zss.model.SRichText;
+import org.zkoss.zss.model.SRichText.Segment;
 /**
  * 
  * @author Dennis
@@ -67,9 +68,21 @@ public class ReadOnlyRichTextImpl extends AbstractRichTextAdv {
 	public void clearSegments() {
 		throw new UnsupportedOperationException("readonly rich text");
 	}
+	
 	@Override
 	public AbstractRichTextAdv clone() {
 		return _richText==null?new ReadOnlyRichTextImpl(_segments.get(0).getText(),_segments.get(0).getFont()):new ReadOnlyRichTextImpl(_richText);
+	}
+	
+	@Override
+	public int getHeightPoints() {
+		int highest = 0;
+		for (Segment ss : getSegments()) {
+			int p = ss.getFont().getHeightPoints();
+			if(p > highest) 
+				highest = p;
+		}
+		return highest;
 	}
 
 }

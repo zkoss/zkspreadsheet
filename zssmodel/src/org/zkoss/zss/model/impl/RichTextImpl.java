@@ -16,7 +16,6 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.model.impl;
 
-import java.io.Serializable;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -79,6 +78,17 @@ public class RichTextImpl extends AbstractRichTextAdv {
 			richText.addSegment(s.getText(), s.getFont());
 		}
 		return richText;
+	}
+	
+	@Override
+	public int getHeightPoints() {
+		int highest = 0;
+		for (Segment ss : getSegments()) {
+			int p = ss.getFont().getHeightPoints();
+			if(p > highest) 
+				highest = p;
+		}
+		return highest;
 	}
 
 }
