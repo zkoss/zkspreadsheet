@@ -23,6 +23,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import org.zkoss.poi.ss.formula.LazyAreaEval;
+import org.zkoss.poi.ss.formula.LazyRefEval;
+import org.zkoss.poi.ss.formula.eval.AreaEval;
+import org.zkoss.poi.ss.formula.eval.ValueEval;
 import org.zkoss.zss.model.CellRegion;
 import org.zkoss.zss.model.ErrorValue;
 import org.zkoss.zss.model.SBook;
@@ -70,6 +74,8 @@ public class DataValidationImpl extends AbstractDataValidationAdv {
 	private FormulaExpression _formula2Expr;
 	private Object _evalValue1Result;
 	private Object _evalValue2Result;
+	private ValueEval _evalValue1EvalResult; //ZSS-810
+	private ValueEval _evalValue2EvalResult; //ZSS-810
 	
 	private boolean _evaluated = false;
 	
@@ -466,6 +472,7 @@ public class DataValidationImpl extends AbstractDataValidationAdv {
 					Object val = result.getValue();
 					if(result.getType() == ResultType.SUCCESS){
 						_evalValue1Result = val;
+						_evalValue1EvalResult = result.getValueEval(); //ZSS-810
 					}else if(result.getType() == ResultType.ERROR){
 						_evalValue1Result = (val instanceof ErrorValue)?val: ErrorValue.valueOf(ErrorValue.INVALID_VALUE);
 					}
@@ -477,6 +484,7 @@ public class DataValidationImpl extends AbstractDataValidationAdv {
 					Object val = result.getValue();
 					if(result.getType() == ResultType.SUCCESS){
 						_evalValue2Result = val;
+						_evalValue2EvalResult = result.getValueEval(); //ZSS-810
 					}else if(result.getType() == ResultType.ERROR){
 						_evalValue2Result = (val instanceof ErrorValue)?val: ErrorValue.valueOf(ErrorValue.INVALID_VALUE);
 					}
@@ -490,35 +498,54 @@ public class DataValidationImpl extends AbstractDataValidationAdv {
 	@Override
 	public List<SCell> getReferToCellList(){
 		if(_formula1Expr!=null && _formula1Expr.isAreaRefs()){
-			List<SCell> list = new LinkedList<SCell>();
-			SBookSeries bookSeries = _sheet.getBook().getBookSeries(); 
-			
 			Ref areaRef = _formula1Expr.getAreaRefs()[0];
-			String bookName =  areaRef.getBookName();
-			String sheetName = areaRef.getSheetName();
-			CellRegion region = new CellRegion(areaRef.getRow(),areaRef.getColumn(),areaRef.getLastRow(),areaRef.getLastColumn());
-			
-			SBook book = bookSeries.getBook(bookName);
-			if(book==null){
-				return list;
-			}
-			SSheet sheet = book.getSheetByName(sheetName);
-			if(sheet==null){
-				return list;
-			}
-			for(int i = region.getRow();i<=region.getLastRow();i++){
-				for(int j=region.getColumn();j<=region.getLastColumn();j++){
-					list.add(sheet.getCell(i, j));
-				}
-			}
-			return list;
+			return getReferToCellList0(areaRef);
+		} else if (_evalValue1EvalResult instanceof LazyAreaEval) { //ZSS-810
+			LazyAreaEval areaEval = (LazyAreaEval) _evalValue1EvalResult;
+			Ref areaRef = new RefImpl(
+					areaEval.getBookName(), areaEval.getSheetName(), 
+					areaEval.getFirstRow(), areaEval.getFirstColumn(),
+					areaEval.getLastRow(), areaEval.getLastColumn());
+			return getReferToCellList0(areaRef);
+		} else if (_evalValue1EvalResult instanceof LazyRefEval) { //ZSS-810
+			LazyRefEval areaEval = (LazyRefEval) _evalValue1EvalResult;
+			Ref areaRef = new RefImpl(
+					areaEval.getBookName(), areaEval.getSheetName(), 
+					areaEval.getRow(), areaEval.getColumn(),
+					areaEval.getRow(), areaEval.getColumn());
+			return getReferToCellList0(areaRef);
 		}
 		return Collections.emptyList();
+	}
+	
+	private List<SCell> getReferToCellList0(Ref areaRef) {
+		SBookSeries bookSeries = _sheet.getBook().getBookSeries(); 
+		List<SCell> list = new LinkedList<SCell>();
+		String bookName =  areaRef.getBookName();
+		String sheetName = areaRef.getSheetName();
+		CellRegion region = new CellRegion(areaRef.getRow(),areaRef.getColumn(),areaRef.getLastRow(),areaRef.getLastColumn());
+		
+		SBook book = bookSeries.getBook(bookName);
+		if(book==null){
+			return list;
+		}
+		SSheet sheet = book.getSheetByName(sheetName);
+		if(sheet==null){
+			return list;
+		}
+		for(int i = region.getRow();i<=region.getLastRow();i++){
+			for(int j=region.getColumn();j<=region.getLastColumn();j++){
+				list.add(sheet.getCell(i, j));
+			}
+		}
+		return list;
 	}
 
 	@Override
 	public boolean hasReferToCellList() {
-		return _formula1Expr!=null && _formula1Expr.isAreaRefs();
+		return (_formula1Expr!=null && _formula1Expr.isAreaRefs())
+				|| (_evalValue1EvalResult instanceof LazyAreaEval) //ZSS-810
+				|| (_evalValue1EvalResult instanceof LazyRefEval); //ZSS-810
 	}
 
 	@Override
@@ -684,5 +711,15 @@ public class DataValidationImpl extends AbstractDataValidationAdv {
 	 */
 	public void setFormula2(FormulaExpression formula2) {
 		setFormulas(_formula1Expr, formula2);
+	}
+	
+	//ZSS-810
+	public ValueEval getValueEval1() { 	
+		return _evalValue1EvalResult;
+	}
+	
+	//ZSS-810
+	public ValueEval getValueEval2() {
+		return _evalValue2EvalResult;
 	}
 }

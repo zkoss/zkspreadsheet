@@ -309,7 +309,7 @@ public class FormulaEngineImpl implements FormulaEngine {
 
 		// by pass if expression is invalid format
 		if(expr.hasError()) {
-			return new EvaluationResultImpl(ResultType.ERROR,  ErrorValue.valueOf(ErrorValue.INVALID_FORMULA));
+			return new EvaluationResultImpl(ResultType.ERROR,  ErrorValue.valueOf(ErrorValue.INVALID_FORMULA), ErrorEval.FORMULA_INVALID);
 		}
 		Ref dependant = context.getDependent();
 		EvaluationResult result = null;
@@ -344,19 +344,21 @@ public class FormulaEngineImpl implements FormulaEngine {
 			}
 		} catch(NotImplementedException e) {
 			_logger.info(e.getMessage() + " when eval " + expr.getFormulaString());
-			result = new EvaluationResultImpl(ResultType.ERROR, new ErrorValue(ErrorValue.INVALID_NAME, e.getMessage()));
+			result = new EvaluationResultImpl(ResultType.ERROR, new ErrorValue(ErrorValue.INVALID_NAME, e.getMessage()), ErrorEval.NAME_INVALID);
 		} catch(EvaluationException e) { 
 			_logger.warning(e.getMessage() + " when eval " + expr.getFormulaString());
 			ErrorEval error = e.getErrorEval();
-			result = new EvaluationResultImpl(ResultType.ERROR, error==null?new ErrorValue(ErrorValue.INVALID_FORMULA, e.getMessage()):error);
+			result = new EvaluationResultImpl(ResultType.ERROR, 
+					error==null?new ErrorValue(ErrorValue.INVALID_FORMULA, e.getMessage()):error, 
+					error==null?ErrorEval.FORMULA_INVALID:error);
 		} catch(FormulaParseException e) {
 			// we skip evaluation if formula has parsing error
 			// so if still occurring formula parsing exception, it should be a bug 
 			_logger.error(e.getMessage() + " when eval " + expr.getFormulaString());
-			result = new EvaluationResultImpl(ResultType.ERROR, new ErrorValue(ErrorValue.INVALID_FORMULA, e.getMessage()));
+			result = new EvaluationResultImpl(ResultType.ERROR, new ErrorValue(ErrorValue.INVALID_FORMULA, e.getMessage()), ErrorEval.FORMULA_INVALID);
 		} catch(Exception e) {
 			_logger.error(e.getMessage() + " when eval " + expr.getFormulaString(), e);
-			result = new EvaluationResultImpl(ResultType.ERROR, new ErrorValue(ErrorValue.INVALID_FORMULA, e.getMessage()));
+			result = new EvaluationResultImpl(ResultType.ERROR, new ErrorValue(ErrorValue.INVALID_FORMULA, e.getMessage()), ErrorEval.FORMULA_INVALID);
 		}
 		return result;
 	}
@@ -432,7 +434,7 @@ public class FormulaEngineImpl implements FormulaEngine {
 			}
 		} else {
 			if(multipleArea){//is multipleArea formula in cell, should return #VALUE!
-				return new EvaluationResultImpl(ResultType.ERROR, ErrorValue.valueOf(ErrorValue.INVALID_VALUE));
+				return new EvaluationResultImpl(ResultType.ERROR, ErrorValue.valueOf(ErrorValue.INVALID_VALUE), ErrorEval.VALUE_INVALID);
 			}
 			EvaluationCell evalCell = evalBook.getSheet(currentSheetIndex).getCell(cell.getRowIndex(),
 					cell.getColumnIndex());
@@ -442,14 +444,15 @@ public class FormulaEngineImpl implements FormulaEngine {
 		// convert to result
 		if(value instanceof ErrorEval) {
 			int code = ((ErrorEval)value).getErrorCode();
-			return new EvaluationResultImpl(ResultType.ERROR, ErrorValue.valueOf((byte)code));
+			return new EvaluationResultImpl(ResultType.ERROR, ErrorValue.valueOf((byte)code), value);
 		} else {
 			try{
-				return new EvaluationResultImpl(ResultType.SUCCESS, getResolvedValue(value));
+				final ResultValueEval resultEval = getResolvedValue(value);
+				return new EvaluationResultImpl(ResultType.SUCCESS, resultEval.value, resultEval.valueEval); //ZSS-810
 			}catch(EvaluationException x){
 				//error when resolve value.
 				if(x.getErrorEval()!=null){//ZSS-591 Get console exception after delete sheet
-					return new EvaluationResultImpl(ResultType.ERROR, ErrorValue.valueOf((byte)x.getErrorEval().getErrorCode()));
+					return new EvaluationResultImpl(ResultType.ERROR, ErrorValue.valueOf((byte)x.getErrorEval().getErrorCode()), x.getErrorEval());
 				}else{
 					throw x;
 				}
@@ -457,22 +460,22 @@ public class FormulaEngineImpl implements FormulaEngine {
 		}
 	}
 
-	protected Object getResolvedValue(ValueEval value) throws EvaluationException {
+	protected ResultValueEval getResolvedValue(ValueEval value) throws EvaluationException {
 		if(value instanceof StringEval) {
-			return ((StringEval)value).getStringValue();
+			return new ResultValueEval(((StringEval)value).getStringValue(), value); //ZSS-810
 		} else if(value instanceof NumberEval) {
-			return ((NumberEval)value).getNumberValue();
+			return new ResultValueEval(((NumberEval)value).getNumberValue(), value); //ZSS-810
 		} else if(value instanceof BlankEval) {
-			return "";
+			return new ResultValueEval("", value); //ZSS-810
 		} else if(value instanceof BoolEval) {
-			return ((BoolEval)value).getBooleanValue();
+			return new ResultValueEval(((BoolEval)value).getBooleanValue(), value); //ZSS-810
 		} else if(value instanceof ValuesEval) {
 			ValueEval[] values = ((ValuesEval)value).getValueEvals();
 			Object[] array = new Object[values.length];
 			for(int i = 0; i < values.length; ++i) {
-				array[i] = getResolvedValue(values[i]);
+				array[i] = getResolvedValue(values[i]).value; //ZSS-810
 			}
-			return array;
+			return new ResultValueEval(array, value); //ZSS-810
 		} else if(value instanceof AreaEval) {
 			// covert all values into an array
 			List<Object> list = new ArrayList<Object>();
@@ -480,14 +483,14 @@ public class FormulaEngineImpl implements FormulaEngine {
 			for(int r = 0; r < area.getHeight(); ++r) {
 				for(int c = 0; c < area.getWidth(); ++c) {
 					ValueEval v = area.getValue(r, c);
-					list.add(getResolvedValue(v));
+					list.add(getResolvedValue(v).value); //ZSS-810
 				}
 			}
-			return list;
+			return new ResultValueEval(list, value); //ZSS-810
 		} else if(value instanceof RefEval) {
 			ValueEval ve = ((RefEval)value).getInnerValueEval();
-			Object v = getResolvedValue(ve);
-			return v;
+			Object v = getResolvedValue(ve).value; //ZSS-810
+			return new ResultValueEval(v, value); //ZSS-810
 		} else if(value instanceof ErrorEval) {
 			throw new EvaluationException((ErrorEval)value);
 		} else {
@@ -687,10 +690,12 @@ public class FormulaEngineImpl implements FormulaEngine {
 
 		private ResultType type;
 		private Object value;
+		private ValueEval valueEval; //ZSS-810
 
-		public EvaluationResultImpl(ResultType type, Object value) {
+		public EvaluationResultImpl(ResultType type, Object value, ValueEval valueEval) {
 			this.type = type;
 			this.value = value;
+			this.valueEval = valueEval;
 		}
 
 		@Override
@@ -701,6 +706,12 @@ public class FormulaEngineImpl implements FormulaEngine {
 		@Override
 		public Object getValue() {
 			return value;
+		}
+		
+		//ZSS-810
+		@Override
+		public ValueEval getValueEval() {
+			return valueEval;
 		}
 
 	}
@@ -1199,5 +1210,16 @@ public class FormulaEngineImpl implements FormulaEngine {
 	//ZSS-759
 	protected ValueEval evaluateFormulaExpression(WorkbookEvaluator evaluator, int sheetIndex, FormulaExpression expr, boolean ignoreDereference) {
 		return evaluator.evaluate(sheetIndex, expr.getFormulaString(), ignoreDereference);
+	}
+
+	//ZSS-810
+	private static class ResultValueEval {
+		final Object value;
+		final ValueEval valueEval;
+		
+		ResultValueEval(Object value, ValueEval valueEval) {
+			this.value = value;
+			this.valueEval = valueEval;
+		}
 	}
 }

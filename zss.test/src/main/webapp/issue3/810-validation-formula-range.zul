@@ -1,0 +1,11 @@
+<zk>
+Since 3.6.0
+<label multiline="true">
+1. You should see 2014 in cell A1.
+2. Select A1 and you should see a validation drop-down button show by cell A1.
+3. Click the dropdown button and you should see dropdown list with options 2008~2014.
+4. Select 2010 and you sould see 2010 show in cell A1.
+</label>
+	<spreadsheet id="ss" src="/issue3/book/810-validation-formula-range.xlsx" vflex="1"  maxVisibleRows="150"
+		maxVisibleColumns="40" showToolbar="true" showSheetbar="true" showFormulabar="true" width="600px"/>
+</zk>

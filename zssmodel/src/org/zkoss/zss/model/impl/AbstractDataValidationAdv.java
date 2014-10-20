@@ -18,6 +18,7 @@ package org.zkoss.zss.model.impl;
 
 import java.io.Serializable;
 
+import org.zkoss.poi.ss.formula.eval.ValueEval;
 import org.zkoss.zss.model.SDataValidation;
 import org.zkoss.zss.model.sys.formula.FormulaExpression;
 /**
@@ -84,4 +85,19 @@ public abstract class AbstractDataValidationAdv implements SDataValidation,Linke
 	 */
 	abstract public void setFormula2(FormulaExpression formula);
 
+	//ZSS-810
+	/**
+	 * 
+	 * @return
+	 * @since 3.6.0
+	 */
+	abstract public ValueEval getValueEval1();
+	
+	//ZSS-810
+	/**
+	 * 
+	 * @return
+	 * @since 3.6.0
+	 */
+	abstract public ValueEval getValueEval2();
 }

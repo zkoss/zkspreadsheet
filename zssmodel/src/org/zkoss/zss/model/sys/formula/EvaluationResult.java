@@ -16,6 +16,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.model.sys.formula;
 
+import org.zkoss.poi.ss.formula.eval.ValueEval;
 import org.zkoss.zss.model.SCell.CellType;
 /**
  * 
@@ -32,5 +33,6 @@ public interface EvaluationResult {
 	
 	ResultType getType();
 	Object getValue();
+	ValueEval getValueEval(); //ZSS-810
 	
 }
