@@ -4222,6 +4222,22 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 //			.append("{border-bottom-color:#FFFFFF;border-right-color:#FFFFFF;}");
 //		}
 		sb.append(name).append(" .zs_indicator_" + getSelectedSheetId() + "{}");// for indicating the css is load ready
+		
+		// ZSS-788
+		// filter out HTML element which shouldn't be affected by bootstrap's style "box-sizing:border-box"
+		if(Package.getPackage("org.zkoss.addons.bootstrap") != null) {	
+			sb.append(name).append(" *[class^=zs]{box-sizing: content-box;-moz-box-sizing: content-box;}")
+				.append(name).append(".zssheet{box-sizing:border-box;-moz-box-sizing: border-box;}")
+				.append(name).append(" .zscell{box-sizing:border-box;-moz-box-sizing: border-box;}")
+				.append(name).append(" .zstopcell{box-sizing:border-box;-moz-box-sizing: border-box;}")
+				.append(name).append(" .zsleftcell{box-sizing:border-box;-moz-box-sizing: border-box;}")
+				.append(name).append(" .zsfocmark{box-sizing:border-box;-moz-box-sizing: border-box;}")
+				.append(name).append(" .zsselect{box-sizing:border-box;-moz-box-sizing: border-box;}")
+				.append(name).append(" .zsselchg{box-sizing:border-box;-moz-box-sizing: border-box;}")
+				.append(name).append(" .zshighlight{box-sizing:border-box;-moz-box-sizing: border-box;}")
+				.append("li[class^=zsmenu-] a:hover, li[class^=zsmenuitem-] a:hover{text-decoration: none;}")
+				.append(name).append(" .cleditorMain * {-moz-box-sizing:content-box; -webkit-box-sizing:content-box; box-sizing:content-box}");
+		}
 
 		return sb.toString();
 	}

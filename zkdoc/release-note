@@ -70,6 +70,7 @@ ZK Spreadsheet 3.6.0
   ZSS-804 A Formula Name which should return a Range.
   ZSS-805 Validation dropdown button is not correctly positioned in merged cell
   ZSS-783 rich text should be hidden by other cells when content height is larger than cell's
+  ZSS-788 ZK Spreadsheet incompatible with zk-bootstrap
   
 ** Upgrade Notes
   * Following api are deprecated
