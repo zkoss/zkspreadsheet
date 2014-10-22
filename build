@@ -117,7 +117,7 @@ if [ "$ZSSPOI" = "" ] ; then
 	if [ -d "zpoi" ] ; then
 		ZSSPOI="."
 	elif [ -d "../zsspoi/zpoi" ] ; then
-		ZSSCML="../zsspoi"
+		ZSSPOI="../zsspoi"
 	else
 		echo "ZSSPOI path is not found!!"
 	fi
