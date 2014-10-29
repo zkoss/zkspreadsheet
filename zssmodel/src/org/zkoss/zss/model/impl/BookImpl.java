@@ -388,11 +388,24 @@ public class BookImpl extends AbstractBookAdv{
 			return;
 		}
 		
+		//ZSS-820
+		reorderSheetFormula(getSheet(oldindex).getSheetName(), oldindex, index);
 		_sheets.remove(oldindex);
 		_sheets.add(index, (AbstractSheetAdv)sheet);
 		
 		//create formula cache for any sheet, sheet name, position change
 		EngineFactory.getInstance().createFormulaEngine().clearCache(new FormulaClearContext(this));
+
+		ModelUpdateUtil.handlePrecedentUpdate(getBookSeries(),new RefImpl(this.getBookName(),sheet.getSheetName(), index));
+		
+		// adjust sheet index
+		moveSheetIndex(getBookName(), oldindex, index);
+	}
+	//ZSS-820
+	private void moveSheetIndex(String bookName, int oldIndex, int newIndex) {
+		AbstractBookSeriesAdv bs = (AbstractBookSeriesAdv)getBookSeries();
+		DependencyTableAdv dt = (DependencyTableAdv) bs.getDependencyTable();
+		dt.moveSheetIndex(bookName, oldIndex, newIndex);
 	}
 
 	public void dump(StringBuilder builder) {
@@ -856,5 +869,83 @@ public class BookImpl extends AbstractBookAdv{
 			}
 		}
 		return list;
+	}
+
+	//ZSS-820
+	private void reorderSheetFormula(String sheetName, int oldIndex, int newIndex) {
+		AbstractBookSeriesAdv bs = (AbstractBookSeriesAdv)getBookSeries();
+		DependencyTable dt = bs.getDependencyTable();
+		Set<Ref> dependents = dt.getDirectDependents(new RefImpl(getBookName(),sheetName, oldIndex));
+		if(dependents.size()>0){
+			final String bookName = getBookName();
+			final int low = oldIndex < newIndex ? oldIndex : newIndex;
+			final int high = oldIndex < newIndex ? newIndex : oldIndex;
+
+			Set<String> bookNames = new HashSet<String>();
+			//filter out dependents that does not need to do reorder
+			for(final Iterator<Ref> it = dependents.iterator(); it.hasNext();) {
+				Ref dependent = it.next();
+				Set<Ref> precedents = ((DependencyTableAdv)dt).getDirectPrecedents(dependent);
+				boolean candidate = false;
+				for (Ref p : precedents) {
+					if (p.getType() != RefType.AREA && p.getType() != RefType.CELL)
+						continue;
+					final String bookName0 = p.getBookName();
+					final String sheet1 = p.getSheetName();
+					final String sheet2 = p.getLastSheetName();
+					
+					final int low0 = getSheetIndex(sheet1);
+					int high0 = getSheetIndex(sheet2);
+					if (high0 < 0) high0 = low0;
+					if (low0 == high0) continue; // single sheet, as is.
+							
+					// no intersection; as is.
+					if (high0 < low || low0 > high) continue;
+
+					if (low0 == oldIndex) {
+						if (low0 != high0 && newIndex >= high0) { //2. move beyond original high end
+							//must change low end sheet name! (_map & _remap must be remapped)
+							candidate = true;
+							
+							// adjust extern sheet name
+							if (!bookNames.contains(bookName0)) {
+								ParsingBook parsingBook = new ParsingBook(bs.getBook(bookName0));
+								parsingBook.reorderSheet(bookName, oldIndex, newIndex);
+								bookNames.add(bookName0);
+							}
+							break;
+						}
+					}
+					
+					if (high0 == oldIndex) {
+						if (low0 != high0 && newIndex <= low0) { //4. move beyond original low end
+							// high0 index not change but sheet name changed
+							candidate = true;
+							
+							// adjust extern sheet name
+							if (!bookNames.contains(bookName0)) {
+								ParsingBook parsingBook = new ParsingBook(bs.getBook(bookName0));
+								parsingBook.reorderSheet(bookName, oldIndex, newIndex);
+								bookNames.add(bookName0);
+							}
+							break;
+						}
+					}
+				}
+				if (!candidate) {
+					it.remove();
+				}
+			}
+
+			if (!dependents.isEmpty()) {
+				for (Ref dependent : dependents) {
+					dt.clearDependents(dependent);
+				}
+			
+				//rebuild the the formula by tuner
+				FormulaTunerHelper tuner = new FormulaTunerHelper(bs);
+				tuner.reorderSheet(this, oldIndex, newIndex, dependents);
+			}
+		}
 	}
 }

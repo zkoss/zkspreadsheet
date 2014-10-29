@@ -1324,6 +1324,9 @@ public class RangeImpl implements SRange {
 				}
 				
 				//in our new model, we don't use sheet index, so we don't need to clear anything when move it
+				// ZSS-820
+				//20141029, henrichen: the above statement is not true when the formula refer to 3D formula
+				//    change sheet order could change sheet name in the formula
 				book.moveSheetTo(sheet, pos);
 				resultSheet.set(sheet);
 				oldIdx.set(old);

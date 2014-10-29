@@ -31,5 +31,7 @@ public abstract class DependencyTableAdv implements DependencyTable, Serializabl
 	
 	abstract public Set<Ref> getDirectPrecedents(Ref dependent);
 	
-	abstract public void adjustSheetIndex(String bookName, int index, int size);
+	abstract public void adjustSheetIndex(String bookName, int index, int size); //ZSS-815
+
+	abstract public void moveSheetIndex(String bookName, int oldIndex, int newIndex); //ZSS-820
 }

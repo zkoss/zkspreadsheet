@@ -449,5 +449,77 @@ public class ParsingBook implements FormulaParsingWorkbook, FormulaRenderingWork
 			return n;
 		}
 	}
+
+	//ZSS-820
+	/**
+	 * reorder a sheet in this parsing book directly.
+	 */
+	public void reorderSheet(String bookName, int oldIndex, int newIndex) {
+		
+		// null as current book
+		if(book.getBookName().equals(bookName)) {
+			bookName = null;
+		}
+		
+		// check every external sheet data and reorder sheet if necessary
+		// reorder as replacing by new external sheets (Note, the index should not be changed)
+		//ZSS-747
+		synchronized (_indexes) {
+			final int offset = oldIndex < newIndex ? -1 : 1;
+			final int low = oldIndex < newIndex ? oldIndex : newIndex;
+			final int high = oldIndex < newIndex ? newIndex : oldIndex;
+			
+			Map<String, Integer> sheetName2index = _indexes.sheetName2index;
+			List<ExternalSheet> index2sheet = _indexes.index2sheet;
+
+			List<ExternalSheet> temp = new ArrayList<ExternalSheet>(index2sheet.size()); 
+			for(ExternalSheet extSheet : index2sheet) {
+				if((bookName == null && extSheet.getWorkbookName() == null)
+					|| (bookName != null && bookName.equals(extSheet.getWorkbookName()))) {
+					final int low0 = book.getSheetIndex(extSheet.getSheetName());
+					int high0 = book.getSheetIndex(extSheet.getLastSheetName());
+					if (high0 < 0) high0 = low0;
+					
+					// no intersection; as is.
+					if (high0 < low || low0 > high) {
+						temp.add(extSheet);
+						continue; 
+					}
+
+					String sheet1 = extSheet.getSheetName();
+					String sheet2 = extSheet.getLastSheetName();
+					if (low0 == oldIndex) {
+						if (low0 != high0 && newIndex >= high0) { //2. move beyond original high end
+							//must change low end sheet name! (_map & _remap must be remapped)
+							sheet1 = book.getSheet(low0 - offset).getSheetName();
+						}
+					}
+					
+					if (high0 == oldIndex) {
+						if (low0 != high0 && newIndex <= low0) { //4. move beyond original low end
+							// high0 index not change but sheet name changed
+							sheet2 = book.getSheet(high0 - offset).getSheetName();
+						}
+					}
+					temp.add(new ExternalSheet(extSheet.getWorkbookName(), sheet1, sheet2));
+				} else {
+					temp.add(extSheet);
+				}
+			}
+			_indexes.index2sheet = temp;
+		
+			// clear the map of external sheet name to index and rebuild it
+			sheetName2index.clear();
+			for(int i = 0, len = temp.size(); i < len; ++i) {
+				ExternalSheet esheet = temp.get(i); 
+				String book = esheet.getWorkbookName();
+				String sheet1 = esheet.getSheetName();
+				String sheet2 = esheet.getLastSheetName();
+				String key = toKey(book, !sheet1.equalsIgnoreCase(sheet2) ? (sheet1 + ":" + sheet2) : sheet1);
+				sheetName2index.put(key, i);
+			}
+		}
+	}
 }
+
 

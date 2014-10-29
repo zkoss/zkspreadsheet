@@ -1222,4 +1222,92 @@ public class FormulaEngineImpl implements FormulaEngine {
 			this.valueEval = valueEval;
 		}
 	}
+
+	//ZSS-820
+	private FormulaExpression adjustMultipleAreaPtgs(Ptg[] ptgs0, String formula, FormulaParseContext context, FormulaAdjuster adjuster) {
+		if(!isMultipleAreaFormula(formula)){
+			return null;
+		}
+		//handle multiple area
+		String[] fs = unwrapeAreaFormula(formula);
+		Ptg ptg0 = ptgs0[ptgs0.length-1];
+		if (!(ptg0 instanceof ParenthesisPtg))
+			return null;
+		
+		Ptg[][] ps = FormulaRenderer.unwrapPtgArrays(ptgs0);
+		
+		List<Ptg> tokens = new ArrayList<Ptg>(ps.length + 2);
+		List<Ref> areaRefs = new ArrayList<Ref>();
+		for(int i=0;i<ps.length-1;i++){
+			FormulaExpression expr = adjustPtgs(ps[i], fs[i], context, adjuster);
+			if(expr.hasError()){
+				return new FormulaExpressionImpl(formula, null, null,true,expr.getErrorMessage(), true);
+			}
+			if(expr.isAreaRefs()){
+				for(Ref ref:expr.getAreaRefs()){
+					areaRefs.add(ref);
+				}
+			}
+			Ptg[] ptgs = expr.getPtgs();
+			for (int k = 0; k < ptgs.length; ++k) {
+				tokens.add(ptgs[k]);
+			}
+		}
+		tokens.add(new ParenthesisPtg(tokens.size()));
+		return new FormulaExpressionImpl(formula, tokens.toArray(new Ptg[tokens.size()]),  areaRefs.size()==0?null:areaRefs.toArray(new Ref[areaRefs.size()]));
+	}
+
+	//ZSS-820
+	/**
+	 * adjust formula through specific adjuster
+	 */
+	private FormulaExpression adjustPtgs(Ptg[] tokens, String formula, FormulaParseContext context, FormulaAdjuster adjuster) {
+		FormulaExpression expr = null;
+		try {
+			// adapt and parse
+			ParsingBook parsingBook = new ParsingBook(context.getBook());
+			String sheetName = context.getSheet().getSheetName();
+			int sheetIndex = parsingBook.getExternalSheetIndex(null, sheetName); // create index according parsing book logic
+//			Ptg[] tokens = parse(formula, parsingBook, sheetIndex, context);
+
+			// adjust formula
+			boolean modified = adjuster.process(sheetIndex, tokens, parsingBook, context);
+			
+			// render formula, detect region and create result
+			String renderedFormula = modified ? 
+					renderFormula(parsingBook, formula, tokens, true) : formula;
+			Ref singleRef = tokens.length == 1 ? toDenpendRef(context, parsingBook, tokens[0]) : null;
+			Ref[] refs = singleRef==null ? null :
+				(singleRef.getType() == RefType.AREA || singleRef.getType() == RefType.CELL ?new Ref[]{singleRef}:null);
+			expr = new FormulaExpressionImpl(renderedFormula, tokens, refs);
+
+		} catch(FormulaParseException e) {
+			_logger.info(e.getMessage());
+			expr = new FormulaExpressionImpl(formula, null, null, true, e.getMessage(), false);
+		}
+		return expr;
+	}
+
+	//ZSS-820
+	@Override
+	public FormulaExpression reorderSheetPtgs(FormulaExpression fexpr, SBook targetBook,
+			int oldIndex, int newIndex, FormulaParseContext context) {
+		String formula = fexpr.getFormulaString().trim();
+		FormulaAdjuster shiftAdjuster = getReorderSheetAdjuster(targetBook, oldIndex, newIndex);
+		FormulaExpression result = adjustMultipleAreaPtgs(fexpr.getPtgs(), formula, context, shiftAdjuster);
+		if(result!=null){
+			return result;
+		}
+		return adjustPtgs(fexpr.getPtgs(), formula, context, shiftAdjuster);
+	}
+	//ZSS-820
+	protected FormulaAdjuster getReorderSheetAdjuster(final SBook targetBook, final int oldIndex, final int newIndex) {
+		return new FormulaAdjuster() {
+			@Override
+			public boolean process(int formulaSheetIndex, Ptg[] tokens, ParsingBook parsingBook, FormulaParseContext context) {
+				//do nothing, we have update parsingBook in BookImpl#reorderSheetFormula
+				return true;
+			}
+		};
+	}
 }

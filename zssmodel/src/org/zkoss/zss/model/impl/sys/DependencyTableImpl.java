@@ -314,4 +314,9 @@ public class DependencyTableImpl extends DependencyTableAdv {
 		// do nothing
 	}
 
+	//ZSS-820
+	@Override
+	public void moveSheetIndex(String bookName, int oldIndex, int newIndex) {
+		// do nothing
+	}
 }

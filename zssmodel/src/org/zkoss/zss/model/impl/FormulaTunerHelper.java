@@ -1253,4 +1253,149 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 		cell.clearFormulaResultCache();
 		ModelUpdateUtil.addRefUpdate(dependent);
 	}
+	
+	// ZSS-820
+	public void reorderSheet(SBook book, int oldIndex, int newIndex, Set<Ref> dependents) {
+		//because of the chart shifting is for all chart, but the input dependent is on series,
+		//so we need to collect the dependent for only shift chart once
+		Map<String,Ref> chartDependents  = new LinkedHashMap<String, Ref>();
+		Map<String,Ref> validationDependents  = new LinkedHashMap<String, Ref>();
+		Set<Ref> cellDependents = new LinkedHashSet<Ref>(); //ZSS-649
+		Map<String,Ref> nameDependents = new LinkedHashMap<String, Ref>(); //ZSS-649
+		Set<Ref> filterDependents = new LinkedHashSet<Ref>(); //ZSS-555
+		
+		splitDependents(dependents, cellDependents, chartDependents, validationDependents, nameDependents, filterDependents);
+		
+		for (Ref dependent : cellDependents) {
+			reorderSheetCellRef(book,oldIndex,newIndex,dependent);
+		}
+		for (Ref dependent : chartDependents.values()) {
+			reorderSheetChartRef(book,oldIndex,newIndex,(ObjectRef)dependent);
+		}
+//20141029, henrichen: validation and filter are associated with single value, will not be affected by sheet index reording
+//  thus we don't have to handle them.
+//		for (Ref dependent : validationDependents.values()) {
+//			reorderSheetDataValidationRef(book,oldIndex,newIndex,(ObjectRef)dependent);
+//		}	
+		//ZSS-649
+		for (Ref dependent : nameDependents.values()) {
+			reorderSheetNameRef(book,oldIndex,newIndex,(NameRef)dependent);
+		}
+//		//ZSS-555
+//		for (Ref dependent : filterDependents) {
+//			reorderSheetFilterRef(book,oldIndex,newIndex,(ObjectRef)dependent);
+//		}
+	}	
+	
+	private void reorderSheetChartRef(SBook bookOfSheet, int oldIndex, int newIndex,ObjectRef dependent) {
+		SBook book = _bookSeries.getBook(dependent.getBookName());
+		if(book==null) return;
+		SSheet sheet = book.getSheetByName(dependent.getSheetName());
+		if(sheet==null) return;
+		final String sheetName = sheet.getSheetName();
+		SChart chart =  sheet.getChart(dependent.getObjectIdPath()[0]);
+		if(chart==null) return;
+		SChartData d = chart.getData();
+		if(!(d instanceof SGeneralChartData)) return;
+		
+		FormulaEngine engine = getFormulaEngine();
+		FormulaExpression exprAfter;
+		SGeneralChartData data = (SGeneralChartData)d;
+		/*
+		 * for sheet rename case, we should always update formula to make new dependency, shouln't ignore if the formula string is the same
+		 * Note, in other move cell case, we could ignore to set same formula string
+		 */
+		FormulaExpression catExpr = ((AbstractGeneralChartDataAdv)data).getCategoriesFormulaExpression();
+		if(catExpr!=null){
+			exprAfter = engine.reorderSheetPtgs(catExpr, bookOfSheet, oldIndex, newIndex,new FormulaParseContext(sheet, sheetName, null));//null ref, no trace dependence here
+			if(!exprAfter.hasError()){
+				((AbstractGeneralChartDataAdv)data).setCategoriesFormula(exprAfter);
+			}
+		}
+		
+		for(int i=0;i<data.getNumOfSeries();i++){
+			SSeries series = data.getSeries(i);
+			FormulaExpression nameExpr = ((AbstractSeriesAdv)series).getNameFormulaExpression();
+			FormulaExpression xvalExpr = ((AbstractSeriesAdv)series).getXValuesFormulaExpression();
+			FormulaExpression yvalExpr = ((AbstractSeriesAdv)series).getYValuesFormulaExpression();
+			FormulaExpression zvalExpr = ((AbstractSeriesAdv)series).getZValuesFormulaExpression();
+			if(nameExpr!=null){
+				exprAfter = engine.reorderSheetPtgs(nameExpr, bookOfSheet, oldIndex, newIndex,new FormulaParseContext(sheet, sheetName, null));//null ref, no trace dependence here
+				if(!exprAfter.hasError()){
+					nameExpr = exprAfter;
+				}
+			}
+			if(xvalExpr!=null){
+				exprAfter = engine.reorderSheetPtgs(xvalExpr, bookOfSheet, oldIndex, newIndex,new FormulaParseContext(sheet, sheetName, null));//null ref, no trace dependence here
+				if(!exprAfter.hasError()){
+					xvalExpr = exprAfter;
+				}
+			}
+			if(yvalExpr!=null){
+				exprAfter = engine.reorderSheetPtgs(yvalExpr, bookOfSheet, oldIndex, newIndex,new FormulaParseContext(sheet, sheetName, null));//null ref, no trace dependence here
+				if(!exprAfter.hasError()){
+					yvalExpr = exprAfter;
+				}
+			}
+			if(zvalExpr!=null){
+				exprAfter = engine.reorderSheetPtgs(zvalExpr, bookOfSheet, oldIndex, newIndex,new FormulaParseContext(sheet, sheetName, null));//null ref, no trace dependence here
+				if(!exprAfter.hasError()){
+					zvalExpr = exprAfter;
+				}
+			}
+			((AbstractSeriesAdv)series).setXYZFormula(nameExpr, xvalExpr, yvalExpr, zvalExpr);
+		}
+		
+		ModelUpdateUtil.addRefUpdate(dependent);
+		
+	}	
+	
+	private void reorderSheetCellRef(SBook bookOfSheet, int oldIndex, int newIndex,Ref dependent) {
+		SBook book = _bookSeries.getBook(dependent.getBookName());
+		if(book==null) return;
+		SSheet sheet = book.getSheetByName(dependent.getSheetName());
+		if(sheet==null) return;
+		String sheetName = sheet.getSheetName();
+		SCell cell = sheet.getCell(dependent.getRow(), dependent.getColumn());
+		if(cell.getType()!=CellType.FORMULA)
+			return;//impossible
+		
+		/*
+		 * for sheet rename case, we should always update formula to make new dependency, shouln't ignore if the formula string is the same
+		 * Note, in other move cell case, we could ignore to set same formula string
+		 */
+
+		FormulaExpression expr = (FormulaExpression) ((AbstractCellAdv)cell).getValue(false);
+		
+		FormulaEngine engine = getFormulaEngine();
+		FormulaExpression exprAfter = engine.reorderSheetPtgs(expr, bookOfSheet, oldIndex, newIndex,new FormulaParseContext(cell, sheetName, null));//null ref, no trace dependence here
+		
+		cell.setValue(exprAfter);
+		//don't need to notify cell change, cell will do
+	}	
+
+	//ZSS-649
+	private void reorderSheetNameRef(SBook bookOfSheet, int oldIndex, int newIndex, NameRef dependent) {
+		SBook book = _bookSeries.getBook(dependent.getBookName());
+		if(book==null) return;
+		SName name = book.getNameByName(dependent.getNameName());
+		if(name==null) return;
+		SSheet sheet = book.getSheetByName(name.getRefersToSheetName());
+		if(sheet==null) return;
+		String sheetName = sheet.getSheetName();
+		
+		/*
+		 * for sheet rename case, we should always update formula to make new dependency, shouln't ignore if the formula string is the same
+		 * Note, in other move cell case, we could ignore to set same formula string
+		 */
+		FormulaExpression expr = ((AbstractNameAdv)name).getRefersToFormulaExpression();
+		
+		FormulaEngine engine = getFormulaEngine();
+		FormulaExpression exprAfter = engine.reorderSheetPtgs(expr, bookOfSheet, oldIndex, newIndex, new FormulaParseContext(sheet, sheetName, null));//null ref, no trace dependence here
+		
+		((AbstractNameAdv)name).setRefersToFormula(exprAfter);
+		//don't need to notify cell change, cell will do
+	}	
+	
+	
 }

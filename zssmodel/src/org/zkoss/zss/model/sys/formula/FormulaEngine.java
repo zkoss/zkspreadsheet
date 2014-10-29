@@ -194,4 +194,17 @@ public interface FormulaEngine {
 	 * @since 3.6.0
 	 */
 	public void updateDependencyTable(FormulaExpression fexpr, FormulaParseContext context);
+	
+	//ZSS-820
+	/**
+	 * 
+	 * @param fexpr
+	 * @param book
+	 * @param oldName
+	 * @param newName
+	 * @param context
+	 * @since 3.6.1
+	 */
+	public FormulaExpression reorderSheetPtgs(FormulaExpression fexpr, SBook book, 
+			int oldIndex, int newIndex, FormulaParseContext context);
 }
