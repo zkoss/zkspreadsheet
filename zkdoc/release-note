@@ -1,5 +1,6 @@
 ZK Spreadsheet 3.6.1
 *Features:
+  ZSS-815 Enhance performance of dependents and precedents lookup mechanism
   
 *Bugs:
   
