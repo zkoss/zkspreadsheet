@@ -337,7 +337,7 @@ public class FormulaEvalTest {
 	}
 
 	private Ref toSheetRef(String sheet1) {
-		return new RefImpl("book1", sheet1);
+		return new RefImpl("book1", sheet1, -1);
 	}
 
 	private Ref toCellRef(String sheet1, String sheet2, String cell) {
@@ -457,15 +457,7 @@ public class FormulaEvalTest {
 		
 		
 		Set<Ref> dependents = table.getDependents(toSheetRef("Sheet2"));
-		Assert.assertEquals(1, dependents.size());
-		Ref ref = dependents.iterator().next();
-		Assert.assertEquals("Sheet1", ref.getSheetName());
-		Assert.assertEquals(null, ref.getLastSheetName());
-		Assert.assertEquals(0, ref.getRow());
-		Assert.assertEquals(0, ref.getColumn());
-		Assert.assertEquals(0, ref.getLastRow());
-		Assert.assertEquals(0, ref.getLastColumn());
-		
+		Assert.assertEquals(0, dependents.size()); //Sheet2 not exists yet, no dependents
 		
 		SSheet sheet2 = book.createSheet("Sheet2");
 		//should clear all for any sheet state change.

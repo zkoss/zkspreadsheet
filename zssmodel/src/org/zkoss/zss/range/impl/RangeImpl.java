@@ -63,6 +63,7 @@ import org.zkoss.zss.model.SheetRegion;
 import org.zkoss.zss.model.SName;
 import org.zkoss.zss.model.ViewAnchor;
 import org.zkoss.zss.model.ErrorValue;
+import org.zkoss.zss.model.impl.AbstractBookAdv;
 import org.zkoss.zss.model.impl.AbstractBookSeriesAdv;
 import org.zkoss.zss.model.impl.AbstractSheetAdv;
 import org.zkoss.zss.model.impl.AbstractNameAdv;
@@ -73,6 +74,7 @@ import org.zkoss.zss.model.impl.FormulaCacheCleaner;
 import org.zkoss.zss.model.impl.RefImpl;
 import org.zkoss.zss.model.impl.NameRefImpl;
 import org.zkoss.zss.model.impl.AbstractDataValidationAdv;
+import org.zkoss.zss.model.impl.sys.DependencyTableAdv;
 import org.zkoss.zss.model.sys.EngineFactory;
 import org.zkoss.zss.model.sys.dependency.DependencyTable;
 import org.zkoss.zss.model.sys.dependency.DependencyTable.RefFilter;
@@ -1325,6 +1327,7 @@ public class RangeImpl implements SRange {
 				book.moveSheetTo(sheet, pos);
 				resultSheet.set(sheet);
 				oldIdx.set(old);
+				
 				return null;
 			}
 
@@ -1427,10 +1430,10 @@ public class RangeImpl implements SRange {
 	}
 	
 	Ref getSheetRef(){
-		return new RefImpl((AbstractSheetAdv)getSheet());
+		return new RefImpl((AbstractSheetAdv)getSheet(), getSheet().getBook().getSheetIndex(getSheet()));
 	}
 	Ref getBookRef(){
-		return new RefImpl((AbstractSheetAdv)getBook());
+		return new RefImpl((AbstractBookAdv)getBook());
 	}
 	
 	private Set<Ref> toSet(Ref ref){

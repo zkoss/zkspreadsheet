@@ -1,10 +1,10 @@
 package org.zkoss.zss.model.impl.sys;
 
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Queue;
@@ -13,7 +13,6 @@ import java.util.Set;
 import org.zkoss.util.logging.Log;
 import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.SBookSeries;
-import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.model.sys.dependency.Ref;
 import org.zkoss.zss.model.sys.dependency.Ref.RefType;
 
@@ -37,13 +36,13 @@ import org.zkoss.zss.model.sys.dependency.Ref.RefType;
 public class DependencyTableImpl extends DependencyTableAdv {
 	private static final long serialVersionUID = 1L;
 	private static final Log _logger = Log.lookup(DependencyTableImpl.class.getName());
-	private static final EnumSet<RefType> _regionTypes = EnumSet.of(RefType.BOOK, RefType.SHEET, RefType.AREA,
+	protected static final EnumSet<RefType> _regionTypes = EnumSet.of(RefType.BOOK, RefType.SHEET, RefType.AREA,
 			RefType.CELL);
 
 	/** Map<dependant, precedent> */
-	private Map<Ref, Set<Ref>> _map = new LinkedHashMap<Ref, Set<Ref>>();
-	private Map<Ref, Set<Ref>> _evaledMap = new LinkedHashMap<Ref, Set<Ref>>();
-	private SBookSeries _books;
+	protected Map<Ref, Set<Ref>> _map = new LinkedHashMap<Ref, Set<Ref>>();
+	protected Map<Ref, Set<Ref>> _evaledMap = new LinkedHashMap<Ref, Set<Ref>>();
+	protected SBookSeries _books;
 
 	public DependencyTableImpl() {
 	}
@@ -93,6 +92,18 @@ public class DependencyTableImpl extends DependencyTableAdv {
 	}
 	
 	private Set<Ref> getDependents(Ref precedent,Map<Ref, Set<Ref>> base) {
+		// ZSS-818
+		if (_regionTypes.contains(precedent.getType())) { 
+			SBook book = _books.getBook(precedent.getBookName());
+			if (book == null) { // no such book
+				return Collections.emptySet();
+			}
+			int[] aSheetIndexes = getSheetIndex(book, precedent);
+			if (aSheetIndexes[0] < 0) { // no such sheet
+				return Collections.emptySet();
+			}
+		}
+		
 		// search dependents and their dependents recursively
 		Set<Ref> result = new LinkedHashSet<Ref>();
 		Queue<Ref> queue = new LinkedList<Ref>();
@@ -296,4 +307,11 @@ public class DependencyTableImpl extends DependencyTableAdv {
 	public Set<Ref> getDirectPrecedents(Ref dependent) {
 		return _map.get(dependent);
 	}
+
+	//ZSS-815
+	@Override
+	public void adjustSheetIndex(String bookName, int index, int size) {
+		// do nothing
+	}
+
 }

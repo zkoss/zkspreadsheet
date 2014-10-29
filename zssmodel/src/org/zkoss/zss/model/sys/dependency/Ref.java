@@ -28,4 +28,12 @@ public interface Ref {
 	public int getLastRow();
 
 	public int getLastColumn();
+	
+	//ZSS-815
+	//since 3.6.1
+	public int getSheetIndex(); 
+	
+	//ZSS-815
+	//since 3.6.1
+	public int getLastSheetIndex();
 }

@@ -108,7 +108,29 @@ public class EngineFactory {
 		return new FormulaEngineImpl();
 	}
 
+	//ZSS-815
+	static Class<?> dependencyTableClazz;
+	static {
+		String clz = Library.getProperty("org.zkoss.zss.model.DependencyTable.class");
+		if(clz!=null){
+			try {
+				dependencyTableClazz = Class.forName(clz);
+			} catch(Exception e) {
+				_logger.error(e.getMessage(), e);
+			}			
+		}
+		
+	}
+	//ZSS-815
 	public DependencyTable createDependencyTable() {
+		try {
+			if(dependencyTableClazz != null) {
+				return (DependencyTable)dependencyTableClazz.newInstance();
+			}
+		} catch(Exception e) {
+			_logger.error(e.getMessage(), e);
+			dependencyTableClazz = null;
+		}
 		return new DependencyTableImpl();
 	}
 	

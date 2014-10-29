@@ -1,8 +1,10 @@
 package org.zkoss.zss.model;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -82,20 +84,26 @@ public class IssueTest {
 		
 		List<Ref> refs = new ArrayList<Ref>(table.getDirectDependents(new RefImpl(book.getBookName())));
 		Assert.assertEquals(2, refs.size());
+
+		// dependents does not necessary in an order
+		Set<String> sheetNames = new HashSet<String>(4);
+		sheetNames.add("Sheet1");
+		sheetNames.add("Sheet2");
+		
 		Ref ref = refs.get(0);
-		Assert.assertEquals("Sheet1", ref.getSheetName());
+		Assert.assertTrue(ref.getSheetName(), sheetNames.contains(ref.getSheetName()));
 		Assert.assertEquals(0, ref.getRow());
 		Assert.assertEquals(0, ref.getColumn());
 		Assert.assertEquals(0, ref.getLastRow());
 		Assert.assertEquals(0, ref.getLastColumn());
 		ref = refs.get(1);
-		Assert.assertEquals("Sheet2", ref.getSheetName());
+		Assert.assertTrue(ref.getSheetName(), sheetNames.contains(ref.getSheetName()));
 		Assert.assertEquals(0, ref.getRow());
 		Assert.assertEquals(0, ref.getColumn());
 		Assert.assertEquals(0, ref.getLastRow());
 		Assert.assertEquals(0, ref.getLastColumn());		
 		
-		refs = new ArrayList<Ref>(table.getDirectDependents(new RefImpl(book.getBookName(),sheet3.getSheetName())));
+		refs = new ArrayList<Ref>(table.getDirectDependents(new RefImpl(book.getBookName(),sheet3.getSheetName(), book.getSheetIndex(sheet3))));
 		Assert.assertEquals(1, refs.size());
 		ref = refs.get(0);
 		Assert.assertEquals("Sheet2", ref.getSheetName());
@@ -104,46 +112,46 @@ public class IssueTest {
 		Assert.assertEquals(0, ref.getLastRow());
 		Assert.assertEquals(0, ref.getLastColumn());
 		
-		refs = new ArrayList<Ref>(table.getDirectDependents(new RefImpl(book.getBookName(),sheet2.getSheetName())));
+		refs = new ArrayList<Ref>(table.getDirectDependents(new RefImpl(book.getBookName(),sheet2.getSheetName(), book.getSheetIndex(sheet2))));
 		Assert.assertEquals(2, refs.size());
 		ref = refs.get(0);
-		Assert.assertEquals("Sheet1", ref.getSheetName());
+		Assert.assertTrue(ref.getSheetName(), sheetNames.contains(ref.getSheetName()));
 		Assert.assertEquals(0, ref.getRow());
 		Assert.assertEquals(0, ref.getColumn());
 		Assert.assertEquals(0, ref.getLastRow());
 		Assert.assertEquals(0, ref.getLastColumn());
 		ref = refs.get(1);
-		Assert.assertEquals("Sheet2", ref.getSheetName());
+		Assert.assertTrue(ref.getSheetName(), sheetNames.contains(ref.getSheetName()));
 		Assert.assertEquals(0, ref.getRow());
 		Assert.assertEquals(0, ref.getColumn());
 		Assert.assertEquals(0, ref.getLastRow());
 		Assert.assertEquals(0, ref.getLastColumn());
 		
-		refs = new ArrayList<Ref>(table.getDependents(new RefImpl(book.getBookName(),sheet3.getSheetName())));
+		refs = new ArrayList<Ref>(table.getDependents(new RefImpl(book.getBookName(),sheet3.getSheetName(), book.getSheetIndex(sheet3))));
 		Assert.assertEquals(2, refs.size());
 		ref = refs.get(0);
-		Assert.assertEquals("Sheet2", ref.getSheetName());
+		Assert.assertTrue(ref.getSheetName(), sheetNames.contains(ref.getSheetName()));
 		Assert.assertEquals(0, ref.getRow());
 		Assert.assertEquals(0, ref.getColumn());
 		Assert.assertEquals(0, ref.getLastRow());
 		Assert.assertEquals(0, ref.getLastColumn());
 		ref = refs.get(1);
-		Assert.assertEquals("Sheet1", ref.getSheetName());
+		Assert.assertTrue(ref.getSheetName(), sheetNames.contains(ref.getSheetName()));
 		Assert.assertEquals(0, ref.getRow());
 		Assert.assertEquals(0, ref.getColumn());
 		Assert.assertEquals(0, ref.getLastRow());
 		Assert.assertEquals(0, ref.getLastColumn());
 		
-		refs = new ArrayList<Ref>(table.getDependents(new RefImpl(book.getBookName(),sheet2.getSheetName())));
+		refs = new ArrayList<Ref>(table.getDependents(new RefImpl(book.getBookName(),sheet2.getSheetName(), book.getSheetIndex(sheet2))));
 		Assert.assertEquals(2, refs.size());
 		ref = refs.get(0);
-		Assert.assertEquals("Sheet1", ref.getSheetName());
+		Assert.assertTrue(ref.getSheetName(), sheetNames.contains(ref.getSheetName()));
 		Assert.assertEquals(0, ref.getRow());
 		Assert.assertEquals(0, ref.getColumn());
 		Assert.assertEquals(0, ref.getLastRow());
 		Assert.assertEquals(0, ref.getLastColumn());
 		ref = refs.get(1);
-		Assert.assertEquals("Sheet2", ref.getSheetName());
+		Assert.assertTrue(ref.getSheetName(), sheetNames.contains(ref.getSheetName()));
 		Assert.assertEquals(0, ref.getRow());
 		Assert.assertEquals(0, ref.getColumn());
 		Assert.assertEquals(0, ref.getLastRow());

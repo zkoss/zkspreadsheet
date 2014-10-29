@@ -20,9 +20,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -47,9 +47,12 @@ import org.zkoss.zss.model.SPicture;
 import org.zkoss.zss.model.SPictureData;
 import org.zkoss.zss.model.SRow;
 import org.zkoss.zss.model.SSheet;
+import org.zkoss.zss.model.impl.sys.DependencyTableAdv;
+import org.zkoss.zss.model.impl.sys.formula.ParsingBook;
 import org.zkoss.zss.model.sys.EngineFactory;
 import org.zkoss.zss.model.sys.dependency.DependencyTable;
 import org.zkoss.zss.model.sys.dependency.Ref;
+import org.zkoss.zss.model.sys.dependency.Ref.RefType;
 import org.zkoss.zss.model.sys.formula.EvaluationContributor;
 import org.zkoss.zss.model.sys.formula.FormulaClearContext;
 import org.zkoss.zss.model.util.CellStyleMatcher;
@@ -72,12 +75,12 @@ public class BookImpl extends AbstractBookAdv{
 	
 	private SBookSeries _bookSeries;
 	
-	private final List<AbstractSheetAdv> _sheets = new LinkedList<AbstractSheetAdv>();
+	private final List<AbstractSheetAdv> _sheets = new ArrayList<AbstractSheetAdv>();
 	private List<AbstractNameAdv> _names;
 	
-	private final List<AbstractCellStyleAdv> _cellStyles = new LinkedList<AbstractCellStyleAdv>();
+	private final List<AbstractCellStyleAdv> _cellStyles = new ArrayList<AbstractCellStyleAdv>();
 	private AbstractCellStyleAdv _defaultCellStyle;
-	private final List<AbstractFontAdv> _fonts = new LinkedList<AbstractFontAdv>();
+	private final List<AbstractFontAdv> _fonts = new ArrayList<AbstractFontAdv>();
 	private final AbstractFontAdv _defaultFont;
 	private final HashMap<AbstractColorAdv,AbstractColorAdv> _colors = new LinkedHashMap<AbstractColorAdv,AbstractColorAdv>();
 	
@@ -214,7 +217,7 @@ public class BookImpl extends AbstractBookAdv{
 		//create formula cache for any sheet, sheet name, position change
 		EngineFactory.getInstance().createFormulaEngine().clearCache(new FormulaClearContext(this));
 
-		ModelUpdateUtil.handlePrecedentUpdate(getBookSeries(),new RefImpl(sheet));
+		ModelUpdateUtil.handlePrecedentUpdate(getBookSeries(),new RefImpl(sheet, -1));
 
 		return sheet;
 	}
@@ -228,23 +231,23 @@ public class BookImpl extends AbstractBookAdv{
 		checkLegalSheetName(newname);
 		checkOwnership(sheet);
 		
+		int index = getSheetIndex(sheet);
 		String oldname = sheet.getSheetName();
 		((AbstractSheetAdv)sheet).setSheetName(newname);
 		
 		//create formula cache for any sheet, sheet name, position change
 		EngineFactory.getInstance().createFormulaEngine().clearCache(new FormulaClearContext(this));
 		
-		ModelUpdateUtil.handlePrecedentUpdate(getBookSeries(),new RefImpl(this.getBookName(),newname));//to clear the cache of formula that has unexisted name
-		ModelUpdateUtil.handlePrecedentUpdate(getBookSeries(),new RefImpl(this.getBookName(),oldname));
+		ModelUpdateUtil.handlePrecedentUpdate(getBookSeries(),new RefImpl(this.getBookName(),newname, index));//to clear the cache of formula that has unexisted name
+		ModelUpdateUtil.handlePrecedentUpdate(getBookSeries(),new RefImpl(this.getBookName(),oldname, index));
 		
-		renameSheetFormula(oldname,newname);
+		renameSheetFormula(oldname,newname,index);
 	}
 	
-	private void renameSheetFormula(String oldName, String newName){
+	private void renameSheetFormula(String oldName, String newName, int index){
 		AbstractBookSeriesAdv bs = (AbstractBookSeriesAdv)getBookSeries();
 		DependencyTable dt = bs.getDependencyTable();
-		Ref ref = new RefImpl(getBookName(),oldName);
-		Set<Ref> dependents = dt.getDirectDependents(ref);
+		Set<Ref> dependents = dt.getDirectDependents(new RefImpl(getBookName(),oldName,index));
 		if(dependents.size()>0){
 			
 			//clear the dependents dependency before rename it's sheet name
@@ -340,6 +343,8 @@ public class BookImpl extends AbstractBookAdv{
 	public void deleteSheet(SSheet sheet) {
 		checkOwnership(sheet);
 		
+		final String bookName = sheet.getBook().getBookName();
+		
 		destroyingSheet.set(sheet);
 		try{
 			((AbstractSheetAdv)sheet).destroy();
@@ -356,11 +361,22 @@ public class BookImpl extends AbstractBookAdv{
 //		sendModelInternalEvent(ModelInternalEvents.createModelInternalEvent(ModelInternalEvents.ON_SHEET_DELETED, 
 //				this,ModelInternalEvents.createDataMap(ModelInternalEvents.PARAM_SHEET_OLD_INDEX, index)));
 		
-		ModelUpdateUtil.handlePrecedentUpdate(getBookSeries(),new RefImpl(this.getBookName(),sheet.getSheetName()));
+		ModelUpdateUtil.handlePrecedentUpdate(getBookSeries(),new RefImpl(this.getBookName(),sheet.getSheetName(), index));
 		
-		renameSheetFormula(oldName,null);
+		renameSheetFormula(oldName, null, index);
+		
+		//ZSS-815
+		// adjust sheet index
+		adjustSheetIndex(bookName, index);
 	}
 
+	//ZSS-815
+	private void adjustSheetIndex(String bookName, int index) {
+		AbstractBookSeriesAdv bs = (AbstractBookSeriesAdv)getBookSeries();
+		DependencyTableAdv dt = (DependencyTableAdv) bs.getDependencyTable();
+		dt.adjustSheetIndex(bookName, index, -1);
+	}
+		
 	@Override
 	public void moveSheetTo(SSheet sheet, int index) {
 		checkOwnership(sheet);
@@ -371,6 +387,7 @@ public class BookImpl extends AbstractBookAdv{
 		if(oldindex==index){
 			return;
 		}
+		
 		_sheets.remove(oldindex);
 		_sheets.add(index, (AbstractSheetAdv)sheet);
 		
@@ -637,7 +654,7 @@ public class BookImpl extends AbstractBookAdv{
 		AbstractNameAdv name = new NameImpl(this,nextObjId("name"),namename,sheetName);
 		
 		if(_names==null){
-			_names = new LinkedList<AbstractNameAdv>();
+			_names = new ArrayList<AbstractNameAdv>();
 		}
 		
 		_names.add(name);

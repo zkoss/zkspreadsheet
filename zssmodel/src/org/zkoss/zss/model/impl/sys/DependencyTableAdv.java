@@ -30,4 +30,6 @@ public abstract class DependencyTableAdv implements DependencyTable, Serializabl
 	abstract public void merge(DependencyTableAdv dependencyTable);
 	
 	abstract public Set<Ref> getDirectPrecedents(Ref dependent);
+	
+	abstract public void adjustSheetIndex(String bookName, int index, int size);
 }

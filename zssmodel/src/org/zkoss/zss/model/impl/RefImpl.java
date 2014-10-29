@@ -36,6 +36,7 @@ public class RefImpl implements Ref, Serializable {
 	final private int _column;
 	final private int _lastRow;
 	final private int _lastColumn;
+	private int _sheetIdx = -1;
 
 	public RefImpl(String bookName, String sheetName, int row, int column,
 			int lastRow, int lastColumn) {
@@ -55,8 +56,9 @@ public class RefImpl implements Ref, Serializable {
 		this(RefType.CELL, bookName, sheetName, lastSheetName, row, column, row, column);
 	}
 
-	public RefImpl(String bookName, String sheetName) {
+	public RefImpl(String bookName, String sheetName, int sheetIdx) {
 		this(RefType.SHEET, bookName, sheetName, null, -1, -1, -1, -1);
+		this._sheetIdx = sheetIdx;
 	}
 
 	public RefImpl(String bookName) {
@@ -68,8 +70,9 @@ public class RefImpl implements Ref, Serializable {
 		cell.getColumnIndex(), cell.getRowIndex(), cell.getColumnIndex());
 	}
 
-	public RefImpl(AbstractSheetAdv sheet) {
+	public RefImpl(AbstractSheetAdv sheet, int sheetIdx) {
 		this(RefType.SHEET, ((AbstractBookAdv) sheet.getBook()).getBookName(), sheet.getSheetName(), null, -1, -1, -1, -1);
+		this._sheetIdx = sheetIdx;
 	}
 
 	public RefImpl(AbstractBookAdv book) {
@@ -150,36 +153,34 @@ public class RefImpl implements Ref, Serializable {
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (obj == null)
+		if (!(obj instanceof Ref))
 			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		RefImpl other = (RefImpl) obj;
+		Ref other = (Ref) obj;
 		
 		if (bookName == null) {
-			if (other.bookName != null)
+			if (other.getBookName() != null)
 				return false;
-		} else if (!bookName.equals(other.bookName))
+		} else if (!bookName.equals(other.getBookName()))
 			return false;
-		if (_column != other._column)
+		if (_column != other.getColumn())
 			return false;
-		if (_lastColumn != other._lastColumn)
+		if (_lastColumn != other.getLastColumn())
 			return false;
-		if (_lastRow != other._lastRow)
+		if (_lastRow != other.getLastRow())
 			return false;
-		if (_row != other._row)
+		if (_row != other.getRow())
 			return false;
 		if (sheetName == null) {
-			if (other.sheetName != null)
+			if (other.getSheetName() != null)
 				return false;
-		} else if (!sheetName.equals(other.sheetName))
+		} else if (!sheetName.equals(other.getSheetName()))
 			return false;
 		if (lastSheetName == null) {
-			if (other.lastSheetName != null)
+			if (other.getLastSheetName() != null)
 				return false;
-		} else if (!lastSheetName.equals(other.lastSheetName))
+		} else if (!lastSheetName.equals(other.getLastSheetName()))
 			return false;
-		if (_type != other._type)
+		if (_type != other.getType())
 			return false;
 		return true;
 	}
@@ -211,5 +212,15 @@ public class RefImpl implements Ref, Serializable {
 
 		sb.insert(0, bookName + ":");
 		return sb.toString();
+	}
+	
+	@Override
+	public int getSheetIndex() {
+		return _sheetIdx;
+	}
+	
+	@Override
+	public int getLastSheetIndex() {
+		return -1;
 	}
 }
