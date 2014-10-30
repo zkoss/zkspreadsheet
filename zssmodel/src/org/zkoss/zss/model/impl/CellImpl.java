@@ -20,6 +20,8 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.Locale;
 
+import org.zkoss.poi.ss.formula.eval.EvaluationException;
+import org.zkoss.poi.ss.formula.eval.ValueEval;
 import org.zkoss.zss.model.CellRegion;
 import org.zkoss.zss.model.ErrorValue;
 import org.zkoss.zss.model.InvalidFormulaException;
@@ -31,6 +33,7 @@ import org.zkoss.zss.model.SComment;
 import org.zkoss.zss.model.SHyperlink;
 import org.zkoss.zss.model.SRichText;
 import org.zkoss.zss.model.SSheet;
+import org.zkoss.zss.model.impl.sys.formula.FormulaEngineImpl;
 import org.zkoss.zss.model.sys.EngineFactory;
 import org.zkoss.zss.model.sys.dependency.DependencyTable;
 import org.zkoss.zss.model.sys.dependency.Ref;
@@ -163,14 +166,17 @@ public class CellImpl extends AbstractCellAdv {
 		//20140731, henrichen: when share the same book, many users might 
 		//populate CellImpl simultaneously; must synchronize it.
 		if(_formulaResultValue != null) return;
-		synchronized (this) {
+		synchronized (this.getSheet().getBook().getBookSeries()) {
 			if (_formulaResultValue == null) {
 				CellValue val = getCellValue();
 				if(val!=null &&  val.getType() == CellType.FORMULA){
-					FormulaEngine fe = EngineFactory.getInstance()
-							.createFormulaEngine();
-					_formulaResultValue = new FormulaResultCellValue(fe.evaluate((FormulaExpression) val.getValue(),
-							new FormulaEvaluationContext(this,getRef())));
+					FormulaEngine fe = EngineFactory.getInstance().createFormulaEngine();
+					// ZSS-818
+					// 20141030, henrichen: callback inside FormulaEngine 
+					//    will update _formulaResultValue automatically
+					fe.evaluate((FormulaExpression) val.getValue(),
+							new FormulaEvaluationContext(this,getRef()));
+//					_formulaResultValue = new FormulaResultCellValue();
 				}
 			}
 		}
@@ -246,10 +252,13 @@ public class CellImpl extends AbstractCellAdv {
 
 	@Override
 	public void clearFormulaResultCache() {
-		if(_formulaResultValue!=null){			
-			//only clear when there is a formula result, or poi will do full cache scan to clean blank.
-			EngineFactory.getInstance().createFormulaEngine().clearCache(new FormulaClearContext(this));
-		}
+		//ZSS-818
+		//20141030, henrichen: we now always clear the evaluation cache after 
+		//    evalFormula() so we don't have to clear it here
+//		if(_formulaResultValue!=null){			
+//			//only clear when there is a formula result, or poi will do full cache scan to clean blank.
+//			EngineFactory.getInstance().createFormulaEngine().clearCache(new FormulaClearContext(this));
+//		}
 		
 		_formulaResultValue = null;
 	}
@@ -489,5 +498,15 @@ public class CellImpl extends AbstractCellAdv {
 		}
 		
 		return tgt;
+	}
+	
+	//ZSS-818
+	//@since 3.6.1
+	public void setFormulaResultValue(ValueEval value) {
+		try {
+			_formulaResultValue = new FormulaResultCellValue(FormulaEngineImpl.convertToEvaluationResult(value));
+		} catch (EvaluationException e) {
+			// ignore it!
+		}		
 	}
 }

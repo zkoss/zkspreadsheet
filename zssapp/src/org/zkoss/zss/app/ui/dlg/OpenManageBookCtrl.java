@@ -182,7 +182,7 @@ public class OpenManageBookCtrl extends DlgCtrlBase{
 							count++;
 						}catch(Exception x){
 							log.debug(x);
-							log.warning("exception when handling user upload file");
+							log.warning("exception when handling user upload file", x);
 						}finally{
 							if(is!=null){
 								is.close();

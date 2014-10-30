@@ -81,6 +81,7 @@ import org.zkoss.zss.model.SCell;
 import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.model.SheetRegion;
 import org.zkoss.zss.model.impl.AbstractBookSeriesAdv;
+import org.zkoss.zss.model.impl.AbstractCellAdv;
 import org.zkoss.zss.model.impl.NameRefImpl;
 import org.zkoss.zss.model.impl.NonSerializableHolder;
 import org.zkoss.zss.model.impl.RefImpl;
@@ -337,6 +338,8 @@ public class FormulaEngineImpl implements FormulaEngine {
 			try {
 				result = evaluateFormula(expr, context, evalBook, evaluator);
 			} finally {
+				//ZSS-818: drop internal cache used in evaluation
+				evaluator.clearAllCachedResultValues(); 
 				setXelContext(oldXelCtx);
 			}
 			if(dependant!=null){
@@ -380,7 +383,20 @@ public class FormulaEngineImpl implements FormulaEngine {
 					for(SBook nb : bookSeries.getBooks()) {
 						String bookName = nb.getBookName();
 						EvalBook evalBook = new EvalBook(nb);
-						WorkbookEvaluator we = new WorkbookEvaluator(evalBook, noCacheClassifier, null);
+						//ZSS-818
+						WorkbookEvaluator we = new WorkbookEvaluator(evalBook, noCacheClassifier, null, new WorkbookEvaluator.CacheManager() {
+							@Override
+							public void onUpdateCacheResult(
+									EvaluationCell srcCell, ValueEval result) {
+								EvalSheet evalSheet = (EvalSheet) srcCell.getSheet();
+								SSheet sheet = evalSheet.getNSheet();
+								final int row = srcCell.getRowIndex();
+								final int col = srcCell.getColumnIndex();
+								SCell cell = sheet.getCell(row, col);
+								((AbstractCellAdv)cell).setFormulaResultValue(result);
+							}
+							
+						});
 						bookNames.add(bookName);
 						evaluators.add(we);
 						evalCtxMap.put(bookName, new EvalContext(evalBook, we));
@@ -442,6 +458,12 @@ public class FormulaEngineImpl implements FormulaEngine {
 		}
 
 		// convert to result
+		return convertToEvaluationResult(value);
+	}
+
+	//ZSS-818
+	public static EvaluationResult convertToEvaluationResult(ValueEval value) throws EvaluationException {
+		// convert to result
 		if(value instanceof ErrorEval) {
 			int code = ((ErrorEval)value).getErrorCode();
 			return new EvaluationResultImpl(ResultType.ERROR, ErrorValue.valueOf((byte)code), value);
@@ -460,7 +482,7 @@ public class FormulaEngineImpl implements FormulaEngine {
 		}
 	}
 
-	protected ResultValueEval getResolvedValue(ValueEval value) throws EvaluationException {
+	protected static ResultValueEval getResolvedValue(ValueEval value) throws EvaluationException {
 		if(value instanceof StringEval) {
 			return new ResultValueEval(((StringEval)value).getStringValue(), value); //ZSS-810
 		} else if(value instanceof NumberEval) {

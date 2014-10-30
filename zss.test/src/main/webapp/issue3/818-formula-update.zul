@@ -1,0 +1,10 @@
+<?page title="FormulaIssueDemo"?>
+<zk>
+<label multiline="true">
+1. Select F1
+2. You should see 998 shown on F3 and D3.
+</label>
+<window border="normal" width="100%" height="600px" apply="zss.issue.Composer818">
+	<spreadsheet id="spreadsheet" src="/issue3/book/818-formula-update.xlsx" vflex="1" hflex="1" showFormulabar="true"></spreadsheet>
+</window>
+</zk>

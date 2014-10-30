@@ -23,6 +23,7 @@ import java.util.LinkedHashSet;
 import java.util.Locale;
 import java.util.Set;
 
+import org.zkoss.poi.ss.formula.eval.ValueEval;
 import org.zkoss.zss.model.ErrorValue;
 import org.zkoss.zss.model.InvalidModelOpException;
 import org.zkoss.zss.model.SCell;
@@ -245,4 +246,8 @@ public abstract class AbstractCellAdv implements SCell,LinkedModelObject,Seriali
 	//ZSS-688
 	//@since 3.6.0
 	/*package*/ abstract AbstractCellAdv cloneCell(AbstractRowAdv row);
+	
+	//ZSS-818
+	//@since 3.6.1
+	public abstract void setFormulaResultValue(ValueEval value); 
 }

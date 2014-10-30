@@ -19,6 +19,7 @@ package org.zkoss.zss.model.impl;
 import java.lang.ref.WeakReference;
 import java.util.Locale;
 
+import org.zkoss.poi.ss.formula.eval.ValueEval;
 import org.zkoss.zss.model.CellRegion;
 import org.zkoss.zss.model.SCellStyle;
 import org.zkoss.zss.model.SColumnArray;
@@ -296,6 +297,14 @@ class CellProxy extends AbstractCellAdv {
 			return new CellProxy((AbstractSheetAdv)row.getSheet(), row.getIndex(), this.getColumnIndex());
 		} else {
 			return _proxy.cloneCell(row);
+		}
+	}
+
+	@Override
+	public void setFormulaResultValue(ValueEval value) {
+		loadProxy();
+		if (_proxy != null) {
+			_proxy.setFormulaResultValue(value);
 		}
 	}
 }
