@@ -1,0 +1,4 @@
+<!-- Since 3.6.1 -->
+	<spreadsheet id="ss" vflex="1" hflex="1" src="/issue3/book/697-chart-engine.xlsx" 
+		showToolbar="true" showSheetbar="true" showFormulabar="true" showContextMenu="true"
+		maxVisibleRows="100" maxVisibleColumns="100"/>

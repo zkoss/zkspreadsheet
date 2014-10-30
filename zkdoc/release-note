@@ -1,6 +1,7 @@
 ZK Spreadsheet 3.6.1
 *Features:
   ZSS-815 Enhance performance of dependents and precedents lookup mechanism
+  ZSS-697 Enhance the Chart engine
   
 *Bugs:
   ZSS-820 Formula should change sheet name if reordered sheet goes beyond its the formula's sheet boundary.
