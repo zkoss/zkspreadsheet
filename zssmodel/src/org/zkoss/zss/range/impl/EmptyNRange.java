@@ -526,4 +526,9 @@ import org.zkoss.zss.range.*;
 		// always return true; and no way to change it
 		return true;
 	}
+
+	@Override
+	public void refresh(boolean includeDependents, boolean enforceEval) {
+		// do nothing
+	}
 }

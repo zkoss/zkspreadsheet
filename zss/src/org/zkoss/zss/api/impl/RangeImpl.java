@@ -822,4 +822,10 @@ public class RangeImpl implements Range{
 	public boolean setAutoRefresh(boolean auto) {
 		return _range.setAutoRefresh(auto);
 	}
+	
+	//ZSS-814
+	@Override
+	public void refresh(boolean includeDependants, boolean enforceEval) {
+		_range.refresh(includeDependants, enforceEval);
+	}
 }

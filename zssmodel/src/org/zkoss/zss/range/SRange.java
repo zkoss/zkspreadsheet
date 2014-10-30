@@ -876,4 +876,12 @@ public interface SRange {
 	 * @since 3.6.0
 	 */
 	public boolean setAutoRefresh(boolean auto);
+	
+	/**
+	 * Refresh UI of this range and its dependent cells if the argument
+	 * includeDependents is true; enforce evaluation if the argument 
+	 * enforceEval is true(no matter the value is cached or not). 
+	 * @since 3.6.1
+	 */
+	public void refresh(boolean includeDependents, boolean enforceEval);
 }

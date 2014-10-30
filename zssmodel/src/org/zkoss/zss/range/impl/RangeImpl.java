@@ -2074,26 +2074,42 @@ public class RangeImpl implements SRange {
 	//Enforce cell evaluation(if not cached) and refresh UI of this range.
 	@Override
 	public void refresh(final boolean includeDependants) {
-		new ReadWriteTask() {
+		refresh(includeDependants, false);
+	}
+	
+	//ZSS-814
+	//Enforce cell evaluation(if not cached) and refresh UI of this range.
+	@Override
+	public void refresh(final boolean includeDependants, final boolean enforceEval) {
+		new ModelManipulationTask() {
 			@Override
-			public Object invoke() {
+			protected Object doInvoke() {
+				SSheet sheet = null;
+				SBook book = null;
 				SBookSeries bookSeries = null;
 				DependencyTable table = null;
+				LinkedHashSet<Ref> refs = new LinkedHashSet<Ref>();
 				if (includeDependants) {
 					bookSeries = getSheet().getBook().getBookSeries();
 					table = ((AbstractBookSeriesAdv)bookSeries).getDependencyTable();
 				}
 				for (EffectedRegion r : _rangeRefs) {
+					sheet = r.sheet;
+					book = sheet.getBook();
 					final CellRegion region = r.region;
-					handleCellNotifyContentChange(new SheetRegion(r.sheet, region));
+					final Ref ref = new RefImpl(book.getBookName(), sheet.getSheetName(), region.getRow(), region.getColumn(), region.getLastRow(), region.getLastColumn());  
+					refs.add(ref);
 					if (includeDependants) {
-						handleRefNotifyContentChange(bookSeries, table.getEvaluatedDependents(new RefImpl(r.sheet.getBook().getBookName(),r.sheet.getSheetName(),
-							region.getRow(),region.getColumn(),region.getLastRow(),region.getLastColumn())));
+						refs.addAll(table.getDependents(ref));
 					}
 				}
+				if (enforceEval) {
+					FormulaCacheCleaner.getCurrent().clear(refs);
+				}
+				handleRefNotifyContentChange(bookSeries, refs);
 				return null;
 			}
-		}.doInReadLock(getLock());
+		}.doInWriteLock(getLock());
 	}
 	
 	//ZSS-760
@@ -2103,4 +2119,5 @@ public class RangeImpl implements SRange {
 		_autoRefresh = auto;
 		return previous;
 	}
+
 }
