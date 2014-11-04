@@ -6,6 +6,7 @@ ZK Spreadsheet 3.6.1
 *Bugs:
   ZSS-820 Formula should change sheet name if reordered sheet goes beyond its the formula's sheet boundary.
   ZSS-818 Formula not update outside the preload rows
+  ZSS-816 Performance impact when protect sheet with allowSelectingUnlockedCells set to true
   
 ** Upgrade Notes
 

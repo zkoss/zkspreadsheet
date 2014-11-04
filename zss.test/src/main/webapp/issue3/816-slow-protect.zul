@@ -1,0 +1,6 @@
+<?page title="PerformanceIssueDemo"?>
+<window border="normal" width="100%" height="800px" apply="zss.issue.Composer816">
+
+<spreadsheet id="spreadsheet" src="/issue3/book/816-slow-protect.xlsx" vflex="1" hflex="1"></spreadsheet>
+
+</window>

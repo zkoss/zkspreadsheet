@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 
+import org.zkoss.zss.model.SCell;
 import org.zkoss.zss.model.SCellStyle;
 import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.model.util.Validations;
@@ -35,12 +36,12 @@ public class RowImpl extends AbstractRowAdv {
 	private AbstractSheetAdv _sheet;
 	private int _index;
 	
-	private final IndexPool<AbstractCellAdv> cells = new IndexPool<AbstractCellAdv>(){
+	private final IndexPool<SCell> cells = new IndexPool<SCell>(){
 		private static final long serialVersionUID = 1L;
 
 		@Override
-		void resetIndex(int newidx, AbstractCellAdv obj) {
-			obj.setIndex(newidx);
+		void resetIndex(int newidx, SCell obj) {
+			((AbstractCellAdv)obj).setIndex(newidx);
 		}};
 
 	private AbstractCellStyleAdv cellStyle;
@@ -74,7 +75,7 @@ public class RowImpl extends AbstractRowAdv {
 
 	@Override
 	AbstractCellAdv getCell(int columnIdx, boolean proxy) {
-		AbstractCellAdv cellObj = cells.get(columnIdx);
+		AbstractCellAdv cellObj = (AbstractCellAdv) cells.get(columnIdx);
 		if (cellObj != null) {
 			return cellObj;
 		}
@@ -84,7 +85,7 @@ public class RowImpl extends AbstractRowAdv {
 
 	@Override
 	AbstractCellAdv getOrCreateCell(int columnIdx) {
-		AbstractCellAdv cellObj = cells.get(columnIdx);
+		AbstractCellAdv cellObj = (AbstractCellAdv) cells.get(columnIdx);
 		if (cellObj == null) {
 			checkOrphan();
 			if(columnIdx > getSheet().getBook().getMaxColumnIndex()){
@@ -109,8 +110,8 @@ public class RowImpl extends AbstractRowAdv {
 	@Override
 	public void clearCell(int start, int end) {
 		// clear before move relation
-		for (AbstractCellAdv cell : cells.subValues(start, end)) {
-			cell.destroy();
+		for (SCell cell : cells.subValues(start, end)) {
+			((AbstractCellAdv) cell).destroy();
 		}
 		cells.clear(start, end);
 	}
@@ -124,12 +125,12 @@ public class RowImpl extends AbstractRowAdv {
 		
 		//destroy the cell that exceeds the max size
 		int maxSize = getSheet().getBook().getMaxColumnSize();
-		Collection<AbstractCellAdv> exceeds = new ArrayList<AbstractCellAdv>(cells.subValues(maxSize, Integer.MAX_VALUE));
+		Collection<SCell> exceeds = new ArrayList<SCell>(cells.subValues(maxSize, Integer.MAX_VALUE));
 		if(exceeds.size()>0){
 			cells.trim(maxSize);
 		}
-		for(AbstractCellAdv cell:exceeds){
-			cell.destroy();
+		for(SCell cell:exceeds){
+			((AbstractCellAdv) cell).destroy();
 		}
 	}
 
@@ -139,8 +140,8 @@ public class RowImpl extends AbstractRowAdv {
 			return;
 		
 		// clear before move relation
-		for (AbstractCellAdv cell : cells.subValues(cellIdx, cellIdx + size - 1)) {
-			cell.destroy();
+		for (SCell cell : cells.subValues(cellIdx, cellIdx + size - 1)) {
+			((AbstractCellAdv) cell).destroy();
 		}
 
 		cells.delete(cellIdx, size);
@@ -156,8 +157,8 @@ public class RowImpl extends AbstractRowAdv {
 	@Override
 	public void destroy() {
 		checkOrphan();
-		for (AbstractCellAdv cell : cells.values()) {
-			cell.destroy();
+		for (SCell cell : cells.values()) {
+			((AbstractCellAdv) cell).destroy();
 		}
 		_sheet = null;
 	}
@@ -215,15 +216,13 @@ public class RowImpl extends AbstractRowAdv {
 		customHeight = custom;
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
-	public Iterator<AbstractCellAdv> getCellIterator(boolean reverse) {
+	public Iterator<SCell> getCellIterator(boolean reverse) {
 		return Collections.unmodifiableCollection(reverse?cells.descendingValues():cells.values()).iterator();
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
-	public Iterator<AbstractCellAdv> getCellIterator(boolean reverse, int start, int end) {
+	public Iterator<SCell> getCellIterator(boolean reverse, int start, int end) {
 		return Collections.unmodifiableCollection(reverse?cells.descendingSubValues(start, end):cells.subValues(start, end)).iterator();
 	}
 
@@ -232,8 +231,8 @@ public class RowImpl extends AbstractRowAdv {
 	void setIndex(int newidx) {
 		int oldIdx = _index;
 		this._index = newidx;
-		for(AbstractCellAdv cell:cells.values()){
-			cell.setRow(oldIdx,this);//set this row again to trigger rebuildFormulaDependency
+		for(SCell cell:cells.values()){
+			((AbstractCellAdv) cell).setRow(oldIdx,this);//set this row again to trigger rebuildFormulaDependency
 		}
 	}
 
@@ -248,21 +247,21 @@ public class RowImpl extends AbstractRowAdv {
 		
 		if(target!=this){
 			//clear the cell in different target range first
-			Collection<AbstractCellAdv> toReplace = ((RowImpl)target).cells.clear(start+offset, end+offset);
-			for(AbstractCellAdv cell:toReplace){
-				cell.destroy();
+			Collection<SCell> toReplace = ((RowImpl)target).cells.clear(start+offset, end+offset);
+			for(SCell cell:toReplace){
+				((AbstractCellAdv) cell).destroy();
 			}
 		}
 		
-		Collection<AbstractCellAdv> toMove = cells.clear(start, end);
+		Collection<SCell> toMove = cells.clear(start, end);
 		int oldRowIdx = getIndex();
-		for(AbstractCellAdv cell:toMove){
+		for(SCell cell:toMove){
 			int newidx = cell.getColumnIndex()+offset;
-			AbstractCellAdv old = ((RowImpl)target).cells.put(newidx, cell);
-			cell.setIndex(newidx);
-			cell.setRow(oldRowIdx,target);
+			SCell old = ((RowImpl)target).cells.put(newidx, cell);
+			((AbstractCellAdv) cell).setIndex(newidx);
+			((AbstractCellAdv) cell).setRow(oldRowIdx,target);
 			if(old!=null){
-				old.destroy();
+				((AbstractCellAdv) old).destroy();
 			}
 		}
 		
@@ -278,7 +277,7 @@ public class RowImpl extends AbstractRowAdv {
 	/*package*/ AbstractRowAdv cloneRow(AbstractSheetAdv sheet) {
 		final RowImpl tgt = new RowImpl(sheet, this._index);
 		
-		for (AbstractCellAdv cell : this.cells.values()) {
+		for (SCell cell : this.cells.values()) {
 			tgt.cells.put(cell.getColumnIndex(), ((CellImpl)cell).cloneCell(tgt));
 		}
 
@@ -288,5 +287,11 @@ public class RowImpl extends AbstractRowAdv {
 		tgt.customHeight = this.customHeight;
 		
 		return tgt;
+	}
+	
+	//ZSS-816
+	@Override
+	public Iterator<SCell> getCellIterator() {
+		return Collections.unmodifiableCollection(cells.values()).iterator();
 	}
 }

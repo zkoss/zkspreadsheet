@@ -45,7 +45,7 @@ public abstract class AbstractRowAdv implements SRow,LinkedModelObject,Serializa
 
 	/*package*/ abstract void deleteCell(int start, int size);
 	
-	/*package*/ abstract Iterator<AbstractCellAdv> getCellIterator(boolean reverse);
+	/*package*/ abstract Iterator<SCell> getCellIterator(boolean reverse);
 
 	/*package*/ abstract void setIndex(int newidx);
 
@@ -54,5 +54,5 @@ public abstract class AbstractRowAdv implements SRow,LinkedModelObject,Serializa
 	//ZSS-688
 	/*package*/ abstract AbstractRowAdv cloneRow(AbstractSheetAdv sheet);
 	
-	public abstract Iterator<AbstractCellAdv> getCellIterator(boolean reverse, int start, int end);
+	public abstract Iterator<SCell> getCellIterator(boolean reverse, int start, int end);
 }

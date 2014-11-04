@@ -16,6 +16,10 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.model;
 
+import java.util.Iterator;
+
+import org.zkoss.zss.model.impl.AbstractCellAdv;
+
 /**
  * A row of a sheet.
  * @author dennis
@@ -46,4 +50,11 @@ public interface SRow extends CellStyleHolder{
 	 * @param custom TRUE, if the height is set by users and is not calculated by system automatically
 	 */
 	public void setCustomHeight(boolean custom);
+	
+	/**
+	 * 
+	 * @return
+	 * @since 3.6.1
+	 */
+	public Iterator<SCell> getCellIterator();
 }

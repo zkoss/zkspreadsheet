@@ -20,6 +20,7 @@ import java.lang.ref.WeakReference;
 import java.util.Collections;
 import java.util.Iterator;
 
+import org.zkoss.zss.model.SCell;
 import org.zkoss.zss.model.SCellStyle;
 import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.model.util.Validations;
@@ -177,7 +178,7 @@ class RowProxy extends AbstractRowAdv{
 		_proxy.setCustomHeight(custom);
 	}
 	@Override
-	public Iterator<AbstractCellAdv> getCellIterator(boolean reverse) {
+	public Iterator<SCell> getCellIterator(boolean reverse) {
 		loadProxy();
 		if (_proxy != null) {
 			return _proxy.getCellIterator(reverse);
@@ -209,12 +210,15 @@ class RowProxy extends AbstractRowAdv{
 		}
 	}
 	
-	public Iterator<AbstractCellAdv> getCellIterator(boolean reverse, int start, int end) {
+	public Iterator<SCell> getCellIterator(boolean reverse, int start, int end) {
 		loadProxy();
 		if (_proxy != null) {
 			return _proxy.getCellIterator(reverse, start, end);
 		}
 		return Collections.EMPTY_LIST.iterator();
 	}
-
+	@Override
+	public Iterator<SCell> getCellIterator() {
+		return getCellIterator(false);
+	}
 }

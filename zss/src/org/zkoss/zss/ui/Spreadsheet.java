@@ -81,6 +81,7 @@ import org.zkoss.zk.ui.ext.AfterCompose;
 import org.zkoss.zk.ui.ext.render.DynamicMedia;
 import org.zkoss.zk.ui.sys.ContentRenderer;
 import org.zkoss.zk.ui.util.DesktopCleanup;
+import org.zkoss.zk.ui.util.ExecutionCleanup;
 import org.zkoss.zss.api.AreaRef;
 import org.zkoss.zss.api.CellOperationUtil;
 import org.zkoss.zss.api.CellRef;
@@ -90,6 +91,7 @@ import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.impl.ImporterImpl;
 import org.zkoss.zss.api.model.Book;
+import org.zkoss.zss.api.model.CellStyle;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.api.model.SheetProtection;
 import org.zkoss.zss.api.model.impl.BookImpl;
@@ -286,6 +288,10 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	
 	//a cleaner to clean book when detach or desktop cleanup
 	private BookCleaner _bookCleaner;
+	
+	//ZSS-816. A DeferOperator to execute operation in a whole before Execution
+	//  cleanup
+	private DeferOperator _deferOperator;
 	
 	/**
 	 * default row height when a sheet is empty
@@ -5069,6 +5075,10 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			_bookCleaner = new BookCleaner(uuid);
 			desktop.addListener(_bookCleaner);
 		}
+		if(_deferOperator==null) {
+			_deferOperator = new DeferOperator(uuid);
+			desktop.addListener(_deferOperator);
+		}
 	}
 	
 	@Override
@@ -5085,6 +5095,10 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		if(_bookCleaner!=null){
 			desktop.removeListener(_bookCleaner);
 			_bookCleaner = null;
+		}
+		if(_deferOperator!=null){
+			desktop.removeListener(_deferOperator);
+			_deferOperator = null;
 		}
 	}
 	
@@ -5211,6 +5225,11 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 //				_rowFreeze = _maxRows - 1;
 //			}
 			smartUpdate("maxRows", getMaxVisibleRows());
+			// 20141104, henrichen: unlock info records until max visible row,
+			// so it needs to update when max visible row changed.
+			if (getSelectedSheet() != null) {
+				updateUnlockInfo();
+			}
 		}
 	}
 	
@@ -5261,11 +5280,26 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	 *  Update unlock info including rows, cols and cells. 
 	 */
 	private void updateUnlockInfo() {
-		final SheetProtection sheetProtection = Ranges.range(getSelectedSheet()).getSheetProtection();
-		if (!sheetProtection.isSelectLockedCellsAllowed() &&
+		//ZSS-816: defer the unlockInfo operation or onCellContentChange might generate a storm
+		if (!hasDeferOperation("unlockInfo")) {
+			addDeferOperation("unlockInfo", new DeferOperation() {
+				@Override
+				public void process() {
+					updateUnlockInfo0();
+				}
+			});
+		}
+	}
+	
+	private void updateUnlockInfo0() {
+		Sheet sht = getSelectedSheet();
+		if (sht != null) {
+			final SheetProtection sheetProtection = Ranges.range(sht).getSheetProtection();
+			if (!sheetProtection.isSelectLockedCellsAllowed() &&
 				sheetProtection.isSelectUnlockedCellsAllowed()) {
-			JSONObject unlockInfo = createUnlockInfo(getSelectedSheet());
-			smartUpdate("unlockInfo", unlockInfo);
+				JSONObject unlockInfo = createUnlockInfo(sht);
+				smartUpdate("unlockInfo", unlockInfo);
+			}
 		}
 	}
 	
@@ -5282,71 +5316,116 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 				// for better performance, because getEndColumnIndex() could be 16384.
 				endColumn = getMaxVisibleColumns(),
 				startRow = ssheet.getStartRowIndex(),
-				endRow = ssheet.getEndRowIndex();
+				endRow = getMaxVisibleRows(); //ssheet.getEndRowIndex();
 				
 		JSONObject attrs = new JSONObject();
 		JSONArray rows = new JSONArray(),
 				columns = new JSONArray(),
 				cells = new JSONArray();
-		
+
+		//ZSS-816
+		SSheet sht = sheet.getInternalSheet();
 		if (startColumn != -1) {
-			// 20140513, RaymondChao: group unlocked columns to improve the performance.
-			int start = -1;
-			for (int i = startColumn; i <= endColumn; i++) {
-				if (ssheet.getColumn(i).getCellStyle().isLocked()) {
-					if (start != -1) {
-						columns.add(createUnlockGroup(start, i - 1));
-						start = -1;
-					}
-				} else {
-					if (start == -1) {
-						start = i;
-					}
+			for (final Iterator<SColumnArray> it = sht.getColumnArrayIterator(); it.hasNext();) {
+				SColumnArray ca = it.next();
+				if (ca.getLastIndex() < startColumn)
+					continue;
+				if (ca.getIndex() > endColumn) //impossible
+					break;
+				// overlaps
+				SCellStyle style = ca.getCellStyle(true);
+				// looking for unlocked columns
+				if (style != null && !style.isLocked()) {
+					final int start = Math.max(startColumn, ca.getIndex());
+					final int end = Math.min(endColumn, ca.getLastIndex());
+					columns.add(createUnlockGroup(start, end));
 				}
-			}
-			if (start != -1) {
-				columns.add(createUnlockGroup(start, endColumn));
 			}
 		}
 		
 		if (startRow != -1) {
-			
-			for (int i = startRow; i <= endRow; i++) {
-				if (!ssheet.getRow(i).getCellStyle().isLocked())
-					rows.add(i);
+			for (final Iterator<SRow> it = sht.getRowIterator(); it.hasNext();) {
+				SRow srow = it.next();
+				SCellStyle style = srow.getCellStyle(true);
+				if (srow.getIndex() > endRow)
+					break;
+				final int rowIdx = srow.getIndex();
+				// looking for unlocked row
+				if (style != null && !style.isLocked()) {
+					rows.add(rowIdx);
+				}
 
-				final int firstColumn = sheet.getFirstColumn(i),
-					lastColumn = sheet.getLastColumn(i);
-				if (firstColumn == -1)
-					continue;
-				int start = -1;
-				JSONObject row = new JSONObject();
-				JSONArray data = new JSONArray();
-				row.put("i", i);
-				// 20140513, RaymondChao: group unlocked cells to improve the performance.
-				for (int j = firstColumn; j <= lastColumn; j++) {
-					if (Ranges.range(sheet, i, j).getCellStyle().isLocked()) {
-						if (start != -1) {
-							data.add(createUnlockGroup(start, j - 1));
-							start = -1;
-						}
-					} else {
-						if (start == -1) {
-							start = j;
+				final Iterator<SCell> itc = srow.getCellIterator();
+				if (itc.hasNext()) {
+					int start = -1;
+					int prev = -1;
+					JSONObject row = new JSONObject();
+					JSONArray data = new JSONArray();
+					row.put("i", rowIdx);
+					
+					while (itc.hasNext()) {
+						SCell cell = itc.next();
+						final int cellIdx = cell.getColumnIndex();
+						SCellStyle stylec = cell.getCellStyle(true);
+						if (stylec.isLocked()) {
+							if (start != -1) {
+								data.add(createUnlockGroup(start, cellIdx - 1));
+								start = -1;
+								prev = -1;
+							} 
+						} else {
+							if (start == -1) {
+								start = cellIdx;
+							} else if (prev != cellIdx - 1) {
+								data.add(createUnlockGroup(start, prev));
+								start = cellIdx;
+							}
+							prev = cellIdx;
 						}
 					}
+					if (start != -1) {
+						data.add(createUnlockGroup(start, prev));
+					}
+					row.put("data", data);
+					cells.add(row);
 				}
-				if (start != -1) {
-					data.add(createUnlockGroup(start, lastColumn));
-				}
-				row.put("data", data);
-				cells.add(row);
 			}
 		}
 		attrs.put("chs", columns);
 		attrs.put("rhs", rows);
 		attrs.put("cs", cells);
 		return attrs;
+	}
+
+	//ZSS-816
+	/** Returns whether the named deferred operation is already exists.
+	 * 
+	 * @param name
+	 * @param op
+	 */
+	private boolean hasDeferOperation(String name) {
+		Execution exec = Executions.getCurrent();
+		Map<String, DeferOperation> map = 
+			(Map<String, DeferOperation>) exec.getAttribute(_ZSS_DEFER_OP_MAP, false);
+		return map != null && map.containsKey(name);
+	}
+	
+	//ZSS-816
+	/* Add a named deferred operation to be operated when execution is going
+	 * to be cleanup. Operation with same name will override previous operation.
+	 * 
+	 * @param name operation name
+	 * @param op the DeferOperation
+	 */
+	private void addDeferOperation(String name, DeferOperation op) {
+		Execution exec = Executions.getCurrent();
+		Map<String, DeferOperation> map = 
+			(Map<String, DeferOperation>) exec.getAttribute(_ZSS_DEFER_OP_MAP, false);
+		if (map == null) {
+			map = new LinkedHashMap<String, DeferOperation>();
+			exec.setAttribute(_ZSS_DEFER_OP_MAP, map, false);
+		}
+		map.put(name,  op);
 	}
 	
 	/*
@@ -5360,7 +5439,6 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		group.put("end", end);
 		return group;
 	}
-	
 
 	private CellDisplayLoader getCellDisplayLoader() {
 		if(_cellDisplayLoader==null){
@@ -5458,5 +5536,47 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			}
 		}
 	}
+
+	//ZSS-816
+	/**
+	 * A prpoper time point that same accumulated deferred operations can be
+	 * executed here. 
+	 */
+	private static class DeferOperator implements ExecutionCleanup, Serializable {
+		private String _ssid;
+		public DeferOperator(String ssid){
+			this._ssid = ssid;
+		}
+
+		@Override
+		public void cleanup(Execution exec, Execution parent,
+				List<Throwable> errs) throws Exception {
+			if (exec != null) {
+				Desktop desktop = exec.getDesktop();
+				if (desktop != null) {
+					Component comp = desktop.getComponentByUuid(_ssid);
+					if(comp instanceof Spreadsheet){
+						Spreadsheet ss = (Spreadsheet)comp;
+						try{
+							Map<String, DeferOperation> map = 
+								(Map<String, DeferOperation>) exec.getAttribute(_ZSS_DEFER_OP_MAP, false);
+							if (map != null) {
+								for (DeferOperation op : map.values()) {
+									op.process();
+								}
+							}
+						}catch(Exception x){}//eat
+					}
+				}
+			}
+		}
+	}
+
+	//ZSS-816
+	private static interface DeferOperation extends Serializable {
+		void process();
+	}
 	
+	//ZSS-816
+	private static final String _ZSS_DEFER_OP_MAP = "_ZSS_DEFER_OP_MAP";
 }
