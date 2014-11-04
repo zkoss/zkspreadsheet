@@ -172,7 +172,7 @@ if="deploy.jboss.required">
 	
 	<!-- for zpoi -->
 	<copy todir="${codegen.archive.dir}" preservelastmodified="yes" failonerror="false">
-		<fileset dir="srcresources" includes="**/functionMetadata*.txt"/>
+		<fileset dir="src" includes="**/functionMetadata*.txt"/>
 	</copy>
 	
 	<!-- for zsshtml -->
