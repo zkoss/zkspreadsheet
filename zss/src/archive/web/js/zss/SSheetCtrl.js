@@ -2534,21 +2534,23 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		if (!unlockInfo)
 			return true;
 
+		for (var prop in unlockInfo.cs) {
+			if (unlockInfo.cs[prop].i == row) {
+				if (groupContains(unlockInfo.cs[prop].data, col)) {
+					return false;
+				}
+				if (groupContains(unlockInfo.cs[prop].lockData, col)) {
+					return true;
+				}
+			}
+		}
+
 		if (groupContains(unlockInfo.chs, col))
 			return false;
 
 		for (var prop in unlockInfo.rhs) {
 			if (unlockInfo.rhs[prop] == row) {
 				return false;
-			}
-		}
-
-
-		for (var prop in unlockInfo.cs) {
-			if (unlockInfo.cs[prop].i == row) {
-				if (groupContains(unlockInfo.cs[prop].data, col)) {
-					return false;
-				}
 			}
 		}
 

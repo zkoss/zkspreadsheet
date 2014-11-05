@@ -5357,6 +5357,9 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 
 				final Iterator<SCell> itc = srow.getCellIterator();
 				if (itc.hasNext()) {
+					int lockStart = -1;
+					int lockPrev = -1;
+					JSONArray lockData = new JSONArray();
 					int start = -1;
 					int prev = -1;
 					JSONObject row = new JSONObject();
@@ -5368,12 +5371,23 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 						final int cellIdx = cell.getColumnIndex();
 						SCellStyle stylec = cell.getCellStyle(true);
 						if (stylec.isLocked()) {
+							//process lock group
+							if (lockStart == -1) {
+								lockStart = cellIdx;
+							} else if (lockPrev != cellIdx - 1) {
+								lockData.add(createLockGroup(lockStart, lockPrev));
+								lockStart = cellIdx;
+							}
+							lockPrev = cellIdx;
+							
+							//process unlock group
 							if (start != -1) {
-								data.add(createUnlockGroup(start, cellIdx - 1));
+								data.add(createUnlockGroup(start, prev));
 								start = -1;
 								prev = -1;
 							} 
 						} else {
+							//process unlock group 
 							if (start == -1) {
 								start = cellIdx;
 							} else if (prev != cellIdx - 1) {
@@ -5381,12 +5395,23 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 								start = cellIdx;
 							}
 							prev = cellIdx;
+							
+							//process lock group
+							if (lockStart != -1) {
+								lockData.add(createLockGroup(lockStart, lockPrev));
+								lockStart = -1;
+								lockPrev = -1;
+							}
 						}
 					}
 					if (start != -1) {
 						data.add(createUnlockGroup(start, prev));
 					}
+					if (lockStart != -1) {
+						lockData.add(createLockGroup(lockStart, lockPrev));
+					}
 					row.put("data", data);
+					row.put("lockData", lockData);
 					cells.add(row);
 				}
 			}
@@ -5438,6 +5463,9 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		group.put("start", start);
 		group.put("end", end);
 		return group;
+	}
+	private JSONObject createLockGroup(int start, int end) {
+		return createUnlockGroup(start, end);
 	}
 
 	private CellDisplayLoader getCellDisplayLoader() {
