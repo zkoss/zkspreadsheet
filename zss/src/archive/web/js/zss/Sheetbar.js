@@ -439,6 +439,47 @@ zss.SheetSelector = zk.$extends(zul.tab.Tabbox, {
    	}
 });
 
+zss.TabPopup = zk.$extends(zul.wgt.Popup, {
+	$init: function() {
+		this.$supers(zss.TabPopup, '$init', arguments);
+		this.setSclass('zstab-popup');
+	},
+	doMouseDown_: function () {
+		// cancel bubble
+	},
+	doMouseUp_: function () {
+		// cancel bubble
+	},
+	bind_: function () {
+		this.$supers(zss.TabPopup, 'bind_', arguments);
+		this.domListen_(this.$n('cave'), 'onClick', '_doClick');
+	},
+	unbind_: function () {
+		this.domUnlisten_(this.$n('cave'), 'onClick', '_doClick');
+		this.$supers(zss.TabPopup, 'unbind_', arguments);
+	},
+	_doClick: function(evt) {
+		var target = evt.target;
+		if(target.widgetName == 'TabOption') {
+			var sheetpanelCave = this.parent.parent;
+			sheetpanelCave.sheetSelector.doSelectSheet(target.getSheetId(), 
+					sheetpanelCave._wgt.sheetCtrl.isSwitchingSheet);
+			this.close();
+		}
+	}
+});
+
+zss.TabOption = zk.$extends(zul.wgt.Button, {
+	$init: function() {
+		this.$supers(zss.TabOption, '$init', arguments);
+		this.setZclass('zstab-option');
+	},
+	widgetName: 'TabOption',
+	$define: {
+		sheetId: function(){}
+	}
+});
+
 zss.SheetpanelCave = zk.$extends(zk.Widget, {
 	$o: zk.$void,
 	$init: function (wgt) {
@@ -454,10 +495,34 @@ zss.SheetpanelCave = zk.$extends(zk.Widget, {
 				image: zk.ajaxURI('/web/zss/img/plus.png', {au: true}),
 				onClick: this.proxy(this.onClickAddSheet)
 			}),
+			sheetMenuBtn = this.sheetMenuButton = new zss.Toolbarbutton({
+				tooltiptext: msgzss.action.showSheets,
+				image: zk.ajaxURI('/web/zss/img/show-all.png', {au: true}),
+				onClick: function() {
+					var labels = wgt.getSheetLabels(),
+						inner = [],
+						sheetId = wgt.getSheetId();
+					popup.clear();
+					for(var i = 0, label; label = labels[i++];) {						
+						var labelId = label.id;
+						popup.appendChild(new zss.TabOption({
+							label: label.name, 
+							sheetId: label.id,
+							sclass: label.id === sheetId ? 'zstab-option-select' : ''
+						}));
+					}
+
+					popup.open(this, null, 'before_start');
+				}
+			}),
 			hlayout = this.hlayout = new zul.box.Hlayout({spacing: 0}),
-			sheetSelector = this.sheetSelector = new zss.SheetSelector(wgt, menu);
+			sheetSelector = this.sheetSelector = new zss.SheetSelector(wgt, menu),
+			popup = new zss.TabPopup();
+		
 		hlayout.appendChild(addSheetBtn);
+		hlayout.appendChild(sheetMenuBtn);
 		hlayout.appendChild(sheetSelector);
+		hlayout.appendChild(popup);
 		
 		this.appendChild(hlayout);
 		this.appendChild(menu);
@@ -465,7 +530,8 @@ zss.SheetpanelCave = zk.$extends(zk.Widget, {
 	setFlexSize_: function(sz, isFlexMin) {
 		var r = this.$supers(zss.SheetpanelCave, 'setFlexSize_', arguments),
 			width = sz.width,
-			btnWidth = 30; //button size, TODO: rm hard-code: jq(this.hlayout.$n().firstChild).width() get wrong value;
+			btnWidth = 52; //button size, TODO: rm hard-code: jq(this.hlayout.$n().firstChild).width() get wrong value;
+
 		if (width > btnWidth)
 			this.sheetSelector.setWidth((width - btnWidth) + 'px');
 	},

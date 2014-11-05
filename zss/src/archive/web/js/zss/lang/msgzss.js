@@ -19,6 +19,7 @@ msgzss = {
 msgzss.action = {
 	sheet: 'Sheet',
 	addSheet: 'Add sheet',
+	showSheets: 'Show sheets',
 	deleteSheet: 'Delete',
 	copySheet: 'Copy',
 	renameSheet: 'Rename',
