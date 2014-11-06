@@ -351,7 +351,7 @@ public class ParsingBook implements FormulaParsingWorkbook, FormulaRenderingWork
 		}
 
 		public boolean isRange() {
-			return false;
+			return true;//false;
 		}
 
 		public NamePtg createPtg() {

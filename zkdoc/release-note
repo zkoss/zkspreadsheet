@@ -10,6 +10,7 @@ ZK Spreadsheet 3.6.1
   ZSS-818 Formula not update outside the preload rows
   ZSS-816 Performance impact when protect sheet with allowSelectingUnlockedCells set to true
   ZSS-811 Exception when export a cell with special formula
+  ZSS-812 NPE when evaluate a special formula
   
 ** Upgrade Notes
 
