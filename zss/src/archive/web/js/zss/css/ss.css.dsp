@@ -1152,6 +1152,10 @@
 	background: #F9F9F9;
 }
 
+.zssheetbar .z-tabbox-left-scroll, .zssheetbar .z-tabbox-right-scroll {
+	padding-top: 2px;
+}
+
 .zssheetselector .zstbtn-addSheet .z-toolbarbutton-content {
 	padding: 0 2px;
 }
@@ -1571,6 +1575,43 @@
 .zssheettab.z-tab-selected:hover {
 	background: #FFFFFF;
 }
+
+/* zss tab selection box begin*/
+.zstab-option {
+	display: block;
+	padding: 3px 4px 2px 20px;
+	background-color: white;
+	border-width: 0px;
+	font-size: 16px;
+	width: 100%;
+	text-align: left;
+}
+
+.zstab-option:hover {
+	background-color: #DDDDDD;
+}
+
+.zstab-popup {
+	max-height: 200px;
+	overflow-y: scroll;
+}
+
+.zstab-popup .z-popup-content {
+	padding: 0px;
+}
+
+.zstab-option-select:before {
+	content: "\f054";
+	font-family: FontAwesome;
+	font-weight: small;
+	font-style: small;
+	font-size: 12px;
+	-webkit-font-smoothing: antialiased;
+	padding-right: 5px;
+	posotion: absolute;
+	margin-left: -13px;
+}
+/* zss tab selection box end*/
 
 .z-initing {
 	background-image: url('http://www.zkoss.org/zk/img/${s:encodeWithZSS("zsspowered.png")}');

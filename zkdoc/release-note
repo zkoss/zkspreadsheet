@@ -3,6 +3,7 @@ ZK Spreadsheet 3.6.1
   ZSS-815 Enhance performance of dependents and precedents lookup mechanism
   ZSS-814 Provide a new APIs which can enforce evaluation and refresh the specified range.
   ZSS-777 Display currency symbol of different countries
+  ZSS-663 Spreadsheet: jump to first/last sheet
   
 *Bugs:
   ZSS-820 Formula should change sheet name if reordered sheet goes beyond its the formula's sheet boundary.
