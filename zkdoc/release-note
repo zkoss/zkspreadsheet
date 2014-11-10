@@ -11,6 +11,7 @@ ZK Spreadsheet 3.6.1
   ZSS-816 Performance impact when protect sheet with allowSelectingUnlockedCells set to true
   ZSS-811 Exception when export a cell with special formula
   ZSS-812 NPE when evaluate a special formula
+  ZSS-829 export pdf cause exception: the region is illegal A47:H48[47,0,46,7]
   
 ** Upgrade Notes
 
