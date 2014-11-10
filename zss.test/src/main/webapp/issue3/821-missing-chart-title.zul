@@ -1,0 +1,13 @@
+<?page title="MissingChartTitleIssue"?>
+<zk>
+<label multiline="true">
+1. Select Sheet "fin_charts"
+2. You should see total 7 charts
+3. From left to right; from top to bottom you should see chart title on the
+top side of the first 6 charts.
+4. First row from left to right you should see "BB", "AA", and "Current vs Quick Ratio"
+5. Second row from left to right you should see "BB", "BB", and "EBITAD Coverage (pre/Post Tax)"
+6. If not, the title is missing and is incorrect.
+</label>
+    <spreadsheet id="spreadsheet" src="/issue3/book/821-missing-chart-title.xlsx" maxVisibleRows="50" vflex="1" hflex="1" showSheetbar="true"></spreadsheet>
+</zk>

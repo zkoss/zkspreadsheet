@@ -338,8 +338,8 @@ public class ExcelXlsxImporter extends AbstractExcelImporter{
 		/**
 		 * A list of POI chart wrapper loaded during import.
 		 */
-		List<ZssChartX> poiCharts = new LinkedList<ZssChartX>();
-		List<Picture> poiPictures = new LinkedList<Picture>();
+		List<ZssChartX> poiCharts = new ArrayList<ZssChartX>();
+		List<Picture> poiPictures = new ArrayList<Picture>();
 		
 		XSSFDrawing patriarch = null;
 		for(POIXMLDocumentPart dr : ((XSSFSheet)poiSheet).getRelations()){
