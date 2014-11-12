@@ -24,11 +24,16 @@ import org.zkoss.poi.hssf.record.chart.*;
 import org.zkoss.poi.hssf.usermodel.*;
 import org.zkoss.poi.hssf.usermodel.HSSFChart.HSSFSeries;
 import org.zkoss.poi.ss.usermodel.*;
+import org.zkoss.poi.ss.usermodel.charts.CategoryAxis;
+import org.zkoss.poi.ss.usermodel.charts.ChartAxis;
+import org.zkoss.poi.ss.usermodel.charts.ValueAxis;
+import org.zkoss.poi.xssf.usermodel.XSSFChart;
 import org.zkoss.poi.xssf.usermodel.XSSFSheet;
 import org.zkoss.zss.model.*;
 import org.zkoss.zss.model.SChart.ChartLegendPosition;
 import org.zkoss.zss.model.SChart.ChartType;
 import org.zkoss.zss.model.chart.*;
+import org.zkoss.zss.model.impl.ChartAxisImpl;
 
 /**
  * 
@@ -124,8 +129,36 @@ public class ExcelXlsImporter extends AbstractExcelImporter{
 //			if (hssfChart.hasLegend()){
 //				chart.setLegendPosition(toLengendPosition(hssfChart.getLegendPos()));
 //			}
+			//ZSS-822
+			importAxis(hssfChart, chart);
 		}
 
+	}
+	
+	//ZSS-822
+	private void importAxis(HSSFChart hssfChart, SChart chart) {
+		//TODO: xls axis
+		//20141112, henrichen: POI does not support Chart Axis yet.
+		// [MS-XLS].pdf page 74 ~ 76
+//		@SuppressWarnings("unchecked")
+//		List<ChartAxis> axises = (List<ChartAxis>) hssfChart.getAxis();
+//		if (axises != null) {
+//			for (ChartAxis axis : axises) {
+//				if (axis instanceof ValueAxis) {
+//					String format = ((ValueAxis) axis).getNumberFormat();
+//					double min = axis.getMinimum();
+//					double max = axis.getMaximum();
+//					SChartAxis saxis = new ChartAxisImpl(axis.getId(), SChartAxis.SChartAxisType.VALUE, min, max, format);
+//					chart.addValueAxis(saxis);
+//				} else if (axis instanceof CategoryAxis) {
+//					String format = null;
+//					double min = axis.getMinimum();
+//					double max = axis.getMaximum();
+//					SChartAxis saxis = new ChartAxisImpl(axis.getId(), SChartAxis.SChartAxisType.CATEGORY, min, max, format);
+//					chart.addCategoryAxis(saxis);
+//				}
+//			}
+//		}
 	}
 	
 	/**

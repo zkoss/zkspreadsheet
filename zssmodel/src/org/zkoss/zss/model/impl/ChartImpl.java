@@ -16,6 +16,10 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.model.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.zkoss.zss.model.SChartAxis;
 import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.model.ViewAnchor;
 import org.zkoss.zss.model.chart.SChartData;
@@ -44,6 +48,9 @@ public class ChartImpl extends AbstractChartAdv {
 	private BarDirection _direction;
 	
 	private boolean _threeD;
+	
+	private List<SChartAxis> _valueAxises = new ArrayList<SChartAxis>();
+	private List<SChartAxis> _categoryAxises = new ArrayList<SChartAxis>();
 	
 	public ChartImpl(AbstractSheetAdv sheet,String id,ChartType type,ViewAnchor anchor){
 		this._sheet = sheet;
@@ -197,7 +204,29 @@ public class ChartImpl extends AbstractChartAdv {
 		tgt._grouping = this._grouping;
 		tgt._direction = this._direction;
 		tgt._threeD = this._threeD;
-		
+		for (SChartAxis axis : _valueAxises) {
+			tgt.addValueAxis(((ChartAxisImpl)axis).cloneChartAxisImpl());
+		}
+		for (SChartAxis axis : _categoryAxises) {
+			tgt.addCategoryAxis(((ChartAxisImpl)axis).cloneChartAxisImpl());
+		}
 		return tgt;
+	}
+	@Override
+	public void addValueAxis(SChartAxis axis) {
+		_valueAxises.add(axis);
+	}
+	@Override
+	public void addCategoryAxis(SChartAxis axis) {
+		_categoryAxises.add(axis);
+	}
+	
+	@Override
+	public List<SChartAxis> getValueAxises() {
+		return _valueAxises;
+	}
+	@Override
+	public List<SChartAxis> getCategoryAxises() {
+		return _categoryAxises;
 	}
 }

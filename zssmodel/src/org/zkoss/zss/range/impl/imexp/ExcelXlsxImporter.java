@@ -34,11 +34,9 @@ import org.zkoss.poi.xssf.usermodel.*;
 import org.zkoss.poi.xssf.usermodel.charts.*;
 import org.zkoss.zss.model.*;
 import org.zkoss.zss.model.SChart.ChartType;
-import org.zkoss.zss.model.SDataValidation.AlertStyle;
-import org.zkoss.zss.model.SDataValidation.OperatorType;
-import org.zkoss.zss.model.SDataValidation.ValidationType;
 import org.zkoss.zss.model.chart.*;
 import org.zkoss.zss.model.impl.AbstractDataValidationAdv;
+import org.zkoss.zss.model.impl.ChartAxisImpl;
 import org.zkoss.zss.model.sys.formula.FormulaEngine;
 /**
  * Specific importing behavior for XLSX.
@@ -214,9 +212,35 @@ public class ExcelXlsxImporter extends AbstractExcelImporter{
 				chart.setTitle(xssfChart.getTitle().getString());
 			}
 			chart.setThreeD(xssfChart.isSetView3D());
-			chart.setLegendPosition(PoiEnumConversion.toLengendPosition(xssfChart.getOrCreateLegend().getPosition()));
+			if (xssfChart.hasLegend()) {
+				chart.setLegendPosition(PoiEnumConversion.toLengendPosition(xssfChart.getOrCreateLegend().getPosition()));
+			}
 			if (categoryData != null){
 				importSeries(categoryData.getSeries(), (SGeneralChartData)chart.getData());
+			}
+			//ZSS-822
+			importAxis(xssfChart, chart);
+		}
+	}
+	//ZSS-822
+	private void importAxis(XSSFChart xssfChart, SChart chart) {
+		@SuppressWarnings("unchecked")
+		List<ChartAxis> axises = (List<ChartAxis>) xssfChart.getAxis();
+		if (axises != null) {
+			for (ChartAxis axis : axises) {
+				if (axis instanceof ValueAxis) {
+					String format = ((ValueAxis) axis).getNumberFormat();
+					double min = axis.getMinimum();
+					double max = axis.getMaximum();
+					SChartAxis saxis = new ChartAxisImpl(axis.getId(), SChartAxis.SChartAxisType.VALUE, min, max, format);
+					chart.addValueAxis(saxis);
+				} else if (axis instanceof CategoryAxis) {
+					String format = null;
+					double min = axis.getMinimum();
+					double max = axis.getMaximum();
+					SChartAxis saxis = new ChartAxisImpl(axis.getId(), SChartAxis.SChartAxisType.CATEGORY, min, max, format);
+					chart.addCategoryAxis(saxis);
+				}
 			}
 		}
 	}

@@ -9,5 +9,5 @@ top side of the first 6 charts.
 5. Second row from left to right you should see "BB", "BB", and "EBITAD Coverage (pre/Post Tax)"
 6. If not, the title is missing and is incorrect.
 </label>
-    <spreadsheet id="spreadsheet" src="/issue3/book/821-missing-chart-title.xlsx" maxVisibleRows="50" vflex="1" hflex="1" showSheetbar="true"></spreadsheet>
+    <spreadsheet id="spreadsheet" src="/issue3/book/821-missing-chart-title.xlsx" maxVisibleRows="50" vflex="1" width="100%" showSheetbar="true"></spreadsheet>
 </zk>

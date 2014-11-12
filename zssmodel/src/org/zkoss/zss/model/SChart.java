@@ -16,6 +16,8 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.model;
 
+import java.util.List;
+
 import org.zkoss.zss.model.chart.SChartData;
 /**
  * Represents a chart in a sheet.
@@ -110,4 +112,12 @@ public interface SChart {
 	public boolean isThreeD();
 	
 	public void setThreeD(boolean threeD);
+	
+	//ZSS-822
+	public List<SChartAxis> getValueAxises();
+	public List<SChartAxis> getCategoryAxises();
+	
+	//ZSS-822
+	public void addValueAxis(SChartAxis axis);
+	public void addCategoryAxis(SChartAxis axis);
 }
