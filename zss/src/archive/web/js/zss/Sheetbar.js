@@ -497,7 +497,7 @@ zss.SheetpanelCave = zk.$extends(zk.Widget, {
 			}),
 			sheetMenuBtn = this.sheetMenuButton = new zss.Toolbarbutton({
 				tooltiptext: msgzss.action.showSheets,
-				image: zk.ajaxURI('/web/zss/img/show-all.png', {au: true}),
+				image: zk.ajaxURI('/web/zss/img/ui-menu.png', {au: true}),
 				onClick: function() {
 					var labels = wgt.getSheetLabels(),
 						inner = [],
