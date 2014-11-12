@@ -263,6 +263,23 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 			CellRangeAddress colrng = new CellRangeAddress(-1, -1, crgn.getColumn(), crgn.getLastColumn());
 			poiSheet.setRepeatingColumns(colrng);
 		}
+		
+		//ZSS-832
+		// export sheet visible
+		int option = 0;
+		switch(sheet.getSheetVisible()) {
+		default:
+		case VISIBLE:
+			option = 0;
+			break;
+		case HIDDEN:
+			option = 1;
+			break;
+		case VERY_HIDDEN:
+			option = 2;
+			break;
+		}
+	    workbook.setSheetHidden(sheetIndex, option);
 	}
 
 	protected void exportMergedRegions(SSheet sheet, Sheet poiSheet) {

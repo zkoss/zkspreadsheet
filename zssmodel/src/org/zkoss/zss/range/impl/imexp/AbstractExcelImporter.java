@@ -27,6 +27,7 @@ import org.zkoss.util.Locales;
 import org.zkoss.zss.model.*;
 import org.zkoss.zss.model.SAutoFilter.NFilterColumn;
 import org.zkoss.zss.model.SPicture.Format;
+import org.zkoss.zss.model.SSheet.SheetVisible;
 import org.zkoss.zss.model.impl.HeaderFooterImpl;
 
 /**
@@ -321,6 +322,16 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 		
 		//import hashed password directly
 		importPassword(poiSheet, sheet);
+		
+		//ZSS-832
+		//import sheet visible
+		if (poiBook.isSheetHidden(poiSheetIndex)) {
+			sheet.setSheetVisible(SheetVisible.HIDDEN);
+		} else if (poiBook.isSheetVeryHidden(poiSheetIndex)) {
+			sheet.setSheetVisible(SheetVisible.VERY_HIDDEN);
+		} else {
+			sheet.setSheetVisible(SheetVisible.VISIBLE);
+		}
 		
 		return sheet;
 	}

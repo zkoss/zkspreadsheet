@@ -51,10 +51,8 @@ import org.zkoss.zss.model.SDataValidation.OperatorType;
 import org.zkoss.zss.model.SDataValidation.ValidationType;
 import org.zkoss.zss.model.SHyperlink;
 import org.zkoss.zss.model.SHyperlink.HyperlinkType;
-import org.zkoss.zss.model.ModelEvents;
 import org.zkoss.zss.model.SFont;
 import org.zkoss.zss.model.SPicture;
-import org.zkoss.zss.model.SRichText;
 import org.zkoss.zss.model.SRow;
 import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.model.SSheetProtection;
@@ -69,12 +67,10 @@ import org.zkoss.zss.model.impl.AbstractSheetAdv;
 import org.zkoss.zss.model.impl.AbstractNameAdv;
 import org.zkoss.zss.model.impl.AbstractCellAdv;
 import org.zkoss.zss.model.impl.ColorImpl;
-import org.zkoss.zss.model.impl.DataValidationImpl;
 import org.zkoss.zss.model.impl.FormulaCacheCleaner;
 import org.zkoss.zss.model.impl.RefImpl;
 import org.zkoss.zss.model.impl.NameRefImpl;
 import org.zkoss.zss.model.impl.AbstractDataValidationAdv;
-import org.zkoss.zss.model.impl.sys.DependencyTableAdv;
 import org.zkoss.zss.model.sys.EngineFactory;
 import org.zkoss.zss.model.sys.dependency.DependencyTable;
 import org.zkoss.zss.model.sys.dependency.DependencyTable.RefFilter;
@@ -110,7 +106,7 @@ public class RangeImpl implements SRange {
 	private int _lastColumn = Integer.MIN_VALUE;
 	private int _lastRow = Integer.MIN_VALUE;
 	private boolean _autoRefresh = true;
-
+	
 	public RangeImpl(SBook book) {
 		this._book = book;
 	}
@@ -2120,4 +2116,45 @@ public class RangeImpl implements SRange {
 		return previous;
 	}
 
+	//ZSS-832
+	@Override
+	public void setSheetVisible(final SheetVisible visible) {
+		new ModelManipulationTask() {
+			final ResultWrap<SSheet> toChangeSheet = new ResultWrap<SSheet>();
+			@Override
+			protected Object doInvoke() {
+				//Process only 1st ref
+				SSheet sheet = null;
+				if (!_rangeRefs.isEmpty()) {
+					EffectedRegion r = _rangeRefs.get(0); 
+					sheet = r.sheet;
+					SSheet.SheetVisible option = null;
+					switch(visible) {
+					case HIDDEN:
+						option = SSheet.SheetVisible.HIDDEN;
+						break;
+					case VISIBLE:
+						option = SSheet.SheetVisible.VISIBLE;
+						break;
+					case VERY_HIDDEN:
+						option = SSheet.SheetVisible.VERY_HIDDEN;
+						break;
+					}
+					SSheet.SheetVisible old = sheet.getSheetVisible(); 
+					if (old != option) {
+						toChangeSheet.set(sheet);
+						sheet.setSheetVisible(option);
+					}
+				}
+				return null;
+			}
+			
+			@Override
+			protected void doBeforeNotify() {
+				if(toChangeSheet.get()!=null) {
+					new NotifyChangeHelper().notifySheetVisibleChange(toChangeSheet.get());
+				}
+			}
+		}.doInWriteLock(getLock());
+	}
 }

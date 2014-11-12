@@ -531,4 +531,9 @@ import org.zkoss.zss.range.*;
 	public void refresh(boolean includeDependents, boolean enforceEval) {
 		// do nothing
 	}
+
+	@Override
+	public void setSheetVisible(SheetVisible visible) {
+		// do nothing
+	}
 }

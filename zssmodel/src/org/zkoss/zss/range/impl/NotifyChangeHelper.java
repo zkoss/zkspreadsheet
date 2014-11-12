@@ -159,6 +159,13 @@ import org.zkoss.zss.model.impl.AbstractBookAdv;
 		((AbstractBookAdv) sheet.getBook()).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_SHEET_ORDER_CHANGE,sheet,
 				ModelEvents.createDataMap(ModelEvents.PARAM_OLD_INDEX,oldIdx)));
 	}
+	//ZSS-823
+	public void notifySheetVisibleChange(SSheet sheet) {
+		if(_logger.debugable()){
+			_logger.debug("Notify sheet visibile change: " + sheet.getSheetName() +" to " + sheet.getSheetVisible());
+		}
+		((AbstractBookAdv) sheet.getBook()).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_SHEET_VISIBLE_CHANGE,sheet));
+	}
 
 	public void notifyDataValidationChange(SSheet sheet, String validationId) {
 		if(_logger.debugable()){

@@ -77,6 +77,7 @@ public class SheetImpl extends AbstractSheetAdv {
 	private SAutoFilter _autoFilter;
 	
 	private SSheetProtection _sheetProtection;
+	private SheetVisible _visible;
 	
 	private final IndexPool<AbstractRowAdv> _rows = new IndexPool<AbstractRowAdv>(){
 		private static final long serialVersionUID = 1L;
@@ -1910,5 +1911,15 @@ public class SheetImpl extends AbstractSheetAdv {
 	@Override
 	public void setHashedPassword(short hashpass) {
 		_password = hashpass;
+	}
+
+	@Override
+	public SheetVisible getSheetVisible() {
+		return _visible;
+	}
+
+	@Override
+	public void setSheetVisible(SheetVisible state) {
+		_visible = state; 
 	}
 }

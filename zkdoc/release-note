@@ -4,6 +4,7 @@ ZK Spreadsheet 3.6.1
   ZSS-814 Provide a new APIs which can enforce evaluation and refresh the specified range.
   ZSS-777 Display currency symbol of different countries
   ZSS-663 Spreadsheet: jump to first/last sheet
+  ZSS-832 Support hide sheet
   
 *Bugs:
   ZSS-820 Formula should change sheet name if reordered sheet goes beyond its the formula's sheet boundary.

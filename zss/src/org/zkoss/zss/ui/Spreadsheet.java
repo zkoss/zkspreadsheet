@@ -2110,6 +2110,13 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 					onSheetDelete(event);
 				}
 			});
+			//ZSS-832
+			addEventListener(ModelEvents.ON_SHEET_VISIBLE_CHANGE, new ModelEventListener() {
+				@Override
+				public void onEvent(ModelEvent event){
+					onSheetVisibleChange(event);
+				}
+			});
 			addEventListener(ON_MODEL_FRIEND_FOCUS_MOVE, new ModelEventListener() {
 				@Override
 				public void onEvent(ModelEvent event){
@@ -2264,6 +2271,14 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			Spreadsheet.this.smartUpdate("sheetLabels", getSheetLabels());
 			Sheet sheet = getBook().getSheet(event.getSheet().getSheetName());
 			org.zkoss.zk.ui.event.Events.postEvent(new SheetEvent(Events.ON_AFTER_SHEET_NAME_CHANGE, Spreadsheet.this, sheet));
+		}
+		//ZSS-832
+		private void onSheetVisibleChange(ModelEvent event) {
+			//TODO: handle sheet visible change
+System.out.println("onSheetVisibleChange: " + event.getSheet().getSheetName() + ", " + event.getSheet().getSheetVisible());
+//			Spreadsheet.this.smartUpdate("sheetLabels", getSheetLabels());
+			Sheet sheet = getBook().getSheet(event.getSheet().getSheetName());
+			org.zkoss.zk.ui.event.Events.postEvent(new SheetEvent(Events.ON_AFTER_SHEET_VISIBLE_CHANGE, Spreadsheet.this, sheet));
 		}
 		
 		private void onSheetCreate(ModelEvent event) {

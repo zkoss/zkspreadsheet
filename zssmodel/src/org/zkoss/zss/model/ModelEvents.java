@@ -39,6 +39,7 @@ public class ModelEvents {
 	public static final String ON_SHEET_NAME_CHANGE = "onSheetNameChange";
 	public static final String ON_SHEET_ORDER_CHANGE = "onSheetOrderChange";
 	public static final String ON_SHEET_DELETE = "onSheetDelete";
+	public static final String ON_SHEET_VISIBLE_CHANGE = "onSheetVisibleChange"; //ZSS-832
 	
 	public static final String ON_PICTURE_ADD = "onPictureAdd";
 	public static final String ON_PICTURE_UPDATE = "onPictureUpdate";

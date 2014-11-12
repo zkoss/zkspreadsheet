@@ -351,4 +351,22 @@ public interface SSheet {
 	 * Gets enhanced protection.
 	 */
 	public SSheetProtection getSheetProtection();
+	
+	/**
+	 * Get the sheet current visible state.
+	 * @since 3.6.1
+	 */
+	public SheetVisible getSheetVisible();
+	
+	/**
+	 * Set the sheet current visible state.
+	 * @since 3.6.1
+	 */
+	public void setSheetVisible(SheetVisible state);
+	
+	public enum SheetVisible {
+		VISIBLE,	// This sheet is visible
+		HIDDEN,		// This sheet is hidden (but can be unhide via UI dialog)
+		VERY_HIDDEN,	// This sheet is hidden and only can be unhhide by API
+	}
 }

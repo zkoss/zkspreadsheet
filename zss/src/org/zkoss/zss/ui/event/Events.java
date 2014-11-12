@@ -167,6 +167,13 @@ public class Events {
 	 */
 	public static final String ON_AFTER_SHEET_NAME_CHANGE = "onAfterSheetNameChange";
 	/**
+	 * This event is sent after sheet's visible is changed by operating the book model.
+	 * @see SheetEvent
+	 * @since 3.6.1
+	 */
+	public static final String ON_AFTER_SHEET_VISIBLE_CHANGE = "onAfterSheetVisibleChange"; //ZSS-832
+	
+	/**
 	 * This event is sent after sheet's order is changed by operating the book model.
 	 * @see SheetEvent
 	 * @since 3.0.0

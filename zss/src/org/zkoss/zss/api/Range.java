@@ -27,7 +27,6 @@ import org.zkoss.zss.api.model.Chart;
 import org.zkoss.zss.api.model.Chart.Grouping;
 import org.zkoss.zss.api.model.Chart.LegendPosition;
 import org.zkoss.zss.api.model.Chart.Type;
-import org.zkoss.zss.api.model.ChartData;
 import org.zkoss.zss.api.model.Color;
 import org.zkoss.zss.api.model.EditableCellStyle;
 import org.zkoss.zss.api.model.EditableFont;
@@ -45,7 +44,6 @@ import org.zkoss.zss.api.model.Validation;
 import org.zkoss.zss.api.model.Validation.AlertStyle;
 import org.zkoss.zss.api.model.Validation.OperatorType;
 import org.zkoss.zss.api.model.Validation.ValidationType;
-import org.zkoss.zss.model.SDataValidation;
 import org.zkoss.zss.range.SRange;
 
 /**
@@ -156,6 +154,12 @@ public interface Range {
 		YEARS,
 		GROWTH_TREND,
 		LINER_TREND
+	}
+	
+	public enum SheetVisible {
+		VISIBLE,
+		HIDDEN,
+		VERY_HIDDEN,
 	}
 
 	/**
@@ -990,4 +994,17 @@ public interface Range {
 	 * @since 3.6.1
 	 */
 	public void refresh(boolean includeDependents, boolean enforceEval);
+	
+	/**
+	 * Setup sheet's visibility; can be VISIBLE, HIDDEN, or VERY_HIDDEN.
+	 * <ul>
+	 * 	<li>VISIBLE: the sheet is visible</li>
+	 *  <li>HIDDEN: the sheet is hidden but can be unhidden using UI</li>
+	 *  <li>VERY_HIDDEN: the sheet is hidden but can be unhidden only via this API.</li>
+	 * </ul>
+	 * @param visible
+	 * @see SheetVisible
+	 * @since 3.6.1
+	 */
+	public void setSheetVisible(SheetVisible visible);
 }

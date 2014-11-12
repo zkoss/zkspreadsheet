@@ -114,5 +114,15 @@ public interface Sheet {
 	 */
 	public int getLastColumn(int row);
 	
-
+	/**
+	 * Returns whether this sheet is hidden.
+	 * @since 3.6.1
+	 */
+	public boolean isHidden();
+	
+	/**
+	 * Returns whether this sheet is very hidden.
+	 * @since 3.6.1
+	 */
+	public boolean isVeryHidden();
 }

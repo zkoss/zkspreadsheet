@@ -128,6 +128,12 @@ public interface SRange {
 		VALUES
 	}
 	
+	public enum SheetVisible {
+		VISIBLE,
+		HIDDEN,
+		VERY_HIDDEN,
+	}
+	
 //	public NSheet getSheet();
 //	public int getRow();
 //	public int getColumn();
@@ -884,4 +890,17 @@ public interface SRange {
 	 * @since 3.6.1
 	 */
 	public void refresh(boolean includeDependents, boolean enforceEval);
+	
+	/**
+	 * Set Sheet visibility; can be SheetVisible.VISIBLE, SheetVisible.HIDDEN,
+	 * and SheetVisible.VERY_HIDDEN.
+	 * <ul>
+	 * 	<li>VISIBLE: the sheet is visible</li>
+	 *  <li>HIDDEN: the sheet is hidden but can be unhidden using UI</li>
+	 *  <li>VERY_HIDDEN: the sheet is hidden but can be unhidden only via this API.</li>
+	 * </ul>
+	 * @since 3.6.1
+	 * @see SheetVisible
+	 */
+	public void setSheetVisible(SheetVisible visible);
 }

@@ -115,7 +115,6 @@ public class SheetImpl implements Sheet{
 
 	
 	public List<Chart> getCharts(){
-		Book book = getBook();
 		List<Chart> charts = new ArrayList<Chart>();
 		
 		for(SChart chart:getNative().getCharts()){
@@ -276,5 +275,15 @@ public class SheetImpl implements Sheet{
 	@Override
 	public int getLastColumn(int row) {
 		 return getNative().getEndCellIndex(row);
+	}
+
+	@Override
+	public boolean isHidden() {
+		return getNative().getSheetVisible() == SSheet.SheetVisible.HIDDEN;
+	}
+
+	@Override
+	public boolean isVeryHidden() {
+		return getNative().getSheetVisible() == SSheet.SheetVisible.VERY_HIDDEN;
 	}
 }

@@ -828,4 +828,22 @@ public class RangeImpl implements Range{
 	public void refresh(boolean includeDependants, boolean enforceEval) {
 		_range.refresh(includeDependants, enforceEval);
 	}
+	
+	//ZSS-832
+	@Override
+	public void setSheetVisible(SheetVisible visible) {
+		SRange.SheetVisible option = null;
+		switch(visible) {
+		case HIDDEN:
+			option = SRange.SheetVisible.HIDDEN;
+			break;
+		case VISIBLE:
+			option = SRange.SheetVisible.VISIBLE;
+			break;
+		case VERY_HIDDEN:
+			option = SRange.SheetVisible.VERY_HIDDEN;
+			break;
+		}
+		_range.setSheetVisible(option);
+	}
 }
