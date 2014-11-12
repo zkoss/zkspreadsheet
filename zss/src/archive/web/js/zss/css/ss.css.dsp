@@ -1579,15 +1579,16 @@
 /* zss tab selection box begin*/
 .zstab-option {
 	display: block;
-	padding: 3px 4px 2px 20px;
+	padding: 3px 10px 2px 10px;
 	background-color: white;
 	border-width: 0px;
-	font-size: 16px;
+	font-size: 13px;
+	line-height: 14px;
 	width: 100%;
 	text-align: left;
 }
 
-.zstab-option:hover {
+.zstab-option:hover, .zstab-option-select {
 	background-color: #DDDDDD;
 }
 
@@ -1598,18 +1599,6 @@
 
 .zstab-popup .z-popup-content {
 	padding: 0px;
-}
-
-.zstab-option-select:before {
-	content: "\f054";
-	font-family: FontAwesome;
-	font-weight: small;
-	font-style: small;
-	font-size: 12px;
-	-webkit-font-smoothing: antialiased;
-	padding-right: 5px;
-	posotion: absolute;
-	margin-left: -13px;
 }
 /* zss tab selection box end*/
 
