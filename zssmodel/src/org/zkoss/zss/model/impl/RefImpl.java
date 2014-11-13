@@ -36,7 +36,7 @@ public class RefImpl implements Ref, Serializable {
 	final private int _column;
 	final private int _lastRow;
 	final private int _lastColumn;
-	private int _sheetIdx = -1;
+	private int _sheetIdx = -1; // tricky! used in IntervalTree only!
 
 	public RefImpl(String bookName, String sheetName, int row, int column,
 			int lastRow, int lastColumn) {
@@ -213,12 +213,14 @@ public class RefImpl implements Ref, Serializable {
 		sb.insert(0, bookName + ":");
 		return sb.toString();
 	}
-	
+
+	//Tricky! This is for IntervalTree only
 	@Override
 	public int getSheetIndex() {
 		return _sheetIdx;
 	}
 	
+	//Tricky! This is for IntervalTree only
 	@Override
 	public int getLastSheetIndex() {
 		return -1;

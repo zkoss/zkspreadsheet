@@ -252,13 +252,11 @@ public class CellImpl extends AbstractCellAdv {
 
 	@Override
 	public void clearFormulaResultCache() {
-		//ZSS-818
-		//20141030, henrichen: we now always clear the evaluation cache after 
-		//    evalFormula() so we don't have to clear it here
-//		if(_formulaResultValue!=null){			
-//			//only clear when there is a formula result, or poi will do full cache scan to clean blank.
-//			EngineFactory.getInstance().createFormulaEngine().clearCache(new FormulaClearContext(this));
-//		}
+		//ZSS-818: better performance
+		if(_formulaResultValue!=null){			
+			//only clear when there is a formula result, or poi will do full cache scan to clean blank.
+			EngineFactory.getInstance().createFormulaEngine().clearCache(new FormulaClearContext(this));
+		}
 		
 		_formulaResultValue = null;
 	}

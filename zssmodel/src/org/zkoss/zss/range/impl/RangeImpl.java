@@ -98,8 +98,7 @@ import org.zkoss.zss.range.impl.autofill.AutoFillHelper;
 public class RangeImpl implements SRange {
 
 	private SBook _book;
-	private final List<EffectedRegion> _rangeRefs = new ArrayList<EffectedRegion>(
-			1);
+	private final LinkedHashSet<SheetRegion> _rangeRefs = new LinkedHashSet<SheetRegion>(2);
 
 	private int _column = Integer.MAX_VALUE;
 	private int _row = Integer.MAX_VALUE;
@@ -138,7 +137,7 @@ public class RangeImpl implements SRange {
 			int rCol) {
 		Validations.argNotNull(sheet);
 		//TODO to support multiple sheet
-		_rangeRefs.add(new EffectedRegion(sheet, tRow, lCol, bRow, rCol));
+		_rangeRefs.add(new SheetRegion(sheet, tRow, lCol, bRow, rCol));
 
 		_column = Math.min(_column, lCol);
 		_row = Math.min(_row, tRow);
@@ -181,10 +180,10 @@ public class RangeImpl implements SRange {
 	
 	@Override
 	public SSheet getSheet() {
-		if(_rangeRefs.size()<=0){
+		if(_rangeRefs.isEmpty()){
 			throw new IllegalStateException("can't find any effected sheet or range");
 		}
-		return _rangeRefs.get(0).sheet;
+		return _rangeRefs.iterator().next().getSheet();
 	}
 	@Override
 	public int getRow() {
@@ -201,17 +200,6 @@ public class RangeImpl implements SRange {
 	@Override
 	public int getLastColumn() {
 		return _lastColumn;
-	}
-
-	private class EffectedRegion {
-		private final SSheet sheet;
-		private final CellRegion region;
-
-		public EffectedRegion(SSheet sheet, int row, int column, int lastRow,
-				int lastColumn) {
-			this.sheet = sheet;
-			region = new CellRegion(row, column,lastRow,lastColumn);
-		}
 	}
 
 	private abstract class CellVisitor {
@@ -231,10 +219,11 @@ public class RangeImpl implements SRange {
 			
 			SBookSeries bookSeries = getSheet().getBook().getBookSeries();
 			DependencyTable table = ((AbstractBookSeriesAdv)bookSeries).getDependencyTable();
-			for (EffectedRegion r : _rangeRefs) {
-				CellRegion region = r.region;
-				handleCellNotifyContentChange(new SheetRegion(r.sheet,r.region));
-				handleRefNotifyContentChange(bookSeries, table.getEvaluatedDependents(new RefImpl(r.sheet.getBook().getBookName(),r.sheet.getSheetName(),
+			for (SheetRegion r : _rangeRefs) {
+				SSheet sheet = r.getSheet();
+				CellRegion region = r.getRegion();
+				handleCellNotifyContentChange(new SheetRegion(sheet,region));
+				handleRefNotifyContentChange(bookSeries, table.getEvaluatedDependents(new RefImpl(sheet.getBook().getBookName(),sheet.getSheetName(),
 						region.getRow(),region.getColumn(),region.getLastRow(),region.getLastColumn())));
 				
 			}
@@ -250,12 +239,13 @@ public class RangeImpl implements SRange {
 		//don't use updateWrap's notify, update whole range at once, to prevent update separately
 		ModelUpdateWrapper updateWrap = new ModelUpdateWrapper(getBookSeries(),false);
 		try{
-			for (EffectedRegion r : _rangeRefs) {
-				CellRegion region = r.region;
+			for (SheetRegion r : _rangeRefs) {
+				SSheet sheet = r.getSheet();
+				CellRegion region = r.getRegion();
 				loop1:
 				for (int i = region.row; i <= region.lastRow; i++) {
 					for (int j = region.column; j <= region.lastColumn; j++) {
-						SCell cell = r.sheet.getCell(i, j);
+						SCell cell = sheet.getCell(i, j);
 						boolean conti = visitor.visit(cell);
 						if(!conti){
 							break loop1;
@@ -339,17 +329,18 @@ public class RangeImpl implements SRange {
 				SBookSeries bookSeries = getSheet().getBook().getBookSeries();
 				DependencyTable table = ((AbstractBookSeriesAdv)bookSeries).getDependencyTable();
 				//clear cells instance directly (not just clear it's data, but it instance directly)
-				for (EffectedRegion r : _rangeRefs) {
-					SBook book = r.sheet.getBook();
-					CellRegion region = r.region;
-					new ClearCellHelper(new RangeImpl(r.sheet,r.region)).clearCellContent();
+				for (SheetRegion r : _rangeRefs) {
+					SSheet sheet = r.getSheet();
+					SBook book = sheet.getBook();
+					CellRegion region = r.getRegion();
+					new ClearCellHelper(new RangeImpl(sheet,region)).clearCellContent();
 					
-					handleCellNotifyContentChange(new SheetRegion(r.sheet,r.region));
+					handleCellNotifyContentChange(new SheetRegion(sheet,region));
 					
 					boolean wholeSheet = region.row==0 && region.lastRow>=book.getMaxRowIndex() 
 							&& region.column==0 && region.lastColumn>=book.getMaxColumnIndex();
 					if(!wholeSheet){//no need to notify again if it is whole sheet already
-						handleRefNotifyContentChange(bookSeries, table.getEvaluatedDependents(new RefImpl(r.sheet.getBook().getBookName(),r.sheet.getSheetName(),
+						handleRefNotifyContentChange(bookSeries, table.getEvaluatedDependents(new RefImpl(sheet.getBook().getBookName(),sheet.getSheetName(),
 							region.row,region.column,region.lastRow,region.lastColumn)));
 					}
 				}
@@ -368,9 +359,11 @@ public class RangeImpl implements SRange {
 			}
 			@Override
 			protected Object doInvoke() {
-				for (EffectedRegion r : _rangeRefs) {
-					new ClearCellHelper(new RangeImpl(r.sheet,r.region)).clearCellStyle();
-					handleCellNotifyContentChange(new SheetRegion(r.sheet,r.region));
+				for (SheetRegion r : _rangeRefs) {
+					SSheet sheet = r.getSheet();
+					CellRegion region = r.getRegion();
+					new ClearCellHelper(new RangeImpl(sheet,region)).clearCellStyle();
+					handleCellNotifyContentChange(new SheetRegion(sheet,region));
 				}
 				return null;
 			}
@@ -390,15 +383,16 @@ public class RangeImpl implements SRange {
 				SBookSeries bookSeries = getSheet().getBook().getBookSeries();
 				DependencyTable table = ((AbstractBookSeriesAdv)bookSeries).getDependencyTable();
 				//clear cells instance directly (not just clear it's data, but it instance directly)
-				for (EffectedRegion r : _rangeRefs) {
-					CellRegion region = r.region;
-					r.sheet.clearCell(region);
+				for (SheetRegion r : _rangeRefs) {
+					SSheet sheet = r.getSheet();
+					CellRegion region = r.getRegion();
+					sheet.clearCell(region);
 					
 					//we still need to handle the row/column style case.
-					new ClearCellHelper(new RangeImpl(r.sheet,r.region)).clearCellStyle();
+					new ClearCellHelper(new RangeImpl(sheet,region)).clearCellStyle();
 					
-					handleCellNotifyContentChange(new SheetRegion(r.sheet,r.region));
-					handleRefNotifyContentChange(bookSeries, table.getEvaluatedDependents(new RefImpl(r.sheet.getBook().getBookName(),r.sheet.getSheetName(),
+					handleCellNotifyContentChange(new SheetRegion(sheet,region));
+					handleRefNotifyContentChange(bookSeries, table.getEvaluatedDependents(new RefImpl(sheet.getBook().getBookName(),sheet.getSheetName(),
 							region.getRow(),region.getColumn(),region.getLastRow(),region.getLastColumn())));
 				}
 				return null;
@@ -550,11 +544,12 @@ public class RangeImpl implements SRange {
 		DependencyTable table = ((AbstractBookSeriesAdv)bookSeries).getDependencyTable();
 		LinkedHashSet<Ref> notifySet = new LinkedHashSet<Ref>();
 		FormulaCacheCleaner cacheCleaner = new FormulaCacheCleaner(bookSeries);
-		for (EffectedRegion r : _rangeRefs) {
-			SBook book = r.sheet.getBook();
+		for (SheetRegion r : _rangeRefs) {
+			SSheet sheet = r.getSheet();
+			SBook book = sheet.getBook();
 			String bookName = book.getBookName();
-			String sheetName = r.sheet.getSheetName();
-			CellRegion region = r.region;
+			String sheetName = sheet.getSheetName();
+			CellRegion region = r.getRegion();
 			Ref pre = new RefImpl(bookName, sheetName, region.row, region.column,region.lastRow,region.lastColumn);
 			cacheCleaner.clearByPrecedent(pre);
 			notifySet.add(pre);
@@ -569,9 +564,9 @@ public class RangeImpl implements SRange {
 	
 	public void notifyChange(final String[] variables){
 		SBookSeries bookSeries = getBookSeries();
-		DependencyTable table = ((AbstractBookSeriesAdv)bookSeries).getDependencyTable();
-		LinkedHashSet<Ref> notifySet = new LinkedHashSet<Ref>();
-		FormulaCacheCleaner cacheCleaner = new FormulaCacheCleaner(bookSeries);
+//		DependencyTable table = ((AbstractBookSeriesAdv)bookSeries).getDependencyTable();
+//		LinkedHashSet<Ref> notifySet = new LinkedHashSet<Ref>();
+//		FormulaCacheCleaner cacheCleaner = new FormulaCacheCleaner(bookSeries);
 		new ReadWriteTask(){
 			@Override
 			public Object invoke() {
@@ -579,9 +574,10 @@ public class RangeImpl implements SRange {
 				DependencyTable table = ((AbstractBookSeriesAdv)bookSeries).getDependencyTable();
 				LinkedHashSet<Ref> notifySet = new LinkedHashSet<Ref>();
 				FormulaCacheCleaner cacheCleaner = new FormulaCacheCleaner(bookSeries);
-				for (EffectedRegion r : _rangeRefs) {
-					final String bookName = r.sheet.getBook().getBookName();
-					String sheetName = r.sheet.getSheetName();
+				for (SheetRegion r : _rangeRefs) {
+					SSheet sheet = r.getSheet();
+					final String bookName = sheet.getBook().getBookName();
+					String sheetName = sheet.getSheetName();
 					for(final String var:variables){
 						Set<Ref> precedents = table.searchPrecedents(new RefFilter() {
 							@Override
@@ -644,12 +640,13 @@ public class RangeImpl implements SRange {
 	private void setRowHeightInLock(Integer heightPx,Boolean hidden, Boolean custom){
 		LinkedHashSet<SheetRegion> notifySet = new LinkedHashSet<SheetRegion>();
 
-		for (EffectedRegion r : _rangeRefs) {
-			int maxcol = r.sheet.getBook().getMaxColumnIndex();
-			CellRegion region = r.region;
+		for (SheetRegion r : _rangeRefs) {
+			SSheet sheet = r.getSheet();
+			int maxcol = sheet.getBook().getMaxColumnIndex();
+			CellRegion region = r.getRegion();
 			
 			for (int i = region.row; i <= region.lastRow; i++) {
-				SRow row = r.sheet.getRow(i);
+				SRow row = sheet.getRow(i);
 				if(heightPx!=null){
 					row.setHeight(heightPx);
 				}
@@ -659,7 +656,7 @@ public class RangeImpl implements SRange {
 				if(custom!=null){
 					row.setCustomHeight(custom);
 				}
-				notifySet.add(new SheetRegion(r.sheet,i,0,i,maxcol));
+				notifySet.add(new SheetRegion(sheet,i,0,i,maxcol));
 			}
 		}
 
@@ -692,12 +689,13 @@ public class RangeImpl implements SRange {
 	private void setColumnWidthInLock(Integer widthPx,Boolean hidden, Boolean custom){
 		LinkedHashSet<SheetRegion> notifySet = new LinkedHashSet<SheetRegion>();
 
-		for (EffectedRegion r : _rangeRefs) {
-			int maxrow = r.sheet.getBook().getMaxRowIndex();
-			CellRegion region = r.region;
+		for (SheetRegion r : _rangeRefs) {
+			SSheet sheet = r.getSheet();
+			int maxrow = sheet.getBook().getMaxRowIndex();
+			CellRegion region = r.getRegion();
 			
 			for (int i = region.column; i <= region.lastColumn; i++) {
-				SColumn column = r.sheet.getColumn(i);
+				SColumn column = sheet.getColumn(i);
 				if(widthPx!=null){
 					column.setWidth(widthPx);
 				}
@@ -707,7 +705,7 @@ public class RangeImpl implements SRange {
 				if(custom!=null){
 					column.setCustomWidth(true);
 				}
-				notifySet.add(new SheetRegion(r.sheet,0,i,maxrow,i));
+				notifySet.add(new SheetRegion(sheet,0,i,maxrow,i));
 			}
 		}
 		new NotifyChangeHelper().notifyRowColumnSizeChange(notifySet);
@@ -895,8 +893,8 @@ public class RangeImpl implements SRange {
 		new ReadWriteTask(){
 			@Override
 			public Object invoke() {
-				for (EffectedRegion r : _rangeRefs) {
-					new SetCellStyleHelper(new RangeImpl(r.sheet,r.region)).setCellStyle(style);	
+				for (SheetRegion r : _rangeRefs) {
+					new SetCellStyleHelper(new RangeImpl(r.getSheet(),r.getRegion())).setCellStyle(style);	
 				}
 				notifyChangeInLock(false);
 				return null;
@@ -1008,27 +1006,28 @@ public class RangeImpl implements SRange {
 
 	protected void setHiddenInLock(boolean hidden) {
 		LinkedHashSet<SheetRegion> notifySet = new LinkedHashSet<SheetRegion>();
-		for (EffectedRegion r : _rangeRefs) {
-			SBook book = r.sheet.getBook();
-			int maxcol = r.sheet.getBook().getMaxColumnIndex();
-			int maxrow = r.sheet.getBook().getMaxRowIndex();
-			CellRegion region = r.region;
+		for (SheetRegion r : _rangeRefs) {
+			SSheet sheet = r.getSheet();
+			SBook book = sheet.getBook();
+			int maxcol = book.getMaxColumnIndex();
+			int maxrow = book.getMaxRowIndex();
+			CellRegion region = r.getRegion();
 			
 			if(isWholeRow(book,region)){//hidden the row when it is whole row
 				for(int i = region.getRow(); i<=region.getLastRow();i++){
-					SRow row = r.sheet.getRow(i);
+					SRow row = sheet.getRow(i);
 					if(row.isHidden()==hidden)
 						continue;
 					row.setHidden(hidden);
-					notifySet.add(new SheetRegion(r.sheet,i,0,i,maxcol));
+					notifySet.add(new SheetRegion(sheet,i,0,i,maxcol));
 				}
 			}else if(isWholeColumn(book,region)){
 				for(int i = region.getColumn(); i<=region.getLastColumn();i++){
-					SColumn col = r.sheet.getColumn(i);
+					SColumn col = sheet.getColumn(i);
 					if(col.isHidden()==hidden)
 						continue;
 					col.setHidden(hidden);
-					notifySet.add(new SheetRegion(r.sheet,0,i,maxrow,i));
+					notifySet.add(new SheetRegion(sheet,0,i,maxrow,i));
 				}
 			}
 		}
@@ -1040,8 +1039,8 @@ public class RangeImpl implements SRange {
 		new ReadWriteTask() {			
 			@Override
 			public Object invoke() {
-				for (EffectedRegion r : _rangeRefs) {
-					SSheet sheet = r.sheet;
+				for (SheetRegion r : _rangeRefs) {
+					SSheet sheet = r.getSheet();
 					if(sheet.getViewInfo().isDisplayGridlines()!=show){
 						sheet.getViewInfo().setDisplayGridlines(show);
 						new NotifyChangeHelper().notifyDisplayGridlines(sheet,show);
@@ -1112,13 +1111,14 @@ public class RangeImpl implements SRange {
 			final int maxRow = book.getMaxRowIndex();
 			final LinkedHashSet<SheetRegion> nrefs = new LinkedHashSet<SheetRegion>(_rangeRefs.size()); 
 
-			for(EffectedRegion ref : _rangeRefs) {
-				final int left = ref.region.getColumn() + colOffset;
-				final int top = ref.region.getRow() + rowOffset;
-				final int right = ref.region.getLastColumn() + colOffset;
-				final int bottom = ref.region.getLastRow() + rowOffset;
+			for(SheetRegion ref : _rangeRefs) {
+				CellRegion region = ref.getRegion();
+				final int left = region.getColumn() + colOffset;
+				final int top = region.getRow() + rowOffset;
+				final int right = region.getLastColumn() + colOffset;
+				final int bottom = region.getLastRow() + rowOffset;
 				
-				final SSheet refSheet = ref.sheet;
+				final SSheet refSheet = ref.getSheet();
 				final int nleft = colOffset < 0 ? Math.max(0, left) : left;  
 				final int ntop = rowOffset < 0 ? Math.max(0, top) : top;
 				final int nright = colOffset > 0 ? Math.min(maxCol, right) : right;
@@ -1147,13 +1147,13 @@ public class RangeImpl implements SRange {
 		return (Boolean)new ReadWriteTask(){
 			@Override
 			public Object invoke() {
-				for (EffectedRegion r : _rangeRefs) {
-					SSheet sheet = r.sheet;
+				for (SheetRegion r : _rangeRefs) {
+					SSheet sheet = r.getSheet();
+					CellRegion region = r.getRegion();
 					if(sheet.isProtected()){
-						CellRegion region = r.region;
 						for (int i = region.row; i <= region.lastRow; i++) {
 							for (int j = region.column; j <= region.lastColumn; j++) {
-								SCellStyle style = r.sheet.getCell(i, j).getCellStyle();
+								SCellStyle style = sheet.getCell(i, j).getCellStyle();
 								if(style.isLocked()){
 									return true;
 								}
@@ -1510,9 +1510,9 @@ public class RangeImpl implements SRange {
 			@Override
 			public Object invoke() {
 				NotifyChangeHelper notifyHelper =  new NotifyChangeHelper();
-				for (EffectedRegion r : _rangeRefs) {
-					SBook book = r.sheet.getBook();
-					notifyHelper.notifyCustomEvent(customEventName,r.sheet,data);
+				for (SheetRegion r : _rangeRefs) {
+					SSheet sheet = r.getSheet();
+					notifyHelper.notifyCustomEvent(customEventName,sheet,data);
 				}
 				return null;
 			}
@@ -1811,14 +1811,14 @@ public class RangeImpl implements SRange {
 			@Override
 			public Object invoke() {
 				//20140423, henrichen: we check only first Sheet
-				EffectedRegion r = _rangeRefs.isEmpty() ? null : _rangeRefs.get(0);
+				SheetRegion r = _rangeRefs.isEmpty() ? null : _rangeRefs.iterator().next();
 				if (r != null) {
-					SSheet sheet = r.sheet;
+					SSheet sheet = r.getSheet();
 					if(sheet.isProtected()){
-						CellRegion region = r.region;
+						CellRegion region = r.getRegion();
 						for (int i = region.row; i <= region.lastRow; i++) {
 							for (int j = region.column; j <= region.lastColumn; j++) {
-								SCellStyle style = r.sheet.getCell(i, j).getCellStyle();
+								SCellStyle style = sheet.getCell(i, j).getCellStyle();
 								//as long as one is protected and locked, return true
 								if(style.isLocked()) { 
 									return true;
@@ -2082,17 +2082,16 @@ public class RangeImpl implements SRange {
 			protected Object doInvoke() {
 				SSheet sheet = null;
 				SBook book = null;
-				SBookSeries bookSeries = null;
+				SBookSeries bookSeries = getSheet().getBook().getBookSeries();
 				DependencyTable table = null;
 				LinkedHashSet<Ref> refs = new LinkedHashSet<Ref>();
 				if (includeDependants) {
-					bookSeries = getSheet().getBook().getBookSeries();
 					table = ((AbstractBookSeriesAdv)bookSeries).getDependencyTable();
 				}
-				for (EffectedRegion r : _rangeRefs) {
-					sheet = r.sheet;
+				for (SheetRegion r : _rangeRefs) {
+					sheet = r.getSheet();
 					book = sheet.getBook();
-					final CellRegion region = r.region;
+					final CellRegion region = r.getRegion();
 					final Ref ref = new RefImpl(book.getBookName(), sheet.getSheetName(), region.getRow(), region.getColumn(), region.getLastRow(), region.getLastColumn());  
 					refs.add(ref);
 					if (includeDependants) {
@@ -2101,6 +2100,15 @@ public class RangeImpl implements SRange {
 				}
 				if (enforceEval) {
 					FormulaCacheCleaner.getCurrent().clear(refs);
+				}
+				// evaluate
+				for (Ref ref : refs) {
+					if (ref.getType() == RefType.CELL) {
+						SBook bk = bookSeries.getBook(ref.getBookName());
+						SSheet sh = bk.getSheetByName(ref.getSheetName());
+						SCell cell = sh.getCell(ref.getRow(), ref.getColumn());
+						cell.getValue();
+					}
 				}
 				handleRefNotifyContentChange(bookSeries, refs);
 				return null;
@@ -2126,8 +2134,8 @@ public class RangeImpl implements SRange {
 				//Process only 1st ref
 				SSheet sheet = null;
 				if (!_rangeRefs.isEmpty()) {
-					EffectedRegion r = _rangeRefs.get(0); 
-					sheet = r.sheet;
+					SheetRegion r = _rangeRefs.iterator().next(); 
+					sheet = r.getSheet();
 					SSheet.SheetVisible option = null;
 					switch(visible) {
 					case HIDDEN:

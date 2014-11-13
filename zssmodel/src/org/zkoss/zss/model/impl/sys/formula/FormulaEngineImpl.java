@@ -338,8 +338,8 @@ public class FormulaEngineImpl implements FormulaEngine {
 			try {
 				result = evaluateFormula(expr, context, evalBook, evaluator);
 			} finally {
-				//ZSS-818: drop internal cache used in evaluation
-				evaluator.clearAllCachedResultValues(); 
+				//ZSS-818: do not drop the internal cache: better performance
+				//evaluator.clearAllCachedResultValues();
 				setXelContext(oldXelCtx);
 			}
 			if(dependant!=null){
