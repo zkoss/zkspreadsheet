@@ -37,6 +37,7 @@ import org.zkoss.zss.model.impl.sys.formula.FormulaEngineImpl;
 import org.zkoss.zss.model.sys.EngineFactory;
 import org.zkoss.zss.model.sys.dependency.DependencyTable;
 import org.zkoss.zss.model.sys.dependency.Ref;
+import org.zkoss.zss.model.sys.formula.EvaluationResult;
 import org.zkoss.zss.model.sys.formula.FormulaClearContext;
 import org.zkoss.zss.model.sys.formula.FormulaEngine;
 import org.zkoss.zss.model.sys.formula.FormulaEvaluationContext;
@@ -172,11 +173,18 @@ public class CellImpl extends AbstractCellAdv {
 				if(val!=null &&  val.getType() == CellType.FORMULA){
 					FormulaEngine fe = EngineFactory.getInstance().createFormulaEngine();
 					// ZSS-818
-					// 20141030, henrichen: callback inside FormulaEngine 
+					// 20141030, henrichen: callback inside FormulaEngine.evaluate() 
 					//    will update _formulaResultValue automatically
-					fe.evaluate((FormulaExpression) val.getValue(),
+					EvaluationResult result = 
+						fe.evaluate((FormulaExpression) val.getValue(),
 							new FormulaEvaluationContext(this,getRef()));
-//					_formulaResultValue = new FormulaResultCellValue();
+					// ZSS-818
+					// 20141113, henrichen: some special case will not go
+					//     thru FormulaEngine.evaluate() method, need to
+					//     cache directly here. This is quite patchy but...
+					if (_formulaResultValue == null) {
+						_formulaResultValue = new FormulaResultCellValue(result);
+					}
 				}
 			}
 		}

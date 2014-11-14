@@ -77,7 +77,7 @@ public class SheetImpl extends AbstractSheetAdv {
 	private SAutoFilter _autoFilter;
 	
 	private SSheetProtection _sheetProtection;
-	private SheetVisible _visible;
+	private SheetVisible _visible = SheetVisible.VISIBLE; //default value
 	
 	private final IndexPool<AbstractRowAdv> _rows = new IndexPool<AbstractRowAdv>(){
 		private static final long serialVersionUID = 1L;

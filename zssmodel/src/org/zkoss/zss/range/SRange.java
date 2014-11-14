@@ -867,8 +867,8 @@ public interface SRange {
 			SFont.TypeOffset typeOffset, SFont.Underline underline);
 
 	/**
-	 * Enforce evaluation(if not cached) and refresh UI of this range and its 
-	 * dependent cells if the includeDependents is true. 
+	 * Evaluate(if not cached), update data model, and refresh UI of this range 
+	 * and its dependent cells if the includeDependents is true. 
 	 * @since 3.6.0
 	 */
 	public void refresh(boolean includeDependants);
@@ -884,9 +884,14 @@ public interface SRange {
 	public boolean setAutoRefresh(boolean auto);
 	
 	/**
-	 * Refresh UI of this range and its dependent cells if the argument
-	 * includeDependents is true; enforce evaluation if the argument 
-	 * enforceEval is true(no matter the value is cached or not). 
+	 * Update data model and refresh UI of this range and its dependent cells 
+	 * if the argument includeDependents is true; enforce evaluation if the 
+	 * argument enforceEval is true.
+	 * 
+	 * Note that when you set argument enforceEval to true, cell cache will 
+	 * be cleared first and then evaluate again no matter it was cached or not 
+	 * so it might take longer time.
+	 *  
 	 * @since 3.6.1
 	 */
 	public void refresh(boolean includeDependents, boolean enforceEval);
