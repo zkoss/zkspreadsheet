@@ -137,5 +137,7 @@ msgzss.action = {
 	moreFunction: 'More Functions',
 	protectSheet: 'Protect Sheet',
 	gridlines: 'Gridlines',
-	richTextEdit: 'Rich Text Edit'
+	richTextEdit: 'Rich Text Edit',
+	hideSheet: 'Hide',
+	unhideSheet: 'Unhide...'
 };

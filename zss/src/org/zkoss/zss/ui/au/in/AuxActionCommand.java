@@ -79,6 +79,10 @@ public class AuxActionCommand extends AbstractCommand implements Command {
 				action = AuxAction.COPY_SHEET.getAction();
 			} else if ("protect".equals(action)) {
 				action = AuxAction.PROTECT_SHEET.getAction();
+			} else if ("hide".equals(action)) {
+				action = AuxAction.HIDE_SHEET.getAction();
+			} else if ("unhide".equals(action)) {
+				action = AuxAction.UNHIDE_SHEET.getAction();
 			} else if ("moveLeft".equals(action)) {
 				action = AuxAction.MOVE_SHEET_LEFT.getAction();
 			} else if ("moveRight".equals(action)) {

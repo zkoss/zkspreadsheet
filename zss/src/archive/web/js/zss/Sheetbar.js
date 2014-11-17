@@ -40,6 +40,14 @@ zss.SheetMenupopup = zk.$extends(zul.menu.Menupopup, {
 				label: msgzss.action.protectSheet, 
 				checkmark: true
 			}, wgt),
+			hide = this.hide = new zss.Menuitem({
+				$action: 'hideSheet',
+				label: msgzss.action.hideSheet
+			}, wgt),
+			unhide = this.unhide = new zss.Menuitem({
+				$action: 'unhideSheet',
+				label: msgzss.action.unhideSheet
+			}, wgt);
 			moveLeft = this.moveLeft = new zss.Menuitem({
 				$action: 'moveSheetLeft',
 				label: msgzss.action.moveSheetLeft
@@ -55,6 +63,8 @@ zss.SheetMenupopup = zk.$extends(zul.menu.Menupopup, {
 		this.appendChild(protect);
 		
 		this.appendChild(new zul.menu.Menuseparator());
+		this.appendChild(hide);
+		this.appendChild(unhide);
 		this.appendChild(moveLeft);
 		this.appendChild(moveRight);
 	},
@@ -81,6 +91,12 @@ zss.SheetMenupopup = zk.$extends(zul.menu.Menupopup, {
 	onClickProtectSheet: function () {
 		this._wgt.fireSheetAction('protect');
 	},
+	onClickHideSheet: function () {
+		this._wgt.fireSheetAction('hide');
+	},
+	onClickUnhideSheet: function () {
+		this._wgt.fireSheetAction('unhide');
+	},
 	onClickMoveSheetLeft: function () {
 		this._wgt.fireSheetAction('moveLeft');
 	},
@@ -98,6 +114,8 @@ zss.SheetMenupopup = zk.$extends(zul.menu.Menupopup, {
 		// so, it will invoke unbind_() first then bind_()
 		this.moveRight.listen({'onClick': this.proxy(this.onClickMoveSheetRight)});
 		this.moveLeft.listen({'onClick': this.proxy(this.onClickMoveSheetLeft)});
+		this.unhide.listen({'onClick': this.proxy(this.onClickUnhideSheet)});
+		this.hide.listen({'onClick': this.proxy(this.onClickHideSheet)});
 		this.protectSheet.listen({'onClick': this.proxy(this.onClickProtectSheet)});
 		this.copySheet.listen({'onClick': this.proxy(this.onClickCopySheet)});
 		this.renameSheet.listen({'onClick': this.proxy(this.onClickRenameSheet)});
@@ -108,6 +126,8 @@ zss.SheetMenupopup = zk.$extends(zul.menu.Menupopup, {
 		this.renameSheet.unlisten({'onClick': this.proxy(this.onClickRenameSheet)});
 		this.copySheet.unlisten({'onClick': this.proxy(this.onClickCopySheet)});
 		this.protectSheet.unlisten({'onClick': this.proxy(this.onClickProtectSheet)});
+		this.hide.unlisten({'onClick': this.proxy(this.onClickHideSheet)});
+		this.unhide.unlisten({'onClick': this.proxy(this.onClickUnhideSheet)});
 		this.moveLeft.unlisten({'onClick': this.proxy(this.onClickMoveSheetLeft)});
 		this.moveRight.unlisten({'onClick': this.proxy(this.onClickMoveSheetRight)});
 		
