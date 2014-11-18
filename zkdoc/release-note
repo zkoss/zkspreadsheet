@@ -15,6 +15,7 @@ ZK Spreadsheet 3.6.1
   ZSS-829 export pdf cause exception: the region is illegal A47:H48[47,0,46,7]
   ZSS-821 missing chart title after importing a chart
   ZSS-822 The scale of y axis is different after importing a chart
+  ZSS-806 Should NOT show Hidden sheet.
   
 ** Upgrade Notes
 
