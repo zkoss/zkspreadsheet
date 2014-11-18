@@ -1,0 +1,13 @@
+<zk>
+Since 3.6.1
+<label multiline="true">
+1. make sure unhide is disabled in sheet popup.
+2. hide all sheets except sheet1, make sure hide in sheet popup is disabled.
+3. add a new sheet and make sure hide became enabled.
+4. open sheet popup on sheet1, choose unhide and select all sheets to show. make sure sheet3 is selected.
+</label>
+	<button label="hide" onClick="Ranges.range(ss.getSelectedSheet()).setSheetVisible(org.zkoss.zss.api.Range.SheetVisible.HIDDEN)" />
+	<spreadsheet id="ss" vflex="1" hflex="1" src="/issue3/book/blank.xlsx"
+		showToolbar="true" showSheetbar="true" showFormulabar="true" showContextMenu="true"
+		maxVisibleRows="100" maxVisibleColumns="100"/>
+</zk>

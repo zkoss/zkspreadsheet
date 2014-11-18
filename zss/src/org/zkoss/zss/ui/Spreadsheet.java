@@ -117,6 +117,7 @@ import org.zkoss.zss.model.SFont;
 import org.zkoss.zss.model.SPicture;
 import org.zkoss.zss.model.SRow;
 import org.zkoss.zss.model.SSheet;
+import org.zkoss.zss.model.SSheet.SheetVisible;
 import org.zkoss.zss.model.sys.formula.EvaluationContributorContainer;
 import org.zkoss.zss.range.SImporter;
 import org.zkoss.zss.range.SImporters;
@@ -1551,12 +1552,15 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			LinkedHashMap<String, String> sheetLabels = new LinkedHashMap<String, String>();
 			
 			SSheet sheet = _book.getSheet(i);
-			sheetLabels.put("id", sheet.getId());
-			sheetLabels.put("name", sheet.getSheetName());
-			if (sheet == _selectedSheet)
-				sheetLabels.put("sel", "t");//stand for true, use for set selected tab only 
-				
-			ary.add(sheetLabels);
+			
+			if(sheet.getSheetVisible() == SheetVisible.VISIBLE) {
+				sheetLabels.put("id", sheet.getId());
+				sheetLabels.put("name", sheet.getSheetName()); 
+				if (sheet == _selectedSheet)
+					sheetLabels.put("sel", "t");//stand for true, use for set selected tab only 
+					
+				ary.add(sheetLabels);
+			}
 		}
 		return ary.size() == 0 ? null : ary;
 	}
@@ -2274,9 +2278,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		}
 		//ZSS-832
 		private void onSheetVisibleChange(ModelEvent event) {
-			//TODO: handle sheet visible change
-System.out.println("onSheetVisibleChange: " + event.getSheet().getSheetName() + ", " + event.getSheet().getSheetVisible());
-//			Spreadsheet.this.smartUpdate("sheetLabels", getSheetLabels());
+			Spreadsheet.this.smartUpdate("sheetLabels", getSheetLabels());
 			Sheet sheet = getBook().getSheet(event.getSheet().getSheetName());
 			org.zkoss.zk.ui.event.Events.postEvent(new SheetEvent(Events.ON_AFTER_SHEET_VISIBLE_CHANGE, Spreadsheet.this, sheet));
 		}
@@ -2284,6 +2286,7 @@ System.out.println("onSheetVisibleChange: " + event.getSheet().getSheetName() + 
 		private void onSheetCreate(ModelEvent event) {
 			Spreadsheet.this.smartUpdate("sheetLabels", getSheetLabels());
 			Sheet sheet = getBook().getSheet(event.getSheet().getSheetName());
+			refreshToolbarDisabled();
 			org.zkoss.zk.ui.event.Events.postEvent(new SheetEvent(Events.ON_AFTER_SHEET_CREATE, Spreadsheet.this, sheet));
 		}
 		
