@@ -16,6 +16,7 @@ ZK Spreadsheet 3.6.1
   ZSS-821 missing chart title after importing a chart
   ZSS-822 The scale of y axis is different after importing a chart
   ZSS-806 Should NOT show Hidden sheet.
+  ZSS-843 close book causes NPE
   
 ** Upgrade Notes
 

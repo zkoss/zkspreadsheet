@@ -1,0 +1,10 @@
+<zk>
+Since 3.6.1
+<label multiline="true">
+close book shouldn't cause null point exception.
+</label>
+	<button label="close book" onClick="ss.setSrc(null);ss.setBook(null)" />
+	<spreadsheet id="ss" vflex="1" hflex="1" src="/issue3/book/blank.xlsx"
+		showToolbar="true" showSheetbar="true" showFormulabar="true" showContextMenu="true"
+		maxVisibleRows="100" maxVisibleColumns="100"/>
+</zk>
