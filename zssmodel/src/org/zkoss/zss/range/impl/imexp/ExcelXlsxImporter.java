@@ -225,16 +225,18 @@ public class ExcelXlsxImporter extends AbstractExcelImporter{
 	//ZSS-822
 	private void importAxis(XSSFChart xssfChart, SChart chart) {
 		@SuppressWarnings("unchecked")
-		List<ChartAxis> axises = (List<ChartAxis>) xssfChart.getAxis();
+		List axises = (List) xssfChart.getAxis();
 		if (axises != null) {
-			for (ChartAxis axis : axises) {
-				if (axis instanceof ValueAxis) {
+			for (Object axis0 : axises) {
+				if (axis0 instanceof ValueAxis) {
+					ValueAxis axis = (ValueAxis) axis0;
 					String format = ((ValueAxis) axis).getNumberFormat();
 					double min = axis.getMinimum();
 					double max = axis.getMaximum();
 					SChartAxis saxis = new ChartAxisImpl(axis.getId(), SChartAxis.SChartAxisType.VALUE, min, max, format);
 					chart.addValueAxis(saxis);
-				} else if (axis instanceof CategoryAxis) {
+				} else if (axis0 instanceof CategoryAxis) {
+					CategoryAxis axis = (CategoryAxis) axis0;
 					String format = null;
 					double min = axis.getMinimum();
 					double max = axis.getMaximum();
