@@ -18,6 +18,7 @@ ZK Spreadsheet 3.6.1
   ZSS-806 Should NOT show Hidden sheet.
   ZSS-843 close book causes NPE
   ZSS-835 if validation type is "any", its Input message will be lost when exporting
+  ZSS-831 incorrect clipping at page junction when export to pdf
   
 ** Upgrade Notes
 
