@@ -459,28 +459,31 @@ public class ExcelXlsxExporter extends AbstractExcelExporter {
 					constraint = poiSheet.getDataValidationHelper().createDecimalConstraint(operatorType, formula1, formula2);
 					break;
 				case ANY:
-					// ANY validation type means no validation
+					constraint = poiSheet.getDataValidationHelper().createAnyConstraint(); //ZSS-835
+					break;
 				default:
 					continue;
 			}
-			final CellRangeAddressList rgnList = new CellRangeAddressList();
-			for (CellRegion rgn : validation.getRegions()) { // must prepare rgnList then create poiValidation
-				rgnList.addCellRangeAddress(rgn.getRow(), rgn.getColumn(), rgn.getLastRow(), rgn.getLastColumn());
+			if (!validation.getRegions().isEmpty()) { // ZSS-835
+				final CellRangeAddressList rgnList = new CellRangeAddressList();
+				for (CellRegion rgn : validation.getRegions()) { // must prepare rgnList then create poiValidation
+					rgnList.addCellRangeAddress(rgn.getRow(), rgn.getColumn(), rgn.getLastRow(), rgn.getLastColumn());
+				}
+				DataValidation poiValidation = 
+					poiSheet.getDataValidationHelper().createValidation(constraint, rgnList);
+				
+				poiValidation.setEmptyCellAllowed(validation.isIgnoreBlank());
+				poiValidation.setSuppressDropDownArrow(validation.isInCellDropdown());
+				
+				poiValidation.setErrorStyle(PoiEnumConversion.toPoiErrorStyle(validation.getAlertStyle()));
+				poiValidation.createErrorBox(validation.getErrorTitle(), validation.getErrorMessage());
+				poiValidation.setShowErrorBox(validation.isShowError());
+				
+				poiValidation.createPromptBox(validation.getInputTitle(), validation.getInputMessage());
+				poiValidation.setShowPromptBox(validation.isShowInput());
+				
+				poiSheet.addValidationData(poiValidation);
 			}
-			DataValidation poiValidation = 
-				poiSheet.getDataValidationHelper().createValidation(constraint, rgnList);
-			
-			poiValidation.setEmptyCellAllowed(validation.isIgnoreBlank());
-			poiValidation.setSuppressDropDownArrow(validation.isInCellDropdown());
-			
-			poiValidation.setErrorStyle(PoiEnumConversion.toPoiErrorStyle(validation.getAlertStyle()));
-			poiValidation.createErrorBox(validation.getErrorTitle(), validation.getErrorMessage());
-			poiValidation.setShowErrorBox(validation.isShowError());
-			
-			poiValidation.createPromptBox(validation.getInputTitle(), validation.getInputMessage());
-			poiValidation.setShowPromptBox(validation.isShowInput());
-			
-			poiSheet.addValidationData(poiValidation);
 		}
 	}
 	
