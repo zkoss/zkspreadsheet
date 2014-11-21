@@ -5,6 +5,7 @@ ZK Spreadsheet 3.6.1
   ZSS-777 Display currency symbol of different countries
   ZSS-663 Spreadsheet: jump to first/last sheet
   ZSS-832 Support hide sheet
+  ZSS-845 Support auto update for Cells refer other cells via INDIRECT() function
   
 *Bugs:
   ZSS-820 Formula should change sheet name if reordered sheet goes beyond its the formula's sheet boundary.

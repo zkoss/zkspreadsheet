@@ -51,6 +51,8 @@ import org.zkoss.poi.ss.formula.eval.RefEval;
 import org.zkoss.poi.ss.formula.eval.StringEval;
 import org.zkoss.poi.ss.formula.eval.ValueEval;
 import org.zkoss.poi.ss.formula.eval.ValuesEval;
+import org.zkoss.poi.ss.formula.function.FunctionMetadataRegistry;
+import org.zkoss.poi.ss.formula.ptg.AbstractFunctionPtg;
 import org.zkoss.poi.ss.formula.ptg.Area3DPtg;
 import org.zkoss.poi.ss.formula.ptg.AreaErrPtg;
 import org.zkoss.poi.ss.formula.ptg.AreaPtg;
@@ -82,6 +84,7 @@ import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.model.SheetRegion;
 import org.zkoss.zss.model.impl.AbstractBookSeriesAdv;
 import org.zkoss.zss.model.impl.AbstractCellAdv;
+import org.zkoss.zss.model.impl.IndirectRefImpl;
 import org.zkoss.zss.model.impl.NameRefImpl;
 import org.zkoss.zss.model.impl.NonSerializableHolder;
 import org.zkoss.zss.model.impl.RefImpl;
@@ -185,7 +188,7 @@ public class FormulaEngineImpl implements FormulaEngine {
 	private FormulaExpression[] parse0(String[] formulas, FormulaParseContext context, boolean multipleArea) {
 		LinkedList<FormulaExpression> result = new LinkedList<FormulaExpression>();
 		Ref dependant = context.getDependent();
-		LinkedList<Ref> precednets = dependant!=null?new LinkedList<Ref>():null;
+		LinkedList<Ref> precedents = dependant!=null?new LinkedList<Ref>():null;
 		try {
 			// adapt and parse
 			SBook book = context.getBook();
@@ -201,17 +204,18 @@ public class FormulaEngineImpl implements FormulaEngine {
 				try{
 					Ptg[] tokens = parse(formula, parsingBook, sheetIndex, context); // current sheet index in parsing is always 0
 					if(dependant!=null){
-						for(Ptg ptg : tokens) {
-							Ref precedent = toDenpendRef(context, parsingBook, ptg);
+						for (int j = 0, len = tokens.length; j < len; ++j) {
+							Ptg ptg = tokens[j];
+							Ref precedent = toDenpendRef(context, parsingBook, ptg, j);
 							if(precedent != null) {
-								precednets.add(precedent);
+								precedents.add(precedent);
 							}
 						}
 					}
 					
 					// render formula, detect region and create result
 					String renderedFormula = renderFormula(parsingBook, formula, tokens, true);
-					Ref singleRef = tokens.length == 1 ? toDenpendRef(context, parsingBook, tokens[0]) : null;
+					Ref singleRef = tokens.length == 1 ? toDenpendRef(context, parsingBook, tokens[0], 0) : null;
 					Ref[] refs = singleRef==null ? null :
 						(singleRef.getType() == RefType.AREA || singleRef.getType() == RefType.CELL ?new Ref[]{singleRef}:null);
 					result.add(new FormulaExpressionImpl(renderedFormula, tokens, refs, false, null, multipleArea));
@@ -230,7 +234,7 @@ public class FormulaEngineImpl implements FormulaEngine {
 			
 			// dependency tracking if no error and necessary
 			if(!error && dependant != null) {
-				for(Ref precedent:precednets){
+				for(Ref precedent:precedents){
 					table.add(dependant, precedent);
 				}
 			}
@@ -256,7 +260,7 @@ public class FormulaEngineImpl implements FormulaEngine {
 			FormulaRenderer.toFormulaEditText(parsingBook, tokens, formula);
 	}
 
-	protected Ref toDenpendRef(FormulaParseContext ctx, ParsingBook parsingBook, Ptg ptg) {
+	protected Ref toDenpendRef(FormulaParseContext ctx, ParsingBook parsingBook, Ptg ptg, int ptgIndex) {
 		try {
 			SSheet sheet = ctx.getSheet();
 
@@ -298,6 +302,11 @@ public class FormulaEngineImpl implements FormulaEngine {
 				String bookName = sheet.getBook().getBookName();
 				return new RefImpl(bookName, sheetName, aptg.getFirstRow(), aptg.getFirstColumn(),
 						aptg.getLastRow(), aptg.getLastColumn());
+			} else if(ptg instanceof AbstractFunctionPtg //ZSS-845
+				&& ((AbstractFunctionPtg)ptg).getFunctionIndex() == FunctionMetadataRegistry.FUNCTION_INDEX_INDIRECT) {
+				String sheetName = sheet.getSheetName();
+				String bookName = sheet.getBook().getBookName();
+				return new IndirectRefImpl(bookName, sheetName, ptgIndex);
 			}
 		} catch(Exception e) {
 			_logger.error(e.getMessage(), e);
@@ -833,7 +842,7 @@ public class FormulaEngineImpl implements FormulaEngine {
 			// render formula, detect region and create result
 			String renderedFormula = modified ? 
 					renderFormula(parsingBook, formula, tokens, true) : formula;
-			Ref singleRef = tokens.length == 1 ? toDenpendRef(context, parsingBook, tokens[0]) : null;
+			Ref singleRef = tokens.length == 1 ? toDenpendRef(context, parsingBook, tokens[0], 0) : null;
 			Ref[] refs = singleRef==null ? null :
 				(singleRef.getType() == RefType.AREA || singleRef.getType() == RefType.CELL ?new Ref[]{singleRef}:null);
 			expr = new FormulaExpressionImpl(renderedFormula, tokens, refs);
@@ -1221,8 +1230,10 @@ public class FormulaEngineImpl implements FormulaEngine {
 		AbstractBookSeriesAdv series = (AbstractBookSeriesAdv)book.getBookSeries();
 		DependencyTable table = series.getDependencyTable();
 		ParsingBook parsingBook = new ParsingBook(book);
-		for(Ptg ptg : fexpr.getPtgs()) {
-			Ref precedent = toDenpendRef(context, parsingBook, ptg);
+		Ptg[] ptgs = fexpr.getPtgs();
+		for (int j = 0, len = ptgs.length; j < len; ++j) {
+			Ptg ptg = ptgs[j];
+			Ref precedent = toDenpendRef(context, parsingBook, ptg, j);
 			if(precedent != null) {
 				table.add(dependent, precedent);
 			}
@@ -1298,7 +1309,7 @@ public class FormulaEngineImpl implements FormulaEngine {
 			// render formula, detect region and create result
 			String renderedFormula = modified ? 
 					renderFormula(parsingBook, formula, tokens, true) : formula;
-			Ref singleRef = tokens.length == 1 ? toDenpendRef(context, parsingBook, tokens[0]) : null;
+			Ref singleRef = tokens.length == 1 ? toDenpendRef(context, parsingBook, tokens[0], 0) : null;
 			Ref[] refs = singleRef==null ? null :
 				(singleRef.getType() == RefType.AREA || singleRef.getType() == RefType.CELL ?new Ref[]{singleRef}:null);
 			expr = new FormulaExpressionImpl(renderedFormula, tokens, refs);

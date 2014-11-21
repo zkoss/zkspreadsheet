@@ -208,6 +208,7 @@ public class RefImpl implements Ref, Serializable {
 			}
 		case NAME://will be override
 		case BOOK:
+		case INDIRECT:
 		}
 
 		sb.insert(0, bookName + ":");
