@@ -2016,15 +2016,17 @@ public class RangeImpl implements SRange {
 	
 	@Override
 	public void deleteValidation() {
-		new ReadWriteTask() {			
+		new ModelManipulationTask() { //ZSS-837
 			@Override
-			public Object invoke() {
+			public Object doInvoke() {
 				List<SDataValidation> dvs = getSheet().deleteDataValidationRegion( 
 				  new CellRegion(getRow(), getColumn(), getLastRow(), getLastColumn()));
-				//ZSS-729
-				for (SDataValidation dv : dvs) {
-					new NotifyChangeHelper().notifyDataValidationChange(getSheet(), (String) dv.getId());
-				}
+				//20141124, henrichen: range removed validation is collected
+				//  and notified in doInWriteLock(). No need to notify here again.
+//				//ZSS-729
+//				for (SDataValidation dv : dvs) {
+//					new NotifyChangeHelper().notifyDataValidationChange(getSheet(), (String) dv.getId());
+//				}
 				return null;
 			}
 		}.doInWriteLock(getLock());

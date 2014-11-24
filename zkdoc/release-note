@@ -21,6 +21,7 @@ ZK Spreadsheet 3.6.1
   ZSS-835 if validation type is "any", its Input message will be lost when exporting
   ZSS-831 incorrect clipping at page junction when export to pdf
   ZSS-834 Spreadsheet cannot understand data validation which refers to named range whose name comes from formula
+  ZSS-837 Delete a data validation on a cell doesn't remove browser's dropdown list
   
 ** Upgrade Notes
 

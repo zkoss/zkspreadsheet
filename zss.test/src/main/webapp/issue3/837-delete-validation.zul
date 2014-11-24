@@ -1,0 +1,23 @@
+<zk>
+Since 3.6.1
+<label multiline="true">
+1. Select B1; you should see a dropdown button by it.
+2. click "Delete Validation" button.
+3. Select B1
+4. The dropdown button by B1 should gone; if not it is a bug.
+
+</label>
+    <zscript>
+    <![CDATA[
+import org.zkoss.zss.api.*;
+import org.zkoss.zss.api.model.*;
+public void deleteValidation() {
+    Range selectedRange = Ranges.range(ss.getSelectedSheet(), ss.getSelection());
+    selectedRange.deleteValidation();
+}
+    ]]></zscript>
+    <button label="Delete Validation" onClick="deleteValidation()" />
+	<spreadsheet id="ss" vflex="1" hflex="1" src="/issue3/book/837-delete-validation.xlsx"
+		showToolbar="true" showSheetbar="true" showFormulabar="true" showContextMenu="true"
+		maxVisibleRows="100" maxVisibleColumns="100"/>
+</zk>
