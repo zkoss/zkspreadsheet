@@ -53,66 +53,76 @@ public class DependencyTrackerImpl implements DependencyTracker {
 		// do nothing, we don't need POI dependency tracking
 	}
 
-	//ZSS-845
+	//ZSS-845, ZSS-834
 	@Override
 	public void clearIndirectRefPrecedent(OperationEvaluationContext ec) {
 		EvaluationWorkbook book = ec.getWorkbook();
 		if (book instanceof EvalBook) {
 			EvalBook evalBook = (EvalBook) book;
 			SBook sbook = evalBook.getNBook();
-			final String bookName = sbook.getBookName();
-			final String sheetName = ec.getSheetName();
-			final int row = ec.getRowIndex();
-			final int col = ec.getColumnIndex();
-			final int ptgIndex = ec.getPtgIndex();
-			AbstractBookSeriesAdv series = (AbstractBookSeriesAdv) sbook.getBookSeries();
-			DependencyTableAdv table = (DependencyTableAdv) series.getDependencyTable();
-			Ref dependant = new RefImpl(bookName, sheetName, row, col);
-			Set<Ref> precedents = table.getDirectPrecedents(dependant);
-			for (Ref precedent : precedents) {
-				if (precedent.getType() == RefType.INDIRECT 
-						&& ((IndirectRef)precedent).getPtgIndex() == ptgIndex) {
-					// clear precedents of the found IndirectRef
-					table.clearDependents(precedent);
-					break;
+			Ref dependent = (Ref) ec.getDependent();
+			if (dependent == null) {
+				final String bookName = sbook.getBookName();
+				final String sheetName = ec.getSheetName();
+				final int row = ec.getRowIndex();
+				final int col = ec.getColumnIndex();
+				dependent = new RefImpl(bookName, sheetName, row, col);
+			}
+			if (dependent != null) {
+				final AbstractBookSeriesAdv series = (AbstractBookSeriesAdv) sbook.getBookSeries();
+				final DependencyTableAdv table = (DependencyTableAdv) series.getDependencyTable();
+				final int ptgIndex = ec.getPtgIndex();
+				final Set<Ref> precedents = table.getDirectPrecedents(dependent);
+				for (Ref precedent : precedents) {
+					if (precedent.getType() == RefType.INDIRECT 
+							&& ((IndirectRef)precedent).getPtgIndex() == ptgIndex) {
+						// clear precedents of the found IndirectRef
+						table.clearDependents(precedent);
+						break;
+					}
 				}
 			}
 		}
 	}
 
-	//ZSS-845
+	//ZSS-845, ZSS-834
 	@Override
 	public void setIndirectRefPrecedent(OperationEvaluationContext ec, ValueEval preRef) {
 		EvaluationWorkbook book = ec.getWorkbook();
 		if (book instanceof EvalBook) {
 			EvalBook evalBook = (EvalBook) book;
 			SBook sbook = evalBook.getNBook();
-			final String bookName = sbook.getBookName();
-			final String sheetName = ec.getSheetName();
-			final int row = ec.getRowIndex();
-			final int col = ec.getColumnIndex();
-			final int ptgIndex = ec.getPtgIndex();
-			AbstractBookSeriesAdv series = (AbstractBookSeriesAdv) sbook.getBookSeries();
-			DependencyTableAdv table = (DependencyTableAdv) series.getDependencyTable();
-			Ref dependant = new RefImpl(bookName, sheetName, row, col);
-			Set<Ref> precedents = table.getDirectPrecedents(dependant);
-			for (Ref precedent : precedents) {
-				if (precedent.getType() == RefType.INDIRECT 
-						&& ((IndirectRef)precedent).getPtgIndex() == ptgIndex) {
-					Ref indirectPrecedent = null;
-					// add precedent of the found IndirectRef
-					if (preRef instanceof NameRangeEval) {
-						final AbstractNameAdv sname = (AbstractNameAdv) sbook.getName(((NameRangeEval) preRef).getNamePtg().getIndex());
-						indirectPrecedent = new NameRefImpl(sname);
-					} else if (preRef instanceof LazyRefEval) {
-						final LazyRefEval refEval = (LazyRefEval) preRef;
-						indirectPrecedent = new RefImpl(refEval.getBookName(), refEval.getSheetName(), refEval.getLastSheetName(), refEval.getRow(), refEval.getColumn());
-					} else if (preRef instanceof LazyAreaEval) {
-						final LazyAreaEval refEval = (LazyAreaEval) preRef;
-						indirectPrecedent = new RefImpl(refEval.getBookName(), refEval.getSheetName(), refEval.getLastSheetName(), refEval.getFirstRow(), refEval.getFirstColumn(), refEval.getLastRow(), refEval.getLastColumn());
+			Ref dependent = (Ref) ec.getDependent();
+			if (dependent == null) {
+				final String bookName = sbook.getBookName();
+				final String sheetName = ec.getSheetName();
+				final int row = ec.getRowIndex();
+				final int col = ec.getColumnIndex();
+				dependent = new RefImpl(bookName, sheetName, row, col);
+			}
+			if (dependent != null) {
+				final AbstractBookSeriesAdv series = (AbstractBookSeriesAdv) sbook.getBookSeries();
+				final DependencyTableAdv table = (DependencyTableAdv) series.getDependencyTable();
+				final int ptgIndex = ec.getPtgIndex();
+				final Set<Ref> precedents = table.getDirectPrecedents(dependent);
+				for (Ref precedent : precedents) {
+					if (precedent.getType() == RefType.INDIRECT 
+							&& ((IndirectRef)precedent).getPtgIndex() == ptgIndex) {
+						Ref indirectPrecedent = null;
+						// add precedent of the found IndirectRef
+						if (preRef instanceof NameRangeEval) {
+							final AbstractNameAdv sname = (AbstractNameAdv) sbook.getName(((NameRangeEval) preRef).getNamePtg().getIndex());
+							indirectPrecedent = new NameRefImpl(sname);
+						} else if (preRef instanceof LazyRefEval) {
+							final LazyRefEval refEval = (LazyRefEval) preRef;
+							indirectPrecedent = new RefImpl(refEval.getBookName(), refEval.getSheetName(), refEval.getLastSheetName(), refEval.getRow(), refEval.getColumn());
+						} else if (preRef instanceof LazyAreaEval) {
+							final LazyAreaEval refEval = (LazyAreaEval) preRef;
+							indirectPrecedent = new RefImpl(refEval.getBookName(), refEval.getSheetName(), refEval.getLastSheetName(), refEval.getFirstRow(), refEval.getFirstColumn(), refEval.getLastRow(), refEval.getLastColumn());
+						}
+						table.add(precedent, indirectPrecedent);
+						break;
 					}
-					table.add(precedent, indirectPrecedent);
-					break;
 				}
 			}
 		}

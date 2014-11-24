@@ -450,12 +450,12 @@ public class FormulaEngineImpl implements FormulaEngine {
 				String[] formulas = unwrapeAreaFormula(expr.getFormulaString());
 				List<ValueEval> evals = new ArrayList<ValueEval>(formulas.length);
 				for(String f:formulas){
-					value = evaluator.evaluate(currentSheetIndex, f, true);
+					value = evaluator.evaluate(currentSheetIndex, f, true, context.getDependent());
 					evals.add(value);
 				}
 				value = new ValuesEval(evals.toArray(new ValueEval[evals.size()]));
 			}else{
-				value = evaluateFormulaExpression(evaluator, currentSheetIndex, expr, true); //ZSS-759
+				value = evaluateFormulaExpression(evaluator, currentSheetIndex, expr, true, context.getDependent()); //ZSS-759, ZSS-834
 			}
 		} else {
 			if(multipleArea){//is multipleArea formula in cell, should return #VALUE!
@@ -463,7 +463,7 @@ public class FormulaEngineImpl implements FormulaEngine {
 			}
 			EvaluationCell evalCell = evalBook.getSheet(currentSheetIndex).getCell(cell.getRowIndex(),
 					cell.getColumnIndex());
-			value = evaluator.evaluate(evalCell);
+			value = evaluator.evaluate(evalCell, context.getDependent());
 		}
 
 		// convert to result
@@ -1241,8 +1241,8 @@ public class FormulaEngineImpl implements FormulaEngine {
 	}
 	
 	//ZSS-759
-	protected ValueEval evaluateFormulaExpression(WorkbookEvaluator evaluator, int sheetIndex, FormulaExpression expr, boolean ignoreDereference) {
-		return evaluator.evaluate(sheetIndex, expr.getFormulaString(), ignoreDereference);
+	protected ValueEval evaluateFormulaExpression(WorkbookEvaluator evaluator, int sheetIndex, FormulaExpression expr, boolean ignoreDereference, Ref dependent) {
+		return evaluator.evaluate(sheetIndex, expr.getFormulaString(), ignoreDereference, dependent);
 	}
 
 	//ZSS-810

@@ -71,6 +71,11 @@ import org.zkoss.zss.model.sys.dependency.Ref.RefType;
 		}
 		for (Ref notify : validationDependents.values()) {
 			handleDataValidationRef((ObjectRef)notify);
+			//ZSS-834
+			//20141124, henrichen: each handleDataValidationRef(notify) will 
+			//  handle ALL validations on a book for rendering; thus no need
+			//  to iterate each validation. break to avoid unnecessary handling.
+			break;
 		}	
 	}
 

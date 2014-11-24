@@ -456,6 +456,7 @@ public class DataValidationImpl extends AbstractDataValidationAdv {
 	public void clearFormulaResultCache() {
 		_evaluated = false;
 		_evalValue1Result = _evalValue2Result = null;
+		_evalValue1EvalResult = _evalValue2EvalResult = null; //ZSS-834
 	}
 	
 	/*package*/ void evalFormula(){

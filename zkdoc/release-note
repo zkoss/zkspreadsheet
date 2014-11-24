@@ -20,6 +20,7 @@ ZK Spreadsheet 3.6.1
   ZSS-843 close book causes NPE
   ZSS-835 if validation type is "any", its Input message will be lost when exporting
   ZSS-831 incorrect clipping at page junction when export to pdf
+  ZSS-834 Spreadsheet cannot understand data validation which refers to named range whose name comes from formula
   
 ** Upgrade Notes
 

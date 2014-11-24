@@ -1,0 +1,17 @@
+<zk>
+Since 3.6.1
+<label multiline="true">
+1. Change focus to "B1"; should see the dropdown button by cell B1
+2. click the button and should see "Item 1, Item 2, Item 3, Item 4, Item 5" dropdown list
+3. Select "Item2" from the dropdown list
+4. Change focus to "B2"; should see the dropdown button by cell B2
+5. click the button and should see "11, 21, 31" dropdown list; if not it is bug.
+6. Change focus back to "B1" and click the dropdown button to select "Itme1"
+7. Change focus to "B2" and click the dropdown button; should see "10, 20, 30, 40, 50" dropdown list; if not it is bug.
+
+</label>
+	<button label="hide" onClick="Ranges.range(ss.getSelectedSheet()).setSheetVisible(org.zkoss.zss.api.Range.SheetVisible.HIDDEN)" />
+	<spreadsheet id="ss" vflex="1" hflex="1" src="/issue3/book/834-nameRange-validation.xlsx"
+		showToolbar="true" showSheetbar="true" showFormulabar="true" showContextMenu="true"
+		maxVisibleRows="100" maxVisibleColumns="100"/>
+</zk>
