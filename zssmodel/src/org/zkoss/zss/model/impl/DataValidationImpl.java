@@ -23,9 +23,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import org.zkoss.lang.Strings;
 import org.zkoss.poi.ss.formula.LazyAreaEval;
 import org.zkoss.poi.ss.formula.LazyRefEval;
 import org.zkoss.poi.ss.formula.eval.AreaEval;
+import org.zkoss.poi.ss.formula.eval.StringEval;
 import org.zkoss.poi.ss.formula.eval.ValueEval;
 import org.zkoss.zss.model.CellRegion;
 import org.zkoss.zss.model.ErrorValue;
@@ -474,6 +476,7 @@ public class DataValidationImpl extends AbstractDataValidationAdv {
 					if(result.getType() == ResultType.SUCCESS){
 						_evalValue1Result = val;
 						_evalValue1EvalResult = result.getValueEval(); //ZSS-810
+						_evalValue1Result = processCommaLiteral(_evalValue1Result, _evalValue1EvalResult ); //ZSS-809
 					}else if(result.getType() == ResultType.ERROR){
 						_evalValue1Result = (val instanceof ErrorValue)?val: ErrorValue.valueOf(ErrorValue.INVALID_VALUE);
 					}
@@ -486,6 +489,7 @@ public class DataValidationImpl extends AbstractDataValidationAdv {
 					if(result.getType() == ResultType.SUCCESS){
 						_evalValue2Result = val;
 						_evalValue2EvalResult = result.getValueEval(); //ZSS-810
+						_evalValue2Result = processCommaLiteral(_evalValue2Result, _evalValue2EvalResult); //ZSS-809
 					}else if(result.getType() == ResultType.ERROR){
 						_evalValue2Result = (val instanceof ErrorValue)?val: ErrorValue.valueOf(ErrorValue.INVALID_VALUE);
 					}
@@ -722,5 +726,21 @@ public class DataValidationImpl extends AbstractDataValidationAdv {
 	//ZSS-810
 	public ValueEval getValueEval2() {
 		return _evalValue2EvalResult;
+	}
+	
+	//ZSS-809
+	private Object processCommaLiteral(Object value, ValueEval valueEval) {
+		if (value != null && valueEval instanceof StringEval) {
+			// YES! must be comma separated and filter out spece
+			final String[] strs = ((String)value).split(","); 
+			List<String> stra = new ArrayList<String>(strs.length);
+			for (String s : strs) {
+				s = s.trim();
+				if (s.length() == 0) continue;
+				stra.add(s);
+			}
+			return stra.size() <= 1 ? value : stra;
+		}
+		return value;
 	}
 }

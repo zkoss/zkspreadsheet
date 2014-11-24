@@ -1,0 +1,16 @@
+<zk>
+Since 3.6.1
+<label multiline="true">
+1. Select A1; you should see a dropdown button by it.
+2. click the dropdown button; you should see a dropdown list with 6 options: 1, 2, 3, 4, 5, 6
+3. if not; then it is a bug.
+4. Select A2; you should see a dropdown button by it.
+5. click the dropdown button; you should see "nothing" in the dropdown list
+6. Select A3; you should see a dropdown button by it.
+7. click the dropdown button; you should see a dropdown list with only 1 option: "a b c d e f".
+
+</label>
+	<spreadsheet id="ss" vflex="1" hflex="1" src="/issue3/book/809-literal-string-validation.xlsx"
+		showToolbar="true" showSheetbar="true" showFormulabar="true" showContextMenu="true"
+		maxVisibleRows="100" maxVisibleColumns="100"/>
+</zk>
