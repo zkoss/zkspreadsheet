@@ -10,7 +10,6 @@ Since 3.6.1
 7. Change focus to "B2" and click the dropdown button; should see "10, 20, 30, 40, 50" dropdown list; if not it is bug.
 
 </label>
-	<button label="hide" onClick="Ranges.range(ss.getSelectedSheet()).setSheetVisible(org.zkoss.zss.api.Range.SheetVisible.HIDDEN)" />
 	<spreadsheet id="ss" vflex="1" hflex="1" src="/issue3/book/834-nameRange-validation.xlsx"
 		showToolbar="true" showSheetbar="true" showFormulabar="true" showContextMenu="true"
 		maxVisibleRows="100" maxVisibleColumns="100"/>
