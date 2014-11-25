@@ -6,6 +6,7 @@ ZK Spreadsheet 3.6.1
   ZSS-663 Spreadsheet: jump to first/last sheet
   ZSS-832 Support hide sheet
   ZSS-845 Support auto update for Cells refer other cells via INDIRECT() function
+  ZSS-697 Enhance the Chart engine
   
 *Bugs:
   ZSS-820 Formula should change sheet name if reordered sheet goes beyond its the formula's sheet boundary.
@@ -25,6 +26,7 @@ ZK Spreadsheet 3.6.1
   ZSS-809 DataValidation does not handle literal list (comma seperated list) correctly.
   
 ** Upgrade Notes
+  * Chart now uses ZK Charts as default chart engine whose exporting needs extra export server. For more detail, please see "export" section in ZK Spreadsheet Essentials.
 
  ------------
 ZK Spreadsheet 3.6.0
