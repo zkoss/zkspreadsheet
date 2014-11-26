@@ -721,7 +721,7 @@
 	border: 5px solid #E8FDFD;
 }
 
-.zswidget-chart img {
+.zswidget-chart .z-charts {
 	border: 1px solid #868686;
 }
 

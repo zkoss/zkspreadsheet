@@ -6,6 +6,7 @@ zk.jar
 zkbind.jar
 zkex.jar
 zul.jar
+zkcharts.jar
 zhtml.jar
 zkplus.jar
 bsh.jar
