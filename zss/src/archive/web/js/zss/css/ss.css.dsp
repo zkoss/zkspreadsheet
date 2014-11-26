@@ -778,6 +778,7 @@
 	padding: 2px;
 	margin: 0;
 	font-size: 12px;
+	height: 12px;
 }
 
 .zsdv-item a.zsdv-item-text {

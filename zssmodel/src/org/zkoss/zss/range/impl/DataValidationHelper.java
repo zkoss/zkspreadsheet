@@ -49,14 +49,14 @@ public class DataValidationHelper {
 		this._sheet = validation.getSheet();
 	}
 
-	public boolean validate(String editText, String dataformat) {
+	public boolean validate(int row, int col, String editText, String dataformat) {
 		final InputEngine ie = EngineFactory.getInstance().createInputEngine();
 		final InputResult result = ie.parseInput(editText == null ? ""
 				: editText, dataformat, new InputParseContext(ZssContext.getCurrent().getLocale()));
-		return validate(result.getType(),result.getValue());
+		return validate(row, col, result.getType(),result.getValue());
 	}
 	
-	public boolean validate(CellType cellType, Object value) {
+	public boolean validate(int row, int col, CellType cellType, Object value) {
 		//allow any value => no need to do validation
 		ValidationType vtype = _validation.getValidationType();
 		if (vtype == ValidationType.ANY) { //can be any value, meaning no validation
@@ -108,7 +108,7 @@ public class DataValidationHelper {
 				break;
 			// List type ( combo box type )
 			case LIST:
-				if (!validateListOperation((value instanceof Date)?cal.dateToDoubleValue((Date)value):value)) {;
+				if (!validateListOperation(row, col, (value instanceof Date)?cal.dateToDoubleValue((Date)value):value)) {;
 					success = false;
 				}
 				break;
@@ -184,12 +184,12 @@ public class DataValidationHelper {
 		return true;
 	}
 	
-	private boolean validateListOperation(Object value) {
+	private boolean validateListOperation(int row, int col, Object value) {
 		if (value == null) {
 			return false;
 		}
 		if(_validation.hasReferToCellList()){
-			for(SCell cell:_validation.getReferToCellList()){
+			for(SCell cell:_validation.getReferToCellList(row, col)){
 				Object val = cell.getValue();
 				if(value.equals(val)){
 					return true;

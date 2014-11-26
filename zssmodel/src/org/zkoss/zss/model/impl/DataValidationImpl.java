@@ -19,14 +19,13 @@ package org.zkoss.zss.model.impl;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import org.zkoss.lang.Strings;
 import org.zkoss.poi.ss.formula.LazyAreaEval;
 import org.zkoss.poi.ss.formula.LazyRefEval;
-import org.zkoss.poi.ss.formula.eval.AreaEval;
 import org.zkoss.poi.ss.formula.eval.StringEval;
 import org.zkoss.poi.ss.formula.eval.ValueEval;
 import org.zkoss.zss.model.CellRegion;
@@ -223,7 +222,7 @@ public class DataValidationImpl extends AbstractDataValidationAdv {
 	public void addRegion(CellRegion region) { // ZSS-648
 		Validations.argNotNull(region);
 		if (this._regions == null) {
-			this._regions = new HashSet<CellRegion>(2);
+			this._regions = new LinkedHashSet<CellRegion>(2);
 		}
 		for (CellRegion regn : this._regions) {
 			if (regn.contains(region)) return; // already in this DataValidation, let go
@@ -507,18 +506,14 @@ public class DataValidationImpl extends AbstractDataValidationAdv {
 			return getReferToCellList0(areaRef);
 		} else if (_evalValue1EvalResult instanceof LazyAreaEval) { //ZSS-810
 			LazyAreaEval areaEval = (LazyAreaEval) _evalValue1EvalResult;
-			Ref areaRef = new RefImpl(
-					areaEval.getBookName(), areaEval.getSheetName(), 
-					areaEval.getFirstRow(), areaEval.getFirstColumn(),
+			return getReferToCellList0(areaEval.getBookName(), areaEval.getSheetName(), 
+					areaEval.getFirstRow(), areaEval.getFirstColumn(), 
 					areaEval.getLastRow(), areaEval.getLastColumn());
-			return getReferToCellList0(areaRef);
 		} else if (_evalValue1EvalResult instanceof LazyRefEval) { //ZSS-810
 			LazyRefEval areaEval = (LazyRefEval) _evalValue1EvalResult;
-			Ref areaRef = new RefImpl(
-					areaEval.getBookName(), areaEval.getSheetName(), 
-					areaEval.getRow(), areaEval.getColumn(),
+			return getReferToCellList0(areaEval.getBookName(), areaEval.getSheetName(), 
+					areaEval.getRow(), areaEval.getColumn(), 
 					areaEval.getRow(), areaEval.getColumn());
-			return getReferToCellList0(areaRef);
 		}
 		return Collections.emptyList();
 	}
@@ -742,5 +737,136 @@ public class DataValidationImpl extends AbstractDataValidationAdv {
 			return stra.size() <= 1 ? value : stra;
 		}
 		return value;
+	}
+
+	//ZSS-833
+	@Override
+	public boolean hasReferToRelativeCol() {
+		evalFormula();
+		if (hasReferToCellList()) {
+			if (_evalValue1EvalResult instanceof LazyAreaEval) {
+				return ((LazyAreaEval)_evalValue1EvalResult).isFirstColRelative()
+						|| ((LazyAreaEval)_evalValue1EvalResult).isLastColRelative();
+			} else if (_evalValue1EvalResult instanceof LazyRefEval) {
+				return ((LazyRefEval)_evalValue1EvalResult).isColRelative(); 
+			}
+		}
+		return false;
+	}
+
+	//ZSS-833
+	@Override
+	public boolean hasReferToRelativeRow() {
+		evalFormula();
+		if (hasReferToCellList()) {
+			if (_evalValue1EvalResult instanceof LazyAreaEval) {
+				return ((LazyAreaEval)_evalValue1EvalResult).isFirstRowRelative()
+						|| ((LazyAreaEval)_evalValue1EvalResult).isLastRowRelative();
+			} else if (_evalValue1EvalResult instanceof LazyRefEval) {
+				return ((LazyRefEval)_evalValue1EvalResult).isRowRelative(); 
+			}
+		}
+		return false;
+	}
+
+	//ZSS-833
+	@Override
+	public List<SCell> getReferToCellList(int row, int col) {
+		if (!hasReferToRelativeCol() && !hasReferToRelativeRow())
+			return getReferToCellList();
+		if (_regions.isEmpty()) {
+			return Collections.emptyList();
+		}
+		CellRegion rgn = _regions.iterator().next();
+		int colDiff = col - rgn.getColumn(), rowDiff = row - rgn.getRow();
+		
+//		if(_formula1Expr!=null && _formula1Expr.isAreaRefs()){
+//			Ref areaRef = _formula1Expr.getAreaRefs()[0];
+//			return getReferToCellList0(areaRef);
+//		} else 
+		if (_evalValue1EvalResult instanceof LazyAreaEval) { //ZSS-810
+			LazyAreaEval areaEval = (LazyAreaEval) _evalValue1EvalResult;
+			final int row1 = areaEval.getFirstRow() + (areaEval.isFirstRowRelative() ? rowDiff : 0);
+			final int row2 = areaEval.getLastRow() + (areaEval.isLastRowRelative() ? rowDiff : 0);
+			final int col1 = areaEval.getFirstColumn() + (areaEval.isFirstColRelative() ? colDiff : 0);
+			final int col2 = areaEval.getLastColumn() + (areaEval.isLastColRelative() ? colDiff : 0);
+			if (row1 >= 0 && row2 >= 0 && col1 >= 0 && col2 >= 0) {
+				return getReferToCellList0(areaEval.getBookName(), areaEval.getSheetName(), row1, col1, row2, col2);
+			}
+		} else if (_evalValue1EvalResult instanceof LazyRefEval) { //ZSS-810
+			LazyRefEval areaEval = (LazyRefEval) _evalValue1EvalResult;
+			final int row1 = areaEval.getRow() + (areaEval.isRowRelative() ? rowDiff : 0);
+			final int col1 = areaEval.getColumn() + (areaEval.isColRelative() ? colDiff : 0);
+			if (row1 >= 0 && col1 >= 0) {
+				return getReferToCellList0(areaEval.getBookName(), areaEval.getSheetName(), row1, col1, row1, col1);
+			}
+		}
+		return Collections.emptyList();
+	}
+
+	//ZSS-833
+	private List<SCell> getReferToCellList0(String bookName, String sheetName, int row1, int col1, int row2, int col2) {
+		SBookSeries bookSeries = _sheet.getBook().getBookSeries(); 
+		List<SCell> list = new LinkedList<SCell>();
+		
+		SBook book = bookSeries.getBook(bookName);
+		if(book==null){
+			return list;
+		}
+		SSheet sheet = book.getSheetByName(sheetName);
+		if(sheet==null){
+			return list;
+		}
+		for(int i = row1; i<=row2; i++){
+			for(int j = col1; j <= col2; ++j) {
+				list.add(sheet.getCell(i, j));
+			}
+		}
+		return list;
+	}
+	
+	//ZSS-833
+	@Override
+	public void addDependency(int row, int col) {
+		if (!hasReferToRelativeCol() && !hasReferToRelativeRow())
+			return;
+		if (_regions.isEmpty()) {
+			return;
+		}
+		CellRegion rgn = _regions.iterator().next();
+		int colDiff = col - rgn.getColumn(), rowDiff = row - rgn.getRow();
+		
+		if (_evalValue1EvalResult instanceof LazyAreaEval) { //ZSS-810
+			LazyAreaEval areaEval = (LazyAreaEval) _evalValue1EvalResult;
+			final int row1 = areaEval.getFirstRow() + (areaEval.isFirstRowRelative() ? rowDiff : 0);
+			final int row2 = areaEval.getLastRow() + (areaEval.isLastRowRelative() ? rowDiff : 0);
+			final int col1 = areaEval.getFirstColumn() + (areaEval.isFirstColRelative() ? colDiff : 0);
+			final int col2 = areaEval.getLastColumn() + (areaEval.isLastColRelative() ? colDiff : 0);
+			if (row1 >= 0 && row2 >= 0 && col1 >= 0 && col2 >= 0) {
+				addDependency(areaEval.getBookName(), areaEval.getSheetName(), row1, col1, row2, col2);
+			}
+		} else if (_evalValue1EvalResult instanceof LazyRefEval) { //ZSS-810
+			LazyRefEval areaEval = (LazyRefEval) _evalValue1EvalResult;
+			final int row1 = areaEval.getRow() + (areaEval.isRowRelative() ? rowDiff : 0);
+			final int col1 = areaEval.getColumn() + (areaEval.isColRelative() ? colDiff : 0);
+			if (row1 >= 0 && col1 >= 0) {
+				addDependency(areaEval.getBookName(), areaEval.getSheetName(), row1, col1, row1, col1);
+			}
+		}
+	}
+	
+	//ZSS-833
+	private void addDependency(String bookName, String sheetName, int row1, int col1, int row2, int col2) {
+		SBookSeries bookSeries = _sheet.getBook().getBookSeries(); 
+		SBook book = bookSeries.getBook(bookName);
+		if(book==null){
+			return;
+		}
+		SSheet sheet = book.getSheetByName(sheetName);
+		if(sheet==null){
+			return;
+		}
+		DependencyTable table = ((AbstractBookSeriesAdv)bookSeries).getDependencyTable();
+		table.add(getRef(), new RefImpl(bookName, sheetName, row1, col1, row2, col2));
 	}
 }

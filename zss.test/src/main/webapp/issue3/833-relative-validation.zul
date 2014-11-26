@@ -1,0 +1,17 @@
+<zk>
+Since 3.6.1: Validation List with relative range
+<label multiline="true">
+1. Select A1, B1, C1, F1, G1, H1; you should see a dropdown button by them.
+2. Now select A1 and click the dropdown button you should see a dropdown list with 3 options: a4, a5, a6
+3. Select B1 and click the dropdown button you should see a dropdown list with 3 options: b4, b5, b6
+4. Select C1 and click the dropdown button you should see a dropdown list with 3 options: c4, c5, c6
+5. Select F1 and click the dropdown button you should see a dropdown list with 3 options: f4, f5, f6
+6. Select G1 and click the dropdown button you should see a dropdown list with 3 empty options.
+7. Select H1 and click the dropdown button you should see a dropdown list with 3 empty options.
+8. Select B5 and change text from "b5" to "b7"
+9. Select B1; click the dropdown button by B1 and you should see dropdown list with 3 options: b4, b7, b6 (NOTE the 2nd option is now b7)
+</label>
+	<spreadsheet id="ss" vflex="1" width="100%" src="/issue3/book/833-relative-validation.xlsx"
+		showToolbar="true" showSheetbar="true" showFormulabar="true" showContextMenu="true"
+		maxVisibleRows="100" maxVisibleColumns="100"/>
+</zk>

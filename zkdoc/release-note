@@ -23,6 +23,7 @@ ZK Spreadsheet 3.6.1
   ZSS-834 Spreadsheet cannot understand data validation which refers to named range whose name comes from formula
   ZSS-837 Delete a data validation on a cell doesn't remove browser's dropdown list
   ZSS-809 DataValidation does not handle literal list (comma seperated list) correctly.
+  ZSS-833 Formula in validation's formula field should follow the relative reference rule.
   
 ** Upgrade Notes
 

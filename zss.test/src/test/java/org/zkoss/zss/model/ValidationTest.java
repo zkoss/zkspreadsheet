@@ -151,57 +151,57 @@ public class ValidationTest {
 		
 		SDataValidation dv1 = sheet1.addDataValidation(new CellRegion(1,1));
 		//test any
-		Assert.assertTrue(new DataValidationHelper(dv1).validate("123", "General"));
+		Assert.assertTrue(new DataValidationHelper(dv1).validate(1, 1, "123", "General"));
 		
 		
 		//test integer
 		dv1.setValidationType(ValidationType.INTEGER);
 		((AbstractDataValidationAdv)dv1).setFormulas("1", "3");
 		dv1.setOperatorType(OperatorType.BETWEEN);
-		Assert.assertFalse(new DataValidationHelper(dv1).validate("1.3", "General"));//not integer
+		Assert.assertFalse(new DataValidationHelper(dv1).validate(1, 1, "1.3", "General"));//not integer
 		
-		Assert.assertTrue(new DataValidationHelper(dv1).validate("1", "General"));
-		Assert.assertTrue(new DataValidationHelper(dv1).validate("2", "General"));
-		Assert.assertTrue(new DataValidationHelper(dv1).validate("3", "General"));
-		Assert.assertFalse(new DataValidationHelper(dv1).validate("0", "General"));
-		Assert.assertFalse(new DataValidationHelper(dv1).validate("4", "General"));
+		Assert.assertTrue(new DataValidationHelper(dv1).validate(1, 1, "1", "General"));
+		Assert.assertTrue(new DataValidationHelper(dv1).validate(1, 1, "2", "General"));
+		Assert.assertTrue(new DataValidationHelper(dv1).validate(1, 1, "3", "General"));
+		Assert.assertFalse(new DataValidationHelper(dv1).validate(1, 1, "0", "General"));
+		Assert.assertFalse(new DataValidationHelper(dv1).validate(1, 1, "4", "General"));
 		
 		dv1.setOperatorType(OperatorType.NOT_BETWEEN);
-		Assert.assertFalse(new DataValidationHelper(dv1).validate("1", "General"));
-		Assert.assertFalse(new DataValidationHelper(dv1).validate("2", "General"));
-		Assert.assertFalse(new DataValidationHelper(dv1).validate("3", "General"));
-		Assert.assertTrue(new DataValidationHelper(dv1).validate("0", "General"));
-		Assert.assertTrue(new DataValidationHelper(dv1).validate("4", "General"));
+		Assert.assertFalse(new DataValidationHelper(dv1).validate(1, 1, "1", "General"));
+		Assert.assertFalse(new DataValidationHelper(dv1).validate(1, 1, "2", "General"));
+		Assert.assertFalse(new DataValidationHelper(dv1).validate(1, 1, "3", "General"));
+		Assert.assertTrue(new DataValidationHelper(dv1).validate(1, 1, "0", "General"));
+		Assert.assertTrue(new DataValidationHelper(dv1).validate(1, 1, "4", "General"));
 		
 		dv1.setOperatorType(OperatorType.EQUAL);
-		Assert.assertTrue(new DataValidationHelper(dv1).validate("1", "General"));
-		Assert.assertFalse(new DataValidationHelper(dv1).validate("2", "General"));
-		Assert.assertFalse(new DataValidationHelper(dv1).validate("3", "General"));
+		Assert.assertTrue(new DataValidationHelper(dv1).validate(1, 1, "1", "General"));
+		Assert.assertFalse(new DataValidationHelper(dv1).validate(1, 1, "2", "General"));
+		Assert.assertFalse(new DataValidationHelper(dv1).validate(1, 1, "3", "General"));
 		
 		dv1.setOperatorType(OperatorType.NOT_EQUAL);
-		Assert.assertFalse(new DataValidationHelper(dv1).validate("1", "General"));
-		Assert.assertTrue(new DataValidationHelper(dv1).validate("2", "General"));
-		Assert.assertTrue(new DataValidationHelper(dv1).validate("3", "General"));
+		Assert.assertFalse(new DataValidationHelper(dv1).validate(1, 1, "1", "General"));
+		Assert.assertTrue(new DataValidationHelper(dv1).validate(1, 1, "2", "General"));
+		Assert.assertTrue(new DataValidationHelper(dv1).validate(1, 1, "3", "General"));
 		
 		dv1.setOperatorType(OperatorType.GREATER_OR_EQUAL);
-		Assert.assertFalse(new DataValidationHelper(dv1).validate("0", "General"));
-		Assert.assertTrue(new DataValidationHelper(dv1).validate("1", "General"));
-		Assert.assertTrue(new DataValidationHelper(dv1).validate("2", "General"));
+		Assert.assertFalse(new DataValidationHelper(dv1).validate(1, 1, "0", "General"));
+		Assert.assertTrue(new DataValidationHelper(dv1).validate(1, 1, "1", "General"));
+		Assert.assertTrue(new DataValidationHelper(dv1).validate(1, 1, "2", "General"));
 		
 		dv1.setOperatorType(OperatorType.GREATER_THAN);
-		Assert.assertFalse(new DataValidationHelper(dv1).validate("0", "General"));
-		Assert.assertFalse(new DataValidationHelper(dv1).validate("1", "General"));
-		Assert.assertTrue(new DataValidationHelper(dv1).validate("2", "General"));
+		Assert.assertFalse(new DataValidationHelper(dv1).validate(1, 1, "0", "General"));
+		Assert.assertFalse(new DataValidationHelper(dv1).validate(1, 1, "1", "General"));
+		Assert.assertTrue(new DataValidationHelper(dv1).validate(1, 1, "2", "General"));
 		
 		dv1.setOperatorType(OperatorType.LESS_OR_EQUAL);
-		Assert.assertFalse(new DataValidationHelper(dv1).validate("2", "General"));
-		Assert.assertTrue(new DataValidationHelper(dv1).validate("1", "General"));
-		Assert.assertTrue(new DataValidationHelper(dv1).validate("0", "General"));
+		Assert.assertFalse(new DataValidationHelper(dv1).validate(1, 1, "2", "General"));
+		Assert.assertTrue(new DataValidationHelper(dv1).validate(1, 1, "1", "General"));
+		Assert.assertTrue(new DataValidationHelper(dv1).validate(1, 1, "0", "General"));
 		
 		dv1.setOperatorType(OperatorType.LESS_THAN);
-		Assert.assertFalse(new DataValidationHelper(dv1).validate("2", "General"));
-		Assert.assertFalse(new DataValidationHelper(dv1).validate("1", "General"));
-		Assert.assertTrue(new DataValidationHelper(dv1).validate("0", "General"));
+		Assert.assertFalse(new DataValidationHelper(dv1).validate(1, 1, "2", "General"));
+		Assert.assertFalse(new DataValidationHelper(dv1).validate(1, 1, "1", "General"));
+		Assert.assertTrue(new DataValidationHelper(dv1).validate(1, 1, "0", "General"));
 	}
 	
 	@Test
@@ -219,50 +219,50 @@ public class ValidationTest {
 		dv1.setValidationType(ValidationType.DECIMAL);
 		((AbstractDataValidationAdv)dv1).setFormulas("A1", "SUM(A1:B1)");//1-3
 		dv1.setOperatorType(OperatorType.BETWEEN);
-		Assert.assertTrue(new DataValidationHelper(dv1).validate("1.3", "General"));//not integer
+		Assert.assertTrue(new DataValidationHelper(dv1).validate(1, 1, "1.3", "General"));//not integer
 		
-		Assert.assertTrue(new DataValidationHelper(dv1).validate("1", "General"));
-		Assert.assertTrue(new DataValidationHelper(dv1).validate("2", "General"));
-		Assert.assertTrue(new DataValidationHelper(dv1).validate("3", "General"));
-		Assert.assertFalse(new DataValidationHelper(dv1).validate("0", "General"));
-		Assert.assertFalse(new DataValidationHelper(dv1).validate("4", "General"));
+		Assert.assertTrue(new DataValidationHelper(dv1).validate(1, 1, "1", "General"));
+		Assert.assertTrue(new DataValidationHelper(dv1).validate(1, 1, "2", "General"));
+		Assert.assertTrue(new DataValidationHelper(dv1).validate(1, 1, "3", "General"));
+		Assert.assertFalse(new DataValidationHelper(dv1).validate(1, 1, "0", "General"));
+		Assert.assertFalse(new DataValidationHelper(dv1).validate(1, 1, "4", "General"));
 		
 		dv1.setOperatorType(OperatorType.NOT_BETWEEN);
-		Assert.assertFalse(new DataValidationHelper(dv1).validate("1", "General"));
-		Assert.assertFalse(new DataValidationHelper(dv1).validate("2", "General"));
-		Assert.assertFalse(new DataValidationHelper(dv1).validate("3", "General"));
-		Assert.assertTrue(new DataValidationHelper(dv1).validate("0", "General"));
-		Assert.assertTrue(new DataValidationHelper(dv1).validate("4", "General"));
+		Assert.assertFalse(new DataValidationHelper(dv1).validate(1, 1, "1", "General"));
+		Assert.assertFalse(new DataValidationHelper(dv1).validate(1, 1, "2", "General"));
+		Assert.assertFalse(new DataValidationHelper(dv1).validate(1, 1, "3", "General"));
+		Assert.assertTrue(new DataValidationHelper(dv1).validate(1, 1, "0", "General"));
+		Assert.assertTrue(new DataValidationHelper(dv1).validate(1, 1, "4", "General"));
 		
 		dv1.setOperatorType(OperatorType.EQUAL);
-		Assert.assertTrue(new DataValidationHelper(dv1).validate("1", "General"));
-		Assert.assertFalse(new DataValidationHelper(dv1).validate("2", "General"));
-		Assert.assertFalse(new DataValidationHelper(dv1).validate("3", "General"));
+		Assert.assertTrue(new DataValidationHelper(dv1).validate(1, 1, "1", "General"));
+		Assert.assertFalse(new DataValidationHelper(dv1).validate(1, 1, "2", "General"));
+		Assert.assertFalse(new DataValidationHelper(dv1).validate(1, 1, "3", "General"));
 		
 		dv1.setOperatorType(OperatorType.NOT_EQUAL);
-		Assert.assertFalse(new DataValidationHelper(dv1).validate("1", "General"));
-		Assert.assertTrue(new DataValidationHelper(dv1).validate("2", "General"));
-		Assert.assertTrue(new DataValidationHelper(dv1).validate("3", "General"));
+		Assert.assertFalse(new DataValidationHelper(dv1).validate(1, 1, "1", "General"));
+		Assert.assertTrue(new DataValidationHelper(dv1).validate(1, 1, "2", "General"));
+		Assert.assertTrue(new DataValidationHelper(dv1).validate(1, 1, "3", "General"));
 		
 		dv1.setOperatorType(OperatorType.GREATER_OR_EQUAL);
-		Assert.assertFalse(new DataValidationHelper(dv1).validate("0", "General"));
-		Assert.assertTrue(new DataValidationHelper(dv1).validate("1", "General"));
-		Assert.assertTrue(new DataValidationHelper(dv1).validate("2", "General"));
+		Assert.assertFalse(new DataValidationHelper(dv1).validate(1, 1, "0", "General"));
+		Assert.assertTrue(new DataValidationHelper(dv1).validate(1, 1, "1", "General"));
+		Assert.assertTrue(new DataValidationHelper(dv1).validate(1, 1, "2", "General"));
 		
 		dv1.setOperatorType(OperatorType.GREATER_THAN);
-		Assert.assertFalse(new DataValidationHelper(dv1).validate("0", "General"));
-		Assert.assertFalse(new DataValidationHelper(dv1).validate("1", "General"));
-		Assert.assertTrue(new DataValidationHelper(dv1).validate("2", "General"));
+		Assert.assertFalse(new DataValidationHelper(dv1).validate(1, 1, "0", "General"));
+		Assert.assertFalse(new DataValidationHelper(dv1).validate(1, 1, "1", "General"));
+		Assert.assertTrue(new DataValidationHelper(dv1).validate(1, 1, "2", "General"));
 		
 		dv1.setOperatorType(OperatorType.LESS_OR_EQUAL);
-		Assert.assertFalse(new DataValidationHelper(dv1).validate("2", "General"));
-		Assert.assertTrue(new DataValidationHelper(dv1).validate("1", "General"));
-		Assert.assertTrue(new DataValidationHelper(dv1).validate("0", "General"));
+		Assert.assertFalse(new DataValidationHelper(dv1).validate(1, 1, "2", "General"));
+		Assert.assertTrue(new DataValidationHelper(dv1).validate(1, 1, "1", "General"));
+		Assert.assertTrue(new DataValidationHelper(dv1).validate(1, 1, "0", "General"));
 		
 		dv1.setOperatorType(OperatorType.LESS_THAN);
-		Assert.assertFalse(new DataValidationHelper(dv1).validate("2", "General"));
-		Assert.assertFalse(new DataValidationHelper(dv1).validate("1", "General"));
-		Assert.assertTrue(new DataValidationHelper(dv1).validate("0", "General"));
+		Assert.assertFalse(new DataValidationHelper(dv1).validate(1, 1, "2", "General"));
+		Assert.assertFalse(new DataValidationHelper(dv1).validate(1, 1, "1", "General"));
+		Assert.assertTrue(new DataValidationHelper(dv1).validate(1, 1, "0", "General"));
 	}
 	
 	@Test
@@ -281,48 +281,48 @@ public class ValidationTest {
 		((AbstractDataValidationAdv)dv1).setFormulas("A1", "SUM(A1:B1)");//1-3
 		dv1.setOperatorType(OperatorType.BETWEEN);
 		
-		Assert.assertTrue(new DataValidationHelper(dv1).validate("A", "General"));
-		Assert.assertTrue(new DataValidationHelper(dv1).validate("AA", "General"));
-		Assert.assertTrue(new DataValidationHelper(dv1).validate("AAA", "General"));
-		Assert.assertFalse(new DataValidationHelper(dv1).validate("", "General"));
-		Assert.assertFalse(new DataValidationHelper(dv1).validate("AAAA", "General"));
+		Assert.assertTrue(new DataValidationHelper(dv1).validate(1, 1, "A", "General"));
+		Assert.assertTrue(new DataValidationHelper(dv1).validate(1, 1, "AA", "General"));
+		Assert.assertTrue(new DataValidationHelper(dv1).validate(1, 1, "AAA", "General"));
+		Assert.assertFalse(new DataValidationHelper(dv1).validate(1, 1, "", "General"));
+		Assert.assertFalse(new DataValidationHelper(dv1).validate(1, 1, "AAAA", "General"));
 		
 		dv1.setOperatorType(OperatorType.NOT_BETWEEN);
-		Assert.assertFalse(new DataValidationHelper(dv1).validate("A", "General"));
-		Assert.assertFalse(new DataValidationHelper(dv1).validate("AA", "General"));
-		Assert.assertFalse(new DataValidationHelper(dv1).validate("AAA", "General"));
-		Assert.assertTrue(new DataValidationHelper(dv1).validate("", "General"));
-		Assert.assertTrue(new DataValidationHelper(dv1).validate("AAAA", "General"));
+		Assert.assertFalse(new DataValidationHelper(dv1).validate(1, 1, "A", "General"));
+		Assert.assertFalse(new DataValidationHelper(dv1).validate(1, 1, "AA", "General"));
+		Assert.assertFalse(new DataValidationHelper(dv1).validate(1, 1, "AAA", "General"));
+		Assert.assertTrue(new DataValidationHelper(dv1).validate(1, 1, "", "General"));
+		Assert.assertTrue(new DataValidationHelper(dv1).validate(1, 1, "AAAA", "General"));
 		
 		dv1.setOperatorType(OperatorType.EQUAL);
-		Assert.assertTrue(new DataValidationHelper(dv1).validate("A", "General"));
-		Assert.assertFalse(new DataValidationHelper(dv1).validate("AA", "General"));
-		Assert.assertFalse(new DataValidationHelper(dv1).validate("AAA", "General"));
+		Assert.assertTrue(new DataValidationHelper(dv1).validate(1, 1, "A", "General"));
+		Assert.assertFalse(new DataValidationHelper(dv1).validate(1, 1, "AA", "General"));
+		Assert.assertFalse(new DataValidationHelper(dv1).validate(1, 1, "AAA", "General"));
 		
 		dv1.setOperatorType(OperatorType.NOT_EQUAL);
-		Assert.assertFalse(new DataValidationHelper(dv1).validate("A", "General"));
-		Assert.assertTrue(new DataValidationHelper(dv1).validate("AA", "General"));
-		Assert.assertTrue(new DataValidationHelper(dv1).validate("AAA", "General"));
+		Assert.assertFalse(new DataValidationHelper(dv1).validate(1, 1, "A", "General"));
+		Assert.assertTrue(new DataValidationHelper(dv1).validate(1, 1, "AA", "General"));
+		Assert.assertTrue(new DataValidationHelper(dv1).validate(1, 1, "AAA", "General"));
 		
 		dv1.setOperatorType(OperatorType.GREATER_OR_EQUAL);
-		Assert.assertFalse(new DataValidationHelper(dv1).validate("", "General"));
-		Assert.assertTrue(new DataValidationHelper(dv1).validate("A", "General"));
-		Assert.assertTrue(new DataValidationHelper(dv1).validate("AA", "General"));
+		Assert.assertFalse(new DataValidationHelper(dv1).validate(1, 1, "", "General"));
+		Assert.assertTrue(new DataValidationHelper(dv1).validate(1, 1, "A", "General"));
+		Assert.assertTrue(new DataValidationHelper(dv1).validate(1, 1, "AA", "General"));
 		
 		dv1.setOperatorType(OperatorType.GREATER_THAN);
-		Assert.assertFalse(new DataValidationHelper(dv1).validate("", "General"));
-		Assert.assertFalse(new DataValidationHelper(dv1).validate("A", "General"));
-		Assert.assertTrue(new DataValidationHelper(dv1).validate("AA", "General"));
+		Assert.assertFalse(new DataValidationHelper(dv1).validate(1, 1, "", "General"));
+		Assert.assertFalse(new DataValidationHelper(dv1).validate(1, 1, "A", "General"));
+		Assert.assertTrue(new DataValidationHelper(dv1).validate(1, 1, "AA", "General"));
 		
 		dv1.setOperatorType(OperatorType.LESS_OR_EQUAL);
-		Assert.assertFalse(new DataValidationHelper(dv1).validate("AA", "General"));
-		Assert.assertTrue(new DataValidationHelper(dv1).validate("A", "General"));
-		Assert.assertTrue(new DataValidationHelper(dv1).validate("", "General"));
+		Assert.assertFalse(new DataValidationHelper(dv1).validate(1, 1, "AA", "General"));
+		Assert.assertTrue(new DataValidationHelper(dv1).validate(1, 1, "A", "General"));
+		Assert.assertTrue(new DataValidationHelper(dv1).validate(1, 1, "", "General"));
 		
 		dv1.setOperatorType(OperatorType.LESS_THAN);
-		Assert.assertFalse(new DataValidationHelper(dv1).validate("AA", "General"));
-		Assert.assertFalse(new DataValidationHelper(dv1).validate("A", "General"));
-		Assert.assertTrue(new DataValidationHelper(dv1).validate("", "General"));
+		Assert.assertFalse(new DataValidationHelper(dv1).validate(1, 1, "AA", "General"));
+		Assert.assertFalse(new DataValidationHelper(dv1).validate(1, 1, "A", "General"));
+		Assert.assertTrue(new DataValidationHelper(dv1).validate(1, 1, "", "General"));
 	}
 	
 	@Test
@@ -343,48 +343,48 @@ public class ValidationTest {
 		((AbstractDataValidationAdv)dv1).setFormulas("A1", "B1");//2013/1/10 - 2013/2/1
 		dv1.setOperatorType(OperatorType.BETWEEN);
 		String format = "yyyy/m/d";
-		Assert.assertTrue(new DataValidationHelper(dv1).validate("2013/1/10", format));
-		Assert.assertTrue(new DataValidationHelper(dv1).validate("2013/1/15", format));
-		Assert.assertTrue(new DataValidationHelper(dv1).validate("2013/2/1", format));
-		Assert.assertFalse(new DataValidationHelper(dv1).validate("2013/1/9", format));
-		Assert.assertFalse(new DataValidationHelper(dv1).validate("2013/2/2", format));
+		Assert.assertTrue(new DataValidationHelper(dv1).validate(1, 1, "2013/1/10", format));
+		Assert.assertTrue(new DataValidationHelper(dv1).validate(1, 1, "2013/1/15", format));
+		Assert.assertTrue(new DataValidationHelper(dv1).validate(1, 1, "2013/2/1", format));
+		Assert.assertFalse(new DataValidationHelper(dv1).validate(1, 1, "2013/1/9", format));
+		Assert.assertFalse(new DataValidationHelper(dv1).validate(1, 1, "2013/2/2", format));
 		
 		dv1.setOperatorType(OperatorType.NOT_BETWEEN);
-		Assert.assertFalse(new DataValidationHelper(dv1).validate("2013/1/10", format));
-		Assert.assertFalse(new DataValidationHelper(dv1).validate("2013/1/15", format));
-		Assert.assertFalse(new DataValidationHelper(dv1).validate("2013/2/1", format));
-		Assert.assertTrue(new DataValidationHelper(dv1).validate("2013/1/9", format));
-		Assert.assertTrue(new DataValidationHelper(dv1).validate("2013/2/2", format));
+		Assert.assertFalse(new DataValidationHelper(dv1).validate(1, 1, "2013/1/10", format));
+		Assert.assertFalse(new DataValidationHelper(dv1).validate(1, 1, "2013/1/15", format));
+		Assert.assertFalse(new DataValidationHelper(dv1).validate(1, 1, "2013/2/1", format));
+		Assert.assertTrue(new DataValidationHelper(dv1).validate(1, 1, "2013/1/9", format));
+		Assert.assertTrue(new DataValidationHelper(dv1).validate(1, 1, "2013/2/2", format));
 		
 		dv1.setOperatorType(OperatorType.EQUAL);
-		Assert.assertTrue(new DataValidationHelper(dv1).validate("2013/1/10", format));
-		Assert.assertFalse(new DataValidationHelper(dv1).validate("2013/1/15", format));
-		Assert.assertFalse(new DataValidationHelper(dv1).validate("2013/2/1", format));
+		Assert.assertTrue(new DataValidationHelper(dv1).validate(1, 1, "2013/1/10", format));
+		Assert.assertFalse(new DataValidationHelper(dv1).validate(1, 1, "2013/1/15", format));
+		Assert.assertFalse(new DataValidationHelper(dv1).validate(1, 1, "2013/2/1", format));
 		
 		dv1.setOperatorType(OperatorType.NOT_EQUAL);
-		Assert.assertFalse(new DataValidationHelper(dv1).validate("2013/1/10", format));
-		Assert.assertTrue(new DataValidationHelper(dv1).validate("2013/1/15", format));
-		Assert.assertTrue(new DataValidationHelper(dv1).validate("2013/2/1", format));
+		Assert.assertFalse(new DataValidationHelper(dv1).validate(1, 1, "2013/1/10", format));
+		Assert.assertTrue(new DataValidationHelper(dv1).validate(1, 1, "2013/1/15", format));
+		Assert.assertTrue(new DataValidationHelper(dv1).validate(1, 1, "2013/2/1", format));
 		
 		dv1.setOperatorType(OperatorType.GREATER_OR_EQUAL);
-		Assert.assertFalse(new DataValidationHelper(dv1).validate("2013/1/9", format));
-		Assert.assertTrue(new DataValidationHelper(dv1).validate("2013/1/10", format));
-		Assert.assertTrue(new DataValidationHelper(dv1).validate("2013/1/15", format));
+		Assert.assertFalse(new DataValidationHelper(dv1).validate(1, 1, "2013/1/9", format));
+		Assert.assertTrue(new DataValidationHelper(dv1).validate(1, 1, "2013/1/10", format));
+		Assert.assertTrue(new DataValidationHelper(dv1).validate(1, 1, "2013/1/15", format));
 		
 		dv1.setOperatorType(OperatorType.GREATER_THAN);
-		Assert.assertFalse(new DataValidationHelper(dv1).validate("2013/1/9", format));
-		Assert.assertFalse(new DataValidationHelper(dv1).validate("2013/1/10", format));
-		Assert.assertTrue(new DataValidationHelper(dv1).validate("2013/1/15", format));
+		Assert.assertFalse(new DataValidationHelper(dv1).validate(1, 1, "2013/1/9", format));
+		Assert.assertFalse(new DataValidationHelper(dv1).validate(1, 1, "2013/1/10", format));
+		Assert.assertTrue(new DataValidationHelper(dv1).validate(1, 1, "2013/1/15", format));
 		
 		dv1.setOperatorType(OperatorType.LESS_OR_EQUAL);
-		Assert.assertFalse(new DataValidationHelper(dv1).validate("2013/1/15", format));
-		Assert.assertTrue(new DataValidationHelper(dv1).validate("2013/1/10", format));
-		Assert.assertTrue(new DataValidationHelper(dv1).validate("2013/1/9", format));
+		Assert.assertFalse(new DataValidationHelper(dv1).validate(1, 1, "2013/1/15", format));
+		Assert.assertTrue(new DataValidationHelper(dv1).validate(1, 1, "2013/1/10", format));
+		Assert.assertTrue(new DataValidationHelper(dv1).validate(1, 1, "2013/1/9", format));
 		
 		dv1.setOperatorType(OperatorType.LESS_THAN);
-		Assert.assertFalse(new DataValidationHelper(dv1).validate("2013/1/15", format));
-		Assert.assertFalse(new DataValidationHelper(dv1).validate("2013/1/10", format));
-		Assert.assertTrue(new DataValidationHelper(dv1).validate("2013/1/9", format));
+		Assert.assertFalse(new DataValidationHelper(dv1).validate(1, 1, "2013/1/15", format));
+		Assert.assertFalse(new DataValidationHelper(dv1).validate(1, 1, "2013/1/10", format));
+		Assert.assertTrue(new DataValidationHelper(dv1).validate(1, 1, "2013/1/9", format));
 	}
 	
 	@Test
@@ -403,48 +403,48 @@ public class ValidationTest {
 		((AbstractDataValidationAdv)dv1).setFormulas("A1", "B1");//12:00 - 14:00
 		dv1.setOperatorType(OperatorType.BETWEEN);
 		String format = "h:mm";
-		Assert.assertTrue(new DataValidationHelper(dv1).validate("12:00", format));
-		Assert.assertTrue(new DataValidationHelper(dv1).validate("12:01", format));
-		Assert.assertTrue(new DataValidationHelper(dv1).validate("14:00", format));
-		Assert.assertFalse(new DataValidationHelper(dv1).validate("11:59", format));
-		Assert.assertFalse(new DataValidationHelper(dv1).validate("14:01", format));
+		Assert.assertTrue(new DataValidationHelper(dv1).validate(1, 1, "12:00", format));
+		Assert.assertTrue(new DataValidationHelper(dv1).validate(1, 1, "12:01", format));
+		Assert.assertTrue(new DataValidationHelper(dv1).validate(1, 1, "14:00", format));
+		Assert.assertFalse(new DataValidationHelper(dv1).validate(1, 1, "11:59", format));
+		Assert.assertFalse(new DataValidationHelper(dv1).validate(1, 1, "14:01", format));
 		
 		dv1.setOperatorType(OperatorType.NOT_BETWEEN);
-		Assert.assertFalse(new DataValidationHelper(dv1).validate("12:00", format));
-		Assert.assertFalse(new DataValidationHelper(dv1).validate("12:01", format));
-		Assert.assertFalse(new DataValidationHelper(dv1).validate("14:00", format));
-		Assert.assertTrue(new DataValidationHelper(dv1).validate("11:59", format));
-		Assert.assertTrue(new DataValidationHelper(dv1).validate("14:01", format));
+		Assert.assertFalse(new DataValidationHelper(dv1).validate(1, 1, "12:00", format));
+		Assert.assertFalse(new DataValidationHelper(dv1).validate(1, 1, "12:01", format));
+		Assert.assertFalse(new DataValidationHelper(dv1).validate(1, 1, "14:00", format));
+		Assert.assertTrue(new DataValidationHelper(dv1).validate(1, 1, "11:59", format));
+		Assert.assertTrue(new DataValidationHelper(dv1).validate(1, 1, "14:01", format));
 		
 		dv1.setOperatorType(OperatorType.EQUAL);
-		Assert.assertTrue(new DataValidationHelper(dv1).validate("12:00", format));
-		Assert.assertFalse(new DataValidationHelper(dv1).validate("12:01", format));
-		Assert.assertFalse(new DataValidationHelper(dv1).validate("14:00", format));
+		Assert.assertTrue(new DataValidationHelper(dv1).validate(1, 1, "12:00", format));
+		Assert.assertFalse(new DataValidationHelper(dv1).validate(1, 1, "12:01", format));
+		Assert.assertFalse(new DataValidationHelper(dv1).validate(1, 1, "14:00", format));
 		
 		dv1.setOperatorType(OperatorType.NOT_EQUAL);
-		Assert.assertFalse(new DataValidationHelper(dv1).validate("12:00", format));
-		Assert.assertTrue(new DataValidationHelper(dv1).validate("12:01", format));
-		Assert.assertTrue(new DataValidationHelper(dv1).validate("14:00", format));
+		Assert.assertFalse(new DataValidationHelper(dv1).validate(1, 1, "12:00", format));
+		Assert.assertTrue(new DataValidationHelper(dv1).validate(1, 1, "12:01", format));
+		Assert.assertTrue(new DataValidationHelper(dv1).validate(1, 1, "14:00", format));
 		
 		dv1.setOperatorType(OperatorType.GREATER_OR_EQUAL);
-		Assert.assertFalse(new DataValidationHelper(dv1).validate("11:59", format));
-		Assert.assertTrue(new DataValidationHelper(dv1).validate("12:00", format));
-		Assert.assertTrue(new DataValidationHelper(dv1).validate("12:01", format));
+		Assert.assertFalse(new DataValidationHelper(dv1).validate(1, 1, "11:59", format));
+		Assert.assertTrue(new DataValidationHelper(dv1).validate(1, 1, "12:00", format));
+		Assert.assertTrue(new DataValidationHelper(dv1).validate(1, 1, "12:01", format));
 		
 		dv1.setOperatorType(OperatorType.GREATER_THAN);
-		Assert.assertFalse(new DataValidationHelper(dv1).validate("11:59", format));
-		Assert.assertFalse(new DataValidationHelper(dv1).validate("12:00", format));
-		Assert.assertTrue(new DataValidationHelper(dv1).validate("12:01", format));
+		Assert.assertFalse(new DataValidationHelper(dv1).validate(1, 1, "11:59", format));
+		Assert.assertFalse(new DataValidationHelper(dv1).validate(1, 1, "12:00", format));
+		Assert.assertTrue(new DataValidationHelper(dv1).validate(1, 1, "12:01", format));
 		
 		dv1.setOperatorType(OperatorType.LESS_OR_EQUAL);
-		Assert.assertFalse(new DataValidationHelper(dv1).validate("12:01", format));
-		Assert.assertTrue(new DataValidationHelper(dv1).validate("12:00", format));
-		Assert.assertTrue(new DataValidationHelper(dv1).validate("11:59", format));
+		Assert.assertFalse(new DataValidationHelper(dv1).validate(1, 1, "12:01", format));
+		Assert.assertTrue(new DataValidationHelper(dv1).validate(1, 1, "12:00", format));
+		Assert.assertTrue(new DataValidationHelper(dv1).validate(1, 1, "11:59", format));
 		
 		dv1.setOperatorType(OperatorType.LESS_THAN);
-		Assert.assertFalse(new DataValidationHelper(dv1).validate("12:01", format));
-		Assert.assertFalse(new DataValidationHelper(dv1).validate("12:00", format));
-		Assert.assertTrue(new DataValidationHelper(dv1).validate("11:59", format));
+		Assert.assertFalse(new DataValidationHelper(dv1).validate(1, 1, "12:01", format));
+		Assert.assertFalse(new DataValidationHelper(dv1).validate(1, 1, "12:00", format));
+		Assert.assertTrue(new DataValidationHelper(dv1).validate(1, 1, "11:59", format));
 	}
 	
 	
@@ -469,39 +469,39 @@ public class ValidationTest {
 		//test integer
 		dv0.setValidationType(ValidationType.LIST);
 		dv0.setFormula1("{1,2,3}");
-		Assert.assertTrue(new DataValidationHelper(dv0).validate("1", numberFormat));
-		Assert.assertTrue(new DataValidationHelper(dv0).validate("2", numberFormat));
-		Assert.assertTrue(new DataValidationHelper(dv0).validate("3", numberFormat));
-		Assert.assertFalse(new DataValidationHelper(dv0).validate("0", numberFormat));
-		Assert.assertFalse(new DataValidationHelper(dv0).validate("4", numberFormat));
+		Assert.assertTrue(new DataValidationHelper(dv0).validate(0, 3,"1", numberFormat));
+		Assert.assertTrue(new DataValidationHelper(dv0).validate(0, 3,"2", numberFormat));
+		Assert.assertTrue(new DataValidationHelper(dv0).validate(0, 3,"3", numberFormat));
+		Assert.assertFalse(new DataValidationHelper(dv0).validate(0, 3,"0", numberFormat));
+		Assert.assertFalse(new DataValidationHelper(dv0).validate(0, 3,"4", numberFormat));
 		
 		dv0.setFormula1("{\"A\",\"B\",\"C\"}");
-		Assert.assertTrue(new DataValidationHelper(dv0).validate("A", numberFormat));
-		Assert.assertTrue(new DataValidationHelper(dv0).validate("B", numberFormat));
-		Assert.assertTrue(new DataValidationHelper(dv0).validate("C", numberFormat));
-		Assert.assertFalse(new DataValidationHelper(dv0).validate("D", numberFormat));
-		Assert.assertFalse(new DataValidationHelper(dv0).validate("E", numberFormat));
+		Assert.assertTrue(new DataValidationHelper(dv0).validate(0, 3,"A", numberFormat));
+		Assert.assertTrue(new DataValidationHelper(dv0).validate(0, 3,"B", numberFormat));
+		Assert.assertTrue(new DataValidationHelper(dv0).validate(0, 3,"C", numberFormat));
+		Assert.assertFalse(new DataValidationHelper(dv0).validate(0, 3,"D", numberFormat));
+		Assert.assertFalse(new DataValidationHelper(dv0).validate(0, 3,"E", numberFormat));
 		
 		dv0.setFormula1("A1:C1");
-		Assert.assertTrue(new DataValidationHelper(dv0).validate("A", numberFormat));
-		Assert.assertTrue(new DataValidationHelper(dv0).validate("B", numberFormat));
-		Assert.assertTrue(new DataValidationHelper(dv0).validate("C", numberFormat));
-		Assert.assertFalse(new DataValidationHelper(dv0).validate("D", numberFormat));
-		Assert.assertFalse(new DataValidationHelper(dv0).validate("E", numberFormat));
+		Assert.assertTrue(new DataValidationHelper(dv0).validate(0, 3,"A", numberFormat));
+		Assert.assertTrue(new DataValidationHelper(dv0).validate(0, 3,"B", numberFormat));
+		Assert.assertTrue(new DataValidationHelper(dv0).validate(0, 3,"C", numberFormat));
+		Assert.assertFalse(new DataValidationHelper(dv0).validate(0, 3,"D", numberFormat));
+		Assert.assertFalse(new DataValidationHelper(dv0).validate(0, 3,"E", numberFormat));
 		
 		dv0.setFormula1("A2:C2");
-		Assert.assertTrue(new DataValidationHelper(dv0).validate("1", numberFormat));
-		Assert.assertTrue(new DataValidationHelper(dv0).validate("2", numberFormat));
-		Assert.assertTrue(new DataValidationHelper(dv0).validate("3", numberFormat));
-		Assert.assertFalse(new DataValidationHelper(dv0).validate("0", numberFormat));
-		Assert.assertFalse(new DataValidationHelper(dv0).validate("4", numberFormat));
+		Assert.assertTrue(new DataValidationHelper(dv0).validate(0, 3,"1", numberFormat));
+		Assert.assertTrue(new DataValidationHelper(dv0).validate(0, 3,"2", numberFormat));
+		Assert.assertTrue(new DataValidationHelper(dv0).validate(0, 3,"3", numberFormat));
+		Assert.assertFalse(new DataValidationHelper(dv0).validate(0, 3,"0", numberFormat));
+		Assert.assertFalse(new DataValidationHelper(dv0).validate(0, 3,"4", numberFormat));
 		
 		dv0.setFormula1("A3:C3");
-		Assert.assertTrue(new DataValidationHelper(dv0).validate("2013/1/1", dateFormat));
-		Assert.assertTrue(new DataValidationHelper(dv0).validate("2013/1/2", dateFormat));
-		Assert.assertTrue(new DataValidationHelper(dv0).validate("2013/1/3", dateFormat));
-		Assert.assertFalse(new DataValidationHelper(dv0).validate("2013/1/4", dateFormat));
-		Assert.assertFalse(new DataValidationHelper(dv0).validate("2013/1/5", dateFormat));
+		Assert.assertTrue(new DataValidationHelper(dv0).validate(0, 3,"2013/1/1", dateFormat));
+		Assert.assertTrue(new DataValidationHelper(dv0).validate(0, 3,"2013/1/2", dateFormat));
+		Assert.assertTrue(new DataValidationHelper(dv0).validate(0, 3,"2013/1/3", dateFormat));
+		Assert.assertFalse(new DataValidationHelper(dv0).validate(0, 3,"2013/1/4", dateFormat));
+		Assert.assertFalse(new DataValidationHelper(dv0).validate(0, 3,"2013/1/5", dateFormat));
 	}
 	@Test
 	public void testDataValidationHelperFormula(){
@@ -527,38 +527,38 @@ public class ValidationTest {
 		//test integer
 		dv0.setValidationType(ValidationType.LIST);
 		dv0.setFormula1("{1,2,3}");
-		Assert.assertTrue(new DataValidationHelper(dv0).validate("=A2", numberFormat));
-		Assert.assertTrue(new DataValidationHelper(dv0).validate("=B2", numberFormat));
-		Assert.assertTrue(new DataValidationHelper(dv0).validate("=C2", numberFormat));
-		Assert.assertFalse(new DataValidationHelper(dv0).validate("=D2", numberFormat));
-		Assert.assertFalse(new DataValidationHelper(dv0).validate("=E2", numberFormat));
+		Assert.assertTrue(new DataValidationHelper(dv0).validate(0, 4,"=A2", numberFormat));
+		Assert.assertTrue(new DataValidationHelper(dv0).validate(0, 4,"=B2", numberFormat));
+		Assert.assertTrue(new DataValidationHelper(dv0).validate(0, 4,"=C2", numberFormat));
+		Assert.assertFalse(new DataValidationHelper(dv0).validate(0, 4,"=D2", numberFormat));
+		Assert.assertFalse(new DataValidationHelper(dv0).validate(0, 4,"=E2", numberFormat));
 		
 		dv0.setFormula1("{\"A\",\"B\",\"C\"}");
-		Assert.assertTrue(new DataValidationHelper(dv0).validate("=A1", numberFormat));
-		Assert.assertTrue(new DataValidationHelper(dv0).validate("=B1", numberFormat));
-		Assert.assertTrue(new DataValidationHelper(dv0).validate("=C1", numberFormat));
-		Assert.assertFalse(new DataValidationHelper(dv0).validate("=D1", numberFormat));
-		Assert.assertFalse(new DataValidationHelper(dv0).validate("=E1", numberFormat));
+		Assert.assertTrue(new DataValidationHelper(dv0).validate(0, 4,"=A1", numberFormat));
+		Assert.assertTrue(new DataValidationHelper(dv0).validate(0, 4,"=B1", numberFormat));
+		Assert.assertTrue(new DataValidationHelper(dv0).validate(0, 4,"=C1", numberFormat));
+		Assert.assertFalse(new DataValidationHelper(dv0).validate(0, 4,"=D1", numberFormat));
+		Assert.assertFalse(new DataValidationHelper(dv0).validate(0, 4,"=E1", numberFormat));
 		
 		dv0.setFormula1("A1:C1");
-		Assert.assertTrue(new DataValidationHelper(dv0).validate("=A1", numberFormat));
-		Assert.assertTrue(new DataValidationHelper(dv0).validate("=B1", numberFormat));
-		Assert.assertTrue(new DataValidationHelper(dv0).validate("=C1", numberFormat));
-		Assert.assertFalse(new DataValidationHelper(dv0).validate("=D1", numberFormat));
-		Assert.assertFalse(new DataValidationHelper(dv0).validate("=E1", numberFormat));
+		Assert.assertTrue(new DataValidationHelper(dv0).validate(0, 4,"=A1", numberFormat));
+		Assert.assertTrue(new DataValidationHelper(dv0).validate(0, 4,"=B1", numberFormat));
+		Assert.assertTrue(new DataValidationHelper(dv0).validate(0, 4,"=C1", numberFormat));
+		Assert.assertFalse(new DataValidationHelper(dv0).validate(0, 4,"=D1", numberFormat));
+		Assert.assertFalse(new DataValidationHelper(dv0).validate(0, 4,"=E1", numberFormat));
 		
 		dv0.setFormula1("A2:C2");
-		Assert.assertTrue(new DataValidationHelper(dv0).validate("=A2", numberFormat));
-		Assert.assertTrue(new DataValidationHelper(dv0).validate("=B2", numberFormat));
-		Assert.assertTrue(new DataValidationHelper(dv0).validate("=C2", numberFormat));
-		Assert.assertFalse(new DataValidationHelper(dv0).validate("=D2", numberFormat));
-		Assert.assertFalse(new DataValidationHelper(dv0).validate("=E2", numberFormat));
+		Assert.assertTrue(new DataValidationHelper(dv0).validate(0, 4,"=A2", numberFormat));
+		Assert.assertTrue(new DataValidationHelper(dv0).validate(0, 4,"=B2", numberFormat));
+		Assert.assertTrue(new DataValidationHelper(dv0).validate(0, 4,"=C2", numberFormat));
+		Assert.assertFalse(new DataValidationHelper(dv0).validate(0, 4,"=D2", numberFormat));
+		Assert.assertFalse(new DataValidationHelper(dv0).validate(0, 4,"=E2", numberFormat));
 		
 		dv0.setFormula1("A3:C3");
-		Assert.assertTrue(new DataValidationHelper(dv0).validate("=A3", numberFormat));
-		Assert.assertTrue(new DataValidationHelper(dv0).validate("=B3", numberFormat));
-		Assert.assertTrue(new DataValidationHelper(dv0).validate("=C3", numberFormat));
-		Assert.assertFalse(new DataValidationHelper(dv0).validate("=D3", numberFormat));
-		Assert.assertFalse(new DataValidationHelper(dv0).validate("=E3", numberFormat));
+		Assert.assertTrue(new DataValidationHelper(dv0).validate(0, 4,"=A3", numberFormat));
+		Assert.assertTrue(new DataValidationHelper(dv0).validate(0, 4,"=B3", numberFormat));
+		Assert.assertTrue(new DataValidationHelper(dv0).validate(0, 4,"=C3", numberFormat));
+		Assert.assertFalse(new DataValidationHelper(dv0).validate(0, 4,"=D3", numberFormat));
+		Assert.assertFalse(new DataValidationHelper(dv0).validate(0, 4,"=E3", numberFormat));
 	}
 }

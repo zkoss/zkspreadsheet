@@ -1403,7 +1403,7 @@ public class RangeImpl implements SRange {
 			boolean visit(SCell cell) {
 				SDataValidation validation = getSheet().getDataValidation(cell.getRowIndex(), cell.getColumnIndex());
 				if(validation!=null){
-					if(!new DataValidationHelper(validation).validate(editText,cell.getCellStyle().getDataFormat())){
+					if(!new DataValidationHelper(validation).validate(cell.getRowIndex(), cell.getColumnIndex(), editText,cell.getCellStyle().getDataFormat())){
 						retrunVal.set(validation);
 						return false;
 					}

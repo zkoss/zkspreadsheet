@@ -100,4 +100,13 @@ public abstract class AbstractDataValidationAdv implements SDataValidation,Linke
 	 * @since 3.6.0
 	 */
 	abstract public ValueEval getValueEval2();
+	
+	//ZSS-833
+	/**
+	 * 
+	 * @param row
+	 * @param col
+	 * @since 3.6.1
+	 */
+	abstract public void addDependency(int row, int col);
 }

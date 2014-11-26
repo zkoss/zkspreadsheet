@@ -118,4 +118,25 @@ public interface SDataValidation extends FormulaContent{
 	public void setFormula2(String formula);
 
 	public Object getId();
+
+	/**
+	 * Returns whether the referred list formula contains a relative column. 
+	 * @return
+	 * @since 3.6.1
+	 */
+	public boolean hasReferToRelativeCol();
+	/**
+	 * Returns whether the referred list formula contains a relative row.
+	 * @return
+	 * @since 3.6.1
+	 */
+	public boolean hasReferToRelativeRow();
+	/**
+	 * Return the referred list relative to the specified row and column.
+	 * @param row
+	 * @param col
+	 * @return
+	 * @since 3.6.1
+	 */
+	public List<SCell> getReferToCellList(int row, int col);
 }
