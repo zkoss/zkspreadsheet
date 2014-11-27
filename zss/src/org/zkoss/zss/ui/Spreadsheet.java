@@ -118,6 +118,8 @@ import org.zkoss.zss.model.SPicture;
 import org.zkoss.zss.model.SRow;
 import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.model.SSheet.SheetVisible;
+import org.zkoss.zss.model.impl.AbstractBookSeriesAdv;
+import org.zkoss.zss.model.impl.sys.DependencyTableImpl;
 import org.zkoss.zss.model.sys.formula.EvaluationContributorContainer;
 import org.zkoss.zss.range.SImporter;
 import org.zkoss.zss.range.SImporters;
@@ -5282,12 +5284,15 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	 * @since 3.6.1
 	 */
 	public void clearClientCache(SSheet sheet) {
+		if (sheet == null) return; 
+		if (!getSBook().equals(sheet.getBook())) return;
+		
 		SSheet currentSheet = getSelectedSSheet(); 
 		if (sheet != null && !sheet.equals(getSelectedSSheet())) {
-			releaseClientCache(sheet.getId());
 			final ActiveRangeHelper helper = getActiveRangeHelper();
-			helper.removeActiveRange(sheet);
-			return;
+			if (helper.removeActiveRange(sheet) != null) {
+				releaseClientCache(sheet.getId());
+			}
 		}
 	}
 	

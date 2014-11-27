@@ -16,7 +16,9 @@ Copyright (C) 2012 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.ui.impl;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 
 import org.zkoss.zss.api.AreaRef;
 //import org.zkoss.zss.model.sys.XSheet;
@@ -60,9 +62,12 @@ public class ActiveRangeHelper {
 	
 	//Remove this sheet from activeRanges
 	//@since 3.6.1
-	public void removeActiveRange(SSheet sheet) {
-		if (activeRanges != null) {
-			activeRanges.remove(sheet);
-		}
+	public AreaRef removeActiveRange(SSheet sheet) {
+		return activeRanges != null ? activeRanges.remove(sheet) : null;
+	}
+	
+	//Iterate sheets in ActiveRanges 
+	public Iterator<SSheet> sheetIterator() {
+		return new ArrayList<SSheet>(activeRanges.keySet()).iterator();
 	}
 }
