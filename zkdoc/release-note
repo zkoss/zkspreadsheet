@@ -7,6 +7,7 @@ ZK Spreadsheet 3.6.1
   ZSS-832 Support hide sheet
   ZSS-845 Support auto update for Cells refer other cells via INDIRECT() function
   ZSS-697 Enhance the Chart engine
+  ZSS-846 Support clearClientCache to avoid bloated client in some cases.
   
 *Bugs:
   ZSS-820 Formula should change sheet name if reordered sheet goes beyond its the formula's sheet boundary.
