@@ -885,16 +885,18 @@ public interface SRange {
 	
 	/**
 	 * Update data model and refresh UI of this range and its dependent cells 
-	 * if the argument includeDependents is true; enforce evaluation if the 
-	 * argument enforceEval is true.
+	 * if the argument includeDependents is true. 
 	 * 
-	 * Note that when you set argument enforceEval to true, cell cache will 
-	 * be cleared first and then evaluate again no matter it was cached or not 
-	 * so it might take longer time.
+	 * Note that when you set parameter clearCache to true, the cached formula 
+	 * result in data model will be cleared first.
+	 * 
+	 * If you set parameter enforceEval to true, data model associated with 
+	 * this range will be evaluated immediately; otherwise will be 
+	 * evaluated on demand.
 	 *  
 	 * @since 3.6.1
 	 */
-	public void refresh(boolean includeDependents, boolean enforceEval);
+	public void refresh(boolean includeDependents, boolean clearCache, boolean enforceEval);
 	
 	/**
 	 * Set Sheet visibility; can be SheetVisible.VISIBLE, SheetVisible.HIDDEN,

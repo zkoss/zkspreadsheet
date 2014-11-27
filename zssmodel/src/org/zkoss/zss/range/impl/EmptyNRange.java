@@ -528,7 +528,7 @@ import org.zkoss.zss.range.*;
 	}
 
 	@Override
-	public void refresh(boolean includeDependents, boolean enforceEval) {
+	public void refresh(boolean includeDependents, boolean clearCache, boolean enforceEval) {
 		// do nothing
 	}
 

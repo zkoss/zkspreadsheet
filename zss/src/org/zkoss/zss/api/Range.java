@@ -972,7 +972,8 @@ public interface Range {
 
 	/**
 	 * Enforce evaluation(if not cached) and refresh UI of this range and its 
-	 * dependent cells if the includeDependents is true. 
+	 * dependent cells if the includeDependents is true. This method is equal
+	 * to refresh(includeDependents, false, true). 
 	 * @since 3.6.0
 	 */
 	public void refresh(boolean includeDependants);
@@ -988,12 +989,19 @@ public interface Range {
 	public boolean setAutoRefresh(boolean auto);
 
 	/**
-	 * Refresh UI of this range and its dependent cells if the argument
-	 * includeDependents is true; enforce evaluation if the argument 
-	 * enforceEval is true(no matter the value is cached or not). 
+	 * Update data model and refresh UI of this range and its dependent cells 
+	 * if the argument includeDependents is true. 
+	 * 
+	 * Note that when you set parameter clearCache to true, the cached formula 
+	 * result in data model will be cleared first.
+	 * 
+	 * If you set parameter enforceEval to true, data model associated with 
+	 * this range will be evaluated immediately; otherwise will be 
+	 * evaluated on demand.
+	 *  
 	 * @since 3.6.1
 	 */
-	public void refresh(boolean includeDependents, boolean enforceEval);
+	public void refresh(boolean includeDependents, boolean clearCache, boolean enforceEval);
 	
 	/**
 	 * Setup sheet's visibility; can be VISIBLE, HIDDEN, or VERY_HIDDEN.

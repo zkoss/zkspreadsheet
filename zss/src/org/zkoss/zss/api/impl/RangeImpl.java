@@ -825,8 +825,8 @@ public class RangeImpl implements Range{
 	
 	//ZSS-814
 	@Override
-	public void refresh(boolean includeDependants, boolean enforceEval) {
-		_range.refresh(includeDependants, enforceEval);
+	public void refresh(boolean includeDependants, boolean clearCache, boolean enforceEval) {
+		_range.refresh(includeDependants, clearCache, enforceEval);
 	}
 	
 	//ZSS-832

@@ -2072,13 +2072,13 @@ public class RangeImpl implements SRange {
 	//Enforce cell evaluation(if not cached) and refresh UI of this range.
 	@Override
 	public void refresh(final boolean includeDependants) {
-		refresh(includeDependants, false);
+		refresh(includeDependants, false, true);
 	}
 	
 	//ZSS-814
 	//Enforce cell evaluation(if not cached) and refresh UI of this range.
 	@Override
-	public void refresh(final boolean includeDependants, final boolean enforceEval) {
+	public void refresh(final boolean includeDependants, final boolean clearCache, final boolean enforceEval) {
 		new ModelManipulationTask() {
 			@Override
 			protected Object doInvoke() {
@@ -2100,16 +2100,18 @@ public class RangeImpl implements SRange {
 						refs.addAll(table.getDependents(ref));
 					}
 				}
-				if (enforceEval) {
+				if (clearCache) {
 					FormulaCacheCleaner.getCurrent().clear(refs);
 				}
 				// evaluate
-				for (Ref ref : refs) {
-					if (ref.getType() == RefType.CELL) {
-						SBook bk = bookSeries.getBook(ref.getBookName());
-						SSheet sh = bk.getSheetByName(ref.getSheetName());
-						SCell cell = sh.getCell(ref.getRow(), ref.getColumn());
-						cell.getValue();
+				if (enforceEval) {
+					for (Ref ref : refs) {
+						if (ref.getType() == RefType.CELL) {
+							SBook bk = bookSeries.getBook(ref.getBookName());
+							SSheet sh = bk.getSheetByName(ref.getSheetName());
+							SCell cell = sh.getCell(ref.getRow(), ref.getColumn());
+							cell.getValue();
+						}
 					}
 				}
 				handleRefNotifyContentChange(bookSeries, refs);
