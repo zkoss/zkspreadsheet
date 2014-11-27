@@ -5273,7 +5273,23 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		setSImporter(importer==null?null:((ImporterImpl)importer).getNative());
 	}
 	
-	
+	//ZSS-846
+	/**
+	 * Call this method to clear client side cache for a Sheet and fine 
+	 * tune data loading speed. Note if the given sheet is the currently 
+	 * selected sheet, it will be ignored.
+	 * @param sheet the sheet
+	 * @since 3.6.1
+	 */
+	public void clearClientCache(SSheet sheet) {
+		SSheet currentSheet = getSelectedSSheet(); 
+		if (sheet != null && !sheet.equals(getSelectedSSheet())) {
+			releaseClientCache(sheet.getId());
+			final ActiveRangeHelper helper = getActiveRangeHelper();
+			helper.removeActiveRange(sheet);
+			return;
+		}
+	}
 	
 	private void refreshToolbarDisabled(){
 		if(!isInvalidated()){

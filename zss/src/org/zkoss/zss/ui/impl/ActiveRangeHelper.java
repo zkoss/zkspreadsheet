@@ -57,4 +57,12 @@ public class ActiveRangeHelper {
 			return false;
 		return rect.contains(tRow, lCol, bRow, rCol);
 	}
+	
+	//Remove this sheet from activeRanges
+	//@since 3.6.1
+	public void removeActiveRange(SSheet sheet) {
+		if (activeRanges != null) {
+			activeRanges.remove(sheet);
+		}
+	}
 }
