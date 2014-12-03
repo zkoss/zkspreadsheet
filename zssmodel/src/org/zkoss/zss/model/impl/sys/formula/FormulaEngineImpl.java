@@ -125,8 +125,7 @@ public class FormulaEngineImpl implements FormulaEngine {
 	private static Pattern _searchPattern = Pattern.compile("\\s*((?:(?:'[^!\\(]+'!)|(?:[^'!,\\(]+!))?(?:[$\\w]+:)?[$\\w]+)"); // for search area reference 
 	
 	private static boolean isMultipleAreaFormula(String formula){
-		return _areaPattern.matcher(formula).matches();
-		
+		return formula.split(",").length > 1 && _areaPattern.matcher(formula).matches(); //ZSS-847
 	}
 	
 	private String[] unwrapeAreaFormula(String formula){

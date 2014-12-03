@@ -25,8 +25,9 @@ ZK Spreadsheet 3.6.1
   ZSS-831 incorrect clipping at page junction when export to pdf
   ZSS-834 Spreadsheet cannot understand data validation which refers to named range whose name comes from formula
   ZSS-837 Delete a data validation on a cell doesn't remove browser's dropdown list
-  ZSS-809 DataValidation does not handle literal list (comma seperated list) correctly.
-  ZSS-833 Formula in validation's formula field should follow the relative reference rule.
+  ZSS-809 DataValidation does not handle literal list (comma seperated list) correctly
+  ZSS-833 Formula in validation's formula field should follow the relative reference rule
+  ZSS-847 Spreadsheet changes a correct sum formula to an incorrect one
   
 ** Upgrade Notes
   * Chart now uses ZK Charts as default chart engine whose exporting needs extra export server. For more detail, please see "export" section in ZK Spreadsheet Essentials.
