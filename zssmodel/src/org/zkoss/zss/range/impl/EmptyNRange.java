@@ -536,4 +536,25 @@ import org.zkoss.zss.range.*;
 	public void setSheetVisible(SheetVisible visible) {
 		// do nothing
 	}
+
+	@Override
+	public String getCommentRichText() {
+		return null;
+	}
+
+	@Override
+	public void setCommentRichText(String html) {
+		// do nothing
+		
+	}
+
+	@Override
+	public void setCommentVisible(boolean visible) {
+		// do nothing
+	}
+
+	@Override
+	public boolean isCommentVisible() {
+		return false;
+	}
 }

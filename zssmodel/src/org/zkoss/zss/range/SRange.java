@@ -910,4 +910,34 @@ public interface SRange {
 	 * @see SheetVisible
 	 */
 	public void setSheetVisible(SheetVisible visible);
+	
+	/**
+	 * Return the comment rich edit text of the left top cell of this Range.
+	 * @return the rich edit text of this Range.
+	 * @since 3.6.1
+	 */
+	public String getCommentRichText();
+
+	/**
+	 * Set comment rich text into the left top cell of this range; null to 
+	 * delete it. 
+	 * @since 3.6.1
+	 */
+	public void setCommentRichText(String html);
+
+	/**
+	 * Set comment visibility into the left top cell of this range; if no
+	 * comment at the cell, it simply ignored.
+	 * @param visible
+	 * @since 3.6.1
+	 */
+	public void setCommentVisible(boolean visible);
+	
+	/**
+	 * Returns whether the comment is always visible at the left top cell of
+	 * this range; if no comment at the cell, it returns false.
+	 * @return
+	 * @since 3.6.1
+	 */
+	public boolean isCommentVisible();
 }

@@ -846,4 +846,24 @@ public class RangeImpl implements Range{
 		}
 		_range.setSheetVisible(option);
 	}
+
+	//ZSS-848
+	public String getCommentRichText() {
+		return _range.getCommentRichText();
+	}
+
+	//ZSS-848
+	public void setCommentRichText(String html) {
+		_range.setCommentRichText(html);
+	}
+
+	//ZSS-848
+	public void setCommentVisible(boolean visible) {
+		_range.setCommentVisible(visible);
+	}
+	
+	//ZSS-848
+	public boolean isCommentVisible() {
+		return _range.isCommentVisible();
+	}
 }

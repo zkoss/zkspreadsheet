@@ -184,6 +184,11 @@ public class RichTextHelper {
 	public static String getCellRichTextHtml(SCell cell) {
 		final boolean wrap = cell.getCellStyle().isWrapText();
 		final SRichText rstr = cell.getRichTextValue();
+		return getCellRichTextHtml(rstr, wrap);
+	}
+	
+	//ZSS-848
+	public static String getCellRichTextHtml(SRichText rstr, boolean wrap) {
 		StringBuilder sb = new StringBuilder();
 		for(Segment seg: rstr.getSegments()) {
 			sb.append(getFontTextHtml(escapeText(seg.getText(), wrap, true), seg.getFont()));

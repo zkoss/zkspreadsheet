@@ -45,6 +45,7 @@ import org.zkoss.zss.model.SChart.ChartGrouping;
 import org.zkoss.zss.model.SChart.ChartLegendPosition;
 import org.zkoss.zss.model.SChart.ChartType;
 import org.zkoss.zss.model.SColumn;
+import org.zkoss.zss.model.SComment;
 import org.zkoss.zss.model.SDataValidation;
 import org.zkoss.zss.model.SDataValidation.AlertStyle;
 import org.zkoss.zss.model.SDataValidation.OperatorType;
@@ -53,6 +54,7 @@ import org.zkoss.zss.model.SHyperlink;
 import org.zkoss.zss.model.SHyperlink.HyperlinkType;
 import org.zkoss.zss.model.SFont;
 import org.zkoss.zss.model.SPicture;
+import org.zkoss.zss.model.SRichText;
 import org.zkoss.zss.model.SRow;
 import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.model.SSheetProtection;
@@ -2168,5 +2170,76 @@ public class RangeImpl implements SRange {
 				}
 			}
 		}.doInWriteLock(getLock());
+	}
+
+	//ZSS-848
+	@Override
+	public void setCommentRichText(final String html) {
+		new CellVisitorTask(new CellVisitorForUpdate() {
+			@Override
+			public boolean visit(SCell cell) {
+				if (html == null) {
+					cell.deleteComment();
+				} else {
+					SRichText text = new RichTextHelper().parse(RangeImpl.this, html);
+					SComment comment = cell.setupComment(); //get or create Comment
+					comment.setRichText(text);
+				}
+				return false;
+			}
+		}).doInWriteLock(getLock());
+	}
+	
+	//ZSS-848
+	@Override
+	public String getCommentRichText() {
+		final ResultWrap<String> r = new ResultWrap<String>();
+		new CellVisitorTask(new CellVisitor() {
+			@Override
+			public boolean visit(SCell cell) {
+				SComment comment = cell.getComment();
+				if (comment != null) {
+					final SRichText rstr = comment.getRichText();
+					final String html = RichTextHelper.getCellRichTextHtml(rstr, true);
+					r.set(html);
+				} else {
+					r.set(null);
+				}
+				return false;
+			}
+		}).doInReadLock(getLock());
+		return r.get();
+	}
+	
+	//ZSS-848
+	public void setCommentVisible(final boolean visible) {
+		new CellVisitorTask(new CellVisitorForUpdate() {
+			@Override
+			public boolean visit(SCell cell) {
+				SComment comment = cell.getComment(); //get or create Comment
+				if (comment != null) {
+					comment.setVisible(visible);
+				}
+				return false;
+			}
+		}).doInWriteLock(getLock());
+	}
+	
+	//ZSS-848
+	public boolean isCommentVisible() {
+		final ResultWrap<Boolean> r = new ResultWrap<Boolean>();
+		new CellVisitorTask(new CellVisitor() {
+			@Override
+			public boolean visit(SCell cell) {
+				SComment comment = cell.getComment();
+				if (comment != null) {
+					r.set(comment.isVisible());
+				} else {
+					r.set(false);
+				}
+				return false;
+			}
+		}).doInReadLock(getLock());
+		return r.get();
 	}
 }

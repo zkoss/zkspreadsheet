@@ -162,4 +162,9 @@ public interface SCell extends CellStyleHolder,FormulaContent{
 	public SComment setupComment();
 	public SComment getComment();
 	
+	/**
+	 * Delete the comment associated with this cell.
+	 * @since 3.6.1
+	 */
+	public void deleteComment();
 }

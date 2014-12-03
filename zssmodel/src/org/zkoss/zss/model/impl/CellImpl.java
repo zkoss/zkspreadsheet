@@ -399,6 +399,14 @@ public class CellImpl extends AbstractCellAdv {
 		addCellUpdate();
 	}
 	
+	//ZSS-848
+	@Override
+	public void deleteComment() {
+		OptFields opts = getOpts(false);
+		if (opts == null) return;
+		opts._comment = null;
+	}
+	
 	@Override
 	void setIndex(int newidx) {
 		if(this._index==newidx){
