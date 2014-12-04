@@ -110,6 +110,10 @@ zss.Cell = zk.$extends(zk.Widget, {
 	 */
 	fontSize: 11,
 	/**
+	 * The comment
+	 */
+	comment: null,
+	/**
 	 * Whether listen onRowHeightChanged event or not 
 	 * Currently, use only on IE6/IE7 for vertical align
 	 * 
@@ -171,6 +175,9 @@ zss.Cell = zk.$extends(zk.Widget, {
 		this.style = cellData.style;
 		this.innerStyle = cellData.innerStyle;
 		this.fontStyle = cellData.fontStyle;
+		
+		//ZSS-849
+		this.comment = cellData.comment;
 	},
 	getVerticalAlign: function () {
 		switch (this.valign) {
@@ -274,7 +281,8 @@ zss.Cell = zk.$extends(zk.Widget, {
 			cave = this.$n('cave'),
 			prevWidth = cave.style.width,
 			fontSize = data.fontSize,
-			real = this.$n('real');
+			real = this.$n('real'),
+			cmt = data.comment;
 		var wrapChanged = this.wrap != data.wrap;
 		var fontSizeChanged = false;
 		if (fontSize != undefined) {
@@ -336,6 +344,14 @@ zss.Cell = zk.$extends(zk.Widget, {
 		//merged cell won't change row height automatically
 		if ((this.cellType == STR_CELL || this.cellType == BLANK_CELL) && !this.merid && processWrap) {//must process wrap after set text
 			this.parent.processWrapCell(this, true);
+		}
+
+		if (cmt != this.comment) {
+			this.comment = cmt;
+			//ZSS-849 TODO: update the cell comment popup window?
+			//1. this.comment could be null(when comment is deleted)
+			//2. this.comment.t -> string in RichText html form
+			//3. this.comment.v -> boolean. true: always show the comment; false: show when mouse hover on the cell
 		}
 	},
 	/**

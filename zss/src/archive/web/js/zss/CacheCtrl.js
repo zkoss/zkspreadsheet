@@ -40,7 +40,8 @@ Copyright (C) 2012 Potix Corporation. All Rights Reserved.
 		ATTR_TEXT = 2,
 		ATTR_STYLE = 3,
 		ATTR_SIZE = 4,
-		ATTR_MERGE = 5;
+		ATTR_MERGE = 5,
+		ATTR_COMMENT = 6;
 	/**
 	 * Create Cell model
 	 * 
@@ -166,6 +167,10 @@ Copyright (C) 2012 Potix Corporation. All Rights Reserved.
 			 */
 			//fontSize
 			/**
+			 * Cell comment
+			 */
+			//comment: v.cmt
+			/**
 			 * Update Cell model
 			 * 
 			 * @param JSON Object v data from server
@@ -181,6 +186,7 @@ Copyright (C) 2012 Potix Corporation. All Rights Reserved.
 					upStyle = (upAll || type == ATTR_STYLE),
 					upSize = (upAll || type == ATTR_SIZE),
 					upMerge = (upAll || type == ATTR_MERGE),
+					upComment = (upAll || type == ATTR_COMMENT),
 					cellType = v.ct;
 				this.cellType = cellType != undefined ? cellType : 3;//default is BLANK_CELL
 				if (upText) {
@@ -240,6 +246,14 @@ Copyright (C) 2012 Potix Corporation. All Rights Reserved.
 						delete this.mergeId;
 						delete this.mergeCls;
 						delete this.merge;
+					}
+				}
+				if (upComment) {
+					var cmt = v.cmt;
+					if (cmt != undefined) {
+						this.comment = cmt;
+					} else {
+						delete this.comment;
 					}
 				}
 			}

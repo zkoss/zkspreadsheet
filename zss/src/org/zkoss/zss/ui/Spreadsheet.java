@@ -112,15 +112,18 @@ import org.zkoss.zss.model.SCellStyle.Alignment;
 import org.zkoss.zss.model.SCellStyle.VerticalAlignment;
 import org.zkoss.zss.model.SChart;
 import org.zkoss.zss.model.SColumnArray;
+import org.zkoss.zss.model.SComment;
 import org.zkoss.zss.model.SDataValidation;
 import org.zkoss.zss.model.SFont;
 import org.zkoss.zss.model.SPicture;
+import org.zkoss.zss.model.SRichText;
 import org.zkoss.zss.model.SRow;
 import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.model.SSheet.SheetVisible;
 import org.zkoss.zss.model.impl.AbstractBookSeriesAdv;
 import org.zkoss.zss.model.impl.sys.DependencyTableImpl;
 import org.zkoss.zss.model.sys.formula.EvaluationContributorContainer;
+import org.zkoss.zss.model.util.RichTextHelper;
 import org.zkoss.zss.range.SImporter;
 import org.zkoss.zss.range.SImporters;
 import org.zkoss.zss.range.SRange;
@@ -3280,7 +3283,8 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 				updateText = (updateAll || type == CellAttribute.TEXT),
 				updateStyle = (updateAll || type == CellAttribute.STYLE),
 				updateSize = (updateAll || type == CellAttribute.SIZE),
-				updateMerge = (updateAll || type == CellAttribute.MERGE);
+				updateMerge = (updateAll || type == CellAttribute.MERGE),
+				updateComment = (updateAll || type == CellAttribute.COMMENT);
 			
 			SCell cell = sheet.getCell(row, col);
 			JSONObject attrs = new JSONObject();
@@ -3354,6 +3358,21 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 				boolean locked = cellStyle.isLocked();
 				if (!locked)
 					attrs.put("l", "f"); //f stand for "false"
+			}
+			
+			//ZSS-849
+			//comment
+			if (updateComment) {
+				SComment comment = cell.getComment();
+				if (comment != null) {
+					SRichText rstr = comment.getRichText();
+					final String html = RichTextHelper.getCellRichTextHtml(rstr, true);
+					boolean visible = comment.isVisible();
+					Map map = new HashMap();
+					map.put("t", html);
+					map.put("v", visible);
+					attrs.put("cmt", map);
+				}
 			}
 			
 			if (!cell.isNull()) {

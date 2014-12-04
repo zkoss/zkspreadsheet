@@ -42,7 +42,7 @@ public interface SpreadsheetCtrl {
 	public static final int DEFAULT_LOAD_ROW_SIZE = 50;
 	
 	public enum CellAttribute {
-		ALL(1), TEXT(2), STYLE(3), SIZE(5), MERGE(5);
+		ALL(1), TEXT(2), STYLE(3), SIZE(4), MERGE(5), COMMENT(6);
 		
 		int value;
 		CellAttribute(int value) {
