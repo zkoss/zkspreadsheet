@@ -28,6 +28,7 @@ ZK Spreadsheet 3.6.1
   ZSS-809 DataValidation does not handle literal list (comma seperated list) correctly
   ZSS-833 Formula in validation's formula field should follow the relative reference rule
   ZSS-847 Spreadsheet changes a correct sum formula to an incorrect one
+  ZSS-826 Fail to export to PDF if set chart title font
   
 ** Upgrade Notes
   * Chart now uses ZK Charts as default chart engine whose exporting needs extra export server. For more detail, please see "export" section in ZK Spreadsheet Essentials.
