@@ -470,22 +470,4 @@ public class PrintSetupImpl implements SPrintSetup,Serializable {
 	public boolean isDifferentFirstPage() {
 		return _diffFirst;
 	}
-	
-	public CellRegion[] getPrintAreas(SSheet sheet) {
-		if (_printArea == null) {
-			return null;
-		}
-		
-		FormulaExpression fexpr = 
-			EngineFactory.getInstance().createFormulaEngine()
-				.parse(_printArea, new FormulaParseContext(sheet, null));
-		
-		Ref[] refs = fexpr.getAreaRefs();
-		CellRegion[] regions = new CellRegion[refs.length];
-		for (int j = 0; j < refs.length; ++j) {
-			final Ref ref = refs[j];
-			regions[j++] = new CellRegion(ref.getRow(), ref.getColumn(), ref.getLastRow(), ref.getLastColumn());
-		}
-		return regions;
-	}
 }
