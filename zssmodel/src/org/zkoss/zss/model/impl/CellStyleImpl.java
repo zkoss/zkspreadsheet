@@ -16,6 +16,15 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.model.impl;
 
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.ByteArrayOutputStream;
+
+import javax.imageio.ImageIO;
+
+import org.apache.commons.codec.binary.Base64;
 import org.zkoss.zss.model.SCellStyle;
 import org.zkoss.zss.model.SColor;
 import org.zkoss.zss.model.SFont;
@@ -31,7 +40,7 @@ public class CellStyleImpl extends AbstractCellStyleAdv {
 	private AbstractFontAdv _font;
 	private SColor _fillColor = ColorImpl.WHITE;
 	private SColor _backColor = ColorImpl.WHITE;
-	private FillPattern _fillPattern = FillPattern.NO_FILL;
+	private FillPattern _fillPattern = FillPattern.NONE;
 	private Alignment _alignment = Alignment.GENERAL;
 	private VerticalAlignment _verticalAlignment = VerticalAlignment.BOTTOM;
 	private boolean _wrapText = false;
@@ -49,6 +58,8 @@ public class CellStyleImpl extends AbstractCellStyleAdv {
 	private boolean _directFormat = false;
 	private boolean _locked = true;// default locked as excel.
 	private boolean _hidden = false;
+	
+	private String _patternHtml; //ZSS-841. cached html string for fill pattern
 
 	public CellStyleImpl(AbstractFontAdv font){
 		this._font = font;
@@ -72,6 +83,7 @@ public class CellStyleImpl extends AbstractCellStyleAdv {
 	public void setFillColor(SColor fillColor) {
 		Validations.argNotNull(fillColor);
 		this._fillColor = fillColor;
+		_patternHtml = null; //clear cache
 	}
 
 	@Override
@@ -83,6 +95,7 @@ public class CellStyleImpl extends AbstractCellStyleAdv {
 	public void setFillPattern(FillPattern fillPattern) {
 		Validations.argNotNull(fillPattern);
 		this._fillPattern = fillPattern;
+		_patternHtml = null; //clear cache
 	}
 
 	@Override
@@ -328,7 +341,6 @@ public class CellStyleImpl extends AbstractCellStyleAdv {
 	//ZSS-780
 	@Override
 	public SColor getBackColor() {
-		// TODO Auto-generated method stub
 		return _backColor;
 	}
 
@@ -337,5 +349,178 @@ public class CellStyleImpl extends AbstractCellStyleAdv {
 	public void setBackgroundColor(SColor backColor) {
 		Validations.argNotNull(backColor);
 		this._backColor = backColor;
+		_patternHtml = null; //clear cache
+	}
+
+	//ZSS-841
+	@Override
+	public String getFillPatternHtml() {
+		final FillPattern pattern = getFillPattern();
+		if (pattern == FillPattern.NONE || pattern == FillPattern.SOLID) {
+			return "";
+		}
+		if (_patternHtml == null) {
+			_patternHtml = getFillPatternHtml(this);
+		}
+		return _patternHtml;
+	}
+
+	//ZSS-841
+	private static byte[][] _PATTERN_BYTES = {
+		null, //NO_FILL
+		
+		// 00000000
+		// 00000000
+		// 00000000
+		// 00000000
+		new byte[] {(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00}, //SOLID, //SOLID_FOREGROUND
+		
+		// 01010101
+		// 10101010
+		// 01010101
+		// 10101010
+		new byte[] {(byte) 0x55, (byte) 0xaa, (byte) 0x55, (byte) 0xaa}, //MEDIUM_GRAY, //FINE_DOTS
+		
+		// 11101110
+		// 10111011
+		// 11101110
+		// 10111011
+		new byte[] {(byte) 0xee, (byte) 0xbb, (byte) 0xee, (byte) 0xbb}, //DARK_GRAY, //ALT_BARS
+		
+		// 10001000
+		// 00100010
+		// 10001000
+		// 00100010
+		new byte[] {(byte) 0x88, (byte) 0x22, (byte) 0x88, (byte) 0x22}, //LIGHT_GRAY, //SPARSE_DOTS
+		
+		// 11111111
+		// 00000000
+		// 00000000
+		// 11111111
+		new byte[] {(byte) 0xff, (byte) 0x00, (byte) 0x00, (byte) 0xff}, //DARK_HORIZONTAL, //THICK_HORZ_BANDS
+		
+		// 00110011
+		// 00110011
+		// 00110011
+		// 00110011
+		new byte[] {(byte) 0x33, (byte) 0x33, (byte) 0x33, (byte) 0x33}, //DARK_VERTICAL, //THICK_VERT_BANDS
+		
+		// 10011001
+		// 11001100
+		// 01100110
+		// 00110011
+		new byte[] {(byte) 0x99, (byte) 0xcc, (byte) 0x66, (byte) 0x33}, //DARK_DOWN, //THICK_BACKWARD_DIAG
+		
+		// 10011001
+		// 00110011
+		// 01100110
+		// 11001100
+		new byte[] {(byte) 0x99, (byte) 0x33, (byte) 0x66, (byte) 0xcc}, //DARK_UP, //THICK_FORWARD_DIAG
+		
+		// 10011001
+		// 10011001
+		// 01100110
+		// 01100110
+		new byte[] {(byte) 0x99, (byte) 0x99, (byte) 0x66, (byte) 0x66}, //DARK_GRID, //BIG_SPOTS
+		
+		// 10011001
+		// 11111111
+		// 01100110
+		// 11111111
+		new byte[] {(byte) 0x99, (byte) 0xff, (byte) 0x66, (byte) 0xff}, //DARK_TRELLIS, //BRICKS
+		
+		// 00000000
+		// 00000000
+		// 00000000
+		// 11111111
+		new byte[] {(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xff}, //LIGHT_HORIZONTAL, //THIN_HORZ_BANDS
+		
+		// 00100010
+		// 00100010
+		// 00100010
+		// 00100010
+		new byte[] {(byte) 0x22, (byte) 0x22, (byte) 0x22, (byte) 0x22}, //LIGHT_VERTICAL, //THIN_VERT_BANDS
+		
+		// 00010001
+		// 10001000
+		// 01000100
+		// 00100010
+		new byte[] {(byte) 0x11, (byte) 0x88, (byte) 0x44, (byte) 0x22}, //LIGHT_DOWN, //THIN_BACKWARD_DIAG
+		
+		// 10001000
+		// 00010001
+		// 00100010
+		// 01000100
+		new byte[] {(byte) 0x88, (byte) 0x11, (byte) 0x22, (byte) 0x44}, //LIGHT_UP, //THIN_FORWARD_DIAG
+		
+		// 00100010
+		// 00100010
+		// 00100010
+		// 11111111 
+		new byte[] {(byte) 0x22, (byte) 0x22, (byte) 0x22, (byte) 0xff}, //LIGHT_GRID, //SQUARES
+		
+		// 01010101
+		// 10001000
+		// 01010101
+		// 00100010
+		new byte[] {(byte) 0x55, (byte) 0x88, (byte) 0x55, (byte) 0x22}, //LIGHT_TRELLIS, //DIAMONDS
+		
+		// 00000000
+		// 10001000
+		// 00000000
+		// 00100010
+		new byte[] {(byte) 0x00, (byte) 0x88, (byte) 0x00, (byte) 0x22}, //GRAY125, //LESS_DOTS 
+		
+		// 00000000
+		// 00100000
+		// 00000000
+		// 00000010
+		new byte[] {(byte) 0x00, (byte) 0x20, (byte) 0x00, (byte) 0x02}, //GRAY0625 //LEAST_DOTS
+	};
+	
+	//ZSS-841
+	public static String getFillPatternHtml(SCellStyle style) {
+		BufferedImage image = new BufferedImage(8, 4, BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g2 = image.createGraphics();
+		// background color
+		byte[] rgb = style.getBackColor().getRGB();
+		g2.setColor(new Color(((int)rgb[0]) & 0xff , ((int)rgb[1]) & 0xff, ((int)rgb[2]) & 0xff));
+		g2.fillRect(0, 0, 8, 4);
+		// foreground color
+		rgb = style.getFillColor().getRGB();
+		g2.setColor(new Color(((int)rgb[0]) & 0xff , ((int)rgb[1]) & 0xff, ((int)rgb[2]) & 0xff));
+		byte[] patb = _PATTERN_BYTES[style.getFillPattern().ordinal()];
+		for (int y = 0; y < 4; ++y) {
+			byte b = patb[y];
+			if (b == 0) continue; // all zero case
+			if (b == 0xff) {
+				g2.drawLine(0, y, 7, y);
+				continue;
+			}
+			for (int x = 0; x < 8; ++x) {
+				if ((b & 0x80) != 0) {
+					g2.drawLine(x, y, x, y);
+				}
+				b <<= 1;
+			}
+		}
+		ByteArrayOutputStream os = new ByteArrayOutputStream();
+		try {
+			ImageIO.write(image, "png", os);
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				os.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		StringBuilder sb = new StringBuilder();
+		sb.append("background-image:url(data:image/png;base64,");
+		String base64 = Base64.encodeBase64String(os.toByteArray());
+		sb.append(base64).append(");");
+		return sb.toString();
 	}
 }

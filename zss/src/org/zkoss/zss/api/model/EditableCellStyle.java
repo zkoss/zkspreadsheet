@@ -41,7 +41,7 @@ public interface EditableCellStyle extends CellStyle{
 
 	/**
 	 * Sets the fill/background pattern <br/>
-	 * Note: Spreadsheet (UI display) supports only {@link FillPattern#NO_FILL} and {@link FillPattern#SOLID_FOREGROUND} 
+	 * Note: Spreadsheet (UI display) supports only {@link FillPattern#NONE} and {@link FillPattern#SOLID} 
 	 * (Other pattern will be display as {@link FillPattern#SOLID_FOREGROUND), 
 	 * However you can still set another pattern, the data will still be kept when export. 
 	 * @param pattern

@@ -205,8 +205,8 @@ public class ImExpTestBase {
 		assertTrue(sheet.getCell(28, 0).getCellStyle().getFont().equals(sheet.getCell(26, 0).getCellStyle().getFont()));
 		
 		//fill pattern
-		assertEquals(FillPattern.SOLID_FOREGROUND, sheet.getCell(37, 1).getCellStyle().getFillPattern());
-		assertEquals(FillPattern.ALT_BARS, sheet.getCell(37, 2).getCellStyle().getFillPattern());
+		assertEquals(FillPattern.SOLID, sheet.getCell(37, 1).getCellStyle().getFillPattern());
+		assertEquals(FillPattern.DARK_GRAY, sheet.getCell(37, 2).getCellStyle().getFillPattern());
 		
 		SSheet protectedSheet = book.getSheetByName("sheet-protection");
 		assertEquals(true, protectedSheet.getCell(0, 0).getCellStyle().isLocked());

@@ -284,43 +284,43 @@ public class PoiEnumConversion {
 
 	public static short toPoiFillPattern(FillPattern fillPattern) {
 		switch(fillPattern) {
-		case ALT_BARS:
+		case DARK_GRAY:
 			return CellStyle.ALT_BARS;
-		case BIG_SPOTS:
+		case DARK_GRID:
 			return CellStyle.BIG_SPOTS;
-		case BRICKS:
+		case DARK_TRELLIS:
 			return CellStyle.BRICKS;
-		case DIAMONDS:
+		case LIGHT_TRELLIS:
 			return CellStyle.DIAMONDS;
-		case FINE_DOTS:
+		case MEDIUM_GRAY:
 			return CellStyle.FINE_DOTS;
-		case LEAST_DOTS:
+		case GRAY0625:
 			return CellStyle.LEAST_DOTS;
-		case LESS_DOTS:
+		case GRAY125:
 			return CellStyle.LESS_DOTS;
-		case SOLID_FOREGROUND:
+		case SOLID:
 			return CellStyle.SOLID_FOREGROUND;
-		case SPARSE_DOTS:
+		case LIGHT_GRAY:
 			return CellStyle.SPARSE_DOTS;
-		case SQUARES:
+		case LIGHT_GRID:
 			return CellStyle.SQUARES;
-		case THICK_BACKWARD_DIAG:
+		case DARK_DOWN:
 			return CellStyle.THICK_BACKWARD_DIAG;
-		case THICK_FORWARD_DIAG:
+		case DARK_UP:
 			return CellStyle.THICK_FORWARD_DIAG;
-		case THICK_HORZ_BANDS:
+		case DARK_HORIZONTAL:
 			return CellStyle.THICK_HORZ_BANDS;
-		case THICK_VERT_BANDS:
+		case DARK_VERTICAL:
 			return CellStyle.THICK_VERT_BANDS;
-		case THIN_BACKWARD_DIAG:
+		case LIGHT_DOWN:
 			return CellStyle.THIN_BACKWARD_DIAG;
-		case THIN_FORWARD_DIAG:
+		case LIGHT_UP:
 			return CellStyle.THIN_FORWARD_DIAG;
-		case THIN_HORZ_BANDS:
+		case LIGHT_HORIZONTAL:
 			return CellStyle.THIN_HORZ_BANDS;
-		case THIN_VERT_BANDS:
+		case LIGHT_VERTICAL:
 			return CellStyle.THIN_VERT_BANDS;
-		case NO_FILL:
+		case NONE:
 		default:
 			return CellStyle.NO_FILL;
 		}
@@ -329,44 +329,44 @@ public class PoiEnumConversion {
 	public static FillPattern toFillPattern(short poiFillPattern) {
 		switch (poiFillPattern) {
 		case CellStyle.SOLID_FOREGROUND:
-			return FillPattern.SOLID_FOREGROUND;
+			return FillPattern.SOLID;
 		case CellStyle.FINE_DOTS:
-			return FillPattern.FINE_DOTS;
+			return FillPattern.MEDIUM_GRAY;
 		case CellStyle.ALT_BARS:
-			return FillPattern.ALT_BARS;
+			return FillPattern.DARK_GRAY;
 		case CellStyle.SPARSE_DOTS:
-			return FillPattern.SPARSE_DOTS;
+			return FillPattern.LIGHT_GRAY;
 		case CellStyle.THICK_HORZ_BANDS:
-			return FillPattern.THICK_HORZ_BANDS;
+			return FillPattern.DARK_HORIZONTAL;
 		case CellStyle.THICK_VERT_BANDS:
-			return FillPattern.THICK_VERT_BANDS;
+			return FillPattern.DARK_VERTICAL;
 		case CellStyle.THICK_BACKWARD_DIAG:
-			return FillPattern.THICK_BACKWARD_DIAG;
+			return FillPattern.DARK_DOWN;
 		case CellStyle.THICK_FORWARD_DIAG:
-			return FillPattern.THICK_FORWARD_DIAG;
+			return FillPattern.DARK_UP;
 		case CellStyle.BIG_SPOTS:
-			return FillPattern.BIG_SPOTS;
+			return FillPattern.DARK_GRID;
 		case CellStyle.BRICKS:
-			return FillPattern.BRICKS;
+			return FillPattern.DARK_TRELLIS;
 		case CellStyle.THIN_HORZ_BANDS:
-			return FillPattern.THIN_HORZ_BANDS;
+			return FillPattern.LIGHT_HORIZONTAL;
 		case CellStyle.THIN_VERT_BANDS:
-			return FillPattern.THIN_VERT_BANDS;
+			return FillPattern.LIGHT_VERTICAL;
 		case CellStyle.THIN_BACKWARD_DIAG:
-			return FillPattern.THIN_BACKWARD_DIAG;
+			return FillPattern.LIGHT_DOWN;
 		case CellStyle.THIN_FORWARD_DIAG:
-			return FillPattern.THIN_FORWARD_DIAG;
+			return FillPattern.LIGHT_UP;
 		case CellStyle.SQUARES:
-			return FillPattern.SQUARES;
+			return FillPattern.LIGHT_GRID;
 		case CellStyle.DIAMONDS:
-			return FillPattern.DIAMONDS;
+			return FillPattern.LIGHT_TRELLIS;
 		case CellStyle.LESS_DOTS:
-			return FillPattern.LESS_DOTS;
+			return FillPattern.GRAY125;
 		case CellStyle.LEAST_DOTS:
-			return FillPattern.LEAST_DOTS;
+			return FillPattern.GRAY0625;
 		case CellStyle.NO_FILL:
 		default:
-			return FillPattern.NO_FILL;
+			return FillPattern.NONE;
 		}
 	}
 

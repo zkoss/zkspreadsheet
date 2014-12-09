@@ -1,0 +1,9 @@
+<zk>
+Since 3.6.1
+<label multiline="true">
+1. Should see fill pattern A1 ~ A18.
+</label>
+	<spreadsheet id="ss" vflex="1" hflex="1" src="/issue3/book/841-fill-patterns.xlsx"
+		showToolbar="true" showSheetbar="true" showFormulabar="true" showContextMenu="true"
+		maxVisibleRows="100" maxVisibleColumns="100"/>
+</zk>

@@ -9,9 +9,10 @@ ZK Spreadsheet 3.6.1
   ZSS-697 Enhance the Chart engine
   ZSS-846 Support clearClientCache to avoid bloated client in some cases.
   ZSS-848 Support comment set/get Range APIs
+  ZSS-841 Support displaying fill pattern
   
 *Bugs:
-  ZSS-820 Formula should change sheet name if reordered sheet goes beyond its the formula's sheet boundary.
+  ZSS-820 Formula should change sheet name if reordered sheet goes beyond the formula's sheet boundary.
   ZSS-818 Formula not update outside the preload rows
   ZSS-816 Performance impact when protect sheet with allowSelectingUnlockedCells set to true
   ZSS-811 Exception when export a cell with special formula
@@ -33,6 +34,8 @@ ZK Spreadsheet 3.6.1
   
 ** Upgrade Notes
   * Chart now uses ZK Charts as default chart engine whose exporting needs extra export server. For more detail, please see "export" section in ZK Spreadsheet Essentials.
+  * Enumeration name of CellStyle.FillPattern is changed to comply with Excel's term:
+	NO_FILL -> NONE, SOLID_FOREGROUND -> SOLID, FINE_DOTS -> MEDIUM_GRAY, ALT_BARS -> DARK_GRAY, SPARSE_DOTS -> LIGHT_GRAY, THICK_HORZ_BANDS -> DARK_HORIZONTAL, THICK_VERT_BANDS -> DARK_VERTICAL, THICK_BACKWARD_DIAG -> DARK_DOWN, THICK_FORWARD_DIAG -> DARK_UP, BIG_SPOTS -> DARK_GRID, BRICKS -> DARK_TRELLIS, THIN_HORZ_BANDS -> LIGHT_HORIZONTAL, THIN_VERT_BANDS -> LIGHT_VERTICAL, THIN_BACKWARD_DIAG -> LIGHT_DOWN, THIN_FORWARD_DIAG -> LIGHT_UP, SQUARES -> LIGHT_GRID, DIAMONDS -> LIGHT_TRELLIS, GRAY125 -> LESS_DOTS, GRAY0625 -> LEAST_DOTS
 
  ------------
 ZK Spreadsheet 3.6.0

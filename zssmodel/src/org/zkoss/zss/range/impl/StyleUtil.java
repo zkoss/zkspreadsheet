@@ -101,13 +101,13 @@ public class StyleUtil {
 		
 		CellStyleMatcher matcher = new CellStyleMatcher(orgStyle);
 		matcher.setFillColor(htmlColor);
-		matcher.setFillPattern(SCellStyle.FillPattern.SOLID_FOREGROUND);
+		matcher.setFillPattern(SCellStyle.FillPattern.SOLID);
 		
 		SCellStyle style = book.searchCellStyle(matcher);
 		if(style==null){
 			style = cloneCellStyle(book,orgStyle);
 			style.setFillColor(newColor);
-			style.setFillPattern(SCellStyle.FillPattern.SOLID_FOREGROUND);
+			style.setFillPattern(SCellStyle.FillPattern.SOLID);
 		}
 		holder.setCellStyle(style);
 		

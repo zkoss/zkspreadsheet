@@ -1660,9 +1660,9 @@ public class ModelTest {
 		matcher.setDataFormat("yyyymd");
 		Assert.assertEquals(style1,book.searchCellStyle(matcher));
 		
-		style1.setFillPattern(FillPattern.SOLID_FOREGROUND);
+		style1.setFillPattern(FillPattern.SOLID);
 		Assert.assertNull(book.searchCellStyle(matcher));
-		matcher.setFillPattern(FillPattern.SOLID_FOREGROUND);
+		matcher.setFillPattern(FillPattern.SOLID);
 		Assert.assertEquals(style1,book.searchCellStyle(matcher));
 		
 		style1.getFont().setBoldweight(Boldweight.BOLD);

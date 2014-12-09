@@ -18,6 +18,10 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
  */
 package org.zkoss.zss.ui.impl;
 
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+
 import org.zkoss.poi.ss.usermodel.ZssContext;
 import org.zkoss.util.Locales;
 import org.zkoss.zss.model.SBook;
@@ -41,6 +45,7 @@ import org.zkoss.zss.model.sys.format.FormatContext;
 import org.zkoss.zss.model.sys.format.FormatEngine;
 import org.zkoss.zss.model.sys.format.FormatResult;
 import org.zkoss.zss.model.util.RichTextHelper;
+import org.zkoss.zss.model.impl.AbstractCellStyleAdv;
 
 /**
  * @author Dennis.Chen
@@ -92,12 +97,15 @@ public class CellFormatHelper {
 		//String bgColor = BookHelper.indexToRGB(_book, style.getFillForegroundColor());
 		//ZSS-34 cell background color does not show in excel
 		//20110819, henrichen: if fill pattern is NO_FILL, shall not show the cell background color
-		String fillColor = _cellStyle.getFillPattern() != SCellStyle.FillPattern.NO_FILL ? 
+		String fillColor = _cellStyle.getFillPattern() != SCellStyle.FillPattern.NONE ? 
 			_cellStyle.getFillColor().getHtmlColor() : null;
 		if (fillColor != null) {
 			sb.append("background-color:").append(fillColor).append(";");
 		}
 
+		//ZSS-841
+		sb.append(((AbstractCellStyleAdv)_cellStyle).getFillPatternHtml());
+		
 		processBottomBorder(sb);
 		processRightBorder(sb);
 
@@ -148,14 +156,17 @@ public class CellFormatHelper {
 			}
 		}
 		
-		//border depends on next cell's background color (why? dennis, 20131118)
+		//border depends on next cell's fill color if solid pattern
 		if(!hitBottom && nextStyle !=null){
 			//String bgColor = BookHelper.indexToRGB(_book, style.getFillForegroundColor());
 			//ZSS-34 cell background color does not show in excel
-			String bgColor = nextStyle.getFillPattern() != FillPattern.NO_FILL ? 
+			String bgColor = nextStyle.getFillPattern() == FillPattern.SOLID ? 
 					nextStyle.getFillColor().getHtmlColor() : null;
 			if (bgColor != null) {
-				hitBottom = appendBorderStyle(sb, "bottom", BorderType.THICK, bgColor);
+				hitBottom = appendBorderStyle(sb, "bottom", BorderType.THIN, bgColor);
+			} else if (nextStyle.getFillPattern() != FillPattern.NONE) { //ZSS-841
+				sb.append("border-bottom:none;"); // no grid line either
+				hitBottom = true;
 			}
 		}
 		
@@ -163,10 +174,13 @@ public class CellFormatHelper {
 		if(!hitBottom && _cellStyle !=null){
 			//String bgColor = BookHelper.indexToRGB(_book, style.getFillForegroundColor());
 			//ZSS-34 cell background color does not show in excel
-			String bgColor = _cellStyle.getFillPattern() != FillPattern.NO_FILL ? 
+			String bgColor = _cellStyle.getFillPattern() == FillPattern.SOLID ? 
 					_cellStyle.getFillColor().getHtmlColor() : null;
 			if (bgColor != null) {
-				hitBottom = appendBorderStyle(sb, "bottom", BorderType.THICK, bgColor);
+				hitBottom = appendBorderStyle(sb, "bottom", BorderType.THIN, bgColor);
+			} else if (_cellStyle.getFillPattern() != FillPattern.NONE) { //ZSS-841
+				sb.append("border-bottom:none;"); // no grid line either
+				hitBottom = true;
 			}
 		}
 		
@@ -211,20 +225,26 @@ public class CellFormatHelper {
 		if(!hitRight && nextStyle !=null){
 			//String bgColor = BookHelper.indexToRGB(_book, style.getFillForegroundColor());
 			//ZSS-34 cell background color does not show in excel
-			String bgColor = nextStyle.getFillPattern() != FillPattern.NO_FILL ? 
+			String bgColor = nextStyle.getFillPattern() == FillPattern.SOLID ? 
 					nextStyle.getFillColor().getHtmlColor() : null;
 			if (bgColor != null) {
 				hitRight = appendBorderStyle(sb, "right", BorderType.THIN, bgColor);
+			} else if (nextStyle.getFillPattern() != FillPattern.NONE) { //ZSS-841
+				sb.append("border-right:none;"); // no grid line either
+				hitRight = true;
 			}
 		}
 		//border depends on current cell's background color
 		if(!hitRight && _cellStyle !=null){
 			//String bgColor = BookHelper.indexToRGB(_book, style.getFillForegroundColor());
 			//ZSS-34 cell background color does not show in excel
-			String bgColor = _cellStyle.getFillPattern() != FillPattern.NO_FILL ? 
+			String bgColor = _cellStyle.getFillPattern() == FillPattern.SOLID ? 
 					_cellStyle.getFillColor().getHtmlColor() : null;
 			if (bgColor != null) {
 				hitRight = appendBorderStyle(sb, "right", BorderType.THIN, bgColor);
+			} else if (_cellStyle.getFillPattern() != FillPattern.NONE) { //ZSS-841
+				sb.append("border-right:none;"); // no grid line either
+				hitRight = true;
 			}
 		}
 		

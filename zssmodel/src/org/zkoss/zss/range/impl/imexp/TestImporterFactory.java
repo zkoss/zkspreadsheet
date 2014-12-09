@@ -146,7 +146,7 @@ public class TestImporterFactory implements SImporterFactory{
 				
 				SCellStyle headerStyle = book.createCellStyle(true);
 				headerStyle.setFillColor(book.createColor("#AAAAAA"));
-				headerStyle.setFillPattern(FillPattern.SOLID_FOREGROUND);
+				headerStyle.setFillPattern(FillPattern.SOLID);
 				headerStyle.setAlignment(Alignment.CENTER);
 				
 				sheet1.getColumn(3).setWidth(150);
@@ -243,7 +243,7 @@ public class TestImporterFactory implements SImporterFactory{
 				sheet.addMergedRegion(new CellRegion("D4:F5"));
 				
 				SCellStyle style = book.createCellStyle(true);
-				style.setFillPattern(FillPattern.SOLID_FOREGROUND);
+				style.setFillPattern(FillPattern.SOLID);
 				style.setFillColor(book.createColor("#FF0000"));
 				sheet.getCell("D4").setCellStyle(style);
 				
@@ -251,14 +251,14 @@ public class TestImporterFactory implements SImporterFactory{
 				sheet.addMergedRegion(new CellRegion("I4:K5"));
 				
 				style = book.createCellStyle(true);
-				style.setFillPattern(FillPattern.SOLID_FOREGROUND);
+				style.setFillPattern(FillPattern.SOLID);
 				style.setFillColor(book.createColor("#FFFF00"));
 				sheet.getCell("I4").setCellStyle(style);
 				
 				
 				
 				style = book.createCellStyle(true);
-				style.setFillPattern(FillPattern.SOLID_FOREGROUND);
+				style.setFillPattern(FillPattern.SOLID);
 				style.setFillColor(book.createColor("#FF00FF"));
 				sheet.getCell("D10").setCellStyle(style);
 				sheet.getCell("D10").setValue("D10");
@@ -650,7 +650,7 @@ public class TestImporterFactory implements SImporterFactory{
 				style.setFont(book.createFont(true));
 				style.getFont().setColor(book.createColor("#FF0000"));
 				style.getFont().setHeightPoints(16);
-				style.setFillPattern(FillPattern.SOLID_FOREGROUND);
+				style.setFillPattern(FillPattern.SOLID);
 				style.setFillColor(book.createColor("#AAAAAA"));
 				
 				
@@ -674,12 +674,12 @@ public class TestImporterFactory implements SImporterFactory{
 				//row/column style
 				
 				style = book.createCellStyle(true);
-				style.setFillPattern(FillPattern.SOLID_FOREGROUND);
+				style.setFillPattern(FillPattern.SOLID);
 				style.setFillColor(book.createColor("#FFAAAA"));
 				sheet.getRow(17).setCellStyle(style);
 				sheet.getCell(17, 0).setStringValue("row style");
 				style = book.createCellStyle(true);
-				style.setFillPattern(FillPattern.SOLID_FOREGROUND);
+				style.setFillPattern(FillPattern.SOLID);
 				style.setFillColor(book.createColor("#AAFFAA"));
 				sheet.getColumn(17).setCellStyle(style);
 				sheet.getColumn(17).setWidth(100);
