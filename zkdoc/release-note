@@ -12,6 +12,7 @@ ZK Spreadsheet 3.6.1
   ZSS-841 Support displaying fill pattern
   ZSS-854 Support import/export DXfs styles in XLSX file
   ZSS-856 Support import/export diagonal border in XLSX file.
+  ZSS-849 Support show cell comment
   
 *Bugs:
   ZSS-820 Formula should change sheet name if reordered sheet goes beyond the formula's sheet boundary.

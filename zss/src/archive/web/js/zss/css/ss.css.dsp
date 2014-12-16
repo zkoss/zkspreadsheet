@@ -1279,6 +1279,20 @@
 	border-left:1px solid #CFCFCF;
 }
 
+/* cell comment */
+.zscellcomment {
+	position: absolute;
+	width: 0;
+	height: 0;
+	border-style: solid;
+	border-width: 3px;
+	right: 0;
+	top: 0;
+	border-color: red red transparent transparent;
+}
+.zscellcomment-hidden {
+	display: none;
+}
 
 <c:if test="${c:browser('ie6-')}">
 .zstbtn .z-toolbarbutton-content,

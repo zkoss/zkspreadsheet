@@ -281,8 +281,7 @@ zss.Cell = zk.$extends(zk.Widget, {
 			cave = this.$n('cave'),
 			prevWidth = cave.style.width,
 			fontSize = data.fontSize,
-			real = this.$n('real'),
-			cmt = data.comment;
+			real = this.$n('real');
 		var wrapChanged = this.wrap != data.wrap;
 		var fontSizeChanged = false;
 		if (fontSize != undefined) {
@@ -344,14 +343,6 @@ zss.Cell = zk.$extends(zk.Widget, {
 		//merged cell won't change row height automatically
 		if ((this.cellType == STR_CELL || this.cellType == BLANK_CELL) && !this.merid && processWrap) {//must process wrap after set text
 			this.parent.processWrapCell(this, true);
-		}
-
-		if (cmt != this.comment) {
-			this.comment = cmt;
-			//ZSS-849 TODO: update the cell comment popup window?
-			//1. this.comment could be null(when comment is deleted)
-			//2. this.comment.t -> string in RichText html form
-			//3. this.comment.v -> boolean. true: always show the comment; false: show when mouse hover on the cell
 		}
 	},
 	/**
@@ -466,9 +457,14 @@ zss.Cell = zk.$extends(zk.Widget, {
 		return '<div id="' + uid + '" class="' + this.getZclass() + '" zs.t="SCell" '
 			+ (style ? 'style="' +  style + '"' : '') + '><div id="' + uid + '-cave" class="' +
 			this._getInnerClass() + '" ' + (innerStyle ? 'style="' + innerStyle + '"' : '') + 
-			'>' + '<div id="' + uid + '-real" class="' + this._getRealClass() + '"' +
+			'>' + this.getCommentHtml(this.comment) 
+			+ '<div id="' + uid + '-real" class="' + this._getRealClass() + '"' +
 			// ZSS-725
 			(fontStyle ? ' style="' + fontStyle + '"' : '') + '>' + text + '</div>' + '</div></div>';
+	},
+	getCommentHtml: function(shown) {
+		// ZSS-849 implement in CML
+		return '';
 	},
 	getZIndex: function () {
 		if (zk.ie6_ || zk.ie7_)
