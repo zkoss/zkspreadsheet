@@ -7,3 +7,4 @@ $ZSS/dist/lib/zpoi.jar
 $ZSS/dist/lib/ext/ooxml-schemas.jar
 $ZSS/dist/lib/ext/xmlbeans.jar
 $ZSS/dist/lib/ext/jsoup.jar
+$ZSS/dist/lib/ext/commons-codec.jar
