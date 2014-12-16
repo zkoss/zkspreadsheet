@@ -47,6 +47,7 @@ import org.zkoss.zss.model.SPicture;
 import org.zkoss.zss.model.SPictureData;
 import org.zkoss.zss.model.SRow;
 import org.zkoss.zss.model.SSheet;
+import org.zkoss.zss.model.SNamedStyle;
 import org.zkoss.zss.model.impl.sys.DependencyTableAdv;
 import org.zkoss.zss.model.impl.sys.formula.ParsingBook;
 import org.zkoss.zss.model.sys.EngineFactory;
@@ -78,8 +79,9 @@ public class BookImpl extends AbstractBookAdv{
 	private final List<AbstractSheetAdv> _sheets = new ArrayList<AbstractSheetAdv>();
 	private List<AbstractNameAdv> _names;
 	
-	private final List<AbstractCellStyleAdv> _cellStyles = new ArrayList<AbstractCellStyleAdv>();
-	private AbstractCellStyleAdv _defaultCellStyle;
+	private final List<SCellStyle> _cellStyles = new ArrayList<SCellStyle>(); 
+	private final Map<String, SNamedStyle> _namedStyles = new HashMap<String, SNamedStyle>(); //ZSS-854
+	private final List<SCellStyle> _defaultCellStyles = new ArrayList<SCellStyle>(); //ZSS-854
 	private final List<AbstractFontAdv> _fonts = new ArrayList<AbstractFontAdv>();
 	private final AbstractFontAdv _defaultFont;
 	private final HashMap<AbstractColorAdv,AbstractColorAdv> _colors = new LinkedHashMap<AbstractColorAdv,AbstractColorAdv>();
@@ -111,7 +113,9 @@ public class BookImpl extends AbstractBookAdv{
 		this._bookName = bookName;
 		_bookSeries = new SimpleBookSeriesImpl(this);
 		_fonts.add(_defaultFont = new FontImpl());
-		_cellStyles.add(_defaultCellStyle = new CellStyleImpl(_defaultFont));
+		AbstractCellStyleAdv defaultCellStyle = new CellStyleImpl(_defaultFont);
+		_cellStyles.add(defaultCellStyle); //ZSS-854
+		_defaultCellStyles.add(defaultCellStyle); //ZSS-854
 		_colors.put(ColorImpl.WHITE,ColorImpl.WHITE);
 		_colors.put(ColorImpl.BLACK,ColorImpl.BLACK);
 		_colors.put(ColorImpl.RED,ColorImpl.RED);
@@ -420,14 +424,21 @@ public class BookImpl extends AbstractBookAdv{
 
 	@Override
 	public SCellStyle getDefaultCellStyle() {
-		return _defaultCellStyle;
+		return getDefaultCellStyle(0);
 	}
-	
+
+	//ZSS-854
+	@Override
+	public SCellStyle getDefaultCellStyle(int index) {
+		return _defaultCellStyles.get(index);
+	}
+
 	@Override
 	public void setDefaultCellStyle(SCellStyle cellStyle) {
 		if (cellStyle == null) return;
-		_defaultCellStyle = (AbstractCellStyleAdv) cellStyle;
-		_cellStyles.set(0, _defaultCellStyle);
+		AbstractCellStyleAdv defaultCellStyle = (AbstractCellStyleAdv) cellStyle;
+		_defaultCellStyles.set(0, defaultCellStyle);
+		_cellStyles.set(0, defaultCellStyle);
 	}
 
 	@Override
@@ -947,5 +958,47 @@ public class BookImpl extends AbstractBookAdv{
 				tuner.reorderSheet(this, oldIndex, newIndex, dependents);
 			}
 		}
+	}
+	
+	//ZSS-854
+	public SNamedStyle getNamedStyle(String name) {
+		return _namedStyles.get(name);
+	}
+
+	//ZSS-854
+	@Override
+	public int addDefaultCellStyle(SCellStyle cellStyle) {
+		_defaultCellStyles.add((AbstractCellStyleAdv)cellStyle);
+		return _defaultCellStyles.size() - 1;
+	}
+	
+	//ZSS-854
+	@Override
+	public Collection<SCellStyle> getDefaultCellStyles() {
+		return _defaultCellStyles;
+	}
+
+	//ZSS-854
+	@Override
+	public void addNamedCellstyle(SNamedStyle namedStyle) {
+		_namedStyles.put(namedStyle.getName(), namedStyle);
+	}
+
+	//ZSS-854
+	@Override
+	public Collection<SNamedStyle> getNamedStyles() {
+		return _namedStyles.values();
+	}
+
+	//ZSS-854
+	@Override
+	public void clearDefaultCellStyles() {
+		_cellStyles.clear();
+	}
+
+	//ZSS-854
+	@Override
+	public void clearNamedStyles() {
+		_namedStyles.clear();		
 	}
 }

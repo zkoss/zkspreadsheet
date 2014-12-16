@@ -87,9 +87,16 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 			colorTable.clear();
 			
 			workbook = createPoiBook();
-			CellStyle  cellStyle = toPOICellStyle(book.getDefaultCellStyle()); // put the default cellStyle
-			workbook.setDefaultCellStyle(cellStyle);
-
+			//ZSS-854: export default cell styles
+			for (SCellStyle style: book.getDefaultCellStyles()) {
+				CellStyle  cellStyle = toPOICellStyle(style); // put the default cellStyle
+				workbook.addDefaultCellStyle(cellStyle);
+			}
+			//ZSS-854: export named cell styles
+			for (SNamedStyle style: book.getNamedStyles()) {
+				NamedStyle  poiStyle = toPOINamedStyle(style); // put the named cellStyle
+				workbook.addDefaultCellStyle(poiStyle);
+			}
 			for (SSheet sheet : book.getSheets()) {
 				exportSheet(sheet);
 			}
@@ -432,6 +439,10 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 		}
 
 		return poiRichTextString;
+	}
+	//ZSS-854
+	protected NamedStyle toPOINamedStyle(SNamedStyle cellStyle) {
+		return workbook.createNamedStyle(cellStyle.getName(), cellStyle.getBuiltinId(), cellStyle.getIndex());
 	}
 
 	protected CellStyle toPOICellStyle(SCellStyle cellStyle) {

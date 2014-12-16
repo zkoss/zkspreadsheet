@@ -129,7 +129,7 @@ public interface SBook {
 	 * @return
 	 */
 	public SCellStyle getDefaultCellStyle();
-
+	
 	/**
 	 * Set the default style of this book
 	 * @since 3.6.0
@@ -281,4 +281,47 @@ public interface SBook {
 	 * @since 3.6.0
 	 */
 	public Collection<SPictureData> getPicturesDatas();
+
+	/**
+	 * Get the nth default style of this book
+	 * @return
+	 * @since 3.7.0
+	 */
+	public SCellStyle getDefaultCellStyle(int index);
+	
+	/**
+	 * Add one more default cell style and return its index.
+	 * @param cellStyle
+	 * @since 3.7.0
+	 */
+	public int addDefaultCellStyle(SCellStyle cellStyle);
+		
+	/**
+	 * Get the named style of this book
+	 * @param name
+	 * @return
+	 * @since 3.7.0
+	 */
+	public SNamedStyle getNamedStyle(String name);
+	
+	/**
+	 * Add one more named cell style. 
+	 * @param namedStyle
+	 * @since 3.7.0
+	 */
+	public void addNamedCellstyle(SNamedStyle namedStyle);
+
+	/**
+	 * Get all default cell styles.
+	 * @return
+	 * @since 3.7.0
+	 */
+	public Collection<SCellStyle> getDefaultCellStyles();
+	
+	/**
+	 * Get all name styles.
+	 * @return
+	 * @since 3.7.0
+	 */
+	public Collection<SNamedStyle> getNamedStyles();
 }

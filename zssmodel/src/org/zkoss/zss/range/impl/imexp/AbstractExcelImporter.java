@@ -28,7 +28,10 @@ import org.zkoss.zss.model.*;
 import org.zkoss.zss.model.SAutoFilter.NFilterColumn;
 import org.zkoss.zss.model.SPicture.Format;
 import org.zkoss.zss.model.SSheet.SheetVisible;
+import org.zkoss.zss.model.impl.BookImpl;
 import org.zkoss.zss.model.impl.HeaderFooterImpl;
+import org.zkoss.zss.model.impl.NamedStyleImpl;
+import org.zkoss.zss.model.impl.AbstractBookAdv;
 
 /**
  * Contains common importing behavior for both XLSX and XLS. Spreadsheet
@@ -70,6 +73,23 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 	
 	/** book type key for book attribute **/
 	protected static String BOOK_TYPE_KEY = "$ZSS.BOOKTYPE$";
+
+	//ZSS-854
+	private void importDefaultCellStyles() {
+		((AbstractBookAdv)book).clearDefaultCellStyles();
+		for (CellStyle poiStyle : workbook.getDefaultCellStyles()) {
+			book.addDefaultCellStyle(importCellStyle(poiStyle));
+		}
+	}
+	//ZSS-854
+	private void importNamedStyles() {
+		((AbstractBookAdv)book).clearNamedStyles();
+		for (NamedStyle poiStyle : workbook.getNamedStyles()) {
+			SNamedStyle namedStyle = 
+					new NamedStyleImpl(poiStyle.getName(), poiStyle.getBuiltinId(), book, (int) poiStyle.getIndex());
+			book.addNamedCellstyle(namedStyle);
+		}
+	}
 	
 	/**
 	 * Import the model according to reversed dependency order among model
@@ -84,7 +104,10 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 
 		workbook = createPoiBook(is);
 		book = SBooks.createBook(bookName);
-		book.setDefaultCellStyle(importCellStyle(workbook.getCellStyleAt((short) 0), false)); //ZSS-780
+//		book.setDefaultCellStyle(importCellStyle(workbook.getCellStyleAt((short) 0), false)); //ZSS-780
+		//ZSS-854
+		importDefaultCellStyles();
+		importNamedStyles();
 		
 		setBookType(book);
 
