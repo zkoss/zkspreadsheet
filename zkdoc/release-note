@@ -13,6 +13,7 @@ ZK Spreadsheet 3.6.1
   ZSS-854 Support import/export DXfs styles in XLSX file
   ZSS-856 Support import/export diagonal border in XLSX file.
   ZSS-849 Support show cell comment
+  ZSS-852 Support condition in SUMPRODUCT function
   
 *Bugs:
   ZSS-820 Formula should change sheet name if reordered sheet goes beyond the formula's sheet boundary.
