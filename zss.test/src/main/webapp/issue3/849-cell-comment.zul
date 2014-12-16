@@ -1,0 +1,22 @@
+<zk>
+Since 3.6.1
+<label multiline="true">
+1. make sure all cell having comment triangle icon have popup panel after move on it by mouse cursor.
+2. make sure removing then adding comment many times will show and hide E2 cell comment.
+2. freeze sheet and then do step 1 and 2 again.
+</label>
+	<button label="remove comment" onClick='Ranges.range(ss.getSelectedSheet(), 1, 4).setCommentRichText(null)' />
+	<button label="add comment" onClick='Ranges.range(ss.getSelectedSheet(), 1, 4).setCommentRichText("test")' />
+	<button label="freeze sheet" onClick='Ranges.range(ss.getSelectedSheet(), 5,5).setFreezePanel(5,5)' />
+	<button label="unfreeze sheet" onClick='Ranges.range(ss.getSelectedSheet()).setFreezePanel(0, 0)' />
+	<spreadsheet id="ss" vflex="1" hflex="1" src="/issue3/book/blank.xlsx"
+		showToolbar="true" showSheetbar="true" showFormulabar="true" showContextMenu="true"
+		maxVisibleRows="100" maxVisibleColumns="100"/>
+		
+	<zscript><![CDATA[
+		for(int i = 0; i <= 10; i++) {
+			if(i%2 == 0) i++;
+			Ranges.range(ss.getSelectedSheet(), i, i).setCommentRichText("<span style=\"font-family: Impact;\"><span style=\"font-size: 16pt;\">Hello</span></span><span style=\"font-size: 11pt; font-family: Calibri;\">aaaaaaaaa</span>");
+		}
+	]]></zscript>
+</zk>
