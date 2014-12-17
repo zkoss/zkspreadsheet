@@ -138,6 +138,19 @@ class CellProxy extends AbstractCellAdv {
 		}
 	}
 
+	//ZSS-853
+	@Override
+	protected void setValue(Object value, boolean aString) {
+		loadProxy();
+		if (_proxy == null && value != null) {
+			_proxy = (AbstractCellAdv) ((AbstractRowAdv) ((AbstractSheetAdv)getSheet()).getOrCreateRow(
+					_rowIdx)).getOrCreateCell(_columnIdx);
+			_proxy.setValue(value, aString);
+		} else if (_proxy != null) {
+			_proxy.setValue(value, aString);
+		}
+	}
+
 	@Override
 	public Object getValue() {
 		loadProxy();

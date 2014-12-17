@@ -80,7 +80,7 @@ public abstract class AbstractCellAdv implements SCell,LinkedModelObject,Seriali
 	
 	@Override
 	public void setStringValue(String value) {
-		setValue(value);
+		setValue(value, true); //ZSS-853
 	}
 
 	@Override
@@ -249,5 +249,9 @@ public abstract class AbstractCellAdv implements SCell,LinkedModelObject,Seriali
 	
 	//ZSS-818
 	//@since 3.6.1
-	public abstract void setFormulaResultValue(ValueEval value); 
+	public abstract void setFormulaResultValue(ValueEval value);
+	
+	//ZSS-853
+	//@since 3.7.0
+	protected abstract void setValue(Object value, boolean aString);
 }

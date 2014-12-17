@@ -319,6 +319,12 @@ public class CellImpl extends AbstractCellAdv {
 	
 	@Override
 	public void setValue(Object newVal) {
+		setValue(newVal, false); //ZSS-853
+	}
+	
+	//ZSS-853
+	@Override
+	protected void setValue(Object newVal, boolean aString) {
 		CellValue oldVal = getCellValue();
 		if( (oldVal==null && newVal==null) ||
 			(oldVal != null && valueEuqals(oldVal.getValue(),newVal))) {
@@ -330,7 +336,7 @@ public class CellImpl extends AbstractCellAdv {
 		if (newVal == null) {
 			newType = CellType.BLANK;
 		} else if (newVal instanceof String) {
-			if (isFormula((String) newVal)) {
+			if (!aString && isFormula((String) newVal)) { //ZSS-853
 				// recursive back with newVal an instance of FromulaExpression
 				setFormulaValue(((String) newVal).substring(1)); 
 				return;// break;

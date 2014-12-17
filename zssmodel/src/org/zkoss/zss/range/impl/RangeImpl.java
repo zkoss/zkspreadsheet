@@ -1075,9 +1075,10 @@ public class RangeImpl implements SRange {
 				SHyperlink link = cell.setupHyperlink(linkType,address,display);
 				
 				String text = display;
-				while(text.startsWith("=")){
-					text = text.substring(1);
-				}
+// ZSS-853: should not remove the "=" which is not consistent with excel 
+//				while(text.startsWith("=")){
+//					text = text.substring(1);
+//				}
 				cell.setStringValue(text);
 				return true;
 			}
