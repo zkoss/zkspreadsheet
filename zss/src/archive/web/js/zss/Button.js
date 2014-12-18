@@ -804,6 +804,15 @@ zss.Menuitem = zk.$extends(zul.menu.Menuitem, {
 });
 zk.copy(zss.Menuitem.prototype, AbstractPopupHandler);
 
+zss.StateMenuitem = zk.$extends(zss.Menuitem, {
+	$init: function (props, wgt) {
+		this.$supers(zss.StateMenuitem, '$init', [props]);
+		this.updateState = props.updateState;
+		this._wgt = wgt;
+	},
+	updateState: null
+});
+
 if (zk.feature.pe) {
 	zss.ColorMenuEx = zk.$extends(zss.Menu, {
 		bind_: function () {
@@ -1045,6 +1054,38 @@ zss.Menupopup = zk.$extends(zul.menu.Menupopup, {
 		}
 	}
 });
+
+// same as zss.Menupopup except refresh item whether shown or hidden when open
+zss.StateMenupopup = zk.$extends(zss.Menupopup, {
+	updateItemState: function(info) {
+		var child = this.firstChild;
+		for(;child; child = child.nextSibling) {
+			if(child.updateState)
+				child.updateState.call(child, info);
+		}
+	}
+});
+	// same as newActionMenuitem except creating zss.StateMenuitem
+	function newActionStateMenuitem(wgt, action, image, updateStateFunc) {
+		return new zss.StateMenuitem({
+			$action: action,
+			image: image ? zk.ajaxURI(image, {au: true}) : null,
+			label: msgzss.action[action],
+			onClick: function () {
+				var sheet = wgt.sheetCtrl;
+				if (sheet) {
+					var s = sheet.getLastSelection(),
+						tRow = s.top,
+						lCol = s.left,
+						bRow = s.bottom,
+						rCol = s.right;
+					sheet.triggerSelection(tRow, lCol, bRow, rCol);
+					wgt.fireToolbarAction(action, {tRow: tRow, lCol: lCol, bRow: bRow, rCol: rCol});
+				}
+			},
+			updateState: updateStateFunc
+		},wgt);
+	}
 
 	function newActionMenuitem(wgt, action, image) {
 		return new zss.Menuitem({
@@ -1501,7 +1542,7 @@ zss.MenupopupFactory = zk.$extends(zk.Object, {
 	},
 	cell: function () {
 		var wgt = this._wgt,
-			p = new zss.Menupopup(wgt),
+			p = new zss.StateMenupopup(wgt),
 			insertMenu = new zss.Menu({
 				label: msgzss.action.insert,
 				sclass: 'insert'
@@ -1555,6 +1596,24 @@ zss.MenupopupFactory = zk.$extends(zk.Object, {
 		sortMP.appendChild(newActionMenuitem(wgt, 'customSort'));
 		sortMenu.appendChild(sortMP);
 		p.appendChild(sortMenu);
+		p.appendChild(new zul.menu.Menuseparator());
+
+		function getCellByXY(info) {
+			var pageX = info.pageX,
+				pageY = info.pageY,
+				sheet = info.sheet,
+				position = zss.SSheetCtrl._calCellPos(sheet, pageX, pageY);
+			return sheet.getCell(position[0], position[1]);
+		}
+		p.appendChild(newActionStateMenuitem(wgt, 'insertComment', null, 
+			function(info){
+				this.setVisible(!getCellByXY(info).comment)}));
+		p.appendChild(newActionStateMenuitem(wgt, 'editComment', null, 
+			function(info){
+				this.setVisible(getCellByXY(info).comment)}));
+		p.appendChild(newActionStateMenuitem(wgt, 'deleteComment', null, 
+			function(info){
+				this.setVisible(getCellByXY(info).comment)}));
 		p.appendChild(new zul.menu.Menuseparator());
 		
 		p.appendChild(newActionMenuitem(wgt, 'formatCell'));

@@ -77,6 +77,11 @@ We also merge lots of POI test cases from a previous project &quot;zsstest&quot;
 		</dependency>	
 		<dependency>
 			<groupId>org.zkoss.zss</groupId>
+			<artifactId>zss</artifactId>
+			<version>${zss.version}</version>
+		</dependency>
+ 		<dependency>
+			<groupId>org.zkoss.zss</groupId>
 			<artifactId>zssex</artifactId>
 			<version>${zss.version}</version>
 		</dependency>

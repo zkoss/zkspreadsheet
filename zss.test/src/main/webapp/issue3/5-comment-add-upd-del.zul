@@ -1,0 +1,15 @@
+<zk>
+Since 3.6.1
+<label multiline="true">
+1. insert a comment on cell B2.
+2. select B2 to make selected mark move on this cell. we can see the comment popup when cursor is on selected mark.
+3. edit the same comment with other content.
+4. delete this comment.
+5. undo all above 4 steps.
+6. protect sheet mode with edit objects allowed can be also worked for above 5 steps, deny otherwise.
+7. make suer above 6 steps work well.
+</label>
+	<spreadsheet id="ss" vflex="1" hflex="1" src="/issue3/book/blank.xlsx"
+		showToolbar="true" showSheetbar="true" showFormulabar="true" showContextMenu="true"
+		maxVisibleRows="100" maxVisibleColumns="100"/>
+</zk>
