@@ -1460,6 +1460,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		var show = this._wgt.isShowContextMenu();
 		if (show) {
 			var menu = this.getCellMenupopup();
+			menu.updateItemState.call(menu, {sheet: this, pageX: pageX, pageY: pageY});
 			this.openStyleMenupopup(pageX, pageY, menu);
 		}
 	},

@@ -122,6 +122,9 @@ public enum AuxAction {
 	 HYPERLINK("hyperlink"),
 	 INSERT_FUNCTION("insertFunction"),
 	 RICH_TEXT_EDIT("richTextEdit"),
+	 INSERT_COMMENT("insertComment"),
+	 EDIT_COMMENT("editComment"),
+	 DELETE_COMMENT("deleteComment"),
 	 
 	 
 	 /* following are fold item only, doesn't send auxevent to server*/
