@@ -1085,15 +1085,15 @@ public class Issue200Test {
 		range.merge(false);
 		range.unmerge();
 		String color = "#548dd4";
-		assertEquals(color, Ranges.range(sheet, "B5").getCellStyle().getFillColor().getHtmlColor());
-		assertEquals(color, Ranges.range(sheet, "B6").getCellStyle().getFillColor().getHtmlColor());
-		assertEquals(color, Ranges.range(sheet, "B7").getCellStyle().getFillColor().getHtmlColor());
-		assertEquals(color, Ranges.range(sheet, "C5").getCellStyle().getFillColor().getHtmlColor());
-		assertEquals(color, Ranges.range(sheet, "C6").getCellStyle().getFillColor().getHtmlColor());
-		assertEquals(color, Ranges.range(sheet, "C7").getCellStyle().getFillColor().getHtmlColor());
-		assertEquals(color, Ranges.range(sheet, "D5").getCellStyle().getFillColor().getHtmlColor());
-		assertEquals(color, Ranges.range(sheet, "D6").getCellStyle().getFillColor().getHtmlColor());
-		assertEquals(color, Ranges.range(sheet, "D7").getCellStyle().getFillColor().getHtmlColor());
+		assertEquals(color, Ranges.range(sheet, "B5").getCellStyle().getBackColor().getHtmlColor());
+		assertEquals(color, Ranges.range(sheet, "B6").getCellStyle().getBackColor().getHtmlColor());
+		assertEquals(color, Ranges.range(sheet, "B7").getCellStyle().getBackColor().getHtmlColor());
+		assertEquals(color, Ranges.range(sheet, "C5").getCellStyle().getBackColor().getHtmlColor());
+		assertEquals(color, Ranges.range(sheet, "C6").getCellStyle().getBackColor().getHtmlColor());
+		assertEquals(color, Ranges.range(sheet, "C7").getCellStyle().getBackColor().getHtmlColor());
+		assertEquals(color, Ranges.range(sheet, "D5").getCellStyle().getBackColor().getHtmlColor());
+		assertEquals(color, Ranges.range(sheet, "D6").getCellStyle().getBackColor().getHtmlColor());
+		assertEquals(color, Ranges.range(sheet, "D7").getCellStyle().getBackColor().getHtmlColor());
 	}
 	
 	/**
