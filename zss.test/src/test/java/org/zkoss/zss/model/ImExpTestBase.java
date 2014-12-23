@@ -195,9 +195,9 @@ public class ImExpTestBase {
 		assertEquals(Alignment.CENTER, sheet.getCell(27, 2).getCellStyle().getAlignment());
 		assertEquals(Alignment.RIGHT, sheet.getCell(27, 3).getCellStyle().getAlignment());
 		//cell filled color
-		assertEquals("#ff0000", sheet.getCell(11, 0).getCellStyle().getFillColor().getHtmlColor());
-		assertEquals("#00ff00", sheet.getCell(11, 1).getCellStyle().getFillColor().getHtmlColor());
-		assertEquals("#0000ff", sheet.getCell(11, 2).getCellStyle().getFillColor().getHtmlColor());
+		assertEquals("#ff0000", sheet.getCell(11, 0).getCellStyle().getBackColor().getHtmlColor());
+		assertEquals("#00ff00", sheet.getCell(11, 1).getCellStyle().getBackColor().getHtmlColor());
+		assertEquals("#0000ff", sheet.getCell(11, 2).getCellStyle().getBackColor().getHtmlColor());
 
 		//ensure cell style reusing
 		assertTrue(sheet.getCell(27, 0).getCellStyle().equals(sheet.getCell(26, 0).getCellStyle()));

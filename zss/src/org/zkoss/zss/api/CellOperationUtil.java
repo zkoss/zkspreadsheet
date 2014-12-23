@@ -437,9 +437,24 @@ public class CellOperationUtil {
 		};
 	}
 	
+	//ZSS-857
+	public static CellStyleApplier getBackColorApplier(final Color color) {
+		return new CellStyleApplierEx() {
+				public void apply(Range range) {
+					SSheet sheet = range.getSheet().getInternalSheet();
+					StyleUtil.setBackColor(sheet.getBook(),sheet.getCell(range.getRow(),range.getColumn()),color.getHtmlColor());
+				}
+
+				@Override
+				public void applyWhole(Range wholeRange) {
+					WholeStyleUtil.setBackColor(wholeRange.getInternalRange(), color.getHtmlColor());
+				}
+		};
+	}
+	
 	@Deprecated
 	public static CellStyleApplier getBackgroundColorApplier(final Color color) {
-		return getFillColorApplier(color);
+		return getBackColorApplier(color);
 	}
 	
 	public static CellStyleApplier getFillColorApplier(final Color color) {

@@ -37,12 +37,15 @@ ZK Spreadsheet 3.6.1
   ZSS-826 Fail to export to PDF if set chart title font
   ZSS-827 Change PdfExporter print setup's one property but it will lose original Excel print setup
   ZSS-853 A cell applied with text format is still evaluated as a formula
+  ZSS-857 Background color in Spreadsheet should be equaled to the BackColor in class CellStyle, not the FillColor.
   
 ** Upgrade Notes
+  * Following api are deprecated
+	* SCellStyle.setBackgroundColor(SColor backColor): use SCellStyle.setBackColor(SColor backColor) instead.
   * Chart now uses ZK Charts as default chart engine whose exporting needs extra export server. For more detail, please see "export" section in ZK Spreadsheet Essentials.
   * Enumeration name of CellStyle.FillPattern is changed to comply with Excel's term:
 	NO_FILL -> NONE, SOLID_FOREGROUND -> SOLID, FINE_DOTS -> MEDIUM_GRAY, ALT_BARS -> DARK_GRAY, SPARSE_DOTS -> LIGHT_GRAY, THICK_HORZ_BANDS -> DARK_HORIZONTAL, THICK_VERT_BANDS -> DARK_VERTICAL, THICK_BACKWARD_DIAG -> DARK_DOWN, THICK_FORWARD_DIAG -> DARK_UP, BIG_SPOTS -> DARK_GRID, BRICKS -> DARK_TRELLIS, THIN_HORZ_BANDS -> LIGHT_HORIZONTAL, THIN_VERT_BANDS -> LIGHT_VERTICAL, THIN_BACKWARD_DIAG -> LIGHT_DOWN, THIN_FORWARD_DIAG -> LIGHT_UP, SQUARES -> LIGHT_GRID, DIAMONDS -> LIGHT_TRELLIS, GRAY125 -> LESS_DOTS, GRAY0625 -> LEAST_DOTS
-
+  
  ------------
 ZK Spreadsheet 3.6.0
 *Features:

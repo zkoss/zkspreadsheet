@@ -38,7 +38,7 @@ public class CellStyleImpl extends AbstractCellStyleAdv {
 	private static final long serialVersionUID = 1L;
 
 	private AbstractFontAdv _font;
-	private SColor _fillColor = ColorImpl.WHITE;
+	private SColor _fillColor = ColorImpl.BLACK; // ZSS-857: default fillColor is black
 	private SColor _backColor = ColorImpl.WHITE;
 	private FillPattern _fillPattern = FillPattern.NONE;
 	private Alignment _alignment = Alignment.GENERAL;
@@ -272,6 +272,7 @@ public class CellStyleImpl extends AbstractCellStyleAdv {
 		setFont(src.getFont());//assign directly
 		
 		setFillColor(src.getFillColor());
+		setBackColor(src.getBackColor());
 		setFillPattern(src.getFillPattern());
 		setAlignment(src.getAlignment());
 		setVerticalAlignment(src.getVerticalAlignment());
@@ -345,8 +346,13 @@ public class CellStyleImpl extends AbstractCellStyleAdv {
 	}
 
 	//ZSS-780
+	@Deprecated
 	@Override
 	public void setBackgroundColor(SColor backColor) {
+		setBackColor(backColor);
+	}
+	@Override
+	public void setBackColor(SColor backColor) {
 		Validations.argNotNull(backColor);
 		this._backColor = backColor;
 		_patternHtml = null; //clear cache

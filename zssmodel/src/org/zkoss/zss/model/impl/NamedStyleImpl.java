@@ -134,6 +134,11 @@ public class NamedStyleImpl implements SNamedStyle {
 	public void setBackgroundColor(SColor backColor) {
 		throw new UnsupportedOperationException();
 	}
+	
+	@Override
+	public void setBackColor(SColor backColor) {
+		throw new UnsupportedOperationException();
+	}
 
 	@Override
 	public void setFillPattern(FillPattern fillPattern) {

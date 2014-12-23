@@ -22,6 +22,7 @@ import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.SCell;
 import org.zkoss.zss.model.SCellStyle;
 import org.zkoss.zss.model.CellStyleHolder;
+import org.zkoss.zss.model.SCellStyle.FillPattern;
 import org.zkoss.zss.model.SColor;
 import org.zkoss.zss.model.SFont;
 import org.zkoss.zss.model.SRichText;
@@ -89,8 +90,7 @@ public class StyleUtil {
 //			cache.put((int)orgStyle.getIndex(), style);
 //		}
 	}
-	
-	
+
 	public static void setFillColor(SBook book,CellStyleHolder holder, String htmlColor){
 		final SCellStyle orgStyle = holder.getCellStyle();
 		final SColor orgColor = orgStyle.getFillColor();
@@ -100,17 +100,42 @@ public class StyleUtil {
 		}
 		
 		CellStyleMatcher matcher = new CellStyleMatcher(orgStyle);
-		matcher.setFillColor(htmlColor);
-		matcher.setFillPattern(SCellStyle.FillPattern.SOLID);
+		matcher.setBackColor(htmlColor);
 		
 		SCellStyle style = book.searchCellStyle(matcher);
 		if(style==null){
 			style = cloneCellStyle(book,orgStyle);
 			style.setFillColor(newColor);
-			style.setFillPattern(SCellStyle.FillPattern.SOLID);
 		}
 		holder.setCellStyle(style);
 		
+	}
+	
+	//ZSS-857
+	public static void setBackColor(SBook book,CellStyleHolder holder, String htmlColor){
+		final SCellStyle orgStyle = holder.getCellStyle();
+		final SColor orgColor = orgStyle.getBackColor();
+		final SColor newColor = book.createColor(htmlColor);
+		if (orgColor == newColor || orgColor != null  && orgColor.equals(newColor)) { //no change, skip
+			return;
+		}
+		
+		SCellStyle.FillPattern pattern = orgStyle.getFillPattern();
+		if (pattern == FillPattern.NONE && htmlColor != null) {
+			pattern = FillPattern.SOLID;
+		}
+		
+		CellStyleMatcher matcher = new CellStyleMatcher(orgStyle);
+		matcher.setBackColor(htmlColor);
+		matcher.setFillPattern(pattern);
+		
+		SCellStyle style = book.searchCellStyle(matcher);
+		if(style==null){
+			style = cloneCellStyle(book,orgStyle);
+			style.setBackColor(newColor);
+			style.setFillPattern(pattern);
+		}
+		holder.setCellStyle(style);
 	}
 	
 	public static void setTextWrap(SBook book,CellStyleHolder holder,boolean wrap){

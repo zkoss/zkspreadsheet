@@ -121,6 +121,15 @@ public class WholeStyleUtil {
 			}});
 	}
 
+	//ZSS-857
+	public static void setBackColor(final SRange wholeRange, final String htmlColor) {
+		setWholeStyle(wholeRange,new StyleApplyer(){
+			@Override
+			public void applyStyle(CellStyleHolder holder) {
+				StyleUtil.setBackColor(wholeRange.getSheet().getBook(), holder, htmlColor);
+			}});
+	}
+
 	public static void setTextHAlign(final SRange wholeRange,
 			final org.zkoss.zss.model.SCellStyle.Alignment hAlignment) {
 		setWholeStyle(wholeRange,new StyleApplyer(){

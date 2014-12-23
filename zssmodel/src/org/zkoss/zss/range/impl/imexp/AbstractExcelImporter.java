@@ -26,6 +26,7 @@ import org.zkoss.poi.xssf.usermodel.*;
 import org.zkoss.util.Locales;
 import org.zkoss.zss.model.*;
 import org.zkoss.zss.model.SAutoFilter.NFilterColumn;
+import org.zkoss.zss.model.SCellStyle.FillPattern;
 import org.zkoss.zss.model.SPicture.Format;
 import org.zkoss.zss.model.SSheet.SheetVisible;
 import org.zkoss.zss.model.impl.BookImpl;
@@ -492,11 +493,20 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 			cellStyle.setVerticalAlignment(PoiEnumConversion.toVerticalAlignment(poiCellStyle.getVerticalAlignment()));
 			Color fgColor = poiCellStyle.getFillForegroundColorColor();
 			Color bgColor = poiCellStyle.getFillBackgroundColorColor();
-			if (fgColor == null && bgColor != null) { //ZSS-797
-				fgColor = bgColor;
+//			if (fgColor == null && bgColor != null) { //ZSS-797
+//				fgColor = bgColor;
+//			}
+			//ZSS-857: SOLID pattern: switch fillColor and backColor 
+			cellStyle.setFillPattern(PoiEnumConversion.toFillPattern(poiCellStyle.getFillPattern()));
+			SColor fgSColor = book.createColor(BookHelper.colorToForegroundHTML(workbook, fgColor));
+			SColor bgSColor = book.createColor(BookHelper.colorToBackgroundHTML(workbook, bgColor));
+			if (cellStyle.getFillPattern() == FillPattern.SOLID) {
+				SColor tmp = fgSColor;
+				fgSColor = bgSColor;
+				bgSColor = tmp;
 			}
-			cellStyle.setFillColor(book.createColor(BookHelper.colorToBackgroundHTML(workbook, fgColor)));
-			cellStyle.setBackgroundColor(book.createColor(BookHelper.colorToBackgroundHTML(workbook, bgColor))); //ZSS-780
+			cellStyle.setFillColor(fgSColor);
+			cellStyle.setBackColor(bgSColor); //ZSS-780
 
 			cellStyle.setBorderLeft(PoiEnumConversion.toBorderType(poiCellStyle.getBorderLeft()));
 			cellStyle.setBorderTop(PoiEnumConversion.toBorderType(poiCellStyle.getBorderTop()));
@@ -508,7 +518,6 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 			cellStyle.setBorderRightColor(book.createColor(BookHelper.colorToBorderHTML(workbook, poiCellStyle.getRightBorderColorColor())));
 			cellStyle.setBorderBottomColor(book.createColor(BookHelper.colorToBorderHTML(workbook, poiCellStyle.getBottomBorderColorColor())));
 			cellStyle.setHidden(poiCellStyle.getHidden());
-			cellStyle.setFillPattern(PoiEnumConversion.toFillPattern(poiCellStyle.getFillPattern()));
 			// same style always use same font
 			cellStyle.setFont(importFont(poiCellStyle));
 		}

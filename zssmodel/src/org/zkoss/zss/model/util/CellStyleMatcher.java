@@ -49,6 +49,7 @@ public class CellStyleMatcher {
 		DataFormat,
 		
 		FillColor,
+		BackColor, //ZSS-857
 //		FillForegroundColor,
 		FillPattern,
 		
@@ -98,6 +99,7 @@ public class CellStyleMatcher {
 		setDataFormat(criteria.getDataFormat());
 		
 		setFillColor(criteria.getFillColor().getHtmlColor());
+		setBackColor(criteria.getBackColor().getHtmlColor()); //ZSS-857
 //		setFillForegroundColor(BookHelper.colorToForegroundHTML(book,criteria.getFillForegroundColorColor()));
 		setFillPattern(criteria.getFillPattern());
 		
@@ -237,6 +239,11 @@ public class CellStyleMatcher {
 	public void setFillColor(String htmlcolor) {
 		_criteria.put(Property.FillColor, htmlcolor);
 	}
+	
+	//ZSS-857
+	public void setBackColor(String htmlcolor) {
+		_criteria.put(Property.BackColor, htmlcolor);
+	}
 
 	//remove api
 	public void removeDataFormat() {
@@ -335,6 +342,11 @@ public class CellStyleMatcher {
 		_criteria.remove(Property.FillColor);
 	}
 
+	//ZSS-857
+	public void removeBackColor(){
+		_criteria.remove(Property.BackColor);
+	}
+
 //	public void removeFillForegroundColor(){
 //		criteria.remove(Property.FillForegroundColor);
 //	}
@@ -406,6 +418,12 @@ public class CellStyleMatcher {
 					return false;
 				}
 				break;
+			case BackColor: //ZSS-857
+				if(!htmlColorEuqlas(e.getValue(),style.getBackColor().getHtmlColor())){
+					return false;
+				}
+				break;
+				
 //			case FillForegroundColor:
 //				if(!equals(e.getValue(),BookHelper.colorToForegroundHTML(book, style.getFillForegroundColorColor()))){
 //					return false;

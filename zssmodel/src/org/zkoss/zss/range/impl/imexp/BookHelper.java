@@ -129,6 +129,15 @@ public final class BookHelper {
 		return htmlColor;
 	}
 	
+	//ZSS-857: default fill color is black
+	public static String colorToForegroundHTML(Workbook book, Color color) {
+		String htmlColor = colorToHTML(book,color);
+		if(AUTO_COLOR.equals(htmlColor)){
+			return "#000000";
+		}
+		return htmlColor;
+	}
+	
 	public static String colorToBackgroundHTML(Workbook book, Color color) {
 		String htmlColor = colorToHTML(book,color);
 		if(AUTO_COLOR.equals(htmlColor)){

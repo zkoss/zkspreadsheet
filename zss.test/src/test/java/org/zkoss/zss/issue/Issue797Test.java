@@ -49,8 +49,8 @@ public class Issue797Test {
 		CellStyle style = rngB1.getCellStyle();
 		Color fillColor = style.getFillColor();
 		Color backColor = style.getBackColor();
-		Assert.assertEquals("fill forecolor", "#ffffff", fillColor.getHtmlColor());
-		Assert.assertEquals("fill backcolor", "#000000", backColor.getHtmlColor());
+		Assert.assertEquals("fill forecolor", "#000000", fillColor.getHtmlColor());
+		Assert.assertEquals("fill backcolor", "#ffffff", backColor.getHtmlColor());
 		
 		//export and test again
 		File temp = Setup.getTempFile();
@@ -61,8 +61,8 @@ public class Issue797Test {
 		style = rngB1.getCellStyle();
 		fillColor = style.getFillColor();
 		backColor = style.getBackColor();
-		Assert.assertEquals("fill forecolor", "#ffffff", fillColor.getHtmlColor());
-		Assert.assertEquals("fill backcolor", "#000000", backColor.getHtmlColor());
+		Assert.assertEquals("fill forecolor", "#000000", fillColor.getHtmlColor());
+		Assert.assertEquals("fill backcolor", "#ffffff", backColor.getHtmlColor());
 	}
 	
 	@Test

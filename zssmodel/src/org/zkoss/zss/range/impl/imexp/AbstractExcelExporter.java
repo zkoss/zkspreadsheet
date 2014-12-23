@@ -25,6 +25,7 @@ import org.zkoss.poi.ss.util.CellRangeAddress;
 import org.zkoss.util.logging.Log;
 import org.zkoss.zss.model.*;
 import org.zkoss.zss.model.SCell.CellType;
+import org.zkoss.zss.model.SCellStyle.FillPattern;
 import org.zkoss.zss.model.SRichText.Segment;
 import org.zkoss.zss.model.impl.HeaderFooterImpl;
 import org.zkoss.zss.model.impl.sys.formula.FormulaEngineImpl;
@@ -95,7 +96,7 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 			//ZSS-854: export named cell styles
 			for (SNamedStyle style: book.getNamedStyles()) {
 				NamedStyle  poiStyle = toPOINamedStyle(style); // put the named cellStyle
-				workbook.addDefaultCellStyle(poiStyle);
+				workbook.addNamedStyle(poiStyle);
 			}
 			for (SSheet sheet : book.getSheets()) {
 				exportSheet(sheet);
@@ -466,8 +467,16 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 		poiCellStyle.setBorder(left, leftColor, top, topColor, right, rightColor, bottom, bottomColor);
 
 		// fill
-		Color fillColor = toPOIColor(cellStyle.getFillColor());
-		Color backColor = toPOIColor(cellStyle.getBackColor());
+		//ZSS-857: SOLID pattern; switch fgColor and bgColor 
+		SColor fgColor = cellStyle.getFillColor();
+		SColor bgColor = cellStyle.getBackColor();
+		if (cellStyle.getFillPattern() == FillPattern.SOLID) {
+			SColor tmp = fgColor;
+			fgColor = bgColor;
+			bgColor = tmp;
+		}
+		Color fillColor = toPOIColor(fgColor);
+		Color backColor = toPOIColor(bgColor);
 		short pattern = PoiEnumConversion.toPoiFillPattern(cellStyle.getFillPattern());
 		poiCellStyle.setFill(fillColor, backColor, pattern);
 		

@@ -35,6 +35,7 @@ public class ProtectSheetTest {
     private FontStrikeoutHandler fontStrikeoutHandler = new FontStrikeoutHandler();
     private ApplyBorderHandler applyBorderHandler = new ApplyBorderHandler(null, null);
     private FillColorHandler fillColorHandler = new FillColorHandler();
+    private BackColorHandler backColorHandler = new BackColorHandler();
     private FontColorHandler fontColorHandler = new FontColorHandler();
     private VerticalAlignHandler verticalAlignHandler = new VerticalAlignHandler(null);
     private HorizontalAlignHandler horizontalAlignHandler = new HorizontalAlignHandler(null);
@@ -284,6 +285,7 @@ public class ProtectSheetTest {
         Assert.assertEquals(fontStrikeoutHandler.isEnabled(book, sheet), enabled);
         Assert.assertEquals(applyBorderHandler.isEnabled(book, sheet), enabled);
         Assert.assertEquals(fillColorHandler.isEnabled(book, sheet), enabled);
+        Assert.assertEquals(backColorHandler.isEnabled(book, sheet), enabled);
         Assert.assertEquals(fontColorHandler.isEnabled(book, sheet), enabled);
         Assert.assertEquals(verticalAlignHandler.isEnabled(book, sheet), enabled);
         Assert.assertEquals(horizontalAlignHandler.isEnabled(book, sheet), enabled);

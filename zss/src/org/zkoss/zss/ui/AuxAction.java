@@ -70,6 +70,7 @@ public enum AuxAction {
 	 BORDER_INSIDE_HORIZONTAL("borderInsideHorizontal"),
 	 BORDER_INSIDE_VERTICAL("borderInsideVertical"),
 	 FILL_COLOR("fillColor"),
+	 BACK_COLOR("backColor"),
 	 FONT_COLOR("fontColor"),
 	 VERTICAL_ALIGN_TOP("verticalAlignTop"),
 	 VERTICAL_ALIGN_MIDDLE("verticalAlignMiddle"),

@@ -30,9 +30,10 @@ import org.zkoss.zss.ui.sys.UndoableActionManager;
 
 /**
  * @author dennis
- *
+ * @author henrichen
+ * @since 3.7.0
  */
-public class FillColorHandler extends AbstractCellHandler {
+public class BackColorHandler extends AbstractCellHandler {
 
 	@Override
 	protected boolean processAction(UserActionContext ctx) {
@@ -63,7 +64,7 @@ public class FillColorHandler extends AbstractCellHandler {
 		UndoableActionManager uam = ctx.getSpreadsheet().getUndoableActionManager();
 		uam.doAction(new CellStyleAction(Labels.getLabel("zss.undo.cellStyle"),sheet, selection.getRow(), selection.getColumn(), 
 				selection.getLastRow(), selection.getLastColumn(), 
-				CellOperationUtil.getFillColorApplier(range
+				CellOperationUtil.getBackColorApplier(range
 					.getCellStyleHelper().createColorFromHtmlColor(color))));
 		return true;
 	}
@@ -77,7 +78,6 @@ public class FillColorHandler extends AbstractCellHandler {
 	}
 	
 	protected String getDefaultColor() {
-		return "#000000"; //default fill color is black
+		return "#FFFFFF";
 	}
-
 }

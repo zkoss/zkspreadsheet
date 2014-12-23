@@ -177,7 +177,9 @@ public interface SCellStyle {
 
 	public void setFillColor(SColor fillColor);
 	
+	@Deprecated
 	public void setBackgroundColor(SColor backColor); //ZSS-780
+	public void setBackColor(SColor backColor);
 
 	public void setFillPattern(FillPattern fillPattern);
 	

@@ -56,6 +56,7 @@ import org.zkoss.zss.ui.impl.ua.AbstractBookHandler;
 import org.zkoss.zss.ui.impl.ua.AbstractCellHandler;
 import org.zkoss.zss.ui.impl.ua.AddSheetHandler;
 import org.zkoss.zss.ui.impl.ua.ApplyBorderHandler;
+import org.zkoss.zss.ui.impl.ua.BackColorHandler;
 import org.zkoss.zss.ui.impl.ua.ClearCellHandler;
 import org.zkoss.zss.ui.impl.ua.CloseBookHandler;
 import org.zkoss.zss.ui.impl.ua.CopyHandler;
@@ -190,6 +191,7 @@ public class DefaultUserActionManagerCtrl implements UserActionManagerCtrl,UserA
 		
 		registerHandler(category, AuxAction.FONT_COLOR.getAction(), new FontColorHandler());
 		registerHandler(category, AuxAction.FILL_COLOR.getAction(), new FillColorHandler());
+		registerHandler(category, AuxAction.BACK_COLOR.getAction(), new BackColorHandler());
 		
 		
 		registerHandler(category, AuxAction.VERTICAL_ALIGN_TOP.getAction(), new VerticalAlignHandler(VerticalAlignment.TOP));
