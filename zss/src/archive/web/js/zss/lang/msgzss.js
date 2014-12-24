@@ -58,7 +58,7 @@ msgzss.action = {
 	borderInside: 'Inside Borders',
 	borderInsideHorizontal: 'Inside Horizontal Borders',
 	borderInsideVertical: 'Inside Vertical Borders',
-	fillColor: 'Fill Color',
+	backColor: 'Background Color',
 	fontColor: 'Font Color',
 	verticalAlign: 'Vertical Align',
 	verticalAlignTop: 'Top Align',

@@ -24,6 +24,7 @@ import java.util.Iterator;
 import org.zkoss.zss.model.InvalidModelOpException;
 import org.zkoss.zss.model.SCell;
 import org.zkoss.zss.model.CellStyleHolder;
+import org.zkoss.zss.model.SCellStyle;
 import org.zkoss.zss.model.SColumn;
 import org.zkoss.zss.model.SRow;
 import org.zkoss.zss.model.SSheet;
@@ -118,6 +119,14 @@ public class WholeStyleUtil {
 			@Override
 			public void applyStyle(CellStyleHolder holder) {
 				StyleUtil.setFillColor(wholeRange.getSheet().getBook(), holder, htmlColor);
+			}});
+	}
+	
+	public static void setFillOptions(final SRange wholeRange, final String backColor, final String fillColor, final SCellStyle.FillPattern pattern) {
+		setWholeStyle(wholeRange,new StyleApplyer(){
+			@Override
+			public void applyStyle(CellStyleHolder holder) {
+				StyleUtil.setFillOptions(wholeRange.getSheet().getBook(), holder, backColor, fillColor, pattern);
 			}});
 	}
 

@@ -15,6 +15,7 @@ ZK Spreadsheet 3.6.1
   ZSS-849 Support show cell comment
   ZSS-852 Support condition in SUMPRODUCT function
   ZSS-5   Support insert/edit/delete comment
+  ZSS-850 Support changing fill pattern with dialog
   
 *Bugs:
   ZSS-820 Formula should change sheet name if reordered sheet goes beyond the formula's sheet boundary.
