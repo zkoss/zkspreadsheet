@@ -31,6 +31,10 @@ public class SimpleBookInfo implements BookInfo{
 		this.lastModify = lastModify;		
 	}
 	
+	public SimpleBookInfo(String name) {
+		this.name = name;
+	}
+	
 	public String getName() {
 		return name;
 	}

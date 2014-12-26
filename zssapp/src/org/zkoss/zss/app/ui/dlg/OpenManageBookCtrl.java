@@ -16,14 +16,15 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.zkoss.util.logging.Log;
 import org.zkoss.util.media.Media;
 import org.zkoss.zk.ui.Executions;
+import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.UploadEvent;
 import org.zkoss.zk.ui.select.annotation.Listen;
@@ -34,13 +35,20 @@ import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.app.repository.BookInfo;
 import org.zkoss.zss.app.repository.BookRepository;
 import org.zkoss.zss.app.repository.BookRepositoryFactory;
+import org.zkoss.zss.app.repository.impl.BookManager;
+import org.zkoss.zss.app.repository.impl.BookManagerImpl;
+import org.zkoss.zss.app.repository.impl.BookUtil;
+import org.zkoss.zss.app.repository.impl.CollaborationInfo;
+import org.zkoss.zss.app.repository.impl.SimpleBookInfo;
 import org.zkoss.zss.app.ui.UiUtil;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Fileupload;
 import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
+import org.zkoss.zul.Listcell;
+import org.zkoss.zul.Listitem;
+import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Window;
-import org.zkoss.zul.event.ListDataEvent;
 
 /**
  * 
@@ -67,6 +75,8 @@ public class OpenManageBookCtrl extends DlgCtrlBase{
 	@Wire
 	Button upload;
 	
+	BookRepository repo = BookRepositoryFactory.getInstance().getRepository();
+	
 	ListModelList<Map<String,Object>> bookListModel = new ListModelList<Map<String,Object>>();
 	
 	public static void show(EventListener<DlgCallbackEvent> callback) {
@@ -80,15 +90,13 @@ public class OpenManageBookCtrl extends DlgCtrlBase{
 	@Override
 	public void doAfterCompose(Window comp) throws Exception {
 		super.doAfterCompose(comp);
-
 		reloadBookModel();
 	}
 	
 	private void reloadBookModel(){
 		bookListModel = new ListModelList<Map<String,Object>>();
-		BookRepository rep = getRepository();
 		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
-		for(BookInfo info : rep.list()){
+		for(BookInfo info : repo.list()){
 			Map<String,Object> data = new HashMap<String,Object>();
 			data.put("name", info.getName());
 			data.put("lastmodify", dateFormat.format(info.getLastModify()));
@@ -99,10 +107,6 @@ public class OpenManageBookCtrl extends DlgCtrlBase{
 		updateButtonState();
 	}
 	
-	private BookRepository getRepository(){
-		return BookRepositoryFactory.getInstance().getRepository();
-	}
-	
 	@Listen("onClick=#open; onDoubleClick=#bookList")
 	public void onOpen(){
 		Map<String,Object> selection = (Map<String,Object>)UiUtil.getSingleSelection(bookListModel);
@@ -110,7 +114,8 @@ public class OpenManageBookCtrl extends DlgCtrlBase{
 			UiUtil.showInfoMessage("Please select a book first");
 			return;
 		}
-		postCallback(ON_OPEN, newMap(newEntry(ARG_BOOKINFO, selection.get("bookinfo"))));
+		BookInfo bookInfo = (BookInfo) selection.get("bookinfo");
+		postCallback(ON_OPEN, newMap(newEntry(ARG_BOOKINFO, bookInfo), newEntry(ARG_BOOK, loadBook(bookInfo))));
 		detach();
 	}
 	
@@ -140,14 +145,27 @@ public class OpenManageBookCtrl extends DlgCtrlBase{
 			return;
 		}
 		
-		BookInfo bookinfo = (BookInfo)selection.get("bookinfo");
-		BookRepository rep = getRepository();
-		try {
-			rep.delete(bookinfo);
-			reloadBookModel();
-		} catch (IOException e) {
-			log.error(e.getMessage(),e);
-			UiUtil.showInfoMessage("Can't delete book "+bookinfo.getName());
+		final BookInfo bookinfo = (BookInfo)selection.get("bookinfo");
+		final BookManager bookManager = BookManagerImpl.getInstance(); 
+		
+		synchronized (bookManager) {
+			String bookName = bookinfo.getName();
+			if(bookManager.isBookAttached(bookinfo)) {
+				String users = CollaborationInfo.getInstance().getUsedUsernames(bookName);
+				UiUtil.showInfoMessage("Book \"" + bookinfo.getName() + "\" is in used by " + users + ".");
+				return;
+			}
+				
+			Messagebox.show("want to delete file \"" + bookName + "\" ?", "ZK Spreadsheet", 
+					Messagebox.OK + Messagebox.CANCEL, Messagebox.INFORMATION, new EventListener<Event>() {
+				@Override
+				public void onEvent(Event event) throws Exception {
+					if(event.getData().equals(Messagebox.OK)) {
+						bookManager.deleteBook(bookinfo);
+						reloadBookModel();
+					}
+				}
+			});
 		}
 	}
 	
@@ -164,11 +182,10 @@ public class OpenManageBookCtrl extends DlgCtrlBase{
 		Fileupload.get(5,new EventListener<UploadEvent>() {
 			public void onEvent(UploadEvent event) throws Exception {
 				BookInfo bookInfo = null;
-				Book book = null;
 				int count = 0;
 				Importer importer = Importers.getImporter();
-				BookRepository rep = getRepository();
 				Media[] medias = event.getMedias();
+				String finalName = null;
 				if(medias==null)
 					return;
 				for(Media m:event.getMedias()){
@@ -176,9 +193,12 @@ public class OpenManageBookCtrl extends DlgCtrlBase{
 						InputStream is = null;
 						try{
 							is = m.getStreamData();
-							String name = m.getName();						
-							book = importer.imports(is, name);
-							bookInfo = rep.saveAs(name, book);
+							String name = m.getName();
+							Book book = importer.imports(is, name);
+							name = BookUtil.appendExtension(name, book);
+							name = BookUtil.suggestFileName(name, book, repo);
+							bookInfo = repo.saveAs(name, book);
+							finalName = bookInfo.getName();
 							count++;
 						}catch(Exception x){
 							log.debug(x);
@@ -190,16 +210,34 @@ public class OpenManageBookCtrl extends DlgCtrlBase{
 						}
 					}
 				}
-				if(count==1){//open book directly if only one book
-					postCallback(ON_OPEN, newMap(newEntry(ARG_BOOKINFO, bookInfo),newEntry(ARG_BOOK, book)));
-					detach();
-				}else if(count>0){
+
+				if(count>0){
 					reloadBookModel();
+					Iterator<Map<String, Object>> iter = bookListModel.iterator();
+					while(iter.hasNext()) {
+						Map<String, Object> data = iter.next();
+						if(data.get("name").equals(finalName)) {
+							bookListModel.addToSelection(data);
+							updateButtonState();
+							break;
+						}
+					}
 				}else{
 					UiUtil.showInfoMessage("Can't get any supported files");
 				}
 			}
 		});
+	}
+	
+	private Book loadBook(BookInfo bookInfo) {
+		Book book = null;
+		try {
+			book = BookManagerImpl.getInstance().readBook(bookInfo);
+		} catch (IOException e) {
+			log.error(e.getMessage(),e);
+			UiUtil.showWarnMessage("Can't load book");
+		}
+		return book;
 	}
 	
 	static private class MapAttrComparator implements Comparator<Map<String, Object>>, Serializable {

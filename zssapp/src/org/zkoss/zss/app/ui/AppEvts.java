@@ -18,6 +18,8 @@ package org.zkoss.zss.app.ui;
  */
 public class AppEvts {
 	
+	public static String ON_CHANGED_USERNAME = "onChangeUsername";
+	public static String ON_AFTER_CHANGED_USERNAME = "onAfterChangeUsername";
 	public static String ON_LOADED_BOOK = "onLoadedBook";
 	public static String ON_CLOSED_BOOK = "onClosedBook";
 	public static String ON_SAVED_BOOK = "onSavedBook";
@@ -31,6 +33,7 @@ public class AppEvts {
 	public static String ON_SAVE_BOOK_AS = "onSaveBookAs";
 	public static String ON_SAVE_CLOSE_BOOK= "onSaveCloseBook";
 	public static String ON_CLOSE_BOOK= "onCloseBook";
+	public static String ON_IMPORT_BOOK = "onImportBook";
 	public static String ON_EXPORT_BOOK = "onExportBook";
 	public static String ON_EXPORT_BOOK_PDF = "onExportBookPdf";
 	

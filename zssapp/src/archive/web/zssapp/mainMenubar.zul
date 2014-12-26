@@ -10,6 +10,7 @@
 				<menuitem id="saveFileAndClose" label="${c:l('zssapp.mainMenu.file.saveClose')}" sclass="zsmenuitem-app appmenu" />
 				<menuitem id="closeFile" label="${c:l('zssapp.mainMenu.file.close')}" sclass="zsmenuitem-app appmenu" />
 				<menuseparator />
+				<menuitem id="importFile" label="${c:l('zssapp.mainMenu.file.import')}" sclass="zsmenuitem-app appmenu" />
 				<menuitem id="exportFile" label="${c:l('zssapp.mainMenu.file.export')}" sclass="zsmenuitem-app appmenu" />
 				<menuitem id="exportPdf" label="${c:l('zssapp.mainMenu.file.exportPdf')}" sclass="zsmenuitem-app appmenu" />
 			</menupopup>
@@ -130,15 +131,14 @@
 		</menu>
 		<menu id="helpMenu" label="${c:l('zssapp.mainMenu.help')}" sclass="zsmenu-app">
 			<menupopup>
-				<menuitem id="forum" label="${c:l('zssapp.mainMenu.help.forum')}"
-					href="http://www.zkoss.org/forum/" target="_blank" sclass="zsmenuitem-app appmenu" />
-				<menuitem id="book" label="${c:l('zssapp.mainMenu.help.document')}"
-					href="http://books.zkoss.org/wiki/ZK_Spreadsheet_Essentials"
-					target="_blank" sclass="zsmenuitem-app appmenu" />
-				<menuitem id="livedemo"
-					label="${c:l('zssapp.mainMenu.help.livedemo')}" href="http://zssdemo.zkoss.org/"
-					target="_blank" sclass="zsmenuitem-app appmenu" />
+				<menuitem id="about" label="${c:l('zssapp.mainMenu.help.about')}"
+					href="http://www.zkoss.org/product/zkspreadsheet" target="_blank" sclass="zsmenuitem-app appmenu" />
+				<menuitem id="contact" label="${c:l('zssapp.mainMenu.help.contact')}"
+					href="http://www.zkoss.org/support/about/contact" target="_blank" sclass="zsmenuitem-app appmenu" />
 			</menupopup>
 		</menu>
+		<menuitem id="zssmark" label="ZK Spreadsheet (Evaluation)" disabled="true"/>
+		<menuitem id="changeUsername" style="float:right;" label="Loading..."/>
 	</menubar>
+	
 </zk>

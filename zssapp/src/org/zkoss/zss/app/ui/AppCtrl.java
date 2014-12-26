@@ -12,21 +12,32 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.app.ui;
 
 import java.io.*;
-
+import java.net.URLDecoder;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import org.zkoss.image.AImage;
 import org.zkoss.lang.Strings;
 import org.zkoss.util.logging.Log;
 import org.zkoss.util.media.AMedia;
 import org.zkoss.util.media.Media;
 import org.zkoss.util.resource.Labels;
+import org.zkoss.web.servlet.http.Encodes;
+import org.zkoss.zk.au.AuRequest;
+import org.zkoss.zk.au.AuService;
 import org.zkoss.zk.ui.*;
 import org.zkoss.zk.ui.event.*;
 import org.zkoss.zk.ui.select.annotation.Wire;
+import org.zkoss.zk.ui.util.DesktopCleanup;
 import org.zkoss.zss.api.*;
 import org.zkoss.zss.api.model.*;
 import org.zkoss.zss.api.model.Hyperlink.HyperlinkType;
 import org.zkoss.zss.app.repository.*;
+import org.zkoss.zss.app.repository.impl.BookManager;
+import org.zkoss.zss.app.repository.impl.BookManagerImpl;
 import org.zkoss.zss.app.repository.impl.BookUtil;
+import org.zkoss.zss.app.repository.impl.CollaborationInfo;
+import org.zkoss.zss.app.repository.impl.SimpleBookInfo;
 import org.zkoss.zss.app.ui.dlg.*;
 import org.zkoss.zss.ui.*;
 import org.zkoss.zss.ui.event.Events;
@@ -43,18 +54,23 @@ import org.zkoss.zul.Fileupload;
 public class AppCtrl extends CtrlBase<Component>{
 	private static final Log log = Log.lookup(AppCtrl.class); 
 	private static final long serialVersionUID = 1L;
-
+	public static final String ZSS_USERNAME = "zssUsername";
+	private static final String UTF8 = "UTF-8";
+	private String username;
 
 	@Wire
 	Spreadsheet ss;
 	
-	
 	BookInfo selectedBookInfo;
 	Book loadedBook;
-
+	Desktop desktop = Executions.getCurrent().getDesktop();
+	private CollaborationInfo collaborationInfo = CollaborationInfo.getInstance();
+	private BookManager bookManager = BookManagerImpl.getInstance();
+	
 	public AppCtrl() {
 		super(true);
 	}
+	
 	public void doBeforeComposeChildren(Component comp) throws Exception {
 		super.doBeforeComposeChildren(comp);
 		comp.setAttribute(APPCOMP, comp);
@@ -63,6 +79,7 @@ public class AppCtrl extends CtrlBase<Component>{
 	@Override
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
+		
 		boolean isEE = "EE".equals(Version.getEdition());
 		boolean readonly = UiUtil.isRepositoryReadonly();
 		UserActionManager uam = ss.getUserActionManager();
@@ -70,7 +87,7 @@ public class AppCtrl extends CtrlBase<Component>{
 			
 			@Override
 			public boolean process(UserActionContext ctx) {
-				doOpenNewBook();
+				doOpenNewBook(true);
 				return true;
 			}
 			
@@ -125,6 +142,7 @@ public class AppCtrl extends CtrlBase<Component>{
 			}
 		});
 		
+		
 		ss.addEventListener(Events.ON_SHEET_SELECT, new EventListener<Event>() {
 			@Override
 			public void onEvent(Event event) throws Exception {
@@ -139,49 +157,169 @@ public class AppCtrl extends CtrlBase<Component>{
 			}
 		});
 		
+		Executions.getCurrent().getDesktop().addListener(new AuService() {
+			@Override
+			public boolean service(AuRequest request, boolean everError) {
+				if(request.getCommand().equals("onBookmarkChange")) {
+					String bookmark = null;
+					try {
+						bookmark = URLDecoder.decode(((String) request.getData().get("")), UTF8);
+					} catch (UnsupportedEncodingException e1) {
+						e1.printStackTrace();
+					}
+
+					if(bookmark.isEmpty()) 
+						doOpenNewBook(false);
+					else {
+						BookInfo bookinfo = null;
+						bookinfo = bookManager.getBookInfo(bookmark);
+						if(bookinfo != null){
+							doLoadBook(bookinfo, null, null, false);
+						}else{
+							// clean push state's path
+							desktop.setBookmark("");
+						}
+					}
+					return true;
+				}
+				return false;
+			}
+		});
 		
-		//load default open book from parameter
-		String bookName = null ;
+		Executions.getCurrent().getDesktop().addListener(new DesktopCleanup(){
+			@Override
+			public void cleanup(Desktop desktop) throws Exception {
+				collaborationInfo.removeUsername(username);
+			}
+		});
+		
+		setupUsername(false);
+		initBook();
+	}
+
+	private void initBook() throws UnsupportedEncodingException {
+		String bookName = null;
 		Execution exec = Executions.getCurrent();
-		bookName = (String)exec.getArg().get("book");
-		if(bookName==null){
+		if(bookName == null) {
+			bookName = (String)exec.getArg().get("book");			
+		}
+		if(bookName == null){
 			bookName = exec.getParameter("book");
 		}
 		
-		BookInfo bookinfo = null;
-		if(!Strings.isBlank(bookName)){
-			bookName = bookName.trim();
-			for(BookInfo info:getRepository().list()){
-				if(bookName.equals(info.getName())){
-					bookinfo = info;
-					break;
-				}
-			}
-		}
+		BookInfo bookinfo = bookManager.getBookInfo(bookName);
 		String sheetName = Executions.getCurrent().getParameter("sheet");
 		if(bookinfo!=null){
-			doLoadBook(bookinfo,null,sheetName);
+			doLoadBook(bookinfo, null, sheetName, false);
 		}else{
-			doOpenNewBook();
+			doOpenNewBook(false);
+		}
+	}
+
+	private void setupUsername(boolean forceAskUser) {
+		setupUsername(forceAskUser, null);
+	}
+	
+	private void setupUsername(final boolean forceAskUser, String message) {
+		if (forceAskUser) {
+			UsernameCtrl.show(new EventListener<DlgCallbackEvent>(){
+				public void onEvent(DlgCallbackEvent event) throws Exception {
+					if(UsernameCtrl.ON_USERNAME_CHANGE.equals(event.getName())){
+						String name = (String)event.getData(UsernameCtrl.ARG_NAME);
+						if(name.equals(username))
+							return;
+						
+						if(!collaborationInfo.addUsername(name, username)) {
+							setupUsername(true, "Conflict, should choose another one...");
+							return;
+						}
+						
+						ss.setUserName(username = name);
+						saveUsername(username);
+						pushAppEvent(AppEvts.ON_AFTER_CHANGED_USERNAME, username);
+					}
+				}}, username == null ? "" : username, message == null ? "" : message);
+		} else {
+			// already in cookie
+			Cookie[] cookies = ((HttpServletRequest)Executions.getCurrent().getNativeRequest()).getCookies();
+			if(cookies != null) {	
+				for (Cookie cookie : cookies) {
+					if (cookie.getName().equals(ZSS_USERNAME)) {
+						username = cookie.getValue();
+						break;
+					}
+				}
+			}
+			
+			String newName = collaborationInfo.getUsername(username);
+			
+			if(username == null) {
+				saveUsername(newName);
+			}
+			
+			username = newName;
+			pushAppEvent(AppEvts.ON_AFTER_CHANGED_USERNAME, username);
+			ss.setUserName(username);
 		}
 	}
 	
-	
-	private BookRepository getRepository(){
-		return BookRepositoryFactory.getInstance().getRepository();
+	private void saveUsername(String username)	{
+		Cookie cookie = new Cookie(ZSS_USERNAME, username);
+		cookie.setMaxAge(Integer.MAX_VALUE);
+		((HttpServletResponse) Executions.getCurrent().getNativeResponse()).addCookie(cookie);
 	}
 	
-	/*package*/ void doOpenNewBook(){
+	/*package*/ void doImportBook(){
+		
+		selectedBookInfo = null;
+		
+		Fileupload.get(1,new EventListener<UploadEvent>() {
+			public void onEvent(UploadEvent event) throws Exception {
+				Importer importer = Importers.getImporter();
+				Media[] medias = event.getMedias();
+				
+				if(medias==null)
+					return;
+				
+				Media[] ms = event.getMedias();
+				Media m = event.getMedias()[0];
+				if(ms.length > 0 && m.isBinary()){
+					String name = m.getName();
+					Book book = importer.imports(m.getStreamData(), name);
+
+					loadedBook = book;
+					loadedBook.setShareScope(EventQueues.APPLICATION);
+					collaborationInfo.removeRelationship(username);
+					ss.setBook(loadedBook);
+					pushAppEvent(AppEvts.ON_LOADED_BOOK,loadedBook);
+					pushAppEvent(AppEvts.ON_CHANGED_SPREADSHEET,ss);
+					updatePageInfo();
+					
+					return;
+				}
+
+				UiUtil.showInfoMessage("Can't get any supported files");
+			}
+		});		
+	}
+	
+	/*package*/ void doOpenNewBook(boolean renewState){
+			
 		selectedBookInfo = null;
 		Importer importer = Importers.getImporter();
 		
 		try {
-			loadedBook = importer.imports(getClass().getResourceAsStream("/web/zssapp/blank.xlsx"), "blank.xlsx");
+			loadedBook = importer.imports(getClass().getResourceAsStream("/web/zssapp/blank.xlsx"), "New Book.xlsx");
+			loadedBook.setShareScope(EventQueues.APPLICATION);
 		} catch (IOException e) {
 			log.error(e.getMessage(),e);
 			UiUtil.showWarnMessage("Can't load a new book");
 			return;
 		}
+
+		if(renewState)
+			desktop.setBookmark("");
+		collaborationInfo.removeRelationship(username);
 		ss.setBook(loadedBook);
 		pushAppEvent(AppEvts.ON_LOADED_BOOK,loadedBook);
 		pushAppEvent(AppEvts.ON_CHANGED_SPREADSHEET,ss);
@@ -193,13 +331,15 @@ public class AppCtrl extends CtrlBase<Component>{
 	private void updatePageInfo(){
 		
 		String name = selectedBookInfo!=null?selectedBookInfo.getName():loadedBook!=null?loadedBook.getBookName():null;
-		getPage().setTitle(name!=null?"Book : "+name:"");
+		getPage().setTitle(name!=null?name:"");
 		
 	}
 	
-	/*package*/ void doCloseBook(){
+	private void doCloseBook(){
 		ss.setBook(loadedBook = null);
 		selectedBookInfo = null;
+		collaborationInfo.removeRelationship(username);
+		desktop.setBookmark("");
 		pushAppEvent(AppEvts.ON_CLOSED_BOOK,null);
 		pushAppEvent(AppEvts.ON_CHANGED_SPREADSHEET,ss);
 		updatePageInfo();
@@ -225,9 +365,9 @@ public class AppCtrl extends CtrlBase<Component>{
 			doSaveBookAs(close);
 			return;
 		}
-		BookRepository rep = getRepository();
+		
 		try {
-			rep.save(selectedBookInfo, loadedBook);
+			BookManagerImpl.getInstance().updateBook(selectedBookInfo);
 			UiUtil.showInfoMessage("Save book to "+selectedBookInfo.getName());
 			pushAppEvent(AppEvts.ON_SAVED_BOOK,loadedBook);
 			if(close){
@@ -252,19 +392,31 @@ public class AppCtrl extends CtrlBase<Component>{
 			UiUtil.showWarnMessage("Please load a book first before save it");
 			return;
 		}
-		String name = "New Book";
+		
+		String name = loadedBook.getBookName();
 		if(selectedBookInfo!=null){
 			name = "Copy Of "+selectedBookInfo.getName();
 		}
-		name = BookUtil.suggestFileName(name,getRepository());
+		name = BookUtil.appendExtension(name, loadedBook);
+		name = BookUtil.suggestFileName(name, loadedBook, BookRepositoryFactory.getInstance().getRepository());
 		
 		SaveBookAsCtrl.show(new EventListener<DlgCallbackEvent>(){
 			public void onEvent(DlgCallbackEvent event) throws Exception {
 				if(SaveBookAsCtrl.ON_SAVE.equals(event.getName())){
+					
 					String name = (String)event.getData(SaveBookAsCtrl.ARG_NAME);
-					BookRepository rep = getRepository();
+					BookManager manager = BookManagerImpl.getInstance();
+
 					try {
-						selectedBookInfo = rep.saveAs(name, loadedBook);
+						synchronized (manager) {		
+							if(manager.isBookAttached(new SimpleBookInfo(name))) {
+								String users = CollaborationInfo.getInstance().getUsedUsernames(name);
+								UiUtil.showWarnMessage("File \"" + name + "\" is in used by " + users + ". Please try again.");
+							}
+							selectedBookInfo = manager.saveBook(new SimpleBookInfo(name), loadedBook);
+							doLoadBook(selectedBookInfo, null, "", true);
+						}
+						
 						pushAppEvent(AppEvts.ON_SAVED_BOOK,loadedBook);
 						UiUtil.showInfoMessage("Save book to "+selectedBookInfo.getName());
 						if(close){
@@ -278,15 +430,13 @@ public class AppCtrl extends CtrlBase<Component>{
 						return;
 					}
 				}
-			}},name);
+			}},name, loadedBook);
 	}
 	
-	
-	private void doLoadBook(BookInfo info,Book book,String sheetName){
+	private void doLoadBook(BookInfo info,Book book,String sheetName, boolean renewState){
 		if(book==null){
-			BookRepository rep = getRepository();
 			try {
-				book = rep.load(info);
+				book = BookManagerImpl.getInstance().readBook(info);
 			}catch (IOException e) {
 				log.error(e.getMessage(),e);
 				UiUtil.showWarnMessage("Can't load book");
@@ -296,7 +446,7 @@ public class AppCtrl extends CtrlBase<Component>{
 		
 		selectedBookInfo = info;
 		loadedBook = book;
-		
+		collaborationInfo.setRelationship(username, book);
 		ss.setBook(loadedBook);
 		if(!Strings.isBlank(sheetName)){
 			if(loadedBook.getSheet(sheetName)!=null){
@@ -304,19 +454,26 @@ public class AppCtrl extends CtrlBase<Component>{
 			}
 		}
 		
+		if(renewState) {
+			try {
+				desktop.setBookmark(Encodes.encodeURI(selectedBookInfo.getName()));
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+			}			
+		}
+		
 		pushAppEvent(AppEvts.ON_LOADED_BOOK,loadedBook);
 		pushAppEvent(AppEvts.ON_CHANGED_SPREADSHEET,ss);
 		updatePageInfo();
-		
 	}
 	
 	private void doOpenManageBook(){
 		OpenManageBookCtrl.show(new EventListener<DlgCallbackEvent>(){
 			public void onEvent(DlgCallbackEvent event) throws Exception {
-				if(OpenManageBookCtrl.ON_OPEN.equals(event.getName())){
+				if(OpenManageBookCtrl.ON_OPEN.equals(event.getName())){					
 					BookInfo info = (BookInfo)event.getData(OpenManageBookCtrl.ARG_BOOKINFO);
 					Book book = (Book)event.getData(OpenManageBookCtrl.ARG_BOOK);
-					doLoadBook(info,book,null);
+					doLoadBook(info, book, null, true);
 				}
 			}});
 	}
@@ -358,7 +515,7 @@ public class AppCtrl extends CtrlBase<Component>{
 	protected void onAppEvent(String event,Object data){
 		//menu
 		if(AppEvts.ON_NEW_BOOK.equals(event)){
-			doOpenNewBook();
+			doOpenNewBook(true);
 		}else if(AppEvts.ON_SAVE_BOOK.equals(event)){
 			doSaveBook(false);
 		}else if(AppEvts.ON_SAVE_BOOK_AS.equals(event)){
@@ -369,6 +526,8 @@ public class AppCtrl extends CtrlBase<Component>{
 			doCloseBook();
 		}else if(AppEvts.ON_OPEN_MANAGE_BOOK.equals(event)){
 			doOpenManageBook();
+		}else if(AppEvts.ON_IMPORT_BOOK.equals(event)){
+			doImportBook();
 		}else if(AppEvts.ON_EXPORT_BOOK.equals(event)){
 			doExportBook();
 		}else if(AppEvts.ON_EXPORT_BOOK_PDF.equals(event)){
@@ -394,6 +553,8 @@ public class AppCtrl extends CtrlBase<Component>{
 			doInsertChart((String) data);
 		} else if (AppEvts.ON_INSERT_HYPERLINK.equals(event)) {
 			doInsertHyperlink();
+		} else if (AppEvts.ON_CHANGED_USERNAME.equals(event)) {
+			setupUsername(true);
 		}
 	}
 
@@ -503,5 +664,7 @@ public class AppCtrl extends CtrlBase<Component>{
 				}
 			}}, address, display);
 	}
+	
+	
 	
 }

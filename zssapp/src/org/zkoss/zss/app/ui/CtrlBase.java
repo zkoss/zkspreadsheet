@@ -106,11 +106,15 @@ public class CtrlBase<T extends Component> extends SelectorComposer<T>{
 	}
 	
 	protected Component getAppComp(){
-		Component comp = (Component)getSelf().getAttribute(APPCOMP, true);
-		if(comp==null){
-			throw new NullPointerException("zssapp component not found");
+		T self = getSelf();
+		if(self != null) {
+			Component comp = (Component)getSelf().getAttribute(APPCOMP, true);
+			if(comp==null){
+				throw new NullPointerException("zssapp component not found");
+			}
+			return comp;
 		}
-		return comp;
+		return null;
 	}
 	
 	//subclass should override this if it cares desktop event
