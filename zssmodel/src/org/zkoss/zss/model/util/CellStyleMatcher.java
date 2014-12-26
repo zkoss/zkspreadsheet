@@ -98,7 +98,6 @@ public class CellStyleMatcher {
 		
 		setDataFormat(criteria.getDataFormat());
 		
-		setBackColor(criteria.getBackColor().getHtmlColor());
 		setFillColor(criteria.getFillColor().getHtmlColor());
 		setBackColor(criteria.getBackColor().getHtmlColor()); //ZSS-857
 //		setFillForegroundColor(BookHelper.colorToForegroundHTML(book,criteria.getFillForegroundColorColor()));
