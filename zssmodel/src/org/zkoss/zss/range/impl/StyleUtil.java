@@ -18,6 +18,8 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.range.impl;
 
+import javax.xml.ws.handler.MessageContext.Scope;
+
 import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.SCell;
 import org.zkoss.zss.model.SCellStyle;
@@ -133,6 +135,35 @@ public class StyleUtil {
 		if(style==null){
 			style = cloneCellStyle(book,orgStyle);
 			style.setBackColor(newColor);
+			style.setFillPattern(pattern);
+		}
+		holder.setCellStyle(style);
+	}
+
+	public static void setFillOptions(SBook book,CellStyleHolder holder, String bgColor, String fillColor, FillPattern pattern){
+		final SCellStyle orgStyle = holder.getCellStyle();
+		final SColor orgBackColor = orgStyle.getBackColor();
+		final SColor newBackColor = book.createColor(bgColor);
+		final SColor orgFillColor = orgStyle.getFillColor();
+		final SColor newFillColor = book.createColor(fillColor);
+		final FillPattern orgPattern = orgStyle.getFillPattern();
+			
+		if ((orgBackColor == newBackColor || (orgBackColor != null  && orgBackColor.equals(newBackColor))) && 
+				(orgFillColor == newFillColor || (orgFillColor != null  && orgFillColor.equals(newFillColor))) &&
+					orgPattern == pattern) {
+			return;
+		}
+		
+		CellStyleMatcher matcher = new CellStyleMatcher(orgStyle);
+		matcher.setBackColor(bgColor);
+		matcher.setFillColor(fillColor);
+		matcher.setFillPattern(pattern);
+		
+		SCellStyle style = book.searchCellStyle(matcher);
+		if(style==null){
+			style = cloneCellStyle(book,orgStyle);
+			style.setBackColor(newBackColor);
+			style.setFillColor(newFillColor);
 			style.setFillPattern(pattern);
 		}
 		holder.setCellStyle(style);

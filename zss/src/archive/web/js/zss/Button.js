@@ -1189,7 +1189,7 @@ zss.StylePanel = zk.$extends(zul.wgt.Popup, {
 		styleContainer.appendChild(tb);
 		
 		tb = new zul.wgt.Toolbar({sclass: 'zsstylepanel-toolbar'});
-		btns = builder.addAll(['fontColor', 'fillColor', 'border', 'verticalAlign', 'horizontalAlign','wrapText']).build();
+		btns = builder.addAll(['fontColor', 'backColor', 'border', 'verticalAlign', 'horizontalAlign','wrapText']).build();
 		while (b = btns.shift()) {
 			tb.appendChild(b);
 		}
@@ -1631,7 +1631,7 @@ zss.Buttons = zk.$extends(zk.Object, {
 	HOME_DEFAULT: ['newBook', 'saveBook', 'exportPDF', 'separator', 
 	          'paste', 'cut', 'copy', 'separator',
 	          'fontFamily', 'fontSize', 'fontBold', 'fontItalic', 'fontUnderline', 
-	          'fontStrike', 'border', 'fontColor', 'fillColor', 'separator',
+	          'fontStrike', 'border', 'fontColor', 'backColor', 'separator',
 	          'verticalAlign', 'horizontalAlign', 'wrapText', 'mergeAndCenter', 'separator',
 	          'insert', 'del', 'format', 'separator',
 	          'autoSum', 'clear', 'sortAndFilter', 'separator',
@@ -1904,19 +1904,19 @@ zss.ButtonBuilder = zk.$extends(zk.Object, {
 		b.setPopup(pp);
 		return b;
 	},
-	fillColor: function () {
+	backColor: function () {
 		var wgt = this._wgt;
 		var colorButtonConstructor = getColorButtonConstructor(wgt);
 		return new colorButtonConstructor({
-			$action: 'fillColor',
+			$action: 'backColor',
 			color: '#FFFFFF',
-			tooltiptext: msgzss.action.fillColor,
+			tooltiptext: msgzss.action.backColor,
 			image: zk.ajaxURI('/web/zss/img/paint-can-color.png', AU),
 			onClick: function () {
 				var sht = wgt.sheetCtrl;
 				if (sht) {
 					var s = sht.getLastSelection();
-					wgt.fireToolbarAction('fillColor', {color: this.getColor(), tRow: s.top, lCol: s.left, bRow: s.bottom, rCol: s.right});	
+					wgt.fireToolbarAction('backColor', {color: this.getColor(), tRow: s.top, lCol: s.left, bRow: s.bottom, rCol: s.right});	
 				}
 			}
 		}, wgt, this._popupHodler);
