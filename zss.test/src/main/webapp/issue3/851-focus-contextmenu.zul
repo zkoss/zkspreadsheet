@@ -1,0 +1,11 @@
+<zk>
+Since 3.7.0
+<label multiline="true">
+1. right click on cell, there are two cases need to be validated in the context menu.
+2. one is click on normal button which won't trigger opening a dialog. Make sure click on those buttons and type a work right after that, the focus will on editbox.
+3. the other is click button will trigger opening a dialog. make sure typing words will go with editbox focusing right after dialog is detached. 
+</label>
+	<spreadsheet id="ss" vflex="1" hflex="1" src="/issue3/book/blank.xlsx"
+		showToolbar="true" showSheetbar="true" showFormulabar="true" showContextMenu="true"
+		maxVisibleRows="100" maxVisibleColumns="100"/>
+</zk>

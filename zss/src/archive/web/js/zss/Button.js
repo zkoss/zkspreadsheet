@@ -1217,6 +1217,7 @@ zss.StylePanel = zk.$extends(zul.wgt.Popup, {
 	},
 	_closeStylePanel: function () {
 		this.close({sendOnOpen:true});
+		this._wgt.focus(true);
 	},
 	onFloatUp: function (ctl, opt) {
 		if (!this.isVisible()) {
