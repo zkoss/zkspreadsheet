@@ -276,6 +276,148 @@ zss.SheetTab = zk.$extends(zul.tab.Tab, {
 	}
 });
 
+zss.Tabs = zk.$extends(zul.tab.Tabs, {
+	_scrollcheck: function(way, tb) {
+		this._shallCheck = false;
+		var tabbox = this.getTabbox();
+		if (!this.desktop || 
+				(tabbox && (!tabbox.isRealVisible() || !tabbox.isTabscroll())))
+			return;
+
+		var tabs = this.$n(),
+			tbx = tabbox.$n();
+
+		if (!tabs || !tbx) 
+			return;	// tabbox is delete , no need to check scroll
+
+		if (tabbox.isVertical()) { //vertical
+			var tabsOffsetHeight = tabs.offsetHeight,
+				tabsScrollTop = tabs.scrollTop,
+				childHeight = 0;
+			
+			jq(this.$n('cave')).children().each(function () {
+				childHeight += this.offsetHeight;
+			});
+
+			if (tabbox._scrolling) { //already in scrolling status
+				var btnsize = this._getArrowSize();
+				if (tabs.offsetHeight <= btnsize)  return;
+				
+				var sel = tabbox.getSelectedTab(),
+					node = tb ? tb.$n() : (sel ? sel.$n() : null),
+					nodeOffsetTop = node ? node.offsetTop : 0,
+					nodeOffsetHeight = node ? node.offsetHeight : 0;
+					
+				if (childHeight <= tabsOffsetHeight + btnsize) {
+					tabbox._scrolling = false;
+					this._showbutton(false)
+					tabs.style.height = jq.px0(tbx.offsetHeight-2);
+					tabs.scrollTop = 0;
+				}
+				switch (way) {
+				case 'end':
+					var d = childHeight - tabsOffsetHeight - tabsScrollTop;
+					this._doScroll(d >= 0 ? 'down' : 'up', d >= 0 ? d : Math.abs(d));
+					break;
+				case 'init':
+				case 'vsel':
+					if (nodeOffsetTop < tabsScrollTop) {
+						this._doScroll('up', tabsScrollTop - nodeOffsetTop);
+					} else if (nodeOffsetTop + nodeOffsetHeight > tabsScrollTop + tabsOffsetHeight) {
+						this._doScroll('down', nodeOffsetTop + nodeOffsetHeight - tabsScrollTop - tabsOffsetHeight);
+					}
+					break;
+				}
+			} else { // not enough tab to scroll
+				if (childHeight - tabsOffsetHeight > 0) {
+					tabbox._scrolling = true;
+					this._showbutton(true);
+					var btnsize = this._getArrowSize(),
+						temp = tbx.offsetHeight - btnsize;
+					tabs.style.height = temp > 0 ? temp + 'px' : '';
+					if (way == 'end') {
+						var d = childHeight - tabsOffsetHeight - tabsScrollTop + 2;
+						if (d >= 0)
+							this._doScroll(this.uuid, 'down', d);
+					}
+				} else {
+					this._showbutton(false);
+				}
+			}
+		} else if(!tabbox.inAccordionMold()) {
+			var cave = this.$n('cave'),
+			 	sel = tabbox.getSelectedTab(),
+				node = tb ? tb.$n() : ( sel ? sel.$n() : null),
+			 	nodeOffsetLeft = node ? node.offsetLeft : 0,
+				nodeOffsetWidth = node ? node.offsetWidth : 0,
+				tabsOffsetWidth = tabs.offsetWidth,
+				tabsScrollLeft = tabs.scrollLeft,
+				childWidth = 0,
+				toolbar = tabbox.toolbar,
+				toolbarWidth = 0;
+
+			jq(cave).children().each(function () {
+				childWidth += this.offsetWidth;
+			});
+			
+			if (toolbar && toolbar.desktop)
+				toolbarWidth = toolbar.$n().offsetWidth;
+			
+			if (tabbox._scrolling) { //already in scrolling status
+				var btnsize = this._getArrowSize();
+				tabbox.$n('right').style.right = toolbarWidth + 'px';
+				
+				if (tabs.offsetWidth <= btnsize) return;
+				if (childWidth <= tabsOffsetWidth + btnsize) {
+					tabbox._scrolling = false;
+					this._showbutton(false);
+					tabs.style.width = jq.px0(tbx.offsetWidth - toolbarWidth);
+					tabs.scrollLeft = 0;
+				}
+				// scroll to specific position
+				switch (way) {
+				case 'end':
+					var d = childWidth - tabsOffsetWidth - tabsScrollLeft;
+					this._doScroll(d >= 0 ? 'right' : 'left', d >= 0 ? d : Math.abs(d));
+					break;
+				case 'init':
+				case 'sel':
+					if (nodeOffsetLeft == tabsScrollLeft) // nothing to do
+						break;
+					
+					if (nodeOffsetLeft < tabsScrollLeft) {
+						this._doScroll('left', tabsScrollLeft - nodeOffsetLeft);
+					} else if (nodeOffsetLeft + nodeOffsetWidth > tabsScrollLeft + tabsOffsetWidth) {
+						this._doScroll('right', nodeOffsetLeft + nodeOffsetWidth - tabsScrollLeft - tabsOffsetWidth);
+					}
+					break;
+				}
+			} else { // not enough tab to scroll
+				if (childWidth - tabsOffsetWidth > 0) {
+					tabbox._scrolling = true;
+					this._showbutton(true);
+					var cave = this.$n('cave'),
+						btnsize = this._getArrowSize(),
+						temp = tbx.offsetWidth - toolbarWidth - btnsize;//coz show button then getsize again
+					cave.style.width = '55555px';
+					tabs.style.width = temp > 0 ? temp + 'px' : '';
+					tabbox.$n('right').style.right = toolbarWidth + 'px';
+					
+					if (way == 'sel') {
+						if (nodeOffsetLeft < tabsScrollLeft) {
+							this._doScroll('left', tabsScrollLeft - nodeOffsetLeft);
+						} else if (nodeOffsetLeft + nodeOffsetWidth > tabsScrollLeft + tabsOffsetWidth) {
+							this._doScroll('right', nodeOffsetLeft + nodeOffsetWidth - tabsScrollLeft - tabsOffsetWidth);
+						}
+					}
+				} else {
+					this._showbutton(false);
+				}
+			}
+		}
+	}
+});
+
 zss.SheetSelector = zk.$extends(zul.tab.Tabbox, {
 	$o: zk.$void,
 	$init: function (wgt, menu) {
@@ -296,7 +438,7 @@ zss.SheetSelector = zk.$extends(zul.tab.Tabbox, {
 		if (tabs)
 			tabs.detach();
 		
-		tabs = new zul.tab.Tabs();
+		tabs = new zss.Tabs();
 		for (var i = 0, len = labels.length; i < len; i++) {
 			var obj = labels[i],
 				tab = new zss.SheetTab({'label': obj.name, 'sheetUuid': obj.id, 
