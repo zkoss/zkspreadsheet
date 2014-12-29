@@ -1,0 +1,10 @@
+<zk>
+Since 3.6.1
+<label multiline="true">
+1. use sheet menu to choose "1234567890-1 (41)", you can see the tab shown in the end of sheet bar.
+2. add a new sheet. this sheet will show right after current one. (click right arrow of bar to see it)
+</label>
+	<spreadsheet id="ss" vflex="1" hflex="1" src="/issue3/book/858-sheetbar-overflow.xlsx"
+		showToolbar="true" showSheetbar="true" showFormulabar="true" showContextMenu="true"
+		maxVisibleRows="100" maxVisibleColumns="100"/>
+</zk>
