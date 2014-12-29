@@ -34,18 +34,41 @@ import org.zkoss.zss.app.repository.BookRepository;
 public class BookUtil {
 
 	/**
-	 * Gets suggested file name of a book
+	 * Attach extension for a file name if the extension dones't exist
 	 */
-	static public String suggestFileName(String fileName,BookRepository rep){
-		int i = 0;
+	static public String appendExtension(String fileName, Book book) {
 		String name = FileUtil.getName(fileName);
 		String dotext = FileUtil.getNameExtension(fileName);
 		
 		if(!Strings.isBlank(dotext)){
 			dotext = "."+dotext;
 		}else{
-			dotext="";
+			if(book != null) {
+				switch(book.getType()){
+					case XLS:
+						dotext = ".xls";
+						break;
+					case XLSX:
+						dotext = ".xlsx";
+						break;
+					default:
+						dotext = ".xlsx";
+				}
+			} else 
+				dotext = ".xlsx";
 		}
+		
+		return name + dotext;
+	}
+	
+	/**
+	 * Gets suggested file name of a book
+	 */
+	static public String suggestFileName(String fileName, Book book, BookRepository rep){
+		int i = 0;
+		fileName = appendExtension(fileName, book);
+		String name = FileUtil.getName(fileName);
+		String dotext = "." + FileUtil.getNameExtension(fileName);
 		
 		Set<String> names = new HashSet<String>();
 

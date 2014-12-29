@@ -11,8 +11,10 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.app.ui.menu;
 
+import org.zkoss.lang.Library;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
+import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zk.ui.select.Selectors;
 import org.zkoss.zk.ui.select.annotation.Listen;
@@ -34,6 +36,11 @@ import org.zkoss.zul.Menuitem;
  */
 public class MainMenubarCtrl extends CtrlBase<Menubar> {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 7588544342697212954L;
+
 	public MainMenubarCtrl() {
 		super(true);
 	}
@@ -51,9 +58,15 @@ public class MainMenubarCtrl extends CtrlBase<Menubar> {
 	@Wire
 	Menuitem closeFile;
 	@Wire
+	Menuitem importFile;
+	@Wire
 	Menuitem exportFile;
 	@Wire
 	Menuitem exportPdf;
+	@Wire
+	Menuitem zssmark;
+	@Wire
+	Menuitem changeUsername;
 	
 	
 	@Wire
@@ -75,16 +88,34 @@ public class MainMenubarCtrl extends CtrlBase<Menubar> {
 	@Wire
 	Menu insertMenu;
 	
+	private static final String ZSS_PREFIX = "ZK Spsreadsheet ";
 	
+	@Override
+	public void doAfterCompose(Menubar comp) throws Exception {
+		super.doAfterCompose(comp);
+		Boolean evalOnly = (Boolean) Executions.getCurrent().getDesktop().getWebApp().getAttribute("Evaluation Only");
+		if(evalOnly == null) 
+			evalOnly = Boolean.FALSE;
+		if(!evalOnly && Library.getProperty("zssapp.showmark", "true").toLowerCase().equals("false")) {
+			zssmark.setParent(null);
+		} else {
+			String title = ZSS_PREFIX + Version.UID;
+			if(evalOnly)
+				title += " (Evaluation)";
+			zssmark.setLabel(title);
+		}
+	}
+
 	protected void onAppEvent(String event,Object data){
 		if(AppEvts.ON_CHANGED_SPREADSHEET.equals(event)){
 			doUpdateMenu((Spreadsheet)data);
 		}else if(AppEvts.ON_UPDATE_UNDO_REDO.equals(event)){
 			doUpdateMenu((Spreadsheet)data);
+		}else if(AppEvts.ON_AFTER_CHANGED_USERNAME.equals(event)){
+			doUpdateUsername((String)data);
 		}
-		
 	}
-	
+
 	private void doUpdateMenu(Spreadsheet sparedsheet){
 
 		boolean hasBook = sparedsheet.getBook()!=null;
@@ -143,6 +174,10 @@ public class MainMenubarCtrl extends CtrlBase<Menubar> {
 			((Menuitem)comp).setDisabled(!isEE || disabled);
 		}
 	}
+	
+	private void doUpdateUsername(String username) {
+		changeUsername.setLabel("Hi, " + username);
+	}
 
 	@Listen("onClick=#newFile")
 	public void onNew(){
@@ -168,6 +203,10 @@ public class MainMenubarCtrl extends CtrlBase<Menubar> {
 	public void onClose(){
 		pushAppEvent(AppEvts.ON_CLOSE_BOOK);
 	}
+	@Listen("onClick=#importFile")
+	public void onImport(){
+		pushAppEvent(AppEvts.ON_IMPORT_BOOK);
+	}
 	@Listen("onClick=#exportFile")
 	public void onExport(){
 		pushAppEvent(AppEvts.ON_EXPORT_BOOK);
@@ -175,6 +214,10 @@ public class MainMenubarCtrl extends CtrlBase<Menubar> {
 	@Listen("onClick=#exportPdf")
 	public void onExportPdf(){
 		pushAppEvent(AppEvts.ON_EXPORT_BOOK_PDF);
+	}
+	@Listen("onClick=#changeUsername")
+	public void onChangeUsername(){
+		pushAppEvent(AppEvts.ON_CHANGED_USERNAME);
 	}
 	
 	@Listen("onToggleFormulaBar=#mainMenubar")

@@ -16,6 +16,8 @@ ZK Spreadsheet 3.6.1
   ZSS-852 Support condition in SUMPRODUCT function
   ZSS-5   Support insert/edit/delete comment
   ZSS-850 Support changing fill pattern with dialog
+  ZSS-839 Import temporarily file to edit for zssapp
+  ZSS-840 support collaboration for zssapp
   
 *Bugs:
   ZSS-820 Formula should change sheet name if reordered sheet goes beyond the formula's sheet boundary.

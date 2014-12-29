@@ -22,7 +22,6 @@ import java.util.List;
 import org.zkoss.zss.api.Exporters;
 import org.zkoss.zss.api.Importers;
 import org.zkoss.zss.api.model.Book;
-import org.zkoss.zss.api.model.Book.BookType;
 import org.zkoss.zss.app.repository.BookInfo;
 import org.zkoss.zss.app.repository.BookRepository;
 import org.zkoss.zss.app.ui.UiUtil;
@@ -115,10 +114,6 @@ public class SimpleRepository implements BookRepository{
 			throw new RuntimeException("unknow book type");
 		}
 		File f = new File(root,name+ext);
-		int c = 0;
-		if(f.exists()){
-			f = new File(root,name+"("+(++c)+")"+ext);
-		}
 		SimpleBookInfo info = new SimpleBookInfo(f,f.getName(),new Date());
 		return save(info,book);
 	}
