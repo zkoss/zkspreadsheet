@@ -39,6 +39,7 @@ ZK Spreadsheet 3.6.1
   ZSS-827 Change PdfExporter print setup's one property but it will lose original Excel print setup
   ZSS-853 A cell applied with text format is still evaluated as a formula
   ZSS-857 Background color in Spreadsheet should be equaled to the BackColor in class CellStyle, not the FillColor.
+  ZSS-851 Users cannot type anything after closing a context menu
   
 ** Upgrade Notes
   * Following api are deprecated
