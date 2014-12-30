@@ -185,7 +185,7 @@ public class ExcelXlsxImporter extends AbstractExcelImporter{
 				case Line3D:
 					chart = sheet.addChart(ChartType.LINE, viewAnchor);
 					categoryData = new XSSFLine3DChartData(xssfChart);
-					chart.setGrouping(PoiEnumConversion.toChartGrouping(((XSSFLineChartData)categoryData).getGrouping())); //ZSS-828
+					chart.setGrouping(PoiEnumConversion.toChartGrouping(((XSSFLine3DChartData)categoryData).getGrouping())); //ZSS-828
 					break;
 				case Pie:
 					chart = sheet.addChart(ChartType.PIE, viewAnchor);
@@ -226,7 +226,6 @@ public class ExcelXlsxImporter extends AbstractExcelImporter{
 	}
 	//ZSS-822
 	private void importAxis(XSSFChart xssfChart, SChart chart) {
-		@SuppressWarnings("unchecked")
 		List axises = (List) xssfChart.getAxis();
 		if (axises != null) {
 			for (Object axis0 : axises) {
