@@ -43,6 +43,7 @@ ZK Spreadsheet 3.6.1
   ZSS-857 Background color in Spreadsheet should be equaled to the BackColor in class CellStyle, not the FillColor.
   ZSS-851 Users cannot type anything after closing a context menu
   ZSS-858 Some sheets are hidden because sheet bar becomes 2 layers
+  ZSS-828 reading from xlsx file can't identify stacked grouping and stacked percentage grouping
   
 ** Upgrade Notes
   * Following api are deprecated

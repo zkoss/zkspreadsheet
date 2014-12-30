@@ -180,10 +180,12 @@ public class ExcelXlsxImporter extends AbstractExcelImporter{
 				case Line:
 					chart = sheet.addChart(ChartType.LINE, viewAnchor);
 					categoryData = new XSSFLineChartData(xssfChart);
+					chart.setGrouping(PoiEnumConversion.toChartGrouping(((XSSFLineChartData)categoryData).getGrouping())); //ZSS-828
 					break;
 				case Line3D:
 					chart = sheet.addChart(ChartType.LINE, viewAnchor);
 					categoryData = new XSSFLine3DChartData(xssfChart);
+					chart.setGrouping(PoiEnumConversion.toChartGrouping(((XSSFLineChartData)categoryData).getGrouping())); //ZSS-828
 					break;
 				case Pie:
 					chart = sheet.addChart(ChartType.PIE, viewAnchor);
