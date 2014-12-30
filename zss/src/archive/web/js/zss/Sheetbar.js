@@ -276,6 +276,7 @@ zss.SheetTab = zk.$extends(zul.tab.Tab, {
 	}
 });
 
+// ZSS-858
 zss.Tabs = zk.$extends(zul.tab.Tabs, {
 	_scrollcheck: function(way, tb) {
 		this._shallCheck = false;
@@ -399,7 +400,7 @@ zss.Tabs = zk.$extends(zul.tab.Tabs, {
 					var cave = this.$n('cave'),
 						btnsize = this._getArrowSize(),
 						temp = tbx.offsetWidth - toolbarWidth - btnsize;//coz show button then getsize again
-					cave.style.width = '55555px';
+					cave.style.width = '33554430px'; // maximum width for chrome
 					tabs.style.width = temp > 0 ? temp + 'px' : '';
 					tabbox.$n('right').style.right = toolbarWidth + 'px';
 					
