@@ -20,8 +20,15 @@ import java.io.*;
 import java.util.*;
 import java.util.concurrent.locks.ReadWriteLock;
 
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBorder;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFill;
 import org.zkoss.poi.ss.usermodel.*;
 import org.zkoss.poi.ss.util.CellRangeAddress;
+import org.zkoss.poi.xssf.model.StylesTable;
+import org.zkoss.poi.xssf.usermodel.XSSFFont;
+import org.zkoss.poi.xssf.usermodel.extensions.XSSFCellBorder;
+import org.zkoss.poi.xssf.usermodel.extensions.XSSFCellFill;
+import org.zkoss.poi.xssf.usermodel.XSSFWorkbook;
 import org.zkoss.util.logging.Log;
 import org.zkoss.zss.model.*;
 import org.zkoss.zss.model.SCell.CellType;
@@ -89,11 +96,13 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 			
 			workbook = createPoiBook();
 			//ZSS-854: export default cell styles
+			workbook.clearDefaultCellStyles();
 			for (SCellStyle style: book.getDefaultCellStyles()) {
-				CellStyle  cellStyle = toPOICellStyle(style); // put the default cellStyle
+				CellStyle cellStyle = toPOIDefaultCellStyle(style); // put the default cellStyle
 				workbook.addDefaultCellStyle(cellStyle);
 			}
 			//ZSS-854: export named cell styles
+			workbook.clearNamedStyles();
 			for (SNamedStyle style: book.getNamedStyles()) {
 				NamedStyle  poiStyle = toPOINamedStyle(style); // put the named cellStyle
 				workbook.addNamedStyle(poiStyle);
@@ -443,7 +452,12 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 	}
 	//ZSS-854
 	protected NamedStyle toPOINamedStyle(SNamedStyle cellStyle) {
-		return workbook.createNamedStyle(cellStyle.getName(), cellStyle.getBuiltinId(), cellStyle.getIndex());
+		return workbook.createNamedStyle(cellStyle.getName(), cellStyle.isCustomBuiltin(), cellStyle.getBuiltinId(), cellStyle.getIndex());
+	}
+	
+	//ZSS-854
+	protected CellStyle toPOIDefaultCellStyle(SCellStyle cellStyle) {
+		return null;
 	}
 
 	protected CellStyle toPOICellStyle(SCellStyle cellStyle) {
@@ -452,7 +466,6 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 		if (poiCellStyle != null) {
 			return poiCellStyle;
 		}
-
 		poiCellStyle = workbook.createCellStyle();
 
 		//set Border

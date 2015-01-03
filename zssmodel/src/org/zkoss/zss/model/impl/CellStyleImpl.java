@@ -25,6 +25,7 @@ import java.io.ByteArrayOutputStream;
 import javax.imageio.ImageIO;
 
 import org.apache.commons.codec.binary.Base64;
+import org.zkoss.lang.Objects;
 import org.zkoss.zss.model.SCellStyle;
 import org.zkoss.zss.model.SColor;
 import org.zkoss.zss.model.SFont;
@@ -528,5 +529,55 @@ public class CellStyleImpl extends AbstractCellStyleAdv {
 		String base64 = Base64.encodeBase64String(os.toByteArray());
 		sb.append(base64).append(");");
 		return sb.toString();
+	}
+	
+	//--Object--//
+	public int hashCode() {
+		int hash = _font == null ? 0 : _font.hashCode();
+		hash = hash * 31 + (_fillColor == null ? 0 : _fillColor.hashCode());
+		hash = hash * 31 + (_backColor == null ? 0 : _backColor.hashCode());
+		hash = hash * 31 + (_fillPattern == null ? 0 : _fillPattern.hashCode());
+		hash = hash * 31 + (_alignment == null ? 0 : _alignment.hashCode());
+		hash = hash * 31 + (_verticalAlignment == null ? 0 : _verticalAlignment.hashCode());
+		hash = hash * 31 + (_wrapText ? 1 : 0);
+		hash = hash * 31 + _borderLeft.ordinal();
+		hash = hash * 31 + _borderTop.ordinal();
+		hash = hash * 31 + _borderRight.ordinal();
+		hash = hash * 31 + _borderBottom.ordinal();
+		hash = hash * 31 + (_borderTopColor == null ? 0 : _borderTopColor.hashCode());
+		hash = hash * 31 + (_borderLeftColor == null ? 0 : _borderLeftColor.hashCode());
+		hash = hash * 31 + (_borderBottomColor == null ? 0 : _borderBottomColor.hashCode());
+		hash = hash * 31 + (_borderRightColor == null ? 0 : _borderRightColor.hashCode());
+		hash = hash * 31 + (_dataFormat == null ? 0 : _dataFormat.hashCode());
+		hash = hash * 31 + (_directFormat ? 1 : 0);
+		hash = hash * 31 + (_locked ? 1 : 0);
+		hash = hash * 31 + (_hidden ? 1 : 0);
+		
+		return hash;
+	}
+	
+	public boolean equals(Object other) {
+		if (other == this) return true;
+		if (!(other instanceof CellStyleImpl)) return false;
+		CellStyleImpl o = (CellStyleImpl) other;
+		return Objects.equals(this._font, o._font)
+				&& Objects.equals(this._fillColor, o._fillColor)
+				&& Objects.equals(this._backColor, o._backColor)
+				&& Objects.equals(this._fillPattern, o._fillPattern)
+				&& Objects.equals(this._alignment, o._alignment)
+				&& Objects.equals(this._verticalAlignment, o._verticalAlignment)
+				&& Objects.equals(this._wrapText, o._wrapText)
+				&& Objects.equals(this._borderLeft, o._borderLeft)
+				&& Objects.equals(this._borderTop, o._borderTop)
+				&& Objects.equals(this._borderRight, o._borderRight)
+				&& Objects.equals(this._borderBottom, o._borderBottom)
+				&& Objects.equals(this._borderTopColor, o._borderTopColor)
+				&& Objects.equals(this._borderLeftColor, o._borderLeftColor)
+				&& Objects.equals(this._borderBottomColor, o._borderBottomColor)
+				&& Objects.equals(this._borderRightColor, o._borderRightColor)
+				&& Objects.equals(this._dataFormat, o._dataFormat)
+				&& Objects.equals(this._directFormat, o._directFormat)
+				&& Objects.equals(this._locked, o._locked)
+				&& Objects.equals(this._hidden, o._hidden);
 	}
 }

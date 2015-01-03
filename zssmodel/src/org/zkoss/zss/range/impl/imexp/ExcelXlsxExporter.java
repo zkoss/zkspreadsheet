@@ -542,4 +542,60 @@ public class ExcelXlsxExporter extends AbstractExcelExporter {
 			((XSSFSheet)poiSheet).setPasswordHash(hashpass);
 		}
 	}
+	
+	
+	//ZSS-854 
+	@Override
+	protected CellStyle toPOIDefaultCellStyle(SCellStyle cellStyle) {
+		//set Border
+		short bottom = PoiEnumConversion.toPoiBorderType(cellStyle.getBorderBottom());
+		short left = PoiEnumConversion.toPoiBorderType(cellStyle.getBorderLeft());
+		short right = PoiEnumConversion.toPoiBorderType(cellStyle.getBorderRight());
+		short top = PoiEnumConversion.toPoiBorderType(cellStyle.getBorderTop());
+		Color bottomColor = toPOIColor(cellStyle.getBorderBottomColor());
+		Color leftColor = toPOIColor(cellStyle.getBorderLeftColor());
+		Color rightColor = toPOIColor(cellStyle.getBorderRightColor());
+		Color topColor = toPOIColor(cellStyle.getBorderTopColor());
+		CTBorder ct = CTBorder.Factory.newInstance();
+		XSSFCellBorder border = new XSSFCellBorder(ct);
+		border.prepareBorder(left, leftColor, top, topColor, right, rightColor, bottom, bottomColor);
+		
+		// fill
+		//ZSS-857: SOLID pattern; switch fgColor and bgColor 
+		SColor fgColor = cellStyle.getFillColor();
+		SColor bgColor = cellStyle.getBackColor();
+		if (cellStyle.getFillPattern() == FillPattern.SOLID) {
+			SColor tmp = fgColor;
+			fgColor = bgColor;
+			bgColor = tmp;
+		}
+		Color fillColor = toPOIColor(fgColor);
+		Color backColor = toPOIColor(bgColor);
+		short pattern = PoiEnumConversion.toPoiFillPattern(cellStyle.getFillPattern());
+		CTFill ctf = CTFill.Factory.newInstance();
+		XSSFCellFill fill = new XSSFCellFill(ctf);
+		fill.prepareFill(fillColor, backColor, pattern);
+		
+		// font
+		XSSFFont font = (XSSFFont)toPOIFont(cellStyle.getFont());
+		
+		// refer from BookHelper#setDataFormat
+		DataFormat df = workbook.createDataFormat();
+		short fmt = df.getFormat(cellStyle.getDataFormat());
+		
+		XSSFCellStyle poiCellStyle = (XSSFCellStyle) ((XSSFWorkbook)workbook).createDefaultCellStyle(border, fill, font, fmt);
+
+		//cell Alignment
+		short hAlign = PoiEnumConversion.toPoiHorizontalAlignment(cellStyle.getAlignment());
+		short vAlign = PoiEnumConversion.toPoiVerticalAlignment(cellStyle.getVerticalAlignment());
+		boolean wrapText = cellStyle.isWrapText();
+		poiCellStyle.setDefaultCellAlignment(hAlign, vAlign, wrapText);
+		
+		//protect
+		boolean locked = cellStyle.isLocked();
+		boolean hidden = cellStyle.isHidden();
+		poiCellStyle.setDefaultProtection(locked, hidden);
+
+		return poiCellStyle;
+	}
 }

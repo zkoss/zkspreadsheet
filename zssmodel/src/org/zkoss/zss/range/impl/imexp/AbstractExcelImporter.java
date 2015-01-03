@@ -79,7 +79,7 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 	private void importDefaultCellStyles() {
 		((AbstractBookAdv)book).clearDefaultCellStyles();
 		for (CellStyle poiStyle : workbook.getDefaultCellStyles()) {
-			book.addDefaultCellStyle(importCellStyle(poiStyle));
+			book.addDefaultCellStyle(importCellStyle(poiStyle, false));
 		}
 	}
 	//ZSS-854
@@ -87,7 +87,8 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 		((AbstractBookAdv)book).clearNamedStyles();
 		for (NamedStyle poiStyle : workbook.getNamedStyles()) {
 			SNamedStyle namedStyle = 
-					new NamedStyleImpl(poiStyle.getName(), poiStyle.getBuiltinId(), book, (int) poiStyle.getIndex());
+					new NamedStyleImpl(poiStyle.getName(), poiStyle.isCustomBuiltin(), 
+							poiStyle.getBuiltinId(), book, (int) poiStyle.getIndex());
 			book.addNamedCellstyle(namedStyle);
 		}
 	}
