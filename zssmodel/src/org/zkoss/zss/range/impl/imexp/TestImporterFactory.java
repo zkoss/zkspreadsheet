@@ -452,6 +452,8 @@ public class TestImporterFactory implements SImporterFactory{
 				buildChartData(chart);
 				chart.setTitle("Another Title");
 				chart.setThreeD(true);
+				chart.setRotX(30);
+				chart.setPerspective(30);
 				
 				chart = sheet.addChart(ChartType.BAR, new ViewAnchor(12, 0, 300, 200));
 				buildChartData(chart);
@@ -460,6 +462,7 @@ public class TestImporterFactory implements SImporterFactory{
 				chart = sheet.addChart(ChartType.BAR, new ViewAnchor(12, 6, 300, 200));
 				buildChartData(chart);
 				chart.setThreeD(true);
+				chart.setRightAngleAxes(true);
 				
 				chart = sheet.addChart(ChartType.COLUMN, new ViewAnchor(12, 12, 300, 200));
 				buildChartData(chart);
@@ -468,6 +471,7 @@ public class TestImporterFactory implements SImporterFactory{
 				chart = sheet.addChart(ChartType.COLUMN, new ViewAnchor(12, 18, 300, 200));
 				buildChartData(chart);
 				chart.setThreeD(true);
+				chart.setRightAngleAxes(true);
 				
 				chart = sheet.addChart(ChartType.DOUGHNUT, new ViewAnchor(12, 18, 300, 200));
 				buildChartData(chart);
@@ -481,6 +485,7 @@ public class TestImporterFactory implements SImporterFactory{
 				chart = sheet.addChart(ChartType.LINE, new ViewAnchor(24, 6, 300, 200));
 				buildChartData(chart);
 				chart.setThreeD(true);
+				chart.setPerspective(30);
 				
 				chart = sheet.addChart(ChartType.AREA, new ViewAnchor(24, 12, 300, 200));
 				buildChartData(chart);

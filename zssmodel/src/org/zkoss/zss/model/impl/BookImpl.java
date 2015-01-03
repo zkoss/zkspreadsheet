@@ -994,6 +994,7 @@ public class BookImpl extends AbstractBookAdv{
 	@Override
 	public void clearDefaultCellStyles() {
 		_cellStyles.clear();
+		_defaultCellStyles.clear();
 	}
 
 	//ZSS-854

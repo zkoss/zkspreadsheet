@@ -120,4 +120,39 @@ public interface SChart {
 	//ZSS-822
 	public void addValueAxis(SChartAxis axis);
 	public void addCategoryAxis(SChartAxis axis);
+	
+	//ZSS-830
+	// -90 ~ 90; default: 0
+	public int getRotX();
+	public void setRotX(int rotX);
+	
+	//ZSS-830
+	// 0 ~ 360; default: 0
+	public int getRotY();
+	public void setRotY(int rotY);
+	
+	//ZSS-830
+	// 0 ~ 240; default: 30
+	public int getPerspective();
+	public void setPerspective(int perspective);
+	
+	//ZSS-830
+	// 5 ~ 500; default: 100
+	public int getHPercent();
+	public void setHPercent(int percent);
+	
+	//ZSS-830
+	// 20 ~ 2000; default: 100
+	public int getDepthPercent();
+	public void setDepthPercent(int percent);
+
+	//ZSS-830
+	// default: true
+	public boolean isRightAngleAxes();
+	public void setRightAngleAxes(boolean b);
+
+	//ZSS-830
+	// -100 ~ +100; default: 0
+	public int getBarOverlap();
+	public void setBarOverlap(int overlap);
 }

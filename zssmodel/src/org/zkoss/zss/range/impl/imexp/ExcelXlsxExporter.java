@@ -20,11 +20,15 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
 import org.zkoss.poi.ss.usermodel.*;
 import org.zkoss.poi.ss.usermodel.charts.*;
 import org.zkoss.poi.ss.util.*;
+import org.zkoss.poi.xssf.model.StylesTable;
 import org.zkoss.poi.xssf.usermodel.*;
 import org.zkoss.poi.xssf.usermodel.XSSFAutoFilter.XSSFFilterColumn;
 import org.zkoss.poi.xssf.usermodel.charts.*;
+import org.zkoss.poi.xssf.usermodel.extensions.XSSFCellBorder;
+import org.zkoss.poi.xssf.usermodel.extensions.XSSFCellFill;
 import org.zkoss.zss.model.*;
 import org.zkoss.zss.model.SAutoFilter.NFilterColumn;
+import org.zkoss.zss.model.SCellStyle.FillPattern;
 import org.zkoss.zss.model.SDataValidation.ValidationType;
 import org.zkoss.zss.model.chart.*;
 /**
@@ -33,7 +37,8 @@ import org.zkoss.zss.model.chart.*;
  * @since 3.5.0
  */
 public class ExcelXlsxExporter extends AbstractExcelExporter {
-	
+	private static final long serialVersionUID = 20141231175402L;
+
 	protected void exportColumnArray(SSheet sheet, Sheet poiSheet, SColumnArray columnArr) {
 		XSSFSheet xssfSheet = (XSSFSheet) poiSheet;
 		
@@ -107,6 +112,7 @@ public class ExcelXlsxExporter extends AbstractExcelExporter {
 					categoryData = new XSSFBarChartData();
 					((XSSFBarChartData)categoryData).setGrouping(PoiEnumConversion.toPoiGrouping(chart.getGrouping()));
 					((XSSFBarChartData)categoryData).setBarDirection(PoiEnumConversion.toPoiBarDirection(chart.getBarDirection()));
+					((XSSFBarChartData)categoryData).setBarOverlap(chart.getBarOverlap()); //ZSS-830
 				}
 				break;
 			case BUBBLE:
@@ -123,6 +129,7 @@ public class ExcelXlsxExporter extends AbstractExcelExporter {
 					categoryData = new XSSFColumnChartData();
 					((XSSFColumnChartData)categoryData).setGrouping(PoiEnumConversion.toPoiGrouping(chart.getGrouping()));
 					((XSSFColumnChartData)categoryData).setBarDirection(PoiEnumConversion.toPoiBarDirection(chart.getBarDirection()));
+					((XSSFColumnChartData)categoryData).setBarOverlap(chart.getBarOverlap());
 				}
 				break;
 			case DOUGHNUT:
@@ -171,7 +178,14 @@ public class ExcelXlsxExporter extends AbstractExcelExporter {
 		Chart poiChart = poiSheet.createDrawingPatriarch().createChart(toClientAnchor(chart.getAnchor(),sheet));
 		//TODO export a chart's title, no POI API supported
 		if (chart.isThreeD()){
-			poiChart.getOrCreateView3D();
+			//ZSS-830
+			XSSFView3D view3d = (XSSFView3D) poiChart.getOrCreateView3D();
+			if (chart.getRotX() != 0) view3d.setRotX(chart.getRotX());
+			if (chart.getRotY() != 0) view3d.setRotY(chart.getRotY());
+			if (chart.getPerspective() != 30) view3d.setPerspective(chart.getPerspective());
+			if (chart.getHPercent() != 100) view3d.setHPercent(chart.getHPercent());
+			if (chart.getDepthPercent() != 100) view3d.setDepthPercent(chart.getDepthPercent());
+			if (!chart.isRightAngleAxes()) view3d.setRightAngleAxes(false);
 		}
 		if (chart.getLegendPosition() != null) {
 			ChartLegend legend = poiChart.getOrCreateLegend();

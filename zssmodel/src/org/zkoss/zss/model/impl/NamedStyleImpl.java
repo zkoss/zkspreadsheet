@@ -24,12 +24,14 @@ import org.zkoss.zss.model.SNamedStyle;
  */
 public class NamedStyleImpl implements SNamedStyle {
 	final private String name;
+	final private boolean custom;
 	final private int index;
 	final private BookImpl book;
 	final private int builtinId;
 	
-	public NamedStyleImpl(String name, int builtinId, SBook book, int index) {
+	public NamedStyleImpl(String name, boolean custom, int builtinId, SBook book, int index) {
 		this.builtinId = builtinId;
+		this.custom = custom;
 		this.book = (BookImpl) book;
 		this.name = name;
 		this.index = index;
@@ -257,7 +259,7 @@ public class NamedStyleImpl implements SNamedStyle {
 
 	@Override
 	public String getName() {
-		return name;
+ 		return name;
 	}
 
 	@Override
@@ -267,7 +269,7 @@ public class NamedStyleImpl implements SNamedStyle {
 	
 	@Override
 	public boolean isCustomBuiltin() {
-		return builtinId >= 0;
+		return custom;
 	}
 	
 	@Override

@@ -587,7 +587,11 @@ public class PoiEnumConversion {
 		}
 	}
 
-	public static org.zkoss.zss.model.SChart.ChartGrouping toChartGrouping(org.zkoss.poi.ss.usermodel.charts.ChartGrouping grouping){
+	public static org.zkoss.zss.model.SChart.ChartGrouping 
+		toChartGrouping(org.zkoss.poi.ss.usermodel.charts.ChartGrouping grouping){
+		if (grouping == null) {
+			return org.zkoss.zss.model.SChart.ChartGrouping.STANDARD;
+		}
 		switch(grouping){
 		case STACKED:
 			return org.zkoss.zss.model.SChart.ChartGrouping.STACKED;

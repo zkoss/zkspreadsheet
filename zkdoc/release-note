@@ -44,6 +44,7 @@ ZK Spreadsheet 3.6.1
   ZSS-851 Users cannot type anything after closing a context menu
   ZSS-858 Some sheets are hidden because sheet bar becomes 2 layers
   ZSS-828 reading from xlsx file can't identify stacked grouping and stacked percentage grouping
+  ZSS-830 export the imported xlsx file and open it in MS Excel, chart will lose many information.
   
 ** Upgrade Notes
   * Following api are deprecated

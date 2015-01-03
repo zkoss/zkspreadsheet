@@ -147,6 +147,7 @@ public class ExcelXlsxImporter extends AbstractExcelImporter{
 					chart = sheet.addChart(ChartType.BAR, viewAnchor);
 					categoryData = new XSSFBarChartData(xssfChart);
 					chart.setBarDirection(PoiEnumConversion.toBarDirection(((XSSFBarChartData)categoryData).getBarDirection()));
+					chart.setBarOverlap(xssfChart.getBarOverlap()); //ZSS-830
 					chart.setGrouping(PoiEnumConversion.toChartGrouping(((XSSFBarChartData)categoryData).getGrouping()));
 					break;
 				case Bar3D:
@@ -165,6 +166,7 @@ public class ExcelXlsxImporter extends AbstractExcelImporter{
 					chart = sheet.addChart(ChartType.COLUMN, viewAnchor);
 					categoryData = new XSSFColumnChartData(xssfChart);
 					chart.setBarDirection(PoiEnumConversion.toBarDirection(((XSSFColumnChartData)categoryData).getBarDirection()));
+					chart.setBarOverlap(xssfChart.getBarOverlap()); //ZSS-830
 					chart.setGrouping(PoiEnumConversion.toChartGrouping(((XSSFColumnChartData)categoryData).getGrouping()));
 					break;
 				case Column3D:
@@ -214,6 +216,16 @@ public class ExcelXlsxImporter extends AbstractExcelImporter{
 				chart.setTitle(xssfChart.getTitle().getString());
 			}
 			chart.setThreeD(xssfChart.isSetView3D());
+			//ZSS-830
+			if (chart.isThreeD()) {
+				XSSFView3D view3d = xssfChart.getOrCreateView3D();
+				chart.setRotX(view3d.getRotX());
+				chart.setRotY(view3d.getRotY());
+				chart.setPerspective(view3d.getPerspective());
+				chart.setHPercent(view3d.getHPercent());
+				chart.setDepthPercent(view3d.getDepthPercent());
+				chart.setRightAngleAxes(view3d.isRightAngleAxes());
+			}
 			if (xssfChart.hasLegend()) {
 				chart.setLegendPosition(PoiEnumConversion.toLengendPosition(xssfChart.getOrCreateLegend().getPosition()));
 			}

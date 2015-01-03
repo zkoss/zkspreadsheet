@@ -49,6 +49,15 @@ public class ChartImpl extends AbstractChartAdv {
 	
 	private boolean _threeD;
 	
+	//ZSS-830
+	private boolean _rAngAx = true; //default true
+	private int _rotX = 0;
+	private int _rotY = 0;
+	private int _hPercent = 100;
+	private int _depthPercent = 100;
+	private int _perspective = 30;
+	private int _barOverlap = 0;
+	
 	private List<SChartAxis> _valueAxises = new ArrayList<SChartAxis>();
 	private List<SChartAxis> _categoryAxises = new ArrayList<SChartAxis>();
 	
@@ -228,5 +237,74 @@ public class ChartImpl extends AbstractChartAdv {
 	@Override
 	public List<SChartAxis> getCategoryAxises() {
 		return _categoryAxises;
+	}
+	
+	//ZSS-830
+	@Override
+	public int getRotX() {
+		return _rotX;
+	}
+	//ZSS-830
+	@Override
+	public void setRotX(int rotX) {
+		_rotX = rotX;
+	}
+	//ZSS-830
+	@Override
+	public int getRotY() {
+		return _rotY;
+	}
+	//ZSS-830
+	@Override
+	public void setRotY(int rotY) {
+		_rotY = rotY;
+	}
+	//ZSS-830
+	@Override
+	public int getPerspective() {
+		return _perspective;
+	}
+	//ZSS-830
+	@Override
+	public void setPerspective(int perspective) {
+		_perspective = perspective;
+	}
+	//ZSS-830
+	@Override
+	public int getHPercent() {
+		return _hPercent;
+	}
+	//ZSS-830
+	@Override
+	public void setHPercent(int percent) {
+		_hPercent = percent;
+	}
+	//ZSS-830
+	@Override
+	public int getDepthPercent() {
+		return _depthPercent;
+	}
+	//ZSS-830
+	@Override
+	public void setDepthPercent(int percent) {
+		_depthPercent = percent;
+	}
+	//ZSS-830
+	@Override
+	public boolean isRightAngleAxes() {
+		return _rAngAx;
+	}
+	//ZSS-830
+	@Override
+	public void setRightAngleAxes(boolean b) {
+		_rAngAx = b;
+	}
+	@Override
+	public int getBarOverlap() {
+		return _barOverlap;
+	}
+	@Override
+	public void setBarOverlap(int overlap) {
+		_barOverlap = overlap;
 	}
 }
