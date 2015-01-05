@@ -29,7 +29,9 @@ import org.zkoss.zss.model.SAutoFilter.NFilterColumn;
 import org.zkoss.zss.model.SCellStyle.FillPattern;
 import org.zkoss.zss.model.SPicture.Format;
 import org.zkoss.zss.model.SSheet.SheetVisible;
+import org.zkoss.zss.model.impl.AbstractCellStyleAdv;
 import org.zkoss.zss.model.impl.BookImpl;
+import org.zkoss.zss.model.impl.CellStyleImpl;
 import org.zkoss.zss.model.impl.HeaderFooterImpl;
 import org.zkoss.zss.model.impl.NamedStyleImpl;
 import org.zkoss.zss.model.impl.AbstractBookAdv;
@@ -80,6 +82,10 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 		((AbstractBookAdv)book).clearDefaultCellStyles();
 		for (CellStyle poiStyle : workbook.getDefaultCellStyles()) {
 			book.addDefaultCellStyle(importCellStyle(poiStyle, false));
+		}
+		// in case of XLS files which we have not support defaultCellStyles 
+		if (book.getDefaultCellStyles().isEmpty()) {
+			((AbstractBookAdv)book).initDefaultCellStyles();
 		}
 	}
 	//ZSS-854

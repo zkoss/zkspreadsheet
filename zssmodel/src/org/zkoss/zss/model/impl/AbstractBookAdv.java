@@ -45,4 +45,6 @@ public abstract class AbstractBookAdv implements SBook,EvaluationContributorCont
 	//ZSS-854
 	public abstract void clearNamedStyles();
 
+	//ZSS-854
+	public abstract void initDefaultCellStyles();
 }

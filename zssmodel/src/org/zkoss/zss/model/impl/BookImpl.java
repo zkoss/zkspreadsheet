@@ -113,9 +113,7 @@ public class BookImpl extends AbstractBookAdv{
 		this._bookName = bookName;
 		_bookSeries = new SimpleBookSeriesImpl(this);
 		_fonts.add(_defaultFont = new FontImpl());
-		AbstractCellStyleAdv defaultCellStyle = new CellStyleImpl(_defaultFont);
-		_cellStyles.add(defaultCellStyle); //ZSS-854
-		_defaultCellStyles.add(defaultCellStyle); //ZSS-854
+		initDefaultCellStyles();
 		_colors.put(ColorImpl.WHITE,ColorImpl.WHITE);
 		_colors.put(ColorImpl.BLACK,ColorImpl.BLACK);
 		_colors.put(ColorImpl.RED,ColorImpl.RED);
@@ -123,6 +121,12 @@ public class BookImpl extends AbstractBookAdv{
 		_colors.put(ColorImpl.BLUE,ColorImpl.BLUE);
 		
 		_bookId = ((char)('a'+_random.nextInt(26))) + Long.toString(/*System.currentTimeMillis()+*/_bookCount.getAndIncrement(), Character.MAX_RADIX) ;
+	}
+	
+	public void initDefaultCellStyles() {
+		AbstractCellStyleAdv defaultCellStyle = new CellStyleImpl(_defaultFont);
+		_cellStyles.add(defaultCellStyle); //ZSS-854
+		_defaultCellStyles.add(defaultCellStyle); //ZSS-854
 	}
 	
 	@Override
