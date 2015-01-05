@@ -17,7 +17,7 @@ Since 3.6.1
 	<zscript><![CDATA[
 		for(int i = 0; i <= 10; i++) {
 			if(i%2 == 0) i++;
-			Ranges.range(ss.getSelectedSheet(), i, i).setCommentRichText("<span style=\"font-family: Impact;\"><span style=\"font-size: 16pt;\">Hello</span></span><span style=\"font-size: 11pt; font-family: Calibri;\">aaaaaaaaa</span>");
+			Ranges.range(ss.getSelectedSheet(), i, i).setCommentRichText("<span style=\"font-family: Impact;\"><span style=\"font-size: 48pt;\">Hello</span></span><span style=\"font-size: 14pt; font-family: Calibri;\">aaaaaaaaa</span>");
 		}
 	]]></zscript>
 </zk>

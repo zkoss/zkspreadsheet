@@ -1293,6 +1293,12 @@
 .zscellcomment-hidden {
 	display: none;
 }
+.zscellcomment-popup .z-popup-content {
+	word-wrap: break-word;
+	width: 160px;
+	line-height: normal;
+	padding: 2px;
+}
 
 <c:if test="${c:browser('ie6-')}">
 .zstbtn .z-toolbarbutton-content,
