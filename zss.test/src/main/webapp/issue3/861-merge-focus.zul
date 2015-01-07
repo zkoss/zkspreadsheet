@@ -1,0 +1,26 @@
+<zk>
+Since 3.6.1
+<label multiline="true">
+1. Select cell A1
+2. Should see focus select A1:B2.
+3. If you see another focus on E1:F2, it is a bug.
+</label>
+<spreadsheet id="spreadsheet" src="/book/blank.xlsx" vflex="1" hflex="1"/>
+<zscript><![CDATA[
+ 		Sheet sheet = spreadsheet.getSelectedSheet();
+        
+        int lastCol = 40;
+        int lastRow = 30;
+        
+        Ranges.range(sheet, "A1:B2").merge(false);
+        Ranges.range(sheet, "C1:D2").merge(false);
+        // There will be focus borders around the last merged cell 
+        Ranges.range(sheet, "E1:F2").merge(false);
+//        Ranges.range(sheet, 0, 0, 1, 1).merge(false);
+//        Ranges.range(sheet, 0, 2, 1, 3).merge(false);
+//        // There will be focus borders around the last merged cell 
+//        Ranges.range(sheet, 0, 4, 1, 5).merge(false);
+]]>
+</zscript>
+</zk>
+

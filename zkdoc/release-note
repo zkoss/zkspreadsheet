@@ -46,6 +46,7 @@ ZK Spreadsheet 3.6.1
   ZSS-828 reading from xlsx file can't identify stacked grouping and stacked percentage grouping
   ZSS-830 export the imported xlsx file and open it in MS Excel, chart will lose many information.
   ZSS-865 Text in two adjecent cells overlaps
+  ZSS-861 Spreadsheet displays an extra focus box on a merged cell
   
 ** Upgrade Notes
   * Following api are deprecated
