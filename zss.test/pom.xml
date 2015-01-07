@@ -31,7 +31,7 @@ We also merge lots of POI test cases from a previous project &quot;zsstest&quot;
 		</repository>
 		<repository>
 			<id>ZK EE Evaluation</id>
-			<url>http://mavensync.zkoss.org/zk/ee-eval</url>
+			<url>http://mavensync.zkoss.org/zk/eval</url>
 		</repository>
 	</repositories>
 	<pluginRepositories>

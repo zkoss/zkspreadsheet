@@ -35,7 +35,7 @@
 		</repository>
 		<repository>
 			<id>ZK Evaluation Repository</id>
-			<url>http://mavensync.zkoss.org/zk/ee-eval</url>
+			<url>http://mavensync.zkoss.org/zk/eval</url>
 		</repository>
 	</repositories>
 	<pluginRepositories>
