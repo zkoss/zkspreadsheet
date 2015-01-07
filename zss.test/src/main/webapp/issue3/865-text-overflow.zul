@@ -1,0 +1,12 @@
+<zk>
+Since 3.6.1
+<label multiline="true">
+1. Select cell B1
+2. Change cell text color from Black to Red (by clicking the "Font Color" icon on toolbar)
+3. You should see text "ABC" change color from Black to Red.
+4. If text "abcdefghijklmno" in cell A1 overflow to B1, it is a bug.
+</label>
+	<spreadsheet id="ss" vflex="1" hflex="1" src="/issue3/book/865-text-overflow.xlsx"
+		showToolbar="true" showSheetbar="true" showFormulabar="true" showContextMenu="true"
+		maxVisibleRows="100" maxVisibleColumns="100"/>
+</zk>

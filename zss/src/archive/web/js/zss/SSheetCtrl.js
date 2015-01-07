@@ -3209,7 +3209,10 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		if(lBlock)
 			lBlock.addMergeRange(id, left, top, right, bottom);
 		
-		this.moveCellFocus(top, left);		
+		//ZSS-861: move focus only if current state is not NOFOCUS
+		if (!(this.state == zss.SSheetCtrl.NOFOCUS)) {
+			this.moveCellFocus(top, left);
+		}
 	},
 	afterKeyDown_: function (wevt) {
 		var wgt = this._wgt; 

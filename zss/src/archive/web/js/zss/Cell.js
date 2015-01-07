@@ -293,7 +293,13 @@ zss.Cell = zk.$extends(zk.Widget, {
 		if (prevWidth && (zk.ie6_ || zk.ie7_)) {//IE6/IE7 set overflow width at cave
 			cave.style.width = prevWidth;
 		}
+		
+		// ZSS-865
+		var orgwidth = real && real.style ? real.style.width : null;
 		real.style.cssText = fst;
+		if (orgwidth && !real.style.width) {
+			jq(real).css('width', orgwidth);
+		}
 		
 		this.lock = data.lock;
 		this.wrap = data.wrap;
