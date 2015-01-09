@@ -479,8 +479,18 @@ public class CellOperationUtil {
 	 */
 	@Deprecated
 	public static void applyBackgroundColor(Range range, final String htmlColor) {
-		applyFillColor(range,htmlColor);
+		applyBackColor(range,htmlColor);
 	}
+	
+	/**
+	 * Apply back-color to cells in the range
+	 * @param range the range to be applied
+	 * @param htmlColor the color by html color syntax(#rgb-hex-code, e.x #FF00FF) 
+	 */
+	public static void applyBackColor(Range range, final String htmlColor) {
+		final Color color = range.getCellStyleHelper().createColorFromHtmlColor(htmlColor);
+		applyCellStyle(range,getBackColorApplier(color));
+	}	
 	
 	/**
 	 * Apply fill-color to cells in the range
