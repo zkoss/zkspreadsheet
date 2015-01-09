@@ -539,7 +539,7 @@ public class ImExpTestBase {
 		SDataValidation fourGrades  = validationSheet.getDataValidation(2, 1);
 		assertEquals(ValidationType.LIST, fourGrades.getValidationType());
 		assertEquals(AlertStyle.WARNING, fourGrades.getAlertStyle());
-		assertEquals("$C$3:$F$3", fourGrades.getFormula1());
+		assertEquals("=$C$3:$F$3", fourGrades.getFormula1());
 		assertEquals(4, fourGrades.getNumOfValue1());
 		assertEquals(0, fourGrades.getNumOfValue2());
 		assertEquals("A", fourGrades.getValue1(0).toString());
@@ -556,7 +556,7 @@ public class ImExpTestBase {
 		
 		SDataValidation limitedColors  = validationSheet.getDataValidation(5, 1);
 		assertEquals(ValidationType.LIST, limitedColors.getValidationType());
-		assertEquals("\"red, blue, green\"", limitedColors.getFormula1());
+		assertEquals("red, blue, green", limitedColors.getFormula1());
 		assertEquals(true, limitedColors.isInCellDropdown());
 		
 		SDataValidation custom  = validationSheet.getDataValidation(6, 1);

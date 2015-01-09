@@ -31,6 +31,7 @@ import org.zkoss.zss.model.SAutoFilter.NFilterColumn;
 import org.zkoss.zss.model.SCellStyle.FillPattern;
 import org.zkoss.zss.model.SDataValidation.ValidationType;
 import org.zkoss.zss.model.chart.*;
+import org.zkoss.zss.model.impl.AbstractDataValidationAdv;
 /**
  * 
  * @author dennis, kuro, Hawk
@@ -446,8 +447,8 @@ public class ExcelXlsxExporter extends AbstractExcelExporter {
 	protected void exportValidation(SSheet sheet, Sheet poiSheet) {
 		for (SDataValidation validation : sheet.getDataValidations()){
 			int operatorType = PoiEnumConversion.toPoiOperatorType(validation.getOperatorType());
-			String formula1 = validation.getFormula1();
-			String formula2 = validation.getFormula2();
+			String formula1 = ((AbstractDataValidationAdv)validation).getEscapedFormula1();
+			String formula2 = ((AbstractDataValidationAdv)validation).getEscapedFormula2();
 			DataValidationConstraint constraint = null;
 			switch(validation.getValidationType()){
 				case TIME:

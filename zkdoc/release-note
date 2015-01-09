@@ -47,9 +47,30 @@ ZK Spreadsheet 3.6.1
   ZSS-830 export the imported xlsx file and open it in MS Excel, chart will lose many information.
   ZSS-865 Text in two adjecent cells overlaps
   ZSS-861 Spreadsheet displays an extra focus box on a merged cell
+  ZSS-866 Incorrect validation error for a string contains a percentage symbol
   
 ** Upgrade Notes
-  * Following api are deprecated
+  * The format of arguments "formula1" and "formula2" in following data validation api has changed:
+	* Range.setValidation(
+			ValidationType validationType,
+			boolean ignoreBlank,
+			OperatorType operatorType,
+			boolean inCellDropDown,
+			String formula1,
+			String formula2,
+			
+			boolean showInput,
+			String inputTitle,
+			String inputMessage,
+			
+			boolean showError,
+			AlertStyle alertStyle,
+			String errorTitle,
+			String errorMessage);
+
+	* It is no longer working to input a literal list whose items are delimited with comma and embraced with curly braces(e.g. {item1, item2, item3}). Please input items delimited with comma directly without the embraced curly braces(e.g. "item1, item2, item3").
+	* It is no longer working to input a formula without the leading equal sign('='). Please input a formula with a leading equal sign('=') just like you will do in a spreadsheet's cell.
+  * Following api are deprecated:
 	* SCellStyle.setBackgroundColor(SColor backColor): use SCellStyle.setBackColor(SColor backColor) instead.
   * Chart now uses ZK Charts as default chart engine whose exporting needs extra export server. For more detail, please see "export" section in ZK Spreadsheet Essentials.
   * Enumeration name of CellStyle.FillPattern is changed to comply with Excel's term:
