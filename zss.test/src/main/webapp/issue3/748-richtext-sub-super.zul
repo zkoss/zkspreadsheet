@@ -4,6 +4,7 @@ Since 3.5.0
 1. If you see richtext with superscript show in A1, then it is OK.
 2. If you see richtext with subscript show in A2, then it is OK.
 3. If you see superscript with subscript show in B1, subscript show in B2, then it is OK.
+(for tech limitation, superscript located at bottom is acceptable)
 4. Press "Export" button and open the exported file.
 5. You shall see the same richtext, superscript, and subscript show in Excel.
 </label>

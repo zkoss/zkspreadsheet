@@ -17,8 +17,8 @@
 	<zscript><![CDATA[//@DECLARATION
 	public void setBGColor(String color){
 		Range r = Ranges.range(ss.getSelectedSheet(), "B5");
-		CellOperationUtil.applyBackgroundColor(r, color);
-		String tcolor = r.getCellStyle().getBackgroundColor().getHtmlColor();
+		CellOperationUtil.applyBackColor(r, color);
+		String tcolor = r.getCellStyle().getBackColor().getHtmlColor();
 		if(!color.equals(tcolor)){
 			alert("color not equals "+color+" != "+tcolor);
 		}
