@@ -7,7 +7,7 @@
 		]]></zscript>
 		<vlayout>
 			<button onClick='setBGColor("#6600ff")'>1. Set B5 bg to purple (#6600ff)</button>
-			<button onClick='setBGColor("#ff0000");'>2. Set B5 bg to blue (#ff0000)</button>
+			<button onClick='setBGColor("#ff0000");'>2. Set B5 bg to red (#ff0000)</button>
 		</vlayout>
 		<vlayout>
 			<button onClick='setBorderColor("#6600ff")'>1. Set B5 border to #6600ff</button>
