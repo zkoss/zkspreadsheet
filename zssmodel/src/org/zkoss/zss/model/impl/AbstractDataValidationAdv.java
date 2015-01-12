@@ -106,7 +106,30 @@ public abstract class AbstractDataValidationAdv implements SDataValidation,Linke
 	 * 
 	 * @param row
 	 * @param col
-	 * @since 3.6.1
+	 * @since 3.7.0
 	 */
 	abstract public void addDependency(int row, int col);
+	
+	//ZSS-866
+	/**
+	 * 
+	 * @return
+	 * @since 3.7.0
+	 */
+	abstract public String getEscapedFormula1();
+	
+	//ZSS-866
+	/**
+	 * 
+	 * @return
+	 * @since 3.7.0
+	 */
+	abstract public String getEscapedFormula2();
+
+	/**
+	 * Setup the two formulas which are in escaped POI format.
+	 * @param formula1
+	 * @param formula2
+	 */
+	abstract public void setEscapedFormulas(String formula1, String formula2);
 }

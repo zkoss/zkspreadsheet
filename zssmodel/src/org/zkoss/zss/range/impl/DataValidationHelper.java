@@ -17,6 +17,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.range.impl;
 
 import java.util.Date;
+import java.util.Locale;
 
 import org.zkoss.poi.ss.usermodel.ZssContext;
 import org.zkoss.zss.model.SCell;
@@ -50,13 +51,11 @@ public class DataValidationHelper {
 	}
 
 	public boolean validate(int row, int col, String editText, String dataformat) {
-		final InputEngine ie = EngineFactory.getInstance().createInputEngine();
-		final InputResult result = ie.parseInput(editText == null ? ""
-				: editText, dataformat, new InputParseContext(ZssContext.getCurrent().getLocale()));
-		return validate(row, col, result.getType(),result.getValue());
+		final InputResult result = normalizeInput(editText, dataformat, ZssContext.getCurrent().getLocale());
+		return validate(row, col, result.getType(),result.getValue(), dataformat);
 	}
 	
-	public boolean validate(int row, int col, CellType cellType, Object value) {
+	public boolean validate(int row, int col, CellType cellType, Object value, String dataformat) {
 		//allow any value => no need to do validation
 		ValidationType vtype = _validation.getValidationType();
 		if (vtype == ValidationType.ANY) { //can be any value, meaning no validation
@@ -108,7 +107,7 @@ public class DataValidationHelper {
 				break;
 			// List type ( combo box type )
 			case LIST:
-				if (!validateListOperation(row, col, (value instanceof Date)?cal.dateToDoubleValue((Date)value):value)) {;
+				if (!validateListOperation(row, col, (value instanceof Date)?cal.dateToDoubleValue((Date)value):value, dataformat)) {;
 					success = false;
 				}
 				break;
@@ -184,7 +183,7 @@ public class DataValidationHelper {
 		return true;
 	}
 	
-	private boolean validateListOperation(int row, int col, Object value) {
+	private boolean validateListOperation(int row, int col, Object value, String dataformat) {
 		if (value == null) {
 			return false;
 		}
@@ -202,10 +201,22 @@ public class DataValidationHelper {
 				if(value.equals(val)){
 					return true;
 				}
+				if (val instanceof String 
+						&& value.equals(normalizeValue((String)val, dataformat))) {
+					return true;
+				}
 			}
 		}
 		return false;
 	}
 
+	private InputResult normalizeInput(String editText, String dataformat, Locale locale) {
+		final InputEngine ie = EngineFactory.getInstance().createInputEngine();
+		return ie.parseInput(editText == null ? ""
+				: editText, dataformat, new InputParseContext(locale));
+	}
 	
+	private Object normalizeValue(String editText, String dataformat) {
+		return normalizeInput(editText, dataformat, Locale.US).getValue();
+	}
 }

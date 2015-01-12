@@ -503,9 +503,9 @@ public class ExcelXlsxImporter extends AbstractExcelImporter{
 			CellRangeAddress[] cellRangeAddresses = poiValidation.getRegions().getCellRangeAddresses();
 			DataValidationConstraint poiConstraint = poiValidation.getValidationConstraint();
 			// getExplicitListValues() will be represented as formula1
-			((AbstractDataValidationAdv)dataValidation).setFormulas(poiConstraint.getFormula1(), poiConstraint.getFormula2());
 			dataValidation.setOperatorType(PoiEnumConversion.toOperatorType(poiConstraint.getOperator()));
 			dataValidation.setValidationType(PoiEnumConversion.toValidationType(poiConstraint.getValidationType()));
+			((AbstractDataValidationAdv)dataValidation).setEscapedFormulas(poiConstraint.getFormula1(), poiConstraint.getFormula2());
 			
 			dataValidation.setIgnoreBlank(poiValidation.getEmptyCellAllowed());
 			dataValidation.setErrorTitle(poiValidation.getErrorBoxTitle());

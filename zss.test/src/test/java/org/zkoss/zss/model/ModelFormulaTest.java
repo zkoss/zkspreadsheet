@@ -762,7 +762,7 @@ public class ModelFormulaTest {
 		
 		SDataValidation dv = sheet1.addDataValidation(new CellRegion("B8"));
 		dv.setValidationType(ValidationType.LIST);
-		dv.setFormula1("B2:B5");
+		dv.setFormula1("=B2:B5");
 		Assert.assertEquals(4,dv.getNumOfValue());
 		Assert.assertEquals("A",dv.getValue(0));
 		Assert.assertEquals("B",dv.getValue(1));

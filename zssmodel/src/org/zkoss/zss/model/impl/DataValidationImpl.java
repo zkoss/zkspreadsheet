@@ -24,6 +24,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import org.zkoss.lang.Strings;
 import org.zkoss.poi.ss.formula.LazyAreaEval;
 import org.zkoss.poi.ss.formula.LazyRefEval;
 import org.zkoss.poi.ss.formula.eval.StringEval;
@@ -372,12 +373,12 @@ public class DataValidationImpl extends AbstractDataValidationAdv {
 
 	@Override
 	public String getFormula1() {
-		return _formula1Expr==null?null:_formula1Expr.getFormulaString();
+		return _unescapeFromPoi(getEscapedFormula1());
 	}
 
 	@Override
 	public String getFormula2() {
-		return _formula2Expr==null?null:_formula2Expr.getFormulaString();
+		return _unescapeFromPoi(getEscapedFormula2());
 	}
 
 	private void clearFormulaDependency(boolean all) { // ZSS-648
@@ -422,16 +423,89 @@ public class DataValidationImpl extends AbstractDataValidationAdv {
 	
 	@Override
 	public void setFormula1(String formula1) {
-		setFormulas(formula1, _formula2Expr == null ? null : _formula2Expr.getFormulaString());
+		formula1 = _escapeToPoi(formula1);
+		setEscapedFormulas(formula1, getEscapedFormula2());
 	}
 	
 	@Override
 	public void setFormula2(String formula2) {
-		setFormulas(_formula1Expr == null ? null : _formula1Expr.getFormulaString(), formula2);
+		formula2 = _escapeToPoi(formula2);
+		setEscapedFormulas(getEscapedFormula1(), formula2);
+	}
+
+	//ZSS-866
+	//20150108, henrichen: DataValidation's formula must be unescaped from
+	//    POI before used in API.
+	// For LIST validation type
+	// * "xyz" embraced with double quote is a literal string. Should remove 
+	//   the embraced double quote(") and unescape adjacent double quote to only 
+	//   one double quote;
+	//   e.g. """8%"", ""9%"", ""10%""" => "8%", "9%", "10%" 
+	// * xyz not embraced with double quote is deemed as a formula. Should lead
+	//   the string with a equals sign as =xyz.
+	private String _unescapeFromPoi(String formula) {
+		if (Strings.isBlank(formula)) return null;
+		final StringBuilder sb = new StringBuilder();
+		if (!formula.startsWith("\"") && formula.length() > 1) {
+			return sb.append("=").append(formula).toString(); //leading with '='  
+		}
+		if (_validationType == ValidationType.LIST) {
+			// skip first double quote and last double quote
+			int pre = -2;
+			for (int j = 1; j < formula.length() - 1; ++j) { 
+				char ch = formula.charAt(j);
+				if (ch == '"') {
+					if (pre == j - 1) { // adjacent double quote; skip 2nd one
+						continue;
+					}
+					pre = j;
+				}
+				sb.append(ch);
+			}
+			return sb.toString();
+		}
+		return formula;
 	}
 	
+	//ZSS-866
+	//20150108, henrichen: DataValidation's formula must be escaped before 
+	// store into POI
+	// For LIST validation type
+	//  * =xyz formula, remove the equal sign and make it as xyz
+	//  * xyz, embrace with double quote(") to make it as "xyz". If contents 
+	//    contains double quote, should escape it by repeat one more double 
+	//    quote;
+	//  e.g. "8%", "9%", "10%" => """8%"", ""9%"", ""10%"""
+	private String _escapeToPoi(String formula) {
+		if (Strings.isBlank(formula)) return null;
+		final StringBuilder sb = new StringBuilder();
+		if (formula.startsWith("=") && formula.length() > 1) {
+			return formula.substring(1); //trim the leading '='  
+		}
+		if (_validationType == ValidationType.LIST) {
+			sb.append('"');
+			for (int j = 0; j < formula.length(); ++j) {
+				char ch = formula.charAt(j);
+				sb.append(ch);
+				if (ch == '"') {
+					sb.append('"');
+				}
+			}
+			sb.append('"');
+			return sb.toString();
+		}
+		return formula;
+	}
+
 	@Override
 	public void setFormulas(String formula1, String formula2) {
+		formula1 = _escapeToPoi(formula1);
+		formula2 = _escapeToPoi(formula2);
+		setEscapedFormulas(formula1, formula2);
+	}
+
+	@Override
+	public void setEscapedFormulas(String formula1, String formula2) {
 		checkOrphan();
 		_evaluated = false;
 		clearFormulaDependency(false); // will clear formula
@@ -440,13 +514,13 @@ public class DataValidationImpl extends AbstractDataValidationAdv {
 		FormulaEngine fe = EngineFactory.getInstance().createFormulaEngine();
 		
 		Ref ref = getRef();
-		if(formula1!=null){
+		if(formula1 != null) {
 			_formula1Expr = fe.parse(formula1, new FormulaParseContext(_sheet,ref));
 		}else{
 			_formula1Expr = null;
 		}
 		
-		if(formula2!=null){
+		if(formula2 != null) {
 			_formula2Expr = fe.parse(formula2, new FormulaParseContext(_sheet,ref));
 		}else{
 			_formula2Expr = null;
@@ -565,8 +639,8 @@ public class DataValidationImpl extends AbstractDataValidationAdv {
 		_operatorType = srcImpl._operatorType;
 		
 		if(srcImpl._formula1Expr!=null){
-			setFormulas(srcImpl._formula1Expr==null?null:srcImpl._formula1Expr.getFormulaString(), 
-						srcImpl._formula2Expr==null?null:srcImpl._formula2Expr.getFormulaString());
+			setEscapedFormulas(srcImpl.getEscapedFormula1(), 
+					srcImpl.getEscapedFormula2());
 		}
 	}
 	
@@ -632,10 +706,10 @@ public class DataValidationImpl extends AbstractDataValidationAdv {
 			}
 		}
 		
-		final String f1 = getFormula1();
+		final String f1 = getEscapedFormula1();
 		if (f1 != null) {
-			final String f2 = getFormula2();
-			setFormulas(f1, f2);
+			final String f2 = getEscapedFormula2();
+			setEscapedFormulas(f1, f2);
 		}
 
 		// Do NOT clone _evalValue1Result, _evalValue2Result, and _evaluated
@@ -868,5 +942,17 @@ public class DataValidationImpl extends AbstractDataValidationAdv {
 		}
 		DependencyTable table = ((AbstractBookSeriesAdv)bookSeries).getDependencyTable();
 		table.add(getRef(), new RefImpl(bookName, sheetName, row1, col1, row2, col2));
+	}
+	
+	//ZSS-866
+	@Override
+	public String getEscapedFormula1() {
+		return _formula1Expr == null ? null : _formula1Expr.getFormulaString();
+	}
+	
+	//ZSS-866
+	@Override
+	public String getEscapedFormula2() {
+		return _formula2Expr == null ? null : _formula2Expr.getFormulaString();
 	}
 }

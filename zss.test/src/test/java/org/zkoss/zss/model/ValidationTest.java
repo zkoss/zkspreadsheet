@@ -49,7 +49,7 @@ public class ValidationTest {
 		SDataValidation dv3 = sheet1.addDataValidation(new CellRegion(1,3));
 		//LIST
 		dv1.setValidationType(ValidationType.LIST);
-		dv1.setFormula1("A1:C1");
+		dv1.setFormula1("=A1:C1");
 		
 		Assert.assertEquals(3, dv1.getNumOfValue1());
 		Assert.assertEquals(0, dv1.getNumOfValue2());
@@ -59,15 +59,15 @@ public class ValidationTest {
 		
 		
 		dv2.setValidationType(ValidationType.INTEGER);
-		((AbstractDataValidationAdv)dv2).setFormulas("A1", "C1");
+		((AbstractDataValidationAdv)dv2).setFormulas("=A1", "=C1");
 		Assert.assertEquals(1, dv2.getNumOfValue1());
 		Assert.assertEquals(1, dv2.getNumOfValue2());
 		Assert.assertEquals(1D, dv2.getValue1(0));
 		Assert.assertEquals(3D, dv2.getValue2(0));
 		
 		dv3.setValidationType(ValidationType.INTEGER);
-		dv3.setFormula1("AVERAGE(A1:C1)");
-		dv3.setFormula2("SUM(A1:C1)");
+		dv3.setFormula1("=AVERAGE(A1:C1)");
+		dv3.setFormula2("=SUM(A1:C1)");
 		Assert.assertEquals(1, dv3.getNumOfValue1());
 		Assert.assertEquals(1, dv3.getNumOfValue2());
 		Assert.assertEquals(2D, dv3.getValue1(0));
@@ -217,7 +217,7 @@ public class ValidationTest {
 		
 		//test integer
 		dv1.setValidationType(ValidationType.DECIMAL);
-		((AbstractDataValidationAdv)dv1).setFormulas("A1", "SUM(A1:B1)");//1-3
+		((AbstractDataValidationAdv)dv1).setFormulas("=A1", "=SUM(A1:B1)");//1-3
 		dv1.setOperatorType(OperatorType.BETWEEN);
 		Assert.assertTrue(new DataValidationHelper(dv1).validate(1, 1, "1.3", "General"));//not integer
 		
@@ -278,7 +278,7 @@ public class ValidationTest {
 		
 		//test integer
 		dv1.setValidationType(ValidationType.TEXT_LENGTH);
-		((AbstractDataValidationAdv)dv1).setFormulas("A1", "SUM(A1:B1)");//1-3
+		((AbstractDataValidationAdv)dv1).setFormulas("=A1", "=SUM(A1:B1)");//1-3
 		dv1.setOperatorType(OperatorType.BETWEEN);
 		
 		Assert.assertTrue(new DataValidationHelper(dv1).validate(1, 1, "A", "General"));
@@ -340,7 +340,7 @@ public class ValidationTest {
 		
 		//test integer
 		dv1.setValidationType(ValidationType.DATE);
-		((AbstractDataValidationAdv)dv1).setFormulas("A1", "B1");//2013/1/10 - 2013/2/1
+		((AbstractDataValidationAdv)dv1).setFormulas("=A1", "=B1");//2013/1/10 - 2013/2/1
 		dv1.setOperatorType(OperatorType.BETWEEN);
 		String format = "yyyy/m/d";
 		Assert.assertTrue(new DataValidationHelper(dv1).validate(1, 1, "2013/1/10", format));
@@ -400,7 +400,7 @@ public class ValidationTest {
 		
 		//test integer
 		dv1.setValidationType(ValidationType.TIME);
-		((AbstractDataValidationAdv)dv1).setFormulas("A1", "B1");//12:00 - 14:00
+		((AbstractDataValidationAdv)dv1).setFormulas("=A1", "=B1");//12:00 - 14:00
 		dv1.setOperatorType(OperatorType.BETWEEN);
 		String format = "h:mm";
 		Assert.assertTrue(new DataValidationHelper(dv1).validate(1, 1, "12:00", format));
@@ -468,35 +468,35 @@ public class ValidationTest {
 		String numberFormat = "General";
 		//test integer
 		dv0.setValidationType(ValidationType.LIST);
-		dv0.setFormula1("{1,2,3}");
+		dv0.setFormula1("1,2,3");
 		Assert.assertTrue(new DataValidationHelper(dv0).validate(0, 3,"1", numberFormat));
 		Assert.assertTrue(new DataValidationHelper(dv0).validate(0, 3,"2", numberFormat));
 		Assert.assertTrue(new DataValidationHelper(dv0).validate(0, 3,"3", numberFormat));
 		Assert.assertFalse(new DataValidationHelper(dv0).validate(0, 3,"0", numberFormat));
 		Assert.assertFalse(new DataValidationHelper(dv0).validate(0, 3,"4", numberFormat));
 		
-		dv0.setFormula1("{\"A\",\"B\",\"C\"}");
+		dv0.setFormula1("\"A\",\"B\",\"C\"");
+		Assert.assertTrue(new DataValidationHelper(dv0).validate(0, 3,"\"A\"", numberFormat));
+		Assert.assertTrue(new DataValidationHelper(dv0).validate(0, 3,"\"B\"", numberFormat));
+		Assert.assertTrue(new DataValidationHelper(dv0).validate(0, 3,"\"C\"", numberFormat));
+		Assert.assertFalse(new DataValidationHelper(dv0).validate(0, 3,"\"D\"", numberFormat));
+		Assert.assertFalse(new DataValidationHelper(dv0).validate(0, 3,"\"E\"", numberFormat));
+		
+		dv0.setFormula1("=A1:C1");
 		Assert.assertTrue(new DataValidationHelper(dv0).validate(0, 3,"A", numberFormat));
 		Assert.assertTrue(new DataValidationHelper(dv0).validate(0, 3,"B", numberFormat));
 		Assert.assertTrue(new DataValidationHelper(dv0).validate(0, 3,"C", numberFormat));
 		Assert.assertFalse(new DataValidationHelper(dv0).validate(0, 3,"D", numberFormat));
 		Assert.assertFalse(new DataValidationHelper(dv0).validate(0, 3,"E", numberFormat));
 		
-		dv0.setFormula1("A1:C1");
-		Assert.assertTrue(new DataValidationHelper(dv0).validate(0, 3,"A", numberFormat));
-		Assert.assertTrue(new DataValidationHelper(dv0).validate(0, 3,"B", numberFormat));
-		Assert.assertTrue(new DataValidationHelper(dv0).validate(0, 3,"C", numberFormat));
-		Assert.assertFalse(new DataValidationHelper(dv0).validate(0, 3,"D", numberFormat));
-		Assert.assertFalse(new DataValidationHelper(dv0).validate(0, 3,"E", numberFormat));
-		
-		dv0.setFormula1("A2:C2");
+		dv0.setFormula1("=A2:C2");
 		Assert.assertTrue(new DataValidationHelper(dv0).validate(0, 3,"1", numberFormat));
 		Assert.assertTrue(new DataValidationHelper(dv0).validate(0, 3,"2", numberFormat));
 		Assert.assertTrue(new DataValidationHelper(dv0).validate(0, 3,"3", numberFormat));
 		Assert.assertFalse(new DataValidationHelper(dv0).validate(0, 3,"0", numberFormat));
 		Assert.assertFalse(new DataValidationHelper(dv0).validate(0, 3,"4", numberFormat));
 		
-		dv0.setFormula1("A3:C3");
+		dv0.setFormula1("=A3:C3");
 		Assert.assertTrue(new DataValidationHelper(dv0).validate(0, 3,"2013/1/1", dateFormat));
 		Assert.assertTrue(new DataValidationHelper(dv0).validate(0, 3,"2013/1/2", dateFormat));
 		Assert.assertTrue(new DataValidationHelper(dv0).validate(0, 3,"2013/1/3", dateFormat));
@@ -526,35 +526,35 @@ public class ValidationTest {
 		String numberFormat = "General";
 		//test integer
 		dv0.setValidationType(ValidationType.LIST);
-		dv0.setFormula1("{1,2,3}");
+		dv0.setFormula1("1,2,3");
 		Assert.assertTrue(new DataValidationHelper(dv0).validate(0, 4,"=A2", numberFormat));
 		Assert.assertTrue(new DataValidationHelper(dv0).validate(0, 4,"=B2", numberFormat));
 		Assert.assertTrue(new DataValidationHelper(dv0).validate(0, 4,"=C2", numberFormat));
 		Assert.assertFalse(new DataValidationHelper(dv0).validate(0, 4,"=D2", numberFormat));
 		Assert.assertFalse(new DataValidationHelper(dv0).validate(0, 4,"=E2", numberFormat));
 		
-		dv0.setFormula1("{\"A\",\"B\",\"C\"}");
+		dv0.setFormula1("A,B,C");
 		Assert.assertTrue(new DataValidationHelper(dv0).validate(0, 4,"=A1", numberFormat));
 		Assert.assertTrue(new DataValidationHelper(dv0).validate(0, 4,"=B1", numberFormat));
 		Assert.assertTrue(new DataValidationHelper(dv0).validate(0, 4,"=C1", numberFormat));
 		Assert.assertFalse(new DataValidationHelper(dv0).validate(0, 4,"=D1", numberFormat));
 		Assert.assertFalse(new DataValidationHelper(dv0).validate(0, 4,"=E1", numberFormat));
 		
-		dv0.setFormula1("A1:C1");
+		dv0.setFormula1("=A1:C1");
 		Assert.assertTrue(new DataValidationHelper(dv0).validate(0, 4,"=A1", numberFormat));
 		Assert.assertTrue(new DataValidationHelper(dv0).validate(0, 4,"=B1", numberFormat));
 		Assert.assertTrue(new DataValidationHelper(dv0).validate(0, 4,"=C1", numberFormat));
 		Assert.assertFalse(new DataValidationHelper(dv0).validate(0, 4,"=D1", numberFormat));
 		Assert.assertFalse(new DataValidationHelper(dv0).validate(0, 4,"=E1", numberFormat));
 		
-		dv0.setFormula1("A2:C2");
+		dv0.setFormula1("=A2:C2");
 		Assert.assertTrue(new DataValidationHelper(dv0).validate(0, 4,"=A2", numberFormat));
 		Assert.assertTrue(new DataValidationHelper(dv0).validate(0, 4,"=B2", numberFormat));
 		Assert.assertTrue(new DataValidationHelper(dv0).validate(0, 4,"=C2", numberFormat));
 		Assert.assertFalse(new DataValidationHelper(dv0).validate(0, 4,"=D2", numberFormat));
 		Assert.assertFalse(new DataValidationHelper(dv0).validate(0, 4,"=E2", numberFormat));
 		
-		dv0.setFormula1("A3:C3");
+		dv0.setFormula1("=A3:C3");
 		Assert.assertTrue(new DataValidationHelper(dv0).validate(0, 4,"=A3", numberFormat));
 		Assert.assertTrue(new DataValidationHelper(dv0).validate(0, 4,"=B3", numberFormat));
 		Assert.assertTrue(new DataValidationHelper(dv0).validate(0, 4,"=C3", numberFormat));

@@ -1,0 +1,34 @@
+<zk>
+Since 3.6.1
+<label multiline="true">
+1. Select cell B1, should see a validation dropdown button
+2. Press the button and pick "9%". It should work without issue.
+3. Select cell B2, should see a validation dropdown button
+4. Press the button and pick 1%. It should work without issue.
+5. Select cell B3, should see a validation dropdown button
+6. Press the button and pick "10 %"". It should work without issue.
+7. Select cell B4, should see a validation dropdown button
+8. Press the button and pick "7%"". It should work without issue.
+9. Select cell B5, should see a validation dropdown button
+10. Press the button and pick "8 %"". It should work without issue.
+</label>
+<spreadsheet id="spreadsheet" src="/issue3/book/866-validation-percentage.xlsx" vflex="1" hflex="1" showFormulabar="true"/>
+<zscript><![CDATA[
+import org.zkoss.zss.api.model.Sheet;
+import org.zkoss.zss.api.model.Validation.AlertStyle;
+import org.zkoss.zss.api.model.Validation.OperatorType;
+import org.zkoss.zss.api.model.Validation.ValidationType;
+
+    Sheet sheet = spreadsheet.getSelectedSheet();
+    // Error occur
+    Range range = Ranges.range(sheet, "B4");
+    range.setValidation(ValidationType.LIST, false, OperatorType.EQUAL, true, "\"6%\", \"7%\", \"8%\"", "", false, "", "", true, AlertStyle.INFO, "Error", "Validate Error");
+    
+    // This one is ok
+    Range range1 = Ranges.range(sheet, "B5");
+    range1.setValidation(ValidationType.LIST, false, OperatorType.EQUAL, true, "\"6 %\", \"7 %\", \"8 %\"", "", false, "", "", true, AlertStyle.INFO, "Error", "Validate Error");
+    //Ranges.range(sheet).protectSheet("", false, true, false, false, false, false, false, false, false, false, false, false, false, false, false);
+]]>
+</zscript>
+</zk>
+
