@@ -67,6 +67,8 @@ public class MainMenubarCtrl extends CtrlBase<Menubar> {
 	Menuitem zssmark;
 	@Wire
 	Menuitem changeUsername;
+	@Wire
+	Menuitem shareBook;
 	
 	
 	@Wire
@@ -131,6 +133,7 @@ public class MainMenubarCtrl extends CtrlBase<Menubar> {
 		closeFile.setDisabled(disabled);
 		exportFile.setDisabled(disabled);
 		exportPdf.setDisabled(!isEE || disabled);
+		shareBook.setDisabled(disabled);
 		
 		
 		
@@ -176,7 +179,7 @@ public class MainMenubarCtrl extends CtrlBase<Menubar> {
 	}
 	
 	private void doUpdateUsername(String username) {
-		changeUsername.setLabel("Hi, " + username);
+		changeUsername.setLabel(username);
 	}
 
 	@Listen("onClick=#newFile")
@@ -218,6 +221,10 @@ public class MainMenubarCtrl extends CtrlBase<Menubar> {
 	@Listen("onClick=#changeUsername")
 	public void onChangeUsername(){
 		pushAppEvent(AppEvts.ON_CHANGED_USERNAME);
+	}
+	@Listen("onClick=#shareBook")
+	public void onShareBook() {
+		pushAppEvent(AppEvts.ON_SHARE_BOOK);
 	}
 	
 	@Listen("onToggleFormulaBar=#mainMenubar")

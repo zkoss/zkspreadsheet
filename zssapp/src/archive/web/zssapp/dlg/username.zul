@@ -17,7 +17,7 @@ Copyright (C) 2014 Potix Corporation. All Rights Reserved.
 	<window title="What's your name?" border="normal" id="usernameDlg"
 		apply="org.zkoss.zss.app.ui.dlg.UsernameCtrl" hflex="min" vflex="min">
 		<vbox hflex="1" pack="center" align="center">
-			<label>Please Enter your nick name</label>
+			<label>Please enter your nick name</label>
 			<hbox>			
 				<textbox id="username"></textbox>
 				<button id="ok" label="OK" />

@@ -18,6 +18,7 @@ ZK Spreadsheet 3.6.1
   ZSS-850 Support changing fill pattern with dialog
   ZSS-839 Import temporarily file to edit for zssapp
   ZSS-840 support collaboration for zssapp
+  ZSS-869 Provide a share button to share document with a URL
   
 *Bugs:
   ZSS-820 Formula should change sheet name if reordered sheet goes beyond the formula's sheet boundary.
