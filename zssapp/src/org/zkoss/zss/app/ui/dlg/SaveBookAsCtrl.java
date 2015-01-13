@@ -27,7 +27,7 @@ import org.zkoss.zss.app.repository.impl.BookManagerImpl;
 import org.zkoss.zss.app.repository.impl.BookUtil;
 import org.zkoss.zss.app.repository.impl.CollaborationInfo;
 import org.zkoss.zss.app.repository.impl.SimpleBookInfo;
-import org.zkoss.zss.app.ui.UiUtil;
+import org.zkoss.zul.Button;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
@@ -42,6 +42,8 @@ public class SaveBookAsCtrl extends DlgCtrlBase{
 	
 	public final static String ARG_NAME = "name";
 	public final static String BOOK = "book";
+	private static final String TITLE = "title";
+	private static final String OK_BTN_NAME = "okBtnName";
 	
 	public static final String ON_SAVE = "onSave";
 	
@@ -50,9 +52,14 @@ public class SaveBookAsCtrl extends DlgCtrlBase{
 	@Wire
 	Textbox bookName;
 	
+	@Wire
+	Button save;
+	
 	BookRepository repo = BookRepositoryFactory.getInstance().getRepository();
 		
 	private final static String URI = "~./zssapp/dlg/saveBookAs.zul";
+
+
 	
 	public static void show(EventListener<DlgCallbackEvent> callback, String name, Book book) {
 		Map arg = newArg(callback);
@@ -62,6 +69,34 @@ public class SaveBookAsCtrl extends DlgCtrlBase{
 		Window comp = (Window)Executions.createComponents(URI, null, arg);
 		comp.doModal();
 		return;
+	}
+	
+	// this function provides changing title and save button's name
+	public static void show(EventListener<DlgCallbackEvent> callback, String name, Book book, String title, String okBtnName) {
+		Map arg = newArg(callback);
+		arg.put(ARG_NAME, name);
+		arg.put(BOOK, book);
+		arg.put(TITLE, title);
+		arg.put(OK_BTN_NAME, okBtnName);
+		
+		Window comp = (Window)Executions.createComponents(URI, null, arg);
+		comp.doModal();
+		return;
+	}
+	
+	public void doAfterCompose(Window comp) throws Exception {
+		super.doAfterCompose(comp);
+		
+		Map<?, ?> arg = Executions.getCurrent().getArg();
+		
+		String title = (String) arg.get(TITLE);
+		String okBtnName = (String)arg.get(OK_BTN_NAME);
+		
+		if(title != null)
+			comp.setTitle(title);
+		
+		if(okBtnName != null)
+			save.setLabel(okBtnName);
 	}
 
 	@Listen("onClick=#save; onOK=#saveAsDlg")

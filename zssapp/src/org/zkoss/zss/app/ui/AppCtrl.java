@@ -13,9 +13,11 @@ package org.zkoss.zss.app.ui;
 
 import java.io.*;
 import java.net.URLDecoder;
+
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import org.zkoss.image.AImage;
 import org.zkoss.lang.Strings;
 import org.zkoss.util.logging.Log;
@@ -23,8 +25,6 @@ import org.zkoss.util.media.AMedia;
 import org.zkoss.util.media.Media;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.web.servlet.http.Encodes;
-import org.zkoss.zk.au.AuRequest;
-import org.zkoss.zk.au.AuService;
 import org.zkoss.zk.ui.*;
 import org.zkoss.zk.ui.event.*;
 import org.zkoss.zk.ui.select.annotation.Wire;
@@ -157,13 +157,13 @@ public class AppCtrl extends CtrlBase<Component>{
 			}
 		});
 		
-		Executions.getCurrent().getDesktop().addListener(new AuService() {
-			@Override
-			public boolean service(AuRequest request, boolean everError) {
-				if(request.getCommand().equals("onBookmarkChange")) {
+		this.getPage().addEventListener(org.zkoss.zk.ui.event.Events.ON_BOOKMARK_CHANGE,
+	         new EventListener<BookmarkEvent>() {
+				@Override
+				public void onEvent(BookmarkEvent event) throws Exception {
 					String bookmark = null;
 					try {
-						bookmark = URLDecoder.decode(((String) request.getData().get("")), UTF8);
+						bookmark = URLDecoder.decode(event.getBookmark(), UTF8);
 					} catch (UnsupportedEncodingException e1) {
 						e1.printStackTrace();
 					}
@@ -180,11 +180,9 @@ public class AppCtrl extends CtrlBase<Component>{
 							desktop.setBookmark("");
 						}
 					}
-					return true;
 				}
-				return false;
 			}
-		});
+        );
 		
 		Executions.getCurrent().getDesktop().addListener(new DesktopCleanup(){
 			@Override
@@ -214,6 +212,58 @@ public class AppCtrl extends CtrlBase<Component>{
 		}else{
 			doOpenNewBook(false);
 		}
+	}
+	
+	private void shareBook() {
+		if(selectedBookInfo==null){
+			if(UiUtil.isRepositoryReadonly()){
+				return;
+			}
+			
+			if(loadedBook==null){
+				UiUtil.showWarnMessage("Please load a book first before share it");
+				return;
+			}
+			
+			String name = loadedBook.getBookName();
+			if(selectedBookInfo!=null){
+				name = "Copy Of "+selectedBookInfo.getName();
+			}
+			name = BookUtil.appendExtension(name, loadedBook);
+			name = BookUtil.suggestFileName(name, loadedBook, BookRepositoryFactory.getInstance().getRepository());
+			
+			SaveBookAsCtrl.show(new EventListener<DlgCallbackEvent>(){
+				public void onEvent(DlgCallbackEvent event) throws Exception {
+					if(SaveBookAsCtrl.ON_SAVE.equals(event.getName())){
+						
+						String name = (String) event.getData(SaveBookAsCtrl.ARG_NAME);
+						BookManager manager = BookManagerImpl.getInstance();
+
+						try {
+							synchronized (manager) {		
+								if(manager.isBookAttached(new SimpleBookInfo(name))) {
+									String users = CollaborationInfo.getInstance().getUsedUsernames(name);
+									UiUtil.showWarnMessage("File \"" + name + "\" is in used by " + users + ". Please try again.");
+								}
+								selectedBookInfo = manager.saveBook(new SimpleBookInfo(name), loadedBook);
+								doLoadBook(selectedBookInfo, null, "", true);
+							}
+							
+							pushAppEvent(AppEvts.ON_SAVED_BOOK, loadedBook);
+							updatePageInfo();
+							
+							ShareBookCtrl.show();
+						} catch (IOException e) {
+							log.error(e.getMessage(), e);
+							UiUtil.showWarnMessage("Can't save book");
+							return;
+						}
+					}
+				}}, name, loadedBook, "Save Book for sharing", "Next");
+		} else {
+			ShareBookCtrl.show();
+		}
+		
 	}
 
 	private void setupUsername(boolean forceAskUser) {
@@ -329,10 +379,8 @@ public class AppCtrl extends CtrlBase<Component>{
 	}
 	
 	private void updatePageInfo(){
-		
 		String name = selectedBookInfo!=null?selectedBookInfo.getName():loadedBook!=null?loadedBook.getBookName():null;
 		getPage().setTitle(name!=null?name:"");
-		
 	}
 	
 	private void doCloseBook(){
@@ -555,6 +603,8 @@ public class AppCtrl extends CtrlBase<Component>{
 			doInsertHyperlink();
 		} else if (AppEvts.ON_CHANGED_USERNAME.equals(event)) {
 			setupUsername(true);
+		} else if (AppEvts.ON_SHARE_BOOK.equals(event)) {
+			shareBook();
 		}
 	}
 
