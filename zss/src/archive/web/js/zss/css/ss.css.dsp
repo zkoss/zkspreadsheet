@@ -118,6 +118,207 @@
 	</c:if>
 }
 
+/* ZSS-568: double border 15 combinations*/
+.zscell.tlbr:before {
+    content:"";
+    position:absolute;
+    z-index:-10;
+    top:0px;left:0px;
+    bottom:1px;right:1px;
+    border-top:1px solid #f00;
+    border-left:1px solid #f00;
+    border-bottom:1px solid #f00;
+    border-right:1px solid #f00;
+    
+    border-top-color:inherit;
+    border-left-color:inherit;
+    border-bottom-color:inherit;
+    border-right-color:inherit;
+}
+
+.zscell._lbr:before {
+    content:"";
+    position:absolute;
+    z-index:-10;
+    top:0px;left:0px;
+    bottom:1px;right:1px;
+    border-left:1px solid #f00;
+    border-bottom:1px solid #f00;
+    border-right:1px solid #f00;
+    
+    border-left-color:inherit;
+    border-bottom-color:inherit;
+    border-right-color:inherit;
+}
+
+.zscell.t_br:before {
+    content:"";
+    position:absolute;
+    z-index:-10;
+    top:0px;left:0px;
+    bottom:1px;right:1px;
+    border-top:1px solid #f00;
+    border-bottom:1px solid #f00;
+    border-right:1px solid #f00;
+    
+    border-top-color:inherit;
+    border-bottom-color:inherit;
+    border-right-color:inherit;
+}
+
+.zscell.tl_r:before {
+    content:"";
+    position:absolute;
+    z-index:-10;
+    top:0px;left:0px;
+    bottom:0px;right:1px;
+    border-top:1px solid #f00;
+    border-left:1px solid #f00;
+    border-right:1px solid #f00;
+    
+    border-top-color:inherit;
+    border-left-color:inherit;
+    border-right-color:inherit;
+}
+
+.zscell.tlb_:before {
+    content:"";
+    position:absolute;
+    z-index:-10;
+    top:0px;left:0px;
+    bottom:1px;right:0px;
+    border-top:1px solid #f00;
+    border-left:1px solid #f00;
+    border-bottom:1px solid #f00;
+    
+    border-top-color:inherit;
+    border-left-color:inherit;
+    border-bottom-color:inherit;
+}
+
+.zscell.__br:before {
+    content:"";
+    position:absolute;
+    z-index:-10;
+    top:0px;left:0px;
+    bottom:1px;right:1px;
+    border-bottom:1px solid #f00;
+    border-right:1px solid #f00;
+    
+    border-bottom-color:inherit;
+    border-right-color:inherit;
+}
+
+.zscell._l_r:before {
+    content:"";
+    position:absolute;
+    z-index:-10;
+    top:0px;left:0px;
+    bottom:0px;right:1px;
+    border-left:1px solid #f00;
+    border-right:1px solid #f00;
+    
+    border-left-color:inherit;
+    border-right-color:inherit;
+}
+
+.zscell._lb_:before {
+    content:"";
+    position:absolute;
+    z-index:-10;
+    top:0px;left:0px;
+    bottom:1px;right:0px;
+    border-left:1px solid #f00;
+    border-bottom:1px solid #f00;
+    
+    border-left-color:inherit;
+    border-bottom-color:inherit;
+}
+
+.zscell.t__r:before {
+    content:"";
+    position:absolute;
+    z-index:-10;
+    top:0px;left:0px;
+    bottom:0px;right:1px;
+    border-top:1px solid #f00;
+    border-right:1px solid #f00;
+    
+    border-top-color:inherit;
+    border-right-color:inherit;
+}
+
+.zscell.t_b_:before {
+    content:"";
+    position:absolute;
+    z-index:-10;
+    top:0px;left:0px;
+    bottom:1px;right:0px;
+    border-top:1px solid #f00;
+    border-bottom:1px solid #f00;
+    
+    border-top-color:inherit;
+    border-bottom-color:inherit;
+}
+
+.zscell.tl__:before {
+    content:"";
+    position:absolute;
+    z-index:-10;
+    top:0px;left:0px;
+    bottom:0px;right:0px;
+    border-top:1px solid #f00;
+    border-left:1px solid #f00;
+    
+    border-top-color:inherit;
+    border-left-color:inherit;
+}
+
+.zscell.___r:before {
+    content:"";
+    position:absolute;
+    z-index:-10;
+    top:0px;left:0px;
+    bottom:0px;right:1px;
+    border-right:1px solid #f00;
+    
+    border-right-color:inherit;
+}
+
+.zscell.__b_:before {
+    content:"";
+    position:absolute;
+    z-index:-10;
+    top:0px;left:0px;
+    bottom:1px;right:0px;
+    border-bottom:1px solid #f00;
+    
+    border-bottom-color:inherit;
+}
+
+.zscell._l__:before {
+    content:"";
+    position:absolute;
+    z-index:-10;
+    top:0px;left:0px;
+    bottom:0px;right:1px;
+    border-left:1px solid #f00;
+    
+    border-left-color:inherit;
+}
+
+.zscell.t___:before {
+    content:"";
+    position:absolute;
+    z-index:-10;
+    top:0px;left:0px;
+    bottom:1px;right:0px;
+    border-top:1px solid #f00;
+    
+    border-top-color:inherit;
+}
+
+
 .zscell-overflow {
 	border-right: 1px;
 	border-right-style:hidden;

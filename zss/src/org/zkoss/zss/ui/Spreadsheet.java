@@ -2759,6 +2759,11 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		// should also update the left - 1, top - 1 part
 		top = top > 0 ? top - 1 : 0;
 		
+		//ZSS-568: for double border, when we update a range, we should also
+		// update the right + 1, bottom + 1 part
+		right = right + 1;
+		bottom = bottom + 1;
+		
 		//ZSS-701, ZSS-700
 		final AreaRef rect = getActiveRangeHelper().getArea(sheet); 
 		
@@ -3332,9 +3337,10 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			}
 			SCellStyle cellStyle = sheet.getCell(row, col).getCellStyle();
 			CellFormatHelper cfh = new CellFormatHelper(sheet, row, col, getMergeMatrixHelper(sheet));
+			StringBuffer doubleBorder = new StringBuffer(8);
 			//style attr
 			if (updateStyle) {
-				String style = cfh.getHtmlStyle();
+				String style = cfh.getHtmlStyle(doubleBorder);
 				if (!Strings.isEmpty(style)) {
 					int idx = styleAggregation.add(style);
 					attrs.put("s", idx);
@@ -3354,10 +3360,16 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 					attrs.put("rb", 1); 
 				}
 				
-				//ZSS509, handling lock info even cell is null ( lock in row,column style)
+				//ZSS-509, handling lock info even cell is null ( lock in row,column style)
 				boolean locked = cellStyle.isLocked();
 				if (!locked)
 					attrs.put("l", "f"); //f stand for "false"
+				
+				//ZSS-568, handling double border style
+				final String db = doubleBorder.toString();
+				if (!"____".equals(db)) {
+					attrs.put("db", db);
+				}
 			}
 			
 			//ZSS-849

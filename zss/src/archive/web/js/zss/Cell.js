@@ -178,6 +178,12 @@ zss.Cell = zk.$extends(zk.Widget, {
 		
 		//ZSS-849
 		this.comment = cellData.comment;
+		
+		//ZSS-568
+		if (cellData.db_tlbr)
+			this.db_tlbr = cellData.db_tlbr;
+		else
+			delete this.db_tlbr;
 	},
 	getVerticalAlign: function () {
 		switch (this.valign) {
@@ -316,6 +322,18 @@ zss.Cell = zk.$extends(zk.Widget, {
 				jq(this.getTextNode()).addClass(WRAP_TEXT_CLASS);
 			} else {
 				jq(this.getTextNode()).removeClass(WRAP_TEXT_CLASS);
+			}
+		}
+		
+		//ZSS-568
+		if (this.db_tlbr != data.db_tlbr) {
+			if (this.db_tlbr) {
+				jq(this.comp).removeClass(this.db_tlbr);
+			}
+			if (data.db_tlbr) {
+				jq(this.comp).addClass(this.db_tlbr=data.db_tlbr);
+			} else {
+				delete this.db_tlbr;
 			}
 		}
 		
@@ -567,13 +585,16 @@ zss.Cell = zk.$extends(zk.Widget, {
 		var cls = 'zscell',
 			hId = this.zsh,
 			wId = this.zsw,
-			mCls = this.mergeCls;
+			mCls = this.mergeCls,
+			db_tlbr = this.db_tlbr; //ZSS-568
 		if (hId)
 			cls += (' zshi' + hId);
 		if (wId)
 			cls += (' zsw' + wId);
 		if (mCls)
 			cls += (' ' + mCls);
+		if (db_tlbr)
+			cls += (' ' + db_tlbr);
 		return cls;
 	},
 	_getInnerClass: function () {

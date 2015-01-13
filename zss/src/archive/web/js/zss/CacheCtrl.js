@@ -171,6 +171,10 @@ Copyright (C) 2012 Potix Corporation. All Rights Reserved.
 			 */
 			//comment: v.cmt
 			/**
+			 * Cell double border style class; undefined if not double border
+			 */
+			//db_tlbr: v.db
+			/**
 			 * Update Cell model
 			 * 
 			 * @param JSON Object v data from server
@@ -223,6 +227,11 @@ Copyright (C) 2012 Potix Corporation. All Rights Reserved.
 					this.rightBorder = rbo != undefined;
 					if (fontSize)
 						this.fontSize = fontSize;
+					//ZSS-568: support double border
+					if (v.db) 
+						this.db_tlbr = v.db;
+					else
+						delete this.db_tlbr;
 				}
 				if (upSize) {
 					// ZSS-224: modify overflow flag spec. to carry more status in bitswise format

@@ -1,0 +1,18 @@
+<zk>
+Since 3.6.1
+<label multiline="true">
+1. You should see black double borders among A1:C3
+2. You should see black double border between A5 and B5
+3. You should see black double border between C4 and C5
+4. You should see black double border between D5 and D6
+5. You should see black double border between E5 and F5
+6. You should see B8:D10 form a sharp sign(#)
+7. You should see blue double border between B9 and C9, B9 and B10
+8. You should see green double border between C9 and D9, D8 and D9
+9. Except the double border mentioned in 7 and 8; other double border among B8:D10 is red.
+10. You should see black double border between A12, B12, and C12
+11. You should see black double border between D11, D12, and D13
+</label>
+<spreadsheet id="spreadsheet" src="/issue3/book/568-double-border.xlsx" vflex="1" hflex="1" showFormulabar="true"/>
+</zk>
+
