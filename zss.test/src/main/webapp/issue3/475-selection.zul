@@ -1,5 +1,9 @@
 <zk>
 	<vbox>
+		<label multiline="true">
+			select successive cell using key shift and arrow down will trigger automatically scrolling when we reach the viewport boundary.
+			if it donesn't do that, it's a bug.
+		</label>
 		<button label="freeze E6" onClick="Ranges.range(ss.getSelectedSheet()).setFreezePanel(5,4);"></button>
 		<spreadsheet id="ss" src="/issue3/book/475-selection.xlsx" maxrows="1000" maxcolumns="100"
 			width="600px" height="600px"

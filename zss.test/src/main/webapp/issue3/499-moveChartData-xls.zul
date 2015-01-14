@@ -1,4 +1,7 @@
 <zk>
+	<label>
+		click each button, you shouldn't see NPE.
+	</label>
 	<vbox hflex="1" vflex="1">
 		<hbox>
 		<button label="1. insert above row 13" onClick="insertOneRow2003()"/>

@@ -1,6 +1,7 @@
 <zk>
 	<vbox width="600px" height="100%">
 		<label pre="true">
+			you should be able to click link in the merged cell.
 		</label>
 		<hlayout>
 			<button label="export" onClick="export();"></button>
