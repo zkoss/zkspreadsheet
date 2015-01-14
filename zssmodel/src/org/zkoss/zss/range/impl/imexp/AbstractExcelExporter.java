@@ -376,6 +376,29 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 			}else{
 				poiCell.setCellType(Cell.CELL_TYPE_FORMULA);
 				poiCell.setCellFormula(cell.getFormulaValue());
+				//ZSS-873
+				if (isExportCache()) {
+					switch(cell.getFormulaResultType()) {
+					default:
+					case BLANK:
+						break;
+					case BOOLEAN:
+						poiCell.setCellValue(cell.getBooleanValue());
+						break;
+					case ERROR:
+						poiCell.setCellErrorValue(cell.getErrorValue().getCode());
+						break;
+					case NUMBER:
+						poiCell.setCellValue((Double) cell.getNumberValue());
+						break;
+					case STRING:
+						if(cell.isRichTextValue()) {
+							poiCell.setCellValue(toPOIRichText(cell.getRichTextValue()));
+						} else {
+							poiCell.setCellValue(cell.getStringValue());
+						}
+					}
+				}
 			}
 			break;
 		case NUMBER:
@@ -584,5 +607,25 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 	    sp.setScenarios(ssp.isScenarios());
 	    sp.setSelectLockedCells(ssp.isSelectLockedCells());
 	    sp.setSelectUnlockedCells(ssp.isSelectUnlockedCells());
+	}
+	
+	//ZSS-873: Import formula cache result from an Excel file
+	private boolean _exportCache = false;
+	/**
+	 * Set whether export cached value into excel file(must be called before
+	 * export() is called.
+	 * @param b
+	 * @since 3.7.0
+	 */
+	public void setExportCache(boolean b) {
+		_exportCache = b;
+	}
+	/**
+	 * Returns whether export cached value into excel file.
+	 * @return
+	 * @since 3.7.0
+	 */
+	protected boolean isExportCache() {
+		return _exportCache;
 	}
 }

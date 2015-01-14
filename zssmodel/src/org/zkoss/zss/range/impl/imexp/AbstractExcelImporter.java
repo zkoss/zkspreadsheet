@@ -20,6 +20,13 @@ import java.io.*;
 import java.util.*;
 
 import org.zkoss.poi.hssf.usermodel.HSSFRichTextString;
+import org.zkoss.poi.ss.formula.eval.BoolEval;
+import org.zkoss.poi.ss.formula.eval.ErrorEval;
+import org.zkoss.poi.ss.formula.eval.NumberEval;
+import org.zkoss.poi.ss.formula.eval.StringEval;
+import org.zkoss.poi.ss.formula.eval.ValueEval;
+import org.zkoss.poi.ss.formula.ptg.FuncVarPtg;
+import org.zkoss.poi.ss.formula.ptg.Ptg;
 import org.zkoss.poi.ss.usermodel.*;
 import org.zkoss.poi.ss.util.CellRangeAddress;
 import org.zkoss.poi.xssf.usermodel.*;
@@ -35,6 +42,9 @@ import org.zkoss.zss.model.impl.CellStyleImpl;
 import org.zkoss.zss.model.impl.HeaderFooterImpl;
 import org.zkoss.zss.model.impl.NamedStyleImpl;
 import org.zkoss.zss.model.impl.AbstractBookAdv;
+import org.zkoss.zss.model.impl.RichTextImpl;
+import org.zkoss.zss.model.impl.AbstractCellAdv;
+import org.zkoss.zss.model.sys.formula.FormulaExpression;
 
 /**
  * Contains common importing behavior for both XLSX and XLS. Spreadsheet
@@ -426,6 +436,37 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 			break;
 		case Cell.CELL_TYPE_FORMULA:
 			cell.setFormulaValue(poiCell.getCellFormula());
+			//ZSS-873
+			if (isImportCache() && !poiCell.isCalcOnLoad() && !mustCalc(cell)) {
+				ValueEval val = null;
+				switch(poiCell.getCachedFormulaResultType()) {
+				case Cell.CELL_TYPE_NUMERIC:
+					val = new NumberEval(poiCell.getNumericCellValue());
+					break;
+				case Cell.CELL_TYPE_STRING:
+					RichTextString poiRichTextString0 = poiCell.getRichStringCellValue();
+					if (poiRichTextString0 != null && poiRichTextString0.numFormattingRuns() > 0) {
+						SRichText richText = new RichTextImpl();
+						importRichText(poiCell, poiRichTextString0, richText);
+						val = new StringEval(richText.getText());
+					} else {
+						val = new StringEval(poiCell.getStringCellValue());
+					}
+					break;
+				case Cell.CELL_TYPE_BOOLEAN:
+					val = BoolEval.valueOf(poiCell.getBooleanCellValue());
+					break;
+				case Cell.CELL_TYPE_ERROR:
+					val = ErrorEval.valueOf(poiCell.getErrorCellValue());
+					break;
+				case Cell.CELL_TYPE_BLANK:
+				default:
+					// do nothing
+				}
+				if (val != null) {
+					((AbstractCellAdv)cell).setFormulaResultValue(val);
+				}
+			}
 			break;
 		case Cell.CELL_TYPE_ERROR:
 			cell.setErrorValue(PoiEnumConversion.toErrorCode(poiCell.getErrorCellValue()));
@@ -650,4 +691,34 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 	 * @param sheet destination sheet
 	 */
 	abstract protected void importSheetProtection(Sheet poiSheet, SSheet sheet); //ZSS-576
+
+	//ZSS-873: Import formula cache result from an Excel file
+	private boolean _importCache = false;
+	/**
+	 * Set if import Excel cached value.
+	 * @since 3.7.0
+	 */
+	public void setImportCache(boolean b) {
+		_importCache = b;
+	}
+	/**
+	 * Returns if import file cached value.
+	 * @since 3.7.0
+	 */
+	protected boolean isImportCache() {
+		return _importCache;
+	}
+	
+	//ZSS-873
+	//Must evaluate INDIRECT() function to make the dependency table)
+	//Issue845Test-checkIndirectNameRange
+	private boolean mustCalc(SCell cell) {
+		FormulaExpression val = ((AbstractCellAdv)cell).getFormulaExpression();
+		for (Ptg ptg : val.getPtgs()) {
+			if (ptg instanceof FuncVarPtg && ((FuncVarPtg)ptg).getFunctionIndex() == 148) { //148 is INDIRECT
+				return true;
+			}
+		}
+		return false;
+	}
 }

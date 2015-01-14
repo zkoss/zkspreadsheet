@@ -46,6 +46,7 @@ public class Issue796Test {
 			Book book = Util.loadBook(this, "book/796-table-formula.xlsx");
 			Sheet sheet1 = book.getSheet("Sheet1");
 			Range rngA3 = Ranges.range(sheet1, "A3");
+			rngA3.refresh(true, true, true); //TODO: ZSS-873: import cache
 			CellData a3 = rngA3.getCellData();
 			Assert.assertEquals("Formula Type", CellData.CellType.FORMULA, a3.getType());
 			//20141014, henrichen: We have not supported Table yet. So the result
@@ -57,6 +58,7 @@ public class Issue796Test {
 			Assert.assertEquals("Value", ErrorValue.NAME, a3.getValue());
 
 			Range rngC2 = Ranges.range(sheet1, "C2");
+			rngC2.refresh(true, true, true); //TODO: ZSS-873: import cache
 			CellData c2 = rngC2.getCellData();
 			Assert.assertEquals("Formula Type", CellData.CellType.FORMULA, c2.getType());
 //			Assert.assertEquals("Value a Number Type", CellData.CellType.NUMERIC, c2.getResultType());

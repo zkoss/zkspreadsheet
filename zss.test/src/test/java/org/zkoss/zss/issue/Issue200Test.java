@@ -769,6 +769,8 @@ public class Issue200Test {
 		Book workbook = Util.loadBook(this, filename);
 		Sheet sheet1 = workbook.getSheet("formula-math");
 		Range B104 = Ranges.range(sheet1, "B104");
+		//clear the imported formula cached results
+		B104.refresh(true, true, true); //TODO: ZSS-873: import cache
 		assertEquals("#NAME?", B104.getCellData().getFormatText());
 	}
 	

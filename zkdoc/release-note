@@ -20,6 +20,7 @@ ZK Spreadsheet 3.6.1
   ZSS-840 support collaboration for zssapp
   ZSS-869 Provide a share button to share document with a URL
   ZSS-568 Support double border style for cells
+  ZSS-873 Import formula cache result from an Excel file
   
 *Bugs:
   ZSS-820 Formula should change sheet name if reordered sheet goes beyond the formula's sheet boundary.

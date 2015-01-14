@@ -328,4 +328,13 @@ class CellProxy extends AbstractCellAdv {
 			_proxy.deleteComment();
 		}
 	}
+
+	@Override
+	public FormulaExpression getFormulaExpression() {
+		loadProxy();
+		if (_proxy != null) {
+			return _proxy.getFormulaExpression();
+		}
+		return null;
+	}
 }

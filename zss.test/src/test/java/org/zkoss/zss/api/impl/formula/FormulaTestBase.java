@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import org.zkoss.zss.AssertUtil;
 import org.zkoss.zss.api.CellOperationUtil;
+import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.Sheet;
@@ -874,7 +875,10 @@ public class FormulaTestBase {
 	protected void testStartDateLaterThanEndDate(Book book) {
 
 		Sheet sheet = book.getSheet("formula-datetime");
-		assertEquals("#VALUE!", Ranges.range(sheet, "B27").getCellData().getFormatText()); // =NETWORKDAYS(DATE(2013,6,2),
+		//TODO: ZSS-873: cached value. NETWORKDAYS is not supported; must refresh to re-evaluate
+		Range b27 = Ranges.range(sheet, "B27");
+		b27.refresh(true, true, true);
+		assertEquals("#VALUE!", b27.getCellData().getFormatText()); // =NETWORKDAYS(DATE(2013,6,2),
 																							// DATE(2013,6,1))
 	}
 

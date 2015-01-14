@@ -529,4 +529,11 @@ public class CellImpl extends AbstractCellAdv {
 			// ignore it!
 		}		
 	}
+	
+	//ZSS-873
+	//@since 3.7.0
+	public FormulaExpression getFormulaExpression() {
+		return _localValue != null && _localValue.getType() == CellType.FORMULA ? 
+				(FormulaExpression) _localValue.getValue() : null; 
+	}
 }
