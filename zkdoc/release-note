@@ -51,6 +51,7 @@ ZK Spreadsheet 3.6.1
   ZSS-865 Text in two adjecent cells overlaps
   ZSS-861 Spreadsheet displays an extra focus box on a merged cell
   ZSS-866 Incorrect validation error for a string contains a percentage symbol
+  ZSS-881 NPE when render chart with cell format "[DBNum1][$-404]General"
   
 ** Upgrade Notes
   * The format of arguments "formula1" and "formula2" in following data validation api has changed:
