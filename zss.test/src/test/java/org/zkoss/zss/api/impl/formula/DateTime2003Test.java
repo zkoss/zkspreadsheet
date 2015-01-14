@@ -191,7 +191,7 @@ public class DateTime2003Test extends FormulaTestBase {
 	}
 
 	@Test
-	public void te8stStartDateLaterThanEndDate() {
+	public void testStartDateLaterThanEndDate() {
 		Book book = Util.loadBook(this, "book/TestFile2003-Formula.xls");
 		testStartDateLaterThanEndDate(book);
 	}
