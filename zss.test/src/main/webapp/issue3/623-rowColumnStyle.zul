@@ -1,6 +1,11 @@
 <vbox hflex="1" vflex="1">
 	<label multiline="true">
-	
+	 1. set Row(3:4) style to red
+	 2. set Column(D:F) style to blue
+	 3. set Column(D2:F5) style to green (word 'A' will fill the intersected area)
+	 4. press button 6, 5, 4 to clear style. (you will see only plain 'A' group)
+	 5. clean all. (remove 'A' group)
+	 6. do steps 1, 2, 3, then clear all style, then clear all content
 	</label>
 	<hbox>
 		<button onClick='setFillColor("3:4","#FF0000")'>set Row(3:4) style to red</button>
@@ -22,8 +27,8 @@
 		org.zkoss.zss.model.SSheet sheet = ss.getSelectedSSheet();
 		
 		org.zkoss.zss.model.SCellStyle style =  sheet.getBook().createCellStyle(true);
-		style.setFillPattern(org.zkoss.zss.model.SCellStyle.FillPattern.SOLID_FOREGROUND);
-		style.setFillColor(sheet.getBook().createColor(color));
+		style.setFillPattern(org.zkoss.zss.model.SCellStyle.FillPattern.SOLID);
+		style.setBackColor(sheet.getBook().createColor(color));
 		org.zkoss.zss.range.SRange range = org.zkoss.zss.range.SRanges.range(sheet,f);
 		range.setCellStyle(style);
 		if(!range.isWholeRow() && !range.isWholeColumn()){

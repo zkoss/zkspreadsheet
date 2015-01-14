@@ -1,9 +1,11 @@
 <zk>
-
+		<label multiline="true">
+			click each button horizontally, it shouldn't cause javascript exception.
+		</label>
 		<vlayout hflex="1" vflex="1">
-			<hlayout>
+			<!-- <hlayout>
 				2007 xls format <button label="export" onClick="export(ss2);"></button>
-			</hlayout>
+			</hlayout> -->
 			<hlayout>
 				<button onClick="run(ss2, 1)">1. change row 2's height</button>
 				<button onClick="run(ss2, 2)">2. freeze one row</button>

@@ -5,6 +5,7 @@
 Reproduce 1:
   1. freeze 1 row (select A2 and click "freeze")
   2. select column A and remove such column
+  		(if you can see the following result, it's a bug)
         * "B1" is also gone 
         * can't select A1 and get no focus
         * if focus on B1, formula bar will show "C1"
@@ -13,6 +14,7 @@ Reproduce 1:
 Reproduce 2:
   1. freeze 1 column (select B1 and click "freeze")
   2. select row 1 and remove such row
+  		(if you can see the following result, it's a bug)
         * "A2" is also gone 
         * can't select A1 and get no focus
         * if focus on A2, formula bar will show "A3"
