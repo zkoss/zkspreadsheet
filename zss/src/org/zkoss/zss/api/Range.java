@@ -973,7 +973,7 @@ public interface Range {
 	/**
 	 * Enforce evaluation(if not cached) and refresh UI of this range and its 
 	 * dependent cells if the includeDependents is true. This method is equal
-	 * to refresh(includeDependents, false, true). 
+	 * to {@link Range#refresh(boolean includeDependents, boolean false, boolean true)}. 
 	 * @since 3.6.0
 	 */
 	public void refresh(boolean includeDependants);

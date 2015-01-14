@@ -16,6 +16,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.range.impl.imexp;
 
+import org.zkoss.lang.Library;
 import org.zkoss.zss.range.SExporterFactory;
 import org.zkoss.zss.range.SExporter;
 /**
@@ -40,10 +41,15 @@ public class ExcelExportFactory implements SExporterFactory{
 	
 	@Override
 	public SExporter createExporter() {
-		if (_type == Type.XLSX){
-			return new ExcelXlsxExporter();
-		}else{
-			return new ExcelXlsExporter();
-		}
+		AbstractExcelExporter exporter = _type == Type.XLSX ?
+			new ExcelXlsxExporter() : new ExcelXlsExporter();
+		exporter.setExportCache(isExportCache()); //ZSS-873
+		return exporter;
+	}
+
+	//ZSS-873
+	private boolean isExportCache() {
+		String importCache = Library.getProperty("org.zkoss.zss.export.cache", "false");
+		return "true".equalsIgnoreCase(importCache.trim());
 	}
 }

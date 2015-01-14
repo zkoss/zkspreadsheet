@@ -254,4 +254,8 @@ public abstract class AbstractCellAdv implements SCell,LinkedModelObject,Seriali
 	//ZSS-853
 	//@since 3.7.0
 	protected abstract void setValue(Object value, boolean aString);
+	
+	//ZSS-873
+	//@since 3.7.0
+	public abstract FormulaExpression getFormulaExpression(); 
 }
