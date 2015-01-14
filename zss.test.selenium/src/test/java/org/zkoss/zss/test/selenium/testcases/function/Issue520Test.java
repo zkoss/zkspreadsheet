@@ -34,6 +34,6 @@ public class Issue520Test extends ZSSTestCase {
 		getTo("/issue3/528-wrap.zul");
 		
 		click(jq("@button:eq(1)"));
-		waitUntil(2, ExpectedConditions.textToBePresentInElement(ZSSBy.javascript("jq($msgArea)[0]"), "resize"));
+		waitUntil(2, ExpectedConditions.textToBePresentInElement(ZSSBy.javascript("jq('$msgArea')[0]"), "resize"));
 	}
 }
