@@ -47,11 +47,22 @@ public class Issue881Test {
 	 * formula
 	 */
 	@Test
-	public void textSpcialFormat() {
+	public void testSpcialFormat() {
 		FormatEngine formatEngine = new FormatEngineImpl();
 		FormatContext ctx = new FormatContext(Setup.getZssLocale());
 		FormatResult result = formatEngine.format("[DBNum1][$-404]General", 1d, ctx, 12);
 		
-		Assert.assertEquals("formated String", "1", result.getText());
+		Assert.assertEquals("[DBNum1][$-404]General format", "1", result.getText());
+		Assert.assertNotNull("JavaFormatter", result.getFormater());
+	}
+
+	@Test
+	public void testGeneralFormat() {
+		FormatEngine formatEngine = new FormatEngineImpl();
+		FormatContext ctx = new FormatContext(Setup.getZssLocale());
+		FormatResult result = formatEngine.format("General", 1d, ctx, 12);
+		
+		Assert.assertEquals("Genral", "1", result.getText());
+		Assert.assertNotNull("JavaFormatter", result.getFormater());
 	}
 }
