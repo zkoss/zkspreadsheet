@@ -1,4 +1,7 @@
 <zk>
+	<label>
+		shouldn't see Java exception.
+	</label>
 	<spreadsheet src="/issue/book/conditional-format.xls" maxVisibleRows="150" maxVisibleColumns="40" width="100%"
 		height="50%" showContextMenu="true" showSheetbar="true" showToolbar="true"
 		ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e" />
