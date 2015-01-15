@@ -64,30 +64,37 @@ We also merge lots of POI test cases from a previous project &quot;zsstest&quot;
 			<groupId>org.zkoss.common</groupId>
 			<artifactId>zcommon</artifactId>
 			<version>${zk.version}</version>
-			<optional>true</optional>
 		</dependency>		
 		<dependency>
 			<groupId>org.zkoss.zk</groupId>
 			<artifactId>zkplus</artifactId>
 			<version>${zk.version}</version>
-			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>org.zkoss.zk</groupId>
 			<artifactId>zkex</artifactId>
 			<version>${zk.version}</version>
-			<optional>true</optional>
 		</dependency>	
 		<dependency>
 			<groupId>org.zkoss.zss</groupId>
 			<artifactId>zss</artifactId>
 			<version>${zss.version}</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>zk</artifactId>
+					<groupId>org.zkoss.zk</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>zul</artifactId>
+					<groupId>org.zkoss.zk</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
- 		<dependency>
+<!--  		<dependency>
 			<groupId>org.zkoss.zss</groupId>
 			<artifactId>zssex</artifactId>
 			<version>${zss.version}</version>
-		</dependency>
+		</dependency> -->
 		<dependency>
 			<groupId>org.zkoss.zss</groupId>
 			<artifactId>zsspdf</artifactId>

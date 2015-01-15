@@ -62,7 +62,6 @@
 			<groupId>org.zkoss.zk</groupId>
 			<artifactId>zk</artifactId>
 			<version>${zk.version}</version>
-			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>org.jsoup</groupId>
