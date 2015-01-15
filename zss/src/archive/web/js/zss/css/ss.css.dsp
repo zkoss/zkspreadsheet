@@ -1838,6 +1838,14 @@
 	display: none;
 }
 
+/* format dialog item text should show in red */
+.redItem .z-listcell-content {
+    color: red;
+}
+.redItem:hover>.z-listcell>.z-listcell-content {
+    color: red;
+}
+
 /* change default font family to Segoe UI */
 .zstbtn-real,
 .zsfontfamily .z-combobox-input,

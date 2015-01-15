@@ -22,6 +22,7 @@ ZK Spreadsheet 3.6.1
   ZSS-568 Support double border style for cells
   ZSS-873 Import formula cache result from an Excel file
   ZSS-877 Format cell dialog shows "General" to indicate a cell with no specific format selected
+  ZSS-876 Show format sample in red for negative number in format cell dialog
   
 *Bugs:
   ZSS-820 Formula should change sheet name if reordered sheet goes beyond the formula's sheet boundary.
