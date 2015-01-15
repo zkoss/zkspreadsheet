@@ -93,25 +93,42 @@
 			<groupId>org.zkoss.common</groupId>
 			<artifactId>zcommon</artifactId>
 			<version>${zk.version}</version>
-			<optional>true</optional>
 		</dependency>			
 		<dependency>
 			<groupId>org.zkoss.zk</groupId>
 			<artifactId>zkplus</artifactId>
 			<version>${zk.version}</version>
-			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.zkoss.zk</groupId>
+			<artifactId>zk</artifactId>
+			<version>${zk.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.zkoss.zk</groupId>
+			<artifactId>zul</artifactId>
+			<version>${zk.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.zkoss.zss</groupId>
 			<artifactId>zss</artifactId>
 			<version>${project.version}</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>zk</artifactId>
+					<groupId>org.zkoss.zk</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>zul</artifactId>
+					<groupId>org.zkoss.zk</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
  		<!-- ZSS EE dependencies -->
 		<dependency>
 			<groupId>org.zkoss.zk</groupId>
 			<artifactId>zkex</artifactId>
 			<version>${zk.version}</version>
-			<optional>true</optional>
 		</dependency>		 
 		<dependency>
 			<groupId>org.zkoss.zss</groupId>
