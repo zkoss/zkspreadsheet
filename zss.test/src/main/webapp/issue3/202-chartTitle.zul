@@ -22,6 +22,7 @@
 	]]>
 	</zscript>
 	<vbox hflex="1" vflex="1">
+		<label>you should see first chart title is "阿斯顿发送Employee payment"</label>
 		<hbox>
 			<button label="Reset" onClick="resetLibrary()"></button>
 		</hbox>

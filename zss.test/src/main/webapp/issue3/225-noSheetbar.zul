@@ -1,5 +1,8 @@
 <zk>
 	<window vflex="1" width="100%" >
+		<label>
+			enable sheet protection via toolbar button. after sheet was protected, move cursor to protect sheet button, you shouldn't see the warn message.
+		</label>
 		<spreadsheet showToolbar="true"
 			id="spreadsheet" vflex="true" width="100%"
 			src="/issue3/book/blank.xlsx" maxcolumns="40" maxrows="200"></spreadsheet>

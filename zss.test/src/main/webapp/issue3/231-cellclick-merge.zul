@@ -1,6 +1,7 @@
 <zk>
 	<vbox width="600px" height="100%">
-		<label pre="true">
+		<label>
+			select merged cell, you can see the direction pointed to top-left one.
 		</label>
 		<hlayout>
 			<label id="msg" value="no msg"></label>

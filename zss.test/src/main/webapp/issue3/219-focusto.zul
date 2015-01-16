@@ -1,5 +1,9 @@
 <zk>
 	<vbox hflex="1" vflex="1">
+		<label>
+			1. press each button, you should see cell to be selected and view scrolled automatically to let the cell visible.
+			2. press freeze then test button 1 to button 8 again.
+		</label>
 		<hbox hflex="1">
 			<button label="focus E4 " onClick='ss.focusTo(3,4)'/>
 			<button label="focus D4 " onClick='ss.focusTo(3,3)'/>
