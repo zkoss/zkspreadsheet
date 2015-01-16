@@ -1,0 +1,10 @@
+<?page title="MissingChartTitleIssue"?>
+<zk>
+<label multiline="true">
+IE only
+1. move to sheet "fin_charts"
+2. move cursor on second chart "AA"
+3. right column's tooltip should show correct value 2.56%. if it shows "undefined", that's a bug.
+</label>
+    <spreadsheet id="spreadsheet" src="/issue3/book/885-floating-point-ie.xlsx" maxVisibleRows="50" vflex="1" width="100%" showSheetbar="true"></spreadsheet>
+</zk>
