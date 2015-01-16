@@ -1845,6 +1845,9 @@
 .redItem:hover>.z-listcell>.z-listcell-content {
     color: red;
 }
+.redItem.z-listitem-selected>.z-listcell>.z-listcell-content {
+    color: red;
+}
 
 /* change default font family to Segoe UI */
 .zstbtn-real,
