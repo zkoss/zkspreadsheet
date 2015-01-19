@@ -58,6 +58,7 @@ ZK Spreadsheet 3.6.1
   ZSS-881 NPE when render chart with cell format "[DBNum1][$-404]General"
   ZSS-885 Percentage value in tooltip of chart show undefined in IE
   ZSS-884 Resize from almost 0 width of spreadsheet to visible status, column header shouldn't disappear
+  ZSS-863 Copy focus mark should be disappear after create new sheet
 
 ** Upgrade Notes
   * The format of arguments "formula1" and "formula2" in following data validation api has changed:
