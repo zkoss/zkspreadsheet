@@ -1,15 +1,15 @@
 <zk>
 Since 3.6.0
 <label multiline="true">
-0. You should see A2 is 1.
+0. You should see A3 is 1.
 1. Click "setEditText("2") on A1" button to set number 2 on A1
-2. You should see A2 change to number 3 and A1 show number 2.
+2. You should see A3 change to number 3 and A1 show number 2.
 3. Click "setEditText("3") on A1 with autoReferesh turned off" button to set number 3 on A1
-4. You should still see A2 show number 3 (no change) and A1 show number 2 (no change).
+4. You should still see A3 show number 3 (no change) and A1 show number 2 (no change).
 5. Click "refresh(false) on A1" to refresh A1 cell only.
-6. You should now see A2 show number 3 (no change) and A1 changed to number 3.
-7. Click "refresh(true) on A1" to refresh both A1 cell and its dependants (which is A2).
-8. You should now see A2 change to number 4 and A1 show number 3 (no change). 
+6. You should now see A3 show number 3 (no change) and A1 changed to number 3.
+7. Click "refresh(true) on A1" to refresh both A1 cell and its dependants (which is A3).
+8. You should now see A3 change to number 4 and A1 show number 3 (no change). 
 </label>
 	<button label='setEditText("2") on A1' onClick="setEditText2A1()" />
 	<button label='setEditText("3") on A1 with autoRefresh turned off' onClick="setEditText3A1WithAutoRefreshOff()" />
