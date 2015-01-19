@@ -417,6 +417,13 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		this._resize();
 		return r;
 	},
+	//ZSS-884
+	isWatchable_: function (name, p, cache) {
+		if ("onSize" == name)
+			return !!this.$n();
+		else
+			return this.$supers(zss.SSheetCtrl, 'isWatchable_', arguments);
+	},
 	bind_: function (desktop, skipper, after) {
 		this.$supers(zss.SSheetCtrl, 'bind_', arguments);
 		//ZSS 125: already process wrap on row.bind_

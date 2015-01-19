@@ -1,0 +1,12 @@
+<zk>
+Since 3.6.1
+<label multiline="true">
+1. Size width of the browser to narrow the browser window until the Spreadsheet shrink to one vertical line.
+2. click browser window's "maximize" icon on the right-top corner to make the browser window full screen.
+3. You should see the column header(A B C D ...) show without problem
+4. If you see a blank bar or partial of the column headers are blank, it is a bug.
+</label>
+	<spreadsheet id="ss" vflex="1" hflex="1" src="/issue3/book/850-fill-pattern.xlsx"
+		showToolbar="true" showSheetbar="true" showFormulabar="true" showContextMenu="true"
+		maxVisibleRows="100" maxVisibleColumns="100"/>
+</zk>
