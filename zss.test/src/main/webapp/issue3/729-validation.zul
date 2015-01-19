@@ -2,9 +2,9 @@
 Since 3.5.0
 <label multiline="true">
 1. Click "Add Validation A2:A4" button to set validation at A1
-2. Move focus to A1, should see the drop down button; click it and the drop-down "a", "b", "c" should appear.
+2. Move focus to A1, should see the drop down button; click it and the drop-down a, b, c should appear.
 3. Click "Add Validation with Array" to set validation at B1
-4. Move focus to B1, should see the drop down button; click it and the drop-down "d", "e", "f" should appear.
+4. Move focus to B1, should see the drop down button; click it and the drop-down "d", "e", "f" should appear(each option embraced with double quote).
 5. Click "Delete Validation" button to delete both validations
 6. Move focus to A1, should not see the drop down button
 7. Move focus to B1, should not see the drop down button
@@ -21,14 +21,14 @@ Since 3.5.0
 	
 	public void addValidation() {
 		Range selectedRange = Ranges.range(ss.getSelectedSheet(), "A1");
-		selectedRange.setValidation(Validation.ValidationType.LIST, true, Validation.OperatorType.EQUAL, true, "A2:A4", null, 
+		selectedRange.setValidation(Validation.ValidationType.LIST, true, Validation.OperatorType.EQUAL, true, "=A2:A4", null, 
 				true,"input title A1", "input message A1",
 				true, Validation.AlertStyle.WARNING, "alert title A1", "alert message A1");
 	}
 
 	public void addValidationWithArray() {
 		Range selectedRange = Ranges.range(ss.getSelectedSheet(), "B1");
-		selectedRange.setValidation(Validation.ValidationType.LIST, true, Validation.OperatorType.EQUAL, true, "{\"d\",\"e\",\"f\"}", null, 
+		selectedRange.setValidation(Validation.ValidationType.LIST, true, Validation.OperatorType.EQUAL, true, "\"d\",\"e\",\"f\"", null, 
 				true,"input title B1", "input message B1",
 				true, Validation.AlertStyle.WARNING, "alert title B1", "alert message B1");
 	}
