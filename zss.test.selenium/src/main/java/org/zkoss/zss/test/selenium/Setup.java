@@ -15,6 +15,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
@@ -47,7 +48,7 @@ public class Setup {
 			}
 		}
 		//http://chromium.googlecode.com/, http://chromedriver.storage.googleapis.com/index.html
-		System.setProperty("webdriver.chrome.driver",config.getProperty("webdriver.chrome.driver"));
+		//System.setProperty("webdriver.chrome.driver",config.getProperty("webdriver.chrome.driver"));
 	}
 																																																																																																																																																																																	
 	public static String getConfig(String key){
@@ -94,6 +95,15 @@ public class Setup {
 	
 	private static WebDriver getChromeDriver() {
 		ChromeDriver driver = new ChromeDriver();
+		// remote chrome driver
+//		RemoteWebDriver driver = null;
+//		try {
+//			driver = new RemoteWebDriver(new URL("http://10.1.3.223:4444/wd/hub"), DesiredCapabilities.chrome());
+//		} catch (MalformedURLException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+		
 		String val = getConfig("zss.browserSize","0,0,1200,800");
 		String[] vals = val.split(",");
 		
@@ -104,6 +114,9 @@ public class Setup {
 	
 	private static WebDriver getFirefoxDriver() {
 		FirefoxDriver driver = new FirefoxDriver();
+//		InternetExplorerDriver driver = null;
+//			driver = new InternetExplorerDriver();
+
 		String val = getConfig("zss.browserSize","0,0,1200,800");
 		String[] vals = val.split(",");
 		
