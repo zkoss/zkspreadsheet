@@ -500,7 +500,7 @@ public class DefaultUserActionManagerCtrl implements UserActionManagerCtrl,UserA
 	
 	protected void clearClipboard() {
 		Clipboard cp = (Clipboard)_sparedsheet.removeAttribute(CLIPBOARD_KEY);
-		if(cp!=null && cp.getSheet().equals(_sparedsheet.getSelectedSheet())){
+		if(cp!=null){
 			_sparedsheet.setHighlight(null);
 		}
 	}
@@ -662,7 +662,7 @@ public class DefaultUserActionManagerCtrl implements UserActionManagerCtrl,UserA
 		public void clearClipboard() {
 			Spreadsheet ss = getSpreadsheet();
 			Clipboard cp = (Clipboard)ss.removeAttribute(CLIPBOARD_KEY);
-			if(cp!=null && cp.getSheet().equals(ss.getSelectedSheet())){
+			if(cp!=null){
 				getSpreadsheet().setHighlight(null);
 			}
 		}

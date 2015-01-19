@@ -1,0 +1,18 @@
+<zk>
+Since 3.6.1
+<label multiline="true">
+1. copy cell A1.
+2. click button "close and create sheet".
+3. if copy focus mark is still here, that's a bug.
+</label>
+	<button label="close and create sheet">
+		<attribute name="onClick">
+			Book b = ss.getBook();
+			ss.setBook(null);
+			ss.setBook(b);
+		</attribute>
+	</button>
+	<spreadsheet id="ss" vflex="1" hflex="1" src="/issue3/book/blank.xlsx"
+		showToolbar="true" showSheetbar="true" showFormulabar="true" showContextMenu="true"
+		maxVisibleRows="100" maxVisibleColumns="100"/>
+</zk>
