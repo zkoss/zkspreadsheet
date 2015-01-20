@@ -629,6 +629,12 @@ zss.TabPopup = zk.$extends(zul.wgt.Popup, {
 					sheetpanelCave._wgt.sheetCtrl.isSwitchingSheet);
 			this.close();
 		}
+	},
+	afterOpenAnima_: function (ref, offset, position, opts) {
+		this.$supers(zss.TabPopup, 'afterOpenAnima_', arguments);
+		if (opts && opts.tabOption) {
+			opts.tabOption.scrollIntoView();
+		}
 	}
 });
 
@@ -664,18 +670,23 @@ zss.SheetpanelCave = zk.$extends(zk.Widget, {
 				onClick: function() {
 					var labels = wgt.getSheetLabels(),
 						inner = [],
-						sheetId = wgt.getSheetId();
+						sheetId = wgt.getSheetId(),
+						selected;
 					popup.clear();
 					for(var i = 0, label; label = labels[i++];) {						
-						var labelId = label.id;
-						popup.appendChild(new zss.TabOption({
-							label: label.name, 
-							sheetId: label.id,
-							sclass: label.id === sheetId ? 'zstab-option-select' : ''
-						}));
+						var labelId = label.id,
+							tabOption = new zss.TabOption({
+								label: label.name, 
+								sheetId: label.id,
+								sclass: label.id === sheetId ? 'zstab-option-select' : ''
+							});
+						popup.appendChild(tabOption);
+						if (label.id === sheetId) {
+							selected = tabOption;
+						}
 					}
-
-					popup.open(this, null, 'before_start');
+					//will call into zss.TabPopup.afterOpenAnima_()
+					popup.open(this, null, 'before_start', {'tabOption':selected});
 				}
 			}),
 			hlayout = this.hlayout = new zul.box.Hlayout({spacing: 0}),
