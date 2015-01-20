@@ -104,7 +104,7 @@ zss.CellBlockCtrl = zk.$extends(zk.Widget, {
 	 */
 	getCell: function (row, col) {
 		var range = this.range;
-		if(row < range.top || row > range.bottom || col < range.left || col > range.right)
+		if(!range || row < range.top || row > range.bottom || col < range.left || col > range.right)
 			return null;
 		return this.rows[row - range.top].getCellAt(col - range.left);
 	},
