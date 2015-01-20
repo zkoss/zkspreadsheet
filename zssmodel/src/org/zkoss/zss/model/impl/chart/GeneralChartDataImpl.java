@@ -20,7 +20,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.zkoss.zss.model.ErrorValue;
-import org.zkoss.zss.model.InvalidModelOpException;
 import org.zkoss.zss.model.SChart;
 import org.zkoss.zss.model.chart.SGeneralChartData;
 import org.zkoss.zss.model.chart.SSeries;
@@ -28,7 +27,6 @@ import org.zkoss.zss.model.impl.AbstractBookSeriesAdv;
 import org.zkoss.zss.model.impl.AbstractChartAdv;
 import org.zkoss.zss.model.impl.EvaluationUtil;
 import org.zkoss.zss.model.impl.ObjectRefImpl;
-import org.zkoss.zss.model.impl.RefImpl;
 import org.zkoss.zss.model.sys.EngineFactory;
 import org.zkoss.zss.model.sys.dependency.Ref;
 import org.zkoss.zss.model.sys.formula.EvaluationResult;
@@ -104,7 +102,9 @@ public class GeneralChartDataImpl extends AbstractGeneralChartDataAdv implements
 		if(i>=EvaluationUtil.sizeOf(_evalResult)){
 			return null;
 		}
-		return EvaluationUtil.valueOf(_evalResult,i);
+		//ZSS-882
+		Object cat = EvaluationUtil.valueOf(_evalResult,i);
+		return cat == null || "".equals(cat) ? String.valueOf(i+1) : cat;
 	}
 	public SSeries addSeries() {
 		SeriesImpl series = new SeriesImpl(_chart,_chart.getId() + "-series" + (_seriesCount++));

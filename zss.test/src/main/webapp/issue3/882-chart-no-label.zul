@@ -1,0 +1,10 @@
+<?page title="MissingChartTitleIssue"?>
+<zk>
+<label multiline="true">
+Since 3.7.0
+1. Move mouse to on top of the right bar of the left 2nd group of bars in the bar chart
+2. Should see a tip: "2 Series2:4"
+3. If you did not see the tips or the tip is different from mentioned in 2, it is a bug.
+</label>
+    <spreadsheet id="spreadsheet" src="/issue3/book/882-chart-no-label.xlsx" maxVisibleRows="50" vflex="1" width="100%" showSheetbar="true"></spreadsheet>
+</zk>
