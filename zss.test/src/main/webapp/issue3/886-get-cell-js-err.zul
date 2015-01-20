@@ -1,0 +1,7 @@
+<?page title="MissingChartTitleIssue"?>
+<zk>
+<label multiline="true">
+switching sheet to "sheet2" shouldn't causes javascript error.
+</label>
+    <spreadsheet id="spreadsheet" src="/issue3/book/886-get-cell-js-err.xlsx" maxVisibleRows="50" vflex="1" width="100%" showSheetbar="true"></spreadsheet>
+</zk>
