@@ -119,7 +119,7 @@ public interface SPrintSetup {
 	
 	/**
 	 * 
-	 * @param scale
+	 * @param scale must be between 10 ~ 400 (inclusive).
 	 * @since 3.6.0
 	 */
 	public void setScale(int scale); // x100; e.g. 20 => 20%, 400 => 400%

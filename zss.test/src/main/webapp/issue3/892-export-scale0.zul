@@ -1,0 +1,29 @@
+<vlayout vflex="1">
+<div>
+<label multiline="true">
+Since 3.6.1
+1. Press the "Export to Excel" button.
+2. If no exception, it is OK.
+3. Open the down loaded excel file "scale0.xlsx" with Excel.
+4. Check Page Layout/Scale to Fit, the scale should be 100%.
+</label>
+</div>
+<button id="export" label="Export to Excel" onClick="doExport()"/>
+<zscript><![CDATA[
+     import java.io.*;
+     import org.zkoss.zss.api.Exporters;
+     import org.zkoss.zul.*;
+     void doExport() throws IOException {
+    	 ByteArrayOutputStream os = new ByteArrayOutputStream();
+    	 try {
+    		  Exporters.getExporter("excel").export(spreadsheet.getBook(), os);
+    	 } catch (Exception ex) {
+    		  os.close();
+    	 }
+    	 Filedownload.save(os.toByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "scale0.xlsx"); 
+     }
+]]>
+</zscript>
+    <spreadsheet id="spreadsheet" src="/issue3/book/892-export-scale0.xlsx" maxVisibleRows="50" maxVisibleColumns="50" vflex="1" width="100%" showSheetbar="true"></spreadsheet>
+</vlayout>
+

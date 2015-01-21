@@ -170,6 +170,7 @@ public class PrintSetupImpl implements SPrintSetup,Serializable {
 
 	@Override
 	public void setScale(int scale) {
+		if (scale < 10 || scale > 400) scale = 100; //ZSS-892
 		this._scale = scale;
 	}
 
@@ -192,7 +193,7 @@ public class PrintSetupImpl implements SPrintSetup,Serializable {
 		this._bottomMargin = src._bottomMargin;
 		
 		this._landscape = src._landscape;
-		this._scale = src._scale;
+		setScale(src._scale);
 		this._paperSize = src._paperSize;
 		
 		HeaderFooterImpl srcHF = (HeaderFooterImpl) src._header;
