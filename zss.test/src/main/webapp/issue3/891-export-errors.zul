@@ -1,0 +1,28 @@
+<?page title="ExportErrorValues"?>
+<zk>
+<label multiline="true">
+Since 3.6.1
+0. Make sure you have set the library-property "org.zkoss.zss.import.cache" and "org.zkoss.zss.export.cache" to true in zk.xml.
+1. Press the "Export to Excel" button.
+2. Open the down loaded excel file "errorValue.xlsx".
+3. You should see on Excel cell B1 show #DIV/0!; B2 show #VALUE!; B3 #REF!; B4 #NAME?; B5 #NUM!; and B6 #N/A.
+4. If you saw blank cells among B1:B6, it is a bug.
+</label>
+<button id="export" label="Export to Excel" onClick="doExport()"/>
+<zscript><![CDATA[
+     import java.io.*;
+     import org.zkoss.zss.api.Exporters;
+     import org.zkoss.zul.*;
+     void doExport() throws IOException {
+    	 ByteArrayOutputStream os = new ByteArrayOutputStream();
+    	 try {
+    		  Exporters.getExporter("excel").export(spreadsheet.getBook(), os);
+    	 } catch (Exception ex) {
+    		  os.close();
+    	 }
+    	 Filedownload.save(os.toByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "errorValue.xlsx"); 
+     }
+]]>
+</zscript>
+    <spreadsheet id="spreadsheet" src="/issue3/book/891-export-errors.xlsx" maxVisibleRows="50" vflex="1" width="100%" showSheetbar="true"></spreadsheet>
+</zk>

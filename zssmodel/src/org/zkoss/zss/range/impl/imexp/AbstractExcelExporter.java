@@ -371,7 +371,7 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 			poiCell.setCellValue(cell.getBooleanValue());
 			break;
 		case FORMULA:
-			if(cell.getFormulaResultType()==CellType.ERROR && cell.getErrorValue().getCode() != ErrorValue.INVALID_FORMULA){
+			if(cell.getFormulaResultType()==CellType.ERROR && cell.getErrorValue().getCode() == ErrorValue.INVALID_FORMULA){//ZSS-891
 				//ignore the value of this cell, excel doesn't allow it invalid formula (pasring error).
 			}else{
 				poiCell.setCellType(Cell.CELL_TYPE_FORMULA);
