@@ -61,6 +61,7 @@ ZK Spreadsheet 3.6.1
   ZSS-863 Copy focus mark should be disappear after create new sheet
   ZSS-886 Switching sheet causes JS error
   ZSS-882 Chart should support showing appropriate non-label name data
+  ZSS-864 Comment should be shown when multiple cells are selected and mouse cursor is on the commented cell inside selection
 
 ** Upgrade Notes
   * The format of arguments "formula1" and "formula2" in following data validation api has changed:

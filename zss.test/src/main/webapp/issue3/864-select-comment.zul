@@ -1,0 +1,17 @@
+<?page title="MissingChartTitleIssue"?>
+<zk>
+<label multiline="true">
+Since 3.6.1
+1. Move to E5; right click to popup the context menu.
+2. Select 'insert comment'; should see the richtext editor popup.
+3. Type in 'test' and press "OK" button and close the richtext editor.
+4. Now you should see a red triangle on top-right corner of cell E5.
+5. Hover mouse to cell E5, shall pop out comment 'test' by the cell E5. 
+6. Select area B3:G7; should see a select mask on B3:G7.
+7. Hover mouse to cell E5, shall still pop out comment 'test' by the cell E5.
+8. If you cannot see the comment pop out; it is a bug. 
+
+</label>
+    <spreadsheet id="spreadsheet" src="/issue3/book/blank.xlsx" maxVisibleRows="50" vflex="1" width="100%" 
+    showSheetbar="true" showContextMenu="true" showFormulabar="true"></spreadsheet>
+</zk>
