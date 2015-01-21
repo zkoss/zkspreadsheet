@@ -1,0 +1,28 @@
+<vlayout vflex="1">
+<div>
+<label multiline="true">
+Since 3.6.1
+1. Press the "Export to Excel" button.
+2. Open the down loaded excel file "columnWidth.xlsx" with Excel.
+3. Check column widths; it should be the same as seen on Excel.
+</label>
+</div>
+<button id="export" label="Export to Excel" onClick="doExport()"/>
+<zscript><![CDATA[
+     import java.io.*;
+     import org.zkoss.zss.api.Exporters;
+     import org.zkoss.zul.*;
+     void doExport() throws IOException {
+    	 ByteArrayOutputStream os = new ByteArrayOutputStream();
+    	 try {
+    		  Exporters.getExporter("excel").export(spreadsheet.getBook(), os);
+    	 } catch (Exception ex) {
+    		  os.close();
+    	 }
+    	 Filedownload.save(os.toByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "columnWidth.xlsx"); 
+     }
+]]>
+</zscript>
+    <spreadsheet id="spreadsheet" src="/issue3/book/896-column-width.xlsx" maxVisibleRows="50" maxVisibleColumns="50" vflex="1" width="100%" showSheetbar="true"></spreadsheet>
+</vlayout>
+
