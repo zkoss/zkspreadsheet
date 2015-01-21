@@ -1,4 +1,4 @@
-<?page title="MissingChartTitleIssue"?>
+<?page title="NoLabelChart"?>
 <zk>
 <label multiline="true">
 Since 3.7.0
