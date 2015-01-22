@@ -25,6 +25,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 
 	<javascript package="zss" />
 
+    <javascript-module name="zss" version="3.6.1"/>
 	<version>
 		<version-class>org.zkoss.zss.ui.Version</version-class>
 		<version-uid>3.6.1</version-uid>
