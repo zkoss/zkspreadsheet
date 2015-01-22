@@ -295,10 +295,6 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	//a cleaner to clean book when detach or desktop cleanup
 	private BookCleaner _bookCleaner;
 	
-	//ZSS-816. A DeferOperator to execute operation in a whole before Execution
-	//  cleanup
-	private DeferOperator _deferOperator;
-	
 	/**
 	 * default row height when a sheet is empty
 	 */
@@ -384,6 +380,14 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 
 				Object[] data = (Object[]) event.getData();
 				processStopEditing((String) data[0], (StopEditingEvent) data[1], (String) data[2]);
+			}
+		});
+		//ZSS-816
+		this.addEventListener(_ON_PROCESS_DEFER_OPERATIONS,  new EventListener() {
+			public void onEvent(Event event) throws Exception {
+				
+				Map<String, DeferOperation> map = (Map<String, DeferOperation>) event.getData();
+				processDeferOperations(map);
 			}
 		});
 		
@@ -4643,7 +4647,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		} else
 			processCancelEditing0(token, event.getSheet(), event.getRow(), event.getColumn(), false, editingType);
 	}
-	
+
 	private void showFormulaErrorThenRetry(IllegalFormulaException ex, final String token, final Sheet sheet, final int rowIdx,final int colIdx, final Object value, final String editingType) {
 		String title = Labels.getLabel("zss.msg.warn_title");
 		String msg = Labels.getLabel("zss.msg.formula_error",new Object[]{ex.getMessage()});
@@ -5126,10 +5130,6 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			_bookCleaner = new BookCleaner(uuid);
 			desktop.addListener(_bookCleaner);
 		}
-		if(_deferOperator==null) {
-			_deferOperator = new DeferOperator(uuid);
-			desktop.addListener(_deferOperator);
-		}
 	}
 	
 	@Override
@@ -5146,10 +5146,6 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		if(_bookCleaner!=null){
 			desktop.removeListener(_bookCleaner);
 			_bookCleaner = null;
-		}
-		if(_deferOperator!=null){
-			desktop.removeListener(_deferOperator);
-			_deferOperator = null;
 		}
 	}
 	
@@ -5519,8 +5515,22 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		if (map == null) {
 			map = new LinkedHashMap<String, DeferOperation>();
 			exec.setAttribute(_ZSS_DEFER_OP_MAP, map, false);
+			//post an low priority event to defer its operation!
+			org.zkoss.zk.ui.event.Events.postEvent(_DEFER_OPERATOR_PRIORITY, _ON_PROCESS_DEFER_OPERATIONS, this, map);
 		}
 		map.put(name,  op);
+	}
+	
+	//ZSS-816
+	/**
+	 * Collected same accumulated deferred operations and process here 
+	 */
+	private void processDeferOperations(Map<String, DeferOperation> map) {
+		if (map != null) {
+			for (DeferOperation op : map.values()) {
+				op.process();
+			}
+		}
 	}
 	
 	/*
@@ -5634,42 +5644,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			}
 		}
 	}
-
-	//ZSS-816
-	/**
-	 * A prpoper time point that same accumulated deferred operations can be
-	 * executed here. 
-	 */
-	private static class DeferOperator implements ExecutionCleanup, Serializable {
-		private String _ssid;
-		public DeferOperator(String ssid){
-			this._ssid = ssid;
-		}
-
-		@Override
-		public void cleanup(Execution exec, Execution parent,
-				List<Throwable> errs) throws Exception {
-			if (exec != null) {
-				Desktop desktop = exec.getDesktop();
-				if (desktop != null) {
-					Component comp = desktop.getComponentByUuid(_ssid);
-					if(comp instanceof Spreadsheet){
-						Spreadsheet ss = (Spreadsheet)comp;
-						try{
-							Map<String, DeferOperation> map = 
-								(Map<String, DeferOperation>) exec.getAttribute(_ZSS_DEFER_OP_MAP, false);
-							if (map != null) {
-								for (DeferOperation op : map.values()) {
-									op.process();
-								}
-							}
-						}catch(Exception x){}//eat
-					}
-				}
-			}
-		}
-	}
-
+	
 	//ZSS-816
 	private static interface DeferOperation extends Serializable {
 		void process();
@@ -5677,4 +5652,8 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	
 	//ZSS-816
 	private static final String _ZSS_DEFER_OP_MAP = "_ZSS_DEFER_OP_MAP";
+	//ZSS-816
+	private static final int _DEFER_OPERATOR_PRIORITY = -20000;
+	//ZSS-816
+	private static final String _ON_PROCESS_DEFER_OPERATIONS = "onProcessDeferOperations";
 }
