@@ -67,6 +67,7 @@ ZK Spreadsheet 3.6.1
   ZSS-896 column width is not correct.
   ZSS-889 Range of selecting a range of Unlock cells doesn't show correctly
   ZSS-862 ZSS charts can't identify the data properly
+  ZSS-895 Unable to click the hyperlink within a multi-row merged cell before the cell is focused
 
 ** Upgrade Notes
   * The format of arguments "formula1" and "formula2" in following data validation api has changed:

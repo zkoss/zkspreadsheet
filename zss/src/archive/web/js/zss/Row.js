@@ -328,6 +328,37 @@ zss.Row = zk.$extends(zk.Widget, {
 	},
 	getHeight: function(){
 		return this.sheet.custRowHeight._getCustomizedSize(this.r);
+	},
+	doMouseMove_: function(evt) {
+		var sheet = this.sheet,
+			mx = evt.pageX,
+			my = evt.pageY,
+			position = zss.SSheetCtrl._calCellPos(sheet, mx, my),
+			row = position[0],
+			column = position[1],
+			cell = sheet.getCell(row, column);
+
+		//ZSS-454 Cannot click on hyperlink in the merge cell.
+		if (cell!=null && cell.merr) {
+			cell = sheet.getCell(cell.mert,cell.merl);
+		}
+
+		if (cell) {
+			var $anchor = jq(cell.comp).find('a');
+			if ($anchor.length > 0) {
+				var anchor = $anchor[0];
+				if(zkS.isOverlapByPoint(anchor, mx, my)) {
+					this._cursor = 'pointer';
+					jq(this.$n()).css('cursor', 'pointer');
+					return;
+				}
+			} 
+		}
+		
+		if (this._cursor) {
+			this._cursor = null;
+			jq(this.$n()).css('cursor', '');
+		}
 	}
 }, {
 	/**

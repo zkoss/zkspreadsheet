@@ -170,12 +170,7 @@ zss.SelAreaCtrl = zk.$extends(zss.AreaCtrl, {
 			var jqa = jq(cell.comp).find('a');
 			if (jqa.length>0) {
 				var aelm = jqa[0];
-				var aoff = zk(aelm).revisedOffset();
-				var x1 = aoff[0],
-					y1 = aoff[1],
-					x2 = x1+aelm.offsetWidth,
-					y2 = y1+aelm.offsetHeight;
-				if (mx>=x1 && mx<=x2 && my>=y1 && my<=y2) {
+				if(zkS.isOverlapByPoint(aelm, mx, my)) {
 					jq(this.icomp).css('cursor', 'pointer');
 					this._setHyperlinkElment(aelm);
 					return;
