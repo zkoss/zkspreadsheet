@@ -151,7 +151,6 @@ zss.SelAreaCtrl = zk.$extends(zss.AreaCtrl, {
 		_showSelectionArea(this, true);
 	},
 	_doMouseMove: function (evt) {
-		if (this._isStartHyperlink()) return; //the hyperlink followup is already started, so don't worry about the cursor
 		var sheet = this.sheet,
 			mx = evt.pageX,
 			my = evt.pageY,
@@ -164,6 +163,10 @@ zss.SelAreaCtrl = zk.$extends(zss.AreaCtrl, {
 			cell = sheet.getCell(cell.mert,cell.merl);
 		}
 		if (cell) {
+			//ZSS-864
+			if (sheet._showCellComment)
+				sheet._showCellComment(cell);
+			if (this._isStartHyperlink()) return; //the hyperlink followup is already started, so don't worry about the cursor
 			var jqa = jq(cell.comp).find('a');
 			if (jqa.length>0) {
 				var aelm = jqa[0];
@@ -183,6 +186,21 @@ zss.SelAreaCtrl = zk.$extends(zss.AreaCtrl, {
 	},
 	_doMouseOut: function (evt) {
 		this._resetHyperlink();
+		
+		//ZSS-864
+		var sheet = this.sheet,
+			mx = evt.pageX,
+			my = evt.pageY,
+			cellpos = zss.SSheetCtrl._calCellPos(sheet, mx, my, false),
+			row = cellpos[0],
+			col = cellpos[1],
+			cell = sheet.getCell(row, col);
+		if (cell!=null && cell.merr) {
+			cell = sheet.getCell(cell.mert,cell.merl);
+		}
+		if (cell && sheet._showCellComment) {
+			sheet._showCellComment(cell);
+		}
 	},
 	_setHyperlinkElment: function (elm) {
 		this._hyperlinkElm = elm;
