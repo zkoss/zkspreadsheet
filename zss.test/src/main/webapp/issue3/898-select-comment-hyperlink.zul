@@ -1,0 +1,21 @@
+<?page title="ShowCommentInSelectArea"?>
+<zk>
+<label multiline="true">
+Since 3.6.1
+1. Move to E5; right click to popup the context menu.
+2. Select 'insert comment'; should see the richtext editor popup.
+3. Type in 'test' and press "OK" button and close the richtext editor.
+4. Now you should see a red triangle on top-right corner of cell E5.
+5. Right click to popup the context menu again; select 'Hyperlink' and insert "http://www.zkoss.org".
+6. Now you should see hyper link in cell E5.  
+7. Hover mouse to cell E5, shall pop out comment 'test' by the cell E5.
+8. Hover mouse to Hyperlink text, the mouse cursor should change to 'pointer-hand'.
+9. Click the hyperlink, should open a new browser tab and show zkoss home page.  
+10. Select area B3:G7; should see a select mask on B3:G7.
+11. Repeat step 7 ~ 9. It should still works.
+12. If you cannot see the comment pop out or the hyperlink is not response as expected; it is a bug. 
+
+</label>
+    <spreadsheet id="spreadsheet" src="/issue3/book/blank.xlsx" maxVisibleRows="50" vflex="1" width="100%" 
+    showSheetbar="true" showContextMenu="true" showFormulabar="true"></spreadsheet>
+</zk>
