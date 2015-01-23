@@ -1,0 +1,8 @@
+<?page title="MissingChartTitleIssue"?>
+<zk>
+<label multiline="true">
+1. switching sheet to "All Unlock Cells".
+2. if we can't select area A1:H20, it's a bug.
+</label>
+    <spreadsheet id="spreadsheet" src="/issue3/book/889-unlock-cells-slow.xlsx" maxVisibleRows="50" vflex="1" width="100%" showSheetbar="true"></spreadsheet>
+</zk>
