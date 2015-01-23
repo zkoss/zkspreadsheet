@@ -100,7 +100,8 @@ public class GeneralChartDataImpl extends AbstractGeneralChartDataAdv implements
 	public Object getCategory(int i) {
 		evalFormula();
 		if(i>=EvaluationUtil.sizeOf(_evalResult)){
-			return null;
+			//ZSS-862
+			return String.valueOf(i+1);
 		}
 		//ZSS-882
 		Object cat = EvaluationUtil.valueOf(_evalResult,i);

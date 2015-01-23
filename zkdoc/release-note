@@ -66,6 +66,7 @@ ZK Spreadsheet 3.6.1
   ZSS-892 An exception is thrown when exporting a file with 0 scale value
   ZSS-896 column width is not correct.
   ZSS-889 Range of selecting a range of Unlock cells doesn't show correctly
+  ZSS-862 ZSS charts can't identify the data properly
 
 ** Upgrade Notes
   * The format of arguments "formula1" and "formula2" in following data validation api has changed:
