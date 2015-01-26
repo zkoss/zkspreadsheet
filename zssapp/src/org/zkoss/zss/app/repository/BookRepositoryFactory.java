@@ -15,6 +15,7 @@ import java.io.File;
 
 import org.zkoss.lang.Library;
 import org.zkoss.zk.ui.WebApps;
+import org.zkoss.zss.app.BookRepository;
 import org.zkoss.zss.app.repository.impl.SimpleRepository;
 
 /**

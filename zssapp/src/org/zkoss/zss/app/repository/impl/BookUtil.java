@@ -24,8 +24,8 @@ import org.zkoss.zss.api.Exporters;
 import org.zkoss.zss.api.IllegalOpArgumentException;
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.Book.BookType;
-import org.zkoss.zss.app.repository.BookInfo;
-import org.zkoss.zss.app.repository.BookRepository;
+import org.zkoss.zss.app.BookInfo;
+import org.zkoss.zss.app.BookRepository;
 /**
  * 
  * @author dennis

@@ -24,8 +24,8 @@ import java.util.Map;
 import org.zkoss.zss.api.Exporters;
 import org.zkoss.zss.api.Importers;
 import org.zkoss.zss.api.model.Book;
-import org.zkoss.zss.app.repository.BookInfo;
-import org.zkoss.zss.app.repository.BookRepository;
+import org.zkoss.zss.app.BookInfo;
+import org.zkoss.zss.app.BookRepository;
 import org.zkoss.zss.app.ui.UiUtil;
 /**
  * 

@@ -16,6 +16,7 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -32,21 +33,19 @@ import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zss.api.Importer;
 import org.zkoss.zss.api.Importers;
 import org.zkoss.zss.api.model.Book;
-import org.zkoss.zss.app.repository.BookInfo;
-import org.zkoss.zss.app.repository.BookRepository;
+import org.zkoss.zss.app.impl.CollaborationInfoImpl;
+import org.zkoss.zss.app.BookInfo;
+import org.zkoss.zss.app.BookRepository;
+import org.zkoss.zss.app.CollaborationInfo;
 import org.zkoss.zss.app.repository.BookRepositoryFactory;
-import org.zkoss.zss.app.repository.impl.BookManager;
-import org.zkoss.zss.app.repository.impl.BookManagerImpl;
+import org.zkoss.zss.app.BookManager;
+import org.zkoss.zss.app.impl.BookManagerImpl;
 import org.zkoss.zss.app.repository.impl.BookUtil;
-import org.zkoss.zss.app.repository.impl.CollaborationInfo;
-import org.zkoss.zss.app.repository.impl.SimpleBookInfo;
 import org.zkoss.zss.app.ui.UiUtil;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Fileupload;
 import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
-import org.zkoss.zul.Listcell;
-import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Window;
 
@@ -76,7 +75,8 @@ public class OpenManageBookCtrl extends DlgCtrlBase{
 	Button upload;
 	
 	BookRepository repo = BookRepositoryFactory.getInstance().getRepository();
-	
+	BookManager bookManager = BookManagerImpl.getInstance(repo);
+	CollaborationInfo collaborationInfo = CollaborationInfoImpl.getInstance();
 	ListModelList<Map<String,Object>> bookListModel = new ListModelList<Map<String,Object>>();
 	
 	public static void show(EventListener<DlgCallbackEvent> callback) {
@@ -146,12 +146,11 @@ public class OpenManageBookCtrl extends DlgCtrlBase{
 		}
 		
 		final BookInfo bookinfo = (BookInfo)selection.get("bookinfo");
-		final BookManager bookManager = BookManagerImpl.getInstance(); 
 		
 		synchronized (bookManager) {
 			String bookName = bookinfo.getName();
 			if(bookManager.isBookAttached(bookinfo)) {
-				String users = CollaborationInfo.getInstance().getUsedUsernames(bookName);
+				String users = Arrays.toString(collaborationInfo.getUsedUsernames(bookName).toArray());
 				UiUtil.showInfoMessage("Book \"" + bookinfo.getName() + "\" is in used by " + users + ".");
 				return;
 			}
@@ -232,7 +231,7 @@ public class OpenManageBookCtrl extends DlgCtrlBase{
 	private Book loadBook(BookInfo bookInfo) {
 		Book book = null;
 		try {
-			book = BookManagerImpl.getInstance().readBook(bookInfo);
+			book = bookManager.readBook(bookInfo);
 		} catch (IOException e) {
 			log.error(e.getMessage(),e);
 			UiUtil.showWarnMessage("Can't load book");

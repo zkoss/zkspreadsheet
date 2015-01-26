@@ -11,6 +11,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.app.ui.dlg;
 
+import java.util.Arrays;
 import java.util.Map;
 
 import org.zkoss.lang.Strings;
@@ -20,12 +21,12 @@ import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zss.api.model.Book;
-import org.zkoss.zss.app.repository.BookRepository;
+import org.zkoss.zss.app.impl.CollaborationInfoImpl;
+import org.zkoss.zss.app.BookRepository;
 import org.zkoss.zss.app.repository.BookRepositoryFactory;
-import org.zkoss.zss.app.repository.impl.BookManager;
-import org.zkoss.zss.app.repository.impl.BookManagerImpl;
+import org.zkoss.zss.app.BookManager;
+import org.zkoss.zss.app.impl.BookManagerImpl;
 import org.zkoss.zss.app.repository.impl.BookUtil;
-import org.zkoss.zss.app.repository.impl.CollaborationInfo;
 import org.zkoss.zss.app.repository.impl.SimpleBookInfo;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Messagebox;
@@ -46,17 +47,15 @@ public class SaveBookAsCtrl extends DlgCtrlBase{
 	private static final String OK_BTN_NAME = "okBtnName";
 	
 	public static final String ON_SAVE = "onSave";
-	
-	private static BookManager bookManager = BookManagerImpl.getInstance();
-	
+		
 	@Wire
 	Textbox bookName;
 	
 	@Wire
 	Button save;
 	
-	BookRepository repo = BookRepositoryFactory.getInstance().getRepository();
-		
+	private BookRepository repo = BookRepositoryFactory.getInstance().getRepository();
+	private BookManager bookManager = BookManagerImpl.getInstance(repo);
 	private final static String URI = "~./zssapp/dlg/saveBookAs.zul";
 
 
@@ -111,7 +110,7 @@ public class SaveBookAsCtrl extends DlgCtrlBase{
 		final String name = BookUtil.appendExtension(bookName.getValue(), book);
 		
 		if(bookManager.isBookAttached(new SimpleBookInfo(name))) {			
-			String users = CollaborationInfo.getInstance().getUsedUsernames(name);
+			String users = Arrays.toString(CollaborationInfoImpl.getInstance().getUsedUsernames(name).toArray());
 			bookName.setErrorMessage("Book \"" + name + "\" is in used by " + users + ".");
 			return;
 		}
