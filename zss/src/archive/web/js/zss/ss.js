@@ -165,3 +165,20 @@ zkS._hasScrollBar = function (cmp, vert) {
 };
 
 zkS._enterChar = String.fromCharCode(13);
+
+/**
+ * check if point(x, y) is overlap to element
+ * @param element a dom element
+ * @param x x of upper left corner
+ * @param y y of upper left corner
+ * @returns true or false
+ */
+zkS.isOverlapByPoint = function(element, x, y) {
+	var zkElement = zk(element),
+		offset = zkElement.revisedOffset(),
+		x1 = offset[0],
+		y1 = offset[1],
+		x2 = x1 + zkElement.offsetWidth(),
+		y2 = y1 + zkElement.offsetHeight();
+	return x >= x1 && x <= x2 && y >= y1 && y <= y2;
+}

@@ -1601,6 +1601,16 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			}
 				
 			if (type == 'lc' && this.selArea) {
+				if (cell!=null && cell.merr) {
+					var anchorA;
+					// go to real merged cell
+					cell = sheet.getCell(cell.mert,cell.merl);
+					if(cell && (anchorA = jq(cell).find('a')) && anchorA.length > 0) {
+						// detect overlap between cursor and anchor
+						if(zkS.isOverlapByPoint(anchorA, mx, my))
+							elm = anchorA[0];
+					}
+				}
 				this.selArea._setHyperlinkElment(elm);
 				this.selArea._tryAndEndHyperlink(row, col, evt);
 			}

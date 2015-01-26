@@ -1,0 +1,15 @@
+<?page title="ShowCommentInSelectArea"?>
+<zk>
+<label multiline="true">
+Since 3.6.1
+1. merge cell B2:D4.
+2. add hyper link "http://www.zkoss.org".
+3. move on this hyper link without selection, cursor should be "pointer".
+4. click hyper link without selection, it should trigger new page to be opened.
+5. try same thing from step 1 to 4 in unmerged cell.
+
+</label>
+    <spreadsheet id="ss" vflex="1" hflex="1" src="/issue3/book/blank.xlsx"
+		showToolbar="true" showSheetbar="true" showFormulabar="true" showContextMenu="true"
+		maxVisibleRows="100" maxVisibleColumns="100"/>
+</zk>
