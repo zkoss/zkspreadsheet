@@ -1,0 +1,20 @@
+<?page title="ShowCommentInSelectArea"?>
+<zk>
+<label multiline="true">
+Since 3.6.1
+1. Move to E5; right click to popup the context menu.
+2. Select 'Hyperlink'; should see the Insert Hyperlink dialog.
+3. Press 'Web Page' button.
+4. In Address field; type in aaaa and press OK button.
+5. You should see a messagebox with Red stop sign and message "'aaaa' is not a valid web page address."
+6. If not, it is a bug.  
+7. Close the messagebox and repeat 1 ~ 3.
+8. In Address field; type in http://www.zkoss.org and press OK button.
+9. You should see in E5 a hyperlink: http://www.zkoss.org.
+10. Move mouse to cell E5, you should see mouse cursor changed to 'pointer' shape.  
+11. Click the link and you browser shall create a new tab and visit http://www.zkoss.org.
+
+</label>
+    <spreadsheet id="spreadsheet" src="/issue3/book/blank.xlsx" maxVisibleRows="50" vflex="1" width="100%" 
+    showSheetbar="true" showContextMenu="true" showFormulabar="true"></spreadsheet>
+</zk>
