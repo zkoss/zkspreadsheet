@@ -1,0 +1,22 @@
+<?page title="ShowCommentInSelectArea"?>
+<zk>
+<label multiline="true">
+Since 3.6.1
+1. Move to E5; right click to popup the context menu.
+2. Select 'Hyperlink'; should see the Insert Hyperlink dialog.
+3. Press 'E-mail Address' button.
+4. In E-mail Address field; type in user@example.com and press OK button.
+5. dialog should close and you should see in E5 the hyperlink 'mailto:user@example.com'
+6. Move mouse to cell E5, you should see mouse cursor changed to 'pointer' shape.  
+7. Click the link and you should see your local email client popup with email address filled in.
+8. Close your email client.
+9. It is a bug if you see a dialog with red stop sign in Spreadsheet with message like following:
+   "The resource you request is no longer available: /index.zul (z_b550).
+    This is normally caused by timeout, or opening too many Web pages.
+    You have to reload the page and try again."
+10. otherwise, it is OK.
+
+</label>
+    <spreadsheet id="spreadsheet" src="/issue3/book/blank.xlsx" maxVisibleRows="50" vflex="1" width="100%" 
+    showSheetbar="true" showContextMenu="true" showFormulabar="true"></spreadsheet>
+</zk>

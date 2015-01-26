@@ -1382,13 +1382,23 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 			if (this._linkToNewTab || evt.ctrlKey) //LINK_URL, always link to new tab window or CTRL-click
 				window.open(href);
 			else //LINK_URL, no CTRL
-				location.href = href;
-		} else if (type == 3) //LINK_EMAIL
-			location.href = href;
+				window.location.href = href;
+		} else if (type == 3) { //LINK_EMAIL
+			window.location.href = href;
+			this._skipOnbeforeunloadOnce(); //ZSS-900
+		}
 //		else if (type == 4) //LINK_FILE
 			//TODO LINK_FILE
 //		else if (type == 2) //LINK_DOCUMENT
 			//TODO LINK_DOCUMENT
+	},
+	//ZSS-900
+	// Tricky! Skip ZK's original onbeforeunload event once and then retore back
+	_skipOnbeforeunloadOnce: function() {
+		var _oldBfUnload = window.onbeforeunload;
+		window.onbeforeunload = function () {
+			window.onbeforeunload = _oldBfUnload;
+		};
 	}
 }, {
 	CELL_MOUSE_EVENT_NAME: {lc:'onCellClick', rc:'onCellRightClick', dbc:'onCellDoubleClick', af:'onCellFilter', dv:'onCellValidator'},
