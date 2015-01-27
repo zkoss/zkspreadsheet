@@ -217,11 +217,6 @@ public abstract class AbstractCellAdv implements SCell,LinkedModelObject,Seriali
 	
 	@Override
 	public SHyperlink setupHyperlink(HyperlinkType type,String address,String label){
-		//ZSS-899
-		HyperlinkType type0 = getHyperlinkType(address);
-		if (type0 == HyperlinkType.FILE) {
-			throw new InvalidModelOpException("'" + address + "' is not a valid web page address");
-		}
 		SHyperlink hyperlink = getHyperlink();
 		if(hyperlink!=null){
 			hyperlink.setType(type);
@@ -264,18 +259,4 @@ public abstract class AbstractCellAdv implements SCell,LinkedModelObject,Seriali
 	//ZSS-873
 	//@since 3.7.0
 	public abstract FormulaExpression getFormulaExpression(); 
-
-	//ZSS-899
-	private HyperlinkType getHyperlinkType(String address) {
-		HyperlinkType type = null;
-        if (address.startsWith("http://") || address.startsWith("https://")
-                || address.startsWith("ftp://")) {
-            type = HyperlinkType.URL;
-        } else if (address.startsWith("mailto:")) {
-            type = HyperlinkType.EMAIL;
-        } else {
-            type = HyperlinkType.FILE;
-        }
-        return type;
-	}
 }

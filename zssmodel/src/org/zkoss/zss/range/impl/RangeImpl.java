@@ -439,7 +439,10 @@ public class RangeImpl implements SRange {
 					
 					//check if a hyperlink
 					if(result.getType() == CellType.STRING){
-						hyperlinkType.set(getHyperlinkType((String)result.getValue()));
+						final HyperlinkType type = getHyperlinkType((String)result.getValue());
+						if (type == HyperlinkType.EMAIL || type == HyperlinkType.URL) {
+							hyperlinkType.set(type);
+						}
 					}
 				}
 				
@@ -483,7 +486,7 @@ public class RangeImpl implements SRange {
 				case STRING:
 					cell.setStringValue((String) resultVal);
 					if(hyperlinkType.get()!=null){
-						cell.setupHyperlink(hyperlinkType.get(),(String)resultVal,(String)resultVal);
+						setupHyperlink0(cell, hyperlinkType.get(),(String)resultVal,(String)resultVal);
 					}
 					break;
 				case ERROR:
@@ -503,14 +506,37 @@ public class RangeImpl implements SRange {
 		}).doInWriteLock(getLock());
 	}
 	
+	//ZSS-899
+	private SHyperlink setupHyperlink0(SCell cell, HyperlinkType type,String address,String label) {
+		HyperlinkType type0 = getHyperlinkType(address);
+		if (type != HyperlinkType.DOCUMENT || type0 != HyperlinkType.FILE) {
+			if (type0 != type) {
+				switch(type) {
+				case DOCUMENT:
+					throw new InvalidModelOpException("'" + address + "' is not a valid document");
+				case EMAIL:
+					throw new InvalidModelOpException("'" + address + "' is not a valid E-mail address");
+				case URL:
+					throw new InvalidModelOpException("'" + address + "' is not a valid web page address");
+				case FILE:
+					throw new InvalidModelOpException("'" + address + "' is not a valid file address");
+				}
+			}
+		}
+		return cell.setupHyperlink(type, address, label);
+	}
+	
 	private SHyperlink.HyperlinkType getHyperlinkType(String address) {
 		if (address != null) {
 			final String addr = address.toLowerCase(); // ZSS-288: support more scheme according to POI code, see  org.zkoss.poi.ss.formula.functions.Hyperlink
-			if (addr.startsWith("http://") || addr.startsWith("https://")) {
-				return SHyperlink.HyperlinkType.URL;
+			if (addr.startsWith("http://") || addr.startsWith("https://")
+					|| address.startsWith("ftp://")) {
+				return HyperlinkType.URL;
 			} else if (addr.startsWith("mailto:")) {
-				return SHyperlink.HyperlinkType.EMAIL;
-			} // ZSS-288: don't support auto-create hyperlink for DOCUMENT and FILE type
+				return HyperlinkType.EMAIL;
+	        } else {
+	            return HyperlinkType.FILE;
+			} // ZSS-288: don't support auto-create hyperlink for DOCUMENT
 		}
 		return null;
 	}
@@ -1072,7 +1098,7 @@ public class RangeImpl implements SRange {
 			final String display) {
 		new CellVisitorTask(new CellVisitorForUpdate() {
 			public boolean visit(SCell cell) {
-				SHyperlink link = cell.setupHyperlink(linkType,address,display);
+				SHyperlink link = setupHyperlink0(cell, linkType,address,display);
 				
 				String text = display;
 // ZSS-853: should not remove the "=" which is not consistent with excel 
