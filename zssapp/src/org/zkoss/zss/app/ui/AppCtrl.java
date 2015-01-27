@@ -364,23 +364,25 @@ public class AppCtrl extends CtrlBase<Component>{
 					return;
 				
 				Media[] ms = event.getMedias();
-				Media m = event.getMedias()[0];
-				if(ms.length > 0 && m.isBinary()){
-					String name = m.getName();
-					Book book = importer.imports(m.getStreamData(), name);
-
-					loadedBook = book;
-					loadedBook.setShareScope(EventQueues.APPLICATION);
-					collaborationInfo.removeRelationship(username);
-					ss.setBook(loadedBook);
-					pushAppEvent(AppEvts.ON_LOADED_BOOK,loadedBook);
-					pushAppEvent(AppEvts.ON_CHANGED_SPREADSHEET,ss);
-					updatePageInfo();
-					
-					return;
+				if(ms.length > 0) {
+					Media m = event.getMedias()[0];
+					if (m.isBinary()){
+						String name = m.getName();
+						Book book = importer.imports(m.getStreamData(), name);
+	
+						loadedBook = book;
+						loadedBook.setShareScope(EventQueues.APPLICATION);
+						collaborationInfo.removeRelationship(username);
+						ss.setBook(loadedBook);
+						pushAppEvent(AppEvts.ON_LOADED_BOOK,loadedBook);
+						pushAppEvent(AppEvts.ON_CHANGED_SPREADSHEET,ss);
+						updatePageInfo();
+						
+						return;
+					}
 				}
 
-				UiUtil.showInfoMessage("Can't get any supported files");
+				UiUtil.showInfoMessage("Fail to import the specified file" + (ms.length > 0 ? ": " + ms[0].getName() : "."));
 			}
 		});		
 	}

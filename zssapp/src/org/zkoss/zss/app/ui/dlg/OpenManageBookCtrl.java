@@ -222,7 +222,7 @@ public class OpenManageBookCtrl extends DlgCtrlBase{
 						}
 					}
 				}else{
-					UiUtil.showInfoMessage("Can't get any supported files");
+					UiUtil.showInfoMessage("Can't upload/import the specified file" + (medias.length > 0 ? ": " + medias[0].getName() : "."));
 				}
 			}
 		});
@@ -234,7 +234,7 @@ public class OpenManageBookCtrl extends DlgCtrlBase{
 			book = bookManager.readBook(bookInfo);
 		} catch (IOException e) {
 			log.error(e.getMessage(),e);
-			UiUtil.showWarnMessage("Can't load book");
+			UiUtil.showWarnMessage("Can't load the specified book:" + bookInfo.getName());
 		}
 		return book;
 	}
