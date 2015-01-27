@@ -287,7 +287,7 @@ public class AppCtrl extends CtrlBase<Component>{
 							ShareBookCtrl.show();
 						} catch (IOException e) {
 							log.error(e.getMessage(), e);
-							UiUtil.showWarnMessage("Can't save book");
+							UiUtil.showWarnMessage("Can't save the specified book: " + name);
 							return;
 						}
 					}
@@ -397,7 +397,7 @@ public class AppCtrl extends CtrlBase<Component>{
 			loadedBook.setShareScope(EventQueues.APPLICATION);
 		} catch (IOException e) {
 			log.error(e.getMessage(),e);
-			UiUtil.showWarnMessage("Can't load a new book");
+			UiUtil.showWarnMessage("Can't open a new book");
 			return;
 		}
 
@@ -459,7 +459,7 @@ public class AppCtrl extends CtrlBase<Component>{
 			}
 		} catch (IOException e) {
 			log.error(e.getMessage(),e);
-			UiUtil.showWarnMessage("Can't save book");
+			UiUtil.showWarnMessage("Can't save the specified book: " + selectedBookInfo.getName());
 			return;
 		}
 	}
@@ -507,7 +507,7 @@ public class AppCtrl extends CtrlBase<Component>{
 						}
 					} catch (IOException e) {
 						log.error(e.getMessage(),e);
-						UiUtil.showWarnMessage("Can't save book");
+						UiUtil.showWarnMessage("Can't save the specified book: " + name);
 						return;
 					}
 				}
@@ -520,7 +520,7 @@ public class AppCtrl extends CtrlBase<Component>{
 				book = bookManager.readBook(info);
 			}catch (IOException e) {
 				log.error(e.getMessage(),e);
-				UiUtil.showWarnMessage("Can't load book");
+				UiUtil.showWarnMessage("Can't load the specified book: " + info.getName());
 				return;
 			}
 		}
