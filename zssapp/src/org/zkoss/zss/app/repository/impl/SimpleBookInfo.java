@@ -14,7 +14,7 @@ package org.zkoss.zss.app.repository.impl;
 import java.io.File;
 import java.util.Date;
 
-import org.zkoss.zss.app.repository.BookInfo;
+import org.zkoss.zss.app.BookInfo;
 /**
  * 
  * @author dennis

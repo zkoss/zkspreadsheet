@@ -22,8 +22,8 @@ import java.util.List;
 import org.zkoss.zss.api.Exporters;
 import org.zkoss.zss.api.Importers;
 import org.zkoss.zss.api.model.Book;
-import org.zkoss.zss.app.repository.BookInfo;
-import org.zkoss.zss.app.repository.BookRepository;
+import org.zkoss.zss.app.BookInfo;
+import org.zkoss.zss.app.BookRepository;
 import org.zkoss.zss.app.ui.UiUtil;
 /**
  * 
@@ -35,7 +35,6 @@ public class SimpleRepository implements BookRepository{
 	public SimpleRepository(File root){
 		this.root = root;
 	}
-	
 	
 	public synchronized List<BookInfo> list() {
 		List<BookInfo> books = new ArrayList<BookInfo>();

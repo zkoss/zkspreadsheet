@@ -14,7 +14,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 {{IS_RIGHT
 }}IS_RIGHT
 */
-package org.zkoss.zss.app.repository;
+package org.zkoss.zss.app;
 
 import java.io.IOException;
 import java.util.List;

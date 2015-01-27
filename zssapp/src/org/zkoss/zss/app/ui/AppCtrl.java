@@ -13,6 +13,7 @@ package org.zkoss.zss.app.ui;
 
 import java.io.*;
 import java.net.URLDecoder;
+import java.util.Arrays;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -28,15 +29,21 @@ import org.zkoss.web.servlet.http.Encodes;
 import org.zkoss.zk.ui.*;
 import org.zkoss.zk.ui.event.*;
 import org.zkoss.zk.ui.select.annotation.Wire;
+import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zk.ui.util.DesktopCleanup;
 import org.zkoss.zss.api.*;
 import org.zkoss.zss.api.model.*;
 import org.zkoss.zss.api.model.Hyperlink.HyperlinkType;
+import org.zkoss.zss.app.BookInfo;
+import org.zkoss.zss.app.BookRepository;
+import org.zkoss.zss.app.CollaborationInfo;
+import org.zkoss.zss.app.CollaborationInfo.CollaborationEventListener;
+import org.zkoss.zss.app.impl.CollaborationInfoImpl;
+import org.zkoss.zss.app.CollaborationInfo.CollaborationEvent;
 import org.zkoss.zss.app.repository.*;
-import org.zkoss.zss.app.repository.impl.BookManager;
-import org.zkoss.zss.app.repository.impl.BookManagerImpl;
+import org.zkoss.zss.app.BookManager;
+import org.zkoss.zss.app.impl.BookManagerImpl;
 import org.zkoss.zss.app.repository.impl.BookUtil;
-import org.zkoss.zss.app.repository.impl.CollaborationInfo;
 import org.zkoss.zss.app.repository.impl.SimpleBookInfo;
 import org.zkoss.zss.app.ui.dlg.*;
 import org.zkoss.zss.ui.*;
@@ -56,6 +63,20 @@ public class AppCtrl extends CtrlBase<Component>{
 	private static final long serialVersionUID = 1L;
 	public static final String ZSS_USERNAME = "zssUsername";
 	private static final String UTF8 = "UTF-8";
+	
+	private static BookRepository repo = BookRepositoryFactory.getInstance().getRepository();
+	private static CollaborationInfo collaborationInfo = CollaborationInfoImpl.getInstance();
+	private static BookManager bookManager = BookManagerImpl.getInstance(repo);
+	static {
+		collaborationInfo.addEvent(new CollaborationEventListener() {
+			@Override
+			public void onEvent(CollaborationEvent event) {
+				if(event.getType() == CollaborationEvent.Type.BOOK_EMPTY)
+					bookManager.detachBook(new SimpleBookInfo((String) event.getValue()));
+			}
+		});
+	}
+	
 	private String username;
 
 	@Wire
@@ -64,8 +85,7 @@ public class AppCtrl extends CtrlBase<Component>{
 	BookInfo selectedBookInfo;
 	Book loadedBook;
 	Desktop desktop = Executions.getCurrent().getDesktop();
-	private CollaborationInfo collaborationInfo = CollaborationInfo.getInstance();
-	private BookManager bookManager = BookManagerImpl.getInstance();
+	
 	
 	public AppCtrl() {
 		super(true);
@@ -171,8 +191,7 @@ public class AppCtrl extends CtrlBase<Component>{
 					if(bookmark.isEmpty()) 
 						doOpenNewBook(false);
 					else {
-						BookInfo bookinfo = null;
-						bookinfo = bookManager.getBookInfo(bookmark);
+						BookInfo bookinfo = getBookInfo(bookmark);
 						if(bookinfo != null){
 							doLoadBook(bookinfo, null, null, false);
 						}else{
@@ -205,13 +224,27 @@ public class AppCtrl extends CtrlBase<Component>{
 			bookName = exec.getParameter("book");
 		}
 		
-		BookInfo bookinfo = bookManager.getBookInfo(bookName);
+		BookInfo bookinfo = getBookInfo(bookName);
 		String sheetName = Executions.getCurrent().getParameter("sheet");
 		if(bookinfo!=null){
 			doLoadBook(bookinfo, null, sheetName, false);
 		}else{
 			doOpenNewBook(false);
 		}
+	}
+	
+	private BookInfo getBookInfo(String bookName) {
+			BookInfo bookinfo = null;
+			if(!Strings.isBlank(bookName)){
+				bookName = bookName.trim();
+				for(BookInfo info:BookRepositoryFactory.getInstance().getRepository().list()){
+					if(bookName.equals(info.getName())){
+						bookinfo = info;
+						break;
+					}
+				}
+			}
+			return bookinfo;
 	}
 	
 	private void shareBook() {
@@ -237,15 +270,14 @@ public class AppCtrl extends CtrlBase<Component>{
 					if(SaveBookAsCtrl.ON_SAVE.equals(event.getName())){
 						
 						String name = (String) event.getData(SaveBookAsCtrl.ARG_NAME);
-						BookManager manager = BookManagerImpl.getInstance();
 
 						try {
-							synchronized (manager) {		
-								if(manager.isBookAttached(new SimpleBookInfo(name))) {
-									String users = CollaborationInfo.getInstance().getUsedUsernames(name);
+							synchronized (bookManager) {		
+								if(bookManager.isBookAttached(new SimpleBookInfo(name))) {
+									String users = Arrays.toString(CollaborationInfoImpl.getInstance().getUsedUsernames(name).toArray());
 									UiUtil.showWarnMessage("File \"" + name + "\" is in used by " + users + ". Please try again.");
 								}
-								selectedBookInfo = manager.saveBook(new SimpleBookInfo(name), loadedBook);
+								selectedBookInfo = bookManager.saveBook(new SimpleBookInfo(name), loadedBook);
 								doLoadBook(selectedBookInfo, null, "", true);
 							}
 							
@@ -415,7 +447,7 @@ public class AppCtrl extends CtrlBase<Component>{
 		}
 		
 		try {
-			BookManagerImpl.getInstance().updateBook(selectedBookInfo);
+			bookManager.updateBook(selectedBookInfo, loadedBook);
 			UiUtil.showInfoMessage("Save book to "+selectedBookInfo.getName());
 			pushAppEvent(AppEvts.ON_SAVED_BOOK,loadedBook);
 			if(close){
@@ -453,15 +485,14 @@ public class AppCtrl extends CtrlBase<Component>{
 				if(SaveBookAsCtrl.ON_SAVE.equals(event.getName())){
 					
 					String name = (String)event.getData(SaveBookAsCtrl.ARG_NAME);
-					BookManager manager = BookManagerImpl.getInstance();
 
 					try {
-						synchronized (manager) {		
-							if(manager.isBookAttached(new SimpleBookInfo(name))) {
-								String users = CollaborationInfo.getInstance().getUsedUsernames(name);
+						synchronized (bookManager) {		
+							if(bookManager.isBookAttached(new SimpleBookInfo(name))) {
+								String users = Arrays.toString(CollaborationInfoImpl.getInstance().getUsedUsernames(name).toArray());
 								UiUtil.showWarnMessage("File \"" + name + "\" is in used by " + users + ". Please try again.");
 							}
-							selectedBookInfo = manager.saveBook(new SimpleBookInfo(name), loadedBook);
+							selectedBookInfo = bookManager.saveBook(new SimpleBookInfo(name), loadedBook);
 							doLoadBook(selectedBookInfo, null, "", true);
 						}
 						
@@ -484,7 +515,7 @@ public class AppCtrl extends CtrlBase<Component>{
 	private void doLoadBook(BookInfo info,Book book,String sheetName, boolean renewState){
 		if(book==null){
 			try {
-				book = BookManagerImpl.getInstance().readBook(info);
+				book = bookManager.readBook(info);
 			}catch (IOException e) {
 				log.error(e.getMessage(),e);
 				UiUtil.showWarnMessage("Can't load book");

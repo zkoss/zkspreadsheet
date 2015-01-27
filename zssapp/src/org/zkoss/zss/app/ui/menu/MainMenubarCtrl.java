@@ -95,17 +95,12 @@ public class MainMenubarCtrl extends CtrlBase<Menubar> {
 	@Override
 	public void doAfterCompose(Menubar comp) throws Exception {
 		super.doAfterCompose(comp);
-		Boolean evalOnly = (Boolean) Executions.getCurrent().getDesktop().getWebApp().getAttribute("Evaluation Only");
-		if(evalOnly == null) 
-			evalOnly = Boolean.FALSE;
-		if(!evalOnly && Library.getProperty("zssapp.showmark", "true").toLowerCase().equals("false")) {
-			zssmark.setParent(null);
-		} else {
-			String title = ZSS_PREFIX + Version.UID;
-			if(evalOnly)
-				title += " (Evaluation)";
-			zssmark.setLabel(title);
-		}
+		initMenuOption();
+	}
+	
+	private void initMenuOption() {
+		boolean isEE = "EE".equals(Version.getEdition());
+		
 	}
 
 	protected void onAppEvent(String event,Object data){
@@ -122,6 +117,8 @@ public class MainMenubarCtrl extends CtrlBase<Menubar> {
 
 		boolean hasBook = sparedsheet.getBook()!=null;
 		boolean isEE = "EE".equals(Version.getEdition());
+		Boolean evalOnly = (Boolean) Executions.getCurrent().getDesktop().getWebApp().getAttribute("Evaluation Only");
+		Boolean collabDisabled = Boolean.valueOf(Library.getProperty("zssapp.collaboration.disabled"));
 		//new and open are always on
 		newFile.setDisabled(false);
 		openManageFile.setDisabled(false);
@@ -133,9 +130,30 @@ public class MainMenubarCtrl extends CtrlBase<Menubar> {
 		closeFile.setDisabled(disabled);
 		exportFile.setDisabled(disabled);
 		exportPdf.setDisabled(!isEE || disabled);
-		shareBook.setDisabled(disabled);
+		changeUsername.setDisabled(!isEE || collabDisabled == Boolean.TRUE);
+		shareBook.setDisabled(!isEE || collabDisabled == Boolean.TRUE);
+		
+		// zss title
+		if(evalOnly == null) 
+			evalOnly = Boolean.FALSE;
+		if(!evalOnly && Boolean.valueOf(Library.getProperty("zssapp.menu.zssmark.hidden")) == Boolean.TRUE) {
+			zssmark.setVisible(false);
+		} else {
+			String title = ZSS_PREFIX + Version.UID;
+			if(evalOnly)
+				title += " (Evaluation)";
+			zssmark.setLabel(title);
+		}
 		
 		
+		
+		Boolean shareBookHidden = Boolean.valueOf(Library.getProperty("zssapp.menu.sharebook.hidden"));
+		if(shareBookHidden)
+			shareBook.setVisible(false);
+		
+		Boolean usernameHidden = Boolean.valueOf(Library.getProperty("zssapp.menu.username.hidden"));
+		if(usernameHidden)
+			changeUsername.setVisible(false);
 		
 		UndoableActionManager uam = sparedsheet.getUndoableActionManager();
 		

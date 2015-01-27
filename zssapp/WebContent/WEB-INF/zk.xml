@@ -8,6 +8,25 @@
 		
 	<session-config>
 		<max-desktops-per-session>10</max-desktops-per-session>
-	
 	</session-config>
+<!--
+	<library-property>
+		<name>zssapp.collaboration.disabled</name>
+		<value>true</value>
+	</library-property>
+	
+ 	<library-property>
+		<name>zssapp.menu.sharebook.hidden</name>
+		<value>true</value>
+	</library-property>
+	
+	<library-property>
+		<name>zssapp.menu.username.hidden</name>
+		<value>true</value>
+	</library-property>
+
+	<library-property>
+		<name>zssapp.menu.zssmark.hidden</name>
+		<value>true</value>
+	</library-property> -->
 </zk>
