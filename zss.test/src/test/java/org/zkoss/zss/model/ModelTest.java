@@ -2132,7 +2132,7 @@ public class ModelTest {
 		SGeneralChartData chartData = (SGeneralChartData)p1.getData();
 		Assert.assertEquals(0, chartData.getNumOfCategory());
 		Assert.assertEquals(0, chartData.getNumOfSeries());
-		Assert.assertEquals(null, chartData.getCategory(100)); //allow out of index
+		Assert.assertEquals("101", chartData.getCategory(100)); //allow out of index
 		
 		chartData.setCategoriesFormula("A1:A3");
 		Assert.assertEquals(3, chartData.getNumOfCategory());
