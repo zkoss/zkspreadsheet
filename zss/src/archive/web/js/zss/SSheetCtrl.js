@@ -2617,6 +2617,11 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		}
 		if (this.state != zss.SSheetCtrl.FOCUSED)
 			return;
+		
+		//ZSS-903
+		var inputNode = this.dp.getInputNode(); 
+		jq(inputNode).val(result);
+		
 		this.dp.deferSelectFocustag();
 	},
 	/**

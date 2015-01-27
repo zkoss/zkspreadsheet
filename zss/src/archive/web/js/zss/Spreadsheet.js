@@ -1317,7 +1317,7 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 			//feature #26: Support copy/paste value to local Excel
 			var keyCode = evt.keyCode;
 			if (this.isListen('onCtrlKey', {any:true}) && 
-				(keyCode == 67 || keyCode == 86)) {
+				(keyCode == 67 || keyCode == 86)) { //67: ctrl-c; 86: ctrl-v
 				var parsed = this._parsedCtlKeys,
 					ctrlKey = evt.ctrlKey ? 1: evt.altKey ? 2: evt.shiftKey ? 3: 0;
 				if (parsed && 

@@ -70,6 +70,7 @@ ZK Spreadsheet 3.6.1
   ZSS-895 Unable to click the hyperlink within a multi-row merged cell before the cell is focused
   ZSS-899 After saving cell's hyper link doesn't work anymore
   ZSS-900 Desktop removed when click a mailto hyperlink in cell
+  ZSS-903 Unable to copy cell content to another application
   
 ** Upgrade Notes
   * The format of arguments "formula1" and "formula2" in following data validation api has changed:
