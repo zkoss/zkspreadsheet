@@ -203,6 +203,8 @@ public class AppCtrl extends CtrlBase<Component>{
 			}
         );
 		
+		Clients.confirmClose("Make sure you have saved your work before leaving this page!");
+		
 		Executions.getCurrent().getDesktop().addListener(new DesktopCleanup(){
 			@Override
 			public void cleanup(Desktop desktop) throws Exception {

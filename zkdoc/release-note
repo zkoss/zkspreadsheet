@@ -26,6 +26,7 @@ ZK Spreadsheet 3.6.1
   ZSS-879 Format Cell dialog can display current cell's format
   ZSS-878 Support adding custom formats and show them in Format Cell dialog
   ZSS-902 ZSS can throw more specific information when importing fails
+  ZSS-897 Zssapp should support alert when close window without saving
   
 *Bugs:
   ZSS-820 Formula should change sheet name if reordered sheet goes beyond the formula's sheet boundary.
