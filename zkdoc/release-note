@@ -1,4 +1,4 @@
-ZK Spreadsheet 3.6.1
+ZK Spreadsheet 3.7.0
 *Features:
   ZSS-815 Enhance performance of dependents and precedents lookup mechanism
   ZSS-814 Provide a new APIs which can enforce evaluation and refresh the specified range.

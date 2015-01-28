@@ -999,7 +999,7 @@ public interface Range {
 	 * this range will be evaluated immediately; otherwise will be 
 	 * evaluated on demand.
 	 *  
-	 * @since 3.6.1
+	 * @since 3.7.0
 	 */
 	public void refresh(boolean includeDependents, boolean clearCache, boolean enforceEval);
 	
@@ -1012,21 +1012,21 @@ public interface Range {
 	 * </ul>
 	 * @param visible
 	 * @see SheetVisible
-	 * @since 3.6.1
+	 * @since 3.7.0
 	 */
 	public void setSheetVisible(SheetVisible visible);
 
 	/**
 	 * Return the comment rich edit text of the left top cell of this Range.
 	 * @return the rich edit text of this Range.
-	 * @since 3.6.1
+	 * @since 3.7.0
 	 */
 	public String getCommentRichText();
 
 	/**
 	 * Set comment rich text into the left top cell of this range; null to 
 	 * delete it. 
-	 * @since 3.6.1
+	 * @since 3.7.0
 	 */
 	public void setCommentRichText(String html);
 
@@ -1034,7 +1034,7 @@ public interface Range {
 	 * Set comment visibility into the left top cell of this range; if no
 	 * comment at the cell, it simply ignored.
 	 * @param visible
-	 * @since 3.6.1
+	 * @since 3.7.0
 	 */
 	public void setCommentVisible(boolean visible);
 	
@@ -1042,7 +1042,7 @@ public interface Range {
 	 * Returns whether the comment is always visible at the left top cell of
 	 * this range; if no comment at the cell, it returns false.
 	 * @return
-	 * @since 3.6.1
+	 * @since 3.7.0
 	 */
 	public boolean isCommentVisible();
 }

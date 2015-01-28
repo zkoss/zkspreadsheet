@@ -26,7 +26,7 @@ public interface CellStyle {
 
 	/**
 	 * The fill pattern
-	 * @since 3.6.1
+	 * @since 3.7.0
 	 */
 	public enum FillPattern {
 		NONE, //NO_FILL

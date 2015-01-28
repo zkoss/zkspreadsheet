@@ -1,4 +1,4 @@
-<!-- Since 3.6.1 -->
+<!-- Since 3.7.0 -->
 <window border="normal" width="100%" height="100%" apply="zss.issue.Composer697">
 	<button id="export" label="Export"/>
 	<spreadsheet id="ss" vflex="1" hflex="1" src="/issue3/book/697-chart-engine.xlsx" 

@@ -54,7 +54,7 @@ public interface SRow extends CellStyleHolder{
 	/**
 	 * 
 	 * @return
-	 * @since 3.6.1
+	 * @since 3.7.0
 	 */
 	public Iterator<SCell> getCellIterator();
 }

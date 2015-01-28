@@ -10,7 +10,7 @@
 		<commons-math.version>2.2</commons-math.version>
 		<servlet.version>2.4</servlet.version>
 	</properties>
-	<version>3.6.1-SNAPSHOT</version>
+	<version>3.7.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<name>ZK Spreadsheet</name>
 	<url>http://www.zkoss.org/zss</url>

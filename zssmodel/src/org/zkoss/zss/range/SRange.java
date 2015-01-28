@@ -894,7 +894,7 @@ public interface SRange {
 	 * this range will be evaluated immediately; otherwise will be 
 	 * evaluated on demand.
 	 *  
-	 * @since 3.6.1
+	 * @since 3.7.0
 	 */
 	public void refresh(boolean includeDependents, boolean clearCache, boolean enforceEval);
 	
@@ -906,7 +906,7 @@ public interface SRange {
 	 *  <li>HIDDEN: the sheet is hidden but can be unhidden using UI</li>
 	 *  <li>VERY_HIDDEN: the sheet is hidden but can be unhidden only via this API.</li>
 	 * </ul>
-	 * @since 3.6.1
+	 * @since 3.7.0
 	 * @see SheetVisible
 	 */
 	public void setSheetVisible(SheetVisible visible);
@@ -914,14 +914,14 @@ public interface SRange {
 	/**
 	 * Return the comment rich edit text of the left top cell of this Range.
 	 * @return the rich edit text of this Range.
-	 * @since 3.6.1
+	 * @since 3.7.0
 	 */
 	public String getCommentRichText();
 
 	/**
 	 * Set comment rich text into the left top cell of this range; null to 
 	 * delete it. 
-	 * @since 3.6.1
+	 * @since 3.7.0
 	 */
 	public void setCommentRichText(String html);
 
@@ -929,7 +929,7 @@ public interface SRange {
 	 * Set comment visibility into the left top cell of this range; if no
 	 * comment at the cell, it simply ignored.
 	 * @param visible
-	 * @since 3.6.1
+	 * @since 3.7.0
 	 */
 	public void setCommentVisible(boolean visible);
 	
@@ -937,7 +937,7 @@ public interface SRange {
 	 * Returns whether the comment is always visible at the left top cell of
 	 * this range; if no comment at the cell, it returns false.
 	 * @return
-	 * @since 3.6.1
+	 * @since 3.7.0
 	 */
 	public boolean isCommentVisible();
 }

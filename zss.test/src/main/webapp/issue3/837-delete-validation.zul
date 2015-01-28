@@ -1,5 +1,5 @@
 <zk>
-Since 3.6.1
+Since 3.7.0
 <label multiline="true">
 1. Select B1; you should see a dropdown button by it.
 2. click "Delete Validation" button.

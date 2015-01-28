@@ -1,7 +1,7 @@
 <?page title="ShowCommentInSelectArea"?>
 <zk>
 <label multiline="true">
-Since 3.6.1
+Since 3.7.0
 1. Move to E5; right click to popup the context menu.
 2. Select 'insert comment'; should see the richtext editor popup.
 3. Type in 'test' and press "OK" button and close the richtext editor.

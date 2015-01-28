@@ -1,7 +1,7 @@
 <vlayout vflex="1">
 <div>
 <label multiline="true">
-Since 3.6.1
+Since 3.7.0
 1. Press the "Export to Excel" button.
 2. Open the down loaded excel file "columnWidth.xlsx" with Excel.
 3. Check column widths; it should be the same as seen on Excel.

@@ -5308,7 +5308,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	 * tune data loading speed. Note if the given sheet is the currently 
 	 * selected sheet, it will be ignored.
 	 * @param sheet the sheet
-	 * @since 3.6.1
+	 * @since 3.7.0
 	 */
 	public void clearClientCache(SSheet sheet) {
 		if (sheet == null) return; 

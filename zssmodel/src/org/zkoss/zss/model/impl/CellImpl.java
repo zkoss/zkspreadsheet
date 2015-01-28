@@ -521,7 +521,7 @@ public class CellImpl extends AbstractCellAdv {
 	}
 	
 	//ZSS-818
-	//@since 3.6.1
+	//@since 3.7.0
 	public void setFormulaResultValue(ValueEval value) {
 		try {
 			_formulaResultValue = new FormulaResultCellValue(FormulaEngineImpl.convertToEvaluationResult(value));

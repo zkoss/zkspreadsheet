@@ -30,10 +30,10 @@ public interface Ref {
 	public int getLastColumn();
 	
 	//ZSS-815
-	//since 3.6.1
+	//since 3.7.0
 	public int getSheetIndex(); 
 	
 	//ZSS-815
-	//since 3.6.1
+	//since 3.7.0
 	public int getLastSheetIndex();
 }

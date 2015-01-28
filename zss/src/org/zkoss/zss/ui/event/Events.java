@@ -169,7 +169,7 @@ public class Events {
 	/**
 	 * This event is sent after sheet's visible is changed by operating the book model.
 	 * @see SheetEvent
-	 * @since 3.6.1
+	 * @since 3.7.0
 	 */
 	public static final String ON_AFTER_SHEET_VISIBLE_CHANGE = "onAfterSheetVisibleChange"; //ZSS-832
 	

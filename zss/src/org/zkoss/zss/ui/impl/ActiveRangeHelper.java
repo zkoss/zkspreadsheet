@@ -61,7 +61,7 @@ public class ActiveRangeHelper {
 	}
 	
 	//Remove this sheet from activeRanges
-	//@since 3.6.1
+	//@since 3.7.0
 	public AreaRef removeActiveRange(SSheet sheet) {
 		return activeRanges != null ? activeRanges.remove(sheet) : null;
 	}

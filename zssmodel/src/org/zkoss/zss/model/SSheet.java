@@ -354,13 +354,13 @@ public interface SSheet {
 	
 	/**
 	 * Get the sheet current visible state.
-	 * @since 3.6.1
+	 * @since 3.7.0
 	 */
 	public SheetVisible getSheetVisible();
 	
 	/**
 	 * Set the sheet current visible state.
-	 * @since 3.6.1
+	 * @since 3.7.0
 	 */
 	public void setSheetVisible(SheetVisible state);
 	

@@ -1,5 +1,5 @@
 <zk>
-Since 3.6.1
+Since 3.7.0
 <label multiline="true">
 1. Select cell B1, should see a validation dropdown button
 2. Press the button and pick "9%". It should work without issue.

@@ -1,5 +1,5 @@
 <zk>
-Since 3.6.1: Validation List with relative range
+Since 3.7.0: Validation List with relative range
 <label multiline="true">
 1. Select A1, B1, C1, F1, G1, H1; you should see a dropdown button by them.
 2. Now select A1 and click the dropdown button you should see a dropdown list with 3 options: a4, a5, a6

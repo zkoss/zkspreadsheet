@@ -1,7 +1,7 @@
 <?page title="ExportErrorValues"?>
 <zk>
 <label multiline="true">
-Since 3.6.1
+Since 3.7.0
 1. Press the "Export to Excel" button.
 2. Open the down loaded excel file "errorValue.xlsx".
 3. You should see on Excel cell B1 show #DIV/0!; B2 show #VALUE!; B3 #REF!; B4 #NAME?; B5 #NUM!; and B6 #N/A.

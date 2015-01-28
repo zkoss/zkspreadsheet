@@ -17,7 +17,7 @@ import org.zkoss.zss.model.sys.dependency.Ref;
 
 /**
  * @author henri
- * @since 3.6.1
+ * @since 3.7.0
  */
 public class IndirectRefImpl extends RefImpl implements IndirectRef {
 	private static final long serialVersionUID = -5188384456353088778L;

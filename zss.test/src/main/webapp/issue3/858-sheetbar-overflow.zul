@@ -1,5 +1,5 @@
 <zk>
-Since 3.6.1
+Since 3.7.0
 <label multiline="true">
 1. use sheet menu to choose "1234567890-1 (41)", you can see the tab shown in the end of sheet bar.
 2. add a new sheet. this sheet will show right after current one. (click right arrow of bar to see it)

@@ -1,5 +1,5 @@
 <zk>
-Since 3.6.1
+Since 3.7.0
 <label multiline="true">
 1. Select cell B1
 2. Change cell text color from Black to Red (by clicking the "Font Color" icon on toolbar)

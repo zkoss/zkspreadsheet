@@ -1,5 +1,5 @@
 <zk>
-Since 3.6.1
+Since 3.7.0
 <label multiline="true">
 1. Select A1; you should see a dropdown button by it.
 2. click the dropdown button; you should see a dropdown list with 6 options: 1, 2, 3, 4, 5, 6

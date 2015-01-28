@@ -203,7 +203,7 @@ public interface FormulaEngine {
 	 * @param oldName
 	 * @param newName
 	 * @param context
-	 * @since 3.6.1
+	 * @since 3.7.0
 	 */
 	public FormulaExpression reorderSheetPtgs(FormulaExpression fexpr, SBook book, 
 			int oldIndex, int newIndex, FormulaParseContext context);

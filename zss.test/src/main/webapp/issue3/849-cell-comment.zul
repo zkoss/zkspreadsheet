@@ -1,5 +1,5 @@
 <zk>
-Since 3.6.1
+Since 3.7.0
 <label multiline="true">
 1. make sure all cell having comment triangle icon have popup panel after move on it by mouse cursor.
 2. make sure removing then adding comment many times will show and hide E2 cell comment.

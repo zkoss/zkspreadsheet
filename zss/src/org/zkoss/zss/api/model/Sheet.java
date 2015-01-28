@@ -116,13 +116,13 @@ public interface Sheet {
 	
 	/**
 	 * Returns whether this sheet is hidden.
-	 * @since 3.6.1
+	 * @since 3.7.0
 	 */
 	public boolean isHidden();
 	
 	/**
 	 * Returns whether this sheet is very hidden.
-	 * @since 3.6.1
+	 * @since 3.7.0
 	 */
 	public boolean isVeryHidden();
 }

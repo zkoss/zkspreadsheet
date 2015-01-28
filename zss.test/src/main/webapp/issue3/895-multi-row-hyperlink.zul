@@ -1,7 +1,7 @@
 <?page title="ShowCommentInSelectArea"?>
 <zk>
 <label multiline="true">
-Since 3.6.1
+Since 3.7.0
 1. merge cell B2:D4.
 2. add hyper link "http://www.zkoss.org".
 3. move on this hyper link without selection, cursor should be "pointer".

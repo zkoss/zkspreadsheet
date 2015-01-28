@@ -122,13 +122,13 @@ public interface SDataValidation extends FormulaContent{
 	/**
 	 * Returns whether the referred list formula contains a relative column. 
 	 * @return
-	 * @since 3.6.1
+	 * @since 3.7.0
 	 */
 	public boolean hasReferToRelativeCol();
 	/**
 	 * Returns whether the referred list formula contains a relative row.
 	 * @return
-	 * @since 3.6.1
+	 * @since 3.7.0
 	 */
 	public boolean hasReferToRelativeRow();
 	/**
@@ -136,7 +136,7 @@ public interface SDataValidation extends FormulaContent{
 	 * @param row
 	 * @param col
 	 * @return
-	 * @since 3.6.1
+	 * @since 3.7.0
 	 */
 	public List<SCell> getReferToCellList(int row, int col);
 }

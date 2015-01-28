@@ -1,5 +1,5 @@
 <zk>
-Since 3.6.1
+Since 3.7.0
 <label multiline="true">
 1. Select each pattern in order with pattern color "black" and background color "white" for cell beside example pattern. The look should be the same look as example.
 (cell with solid pattern should also change back color to black in order to show the same look in loaded file)

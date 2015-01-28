@@ -1,7 +1,7 @@
 <vlayout vflex="1">
 <div>
 <label multiline="true">
-Since 3.6.1
+Since 3.7.0
 1. Press the "Export to Excel" button.
 2. If no exception, it is OK.
 3. Open the down loaded excel file "scale0.xlsx" with Excel.

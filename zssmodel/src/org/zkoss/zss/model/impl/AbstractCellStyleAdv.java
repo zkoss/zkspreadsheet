@@ -34,7 +34,7 @@ public abstract class AbstractCellStyleAdv implements SCellStyle,Serializable{
 
 	/**
 	 * gets the fillpattern background-image style for this style.
-	 * @since 3.6.1
+	 * @since 3.7.0
 	 */
 	abstract public String getFillPatternHtml();
 }

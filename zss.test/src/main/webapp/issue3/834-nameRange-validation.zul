@@ -1,5 +1,5 @@
 <zk>
-Since 3.6.1
+Since 3.7.0
 <label multiline="true">
 1. Change focus to "B1"; should see the dropdown button by cell B1
 2. click the button and should see "Item 1, Item 2, Item 3, Item 4, Item 5" dropdown list

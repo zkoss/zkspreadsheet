@@ -1,5 +1,5 @@
 <zk>
-Since 3.6.1
+Since 3.7.0
 <label multiline="true">
 1. insert a comment on cell B2.
 2. select B2 to make selected mark move on this cell. we can see the comment popup when cursor is on selected mark.

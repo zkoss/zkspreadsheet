@@ -1,7 +1,7 @@
 <vlayout vflex="1">
 <div>
 <label multiline="true">
-Since 3.6.1
+Since 3.7.0
 1. Should see a Pie Chart.
 2. Move mouse to three slices; should pop tips
 3. Should see 1 Series 1: 10, 2 Series 1: 20, 3 Series 1: 30.

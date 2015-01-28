@@ -1,5 +1,5 @@
 <zk>
-Since 3.6.1
+Since 3.7.0
 <label multiline="true">
 1. make sure unhide is disabled in sheet popup.
 2. hide all sheets except sheet1, make sure hide in sheet popup is disabled.
