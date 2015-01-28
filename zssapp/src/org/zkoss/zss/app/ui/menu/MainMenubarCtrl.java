@@ -64,6 +64,8 @@ public class MainMenubarCtrl extends CtrlBase<Menubar> {
 	@Wire
 	Menuitem exportPdf;
 	@Wire
+	Menuitem about;
+	@Wire
 	Menuitem zssmark;
 	@Wire
 	Menuitem changeUsername;
@@ -133,6 +135,9 @@ public class MainMenubarCtrl extends CtrlBase<Menubar> {
 		changeUsername.setDisabled(!isEE || collabDisabled == Boolean.TRUE);
 		shareBook.setDisabled(!isEE || collabDisabled == Boolean.TRUE);
 		
+		// set about url
+		about.setHref(Library.getProperty("zssapp.menu.about.url", "http://www.zkoss.org/product/zkspreadsheet"));
+		
 		// zss title
 		if(evalOnly == null) 
 			evalOnly = Boolean.FALSE;
@@ -144,8 +149,6 @@ public class MainMenubarCtrl extends CtrlBase<Menubar> {
 				title += " (Evaluation)";
 			zssmark.setLabel(title);
 		}
-		
-		
 		
 		Boolean shareBookHidden = Boolean.valueOf(Library.getProperty("zssapp.menu.sharebook.hidden"));
 		if(shareBookHidden)
