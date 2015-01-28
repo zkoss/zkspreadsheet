@@ -25,7 +25,6 @@ ZK Spreadsheet 3.7.0
   ZSS-876 Show format sample in red for negative number in format cell dialog
   ZSS-879 Format Cell dialog can display current cell's format
   ZSS-878 Support adding custom formats and show them in Format Cell dialog
-  ZSS-902 ZSS can throw more specific information when importing fails
   ZSS-897 Zssapp should support alert when close window without saving
   
 *Bugs:
@@ -73,6 +72,8 @@ ZK Spreadsheet 3.7.0
   ZSS-899 After saving cell's hyper link doesn't work anymore
   ZSS-900 Desktop removed when click a mailto hyperlink in cell
   ZSS-903 Unable to copy cell content to another application
+  ZSS-874 Set fill pattern to horizontal stripe, but the exported file shows 12.5% gray
+  ZSS-898 Cell's hyperlink doesn't work when selecting multiple cells including itself
   
 ** Upgrade Notes
   * The format of arguments "formula1" and "formula2" in following data validation api has changed:
