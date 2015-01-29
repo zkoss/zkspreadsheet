@@ -1,3 +1,11 @@
+ZK Spreadsheet 3.8.0
+*Features:
+
+*Bugs:
+
+** Upgrade Notes
+
+ ------------
 ZK Spreadsheet 3.7.0
 *Features:
   ZSS-815 Enhance performance of dependents and precedents lookup mechanism

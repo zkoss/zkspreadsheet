@@ -25,10 +25,10 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 
 	<javascript package="zss" />
 
-    <javascript-module name="zss" version="3.7.0"/>
+    <javascript-module name="zss" version="3.8.0"/>
 	<version>
 		<version-class>org.zkoss.zss.ui.Version</version-class>
-		<version-uid>3.7.0</version-uid>
+		<version-uid>3.8.0</version-uid>
 		<zk.version>7.0.3</zk.version><!-- or later -->
 	</version>
 

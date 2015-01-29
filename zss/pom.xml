@@ -6,11 +6,11 @@
 	<artifactId>zss</artifactId>
 	<properties>
 		<zk.version>7.0.3</zk.version>
-		<zpoi.version>3.9.6-SNAPSHOT</zpoi.version>
+		<zpoi.version>3.9.7-SNAPSHOT</zpoi.version>
 		<commons-math.version>2.2</commons-math.version>
 		<servlet.version>2.4</servlet.version>
 	</properties>
-	<version>3.7.0-SNAPSHOT</version>
+	<version>3.8.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<name>ZK Spreadsheet</name>
 	<url>http://www.zkoss.org/zss</url>
