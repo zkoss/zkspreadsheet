@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.zkoss.image.AImage;
+import org.zkoss.lang.Library;
 import org.zkoss.lang.Strings;
 import org.zkoss.util.logging.Log;
 import org.zkoss.util.media.AMedia;
@@ -52,6 +53,7 @@ import org.zkoss.zss.ui.impl.DefaultUserActionManagerCtrl;
 import org.zkoss.zss.ui.sys.UndoableActionManager;
 import org.zkoss.zul.Filedownload;
 import org.zkoss.zul.Fileupload;
+import org.zkoss.zul.Script;
 
 /**
  * 
@@ -81,6 +83,9 @@ public class AppCtrl extends CtrlBase<Component>{
 
 	@Wire
 	Spreadsheet ss;
+	
+	@Wire
+	Script confirmMsgWorkaround;
 	
 	BookInfo selectedBookInfo;
 	Book loadedBook;
@@ -203,7 +208,12 @@ public class AppCtrl extends CtrlBase<Component>{
 			}
         );
 		
-		Clients.confirmClose("Make sure you have saved your work before leaving this page!");
+		// confirmMsgWorkaround is a workaround for confirm message with Cleanup event.
+		// we don't need it if we don't use confirm message.
+		if(Boolean.valueOf(Library.getProperty("zssapp.warning.save", "true")) == Boolean.TRUE)
+			Clients.confirmClose("Make sure you have saved your work before leaving this page!");
+		else
+			confirmMsgWorkaround.setParent(null);
 		
 		Executions.getCurrent().getDesktop().addListener(new DesktopCleanup(){
 			@Override
