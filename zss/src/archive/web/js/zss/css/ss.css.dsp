@@ -324,11 +324,13 @@
 	border-right-style:hidden;
 	overflow: visible;
 	position: relative;
+    z-index: 11; /* ZSS-917 see zscell's z-index */ 
 }
 
 .zscell-overflow-b {
 	overflow: visible;
 	position: relative;
+	z-index: 11; /* ZSS-917 see zscell's z-index */
 }
 
 .zscelltxt {
