@@ -54,7 +54,7 @@ public class EvalSheet implements EvaluationSheet {
 			SSheet sheet = cell.getSheet();
 			SBook book = sheet.getBook();
 			int sheetIndex = book.getSheetIndex(sheet);
-			key = new Key(sheetIndex, cell.getRowIndex(), cell.getColumnIndex());
+			key = new Key(book.getBookName(), sheetIndex, cell.getRowIndex(), cell.getColumnIndex());
 		}
 
 		public Object getIdentityKey() {
@@ -153,11 +153,13 @@ public class EvalSheet implements EvaluationSheet {
 	}
 
 	private static class Key {
+		public String bookName; //ZSS-910
 		public int sheet;
 		public int row;
 		public int column;
 
-		public Key(int sheet, int row, int column) {
+		public Key(String bookName, int sheet, int row, int column) {
+			this.bookName = bookName; //ZSS-910
 			this.sheet = sheet;
 			this.row = row;
 			this.column = column;
@@ -166,7 +168,7 @@ public class EvalSheet implements EvaluationSheet {
 		@Override
 		public int hashCode() {
 			final int prime = 31;
-			int result = 1;
+			int result = bookName == null ? 1 : bookName.hashCode(); //ZSS-910
 			result = prime * result + column;
 			result = prime * result + row;
 			result = prime * result + sheet;
@@ -182,6 +184,8 @@ public class EvalSheet implements EvaluationSheet {
 			if(getClass() != obj.getClass())
 				return false;
 			Key other = (Key)obj;
+			if(bookName != obj || (bookName != null && !bookName.equals(obj))) //ZSS-910
+				return false;
 			if(column != other.column)
 				return false;
 			if(row != other.row)

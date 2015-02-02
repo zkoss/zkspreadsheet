@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<zk>
+<label multiline="true">
+Since 3.8.0
+1. Enter 1 at A1, 2 at B1 in profile.xlsx
+2. Enter =SUM(A1:B1) at C1 in profile.xlsx; you should see 3 shown at C1
+3. Enter =[profile.xlsx]Sheet1!C1 at C1 in resume.xlsx; you should see 3 shown at C1 of resume.xlsx, too.
+4. Delete content at C1 in resume.xlsx
+5. Paste the same formula above again, =[profile.xlsx]Sheet1!C1 at C1 in resume.xlsx
+6. You should still see 3 shown at C1 in resume.xlsx; it is a bug if not. 
+</label>
+<window width="900px" apply="zss.issue.Composer910">
+    <groupbox height="190px" width="840px">
+        <caption>profile.xlsx</caption>
+        <spreadsheet id="profileSpreadsheet"
+            width="840px" height="170px" maxrows="2" maxcolumns="7" />
+    </groupbox>
+    <groupbox width="720px" height="420px">
+        <caption>resume.xlsx</caption>
+        <spreadsheet id="resumeSpreadsheet"
+            width="740px" height="380px" maxrows="12" maxcolumns="6" />
+    </groupbox>
+</window>
+</zk>
