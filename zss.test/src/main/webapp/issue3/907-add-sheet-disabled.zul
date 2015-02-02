@@ -1,0 +1,12 @@
+<zk>
+Since 3.7.0
+<label multiline="true">
+1. press disable add if we can add new sheet, that's a bug.
+2. press enable add if we can't add new sheet, that's a bug.
+</label>
+	<button id="disabledBtn" label="disable add" onClick="ss.disableUserAction(AuxAction.ADD_SHEET, true);"/>
+	<button id="enabledBtn" label="enable add" onClick="ss.disableUserAction(AuxAction.ADD_SHEET, false);"/>
+	<spreadsheet id="ss" vflex="1" hflex="1" src="/issue3/book/blank.xlsx"
+		showToolbar="true" showSheetbar="true" showFormulabar="true" showContextMenu="true"
+		maxVisibleRows="100" maxVisibleColumns="100"/>
+</zk>

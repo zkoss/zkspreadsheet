@@ -1,5 +1,7 @@
 ZK Spreadsheet 3.8.0
 *Features:
+  ZSS-907 Cannot prevent user to add a new sheet
+
 *Bugs:
   ZSS-910 Problem referencing a cell with formula in same position of other file
   ZSS-914 java.lang.IndexOutOfBoundsException on HSSFRow.getRowStyle()
