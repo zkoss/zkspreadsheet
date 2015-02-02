@@ -723,7 +723,8 @@ zss.SheetpanelCave = zk.$extends(zk.Widget, {
 		out.push('</div>');
 	},
 	setDisabled: function (actions){
-		//TODO should apply disabled action to add btn and context menu
+		// TODO: consider applying sheet selector's and sheet menu's disabled. 
+		this.addSheetButton.setDisabled(actions);
 		this.menu.setDisabled(actions);
 	}
 });
