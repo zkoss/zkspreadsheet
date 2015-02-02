@@ -23,6 +23,12 @@ public class SheetCtrlWidget extends Widget {
 		setSelector(spreadsheet.getSelector().toString() + ".sheetCtrl");
 	}
 	
+	/**
+	 * 
+	 * @param row start from 0
+	 * @param column row start from 0
+	 * @return
+	 */
 	public CellWidget getCell(int row, int column) {
 		return new CellWidget(this, row, column);
 	}

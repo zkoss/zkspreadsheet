@@ -60,6 +60,26 @@ public class JQuery extends ClientWidget {
 		return (String) fun("val");
 	}
 	
+	public String css(String propertyName) {
+		return TestCaseBase.eval("return " + toString() + ".css('" + propertyName + "')").toString().trim();
+	}
+	
+	public int width() {
+		return Integer.parseInt(fun("width").toString());
+	}
+	
+	public int height() {
+		return Integer.parseInt(fun("height").toString());
+	}
+	
+	public int offsetLeft() {
+		return Integer.parseInt(super.getProperty("offset().left").toString());
+	}
+	
+	public int offsetTop() {
+		return Integer.parseInt(super.getProperty("offset().top").toString());
+	}
+	
 	public boolean exists() {
 		return length() > 0;
 	}
