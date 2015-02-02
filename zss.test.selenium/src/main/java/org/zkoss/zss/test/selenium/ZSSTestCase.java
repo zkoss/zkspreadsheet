@@ -4,8 +4,15 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.zkoss.zss.test.selenium.entity.ClientWidget;
+import org.zkoss.zss.test.selenium.entity.SpreadsheetWidget;
 
 public class ZSSTestCase extends ZKClientTestCase {
+	
+	public SpreadsheetWidget focusSheet() {
+		SpreadsheetWidget spreadsheet = getSpreadsheet();
+		spreadsheet.focus();
+		return spreadsheet;
+	}
 	
 	public void setZSSScrollTop(int val) {
 		((RemoteWebDriver)driver()).executeScript("jq('@spreadsheet .zsscroll').scrollTop("+ val +");");
@@ -65,6 +72,26 @@ public class ZSSTestCase extends ZKClientTestCase {
 	public void doubleClick(WebElement element) {
 		Actions action= new Actions(driver());
 		action.moveToElement(element).doubleClick().perform();
+	}
+	
+	/**
+	 * go to tab nth
+	 * @param nth start from 1, 1 means first tab
+	 */
+	public void gotoTab(int nth) {
+		click(jq(".zssheettab:nth-child(" + nth + ")"));
+	}
+	
+	// coordString pattern: "1,2", means shift position to x = +1, y = +2.
+	public void mouseMoveAt(ClientWidget locator, String coordString) {
+		String[] coords = coordString.split(",");
+		int x = Integer.parseInt(coords[0]);
+		int y = Integer.parseInt(coords[1]);
+		new Actions(driver()).moveToElement(locator.toWebElement(), x, y).perform();
+	}
+	
+	public void dragAndDrop(WebElement from, WebElement to) {
+		new Actions(driver()).dragAndDrop(from, to).perform();
 	}
 	
 	public void closeMessageWindow() {
