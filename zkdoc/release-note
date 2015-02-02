@@ -3,6 +3,7 @@ ZK Spreadsheet 3.8.0
 *Bugs:
   ZSS-910 Problem referencing a cell with formula in same position of other file
   ZSS-914 java.lang.IndexOutOfBoundsException on HSSFRow.getRowStyle()
+  ZSS-916 ZSS doesn't display space character in a cell with wrapped text
   
 ** Upgrade Notes
 

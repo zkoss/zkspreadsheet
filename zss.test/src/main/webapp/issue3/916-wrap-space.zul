@@ -1,0 +1,11 @@
+<zk>
+<label multiline="true">
+Since 3.8.0
+1. You should see in "A1" a wrapped text with 5 prepend spaces.
+2. You should see in "A2" a non-wrapped text with 4 prepend spaces.
+3. If not, it is a bug.
+
+</label>
+    <spreadsheet id="spreadsheet" src="/issue3/book/916-wrap-space.xlsx" maxVisibleRows="50" vflex="1" width="100%" 
+    showSheetbar="true" showContextMenu="true" showFormulabar="true"></spreadsheet>
+</zk>
