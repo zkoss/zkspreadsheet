@@ -170,6 +170,7 @@ zss.SheetTab = zk.$extends(zul.tab.Tab, {
 	$init: function (arg, wgt) {
 		this.$supers(zss.SheetTab, '$init', [arg]);
 		this._wgt = wgt;
+		this._selector = arg.selector;
 		this.appendChild(this.textbox = new zul.inp.Textbox({
 			visible: false,
 			onBlur: this.proxy(this.onStopEditing), // ZSS-308: spec. changed > do rename process when blurring 
@@ -237,6 +238,9 @@ zss.SheetTab = zk.$extends(zul.tab.Tab, {
 		return !!this.editing;
 	},
 	doDoubleClick_: function () {
+		// ZSS-908 support disabled from server command
+		if(this._selector.renameDisabled)
+			return;
 		var editing = this.isEditing();
 		if (editing) {
 			var tb = this.textbox;
@@ -443,7 +447,7 @@ zss.SheetSelector = zk.$extends(zul.tab.Tabbox, {
 		for (var i = 0, len = labels.length; i < len; i++) {
 			var obj = labels[i],
 				tab = new zss.SheetTab({'label': obj.name, 'sheetUuid': obj.id, 
-				'onClick': clkFn, 'onRightClick': clkFn}, wgt);
+				'onClick': clkFn, 'onRightClick': clkFn, selector: this}, wgt);
 			tab.setContext(menu);
 			tabs.appendChild(tab);
 			
@@ -585,13 +589,25 @@ zss.SheetSelector = zk.$extends(zul.tab.Tabbox, {
 		this._menu.setProtectSheetCheckmark(b);
 	},
 	setDisabled: function (b) {
-		var cur = !!this._disd;
-		if (cur != b) {
-			this._disd = b;
-			var tab = this.tabs.firstChild;
-			for (;tab; tab = tab.nextSibling) {
-				tab.setDisabled(b);
-			}
+		// var cur = !!this._disd;
+		// if (cur != b) {
+		// 	this._disd = b;
+		// 	var tab = this.tabs.firstChild;
+		// 	for (;tab; tab = tab.nextSibling) {
+		// 		tab.setDisabled(b);
+		// 	}
+		// }
+
+		// ZSS-908 support disabled from server command
+		var renameDisabled = false;
+		if (jq.isArray(b)) {
+			for(var i = 0, length = b.length; i < length; i++) {
+				if(b[i] === 'renameSheet') {
+					renameDisabled = true;
+					break;
+				}
+			}	
+			this.renameDisabled = renameDisabled;
 		}
 	},
    	redrawHTML_: function () {
@@ -725,6 +741,7 @@ zss.SheetpanelCave = zk.$extends(zk.Widget, {
 	setDisabled: function (actions){
 		// TODO: consider applying sheet selector's and sheet menu's disabled. 
 		this.addSheetButton.setDisabled(actions);
+		this.sheetSelector.setDisabled(actions);
 		this.menu.setDisabled(actions);
 	}
 });
