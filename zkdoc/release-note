@@ -1,12 +1,13 @@
 ZK Spreadsheet 3.8.0
 *Features:
-  ZSS-907 Cannot prevent user to add a new sheet
 
 *Bugs:
   ZSS-910 Problem referencing a cell with formula in same position of other file
   ZSS-914 java.lang.IndexOutOfBoundsException on HSSFRow.getRowStyle()
   ZSS-916 ZSS doesn't display space character in a cell with wrapped text
   ZSS-917 ZSS doesn't display a long text across cells with background colors
+  ZSS-907 Cannot prevent user to add a new sheet
+  ZSS-908 Cannot prevent user to rename a sheet with disableUserAction
   
 ** Upgrade Notes
 
