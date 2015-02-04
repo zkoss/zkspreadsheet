@@ -103,6 +103,8 @@ public class BookImpl extends AbstractBookAdv{
 	
 	private ArrayList<SPictureData> _picDatas; //since 3.6.0
 	
+	private boolean _dirty = false;
+	
 	/**
 	 * the sheet which is destroying now.
 	 */
@@ -185,9 +187,13 @@ public class BookImpl extends AbstractBookAdv{
 		if(_listeners!=null){
 			_listeners.sendModelEvent(event);
 		}
+		
 		if(_queueListeners!=null){
 			_queueListeners.sendModelEvent(event);
 		}
+		
+		if(ModelEvent.class.isAssignableFrom(event.getClass()))
+			_dirty = true;
 	}
 	
 	@Override
@@ -1005,5 +1011,17 @@ public class BookImpl extends AbstractBookAdv{
 	@Override
 	public void clearNamedStyles() {
 		_namedStyles.clear();		
+	}
+
+	//ZSS-923
+	@Override
+	public boolean isDirty() {
+		return _dirty;
+	}
+
+	//ZSS-923
+	@Override
+	public void setDirty(boolean dirty) {
+		_dirty = dirty;
 	}
 }

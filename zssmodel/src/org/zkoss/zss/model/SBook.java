@@ -324,4 +324,20 @@ public interface SBook {
 	 * @since 3.7.0
 	 */
 	public Collection<SNamedStyle> getNamedStyles();
+	
+	/**
+	 * Get if book is changed
+	 * @return
+	 * @see #resetDirty()
+	 * @since 3.8.0
+	 */
+	public boolean isDirty();
+	
+	/**
+	 * Set dirty flag
+	 * @see #isDirty()
+	 * @since 3.8.0
+	 * @param dirty
+	 */
+	public void setDirty(boolean dirty);
 }
