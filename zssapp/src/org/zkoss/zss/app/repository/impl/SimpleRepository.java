@@ -11,13 +11,16 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.app.repository.impl;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.locks.ReadWriteLock;
 
 import org.zkoss.zss.api.Exporters;
 import org.zkoss.zss.api.Importers;
@@ -59,41 +62,65 @@ public class SimpleRepository implements BookRepository{
 		return book;
 	}
 
+	// TODO: remove synchronized keyword, and use each book name as synchronized key to let different file be access concurrently.
 	public synchronized BookInfo save(BookInfo info, Book book) throws IOException {
 		if(UiUtil.isRepositoryReadonly()){
 			return null;
 		}
-		FileOutputStream fos = null;
+			
+		ByteArrayOutputStream cacheOutputStream = null;
+		FileOutputStream fileOutputStream = null;
+		ReadWriteLock lock = book.getInternalBook().getBookSeries().getLock();
 		try{
-			File f = ((SimpleBookInfo)info).getFile();
-			//write to temp file first to avoid write error damage original file 
-			File temp = File.createTempFile("temp", f.getName());
-			fos = new FileOutputStream(temp);
-			//ZSS-680: ZSS app always save to xlsx format
-			String type = "excel";
-			switch(book.getType()) {
-			case XLS:
-				type = "xls";
-				break;
-			case XLSX:
-				//fall down
-			default:
-				type = "xlsx";
-				break;
+			// 1. write to memory cache
+			try {
+				lock.writeLock().lock();
+				if(!book.getInternalBook().isDirty())
+					return info;
+				// blank excel file needs 41xx bytes
+				cacheOutputStream = new ByteArrayOutputStream(5000);
+				exportBook(book, cacheOutputStream);
+				book.getInternalBook().setDirty(false);
+			} finally {
+				lock.writeLock().unlock();
 			}
-			Exporters.getExporter(type).export(book, fos);
 			
-			fos.close();
-			fos = null;
+			// 2. write to temporary file
+			//write to temp file first to avoid write error damage original file 
+			File f = ((SimpleBookInfo)info).getFile();
+			File temp = File.createTempFile("temp", f.getName());
+			temp.deleteOnExit();
+			fileOutputStream = new FileOutputStream(temp);
+			cacheOutputStream.writeTo(fileOutputStream);
 			
+			// 3. file copy
 			FileUtil.copy(temp,f);
 			temp.delete();
-			
 		}finally{
-			if(fos!=null)
-				fos.close();
+			if(cacheOutputStream != null)
+				cacheOutputStream.close();
+			
+			if(fileOutputStream != null)
+				fileOutputStream.close();
 		}
+		
 		return info;
+	}
+	
+	private void exportBook(Book book, OutputStream fos) throws IOException {
+		//ZSS-680: ZSS app always save to xlsx format
+		String type = "excel";
+		switch(book.getType()) {
+		case XLS:
+			type = "xls";
+			break;
+		case XLSX:
+			//fall down
+		default:
+			type = "xlsx";
+			break;
+		}
+		Exporters.getExporter(type).export(book, fos);
 	}
 	
 	public synchronized BookInfo saveAs(String bookname,Book book) throws IOException {
@@ -116,7 +143,6 @@ public class SimpleRepository implements BookRepository{
 		SimpleBookInfo info = new SimpleBookInfo(f,f.getName(),new Date());
 		return save(info,book);
 	}
-
 
 	public boolean delete(BookInfo info) throws IOException {
 		if(UiUtil.isRepositoryReadonly()){

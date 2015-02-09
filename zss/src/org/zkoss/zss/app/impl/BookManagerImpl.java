@@ -36,12 +36,15 @@ public class BookManagerImpl implements BookManager {
 	}
 
 	@Override
-	public void detachBook(BookInfo info) {}
+	public void detachBook(BookInfo info) throws IOException {}
 	
 	@Override
 	public boolean isBookAttached(BookInfo info) {
 		return false;
 	}
+	
+	@Override
+	public void saveAll() throws IOException {}
 	
 	// ======================= Singleton Implementation ======================
 	private static BookManagerImpl bookManagerImpl;
@@ -63,4 +66,7 @@ public class BookManagerImpl implements BookManager {
 		}
 		return bookManagerImpl;
 	}
+
+	@Override
+	public void shutdownAutoFileSaving() {}
 }
