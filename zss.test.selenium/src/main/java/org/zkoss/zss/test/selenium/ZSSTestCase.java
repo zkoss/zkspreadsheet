@@ -1,9 +1,12 @@
 package org.zkoss.zss.test.selenium;
 
+import static org.junit.Assert.assertTrue;
+
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.zkoss.zss.test.selenium.entity.ClientWidget;
+import org.zkoss.zss.test.selenium.entity.JQuery;
 import org.zkoss.zss.test.selenium.entity.SpreadsheetWidget;
 
 public class ZSSTestCase extends ZKClientTestCase {
@@ -101,6 +104,10 @@ public class ZSSTestCase extends ZKClientTestCase {
 		return new SheetFunction();
 	}
 	
+	public SheetItemUtil sheetItemUtil() {
+		return new SheetItemUtil();
+	}
+	
 	public class SheetFunction {
 		/**
 		 * go to tab nth
@@ -120,6 +127,28 @@ public class ZSSTestCase extends ZKClientTestCase {
 		
 		public void mergeToggle() {
 			click(jq(".zstbtn-mergeAndCenter.z-toolbarbutton"));
+		}
+	}
+	
+	public class SheetItemUtil {
+		/**
+		 * validate how close item1 and item2 are 
+		 * @param item1
+		 * @param item2
+		 * @param tolerance
+		 */
+		public void assertCloseTo(JQuery item1, JQuery item2, int tolerance) {
+			assertTrue(item2.exists());
+			
+			int top1 = item1.offsetTop();
+			int left1 = item1.offsetLeft();
+			int width = item1.width();
+			
+			int top2 = item2.offsetTop();
+			int left2 = item2.offsetLeft();
+			
+			assertTrue(Math.abs(top1 - top2) < tolerance);
+			assertTrue(Math.abs((left1 + width) - left2) < tolerance);
 		}
 	}
 }

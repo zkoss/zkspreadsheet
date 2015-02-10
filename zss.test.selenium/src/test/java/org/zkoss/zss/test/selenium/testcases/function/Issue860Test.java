@@ -4,11 +4,8 @@ import static org.junit.Assert.*;
 
 import org.junit.Ignore;
 import org.junit.Test;
-import org.openqa.selenium.interactions.Actions;
 import org.zkoss.zss.test.selenium.Setup;
 import org.zkoss.zss.test.selenium.ZSSTestCase;
-import org.zkoss.zss.test.selenium.entity.SheetCtrlWidget;
-import org.zkoss.zss.test.selenium.entity.SpreadsheetWidget;
 
 
 public class Issue860Test extends ZSSTestCase {

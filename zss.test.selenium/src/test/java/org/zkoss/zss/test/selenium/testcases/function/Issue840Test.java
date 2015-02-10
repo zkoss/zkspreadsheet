@@ -1,10 +1,9 @@
 package org.zkoss.zss.test.selenium.testcases.function;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.Actions;
 import org.zkoss.zss.test.selenium.Setup;
 import org.zkoss.zss.test.selenium.ZSSTestCase;
 import org.zkoss.zss.test.selenium.entity.CellWidget;
@@ -111,6 +110,28 @@ public class Issue840Test extends ZSSTestCase {
 		waitUntilProcessEnd(Setup.getTimeoutL0());
 		assertTrue(jq(".zscellcomment-popup").css("display").equals("block"));
 	}
+	
+	@Test
+	public void testZSS843() throws Exception {
+		getTo("issue3/843-close-book-npe.zul");
+		
+		click(jq(".z-button:eq(0)"));
+		waitUntilProcessEnd(Setup.getTimeoutL0());
+		assertFalse(jq("div.z-error").exists());
+	}
+	
+	@Test
+	public void testZSS841() throws Exception {
+		getTo("issue3/841-fill-patterns.zul");
+		
+		for(int i = 0; i < 7; i++)
+			assertTrue(jq(".zsrow:eq(" + i + ") .zscell:eq(0)").css("background-image").startsWith("url(data:image/png;base64,"));
+		
+		for(int i = 8; i < 18; i++)
+			assertTrue(jq(".zsrow:eq(" + i + ") .zscell:eq(0)").css("background-image").startsWith("url(data:image/png;base64,"));
+	}
+	
+	
 }
 
 
