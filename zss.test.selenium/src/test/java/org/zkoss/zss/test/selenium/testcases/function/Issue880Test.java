@@ -34,7 +34,7 @@ public class Issue880Test extends ZSSTestCase {
 	@Test
 	public void testZSS886() throws Exception {
 		getTo("/issue3/886-get-cell-js-err.zul");
-		gotoTab(2);
+		sheetFunction().gotoTab(2);
 		waitUntilProcessEnd(Setup.getTimeoutL0());
 		assertEquals(jq("div.z-error").exists(), false);
 	}
@@ -43,7 +43,7 @@ public class Issue880Test extends ZSSTestCase {
 	public void testZSS889() throws Exception {
 		getTo("/issue3/889-unlock-cells-slow.zul");
 		
-		gotoTab(4);
+		sheetFunction().gotoTab(4);
 		waitUntilProcessEnd(Setup.getTimeoutL0());
 		
 		SheetCtrlWidget ctrl = focusSheet().getSheetCtrl();

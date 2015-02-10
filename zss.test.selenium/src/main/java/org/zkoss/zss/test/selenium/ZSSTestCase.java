@@ -74,14 +74,6 @@ public class ZSSTestCase extends ZKClientTestCase {
 		action.moveToElement(element).doubleClick().perform();
 	}
 	
-	/**
-	 * go to tab nth
-	 * @param nth start from 1, 1 means first tab
-	 */
-	public void gotoTab(int nth) {
-		click(jq(".zssheettab:nth-child(" + nth + ")"));
-	}
-	
 	// coordString pattern: "1,2", means shift position to x = +1, y = +2.
 	public void mouseMoveAt(ClientWidget locator, String coordString) {
 		String[] coords = coordString.split(",");
@@ -90,11 +82,44 @@ public class ZSSTestCase extends ZKClientTestCase {
 		new Actions(driver()).moveToElement(locator.toWebElement(), x, y).perform();
 	}
 	
+	public void mouseMoveAt(WebElement webElement, String coordString) {
+		String[] coords = coordString.split(",");
+		int x = Integer.parseInt(coords[0]);
+		int y = Integer.parseInt(coords[1]);
+		new Actions(driver()).moveToElement(webElement, x, y).perform();
+	}
+	
 	public void dragAndDrop(WebElement from, WebElement to) {
 		new Actions(driver()).dragAndDrop(from, to).perform();
 	}
 	
 	public void closeMessageWindow() {
 		
+	}
+	
+	public SheetFunction sheetFunction() {
+		return new SheetFunction();
+	}
+	
+	public class SheetFunction {
+		/**
+		 * go to tab nth
+		 * @param nth start from 1, 1 means first tab
+		 */
+		public void gotoTab(int nth) {
+			click(jq(".zssheettab:nth-child(" + nth + ")"));
+		}
+		
+		public void copy() {
+			click(jq(".zstbtn-copy.z-toolbarbutton"));
+		}
+		
+		public void paste() {
+			click(jq(".zstbtn-paste.z-toolbarbutton"));
+		}
+		
+		public void mergeToggle() {
+			click(jq(".zstbtn-mergeAndCenter.z-toolbarbutton"));
+		}
 	}
 }
