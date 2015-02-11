@@ -4,7 +4,7 @@ Since 3.7.0
 1. add 20 or more new sheets.
 2. click "show sheets" button to see if the amount of items in menu is the same as in the sheet bar.
 3. move the menu down and select the last sheet, the sheet tab in sheet bar and workspace should be changed.
-4. open sheets menu again to see if the selected sheet has marked sign.
+4. open sheets menu again to see if the selected sheet has marked.
 </label>
 	
 	<spreadsheet id="ss" vflex="1" hflex="1" src="/issue3/book/blank.xlsx" 

@@ -2,7 +2,7 @@
 <zk>
 <label multiline="true">
 Since 3.7.0
-1. Enter "A1" to A1, "B1" to B1, "C1" to C1, "A1" to A2, "B2" to B2, "C2" to C2.
+1. Enter "A1" to A1, "B1" to B1, "C1" to C1, "A2" to A2, "B2" to B2, "C2" to C2.
 2. Select A1:C2
 3. Press CTRL-C and you should see the flashing border around A1:C2.
 4. Select E1; press CTRL-V, you should see A1:C2 copy onto E1:G2
@@ -11,6 +11,8 @@ Since 3.7.0
 7. If not, it is a bug.
 
 </label>
+	<label>For selenium text, you can simply paste in this text box.</label>
+	<textbox width="200px" height="50px" multiline="true" id="textbox"/>
     <spreadsheet id="spreadsheet" src="/issue3/book/blank.xlsx" maxVisibleRows="50" vflex="1" width="100%" 
     showSheetbar="true" showContextMenu="true" showFormulabar="true"></spreadsheet>
 </zk>

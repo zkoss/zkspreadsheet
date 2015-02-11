@@ -681,6 +681,7 @@ zss.SheetpanelCave = zk.$extends(zk.Widget, {
 				onClick: this.proxy(this.onClickAddSheet)
 			}),
 			sheetMenuBtn = this.sheetMenuButton = new zss.Toolbarbutton({
+				$action: 'showSheets',
 				tooltiptext: msgzss.action.showSheets,
 				image: zk.ajaxURI('/web/zss/img/ui-menu.png', {au: true}),
 				onClick: function() {
