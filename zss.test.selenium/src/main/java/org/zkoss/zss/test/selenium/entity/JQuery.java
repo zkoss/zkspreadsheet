@@ -73,11 +73,11 @@ public class JQuery extends ClientWidget {
 	}
 	
 	public int offsetLeft() {
-		return Integer.parseInt(super.getProperty("offset().left").toString());
+		return (int) Math.round(Double.parseDouble(super.getProperty("offset().left").toString()));
 	}
 	
 	public int offsetTop() {
-		return Integer.parseInt(super.getProperty("offset().top").toString());
+		return (int) Math.round(Double.parseDouble(super.getProperty("offset().top").toString()));
 	}
 	
 	public boolean exists() {

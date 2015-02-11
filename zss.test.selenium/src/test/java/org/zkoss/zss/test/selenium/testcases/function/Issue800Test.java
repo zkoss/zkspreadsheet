@@ -28,7 +28,7 @@ public class Issue800Test extends ZSSTestCase {
 		
 		click(b1);
 		waitUntilProcessEnd(Setup.getTimeoutL0());
-		sheetItemUtil().assertCloseTo(b1, dropdown, 7);
+		sheetItemUtil().assertHorizontalCloseTo(b1, dropdown, 7);
 		click(dropdown);
 		waitUntilProcessEnd(Setup.getTimeoutL0());
 		assertTrue(jq(".zscellpopup:visible .zsdv-item:eq(0)").text().equals("1"));
@@ -42,7 +42,7 @@ public class Issue800Test extends ZSSTestCase {
 		
 		click(b2);
 		waitUntilProcessEnd(Setup.getTimeoutL0());
-		sheetItemUtil().assertCloseTo(b2, dropdown, 7);
+		sheetItemUtil().assertHorizontalCloseTo(b2, dropdown, 7);
 		click(dropdown);
 		waitUntilProcessEnd(Setup.getTimeoutL0());
 		assertTrue(jq(".zscellpopup:visible .zsdv-item:eq(0)").text().trim().equals(""));
@@ -51,7 +51,7 @@ public class Issue800Test extends ZSSTestCase {
 		
 		click(b3);
 		waitUntilProcessEnd(Setup.getTimeoutL0());
-		sheetItemUtil().assertCloseTo(b3, dropdown, 7);
+		sheetItemUtil().assertHorizontalCloseTo(b3, dropdown, 7);
 		click(dropdown);
 		waitUntilProcessEnd(Setup.getTimeoutL0());
 		assertTrue(jq(".zscellpopup:visible .zsdv-item:eq(0)").text().trim().equals("a b c d e f"));

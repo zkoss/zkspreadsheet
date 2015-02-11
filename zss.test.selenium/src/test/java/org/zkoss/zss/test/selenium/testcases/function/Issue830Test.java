@@ -30,27 +30,27 @@ public class Issue830Test extends ZSSTestCase {
 		// 1. Select A1, B1, C1, F1, G1, H1; you should see a dropdown button by them.
 		click(a1);
 		waitUntilProcessEnd(Setup.getTimeoutL0());
-		sheetItemUtil().assertCloseTo(a1, dropdown, 7);
+		sheetItemUtil().assertHorizontalCloseTo(a1, dropdown, 7);
 		
 		click(b1);
 		waitUntilProcessEnd(Setup.getTimeoutL0());
-		sheetItemUtil().assertCloseTo(b1, dropdown, 7);
+		sheetItemUtil().assertHorizontalCloseTo(b1, dropdown, 7);
 		
 		click(c1);
 		waitUntilProcessEnd(Setup.getTimeoutL0());
-		sheetItemUtil().assertCloseTo(c1, dropdown, 7);
+		sheetItemUtil().assertHorizontalCloseTo(c1, dropdown, 7);
 		
 		click(f1);
 		waitUntilProcessEnd(Setup.getTimeoutL0());
-		sheetItemUtil().assertCloseTo(f1, dropdown, 7);
+		sheetItemUtil().assertHorizontalCloseTo(f1, dropdown, 7);
 		
 		click(g1);
 		waitUntilProcessEnd(Setup.getTimeoutL0());
-		sheetItemUtil().assertCloseTo(g1, dropdown, 7);
+		sheetItemUtil().assertHorizontalCloseTo(g1, dropdown, 7);
 		
 		click(h1);
 		waitUntilProcessEnd(Setup.getTimeoutL0());
-		sheetItemUtil().assertCloseTo(h1, dropdown, 7);
+		sheetItemUtil().assertHorizontalCloseTo(h1, dropdown, 7);
 		
 		click(a1);
 		waitUntilProcessEnd(Setup.getTimeoutL0());
@@ -141,7 +141,7 @@ public class Issue830Test extends ZSSTestCase {
 		
 		click(b1);
 		waitUntilProcessEnd(Setup.getTimeoutL0());
-		sheetItemUtil().assertCloseTo(b1, dropdown, 7);
+		sheetItemUtil().assertHorizontalCloseTo(b1, dropdown, 7);
 		click(dropdown);
 		waitUntilProcessEnd(Setup.getTimeoutL0());
 		assertTrue(jq(".zscellpopup:visible .zsdv-item:eq(0)").text().equals("Item 1"));
@@ -154,7 +154,7 @@ public class Issue830Test extends ZSSTestCase {
 		
 		click(b2);
 		waitUntilProcessEnd(Setup.getTimeoutL0());
-		sheetItemUtil().assertCloseTo(b2, dropdown, 7);
+		sheetItemUtil().assertHorizontalCloseTo(b2, dropdown, 7);
 		click(dropdown);
 		waitUntilProcessEnd(Setup.getTimeoutL0());
 		assertTrue(jq(".zscellpopup:visible .zsdv-item:eq(0)").text().equals("11"));
@@ -172,7 +172,7 @@ public class Issue830Test extends ZSSTestCase {
 		
 		click(b2);
 		waitUntilProcessEnd(Setup.getTimeoutL0());
-		sheetItemUtil().assertCloseTo(b2, dropdown, 7);
+		sheetItemUtil().assertHorizontalCloseTo(b2, dropdown, 7);
 		click(dropdown);
 		waitUntilProcessEnd(Setup.getTimeoutL0());
 		assertTrue(jq(".zscellpopup:visible .zsdv-item:eq(0)").text().equals("10"));

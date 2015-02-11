@@ -108,6 +108,10 @@ public class ZSSTestCase extends ZKClientTestCase {
 		return new SheetItemUtil();
 	}
 	
+	public SheetChartUtil sheetChartUtil() {
+		return new SheetChartUtil();
+	}
+	
 	public class SheetFunction {
 		/**
 		 * go to tab nth
@@ -132,23 +136,33 @@ public class ZSSTestCase extends ZKClientTestCase {
 	
 	public class SheetItemUtil {
 		/**
-		 * validate how close item1 and item2 are 
+		 * validate how close item1 and item2 are. from item1 tail to item2 head.
 		 * @param item1
 		 * @param item2
 		 * @param tolerance
 		 */
-		public void assertCloseTo(JQuery item1, JQuery item2, int tolerance) {
-			assertTrue(item2.exists());
-			
-			int top1 = item1.offsetTop();
+		public void assertHorizontalCloseTo(JQuery item1, JQuery item2, int tolerance) {
 			int left1 = item1.offsetLeft();
 			int width = item1.width();
-			
-			int top2 = item2.offsetTop();
 			int left2 = item2.offsetLeft();
-			
-			assertTrue(Math.abs(top1 - top2) < tolerance);
+
 			assertTrue(Math.abs((left1 + width) - left2) < tolerance);
+		}
+	}
+	
+	public class SheetChartUtil {
+		/**
+		 * for example => jq('.z-charts:eq(0)').zk.$().engine.series[0].data[4].y
+		 * we can get what the point is
+		 * @param query
+		 * @param seriesIndex
+		 * @param index
+		 * @param axis
+		 * @return
+		 */
+		public String getValue(String query, int seriesIndex, int index, String axis) {
+			// jq('.z-charts:eq(0)').zk.$().engine.series[0].data[4].y
+			return eval("return jq('" + query + "').zk.$().engine.series[" + seriesIndex + "].data[" + index + "]." + axis).toString();
 		}
 	}
 }

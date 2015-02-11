@@ -20,6 +20,30 @@ public class Issue660Test extends ZSSTestCase {
 	}
 	
 	@Test
+	public void testZSS663() throws Exception {
+		getTo("issue3/663-show-sheets.zul");
+		SpreadsheetWidget ss = focusSheet();
+		SheetCtrlWidget ctrl = ss.getSheetCtrl();
+		
+		for(int i = 0; i < 20; i++) {
+			click(jq(".zstbtn-addSheet"));
+			waitUntilProcessEnd(Setup.getTimeoutL0());
+		}
+		
+		click(jq(".zstbtn-showSheets"));
+		waitUntilProcessEnd(Setup.getTimeoutL0());
+		
+		int tabSize = jq(".zssheettab").length();
+		int menuSize = jq(".z-popup-content:visible button").length();
+		assertEquals(tabSize, menuSize);
+		
+		click(jq(".z-popup-content:visible button:eq(" + (menuSize - 1) + ")"));
+		waitUntilProcessEnd(Setup.getTimeoutL0());
+		
+		sheetItemUtil().assertHorizontalCloseTo(jq(".zssheettab:eq(" + (tabSize - 1) + ")"), jq(".z-tabbox-right-scroll:visible"), 5);
+	}
+	
+	@Test
 	public void testZSS664() throws Exception {
 		getTo("/issue/664-page-up-down.zul");
 		

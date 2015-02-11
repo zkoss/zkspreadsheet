@@ -2,6 +2,7 @@ package org.zkoss.zss.test.selenium.testcases.function;
 
 import static org.junit.Assert.assertEquals;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.WebElement;
 import org.zkoss.zss.test.selenium.Setup;
@@ -33,6 +34,12 @@ public class Issue560Test extends ZSSTestCase {
 		click(sheetCtrl.getCell("C4"));
 		waitForTime(Setup.getTimeoutL1());
 		assertEquals("#VALUE!", cellC3.getText());
+	}
+	
+	@Ignore("vision")
+	@Test
+	public void testZSS568() throws Exception {
+		
 	}
 	
 	@Test
