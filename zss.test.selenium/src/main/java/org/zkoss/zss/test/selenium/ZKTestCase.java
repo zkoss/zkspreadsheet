@@ -50,6 +50,7 @@ public class ZKTestCase extends TestCaseBase {
 		((RemoteWebDriver)driver()).executeScript("zsstsDebug = "+Setup.isJsDebug()+";");
 		String agentJs = AgentScripts.instance().getScript();
 		((RemoteWebDriver)driver()).executeScript(agentJs);
+		eval("jq(window).error(function(){zk._Erbx.push('js error...')})");
 	}
 	
 	public void waitUntil(long timeout, ExpectedCondition<?> condition) {

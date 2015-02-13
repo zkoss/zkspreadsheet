@@ -7,8 +7,8 @@ Reproduce 1:
   2. select column A and remove such column
   		(if you can see the following result, it's a bug)
         * "B1" is also gone 
-        * can't select A1 and get no focus
-        * if focus on B1, formula bar will show "C1"
+        * can't select cell A1 and get no focus
+        * if focus on cell A1, formula bar will show "C1"
 			</label>
 			<label pre="true">
 Reproduce 2:
@@ -16,8 +16,8 @@ Reproduce 2:
   2. select row 1 and remove such row
   		(if you can see the following result, it's a bug)
         * "A2" is also gone 
-        * can't select A1 and get no focus
-        * if focus on A2, formula bar will show "A3"
+        * can't select cell A1 and get no focus
+        * if focus on cell A1, formula bar will show "A3"
 			</label>
 		</hbox>
 		<hbox>

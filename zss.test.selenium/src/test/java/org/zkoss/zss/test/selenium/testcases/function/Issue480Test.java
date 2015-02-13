@@ -6,6 +6,7 @@ import org.junit.Test;
 import org.zkoss.zss.test.selenium.Setup;
 import org.zkoss.zss.test.selenium.ZSSTestCase;
 import org.zkoss.zss.test.selenium.entity.SheetCtrlWidget;
+import org.zkoss.zss.test.selenium.entity.SpreadsheetWidget;
 
 public class Issue480Test extends ZSSTestCase {
 	@Test
@@ -33,5 +34,56 @@ public class Issue480Test extends ZSSTestCase {
 	    assertEquals("g", sheetCtrl.getCell("A9").getText());
 	    assertEquals("h", sheetCtrl.getCell("B9").getText());
 	    assertEquals("i", sheetCtrl.getCell("C9").getText());
+	}
+	
+	@Test
+	public void testZSS488() throws Exception {
+		getTo("issue3/488-delete-first-column.zul");
+		SpreadsheetWidget ss = focusSheet();
+		SheetCtrlWidget ctrl = ss.getSheetCtrl();
+		
+		click(".z-button:eq(2)");
+		waitUntilProcessEnd(Setup.getTimeoutL0());
+		
+		click(ctrl.getCell("A1"));
+		waitUntilProcessEnd(Setup.getTimeoutL0());
+		
+		assertEquals(
+				eval("return jq('@spreadsheet').zk.$().sheetCtrl.selArea.lastRange.top === 0"), true);
+		assertEquals(
+				eval("return jq('@spreadsheet').zk.$().sheetCtrl.selArea.lastRange.bottom === 0"), true);
+		assertEquals(
+				eval("return jq('@spreadsheet').zk.$().sheetCtrl.selArea.lastRange.left === 0"), true);
+		assertEquals(
+				eval("return jq('@spreadsheet').zk.$().sheetCtrl.selArea.lastRange.right === 0"), true);
+		
+		assertEquals(ctrl.getFormulabarEditor().getValue(), "B1");
+		
+		getTo("issue3/488-delete-first-column.zul");
+		ss = focusSheet();
+		ctrl = ss.getSheetCtrl();
+		
+		click(".z-button:eq(3)");
+		waitUntilProcessEnd(Setup.getTimeoutL0());
+		click(".z-button:eq(4)");
+		waitUntilProcessEnd(Setup.getTimeoutL0());
+		click(".z-button:eq(5)");
+		waitUntilProcessEnd(Setup.getTimeoutL0());
+		
+		// directly click on A1 will got B1 clicked :<
+		click(ctrl.getCell("A2"));
+		click(ctrl.getCell("A1"));
+		waitUntilProcessEnd(Setup.getTimeoutL0());
+		
+		assertEquals(
+				eval("return jq('@spreadsheet').zk.$().sheetCtrl.selArea.lastRange.top === 0"), true);
+		assertEquals(
+				eval("return jq('@spreadsheet').zk.$().sheetCtrl.selArea.lastRange.bottom === 0"), true);
+		assertEquals(
+				eval("return jq('@spreadsheet').zk.$().sheetCtrl.selArea.lastRange.left === 0"), true);
+		assertEquals(
+				eval("return jq('@spreadsheet').zk.$().sheetCtrl.selArea.lastRange.right === 0"), true);
+		
+		assertEquals(ctrl.getFormulabarEditor().getValue(), "A2");
 	}
 }

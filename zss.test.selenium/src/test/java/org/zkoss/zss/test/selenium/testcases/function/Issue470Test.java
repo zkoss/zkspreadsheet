@@ -2,10 +2,13 @@ package org.zkoss.zss.test.selenium.testcases.function;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Ignore;
 import org.junit.Test;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 import org.zkoss.zss.test.selenium.Setup;
 import org.zkoss.zss.test.selenium.ZSSTestCase;
 import org.zkoss.zss.test.selenium.entity.EditorWidget;
@@ -44,10 +47,43 @@ public class Issue470Test extends ZSSTestCase {
 		assertEquals("22", xlsSheetCtrl.getCell("C2").getText());
 	}
 	
-	@Ignore("Scroll")
 	@Test
 	public void testZSS475() throws Exception {
+		getTo("issue3/475-selection.zul");
+		SpreadsheetWidget ss = focusSheet();
+		SheetCtrlWidget ctrl = ss.getSheetCtrl();
 		
+		click(ctrl.getCell("A1"));
+		waitUntilProcessEnd(Setup.getTimeoutL0());
+		
+		int i = 0;
+		for(; i < 100; i++) {
+			new Actions(driver()).sendKeys(Keys.chord(Keys.SHIFT, Keys.ARROW_DOWN)).perform();
+			waitUntilProcessEnd(Setup.getTimeoutL0());
+			if(!Boolean.valueOf(eval("return jq('.zsscroll').scrollTop() === 0").toString()))
+				break;
+		}
+		
+		assertTrue(i < 100);
+		
+		getTo("issue3/475-selection.zul");
+		ss = focusSheet();
+		ctrl = ss.getSheetCtrl();
+		
+		click(".z-button:eq(0)");
+		waitUntilProcessEnd(Setup.getTimeoutL0());
+		click(ctrl.getCell("A1"));
+		waitUntilProcessEnd(Setup.getTimeoutL0());
+		
+		i = 0;
+		for(; i < 100; i++) {
+			new Actions(driver()).sendKeys(Keys.chord(Keys.SHIFT, Keys.ARROW_DOWN)).perform();
+			waitUntilProcessEnd(Setup.getTimeoutL0());
+			if(!Boolean.valueOf(eval("return jq('.zsscroll').scrollTop() === 0").toString()))
+				break;
+		}
+		
+		assertTrue(i < 100);
 	}
 	
 	@Ignore("Export")
