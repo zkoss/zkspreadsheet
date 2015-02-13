@@ -9,7 +9,10 @@ public interface BookManager {
 	BookInfo updateBook(BookInfo info, Book book) throws IOException;
 	BookInfo saveBook(BookInfo info, Book book) throws IOException;
 	void deleteBook(BookInfo info) throws IOException;
+	void saveAll() throws IOException;
 	
-	void detachBook(BookInfo info);
+	void detachBook(BookInfo info) throws IOException;
 	boolean isBookAttached(BookInfo info);
+	
+	void shutdownAutoFileSaving();
 }

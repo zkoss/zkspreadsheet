@@ -29,6 +29,7 @@ import org.zkoss.util.resource.Labels;
 import org.zkoss.web.servlet.http.Encodes;
 import org.zkoss.zk.ui.*;
 import org.zkoss.zk.ui.event.*;
+import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zk.ui.util.DesktopCleanup;
@@ -51,6 +52,7 @@ import org.zkoss.zss.ui.*;
 import org.zkoss.zss.ui.event.Events;
 import org.zkoss.zss.ui.impl.DefaultUserActionManagerCtrl;
 import org.zkoss.zss.ui.sys.UndoableActionManager;
+import org.zkoss.zul.Button;
 import org.zkoss.zul.Filedownload;
 import org.zkoss.zul.Fileupload;
 import org.zkoss.zul.Script;
@@ -74,7 +76,21 @@ public class AppCtrl extends CtrlBase<Component>{
 			@Override
 			public void onEvent(CollaborationEvent event) {
 				if(event.getType() == CollaborationEvent.Type.BOOK_EMPTY)
-					bookManager.detachBook(new SimpleBookInfo((String) event.getValue()));
+					try {
+						BookInfo info = null;
+						String bookName = (String) event.getValue();
+						for (BookInfo bookInfo : repo.list()) {
+							if(bookInfo.getName().equals(bookName))
+								info = bookInfo;
+						}
+						
+						if(info != null)
+							bookManager.detachBook(info);
+					} catch (IOException e) {
+						log.error(e.getMessage());
+						e.printStackTrace();
+						UiUtil.showWarnMessage("Can't detach book: " + event.getValue());
+					}
 			}
 		});
 	}
@@ -90,7 +106,7 @@ public class AppCtrl extends CtrlBase<Component>{
 	BookInfo selectedBookInfo;
 	Book loadedBook;
 	Desktop desktop = Executions.getCurrent().getDesktop();
-	
+
 	
 	public AppCtrl() {
 		super(true);
@@ -190,7 +206,9 @@ public class AppCtrl extends CtrlBase<Component>{
 					try {
 						bookmark = URLDecoder.decode(event.getBookmark(), UTF8);
 					} catch (UnsupportedEncodingException e1) {
+						log.error(e1.getMessage());
 						e1.printStackTrace();
+						UiUtil.showWarnMessage("Decoding URL got something wrong: " + event.getBookmark());
 					}
 
 					if(bookmark.isEmpty()) 
@@ -551,7 +569,9 @@ public class AppCtrl extends CtrlBase<Component>{
 			try {
 				desktop.setBookmark(Encodes.encodeURI(selectedBookInfo.getName()));
 			} catch (UnsupportedEncodingException e) {
+				log.error(e.getMessage());
 				e.printStackTrace();
+				UiUtil.showWarnMessage("Encoding URL got something wrong: " + selectedBookInfo.getName());
 			}			
 		}
 		

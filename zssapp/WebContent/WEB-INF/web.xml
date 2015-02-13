@@ -7,6 +7,12 @@
 	<description><![CDATA[My ZK Application]]></description>
 	<display-name>zssdemo3</display-name>
 
+	<!-- ZK Spreadsheet App -->
+	<listener>
+		<description>Saving all books when server is shutting down</description>
+		<listener-class>org.zkoss.zss.app.repository.impl.ServletContextListenerImpl</listener-class>
+	</listener>
+
 	<!-- //// -->
 	<!-- ZK -->
 	<listener>

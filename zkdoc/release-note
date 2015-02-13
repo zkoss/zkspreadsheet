@@ -1,7 +1,8 @@
 ZK Spreadsheet 3.8.0
 *Features:
   ZSS-923 Support dirty check for book
-
+  ZSS-872 Support automatically saving the book model periodically
+  
 *Bugs:
   ZSS-910 Problem referencing a cell with formula in same position of other file
   ZSS-914 java.lang.IndexOutOfBoundsException on HSSFRow.getRowStyle()
@@ -11,6 +12,8 @@ ZK Spreadsheet 3.8.0
   ZSS-908 Cannot prevent user to rename a sheet with disableUserAction
   
 ** Upgrade Notes
+  * Default period for automatically saving in zssapp is 15 minutes.
+  * Zssapp supports saving all in-memory saved book when server is shutting down.
 
  ------------
 ZK Spreadsheet 3.7.0

@@ -28,5 +28,12 @@
 	<library-property>
 		<name>zssapp.menu.zssmark.hidden</name>
 		<value>true</value>
-	</library-property> -->
+	</library-property>
+	
+	<library-property>
+		<name>zssapp.save.period.second</name>
+		<value>60</value>
+	</library-property> 
+-->	
+
 </zk>
