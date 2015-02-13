@@ -4,19 +4,39 @@ package org.zkoss.zss.test.selenium.testcases.function;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.zkoss.zss.test.selenium.AssertUtil;
+import org.zkoss.zss.test.selenium.Setup;
 import org.zkoss.zss.test.selenium.ZSSTestCase;
 import org.zkoss.zss.test.selenium.entity.ZSSBy;
 
 public class Issue520Test extends ZSSTestCase {
 	
-	@Ignore("Chart")
 	@Test
 	public void testZSS524() throws Exception {
+		getTo("issue3/524-chart.zul");
+		
+		SheetFunction func = sheetFunction();
+		click(".zssheettab:eq(1)");
+		waitUntilProcessEnd(Setup.getTimeoutL0());
+		click(".zssheettab:eq(2)");
+		waitUntilProcessEnd(Setup.getTimeoutL0());
+		click(".zssheettab:eq(3)");
+		waitUntilProcessEnd(Setup.getTimeoutL0());
+		
+		click(".zssheettab:eq(5)");
+		waitUntilProcessEnd(Setup.getTimeoutL0());
+		click(".zssheettab:eq(6)");
+		waitUntilProcessEnd(Setup.getTimeoutL0());
+		click(".zssheettab:eq(7)");
+		waitUntilProcessEnd(Setup.getTimeoutL0());
+		
+		AssertUtil.assertNoJAVAError();
 	}
 	
-	@Ignore("Chart")
+	@Ignore("vision")
 	@Test
 	public void testZSS525() throws Exception {
+		
 	}
 	
 	@Ignore("Bug is not fixed yet")

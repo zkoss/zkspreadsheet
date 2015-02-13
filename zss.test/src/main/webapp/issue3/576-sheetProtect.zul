@@ -5,8 +5,8 @@
 			1. Focus and selection should be allowed only inside the greed area in Sheet "Test1".
 			2. Make a selection and click "Clear All" or "Clear Style", the selection should be unselectable.
 			3. Switch to "Test2" then go back to "Test1", and do step 1.
-			3. Sort and Insert Hyperlink should only work in the greed area in Sheet "Test2".
-			4. Move focus should not crash or slower in Sheet "All Unlock cell".
+			4. Sort and Insert Hyperlink should only work in the greed area in Sheet "Test2".
+			5. Move focus should not crash or slower in Sheet "All Unlock cell".
 		</label>
 		<spreadsheet src="/issue3/book/576-sheet-protection.xlsx" showToolbar="true" showFormulabar="true" showSheetbar="true" showContextMenu="true"
 			maxVisibleRows="200" maxVisibleColumns="40" width="100%" height="450px">

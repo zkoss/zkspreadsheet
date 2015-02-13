@@ -25,7 +25,7 @@ public class Issue580Test extends ZSSTestCase {
 				.getCssValue("background-color"));	
 	}
 	
-	@Ignore("A bit complicated")
+	@Ignore("vision")
 	@Test
 	public void testZSS587() throws Exception {
 		

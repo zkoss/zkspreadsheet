@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import org.junit.Ignore;
 import org.junit.Test;
+import org.zkoss.zss.test.selenium.AssertUtil;
 import org.zkoss.zss.test.selenium.Setup;
 import org.zkoss.zss.test.selenium.ZSSTestCase;
 
@@ -89,7 +90,7 @@ public class Issue860Test extends ZSSTestCase {
 		click(jq(".zsdropdown"));
 		waitUntilProcessEnd(Setup.getTimeoutL0());
 		click(jq(".zsdv-item").get(1));
-		assertFalse(jq("div.z-error").exists());
+		AssertUtil.assertNoJSError();
 		
 		waitUntilProcessEnd(Setup.getTimeoutL0());
 		click(jq(".zsrow:eq(1) .zscell:eq(1)"));
@@ -97,7 +98,7 @@ public class Issue860Test extends ZSSTestCase {
 		click(jq(".zsdropdown"));
 		waitUntilProcessEnd(Setup.getTimeoutL0());
 		click(jq(".zsdv-item").get(0));
-		assertFalse(jq("div.z-error").exists());
+		AssertUtil.assertNoJSError();
 		
 		waitUntilProcessEnd(Setup.getTimeoutL0());
 		click(jq(".zsrow:eq(2) .zscell:eq(1)"));
@@ -105,7 +106,7 @@ public class Issue860Test extends ZSSTestCase {
 		click(jq(".zsdropdown"));
 		waitUntilProcessEnd(Setup.getTimeoutL0());
 		click(jq(".zsdv-item").get(0));
-		assertFalse(jq("div.z-error").exists());
+		AssertUtil.assertNoJSError();
 
 		waitUntilProcessEnd(Setup.getTimeoutL0());
 		click(jq(".zsrow:eq(3) .zscell:eq(1)"));
@@ -113,7 +114,7 @@ public class Issue860Test extends ZSSTestCase {
 		click(jq(".zsdropdown"));
 		waitUntilProcessEnd(Setup.getTimeoutL0());
 		click(jq(".zsdv-item").get(1));
-		assertFalse(jq("div.z-error").exists());
+		AssertUtil.assertNoJSError();
 		
 		waitUntilProcessEnd(Setup.getTimeoutL0());
 		click(jq(".zsrow:eq(4) .zscell:eq(1)"));
@@ -121,7 +122,7 @@ public class Issue860Test extends ZSSTestCase {
 		click(jq(".zsdropdown"));
 		waitUntilProcessEnd(Setup.getTimeoutL0());
 		click(jq(".zsdv-item").get(2));
-		assertFalse(jq("div.z-error").exists());
+		AssertUtil.assertNoJSError();
 	}
 }
 

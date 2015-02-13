@@ -22,8 +22,8 @@
 	<vlayout width="100%" height="100%">
 		<label multiline="true">
 			1. copy A1 then paste to A1
-			2. copy A1:B2 then paste to A1:B2
-			3. copy A1:B3 then paste to A1:B3
+			2. copy A2:B2 then paste to A2:B2
+			3. copy A3:B3 then paste to A3:D3
 			4. above steps shouldn't cause java exception.
 		</label>
 		<spreadsheet id="ss" src="/issue3/book/blank.xlsx" maxrows="200" maxcolumns="40"

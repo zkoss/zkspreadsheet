@@ -2,6 +2,7 @@ package org.zkoss.zss.test.selenium.testcases.function;
 
 import static org.junit.Assert.assertEquals;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.interactions.Actions;
@@ -17,6 +18,11 @@ import org.zkoss.zss.test.selenium.entity.ZSStyle;
 
 public class Issue500Test extends ZSSTestCase {
 	
+	@Ignore("vision")
+	@Test
+	public void testZSS500() throws Exception {
+		
+	}
 	
 	@Test
 	public void testZSS501() throws Exception {
@@ -44,6 +50,56 @@ public class Issue500Test extends ZSSTestCase {
 		click(cellC4);
 		waitForTime(Setup.getTimeoutL2());
 		assertEquals("A1 is uneditable", "BBB", cellA1.getText());
+	}
+	
+	@Test
+	public void testZSS505() throws Exception {
+		getTo("issue3/505-chartDisplay.zul");
+		
+		click(".z-button:eq(0)");
+		waitForTime(Setup.getTimeoutL0());
+		
+		for(int i = 0; i < 1800; i += 300) {
+			eval("jq('.zsscroll').scrollTop(" + i + ")");
+			waitForTime(Setup.getTimeoutL0());
+		}
+		
+		for(int i = 0; i < 2800; i += 300) {
+			eval("jq('.zsscroll').scrollLeft(" + i + ")");
+			waitForTime(Setup.getTimeoutL0());
+		}
+		
+		for(int i = 0; i < 1800; i += 300) {
+			eval("jq('.zsscroll').scrollTop(" + i + ")");
+			waitForTime(Setup.getTimeoutL0());
+		}
+		
+		assertEquals(jq(".z-charts").length(), 0);
+	}
+	
+	@Test
+	public void testZSS5052007() throws Exception {
+		getTo("issue3/505-chartDisplay2007.zul");
+		
+		click(".z-button:eq(0)");
+		waitForTime(Setup.getTimeoutL0());
+		
+		for(int i = 0; i < 1800; i += 300) {
+			eval("jq('.zsscroll').scrollTop(" + i + ")");
+			waitForTime(Setup.getTimeoutL0());
+		}
+		
+		for(int i = 0; i < 2800; i += 300) {
+			eval("jq('.zsscroll').scrollLeft(" + i + ")");
+			waitForTime(Setup.getTimeoutL0());
+		}
+		
+		for(int i = 0; i < 1800; i += 300) {
+			eval("jq('.zsscroll').scrollTop(" + i + ")");
+			waitForTime(Setup.getTimeoutL0());
+		}
+		
+		assertEquals(jq(".z-charts").length(), 0);
 	}
 	
 	@Test

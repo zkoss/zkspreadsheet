@@ -10,4 +10,8 @@ public class AssertUtil {
 	public static void assertNoJSError() {
 		assertFalse("Should not show js error", JQuery.$(".z-error").exists());
 	}
+	
+	public static void assertNoJAVAError() {
+		assertFalse(JQuery.$(".z-messagebox-error").exists());
+	}
 }

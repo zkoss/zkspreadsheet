@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import org.junit.Ignore;
 import org.junit.Test;
+import org.zkoss.zss.test.selenium.AssertUtil;
 import org.zkoss.zss.test.selenium.Setup;
 import org.zkoss.zss.test.selenium.ZSSTestCase;
 
@@ -40,7 +41,7 @@ public class Issue890Test extends ZSSTestCase {
 		// press OK
 		click(jq(".z-window .z-button:eq(2)"));
 		waitUntilProcessEnd(Setup.getTimeoutL0());
-		assertTrue(jq(".z-messagebox-error").exists());
+		AssertUtil.assertNoJAVAError();
 		
 		// omit step 7 ~ 11 due to selenium technical issue
 	}

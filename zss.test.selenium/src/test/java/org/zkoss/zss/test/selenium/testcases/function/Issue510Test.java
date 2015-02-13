@@ -7,10 +7,12 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.WebElement;
+import org.zkoss.zss.test.selenium.AssertUtil;
 import org.zkoss.zss.test.selenium.Setup;
 import org.zkoss.zss.test.selenium.ZSSTestCase;
 import org.zkoss.zss.test.selenium.entity.CellWidget;
 import org.zkoss.zss.test.selenium.entity.EditorWidget;
+import org.zkoss.zss.test.selenium.entity.JQuery;
 import org.zkoss.zss.test.selenium.entity.SheetCtrlWidget;
 import org.zkoss.zss.test.selenium.entity.SpreadsheetWidget;
 
@@ -49,6 +51,30 @@ public class Issue510Test extends ZSSTestCase {
 		click(jq(".z-messagebox-window button:eq(1)"));
 		waitForTime(Setup.getTimeoutL0());
 		assertEquals("Inline editor should stay in C3", "C3", (String) editor.getProperty("cellRef"));
+	}
+	
+	@Test
+	public void testZSS515() throws Exception {
+		getTo("/issue3/515-deleteFreezeRow.zul");
+		JQuery btns = jq(".z-button");
+		
+		for(int i = 0; i < 10; i++) {
+			click(btns.get(i));
+			waitForTime(Setup.getTimeoutL0());
+			AssertUtil.assertNoJAVAError();			
+		}
+	}
+	
+	@Test
+	public void testZSS515XLS() throws Exception {
+		getTo("/issue3/515-deleteFreezeRow-xls.zul");
+		JQuery btns = jq(".z-button");
+		
+		for(int i = 0; i < 10; i++) {
+			click(btns.get(i));
+			waitForTime(Setup.getTimeoutL0());
+			AssertUtil.assertNoJAVAError();			
+		}
 	}
 	
 	@Test

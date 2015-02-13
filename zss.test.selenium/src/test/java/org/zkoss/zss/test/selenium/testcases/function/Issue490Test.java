@@ -53,13 +53,35 @@ public class Issue490Test extends ZSSTestCase {
 	public void testZSS494() throws Exception {
 	}
 	
-	@Ignore()
-	@Test
-	public void testZSS496() throws Exception {
-	}
-	
-	@Ignore("Chart")
 	@Test
 	public void testZSS499() throws Exception {
+		getTo("issue3/499-moveChartData.zul");
+		
+		click(".z-button:eq(0)");
+		waitForTime(Setup.getTimeoutL0());
+		
+		click(".z-button:eq(1)");
+		waitForTime(Setup.getTimeoutL0());
+		
+		click(".z-button:eq(2)");
+		waitForTime(Setup.getTimeoutL0());
+		
+		AssertUtil.assertNoJAVAError();
+	}
+	
+	@Test
+	public void testZSS499XLS() throws Exception {
+		getTo("issue3/499-moveChartData-xls.zul");
+		
+		click(".z-button:eq(0)");
+		waitForTime(Setup.getTimeoutL0());
+		
+		click(".z-button:eq(1)");
+		waitForTime(Setup.getTimeoutL0());
+		
+		click(".z-button:eq(2)");
+		waitForTime(Setup.getTimeoutL0());
+		
+		AssertUtil.assertNoJAVAError();
 	}
 }
