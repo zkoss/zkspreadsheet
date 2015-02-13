@@ -10,6 +10,7 @@ ZK Spreadsheet 3.8.0
   ZSS-917 ZSS doesn't display a long text across cells with background colors
   ZSS-907 Cannot prevent user to add a new sheet
   ZSS-908 Cannot prevent user to rename a sheet with disableUserAction
+  ZSS-838 Spreadsheet crashes when using autofilter with large amount of rows
   
 ** Upgrade Notes
   * Default period for automatically saving in zssapp is 15 minutes.

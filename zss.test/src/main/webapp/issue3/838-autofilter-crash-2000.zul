@@ -1,0 +1,10 @@
+<zk>
+<label multiline="true">
+Since 3.8.0
+1. Click filter button to drop down list of a autofilter, uncheck all, only check "Daniel"
+2. The speed should be reasonable( < 10 seconds); if not, the performance is not acceptable. 
+
+</label>
+    <spreadsheet id="spreadsheet" src="/issue3/book/838-autofilter-crash-2000.xlsx" maxVisibleRows="3010" vflex="1" width="100%" 
+    showSheetbar="true" showContextMenu="true" showFormulabar="true"></spreadsheet>
+</zk>
