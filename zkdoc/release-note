@@ -13,6 +13,7 @@ ZK Spreadsheet 3.8.0
   ZSS-838 Spreadsheet crashes when using autofilter with large amount of rows
   ZSS-928 Seting fit width and height into one page doesn't print gridline and headings
   ZSS-935 Data filter show error window if the data contains #N/A or #DIV/0
+  ZSS-934 Data validations are not visible after switching to another sheet
   
 ** Upgrade Notes
   * Default period for automatically saving in zssapp is 15 minutes.

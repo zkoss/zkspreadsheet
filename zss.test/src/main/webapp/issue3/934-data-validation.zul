@@ -1,0 +1,36 @@
+<zk>
+Since 3.8.0
+<label multiline="true">
+1. Focus on A2 => should see validation drop down button.
+2. Focus on A3 => should see validation drop down button.
+3. click '+' on sheetbar to add a new sheet
+4. Select the new added sheet
+5. Select back to "Sample" sheet
+6. Focus on A2 => should still see validation drop down button; if not, it is a bug.
+7. Focus on A3 => should still see validation drop down button; if not, it is a bug.
+</label>
+	<spreadsheet id="ss" vflex="1" hflex="1" src="/issue3/book/934-data-validation.xlsx"
+		showToolbar="true" showSheetbar="true" showFormulabar="true" showContextMenu="true"
+		maxVisibleRows="20" maxVisibleColumns="10"/>
+    <zscript><![CDATA[
+        import org.zkoss.zss.api.Ranges;
+        import org.zkoss.zss.api.model.Validation.ValidationType;
+        import org.zkoss.zss.api.model.Validation.OperatorType;
+        import org.zkoss.zss.api.model.Validation.AlertStyle;
+        Ranges.range(ss.getSelectedSheet(), 2, 0)
+        .setValidation(
+            ValidationType.LIST,         
+            true,                       // ignore blank
+            OperatorType.EQUAL,         
+            true,                       // in cell dropdown
+            "1,2,3,4,5",                // the source of list (for list validation)
+            null,                       // additional formula
+            false,                      // show input
+            null,                       // input title
+            null,                       // input message
+            false,                      // show error
+            AlertStyle.INFO,                            
+            null,                       // error title
+            null);                      // error message
+    ]]></zscript>
+</zk>
