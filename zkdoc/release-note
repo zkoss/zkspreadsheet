@@ -11,6 +11,7 @@ ZK Spreadsheet 3.8.0
   ZSS-907 Cannot prevent user to add a new sheet
   ZSS-908 Cannot prevent user to rename a sheet with disableUserAction
   ZSS-838 Spreadsheet crashes when using autofilter with large amount of rows
+  ZSS-928 Seting fit width and height into one page doesn't print gridline and headings
   
 ** Upgrade Notes
   * Default period for automatically saving in zssapp is 15 minutes.
