@@ -1,0 +1,11 @@
+<zk>
+Since 3.8.0
+<label multiline="true">
+1. You should see filter button on B2.
+2. Press the filter button; it should drop down a filter list with #DIV/0! option.
+3. If otherwise throws an exception, it is a bug.
+</label>
+	<spreadsheet id="ss" vflex="1" hflex="1" src="/issue3/book/935-filter-div0.xlsx"
+		showToolbar="true" showSheetbar="true" showFormulabar="true" showContextMenu="true"
+		maxVisibleRows="100" maxVisibleColumns="100"/>
+</zk>

@@ -337,7 +337,10 @@ import org.zkoss.zss.ui.Spreadsheet;
 				final boolean b2 = ((Boolean)val2).booleanValue();
 				return !b1 && b2 ? -1 : b1 && !b2 ? 1 : 0;
 			case 5: //Error(Byte)
-				return ((Byte)val1).compareTo((Byte)val2);
+				//ZSS-935
+				final byte by1 = val1 instanceof ErrorValue ? Byte.valueOf(((ErrorValue)val1).getCode()) : ((Byte) val1).byteValue();
+				final byte by2 = val2 instanceof ErrorValue ? Byte.valueOf(((ErrorValue)val2).getCode()) : ((Byte) val2).byteValue();
+				return by1 - by2;
 			default:
 			case 6: //(Blanks)
 				return 0;
