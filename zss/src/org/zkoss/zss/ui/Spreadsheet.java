@@ -1671,7 +1671,10 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			renderer.render("protect", _protectSheet);
 		}
 		
-		renderer.render("topPanelHeight", isHidecolumnhead() ? 1 : this.getTopheadheight());
+		// ZSS-938 set th as 0 is for hiding 1-pixel-height part of column header
+		// in case, i didn't find any inpropriate look for using 1px to row header however.
+		// so i decide to only adjust column header.
+		renderer.render("topPanelHeight", isHidecolumnhead() ? 0 : this.getTopheadheight());
 		renderer.render("leftPanelWidth", isHiderowhead() ? 1 : this.getLeftheadwidth());
 
 		if (_cellpadding != DEFAULT_CELL_PADDING)
@@ -3902,7 +3905,10 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		boolean hidecol = isHidecolumnhead();
 		boolean showgrid = sheet.getViewInfo().isDisplayGridlines();
 
-		int th = hidecol ? 1 : this.getTopheadheight();
+		// ZSS-938 set th as 0 is for hiding 1-pixel-height part of column header
+		// in case, i didn't find any inpropriate look for using 1px to row header however.
+		// so i decide to only adjust column header.
+		int th = hidecol ? 0 : this.getTopheadheight();
 		int lw = hiderow ? 1 : this.getLeftheadwidth();
 		int cp = this._cellpadding;//
 		int rh = this.getRowheight();
