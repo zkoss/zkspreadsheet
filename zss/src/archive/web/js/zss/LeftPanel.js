@@ -283,13 +283,14 @@ zss.Panel = zk.$extends(zk.Widget, {
 				(this.hasPad_() ? '<div id="' + uid + '-pad" class="zs' + type + 'pad"></div>' : ''),
 				'<div id="', uid, '-real" class="zs', type, 
 				'i"><div id="', uid, '-head" class="zs', type, 'head">');
-		if (!this.hidehead) {
-			var hs = this.headers,
-				size = hs.length;
-			for (var i = 0; i < size; i++) {
-				out.push(hs[i].getHtml());
-			}
+
+		// ZSS-937 output DOM however. simply hiding headers for hidden state is enough. 
+		var hs = this.headers,
+			size = hs.length;
+		for (var i = 0; i < size; i++) {
+			out.push(hs[i].getHtml());
 		}
+
 		out.push('</div>'); //head div end
 		if (this.block) { //frozen block
 			this.block.redraw(out);
