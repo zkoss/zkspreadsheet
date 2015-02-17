@@ -1,0 +1,21 @@
+<zk>
+<label multiline="true">
+Since 3.8.0
+1. you shouldn't see grid line for dis-aligned to row or column headers with freeze case.
+1.1 click button 1. check it.
+1.2 then click button 2. check it.
+1.3 then click button 1. check it.
+
+2. you shouldn't see grid line for dis-aligned to row or column headers with freeze case.
+2.1 click button 2 and button 3.
+2.2 click button 1. check it.
+2.3 click button 2. check it.
+2.4 click button 1. check it.
+</label>
+	<button label="toggle column headers" onClick="ss.setHidecolumnhead(!ss.isHidecolumnhead())"/>
+	<button label="toggle row headers" onClick="ss.setHiderowhead(!ss.isHiderowhead())"/>
+	<button label="freeze" onClick='Ranges.range(ss.getSelectedSheet()).setFreezePanel(4, 4);'/>
+	<button label="unfreeze" onClick='Ranges.range(ss.getSelectedSheet()).setFreezePanel(0, 0);'/>
+    <spreadsheet id="ss" src="/issue3/book/blank.xlsx" maxVisibleRows="50" vflex="1" width="100%" 
+    showSheetbar="true" showContextMenu="true" showFormulabar="true" hiderowhead="true" hidecolumnhead="true"></spreadsheet>
+</zk>
