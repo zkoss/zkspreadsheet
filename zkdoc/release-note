@@ -16,6 +16,7 @@ ZK Spreadsheet 3.8.0
   ZSS-934 Data validations are not visible after switching to another sheet
   ZSS-937 Hiding column and row shouldn't cause js error when switching sheets
   ZSS-938 It shouldn't show tiny part of header's title when hidden column header
+  ZSS-924 JS Error showed in console when ZSS in JSF has no excel source file.
   
 ** Upgrade Notes
   * Default period for automatically saving in zssapp is 15 minutes.
