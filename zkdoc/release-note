@@ -15,6 +15,7 @@ ZK Spreadsheet 3.8.0
   ZSS-935 Data filter show error window if the data contains #N/A or #DIV/0
   ZSS-934 Data validations are not visible after switching to another sheet
   ZSS-937 Hiding column and row shouldn't cause js error when switching sheets
+  ZSS-938 It shouldn't show tiny part of header's title when hidden column header
   
 ** Upgrade Notes
   * Default period for automatically saving in zssapp is 15 minutes.
