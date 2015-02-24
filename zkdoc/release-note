@@ -2,6 +2,7 @@ ZK Spreadsheet 3.8.0
 *Features:
   ZSS-923 Support dirty check for book
   ZSS-872 Support automatically saving the book model periodically
+  ZSS-883 Make Format Dialog be customized easier
   
 *Bugs:
   ZSS-910 Problem referencing a cell with formula in same position of other file
