@@ -1,0 +1,9 @@
+<zk>
+<label multiline="true">
+Since 3.8.0
+Type words into following textbox shouldn't cause js error.
+</label>
+<textbox width="150px"/>
+    <spreadsheet id="ss" maxVisibleRows="50" vflex="1" width="100%" 
+    showSheetbar="true" showContextMenu="true" showFormulabar="true" hiderowhead="true" hidecolumnhead="true"></spreadsheet>
+</zk>

@@ -1303,9 +1303,10 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 		this.$supers('doKeyDown_', arguments);
 	},
 	afterKeyDown_: function (evt) {
-		if (this.sheetCtrl.state != zss.SSheetCtrl.EDITING) {
+		var sheet = this.sheetCtrl; 
+		if (sheet && sheet.state != zss.SSheetCtrl.EDITING) {
 			var data = evt.data,
-				sel = this.sheetCtrl.getLastSelection();
+				sel = sheet.getLastSelection();
 			if (sel) {
 				data.tRow = sel.top;
 				data.lCol = sel.left;
@@ -1325,7 +1326,7 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 					//Widget.js will stop event, if onCtrlKey reg ctrl + c and ctrl + v. restart the event
 					evt.domStopped = false;
 				}
-				var sheet = this.sheetCtrl;
+
 				// ZSS-737: prevent focus lost when focus to textarea.
 				sheet.isPasteFromClipboard = true;
 				sheet.dp.selectInputNode();
