@@ -1,0 +1,8 @@
+<vbox hflex="1" vflex="1">
+	<label multiline="true">
+		Should see 4 in cell D4; #VALUE! in cell D5.
+	</label>
+	<spreadsheet id="ss" src="/issue3/book/933-name-union.xlsx" maxVisibleRows="30" maxVisibleColumns="40"
+		hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
+		showFormulabar="true" />	
+</vbox>
