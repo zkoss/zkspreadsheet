@@ -103,6 +103,9 @@ public class AppCtrl extends CtrlBase<Component>{
 	@Wire
 	Script confirmMsgWorkaround;
 	
+	@Wire
+	Script gaScript;
+	
 	BookInfo selectedBookInfo;
 	Book loadedBook;
 	Desktop desktop = Executions.getCurrent().getDesktop();
@@ -166,6 +169,11 @@ public class AppCtrl extends CtrlBase<Component>{
 					return book!=null;
 				}
 			});
+			
+			// ZSS-940 remove GA code for EE customer
+			Object evalOnly = Executions.getCurrent().getDesktop().getWebApp().getAttribute("Evaluation Only");
+			if(!(evalOnly == null ? false : (Boolean)evalOnly))
+				gaScript.setParent(null);
 		}
 		
 		//do after default

@@ -3,6 +3,7 @@ ZK Spreadsheet 3.8.0
   ZSS-923 Support dirty check for book
   ZSS-872 Support automatically saving the book model periodically
   ZSS-883 Make Format Dialog be customized easier
+  ZSS-940 Support removing GA code for EE customer version
   
 *Bugs:
   ZSS-910 Problem referencing a cell with formula in same position of other file
