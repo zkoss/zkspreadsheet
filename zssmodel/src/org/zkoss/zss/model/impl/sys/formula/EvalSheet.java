@@ -184,7 +184,7 @@ public class EvalSheet implements EvaluationSheet {
 			if(getClass() != obj.getClass())
 				return false;
 			Key other = (Key)obj;
-			if(bookName != obj || (bookName != null && !bookName.equals(obj))) //ZSS-910
+			if(bookName != other.bookName || (bookName != null && !bookName.equals(other.bookName))) //ZSS-910
 				return false;
 			if(column != other.column)
 				return false;
