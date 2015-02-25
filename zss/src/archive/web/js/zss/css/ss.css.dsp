@@ -354,6 +354,21 @@
 	</c:if>
 }
 
+/* ZSS-918: vertical text */
+.zsvtxt {
+    display: -moz-inline-box;
+    width:1em;
+    font-size:inherit;
+    word-wrap:break-word;
+    white-space:normal;
+    letter-spacing:1em;
+    display: inline-block;
+    <c:if test="${c:browser('ie') and not c:browser('ie11')}">
+        zoom: 1;
+        *display: inline;
+    </c:if>
+}
+
 .zscelltxt-wrap{
 	word-wrap:break-word;
 	width:inherit;

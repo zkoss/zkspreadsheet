@@ -242,4 +242,14 @@ public class WholeStyleUtil {
 				StyleUtil.setFontTypeOffset(wholeRange.getSheet().getBook(), holder, fontTypeOffset);
 			}});
 	}
+
+	//ZSS-918
+	public static void setTextRotation(final SRange wholeRange,
+			final int rotation) {
+		setWholeStyle(wholeRange,new StyleApplyer(){
+			@Override
+			public void applyStyle(CellStyleHolder holder) {
+				StyleUtil.setTextRotation(wholeRange.getSheet().getBook(), holder, rotation);
+			}});
+	}
 }

@@ -1,0 +1,8 @@
+<vbox hflex="1" vflex="1">
+	<label multiline="true">
+		Should see "Vertical Text"" in B2 and 1.23457E+14 in cell D2 vertically and horizontal centered.
+	</label>
+	<spreadsheet id="ss" src="/issue3/book/918-vertical-text.xlsx" maxVisibleRows="30" maxVisibleColumns="40"
+		hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
+		showFormulabar="true" />	
+</vbox>

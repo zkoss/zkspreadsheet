@@ -65,7 +65,7 @@ public class CellStyleMatcher {
 		Hidden,
 //		Indention,
 		Locked,
-//		Rotation,
+		Rotation,
 
 		WrapText;
 	}
@@ -111,7 +111,7 @@ public class CellStyleMatcher {
 		
 		setLocked(criteria.isLocked());
 		
-//		setRotation(criteria.getRotation());
+		setRotation(criteria.getRotation());
 		
 		setWrapText(criteria.isWrapText());
 	}
@@ -193,10 +193,10 @@ public class CellStyleMatcher {
 		_criteria.put(Property.VerticalAlignment, align);
 	}
 
-//	public void setRotation(short rotation) {
-//		criteria.put(Property.Rotation,rotation );
-//	}
-//
+	public void setRotation(int rotation) {
+		_criteria.put(Property.Rotation, rotation );
+	}
+
 //	public void setIndention(short indent) {
 //		criteria.put(Property.Indention, indent);
 //	}
@@ -295,10 +295,10 @@ public class CellStyleMatcher {
 		_criteria.remove(Property.VerticalAlignment);
 	}
 
-//	public void removeRotation(){
-//		criteria.remove(Property.Rotation);
-//	}
-//
+	public void removeRotation(){
+		_criteria.remove(Property.Rotation);
+	}
+
 //	public void removeIndention(){
 //		criteria.remove(Property.Indention);
 //	}
@@ -489,11 +489,11 @@ public class CellStyleMatcher {
 					return false;
 				}
 				break;
-//			case Rotation:
-//				if(!equals(e.getValue(),style.getRotation())){
-//					return false;
-//				}
-//				break;
+			case Rotation:
+				if(!equals(e.getValue(),style.getRotation())){
+					return false;
+				}
+				break;
 			case WrapText:
 				if(!equals(e.getValue(),style.isWrapText())){
 					return false;

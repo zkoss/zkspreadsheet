@@ -3421,7 +3421,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 				}
 				
 				if (updateStyle) {
-					boolean wrap = cellStyle.isWrapText();
+					final boolean wrap = cellStyle.isWrapText();
 					if (wrap)
 						attrs.put("wp", 1);
 					
@@ -3433,6 +3433,9 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 						break;
 					case RIGHT:
 						attrs.put("ha", "r");
+						break;
+					case LEFT:
+					default:
 						break;
 					}
 					

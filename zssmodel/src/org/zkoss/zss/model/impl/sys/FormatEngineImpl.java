@@ -228,6 +228,10 @@ public class FormatEngineImpl implements FormatEngine {
 	//ZSS-666
 	//get column width form  pixel to char256
 	public static int getCellWidth256(SCell cell) {
+		//ZSS-918: vertical text always use 12 character width
+		if (cell.getCellStyle().getRotation() == 255) { //vertical text
+			return 12 * 256;
+		}
 		//1 border + 2 * padding(2px) => 5
 		//ZSS-791
 		SSheet sheet = cell.getSheet();

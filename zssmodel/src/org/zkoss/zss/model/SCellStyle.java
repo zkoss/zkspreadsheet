@@ -222,4 +222,12 @@ public interface SCellStyle {
 	public void setFont(SFont font);
 
 	public void copyFrom(SCellStyle src);
+		
+    /**
+     * get the degree of rotation for the text in the cell
+     * @return rotation degrees (between -90 and 90 degrees); 255 means "vertical text"
+     * @since 3.8.0
+     */
+	public int getRotation();
+	public void setRotation(int rotation);
 }

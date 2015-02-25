@@ -276,4 +276,16 @@ public class NamedStyleImpl implements SNamedStyle {
 	public int getBuiltinId() {
 		return builtinId;
 	}
+
+	//ZSS-918
+	@Override
+	public int getRotation() {
+		return book.getDefaultCellStyle(index).getRotation();
+	}
+
+	//ZSS-918
+	@Override
+	public void setRotation(int rotation) {
+		throw new UnsupportedOperationException();
+	}
 }

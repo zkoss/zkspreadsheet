@@ -18,13 +18,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
  */
 package org.zkoss.zss.ui.impl;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
-
 import org.zkoss.poi.ss.usermodel.ZssContext;
-import org.zkoss.util.Locales;
-import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.SCell;
 import org.zkoss.zss.model.SCellStyle;
 import org.zkoss.zss.model.SColor;
@@ -39,7 +33,6 @@ import org.zkoss.zss.model.SCellStyle.FillPattern;
 import org.zkoss.zss.model.SCellStyle.VerticalAlignment;
 import org.zkoss.zss.model.SFont.Boldweight;
 import org.zkoss.zss.model.SFont.Underline;
-import org.zkoss.zss.model.SRichText.Segment;
 import org.zkoss.zss.model.sys.EngineFactory;
 import org.zkoss.zss.model.sys.format.FormatContext;
 import org.zkoss.zss.model.sys.format.FormatEngine;
@@ -65,8 +58,6 @@ public class CellFormatHelper {
 
 	private SSheet _sheet;
 	
-	private SBook _book;
-
 	private int _row;
 
 	private int _col;
@@ -81,7 +72,6 @@ public class CellFormatHelper {
 	
 	public CellFormatHelper(SSheet sheet, int row, int col, MergeMatrixHelper mmhelper) {
 		_sheet = sheet;
-		_book = _sheet.getBook(); 
 		_row = row;
 		_col = col;
 		_cell = sheet.getCell(row, col);
@@ -351,6 +341,7 @@ public class CellFormatHelper {
 				sb.append("vertical-align: middle;");
 				break;
 			case BOTTOM:
+			default:
 				sb.append("vertical-align: bottom;");
 				break;
 			}
@@ -406,10 +397,14 @@ public class CellFormatHelper {
 	/* given alignment and cell type, return real alignment */
 	//Halignment determined by style alignment, text format and value type  
 	public static Alignment getRealAlignment(SCell cell) {
-		SCellStyle style = cell.getCellStyle();
+		final SCellStyle style = cell.getCellStyle();
 		CellType type = cell.getType();
 		Alignment align = style.getAlignment();
 		if (align == Alignment.GENERAL) {
+			//ZSS-918: vertical text default to horizontal center; no matter the type 
+			final boolean vtxt = style.getRotation() == 255; 
+			if (vtxt) return Alignment.CENTER;
+			
 			final String format = style.getDataFormat();
 			if (format != null && format.startsWith("@")) //a text format
 				type = CellType.STRING;
@@ -425,6 +420,7 @@ public class CellFormatHelper {
 			case NUMBER:
 				return Alignment.RIGHT;
 			case STRING:
+			default:
 				return Alignment.LEFT;
 			}
 		}
@@ -444,6 +440,8 @@ public class CellFormatHelper {
 		case CENTER:
 		case CENTER_SELECTION:
 			sb.append("text-align:").append("center").append(";");
+			break;
+		default:
 			break;
 		}
 
@@ -482,25 +480,19 @@ public class CellFormatHelper {
 		String text = "";
 		if (!cell.isNull()) {
 			boolean wrap = cell.getCellStyle().isWrapText();
+			boolean vtxt = cell.getCellStyle().getRotation() == 255; //ZSS-918
 			
 			final FormatResult ft = EngineFactory.getInstance().createFormatEngine().format(cell, new FormatContext(ZssContext.getCurrent().getLocale()));
 			if (ft.isRichText()) {
 				final SRichText rstr = ft.getRichText();
-				final SHyperlink hlink = cell.getHyperlink();
-				if (hlink == null) {
-					text = getRichTextHtml(rstr, wrap, true);
-				} else {
-					text = getHyperlinkHtml(getRichTextHtml(rstr, wrap, true), hlink);						
-				}
+				text = vtxt ? getVRichTextHtml(rstr, wrap) : getRichTextHtml(rstr, wrap); //ZSS-918
 			} else {
-				text = escapeText(ft.getText(), wrap, true);
-				final SHyperlink hlink = cell.getHyperlink();
-				if (hlink != null) {
-					text = getHyperlinkHtml(text, hlink);
-				}				
+				text = vtxt ? escapeVText(ft.getText(), wrap) : escapeText(ft.getText(), wrap, true); //ZSS-918
 			}
-
-			
+			final SHyperlink hlink = cell.getHyperlink();
+			if (hlink != null) {
+				text = getHyperlinkHtml(text, hlink);
+			}				
 		}
 		return text;
 	}
@@ -515,11 +507,8 @@ public class CellFormatHelper {
 			final FormatResult ft = EngineFactory.getInstance().createFormatEngine().format(cell, new FormatContext(ZssContext.getCurrent().getLocale()));
 			if (ft.isRichText()) {
 				final SRichText rstr = ft.getRichText();
-				StringBuilder sb = new StringBuilder();
-				for(Segment seg: rstr.getSegments()) {
-					sb.append(RichTextHelper.getFontTextHtml(escapeText(seg.getText(), wrap, true), seg.getFont()));
-				}
-				text = sb.toString();
+				text = RichTextHelper.getCellRichTextHtml(rstr, wrap);
+
 			} else {
 				text = RichTextHelper.getFontTextHtml(escapeText(ft.getText(), wrap, true), cell.getCellStyle().getFont());
 			}
@@ -544,20 +533,8 @@ public class CellFormatHelper {
 		return sb.toString();		
 	}
 	
-	private static String getRichTextHtml(SRichText text, boolean wrap, boolean multiline) {
-		StringBuilder sb = new StringBuilder();
-		for(Segment seg:text.getSegments()){
-			sb.append("<span style=\"")
-				.append(getFontCSSStyle(seg.getFont()))
-				.append("\">");
-			sb.append(escapeText(seg.getText(),wrap,multiline));
-			sb.append("</span>");
-		}
-		return sb.toString();
-	}
-	
-	private static String getFontCSSStyle(SFont font) {
-		return RichTextHelper.getFontCSSStyle(font, true);
+	private static String getRichTextHtml(SRichText text, boolean wrap) {
+		return RichTextHelper.getCellRichTextHtml(text, wrap);
 	}
 	
 	
@@ -678,4 +655,13 @@ public class CellFormatHelper {
 		return hitLeft;
 	}
 
+	//ZSS-918
+	private static String escapeVText(String text, boolean wrap) {
+		return RichTextHelper.escapeVText(text, wrap);
+	}
+	
+	//ZSS-918
+	private static String getVRichTextHtml(SRichText rstr, boolean wrap) {
+		return RichTextHelper.getCellVRichTextHtml(rstr, wrap);
+	}
 }

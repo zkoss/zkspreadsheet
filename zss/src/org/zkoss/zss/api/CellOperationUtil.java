@@ -970,4 +970,31 @@ public class CellOperationUtil {
 			}
 		};
 	}
+
+	//ZSS-918
+	//@since 3.8.0
+	public static CellStyleApplier getRotationApplier(final short rotation){
+		return new CellStyleApplierEx() {
+			public void apply(Range range) {
+				//ZSS 464, efficient implement
+				SSheet sheet = range.getSheet().getInternalSheet();
+				StyleUtil.setTextRotation(sheet.getBook(),sheet.getCell(range.getRow(),range.getColumn()),rotation);
+			}
+			
+			@Override
+			public void applyWhole(Range wholeRange) {
+				WholeStyleUtil.setTextRotation(wholeRange.getInternalRange(), rotation);
+			}
+		};
+	}
+	
+	/**
+	 * Apply alignment to cells in the range
+	 * @param range the range to be applied
+	 * @param int the rotation degree(255 means vertical text)
+	 * @since 3.8.0
+	 */
+	public static void applyRotation(Range range,final int rotation) {
+		applyCellStyle(range, getRotationApplier((short)rotation));
+	}
 }

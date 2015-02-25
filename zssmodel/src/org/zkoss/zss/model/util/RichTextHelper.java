@@ -290,5 +290,45 @@ public class RichTextHelper {
 		}
 		return sb.toString();
 	}
+	
+	//ZSS-918
+	public static String escapeVText(String text, boolean wrap) {
+		final String between = wrap ? "</div><div class=\"zsvtxt\">" : "&nbsp;"; 
+		final StringBuffer out = new StringBuffer();
+		out.append("<div class=\"zsvtxt\">");
+		for (int j = 0, tl = text.length(); j < tl; ++j) {
+			char cc = text.charAt(j);
+			switch (cc) {
+			case '&': out.append("&amp;"); break;
+			case '<': out.append("&lt;"); break;
+			case '>': out.append("&gt;"); break;
+			case ' ': out.append("&nbsp;"); break;
+			case '\n': out.append(between); break;
+			default:
+				out.append(cc);
+			}
+		}
+		out.append("</div>");
+		return out.toString();
+	}
+	
+	//ZSS-918
+	public static String getCellVRichTextHtml(SRichText rstr, boolean wrap) {
+		final String between = wrap ? "</div><div class=\"zsvtxt\">" : "&nbsp;"; 
+		StringBuilder sb = new StringBuilder();
+		sb.append("<div class=\"zsvtxt\">");
+		for(Segment seg: rstr.getSegments()) {
+			final String[] texts = seg.getText().split("\n");
+			final SFont font = seg.getFont();
+			int j = 0;
+			for (int len = texts.length - 1; j < len; ++j) {
+				sb.append(getFontTextHtml(escapeText(texts[j], wrap, true), font));
+				sb.append(between);
+			}
+			sb.append(getFontTextHtml(escapeText(texts[j], wrap, true), font));
+		}
+		sb.append("</div>");
+		return sb.toString();
+	}
 }
 

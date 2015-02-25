@@ -136,4 +136,9 @@ public class EditableCellStyleImpl extends CellStyleImpl implements EditableCell
 	public void setHidden(boolean hidden) {
 		getNative().setHidden(hidden);;
 	}
+	
+	//ZSS-918
+	public void setRotation(int rotation) {
+		getNative().setRotation(rotation);
+	}
 }

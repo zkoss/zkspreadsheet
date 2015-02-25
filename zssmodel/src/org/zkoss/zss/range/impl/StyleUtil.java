@@ -859,4 +859,22 @@ public class StyleUtil {
 		
 		return false;
 	}
+	
+	//ZSS-918
+	public static void setTextRotation(SBook book,CellStyleHolder holder, int rotation){
+		final SCellStyle orgStyle = holder.getCellStyle();
+		final int rot = orgStyle.getRotation();
+		if (rot == rotation) { //no change, skip
+			return;
+		}
+		
+		CellStyleMatcher matcher = new CellStyleMatcher(orgStyle);
+		matcher.setRotation(rotation);
+		SCellStyle style = book.searchCellStyle(matcher);
+		if(style==null){
+			style = cloneCellStyle(book,orgStyle);
+			style.setRotation(rotation);
+		}
+		holder.setCellStyle(style);
+	}
 }
