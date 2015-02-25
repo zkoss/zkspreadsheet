@@ -1,0 +1,8 @@
+<vbox hflex="1" vflex="1">
+	<label multiline="true">
+		Should see top border on cell D3 and C7; should see left border on cell C4 and B6.
+	</label>
+	<spreadsheet id="ss" src="/issue3/book/919-merge-border.xlsx" maxVisibleRows="30" maxVisibleColumns="40"
+		hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
+		showFormulabar="true" />	
+</vbox>

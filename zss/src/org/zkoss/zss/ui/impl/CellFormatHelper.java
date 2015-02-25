@@ -141,12 +141,15 @@ public class CellFormatHelper {
 					next = _sheet.getCell(rect.getTop(),rect.getLeft());
 				}
 			}*/
-			nextStyle = _sheet.getCell(bottom,_col).getCellStyle();
-			if (nextStyle != null){
-				bb = nextStyle.getBorderTop();// get top border of
-				String color = nextStyle.getBorderTopColor().getHtmlColor();
-				// set next row top border as cell's bottom border;
-				hitBottom = appendBorderStyle(sb, "bottom", bb, color);
+			//ZSS-919: merge more than 2 columns; must use top border of bottom cell
+			if (!hitMerge || rect.getColumn() == rect.getLastColumn()) {  
+				nextStyle = _sheet.getCell(bottom,_col).getCellStyle();
+				if (nextStyle != null){
+					bb = nextStyle.getBorderTop();// get top border of
+					String color = nextStyle.getBorderTopColor().getHtmlColor();
+					// set next row top border as cell's bottom border;
+					hitBottom = appendBorderStyle(sb, "bottom", bb, color);
+				}
 			}
 		}
 		
@@ -206,13 +209,16 @@ public class CellFormatHelper {
 		//else get next cell of this cell
 		if(!hitRight){
 			right = hitMerge?rect.getLastColumn()+1:_col+1;
-			nextStyle = _sheet.getCell(_row,right).getCellStyle();
-			if (nextStyle != null){
-				bb = nextStyle.getBorderLeft();//get left here
-				//String color = BookHelper.indexToRGB(_book, style.getLeftBorderColor());
-				// ZSS-34 cell background color does not show in excel
-				String color = nextStyle.getBorderLeftColor().getHtmlColor();
-				hitRight = appendBorderStyle(sb, "right", bb, color);
+			//ZSS-919: merge more than 2 rows; must use left border of right cell
+			if (!hitMerge || rect.getRow() == rect.getLastRow()) {  
+				nextStyle = _sheet.getCell(_row,right).getCellStyle();
+				if (nextStyle != null){
+					bb = nextStyle.getBorderLeft();//get left here
+					//String color = BookHelper.indexToRGB(_book, style.getLeftBorderColor());
+					// ZSS-34 cell background color does not show in excel
+					String color = nextStyle.getBorderLeftColor().getHtmlColor();
+					hitRight = appendBorderStyle(sb, "right", bb, color);
+				}
 			}
 		}
 
@@ -586,6 +592,21 @@ public class CellFormatHelper {
 			if (bb == BorderType.DOUBLE) {
 				String color = nextStyle.getBorderTopColor().getHtmlColor();
 				hitTop = appendBorderStyle(sb, "top", bb, color);
+			} else if (bb != BorderType.NONE) {
+				//ZSS-919: check if my top is a merged cell 
+				top = hitMerge ? rect.getRow() - 1 : _row - 1;
+				if (top >= 0) {
+					final MergedRect rectT = _mmHelper.getMergeRange(top, _col);
+					//my top merge more than 2 columns
+					if (rectT != null && rectT.getColumn() < rectT.getLastColumn()) { 
+						String color = nextStyle.getBorderTopColor().getHtmlColor();
+						//support only solid line but position correctly
+						return appendMergedBorder(sb, "top", color);
+						
+//						//offset 1px to bottom but support more line styles
+//						return hitTop = appendBorderStyle(sb, "top", bb, color);
+					}
+				}
 			}
 		}
 		
@@ -628,6 +649,21 @@ public class CellFormatHelper {
 			if (bb == BorderType.DOUBLE) {
 				String color = nextStyle.getBorderLeftColor().getHtmlColor();
 				hitLeft = appendBorderStyle(sb, "left", bb, color);
+			} else if (bb != BorderType.NONE) { 
+				//ZSS-919: check if my left is a merged cell 
+				left = hitMerge?rect.getColumn()-1:_col-1;
+				if (left >= 0) {
+					final MergedRect rectT = _mmHelper.getMergeRange(_row, left);
+					//my left merged more than 2 rows
+					if (rectT != null && rectT.getRow() < rectT.getLastRow()) { 
+						String color = nextStyle.getBorderLeftColor().getHtmlColor();
+						//support only solid line but position correctly
+						return appendMergedBorder(sb, "left", color);
+						
+//						//offset 1px to right but support more line styles
+//						return hitLeft = appendBorderStyle(sb, "left", bb, color); 
+					}
+				}
 			}
 		}
 
@@ -663,5 +699,11 @@ public class CellFormatHelper {
 	//ZSS-918
 	private static String getVRichTextHtml(SRichText rstr, boolean wrap) {
 		return RichTextHelper.getCellVRichTextHtml(rstr, wrap);
+	}
+
+	//ZSS-919
+	private boolean appendMergedBorder(StringBuffer sb, String locate, String color) {
+		sb.append("box-shadow:").append("top".equals(locate) ? "0px -1px " : "-1px 0px ").append(color).append(";");
+		return true;
 	}
 }

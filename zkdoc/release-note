@@ -21,6 +21,7 @@ ZK Spreadsheet 3.8.0
   ZSS-938 It shouldn't show tiny part of header's title when hidden column header
   ZSS-924 JS Error showed in console when ZSS in JSF has no excel source file.
   ZSS-933 Server console shows "evaluation stack not empty" when load page
+  ZSS-919 Missing top border
   
 ** Upgrade Notes
   * Default period for automatically saving in zssapp is 15 minutes.
