@@ -1,0 +1,19 @@
+<zk >
+	<label multiline="true">
+		For ZK way
+		1. click on these description to let focus move to BODY
+		2. press delete key (not backspace) on keyboard.
+		3. you shouldn't see the onCtrl event sent to server(in browser developer console -> network)
+		
+		For ZSS JSF
+		1. open zssdemo project and go to Working With JSF.
+		2. click empty area right beside submit button to let focus move to BODY
+		3. press delete key (not backspace) on keyboard.
+		4. you shouldn't see the onCtrl event sent to server(in browser developer console -> network)
+	</label>
+	
+	<div width="100%" vflex="1">
+	   	<spreadsheet id="ss" src="/issue3/book/blank.xlsx" maxVisibleRows="50" vflex="1" width="100%" 
+   			showSheetbar="true" showContextMenu="true" showFormulabar="true" hiderowhead="true" hidecolumnhead="true"/>
+	</div>
+</zk>
