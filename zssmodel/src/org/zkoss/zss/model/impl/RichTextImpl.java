@@ -16,6 +16,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.model.impl;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -30,7 +31,7 @@ import org.zkoss.zss.model.util.Validations;
 public class RichTextImpl extends AbstractRichTextAdv {
 	private static final long serialVersionUID = 1L;
 
-	List<SegmentImpl> _segments = new LinkedList<SegmentImpl>();
+	List<SegmentImpl> _segments = new ArrayList<SegmentImpl>();
 
 
 	@Override
@@ -55,6 +56,17 @@ public class RichTextImpl extends AbstractRichTextAdv {
 	public void addSegment(String text, SFont font) {
 		Validations.argNotNull(text,font);
 		if("".equals(text)) return;
+		
+		if (!_segments.isEmpty()) {
+			final int idx = _segments.size() - 1;
+			final Segment seg = _segments.get(idx);
+			// text merge to previous segment if text is \n' or fonts are the same
+			if ("\n".equals(text) || seg.getFont().equals(font)) { 
+				_segments.set(idx, new SegmentImpl(seg.getText()+text, seg.getFont()));
+				return;
+			}
+		}
+		
 		_segments.add(new SegmentImpl(text, font));
 	}
 

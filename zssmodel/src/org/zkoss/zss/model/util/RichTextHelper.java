@@ -318,7 +318,12 @@ public class RichTextHelper {
 		StringBuilder sb = new StringBuilder();
 		sb.append("<div class=\"zsvtxt\">");
 		for(Segment seg: rstr.getSegments()) {
-			final String[] texts = seg.getText().split("\n");
+			final String text = seg.getText();
+			if ("\n".equals(text)) { // segment with single \n
+				sb.append(between);
+				continue;
+			}
+			final String[] texts = text.split("\n");
 			final SFont font = seg.getFont();
 			int j = 0;
 			for (int len = texts.length - 1; j < len; ++j) {
