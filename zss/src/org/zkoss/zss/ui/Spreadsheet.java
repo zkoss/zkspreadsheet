@@ -1972,7 +1972,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			return;// since it is invalidate, we don't need to do anymore
 		
 		final SAutoFilter filter = sheet.getAutoFilter();
-		if (filter.getRegion().getRowCount() > 500) { //ZSS-838
+		if (filter != null && filter.getRegion().getRowCount() > 500) { //ZSS-838, ZSS-943
 			this.invalidate();
 		} else { 
 			smartUpdate("autoFilter", convertAutoFilterToJSON(filter));

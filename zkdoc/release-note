@@ -25,6 +25,7 @@ ZK Spreadsheet 3.8.0
   ZSS-919 Missing top border
   ZSS-920 Unexpected onCtrlKey request is sent to server when using ZSS JSF
   ZSS-936 Friend focus should use new event type instead of model event
+  ZSS-943 Turn off filter shouldn't cause NPE
   
 ** Upgrade Notes
   * Default period for automatically saving in zssapp is 15 minutes.
