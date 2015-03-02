@@ -63,16 +63,36 @@ import org.zkoss.zss.range.impl.ModelUpdateCollector;
 			collector.addRef(ref);
 		}
 	}
+	@Deprecated
 	/*package*/ static void addCellUpdate(SSheet sheet,SCell cell){
-		addCellUpdate(sheet,cell.getRowIndex(),cell.getColumnIndex());
+		addCellUpdate(sheet, cell, CellAttribute.ALL);
 	}
+	//ZSS-939
+	//@since 3.8.0
+	/*package*/ static void addCellUpdate(SSheet sheet,SCell cell, CellAttribute cellAttr){
+		addCellUpdate(sheet,cell.getRowIndex(),cell.getColumnIndex(),cellAttr);
+	}
+	
+	@Deprecated
 	/*package*/ static void addCellUpdate(SSheet sheet,int row,int column){
-		addCellUpdate(sheet,row,column,row,column);
+		addCellUpdate(sheet,row,column, CellAttribute.ALL);
 	}
+	//ZSS-939
+	//@since 3.8.0
+	/*package*/ static void addCellUpdate(SSheet sheet,int row,int column, CellAttribute cellAttr){
+		addCellUpdate(sheet,row,column,row,column, cellAttr);
+	}
+	
+	@Deprecated
 	/*package*/ static void addCellUpdate(SSheet sheet,int row,int column, int lastRow, int lastColumn){
+		addCellUpdate(sheet, row, column, lastRow, lastColumn, CellAttribute.ALL);
+	}
+	//ZSS-939
+	//@since 3.8.0
+	/*package*/ static void addCellUpdate(SSheet sheet,int row,int column, int lastRow, int lastColumn, CellAttribute cellAttr){
 		ModelUpdateCollector collector = ModelUpdateCollector.getCurrent();
 		if(collector!=null){
-			collector.addCellUpdate(sheet,row, column,lastRow,lastColumn);
+			collector.addCellUpdate(sheet,row, column,lastRow,lastColumn, cellAttr);
 		}
 	}
 	

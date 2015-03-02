@@ -68,6 +68,7 @@ import org.zkoss.zss.model.impl.AbstractBookSeriesAdv;
 import org.zkoss.zss.model.impl.AbstractSheetAdv;
 import org.zkoss.zss.model.impl.AbstractNameAdv;
 import org.zkoss.zss.model.impl.AbstractCellAdv;
+import org.zkoss.zss.model.impl.CellAttribute;
 import org.zkoss.zss.model.impl.ColorImpl;
 import org.zkoss.zss.model.impl.FormulaCacheCleaner;
 import org.zkoss.zss.model.impl.RefImpl;
@@ -224,12 +225,14 @@ public class RangeImpl implements SRange {
 			for (SheetRegion r : _rangeRefs) {
 				SSheet sheet = r.getSheet();
 				CellRegion region = r.getRegion();
-				handleCellNotifyContentChange(new SheetRegion(sheet,region));
+				handleCellNotifyContentChange(new SheetRegion(sheet,region), getCellAttr()); //ZSS-939
 				handleRefNotifyContentChange(bookSeries, table.getEvaluatedDependents(new RefImpl(sheet.getBook().getBookName(),sheet.getSheetName(),
-						region.getRow(),region.getColumn(),region.getLastRow(),region.getLastColumn())));
+						region.getRow(),region.getColumn(),region.getLastRow(),region.getLastColumn())), getCellAttr()); //ZSS-939
 				
 			}
 		}
+		//ZSS-939
+		abstract CellAttribute getCellAttr();
 	}
 	
 
@@ -263,13 +266,13 @@ public class RangeImpl implements SRange {
 		visitor.afterVisitAll();
 	}
 
-	private void handleRefNotifyContentChange(SBookSeries bookSeries,Set<Ref> notifySet) {
+	private void handleRefNotifyContentChange(SBookSeries bookSeries,Set<Ref> notifySet, CellAttribute cellAttr) { //ZSS-939
 		// notify changes
-		new RefNotifyContentChangeHelper(bookSeries).notifyContentChange(notifySet);
+		new RefNotifyContentChangeHelper(bookSeries).notifyContentChange(notifySet, cellAttr);
 	}
-	private void handleRefNotifyContentChange(SBookSeries bookSeries,Ref notify) {
+	private void handleRefNotifyContentChange(SBookSeries bookSeries,Ref notify, CellAttribute cellAttr) { //ZSS-939
 		// notify changes
-		new RefNotifyContentChangeHelper(bookSeries).notifyContentChange(notify);
+		new RefNotifyContentChangeHelper(bookSeries).notifyContentChange(notify, cellAttr);
 	}
 
 	private boolean equalObjects(Object obj1, Object obj2) {
@@ -315,6 +318,11 @@ public class RangeImpl implements SRange {
 				}
 				return true;
 			}
+			//ZSS-939
+			@Override
+			CellAttribute getCellAttr() {
+				return CellAttribute.TEXT;
+			}
 		}).doInWriteLock(getLock());
 	}
 	
@@ -337,13 +345,13 @@ public class RangeImpl implements SRange {
 					CellRegion region = r.getRegion();
 					new ClearCellHelper(new RangeImpl(sheet,region)).clearCellContent();
 					
-					handleCellNotifyContentChange(new SheetRegion(sheet,region));
+					handleCellNotifyContentChange(new SheetRegion(sheet,region), CellAttribute.TEXT); //ZSS-939
 					
 					boolean wholeSheet = region.row==0 && region.lastRow>=book.getMaxRowIndex() 
 							&& region.column==0 && region.lastColumn>=book.getMaxColumnIndex();
 					if(!wholeSheet){//no need to notify again if it is whole sheet already
 						handleRefNotifyContentChange(bookSeries, table.getEvaluatedDependents(new RefImpl(sheet.getBook().getBookName(),sheet.getSheetName(),
-							region.row,region.column,region.lastRow,region.lastColumn)));
+							region.row,region.column,region.lastRow,region.lastColumn)), CellAttribute.TEXT); //ZSS-939
 					}
 				}
 				return null;
@@ -365,7 +373,7 @@ public class RangeImpl implements SRange {
 					SSheet sheet = r.getSheet();
 					CellRegion region = r.getRegion();
 					new ClearCellHelper(new RangeImpl(sheet,region)).clearCellStyle();
-					handleCellNotifyContentChange(new SheetRegion(sheet,region));
+					handleCellNotifyContentChange(new SheetRegion(sheet,region), CellAttribute.STYLE); //ZSS-939
 				}
 				return null;
 			}
@@ -393,9 +401,9 @@ public class RangeImpl implements SRange {
 					//we still need to handle the row/column style case.
 					new ClearCellHelper(new RangeImpl(sheet,region)).clearCellStyle();
 					
-					handleCellNotifyContentChange(new SheetRegion(sheet,region));
+					handleCellNotifyContentChange(new SheetRegion(sheet,region), CellAttribute.ALL); //ZSS-939
 					handleRefNotifyContentChange(bookSeries, table.getEvaluatedDependents(new RefImpl(sheet.getBook().getBookName(),sheet.getSheetName(),
-							region.getRow(),region.getColumn(),region.getLastRow(),region.getLastColumn())));
+							region.getRow(),region.getColumn(),region.getLastRow(),region.getLastColumn())), CellAttribute.ALL); //ZSS-939
 				}
 				return null;
 			}
@@ -503,6 +511,12 @@ public class RangeImpl implements SRange {
 				}
 				return true;
 			}
+			
+			//ZSS-939
+			@Override
+			CellAttribute getCellAttr() {
+				return CellAttribute.ALL;
+			}
 		}).doInWriteLock(getLock());
 	}
 	
@@ -557,17 +571,23 @@ public class RangeImpl implements SRange {
 
 	@Override
 	public void notifyChange() {
+		notifyChange(CellAttribute.ALL);
+	}
+	
+	//ZSS-939
+	@Override
+	public void notifyChange(final CellAttribute cellAttr) {
 		new ReadWriteTask(){
 			@Override
 			public Object invoke() {
-				notifyChangeInLock(true);
+				notifyChangeInLock(true, cellAttr);
 				return null;
 			}
 		
 		}.doInWriteLock(getLock());//we will clear formula cache, so need to use write lock
 	}
 	
-	private void notifyChangeInLock(boolean notifyDependent){
+	private void notifyChangeInLock(boolean notifyDependent, CellAttribute cellAttr){ //ZSS-939
 		SBookSeries bookSeries = getBookSeries();
 		DependencyTable table = ((AbstractBookSeriesAdv)bookSeries).getDependencyTable();
 		LinkedHashSet<Ref> notifySet = new LinkedHashSet<Ref>();
@@ -587,7 +607,7 @@ public class RangeImpl implements SRange {
 				notifySet.addAll(table.getEvaluatedDependents(pre));
 			}
 		}
-		handleRefNotifyContentChange(bookSeries,notifySet);
+		handleRefNotifyContentChange(bookSeries,notifySet,cellAttr); //ZSS-939
 	}
 	
 	public void notifyChange(final String[] variables){
@@ -629,7 +649,7 @@ public class RangeImpl implements SRange {
 						
 					}
 				}
-				handleRefNotifyContentChange(bookSeries,notifySet);
+				handleRefNotifyContentChange(bookSeries,notifySet, CellAttribute.ALL); //ZSS-939
 				return null;
 			}
 		
@@ -737,7 +757,8 @@ public class RangeImpl implements SRange {
 			}
 		}
 		new NotifyChangeHelper().notifyRowColumnSizeChange(notifySet);
-		new NotifyChangeHelper().notifyCellChange(notifySet); //ZSS-666
+		new NotifyChangeHelper().notifyCellChange(notifySet, CellAttribute.ALL); //ZSS-666
+			// ZSS-939, must use CellAttribute.ALL; General format number change precision per the column width
 	}
 
 	@Override
@@ -924,7 +945,7 @@ public class RangeImpl implements SRange {
 				for (SheetRegion r : _rangeRefs) {
 					new SetCellStyleHelper(new RangeImpl(r.getSheet(),r.getRegion())).setCellStyle(style);	
 				}
-				notifyChangeInLock(false);
+				notifyChangeInLock(false, CellAttribute.STYLE); //ZSS-939
 				return null;
 			}
 		}.doInWriteLock(getLock());
@@ -1107,6 +1128,12 @@ public class RangeImpl implements SRange {
 //				}
 				cell.setStringValue(text);
 				return true;
+			}
+			
+			//ZSS-939
+			@Override
+			CellAttribute getCellAttr() {
+				return CellAttribute.TEXT;
 			}
 		}).doInWriteLock(getLock());
 	}
@@ -1630,16 +1657,16 @@ public class RangeImpl implements SRange {
 			for(ModelUpdate update:modelUpdates){
 				switch(update.getType()){
 				case CELL:
-					handleCellNotifyContentChange((SheetRegion)update.getData());
+					handleCellNotifyContentChange((SheetRegion)update.getData(), update.getCellAttr()); //ZSS-939
 					break;
 				case CELLS:
-					handleCellNotifyContentChange((Set<SheetRegion>)update.getData());
+					handleCellNotifyContentChange((Set<SheetRegion>)update.getData(), update.getCellAttr()); //ZSS-939
 					break;
 				case REF:
-					handleRefNotifyContentChange(bookSeries,(Ref)update.getData());
+					handleRefNotifyContentChange(bookSeries,(Ref)update.getData(), update.getCellAttr()); //ZSS-939
 					break;
 				case REFS:
-					handleRefNotifyContentChange(bookSeries,(Set<Ref>)update.getData());
+					handleRefNotifyContentChange(bookSeries,(Set<Ref>)update.getData(), update.getCellAttr()); //ZSS-939
 					break;
 				case MERGE:
 					MergeUpdate mu = (MergeUpdate)update.getData();
@@ -1684,11 +1711,11 @@ public class RangeImpl implements SRange {
 		new NotifyChangeHelper().notifyMergeAdd(mergeNotifySet);
 	}
 	
-	private void handleCellNotifyContentChange(SheetRegion cellNotify) {
-		new NotifyChangeHelper().notifyCellChange(cellNotify);
+	private void handleCellNotifyContentChange(SheetRegion cellNotify, CellAttribute cellAttr) { //ZSS-939
+		new NotifyChangeHelper().notifyCellChange(cellNotify, cellAttr);
 	}
-	private void handleCellNotifyContentChange(Set<SheetRegion> cellNotifySet) {
-		new NotifyChangeHelper().notifyCellChange(cellNotifySet);
+	private void handleCellNotifyContentChange(Set<SheetRegion> cellNotifySet, CellAttribute cellAttr) { //ZSS-939
+		new NotifyChangeHelper().notifyCellChange(cellNotifySet, cellAttr);
 	}
 	
 	private void handleInsertDeleteNotifyChange(InsertDeleteUpdate insertDeleteNofity) {
@@ -1826,7 +1853,7 @@ public class RangeImpl implements SRange {
 		// have to notify those cells.
 		final AbstractBookSeriesAdv series = (AbstractBookSeriesAdv) getBookSeries();
 		final DependencyTable table = series.getDependencyTable();
-		handleRefNotifyContentChange(series, table.getEvaluatedDependents(new NameRefImpl((AbstractNameAdv)name)));
+		handleRefNotifyContentChange(series, table.getEvaluatedDependents(new NameRefImpl((AbstractNameAdv)name)), CellAttribute.ALL); //ZSS-939
 	}
 	
 	private static final SRange EMPTY_RANGE = new EmptyNRange();
@@ -2143,7 +2170,7 @@ public class RangeImpl implements SRange {
 						}
 					}
 				}
-				handleRefNotifyContentChange(bookSeries, refs);
+				handleRefNotifyContentChange(bookSeries, refs, CellAttribute.ALL); //ZSS-939
 				return null;
 			}
 		}.doInWriteLock(getLock());
@@ -2214,6 +2241,11 @@ public class RangeImpl implements SRange {
 				}
 				return false;
 			}
+			//ZSS-939
+			@Override
+			CellAttribute getCellAttr() {
+				return CellAttribute.COMMENT;
+			}
 		}).doInWriteLock(getLock());
 	}
 	
@@ -2248,6 +2280,11 @@ public class RangeImpl implements SRange {
 					comment.setVisible(visible);
 				}
 				return false;
+			}
+			//ZSS-939
+			@Override
+			CellAttribute getCellAttr() {
+				return CellAttribute.COMMENT;
 			}
 		}).doInWriteLock(getLock());
 	}

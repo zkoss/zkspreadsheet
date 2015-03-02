@@ -29,6 +29,7 @@ import org.zkoss.zss.model.SDataValidation.OperatorType;
 import org.zkoss.zss.model.SDataValidation.ValidationType;
 import org.zkoss.zss.model.SHyperlink.HyperlinkType;
 import org.zkoss.zss.model.SPicture.Format;
+import org.zkoss.zss.model.impl.CellAttribute;
 /**
  * The main API to manipulate Spreadsheet's book model.
  * It may represent one or more cells, a row, a column, or a selection of a block of cells. 
@@ -940,4 +941,10 @@ public interface SRange {
 	 * @since 3.7.0
 	 */
 	public boolean isCommentVisible();
+
+	/**
+	 * Notify this range has been changed with the specified attribute.
+	 * @since 3.8.0
+	 */
+	public void notifyChange(CellAttribute cellAttr); 
 }

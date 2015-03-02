@@ -2404,8 +2404,12 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			final int left = region.getColumn();
 			final int top = region.getRow();
 			final int right = region.getLastColumn();
-			int bottom = region.getLastRow();
-			updateCell(sheet, left, top, right, bottom);
+			final int bottom = region.getLastRow();
+			//ZSS-939
+			final Integer cellAttrVal = (Integer) event.getData("cellAttr");
+			final CellAttribute cellAttr = cellAttrVal == null ? CellAttribute.ALL : CellAttribute.values()[cellAttrVal - 1];
+			updateCell(sheet, left, top, right, bottom, cellAttr);
+			
 			updateUnlockInfo();
 			org.zkoss.zk.ui.event.Events.postEvent(new CellAreaEvent(
 					Events.ON_AFTER_CELL_CHANGE, Spreadsheet.this, new SheetImpl(new SimpleRef<SBook>(sheet.getBook()),new SimpleRef<SSheet>(sheet))
@@ -2723,8 +2727,13 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	 * @param right right of block
 	 * @param bottom bottom of block
 	 */
+	@Deprecated
 	/* package */void updateCell(int left, int top, int right, int bottom) {
-		updateCell(getSelectedSSheet(), left, top, right, bottom);
+		updateCell(getSelectedSSheet(), left, top, right, bottom, CellAttribute.ALL);
+	}
+	//ZSS-939
+	/* package */void updateCell(int left, int top, int right, int bottom, CellAttribute cellAttr) {
+		updateCell(getSelectedSSheet(), left, top, right, bottom, cellAttr);
 	}
 
 	private void updateWidget(SSheet sheet,String objId) {
@@ -2759,7 +2768,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		}
 	}
 	
-	private void updateCell(SSheet sheet, int left, int top, int right, int bottom) {
+	private void updateCell(SSheet sheet, int left, int top, int right, int bottom, CellAttribute cellAttr) { //ZSS-939
 		if (this.isInvalidated())
 			return;// since it is invalidate, we don't need to do anymore
 
@@ -2767,14 +2776,17 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		if (!getActiveRangeHelper().containsSheet(sheet))
 			return;
 		
-		left = left > 0 ? left - 1 : 0;// for border, when update a range, we
-		// should also update the left - 1, top - 1 part
-		top = top > 0 ? top - 1 : 0;
-		
-		//ZSS-568: for double border, when we update a range, we should also
-		// update the right + 1, bottom + 1 part
-		right = right + 1;
-		bottom = bottom + 1;
+		//ZSS-939: optimize for border case
+		if (cellAttr == CellAttribute.ALL || cellAttr == CellAttribute.STYLE) {
+			left = left > 0 ? left - 1 : 0;// for border, when update a range, we
+			// should also update the left - 1, top - 1 part
+			top = top > 0 ? top - 1 : 0;
+			
+			//ZSS-568: for double border, when we update a range, we should also
+			// update the right + 1, bottom + 1 part
+			right = right + 1;
+			bottom = bottom + 1;
+		}
 		
 		//ZSS-701, ZSS-700
 		final AreaRef rect = getActiveRangeHelper().getArea(sheet); 
@@ -2812,28 +2824,28 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		JSONObject activeRange = null;
 		//	data panel 
 		if (top >= 0 && top <= bottom && left >= 0 && left <= right) {
-			activeRange = responseUpdateCell(sheet, sheetId, left, top, right, bottom);
+			activeRange = responseUpdateCell(sheet, sheetId, left, top, right, bottom, cellAttr); //ZSS-939
 		}
 		// top freeze panel
 		if (frTop >= 0 && frTop <= frBottom && left >= 0 && left <= right) { 
 			if(activeRange == null) { // freeze panel needs payloader
-				activeRange = responseUpdateCell(sheet, sheetId, loadLeft, loadTop, loadLeft, loadTop); 
+				activeRange = responseUpdateCell(sheet, sheetId, loadLeft, loadTop, loadLeft, loadTop, cellAttr); //ZSS-939 
 			}
-			activeRange.put("topFrozen", responseUpdateCell(sheet, sheetId, left, frTop, right, frBottom));
+			activeRange.put("topFrozen", responseUpdateCell(sheet, sheetId, left, frTop, right, frBottom, cellAttr)); //ZSS-939
 		}
 		// left freeze panel
 		if (frLeft >= 0 && frLeft <= frRight && top >= 0 && top <= bottom) {
 			if(activeRange == null) { // freeze panel needs payloader
-				activeRange = responseUpdateCell(sheet, sheetId, loadLeft, loadTop, loadLeft, loadTop); 
+				activeRange = responseUpdateCell(sheet, sheetId, loadLeft, loadTop, loadLeft, loadTop, cellAttr);  //ZSS-939
 			}
-			activeRange.put("leftFrozen", responseUpdateCell(sheet, sheetId, frLeft, top, frRight, bottom));
+			activeRange.put("leftFrozen", responseUpdateCell(sheet, sheetId, frLeft, top, frRight, bottom, cellAttr)); //ZSS-939
 		}
 		// corner freeze panel
 		if (frTop >= 0 && frTop <= frBottom && frLeft >= 0 && frLeft <= frRight) {
 			if(activeRange == null) { // freeze panel needs payloader
-				activeRange = responseUpdateCell(sheet, sheetId, loadLeft, loadTop, loadLeft, loadTop);
+				activeRange = responseUpdateCell(sheet, sheetId, loadLeft, loadTop, loadLeft, loadTop, cellAttr); //ZSS-939
 			}
-			activeRange.put("cornerFrozen", responseUpdateCell(sheet, sheetId, frLeft, frTop, frRight, frBottom));
+			activeRange.put("cornerFrozen", responseUpdateCell(sheet, sheetId, frLeft, frTop, frRight, frBottom, cellAttr)); //ZSS-939
 		}
 		
 		if(activeRange != null) {
@@ -2841,9 +2853,9 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		}
 	}
 	
-	private JSONObject responseUpdateCell(SSheet sheet, String sheetId, int left, int top, int right, int bottom) {
+	private JSONObject responseUpdateCell(SSheet sheet, String sheetId, int left, int top, int right, int bottom, CellAttribute cellAttr) { //ZSS-939
 		SpreadsheetCtrl spreadsheetCtrl = ((SpreadsheetCtrl) this.getExtraCtrl());
-		JSONObject result = spreadsheetCtrl.getRangeAttrs(sheet, SpreadsheetCtrl.Header.NONE, CellAttribute.ALL, left, top, right, bottom);
+		JSONObject result = spreadsheetCtrl.getRangeAttrs(sheet, SpreadsheetCtrl.Header.NONE, cellAttr, left, top, right, bottom); //ZSS-939
 		result.put("type", "udcell");
 		return result;
 	}
@@ -3185,6 +3197,12 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		 * @param containsHeader
 		 * @return
 		 */
+		@Deprecated
+		public JSONObject getRangeAttrs(SSheet sheet, Header containsHeader, int left, int top, int right, int bottom) {
+			return getRangeAttrs(sheet, containsHeader, CellAttribute.ALL, left, top, right, bottom);
+		}
+		//ZSS-939
+		//@since 3.8.0
 		public JSONObject getRangeAttrs(SSheet sheet, Header containsHeader, CellAttribute type, int left, int top, int right, int bottom) {
 			JSONObject attrs = new JSONObject();
 			
@@ -3509,12 +3527,12 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			if(log.debugable()){
 				log.debug("update cells when insert column " + col + ",size:" + size + ":" + left + "," + top + "," + right + "," + bottom);
 			}
-			updateCell(sheet, left, top, right, bottom);
+			updateCell(sheet, left, top, right, bottom, CellAttribute.ALL); //ZSS-939
 			
 			// ZSS-404: must update cell in freeze panels (previous range is only for data block)
 			int rowFreeze = getSelectedSheetRowfreeze();
 			if(rowFreeze >= 0) {
-				updateCell(sheet, left, 0, right, rowFreeze); // top freeze panel
+				updateCell(sheet, left, 0, right, rowFreeze, CellAttribute.ALL); // top freeze panel; ZSS-939
 			}
 
 			//update inserted column widths
@@ -3579,12 +3597,12 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			int right = rect.getLastColumn();
 			
 			log.debug("update cells when insert row " + row + ",size:" + size + ":" + left + "," + top + "," + right + "," + bottom);
-			updateCell(sheet, left, top, right, bottom);
+			updateCell(sheet, left, top, right, bottom, CellAttribute.ALL);
 			
 			// ZSS-404: must update cell in freeze panels (previous range is only for data block)
 			int colFreeze = getSelectedSheetColumnfreeze();
 			if(colFreeze >= 0) {
-				updateCell(sheet, 0, top, colFreeze, bottom); // left freeze panel
+				updateCell(sheet, 0, top, colFreeze, bottom, CellAttribute.ALL); // left freeze panel
 			}
 			
 			// update the inserted row height
@@ -3644,7 +3662,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			int left = col;
 			right = left;
 			
-			updateCell(sheet, left, rect.getRow(), right, rect.getLastRow());
+			updateCell(sheet, left, rect.getRow(), right, rect.getLastRow(), CellAttribute.ALL); //ZSS-939
 		}
 
 		public void removeRows(SSheet sheet, int row, int size) {
@@ -3697,7 +3715,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			int top = row;
 			bottom = top;
 			
-			updateCell(sheet, rect.getColumn(), top, rect.getLastColumn(), bottom);
+			updateCell(sheet, rect.getColumn(), top, rect.getLastColumn(), bottom, CellAttribute.ALL); //ZSS-939
 		}
 
 		public void updateMergeCell(SSheet sheet, int left, int top, int right,
@@ -3720,7 +3738,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 				updateMergeCell0(sheet, rect, "remove");
 			}
 			//updateCell(sheet, left > 0 ? left - 1 : 0, top > 1 ? top - 1 : 0, right + 1, bottom + 1);
-			updateCell(sheet, left, top, right, bottom);
+			updateCell(sheet, left, top, right, bottom, CellAttribute.ALL); //ZSS-939
 		}
 
 		private void updateMergeCell0(SSheet sheet, MergedRect block, String type) {
@@ -3779,7 +3797,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 				updateMergeCell0(sheet, rect, "add");
 			}
 //			updateCell(sheet, left > 0 ? left - 1 : 0, top > 1 ? top - 1 : 0, right + 1, bottom + 1);
-			updateCell(sheet, left, top, right, bottom);
+			updateCell(sheet, left, top, right, bottom, CellAttribute.ALL); //ZSS-939
 		}
 
 		//in pixel

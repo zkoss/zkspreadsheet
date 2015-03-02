@@ -159,7 +159,7 @@ public class CellImpl extends AbstractCellAdv {
 			Validations.argInstance(cellStyle, AbstractCellStyleAdv.class);
 		}
 		this._cellStyle = (AbstractCellStyleAdv) cellStyle;
-		addCellUpdate();
+		addCellUpdate(CellAttribute.STYLE); //ZSS-939
 	}
 
 	@Override
@@ -213,12 +213,12 @@ public class CellImpl extends AbstractCellAdv {
 		};
 		//don't update when sheet is destroying
 		if(BookImpl.destroyingSheet.get()!=getSheet()){
-			addCellUpdate();
+			addCellUpdate(CellAttribute.TEXT); //ZSS-939
 		}
 	}
 	
-	private void addCellUpdate(){
-		ModelUpdateUtil.addCellUpdate(getSheet(), getRowIndex(), getColumnIndex());
+	private void addCellUpdate(CellAttribute cellAttr){ //ZSS-939
+		ModelUpdateUtil.addCellUpdate(getSheet(), getRowIndex(), getColumnIndex(), cellAttr);
 	}
 	
 	@Override
@@ -389,7 +389,7 @@ public class CellImpl extends AbstractCellAdv {
 	public void setHyperlink(SHyperlink hyperlink) {
 		Validations.argInstance(hyperlink, AbstractHyperlinkAdv.class);
 		getOpts(true)._hyperlink = (AbstractHyperlinkAdv)hyperlink;
-		addCellUpdate();
+		addCellUpdate(CellAttribute.TEXT); //ZSS-939
 	}
 	
 	@Override
@@ -402,7 +402,7 @@ public class CellImpl extends AbstractCellAdv {
 	public void setComment(SComment comment) {
 		Validations.argInstance(comment, AbstractCommentAdv.class);
 		getOpts(true)._comment = (AbstractCommentAdv)comment;
-		addCellUpdate();
+		addCellUpdate(CellAttribute.COMMENT); //ZSS-939
 	}
 	
 	//ZSS-848

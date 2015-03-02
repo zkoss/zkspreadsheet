@@ -16,13 +16,16 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.range.impl;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.zkoss.util.logging.Log;
 import org.zkoss.zss.model.*;
 import org.zkoss.zss.model.impl.AbstractBookAdv;
+import org.zkoss.zss.model.impl.CellAttribute;
 /**
  * A helper class that encapsulate details of sending model events.
  * @author Dennis
@@ -115,18 +118,33 @@ import org.zkoss.zss.model.impl.AbstractBookAdv;
 				notify.getRegion()));
 	}
 
+	@Deprecated
 	public void notifyCellChange(Set<SheetRegion> cellNotifySet) {
+		notifyCellChange(cellNotifySet, CellAttribute.ALL);
+	}
+	@Deprecated
+	public void notifyCellChange(SheetRegion notify) {
+		notifyCellChange(notify, CellAttribute.ALL);
+	}
+
+	//ZSS-939
+	//@since 3.8.0
+	public void notifyCellChange(Set<SheetRegion> cellNotifySet, CellAttribute cellAttr) {
 		for(SheetRegion notify:cellNotifySet){
-			notifyCellChange(notify);
+			notifyCellChange(notify, cellAttr);
 		}
 	}
-	public void notifyCellChange(SheetRegion notify) {
+	//ZSS-939
+	//@since 3.8.0
+	public void notifyCellChange(SheetRegion notify, CellAttribute cellAttr) {
 		SBook book = notify.getSheet().getBook();
 		if(_logger.debugable()){
-			_logger.debug("Notify cell change "+notify.getReferenceString());
+			_logger.debug("Notify cell change "+notify.getReferenceString()+" of attribute "+cellAttr);
 		}
+		final Map<String, Integer> attrMap = new HashMap<String, Integer>(2);
+		attrMap.put("cellAttr", cellAttr.value);
 		((AbstractBookAdv) book).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_CELL_CONTENT_CHANGE,notify.getSheet(),
-				notify.getRegion()));
+				notify.getRegion(), attrMap));
 	}
 	
 	public void notifySheetDelete(SBook book,SSheet deletedSheet,int deletedIndex){

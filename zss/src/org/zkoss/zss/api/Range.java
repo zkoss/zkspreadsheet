@@ -161,6 +161,12 @@ public interface Range {
 		HIDDEN,
 		VERY_HIDDEN,
 	}
+	
+	//ZSS-939: the sequence must be consistent with org.zkoss.zss.model.impl.CellAttribute
+	//@since 3.8.0
+	public enum CellAttribute {
+		ALL, TEXT, STYLE, SIZE, MERGE, COMMENT;
+	}
 
 	/**
 	 * Sets the synchronization level of this range
@@ -1045,4 +1051,10 @@ public interface Range {
 	 * @since 3.7.0
 	 */
 	public boolean isCommentVisible();
+
+	/**
+	 * Notify this range has been changed on the specifield attribute.
+	 * @since 3.8.0
+	 */
+	public void notifyChange(CellAttribute cellAttr);
 }

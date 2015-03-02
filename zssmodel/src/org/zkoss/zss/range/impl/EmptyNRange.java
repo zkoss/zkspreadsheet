@@ -18,6 +18,7 @@ import org.zkoss.zss.model.SFont.TypeOffset;
 import org.zkoss.zss.model.SFont.Underline;
 import org.zkoss.zss.model.SHyperlink.HyperlinkType;
 import org.zkoss.zss.model.SPicture.Format;
+import org.zkoss.zss.model.impl.CellAttribute;
 import org.zkoss.zss.range.*;
 
 /**
@@ -556,5 +557,12 @@ import org.zkoss.zss.range.*;
 	@Override
 	public boolean isCommentVisible() {
 		return false;
+	}
+
+	//ZSS-939
+	@Override
+	public void notifyChange(CellAttribute cellAttr) {
+		// do nothing
+		
 	}
 }

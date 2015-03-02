@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.zkoss.zss.api.Range.ApplyBorderType;
 import org.zkoss.zss.api.Range.AutoFillType;
+import org.zkoss.zss.api.Range.CellAttribute;
 import org.zkoss.zss.api.Range.DeleteShift;
 import org.zkoss.zss.api.Range.InsertCopyOrigin;
 import org.zkoss.zss.api.Range.InsertShift;
@@ -627,7 +628,7 @@ public class CellOperationUtil {
 				}
 			});
 		}
-		range.notifyChange();
+		range.notifyChange(CellAttribute.STYLE); //ZSS-939
 	}
 	
 	/**

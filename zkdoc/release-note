@@ -5,6 +5,7 @@ ZK Spreadsheet 3.8.0
   ZSS-883 Make Format Dialog be customized easier
   ZSS-918 Support to display vertical text
   ZSS-940 Support removing GA code for EE customer version
+  ZSS-939 Changing cell style doesn't trigger formula recalculation
   
 *Bugs:
   ZSS-910 Problem referencing a cell with formula in same position of other file

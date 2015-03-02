@@ -25,6 +25,7 @@ import java.util.Set;
 import org.zkoss.zss.model.CellRegion;
 import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.model.SheetRegion;
+import org.zkoss.zss.model.impl.CellAttribute;
 import org.zkoss.zss.model.impl.RefImpl;
 import org.zkoss.zss.model.sys.dependency.Ref;
 import org.zkoss.zss.range.impl.ModelUpdate.UpdateType;
@@ -89,11 +90,11 @@ public class ModelUpdateCollector {
 				 
 				 removeLast();
 				 
-				 addModelUpdate(new ModelUpdate(UpdateType.REFS, data));
+				 addModelUpdate(new ModelUpdate(UpdateType.REFS, data, CellAttribute.ALL)); //ZSS-939
 				 return;
 			}
 		}
-		addModelUpdate(new ModelUpdate(UpdateType.REFS, new LinkedHashSet(dependents)));
+		addModelUpdate(new ModelUpdate(UpdateType.REFS, new LinkedHashSet(dependents), CellAttribute.ALL)); //ZSS-939
 	}
 
 	public void addRef(Ref ref) {
@@ -110,15 +111,23 @@ public class ModelUpdateCollector {
 				 
 				 removeLast();
 				 
-				 addModelUpdate(new ModelUpdate(UpdateType.REFS, data));
+				 addModelUpdate(new ModelUpdate(UpdateType.REFS, data, CellAttribute.ALL)); //ZSS-939
 				 return;
 			}
 		}
-		addModelUpdate(new ModelUpdate(UpdateType.REF, ref));
+		addModelUpdate(new ModelUpdate(UpdateType.REF, ref, CellAttribute.ALL));
 	}
 
+	@Deprecated
 	public void addCellUpdate(SSheet sheet, int row, int column, int lastRow,
 			int lastColumn) {
+		addCellUpdate(sheet, row, column, lastRow, lastColumn, CellAttribute.ALL);
+	}
+
+	//ZSS-939
+	//@since 3.8.0
+	public void addCellUpdate(SSheet sheet, int row, int column, int lastRow,
+			int lastColumn, CellAttribute cellAttr) {
 		ModelUpdate last = getLast();
 		//optimal, check if it is in previous refs, ref
 		if(last!=null){
@@ -136,35 +145,35 @@ public class ModelUpdateCollector {
 					//ignore if it is in previous refs
 					return;
 				}
-			}else if(last.getType()==UpdateType.CELLS){
+			}else if(last.getType()==UpdateType.CELLS && last.getCellAttr()==cellAttr){ //ZSS-939
 				SheetRegion data = new SheetRegion(sheet,row,column,lastRow,lastColumn);
 				((Set<SheetRegion>)last.getData()).add(data); 
 				return;
-			}else if(last.getType()==UpdateType.CELL){
+			}else if(last.getType()==UpdateType.CELL && last.getCellAttr()==cellAttr){ //ZSS-939
 				Set<SheetRegion> data = new LinkedHashSet<SheetRegion>();
 				data.add((SheetRegion)last.getData());
 				data.add(new SheetRegion(sheet,row,column,lastRow,lastColumn));
 				 
 				removeLast();
 				
-				addModelUpdate(new ModelUpdate(UpdateType.CELLS, data));
+				addModelUpdate(new ModelUpdate(UpdateType.CELLS, data, cellAttr)); //ZSS-939
 			}
 		}
 		addModelUpdate(new ModelUpdate(UpdateType.CELL, new SheetRegion(sheet,
-				row, column, lastRow, lastColumn)));
+				row, column, lastRow, lastColumn), cellAttr)); //ZSS-939
 	}
 
 	public void addMergeChange(SSheet sheet, CellRegion original,
 			CellRegion changeTo) {
 		addModelUpdate(new ModelUpdate(UpdateType.MERGE, new MergeUpdate(sheet,
-				original, changeTo)));
+				original, changeTo), CellAttribute.ALL)); //ZSS-939
 	}
 
 	public void addInsertDeleteUpdate(SSheet sheet, boolean inserted,
 			boolean isRow, int index, int lastIndex) {
 		addModelUpdate(new ModelUpdate(
 				UpdateType.INSERT_DELETE,
-				new InsertDeleteUpdate(sheet, inserted, isRow, index, lastIndex)));
+				new InsertDeleteUpdate(sheet, inserted, isRow, index, lastIndex), CellAttribute.ALL));//ZSS-939
 	}
 
 }

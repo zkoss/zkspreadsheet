@@ -705,7 +705,7 @@ public class SheetImpl extends AbstractSheetAdv {
 			EngineFactory.getInstance().createFormulaEngine().clearCache(new FormulaClearContext(this));
 			
 			// notify affected region update
-			ModelUpdateUtil.addCellUpdate(this, rowIdx, columnIdx, lastRowIdx, getBook().getMaxColumnIndex());
+			ModelUpdateUtil.addCellUpdate(this, rowIdx, columnIdx, lastRowIdx, getBook().getMaxColumnIndex(), CellAttribute.ALL); //ZSS-939
 		}else{ // vertical
 			int maxSize = getBook().getMaxRowSize();
 			Collection<AbstractRowAdv> effectedRows = _rows.descendingSubValues(rowIdx,Integer.MAX_VALUE);
@@ -725,7 +725,7 @@ public class SheetImpl extends AbstractSheetAdv {
 			EngineFactory.getInstance().createFormulaEngine().clearCache(new FormulaClearContext(this));
 			
 			// notify affected region update
-			ModelUpdateUtil.addCellUpdate(this, rowIdx, columnIdx, getBook().getMaxRowIndex(), lastColumnIdx);
+			ModelUpdateUtil.addCellUpdate(this, rowIdx, columnIdx, getBook().getMaxRowIndex(), lastColumnIdx, CellAttribute.ALL); //ZSS-939
 		}
 		
 		shiftAfterCellInsert(rowIdx, columnIdx, lastRowIdx,lastColumnIdx,horizontal);
@@ -758,7 +758,7 @@ public class SheetImpl extends AbstractSheetAdv {
 			EngineFactory.getInstance().createFormulaEngine().clearCache(new FormulaClearContext(this));
 			
 			// notify affected region update
-			ModelUpdateUtil.addCellUpdate(this, rowIdx, columnIdx, lastRowIdx, getBook().getMaxColumnIndex());
+			ModelUpdateUtil.addCellUpdate(this, rowIdx, columnIdx, lastRowIdx, getBook().getMaxColumnIndex(), CellAttribute.ALL); //ZSS-939
 		}else{ // vertical
 			Collection<AbstractRowAdv> effectedRows = _rows.subValues(rowIdx,lastRowIdx);
 			for(AbstractRowAdv row:effectedRows){
@@ -775,7 +775,7 @@ public class SheetImpl extends AbstractSheetAdv {
 			EngineFactory.getInstance().createFormulaEngine().clearCache(new FormulaClearContext(this));
 			
 			// notify affected region update
-			ModelUpdateUtil.addCellUpdate(this, rowIdx, columnIdx, getBook().getMaxRowIndex(), lastColumnIdx);
+			ModelUpdateUtil.addCellUpdate(this, rowIdx, columnIdx, getBook().getMaxRowIndex(), lastColumnIdx, CellAttribute.ALL); //ZSS-939
 		}
 		
 		shiftAfterCellDelete(rowIdx, columnIdx, lastRowIdx,lastColumnIdx,horizontal);

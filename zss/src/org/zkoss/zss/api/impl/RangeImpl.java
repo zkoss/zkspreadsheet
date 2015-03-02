@@ -866,4 +866,10 @@ public class RangeImpl implements Range{
 	public boolean isCommentVisible() {
 		return _range.isCommentVisible();
 	}
+
+	//ZSS-939
+	@Override
+	public void notifyChange(CellAttribute cellAttr){ 
+		_range.notifyChange(org.zkoss.zss.model.impl.CellAttribute.values()[cellAttr.ordinal()]);
+	}
 }
