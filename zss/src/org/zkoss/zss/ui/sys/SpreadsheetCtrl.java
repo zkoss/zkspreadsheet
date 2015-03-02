@@ -77,7 +77,7 @@ public interface SpreadsheetCtrl {
 	
 	public JSONObject getColumnHeaderAttrs(SSheet sheet, int colStart, int colEnd);
 	
-	public JSONObject getRangeAttrs(SSheet sheet, Header containsHeader, CellAttribute type, int left, int top, int right, int bottom);
+	public JSONObject getRangeAttrs(SSheet sheet, Header containsHeader, int left, int top, int right, int bottom);
 	
 	/**
 	 * Add widget to the {@link WidgetHandler} of this spreadsheet, 
@@ -116,4 +116,17 @@ public interface SpreadsheetCtrl {
 	 * @since 3.0.0
 	 */
 	public FreezeInfoLoader getFreezeInfoLoader();
+
+	/**
+	 * @since 3.8.0
+	 * @param sheet
+	 * @param containsHeader
+	 * @param type
+	 * @param left
+	 * @param top
+	 * @param right
+	 * @param bottom
+	 * @return
+	 */
+	public JSONObject getRangeAttrs(SSheet sheet, Header containsHeader, CellAttribute type, int left, int top, int right, int bottom);
 }
