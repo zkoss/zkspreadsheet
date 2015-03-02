@@ -315,7 +315,8 @@ public class CellStyleImpl extends AbstractCellStyleAdv {
 		.append(".").append(_borderBottomColor.getHtmlColor())
 		.append(".").append(_dataFormat)
 		.append(".").append(_locked?"T":"F")
-		.append(".").append(_hidden?"T":"F");
+		.append(".").append(_hidden?"T":"F")
+		.append(".").append(_rotation);
 		return sb.toString();
 	}
 

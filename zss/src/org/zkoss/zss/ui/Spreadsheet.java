@@ -364,9 +364,6 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	
 	private FreezeInfoLoader _freezeInfoLoader = null;
 	
-	private static final String ON_MODEL_FRIEND_FOCUS_DELETE = "onFriendFocusDelete";
-	private static final String ON_MODEL_FRIEND_FOCUS_MOVE = "onFriendFocusMove";
-	
 	public Spreadsheet() {
 		this.addEventListener("onStartEditingImpl", new EventListener() {
 			public void onEvent(Event event) throws Exception {
@@ -679,7 +676,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		if (_selectedSheet != null && getSBook().getSheetIndex(_selectedSheet) != -1  && _selfEditorFocus != null) {
 			final SRange rng = SRanges.range(_selectedSheet);
 			getFriendFocusHelper().removeFocus(_selfEditorFocus);
-			rng.notifyCustomEvent(ON_MODEL_FRIEND_FOCUS_DELETE,_selfEditorFocus,true);
+			rng.notifyCustomEvent(ModelEvents.ON_MODEL_FRIEND_FOCUS_DELETE,_selfEditorFocus,true);
 			_selfEditorFocus = null;
 		}
 	}
@@ -693,7 +690,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 				_selfEditorFocus.setPosition(row, column);
 			}
 			final SRange rng = SRanges.range(_selectedSheet);
-			rng.notifyCustomEvent(ON_MODEL_FRIEND_FOCUS_MOVE,_selfEditorFocus,true);
+			rng.notifyCustomEvent(ModelEvents.ON_MODEL_FRIEND_FOCUS_MOVE,_selfEditorFocus,true);
 		}
 		syncFriendFocus();
 	}
@@ -2138,13 +2135,13 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 					onSheetVisibleChange(event);
 				}
 			});
-			addEventListener(ON_MODEL_FRIEND_FOCUS_MOVE, new ModelEventListener() {
+			addEventListener(ModelEvents.ON_MODEL_FRIEND_FOCUS_MOVE, new ModelEventListener() {
 				@Override
 				public void onEvent(ModelEvent event){
 					onFriendFocusMove(event);
 				}
 			});
-			addEventListener(ON_MODEL_FRIEND_FOCUS_DELETE, new ModelEventListener() {
+			addEventListener(ModelEvents.ON_MODEL_FRIEND_FOCUS_DELETE, new ModelEventListener() {
 				@Override
 				public void onEvent(ModelEvent event){
 					onFriendFocusDelete(event);

@@ -27,6 +27,9 @@ import java.util.Map;
  */
 public class ModelEvents {
 	
+	/*
+	 * Common model event
+	 */
 	public static final String ON_CELL_CONTENT_CHANGE = "onCellChange";
 	public static final String ON_CHART_CONTENT_CHANGE = "onChartContentChange";
 	public static final String ON_DATA_VALIDATION_CONTENT_CHANGE = "onDataValidationContentChange";
@@ -59,6 +62,12 @@ public class ModelEvents {
 	public static final String ON_ROW_DELETE = "onRowDelete";
 	public static final String ON_COLUMN_INSERT= "onColumnInsert";
 	public static final String ON_COLUMN_DELETE = "onColumnDelete";
+	
+	/*
+	 * Custom model event
+	 */
+	public static final String ON_MODEL_FRIEND_FOCUS_DELETE = "onFriendFocusDelete";
+	public static final String ON_MODEL_FRIEND_FOCUS_MOVE = "onFriendFocusMove";
 	
 	/**
 	 * the effected book
@@ -185,4 +194,15 @@ public class ModelEvents {
 		ModelEvent event = new ModelEvent(name, datamap);
 		return event;
 	}
+
+	// ZSS-936
+	public static boolean isCustomEvent(ModelEvent event) {
+		if(event.getName().equals(ON_MODEL_FRIEND_FOCUS_MOVE) || 
+			event.getName().equals(ON_MODEL_FRIEND_FOCUS_DELETE))
+			return true;
+		
+		return false;
+	}
+	
+	
 }

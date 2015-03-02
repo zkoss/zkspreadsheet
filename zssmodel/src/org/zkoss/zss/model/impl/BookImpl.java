@@ -36,6 +36,7 @@ import org.zkoss.zss.model.EventQueueModelEventListener;
 import org.zkoss.zss.model.InvalidModelOpException;
 import org.zkoss.zss.model.ModelEvent;
 import org.zkoss.zss.model.ModelEventListener;
+import org.zkoss.zss.model.ModelEvents;
 import org.zkoss.zss.model.SBookSeries;
 import org.zkoss.zss.model.SCell;
 import org.zkoss.zss.model.SCellStyle;
@@ -192,7 +193,7 @@ public class BookImpl extends AbstractBookAdv{
 			_queueListeners.sendModelEvent(event);
 		}
 		
-		if(ModelEvent.class.isAssignableFrom(event.getClass()))
+		if(!ModelEvents.isCustomEvent(event))
 			_dirty = true;
 	}
 	
