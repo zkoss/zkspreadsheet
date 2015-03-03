@@ -42,13 +42,23 @@ public interface BookRepository {
 	Book load(BookInfo info) throws IOException;
 	
 	/**
-	 * Saves a book and replace book of BookInfo
+	 * Saves a book and replace book of BookInfo. This method will do nothing when book's dirty flag is false.
 	 * @param info the BookInfo
 	 * @param book the book to be saved
 	 * @return the updated BookInfo, or null if not saved.
 	 * @throws IOException
 	 */
-	BookInfo save(BookInfo info,Book book) throws IOException;
+	BookInfo save(BookInfo info, Book book) throws IOException;
+	
+	/**
+	 * Saves a book and replace book of BookInfo
+	 * @param info the BookInfo
+	 * @param book the book to be saved
+	 * @param isForce save without dirty check if true
+	 * @return the updated BookInfo, or null if not saved.
+	 * @throws IOException
+	 */
+	BookInfo save(BookInfo info, Book book, boolean isForce) throws IOException;
 	
 	/**
 	 * Saves a book with a new name, 

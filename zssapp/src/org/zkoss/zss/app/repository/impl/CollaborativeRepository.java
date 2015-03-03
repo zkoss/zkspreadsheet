@@ -72,8 +72,12 @@ public class CollaborativeRepository implements BookRepository{
 			return book;
 		}
 	}
-
+	
 	public BookInfo save(BookInfo info, Book book) throws IOException {
+		return save(info, book, false);
+	}
+
+	public BookInfo save(BookInfo info, Book book, boolean isForce) throws IOException {
 		if(UiUtil.isRepositoryReadonly()){
 			return null;
 		}

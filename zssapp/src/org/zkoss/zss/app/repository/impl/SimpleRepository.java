@@ -61,9 +61,13 @@ public class SimpleRepository implements BookRepository{
 		Book book = Importers.getImporter().imports(((SimpleBookInfo)info).getFile(), info.getName());
 		return book;
 	}
+	
+	public BookInfo save(BookInfo info, Book book) throws IOException {
+		return save(info, book, false);
+	}
 
 	// TODO: remove synchronized keyword, and use each book name as synchronized key to let different file be access concurrently.
-	public synchronized BookInfo save(BookInfo info, Book book) throws IOException {
+	public synchronized BookInfo save(BookInfo info, Book book, boolean isForce) throws IOException {
 		if(UiUtil.isRepositoryReadonly()){
 			return null;
 		}
@@ -75,7 +79,7 @@ public class SimpleRepository implements BookRepository{
 			// 1. write to memory cache
 			try {
 				lock.writeLock().lock();
-				if(!book.getInternalBook().isDirty())
+				if(!book.getInternalBook().isDirty() && !isForce)
 					return info;
 				// blank excel file needs 41xx bytes
 				cacheOutputStream = new ByteArrayOutputStream(5000);
@@ -123,7 +127,7 @@ public class SimpleRepository implements BookRepository{
 		Exporters.getExporter(type).export(book, fos);
 	}
 	
-	public synchronized BookInfo saveAs(String bookname,Book book) throws IOException {
+	public synchronized BookInfo saveAs(String bookname, Book book) throws IOException {
 		if(UiUtil.isRepositoryReadonly()){
 			return null;
 		}
@@ -141,7 +145,7 @@ public class SimpleRepository implements BookRepository{
 		}
 		File f = new File(root,name+ext);
 		SimpleBookInfo info = new SimpleBookInfo(f,f.getName(),new Date());
-		return save(info,book);
+		return save(info, book, true);
 	}
 
 	public boolean delete(BookInfo info) throws IOException {
