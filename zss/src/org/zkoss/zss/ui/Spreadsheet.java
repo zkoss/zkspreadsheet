@@ -122,6 +122,7 @@ import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.model.SSheet.SheetVisible;
 import org.zkoss.zss.model.impl.AbstractBookSeriesAdv;
 import org.zkoss.zss.model.impl.sys.DependencyTableImpl;
+import org.zkoss.zss.model.sys.format.FormatResult;
 import org.zkoss.zss.model.sys.formula.EvaluationContributorContainer;
 import org.zkoss.zss.model.util.RichTextHelper;
 import org.zkoss.zss.range.SImporter;
@@ -3365,6 +3366,13 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			SCellStyle cellStyle = sheet.getCell(row, col).getCellStyle();
 			CellFormatHelper cfh = new CellFormatHelper(sheet, row, col, getMergeMatrixHelper(sheet));
 			StringBuffer doubleBorder = new StringBuffer(8);
+			//ZSS-945: optimize calling CellFormatHelper#getFormatResult()
+			//This implementation is super dirty! However, works. 
+			//@see cfh.getFontHtmlStyle(ft);
+			//@see getCellDisplayLoader().getCellHtmlText(sheet, row, col, ft);
+			//@see cfh.getCellFormattedText(ft);
+			final FormatResult ft = updateStyle || updateText ? cfh.getFormatResult() : null;
+			
 			//style attr
 			if (updateStyle) {
 				String style = cfh.getHtmlStyle(doubleBorder);
@@ -3378,7 +3386,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 					attrs.put("is", idx);
 				}
 				// ZSS-725
-				String fontStyle = cfh.getFontHtmlStyle();
+				String fontStyle = cfh.getFontHtmlStyle(ft); //ZSS-945
 				if (!Strings.isEmpty(fontStyle)) {
 					int idx = styleAggregation.add(fontStyle);
 					attrs.put("os", idx);
@@ -3421,9 +3429,9 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 				
 				if (updateText) {
 					if (cellType != CellType.BLANK || cell.getHyperlink() != null) {
-						String cellText = getCellDisplayLoader().getCellHtmlText(sheet, row, col);
+						String cellText = getCellDisplayLoader().getCellHtmlText(sheet, row, col, ft); //ZSS-945
 						final String editText = cfh.getCellEditText();
-						final String formatText = cfh.getCellFormattedText();
+						final String formatText = cfh.getCellFormattedText(ft); //ZSS-945
 						
 						if (Objects.equals(cellText, editText) && Objects.equals(editText, formatText)) {
 							attrs.put("meft", textAggregation.add(cellText));

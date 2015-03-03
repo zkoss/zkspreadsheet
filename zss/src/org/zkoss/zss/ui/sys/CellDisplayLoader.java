@@ -17,6 +17,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.ui.sys;
 
 import org.zkoss.zss.model.SSheet;
+import org.zkoss.zss.model.sys.format.FormatResult;
 
 /**
  * @author dennis
@@ -29,4 +30,15 @@ public interface CellDisplayLoader {
 	 * @return the html text or null if the cell is not support to show it.
 	 */
 	public String getCellHtmlText(SSheet sheet,int row, int column);
+	
+	//ZSS945
+	/**
+	 * Internal Use.
+	 * @param sheet
+	 * @param row
+	 * @param column
+	 * @return
+	 * @since 3.8.0
+	 */
+	public String getCellHtmlText(SSheet sheet,int row, int column, FormatResult ft);
 }

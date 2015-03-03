@@ -706,4 +706,96 @@ public class CellFormatHelper {
 		sb.append("box-shadow:").append("top".equals(locate) ? "0px -1px " : "-1px 0px ").append(color).append(";");
 		return true;
 	}
+	
+	//20150303, henrichen: The fix for ZSS-945 is super dirty!
+	//ZSS-945
+	//@since 3.8.0
+	//@Internal
+	public FormatResult getFormatResult() {
+		return _cell == null ? null : _formatEngine.format(_cell, new FormatContext(ZssContext.getCurrent().getLocale()));
+	}
+	
+	//ZSS-945
+	//@since 3.8.0
+	//@Internal
+	public String getCellFormattedText(FormatResult ft) {
+		return ft == null ? "" : ft.getText();
+	}
+	
+	//ZSS-945
+	//@since 3.8.0
+	//@Internal
+	public String getFontHtmlStyle(FormatResult ft) {
+		if (!_cell.isNull()) {
+			
+			final StringBuffer sb = new StringBuffer();
+			final SFont font = _cellStyle.getFont();
+			
+			//sb.append(BookHelper.getFontCSSStyle(_book, font));
+			sb.append(getFontCSSStyle(_cell, font));
+
+			//condition color
+			final boolean isRichText = ft.isRichText();
+			if (!isRichText) {
+				final SColor color = ft.getColor();
+				if(color!=null){
+					final String htmlColor = color.getHtmlColor();
+					sb.append("color:").append(htmlColor).append(";");
+				}
+			}
+
+			return sb.toString();
+		}
+		return "";
+	}
+	
+	//ZSS-945
+	//@since 3.8.0
+	//@Internal
+	/**
+	 * Gets Cell text by given row and column, it handling
+	 */
+	static public String getRichCellHtmlText(SSheet sheet, int row,int column, FormatResult ft){
+		final SCell cell = sheet.getCell(row, column);
+		String text = "";
+		if (!cell.isNull()) {
+			boolean wrap = cell.getCellStyle().isWrapText();
+			boolean vtxt = cell.getCellStyle().getRotation() == 255; //ZSS-918
+			
+			if (ft.isRichText()) {
+				final SRichText rstr = ft.getRichText();
+				text = vtxt ? getVRichTextHtml(rstr, wrap) : getRichTextHtml(rstr, wrap); //ZSS-918
+			} else {
+				text = vtxt ? escapeVText(ft.getText(), wrap) : escapeText(ft.getText(), wrap, true); //ZSS-918
+			}
+			final SHyperlink hlink = cell.getHyperlink();
+			if (hlink != null) {
+				text = getHyperlinkHtml(text, hlink);
+			}				
+		}
+		return text;
+	}
+	
+	//ZSS-945
+	//@since 3.8.0
+	//@Internal
+	/**
+	 * Gets Cell text by given row and column
+	 */
+	static public String getCellHtmlText(SSheet sheet, int row,int column, FormatResult ft){
+		final SCell cell = sheet.getCell(row, column);
+		String text = "";
+		if (cell != null) {
+			boolean wrap = cell.getCellStyle().isWrapText();
+			
+			if (ft.isRichText()) {
+				final SRichText rstr = ft.getRichText();
+				text = rstr.getText();
+			} else {
+				text = ft.getText();
+			}
+			text = escapeText(text, wrap, true);
+		}
+		return text;
+	}
 }
