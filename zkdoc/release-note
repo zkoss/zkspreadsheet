@@ -28,6 +28,7 @@ ZK Spreadsheet 3.8.0
   ZSS-936 Friend focus should use new event type instead of model event
   ZSS-943 Turn off filter shouldn't cause NPE
   ZSS-946 Cannot upload a file in zssapp
+  ZSS-947 Cannot upload a file with a print area
   
 ** Upgrade Notes
   * Default period for automatically saving in zssapp is 15 minutes.
