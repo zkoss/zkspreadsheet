@@ -23,8 +23,6 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 
 	<message-loader-class>org.zkoss.zss.ui.impl.ZssMessageLoader</message-loader-class>
 
-	<javascript package="zss" />
-
     <javascript-module name="zss" version="3.8.0"/>
 	<version>
 		<version-class>org.zkoss.zss.ui.Version</version-class>
