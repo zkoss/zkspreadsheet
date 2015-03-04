@@ -30,6 +30,7 @@ ZK Spreadsheet 3.8.0
   ZSS-943 Turn off filter shouldn't cause NPE
   ZSS-946 Cannot upload a file in zssapp
   ZSS-947 Cannot upload a file with a print area
+  ZSS-941 zss.wpd file is loaded even if spreadsheet component is not used  
   
 ** Upgrade Notes
   * Default period for automatically saving in zssapp is 15 minutes.

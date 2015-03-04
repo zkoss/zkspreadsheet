@@ -1,0 +1,5 @@
+<vbox hflex="1" vflex="1">
+	<label multiline="true">
+		You shouldn't see zss.wpd loaded in debugger's network console.
+	</label>	
+</vbox>
