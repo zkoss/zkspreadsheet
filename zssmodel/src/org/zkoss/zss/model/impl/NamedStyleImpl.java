@@ -288,4 +288,14 @@ public class NamedStyleImpl implements SNamedStyle {
 	public void setRotation(int rotation) {
 		throw new UnsupportedOperationException();
 	}
+
+	@Override
+	public int getIndention() {
+		return book.getDefaultCellStyle(index).getIndention();
+	}
+
+	@Override
+	public void setIndention(int indent) {
+		throw new UnsupportedOperationException();
+	}
 }

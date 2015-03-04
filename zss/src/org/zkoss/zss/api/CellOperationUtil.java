@@ -998,4 +998,31 @@ public class CellOperationUtil {
 	public static void applyRotation(Range range,final int rotation) {
 		applyCellStyle(range, getRotationApplier((short)rotation));
 	}
+	
+	//ZSS-915
+	//@since 3.8.0
+	public static CellStyleApplier getIndentionApplier(final int indention){
+		return new CellStyleApplierEx() {
+			public void apply(Range range) {
+				//ZSS 464, efficient implement
+				SSheet sheet = range.getSheet().getInternalSheet();
+				StyleUtil.setTextIndention(sheet.getBook(), sheet.getCell(range.getRow(), range.getColumn()), indention);
+			}
+			
+			@Override
+			public void applyWhole(Range wholeRange) {
+				WholeStyleUtil.setTextIndention(wholeRange.getInternalRange(), indention);
+			}
+		};
+	}
+	
+	/**
+	 * Apply indention to cells in the range
+	 * @param range the range to be applied
+	 * @param int the indention
+	 * @since 3.8.0
+	 */
+	public static void applyIndention(Range range, final int indention) {
+		applyCellStyle(range, getIndentionApplier((short)indention));
+	}
 }

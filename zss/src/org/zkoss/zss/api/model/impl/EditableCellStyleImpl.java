@@ -141,4 +141,9 @@ public class EditableCellStyleImpl extends CellStyleImpl implements EditableCell
 	public void setRotation(int rotation) {
 		getNative().setRotation(rotation);
 	}
+	
+	//ZSS-915
+	public void setIndention(int indention) {
+		getNative().setIndention(indention);
+	}
 }

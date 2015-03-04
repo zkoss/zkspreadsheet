@@ -540,6 +540,7 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 			cellStyle.setAlignment(PoiEnumConversion.toHorizontalAlignment(poiCellStyle.getAlignment()));
 			cellStyle.setVerticalAlignment(PoiEnumConversion.toVerticalAlignment(poiCellStyle.getVerticalAlignment()));
 			cellStyle.setRotation(poiCellStyle.getRotation()); //ZSS-918
+			cellStyle.setIndention(poiCellStyle.getIndention()); //ZSS-915
 			Color fgColor = poiCellStyle.getFillForegroundColorColor();
 			Color bgColor = poiCellStyle.getFillBackgroundColorColor();
 //			if (fgColor == null && bgColor != null) { //ZSS-797

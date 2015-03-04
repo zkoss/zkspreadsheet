@@ -877,4 +877,22 @@ public class StyleUtil {
 		}
 		holder.setCellStyle(style);
 	}
+	
+	//ZSS-915
+	public static void setTextIndention(SBook book,CellStyleHolder holder, int indention){
+		final SCellStyle orgStyle = holder.getCellStyle();
+		final int ind = orgStyle.getIndention();
+		if (ind == indention) { //no change, skip
+			return;
+		}
+		
+		CellStyleMatcher matcher = new CellStyleMatcher(orgStyle);
+		matcher.setIndention(indention);
+		SCellStyle style = book.searchCellStyle(matcher);
+		if(style==null){
+			style = cloneCellStyle(book, orgStyle);
+			style.setIndention(indention);
+		}
+		holder.setCellStyle(style);
+	}
 }

@@ -3385,8 +3385,8 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 					int idx = styleAggregation.add(innerStyle);
 					attrs.put("is", idx);
 				}
-				// ZSS-725
-				String fontStyle = cfh.getFontHtmlStyle(ft); //ZSS-945
+				// ZSS-915
+				String fontStyle = cfh.getRealHtmlStyle(ft); //ZSS-945
 				if (!Strings.isEmpty(fontStyle)) {
 					int idx = styleAggregation.add(fontStyle);
 					attrs.put("os", idx);
@@ -3447,6 +3447,10 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 					final boolean wrap = cellStyle.isWrapText();
 					if (wrap)
 						attrs.put("wp", 1);
+					
+					final int indention = cellStyle.getIndention();
+					if(indention > 0)
+						attrs.put("ind", indention);
 					
 					Alignment horizontalAlignment = CellFormatHelper.getRealAlignment(cell);
 					switch(horizontalAlignment) {
