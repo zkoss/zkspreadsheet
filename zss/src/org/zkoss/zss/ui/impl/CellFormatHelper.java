@@ -798,4 +798,28 @@ public class CellFormatHelper {
 		}
 		return text;
 	}
+	
+	public String getRealHtmlStyle(FormatResult ft) {
+		if (!_cell.isNull()) {
+			
+			final StringBuffer sb = new StringBuffer();
+			sb.append(getFontHtmlStyle(ft));
+			sb.append(getIndentCSSStyle(_cell));			
+			return sb.toString();
+		}
+		
+		return "";
+	}
+	
+	private String getIndentCSSStyle(SCell cell) {
+		final int indention = _cell.getCellStyle().getIndention();
+		final boolean wrap = _cell.getCellStyle().isWrapText();
+		if(indention > 0) {
+			if(wrap)
+				return "float:right; width: calc(100% - " + (indention * 8.5) + "px);";
+			else
+				return "text-indent:" + (indention * 8.5) + "px;";
+		}
+		return "";
+	}
 }

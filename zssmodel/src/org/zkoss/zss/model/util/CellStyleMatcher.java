@@ -63,7 +63,7 @@ public class CellStyleMatcher {
 		FontUnderline,
 		
 		Hidden,
-//		Indention,
+		Indention,
 		Locked,
 		Rotation,
 
@@ -107,7 +107,7 @@ public class CellStyleMatcher {
 		
 		
 		setHidden(criteria.isHidden());
-//		setIndention(criteria.getIndention());
+		setIndention(criteria.getIndention());
 		
 		setLocked(criteria.isLocked());
 		
@@ -197,9 +197,9 @@ public class CellStyleMatcher {
 		_criteria.put(Property.Rotation, rotation );
 	}
 
-//	public void setIndention(short indent) {
-//		criteria.put(Property.Indention, indent);
-//	}
+	public void setIndention(int indent) {
+		_criteria.put(Property.Indention, indent);
+	}
 
 	public void setBorderRight(SCellStyle.BorderType border) {
 		_criteria.put(Property.BorderRight, border);
@@ -299,9 +299,9 @@ public class CellStyleMatcher {
 		_criteria.remove(Property.Rotation);
 	}
 
-//	public void removeIndention(){
-//		criteria.remove(Property.Indention);
-//	}
+	public void removeIndention(){
+		_criteria.remove(Property.Indention);
+	}
 
 	public void removeBorderRight(){
 		_criteria.remove(Property.BorderRight);
@@ -479,11 +479,11 @@ public class CellStyleMatcher {
 					return false;
 				}
 				break;
-//			case Indention:
-//				if(!equals(e.getValue(),style.getIndention())){
-//					return false;
-//				}
-//				break;
+			case Indention:
+				if(!equals(e.getValue(),style.getIndention())){
+					return false;
+				}
+				break;
 			case Locked:
 				if(!equals(e.getValue(),style.isLocked())){
 					return false;

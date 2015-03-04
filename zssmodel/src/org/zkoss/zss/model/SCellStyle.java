@@ -230,4 +230,8 @@ public interface SCellStyle {
      */
 	public int getRotation();
 	public void setRotation(int rotation);
+	
+	public int getIndention();
+	public void setIndention(int indent);
+	
 }

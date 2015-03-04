@@ -7,6 +7,7 @@ ZK Spreadsheet 3.8.0
   ZSS-940 Support removing GA code for EE customer version
   ZSS-939 Changing cell style doesn't trigger formula recalculation
   ZSS-945 Optimize calling FormatEngine#format when rendering the Spreadsheet
+  ZSS-915 Display the indent text in a cell
   
 *Bugs:
   ZSS-910 Problem referencing a cell with formula in same position of other file

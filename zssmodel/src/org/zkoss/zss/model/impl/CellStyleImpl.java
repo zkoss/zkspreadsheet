@@ -63,6 +63,8 @@ public class CellStyleImpl extends AbstractCellStyleAdv {
 	private String _patternHtml; //ZSS-841. cached html string for fill pattern
 	
 	private int _rotation; //ZSS-918
+	
+	private int _indention; //ZSS-915
 
 	public CellStyleImpl(AbstractFontAdv font){
 		this._font = font;
@@ -281,6 +283,7 @@ public class CellStyleImpl extends AbstractCellStyleAdv {
 		setVerticalAlignment(src.getVerticalAlignment());
 		setWrapText(src.isWrapText());
 		setRotation(src.getRotation()); //ZSS-918
+		setIndention(src.getIndention()); //ZSS-915
 
 		setBorderLeft(src.getBorderLeft());
 		setBorderTop(src.getBorderTop());
@@ -557,6 +560,7 @@ public class CellStyleImpl extends AbstractCellStyleAdv {
 		hash = hash * 31 + (_locked ? 1 : 0);
 		hash = hash * 31 + (_hidden ? 1 : 0);
 		hash = hash * 31 + _rotation;
+		hash = hash * 31 + _indention;
 		
 		return hash;
 	}
@@ -584,7 +588,8 @@ public class CellStyleImpl extends AbstractCellStyleAdv {
 				&& Objects.equals(this._directFormat, o._directFormat)
 				&& Objects.equals(this._locked, o._locked)
 				&& Objects.equals(this._hidden, o._hidden)
-				&& Objects.equals(this._rotation, o._rotation);
+				&& Objects.equals(this._rotation, o._rotation)
+				&& Objects.equals(this._indention, o._indention);
 		
 	}
 
@@ -599,4 +604,18 @@ public class CellStyleImpl extends AbstractCellStyleAdv {
 	public void setRotation(int rotation) {
 		_rotation = rotation;
 	}
+
+	//ZSS-915
+	@Override
+	public int getIndention() {
+		return _indention;
+	}
+
+	//ZSS-915
+	@Override
+	public void setIndention(int indention) {
+		_indention = indention;
+	}
+	
+	
 }
