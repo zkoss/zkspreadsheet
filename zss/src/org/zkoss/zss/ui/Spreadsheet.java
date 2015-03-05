@@ -3405,6 +3405,12 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 				if (!"____".equals(db)) {
 					attrs.put("db", db);
 				}
+
+				//ZSS-901, handling auto filter border style
+				final String af = cfh.getAutoFilterBorder();
+				if (!"____".equals(af)) {
+					attrs.put("af", "af"+af);
+				}
 			}
 			
 			//ZSS-849

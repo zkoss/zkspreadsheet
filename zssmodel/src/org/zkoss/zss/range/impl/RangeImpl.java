@@ -1509,9 +1509,9 @@ public class RangeImpl implements SRange {
 				if((filter==null && !enable) || (filter!=null && enable)){
 					return filter;
 				}
-				
-				filter = new AutoFilterHelper(RangeImpl.this).enableAutoFilter(enable);
-				notifySheetAutoFilterChange();
+				//ZSS-901
+				SAutoFilter filter0 = new AutoFilterHelper(RangeImpl.this).enableAutoFilter(enable);
+				notifySheetAutoFilterChange(enable ? filter0 : filter);
 				return filter;
 			}
 		}.doInWriteLock(getLock());
@@ -1525,7 +1525,7 @@ public class RangeImpl implements SRange {
 			@Override
 			public Object invoke() {
 				SAutoFilter filter = new AutoFilterHelper(RangeImpl.this).enableAutoFilter(field, filterOp, criteria1, criteria2, visibleDropDown);
-				notifySheetAutoFilterChange();
+				notifySheetAutoFilterChange(filter); //ZSS-901
 				return filter;
 			}
 		}.doInWriteLock(getLock());
@@ -1537,7 +1537,7 @@ public class RangeImpl implements SRange {
 			@Override
 			public Object invoke() {
 				new AutoFilterHelper(RangeImpl.this).resetAutoFilter();
-				notifySheetAutoFilterChange();
+				notifySheetAutoFilterChange(getSheet().getAutoFilter()); //ZSS-901
 				return null;
 			}
 		}.doInWriteLock(getLock());		
@@ -1549,14 +1549,32 @@ public class RangeImpl implements SRange {
 			@Override
 			public Object invoke() {
 				new AutoFilterHelper(RangeImpl.this).applyAutoFilter();
-				notifySheetAutoFilterChange();
+				notifySheetAutoFilterChange(getSheet().getAutoFilter()); //ZSS-901
 				return null;
 			}
 		}.doInWriteLock(getLock());		
 	}
 	
-	private void notifySheetAutoFilterChange(){
-		new NotifyChangeHelper().notifySheetAutoFilterChange(getSheet());
+	private void notifySheetAutoFilterChange(SAutoFilter filter){
+		SSheet sheet = getSheet();
+		//ZSS-901: update the auto filter border
+		new NotifyChangeHelper().notifySheetAutoFilterChange(sheet);
+		if (filter != null) {
+			notifySheetAutoFilterBorderChange(sheet, filter.getRegion());
+		}
+	}
+	//ZSS-901
+	private void notifySheetAutoFilterBorderChange(SSheet sheet, CellRegion rgn) {
+		final int left = rgn.getColumn();
+		final int top = rgn.getRow();
+		final int right = rgn.getLastColumn();
+		final int bottom = rgn.getLastRow();
+		Set<SheetRegion> srs = new HashSet<SheetRegion>(8);
+		srs.add(new SheetRegion(sheet, top, left, top, right)); // top row
+		srs.add(new SheetRegion(sheet, top, left, bottom, left)); // left column
+		srs.add(new SheetRegion(sheet, top, right, bottom, right)); // right column
+		srs.add(new SheetRegion(sheet, bottom, left, bottom, right)); // bottom row
+		handleCellNotifyContentChange(srs, CellAttribute.STYLE);
 	}
 
 	@Override

@@ -1,0 +1,13 @@
+<vbox hflex="1" vflex="1">
+	<label multiline="true">
+1. You should see the filter dropdown button on Cell B2, C2, and D2.
+2. You should see a green dotted border outlined B2:D5, too; which indicate where the filter range is.
+3. Press filter icon and select Filter option to remove the filter; you should now see the three filter dropdown buttons disappear and the green dotted border disappear.
+4. Select C1 and select Filter option again.
+5. You should see the filter dropdown button on Cell B2, C2, and D2 again.
+6. You should see the green dotted border outline B2:D5 again.
+	</label>
+	<spreadsheet id="ss" src="/issue3/book/901-filter-range.xlsx" maxVisibleRows="30" maxVisibleColumns="40"
+		hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
+		showFormulabar="true" />	
+</vbox>

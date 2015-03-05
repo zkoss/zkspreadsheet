@@ -19,6 +19,8 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.ui.impl;
 
 import org.zkoss.poi.ss.usermodel.ZssContext;
+import org.zkoss.zss.model.CellRegion;
+import org.zkoss.zss.model.SAutoFilter;
 import org.zkoss.zss.model.SCell;
 import org.zkoss.zss.model.SCellStyle;
 import org.zkoss.zss.model.SColor;
@@ -821,5 +823,29 @@ public class CellFormatHelper {
 				return "text-indent:" + (indention * 8.5) + "px;";
 		}
 		return "";
+	}
+
+	//ZSS-901
+	public String getAutoFilterBorder() {
+
+		StringBuffer sb = new StringBuffer();
+
+		final SAutoFilter filter = _sheet.getAutoFilter(); 
+		if (filter == null) return "____"; //empty
+		
+		// must check in top/left/bottom/right order
+		final CellRegion rgn = filter.getRegion();
+		final int t = rgn.getRow();
+		final int l = rgn.getColumn();
+		final int b = rgn.getLastRow();
+		final int r = rgn.getLastColumn();
+		
+		final int r0 = _cell.getRowIndex();
+		final int c0 = _cell.getColumnIndex(); 
+		sb.append(r0 == t && l <= c0 && c0 <= r ? "t" : "_");
+		sb.append(c0 == l && t <= r0 && r0 <= b? "l" : "_");
+		sb.append(r0 == b && l <= c0 && c0 <= r ? "b" : "_");
+		sb.append(c0 == r && t <= r0 && r0 <= b ? "r" : "_");
+		return sb.toString();
 	}
 }

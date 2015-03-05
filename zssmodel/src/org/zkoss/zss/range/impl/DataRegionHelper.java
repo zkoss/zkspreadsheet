@@ -362,6 +362,10 @@ import org.zkoss.zss.range.SRange;
 				break;
 			}
 		}
+		//ZSS-901
+		if (allblank) {
+			allblank = minc > lc || rc > maxc; //!(minc <= lc && rc <= maxc);
+		}
 		return allblank ? null : new int[] {minc, minr, maxc, maxr};
 	}	
 	

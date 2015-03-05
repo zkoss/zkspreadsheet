@@ -184,6 +184,12 @@ zss.Cell = zk.$extends(zk.Widget, {
 			this.db_tlbr = cellData.db_tlbr;
 		else
 			delete this.db_tlbr;
+
+		//ZSS-901
+		if (cellData.af_tlbr)
+			this.af_tlbr = cellData.af_tlbr;
+		else
+			delete this.af_tlbr;
 	},
 	getVerticalAlign: function () {
 		switch (this.valign) {
@@ -334,6 +340,18 @@ zss.Cell = zk.$extends(zk.Widget, {
 				jq(this.comp).addClass(this.db_tlbr=data.db_tlbr);
 			} else {
 				delete this.db_tlbr;
+			}
+		}
+		
+		//ZSS-901
+		if (this.af_tlbr != data.af_tlbr) {
+			if (this.af_tlbr) {
+				jq(this.comp).removeClass(this.af_tlbr);
+			}
+			if (data.af_tlbr) {
+				jq(this.comp).addClass(this.af_tlbr=data.af_tlbr);
+			} else {
+				delete this.af_tlbr;
 			}
 		}
 		
@@ -586,7 +604,8 @@ zss.Cell = zk.$extends(zk.Widget, {
 			hId = this.zsh,
 			wId = this.zsw,
 			mCls = this.mergeCls,
-			db_tlbr = this.db_tlbr; //ZSS-568
+			db_tlbr = this.db_tlbr, //ZSS-568
+			af_tlbr = this.af_tlbr; //ZSS-901
 		if (hId)
 			cls += (' zshi' + hId);
 		if (wId)
@@ -595,6 +614,8 @@ zss.Cell = zk.$extends(zk.Widget, {
 			cls += (' ' + mCls);
 		if (db_tlbr)
 			cls += (' ' + db_tlbr);
+		if (af_tlbr)
+			cls += (' ' + af_tlbr);
 		return cls;
 	},
 	_getInnerClass: function () {

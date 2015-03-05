@@ -175,6 +175,10 @@ Copyright (C) 2012 Potix Corporation. All Rights Reserved.
 			 */
 			//db_tlbr: v.db
 			/**
+			 * Cell auto-filter border style class; undefined if not within autofilter range
+			 */
+			//af_tlbr: v.af
+			/**
 			 * Update Cell model
 			 * 
 			 * @param JSON Object v data from server
@@ -232,6 +236,11 @@ Copyright (C) 2012 Potix Corporation. All Rights Reserved.
 						this.db_tlbr = v.db;
 					else
 						delete this.db_tlbr;
+					//ZSS-901: support auto-filter border
+					if (v.af) 
+						this.af_tlbr = v.af;
+					else
+						delete this.af_tlbr;
 				}
 				if (upSize) {
 					// ZSS-224: modify overflow flag spec. to carry more status in bitswise format

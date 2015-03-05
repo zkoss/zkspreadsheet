@@ -318,6 +318,159 @@
     border-top-color:inherit;
 }
 
+/* ZSS-901: auto filter border 15 combinations*/
+.zscell.aftlbr:after {
+    content:"";
+    position:absolute;
+    z-index:-10;
+    top:1px;left:0px;
+    bottom:0px;right:0px;
+    border-top:1px dotted #75CD45;
+    border-left:1px dotted #75CD45;
+    border-bottom:1px dotted #75CD45;
+    border-right:1px dotted #75CD45;
+}
+
+.zscell.af_lbr:after {
+    content:"";
+    position:absolute;
+    z-index:-10;
+    top:0px;left:0px;
+    bottom:0px;right:0px;
+    border-left:1px dotted #75CD45;
+    border-bottom:1px dotted #75CD45;
+    border-right:1px dotted #75CD45;
+}
+
+.zscell.aft_br:after {
+    content:"";
+    position:absolute;
+    z-index:-10;
+    top:1px;left:0px;
+    bottom:0px;right:0px;
+    border-top:1px dotted #75CD45;
+    border-bottom:1px dotted #75CD45;
+    border-right:1px dotted #75CD45;
+}
+
+.zscell.aftl_r:after {
+    content:"";
+    position:absolute;
+    z-index:-10;
+    top:1px;left:0px;
+    bottom:0px;right:0px;
+    border-top:1px dotted #75CD45;
+    border-left:1px dotted #75CD45;
+    border-right:1px dotted #75CD45;
+}
+
+.zscell.aftlb_:after {
+    content:"";
+    position:absolute;
+    z-index:-10;
+    top:1px;left:0px;
+    bottom:0px;right:0px;
+    border-top:1px dotted #75CD45;
+    border-left:1px dotted #75CD45;
+    border-bottom:1px dotted #75CD45;
+}
+
+.zscell.af__br:after {
+    content:"";
+    position:absolute;
+    z-index:-10;
+    top:0px;left:0px;
+    bottom:0px;right:0px;
+    border-bottom:1px dotted #75CD45;
+    border-right:1px dotted #75CD45;
+}
+
+.zscell.af_l_r:after {
+    content:"";
+    position:absolute;
+    z-index:-10;
+    top:0px;left:0px;
+    bottom:0px;right:0px;
+    border-left:1px dotted #75CD45;
+    border-right:1px dotted #75CD45;
+}
+
+.zscell.af_lb_:after {
+    content:"";
+    position:absolute;
+    z-index:-10;
+    top:0px;left:0px;
+    bottom:0px;right:0px;
+    border-left:1px dotted #75CD45;
+    border-bottom:1px dotted #75CD45;
+}
+
+.zscell.aft__r:after {
+    content:"";
+    position:absolute;
+    z-index:-10;
+    top:1px;left:0px;
+    bottom:0px;right:0px;
+    border-top:1px dotted #75CD45;
+    border-right:1px dotted #75CD45;
+}
+
+.zscell.aft_b_:after {
+    content:"";
+    position:absolute;
+    z-index:-10;
+    top:1px;left:0px;
+    bottom:0px;right:0px;
+    border-top:1px dotted #75CD45;
+    border-bottom:1px dotted #75CD45;
+}
+
+.zscell.aftl__:after {
+    content:"";
+    position:absolute;
+    z-index:-10;
+    top:1px;left:0px;
+    bottom:0px;right:0px;
+    border-top:1px dotted #75CD45;
+    border-left:1px dotted #75CD45;
+}
+
+.zscell.af___r:after {
+    content:"";
+    position:absolute;
+    z-index:-10;
+    top:0px;left:0px;
+    bottom:0px;right:0px;
+    border-right:1px dotted #75CD45;
+}
+
+.zscell.af__b_:after {
+    content:"";
+    position:absolute;
+    z-index:-10;
+    top:0px;left:0px;
+    bottom:0px;right:0px;
+    border-bottom:1px dotted #75CD45;
+}
+
+.zscell.af_l__:after {
+    content:"";
+    position:absolute;
+    z-index:-10;
+    top:0px;left:0px;
+    bottom:0px;right:0px;
+    border-left:1px dotted #75CD45;
+}
+
+.zscell.aft___:after {
+    content:"";
+    position:absolute;
+    z-index:-10;
+    top:1px;left:0px;
+    bottom:0px;right:0px;
+    border-top:1px dotted #75CD45;
+}
+
 
 .zscell-overflow {
 	border-right: 1px;
