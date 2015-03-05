@@ -364,7 +364,9 @@ import org.zkoss.zss.range.SRange;
 		}
 		//ZSS-901
 		if (allblank) {
-			allblank = minc > lc || rc > maxc; //!(minc <= lc && rc <= maxc);
+			//allblank = !(at least one cell within minc--maxc)
+			//!((minc <= lc && lc <= maxc) || (minc <= rc && rc <= maxc));
+			allblank = (minc > lc || lc > maxc) && (minc > rc || rc > maxc); 
 		}
 		return allblank ? null : new int[] {minc, minr, maxc, maxr};
 	}	
