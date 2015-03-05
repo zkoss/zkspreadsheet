@@ -65,7 +65,7 @@ zss.DataPanel = zk.$extends(zk.Object, {
 	reset: function (width, height) {
 		var wgt = this._wgt,
 			l = this.paddingl = wgt.getLeftPanelWidth(),
-			t = this.paddingt = wgt.getTopPanelHeight();
+			t = this.paddingt = wgt.getTopPanelHeight() + 1; //ZSS-948: +1 to avoid heading's bottom border
 		this.width = width;
 		this.height = height;
 		jq(this.comp).css({'padding-left': jq.px0(l), 'padding-top': jq.px0(t),'width': jq.px0(width), 'height': jq.px0(height)});
@@ -102,9 +102,10 @@ zss.DataPanel = zk.$extends(zk.Object, {
 		
 		var width = self.width - self.paddingl,
 			height = self.height,
-			pdl = self.paddingl + sheet.leftWidth;
+			pdl = self.paddingl + sheet.leftWidth,
+			pdt = sheet.topHeight + 1; //ZSS-948: +1 to avoid heading's bottom border
 		
-		jq(self.comp).css({'padding-left': jq.px0(pdl), 'padding-top': jq.px0(sheet.topHeight), 'width': jq.px0(width)});
+		jq(self.comp).css({'padding-left': jq.px0(pdl), 'padding-top': jq.px0(pdt), 'width': jq.px0(width)});
 		jq(self.comp).css({'width': jq.px0(width)});
 		jq(self.comp).css({'height': jq.px0(height)}); // ZSS-324: height must be adjusted too
 		jq(self.padcomp).css('height', jq.px0(self.paddingt));

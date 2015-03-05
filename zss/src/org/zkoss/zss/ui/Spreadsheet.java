@@ -3975,7 +3975,9 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 
 		// zcss.setRule(name+" .zsdata",["padding-top","padding-left"],[th+"px",lw+"px"],true,sid);
 		sb.append(name).append(" .zsdata{");
-		sb.append("padding-top:").append(th).append("px;");
+		//ZSS-948: + 1 to avoid 1st row's top border covered by heading's bottom border
+//		sb.append("padding-top:").append(th).append("px;");
+		sb.append("padding-top:").append(th+1).append("px;");
 		sb.append("padding-left:").append(lw).append("px;");
 		sb.append("}");
 
@@ -4066,7 +4068,9 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		}
 
 		sb.append(name).append(" .zsleft{");
-		sb.append("top:").append(th).append("px;");
+		//ZSS-948: + 1 to avoid 1st row's top border covered by heading's bottom border
+//		sb.append("top:").append(th).append("px;");
+		sb.append("top:").append(th+1).append("px;");
 		sb.append("width:").append(fzc > -1 ? leftw - 1 : leftw)
 				.append("px;");
 		sb.append("}");

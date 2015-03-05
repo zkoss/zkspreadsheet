@@ -32,6 +32,7 @@ ZK Spreadsheet 3.8.0
   ZSS-946 Cannot upload a file in zssapp
   ZSS-947 Cannot upload a file with a print area
   ZSS-941 zss.wpd file is loaded even if spreadsheet component is not used  
+  ZSS-948 The top border of the first row is incorrectly covered by the column heading.
   
 ** Upgrade Notes
   * Default period for automatically saving in zssapp is 15 minutes.
