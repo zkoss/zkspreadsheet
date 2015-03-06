@@ -32,6 +32,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.zkoss.lang.Objects;
 import org.zkoss.poi.ss.SpreadsheetVersion;
 import org.zkoss.util.logging.Log;
+import org.zkoss.zk.ui.Executions;
 import org.zkoss.zss.model.EventQueueModelEventListener;
 import org.zkoss.zss.model.InvalidModelOpException;
 import org.zkoss.zss.model.ModelEvent;
@@ -189,12 +190,24 @@ public class BookImpl extends AbstractBookAdv{
 			_listeners.sendModelEvent(event);
 		}
 		
-		if(_queueListeners!=null){
+		if(_queueListeners!=null &&
+			// System thread doesn't have execution so that it will throw IllegalStateException
+			// e.g. Background Thread created by Executor
+			Executions.getCurrent() != null){
 			_queueListeners.sendModelEvent(event);
 		}
 		
-		if(!ModelEvents.isCustomEvent(event))
-			_dirty = true;
+		if(!ModelEvents.isCustomEvent(event)) {
+			if(!_dirty) {
+				_dirty = true;
+				// ZSS-942, By Jerry 2015/3/5
+				// ATTENTION: ModelEvents.ON_MODEL_DIRTY_CHANGE is a custom event.
+				// Dirty change is a special case for calling sendModelEvent inside model.
+				// In normal model event case, we should do it in Range level.
+				sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_MODEL_DIRTY_CHANGE, event.getSheet(),
+						ModelEvents.createDataMap(ModelEvents.PARAM_CUSTOM_DATA, _dirty)));
+			}
+		}
 	}
 	
 	@Override

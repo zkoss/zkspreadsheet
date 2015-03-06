@@ -18,6 +18,7 @@ package org.zkoss.zss.app.ui;
  */
 public class AppEvts {
 	
+	public static String ON_FILE_SAVED = "onFileSaved";
 	public static String ON_SHARE_BOOK = "onShareBook";
 	public static String ON_CHANGED_USERNAME = "onChangeUsername";
 	public static String ON_AFTER_CHANGED_USERNAME = "onAfterChangeUsername";

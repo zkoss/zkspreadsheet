@@ -11,6 +11,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.app.ui.menu;
 
+import java.util.Date;
 import org.zkoss.lang.Library;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
@@ -19,6 +20,7 @@ import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zk.ui.select.Selectors;
 import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
+import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.app.ui.CtrlBase;
 import org.zkoss.zss.app.ui.AppEvts;
@@ -97,12 +99,6 @@ public class MainMenubarCtrl extends CtrlBase<Menubar> {
 	@Override
 	public void doAfterCompose(Menubar comp) throws Exception {
 		super.doAfterCompose(comp);
-		initMenuOption();
-	}
-	
-	private void initMenuOption() {
-		boolean isEE = "EE".equals(Version.getEdition());
-		
 	}
 
 	protected void onAppEvent(String event,Object data){
@@ -112,6 +108,11 @@ public class MainMenubarCtrl extends CtrlBase<Menubar> {
 			doUpdateMenu((Spreadsheet)data);
 		}else if(AppEvts.ON_AFTER_CHANGED_USERNAME.equals(event)){
 			doUpdateUsername((String)data);
+		}else if(AppEvts.ON_FILE_SAVED.equals(event)){
+			if(data.equals(Boolean.TRUE))
+				setFileSaved();
+			else
+				clearFileSaved();
 		}
 	}
 
@@ -201,6 +202,20 @@ public class MainMenubarCtrl extends CtrlBase<Menubar> {
 	
 	private void doUpdateUsername(String username) {
 		changeUsername.setLabel(username);
+	}
+	
+	private void setFileSaved() {
+		String label = Labels.getLabel("zssapp.mainMenu.lastSave");
+		// we do client side operation for time zone.
+		String script = "var saveMsgTime = new Date(" + new Date().getTime() + ");";
+		// template "Last saved: xx:xx"
+		Clients.evalJavaScript(script + "jq('$saveMessage').zk.$().setLabel('" + label + ": ' + " +
+				"saveMsgTime.getHours() + ':' + " +
+				"('0' + saveMsgTime.getMinutes()).slice(-2));");
+	}
+	
+	private void clearFileSaved() {
+		Clients.evalJavaScript("jq('$saveMessage').zk.$().setLabel('');");
 	}
 
 	@Listen("onClick=#newFile")
