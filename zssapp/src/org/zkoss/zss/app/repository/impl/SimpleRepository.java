@@ -28,6 +28,8 @@ import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.app.BookInfo;
 import org.zkoss.zss.app.BookRepository;
 import org.zkoss.zss.app.ui.UiUtil;
+import org.zkoss.zss.model.ModelEvents;
+import org.zkoss.zss.range.SRanges;
 /**
  * 
  * @author dennis
@@ -77,16 +79,23 @@ public class SimpleRepository implements BookRepository{
 		ReadWriteLock lock = book.getInternalBook().getBookSeries().getLock();
 		try{
 			// 1. write to memory cache
+			boolean skip = false;
 			try {
 				lock.writeLock().lock();
-				if(!book.getInternalBook().isDirty() && !isForce)
+				if(!book.getInternalBook().isDirty() && !isForce) {
+					skip = true;
 					return info;
+				}
 				// blank excel file needs 41xx bytes
 				cacheOutputStream = new ByteArrayOutputStream(5000);
 				exportBook(book, cacheOutputStream);
 				book.getInternalBook().setDirty(false);
 			} finally {
 				lock.writeLock().unlock();
+				
+				// save notification when user file saved or user force to save 
+				if (!skip)
+					SRanges.range(book.getSheetAt(0).getInternalSheet()).notifyCustomEvent(ModelEvents.ON_MODEL_DIRTY_CHANGE, false, false);
 			}
 			
 			// 2. write to temporary file

@@ -14,7 +14,6 @@ package org.zkoss.zss.app.ui;
 import java.io.*;
 import java.net.URLDecoder;
 import java.util.Arrays;
-
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -29,7 +28,6 @@ import org.zkoss.util.resource.Labels;
 import org.zkoss.web.servlet.http.Encodes;
 import org.zkoss.zk.ui.*;
 import org.zkoss.zk.ui.event.*;
-import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zk.ui.util.DesktopCleanup;
@@ -48,11 +46,13 @@ import org.zkoss.zss.app.impl.BookManagerImpl;
 import org.zkoss.zss.app.repository.impl.BookUtil;
 import org.zkoss.zss.app.repository.impl.SimpleBookInfo;
 import org.zkoss.zss.app.ui.dlg.*;
+import org.zkoss.zss.model.ModelEvent;
+import org.zkoss.zss.model.ModelEventListener;
+import org.zkoss.zss.model.ModelEvents;
 import org.zkoss.zss.ui.*;
 import org.zkoss.zss.ui.event.Events;
 import org.zkoss.zss.ui.impl.DefaultUserActionManagerCtrl;
 import org.zkoss.zss.ui.sys.UndoableActionManager;
-import org.zkoss.zul.Button;
 import org.zkoss.zul.Filedownload;
 import org.zkoss.zul.Fileupload;
 import org.zkoss.zul.Script;
@@ -71,6 +71,7 @@ public class AppCtrl extends CtrlBase<Component>{
 	private static BookRepository repo = BookRepositoryFactory.getInstance().getRepository();
 	private static CollaborationInfo collaborationInfo = CollaborationInfoImpl.getInstance();
 	private static BookManager bookManager = BookManagerImpl.getInstance(repo);
+	private ModelEventListener dirtyChangeEventListener;
 	static {
 		collaborationInfo.addEvent(new CollaborationEventListener() {
 			@Override
@@ -244,6 +245,7 @@ public class AppCtrl extends CtrlBase<Component>{
 		Executions.getCurrent().getDesktop().addListener(new DesktopCleanup(){
 			@Override
 			public void cleanup(Desktop desktop) throws Exception {
+				doCloseBook();
 				collaborationInfo.removeUsername(username);
 			}
 		});
@@ -389,14 +391,14 @@ public class AppCtrl extends CtrlBase<Component>{
 		((HttpServletResponse) Executions.getCurrent().getNativeResponse()).addCookie(cookie);
 	}
 	
-	/*package*/ void doImportBook(){
-		
-		selectedBookInfo = null;
-		
+	/*package*/ void doImportBook(){				
 		Fileupload.get(1,new EventListener<UploadEvent>() {
 			public void onEvent(UploadEvent event) throws Exception {
 				Importer importer = Importers.getImporter();
 				Media[] medias = event.getMedias();
+				
+				if(loadedBook != null)
+					doCloseBook(false);
 				
 				if(medias==null)
 					return;
@@ -412,6 +414,7 @@ public class AppCtrl extends CtrlBase<Component>{
 						loadedBook.setShareScope(EventQueues.APPLICATION);
 						collaborationInfo.removeRelationship(username);
 						ss.setBook(loadedBook);
+						desktop.setBookmark("");
 						pushAppEvent(AppEvts.ON_LOADED_BOOK,loadedBook);
 						pushAppEvent(AppEvts.ON_CHANGED_SPREADSHEET,ss);
 						updatePageInfo();
@@ -429,6 +432,9 @@ public class AppCtrl extends CtrlBase<Component>{
 			
 		selectedBookInfo = null;
 		Importer importer = Importers.getImporter();
+		
+		if(loadedBook != null)
+			doCloseBook(false);
 		
 		try {
 			loadedBook = importer.imports(getClass().getResourceAsStream("/web/zssapp/blank.xlsx"), "New Book.xlsx");
@@ -455,11 +461,17 @@ public class AppCtrl extends CtrlBase<Component>{
 		getPage().setTitle(name!=null?name:"");
 	}
 	
-	private void doCloseBook(){
+	private void doCloseBook() {
+		doCloseBook(true);
+	}
+	
+	private void doCloseBook(boolean isChangeBookmark){
+		removeSaveNotification(loadedBook);
 		ss.setBook(loadedBook = null);
 		selectedBookInfo = null;
 		collaborationInfo.removeRelationship(username);
-		desktop.setBookmark("");
+		if(isChangeBookmark)
+			desktop.setBookmark("");
 		pushAppEvent(AppEvts.ON_CLOSED_BOOK,null);
 		pushAppEvent(AppEvts.ON_CHANGED_SPREADSHEET,ss);
 		updatePageInfo();
@@ -487,7 +499,7 @@ public class AppCtrl extends CtrlBase<Component>{
 		}
 		
 		try {
-			bookManager.updateBook(selectedBookInfo, loadedBook);
+			bookManager.saveBook(selectedBookInfo, loadedBook);
 			UiUtil.showInfoMessage("Save book to "+selectedBookInfo.getName());
 			pushAppEvent(AppEvts.ON_SAVED_BOOK,loadedBook);
 			if(close){
@@ -539,7 +551,7 @@ public class AppCtrl extends CtrlBase<Component>{
 						pushAppEvent(AppEvts.ON_SAVED_BOOK,loadedBook);
 						UiUtil.showInfoMessage("Save book to "+selectedBookInfo.getName());
 						if(close){
-							doCloseBook();
+							doCloseBook(false);
 						}else{
 							updatePageInfo();
 						}
@@ -563,6 +575,9 @@ public class AppCtrl extends CtrlBase<Component>{
 			}
 		}
 		
+		if(loadedBook != null)
+			doCloseBook(false);
+		
 		selectedBookInfo = info;
 		loadedBook = book;
 		collaborationInfo.setRelationship(username, book);
@@ -583,11 +598,71 @@ public class AppCtrl extends CtrlBase<Component>{
 			}			
 		}
 		
+		initSaveNotification(book);
 		pushAppEvent(AppEvts.ON_LOADED_BOOK,loadedBook);
 		pushAppEvent(AppEvts.ON_CHANGED_SPREADSHEET,ss);
 		updatePageInfo();
 	}
 	
+	private void initSaveNotification(Book book) {
+		if(book == null)
+			return;
+
+		dirtyChangeEventListener = new ModelEventListener() {
+			private static final long serialVersionUID = -281657389731703778L;
+
+			@Override
+			public void onEvent(ModelEvent event) {
+				if(event.getName().equals(ModelEvents.ON_MODEL_DIRTY_CHANGE)) {
+					// if dirty flag become false
+					if(event.getData(ModelEvents.PARAM_CUSTOM_DATA).equals(Boolean.FALSE)) {
+						if(Executions.getCurrent() == null) { // in case of background thread
+							try {
+								Executions.activate(AppCtrl.this.desktop);
+								try {
+									pushAppEvent(AppEvts.ON_FILE_SAVED, Boolean.TRUE);
+								} finally {
+									Executions.deactivate(AppCtrl.this.desktop);
+								}
+							} catch (DesktopUnavailableException e) {
+								throw new RuntimeException("The server push thread interrupted", e);
+							} catch (InterruptedException e) {
+								throw new RuntimeException("The server push thread interrupted", e);
+							}
+						} else
+							pushAppEvent(AppEvts.ON_FILE_SAVED, Boolean.TRUE);
+					}
+				}
+			}
+		};
+		
+		book.getInternalBook().addEventListener(dirtyChangeEventListener);
+	}
+	
+	private void removeSaveNotification(Book book) {
+		if(book == null)
+			return;
+
+		book.getInternalBook().removeEventListener(dirtyChangeEventListener);
+
+		if(Executions.getCurrent() == null) { // in case of background thread
+			try {
+				Executions.activate(AppCtrl.this.desktop);
+				try {
+					pushAppEvent(AppEvts.ON_FILE_SAVED, Boolean.FALSE);
+				} finally {
+					Executions.deactivate(AppCtrl.this.desktop);
+				}
+			} catch (DesktopUnavailableException e) {
+				throw new RuntimeException("The server push thread interrupted", e);
+			} catch (InterruptedException e) {
+				throw new RuntimeException("The server push thread interrupted", e);
+			}
+		} else {
+			pushAppEvent(AppEvts.ON_FILE_SAVED, Boolean.FALSE);
+		}
+	}
+
 	private void doOpenManageBook(){
 		OpenManageBookCtrl.show(new EventListener<DlgCallbackEvent>(){
 			public void onEvent(DlgCallbackEvent event) throws Exception {

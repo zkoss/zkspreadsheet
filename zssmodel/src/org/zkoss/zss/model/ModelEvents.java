@@ -68,6 +68,7 @@ public class ModelEvents {
 	 */
 	public static final String ON_MODEL_FRIEND_FOCUS_DELETE = "onFriendFocusDelete";
 	public static final String ON_MODEL_FRIEND_FOCUS_MOVE = "onFriendFocusMove";
+	public static final String ON_MODEL_DIRTY_CHANGE = "onDirtyChange";
 	
 	/**
 	 * the effected book
@@ -197,11 +198,9 @@ public class ModelEvents {
 
 	// ZSS-936
 	public static boolean isCustomEvent(ModelEvent event) {
-		if(event.getName().equals(ON_MODEL_FRIEND_FOCUS_MOVE) || 
-			event.getName().equals(ON_MODEL_FRIEND_FOCUS_DELETE))
-			return true;
-		
-		return false;
+		return event.getName().equals(ON_MODEL_FRIEND_FOCUS_MOVE) || 
+			event.getName().equals(ON_MODEL_FRIEND_FOCUS_DELETE) ||
+			event.getName().equals(ON_MODEL_DIRTY_CHANGE); // ZSS-942
 	}
 	
 	

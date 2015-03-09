@@ -9,6 +9,7 @@ ZK Spreadsheet 3.8.0
   ZSS-945 Optimize calling FormatEngine#format when rendering the Spreadsheet
   ZSS-915 Display the indent text in a cell
   ZSS-901 Improve the filter's usability
+  ZSS-942 Support notification at menu bar for automatic data saving
   
 *Bugs:
   ZSS-910 Problem referencing a cell with formula in same position of other file
