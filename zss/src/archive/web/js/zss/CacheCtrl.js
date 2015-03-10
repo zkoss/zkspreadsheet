@@ -219,7 +219,8 @@ Copyright (C) 2012 Potix Corporation. All Rights Reserved.
 						lock = v.l,
 						halign = v.ha,
 						valign = v.va,
-						fontSize = v.fs;
+						fontSize = v.fs,
+						rotate = v.rot; //ZSS-944
 					this.style = sId != undefined ? styles[sId] : '';
 					this.innerStyle = isId != undefined ? styles[isId] : '';
 					this.fontStyle = osId != undefined ? styles[osId] : '';
@@ -241,6 +242,8 @@ Copyright (C) 2012 Potix Corporation. All Rights Reserved.
 						this.af_tlbr = v.af;
 					else
 						delete this.af_tlbr;
+					//ZSS-944: support 90 degree text rotation
+					this.rotate = rotate; // text rotation
 				}
 				if (upSize) {
 					// ZSS-224: modify overflow flag spec. to carry more status in bitswise format

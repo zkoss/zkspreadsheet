@@ -452,8 +452,9 @@ public class CellFormatHelper {
 		default:
 			break;
 		}
-
-		boolean textWrap = style.isWrapText();
+		//ZSS-944: when rotate 90 degree, wrap must be false
+		final int rotate90 = style.getRotation();
+		boolean textWrap = style.isWrapText() && rotate90 != 90 && rotate90 != 180;
 		if (textWrap) {
 			sb.append("white-space:").append("normal").append(";");
 		}/*else{ sb.append("white-space:").append("nowrap").append(";"); }*/

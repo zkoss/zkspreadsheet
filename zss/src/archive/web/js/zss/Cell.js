@@ -190,6 +190,9 @@ zss.Cell = zk.$extends(zk.Widget, {
 			this.af_tlbr = cellData.af_tlbr;
 		else
 			delete this.af_tlbr;
+		
+		//ZSS-944
+		this.rotate = cellData.rotate;
 	},
 	getVerticalAlign: function () {
 		switch (this.valign) {
@@ -294,7 +297,16 @@ zss.Cell = zk.$extends(zk.Widget, {
 			prevWidth = cave.style.width,
 			fontSize = data.fontSize,
 			real = this.$n('real');
-		var wrapChanged = this.wrap != data.wrap;
+		//ZSS-944: 
+		var wasRotate90 = this.rotate == 90 || this.rotate == 180,
+			toRotate90 = data.rotate == 90 || data.rotate == 180,
+			//  when rotate, wrap must be false!
+			wrap0 = !toRotate90 && data.wrap,
+			wrapChanged = this.wrap != wrap0,
+			valignChanged = this.valign != data.valign,
+			halignChanged = this.halign != data.halign,
+			rotateChanged = this.rotate != data.rotate;
+		
 		var fontSizeChanged = false;
 		if (fontSize != undefined) {
 			fontSizeChanged = this.fontSize != data.fontSize
@@ -307,10 +319,29 @@ zss.Cell = zk.$extends(zk.Widget, {
 		}
 		
 		// ZSS-865
-		var orgwidth = real && real.style ? real.style.width : null;
+		var orgwidth = real && real.style ? real.style.width : null,
+			orgTransOrigin = real && real.style ? real.style.transformOrigin : null, //ZSS-944
+			orgTrans = real && real.style ? real.style.transform : null,
+			orgFamily = real && real.style ? real.style.fontFamily : null;
+		
 		real.style.cssText = fst;
 		if (orgwidth && !real.style.width) {
 			jq(real).css('width', orgwidth);
+		}
+
+		//ZSS-944: invalidate the cached text width
+		if (txtChd || fontSizeChanged || orgFamily != real.style.fontFamily) delete this._tw;  
+
+		// ZSS-944
+		if (toRotate90) {
+			if (orgTransOrigin && !real.style.transformOrigin) {
+				real.style['transform-origin'] = orgTransOrigin;
+			}
+			if (orgTrans && !real.style.transform) {
+				real.style['transform'] = orgTrans;
+				//cave must be always left aligned so css3 transform can handle the text properly
+				cave.style['text-align'] = ''; 
+			}
 		}
 		
 		this.lock = data.lock;
@@ -324,7 +355,7 @@ zss.Cell = zk.$extends(zk.Widget, {
 		this.setText(txt, false, wrapChanged); //when wrap changed, shall re-process overflow
 		
 		if (wrapChanged) {
-			if (this.wrap) {
+			if (wrap0) {
 				jq(this.getTextNode()).addClass(WRAP_TEXT_CLASS);
 			} else {
 				jq(this.getTextNode()).removeClass(WRAP_TEXT_CLASS);
@@ -375,7 +406,7 @@ zss.Cell = zk.$extends(zk.Widget, {
 		}
 		this.cellType = cellType;
 
-		var processWrap = wrapChanged || (this.wrap && (txtChd || fontSizeChanged));
+		var processWrap = wrapChanged || (wrap0 && (txtChd || fontSizeChanged));
 		if (this._justCopied === true){	//zss-528, when a cell is just inserted, its status is not synchronized with server, we ignore its status difference from server's.
 			processWrap = false;
 			delete this._justCopied;
@@ -386,6 +417,47 @@ zss.Cell = zk.$extends(zk.Widget, {
 		if ((this.cellType == STR_CELL || this.cellType == BLANK_CELL) && !this.merid && processWrap) {//must process wrap after set text
 			this.parent.processWrapCell(this, true);
 		}
+		
+		//ZSS-944
+//		this._updateListenRotate(toRotate90);
+		if (rotateChanged || valignChanged || halignChanged || fontSizeChanged || this.redoRotate
+			|| (wasRotate90 && txtChd)) { //already rotate and text changed
+			var processedRotate = false;
+			if (wasRotate90 && !toRotate90) {
+				this._clearRotate();
+				processedRotate = true;
+			}
+			this.rotate = data.rotate;
+			if (!processedRotate)
+				this._processRotate();
+			delete this.redoRotate; //see CellBlockCtrl.addMergeRange and CellBlockCtrl.removeMergeRange
+		}
+	},
+//	//ZSS-944
+//	/**
+//	 * Set rotate attribute and register listener or unregister onProcessRotate listener base on rotate attribute (== 90 || == 180)
+//	 * @param boolean 
+//	 * @return boolean whether reset rotate attribute or not
+//	 */
+//	_updateListenRotate: function (b) {
+//		var curr = !!this._listenProcessRotate;
+//		if (curr != b) {
+//			this.sheet[curr ? 'unlisten' : 'listen']({onProcessRotate: this.proxy(this._onProcessRotate)});
+//			this._listenProcessRotate = b;
+//			return true;
+//		}
+//		return false;
+//	},
+	//ZSS-944
+	_clearRotate: function () {
+		var real = this.$n('real')
+			$real = jq(real);
+		$real.css('transform', ''); // clear transform
+		$real.css('transform-origin', ''); // clear transform-origin
+	},
+	//ZSS-944
+	_processRotate: function () {
+		// not implement in OSE
 	},
 	/**
 	 * Set overflow attribute and register listener or unregister onProcessOverflow listener base on overflow attribute
@@ -560,6 +632,14 @@ zss.Cell = zk.$extends(zk.Widget, {
 			this._processOverflow(); // heavy duty
 		}
 		
+		//ZSS-944
+		var toRotate90 = this.rotate == 90 || this.rotate == 180;
+//		this._updateListenRotate(toRotate90);
+		if (toRotate90) {
+			this._processRotate(); // heavy duty
+			return; // rotate imply no wrap
+		}
+		
 		//to record how many cells enabling "wrap text"
 		if ((this.cellType == STR_CELL || this.cellType == BLANK_CELL) && !this.merid && this.wrap && !(this._justCopied === true))  {
 			//true indicate delay calcuate wrap height after CSS ready	
@@ -568,6 +648,7 @@ zss.Cell = zk.$extends(zk.Widget, {
 			//doesn't update wrap range when row height is not default
 			this.parent.processWrapCell(this, true,  currentHeight!=defaultHeight);
 		}
+		
 	},
 	unbind_: function () {
 		this._updateListenOverflow(false);
@@ -578,6 +659,16 @@ zss.Cell = zk.$extends(zk.Widget, {
 		
 		this.$supers(zss.Cell, 'unbind_', arguments);
 	},
+//	//ZSS-944
+//	/**
+//	 * When this cell's rotate status changed
+//	 */
+//	_onProcessRotate: function (evt) {
+//		var rotate90 = this.rotate == 90 || this.rotate == 180; 
+//		if (rotate90) {
+//			//TODO
+//		}
+//	},
 	/**
 	 * When cells after this cell changed, may effect this cell's overflow
 	 */
@@ -629,7 +720,9 @@ zss.Cell = zk.$extends(zk.Widget, {
 		return cls;
 	},
 	_getRealClass: function() {
-		var cls = 'zscelltxt-real ' + (this.wrap ? WRAP_TEXT_CLASS:''),
+		//ZSS-944: when rotate 90 degree, wrap must be false
+		var rotate90 = this.rotate == 90 || this.rotate == 180,
+			cls = 'zscelltxt-real ' + (this.wrap && !rotate90 ? WRAP_TEXT_CLASS:''),
 			hId = this.zsh;
 
 		if(hId) 

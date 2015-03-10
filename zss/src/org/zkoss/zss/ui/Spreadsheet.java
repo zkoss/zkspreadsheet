@@ -3487,6 +3487,10 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 					SFont font = cellStyle.getFont();
 					int fontSize = font.getHeightPoints();
 					attrs.put("fs", fontSize);
+					
+					//ZSS-944: pass rotate info to browser
+					final int rotate = cellStyle.getRotation();
+					attrs.put("rot", rotate);
 				}
 			}
 			return attrs;

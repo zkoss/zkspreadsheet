@@ -140,6 +140,9 @@ zss.CellBlockCtrl = zk.$extends(zk.Widget, {
 				cell.merb = bottom;
 			}
 		}
+		//ZSS-944
+		ctrl.redoRotate = true;
+		this.update_(top, left, top, left);
 	},
 	/**
 	 * Remove the merge range of the cell
@@ -179,7 +182,11 @@ zss.CellBlockCtrl = zk.$extends(zk.Widget, {
 			}
 		}
 		ctrl.redoOverflow = true;
+		//ZSS-944
+		ctrl.redoRotate = true;
+		this.update_(top, left, top, left);
 	},
+
 	/**
 	 * Update cells
 	 */
