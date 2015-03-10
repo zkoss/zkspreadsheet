@@ -709,6 +709,8 @@ public class RangeImpl implements SRange {
 		}
 
 		new NotifyChangeHelper().notifyRowColumnSizeChange(notifySet);
+		new NotifyChangeHelper().notifyCellChange(notifySet, CellAttribute.ALL); //ZSS-666
+			// ZSS-944, General format number change precision per the row height for 90deg text
 	}
 
 	@Override

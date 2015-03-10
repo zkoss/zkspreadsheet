@@ -229,21 +229,36 @@ public class FormatEngineImpl implements FormatEngine {
 	//get column width form  pixel to char256
 	public static int getCellWidth256(SCell cell) {
 		//ZSS-918: vertical text always use 12 character width
-		if (cell.getCellStyle().getRotation() == 255) { //vertical text
+		final int rotate = cell.getCellStyle().getRotation(); 
+		if (rotate == 255) { //vertical text
 			return 12 * 256;
 		}
+		
 		//1 border + 2 * padding(2px) => 5
 		//ZSS-791
 		SSheet sheet = cell.getSheet();
 		CellRegion region = sheet.getMergedRegion(cell.getRowIndex(), cell.getColumnIndex());
 		int px = 0;
-		if (region != null) {
-			for (int col = region.getColumn(), endCol = region.getLastColumn(); 
-					col <= endCol; ++col) {
-				px += sheet.getColumn(col).getWidth();
+		
+		//ZSS-944: 90deg text use row height as the width 
+		if (rotate == 90 || rotate == -90) { 
+			if (region != null) {
+				for (int row = region.getRow(), endCol = region.getLastRow(); 
+						row <= endCol; ++row) {
+					px += sheet.getRow(row).getHeight();
+				}
+			} else {
+				px = sheet.getRow(cell.getRowIndex()).getHeight();
 			}
 		} else {
-			px = sheet.getColumn(cell.getColumnIndex()).getWidth();
+			if (region != null) {
+				for (int col = region.getColumn(), endCol = region.getLastColumn(); 
+						col <= endCol; ++col) {
+					px += sheet.getColumn(col).getWidth();
+				}
+			} else {
+				px = sheet.getColumn(cell.getColumnIndex()).getWidth();
+			}
 		}
 		px -= 5;
 		return UnitUtil.pxToFileChar256(px, AbstractExcelImporter.CHRACTER_WIDTH);
