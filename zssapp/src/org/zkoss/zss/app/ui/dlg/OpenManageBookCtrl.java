@@ -111,7 +111,7 @@ public class OpenManageBookCtrl extends DlgCtrlBase{
 	public void onOpen(){
 		Map<String,Object> selection = (Map<String,Object>)UiUtil.getSingleSelection(bookListModel);
 		if(selection==null){
-			UiUtil.showInfoMessage("Please select a book first");
+			UiUtil.showWarnMessage("Please select a book first");
 			return;
 		}
 		BookInfo bookInfo = (BookInfo) selection.get("bookinfo");
@@ -141,7 +141,7 @@ public class OpenManageBookCtrl extends DlgCtrlBase{
 		}
 		Map<String,Object> selection = (Map<String,Object>)UiUtil.getSingleSelection(bookListModel);
 		if(selection==null){
-			UiUtil.showInfoMessage("Please select a book first");
+			UiUtil.showWarnMessage("Please select a book first");
 			return;
 		}
 		
@@ -222,7 +222,7 @@ public class OpenManageBookCtrl extends DlgCtrlBase{
 						}
 					}
 				}else{
-					UiUtil.showInfoMessage("Can't upload/import the specified file" + (medias.length > 0 ? ": " + medias[0].getName() : "."));
+					UiUtil.showWarnMessage("Can't upload/import the specified file" + (medias.length > 0 ? ": " + medias[0].getName() : "."));
 				}
 			}
 		});

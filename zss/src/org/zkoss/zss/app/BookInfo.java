@@ -19,6 +19,10 @@ import java.util.Date;
  */
 public interface BookInfo {
 	
+	public final static String STATE_EMPTY = "empty";			// no book loaded
+	public final static String STATE_UNSAVED = "unsaved";		// doesn't save yet
+	public final static String STATE_SAVED = "saved";			// all modified saved
+	
 	String getName();
 	
 	Date getLastModify();

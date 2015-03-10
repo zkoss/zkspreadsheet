@@ -22,6 +22,7 @@ import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zss.api.model.Sheet;
+import org.zkoss.zss.app.BookInfo;
 import org.zkoss.zss.app.ui.CtrlBase;
 import org.zkoss.zss.app.ui.AppEvts;
 import org.zkoss.zss.app.ui.UiUtil;
@@ -108,12 +109,32 @@ public class MainMenubarCtrl extends CtrlBase<Menubar> {
 			doUpdateMenu((Spreadsheet)data);
 		}else if(AppEvts.ON_AFTER_CHANGED_USERNAME.equals(event)){
 			doUpdateUsername((String)data);
-		}else if(AppEvts.ON_FILE_SAVED.equals(event)){
-			if(data.equals(Boolean.TRUE))
-				setFileSaved();
-			else
-				clearFileSaved();
+		}else if(AppEvts.ON_CHANGED_FILE_STATE.equals(event)){
+			doUpdateFileState((String)data);
 		}
+	}
+
+	private void doUpdateFileState(String data) {
+		if (data.equals(BookInfo.STATE_EMPTY))
+			setFileState(Labels.getLabel("zssapp.mainMenu.state.empty"));
+		else if (data.equals(BookInfo.STATE_UNSAVED))
+			setFileState(Labels.getLabel("zssapp.mainMenu.state.unsaved"));
+		else if (data.equals(BookInfo.STATE_SAVED))
+			updateFileSavedTime();
+	}
+	
+	private void setFileState(String label) {
+		Clients.evalJavaScript("jq('$saveMessage').zk.$().setLabel('" + label + "');");
+	}
+	
+	private void updateFileSavedTime() {
+		// we do client side operation for time zone.
+		String script = "var saveMsgTime = new Date(" + new Date().getTime() + ");";
+		// template "Last saved: xx:xx"
+		Clients.evalJavaScript(script + "jq('$saveMessage').zk.$().setLabel('" + 
+				Labels.getLabel("zssapp.mainMenu.state.lastSaved") + ": ' + " +
+				"saveMsgTime.getHours() + ':' + " +
+				"('0' + saveMsgTime.getMinutes()).slice(-2));");
 	}
 
 	private void doUpdateMenu(Spreadsheet sparedsheet){
@@ -204,19 +225,6 @@ public class MainMenubarCtrl extends CtrlBase<Menubar> {
 		changeUsername.setLabel(username);
 	}
 	
-	private void setFileSaved() {
-		String label = Labels.getLabel("zssapp.mainMenu.lastSave");
-		// we do client side operation for time zone.
-		String script = "var saveMsgTime = new Date(" + new Date().getTime() + ");";
-		// template "Last saved: xx:xx"
-		Clients.evalJavaScript(script + "jq('$saveMessage').zk.$().setLabel('" + label + ": ' + " +
-				"saveMsgTime.getHours() + ':' + " +
-				"('0' + saveMsgTime.getMinutes()).slice(-2));");
-	}
-	
-	private void clearFileSaved() {
-		Clients.evalJavaScript("jq('$saveMessage').zk.$().setLabel('');");
-	}
 
 	@Listen("onClick=#newFile")
 	public void onNew(){

@@ -29,18 +29,18 @@ public class UiUtil {
 		return null;
 	}
 	
-	public static void showInfoMessage(String message,long time) {
-		Clients.showNotification(message,"info",null,null,2000,true);
+	public static void showInfoMessage(String message,int time) {
+		Clients.showNotification(message, "info", null, null, time, true);
 	}
 	public static void showInfoMessage(String message) {
-		showInfoMessage(message,2000);
+		showInfoMessage(message, 5000);
 	}
 	
-	public static void showWarnMessage(String message,long time) {
-		Clients.showNotification(message,"warn",null,null,2000,true);
+	public static void showWarnMessage(String message,int time) {
+		Clients.showNotification(message, "warn", null, null, time, true);
 	}
 	public static void showWarnMessage(String message) {
-		showWarnMessage(message, 2000);
+		showWarnMessage(message, 5000);
 	}
 	
 	public static boolean isRepositoryReadonly(){

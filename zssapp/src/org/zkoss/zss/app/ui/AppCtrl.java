@@ -288,18 +288,18 @@ public class AppCtrl extends CtrlBase<Component>{
 	}
 	
 	private void shareBook() {
-		if(selectedBookInfo==null){
+		if(isBookSaved()){
 			if(UiUtil.isRepositoryReadonly()){
 				return;
 			}
 			
-			if(loadedBook==null){
+			if(!isBookLoaded()){
 				UiUtil.showWarnMessage("Please load a book first before share it");
 				return;
 			}
 			
 			String name = loadedBook.getBookName();
-			if(selectedBookInfo!=null){
+			if(isBookSaved()){
 				name = "Copy Of "+selectedBookInfo.getName();
 			}
 			name = BookUtil.appendExtension(name, loadedBook);
@@ -317,8 +317,8 @@ public class AppCtrl extends CtrlBase<Component>{
 									String users = Arrays.toString(CollaborationInfoImpl.getInstance().getUsedUsernames(name).toArray());
 									UiUtil.showWarnMessage("File \"" + name + "\" is in used by " + users + ". Please try again.");
 								}
-								selectedBookInfo = bookManager.saveBook(new SimpleBookInfo(name), loadedBook);
-								doLoadBook(selectedBookInfo, null, "", true);
+								BookInfo info = bookManager.saveBook(new SimpleBookInfo(name), loadedBook);
+								doLoadBook(info, null, "", true);
 							}
 							
 							pushAppEvent(AppEvts.ON_SAVED_BOOK, loadedBook);
@@ -391,13 +391,28 @@ public class AppCtrl extends CtrlBase<Component>{
 		((HttpServletResponse) Executions.getCurrent().getNativeResponse()).addCookie(cookie);
 	}
 	
+	private void setBook(Book book, BookInfo info) {
+		this.loadedBook = book;
+		this.selectedBookInfo = info;
+		
+		if(book == null) {
+			pushAppEvent(AppEvts.ON_CHANGED_FILE_STATE, BookInfo.STATE_EMPTY);
+		} else {
+			if(info == null)
+				pushAppEvent(AppEvts.ON_CHANGED_FILE_STATE, BookInfo.STATE_UNSAVED);
+			else
+				pushAppEvent(AppEvts.ON_CHANGED_FILE_STATE, BookInfo.STATE_SAVED);			
+		}
+			
+	}
+	
 	/*package*/ void doImportBook(){				
 		Fileupload.get(1,new EventListener<UploadEvent>() {
 			public void onEvent(UploadEvent event) throws Exception {
 				Importer importer = Importers.getImporter();
 				Media[] medias = event.getMedias();
 				
-				if(loadedBook != null)
+				if(isBookLoaded())
 					doCloseBook(false);
 				
 				if(medias==null)
@@ -409,31 +424,30 @@ public class AppCtrl extends CtrlBase<Component>{
 					if (m.isBinary()){
 						String name = m.getName();
 						Book book = importer.imports(m.getStreamData(), name);
-	
-						loadedBook = book;
-						loadedBook.setShareScope(EventQueues.APPLICATION);
+						book.setShareScope(EventQueues.APPLICATION);
+						
+						setBook(book, null);
 						collaborationInfo.removeRelationship(username);
-						ss.setBook(loadedBook);
+						ss.setBook(book);
 						desktop.setBookmark("");
-						pushAppEvent(AppEvts.ON_LOADED_BOOK,loadedBook);
-						pushAppEvent(AppEvts.ON_CHANGED_SPREADSHEET,ss);
+						pushAppEvent(AppEvts.ON_LOADED_BOOK, book);
+						pushAppEvent(AppEvts.ON_CHANGED_SPREADSHEET, ss);
 						updatePageInfo();
 						
 						return;
 					}
 				}
 
-				UiUtil.showInfoMessage("Fail to import the specified file" + (ms.length > 0 ? ": " + ms[0].getName() : "."));
+				UiUtil.showWarnMessage("Fail to import the specified file" + (ms.length > 0 ? ": " + ms[0].getName() : "."));
 			}
 		});		
 	}
 	
 	/*package*/ void doOpenNewBook(boolean renewState){
 			
-		selectedBookInfo = null;
 		Importer importer = Importers.getImporter();
 		
-		if(loadedBook != null)
+		if(isBookLoaded())
 			doCloseBook(false);
 		
 		try {
@@ -447,17 +461,19 @@ public class AppCtrl extends CtrlBase<Component>{
 
 		if(renewState)
 			desktop.setBookmark("");
+		
 		collaborationInfo.removeRelationship(username);
 		ss.setBook(loadedBook);
-		pushAppEvent(AppEvts.ON_LOADED_BOOK,loadedBook);
-		pushAppEvent(AppEvts.ON_CHANGED_SPREADSHEET,ss);
+		pushAppEvent(AppEvts.ON_CHANGED_FILE_STATE, BookInfo.STATE_UNSAVED);
+		pushAppEvent(AppEvts.ON_LOADED_BOOK, loadedBook);
+		pushAppEvent(AppEvts.ON_CHANGED_SPREADSHEET, ss);
 		updatePageInfo();
 //		UiUtil.showInfoMessage("Loaded a new blank book");
 		
 	}
 	
 	private void updatePageInfo(){
-		String name = selectedBookInfo!=null?selectedBookInfo.getName():loadedBook!=null?loadedBook.getBookName():null;
+		String name = isBookSaved() ? selectedBookInfo.getName() : isBookLoaded() ? loadedBook.getBookName() : null;
 		getPage().setTitle(name!=null?name:"");
 	}
 	
@@ -467,8 +483,8 @@ public class AppCtrl extends CtrlBase<Component>{
 	
 	private void doCloseBook(boolean isChangeBookmark){
 		removeSaveNotification(loadedBook);
-		ss.setBook(loadedBook = null);
-		selectedBookInfo = null;
+		ss.setBook(null);
+		setBook(null, null);
 		collaborationInfo.removeRelationship(username);
 		if(isChangeBookmark)
 			desktop.setBookmark("");
@@ -489,19 +505,19 @@ public class AppCtrl extends CtrlBase<Component>{
 		if(UiUtil.isRepositoryReadonly()){
 			return;
 		}
-		if(loadedBook==null){
+		if(!isBookLoaded()){
 			UiUtil.showWarnMessage("Please load a book first before save it");
 			return;
 		}
-		if(selectedBookInfo==null){
+		if(!isBookSaved()){
 			doSaveBookAs(close);
 			return;
 		}
 		
 		try {
 			bookManager.saveBook(selectedBookInfo, loadedBook);
-			UiUtil.showInfoMessage("Save book to "+selectedBookInfo.getName());
-			pushAppEvent(AppEvts.ON_SAVED_BOOK,loadedBook);
+			pushAppEvent(AppEvts.ON_CHANGED_FILE_STATE, BookInfo.STATE_SAVED);
+			pushAppEvent(AppEvts.ON_SAVED_BOOK, loadedBook);
 			if(close){
 				doCloseBook();
 			}else{
@@ -514,19 +530,23 @@ public class AppCtrl extends CtrlBase<Component>{
 		}
 	}
 
+	private boolean isBookSaved() {
+		return selectedBookInfo != null;
+	}
+
 
 	
 	private void doSaveBookAs(final boolean close){
 		if(UiUtil.isRepositoryReadonly()){
 			return;
 		}
-		if(loadedBook==null){
+		if(!isBookLoaded()){
 			UiUtil.showWarnMessage("Please load a book first before save it");
 			return;
 		}
 		
 		String name = loadedBook.getBookName();
-		if(selectedBookInfo!=null){
+		if(isBookSaved()){
 			name = "Copy Of "+selectedBookInfo.getName();
 		}
 		name = BookUtil.appendExtension(name, loadedBook);
@@ -544,12 +564,11 @@ public class AppCtrl extends CtrlBase<Component>{
 								String users = Arrays.toString(CollaborationInfoImpl.getInstance().getUsedUsernames(name).toArray());
 								UiUtil.showWarnMessage("File \"" + name + "\" is in used by " + users + ". Please try again.");
 							}
-							selectedBookInfo = bookManager.saveBook(new SimpleBookInfo(name), loadedBook);
-							doLoadBook(selectedBookInfo, null, "", true);
+							BookInfo info = bookManager.saveBook(new SimpleBookInfo(name), loadedBook);
+							doLoadBook(info, null, "", true);
 						}
 						
 						pushAppEvent(AppEvts.ON_SAVED_BOOK,loadedBook);
-						UiUtil.showInfoMessage("Save book to "+selectedBookInfo.getName());
 						if(close){
 							doCloseBook(false);
 						}else{
@@ -575,11 +594,10 @@ public class AppCtrl extends CtrlBase<Component>{
 			}
 		}
 		
-		if(loadedBook != null)
+		if(isBookLoaded())
 			doCloseBook(false);
 		
-		selectedBookInfo = info;
-		loadedBook = book;
+		setBook(book, info);
 		collaborationInfo.setRelationship(username, book);
 		ss.setBook(loadedBook);
 		if(!Strings.isBlank(sheetName)){
@@ -614,23 +632,23 @@ public class AppCtrl extends CtrlBase<Component>{
 			@Override
 			public void onEvent(ModelEvent event) {
 				if(event.getName().equals(ModelEvents.ON_MODEL_DIRTY_CHANGE)) {
-					// if dirty flag become false
-					if(event.getData(ModelEvents.PARAM_CUSTOM_DATA).equals(Boolean.FALSE)) {
-						if(Executions.getCurrent() == null) { // in case of background thread
+					if(Executions.getCurrent() == null) { // in case of background thread
+						try {
+							Executions.activate(AppCtrl.this.desktop);
 							try {
-								Executions.activate(AppCtrl.this.desktop);
-								try {
-									pushAppEvent(AppEvts.ON_FILE_SAVED, Boolean.TRUE);
-								} finally {
-									Executions.deactivate(AppCtrl.this.desktop);
-								}
-							} catch (DesktopUnavailableException e) {
-								throw new RuntimeException("The server push thread interrupted", e);
-							} catch (InterruptedException e) {
-								throw new RuntimeException("The server push thread interrupted", e);
+								if( event.getData(ModelEvents.PARAM_CUSTOM_DATA).equals(Boolean.FALSE))
+									pushAppEvent(AppEvts.ON_CHANGED_FILE_STATE, BookInfo.STATE_SAVED);
+							} finally {
+								Executions.deactivate(AppCtrl.this.desktop);
 							}
-						} else
-							pushAppEvent(AppEvts.ON_FILE_SAVED, Boolean.TRUE);
+						} catch (DesktopUnavailableException e) {
+							throw new RuntimeException("The server push thread interrupted", e);
+						} catch (InterruptedException e) {
+							throw new RuntimeException("The server push thread interrupted", e);
+						}
+					} else {
+						if( event.getData(ModelEvents.PARAM_CUSTOM_DATA).equals(Boolean.FALSE))
+							pushAppEvent(AppEvts.ON_CHANGED_FILE_STATE, BookInfo.STATE_SAVED);
 					}
 				}
 			}
@@ -649,7 +667,7 @@ public class AppCtrl extends CtrlBase<Component>{
 			try {
 				Executions.activate(AppCtrl.this.desktop);
 				try {
-					pushAppEvent(AppEvts.ON_FILE_SAVED, Boolean.FALSE);
+					pushAppEvent(AppEvts.ON_CHANGED_FILE_STATE, BookInfo.STATE_EMPTY);
 				} finally {
 					Executions.deactivate(AppCtrl.this.desktop);
 				}
@@ -659,7 +677,7 @@ public class AppCtrl extends CtrlBase<Component>{
 				throw new RuntimeException("The server push thread interrupted", e);
 			}
 		} else {
-			pushAppEvent(AppEvts.ON_FILE_SAVED, Boolean.FALSE);
+			pushAppEvent(AppEvts.ON_CHANGED_FILE_STATE, BookInfo.STATE_EMPTY);
 		}
 	}
 
@@ -675,7 +693,7 @@ public class AppCtrl extends CtrlBase<Component>{
 	}
 	
 	private void doExportBook(){
-		if(loadedBook==null){
+		if(!isBookLoaded()){
 			UiUtil.showWarnMessage("Please load a book first before export it");
 			return;
 		}
@@ -690,9 +708,13 @@ public class AppCtrl extends CtrlBase<Component>{
 			UiUtil.showWarnMessage("Can't export the book");
 		}
 	}
+
+	private boolean isBookLoaded() {
+		return loadedBook != null;
+	}
 	
 	/*package*/ void doExportPdf(){
-		if(loadedBook==null){
+		if(!isBookLoaded()){
 			UiUtil.showWarnMessage("Please load a book first before export it");
 			return;
 		}
