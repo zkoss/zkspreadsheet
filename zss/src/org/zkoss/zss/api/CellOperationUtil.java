@@ -38,6 +38,7 @@ import org.zkoss.zss.api.model.Hyperlink.HyperlinkType;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.api.model.impl.EnumUtil;
 import org.zkoss.zss.model.SCell;
+import org.zkoss.zss.model.SCellStyle;
 import org.zkoss.zss.model.SRichText.Segment;
 import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.model.impl.AbstractRichTextAdv;
@@ -152,6 +153,10 @@ public class CellOperationUtil {
 			public void applyWhole(Range wholeRange) {
 				WholeStyleUtil.setFontName(wholeRange.getInternalRange(),fontName);
 			}
+			@Override
+			public void notifyChange(Range range) {
+				range.notifyChange(CellAttribute.STYLE);
+			}
 		};
 	}
 	/**
@@ -168,6 +173,10 @@ public class CellOperationUtil {
 			public void apply(Range range) {
 				SSheet sheet = range.getSheet().getInternalSheet();
 				StyleUtil.setRichTextFontName(sheet.getBook(),sheet.getCell(range.getRow(),range.getColumn()),fontName);
+			}
+			@Override
+			public void notifyChange(Range range) {
+				range.notifyChange(CellAttribute.STYLE);
 			}
 		};
 	}
@@ -263,6 +272,10 @@ public class CellOperationUtil {
 			public void applyWhole(Range wholeRange) {
 				WholeStyleUtil.setFontHeightPoints(wholeRange.getInternalRange(),fontHeightPoints);
 			}
+			@Override
+			public void notifyChange(Range range) {
+				range.notifyChange(CellAttribute.STYLE);
+			}
 		};
 	}
 	//ZSS-752
@@ -271,6 +284,10 @@ public class CellOperationUtil {
 			public void apply(Range range) {
 				SSheet sheet = range.getSheet().getInternalSheet();
 				StyleUtil.setRichTextFontHeightPoints(sheet.getBook(),sheet.getCell(range.getRow(),range.getColumn()),heightPoints);
+			}
+			@Override
+			public void notifyChange(Range range) {
+				range.notifyChange(CellAttribute.STYLE);
 			}
 		};
 	}
@@ -286,6 +303,10 @@ public class CellOperationUtil {
 			@Override
 			public void applyWhole(Range wholeRange) {
 				WholeStyleUtil.setFontBoldWeight(wholeRange.getInternalRange(),EnumUtil.toFontBoldweight(boldweight));
+			}
+			@Override
+			public void notifyChange(Range range) {
+				range.notifyChange(CellAttribute.STYLE);
 			}
 		};
 	}
@@ -305,6 +326,10 @@ public class CellOperationUtil {
 				SSheet sheet = range.getSheet().getInternalSheet();
 				StyleUtil.setRichTextFontBoldweight(sheet.getBook(),sheet.getCell(range.getRow(),range.getColumn()),EnumUtil.toFontBoldweight(boldweight));
 			}
+			@Override
+			public void notifyChange(Range range) {
+				range.notifyChange(CellAttribute.STYLE);
+			}
 		};
 	}
 
@@ -318,6 +343,10 @@ public class CellOperationUtil {
 			@Override
 			public void applyWhole(Range wholeRange) {
 				WholeStyleUtil.setFontItalic(wholeRange.getInternalRange(),italic);
+			}
+			@Override
+			public void notifyChange(Range range) {
+				range.notifyChange(CellAttribute.STYLE);
 			}
 		};
 	}
@@ -336,6 +365,10 @@ public class CellOperationUtil {
 				SSheet sheet = range.getSheet().getInternalSheet();
 				StyleUtil.setRichTextFontItalic(sheet.getBook(),sheet.getCell(range.getRow(),range.getColumn()),italic);
 			}
+			@Override
+			public void notifyChange(Range range) {
+				range.notifyChange(CellAttribute.STYLE);
+			}
 		};
 	}
 
@@ -350,6 +383,10 @@ public class CellOperationUtil {
 			@Override
 			public void applyWhole(Range wholeRange) {
 				WholeStyleUtil.setFontStrikethrough(wholeRange.getInternalRange(),strikeout);
+			}
+			@Override
+			public void notifyChange(Range range) {
+				range.notifyChange(CellAttribute.STYLE);
 			}
 		};
 	}
@@ -368,6 +405,10 @@ public class CellOperationUtil {
 				SSheet sheet = range.getSheet().getInternalSheet();
 				StyleUtil.setRichTextFontStrikeout(sheet.getBook(),sheet.getCell(range.getRow(),range.getColumn()),strikeout);
 			}
+			@Override
+			public void notifyChange(Range range) {
+				range.notifyChange(CellAttribute.STYLE);
+			}
 		};
 	}
 	
@@ -382,6 +423,10 @@ public class CellOperationUtil {
 			@Override
 			public void applyWhole(Range wholeRange) {
 				WholeStyleUtil.setFontUnderline(wholeRange.getInternalRange(), EnumUtil.toFontUnderline(underline));
+			}
+			@Override
+			public void notifyChange(Range range) {
+				range.notifyChange(CellAttribute.STYLE);
 			}
 		};
 	}
@@ -401,6 +446,10 @@ public class CellOperationUtil {
 				SSheet sheet = range.getSheet().getInternalSheet();
 				StyleUtil.setRichTextFontUnderline(sheet.getBook(),sheet.getCell(range.getRow(),range.getColumn()),EnumUtil.toFontUnderline(underline));
 			}
+			@Override
+			public void notifyChange(Range range) {
+				range.notifyChange(CellAttribute.STYLE);
+			}
 		};
 	}
 	
@@ -415,6 +464,10 @@ public class CellOperationUtil {
 			@Override
 			public void applyWhole(Range wholeRange) {
 				WholeStyleUtil.setFontColor(wholeRange.getInternalRange(), color.getHtmlColor());
+			}
+			@Override
+			public void notifyChange(Range range) {
+				range.notifyChange(CellAttribute.STYLE);
 			}
 		};
 	}
@@ -435,6 +488,10 @@ public class CellOperationUtil {
 				SSheet sheet = range.getSheet().getInternalSheet();
 				StyleUtil.setRichTextFontColor(sheet.getBook(),sheet.getCell(range.getRow(),range.getColumn()),color.getHtmlColor());
 			}
+			@Override
+			public void notifyChange(Range range) {
+				range.notifyChange(CellAttribute.STYLE);
+			}
 		};
 	}
 	
@@ -449,6 +506,10 @@ public class CellOperationUtil {
 				@Override
 				public void applyWhole(Range wholeRange) {
 					WholeStyleUtil.setBackColor(wholeRange.getInternalRange(), color.getHtmlColor());
+				}
+				@Override
+				public void notifyChange(Range range) {
+					range.notifyChange(CellAttribute.STYLE);
 				}
 		};
 	}
@@ -468,6 +529,10 @@ public class CellOperationUtil {
 				@Override
 				public void applyWhole(Range wholeRange) {
 					WholeStyleUtil.setFillColor(wholeRange.getInternalRange(), color.getHtmlColor());
+				}
+				@Override
+				public void notifyChange(Range range) {
+					range.notifyChange(CellAttribute.STYLE);
 				}
 		};
 	}
@@ -516,6 +581,10 @@ public class CellOperationUtil {
 			public void applyWhole(Range wholeRange) {
 				WholeStyleUtil.setDataFormat(wholeRange.getInternalRange(), format);
 			}			
+			@Override
+			public void notifyChange(Range range) {
+				range.notifyChange(CellAttribute.STYLE);
+			}
 		};
 		
 	}
@@ -541,6 +610,10 @@ public class CellOperationUtil {
 			public void applyWhole(Range wholeRange) {
 				WholeStyleUtil.setTextHAlign(wholeRange.getInternalRange(), EnumUtil.toStyleAlignemnt(alignment));
 			}
+			@Override
+			public void notifyChange(Range range) {
+				range.notifyChange(CellAttribute.STYLE);
+			}
 		};
 	}
 	
@@ -565,6 +638,10 @@ public class CellOperationUtil {
 			public void applyWhole(Range wholeRange) {
 				WholeStyleUtil.setTextVAlign(wholeRange.getInternalRange(), EnumUtil.toStyleVerticalAlignemnt(alignment));
 			}
+			@Override
+			public void notifyChange(Range range) {
+				range.notifyChange(CellAttribute.STYLE);
+			}
 		};
 	}
 	
@@ -581,8 +658,14 @@ public class CellOperationUtil {
 	 * Interface for help apply cell style
 	 */
 	public interface CellStyleApplier {
-		/** apply style to new cell**/
+		/** apply style to a single cell range **/
 		public void apply(Range cellRange);
+
+		/** 
+		 * NotifyChange after applying the style to all cells.
+		 * @since 3.8.0 
+		 */
+		public void notifyChange(Range range);
 	}
 	/**
 	 * Interface for help apply whole row,column style
@@ -628,7 +711,7 @@ public class CellOperationUtil {
 				}
 			});
 		}
-		range.notifyChange(CellAttribute.STYLE); //ZSS-939
+		applyer.notifyChange(range); //ZSS-939
 	}
 	
 	/**
@@ -690,15 +773,21 @@ public class CellOperationUtil {
 	
 	public static CellStyleApplier getWrapTextApplier(final boolean wraptext) {
 		return new CellStyleApplierEx() {
-			public void apply(Range range) {
-				SSheet sheet = range.getSheet().getInternalSheet();
-				StyleUtil.setTextWrap(sheet.getBook(),sheet.getCell(range.getRow(),range.getColumn()),wraptext);
+			public void apply(Range cellRange) {
+				final SSheet sheet = cellRange.getSheet().getInternalSheet();
+				final SCell cell = sheet.getCell(cellRange.getRow(),cellRange.getColumn());
+				StyleUtil.setTextWrap(sheet.getBook(),cell,wraptext);
 			}
 
 			@Override
 			public void applyWhole(Range wholeRange) {
 				WholeStyleUtil.setTextWrap(wholeRange.getInternalRange(), wraptext);
 			}			
+			//ZSS-918: in case of vertical text + wrap, must update ALL
+			@Override
+			public void notifyChange(Range range) {
+				range.notifyChange(CellAttribute.ALL);
+			}
 		};
 	}
 	
@@ -952,6 +1041,10 @@ public class CellOperationUtil {
 			public void applyWhole(Range wholeRange) {
 				WholeStyleUtil.setFontTypeOffset(wholeRange.getInternalRange(), EnumUtil.toFontTypeOffset(offset));
 			}
+			@Override
+			public void notifyChange(Range range) {
+				range.notifyChange(CellAttribute.STYLE);
+			}
 		};
 	}
 	/**
@@ -969,6 +1062,10 @@ public class CellOperationUtil {
 				SSheet sheet = range.getSheet().getInternalSheet();
 				StyleUtil.setRichTextFontTypeOffset(sheet.getBook(),sheet.getCell(range.getRow(),range.getColumn()),EnumUtil.toFontTypeOffset(offset));
 			}
+			@Override
+			public void notifyChange(Range range) {
+				range.notifyChange(CellAttribute.STYLE);
+			}
 		};
 	}
 
@@ -985,6 +1082,12 @@ public class CellOperationUtil {
 			@Override
 			public void applyWhole(Range wholeRange) {
 				WholeStyleUtil.setTextRotation(wholeRange.getInternalRange(), rotation);
+			}
+			
+			//ZSS-918: vertical text would need to update both text and style
+			@Override
+			public void notifyChange(Range range) {
+				range.notifyChange(CellAttribute.ALL);
 			}
 		};
 	}
@@ -1012,6 +1115,11 @@ public class CellOperationUtil {
 			@Override
 			public void applyWhole(Range wholeRange) {
 				WholeStyleUtil.setTextIndention(wholeRange.getInternalRange(), indention);
+			}
+			
+			@Override
+			public void notifyChange(Range range) {
+				range.notifyChange(CellAttribute.STYLE);
 			}
 		};
 	}
