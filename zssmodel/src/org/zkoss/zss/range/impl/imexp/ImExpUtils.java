@@ -19,6 +19,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.range.impl.imexp;
 
 import org.zkoss.poi.ss.usermodel.*;
+import org.zkoss.poi.xssf.usermodel.XSSFSheet;
 
 
 /**
@@ -31,8 +32,15 @@ public class ImExpUtils {
 
 	public static int getWidthAny(Sheet poiSheet,int col, int charWidth){
 		int w = poiSheet.getColumnWidth(col);
-		if (w == poiSheet.getDefaultColumnWidth() * 256) { //default column width
-			return UnitUtil.defaultColumnWidthToPx(w / 256, charWidth);
+		//ZSS-952
+		if (poiSheet instanceof XSSFSheet) {
+			if (w == ((XSSFSheet) poiSheet).getXssfDefaultColumnWidth() * 256) {
+				return UnitUtil.xssfDefaultColumnWidthToPx(w / 256.0, charWidth);
+			}
+		} else {
+			if (w == poiSheet.getDefaultColumnWidth() * 256) { //default column width
+				return UnitUtil.defaultColumnWidthToPx(w / 256, charWidth);
+			}
 		}
 		return UnitUtil.fileChar256ToPx(w, charWidth);
 	}

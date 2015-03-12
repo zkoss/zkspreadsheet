@@ -126,4 +126,20 @@ public class UnitUtil {
 		return incheToCm(pxToInche(px));
 	}
 
+	//ZSS-952
+	/** 
+	 * Convert XSSF default columns width (in character) to pixel. In XSSF the
+	 * value is a double value / charWidth and includes the 5 pixels margin padding.
+	 * 
+	 * 5 pixels are margin padding.(There are 4 pixels of margin padding (two on each side), plus 1 pixel padding for the gridlines.)
+	 * Description of how column widths are determined in Excel (http://support.microsoft.com/kb/214123)
+	 * @param columnWidth number of character
+	 * @param charWidth Using the Calibri font, the maximum digit width of 11 point font size is 7 pixels (at 96 dpi).
+	 * @return width in pixel
+	 */ 
+	public static int xssfDefaultColumnWidthToPx(double xssfDefaultColumnWidth, int charWidth) {
+		return (int) Math.round(xssfDefaultColumnWidth * charWidth);
+	}
+
+
 }

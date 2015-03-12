@@ -243,15 +243,21 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 	 */
 	abstract protected void importExternalBookLinks();
 
+	//ZSS-952
+	protected void importSheetDefaultColumnWidth(Sheet poiSheet, SSheet sheet) {
+		// reference XUtils.getDefaultColumnWidthInPx()
+		int defaultWidth = UnitUtil.defaultColumnWidthToPx(poiSheet.getDefaultColumnWidth(), CHRACTER_WIDTH);
+		sheet.setDefaultColumnWidth(defaultWidth);
+	}
+	
 	/*
 	 * import sheet scope content from POI Sheet.
 	 */
 	protected SSheet importSheet(Sheet poiSheet, int poiSheetIndex) {
 		SSheet sheet = book.createSheet(poiSheet.getSheetName());
 		sheet.setDefaultRowHeight(UnitUtil.twipToPx(poiSheet.getDefaultRowHeight()));
-		// reference XUtils.getDefaultColumnWidthInPx()
-		int defaultWidth = UnitUtil.defaultColumnWidthToPx(poiSheet.getDefaultColumnWidth(), CHRACTER_WIDTH);
-		sheet.setDefaultColumnWidth(defaultWidth);
+		//ZSS-952
+		importSheetDefaultColumnWidth(poiSheet, sheet);
 		// reference FreezeInfoLoaderImpl.getRowFreeze()
 		sheet.getViewInfo().setNumOfRowFreeze(BookHelper.getRowFreeze(poiSheet));
 		sheet.getViewInfo().setNumOfColumnFreeze(BookHelper.getColumnFreeze(poiSheet));

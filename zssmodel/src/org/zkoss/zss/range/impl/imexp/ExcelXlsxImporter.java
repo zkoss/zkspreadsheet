@@ -95,7 +95,9 @@ public class ExcelXlsxImporter extends AbstractExcelImporter{
 			return;
 		}
 		
-		int defaultWidth = UnitUtil.defaultColumnWidthToPx(poiSheet.getDefaultColumnWidth(), CHRACTER_WIDTH);
+		//ZSS-952: xssf's default column width includes the 5 pixels padding and is in charwidth unit.
+//		int defaultWidth = UnitUtil.defaultColumnWidthToPx(poiSheet.getDefaultColumnWidth(), CHRACTER_WIDTH);
+		int defaultWidth = UnitUtil.xssfDefaultColumnWidthToPx(((XSSFSheet)poiSheet).getXssfDefaultColumnWidth(), CHRACTER_WIDTH);
 		CTCols colsArray = worksheet.getColsArray(0);
 		for (int i = 0; i < colsArray.sizeOfColArray(); i++) {
 			CTCol ctCol = colsArray.getColArray(i);
@@ -581,5 +583,12 @@ public class ExcelXlsxImporter extends AbstractExcelImporter{
 	    ssp.setSelectUnlockedCells(sp.isSelectUnlockedCells());
 	}
 
+	//ZSS-952
+	@Override
+	protected void importSheetDefaultColumnWidth(Sheet poiSheet, SSheet sheet) {
+		// reference XUtils.getDefaultColumnWidthInPx()
+		int defaultWidth = UnitUtil.xssfDefaultColumnWidthToPx(((XSSFSheet)poiSheet).getXssfDefaultColumnWidth(), CHRACTER_WIDTH);
+		sheet.setDefaultColumnWidth(defaultWidth);
+	}
 }
  
