@@ -266,15 +266,17 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 				lCol = visRng.left,
 				rCol = visRng.right,
 				rowHeadHidden = wgt._rowHeadHidden,
-				colHeadHidden = wgt._columnHeadHidden;
+				colHeadHidden = wgt._columnHeadHidden,
+				tRow0 = tRow > 0 ? this.mergeMatrix.getTopRow(tRow) : 0, //ZSS-927
+				lCol0 = lCol > 0 ? this.mergeMatrix.getLeftCol(lCol) : 0; //ZSS-927
 			if (bRow > rect.bottom)
 				bRow = rect.bottom;
 			if (rCol > rect.right)
 				rCol = rect.right;
 			// ZSS-392: every panel use it's owned ActiveRange data
-			var activeBlock = new zss.MainBlockCtrl(sheet, tRow, lCol, bRow, rCol, data);
-			var topPanel = new zss.TopPanel(sheet, rowHeadHidden, lCol, rCol, (data.topFrozen ? data.topFrozen : data));
-			var leftPanel = new zss.LeftPanel(sheet, colHeadHidden, tRow, bRow, (data.leftFrozen ? data.leftFrozen : data));
+			var activeBlock = new zss.MainBlockCtrl(sheet, tRow0, lCol0, bRow, rCol, data); //ZSS-927
+			var topPanel = new zss.TopPanel(sheet, rowHeadHidden, lCol0, rCol, (data.topFrozen ? data.topFrozen : data)); //ZSS-927
+			var leftPanel = new zss.LeftPanel(sheet, colHeadHidden, tRow0, bRow, (data.leftFrozen ? data.leftFrozen : data)); //ZSS-927
 
 			if (!sheetCSSReady) {//set visible after CSS loaded
 				activeBlock.setVisible(false);

@@ -227,5 +227,35 @@ zss.MergeMatrix =  zk.$extends(zk.Object, {
 				break;
 			}
 		}
+	},
+	//ZSS-927
+	/**
+	 * Returns the merged top row which overlaps the specified row. 
+	 */
+	getTopRow: function (row) {
+		var size = this.mergeMatrix.length,
+			top = row,
+			range;
+		for (var i = 0; i < size; i++) {
+			range = this.mergeMatrix[i];
+			if (range.top <= row && range.bottom >= row && range.top < top)
+				top = range.top;
+		}
+		return top;
+	},
+	//ZSS-927
+	/**
+	 * Returns the merged left row which overlaps the specified column.
+	 */
+	getLeftCol: function (col) {
+		var size = this.mergeMatrix.length,
+			left = col,
+			range;
+		for (var i = 0; i < size; i++) {
+			range = this.mergeMatrix[i];
+			if (range.left <= col && range.right >= col && range.left < left)
+				left = range.left;
+		}
+		return left;
 	}
 });

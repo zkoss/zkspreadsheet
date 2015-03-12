@@ -1,0 +1,12 @@
+<vbox hflex="1" vflex="1">
+	<label multiline="true">
+1. You should see "A1" in a merged cell(which merge A1:B2) on the left top corner.
+2. The column A and row 1 is frozen. 
+3. And you should see "B3" in cell B3 and "C1" in cell C1
+4. Now select Sheet2 and then select back to Sheet1  
+5. All cells should be the same as before you selected away and back.
+	</label>
+	<spreadsheet id="ss" src="/issue3/book/927-merge-across-frozen.xlsx" maxVisibleRows="30" maxVisibleColumns="40"
+		hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
+		showFormulabar="true" />	
+</vbox>
