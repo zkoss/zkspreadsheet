@@ -91,7 +91,7 @@ zss.AreaCtrl = zk.$extends(zk.Object, {
 			dp = sheet.dp;
 		
 		l += sheet.leftWidth;//adjust to block position.
-		t += sheet.topHeight;//adjust to block position.
+		t += sheet.topHeight + 1;//adjust to block position. //ZSS-948
 		l = l - 2;
 		t = t - 2;
 		w = w + 3;
@@ -341,7 +341,7 @@ zss.AreaCtrlTop = zk.$extends(zss.AreaCtrl, {
 	//override
   	relocate_: function(l , t, w, h) {
 		var sheet = this.sheet;
-		t += sheet.topHeight - 1;//adjust to block position.
+		t += sheet.topHeight;//adjust to block position. //ZSS-948
 
 		l = l - 2;
 		t = t - 2;
