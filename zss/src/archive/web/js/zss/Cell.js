@@ -419,7 +419,7 @@ zss.Cell = zk.$extends(zk.Widget, {
 		}
 		
 		//ZSS-944
-//		this._updateListenRotate(toRotate90);
+		this._updateListenRotate(toRotate90);
 		if (rotateChanged || valignChanged || halignChanged || fontSizeChanged || this.redoRotate
 			|| (wasRotate90 && txtChd)) { //already rotate and text changed
 			var processedRotate = false;
@@ -433,21 +433,21 @@ zss.Cell = zk.$extends(zk.Widget, {
 			delete this.redoRotate; //see CellBlockCtrl.addMergeRange and CellBlockCtrl.removeMergeRange
 		}
 	},
-//	//ZSS-944
-//	/**
-//	 * Set rotate attribute and register listener or unregister onProcessRotate listener base on rotate attribute (== 90 || == 180)
-//	 * @param boolean 
-//	 * @return boolean whether reset rotate attribute or not
-//	 */
-//	_updateListenRotate: function (b) {
-//		var curr = !!this._listenProcessRotate;
-//		if (curr != b) {
-//			this.sheet[curr ? 'unlisten' : 'listen']({onProcessRotate: this.proxy(this._onProcessRotate)});
-//			this._listenProcessRotate = b;
-//			return true;
-//		}
-//		return false;
-//	},
+	//ZSS-944
+	/**
+	 * Set rotate attribute and register listener or unregister onProcessRotate listener base on rotate attribute (== 90 || == 180)
+	 * @param boolean 
+	 * @return boolean whether reset rotate attribute or not
+	 */
+	_updateListenRotate: function (b) {
+		var curr = !!this._listenProcessRotate;
+		if (curr != b) {
+			this.sheet[curr ? 'unlisten' : 'listen']({onProcessRotate: this.proxy(this._onProcessRotate)});
+			this._listenProcessRotate = b;
+			return true;
+		}
+		return false;
+	},
 	//ZSS-944
 	_clearRotate: function () {
 		var real = this.$n('real')
@@ -634,7 +634,7 @@ zss.Cell = zk.$extends(zk.Widget, {
 		
 		//ZSS-944
 		var toRotate90 = this.rotate == 90 || this.rotate == 180;
-//		this._updateListenRotate(toRotate90);
+		this._updateListenRotate(toRotate90);
 		if (toRotate90) {
 			this._processRotate(); // heavy duty
 			return; // rotate imply no wrap
@@ -652,6 +652,7 @@ zss.Cell = zk.$extends(zk.Widget, {
 	},
 	unbind_: function () {
 		this._updateListenOverflow(false);
+		this._updateListenRotate(false); //ZSS-944
 		this._updateListenRowHeightChanged(false);
 		
 		this.comp = this.comp.ctrl = this.cave = this.sheet = this.overlapBy = this._listenRowHeightChanged =
@@ -659,16 +660,25 @@ zss.Cell = zk.$extends(zk.Widget, {
 		
 		this.$supers(zss.Cell, 'unbind_', arguments);
 	},
-//	//ZSS-944
-//	/**
-//	 * When this cell's rotate status changed
-//	 */
-//	_onProcessRotate: function (evt) {
-//		var rotate90 = this.rotate == 90 || this.rotate == 180; 
-//		if (rotate90) {
-//			//TODO
-//		}
-//	},
+	//ZSS-944
+	/**
+	 * When this cell's rotate changed
+	 */
+	_onProcessRotate: function (evt) {
+		data = evt.data;
+		if (data) {
+			var row = this.r,
+				tRow = data.tRow,
+				bRow = data.bRow;
+			if (this.c == data.col
+				&& ((tRow == undefined && bRow == undefined) || 
+						(tRow && bRow && row >= tRow && row <= bRow))) {
+				var rotate90 = this.rotate == 90 || this.rotate == 180; 
+				if (rotate90)
+					this._processRotate();
+			}
+		}
+	},
 	/**
 	 * When cells after this cell changed, may effect this cell's overflow
 	 */

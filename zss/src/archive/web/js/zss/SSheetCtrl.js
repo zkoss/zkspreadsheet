@@ -469,6 +469,41 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		
 		this.$supers(zss.SSheetCtrl, 'unbind_', arguments);
 	},
+	//ZSS-944
+	/**
+	 * Sets the rotate 90deg column
+	 * 
+	 * @param int row the row index
+	 * @param int col the column index
+	 * @param boolean run indicate whether to process rotate now or not
+	 */
+	triggerRotateColumn_: function (row, col, run) {
+		var r = this._rotateRange;
+		if (!r)
+			r = this._rotateRange = {}; //tRow, bRow, and col attributes
+		var rCol = r.col;
+		rCol ? r.col = Math.max(rCol, col) : r.col = col;
+		if (row) {
+			var	tRow = r.tRow,
+				bRow = r.bRow;
+			tRow ? r.tRow = Math.min(tRow, row) : r.tRow = row;
+			bRow ? r.bRow = Math.max(bRow, row) : r.bRow = row;
+		}
+		if (run) {
+			this.fireProcessRotate_();
+		}
+	},
+	//ZSS-944
+	/**
+	 * Fire process cell 90deg rotate event
+	 */
+	fireProcessRotate_: function () {
+		var r = this._rotateRange;
+		if (r != undefined) {
+			this.fire('onProcessRotate', {col: r.col, tRow: r.tRow, bRow: r.bRow});
+			delete this._rotateRange;
+		}
+	},
 	/**
 	 * Sets the overflow column, columns before need to process overflow
 	 * 
@@ -2118,6 +2153,9 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		
 			//process text overflow when resize column
 			this.triggerOverflowColumn_(null, col + 1, true);
+			
+			//ZSS-944: process 90deg rotate when resize column
+			this.triggerRotateColumn_(null, col, true);
 			
 			if (this.frozenCol >= col) {
 				this.lp._fixSize();
