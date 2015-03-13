@@ -237,6 +237,8 @@ zss.CellBlockCtrl = zk.$extends(zk.Widget, {
 			}
 			if (isVer)
 				html += row.getHtmlEpilogHalf();
+			else if (row._prepareAutoFilterBtns)
+				row._prepareAutoFilterBtns(); //ZSS-953
 			
 			if (isBtm)
 				this.appendRow(row, html, true);

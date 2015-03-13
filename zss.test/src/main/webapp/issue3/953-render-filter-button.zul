@@ -1,0 +1,12 @@
+<vlayout vflex="1">
+<div>
+<label multiline="true">
+Since 3.8.0
+1. You should see auto filter button from A2 all the way to AX2 (by scrolling to right)
+2. If not, it is a bug.
+</label>
+</div>
+<button id="export" label="Export to Excel" onClick="doExport()"/>
+    <spreadsheet id="spreadsheet" src="/issue3/book/953-render-filter-button.xlsx" maxVisibleRows="50" maxVisibleColumns="50" vflex="1" width="100%" showSheetbar="true"></spreadsheet>
+</vlayout>
+
