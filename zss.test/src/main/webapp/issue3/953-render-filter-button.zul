@@ -6,7 +6,6 @@ Since 3.8.0
 2. If not, it is a bug.
 </label>
 </div>
-<button id="export" label="Export to Excel" onClick="doExport()"/>
     <spreadsheet id="spreadsheet" src="/issue3/book/953-render-filter-button.xlsx" maxVisibleRows="50" maxVisibleColumns="50" vflex="1" width="100%" showSheetbar="true"></spreadsheet>
 </vlayout>
 
