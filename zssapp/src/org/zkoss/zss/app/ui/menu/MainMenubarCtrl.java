@@ -130,11 +130,12 @@ public class MainMenubarCtrl extends CtrlBase<Menubar> {
 	private void updateFileSavedTime() {
 		// we do client side operation for time zone.
 		String script = "var saveMsgTime = new Date(" + new Date().getTime() + ");";
-		// template "Last saved: xx:xx"
+		// template "Last saved: xx:xx:xx"
 		Clients.evalJavaScript(script + "jq('$saveMessage').zk.$().setLabel('" + 
 				Labels.getLabel("zssapp.mainMenu.state.lastSaved") + ": ' + " +
 				"saveMsgTime.getHours() + ':' + " +
-				"('0' + saveMsgTime.getMinutes()).slice(-2));");
+				"('0' + saveMsgTime.getMinutes()).slice(-2) + ':' + " + 
+				"('0' + saveMsgTime.getSeconds()).slice(-2));");
 	}
 
 	private void doUpdateMenu(Spreadsheet sparedsheet){
