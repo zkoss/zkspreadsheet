@@ -40,6 +40,7 @@ ZK Spreadsheet 3.8.0
   ZSS-954 Filter button does not properly rendered when change selected sheet
   ZSS-953 Filter button does not properly rendered when scroll into view
   ZSS-808 Auto changing height shouldn't be treated as custom value
+  ZSS-951 Cell overflow should consider indent case
   
 ** Upgrade Notes
   * Default period for automatically saving in zssapp is 15 minutes.

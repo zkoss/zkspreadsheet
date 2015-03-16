@@ -293,6 +293,8 @@ zss.Cell = zk.$extends(zk.Widget, {
 			cellType = data.cellType,
 			txt = data.text,
 			txtChd = txt != this.text,
+			indention = data.indention,
+			indentionChd = indention != this.indention,
 			cave = this.$n('cave'),
 			prevWidth = cave.style.width,
 			fontSize = data.fontSize,
@@ -350,6 +352,7 @@ zss.Cell = zk.$extends(zk.Widget, {
 		this.valign = data.valign;
 		this.rborder = data.rightBorder;
 		this.edit = data.editText;
+		this.indention = data.indention;
 		
 		this._updateListenOverflow(overflow);
 		this.setText(txt, false, wrapChanged); //when wrap changed, shall re-process overflow
@@ -387,7 +390,7 @@ zss.Cell = zk.$extends(zk.Widget, {
 		}
 		
 		if (this.overflow != overflow // overflow changed
-			|| (this.overflow && txtChd)) { // already overflow and text changed
+			|| (this.overflow && (txtChd || indentionChd))) { // already overflow and text, indention changed
 			var processedOverflow = false;
 			if (this.overflow && !overflow) {
 				this._clearOverflow();
