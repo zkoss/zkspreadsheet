@@ -332,7 +332,7 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 		} else {
 			// not hidden, calculate height
 			if (row.getHeight() != sheet.getDefaultRowHeight()) {
-				poiRow.setCustomHeight(true);
+				poiRow.setCustomHeight(row.isCustomHeight());
 				poiRow.setHeight((short) UnitUtil.pxToTwip(row.getHeight()));
 			}
 		}

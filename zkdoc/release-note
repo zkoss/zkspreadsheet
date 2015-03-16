@@ -39,6 +39,7 @@ ZK Spreadsheet 3.8.0
   ZSS-952 Too many columns with custom width causes incorrectly rendering
   ZSS-954 Filter button does not properly rendered when change selected sheet
   ZSS-953 Filter button does not properly rendered when scroll into view
+  ZSS-808 Auto changing height shouldn't be treated as custom value
   
 ** Upgrade Notes
   * Default period for automatically saving in zssapp is 15 minutes.
