@@ -251,7 +251,7 @@ public class CellOperationUtil {
 			int px = sheet.getRowHeight(row);
 			
 			if(fpx>px) {
-				Ranges.range(range.getSheet(), row, endCol).setRowHeight(fpx+4);//4 is padding
+				Ranges.range(range.getSheet(), row, endCol).setRowHeight(fpx+4, false);//4 is padding
 			}
 		}
 	}
@@ -265,7 +265,7 @@ public class CellOperationUtil {
 				StyleUtil.setFontHeightPoints(sheet.getBook(),sheet.getCell(range.getRow(),range.getColumn()),fontHeightPoints);
 				int px = range.getSheet().getRowHeight(range.getRow());//rowHeight in px
 				if(fpx>px) {
-					range.setRowHeight(fpx+4);//4 is padding
+					range.setRowHeight(fpx+4, false);//4 is padding
 				}
 			}
 			@Override
