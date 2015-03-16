@@ -225,6 +225,7 @@ Copyright (C) 2012 Potix Corporation. All Rights Reserved.
 					this.innerStyle = isId != undefined ? styles[isId] : '';
 					this.fontStyle = osId != undefined ? styles[osId] : '';
 					this.wrap = wrap != undefined;
+					this.indention = v.ind || 0;
 					//bug ZSS-56: Unlock a cell, protect sheet, cannot double click to edit the cell
 					this.lock = lock != undefined ? lock != 'f' : true;
 					this.halign = halign || 'l'; //horizontal align: default left
