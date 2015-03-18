@@ -442,4 +442,9 @@ public class ExcelXlsImporter extends AbstractExcelImporter{
 	    ssp.setSelectLockedCells(sp.isSelectLockedCells());
 	    ssp.setSelectUnlockedCells(sp.isSelectUnlockedCells());
 	}
+
+	@Override
+	protected void importTables(Sheet poiSheet, SSheet sheet) {
+		// not support in XLS
+	}
 }

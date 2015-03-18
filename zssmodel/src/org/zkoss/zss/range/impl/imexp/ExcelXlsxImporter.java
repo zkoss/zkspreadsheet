@@ -26,6 +26,7 @@ import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTDrawing;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
 import org.w3c.dom.Node;
 import org.zkoss.poi.POIXMLDocumentPart;
+import org.zkoss.poi.ss.util.CellReference;
 import org.zkoss.poi.ss.usermodel.*;
 import org.zkoss.poi.ss.usermodel.charts.*;
 import org.zkoss.poi.ss.util.CellRangeAddress;
@@ -34,9 +35,14 @@ import org.zkoss.poi.xssf.usermodel.*;
 import org.zkoss.poi.xssf.usermodel.charts.*;
 import org.zkoss.zss.model.*;
 import org.zkoss.zss.model.SChart.ChartType;
+import org.zkoss.zss.model.STableColumn.STotalsRowFunction;
 import org.zkoss.zss.model.chart.*;
 import org.zkoss.zss.model.impl.AbstractDataValidationAdv;
+import org.zkoss.zss.model.impl.AutoFilterImpl;
 import org.zkoss.zss.model.impl.ChartAxisImpl;
+import org.zkoss.zss.model.impl.TableColumnImpl;
+import org.zkoss.zss.model.impl.TableImpl;
+import org.zkoss.zss.model.impl.TableStyleInfoImpl;
 import org.zkoss.zss.model.sys.formula.FormulaEngine;
 /**
  * Specific importing behavior for XLSX.
@@ -589,6 +595,42 @@ public class ExcelXlsxImporter extends AbstractExcelImporter{
 		// reference XUtils.getDefaultColumnWidthInPx()
 		int defaultWidth = UnitUtil.xssfDefaultColumnWidthToPx(((XSSFSheet)poiSheet).getXssfDefaultColumnWidth(), CHRACTER_WIDTH);
 		sheet.setDefaultColumnWidth(defaultWidth);
+	}
+
+	//ZSS-855
+	@Override
+	protected void importTables(Sheet poiSheet, SSheet sheet) {
+		final XSSFSheet srcSheet = (XSSFSheet) poiSheet;
+		for (XSSFTable poiTable : srcSheet.getTables()) {
+			final CellReference cr1 = poiTable.getStartCellReference();
+			final CellReference cr2 = poiTable.getEndCellReference();
+			final CellRegion region = new CellRegion(cr1.getRow(), cr1.getCol(), cr2.getRow(), cr2.getCol());
+			final XSSFTableStyleInfo poiInfo = new XSSFTableStyleInfo(poiTable.getTableStyleInfo());
+			final STableStyleInfo info = 
+				new TableStyleInfoImpl(poiInfo.getName(), 
+					poiInfo.isShowColumnStripes(), poiInfo.isShowRowStripes(),
+					poiInfo.isShowLastColumn(), poiInfo.isShowFirstColumn());
+ 
+			final STable table = new TableImpl(
+				poiTable.getName(),
+				poiTable.getDisplayName(),
+				region,
+				poiTable.getHeaderRowCount(),
+				poiTable.getTotalsRowCount(),
+				info);
+			
+			for (XSSFTableColumn poiTbCol : poiTable.getTableColumns()) {
+				final STableColumn tbCol = new TableColumnImpl(poiTbCol.getName());
+				tbCol.setTotalsRowLabel(poiTbCol.getTotalsRowLabel());
+				tbCol.setTotalsRowFunction(STotalsRowFunction.valueOf(poiTbCol.getTotalsRowFunction().name()));
+				table.addColumn(tbCol);
+			}
+			
+			final XSSFAutoFilter filter = poiTable.getAutoFilter();
+			table.enableFilter(filter != null);
+			
+			sheet.addTable(table);
+		}
 	}
 }
  

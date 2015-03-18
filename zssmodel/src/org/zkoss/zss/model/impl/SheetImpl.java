@@ -46,6 +46,7 @@ import org.zkoss.zss.model.SPicture;
 import org.zkoss.zss.model.SPrintSetup;
 import org.zkoss.zss.model.SRow;
 import org.zkoss.zss.model.SSheetViewInfo;
+import org.zkoss.zss.model.STable;
 import org.zkoss.zss.model.ViewAnchor;
 import org.zkoss.zss.model.PasteOption;
 import org.zkoss.zss.model.SheetRegion;
@@ -103,6 +104,9 @@ public class SheetImpl extends AbstractSheetAdv {
 	private HashMap<String,Object> _attributes;
 	private int _defaultColumnWidth = 64; //in pixel
 	private int _defaultRowHeight = 20;//in pixel
+	
+	//ZSS-855
+	private final List<STable> _tables = new ArrayList<STable>();
 	
 	public SheetImpl(AbstractBookAdv book,String id){
 		this._book = book;
@@ -1921,5 +1925,41 @@ public class SheetImpl extends AbstractSheetAdv {
 	@Override
 	public void setSheetVisible(SheetVisible state) {
 		_visible = state; 
+	}
+
+	//ZSS-855
+	@Override
+	public void addTable(STable table) {
+		_tables.add(table);
+	}
+
+	//ZSS-855
+	@Override
+	public List<STable> getTables() {
+		return Collections.unmodifiableList(_tables);
+	}
+	
+	//ZSS-855
+	@Override
+	public void removeTable(String name) {
+		for (Iterator<STable> it = _tables.iterator(); it.hasNext();) {
+			final STable tb = it.next();
+			if (name.equalsIgnoreCase(tb.getName())) {
+				it.remove();
+				break;
+			}
+		}
+	}
+	
+	//ZSS-855
+	public STable getTableByRowCol(int rowIdx, int colIdx) {
+		for (STable tb : _tables) {
+			final CellRegion rgn = tb.getRegion();
+			if (rgn.getColumn() <= colIdx && colIdx <= rgn.getLastColumn()
+					&& rgn.getRow() <= rowIdx && rowIdx <= rgn.getLastRow()) {
+				return tb; //found
+			}
+		}
+		return null;
 	}
 }

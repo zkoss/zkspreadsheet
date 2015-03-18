@@ -147,6 +147,7 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 			for (int i = 0; i < numberOfSheet; i++) {
 				SSheet sheet = book.getSheet(i);
 				Sheet poiSheet = workbook.getSheetAt(i);
+				importTables(poiSheet, sheet); //ZSS-855
 				for (Row poiRow : poiSheet) {
 					importRow(poiRow, sheet);
 				}
@@ -700,6 +701,14 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 	 */
 	abstract protected void importSheetProtection(Sheet poiSheet, SSheet sheet); //ZSS-576
 
+	/**
+	 * POI sheet tables
+	 * @param poiSheet source POI sheet
+	 * @param sheet destination sheet
+	 * @since 3.8.0
+	 */
+	abstract protected void importTables(Sheet poiSheet, SSheet sheet); //ZSS-855
+	
 	//ZSS-873: Import formula cache result from an Excel file
 	private boolean _importCache = false;
 	/**

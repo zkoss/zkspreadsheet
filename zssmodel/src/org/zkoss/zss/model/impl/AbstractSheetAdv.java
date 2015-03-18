@@ -20,6 +20,7 @@ import java.io.Serializable;
 
 import org.zkoss.zss.model.SColumn;
 import org.zkoss.zss.model.SSheet;
+import org.zkoss.zss.model.STable;
 /**
  * 
  * @author dennis
@@ -47,4 +48,5 @@ public abstract class AbstractSheetAdv implements SSheet,LinkedModelObject,Seria
 	
 //	/*package*/ abstract void onModelInternalEvent(ModelInternalEvent event);
 	
+	abstract public STable getTableByRowCol(int rowIdx, int colIdx);
 }

@@ -31,7 +31,10 @@ import org.zkoss.poi.ss.formula.ptg.Ptg;
 import org.zkoss.poi.ss.formula.ptg.TableNamePtg;
 import org.zkoss.util.logging.Log;
 import org.zkoss.zss.model.SBook;
+import org.zkoss.zss.model.SSheet;
+import org.zkoss.zss.model.STable;
 import org.zkoss.zss.model.sys.formula.FormulaEngine;
+import org.zkoss.zss.model.impl.AbstractSheetAdv;
 
 /**
  * A pseudo formula parsing workbook for parsing only.
@@ -434,8 +437,12 @@ public class ParsingBook implements FormulaParsingWorkbook, FormulaRenderingWork
 	//ZSS-796
 	@Override
 	public EvaluationName getTableName(String tableName, String columnName, int sheetIndex, int rowIdx, int colIdx) {
-		//TODO: find the real table name from book, sheetIdx, rowIdx, and colIdx
-		String tableName0 = tableName == null ? "" : tableName;
+		String tableName0 = tableName;
+		if (tableName0 == null) {
+			final SSheet sheet = book.getSheet(sheetIndex);
+			final STable table = ((AbstractSheetAdv)sheet).getTableByRowCol(rowIdx, colIdx);
+			tableName0 = table == null ? null : table.getName();
+		}
 		String key = toKey(String.valueOf(-1), tableName0);
 		//ZSS-747
 		synchronized (_indexes) {

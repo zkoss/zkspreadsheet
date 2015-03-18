@@ -369,4 +369,24 @@ public interface SSheet {
 		HIDDEN,		// This sheet is hidden (but can be unhide via UI dialog)
 		VERY_HIDDEN,	// This sheet is hidden and only can be unhhide by API
 	}
+	
+	/**
+	 * Add a new table
+	 * @param table
+	 * @since 3.8.0
+	 */
+	public void addTable(STable table);
+	/**
+	 * Get tables in this sheet
+	 * @return
+	 * @since 3.8.0
+	 */
+	public List<STable> getTables();
+
+	/**
+	 * Remove the table of the specified table name. 
+	 * @param tableName
+	 * @since 3.8.0
+	 */
+	public void removeTable(String tableName);
 }

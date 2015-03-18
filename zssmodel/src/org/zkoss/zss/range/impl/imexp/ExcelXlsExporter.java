@@ -76,4 +76,9 @@ public class ExcelXlsExporter extends AbstractExcelExporter {
 			((HSSFSheet)poiSheet).setPasswordHash(hashpass);
 		}
 	}
+
+	@Override
+	protected void exportTables(SSheet sheet, Sheet poiSheet) {
+		// not support in XLS
+	}
 }

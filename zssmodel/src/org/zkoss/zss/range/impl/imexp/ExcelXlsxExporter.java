@@ -23,6 +23,7 @@ import org.zkoss.poi.ss.util.*;
 import org.zkoss.poi.xssf.model.StylesTable;
 import org.zkoss.poi.xssf.usermodel.*;
 import org.zkoss.poi.xssf.usermodel.XSSFAutoFilter.XSSFFilterColumn;
+import org.zkoss.poi.xssf.usermodel.XSSFTableColumn.TotalsRowFunction;
 import org.zkoss.poi.xssf.usermodel.charts.*;
 import org.zkoss.poi.xssf.usermodel.extensions.XSSFCellBorder;
 import org.zkoss.poi.xssf.usermodel.extensions.XSSFCellFill;
@@ -598,5 +599,48 @@ public class ExcelXlsxExporter extends AbstractExcelExporter {
 		poiCellStyle.setDefaultProtection(locked, hidden);
 
 		return poiCellStyle;
+	}
+
+	//ZSS-855
+	@Override
+	protected void exportTables(SSheet sheet, Sheet poiSheet0) {
+		final XSSFSheet poiSheet = (XSSFSheet) poiSheet0;
+		int k = 0;
+		for (STable table : sheet.getTables()) {
+			XSSFTable poiTable = poiSheet.createTable();
+			poiTable.setName(table.getName());
+			poiTable.setDisplayName(table.getDisplayName());
+			poiTable.setRef(table.getRegion().getReferenceString());
+			poiTable.setTotalsRowCount(table.getTotalsRowCount());
+			poiTable.setHeaderRowCount(table.getHeaderRowCount());
+			final XSSFTableStyleInfo poiInfo = poiTable.createTableStyleInfo();
+			final STableStyleInfo info = table.getTableStyleInfo();
+			poiInfo.setName(info.getName());
+			poiInfo.setShowColumnStripes(info.isShowColumnStripes());
+			poiInfo.setShowRowStripes(info.isShowRowStripes());
+			poiInfo.setShowLastColumn(info.isShowLastColumn());
+			poiInfo.setShowFirstColumn(info.isShowFirstColumn());
+			
+			final SAutoFilter filter = table.getFilter();
+			if (filter != null) {
+				XSSFAutoFilter poiFilter = poiTable.createAutoFilter();
+				poiFilter.setRef(filter.getRegion().getReferenceString());
+			} else {
+				poiTable.clearAutoFilter();
+			}
+			
+			int j = 0;
+			for (STableColumn tbCol : table.getColumns()) {
+				final XSSFTableColumn poiTbCol = poiTable.addTableColumn();
+				poiTbCol.setName(tbCol.getName());
+				poiTbCol.setId(++j);
+				if (tbCol.getTotalsRowLabel() != null)
+					poiTbCol.setTotalsRowLabel(tbCol.getTotalsRowLabel());
+				if (tbCol.getTotalsRowFunction() != null)
+					poiTbCol.setTotalsRowFunction(TotalsRowFunction.valueOf(tbCol.getTotalsRowFunction().name()));
+			}
+			poiTable.setId(++k);
+			((XSSFWorkbook)workbook).addTableName(poiTable);
+		}
 	}
 }
