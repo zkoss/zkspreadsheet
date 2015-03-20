@@ -33,6 +33,7 @@ import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zk.ui.util.DesktopCleanup;
 import org.zkoss.zss.api.*;
 import org.zkoss.zss.api.model.*;
+import org.zkoss.zss.api.model.Book.BookType;
 import org.zkoss.zss.api.model.Hyperlink.HyperlinkType;
 import org.zkoss.zss.app.BookInfo;
 import org.zkoss.zss.app.BookRepository;
@@ -791,7 +792,8 @@ public class AppCtrl extends CtrlBase<Component>{
 		String name = BookUtil.suggestFileName(loadedBook);
 		File file;
 		try {
-			file = BookUtil.saveBookToWorkingFolder(loadedBook);
+			BookType bookType = loadedBook.getType();
+			file = BookUtil.saveBookToWorkingFolder(loadedBook, bookType == null ? null : bookType.toString().toLowerCase());
 			//default Excel exporter exports XLSX 
 			Filedownload.save(new AMedia(name, null, "application/vnd.ms-excel.12", file, true));
 		} catch (IOException e) {
