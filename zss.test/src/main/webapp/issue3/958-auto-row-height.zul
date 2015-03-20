@@ -1,0 +1,58 @@
+<vbox hflex="1" vflex="1">
+	<label multiline="true">
+		1. click "block 1", check A even cells are changed as its cell description. e.g. for cell A2's result, see description A1.
+		reload page.
+		2. click "block 2", check A even cells are changed as its cell description. e.g. for cell I2's result, see description I1.
+		reload page.
+		3. click "block 3-1", make sure row 17 become larger. click "block 3-2", make sure row 17 become smaller as D17's cell height, rather than default height.
+		reload page.
+		4. click "block 4-1", make sure row 21 as same logical as step 3.
+	</label>
+	<hbox>
+		<button label="block 1(blue)">
+			<attribute name="onClick"><![CDATA[
+				CellOperationUtil.applyWrapText(Ranges.range(ss.getSelectedSheet(), "A2"), true);
+				CellOperationUtil.applyFontSize(Ranges.range(ss.getSelectedSheet(), "A4"), 18);
+				CellOperationUtil.applyFontName(Ranges.range(ss.getSelectedSheet(), "A6"), "Arial Black");
+				CellOperationUtil.applyWrapText(Ranges.range(ss.getSelectedSheet(), "A8"), true);
+				CellOperationUtil.applyRotation(Ranges.range(ss.getSelectedSheet(), "A10"), 90);
+				CellOperationUtil.applyRotation(Ranges.range(ss.getSelectedSheet(), "A12"), 180);
+				CellOperationUtil.applyRotation(Ranges.range(ss.getSelectedSheet(), "A14"), 255);
+			]]></attribute>
+		</button>
+		<button label="block 2(green)">
+			<attribute name="onClick"><![CDATA[
+				CellOperationUtil.applyWrapText(Ranges.range(ss.getSelectedSheet(), "I2"), true);
+				Ranges.range(ss.getSelectedSheet(), "I4").setCellRichText("<span style=\"font-family: Calibri; color: rgb(46, 117, 181); font-weight: normal;\"><span style=\"font-size: 28pt;\">this&nbsp;is&nbsp;a</span></span><span style=\"font-size: 11pt; font-family: Calibri; color: rgb(0, 0, 0); font-weight: normal;\">&nbsp;test</span>");
+				Ranges.range(ss.getSelectedSheet(), "I6").setCellRichText("<span style=\"color: rgb(46, 117, 181); font-weight: normal; font-size: 11pt;\"><span style=\"font-family: 'Arial Black';\">this&nbsp;is&nbsp;a</span></span><span style=\"font-family: Calibri; color: rgb(0, 0, 0); font-weight: normal; font-size: 11pt;\">&nbsp;test</span>");
+				CellOperationUtil.applyWrapText(Ranges.range(ss.getSelectedSheet(), "I8"), true);
+				CellOperationUtil.applyRotation(Ranges.range(ss.getSelectedSheet(), "I10"), 90);
+				CellOperationUtil.applyRotation(Ranges.range(ss.getSelectedSheet(), "I12"), 180);
+				CellOperationUtil.applyRotation(Ranges.range(ss.getSelectedSheet(), "I14"), 255);
+			]]></attribute>
+		</button>
+		<button label="block 3-1(pink)">
+			<attribute name="onClick"><![CDATA[
+				CellOperationUtil.applyFontSize(Ranges.range(ss.getSelectedSheet(), "A17"), 32);
+			]]></attribute>
+		</button>
+		<button label="block 3-2(pink)">
+			<attribute name="onClick"><![CDATA[
+				CellOperationUtil.applyFontSize(Ranges.range(ss.getSelectedSheet(), "A17"), 12);
+			]]></attribute>
+		</button>
+		<button label="block 4-1(gray)">
+			<attribute name="onClick"><![CDATA[
+				CellOperationUtil.applyWrapText(Ranges.range(ss.getSelectedSheet(), "A21"), true);
+			]]></attribute>
+		</button>
+		<button label="block 4-2(gray)">
+			<attribute name="onClick"><![CDATA[
+				CellOperationUtil.applyWrapText(Ranges.range(ss.getSelectedSheet(), "A21"), false);
+			]]></attribute>
+		</button>
+	</hbox>
+	<spreadsheet id="ss" src="/issue3/book/958-auto-row-height.xlsx" maxVisibleRows="30" maxVisibleColumns="40"
+		hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
+		showFormulabar="true" />
+</vbox>
