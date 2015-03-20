@@ -1,0 +1,11 @@
+<vbox hflex="1" vflex="1">
+	<label multiline="true">
+Since 3.8.0
+1. You should see all value in G12:H19 is TRUE.
+2. If any cell in G12:G19 is not TRUE, the calculation at column B of that row is not correct and is a bug.
+3. If any cell in H12:H19 is not TRUE, the calculation at column C of that row is not correct and is a bug.  
+	</label>
+	<spreadsheet id="ss" src="/issue3/book/962-subtotal-ignore-hidden.xlsx" maxVisibleRows="30" maxVisibleColumns="40"
+		hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
+		showFormulabar="true" />	
+</vbox>

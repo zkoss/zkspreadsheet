@@ -48,5 +48,9 @@ public abstract class AbstractSheetAdv implements SSheet,LinkedModelObject,Seria
 	
 //	/*package*/ abstract void onModelInternalEvent(ModelInternalEvent event);
 	
+	//ZSS-855
 	abstract public STable getTableByRowCol(int rowIdx, int colIdx);
+	
+	//ZSS-962
+	abstract public boolean isHidden(int rowIdx, int colIdx);
 }

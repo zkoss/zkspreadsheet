@@ -22,6 +22,8 @@ import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.model.SCell.CellType;
 import org.zkoss.zss.model.sys.formula.FormulaExpression;
 import org.zkoss.zss.model.impl.CellImpl;
+import org.zkoss.zss.model.impl.AbstractSheetAdv;
+
 /**
  * 
  * @author Pao
@@ -218,5 +220,11 @@ public class EvalSheet implements EvaluationSheet {
 		EvalSheet other = (EvalSheet) obj;
 		
 		return _sheet == other._sheet;
+	}
+
+	//ZSS-962
+	@Override
+	public boolean isHidden(int rowIndex, int columnIndex) {
+		return ((AbstractSheetAdv)_sheet).isHidden(rowIndex, columnIndex);
 	}
 }

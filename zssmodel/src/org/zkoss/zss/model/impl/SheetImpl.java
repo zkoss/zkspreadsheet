@@ -1952,6 +1952,7 @@ public class SheetImpl extends AbstractSheetAdv {
 	}
 	
 	//ZSS-855
+	@Override
 	public STable getTableByRowCol(int rowIdx, int colIdx) {
 		for (STable tb : _tables) {
 			final CellRegion rgn = tb.getRegion();
@@ -1961,5 +1962,15 @@ public class SheetImpl extends AbstractSheetAdv {
 			}
 		}
 		return null;
+	}
+
+	//ZSS-962
+	@Override
+	public boolean isHidden(int rowIdx, int colIdx) {
+		SRow row = getRow(rowIdx);
+		if (row.isHidden()) return true;
+		
+		SColumnArray colArray = getColumnArray(colIdx);
+		return colArray.isHidden();
 	}
 }
