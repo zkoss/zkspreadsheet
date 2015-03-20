@@ -55,6 +55,7 @@ import org.zkoss.zss.ui.impl.DefaultUserActionManagerCtrl;
 import org.zkoss.zss.ui.sys.UndoableActionManager;
 import org.zkoss.zul.Filedownload;
 import org.zkoss.zul.Fileupload;
+import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Script;
 
 /**
@@ -66,6 +67,7 @@ public class AppCtrl extends CtrlBase<Component>{
 	private static final Log log = Log.lookup(AppCtrl.class); 
 	private static final long serialVersionUID = 1L;
 	public static final String ZSS_USERNAME = "zssUsername";
+	private static final String UNSAVED_MESSAGE = "Do you want to leave this book without save??";
 	private static final String UTF8 = "UTF-8";
 	
 	private static BookRepository repo = BookRepositoryFactory.getInstance().getRepository();
@@ -110,7 +112,8 @@ public class AppCtrl extends CtrlBase<Component>{
 	BookInfo selectedBookInfo;
 	Book loadedBook;
 	Desktop desktop = Executions.getCurrent().getDesktop();
-
+	
+	private UnsavedAlertState isNeedUnsavedAlert = UnsavedAlertState.DISABLED;
 	
 	public AppCtrl() {
 		super(true);
@@ -238,7 +241,7 @@ public class AppCtrl extends CtrlBase<Component>{
 		// confirmMsgWorkaround is a workaround for confirm message with Cleanup event.
 		// we don't need it if we don't use confirm message.
 		if(Boolean.valueOf(Library.getProperty("zssapp.warning.save", "true")) == Boolean.TRUE)
-			Clients.confirmClose("Make sure you have saved your work before leaving this page!");
+			isNeedUnsavedAlert = UnsavedAlertState.STOP;
 		else
 			confirmMsgWorkaround.setParent(null);
 		
@@ -403,10 +406,23 @@ public class AppCtrl extends CtrlBase<Component>{
 			else
 				pushAppEvent(AppEvts.ON_CHANGED_FILE_STATE, BookInfo.STATE_SAVED);			
 		}
-			
+		
+		updateUnsavedAlert(false);
 	}
 	
-	/*package*/ void doImportBook(){				
+	/*package*/ void doImportBook(){
+		if(isNeedUnsavedAlert == UnsavedAlertState.ENABLED) {			
+			askForUnsavedFile(new AsyncFunction() {
+				@Override
+				public void invoke() {
+					doImportBook0();
+				}
+			});
+		} else
+			doImportBook0();
+	}
+	
+	private void doImportBook0(){
 		Fileupload.get(1,new EventListener<UploadEvent>() {
 			public void onEvent(UploadEvent event) throws Exception {
 				Importer importer = Importers.getImporter();
@@ -443,16 +459,25 @@ public class AppCtrl extends CtrlBase<Component>{
 		});		
 	}
 	
-	/*package*/ void doOpenNewBook(boolean renewState){
-			
+	/*package*/ void doOpenNewBook(final boolean renewState){
+		if(isBookLoaded()) {			
+			doAsyncCloseBook(false, new AsyncFunction() {
+				
+				@Override
+				public void invoke() {
+					doOpenNewBook0(renewState);
+				}
+			});
+		} else
+			doOpenNewBook0(renewState);
+	}
+	
+	private void doOpenNewBook0(boolean renewState) {
 		Importer importer = Importers.getImporter();
-		
-		if(isBookLoaded())
-			doCloseBook(false);
-		
 		try {
-			loadedBook = importer.imports(getClass().getResourceAsStream("/web/zssapp/blank.xlsx"), "New Book.xlsx");
-			loadedBook.setShareScope(EventQueues.APPLICATION);
+			Book book = importer.imports(getClass().getResourceAsStream("/web/zssapp/blank.xlsx"), "New Book.xlsx");
+			book.setShareScope(EventQueues.APPLICATION);
+			setBook(book, null);
 		} catch (IOException e) {
 			log.error(e.getMessage(),e);
 			UiUtil.showWarnMessage("Can't open a new book");
@@ -464,12 +489,11 @@ public class AppCtrl extends CtrlBase<Component>{
 		
 		collaborationInfo.removeRelationship(username);
 		ss.setBook(loadedBook);
+		initSaveNotification(loadedBook);
 		pushAppEvent(AppEvts.ON_CHANGED_FILE_STATE, BookInfo.STATE_UNSAVED);
 		pushAppEvent(AppEvts.ON_LOADED_BOOK, loadedBook);
 		pushAppEvent(AppEvts.ON_CHANGED_SPREADSHEET, ss);
-		updatePageInfo();
-//		UiUtil.showInfoMessage("Loaded a new blank book");
-		
+		updatePageInfo();		
 	}
 	
 	private void updatePageInfo(){
@@ -491,6 +515,41 @@ public class AppCtrl extends CtrlBase<Component>{
 		pushAppEvent(AppEvts.ON_CLOSED_BOOK,null);
 		pushAppEvent(AppEvts.ON_CHANGED_SPREADSHEET,ss);
 		updatePageInfo();
+	}
+	
+	//ZSS-697
+	private void doAsyncCloseBook(final boolean isChangeBookmark, final AsyncFunction callback){
+		if(isNeedUnsavedAlert == UnsavedAlertState.ENABLED) {
+			askForUnsavedFile(new AsyncFunction() {
+				@Override
+				public void invoke() {					
+					doAsyncCloseBook0(isChangeBookmark, callback);
+				}
+			});
+		} else {
+			doAsyncCloseBook0(isChangeBookmark, callback);
+		}
+	}
+	
+	private void askForUnsavedFile(final AsyncFunction yesCallback) {
+		if(yesCallback == null) 
+			return;
+		
+		Messagebox.show(UNSAVED_MESSAGE, "ZK Spreadsheet", 
+				Messagebox.OK + Messagebox.CANCEL, Messagebox.INFORMATION, new EventListener<Event>() {
+			@Override
+			public void onEvent(Event event) throws Exception {
+				if(event.getData().equals(Messagebox.OK)) {
+					yesCallback.invoke();
+				}
+			}
+		});
+	}
+	
+	private void doAsyncCloseBook0(boolean isChangeBookmark, AsyncFunction callback) {
+		doCloseBook(isChangeBookmark);
+		if(callback != null)
+			callback.invoke();
 	}
 	
 	/*package*/ void onSheetSelect(){
@@ -638,6 +697,8 @@ public class AppCtrl extends CtrlBase<Component>{
 							try {
 								if( event.getData(ModelEvents.PARAM_CUSTOM_DATA).equals(Boolean.FALSE))
 									pushAppEvent(AppEvts.ON_CHANGED_FILE_STATE, BookInfo.STATE_SAVED);
+								else
+									updateUnsavedAlert(true);
 							} finally {
 								Executions.deactivate(AppCtrl.this.desktop);
 							}
@@ -649,12 +710,30 @@ public class AppCtrl extends CtrlBase<Component>{
 					} else {
 						if( event.getData(ModelEvents.PARAM_CUSTOM_DATA).equals(Boolean.FALSE))
 							pushAppEvent(AppEvts.ON_CHANGED_FILE_STATE, BookInfo.STATE_SAVED);
+						else
+							updateUnsavedAlert(true);
 					}
 				}
 			}
 		};
 		
 		book.getInternalBook().addEventListener(dirtyChangeEventListener);
+	}
+	
+	//ZSS-897
+	private synchronized void updateUnsavedAlert(boolean turnOn) {
+		if(isNeedUnsavedAlert == UnsavedAlertState.DISABLED)
+			return;
+		
+		if(turnOn) {
+			if(!isBookSaved() && isNeedUnsavedAlert == UnsavedAlertState.STOP) {
+				Clients.confirmClose(UNSAVED_MESSAGE);
+				isNeedUnsavedAlert = UnsavedAlertState.ENABLED;
+			}
+		} else {
+			Clients.confirmClose(null);
+			isNeedUnsavedAlert = UnsavedAlertState.STOP;
+		}
 	}
 	
 	private void removeSaveNotification(Book book) {
@@ -682,6 +761,18 @@ public class AppCtrl extends CtrlBase<Component>{
 	}
 
 	private void doOpenManageBook(){
+		if (isNeedUnsavedAlert == UnsavedAlertState.ENABLED) {
+			askForUnsavedFile(new AsyncFunction() {
+				@Override
+				public void invoke() {
+					doOpenManageBook0();
+				}
+			});
+		} else
+			doOpenManageBook0();
+	}
+	
+	private void doOpenManageBook0() {
 		OpenManageBookCtrl.show(new EventListener<DlgCallbackEvent>(){
 			public void onEvent(DlgCallbackEvent event) throws Exception {
 				if(OpenManageBookCtrl.ON_OPEN.equals(event.getName())){					
@@ -741,7 +832,7 @@ public class AppCtrl extends CtrlBase<Component>{
 		}else if(AppEvts.ON_SAVE_CLOSE_BOOK.equals(event)){
 			doSaveBook(true);
 		}else if(AppEvts.ON_CLOSE_BOOK.equals(event)){
-			doCloseBook();
+			doAsyncCloseBook(true, null);
 		}else if(AppEvts.ON_OPEN_MANAGE_BOOK.equals(event)){
 			doOpenManageBook();
 		}else if(AppEvts.ON_IMPORT_BOOK.equals(event)){
@@ -885,6 +976,11 @@ public class AppCtrl extends CtrlBase<Component>{
 			}}, address, display);
 	}
 	
+	interface AsyncFunction {
+		public void invoke();
+	}
 	
-	
+	enum UnsavedAlertState {
+		DISABLED, ENABLED, STOP
+	}
 }
