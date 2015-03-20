@@ -555,9 +555,12 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		}else{
 			var self = this; 
 			setTimeout(function(){
-						self.fireProcessWrap_();
-						},25);
+				self.fireProcessWrap_();
+				},25);
 		}
+	},
+	fireProcessAutoHeight_: function() {
+		// not implement in OSE
 	},
 	//TODO: change to fire 'onSelectedSheet' evt
 	fireProtectSheet: function (protect) {
@@ -583,7 +586,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 	},
 	onContentsChanged: function (evt) {
 		this.fireProcessOverflow_();
-		this.fireProcessWrap_();
+		this.fireProcessAutoHeight_();
 		
 		var r = this._selectionRange;
 		if (r) {

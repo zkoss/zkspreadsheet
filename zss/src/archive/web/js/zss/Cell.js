@@ -287,6 +287,7 @@ zss.Cell = zk.$extends(zk.Widget, {
 			format = data.formatText,
 			st = this.style = data.style,
 			ist = this.innerStyle = data.innerStyle,
+			fontStyleChg = this.fontStyle != data.fontStyle,
 			fst = this.fontStyle = data.fontStyle,
 			n = this.comp,
 			overflow = data.overflow,
@@ -414,12 +415,6 @@ zss.Cell = zk.$extends(zk.Widget, {
 			processWrap = false;
 			delete this._justCopied;
 		}
-		if (processWrap)
-			this._txtHgh = jq(this.getTextNode()).height();//cache txt height
-		//merged cell won't change row height automatically
-		if ((this.cellType == STR_CELL || this.cellType == BLANK_CELL) && !this.merid && processWrap) {//must process wrap after set text
-			this.parent.processWrapCell(this, true);
-		}
 		
 		//ZSS-944
 		this._updateListenRotate(toRotate90);
@@ -434,6 +429,20 @@ zss.Cell = zk.$extends(zk.Widget, {
 			if (!processedRotate)
 				this._processRotate();
 			delete this.redoRotate; //see CellBlockCtrl.addMergeRange and CellBlockCtrl.removeMergeRange
+		}
+
+		//ZSS-958: process auto row/cell height for all cases
+		if (
+			txtChd ||
+			fontStyleChg ||
+			fontSizeChanged || 
+			rotateChanged || 
+			((this.cellType == STR_CELL || this.cellType == BLANK_CELL) && !this.merid && processWrap) //ZSS-528, for wrap case
+		) { 
+			var newHeight = this._getTextHeight0();
+			this.parent.updateAutoHeightDirty(this._txtHgh || -1, newHeight);
+			this._txtHgh = newHeight;
+			this.parent.processCellAutoHeight(this);
 		}
 	},
 	//ZSS-944
@@ -499,9 +508,12 @@ zss.Cell = zk.$extends(zk.Widget, {
 	 * 
 	 * @return int height
 	 */
-	getTextHeight: function () {
+	getTextHeight: function () {		
 		var h = this._txtHgh;
-		return h != undefined ? h : this._txtHgh = jq(this.getTextNode()).height();
+		return h != undefined ? h : this._txtHgh = this._getTextHeight0();
+	},
+	_getTextHeight0: function () {
+		return jq(this.getTextNode()).height();
 	},
 	_updateVerticalAlign: zk.ie6_ || zk.ie7_ ? function () {
 		var	v = this.valign,
@@ -642,21 +654,19 @@ zss.Cell = zk.$extends(zk.Widget, {
 			this._processRotate(); // heavy duty
 			return; // rotate imply no wrap
 		}
+
+		// ZSS-958: save all cells which aren't same as default height to calculate heighest row height
+		this._saveNoneDefaultHeightCell();
 		
-		//to record how many cells enabling "wrap text"
-		if ((this.cellType == STR_CELL || this.cellType == BLANK_CELL) && !this.merid && this.wrap && !(this._justCopied === true))  {
-			//true indicate delay calcuate wrap height after CSS ready	
-			var currentHeight = this.parent.getHeight();
-			var defaultHeight = this.sheet.custRowHeight.getDefaultSize();
-			//doesn't update wrap range when row height is not default
-			this.parent.processWrapCell(this, true,  currentHeight!=defaultHeight);
-		}
-		
+	},
+	_saveNoneDefaultHeightCell: function () {
+		// not implement in OSE
 	},
 	unbind_: function () {
 		this._updateListenOverflow(false);
 		this._updateListenRotate(false); //ZSS-944
 		this._updateListenRowHeightChanged(false);
+		this.parent.removeAutoHeightCell(this);
 		
 		this.comp = this.comp.ctrl = this.cave = this.sheet = this.overlapBy = this._listenRowHeightChanged =
 		this.block = this.lock = null;
