@@ -44,6 +44,8 @@ import org.zkoss.zss.model.impl.TableColumnImpl;
 import org.zkoss.zss.model.impl.TableImpl;
 import org.zkoss.zss.model.impl.TableStyleInfoImpl;
 import org.zkoss.zss.model.sys.formula.FormulaEngine;
+import org.zkoss.zss.model.impl.AbstractBookAdv;
+
 /**
  * Specific importing behavior for XLSX.
  * 
@@ -630,7 +632,17 @@ public class ExcelXlsxImporter extends AbstractExcelImporter{
 			table.enableFilter(filter != null);
 			
 			sheet.addTable(table);
+			
+			importTableName(table);
+			((AbstractBookAdv)book).addTable(table);
 		}
+	}
+	
+	//ZSS-855
+	protected void importTableName(STable table) {
+		SName namedRange = ((AbstractBookAdv)book).createTableName(table);
+		CellRegion rgn = table.getNameRegion();
+		namedRange.setRefersToFormula(rgn.getReferenceString());
 	}
 }
  

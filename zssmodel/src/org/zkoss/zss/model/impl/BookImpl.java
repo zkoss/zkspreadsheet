@@ -50,6 +50,7 @@ import org.zkoss.zss.model.SPictureData;
 import org.zkoss.zss.model.SRow;
 import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.model.SNamedStyle;
+import org.zkoss.zss.model.STable;
 import org.zkoss.zss.model.impl.sys.DependencyTableAdv;
 import org.zkoss.zss.model.impl.sys.formula.ParsingBook;
 import org.zkoss.zss.model.sys.EngineFactory;
@@ -106,6 +107,9 @@ public class BookImpl extends AbstractBookAdv{
 	private ArrayList<SPictureData> _picDatas; //since 3.6.0
 	
 	private boolean _dirty = false;
+	
+	//ZSS-855
+	private HashMap<String, STable> _tables; //since 3.8.0
 	
 	/**
 	 * the sheet which is destroying now.
@@ -1037,5 +1041,53 @@ public class BookImpl extends AbstractBookAdv{
 	@Override
 	public void setDirty(boolean dirty) {
 		_dirty = dirty;
+	}
+	
+	//ZSS-855
+	@Override
+	public SName createTableName(STable table) {
+		final String namename = table.getName();
+		checkLegalNameName(namename, null);
+
+		AbstractNameAdv name = new TableNameImpl(this,table,nextObjId("name"),namename);
+		
+		if(_names==null){
+			_names = new ArrayList<AbstractNameAdv>();
+		}
+		
+		_names.add(name);
+		return name;
+	}
+	
+	//ZSS-855
+	@Override
+	public void addTable(STable table) {
+		if (_tables == null) {
+			_tables = new HashMap<String, STable>();
+		}
+		_tables.put(table.getName(), table);
+	}
+
+	//ZSS-855
+	@Override
+	public STable getTable(String name) {
+		return _tables.get(name);
+	}
+	
+	//ZSS-855
+	@Override
+	public void removeTable(String name) {
+		_tables.remove(name);
+	}
+	
+	//ZSS-855
+	@Override
+	public void renameTable(String oldName, String newName) {
+		STable tb = _tables.remove(oldName);
+		if (tb != null) {
+			tb.setName(newName);
+			tb.setDisplayName(newName);
+		}
+		addTable(tb);
 	}
 }

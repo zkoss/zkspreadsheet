@@ -17,11 +17,14 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.model.impl;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
 
 import org.zkoss.zss.model.ModelEvent;
 import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.SBookSeries;
+import org.zkoss.zss.model.SName;
+import org.zkoss.zss.model.STable;
 import org.zkoss.zss.model.sys.formula.EvaluationContributorContainer;
 /**
  * 
@@ -47,4 +50,19 @@ public abstract class AbstractBookAdv implements SBook,EvaluationContributorCont
 
 	//ZSS-854
 	public abstract void initDefaultCellStyles();
+	
+	//ZSS-855
+	public abstract SName createTableName(STable table);
+	
+	//ZSS-855
+	public abstract void addTable(STable table);
+
+	//ZSS-855
+	public abstract STable getTable(String name);
+	
+	//ZSS-855
+	public abstract void removeTable(String name);
+	
+	//ZSS-855
+	public abstract void renameTable(String oldName, String newName);
 }

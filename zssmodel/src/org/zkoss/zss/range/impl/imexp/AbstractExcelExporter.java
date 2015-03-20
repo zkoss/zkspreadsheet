@@ -35,6 +35,7 @@ import org.zkoss.zss.model.SCell.CellType;
 import org.zkoss.zss.model.SCellStyle.FillPattern;
 import org.zkoss.zss.model.SRichText.Segment;
 import org.zkoss.zss.model.impl.HeaderFooterImpl;
+import org.zkoss.zss.model.impl.TableNameImpl;
 import org.zkoss.zss.model.impl.sys.formula.FormulaEngineImpl;
 import org.zkoss.zss.model.util.Strings;
 
@@ -142,6 +143,7 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 
 	protected void exportNamedRange(SBook book) {
 		for (SName name : book.getNames()) {
+			if (name instanceof TableNameImpl) continue; //ZSS-855: skip Name associated with Table
 			Name poiName = workbook.createName();
 			try{
 				String sheetName = name.getApplyToSheetName();//ZSS-699
