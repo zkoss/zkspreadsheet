@@ -1,0 +1,8 @@
+<?page title="NoLabelChart"?>
+<zk>
+<label multiline="true">
+Since 3.8.0
+You should see this page loaded.
+</label>
+    <spreadsheet id="spreadsheet" src="/issue3/book/959-fail-picture-chart.xlsx" maxVisibleRows="50" vflex="1" width="100%" showSheetbar="true"></spreadsheet>
+</zk>
