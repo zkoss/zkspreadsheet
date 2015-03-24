@@ -85,6 +85,7 @@ import org.zkoss.zss.ui.impl.ua.InsertRowHandler;
 import org.zkoss.zss.ui.impl.ua.MoveSheetHandler;
 import org.zkoss.zss.ui.impl.ua.PasteHandler;
 import org.zkoss.zss.ui.impl.ua.RenameSheetHandler;
+import org.zkoss.zss.ui.impl.ua.TextIndentHandler;
 import org.zkoss.zss.ui.impl.ua.VerticalAlignHandler;
 import org.zkoss.zss.ui.impl.ua.WrapTextHandler;
 import org.zkoss.zss.ui.impl.undo.ClearCellAction;
@@ -202,6 +203,9 @@ public class DefaultUserActionManagerCtrl implements UserActionManagerCtrl,UserA
 		registerHandler(category, AuxAction.HORIZONTAL_ALIGN_RIGHT.getAction(), new HorizontalAlignHandler(Alignment.RIGHT));
 		
 		registerHandler(category, AuxAction.WRAP_TEXT.getAction(), new WrapTextHandler());
+		
+		registerHandler(category, AuxAction.TEXT_INDENT_INCREASE.getAction(), new TextIndentHandler(1));
+		registerHandler(category, AuxAction.TEXT_INDENT_DECREASE.getAction(), new TextIndentHandler(-1));
 		
 		registerHandler(category, AuxAction.INSERT_SHIFT_CELL_RIGHT.getAction(), new InsertCellRightHandler());
 		registerHandler(category, AuxAction.INSERT_SHIFT_CELL_DOWN.getAction(), new InsertCellDownHandler());

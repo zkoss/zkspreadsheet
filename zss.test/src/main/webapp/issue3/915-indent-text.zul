@@ -16,16 +16,14 @@
 		<attribute name="onClick"><![CDATA[
 			int row = ss.getCellFocus().getRow();
 			int column = ss.getCellFocus().getColumn();
-			int indention = ss.getSelectedSheet().getInternalSheet().getCell(row, column).getCellStyle().getIndention();
-			org.zkoss.zss.api.CellOperationUtil.applyIndention(Ranges.range(ss.getSelectedSheet(), row, column), indention + 1);
+			org.zkoss.zss.api.CellOperationUtil.applyIndentionOffset(Ranges.range(ss.getSelectedSheet(), row, column), 1);
 		]]></attribute>
 	</button>
 	<button label="decrease indent">
 		<attribute name="onClick"><![CDATA[
 			int row = ss.getCellFocus().getRow();
 			int column = ss.getCellFocus().getColumn();
-			int indention = ss.getSelectedSheet().getInternalSheet().getCell(row, column).getCellStyle().getIndention() - 1;
-			org.zkoss.zss.api.CellOperationUtil.applyIndention(Ranges.range(ss.getSelectedSheet(), row, column), indention > 0 ? indention : 0);
+			org.zkoss.zss.api.CellOperationUtil.applyIndentionOffset(Ranges.range(ss.getSelectedSheet(), row, column), -1);
 		]]></attribute>
 	</button>
 	<spreadsheet id="ss" src="/issue3/book/915-indent-text.xlsx" maxVisibleRows="30" maxVisibleColumns="40"

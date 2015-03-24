@@ -1633,8 +1633,8 @@ zss.Buttons = zk.$extends(zk.Object, {
 	          'paste', 'cut', 'copy', 'separator',
 	          'fontFamily', 'fontSize', 'fontBold', 'fontItalic', 'fontUnderline', 
 	          'fontStrike', 'border', 'fontColor', 'backColor', 'separator',
-	          'verticalAlign', 'horizontalAlign', 'wrapText', 'mergeAndCenter', 'separator',
-	          'insert', 'del', 'format', 'separator',
+	          'verticalAlign', 'horizontalAlign', 'textIndentDecrease', 'textIndentIncrease', 
+	          'wrapText', 'mergeAndCenter', 'separator', 'insert', 'del', 'format', 'separator',
 	          'autoSum', 'clear', 'sortAndFilter', 'separator',
 	          'protectSheet', 'gridlines', 'separator',
 	          'insertPicture', 'insertChart', 'hyperlink'
@@ -2020,6 +2020,12 @@ zss.ButtonBuilder = zk.$extends(zk.Object, {
 		b.setClickDisabled(true);
 		b.setPopup(p);
 		return b;
+	},
+	textIndentIncrease: function () {
+		return newActionToolbarbutton(this._wgt, 'textIndentIncrease', '/web/zss/img/edit-indent.png');
+	},
+	textIndentDecrease: function () {
+		return newActionToolbarbutton(this._wgt, 'textIndentDecrease', '/web/zss/img/edit-outdent.png');
 	},
 	wrapText: function () {
 		var wgt = this._wgt,

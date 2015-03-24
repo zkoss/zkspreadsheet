@@ -253,13 +253,14 @@ public class WholeStyleUtil {
 			}});
 	}
 	
-	//ZSS-915
-	public static void setTextIndention(final SRange wholeRange,
-			final int indention) {
-		setWholeStyle(wholeRange,new StyleApplyer(){
+	// ZSS-915
+	public static void setTextIndentionOffset(final SRange wholeRange,
+			final int offset) {
+		setWholeStyle(wholeRange, new StyleApplyer() {
 			@Override
 			public void applyStyle(CellStyleHolder holder) {
-				StyleUtil.setTextRotation(wholeRange.getSheet().getBook(), holder, indention);
-			}});
+				StyleUtil.setTextIndentionOffset(wholeRange.getSheet().getBook(), holder, offset);
+			}
+		});
 	}
 }

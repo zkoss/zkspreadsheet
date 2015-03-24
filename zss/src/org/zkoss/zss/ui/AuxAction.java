@@ -79,6 +79,8 @@ public enum AuxAction {
 	 HORIZONTAL_ALIGN_CENTER("horizontalAlignCenter"),
 	 HORIZONTAL_ALIGN_RIGHT("horizontalAlignRight"),
 	 WRAP_TEXT("wrapText"),
+	 TEXT_INDENT_INCREASE("textIndentIncrease"),
+	 TEXT_INDENT_DECREASE("textIndentDecrease"),
 	 MERGE_AND_CENTER("mergeAndCenter"),
 	 MERGE_ACROSS("mergeAcross"),
 	 MERGE_CELL("mergeCell"),
