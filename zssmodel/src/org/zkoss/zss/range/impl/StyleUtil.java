@@ -879,19 +879,26 @@ public class StyleUtil {
 	}
 	
 	//ZSS-915
-	public static void setTextIndention(SBook book,CellStyleHolder holder, int indention){
-		final SCellStyle orgStyle = holder.getCellStyle();
-		final int ind = orgStyle.getIndention();
-		if (ind == indention) { //no change, skip
+	public static void setTextIndentionOffset(SBook book,CellStyleHolder holder, int offset){
+		if (offset == 0) { //no change, skip
 			return;
 		}
 		
+		final SCellStyle orgStyle = holder.getCellStyle();
+		int ind = orgStyle.getIndention();
+		int indent = ind + offset;
+		if(indent < 0)
+			indent = 0;
+		
+		if(ind == indent)
+			return;
+		
 		CellStyleMatcher matcher = new CellStyleMatcher(orgStyle);
-		matcher.setIndention(indention);
+		matcher.setIndention(indent);
 		SCellStyle style = book.searchCellStyle(matcher);
 		if(style==null){
 			style = cloneCellStyle(book, orgStyle);
-			style.setIndention(indention);
+			style.setIndention(indent);
 		}
 		holder.setCellStyle(style);
 	}

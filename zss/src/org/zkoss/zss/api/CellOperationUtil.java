@@ -1104,17 +1104,17 @@ public class CellOperationUtil {
 	
 	//ZSS-915
 	//@since 3.8.0
-	public static CellStyleApplier getIndentionApplier(final int indention){
+	public static CellStyleApplier getIndentionApplier(final int offset){
 		return new CellStyleApplierEx() {
 			public void apply(Range range) {
 				//ZSS 464, efficient implement
 				SSheet sheet = range.getSheet().getInternalSheet();
-				StyleUtil.setTextIndention(sheet.getBook(), sheet.getCell(range.getRow(), range.getColumn()), indention);
+				StyleUtil.setTextIndentionOffset(sheet.getBook(), sheet.getCell(range.getRow(), range.getColumn()), offset);
 			}
 			
 			@Override
 			public void applyWhole(Range wholeRange) {
-				WholeStyleUtil.setTextIndention(wholeRange.getInternalRange(), indention);
+				WholeStyleUtil.setTextIndentionOffset(wholeRange.getInternalRange(), offset);
 			}
 			
 			@Override
@@ -1127,10 +1127,11 @@ public class CellOperationUtil {
 	/**
 	 * Apply indention to cells in the range
 	 * @param range the range to be applied
-	 * @param int the indention
+	 * @param offset the relative value to indent. Value greater than 0 means increasing indent. 
+	 * On the other hand, value less than 0 means decreasing indent.
 	 * @since 3.8.0
 	 */
-	public static void applyIndention(Range range, final int indention) {
-		applyCellStyle(range, getIndentionApplier((short)indention));
+	public static void applyIndentionOffset(Range range, final int offset) {
+		applyCellStyle(range, getIndentionApplier(offset));
 	}
 }

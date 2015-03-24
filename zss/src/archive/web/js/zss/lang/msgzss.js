@@ -68,6 +68,8 @@ msgzss.action = {
 	horizontalAlignLeft: 'Align Text Left',
 	horizontalAlignCenter: 'Center Text',
 	horizontalAlignRight: 'Align Text Right',
+	textIndentIncrease: 'Increase Indent',
+	textIndentDecrease: 'Decrease Indent',
 	wrapText: 'Wrap Text',
 	mergeAndCenter: 'Merge & Center',
 	mergeAcross: 'Merge Across',

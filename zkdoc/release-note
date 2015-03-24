@@ -11,9 +11,10 @@ ZK Spreadsheet 3.8.0
   ZSS-901 Improve the filter's usability
   ZSS-942 Support notification at menu bar for automatic data saving
   ZSS-944 Support 90/-90 degree Text orientation
-  ZSS-855 Support import/export Table data model in XLSX file
+  ZSS-855 Suport import/export Table data model in XLSX file
   ZSS-962 SUBTOTAL function should suport ignore hidden cell for subfunction 101 to 111
   ZSS-958 Auto row height should support for client side calculation
+  ZSS-963 Support text indent with toolbar button
   
 *Bugs:
   ZSS-910 Problem referencing a cell with formula in same position of other file

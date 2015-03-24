@@ -1,0 +1,12 @@
+<vbox hflex="1" vflex="1">
+	<label multiline="true">
+		1. set "test indent" into A1.
+		2. click increase indent for 3 times on tool bar. make sure it works and overflow for A1:B1 is correct.
+		3. click decrease indent for 4 times on tool bar. make sure it works and overflow for A1:B1 is correct. 
+		4. click protect sheet on tool bar and make sure both indent buttons are disabled.
+		5. cancel protect sheet and protect it again with "format cells" enabled. make sure indent button can be used.
+	</label>
+	<spreadsheet id="ss" src="/issue3/book/blank.xlsx" maxVisibleRows="30" maxVisibleColumns="40"
+		hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
+		showFormulabar="true" />
+</vbox>
