@@ -20,7 +20,6 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
 import org.zkoss.poi.ss.usermodel.*;
 import org.zkoss.poi.ss.usermodel.charts.*;
 import org.zkoss.poi.ss.util.*;
-import org.zkoss.poi.xssf.model.StylesTable;
 import org.zkoss.poi.xssf.usermodel.*;
 import org.zkoss.poi.xssf.usermodel.XSSFAutoFilter.XSSFFilterColumn;
 import org.zkoss.poi.xssf.usermodel.XSSFTableColumn.TotalsRowFunction;
@@ -610,7 +609,7 @@ public class ExcelXlsxExporter extends AbstractExcelExporter {
 			XSSFTable poiTable = poiSheet.createTable();
 			poiTable.setName(table.getName());
 			poiTable.setDisplayName(table.getDisplayName());
-			poiTable.setRef(table.getAllRegion().getReferenceString());
+			poiTable.setRef(table.getAllRegion().getRegion().getReferenceString());
 			poiTable.setTotalsRowCount(table.getTotalsRowCount());
 			poiTable.setHeaderRowCount(table.getHeaderRowCount());
 			final XSSFTableStyleInfo poiInfo = poiTable.createTableStyleInfo();
