@@ -606,7 +606,8 @@ public class ExcelXlsxImporter extends AbstractExcelImporter{
 		for (XSSFTable poiTable : srcSheet.getTables()) {
 			final CellReference cr1 = poiTable.getStartCellReference();
 			final CellReference cr2 = poiTable.getEndCellReference();
-			final CellRegion region = new CellRegion(cr1.getRow(), cr1.getCol(), cr2.getRow(), cr2.getCol());
+			final CellRegion region0 = new CellRegion(cr1.getRow(), cr1.getCol(), cr2.getRow(), cr2.getCol());
+			final SheetRegion region  = new SheetRegion(sheet, region0);
 			final XSSFTableStyleInfo poiInfo = new XSSFTableStyleInfo(poiTable.getTableStyleInfo());
 			final STableStyleInfo info = 
 				new TableStyleInfoImpl(poiInfo.getName(), 
@@ -641,7 +642,7 @@ public class ExcelXlsxImporter extends AbstractExcelImporter{
 	//ZSS-855
 	protected void importTableName(STable table) {
 		SName namedRange = ((AbstractBookAdv)book).createTableName(table);
-		CellRegion rgn = table.getNameRegion();
+		SheetRegion rgn = table.getDataRegion();
 		namedRange.setRefersToFormula(rgn.getReferenceString());
 	}
 }

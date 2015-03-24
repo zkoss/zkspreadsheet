@@ -15,6 +15,7 @@ ZK Spreadsheet 3.8.0
   ZSS-962 SUBTOTAL function should suport ignore hidden cell for subfunction 101 to 111
   ZSS-958 Auto row height should support for client side calculation
   ZSS-963 Support text indent with toolbar button
+  ZSS-960 Support evaluate formula with Table expressions
   
 *Bugs:
   ZSS-910 Problem referencing a cell with formula in same position of other file

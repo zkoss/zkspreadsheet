@@ -1955,7 +1955,8 @@ public class SheetImpl extends AbstractSheetAdv {
 	@Override
 	public STable getTableByRowCol(int rowIdx, int colIdx) {
 		for (STable tb : _tables) {
-			final CellRegion rgn = tb.getRegion();
+			final SheetRegion srgn = tb.getAllRegion();
+			final CellRegion rgn = srgn.getRegion();
 			if (rgn.getColumn() <= colIdx && colIdx <= rgn.getLastColumn()
 					&& rgn.getRow() <= rowIdx && rowIdx <= rgn.getLastRow()) {
 				return tb; //found

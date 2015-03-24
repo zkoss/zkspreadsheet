@@ -28,13 +28,16 @@ import org.zkoss.poi.ss.formula.FormulaType;
 import org.zkoss.poi.ss.formula.ptg.NamePtg;
 import org.zkoss.poi.ss.formula.ptg.NameXPtg;
 import org.zkoss.poi.ss.formula.ptg.Ptg;
-import org.zkoss.poi.ss.formula.ptg.TableNamePtg;
+import org.zkoss.poi.ss.formula.ptg.TablePtg;
+import org.zkoss.poi.ss.formula.ptg.TablePtg.Item;
 import org.zkoss.util.logging.Log;
 import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.model.STable;
+import org.zkoss.zss.model.SheetRegion;
 import org.zkoss.zss.model.sys.formula.FormulaEngine;
 import org.zkoss.zss.model.impl.AbstractSheetAdv;
+import org.zkoss.zss.model.impl.AbstractBookAdv;
 
 /**
  * A pseudo formula parsing workbook for parsing only.
@@ -360,55 +363,7 @@ public class ParsingBook implements FormulaParsingWorkbook, FormulaRenderingWork
 		public NamePtg createPtg() {
 			return new NamePtg(nameIndex);
 		}
-	}
-	
-	//ZSS-796
-	/**
-	 * table name to represent named range
-	 * @since 3.6.0
-	 */
-	private class TableName implements EvaluationName {
-
-		private final String tableName;
-		private final String columnName;
-		private final int nameIndex;
-		private final boolean inTable;
-
-		/**
-		 * @param sheetIndex sheet index; if -1, indicates whole book.
-		 */
-		public TableName(String tableName, int nameIndex, String columnName, boolean inTable) {
-			this.tableName = tableName;
-			this.nameIndex = nameIndex;
-			this.columnName = columnName;
-			this.inTable = inTable;
-		}
-
-		public Ptg[] getNameDefinition() {
-			return FormulaParser.parse(tableName, ParsingBook.this, FormulaType.NAMEDRANGE, -1); //  ?FormulaType.ARRAY
-		}
-
-		public String getNameText() {
-			return tableName;
-		}
-
-		public boolean hasFormula() {
-			return false;
-		}
-
-		public boolean isFunctionName() {
-			return true;
-		}
-
-		public boolean isRange() {
-			return true;
-		}
-
-		public TableNamePtg createPtg() {
-			return new TableNamePtg(nameIndex, tableName, columnName, inTable);
-		}
-	}
-
+	}	
 	
 	//to compatible with zss-575 in 3.0
 	@Override
@@ -432,29 +387,6 @@ public class ParsingBook implements FormulaParsingWorkbook, FormulaRenderingWork
 	public EvaluationName getName(String name, String sheetName) {
 		int sheetIndex = book.getSheetIndex(sheetName);
 		return getName(name, sheetIndex);
-	}
-
-	//ZSS-796
-	@Override
-	public EvaluationName getTableName(String tableName, String columnName, int sheetIndex, int rowIdx, int colIdx) {
-		String tableName0 = tableName;
-		if (tableName0 == null) {
-			final SSheet sheet = book.getSheet(sheetIndex);
-			final STable table = ((AbstractSheetAdv)sheet).getTableByRowCol(rowIdx, colIdx);
-			tableName0 = table == null ? null : table.getName();
-		}
-		String key = toKey(String.valueOf(-1), tableName0);
-		//ZSS-747
-		synchronized (_indexes) {
-			Integer index = _indexes.name2index.get(key);
-			if(index == null) {
-				index = _indexes.index2name.size();
-				_indexes.index2name.add(new Object[] {Integer.valueOf(-1), tableName0});
-				_indexes.name2index.put(key, index);
-			}
-			EvaluationName n = new TableName(tableName0, index, columnName, tableName == null);
-			return n;
-		}
 	}
 
 	//ZSS-820
@@ -527,6 +459,142 @@ public class ParsingBook implements FormulaParsingWorkbook, FormulaRenderingWork
 			}
 		}
 	}
+	
+	//ZSS-960
+	@Override
+	public TablePtg createTablePtg(String tableName, Object[] specifiers, int sheetIndex, int rowIdx, int colIdx) {
+		if (specifiers.length > 3) {
+			throw new IllegalArgumentException("At most total 3 table specifiers: " + specifiers);
+		}
+		String tableName0 = tableName;
+		if (tableName0 == null) {
+			final SSheet sheet = book.getSheet(sheetIndex);
+			final STable table = ((AbstractSheetAdv)sheet).getTableByRowCol(rowIdx, colIdx);
+			tableName0 = table == null ? null : table.getName();
+		}
+		
+		if (tableName0 == null) {
+			throw new IllegalArgumentException("Unknown [...] expression; expect a Table");
+		}
+		TablePtg.Item item1 = null;
+		TablePtg.Item item2 = null; 
+		String column1 = null;
+		String column2 = null;
+		for (Object obj : specifiers) {
+			if (obj instanceof String) {
+				if (column1 == null) {
+					column1 = normalize((String)obj);
+				} else if (column2 == null) {
+					column2 = normalize((String)obj);
+				} else {
+					throw new IllegalArgumentException("Should not have more than 2 column specifiers: " + specifiers);
+				}
+			} else if (obj instanceof Item) {
+				if (item1 == null) {
+					item1 = (Item) obj;
+				} else if (item2 == null) {
+					item2 = (Item) obj;
+				} else {
+					throw new IllegalArgumentException("Should not have more than 2 item specifiers: " + specifiers);
+				}
+			} else {
+				throw new IllegalArgumentException("Unknown table specifiers: " + obj);
+			}
+		}
+		if (item2 != null) {
+			//sorting Items
+			if (item2.ordinal() < item1.ordinal()) {
+				final Item tmp = item1;
+				item1 = item2;
+				item2 = tmp;
+			}
+			
+			//intersect Items
+			switch(item1) {
+			case ALL:
+				item2 = null;
+				break;
+			case HEADERS:
+				if (item2 == Item.HEADERS || item2 == Item.TOTALS || item2 == Item.THIS_ROW) {
+					item2 = null;
+				}
+				break;
+			case DATA:
+				if (item2 == Item.THIS_ROW || item2 == Item.DATA) {
+					item1 = item2;
+					item2 = null;
+				}
+				break;
+			case TOTALS:
+				if (item2 == Item.TOTALS || item2 == Item.THIS_ROW) {
+					item2 = null;
+				}
+				break;
+			case THIS_ROW:
+				if (item2 == Item.THIS_ROW) {
+					item2 = null;
+				}
+				break;
+			}
+		}
+
+		STable table = ((AbstractBookAdv)book).getTable(tableName0);
+		SheetRegion rgn1 = table.getItemRegion(item1 != null ? item1 : Item.DATA, rowIdx);
+		SSheet sheet = rgn1.getSheet(); 
+		int l = rgn1.getColumn();
+		int r = rgn1.getLastColumn();
+		int t = rgn1.getRow();
+		int b = rgn1.getLastRow();
+		
+		SheetRegion rgn2 = table.getItemRegion(item2, rowIdx);
+		if (rgn2 != null) {
+			int l2 = rgn2.getColumn();
+			int r2 = rgn2.getLastColumn();
+			int t2 = rgn2.getRow();
+			int b2 = rgn2.getLastRow();
+			
+			if (l2 < l) l = l2;
+			if (r2 > r) r = r2;
+			if (t2 < t) t = t2;
+			if (b2 > b) b = b2;
+		}
+		
+		SheetRegion rgn3 = table.getColumnsRegion(column1, column2);
+		if (rgn3 != null) {
+			int l3 = rgn3.getColumn();
+			int r3 = rgn3.getLastColumn();
+			
+			if (l3 > l) l = l3;
+			if (r3 < r) r = r3;
+		}
+
+		final int sheetIdx = book.getSheetIndex(sheet);
+		return new TablePtg(sheetIdx, t, b, l, r, tableName0, 
+				item1 == null ? new Item[0] : 
+					item2 == null ? 
+						new Item[]{item1} : new Item[] {item1, item2},
+				column1 == null ? new String[0] : 
+					column2 == null ? 
+						new String[] {column1} : new String[]{column1, column2}, tableName == null);
+	}
+
+	//ZSS-960
+	private static String normalize(String col) {
+		int preSingle = -2; //single quote index
+		StringBuilder sb = new StringBuilder();
+		for (int j = 0, len = col.length(); j < len; ++j) {
+			char ch = col.charAt(j);
+			if (ch == '\'') {
+				if (preSingle == j - 1) {
+					sb.append(ch);
+					preSingle = -2;
+				} else {
+					preSingle = j;
+				}
+			} else {
+				sb.append(ch);
+			}
+		}
+		return sb.toString();
+	}
 }
-
-

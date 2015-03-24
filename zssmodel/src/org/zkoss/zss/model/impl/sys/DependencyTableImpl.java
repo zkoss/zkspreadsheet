@@ -37,7 +37,7 @@ public class DependencyTableImpl extends DependencyTableAdv {
 	private static final long serialVersionUID = 1L;
 	private static final Log _logger = Log.lookup(DependencyTableImpl.class.getName());
 	protected static final EnumSet<RefType> _regionTypes = EnumSet.of(RefType.BOOK, RefType.SHEET, RefType.AREA,
-			RefType.CELL);
+			RefType.CELL, RefType.TABLE);
 
 	/** Map<dependant, precedent> */
 	protected Map<Ref, Set<Ref>> _map = new LinkedHashMap<Ref, Set<Ref>>();

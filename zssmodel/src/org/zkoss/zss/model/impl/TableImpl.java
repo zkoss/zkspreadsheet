@@ -15,13 +15,16 @@ package org.zkoss.zss.model.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.zkoss.poi.ss.formula.ptg.TablePtg;
 import org.zkoss.zss.model.CellRegion;
 import org.zkoss.zss.model.SAutoFilter;
 import org.zkoss.zss.model.SCellStyle;
 import org.zkoss.zss.model.SNamedStyle;
+import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.model.STable;
 import org.zkoss.zss.model.STableColumn;
 import org.zkoss.zss.model.STableStyleInfo;
+import org.zkoss.zss.model.SheetRegion;
 
 /**
  * @author henri
@@ -42,12 +45,12 @@ public class TableImpl implements STable {
 	
 	int _totalsRowCount;
 	int _headerRowCount;
-	CellRegion _region;
+	SheetRegion _region;
 	String _name;
 	String _displayName;
 	
 	public TableImpl(String name, String displayName, 
-			CellRegion region, 
+			SheetRegion region, 
 			int headerRowCount, int totalsRowCount,
 			STableStyleInfo info) {
 //			SNamedStyle headerRowCellStyle, SCellStyle headerRowStyle,
@@ -141,7 +144,7 @@ public class TableImpl implements STable {
 		return _headerRowCount;
 	}
 	@Override
-	public CellRegion getRegion() {
+	public SheetRegion getAllRegion() {
 		return _region;
 	}
 	@Override
@@ -157,7 +160,7 @@ public class TableImpl implements STable {
 		final int t = _region.getRow();
 		final int r = _region.getLastColumn();
 		final int b = _region.getLastRow();
-		_region = new CellRegion(t, l, b + _totalsRowCount - count, r);
+		_region = new SheetRegion(_region.getSheet(), new CellRegion(t, l, b + _totalsRowCount - count, r));
 		_totalsRowCount = count;
 	}
 
@@ -175,7 +178,7 @@ public class TableImpl implements STable {
 			final int tc = getTotalsRowCount();
 			_filter = new AutoFilterImpl(new CellRegion(t + _headerRowCount - count, l, b - tc, r));
 		}
-		_region = new CellRegion(t + _headerRowCount - count, l, b, r);
+		_region = new SheetRegion(_region.getSheet(), new CellRegion(t + _headerRowCount - count, l, b, r));
 		_headerRowCount = count;
 	}
 
@@ -195,26 +198,100 @@ public class TableImpl implements STable {
 	}
 	
 	@Override
-	public CellRegion getNameRegion() {
+	public SheetRegion getDataRegion() {
 		final int l = _region.getColumn();
 		final int t = _region.getRow();
 		final int r = _region.getLastColumn();
 		final int b = _region.getLastRow();
-		return new CellRegion(t + _headerRowCount, l, b - _totalsRowCount, r);
+		return new SheetRegion(_region.getSheet(), new CellRegion(t + _headerRowCount, l, b - _totalsRowCount, r));
 	}
 	
 	@Override
-	public CellRegion getColumnRegion(String columnName) {
+	public SheetRegion getColumnsRegion(String columnName1, String columnName2) {
+		if (columnName1 == null) {
+			if (columnName2 == null)
+				return null;
+			else {
+				columnName1 = columnName2;
+				columnName2 = null;
+			}
+		}
+		int c1 = -1;
+		int c2 = -1;
 		int l = _region.getColumn();
+		SSheet sheet  = _region.getSheet();
 		for (STableColumn tbCol : _columns) {
-			if (columnName.equalsIgnoreCase(tbCol.getName())) {
-				final int t = _region.getRow();
-				final int r = _region.getLastColumn();
-				final int b = _region.getLastRow();
-				return new CellRegion(t + _headerRowCount, l, b - _totalsRowCount, l);
+			if (columnName1.equalsIgnoreCase(tbCol.getName())) {
+				c1 = l;
+				if (columnName2 == null || c2 >= 0) break;
+			}
+			if (tbCol.getName().equalsIgnoreCase(columnName2)) {
+				c2 = l;
+				if (c1 >= 0) break;
 			}
 			++l;
 		}
-		return null; 
+		if (c1 < 0 || (columnName2 != null && c2 < 0))
+			return null;
+		
+		if (c2 < 0) c2 = c1;
+		final int t = _region.getRow();
+		final int b = _region.getLastRow();
+		if (c2 < c1) {
+			final int tmp = c1;
+			c1 = c2;
+			c2 = tmp;
+		}
+		return new SheetRegion(sheet, new CellRegion(t + _headerRowCount, c1, b - _totalsRowCount, c2));
+	}
+
+	@Override
+	public SheetRegion getHeadersRegion() {
+		if (_headerRowCount == 0) return null; // no headers row at all
+		final int l = _region.getColumn();
+		final int t = _region.getRow();
+		final int r = _region.getLastColumn();
+		return new SheetRegion(_region.getSheet(), new CellRegion(t, l, t, r));
+	}
+
+	@Override
+	public SheetRegion getTotalsRegion() {
+		if (_totalsRowCount == 0) return null; //no totals row at all
+		final int l = _region.getColumn();
+		final int r = _region.getLastColumn();
+		final int b = _region.getLastRow();
+		return new SheetRegion(_region.getSheet(), new CellRegion(b, l, b, r));
+	}
+
+	@Override
+	public SheetRegion getThisRowRegion(int rowIdx) {
+		final int t = _region.getRow() + _headerRowCount;
+		final int b = _region.getLastRow() - _totalsRowCount;
+		if (t > rowIdx || rowIdx > b) {
+			throw new IndexOutOfBoundsException("expect rowIdx(" + rowIdx + ") is between "+ t + " and " + b);
+		}
+		final int l = _region.getColumn();
+		final int r = _region.getLastColumn();
+		return new SheetRegion(_region.getSheet(), new CellRegion(rowIdx, l, rowIdx, r));
+	}
+
+	@Override
+	public SheetRegion getItemRegion(TablePtg.Item item, int rowIdx) {
+		if (item == null)
+			return null;
+		
+		switch(item) {
+		case ALL:
+			return getAllRegion();
+		case DATA:
+			return getDataRegion();
+		case HEADERS:
+			return getHeadersRegion();
+		case TOTALS:
+			return getTotalsRegion();
+		case THIS_ROW:
+			return getThisRowRegion(rowIdx);
+		}
+		return null;
 	}
 }

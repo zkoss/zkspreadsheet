@@ -23,6 +23,7 @@ import org.zkoss.poi.ss.formula.functions.FreeRefFunction;
 import org.zkoss.poi.ss.formula.ptg.NamePtg;
 import org.zkoss.poi.ss.formula.ptg.NameXPtg;
 import org.zkoss.poi.ss.formula.ptg.Ptg;
+import org.zkoss.poi.ss.formula.ptg.TablePtg;
 import org.zkoss.poi.ss.formula.udf.UDFFinder;
 import org.zkoss.poi.xssf.model.IndexedUDFFinder;
 import org.zkoss.zss.model.SBook;
@@ -297,9 +298,10 @@ public final class EvalBook implements EvaluationWorkbook, FormulaParsingWorkboo
 		return _parsingBook.getName(name, sheetName);
 	}
 
+	//ZSS-960
 	@Override
-	public EvaluationName getTableName(String tableName, String columnName,
+	public TablePtg createTablePtg(String tableName, Object[] specifiers,
 			int sheetIndex, int rowIdx, int colIdx) {
-		return _parsingBook.getTableName(tableName, columnName, sheetIndex, rowIdx, colIdx);
+		return _parsingBook.createTablePtg(tableName, specifiers, sheetIndex, rowIdx, colIdx);
 	}
 }

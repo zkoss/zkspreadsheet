@@ -14,6 +14,8 @@ package org.zkoss.zss.model;
 
 import java.util.List;
 
+import org.zkoss.poi.ss.formula.ptg.TablePtg.Item;
+
 /**
  * Table
  * @author henri
@@ -37,12 +39,16 @@ public interface STable {
 	void setTotalsRowCount(int count);
 	int getHeaderRowCount(); //headerRowCount; 0 if not show; default is 1
 	void setHeaderRowCount(int count);
-	CellRegion getRegion(); // ref
 	String getName(); //name (Name used in formula)
 	void setName(String name);
 	String getDisplayName();
 	void setDisplayName(String name);
 	
-	CellRegion getNameRegion(); // associated Name region
-	CellRegion getColumnRegion(String columnName);
+	SheetRegion getAllRegion(); // #All
+	SheetRegion getDataRegion(); // #Data (=== Table's Name region)
+	SheetRegion getColumnsRegion(String columnName1, String columnName2); // [#All],[column1]:[column2]
+	SheetRegion getHeadersRegion(); // [#Headers]
+	SheetRegion getTotalsRegion(); // [#Totals]
+	SheetRegion getThisRowRegion(int rowIdx); //[#This Row]
+	SheetRegion getItemRegion(Item item, int rowIdx);
 }

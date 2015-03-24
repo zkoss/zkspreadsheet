@@ -69,6 +69,8 @@ import org.zkoss.poi.ss.formula.ptg.Ref3DPtg;
 import org.zkoss.poi.ss.formula.ptg.RefErrorPtg;
 import org.zkoss.poi.ss.formula.ptg.RefPtg;
 import org.zkoss.poi.ss.formula.ptg.RefPtgBase;
+import org.zkoss.poi.ss.formula.ptg.TablePtg;
+import org.zkoss.poi.ss.formula.ptg.TablePtg.Item;
 import org.zkoss.poi.ss.formula.udf.UDFFinder;
 import org.zkoss.poi.util.LittleEndianOutput;
 import org.zkoss.poi.xssf.model.IndexedUDFFinder;
@@ -81,13 +83,16 @@ import org.zkoss.zss.model.ErrorValue;
 import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.SCell;
 import org.zkoss.zss.model.SSheet;
+import org.zkoss.zss.model.STable;
 import org.zkoss.zss.model.SheetRegion;
 import org.zkoss.zss.model.impl.AbstractBookSeriesAdv;
+import org.zkoss.zss.model.impl.AbstractBookAdv;
 import org.zkoss.zss.model.impl.AbstractCellAdv;
 import org.zkoss.zss.model.impl.IndirectRefImpl;
 import org.zkoss.zss.model.impl.NameRefImpl;
 import org.zkoss.zss.model.impl.NonSerializableHolder;
 import org.zkoss.zss.model.impl.RefImpl;
+import org.zkoss.zss.model.impl.TableRefImpl;
 import org.zkoss.zss.model.impl.sys.DependencyTableAdv;
 import org.zkoss.zss.model.sys.dependency.DependencyTable;
 import org.zkoss.zss.model.sys.dependency.Ref;
@@ -306,6 +311,22 @@ public class FormulaEngineImpl implements FormulaEngine {
 				String sheetName = sheet.getSheetName();
 				String bookName = sheet.getBook().getBookName();
 				return new IndirectRefImpl(bookName, sheetName, ptgIndex);
+			} else if(ptg instanceof TablePtg) { //ZSS-855
+				TablePtg tbPtg = (TablePtg)ptg;
+				SBook book = sheet.getBook();
+				String tbName = tbPtg.getTableName();
+				STable tb = ((AbstractBookAdv)book).getTable(tbName);
+				String columnName1 = tbPtg.getColumn1();
+				String columnName2 = tbPtg.getColumn2();
+				Item item1 = tbPtg.getItem1();
+				Item item2 = tbPtg.getItem2();
+				SSheet srcSheet = tb.getAllRegion().getSheet();
+				String sheetName = srcSheet.getSheetName();
+				String bookName = book.getBookName();
+				return new TableRefImpl(bookName, sheetName, tbName, item1, item2, 
+						columnName1, columnName2, 
+						tbPtg.getFirstRow(), tbPtg.getFirstColumn(),
+						tbPtg.getLastRow(), tbPtg.getLastColumn());
 			}
 		} catch(Exception e) {
 			_logger.error(e.getMessage(), e);

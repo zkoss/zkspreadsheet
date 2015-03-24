@@ -610,7 +610,7 @@ public class ExcelXlsxExporter extends AbstractExcelExporter {
 			XSSFTable poiTable = poiSheet.createTable();
 			poiTable.setName(table.getName());
 			poiTable.setDisplayName(table.getDisplayName());
-			poiTable.setRef(table.getRegion().getReferenceString());
+			poiTable.setRef(table.getAllRegion().getReferenceString());
 			poiTable.setTotalsRowCount(table.getTotalsRowCount());
 			poiTable.setHeaderRowCount(table.getHeaderRowCount());
 			final XSSFTableStyleInfo poiInfo = poiTable.createTableStyleInfo();
