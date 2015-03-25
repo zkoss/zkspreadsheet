@@ -16,6 +16,7 @@ ZK Spreadsheet 3.8.0
   ZSS-958 Auto row height should support for client side calculation
   ZSS-963 Support text indent with toolbar button
   ZSS-960 Support evaluate formula with Table expressions
+  ZSS-964 Support text orientation with dialog
   
 *Bugs:
   ZSS-910 Problem referencing a cell with formula in same position of other file
