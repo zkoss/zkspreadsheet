@@ -12,12 +12,17 @@
 
 package org.zkoss.zss.model.impl;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
+import org.zkoss.poi.ss.formula.ptg.Ptg;
 import org.zkoss.poi.ss.formula.ptg.TablePtg;
 import org.zkoss.zss.model.CellRegion;
 import org.zkoss.zss.model.SAutoFilter;
+import org.zkoss.zss.model.SBook;
+import org.zkoss.zss.model.SCell;
 import org.zkoss.zss.model.SCellStyle;
 import org.zkoss.zss.model.SNamedStyle;
 import org.zkoss.zss.model.SSheet;
@@ -25,12 +30,20 @@ import org.zkoss.zss.model.STable;
 import org.zkoss.zss.model.STableColumn;
 import org.zkoss.zss.model.STableStyleInfo;
 import org.zkoss.zss.model.SheetRegion;
+import org.zkoss.zss.model.SCell.CellType;
+import org.zkoss.zss.model.sys.EngineFactory;
+import org.zkoss.zss.model.sys.dependency.DependencyTable;
+import org.zkoss.zss.model.sys.dependency.Ref;
+import org.zkoss.zss.model.sys.formula.FormulaEngine;
+import org.zkoss.zss.model.sys.formula.FormulaExpression;
+import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 
 /**
  * @author henri
  * @since 3.8.0
  */
-public class TableImpl implements STable {
+public class TableImpl implements STable,LinkedModelObject,Serializable{
+	AbstractBookAdv _book;
 	SAutoFilter _filter; // if _headerRowCount == 0; then _filter ==  null
 	List<STableColumn> _columns;
 	STableStyleInfo _tableStyleInfo;
@@ -49,13 +62,14 @@ public class TableImpl implements STable {
 	String _name;
 	String _displayName;
 	
-	public TableImpl(String name, String displayName, 
+	public TableImpl(AbstractBookAdv book, String name, String displayName, 
 			SheetRegion region, 
 			int headerRowCount, int totalsRowCount,
 			STableStyleInfo info) {
 //			SNamedStyle headerRowCellStyle, SCellStyle headerRowStyle,
 //			SNamedStyle dataCellStyle, SCellStyle dataStyle,
 //			SNamedStyle totalsRowCellStyle, SCellStyle totalsRowStyle) {
+		_book = book;
 		_name = name;
 		_displayName = displayName;
 		_region = region;
@@ -183,8 +197,9 @@ public class TableImpl implements STable {
 	}
 
 	@Override
-	public void setName(String name) {
-		_name = name;
+	public void setName(String newname) {
+		checkOrphan();
+		_name = newname;
 	}
 
 	@Override
@@ -293,5 +308,18 @@ public class TableImpl implements STable {
 			return getThisRowRegion(rowIdx);
 		}
 		return null;
+	}
+	
+	@Override
+	public void destroy() {
+		checkOrphan();
+		_book = null;
+	}
+
+	@Override
+	public void checkOrphan() {
+		if(_book==null){
+			throw new IllegalStateException("doesn't connect to parent");
+		}
 	}
 }

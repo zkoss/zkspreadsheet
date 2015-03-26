@@ -109,6 +109,11 @@ public class RangeImpl implements Range{
 		this._range = range;
 		_sharedCtx = new SharedContext(sheet);
 	}
+	//ZSS-966
+	public RangeImpl(SRange range,Book book) {
+		this._range = range;
+		_sharedCtx = new SharedContext(book);
+	}
 	private RangeImpl(SRange range,SharedContext ctx) {
 		this._range = range;
 		_sharedCtx = ctx;
@@ -139,17 +144,22 @@ public class RangeImpl implements Range{
 	
 	private static class SharedContext{
 		Sheet _sheet;
+		Book _book; //ZSS-966
 		
 		private SharedContext(Sheet sheet){
 			this._sheet = sheet;
 		}
-		
+		//ZSS-966
+		private SharedContext(Book book) {
+			this._sheet = null;
+			this._book = book;
+		}
 		public Sheet getSheet(){
 			return _sheet;
 		}
 		
 		public Book getBook(){
-			return _sheet.getBook();
+			return _book == null ? _sheet.getBook() : _book;
 		}
 	}
 	
@@ -871,5 +881,11 @@ public class RangeImpl implements Range{
 	@Override
 	public void notifyChange(CellAttribute cellAttr){ 
 		_range.notifyChange(org.zkoss.zss.model.impl.CellAttribute.values()[cellAttr.ordinal()]);
+	}
+	
+	//ZSS-966
+	@Override
+	public void setNameName(String namename, String newname) {
+		_range.setNameName(namename, newname);
 	}
 }

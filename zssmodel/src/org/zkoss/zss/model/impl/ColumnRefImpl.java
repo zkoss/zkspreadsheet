@@ -18,14 +18,14 @@ package org.zkoss.zss.model.impl;
 
 import org.zkoss.poi.ss.formula.ptg.TablePtg;
 import org.zkoss.poi.ss.formula.ptg.TablePtg.Item;
-import org.zkoss.zss.model.sys.dependency.TableRef;
+import org.zkoss.zss.model.sys.dependency.ColumnRef;
 import org.zkoss.zss.model.sys.dependency.Ref.RefType;
 /**
  * 
  * @author henrichen
  * @since 3.8.0
  */
-public class TableRefImpl extends RefImpl implements TableRef{
+public class ColumnRefImpl extends RefImpl implements ColumnRef{
 
 	private static final long serialVersionUID = 1L;
 	 
@@ -36,7 +36,7 @@ public class TableRefImpl extends RefImpl implements TableRef{
 	private final Item _item1;
 	private final Item _item2;
 	
-	public TableRefImpl(String bookName, String sheetName, 
+	public ColumnRefImpl(String bookName, String sheetName, 
 			String tableName, Item item1, Item item2, 
 			String columnName1, String columnName2,
 			int row, int column, int lastRow, int lastColumn) {
@@ -73,7 +73,7 @@ public class TableRefImpl extends RefImpl implements TableRef{
 			return true;
 		if (getClass() != obj.getClass())
 			return false;
-		TableRefImpl other = (TableRefImpl) obj;
+		ColumnRefImpl other = (ColumnRefImpl) obj;
 		
 		if (bookName == null) {
 			if (other.bookName != null)
@@ -125,5 +125,23 @@ public class TableRefImpl extends RefImpl implements TableRef{
 		+ (row1 == row2 && col1 == col2 ? new org.zkoss.poi.ss.util.CellReference(row1,col1).formatAsString() :
 				new org.zkoss.poi.ss.util.AreaReference(new org.zkoss.poi.ss.util.CellReference(row1, col1),
 						new org.zkoss.poi.ss.util.CellReference(row2, col2)).formatAsString());
+	}
+
+	//ZSS-966
+	@Override
+	public String getTableName() {
+		return _tableName;
+	}
+
+	//ZSS-966
+	@Override
+	public String getColumnName1() {
+		return _columnName1;
+	}
+
+	//ZSS-966
+	@Override
+	public String getColumnName2() {
+		return _columnName2;
 	}
 }

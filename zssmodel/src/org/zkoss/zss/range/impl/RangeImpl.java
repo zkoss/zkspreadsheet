@@ -2326,4 +2326,37 @@ public class RangeImpl implements SRange {
 		}).doInReadLock(getLock());
 		return r.get();
 	}
+	
+	//ZSS-966
+	public void setNameName(final String namename, final String newname) {
+		//it just handle the first ref
+		final ResultWrap<SSheet> resultSheet = new ResultWrap<SSheet>();
+		final ResultWrap<SName> resultName = new ResultWrap<SName>();
+		final ResultWrap<String> oldName = new ResultWrap<String>();
+		new ModelManipulationTask() {			
+			@Override
+			protected Object doInvoke() {
+				SBook book = getBook();
+				SSheet sheet = _rangeRefs.isEmpty() ? null : getSheet();
+				String sheetName = sheet == null ? null : sheet.getSheetName();
+				SName name = book.getNameByName(namename, sheetName);
+				String old = name == null ? null : name.getName();
+				if (old == null || old.equals(newname)) {
+					return null;
+				}
+				book.setNameName(name, newname, sheetName);
+				resultSheet.set(sheet);
+				resultName.set(name);
+				oldName.set(old);
+				return null;
+			}
+
+			@Override
+			protected void doBeforeNotify() {
+				if(resultName.get()!=null){
+					new NotifyChangeHelper().notifyNameNameChange(resultSheet.get(),resultName.get(),oldName.get());
+				}
+			}
+		}.doInWriteLock(getLock());	
+	}
 }

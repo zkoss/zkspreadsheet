@@ -63,6 +63,8 @@ public class ModelEvents {
 	public static final String ON_COLUMN_INSERT= "onColumnInsert";
 	public static final String ON_COLUMN_DELETE = "onColumnDelete";
 	
+	//ZSS-966
+	public static final String ON_NAME_NAME_CHANGE = "onNameNameChange";
 	/*
 	 * Custom model event
 	 */
@@ -113,6 +115,12 @@ public class ModelEvents {
 	 */
 	public static final String PARAM_ENABLED = "enabled";
 	
+	/**
+	 * The Name in the table or sheet.
+	 * @since 3.8.0
+	 */
+	public static final String PARAM_NAME = "name";
+	
 	public static ModelEvent createModelEvent(String name, SBook book){
 		return createModelEvent0(name,book,null,null,null);
 	}
@@ -147,6 +155,11 @@ public class ModelEvents {
 	 */
 	public static ModelEvent createModelEvent(String name, SSheet sheet,CellRegion region){
 		return createModelEvent0(name,sheet.getBook(),sheet,region,null);
+	}
+	
+	//ZSS-966
+	public static ModelEvent createModelEvent(String name, SBook book, SSheet sheet, Map data) {
+		return createModelEvent0(name,book,sheet,null,data);
 	}
 	
 	/**

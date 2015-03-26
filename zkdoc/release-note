@@ -17,6 +17,7 @@ ZK Spreadsheet 3.8.0
   ZSS-963 Support text indent with toolbar button
   ZSS-960 Support evaluate formula with Table expressions
   ZSS-964 Support text orientation with dialog
+  ZSS-966 Support change Table name
   
 *Bugs:
   ZSS-910 Problem referencing a cell with formula in same position of other file

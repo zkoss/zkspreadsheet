@@ -207,4 +207,18 @@ public interface FormulaEngine {
 	 */
 	public FormulaExpression reorderSheetPtgs(FormulaExpression fexpr, SBook book, 
 			int oldIndex, int newIndex, FormulaParseContext context);
+
+	//ZSS-966
+	/**
+	 * 
+	 * @param fexpr
+	 * @param book
+	 * @param oldName
+	 * @param newName
+	 * @param context
+	 * @return
+	 * @since 3.6.0
+	 */
+	public FormulaExpression renameTablePtgs(FormulaExpression fexpr, SBook book, String oldName,String newName,
+			FormulaParseContext context);
 }

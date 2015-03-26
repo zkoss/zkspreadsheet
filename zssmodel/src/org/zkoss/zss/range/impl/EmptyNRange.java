@@ -565,4 +565,10 @@ import org.zkoss.zss.range.*;
 		// do nothing
 		
 	}
+
+	//ZSS-966
+	@Override
+	public void setNameName(String namename, String newname) {
+		// do nothing
+	}
 }

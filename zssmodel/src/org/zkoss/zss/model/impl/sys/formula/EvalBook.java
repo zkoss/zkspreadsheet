@@ -29,8 +29,10 @@ import org.zkoss.poi.xssf.model.IndexedUDFFinder;
 import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.SName;
 import org.zkoss.zss.model.SSheet;
+import org.zkoss.zss.model.STable;
 import org.zkoss.zss.model.sys.formula.FormulaExpression;
 import org.zkoss.zss.model.impl.AbstractNameAdv;
+import org.zkoss.zss.model.impl.AbstractBookAdv;
 
 /**
  * modified from org.zkoss.poi.xssf.usermodel.XSSFEvaluationWorkbook
@@ -303,5 +305,12 @@ public final class EvalBook implements EvaluationWorkbook, FormulaParsingWorkboo
 	public TablePtg createTablePtg(String tableName, Object[] specifiers,
 			int sheetIndex, int rowIdx, int colIdx) {
 		return _parsingBook.createTablePtg(tableName, specifiers, sheetIndex, rowIdx, colIdx);
+	}
+
+	//ZSS-966
+	@Override
+	public String getTableName(String name) {
+		final STable table = ((AbstractBookAdv)_nbook).getTable(name); 
+		return table == null ? null : table.getName();
 	}
 }

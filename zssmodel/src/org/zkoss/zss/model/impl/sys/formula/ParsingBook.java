@@ -464,7 +464,7 @@ public class ParsingBook implements FormulaParsingWorkbook, FormulaRenderingWork
 	@Override
 	public TablePtg createTablePtg(String tableName, Object[] specifiers, int sheetIndex, int rowIdx, int colIdx) {
 		if (specifiers.length > 3) {
-			throw new IllegalArgumentException("At most total 3 table specifiers: " + specifiers);
+			throw new IllegalArgumentException("at most total 3 table specifiers");
 		}
 		String tableName0 = tableName;
 		if (tableName0 == null) {
@@ -474,7 +474,7 @@ public class ParsingBook implements FormulaParsingWorkbook, FormulaRenderingWork
 		}
 		
 		if (tableName0 == null) {
-			throw new IllegalArgumentException("Unknown [...] expression; expect a Table");
+			throw new IllegalArgumentException("a Table");
 		}
 		TablePtg.Item item1 = null;
 		TablePtg.Item item2 = null; 
@@ -487,7 +487,7 @@ public class ParsingBook implements FormulaParsingWorkbook, FormulaRenderingWork
 				} else if (column2 == null) {
 					column2 = normalize((String)obj);
 				} else {
-					throw new IllegalArgumentException("Should not have more than 2 column specifiers: " + specifiers);
+					throw new IllegalArgumentException("at most 2 column specifiers");
 				}
 			} else if (obj instanceof Item) {
 				if (item1 == null) {
@@ -495,10 +495,10 @@ public class ParsingBook implements FormulaParsingWorkbook, FormulaRenderingWork
 				} else if (item2 == null) {
 					item2 = (Item) obj;
 				} else {
-					throw new IllegalArgumentException("Should not have more than 2 item specifiers: " + specifiers);
+					throw new IllegalArgumentException("at most 2 item specifiers: " + specifiers);
 				}
 			} else {
-				throw new IllegalArgumentException("Unknown table specifiers: " + obj);
+				throw new IllegalArgumentException("legal specifier("+ obj + ")");
 			}
 		}
 		if (item2 != null) {
@@ -596,5 +596,11 @@ public class ParsingBook implements FormulaParsingWorkbook, FormulaRenderingWork
 			}
 		}
 		return sb.toString();
+	}
+	
+	//ZSS-966
+	public String getTableName(String name) {
+		final STable table = ((AbstractBookAdv)book).getTable(name); 
+		return table == null ? null : table.getName();
 	}
 }

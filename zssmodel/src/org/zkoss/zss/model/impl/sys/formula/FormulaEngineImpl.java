@@ -15,10 +15,12 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -92,11 +94,14 @@ import org.zkoss.zss.model.impl.IndirectRefImpl;
 import org.zkoss.zss.model.impl.NameRefImpl;
 import org.zkoss.zss.model.impl.NonSerializableHolder;
 import org.zkoss.zss.model.impl.RefImpl;
-import org.zkoss.zss.model.impl.TableRefImpl;
+import org.zkoss.zss.model.impl.ColumnRefImpl;
+import org.zkoss.zss.model.impl.TablePrecedentRefImpl;
 import org.zkoss.zss.model.impl.sys.DependencyTableAdv;
+import org.zkoss.zss.model.sys.dependency.ColumnRef;
 import org.zkoss.zss.model.sys.dependency.DependencyTable;
 import org.zkoss.zss.model.sys.dependency.Ref;
 import org.zkoss.zss.model.sys.dependency.Ref.RefType;
+import org.zkoss.zss.model.sys.dependency.TablePrecedentRef;
 import org.zkoss.zss.model.sys.formula.EvaluationResult;
 import org.zkoss.zss.model.sys.formula.FormulaClearContext;
 import org.zkoss.zss.model.sys.formula.FormulaEngine;
@@ -201,7 +206,8 @@ public class FormulaEngineImpl implements FormulaEngine {
 			
 			AbstractBookSeriesAdv series = (AbstractBookSeriesAdv)book.getBookSeries();
 			DependencyTableAdv table = (DependencyTableAdv)series.getDependencyTable();
-			
+			//ZSS-966
+			Map<Ref, Set<ColumnRef>> tablePrecedents = new HashMap<Ref, Set<ColumnRef>>();
 			boolean error = false;
 			
 			for(String formula:formulas){
@@ -210,16 +216,28 @@ public class FormulaEngineImpl implements FormulaEngine {
 					if(dependant!=null){
 						for (int j = 0, len = tokens.length; j < len; ++j) {
 							Ptg ptg = tokens[j];
-							Ref precedent = toDenpendRef(context, parsingBook, ptg, j);
+							Ref precedent = toDependRef(context, parsingBook, ptg, j);
 							if(precedent != null) {
 								precedents.add(precedent);
+								
+								//ZSS-966
+								if (precedent instanceof ColumnRef) {
+									ColumnRef colRef = (ColumnRef) precedent;
+									TablePrecedentRef tbPrecedent = new TablePrecedentRefImpl(colRef.getBookName(), colRef.getTableName());
+									Set<ColumnRef> colRefs = tablePrecedents.get(tbPrecedent);
+									if (colRefs == null) {
+										colRefs = new HashSet<ColumnRef>();
+										tablePrecedents.put(tbPrecedent, colRefs);
+									}
+									colRefs.add(colRef);
+								}
 							}
 						}
 					}
 					
 					// render formula, detect region and create result
 					String renderedFormula = renderFormula(parsingBook, formula, tokens, true);
-					Ref singleRef = tokens.length == 1 ? toDenpendRef(context, parsingBook, tokens[0], 0) : null;
+					Ref singleRef = tokens.length == 1 ? toDependRef(context, parsingBook, tokens[0], 0) : null;
 					Ref[] refs = singleRef==null ? null :
 						(singleRef.getType() == RefType.AREA || singleRef.getType() == RefType.CELL ?new Ref[]{singleRef}:null);
 					result.add(new FormulaExpressionImpl(renderedFormula, tokens, refs, false, null, multipleArea));
@@ -240,6 +258,13 @@ public class FormulaEngineImpl implements FormulaEngine {
 			if(!error && dependant != null) {
 				for(Ref precedent:precedents){
 					table.add(dependant, precedent);
+				}
+				//ZSS-966
+				for(Ref precedent:tablePrecedents.keySet()) {
+					Set<ColumnRef> colRefs = tablePrecedents.get(precedent);
+					for (ColumnRef colRef : colRefs) {
+						table.add(colRef, precedent);
+					}
 				}
 			}
 		} catch(Exception e) {
@@ -264,7 +289,7 @@ public class FormulaEngineImpl implements FormulaEngine {
 			FormulaRenderer.toFormulaEditText(parsingBook, tokens, formula);
 	}
 
-	protected Ref toDenpendRef(FormulaParseContext ctx, ParsingBook parsingBook, Ptg ptg, int ptgIndex) {
+	protected Ref toDependRef(FormulaParseContext ctx, ParsingBook parsingBook, Ptg ptg, int ptgIndex) {
 		try {
 			SSheet sheet = ctx.getSheet();
 
@@ -323,7 +348,7 @@ public class FormulaEngineImpl implements FormulaEngine {
 				SSheet srcSheet = tb.getAllRegion().getSheet();
 				String sheetName = srcSheet.getSheetName();
 				String bookName = book.getBookName();
-				return new TableRefImpl(bookName, sheetName, tbName, item1, item2, 
+				return new ColumnRefImpl(bookName, sheetName, tbName, item1, item2, 
 						columnName1, columnName2, 
 						tbPtg.getFirstRow(), tbPtg.getFirstColumn(),
 						tbPtg.getLastRow(), tbPtg.getLastColumn());
@@ -862,7 +887,7 @@ public class FormulaEngineImpl implements FormulaEngine {
 			// render formula, detect region and create result
 			String renderedFormula = modified ? 
 					renderFormula(parsingBook, formula, tokens, true) : formula;
-			Ref singleRef = tokens.length == 1 ? toDenpendRef(context, parsingBook, tokens[0], 0) : null;
+			Ref singleRef = tokens.length == 1 ? toDependRef(context, parsingBook, tokens[0], 0) : null;
 			Ref[] refs = singleRef==null ? null :
 				(singleRef.getType() == RefType.AREA || singleRef.getType() == RefType.CELL ?new Ref[]{singleRef}:null);
 			expr = new FormulaExpressionImpl(renderedFormula, tokens, refs);
@@ -1253,9 +1278,16 @@ public class FormulaEngineImpl implements FormulaEngine {
 		Ptg[] ptgs = fexpr.getPtgs();
 		for (int j = 0, len = ptgs.length; j < len; ++j) {
 			Ptg ptg = ptgs[j];
-			Ref precedent = toDenpendRef(context, parsingBook, ptg, j);
+			Ref precedent = toDependRef(context, parsingBook, ptg, j);
 			if(precedent != null) {
 				table.add(dependent, precedent);
+				
+				//ZSS-966
+				if (precedent instanceof ColumnRef) {
+					final ColumnRef colRef = (ColumnRef) precedent;
+					final TablePrecedentRef tbPrecedent = new TablePrecedentRefImpl(colRef.getBookName(), colRef.getTableName());
+					table.add(dependent, tbPrecedent);
+				}
 			}
 		}
 	}
@@ -1329,7 +1361,7 @@ public class FormulaEngineImpl implements FormulaEngine {
 			// render formula, detect region and create result
 			String renderedFormula = modified ? 
 					renderFormula(parsingBook, formula, tokens, true) : formula;
-			Ref singleRef = tokens.length == 1 ? toDenpendRef(context, parsingBook, tokens[0], 0) : null;
+			Ref singleRef = tokens.length == 1 ? toDependRef(context, parsingBook, tokens[0], 0) : null;
 			Ref[] refs = singleRef==null ? null :
 				(singleRef.getType() == RefType.AREA || singleRef.getType() == RefType.CELL ?new Ref[]{singleRef}:null);
 			expr = new FormulaExpressionImpl(renderedFormula, tokens, refs);
@@ -1362,5 +1394,14 @@ public class FormulaEngineImpl implements FormulaEngine {
 				return true;
 			}
 		};
+	}
+
+	//ZSS-966
+	@Override
+	public FormulaExpression renameTablePtgs(FormulaExpression fexpr,
+			SBook book, String oldName, String newName,
+			FormulaParseContext context) {
+		// TODO
+		return fexpr;
 	}
 }

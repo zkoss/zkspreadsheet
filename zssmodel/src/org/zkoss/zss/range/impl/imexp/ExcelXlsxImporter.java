@@ -614,7 +614,7 @@ public class ExcelXlsxImporter extends AbstractExcelImporter{
 					poiInfo.isShowColumnStripes(), poiInfo.isShowRowStripes(),
 					poiInfo.isShowLastColumn(), poiInfo.isShowFirstColumn());
  
-			final STable table = new TableImpl(
+			final STable table = new TableImpl((AbstractBookAdv)book,
 				poiTable.getName(),
 				poiTable.getDisplayName(),
 				region,

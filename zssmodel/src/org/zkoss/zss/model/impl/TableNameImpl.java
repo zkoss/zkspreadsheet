@@ -30,5 +30,6 @@ public class TableNameImpl extends NameImpl {
 	void setName(String newname, String applyToSheetName) {
 		super.setName(newname, applyToSheetName);
 		this._table.setName(newname);
+		this._table.setDisplayName(newname);
 	}
 }

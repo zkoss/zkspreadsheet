@@ -34,7 +34,7 @@ public class NameImpl extends AbstractNameAdv {
 	private AbstractBookAdv _book;
 	private String _name;
 	
-	private String _applyToSheetName;
+	private String _applyToSheetName; // This Name's sheet scope; null means Book scope
 	
 	private FormulaExpression _refersToExprFormula;
 	

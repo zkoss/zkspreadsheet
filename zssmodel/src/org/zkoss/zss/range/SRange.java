@@ -946,5 +946,14 @@ public interface SRange {
 	 * Notify this range has been changed with the specified attribute.
 	 * @since 3.8.0
 	 */
-	public void notifyChange(CellAttribute cellAttr); 
+	public void notifyChange(CellAttribute cellAttr);
+	
+	/**
+     * Set(Rename) the name of the Name(or Table) as specified in this 
+     * Range(a Book or a Sheet).
+	 * @param namename name of the Name(or Table)
+	 * @param newname new name for the Name(or Table) 
+	 * @since 3.8.0
+	 */
+	public void setNameName(String namename, String newname);
 }

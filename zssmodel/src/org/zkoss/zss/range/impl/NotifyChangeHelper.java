@@ -249,4 +249,15 @@ import org.zkoss.zss.model.impl.CellAttribute;
 		ModelEvent event = ModelEvents.createModelEvent(eventName, sheet, region);
 		((AbstractBookAdv)sheet.getBook()).sendModelEvent(event);
 	}
+	
+	//ZSS-966: This might be useful when we do Name Manager
+	public void notifyNameNameChange(SSheet sheet, SName name, String oldName){
+		if(_logger.debugable()){
+			_logger.debug("Notify Name's name change "+oldName+" to "+name.getName());
+		}
+		((AbstractBookAdv) name.getBook()).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_NAME_NAME_CHANGE, name.getBook(), sheet, 
+				ModelEvents.createDataMap(ModelEvents.PARAM_OLD_NAME,oldName, ModelEvents.PARAM_NAME, name)));
+	}
+	
+
 }

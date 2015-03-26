@@ -61,8 +61,5 @@ public abstract class AbstractBookAdv implements SBook,EvaluationContributorCont
 	public abstract STable getTable(String name);
 	
 	//ZSS-855
-	public abstract void removeTable(String name);
-	
-	//ZSS-855
-	public abstract void renameTable(String oldName, String newName);
+	public abstract STable removeTable(String name);
 }

@@ -107,4 +107,16 @@ public class SRanges {
 	public static SRange range(SSheet sheet, int row, int col){	
 		return new RangeImpl(sheet,row,col);
 	}
+
+	/** 
+	 * Returns the associated {@link SRange} of the whole specified {@link SSheet}. 
+	 *  
+	 * @param sheet the {@link SSheet} the Range will refer to.
+	 * @return the associated {@link SRange} of the whole specified {@link SSheet}.
+	 * @since 3.8.0 
+	 */
+	public static SRange range(SBook book){
+		return new RangeImpl(book);
+	}
+	
 }

@@ -2271,6 +2271,13 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 					onSheetFreeze(event);
 				}
 			});
+//			//ZSS-966
+//			addEventListener(ModelEvents.ON_NAME_NAME_CHANGE, new ModelEventListener() {
+//				@Override
+//				public void onEvent(ModelEvent event){
+//					onNameNameChange(event);
+//				}
+//			});
 			/* TODO zss 3.5
 			addEventListener(SSDataEvent.ON_BOOK_EXPORT, new EventListener() {
 				@Override
@@ -2592,6 +2599,12 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 				loader.onSheetFreeze(sheet);
 			}
 		}
+//		//ZSS-966
+//		private void onNameNameChange(ModelEvent event) { 
+//			Spreadsheet.this.smartUpdate("nameLabels", getNameLabels());
+//			Name name = getBook().getName(((SName)event.getData(ModelEvents.PARAM_NAME)).getName());
+//			org.zkoss.zk.ui.event.Events.postEvent(new NameEvent(Events.ON_AFTER_NAME_NAME_CHANGE, Spreadsheet.this, name));
+//		}
 		/*
 		private void onBookExport(SSDataEvent event) {
 			//

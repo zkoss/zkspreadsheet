@@ -129,6 +129,7 @@ public class BookImpl extends AbstractBookAdv{
 		_colors.put(ColorImpl.BLUE,ColorImpl.BLUE);
 		
 		_bookId = ((char)('a'+_random.nextInt(26))) + Long.toString(/*System.currentTimeMillis()+*/_bookCount.getAndIncrement(), Character.MAX_RADIX) ;
+		_tables = new HashMap<String, STable>(0);
 	}
 	
 	public void initDefaultCellStyles() {
@@ -208,7 +209,7 @@ public class BookImpl extends AbstractBookAdv{
 				// ATTENTION: ModelEvents.ON_MODEL_DIRTY_CHANGE is a custom event.
 				// Dirty change is a special case for calling sendModelEvent inside model.
 				// In normal model event case, we should do it in Range level.
-				sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_MODEL_DIRTY_CHANGE, event.getSheet(),
+				sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_MODEL_DIRTY_CHANGE, event.getBook(), event.getSheet(),
 						ModelEvents.createDataMap(ModelEvents.PARAM_CUSTOM_DATA, _dirty)));
 			}
 		}
@@ -305,6 +306,10 @@ public class BookImpl extends AbstractBookAdv{
 	private void checkLegalNameName(String name,String sheetName) {
 		if(Strings.isBlank(name)){
 			throw new InvalidModelOpException("name '"+name+"' is not legal");
+		}
+		//ZSS-966
+		if (getTable(name) != null) {
+			throw new InvalidModelOpException("name '"+name+"' is duplicated with Table name");
 		}
 		if(getNameByName(name,sheetName)!=null){ //must be unique in the scope
 			throw new InvalidModelOpException("name '"+name+"' "+(sheetName==null?"":" in '"+sheetName+"'")+" is duplicated");
@@ -728,11 +733,28 @@ public class BookImpl extends AbstractBookAdv{
 		ModelUpdateUtil.handlePrecedentUpdate(getBookSeries(),new NameRefImpl((AbstractNameAdv)name));
 		
 		final String oldName = name.getName(); // ZSS-661
+		
+		//ZSS-966: notify the (old) table name is change before update name
+		if (name instanceof TableNameImpl) {
+			ModelUpdateUtil.handlePrecedentUpdate(getBookSeries(), new TablePrecedentRefImpl(this.getBookName(), oldName));
+		}
+		
 		((AbstractNameAdv)name).setName(newname,sheetName);
 		//don't need to notify new name precedent update, since Name handle it itself
 		
 		//Rename formula that contains this name
 		renameNameFormula(name, oldName, newname, sheetName); // ZSS-661
+		
+		//Rename formula that contains this table name
+		if (name instanceof TableNameImpl) {
+			//ZSS-966: reput Table; must do this first or renameTableName() 
+			//cannot find the correct table
+			STable tb = removeTable(oldName);
+			if (tb != null)
+				addTable(tb);
+
+			renameTableNameFormula(name, oldName, newname);
+		}
 	}
 	
 	private void renameNameFormula(SName name, String oldName, String newName, String sheetName) {
@@ -1062,32 +1084,36 @@ public class BookImpl extends AbstractBookAdv{
 	//ZSS-855
 	@Override
 	public void addTable(STable table) {
-		if (_tables == null) {
-			_tables = new HashMap<String, STable>();
-		}
-		_tables.put(table.getName(), table);
+		_tables.put(table.getName().toUpperCase(), table);
 	}
 
 	//ZSS-855
 	@Override
 	public STable getTable(String name) {
-		return _tables.get(name);
+		return _tables.get(name.toUpperCase());
 	}
 	
 	//ZSS-855
 	@Override
-	public void removeTable(String name) {
-		_tables.remove(name);
+	public STable removeTable(String name) {
+		return _tables.remove(name.toUpperCase());
 	}
 	
-	//ZSS-855
-	@Override
-	public void renameTable(String oldName, String newName) {
-		STable tb = _tables.remove(oldName);
-		if (tb != null) {
-			tb.setName(newName);
-			tb.setDisplayName(newName);
+	//ZSS-966
+	private void renameTableNameFormula(SName name, String oldName, String newName) {
+		AbstractBookSeriesAdv bs = (AbstractBookSeriesAdv)getBookSeries();
+		FormulaTunerHelper tuner = new FormulaTunerHelper(bs);
+		DependencyTable dt = bs.getDependencyTable();
+		final Ref ref = new TablePrecedentRefImpl(name.getBook().getBookName(), oldName); //old name
+		Set<Ref> dependents = dt.getDirectDependents(ref);
+		if(dependents.size()>0){
+			//clear the dependents dependency before rename it's Name name
+			for(Ref dependent:dependents){
+				dt.clearDependents(dependent);
+			}
+			
+			//rebuild the the formula by tuner
+			tuner.renameTableName(this, oldName, newName, dependents);
 		}
-		addTable(tb);
 	}
 }

@@ -17,8 +17,10 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.api;
 
 import org.zkoss.zss.api.impl.RangeImpl;
+import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.api.model.impl.SheetImpl;
+import org.zkoss.zss.api.model.impl.BookImpl;
 import org.zkoss.zss.range.SRanges;
 
 /**
@@ -170,5 +172,15 @@ public class Ranges {
 	public static String getRowRefString(int row){
 		int excelRowNum = row + 1;
 		return Integer.toString(excelRowNum);
+	}
+	
+	/** 
+	 * Returns the associated {@link Range} of the whole specified {@link Book}. 
+	 *  
+	 * @param book the {@link Book} the Range will refer to.
+	 * @return the associated {@link Range} of the whole specified {@link Book}. 
+	 */
+	public static Range range(Book book){
+		return new RangeImpl(SRanges.range(((BookImpl)book).getNative()),book);
 	}
 }
