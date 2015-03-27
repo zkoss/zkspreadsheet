@@ -29,7 +29,7 @@ public class ColumnRefImpl extends RefImpl implements ColumnRef{
 
 	private static final long serialVersionUID = 1L;
 	 
-	
+	private final boolean _withHeaders;
 	private final String _tableName;
 	private final String _columnName1;
 	private final String _columnName2;
@@ -38,7 +38,7 @@ public class ColumnRefImpl extends RefImpl implements ColumnRef{
 	
 	public ColumnRefImpl(String bookName, String sheetName, 
 			String tableName, Item item1, Item item2, 
-			String columnName1, String columnName2,
+			String columnName1, String columnName2, boolean withHeaders,
 			int row, int column, int lastRow, int lastColumn) {
 		super(RefType.TABLE, bookName, sheetName, null, row, column, lastRow, lastColumn);
 		this._tableName = tableName;
@@ -46,6 +46,7 @@ public class ColumnRefImpl extends RefImpl implements ColumnRef{
 		this._columnName2 = columnName2;
 		this._item1 = item1;
 		this._item2 = item2;
+		this._withHeaders = withHeaders;
 	}
 	
 	@Override
@@ -143,5 +144,11 @@ public class ColumnRefImpl extends RefImpl implements ColumnRef{
 	@Override
 	public String getColumnName2() {
 		return _columnName2;
+	}
+	
+	//ZSS-967
+	@Override
+	public boolean isWithHeaders() {
+		return _withHeaders;
 	}
 }

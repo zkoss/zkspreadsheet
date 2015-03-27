@@ -62,4 +62,8 @@ public abstract class AbstractBookAdv implements SBook,EvaluationContributorCont
 	
 	//ZSS-855
 	public abstract STable removeTable(String name);
+	
+	//ZSS-967
+	//return null if newName is not duplicated in the Table
+	public abstract String setTableColumnName(STable table, String oldName, String newName);
 }

@@ -32,6 +32,7 @@ import org.zkoss.zss.model.SChart;
 import org.zkoss.zss.model.SDataValidation;
 import org.zkoss.zss.model.SName;
 import org.zkoss.zss.model.SSheet;
+import org.zkoss.zss.model.STable;
 import org.zkoss.zss.model.SheetRegion;
 import org.zkoss.zss.model.SCell.CellType;
 import org.zkoss.zss.model.chart.SChartData;
@@ -1426,11 +1427,46 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 		
 		FormulaEngine engine = getFormulaEngine();
 		FormulaExpression exprAfter = 
-				engine.renameTablePtgs(expr, bookOfSheet, oldName, newName, new FormulaParseContext(cell, null));
+				engine.renameTableNameTablePtgs(expr, bookOfSheet, oldName, newName, new FormulaParseContext(cell, null));
 		
 		cell.setValue(exprAfter);
 		//don't need to notify cell change, cell will do
 	}
 
+
+	// ZSS-967
+	public void renameColumnName(STable table, String oldName, String newName,
+			Set<Ref> dependents) {
+		for (Ref dependent : dependents) {
+			if (dependent.getType() == RefType.CELL || dependent.getType() == RefType.TABLE) {
+				renameColumnNameCellRef(table, oldName, newName, dependent);
+			}
+		}
+	}	
+
+	//ZSS-967
+	private void renameColumnNameCellRef(STable table, String oldName, String newName, Ref dependent) {
+		SBook book = _bookSeries.getBook(dependent.getBookName());
+		if (book == null) return;
+		SSheet sheet = book.getSheetByName(dependent.getSheetName());
+		if (sheet == null) return;
+		SCell cell = sheet.getCell(dependent.getRow(), dependent.getColumn());
+		if(cell.getType() != CellType.FORMULA)
+			return;//impossible
+		
+		/*
+		 * for table's column rename case, we should always update formula to make new 
+		 * dependency, shouln't ignore if the formula string is the same
+		 * Note, in other move cell case, we could ignore to set same formula string
+		 */
+		FormulaExpression expr = (FormulaExpression) ((AbstractCellAdv)cell).getValue(false);
+		
+		FormulaEngine engine = getFormulaEngine();
+		FormulaExpression exprAfter = 
+				engine.renameColumnNameTablePtgs(expr, table, oldName, newName, new FormulaParseContext(cell, null));
+		
+		cell.setValue(exprAfter);
+		//don't need to notify cell change, cell will do
+	}
 
 }

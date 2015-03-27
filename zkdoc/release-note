@@ -18,6 +18,7 @@ ZK Spreadsheet 3.8.0
   ZSS-960 Support evaluate formula with Table expressions
   ZSS-964 Support text orientation with dialog
   ZSS-966 Support change Table name
+  ZSS-967 Support change Table's column name
   
 *Bugs:
   ZSS-910 Problem referencing a cell with formula in same position of other file

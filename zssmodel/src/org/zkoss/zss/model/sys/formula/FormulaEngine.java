@@ -17,6 +17,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.model.sys.formula;
 
 import org.zkoss.zss.model.SBook;
+import org.zkoss.zss.model.STable;
 import org.zkoss.zss.model.SheetRegion;
 import org.zkoss.zss.model.sys.dependency.Ref;
 
@@ -212,13 +213,27 @@ public interface FormulaEngine {
 	/**
 	 * 
 	 * @param fexpr
-	 * @param book
 	 * @param oldName
 	 * @param newName
 	 * @param context
 	 * @return
-	 * @since 3.6.0
+	 * @since 3.8.0
 	 */
-	public FormulaExpression renameTablePtgs(FormulaExpression fexpr, SBook book, String oldName,String newName,
+	public FormulaExpression renameTableNameTablePtgs(FormulaExpression fexpr, SBook book, String oldName,String newName,
+			FormulaParseContext context);
+
+
+	//ZSS-967
+	/**
+	 * 
+	 * @param fexpr
+	 * @param tableName
+	 * @param oldName
+	 * @param newName
+	 * @param context
+	 * @return
+	 * @since 3.8.0
+	 */
+	public FormulaExpression renameColumnNameTablePtgs(FormulaExpression fexpr, STable table, String oldName,String newName,
 			FormulaParseContext context);
 }

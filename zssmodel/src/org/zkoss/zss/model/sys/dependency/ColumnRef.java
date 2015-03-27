@@ -12,4 +12,6 @@ public interface ColumnRef extends Ref{
 	String getColumnName1();
 	
 	String getColumnName2();
+	
+	boolean isWithHeaders(); //ZSS-967
 }

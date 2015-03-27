@@ -22,11 +22,13 @@ import org.zkoss.poi.ss.formula.ptg.TablePtg.Item;
  * @since 3.8.0
  */
 public interface STable {
+	SBook getBook(); //ZSS-967
 	SAutoFilter getFilter(); // turn off header Row; then this is null; ref and region is the same; then no totals row
 	void enableFilter(boolean enable);
 	
 	void addColumn(STableColumn column);
 	List<STableColumn> getColumns();
+	STableColumn getColumnAt(int colIdx); //ZSS-967
 	STableStyleInfo getTableStyleInfo();
 	
 //	SNamedStyle getDataCellStyle(); // dataCellStyle

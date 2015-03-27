@@ -51,6 +51,7 @@ import org.zkoss.zss.model.SRow;
 import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.model.SNamedStyle;
 import org.zkoss.zss.model.STable;
+import org.zkoss.zss.model.STableColumn;
 import org.zkoss.zss.model.impl.sys.DependencyTableAdv;
 import org.zkoss.zss.model.impl.sys.formula.ParsingBook;
 import org.zkoss.zss.model.sys.EngineFactory;
@@ -1114,6 +1115,75 @@ public class BookImpl extends AbstractBookAdv{
 			
 			//rebuild the the formula by tuner
 			tuner.renameTableName(this, oldName, newName, dependents);
+		}
+	}
+	
+	//ZSS-967
+	public String setTableColumnName(STable table, String oldName, String newName) {
+		// locate the STableColumn of oldName
+		List<STableColumn> tbCols = table.getColumns();
+		STableColumn tbCol = null;
+		STableColumn tbColDup = null;
+		Set<String> set = new HashSet<String>(tbCols.size() * 4 / 3);
+		for (STableColumn tbCol0 : tbCols) {
+			final String tbColName = tbCol0.getName().toUpperCase(); 
+			if (tbColName.equalsIgnoreCase(oldName)) {
+				tbCol = tbCol0;
+			} else if (tbColName.equalsIgnoreCase(newName)) {
+				tbColDup = tbCol0;
+			} else {
+				set.add(tbColName);
+			}
+		}
+		if (tbCol == null) return null;
+		
+		String newName0 = null;
+		if (newName == null) {
+			// Generate a newer name if want to clear the cell
+			newName0 = "Column";
+			final String newNameUpper = newName0.toUpperCase();
+			for (int j = tbCols.size(); j > 0; --j) {
+				if (!set.contains(newNameUpper + j)) {
+					newName0 = newName0 + j;
+					break;
+				}
+			}
+		} else if (tbColDup != null) {
+			// Generate a newer name if found duplicate new name;
+			newName0 = newName;
+			final String newNameUpper = newName0.toUpperCase();
+			for (int j = 2, len = tbCols.size() + 2; j < len; ++j) {
+				if (!set.contains(newNameUpper + j)) {
+					newName0 = newName0 + j;
+					break;
+				}
+			}
+		}
+		
+		final String newName1 = newName0 != null ? newName0 : newName; 
+		tbCol.setName(newName1);
+		
+		renameColumnNameFormula(table, oldName, newName1);
+		
+		return newName0 != null ? newName0 : null;
+	}
+	
+	//ZSS-967
+	private void renameColumnNameFormula(STable table, String oldName, String newName) {
+		AbstractBookSeriesAdv bs = (AbstractBookSeriesAdv)getBookSeries();
+		FormulaTunerHelper tuner = new FormulaTunerHelper(bs);
+		DependencyTable dt = bs.getDependencyTable();
+		final String tableName = table.getName();
+		final Ref ref = new ColumnPrecedentRefImpl(table.getBook().getBookName(), tableName, oldName); //old name
+		Set<Ref> dependents = dt.getDirectDependents(ref);
+		if(dependents.size()>0){
+			//clear the dependents dependency before rename it's Name name
+			for(Ref dependent:dependents){
+				dt.clearDependents(dependent);
+			}
+			
+			//rebuild the the formula by tuner
+			tuner.renameColumnName(table, oldName, newName, dependents);
 		}
 	}
 }

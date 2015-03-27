@@ -84,6 +84,12 @@ public class TableImpl implements STable,LinkedModelObject,Serializable{
 //		_totalsRowStyle = totalsRowStyle;
 //		_dataStyle = dataStyle;
 	}
+
+	//ZSS-967
+	@Override
+	public SBook getBook() {
+		return _book;
+	}
 	
 	@Override
 	public SAutoFilter getFilter() {
@@ -321,5 +327,13 @@ public class TableImpl implements STable,LinkedModelObject,Serializable{
 		if(_book==null){
 			throw new IllegalStateException("doesn't connect to parent");
 		}
+	}
+
+	//ZSS-967
+	@Override
+	public STableColumn getColumnAt(int colIdx) {
+		CellRegion rgn = _region.getRegion();
+		final int idx = colIdx - rgn.getColumn();
+		return idx < 0 || idx >= _columns.size() ? null : _columns.get(idx);
 	}
 }

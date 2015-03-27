@@ -12,6 +12,7 @@
 
 package org.zkoss.zss.model.impl;
 
+import org.zkoss.poi.ss.formula.ptg.TablePtg;
 import org.zkoss.zss.model.sys.dependency.ColumnPrecedentRef;
 import org.zkoss.zss.model.sys.dependency.Ref.RefType;
 
@@ -27,8 +28,8 @@ public class ColumnPrecedentRefImpl extends RefImpl implements ColumnPrecedentRe
 	private final String _columnName;
 	public ColumnPrecedentRefImpl(String bookName, String tableName, String columnName) {
 		super(RefType.NAME, bookName, null, null, -1, -1, -1, -1);
-		_tableName = tableName;
-		_columnName = columnName;
+		_tableName = tableName.toUpperCase();
+		_columnName = columnName.toUpperCase();
 	}
 	
 	public int hashCode() {
@@ -60,5 +61,10 @@ public class ColumnPrecedentRefImpl extends RefImpl implements ColumnPrecedentRe
 	@Override
 	public String getColumnName() {
 		return _columnName;
+	}
+
+	@Override
+	public String toString() {
+		return "ColumnPrecedentRef()"+bookName+":" + TablePtg.formatAsFormulaString(_tableName, null, null, _columnName, null, false);
 	}
 }

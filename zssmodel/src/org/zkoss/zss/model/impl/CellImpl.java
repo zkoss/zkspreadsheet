@@ -22,6 +22,7 @@ import java.util.Locale;
 
 import org.zkoss.poi.ss.formula.eval.EvaluationException;
 import org.zkoss.poi.ss.formula.eval.ValueEval;
+import org.zkoss.poi.ss.usermodel.ZssContext;
 import org.zkoss.zss.model.CellRegion;
 import org.zkoss.zss.model.ErrorValue;
 import org.zkoss.zss.model.InvalidFormulaException;
@@ -33,10 +34,15 @@ import org.zkoss.zss.model.SComment;
 import org.zkoss.zss.model.SHyperlink;
 import org.zkoss.zss.model.SRichText;
 import org.zkoss.zss.model.SSheet;
+import org.zkoss.zss.model.STable;
+import org.zkoss.zss.model.STableColumn;
 import org.zkoss.zss.model.impl.sys.formula.FormulaEngineImpl;
 import org.zkoss.zss.model.sys.EngineFactory;
 import org.zkoss.zss.model.sys.dependency.DependencyTable;
 import org.zkoss.zss.model.sys.dependency.Ref;
+import org.zkoss.zss.model.sys.format.FormatContext;
+import org.zkoss.zss.model.sys.format.FormatEngine;
+import org.zkoss.zss.model.sys.format.FormatResult;
 import org.zkoss.zss.model.sys.formula.EvaluationResult;
 import org.zkoss.zss.model.sys.formula.FormulaClearContext;
 import org.zkoss.zss.model.sys.formula.FormulaEngine;
@@ -232,6 +238,15 @@ public class CellImpl extends AbstractCellAdv {
 	public void setFormulaValue(String formula, Locale locale) {
 		checkOrphan();
 		Validations.argNotNull(formula);
+		
+		//ZSS-967
+		// this cell in table header row
+		final STable table = getTable();
+		if (table != null && table.getHeaderRowCount() > 0 && table.getHeadersRegion().getRow() == this.getRowIndex()) {
+			setCellValue(new CellValue("0"));
+			return;
+		}
+		
 		FormulaEngine fe = EngineFactory.getInstance().createFormulaEngine();
 		FormulaParseContext formulaCtx = 
 				new FormulaParseContext(this.getSheet().getBook(),this.getSheet(),this,this.getSheet().getSheetName(),null,locale);
@@ -305,11 +320,33 @@ public class CellImpl extends AbstractCellAdv {
 	
 	private void setCellValue(CellValue value){
 		checkOrphan();
+		
 		this._localValue = value!=null&&value.getType()==CellType.BLANK?null:value;
 		
 		//clear the dependent's formula result cache
-		SBookSeries bookSeries = getSheet().getBook().getBookSeries();
+		SBook book = getSheet().getBook();
+		SBookSeries bookSeries = book.getBookSeries();
 		ModelUpdateUtil.handlePrecedentUpdate(bookSeries,getRef());
+		
+		//ZSS-967
+		// this cell in table header row
+		final STable table = getTable();
+		if (table != null && table.getHeaderRowCount() > 0 && table.getHeadersRegion().getRow() == this.getRowIndex()) {
+			final STableColumn tbCol = table.getColumnAt(this.getColumnIndex());
+			final String oldName = tbCol.getName(); 
+
+			String newname = null;
+			if (value != null) {
+				final FormatEngine formatEngine = EngineFactory.getInstance().createFormatEngine();
+				final FormatResult ft = formatEngine.format(this, new FormatContext(ZssContext.getCurrent().getLocale()));
+				newname = ft.getText();
+			}
+
+			final String newValue = ((AbstractBookAdv)book).setTableColumnName(table, oldName, newname);
+			if (newValue != null) {
+				this._localValue = new CellValue(newValue);
+			}
+		}
 	}
 
 	
@@ -535,5 +572,14 @@ public class CellImpl extends AbstractCellAdv {
 	public FormulaExpression getFormulaExpression() {
 		return _localValue != null && _localValue.getType() == CellType.FORMULA ? 
 				(FormulaExpression) _localValue.getValue() : null; 
+	}
+	
+	//ZSS-967
+	private STable getTable() {
+		final SSheet sheet = getSheet();
+		if (!sheet.getTables().isEmpty()) {
+			return ((AbstractSheetAdv)sheet).getTableByRowCol(this.getRowIndex(), this.getColumnIndex());
+		}
+		return null;
 	}
 }

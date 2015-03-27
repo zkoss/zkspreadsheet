@@ -90,6 +90,7 @@ import org.zkoss.zss.model.SheetRegion;
 import org.zkoss.zss.model.impl.AbstractBookSeriesAdv;
 import org.zkoss.zss.model.impl.AbstractBookAdv;
 import org.zkoss.zss.model.impl.AbstractCellAdv;
+import org.zkoss.zss.model.impl.ColumnPrecedentRefImpl;
 import org.zkoss.zss.model.impl.IndirectRefImpl;
 import org.zkoss.zss.model.impl.NameRefImpl;
 import org.zkoss.zss.model.impl.NonSerializableHolder;
@@ -97,6 +98,7 @@ import org.zkoss.zss.model.impl.RefImpl;
 import org.zkoss.zss.model.impl.ColumnRefImpl;
 import org.zkoss.zss.model.impl.TablePrecedentRefImpl;
 import org.zkoss.zss.model.impl.sys.DependencyTableAdv;
+import org.zkoss.zss.model.sys.dependency.ColumnPrecedentRef;
 import org.zkoss.zss.model.sys.dependency.ColumnRef;
 import org.zkoss.zss.model.sys.dependency.DependencyTable;
 import org.zkoss.zss.model.sys.dependency.Ref;
@@ -205,9 +207,7 @@ public class FormulaEngineImpl implements FormulaEngine {
 			int sheetIndex = parsingBook.getExternalSheetIndex(null, context.getSheet().getSheetName());
 			
 			AbstractBookSeriesAdv series = (AbstractBookSeriesAdv)book.getBookSeries();
-			DependencyTableAdv table = (DependencyTableAdv)series.getDependencyTable();
-			//ZSS-966
-			Map<Ref, Set<ColumnRef>> tablePrecedents = new HashMap<Ref, Set<ColumnRef>>();
+			DependencyTableAdv dt = (DependencyTableAdv)series.getDependencyTable();
 			boolean error = false;
 			
 			for(String formula:formulas){
@@ -222,14 +222,40 @@ public class FormulaEngineImpl implements FormulaEngine {
 								
 								//ZSS-966
 								if (precedent instanceof ColumnRef) {
+									// TableName
 									ColumnRef colRef = (ColumnRef) precedent;
-									TablePrecedentRef tbPrecedent = new TablePrecedentRefImpl(colRef.getBookName(), colRef.getTableName());
-									Set<ColumnRef> colRefs = tablePrecedents.get(tbPrecedent);
-									if (colRefs == null) {
-										colRefs = new HashSet<ColumnRef>();
-										tablePrecedents.put(tbPrecedent, colRefs);
+									final String bookName = colRef.getBookName();
+									final String tableName = colRef.getTableName();
+									TablePrecedentRef tbPrecedent = new TablePrecedentRefImpl(bookName, tableName);
+									precedents.add(tbPrecedent);
+									
+									//ZSS-967
+									if (colRef.isWithHeaders()) {
+										final String columnName1 = colRef.getColumnName1(); 
+										if (columnName1 != null) {
+											// columnName1
+											ColumnPrecedentRef colPrecedent1 = new ColumnPrecedentRefImpl(bookName, tableName, columnName1);
+											precedents.add(colPrecedent1);
+
+											final STable table = ((AbstractBookAdv)book).getTable(tableName);
+											final int rowHd = table.getHeadersRegion().getRow();
+											final int col1 = colRef.getColumn();
+											final String sheetName = table.getAllRegion().getSheet().getSheetName();
+											final Ref cellRef1 = new RefImpl(bookName, sheetName, rowHd, col1);
+											precedents.add(cellRef1);
+										
+											// columnName2
+											final String columnName2 = colRef.getColumnName2();
+											if (columnName2 != null) {
+												ColumnPrecedentRef colPrecedent2 = new ColumnPrecedentRefImpl(bookName, tableName, columnName2);
+												precedents.add(colPrecedent2);
+												
+												final int col2 = colRef.getLastColumn();
+												final Ref cellRef2 = new RefImpl(bookName, sheetName, rowHd, col2);
+												precedents.add(cellRef2);
+											}
+										}
 									}
-									colRefs.add(colRef);
 								}
 							}
 						}
@@ -257,14 +283,7 @@ public class FormulaEngineImpl implements FormulaEngine {
 			// dependency tracking if no error and necessary
 			if(!error && dependant != null) {
 				for(Ref precedent:precedents){
-					table.add(dependant, precedent);
-				}
-				//ZSS-966
-				for(Ref precedent:tablePrecedents.keySet()) {
-					Set<ColumnRef> colRefs = tablePrecedents.get(precedent);
-					for (ColumnRef colRef : colRefs) {
-						table.add(colRef, precedent);
-					}
+					dt.add(dependant, precedent);
 				}
 			}
 		} catch(Exception e) {
@@ -349,7 +368,7 @@ public class FormulaEngineImpl implements FormulaEngine {
 				String sheetName = srcSheet.getSheetName();
 				String bookName = book.getBookName();
 				return new ColumnRefImpl(bookName, sheetName, tbName, item1, item2, 
-						columnName1, columnName2, 
+						columnName1, columnName2, tb.getHeaderRowCount() > 0,
 						tbPtg.getFirstRow(), tbPtg.getFirstColumn(),
 						tbPtg.getLastRow(), tbPtg.getLastColumn());
 			}
@@ -1273,20 +1292,52 @@ public class FormulaEngineImpl implements FormulaEngine {
 		
 		SBook book = context.getBook();
 		AbstractBookSeriesAdv series = (AbstractBookSeriesAdv)book.getBookSeries();
-		DependencyTable table = series.getDependencyTable();
+		DependencyTable dt = series.getDependencyTable();
 		ParsingBook parsingBook = new ParsingBook(book);
 		Ptg[] ptgs = fexpr.getPtgs();
 		for (int j = 0, len = ptgs.length; j < len; ++j) {
 			Ptg ptg = ptgs[j];
 			Ref precedent = toDependRef(context, parsingBook, ptg, j);
 			if(precedent != null) {
-				table.add(dependent, precedent);
+				dt.add(dependent, precedent);
 				
 				//ZSS-966
 				if (precedent instanceof ColumnRef) {
 					final ColumnRef colRef = (ColumnRef) precedent;
-					final TablePrecedentRef tbPrecedent = new TablePrecedentRefImpl(colRef.getBookName(), colRef.getTableName());
-					table.add(dependent, tbPrecedent);
+					
+					// tableName
+					final String bookName = colRef.getBookName();
+					final String tableName = colRef.getTableName();
+					final TablePrecedentRef tbPrecedent = new TablePrecedentRefImpl(bookName, tableName);
+					dt.add(dependent, tbPrecedent);
+
+					// ZSS-967
+					if (colRef.isWithHeaders()) {
+						// columnName1
+						final String colName1 = colRef.getColumnName1();
+						if (colName1 != null) {
+							final ColumnPrecedentRef colPrecedent1 = new ColumnPrecedentRefImpl(bookName, tableName, colName1);
+							dt.add(dependent, colPrecedent1);
+	
+							final STable table = ((AbstractBookAdv)book).getTable(tableName);
+							final int rowHd = table.getHeadersRegion().getRow();
+							final int col1 = colRef.getColumn();
+							final String sheetName = table.getAllRegion().getSheet().getSheetName();
+							final Ref cellRef1 = new RefImpl(bookName, sheetName, rowHd, col1);
+							dt.add(dependent, cellRef1);
+							
+							// columnName2
+							final String colName2 = colRef.getColumnName2();
+							if (colName2 != null) {
+								final ColumnPrecedentRef colPrecedent2 = new ColumnPrecedentRefImpl(bookName, tableName, colName2);
+								dt.add(dependent, colPrecedent2);
+	
+								final int col2 = colRef.getLastColumn();
+								final Ref cellRef2 = new RefImpl(bookName, sheetName, rowHd, col2);
+								dt.add(dependent, cellRef2);
+							}
+						}
+					}
 				}
 			}
 		}
@@ -1398,8 +1449,17 @@ public class FormulaEngineImpl implements FormulaEngine {
 
 	//ZSS-966
 	@Override
-	public FormulaExpression renameTablePtgs(FormulaExpression fexpr,
+	public FormulaExpression renameTableNameTablePtgs(FormulaExpression fexpr,
 			SBook book, String oldName, String newName,
+			FormulaParseContext context) {
+		// TODO
+		return fexpr;
+	}
+
+	//ZSS-967
+	@Override
+	public FormulaExpression renameColumnNameTablePtgs(FormulaExpression fexpr,
+			STable table, String oldName, String newName,
 			FormulaParseContext context) {
 		// TODO
 		return fexpr;

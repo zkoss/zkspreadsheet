@@ -1,0 +1,39 @@
+<vbox hflex="1" vflex="1">
+	<label multiline="true">
+Since 3.8.0
+1. Select J1 and change it from "Column10" to "ColumnX";
+2. Check L2 to L14 if the column name has changed from Column10 to ColumnX.
+3. If not, it is a bug.
+4. Then press "Export to Excel".
+5. Open the down loaded excel file "966-export-rename-table.xlsx" using Excel.
+6. Check the column L and the column name in formula should be ColumnX as well.
+7. If not, it is a bug.
+8. Select J1 and press delete to clear the cell; should see J1 change to system selected label "Column10".
+9. Check L2 to L14 if the column name has changed from ColumnX to Column10.
+10. If not, it is a bug.
+11. Select J1 and enter a formula "=K1"; should see J1 change to system selected label "0".
+12. Check L2 to L14 if the column name has changed from Column10 to 0.
+13. If not, it is a bug.
+ 
+	</label>
+<button id="export" label="Export to Excel" onClick="doExport()"/>
+<zscript><![CDATA[
+     import java.io.*;
+     import org.zkoss.zss.api.Exporters;
+     import org.zkoss.zss.model.SBook;
+     import org.zkoss.zul.*;
+     void doExport() throws IOException {
+         ByteArrayOutputStream os = new ByteArrayOutputStream();
+         try {
+              Exporters.getExporter("excel").export(ss.getBook(), os);
+         } catch (Exception ex) {
+              os.close();
+         }
+         Filedownload.save(os.toByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "967-export-rename-table-column.xlsx"); 
+     }
+]]>
+</zscript>
+	<spreadsheet id="ss" src="/issue3/book/967-rename-table-column.xlsx" maxVisibleRows="30" maxVisibleColumns="40"
+		hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
+		showFormulabar="true" />	
+</vbox>

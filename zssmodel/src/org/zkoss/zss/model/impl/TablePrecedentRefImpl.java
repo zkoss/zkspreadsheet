@@ -24,9 +24,10 @@ import org.zkoss.zss.model.sys.dependency.Ref.RefType;
 public class TablePrecedentRefImpl extends RefImpl implements TablePrecedentRef {
 	private static final long serialVersionUID = -2180648336808339667L;
 	private final String _tableName;
+	
 	public TablePrecedentRefImpl(String bookName, String tableName) {
 		super(RefType.NAME, bookName, null, null, -1, -1, -1, -1);
-		_tableName = tableName;
+		_tableName = tableName.toUpperCase();
 	}
 	
 	public int hashCode() {
