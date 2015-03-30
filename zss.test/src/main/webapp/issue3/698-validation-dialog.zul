@@ -1,0 +1,90 @@
+<vbox hflex="1" vflex="1">
+	<label multiline="true">
+		right click on A1 and set data validation parameters.
+		1. choose "whole number", "between", 1, 10, checked ignore blank in Settings. Checked show input with title "title1", message "message1" in Input message.
+			Checked show error with Style "Warning", title "title2", message "message2". after press OK, then click validate Step1 button. 
+		2. choose "List" with "=A2:A4" checked Ignore blank and In-cell dropdown in Settings. remove checked for Input Message and Error Alert. after press OK, then click validate Step2 button.
+		3. select each allow type in Settings and click validate Step3 button with corresponding type. (whole number is integer)
+		4. select each data type in Settings and click validate Step4 button with corresponding type.
+		5. select each alert style in Error Alert and click validate Step5 button with corresponding type.
+	</label>
+	<textbox readonly="true" id="status"/>
+	<button label="validate Step1">
+		<attribute name="onClick"><![CDATA[
+			status.setValue("Fail");
+			List vs = Ranges.range(ss.getSelectedSheet(), "A1").getValidations();
+			if(vs.size() > 0) {
+				Validation v = (Validation) vs.get(0);
+				if(
+						v.getValidationType() == org.zkoss.zss.api.model.Validation.ValidationType.INTEGER &&
+						v.getOperatorType() == org.zkoss.zss.api.model.Validation.OperatorType.BETWEEN &&
+						v.getFormula1().equals("1") && v.getFormula2().equals("10") && v.isIgnoreBlank() &&
+						!v.isInCellDropdown() && v.isShowInput() && v.isShowError() &&
+						v.getInputTitle().equals("title1") && v.getInputMessage().equals("message1") &&
+						v.getAlertStyle() == org.zkoss.zss.api.model.Validation.AlertStyle.WARNING &&
+						v.getErrorTitle().equals("title2") && v.getErrorMessage().equals("message2")
+				)
+					status.setValue("OK");
+			}
+		]]></attribute>
+	</button>
+	<button label="validate Step2">
+		<attribute name="onClick"><![CDATA[
+			status.setValue("Fail");
+			List vs = Ranges.range(ss.getSelectedSheet(), "A1").getValidations();
+			if(vs.size() > 0) {
+				Validation v = (Validation) vs.get(0);
+				if(
+						v.getValidationType() == org.zkoss.zss.api.model.Validation.ValidationType.LIST &&
+						v.getFormula1().equals("=A2:A4") && v.isIgnoreBlank() && v.isInCellDropdown() && 
+						!v.isShowInput() && !v.isShowError()
+				)
+					status.setValue("OK");
+			}
+		]]></attribute>
+	</button>
+	<hbox>
+		<button label="validate Step3">
+			<attribute name="onClick"><![CDATA[
+				status.setValue("Fail");
+				List vs = Ranges.range(ss.getSelectedSheet(), "A1").getValidations();
+				if(vs.size() > 0 && validationTypes.getSelection().iterator().next().equals(((Validation)vs.get(0)).getValidationType()))
+					status.setValue("OK");
+			]]></attribute>
+		</button>
+		<combobox id="validationType"/>
+	</hbox>
+	<hbox>
+		<button label="validate Step4">
+			<attribute name="onClick"><![CDATA[
+				status.setValue("Fail");
+				List vs = Ranges.range(ss.getSelectedSheet(), "A1").getValidations();
+				if(vs.size() > 0 && operatorTypes.getSelection().iterator().next().equals(((Validation)vs.get(0)).getOperatorType()))
+					status.setValue("OK");
+			]]></attribute>
+		</button>
+		<combobox id="operatorType"/>
+	</hbox>
+	<hbox>
+		<button label="validate Step5">
+			<attribute name="onClick"><![CDATA[
+				status.setValue("Fail");
+				List vs = Ranges.range(ss.getSelectedSheet(), "A1").getValidations();
+				if(vs.size() > 0 && alertStyles.getSelection().iterator().next().equals(((Validation)vs.get(0)).getAlertStyle()))
+					status.setValue("OK");
+			]]></attribute>
+		</button>
+		<combobox id="alertStyle"/>
+	</hbox>
+	<spreadsheet id="ss" src="/issue3/book/blank.xlsx" maxVisibleRows="30" maxVisibleColumns="40"
+		hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
+		showFormulabar="true" />
+	<zscript><![CDATA[
+		ListModelList validationTypes = new ListModelList(org.zkoss.zss.api.model.Validation.ValidationType.values());
+		validationType.setModel(validationTypes);
+		ListModelList operatorTypes = new ListModelList(org.zkoss.zss.api.model.Validation.OperatorType.values());
+		operatorType.setModel(operatorTypes);
+		ListModelList alertStyles = new ListModelList(org.zkoss.zss.api.model.Validation.AlertStyle.values());
+		alertStyle.setModel(alertStyles);
+	]]></zscript>
+</vbox>

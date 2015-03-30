@@ -144,5 +144,6 @@ msgzss.action = {
 	gridlines: 'Gridlines',
 	richTextEdit: 'Rich Text Edit',
 	hideSheet: 'Hide',
-	unhideSheet: 'Unhide...'
+	unhideSheet: 'Unhide...',
+	dataValidation: 'Data Validation'
 };
