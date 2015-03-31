@@ -52,6 +52,7 @@ ZK Spreadsheet 3.8.0
   ZSS-951 Cell overflow should consider indent case
   ZSS-959 Spreadsheet shouldn't crash when using BaseWidget
   ZSS-956 Zssapp exported Excel filename extension should be xlsx
+  ZSS-980 Data validation in range should consider clear case
   
 ** Upgrade Notes
   * Default period for automatically saving in zssapp is 15 minutes.
