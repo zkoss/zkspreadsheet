@@ -1514,6 +1514,7 @@ zss.MenupopupFactory = zk.$extends(zk.Object, {
 		p.appendChild(new zul.menu.Menuseparator());
 		
 		p.appendChild(newActionMenuitem(wgt, 'formatCell'));
+		p.appendChild(newActionMenuitem(wgt, 'dataValidation'));
 		p.appendChild(newActionMenuitem(wgt, 'rowHeight'));
 		p.appendChild(newActionMenuitem(wgt, 'hideRow'));
 		p.appendChild(newActionMenuitem(wgt, 'unhideRow'));
@@ -1535,6 +1536,7 @@ zss.MenupopupFactory = zk.$extends(zk.Object, {
 		p.appendChild(new zul.menu.Menuseparator());
 		
 		p.appendChild(newActionMenuitem(wgt, 'formatCell'));
+		p.appendChild(newActionMenuitem(wgt, 'dataValidation'));
 		p.appendChild(newActionMenuitem(wgt, 'columnWidth'));
 		p.appendChild(newActionMenuitem(wgt, 'hideColumn'));
 		p.appendChild(newActionMenuitem(wgt, 'unhideColumn'));
@@ -1618,6 +1620,7 @@ zss.MenupopupFactory = zk.$extends(zk.Object, {
 		p.appendChild(new zul.menu.Menuseparator());
 		
 		p.appendChild(newActionMenuitem(wgt, 'formatCell'));
+		p.appendChild(newActionMenuitem(wgt, 'dataValidation'));
 		p.appendChild(newActionMenuitem(wgt, 'hyperlink'));
 		p.appendChild(newActionMenuitem(wgt, 'richTextEdit'));
 		return p;

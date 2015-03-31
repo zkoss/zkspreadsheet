@@ -135,7 +135,8 @@ Copyright (C) 2012 Potix Corporation. All Rights Reserved.
 		_mathAndTrig: 'Math & Trig',
 		_moreFunction: 'More Functions',
 		_protectSheet: 'Protect Sheet',
-		_gridlines: 'Gridlines'
+		_gridlines: 'Gridlines',
+		_dataValidation: 'Data Validation'
 	};
 	
 zss.Labels = zk.$extends(zk.Object, {
@@ -262,7 +263,8 @@ zss.Labels = zk.$extends(zk.Object, {
 		mathAndTrig: null,
 		moreFunction: null,
 		protectSheet: null,
-		gridlines: null
+		gridlines: null,
+		dataValidation: null
 	}
 });
 */

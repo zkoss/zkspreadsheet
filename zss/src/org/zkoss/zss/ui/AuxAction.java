@@ -128,6 +128,7 @@ public enum AuxAction {
 	 INSERT_COMMENT("insertComment"),
 	 EDIT_COMMENT("editComment"),
 	 DELETE_COMMENT("deleteComment"),
+	 DATA_VALIDATION("dataValidation"),
 	 
 	 
 	 /* following are fold item only, doesn't send auxevent to server*/
