@@ -2036,7 +2036,7 @@ public class RangeImpl implements SRange {
 						showError, alertStyle, errorTitle,
 						errorMessage);
 				//ZSS-729
-				new NotifyChangeHelper().notifyDataValidationChange(getSheet(), (String)dv.getId());
+				new NotifyChangeHelper().notifyDataValidationChange(getSheet(), (String) (dv == null ? null : dv.getId()));
 				return null;
 			}
 		}.doInWriteLock(getLock());
@@ -2049,6 +2049,18 @@ public class RangeImpl implements SRange {
 			boolean showError, AlertStyle alertStyle, String errorTitle,
 			String errorMessage) {
 		SDataValidation dv = getSheet().getDataValidation(getRow(), getColumn());
+		
+		//ZSS-980: remove existing validation or do nothing, if parameters are default value
+		if (isDefaultValidationParameter(validationType, ignoreBlank, operatorType, inCellDropDown, formula1, formula2,
+					showInput, inputTitle, inputMessage, showError, alertStyle, errorTitle, errorMessage)) {
+			List<SDataValidation> dvs = null;
+			if (dv != null) {
+				dvs = getSheet().deleteDataValidationRegion( 
+						  new CellRegion(getRow(), getColumn(), getLastRow(), getLastColumn()));
+			}
+			return dvs != null && dvs.size() > 0 ? dvs.get(0) : null;
+		}
+	
 		if (dv == null) {
 			dv = getSheet().addDataValidation(new CellRegion(getRow(), getColumn(), getLastRow(), getLastColumn()));
 		}
@@ -2066,6 +2078,16 @@ public class RangeImpl implements SRange {
 		dv.setErrorMessage(errorMessage);
 		
 		return dv;
+	}
+
+	private boolean isDefaultValidationParameter(ValidationType validationType,
+			boolean ignoreBlank, OperatorType operatorType,
+			boolean inCellDropDown, String formula1, String formula2,
+			boolean showInput, String inputTitle, String inputMessage,
+			boolean showError, AlertStyle alertStyle, String errorTitle,
+			String errorMessage) {
+		return validationType == ValidationType.ANY && showInput && inputTitle.isEmpty() && inputMessage.isEmpty() && 
+				showError && alertStyle == AlertStyle.STOP && errorTitle.isEmpty() && errorMessage.isEmpty();
 	}
 
 	@SuppressWarnings("unchecked")

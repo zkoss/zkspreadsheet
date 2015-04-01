@@ -1,0 +1,56 @@
+<vbox hflex="1" vflex="1">
+	<label multiline="true">
+		1. click buttons following the order 1-1, 1-2, 1-3, you can see status become OK.
+		2. click buttons following the order 2-1, 2-2, 2-3, you can see status become OK.
+	</label>
+	<textbox id="status" readonly="true"/>
+	<hbox>
+		<button label="Step1-1">
+			<attribute name="onClick"><![CDATA[
+				Ranges.range(ss.getSelectedSheet(), "A1").setValidation(org.zkoss.zss.api.model.Validation.ValidationType.INTEGER,
+						true, org.zkoss.zss.api.model.Validation.OperatorType.BETWEEN,
+						false, "1", "10", true, "", "", true, org.zkoss.zss.api.model.Validation.AlertStyle.STOP, "", "");
+			]]></attribute>
+		</button>
+		<button label="Step1-2">
+			<attribute name="onClick"><![CDATA[
+			Ranges.range(ss.getSelectedSheet(), "A1").setValidation(org.zkoss.zss.api.model.Validation.ValidationType.ANY,
+				true, org.zkoss.zss.api.model.Validation.OperatorType.BETWEEN,
+				false, "", "", true, "", "", true, org.zkoss.zss.api.model.Validation.AlertStyle.STOP, "", "");
+			]]></attribute>
+		</button>
+		<button label="Step1-3">
+			<attribute name="onClick"><![CDATA[
+				status.setValue("Fail");
+				if(Ranges.range(ss.getSelectedSheet(), "A1").getValidations().size() == 0)
+					status.setValue("OK");
+			]]></attribute>
+		</button>
+		
+		<button label="Step2-1">
+			<attribute name="onClick"><![CDATA[
+				Ranges.range(ss.getSelectedSheet(), "A1:C3").setValidation(org.zkoss.zss.api.model.Validation.ValidationType.INTEGER,
+						true, org.zkoss.zss.api.model.Validation.OperatorType.BETWEEN,
+						false, "1", "10", true, "", "", true, org.zkoss.zss.api.model.Validation.AlertStyle.STOP, "", "");
+			]]></attribute>
+		</button>
+		<button label="Step2-2">
+			<attribute name="onClick"><![CDATA[
+			Ranges.range(ss.getSelectedSheet(), "A1:C3").setValidation(org.zkoss.zss.api.model.Validation.ValidationType.ANY,
+				true, org.zkoss.zss.api.model.Validation.OperatorType.BETWEEN,
+				false, "", "", true, "", "", true, org.zkoss.zss.api.model.Validation.AlertStyle.STOP, "", "");
+			]]></attribute>
+		</button>
+		<button label="Step2-3">
+			<attribute name="onClick"><![CDATA[
+				status.setValue("Fail");
+				if(Ranges.range(ss.getSelectedSheet(), "A1:C3").getValidations().size() == 0)
+					status.setValue("OK");
+			]]></attribute>
+		</button>
+	</hbox>
+	
+	<spreadsheet id="ss" src="/issue3/book/blank.xlsx" maxVisibleRows="30" maxVisibleColumns="40"
+		hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
+		showFormulabar="true" />
+</vbox>
