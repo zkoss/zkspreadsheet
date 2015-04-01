@@ -612,7 +612,7 @@ public class ExcelXlsxImporter extends AbstractExcelImporter{
 			final STableStyleInfo info = 
 				new TableStyleInfoImpl(poiInfo.getName(), 
 					poiInfo.isShowColumnStripes(), poiInfo.isShowRowStripes(),
-					poiInfo.isShowLastColumn(), poiInfo.isShowFirstColumn());
+					poiInfo.isShowFirstColumn(), poiInfo.isShowLastColumn());
  
 			final STable table = new TableImpl((AbstractBookAdv)book,
 				poiTable.getName(),
@@ -624,8 +624,11 @@ public class ExcelXlsxImporter extends AbstractExcelImporter{
 			
 			for (XSSFTableColumn poiTbCol : poiTable.getTableColumns()) {
 				final STableColumn tbCol = new TableColumnImpl(poiTbCol.getName());
-				tbCol.setTotalsRowLabel(poiTbCol.getTotalsRowLabel());
-				tbCol.setTotalsRowFunction(STotalsRowFunction.valueOf(poiTbCol.getTotalsRowFunction().name()));
+				tbCol.setTotalsRowFunction(STotalsRowFunction.values()[poiTbCol.getTotalsRowFunction().ordinal()]);
+				if (tbCol.getTotalsRowFunction() == STotalsRowFunction.none)
+					tbCol.setTotalsRowLabel(poiTbCol.getTotalsRowLabel());
+				else if (tbCol.getTotalsRowFunction() == STotalsRowFunction.custom)
+					tbCol.setTotalsRowFormula(poiTbCol.getTotalsRowFormula()); //ZSS-977
 				table.addColumn(tbCol);
 			}
 			

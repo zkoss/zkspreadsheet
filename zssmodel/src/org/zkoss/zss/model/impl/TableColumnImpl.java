@@ -22,10 +22,8 @@ import org.zkoss.zss.model.STableColumn;
  */
 public class TableColumnImpl implements STableColumn {
 	String _name;
-	SCellStyle _cellStyle;
-	SCellStyle _dataStyle;
-	SCellStyle _totalsRowStyle;
 	String _totalsRowLabel;
+	String _totalsRowFormula;
 	STotalsRowFunction _totalsRowFunction;
 	
 	public TableColumnImpl(String name) {
@@ -34,21 +32,6 @@ public class TableColumnImpl implements STableColumn {
 	@Override
 	public String getName() {
 		return _name;
-	}
-
-	@Override
-	public SCellStyle getDataCellStyle() {
-		return _cellStyle;
-	}
-
-	@Override
-	public SCellStyle getDataStyle() {
-		return _dataStyle;
-	}
-
-	@Override
-	public SCellStyle getTotalsRowStyle() {
-		return _totalsRowStyle;
 	}
 
 	@Override
@@ -67,21 +50,6 @@ public class TableColumnImpl implements STableColumn {
 	}
 
 	@Override
-	public void setDataCellStyle(SCellStyle style) {
-		_cellStyle = style;
-	}
-
-	@Override
-	public void setDataStyle(SCellStyle style) {
-		_dataStyle = style;
-	}
-
-	@Override
-	public void setTotalsRowStyle(SCellStyle style) {
-		_totalsRowStyle = style;
-	}
-
-	@Override
 	public void setTotalsRowLabel(String label) {
 		_totalsRowLabel = label;
 	}
@@ -89,5 +57,13 @@ public class TableColumnImpl implements STableColumn {
 	@Override
 	public void setTotalsRowFunction(STotalsRowFunction func) {
 		_totalsRowFunction = func;
+	}
+	@Override
+	public String getTotalsRowFormula() {
+		return _totalsRowFormula;
+	}
+	@Override
+	public void setTotalsRowFormula(String formula) {
+		_totalsRowFormula = formula;
 	}
 }

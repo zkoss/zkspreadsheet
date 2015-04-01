@@ -19,7 +19,7 @@ import org.zkoss.zss.model.SHyperlink;
 import org.zkoss.zss.model.SPicture;
 import org.zkoss.zss.model.SRichText;
 import org.zkoss.zss.model.SSheet;
-import org.zkoss.zss.model.SCellStyle.BorderType;
+import org.zkoss.zss.model.SBorder.BorderType;
 import org.zkoss.zss.model.SFont.Boldweight;
 import org.zkoss.zss.model.SFont.Underline;
 import org.zkoss.zss.model.SPicture.Format;

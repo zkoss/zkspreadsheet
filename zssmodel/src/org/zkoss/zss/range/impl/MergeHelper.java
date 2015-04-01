@@ -26,7 +26,7 @@ import org.zkoss.zss.model.InvalidModelOpException;
 import org.zkoss.zss.model.SCell;
 import org.zkoss.zss.model.SCellStyle;
 import org.zkoss.zss.model.SSheet;
-import org.zkoss.zss.model.SCellStyle.BorderType;
+import org.zkoss.zss.model.SBorder.BorderType;
 import org.zkoss.zss.range.SRange;
 /**
  * 

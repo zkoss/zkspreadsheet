@@ -183,7 +183,7 @@ public class EnumUtil {
 		throw new IllegalArgumentException("unknow font boldweight "+boldweight);
 	}
 
-	public static FillPattern toStyleFillPattern(SCellStyle.FillPattern pattern) {
+	public static FillPattern toStyleFillPattern(SFill.FillPattern pattern) {
 		switch(pattern){
 		case NONE:
 			return CellStyle.FillPattern.NONE;
@@ -227,46 +227,46 @@ public class EnumUtil {
 		throw new IllegalArgumentException("unknow pattern type "+pattern);	
 	}
 	
-	public static SCellStyle.FillPattern toStyleFillPattern(FillPattern pattern) {
+	public static SFill.FillPattern toStyleFillPattern(FillPattern pattern) {
 		switch(pattern){
 		case NONE:
-			return SCellStyle.FillPattern.NONE;
+			return SFill.FillPattern.NONE;
 		case SOLID:
-			return SCellStyle.FillPattern.SOLID;
+			return SFill.FillPattern.SOLID;
 		case MEDIUM_GRAY:
-			return SCellStyle.FillPattern.MEDIUM_GRAY;
+			return SFill.FillPattern.MEDIUM_GRAY;
 		case DARK_GRAY:
-			return SCellStyle.FillPattern.DARK_GRAY;
+			return SFill.FillPattern.DARK_GRAY;
 		case LIGHT_GRAY:
-			return SCellStyle.FillPattern.LIGHT_GRAY;
+			return SFill.FillPattern.LIGHT_GRAY;
 		case DARK_HORIZONTAL:
-			return SCellStyle.FillPattern.DARK_HORIZONTAL;
+			return SFill.FillPattern.DARK_HORIZONTAL;
 		case DARK_VERTICAL:
-			return SCellStyle.FillPattern.DARK_VERTICAL;
+			return SFill.FillPattern.DARK_VERTICAL;
 		case DARK_DOWN:
-			return SCellStyle.FillPattern.DARK_DOWN;
+			return SFill.FillPattern.DARK_DOWN;
 		case DARK_UP:
-			return SCellStyle.FillPattern.DARK_UP;
+			return SFill.FillPattern.DARK_UP;
 		case DARK_GRID:
-			return SCellStyle.FillPattern.DARK_GRID;
+			return SFill.FillPattern.DARK_GRID;
 		case DARK_TRELLIS:
-			return SCellStyle.FillPattern.DARK_TRELLIS;
+			return SFill.FillPattern.DARK_TRELLIS;
 		case LIGHT_HORIZONTAL:
-			return SCellStyle.FillPattern.LIGHT_HORIZONTAL;
+			return SFill.FillPattern.LIGHT_HORIZONTAL;
 		case LIGHT_VERTICAL:
-			return SCellStyle.FillPattern.LIGHT_VERTICAL;
+			return SFill.FillPattern.LIGHT_VERTICAL;
 		case LIGHT_DOWN:
-			return SCellStyle.FillPattern.LIGHT_DOWN;
+			return SFill.FillPattern.LIGHT_DOWN;
 		case LIGHT_UP:
-			return SCellStyle.FillPattern.LIGHT_UP;
+			return SFill.FillPattern.LIGHT_UP;
 		case LIGHT_GRID:
-			return SCellStyle.FillPattern.LIGHT_GRID;
+			return SFill.FillPattern.LIGHT_GRID;
 		case LIGHT_TRELLIS:
-			return SCellStyle.FillPattern.LIGHT_TRELLIS;
+			return SFill.FillPattern.LIGHT_TRELLIS;
 		case GRAY125:
-			return SCellStyle.FillPattern.GRAY125;
+			return SFill.FillPattern.GRAY125;
 		case GRAY0625:
-			return SCellStyle.FillPattern.GRAY0625;
+			return SFill.FillPattern.GRAY0625;
 		}
 		throw new IllegalArgumentException("unknow pattern type "+pattern);
 	}
@@ -366,41 +366,41 @@ public class EnumUtil {
 		throw new IllegalArgumentException("unknow cell border apply type "+type);
 	}
 
-	public static SCellStyle.BorderType toStyleBorderType(BorderType borderType) {
+	public static SBorder.BorderType toStyleBorderType(BorderType borderType) {
 		switch(borderType){
 		case NONE:
-			return SCellStyle.BorderType.NONE;
+			return SBorder.BorderType.NONE;
 		case THIN:
-			return SCellStyle.BorderType.THIN;
+			return SBorder.BorderType.THIN;
 		case MEDIUM:
-			return SCellStyle.BorderType.MEDIUM;
+			return SBorder.BorderType.MEDIUM;
 		case DASHED:
-			return SCellStyle.BorderType.DASHED;
+			return SBorder.BorderType.DASHED;
 		case HAIR:
-			return SCellStyle.BorderType.HAIR;
+			return SBorder.BorderType.HAIR;
 		case THICK:
-			return SCellStyle.BorderType.THICK;
+			return SBorder.BorderType.THICK;
 		case DOUBLE:
-			return SCellStyle.BorderType.DOUBLE;
+			return SBorder.BorderType.DOUBLE;
 		case DOTTED:
-			return SCellStyle.BorderType.DOTTED;
+			return SBorder.BorderType.DOTTED;
 		case MEDIUM_DASHED:
-			return SCellStyle.BorderType.MEDIUM_DASHED;
+			return SBorder.BorderType.MEDIUM_DASHED;
 		case DASH_DOT:
-			return SCellStyle.BorderType.DASH_DOT;
+			return SBorder.BorderType.DASH_DOT;
 		case MEDIUM_DASH_DOT:
-			return SCellStyle.BorderType.MEDIUM_DASH_DOT;
+			return SBorder.BorderType.MEDIUM_DASH_DOT;
 		case DASH_DOT_DOT:
-			return SCellStyle.BorderType.DASH_DOT_DOT;
+			return SBorder.BorderType.DASH_DOT_DOT;
 		case MEDIUM_DASH_DOT_DOT:
-			return SCellStyle.BorderType.MEDIUM_DASH_DOT_DOT;
+			return SBorder.BorderType.MEDIUM_DASH_DOT_DOT;
 		case SLANTED_DASH_DOT:
-			return SCellStyle.BorderType.SLANTED_DASH_DOT;
+			return SBorder.BorderType.SLANTED_DASH_DOT;
 		}
 		throw new IllegalArgumentException("unknow style border type "+borderType);
 	}
 	
-	public static BorderType toStyleBorderType(SCellStyle.BorderType borderType) {
+	public static BorderType toStyleBorderType(SBorder.BorderType borderType) {
 		switch(borderType){
 		case NONE:
 			return BorderType.NONE;
@@ -434,36 +434,36 @@ public class EnumUtil {
 		throw new IllegalArgumentException("unknow style border type "+borderType);
 	}
 	
-	public static SCellStyle.BorderType toRangeBorderType(BorderType lineStyle) {
+	public static SBorder.BorderType toRangeBorderType(BorderType lineStyle) {
 		switch(lineStyle){
 		case NONE:
-			return SCellStyle.BorderType.NONE;
+			return SBorder.BorderType.NONE;
 		case THIN:
-			return SCellStyle.BorderType.THIN;
+			return SBorder.BorderType.THIN;
 		case MEDIUM:
-			return SCellStyle.BorderType.MEDIUM;
+			return SBorder.BorderType.MEDIUM;
 		case DASHED:
-			return SCellStyle.BorderType.DASHED;
+			return SBorder.BorderType.DASHED;
 		case HAIR:
-			return SCellStyle.BorderType.HAIR;
+			return SBorder.BorderType.HAIR;
 		case THICK:
-			return SCellStyle.BorderType.THICK;
+			return SBorder.BorderType.THICK;
 		case DOUBLE:
-			return SCellStyle.BorderType.DOUBLE;
+			return SBorder.BorderType.DOUBLE;
 		case DOTTED:
-			return SCellStyle.BorderType.DOTTED;
+			return SBorder.BorderType.DOTTED;
 		case MEDIUM_DASHED:
-			return SCellStyle.BorderType.MEDIUM_DASHED;
+			return SBorder.BorderType.MEDIUM_DASHED;
 		case DASH_DOT:
-			return SCellStyle.BorderType.DASH_DOT;
+			return SBorder.BorderType.DASH_DOT;
 		case MEDIUM_DASH_DOT:
-			return SCellStyle.BorderType.MEDIUM_DASH_DOT;
+			return SBorder.BorderType.MEDIUM_DASH_DOT;
 		case DASH_DOT_DOT:
-			return SCellStyle.BorderType.DASH_DOT_DOT;
+			return SBorder.BorderType.DASH_DOT_DOT;
 		case MEDIUM_DASH_DOT_DOT:
-			return SCellStyle.BorderType.MEDIUM_DASH_DOT_DOT;
+			return SBorder.BorderType.MEDIUM_DASH_DOT_DOT;
 		case SLANTED_DASH_DOT:
-			return SCellStyle.BorderType.SLANTED_DASH_DOT;
+			return SBorder.BorderType.SLANTED_DASH_DOT;
 		}
 		throw new IllegalArgumentException("unknow cell border line style "+lineStyle);
 	}

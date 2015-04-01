@@ -15,6 +15,8 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 }}IS_RIGHT
 */
 package org.zkoss.zss.model;
+import org.zkoss.zss.model.SFill.FillPattern;
+import org.zkoss.zss.model.SBorder.BorderType;
 
 /**
  * Represent style information e.g. alignment, border, format pattern, font, color, fill pattern, wrap text, and hidden status. It may associate with a book or cells.
@@ -23,33 +25,7 @@ package org.zkoss.zss.model;
  */
 public interface SCellStyle {
 
-	public static final String FORMAT_GENERAL = "General";
-	
-	/**
-	 * The fill pattern
-	 * @since 3.7.0
-	 */
-	public enum FillPattern {
-		NONE, //NO_FILL
-		SOLID, //SOLID_FOREGROUND
-		MEDIUM_GRAY, //FINE_DOTS
-		DARK_GRAY, //ALT_BARS
-		LIGHT_GRAY, //SPARSE_DOTS
-		DARK_HORIZONTAL, //THICK_HORZ_BANDS
-		DARK_VERTICAL, //THICK_VERT_BANDS
-		DARK_DOWN, //THICK_BACKWARD_DIAG
-		DARK_UP, //THICK_FORWARD_DIAG
-		DARK_GRID, //BIG_SPOTS
-		DARK_TRELLIS, //BRICKS
-		LIGHT_HORIZONTAL, //THIN_HORZ_BANDS
-		LIGHT_VERTICAL, //THIN_VERT_BANDS
-		LIGHT_DOWN, //THIN_BACKWARD_DIAG
-		LIGHT_UP, //THIN_FORWARD_DIAG
-		LIGHT_GRID, //SQUARES
-		LIGHT_TRELLIS, //DIAMONDS
-		GRAY125, //LESS_DOTS 
-		GRAY0625 //LEAST_DOTS
-	}
+	public static final String FORMAT_GENERAL = "General";	
 
 	/**
 	 * The horizontal alignment
@@ -66,15 +42,6 @@ public interface SCellStyle {
 	public enum VerticalAlignment {
 		TOP, CENTER, BOTTOM, JUSTIFY
 	}
-
-	/**
-	 * The border type
-	 * @since 3.5.0
-	 */
-	public enum BorderType {
-		NONE, THIN, MEDIUM, DASHED, HAIR, THICK, DOUBLE, DOTTED, MEDIUM_DASHED, DASH_DOT, MEDIUM_DASH_DOT, DASH_DOT_DOT, MEDIUM_DASH_DOT_DOT, SLANTED_DASH_DOT;
-	}
-	
 	
 	/**
 	 * @return fill foreground-color
@@ -131,6 +98,24 @@ public interface SCellStyle {
 	public BorderType getBorderBottom();
 
 	/**
+	 * @return vertical border
+	 * @since 3.8.0
+	 */
+	public BorderType getBorderVertical();
+
+	/**
+	 * @return horizontal border
+	 * @since 3.8.0
+	 */
+	public BorderType getBorderHorizontal();
+
+	/**
+	 * @return diagonal border
+	 * @since 3.8.0
+	 */
+	public BorderType getBorderDiagonal();
+
+	/**
 	 * @return top border color
 	 */
 	public SColor getBorderTopColor();
@@ -151,6 +136,24 @@ public interface SCellStyle {
 	 */
 	public SColor getBorderRightColor();
 	
+	/**
+	 * @return vertical border color
+	 * @since 3.8.0
+	 */
+	public SColor getBorderVerticalColor();
+
+	/**
+	 * @return horizontal border color
+	 * @since 3.8.0
+	 */
+	public SColor getBorderHorizontalColor();
+
+	/**
+	 * @return diagonal border color
+	 * @since 3.8.0
+	 */
+	public SColor getBorderDiagonalColor();
+
 	/**
 	 * @return data format
 	 */
@@ -201,6 +204,15 @@ public interface SCellStyle {
 	public void setBorderBottom(BorderType borderBottom);
 	public void setBorderBottom(BorderType borderBottom,SColor color);
 
+	public void setBorderVertical(BorderType borderVertical);
+	public void setBorderVertical(BorderType borderVertical,SColor color);
+
+	public void setBorderHorizontal(BorderType borderHorizontal);
+	public void setBorderHorizontal(BorderType borderHorizontal,SColor color);
+
+	public void setBorderDiagonal(BorderType borderDiagonal);
+	public void setBorderDiagonal(BorderType borderDiagonal,SColor color);
+
 	public void setBorderTopColor(SColor borderTopColor);
 
 	public void setBorderLeftColor(SColor borderLeftColor);
@@ -208,6 +220,12 @@ public interface SCellStyle {
 	public void setBorderBottomColor(SColor borderBottomColor);
 
 	public void setBorderRightColor(SColor borderRightColor);
+	
+	public void setBorderVerticalColor(SColor color);
+	
+	public void setBorderHorizontalColor(SColor color);
+	
+	public void setBorderDiagonalColor(SColor color);
 
 	public void setDataFormat(String dataFormat);
 	
@@ -233,5 +251,20 @@ public interface SCellStyle {
 	
 	public int getIndention();
 	public void setIndention(int indent);
+
+	//ZSS-977
+	/**
+	 * Returns the border
+	 * @return
+	 * @since 3.8.0
+	 */
+	public SBorder getBorder();
 	
+	//ZSS-977
+	/**
+	 * Returns the fill
+	 * @return
+	 * @since 3.8.0
+	 */
+	public SFill getFill();
 }

@@ -28,7 +28,8 @@ import org.zkoss.poi.xssf.usermodel.extensions.XSSFCellBorder;
 import org.zkoss.poi.xssf.usermodel.extensions.XSSFCellFill;
 import org.zkoss.zss.model.*;
 import org.zkoss.zss.model.SAutoFilter.NFilterColumn;
-import org.zkoss.zss.model.SCellStyle.FillPattern;
+import org.zkoss.zss.model.SFill.FillPattern;
+import org.zkoss.zss.model.STableColumn.STotalsRowFunction;
 import org.zkoss.zss.model.SDataValidation.ValidationType;
 import org.zkoss.zss.model.chart.*;
 import org.zkoss.zss.model.impl.AbstractDataValidationAdv;
@@ -633,10 +634,12 @@ public class ExcelXlsxExporter extends AbstractExcelExporter {
 				final XSSFTableColumn poiTbCol = poiTable.addTableColumn();
 				poiTbCol.setName(tbCol.getName());
 				poiTbCol.setId(++j);
-				if (tbCol.getTotalsRowLabel() != null)
-					poiTbCol.setTotalsRowLabel(tbCol.getTotalsRowLabel());
 				if (tbCol.getTotalsRowFunction() != null)
-					poiTbCol.setTotalsRowFunction(TotalsRowFunction.valueOf(tbCol.getTotalsRowFunction().name()));
+					poiTbCol.setTotalsRowFunction(TotalsRowFunction.values()[tbCol.getTotalsRowFunction().ordinal()]);
+				if (tbCol.getTotalsRowFunction() == STotalsRowFunction.none && tbCol.getTotalsRowLabel() != null)
+					poiTbCol.setTotalsRowLabel(tbCol.getTotalsRowLabel());
+				else if (tbCol.getTotalsRowFunction() == STotalsRowFunction.custom && tbCol.getTotalsRowFormula() != null)
+					poiTbCol.setTotalsRowFormula(tbCol.getTotalsRowFormula()); //ZSS-977
 			}
 			poiTable.setId(++k);
 			((XSSFWorkbook)workbook).addTableName(poiTable);

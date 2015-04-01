@@ -39,7 +39,7 @@ import org.zkoss.zss.model.SBookSeries;
 import org.zkoss.zss.model.SCell;
 import org.zkoss.zss.model.SCell.CellType;
 import org.zkoss.zss.model.SCellStyle;
-import org.zkoss.zss.model.SCellStyle.BorderType;
+import org.zkoss.zss.model.SBorder.BorderType;
 import org.zkoss.zss.model.SChart;
 import org.zkoss.zss.model.SChart.ChartGrouping;
 import org.zkoss.zss.model.SChart.ChartLegendPosition;

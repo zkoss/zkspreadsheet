@@ -32,7 +32,7 @@ import org.zkoss.poi.xssf.usermodel.XSSFWorkbook;
 import org.zkoss.util.logging.Log;
 import org.zkoss.zss.model.*;
 import org.zkoss.zss.model.SCell.CellType;
-import org.zkoss.zss.model.SCellStyle.FillPattern;
+import org.zkoss.zss.model.SFill.FillPattern;
 import org.zkoss.zss.model.SRichText.Segment;
 import org.zkoss.zss.model.impl.HeaderFooterImpl;
 import org.zkoss.zss.model.impl.TableNameImpl;

@@ -32,4 +32,10 @@ public interface STableStyleInfo {
 	
 	boolean isShowFirstColumn();
 	void setShowFirstColumn(boolean b);
+	
+	/**
+	 * Returns styles used in this TableStyleInfo.
+	 * @return
+	 */
+	public STableStyle getTableStyle();
 }

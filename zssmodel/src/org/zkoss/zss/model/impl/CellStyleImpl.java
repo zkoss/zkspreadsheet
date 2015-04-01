@@ -16,18 +16,13 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.model.impl;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.io.ByteArrayOutputStream;
-
-import javax.imageio.ImageIO;
-
-import org.apache.commons.codec.binary.Base64;
 import org.zkoss.lang.Objects;
+import org.zkoss.zss.model.SBorder;
 import org.zkoss.zss.model.SCellStyle;
 import org.zkoss.zss.model.SColor;
+import org.zkoss.zss.model.SFill;
+import org.zkoss.zss.model.SFill.FillPattern;
+import org.zkoss.zss.model.SBorder.BorderType;
 import org.zkoss.zss.model.SFont;
 import org.zkoss.zss.model.util.Validations;
 /**
@@ -39,37 +34,33 @@ public class CellStyleImpl extends AbstractCellStyleAdv {
 	private static final long serialVersionUID = 1L;
 
 	private AbstractFontAdv _font;
-	private SColor _fillColor = ColorImpl.BLACK; // ZSS-857: default fillColor is black
-	private SColor _backColor = ColorImpl.WHITE;
-	private FillPattern _fillPattern = FillPattern.NONE;
+	
+	//SFill
+	private AbstractFillAdv _fill;
+	
+	//SBorder
+	private AbstractBorderAdv _border;
+	
 	private Alignment _alignment = Alignment.GENERAL;
 	private VerticalAlignment _verticalAlignment = VerticalAlignment.BOTTOM;
 	private boolean _wrapText = false;
-
-	private BorderType _borderLeft = BorderType.NONE;
-	private BorderType _borderTop = BorderType.NONE;
-	private BorderType _borderRight = BorderType.NONE;
-	private BorderType _borderBottom = BorderType.NONE;
-	private SColor _borderTopColor = ColorImpl.BLACK;
-	private SColor _borderLeftColor = ColorImpl.BLACK;
-	private SColor _borderBottomColor = ColorImpl.BLACK;
-	private SColor _borderRightColor = ColorImpl.BLACK;
 
 	private String _dataFormat = FORMAT_GENERAL;
 	private boolean _directFormat = false;
 	private boolean _locked = true;// default locked as excel.
 	private boolean _hidden = false;
-	
-	private String _patternHtml; //ZSS-841. cached html string for fill pattern
-	
 	private int _rotation; //ZSS-918
-	
 	private int _indention; //ZSS-915
 
 	public CellStyleImpl(AbstractFontAdv font){
 		this._font = font;
 	}
 	
+	public CellStyleImpl(AbstractFontAdv font, AbstractFillAdv fill, AbstractBorderAdv border){
+		this._font = font;
+		this._fill = fill;
+		this._border = border;
+	}
 	public SFont getFont(){
 		return _font;
 	}
@@ -81,26 +72,30 @@ public class CellStyleImpl extends AbstractCellStyleAdv {
 
 	@Override
 	public SColor getFillColor() {
-		return _fillColor;
+		return _fill == null ? ColorImpl.BLACK : _fill.getFillColor();
 	}
 
 	@Override
 	public void setFillColor(SColor fillColor) {
 		Validations.argNotNull(fillColor);
-		this._fillColor = fillColor;
-		_patternHtml = null; //clear cache
+		if (_fill == null) {
+			_fill = new FillImpl();
+		}
+		_fill.setFillColor(fillColor);
 	}
 
 	@Override
 	public FillPattern getFillPattern() {
-		return _fillPattern;
+		return _fill == null ? FillPattern.NONE : _fill.getFillPattern();
 	}
 
 	@Override
 	public void setFillPattern(FillPattern fillPattern) {
 		Validations.argNotNull(fillPattern);
-		this._fillPattern = fillPattern;
-		_patternHtml = null; //clear cache
+		if (_fill == null) {
+			_fill = new FillImpl();
+		}
+		_fill.setFillPattern(fillPattern);
 	}
 
 	@Override
@@ -137,90 +132,114 @@ public class CellStyleImpl extends AbstractCellStyleAdv {
 
 	@Override
 	public BorderType getBorderLeft() {
-		return _borderLeft;
+		return _border == null ? BorderType.NONE : _border.getBorderLeft();
 	}
 
 	@Override
 	public void setBorderLeft(BorderType borderLeft) {
 		Validations.argNotNull(borderLeft);
-		this._borderLeft = borderLeft;
+		if (_border == null) {
+			_border = new BorderImpl();
+		}
+		_border.setBorderLeft(borderLeft);
 	}
 
 	@Override
 	public BorderType getBorderTop() {
-		return _borderTop;
+		return _border == null ? BorderType.NONE : _border.getBorderTop();
 	}
 
 	@Override
-	public void setBorderTop(BorderType borderTop) {
-		Validations.argNotNull(borderTop);
-		this._borderTop = borderTop;
+	public void setBorderTop(BorderType type) {
+		Validations.argNotNull(type);
+		if (_border == null) {
+			_border = new BorderImpl();
+		}
+		_border.setBorderTop(type);
 	}
 
 	@Override
 	public BorderType getBorderRight() {
-		return _borderRight;
+		return _border == null ? BorderType.NONE : _border.getBorderRight();
 	}
 
 	@Override
-	public void setBorderRight(BorderType borderRight) {
-		Validations.argNotNull(borderRight);
-		this._borderRight = borderRight;
+	public void setBorderRight(BorderType type) {
+		Validations.argNotNull(type);
+		if (_border == null) {
+			_border = new BorderImpl();
+		}
+		_border.setBorderRight(type);
 	}
 
 	@Override
 	public BorderType getBorderBottom() {
-		return _borderBottom;
+		return _border == null ? BorderType.NONE : _border.getBorderBottom();
 	}
 
 	@Override
-	public void setBorderBottom(BorderType borderBottom){
-		Validations.argNotNull(borderBottom);
-		this._borderBottom = borderBottom;
+	public void setBorderBottom(BorderType type){
+		Validations.argNotNull(type);
+		if (_border == null) {
+			_border = new BorderImpl();
+		}
+		_border.setBorderBottom(type);
 	}
 
 	@Override
 	public SColor getBorderTopColor() {
-		return _borderTopColor;
+		return _border == null ? ColorImpl.BLACK : _border.getBorderTopColor();
 	}
 
 	@Override
-	public void setBorderTopColor(SColor borderTopColor) {
-		Validations.argNotNull(borderTopColor);
-		this._borderTopColor = borderTopColor;
+	public void setBorderTopColor(SColor color) {
+		Validations.argNotNull(color);
+		if (_border == null) {
+			_border = new BorderImpl();
+		}
+		_border.setBorderTopColor(color);
 	}
 
 	@Override
 	public SColor getBorderLeftColor() {
-		return _borderLeftColor;
+		return _border == null ? ColorImpl.BLACK : _border.getBorderLeftColor();
 	}
 
 	@Override
-	public void setBorderLeftColor(SColor borderLeftColor) {
-		Validations.argNotNull(borderLeftColor);
-		this._borderLeftColor = borderLeftColor;
+	public void setBorderLeftColor(SColor color) {
+		Validations.argNotNull(color);
+		if (_border == null) {
+			_border = new BorderImpl();
+		}
+		_border.setBorderLeftColor(color);
 	}
 
 	@Override
 	public SColor getBorderBottomColor() {
-		return _borderBottomColor;
+		return _border == null ? ColorImpl.BLACK : _border.getBorderBottomColor();
 	}
 
 	@Override
-	public void setBorderBottomColor(SColor borderBottomColor) {
-		Validations.argNotNull(borderBottomColor);
-		this._borderBottomColor = borderBottomColor;
+	public void setBorderBottomColor(SColor color) {
+		Validations.argNotNull(color);
+		if (_border == null) {
+			_border = new BorderImpl();
+		}
+		_border.setBorderBottomColor(color);
 	}
 
 	@Override
 	public SColor getBorderRightColor() {
-		return _borderRightColor;
+		return _border == null ? ColorImpl.BLACK : _border.getBorderRightColor();
 	}
 
 	@Override
-	public void setBorderRightColor(SColor borderRightColor) {
-		Validations.argNotNull(borderRightColor);
-		this._borderRightColor = borderRightColor;
+	public void setBorderRightColor(SColor color) {
+		Validations.argNotNull(color);
+		if (_border == null) {
+			_border = new BorderImpl();
+		}
+		_border.setBorderRightColor(color);
 	}
 
 	@Override
@@ -302,20 +321,12 @@ public class CellStyleImpl extends AbstractCellStyleAdv {
 	@Override
 	String getStyleKey() {
 		StringBuilder sb = new StringBuilder();
-		sb.append(_font.getStyleKey())
-		.append(".").append(_fillPattern.ordinal())
-		.append(".").append(_fillColor.getHtmlColor())
+		sb.append(_font == null ? "" : _font.getStyleKey())
+		.append(".").append(_fill == null ? "" : _fill.getStyleKey())
+		.append(".").append(_border == null ? "" : _border.getStyleKey())
 		.append(".").append(_alignment.ordinal())
 		.append(".").append(_verticalAlignment.ordinal())
 		.append(".").append(_wrapText?"T":"F")
-		.append(".").append(_borderLeft.ordinal())
-		.append(".").append(_borderLeftColor.getHtmlColor())
-		.append(".").append(_borderRight.ordinal())
-		.append(".").append(_borderRightColor.getHtmlColor())
-		.append(".").append(_borderTop.ordinal())
-		.append(".").append(_borderTopColor.getHtmlColor())
-		.append(".").append(_borderBottom.ordinal())
-		.append(".").append(_borderBottomColor.getHtmlColor())
 		.append(".").append(_dataFormat)
 		.append(".").append(_locked?"T":"F")
 		.append(".").append(_hidden?"T":"F")
@@ -350,7 +361,7 @@ public class CellStyleImpl extends AbstractCellStyleAdv {
 	//ZSS-780
 	@Override
 	public SColor getBackColor() {
-		return _backColor;
+		return _fill == null ? ColorImpl.WHITE : _fill.getBackColor();
 	}
 
 	//ZSS-780
@@ -362,199 +373,26 @@ public class CellStyleImpl extends AbstractCellStyleAdv {
 	@Override
 	public void setBackColor(SColor backColor) {
 		Validations.argNotNull(backColor);
-		this._backColor = backColor;
-		_patternHtml = null; //clear cache
+		if (_fill == null) {
+			_fill = new FillImpl();
+		}
+		_fill.setBackColor(backColor);
 	}
 
 	//ZSS-841
 	@Override
 	public String getFillPatternHtml() {
-		final FillPattern pattern = getFillPattern();
-		if (pattern == FillPattern.NONE || pattern == FillPattern.SOLID) {
-			return "";
-		}
-		if (_patternHtml == null) {
-			_patternHtml = getFillPatternHtml(this);
-		}
-		return _patternHtml;
-	}
-
-	//ZSS-841
-	private static byte[][] _PATTERN_BYTES = {
-		null, //NO_FILL
-		
-		// 00000000
-		// 00000000
-		// 00000000
-		// 00000000
-		new byte[] {(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00}, //SOLID, //SOLID_FOREGROUND
-		
-		// 01010101
-		// 10101010
-		// 01010101
-		// 10101010
-		new byte[] {(byte) 0x55, (byte) 0xaa, (byte) 0x55, (byte) 0xaa}, //MEDIUM_GRAY, //FINE_DOTS
-		
-		// 11101110
-		// 10111011
-		// 11101110
-		// 10111011
-		new byte[] {(byte) 0xee, (byte) 0xbb, (byte) 0xee, (byte) 0xbb}, //DARK_GRAY, //ALT_BARS
-		
-		// 10001000
-		// 00100010
-		// 10001000
-		// 00100010
-		new byte[] {(byte) 0x88, (byte) 0x22, (byte) 0x88, (byte) 0x22}, //LIGHT_GRAY, //SPARSE_DOTS
-		
-		// 11111111
-		// 00000000
-		// 00000000
-		// 11111111
-		new byte[] {(byte) 0xff, (byte) 0x00, (byte) 0x00, (byte) 0xff}, //DARK_HORIZONTAL, //THICK_HORZ_BANDS
-		
-		// 00110011
-		// 00110011
-		// 00110011
-		// 00110011
-		new byte[] {(byte) 0x33, (byte) 0x33, (byte) 0x33, (byte) 0x33}, //DARK_VERTICAL, //THICK_VERT_BANDS
-		
-		// 10011001
-		// 11001100
-		// 01100110
-		// 00110011
-		new byte[] {(byte) 0x99, (byte) 0xcc, (byte) 0x66, (byte) 0x33}, //DARK_DOWN, //THICK_BACKWARD_DIAG
-		
-		// 10011001
-		// 00110011
-		// 01100110
-		// 11001100
-		new byte[] {(byte) 0x99, (byte) 0x33, (byte) 0x66, (byte) 0xcc}, //DARK_UP, //THICK_FORWARD_DIAG
-		
-		// 10011001
-		// 10011001
-		// 01100110
-		// 01100110
-		new byte[] {(byte) 0x99, (byte) 0x99, (byte) 0x66, (byte) 0x66}, //DARK_GRID, //BIG_SPOTS
-		
-		// 10011001
-		// 11111111
-		// 01100110
-		// 11111111
-		new byte[] {(byte) 0x99, (byte) 0xff, (byte) 0x66, (byte) 0xff}, //DARK_TRELLIS, //BRICKS
-		
-		// 00000000
-		// 00000000
-		// 00000000
-		// 11111111
-		new byte[] {(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xff}, //LIGHT_HORIZONTAL, //THIN_HORZ_BANDS
-		
-		// 00100010
-		// 00100010
-		// 00100010
-		// 00100010
-		new byte[] {(byte) 0x22, (byte) 0x22, (byte) 0x22, (byte) 0x22}, //LIGHT_VERTICAL, //THIN_VERT_BANDS
-		
-		// 00010001
-		// 10001000
-		// 01000100
-		// 00100010
-		new byte[] {(byte) 0x11, (byte) 0x88, (byte) 0x44, (byte) 0x22}, //LIGHT_DOWN, //THIN_BACKWARD_DIAG
-		
-		// 10001000
-		// 00010001
-		// 00100010
-		// 01000100
-		new byte[] {(byte) 0x88, (byte) 0x11, (byte) 0x22, (byte) 0x44}, //LIGHT_UP, //THIN_FORWARD_DIAG
-		
-		// 00100010
-		// 00100010
-		// 00100010
-		// 11111111 
-		new byte[] {(byte) 0x22, (byte) 0x22, (byte) 0x22, (byte) 0xff}, //LIGHT_GRID, //SQUARES
-		
-		// 01010101
-		// 10001000
-		// 01010101
-		// 00100010
-		new byte[] {(byte) 0x55, (byte) 0x88, (byte) 0x55, (byte) 0x22}, //LIGHT_TRELLIS, //DIAMONDS
-		
-		// 00000000
-		// 10001000
-		// 00000000
-		// 00100010
-		new byte[] {(byte) 0x00, (byte) 0x88, (byte) 0x00, (byte) 0x22}, //GRAY125, //LESS_DOTS 
-		
-		// 00000000
-		// 00100000
-		// 00000000
-		// 00000010
-		new byte[] {(byte) 0x00, (byte) 0x20, (byte) 0x00, (byte) 0x02}, //GRAY0625 //LEAST_DOTS
-	};
-	
-	//ZSS-841
-	public static String getFillPatternHtml(SCellStyle style) {
-		BufferedImage image = new BufferedImage(8, 4, BufferedImage.TYPE_INT_ARGB);
-		Graphics2D g2 = image.createGraphics();
-		// background color
-		byte[] rgb = style.getBackColor().getRGB();
-		g2.setColor(new Color(((int)rgb[0]) & 0xff , ((int)rgb[1]) & 0xff, ((int)rgb[2]) & 0xff));
-		g2.fillRect(0, 0, 8, 4);
-		// foreground color
-		rgb = style.getFillColor().getRGB();
-		g2.setColor(new Color(((int)rgb[0]) & 0xff , ((int)rgb[1]) & 0xff, ((int)rgb[2]) & 0xff));
-		byte[] patb = _PATTERN_BYTES[style.getFillPattern().ordinal()];
-		for (int y = 0; y < 4; ++y) {
-			byte b = patb[y];
-			if (b == 0) continue; // all zero case
-			if (b == 0xff) {
-				g2.drawLine(0, y, 7, y);
-				continue;
-			}
-			for (int x = 0; x < 8; ++x) {
-				if ((b & 0x80) != 0) {
-					g2.drawLine(x, y, x, y);
-				}
-				b <<= 1;
-			}
-		}
-		ByteArrayOutputStream os = new ByteArrayOutputStream();
-		try {
-			ImageIO.write(image, "png", os);
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				os.close();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		StringBuilder sb = new StringBuilder();
-		sb.append("background-image:url(data:image/png;base64,");
-		String base64 = Base64.encodeBase64String(os.toByteArray());
-		sb.append(base64).append(");");
-		return sb.toString();
+		return _fill == null ? "" : ((FillImpl)_fill).getFillPatternHtml();
 	}
 	
 	//--Object--//
 	public int hashCode() {
 		int hash = _font == null ? 0 : _font.hashCode();
-		hash = hash * 31 + (_fillColor == null ? 0 : _fillColor.hashCode());
-		hash = hash * 31 + (_backColor == null ? 0 : _backColor.hashCode());
-		hash = hash * 31 + (_fillPattern == null ? 0 : _fillPattern.hashCode());
+		hash = hash * 31 + (_fill == null ? 0 : _fill.hashCode());
 		hash = hash * 31 + (_alignment == null ? 0 : _alignment.hashCode());
 		hash = hash * 31 + (_verticalAlignment == null ? 0 : _verticalAlignment.hashCode());
 		hash = hash * 31 + (_wrapText ? 1 : 0);
-		hash = hash * 31 + _borderLeft.ordinal();
-		hash = hash * 31 + _borderTop.ordinal();
-		hash = hash * 31 + _borderRight.ordinal();
-		hash = hash * 31 + _borderBottom.ordinal();
-		hash = hash * 31 + (_borderTopColor == null ? 0 : _borderTopColor.hashCode());
-		hash = hash * 31 + (_borderLeftColor == null ? 0 : _borderLeftColor.hashCode());
-		hash = hash * 31 + (_borderBottomColor == null ? 0 : _borderBottomColor.hashCode());
-		hash = hash * 31 + (_borderRightColor == null ? 0 : _borderRightColor.hashCode());
+		hash = hash * 31 + (_border == null ? 0 : _border.hashCode());
 		hash = hash * 31 + (_dataFormat == null ? 0 : _dataFormat.hashCode());
 		hash = hash * 31 + (_directFormat ? 1 : 0);
 		hash = hash * 31 + (_locked ? 1 : 0);
@@ -570,20 +408,11 @@ public class CellStyleImpl extends AbstractCellStyleAdv {
 		if (!(other instanceof CellStyleImpl)) return false;
 		CellStyleImpl o = (CellStyleImpl) other;
 		return Objects.equals(this._font, o._font)
-				&& Objects.equals(this._fillColor, o._fillColor)
-				&& Objects.equals(this._backColor, o._backColor)
-				&& Objects.equals(this._fillPattern, o._fillPattern)
+				&& Objects.equals(this._fill, o._fill)
 				&& Objects.equals(this._alignment, o._alignment)
 				&& Objects.equals(this._verticalAlignment, o._verticalAlignment)
 				&& Objects.equals(this._wrapText, o._wrapText)
-				&& Objects.equals(this._borderLeft, o._borderLeft)
-				&& Objects.equals(this._borderTop, o._borderTop)
-				&& Objects.equals(this._borderRight, o._borderRight)
-				&& Objects.equals(this._borderBottom, o._borderBottom)
-				&& Objects.equals(this._borderTopColor, o._borderTopColor)
-				&& Objects.equals(this._borderLeftColor, o._borderLeftColor)
-				&& Objects.equals(this._borderBottomColor, o._borderBottomColor)
-				&& Objects.equals(this._borderRightColor, o._borderRightColor)
+				&& Objects.equals(this._border, o._border)
 				&& Objects.equals(this._dataFormat, o._dataFormat)
 				&& Objects.equals(this._directFormat, o._directFormat)
 				&& Objects.equals(this._locked, o._locked)
@@ -616,6 +445,146 @@ public class CellStyleImpl extends AbstractCellStyleAdv {
 	public void setIndention(int indention) {
 		_indention = indention;
 	}
+
+	//ZSS-977
+	@Override
+	public SBorder getBorder() {
+		return _border;
+	}
+
+	//ZSS-977
+	@Override
+	public SFill getFill() {
+		return _fill;
+	}
+
+	//ZSS-977
+	@Override
+	public void setBorderVertical(BorderType type) {
+		if (_border == null) {
+			_border = new BorderImpl();
+		}
+		_border.setBorderVertical(type);
+	}
+
+	//ZSS-977
+	@Override
+	public void setBorderVertical(BorderType type, SColor color) {
+		if (_border == null) {
+			_border = new BorderImpl();
+		}
+		_border.setBorderVertical(type);
+		_border.setBorderVerticalColor(color);
+	}
+
+	//ZSS-977
+	@Override
+	public void setBorderHorizontal(BorderType type) {
+		if (_border == null) {
+			_border = new BorderImpl();
+		}
+		_border.setBorderHorizontal(type);
+	}
+
+	//ZSS-977
+	@Override
+	public void setBorderHorizontal(BorderType type, SColor color) {
+		if (_border == null) {
+			_border = new BorderImpl();
+		}
+		_border.setBorderHorizontal(type);
+		_border.setBorderHorizontalColor(color);
+	}
+
+	//ZSS-977
+	@Override
+	public void setBorderDiagonal(BorderType type) {
+		if (_border == null) {
+			_border = new BorderImpl();
+		}
+		_border.setBorderDiagonal(type);
+	}
+
+	//ZSS-977
+	@Override
+	public void setBorderDiagonal(BorderType type, SColor color) {
+		if (_border == null) {
+			_border = new BorderImpl();
+		}
+		_border.setBorderDiagonal(type);
+		_border.setBorderDiagonalColor(color);
+	}
+
+	//ZSS-977
+	@Override
+	public void setBorderVerticalColor(SColor color) {
+		if (_border == null) {
+			_border = new BorderImpl();
+		}
+		_border.setBorderVerticalColor(color);
+	}
+
+	//ZSS-977
+	@Override
+	public void setBorderHorizontalColor(SColor color) {
+		if (_border == null) {
+			_border = new BorderImpl();
+		}
+		_border.setBorderHorizontalColor(color);
+	}
+
+	//ZSS-977
+	@Override
+	public void setBorderDiagonalColor(SColor color) {
+		if (_border == null) {
+			_border = new BorderImpl();
+		}
+		_border.setBorderDiagonalColor(color);
+	}
+
+	//ZSS-977
+	@Override
+	public BorderType getBorderVertical() {
+		return _border == null ? BorderType.NONE : _border.getBorderVertical();
+	}
+
+	//ZSS-977
+	@Override
+	public BorderType getBorderHorizontal() {
+		return _border == null ? BorderType.NONE : _border.getBorderHorizontal();
+	}
+
+	//ZSS-977
+	@Override
+	public BorderType getBorderDiagonal() {
+		return _border == null ? BorderType.NONE : _border.getBorderDiagonal();
+	}
+
+	//ZSS-977
+	@Override
+	public SColor getBorderVerticalColor() {
+		return _border == null ? ColorImpl.BLACK : _border.getBorderVerticalColor();
+	}
+
+	//ZSS-977
+	@Override
+	public SColor getBorderHorizontalColor() {
+		return _border == null ? ColorImpl.BLACK : _border.getBorderHorizontalColor();
+	}
+
+	//ZSS-977
+	@Override
+	public SColor getBorderDiagonalColor() {
+		return _border == null ? ColorImpl.BLACK : _border.getBorderDiagonalColor();
+	}
 	
+	//ZSS-977
+	protected void setBorder(SBorder border) {
+		_border = (AbstractBorderAdv)border;
+	}
 	
+	//ZSS-977
+	protected void setFill(SFill fill) {
+		_fill = (AbstractFillAdv) fill;
+	}
 }

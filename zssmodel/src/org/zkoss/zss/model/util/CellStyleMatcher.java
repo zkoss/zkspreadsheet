@@ -78,21 +78,21 @@ public class CellStyleMatcher {
 	public CellStyleMatcher(SCellStyle criteria){
 		setAlignment(criteria.getAlignment());
 		setVerticalAlignment(criteria.getVerticalAlignment());
-		SCellStyle.BorderType btype;
+		SBorder.BorderType btype;
 		setBorderBottom(btype=criteria.getBorderBottom());
-		if(btype!=SCellStyle.BorderType.NONE){//only compare color when the border is not none
+		if(btype!=SBorder.BorderType.NONE){//only compare color when the border is not none
 			setBorderBottomColor(criteria.getBorderBottomColor().getHtmlColor());
 		}
 		setBorderLeft(btype=criteria.getBorderLeft());
-		if(btype!=SCellStyle.BorderType.NONE){
+		if(btype!=SBorder.BorderType.NONE){
 			setBorderLeftColor(criteria.getBorderLeftColor().getHtmlColor());
 		}
 		setBorderRight(btype=criteria.getBorderRight());
-		if(btype!=SCellStyle.BorderType.NONE){
+		if(btype!=SBorder.BorderType.NONE){
 			setBorderRightColor(criteria.getBorderRightColor().getHtmlColor());
 		}
 		setBorderTop(btype=criteria.getBorderTop());
-		if(btype!=SCellStyle.BorderType.NONE){
+		if(btype!=SBorder.BorderType.NONE){
 			setBorderTopColor(criteria.getBorderTopColor().getHtmlColor());
 		}
 		
@@ -201,18 +201,18 @@ public class CellStyleMatcher {
 		_criteria.put(Property.Indention, indent);
 	}
 
-	public void setBorderRight(SCellStyle.BorderType border) {
+	public void setBorderRight(SBorder.BorderType border) {
 		_criteria.put(Property.BorderRight, border);
 	}
 
-	public void setBorderTop(SCellStyle.BorderType border) {
+	public void setBorderTop(SBorder.BorderType border) {
 		_criteria.put(Property.BorderTop,border );
 	}
 
-	public void setBorderBottom(SCellStyle.BorderType border) {
+	public void setBorderBottom(SBorder.BorderType border) {
 		_criteria.put(Property.BorderBottom, border);
 	}
-	public void setBorderLeft(SCellStyle.BorderType border) {
+	public void setBorderLeft(SBorder.BorderType border) {
 		_criteria.put(Property.BorderLeft, border);
 	}
 
@@ -232,7 +232,7 @@ public class CellStyleMatcher {
 		_criteria.put(Property.BorderBottomColor,htmlcolor );
 	}
 
-	public void setFillPattern(SCellStyle.FillPattern fp) {
+	public void setFillPattern(SFill.FillPattern fp) {
 		_criteria.put(Property.FillPattern,fp );
 	}
 

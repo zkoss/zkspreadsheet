@@ -21,10 +21,12 @@ package org.zkoss.zss.range.impl;
 import javax.xml.ws.handler.MessageContext.Scope;
 
 import org.zkoss.zss.model.SBook;
+import org.zkoss.zss.model.SBorder;
 import org.zkoss.zss.model.SCell;
 import org.zkoss.zss.model.SCellStyle;
 import org.zkoss.zss.model.CellStyleHolder;
-import org.zkoss.zss.model.SCellStyle.FillPattern;
+import org.zkoss.zss.model.SFill;
+import org.zkoss.zss.model.SFill.FillPattern;
 import org.zkoss.zss.model.SColor;
 import org.zkoss.zss.model.SFont;
 import org.zkoss.zss.model.SRichText;
@@ -122,7 +124,7 @@ public class StyleUtil {
 			return;
 		}
 		
-		SCellStyle.FillPattern pattern = orgStyle.getFillPattern();
+		SFill.FillPattern pattern = orgStyle.getFillPattern();
 		if (pattern == FillPattern.NONE && htmlColor != null) {
 			pattern = FillPattern.SOLID;
 		}
@@ -287,30 +289,30 @@ public class StyleUtil {
 	public static final short BORDER_EDGE_LEFT			= 0x08;
 	public static final short BORDER_EDGE_ALL			= BORDER_EDGE_BOTTOM|BORDER_EDGE_RIGHT|BORDER_EDGE_TOP|BORDER_EDGE_LEFT;
 	
-	public static void setBorder(SBook book,CellStyleHolder holder, String color, SCellStyle.BorderType linestyle){
+	public static void setBorder(SBook book,CellStyleHolder holder, String color, SBorder.BorderType linestyle){
 		setBorder(book,holder, color, linestyle, BORDER_EDGE_ALL);
 	}
 	
-	public static void setBorderTop(SBook book,CellStyleHolder holder,String color, SCellStyle.BorderType linestyle){
+	public static void setBorderTop(SBook book,CellStyleHolder holder,String color, SBorder.BorderType linestyle){
 		setBorder(book,holder, color, linestyle, BORDER_EDGE_TOP);
 	}
-	public static void setBorderLeft(SBook book,CellStyleHolder holder,String color, SCellStyle.BorderType linestyle){
+	public static void setBorderLeft(SBook book,CellStyleHolder holder,String color, SBorder.BorderType linestyle){
 		setBorder(book,holder, color, linestyle, BORDER_EDGE_LEFT);
 	}
-	public static void setBorderBottom(SBook book,CellStyleHolder holder,String color, SCellStyle.BorderType linestyle){
+	public static void setBorderBottom(SBook book,CellStyleHolder holder,String color, SBorder.BorderType linestyle){
 		setBorder(book,holder, color, linestyle, BORDER_EDGE_BOTTOM);
 	}
-	public static void setBorderRight(SBook book,CellStyleHolder holder,String color, SCellStyle.BorderType linestyle){
+	public static void setBorderRight(SBook book,CellStyleHolder holder,String color, SBorder.BorderType linestyle){
 		setBorder(book,holder, color, linestyle, BORDER_EDGE_RIGHT);
 	}
 	
-	public static void setBorder(SBook book,CellStyleHolder holder, String htmlColor, SCellStyle.BorderType lineStyle, short at){
+	public static void setBorder(SBook book,CellStyleHolder holder, String htmlColor, SBorder.BorderType lineStyle, short at){
 		
 		final SCellStyle orgStyle = holder.getCellStyle();
 		//ZSS-464 try to search existed matched style
 		SCellStyle style = null;
 		final SColor color = book.createColor(htmlColor);
-		boolean hasBorder = lineStyle != SCellStyle.BorderType.NONE;
+		boolean hasBorder = lineStyle != SBorder.BorderType.NONE;
 		if(htmlColor!=null){
 			CellStyleMatcher matcher = new CellStyleMatcher(orgStyle);
 			if((at & BORDER_EDGE_LEFT)!=0) {

@@ -280,7 +280,7 @@ public interface SRange {
  	 * @param lineStyle border line style, one of {@link SCellStyle.BorderStyle} 
 	 * @param color color in HTML format; i.e., #rrggbb.
 	 */
-	public void setBorders(ApplyBorderType borderIndex, SCellStyle.BorderType lineStyle, String color);
+	public void setBorders(ApplyBorderType borderIndex, SBorder.BorderType lineStyle, String color);
 
 	/**
 	 * Move this range to a new place as specified by row offset (negative value to move up; 

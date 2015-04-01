@@ -48,6 +48,17 @@ public class FontImpl extends AbstractFontAdv {
 	private TypeOffset _fontTypeOffset = TypeOffset.NONE;
 	private Underline _fontUnderline = Underline.NONE;
 
+	public FontImpl(){}
+	
+	//ZSS-977
+	public FontImpl(String fontColor, boolean bold, boolean fontItalic, boolean fontStrikeout, Underline fontUnderline) {
+		_fontColor = fontColor != null ? new ColorImpl(fontColor) : ColorImpl.BLACK;
+		_fontBoldweight = bold ? Boldweight.BOLD : Boldweight.NORMAL;
+		_fontItalic = fontItalic;
+		_fontStrikeout = fontStrikeout;
+		_fontUnderline = fontUnderline;
+	}
+	
 	@Override
 	public String getName() {
 		return _fontName;
@@ -162,5 +173,20 @@ public class FontImpl extends AbstractFontAdv {
 		.append(".").append(_fontTypeOffset.ordinal())
 		.append(".").append(_fontUnderline.ordinal());
 		return sb.toString();
+	}
+	
+	//ZSS-977
+	public int hashCode() {
+		return getStyleKey().hashCode();
+	}
+	
+	//ZSS-977
+	public boolean equals(Object other) {
+		if (other == this)
+			return true;
+		if (!(other instanceof FontImpl))
+			return false;
+		final FontImpl o = (FontImpl) other;
+		return this.getStyleKey().equals(o.getStyleKey());
 	}
 }

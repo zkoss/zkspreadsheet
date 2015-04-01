@@ -20,6 +20,7 @@ ZK Spreadsheet 3.8.0
   ZSS-966 Support change Table name
   ZSS-967 Support change Table's column name
   ZSS-698 Support validation dialog
+  ZSS-977 Support showing Table in TableStyleMedium9.
   
 *Bugs:
   ZSS-910 Problem referencing a cell with formula in same position of other file
@@ -57,6 +58,8 @@ ZK Spreadsheet 3.8.0
 ** Upgrade Notes
   * Default period for automatically saving in zssapp is 15 minutes.
   * Zssapp supports saving all in-memory saved book when server is shutting down.
+  * org.zkoss.zss.model.SCellStyle.BorderType has been moved to org.zkoss.zss.model.SBorder.BorderType; thus APIs that pass the  BorderType as a parameter will have to be modified accordingly.
+  * org.zkoss.zss.model.SCellStyle.FillPattern has been moved to org.zkoss.zss.model.SFill.FillPattern; thus APIs that pass the FillPattern as a parameter will have to be modified accordingly.
 
  ------------
 ZK Spreadsheet 3.7.0

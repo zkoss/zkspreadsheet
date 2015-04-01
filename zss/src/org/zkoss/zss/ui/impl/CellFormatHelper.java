@@ -21,26 +21,30 @@ package org.zkoss.zss.ui.impl;
 import org.zkoss.poi.ss.usermodel.ZssContext;
 import org.zkoss.zss.model.CellRegion;
 import org.zkoss.zss.model.SAutoFilter;
+import org.zkoss.zss.model.SBorder.BorderType;
 import org.zkoss.zss.model.SCell;
+import org.zkoss.zss.model.SCell.CellType;
 import org.zkoss.zss.model.SCellStyle;
+import org.zkoss.zss.model.SCellStyle.Alignment;
+import org.zkoss.zss.model.SCellStyle.VerticalAlignment;
 import org.zkoss.zss.model.SColor;
+import org.zkoss.zss.model.SFill;
+import org.zkoss.zss.model.SFill.FillPattern;
 import org.zkoss.zss.model.SFont;
+import org.zkoss.zss.model.SFont.Boldweight;
+import org.zkoss.zss.model.SFont.Underline;
 import org.zkoss.zss.model.SHyperlink;
 import org.zkoss.zss.model.SRichText;
 import org.zkoss.zss.model.SSheet;
-import org.zkoss.zss.model.SCell.CellType;
-import org.zkoss.zss.model.SCellStyle.Alignment;
-import org.zkoss.zss.model.SCellStyle.BorderType;
-import org.zkoss.zss.model.SCellStyle.FillPattern;
-import org.zkoss.zss.model.SCellStyle.VerticalAlignment;
-import org.zkoss.zss.model.SFont.Boldweight;
-import org.zkoss.zss.model.SFont.Underline;
+import org.zkoss.zss.model.STable;
+import org.zkoss.zss.model.impl.AbstractCellStyleAdv;
+import org.zkoss.zss.model.impl.AbstractSheetAdv;
+import org.zkoss.zss.model.impl.AbstractTableAdv;
 import org.zkoss.zss.model.sys.EngineFactory;
 import org.zkoss.zss.model.sys.format.FormatContext;
 import org.zkoss.zss.model.sys.format.FormatEngine;
 import org.zkoss.zss.model.sys.format.FormatResult;
 import org.zkoss.zss.model.util.RichTextHelper;
-import org.zkoss.zss.model.impl.AbstractCellStyleAdv;
 
 /**
  * @author Dennis.Chen
@@ -82,33 +86,35 @@ public class CellFormatHelper {
 		_formatEngine = EngineFactory.getInstance().createFormatEngine();
 	}
 
-	public String getHtmlStyle(StringBuffer doubleBorder) {
-
+	public String getHtmlStyle(StringBuffer doubleBorder, STable table, SCellStyle tbStyle) { //ZSS-977
 		StringBuffer sb = new StringBuffer();
 
-		//String bgColor = BookHelper.indexToRGB(_book, style.getFillForegroundColor());
 		//ZSS-34 cell background color does not show in excel
-		//20110819, henrichen: if fill pattern is NO_FILL, shall not show the cell background color
-		//ZSS-857
-		String backColor = _cellStyle.getFillPattern() != SCellStyle.FillPattern.NONE ? 
-				_cellStyle.getBackColor().getHtmlColor() : null;
+		//20110819, henrichen: if fill pattern is NONE, shall not show the cell background color
+		//ZSS-857, ZSS-977: consider Table background
+		SCellStyle fillStyle = getFillStyle(_cellStyle, tbStyle);
+		
+		String backColor = fillStyle != null ? 
+			fillStyle.getBackColor().getHtmlColor() : null;
 		if (backColor != null) {
 			sb.append("background-color:").append(backColor).append(";");
 		}
 
-		//ZSS-841
-		sb.append(((AbstractCellStyleAdv)_cellStyle).getFillPatternHtml());
+		//ZSS-841, ZSS-977:consider table style
+		if (fillStyle != null)
+			sb.append(((AbstractCellStyleAdv)fillStyle).getFillPatternHtml());
 		
 		//ZSS-568: double border is composed by this and adjacent cells
-		processTopBorder(sb, doubleBorder);
-		processLeftBorder(sb, doubleBorder);
-		processBottomBorder(sb, doubleBorder);
-		processRightBorder(sb, doubleBorder);
+		//ZSS-977: consider table style
+		processTopBorder(sb, doubleBorder, fillStyle, tbStyle);
+		processLeftBorder(sb, doubleBorder, fillStyle, tbStyle);
+		processBottomBorder(sb, doubleBorder, fillStyle, tbStyle);
+		processRightBorder(sb, doubleBorder, fillStyle, tbStyle);
 
 		return sb.toString();
 	}
 	
-	private boolean processBottomBorder(StringBuffer sb, StringBuffer db) {
+	private boolean processBottomBorder(StringBuffer sb, StringBuffer db, SCellStyle fillStyle, SCellStyle tbStyle) { //ZSS-977
 
 		boolean hitBottom = false;
 		MergedRect rect = null;
@@ -123,17 +129,17 @@ public class CellFormatHelper {
 			hitMerge = true;
 			bottom = rect.getLastRow();
 		}
-		SCellStyle nextStyle = _sheet.getCell(bottom,_col).getCellStyle();
+		SCellStyle nextStyle = getBottomStyle(_sheet.getCell(bottom,_col).getCellStyle(), tbStyle); //ZSS-977 
 		BorderType bb = null;
 		if (nextStyle != null){
 			bb = nextStyle.getBorderBottom();
 			String color = nextStyle.getBorderBottomColor().getHtmlColor();
 			hitBottom = appendBorderStyle(sb, "bottom", bb, color);
 		}
-		
 
 		// ZSS-259: should check and apply the top border from the bottom cell
 		// of merged range's bottom as processRightBorder() does.
+		SCellStyle nextFillStyle = null; //ZSS-977
 		if (!hitBottom) {
 			bottom = hitMerge ? rect.getLastRow() + 1 : _row + 1; 
 			/*if(next == null){ // don't search into merge ranges
@@ -144,49 +150,64 @@ public class CellFormatHelper {
 				}
 			}*/
 			//ZSS-919: merge more than 2 columns; must use top border of bottom cell
-			if (!hitMerge || rect.getColumn() == rect.getLastColumn()) {  
-				nextStyle = _sheet.getCell(bottom,_col).getCellStyle();
+			if (!hitMerge || rect.getColumn() == rect.getLastColumn()) {
+				nextFillStyle = nextStyle = _sheet.getCell(bottom,_col).getCellStyle();
+				//ZSS-977
+				SCellStyle nextTbStyle = null;
+				if (nextStyle.getBorderTop() == BorderType.NONE) { 
+					final STable table0 = ((AbstractSheetAdv)_sheet).getTableByRowCol(bottom, _col);
+					nextTbStyle = table0 == null ? null : 
+						((AbstractTableAdv)table0).getCellStyle(bottom, _col);
+					nextStyle = getTopStyle(nextStyle, nextTbStyle);
+				}
+
 				if (nextStyle != null){
 					bb = nextStyle.getBorderTop();// get top border of
 					String color = nextStyle.getBorderTopColor().getHtmlColor();
 					// set next row top border as cell's bottom border;
 					hitBottom = appendBorderStyle(sb, "bottom", bb, color);
 				}
+				
+				//ZSS-977
+				if (!hitBottom) {
+					nextFillStyle = getFillStyle(nextFillStyle, nextTbStyle);
+				}
 			}
 		}
 		
 		//border depends on next cell's fill color if solid pattern
-		if(!hitBottom && nextStyle !=null){
+		if(!hitBottom && nextFillStyle !=null){
 			//String bgColor = BookHelper.indexToRGB(_book, style.getFillForegroundColor());
 			//ZSS-34 cell background color does not show in excel
-			String bgColor = nextStyle.getFillPattern() == FillPattern.SOLID ? 
-					nextStyle.getBackColor().getHtmlColor() : null; //ZSS-857
+			String bgColor = nextFillStyle.getFillPattern() == FillPattern.SOLID ? 
+					nextFillStyle.getBackColor().getHtmlColor() : null; //ZSS-857
 			if (bgColor != null) {
 				hitBottom = appendBorderStyle(sb, "bottom", BorderType.THIN, bgColor);
-			} else if (nextStyle.getFillPattern() != FillPattern.NONE) { //ZSS-841
+			} else if (nextFillStyle.getFillPattern() != FillPattern.NONE) { //ZSS-841
 				sb.append("border-bottom:none;"); // no grid line either
 				hitBottom = true;
 			}
 		}
 		
 		//border depends on current cell's background color
-		if(!hitBottom && _cellStyle !=null){
+		if(!hitBottom && fillStyle !=null){
 			//String bgColor = BookHelper.indexToRGB(_book, style.getFillForegroundColor());
 			//ZSS-34 cell background color does not show in excel
-			String bgColor = _cellStyle.getFillPattern() == FillPattern.SOLID ? 
-					_cellStyle.getBackColor().getHtmlColor() : null;
+			String bgColor = fillStyle.getFillPattern() == FillPattern.SOLID ? 
+					fillStyle.getBackColor().getHtmlColor() : null;
 			if (bgColor != null) {
 				hitBottom = appendBorderStyle(sb, "bottom", BorderType.THIN, bgColor);
-			} else if (_cellStyle.getFillPattern() != FillPattern.NONE) { //ZSS-841
+			} else if (fillStyle.getFillPattern() != FillPattern.NONE) { //ZSS-841
 				sb.append("border-bottom:none;"); // no grid line either
 				hitBottom = true;
 			}
 		}
 		db.append(hitBottom && bb == BorderType.DOUBLE ? "b" : "_");
+		
 		return hitBottom;
 	}
 
-	private boolean processRightBorder(StringBuffer sb, StringBuffer db) {
+	private boolean processRightBorder(StringBuffer sb, StringBuffer db, SCellStyle fillStyle, SCellStyle tbStyle) { //ZSS-977
 		boolean hitRight = false;
 		MergedRect rect=null;
 		boolean hitMerge = false;
@@ -198,22 +219,31 @@ public class CellFormatHelper {
 			right = rect.getLastColumn();
 		}
 		BorderType bb = null;
-		SCellStyle nextStyle = _sheet.getCell(_row,right).getCellStyle();
+		SCellStyle nextStyle = getRightStyle(_sheet.getCell(_row, right).getCellStyle(), tbStyle); //ZSS-977
 		if (nextStyle != null){
 			bb = nextStyle.getBorderRight();
 			String color = nextStyle.getBorderRightColor().getHtmlColor();
 			hitRight = appendBorderStyle(sb, "right", bb, color);
 		}
-
 		
 		//if no border for target cell,then check is this cell in a merge range
 		//if(true) then try to get next cell after this merge range
 		//else get next cell of this cell
+		SCellStyle nextFillStyle = null; //ZSS-977
 		if(!hitRight){
 			right = hitMerge?rect.getLastColumn()+1:_col+1;
 			//ZSS-919: merge more than 2 rows; must use left border of right cell
 			if (!hitMerge || rect.getRow() == rect.getLastRow()) {  
-				nextStyle = _sheet.getCell(_row,right).getCellStyle();
+				nextFillStyle = nextStyle = _sheet.getCell(_row,right).getCellStyle();
+				//ZSS-977
+				SCellStyle nextTbStyle = null;
+				if (nextStyle.getBorderLeft() == BorderType.NONE) { 
+					final STable table0 = ((AbstractSheetAdv)_sheet).getTableByRowCol(_row, right);
+					nextTbStyle = table0 == null ? null : 
+						((AbstractTableAdv)table0).getCellStyle(_row, right);
+					nextStyle = getLeftStyle(nextStyle, nextTbStyle);
+				}
+				
 				if (nextStyle != null){
 					bb = nextStyle.getBorderLeft();//get left here
 					//String color = BookHelper.indexToRGB(_book, style.getLeftBorderColor());
@@ -221,37 +251,43 @@ public class CellFormatHelper {
 					String color = nextStyle.getBorderLeftColor().getHtmlColor();
 					hitRight = appendBorderStyle(sb, "right", bb, color);
 				}
+				
+				//ZSS-977
+				if (!hitRight) {
+					nextFillStyle = getFillStyle(nextFillStyle, nextTbStyle);
+				}
 			}
 		}
 
 		//border depends on next cell's background color (why? dennis, 20131118)
-		if(!hitRight && nextStyle !=null){
+		if(!hitRight && nextFillStyle !=null){
 			//String bgColor = BookHelper.indexToRGB(_book, style.getFillForegroundColor());
 			//ZSS-34 cell background color does not show in excel
-			String bgColor = nextStyle.getFillPattern() == FillPattern.SOLID ? 
-					nextStyle.getBackColor().getHtmlColor() : null;
+			String bgColor = nextFillStyle.getFillPattern() == FillPattern.SOLID ? 
+					nextFillStyle.getBackColor().getHtmlColor() : null;
 			if (bgColor != null) {
 				hitRight = appendBorderStyle(sb, "right", BorderType.THIN, bgColor);
-			} else if (nextStyle.getFillPattern() != FillPattern.NONE) { //ZSS-841
+			} else if (nextFillStyle.getFillPattern() != FillPattern.NONE) { //ZSS-841
 				sb.append("border-right:none;"); // no grid line either
 				hitRight = true;
 			}
 		}
 		//border depends on current cell's background color
-		if(!hitRight && _cellStyle !=null){
+		if(!hitRight && fillStyle !=null){
 			//String bgColor = BookHelper.indexToRGB(_book, style.getFillForegroundColor());
 			//ZSS-34 cell background color does not show in excel
-			String bgColor = _cellStyle.getFillPattern() == FillPattern.SOLID ? 
-					_cellStyle.getBackColor().getHtmlColor() : null;
+			String bgColor = fillStyle.getFillPattern() == FillPattern.SOLID ? 
+					fillStyle.getBackColor().getHtmlColor() : null;
 			if (bgColor != null) {
 				hitRight = appendBorderStyle(sb, "right", BorderType.THIN, bgColor);
-			} else if (_cellStyle.getFillPattern() != FillPattern.NONE) { //ZSS-841
+			} else if (fillStyle.getFillPattern() != FillPattern.NONE) { //ZSS-841
 				sb.append("border-right:none;"); // no grid line either
 				hitRight = true;
 			}
 		}
 
 		db.append(hitRight && bb == BorderType.DOUBLE ? "r" : "_");
+		
 		return hitRight;
 	}
 
@@ -462,11 +498,19 @@ public class CellFormatHelper {
 		return sb.toString();
 	}
 
+	//ZSS-977
+	@Deprecated
 	public boolean hasRightBorder() {
+		return hasRightBorder(null, null);
+	}
+	//ZSS-977
+	//@since 3.8.0
+	public boolean hasRightBorder(STable table, SCellStyle tbStyle) {
 		if(hasRightBorder_set){
 			return hasRightBorder;
 		}else{
-			hasRightBorder = processRightBorder(new StringBuffer(), new StringBuffer());
+			SCellStyle fillStyle = getFillStyle(_cellStyle, tbStyle); //ZSS-977
+			hasRightBorder = processRightBorder(new StringBuffer(), new StringBuffer(), fillStyle, tbStyle);
 			hasRightBorder_set = true;
 		}
 		return hasRightBorder;
@@ -573,7 +617,7 @@ public class CellFormatHelper {
 	}
 
 	//ZSS-568
-	private boolean processTopBorder(StringBuffer sb, StringBuffer db) {
+	private boolean processTopBorder(StringBuffer sb, StringBuffer db, SCellStyle fillStyle, SCellStyle tbStyle) { //ZSS-977
 
 		boolean hitTop = false;
 		MergedRect rect = null;
@@ -588,7 +632,7 @@ public class CellFormatHelper {
 			hitMerge = true;
 			top = rect.getRow();
 		}
-		SCellStyle nextStyle = _sheet.getCell(top,_col).getCellStyle();
+		SCellStyle nextStyle = getTopStyle(_sheet.getCell(top,_col).getCellStyle(), tbStyle); //ZSS-977
 		
 		if (nextStyle != null){
 			BorderType bb = nextStyle.getBorderTop();
@@ -620,6 +664,14 @@ public class CellFormatHelper {
 			top = hitMerge ? rect.getRow() - 1 : _row - 1;
 			if (top >= 0) {
 				nextStyle = _sheet.getCell(top,_col).getCellStyle();
+				//ZSS-977
+				if (nextStyle.getBorderBottom() == BorderType.NONE) { 
+					final STable table0 = ((AbstractSheetAdv)_sheet).getTableByRowCol(top, _col);
+					final SCellStyle tbStyle0 = 
+							table0 == null ? null : ((AbstractTableAdv)table0).getCellStyle(top, _col);
+					nextStyle = getBottomStyle(nextStyle, tbStyle0);
+				}
+				
 				if (nextStyle != null){
 					BorderType bb = nextStyle.getBorderBottom();// get bottom border of
 					if (bb == BorderType.DOUBLE) {
@@ -635,7 +687,7 @@ public class CellFormatHelper {
 		return hitTop;
 	}
 
-	private boolean processLeftBorder(StringBuffer sb, StringBuffer db) {
+	private boolean processLeftBorder(StringBuffer sb, StringBuffer db, SCellStyle fillStyle, SCellStyle tbStyle) { //ZSS-977
 		boolean hitLeft = false;
 		MergedRect rect=null;
 		boolean hitMerge = false;
@@ -646,7 +698,7 @@ public class CellFormatHelper {
 			hitMerge = true;
 			left = rect.getColumn();
 		}
-		SCellStyle nextStyle = _sheet.getCell(_row,left).getCellStyle();
+		SCellStyle nextStyle = getLeftStyle(_sheet.getCell(_row,left).getCellStyle(), tbStyle); //ZSS-977
 		if (nextStyle != null){
 			BorderType bb = nextStyle.getBorderLeft();
 			if (bb == BorderType.DOUBLE) {
@@ -671,13 +723,20 @@ public class CellFormatHelper {
 		}
 
 		
-		//if no border for target cell,then check is this cell in a merge range
+		//if no border for target cell,then check if this cell is in a merge range
 		//if(true) then try to get next cell after this merge range
 		//else get next cell of this cell
 		if(!hitLeft){
 			left = hitMerge?rect.getColumn()-1:_col-1;
 			if (left >= 0) {
 				nextStyle = _sheet.getCell(_row,left).getCellStyle();
+				//ZSS-977
+				if (nextStyle.getBorderRight() == BorderType.NONE) { 
+					final STable table0 = ((AbstractSheetAdv)_sheet).getTableByRowCol(_row, left);
+					final SCellStyle tbStyle0 = 
+							table0 == null ? null : ((AbstractTableAdv)table0).getCellStyle(_row, left);
+					nextStyle = getRightStyle(nextStyle, tbStyle0);
+				}
 				if (nextStyle != null){
 					BorderType bb = nextStyle.getBorderRight();//get right here
 					//String color = BookHelper.indexToRGB(_book, style.getLeftBorderColor());
@@ -728,13 +787,19 @@ public class CellFormatHelper {
 	//ZSS-945
 	//@since 3.8.0
 	//@Internal
-	public String getFontHtmlStyle(FormatResult ft) {
+	public String getFontHtmlStyle(FormatResult ft, SCellStyle tbCellStyle) { //ZSS-977
 		if (!_cell.isNull()) {
 			
 			final StringBuffer sb = new StringBuffer();
-			final SFont font = _cellStyle.getFont();
+			SFont font = _cellStyle.getFont();
 			
-			//sb.append(BookHelper.getFontCSSStyle(_book, font));
+			//ZSS-977
+			if (tbCellStyle != null && _sheet.getBook().getDefaultFont().equals(font)) {
+				final SFont font0 = tbCellStyle.getFont();
+				if (font0 != null) {
+					font = font0;
+				}
+			}
 			sb.append(getFontCSSStyle(_cell, font));
 
 			//condition color
@@ -802,11 +867,12 @@ public class CellFormatHelper {
 		return text;
 	}
 	
-	public String getRealHtmlStyle(FormatResult ft) {
+	//@since 3.8.0
+	public String getRealHtmlStyle(FormatResult ft, SCellStyle tbCellStyle) { //ZSS-977
 		if (!_cell.isNull()) {
 			
 			final StringBuffer sb = new StringBuffer();
-			sb.append(getFontHtmlStyle(ft));
+			sb.append(getFontHtmlStyle(ft, tbCellStyle)); //ZSS-977
 			sb.append(getIndentCSSStyle(_cell));			
 			return sb.toString();
 		}
@@ -848,5 +914,33 @@ public class CellFormatHelper {
 		sb.append(r0 == b && l <= c0 && c0 <= r ? "b" : "_");
 		sb.append(c0 == r && t <= r0 && r0 <= b ? "r" : "_");
 		return sb.toString();
+	}
+	
+	//ZSS-977
+	//@since 3.8.0
+	private SCellStyle getFillStyle(SCellStyle cellStyle, SCellStyle tbStyle) {
+		return cellStyle.getFillPattern() != SFill.FillPattern.NONE ?
+			cellStyle : tbStyle;
+	}
+	
+	//ZSS-977
+	//@since 3.8.0
+	private SCellStyle getLeftStyle(SCellStyle cellStyle, SCellStyle tbStyle) {
+		return tbStyle == null || cellStyle.getBorderLeft() != BorderType.NONE ? cellStyle : tbStyle; 
+	}
+	//ZSS-977
+	//@since 3.8.0
+	private SCellStyle getTopStyle(SCellStyle cellStyle, SCellStyle tbStyle) {
+		return tbStyle == null || cellStyle.getBorderTop() != BorderType.NONE ? cellStyle : tbStyle;
+	}
+	//ZSS-977
+	//@since 3.8.0
+	private SCellStyle getRightStyle(SCellStyle cellStyle, SCellStyle tbStyle) {
+		return tbStyle == null || cellStyle.getBorderRight() != BorderType.NONE ? cellStyle : tbStyle;
+	}
+	//ZSS-977
+	//@since 3.8.0
+	private SCellStyle getBottomStyle(SCellStyle cellStyle, SCellStyle tbStyle) {
+		return tbStyle == null || cellStyle.getBorderBottom() != BorderType.NONE ? cellStyle : tbStyle;
 	}
 }

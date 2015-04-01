@@ -26,6 +26,7 @@ import org.zkoss.zss.model.SCell;
 import org.zkoss.zss.model.CellStyleHolder;
 import org.zkoss.zss.model.SCellStyle;
 import org.zkoss.zss.model.SColumn;
+import org.zkoss.zss.model.SFill;
 import org.zkoss.zss.model.SRow;
 import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.range.SRange;
@@ -122,7 +123,7 @@ public class WholeStyleUtil {
 			}});
 	}
 	
-	public static void setFillOptions(final SRange wholeRange, final String backColor, final String fillColor, final SCellStyle.FillPattern pattern) {
+	public static void setFillOptions(final SRange wholeRange, final String backColor, final String fillColor, final SFill.FillPattern pattern) {
 		setWholeStyle(wholeRange,new StyleApplyer(){
 			@Override
 			public void applyStyle(CellStyleHolder holder) {

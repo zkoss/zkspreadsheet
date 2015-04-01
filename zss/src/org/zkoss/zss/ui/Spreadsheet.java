@@ -120,7 +120,10 @@ import org.zkoss.zss.model.SRichText;
 import org.zkoss.zss.model.SRow;
 import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.model.SSheet.SheetVisible;
+import org.zkoss.zss.model.STable;
 import org.zkoss.zss.model.impl.AbstractBookSeriesAdv;
+import org.zkoss.zss.model.impl.AbstractSheetAdv;
+import org.zkoss.zss.model.impl.AbstractTableAdv;
 import org.zkoss.zss.model.impl.sys.DependencyTableImpl;
 import org.zkoss.zss.model.sys.format.FormatResult;
 import org.zkoss.zss.model.sys.formula.EvaluationContributorContainer;
@@ -3388,7 +3391,11 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			
 			//style attr
 			if (updateStyle) {
-				String style = cfh.getHtmlStyle(doubleBorder);
+				//ZSS-977
+				STable table = ((AbstractSheetAdv)sheet).getTableByRowCol(row, col);
+				SCellStyle tbCellStyle = table != null ? ((AbstractTableAdv)table).getCellStyle(row, col) : null;
+				String style = cfh.getHtmlStyle(doubleBorder, table, tbCellStyle);
+				
 				if (!Strings.isEmpty(style)) {
 					int idx = styleAggregation.add(style);
 					attrs.put("s", idx);
@@ -3399,12 +3406,12 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 					attrs.put("is", idx);
 				}
 				// ZSS-915
-				String fontStyle = cfh.getRealHtmlStyle(ft); //ZSS-945
+				String fontStyle = cfh.getRealHtmlStyle(ft, tbCellStyle); //ZSS-945, ZSS-977
 				if (!Strings.isEmpty(fontStyle)) {
 					int idx = styleAggregation.add(fontStyle);
 					attrs.put("os", idx);
 				}
-				if (cfh.hasRightBorder()) {
+				if (cfh.hasRightBorder(table, tbCellStyle)) { //ZSS-977
 					attrs.put("rb", 1); 
 				}
 				

@@ -13,10 +13,14 @@
 package org.zkoss.zss.model.impl;
 
 import org.zkoss.zss.model.SBook;
+import org.zkoss.zss.model.SBorder;
 import org.zkoss.zss.model.SCellStyle;
 import org.zkoss.zss.model.SColor;
+import org.zkoss.zss.model.SFill;
 import org.zkoss.zss.model.SFont;
 import org.zkoss.zss.model.SNamedStyle;
+import org.zkoss.zss.model.SBorder.BorderType;
+import org.zkoss.zss.model.SFill.FillPattern;
 
 /**
  * @author henri
@@ -297,5 +301,107 @@ public class NamedStyleImpl implements SNamedStyle {
 	@Override
 	public void setIndention(int indent) {
 		throw new UnsupportedOperationException();
+	}
+
+	//ZSS-977
+	@Override
+	public BorderType getBorderVertical() {
+		return book.getDefaultCellStyle(index).getBorderVertical();
+	}
+
+	//ZSS-977
+	@Override
+	public BorderType getBorderHorizontal() {
+		return book.getDefaultCellStyle(index).getBorderHorizontal();
+	}
+
+	//ZSS-977
+	@Override
+	public BorderType getBorderDiagonal() {
+		return book.getDefaultCellStyle(index).getBorderDiagonal();
+	}
+
+	//ZSS-977
+	@Override
+	public SColor getBorderVerticalColor() {
+		return book.getDefaultCellStyle(index).getBorderVerticalColor();
+	}
+
+	//ZSS-977
+	@Override
+	public SColor getBorderHorizontalColor() {
+		return book.getDefaultCellStyle(index).getBorderHorizontalColor();
+	}
+
+	//ZSS-977
+	@Override
+	public SColor getBorderDiagonalColor() {
+		return book.getDefaultCellStyle(index).getBorderDiagonalColor();
+	}
+
+	//ZSS-977
+	@Override
+	public void setBorderVertical(BorderType borderVertical) {
+		throw new UnsupportedOperationException();
+	}
+
+	//ZSS-977
+	@Override
+	public void setBorderVertical(BorderType borderVertical, SColor color) {
+		throw new UnsupportedOperationException();
+	}
+
+	//ZSS-977
+	@Override
+	public void setBorderHorizontal(BorderType borderHorizontal) {
+		throw new UnsupportedOperationException();
+	}
+
+	//ZSS-977
+	@Override
+	public void setBorderHorizontal(BorderType borderHorizontal, SColor color) {
+		throw new UnsupportedOperationException();
+	}
+
+	//ZSS-977
+	@Override
+	public void setBorderDiagonal(BorderType borderDiagonal) {
+		throw new UnsupportedOperationException();
+	}
+
+	//ZSS-977
+	@Override
+	public void setBorderDiagonal(BorderType borderDiagonal, SColor color) {
+		throw new UnsupportedOperationException();
+	}
+
+	//ZSS-977
+	@Override
+	public void setBorderVerticalColor(SColor color) {
+		throw new UnsupportedOperationException();
+	}
+
+	//ZSS-977
+	@Override
+	public void setBorderHorizontalColor(SColor color) {
+		throw new UnsupportedOperationException();
+	}
+
+	//ZSS-977
+	@Override
+	public void setBorderDiagonalColor(SColor color) {
+		throw new UnsupportedOperationException();
+	}
+
+	//ZSS-977
+	@Override
+	public SBorder getBorder() {
+		return book.getDefaultCellStyle(index).getBorder();
+	}
+
+	//ZSS-977
+	@Override
+	public SFill getFill() {
+		return book.getDefaultCellStyle(index).getFill();
 	}
 }

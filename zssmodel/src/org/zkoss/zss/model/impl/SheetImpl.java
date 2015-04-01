@@ -1972,6 +1972,7 @@ public class SheetImpl extends AbstractSheetAdv {
 		if (row.isHidden()) return true;
 		
 		SColumnArray colArray = getColumnArray(colIdx);
-		return colArray.isHidden();
+		//null means the column is in default width and status
+		return colArray == null ? false : colArray.isHidden();
 	}
 }

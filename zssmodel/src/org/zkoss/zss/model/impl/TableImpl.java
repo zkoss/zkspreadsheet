@@ -12,49 +12,37 @@
 
 package org.zkoss.zss.model.impl;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
-import org.zkoss.poi.ss.formula.ptg.Ptg;
 import org.zkoss.poi.ss.formula.ptg.TablePtg;
 import org.zkoss.zss.model.CellRegion;
 import org.zkoss.zss.model.SAutoFilter;
 import org.zkoss.zss.model.SBook;
-import org.zkoss.zss.model.SCell;
+import org.zkoss.zss.model.SBorder;
+import org.zkoss.zss.model.SBorder.BorderType;
+import org.zkoss.zss.model.SBorderLine;
 import org.zkoss.zss.model.SCellStyle;
-import org.zkoss.zss.model.SNamedStyle;
+import org.zkoss.zss.model.SFill;
+import org.zkoss.zss.model.SFont;
 import org.zkoss.zss.model.SSheet;
-import org.zkoss.zss.model.STable;
 import org.zkoss.zss.model.STableColumn;
+import org.zkoss.zss.model.STableStyle;
+import org.zkoss.zss.model.STableStyleElem;
 import org.zkoss.zss.model.STableStyleInfo;
 import org.zkoss.zss.model.SheetRegion;
-import org.zkoss.zss.model.SCell.CellType;
-import org.zkoss.zss.model.sys.EngineFactory;
-import org.zkoss.zss.model.sys.dependency.DependencyTable;
-import org.zkoss.zss.model.sys.dependency.Ref;
-import org.zkoss.zss.model.sys.formula.FormulaEngine;
-import org.zkoss.zss.model.sys.formula.FormulaExpression;
-import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 
 /**
  * @author henri
  * @since 3.8.0
  */
-public class TableImpl implements STable,LinkedModelObject,Serializable{
+public class TableImpl extends AbstractTableAdv implements LinkedModelObject {
+	private static final long serialVersionUID = 1L;
+	
 	AbstractBookAdv _book;
 	SAutoFilter _filter; // if _headerRowCount == 0; then _filter ==  null
 	List<STableColumn> _columns;
 	STableStyleInfo _tableStyleInfo;
-	
-//	SNamedStyle _totalsRowCellStyle;
-//	SNamedStyle _dataCellStyle;
-//	SNamedStyle _headerRowCellStyle;
-//	
-//	SCellStyle _totalsRowStyle; //Dxf
-//	SCellStyle _dataStyle; //Dxf
-//	SCellStyle _headerRowStyle; //Dxf
 	
 	int _totalsRowCount;
 	int _headerRowCount;
@@ -66,9 +54,6 @@ public class TableImpl implements STable,LinkedModelObject,Serializable{
 			SheetRegion region, 
 			int headerRowCount, int totalsRowCount,
 			STableStyleInfo info) {
-//			SNamedStyle headerRowCellStyle, SCellStyle headerRowStyle,
-//			SNamedStyle dataCellStyle, SCellStyle dataStyle,
-//			SNamedStyle totalsRowCellStyle, SCellStyle totalsRowStyle) {
 		_book = book;
 		_name = name;
 		_displayName = displayName;
@@ -77,12 +62,6 @@ public class TableImpl implements STable,LinkedModelObject,Serializable{
 		_totalsRowCount = totalsRowCount;
 		_tableStyleInfo = info;
 		_columns  = new ArrayList<STableColumn>();
-//		_headerRowCellStyle = headerRowCellStyle;
-//		_totalsRowCellStyle = totalsRowCellStyle;
-//		_dataCellStyle = dataCellStyle;
-//		_headerRowStyle = headerRowStyle;
-//		_totalsRowStyle = totalsRowStyle;
-//		_dataStyle = dataStyle;
 	}
 
 	//ZSS-967
@@ -335,5 +314,212 @@ public class TableImpl implements STable,LinkedModelObject,Serializable{
 		CellRegion rgn = _region.getRegion();
 		final int idx = colIdx - rgn.getColumn();
 		return idx < 0 || idx >= _columns.size() ? null : _columns.get(idx);
+	}
+
+	//ZSS-977
+	private List<SCellStyle> getCellStylesInRange(int row, int col) {
+		final List<SCellStyle> cellStyles = new ArrayList<SCellStyle>();
+		final CellRegion all = _region.getRegion();
+		final STableStyle tbStyle = _tableStyleInfo.getTableStyle();
+		if (getTotalsRowCount() > 0 && row == all.getLastRow()) {
+			if (_tableStyleInfo.isShowLastColumn() && col == all.getLastColumn()) {
+				//Last Total Cell
+				final STableStyleElem result = tbStyle.getLastTotalCellStyle();
+				if (result != null) cellStyles.add(result);
+			} 
+			if (_tableStyleInfo.isShowFirstColumn() && col == all.getColumn()) { 
+				//First Total Cell
+				final STableStyleElem result = tbStyle.getFirstTotalCellStyle();
+				if (result != null) cellStyles.add(result);
+			}
+		} 
+		if (getHeaderRowCount() > 0 && row == all.getRow()) {
+			if (_tableStyleInfo.isShowLastColumn() && col == all.getLastColumn()) {
+				//Last Header Cell
+				final STableStyleElem result = _tableStyleInfo.getTableStyle().getLastHeaderCellStyle();
+				if (result != null) cellStyles.add(result);
+			}
+			if (_tableStyleInfo.isShowFirstColumn() && col == all.getColumn()) {
+				//First Header Cell
+				final STableStyleElem result = tbStyle.getFirstHeaderCellStyle();
+				if (result != null) cellStyles.add(result);
+			}
+		}
+		if (getTotalsRowCount() > 0 && row == all.getLastRow()) {
+			//Total Row
+			final STableStyleElem result = tbStyle.getTotalRowStyle();
+			if (result != null) cellStyles.add(result);
+		}
+		if (getHeaderRowCount() > 0 && row == all.getRow()) {
+			//Header Row
+			final STableStyleElem result = _tableStyleInfo.getTableStyle().getHeaderRowStyle();
+			if (result != null) cellStyles.add(result);
+		}
+		if (_tableStyleInfo.isShowFirstColumn() && col == all.getColumn()) {
+			//First Column
+			final STableStyleElem result = _tableStyleInfo.getTableStyle().getFirstColumnStyle();
+			if (result != null) cellStyles.add(result);
+		} 
+		if (_tableStyleInfo.isShowLastColumn() && col == all.getLastColumn()) {  
+			//Last Column
+			final STableStyleElem result = _tableStyleInfo.getTableStyle().getLastColumnStyle();
+			if (result != null) cellStyles.add(result);
+		} 
+		//Row Stripe
+		if (_tableStyleInfo.isShowRowStripes()) {
+			final int topDataRow = all.getRow() + getHeaderRowCount();
+			final STableStyle nmTableStyle = _tableStyleInfo.getTableStyle();
+			final int rowStripe1Size = nmTableStyle.getRowStrip1Size();
+			final int rowStripe2Size = nmTableStyle.getRowStrip2Size();
+			int rowStripeSize = (row - topDataRow) % (rowStripe1Size + rowStripe2Size);
+			final STableStyleElem result = 
+					rowStripeSize < rowStripe1Size ?  // rowStripe1
+						nmTableStyle.getRowStripe1Style():
+						nmTableStyle.getRowStripe2Style();
+			if (result != null) cellStyles.add(result);
+		} 
+		//Column Stripe
+		if (_tableStyleInfo.isShowColumnStripes()) {
+			final STableStyle nmTableStyle = _tableStyleInfo.getTableStyle();
+			final int colStripe1Size = nmTableStyle.getColStrip1Size();
+			final int colStripe2Size = nmTableStyle.getColStrip2Size();
+			int colStripeSize = (col - all.getColumn()) % (colStripe1Size + colStripe2Size);
+			final STableStyleElem result = 
+					colStripeSize < colStripe1Size ? // colStripe1
+						nmTableStyle.getColStripe1Style():
+						nmTableStyle.getColStripe2Style();
+			if (result != null) cellStyles.add(result);
+		} 
+		//Whole Table
+		final STableStyleElem result = _tableStyleInfo.getTableStyle().getWholeTableStyle();
+		if (result != null) cellStyles.add(result);
+		return cellStyles;
+	}
+	
+	//ZSS-977
+	public SFont getFont(int row, int col) {
+		List<SCellStyle> styles = getCellStylesInRange(row, col);
+		for (SCellStyle style : styles) {
+			final SFont font = style.getFont();
+			if (font != null) return font;
+		}
+		return null;
+	}
+	
+	//ZSS-977
+	private SBorderLine getBottomLine(SBorder border, int row, int col) {
+		final SBorderLine line = border.getBottomLine();
+		if (line != null) return line;
+		else { //try horizontal border
+			final CellRegion region = _region.getRegion();
+			if (row < region.getLastRow()) { // inside
+				return border.getHorizontalLine();
+			}
+		}
+		return null;
+	}
+
+	//ZSS-977
+	private SBorderLine getTopLine(SBorder border, int row, int col) {
+		final SBorderLine line = border.getTopLine();
+		if (line != null) return line;
+		else { //try horizontal border
+			final CellRegion region = _region.getRegion();
+			if (row > region.getRow()) { // inside
+				return border.getHorizontalLine();
+			}
+		}
+		return null;
+	}
+
+	//ZSS-977
+	private SBorderLine getLeftLine(SBorder border, int row, int col) {
+		final SBorderLine line = border.getLeftLine();
+		if (line != null) return line;
+		else { //try horizontal border
+			final CellRegion region = _region.getRegion();
+			if (col > region.getColumn()) { // inside
+				return border.getVerticalLine();
+			}
+		}
+		return null;
+	}
+
+	//ZSS-977
+	private SBorderLine getRightLine(SBorder border, int row, int col) {
+		final SBorderLine line = border.getRightLine();
+		if (line != null) return line;
+		else { //try horizontal border
+			final CellRegion region = _region.getRegion();
+			if (col < region.getLastColumn()) { // inside
+				return border.getVerticalLine();
+			}
+		}
+		return null;
+	}
+
+	//ZSS-977
+	private SBorderLine getDiagonalLine(SBorder border, int row, int col) {
+		return border.getDiagonalLine();
+	}
+	
+	//ZSS-977
+	public SCellStyle getCellStyle(int row, int col) {
+		SFill fill = null;
+		SFont font = null;
+		SBorder border = null;
+		SBorderLine bottom = null;
+		SBorderLine top = null;
+		SBorderLine left = null;
+		SBorderLine right = null;
+		SBorderLine diagonal = null;
+		List<SCellStyle> styles = getCellStylesInRange(row, col);
+		for (SCellStyle style : styles) {
+			if (fill == null) {
+				SFill fill0 = style.getFill();
+				if (fill0 != null) fill = fill0;
+			}
+			if (font == null) {
+				SFont font0 = style.getFont();
+				if (font0 != null) font = font0;
+			}
+			if (border == null) {
+				SBorder border0 = style.getBorder();
+				if (border0 != null) {
+					if (bottom == null) {
+						SBorderLine bottom0 = getBottomLine(border0, row, col);
+						if (bottom0 != null) bottom = bottom0;
+					}
+					if (top == null) {
+						SBorderLine top0 = getTopLine(border0, row, col);
+						if (top0 != null) top = top0;
+					}
+					if (left == null) {
+						SBorderLine left0 = getLeftLine(border0, row, col);
+						if (left0 != null) left = left0;
+					}
+					if (right == null) {
+						SBorderLine right0 = getRightLine(border0, row, col);
+						if (right0 != null) right = right0;
+					}
+//					if (diagonal == null) {
+//						SBorderLine diagonal0 = getDiagonalLine(border0, row, col);
+//						if (diagonal0 != null) diagonal = diagonal0;
+//					}
+					if (bottom != null && top != null && left != null && right != null /*&& diagonal != null*/) {
+						border = new BorderImpl(left, top, right, bottom, diagonal, null, null);
+					}
+				}
+			}
+			if (fill != null && font != null && border != null) break;
+		}
+		if (border == null) {
+			if (bottom != null || top != null || left != null || right != null || diagonal != null) {
+				border = new BorderImpl(left, top, right, bottom, diagonal, null, null);
+			}
+		}
+
+		return font == null && fill == null && border == null ? 
+				null : new CellStyleImpl((AbstractFontAdv)font, (AbstractFillAdv)fill, (AbstractBorderAdv)border);
 	}
 }

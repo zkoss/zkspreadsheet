@@ -20,27 +20,24 @@ package org.zkoss.zss.model;
 public interface STableColumn {
 	String getName();
 	void setName(String name);
-	SCellStyle getDataCellStyle(); // dataCellStyle - by name
-	void setDataCellStyle(SCellStyle style);
-	SCellStyle getDataStyle(); // dataDxfId
-	void setDataStyle(SCellStyle style);
-	SCellStyle getTotalsRowStyle(); // totalsRowDxfId
-	void setTotalsRowStyle(SCellStyle style);
 	String getTotalsRowLabel();
 	void setTotalsRowLabel(String label);
 	STotalsRowFunction getTotalsRowFunction();
 	void setTotalsRowFunction(STotalsRowFunction func);
+	String getTotalsRowFormula();
+	void setTotalsRowFormula(String formula);
 	
-	public static enum STotalsRowFunction {
-		AVERAGE,
-		COUNT,
-		COUNT_NUMS,
-		CUSTOM,
-		MAX,
-		MIN,
-		NONE,
-		STD_DEV,
-		SUM,
-		VAR;
+	//the order is important which consist with Excel's model order
+	public static enum STotalsRowFunction { 
+		none,
+		sum,
+		min,
+		max,
+		average,
+		count,
+		countNums,
+		stdDev,
+		var,
+		custom,
 	}
 }

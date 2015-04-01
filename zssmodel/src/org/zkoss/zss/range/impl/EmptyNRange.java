@@ -6,7 +6,7 @@ import java.util.concurrent.locks.ReadWriteLock;
 
 import org.zkoss.zss.model.*;
 import org.zkoss.zss.model.SAutoFilter.FilterOp;
-import org.zkoss.zss.model.SCellStyle.BorderType;
+import org.zkoss.zss.model.SBorder.BorderType;
 import org.zkoss.zss.model.SChart.ChartGrouping;
 import org.zkoss.zss.model.SChart.ChartLegendPosition;
 import org.zkoss.zss.model.SChart.ChartType;
