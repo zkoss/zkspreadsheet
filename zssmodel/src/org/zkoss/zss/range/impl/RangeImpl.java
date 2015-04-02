@@ -2020,12 +2020,12 @@ public class RangeImpl implements SRange {
 			final boolean showInput, final String inputTitle, final String inputMessage,
 			final boolean showError, final AlertStyle alertStyle, final String errorTitle,
 			final String errorMessage) {
-		// empty validation
-		if (validationType == ValidationType.ANY 
-				&& inputTitle == null && inputMessage == null 
-				&& errorTitle == null && errorMessage == null) {
-			return;
-		}
+
+		//ZSS-981
+		// will throws ValidationException if parameters is invalid.
+		new DataValidationVerificationHelper(validationType, ignoreBlank, operatorType, inCellDropDown, formula1, formula2, showInput,
+				inputTitle, inputMessage, showError, alertStyle, errorTitle, errorMessage).verify();
+
 		new ReadWriteTask() {			
 			@Override
 			public Object invoke() {
