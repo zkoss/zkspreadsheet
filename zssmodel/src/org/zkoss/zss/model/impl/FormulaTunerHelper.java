@@ -1089,7 +1089,7 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 	public void renameName(SBook book, String oldName, String newName,
 			Set<Ref> dependents, int sheetIndex) {
 		for (Ref dependent : dependents) {
-			if (dependent.getType() == RefType.CELL) {
+			if (dependent.getType() == RefType.CELL|| dependent.getType() == RefType.TABLE) {//ZSS-983
 				renameNameCellRef(book, oldName, newName, dependent, sheetIndex);
 			}
 		}
@@ -1128,7 +1128,7 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 		
 		for (Ref dependent : dependents) {
 			RefType type = dependent.getType();
-			if (type == RefType.CELL) {
+			if (type == RefType.CELL || dependent.getType() == RefType.TABLE) {//ZSS-983
 				cellDependents.add(dependent);
 			} else if (type == RefType.OBJECT) {
 				if(((ObjectRef)dependent).getObjectType()==ObjectType.CHART){
@@ -1175,7 +1175,7 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 		
 		for (Ref dependent : dependents) {
 			RefType type = dependent.getType(); 
-			if (type == RefType.CELL) {
+			if (type == RefType.CELL || dependent.getType() == RefType.TABLE) {//ZSS-983
 				clearFormulaCacheCellRef(dependent);
 			} else if (type == RefType.OBJECT) {
 				if(((ObjectRef)dependent).getObjectType()==ObjectType.CHART){
@@ -1402,7 +1402,7 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 	public void renameTableName(SBook book, String oldName, String newName,
 			Set<Ref> dependents) {
 		for (Ref dependent : dependents) {
-			if (dependent.getType() == RefType.CELL) {
+			if (dependent.getType() == RefType.CELL || dependent.getType() == RefType.TABLE) { //ZSS-983
 				renameTableNameCellRef(book, oldName, newName, dependent);
 			}
 		}
