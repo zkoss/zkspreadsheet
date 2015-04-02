@@ -49,23 +49,21 @@ public class Issue796Test {
 			rngA3.refresh(true, true, true); //TODO: ZSS-873: import cache
 			CellData a3 = rngA3.getCellData();
 			Assert.assertEquals("Formula Type", CellData.CellType.FORMULA, a3.getType());
-			//20141014, henrichen: We have not supported Table yet. So the result
-			//is #Name!
-//			Assert.assertEquals("Value a Number Type", CellData.CellType.NUMERIC, a3.getResultType());
-//			Assert.assertEquals("Value", 1d, a3.getDoubleValue(), 0d);
+			Assert.assertEquals("Value a Number Type", CellData.CellType.NUMERIC, a3.getResultType());
+			Assert.assertEquals("Value", 1d, a3.getDoubleValue(), 0d);
 			Assert.assertEquals("Formula", "SUBTOTAL(103,[Column1])", a3.getFormulaValue());
-			Assert.assertEquals("Value a number", CellData.CellType.NUMERIC, a3.getResultType());
-			Assert.assertEquals("Value", 1.0, a3.getValue());
+//			Assert.assertEquals("Value an Error Type on 20141014", CellData.CellType.ERROR, a3.getResultType());
+//			Assert.assertEquals("Value", ErrorValue.NAME, a3.getValue());
 
 			Range rngC2 = Ranges.range(sheet1, "C2");
 			rngC2.refresh(true, true, true); //TODO: ZSS-873: import cache
 			CellData c2 = rngC2.getCellData();
 			Assert.assertEquals("Formula Type", CellData.CellType.FORMULA, c2.getType());
-//			Assert.assertEquals("Value a Number Type", CellData.CellType.NUMERIC, c2.getResultType());
-//			Assert.assertEquals("Value", 99d, c2.getDoubleValue(), 0d);
+			Assert.assertEquals("Value a Number Type", CellData.CellType.NUMERIC, c2.getResultType());
+			Assert.assertEquals("Value", 99d, c2.getDoubleValue(), 0d);
 			Assert.assertEquals("Formula", "Table1[Column1]", c2.getFormulaValue());
-			Assert.assertEquals("Value a number", CellData.CellType.NUMERIC, c2.getResultType());
-			Assert.assertEquals("Value", 99.0, c2.getValue());
+//			Assert.assertEquals("Value an Error Type on 20141014", CellData.CellType.ERROR, c2.getResultType());
+//			Assert.assertEquals("Value", ErrorValue.NAME, c2.getValue());
 		} catch (Exception ex) {
 			Assert.assertTrue("Parse Table Formula:" + ex.getMessage(), false);
 		}
