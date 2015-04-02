@@ -1,0 +1,20 @@
+<vbox hflex="1" vflex="1">
+	<label multiline="true">
+		set data validation with following parameters via settings tab in data validation dialog and make sure it works
+		1. whole number, between, 1, 10
+		2. decimal, between, 1.1, =10.1
+		3. date, between, 1/30/2015, 1/31
+		4. time, between, 14:20,  3:20 PM
+		5. text length, between, 1, 1000
+		
+		set data validation with following parameters via settings tab in data validation dialog and make sure alert window shown
+		format {allow, data, min, max}, other values are default values
+		1. whole number, between, 1.1, 10.1
+		2. decimal, between, abc, ddd
+		3. date, between, 2015, 31
+	</label>
+	
+	<spreadsheet id="ss" src="/issue3/book/blank.xlsx" maxVisibleRows="30" maxVisibleColumns="40"
+		hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
+		showFormulabar="true" />
+</vbox>

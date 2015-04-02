@@ -86,14 +86,6 @@ public class DataValidationImpl extends AbstractDataValidationAdv {
 		this._id = id;
 	}
 	
-	public boolean isEmpty() {
-		return _validationType == ValidationType.ANY
-				&& _inputTitle == null
-				&& _inputMessage == null
-				&& _errorTitle == null
-				&& _errorMessage == null;
-	}
-	
 	public DataValidationImpl(AbstractSheetAdv sheet, AbstractDataValidationAdv copyFrom) {
 		this(sheet, (String) null);
 		if (copyFrom != null) {
