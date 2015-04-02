@@ -54,7 +54,7 @@ ZK Spreadsheet 3.8.0
   ZSS-959 Spreadsheet shouldn't crash when using BaseWidget
   ZSS-956 Zssapp exported Excel filename extension should be xlsx
   ZSS-980 Data validation in range should consider clear case
-  ZSS-983 Rename Table then Rename column, the column name in formula inside table does should change accordingly
+  ZSS-983 Rename Table then Rename column, the column name in formula inside table should change accordingly
   
 ** Upgrade Notes
   * Default period for automatically saving in zssapp is 15 minutes.
