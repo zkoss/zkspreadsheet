@@ -1,0 +1,5 @@
+<window apply="zss.issue.Composer970" height="800px">
+	<spreadsheet id="spreadsheet" src="/issue3/book/970.xlsx" width="100%" maxVisibleColumns="40"
+	maxVisibleRows="200" height="80%" showContextMenu="true" showSheetbar="true" showToolbar="true" 
+		showFormulabar="true" />
+</window>
