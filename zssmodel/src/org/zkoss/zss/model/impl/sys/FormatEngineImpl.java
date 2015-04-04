@@ -29,7 +29,9 @@ import org.zkoss.zss.model.SCell;
 import org.zkoss.zss.model.SCellStyle;
 import org.zkoss.zss.model.SCell.CellType;
 import org.zkoss.zss.model.SSheet;
+import org.zkoss.zss.model.STableStyle;
 import org.zkoss.zss.model.impl.ReadOnlyRichTextImpl;
+import org.zkoss.zss.model.impl.TableStyleNone;
 import org.zkoss.zss.model.sys.EngineFactory;
 import org.zkoss.zss.model.sys.format.FormatContext;
 import org.zkoss.zss.model.sys.format.FormatEngine;
@@ -267,5 +269,10 @@ public class FormatEngineImpl implements FormatEngine {
 	//ZSS-565
 	protected String getFormulaEditText(SCell cell) {
 		return cell.getFormulaValue();
+	}
+	
+	//ZSS-977
+	public STableStyle getTableStyle(String name) {
+		return TableStyleNone.instance;
 	}
 }

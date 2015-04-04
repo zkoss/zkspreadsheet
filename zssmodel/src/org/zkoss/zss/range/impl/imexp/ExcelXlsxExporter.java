@@ -603,9 +603,8 @@ public class ExcelXlsxExporter extends AbstractExcelExporter {
 
 	//ZSS-855
 	@Override
-	protected void exportTables(SSheet sheet, Sheet poiSheet0) {
+	protected int exportTables(SSheet sheet, Sheet poiSheet0, int tbId) {
 		final XSSFSheet poiSheet = (XSSFSheet) poiSheet0;
-		int k = 0;
 		for (STable table : sheet.getTables()) {
 			XSSFTable poiTable = poiSheet.createTable();
 			poiTable.setName(table.getName());
@@ -641,8 +640,10 @@ public class ExcelXlsxExporter extends AbstractExcelExporter {
 				else if (tbCol.getTotalsRowFunction() == STotalsRowFunction.custom && tbCol.getTotalsRowFormula() != null)
 					poiTbCol.setTotalsRowFormula(tbCol.getTotalsRowFormula()); //ZSS-977
 			}
-			poiTable.setId(++k);
+			poiTable.setId(++tbId);
 			((XSSFWorkbook)workbook).addTableName(poiTable);
 		}
+		
+		return tbId;
 	}
 }

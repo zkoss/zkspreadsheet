@@ -18,6 +18,8 @@ package org.zkoss.zss.model.sys.format;
 
 import org.zkoss.zss.model.SCell;
 import org.zkoss.zss.model.SCellStyle;
+import org.zkoss.zss.model.STableStyle;
+import org.zkoss.zss.model.impl.TableStyleNone;
 
 /**
  * 
@@ -50,5 +52,12 @@ public interface FormatEngine {
 	 * @see #getLocalizedFormat(String, FormatContext)
 	 */
 	FormatResult format(String format, Object value, FormatContext ctx, int cellWidth);
-	
+
+	/**
+	 * Returns TableStyle of the specified name
+	 * @param name
+	 * @return
+	 * @since 3.8.0
+	 */
+	STableStyle getTableStyle(String name);
 }

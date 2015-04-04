@@ -20,7 +20,7 @@ ZK Spreadsheet 3.8.0
   ZSS-966 Support change Table name
   ZSS-967 Support change Table's column name
   ZSS-698 Support validation dialog
-  ZSS-977 Support showing Table in TableStyleMedium9.
+  ZSS-977 Support showing Tables
   ZSS-981 Support parameters verification of data validation
   
 *Bugs:

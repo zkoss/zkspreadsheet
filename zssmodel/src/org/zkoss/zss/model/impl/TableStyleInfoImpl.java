@@ -15,8 +15,10 @@ package org.zkoss.zss.model.impl;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.zkoss.lang.Objects;
 import org.zkoss.zss.model.STableStyle;
 import org.zkoss.zss.model.STableStyleInfo;
+import org.zkoss.zss.model.sys.EngineFactory;
 
 /**
  * Table style
@@ -24,13 +26,6 @@ import org.zkoss.zss.model.STableStyleInfo;
  * @since 3.8.0
  */
 public class TableStyleInfoImpl implements STableStyleInfo {
-	//ZSS-977
-	private static final Map<String, STableStyle> _builtInTableStyles = new HashMap<String, STableStyle>(4);
-	static {
-		_builtInTableStyles.put("None", TableStyleNone.instance); 
-		_builtInTableStyles.put("TableStyleMedium9", TableStyleMedium9.instance); 
-	}
-
 	private String name;
 	private boolean showColumnStripes;
 	private boolean showRowStripes;
@@ -40,7 +35,7 @@ public class TableStyleInfoImpl implements STableStyleInfo {
 	
 	public TableStyleInfoImpl(String name, boolean showColumnStripes, boolean showRowStrips,
 			boolean showFirstColumn, boolean showLastColumn) {
-		setName(name); //ZSS-977
+		this.name = name; // "None" when name is null
 		this.showColumnStripes = showColumnStripes;
 		this.showRowStripes = showRowStrips;
 		this.showFirstColumn = showFirstColumn;
@@ -54,12 +49,10 @@ public class TableStyleInfoImpl implements STableStyleInfo {
 	
 	@Override
 	public void setName(String name) {
-		this.name = name;
-		//ZSS-977
-		tableStyle = _builtInTableStyles.get(name);
-		if (tableStyle == null) {
-			tableStyle = TableStyleMedium9.instance; //default to TableStyleNone.instance;
+		if (!Objects.equals(name, this.name)) {
+			tableStyle = null;
 		}
+		this.name = name;
 	}
 
 	@Override
@@ -105,6 +98,10 @@ public class TableStyleInfoImpl implements STableStyleInfo {
 	//ZSS-977
 	@Override
 	public STableStyle getTableStyle() {
+		if (tableStyle == null) {
+			tableStyle = EngineFactory.getInstance()
+							.createFormatEngine().getTableStyle(name);
+		}
 		return tableStyle;
 	}
 }

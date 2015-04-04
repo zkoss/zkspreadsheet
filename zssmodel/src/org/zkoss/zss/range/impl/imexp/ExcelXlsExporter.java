@@ -78,7 +78,8 @@ public class ExcelXlsExporter extends AbstractExcelExporter {
 	}
 
 	@Override
-	protected void exportTables(SSheet sheet, Sheet poiSheet) {
+	protected int exportTables(SSheet sheet, Sheet poiSheet, int tbId) {
 		// not support in XLS
+		return 0;
 	}
 }

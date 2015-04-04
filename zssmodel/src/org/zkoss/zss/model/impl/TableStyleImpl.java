@@ -39,7 +39,7 @@ public class TableStyleImpl implements STableStyle {
 	private final STableStyleElem firstTotalCell;
 	private final STableStyleElem lastTotalCell;
 
-	TableStyleImpl(
+	public TableStyleImpl(
 		String name,
 		STableStyleElem wholeTable,
 		STableStyleElem colStripe1,

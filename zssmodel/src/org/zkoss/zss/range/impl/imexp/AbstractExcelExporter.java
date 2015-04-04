@@ -77,7 +77,7 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 
 	abstract protected void exportPassword(SSheet sheet, Sheet poiSheet);
 	
-	abstract protected void exportTables(SSheet sheet, Sheet poiSheet); //ZSS-855
+	abstract protected int exportTables(SSheet sheet, Sheet poiSheet, int tbId); //ZSS-855
 	/**
 	 * Export the model according to reversed depended order: book, sheet,
 	 * defined name, cells, chart, pictures, validation. Because named ranges
@@ -115,10 +115,11 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 			}
 			exportNamedRange(book);
 			exportPictureData(book); //ZSS-735
+			int tbId = 0;
 			for (int n = 0; n < book.getSheets().size(); n++) {
 				SSheet sheet = book.getSheet(n);
 				Sheet poiSheet = workbook.getSheetAt(n);
-				exportTables(sheet, poiSheet); //ZSS-855
+				tbId = exportTables(sheet, poiSheet, tbId); //ZSS-855
 				exportRowColumn(sheet, poiSheet);
 				exportMergedRegions(sheet, poiSheet);
 				exportChart(sheet, poiSheet);
