@@ -1,0 +1,26 @@
+<vbox hflex="1" vflex="1">
+	<label multiline="true">
+		1. select whole row 1, and right click to open data validation dialog.
+		2. select allow as "whole number"
+		3. select data as "between"
+		4. set min as 1, max as 10.
+		5. click OK.
+		6. select whole column A, do same thing as step 1 ~ 5.
+		7. type 111 into A2, now it should show alert.
+	</label>
+	<button id="export" label="Export to Excel">
+		<attribute name="onClick"><![CDATA[
+		     java.io.ByteArrayOutputStream os = new java.io.ByteArrayOutputStream();
+		    	 try {
+		    		  Exporters.getExporter("excel").export(ss.getBook(), os);
+		    	 } catch (Exception ex) {
+		    		  os.close();
+		    	 }
+		    	 Filedownload.save(os.toByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "test.xlsx"); 
+		]]></attribute>
+	</button>
+	
+	<spreadsheet id="ss" src="/issue3/book/blank.xlsx" maxVisibleRows="30" maxVisibleColumns="40"
+		hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
+		showFormulabar="true" />
+</vbox>

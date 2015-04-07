@@ -2048,22 +2048,24 @@ public class RangeImpl implements SRange {
 			boolean showInput, String inputTitle, String inputMessage,
 			boolean showError, AlertStyle alertStyle, String errorTitle,
 			String errorMessage) {
-		SDataValidation dv = getSheet().getDataValidation(getRow(), getColumn());
+		
+		List<SDataValidation> dataValidations = getValidations();
+		List<SDataValidation> deletedDataValidations = null;
+		
+		//ZSS-979: remove validation for either new value or default value modification 
+		if(dataValidations.size() > 0) {
+			deletedDataValidations = getSheet().deleteDataValidationRegion( 
+					new CellRegion(getRow(), getColumn(), getLastRow(), getLastColumn()));
+		}
 		
 		//ZSS-980: remove existing validation or do nothing, if parameters are default value
 		if (isDefaultValidationParameter(validationType, ignoreBlank, operatorType, inCellDropDown, formula1, formula2,
-					showInput, inputTitle, inputMessage, showError, alertStyle, errorTitle, errorMessage)) {
-			List<SDataValidation> dvs = null;
-			if (dv != null) {
-				dvs = getSheet().deleteDataValidationRegion( 
-						  new CellRegion(getRow(), getColumn(), getLastRow(), getLastColumn()));
-			}
-			return dvs != null && dvs.size() > 0 ? dvs.get(0) : null;
+				showInput, inputTitle, inputMessage, showError, alertStyle, errorTitle, errorMessage)) {
+			return deletedDataValidations != null ? deletedDataValidations.get(0) : null;
 		}
-	
-		if (dv == null) {
-			dv = getSheet().addDataValidation(new CellRegion(getRow(), getColumn(), getLastRow(), getLastColumn()));
-		}
+
+		SDataValidation dv = getSheet().addDataValidation(new CellRegion(getRow(), getColumn(), getLastRow(), getLastColumn()));
+
 		dv.setValidationType(validationType);
 		dv.setIgnoreBlank(ignoreBlank);
 		dv.setOperatorType(operatorType);
@@ -2098,6 +2100,7 @@ public class RangeImpl implements SRange {
 			public Object invoke() {
 				final CellRegion region = new CellRegion(getRow(), getColumn(), getLastRow(), getLastColumn());
 				List<SDataValidation> results = new ArrayList<SDataValidation>();
+				final int cellCount = region.getCellCount();
 				for (SDataValidation dv: getSheet().getDataValidations()) {
 					for (CellRegion rgn : dv.getRegions()) {
 						if (rgn.overlaps(region)) {
@@ -2105,7 +2108,7 @@ public class RangeImpl implements SRange {
 							break;
 						}
 					}
-					if (results.size() > 1) break;
+					if (results.size() == cellCount) break;
 				}
 				return results;
 			}
