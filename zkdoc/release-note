@@ -22,6 +22,7 @@ ZK Spreadsheet 3.8.0
   ZSS-698 Support validation dialog
   ZSS-977 Support showing Tables
   ZSS-981 Support parameters verification of data validation
+  ZSS-985 Support delete a whole Table Row or a whole Table Column.
   
 *Bugs:
   ZSS-910 Problem referencing a cell with formula in same position of other file
@@ -57,6 +58,7 @@ ZK Spreadsheet 3.8.0
   ZSS-980 Data validation in range should consider clear case
   ZSS-983 Rename Table then Rename column, the column name in formula inside table should change accordingly
   ZSS-979 Data validation for a whole row or column should work
+  ZSS-984 Should not be able to delete the row if the row contains Table Header or across rows of two Tables
   
 ** Upgrade Notes
   * Default period for automatically saving in zssapp is 15 minutes.

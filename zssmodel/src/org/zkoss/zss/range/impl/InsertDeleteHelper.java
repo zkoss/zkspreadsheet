@@ -15,6 +15,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.jsoup.select.Evaluator.IsRoot;
 import org.zkoss.zss.model.CellRegion;
 import org.zkoss.zss.model.InvalidModelOpException;
 import org.zkoss.zss.model.SCell;
@@ -74,21 +75,22 @@ public class InsertDeleteHelper extends RangeHelperBase {
 			
 			// table is contained by the range
 			if (row1 <= tr1 && tr2 <= row2 && col1 <= tc1 && tc2 <= col2) {
-				if (range.isWholeRow() || range.isWholeColumn()) {
-					toDelete.add(tb.getName().toUpperCase()); //total delete
-					continue;
+				if (!isWholeColumn() && !isWholeRow() && !toDelete.isEmpty()) {
+					return "The operation can only be applied on one table.";
 				}
+				toDelete.add(tb.getName().toUpperCase()); //total delete
+				continue;
 			}
 			//overlapped more than 2 tables
 			if (!overlapped.isEmpty() || !toDelete.isEmpty()) { 
-				return "The operation can only be applied on one table";
+				return "The operation can only be applied on one table.";
 			}
 			// Range is a row or a column or the table contains the selected range
 			if (range.isWholeRow() || range.isWholeColumn() ||
 				(tr1 <= row1 && row2 <= tr2 && tc1 <= col1 && col2 <= tc2)) {
 				overlapped.add(tb.getName().toUpperCase());
 			} else {
-				return "The operation can only be applied on the whole row, whole column, outside of a table, or inside of a table.";
+				return "The operation can only be applied on one table.";
 			}
 		}
 		return null; // succeed
@@ -153,9 +155,10 @@ public class InsertDeleteHelper extends RangeHelperBase {
 		if (overlap != null) {
 			final CellRegion orgn = overlap.getAllRegion().getRegion();
 			final int r1 = orgn.getRow();
+			final int r2 = orgn.getLastRow();
 			if (shift == DeleteShift.UP) {
 				//cover the header row; must shift left
-				if ((overlap.getHeaderRowCount() > 0 && row1 <= r1 && r1 <= row2)
+				if ((overlap.getHeaderRowCount() > 0 && row1 <= r1 && r1 <= row2 && r2 > row2)
 						|| ((orgn.getRowCount() - overlap.getHeaderRowCount() - overlap.getTotalsRowCount()) == 1)) {
 					throw new InvalidModelOpException("Can only applies Delete > Shift Cells Left"); //ZSS-984
 				} else {
@@ -306,8 +309,7 @@ public class InsertDeleteHelper extends RangeHelperBase {
 			if (overlap != null) {
 				final CellRegion rgn = overlap.getAllRegion().getRegion();
 				//cover the header row, must deleteCols
-				if (shift == DeleteShift.LEFT || 
-					(overlap.getHeaderRowCount() > 0 && rgn.getRow() >= getRow() && rgn.getRow() <= getLastRow())) {
+				if (shift == DeleteShift.LEFT) { 
 					deleteCols(overlap);
 					shiftTables(book, toShift, row1, col1, row2, col2, DeleteShift.LEFT);
 					sheet.deleteCell(rgn.getRow(), getColumn(), rgn.getLastRow(), getLastColumn(), true /*DeleteShift.LEFT*/);
@@ -326,6 +328,7 @@ public class InsertDeleteHelper extends RangeHelperBase {
 					}
 				}
 			} else {
+				shiftTables(book, toShift, row1, col1, row2, col2, shift);
 				sheet.deleteCell(row1, col1, row2, col2, shift == DeleteShift.LEFT);
 			}
 		}
