@@ -270,4 +270,11 @@ public class CellRegion implements Serializable {
 		
 		return new CellRegion(row1, col1, row2, col2);
 	}
+
+	/**
+	 * @return returns the cell count which this region covers 
+	 */
+	public int getCellCount() {
+		return getRowCount() * getColumnCount();
+	}
 }
