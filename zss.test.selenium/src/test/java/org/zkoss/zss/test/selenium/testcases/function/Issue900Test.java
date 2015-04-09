@@ -65,22 +65,26 @@ public class Issue900Test extends ZSSTestCase {
 		assertEquals(jq("$textbox").val(), "A1\tB1\tC1\nA2\tB2\tC2\n");
 	}
 	
+	@Ignore("need test in zssapp")
 	@Test
 	public void testZSS970() throws Exception {
-		getTo("/issue3/970-stuck.zul");
+		getTo("/#test.xlsx");
 		SpreadsheetWidget ss = focusSheet();
 		SheetCtrlWidget ctrl = ss.getSheetCtrl();
 		EditorWidget editor = ctrl.getInlineEditor();
 		int col = 0;
 		int row = 0;
-		String text = "1"; 
-		for (col = 0 ; col < 30 ; col++){
-			for (row = 0 ; row <100 ; row++){
-				click(ctrl.getCell(row, col));
-				waitUntilProcessEnd(Setup.getTimeoutL0());
-				editor.toWebElement().sendKeys(text);
-				waitUntilProcessEnd(Setup.getTimeoutL0());
+		String text = "c"; 
+		for (int i = 0; i < 50; i++) {
+			for (col = 0 ; col < 30 ; col++){
+				for (row = 0 ; row <30 ; row++){
+					click(ctrl.getCell(row, col));
+					Thread.sleep(10);
+					editor.toWebElement().sendKeys((i%10) + "");
+					Thread.sleep(10);
+				}
 			}
+			text = String.valueOf((char)(text.charAt(0) + 1));
 		}
 	}
 }
