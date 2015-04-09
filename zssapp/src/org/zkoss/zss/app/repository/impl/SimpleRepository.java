@@ -80,8 +80,8 @@ public class SimpleRepository implements BookRepository{
 		try{
 			// 1. write to memory cache
 			boolean skip = false;
+			lock.writeLock().lock();
 			try {
-				lock.writeLock().lock();
 				if(!book.getInternalBook().isDirty() && !isForce) {
 					skip = true;
 					return info;

@@ -690,30 +690,37 @@ public class AppCtrl extends CtrlBase<Component>{
 			private static final long serialVersionUID = -281657389731703778L;
 
 			@Override
-			public void onEvent(ModelEvent event) {
+			public void onEvent(final ModelEvent event) {
 				if(event.getName().equals(ModelEvents.ON_MODEL_DIRTY_CHANGE)) {
-					if(Executions.getCurrent() == null) { // in case of background thread
-						try {
-							Executions.activate(AppCtrl.this.desktop);
-							try {
+					//ZSS-970: a new thread is used to skip blocking by Executions.activate()
+					new Thread(new Runnable() {
+						@Override
+						public void run() {
+							if(Executions.getCurrent() == null) { // in case of background thread
+								try {
+									Executions.activate(AppCtrl.this.desktop);
+									try {
+										if( event.getData(ModelEvents.PARAM_CUSTOM_DATA).equals(Boolean.FALSE))
+											pushAppEvent(AppEvts.ON_CHANGED_FILE_STATE, BookInfo.STATE_SAVED);
+										else
+											updateUnsavedAlert(true);
+									} finally {
+										Executions.deactivate(AppCtrl.this.desktop);
+									}
+								} catch (DesktopUnavailableException e) {
+									throw new RuntimeException("The server push thread interrupted", e);
+								} catch (InterruptedException e) {
+									throw new RuntimeException("The server push thread interrupted", e);
+								}
+							} else {
 								if( event.getData(ModelEvents.PARAM_CUSTOM_DATA).equals(Boolean.FALSE))
 									pushAppEvent(AppEvts.ON_CHANGED_FILE_STATE, BookInfo.STATE_SAVED);
 								else
 									updateUnsavedAlert(true);
-							} finally {
-								Executions.deactivate(AppCtrl.this.desktop);
 							}
-						} catch (DesktopUnavailableException e) {
-							throw new RuntimeException("The server push thread interrupted", e);
-						} catch (InterruptedException e) {
-							throw new RuntimeException("The server push thread interrupted", e);
 						}
-					} else {
-						if( event.getData(ModelEvents.PARAM_CUSTOM_DATA).equals(Boolean.FALSE))
-							pushAppEvent(AppEvts.ON_CHANGED_FILE_STATE, BookInfo.STATE_SAVED);
-						else
-							updateUnsavedAlert(true);
-					}
+					}).start();
+					
 				}
 			}
 		};
