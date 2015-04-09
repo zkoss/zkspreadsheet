@@ -1975,4 +1975,19 @@ public class SheetImpl extends AbstractSheetAdv {
 		//null means the column is in default width and status
 		return colArray == null ? false : colArray.isHidden();
 	}
+	
+	//ZSS-985
+	@Override
+	public void removeTables(Set<String> tableNames) {
+		if (tableNames.isEmpty()) return;
+		for (Iterator<STable> it = _tables.iterator(); it.hasNext();) {
+			final STable tb = it.next();
+			final String tbName = tb.getName().toUpperCase();
+			if (tableNames.contains(tbName)) {
+				it.remove();
+				tableNames.remove(tbName);
+				if (tableNames.isEmpty()) break;
+			}
+		}
+	}
 }

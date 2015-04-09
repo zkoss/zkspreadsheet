@@ -17,6 +17,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.model.impl;
 
 import java.io.Serializable;
+import java.util.Set;
 
 import org.zkoss.zss.model.SColumn;
 import org.zkoss.zss.model.SSheet;
@@ -53,4 +54,7 @@ public abstract class AbstractSheetAdv implements SSheet,LinkedModelObject,Seria
 	
 	//ZSS-962
 	abstract public boolean isHidden(int rowIdx, int colIdx);
+	
+	//ZSS-985
+	abstract public void removeTables(Set<String> tableNames);
 }

@@ -11,8 +11,11 @@ Copyright (C) 2014 Potix Corporation. All Rights Reserved.
  */
 package org.zkoss.zss.range.impl;
 
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
+import org.zkoss.zss.model.CellRegion;
 import org.zkoss.zss.model.InvalidModelOpException;
 import org.zkoss.zss.model.SCell;
 import org.zkoss.zss.model.SCellStyle;
@@ -20,11 +23,16 @@ import org.zkoss.zss.model.SChart;
 import org.zkoss.zss.model.SColumn;
 import org.zkoss.zss.model.SColumnArray;
 import org.zkoss.zss.model.SRow;
+import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.model.SSheetViewInfo;
+import org.zkoss.zss.model.STable;
 import org.zkoss.zss.model.ViewAnchor;
+import org.zkoss.zss.model.impl.AbstractBookAdv;
 import org.zkoss.zss.model.impl.AbstractCellAdv;
 import org.zkoss.zss.model.impl.AbstractColumnArrayAdv;
 import org.zkoss.zss.model.impl.AbstractRowAdv;
+import org.zkoss.zss.model.impl.AbstractSheetAdv;
+import org.zkoss.zss.model.impl.AbstractTableAdv;
 import org.zkoss.zss.range.SRange;
 import org.zkoss.zss.range.SRange.DeleteShift;
 import org.zkoss.zss.range.SRange.InsertCopyOrigin;
@@ -41,12 +49,202 @@ public class InsertDeleteHelper extends RangeHelperBase {
 		super(range);
 	}
 
+	// ZSS-984
+	//category tables to toDelete(which to be deleted in delete case or shifted in insert case), 
+	//  toShift(which need shift region), overlap(which need partial delete/insert)
+	//  return error message if not OK; return null if OK.
+	private String getCoveredTables(SRange range, 
+			Set<String> toDelete, Set<String> overlapped, 
+			DeleteShift dshift, InsertShift ishift) {
+		final int row1 = range.getRow();
+		final int row2 = range.getLastRow();
+		final int col1 = range.getColumn();
+		final int col2 = range.getLastColumn();
+		final SSheet sheet  = range.getSheet();
+		for (STable tb : sheet.getTables()) {
+			final CellRegion rgn = tb.getAllRegion().getRegion();
+			final int tr1 = rgn.getRow();
+			final int tc1 = rgn.getColumn();
+			final int tr2 = rgn.getLastRow();
+			final int tc2 = rgn.getLastColumn();
+			
+			if (tr2 < row1 || tr1 > row2 || tc2 < col1 || tc1 > col2) {
+				continue; //no overlapping
+			}
+			
+			// table is contained by the range
+			if (row1 <= tr1 && tr2 <= row2 && col1 <= tc1 && tc2 <= col2) {
+				if (range.isWholeRow() || range.isWholeColumn()) {
+					toDelete.add(tb.getName().toUpperCase()); //total delete
+					continue;
+				}
+			}
+			//overlapped more than 2 tables
+			if (!overlapped.isEmpty() || !toDelete.isEmpty()) { 
+				return "The operation can only be applied on one table";
+			}
+			// Range is a row or a column or the table contains the selected range
+			if (range.isWholeRow() || range.isWholeColumn() ||
+				(tr1 <= row1 && row2 <= tr2 && tc1 <= col1 && col2 <= tc2)) {
+				overlapped.add(tb.getName().toUpperCase());
+			} else {
+				return "The operation can only be applied on the whole row, whole column, outside of a table, or inside of a table.";
+			}
+		}
+		return null; // succeed
+	}
+
+	//ZSS-985
+	//collect Tables needs to be shifted
+	private void collectAndCheckShiftTables(int row1, int col1, int row2, int col2, Set<String> toShift, boolean horizontal) {
+		if (horizontal) {
+			for (STable tb : sheet.getTables()) {
+				final CellRegion rgn = tb.getAllRegion().getRegion();
+				final int tr1 = rgn.getRow();
+				final int tc1 = rgn.getColumn();
+				final int tr2 = rgn.getLastRow();
+				if (tc1 > col2) { // right side tables
+					if (tr2 >= row1 && tr1 <= row2) { // row overlapping
+						if (row1 > tr1 || tr2 > row2) { // row is not total cover
+							throw new InvalidModelOpException("The operation is attempting to shift cells in table '"+ tb.getAllRegion().getRegion().getReferenceString() + "' on your worksheet."); //ZSS-984
+						} else {
+							toShift.add(tb.getName().toUpperCase());
+						}
+					}
+				}
+			}
+		} else {
+			for (STable tb : sheet.getTables()) {
+				final CellRegion rgn = tb.getAllRegion().getRegion();
+				final int tr1 = rgn.getRow();
+				final int tc1 = rgn.getColumn();
+				final int tc2 = rgn.getLastColumn();
+				if (tr1 > row2) { // bottom side tables
+					if (tc2 >= col1 && tc1 <= col2) { // column overlapping
+						if (col1 > tc1 || tc2 > col2) { // column is not total cover
+							throw new InvalidModelOpException("The operation is attempting to shift cells in table '"+ tb.getAllRegion().getRegion().getReferenceString() + "' on your worksheet."); //ZSS-984
+						} else {
+							toShift.add(tb.getName().toUpperCase());
+						}
+					}
+				}
+			}
+		}
+	}
+
+	//ZSS-985
+	//delete all tables that can be deleted; return overlapped table that can
+	//be partial deleted
+	private STable deleteTable(DeleteShift shift, Set<String> toShift) {
+		final Set<String> toDelete = new HashSet<String>();
+		final Set<String> overlapped = new HashSet<String>(2);
+		String message = getCoveredTables(range, toDelete, overlapped, shift, null); //ZSS-984
+		if (message != null)
+			throw new InvalidModelOpException(message); //ZSS-984
+		
+		final AbstractBookAdv book = (AbstractBookAdv) sheet.getBook();
+		final STable overlap = overlapped.isEmpty() ? null : book.getTable(overlapped.iterator().next());
+		
+		final int row1 = getRow();
+		final int row2 = getLastRow();
+		final int col1 = getColumn();
+		final int col2 = getLastColumn();
+		//check if we can shift the toShift without problem
+		if (overlap != null) {
+			final CellRegion orgn = overlap.getAllRegion().getRegion();
+			final int r1 = orgn.getRow();
+			if (shift == DeleteShift.UP) {
+				//cover the header row; must shift left
+				if ((overlap.getHeaderRowCount() > 0 && row1 <= r1 && r1 <= row2)
+						|| ((orgn.getRowCount() - overlap.getHeaderRowCount() - overlap.getTotalsRowCount()) == 1)) {
+					throw new InvalidModelOpException("Can only applies Delete > Shift Cells Left"); //ZSS-984
+				} else {
+					final int c01 = Math.min(orgn.getColumn(), col1);
+					final int c02 = Math.max(orgn.getLastColumn(), col2);
+					collectAndCheckShiftTables(row1, c01, row2, c02, toShift, false /*horizontal*/);
+				}
+			} else { // shift == DeleteShift.LEFT
+				final int r01 = Math.min(r1,  row1);
+				final int r02 = Math.max(orgn.getLastRow(), row2);
+				collectAndCheckShiftTables(r01, col1, r02, col2, toShift, true /*horizontal*/);
+			}
+		} else {
+			collectAndCheckShiftTables(row1, col1, row2, col2, toShift, shift == DeleteShift.LEFT /*horizontal*/);
+		}
+		
+		//do delete
+		if (!toDelete.isEmpty()) {
+			for (String tbName : toDelete) {
+				book.removeTable(tbName);
+			}
+			((AbstractSheetAdv)sheet).removeTables(toDelete);
+		}
+		
+		//do partial delete
+		return overlap;
+	}
+	
+	//ZSS-985
+	private void deleteTable0(STable tb) {
+		final AbstractBookAdv book = (AbstractBookAdv) sheet.getBook();
+		final String tbName = tb.getName();
+		book.removeTable(tbName);
+		((AbstractSheetAdv)sheet).removeTable(tbName);
+	}
+	
+	//ZSS-985
+	//return true means need some extra checking on deleting cells
+	private boolean deleteRows(STable tb) {
+		if (tb == null) return false;
+		final CellRegion rgn = tb.getAllRegion().getRegion();
+		if (rgn.getRow() == getRow() && rgn.getLastRow() == getLastRow()) {
+			deleteTable0(tb);
+			return false;
+		} else {
+			((AbstractTableAdv)tb).deleteRows(getRow(), getLastRow());
+			return true;
+		}
+	}
+	
+	//ZSS-985
+	private void deleteCols(STable tb) {
+		if (tb == null) return;
+		final CellRegion rgn = tb.getAllRegion().getRegion();
+		// cover all
+		if (rgn.getColumn() == getColumn() && rgn.getLastColumn() == getLastColumn()) {
+			deleteTable0(tb);
+		} else {
+			((AbstractTableAdv)tb).deleteCols(getColumn(), getLastColumn());
+		}
+	}
+
+	//ZSS-985
+	private void shiftTables(AbstractBookAdv book, Set<String> toShift, int row1, int col1, int row2, int col2, DeleteShift shift) {
+		//do shift
+		if (!toShift.isEmpty()) {
+			if (shift == DeleteShift.LEFT) {
+				final int offset = col2 - col1 + 1;
+				for (String tbName : toShift) {
+					((AbstractTableAdv)book.getTable(tbName)).shiftLeft(offset);
+				}
+			} else { //shift == DeleteShift.UP
+				final int offset = row2 - row1 + 1;
+				for (String tbName : toShift) {
+					((AbstractTableAdv)book.getTable(tbName)).shiftUp(offset);
+				}
+			}
+		}
+	}
+	//ZSS-985
 	public void delete(DeleteShift shift) {
 		// just process on the first sheet even this range over multiple sheetsl
-
+		final AbstractBookAdv book = (AbstractBookAdv)sheet.getBook();
+		int row1 = getRow();
+		int row2 = getLastRow();
+		int col1 = getColumn();
+		int col2 = getLastColumn();
 		// insert row/column/cell
 		if(isWholeRow()) { // ignore insert direction
-			
 			// ZSS:592: Doesn't support inserting/deleting row/columns when current range cross freeze panel
 			if(checkInCornerFreezePanel()) {
 				throw new InvalidModelOpException("Doesn't support deleting rows/columns operation when current range covers the corner frozen panes");
@@ -55,11 +253,29 @@ public class InsertDeleteHelper extends RangeHelperBase {
 			if(checkCrossTopFreezePanel()) {
 				throw new InvalidModelOpException("Doesn't support deleting rows when current range cross the freeze panes line");
 			}
+	
+			//ZSS-985
+			final Set<String> toShift = new HashSet<String>();
+			final STable overlap = deleteTable(DeleteShift.UP, toShift);
+			if (overlap != null) {
+				CellRegion rgn = overlap.getAllRegion().getRegion();
+				if (deleteRows(overlap)) { // might change the region
+					final CellRegion rgn0 = overlap.getAllRegion().getRegion();
+					//reserve at least one row and clear it's content
+					if ((rgn0.getLastRow() - rgn0.getRow() + row2 - row1 + 1) > (rgn.getLastRow() - rgn.getRow())) {
+						new ClearCellHelper(new RangeImpl(sheet, row1, col1, row1, col2)).clearCellContent(); 
+						row1 = row1 + 1;
+					}
+				}
+			}
 			
 			// shrink chart size (picture's size won't be changed in Excel)
 			// before delete rows (delete rows will make chart move)
-			shrinkChartHeight();
-			sheet.deleteRow(getRow(), getLastRow());
+			if (row2 >= row1) { //ZSS-985
+				shiftTables(book, toShift, row1, col1, row2, col2, DeleteShift.UP);
+				shrinkChartHeight(row1, row2);
+				sheet.deleteRow(row1, row2);
+			}
 			
 		} else if(isWholeColumn()) { // ignore insert direction
 			
@@ -72,13 +288,46 @@ public class InsertDeleteHelper extends RangeHelperBase {
 				throw new InvalidModelOpException("Doesn't support deleting columns when current range cross the freeze panes line");
 			}
 
+			//ZSS-985
+			final Set<String> toShift = new HashSet<String>();
+			final STable overlap = deleteTable(DeleteShift.LEFT, toShift);
+			deleteCols(overlap);
+			shiftTables(book, toShift, row1, col1, row2, col2, DeleteShift.LEFT);
+			
 			// shrink chart size (picture's size won't be changed in Excel)
 			// before delete columns (delete columns will make chart move)
 			shrinkChartWidth();
-			sheet.deleteColumn(getColumn(), getLastColumn());
+			sheet.deleteColumn(col1, col2);
 			
 		} else if(shift != DeleteShift.DEFAULT) { // do nothing if "DEFAULT", it's according to XRange.delete() spec.
-			sheet.deleteCell(getRow(), getColumn(), getLastRow(), getLastColumn(), shift == DeleteShift.LEFT);
+			//ZSS-985
+			final Set<String> toShift = new HashSet<String>();
+			final STable overlap = deleteTable(shift, toShift);
+			if (overlap != null) {
+				final CellRegion rgn = overlap.getAllRegion().getRegion();
+				//cover the header row, must deleteCols
+				if (shift == DeleteShift.LEFT || 
+					(overlap.getHeaderRowCount() > 0 && rgn.getRow() >= getRow() && rgn.getRow() <= getLastRow())) {
+					deleteCols(overlap);
+					shiftTables(book, toShift, row1, col1, row2, col2, DeleteShift.LEFT);
+					sheet.deleteCell(rgn.getRow(), getColumn(), rgn.getLastRow(), getLastColumn(), true /*DeleteShift.LEFT*/);
+				} else { //if (shift == DeleteShift.UP) {
+					if (deleteRows(overlap)) {
+						final CellRegion rgn0 = overlap.getAllRegion().getRegion();
+						//reserve at least one row and clear it's content
+						if ((rgn0.getLastRow() - rgn0.getRow() + row2 - row1 + 1) > (rgn.getLastRow() - rgn.getRow())) {
+							new ClearCellHelper(new RangeImpl(sheet, row1, rgn.getColumn(), row1, rgn.getLastColumn())).clearCellContent(); 
+							row1 = row1 + 1;
+						}
+					}
+					if (row2 >= row1) { //ZSS-985
+						shiftTables(book, toShift, row1, col1, row2, col2, DeleteShift.UP);
+						sheet.deleteCell(row1, rgn.getColumn(), row2, rgn.getLastColumn(), false /*!DeleteShift.LEFT*/);
+					}
+				}
+			} else {
+				sheet.deleteCell(row1, col1, row2, col2, shift == DeleteShift.LEFT);
+			}
 		}
 	}
 
@@ -304,15 +553,15 @@ public class InsertDeleteHelper extends RangeHelperBase {
 		}
 	}
 
-	private void shrinkChartHeight() {
+	private void shrinkChartHeight(int row1, int row2) { //ZSS-985
 		for(SChart chart : sheet.getCharts()) {
 			ViewAnchor anchor = chart.getAnchor();
 			int row = anchor.getRowIndex();
 			ViewAnchor rightBottomAnchor = anchor.getRightBottomAnchor(sheet);
 			int lastRow = rightBottomAnchor.getRowIndex();
-			if((row <= getRow() && getRow() <= lastRow) || (row <= getLastRow() && getLastRow() <= lastRow)) {
+			if((row <= row1 && row1 <= lastRow) || (row <= row2 && row2 <= lastRow)) {
 				int shrunkHeight = 0;
-				for(int r = (getRow() > row ? getRow() : row); r <= getLastRow() && r <= lastRow; ++r) {
+				for(int r = (row1 > row ? row1 : row); r <= row2 && r <= lastRow; ++r) {
 					if(r != lastRow) {
 						shrunkHeight += sheet.getRow(r).getHeight();
 					} else {

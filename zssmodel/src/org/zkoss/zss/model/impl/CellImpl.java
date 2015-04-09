@@ -129,7 +129,9 @@ public class CellImpl extends AbstractCellAdv {
 	@Override
 	public void destroy() {
 		checkOrphan();
-		clearValue();
+		//ZSS-985: when delete table cell, it causes side effect to 
+		//     rename column name; thus use a boolean to distinguish the case
+		clearValue0(true);
 		_row = null;
 	}
 
@@ -206,11 +208,14 @@ public class CellImpl extends AbstractCellAdv {
 
 	@Override
 	public void clearValue() {
+		clearValue0(false); //ZSS-985
+	}
+	private void clearValue0(boolean destroy) {
 		checkOrphan();
 		clearFormulaDependency();
 		clearFormulaResultCache();
 		
-		setCellValue(null);
+		setCellValue(null, destroy); //ZSS-985
 		
 		OptFields opts = getOpts(false); 
 		if(opts!=null){
@@ -243,7 +248,7 @@ public class CellImpl extends AbstractCellAdv {
 		// this cell in table header row
 		final STable table = getTable();
 		if (table != null && table.getHeaderRowCount() > 0 && table.getHeadersRegion().getRow() == this.getRowIndex()) {
-			setCellValue(new CellValue("0"));
+			setCellValue(new CellValue("0"), false); //ZSS-985
 			return;
 		}
 		
@@ -318,7 +323,7 @@ public class CellImpl extends AbstractCellAdv {
 		return _localValue;
 	}
 	
-	private void setCellValue(CellValue value){
+	private void setCellValue(CellValue value, boolean destroy){ //ZSS-985
 		checkOrphan();
 		
 		this._localValue = value!=null&&value.getType()==CellType.BLANK?null:value;
@@ -327,24 +332,27 @@ public class CellImpl extends AbstractCellAdv {
 		SBook book = getSheet().getBook();
 		SBookSeries bookSeries = book.getBookSeries();
 		ModelUpdateUtil.handlePrecedentUpdate(bookSeries,getRef());
-		
-		//ZSS-967
-		// this cell in table header row
-		final STable table = getTable();
-		if (table != null && table.getHeaderRowCount() > 0 && table.getHeadersRegion().getRow() == this.getRowIndex()) {
-			final STableColumn tbCol = table.getColumnAt(this.getColumnIndex());
-			final String oldName = tbCol.getName(); 
 
-			String newname = null;
-			if (value != null) {
-				final FormatEngine formatEngine = EngineFactory.getInstance().createFormatEngine();
-				final FormatResult ft = formatEngine.format(this, new FormatContext(ZssContext.getCurrent().getLocale()));
-				newname = ft.getText();
-			}
-
-			final String newValue = ((AbstractBookAdv)book).setTableColumnName(table, oldName, newname);
-			if (newValue != null) {
-				this._localValue = new CellValue(newValue);
+		//ZSS-985: if it is not destroying this cell
+		if (!destroy) {
+			//ZSS-967
+			// this cell in table header row
+			final STable table = getTable();
+			if (table != null && table.getHeaderRowCount() > 0 && table.getHeadersRegion().getRow() == this.getRowIndex()) {
+				final STableColumn tbCol = table.getColumnAt(this.getColumnIndex());
+				final String oldName = tbCol.getName(); 
+	
+				String newname = null;
+				if (value != null) {
+					final FormatEngine formatEngine = EngineFactory.getInstance().createFormatEngine();
+					final FormatResult ft = formatEngine.format(this, new FormatContext(ZssContext.getCurrent().getLocale()));
+					newname = ft.getText();
+				}
+	
+				final String newValue = ((AbstractBookAdv)book).setTableColumnName(table, oldName, newname);
+				if (newValue != null) {
+					this._localValue = new CellValue(newValue);
+				}
 			}
 		}
 	}
@@ -413,7 +421,7 @@ public class CellImpl extends AbstractCellAdv {
 			EngineFactory.getInstance().createFormulaEngine().updateDependencyTable((FormulaExpression)newVal, context);
 		}
 			
-		setCellValue(newCellVal);
+		setCellValue(newCellVal, false); //ZSS-985
 	}
 
 	@Override

@@ -25,5 +25,23 @@ public abstract class AbstractTableAdv implements STable, Serializable {
 	private static final long serialVersionUID = 1L;
 
 	public abstract SCellStyle getCellStyle(int row, int col);
+	
+	//ZSS-985
+	public abstract void deleteRows(int row1, int row2);
+	
+	//ZSS-985
+	public abstract void deleteCols(int col1, int col2);
+	
+	//ZSS-985
+	public abstract void shiftLeft(int offset);
+
+	//ZSS-985
+	public abstract void shiftUp(int offset);
+
+//	//ZSS-986
+//	public abstract boolean shiftRight(int offset); //return false if shift out of the sheet limit
+//
+//	//ZSS-986
+//	public abstract boolean shiftDown(int offset); //return false if shift out of the sheet limit
 }
 

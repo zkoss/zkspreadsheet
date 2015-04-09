@@ -484,4 +484,106 @@ public class TableImpl extends AbstractTableAdv implements LinkedModelObject {
 						firstRow, firstCol, lastRow, lastCol);
 		return picker.getCellStyle();
 	}
+
+	//ZSS-985
+	@Override
+	public void deleteRows(int row1, int row2) {
+		final SSheet sheet = _region.getSheet();
+		final CellRegion rgn = _region.getRegion();
+		final boolean containTotals = getTotalsRowCount() > 0 && row2 > rgn.getLastRow() - getTotalsRowCount();
+		final int diff = row2 - row1 + 1;
+		final int dataSize = rgn.getLastRow() - rgn.getRow() + 1 - getHeaderRowCount()
+				- (containTotals ? 0 : getTotalsRowCount()); 
+		final int bottom = diff < dataSize ? // keep at least one row
+				rgn.getLastRow() - diff : rgn.getLastRow() - dataSize + 1; 
+		if (containTotals) {
+			_totalsRowCount = 0;
+		}
+		setRegionAndFilter(new SheetRegion(sheet, new CellRegion(rgn.getRow(), rgn.getColumn(), bottom, rgn.getLastColumn())));
+	}
+
+	//ZSS-985
+	@Override
+	public void deleteCols(int col1, int col2) {
+		final SSheet sheet = _region.getSheet();
+		final CellRegion rgn = _region.getRegion();
+		final int diff = col2 - col1 + 1;
+		final int right = rgn.getLastColumn() - diff;
+		final int c1 = rgn.getColumn();
+		final int c01 = col1 - c1;
+		final int c02 = col2 - c1;
+		for (int j = c02; j >= c01; --j) {
+			_columns.remove(j);
+		}
+		setRegionAndFilter(new SheetRegion(sheet, new CellRegion(rgn.getRow(), rgn.getColumn(), rgn.getLastRow(), right)));
+	}
+
+	//ZSS-985
+	@Override
+	public void shiftLeft(int diff) {
+		final SSheet sheet = _region.getSheet();
+		final CellRegion rgn = _region.getRegion();
+		final int left = rgn.getColumn() - diff;
+		final int right = rgn.getLastColumn() - diff;
+		setRegionAndFilter(new SheetRegion(sheet, new CellRegion(rgn.getRow(), left, rgn.getLastRow(), right)));
+	}
+
+	//ZSS-985
+	@Override
+	public void shiftUp(int diff) {
+		final SSheet sheet = _region.getSheet();
+		final CellRegion rgn = _region.getRegion();
+		final int top = rgn.getRow() - diff;
+		final int bottom = rgn.getLastRow() - diff;
+		setRegionAndFilter(new SheetRegion(sheet, new CellRegion(top, rgn.getColumn(), bottom, rgn.getLastColumn())));
+	}
+
+//	//ZSS-986
+//	//return false if shift over the right limit of the excel columns
+//	@Override
+//	public boolean shiftRight(int offset) {
+//		shiftLeft(-offset);
+//		final SSheet sheet = _region.getSheet();
+//		final SBook book = sheet.getBook();
+//		final int left = _region.getColumn();
+//		final int right = _region.getLastColumn();
+//		if (book.getMaxColumnIndex() < left) {
+//			return false;
+//		}
+//		if (book.getMaxColumnIndex() < right) {
+//			deleteCols(book.getMaxColumnIndex()+1, right);
+//		}
+//		return true;
+//	}
+//
+//	//ZSS-986
+//	//return false if shift over the bottom limit of the excel rows
+//	@Override
+//	public boolean shiftDown(int offset) {
+//		shiftUp(-offset);
+//		final SSheet sheet = _region.getSheet();
+//		final SBook book = sheet.getBook();
+//		final int top = _region.getRow();
+//		final int bottom = _region.getLastRow();
+//		if (book.getMaxRowIndex() < top) {
+//			return false;
+//		}
+//		if (getHeaderRowCount() > 0 && top == book.getMaxRowIndex()) {
+//			return false;
+//		}
+//		if (book.getMaxRowIndex() < bottom) {
+//			deleteRows(book.getMaxRowIndex()+1, bottom);
+//		}
+//		return true;
+//	}
+	
+	//ZSS-985
+	private void setRegionAndFilter(SheetRegion region) {
+		_region = region;		
+		if (_filter != null) {
+			_filter = null;
+			if (getHeaderRowCount() > 0)
+				enableFilter(true);
+		}
+	}
 }
