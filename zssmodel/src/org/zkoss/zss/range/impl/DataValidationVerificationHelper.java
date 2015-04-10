@@ -79,20 +79,24 @@ public class DataValidationVerificationHelper {
 		final InputEngine ie = EngineFactory.getInstance().createInputEngine();
 		InputResult formula1Value = ie.parseInput(_formula1 == null ? ""
 				: _formula1, SCellStyle.FORMAT_GENERAL, new InputParseContext(ZssContext.getCurrent().getLocale()));
-		InputResult formula2Value = ie.parseInput(_formula1 == null ? ""
-				: _formula1, SCellStyle.FORMAT_GENERAL, new InputParseContext(ZssContext.getCurrent().getLocale()));
+		InputResult formula2Value = ie.parseInput(_formula2 == null ? ""
+				: _formula2, SCellStyle.FORMAT_GENERAL, new InputParseContext(ZssContext.getCurrent().getLocale()));
 		
 		switch (_validationType) {
 			case INTEGER:
-			case TEXT_LENGTH:
 				verifyInteger(formula1Value, formula2Value);
+				break;
+			case TEXT_LENGTH:
+				verifyTextLength(formula1Value, formula2Value);
 				break;
 			case DECIMAL:
 				verifyDecimal(formula1Value, formula2Value);
 				break;
 			case DATE:
-			case TIME:
 				verifyDate(formula1Value, formula2Value);
+				break;
+			case TIME:
+				verifyTime(formula1Value, formula2Value);
 				break;
 			case LIST:
 			case CUSTOM:
@@ -102,42 +106,108 @@ public class DataValidationVerificationHelper {
 	}
 
 	private void verifyDate(InputResult formula1Value, InputResult formula2Value) {
+		boolean notFormula2 = !isFormula(formula2Value);
+		boolean notFormula1 = !isFormula(formula1Value);
+		
 		if(_doubleFormula) {
-			if(!isFormula(formula2Value) && !formula2Value.getValue().getClass().equals(Date.class)) {
-				throw new InvalidDataValidationException("Formula should be in time format.");
+			if(notFormula2 && !formula2Value.getValue().getClass().equals(Date.class)) {
+				throw new InvalidDataValidationException("Formula should be a Date value.");
 			}
 		}
 		
-		if(!isFormula(formula1Value) && !formula1Value.getValue().getClass().equals(Date.class)) {
-			throw new InvalidDataValidationException("Formula should be in time format.");
+		if(notFormula1 && !formula1Value.getValue().getClass().equals(Date.class)) {
+			throw new InvalidDataValidationException("Formula should be a Date value.");
+		}
+		
+		if(notFormula2 && notFormula1 && _doubleFormula && ((Date) formula2Value.getValue()).getTime() < ((Date) formula1Value.getValue()).getTime()) {
+			throw new InvalidDataValidationException("The End Date must be greater than or equal to the Start Date.");
+		}
+	}
+	
+	private void verifyTime(InputResult formula1Value, InputResult formula2Value) {
+		boolean notFormula2 = !isFormula(formula2Value);
+		boolean notFormula1 = !isFormula(formula1Value);
+		
+		if(_doubleFormula) {
+			if(notFormula2 && !formula2Value.getValue().getClass().equals(Date.class)) {
+				throw new InvalidDataValidationException("Formula should be a Time value.");
+			}
+		}
+		
+		if(notFormula1 && !formula1Value.getValue().getClass().equals(Date.class)) {
+			throw new InvalidDataValidationException("Formula should be a Time value.");
+		}
+		
+		if(notFormula2 && notFormula1 && _doubleFormula && ((Date) formula2Value.getValue()).getTime() < ((Date) formula1Value.getValue()).getTime()) {
+			throw new InvalidDataValidationException("The End Time must be greater than or equal to the Start Time.");
 		}
 	}
 
 	private void verifyDecimal(InputResult formula1Value, InputResult formula2Value) {
+		boolean notFormula2 = !isFormula(formula2Value);
+		boolean notFormula1 = !isFormula(formula1Value);
+		
 		if(_doubleFormula) {
-			if(!isFormula(formula2Value) && formula2Value.getType() != CellType.NUMBER) {
-				throw new InvalidDataValidationException("Formula should be a number.");
+			if(notFormula2 && formula2Value.getType() != CellType.NUMBER) {
+				throw new InvalidDataValidationException("Formula should be a Decimal value.");
 			}
 		}
 		
-		if(!isFormula(formula1Value) && formula1Value.getType() != CellType.NUMBER) {
-			throw new InvalidDataValidationException("Formula should be a number.");
+		if(notFormula1 && formula1Value.getType() != CellType.NUMBER) {
+			throw new InvalidDataValidationException("Formula should be a Decimal value.");
+		}
+		
+		if(notFormula2 && notFormula1 && _doubleFormula && ((Double) formula2Value.getValue()) < ((Double) formula1Value.getValue())) {
+			throw new InvalidDataValidationException("The Maximum must be greater than or equal to the Minimum.");
 		}
 	}
 
 	private void verifyInteger(InputResult formula1Value, InputResult formula2Value) {
 		try {	
+			boolean notFormula2 = !isFormula(formula2Value);
+			boolean notFormula1 = !isFormula(formula1Value);
 			Double value;
+			
 			if(_doubleFormula) {
-				if(!isFormula(formula2Value) && (formula2Value.getType() != CellType.NUMBER
+				if(notFormula2 && (formula2Value.getType() != CellType.NUMBER
+						|| (value = (Double) formula2Value.getValue()) != value.intValue())) {
+					throw new InvalidDataValidationException("Formula should be a Whole number.");
+				}
+			}
+			
+			if(notFormula1 && (formula1Value.getType() != CellType.NUMBER
+					|| (value = (Double) formula1Value.getValue()) != value.intValue())) {
+				throw new InvalidDataValidationException("Formula should be a Whole number.");
+			}
+			
+			if(notFormula2 && notFormula1 && _doubleFormula && ((Double) formula2Value.getValue()) < ((Double) formula1Value.getValue())) {
+				throw new InvalidDataValidationException("The Maximum must be greater than or equal to the Minimum.");
+			}
+		} catch (ClassCastException e) {
+			throw new InvalidDataValidationException("Formula should be a Whole number.");
+		}
+	}
+	
+	private void verifyTextLength(InputResult formula1Value, InputResult formula2Value) {
+		try {	
+			boolean notFormula2 = !isFormula(formula2Value);
+			boolean notFormula1 = !isFormula(formula1Value);
+			Double value;
+			
+			if(_doubleFormula) {
+				if(notFormula2 && (formula2Value.getType() != CellType.NUMBER
 						|| (value = (Double) formula2Value.getValue()) != value.intValue())) {
 					throw new InvalidDataValidationException("Formula should be a integer.");
 				}
 			}
 			
-			if(!isFormula(formula1Value) && (formula1Value.getType() != CellType.NUMBER
+			if(notFormula1 && (formula1Value.getType() != CellType.NUMBER
 					|| (value = (Double) formula1Value.getValue()) != value.intValue())) {
 				throw new InvalidDataValidationException("Formula should be a integer.");
+			}
+			
+			if(notFormula2 && notFormula1 && _doubleFormula && ((Double) formula2Value.getValue()) < ((Double) formula1Value.getValue())) {
+				throw new InvalidDataValidationException("The Maximum must be greater than or equal to the Minimum.");
 			}
 		} catch (ClassCastException e) {
 			throw new InvalidDataValidationException("Formula should be a integer.");
