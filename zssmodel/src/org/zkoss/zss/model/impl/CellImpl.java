@@ -36,6 +36,7 @@ import org.zkoss.zss.model.SRichText;
 import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.model.STable;
 import org.zkoss.zss.model.STableColumn;
+import org.zkoss.zss.model.STableColumn.STotalsRowFunction;
 import org.zkoss.zss.model.impl.sys.formula.FormulaEngineImpl;
 import org.zkoss.zss.model.sys.EngineFactory;
 import org.zkoss.zss.model.sys.dependency.DependencyTable;
@@ -338,25 +339,60 @@ public class CellImpl extends AbstractCellAdv {
 			//ZSS-967
 			// this cell in table header row
 			final STable table = getTable();
-			if (table != null && table.getHeaderRowCount() > 0 && table.getHeadersRegion().getRow() == this.getRowIndex()) {
-				final STableColumn tbCol = table.getColumnAt(this.getColumnIndex());
-				final String oldName = tbCol.getName(); 
-	
-				String newname = null;
-				if (value != null) {
-					final FormatEngine formatEngine = EngineFactory.getInstance().createFormatEngine();
-					final FormatResult ft = formatEngine.format(this, new FormatContext(ZssContext.getCurrent().getLocale()));
-					newname = ft.getText();
-				}
-	
-				final String newValue = ((AbstractBookAdv)book).setTableColumnName(table, oldName, newname);
-				if (newValue != null) {
-					this._localValue = new CellValue(newValue);
+			if (table != null) {
+				final CellRegion rgn = table.getAllRegion().getRegion();
+				if (table.getHeaderRowCount() > 0 && rgn.getRow() == this.getRowIndex()) {
+					//on Table Header Row
+					final STableColumn tbCol = table.getColumnAt(this.getColumnIndex());
+					final String oldName = tbCol.getName(); 
+		
+					String newname = null;
+					if (value != null) {
+						final FormatEngine formatEngine = EngineFactory.getInstance().createFormatEngine();
+						final FormatResult ft = formatEngine.format(this, new FormatContext(ZssContext.getCurrent().getLocale()));
+						newname = ft.getText();
+					}
+		
+					final String newValue = ((AbstractBookAdv)book).setTableColumnName(table, oldName, newname);
+					if (newValue != null) {
+						this._localValue = new CellValue(newValue);
+					}
+				} else if (table.getTotalsRowCount() > 0 && rgn.getLastRow() == this.getRowIndex()) {
+					//ZSS-989
+					//on Table Total Row
+					final STableColumn tbCol = table.getColumnAt(this.getColumnIndex());
+					setTableTotalsRowFunction(value, tbCol);
 				}
 			}
 		}
 	}
 
+	//ZSS-989
+	private void setTableTotalsRowFunction(CellValue value, STableColumn tbCol) {
+		STotalsRowFunction func = STotalsRowFunction.none;
+		if (value != null && value.getType() == CellType.FORMULA) {
+			final FormulaExpression fe = (FormulaExpression) value.getValue();
+			final String formula = fe.getFormulaString();
+			if (formula.startsWith("SUBTOTAL(") && formula.charAt(12) == ','
+				&& formula.charAt(13) == '[' && formula.endsWith("])")
+				&& tbCol.getName().equalsIgnoreCase(formula.substring(14, formula.length()-2))) {
+				func = STotalsRowFunction.valueOfCode(formula.substring(9, 12));
+			} else {
+				func = STotalsRowFunction.custom;
+			}
+			if (func == STotalsRowFunction.custom) {
+				tbCol.setTotalsRowFormula(formula);
+			}
+		} else {
+			if (value != null) {
+				final FormatEngine formatEngine = EngineFactory.getInstance().createFormatEngine();
+				final FormatResult ft = formatEngine.format(this, new FormatContext(ZssContext.getCurrent().getLocale()));
+				final String label = ft.getText();
+				tbCol.setTotalsRowLabel(label);
+			}
+		}
+		tbCol.setTotalsRowFunction(func);
+	}
 	
 	private static boolean valueEuqals(Object val1, Object val2){
 		return val1==val2||(val1!=null && val1.equals(val2));

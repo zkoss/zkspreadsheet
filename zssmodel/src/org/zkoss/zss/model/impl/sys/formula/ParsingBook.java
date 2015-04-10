@@ -34,6 +34,7 @@ import org.zkoss.util.logging.Log;
 import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.model.STable;
+import org.zkoss.zss.model.STableColumn;
 import org.zkoss.zss.model.SheetRegion;
 import org.zkoss.zss.model.sys.formula.FormulaEngine;
 import org.zkoss.zss.model.impl.AbstractSheetAdv;
@@ -460,6 +461,17 @@ public class ParsingBook implements FormulaParsingWorkbook, FormulaRenderingWork
 		}
 	}
 	
+	//ZSS-989
+	//return a match TableColumn name with a given case-in-sensitive column name.  
+	private String getColumnName(STable table, String colName) {
+		for (STableColumn tbCol : table.getColumns()) {
+			final String tbColName = tbCol.getName(); 
+			if (tbColName.equalsIgnoreCase(colName))
+				return tbColName;
+		}
+		return null;
+	}
+	
 	//ZSS-960
 	@Override
 	public TablePtg createTablePtg(String tableName, Object[] specifiers, int sheetIndex, int rowIdx, int colIdx) {
@@ -474,7 +486,7 @@ public class ParsingBook implements FormulaParsingWorkbook, FormulaRenderingWork
 		}
 		
 		if (tableName0 == null) {
-			throw new IllegalArgumentException("a Table");
+			throw new IllegalArgumentException(tableName == null ? "Expect a legal Table" : "Expect a legal Table: '" + tableName + "'");
 		}
 		TablePtg.Item item1 = null;
 		TablePtg.Item item2 = null; 
@@ -539,6 +551,24 @@ public class ParsingBook implements FormulaParsingWorkbook, FormulaRenderingWork
 		}
 
 		STable table = ((AbstractBookAdv)book).getTable(tableName0);
+		
+		//ZSS-989
+		//make Table column name to be equal to the TableColumn's name(which might be case in sensitive)
+		if (column1 != null) {
+			final String column01 = getColumnName(table, column1);
+			if (column01 == null) {
+				throw new IllegalArgumentException("expect a legal Table Column: '" + column1 +"'");
+			}
+			column1 = column01;
+		}
+		if (column2 != null) {
+			final String column02 = getColumnName(table, column2);
+			if (column02 == null) {
+				throw new IllegalArgumentException("expect a legal Table Column: '" + column2 + "'");
+			}
+			column2 = column02;
+		}
+		
 		SheetRegion rgn1 = table.getItemRegion(item1 != null ? item1 : Item.DATA, rowIdx);
 		SSheet sheet = rgn1.getSheet(); 
 		int l = rgn1.getColumn();
@@ -579,6 +609,7 @@ public class ParsingBook implements FormulaParsingWorkbook, FormulaRenderingWork
 	}
 
 	//ZSS-960
+	// unescape single quote
 	private static String normalize(String col) {
 		int preSingle = -2; //single quote index
 		StringBuilder sb = new StringBuilder();

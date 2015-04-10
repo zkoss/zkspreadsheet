@@ -1,0 +1,38 @@
+<vbox hflex="1" vflex="1">
+	<label multiline="true">
+Since 3.8.0
+1. Select B6; change formula to =SUBTOTAL(102,[COLUMN2]) and press return.
+2. Select back to B6; should see formula in formula bar =SUBTOTAL(102,[Column2])
+3. Change formula to =SUBTOTAL(102,[Column6]) and press return.
+4. Should see a message box complaining "expect a legal Table Column: 'Column6'"
+5. Change formula to "Hello" and press return.
+6. Select back to B6; should see "Hello" in formula bar 
+7. Select C6; change formula to =SUBTOTAL(104,[Column3]) and press return.
+6. Select back C6; should see formula in formula bar =SUBTOTAL(104,[Column3]).
+7. Select D6; change formula to =SUBTOTAL(104,[COLUMN3]) and press return.
+8. Select back D6; should see formula in formula bar =SUBTOTAL(104,[Column3]).
+9. Press the "Export to Excel" button.
+10. Open the down loaded excel file "989-export-total-rows-function.xlsx" using Excel.
+11. Compare with /issue3/book/989-total-rows-function.xlsx(also open using Excel); should be the same.
+12. If not, it is a bug.
+	</label>
+<button id="export" label="Export to Excel" onClick="doExport()"/>
+<zscript><![CDATA[
+     import java.io.*;
+     import org.zkoss.zss.api.Exporters;
+     import org.zkoss.zul.*;
+     void doExport() throws IOException {
+         ByteArrayOutputStream os = new ByteArrayOutputStream();
+         try {
+              Exporters.getExporter("excel").export(ss.getBook(), os);
+         } catch (Exception ex) {
+              os.close();
+         }
+         Filedownload.save(os.toByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "989-export-total-rows-function.xlsx"); 
+     }
+]]>
+</zscript>
+	<spreadsheet id="ss" src="/issue3/book/989-total-rows-function.xlsx" maxVisibleRows="60" maxVisibleColumns="40"
+		hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
+		showFormulabar="true" />	
+</vbox>
