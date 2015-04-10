@@ -1120,6 +1120,8 @@ public class BookImpl extends AbstractBookAdv{
 	
 	//ZSS-967
 	public String setTableColumnName(STable table, String oldName, String newName) {
+		if (Objects.equals(oldName, newName)) return newName;
+		
 		// locate the STableColumn of oldName
 		List<STableColumn> tbCols = table.getColumns();
 		STableColumn tbCol = null;

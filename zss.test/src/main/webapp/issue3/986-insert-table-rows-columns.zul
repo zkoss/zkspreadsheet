@@ -1,0 +1,38 @@
+<vbox hflex="1" vflex="1">
+	<label multiline="true">
+Since 3.8.0
+1. Select Column A:B; right click to popup context menu. Select Insert Columns.
+2. You should see All Table's on this sheet is moved 2 columns right(e.g. Table A2:F6 is moved to C2:G6)
+3. Select Row 1:3; right click to select Insert Rows
+4. You should see All Table's on this sheet is moved 3 rows down(e.g. Table C2:G6 is moved to C5:G9) 
+5. Select C5:D5; right click to select Insert > Shift Cells Right.
+6. You should see the Tables C5:G9 extend two Table columns to C5:I9, and Table I5:M9, O5:S9 are shifted right to K5:O9, Q5:U9 respectively
+7. Select C5:D5; right click to select Insert > Shift Cells Down.
+8. Should see a message box complaining "Can only applies Insert > Shift Cells Right".
+9. Select C6; right click to select Insert > Shift Cells Down. 
+10. Should see a message box complaining "The operation is attempting to shift cells in table 'I12:M16' on your worksheet"
+11. Select C13; right click to select Insert > Shift Cells Down.
+12. Should see Table C12:G16 extend one Table row to C12:G17, and Table C19:G23 are shifted down to C20:G24.
+13. Select B21:C21; right click to select Insert > Shift Cells Down.
+14. Should see a message box complaining "The operation can only be applied on one table".
+	</label>
+<button id="export" label="Export to Excel" onClick="doExport()"/>
+<zscript><![CDATA[
+     import java.io.*;
+     import org.zkoss.zss.api.Exporters;
+     import org.zkoss.zul.*;
+     void doExport() throws IOException {
+         ByteArrayOutputStream os = new ByteArrayOutputStream();
+         try {
+              Exporters.getExporter("excel").export(ss.getBook(), os);
+         } catch (Exception ex) {
+              os.close();
+         }
+         Filedownload.save(os.toByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "986-export-insert-rows-columns.xlsx"); 
+     }
+]]>
+</zscript>
+	<spreadsheet id="ss" src="/issue3/book/986-insert-table-rows-columns.xlsx" maxVisibleRows="60" maxVisibleColumns="40"
+		hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
+		showFormulabar="true" />	
+</vbox>

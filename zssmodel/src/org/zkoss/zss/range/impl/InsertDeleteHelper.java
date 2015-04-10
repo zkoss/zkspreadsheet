@@ -15,7 +15,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.jsoup.select.Evaluator.IsRoot;
 import org.zkoss.zss.model.CellRegion;
 import org.zkoss.zss.model.InvalidModelOpException;
 import org.zkoss.zss.model.SCell;
@@ -27,6 +26,7 @@ import org.zkoss.zss.model.SRow;
 import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.model.SSheetViewInfo;
 import org.zkoss.zss.model.STable;
+import org.zkoss.zss.model.STableColumn;
 import org.zkoss.zss.model.ViewAnchor;
 import org.zkoss.zss.model.impl.AbstractBookAdv;
 import org.zkoss.zss.model.impl.AbstractCellAdv;
@@ -54,9 +54,8 @@ public class InsertDeleteHelper extends RangeHelperBase {
 	//category tables to toDelete(which to be deleted in delete case or shifted in insert case), 
 	//  toShift(which need shift region), overlap(which need partial delete/insert)
 	//  return error message if not OK; return null if OK.
-	private String getCoveredTables(SRange range, 
-			Set<String> toDelete, Set<String> overlapped, 
-			DeleteShift dshift, InsertShift ishift) {
+	private String getDeletedTables(SRange range, 
+			Set<String> toDelete, Set<String> overlapped) { 
 		final int row1 = range.getRow();
 		final int row2 = range.getLastRow();
 		final int col1 = range.getColumn();
@@ -140,7 +139,7 @@ public class InsertDeleteHelper extends RangeHelperBase {
 	private STable deleteTable(DeleteShift shift, Set<String> toShift) {
 		final Set<String> toDelete = new HashSet<String>();
 		final Set<String> overlapped = new HashSet<String>(2);
-		String message = getCoveredTables(range, toDelete, overlapped, shift, null); //ZSS-984
+		String message = getDeletedTables(range, toDelete, overlapped); //ZSS-984
 		if (message != null)
 			throw new InvalidModelOpException(message); //ZSS-984
 		
@@ -222,19 +221,29 @@ public class InsertDeleteHelper extends RangeHelperBase {
 	}
 
 	//ZSS-985
-	private void shiftTables(AbstractBookAdv book, Set<String> toShift, int row1, int col1, int row2, int col2, DeleteShift shift) {
+	private void shiftTables(AbstractBookAdv book, Set<String> toShift, int offset, boolean horizontal) {
 		//do shift
 		if (!toShift.isEmpty()) {
-			if (shift == DeleteShift.LEFT) {
-				final int offset = col2 - col1 + 1;
+			Set<String> toDelete = new HashSet<String>();
+			if (horizontal) {
 				for (String tbName : toShift) {
-					((AbstractTableAdv)book.getTable(tbName)).shiftLeft(offset);
+					if (!((AbstractTableAdv)book.getTable(tbName)).shiftCols(offset)) {
+						toDelete.add(tbName);
+					}
 				}
-			} else { //shift == DeleteShift.UP
-				final int offset = row2 - row1 + 1;
+			} else {
 				for (String tbName : toShift) {
-					((AbstractTableAdv)book.getTable(tbName)).shiftUp(offset);
+					if (!((AbstractTableAdv)book.getTable(tbName)).shiftRows(offset)) {
+						toDelete.add(tbName);
+					};
 				}
+			}
+			//do delete
+			if (!toDelete.isEmpty()) {
+				for (String tbName : toDelete) {
+					book.removeTable(tbName);
+				}
+				((AbstractSheetAdv)sheet).removeTables(toDelete);
 			}
 		}
 	}
@@ -275,7 +284,7 @@ public class InsertDeleteHelper extends RangeHelperBase {
 			// shrink chart size (picture's size won't be changed in Excel)
 			// before delete rows (delete rows will make chart move)
 			if (row2 >= row1) { //ZSS-985
-				shiftTables(book, toShift, row1, col1, row2, col2, DeleteShift.UP);
+				shiftTables(book, toShift, -row2 + row1 - 1, false /*horizontal*/);
 				shrinkChartHeight(row1, row2);
 				sheet.deleteRow(row1, row2);
 			}
@@ -295,7 +304,7 @@ public class InsertDeleteHelper extends RangeHelperBase {
 			final Set<String> toShift = new HashSet<String>();
 			final STable overlap = deleteTable(DeleteShift.LEFT, toShift);
 			deleteCols(overlap);
-			shiftTables(book, toShift, row1, col1, row2, col2, DeleteShift.LEFT);
+			shiftTables(book, toShift, -col2 + col1 - 1, true /*horizontal*/);
 			
 			// shrink chart size (picture's size won't be changed in Excel)
 			// before delete columns (delete columns will make chart move)
@@ -311,8 +320,8 @@ public class InsertDeleteHelper extends RangeHelperBase {
 				//cover the header row, must deleteCols
 				if (shift == DeleteShift.LEFT) { 
 					deleteCols(overlap);
-					shiftTables(book, toShift, row1, col1, row2, col2, DeleteShift.LEFT);
-					sheet.deleteCell(rgn.getRow(), getColumn(), rgn.getLastRow(), getLastColumn(), true /*DeleteShift.LEFT*/);
+					shiftTables(book, toShift, -col2 + col1 - 1, true /*horizontal*/);
+					sheet.deleteCell(rgn.getRow(), col1, rgn.getLastRow(), col2, true /*DeleteShift.LEFT*/);
 				} else { //if (shift == DeleteShift.UP) {
 					if (deleteRows(overlap)) {
 						final CellRegion rgn0 = overlap.getAllRegion().getRegion();
@@ -323,20 +332,159 @@ public class InsertDeleteHelper extends RangeHelperBase {
 						}
 					}
 					if (row2 >= row1) { //ZSS-985
-						shiftTables(book, toShift, row1, col1, row2, col2, DeleteShift.UP);
+						shiftTables(book, toShift, -row2 + row1 - 1, false /*horizontal*/);
 						sheet.deleteCell(row1, rgn.getColumn(), row2, rgn.getLastColumn(), false /*!DeleteShift.LEFT*/);
 					}
 				}
 			} else {
-				shiftTables(book, toShift, row1, col1, row2, col2, shift);
+				if (shift == DeleteShift.LEFT) { 
+					shiftTables(book, toShift, -col2 + col1 - 1, true /*horizontal*/);
+				} else {
+					shiftTables(book, toShift, -row2 + row1 - 1, false /*horizontal*/);
+				}
 				sheet.deleteCell(row1, col1, row2, col2, shift == DeleteShift.LEFT);
 			}
 		}
 	}
 
+	// ZSS-986
+	//category tables to overlap(which need partial insert)
+	//  return error message if not OK; return null if OK.
+	private String getInsertedTables(SRange range, Set<String> overlapped, boolean horizontal) {
+		final int row1 = range.getRow();
+		final int row2 = range.getLastRow();
+		final int col1 = range.getColumn();
+		final int col2 = range.getLastColumn();
+		final SSheet sheet  = range.getSheet();
+		final boolean isWholeRow = isWholeRow();
+		final boolean isWholeColumn = isWholeColumn();
+		final Set<String> toShift = new HashSet<String>();
+		
+		for (STable tb : sheet.getTables()) {
+			final CellRegion rgn = tb.getAllRegion().getRegion();
+			final int tr1 = rgn.getRow();
+			final int tc1 = rgn.getColumn();
+			final int tr2 = rgn.getLastRow();
+			final int tc2 = rgn.getLastColumn();
+			
+			if (tr2 < row1 || tr1 > row2 || tc2 < col1 || tc1 > col2) {
+				continue; //no overlapping
+			}
+
+			//Shift
+			//1. Whole Row and cover the top Table row
+			//2. Whole Column and cover the left Table column
+			//3. Shift vertical and the selected range contains the whole Table columns (shift down) 
+			//4. Shift horizontal and the selected range contains the whole Table rows (shift right)
+
+			if (isWholeRow && row1 <= tr1) {
+				toShift.add(tb.getName().toUpperCase());
+			} else if (isWholeColumn && col1 <= tc1) {
+				toShift.add(tb.getName().toUpperCase());
+			} else if ((!horizontal && col1 <= tc1 && tc2 <= col2)
+				&& (row1 < tr1 || (row1 == tr1 && (col1 < tc1 || tc2 < col2)))) {
+				toShift.add(tb.getName().toUpperCase());
+			} else if ((horizontal && row1 <= tr1 && tr2 <= row2)
+				&& (col1 < tc1 || (col1 == tc1 && (row1 < tr1 || tr2 < row2)))) { 
+				toShift.add(tb.getName().toUpperCase());
+			} else {
+				if (!overlapped.isEmpty() || !toShift.isEmpty()) { 
+					return "The operation can only be applied on one table.";
+				}
+				// 1. Range is a row or a column 
+				// 2. The table contains the selected range
+				if (range.isWholeRow() || range.isWholeColumn() 
+						|| (tr1 <= row1 && row2 <= tr2 && tc1 <= col1 && col2 <= tc2)) {
+					overlapped.add(tb.getName().toUpperCase());
+				} else {
+					return "The operation can only be applied on one table.";
+				}
+			}
+		}
+		return null; // succeed
+	}
+
+	//ZSS-986
+	//return overlapped table that can be partial inserted (extended)
+	private STable insertTable(InsertShift shift, Set<String> toShift) {
+		final Set<String> overlapped = new HashSet<String>(2);
+		String message = getInsertedTables(range, overlapped, shift == InsertShift.RIGHT); //ZSS-986
+		if (message != null)
+			throw new InvalidModelOpException(message);
+		
+		final AbstractBookAdv book = (AbstractBookAdv) sheet.getBook();
+		final STable overlap = overlapped.isEmpty() ? null : book.getTable(overlapped.iterator().next());
+		
+		final int row1 = getRow();
+		final int row2 = getLastRow();
+		final int col1 = getColumn();
+		final int col2 = getLastColumn();
+		//check if we can shift the toShift without problem
+		if (overlap != null) {
+			final CellRegion orgn = overlap.getAllRegion().getRegion();
+			final int r1 = orgn.getRow();
+			final int r2 = orgn.getLastRow();
+			if (shift == InsertShift.DOWN) {
+				//cover the header row; must shift right
+				if (overlap.getHeaderRowCount() > 0 && row1 <= r1 && r1 <= row2 && r2 > row2) {
+					throw new InvalidModelOpException("Can only applies Insert > Shift Cells Right");
+				} else {
+					final int c01 = Math.min(orgn.getColumn(), col1);
+					final int c02 = Math.max(orgn.getLastColumn(), col2);
+					collectAndCheckShiftTables(row1, c01, row1, c02, toShift, false /*horizontal*/);
+				}
+			} else { // shift == DeleteShift.LEFT
+				final int r01 = Math.min(r1,  row1);
+				final int r02 = Math.max(orgn.getLastRow(), row2);
+				collectAndCheckShiftTables(r01, col1, r02, col1, toShift, true /*horizontal*/);
+			}
+		} else {
+			if (shift == InsertShift.DOWN) {
+				//row1-1 for the case that select on first row of the Table 
+				collectAndCheckShiftTables(row1, col1, row1-1, col2, toShift, false /*horizontal*/);
+			} else {
+				//col1-1 for the case that select on first column of the Table
+				collectAndCheckShiftTables(row1, col1, row2, col1-1, toShift, true /*horizontal*/);
+			}
+		}
+		
+		//do partial insert
+		return overlap;
+	}
+
+	//ZSS-986
+	private void insertTableRows(STable tb) {
+		if (tb == null) return;
+		((AbstractTableAdv)tb).insertRows(getRow(), getLastRow());
+	}
+	
+	//ZSS-986
+	private void insertTableCols(STable tb, boolean insertLeft) {
+		if (tb == null) return;
+		((AbstractTableAdv)tb).insertCols(getColumn(), getLastColumn(), insertLeft);
+	}
+
+	//ZSS-986
+	private void fillHeaderRow(STable tb, int col1, int col2) {
+		if (tb == null || tb.getHeaderRowCount() == 0) return;
+		final CellRegion rgn = tb.getAllRegion().getRegion();
+		final int r1 = rgn.getRow();
+		for (int j = col1; j <= col2; ++j) {
+			final STableColumn tbCol = tb.getColumnAt(j);
+			final String name = tbCol.getName();
+			final SCell cell = sheet.getCell(r1, j);
+			cell.setStringValue(name);
+		}
+	}
+	
 	public void insert(InsertShift shift, InsertCopyOrigin copyOrigin) {
 		// just process on the first sheet even this range over multiple sheets
 		
+		final AbstractBookAdv book = (AbstractBookAdv)sheet.getBook();
+		int row1 = getRow();
+		int row2 = getLastRow();
+		int col1 = getColumn();
+		int col2 = getLastColumn();
 		// insert row/column/cell
 		if(isWholeRow()) { // ignore insert direction
 			
@@ -348,17 +496,26 @@ public class InsertDeleteHelper extends RangeHelperBase {
 			if(checkCrossTopFreezePanel()) {
 				throw new InvalidModelOpException("Doesn't support inserting rows when current range cross the freeze panes line");
 			}
+
+			//ZSS-986
+			final Set<String> toShift = new HashSet<String>();
+			final STable overlap = insertTable(InsertShift.DOWN, toShift);
+			insertTableRows(overlap);
+			shiftTables(book, toShift, row2 - row1 + 1, false /*horizontal*/);
 			
-			sheet.insertRow(getRow(), getLastRow());
+			if (overlap != null) {
+				copyOrigin = InsertCopyOrigin.FORMAT_LEFT_ABOVE; //always copy left/above style in Table case
+			}
+			sheet.insertRow(row1, row2);
 			
 			// copy style/formal/size
 			if(copyOrigin == InsertCopyOrigin.FORMAT_LEFT_ABOVE) {
-				if(getRow() - 1 >= 0) {
-					copyRowStyle(getRow() - 1, getRow(), getLastRow());
+				if(row1 - 1 >= 0) {
+					copyRowStyle(row1 - 1, row1, row2);
 				}
 			} else if(copyOrigin == InsertCopyOrigin.FORMAT_RIGHT_BELOW) {
 				if(getLastRow() + 1 <= sheet.getBook().getMaxRowIndex()) {
-					copyRowStyle(getLastRow() + 1, getRow(), getLastRow());
+					copyRowStyle(row2 + 1, row1, row2);
 				}
 			}
 			
@@ -375,17 +532,27 @@ public class InsertDeleteHelper extends RangeHelperBase {
 			if(checkCrossLeftFreezePanel()) {
 				throw new InvalidModelOpException("Doesn't support inserting columns when current range cross the freeze panes line");
 			}
-			
-			sheet.insertColumn(getColumn(), getLastColumn());
 
+			//ZSS-986
+			final Set<String> toShift = new HashSet<String>();
+			final STable overlap = insertTable(InsertShift.RIGHT, toShift);
+			insertTableCols(overlap, copyOrigin == InsertCopyOrigin.FORMAT_LEFT_ABOVE);
+			shiftTables(book, toShift, col2 - col1 + 1, true /*horizontal*/);
+
+			if (overlap != null) {
+				copyOrigin = InsertCopyOrigin.FORMAT_LEFT_ABOVE; //always copy left/above style in Table case
+			}
+			sheet.insertColumn(col1, col2);
+			fillHeaderRow(overlap, col1, col2);
+			
 			// copy style/formal/size
 			if(copyOrigin == InsertCopyOrigin.FORMAT_LEFT_ABOVE) {
-				if(getColumn() - 1 >= 0) {
-					copyColumnStyle(getColumn() - 1, getColumn(), getLastColumn());
+				if(col1 - 1 >= 0) {
+					copyColumnStyle(col1 - 1, col1, col2);
 				}
 			} else if(copyOrigin == InsertCopyOrigin.FORMAT_RIGHT_BELOW) {
-				if(getLastColumn() + 1 <= sheet.getBook().getMaxColumnIndex()) {
-					copyColumnStyle(getLastColumn() + 1, getColumn(), getLastColumn());
+				if(col2 + 1 <= sheet.getBook().getMaxColumnIndex()) {
+					copyColumnStyle(col2 + 1, col1, col2);
 				}
 			}
 			
@@ -393,27 +560,72 @@ public class InsertDeleteHelper extends RangeHelperBase {
 			extendChartWidth();
 
 		} else if(shift != InsertShift.DEFAULT) { // do nothing if "DEFAULT", it's according to XRange.insert() spec.
-			sheet.insertCell(getRow(), getColumn(), getLastRow(), getLastColumn(), shift == InsertShift.RIGHT);
+			//ZSS-986
+			final Set<String> toShift = new HashSet<String>();
+			final STable overlap = insertTable(shift, toShift);
+			if (overlap != null) {
+				final CellRegion rgn = overlap.getAllRegion().getRegion();
+				if (shift == InsertShift.RIGHT) {
+					final boolean isLastColumn = col1 == rgn.getLastColumn();
+					insertTableCols(overlap, copyOrigin == InsertCopyOrigin.FORMAT_LEFT_ABOVE);
+					shiftTables(book, toShift, col2 - col1 + 1, true /*horizontal*/);
+					
+					if (col1 == col2 && isLastColumn
+						&& copyOrigin == InsertCopyOrigin.FORMAT_RIGHT_BELOW) { //Insert Table Column to the Right 
+						++col1;
+						++col2;
+					}
 
+					row1 = rgn.getRow();
+					row2 = rgn.getLastRow();
+				} else {
+					final boolean isLastDataRow = row1 == rgn.getLastRow() - overlap.getTotalsRowCount();
+					insertTableRows(overlap);
+					shiftTables(book, toShift, row2 - row1 + 1, false /*horizontal*/);
+					
+					if (row1 == row2 && isLastDataRow 
+						&& copyOrigin == InsertCopyOrigin.FORMAT_RIGHT_BELOW) { //Insert Table Column to the Right 
+						++row1;
+						++row2;
+					}
+					
+					col1 = rgn.getColumn();
+					col2 = rgn.getLastColumn();
+				}
+				copyOrigin = InsertCopyOrigin.FORMAT_LEFT_ABOVE; //always copy left/above style in Table case
+			} else {
+				if (shift == InsertShift.RIGHT) { 
+					shiftTables(book, toShift, col2 - col1 + 1, true /*horizontal*/);
+				} else {
+					shiftTables(book, toShift, row2 - row1 + 1, false /*horizontal*/);
+				}
+			}
+			
+			sheet.insertCell(row1, col1, row2, col2, shift == InsertShift.RIGHT);
+
+			if (shift == InsertShift.RIGHT) {
+				fillHeaderRow(overlap, col1, col2);
+			}
+			
 			// copy style/formal/size
 			if(shift == InsertShift.RIGHT) { // horizontal
 				if(copyOrigin == InsertCopyOrigin.FORMAT_LEFT_ABOVE) {
-					if(getColumn() - 1 >= 0) {
-						copyCellStyleFromColumn(getColumn() - 1);
+					if(col1 - 1 >= 0) {
+						copyCellStyleFromColumn(col1 - 1);
 					}
 				} else if(copyOrigin == InsertCopyOrigin.FORMAT_RIGHT_BELOW) {
-					if(getLastColumn() + 1 <= sheet.getBook().getMaxColumnIndex()) {
-						copyCellStyleFromColumn(getLastColumn() + 1);
+					if(col2 + 1 <= sheet.getBook().getMaxColumnIndex()) {
+						copyCellStyleFromColumn(col2 + 1);
 					}
 				}
 			} else { // vertical
 				if(copyOrigin == InsertCopyOrigin.FORMAT_LEFT_ABOVE) {
-					if(getRow() - 1 >= 0) {
-						copyCellStyleFromRow(getRow() - 1);
+					if(row1 - 1 >= 0) {
+						copyCellStyleFromRow(row1 - 1);
 					}
 				} else if(copyOrigin == InsertCopyOrigin.FORMAT_RIGHT_BELOW) {
-					if(getLastRow() + 1 <= sheet.getBook().getMaxRowIndex()) {
-						copyCellStyleFromRow(getLastRow() + 1);
+					if(row2 + 1 <= sheet.getBook().getMaxRowIndex()) {
+						copyCellStyleFromRow(row2 + 1);
 					}
 				}
 			}

@@ -13,7 +13,9 @@
 package org.zkoss.zss.model.impl;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.zkoss.poi.ss.formula.ptg.TablePtg;
 import org.zkoss.zss.model.CellRegion;
@@ -21,11 +23,14 @@ import org.zkoss.zss.model.SAutoFilter;
 import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.SBorder;
 import org.zkoss.zss.model.SBorder.BorderType;
+import org.zkoss.zss.model.sys.dependency.DependencyTable;
+import org.zkoss.zss.model.sys.dependency.Ref;
 import org.zkoss.zss.model.SBorderLine;
 import org.zkoss.zss.model.SCellStyle;
 import org.zkoss.zss.model.SFill;
 import org.zkoss.zss.model.SFont;
 import org.zkoss.zss.model.SSheet;
+import org.zkoss.zss.model.STable;
 import org.zkoss.zss.model.STableColumn;
 import org.zkoss.zss.model.STableStyle;
 import org.zkoss.zss.model.STableStyleElem;
@@ -518,64 +523,46 @@ public class TableImpl extends AbstractTableAdv implements LinkedModelObject {
 		setRegionAndFilter(new SheetRegion(sheet, new CellRegion(rgn.getRow(), rgn.getColumn(), rgn.getLastRow(), right)));
 	}
 
-	//ZSS-985
+	//ZSS-985, ZSS-986
+	//return false if shift over the right limit of the excel columns
 	@Override
-	public void shiftLeft(int diff) {
+	public boolean shiftCols(int diff) {
 		final SSheet sheet = _region.getSheet();
 		final CellRegion rgn = _region.getRegion();
-		final int left = rgn.getColumn() - diff;
-		final int right = rgn.getLastColumn() - diff;
+		final int left = rgn.getColumn() + diff;
+		final int right = rgn.getLastColumn() + diff;
 		setRegionAndFilter(new SheetRegion(sheet, new CellRegion(rgn.getRow(), left, rgn.getLastRow(), right)));
+		final SBook book = sheet.getBook();
+		if (book.getMaxColumnIndex() < left) {
+			return false;
+		}
+		if (book.getMaxColumnIndex() < right) {
+			deleteCols(book.getMaxColumnIndex()+1, right);
+		}
+		return true;
 	}
 
-	//ZSS-985
+	//ZSS-985, ZSS-986
+	//return false if shift over the bottom limit of the excel rows
 	@Override
-	public void shiftUp(int diff) {
+	public boolean shiftRows(int diff) {
 		final SSheet sheet = _region.getSheet();
 		final CellRegion rgn = _region.getRegion();
-		final int top = rgn.getRow() - diff;
-		final int bottom = rgn.getLastRow() - diff;
+		final int top = rgn.getRow() + diff;
+		final int bottom = rgn.getLastRow() + diff;
 		setRegionAndFilter(new SheetRegion(sheet, new CellRegion(top, rgn.getColumn(), bottom, rgn.getLastColumn())));
+		final SBook book = sheet.getBook();
+		if (book.getMaxRowIndex() < top) {
+			return false;
+		}
+		if (getHeaderRowCount() > 0 && top == book.getMaxRowIndex()) {
+			return false;
+		}
+		if (book.getMaxRowIndex() < bottom) {
+			deleteRows(book.getMaxRowIndex()+1, bottom);
+		}
+		return true;
 	}
-
-//	//ZSS-986
-//	//return false if shift over the right limit of the excel columns
-//	@Override
-//	public boolean shiftRight(int offset) {
-//		shiftLeft(-offset);
-//		final SSheet sheet = _region.getSheet();
-//		final SBook book = sheet.getBook();
-//		final int left = _region.getColumn();
-//		final int right = _region.getLastColumn();
-//		if (book.getMaxColumnIndex() < left) {
-//			return false;
-//		}
-//		if (book.getMaxColumnIndex() < right) {
-//			deleteCols(book.getMaxColumnIndex()+1, right);
-//		}
-//		return true;
-//	}
-//
-//	//ZSS-986
-//	//return false if shift over the bottom limit of the excel rows
-//	@Override
-//	public boolean shiftDown(int offset) {
-//		shiftUp(-offset);
-//		final SSheet sheet = _region.getSheet();
-//		final SBook book = sheet.getBook();
-//		final int top = _region.getRow();
-//		final int bottom = _region.getLastRow();
-//		if (book.getMaxRowIndex() < top) {
-//			return false;
-//		}
-//		if (getHeaderRowCount() > 0 && top == book.getMaxRowIndex()) {
-//			return false;
-//		}
-//		if (book.getMaxRowIndex() < bottom) {
-//			deleteRows(book.getMaxRowIndex()+1, bottom);
-//		}
-//		return true;
-//	}
 	
 	//ZSS-985
 	private void setRegionAndFilter(SheetRegion region) {
@@ -585,5 +572,71 @@ public class TableImpl extends AbstractTableAdv implements LinkedModelObject {
 			if (getHeaderRowCount() > 0)
 				enableFilter(true);
 		}
+	}
+
+	//ZSS-986
+	@Override
+	public void insertRows(int row1, int row2) {
+		final CellRegion rgn = _region.getRegion();
+		final int r1 = rgn.getRow();
+		final int r2 = rgn.getLastRow();
+		final SSheet sheet = _region.getSheet();
+		final int diff = row2 - row1 + 1;
+		final int top = r1; 
+		final int bottom = r2 + diff;
+		setRegionAndFilter(new SheetRegion(sheet, new CellRegion(top, rgn.getColumn(), bottom, rgn.getLastColumn())));
+	}
+
+	//ZSS-986
+	@Override
+	public void insertCols(int col1, int col2, boolean insertLeft) {
+		final CellRegion rgn = _region.getRegion();
+		final int c1 = rgn.getColumn();
+		if (!insertLeft) {
+			//only when select one column and the column is the last column
+			//insertLeft can be false
+			if (col2 != col1 || col2 != c1) { 
+				insertLeft = true;
+			}
+		}
+		final SSheet sheet = _region.getSheet();
+		final int diff = col2 - col1 + 1;
+		final int left = c1;
+		final int right = rgn.getLastColumn() + diff;
+		List<String> newNames = genNewColumnName(diff);
+		if (insertLeft) {
+			final int c01 = col1 - c1;
+			for (int j = 0; j < diff; ++j) {
+				final String name = newNames.get(j); 
+				_columns.add(c01, new TableColumnImpl(name));
+			}
+		} else { // insert at right (append)
+			for (int j = diff; --j >= 0;) {
+				final String name = newNames.get(j); 
+				_columns.add(new TableColumnImpl(name));
+			}
+		}
+		setRegionAndFilter(new SheetRegion(sheet, new CellRegion(rgn.getRow(), left, rgn.getLastRow(), right)));
+	}
+
+	//ZSS-986
+	private List<String> genNewColumnName(int count) {
+		// Generate a newer name if want to clear the cell
+		List<STableColumn> tbCols = getColumns();
+		Set<String> set = new HashSet<String>(tbCols.size() * 4 / 3);
+		for (STableColumn tbCol : tbCols) {
+			set.add(tbCol.getName().toUpperCase());
+		}
+		List<String> result = new ArrayList<String>(count);
+		String newName0 = "Column";
+		final String newNameUpper = newName0.toUpperCase();
+		for (int j = tbCols.size() + count; j > 0; --j) {
+			if (!set.contains(newNameUpper + j)) {
+				result.add(newName0 + j);
+				if (--count <= 0)
+					break;
+			}
+		}
+		return result;
 	}
 }

@@ -23,6 +23,7 @@ ZK Spreadsheet 3.8.0
   ZSS-977 Support showing Tables
   ZSS-981 Support parameters verification of data validation
   ZSS-985 Support delete a whole Table Row or a whole Table Column.
+  ZSS-986 Support insert whole Table row or whole Table column.
   
 *Bugs:
   ZSS-910 Problem referencing a cell with formula in same position of other file
