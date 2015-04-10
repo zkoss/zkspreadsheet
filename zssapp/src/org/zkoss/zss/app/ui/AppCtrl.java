@@ -231,8 +231,8 @@ public class AppCtrl extends CtrlBase<Component>{
 						if(bookinfo != null){
 							doLoadBook(bookinfo, null, null, false);
 						}else{
-							// clean push state's path
-							desktop.setBookmark("");
+							// clean push state's path for incorrect file name
+							doOpenNewBook(true);
 						}
 					}
 				}
