@@ -28,7 +28,6 @@ import org.zkoss.zss.model.SCellStyle;
 import org.zkoss.zss.model.SCellStyle.Alignment;
 import org.zkoss.zss.model.SCellStyle.VerticalAlignment;
 import org.zkoss.zss.model.SColor;
-import org.zkoss.zss.model.SFill;
 import org.zkoss.zss.model.SFill.FillPattern;
 import org.zkoss.zss.model.SFont;
 import org.zkoss.zss.model.SFont.Boldweight;
@@ -45,6 +44,7 @@ import org.zkoss.zss.model.sys.format.FormatContext;
 import org.zkoss.zss.model.sys.format.FormatEngine;
 import org.zkoss.zss.model.sys.format.FormatResult;
 import org.zkoss.zss.model.util.RichTextHelper;
+import org.zkoss.zss.range.impl.StyleUtil;
 
 /**
  * @author Dennis.Chen
@@ -92,7 +92,7 @@ public class CellFormatHelper {
 		//ZSS-34 cell background color does not show in excel
 		//20110819, henrichen: if fill pattern is NONE, shall not show the cell background color
 		//ZSS-857, ZSS-977: consider Table background
-		SCellStyle fillStyle = getFillStyle(_cellStyle, tbStyle);
+		SCellStyle fillStyle = StyleUtil.getFillStyle(_cellStyle, tbStyle);
 		
 		String backColor = fillStyle != null ? 
 			fillStyle.getBackColor().getHtmlColor() : null;
@@ -129,7 +129,7 @@ public class CellFormatHelper {
 			hitMerge = true;
 			bottom = rect.getLastRow();
 		}
-		SCellStyle nextStyle = getBottomStyle(_sheet.getCell(bottom,_col).getCellStyle(), tbStyle); //ZSS-977 
+		SCellStyle nextStyle = StyleUtil.getBottomStyle(_sheet.getCell(bottom,_col).getCellStyle(), tbStyle); //ZSS-977 
 		BorderType bb = null;
 		if (nextStyle != null){
 			bb = nextStyle.getBorderBottom();
@@ -158,7 +158,7 @@ public class CellFormatHelper {
 					final STable table0 = ((AbstractSheetAdv)_sheet).getTableByRowCol(bottom, _col);
 					nextTbStyle = table0 == null ? null : 
 						((AbstractTableAdv)table0).getCellStyle(bottom, _col);
-					nextStyle = getTopStyle(nextStyle, nextTbStyle);
+					nextStyle = StyleUtil.getTopStyle(nextStyle, nextTbStyle);
 				}
 
 				if (nextStyle != null){
@@ -170,7 +170,7 @@ public class CellFormatHelper {
 				
 				//ZSS-977
 				if (!hitBottom) {
-					nextFillStyle = getFillStyle(nextFillStyle, nextTbStyle);
+					nextFillStyle = StyleUtil.getFillStyle(nextFillStyle, nextTbStyle);
 				}
 			}
 		}
@@ -219,7 +219,7 @@ public class CellFormatHelper {
 			right = rect.getLastColumn();
 		}
 		BorderType bb = null;
-		SCellStyle nextStyle = getRightStyle(_sheet.getCell(_row, right).getCellStyle(), tbStyle); //ZSS-977
+		SCellStyle nextStyle = StyleUtil.getRightStyle(_sheet.getCell(_row, right).getCellStyle(), tbStyle); //ZSS-977
 		if (nextStyle != null){
 			bb = nextStyle.getBorderRight();
 			String color = nextStyle.getBorderRightColor().getHtmlColor();
@@ -241,7 +241,7 @@ public class CellFormatHelper {
 					final STable table0 = ((AbstractSheetAdv)_sheet).getTableByRowCol(_row, right);
 					nextTbStyle = table0 == null ? null : 
 						((AbstractTableAdv)table0).getCellStyle(_row, right);
-					nextStyle = getLeftStyle(nextStyle, nextTbStyle);
+					nextStyle = StyleUtil.getLeftStyle(nextStyle, nextTbStyle);
 				}
 				
 				if (nextStyle != null){
@@ -254,7 +254,7 @@ public class CellFormatHelper {
 				
 				//ZSS-977
 				if (!hitRight) {
-					nextFillStyle = getFillStyle(nextFillStyle, nextTbStyle);
+					nextFillStyle = StyleUtil.getFillStyle(nextFillStyle, nextTbStyle);
 				}
 			}
 		}
@@ -509,7 +509,7 @@ public class CellFormatHelper {
 		if(hasRightBorder_set){
 			return hasRightBorder;
 		}else{
-			SCellStyle fillStyle = getFillStyle(_cellStyle, tbStyle); //ZSS-977
+			SCellStyle fillStyle = StyleUtil.getFillStyle(_cellStyle, tbStyle); //ZSS-977
 			hasRightBorder = processRightBorder(new StringBuffer(), new StringBuffer(), fillStyle, tbStyle);
 			hasRightBorder_set = true;
 		}
@@ -632,7 +632,7 @@ public class CellFormatHelper {
 			hitMerge = true;
 			top = rect.getRow();
 		}
-		SCellStyle nextStyle = getTopStyle(_sheet.getCell(top,_col).getCellStyle(), tbStyle); //ZSS-977
+		SCellStyle nextStyle = StyleUtil.getTopStyle(_sheet.getCell(top,_col).getCellStyle(), tbStyle); //ZSS-977
 		
 		if (nextStyle != null){
 			BorderType bb = nextStyle.getBorderTop();
@@ -669,7 +669,7 @@ public class CellFormatHelper {
 					final STable table0 = ((AbstractSheetAdv)_sheet).getTableByRowCol(top, _col);
 					final SCellStyle tbStyle0 = 
 							table0 == null ? null : ((AbstractTableAdv)table0).getCellStyle(top, _col);
-					nextStyle = getBottomStyle(nextStyle, tbStyle0);
+					nextStyle = StyleUtil.getBottomStyle(nextStyle, tbStyle0);
 				}
 				
 				if (nextStyle != null){
@@ -698,7 +698,7 @@ public class CellFormatHelper {
 			hitMerge = true;
 			left = rect.getColumn();
 		}
-		SCellStyle nextStyle = getLeftStyle(_sheet.getCell(_row,left).getCellStyle(), tbStyle); //ZSS-977
+		SCellStyle nextStyle = StyleUtil.getLeftStyle(_sheet.getCell(_row,left).getCellStyle(), tbStyle); //ZSS-977
 		if (nextStyle != null){
 			BorderType bb = nextStyle.getBorderLeft();
 			if (bb == BorderType.DOUBLE) {
@@ -735,7 +735,7 @@ public class CellFormatHelper {
 					final STable table0 = ((AbstractSheetAdv)_sheet).getTableByRowCol(_row, left);
 					final SCellStyle tbStyle0 = 
 							table0 == null ? null : ((AbstractTableAdv)table0).getCellStyle(_row, left);
-					nextStyle = getRightStyle(nextStyle, tbStyle0);
+					nextStyle = StyleUtil.getRightStyle(nextStyle, tbStyle0);
 				}
 				if (nextStyle != null){
 					BorderType bb = nextStyle.getBorderRight();//get right here
@@ -791,15 +791,8 @@ public class CellFormatHelper {
 		if (!_cell.isNull()) {
 			
 			final StringBuffer sb = new StringBuffer();
-			SFont font = _cellStyle.getFont();
-			
 			//ZSS-977
-			if (tbCellStyle != null && _sheet.getBook().getDefaultFont().equals(font)) {
-				final SFont font0 = tbCellStyle.getFont();
-				if (font0 != null) {
-					font = font0;
-				}
-			}
+			SFont font = StyleUtil.getFontStyle(_sheet.getBook(), _cellStyle, tbCellStyle);;
 			sb.append(getFontCSSStyle(_cell, font));
 
 			//condition color
@@ -914,33 +907,5 @@ public class CellFormatHelper {
 		sb.append(r0 == b && l <= c0 && c0 <= r ? "b" : "_");
 		sb.append(c0 == r && t <= r0 && r0 <= b ? "r" : "_");
 		return sb.toString();
-	}
-	
-	//ZSS-977
-	//@since 3.8.0
-	private SCellStyle getFillStyle(SCellStyle cellStyle, SCellStyle tbStyle) {
-		return cellStyle.getFillPattern() != SFill.FillPattern.NONE ?
-			cellStyle : tbStyle;
-	}
-	
-	//ZSS-977
-	//@since 3.8.0
-	private SCellStyle getLeftStyle(SCellStyle cellStyle, SCellStyle tbStyle) {
-		return tbStyle == null || cellStyle.getBorderLeft() != BorderType.NONE ? cellStyle : tbStyle; 
-	}
-	//ZSS-977
-	//@since 3.8.0
-	private SCellStyle getTopStyle(SCellStyle cellStyle, SCellStyle tbStyle) {
-		return tbStyle == null || cellStyle.getBorderTop() != BorderType.NONE ? cellStyle : tbStyle;
-	}
-	//ZSS-977
-	//@since 3.8.0
-	private SCellStyle getRightStyle(SCellStyle cellStyle, SCellStyle tbStyle) {
-		return tbStyle == null || cellStyle.getBorderRight() != BorderType.NONE ? cellStyle : tbStyle;
-	}
-	//ZSS-977
-	//@since 3.8.0
-	private SCellStyle getBottomStyle(SCellStyle cellStyle, SCellStyle tbStyle) {
-		return tbStyle == null || cellStyle.getBorderBottom() != BorderType.NONE ? cellStyle : tbStyle;
 	}
 }

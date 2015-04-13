@@ -19,14 +19,19 @@ package org.zkoss.zss.model.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.zkoss.poi.ss.formula.FormulaRenderer;
+import org.zkoss.poi.ss.formula.ptg.Ptg;
 import org.zkoss.zss.model.SCell;
 import org.zkoss.zss.model.SCellStyle;
 import org.zkoss.zss.model.SComment;
 import org.zkoss.zss.model.SDataValidation;
 import org.zkoss.zss.model.SHyperlink;
 import org.zkoss.zss.model.SCell.CellType;
+import org.zkoss.zss.model.impl.sys.formula.ParsingBook;
+import org.zkoss.zss.model.sys.formula.FormulaExpression;
 import org.zkoss.zss.model.CellRegion;
 import org.zkoss.zss.model.SSheet;
+import org.zkoss.zss.range.impl.StyleUtil;
 
 /**
  * a help class to hold cell data and apply to another
@@ -107,12 +112,17 @@ public class CellBuffer {
 			buffer.setType(cell.getType());
 			
 			if(cell.getType() == CellType.FORMULA){
-				buffer.setFormula(cell.getFormulaValue());
+				//ZSS-1002
+				final String formula = cell.getFormulaValue();
+				final ParsingBook parsingBook = new ParsingBook(cell.getSheet().getBook());
+				final Ptg[] tokens = ((AbstractCellAdv)cell).getFormulaExpression().getPtgs();
+				final String result = FormulaRenderer.toFormulaCopyText(parsingBook, tokens, formula);
+				buffer.setFormula(result);
 			}else{
 				buffer.setValue(cell.getValue());
 			}
 			
-			buffer.setStyle(cell.getCellStyle());
+			buffer.setStyle(StyleUtil.prepareStyle(cell));
 			buffer.setHyperlink(cell.getHyperlink());
 			buffer.setComment(cell.getComment());
 			buffer.setValidation(cell.getSheet().getDataValidation(cell.getRowIndex(), cell.getColumnIndex()));

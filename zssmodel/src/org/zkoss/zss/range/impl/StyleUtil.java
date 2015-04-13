@@ -26,12 +26,16 @@ import org.zkoss.zss.model.SCell;
 import org.zkoss.zss.model.SCellStyle;
 import org.zkoss.zss.model.CellStyleHolder;
 import org.zkoss.zss.model.SFill;
+import org.zkoss.zss.model.STable;
+import org.zkoss.zss.model.SBorder.BorderType;
 import org.zkoss.zss.model.SFill.FillPattern;
 import org.zkoss.zss.model.SColor;
 import org.zkoss.zss.model.SFont;
 import org.zkoss.zss.model.SRichText;
 import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.model.impl.AbstractCellAdv;
+import org.zkoss.zss.model.impl.AbstractSheetAdv;
+import org.zkoss.zss.model.impl.AbstractTableAdv;
 import org.zkoss.zss.model.impl.RichTextImpl;
 import org.zkoss.zss.model.util.CellStyleMatcher;
 import org.zkoss.zss.model.util.FontMatcher;
@@ -903,5 +907,102 @@ public class StyleUtil {
 			style.setIndention(indent);
 		}
 		holder.setCellStyle(style);
+	}
+
+	
+	//ZSS-977
+	//@since 3.8.0
+	public static SFont getFontStyle(SBook book, SCellStyle cellStyle, SCellStyle tbCellStyle) {
+		SFont font = cellStyle.getFont();
+		
+		if (tbCellStyle != null && book.getDefaultFont().equals(font)) {
+			final SFont font0 = tbCellStyle.getFont();
+			if (font0 != null) {
+				font = font0;
+			}
+		}
+		
+		return font;
+	}
+	
+	//ZSS-977
+	//@since 3.8.0
+	public static SCellStyle getFillStyle(SCellStyle cellStyle, SCellStyle tbStyle) {
+		return cellStyle.getFillPattern() != SFill.FillPattern.NONE ?
+			cellStyle : tbStyle;
+	}
+	
+	//ZSS-977
+	//@since 3.8.0
+	public static SCellStyle getLeftStyle(SCellStyle cellStyle, SCellStyle tbStyle) {
+		return tbStyle == null || cellStyle.getBorderLeft() != BorderType.NONE ? cellStyle : tbStyle; 
+	}
+	//ZSS-977
+	//@since 3.8.0
+	public static SCellStyle getTopStyle(SCellStyle cellStyle, SCellStyle tbStyle) {
+		return tbStyle == null || cellStyle.getBorderTop() != BorderType.NONE ? cellStyle : tbStyle;
+	}
+	//ZSS-977
+	//@since 3.8.0
+	public static SCellStyle getRightStyle(SCellStyle cellStyle, SCellStyle tbStyle) {
+		return tbStyle == null || cellStyle.getBorderRight() != BorderType.NONE ? cellStyle : tbStyle;
+	}
+	//ZSS-977
+	//@since 3.8.0
+	public static SCellStyle getBottomStyle(SCellStyle cellStyle, SCellStyle tbStyle) {
+		return tbStyle == null || cellStyle.getBorderBottom() != BorderType.NONE ? cellStyle : tbStyle;
+	}
+
+	//ZSS-1002
+	//@since 3.8.0
+	public static SCellStyle prepareStyle(SCell srcCell) {
+		final int row = srcCell.getRowIndex();
+		final int col = srcCell.getColumnIndex();
+		SSheet sheet = srcCell.getSheet();
+		STable table = ((AbstractSheetAdv)sheet).getTableByRowCol(row, col);
+		SCellStyle tbStyle = table != null ? ((AbstractTableAdv)table).getCellStyle(row, col) : null;
+		SCellStyle cellStyle = srcCell.getCellStyle();
+		if (tbStyle == null) return cellStyle;
+
+		SBook book = sheet.getBook();
+		SFont font = StyleUtil.getFontStyle(book, cellStyle, tbStyle);
+		SCellStyle fillStyle = getFillStyle(cellStyle, tbStyle);
+		SCellStyle leftStyle = getLeftStyle(cellStyle, tbStyle);
+		SCellStyle topStyle = getTopStyle(cellStyle, tbStyle);
+		SCellStyle rightStyle = getRightStyle(cellStyle, tbStyle);
+		SCellStyle bottomStyle = getBottomStyle(cellStyle, tbStyle);
+		
+		CellStyleMatcher matcher = new CellStyleMatcher(cellStyle);
+		matcher.setBackColor(fillStyle.getBackColor().getHtmlColor());
+		matcher.setFillColor(fillStyle.getFillColor().getHtmlColor());
+		matcher.setFillPattern(fillStyle.getFillPattern());
+		matcher.setFont(font);
+		matcher.setBorderBottom(bottomStyle.getBorderBottom());
+		matcher.setBorderBottomColor(bottomStyle.getBorderBottomColor().getHtmlColor());
+		matcher.setBorderTop(topStyle.getBorderTop());
+		matcher.setBorderTopColor(topStyle.getBorderTopColor().getHtmlColor());
+		matcher.setBorderLeft(leftStyle.getBorderLeft());
+		matcher.setBorderLeftColor(leftStyle.getBorderLeftColor().getHtmlColor());
+		matcher.setBorderRight(rightStyle.getBorderRight());
+		matcher.setBorderRightColor(rightStyle.getBorderRightColor().getHtmlColor());
+	
+		SCellStyle style = book.searchCellStyle(matcher);
+		if(style==null){
+			style = cloneCellStyle(book, cellStyle);
+			style.setBackColor(fillStyle.getBackColor());
+			style.setFillColor(fillStyle.getFillColor());
+			style.setFillPattern(fillStyle.getFillPattern());
+			style.setFont(font);
+			style.setBorderBottom(bottomStyle.getBorderBottom());
+			style.setBorderBottomColor(bottomStyle.getBorderBottomColor());
+			style.setBorderTop(topStyle.getBorderTop());
+			style.setBorderTopColor(topStyle.getBorderTopColor());
+			style.setBorderLeft(leftStyle.getBorderLeft());
+			style.setBorderLeftColor(leftStyle.getBorderLeftColor());
+			style.setBorderRight(rightStyle.getBorderRight());
+			style.setBorderRightColor(rightStyle.getBorderRightColor());
+		}
+
+		return style;
 	}
 }

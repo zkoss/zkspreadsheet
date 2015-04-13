@@ -24,17 +24,20 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import org.zkoss.poi.ss.formula.FormulaRenderer;
+import org.zkoss.poi.ss.formula.ptg.Ptg;
 import org.zkoss.zss.model.CellRegion;
 import org.zkoss.zss.model.InvalidModelOpException;
+import org.zkoss.zss.model.PasteOption;
+import org.zkoss.zss.model.PasteOption.PasteType;
 import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.SCell;
+import org.zkoss.zss.model.SCell.CellType;
 import org.zkoss.zss.model.SCellStyle;
 import org.zkoss.zss.model.SDataValidation;
 import org.zkoss.zss.model.SSheet;
-import org.zkoss.zss.model.PasteOption;
 import org.zkoss.zss.model.SheetRegion;
-import org.zkoss.zss.model.SCell.CellType;
-import org.zkoss.zss.model.PasteOption.PasteType;
+import org.zkoss.zss.model.impl.sys.formula.ParsingBook;
 import org.zkoss.zss.model.sys.EngineFactory;
 import org.zkoss.zss.model.sys.formula.FormulaEngine;
 import org.zkoss.zss.model.sys.formula.FormulaExpression;
@@ -323,17 +326,19 @@ public class PasteCellHelper { //ZSS-693: promote visibility
 		boolean transpose = option.isTranspose();
 		int srcRowCount = transpose?src.getColumnCount():src.getRowCount();
 		int srcColCount = transpose?src.getRowCount():src.getColumnCount();
-		
+		final SSheet sheet = src.getSheet();
 		
 		CellBuffer[][] srcBuffer = new CellBuffer[srcRowCount][srcColCount];
 		SSheet srcSheet = src.getSheet();
 		for(int r = row; r <= lastRow;r++){
 			for(int c = column; c <= lastColumn;c++){
 				SCell srcCell = srcSheet.getCell(r,c);
-				PasteType pt = option.getPasteType(); 
+				PasteType pt = option.getPasteType();
+
 				boolean handleStyle = handleStylePasteType.contains(pt)
 						&& (srcSheet.getRow(r).getCellStyle(true) != null
-						|| srcSheet.getColumn(c).getCellStyle(true) != null);
+						|| srcSheet.getColumn(c).getCellStyle(true) != null)
+						|| ((AbstractSheetAdv)sheet).getTableByRowCol(r, c) != null; //ZSS-1002
 				
 				if(srcCell.isNull() && !handleStyle) //to avoid unnecessary create
 					continue;
@@ -346,7 +351,7 @@ public class PasteCellHelper { //ZSS-693: promote visibility
 				case ALL:
 				case ALL_EXCEPT_BORDERS:
 					prepareValue(buffer,srcCell,true);
-					buffer.setStyle(srcCell.getCellStyle());
+					buffer.setStyle(StyleUtil.prepareStyle(srcCell)); //ZSS-1002
 					buffer.setHyperlink(srcCell.getHyperlink());
 					buffer.setComment(srcCell.getComment());
 					buffer.setValidation(srcSheet.getDataValidation(r, c));
@@ -381,7 +386,12 @@ public class PasteCellHelper { //ZSS-693: promote visibility
 
 	private void prepareValue(CellBuffer buffer, SCell srcCell, boolean copyFormula) {
 		if(copyFormula && srcCell.getType() == CellType.FORMULA){
-			buffer.setFormula(srcCell.getFormulaValue());
+			//ZSS-1002
+			final String formula = srcCell.getFormulaValue();
+			final ParsingBook parsingBook = new ParsingBook(srcCell.getSheet().getBook());
+			final Ptg[] tokens = ((AbstractCellAdv)srcCell).getFormulaExpression().getPtgs();
+			final String result = FormulaRenderer.toFormulaCopyText(parsingBook, tokens, formula);
+			buffer.setFormula(result);
 		}else{
 			buffer.setValue(srcCell.getValue());
 		}
@@ -540,8 +550,8 @@ public class PasteCellHelper { //ZSS-693: promote visibility
 			String formula = buffer.getFormula();
 			if(formula!=null){
 				FormulaEngine engine = getFormulaEngine();
-				
-				FormulaParseContext context = new FormulaParseContext(_destSheet, null); //nodependency
+
+				FormulaParseContext context = new FormulaParseContext(destCell, null); //nodependency, //ZSS-1002
 				FormulaExpression expr; 
 				FormulaExpression fexpr = engine.parse(formula, context);
 				if(cutFrom!=null){
@@ -561,5 +571,4 @@ public class PasteCellHelper { //ZSS-693: promote visibility
 		}
 		destCell.setValue(buffer.getValue());
 	}
-
 }

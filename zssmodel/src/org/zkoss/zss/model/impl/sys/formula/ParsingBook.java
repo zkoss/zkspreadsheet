@@ -479,10 +479,14 @@ public class ParsingBook implements FormulaParsingWorkbook, FormulaRenderingWork
 			throw new IllegalArgumentException("at most total 3 table specifiers");
 		}
 		String tableName0 = tableName;
+		String tableName1 = null; //ZSS-1002
+		final SSheet sheetx = book.getSheet(sheetIndex);
+		final STable tablex = ((AbstractSheetAdv)sheetx).getTableByRowCol(rowIdx, colIdx);
 		if (tableName0 == null) {
-			final SSheet sheet = book.getSheet(sheetIndex);
-			final STable table = ((AbstractSheetAdv)sheet).getTableByRowCol(rowIdx, colIdx);
-			tableName0 = table == null ? null : table.getName();
+			tableName0 = tablex == null ? null : tablex.getName();
+		} else {
+			//ZSS-1002
+			tableName1 = tablex == null ? null : tablex.getName();
 		}
 		
 		if (tableName0 == null) {
@@ -605,7 +609,8 @@ public class ParsingBook implements FormulaParsingWorkbook, FormulaRenderingWork
 						new Item[]{item1} : new Item[] {item1, item2},
 				column1 == null ? new String[0] : 
 					column2 == null ? 
-						new String[] {column1} : new String[]{column1, column2}, tableName == null);
+						new String[] {column1} : new String[]{column1, column2}, tableName == null || tableName.equalsIgnoreCase(tableName1));
+					//inTable if not given a tableName or tableName equals the name of the table(tableName1) in place 
 	}
 
 	//ZSS-960
