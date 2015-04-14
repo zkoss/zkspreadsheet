@@ -26,6 +26,7 @@ ZK Spreadsheet 3.8.0
   ZSS-986 Support insert whole Table row or whole Table column.
   ZSS-989 Support auto-categorization of formulas in Table's Totals Rows.
   ZSS-1002 Support copy table related formula from inside table to outside table and vice versa
+  ZSS-973 Hidden rows and columns should not be printed in the exported PDF
   
 *Bugs:
   ZSS-910 Problem referencing a cell with formula in same position of other file
