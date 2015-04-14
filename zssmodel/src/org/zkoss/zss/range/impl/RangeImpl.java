@@ -599,7 +599,10 @@ public class RangeImpl implements SRange {
 			String sheetName = sheet.getSheetName();
 			CellRegion region = r.getRegion();
 			Ref pre = new RefImpl(bookName, sheetName, region.row, region.column,region.lastRow,region.lastColumn);
-			cacheCleaner.clearByPrecedent(pre);
+			//ZSS-957
+			if (cellAttr == CellAttribute.ALL || cellAttr == CellAttribute.TEXT) {
+				cacheCleaner.clearByPrecedent(pre);
+			}
 			notifySet.add(pre);
 			boolean wholeSheet = region.row==0 && region.lastRow>=book.getMaxRowIndex() 
 					&& region.column==0 && region.lastColumn>=book.getMaxColumnIndex();

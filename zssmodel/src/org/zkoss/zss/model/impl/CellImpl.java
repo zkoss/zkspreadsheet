@@ -23,6 +23,7 @@ import java.util.Locale;
 import org.zkoss.poi.ss.formula.eval.EvaluationException;
 import org.zkoss.poi.ss.formula.eval.ValueEval;
 import org.zkoss.poi.ss.usermodel.ZssContext;
+import org.zkoss.poi.util.Internal;
 import org.zkoss.zss.model.CellRegion;
 import org.zkoss.zss.model.ErrorValue;
 import org.zkoss.zss.model.InvalidFormulaException;
@@ -625,5 +626,12 @@ public class CellImpl extends AbstractCellAdv {
 			return ((AbstractSheetAdv)sheet).getTableByRowCol(this.getRowIndex(), this.getColumnIndex());
 		}
 		return null;
+	}
+	
+	//ZSS-957
+	//@for test only
+	@Internal
+	public Object getFromulaResultValue() {
+		return _formulaResultValue;
 	}
 }
