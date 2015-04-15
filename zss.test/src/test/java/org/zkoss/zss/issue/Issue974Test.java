@@ -14,7 +14,7 @@ import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.impl.pdf.PdfExporter;
 
-public class Issue973Test {
+public class Issue974Test {
 	
 	@BeforeClass
 	public static void setUpLibrary() throws Exception {
@@ -35,10 +35,10 @@ public class Issue973Test {
 	 * Test export to pdf with hidden row and column.
 	 */
 	@Test
-	public void exportHiddenRowColumn() {
-		Book book = Util.loadBook(this, "book/973-hidden-rows-columns-pdf.xlsx");
+	public void exportFillPatterns() {
+		Book book = Util.loadBook(this, "book/974-fill-patterns-pdf.xlsx");
 		
-		File temp = Setup.getTempFile("Issue973HiddenRowsColumnsTest",".pdf");
+		File temp = Setup.getTempFile("Issue974FillPatternsTest",".pdf");
 		
 		exportBook(book.getInternalBook(), temp);
 		
@@ -48,6 +48,7 @@ public class Issue973Test {
 	private void exportBook(SBook book, File file) {
 		
 		PdfExporter pdfExporter = new PdfExporter();
+		
 		try {
 			pdfExporter.export(book, file);
 		} catch (IOException e) {

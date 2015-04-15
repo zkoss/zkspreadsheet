@@ -106,46 +106,10 @@ public class FillImpl extends AbstractFillAdv {
 
 	//ZSS-841
 	private static String getFillPatternHtml(SFill style) {
-		BufferedImage image = new BufferedImage(8, 4, BufferedImage.TYPE_INT_ARGB);
-		Graphics2D g2 = image.createGraphics();
-		// background color
-		byte[] rgb = style.getBackColor().getRGB();
-		g2.setColor(new Color(((int)rgb[0]) & 0xff , ((int)rgb[1]) & 0xff, ((int)rgb[2]) & 0xff));
-		g2.fillRect(0, 0, 8, 4);
-		// foreground color
-		rgb = style.getFillColor().getRGB();
-		g2.setColor(new Color(((int)rgb[0]) & 0xff , ((int)rgb[1]) & 0xff, ((int)rgb[2]) & 0xff));
-		byte[] patb = _PATTERN_BYTES[style.getFillPattern().ordinal()];
-		for (int y = 0; y < 4; ++y) {
-			byte b = patb[y];
-			if (b == 0) continue; // all zero case
-			if (b == 0xff) {
-				g2.drawLine(0, y, 7, y);
-				continue;
-			}
-			for (int x = 0; x < 8; ++x) {
-				if ((b & 0x80) != 0) {
-					g2.drawLine(x, y, x, y);
-				}
-				b <<= 1;
-			}
-		}
-		ByteArrayOutputStream os = new ByteArrayOutputStream();
-		try {
-			ImageIO.write(image, "png", os);
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				os.close();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
+		byte[] rawData = getFillPatternBytes(style, 0, 0, 8, 4);
 		StringBuilder sb = new StringBuilder();
 		sb.append("background-image:url(data:image/png;base64,");
-		String base64 = Base64.encodeBase64String(os.toByteArray());
+		String base64 = Base64.encodeBase64String(rawData);
 		sb.append(base64).append(");");
 		return sb.toString();
 	}
@@ -269,5 +233,51 @@ public class FillImpl extends AbstractFillAdv {
 			.append(_fillPattern.ordinal()) 
 			.append(".").append(_fillColor.getHtmlColor())
 			.append(".").append(_backColor.getHtmlColor()).toString();
+	}
+
+	//ZSS-974
+	//@since 3.8.0
+	public static byte[] getFillPatternBytes(SFill style, int xOffset, int yOffset, int width, int height) {
+		BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g2 = image.createGraphics();
+		// background color
+		byte[] rgb = style.getBackColor().getRGB();
+		g2.setColor(new Color(((int)rgb[0]) & 0xff , ((int)rgb[1]) & 0xff, ((int)rgb[2]) & 0xff));
+		g2.fillRect(0, 0, width, height);
+		// foreground color
+		rgb = style.getFillColor().getRGB();
+		g2.setColor(new Color(((int)rgb[0]) & 0xff , ((int)rgb[1]) & 0xff, ((int)rgb[2]) & 0xff));
+		byte[] patb = _PATTERN_BYTES[style.getFillPattern().ordinal()];
+		for (int y = 0; y < height; ++y) {
+			final int y0 = (y + yOffset) % 4;
+			byte b = patb[y0];
+			if (b == 0) continue; // all zero case
+			if (b == 0xff) {
+				g2.drawLine(0, y, width-1, y);
+				continue;
+			}
+			int mask = 0x80 >>> (xOffset % 8);
+			for (int x = 0; x < width; ++x) {
+				if ((b & mask) != 0) {
+					g2.drawLine(x, y, x, y);
+				}
+				mask >>>= 1;
+				if (mask == 0) mask = 0x80;
+			}
+		}
+		ByteArrayOutputStream os = new ByteArrayOutputStream();
+		try {
+			ImageIO.write(image, "png", os);
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				os.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return os.toByteArray();
 	}
 }
