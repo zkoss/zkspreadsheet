@@ -48,6 +48,10 @@ zss.ScrollPanel = zk.$extends(zk.Object, {
 		this.minWidth = dtcmp.offsetWidth;
 		wgt.domListen_(scrollPanel, 'onScroll', this.proxy(this._doScrolling))
 			.domListen_(scrollPanel, 'onMouseDown', this.proxy(this._doMousedown));
+		
+		jq(sheet.cp.$n()).on('mousewheel', this.proxy(this._doMouseWheel));
+		jq(sheet.lp.$n()).on('mousewheel', this.proxy(this._doMouseWheel));
+		jq(sheet.tp.$n()).on('mousewheel', this.proxy(this._doMouseWheel));
 	},
 	/**
 	 * Returns the direction that scroll to
@@ -76,12 +80,30 @@ zss.ScrollPanel = zk.$extends(zk.Object, {
 			wgt = sheet._wgt,
 			n = sheet.$n('sp');
 		
+		jq(sheet.tp.$n()).off('mousewheel', this.proxy(this._doMouseWheel));
+		jq(sheet.lp.$n()).off('mousewheel', this.proxy(this._doMouseWheel));
+		jq(sheet.cp.$n()).off('mousewheel', this.proxy(this._doMouseWheel));
+		
 		wgt.domUnlisten_(n, 'onScroll', this.proxy(this._doScrolling))
 			.domUnlisten_(n, 'onMouseDown', this.proxy(this._doMousedown));
 		
 		this.invalid = true;
 		if(this.comp) this.comp.ctrl = null;
 		this.comp = this.sheet = null;
+	},
+	//ZSS-996
+	_doMouseWheel: function (evt) {
+		var event = evt.originalEvent,
+			deltaX = event.wheelDeltaX,
+			deltaY = event.wheelDeltaY ? event.wheelDeltaY / 120 : event.wheelDelta ? event.wheelDelta / 120 : -event.detail / 3,
+			scrollPanel = jq(this.comp);
+				
+		if(deltaY && deltaY != 0)
+			scrollPanel.scrollTop(scrollPanel.scrollTop() - (deltaY * 100));
+		
+		// ff & IE doesn't support horizontal mouse wheel
+		if(deltaX && deltaX != 0)
+			scrollPanel.scrollLeft(scrollPanel.scrollLeft() - (deltaX / 120 * 100));
 	},
 	_doMousedown: function (evt) {
 		var cmp = this.comp;

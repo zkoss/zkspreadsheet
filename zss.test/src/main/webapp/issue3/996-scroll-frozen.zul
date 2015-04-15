@@ -1,0 +1,13 @@
+<vbox hflex="1" vflex="1">
+	<label multiline="true">
+		scroll vertically and horizontally in four frozen panel. make sure it works.
+	</label>
+	
+	<spreadsheet id="ss" src="/issue3/book/blank.xlsx" maxVisibleRows="50" maxVisibleColumns="50"
+		hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
+		showFormulabar="true" />
+		
+	<zscript><![CDATA[
+		     Ranges.range(ss.getSelectedSheet()).setFreezePanel(2, 5); 
+		]]></zscript>
+</vbox>
