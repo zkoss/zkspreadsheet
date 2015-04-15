@@ -65,6 +65,7 @@ ZK Spreadsheet 3.8.0
   ZSS-984 Should not be able to delete the row if the row contains Table Header or across rows of two Tables
   ZSS-970 Zssapp crashed during editing
   ZSS-957 setCellStyle() should not clears a formula result cache
+  ZSS-996 Cannot scroll rows when mouse pointer is over freezing columns
   
 ** Upgrade Notes
   * Default period for automatically saving in zssapp is 15 minutes.
