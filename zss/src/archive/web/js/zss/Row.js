@@ -39,16 +39,11 @@ zss.Row = zk.$extends(zk.Widget, {
 	},
 	bind_: function (desktop, skipper, after) {
 		this.$supers(zss.Row, 'bind_', arguments);//after bind cells, may need to process wrap height
-		this.sheet.listen({onProcessAutoHeight: this.proxy(this._onProcessAutoHeight)});
 	},
 	unbind_: function () {
 		delete this.cells;
 		this.r = this.zsh = null;
-		this.sheet.unlisten({onProcessAutoHeight: this.proxy(this._onProcessAutoHeight)});
 		this.$supers(zss.Row, 'unbind_', arguments);
-	},
-	_onProcessAutoHeight: function (evt) {
-		// not implement in OSE
 	},
 	updateAutoHeightDirty: function (oldCellHeight, newCellHeight) {
 		// not implement in OSE
