@@ -1990,4 +1990,16 @@ public class SheetImpl extends AbstractSheetAdv {
 			}
 		}
 	}
+	
+	//ZSS-1001
+	@Override
+	public void removeTable(STable table) {
+		_tables.remove(table);
+	}
+	
+	//ZSS-1001
+	@Override
+	public void clearTables() {
+		_tables.clear();
+	}
 }

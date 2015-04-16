@@ -343,9 +343,10 @@ public class RangeImpl implements SRange {
 					SSheet sheet = r.getSheet();
 					SBook book = sheet.getBook();
 					CellRegion region = r.getRegion();
-					new ClearCellHelper(new RangeImpl(sheet,region)).clearCellContent();
+					final boolean deleteTables = 
+							new ClearCellHelper(new RangeImpl(sheet,region)).clearCellContentAndTables(); //ZSS-1001
 					
-					handleCellNotifyContentChange(new SheetRegion(sheet,region), CellAttribute.TEXT); //ZSS-939
+					handleCellNotifyContentChange(new SheetRegion(sheet,region), deleteTables ? CellAttribute.ALL : CellAttribute.TEXT); //ZSS-939, ZSS-1001
 					
 					boolean wholeSheet = region.row==0 && region.lastRow>=book.getMaxRowIndex() 
 							&& region.column==0 && region.lastColumn>=book.getMaxColumnIndex();

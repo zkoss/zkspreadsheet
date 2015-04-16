@@ -18,15 +18,17 @@ package org.zkoss.zss.range.impl;
 
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
-import org.zkoss.zss.model.InvalidModelOpException;
 import org.zkoss.zss.model.SCell;
 import org.zkoss.zss.model.SCellStyle;
 import org.zkoss.zss.model.SColumn;
 import org.zkoss.zss.model.SColumnArray;
 import org.zkoss.zss.model.SRow;
-import org.zkoss.zss.model.impl.AbstractCellAdv;
+import org.zkoss.zss.model.STable;
+import org.zkoss.zss.model.impl.AbstractBookAdv;
+import org.zkoss.zss.model.impl.AbstractSheetAdv;
 import org.zkoss.zss.range.SRange;
 
 /**
@@ -124,7 +126,7 @@ public class ClearCellHelper extends RangeHelperBase{
 		}
 		
 		for(int r = getRow(); r <= getLastRow(); r++){
-			Set<Integer> rowColumnHasStyle = new HashSet(columnHasStyle);
+			Set<Integer> rowColumnHasStyle = new HashSet<Integer>(columnHasStyle);
 			SRow row = sheet.getRow(r);
 			if(!row.isNull()){
 				row.setCellStyle(null);
@@ -148,7 +150,15 @@ public class ClearCellHelper extends RangeHelperBase{
 		}
 	}
 	
-	
+	//ZSS-1001
+	// Returns true if some tables deleted; false if no tables to be deleted.
+	//@since 3.8.0
+	public boolean clearCellContentAndTables() {
+		final boolean deleted = clearTables();
+		clearCellContent();
+		return deleted;
+	}
+
 	public void clearCellContent() {
 		if(isWholeSheet()){
 			clearWholeSheetContent();
@@ -163,6 +173,32 @@ public class ClearCellHelper extends RangeHelperBase{
 					clearCellContent(cell);
 				}
 			}
+		}
+	}
+	
+	//ZSS-1001
+	//Return true to indicate delete the tables; or false if no table to delete.
+	private boolean clearTables() {
+		if (isWholeSheet()) {
+			//ZSS-1001
+			List<STable> tables = sheet.getTables();
+			final boolean deleteTables = !tables.isEmpty();
+			AbstractBookAdv book = (AbstractBookAdv) sheet.getBook();
+			for (STable tb : tables) {
+				book.removeTable(tb.getName());
+			}
+			((AbstractSheetAdv)sheet).clearTables();
+			return deleteTables;
+		} else {
+			final int row1 = getRow();
+			final int row2 = getLastRow();
+			final int col1 = getColumn();
+			final int col2 = getLastColumn();
+			final Set<String> toDelete = 
+					InsertDeleteHelper.collectContainedTables(sheet, row1, col1, row2, col2);
+			final boolean deleteTables = !toDelete.isEmpty();
+			InsertDeleteHelper.deleteTablesByNames(sheet, toDelete);
+			return deleteTables;
 		}
 	}
 

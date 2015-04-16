@@ -175,17 +175,42 @@ public class InsertDeleteHelper extends RangeHelperBase {
 		}
 		
 		//do delete
+		deleteTablesByNames(sheet, toDelete);
+		
+		//do partial delete
+		return overlap;
+	}
+	
+	//ZSS-1001
+	public static Set<String> collectContainedTables(SSheet sheet, 
+			int row1, int col1, int row2, int col2) {
+		Set<String> toDelete = new HashSet<String>();
+		for (STable tb : sheet.getTables()) {
+			final CellRegion rgn = tb.getAllRegion().getRegion();
+			final int tr1 = rgn.getRow();
+			final int tc1 = rgn.getColumn();
+			final int tr2 = rgn.getLastRow();
+			final int tc2 = rgn.getLastColumn();
+			
+			// table is contained by the range
+			if (row1 <= tr1 && tr2 <= row2 && col1 <= tc1 && tc2 <= col2) {
+				toDelete.add(tb.getName().toUpperCase()); //total delete
+			}
+		}
+		return toDelete;
+	}
+	
+	//ZSS-1001
+	public static void deleteTablesByNames(SSheet sheet, Set<String> toDelete) {
+		AbstractBookAdv book = (AbstractBookAdv)sheet.getBook();
 		if (!toDelete.isEmpty()) {
 			for (String tbName : toDelete) {
 				book.removeTable(tbName);
 			}
 			((AbstractSheetAdv)sheet).removeTables(toDelete);
 		}
-		
-		//do partial delete
-		return overlap;
 	}
-	
+
 	//ZSS-985
 	private void deleteTable0(STable tb) {
 		final AbstractBookAdv book = (AbstractBookAdv) sheet.getBook();

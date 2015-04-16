@@ -29,6 +29,7 @@ ZK Spreadsheet 3.8.0
   ZSS-973 Hidden rows and columns should not be printed in the exported PDF
   ZSS-974 Export fill pattern to PDF file
   ZSS-975 Export bold text to PDF file
+  ZSS-1001 Support clear a Table
   
 *Bugs:
   ZSS-910 Problem referencing a cell with formula in same position of other file

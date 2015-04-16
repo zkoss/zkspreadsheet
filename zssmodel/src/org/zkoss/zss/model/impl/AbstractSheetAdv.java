@@ -57,4 +57,10 @@ public abstract class AbstractSheetAdv implements SSheet,LinkedModelObject,Seria
 	
 	//ZSS-985
 	abstract public void removeTables(Set<String> tableNames);
+	
+	//ZSS-1001
+	abstract public void removeTable(STable table);
+	
+	//ZSS-1001
+	abstract public void clearTables();
 }
