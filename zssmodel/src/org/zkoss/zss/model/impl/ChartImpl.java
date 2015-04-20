@@ -58,6 +58,8 @@ public class ChartImpl extends AbstractChartAdv {
 	private int _perspective = 30;
 	private int _barOverlap = 0;
 	
+	private boolean _plotOnlyVisibleCells = true; //default true
+	
 	private List<SChartAxis> _valueAxises = new ArrayList<SChartAxis>();
 	private List<SChartAxis> _categoryAxises = new ArrayList<SChartAxis>();
 	
@@ -306,5 +308,14 @@ public class ChartImpl extends AbstractChartAdv {
 	@Override
 	public void setBarOverlap(int overlap) {
 		_barOverlap = overlap;
+	}
+	@Override
+	public void setPlotOnlyVisibleCells(boolean plotOnlyVisibleCells) {
+		_plotOnlyVisibleCells = plotOnlyVisibleCells;
+		
+	}
+	@Override
+	public boolean isPlotOnlyVisibleCells() {
+		return _plotOnlyVisibleCells;
 	}
 }

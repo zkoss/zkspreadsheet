@@ -16,8 +16,10 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.model.impl.chart;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.zkoss.zss.model.ErrorValue;
 import org.zkoss.zss.model.SChart;
@@ -53,8 +55,11 @@ public class GeneralChartDataImpl extends AbstractGeneralChartDataAdv implements
 	private Object _evalResult;
 	
 	private boolean _evaluated = false;
+	private boolean _visibleEvaluated = false;
 	
 	private int _seriesCount = 0;
+
+	private boolean[] _hiddenCategoriesInfo;
 	
 	public GeneralChartDataImpl(AbstractChartAdv chart,String id){
 		this._chart = chart;
@@ -147,6 +152,7 @@ public class GeneralChartDataImpl extends AbstractGeneralChartDataAdv implements
 	public void clearFormulaResultCache() {
 		_evalResult = null;
 		_evaluated = false;
+		_visibleEvaluated = false;
 		for(SeriesImpl series:_serieses){
 			series.clearFormulaResultCache();
 		}
@@ -231,6 +237,29 @@ public class GeneralChartDataImpl extends AbstractGeneralChartDataAdv implements
 			FormulaEngine fe = EngineFactory.getInstance().createFormulaEngine();
 			fe.updateDependencyTable(fexpr, new FormulaParseContext(_chart.getSheet(),getRef()));
 		}
-	};
+	}
 
+	@Override
+	public boolean isCategoryHidden(int index) {
+		evalVisibleInfo();
+		// select multiple empty rows may cause exceeding array index exception
+		return _hiddenCategoriesInfo == null ? false : _hiddenCategoriesInfo.length < index + 1 ? false : _hiddenCategoriesInfo[index];
+	}
+
+	private void evalVisibleInfo() {
+		if(_visibleEvaluated)
+			return;
+		
+		synchronized (this) {
+			if(!_visibleEvaluated) {
+				Map<Integer, Boolean> cachedRowValues = new HashMap<Integer, Boolean>(16);
+				Map<Integer, Boolean> cachedColumnValues = new HashMap<Integer, Boolean>(16);
+				_hiddenCategoriesInfo = new boolean[getNumOfCategory()];
+				
+				ChartUtil.evalVisibleInfo(_chart, _catFormulaExpr, _hiddenCategoriesInfo, cachedRowValues, cachedColumnValues);
+				_visibleEvaluated = true;
+			}
+		}
+		
+	}
 }
