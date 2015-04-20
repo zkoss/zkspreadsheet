@@ -1,0 +1,30 @@
+<vbox hflex="1" vflex="1">
+	<label multiline="true">
+Since 3.8.0
+1. Select A6; right click to popup context menu and select Data Validation.
+2. You should see an info messagebox say "The operation cannot be applied on Table's totals row"
+3. Select A7; right click to select Data Validation.
+4. You should see the Data Validation dialog for parameters setting.
+5. Select A5; right click to select Data Validation.
+6. You should see the Data Validation dialog for parameters setting.
+	</label>
+<button id="export" label="Export to Excel" onClick="doExport()"/>
+<zscript><![CDATA[
+     import java.io.*;
+     import org.zkoss.zss.api.Exporters;
+     import org.zkoss.zul.*;
+     void doExport() throws IOException {
+         ByteArrayOutputStream os = new ByteArrayOutputStream();
+         try {
+              Exporters.getExporter("excel").export(ss.getBook(), os);
+         } catch (Exception ex) {
+              os.close();
+         }
+         Filedownload.save(os.toByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "990-export-validate-table-total-rows.xlsx"); 
+     }
+]]>
+</zscript>
+	<spreadsheet id="ss" src="/issue3/book/990-validate-table-total-rows.xlsx" maxVisibleRows="60" maxVisibleColumns="40"
+		hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
+		showFormulabar="true" />	
+</vbox>
