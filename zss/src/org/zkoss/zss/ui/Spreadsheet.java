@@ -970,10 +970,15 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			//handle AutoFilter
 			Map afmap = convertAutoFilterToJSON(sheet.getAutoFilter());
 			if (afmap != null) {
-				smartUpdate("_autoFilter", afmap);
+				smartUpdate("autoFilter", afmap);
 			} else {
-				smartUpdate("_autoFilter", (String) null);
+				smartUpdate("autoFilter", (String) null);
 			}
+			
+			//ZSS-988
+			//handle Table's AutoFilter
+			Map<String, Map> tbafsmap = convertTableFiltersToJSON(sheet);
+			smartUpdate("tableFilters", tbafsmap);
 			
 			smartUpdate("rowHeight", getRowheight());
 			smartUpdate("columnWidth", getColumnwidth());
@@ -1541,7 +1546,23 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		return null;
 	}
 
+	//ZSS-988
+	private Map<String, Map> convertATableFilterToJSON(STable table) {
+		Map<String, Map> tbmap = new HashMap<String, Map>();
+		Map tafmap = convertAutoFilterToJSON(table.getAutoFilter());
+		tbmap.put(table.getName(), tafmap);
+		return tbmap;
+	}
 	
+	//ZSS-988
+	private Map<String, Map> convertTableFiltersToJSON(SSheet sheet) {
+		Map<String, Map> tbmap = new HashMap<String, Map>();
+		for (STable table : sheet.getTables()) {
+			Map tafmap = convertAutoFilterToJSON(table.getAutoFilter());
+			tbmap.put(table.getName(), tafmap);
+		}
+		return tbmap.isEmpty() ? null : tbmap;
+	}
 
 	//ZSS-13: Support Open hyperlink in a separate browser tab window
 	private boolean getLinkToNewTab() {
@@ -1645,6 +1666,11 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		} else {
 			renderer.render("autoFilter", (String) null);
 		}
+		
+		//ZSS-988
+		//handle Table's AutoFilter
+		Map<String, Map> tbafsmap = convertTableFiltersToJSON(sheet);
+		renderer.render("tableFilters", tbafsmap);
 
 		int rowHeight = getRowheight();
 		if (rowHeight != DEFAULT_ROW_HEIGHT) {
@@ -1967,7 +1993,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	 * Update autofilter buttons.
 	 * @param af the current AutoFilter.
 	 */
-	private void updateAutoFilter(SSheet sheet) {
+	private void updateAutoFilter(SSheet sheet, STable table) { //ZSS-988
 		if (!getSelectedSSheet().equals(sheet)){
 			releaseClientCache(sheet.getId());
 			return;
@@ -1975,11 +2001,15 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		if (this.isInvalidated())
 			return;// since it is invalidate, we don't need to do anymore
 		
-		final SAutoFilter filter = sheet.getAutoFilter();
+		final SAutoFilter filter = table != null ? table.getAutoFilter() : sheet.getAutoFilter();
 		if (filter != null && filter.getRegion().getRowCount() > 500) { //ZSS-838, ZSS-943
 			this.invalidate();
 		} else { 
-			smartUpdate("autoFilter", convertAutoFilterToJSON(filter));
+			if (table == null) {
+				smartUpdate("autoFilter", convertAutoFilterToJSON(filter));
+			} else {
+				smartUpdate("aTableFilter", convertATableFilterToJSON(table)); //ZSS-988
+			}
 		}
 	}
 
@@ -2570,7 +2600,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		private void onAutoFilterChange(ModelEvent event) {
 			final SSheet sheet = event.getSheet();
 			
-			updateAutoFilter(sheet);
+			updateAutoFilter(sheet, (STable)event.getData("TABLE")); //ZSS-988
 		}
 		private void onDisplayGridlines(ModelEvent event) {
 			final SSheet sheet = event.getSheet();

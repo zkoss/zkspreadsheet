@@ -620,7 +620,7 @@ public class ExcelXlsxExporter extends AbstractExcelExporter {
 			poiInfo.setShowLastColumn(info.isShowLastColumn());
 			poiInfo.setShowFirstColumn(info.isShowFirstColumn());
 			
-			final SAutoFilter filter = table.getFilter();
+			final SAutoFilter filter = table.getAutoFilter();
 			if (filter != null) {
 				XSSFAutoFilter poiFilter = poiTable.createAutoFilter();
 				poiFilter.setRef(filter.getRegion().getReferenceString());

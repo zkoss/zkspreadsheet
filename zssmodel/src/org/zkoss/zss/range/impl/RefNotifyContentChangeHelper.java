@@ -117,7 +117,7 @@ import org.zkoss.zss.model.sys.dependency.Ref.RefType;
 		if(book==null) return;
 		SSheet sheet = book.getSheetByName(notify.getSheetName());
 		if(sheet==null) return;
-		_notifyHelper.notifySheetAutoFilterChange(sheet);
+		_notifyHelper.notifySheetAutoFilterChange(sheet, null); //ZSS-988
 	}
 
 	private void handleAreaRef(Ref notify, CellAttribute cellAttr) {

@@ -23,20 +23,29 @@ import org.zkoss.poi.ss.formula.ptg.TablePtg.Item;
  */
 public interface STable {
 	SBook getBook(); //ZSS-967
-	SAutoFilter getFilter(); // turn off header Row; then this is null; ref and region is the same; then no totals row
-	void enableFilter(boolean enable);
+	/**
+	 * Gets the auto filter information if there is.
+	 * @return the auto filter, or null if not found
+	 */
+	SAutoFilter getAutoFilter(); // turn off header Row; then this is null; ref and region is the same; then no totals row
+	void enableAutoFilter(boolean enable);
+	
+	/**
+	 * Creates a new auto filter for this table the old one will be drop directly.
+	 * @return the new auto filter.
+	 */
+	public SAutoFilter createAutoFilter();
+	
+	/**
+	 * Delete current autofilter if it has
+	 */
+	public void deleteAutoFilter();
 	
 	void addColumn(STableColumn column);
 	List<STableColumn> getColumns();
 	STableColumn getColumnAt(int colIdx); //ZSS-967
 	STableStyleInfo getTableStyleInfo();
-	
-//	SNamedStyle getDataCellStyle(); // dataCellStyle
-//	SNamedStyle getTotalsRowCellStyle(); // totalsRowCellStyle
-//	SNamedStyle getHeaderRowCellStyle(); // headerRowCellStyle
-//	SCellStyle getTotalsRowStyle(); //totalsRowDxfId
-//	SCellStyle getDataStyle(); //dataDxfId
-//	SCellStyle getHeaderRowStyle(); //headerRowDxfId
+
 	int getTotalsRowCount(); //totalsRowCount; 0 if not show; default is 0
 	void setTotalsRowCount(int count);
 	int getHeaderRowCount(); //headerRowCount; 0 if not show; default is 1

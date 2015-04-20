@@ -59,6 +59,7 @@ import org.zkoss.zss.model.SRow;
 import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.model.SSheetProtection;
 import org.zkoss.zss.model.SSheetViewInfo;
+import org.zkoss.zss.model.STable;
 import org.zkoss.zss.model.SheetRegion;
 import org.zkoss.zss.model.SName;
 import org.zkoss.zss.model.ViewAnchor;
@@ -1041,9 +1042,11 @@ public class RangeImpl implements SRange {
 
 	@Override
 	public void setHidden(final boolean hidden) {
-		new ReadWriteTask() {
+		//ZSS-988: use ModelManipulateTask; so we can fire CellContentChange 
+		// event and Subtotal(1xx, ...) works
+		new ModelManipulationTask() { 
 			@Override
-			public Object invoke() {
+			public Object doInvoke() {
 				setHiddenInLock(hidden);
 				return null;
 			}
@@ -1503,22 +1506,56 @@ public class RangeImpl implements SRange {
 		return refs;
 	}
 	
+	//ZSS-988: if cover both table and non-table area or cover more than 2 tables, cannot do this!
+	private STable getFilterTable() {
+		final int row1 = getRow();
+		final int row2 = getLastRow();
+		final int col1 = getColumn();
+		final int col2 = getLastColumn();
+		
+		final SSheet sheet = getSheet();
+		STable table = null;
+		for (STable tb : sheet.getTables()) {
+			final CellRegion rgn = tb.getAllRegion().getRegion();
+			final int tr1 = rgn.getRow();
+			final int tc1 = rgn.getColumn();
+			final int tr2 = rgn.getLastRow();
+			final int tc2 = rgn.getLastColumn();
+			
+			// table contains the range
+			if (tr1 <= row1 && row2 <= tr2 && tc1 <= col1 && col2 <= tc2) {
+				table = tb;
+				break;
+			}
+			// if overlap the table
+			if (tr2 >= row1 && tr1 <= row2 && tc2 >= col1 && tc1 <= col2) {
+				throw new InvalidModelOpException("The operation can only be applied on one table or out of all tables"); //ZSS-988
+			}
+		}
+		return table;
+	}
+	
+	
 	@Override 
 	public SAutoFilter enableAutoFilter(final boolean enable){
 		//it just handle the first ref
 		return (SAutoFilter) new ReadWriteTask() {			
 			@Override
 			public Object invoke() {
-				SSheet sheet = getSheet();
-				SAutoFilter filter = sheet.getAutoFilter();
+				final SSheet sheet = getSheet();
+				//ZSS-988
+				final STable table = getFilterTable();
+				final SAutoFilter filter = table == null ? sheet.getAutoFilter() : table.getAutoFilter();
 				
 				if((filter==null && !enable) || (filter!=null && enable)){
 					return filter;
 				}
-				//ZSS-901
-				SAutoFilter filter0 = new AutoFilterHelper(RangeImpl.this).enableAutoFilter(enable);
-				notifySheetAutoFilterChange(enable ? filter0 : filter);
-				return filter;
+				//ZSS-901, ZSS-988
+				SAutoFilter filter0 = table != null ?
+						new AutoFilterHelper(RangeImpl.this).enableTableFilter(table, enable):
+						new AutoFilterHelper(RangeImpl.this).enableAutoFilter(enable);
+				notifySheetAutoFilterChange(table, enable ? filter0 : filter);
+				return filter0;
 			}
 		}.doInWriteLock(getLock());
 	}
@@ -1527,11 +1564,13 @@ public class RangeImpl implements SRange {
 	public SAutoFilter enableAutoFilter(final int field, final FilterOp filterOp,
 			final Object criteria1, final Object criteria2, final Boolean visibleDropDown) {
 		//it just handle the first ref
-		return (SAutoFilter) new ReadWriteTask() {			
+		return (SAutoFilter) new ReadWriteTask() {
 			@Override
 			public Object invoke() {
-				SAutoFilter filter = new AutoFilterHelper(RangeImpl.this).enableAutoFilter(field, filterOp, criteria1, criteria2, visibleDropDown);
-				notifySheetAutoFilterChange(filter); //ZSS-901
+				final STable table = getFilterTable(); //ZSS-988
+				final SAutoFilter filter = new AutoFilterHelper(RangeImpl.this).enableAutoFilter(table, field, filterOp, criteria1, criteria2, visibleDropDown);
+				final SSheet sheet = getSheet();
+				notifySheetAutoFilterChange(table, sheet.getAutoFilter()); //ZSS-901
 				return filter;
 			}
 		}.doInWriteLock(getLock());
@@ -1542,8 +1581,12 @@ public class RangeImpl implements SRange {
 		new ReadWriteTask() {			
 			@Override
 			public Object invoke() {
-				new AutoFilterHelper(RangeImpl.this).resetAutoFilter();
-				notifySheetAutoFilterChange(getSheet().getAutoFilter()); //ZSS-901
+				//ZSS-988
+				final SSheet sheet = getSheet();
+				final STable table = ((AbstractSheetAdv)sheet).getTableByRowCol(getRow(), getColumn());
+
+				new AutoFilterHelper(RangeImpl.this).resetAutoFilter(table); //ZSS-988
+				notifySheetAutoFilterChange(table, getSheet().getAutoFilter()); //ZSS-901
 				return null;
 			}
 		}.doInWriteLock(getLock());		
@@ -1554,21 +1597,30 @@ public class RangeImpl implements SRange {
 		new ReadWriteTask() {			
 			@Override
 			public Object invoke() {
-				new AutoFilterHelper(RangeImpl.this).applyAutoFilter();
-				notifySheetAutoFilterChange(getSheet().getAutoFilter()); //ZSS-901
+				//ZSS-988
+				final SSheet sheet = getSheet();
+				final STable table = ((AbstractSheetAdv)sheet).getTableByRowCol(getRow(), getColumn());
+				
+				new AutoFilterHelper(RangeImpl.this).applyAutoFilter(table);
+				notifySheetAutoFilterChange(table, sheet.getAutoFilter()); //ZSS-901, ZSS-988
 				return null;
 			}
 		}.doInWriteLock(getLock());		
 	}
 	
-	private void notifySheetAutoFilterChange(SAutoFilter filter){
+	private void notifySheetAutoFilterChange(STable table, SAutoFilter filter){ //ZSS-988
 		SSheet sheet = getSheet();
-		//ZSS-901: update the auto filter border
-		new NotifyChangeHelper().notifySheetAutoFilterChange(sheet);
-		if (filter != null) {
-			notifySheetAutoFilterBorderChange(sheet, filter.getRegion());
+		new NotifyChangeHelper().notifySheetAutoFilterChange(sheet, table); //ZSS-988
+
+		//ZSS-988
+		if (table == null) {
+			//ZSS-901: update the auto filter border
+			if (filter != null) {
+				notifySheetAutoFilterBorderChange(sheet, filter.getRegion());
+			}
 		}
 	}
+	
 	//ZSS-901
 	private void notifySheetAutoFilterBorderChange(SSheet sheet, CellRegion rgn) {
 		final int left = rgn.getColumn();

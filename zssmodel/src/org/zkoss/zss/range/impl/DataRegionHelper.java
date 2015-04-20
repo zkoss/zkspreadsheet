@@ -23,6 +23,7 @@ import org.zkoss.zss.model.SCell;
 import org.zkoss.zss.model.SRow;
 import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.range.SRange;
+import org.zkoss.zss.model.impl.AbstractSheetAdv;
 
 /**
  * To help search the data region
@@ -110,6 +111,10 @@ import org.zkoss.zss.range.SRange;
 	}
 	
 	private static int[] getCellMinMax(SSheet sheet, int row, int col) {
+		//ZSS-988
+		if (((AbstractSheetAdv)sheet).getTableByRowCol(row, col) != null) {
+			return null;
+		}
 		CellRegion rng = sheet.getMergedRegion(row,col);
 		if(rng==null){
 			rng = new CellRegion(row,col,row,col);
@@ -194,6 +199,11 @@ import org.zkoss.zss.range.SRange;
 	}
 	
 	private static int[] getNonBlankCell(SSheet sheet, int row, int col) {
+		//ZSS-988: must exclude Table for finding autoFitler region
+		if (((AbstractSheetAdv)sheet).getTableByRowCol(row, col) != null) {
+			return null;
+		}
+		
 		final SRow rowObj = sheet.getRow(row);
 		return !isEmptyRow(sheet, rowObj) ?
 			getNonBlankCell0(sheet, row, col) : null; 

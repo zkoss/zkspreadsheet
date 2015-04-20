@@ -44,11 +44,13 @@ import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.model.SAutoFilter.FilterOp;
 import org.zkoss.zss.model.SAutoFilter.NFilterColumn;
 import org.zkoss.zss.model.SCell.CellType;
+import org.zkoss.zss.model.STable;
 import org.zkoss.zss.model.sys.EngineFactory;
 import org.zkoss.zss.model.sys.format.FormatContext;
 import org.zkoss.zss.model.sys.format.FormatEngine;
 import org.zkoss.zss.model.sys.format.FormatResult;
 import org.zkoss.zss.model.impl.AbstractAutoFilterAdv;
+import org.zkoss.zss.model.impl.AbstractSheetAdv;
 import org.zkoss.zss.range.SRange;
 import org.zkoss.zss.range.SRanges;
 import org.zkoss.zss.ui.Spreadsheet;
@@ -65,14 +67,17 @@ import org.zkoss.zss.ui.Spreadsheet;
 	
 	/*package*/ AreaRef processFilter(Spreadsheet spreadsheet,Sheet sheet,int row, int col, int field) {
 		SSheet worksheet = ((SheetImpl)sheet).getNative();
-		final SAutoFilter autoFilter = worksheet.getAutoFilter();
+		//ZSS-988
+		STable table = ((AbstractSheetAdv)worksheet).getTableByRowCol(row, col);
+		final SAutoFilter autoFilter = table == null ? worksheet.getAutoFilter() : table.getAutoFilter();
+		
 		final NFilterColumn filterColumn = autoFilter.getFilterColumn(field - 1,false);
 		String rangeAddr = autoFilter.getRegion().getReferenceString();
 		final SRange range = SRanges.range(worksheet, rangeAddr);
 		
 		//ZSS-704: Note that scanRows() could provide new bottom
 		final int bottom = range.getLastRow();
-		Object[] results = scanRows(field, filterColumn, range, worksheet);
+		Object[] results = scanRows(field, filterColumn, range, worksheet, table); //ZSS-988
 		@SuppressWarnings("unchecked")
 		SortedSet<FilterRowInfo> orderedRowInfos = (SortedSet<FilterRowInfo>) results[0];
 		if (bottom != ((Integer) results[1]).intValue()) {
@@ -124,7 +129,7 @@ import org.zkoss.zss.ui.Spreadsheet;
 
 	// ZSS-704
 	// [0]: SortedSet<FilterRowInfo>; [1]: new bottom
-	private Object[] scanRows(int field, NFilterColumn fc, SRange range, SSheet worksheet) {
+	private Object[] scanRows(int field, NFilterColumn fc, SRange range, SSheet worksheet, STable table) { //ZSS-988
 		SortedSet<FilterRowInfo> orderedRowInfos = new TreeSet<FilterRowInfo>(new FilterRowInfoComparator());
 		
 		blankRowInfo = new FilterRowInfo(BLANK_VALUE, "(Blanks)");
@@ -136,6 +141,11 @@ import org.zkoss.zss.ui.Spreadsheet;
 		final int columnIndex = range.getColumn() + field - 1;
 		FormatEngine fe = EngineFactory.getInstance().createFormatEngine();
 		for (int i = top; i <= bottom; i++) {
+			//ZSS-988: filter column with no criteria should not show option of hidden row 
+			if (criteria1 == null || criteria1.isEmpty()) {
+				if (worksheet.getRow(i).isHidden())
+					continue;
+			}
 			final SCell c = worksheet.getCell(i, columnIndex);
 			if (!c.isNull() && c.getType() != CellType.BLANK) {
 				FormatResult fr = fe.format(c, new FormatContext(ZssContext.getCurrent().getLocale()));
@@ -161,45 +171,48 @@ import org.zkoss.zss.ui.Spreadsheet;
 				hasSelectedBlank = prepareBlankRow(criteria1, hasSelectedBlank);
 			}
 		}
-		//ZSS-704: user could have enter non-blank value along the filter, must add that into
-		final int left = range.getColumn();
-		final int right = range.getLastColumn();
-		for (int i = bottom+1; bottom < worksheet.getEndRowIndex(); ++i) {
-			final SCell c = worksheet.getCell(i, columnIndex);
-			if (!c.isNull() && c.getType() != CellType.BLANK) {
-				FormatResult fr = fe.format(c, new FormatContext(ZssContext.getCurrent().getLocale()));
-				String displaytxt = fr.getText();
-				if(!hasBlank && displaytxt.trim().isEmpty()) { //ZSS-707: show as blank; then it is blank
-					hasBlank = true;
-					hasSelectedBlank = prepareBlankRow(criteria1, hasSelectedBlank);
-					continue;
-				}
-				
-				Object val = c.getValue(); // ZSS-707
-				if(c.getType()==CellType.NUMBER && fr.isDateFormatted()){
-					val = c.getDateValue();
-				}
-				
-				FilterRowInfo rowInfo = new FilterRowInfo(val, displaytxt);
-				//ZSS-299
-				orderedRowInfos.add(rowInfo);
-				if (criteria1 == null || criteria1.isEmpty() || criteria1.contains(displaytxt)) { //selected
-					rowInfo.setSelected(true);
-				}
-			} else {
-				//really an empty cell?
-				int[] ltrb = getMergedMinMax(worksheet, i, columnIndex);
-				if (ltrb == null) {
-					if (neighborIsBlank(worksheet, left, right, i, columnIndex)) {
-						bottom = i - 1;
-						break;
+		//ZSS-988: Only when it is not a table filter, it is possible to change the last row.
+		if (table == null) {
+			//ZSS-704: user could have enter non-blank value along the filter, must add that into
+			final int left = range.getColumn();
+			final int right = range.getLastColumn();
+			for (int i = bottom+1; bottom < worksheet.getEndRowIndex(); ++i) {
+				final SCell c = worksheet.getCell(i, columnIndex);
+				if (!c.isNull() && c.getType() != CellType.BLANK) {
+					FormatResult fr = fe.format(c, new FormatContext(ZssContext.getCurrent().getLocale()));
+					String displaytxt = fr.getText();
+					if(!hasBlank && displaytxt.trim().isEmpty()) { //ZSS-707: show as blank; then it is blank
+						hasBlank = true;
+						hasSelectedBlank = prepareBlankRow(criteria1, hasSelectedBlank);
+						continue;
+					}
+					
+					Object val = c.getValue(); // ZSS-707
+					if(c.getType()==CellType.NUMBER && fr.isDateFormatted()){
+						val = c.getDateValue();
+					}
+					
+					FilterRowInfo rowInfo = new FilterRowInfo(val, displaytxt);
+					//ZSS-299
+					orderedRowInfos.add(rowInfo);
+					if (criteria1 == null || criteria1.isEmpty() || criteria1.contains(displaytxt)) { //selected
+						rowInfo.setSelected(true);
 					}
 				} else {
-					i = ltrb[3];
-				}
-				if (!hasBlank) {
-					hasBlank = true;
-					hasSelectedBlank = prepareBlankRow(criteria1, hasSelectedBlank);
+					//really an empty cell?
+					int[] ltrb = getMergedMinMax(worksheet, i, columnIndex);
+					if (ltrb == null) {
+						if (neighborIsBlank(worksheet, left, right, i, columnIndex)) {
+							bottom = i - 1;
+							break;
+						}
+					} else {
+						i = ltrb[3];
+					}
+					if (!hasBlank) {
+						hasBlank = true;
+						hasSelectedBlank = prepareBlankRow(criteria1, hasSelectedBlank);
+					}
 				}
 			}
 		}

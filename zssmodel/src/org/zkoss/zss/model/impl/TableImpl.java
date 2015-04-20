@@ -22,9 +22,12 @@ import org.zkoss.zss.model.CellRegion;
 import org.zkoss.zss.model.SAutoFilter;
 import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.SBorder;
+import org.zkoss.zss.model.SAutoFilter.FilterOp;
+import org.zkoss.zss.model.SAutoFilter.NFilterColumn;
 import org.zkoss.zss.model.SBorder.BorderType;
 import org.zkoss.zss.model.sys.dependency.DependencyTable;
 import org.zkoss.zss.model.sys.dependency.Ref;
+import org.zkoss.zss.model.util.Validations;
 import org.zkoss.zss.model.SBorderLine;
 import org.zkoss.zss.model.SCellStyle;
 import org.zkoss.zss.model.SFill;
@@ -75,30 +78,6 @@ public class TableImpl extends AbstractTableAdv implements LinkedModelObject {
 		return _book;
 	}
 	
-	@Override
-	public SAutoFilter getFilter() {
-		// if no header row then there is no filter
-		return _headerRowCount == 0 ? null : _filter;
-	}
-	public void enableFilter(boolean enable) {
-		if ((_filter != null) == enable) return;
-		
-		if (enable) {
-			if (getHeaderRowCount() == 0)
-				setHeaderRowCount(1);
-			else {
-				final int l = _region.getColumn();
-				final int t = _region.getRow();
-				final int r = _region.getLastColumn();
-				final int b = _region.getLastRow();
-				final int tc = getTotalsRowCount();
-				_filter = new AutoFilterImpl(new CellRegion(t, l, b - tc, r));
-			}
-		} else {
-			_filter = null;
-		}
-	}
-
 	@Override
 	public List<STableColumn> getColumns() {
 		return _columns;
@@ -379,6 +358,19 @@ public class TableImpl extends AbstractTableAdv implements LinkedModelObject {
 		}
 	}
 	
+	//ZSS-988: if filter out the bottom rows; deemed it as next to totalsRow for
+	// style
+	private boolean isNextTotalsRow(SSheet sheet, int row, int lastRow) {
+		if (getTotalsRowCount() == 0) return false;
+		
+		for (int j= row; j <= lastRow; ++j) {
+			if (!sheet.getRow(j).isHidden()) {
+				return lastRow == j; 
+			}
+		}
+		return false;
+	}
+	
 	//ZSS-977
 	@Override
 	public SCellStyle getCellStyle(int row, int col) {
@@ -433,7 +425,7 @@ public class TableImpl extends AbstractTableAdv implements LinkedModelObject {
 			}
 		}
 		
-		final boolean nextTotalsRow = getTotalsRowCount() > 0 && row == (all.getLastRow() - getTotalsRowCount()); 
+		final boolean nextTotalsRow = isNextTotalsRow(_region.getSheet(), row, all.getLastRow() - getTotalsRowCount()); 
 		if (_tableStyleInfo.isShowFirstColumn() && firstCol) {
 			//First Column
 			final STableStyleElem result = _tableStyleInfo.getTableStyle().getFirstColumnStyle();
@@ -570,7 +562,7 @@ public class TableImpl extends AbstractTableAdv implements LinkedModelObject {
 		if (_filter != null) {
 			_filter = null;
 			if (getHeaderRowCount() > 0)
-				enableFilter(true);
+				enableAutoFilter(true);
 		}
 	}
 
@@ -638,5 +630,50 @@ public class TableImpl extends AbstractTableAdv implements LinkedModelObject {
 			}
 		}
 		return result;
+	}
+
+	@Override
+	public void enableAutoFilter(boolean enable) {
+		if ((_filter != null) == enable) return;
+		
+		if (enable) {
+			if (getHeaderRowCount() == 0)
+				setHeaderRowCount(1);
+			else {
+				final int l = _region.getColumn();
+				final int t = _region.getRow();
+				final int r = _region.getLastColumn();
+				final int b = _region.getLastRow();
+				final int tc = getTotalsRowCount();
+				_filter = new AutoFilterImpl(new CellRegion(t, l, b - tc, r));
+			}
+		} else {
+			deleteAutoFilter();
+		}
+	}
+
+	@Override
+	public SAutoFilter getAutoFilter() {
+		// if no header row then there is no filter
+		return _headerRowCount == 0 ? null : _filter;
+	}
+	
+	@Override
+	public SAutoFilter createAutoFilter() {
+		final int l = _region.getColumn();
+		final int t = _region.getRow();
+		final int r = _region.getLastColumn();
+		final int b = _region.getLastRow();
+		final int tc = getTotalsRowCount();
+		CellRegion region = new CellRegion(t, l, b - tc, r);
+
+		_filter = new AutoFilterImpl(region);
+		
+		return _filter;
+	}
+
+	@Override
+	public void deleteAutoFilter() {
+		_filter = null;
 	}
 }

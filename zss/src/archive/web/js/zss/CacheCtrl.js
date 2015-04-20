@@ -1045,6 +1045,13 @@ zss.Snapshot = zk.$extends(zk.Object, {
 				this.setAutoFilter(af);
 			}
 		}
+		//ZSS-988
+		if (wgt.getTableFilters) {
+			var tbafs = wgt.getTableFilters();
+			if (tbafs) {
+				this.setTableFilters(tbafs);
+			}
+		}
 	},
 	$define: {
 		scss: null,
@@ -1095,7 +1102,8 @@ zss.Snapshot = zk.$extends(zk.Object, {
 		selection: null,
 		highlight: null,
 		dataValidations: null,
-		autoFilter: null
+		autoFilter: null,
+		tableFilters: null  //ZSS-988
 	}
 });
 

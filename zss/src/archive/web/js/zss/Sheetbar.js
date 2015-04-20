@@ -510,6 +510,7 @@ zss.SheetSelector = zk.$extends(zul.tab.Tabbox, {
 						hsel = snapshop.getHighlight(),
 						dv = snapshop.getDataValidations(),
 						af = snapshop.getAutoFilter(),
+						tbafs = snapshop.getTableFilters(), //ZSS-988
 						frow = snapshop.getRowFreeze(),
 						fcol = snapshop.getColumnFreeze();
 					
@@ -538,6 +539,12 @@ zss.SheetSelector = zk.$extends(zul.tab.Tabbox, {
 						wgt.setAutoFilter(af);
 					} else if (wgt.setAutoFilter) {
 						wgt.setAutoFilter(null);
+					}
+					//ZSS-988
+					if (tbafs && !ignoreStatus) {
+						wgt.setTableFilters(tbafs);
+					} else if (wgt.setTableFilters) {
+						wgt.setTableFilters(null);
 					}
 					wgt.setSheetId(sheetId, false, visRng);//replace widgets: cells, headers etc..
 					

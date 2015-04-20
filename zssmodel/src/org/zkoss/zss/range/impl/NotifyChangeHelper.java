@@ -48,10 +48,12 @@ import org.zkoss.zss.model.impl.CellAttribute;
 	}
 	
 	
-	public void notifySheetAutoFilterChange(SSheet sheet) {
+	public void notifySheetAutoFilterChange(SSheet sheet, STable table) { //ZSS-988
+		final Map data = new HashMap(2);
+		data.put("TABLE", table); //ZSS-988: carry table information along (could be null)
 		((AbstractBookAdv) sheet.getBook())
 				.sendModelEvent(ModelEvents.createModelEvent(
-						ModelEvents.ON_AUTOFILTER_CHANGE, sheet));
+						ModelEvents.ON_AUTOFILTER_CHANGE, sheet, data));
 	}
 
 	public void notifySheetFreezeChange(SSheet sheet) {

@@ -74,11 +74,13 @@ import org.zkoss.zss.model.SHyperlink;
 import org.zkoss.zss.model.SPicture;
 import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.model.SSheetProtection;
+import org.zkoss.zss.model.STable;
 import org.zkoss.zss.model.ViewAnchor;
 import org.zkoss.zss.model.util.FontMatcher;
 import org.zkoss.zss.range.SRange;
 import org.zkoss.zss.range.SRanges;
 import org.zkoss.zss.range.impl.imexp.BookHelper;
+import org.zkoss.zss.model.impl.AbstractSheetAdv;
 
 /**
  * 1.Range does not handle the protection issue. By calling 
@@ -472,7 +474,10 @@ public class RangeImpl implements Range{
 	
 	/** check if auto filter is enable or not.**/
 	public boolean isAutoFilterEnabled(){
-		return getSheet().isAutoFilterEnabled();
+		final SSheet sheet = _range.getSheet();
+		//ZSS-988
+		final STable table = ((AbstractSheetAdv)sheet).getTableByRowCol(getRow(), getColumn());
+		return table != null ? table.getAutoFilter() != null : sheet.getAutoFilter()!=null; 
 	}
 	
 	// ZSS-246: give an API for user checking the auto-filtering range before applying it.

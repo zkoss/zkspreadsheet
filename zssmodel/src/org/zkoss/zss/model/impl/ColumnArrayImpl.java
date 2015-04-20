@@ -16,6 +16,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.model.impl;
 
+import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.SCellStyle;
 import org.zkoss.zss.model.SColumn;
 import org.zkoss.zss.model.SSheet;
@@ -112,6 +113,12 @@ public class ColumnArrayImpl extends AbstractColumnArrayAdv {
 	@Override
 	public void setHidden(boolean hidden) {
 		this._hidden = hidden;
+		
+		//ZSS-988: Subtotal(1xx, range) depends on hidden/unhidden rows/columns
+		final SBook book = _sheet.getBook();
+		ModelUpdateUtil.handlePrecedentUpdate(book.getBookSeries(),
+				new RefImpl(book.getBookName(), _sheet.getSheetName(), _sheet.getStartRowIndex(),
+						getIndex(), _sheet.getEndRowIndex(), getLastIndex()));
 	}
 
 	@Override

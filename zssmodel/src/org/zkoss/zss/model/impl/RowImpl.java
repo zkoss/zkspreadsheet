@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 
+import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.SCell;
 import org.zkoss.zss.model.SCellStyle;
 import org.zkoss.zss.model.SSheet;
@@ -205,6 +206,12 @@ public class RowImpl extends AbstractRowAdv {
 	@Override
 	public void setHidden(boolean hidden) {
 		this.hidden = hidden;
+		
+		//ZSS-988: Subtotal(1xx, range) depends on hidden/unhidden rows/columns
+		final SBook book = _sheet.getBook();
+		ModelUpdateUtil.handlePrecedentUpdate(book.getBookSeries(),
+				new RefImpl(book.getBookName(), _sheet.getSheetName(), getIndex(),
+						getStartCellIndex(), getIndex(), getEndCellIndex()));
 	}
 	
 	@Override

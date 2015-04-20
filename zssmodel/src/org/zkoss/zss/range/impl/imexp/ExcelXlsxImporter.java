@@ -633,7 +633,7 @@ public class ExcelXlsxImporter extends AbstractExcelImporter{
 			}
 			
 			final XSSFAutoFilter filter = poiTable.getAutoFilter();
-			table.enableFilter(filter != null);
+			table.enableAutoFilter(filter != null);
 			
 			sheet.addTable(table);
 			
