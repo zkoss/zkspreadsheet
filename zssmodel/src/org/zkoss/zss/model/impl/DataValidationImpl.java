@@ -29,6 +29,12 @@ import org.zkoss.poi.ss.formula.LazyAreaEval;
 import org.zkoss.poi.ss.formula.LazyRefEval;
 import org.zkoss.poi.ss.formula.eval.StringEval;
 import org.zkoss.poi.ss.formula.eval.ValueEval;
+import org.zkoss.poi.ss.formula.ptg.BoolPtg;
+import org.zkoss.poi.ss.formula.ptg.ErrPtg;
+import org.zkoss.poi.ss.formula.ptg.IntPtg;
+import org.zkoss.poi.ss.formula.ptg.NumberPtg;
+import org.zkoss.poi.ss.formula.ptg.Ptg;
+import org.zkoss.poi.ss.formula.ptg.StringPtg;
 import org.zkoss.zss.model.CellRegion;
 import org.zkoss.zss.model.ErrorValue;
 import org.zkoss.zss.model.SBook;
@@ -365,12 +371,12 @@ public class DataValidationImpl extends AbstractDataValidationAdv {
 
 	@Override
 	public String getFormula1() {
-		return _unescapeFromPoi(getEscapedFormula1());
+		return _unescapeFromPoi(getEscapedFormula1(), _formula1Expr.getPtgs()); //ZSS-978
 	}
 
 	@Override
 	public String getFormula2() {
-		return _unescapeFromPoi(getEscapedFormula2());
+		return _unescapeFromPoi(getEscapedFormula2(), _formula2Expr.getPtgs()); //ZSS-978
 	}
 
 	private void clearFormulaDependency(boolean all) { // ZSS-648
@@ -425,6 +431,15 @@ public class DataValidationImpl extends AbstractDataValidationAdv {
 		setEscapedFormulas(getEscapedFormula1(), formula2);
 	}
 
+	//ZSS-978
+	private boolean isLiteralPtg(Ptg ptg) {
+		return ptg instanceof BoolPtg
+				|| ptg instanceof IntPtg 
+				|| ptg instanceof NumberPtg
+				|| ptg instanceof StringPtg
+				|| ptg instanceof ErrPtg;
+	}
+	
 	//ZSS-866
 	//20150108, henrichen: DataValidation's formula must be unescaped from
 	//    POI before used in API.
@@ -435,11 +450,13 @@ public class DataValidationImpl extends AbstractDataValidationAdv {
 	//   e.g. """8%"", ""9%"", ""10%""" => "8%", "9%", "10%" 
 	// * xyz not embraced with double quote is deemed as a formula. Should lead
 	//   the string with a equals sign as =xyz.
-	private String _unescapeFromPoi(String formula) {
+	private String _unescapeFromPoi(String formula, Ptg[] ptgs) { //ZSS-978
 		if (Strings.isBlank(formula)) return null;
 		final StringBuilder sb = new StringBuilder();
 		if (!formula.startsWith("\"") && formula.length() > 1) {
-			return sb.append("=").append(formula).toString(); //leading with '='  
+			//ZSS-978
+			if (ptgs.length > 1 || !isLiteralPtg(ptgs[0]))
+				return sb.append("=").append(formula).toString(); //leading with '='  
 		}
 		if (_validationType == ValidationType.LIST) {
 			// skip first double quote and last double quote
