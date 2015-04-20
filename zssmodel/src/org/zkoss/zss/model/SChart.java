@@ -155,4 +155,9 @@ public interface SChart {
 	// -100 ~ +100; default: 0
 	public int getBarOverlap();
 	public void setBarOverlap(int overlap);
+
+	//ZSS-982
+	// default: true
+	public void setPlotOnlyVisibleCells(boolean plotOnlyVisibleCells);
+	public boolean isPlotOnlyVisibleCells();
 }

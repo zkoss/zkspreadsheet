@@ -41,5 +41,7 @@ public interface SGeneralChartData extends SChartData{
 	
 	public String getCategoriesFormula();
 	public void setCategoriesFormula(String expr);
+
+	boolean isCategoryHidden(int index);
 	
 }

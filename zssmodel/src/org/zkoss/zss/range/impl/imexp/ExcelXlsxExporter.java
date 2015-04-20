@@ -211,6 +211,8 @@ public class ExcelXlsxExporter extends AbstractExcelExporter {
 		} else {
 			poiChart.plot(chartData);
 		}
+		
+		poiChart.setPlotOnlyVisibleCells(chart.isPlotOnlyVisibleCells());
 	}
 	
 	

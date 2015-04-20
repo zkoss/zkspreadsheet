@@ -245,6 +245,8 @@ public class ExcelXlsxImporter extends AbstractExcelImporter{
 			}
 			//ZSS-822
 			importAxis(xssfChart, chart);
+			
+			chart.setPlotOnlyVisibleCells(xssfChart.isPlotOnlyVisibleCells());
 		}
 	}
 	//ZSS-822

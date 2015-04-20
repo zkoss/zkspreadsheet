@@ -1089,7 +1089,19 @@ public class RangeImpl implements SRange {
 				}
 			}
 		}
+		
 		new NotifyChangeHelper().notifyRowColumnSizeChange(notifySet);
+		
+		SBookSeries bookSeries = getSheet().getBook().getBookSeries();
+		DependencyTable table = ((AbstractBookSeriesAdv)bookSeries).getDependencyTable();
+		Set<Ref> refSet = new HashSet<Ref>(1); // normally it's a continuous segment
+		for (SheetRegion sheetRegion : notifySet) {
+			SSheet sheet = sheetRegion.getSheet();
+			refSet.addAll(table.getEvaluatedDependents(new RefImpl(sheet.getBook().getBookName(), sheet.getSheetName(),
+					sheetRegion.getRow(), sheetRegion.getColumn(), sheetRegion.getLastRow(), sheetRegion.getLastColumn())));
+		}
+		
+		handleRefNotifyContentChange(getBookSeries(), refSet, CellAttribute.ALL);
 	}
 
 	@Override

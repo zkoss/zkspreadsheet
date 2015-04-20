@@ -17,9 +17,10 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.model.impl.chart;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.zkoss.zss.model.ErrorValue;
-import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.model.chart.SSeries;
 import org.zkoss.zss.model.impl.AbstractBookSeriesAdv;
@@ -28,7 +29,6 @@ import org.zkoss.zss.model.impl.AbstractSeriesAdv;
 import org.zkoss.zss.model.impl.EvaluationUtil;
 import org.zkoss.zss.model.impl.LinkedModelObject;
 import org.zkoss.zss.model.impl.ObjectRefImpl;
-import org.zkoss.zss.model.impl.RefImpl;
 import org.zkoss.zss.model.sys.EngineFactory;
 import org.zkoss.zss.model.sys.dependency.Ref;
 import org.zkoss.zss.model.sys.formula.EvaluationResult;
@@ -56,8 +56,15 @@ public class SeriesImpl extends AbstractSeriesAdv implements SSeries,Serializabl
 	private Object _evalValuesResult;
 	private Object _evalYValuesResult;
 	private Object _evalZValuesResult;
+
+	private boolean[] _hiddenNameInfo;
+	private boolean[] _hiddenValuesInfo;
+	private boolean[] _hiddenYValuesInfo;
+	private boolean[] _hiddenZValuesInfo;
 	
 	private boolean _evaluated = false;
+	private boolean _visibleEvaluated = false;
+	
 	
 	/*package*/ void evalFormula(){
 		//ZSS-740
@@ -108,6 +115,40 @@ public class SeriesImpl extends AbstractSeriesAdv implements SSeries,Serializabl
 					}
 				}
 				_evaluated = true;
+			}
+		}
+	}
+	
+	/*package*/ void evalVisibleInfo() {
+		if(_visibleEvaluated)
+			return;
+		
+		synchronized (this) {
+			if(!_visibleEvaluated) {
+				Map<Integer, Boolean> cachedRowValues = new HashMap<Integer, Boolean>(16);
+				Map<Integer, Boolean> cachedColumnValues = new HashMap<Integer, Boolean>(16);
+				
+				if(_nameExpr != null) {
+					_hiddenNameInfo = new boolean[getNumOfValue()];
+					ChartUtil.evalVisibleInfo(_chart, _nameExpr, _hiddenNameInfo, cachedRowValues, cachedColumnValues);
+				}
+				
+				if(_valueExpr != null) {
+					_hiddenValuesInfo = new boolean[getNumOfValue()];
+					ChartUtil.evalVisibleInfo(_chart, _valueExpr, _hiddenValuesInfo, cachedRowValues, cachedColumnValues);
+				}
+				
+				if(_yValueExpr != null) {
+					_hiddenYValuesInfo = new boolean[getNumOfValue()];
+					ChartUtil.evalVisibleInfo(_chart, _yValueExpr, _hiddenYValuesInfo, cachedRowValues, cachedColumnValues);		
+				}
+		
+				if(_zValueExpr != null) {
+					_hiddenZValuesInfo = new boolean[getNumOfValue()];
+					ChartUtil.evalVisibleInfo(_chart, _zValueExpr, _hiddenZValuesInfo, cachedRowValues, cachedColumnValues);
+				}
+				
+				_visibleEvaluated = true;
 			}
 		}
 	}
@@ -178,6 +219,7 @@ public class SeriesImpl extends AbstractSeriesAdv implements SSeries,Serializabl
 	public void setXYZFormula(String nameExpression,String xValueExpression, String yValueExpression,String zValueExpression){
 		checkOrphan();
 		_evaluated = false;
+		_visibleEvaluated = false;
 		clearFormulaDependency();
 		
 		FormulaEngine fe = EngineFactory.getInstance().createFormulaEngine();
@@ -247,7 +289,9 @@ public class SeriesImpl extends AbstractSeriesAdv implements SSeries,Serializabl
 	@Override
 	public void clearFormulaResultCache() {
 		_evaluated = false;
-		_evalNameResult = _evalValuesResult = _evalYValuesResult = _evalZValuesResult = null;		
+		_visibleEvaluated = false;
+		_evalNameResult = _evalValuesResult = _evalYValuesResult = _evalZValuesResult = null;
+		_hiddenNameInfo = _hiddenValuesInfo = _hiddenYValuesInfo = _hiddenZValuesInfo = null;
 	}
 	
 	private void clearFormulaDependency() {
@@ -341,6 +385,7 @@ public class SeriesImpl extends AbstractSeriesAdv implements SSeries,Serializabl
 	public void setXYZFormula(FormulaExpression nameExpr, FormulaExpression xValueExpr, FormulaExpression yValueExpr, FormulaExpression zValueExpr) {
 		checkOrphan();
 		_evaluated = false;
+		_visibleEvaluated = false;
 		clearFormulaDependency();
 		
 		this._nameExpr = nameExpr;
@@ -366,4 +411,29 @@ public class SeriesImpl extends AbstractSeriesAdv implements SSeries,Serializabl
 			fe.updateDependencyTable(zValueExpr, context);
 		}
 	}
+
+	@Override
+	public boolean isNameFomulaHidden(int index) {
+		evalVisibleInfo();
+		return _hiddenNameInfo == null ? false : _hiddenNameInfo[index];
+	}
+	
+	@Override
+	public boolean isXValueFomulaHidden(int index) {
+		evalVisibleInfo();
+		return _hiddenValuesInfo == null ? false : _hiddenValuesInfo[index];
+	}
+
+	@Override
+	public boolean isYValueFomulaHidden(int index) {
+		evalVisibleInfo();
+		return _hiddenYValuesInfo == null ? false : _hiddenYValuesInfo[index];
+	}
+
+	@Override
+	public boolean isZValueFomulaHidden(int index) {
+		evalVisibleInfo();
+		return _hiddenZValuesInfo == null ? false : _hiddenZValuesInfo[index];
+	}
+
 }

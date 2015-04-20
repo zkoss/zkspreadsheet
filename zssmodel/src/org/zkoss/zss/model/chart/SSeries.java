@@ -59,4 +59,13 @@ public interface SSeries extends FormulaContent{
 	public String getXValuesFormula();
 	public String getYValuesFormula();
 	public String getZValuesFormula();
+	
+	/**
+	 * detect visibility for index
+	 * @return
+	 */
+	public boolean isNameFomulaHidden(int index);
+	public boolean isXValueFomulaHidden(int index);
+	public boolean isYValueFomulaHidden(int index);
+	public boolean isZValueFomulaHidden(int index);
 }
