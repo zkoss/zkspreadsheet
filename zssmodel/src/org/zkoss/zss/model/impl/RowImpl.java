@@ -209,9 +209,14 @@ public class RowImpl extends AbstractRowAdv {
 		
 		//ZSS-988: Subtotal(1xx, range) depends on hidden/unhidden rows/columns
 		final SBook book = _sheet.getBook();
-		ModelUpdateUtil.handlePrecedentUpdate(book.getBookSeries(),
-				new RefImpl(book.getBookName(), _sheet.getSheetName(), getIndex(),
-						getStartCellIndex(), getIndex(), getEndCellIndex()));
+		//ZSS-1007
+		final int col1 = getStartCellIndex();
+		final int col2 = getEndCellIndex();
+		if (col1 >= 0 && col2 >= 0) { //handle dependency if with data
+			ModelUpdateUtil.handlePrecedentUpdate(book.getBookSeries(),
+					new RefImpl(book.getBookName(), _sheet.getSheetName(), getIndex(),
+							col1, getIndex(), col2));
+		}
 	}
 	
 	@Override

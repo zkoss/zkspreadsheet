@@ -116,9 +116,17 @@ public class ColumnArrayImpl extends AbstractColumnArrayAdv {
 		
 		//ZSS-988: Subtotal(1xx, range) depends on hidden/unhidden rows/columns
 		final SBook book = _sheet.getBook();
-		ModelUpdateUtil.handlePrecedentUpdate(book.getBookSeries(),
-				new RefImpl(book.getBookName(), _sheet.getSheetName(), _sheet.getStartRowIndex(),
-						getIndex(), _sheet.getEndRowIndex(), getLastIndex()));
+		
+		//ZSS-1007
+		final int row1 = _sheet.getStartRowIndex();
+		final int row2 = _sheet.getEndRowIndex();
+		final int col1 = getIndex();
+		final int col2 = getLastIndex();
+		if (row1 >= 0 && row2 >= 0 && col1 >= 0 && col2 >=0) {
+			ModelUpdateUtil.handlePrecedentUpdate(book.getBookSeries(),
+					new RefImpl(book.getBookName(), _sheet.getSheetName(), 
+							row1, col1, row2, col2));
+		}
 	}
 
 	@Override
