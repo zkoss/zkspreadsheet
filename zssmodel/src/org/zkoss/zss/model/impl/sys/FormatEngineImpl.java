@@ -170,25 +170,7 @@ public class FormatEngineImpl implements FormatEngine {
 				final double val = cell.getNumberValue().doubleValue();
 				
 				if (isDateFormatted(cell.getCellStyle().getDataFormat(),val,locale)) { //ZSS-15 edit date cells doesn't work
-					String formatString = null;
-					if (Math.abs(val) < 1) { //time only
-						formatString = getDateFormatString(TIME, locale);//"h:mm:ss AM/PM"; //ZSS-67
-						if (formatString == null) { //ZSS-76
-							formatString = "h:mm:ss AM/PM";
-						}
-					} else if (isInteger(Double.valueOf(val))) { //date only
-						formatString = getDateFormatString(DATE, locale); //"mm/dd/yyyy"; //ZSS-67
-						if (formatString == null) { //ZSS-76
-							formatString = "mm/dd/yyyy";
-						}
-					} else { //date + time
-						formatString = getDateFormatString(DATE_TIME, locale);//"mm/dd/yyyy h:mm:ss AM/PM" //ZSS-67
-						if (formatString == null) { //ZSS-76
-							formatString = "mm/dd/yyyy h:mm:ss AM/PM";
-						}
-					}
-					final boolean date1904 = false; // always false in new model
-					return new DataFormatter(locale, false).formatRawCellContents(val, -1, formatString, date1904); //ZSS-68
+					return getDateTimeString(val, locale); //ZSS-994
 				} else {
 					return NumberToTextConverter.toText(val);
 				}
