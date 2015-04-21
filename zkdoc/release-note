@@ -73,6 +73,7 @@ ZK Spreadsheet 3.8.0
   ZSS-996 Cannot scroll rows when mouse pointer is over freezing columns
   ZSS-990 Should NOT be able to set DataValidation on Table's total Rows
   ZSS-978 Formula parameters in dataValidation shouldn't change valid value
+  ZSS-1005 formula editing adds arbitrary cell references
   
 ** Upgrade Notes
   * Default period for automatically saving in zssapp is 15 minutes.

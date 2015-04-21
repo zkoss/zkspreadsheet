@@ -96,6 +96,12 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 						startRange.setEnd(range.startContainer, range.startOffset);
 						endRange.setStart(node, 0);
 						endRange.setEnd(range.endContainer, range.endOffset);
+						//ZSS-1005
+						if(range.toString() === '' && range.startOffset == 0 && range.endOffset == 0) {
+							var length = node.innerText.length;
+							startRange.setEnd(range.startContainer, length);
+							endRange.setEnd(range.endContainer, length);
+						}
 						return [getTextOffset(startRange, countBr), getTextOffset(endRange, countBr)];
 					} catch (e) {
 						return [0, 0];
@@ -879,6 +885,15 @@ zss.Editbox = zk.$extends(zul.inp.InputWidget, {
 					evt.stop();
 				}
 				break;
+			case 37: //Left
+			case 38: //Up
+			case 39: //Right
+			case 40: //Dow
+				//ZSS-1005: extra bug, hold arrow key to move quickly causes cursor shift incorrectly, 
+				//so that cursor calculation will be wrong.
+				if(sheet.enableKeyNavigation)
+					evt.stop();
+				break;
 			}	
 		}
 	},
@@ -938,7 +953,10 @@ zss.Editbox = zk.$extends(zul.inp.InputWidget, {
 					sheet.editingFormulaInfo = getEditingFormulaInfo(type, input, position);
 				}
 			} else {
-				sheet.editingFormulaInfo = getEditingFormulaInfo(type, input, position);
+				//ZSS-1005 when mouse click on a editing input, enableKeyNavigation will became false.
+				//we won't give a cell reference navigation again for it till next startEditing
+				if(sheet.enableKeyNavigation)
+					sheet.editingFormulaInfo = getEditingFormulaInfo(type, input, position);
 			}
 		} else {
 			sheet._wgt.doKeyUp_(evt);
