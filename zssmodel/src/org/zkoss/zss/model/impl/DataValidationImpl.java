@@ -18,10 +18,12 @@ package org.zkoss.zss.model.impl;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 import org.zkoss.lang.Strings;
@@ -35,11 +37,14 @@ import org.zkoss.poi.ss.formula.ptg.IntPtg;
 import org.zkoss.poi.ss.formula.ptg.NumberPtg;
 import org.zkoss.poi.ss.formula.ptg.Ptg;
 import org.zkoss.poi.ss.formula.ptg.StringPtg;
+import org.zkoss.poi.ss.usermodel.ZssContext;
 import org.zkoss.zss.model.CellRegion;
 import org.zkoss.zss.model.ErrorValue;
+import org.zkoss.zss.model.InvalidFormulaException;
 import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.SBookSeries;
 import org.zkoss.zss.model.SCell;
+import org.zkoss.zss.model.SCellStyle;
 import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.model.sys.EngineFactory;
 import org.zkoss.zss.model.sys.dependency.DependencyTable;
@@ -51,8 +56,12 @@ import org.zkoss.zss.model.sys.formula.FormulaEvaluationContext;
 import org.zkoss.zss.model.sys.formula.FormulaExpression;
 import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 import org.zkoss.zss.model.sys.formula.EvaluationResult.ResultType;
+import org.zkoss.zss.model.sys.input.InputEngine;
+import org.zkoss.zss.model.sys.input.InputParseContext;
+import org.zkoss.zss.model.sys.input.InputResult;
 import org.zkoss.zss.model.util.Validations;
 import org.zkoss.zss.model.impl.sys.DependencyTableAdv;
+import org.zkoss.zss.model.impl.sys.FormatEngineImpl;
 /**
  * 
  * @author Dennis
@@ -371,12 +380,12 @@ public class DataValidationImpl extends AbstractDataValidationAdv {
 
 	@Override
 	public String getFormula1() {
-		return _unescapeFromPoi(getEscapedFormula1(), _formula1Expr.getPtgs()); //ZSS-978
+		return _unescapeFromPoi(_formula1Expr); // ZSS-978, ZSS-994
 	}
 
 	@Override
 	public String getFormula2() {
-		return _unescapeFromPoi(getEscapedFormula2(), _formula2Expr.getPtgs()); //ZSS-978
+		return _unescapeFromPoi(_formula2Expr); // ZSS-978, ZSS-994
 	}
 
 	private void clearFormulaDependency(boolean all) { // ZSS-648
@@ -450,7 +459,10 @@ public class DataValidationImpl extends AbstractDataValidationAdv {
 	//   e.g. """8%"", ""9%"", ""10%""" => "8%", "9%", "10%" 
 	// * xyz not embraced with double quote is deemed as a formula. Should lead
 	//   the string with a equals sign as =xyz.
-	private String _unescapeFromPoi(String formula, Ptg[] ptgs) { //ZSS-978
+	private String _unescapeFromPoi(FormulaExpression expr) { //ZSS-978, ZSS-994
+		if (expr == null) return null;
+		String formula = expr.getFormulaString();
+		Ptg[] ptgs = expr.getPtgs();
 		if (Strings.isBlank(formula)) return null;
 		final StringBuilder sb = new StringBuilder();
 		if (!formula.startsWith("\"") && formula.length() > 1) {
@@ -473,10 +485,32 @@ public class DataValidationImpl extends AbstractDataValidationAdv {
 			}
 			return sb.toString();
 		}
-		return formula;
+		//ZSS-994
+		if (isNumber()) {
+			if (isDateFormat()) {
+				final double val = Double.parseDouble(formula);
+				final Locale locale = ZssContext.getCurrent().getLocale();
+				return FormatEngineImpl.getDateTimeString(val, locale);
+			}
+			return formula;
+		}
+		return null;
+	}
+
+	//ZSS-994
+	private boolean isNumber() {
+		return _validationType == ValidationType.DECIMAL
+				|| _validationType == ValidationType.INTEGER
+				|| _validationType == ValidationType.TEXT_LENGTH
+				|| isDateFormat();
+	}
+	// ZSS-994
+	private boolean isDateFormat() {
+		return _validationType == ValidationType.DATE
+				|| _validationType == ValidationType.TIME;
 	}
 	
-	//ZSS-866
+	//ZSS-866, ZSS-994
 	//20150108, henrichen: DataValidation's formula must be escaped before 
 	// store into POI
 	// For LIST validation type
@@ -486,26 +520,63 @@ public class DataValidationImpl extends AbstractDataValidationAdv {
 	//    quote;
 	//  e.g. "8%", "9%", "10%" => """8%"", ""9%"", ""10%"""
 	private String _escapeToPoi(String formula) {
-		if (Strings.isBlank(formula)) return null;
-		final StringBuilder sb = new StringBuilder();
-		if (formula.startsWith("=") && formula.length() > 1) {
-			return formula.substring(1); //trim the leading '='  
-		}
-		if (_validationType == ValidationType.LIST) {
-			sb.append('"');
-			for (int j = 0; j < formula.length(); ++j) {
-				char ch = formula.charAt(j);
-				sb.append(ch);
-				if (ch == '"') {
-					sb.append('"');
+		if (Strings.isBlank(formula))
+			return null;
+		InputResult input = parseInput(formula);
+		switch (input.getType()) {
+		case FORMULA:
+			return formula.substring(1);
+		case STRING:
+			if (_validationType == ValidationType.LIST) {
+				StringBuilder sb = new StringBuilder();
+				sb.append('"');
+				for (int j = 0; j < formula.length(); ++j) {
+					char ch = formula.charAt(j);
+					sb.append(ch);
+					if (ch == '"') {
+						sb.append('"');
+					}
 				}
+				sb.append('"');
+				return sb.toString();
 			}
-			sb.append('"');
-			return sb.toString();
+			return formula;
+		case NUMBER:
+			final Object val = input.getValue();
+			double num = val instanceof Date ? EngineFactory.getInstance()
+					.getCalendarUtil().dateToDoubleValue((Date) val)
+					: ((Number) val).doubleValue();
+			return Double.toString(num);
+		default:
+			return formula;
 		}
-		return formula;
 	}
 
+	// ZSS-994
+	private InputResult parseInput(String formula) {
+		final InputEngine ie = EngineFactory.getInstance().createInputEngine();
+		return ie.parseInput(formula == null ? "" : formula,
+				SCellStyle.FORMAT_GENERAL, new InputParseContext(ZssContext
+						.getCurrent().getLocale()));
+	}
+
+	// ZSS-994
+	private FormulaExpression parseFormula(String formula) {
+		FormulaEngine fe = EngineFactory.getInstance().createFormulaEngine();
+		Ref ref = getRef();
+		final Locale locale = ZssContext.getCurrent().getLocale();
+		final FormulaParseContext formulaCtx = new FormulaParseContext(
+				_sheet.getBook(), _sheet, null/* SCell */, _sheet.getSheetName(),
+				ref, locale);
+		final FormulaExpression expr = fe.parse(formula, formulaCtx);
+		if (expr.hasError()) {
+			String msg = expr.getErrorMessage();
+			throw new InvalidFormulaException(msg == null ? "The formula ="
+					+ formula + " contains error" : msg);
+		}
+		return expr;
+	}
+	
 	@Override
 	public void setFormulas(String formula1, String formula2) {
 		formula1 = _escapeToPoi(formula1);
@@ -519,19 +590,16 @@ public class DataValidationImpl extends AbstractDataValidationAdv {
 		_evaluated = false;
 		clearFormulaDependency(false); // will clear formula
 		clearFormulaResultCache();
-		
-		FormulaEngine fe = EngineFactory.getInstance().createFormulaEngine();
-		
-		Ref ref = getRef();
-		if(formula1 != null) {
-			_formula1Expr = fe.parse(formula1, new FormulaParseContext(_sheet,ref));
-		}else{
+
+		if (formula1 != null) {
+			_formula1Expr = parseFormula(formula1); // ZSS-994
+		} else {
 			_formula1Expr = null;
 		}
-		
-		if(formula2 != null) {
-			_formula2Expr = fe.parse(formula2, new FormulaParseContext(_sheet,ref));
-		}else{
+
+		if (formula2 != null) {
+			_formula2Expr = parseFormula(formula2); // ZSS-994
+		} else {
 			_formula2Expr = null;
 		}
 	}

@@ -227,6 +227,30 @@ public class FormatEngineImpl implements FormatEngine {
 		return false;
 	}
 	
+	//ZSS-944
+	//@since 3.8.0
+	public static String getDateTimeString(double val, Locale locale) {
+		String formatString = null;
+		if (Math.abs(val) < 1) { //time only
+			formatString = getDateFormatString(TIME, locale);//"h:mm:ss AM/PM"; //ZSS-67
+			if (formatString == null) { //ZSS-76
+				formatString = "h:mm:ss AM/PM";
+			}
+		} else if (isInteger(Double.valueOf(val))) { //date only
+			formatString = getDateFormatString(DATE, locale); //"mm/dd/yyyy"; //ZSS-67
+			if (formatString == null) { //ZSS-76
+				formatString = "mm/dd/yyyy";
+			}
+		} else { //date + time
+			formatString = getDateFormatString(DATE_TIME, locale);//"mm/dd/yyyy h:mm:ss AM/PM" //ZSS-67
+			if (formatString == null) { //ZSS-76
+				formatString = "mm/dd/yyyy h:mm:ss AM/PM";
+			}
+		}
+		final boolean date1904 = false; // always false in new model
+		return new DataFormatter(locale, false).formatRawCellContents(val, -1, formatString, date1904); //ZSS-68
+	}
+
 	//ZSS-666
 	//get column width form  pixel to char256
 	public static int getCellWidth256(SCell cell) {
