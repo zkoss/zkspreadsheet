@@ -1,0 +1,22 @@
+<vbox hflex="1" vflex="1">
+	<label multiline="true">
+		test1
+		1. type "=" into A1(don't press enter or other key).
+		2. press right arrow key to move reference to B1.
+		3. type "+". (editing mode is still there)
+		4. press right to add reference after +.
+		5. click at middle index of word "C1" after + by mouse. (need to locate cursor at the middle of word "C1")
+		6. move cursor to the beginning by keyboard's left arrow key.
+		7. make sure all word is still "=B1+C1".
+		test2
+		1. type "=" into A1(don't press enter or other key).
+		2. hold right arrow key to move selected cell to about the index between H1 ~ J1.
+		(issue is move cells by holding arrow key, there will be a error reference when we release arrow key)
+		(so you can move further and make sure the reference is the same to the selected cell)
+		3. make sure the reference is "=H1" or "=I1" or "=J1".
+	</label>
+	
+	<spreadsheet id="ss" src="/issue3/book/blank.xlsx" maxVisibleRows="50" maxVisibleColumns="50"
+		hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
+		showFormulabar="true" />
+</vbox>

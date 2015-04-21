@@ -512,7 +512,7 @@ zss.DataPanel = zk.$extends(zk.Object, {
 			local = this,
 			fn = function () {
 				//zss-219, if the cell dom is not exsited, scroll to it first, and then focus it. 
-				if(!!!sheet.getCell(row, col)){
+				if(!sheet.getCell(row, col)){
 					sheet.sp.scrollToVisible(row,col);
 					setTimeout(function(){
 						local._moveFocus(row, col, scroll, selection, noevt, noslevt);	
