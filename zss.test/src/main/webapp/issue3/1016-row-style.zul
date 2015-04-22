@@ -1,0 +1,26 @@
+<vbox hflex="1" vflex="1">
+	<label multiline="true">
+Since 3.8.0
+1. Press export button to export this sheet as 1016-export-row-style.xlsx.
+2. Open the exported file with Excel and check with original sheet, the background of Row1, Row5, D2:F2, to the right of J8:J13 should be Grey background.
+	</label>
+<button id="export" label="Export to Excel" onClick="doExport()"/>
+<zscript><![CDATA[
+     import java.io.*;
+     import org.zkoss.zss.api.Exporters;
+     import org.zkoss.zul.*;
+     void doExport() throws IOException {
+         ByteArrayOutputStream os = new ByteArrayOutputStream();
+         try {
+              Exporters.getExporter("excel").export(ss.getBook(), os);
+         } catch (Exception ex) {
+              os.close();
+         }
+         Filedownload.save(os.toByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "1016-export-row-style.xlsx"); 
+     }
+]]>
+</zscript>
+	<spreadsheet id="ss" src="/issue3/book/1016-row-style.xlsx" maxVisibleRows="60" maxVisibleColumns="40"
+		hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
+		showFormulabar="true" />	
+</vbox>
