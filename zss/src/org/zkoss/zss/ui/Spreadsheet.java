@@ -2750,9 +2750,9 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			while(iter.hasNext()) {
 				SRow row = iter.next();
 				final boolean hidden = row.isHidden();
-				
 				final int height = row.getHeight();
-				if (height != defaultSize || hidden) { //special height or hidden
+				final boolean customHeight = row.isCustomHeight();
+				if (height != defaultSize || hidden || customHeight) { //special height, hidden or custom height
 					infos.add(new HeaderPositionInfo(row.getIndex(), height, _custRowId.next(), hidden, row.isCustomHeight()));
 				}
 			}
