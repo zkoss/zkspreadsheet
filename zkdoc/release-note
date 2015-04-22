@@ -76,6 +76,7 @@ ZK Spreadsheet 3.8.0
   ZSS-1005 formula editing adds arbitrary cell references
   ZSS-994 Data validation with date should work
   ZSS-1008 Should show frozen pane
+  ZSS-1012 Should export customHeight on Row with cells
   
 ** Upgrade Notes
   * Default period for automatically saving in zssapp is 15 minutes.

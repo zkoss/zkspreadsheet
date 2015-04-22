@@ -46,6 +46,11 @@ import org.zkoss.zss.model.util.Strings;
  * @since 3.5.0
  */
 abstract public class AbstractExcelExporter extends AbstractExporter {
+	//Though there is customHeight defined in <sheetFormatPr>. However, it is 
+	//  only for empty rows; not rows with cells. For rows with cells, still 
+	//  have to specifies its height or it will use application's default row 
+	//  height instead.
+	private static final int DEFAULT_ROW_HEIGHT = 20; //ZSS-1012
 
 	/**
 	 * Exporting destination, POI book model
@@ -339,7 +344,12 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 			poiRow.setZeroHeight(true);
 		} else {
 			// not hidden, calculate height
-			if (row.getHeight() != sheet.getDefaultRowHeight()) {
+			//ZSS-1012
+			//Though there is customHeight defined in sheet. However, it is 
+			//  only for empty rows; not rows with cells. For rows with cells, 
+			//  still have to specifies its height or it will use 
+			//	DEFAULT_ROW_HEIGHT instead 
+			if (row.getHeight() != DEFAULT_ROW_HEIGHT) { //ZSS-1012
 				poiRow.setCustomHeight(row.isCustomHeight());
 				poiRow.setHeight((short) UnitUtil.pxToTwip(row.getHeight()));
 			}
