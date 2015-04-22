@@ -5,6 +5,9 @@
 		2. test hidden column (hide 1 ~ many).
 		make sure same steps for charts are the same as one shown in Excel. (downloaded by copy from source folder is better. now, our exported file may doesn't show chart very well.)
 		make sure each validation steps for corresponding exported PDF are the same result.
+		
+		extra test
+		1. make sure hide column A in sheet tab "category model - hide" will let category label "a b c" become ". . .", labels in PDF output will become blank
 	</label>
 	<button label="Export to Excel" onClick="doExport()"/>
 	<button label="Export to PDF" onClick="doPDFExport()"/>
