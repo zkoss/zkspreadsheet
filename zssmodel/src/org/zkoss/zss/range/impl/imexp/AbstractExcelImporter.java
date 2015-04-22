@@ -141,13 +141,15 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 			importExternalBookLinks();
 			int numberOfSheet = workbook.getNumberOfSheets();
 			for (int i = 0; i < numberOfSheet; i++) {
-				importSheet(workbook.getSheetAt(i), i);
+				Sheet poiSheet = workbook.getSheetAt(i);
+				importSheet(poiSheet, i);
+				SSheet sheet = book.getSheet(i);
+				importTables(poiSheet, sheet); //ZSS-855, ZSS-1011
 			}
 			importNamedRange();
 			for (int i = 0; i < numberOfSheet; i++) {
 				SSheet sheet = book.getSheet(i);
 				Sheet poiSheet = workbook.getSheetAt(i);
-				importTables(poiSheet, sheet); //ZSS-855
 				for (Row poiRow : poiSheet) {
 					importRow(poiRow, sheet);
 				}

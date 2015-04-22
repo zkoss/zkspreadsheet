@@ -110,16 +110,18 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 				NamedStyle  poiStyle = toPOINamedStyle(style); // put the named cellStyle
 				workbook.addNamedStyle(poiStyle);
 			}
-			for (SSheet sheet : book.getSheets()) {
-				exportSheet(sheet);
-			}
-			exportNamedRange(book);
-			exportPictureData(book); //ZSS-735
 			int tbId = 0;
 			for (int n = 0; n < book.getSheets().size(); n++) {
 				SSheet sheet = book.getSheet(n);
+				exportSheet(sheet);
 				Sheet poiSheet = workbook.getSheetAt(n);
-				tbId = exportTables(sheet, poiSheet, tbId); //ZSS-855
+				tbId = exportTables(sheet, poiSheet, tbId); //ZSS-855, ZSS-1011
+			}
+			exportNamedRange(book);
+			exportPictureData(book); //ZSS-735
+			for (int n = 0; n < book.getSheets().size(); n++) {
+				SSheet sheet = book.getSheet(n);
+				Sheet poiSheet = workbook.getSheetAt(n);
 				exportRowColumn(sheet, poiSheet);
 				exportMergedRegions(sheet, poiSheet);
 				exportChart(sheet, poiSheet);
