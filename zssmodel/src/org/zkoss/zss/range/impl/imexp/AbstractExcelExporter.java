@@ -345,12 +345,12 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 		} else {
 			// not hidden, calculate height
 			//ZSS-1012
-			//Though there is customHeight defined in sheet. However, it is 
-			//  only for empty rows; not rows with cells. For rows with cells, 
-			//  still have to specifies its height or it will use 
-			//	DEFAULT_ROW_HEIGHT instead 
-			if (row.getHeight() != DEFAULT_ROW_HEIGHT) { //ZSS-1012
-				poiRow.setCustomHeight(row.isCustomHeight());
+			// We export both customHeight and Height when customHeight is set.
+			// otherwise, we may export only height value if height is not equal to DEFAULT_ROW_HEIGHT
+			if (row.isCustomHeight()) {
+				poiRow.setCustomHeight(true);
+				poiRow.setHeight((short) UnitUtil.pxToTwip(row.getHeight()));
+			} else if (row.getHeight() != DEFAULT_ROW_HEIGHT) {
 				poiRow.setHeight((short) UnitUtil.pxToTwip(row.getHeight()));
 			}
 		}
