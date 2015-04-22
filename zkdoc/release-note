@@ -75,7 +75,8 @@ ZK Spreadsheet 3.8.0
   ZSS-978 Formula parameters in dataValidation shouldn't change valid value
   ZSS-1005 formula editing adds arbitrary cell references
   ZSS-994 Data validation with date should work
-
+  ZSS-1008 Should show frozen pane
+  
 ** Upgrade Notes
   * Default period for automatically saving in zssapp is 15 minutes.
   * Zssapp supports saving all in-memory saved book when server is shutting down.

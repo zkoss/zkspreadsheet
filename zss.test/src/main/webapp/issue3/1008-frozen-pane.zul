@@ -1,0 +1,9 @@
+<vbox hflex="1" vflex="1">
+	<label multiline="true">
+		Should see frozen pane above Row 16; scroll vertically see rows below Row 15 scrolling.
+	</label>
+	
+	<spreadsheet id="ss" src="/issue3/book/1008-frozen-pane.xlsx" maxVisibleRows="50" maxVisibleColumns="50"
+		hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
+		showFormulabar="true" />
+</vbox>

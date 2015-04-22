@@ -76,7 +76,7 @@ public final class BookHelper {
 			if (pane == null) {
 				return false;
 			} else {
-				return pane.getState() == STPaneState.FROZEN; 
+				return pane.getState() == STPaneState.FROZEN || pane.getState() == STPaneState.FROZEN_SPLIT; //ZSS-1008 
 			}
 		}
 	}
