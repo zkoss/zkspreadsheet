@@ -516,23 +516,28 @@ public class ExcelXlsxExporter extends AbstractExcelExporter {
 			CellRegion region = autoFilter.getRegion();
 			XSSFAutoFilter poiAutoFilter = (XSSFAutoFilter)poiSheet.setAutoFilter(new CellRangeAddress(region.getRow(), region.getLastRow(), region.getColumn(), region.getLastColumn()));
 			int numberOfColumn = region.getLastColumn() - region.getColumn() + 1;
-			for( int i = 0 ; i < numberOfColumn ; i++){
-				NFilterColumn srcFilterColumn = autoFilter.getFilterColumn(i, false);
-				if (srcFilterColumn == null){
-					continue;
-				}
-				XSSFFilterColumn destFilterColumn = (XSSFFilterColumn)poiAutoFilter.getOrCreateFilterColumn(i);
-				Object[] criteria1 = null;
-				if (srcFilterColumn.getCriteria1()!=null){
-					criteria1 = srcFilterColumn.getCriteria1().toArray(new String[0]);
-				}
-				Object[] criteria2 = null;
-				if (srcFilterColumn.getCriteria1()!=null){
-					criteria2 = srcFilterColumn.getCriteria2().toArray(new String[0]);
-				}
-				destFilterColumn.setProperties(criteria1, PoiEnumConversion.toPoiFilterOperator(srcFilterColumn.getOperator()),
-						criteria2, srcFilterColumn.isShowButton());
+			exportFilterColumns(poiAutoFilter, autoFilter, numberOfColumn);
+		}
+	}
+	
+	//ZSS-1019
+	private void exportFilterColumns(XSSFAutoFilter poiAutoFilter, SAutoFilter autoFilter, int numberOfColumn) {
+		for( int i = 0 ; i < numberOfColumn ; i++){
+			NFilterColumn srcFilterColumn = autoFilter.getFilterColumn(i, false);
+			if (srcFilterColumn == null){
+				continue;
 			}
+			XSSFFilterColumn destFilterColumn = (XSSFFilterColumn)poiAutoFilter.getOrCreateFilterColumn(i);
+			Object[] criteria1 = null;
+			if (srcFilterColumn.getCriteria1()!=null){
+				criteria1 = srcFilterColumn.getCriteria1().toArray(new String[0]);
+			}
+			Object[] criteria2 = null;
+			if (srcFilterColumn.getCriteria1()!=null){
+				criteria2 = srcFilterColumn.getCriteria2().toArray(new String[0]);
+			}
+			destFilterColumn.setProperties(criteria1, PoiEnumConversion.toPoiFilterOperator(srcFilterColumn.getOperator()),
+					criteria2, srcFilterColumn.isShowButton());
 		}
 	}
 	
@@ -624,8 +629,10 @@ public class ExcelXlsxExporter extends AbstractExcelExporter {
 			
 			final SAutoFilter filter = table.getAutoFilter();
 			if (filter != null) {
+				final CellRegion region = filter.getRegion();
 				XSSFAutoFilter poiFilter = poiTable.createAutoFilter();
-				poiFilter.setRef(filter.getRegion().getReferenceString());
+				poiFilter.setRef(region.getReferenceString());
+				exportFilterColumns(poiFilter, filter, region.getColumnCount());
 			} else {
 				poiTable.clearAutoFilter();
 			}
