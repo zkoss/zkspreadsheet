@@ -634,10 +634,17 @@ public class ExcelXlsxImporter extends AbstractExcelImporter{
 				table.addColumn(tbCol);
 			}
 			
-			final XSSFAutoFilter filter = poiTable.getAutoFilter();
-			table.enableAutoFilter(filter != null);
+			final XSSFAutoFilter poiFilter = poiTable.getAutoFilter();
+			table.enableAutoFilter(poiFilter != null);
 			
 			sheet.addTable(table);
+
+			//ZSS-1019
+			if (poiFilter != null) {
+				final int numberOfColumn = region.getColumnCount();
+				final SAutoFilter zssFilter = table.getAutoFilter();
+				importAutoFilterColumns(poiFilter, zssFilter, numberOfColumn);
+			}
 			
 			importTableName(table);
 			((AbstractBookAdv)book).addTable(table);

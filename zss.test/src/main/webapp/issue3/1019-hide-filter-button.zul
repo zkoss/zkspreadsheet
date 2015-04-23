@@ -1,0 +1,11 @@
+<vbox hflex="1" vflex="1">
+	<label multiline="true">
+	Since 3.8.0
+		1. Select Invoice sheet; should see no filter buttons in Row 16
+		2. Select Customers sheet; should see filter buttons on A4:J4
+	</label>
+	
+	<spreadsheet id="ss" src="/issue3/book/1019-hide-filter-button.xlsx" maxVisibleRows="50" maxVisibleColumns="50"
+		hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
+		showFormulabar="true" />
+</vbox>

@@ -673,14 +673,19 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 			CellRangeAddress filteringRange = poiAutoFilter.getRangeAddress();
 			SAutoFilter autoFilter = sheet.createAutoFilter(new CellRegion(filteringRange.formatAsString()));
 			int numberOfColumn = filteringRange.getLastColumn() - filteringRange.getFirstColumn() + 1;
-			for (int i = 0; i < numberOfColumn; i++) {
-				FilterColumn srcColumn = poiAutoFilter.getFilterColumn(i);
-				if (srcColumn == null) {
-					continue;
-				}
-				NFilterColumn destColumn = autoFilter.getFilterColumn(i, true);
-				destColumn.setProperties(PoiEnumConversion.toFilterOperator(srcColumn.getOperator()), srcColumn.getCriteria1(), srcColumn.getCriteria2(), srcColumn.isOn());
+			importAutoFilterColumns(poiAutoFilter, autoFilter, numberOfColumn); //ZSS-1019
+		}
+	}
+	
+	//ZSS-1019
+	protected void importAutoFilterColumns(AutoFilter poiFilter, SAutoFilter zssFilter, int numberOfColumn) {
+		for (int i = 0; i < numberOfColumn; i++) {
+			FilterColumn srcColumn = poiFilter.getFilterColumn(i);
+			if (srcColumn == null) {
+				continue;
 			}
+			NFilterColumn destColumn = zssFilter.getFilterColumn(i, true);
+			destColumn.setProperties(PoiEnumConversion.toFilterOperator(srcColumn.getOperator()), srcColumn.getCriteria1(), srcColumn.getCriteria2(), srcColumn.isOn());
 		}
 	}
 
