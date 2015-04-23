@@ -602,8 +602,8 @@ public class ParsingBook implements FormulaParsingWorkbook, FormulaRenderingWork
 			if (r3 < r) r = r3;
 		}
 
-		final int sheetIdx = book.getSheetIndex(sheet);
-		return new TablePtg(sheetIdx, t, b, l, r, tableName0, 
+		final int extIdx = this.getExternalSheetIndex(sheet.getSheetName()); //ZSS-1013
+		return new TablePtg(extIdx, t, b, l, r, tableName0, 
 				item1 == null ? new Item[0] : 
 					item2 == null ? 
 						new Item[]{item1} : new Item[] {item1, item2},
