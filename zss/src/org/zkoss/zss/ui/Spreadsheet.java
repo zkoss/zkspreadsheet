@@ -3419,11 +3419,12 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			//@see cfh.getCellFormattedText(ft);
 			final FormatResult ft = updateStyle || updateText ? cfh.getFormatResult() : null;
 			
+			//ZSS-977
+			STable table = ((AbstractSheetAdv)sheet).getTableByRowCol(row, col);
+			SCellStyle tbCellStyle = table != null ? ((AbstractTableAdv)table).getCellStyle(row, col) : null;
+			
 			//style attr
 			if (updateStyle) {
-				//ZSS-977
-				STable table = ((AbstractSheetAdv)sheet).getTableByRowCol(row, col);
-				SCellStyle tbCellStyle = table != null ? ((AbstractTableAdv)table).getCellStyle(row, col) : null;
 				String style = cfh.getHtmlStyle(doubleBorder, table, tbCellStyle);
 				
 				if (!Strings.isEmpty(style)) {
@@ -3485,7 +3486,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 				
 				if (updateText) {
 					if (cellType != CellType.BLANK || cell.getHyperlink() != null) {
-						String cellText = getCellDisplayLoader().getCellHtmlText(sheet, row, col, ft); //ZSS-945
+						String cellText = getCellDisplayLoader().getCellHtmlText(sheet, row, col, ft, tbCellStyle); //ZSS-945, ZSS-1018
 						final String editText = cfh.getCellEditText();
 						final String formatText = cfh.getCellFormattedText(ft); //ZSS-945
 						

@@ -300,6 +300,7 @@ zss.Cell = zk.$extends(zk.Widget, {
 			prevWidth = cave.style.width,
 			fontSize = data.fontSize,
 			real = this.$n('real');
+			
 		//ZSS-944: 
 		var wasRotate90 = this.rotate == 90 || this.rotate == 180,
 			toRotate90 = data.rotate == 90 || data.rotate == 180,
@@ -358,6 +359,13 @@ zss.Cell = zk.$extends(zk.Widget, {
 		this._updateListenOverflow(overflow);
 		this.setText(txt, false, wrapChanged); //when wrap changed, shall re-process overflow
 		
+		//ZSS-1018
+		//must after setText(); since the old a link is included in txt
+		var link = jq(real).children('a')[0];
+		if (link && fontStyleChg) {
+			link.style.cssText = fst;
+		}
+
 		if (wrapChanged) {
 			if (wrap0) {
 				jq(this.getTextNode()).addClass(WRAP_TEXT_CLASS);

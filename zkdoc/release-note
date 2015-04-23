@@ -78,6 +78,7 @@ ZK Spreadsheet 3.8.0
   ZSS-1008 Should show frozen pane
   ZSS-1012 Should export customHeight on Row with cells
   ZSS-1016 Should not export default style to Row.
+  ZSS-1018 Color and decoration of a hyperlink in cell is not correctly displayed
   
 ** Upgrade Notes
   * Default period for automatically saving in zssapp is 15 minutes.

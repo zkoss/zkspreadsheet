@@ -345,6 +345,8 @@ public class CellFormatHelper {
 			if (isUnderline)	
 				sb.append(" underline");
 			sb.append(";");
+		} else {
+			sb.append("text-decoration:none;"); //ZSS-1018
 		}
 
 		final Boldweight weight = font.getBoldweight();
@@ -532,8 +534,9 @@ public class CellFormatHelper {
 		final SCell cell = sheet.getCell(row, column);
 		String text = "";
 		if (!cell.isNull()) {
-			boolean wrap = cell.getCellStyle().isWrapText();
-			boolean vtxt = cell.getCellStyle().getRotation() == 255; //ZSS-918
+			final SCellStyle style = cell.getCellStyle();
+			boolean wrap = style.isWrapText();
+			boolean vtxt = style.getRotation() == 255; //ZSS-918
 			
 			final FormatResult ft = EngineFactory.getInstance().createFormatEngine().format(cell, new FormatContext(ZssContext.getCurrent().getLocale()));
 			if (ft.isRichText()) {
@@ -544,7 +547,7 @@ public class CellFormatHelper {
 			}
 			final SHyperlink hlink = cell.getHyperlink();
 			if (hlink != null) {
-				text = getHyperlinkHtml(text, hlink);
+				text = getHyperlinkHtml(text, hlink, sheet, cell, style, ft, null); //ZSS-1018
 			}				
 		}
 		return text;
@@ -569,7 +572,8 @@ public class CellFormatHelper {
 		return text;
 	}
 	
-	private static String getHyperlinkHtml(String label, SHyperlink link) {
+	private static String getHyperlinkHtml(String label, SHyperlink link, 
+			SSheet sheet, SCell cell, SCellStyle cellStyle, FormatResult ft, SCellStyle tbStyle) { //ZSS-1018
 		String addr = escapeText(link.getAddress()==null?"":link.getAddress(), false, false); //TODO escape something?
 		if (label == null) {
 			label = escapeText(link.getLabel(), false, false);
@@ -580,7 +584,10 @@ public class CellFormatHelper {
 		final StringBuffer sb  = new StringBuffer();
 		//ZSS-233, don't use href directly to avoid direct click on spreadsheet at the beginning.
 		sb.append("<a zs.t=\"SHyperlink\" z.t=\"").append(link.getType().getValue()).append("\" href=\"javascript:\" z.href=\"")
-			.append(addr).append("\">")
+			.append(addr)
+			.append("\" style=\"") //ZSS-1018
+			.append(getFontHtmlStyle(sheet, cell, cellStyle, ft, tbStyle)) //ZSS-1018
+			.append("\">")
 			.append(label==null?"":label)
 			.append("</a>");
 		return sb.toString();		
@@ -784,16 +791,16 @@ public class CellFormatHelper {
 		return ft == null ? "" : ft.getText();
 	}
 	
-	//ZSS-945
+	//ZSS-945, ZSS-1018
 	//@since 3.8.0
 	//@Internal
-	public String getFontHtmlStyle(FormatResult ft, SCellStyle tbCellStyle) { //ZSS-977
-		if (!_cell.isNull()) {
+	public static String getFontHtmlStyle(SSheet sheet, SCell cell, SCellStyle cellStyle, FormatResult ft, SCellStyle tbCellStyle) { //ZSS-977
+		if (!cell.isNull()) {
 			
 			final StringBuffer sb = new StringBuffer();
 			//ZSS-977
-			SFont font = StyleUtil.getFontStyle(_sheet.getBook(), _cellStyle, tbCellStyle);;
-			sb.append(getFontCSSStyle(_cell, font));
+			SFont font = StyleUtil.getFontStyle(sheet.getBook(), cellStyle, tbCellStyle);;
+			sb.append(getFontCSSStyle(cell, font));
 
 			//condition color
 			final boolean isRichText = ft.isRichText();
@@ -816,12 +823,13 @@ public class CellFormatHelper {
 	/**
 	 * Gets Cell text by given row and column, it handling
 	 */
-	static public String getRichCellHtmlText(SSheet sheet, int row,int column, FormatResult ft){
+	static public String getRichCellHtmlText(SSheet sheet, int row,int column, FormatResult ft, SCellStyle tbStyle){ //ZSS-1018
 		final SCell cell = sheet.getCell(row, column);
 		String text = "";
 		if (!cell.isNull()) {
-			boolean wrap = cell.getCellStyle().isWrapText();
-			boolean vtxt = cell.getCellStyle().getRotation() == 255; //ZSS-918
+			final SCellStyle style = cell.getCellStyle(); 
+			boolean wrap = style.isWrapText();
+			boolean vtxt = style.getRotation() == 255; //ZSS-918
 			
 			if (ft.isRichText()) {
 				final SRichText rstr = ft.getRichText();
@@ -831,7 +839,7 @@ public class CellFormatHelper {
 			}
 			final SHyperlink hlink = cell.getHyperlink();
 			if (hlink != null) {
-				text = getHyperlinkHtml(text, hlink);
+				text = getHyperlinkHtml(text, hlink, sheet, cell, style, ft, tbStyle); //ZSS-1018
 			}				
 		}
 		return text;
@@ -843,7 +851,7 @@ public class CellFormatHelper {
 	/**
 	 * Gets Cell text by given row and column
 	 */
-	static public String getCellHtmlText(SSheet sheet, int row,int column, FormatResult ft){
+	static public String getCellHtmlText(SSheet sheet, int row,int column, FormatResult ft, SCellStyle tbStyle){ //ZSS-1018
 		final SCell cell = sheet.getCell(row, column);
 		String text = "";
 		if (cell != null) {
@@ -863,9 +871,8 @@ public class CellFormatHelper {
 	//@since 3.8.0
 	public String getRealHtmlStyle(FormatResult ft, SCellStyle tbCellStyle) { //ZSS-977
 		if (!_cell.isNull()) {
-			
 			final StringBuffer sb = new StringBuffer();
-			sb.append(getFontHtmlStyle(ft, tbCellStyle)); //ZSS-977
+			sb.append(getFontHtmlStyle(_sheet, _cell, _cell.getCellStyle(), ft, tbCellStyle)); //ZSS-977, ZSS-1018
 			sb.append(getIndentCSSStyle(_cell));			
 			return sb.toString();
 		}

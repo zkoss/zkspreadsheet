@@ -1,0 +1,9 @@
+<vbox hflex="1" vflex="1">
+	<label multiline="true">
+		Select A1, and change font color; text color of the font should change accordingly.
+	</label>
+	
+	<spreadsheet id="ss" src="/issue3/book/1018-hyperlink.xlsx" maxVisibleRows="50" maxVisibleColumns="50"
+		hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
+		showFormulabar="true" />
+</vbox>

@@ -16,6 +16,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.ui.impl;
 
+import org.zkoss.zss.model.SCellStyle;
 import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.model.sys.format.FormatResult;
 import org.zkoss.zss.ui.sys.CellDisplayLoader;
@@ -34,9 +35,9 @@ public class SimpleCellDisplayLoader implements CellDisplayLoader {
 		return CellFormatHelper.getCellHtmlText(sheet, row, column);
 	}
 
-	//ZSS-945
+	//ZSS-945, ZSS-1018
 	@Override
-	public String getCellHtmlText(SSheet sheet, int row, int column, FormatResult ft) {
-		return CellFormatHelper.getCellHtmlText(sheet, row, column, ft);
+	public String getCellHtmlText(SSheet sheet, int row, int column, FormatResult ft, SCellStyle tbStyle) {
+		return CellFormatHelper.getCellHtmlText(sheet, row, column, ft, tbStyle);
 	}
 }
