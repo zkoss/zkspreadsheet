@@ -555,6 +555,10 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 
 		// put into table
 		styleTable.put(cellStyle, poiCellStyle);
+		
+		int indention = cellStyle.getIndention();
+		if (indention > 0) 
+			poiCellStyle.setIndention((short) indention);
 
 		return poiCellStyle;
 

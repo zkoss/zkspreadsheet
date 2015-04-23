@@ -139,6 +139,7 @@ zss.Cell = zk.$extends(zk.Widget, {
 			colHeader = src.columnHeaders[col],
 			rowHeader = src.rowHeaders[row];
 		this.text = cellData.text || '';
+		this.indention = cellData.indention;
 		if (colHeader && rowHeader) {
 			this.ref = colHeader.t + rowHeader.t;
 		}
@@ -318,9 +319,6 @@ zss.Cell = zk.$extends(zk.Widget, {
 		}
 		this.$n().style.cssText = st;
 		cave.style.cssText = ist;
-		if (prevWidth && (zk.ie6_ || zk.ie7_)) {//IE6/IE7 set overflow width at cave
-			cave.style.width = prevWidth;
-		}
 		
 		// ZSS-865
 		var orgwidth = real && real.style ? real.style.width : null,
@@ -329,7 +327,7 @@ zss.Cell = zk.$extends(zk.Widget, {
 			orgFamily = real && real.style ? real.style.fontFamily : null;
 		
 		real.style.cssText = fst;
-		if (orgwidth && !real.style.width) {
+		if (orgwidth && !indentionChd && !real.style.width) {
 			jq(real).css('width', orgwidth);
 		}
 
@@ -445,6 +443,7 @@ zss.Cell = zk.$extends(zk.Widget, {
 			fontStyleChg ||
 			fontSizeChanged || 
 			rotateChanged || 
+			indentionChd ||
 			((this.cellType == STR_CELL || this.cellType == BLANK_CELL) && !this.merid && processWrap) //ZSS-528, for wrap case
 		) { 
 			var newHeight = this._getTextHeight0();
