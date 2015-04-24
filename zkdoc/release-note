@@ -80,6 +80,7 @@ ZK Spreadsheet 3.8.0
   ZSS-1016 Should not export default style to Row.
   ZSS-1018 Color and decoration of a hyperlink in cell is not correctly displayed
   ZSS-1019 Should not show Filter button if hiddenButton is set to true
+  ZSS-1022 NPE when load file with theme
   
 ** Upgrade Notes
   * Default period for automatically saving in zssapp is 15 minutes.
