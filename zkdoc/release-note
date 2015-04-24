@@ -32,6 +32,7 @@ ZK Spreadsheet 3.8.0
   ZSS-1001 Support clear a Table
   ZSS-988 Support auto filter on Table
   ZSS-982 Add a parameter to show/hide chart when the data source is in hidden columns and rows
+  ZSS-1014 Support EOMONTH function
   
 *Bugs:
   ZSS-910 Problem referencing a cell with formula in same position of other file
