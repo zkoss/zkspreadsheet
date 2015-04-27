@@ -41,7 +41,7 @@ public class Issue796Test {
 	 * Test parse table formula
 	 */
 	@Test
-	public void tesParseTableFormula() {
+	public void testParseTableFormula() {
 		try {
 			Book book = Util.loadBook(this, "book/796-table-formula.xlsx");
 			Sheet sheet1 = book.getSheet("Sheet1");
@@ -51,7 +51,8 @@ public class Issue796Test {
 			Assert.assertEquals("Formula Type", CellData.CellType.FORMULA, a3.getType());
 			Assert.assertEquals("Value a Number Type", CellData.CellType.NUMERIC, a3.getResultType());
 			Assert.assertEquals("Value", 1d, a3.getDoubleValue(), 0d);
-			Assert.assertEquals("Formula", "SUBTOTAL(103,[Column1])", a3.getFormulaValue());
+			final String a3Str = a3.getFormulaValue();
+			Assert.assertEquals("Formula", "SUBTOTAL(103,[Column1])", a3Str);
 //			Assert.assertEquals("Value an Error Type on 20141014", CellData.CellType.ERROR, a3.getResultType());
 //			Assert.assertEquals("Value", ErrorValue.NAME, a3.getValue());
 
