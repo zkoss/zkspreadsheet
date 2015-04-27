@@ -11,7 +11,11 @@
 3. all menu should still work (after the exception, they didn't)
 	</label>
 		<hbox hflex="1">
-		<button label="reproduce" onClick='Ranges.range(ss.getSelectedSheet(), "D1").setColumnWidth(255)'/>
+		<button label="reproduce">
+			<attribute name="onClick"><![CDATA[
+				Ranges.range(ss.getSelectedSheet(), 3, 3).setColumnWidth(10);
+			]]></attribute>
+		</button>
 		</hbox>	
 		<spreadsheet id="ss" src="/issue3/book/433-column-width.xlsx" hflex="1" vflex="1"
 			maxVisibleRows="500" maxVisibleColumns="100" showToolbar="true" showFormulabar="true"

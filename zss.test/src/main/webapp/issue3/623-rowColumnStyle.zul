@@ -27,7 +27,7 @@
 		org.zkoss.zss.model.SSheet sheet = ss.getSelectedSSheet();
 		
 		org.zkoss.zss.model.SCellStyle style =  sheet.getBook().createCellStyle(true);
-		style.setFillPattern(org.zkoss.zss.model.SCellStyle.FillPattern.SOLID);
+		style.setFillPattern(org.zkoss.zss.model.SFill.FillPattern.SOLID);
 		style.setBackColor(sheet.getBook().createColor(color));
 		org.zkoss.zss.range.SRange range = org.zkoss.zss.range.SRanges.range(sheet,f);
 		range.setCellStyle(style);

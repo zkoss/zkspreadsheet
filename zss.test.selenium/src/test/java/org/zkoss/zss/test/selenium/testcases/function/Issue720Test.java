@@ -110,7 +110,7 @@ public class Issue720Test extends ZSSTestCase {
 		waitUntilProcessEnd(Setup.getTimeoutL0());
 		click(dropdown);
 		waitUntilProcessEnd(Setup.getTimeoutL0());
-		assertEquals("def", jq(".zsdv-popup-cave").text());
+		assertEquals("\"d\"\"e\"\"f\"", jq(".zsdv-popup-cave").text());
 		click(jq("@button:eq(2)"));
 		waitUntilProcessEnd(Setup.getTimeoutL0());
 		spreadsheet.focus();

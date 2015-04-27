@@ -8,11 +8,41 @@ import org.openqa.selenium.Keys;
 import org.zkoss.zss.test.selenium.Setup;
 import org.zkoss.zss.test.selenium.ZSSTestCase;
 import org.zkoss.zss.test.selenium.entity.EditorWidget;
+import org.zkoss.zss.test.selenium.entity.JQuery;
 import org.zkoss.zss.test.selenium.entity.SheetCtrlWidget;
 import org.zkoss.zss.test.selenium.entity.SpreadsheetWidget;
 
 
 public class Issue900Test extends ZSSTestCase {
+	
+	@Test
+	public void testZSS901() throws Exception {
+		getTo("issue3/901-filter-range.zul");
+		SpreadsheetWidget ss = focusSheet();
+		SheetCtrlWidget ctrl = ss.getSheetCtrl();
+		EditorWidget editor = ctrl.getInlineEditor();
+		
+		assertTrue(isDropdownOnCell(0, 1));
+		assertTrue(isDropdownOnCell(1, 2));
+		assertTrue(isDropdownOnCell(2, 3));
+		
+		
+	}
+	
+	private boolean isDropdownOnCell(int dropdownIndex, int cellIndex) {
+		JQuery dropdown = jq(".zsdropdown:eq(" + dropdownIndex + ")");
+		int cellHorizontalMiddle = dropdown.offsetLeft() + dropdown.width()/2;
+		int cellVerticalMiddle = dropdown.offsetTop() + dropdown.height()/2;
+
+		int cellLeft = jq("@Row:eq(1) @Cell:eq(" + cellIndex + ")").offsetLeft();
+		int cellRight = cellLeft + jq("@Row:eq(1) @Cell:eq(" + cellIndex + ")").width();
+		int cellTop = jq("@Row:eq(1) @Cell:eq(" + cellIndex + ")").offsetTop();
+		int cellBottom = cellTop + jq("@Row:eq(1) @Cell:eq(" + cellIndex + ")").height();
+		
+		return cellHorizontalMiddle > cellLeft && cellHorizontalMiddle < cellRight && cellVerticalMiddle > cellTop && cellVerticalMiddle < cellBottom;
+	}
+	
+//	private boolean isCellHasBorder(JQuery cell, )
 	
 	@Ignore("vision, email")
 	@Test

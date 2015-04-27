@@ -1,8 +1,6 @@
 package org.zkoss.zss.test.selenium.testcases.function;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
+import static org.junit.Assert.*;
 import org.junit.Test;
 import org.zkoss.zss.test.selenium.Setup;
 import org.zkoss.zss.test.selenium.ZSSTestCase;
@@ -23,7 +21,7 @@ public class Issue840Test extends ZSSTestCase {
 		for(int i = jq.length() - 1; i >= 0; i--) {
 			mouseMoveAt(jq.get(i), "1,1");
 			waitUntilProcessEnd(Setup.getTimeoutL0());
-			assertTrue(jq(".zscellcomment-popup").css("display").equals("block"));
+			assertEquals(jq(".zscellcomment-popup").css("display"), "block");
 			waitUntilProcessEnd(Setup.getTimeoutL0());
 		}
 		
@@ -32,12 +30,12 @@ public class Issue840Test extends ZSSTestCase {
 		waitUntilProcessEnd(Setup.getTimeoutL0());
 		mouseMoveAt(ctrl.getCell(1, 4), "3,3");
 		waitUntilProcessEnd(Setup.getTimeoutL0());
-		assertTrue(jq(".zscellcomment-popup").css("display").equals("block"));
+		assertEquals(jq(".zscellcomment-popup").css("display"), "block");
 		click(jq(".z-button:nth(0)"));
 		waitUntilProcessEnd(Setup.getTimeoutL0());
 		mouseMoveAt(ctrl.getCell(1, 4), "3,3");
 		waitUntilProcessEnd(Setup.getTimeoutL0());
-		assertTrue(!jq(".zscellcomment-popup").css("display").equals("block"));
+		assertNotEquals(jq(".zscellcomment-popup").css("display"), "block");
 		
 		// 3. merge cell D4:E6, check merged cell will show comment in non-select, select and copy mode.
 		CellWidget c1 = ctrl.getCell(3, 3);
@@ -71,15 +69,15 @@ public class Issue840Test extends ZSSTestCase {
 		
 		mouseMoveAt(c1, "3,3");
 		waitUntilProcessEnd(Setup.getTimeoutL0());
-		assertTrue(jq(".zscellcomment-popup").css("display").equals("block"));
+		assertEquals(jq(".zscellcomment-popup").css("display"), "block");
 		
 		mouseMoveAt(c2, "3,3");
 		waitUntilProcessEnd(Setup.getTimeoutL0());
-		assertTrue(jq(".zscellcomment-popup").css("display").equals("block"));
+		assertEquals(jq(".zscellcomment-popup").css("display"), "block");
 		
 		mouseMoveAt(c3, "3,3");
 		waitUntilProcessEnd(Setup.getTimeoutL0());
-		assertTrue(jq(".zscellcomment-popup").css("display").equals("block"));
+		assertEquals(jq(".zscellcomment-popup").css("display"), "block");
 		
 		// 4. freeze sheet and then do step 1 and 2 again.
 		// 5. switch sheets, make sure all functions above will work as well.
@@ -95,7 +93,7 @@ public class Issue840Test extends ZSSTestCase {
 		for(int i = jq.length() - 1; i >= 0; i--) {
 			mouseMoveAt(jq.get(i), "1,1");
 			waitUntilProcessEnd(Setup.getTimeoutL0());
-			assertTrue(jq(".zscellcomment-popup").css("display").equals("block"));
+			assertEquals(jq(".zscellcomment-popup").css("display"), "block");
 			waitUntilProcessEnd(Setup.getTimeoutL0());
 		}
 		
@@ -103,12 +101,12 @@ public class Issue840Test extends ZSSTestCase {
 		waitUntilProcessEnd(Setup.getTimeoutL0());
 		mouseMoveAt(ctrl.getCell(1, 4), "3,3");
 		waitUntilProcessEnd(Setup.getTimeoutL0());
-		assertTrue(jq(".zscellcomment-popup").css("display").equals("block"));
+		assertEquals(jq(".zscellcomment-popup").css("display"), "block");
 		click(jq(".z-button:nth(0)"));
 		waitUntilProcessEnd(Setup.getTimeoutL0());
 		mouseMoveAt(ctrl.getCell(1, 4), "3,3");
 		waitUntilProcessEnd(Setup.getTimeoutL0());
-		assertTrue(jq(".zscellcomment-popup").css("display").equals("block"));
+		assertEquals(jq(".zscellcomment-popup").css("display"), "block");
 	}
 	
 	@Test

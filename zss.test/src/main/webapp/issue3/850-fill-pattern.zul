@@ -6,7 +6,7 @@ Since 3.7.0
 2. Select background color when pattern is none, it should be changed to Solid.
 3. Changing fill options shouldn't affect format if user didn't select any format option.
 </label>
-	<spreadsheet id="ss" vflex="1" hflex="1" src="/issue3/book/850-fill-pattern.xlsx"
+	<spreadsheet id="ss" vflex="1" width="100%" src="/issue3/book/850-fill-pattern.xlsx"
 		showToolbar="true" showSheetbar="true" showFormulabar="true" showContextMenu="true"
 		maxVisibleRows="100" maxVisibleColumns="100"/>
 </zk>

@@ -19,7 +19,7 @@ public class Issue850Test extends ZSSTestCase {
 		waitUntilProcessEnd(Setup.getTimeoutL0());
 		click(jq(".zsmenuitem-formatCell.z-menuitem"));
 		waitUntilProcessEnd(Setup.getTimeoutL0());
-		click(jq(".z-window .z-tab:eq(1)"));
+		click(jq(".z-window .z-tab:eq(2)"));
 		waitUntilProcessEnd(Setup.getTimeoutL0());
 		click(jq(".z-window .z-colorbox:eq(0)"));
 		waitUntilProcessEnd(Setup.getTimeoutL0());
@@ -56,20 +56,17 @@ public class Issue850Test extends ZSSTestCase {
 		waitUntilProcessEnd(Setup.getTimeoutL0());
 		click(jq(".zsmenuitem-formatCell.z-menuitem"));
 		waitUntilProcessEnd(Setup.getTimeoutL0());
-		click(jq(".z-window .z-tab:eq(1)"));
+		click(jq(".z-window .z-tab:eq(2)"));
 		waitUntilProcessEnd(Setup.getTimeoutL0());
 		
-		click(jq(".z-window .z-combobox-button"));
+		click(jq(".z-window .z-combobox-button:eq(1)"));
 		waitUntilProcessEnd(Setup.getTimeoutL0());
-		click(jq(".z-comboitem:eq(" + nth + ")"));
+		click(jq(".z-combobox-open .z-comboitem:eq(" + nth + ")"));
 		waitUntilProcessEnd(Setup.getTimeoutL0());
 		
 		// press OK
 		click(jq(".z-window .z-button:eq(0)"));
 		waitUntilProcessEnd(Setup.getTimeoutL0());
-		
-		System.out.println(e1.css("background-image"));
-		System.out.println(e2.css("background-image"));
 		
 		assertTrue(
 			e2.css("background-image").equals(e1.css("background-image")));

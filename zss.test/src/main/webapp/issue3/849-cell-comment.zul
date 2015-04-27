@@ -7,11 +7,13 @@ Since 3.7.0
 4. freeze sheet and then do step 1 and 2 again.
 5. switch sheets, make sure all functions above will work as well.
 </label>
-	<button label="remove comment" onClick='Ranges.range(ss.getSelectedSheet(), 1, 4).setCommentRichText(null)' />
-	<button label="add comment" onClick='Ranges.range(ss.getSelectedSheet(), 1, 4).setCommentRichText("test")' />
-	<button label="freeze sheet" onClick='Ranges.range(ss.getSelectedSheet(), 5,5).setFreezePanel(5,5)' />
-	<button label="unfreeze sheet" onClick='Ranges.range(ss.getSelectedSheet()).setFreezePanel(0, 0)' />
-	<spreadsheet id="ss" vflex="1" hflex="1" src="/issue3/book/blank.xlsx"
+	<hbox>
+		<button label="remove comment" onClick='Ranges.range(ss.getSelectedSheet(), 1, 4).setCommentRichText(null)' />
+		<button label="add comment" onClick='Ranges.range(ss.getSelectedSheet(), 1, 4).setCommentRichText("test")' />
+		<button label="freeze sheet" onClick='Ranges.range(ss.getSelectedSheet(), 5,5).setFreezePanel(5,5)' />
+		<button label="unfreeze sheet" onClick='Ranges.range(ss.getSelectedSheet()).setFreezePanel(0, 0)' />
+	</hbox>
+	<spreadsheet id="ss" vflex="1" width="100%" src="/issue3/book/blank.xlsx"
 		showToolbar="true" showSheetbar="true" showFormulabar="true" showContextMenu="true"
 		maxVisibleRows="100" maxVisibleColumns="100"/>
 		
