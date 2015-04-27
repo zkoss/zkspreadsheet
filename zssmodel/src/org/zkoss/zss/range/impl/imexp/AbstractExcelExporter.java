@@ -108,6 +108,7 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 			for (SCellStyle style: book.getDefaultCellStyles()) {
 				CellStyle cellStyle = toPOIDefaultCellStyle(style); // put the default cellStyle
 				workbook.addDefaultCellStyle(cellStyle);
+				toPOICellStyle(style); //ZSS-1027: put the default cellStyle into cellXfs
 			}
 			//ZSS-854: export named cell styles
 			workbook.clearNamedStyles();
