@@ -45,12 +45,15 @@ import org.zkoss.zss.model.sys.format.FormatEngine;
 import org.zkoss.zss.model.sys.format.FormatResult;
 import org.zkoss.zss.model.util.RichTextHelper;
 import org.zkoss.zss.range.impl.StyleUtil;
+import org.zkoss.zss.ui.impl.undo.ReserveUtil;
 
 /**
  * @author Dennis.Chen
  * 
  */
 public class CellFormatHelper {
+	
+	private static final int RESERVE_CELL_MARGIN = ReserveUtil.RESERVE_STYLE * 2; // double side 
 
 	/**
 	 * cell to get the format, could be null.
@@ -884,9 +887,11 @@ public class CellFormatHelper {
 		final int indention = _cell.getCellStyle().getIndention();
 		final boolean wrap = _cell.getCellStyle().isWrapText();
 		if(indention > 0) {
-			if(wrap)
-				return "float:right; width: calc(100% - " + (indention * 8.5) + "px);";
-			else
+			if(wrap) {
+				//ZSS-1016
+				return "float:right; width: " + 
+					(_sheet.getColumn(_cell.getColumnIndex()).getWidth() - (indention * 8.5) - RESERVE_CELL_MARGIN) + "px;";
+			} else 
 				return "text-indent:" + (indention * 8.5) + "px;";
 		}
 		return "";
