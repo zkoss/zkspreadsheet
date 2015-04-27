@@ -53,6 +53,18 @@ public class Issue1022Test {
 			Book book = Util.loadBook(this, "book/1022-theme-table.xlsx");
 			Assert.assertTrue("No Exception", true);
 			Exporters.getExporter("xlsx").export(book, os);
+			
+			Sheet sheet1 = book.getSheetAt(0);
+			Range rngC34 = Ranges.range(sheet1, "C34");
+			CellData cd = rngC34.getCellData();
+			Assert.assertEquals("Numeric", CellType.NUMERIC, cd.getResultType());
+			Assert.assertEquals("C34", 23216d, cd.getDoubleValue(), 0d);
+			
+			Range rngF29 = Ranges.range(sheet1, "F29");
+			cd = rngF29.getCellData();
+			Assert.assertEquals("Numeric", CellType.NUMERIC, cd.getResultType());
+			Assert.assertEquals("F29", 5952d, cd.getDoubleValue(), 0d);
+			
 		} catch (Exception e) {
 			Assert.assertTrue("Exception when load \"issue/book/1022-theme-table.xlsx\":\n" + e, false);
 		} finally {
