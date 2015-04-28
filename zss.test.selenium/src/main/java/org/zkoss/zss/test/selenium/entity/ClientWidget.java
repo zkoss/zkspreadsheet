@@ -123,6 +123,10 @@ public class ClientWidget {
 		return TestCaseBase.eval(String.format(RETURN_FUN, toString(), name));
 	}
 	
+	public Object attr(String name) {
+		return TestCaseBase.eval("return " + toString() + ".attr('" + name + "')");
+	}
+	
 	public String getResult() {
 		final String script = toString();
 		js.clear();
