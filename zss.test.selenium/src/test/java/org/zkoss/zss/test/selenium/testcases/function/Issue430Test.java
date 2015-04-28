@@ -1,6 +1,6 @@
 package org.zkoss.zss.test.selenium.testcases.function;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import org.junit.Ignore;
 import org.junit.Test;
