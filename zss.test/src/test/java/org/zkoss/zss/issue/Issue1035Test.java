@@ -36,7 +36,7 @@ public class Issue1035Test {
 	 * Test render long text that across the cell boundary
 	 */
 	@Test
-	public void exportTitleFont() {
+	public void exportRepeatColumnTitles() {
 		Book book = Util.loadBook(this, "book/1035-repeat-column-titles-pdf.xlsx");
 		
 		File temp = Setup.getTempFile("Issue1035ExportRepeatColumnTitles",".pdf");
