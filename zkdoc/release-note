@@ -86,6 +86,7 @@ ZK Spreadsheet 3.8.0
   ZSS-1027 Setting a row background color causes exported xlsx to have every row contains that background color
   ZSS-1035 Should repeat column titles when exporting to PDF
   ZSS-1031 Fail to export a PDF when set repeating rows title
+  ZSS-1029 Cells with background color only shows for cells containing data when exporting to PDF
   
 ** Upgrade Notes
   * Default period for automatically saving in zssapp is 15 minutes.
