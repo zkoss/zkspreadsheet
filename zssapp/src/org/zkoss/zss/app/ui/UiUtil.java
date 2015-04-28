@@ -30,14 +30,14 @@ public class UiUtil {
 	}
 	
 	public static void showInfoMessage(String message,int time) {
-		Clients.showNotification(message, "info", null, null, time, true);
+		Clients.showNotification(message, Clients.NOTIFICATION_TYPE_INFO, null, null, time, true);
 	}
 	public static void showInfoMessage(String message) {
 		showInfoMessage(message, 5000);
 	}
 	
 	public static void showWarnMessage(String message,int time) {
-		Clients.showNotification(message, "warn", null, null, time, true);
+		Clients.showNotification(message, Clients.NOTIFICATION_TYPE_WARNING, null, null, time, true);
 	}
 	public static void showWarnMessage(String message) {
 		showWarnMessage(message, 5000);

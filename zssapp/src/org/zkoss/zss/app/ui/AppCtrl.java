@@ -825,7 +825,7 @@ public class AppCtrl extends CtrlBase<Component>{
 			Filedownload.save(new AMedia(name, null, "application/pdf", file, true));
 		} catch (IOException e) {
 			log.error(e.getMessage(),e);
-			UiUtil.showWarnMessage("Can't export the book");
+			UiUtil.showWarnMessage("Can't export the book: " + e.getMessage());
 		}
 	}
 	
