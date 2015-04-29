@@ -92,6 +92,7 @@ ZK Spreadsheet 3.8.0
   ZSS-1028 Export a blank file throws an IOException
   ZSS-1042 focus() doesn't work as expected
   ZSS-1036 Fail to export a file with repeating row title to a PDF
+  ZSS-1041 Linked text should show underline
   
 ** Upgrade Notes
   * Default period for automatically saving in zssapp is 15 minutes.

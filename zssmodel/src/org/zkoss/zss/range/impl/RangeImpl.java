@@ -26,20 +26,21 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.concurrent.locks.ReadWriteLock;
 
+import org.zkoss.lang.Strings;
 import org.zkoss.poi.ss.usermodel.ZssContext;
 import org.zkoss.poi.ss.util.WorkbookUtil;
-import org.zkoss.lang.Strings;
 import org.zkoss.zss.model.CellRegion;
+import org.zkoss.zss.model.ErrorValue;
 import org.zkoss.zss.model.InvalidModelOpException;
 import org.zkoss.zss.model.PasteOption;
 import org.zkoss.zss.model.SAutoFilter;
 import org.zkoss.zss.model.SAutoFilter.FilterOp;
 import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.SBookSeries;
+import org.zkoss.zss.model.SBorder.BorderType;
 import org.zkoss.zss.model.SCell;
 import org.zkoss.zss.model.SCell.CellType;
 import org.zkoss.zss.model.SCellStyle;
-import org.zkoss.zss.model.SBorder.BorderType;
 import org.zkoss.zss.model.SChart;
 import org.zkoss.zss.model.SChart.ChartGrouping;
 import org.zkoss.zss.model.SChart.ChartLegendPosition;
@@ -50,9 +51,10 @@ import org.zkoss.zss.model.SDataValidation;
 import org.zkoss.zss.model.SDataValidation.AlertStyle;
 import org.zkoss.zss.model.SDataValidation.OperatorType;
 import org.zkoss.zss.model.SDataValidation.ValidationType;
+import org.zkoss.zss.model.SFont;
 import org.zkoss.zss.model.SHyperlink;
 import org.zkoss.zss.model.SHyperlink.HyperlinkType;
-import org.zkoss.zss.model.SFont;
+import org.zkoss.zss.model.SName;
 import org.zkoss.zss.model.SPicture;
 import org.zkoss.zss.model.SRichText;
 import org.zkoss.zss.model.SRow;
@@ -61,20 +63,18 @@ import org.zkoss.zss.model.SSheetProtection;
 import org.zkoss.zss.model.SSheetViewInfo;
 import org.zkoss.zss.model.STable;
 import org.zkoss.zss.model.SheetRegion;
-import org.zkoss.zss.model.SName;
 import org.zkoss.zss.model.ViewAnchor;
-import org.zkoss.zss.model.ErrorValue;
 import org.zkoss.zss.model.impl.AbstractBookAdv;
 import org.zkoss.zss.model.impl.AbstractBookSeriesAdv;
-import org.zkoss.zss.model.impl.AbstractSheetAdv;
-import org.zkoss.zss.model.impl.AbstractNameAdv;
 import org.zkoss.zss.model.impl.AbstractCellAdv;
+import org.zkoss.zss.model.impl.AbstractDataValidationAdv;
+import org.zkoss.zss.model.impl.AbstractNameAdv;
+import org.zkoss.zss.model.impl.AbstractSheetAdv;
 import org.zkoss.zss.model.impl.CellAttribute;
 import org.zkoss.zss.model.impl.ColorImpl;
 import org.zkoss.zss.model.impl.FormulaCacheCleaner;
-import org.zkoss.zss.model.impl.RefImpl;
 import org.zkoss.zss.model.impl.NameRefImpl;
-import org.zkoss.zss.model.impl.AbstractDataValidationAdv;
+import org.zkoss.zss.model.impl.RefImpl;
 import org.zkoss.zss.model.sys.EngineFactory;
 import org.zkoss.zss.model.sys.dependency.DependencyTable;
 import org.zkoss.zss.model.sys.dependency.DependencyTable.RefFilter;
@@ -539,6 +539,11 @@ public class RangeImpl implements SRange {
 				}
 			}
 		}
+		//ZSS-1041: should use default hyperlink style
+		final SBook book = cell.getSheet().getBook();
+		SCellStyle linkStyle = book.getOrCreateDefaultHyperlinkStyle();
+		cell.setCellStyle(linkStyle);
+		
 		return cell.setupHyperlink(type, address, label);
 	}
 	
@@ -1154,7 +1159,7 @@ public class RangeImpl implements SRange {
 			//ZSS-939
 			@Override
 			CellAttribute getCellAttr() {
-				return CellAttribute.TEXT;
+				return CellAttribute.ALL; //ZSS-1041, CellAttribute.TEXT will not overflow to next cell
 			}
 		}).doInWriteLock(getLock());
 	}

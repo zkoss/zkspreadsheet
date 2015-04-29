@@ -64,6 +64,7 @@ import org.zkoss.zss.model.util.CellStyleMatcher;
 import org.zkoss.zss.model.util.FontMatcher;
 import org.zkoss.zss.model.util.Strings;
 import org.zkoss.zss.model.util.Validations;
+import org.zkoss.zss.range.impl.StyleUtil;
 
 /**
  * @author dennis
@@ -1187,5 +1188,30 @@ public class BookImpl extends AbstractBookAdv{
 			//rebuild the the formula by tuner
 			tuner.renameColumnName(table, oldName, newName, dependents);
 		}
+	}
+	
+	//ZSS-1041
+	@Override
+	public SCellStyle getOrCreateDefaultHyperlinkStyle() {
+		final SFont defaultFont = this.getDefaultFont();
+		final FontMatcher fontMatcher = new FontMatcher(defaultFont);
+		fontMatcher.setColor("0000FF");
+		fontMatcher.setUnderline(SFont.Underline.SINGLE);
+		SFont linkFont = this.searchFont(fontMatcher);
+		
+		if (linkFont == null) {
+			linkFont = this.createFont(defaultFont, true);
+			linkFont.setColor(this.createColor("#0000FF"));
+			linkFont.setUnderline(SFont.Underline.SINGLE);
+		}
+		final SCellStyle defaultStyle = this.getDefaultCellStyle();
+		final CellStyleMatcher matcher = new CellStyleMatcher(defaultStyle);
+		matcher.setFont(linkFont);
+		SCellStyle linkStyle = this.searchCellStyle(matcher);
+		if (linkStyle == null) {
+			linkStyle = StyleUtil.cloneCellStyle(this, defaultStyle); //will store into book's styleTable
+			linkStyle.setFont(linkFont);
+		}
+		return linkStyle;
 	}
 }

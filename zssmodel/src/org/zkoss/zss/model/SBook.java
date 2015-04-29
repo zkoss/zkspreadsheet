@@ -340,4 +340,11 @@ public interface SBook {
 	 * @param dirty
 	 */
 	public void setDirty(boolean dirty);
+	
+	/**
+	 * Returns existing or create SCellStyle for hyperlink.
+	 * @return
+	 * @since 3.8.0
+	 */
+	public SCellStyle getOrCreateDefaultHyperlinkStyle();
 }
