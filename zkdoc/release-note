@@ -93,6 +93,7 @@ ZK Spreadsheet 3.8.0
   ZSS-1042 focus() doesn't work as expected
   ZSS-1036 Fail to export a file with repeating row title to a PDF
   ZSS-1041 Linked text should show underline
+  ZSS-1040 Focus mark shouldn't be mis-alignment with grid line
   
 ** Upgrade Notes
   * Default period for automatically saving in zssapp is 15 minutes.

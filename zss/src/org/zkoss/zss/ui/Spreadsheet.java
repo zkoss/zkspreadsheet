@@ -954,6 +954,9 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		}
 		
 		updateSheetAttributes(cacheInClient/*, rowfreeze, colfreeze*/);
+		
+		//ZSS-1040: must sync here because customRow/customHeight not ready yet
+		syncFriendFocus(true);
 	}
 	
 	private void updateSheetAttributes(boolean cacheInClient/*, int rowfreeze, int colfreeze*/) {
@@ -5029,6 +5032,10 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	}
 	
 	private void syncFriendFocus() {
+		syncFriendFocus(false);
+	}
+	//ZSS-1040
+	private void syncFriendFocus(boolean always) {
 		if (_book != null) {
 			final Set<Object> bookFocuses;
 			final Set<String> keep = new HashSet<String>();
@@ -5045,7 +5052,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 				String id = focus.getId();
 				inbook.add(id);
 				if(focus.getSheetId().equals(sheetid)){
-					if(!_friendFocuses.containsKey(id)){
+					if(!_friendFocuses.containsKey(id) || always){ //ZSS-1040
 						//same sheet, but not in friend focus, add back
 						addOrMoveFriendFocus(id, focus.getName(), focus.getColor(), focus.getSheetId(), focus.getRow(), focus.getColumn());
 					}
