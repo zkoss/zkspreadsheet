@@ -90,6 +90,7 @@ ZK Spreadsheet 3.8.0
   ZSS-1033 Print headinging in smaller default row height
   ZSS-1030 Exported PDF's cell border shouldn't be broken
   ZSS-1028 Export a blank file throws an IOException
+  ZSS-1042 focus() doesn't work as expected
   
 ** Upgrade Notes
   * Default period for automatically saving in zssapp is 15 minutes.

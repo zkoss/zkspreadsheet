@@ -1,0 +1,15 @@
+<vbox hflex="1" vflex="1">
+	<label multiline="true">
+Since 3.8.0
+1. Press focus button, and you should see the system focus move to the Spreadsheet cell A1.
+2. If not, it is a bug.
+	</label>
+<button id="focus" label="focus" onClick="ss.focus()"/>
+	<spreadsheet id="ss" src="/issue3/book/blank.xlsx" maxVisibleRows="60" maxVisibleColumns="40"
+		hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
+		showFormulabar="true" />
+		<zscript><![CDATA[
+		    focus.focus();
+		]]>
+		</zscript>	
+</vbox>
