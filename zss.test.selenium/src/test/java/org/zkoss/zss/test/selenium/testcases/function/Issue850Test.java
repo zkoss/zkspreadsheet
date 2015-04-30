@@ -2,6 +2,7 @@ package org.zkoss.zss.test.selenium.testcases.function;
 
 import static org.junit.Assert.assertTrue;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.interactions.Actions;
 import org.zkoss.zss.test.selenium.Setup;
@@ -110,6 +111,10 @@ public class Issue850Test extends ZSSTestCase {
 		assertTrue(eval("return jq('.zsrow:eq(1) .zscell:eq(0)').zk.$().getText()")
 				.equals("test"));
 	}
+	
+	@Ignore("vision")
+	@Test
+	public void testZSS855() throws Exception {}
 }
 
 
