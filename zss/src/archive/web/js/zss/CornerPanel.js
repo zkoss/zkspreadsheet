@@ -92,9 +92,28 @@ zss.CornerPanel = zk.$extends(zk.Widget, {
 			this.selChgArea = new zss.SelChgCtrlCorner(sheet, selchgcmp);
 			this.focusMark = new zss.FocusMarkCtrlCorner(sheet, focuscmp, sheet.initparm.focus.clone());
 			this.hlArea = new zss.HighlightCorner(sheet, hlcmp, sheet.initparm.hlrange.clone(), "inner");
+
+			//ZSS-1043
+			var sheet = this.sheet;
+			if(sheet.editorFocusMark) {
+				var dummy = "";
+				for (var id in sheet.editorFocusMark) {
+					var focusMark = sheet.editorFocusMark[id];
+					this.addEditorFocus(id, dummy);
+				}
+			}
 		}
 	},
 	unbind_: function () {
+		//ZSS-1043
+		if (this.editorFocusMark) {
+			for (var id in this.editorFocusMark) {
+				var focusMark = this.editorFocusMark[id];
+				this._removeEditorFocusMark(focusMark);
+			}
+			this.editorFocusMark = null;
+		}
+		
 		if (this.selArea) {
 			this.selArea.cleanup();
 			this.selArea = null;
@@ -196,5 +215,54 @@ zss.CornerPanel = zk.$extends(zk.Widget, {
 		if (this.block) this.block.removeRow(row, size);
 		if (this.tp) this.tp.removeRow(row, size);
 		if (this.lp) this.lp.removeRow(row, size, extnm);
+	},
+	//ZSS-1043
+	addEditorFocus : function(id, name){
+		if (this.editorFocusMark && this.editorFocusMark[id])
+			return;
+		if (this.block) {
+			var sheet = this.sheet,
+				focusmarkcmp = this.$n('focmark'), 
+				x = focusmarkcmp,
+				div = x.cloneNode(true);
+			
+			div.id = div.id + '_' + id;
+			div.style.borderWidth = "3px";
+			x.parentNode.appendChild(div);
+			this.addEditorFocus_(id, name, div);
+		}
+	},
+	//ZSS-1043
+	addEditorFocus_ : function(id, name, div) {
+		if(!this.editorFocusMark)
+			this.editorFocusMark = new Object();
+		this.editorFocusMark[id] = new zss.FocusMarkCtrlCorner(this.sheet, div, new zss.Pos(0, 0));
+	},
+	//ZSS-1043
+	removeEditorFocus : function(id){
+		if (this.block) {
+			if (!this.editorFocusMark)
+				return;
+			var ctrl = this.editorFocusMark[id];
+			this._removeEditorFocusMark(ctrl);
+			this.editorFocusMark[id] = null;
+		}
+	},
+	//ZSS-1043
+	_removeEditorFocusMark : function(ctrl) {
+		if (ctrl) {
+			ctrl.comp.parentNode.removeChild(ctrl.comp);
+			ctrl.cleanup();
+		}
+	},
+	//ZSS-1043
+	moveEditorFocus : function(id, name, color, row, col){
+		if (this.block) {
+			if(!this.editorFocusMark || !this.editorFocusMark[id]){
+				this.addEditorFocus(id, name);
+			}
+			this.editorFocusMark[id].relocate(row, col);
+			this.editorFocusMark[id].showMark(color, name); //new color/oldcolor with label
+		}
 	}
 });

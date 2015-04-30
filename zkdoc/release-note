@@ -96,6 +96,7 @@ ZK Spreadsheet 3.8.0
   ZSS-1040 Focus mark shouldn't be mis-alignment with grid line
   ZSS-1038 Saving file shouldn't cause NPE
   ZSS-1045 Mouse click doesn't work on a focus mark
+  ZSS-1043 Friend focus mark does not show in frozen panel
   
 ** Upgrade Notes
   * Default period for automatically saving in zssapp is 15 minutes.

@@ -97,6 +97,12 @@ zss.TopPanel = zk.$extends(zss.Panel, {
 		this.focusMark = new zss.FocusMarkCtrlTop(sheet, focus, sheet.initparm.focus.clone());
 		this.hlArea = new zss.HighlightTop(sheet, highlight, sheet.initparm.hlrange.clone(), "inner");
 	},
+	//ZSS-1043
+	addEditorFocus_ : function(id, name, div) {
+		if(!this.editorFocusMark)
+			this.editorFocusMark = new Object();
+		this.editorFocusMark[id] = new zss.FocusMarkCtrlTop(this.sheet, div, new zss.Pos(0, 0));
+	},
 	_getTopHeaderFontSize: function () {
 		var head = this.$n('head'),
 			col = head != null ? head.firstChild : null;

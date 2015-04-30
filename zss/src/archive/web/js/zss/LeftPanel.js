@@ -206,6 +206,16 @@ zss.Panel = zk.$extends(zk.Widget, {
 		
 		if (this.block) {
 			this.bindFrozenCtrl_();
+			
+			//ZSS-1043
+			var sheet = this.sheet;
+			if(sheet.editorFocusMark) {
+				var dummy = "";
+				for (var id in sheet.editorFocusMark) {
+					var focusMark = sheet.editorFocusMark[id];
+					this.addEditorFocus(id, dummy);
+				}
+			}
 		}
 	},
 	bindFrozenCtrl_: function () {
@@ -234,6 +244,16 @@ zss.Panel = zk.$extends(zk.Widget, {
 		if (this.headers) {
 			this.headers.splice(0, this.headers.length);
 		}
+		
+		//ZSS-1043
+		if (this.editorFocusMark) {
+			for (var id in this.editorFocusMark) {
+				var focusMark = this.editorFocusMark[id];
+				this._removeEditorFocusMark(focusMark);
+			}
+			this.editorFocusMark = null;
+		}
+		
 		this.unbindFrozenCtrl_();
 		this.comp = this.comp.ctrl = this.padcomp = this.wpcomp = this.icomp = 
 		this.hcomp = this.headers = this.block = this.sheet = null;
@@ -304,6 +324,53 @@ zss.Panel = zk.$extends(zk.Widget, {
 		out.push('</div>');
 		out.push('<div id="', uid, '-',type,'wp" class="zswidgetpanel" zs.t="SWidgetpanel"></div>');
 		out.push('</div>');
+	},
+	//ZSS-1043
+	addEditorFocus : function(id, name){
+		if (this.editorFocusMark && this.editorFocusMark[id])
+			return;
+		if (this.block) {
+			var sheet = this.sheet,
+				focusmarkcmp = this.$n('focmark'), 
+				x = focusmarkcmp,
+				div = x.cloneNode(true);
+			
+			div.id = div.id + '_' + id;
+			div.style.borderWidth = "3px";
+			x.parentNode.appendChild(div);
+			this.addEditorFocus_(id, name, div);
+		}
+	},
+	//ZSS-1043
+	addEditorFocus_ : function(id, name, div) {
+		//to be overridden
+	},
+	//ZSS-1043
+	removeEditorFocus : function(id){
+		if (this.block) {
+			if (!this.editorFocusMark)
+				return;
+			var ctrl = this.editorFocusMark[id];
+			this._removeEditorFocusMark(ctrl);
+			this.editorFocusMark[id] = null;
+		}
+	},
+	//ZSS-1043
+	_removeEditorFocusMark : function(ctrl) {
+		if (ctrl) {
+			ctrl.comp.parentNode.removeChild(ctrl.comp);
+			ctrl.cleanup();
+		}
+	},
+	//ZSS-1043
+	moveEditorFocus : function(id, name, color, row, col){
+		if (this.block) {
+			if(!this.editorFocusMark || !this.editorFocusMark[id]){
+				this.addEditorFocus(id, name);
+			}
+			this.editorFocusMark[id].relocate(row, col);
+			this.editorFocusMark[id].showMark(color, name); //new color/oldcolor with label
+		}
 	}
 });
 /**
@@ -384,6 +451,12 @@ zss.LeftPanel = zk.$extends(zss.Panel, {
 		this.selChgArea = new zss.SelChgCtrlLeft(sheet, selChg);
 		this.focusMark = new zss.FocusMarkCtrlLeft(sheet, focus, sheet.initparm.focus.clone());
 		this.hlArea = new zss.HighlightLeft(sheet, highlight, sheet.initparm.hlrange.clone(), "inner");
+	},
+	//ZSS-1043
+	addEditorFocus_ : function(id, name, div) {
+		if(!this.editorFocusMark)
+			this.editorFocusMark = new Object();
+		this.editorFocusMark[id] = new zss.FocusMarkCtrlLeft(this.sheet, div, new zss.Pos(0, 0));
 	},
 	getTypeAttr_: function () {
 		return 'SLeftPanel';

@@ -603,11 +603,24 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 	_addEditorFocus : function(id, name){
 		var x = this.focusmarkcmp,
 			div = x.cloneNode(true);
+		
+		div.id = div.id + '_' + id;
 		div.style.borderWidth = "3px";
 		x.parentNode.appendChild(div);
 		if(!this.editorFocusMark)
 			this.editorFocusMark = new Object();
 		this.editorFocusMark[id] = new zss.FocusMarkCtrl(this, div, new zss.Pos(0, 0));
+
+		//ZSS-1043
+		if (this.tp) {
+			this.tp.addEditorFocus(id, name);
+		}
+		if (this.lp) {
+			this.lp.addEditorFocus(id, name);
+		}
+		if (this.cp) {
+			this.cp.addEditorFocus(id, name);
+		}
 	},
 	removeEditorFocus : function(id){
 		if (!this.editorFocusMark)
@@ -618,6 +631,17 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			ctrl.cleanup();
 		}
 		this.editorFocusMark[id] = null;
+
+		//ZSS-1043
+		if (this.tp) {
+			this.tp.removeEditorFocus(id);
+		}
+		if (this.lp) {
+			this.lp.removeEditorFocus(id);
+		}
+		if (this.cp) {
+			this.cp.removeEditorFocus(id);
+		}
 	},
 	moveEditorFocus : function(id, name, color, row, col){
 		if(!this.editorFocusMark || !this.editorFocusMark[id]){
@@ -625,6 +649,17 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		}
 		this.editorFocusMark[id].relocate(row, col);
 		this.editorFocusMark[id].showMark(color, name); //new color/oldcolor with label
+		
+		//ZSS-1043
+		if (this.tp) {
+			this.tp.moveEditorFocus(id, name, color, row, col);
+		}
+		if (this.lp) {
+			this.lp.moveEditorFocus(id, name, color, row, col);
+		}
+		if (this.cp) {
+			this.cp.moveEditorFocus(id, name, color, row, col);
+		}
 	},
 	_resize: function () {
 		if (this.invalid) return;
