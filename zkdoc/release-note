@@ -95,6 +95,7 @@ ZK Spreadsheet 3.8.0
   ZSS-1041 Linked text should show underline
   ZSS-1040 Focus mark shouldn't be mis-alignment with grid line
   ZSS-1038 Saving file shouldn't cause NPE
+  ZSS-1045 Mouse click doesn't work on a focus mark
   
 ** Upgrade Notes
   * Default period for automatically saving in zssapp is 15 minutes.
