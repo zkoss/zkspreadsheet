@@ -91,6 +91,7 @@ public class Setup {
 	
 	static public WebDriver getDriver() throws MalformedURLException{
 		return getChromeDriver();
+//		return getFirefoxDriver();
 	}
 	
 	private static WebDriver getChromeDriver() {
@@ -114,8 +115,13 @@ public class Setup {
 	
 	private static WebDriver getFirefoxDriver() {
 		FirefoxDriver driver = new FirefoxDriver();
-//		InternetExplorerDriver driver = null;
-//			driver = new InternetExplorerDriver();
+//		RemoteWebDriver driver = null;
+//		try {
+//			driver = new RemoteWebDriver(new URL("http://10.1.3.222:4444/wd/hub"), DesiredCapabilities.firefox());
+//		} catch (MalformedURLException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 
 		String val = getConfig("zss.browserSize","0,0,1200,800");
 		String[] vals = val.split(",");
