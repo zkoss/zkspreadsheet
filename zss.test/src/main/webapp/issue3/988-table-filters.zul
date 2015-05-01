@@ -12,8 +12,8 @@ Since 3.8.0
 8. Select Row 20; select Filter icon; should see a complain messagebox show "The operation can only be applied on one table or out of all tables".
 9. Click dropdown button on E2; should see a dropdown meanu; click out option "2"; should see Row 4 is hidden, E6 value change from 2 to 1.
 10. Input 2 into cell E5; select Reapply icon in toolbar; should see Row 5 hidden and B6, C6, and D6 change from 2 to 1.
-11. Select K6; select Clear icon in toolbar; should see a information messagebox show "The filter is not applied any criteria"
-12. Select A6; select Clear icon in toolbar; should see Row 4 and Row 5 unhidden and B6, C6, and D6 change from 1 to 2 and E6 change from 1 to 3.
+11. Select K6; select Filter->Clear icon in toolbar; should see a information messagebox show "The filter is not applied any criteria"
+12. Select A6; select Filter->Clear icon in toolbar; should see Row 4 and Row 5 unhidden and B6, C6, and D6 change from 1 to 2 and E6 change from 1 to 3.
 	</label>
 <button id="export" label="Export to Excel" onClick="doExport()"/>
 <zscript><![CDATA[

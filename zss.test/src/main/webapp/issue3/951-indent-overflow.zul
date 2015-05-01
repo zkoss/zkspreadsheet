@@ -1,16 +1,8 @@
 <vbox hflex="1" vflex="1">
 	<label multiline="true">
 1. type text "this is a test" into A1. make sure you can see this whole sentence.
-2. click 'increase indent' with selection on A1 for 10 times, make sure whole sentence shoudn't be covered by other cells.
+2. click 'increase indent' button on toolbar with selection on A1 for 10 times, make sure whole sentence shoudn't be covered by other cells.
 	</label>
-	<button label="increase indent">
-		<attribute name="onClick"><![CDATA[
-			int row = ss.getCellFocus().getRow();
-			int column = ss.getCellFocus().getColumn();
-			int indention = ss.getSelectedSheet().getInternalSheet().getCell(row, column).getCellStyle().getIndention();
-			org.zkoss.zss.api.CellOperationUtil.applyIndention(Ranges.range(ss.getSelectedSheet(), row, column), indention + 1);
-		]]></attribute>
-	</button>
 	<spreadsheet id="ss" src="/issue3/book/blank.xlsx" maxVisibleRows="30" maxVisibleColumns="40"
 		hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
 		showFormulabar="true" />	
