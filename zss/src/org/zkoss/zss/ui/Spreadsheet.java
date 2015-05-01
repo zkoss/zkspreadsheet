@@ -121,9 +121,11 @@ import org.zkoss.zss.model.SRow;
 import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.model.SSheet.SheetVisible;
 import org.zkoss.zss.model.STable;
+import org.zkoss.zss.model.impl.AbstractBookAdv;
 import org.zkoss.zss.model.impl.AbstractBookSeriesAdv;
 import org.zkoss.zss.model.impl.AbstractSheetAdv;
 import org.zkoss.zss.model.impl.AbstractTableAdv;
+import org.zkoss.zss.model.impl.TableImpl.DummyTable;
 import org.zkoss.zss.model.impl.sys.DependencyTableImpl;
 import org.zkoss.zss.model.sys.format.FormatResult;
 import org.zkoss.zss.model.sys.formula.EvaluationContributorContainer;
@@ -1551,17 +1553,21 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 
 	//ZSS-988
 	private Map<String, Map> convertATableFilterToJSON(STable table) {
+		final AbstractBookAdv book = (AbstractBookAdv) table.getAllRegion().getSheet().getBook();
 		Map<String, Map> tbmap = new HashMap<String, Map>();
-		Map tafmap = convertAutoFilterToJSON(table.getAutoFilter());
+		Map tafmap = table instanceof DummyTable || book.getTable(table.getName()) == null ? null : //ZSS-988: handle table deleted
+			convertAutoFilterToJSON(table.getAutoFilter());
 		tbmap.put(table.getName(), tafmap);
 		return tbmap;
 	}
 	
 	//ZSS-988
 	private Map<String, Map> convertTableFiltersToJSON(SSheet sheet) {
+		final AbstractBookAdv book = (AbstractBookAdv) sheet.getBook();
 		Map<String, Map> tbmap = new HashMap<String, Map>();
 		for (STable table : sheet.getTables()) {
-			Map tafmap = convertAutoFilterToJSON(table.getAutoFilter());
+			Map tafmap = book.getTable(table.getName()) == null ? null :  //ZSS-988: handle table deleted
+					convertAutoFilterToJSON(table.getAutoFilter());
 			tbmap.put(table.getName(), tafmap);
 		}
 		return tbmap.isEmpty() ? null : tbmap;
@@ -2011,7 +2017,9 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			if (table == null) {
 				smartUpdate("autoFilter", convertAutoFilterToJSON(filter));
 			} else {
-				smartUpdate("aTableFilter", convertATableFilterToJSON(table)); //ZSS-988
+				String json = JSONObject.toJSONString(convertATableFilterToJSON(table));
+				//ZSS-988: use response because there might be operations for different tables
+				response(new AuInvoke(this, "setATableFilter", json)); 
 			}
 		}
 	}

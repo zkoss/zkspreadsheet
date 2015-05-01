@@ -22,6 +22,7 @@ import org.zkoss.zss.model.CellRegion;
 import org.zkoss.zss.model.SBookSeries;
 import org.zkoss.zss.model.SCell;
 import org.zkoss.zss.model.SSheet;
+import org.zkoss.zss.model.STable;
 import org.zkoss.zss.model.sys.dependency.DependencyTable;
 import org.zkoss.zss.model.sys.dependency.Ref;
 import org.zkoss.zss.range.impl.ModelUpdateCollector;
@@ -107,6 +108,15 @@ import org.zkoss.zss.range.impl.ModelUpdateCollector;
 		ModelUpdateCollector collector = ModelUpdateCollector.getCurrent();
 		if(collector != null) {
 			collector.addInsertDeleteUpdate(sheet, inserted, isRow, index, lastIndex);
+		}
+	}
+	
+	//ZSS-988: delete old filter, shift rows/cols, add new filter
+	//@since 3.8.0
+	/*package*/static void addAutoFilterUpdate(SSheet sheet, STable table) {
+		ModelUpdateCollector collector = ModelUpdateCollector.getCurrent();
+		if(collector != null) {
+			collector.addAutoFilterUpdate(sheet, table);
 		}
 	}
 }

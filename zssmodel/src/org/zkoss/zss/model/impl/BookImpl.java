@@ -64,6 +64,7 @@ import org.zkoss.zss.model.util.CellStyleMatcher;
 import org.zkoss.zss.model.util.FontMatcher;
 import org.zkoss.zss.model.util.Strings;
 import org.zkoss.zss.model.util.Validations;
+import org.zkoss.zss.range.impl.NotifyChangeHelper;
 import org.zkoss.zss.range.impl.StyleUtil;
 
 /**
@@ -741,7 +742,7 @@ public class BookImpl extends AbstractBookAdv{
 			ModelUpdateUtil.handlePrecedentUpdate(getBookSeries(), new TablePrecedentRefImpl(this.getBookName(), oldName));
 		}
 		
-		((AbstractNameAdv)name).setName(newname,sheetName);
+		((AbstractNameAdv)name).setName(newname,sheetName); //will change Table's name if the name is a TableName
 		//don't need to notify new name precedent update, since Name handle it itself
 		
 		//Rename formula that contains this name
@@ -1098,7 +1099,12 @@ public class BookImpl extends AbstractBookAdv{
 	//ZSS-855
 	@Override
 	public STable removeTable(String name) {
-		return _tables.remove(name.toUpperCase());
+		final STable tb = _tables.remove(name.toUpperCase());
+		//ZSS-988: should consider table filter
+		if (tb != null) {
+			((AbstractTableAdv)tb).refreshFilter();
+		}
+		return tb; 
 	}
 	
 	//ZSS-966

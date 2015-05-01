@@ -24,6 +24,7 @@ import java.util.Set;
 
 import org.zkoss.zss.model.CellRegion;
 import org.zkoss.zss.model.SSheet;
+import org.zkoss.zss.model.STable;
 import org.zkoss.zss.model.SheetRegion;
 import org.zkoss.zss.model.impl.CellAttribute;
 import org.zkoss.zss.model.impl.RefImpl;
@@ -176,4 +177,11 @@ public class ModelUpdateCollector {
 				new InsertDeleteUpdate(sheet, inserted, isRow, index, lastIndex), CellAttribute.ALL));//ZSS-939
 	}
 
+	//ZSS-988: delete old filter, shift row/col, add new filter
+	//@since 3.8.0
+	public void addAutoFilterUpdate(SSheet sheet, STable table) {
+		addModelUpdate(new ModelUpdate(
+				UpdateType.FILTER,
+				new AutoFilterUpdate(sheet, table), CellAttribute.ALL));
+	}
 }

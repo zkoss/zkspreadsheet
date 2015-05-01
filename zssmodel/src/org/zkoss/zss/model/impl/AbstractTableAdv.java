@@ -15,6 +15,7 @@ package org.zkoss.zss.model.impl;
 import java.io.Serializable;
 
 import org.zkoss.zss.model.SCellStyle;
+import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.model.STable;
 
 /**
@@ -43,5 +44,9 @@ public abstract class AbstractTableAdv implements STable, Serializable {
 	
 	//ZSS-986
 	public abstract void insertCols(int col1, int col2, boolean insertLeft);
+	
+	//ZSS-988
+	//delete old filter; shift; add new filter
+	public abstract void refreshFilter();
 }
 

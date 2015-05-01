@@ -280,6 +280,9 @@ public class InsertDeleteHelper extends RangeHelperBase {
 		int row2 = getLastRow();
 		int col1 = getColumn();
 		int col2 = getLastColumn();
+		//ZSS-988
+		final Set<String> toShift = new HashSet<String>();
+		STable overlap = null;
 		// insert row/column/cell
 		if(isWholeRow()) { // ignore insert direction
 			// ZSS:592: Doesn't support inserting/deleting row/columns when current range cross freeze panel
@@ -292,8 +295,8 @@ public class InsertDeleteHelper extends RangeHelperBase {
 			}
 	
 			//ZSS-985
-			final Set<String> toShift = new HashSet<String>();
-			final STable overlap = deleteTable(DeleteShift.UP, toShift);
+//			final Set<String> toShift = new HashSet<String>();
+			overlap = deleteTable(DeleteShift.UP, toShift);
 			if (overlap != null) {
 				CellRegion rgn = overlap.getAllRegion().getRegion();
 				if (deleteRows(overlap)) { // might change the region
@@ -326,8 +329,8 @@ public class InsertDeleteHelper extends RangeHelperBase {
 			}
 
 			//ZSS-985
-			final Set<String> toShift = new HashSet<String>();
-			final STable overlap = deleteTable(DeleteShift.LEFT, toShift);
+//			final Set<String> toShift = new HashSet<String>();
+			overlap = deleteTable(DeleteShift.LEFT, toShift);
 			deleteCols(overlap);
 			shiftTables(book, toShift, -col2 + col1 - 1, true /*horizontal*/);
 			
@@ -338,8 +341,8 @@ public class InsertDeleteHelper extends RangeHelperBase {
 			
 		} else if(shift != DeleteShift.DEFAULT) { // do nothing if "DEFAULT", it's according to XRange.delete() spec.
 			//ZSS-985
-			final Set<String> toShift = new HashSet<String>();
-			final STable overlap = deleteTable(shift, toShift);
+//			final Set<String> toShift = new HashSet<String>();
+			overlap = deleteTable(shift, toShift);
 			if (overlap != null) {
 				final CellRegion rgn = overlap.getAllRegion().getRegion();
 				//cover the header row, must deleteCols
@@ -368,6 +371,19 @@ public class InsertDeleteHelper extends RangeHelperBase {
 					shiftTables(book, toShift, -row2 + row1 - 1, false /*horizontal*/);
 				}
 				sheet.deleteCell(row1, col1, row2, col2, shift == DeleteShift.LEFT);
+			}
+		}
+		//ZSS-988
+		if (overlap != null) {
+			((AbstractTableAdv)overlap).refreshFilter();
+		}
+		//ZSS-988: delete old filter, shift, add new filter
+		if (!toShift.isEmpty()) {
+			for (String tbName : toShift) {
+				final AbstractTableAdv tb = (AbstractTableAdv)book.getTable(tbName);
+				if (tb != null) {
+					tb.refreshFilter();
+				}
 			}
 		}
 	}
@@ -510,6 +526,9 @@ public class InsertDeleteHelper extends RangeHelperBase {
 		int row2 = getLastRow();
 		int col1 = getColumn();
 		int col2 = getLastColumn();
+		//ZSS-988
+		final Set<String> toShift = new HashSet<String>();
+		STable overlap = null;
 		// insert row/column/cell
 		if(isWholeRow()) { // ignore insert direction
 			
@@ -523,8 +542,8 @@ public class InsertDeleteHelper extends RangeHelperBase {
 			}
 
 			//ZSS-986
-			final Set<String> toShift = new HashSet<String>();
-			final STable overlap = insertTable(InsertShift.DOWN, toShift);
+//			final Set<String> toShift = new HashSet<String>();
+			overlap = insertTable(InsertShift.DOWN, toShift);
 			insertTableRows(overlap);
 			shiftTables(book, toShift, row2 - row1 + 1, false /*horizontal*/);
 			
@@ -559,8 +578,8 @@ public class InsertDeleteHelper extends RangeHelperBase {
 			}
 
 			//ZSS-986
-			final Set<String> toShift = new HashSet<String>();
-			final STable overlap = insertTable(InsertShift.RIGHT, toShift);
+//			final Set<String> toShift = new HashSet<String>();
+			overlap = insertTable(InsertShift.RIGHT, toShift);
 			insertTableCols(overlap, copyOrigin == InsertCopyOrigin.FORMAT_LEFT_ABOVE);
 			shiftTables(book, toShift, col2 - col1 + 1, true /*horizontal*/);
 
@@ -586,8 +605,8 @@ public class InsertDeleteHelper extends RangeHelperBase {
 
 		} else if(shift != InsertShift.DEFAULT) { // do nothing if "DEFAULT", it's according to XRange.insert() spec.
 			//ZSS-986
-			final Set<String> toShift = new HashSet<String>();
-			final STable overlap = insertTable(shift, toShift);
+//			final Set<String> toShift = new HashSet<String>();
+			overlap = insertTable(shift, toShift);
 			if (overlap != null) {
 				final CellRegion rgn = overlap.getAllRegion().getRegion();
 				if (shift == InsertShift.RIGHT) {
@@ -652,6 +671,19 @@ public class InsertDeleteHelper extends RangeHelperBase {
 					if(row2 + 1 <= sheet.getBook().getMaxRowIndex()) {
 						copyCellStyleFromRow(row2 + 1);
 					}
+				}
+			}
+		}
+		//ZSS-988
+		if (overlap != null) {
+			((AbstractTableAdv)overlap).refreshFilter();
+		}
+		//ZSS-988: delete old filter, shift, add new filter
+		if (!toShift.isEmpty()) {
+			for (String tbName : toShift) {
+				final AbstractTableAdv tb = (AbstractTableAdv)book.getTable(tbName);
+				if (tb != null) {
+					tb.refreshFilter();
 				}
 			}
 		}

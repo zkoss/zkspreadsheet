@@ -1773,6 +1773,9 @@ public class RangeImpl implements SRange {
 				case INSERT_DELETE:
 					handleInsertDeleteNotifyChange(((InsertDeleteUpdate)update.getData()));
 					break;
+				case FILTER: //ZSS-988
+					handleAutoFitlerNotifyChange(((AutoFilterUpdate)update.getData()));
+					break;
 				}				
 			}
 		}
@@ -1813,6 +1816,11 @@ public class RangeImpl implements SRange {
 	
 	private void handleInsertDeleteNotifyChange(InsertDeleteUpdate insertDeleteNofity) {
 		new NotifyChangeHelper().notifyInsertDelete(insertDeleteNofity);
+	}
+	
+	//ZSS-988
+	private void handleAutoFitlerNotifyChange(AutoFilterUpdate update) {
+		new NotifyChangeHelper().notifySheetAutoFilterChange(update.getSheet(), update.getTable());
 	}
 	private void handleInsertDeleteNotifyChange(List<InsertDeleteUpdate> insertDeleteNofitySet) {
 		new NotifyChangeHelper().notifyInsertDelete(insertDeleteNofitySet);

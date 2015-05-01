@@ -28,7 +28,7 @@ public class ModelUpdate {
 	 * @since 3.5.0
 	 */
 	public static enum UpdateType{
-		REF, REFS, CELL, CELLS, MERGE, INSERT_DELETE
+		REF, REFS, CELL, CELLS, MERGE, INSERT_DELETE, FILTER /*ZSS-988*/,
 	}
 	
 	final UpdateType type;

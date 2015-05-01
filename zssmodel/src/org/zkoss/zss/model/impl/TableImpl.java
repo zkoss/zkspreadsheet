@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.zkoss.poi.ss.formula.ptg.TablePtg;
+import org.zkoss.poi.ss.formula.ptg.TablePtg.Item;
 import org.zkoss.zss.model.CellRegion;
 import org.zkoss.zss.model.SAutoFilter;
 import org.zkoss.zss.model.SBook;
@@ -39,6 +40,7 @@ import org.zkoss.zss.model.STableStyle;
 import org.zkoss.zss.model.STableStyleElem;
 import org.zkoss.zss.model.STableStyleInfo;
 import org.zkoss.zss.model.SheetRegion;
+import org.zkoss.zss.range.impl.NotifyChangeHelper;
 
 /**
  * @author henri
@@ -675,5 +677,121 @@ public class TableImpl extends AbstractTableAdv implements LinkedModelObject {
 	@Override
 	public void deleteAutoFilter() {
 		_filter = null;
+	}
+	
+	//ZSS-988: delete old filter; shift row/col; add new filter
+	@Override
+	public void refreshFilter() {
+		SSheet sheet = _region.getSheet();
+		new NotifyChangeHelper().notifySheetAutoFilterChange(sheet, new DummyTable(this)); //delete old filter
+		if (((AbstractBookAdv)sheet.getBook()).getTable(_name) != null && _filter != null) {
+			ModelUpdateUtil.addAutoFilterUpdate(sheet, this); // add new filter after Range operation is done
+		}
+	}
+	
+	//ZSS-988: used to delete old table filter (same table name but empty content: 
+	//    {@see Spreadsheet#convertATableFilterToJSON(STable table)}
+	public static class DummyTable implements STable {
+		final STable tb;
+		public DummyTable(STable tb) {
+			this.tb = tb;
+		}
+		@Override
+		public SBook getBook() {
+			return tb.getBook();
+		}
+		@Override
+		public SAutoFilter getAutoFilter() {
+			return tb.getAutoFilter();
+		}
+		@Override
+		public void enableAutoFilter(boolean enable) {
+			tb.enableAutoFilter(enable);
+		}
+		@Override
+		public SAutoFilter createAutoFilter() {
+			return tb.createAutoFilter();
+		}
+		@Override
+		public void deleteAutoFilter() {
+			tb.deleteAutoFilter();
+		}
+		@Override
+		public void addColumn(STableColumn column) {
+			tb.addColumn(column);
+		}
+		@Override
+		public List<STableColumn> getColumns() {
+			return tb.getColumns();
+		}
+		@Override
+		public STableColumn getColumnAt(int colIdx) {
+			return tb.getColumnAt(colIdx);
+		}
+		@Override
+		public STableStyleInfo getTableStyleInfo() {
+			return tb.getTableStyleInfo();
+		}
+		@Override
+		public int getTotalsRowCount() {
+			return tb.getTotalsRowCount();
+		}
+		@Override
+		public void setTotalsRowCount(int count) {
+			tb.setTotalsRowCount(count);
+		}
+		@Override
+		public int getHeaderRowCount() {
+			return tb.getHeaderRowCount();
+		}
+		@Override
+		public void setHeaderRowCount(int count) {
+			tb.setHeaderRowCount(count);
+		}
+		@Override
+		public String getName() {
+			return tb.getName();
+		}
+		@Override
+		public void setName(String name) {
+			tb.setName(name);
+		}
+		@Override
+		public String getDisplayName() {
+			return tb.getDisplayName();
+		}
+		@Override
+		public void setDisplayName(String name) {
+			tb.setDisplayName(name);
+		}
+		@Override
+		public SheetRegion getAllRegion() {
+			return tb.getAllRegion();
+		}
+		@Override
+		public SheetRegion getDataRegion() {
+			return tb.getDataRegion();
+		}
+		@Override
+		public SheetRegion getColumnsRegion(String columnName1,
+				String columnName2) {
+			return tb.getColumnsRegion(columnName1, columnName2);
+		}
+		@Override
+		public SheetRegion getHeadersRegion() {
+			return tb.getHeadersRegion();
+		}
+		@Override
+		public SheetRegion getTotalsRegion() {
+			return tb.getTotalsRegion();
+		}
+		@Override
+		public SheetRegion getThisRowRegion(int rowIdx) {
+			return tb.getThisRowRegion(rowIdx);
+		}
+		@Override
+		public SheetRegion getItemRegion(Item item, int rowIdx) {
+			return tb.getItemRegion(item, rowIdx);
+		}
 	}
 }

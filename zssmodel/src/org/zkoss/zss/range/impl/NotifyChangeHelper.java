@@ -31,7 +31,7 @@ import org.zkoss.zss.model.impl.CellAttribute;
  * @author Dennis
  * @since 3.5.0
  */
-/*package*/ class NotifyChangeHelper{
+public class NotifyChangeHelper{
 
 	private static final Log _logger = Log.lookup(NotifyChangeHelper.class.getName());
 	
