@@ -79,6 +79,7 @@ ZK Spreadsheet 3.8.0
   ZSS-1008 Should show frozen pane
   ZSS-1012 Should export customHeight on Row with cells
   ZSS-1016 Should not export default style to Row.
+  ZSS-1013 Should be able to refer Table of another sheet
   ZSS-1018 Color and decoration of a hyperlink in cell is not correctly displayed
   ZSS-1019 Should not show Filter button if hiddenButton is set to true
   ZSS-1022 NPE when load file with theme
@@ -97,13 +98,7 @@ ZK Spreadsheet 3.8.0
   ZSS-1038 Saving file shouldn't cause NPE
   ZSS-1045 Mouse click doesn't work on a focus mark
   ZSS-1043 Friend focus mark does not show in frozen panel
-  
-  ZSS-1013 Should be able to refer Table of another sheet
-  ZSS-1011 org.zkoss.zss.model.InvalidFormulaException
-  ZSS-1009 NPE on import
-  ZSS-1007 Hide rows shouldn't cause java exception
-
-  
+    
 ** Upgrade Notes
   * Default period for automatically saving in zssapp is 15 minutes.
   * Zssapp supports saving all in-memory saved book when server is shutting down.
