@@ -77,6 +77,7 @@ ZK Spreadsheet 3.8.0
   ZSS-1005 formula editing adds arbitrary cell references
   ZSS-994 Data validation with date should work
   ZSS-1008 Should show frozen pane
+  ZSS-1011 org.zkoss.zss.model.InvalidFormulaException
   ZSS-1012 Should export customHeight on Row with cells
   ZSS-1016 Should not export default style to Row.
   ZSS-1013 Should be able to refer Table of another sheet
