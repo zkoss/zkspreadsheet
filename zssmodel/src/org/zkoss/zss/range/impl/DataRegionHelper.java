@@ -250,6 +250,7 @@ import org.zkoss.zss.range.SRange;
 			tlm = 0;
 			blm = Integer.MAX_VALUE;
 			
+			// locate the row limits first
 			for (STable tb : sheet.getTables()) {
 				final CellRegion rgn = tb.getAllRegion().getRegion();
 				
@@ -258,13 +259,6 @@ import org.zkoss.zss.range.SRange;
 				final int t = rgn.getRow();
 				final int b = rgn.getLastRow();
 				
-				if (col < l && rlm >= l) {
-					rlm = l - 1;
-				}
-				if (col > r && llm <= r) {
-					llm = r + 1;
-				}
-				
 				//Don't consider row limits unless the cell is between the table's first column and last column
 				if (l <= col && col <= r) {  
 					if (row < t && blm >= t) {
@@ -272,6 +266,26 @@ import org.zkoss.zss.range.SRange;
 					}
 					if (row > b && tlm <= b) {
 						tlm = b + 1;
+					}
+				}
+			}
+			
+			// then locate the column limits
+			for (STable tb : sheet.getTables()) {
+				final CellRegion rgn = tb.getAllRegion().getRegion();
+				
+				final int l = rgn.getColumn();
+				final int r = rgn.getLastColumn();
+				final int t = rgn.getRow();
+				final int b = rgn.getLastRow();
+
+				//Don't consider column limits unless the table overlapped with found row limits
+				if (t <= blm && b >= tlm) {
+					if (col < l && rlm >= l) {
+						rlm = l - 1;
+					}
+					if (col > r && llm <= r) {
+						llm = r + 1;
 					}
 				}
 			}

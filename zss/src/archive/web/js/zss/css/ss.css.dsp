@@ -1105,7 +1105,7 @@
 	width:17px;
 	position: absolute;
 	bottom: 2px;
-	z-index: 10;
+	z-index: 12;
 	background-repeat:no-repeat;
 	background-size: 100%;
 }
