@@ -173,10 +173,23 @@ import org.zkoss.zss.ui.Spreadsheet;
 		}
 		//ZSS-988: Only when it is not a table filter, it is possible to change the last row.
 		if (table == null) {
+			//ZSS-988: when hit Table cell; must stop
+			int blm = Integer.MAX_VALUE;
+			final SSheet sheet = range.getSheet();
+			for (STable tb : sheet.getTables()) {
+				final CellRegion rgn = tb.getAllRegion().getRegion();
+				final int l = rgn.getColumn();
+				final int r = rgn.getLastColumn();
+				final int t = rgn.getRow();
+				if (l <= columnIndex && columnIndex <= r && t > bottom && blm >= t)
+					blm = t - 1;
+			}
+			
+			final int maxblm = Math.min(blm, worksheet.getEndRowIndex());
 			//ZSS-704: user could have enter non-blank value along the filter, must add that into
 			final int left = range.getColumn();
 			final int right = range.getLastColumn();
-			for (int i = bottom+1; bottom < worksheet.getEndRowIndex(); ++i) {
+			for (int i = bottom+1; i <= maxblm ; ++i) {
 				final SCell c = worksheet.getCell(i, columnIndex);
 				if (!c.isNull() && c.getType() != CellType.BLANK) {
 					FormatResult fr = fe.format(c, new FormatContext(ZssContext.getCurrent().getLocale()));

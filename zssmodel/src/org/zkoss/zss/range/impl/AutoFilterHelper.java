@@ -32,6 +32,7 @@ import org.zkoss.zss.model.SAutoFilter.NFilterColumn;
 import org.zkoss.zss.model.impl.AbstractSheetAdv;
 import org.zkoss.zss.range.SRange;
 import org.zkoss.zss.range.SRanges;
+import org.zkoss.zss.range.impl.DataRegionHelper.FilterRegionHelper;
 
 /**
  * 
@@ -299,7 +300,7 @@ import org.zkoss.zss.range.SRanges;
 		} else {
 			enableAutoFilter(false); //disable existing filter
 			//re-define filtering range 
-			CellRegion filteringRange = DataRegionHelper.findCurrentRegion(sheet, firstRow, firstColumn);
+			CellRegion filteringRange = new FilterRegionHelper().findCurrentRegion(sheet, firstRow, firstColumn);
 			if (filteringRange == null){ //Don't enable auto filter if there are all blank cells
 				return;
 			}else{
