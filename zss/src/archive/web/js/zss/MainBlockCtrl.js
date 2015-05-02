@@ -687,8 +687,25 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 						t = rng.top,
 						r = rng.right;
 					if (!vrange) vrange = zss.SSheetCtrl._getVisibleRange(sheet);
-					if (t <= vrange.bottom && t >= vrange.top && l <= vrange.right && r >= vrange.left) { //overlap
+					//ZSS-954: In frozen panel, one dimension change still need to setAutoFilter
+					if ((t <= vrange.bottom && t >= vrange.top) || (l <= vrange.right && r >= vrange.left)) { //overlap
 						wgt.setAutoFilter(af);
+					}
+				}
+				//ZSS-988: has to prepare Table's filter button after loadForVisible
+				var tbafs = wgt._tableFilters;
+				if (tbafs && wgt.setTableFilters) {
+					for (var tbname in tbafs) {
+						var af = tbafs[tbname];
+							rng = af.range,
+							l = rng.left,
+							t = rng.top,
+							r = rng.right;
+						if (!vrange) vrange = zss.SSheetCtrl._getVisibleRange(sheet);
+						//ZSS-954: In frozen panel, one dimension change still need to prepare the Table filter
+						if ((t <= vrange.bottom && t >= vrange.top) || (l <= vrange.right && r >= vrange.left)) { //overlap
+							wgt._prepareAutoFilter(sheet, wgt._tableFilters ? wgt._tableFilters[tbname] : null, af);
+						}
 					}
 				}
 			}
