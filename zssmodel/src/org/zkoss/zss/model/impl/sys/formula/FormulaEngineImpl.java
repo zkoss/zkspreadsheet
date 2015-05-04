@@ -317,6 +317,22 @@ public class FormulaEngineImpl implements FormulaEngine {
 				// TODO consider function-type dependency
 			} else if(ptg instanceof FuncPtg) {
 				// TODO consider function-type dependency
+			} else if(ptg instanceof TablePtg) { //ZSS-855, ZSS-966 and ZSS-967: (side-effect of ZSS-1013) must before Area3DPtg and Ref3DPtg
+				TablePtg tbPtg = (TablePtg)ptg;
+				SBook book = sheet.getBook();
+				String tbName = tbPtg.getTableName();
+				STable tb = ((AbstractBookAdv)book).getTable(tbName);
+				String columnName1 = tbPtg.getColumn1();
+				String columnName2 = tbPtg.getColumn2();
+				Item item1 = tbPtg.getItem1();
+				Item item2 = tbPtg.getItem2();
+				SSheet srcSheet = tb.getAllRegion().getSheet();
+				String sheetName = srcSheet.getSheetName();
+				String bookName = book.getBookName();
+				return new ColumnRefImpl(bookName, sheetName, tbName, item1, item2, 
+						columnName1, columnName2, tb.getHeaderRowCount() > 0,
+						tbPtg.getFirstRow(), tbPtg.getFirstColumn(),
+						tbPtg.getLastRow(), tbPtg.getLastColumn());
 			} else if(ptg instanceof Ref3DPtg) {
 				Ref3DPtg rptg = (Ref3DPtg)ptg;
 				// might be internal or external book reference
@@ -350,22 +366,6 @@ public class FormulaEngineImpl implements FormulaEngine {
 				String sheetName = sheet.getSheetName();
 				String bookName = sheet.getBook().getBookName();
 				return new IndirectRefImpl(bookName, sheetName, ptgIndex);
-			} else if(ptg instanceof TablePtg) { //ZSS-855
-				TablePtg tbPtg = (TablePtg)ptg;
-				SBook book = sheet.getBook();
-				String tbName = tbPtg.getTableName();
-				STable tb = ((AbstractBookAdv)book).getTable(tbName);
-				String columnName1 = tbPtg.getColumn1();
-				String columnName2 = tbPtg.getColumn2();
-				Item item1 = tbPtg.getItem1();
-				Item item2 = tbPtg.getItem2();
-				SSheet srcSheet = tb.getAllRegion().getSheet();
-				String sheetName = srcSheet.getSheetName();
-				String bookName = book.getBookName();
-				return new ColumnRefImpl(bookName, sheetName, tbName, item1, item2, 
-						columnName1, columnName2, tb.getHeaderRowCount() > 0,
-						tbPtg.getFirstRow(), tbPtg.getFirstColumn(),
-						tbPtg.getLastRow(), tbPtg.getLastColumn());
 			}
 		} catch(Exception e) {
 			_logger.error(e.getMessage(), e);

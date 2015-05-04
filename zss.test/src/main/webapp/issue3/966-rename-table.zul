@@ -2,7 +2,7 @@
 	<label multiline="true">
 Since 3.8.0
 1. Press the "Rename a Name from NameK1 to NewNameK1" button.
-2. Check K1 if the Name name has changed from NameK1 to NewNameK1.
+2. Check L1 if the Name name has changed from NameK1 to NewNameK1.
 3. If not, it is a bug.
 4. Press the "Rename a Table from Table1 to Table2" button.
 5. Check L2 to L14 if the table name has changed from Table1 to Table2.
