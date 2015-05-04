@@ -447,6 +447,7 @@ public class AppCtrl extends CtrlBase<Component>{
 						collaborationInfo.removeRelationship(username);
 						ss.setBook(book);
 						desktop.setBookmark("");
+						initSaveNotification(loadedBook);
 						pushAppEvent(AppEvts.ON_LOADED_BOOK, book);
 						pushAppEvent(AppEvts.ON_CHANGED_SPREADSHEET, ss);
 						updatePageInfo();
