@@ -72,6 +72,8 @@ public class Issue0000Test extends ZSSTestCase {
 		waitUntilProcessEnd(Setup.getTimeoutL0());
 		assertTrue(jq(".zscellcomment-popup").css("display").equals("none"));
 		
+		click(ctrl.getCell("A1"));
+		waitUntilProcessEnd(Setup.getTimeoutL0());
 		sendKeys(jq("body"), Keys.chord(Keys.CONTROL, "z"));
 		waitUntilProcessEnd(Setup.getTimeoutL0());
 		
@@ -80,7 +82,7 @@ public class Issue0000Test extends ZSSTestCase {
 		assertEquals(jq(".zscellcomment-popup .z-popup-content").html(), 
 			"<span style=\"font-family:新細明體;color:#000000;font-weight:normal;font-size:11pt;\">test1</span>");
 		
-		click(b2);
+		click(ctrl.getCell("A1"));
 		waitUntilProcessEnd(Setup.getTimeoutL0());
 		sendKeys(jq("body"), Keys.chord(Keys.CONTROL, "z"));
 		waitUntilProcessEnd(Setup.getTimeoutL0());
