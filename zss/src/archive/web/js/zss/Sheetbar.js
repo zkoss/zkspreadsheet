@@ -579,7 +579,7 @@ zss.SheetSelector = zk.$extends(zul.tab.Tabbox, {
 		for (;tab; tab = tab.nextSibling) {
 			if (sheetId == tab.getSheetUuid()) {
 				var sheet = this._wgt.sheetCtrl;
-				if (sheet) {
+				if (sheet && !sheet.isSwitchingSheet) { //ZSS-1037: side-effect of ZSS-762
 					// ZSS-762: blur spreadsheet to prevent it refocuses to inline editor
 					sheet.dp._doFocusLost();
 				}

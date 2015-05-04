@@ -557,7 +557,7 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 				sheetSelector = sheetBar ? sheetBar.getSheetSelector() : null;
 			if (sheetSelector)
 				sheetSelector.setSelectedSheet(id);
-			if (sheetCtrl && cacheCtrl && cacheCtrl.getSelectedSheet().sheetId != id) {
+			if (sheetCtrl && cacheCtrl && cacheCtrl.getSelectedSheet().id != id) {
 				if (!fromServer) {
 					cacheCtrl.setSelectedSheetBy(id);	
 				}
