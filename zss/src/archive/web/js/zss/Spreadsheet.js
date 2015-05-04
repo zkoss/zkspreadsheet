@@ -836,7 +836,7 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 		var sheet = this.sheetCtrl;
 		if (!sheet) return;
 		
-		var v0 = jq.evalJSON(v); //ZSS-1042
+		var v0 = typeof v === 'string' ? jq.evalJSON(v) : v; //ZSS-1042
 		if (this.isSheetCSSReady()) {
 			sheet._cmdRetriveFocus(v0);
 		} else {
