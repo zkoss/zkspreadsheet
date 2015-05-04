@@ -260,10 +260,16 @@ public class FormulaEngineImpl implements FormulaEngine {
 					
 				}catch(FormulaParseException e) {
 					_logger.info(e.getMessage() + " when parsing " + formula + " at " + getReference(context));
+					if (_logger.infoable()) {
+						e.printStackTrace();
+					}
 					result.add(new FormulaExpressionImpl(formula, null, null, true, e.getMessage(), multipleArea));
 					error = true;
 				} catch(Exception e) {
 					_logger.error(e.getMessage() + " when parsing " + formula + " at " + getReference(context), e);
+					if (_logger.errorable()) {
+						e.printStackTrace();
+					}
 					result.add(new FormulaExpressionImpl(formula, null, null, true, e.getMessage(), multipleArea));
 					error = true;
 				}
