@@ -571,4 +571,10 @@ import org.zkoss.zss.range.*;
 	public void setNameName(String namename, String newname) {
 		// do nothing
 	}
+
+	//ZSS-1046
+	@Override
+	public void setStringValue(String value) {
+		// do nothing
+	}
 }
