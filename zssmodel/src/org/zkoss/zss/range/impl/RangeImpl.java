@@ -2465,4 +2465,24 @@ public class RangeImpl implements SRange {
 			}
 		}.doInWriteLock(getLock());	
 	}
+	
+	//ZSS-1046
+	//@Since 3.8.0 
+	@Override
+	public void setStringValue(final String value) {
+		new CellVisitorTask(new CellVisitorForUpdate() {
+			public boolean visit(SCell cell) {
+				Object cellval = cell.getValue();
+				if (!equalObjects(cellval, value)) {
+					((AbstractCellAdv)cell).setStringValue(value);
+				}
+				return true;
+			}
+			
+			@Override
+			CellAttribute getCellAttr() {
+				return CellAttribute.ALL;
+			}
+		}).doInWriteLock(getLock());
+	}
 }

@@ -1,0 +1,18 @@
+<vbox hflex="1" vflex="1">
+	<label multiline="true">
+Since 3.8.0
+1. Select following textbox and press CTRL-A to select all text in the textbox; i.e. "=date f\n=vlookop()"
+2. Now press CTRL-C to copy the text
+3. Now select cell A1 in the spreadsheet; and press CTRL-V to paste the text onto cell A1
+4. You should see a messagebox popup and complains "This formula contains an error: Unused input[f] after attempting to parse the formula [date f]
+5. And in cell A2, you should see "=vlookup()";
+6. Press OK button of the messagebox; you should see focus back on A1 with value in edit mode "=date f".  
+	</label>
+	<textbox multiline="true" rows="5"><attribute name="value">=date f
+=vlookup()
+</attribute>
+	</textbox>
+	<spreadsheet id="ss" src="/issue3/book/blank.xlsx" maxVisibleRows="60" maxVisibleColumns="40"
+		hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
+		showFormulabar="true" />
+</vbox>

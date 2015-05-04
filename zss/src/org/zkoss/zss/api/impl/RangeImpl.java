@@ -893,4 +893,11 @@ public class RangeImpl implements Range{
 	public void setNameName(String namename, String newname) {
 		_range.setNameName(namename, newname);
 	}
+	
+	//ZSS-1046
+	//@Since 3.8.0
+	@Override
+	public void setStringValue(String text) {
+		_range.setStringValue(text);
+	}
 }

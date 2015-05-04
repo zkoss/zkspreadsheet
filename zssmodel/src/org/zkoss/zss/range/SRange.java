@@ -956,4 +956,13 @@ public interface SRange {
 	 * @since 3.8.0
 	 */
 	public void setNameName(String namename, String newname);
+
+
+	/**
+	 * Save the specified value into this range as a String no matter the value 
+	 * is prefixed with '=' or not. 
+	 * @param value
+	 * @since 3.8.0
+	 */
+	public void setStringValue(String value);
 }

@@ -18,6 +18,8 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.ui.impl.undo;
 
+import org.zkoss.zk.ui.Execution;
+import org.zkoss.zk.ui.Executions;
 import org.zkoss.zss.api.CellOperationUtil;
 import org.zkoss.zss.api.IllegalFormulaException;
 import org.zkoss.zss.api.Range;
@@ -45,11 +47,27 @@ public class CellEditTextAction extends AbstractEditTextAction {
 		_editText = null;
 	}
 
+	//ZSS-1046
+	private static final String ALREADY_PARSE_ERROR = "ZSS_ALREADY_PARSE_ERROR";
 	protected void applyAction(){
 		boolean protect = isSheetProtected();
 		if(_editText!=null && !protect){
 			Range r = Ranges.range(_sheet,_row,_column,_lastRow,_lastColumn);
-			r.setCellEditText(_editText);
+			try {
+				r.setCellEditText(_editText);
+			}catch(IllegalFormulaException x){
+				//ZSS-1046: In excel, it it saved as a String if already parse error in previous pasted cell in a paste
+				final Execution exec = Executions.getCurrent();
+				if (exec != null) {
+					if (exec.getAttribute(ALREADY_PARSE_ERROR, false) != null) {
+						((org.zkoss.zss.api.impl.RangeImpl)r).setStringValue(_editText);
+						return;
+					} else {
+						exec.setAttribute(ALREADY_PARSE_ERROR, Boolean.TRUE, false);
+					}
+				}
+				throw x;
+			}
 			
 			if(_editText.contains("\n"))
 				CellOperationUtil.applyWrapText(r, true);
