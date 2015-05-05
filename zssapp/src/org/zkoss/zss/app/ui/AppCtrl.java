@@ -292,7 +292,7 @@ public class AppCtrl extends CtrlBase<Component>{
 	}
 	
 	private void shareBook() {
-		if(isBookSaved()){
+		if(!isBookSaved()){
 			if(UiUtil.isRepositoryReadonly()){
 				return;
 			}
