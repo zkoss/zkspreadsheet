@@ -603,11 +603,13 @@ public class CellOperationUtil {
 			public void apply(Range range) {
 				//ZSS 464, efficient implement
 				SSheet sheet = range.getSheet().getInternalSheet();
+				StyleUtil.setTextIndention(sheet.getBook(), sheet.getCell(range.getRow(), range.getColumn()), 0);
 				StyleUtil.setTextHAlign(sheet.getBook(),sheet.getCell(range.getRow(),range.getColumn()),EnumUtil.toStyleAlignemnt(alignment));
 			}
 			
 			@Override
 			public void applyWhole(Range wholeRange) {
+				WholeStyleUtil.setTextIndention(wholeRange.getInternalRange(), 0);
 				WholeStyleUtil.setTextHAlign(wholeRange.getInternalRange(), EnumUtil.toStyleAlignemnt(alignment));
 			}
 			@Override
@@ -1109,11 +1111,13 @@ public class CellOperationUtil {
 			public void apply(Range range) {
 				//ZSS 464, efficient implement
 				SSheet sheet = range.getSheet().getInternalSheet();
+				StyleUtil.setTextHAlign(sheet.getBook(), sheet.getCell(range.getRow(), range.getColumn()), SCellStyle.Alignment.LEFT);
 				StyleUtil.setTextIndentionOffset(sheet.getBook(), sheet.getCell(range.getRow(), range.getColumn()), offset);
 			}
 			
 			@Override
 			public void applyWhole(Range wholeRange) {
+				WholeStyleUtil.setTextHAlign(wholeRange.getInternalRange(), EnumUtil.toStyleAlignemnt(Alignment.LEFT));
 				WholeStyleUtil.setTextIndentionOffset(wholeRange.getInternalRange(), offset);
 			}
 			

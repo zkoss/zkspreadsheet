@@ -889,10 +889,13 @@ public class StyleUtil {
 		if (offset == 0) { //no change, skip
 			return;
 		}
-		
+		setTextIndention(book, holder, holder.getCellStyle().getIndention() + offset);
+	}
+
+	//ZSS-915
+	public static void setTextIndention(SBook book,CellStyleHolder holder, int indent) {
 		final SCellStyle orgStyle = holder.getCellStyle();
 		int ind = orgStyle.getIndention();
-		int indent = ind + offset;
 		if(indent < 0)
 			indent = 0;
 		

@@ -264,4 +264,15 @@ public class WholeStyleUtil {
 			}
 		});
 	}
+	
+	// ZSS-915
+	public static void setTextIndention(final SRange wholeRange,
+			final int indention) {
+		setWholeStyle(wholeRange, new StyleApplyer() {
+			@Override
+			public void applyStyle(CellStyleHolder holder) {
+				StyleUtil.setTextIndention(wholeRange.getSheet().getBook(), holder, indention);
+			}
+		});
+	}
 }
