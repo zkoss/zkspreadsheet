@@ -1,0 +1,15 @@
+<vbox hflex="1" vflex="1">
+	<label multiline="true">
+Since 3.8.0
+		Firefox only
+		1. set a link "http://www.zkoss.org" into C3
+		2. click on A1 to let focus mark move out from C3
+		3. drag a range C3:F5 or further (mouse down and move little quickly)
+		4. if you see the selection get out of control and can't select anymore after click, it's a bug
+		issue description: this issue is in order to dragging a anchor tag instead of normal select, the dragging handler will be out of control
+		so you can make sure dragging anchor tag doens't happen to pass this test case
+	</label>
+	<spreadsheet id="ss" src="/issue3/book/blank.xlsx" maxVisibleRows="60" maxVisibleColumns="40"
+		hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
+		showFormulabar="true" />	
+</vbox>

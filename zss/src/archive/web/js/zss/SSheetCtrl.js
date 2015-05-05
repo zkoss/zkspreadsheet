@@ -1248,8 +1248,14 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 					_isLeftMouseEvt(evt) ? "l" : "r", ls.right));
 			
 			//start hyperlink follow up
-			if(_isLeftMouseEvt(evt) && this.selArea)
+			if(_isLeftMouseEvt(evt) && this.selArea) {
 				this.selArea._startHyperlink(elm);
+				
+				//ZSS-1048: prevent from dragging anchor in firefox
+				if(zk.ff && elm.tagName.toLowerCase() == 'a')
+					evt.stop();
+			}
+			
 		} else if ((cmp = zkS.parentByZSType(elm, "SRow"))) { //click down on vertical merged cell
 			var cmpofs = zk(cmp).revisedOffset();
 			mx = evt.pageX;
