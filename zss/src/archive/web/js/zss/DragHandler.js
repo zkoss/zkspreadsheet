@@ -55,11 +55,11 @@ zss.DragHandler = zk.$extends(zk.Object, {
 		return false;
 	},
 	cleanup: function () {
+		if (this.invalid) return;//don't clean twice.
 		var wgt = this.sheet._wgt;
 		wgt.domUnlisten_(document, "onMouseUp", '_doDragMouseUp');
 		wgt.domUnlisten_(document, "onMouseMove", '_doDragMouseDown');
 		
-		if (this.invalid) return;//don't clean twice.
 		this.invalid = true;
 		this.stopAutoScroll();
 		zk(document.body).enableSelection();

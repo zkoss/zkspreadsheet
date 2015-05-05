@@ -689,7 +689,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 	 * @param boolean dragging
 	 */
 	setDragging: function (dragging) {
-		this.stopDragging();
+//		this.stopDragging(); //ZSS-1048: Should call stopDragging() by caller
 		this.dragging = dragging;
 	},
 	/**
@@ -1244,6 +1244,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 
 			var ls = this.getLastSelection();//cause of merge, focus might be change, get form last
 			this.selType = zss.SEL.CELL;
+			this.stopDragging(); //ZSS-1048: should stop old dragging first then set new dragging
 			this.setDragging(new zss.SelDrag(sheet, this.selType, ls.top, ls.left,
 					_isLeftMouseEvt(evt) ? "l" : "r", ls.right));
 			
@@ -1283,6 +1284,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 
 			var ls = this.getLastSelection();//cause of merge, focus might be change, get from last
 			this.selType = zss.SEL.CELL;
+			this.stopDragging(); //ZSS-1048: should stop old dragging first then set new dragging
 			this.setDragging(new zss.SelDrag(sheet, this.selType, ls.top, ls.left,
 					_isLeftMouseEvt(evt) ? "l" : "r", ls.right));
 			
@@ -1294,6 +1296,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			if(_isLeftMouseEvt(evt)) {//TODO support right mouse down
 				if (!this.selType)
 					this.selType = zss.SEL.CELL;
+				this.stopDragging(); //ZSS-1048: should stop old dragging first then set new dragging
 				this.setDragging(new zss.SelChgDrag(sheet, this.selType, zss.SELDRAG.RESIZE));
 			}
 		} else if ((cmp = zkS.parentByZSType(elm, ["SSelInner", "SFocus", "SHighlight"], 1)) != null) {
@@ -1329,6 +1332,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 				sheet.dp.moveFocus(row, col, false, true, false, true);
 				var ls = this.getLastSelection();//cause of merge, focus might be change, get form last
 				this.selType = zss.SEL.CELL;
+				this.stopDragging(); //ZSS-1048: should stop old dragging first then set new dragging
 				this.setDragging(new zss.SelDrag(sheet, this.selType, ls.top, ls.left,
 						_isLeftMouseEvt(evt) ? "l" : "r", ls.right));
 				
@@ -1367,6 +1371,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			
 				if (!this.selType)
 					this.selType = zss.SEL.CELL;
+				this.stopDragging(); //ZSS-1048: should stop old dragging first then set new dragging
 				this.setDragging(new zss.SelChgDrag(sheet, this.selType, zss.SELDRAG.MOVE, row, col));
 				
 				//start hyperlink follow up
@@ -1439,6 +1444,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 					seltype = zss.SEL.ROW;
 				}
 				sheet.selType = seltype;
+				this.stopDragging(); //ZSS-1048: should stop old dragging first then set new dragging
 				this.setDragging(new zss.SelDrag(sheet, seltype, row, col, _isLeftMouseEvt(evt) ? "l" : "r"));
 			}
 		} else if ((cmp = zkS.parentByZSType(elm, "SCorner", 1)) != null) {
@@ -1451,6 +1457,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			if (left != ls.left || top != ls.top || right != ls.right || bottom != ls.bottom) {
 				this.moveCellSelection(left, top, right, bottom);
 				this.selType = zss.SEL.ALL;
+				this.stopDragging(); //ZSS-1048: should stop old dragging first then set new dragging
 				this.setDragging(new zss.SelDrag(sheet, this.selType, 0, 0, _isLeftMouseEvt(evt) ? "l" : "r"));
 			}
 		}
