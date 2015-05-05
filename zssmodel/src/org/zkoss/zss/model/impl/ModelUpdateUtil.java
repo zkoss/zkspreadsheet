@@ -33,9 +33,12 @@ import org.zkoss.zss.range.impl.ModelUpdateCollector;
  * @since 3.5.0
  */
 /*package*/ class ModelUpdateUtil {
-
-	
 	/*package*/ static void handlePrecedentUpdate(SBookSeries bookSeries, Ref precedent){
+		handlePrecedentUpdate(bookSeries, precedent, true);
+	}
+	//ZSS-1047: (side-effect of ZSS-988 and ZSS-1007 which consider setHidden() of SUBTOTAL() function)
+	// see ColumnArrayImpl#setHidden()
+	/*package*/ static void handlePrecedentUpdate(SBookSeries bookSeries, Ref precedent, boolean includePrecedent){
 		//clear formula cache (that reval the unexisted sheet before
 		FormulaCacheCleaner clearer = FormulaCacheCleaner.getCurrent();
 		ModelUpdateCollector collector = ModelUpdateCollector.getCurrent();
@@ -45,7 +48,9 @@ import org.zkoss.zss.range.impl.ModelUpdateCollector;
 			DependencyTable table = ((AbstractBookSeriesAdv)bookSeries).getDependencyTable();
 			dependents = table.getEvaluatedDependents(precedent); 
 		}
-		addRefUpdate(precedent);
+		if (includePrecedent) { //ZSS-1047
+			addRefUpdate(precedent);
+		}
 		if(dependents!=null && dependents.size()>0){
 			if(clearer!=null){
 				clearer.clear(dependents);

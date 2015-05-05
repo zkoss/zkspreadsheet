@@ -205,6 +205,8 @@ public class RowImpl extends AbstractRowAdv {
 
 	@Override
 	public void setHidden(boolean hidden) {
+		if (this.hidden == hidden) return;
+		
 		this.hidden = hidden;
 		
 		//ZSS-988: Subtotal(1xx, range) depends on hidden/unhidden rows/columns
@@ -213,9 +215,11 @@ public class RowImpl extends AbstractRowAdv {
 		final int col1 = getStartCellIndex();
 		final int col2 = getEndCellIndex();
 		if (col1 >= 0 && col2 >= 0) { //handle dependency if with data
+			//ZSS-1047: (side-effect of ZSS-988 and ZSS-1007 which consider setHidden() of SUBTOTAL() function)
+			final boolean includePrecedent = false;
 			ModelUpdateUtil.handlePrecedentUpdate(book.getBookSeries(),
 					new RefImpl(book.getBookName(), _sheet.getSheetName(), getIndex(),
-							col1, getIndex(), col2));
+							col1, getIndex(), col2), includePrecedent);
 		}
 	}
 	

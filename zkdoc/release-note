@@ -103,6 +103,7 @@ ZK Spreadsheet 3.8.0
   ZSS-1043 Friend focus mark does not show in frozen panel
   ZSS-1046 Paste multiple invalid formulas from notepad into cells show infinite warning message
   ZSS-1037 Switching sheet tabs while editing a formula causes unable to enter
+  ZSS-1047 Cell text is incorrect after inserting column
     
 ** Upgrade Notes
   * Default period for automatically saving in zssapp is 15 minutes.

@@ -16,6 +16,8 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.model.impl;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -476,7 +478,8 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 		
 		// update Validation's region (sqref)
 		FormulaParseContext context = new FormulaParseContext(sheet, null); //null ref, no trace dependence here
-		for (CellRegion region : validation.getRegions()) {
+		final Collection<CellRegion> regions = new ArrayList<CellRegion>(validation.getRegions()); //ZSS-1047 avoid Comodification...
+		for (CellRegion region : regions) {
 			String sqref = region.getReferenceString();
 			FormulaExpression fexpr = engine.parse(sqref, context);
 			FormulaExpression expr2 = engine.extendPtgs(fexpr, sheetRegion, horizontal, context);
@@ -487,8 +490,9 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 						sheet.deleteDataValidation(validation);
 					}
 				} else {
-					region = new CellRegion(expr2.getFormulaString());
-					((AbstractDataValidationAdv)validation).addRegion(region);
+					((AbstractDataValidationAdv)validation).removeRegion(region); //ZSS-1047
+					final CellRegion region0 = new CellRegion(expr2.getFormulaString());
+					((AbstractDataValidationAdv)validation).addRegion(region0);
 				}
 			}
 		}
