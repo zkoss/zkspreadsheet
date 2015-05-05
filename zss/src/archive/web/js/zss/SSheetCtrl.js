@@ -362,7 +362,6 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 				var range = self.initparm.hlrange;
 				self.hlArea.show = true;
 				self.moveHighlight(range.left, range.top, range.right, range.bottom);
-				delete self.initparm;
 			});
 			
 		} else {

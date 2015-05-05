@@ -1,0 +1,16 @@
+<vbox hflex="1" vflex="1">
+	<label multiline="true">
+Since 3.8.0
+		1. select C3:D5, and copy it
+		2. click freeze button
+		3. go to sheet2 and back, it shouldn't show js error in developer console
+	</label>
+	<button label="freeze">
+		<attribute name="onClick"><![CDATA[
+			Ranges.range(ss.getSelectedSheet()).setFreezePanel(3, 3);
+		]]></attribute>
+	</button>
+	<spreadsheet id="ss" src="/issue3/book/blank.xlsx" maxVisibleRows="60" maxVisibleColumns="40"
+		hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
+		showFormulabar="true" />	
+</vbox>

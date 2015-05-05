@@ -104,6 +104,7 @@ ZK Spreadsheet 3.8.0
   ZSS-1046 Paste multiple invalid formulas from notepad into cells show infinite warning message
   ZSS-1037 Switching sheet tabs while editing a formula causes unable to enter
   ZSS-1047 Cell text is incorrect after inserting column
+  ZSS-1032 Multiple copied Cell case across frozen panel causes js error
     
 ** Upgrade Notes
   * Default period for automatically saving in zssapp is 15 minutes.
