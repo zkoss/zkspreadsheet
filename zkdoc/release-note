@@ -106,6 +106,7 @@ ZK Spreadsheet 3.8.0
   ZSS-1047 Cell text is incorrect after inserting column
   ZSS-1032 Multiple copied Cell case across frozen panel causes js error
   ZSS-1048 Start selection from hyperlink cell should work
+  ZSS-1049 When sheet move, the corresponding formula does not update
     
 ** Upgrade Notes
   * Default period for automatically saving in zssapp is 15 minutes.

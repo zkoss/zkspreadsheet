@@ -437,6 +437,8 @@ public class BookImpl extends AbstractBookAdv{
 		EngineFactory.getInstance().createFormulaEngine().clearCache(new FormulaClearContext(this));
 
 		ModelUpdateUtil.handlePrecedentUpdate(getBookSeries(),new RefImpl(this.getBookName(),sheet.getSheetName(), index));
+		//ZSS-1049: should consider formulas that referred to the old index 
+		ModelUpdateUtil.handlePrecedentUpdate(getBookSeries(),new RefImpl(this.getBookName(),sheet.getSheetName(), oldindex));
 		
 		// adjust sheet index
 		moveSheetIndex(getBookName(), oldindex, index);
