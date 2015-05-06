@@ -684,7 +684,7 @@ public class AppCtrl extends CtrlBase<Component>{
 	}
 	
 	private void initSaveNotification(Book book) {
-		if(book == null)
+		if(book == null || !"EE".equals(Version.getEdition()))
 			return;
 
 		dirtyChangeEventListener = new ModelEventListener() {
@@ -746,7 +746,7 @@ public class AppCtrl extends CtrlBase<Component>{
 	}
 	
 	private void removeSaveNotification(Book book) {
-		if(book == null)
+		if(book == null || !"EE".equals(Version.getEdition()))
 			return;
 
 		book.getInternalBook().removeEventListener(dirtyChangeEventListener);
