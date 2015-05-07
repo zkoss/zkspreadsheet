@@ -6,7 +6,7 @@
 	<artifactId>zss</artifactId>
 	<properties>
 		<zk.version>7.0.3</zk.version>
-		<zpoi.version>3.9.7-SNAPSHOT</zpoi.version>
+		<zpoi.version>3.9.7</zpoi.version>
 		<commons-math.version>2.2</commons-math.version>
 		<servlet.version>2.4</servlet.version>
 	</properties>
