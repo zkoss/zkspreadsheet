@@ -2,7 +2,8 @@ ZK Spreadsheet 3.8.0.1
 *Features:
   
 *Bugs:
-    
+  ZSS-1052 Shutdown in jetty will cause NPE
+
 ** Upgrade Notes
 
  ------------
