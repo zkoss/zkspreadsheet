@@ -39,6 +39,12 @@
 		<name>zssapp.save.period.second</name>
 		<value>60</value>
 	</library-property> 
+	
+	<library-property>
+		<name>zssapp.bookmark.disable</name>
+		<value>true</value>
+	</library-property>
 -->	
+	
 
 </zk>

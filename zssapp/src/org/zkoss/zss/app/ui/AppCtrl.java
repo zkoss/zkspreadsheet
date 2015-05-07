@@ -70,6 +70,7 @@ public class AppCtrl extends CtrlBase<Component>{
 	public static final String ZSS_USERNAME = "zssUsername";
 	private static final String UNSAVED_MESSAGE = "Do you want to leave this book without save??";
 	private static final String UTF8 = "UTF-8";
+	private static final boolean DISABLE_BOOKMARK = Boolean.valueOf(Library.getProperty("zssapp.bookmark.disable", "false"));
 	
 	private static BookRepository repo = BookRepositoryFactory.getInstance().getRepository();
 	private static CollaborationInfo collaborationInfo = CollaborationInfoImpl.getInstance();
@@ -211,33 +212,35 @@ public class AppCtrl extends CtrlBase<Component>{
 			}
 		});
 		
-		this.getPage().addEventListener(org.zkoss.zk.ui.event.Events.ON_BOOKMARK_CHANGE,
-	         new EventListener<BookmarkEvent>() {
-				@Override
-				public void onEvent(BookmarkEvent event) throws Exception {
-					String bookmark = null;
-					try {
-						bookmark = URLDecoder.decode(event.getBookmark(), UTF8);
-					} catch (UnsupportedEncodingException e1) {
-						log.error(e1.getMessage());
-						e1.printStackTrace();
-						UiUtil.showWarnMessage("Decoding URL got something wrong: " + event.getBookmark());
-					}
-
-					if(bookmark.isEmpty()) 
-						doOpenNewBook(false);
-					else {
-						BookInfo bookinfo = getBookInfo(bookmark);
-						if(bookinfo != null){
-							doLoadBook(bookinfo, null, null, false);
-						}else{
-							// clean push state's path for incorrect file name
-							doOpenNewBook(true);
+		if(!DISABLE_BOOKMARK) {
+			this.getPage().addEventListener(org.zkoss.zk.ui.event.Events.ON_BOOKMARK_CHANGE,
+		         new EventListener<BookmarkEvent>() {
+					@Override
+					public void onEvent(BookmarkEvent event) throws Exception {
+						String bookmark = null;
+						try {
+							bookmark = URLDecoder.decode(event.getBookmark(), UTF8);
+						} catch (UnsupportedEncodingException e1) {
+							log.error(e1.getMessage());
+							e1.printStackTrace();
+							UiUtil.showWarnMessage("Decoding URL got something wrong: " + event.getBookmark());
+						}
+	
+						if(bookmark.isEmpty()) 
+							doOpenNewBook(false);
+						else {
+							BookInfo bookinfo = getBookInfo(bookmark);
+							if(bookinfo != null){
+								doLoadBook(bookinfo, null, null, false);
+							}else{
+								// clean push state's path for incorrect file name
+								doOpenNewBook(true);
+							}
 						}
 					}
 				}
-			}
-        );
+	        );
+		}
 		
 		// confirmMsgWorkaround is a workaround for confirm message with Cleanup event.
 		// we don't need it if we don't use confirm message.
@@ -256,6 +259,11 @@ public class AppCtrl extends CtrlBase<Component>{
 		
 		setupUsername(false);
 		initBook();
+	}
+	
+	private void setBookmark(String bookmark) {
+		if(!DISABLE_BOOKMARK)
+			desktop.setBookmark(bookmark);
 	}
 
 	private void initBook() throws UnsupportedEncodingException {
@@ -446,7 +454,7 @@ public class AppCtrl extends CtrlBase<Component>{
 						setBook(book, null);
 						collaborationInfo.removeRelationship(username);
 						ss.setBook(book);
-						desktop.setBookmark("");
+						setBookmark("");
 						initSaveNotification(loadedBook);
 						pushAppEvent(AppEvts.ON_LOADED_BOOK, book);
 						pushAppEvent(AppEvts.ON_CHANGED_SPREADSHEET, ss);
@@ -487,7 +495,7 @@ public class AppCtrl extends CtrlBase<Component>{
 		}
 
 		if(renewState)
-			desktop.setBookmark("");
+			setBookmark("");
 		
 		collaborationInfo.removeRelationship(username);
 		ss.setBook(loadedBook);
@@ -513,7 +521,7 @@ public class AppCtrl extends CtrlBase<Component>{
 		setBook(null, null);
 		collaborationInfo.removeRelationship(username);
 		if(isChangeBookmark)
-			desktop.setBookmark("");
+			setBookmark("");
 		pushAppEvent(AppEvts.ON_CLOSED_BOOK,null);
 		pushAppEvent(AppEvts.ON_CHANGED_SPREADSHEET,ss);
 		updatePageInfo();
@@ -669,7 +677,7 @@ public class AppCtrl extends CtrlBase<Component>{
 		
 		if(renewState) {
 			try {
-				desktop.setBookmark(Encodes.encodeURI(selectedBookInfo.getName()));
+				setBookmark(Encodes.encodeURI(selectedBookInfo.getName()));
 			} catch (UnsupportedEncodingException e) {
 				log.error(e.getMessage());
 				e.printStackTrace();
