@@ -6,6 +6,7 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
 import org.zkoss.util.logging.Log;
+import org.zkoss.zk.ui.WebApps;
 import org.zkoss.zss.app.BookManager;
 import org.zkoss.zss.app.impl.BookManagerImpl;
 import org.zkoss.zss.app.repository.BookRepositoryFactory;
@@ -19,13 +20,16 @@ public class ServletContextListenerImpl implements ServletContextListener {
 
 	@Override
 	public void contextDestroyed(ServletContextEvent sce) {
-		BookManager manager = BookManagerImpl.getInstance(BookRepositoryFactory.getInstance().getRepository());
-		manager.shutdownAutoFileSaving();
-		try {
-			manager.saveAll();
-		} catch (IOException e) {
-			e.printStackTrace();
-			logger.error("Saving all files causes error: " + e.getMessage());
+		//ZSS-1052: skip this case, repository doesn't loaded before means there is nothing unsaved file waiting for saving.
+		if(WebApps.getCurrent() != null) {
+			BookManager manager = BookManagerImpl.getInstance(BookRepositoryFactory.getInstance().getRepository());
+			manager.shutdownAutoFileSaving();
+			try {
+				manager.saveAll();
+			} catch (IOException e) {
+				e.printStackTrace();
+				logger.error("Saving all files causes error: " + e.getMessage());
+			}
 		}
 	}
 }
