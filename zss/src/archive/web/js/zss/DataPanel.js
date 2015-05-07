@@ -398,7 +398,8 @@ zss.DataPanel = zk.$extends(zk.Object, {
 				}
 			}
 
-			if (edit != value) { //has to send back to server
+			//ZSS-1046: enforce formula check if a String but looks like a formula
+			if (edit != value || (edit && edit.charAt(0) == '=' && cell && cell.cellType == 1 && edit.length > 1)) { //has to send back to server
 				var token = "";
 				if (type == "movedown") {//move down after aysnchronized call back
 					token = zkS.addCallback(function(){
