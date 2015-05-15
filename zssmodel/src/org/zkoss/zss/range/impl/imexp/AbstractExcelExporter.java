@@ -539,7 +539,9 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 		short hAlign = PoiEnumConversion.toPoiHorizontalAlignment(cellStyle.getAlignment());
 		short vAlign = PoiEnumConversion.toPoiVerticalAlignment(cellStyle.getVerticalAlignment());
 		boolean wrapText = cellStyle.isWrapText();
-		poiCellStyle.setCellAlignment(hAlign, vAlign, wrapText);
+		
+		//ZSS-1020
+		poiCellStyle.setCellAlignment(hAlign, vAlign, wrapText, (short) cellStyle.getRotation());
 		
 		//protect
 		boolean locked = cellStyle.isLocked();

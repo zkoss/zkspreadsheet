@@ -2,6 +2,7 @@ ZK Spreadsheet 3.8.1
 *Features:
   
 *Bugs:
+  ZSS-1020 Rotation info should be included into exported excel file
 
 ** Upgrade Notes
 

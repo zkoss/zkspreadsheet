@@ -1,0 +1,29 @@
+<vbox hflex="1" vflex="1">
+	<label multiline="true">
+Since 3.8.0
+1. You should see A1 format as vertical text
+2. B2 format as 90 degree text
+3. C3 format as -90 degree text
+4. Press export button to export this sheet as 1020-export-export-rotation.xlsx.
+3. Open the exported file with Excel and check with original sheet; should be the same. 
+	</label>
+<button id="export" label="Export to Excel" onClick="doExport()"/>
+<zscript><![CDATA[
+     import java.io.*;
+     import org.zkoss.zss.api.Exporters;
+     import org.zkoss.zul.*;
+     void doExport() throws IOException {
+         ByteArrayOutputStream os = new ByteArrayOutputStream();
+         try {
+              Exporters.getExporter("excel").export(ss.getBook(), os);
+         } catch (Exception ex) {
+              os.close();
+         }
+         Filedownload.save(os.toByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "1020-export-export-rotation.xlsx"); 
+     }
+]]>
+</zscript>
+	<spreadsheet id="ss" src="/issue3/book/1020-export-rotation.xlsx" maxVisibleRows="60" maxVisibleColumns="40"
+		hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
+		showFormulabar="true" />	
+</vbox>

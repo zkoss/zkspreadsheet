@@ -303,8 +303,8 @@ zss.Cell = zk.$extends(zk.Widget, {
 			real = this.$n('real');
 			
 		//ZSS-944: 
-		var wasRotate90 = this.rotate == 90 || this.rotate == 180,
-			toRotate90 = data.rotate == 90 || data.rotate == 180,
+		var wasRotate90 = this.rotate == 90 || this.rotate == -90, //ZSS-1020
+			toRotate90 = data.rotate == 90 || data.rotate == -90, //ZSS-1020
 			//  when rotate, wrap must be false!
 			wrap0 = !toRotate90 && data.wrap,
 			wrapChanged = this.wrap != wrap0,
@@ -454,7 +454,7 @@ zss.Cell = zk.$extends(zk.Widget, {
 	},
 	//ZSS-944
 	/**
-	 * Set rotate attribute and register listener or unregister onProcessRotate listener base on rotate attribute (== 90 || == 180)
+	 * Set rotate attribute and register listener or unregister onProcessRotate listener base on rotate attribute (== 90 || == -90)
 	 * @param boolean 
 	 * @return boolean whether reset rotate attribute or not
 	 */
@@ -655,7 +655,7 @@ zss.Cell = zk.$extends(zk.Widget, {
 		}
 		
 		//ZSS-944
-		var toRotate90 = this.rotate == 90 || this.rotate == 180;
+		var toRotate90 = this.rotate == 90 || this.rotate == -90; //ZSS-1020
 		this._updateListenRotate(toRotate90);
 		if (toRotate90) {
 			this._processRotate(); // heavy duty
@@ -693,7 +693,7 @@ zss.Cell = zk.$extends(zk.Widget, {
 			if (this.c == data.col
 				&& ((tRow == undefined && bRow == undefined) || 
 						(tRow && bRow && row >= tRow && row <= bRow))) {
-				var rotate90 = this.rotate == 90 || this.rotate == 180; 
+				var rotate90 = this.rotate == 90 || this.rotate == -90; //ZSS-1020 
 				if (rotate90)
 					this._processRotate();
 			}
@@ -751,7 +751,7 @@ zss.Cell = zk.$extends(zk.Widget, {
 	},
 	_getRealClass: function() {
 		//ZSS-944: when rotate 90 degree, wrap must be false
-		var rotate90 = this.rotate == 90 || this.rotate == 180,
+		var rotate90 = this.rotate == 90 || this.rotate == -90, //ZSS-1020
 			cls = 'zscelltxt-real ' + (this.wrap && !rotate90 ? WRAP_TEXT_CLASS:''),
 			hId = this.zsh;
 

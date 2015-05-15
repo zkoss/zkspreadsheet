@@ -454,6 +454,10 @@ public class CellFormatHelper {
 			final boolean vtxt = style.getRotation() == 255; 
 			if (vtxt) return Alignment.CENTER;
 			
+			//ZSS-1020: 90 degree text default to horizontal right; no matter the type
+			final boolean deg90 = style.getRotation() == 90;
+			if (deg90) return Alignment.RIGHT;
+			
 			final String format = style.getDataFormat();
 			if (format != null && format.startsWith("@")) //a text format
 				type = CellType.STRING;
@@ -495,7 +499,7 @@ public class CellFormatHelper {
 		}
 		//ZSS-944: when rotate 90 degree, wrap must be false
 		final int rotate90 = style.getRotation();
-		boolean textWrap = style.isWrapText() && rotate90 != 90 && rotate90 != 180;
+		boolean textWrap = style.isWrapText() && rotate90 != 90 && rotate90 != -90; //ZSS-1020
 		if (textWrap) {
 			sb.append("white-space:").append("normal").append(";");
 		}/*else{ sb.append("white-space:").append("nowrap").append(";"); }*/
