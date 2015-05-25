@@ -389,4 +389,36 @@ public interface SSheet {
 	 * @since 3.8.0
 	 */
 	public void removeTable(String tableName);
+	
+	/**
+	 * New way of hashing sheet protection password.
+	 * 
+	 * @param hashValue
+	 * @since 3.8.1
+	 */
+	public void setHashValue(String hashValue);
+
+	/**
+	 * New way of hashing sheet protection password.
+	 * 
+	 * @param spinCount
+	 * @since 3.8.1
+	 */
+	public void setSpinCount(String spinCount);
+	
+	/**
+	 * New way of hashing sheet protection password.
+	 * 
+	 * @param saltValue
+	 * @since 3.8.1
+	 */
+	public void setSaltValue(String saltValue);
+
+	/**
+	 * New way of hashing sheet protection password.
+	 * 
+	 * @param algName
+	 * @since 3.8.1
+	 */
+	public void setAlgName(String algName);
 }

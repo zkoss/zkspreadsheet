@@ -1,5 +1,6 @@
 ZK Spreadsheet 3.8.1
 *Features:
+  ZSS-1063 Support new password mechanism introduced since 2012
   
 *Bugs:
   ZSS-1020 Rotation info should be included into exported excel file

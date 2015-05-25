@@ -23,11 +23,13 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.locks.ReadWriteLock;
 
 import org.zkoss.lang.Strings;
 import org.zkoss.poi.ss.usermodel.ZssContext;
+import org.zkoss.poi.ss.util.SheetUtil;
 import org.zkoss.poi.ss.util.WorkbookUtil;
 import org.zkoss.zss.model.CellRegion;
 import org.zkoss.zss.model.ErrorValue;
@@ -75,6 +77,7 @@ import org.zkoss.zss.model.impl.ColorImpl;
 import org.zkoss.zss.model.impl.FormulaCacheCleaner;
 import org.zkoss.zss.model.impl.NameRefImpl;
 import org.zkoss.zss.model.impl.RefImpl;
+import org.zkoss.zss.model.impl.SheetImpl;
 import org.zkoss.zss.model.sys.EngineFactory;
 import org.zkoss.zss.model.sys.dependency.DependencyTable;
 import org.zkoss.zss.model.sys.dependency.DependencyTable.RefFilter;
@@ -2040,7 +2043,18 @@ public class RangeImpl implements SRange {
 			final short hashpass = sht.getHashedPassword();
 			final short inputpass = WorkbookUtil.hashPassword(password);
 			if (inputpass != hashpass) {
-				return;
+				//ZSS-1063
+				final String hashValue = ((SheetImpl)sht).getHashValue();
+				if (hashValue == null)
+					return;
+				
+				final String spinCount = ((SheetImpl)sht).getSpinCount();
+				final String saltValue = ((SheetImpl)sht).getSaltValue();
+				final String algName = ((SheetImpl)sht).getAlgName();
+				
+				final String calcPass = SheetUtil.encryptPassword(password, algName, saltValue, Integer.parseInt(spinCount));
+				if (!hashValue.equals(calcPass)) 
+					return;
 			}
 		}
 		final SSheetProtection sp = sht.getSheetProtection();
@@ -2069,6 +2083,19 @@ public class RangeImpl implements SRange {
 			// check password
 			if (password == null || password.isEmpty() || WorkbookUtil.hashPassword(password) != hashpass) {
 				return false;
+			}
+		} else {
+			//ZSS-1063
+			final String hashValue = ((SheetImpl)sht).getHashValue();
+			if (hashValue != null) {
+				if (password == null || password.isEmpty())
+					return false;
+				final String saltValue = ((SheetImpl)sht).getSaltValue(); 
+				final String spinCount = ((SheetImpl)sht).getSpinCount(); 
+				final String algName = ((SheetImpl)sht).getAlgName();
+				final String calcPass = SheetUtil.encryptPassword(password, algName, saltValue, Integer.parseInt(spinCount));
+				if (!hashValue.equals(calcPass))
+					return false;
 			}
 		}
 		setPasswordInLock(sht, null);

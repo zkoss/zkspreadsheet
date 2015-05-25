@@ -17,6 +17,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.range.impl.imexp;
 
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
+
 import org.zkoss.poi.ss.usermodel.*;
 import org.zkoss.poi.ss.usermodel.charts.*;
 import org.zkoss.poi.ss.util.*;
@@ -33,6 +34,7 @@ import org.zkoss.zss.model.STableColumn.STotalsRowFunction;
 import org.zkoss.zss.model.SDataValidation.ValidationType;
 import org.zkoss.zss.model.chart.*;
 import org.zkoss.zss.model.impl.AbstractDataValidationAdv;
+import org.zkoss.zss.model.impl.SheetImpl;
 /**
  * 
  * @author dennis, kuro, Hawk
@@ -546,9 +548,23 @@ public class ExcelXlsxExporter extends AbstractExcelExporter {
 	 */
 	@Override
 	protected void exportPassword(SSheet sheet, Sheet poiSheet) {
-		short hashpass = sheet.getHashedPassword();
-		if (hashpass != 0) {
-			((XSSFSheet)poiSheet).setPasswordHash(hashpass);
+		
+		//ZSS-1063
+		final String hashValue = ((SheetImpl)sheet).getHashValue();
+		if (hashValue != null) {
+			final String saltValue = ((SheetImpl)sheet).getSaltValue();
+			final String spinCount = ((SheetImpl)sheet).getSpinCount();
+			final String algName = ((SheetImpl)sheet).getAlgName();
+			
+			((XSSFSheet)poiSheet).setHashValue(hashValue);
+			((XSSFSheet)poiSheet).setSaltValue(saltValue);
+			((XSSFSheet)poiSheet).setSpinCount(spinCount);
+			((XSSFSheet)poiSheet).setAlgName(algName);
+		} else {
+			short hashpass = sheet.getHashedPassword();
+			if (hashpass != 0) {
+				((XSSFSheet)poiSheet).setPasswordHash(hashpass);
+			}
 		}
 	}
 	

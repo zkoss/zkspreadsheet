@@ -1,6 +1,6 @@
 <vbox hflex="1" vflex="1">
 	<label multiline="true">
-Since 3.8.0
+Since 3.8.1
 1. You should see A1 format as vertical text
 2. B2 format as 90 degree text
 3. C3 format as -90 degree text

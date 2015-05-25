@@ -30,6 +30,7 @@ import java.util.SortedMap;
 
 import org.zkoss.lang.Library;
 import org.zkoss.poi.ss.util.CellReference;
+import org.zkoss.poi.ss.util.SheetUtil;
 import org.zkoss.poi.ss.util.WorkbookUtil;
 import org.zkoss.util.logging.Log;
 import org.zkoss.zss.model.CellRegion;
@@ -79,6 +80,12 @@ public class SheetImpl extends AbstractSheetAdv {
 	
 	private SSheetProtection _sheetProtection;
 	private SheetVisible _visible = SheetVisible.VISIBLE; //default value
+	
+	//ZSS-1063
+	private String _hashValue;
+	private String _spinCount;
+	private String _algName;
+	private String _saltValue;
 	
 	private final IndexPool<AbstractRowAdv> _rows = new IndexPool<AbstractRowAdv>(){
 		private static final long serialVersionUID = 1L;
@@ -919,6 +926,12 @@ public class SheetImpl extends AbstractSheetAdv {
 		tgt._defaultColumnWidth = this._defaultColumnWidth;
 		//_defaultRowHeight
 		tgt._defaultRowHeight = this._defaultRowHeight;
+
+		//ZSS-1063
+		tgt._hashValue = this._hashValue;
+		tgt._saltValue = this._saltValue;
+		tgt._spinCount = this._spinCount;
+		tgt._algName = this._algName;
 	}
 
 	public void dump(StringBuilder builder) {
@@ -1722,6 +1735,19 @@ public class SheetImpl extends AbstractSheetAdv {
 		_protected = password != null;
 		this._password = 
 			password == null || password.isEmpty() ? 0 : WorkbookUtil.hashPassword(password);
+		
+		//ZSS-1063
+		if (password != null && !password.isEmpty()) {
+			this._algName = "SHA-512";
+			this._saltValue = SheetUtil.base64Random16Bytes();
+			this._spinCount = "100000";
+			this._hashValue = SheetUtil.encryptPassword(password, this._algName, this._saltValue, Integer.parseInt(this._spinCount));
+		} else {
+			this._algName = null;
+			this._saltValue = null;
+			this._spinCount = null;
+			this._hashValue = null;
+		}
 	}
 	
 	@Override
@@ -2001,5 +2027,41 @@ public class SheetImpl extends AbstractSheetAdv {
 	@Override
 	public void clearTables() {
 		_tables.clear();
+	}
+
+	//ZSS-1063
+	@Override
+	public void setHashValue(String hashValue) {
+		_hashValue  = hashValue;
+	}
+	public String getHashValue() {
+		return _hashValue;
+	}
+
+	//ZSS-1063
+	@Override
+	public void setSpinCount(String spinCount) {
+		_spinCount = spinCount;
+	}
+	public String getSpinCount() {
+		return  _spinCount;
+	}
+
+	//ZSS-1063
+	@Override
+	public void setSaltValue(String saltValue) {
+		_saltValue = saltValue;
+	}
+	public String getSaltValue() {
+		return _saltValue;
+	}
+
+	//ZSS-1063
+	@Override
+	public void setAlgName(String algName) {
+		_algName = algName;
+	}
+	public String getAlgName() {
+		return _algName;
 	}
 }

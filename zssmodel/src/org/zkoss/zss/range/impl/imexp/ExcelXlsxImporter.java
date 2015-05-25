@@ -569,6 +569,16 @@ public class ExcelXlsxImporter extends AbstractExcelImporter{
 	protected void importPassword(Sheet poiSheet, SSheet sheet) {
 		short hashpass = ((XSSFSheet)poiSheet).getPasswordHash(); 
 		sheet.setHashedPassword(hashpass);
+		
+		//ZSS-1063
+		String hashValue = ((XSSFSheet)poiSheet).getHashValue();
+		sheet.setHashValue(hashValue);
+		String spinCount = ((XSSFSheet)poiSheet).getSpinCount();
+		sheet.setSpinCount(spinCount);
+		String saltValue = ((XSSFSheet)poiSheet).getSaltValue();
+		sheet.setSaltValue(saltValue);
+		String algName = ((XSSFSheet)poiSheet).getAlgName();
+		sheet.setAlgName(algName);
 	}
 	
 	@Override
