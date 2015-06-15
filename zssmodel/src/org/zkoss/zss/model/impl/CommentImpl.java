@@ -26,7 +26,7 @@ public class CommentImpl extends AbstractCommentAdv {
 	private static final long serialVersionUID = 1L;
 	private Object _text;
 	private String _author;
-	private boolean _visible = true;
+	private boolean _visible; //ZSS-1055
 	
 	@Override
 	public String getText() {

@@ -6,6 +6,7 @@ ZK Spreadsheet 3.8.1
 *Bugs:
   ZSS-1020 Rotation info should be included into exported excel file
   ZSS-1064 ZSS does not recognize @Listen events after 3.8.0 update
+  ZSS-1055 Comment should not be visible when exporting
 
 ** Upgrade Notes
 
