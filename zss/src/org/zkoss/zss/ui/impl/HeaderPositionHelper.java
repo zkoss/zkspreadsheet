@@ -56,6 +56,58 @@ public class HeaderPositionHelper {
 		return j < 0 ? false : _infos.get(j).hidden;
 	}
 	
+	//ZSS-1000
+	//@since 3.8.1
+	public int getPrevNonHidden(int cellIndex) {
+		cellIndex = cellIndex - 1;
+		if (cellIndex < 0) { //out of bound
+			return -1;
+		}
+		int j = Collections.binarySearch(_infos, Integer.valueOf(cellIndex), new HeaderPositionInfoComparator());
+		if (j < 0 || !_infos.get(j).hidden) {
+			return cellIndex;
+		}
+		cellIndex = cellIndex - 1;
+		for (;--j >= 0;) {
+			HeaderPositionInfo info = _infos.get(j);
+			if (info.index < cellIndex) {
+				return cellIndex;
+			} else if (info.index == cellIndex) {
+				if (!info.hidden) {
+					return cellIndex;
+				} else {
+					cellIndex = cellIndex - 1;
+				}
+			}
+		}
+		return cellIndex;
+	}
+	
+	//ZSS-1000
+	//@since 3.8.1
+	public int getNextNonHidden(int cellIndex) {
+		cellIndex = cellIndex + 1;
+		
+		int j = Collections.binarySearch(_infos, Integer.valueOf(cellIndex), new HeaderPositionInfoComparator());
+		if (j < 0 || !_infos.get(j).hidden) {
+			return cellIndex;
+		}
+		cellIndex = cellIndex + 1;
+		for (int len = _infos.size(); ++j < len;) {
+			HeaderPositionInfo info = _infos.get(j);
+			if (info.index > cellIndex) {
+				return cellIndex;
+			} else if (info.index == cellIndex) {
+				if (!info.hidden) {
+					return cellIndex;
+				} else {
+					cellIndex = cellIndex + 1;
+				}
+			}
+		}
+		return cellIndex;
+	}
+	
 	public int getSize(int cellIndex) {
 		final int j = Collections.binarySearch(_infos, Integer.valueOf(cellIndex), new HeaderPositionInfoComparator());
 		return j < 0 ? _defaultSize : _infos.get(j).size;

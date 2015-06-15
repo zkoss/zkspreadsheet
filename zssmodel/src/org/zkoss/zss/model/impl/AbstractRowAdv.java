@@ -30,7 +30,7 @@ import org.zkoss.zss.model.SRow;
 public abstract class AbstractRowAdv implements SRow,LinkedModelObject,Serializable{
 	private static final long serialVersionUID = 1L;
 	
-	/*package*/ abstract AbstractCellAdv getCell(int columnIdx, boolean proxy);
+	public abstract AbstractCellAdv getCell(int columnIdx, boolean proxy);
 
 	/*package*/ abstract AbstractCellAdv getOrCreateCell(int columnIdx);
 	

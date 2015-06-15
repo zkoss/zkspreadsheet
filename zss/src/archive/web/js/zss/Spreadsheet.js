@@ -1401,6 +1401,15 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 		window.onbeforeunload = function () {
 			window.onbeforeunload = _oldBfUnload;
 		};
+	},
+	//ZSS-1000
+	setCtrlArrowMoveFocus: function (v) {
+		var sheetId = v.sheetId,
+			row = v.row,
+			col = v.col;
+		if (sheetId != this.getSheetId()) return;
+		var ssctrl = this.sheetCtrl;
+		ssctrl.dp.ctrlArrowMoveFocus(row, col);
 	}
 }, {
 	CELL_MOUSE_EVENT_NAME: {lc:'onCellClick', rc:'onCellRightClick', dbc:'onCellDoubleClick', af:'onCellFilter', dv:'onCellValidator'},

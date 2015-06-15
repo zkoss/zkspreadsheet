@@ -1,0 +1,27 @@
+<vbox hflex="1" vflex="1">
+	<label multiline="true">
+Since 3.8.1
+1. You should see the focus mark on A1.
+2. Press Ctrl-Down, you should see focus mark on A3
+3. Press Ctrl-Down again, you should still see focus mark on A3
+4. Press Ctrl-Up, you should still see focus mark on A3
+5. Press Ctrl-Right, you should see focus mark on Q3
+6. Press Ctrl-Right again, you should still see focus mark on Q3
+7. Press Right arrow, you should see focus mark on T3
+8. Press Ctrl-Right, you should still see focus mark on T3
+9. Press Ctrl-Left, you should still see focus mark on T3
+10. Unprotect the sheet by click on the "lock" icon on toolbar.
+11. Press Ctrl-Right, you should see focus on AN3.
+12. Press Ctrl-Left, focus on T3.
+13. Press Ctrl-Left again, focus on R3.
+14. Press Ctrl-Left again, focus no Q3.
+15. Press Ctrl-Left again, focus on A3.
+16. Press Ctrl-Up, focus on A1.
+17. Press Ctrl-Down, focus on A3
+18. Press Ctrl-Down again, focus on A200.
+19. Press Ctrl-Up, focus on A3. 
+</label>
+	<spreadsheet id="ss" src="/issue3/book/1000-ctrl-arrows.xlsx" maxVisibleRows="200" maxVisibleColumns="40"
+		hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
+		showFormulabar="true" />	
+</vbox>

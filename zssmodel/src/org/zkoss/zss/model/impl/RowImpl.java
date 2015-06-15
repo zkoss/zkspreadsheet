@@ -75,7 +75,7 @@ public class RowImpl extends AbstractRowAdv {
 	}
 
 	@Override
-	AbstractCellAdv getCell(int columnIdx, boolean proxy) {
+	public AbstractCellAdv getCell(int columnIdx, boolean proxy) {
 		AbstractCellAdv cellObj = (AbstractCellAdv) cells.get(columnIdx);
 		if (cellObj != null) {
 			return cellObj;

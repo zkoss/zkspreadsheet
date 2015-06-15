@@ -804,7 +804,8 @@ zss.DataPanel = zk.$extends(zk.Object, {
 	 * Move up
 	 */
 	moveUp: function (evt) {
-		var sheet = this.sheet;
+		var sheet = this.sheet,
+			ctrlkey = !evt.altKey && evt.ctrlKey; //ZSS-1000;
 		if (zkS.isEvtKey(evt,"s")) {
 			sheet.shiftSelection("up");
 			return;
@@ -813,6 +814,12 @@ zss.DataPanel = zk.$extends(zk.Object, {
 			row = pos.row,
 			col = pos.column;
 		if (row < 0 || col < 0) return;
+		
+		//ZSS-1000
+		if (ctrlkey) {
+			this._fireCtrlArrow(sheet, row, col, "up");
+			return;
+		}
 		if (!sheet._wgt.isProtect() || sheet._wgt.allowSelectLockedCells) {
 			if (row > 0) {
 				var prevrow = row - 1,
@@ -835,7 +842,8 @@ zss.DataPanel = zk.$extends(zk.Object, {
 	 * Move down
 	 */
 	moveDown: function(evt, r, c) {
-		var sheet = this.sheet;
+		var sheet = this.sheet,
+		ctrlkey = !evt.altKey && evt.ctrlKey; //ZSS-1000;
 		if (zkS.isEvtKey(evt, "s")) {
 			sheet.shiftSelection("down");
 			return;
@@ -852,6 +860,11 @@ zss.DataPanel = zk.$extends(zk.Object, {
 				row = mb;
 		}
 
+		//ZSS-1000
+		if (ctrlkey) {
+			this._fireCtrlArrow(sheet, row, col, "down");
+			return;
+		}
 		if (!sheet._wgt.isProtect() || sheet._wgt.allowSelectLockedCells) {
 			if (row < sheet.maxRows - 1) {
 				var nextrow = row + 1,
@@ -874,7 +887,8 @@ zss.DataPanel = zk.$extends(zk.Object, {
 	 * Move to the left column
 	 */
 	moveLeft: function(evt, r, c) {
-		var sheet = this.sheet;
+		var sheet = this.sheet,
+		ctrlkey = !evt.altKey && evt.ctrlKey; //ZSS-1000;
 		if (zkS.isEvtKey(evt,"s")) {
 			sheet.shiftSelection("left");
 			return;
@@ -883,6 +897,11 @@ zss.DataPanel = zk.$extends(zk.Object, {
 			row = r ? r : pos.row,
 			col = c ? c : pos.column;
 		if (row < 0 || col < 0) return;
+		//ZSS-1000
+		if (ctrlkey) {
+			this._fireCtrlArrow(sheet, row, col, "left");
+			return;
+		}
 		if (!sheet._wgt.isProtect() || sheet._wgt.allowSelectLockedCells) {
 			if (col > 0) {
 				var prevcol = col - 1,
@@ -904,7 +923,8 @@ zss.DataPanel = zk.$extends(zk.Object, {
 	 * Move to the right column 
 	 */
 	moveRight: function(evt, r, c) {
-		var sheet = this.sheet;
+		var sheet = this.sheet,
+		ctrlkey = !evt.altKey && evt.ctrlKey; //ZSS-1000;
 		if (zkS.isEvtKey(evt, "s")) {
 			sheet.shiftSelection("right");
 			return;
@@ -921,6 +941,11 @@ zss.DataPanel = zk.$extends(zk.Object, {
 				col = mr;
 		}
 		
+		//ZSS-1000
+		if (ctrlkey) {
+			this._fireCtrlArrow(sheet, row, col, "right");
+			return;
+		}
 		if (!sheet._wgt.isProtect() || sheet._wgt.allowSelectLockedCells) {
 			if (col < sheet.maxCols - 1) {
 				var nextcol = col + 1,
@@ -1030,6 +1055,15 @@ zss.DataPanel = zk.$extends(zk.Object, {
 			newpos.row = newpos.row < sheet.maxRows - 1 ? newpos.row + 1 : 0;
 		}
 		return newpos;
+	},
+	//ZSS-1000
+	_fireCtrlArrow: function (sheet, row, col, dir) {
+		sheet._wgt.fire('onZSSCtrlArrow',
+				{sheetId: sheet.serverSheetId, row: row, col: col, dir: dir}, {toServer: true});
+	},
+	//ZSS-1000
+	ctrlArrowMoveFocus: function(row, col) {
+		this.moveFocus(row, col, true, true);
 	}
 });
 })();

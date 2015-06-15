@@ -99,7 +99,7 @@ class RowProxy extends AbstractRowAdv{
 	}
 	
 	@Override
-	AbstractCellAdv getCell(int columnIdx, boolean proxy) {
+	public AbstractCellAdv getCell(int columnIdx, boolean proxy) {
 		throw new UnsupportedOperationException("readonly");
 	}
 	@Override
