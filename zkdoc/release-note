@@ -7,6 +7,7 @@ ZK Spreadsheet 3.8.1
   ZSS-1020 Rotation info should be included into exported excel file
   ZSS-1064 ZSS does not recognize @Listen events after 3.8.0 update
   ZSS-1055 Comment should not be visible when exporting
+  ZSS-1069 Typing a character causes a javascript error
 
 ** Upgrade Notes
 

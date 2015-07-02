@@ -805,7 +805,7 @@ zss.DataPanel = zk.$extends(zk.Object, {
 	 */
 	moveUp: function (evt) {
 		var sheet = this.sheet,
-			ctrlkey = !evt.altKey && evt.ctrlKey; //ZSS-1000;
+			ctrlkey = evt && !evt.altKey && evt.ctrlKey; //ZSS-1000, ZSS-1069;
 		if (zkS.isEvtKey(evt,"s")) {
 			sheet.shiftSelection("up");
 			return;
@@ -843,7 +843,7 @@ zss.DataPanel = zk.$extends(zk.Object, {
 	 */
 	moveDown: function(evt, r, c) {
 		var sheet = this.sheet,
-		ctrlkey = !evt.altKey && evt.ctrlKey; //ZSS-1000;
+			ctrlkey = evt && !evt.altKey && evt.ctrlKey; //ZSS-1000, ZSS-1069;
 		if (zkS.isEvtKey(evt, "s")) {
 			sheet.shiftSelection("down");
 			return;
@@ -888,7 +888,7 @@ zss.DataPanel = zk.$extends(zk.Object, {
 	 */
 	moveLeft: function(evt, r, c) {
 		var sheet = this.sheet,
-		ctrlkey = !evt.altKey && evt.ctrlKey; //ZSS-1000;
+			ctrlkey = evt && !evt.altKey && evt.ctrlKey; //ZSS-1000, ZSS-1069;
 		if (zkS.isEvtKey(evt,"s")) {
 			sheet.shiftSelection("left");
 			return;
@@ -924,7 +924,7 @@ zss.DataPanel = zk.$extends(zk.Object, {
 	 */
 	moveRight: function(evt, r, c) {
 		var sheet = this.sheet,
-		ctrlkey = !evt.altKey && evt.ctrlKey; //ZSS-1000;
+			ctrlkey = evt && !evt.altKey && evt.ctrlKey; //ZSS-1000, ZSS-1069;
 		if (zkS.isEvtKey(evt, "s")) {
 			sheet.shiftSelection("right");
 			return;
