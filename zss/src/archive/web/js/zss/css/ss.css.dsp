@@ -1701,6 +1701,12 @@
 	padding: 0 1px;
 }
 
+/* ZSS-1072 */
+.zsfontfamily-calibri .z-comboitem-text {
+    font-family:Calibri;
+    font-size: 18px;
+}
+
 .zsfontfamily-arial .z-comboitem-text {
 	font-family:Arial;
 	font-size: 18px;

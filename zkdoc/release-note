@@ -8,6 +8,7 @@ ZK Spreadsheet 3.8.1
   ZSS-1064 ZSS does not recognize @Listen events after 3.8.0 update
   ZSS-1055 Comment should not be visible when exporting
   ZSS-1069 Typing a character causes a javascript error
+  ZSS-1072 The font "Calibri" is missing from the dropdown in the toolbar
 
 ** Upgrade Notes
 

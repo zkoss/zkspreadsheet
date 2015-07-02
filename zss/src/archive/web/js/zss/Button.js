@@ -228,7 +228,7 @@ zss.FontFamilyCombobox = zk.$extends(zul.inp.Combobox, {
 		var chd = this.firstChild;
 		if (!chd) {
 			var prefix = 'zsfontfamily',
-				fonts = ['Arial', 'Arial Black', 'Comic Sans MS',
+				fonts = ['Calibri', 'Arial', 'Arial Black', 'Comic Sans MS', //ZSS-1072
 			             'Courier New', 'Georgia', 'Impact', 
 			             'Lucida Console', 'Lucida Sans Unicode',
 			             'Palatino Linotype', 'Tahoma', 'Times New Roman',
