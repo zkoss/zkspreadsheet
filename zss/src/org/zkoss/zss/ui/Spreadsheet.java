@@ -152,6 +152,7 @@ import org.zkoss.zss.ui.event.SheetDeleteEvent;
 import org.zkoss.zss.ui.event.SheetEvent;
 import org.zkoss.zss.ui.event.StartEditingEvent;
 import org.zkoss.zss.ui.event.StopEditingEvent;
+import org.zkoss.zss.ui.event.SyncFriendFocusEvent;
 import org.zkoss.zss.ui.impl.ActiveRangeHelper;
 import org.zkoss.zss.ui.impl.CellFormatHelper;
 import org.zkoss.zss.ui.impl.ComponentEvaluationContributor;
@@ -2379,6 +2380,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		private void onFriendFocusMove(ModelEvent event) {
 			SSheet sheet = event.getSheet();
 			if (!getSelectedSSheet().equals(sheet)){
+				syncFriendFocus(); //ZSS-998
 				return;
 			}
 			final Focus focus = (Focus) event.getCustomData(); //other's spreadsheet's focus
@@ -2391,6 +2393,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		private void onFriendFocusDelete(ModelEvent event) {
 			SSheet sheet = event.getSheet();
 			if (!getSelectedSSheet().equals(sheet)){
+				syncFriendFocus(); //ZSS-998
 				return;
 			}
 			final Focus focus = (Focus) event.getCustomData(); //other's spreadsheet's focus
@@ -5046,8 +5049,12 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	private void syncFriendFocus(boolean always) {
 		if (_book != null) {
 			final Set<Object> bookFocuses;
-			final Set<String> keep = new HashSet<String>();
-			final Set<String> inbook = new HashSet<String>();
+			final Set<String> keep = new HashSet<String>(); //friend focus id in sheet
+			final Set<String> inbook = new HashSet<String>(); //friend focus id in book
+			
+			//ZSS-998
+			final List<Focus> inSheetFocus = new ArrayList<Focus>(); //friend focus in sheet
+			final List<Focus> inBookFocus = new ArrayList<Focus>(); //friend focus in book
 			
 			bookFocuses = getFriendFocusHelper().getAllFocus();
 			
@@ -5059,12 +5066,14 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 				Focus focus = (Focus)f;
 				String id = focus.getId();
 				inbook.add(id);
+				inBookFocus.add(focus); //ZSS-998
 				if(focus.getSheetId().equals(sheetid)){
 					if(!_friendFocuses.containsKey(id) || always){ //ZSS-1040
 						//same sheet, but not in friend focus, add back
 						addOrMoveFriendFocus(id, focus.getName(), focus.getColor(), focus.getSheetId(), focus.getRow(), focus.getColumn());
 					}
-					keep.add(id);//same sheet, keep it in friend focus 
+					keep.add(id);//same sheet, keep it in friend focus
+					inSheetFocus.add(focus); //ZSS-998
 				}else if(_friendFocuses.containsKey(id)){
 					//different sheet and in firend, remove it
 					removeFriendFocus(id);
@@ -5075,6 +5084,11 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 				if(keep.contains(fid)) continue;
 				removeFriendFocus(fid);				
 			}
+			
+			//ZSS-998
+			final Sheet sheet = getSelectedSheet();
+			org.zkoss.zk.ui.event.Events.postEvent(
+				new SyncFriendFocusEvent(Events.ON_SYNC_FRIEND_FOCUS, Spreadsheet.this, sheet, inBookFocus, inSheetFocus));
 		}
 	}
 	

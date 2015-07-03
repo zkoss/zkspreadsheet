@@ -200,6 +200,13 @@ public class Events {
 	 * @since 3.0.0
 	 */
 	public static final String ON_AFTER_CELL_CHANGE = "onAfterCellChange";
+
+	/**
+	 * This event is sent after friend focus is added/deleted/moved.
+	 * @see SyncFriendFocusEvent
+	 * @since 3.8.1
+	 */
+	public static final String ON_SYNC_FRIEND_FOCUS = "onSyncFriendFocus";
 	
 	/*
 	 * end of book delegation event  

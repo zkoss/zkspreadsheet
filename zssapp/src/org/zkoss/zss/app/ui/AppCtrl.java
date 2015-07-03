@@ -14,6 +14,8 @@ package org.zkoss.zss.app.ui;
 import java.io.*;
 import java.net.URLDecoder;
 import java.util.Arrays;
+import java.util.Collection;
+
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -52,11 +54,15 @@ import org.zkoss.zss.model.ModelEventListener;
 import org.zkoss.zss.model.ModelEvents;
 import org.zkoss.zss.ui.*;
 import org.zkoss.zss.ui.event.Events;
+import org.zkoss.zss.ui.event.SyncFriendFocusEvent;
 import org.zkoss.zss.ui.impl.DefaultUserActionManagerCtrl;
+import org.zkoss.zss.ui.impl.Focus;
 import org.zkoss.zss.ui.sys.UndoableActionManager;
 import org.zkoss.zul.Filedownload;
 import org.zkoss.zul.Fileupload;
+import org.zkoss.zul.Html;
 import org.zkoss.zul.Messagebox;
+import org.zkoss.zul.Popup;
 import org.zkoss.zul.Script;
 
 /**
@@ -110,6 +116,9 @@ public class AppCtrl extends CtrlBase<Component>{
 	
 	@Wire
 	Script gaScript;
+	
+	@Wire
+	Html usersPopContent; //ZSS-998
 	
 	BookInfo selectedBookInfo;
 	Book loadedBook;
@@ -209,6 +218,15 @@ public class AppCtrl extends CtrlBase<Component>{
 			@Override
 			public void onEvent(Event event) throws Exception {
 				onAfterUndoableManagerAction();
+			}
+		});
+		
+		//ZSS-998
+		ss.addEventListener(Events.ON_SYNC_FRIEND_FOCUS, new EventListener<Event>() {
+			@Override
+			public void onEvent(Event event) throws Exception {
+				final SyncFriendFocusEvent fe = (SyncFriendFocusEvent) event;
+				onSyncFriendFocus(fe.getInBook(), fe.getInSheet());
 			}
 		});
 		
@@ -568,6 +586,33 @@ public class AppCtrl extends CtrlBase<Component>{
 	
 	/*package*/ void onAfterUndoableManagerAction(){
 		pushAppEvent(AppEvts.ON_UPDATE_UNDO_REDO,ss);
+	}
+	
+	//ZSS-998
+	/*package*/ void onSyncFriendFocus(Collection<Focus> inBook, Collection<Focus> inSheet) {
+		if (inBook.isEmpty()) {
+			usersPopContent.setContent("<span style=\"color:#5f5f5f;font-size:12px;font-weight:400;"
+					+"font-family:\"Segoe UI\", Tahoma, Thonburi, Arial, Verdana, sans-serif;\">"
+						+"(empty)</span>");
+			return;
+		}
+		
+		StringBuilder sb = new StringBuilder();
+		sb.append("<ul style=\"background-clip:padding-box;padding:0;"
+					+ "margin:8px 10px;display:block;min-width:16px;font-size:12px;"
+					+"font-family:\"Segoe UI\", Tahoma, Thonburi, Arial, Verdana, sans-serif;\">");
+		for (Focus focus : inBook) {
+			sb.append("<li style=\"display:list-item;list-style:none;font-size:12px;margin:2px 0 0;\">"
+						+ "<div style=\"white-space:nowrap;height:18px;padding:0;font-size:12px;font-weight:400;color:#5f5f5f;\">" 
+							+ "<i style=\"display:inline-block;width:4px;height:14px;float:left;background-color:" 
+	                      		+ focus.getColor() + ";color:#ffffff;\"></i>" 
+							+ "<div style=\"overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding-left:5px;\">"
+	                      		+ focus.getName() + "</div>" 
+						+ "</div>" + 
+	                  "</li>");
+		}
+		sb.append("</ul>");
+		usersPopContent.setContent(sb.toString());
 	}
 	
 	/*package*/ void doSaveBook(boolean close){

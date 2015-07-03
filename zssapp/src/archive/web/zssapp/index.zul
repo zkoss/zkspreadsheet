@@ -41,5 +41,9 @@
 				'page': location.pathname + location.search  + location.hash
 			});
 		]]></script>
+	    <popup id="usersPop" width="115px">
+            <html id="usersPopContent">
+            </html>
+        </popup>
 	</window>
 </zk>
