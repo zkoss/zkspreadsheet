@@ -20,7 +20,7 @@ package org.zkoss.zss.ui.event;
  * @author dennis
  * @since 3.0.0
  */
-public enum HedaerType{
+public enum HeaderType{
 	COLUMN,
 	ROW
 }

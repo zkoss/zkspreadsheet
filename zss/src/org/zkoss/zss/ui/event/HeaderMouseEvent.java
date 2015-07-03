@@ -30,12 +30,12 @@ import org.zkoss.zss.model.SSheet;
 public class HeaderMouseEvent extends MouseEvent{
 	private SSheet _sheet;
 	private int _index;
-	private HedaerType _type;
+	private HeaderType _type;
 	private int _clientx;
 	private int _clienty;
 
 
-	public HeaderMouseEvent(String name, Component target, int x,int y, int keys,SSheet sheet, HedaerType type, int index,int clientx,int clienty) {
+	public HeaderMouseEvent(String name, Component target, int x,int y, int keys,SSheet sheet, HeaderType type, int index,int clientx,int clienty) {
 		super(name, target, x, y, clientx, clienty, keys);
 		_sheet = sheet;
 		this._index = index;
@@ -87,7 +87,7 @@ public class HeaderMouseEvent extends MouseEvent{
 	 * get type of this event, it will be {@link HeaderUpdateEvent#TOP_HEADER} or (@link HeaderEvent#LEFT_HEADER} 
 	 * @return the type of header
 	 */
-	public HedaerType getType(){
+	public HeaderType getType(){
 		return _type;
 	}
 	

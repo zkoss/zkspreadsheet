@@ -31,7 +31,7 @@ import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.event.HeaderMouseEvent;
-import org.zkoss.zss.ui.event.HedaerType;
+import org.zkoss.zss.ui.event.HeaderType;
 
 /**
  * A Command (client to server) for handling user(client) start editing a cell
@@ -74,7 +74,7 @@ public class HeaderMouseCommand extends AbstractCommand implements Command {
 			throw new UiException("unknow type : " + type);
 		}
 		
-		HedaerType htype = (row == -1) ? HedaerType.COLUMN : HedaerType.ROW;
+		HeaderType htype = (row == -1) ? HeaderType.COLUMN : HeaderType.ROW;
 		int index = (row == -1) ? col : row;
 				
 		Events.postEvent(new HeaderMouseEvent(type, comp, shx, shy, key, sheet, htype, index, mx, my));

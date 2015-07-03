@@ -30,7 +30,7 @@ import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.event.HeaderAction;
 import org.zkoss.zss.ui.event.HeaderUpdateEvent;
-import org.zkoss.zss.ui.event.HedaerType;
+import org.zkoss.zss.ui.event.HeaderType;
 import org.zkoss.zss.ui.sys.SpreadsheetInCtrl;
 
 
@@ -76,7 +76,7 @@ public class HeaderUpdateCommand extends AbstractCommand implements Command {
 			if (Events.isListened(spreadsheet, org.zkoss.zss.ui.event.Events.ON_HEADER_UPDATE, true)){
 				HeaderUpdateEvent he = new HeaderUpdateEvent(
 						org.zkoss.zss.ui.event.Events.ON_HEADER_UPDATE,
-						spreadsheet, sheet, HedaerType.COLUMN, HeaderAction.RESIZE, index, newsize,
+						spreadsheet, sheet, HeaderType.COLUMN, HeaderAction.RESIZE, index, newsize,
 						hidden);
 				Events.postEvent(he);
 			}
@@ -104,7 +104,7 @@ public class HeaderUpdateCommand extends AbstractCommand implements Command {
 			if (Events.isListened(spreadsheet,org.zkoss.zss.ui.event.Events.ON_HEADER_UPDATE, true)){
 				HeaderUpdateEvent he = new HeaderUpdateEvent(
 						org.zkoss.zss.ui.event.Events.ON_HEADER_UPDATE,
-						spreadsheet, sheet, HedaerType.ROW, HeaderAction.RESIZE,index, newsize,
+						spreadsheet, sheet, HeaderType.ROW, HeaderAction.RESIZE,index, newsize,
 						hidden);
 				Events.postEvent(he);
 			}

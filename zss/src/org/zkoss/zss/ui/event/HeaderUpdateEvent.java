@@ -32,13 +32,13 @@ public class HeaderUpdateEvent extends Event{
 //	static public final int LEFT_HEADER = 1;
 	
 	private SSheet _sheet;
-	private HedaerType _type;
+	private HeaderType _type;
 	private HeaderAction _action;
 	private int _index;
 	private boolean _hidden;
 	private int _size;
 
-	public HeaderUpdateEvent(String name, Component target,SSheet sheet, HedaerType type, HeaderAction acton,int index, int size, boolean hidden) {
+	public HeaderUpdateEvent(String name, Component target,SSheet sheet, HeaderType type, HeaderAction acton,int index, int size, boolean hidden) {
 		super(name, target, size);
 		_sheet = sheet;
 		this._type = type;
@@ -73,7 +73,7 @@ public class HeaderUpdateEvent extends Event{
 	 * get type of this event 
 	 * @return the type of header
 	 */
-	public HedaerType getType(){
+	public HeaderType getType(){
 		return _type;
 	}
 	
