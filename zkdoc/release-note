@@ -12,6 +12,7 @@ ZK Spreadsheet 3.8.1
   ZSS-1072 The font "Calibri" is missing from the dropdown in the toolbar
   ZSS-1075 Scroll to right quickly and a javascript error happens
   ZSS-1067 JS Error showed when hiderowhead/hidecolumnhead attribute is set to true
+  ZSS-1074 Exported pdf missing background color when setting the color with whole row/column
 
 ** Upgrade Notes
 
