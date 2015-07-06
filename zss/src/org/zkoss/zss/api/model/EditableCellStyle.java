@@ -30,13 +30,26 @@ public interface EditableCellStyle extends CellStyle{
 	 * @param font the font
 	 */
 	public void setFont(Font font);
+	
 	/**
-	 * Sets background-color
+	 * Sets background-color of a fill
 	 * @param color background-color
-	 * @deprecated since 3.5.0 , use {@link #setFillColor(Color)}
+	 * @deprecated since 3.5.0 , use {@link #setBackColor(Color)}
 	 */
 	public void setBackgroundColor(Color color);
 	
+	/**
+	 * Sets background-color of a fill
+	 * @param color background-color
+	 * @since 3.8.1
+	 */
+	public void setBackColor(Color color);
+	
+	/**
+	 * Sets forground-color of a fill.
+	 * @param color
+	 * @since 3.5.0
+	 */
 	public void setFillColor(Color color);
 
 	/**

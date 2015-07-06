@@ -65,8 +65,9 @@ public class EditableCellStyleImpl extends CellStyleImpl implements EditableCell
 		getNative().copyFrom(((CellStyleImpl)src).getNative());
 	}
 
+	@Deprecated
 	public void setBackgroundColor(Color color) {
-		setFillColor(color);
+		setBackColor(color); //ZSS-1068
 	}
 	public void setFillColor(Color color) {
 		getNative().setFillColor(((ColorImpl)color).getNative());
@@ -145,5 +146,11 @@ public class EditableCellStyleImpl extends CellStyleImpl implements EditableCell
 	//ZSS-915
 	public void setIndention(int indention) {
 		getNative().setIndention(indention);
+	}
+
+	//ZSS-1068
+	@Override
+	public void setBackColor(Color color) {
+		getNative().setBackColor(((ColorImpl)color).getNative());
 	}
 }

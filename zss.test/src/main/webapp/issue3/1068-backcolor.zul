@@ -1,0 +1,25 @@
+<vbox hflex="1" vflex="1">
+	<label multiline="true">
+1. Press the button "Change A1 background color to Red"
+2. You should then see A1's background color change to Red.
+	</label>
+	<button label="Change A1 background color to Red" onClick='changeBackcolor()'/>
+	<zscript>
+	<![CDATA[
+       import org.zkoss.zss.api.model.CellStyle.FillPattern;
+	   void changeBackcolor() {
+		   Sheet sheet = ss.getSelectedSheet();
+		   Range A1 = Ranges.range(sheet, "A1");
+	       //change Style
+	        CellStyle oldStyle = A1.getCellStyle();
+	        EditableCellStyle newStyle = A1.getCellStyleHelper().createCellStyle(oldStyle);
+	        Color newColor = A1.getCellStyleHelper().createColorFromHtmlColor("ff0000");
+	        newStyle.setBackColor(newColor);
+	        newStyle.setFillPattern(FillPattern.SOLID);
+	        A1.setCellStyle(newStyle);
+	   }
+	]]>
+	</zscript>
+	<spreadsheet id="ss" src="/issue3/book/blank.xlsx" maxVisibleRows="30" maxVisibleColumns="40"
+		hflex="1" vflex="1" />	
+</vbox>
