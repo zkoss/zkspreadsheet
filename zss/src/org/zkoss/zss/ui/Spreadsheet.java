@@ -3293,7 +3293,8 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			attrs.put("st", styleAggregation.getJSONArray());
 			attrs.put("m", mergeAggregation.getJSONObject());
 			
-			boolean addRowColumnHeader = containsHeader == Header.BOTH;
+			//ZSS-1067: always send row and column header for client side caching
+			boolean addRowColumnHeader = true; //containsHeader == Header.BOTH;
 			boolean addRowHeader = addRowColumnHeader || containsHeader == Header.ROW;
 			boolean addColumnHeader = addRowColumnHeader || containsHeader == Header.COLUMN;
 			

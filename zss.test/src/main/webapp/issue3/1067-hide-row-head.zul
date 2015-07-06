@@ -1,0 +1,11 @@
+<vbox hflex="1" vflex="1">
+    <label multiline="true">
+Since 3.8.1
+1. Drag the vertical scroll bar handle down without releasing until all grid line disappear; then release mouse.
+2. If you see JavaScript error pop out, it is a bug. If no, it is OK.
+    </label>
+<spreadsheet src="/issue3/book/blank.xlsx" hflex="1" vflex="1"
+        maxrows="2000" maxcolumns="20"
+        showToolbar="true" showFormulabar="true" showSheetbar="true"
+        hiderowhead="true" hidecolumnhead="true" />
+</vbox>
