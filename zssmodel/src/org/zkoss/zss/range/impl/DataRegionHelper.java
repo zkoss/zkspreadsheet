@@ -139,6 +139,10 @@ import org.zkoss.zss.range.SRange;
 	private CellRegion getLargestRange(SSheet sheet) {
 		int t = Math.max(0, sheet.getStartRowIndex());//to ignore -1 (no row)
 		int b = sheet.getEndRowIndex();
+		
+		//ZSS-1073: no data at all
+		if (b < 0) return null;
+		
 		//top row
 		int minr = -1;
 		for(int r = t; r <= b && minr < 0; ++r) {
