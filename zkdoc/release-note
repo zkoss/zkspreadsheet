@@ -15,6 +15,7 @@ ZK Spreadsheet 3.8.1
   ZSS-1074 Exported pdf missing background color when setting the color with whole row/column
   ZSS-1073 applying a filter to an empty sheet (area) causes an error
   ZSS-1068 Cannot set background color by EditableCellStyle
+  ZSS-1071 Formula bar content messed when moving arrow key
 
 ** Upgrade Notes
 

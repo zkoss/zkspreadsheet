@@ -675,7 +675,10 @@ zss.FormulabarEditor = zk.$extends(zul.inp.InputWidget, {
 					sheet.editingFormulaInfo = getEditingFormulaInfo(type, input, position);
 				}
 			} else {
-				sheet.editingFormulaInfo = getEditingFormulaInfo(type, input, position);
+				//ZSS-1071 when mouse click on a editing input, enableKeyNavigation will became false.
+				//we won't give a cell reference navigation again for it till next startEditing
+				if(sheet.enableKeyNavigation)
+					sheet.editingFormulaInfo = getEditingFormulaInfo(type, input, position);
 			}
 		}
 	},
