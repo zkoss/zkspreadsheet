@@ -1,0 +1,10 @@
+<vbox hflex="1" vflex="1">
+	<label multiline="true">
+Since 3.8.1
+1. Scroll to right quickly.
+2. If you JavaScript error pop out, it is a bug. If no, it is OK.
+	</label>
+<spreadsheet id="ss" hflex="1" vflex="1" showSheetbar="true" hidecolumnhead="true"
+        maxVisibleRows="100" maxVisibleColumns="50"  maxRenderedCellSize="5000"
+        src="/issue3/book/1075-scroll-to-right.xlsx"/>
+</vbox>

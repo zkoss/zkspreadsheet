@@ -551,7 +551,8 @@ public class CellFetchCommandHelper{
 		int rangeRight = rangeWidth > fetchWidth ? cs + rangeWidth - 1 : ce - 1; 
 		int rangeBottom = rangeBtmHeight < 0 ? blockBottom : blockBottom + rangeBtmHeight - 1;
 		final SpreadsheetCtrl spreadsheetCtrl = ((SpreadsheetCtrl) _spreadsheet.getExtraCtrl());
-		JSONObject mainBlock = spreadsheetCtrl.getRangeAttrs(sheet, _hidecolhead ? SpreadsheetCtrl.Header.NONE : SpreadsheetCtrl.Header.COLUMN, 
+		//ZSS-1075: always load header info no matter hide the head or not(must cached in client side)
+		JSONObject mainBlock = spreadsheetCtrl.getRangeAttrs(sheet, SpreadsheetCtrl.Header.COLUMN, 
 				SpreadsheetCtrl.CellAttribute.ALL, cs, rangeTop, rangeRight, rangeBottom);
 		mainBlock.put("dir", "east");
 		json.put("data", mainBlock);
@@ -564,7 +565,8 @@ public class CellFetchCommandHelper{
 		//process frozen row data
 		int fzr = spreadsheetCtrl.getFreezeInfoLoader().getRowFreeze(sheet);
 		if (fzr > -1) {
-			mainBlock.put("topFrozen", spreadsheetCtrl.getRangeAttrs(sheet, _hiderowhead ? SpreadsheetCtrl.Header.NONE : SpreadsheetCtrl.Header.BOTH, SpreadsheetCtrl.CellAttribute.ALL, 
+			//ZSS-1075: always load header info no matter hide the head or not(must cached in client side)
+			mainBlock.put("topFrozen", spreadsheetCtrl.getRangeAttrs(sheet, SpreadsheetCtrl.Header.BOTH, SpreadsheetCtrl.CellAttribute.ALL, 
 					cs, 0, rangeRight, fzr));
 		}
 		return new LoadResult(cs, rangeTop, rangeRight, rangeBottom, json);
@@ -591,7 +593,8 @@ public class CellFetchCommandHelper{
 			rangeLeft = 0;
 		int rangeBottom = rangeBtmHeight < 0 ? blockBottom : blockBottom + rangeBtmHeight - 1;
 		final SpreadsheetCtrl spreadsheetCtrl = ((SpreadsheetCtrl) _spreadsheet.getExtraCtrl());
-		JSONObject mainBlock = spreadsheetCtrl.getRangeAttrs(sheet, _hidecolhead ? SpreadsheetCtrl.Header.NONE : SpreadsheetCtrl.Header.COLUMN, 
+		//ZSS-1075: always load header info no matter hide the head or not(must cached in client side)
+		JSONObject mainBlock = spreadsheetCtrl.getRangeAttrs(sheet, SpreadsheetCtrl.Header.COLUMN, 
 				SpreadsheetCtrl.CellAttribute.ALL, rangeLeft, rangeTop, cs, rangeBottom);
 		mainBlock.put("dir", "west");
 		json.put("data", mainBlock);
@@ -604,7 +607,8 @@ public class CellFetchCommandHelper{
 		// process frozen row data
 		int fzr = spreadsheetCtrl.getFreezeInfoLoader().getRowFreeze(sheet);
 		if (fzr > -1) {
-			mainBlock.put("topFrozen", spreadsheetCtrl.getRangeAttrs(sheet, _hiderowhead ? SpreadsheetCtrl.Header.NONE : SpreadsheetCtrl.Header.BOTH, SpreadsheetCtrl.CellAttribute.ALL, 
+			//ZSS-1075: always load header info no matter hide the head or not(must cached in client side)
+			mainBlock.put("topFrozen", spreadsheetCtrl.getRangeAttrs(sheet, SpreadsheetCtrl.Header.BOTH, SpreadsheetCtrl.CellAttribute.ALL, 
 					rangeLeft, 0, cs, fzr));
 		}
 		return new LoadResult(rangeLeft, rangeTop, cs, rangeBottom, json);
@@ -627,7 +631,8 @@ public class CellFetchCommandHelper{
 		rangeLeft = rangeLeft > 0 && rangeLeft < blockLeft ? rangeLeft : blockLeft;
 		cacheRight = Math.max(blockRight, cacheRight);
 		final SpreadsheetCtrl spreadsheetCtrl = ((SpreadsheetCtrl) _spreadsheet.getExtraCtrl());
-		JSONObject mainBlock = spreadsheetCtrl.getRangeAttrs(sheet, _hidecolhead ? SpreadsheetCtrl.Header.NONE : SpreadsheetCtrl.Header.ROW, SpreadsheetCtrl.CellAttribute.ALL, 
+		//ZSS-1075: always load header info no matter hide the head or not(must cached in client side)
+		JSONObject mainBlock = spreadsheetCtrl.getRangeAttrs(sheet, SpreadsheetCtrl.Header.ROW, SpreadsheetCtrl.CellAttribute.ALL, 
 				rangeLeft, rs, cacheRight, rangeBottom);
 		mainBlock.put("dir", "south");
 		json.put("data", mainBlock);
@@ -640,7 +645,8 @@ public class CellFetchCommandHelper{
 		// process frozen left
 		int fzc = spreadsheetCtrl.getFreezeInfoLoader().getColumnFreeze(sheet);
 		if (fzc > -1) {
-			mainBlock.put("leftFrozen", spreadsheetCtrl.getRangeAttrs(sheet, _hidecolhead ? SpreadsheetCtrl.Header.NONE : SpreadsheetCtrl.Header.BOTH, SpreadsheetCtrl.CellAttribute.ALL,
+			//ZSS-1075: always load header info no matter hide the head or not(must cached in client side)
+			mainBlock.put("leftFrozen", spreadsheetCtrl.getRangeAttrs(sheet, SpreadsheetCtrl.Header.BOTH, SpreadsheetCtrl.CellAttribute.ALL,
 					0, rs, fzc, rangeBottom));
 		}
 
@@ -665,7 +671,8 @@ public class CellFetchCommandHelper{
 //		rangeRight = Math.min(Math.max(blockRight, rangeRight), _spreadsheet.getMaxcolumns() - 1);
 		rangeRight = Math.max(blockRight, rangeRight);
 		final SpreadsheetCtrl spreadsheetCtrl = ((SpreadsheetCtrl) _spreadsheet.getExtraCtrl());
-		JSONObject mainBlock = spreadsheetCtrl.getRangeAttrs(sheet, _hidecolhead ? SpreadsheetCtrl.Header.NONE : SpreadsheetCtrl.Header.ROW, SpreadsheetCtrl.CellAttribute.ALL, 
+		//ZSS-1075: always load header info no matter hide the head or not(must cached in client side)
+		JSONObject mainBlock = spreadsheetCtrl.getRangeAttrs(sheet, SpreadsheetCtrl.Header.ROW, SpreadsheetCtrl.CellAttribute.ALL, 
 				rangeLeft, rangeTop, rangeRight, rs);
 		mainBlock.put("dir", "north");
 		json.put("data", mainBlock);
@@ -678,7 +685,8 @@ public class CellFetchCommandHelper{
 		// process frozen left
 		int frc = spreadsheetCtrl.getFreezeInfoLoader().getColumnFreeze(sheet);
 		if (frc > -1) {
-			mainBlock.put("leftFrozen", spreadsheetCtrl.getRangeAttrs(sheet, _hidecolhead ? SpreadsheetCtrl.Header.NONE : SpreadsheetCtrl.Header.BOTH, SpreadsheetCtrl.CellAttribute.ALL,
+			//ZSS-1075: always load header info no matter hide the head or not(must cached in client side)
+			mainBlock.put("leftFrozen", spreadsheetCtrl.getRangeAttrs(sheet, SpreadsheetCtrl.Header.BOTH, SpreadsheetCtrl.CellAttribute.ALL,
 					0, rangeTop, frc, rs));
 		}
 		return new LoadResult(rangeLeft, rangeTop, rangeRight, rs, json);
