@@ -36,7 +36,7 @@ public class Issue1077Test {
 	 * Test render long text that across the cell boundary
 	 */
 	@Test
-	public void exportRepeatColumnTitles() {
+	public void exportSpecialChars() {
 		Book book = Util.loadBook(this, "book/1077-export-special-chars-pdf.xlsx");
 		
 		File temp = Setup.getTempFile("Issue1077ExportSpecialChars",".pdf");
