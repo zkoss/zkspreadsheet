@@ -1,0 +1,13 @@
+<vbox hflex="1" vflex="1">
+	<label multiline="true">
+Since 3.8.1
+1. Click the spreadsheet and select B2:D4.
+2. Click "alert" button, the B2:D4 selection should keep as is.
+3. If not, it is a bug.
+	</label>
+<button id="alert" label="focus" onClick='alert("Keep cell selection range")'/>
+<spreadsheet id="ss" src="/issue3/book/blank.xlsx" maxVisibleRows="60" maxVisibleColumns="40"
+	hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
+	showFormulabar="true" keepCellSelection="true"/>
+	
+</vbox>

@@ -634,7 +634,7 @@ zss.DataPanel = zk.$extends(zk.Object, {
 		var sheet = this.sheet;
 		sheet.state = zss.SSheetCtrl.NOFOCUS;
 		sheet.hideCellFocus();
-		sheet.hideCellSelection();
+		if (!sheet._wgt._keepCellSelection) sheet.hideCellSelection(); //ZSS-1044
 		sheet.animateHighlight(false);
 		sheet._wgt.fire('onBlur');
 	},

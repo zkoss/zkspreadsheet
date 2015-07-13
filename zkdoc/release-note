@@ -3,6 +3,7 @@ ZK Spreadsheet 3.8.1
   ZSS-1063 Support new password mechanism introduced since 2012
   ZSS-1000 Support ctrl + arrow key
   ZSS-998  Show all online users on the top of the page
+  ZSS-1044 Keep selection box visible even when spreadsheet losing focus
   
 *Bugs:
   ZSS-1020 Rotation info should be included into exported excel file

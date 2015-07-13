@@ -371,6 +371,10 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	
 	private FreezeInfoLoader _freezeInfoLoader = null;
 	
+	//ZSS-1044: Whether keep the cell selection when this component lost focus;
+	// default to false.
+	private boolean _keepCellSelection = false;
+	
 	public Spreadsheet() {
 		this.addEventListener("onStartEditingImpl", new EventListener() {
 			public void onEvent(Event event) throws Exception {
@@ -1789,6 +1793,9 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		
 		renderer.render("columnHeadHidden", _hideColhead);
 		renderer.render("rowHeadHidden", _hideRowhead);
+		
+		//ZSS-1044
+		renderer.render("keepCellSelection", _keepCellSelection);
 		
 		//handle Validation, must after render("activeRange" ...)
 		List<Map<String, Object>> dvs = getDataValidationHandler().loadDataValidtionJASON(getSelectedSheet());
@@ -5792,4 +5799,29 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	private static final int _DEFER_OPERATOR_PRIORITY = -20000;
 	//ZSS-816
 	private static final String _ON_PROCESS_DEFER_OPERATIONS = "onProcessDeferOperations";
+
+
+	/**
+	 * Returns true if keep the cell selection box when lost focus; default to
+	 * false.
+	 * @return true if keep the cell selection box when lost focus; default to false.
+	 * @since 3.8.1
+	 */
+	//ZSS-1044
+	public boolean isKeepCellSelection() {
+		return _keepCellSelection;
+	}
+
+	/**
+	 * Sets true to keep the cell selection box when lost focus.
+	 * @param keep true to keep the cell selection box when lost focus.
+	 * @since 3.8.1
+	 */
+	//ZSS-1044
+	public void setKeepCellSelection(boolean keep) {
+		if (_keepCellSelection != keep) {
+			_keepCellSelection = keep;
+			smartUpdate("keepCellSelection", _keepCellSelection);
+		}
+	}
 }

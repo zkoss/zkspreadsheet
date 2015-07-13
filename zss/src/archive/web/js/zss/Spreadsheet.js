@@ -719,7 +719,9 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 		//flag that indicate server has done paste operation, no need to do paste at client,
 		//Note. this flag will clear by doKeyUp()
 		doPasteFromServer: null,
-		colorPickerExUsed: null
+		colorPickerExUsed: null,
+		//ZSS-1044: Whether keep cell selection box when lost focus
+		keepCellSelection: false
 	},
 	// ZSS-390: the selected range should not large than max rows/columns
 	// It will be significant poor performance.
