@@ -1593,6 +1593,11 @@
 	height: 26px;
 }
 
+/* ZSS-1076 */
+.zstbtn img {
+    width: 16px;
+}
+    
 <c:if test="${c:browser('ie6-')}">
 .zstbtn .zstbtn-cave {
 	margin-right: -12px;
