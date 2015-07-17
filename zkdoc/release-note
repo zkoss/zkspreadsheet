@@ -22,6 +22,7 @@ ZK Spreadsheet 3.8.1
   ZSS-1076 Toolbar menu icon shouldn't be broken
   ZSS-1080 A formula is moved after switching to another sheet
   ZSS-1079 When editing a formula, switching to another sheet doesn't stop editing
+  ZSS-1081 Inconsistent behaviours when entering an incorrect formula and switching to another sheet
 
 ** Upgrade Notes
 
