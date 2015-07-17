@@ -1,0 +1,15 @@
+<vbox hflex="1" vflex="1">
+    <label multiline="true">
+Firefox and IE9. Since 3.8.1
+1. On Sheet 1, Enter in cell C4 the formula =sum(1,2)
+2. On Sheet 2, Enter in cell C4 the formula =sum(3,4)
+3. On Sheet 1, select cell C4 and click in the formula edit area on the formula bar
+4. Change =sum(1,2) to =sum(1,3)
+5. While still in edit mode, switch to Sheet 2
+6. The editing should stop automatically and you are in Sheet2 now
+7. Select back to Sheet1, you should see value 4 in cell C4 now.
+</label>
+<spreadsheet id="ss" src="/issue3/book/blank.xlsx" maxVisibleRows="60" maxVisibleColumns="40"
+    hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
+    showFormulabar="true"/>
+</vbox>
