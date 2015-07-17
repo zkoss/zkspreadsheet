@@ -249,6 +249,21 @@ zss.SheetTab = zk.$extends(zul.tab.Tab, {
 			this.startEditing();
 		}
 	},
+	//ZSS-1080: tricky. Avoid doClick_ proceed (until formula check on server is done)
+	doClick_: function (event) {
+		var sheet = this._wgt.sheetCtrl;
+	
+		if (sheet.asyncCheckFormula) { // is checking formula on server
+			sheet.asyncCheckFormula = false;
+			var sheetTab = this,
+				event0 = event;
+			sheet.sheetTabFn = function () 
+				{ sheetTab.$supers(zss.SheetTab, 'doClick_', [event0]);};
+			return;
+		}
+	
+		this.$supers(zss.SheetTab, 'doClick_', arguments);
+	},
 	doMouseDown_: function (event) {
 		//TODO: spreadsheet shall remain focus when mouse down on SheetTab
 		//eat event

@@ -20,6 +20,7 @@ ZK Spreadsheet 3.8.1
   ZSS-1078 NullPointerException is thrown when importing a file having a protected sheet with empty password
   ZSS-1077 PDF export ignores chinese characters
   ZSS-1076 Toolbar menu icon shouldn't be broken
+  ZSS-1080 A formula is moved after switching to another sheet
 
 ** Upgrade Notes
 

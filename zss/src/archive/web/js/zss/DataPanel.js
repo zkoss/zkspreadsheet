@@ -429,9 +429,28 @@ zss.DataPanel = zk.$extends(zk.Object, {
 						sheet.dp.reFocus(true);
 					});
 				} else if (type == "lostfocus") {//lost focus after aysnchronized call back
+					//ZSS-1080, 20150717, henrichen: in Firefox when click another sheet tab
+					// after entering a half-baked formula, Firefox will continue to trigger 
+					// SheetTab.doClick_() while Chrome will NOT(an unknown myth; maybe
+					// it is done in ZK?). However, it caused the issue of ZSS-1080.
+					// What we do is to prohibit Firefox from calling doClick_() in SheetTab
+					// and avoid sheet tab selection being changed; then after server done
+					// the formula checking and then call the doClick_() accordingly.
+					sheet.asyncCheckFormula = true; //ZSS-1080: do formula checking on Server after lost focus
 					token = zkS.addCallback(function(){
-						if (sheet.invalid) return;
-						sheet.dp._doFocusLost();
+						sheet.asyncCheckFormula = false; //ZSS-1080: done the formula checking
+						if (!sheet.invalid) {
+							var osheetState = sheet.state; //ZSS-1080
+							sheet.dp._doFocusLost();
+							
+							//ZSS-1080: until after formula check is done; then 
+							// call back to doClick_ on SheetTab(@see Sheetbar.js)
+							// if it is a valid formula
+							if (sheet.sheetTabFn && osheetState == zss.SSheetCtrl.STOP_EDIT) {
+								sheet.sheetTabFn();
+							}
+						}
+						sheet.sheetTabFn = null; //ZSS-1080: clean up sheetTabFn
 					});
 				}
 				
