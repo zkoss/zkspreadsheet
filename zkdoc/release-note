@@ -24,6 +24,7 @@ ZK Spreadsheet 3.8.1
   ZSS-1079 When editing a formula, switching to another sheet doesn't stop editing
   ZSS-1081 Inconsistent behaviours when entering an incorrect formula and switching to another sheet
   ZSS-929 javascript exception when copy a merged cell, freeze and switch sheet tabs
+  ZSS-932 Chart should change label name after cell's value changed
   
 ** Upgrade Notes
 

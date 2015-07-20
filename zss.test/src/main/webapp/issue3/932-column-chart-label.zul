@@ -1,0 +1,15 @@
+<vbox hflex="1" vflex="1">
+    <label multiline="true">
+Since 3.8.1
+1. type a into A1, b into A2.
+2. type 1 into B1, 2 into B2.
+3. Select A1:B2 and insert column chart based on these data.
+4. You should see a column chart with 1st column label as a and 2nd column label as b
+5. Now change cell A1 from a to aa.
+6. You should see the 1st column label change from a to aa.
+7. If not, it is a bug.
+</label>
+<spreadsheet id="ss" src="/issue3/book/blank.xlsx" maxVisibleRows="60" maxVisibleColumns="40"
+    hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
+    showFormulabar="true"/>
+</vbox>
