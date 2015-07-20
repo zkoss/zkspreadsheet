@@ -1,0 +1,19 @@
+<vbox hflex="1" vflex="1">
+    <label multiline="true">
+Since 3.8.1
+1. Press "Freeze" button, you should see the column A and B is freezed.
+2. Scroll to show row 100.
+3. Select A100.
+4. You should see A100 selected.
+5. If you see the browser scroll up to top; then it is a bug.
+</label>
+<button label="Freeze" onClick="freeze()"/>
+<zscript><![CDATA[
+    void freeze() {
+        org.zkoss.zss.api.Ranges.range(ss.getSelectedSheet()).setFreezePanel(0,2);
+    }
+]]></zscript>
+<spreadsheet id="ss" src="/issue3/book/926-freeze-column-jump-top.xlsx" maxVisibleRows="200" maxVisibleColumns="40"
+    hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
+    showFormulabar="true"/>
+</vbox>
