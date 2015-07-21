@@ -26,6 +26,7 @@ ZK Spreadsheet 3.8.1
   ZSS-929 javascript exception when copy a merged cell, freeze and switch sheet tabs
   ZSS-932 Chart should change label name after cell's value changed
   ZSS-926 Browser's scrollbar moves up to top when frozen column is selected
+  ZSS-930 Continuously copy and paste merged cell cause selection error
   
 ** Upgrade Notes
 

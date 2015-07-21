@@ -1,0 +1,14 @@
+<vbox hflex="1" vflex="1">
+    <label multiline="true">
+Since 3.8.1
+1. Select cell B3:C4 and merge the area; then press CTRL-C to copy it.
+2. Select cell B6.
+3. Press Ctrl-V to paste the copy; you should see B6:C7 merged and selected.
+4. If you see two selections on B6 and B6:C7, it is a bug. 
+5. Now press Ctrl-C to copy again; the copy mark is on Cell B6.
+6. Select cell B9.
+7. Press Ctrl-V to paste the copy and you should see B9:C10 merged and selected.</label>
+<spreadsheet id="ss" src="/issue3/book/blank.xlsx" maxVisibleRows="60" maxVisibleColumns="40"
+    hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
+    showFormulabar="true"/>
+</vbox>

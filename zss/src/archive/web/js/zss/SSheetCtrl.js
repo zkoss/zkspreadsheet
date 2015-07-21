@@ -3323,6 +3323,8 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		
 		//ZSS-861: move focus only if current state is not NOFOCUS
 		if (!(this.state == zss.SSheetCtrl.NOFOCUS)) {
+			//ZSS-930
+			this.moveCellSelection(left, top, left, top, false, true);
 			this.moveCellFocus(top, left);
 		}
 	},
