@@ -1,0 +1,12 @@
+<vbox hflex="1" vflex="1">
+    <label multiline="true">
+Since 3.8.1
+1. In Sheet1, scroll column to right end and you should see cell XFD1 with value xfd.
+2. Select Sheet2, should see value a in A1. Scroll column to right, should see column AN. 
+3. Select Sheet3. should see no value. Scroll column to right, should see column AN. 
+4. If not, it is a bug.
+</label>
+<spreadsheet id="ss" src="/issue3/book/1084-max-cols.xlsx"
+    hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
+    showFormulabar="true"/>
+</vbox>

@@ -4,6 +4,7 @@ ZK Spreadsheet 3.8.1
   ZSS-1000 Support ctrl + arrow key
   ZSS-998  Show all online users on the top of the page
   ZSS-1044 Keep selection box visible even when spreadsheet losing focus
+  ZSS-1084 Can initialize max row and column automatically by detecting file content
   
 *Bugs:
   ZSS-1020 Rotation info should be included into exported excel file
@@ -29,7 +30,15 @@ ZK Spreadsheet 3.8.1
   ZSS-930 Continuously copy and paste merged cell cause selection error
   
 ** Upgrade Notes
-
+  * Set org.zkoss.zss.ui.Spreadsheet#setMaxVisibleRows() to zero or leave as default; then
+    ZK Spreadsheet will determine the max visible rows per the sheet's content.
+  * Set org.zkoss.zss.ui.Spreadsheet#setMaxVisibleColumns() to zero or leave as default; then
+    ZK Spreadsheet will determine the max visible columns per the sheet's content.
+  * The org.zkoss.zss.ui.Spreadsheet#getMaxVisibleRows() now returns the max number of visible rows 
+    of the currently selected sheet.
+  * The org.zkoss.zss.ui.Spreadsheet#getMaxVisibleColumns() now returns the max number of visible columns 
+    of the currently selected sheet.
+  
  ------------
 ZK Spreadsheet 3.8.0.1
 *Features:

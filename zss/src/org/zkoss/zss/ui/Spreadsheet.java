@@ -40,6 +40,7 @@ import org.zkoss.lang.Classes;
 import org.zkoss.lang.Library;
 import org.zkoss.lang.Objects;
 import org.zkoss.lang.Strings;
+import org.zkoss.poi.ss.SpreadsheetVersion;
 //import org.zkoss.poi.ss.SpreadsheetVersion;
 //import org.zkoss.poi.ss.usermodel.AutoFilter;
 //import org.zkoss.poi.ss.usermodel.Cell;
@@ -119,10 +120,12 @@ import org.zkoss.zss.model.SPicture;
 import org.zkoss.zss.model.SRichText;
 import org.zkoss.zss.model.SRow;
 import org.zkoss.zss.model.SSheet;
+import org.zkoss.zss.model.ViewAnchor;
 import org.zkoss.zss.model.SSheet.SheetVisible;
 import org.zkoss.zss.model.STable;
 import org.zkoss.zss.model.impl.AbstractBookAdv;
 import org.zkoss.zss.model.impl.AbstractBookSeriesAdv;
+import org.zkoss.zss.model.impl.AbstractRowAdv;
 import org.zkoss.zss.model.impl.AbstractSheetAdv;
 import org.zkoss.zss.model.impl.AbstractTableAdv;
 import org.zkoss.zss.model.impl.TableImpl.DummyTable;
@@ -198,9 +201,9 @@ import org.zkoss.zul.impl.XulElement;
  * the data from a data model({@link SBook}) and interact with this model by
  * event.<br/>
  * You can assign a Book by {@link #setBook(SBook)} or just set the .xls file
- * location by {@link #setSrc(String)}. You also need to set two attributes to
+ * location by {@link #setSrc(String)}. You can also set two attributes to
  * restrict max rows and columns to show on client side by
- * {@link #setMaxrows(int)} and {@link #setMaxcolumns(int)}. <br/>
+ * {@link #setMaxVisibleRows(int)} and {@link #setMaxVisibleColumns(int)}. <br/>
  * To use Spreadsheet in .zul file, just use <code>&lt;spreadsheet/&gt;</code>
  * tag like any other ZK Components.<br/>
  * An simplest example : <br/>
@@ -248,8 +251,8 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	private static final int DEFAULT_TOP_HEAD_HEIGHT = 20;
 	private static final int DEFAULT_LEFT_HEAD_WIDTH = 36;
 	private static final int DEFAULT_CELL_PADDING = 2;
-	private static final int DEFAULT_MAX_ROWS = 20;
-	private static final int DEFAULT_MAX_COLUMNS = 10;
+	private static final int DEFAULT_MAX_ROWS = 200;
+	private static final int DEFAULT_MAX_COLUMNS = 40;
 	
 	private static final int DEFAULT_ROW_HEIGHT = 20;
 	
@@ -262,8 +265,10 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 
 	private String _src; // the src to create an internal book
 	transient private SImporter _importer; // the spreadsheet importer
-	private int _maxRows = DEFAULT_MAX_ROWS; // how many row of this spreadsheet
-	private int _maxColumns = DEFAULT_MAX_COLUMNS; // how many column of this spreadsheet
+	private int _maxRows = 0; //how many row of this spreadsheet; default to zero
+	private int _maxColumns = 0; //how many column of this spreadsheet; default to zero
+	//ZSS-1084
+	private Map<String, int[]> _sheetMaxRowsCols; //the maximum visible rows/cols per SheetId
 	
 	private int _preloadRowSize = -1; //the number of row to load when receiving the rendering request
 	private int _preloadColumnSize = -1; //the number of column to load when receiving the rendering request
@@ -772,6 +777,9 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		
 		//clear undo history
 		clearUndoableActionManager();
+		
+		//ZSS-1084: initialize sheetMaxRowsCols
+		_sheetMaxRowsCols = new HashMap<String, int[]>();
 		
 		_book = book;
 		if (_book != null) {
@@ -1726,14 +1734,10 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		renderer.render("loadcss", new JavaScriptValue("zk.loadCSS('" + css + "', '" + this.getUuid() + "-sheet')"));
 		renderer.render("scss", css);
 
-		int maxRows = getMaxrows();
-		if (maxRows != DEFAULT_MAX_ROWS) {
-			renderer.render("maxRows", maxRows);
-		}
-		int maxCols = getMaxcolumns();
-		if (maxCols != DEFAULT_MAX_COLUMNS) {
-			renderer.render("maxColumns", maxCols);
-		}
+		int maxRows = getMaxVisibleRows();
+		renderer.render("maxRows", maxRows); //ZSS-1084
+		int maxCols = getMaxVisibleColumns();
+		renderer.render("maxColumns", maxCols); //ZSS-1084
 		int rowFreeze = getSelectedSheetRowfreeze();
 		if (rowFreeze > -1) {
 			renderer.render("rowFreeze", rowFreeze);
@@ -3577,7 +3581,9 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			if (size <= 0) {
 				throw new UiException("size must > 0 : " + size);
 			}
-			if (col > _maxColumns) {// not in scope, do nothing,
+			//ZSS-1084
+			int maxCols = getSheetMaxCols(sheet);
+			if (col > maxCols) {// not in scope, do nothing,
 				return;
 			}
 			// because of rowfreeze and colfreeze,
@@ -3603,7 +3609,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 //				_colFreeze += size;
 //			}
 
-			result.put("maxcol", _maxColumns);
+			result.put("maxcol", maxCols); //ZSS-1084
 			result.put("colfreeze", getSelectedSheetColumnfreeze());
 
 			response("insertRowColumn" + XUtils.nextUpdateId(), new AuInsertRowColumn(Spreadsheet.this, "", sheet.getId(), result));
@@ -3613,7 +3619,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			// update surround cell
 			int left = col;
 			right = left + size - 1;
-			right = right >= _maxColumns - 1 ? _maxColumns - 1 : right;
+			right = right >= maxCols - 1 ? maxCols - 1 : right; //ZSS-1084
 			int top = rect.getRow();
 			int bottom = rect.getLastRow();
 			if(log.debugable()){
@@ -3651,9 +3657,12 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			if (size <= 0) {
 				throw new UiException("size must > 0 : " + size);
 			}
-			if (row > _maxRows) {// not in scrope, do nothing,
+			//ZSS-1084
+			int maxRows = getSheetMaxRows(sheet);
+			if (row > maxRows) {// not in scrope, do nothing,
 				return;
 			}
+
 			// because of rowfreeze and colfreeze,
 			// don't avoid insert behavior here, always send required data to
 			// client,
@@ -3674,7 +3683,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			
 			//_maxRows += size;
 
-			result.put("maxrow", _maxRows);
+			result.put("maxrow", maxRows); //ZSS-1084
 			result.put("rowfreeze", getSelectedSheetRowfreeze());
 
 			response("insertRowColumn" + XUtils.nextUpdateId(), new AuInsertRowColumn(Spreadsheet.this, "", sheet.getId(), result));
@@ -3684,7 +3693,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			// update surround cell
 			int top = row;
 			bottom = top + size - 1;
-			bottom = bottom >= _maxRows - 1 ? _maxRows - 1 : bottom;
+			bottom = bottom >= maxRows - 1 ? maxRows - 1 : bottom; //ZSS-1084
 			int left = rect.getColumn();
 			int right = rect.getLastColumn();
 			
@@ -3711,12 +3720,13 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			} else if (col < 0) {
 				throw new UiException("column must >= 0 : " + col);
 			}
-			if (col >= _maxColumns) {
+			//ZSS-1084
+			int maxCols = getSheetMaxCols(sheet);
+			if (col >= maxCols) {
 				return;
 			}
-
-			if (col + size > _maxColumns) {
-				size = _maxColumns - col;
+			if (col + size > maxCols) {
+				size = maxCols - col;
 			}
 
 			// because of rowfreeze and colfreeze,
@@ -3744,7 +3754,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 
 			//_maxColumns -= size;
 
-			result.put("maxcol", _maxColumns);
+			result.put("maxcol", maxCols); //ZSS-1084
 			result.put("colfreeze", getSelectedSheetColumnfreeze());
 
 			response("removeRowColumn" + XUtils.nextUpdateId(), new AuRemoveRowColumn(Spreadsheet.this, "", sheet.getId(), result));
@@ -3767,11 +3777,13 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			} else if (row < 0) {
 				throw new UiException("row must >= 0 : " + row);
 			}
-			if (row >= _maxRows) {
+			//ZSS-1084
+			int maxRows = getSheetMaxRows(sheet); 
+			if (row >= maxRows) {
 				return;
 			}
-			if (row + size > _maxRows) {
-				size = _maxRows - row;
+			if (row + size > maxRows) {
+				size = maxRows - row;
 			}
 
 			// because of rowfreeze and colfreeze,
@@ -3797,7 +3809,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 
 //			_maxRows -= size;
 
-			result.put("maxrow", _maxRows);
+			result.put("maxrow", maxRows); //ZSS-1084
 			result.put("rowfreeze", getSelectedSheetRowfreeze());
 
 			response("removeRowColumn" + XUtils.nextUpdateId(), new AuRemoveRowColumn(Spreadsheet.this, "", sheet.getId(), result));
@@ -4499,6 +4511,10 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		refreshToolbarDisabled();
 		refreshAllowedOptions();
 		updateUnlockInfo();
+		
+		//ZSS-1084
+		smartUpdate("maxRows", getMaxVisibleRows());
+		smartUpdate("maxColumns", getMaxVisibleColumns());
 	}
 	
 	public String getSelectedSheetName() {
@@ -5352,24 +5368,27 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	 * @since 3.0.0
 	 */
 	public int getMaxVisibleColumns() {
-		return _maxColumns;
+		return getSheetMaxCols(getSelectedSSheet());
 	}
 
 	/**
-	 * Returns the maximum visible number of rows of this spreadsheet. You can assign
-	 * new number by calling {@link #setMaxVisibleRows(int)}.
+	 * Returns the maximum visible number of rows of the currently selected
+	 * sheet. You can assign new number by calling {@link #setMaxVisibleRows(int)}.
 	 * 
-	 * @return the maximum visible number of rows.
+	 * @return the maximum visible number of rows of the currently selected sheet.
 	 * @since 3.0.0
 	 */
 	public int getMaxVisibleRows() {
-		return _maxRows;
+		return getSheetMaxRows(getSelectedSSheet());
 	}
 	
 	/**
 	 * Sets the maximum visible number of columns of this spreadsheet. For example, if you
 	 * set this parameter to 40, it will allow showing only column 0 to column 39. the minimal value of
-	 * max number of columns must large than 0;
+	 * max number of columns must large than 0. Since 3.8.1, if you set maximum visible number of columns
+	 * to 0, it means you allow end user to adjust the visible number of columns. 
+	 * <br/>
+	 * Default : 0. (since 3.8.1)
 	 * 
 	 * @param maxcols  the maximum visible number of columns 
 	 * @since 3.0.0
@@ -5398,8 +5417,10 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	/**
 	 * Sets the maximum visible number of rows of this spreadsheet. For example, if you set
 	 * this parameter to 40, it will allow showing only row 0 to 39. The minimal value of max number of rows
-	 * must large than 0; <br/>
-	 * Default : 20.
+	 * must large than 0. Since 3.8.1, if you set maximum visible number of rows
+	 * to 0, it means you allow end user to adjust the visible number of rows. 
+	 * <br/>
+	 * Default : 0. (since 3.8.1)
 	 * 
 	 * @param maxrows  the maximum visible number of rows
 	 * @since 3.0.0
@@ -5822,6 +5843,169 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		if (_keepCellSelection != keep) {
 			_keepCellSelection = keep;
 			smartUpdate("keepCellSelection", _keepCellSelection);
+		}
+	}
+	
+	//ZSS-1084
+	private CellRegion findDataBoundary(SSheet sheet) {
+		// or find print area for real data
+		int firstCol = 0;
+		int endCol = -1;
+		int firstRow = 0;
+		int endRow = -1;
+		SBook _wb = getSBook();
+
+		// Boundary for cell data
+		Iterator<SRow> rowIter = sheet.getRowIterator();
+		while (rowIter.hasNext()) {
+			SRow row = rowIter.next();
+			int rowIdx = row.getIndex();
+			int lastCol = sheet.getEndCellIndex(rowIdx);
+			if (lastCol < 0) {
+				//ZSS-1074: fill is different to default; should print it!
+				if (row.getCellStyle(true) != null && !row.getCellStyle().getFill().equals(_wb.getDefaultCellStyle().getFill())) {
+					endRow = Math.max(endRow, rowIdx);
+				} else {
+					continue; //skip blank row
+				}
+			}
+			int lastNonBlankCol = searchNonBlankEndColumn(sheet, rowIdx, lastCol);
+			//ZSS-772: could be a long merged cell that exceeds the endColumn
+			//mergedcell cannot overflow to next sibling
+			CellRegion mergedRegion = getMergedRegionIfAny(sheet, rowIdx, lastNonBlankCol);
+			if (mergedRegion != null) {
+				 int col = mergedRegion.getLastColumn();
+				 if (col > lastCol) {
+					 lastCol = col;
+				 }
+			} else { //ZSS-772: could be a long text that exceeds the endColumn
+				//20150722, henrichen: Cannot calcuate the text length in server side
+				// we are forced to ignore this case.
+				//SCell zssCell = sheet.getCell(rowIdx, lastNonBlankCol);
+				//final int col = getExtendedEndColumn(sheet, zssCell, lastNonBlankCol);
+				final int col = lastNonBlankCol;
+				if (col > lastCol) {
+					lastCol = col;
+				}
+			}
+			endCol = Math.max(endCol, lastCol);
+			endRow = Math.max(endRow, row.getIndex());
+		}
+		
+		// Boundary for pictures
+		List<SPicture> pics = sheet.getPictures();
+		if (pics != null && pics.size() != 0) {
+			for(SPicture pic : pics) {
+				ViewAnchor anchor1 = pic.getAnchor();
+				ViewAnchor anchor2 = anchor1.getRightBottomAnchor(sheet);
+				if(anchor2.getColumnIndex() > endCol) {
+					endCol = anchor2.getColumnIndex(); 
+				}
+				if(anchor2.getRowIndex() > endRow) {
+					endRow = anchor2.getRowIndex();
+				}
+			}
+		}
+		
+		// Boundary for charts
+		List<SChart> charts = sheet.getCharts();
+		if (charts != null && charts.size() != 0) {
+			for(SChart chart : charts) {
+				ViewAnchor anchor1 = chart.getAnchor();
+				ViewAnchor anchor2 = anchor1.getRightBottomAnchor(sheet);
+				if(anchor2.getColumnIndex() > endCol) {
+					endCol = anchor2.getColumnIndex(); 
+				}
+				if(anchor2.getRowIndex() > endRow) {
+					endRow = anchor2.getRowIndex();
+				}
+			}
+		}
+		
+		return new CellRegion(firstRow, firstCol, endRow < 0 ? 0 : endRow , endCol < 0 ? 0 : endCol) ;
+	}
+	
+	// Returns merged region cell range for a given cell
+	//ZSS-1084
+	private CellRegion getMergedRegionIfAny(SSheet sheet, int rowIdx, int colIdx) {
+		CellRegion partOfRange = null;
+
+		for(CellRegion range : sheet.getMergedRegions()) {
+			if (colIdx >= range.getColumn() && colIdx <= range.getLastColumn()
+				&& rowIdx >= range.getRow() && rowIdx <= range.getLastRow()) {
+				partOfRange = range;
+				break;
+			}
+		}
+
+		return partOfRange;
+	}
+
+	//Search non-blank end column
+	//ZSS-1084
+	private int searchNonBlankEndColumn(SSheet sheet, int rowIdx, int lastColIdx) {
+		int last = -1;
+		for (int i = lastColIdx; i >= 0; i--) {
+			final SCell cell = sheet.getCell(rowIdx, i);
+			if (!cell.isNull() && cell.getType() != SCell.CellType.BLANK) {
+				last = i;
+				break;
+			}
+		}
+		return last;
+	}
+	
+	//ZSS-1084
+	private int getSheetMaxRows(SSheet sheet) {
+		if (sheet == null) {
+			return _maxRows > 0 ? _maxRows : DEFAULT_MAX_ROWS;
+		}
+		String sheetId = sheet.getId();
+		int[] maxRowsCols = _sheetMaxRowsCols.get(sheetId);
+		if (_maxRows <= 0 && maxRowsCols == null) { //initialize
+			maxRowsCols = new int[2];
+			initSheetMaxRowsCols(sheet, maxRowsCols);
+		}
+		return _maxRows > 0 ? _maxRows : maxRowsCols[0];
+	}
+	
+	//ZSS-1084
+	private int getSheetMaxCols(SSheet sheet) {
+		if (sheet == null) {
+			return _maxColumns > 0 ? _maxColumns : DEFAULT_MAX_COLUMNS;
+		}
+		String sheetId = sheet.getId();
+		int[] maxRowsCols = _sheetMaxRowsCols.get(sheetId);
+		if (_maxColumns <= 0 && maxRowsCols == null) { //initialize
+			maxRowsCols = new int[2];
+			initSheetMaxRowsCols(sheet, maxRowsCols);
+		}
+		return _maxColumns > 0 ? _maxColumns : maxRowsCols[1];
+	}
+	
+	//ZSS-1084
+	private void initSheetMaxRowsCols(SSheet sheet, int[] maxRowsCols) {
+		CellRegion region = findDataBoundary(sheet);
+		if (region != null) {
+			int maxRows = region.lastRow + 2;
+			int maxCols = region.lastColumn + 2;
+			if (maxRows > SpreadsheetVersion.EXCEL2007.getMaxRows()) {
+				maxRows = SpreadsheetVersion.EXCEL2007.getMaxRows();
+			} else if (maxRows < DEFAULT_MAX_ROWS) {
+				maxRows = DEFAULT_MAX_ROWS;
+			}
+			if (maxCols > SpreadsheetVersion.EXCEL2007.getMaxColumns()) {
+				maxCols = SpreadsheetVersion.EXCEL2007.getMaxColumns();
+			} else if (maxCols < DEFAULT_MAX_COLUMNS) {
+				maxCols = DEFAULT_MAX_COLUMNS;
+			}
+			maxRowsCols[0] = maxRows;
+			maxRowsCols[1] = maxCols;
+			_sheetMaxRowsCols.put(sheet.getId(), maxRowsCols);
+		} else {
+			maxRowsCols = new int[2];
+			maxRowsCols[0] = DEFAULT_MAX_ROWS;
+			maxRowsCols[1] = DEFAULT_MAX_COLUMNS;
 		}
 	}
 }
