@@ -52,7 +52,7 @@ public class InsertRowHandler extends AbstractHandler {
 		// work around for ZSS-586: don't allow insert rows when select whole visible rows
 		int row = range.getRow();
 		int lastRow = range.getLastRow();
-		int maxVisibleRows = ctx.getSpreadsheet().getMaxVisibleRows();
+		int maxVisibleRows = ctx.getSpreadsheet().getCurrentMaxVisibleRows(); //ZSS-1084
 		if(lastRow - row + 1 == maxVisibleRows) {
 			throw new IllegalOpArgumentException(Labels.getLabel("zss.msg.operation_not_supported_with_all_row"));
 		}

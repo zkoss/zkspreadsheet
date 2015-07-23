@@ -87,7 +87,7 @@ public abstract class AbstractHandler implements UserActionHandler{
 		Spreadsheet ss = ctx.getSpreadsheet();
 		AreaRef sel = ctx.getSelection();
 		
-		if(sel.getRow()==0 && sel.getLastRow() >= ss.getMaxVisibleRows()-1){
+		if(sel.getRow()==0 && sel.getLastRow() >= ss.getCurrentMaxVisibleRows()-1){ //ZSS-1084
 			return true;
 		}
 		return false;
@@ -96,7 +96,7 @@ public abstract class AbstractHandler implements UserActionHandler{
 		Spreadsheet ss = ctx.getSpreadsheet();
 		AreaRef sel = ctx.getSelection();
 		
-		if(sel.getColumn()==0 && sel.getLastColumn() >= ss.getMaxVisibleColumns()-1){
+		if(sel.getColumn()==0 && sel.getLastColumn() >= ss.getCurrentMaxVisibleColumns()-1){ //ZSS-1084
 			return true;
 		}
 		return false;
@@ -105,8 +105,8 @@ public abstract class AbstractHandler implements UserActionHandler{
 		Spreadsheet ss = ctx.getSpreadsheet();
 		AreaRef sel = ctx.getSelection();
 		
-		if(sel.getRow()==0 && sel.getLastRow() >= ss.getMaxVisibleRows()-1 &&
-				sel.getColumn()==0 && sel.getLastColumn() >= ss.getMaxVisibleColumns()-1){
+		if(sel.getRow()==0 && sel.getLastRow() >= ss.getCurrentMaxVisibleRows()-1 &&  //ZSS-1084
+				sel.getColumn()==0 && sel.getLastColumn() >= ss.getCurrentMaxVisibleColumns()-1){ //ZSS-1084
 			return true;
 		}
 		return false;

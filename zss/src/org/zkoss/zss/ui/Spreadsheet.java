@@ -1059,9 +1059,9 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	}
 
 	/**
-	 * Sets the maximum visible number of rows of this spreadsheet. For example, if you set
-	 * this parameter to 40, it will allow showing only row 0 to 39. The minimal value of max number of rows
-	 * must large than 0; <br/>
+	 * Sets the maximum visible number of rows of this spreadsheet. For example, 
+	 * if you set this parameter to 40, it will allow showing only row 0 to 39. 
+	 * The minimal value of max number of rows must large than 0; <br/>
 	 * Default : 20.
 	 * 
 	 * @param maxrows  the maximum visible number of rows
@@ -1090,9 +1090,9 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		int rowSize = SpreadsheetCtrl.DEFAULT_LOAD_ROW_SIZE;
 		int preloadRowSize = getPreloadRowSize();
 		if (preloadRowSize == -1) {
-			rowSize = Math.min(rowSize, getMaxrows() - 1);
+			rowSize = Math.min(rowSize, getCurrentMaxVisibleRows() - 1); //ZSS-1084
 		} else {
-			rowSize = Math.min(preloadRowSize - 1, getMaxrows() - 1);
+			rowSize = Math.min(preloadRowSize - 1, getCurrentMaxVisibleRows() - 1); //ZSS-1084
 		}
 		return rowSize;
 	}
@@ -1139,9 +1139,9 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		int colSize = SpreadsheetCtrl.DEFAULT_LOAD_COLUMN_SIZE;
 		int preloadColSize = getPreloadColumnSize();
 		if (preloadColSize == -1) {
-			colSize = Math.min(colSize, getMaxcolumns() - 1);
+			colSize = Math.min(colSize, getCurrentMaxVisibleColumns() - 1); //ZSS-1084
 		} else {
-			colSize = Math.min(preloadColSize - 1, getMaxcolumns() - 1);
+			colSize = Math.min(preloadColSize - 1, getCurrentMaxVisibleColumns() - 1); //ZSS-1084
 		}
 		return colSize;
 	}
@@ -1734,9 +1734,9 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		renderer.render("loadcss", new JavaScriptValue("zk.loadCSS('" + css + "', '" + this.getUuid() + "-sheet')"));
 		renderer.render("scss", css);
 
-		int maxRows = getMaxVisibleRows();
+		int maxRows = getCurrentMaxVisibleRows(); //ZSS-1084
 		renderer.render("maxRows", maxRows); //ZSS-1084
-		int maxCols = getMaxVisibleColumns();
+		int maxCols = getCurrentMaxVisibleColumns(); //ZSS-1084
 		renderer.render("maxColumns", maxCols); //ZSS-1084
 		int rowFreeze = getSelectedSheetRowfreeze();
 		if (rowFreeze > -1) {
@@ -1981,9 +1981,9 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			args.put("type", "hide");
 		} else {
 			final int left = Math.max(highlight.getColumn(), 0);
-			final int right = Math.min(highlight.getLastColumn(), this.getMaxcolumns()-1);
+			final int right = Math.min(highlight.getLastColumn(), this.getCurrentMaxVisibleColumns()-1); //ZSS-1084
 			final int top = Math.max(highlight.getRow(), 0);
-			final int bottom = Math.min(highlight.getLastRow(), this.getMaxrows()-1);
+			final int bottom = Math.min(highlight.getLastRow(), this.getCurrentMaxVisibleRows()-1); //ZSS-1084
 			if (left > right || top > bottom) {
 				_highlightArea = null;
 				args.put("type", "hide");
@@ -2077,8 +2077,8 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		if (_focusArea.getColumn() != focus.getColumn()
 				|| _focusArea.getRow() != focus.getRow()) {
 			if (focus.getColumn() < 0 || focus.getRow() < 0
-					|| focus.getColumn() >= this.getMaxcolumns()
-					|| focus.getRow() >= this.getMaxrows()) {
+					|| focus.getColumn() >= this.getCurrentMaxVisibleColumns() //ZSS-1084
+					|| focus.getRow() >= this.getCurrentMaxVisibleRows()) { //ZSS-1084
 				throw new UiException("illegal position : " + focus.toString());
 			}
 			setCellFocusDirectly(focus);
@@ -4513,8 +4513,8 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		updateUnlockInfo();
 		
 		//ZSS-1084
-		smartUpdate("maxRows", getMaxVisibleRows());
-		smartUpdate("maxColumns", getMaxVisibleColumns());
+		smartUpdate("maxRows", getCurrentMaxVisibleRows());
+		smartUpdate("maxColumns", getCurrentMaxVisibleColumns());
 	}
 	
 	public String getSelectedSheetName() {
@@ -5368,17 +5368,39 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	 * @since 3.0.0
 	 */
 	public int getMaxVisibleColumns() {
-		return getSheetMaxCols(getSelectedSSheet());
+		return _maxColumns; //ZSS-1084 
 	}
-
+	
 	/**
-	 * Returns the maximum visible number of rows of the currently selected
-	 * sheet. You can assign new number by calling {@link #setMaxVisibleRows(int)}.
+	 * Returns the maximum visible number of rows of this spreadsheet. 
+	 * You can assign new number by calling {@link #setMaxVisibleRows(int)}.
 	 * 
 	 * @return the maximum visible number of rows of the currently selected sheet.
 	 * @since 3.0.0
 	 */
 	public int getMaxVisibleRows() {
+		return _maxRows; //ZSS-1084
+	}
+	
+	//ZSS-1084
+	/**
+	 * Returns the maximum visible number of columns of the currently selected
+	 * sheet.
+	 * @return
+	 * @since 3.8.1
+	 */
+	public int getCurrentMaxVisibleColumns() {
+		return getSheetMaxCols(getSelectedSSheet());
+	}
+
+	//ZSS-1084
+	/**
+	 * Returns the maximum visible number of rows of the currently selected
+	 * sheet. 
+	 * @return
+	 * @since 3.8.1
+	 */
+	public int getCurrentMaxVisibleRows() {
 		return getSheetMaxRows(getSelectedSSheet());
 	}
 	
@@ -5405,7 +5427,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 //				_colFreeze = _maxColumns - 1;
 //			}
 			
-			smartUpdate("maxColumns", getMaxVisibleColumns());
+			smartUpdate("maxColumns", getCurrentMaxVisibleColumns()); //ZSS-1084
 			// 20140514, RaymondChao: unlock info records until max visible column,
 			// so it needs to update when max visible column changed.
 			if (getSelectedSheet() != null) {
@@ -5435,7 +5457,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 //			if (_rowFreeze >= _maxRows) {
 //				_rowFreeze = _maxRows - 1;
 //			}
-			smartUpdate("maxRows", getMaxVisibleRows());
+			smartUpdate("maxRows", getCurrentMaxVisibleRows()); //ZSS-1084
 			// 20141104, henrichen: unlock info records until max visible row,
 			// so it needs to update when max visible row changed.
 			if (getSelectedSheet() != null) {
@@ -5544,9 +5566,9 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		final int startColumn = ssheet.getStartColumnIndex(),
 				// 20140513, RaymondChao: use getMaxVisibleColumns() instead of ssheet.getEndColumnIndex()
 				// for better performance, because getEndColumnIndex() could be 16384.
-				endColumn = getMaxVisibleColumns(),
+				endColumn = getCurrentMaxVisibleColumns(), //ZSS-1084
 				startRow = ssheet.getStartRowIndex(),
-				endRow = getMaxVisibleRows(); //ssheet.getEndRowIndex();
+				endRow = getCurrentMaxVisibleRows(); //ZSS-1084
 				
 		JSONObject attrs = new JSONObject();
 		JSONArray rows = new JSONArray(),

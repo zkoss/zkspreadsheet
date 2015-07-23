@@ -426,9 +426,9 @@ public class DefaultUserActionManagerCtrl implements UserActionManagerCtrl,UserA
 			extraData = new HashMap();
 		}
 		
-		AreaRef visibleSelection = new AreaRef(selection.getRow(), selection.getColumn(), Math.min(
-		spreadsheet.getMaxVisibleRows(), selection.getLastRow()), Math.min(
-					    spreadsheet.getMaxVisibleColumns(), selection.getLastColumn()));
+		AreaRef visibleSelection = new AreaRef(selection.getRow(), selection.getColumn(), 
+				Math.min(spreadsheet.getCurrentMaxVisibleRows(), selection.getLastRow()), //ZSS-1084 
+				Math.min(spreadsheet.getCurrentMaxVisibleColumns(), selection.getLastColumn())); //ZSS-1084
 		CellSelectionType _selectionType = CellSelectionType.CELL;
 		
 		//book could be null after close -> new book

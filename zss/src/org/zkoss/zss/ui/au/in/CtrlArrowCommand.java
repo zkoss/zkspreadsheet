@@ -124,20 +124,20 @@ public class CtrlArrowCommand extends AbstractCommand implements Command {
 			NonBlankCellsHelper helper = createRowNonBlankCellsHelper(sheet, rowIdx);
 			HeaderPositionHelper phelper = spreadsheetCtrl.getColumnPositionHelper(sheetId);
 			if (helper == null) { //no nonblank cell at all!
-				return phelper.getPrevNonHidden(spreadsheet.getMaxVisibleColumns());
+				return phelper.getPrevNonHidden(spreadsheet.getCurrentMaxVisibleColumns()); //ZSS-1084
 			}
 			int next = colIdx;
 			while (true) {
 				next = helper.getNextNonBlank(next);
 				if (next >= 0) {
 					if (!phelper.isHidden(next)) {
-						if (next >= spreadsheet.getMaxVisibleColumns()) {
-							return phelper.getPrevNonHidden(spreadsheet.getMaxVisibleColumns());
+						if (next >= spreadsheet.getCurrentMaxVisibleColumns()) { //ZSS-1084
+							return phelper.getPrevNonHidden(spreadsheet.getCurrentMaxVisibleColumns()); //ZSS-1084
 						}
 						return next;
 					}
 				} else {
-					return phelper.getPrevNonHidden(spreadsheet.getMaxVisibleColumns());
+					return phelper.getPrevNonHidden(spreadsheet.getCurrentMaxVisibleColumns()); //ZSS-1084
 				}
 			}
 		} else if ("up".equals(dir)) {
@@ -158,23 +158,23 @@ public class CtrlArrowCommand extends AbstractCommand implements Command {
 				}
 			}
 		} else if ("down".equals(dir)) {
-			NonBlankCellsHelper helper = createColumnNonBlankCellsHelper(sheet, rowIdx);
+			NonBlankCellsHelper helper = createColumnNonBlankCellsHelper(sheet, colIdx);
 			HeaderPositionHelper phelper = spreadsheetCtrl.getRowPositionHelper(sheetId);
 			if (helper == null) { //no nonblank cell at all!
-				return phelper.getPrevNonHidden(spreadsheet.getMaxVisibleRows());
+				return phelper.getPrevNonHidden(spreadsheet.getCurrentMaxVisibleRows()); //ZSS-1084
 			}
 			int next = rowIdx;
 			while (true) {
 				next = helper.getNextNonBlank(next);
 				if (next >= 0) {
 					if (!phelper.isHidden(next)) {
-						if (next >= spreadsheet.getMaxVisibleRows()) {
-							return phelper.getPrevNonHidden(spreadsheet.getMaxVisibleRows());
+						if (next >= spreadsheet.getCurrentMaxVisibleRows()) { //ZSS-1084
+							return phelper.getPrevNonHidden(spreadsheet.getCurrentMaxVisibleRows()); //ZSS-1084
 						}
 						return next;
 					}
 				} else {
-					return phelper.getPrevNonHidden(spreadsheet.getMaxVisibleRows());
+					return phelper.getPrevNonHidden(spreadsheet.getCurrentMaxVisibleRows()); //ZSS-1084
 				}
 			}
 		}

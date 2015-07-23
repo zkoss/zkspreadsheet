@@ -288,11 +288,11 @@ public class CellFetchCommandHelper{
 			int dpHeight, int viewWidth, int viewHeight, int blockLeft, int blockTop, int blockRight, int blockBottom,
 			int visibleLeft, int visibleTop, int visibleRight, int visibleBottom, int cacheRangeWidth, int cacheRangeHeight) {
 		
-		if (visibleRight > spreadsheet.getMaxcolumns() - 1) {
-			visibleRight = spreadsheet.getMaxcolumns() - 1;
+		if (visibleRight > spreadsheet.getCurrentMaxVisibleColumns() - 1) { //ZSS-1084
+			visibleRight = spreadsheet.getCurrentMaxVisibleColumns() - 1; //ZSS-1084
 		}
-		if (visibleBottom > spreadsheet.getMaxrows() - 1) {
-			visibleBottom = spreadsheet.getMaxrows() - 1;
+		if (visibleBottom > spreadsheet.getCurrentMaxVisibleRows() - 1) { //ZSS-1084
+			visibleBottom = spreadsheet.getCurrentMaxVisibleRows() - 1; //ZSS-1084
 		}
 		//calculate visible range , for merge range.
 		int left = Math.min(visibleLeft, blockLeft);
@@ -415,8 +415,8 @@ public class CellFetchCommandHelper{
 			
 			int newLeft = Math.max(rangeLeft - preloadColSize, 0);
 			int newTop = Math.max(rangeTop - preloadRowSize, 0);
-			int newRight = Math.min(rangeRight + preloadColSize, _spreadsheet.getMaxcolumns() - 1);
-			int newBtm = Math.min(rangeBtm + preloadRowSize, _spreadsheet.getMaxrows() - 1);
+			int newRight = Math.min(rangeRight + preloadColSize, _spreadsheet.getCurrentMaxVisibleColumns() - 1); //ZSS-1084
+			int newBtm = Math.min(rangeBtm + preloadRowSize, _spreadsheet.getCurrentMaxVisibleRows() - 1); //ZSS-1084
 			
 			rangeTop = _mergeMatrix.getTopConnectedRow(newTop, newLeft, newRight);
 			rangeBtm = _mergeMatrix.getBottomConnectedRow(newBtm, newLeft, newRight);
@@ -427,7 +427,7 @@ public class CellFetchCommandHelper{
 			//extends range left and right
 			int preloadSize =  preloadColSize / 2;
 			int newLeft = Math.max(rangeLeft - preloadSize, 0);
-			int newRight = Math.min(rangeRight + preloadSize, _spreadsheet.getMaxcolumns() - 1);
+			int newRight = Math.min(rangeRight + preloadSize, _spreadsheet.getCurrentMaxVisibleColumns() - 1); //ZSS-1084
 			
 			rangeLeft = _mergeMatrix.getLeftConnectedColumn(newLeft, rangeTop, rangeBtm);
 			rangeRight = _mergeMatrix.getRightConnectedColumn(newRight, rangeTop, rangeBtm);
@@ -435,7 +435,7 @@ public class CellFetchCommandHelper{
 			
 			int preloadSize = preloadRowSize / 2;
 			int newTop = Math.max(rangeTop - preloadSize, 0);
-			int newBtm = Math.min(rangeBtm + preloadSize, _spreadsheet.getMaxrows() - 1);
+			int newBtm = Math.min(rangeBtm + preloadSize, _spreadsheet.getCurrentMaxVisibleRows() - 1); //ZSS-1084
 			
 			rangeTop = _mergeMatrix.getTopConnectedRow(newTop, rangeLeft, rangeRight);
 			rangeBtm = _mergeMatrix.getBottomConnectedRow(newBtm, rangeLeft, rangeRight);
@@ -492,18 +492,18 @@ public class CellFetchCommandHelper{
 			left = _colHelper.getCellIndex(_colHelper.getStartPixel(col) - viewWidth);
 			// w = col - left + 2;//load more;
 
-			if (right > spreadsheet.getMaxcolumns() - 1) {
+			if (right > spreadsheet.getCurrentMaxVisibleColumns() - 1) { //ZSS-1084
 				// w = spreadsheet.getMaxcolumn()-left;
-				right = spreadsheet.getMaxcolumns() - 1;
+				right = spreadsheet.getCurrentMaxVisibleColumns() - 1; //ZSS-1084
 			}
 		} else if (dir.indexOf("W") >= 0) {
 			left = col <= 0 ? 0 : col - 1;
 			right = _colHelper.getCellIndex(_colHelper.getStartPixel(col)
 					+ viewWidth);// end cell index
 
-			if (right > spreadsheet.getMaxcolumns() - 1) {
+			if (right > spreadsheet.getCurrentMaxVisibleColumns() - 1) { //ZSS-1084
 				// w = spreadsheet.getMaxcolumn()-left;
-				right = spreadsheet.getMaxcolumns() - 1;
+				right = spreadsheet.getCurrentMaxVisibleColumns() - 1; //ZSS-1084
 			}
 		} else {
 			left = blockLeft;// rangeLeft;
@@ -514,15 +514,15 @@ public class CellFetchCommandHelper{
 			bottom = row + 1;
 			top = _rowHelper.getCellIndex(_rowHelper.getStartPixel(row)	- viewHeight);
 
-			if (bottom > spreadsheet.getMaxrows() - 1) {
-				bottom = spreadsheet.getMaxrows() - 1;
+			if (bottom > spreadsheet.getCurrentMaxVisibleRows() - 1) { //ZSS-1084
+				bottom = spreadsheet.getCurrentMaxVisibleRows() - 1; //ZSS-1084
 			}
 		} else if (dir.indexOf("N") >= 0) {
 			top = row <= 0 ? 0 : row - 1;
 			bottom = _rowHelper.getCellIndex(_rowHelper.getStartPixel(row) + viewHeight);// end cell index
 
-			if (bottom > spreadsheet.getMaxrows() - 1) {
-				bottom = spreadsheet.getMaxrows() - 1;
+			if (bottom > spreadsheet.getCurrentMaxVisibleRows() - 1) { //ZSS-1084
+				bottom = spreadsheet.getCurrentMaxVisibleRows() - 1; //ZSS-1084
 			}
 		} else {
 			top = blockTop;// rangeTop;
@@ -627,7 +627,7 @@ public class CellFetchCommandHelper{
 		json.put("top", rs);
 		json.put("left", blockLeft);
 		
-		int rangeBottom = Math.min(cacheRangeHeight > fetchHeight ? rs + cacheRangeHeight - 1 : re - 1, _spreadsheet.getMaxrows() - 1);
+		int rangeBottom = Math.min(cacheRangeHeight > fetchHeight ? rs + cacheRangeHeight - 1 : re - 1, _spreadsheet.getCurrentMaxVisibleRows() - 1); //ZSS-1084
 		rangeLeft = rangeLeft > 0 && rangeLeft < blockLeft ? rangeLeft : blockLeft;
 		cacheRight = Math.max(blockRight, cacheRight);
 		final SpreadsheetCtrl spreadsheetCtrl = ((SpreadsheetCtrl) _spreadsheet.getExtraCtrl());

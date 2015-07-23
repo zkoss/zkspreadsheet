@@ -71,7 +71,7 @@ public class UtilFns {
 		return Integer.valueOf(0);
 	}
 	static public Integer getRowEnd(Spreadsheet ss){
-		int max = ss.getMaxrows();
+		int max = ss.getCurrentMaxVisibleRows(); //ZSS-1084
 		max = max<=20?max-1:20;
 		return Integer.valueOf(max);//Integer.valueOf(ss.getMaxrow()-1);
 	}
@@ -79,7 +79,7 @@ public class UtilFns {
 		return Integer.valueOf(0);
 	}
 	static public Integer getColEnd(Spreadsheet ss){
-		int max = ss.getMaxcolumns();
+		int max = ss.getCurrentMaxVisibleColumns(); //ZSS-1084
 
 		max = max<=10?max-1:10;
 		
