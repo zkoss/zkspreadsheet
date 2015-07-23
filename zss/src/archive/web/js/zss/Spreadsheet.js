@@ -1411,7 +1411,16 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 			col = v.col;
 		if (sheetId != this.getSheetId()) return;
 		var ssctrl = this.sheetCtrl;
-		ssctrl.dp.ctrlArrowMoveFocus(row, col);
+		ssctrl.dp.moveFocus(row, col, true, true);
+	},
+	//ZSS-1085
+	setShiftPosFocus: function (v) {
+		var sheetId = v.sheetId,
+			row = v.row,
+			col = v.col;
+		if (sheetId != this.getSheetId()) return;
+		var ssctrl = this.sheetCtrl;
+		ssctrl.dp.moveFocus(row, col, true, true);
 	}
 }, {
 	CELL_MOUSE_EVENT_NAME: {lc:'onCellClick', rc:'onCellRightClick', dbc:'onCellDoubleClick', af:'onCellFilter', dv:'onCellValidator'},

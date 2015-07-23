@@ -32,6 +32,7 @@ import org.zkoss.zss.ui.au.in.FetchActiveRangeCommand;
 import org.zkoss.zss.ui.au.in.FilterCommand;
 import org.zkoss.zss.ui.au.in.HeaderUpdateCommand;
 import org.zkoss.zss.ui.au.in.HeaderMouseCommand;
+import org.zkoss.zss.ui.au.in.ShiftPosCommand;
 import org.zkoss.zss.ui.au.in.WidgetUpdateCommand;
 import org.zkoss.zss.ui.au.in.SelectSheetCommand;
 import org.zkoss.zss.ui.au.in.CellSelectionUpdateCommand;
@@ -56,6 +57,7 @@ import org.zkoss.zss.ui.event.Events;
 	static final String ON_ZSS_SYNC_BLOCK = "onZSSSyncBlock";
 	
 	static final String ON_ZSS_CTRL_ARROW = "onZSSCtrlArrow"; //ZSS-1000
+	static final String ON_ZSS_SHIFT_POS = "onZSSShiftPos"; //ZSS-1085
 	
 	static final Map<String, Command> CMDS;
 	static{
@@ -121,6 +123,8 @@ import org.zkoss.zss.ui.event.Events;
 		
 		//ZSS-1000
 		CMDS.put(ON_ZSS_CTRL_ARROW, new CtrlArrowCommand());
+		//ZSS-1085
+		CMDS.put(ON_ZSS_SHIFT_POS, new ShiftPosCommand());
 	}
 	/**
 	 * 

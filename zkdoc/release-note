@@ -28,16 +28,19 @@ ZK Spreadsheet 3.8.1
   ZSS-932 Chart should change label name after cell's value changed
   ZSS-926 Browser's scrollbar moves up to top when frozen column is selected
   ZSS-930 Continuously copy and paste merged cell cause selection error
+  ZSS-1085 Press left arrow key on a protected sheet and Javascript busy
   
 ** Upgrade Notes
   * Set org.zkoss.zss.ui.Spreadsheet#setMaxVisibleRows() to zero or leave as default; then
     ZK Spreadsheet will determine the max visible rows per the sheet's content.
   * Set org.zkoss.zss.ui.Spreadsheet#setMaxVisibleColumns() to zero or leave as default; then
     ZK Spreadsheet will determine the max visible columns per the sheet's content.
-  * The org.zkoss.zss.ui.Spreadsheet#getMaxVisibleRows() now returns the max number of visible rows 
-    of the currently selected sheet.
-  * The org.zkoss.zss.ui.Spreadsheet#getMaxVisibleColumns() now returns the max number of visible columns 
-    of the currently selected sheet.
+  * org.zkoss.zss.ui.Spreadsheet#getCurrentMaxVisibleRows(): new API which returns the max 
+	number of visible rows of the currently selected sheet. If you ever used getMaxVisibleRows() or
+	getMaxRows() in application should replace with this new API instead.
+  * org.zkoss.zss.ui.Spreadsheet#getCurrentMaxVisibleColumns() now API which returns the max 
+	number of visible columns of the currently selected sheet. If you ever used getMaxVisibleColumns() or
+	getMaxColumns() in application should replace with this new API instead.
   
  ------------
 ZK Spreadsheet 3.8.0.1

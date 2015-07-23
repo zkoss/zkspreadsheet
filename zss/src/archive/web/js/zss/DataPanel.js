@@ -788,6 +788,10 @@ zss.DataPanel = zk.$extends(zk.Object, {
 			col = custColWidth.getDecUnhidden(nextcol, nextcol > col ? col : 0); //search backward
 		} else {
 			var newpos = this._getShiftPos(row, col, 'end');
+			//ZSS-1085: wait for server callback
+			if (newpos == null) { 
+				return;
+			}
 			row = newpos.row;
 			col = newpos.col;
 		}
@@ -814,6 +818,10 @@ zss.DataPanel = zk.$extends(zk.Object, {
 			col = custColWidth.getIncUnhidden(prevcol, col < (sheet.maxCols - 1) ? col : (sheet.maxCols - 1)); //search forward
 		} else {
 			var newpos = this._getShiftPos(row, col, 'home');
+			//ZSS-1085: wait for server callback
+			if (newpos == null) {
+				return;
+			}
 			row = newpos.row;
 			col = newpos.col;
 		}
@@ -851,6 +859,10 @@ zss.DataPanel = zk.$extends(zk.Object, {
 			}
 		} else {
 			var newpos = this._getShiftPos(row, col, 'up');
+			//ZSS-1085: wait for server callback
+			if (newpos == null) { 
+				return;
+			}
 			row = newpos.row;
 			col = newpos.col;
 		}
@@ -896,6 +908,10 @@ zss.DataPanel = zk.$extends(zk.Object, {
 			}
 		} else {
 			var newpos = this._getShiftPos(row, col, 'down');
+			//ZSS-1085: wait for server callback
+			if (newpos == null) { 
+				return;
+			}
 			row = newpos.row;
 			col = newpos.col;
 		}
@@ -933,6 +949,10 @@ zss.DataPanel = zk.$extends(zk.Object, {
 			}
 		} else {
 			var newpos = this._getShiftPos(row, col, 'left');
+			//ZSS-1085: wait for server callback
+			if (newpos == null) { 
+				return;
+			}
 			row = newpos.row;
 			col = newpos.col;
 		}
@@ -977,6 +997,10 @@ zss.DataPanel = zk.$extends(zk.Object, {
 			}
 		} else {
 			var newpos = this._getShiftPos(row, col, 'right');
+			//ZSS-1085: wait for server callback
+			if (newpos == null) { 
+				return;
+			}
 			row = newpos.row;
 			col = newpos.col;
 		}
@@ -1004,7 +1028,13 @@ zss.DataPanel = zk.$extends(zk.Object, {
 			fn = this._shiftLeft;
 			newPos = {row: sheet.maxRows - 1, col: sheet.maxCols};
 		}
+		var count = 1000; //ZSS-1085: client side count of trial
 		do {
+			//ZSS-1085: try in client side for most [count] times; then use server solution
+			if (--count == 0) {
+				this._fireShiftPos(sheet, row, col, key);
+				return null;
+			}
 			newPos = fn.call(this, newPos);
 		} while (this.sheet.isCellLocked(newPos.row, newPos.col) || 
 			sheet.custRowHeight.isHidden(newPos.row) || sheet.custColWidth.isHidden(newPos.col));
@@ -1080,9 +1110,10 @@ zss.DataPanel = zk.$extends(zk.Object, {
 		sheet._wgt.fire('onZSSCtrlArrow',
 				{sheetId: sheet.serverSheetId, row: row, col: col, dir: dir}, {toServer: true});
 	},
-	//ZSS-1000
-	ctrlArrowMoveFocus: function(row, col) {
-		this.moveFocus(row, col, true, true);
-	}
+	//ZSS-1085
+	_fireShiftPos: function (sheet, row, col, dir) {
+		sheet._wgt.fire('onZSSShiftPos',
+				{sheetId: sheet.serverSheetId, row: row, col: col, dir: dir}, {toServer: true});
+	}		
 });
 })();

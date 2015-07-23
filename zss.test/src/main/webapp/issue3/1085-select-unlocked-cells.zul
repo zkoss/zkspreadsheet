@@ -1,0 +1,23 @@
+<vbox hflex="1" vflex="1">
+	<label multiline="true">
+Since 3.8.1
+1. You should see the focus mark on A1.
+2. Press Left arrow key, you should see focus mark on A6
+3. Press Left again, you should see focus mark on XFD3
+4. Press Left again, you should see focus mark on E3
+5. Press Left again, you should see focus mark on A3
+6. Press Left again, you should see focus mark on A1
+6. Press Right arrow key in sequence, you should see focus mark travel on A1, A3, E3, XFD3, A6, A1, ...
+7. Press Down arrow key in sequence, you should see focus mark travel on A1, A3, A6, E3, XFD3, A1, ...
+8. Press Up arrow key in sequence, you should see focus mark travel on A1, XFD3, E3, A6, A3, A1, ...
+9. Select on cell A1, press End key, you should see focus mark on A6
+10. Select on cell E3,  press End key, you should see focus mark on A6
+11. Select whichever cell, press End key, you should see focus mark on A6
+12. Select on cell A6, press Home key, you should see focus mark on A1
+13. Select on cell E3,  press Home key, you should see focus mark on A1
+14. Select whichever cell, press Home key, you should see focus mark on A1
+</label>
+	<spreadsheet id="ss" src="/issue3/book/1085-select-unlocked-cells.xlsx"
+		hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
+		showFormulabar="true" />	
+</vbox>
