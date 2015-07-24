@@ -998,7 +998,15 @@ zss.Editbox = zk.$extends(zul.inp.InputWidget, {
 				input = this.comp,
 				value = this.getValue();
 			if (formulabarEditor) {
-				formulabarEditor.setValue(value);
+				//20150724, henrichen: ZSS-1086: Firefox seems stop the focus 
+				// event if you set value into formulabarEditor when it is 
+				// gaining focus. StackTraces:
+				//  formulabarEditor.doMouseDown_ -> dataPanel.startEditing -> 
+				//	dataPanel._openEditbox(null, true) -> inlineEditor.edit ->
+				//	inlineEditor._startEditing -> ... -> formulabarEditor.doFocus_
+				if (!noFocus) { 
+					formulabarEditor.setValue(value);
+				}
 			}
 			if ('=' == value.charAt(0)) {
 				var length = value.length;

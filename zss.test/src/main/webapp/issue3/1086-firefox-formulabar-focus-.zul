@@ -1,0 +1,13 @@
+<vbox hflex="1" vflex="1">
+	<label multiline="true">
+Since 3.8.1
+1. Type =sum(1,2) in A1 and Enter; should see value 3 in A1.
+2. Select back to A1.
+3. (tricky step) Click the formula's name 'SUM' in the formula bar(not click on the end of the formula). 
+   The formulabar should gain focus and you should see the caret.
+4. If you find the formula bar gains no focus and no caret on it, it is a bug.
+</label>
+	<spreadsheet id="ss" src="/issue3/book/blank.xlsx" maxVisibleRows="60" maxVisibleColumns="40"
+		hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
+		showFormulabar="true" />
+</vbox>
