@@ -217,17 +217,17 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			sp = this.sp,
 			tp = this.tp,
 			lp = this.lp,
-			snapshop = cacheCtrl.getSnapshot(wgt.getSheetId());
-		if (snapshop) {
-			syncAttributes(wgt, snapshop, 
+			snapshot = cacheCtrl.getSnapshot(wgt.getSheetId());
+		if (snapshot) {
+			syncAttributes(wgt, snapshot, 
 				['_displayGridlines', '_rowFreeze', '_columnFreeze', '_rowHeight', '_columnWidth', '_protect']);
-			var d = snapshop.getDataPanelSize(),
-				s = snapshop.getScrollPanelPos();
+			var d = snapshot.getDataPanelSize(),
+				s = snapshot.getScrollPanelPos();
 			
 			dp.reset(d.width, d.height);
 			sp.reset(s.scrollTop, s.scrollLeft);
-			lp._updateTopPos(snapshop.getLeftPanelPos());
-			tp._updateLeftPos(snapshop.getTopPanelPos());
+			lp._updateTopPos(snapshot.getLeftPanelPos());
+			tp._updateLeftPos(snapshot.getTopPanelPos());
 		} else { //switch to new sheet focus on [0, 0]
 			sp.reset(0, 0);
 			lp._updateTopPos(0);
@@ -242,14 +242,14 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		this.frozenRow = wgt.getRowFreeze();
 		this.frozenCol = wgt.getColumnFreeze();
 
-		this.custColWidth = new zss.PositionHelper(this.colWidth, snapshop ? snapshop.getCustColWidth() : newPositionArray(wgt.getCsc()));
-		this.custColWidth.ids = new zss.Id(snapshop?snapshop.getCustColLastId():0, 2);
+		this.custColWidth = new zss.PositionHelper(this.colWidth, snapshot ? snapshot.getCustColWidth() : newPositionArray(wgt.getCsc()));
+		this.custColWidth.ids = new zss.Id(snapshot?snapshot.getCustColLastId():0, 2);
 		
-		this.custRowHeight = new zss.PositionHelper(this.rowHeight, snapshop ? snapshop.getCustRowHeight() : newPositionArray(wgt.getCsr()));
-		this.custRowHeight.ids = new zss.Id(snapshop?snapshop.getCustRowLastId():0, 2);
+		this.custRowHeight = new zss.PositionHelper(this.rowHeight, snapshot ? snapshot.getCustRowHeight() : newPositionArray(wgt.getCsr()));
+		this.custRowHeight.ids = new zss.Id(snapshot?snapshot.getCustRowLastId():0, 2);
 		
 		//merge range
-		this.mergeMatrix = new zss.MergeMatrix(snapshop ? snapshop.getMergeMatrix() : newMergeMatrixArray(wgt.getMergeRange()), this);
+		this.mergeMatrix = new zss.MergeMatrix(snapshot ? snapshot.getMergeMatrix() : newMergeMatrixArray(wgt.getMergeRange()), this);
 
 		var data = wgt._cacheCtrl.getSelectedSheet(),
 			sheetCSSReady = wgt.isSheetCSSReady();
@@ -322,6 +322,28 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			this._resize();
 		}
 		doAfterCSSReady(this);
+	},
+	//ZSS-1087: restore panel postion 
+	restorePos_: function (snapshot) {
+		if (this.bindLevel < 0) {//this method shall invoke after bind
+			return;
+		}
+		var	wgt = this._wgt,
+			sheet = this,
+			cacheCtrl = wgt._cacheCtrl,
+			dp = this.dp,
+			sp = this.sp,
+			tp = this.tp,
+			lp = this.lp;
+//		syncAttributes(wgt, snapshot, 
+//			['_displayGridlines', '_rowFreeze', '_columnFreeze', '_rowHeight', '_columnWidth', '_protect']);
+		var d = snapshot.getDataPanelSize(),
+			s = snapshot.getScrollPanelPos();
+		
+		dp.reset(d.width, d.height);
+		sp.reset(s.scrollTop, s.scrollLeft);
+		lp._updateTopPos(snapshot.getLeftPanelPos());
+		tp._updateLeftPos(snapshot.getTopPanelPos());
 	},
 	afterParentChanged_: function () { //all attributes set when afterParentChanged_
 		var self = this,

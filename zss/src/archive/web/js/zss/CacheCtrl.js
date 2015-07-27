@@ -1132,7 +1132,7 @@ zss.CacheCtrl = zk.$extends(zk.Object, {
 	 * Save current sheet status
 	 */
 	snap: function (sheetId) {
-		this.snapshots[sheetId] = new zss.Snapshot(this._wgt);
+		return this.snapshots[sheetId] = new zss.Snapshot(this._wgt);
 	},
 	getSnapshot: function (sheetId) {
 		return this.snapshots[sheetId];

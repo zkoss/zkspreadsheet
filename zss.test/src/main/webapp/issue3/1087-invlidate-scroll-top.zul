@@ -1,0 +1,13 @@
+<vbox hflex="1" vflex="1">
+	<label multiline="true">
+Since 3.8.1
+1. Scroll sheet to row 100 and select A100.
+2. Press "invalidate", the scroll position should retain.
+3. Click the spreadsheet, the focus are still on A100.
+4. If not, it is a bug.
+	</label>
+<button id="invalidate" label="invalidate" onClick="ss.invalidate()"/>
+	<spreadsheet id="ss" src="/issue3/book/blank.xlsx"
+		hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
+		showFormulabar="true" />
+</vbox>

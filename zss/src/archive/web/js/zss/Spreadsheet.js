@@ -1123,6 +1123,14 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 			sheet.fireDisplayGridlines(this.isDisplayGridlines());
 		}
 		
+		//ZSS-1087: restore panel position after invalidate()
+		if (this.desktop._tmpSnaps) {
+			var sheetId = this.getSheetId(),
+				snapshot = this.desktop._tmpSnaps[sheetId];
+			sheet.restorePos_(snapshot);// sheet.restoreSheet(snapshot);
+			if (snapshot) delete this.desktop._tmpSnaps[sheetId];
+		}
+		
 		zWatch.listen({onResponse: this});
 		
 		// ZSS-253: listen global event to modify focus
@@ -1131,6 +1139,13 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 //		jq(document).bind('keyup', this.proxy(this._doPartnerBlur)); // zss still has focus when key down 
 	},
 	unbind_: function () {
+		//ZSS-1087: store the panel position before invalidate()
+		if (this._cacheCtrl) {
+			this.desktop._tmpSnaps = this.desktop._tmpSnaps || {};
+			var sheetId = this.getSheetId();
+			this.desktop._tmpSnaps[sheetId] = this._cacheCtrl.snap(sheetId);
+		}
+		
 		zWatch.unlisten({onResponse: this});
 		
 		this._cacheCtrl = this._maxColumnMap = this._maxRowMap = null;
