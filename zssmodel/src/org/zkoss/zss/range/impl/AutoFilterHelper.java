@@ -18,9 +18,11 @@ package org.zkoss.zss.range.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Set;
 
+import org.zkoss.zk.ui.Executions;
 import org.zkoss.zss.model.CellRegion;
 import org.zkoss.zss.model.InvalidModelOpException;
 import org.zkoss.zss.model.SAutoFilter;
@@ -115,12 +117,12 @@ import org.zkoss.zss.range.impl.DataRegionHelper.FilterRegionHelper;
 				}
 			}
 		}
-		enableAutoFilter0(filter, field, filterOp, criteria1, criteria2, showButton);
+		enableAutoFilter0(table, filter, field, filterOp, criteria1, criteria2, showButton);
 		return filter;
 	}
 	
 	//ZSS-988
-	public void enableAutoFilter0(SAutoFilter filter, final int field, final FilterOp filterOp,
+	private void enableAutoFilter0(STable table, SAutoFilter filter, final int field, final FilterOp filterOp,
 			final Object criteria1, final Object criteria2, final Boolean showButton) {
 		
 		final NFilterColumn fc = filter.getFilterColumn(field-1,true);	
@@ -134,6 +136,8 @@ import org.zkoss.zss.range.impl.DataRegionHelper.FilterRegionHelper;
 		final int row = row1 + 1;
 		final int row2 = affectedArea.getLastRow();
 		final Set cr1 = fc.getCriteria1();
+		//ZSS-1083(refix ZSS-838): Collect affected rows first
+		LinkedHashMap<Integer, Boolean> affectedRows = new LinkedHashMap<Integer, Boolean>(); 
 //		final Set<Ref> all = new HashSet<Ref>();
 		for (int r = row; r <= row2; ++r) {
 			final SCell cell = sheet.getCell(r, col); 
@@ -141,7 +145,9 @@ import org.zkoss.zss.range.impl.DataRegionHelper.FilterRegionHelper;
 			if (cr1 != null && !cr1.isEmpty() && !cr1.contains(val)) { //to be hidden
 				final SRow rowobj = sheet.getRow(r);
 				if (!rowobj.isHidden()) { //a non-hidden row
-					SRanges.range(sheet,r,0).getRows().setHidden(true);
+					//ZSS-1083(refix ZSS-838): Collect affected rows first 
+//					SRanges.range(sheet,r,0).getRows().setHidden(true);
+					affectedRows.put(r, true);
 				}
 			} else { //candidate to be shown (other FieldColumn might still hide this row!
 				final SRow rowobj = sheet.getRow(r);
@@ -149,15 +155,32 @@ import org.zkoss.zss.range.impl.DataRegionHelper.FilterRegionHelper;
 					// ZSS-646: we don't care about the columns at all; use 0.
 //					final int left = sheet.getStartCellIndex(r);
 //					final int right = sheet.getEndCellIndex(r);
-					final SRange rng = SRanges.range(sheet,r,0,r,0);  
+					//ZSS-1083(refix ZSS-838): Collect affected rows first
+//					final SRange rng = SRanges.range(sheet,r,0,r,0);  
 //					all.addAll(rng.getRefs());
-					rng.getRows().setHidden(false); //unhide row
+//					rng.getRows().setHidden(false); //unhide row
+					affectedRows.put(r, false);
 					
 //					rng.notifyChange(); //why? text overflow? ->  //BookHelper.notifyCellChanges(_sheet.getBook(), all); //unhidden row must reevaluate
 				}
 			}
 		}
 		
+		//ZSS-1083(refix ZSS-838): Handle affected rows
+		if (!affectedRows.isEmpty()) {
+			final String key = (table == null ? sheet.getId() : table.getName())+"_ZSS_AFFECTED_ROWS"; 
+			int sz = affectedRows.size();
+			int j  = 0;
+			for (int r : affectedRows.keySet()) {
+				//ZSS-838: flag only the last handled row so 
+				//  Spreadsheet.java#updateAutoFilter can optimize the smartUpdate
+				if (++j == sz) { 
+					Executions.getCurrent().setAttribute("CONTAINS_"+key, true);
+					Executions.getCurrent().setAttribute(key, new Integer(sz));
+				}
+				SRanges.range(sheet,r,0).getRows().setHidden(affectedRows.get(r));
+			}
+		}
 //		BookHelper.notifyCellChanges(_sheet.getBook(), all); //unhidden row must reevaluate
 	}
 	
@@ -320,7 +343,7 @@ import org.zkoss.zss.range.impl.DataRegionHelper.FilterRegionHelper;
 			Object c2 = oldFilterColumn[3];
 			boolean showBtn = (Boolean)oldFilterColumn[4];
 			
-			enableAutoFilter0(newFilter, field,op,c1,c2,showBtn); //ZSS-988
+			enableAutoFilter0(table, newFilter, field,op,c1,c2,showBtn); //ZSS-988
 		}
 	}
 

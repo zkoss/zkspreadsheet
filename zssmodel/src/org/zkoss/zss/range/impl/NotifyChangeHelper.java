@@ -23,6 +23,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.zkoss.util.logging.Log;
+import org.zkoss.zk.ui.Execution;
+import org.zkoss.zk.ui.Executions;
 import org.zkoss.zss.model.*;
 import org.zkoss.zss.model.impl.AbstractBookAdv;
 import org.zkoss.zss.model.impl.CellAttribute;
@@ -51,6 +53,20 @@ public class NotifyChangeHelper{
 	public void notifySheetAutoFilterChange(SSheet sheet, STable table) { //ZSS-988
 		final Map data = new HashMap(2);
 		data.put("TABLE", table); //ZSS-988: carry table information along (could be null)
+		//ZSS-1083(refix ZSS-838): Carry the affecedRowCount to ModelEvent handler
+		//  Spreadsheet.java#updateAutoFilter from AutoFilterHelper.java#enableAutoFilter0
+		//  so Spreadsheet.java#updateAutoFilter can optimize the smartUpdate
+		final Execution exec = Executions.getCurrent();
+		final String key = (table == null ? sheet.getId() : table.getName())+"_ZSS_AFFECTED_ROWS";
+		if (exec != null) {
+			if ((Boolean)exec.getAttribute("CONTAINS_"+key, false) != null) {
+				data.put(key, exec.getAttribute(key, false));
+				exec.setAttribute("CONTAINS_"+key, null, false);
+				exec.setAttribute(key, null, false);
+			} else {
+				data.put(key, 0); // zero means wait...
+			}
+		}
 		((AbstractBookAdv) sheet.getBook())
 				.sendModelEvent(ModelEvents.createModelEvent(
 						ModelEvents.ON_AUTOFILTER_CHANGE, sheet, data));

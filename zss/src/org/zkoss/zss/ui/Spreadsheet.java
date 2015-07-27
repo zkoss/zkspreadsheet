@@ -2014,7 +2014,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	 * Update autofilter buttons.
 	 * @param af the current AutoFilter.
 	 */
-	private void updateAutoFilter(SSheet sheet, STable table) { //ZSS-988
+	private void updateAutoFilter(SSheet sheet, STable table, Integer affectedRowCount) { //ZSS-988
 		if (!getSelectedSSheet().equals(sheet)){
 			releaseClientCache(sheet.getId());
 			return;
@@ -2023,8 +2023,13 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			return;// since it is invalidate, we don't need to do anymore
 		
 		final SAutoFilter filter = table != null ? table.getAutoFilter() : sheet.getAutoFilter();
-		if (filter != null && filter.getRegion().getRowCount() > 500) { //ZSS-838, ZSS-943
-			this.invalidate();
+		//ZSS-1803(refix ZSS-838): check affected row count; see #onAutoFilterChange
+//		if (filter != null && filter.getRegion().getRowCount() > 500) { //ZSS-838, ZSS-943
+//			this.invalidate();
+		if (affectedRowCount != null) {
+			if (affectedRowCount.intValue() > 500) {
+				this.invalidate();
+			} // else if (rowCount.intValue() == 0) // wait...
 		} else { 
 			if (table == null) {
 				smartUpdate("autoFilter", convertAutoFilterToJSON(filter));
@@ -2624,8 +2629,13 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		
 		private void onAutoFilterChange(ModelEvent event) {
 			final SSheet sheet = event.getSheet();
-			
-			updateAutoFilter(sheet, (STable)event.getData("TABLE")); //ZSS-988
+
+			//ZSS-1083(refix ZSS-838): Retrieve affected row count caused by onZSSFilter
+			// see AutoFilterHelper.java#enableAutoFilter0
+			final STable table = (STable)event.getData("TABLE");
+			final String key = (table == null ? sheet.getId() : table.getName())+"_ZSS_AFFECTED_ROWS";
+			final Integer affectedRowCount = (Integer)event.getData(key);
+			updateAutoFilter(sheet, table, affectedRowCount); //ZSS-988
 		}
 		private void onDisplayGridlines(ModelEvent event) {
 			final SSheet sheet = event.getSheet();

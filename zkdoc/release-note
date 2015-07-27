@@ -30,6 +30,7 @@ ZK Spreadsheet 3.8.1
   ZSS-930 Continuously copy and paste merged cell cause selection error
   ZSS-1085 Press left arrow key on a protected sheet and Javascript busy
   ZSS-1086 Firefox only. Formulabar dost not gain focus when click on formula name.
+  ZSS-1083 ZSS scroll back unexpectedly when entering any value under autofilter enabled
   
 ** Upgrade Notes
   * Set org.zkoss.zss.ui.Spreadsheet#setMaxVisibleRows() to zero or leave as default; then

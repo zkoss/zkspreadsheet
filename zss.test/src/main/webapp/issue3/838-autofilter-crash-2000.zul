@@ -1,5 +1,5 @@
 <zk>
-<label multiline="false"><![CDATA[
+<label multiline="true"><![CDATA[
 Since 3.8.0
 1. Click filter button to drop down list of a autofilter, uncheck all, only check "Daniel"
 2. The speed should be reasonable( < 10 seconds); if not, the performance is not acceptable. 
