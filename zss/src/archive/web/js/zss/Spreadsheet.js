@@ -721,7 +721,43 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 		doPasteFromServer: null,
 		colorPickerExUsed: null,
 		//ZSS-1044: Whether keep cell selection box when lost focus
-		keepCellSelection: false
+		keepCellSelection: false,
+		//ZSS-1082: end user be to increase max visible rows/columns
+		/**
+		 * Sets whether show add-max-visible-row button
+		 * @param boolean true if want to show add-max-visible-row button
+		 */
+		/**
+		 * Returns whether show add-max-visible-row button
+		 * @return boolean 
+		 */
+		showAddRow: function (show) {
+			if (this._addRow != show) {
+				this._addRow = show;
+				var w = this._sheetBar;
+				if (w && w.isVisible()) {
+					w.cave.addRowButton.setVisible(show);
+				}
+			}
+		},
+		//ZSS-1082: end user be to increase max visible rows/columns
+		/**
+		 * Sets whether show add-max-visible-column button
+		 * @param boolean true if want to show add-max-visible-column button
+		 */
+		/**
+		 * Returns whether show add-max-visible-column button
+		 * @return boolean 
+		 */
+		showAddColumn: function (show) {
+			if (this._addColumn != show) {
+				this._addColumn = show;
+				var w = this._sheetBar;
+				if (w && w.isVisible()) {
+					w.cave.addColButton.setVisible(show);
+				}
+			}
+		}
 	},
 	// ZSS-390: the selected range should not large than max rows/columns
 	// It will be significant poor performance.
@@ -1050,6 +1086,16 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 	},
 	fireSheetAction: function (action, extra) {
 		var data = {sheetId: this.getSheetId(), tag: 'sheet', action: action};
+		this.fire('onAuxAction', zk.copy(data, extra), {toServer: true});
+	},
+	//ZSS-1082
+	fireRowAction: function (action, extra) {
+		var data = {sheetId: this.getSheetId(), tag: 'row', action: action};
+		this.fire('onAuxAction', zk.copy(data, extra), {toServer: true});
+	},
+	//ZSS-1082
+	fireColAction: function (action, extra) {
+		var data = {sheetId: this.getSheetId(), tag: 'column', action: action};
 		this.fire('onAuxAction', zk.copy(data, extra), {toServer: true});
 	},
 	/**

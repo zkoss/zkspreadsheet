@@ -730,11 +730,25 @@ zss.SheetpanelCave = zk.$extends(zk.Widget, {
 			}),
 			hlayout = this.hlayout = new zul.box.Hlayout({spacing: 0}),
 			sheetSelector = this.sheetSelector = new zss.SheetSelector(wgt, menu),
-			popup = new zss.TabPopup();
+			popup = new zss.TabPopup(),
+			addColBtn = this.addColButton = new zss.Toolbarbutton({ //ZSS-1082
+				$action: 'addCol',
+				tooltiptext: msgzss.action.addCol,
+				image: zk.ajaxURI('/web/zss/img/control-stop-000-small.png', {au: true}),
+				onClick: this.proxy(this.onClickAddCol)
+			}),
+			addRowBtn = this.addRowButton = new zss.Toolbarbutton({ //ZSS-1082
+				$action: 'addRow',
+				tooltiptext: msgzss.action.addRow,
+				image: zk.ajaxURI('/web/zss/img/control-stop-270-small.png', {au: true}),
+				onClick: this.proxy(this.onClickAddRow)
+			});
 		
 		hlayout.appendChild(addSheetBtn);
 		hlayout.appendChild(sheetMenuBtn);
 		hlayout.appendChild(sheetSelector);
+		hlayout.appendChild(addColBtn); //ZSS-1082
+		hlayout.appendChild(addRowBtn); //ZSS-1082
 		hlayout.appendChild(popup);
 		
 		this.appendChild(hlayout);
@@ -743,13 +757,27 @@ zss.SheetpanelCave = zk.$extends(zk.Widget, {
 	setFlexSize_: function(sz, isFlexMin) {
 		var r = this.$supers(zss.SheetpanelCave, 'setFlexSize_', arguments),
 			width = sz.width,
-			btnWidth = 52; //button size, TODO: rm hard-code: jq(this.hlayout.$n().firstChild).width() get wrong value;
+			btnWidth = 26 * 2 + 18 * 2; //ZSS-1082: button size, TODO: rm hard-code: jq(this.hlayout.$n().firstChild).width() get wrong value;
 
 		if (width > btnWidth)
 			this.sheetSelector.setWidth((width - btnWidth) + 'px');
 	},
 	onClickAddSheet: function () {
 		this._wgt.fireSheetAction("add");
+	},
+	//ZSS-1082
+	onClickAddRow: function () {
+		this._wgt.fireRowAction("add");
+	},
+	//ZSS-1082
+	onClickAddCol: function () {
+		this._wgt.fireColAction("add");
+	},
+	//ZSS-1082
+	bind_: function () {
+		this.addColButton.setVisible(this._wgt._addColumn);
+		this.addRowButton.setVisible(this._wgt._addRow);
+		this.$supers(zss.SheetpanelCave, 'bind_', arguments);
 	},
 	redraw: function (out) {
 		var uid = this.uuid;

@@ -284,6 +284,11 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	private boolean _showToolbar;
 	private boolean _showSheetbar;
 	
+	//ZSS-1082
+	private boolean _showAddRow = true;
+	//ZSS-1082
+	private boolean _showAddColumn = true;
+	
 	//TODO undo/redo
 	//StateManager stateManager = new StateManager(this);
 	
@@ -1673,8 +1678,15 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		if (sheetLabels != null) {
 			renderer.render("sheetLabels", sheetLabels);
 		}
-		if (_showSheetbar)
+		if (_showSheetbar) {
 			renderer.render("showSheetbar", _showSheetbar);
+		}
+		if (_showAddRow) { //ZSS-1082
+			renderer.render("showAddRow", _showAddRow);
+		}
+		if (_showAddColumn) { //ZSS-1082
+			renderer.render("showAddColumn", _showAddColumn);
+		}
 		
 		//handle link to new browser tab window; default to link to new tab
 		if (!getLinkToNewTab()) {
@@ -3592,7 +3604,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 				throw new UiException("size must > 0 : " + size);
 			}
 			//ZSS-1084
-			int maxCols = getSheetMaxCols(sheet);
+			int maxCols = getSheetMaxVisibleColumns(sheet);
 			if (col > maxCols) {// not in scope, do nothing,
 				return;
 			}
@@ -3668,7 +3680,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 				throw new UiException("size must > 0 : " + size);
 			}
 			//ZSS-1084
-			int maxRows = getSheetMaxRows(sheet);
+			int maxRows = getSheetMaxVisibleRows(sheet);
 			if (row > maxRows) {// not in scrope, do nothing,
 				return;
 			}
@@ -3731,7 +3743,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 				throw new UiException("column must >= 0 : " + col);
 			}
 			//ZSS-1084
-			int maxCols = getSheetMaxCols(sheet);
+			int maxCols = getSheetMaxVisibleColumns(sheet);
 			if (col >= maxCols) {
 				return;
 			}
@@ -3788,7 +3800,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 				throw new UiException("row must >= 0 : " + row);
 			}
 			//ZSS-1084
-			int maxRows = getSheetMaxRows(sheet); 
+			int maxRows = getSheetMaxVisibleRows(sheet); 
 			if (row >= maxRows) {
 				return;
 			}
@@ -5400,7 +5412,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	 * @since 3.8.1
 	 */
 	public int getCurrentMaxVisibleColumns() {
-		return getSheetMaxCols(getSelectedSSheet());
+		return getSheetMaxVisibleColumns(getSelectedSSheet());
 	}
 
 	//ZSS-1084
@@ -5411,7 +5423,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	 * @since 3.8.1
 	 */
 	public int getCurrentMaxVisibleRows() {
-		return getSheetMaxRows(getSelectedSSheet());
+		return getSheetMaxVisibleRows(getSelectedSSheet());
 	}
 	
 	/**
@@ -5432,17 +5444,8 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 
 		if (_maxColumns != maxcols) {
 			_maxColumns = maxcols;
-//
-//			if (_colFreeze >= _maxColumns) {
-//				_colFreeze = _maxColumns - 1;
-//			}
-			
-			smartUpdate("maxColumns", getCurrentMaxVisibleColumns()); //ZSS-1084
-			// 20140514, RaymondChao: unlock info records until max visible column,
-			// so it needs to update when max visible column changed.
-			if (getSelectedSheet() != null) {
-				updateUnlockInfo();
-			}
+			//ZSS-1082
+			refreshMaxVisibleColumns();
 		}
 	}
 	
@@ -5464,15 +5467,28 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 
 		if (_maxRows != maxrows) {
 			_maxRows = maxrows;
-//			if (_rowFreeze >= _maxRows) {
-//				_rowFreeze = _maxRows - 1;
-//			}
-			smartUpdate("maxRows", getCurrentMaxVisibleRows()); //ZSS-1084
-			// 20141104, henrichen: unlock info records until max visible row,
-			// so it needs to update when max visible row changed.
-			if (getSelectedSheet() != null) {
-				updateUnlockInfo();
-			}
+			//ZSS-1082
+			refreshMaxVisibleRows();
+		}
+	}
+
+	//ZSS-1082
+	private void refreshMaxVisibleColumns() {
+		smartUpdate("maxColumns", getCurrentMaxVisibleColumns()); //ZSS-1084
+		// 20140514, RaymondChao: unlock info records until max visible column,
+		// so it needs to update when max visible column changed.
+		if (getSelectedSheet() != null) {
+			updateUnlockInfo();
+		}
+	}
+	
+	//ZSS-1082
+	private void refreshMaxVisibleRows() {
+		smartUpdate("maxRows", getCurrentMaxVisibleRows()); //ZSS-1084
+		// 20141104, henrichen: unlock info records until max visible row,
+		// so it needs to update when max visible row changed.
+		if (getSelectedSheet() != null) {
+			updateUnlockInfo();
 		}
 	}
 	
@@ -5988,7 +6004,12 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	}
 	
 	//ZSS-1084
-	private int getSheetMaxRows(SSheet sheet) {
+	/**
+	 * Returns the max visible rows of the specified sheet
+	 * @param sheet
+	 * @since 3.8.1
+	 */
+	public int getSheetMaxVisibleRows(SSheet sheet) {
 		if (sheet == null) {
 			return _maxRows > 0 ? _maxRows : DEFAULT_MAX_ROWS;
 		}
@@ -6002,7 +6023,12 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	}
 	
 	//ZSS-1084
-	private int getSheetMaxCols(SSheet sheet) {
+	/**
+	 * Returns the max visible columns of the specified sheet
+	 * @param sheet
+	 * @since 3.8.1
+	 */
+	public int getSheetMaxVisibleColumns(SSheet sheet) {
 		if (sheet == null) {
 			return _maxColumns > 0 ? _maxColumns : DEFAULT_MAX_COLUMNS;
 		}
@@ -6039,5 +6065,107 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			maxRowsCols[0] = DEFAULT_MAX_ROWS;
 			maxRowsCols[1] = DEFAULT_MAX_COLUMNS;
 		}
+	}
+	
+	//ZSS-1082
+	/**
+	 * Sets the max visible rows of the specified sheet
+	 * @param sheet
+	 * @since 3.8.1
+	 */
+	public void setSheetMaxVisibleRows(SSheet sheet, int maxRows) {
+		if (sheet == null) {
+			return;
+		}
+		if (_maxRows > 0) {
+			if (maxRows <= SpreadsheetVersion.EXCEL2007.getLastRowIndex()) {
+				if (_maxRows != maxRows) {
+					_maxRows = maxRows;
+					refreshMaxVisibleRows();
+				}
+			}
+		} else {
+			String sheetId = sheet.getId();
+			int[] maxRowsCols = _sheetMaxRowsCols.get(sheetId);
+			if (maxRowsCols[0] < SpreadsheetVersion.EXCEL2007.getLastRowIndex()) {
+				if (maxRowsCols[0] != maxRows) {
+					maxRowsCols[0] = maxRows;
+					refreshMaxVisibleRows();
+				}
+			}
+		}
+	}
+	
+	//ZSS-1082
+	/**
+	 * Sets the max visibles columns of the specified sheet.
+	 * @param sheet
+	 * @since 3.8.1
+	 */
+	public void setSheetMaxVisibleColumns(SSheet sheet, int maxColumns) {
+		if (sheet == null) {
+			return;
+		}
+		if (_maxColumns > 0) {
+			if (maxColumns <= SpreadsheetVersion.EXCEL2007.getLastRowIndex()) {
+				if (_maxColumns != maxColumns) {
+					_maxColumns = maxColumns;
+					refreshMaxVisibleColumns();
+				}
+			}
+		} else {
+			String sheetId = sheet.getId();
+			int[] maxRowsCols = _sheetMaxRowsCols.get(sheetId);
+			if (maxRowsCols[1] < SpreadsheetVersion.EXCEL2007.getLastColumnIndex()) {
+				if (maxRowsCols[1] != maxColumns) {
+					maxRowsCols[1] = maxColumns;
+					refreshMaxVisibleColumns();
+				}
+			}
+		}
+	}
+	
+	//ZSS-1082
+	/**
+	 * Sets whether show the add row button in sheetbar.
+	 * @param showAddRow true if want to show add row button in sheetbar
+	 * @since 3.8.1
+	 */
+	public void setShowAddRow(boolean showAddRow) {
+		if (_showAddRow != showAddRow) {
+			_showAddRow = showAddRow;
+			smartUpdate("showAddRow", _showAddRow);
+		}
+	}
+	
+	//ZSS-1082
+	/**
+	 * Returns whether show the add row button in sheetbar.
+	 * @since 3.8.1
+	 */
+	public boolean isShowAddRow() {
+		return _showAddRow;
+	}
+
+	//ZSS-1082
+	/**
+	 * Sets whether show the add column button in sheetbar.
+	 * @param showAddColumn true if want to show add column button in sheetbar
+	 * @since 3.8.1
+	 */
+	public void setShowAddColumn(boolean showAddColumn) {
+		if (_showAddColumn != showAddColumn) {
+			_showAddColumn = showAddColumn;
+			smartUpdate("showAddColumn", _showAddColumn);
+		}
+	}
+	
+	//ZSS-1082
+	/**
+	 * Returns whether show the add column button in sheetbar.
+	 * @since 3.8.1
+	 */
+	public boolean isShowAddColumn() {
+		return _showAddColumn;
 	}
 }

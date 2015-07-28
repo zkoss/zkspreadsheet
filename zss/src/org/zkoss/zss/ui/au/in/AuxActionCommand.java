@@ -94,6 +94,36 @@ public class AuxActionCommand extends AbstractCommand implements Command {
 			}
 		}else if ("toolbar".equals(tag)) {
 			sheet = spreadsheet.getSelectedSheet();
+		}else if ("column".equals(tag) && spreadsheet.getSBook() != null) { //ZSS-1082
+			String sheetId = (String) data.get("sheetId");
+			//don't get form spreadsheet, it (should be)is possible doing on non-selected sheet
+			sheet = getSheetByUuid(spreadsheet.getBook(), sheetId);
+			
+			if(sheet==null){
+				//not found, it is possible been deleted.?
+				return;
+			}
+
+			// client's act doesn't follow the Action, so I have to remap it.
+			// TODO make client use correct key directly?
+			if ("add".equals(action)) {
+				action = AuxAction.ADD_COLUMN.getAction();
+			}
+		}else if ("row".equals(tag)) { //ZSS-1082
+			String sheetId = (String) data.get("sheetId");
+			//don't get form spreadsheet, it (should be)is possible doing on non-selected sheet
+			sheet = getSheetByUuid(spreadsheet.getBook(), sheetId);
+			
+			if(sheet==null){
+				//not found, it is possible been deleted.?
+				return;
+			}
+
+			// client's act doesn't follow the Action, so I have to remap it.
+			// TODO make client use correct key directly?
+			if ("add".equals(action)) {
+				action = AuxAction.ADD_ROW.getAction();
+			}
 		}else{
 			throw new UiException(MZk.ILLEGAL_REQUEST_WRONG_DATA, new Object[] {Objects.toString(data), AuxActionCommand.class });
 		}

@@ -54,6 +54,8 @@ import org.zkoss.zss.ui.event.KeyEvent;
 import org.zkoss.zss.ui.impl.ua.AbstractHandler;
 import org.zkoss.zss.ui.impl.ua.AbstractBookHandler;
 import org.zkoss.zss.ui.impl.ua.AbstractCellHandler;
+import org.zkoss.zss.ui.impl.ua.AddColumnHandler;
+import org.zkoss.zss.ui.impl.ua.AddRowHandler;
 import org.zkoss.zss.ui.impl.ua.AddSheetHandler;
 import org.zkoss.zss.ui.impl.ua.ApplyBorderHandler;
 import org.zkoss.zss.ui.impl.ua.BackColorHandler;
@@ -229,6 +231,8 @@ public class DefaultUserActionManagerCtrl implements UserActionManagerCtrl,UserA
 		registerHandler(category, AuxAction.HIDE_ROW.getAction(), new HideHeaderHandler(HideHeaderAction.Type.ROW,true));
 		registerHandler(category, AuxAction.UNHIDE_ROW.getAction(), new HideHeaderHandler(HideHeaderAction.Type.ROW,false));
 		
+		registerHandler(category, AuxAction.ADD_ROW.getAction(), new AddRowHandler()); //ZSS-1082
+		registerHandler(category, AuxAction.ADD_COLUMN.getAction(), new AddColumnHandler()); //ZSS-1082
 		
 		
 		//for enable some menu folder, do nothing

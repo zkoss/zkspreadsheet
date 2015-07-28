@@ -129,7 +129,8 @@ public enum AuxAction {
 	 EDIT_COMMENT("editComment"),
 	 DELETE_COMMENT("deleteComment"),
 	 DATA_VALIDATION("dataValidation"),
-	 
+	 ADD_ROW("addRow"), //ZSS-1082
+	 ADD_COLUMN("addColumn"), //ZSS-1082
 	 
 	 /* following are fold item only, doesn't send auxevent to server*/
 	 VERTICAL_ALIGN("verticalAlign"),

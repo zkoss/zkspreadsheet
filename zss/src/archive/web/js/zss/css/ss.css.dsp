@@ -1597,6 +1597,31 @@
 .zstbtn img {
     width: 16px;
 }
+
+/* ZSS-1082 */
+.zstbtn-addRow {
+    margin:0;
+}
+/* ZSS-1082 */
+.zstbtn-addCol {
+    margin:0;
+}
+/* ZSS-1082 */
+.zstbtn-addRow.z-toolbarbutton {
+    padding: 2px 0px;
+}
+/* ZSS-1082 */
+.zstbtn-addCol.z-toolbarbutton {
+    padding: 2px 0px;
+}
+/* ZSS-1082 */
+.zstbtn-addRow .z-toolbarbutton-content {
+    padding: 2px 0px;
+}
+/* ZSS-1082 */
+.zstbtn-addCol .z-toolbarbutton-content {
+    padding: 2px 0px;
+}
     
 <c:if test="${c:browser('ie6-')}">
 .zstbtn .zstbtn-cave {
