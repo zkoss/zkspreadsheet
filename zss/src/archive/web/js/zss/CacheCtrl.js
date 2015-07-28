@@ -1014,7 +1014,7 @@ zss.Snapshot = zk.$extends(zk.Object, {
 			scrollPanel = sheet.sp,
 			visRng = zss.SSheetCtrl._getVisibleRange(sheet);
 		copyAttributes(this, wgt, 
-			['_scss', '_displayGridlines', '_rowFreeze', '_columnFreeze', '_rowHeight', '_columnWidth', '_protect']);
+			['_scss', '_displayGridlines', '_rowFreeze', '_columnFreeze', '_rowHeight', '_columnWidth', '_protect', '_maxRows', '_maxColumns']);
 		
 		this.setCustRowHeight(sheet.custRowHeight.custom);
 		this.setCustRowLastId(sheet.custRowHeight.ids.last);
@@ -1103,7 +1103,9 @@ zss.Snapshot = zk.$extends(zk.Object, {
 		highlight: null,
 		dataValidations: null,
 		autoFilter: null,
-		tableFilters: null  //ZSS-988
+		tableFilters: null, //ZSS-988
+		maxRows: null, 		//ZSS-1082
+		maxColumns: null 	//ZSS-1082
 	}
 });
 

@@ -527,7 +527,13 @@ zss.SheetSelector = zk.$extends(zul.tab.Tabbox, {
 						af = snapshop.getAutoFilter(),
 						tbafs = snapshop.getTableFilters(), //ZSS-988
 						frow = snapshop.getRowFreeze(),
-						fcol = snapshop.getColumnFreeze();
+						fcol = snapshop.getColumnFreeze(),
+						maxRows = snapshop.getMaxRows(), //ZSS-1082
+						maxColumns = snapshop.getMaxColumns(); //ZSS-1082
+						
+					//ZSS-1082
+					wgt.setMaxRows(maxRows);
+					wgt.setMaxColumns(maxColumns);
 					
 					if (focus && !ignoreStatus) {
 						row = focus.row;
