@@ -3,10 +3,10 @@
 Since 3.8.1
 1. You should see a filter dropdown button on A1.
 2. Press the dropdown and type 1; should see only 11,12,13,14,15,21,31 in the list
-3. Click OK button and you should see only rows in the above list; others are hidden.
-4. Press the dropdown and type 2; should see only 12,21,22,23,24,25,32 in the list; however 22,23,24,25 are not checked.
+3. Click OK button and you should see rows 11,12,13,14,15,21,31.
+4. Press the dropdown and type 2; should see only 12,21,22,23,24,25,32 in the list; however only 12,21 are checked.
 5. Click OK button and you should see only rows 12 and 21.
-6. Press the dropdown and type 3; should see 13,23,31,32,33,34,35 but OK button is disabled because all is not checked.
+6. Press the dropdown and type 3; should see 13,23,31,32,33,34,35 but OK button is disabled because none of item is checked.
 	</label>
 	<spreadsheet id="ss" src="/issue3/book/1050-filter-autofilter.xlsx"
 		hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
