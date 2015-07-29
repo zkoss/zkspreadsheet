@@ -2041,15 +2041,18 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		if (affectedRowCount != null) {
 			if (affectedRowCount.intValue() > 500) {
 				this.invalidate();
-			} // else if (rowCount.intValue() == 0) // wait...
-		} else { 
-			if (table == null) {
-				smartUpdate("autoFilter", convertAutoFilterToJSON(filter));
-			} else {
-				String json = JSONObject.toJSONString(convertATableFilterToJSON(table));
-				//ZSS-988: use response because there might be operations for different tables
-				response(new AuInvoke(this, "setATableFilter", json)); 
+				return;
+			} else if (affectedRowCount.intValue() <= 0) { // wait last affected row
+				return;
 			}
+		}
+		//affectedRowCount == null || affectedRowCount between 1 and 500
+		if (table == null) {
+			smartUpdate("autoFilter", convertAutoFilterToJSON(filter));
+		} else {
+			String json = JSONObject.toJSONString(convertATableFilterToJSON(table));
+			//ZSS-988: use response because there might be operations for different tables
+			response(new AuInvoke(this, "setATableFilter", json)); 
 		}
 	}
 

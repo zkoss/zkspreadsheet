@@ -22,6 +22,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Set;
 
+import org.zkoss.lang.Integers;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zss.model.CellRegion;
 import org.zkoss.zss.model.InvalidModelOpException;
@@ -169,14 +170,16 @@ import org.zkoss.zss.range.impl.DataRegionHelper.FilterRegionHelper;
 		//ZSS-1083(refix ZSS-838): Handle affected rows
 		if (!affectedRows.isEmpty()) {
 			final String key = (table == null ? sheet.getId() : table.getName())+"_ZSS_AFFECTED_ROWS"; 
+			Executions.getCurrent().setAttribute("CONTAINS_"+key, true);
 			int sz = affectedRows.size();
 			int j  = 0;
 			for (int r : affectedRows.keySet()) {
 				//ZSS-838: flag only the last handled row so 
 				//  Spreadsheet.java#updateAutoFilter can optimize the smartUpdate
 				if (++j == sz) { 
-					Executions.getCurrent().setAttribute("CONTAINS_"+key, true);
 					Executions.getCurrent().setAttribute(key, new Integer(sz));
+				} else { // wait for last affected row
+					Executions.getCurrent().setAttribute(key, Integers.ZERO);
 				}
 				SRanges.range(sheet,r,0).getRows().setHidden(affectedRows.get(r));
 			}

@@ -60,11 +60,12 @@ public class NotifyChangeHelper{
 		final String key = (table == null ? sheet.getId() : table.getName())+"_ZSS_AFFECTED_ROWS";
 		if (exec != null) {
 			if ((Boolean)exec.getAttribute("CONTAINS_"+key, false) != null) {
-				data.put(key, exec.getAttribute(key, false));
-				exec.setAttribute("CONTAINS_"+key, null, false);
-				exec.setAttribute(key, null, false);
-			} else {
-				data.put(key, 0); // zero means wait...
+				Integer affectedRows = (Integer) exec.getAttribute(key, false);
+				data.put(key, affectedRows);
+				if (affectedRows.intValue() > 0) { // is last affected row; so clear
+					exec.setAttribute("CONTAINS_"+key, null, false);
+					exec.setAttribute(key, null, false);
+				}
 			}
 		}
 		((AbstractBookAdv) sheet.getBook())
