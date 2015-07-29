@@ -6,6 +6,7 @@ ZK Spreadsheet 3.8.1
   ZSS-1044 Keep selection box visible even when spreadsheet losing focus
   ZSS-1084 Can initialize max row and column automatically by detecting file content
   ZSS-1082 Users can increase max visible rows
+  ZSS-1050 Filter by searching for AutoFilter
   
 *Bugs:
   ZSS-1020 Rotation info should be included into exported excel file
