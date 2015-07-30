@@ -382,8 +382,9 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	private FreezeInfoLoader _freezeInfoLoader = null;
 	
 	//ZSS-1044: Whether keep the cell selection when this component lost focus;
-	// default to false.
-	private boolean _keepCellSelection = false;
+	// default to true.
+	private boolean _keepCellSelection = 
+		!"false".equalsIgnoreCase(Library.getProperty("org.zkoss.zss.ui.keepCellSelection", "true"));
 	
 	public Spreadsheet() {
 		this.addEventListener("onStartEditingImpl", new EventListener() {
