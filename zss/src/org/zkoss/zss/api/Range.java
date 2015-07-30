@@ -900,6 +900,14 @@ public interface Range {
 
 	/**
 	 * Add if not exist or modify an existing {@link Validation} to this range.
+	 * 
+	 * There are two ways to input list items for data validation in argument
+	 * "formula1" and "formula2". One is to specify a range via a formula such 
+	 * as "=A1:A4" where the values in the cells of the range is the constrained 
+	 * value list; another is to input literally the constrained value list
+	 * delimited by comma such as "1, 2, 3, 4". Note that when you input a
+	 * formula, must lead the formula with an equal sign('='). 
+	 *  
 	 * @param validationType the type of this validation  
 	 * @param ignoreBlank true if blank values are permitted. 
 	 * @param operatorType the operator for this validation
