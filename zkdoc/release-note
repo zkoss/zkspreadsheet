@@ -36,6 +36,7 @@ ZK Spreadsheet 3.8.1
   ZSS-1087 invalidate() make sheet scroll back to top
   ZSS-1089 ZSS doesn't apply searching result when the filter is applied
   ZSS-1092 option (Select All) in autofilter dialog is not correctly shown
+  ZSS-1090 External book reference failed
   
 ** Upgrade Notes
   * Set org.zkoss.zss.ui.Spreadsheet#setMaxVisibleRows() to zero or leave as default; then
