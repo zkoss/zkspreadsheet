@@ -1,0 +1,14 @@
+<vbox hflex="1" vflex="1">
+	<label multiline="true">
+Since 3.8.1
+1. You should see a filter dropdown button on A1.
+2. Press the dropdown and type a; should see only a in the list.
+3. Click OK button and you should see row 3 and 4 is hidden.
+4. Press the dropdown and should see only option a is checked and (Select All) is semi-checked(small squre in checkbox)
+5. Uncheck option a and you should se the (Select All) unchecked accordingly.
+6. If not, it is a bug.
+	</label>
+	<spreadsheet id="ss" src="/issue3/book/1092-autofilter-select-all.xlsx"
+		hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
+		showFormulabar="true" />
+</vbox>
