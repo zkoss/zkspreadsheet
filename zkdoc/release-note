@@ -38,6 +38,7 @@ ZK Spreadsheet 3.8.1
   ZSS-1092 option (Select All) in autofilter dialog is not correctly shown
   ZSS-1090 External book reference failed
   ZSS-1093 ClassNotFoundException when loading zssjsf
+  ZSS-1091 Support customized header and footer
   
 ** Upgrade Notes
   * Set org.zkoss.zss.ui.Spreadsheet#setMaxVisibleRows() to zero or leave as default; then
