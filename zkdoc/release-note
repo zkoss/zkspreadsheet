@@ -34,6 +34,7 @@ ZK Spreadsheet 3.8.1
   ZSS-1086 Firefox only. Formulabar dost not gain focus when click on formula name.
   ZSS-1083 ZSS scroll back unexpectedly when entering any value under autofilter enabled
   ZSS-1087 invalidate() make sheet scroll back to top
+  ZSS-1089 ZSS doesn't apply searching result when the filter is applied
   
 ** Upgrade Notes
   * Set org.zkoss.zss.ui.Spreadsheet#setMaxVisibleRows() to zero or leave as default; then
