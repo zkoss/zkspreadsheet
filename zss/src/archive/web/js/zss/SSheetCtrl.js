@@ -325,6 +325,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 	},
 	//ZSS-1087: restore panel postion 
 	restorePos_: function (snapshot) {
+		if (!snapshot) return; //ZSS-1095
 		if (this.bindLevel < 0) {//this method shall invoke after bind
 			return;
 		}

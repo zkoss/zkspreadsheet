@@ -39,6 +39,7 @@ ZK Spreadsheet 3.8.1
   ZSS-1090 External book reference failed
   ZSS-1093 ClassNotFoundException when loading zssjsf
   ZSS-1091 Support customized header and footer
+  ZSS-1095 Create new book causes js error
   
 ** Upgrade Notes
   * Set org.zkoss.zss.ui.Spreadsheet#setMaxVisibleRows() to zero or leave as default; then
