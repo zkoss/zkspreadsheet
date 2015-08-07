@@ -504,14 +504,15 @@ zss.DataPanel = zk.$extends(zk.Object, {
 	* @param {boolean} selection move selection to focus cell, (the selection will change)
 	* @param {boolean} noevt don't send onCellFocus Event to server side
 	* @param {boolean} noslevt don't send onCellSelection Event to server side
+	* @param {boolean} forceStopEditing force stop editing mode
 	*/
-	moveFocus: function(row, col, scroll, selection, noevt, noslevt) {
+	moveFocus: function(row, col, scroll, selection, noevt, noslevt, forceStopEditing) { //ZSS-1098
 		var sheet = this.sheet,
 			lastFocus = sheet.getLastFocus();
 
 		if (sheet && !sheet.editingFormulaInfo) {
 			// ZSS-370: don't stop editing if target position is same as current focus cell 
-			if(lastFocus.row != row || lastFocus.column != col) {
+			if(lastFocus.row != row || lastFocus.column != col || forceStopEditing) { //ZSS-1098
 				this.stopEditing("refocus");
 			}
 		} else { //when editing formula, always set focus back to editor
@@ -722,7 +723,7 @@ zss.DataPanel = zk.$extends(zk.Object, {
 				newrow = custRowHeight.getIncUnhidden(prevrow, row); //search downward
 			row = newrow;
 		}
-		this.moveFocus(row, col, true, true);
+		this.moveFocus(row, col, true, true, null, null, true); //ZSS-1098
 	},
 	/**
 	 * Move page down
@@ -766,7 +767,7 @@ zss.DataPanel = zk.$extends(zk.Object, {
 				newrow = custRowHeight.getDecUnhidden(nextrow, row); //search upward
 			row = newrow;
 		}
-		this.moveFocus(row, col, true, true);
+		this.moveFocus(row, col, true, true, null, null, true); //ZSS-1098
 	},
 	/**
 	 * Move to the end column
@@ -796,7 +797,7 @@ zss.DataPanel = zk.$extends(zk.Object, {
 			col = newpos.col;
 		}
 
-		this.moveFocus(row, col, true, true);
+		this.moveFocus(row, col, true, true, null, null, true); //ZSS-1098
 	},
 	/**
 	 * Move to the first column 
@@ -825,7 +826,7 @@ zss.DataPanel = zk.$extends(zk.Object, {
 			row = newpos.row;
 			col = newpos.col;
 		}
-		this.moveFocus(row, col, true, true);
+		this.moveFocus(row, col, true, true, null, null, true); //ZSS-1098
 	},
 	/**
 	 * Move up
@@ -867,7 +868,7 @@ zss.DataPanel = zk.$extends(zk.Object, {
 			col = newpos.col;
 		}
 		
-		this.moveFocus(row, col, true, true);
+		this.moveFocus(row, col, true, true, null, null, true); //ZSS-1098
 	},
 	/**
 	 * Move down
@@ -916,7 +917,7 @@ zss.DataPanel = zk.$extends(zk.Object, {
 			col = newpos.col;
 		}
 
-		this.moveFocus(row, col, true, true);
+		this.moveFocus(row, col, true, true, null, null, true); //ZSS-1098
 	},
 	/**
 	 * Move to the left column
@@ -956,7 +957,7 @@ zss.DataPanel = zk.$extends(zk.Object, {
 			row = newpos.row;
 			col = newpos.col;
 		}
-		this.moveFocus(row, col, true, true);
+		this.moveFocus(row, col, true, true, null, null, true); //ZSS-1098
 	},
 	/**
 	 * Move to the right column 
@@ -1004,7 +1005,7 @@ zss.DataPanel = zk.$extends(zk.Object, {
 			row = newpos.row;
 			col = newpos.col;
 		}
-		this.moveFocus(row, col, true, true);
+		this.moveFocus(row, col, true, true, null, null, true); //ZSS-1098
 	},
 	// Get the unlock and unhidden cell's position when in sheet protection
 	_getShiftPos: function(row, col, key) {
