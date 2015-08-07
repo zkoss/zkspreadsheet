@@ -12,6 +12,8 @@
 
 package org.zkoss.zss.model.impl;
 
+import java.io.Serializable;
+
 import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.SBorder;
 import org.zkoss.zss.model.SCellStyle;
@@ -26,7 +28,8 @@ import org.zkoss.zss.model.SFill.FillPattern;
  * @author henri
  * @since 3.7.0
  */
-public class NamedStyleImpl implements SNamedStyle {
+public class NamedStyleImpl implements SNamedStyle, Serializable {
+	private static final long serialVersionUID = -3301182398902275997L;
 	final private String name;
 	final private boolean custom;
 	final private int index;

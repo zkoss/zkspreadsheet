@@ -26,6 +26,7 @@ import org.zkoss.zss.ui.UserActionContext;
  * @since 3.6.0
  */
 public class CopySheetHandler extends AbstractBookHandler{
+	private static final long serialVersionUID = 7305083772423271908L;
 
 	@Override
 	protected boolean processAction(UserActionContext ctx) {

@@ -33,6 +33,7 @@ import org.zkoss.zss.ui.sys.UndoableActionManager;
  *
  */
 public class FillColorHandler extends AbstractCellHandler {
+	private static final long serialVersionUID = -8183364171723692198L;
 
 	@Override
 	protected boolean processAction(UserActionContext ctx) {

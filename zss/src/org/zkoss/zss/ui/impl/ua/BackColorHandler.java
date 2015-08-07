@@ -34,6 +34,7 @@ import org.zkoss.zss.ui.sys.UndoableActionManager;
  * @since 3.7.0
  */
 public class BackColorHandler extends AbstractCellHandler {
+	private static final long serialVersionUID = 7657041154984979049L;
 
 	@Override
 	protected boolean processAction(UserActionContext ctx) {

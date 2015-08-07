@@ -29,6 +29,7 @@ import org.zkoss.zss.ui.impl.undo.PasteCellAction;
 import org.zkoss.zss.ui.sys.UndoableActionManager;
 
 public class PasteHandler extends AbstractHandler {
+	private static final long serialVersionUID = -6262315007795949652L;
 
 	@Override
 	protected boolean processAction(UserActionContext ctx) {

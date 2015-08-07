@@ -18,12 +18,14 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.ui;
 
+import java.io.Serializable;
+
 
 /**
  * A widget, like a embedded object of spreadsheet, for example a image, a chart or a dropdown 
  * @author Dennis.Chen
  */
-public interface Widget {
+public interface Widget extends Serializable {
 
 	/**
 	 * is this widget should attach to a cell, 

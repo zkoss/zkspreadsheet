@@ -16,6 +16,8 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.ui.impl.ua;
 
+import java.io.Serializable;
+
 import org.zkoss.lang.Strings;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zss.api.CellOperationUtil;
@@ -35,7 +37,7 @@ import org.zkoss.zss.ui.sys.UndoableActionManager;
  *
  */
 public class ApplyBorderHandler extends AbstractCellHandler {
-
+	private static final long serialVersionUID = 8882420154583823676L;
 	private final ApplyBorderType _applyType;
 	private final BorderType _borderType;
 	public ApplyBorderHandler(ApplyBorderType applyType, BorderType borderType) {

@@ -16,6 +16,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.ui.sys;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
@@ -26,7 +27,7 @@ import org.zkoss.zss.api.model.Sheet;
  * @author dennis
  * @since 3.0.0
  */
-public interface DataValidationHandler {
+public interface DataValidationHandler extends Serializable {
 	
 	public List<Map<String, Object>> loadDataValidtionJASON(Sheet sheet);
 	

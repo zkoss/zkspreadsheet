@@ -35,6 +35,7 @@ import org.zkoss.zss.ui.sys.UndoableActionManager;
  * 
  */
 public class ClearCellHandler extends AbstractHandler {
+	private static final long serialVersionUID = -3759122452949257087L;
 	ClearCellAction.Type _type;
 
 	public ClearCellHandler(Type type) {

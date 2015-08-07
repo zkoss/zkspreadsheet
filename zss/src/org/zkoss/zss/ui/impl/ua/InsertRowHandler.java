@@ -35,6 +35,7 @@ import org.zkoss.zss.ui.sys.UndoableActionManager;
  *
  */
 public class InsertRowHandler extends AbstractHandler {
+	private static final long serialVersionUID = -9104949440019029413L;
 
 	/* (non-Javadoc)
 	 * @see org.zkoss.zss.ui.sys.ua.impl.AbstractHandler#processAction(org.zkoss.zss.ui.UserActionContext)

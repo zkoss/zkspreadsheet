@@ -1,6 +1,7 @@
 package org.zkoss.zss.app.repository.impl;
 
 import java.io.IOException;
+import java.io.Serializable;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -11,8 +12,8 @@ import org.zkoss.zss.app.BookManager;
 import org.zkoss.zss.app.impl.BookManagerImpl;
 import org.zkoss.zss.app.repository.BookRepositoryFactory;
 
-public class ServletContextListenerImpl implements ServletContextListener {
-	
+public class ServletContextListenerImpl implements ServletContextListener, Serializable {
+	private static final long serialVersionUID = 7123078891875657326L;
 	private static final Log logger = Log.lookup(ServletContextListenerImpl.class.getName());
 
 	@Override

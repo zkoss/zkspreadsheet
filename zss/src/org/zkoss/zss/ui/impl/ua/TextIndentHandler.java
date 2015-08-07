@@ -33,7 +33,7 @@ import org.zkoss.zss.ui.sys.UndoableActionManager;
  *
  */
 public class TextIndentHandler extends AbstractCellHandler {
-
+	private static final long serialVersionUID = -2346819389887059442L;
 	private int offset;
 	
 	

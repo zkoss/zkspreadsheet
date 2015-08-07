@@ -78,6 +78,7 @@ import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.WebApp;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
+import org.zkoss.zk.ui.event.SerializableEventListener;
 import org.zkoss.zk.ui.ext.AfterCompose;
 import org.zkoss.zk.ui.ext.render.DynamicMedia;
 import org.zkoss.zk.ui.sys.ContentRenderer;
@@ -387,14 +388,16 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		!"false".equalsIgnoreCase(Library.getProperty("org.zkoss.zss.ui.keepCellSelection", "true"));
 	
 	public Spreadsheet() {
-		this.addEventListener("onStartEditingImpl", new EventListener() {
+		this.addEventListener("onStartEditingImpl", new SerializableEventListener() {
+			private static final long serialVersionUID = 2401696322103957589L;
 			public void onEvent(Event event) throws Exception {
 				Object[] data = (Object[]) event.getData();
 				processStartEditing((String) data[0],
 						(StartEditingEvent) data[1], (String) data[2]);
 			}
 		});
-		this.addEventListener("onStopEditingImpl", new EventListener() {
+		this.addEventListener("onStopEditingImpl", new SerializableEventListener() {
+			private static final long serialVersionUID = 2412586322103952998L;
 			public void onEvent(Event event) throws Exception {
 
 				Object[] data = (Object[]) event.getData();
@@ -402,7 +405,8 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			}
 		});
 		//ZSS-816
-		this.addEventListener(_ON_PROCESS_DEFER_OPERATIONS,  new EventListener() {
+		this.addEventListener(_ON_PROCESS_DEFER_OPERATIONS,  new SerializableEventListener() {
+			private static final long serialVersionUID = 2401758232103952998L;
 			public void onEvent(Event event) throws Exception {
 				
 				Map<String, DeferOperation> map = (Map<String, DeferOperation>) event.getData();
@@ -439,7 +443,8 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		UserActionManagerCtrl ua = this.getUserActionManagerCtrl();
 		_lastUAEvents = ua.getInterestedEvents();
 		if(_lastUAEvents!=null && _lastUAEvents.size()>0){
-			_uAEventDispatcher = new EventListener() {
+			_uAEventDispatcher = new SerializableEventListener() {
+				private static final long serialVersionUID = 2401696159873652998L;
 				public void onEvent(Event event) throws Exception {
 					UserActionManagerCtrl ua = getUserActionManagerCtrl();
 					if(ua instanceof EventListener){
@@ -803,7 +808,8 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			//20130523, dennis, if share-scope is not empty, then should always sync the  focus, not only application and session
 			//TODO use a configuration to config this.
 			if (!Strings.isEmpty(_book.getShareScope())) { //have to sync focus
-				this.addEventListener(Events.ON_CELL_FOUCS, _focusListener = new EventListener() {
+				this.addEventListener(Events.ON_CELL_FOUCS, _focusListener = new SerializableEventListener() {
+					private static final long serialVersionUID = 2716358947569822998L;
 					@Override
 					public void onEvent(Event event) throws Exception {
 						doMoveSelfFocus((CellEvent) event);

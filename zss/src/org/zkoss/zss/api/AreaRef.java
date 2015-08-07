@@ -18,6 +18,8 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.api;
 
+import java.io.Serializable;
+
 
 /**
  * A class that represents an area reference with 4 value : 
@@ -26,8 +28,8 @@ package org.zkoss.zss.api;
  * @author Dennis.Chen
  * @since 3.0.0
  */
-public class AreaRef {
-
+public class AreaRef implements Serializable {
+	private static final long serialVersionUID = 8864825038504082277L;
 	protected int _column = -1;
 	protected int _row = -1;
 	protected int _lastColumn = -1;

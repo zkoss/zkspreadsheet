@@ -207,14 +207,18 @@ public class AppCtrl extends CtrlBase<Component>{
 		});
 		
 		
-		ss.addEventListener(Events.ON_SHEET_SELECT, new EventListener<Event>() {
+		ss.addEventListener(Events.ON_SHEET_SELECT, new SerializableEventListener<Event>() {
+			private static final long serialVersionUID = -6317703235308792786L;
+
 			@Override
 			public void onEvent(Event event) throws Exception {
 				onSheetSelect();
 			}
 		});
 		
-		ss.addEventListener(Events.ON_AFTER_UNDOABLE_MANAGER_ACTION, new EventListener<Event>() {
+		ss.addEventListener(Events.ON_AFTER_UNDOABLE_MANAGER_ACTION, new SerializableEventListener<Event>() {
+			private static final long serialVersionUID = -2428002022759075909L;
+
 			@Override
 			public void onEvent(Event event) throws Exception {
 				onAfterUndoableManagerAction();
@@ -222,7 +226,9 @@ public class AppCtrl extends CtrlBase<Component>{
 		});
 		
 		//ZSS-998
-		ss.addEventListener(Events.ON_SYNC_FRIEND_FOCUS, new EventListener<Event>() {
+		ss.addEventListener(Events.ON_SYNC_FRIEND_FOCUS, new SerializableEventListener<Event>() {
+			private static final long serialVersionUID = 1870486146113521339L;
+
 			@Override
 			public void onEvent(Event event) throws Exception {
 				final SyncFriendFocusEvent fe = (SyncFriendFocusEvent) event;
@@ -232,7 +238,9 @@ public class AppCtrl extends CtrlBase<Component>{
 		
 		if(!DISABLE_BOOKMARK) {
 			this.getPage().addEventListener(org.zkoss.zk.ui.event.Events.ON_BOOKMARK_CHANGE,
-		         new EventListener<BookmarkEvent>() {
+		         new SerializableEventListener<BookmarkEvent>() {
+					private static final long serialVersionUID = 5699364737927805458L;
+
 					@Override
 					public void onEvent(BookmarkEvent event) throws Exception {
 						String bookmark = null;
@@ -335,7 +343,9 @@ public class AppCtrl extends CtrlBase<Component>{
 			name = BookUtil.appendExtension(name, loadedBook);
 			name = BookUtil.suggestFileName(name, loadedBook, BookRepositoryFactory.getInstance().getRepository());
 			
-			SaveBookAsCtrl.show(new EventListener<DlgCallbackEvent>(){
+			SaveBookAsCtrl.show(new SerializableEventListener<DlgCallbackEvent>(){
+				private static final long serialVersionUID = 5953139810992856892L;
+
 				public void onEvent(DlgCallbackEvent event) throws Exception {
 					if(SaveBookAsCtrl.ON_SAVE.equals(event.getName())){
 						
@@ -374,7 +384,9 @@ public class AppCtrl extends CtrlBase<Component>{
 	
 	private void setupUsername(final boolean forceAskUser, String message) {
 		if (forceAskUser) {
-			UsernameCtrl.show(new EventListener<DlgCallbackEvent>(){
+			UsernameCtrl.show(new SerializableEventListener<DlgCallbackEvent>(){
+				private static final long serialVersionUID = -6819708673820196683L;
+
 				public void onEvent(DlgCallbackEvent event) throws Exception {
 					if(UsernameCtrl.ON_USERNAME_CHANGE.equals(event.getName())){
 						String name = (String)event.getData(UsernameCtrl.ARG_NAME);
@@ -450,7 +462,9 @@ public class AppCtrl extends CtrlBase<Component>{
 	}
 	
 	private void doImportBook0(){
-		Fileupload.get(1,new EventListener<UploadEvent>() {
+		Fileupload.get(1,new SerializableEventListener<UploadEvent>() {
+			private static final long serialVersionUID = -8173538106339815887L;
+
 			public void onEvent(UploadEvent event) throws Exception {
 				Importer importer = Importers.getImporter();
 				Media[] medias = event.getMedias();
@@ -564,7 +578,10 @@ public class AppCtrl extends CtrlBase<Component>{
 			return;
 		
 		Messagebox.show(UNSAVED_MESSAGE, "ZK Spreadsheet", 
-				Messagebox.OK + Messagebox.CANCEL, Messagebox.INFORMATION, new EventListener<Event>() {
+				Messagebox.OK + Messagebox.CANCEL, Messagebox.INFORMATION, 
+				new SerializableEventListener<Event>() {
+			private static final long serialVersionUID = -7373178956047605810L;
+
 			@Override
 			public void onEvent(Event event) throws Exception {
 				if(event.getData().equals(Messagebox.OK)) {
@@ -666,7 +683,9 @@ public class AppCtrl extends CtrlBase<Component>{
 		name = BookUtil.appendExtension(name, loadedBook);
 		name = BookUtil.suggestFileName(name, loadedBook, BookRepositoryFactory.getInstance().getRepository());
 		
-		SaveBookAsCtrl.show(new EventListener<DlgCallbackEvent>(){
+		SaveBookAsCtrl.show(new SerializableEventListener<DlgCallbackEvent>(){
+			private static final long serialVersionUID = 3378482725465871522L;
+
 			public void onEvent(DlgCallbackEvent event) throws Exception {
 				if(SaveBookAsCtrl.ON_SAVE.equals(event.getName())){
 					
@@ -835,7 +854,9 @@ public class AppCtrl extends CtrlBase<Component>{
 	}
 	
 	private void doOpenManageBook0() {
-		OpenManageBookCtrl.show(new EventListener<DlgCallbackEvent>(){
+		OpenManageBookCtrl.show(new SerializableEventListener<DlgCallbackEvent>(){
+			private static final long serialVersionUID = 7753635062865984294L;
+
 			public void onEvent(DlgCallbackEvent event) throws Exception {
 				if(OpenManageBookCtrl.ON_OPEN.equals(event.getName())){					
 					BookInfo info = (BookInfo)event.getData(OpenManageBookCtrl.ARG_BOOKINFO);
@@ -962,7 +983,9 @@ public class AppCtrl extends CtrlBase<Component>{
 	}
 	
 	private void doInsertPicture() {
-		Fileupload.get(1,new EventListener<UploadEvent>() {
+		Fileupload.get(1,new SerializableEventListener<UploadEvent>() {
+			private static final long serialVersionUID = -3555918387396107106L;
+
 			public void onEvent(UploadEvent event) throws Exception {
 				Media media = event.getMedia();
 				if(media == null){
@@ -1029,7 +1052,9 @@ public class AppCtrl extends CtrlBase<Component>{
 		Hyperlink link = range.getCellHyperlink();
 		String display = link == null ? range.getCellFormatText():link.getLabel();
 		String address = link == null ? null:link.getAddress();
-		HyperlinkCtrl.show(new EventListener<DlgCallbackEvent>(){
+		HyperlinkCtrl.show(new SerializableEventListener<DlgCallbackEvent>(){
+			private static final long serialVersionUID = -2571984995170497501L;
+
 			public void onEvent(DlgCallbackEvent event) throws Exception {
 				if(HyperlinkCtrl.ON_OK.equals(event.getName())){
 					final String address = (String) event.getData(HyperlinkCtrl.ARG_ADDRESS);

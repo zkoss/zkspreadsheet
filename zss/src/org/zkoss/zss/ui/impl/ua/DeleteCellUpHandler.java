@@ -32,6 +32,7 @@ import org.zkoss.zss.ui.sys.UndoableActionManager;
  *
  */
 public class DeleteCellUpHandler extends AbstractProtectedHandler {
+	private static final long serialVersionUID = -2479991678367164843L;
 
 	/* (non-Javadoc)
 	 * @see org.zkoss.zss.ui.sys.ua.impl.AbstractHandler#processAction(org.zkoss.zss.ui.UserActionContext)

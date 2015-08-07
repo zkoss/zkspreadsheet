@@ -24,6 +24,7 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.EventQueue;
 import org.zkoss.zk.ui.event.EventQueues;
+import org.zkoss.zk.ui.event.SerializableEventListener;
 import org.zkoss.zss.model.ModelEvent;
 import org.zkoss.zss.model.ModelEventListener;
 /**
@@ -93,7 +94,8 @@ public class EventQueueListenerAdaptor implements EventListenerAdaptor,Serializa
 	}
 
 	
-	static class WrappedListener implements EventListener<Event>{
+	static class WrappedListener implements SerializableEventListener<Event>{
+		private static final long serialVersionUID = 1874923168106607228L;
 		ModelEventListener listener;
 		public WrappedListener(ModelEventListener l){
 			this.listener = l;

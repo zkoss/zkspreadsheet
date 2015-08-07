@@ -1,0 +1,32 @@
+<vbox hflex="1" vflex="1">
+	<label multiline="true">
+Since 3.8.1
+1. Press "Serialize" button, and you should NOT see any exception.
+2. If there is any exception, it is a bug.
+	</label>
+<button id="serialize" label="Serialize" onClick="serialize()"/>
+	<spreadsheet id="ss" src="/issue3/book/1094_serialize_demo_sample.xlsx" maxVisibleRows="60" maxVisibleColumns="40"
+		hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
+		showFormulabar="true" />
+		<zscript><![CDATA[
+		    import java.io.*;
+		    void serialize() throws IOException {
+		    	ByteArrayOutputStream os = new ByteArrayOutputStream();
+		    	ObjectOutputStream oos = new ObjectOutputStream(os);
+		    	try {
+		    	 oos.writeObject(ss);
+		    	} finally  {
+		    		oos.close();
+		    	}
+		    	ByteArrayInputStream is = new ByteArrayInputStream(os.toByteArray());
+		    	ObjectInputStream ois = new ObjectInputStream(is);
+		    	try {
+		    	 Spreadsheet ss0 = ois.readObject();
+		    	} finally {
+		    		ois.close();
+		    	}
+		    	alert("Serialize OK");
+		    }
+		]]>
+		</zscript>	
+</vbox>

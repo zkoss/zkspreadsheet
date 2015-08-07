@@ -39,6 +39,7 @@ import org.zkoss.zss.ui.sys.UndoableActionManager;
  *
  */
 public class FontUnderlineHandler extends AbstractCellHandler {
+	private static final long serialVersionUID = -302013632510273391L;
 
 	@Override
 	protected boolean processAction(UserActionContext ctx) {

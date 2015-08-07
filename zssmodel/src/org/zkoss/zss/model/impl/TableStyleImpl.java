@@ -12,6 +12,8 @@
 
 package org.zkoss.zss.model.impl;
 
+import java.io.Serializable;
+
 import org.zkoss.zss.model.STableStyle;
 import org.zkoss.zss.model.STableStyleElem;
 
@@ -19,7 +21,8 @@ import org.zkoss.zss.model.STableStyleElem;
  * @author henri
  * @since 3.8.0
  */
-public class TableStyleImpl implements STableStyle {
+public class TableStyleImpl implements STableStyle, Serializable {
+	private static final long serialVersionUID = 1378512655196539803L;
 	private final String name;
 	private final STableStyleElem wholeTable;
 	private final STableStyleElem colStripe1;

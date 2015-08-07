@@ -24,6 +24,7 @@ import org.zkoss.zss.api.model.Sheet;
  * @since 3.0.0
  */
 public abstract class AbstractBookHandler extends AbstractHandler{
+	private static final long serialVersionUID = -8867851919327890720L;
 
 	@Override
 	public boolean isEnabled(Book book, Sheet sheet) {

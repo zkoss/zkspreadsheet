@@ -24,6 +24,7 @@ import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.ui.sys.DataValidationHandler;
 
 public class DummyDataValidationHandler implements DataValidationHandler {
+	private static final long serialVersionUID = -5474895962009092256L;
 
 	@Override
 	public List<Map<String, Object>> loadDataValidtionJASON(Sheet sheet) {

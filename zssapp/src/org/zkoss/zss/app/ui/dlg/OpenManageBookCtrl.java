@@ -27,6 +27,7 @@ import org.zkoss.util.media.Media;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
+import org.zkoss.zk.ui.event.SerializableEventListener;
 import org.zkoss.zk.ui.event.UploadEvent;
 import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
@@ -156,7 +157,9 @@ public class OpenManageBookCtrl extends DlgCtrlBase{
 			}
 				
 			Messagebox.show("want to delete file \"" + bookName + "\" ?", "ZK Spreadsheet", 
-					Messagebox.OK + Messagebox.CANCEL, Messagebox.INFORMATION, new EventListener<Event>() {
+					Messagebox.OK + Messagebox.CANCEL, Messagebox.INFORMATION, new SerializableEventListener<Event>() {
+				private static final long serialVersionUID = 4698610847862970542L;
+
 				@Override
 				public void onEvent(Event event) throws Exception {
 					if(event.getData().equals(Messagebox.OK)) {
@@ -178,7 +181,9 @@ public class OpenManageBookCtrl extends DlgCtrlBase{
 		if(UiUtil.isRepositoryReadonly()){
 			return;
 		}
-		Fileupload.get(5,new EventListener<UploadEvent>() {
+		Fileupload.get(5,new SerializableEventListener<UploadEvent>() {
+			private static final long serialVersionUID = -7772499154678293597L;
+
 			public void onEvent(UploadEvent event) throws Exception {
 				BookInfo bookInfo = null;
 				int count = 0;

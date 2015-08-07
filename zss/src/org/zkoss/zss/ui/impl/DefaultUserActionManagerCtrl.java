@@ -237,6 +237,8 @@ public class DefaultUserActionManagerCtrl implements UserActionManagerCtrl,UserA
 		
 		//for enable some menu folder, do nothing
 		UserActionHandler folderhandler = new AbstractHandler() {
+			private static final long serialVersionUID = -8432478971347806399L;
+
 			@Override
 			protected boolean processAction(UserActionContext ctx) {
 				return false;
@@ -245,6 +247,8 @@ public class DefaultUserActionManagerCtrl implements UserActionManagerCtrl,UserA
 		
 		//for enable cell format menu folder, do nothing
 		UserActionHandler cellfolderhandler = new AbstractCellHandler() {
+			private static final long serialVersionUID = -5609262169871048327L;
+
 			@Override
 			protected boolean processAction(UserActionContext ctx) {
 				return false;
@@ -253,6 +257,8 @@ public class DefaultUserActionManagerCtrl implements UserActionManagerCtrl,UserA
 		
 		//for enable sort and filter menu folder, do nothing
 		UserActionHandler sortfolderhandler = new AbstractHandler() {
+			private static final long serialVersionUID = -7703640984068234979L;
+
 			@Override
 			protected boolean processAction(UserActionContext ctx) {
 				return false;
@@ -276,6 +282,8 @@ public class DefaultUserActionManagerCtrl implements UserActionManagerCtrl,UserA
 		//key
 		category =  Category.KEYSTROKE.getName();
 		registerHandler(category, "^Z", new AbstractBookHandler() {
+			private static final long serialVersionUID = -504443727571681016L;
+
 			@Override
 			protected boolean processAction(UserActionContext ctx) {
 				doUndo();
@@ -283,6 +291,8 @@ public class DefaultUserActionManagerCtrl implements UserActionManagerCtrl,UserA
 			}
 		});
 		registerHandler(category, "^Y", new AbstractBookHandler() {
+			private static final long serialVersionUID = -527097451854686813L;
+
 			@Override
 			protected boolean processAction(UserActionContext ctx) {
 				doRedo();

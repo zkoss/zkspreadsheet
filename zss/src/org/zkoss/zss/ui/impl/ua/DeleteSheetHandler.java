@@ -29,6 +29,7 @@ import org.zkoss.zss.ui.UserActionContext;
  * @since 3.0.0
  */
 public class DeleteSheetHandler extends AbstractSheetHandler{
+	private static final long serialVersionUID = 1721402477934763045L;
 
 	@Override
 	public boolean isEnabled(Book book, Sheet sheet) {

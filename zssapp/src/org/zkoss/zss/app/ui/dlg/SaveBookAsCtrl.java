@@ -18,6 +18,7 @@ import org.zkoss.lang.Strings;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
+import org.zkoss.zk.ui.event.SerializableEventListener;
 import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zss.api.model.Book;
@@ -118,7 +119,9 @@ public class SaveBookAsCtrl extends DlgCtrlBase{
 		String sname = BookUtil.suggestFileName(name, book, repo);
 		if(!name.equals(sname)) {
 			Messagebox.show("want to overwrite file \"" + name + "\" ?", "ZK Spreadsheet", 
-					Messagebox.OK + Messagebox.CANCEL, Messagebox.INFORMATION, new EventListener<Event>() {
+					Messagebox.OK + Messagebox.CANCEL, Messagebox.INFORMATION, new SerializableEventListener<Event>() {
+				private static final long serialVersionUID = -461662357611872195L;
+
 				@Override
 				public void onEvent(Event event) throws Exception {
 					if(event.getData().equals(Messagebox.OK)) {

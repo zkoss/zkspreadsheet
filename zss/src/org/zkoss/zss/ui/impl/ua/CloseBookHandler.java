@@ -24,6 +24,8 @@ import org.zkoss.zss.ui.UserActionContext;
  * @since 3.0.0
  */
 public class CloseBookHandler extends AbstractBookHandler{
+	private static final long serialVersionUID = 1817091974741129453L;
+
 	@Override
 	protected boolean processAction(UserActionContext ctx) {
 		Spreadsheet zss = ctx.getSpreadsheet();

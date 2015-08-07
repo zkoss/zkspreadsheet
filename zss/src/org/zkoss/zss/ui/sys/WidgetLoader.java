@@ -22,6 +22,8 @@ package org.zkoss.zss.ui.sys;
 //import org.zkoss.poi.ss.usermodel.Picture;
 //import org.zkoss.poi.ss.usermodel.ZssChartX;
 //import org.zkoss.zss.model.sys.XSheet;
+import java.io.Serializable;
+
 import org.zkoss.zss.model.SChart;
 import org.zkoss.zss.model.SPicture;
 import org.zkoss.zss.model.SSheet;
@@ -34,7 +36,7 @@ import org.zkoss.zss.ui.Spreadsheet;
  * @author Dennis.Chen
  *
  */
-public interface WidgetLoader {
+public interface WidgetLoader extends Serializable {
 
 	/**
 	 * Initial a widget loader with a spreadsheet

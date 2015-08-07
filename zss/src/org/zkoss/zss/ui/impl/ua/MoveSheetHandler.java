@@ -28,7 +28,7 @@ import org.zkoss.zss.ui.UserActionContext;
  * @since 3.0.0
  */
 public class MoveSheetHandler extends AbstractSheetHandler{
-
+	private static final long serialVersionUID = 758336150863254712L;
 	boolean _left;
 	
 	public MoveSheetHandler(boolean left){

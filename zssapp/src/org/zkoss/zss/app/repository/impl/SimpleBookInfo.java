@@ -21,6 +21,7 @@ import org.zkoss.zss.app.BookInfo;
  *
  */
 public class SimpleBookInfo implements BookInfo{
+	private static final long serialVersionUID = -7407433808475436480L;
 	private String name;
 	private Date lastModify;
 	private File file;

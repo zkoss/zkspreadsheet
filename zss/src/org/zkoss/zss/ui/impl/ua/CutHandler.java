@@ -21,6 +21,7 @@ import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.ui.UserActionContext;
 
 public class CutHandler extends AbstractHandler {
+	private static final long serialVersionUID = 1848917655654382976L;
 
 	@Override
 	protected boolean processAction(UserActionContext ctx) {

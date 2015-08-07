@@ -16,6 +16,8 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.ui.impl.ua;
 
+import java.io.Serializable;
+
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zss.api.AreaRef;
 import org.zkoss.zss.api.IllegalOpArgumentException;
@@ -32,7 +34,8 @@ import org.zkoss.zul.Messagebox;
  * @author dennis
  * @since 3.0.0
  */
-public abstract class AbstractHandler implements UserActionHandler{
+public abstract class AbstractHandler implements UserActionHandler, Serializable {
+	private static final long serialVersionUID = -3596700452009821943L;
 
 	@Override
 	public boolean isEnabled(Book book, Sheet sheet) {

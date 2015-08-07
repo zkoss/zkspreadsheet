@@ -17,6 +17,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.app;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.List;
 
 import org.zkoss.zss.api.model.Book;
@@ -25,7 +26,7 @@ import org.zkoss.zss.api.model.Book;
  * @author dennis
  *
  */
-public interface BookRepository {
+public interface BookRepository extends Serializable {
 
 	/**
 	 * Get the BookInfo list

@@ -25,6 +25,8 @@ import org.zkoss.zss.ui.UserActionContext;
  * @since 3.8.1
  */
 public class AddColumnHandler extends AbstractHandler{
+	private static final long serialVersionUID = -4625955856473698048L;
+
 	@Override
 	protected boolean processAction(UserActionContext ctx) {
 		SSheet sheet = ctx.getSheet().getInternalSheet();

@@ -20,6 +20,7 @@ import org.zkoss.zss.model.STable;
  * @since 3.8.0
  */
 public class TableNameImpl extends NameImpl {
+	private static final long serialVersionUID = -6269415794828338660L;
 	STable _table;
 	public TableNameImpl(AbstractBookAdv book, STable table, String id, String name) {
 		super(book, id, name, null);

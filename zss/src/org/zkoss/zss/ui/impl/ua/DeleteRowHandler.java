@@ -33,6 +33,7 @@ import org.zkoss.zss.ui.sys.UndoableActionManager;
  *
  */
 public class DeleteRowHandler extends AbstractHandler {
+	private static final long serialVersionUID = -3250068182764513758L;
 
 	/* (non-Javadoc)
 	 * @see org.zkoss.zss.ui.sys.ua.impl.AbstractHandler#processAction(org.zkoss.zss.ui.UserActionContext)

@@ -33,6 +33,7 @@ import org.zkoss.zss.app.ui.UiUtil;
  *
  */
 public class CollaborativeRepository implements BookRepository{
+	private static final long serialVersionUID = -4784289072382777993L;
 	File root;
 	Map<String, Book> books = new HashMap<String, Book>(list().size() + 5);
 

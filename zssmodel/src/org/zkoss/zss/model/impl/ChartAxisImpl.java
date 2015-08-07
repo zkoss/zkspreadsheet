@@ -12,13 +12,16 @@
 
 package org.zkoss.zss.model.impl;
 
+import java.io.Serializable;
+
 import org.zkoss.zss.model.SChartAxis;
 
 /**
  * @author henri
  *
  */
-public class ChartAxisImpl implements SChartAxis {
+public class ChartAxisImpl implements SChartAxis, Serializable {
+	private static final long serialVersionUID = 2598887754686809214L;
 	final private long id;
 	final private SChartAxisType type;
 	private Double min;

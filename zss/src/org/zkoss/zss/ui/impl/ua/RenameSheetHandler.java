@@ -30,6 +30,7 @@ import org.zkoss.zss.ui.UserActionContext;
  * @since 3.0.0
  */
 public class RenameSheetHandler extends AbstractSheetHandler{
+	private static final long serialVersionUID = -8419691290554319060L;
 
 	@Override
 	protected boolean processAction(UserActionContext ctx) {

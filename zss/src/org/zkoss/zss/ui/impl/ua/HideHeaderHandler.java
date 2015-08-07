@@ -15,6 +15,7 @@ import org.zkoss.zss.ui.impl.undo.HideHeaderAction.Type;
 import org.zkoss.zss.ui.sys.UndoableActionManager;
 
 public class HideHeaderHandler extends AbstractHandler {
+	private static final long serialVersionUID = 9120677511231533029L;
 	final HideHeaderAction.Type _type;
 	final boolean _hide;
 	

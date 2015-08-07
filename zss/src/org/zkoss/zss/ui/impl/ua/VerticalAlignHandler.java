@@ -33,7 +33,7 @@ import org.zkoss.zss.ui.sys.UndoableActionManager;
  *
  */
 public class VerticalAlignHandler extends AbstractCellHandler {
-
+	private static final long serialVersionUID = -4843520864700871509L;
 	VerticalAlignment _type;
 	
 	

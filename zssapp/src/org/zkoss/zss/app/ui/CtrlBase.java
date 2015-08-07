@@ -18,6 +18,7 @@ import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.Events;
+import org.zkoss.zk.ui.event.SerializableEventListener;
 import org.zkoss.zk.ui.select.SelectorComposer;
 
 /**
@@ -55,7 +56,9 @@ public class CtrlBase<T extends Component> extends SelectorComposer<T>{
 		super.doAfterCompose(comp);	
 		
 		if(listenZssAppEvent){
-			desktopEventDispatcher = new EventListener<Event>(){
+			desktopEventDispatcher = new SerializableEventListener<Event>(){
+				private static final long serialVersionUID = 2403679013740201939L;
+
 					public void onEvent(Event event) throws Exception {
 						AppEvent appevt = (AppEvent)event.getData();
 						if(appevt.ignoreSelf && appevt.from==CtrlBase.this){

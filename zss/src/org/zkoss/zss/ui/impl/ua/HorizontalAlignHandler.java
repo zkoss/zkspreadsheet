@@ -16,6 +16,8 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.ui.impl.ua;
 
+import java.io.Serializable;
+
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zss.api.CellOperationUtil;
 import org.zkoss.zss.api.Range;
@@ -33,7 +35,7 @@ import org.zkoss.zss.ui.sys.UndoableActionManager;
  *
  */
 public class HorizontalAlignHandler extends AbstractCellHandler {
-
+	private static final long serialVersionUID = 1325108795740018120L;
 	Alignment _type;
 	
 	

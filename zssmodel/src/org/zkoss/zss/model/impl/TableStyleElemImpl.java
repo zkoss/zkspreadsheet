@@ -22,6 +22,8 @@ import org.zkoss.zss.model.STableStyleElem;
  * @since 3.8.0
  */
 public class TableStyleElemImpl extends CellStyleImpl implements STableStyleElem {
+	private static final long serialVersionUID = -8901383802206100226L;
+
 	public TableStyleElemImpl(SFont font, SFill fill, SBorder border) {
 		super((AbstractFontAdv)font, (AbstractFillAdv) fill, (AbstractBorderAdv) border);
 	}

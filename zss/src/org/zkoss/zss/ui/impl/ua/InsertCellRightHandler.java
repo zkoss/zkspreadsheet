@@ -34,6 +34,7 @@ import org.zkoss.zss.ui.sys.UndoableActionManager;
  *
  */
 public class InsertCellRightHandler extends AbstractProtectedHandler {
+	private static final long serialVersionUID = 3969443679620461004L;
 
 	/* (non-Javadoc)
 	 * @see org.zkoss.zss.ui.sys.ua.impl.AbstractHandler#processAction(org.zkoss.zss.ui.UserActionContext)

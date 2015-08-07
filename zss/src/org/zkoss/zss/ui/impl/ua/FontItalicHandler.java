@@ -38,6 +38,7 @@ import org.zkoss.zss.ui.sys.UndoableActionManager;
  *
  */
 public class FontItalicHandler extends AbstractCellHandler {
+	private static final long serialVersionUID = 8778194802956921793L;
 
 	@Override
 	protected boolean processAction(UserActionContext ctx) {

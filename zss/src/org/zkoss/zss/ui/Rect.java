@@ -8,6 +8,8 @@ import org.zkoss.zss.api.AreaRef;
  * @deprecated since 3.0.0 use {@link AreaRef}
  */
 public class Rect extends AreaRef{
+	private static final long serialVersionUID = -660274288545569502L;
+
 	public Rect(){
 	}
 	

@@ -28,6 +28,7 @@ import org.zkoss.zss.ui.impl.ua.AbstractBookHandler;
  *
  */
 public class DisplayGridlinesAction extends AbstractBookHandler {
+	private static final long serialVersionUID = 8248030146794007377L;
 
 	/* (non-Javadoc)
 	 * @see org.zkoss.zss.ui.sys.ua.impl.AbstractHandler#processAction(org.zkoss.zss.ui.UserActionContext)

@@ -23,6 +23,7 @@ import org.zkoss.zss.ui.sys.FreezeInfoLoader;
  * @since 3.0.0
  */
 public class DummyFreezeInfoLoader implements FreezeInfoLoader {
+	private static final long serialVersionUID = -8162740108561693443L;
 
 	/* (non-Javadoc)
 	 * @see org.zkoss.zss.ui.sys.FreezeInfoLoader#getRowFreeze(org.zkoss.zss.api.model.Sheet)

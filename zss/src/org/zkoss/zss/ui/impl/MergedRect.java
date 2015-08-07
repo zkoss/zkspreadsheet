@@ -25,7 +25,7 @@ import org.zkoss.zss.api.AreaRef;
  *
  */
 public class MergedRect extends AreaRef{
-
+	private static final long serialVersionUID = 6619168213752834868L;
 	private int _id;
 	public MergedRect(){
 		this(-1,-1,-1,-1,-1);

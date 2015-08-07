@@ -11,13 +11,14 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.app;
 
+import java.io.Serializable;
 import java.util.Date;
 /**
  * Book information
  * @author dennis
  *
  */
-public interface BookInfo {
+public interface BookInfo extends Serializable {
 	
 	public final static String STATE_EMPTY = "empty";			// no book loaded
 	public final static String STATE_UNSAVED = "unsaved";		// doesn't save yet

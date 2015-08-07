@@ -16,12 +16,14 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.ui.sys;
 
+import java.io.Serializable;
+
 
 /**
  * @author dennis
  * @since 3.0.0
  */
-public interface FreezeInfoLoader {
+public interface FreezeInfoLoader extends Serializable{
 
 	/**
 	 * return freeze info, zero base

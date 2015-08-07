@@ -18,6 +18,7 @@ import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
+import org.zkoss.zk.ui.event.SerializableEventListener;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zss.app.ui.CtrlBase;
 import org.zkoss.zul.Window;
@@ -27,7 +28,7 @@ import org.zkoss.zul.Window;
  *
  */
 public class DlgCtrlBase extends CtrlBase<Window>{
-
+	private static final long serialVersionUID = -20175256603400237L;
 	private final static String ARG_CALLBACK = "callback";
 	protected EventListener callback;
 	
@@ -50,7 +51,9 @@ public class DlgCtrlBase extends CtrlBase<Window>{
 			throw new UiException("callback for dialog not found");
 		}
 		
-		comp.addEventListener("onCallback", new EventListener<Event>() {
+		comp.addEventListener("onCallback", new SerializableEventListener<Event>() {
+			private static final long serialVersionUID = 9121671747666631895L;
+
 			public void onEvent(Event event) throws Exception {
 				Object[] data = (Object[])event.getData();
 				DlgCallbackEvent evt = new DlgCallbackEvent((String)data[0],(Map<String,Object>)data[1]);

@@ -18,6 +18,8 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.ui.sys;
 
+import java.io.Serializable;
+
 import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.Widget;
@@ -29,7 +31,7 @@ import org.zkoss.zss.ui.Widget;
  * @author Dennis.Chen
  *
  */
-public interface WidgetHandler{
+public interface WidgetHandler {
 
 	/**
 	 * initial a widget handler. 

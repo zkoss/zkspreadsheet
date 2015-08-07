@@ -16,13 +16,16 @@ Copyright (C) 2014 Potix Corporation. All Rights Reserved.
 
 package org.zkoss.zss.model.impl;
 
+import java.io.Serializable;
+
 import org.zkoss.zss.model.SSheetProtection;
 
 /**
  * @author henri
  *
  */
-public class SheetProtectionImpl implements SSheetProtection {
+public class SheetProtectionImpl implements SSheetProtection, Serializable {
+	private static final long serialVersionUID = -4821001553145539929L;
 	// bit position match xls native record so don't change them.
 	private static final int OBJECTS        = 0x01;
 	private static final int SCENARIOS 		= 0x02;

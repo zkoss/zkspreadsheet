@@ -4,11 +4,13 @@
 
 package org.zkoss.zss.ui.impl;
 
+import java.io.Serializable;
 import java.lang.ref.WeakReference;
 
 import org.zkoss.zss.ui.Spreadsheet;
 
-public class Focus {
+public class Focus implements Serializable {
+	private static final long serialVersionUID = 2401696322103952998L;
 	private final String id;
 	private String name;
 	private String color;

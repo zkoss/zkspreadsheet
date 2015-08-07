@@ -32,6 +32,7 @@ import org.zkoss.zss.ui.sys.UndoableActionManager;
  *
  */
 public class WrapTextHandler extends AbstractCellHandler {
+	private static final long serialVersionUID = -7083063834138133156L;
 
 	/* (non-Javadoc)
 	 * @see org.zkoss.zss.ui.sys.ua.impl.AbstractHandler#processAction(org.zkoss.zss.ui.UserActionContext)

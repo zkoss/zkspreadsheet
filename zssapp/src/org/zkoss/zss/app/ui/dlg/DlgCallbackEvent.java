@@ -20,6 +20,7 @@ import org.zkoss.zk.ui.event.Event;
  *
  */
 public class DlgCallbackEvent extends Event{
+	private static final long serialVersionUID = 1574572906717059919L;
 
 	public DlgCallbackEvent(String name, Map<String,Object> data) {
 		super(name, null, data);

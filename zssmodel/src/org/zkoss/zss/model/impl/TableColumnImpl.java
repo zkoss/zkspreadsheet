@@ -12,6 +12,8 @@
 
 package org.zkoss.zss.model.impl;
 
+import java.io.Serializable;
+
 import org.zkoss.zss.model.SCellStyle;
 import org.zkoss.zss.model.STableColumn;
 
@@ -20,7 +22,9 @@ import org.zkoss.zss.model.STableColumn;
  * @author henri
  * @since 3.8.0
  */
-public class TableColumnImpl implements STableColumn {
+public class TableColumnImpl implements STableColumn, Serializable {
+	private static final long serialVersionUID = 4333495215409538027L;
+	
 	String _name;
 	String _totalsRowLabel;
 	String _totalsRowFormula;

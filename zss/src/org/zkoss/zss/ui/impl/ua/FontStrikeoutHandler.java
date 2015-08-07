@@ -38,6 +38,7 @@ import org.zkoss.zss.ui.sys.UndoableActionManager;
  *
  */
 public class FontStrikeoutHandler extends AbstractCellHandler {
+	private static final long serialVersionUID = 6736037943170651675L;
 
 	@Override
 	protected boolean processAction(UserActionContext ctx) {

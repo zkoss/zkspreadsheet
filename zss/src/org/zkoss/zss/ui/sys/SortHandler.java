@@ -32,7 +32,7 @@ import org.zkoss.zss.ui.impl.undo.SortCellAction;
  *
  */
 public class SortHandler extends AbstractHandler {
-
+	private static final long serialVersionUID = 274722279166484811L;
 	boolean _desc;
 	public SortHandler(boolean desc) {
 		this._desc = desc;

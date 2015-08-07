@@ -36,6 +36,7 @@ import org.zkoss.zss.range.SRanges;
  *
  */
 public class SimpleRepository implements BookRepository{
+	private static final long serialVersionUID = 934417121819181741L;
 	File root;
 	public SimpleRepository(File root){
 		this.root = root;

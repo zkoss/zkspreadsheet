@@ -20,7 +20,7 @@ import org.zkoss.zss.ui.impl.Focus;
 	private static final long serialVersionUID = 1L;
 	
 	private int _focusid;
-	private WeakHashMap<Object, String> _focusMap = new WeakHashMap<Object, String>(20);
+	private transient WeakHashMap<Object, String> _focusMap = new WeakHashMap<Object, String>(20);
 	private Map<String, String> _focusColors = new HashMap<String, String>(20); //id -> Focus
 	
 	private final static String[] FOCUS_COLORS = 
@@ -84,6 +84,24 @@ import org.zkoss.zss.ui.impl.Focus;
 			} 
 		}
 	}
+
+	//ZSS-1094
+	private synchronized void writeObject(java.io.ObjectOutputStream s)
+	throws java.io.IOException {
+		s.defaultWriteObject();
+		
+		s.writeObject(new HashMap<Object, String>(_focusMap));
+	}
 	
-	
+	//ZSS-1094
+	private void readObject(java.io.ObjectInputStream s)
+	throws java.io.IOException, ClassNotFoundException {
+		s.defaultReadObject();
+		
+		Map<Object, String> focusMap = (Map<Object, String>) s.readObject();
+		if (focusMap != null) {
+			_focusMap = new WeakHashMap<Object, String>(focusMap);
+		}
+	}
+
 }

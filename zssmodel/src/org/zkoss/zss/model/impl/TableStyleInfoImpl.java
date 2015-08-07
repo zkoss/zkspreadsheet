@@ -12,6 +12,7 @@
 
 package org.zkoss.zss.model.impl;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,7 +26,8 @@ import org.zkoss.zss.model.sys.EngineFactory;
  * @author henri
  * @since 3.8.0
  */
-public class TableStyleInfoImpl implements STableStyleInfo {
+public class TableStyleInfoImpl implements STableStyleInfo, Serializable {
+	private static final long serialVersionUID = 7484917725933371393L;
 	private String name;
 	private boolean showColumnStripes;
 	private boolean showRowStripes;

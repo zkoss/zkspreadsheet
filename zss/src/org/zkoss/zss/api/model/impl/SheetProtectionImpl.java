@@ -16,6 +16,8 @@ Copyright (C) 2014 Potix Corporation. All Rights Reserved.
 
 package org.zkoss.zss.api.model.impl;
 
+import java.io.Serializable;
+
 import org.zkoss.zss.api.model.SheetProtection;
 import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.model.SSheetProtection;
@@ -24,7 +26,8 @@ import org.zkoss.zss.model.SSheetProtection;
  * @author henri
  * @since 3.5.0
  */
-public class SheetProtectionImpl implements SheetProtection {
+public class SheetProtectionImpl implements SheetProtection, Serializable {
+	private static final long serialVersionUID = 913006910889795824L;
 	
 	private ModelRef<SSheet> _sheetRef;
 	private ModelRef<SSheetProtection> _sspRef;

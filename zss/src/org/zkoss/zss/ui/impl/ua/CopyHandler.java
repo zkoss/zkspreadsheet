@@ -21,6 +21,7 @@ import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.ui.UserActionContext;
 
 public class CopyHandler extends AbstractSheetHandler {
+	private static final long serialVersionUID = 8610772934248693485L;
 
 	@Override
 	protected boolean processAction(UserActionContext ctx) {
