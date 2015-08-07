@@ -21,12 +21,16 @@ Copyright (C) 2015 Potix Corporation. All Rights Reserved.
 		4. Press Up arrow key, should stop editing but focus mark stay on A1 and value is "up".
         5. Type "left" on cell A3 (will automatically enter editing mode)
         6. Press Left arrow key, should stop editing but focus mark stay on A3 and value is "left".
-        7. Type "down" on cell A40 (will automatically enter editing mode)
-        8. Press Down arrow key, should stop editing but focus mark stay on A40 and value is "down".
-        9. Type "pagedown" on cell A38 (will automatically enter editing mode)
-        10. Press PageDown key, should stop editing but focus mark stay on A38 and value is "pagedown".
-        11. Type "right" on cell Z38 (will automatically enter editing mode)
-        12. Press Right arrow key, should stop editing but focus mark stay on Z38 and value is "right".
+        7. Type "home" on cell A4 (will automatically enter editing mode)
+        8. Press Home key, should stop editing but focus mark stay on A4 and value is "home".
+        9. Type "down" on cell A40 (will automatically enter editing mode)
+        10. Press Down arrow key, should stop editing but focus mark stay on A40 and value is "down".
+        11. Type "pagedown" on cell A38 (will automatically enter editing mode)
+        12. Press PageDown key, should stop editing but focus mark stay on A38 and value is "pagedown".
+        13. Type "right" on cell Z38 (will automatically enter editing mode)
+        14. Press Right arrow key, should stop editing but focus mark stay on Z38 and value is "right".
+        15. Type "end" on cell Z37 (will automatically enter editing mode)
+        16. Press End key, should stop editing but focus mark stay on Z37 and value is "end".
 	</label>
 	<spreadsheet src="/issue3/book/blank.xlsx" showFormulabar="true" height="500px" width="800px" maxVisibleColumns="26" maxVisibleRows="40">
 	</spreadsheet>
