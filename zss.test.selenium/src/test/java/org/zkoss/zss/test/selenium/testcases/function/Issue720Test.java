@@ -63,10 +63,10 @@ public class Issue720Test extends ZSSTestCase {
 				"<span style=\"font-family:新細明體;color:#000000;text-decoration: line-through;font-weight:normal;font-size:11pt;\">abc</span>");	
 		
 		assertEquals(jq(".zsrow:eq(4) .zscell:eq(0) .zscelltxt-real").html().trim(), 
-				"<span style=\"font-family:新細明體;color:#000000;font-weight:normal;font-size:8pt;vertical-align:sub;\">abc</span>");
+				"<span style=\"font-family:新細明體;color:#000000;font-weight:normal;font-size:11pt;\"><sub>abc</sub></span>");
 		
 		assertEquals(jq(".zsrow:eq(5) .zscell:eq(0) .zscelltxt-real").html().trim(), 
-				"<span style=\"font-family:新細明體;color:#000000;font-weight:normal;font-size:8pt;vertical-align:super;\">abc</span>");	
+				"<span style=\"font-family:新細明體;color:#000000;font-weight:normal;font-size:11pt;\"><sup>abc</sup></span>");	
 		
 		assertEquals(jq(".zsrow:eq(6) .zscell:eq(0) .zscelltxt-real").html().trim(), 
 				"<span style=\"font-family:arial;color:#000000;font-weight:normal;font-size:11pt;\">abc</span>");
