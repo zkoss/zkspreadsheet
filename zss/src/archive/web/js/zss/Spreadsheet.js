@@ -1167,14 +1167,16 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 			}
 			sheet.fireProtectSheet(this.isProtect());
 			sheet.fireDisplayGridlines(this.isDisplayGridlines());
-		}
 		
-		//ZSS-1087: restore panel position after invalidate()
-		if (this.desktop._tmpSnaps) {
-			var sheetId = this.getSheetId(),
-				snapshot = this.desktop._tmpSnaps[sheetId];
-			sheet.restorePos_(snapshot);// sheet.restoreSheet(snapshot);
-			if (snapshot) delete this.desktop._tmpSnaps[sheetId];
+			//ZSS-1087: restore panel position after invalidate()
+			if (desktop._tmpSnaps) {
+				if (desktop._tmpSnapsTimer) {
+					clearTimeout(desktop._tmpSnapsTimer);
+					delete desktop._tmpSnapsTimer
+				}
+				sheet.restorePos_(desktop._tmpSnaps);// sheet.restoreSheet(snapshot);
+				delete desktop._tmpSnaps;
+			}
 		}
 		
 		zWatch.listen({onResponse: this});
@@ -1187,9 +1189,13 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 	unbind_: function () {
 		//ZSS-1087: store the panel position before invalidate()
 		if (this._cacheCtrl) {
-			this.desktop._tmpSnaps = this.desktop._tmpSnaps || {};
-			var sheetId = this.getSheetId();
-			this.desktop._tmpSnaps[sheetId] = this._cacheCtrl.snap(sheetId);
+			var sheetId = this.getSheetId(),
+				dt = this.desktop;
+			dt._tmpSnaps = this._cacheCtrl.snap(sheetId);
+			//ZSS-1087: auto delete to avoid memory leak
+			dt._tmpSnapsTimer = setTimeout(function () {
+				delete dt._tmpSnaps;
+			}, 0);
 		}
 		
 		zWatch.unlisten({onResponse: this});
