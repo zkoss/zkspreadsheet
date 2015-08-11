@@ -1,0 +1,23 @@
+<vbox hflex="1" vflex="1">
+	<label multiline="true">
+Since 3.8.0
+1. Right click Sheet1, you should see menu items "Move left" disabled and "Move right" enabled.
+2. Right click Sheet2, you should see menu items "Move left" enabled and "Move right" enabled.
+3. Right click Sheet3, you should see menu items "Move left" enabled and "Move right" disabled.
+4. Press "Disable Move Sheet" button.
+5. Right click Sheet1, Sheet2, Sheet3, you should see both menu items "Move left" and "Move right" disabled.
+6. If not, it is a bug.
+	</label>
+<button label="Disable Move Sheet" onClick="disableMoveSheet()"/>
+	<spreadsheet id="ss" src="/issue3/book/blank.xlsx" maxVisibleRows="60" maxVisibleColumns="40"
+		hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
+		showFormulabar="true" />
+		<zscript><![CDATA[
+		                
+		    void disableMoveSheet() {
+		    	ss.disableUserAction(AuxAction.MOVE_SHEET_LEFT, true);
+		    	ss.disableUserAction(AuxAction.MOVE_SHEET_RIGHT, true);
+		    }
+		]]>
+		</zscript>	
+</vbox>

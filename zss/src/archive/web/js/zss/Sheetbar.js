@@ -145,8 +145,9 @@ zss.SheetMenupopup = zk.$extends(zul.menu.Menupopup, {
 				break;
 			}
 		}
-		this.moveLeft.setDisabled(i == 0);//the first sheet not allow move left
-		this.moveRight.setDisabled(i == len - 1);//the last sheet not allow move right
+		if (this.moveLeft.isDisabled)
+		this.moveLeft.setDisabled(i == 0 || this._moveLeftDisabled);//the first sheet not allow move left, ZSS-1099
+		this.moveRight.setDisabled(i == len - 1 || this._moveRightDisabled);//the last sheet not allow move right, ZSS-1099
 		
 		this.protectSheet.setChecked(wgt.isProtect());
 		
@@ -162,6 +163,9 @@ zss.SheetMenupopup = zk.$extends(zul.menu.Menupopup, {
 			
 			chd.setDisabled(actions);
 		}
+		//ZSS-1099
+		this._moveLeftDisabled = this.moveLeft.isDisabled();
+		this._moveRightDisabled = this.moveRight.isDisabled();
 	}
 });
 
