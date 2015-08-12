@@ -1,0 +1,13 @@
+<vbox hflex="1" vflex="1">
+    <label multiline="true">
+Since 3.8.1
+1. In Sheet1, CTRL-right to move focus to XFD1
+2. Select Sheet2 and CTRL-right to AN
+3. Select Sheet3 and CTRL-right to AN
+4. Select Sheet2
+5. Select Sheet1
+6. You should not see any error pop up; or it is a bug</label>
+<spreadsheet id="ss" src="/issue3/book/1101-js-NPE.xlsx"
+    hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
+    showFormulabar="true"/>
+</vbox>

@@ -855,7 +855,7 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 				//if click first, and then call loadForVisible.(those 2 event will send in one au_
 				//then this call bak will throw exception because this block is invalidate.
 				//TODO : so, in any call, i should check is it valid or not. 
-				if (local.invalid) return;
+				if (local.invalid || !local.range) return; //ZSS-1101: when change sheet, local.range could be undefined
 				var b = sheet.activeBlock;
 				b.loadstate = zss.MainBlockCtrl.IDLE;
 				b.loadForVisible();;

@@ -45,6 +45,7 @@ ZK Spreadsheet 3.8.1
   ZSS-1096 Invalid named range causes importing failure
   ZSS-1099 Cannot disable moving a sheet left and right
   ZSS-1100 UiException: Illegal request when change sheet
+  ZSS-1101 JavaScript NPE
   
 ** Upgrade Notes
   * Set org.zkoss.zss.ui.Spreadsheet#setMaxVisibleRows() to zero or leave as default; then
