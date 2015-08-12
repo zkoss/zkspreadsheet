@@ -1088,7 +1088,9 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 				this.moveCellSelection(maxcols - 1, fpos.row, maxcols - 1, fpos.row, true);
 				// reload and send AU
 				spos = this.getLastSelection();
-				this._sendOnCellSelection(this.selType, spos.left, spos.top, spos.right, spos.bottom);
+				if (this.selType) { //ZSS-1100: fire only if not change sheet(selType would be undefined when chagne sheet)
+					this._sendOnCellSelection(this.selType, spos.left, spos.top, spos.right, spos.bottom);
+				}
 			}
 			
 			// prune block, cache will auto-pruned by scrolling
@@ -1129,7 +1131,9 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 				this.moveCellSelection(fpos.column, maxrows - 1, fpos.column, maxrows - 1, true);
 				// reload and send AU
 				spos = this.getLastSelection();
-				this._sendOnCellSelection(this.selType, spos.left, spos.top, spos.right, spos.bottom);
+				if (this.selType) {//ZSS-1100: fire only if not change sheet(selType would be undefined when chagne sheet)
+					this._sendOnCellSelection(this.selType, spos.left, spos.top, spos.right, spos.bottom);
+				}
 			}
 			
 			// prune block, cache will auto-pruned by scrolling
