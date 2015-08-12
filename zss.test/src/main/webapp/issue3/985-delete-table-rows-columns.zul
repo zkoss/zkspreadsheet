@@ -10,7 +10,7 @@ Since 3.8.0
 7. Select column G to column H; right click to Delete Colulmns.
 8. You should see Column2 and Column3 of the Table F2:J6 is deleted and Table L2:P6 is shift left to J2:N6 accordingly
 9. Select column F to column H; right click to Delete Columns 
-10. You should see Table F2:H6 is deleted and Table J2:N6 is shift left to G2:L6 accordingly
+10. You should see Table F2:H6 is deleted and Table J2:N6 is shift left to G2:K6 accordingly
 	</label>
 <button id="export" label="Export to Excel" onClick="doExport()"/>
 <button id="invalid" label="Invalidate" onClick="doInvalidate()"/>

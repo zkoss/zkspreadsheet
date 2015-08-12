@@ -54,6 +54,6 @@ public class Composer670 extends GenericForwardComposer<Window> {
 	}
 	
 	public void onClick$setFormulaWithRange(){
-		Ranges.range(spreadsheet.getSelectedSheet(), 2,0).setCellEditText("=A1*0.8");
+		Ranges.range(spreadsheet.getSelectedSheet(), 2,0).setCellEditText("=A1*0,8");
 	}
 }
