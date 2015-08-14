@@ -7,7 +7,13 @@ import static org.junit.Assert.fail;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
+
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -17,6 +23,9 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.zkoss.image.AImage;
 import org.zkoss.poi.hssf.usermodel.HSSFSheet;
+import org.zkoss.zk.ui.Desktop;
+import org.zkoss.zk.ui.http.ExecutionImpl;
+import org.zkoss.zk.ui.sys.ExecutionsCtrl;
 import org.zkoss.zss.AssertUtil;
 import org.zkoss.zss.Setup;
 import org.zkoss.zss.Util;
@@ -61,6 +70,25 @@ import org.zkoss.zss.api.model.Sheet;
  * ZSS-399.
  */
 public class Issue200Test {
+	//simulate an Execution
+	static private class TemporaryExecution extends ExecutionImpl {
+		private Map<String, Object> attrs = new HashMap<String, Object>();
+		private TemporaryExecution() {
+			super(null, null, null, null, null);
+		}
+		
+		@Override
+		public Object getAttribute(String name) {
+			return attrs.get(name);
+		}
+
+		@Override
+		public Object setAttribute(String name, Object value) {
+			Object old = attrs.get(name);
+			attrs.put(name, value);
+			return old;
+		}
+	}
 	
 	@BeforeClass
 	public static void setUpLibrary() throws Exception {
@@ -70,10 +98,13 @@ public class Issue200Test {
 	@Before
 	public void startUp() throws Exception {
 		Setup.pushZssLocale(Locale.TAIWAN);
+		final TemporaryExecution de = new TemporaryExecution();
+		ExecutionsCtrl.setCurrent(de);
 	}
 	
 	@After
 	public void tearDown() throws Exception {
+		ExecutionsCtrl.setCurrent(null);
 		Setup.popZssLocale();
 	}
 	
