@@ -280,8 +280,8 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 			// ZSS-683: check if the editor is editing to prevent fire onStopEditing twice
 			} else if (!sheet._wgt.hasFocus() && wgt.isEditing()) {
 				sheet.dp.stopEditing(sheet.innerClicking > 0 ? "refocus" : "lostfocus");
-			} else if (zk.ie == 9 && sheet._wgt.hasFocus() && wgt.isEditing()) {
-				//ZSS-1081; ie9's hasFocus() will be true while others not
+			} else if (zk.ie && sheet._wgt.hasFocus() && wgt.isEditing()) {
+				//ZSS-1081; ie9's & ie11's hasFocus() will be true while others not
 				sheet.dp.stopEditing(sheet.innerClicking > 0 ? "refocus" : "lostfocus");
 			}
 		}
