@@ -488,7 +488,7 @@
 
 .zscelltxt {
 	font-family: Calibri;
-	font-size: 11px;
+	font-size: 11pt;
 	text-align: left;
 	width: 49px; /* colWidth - 2*cellPadding - 1 , 1 is border*/
 	overflow: hidden;

@@ -323,7 +323,7 @@ zss.Cell = zk.$extends(zk.Widget, {
 		// ZSS-865
 		var orgwidth = real && real.style ? real.style.width : null,
 			orgTransOrigin = real && real.style ? real.style.transformOrigin : null, //ZSS-944
-			orgTrans = real && real.style ? real.style.transform : null,
+			orgTrans = real && real.style ?  real.style[zk.ie && zk.ie < 10 ? '-ms-transform' : 'transform'] : null, //ZSS-1108:IE9 use -ms-transform
 			orgFamily = real && real.style ? real.style.fontFamily : null;
 		
 		real.style.cssText = fst;
@@ -339,8 +339,9 @@ zss.Cell = zk.$extends(zk.Widget, {
 			if (orgTransOrigin && !real.style.transformOrigin) {
 				real.style['transform-origin'] = orgTransOrigin;
 			}
-			if (orgTrans && !real.style.transform) {
-				real.style['transform'] = orgTrans;
+			//ZSS-1108: IE9 use -ms-transform
+			if (orgTrans && !real.style[zk.ie && zk.ie < 10 ? '-ms-transform' : 'transform']) {
+				real.style[zk.ie && zk.ie < 10 ? '-ms-transform' : 'transform'] = orgTrans;
 				//cave must be always left aligned so css3 transform can handle the text properly
 				cave.style['text-align'] = ''; 
 			}
@@ -471,7 +472,8 @@ zss.Cell = zk.$extends(zk.Widget, {
 	_clearRotate: function () {
 		var real = this.$n('real')
 			$real = jq(real);
-		$real.css('transform', ''); // clear transform
+		//ZSS-1108: IE9 use -ms-transform
+		$real.css(zk.ie && zk.ie < 10 ? '-ms-transform' : 'transform', ''); // clear transform
 		$real.css('transform-origin', ''); // clear transform-origin
 	},
 	//ZSS-944
