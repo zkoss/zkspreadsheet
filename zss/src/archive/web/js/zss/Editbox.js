@@ -281,7 +281,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 			} else if (!sheet._wgt.hasFocus() && wgt.isEditing()) {
 				sheet.dp.stopEditing(sheet.innerClicking > 0 ? "refocus" : "lostfocus");
 			} else if (zk.ie && sheet._wgt.hasFocus() && wgt.isEditing()) {
-				//ZSS-1081; ie9's & ie11's hasFocus() will be true while others not
+				//ZSS-1081; ie's hasFocus() will be true while others not
 				sheet.dp.stopEditing(sheet.innerClicking > 0 ? "refocus" : "lostfocus");
 			}
 		}
