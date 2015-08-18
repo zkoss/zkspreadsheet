@@ -3,12 +3,12 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.zkoss</groupId>
 	<artifactId>zss.test</artifactId>
-	<version>3.8.1-SNAPSHOT</version>
+	<version>3.8.1</version>
 	<properties>
 		<maven.build.timestamp.format>yyyy-MM-dd</maven.build.timestamp.format>
 		<packname>-0.0.1-SNAPSHOT-FL-${maven.build.timestamp}</packname>
-		<zk.version>7.0.5.2-Eval</zk.version><!-- Set version 655 here for test compatibility with 655  -->
-		<zss.version>3.8.1-SNAPSHOT</zss.version>
+		<zk.version>7.0.5.2</zk.version><!-- Set version 655 here for test compatibility with 655  -->
+		<zss.version>3.8.1</zss.version>
 	</properties>
 	<packaging>war</packaging>
 	<name>The ZK Spreadsheet Test Project</name>
