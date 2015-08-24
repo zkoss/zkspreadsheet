@@ -1,0 +1,21 @@
+<vbox hflex="1" vflex="1">
+	<label multiline="true">
+Since 3.8.2
+1. Select C1; press Ctrl-Down, you should see focus mark on C3
+2. Press Ctrl-Down again and again,  you should see focus mark on C9, C11, C13, C16, C18, C24, C194, C195, C200
+3. Now Press Ctrl-Up again and again, you should see focus mark on C195, C194, C24, C18, C16, C13, C11, C9, C3, C1
+4. Select A9; press Ctrl-Right again and again, you should see focus mark on C9, J9, M9, O9, Q9, AJ9, AK9, AN9
+5. Now Press Ctrl-Left again and again, you should see focus mark on AK9, AJ9, Q9, O9, M9, J9, C9, A9
+6. Select F9; Press Ctrl-Right, you should see focus mark on J9
+7. Select F9; Press Ctrl-Left, you should see focus mark on C9
+8. Select C5: Press Ctrl-Up, you should see focus mark on C3
+9. Select C5; Press Ctrl-Down, you should see focus mark on C9
+10. Select C1; Press Ctrl-Right, you should see focus mark on AN1
+11. Select AJ1; Press Ctrl-Left, you should see focus mark on A1
+12. Select A4; Press Ctrl-Down, you should see focus mark on A200
+13. Select A195; Press Ctrl-Up, you should see focus mark on A1
+</label>
+	<spreadsheet id="ss" src="/issue3/book/1109-ctrl-arrows.xlsx" maxVisibleRows="200" maxVisibleColumns="40"
+		hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
+		showFormulabar="true" />	
+</vbox>

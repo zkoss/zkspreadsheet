@@ -69,7 +69,7 @@ public class NonBlankCellsHelper {
 				info = _infos.get(j);
 				return info.start;
 			} else {
-				return start + 1;
+				return info.end; //ZSS-1109
 			}
 		}
 	}
@@ -94,7 +94,7 @@ public class NonBlankCellsHelper {
 				info = _infos.get(j);
 				return info.end;
 			} else {
-				return start - 1;
+				return info.start; //ZSS-1109
 			}
 		}
 	}

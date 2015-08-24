@@ -2,6 +2,7 @@ ZK Spreadsheet 3.8.2
 *Features:
   
 *Bugs:
+  ZSS-1109 The selection box should jump to last filled cell through consecutive filled data when using ctrl + arrow
   
 ** Upgrade Notes
   
