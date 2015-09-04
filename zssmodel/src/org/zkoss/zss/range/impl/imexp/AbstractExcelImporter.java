@@ -44,6 +44,7 @@ import org.zkoss.zss.model.impl.NamedStyleImpl;
 import org.zkoss.zss.model.impl.AbstractBookAdv;
 import org.zkoss.zss.model.impl.RichTextImpl;
 import org.zkoss.zss.model.impl.AbstractCellAdv;
+import org.zkoss.zss.model.impl.SheetImpl;
 import org.zkoss.zss.model.sys.formula.FormulaExpression;
 
 /**
@@ -392,9 +393,15 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 		// merged cells
 		// reference RangeImpl.getMergeAreas()
 		int nMerged = poiSheet.getNumMergedRegions();
+		final SheetImpl sheetImpl = (SheetImpl)sheet;
 		for (int i = nMerged - 1; i >= 0; --i) {
 			final CellRangeAddress mergedRegion = poiSheet.getMergedRegion(i);
-			sheet.addMergedRegion(new CellRegion(mergedRegion.getFirstRow(), mergedRegion.getFirstColumn(), mergedRegion.getLastRow(), mergedRegion.getLastColumn()));
+			//ZSS-1114: any new merged region that overlapped with previous merged region is thrown away
+			final CellRegion r = new CellRegion(mergedRegion.getFirstRow(), mergedRegion.getFirstColumn(), mergedRegion.getLastRow(), mergedRegion.getLastColumn());
+			if (sheetImpl.checkMergedRegion(r) != null) {
+				continue;
+			}
+			sheetImpl.addDirectlyMergedRegion(r);
 		}
 	}
 

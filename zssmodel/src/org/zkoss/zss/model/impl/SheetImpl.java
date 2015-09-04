@@ -2064,4 +2064,29 @@ public class SheetImpl extends AbstractSheetAdv {
 	public String getAlgName() {
 		return _algName;
 	}
+	
+	
+	//ZSS-1114
+	public CellRegion checkMergedRegion(CellRegion region) {
+		Validations.argNotNull(region);
+		if(region.isSingle()){
+			return null;
+		}
+		for(CellRegion r:_mergedRegions){
+			if(r.overlaps(region)){
+				return r;
+			}
+		}
+		return null;
+	}
+	//ZSS-1114
+	public void addDirectlyMergedRegion(CellRegion region) {
+		if(region.isSingle()){
+			return;
+		}
+		_mergedRegions.add(region);
+		ModelUpdateUtil.addMergeUpdate(this,null, region);
+	}
+
+
 }
