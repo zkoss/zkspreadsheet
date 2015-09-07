@@ -31,6 +31,7 @@ import org.zkoss.poi.ss.usermodel.*;
 import org.zkoss.poi.ss.util.CellRangeAddress;
 import org.zkoss.poi.xssf.usermodel.*;
 import org.zkoss.util.Locales;
+import org.zkoss.util.logging.Log;
 import org.zkoss.zss.model.*;
 import org.zkoss.zss.model.SAutoFilter.NFilterColumn;
 import org.zkoss.zss.model.SFill.FillPattern;
@@ -64,6 +65,8 @@ import org.zkoss.zss.model.sys.formula.FormulaExpression;
  * @since 3.5.0
  */
 abstract public class AbstractExcelImporter extends AbstractImporter {
+	private static final Log _logger = Log.lookup(AbstractExcelImporter.class);
+	
 	/**
 	 * Office Open XML Part 4: Markup Language Reference 3.3.1.12 col (Column
 	 * Width & Formatting) The character width 7 is based on Calibri 11. We can
@@ -398,7 +401,9 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 			final CellRangeAddress mergedRegion = poiSheet.getMergedRegion(i);
 			//ZSS-1114: any new merged region that overlapped with previous merged region is thrown away
 			final CellRegion r = new CellRegion(mergedRegion.getFirstRow(), mergedRegion.getFirstColumn(), mergedRegion.getLastRow(), mergedRegion.getLastColumn());
-			if (sheetImpl.checkMergedRegion(r) != null) {
+			final CellRegion overlapped = sheetImpl.checkMergedRegion(r); 
+			if (overlapped != null) {
+				_logger.warning("the region "+ r + " is overlapped with existing merged area " + overlapped + ". Dropped.");
 				continue;
 			}
 			sheetImpl.addDirectlyMergedRegion(r);
