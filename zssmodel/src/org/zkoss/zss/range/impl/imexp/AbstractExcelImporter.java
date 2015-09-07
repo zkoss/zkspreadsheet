@@ -403,7 +403,7 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 			final CellRegion r = new CellRegion(mergedRegion.getFirstRow(), mergedRegion.getFirstColumn(), mergedRegion.getLastRow(), mergedRegion.getLastColumn());
 			final CellRegion overlapped = sheetImpl.checkMergedRegion(r); 
 			if (overlapped != null) {
-				_logger.warning("the region "+ r + " is overlapped with existing merged area " + overlapped + ". Dropped.");
+				_logger.warning("Drop the region "+ r + " which is overlapped with existing merged area " + overlapped + ".");
 				continue;
 			}
 			sheetImpl.addDirectlyMergedRegion(r);
