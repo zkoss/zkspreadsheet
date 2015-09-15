@@ -1,0 +1,23 @@
+<zk>
+    <label multiline="true">
+Since 3.8.2
+1. Click wrap button.
+2. Check if the text in C2 correctly wrap around as show below
+   somthing 
+   somthings
+   omething  
+   somthing
+</label>
+
+<button onClick="wrap()">wrap</button>
+<spreadsheet id="ss" src="/issue3/book/1118-linebreak.xlsx" maxVisibleRows="800" maxVisibleColumns="20" width="100%" 
+		height="400px" 
+		showContextMenu="true" showSheetbar="true" showToolbar="true" showFormulabar="true" 
+		/>
+		<zscript><![CDATA[
+		public void wrap(){
+			CellOperationUtil.applyWrapText(Ranges.range(ss.getSelectedSheet(),1,2), true);
+			Ranges.range(ss.getSelectedSheet(),1, 2).setCellValue("something somethingsomething something");
+		}
+		]]></zscript>
+</zk>

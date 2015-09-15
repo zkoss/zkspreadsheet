@@ -80,7 +80,7 @@
 	padding: 0px;
 	height: 20px; /*rowHeight*/
 	overflow-y: visible;/*don't set hidden, otherwise sometime there will appear h-scrollbar in row*/
-	white-space: nowrap;
+	white-space: pre; /*zss-1118*/
 	z-index: 1;
 	<c:if test="${c:browser('ie') and not c:browser('ie11')}"> 
 		font-size:0;

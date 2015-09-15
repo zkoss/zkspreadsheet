@@ -204,12 +204,12 @@ public class RichTextHelper {
 			case '&': out.append("&amp;"); break;
 			case '<': out.append("&lt;"); break;
 			case '>': out.append("&gt;"); break;
-			case ' ': out.append("&nbsp;"); break; //ZSS-916
+//			case ' ': out.append("&nbsp;"); break; //ZSS-916, ZSS-1118
 			case '\n':
 				if (wrap && multiline) {
 					out.append("<br/>");
-					break;
 				}
+				break; //ZSS-1118
 			default:
 				out.append(cc);
 			}
