@@ -197,6 +197,11 @@ Copyright (C) 2012 Potix Corporation. All Rights Reserved.
 					upComment = (upAll || type == ATTR_COMMENT),
 					cellType = v.ct;
 				this.cellType = cellType != undefined ? cellType : 3;//default is BLANK_CELL
+				//ZSS-1116: remember the autoHeight possibility
+				if (this.cellType != 3 && // not a BLANK_CELL
+						(upText || upStyle || upSize || upMerge)) {
+					this._autoHeight = true;
+				}
 				if (upText) {
 					var mergedTextId = v.meft;
 					if (mergedTextId != undefined) {//index start from 0

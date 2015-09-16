@@ -194,6 +194,10 @@ zss.Cell = zk.$extends(zk.Widget, {
 		
 		//ZSS-944
 		this.rotate = cellData.rotate;
+		
+		//ZSS-1116: see CacheCtrl.js#newCell() and autuheight.js#_saveNoneDefaultHeightCell()
+		this._autoHeight = cellData._autoHeight;
+		delete cellData._autoHeight;
 	},
 	getVerticalAlign: function () {
 		switch (this.valign) {
@@ -301,7 +305,11 @@ zss.Cell = zk.$extends(zk.Widget, {
 			prevWidth = cave.style.width,
 			fontSize = data.fontSize,
 			real = this.$n('real');
-			
+
+		//ZSS-1116
+		this._autoHeight = data._autoHeight;
+		delete data._autoHeight;
+		
 		//ZSS-944: 
 		var wasRotate90 = this.rotate == 90 || this.rotate == -90, //ZSS-1020
 			toRotate90 = data.rotate == 90 || data.rotate == -90, //ZSS-1020
@@ -446,11 +454,21 @@ zss.Cell = zk.$extends(zk.Widget, {
 			rotateChanged || 
 			indentionChd ||
 			((this.cellType == STR_CELL || this.cellType == BLANK_CELL) && !this.merid && processWrap) //ZSS-528, for wrap case
-		) { 
+		) {
+			//ZSS-1116
+			this._processAutoHeight();
+		}
+	},
+	//ZSS-1116
+	_processAutoHeight: function () {
+		if (this._autoHeight) {
 			var newHeight = this._getTextHeight0();
 			this.parent.updateAutoHeightDirty(this._txtHgh || -1, newHeight);
 			this._txtHgh = newHeight;
 			this.parent.processCellAutoHeight(this);
+			
+			this.sheet._wgt._triggerContentsChanged = true;
+			delete this._autoHeight;
 		}
 	},
 	//ZSS-944
@@ -665,7 +683,7 @@ zss.Cell = zk.$extends(zk.Widget, {
 		}
 
 		// ZSS-958: save all cells which aren't same as default height to calculate heighest row height
-		this._saveNoneDefaultHeightCell();
+		this._saveNoneDefaultHeightCell(); //ZSS-1116
 		
 	},
 	_saveNoneDefaultHeightCell: function () {
