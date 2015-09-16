@@ -3,10 +3,10 @@
 Since 3.8.2
 1. Click wrap button.
 2. Check if the text in C2 correctly wrap around as show below
-   somthing 
-   somthings
+   something 
+   somethings
    omething  
-   somthing
+   something
 </label>
 
 <button onClick="wrap()">wrap</button>
