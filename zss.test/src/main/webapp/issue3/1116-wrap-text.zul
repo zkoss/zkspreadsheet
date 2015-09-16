@@ -8,6 +8,14 @@ Since 3.8.2
    somethings
    omething  
    something
+4. Refresh(press F5)
+5. Scroll to row 23(by clicking on scrollbar once)
+6. Click wrap button.
+7. Check if the text in C23 correctly wrap around as show below
+   something 
+   somethings
+   omething  
+   something
 </label>
 
 <button onClick="wrap()">wrap</button>

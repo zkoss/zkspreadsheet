@@ -447,6 +447,7 @@ zss.Cell = zk.$extends(zk.Widget, {
 		}
 
 		//ZSS-958: process auto row/cell height for all cases
+		//ZSS-1116: see CacheCtrl.js#newCell#update()
 		if (
 			txtChd ||
 			fontStyleChg ||
