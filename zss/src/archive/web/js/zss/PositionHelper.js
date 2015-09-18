@@ -126,21 +126,55 @@ zss.PositionHelper = zk.$extends(zk.Object, {
 	 */
 	getStartPixel: function (cellIndex) {
 		if (cellIndex < 0) return 0;
-		var count =0,
-			sum = 0,
+		return this._getStartPixel0(cellIndex)[0];
+	},
+	//ZSS-1117: return [start-pixel-of-cellIndex, new start metaIndex, new start pixel for the new start metaIndex]
+	// + cellIndex to find its startPixel
+	// + sidx - starting metaIndex; optional; default 0
+	// + spx - starting pixel for the starting metaIndex; optional; default 0
+	_getStartPixel0: function (cellIndex, sidx, spx) {
+		var count = sidx || 0,
+			sum = spx || 0,
 			customizedSize = this.custom,
 			defaultSize = this.size,
 			size = customizedSize.length;
 
-		for (var i = 0; i < size; i++) {
+		for (var i = count; i < size; i++) {
 			if (cellIndex <= customizedSize[i][0])
 				break;
 
 			count++;
 			sum += customizedSize[i][3] ? 0 : customizedSize[i][1];
 		}
+		var spx0 = sum + (count > 0 ? (customizedSize[count-1][0] + 1 - count) : 0) * defaultSize; 
 		sum = sum + (cellIndex - count) * defaultSize;
-		return sum;
+		return [sum, count, spx0];
+	},
+	//ZSS-1117
+	getDiffPixel: function (startIdx, endIdx) {
+		var sinfo = this._getStartPixel0(startIdx),
+			einfo = this._getStartPixel0(endIdx+1, sinfo[1], sinfo[2]);
+		return einfo[0] - sinfo[0];
+	},
+	//ZSS-1117
+	getMetaIndex: function (cellIdx, min, max) {
+		var customizedSize = this.custom,
+			defaultSize = this.size,
+			size = customizedSize.length,
+			imin = min || 0,
+			imax = max || size-1;
+		while (imin <= imax) {
+			var imid = Math.floor((imax + imin) / 2),
+				cidx = customizedSize[imid][0];
+			if ( cidx == cellIdx) {
+				return imid;
+			} else if (cidx < cellIdx) {
+				imin = imid + 1; 
+			} else {
+				imax = imid - 1;
+			}
+		}
+		return -imid - 1; // not found
 	},
 	/**
 	 * Shift Meta 

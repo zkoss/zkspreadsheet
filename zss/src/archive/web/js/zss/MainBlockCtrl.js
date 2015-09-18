@@ -730,7 +730,7 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 		}
 		if (!vrange)
 			vrange = zss.SSheetCtrl._getVisibleRange(sheet);
-		
+console.log("MainBlockCtrl.js#_loadForVisible():vrange(t,b,l,r):("+vrange.top+","+vrange.bottom+","+vrange.left+","+vrange.right+")");		
 		//Two phases
 		//1. create cells from cache if possible
 		//2. fetch data from server

@@ -649,6 +649,45 @@ zss.Cell = zk.$extends(zk.Widget, {
 	_processOverflow: function () {
 		// not implement in OSE
 	},
+	//ZSS-1117: reset temporary merge cell
+	_resetTempMergeCell: function (rc, newrow, newcol) {
+console.log("Cell.js#_resetTempMergeCell: r,c,newrow,newcol:"+(rc ? rc[0] : "n/a")+","+(rc? rc[1] : "n/a")+","+newrow+","+newcol);		
+		if (rc && (newrow != rc[0] || newcol != rc[1])) { //different
+			this.block._clearTempMergeCell(rc[3]);
+			this._resetTempMergeCellStyle(rc[2]);
+		}
+	},
+	//ZSS-1117: set temporary merge cell
+	_setTempMergeCell: function (rc, row, col, mcell) {
+		if (!rc || rc[0] != row || rc[1] != col) {
+			this.block._setTempMergeCell(row, col, mcell);
+		}
+	},
+	//ZSS-1117
+	_setTempMergeCellStyle: function (jqcomp) {
+		//overwrite style of the temporary merge cell style
+		if (jqcomp.hasClass("zsmergeeu")) {
+			jqcomp.css("visibility", "visible");
+		} else {
+			jqcomp.removeClass("zsmergee");
+		}
+	},
+	//ZSS-1117
+	_resetTempMergeCellStyle: function (oldmcell) {
+		if (oldmcell) {
+			var comp = oldmcell.comp,
+			jqcomp = comp ? jq(comp) : null;
+			if (jqcomp) {
+				jqcomp.css("width", "");
+				jqcomp.css("height", "");
+				if (jqcomp.hasClass("zsmergeeu")) {
+					jqcomp.css("visibility", "");
+				} else {
+					jqcomp.addClass("zsmergee");
+				}
+			}
+		}
+	},
 	bind_: function (desktop, skipper, after) {
 		this.$supers(zss.Cell, 'bind_', arguments);
 		
@@ -657,6 +696,183 @@ zss.Cell = zk.$extends(zk.Widget, {
 		n.ctrl = this;
 		this.cave = n.firstChild;
 
+		//ZSS-1117: a cell in merge range
+		var range = this.block.range,
+			rr = range.right,
+			rl = range.left,
+			rt = range.top,
+			rb = range.bottom;
+		
+		if (this.merid) {
+			var ml = this.merl,
+				mr = this.merr,
+				mt = this.mert,
+				mb = this.merb,
+				amergee = this.c != ml || this.r != mt,
+				cr = this.c == rr && mr > rr, //cut at right
+				cb = this.r == rb && mb > rb; //cut at bottom
+			
+			if (amergee) {
+				//scroll right/bottom
+				var cutr, cutb;
+				if (cr && (this.r == mb || cb)) { //cut right
+					cutr = true;
+				}
+				if (cb && (this.c == mr || cr)) { //cut bottom
+					cutb = true;
+				}
+				if (cutr || cutb) {
+					// clear previous temporary mergeCell
+					var oldrc = this.block._getTempMergeCell(ml, mt, mr, mb, rl, rt, rr, rb),
+						mcell = this.block.getCell(mt, ml),
+						tmp;
+					if (!mcell) { //means cut at left top
+						mt = Math.max(rt, mt);
+						ml = Math.max(rl, ml);
+						mcell = this.block.getCell(mt, ml);
+						tmp = true;
+						// remember the temporary mergeCell 
+						this._setTempMergeCell(oldrc, mt, ml, mcell);
+console.log("Cell.js@725#bind_, r, c, mcell:"+this.r+","+this.c+","+mcell);		
+					}
+					// reset the old mcell's style and clear
+					this._resetTempMergeCell(oldrc, mt, ml);
+					
+					var comp = mcell.comp,
+						jqcomp = jq(comp);
+					
+					if (cutr || tmp) {
+console.log("Cell.js@734#bind_:new width:ml:"+ml+",rr:"+rr);						
+						//new width
+						var width = this.sheet.custColWidth.getDiffPixel(ml, rr);
+						jqcomp.css("width", width);
+					} else {
+						jqcomp.css("width", "");
+					}
+					
+					if (cutb || tmp) {
+console.log("Cell.js@743#bind_:new height:mt:"+mt+",rb:"+rb);						
+						//new height
+						var height = this.sheet.custRowHeight.getDiffPixel(mt, rb);
+						jqcomp.css("height", height);
+					} else {
+						jqcomp.css("height", "");
+					}
+					
+					if (tmp) {
+						//overwrite style of temporary merge cell
+						this._setTempMergeCellStyle(jqcomp);
+					}
+				} else if (this.r == mb && this.c == mr) {
+					//clear previous possible temporary mergeCell
+					var oldrc = this.block._getTempMergeCell(ml, mt, mr, mb, rl, rt, rr, rb),
+						mcell = this.block.getCell(mt, ml),
+						tmp,
+						skip;
+					// block.getCell() could return incorrect mcell because
+					// the mcell is not put into row yet 
+					if (mcell && (mcell.r != mt || mcell.c != ml)) {
+						// if such case; assume mcell has been processed in 
+						//	  left-top cell already; we can skip here
+						skip = true; 
+					}
+					if (!skip) {
+						if (!mcell) { //means cut at left top
+							mt = Math.max(rt, mt);
+							ml = Math.max(rl, ml);
+							mcell = this.block.getCell(mt, ml);
+							tmp = true;
+							// remember the temporary mergeCell 
+							this._setTempMergeCell(oldrc, mt, ml, mcell);
+	console.log("Cell.js@781#bind_, r, c, mcell:"+this.r+","+this.c+","+mcell);		
+						}
+						// reset the old mcell's style
+						this._resetTempMergeCell(oldrc, mt, ml);
+
+						var comp = mcell.comp,
+							jqcomp = jq(comp);
+						
+						if (tmp) {
+							var width = this.sheet.custColWidth.getDiffPixel(ml, mr),
+								height = this.sheet.custRowHeight.getDiffPixel(mt, mb);
+							
+							//new width and new height
+							jqcomp.css("width", width);
+							jqcomp.css("height", height);
+							
+	console.log("Cell.js#bind_@798 overwrite display");
+							//overwrite style of temporary merge cell
+							this._setTempMergeCellStyle(jqcomp);
+						} else {
+							jqcomp.css("width", "");
+							jqcomp.css("height", "");
+						}
+					}
+				} else { //scroll left/top
+					var cl = this.c == rl && ml < rl, //cut at left
+						ct = this.r == rt && mt < rt, //cut at top
+						cutl, cutt;
+					if (cl && (this.r == mt || ct)) { //cut left
+						cutl = true;
+					}
+					if (ct && (this.c == ml || cl)) { //cut top
+						cutt = true;
+					}
+					if (cutl || cutt) {
+						//clear previous possible temporary mergeCell
+						var oldrc = this.block._getTempMergeCell(ml, mt, mr, mb, rl, rt, rr, rb),
+							mcell = this;
+						
+						// remember the temporary mergeCell 
+						mt = Math.max(rt, mt);
+						ml = Math.max(rl, ml);
+						this._setTempMergeCell(oldrc, mt, ml, mcell);
+						
+						// reset the old mcell's style
+						this._resetTempMergeCell(oldrc, mt, ml);
+
+						var comp = mcell.comp,
+							jqcomp = jq(comp);
+						
+						if (cutl) {
+							//new width
+							var width = this.sheet.custColWidth.getDiffPixel(ml, Math.min(mr, rr));
+							jqcomp.css("width", width);
+console.log("Cell.js@839#bind_:new width:ml:"+ml+",rl:"+rl+",width:"+width);						
+						}
+												
+						if (cutt) {
+							//new height
+							var height = this.sheet.custRowHeight.getDiffPixel(mt, Math.min(mb, rb));
+							jqcomp.css("height", height);
+console.log("Cell.js@846#bind_:new height:mt:"+mt+",rt:"+rt+",heigt:"+height);						
+						}
+												
+console.log("Cell.js@850#bind_: display: inline-block");						
+						//overwrite style of temporary merge cell
+						this._setTempMergeCellStyle(jqcomp);
+					}
+				}
+			} else { //mergeCell
+				//scroll right/bottom
+				if (this.r == Math.min(rb, mb) && this.c == Math.min(rr, mr)) {
+					//the only cell loaded at right-bottom corner of the block
+					if (this.c != mr) {
+						var width = this.sheet.custColWidth.getSize(this.c);
+						jq(n).css("width", width);
+					}
+					if (this.r != mb) {
+						var height = this.sheet.custRowHeight.getSize(this.r);
+						jq(n).css("height", height);
+					}
+				} else { //scroll left/top 
+console.log("Cell.js@871#bind_, r, c, mergecell clear tempcell:"+this.r+","+this.c);		
+					// reset the old mcell's style
+					var oldrc = this.block._getTempMergeCell(ml, mt, mr, mb, rl, rt, rr, rb);
+					this._resetTempMergeCell(oldrc, mt, ml);
+				}
+			}
+		}
 
 		if (this.cellType == BLANK_CELL) {//no need to process overflow and wrap
 			return;

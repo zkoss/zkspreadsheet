@@ -26,10 +26,35 @@ zss.CellBlockCtrl = zk.$extends(zk.Widget, {
 	widgetName: 'CellBlock',
 	range: null,
 	_lastDir: null,
+	_tempMergeCells: [], //ZSS-1117
 	$o: zk.$void, //owner, fellows relationship no needed
+	//ZSS-1117
+	_setTempMergeCell: function (row, col, mcell) {
+		this._tempMergeCells.push([row,col, mcell]);
+	},
+	//ZSS-1117: return [row, col, mcell, index] if found; or null if not
+	_getTempMergeCell: function (merl, mert, merr, merb, rl, rt, rr, rb) {
+		for (var j = this._tempMergeCells.length; --j >= 0;) {
+			var rc = this._tempMergeCells[j],
+				r = rc[0],
+				c = rc[1];
+			if (merl <= c && c <= merr && mert <= r && r <= merb) { //within specified merge range
+				return [r, c, rc[2], j];
+			} else if (r < rt || r > rb || c < rl || c > rr) { // out of valid range
+				this._tempMergeCells.splice(j, 1); //delete it
+			}
+		}
+		return null;
+	},
+	//ZSS-1117: return null if not found; the tuple [row, col] if found
+	_clearTempMergeCell: function (index) {
+		if (index >= 0 && index < this._tempMergeCells.length) {
+			this._tempMergeCells.splice(index, 1);
+		}
+	},
 	$init: function (sheet, tRow, lCol, bRow, rCol, data, type) {
 		this.$supers(zss.CellBlockCtrl, '$init', []); //DO NOT pass "arguments" or all fields will be copied into this Object. 
-		
+console.log("CellBlockCtrl.js#$init:t,b,l,r:"+tRow+","+bRow+","+lCol+","+rCol);		
 		this.sheet = sheet;
 		this.type = type;
 		this.rows = [];
@@ -103,6 +128,10 @@ zss.CellBlockCtrl = zk.$extends(zk.Widget, {
 	 * @param int col
 	 */
 	getCell: function (row, col) {
+//BK-1117, 126
+if (col == 95 && row == 0) {
+	console.log("CellBlockCtrl.js#getCell(): row, col:"+row+","+col);
+}		
 		var range = this.range;
 		if(!range || row < range.top || row > range.bottom || col < range.left || col > range.right)
 			return null;
@@ -126,11 +155,13 @@ zss.CellBlockCtrl = zk.$extends(zk.Widget, {
 				if (i == left && r == top) {
 					comp = cell.comp;
 					jq(comp).addClass("zsmerge" + id);
+console.log("CellBlockCtrl.js#addMergeRange():zsmerge"+id);					
 				} else {
 					cell = this.getCell(r, i);
 					if (!cell) break;//in top / left /corner , they might not have such cell
 					comp = cell.comp;
 					jq(comp).addClass(r == top ? "zsmergee" : "zsmergeeu");
+console.log("CellBlockCtrl.js#addMergeRange() of zsmerge"+id+","+ (r == top ? "zsmergee" : "zsmergeeu"));					
 				}
 	
 				cell.merid = id;
@@ -221,6 +252,17 @@ zss.CellBlockCtrl = zk.$extends(zk.Widget, {
 			isVer = isTop || isBtm || isJump,
 			isLeft = 'west' == dir,
 			isRight = 'east' == dir;
+		
+		var width = rCol - lCol + 1;
+		if (isLeft)
+			cr.extendLeft(width);
+		else if (isRight)
+			cr.extendRight(width);
+		else if (isJump)
+			this.range = new zss.Range(cr.left, cr.top, width, height, true);
+		
+console.log("CellBlockCtrl.js#create_():t,b,l,r:"+this.range.top+","+this.range.bottom+","+this.range.left+","+this.range.right);
+
 		for (var r = tRow, j = 0; r <= bRow; r++) {
 			var row = isVer ? new zss.Row(sheet, block, r, data) : this.getRow(r),
 				html = isVer ? row.getHtmlPrologHalf() : '';
@@ -248,17 +290,18 @@ zss.CellBlockCtrl = zk.$extends(zk.Widget, {
 		}
 		//ZSS 125: wrap text processed on row.bind_, within appendRow / insertRow
 		delete sheet._wrapRange;
-		
-		var r = this.range,
-			width = rCol - lCol + 1;
-		if (isLeft)
-			r.extendLeft(width);
-		else if (isRight)
-			r.extendRight(width);
-		else if (isJump) {
-			var oldRange = r;
-			this.range = new zss.Range(oldRange.left, oldRange.top, width, height, true);
-		}
+//		
+//		var r = this.range,
+//			width = rCol - lCol + 1;
+//		if (isLeft)
+//			r.extendLeft(width);
+//		else if (isRight)
+//			r.extendRight(width);
+//		else if (isJump) {
+//			var oldRange = r;
+//			this.range = new zss.Range(oldRange.left, oldRange.top, width, height, true);
+//		}
+//console.log("CellBlockCtrl.js#create_():t,b,l,r:"+this.range.top+","+this.range.bottom+","+this.range.left+","+this.range.right);		
 	},
 	/**
 	 * Sets rows's width position index

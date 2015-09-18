@@ -163,8 +163,13 @@ zss.TopPanel = zk.$extends(zss.Panel, {
 		if (!this.block) return;
 		var width = this.width,
 			leftpos = this.leftpos,
-			leftpad = this.leftpad;
-		width = width - (leftpos ? leftpos : 0) - (leftpad ? leftpad : 0);
+			leftpad = this.leftpad,
+			//ZSS-1117
+			range = this.block.range,
+			left = range.left,
+			right = range.right;
+		
+		width = this.sheet.custColWidth.getDiffPixel(left, right);//ZSS-1117
 		if (width < 0) width = 0;
 		jq(this.block.comp).css('width', jq.px0(width));
 	},

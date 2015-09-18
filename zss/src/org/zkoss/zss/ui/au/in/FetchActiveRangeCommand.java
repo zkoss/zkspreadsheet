@@ -54,7 +54,9 @@ public class FetchActiveRangeCommand extends AbstractCommand implements Command 
 		int bottom = (Integer) data.get("bottom");
 		
 		SSheet sheet = spreadsheet.getSelectedSSheet();
-		
+if (right <= 96 && right >= 56) {
+	System.out.println("FetchActiveRangeCommand.java@58");
+}
 		if (sheetId.equals(sheet.getId())) {
 			final SpreadsheetCtrl spreadsheetCtrl = ((SpreadsheetCtrl) spreadsheet.getExtraCtrl());
 			

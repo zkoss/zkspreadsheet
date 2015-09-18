@@ -114,6 +114,7 @@ zss.Row = zk.$extends(zk.Widget, {
 		for (i = 0; i < size; i++) {
 			if (this.cells[i].c == col) return this.cells[i];
 		}
+		return null;
 	},
 	/**
 	 * Returns the {@link zss.Cell}
