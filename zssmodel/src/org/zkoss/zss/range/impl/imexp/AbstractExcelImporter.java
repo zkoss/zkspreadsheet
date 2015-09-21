@@ -108,7 +108,7 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 		for (NamedStyle poiStyle : workbook.getNamedStyles()) {
 			SNamedStyle namedStyle = 
 					new NamedStyleImpl(poiStyle.getName(), poiStyle.isCustomBuiltin(), 
-							poiStyle.getBuiltinId(), book, (int) poiStyle.getIndex());
+							poiStyle.getBuiltinId(), book, poiStyle.getIndex());
 			book.addNamedCellstyle(namedStyle);
 		}
 	}

@@ -8,9 +8,18 @@ ZK Spreadsheet 3.8.2
   ZSS-1118 line breaks splitting words in spreadsheet - regular spaces replaces by nbsp
   ZSS-1116 Wrap a cell which is not in the visible area doesn't work
   ZSS-1117 Merged cells are shifted after scrolling
+  ZSS-1120 Fails to export named styles
   
 ** Upgrade Notes
-  
+    * org.zkoss.poi.ss.usermodel.CellStyle#getIndex() have been changed to return int instead of short because the 
+	  limit of the distinct cell styles in Excel 2007 and above is 64000 while that of Excel 97-2003 is only 4000;
+      have to extend it to accommodate the capacity. Thus the corresponding implementation are changed accordingly.
+	  
+	* org.zkoss.poi.ss.usermodel.Workbook#getIndexAt(short idx) have been changed to 
+	  org.zkoss.poi.ss.usermodel.Workbook#getIndexAt(int idx) because the 
+	  limit of the distinct cell styles in Excel 2007 and above is 64000 while that of Excel 97-2003 is only 4000;
+      have to extend it to accommodate the capacity. Thus the corresponding implementation are changed accordingly.
+
  ------------
 ZK Spreadsheet 3.8.1
 *Features:
