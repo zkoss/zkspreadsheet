@@ -127,9 +127,6 @@ public class MergeMatrixHelper {
 	 * @return MergedRect
 	 */
 	public MergedRect getMergedRect(int id) {
-if (id == 9) {
-	System.out.println("MergeMatrixHelper@131");
-}
 		for (MergedRect r : _mergeRanges) {
 			if (r.getId() == id) {
 				return r;

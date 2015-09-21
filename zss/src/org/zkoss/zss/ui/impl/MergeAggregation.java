@@ -131,9 +131,6 @@ public class MergeAggregation {
 	 */
 	private HashMap<String, Integer> newMergeAttributes(MergedRect rect) {
 		HashMap<String, Integer> attrs = new HashMap<String, Integer>(5); //id, left, right, top and bottom attributes
-if (rect.getColumn() == 92 && rect.getLastColumn() == 96) {
-System.out.println("MergeAggregation.java#newMergeAttributes()@135");			
-}
 		attrs.put("i", rect.getId());
 		attrs.put("l", rect.getColumn());
 		attrs.put("t", rect.getRow());
