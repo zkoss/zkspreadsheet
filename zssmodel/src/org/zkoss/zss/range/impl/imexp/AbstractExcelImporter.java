@@ -92,7 +92,7 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 	protected static String BOOK_TYPE_KEY = "$ZSS.BOOKTYPE$";
 
 	//ZSS-854
-	private void importDefaultCellStyles() {
+	protected void importDefaultCellStyles() {
 		((AbstractBookAdv)book).clearDefaultCellStyles();
 		for (CellStyle poiStyle : workbook.getDefaultCellStyles()) {
 			book.addDefaultCellStyle(importCellStyle(poiStyle, false));
@@ -103,7 +103,7 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 		}
 	}
 	//ZSS-854
-	private void importNamedStyles() {
+	protected void importNamedStyles() {
 		((AbstractBookAdv)book).clearNamedStyles();
 		for (NamedStyle poiStyle : workbook.getNamedStyles()) {
 			SNamedStyle namedStyle = 
@@ -679,7 +679,7 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 	 * @param poiSheet source POI sheet
 	 * @param sheet destination sheet
 	 */
-	private void importAutoFilter(Sheet poiSheet, SSheet sheet) {
+	protected void importAutoFilter(Sheet poiSheet, SSheet sheet) {
 		AutoFilter poiAutoFilter = poiSheet.getAutoFilter();
 		if (poiAutoFilter != null) {
 			CellRangeAddress filteringRange = poiAutoFilter.getRangeAddress();
@@ -701,7 +701,7 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 		}
 	}
 
-	private org.zkoss.poi.ss.usermodel.Font getPoiFontFromRichText(Workbook book,
+	protected org.zkoss.poi.ss.usermodel.Font getPoiFontFromRichText(Workbook book,
 			Cell cell, RichTextString rstr, int run) {
 		org.zkoss.poi.ss.usermodel.Font font = rstr instanceof HSSFRichTextString ? book.getFontAt(((HSSFRichTextString) rstr).getFontOfFormattingRun(run)) : ((XSSFRichTextString) rstr)
 				.getFontOfFormattingRun((XSSFWorkbook)book, run);
@@ -729,7 +729,7 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 	abstract protected void importTables(Sheet poiSheet, SSheet sheet); //ZSS-855
 	
 	//ZSS-873: Import formula cache result from an Excel file
-	private boolean _importCache = false;
+	protected boolean _importCache = false;
 	/**
 	 * Set if import Excel cached value.
 	 * @since 3.7.0
@@ -748,7 +748,7 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 	//ZSS-873
 	//Must evaluate INDIRECT() function to make the dependency table)
 	//Issue845Test-checkIndirectNameRange
-	private boolean mustCalc(SCell cell) {
+	protected boolean mustCalc(SCell cell) {
 		FormulaExpression val = ((AbstractCellAdv)cell).getFormulaExpression();
 		for (Ptg ptg : val.getPtgs()) {
 			if (ptg instanceof FuncVarPtg && ((FuncVarPtg)ptg).getFunctionIndex() == 148) { //148 is INDIRECT

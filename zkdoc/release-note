@@ -1,6 +1,7 @@
 ZK Spreadsheet 3.8.2
 *Features:
   ZSS-1114 Automatically ignore duplicate merged region when importing
+  ZSS-1121 Declare methods as protected for importers and exporters
   
 *Bugs:
   ZSS-1109 The selection box should jump to last filled cell through consecutive filled data when using ctrl + arrow

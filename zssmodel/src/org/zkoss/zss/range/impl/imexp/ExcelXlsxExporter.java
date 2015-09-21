@@ -94,7 +94,7 @@ public class ExcelXlsxExporter extends AbstractExcelExporter {
 	 * @param chart
 	 * @return a POI ChartData filled with Spreadsheet chart data, or null if the chart type is unsupported.   
 	 */
-	private ChartData fillPoiChartData(SChart chart) {
+	protected ChartData fillPoiChartData(SChart chart) {
 		CategoryData categoryData = null;
 		ChartData chartData = null;
 		switch(chart.getType()){
@@ -178,7 +178,7 @@ public class ExcelXlsxExporter extends AbstractExcelExporter {
 	 * @param sheet
 	 * @param poiSheet the sheet where the POI chart locates
 	 */
-	private void plotPoiChart(SChart chart, ChartData chartData, SSheet sheet, Sheet poiSheet){
+	protected void plotPoiChart(SChart chart, ChartData chartData, SSheet sheet, Sheet poiSheet){
 		Chart poiChart = poiSheet.createDrawingPatriarch().createChart(toClientAnchor(chart.getAnchor(),sheet));
 		//TODO export a chart's title, no POI API supported
 		if (chart.isThreeD()){
@@ -218,7 +218,7 @@ public class ExcelXlsxExporter extends AbstractExcelExporter {
 	}
 	
 	
-	private ClientAnchor toClientAnchor(ViewAnchor viewAnchor, SSheet sheet){
+	protected ClientAnchor toClientAnchor(ViewAnchor viewAnchor, SSheet sheet){
 		ViewAnchor rightBottomAnchor = viewAnchor.getRightBottomAnchor(sheet);
 		
 		ClientAnchor clientAnchor = new XSSFClientAnchor(UnitUtil.pxToEmu(viewAnchor.getXOffset()),UnitUtil.pxToEmu(viewAnchor.getYOffset()),
@@ -233,7 +233,7 @@ public class ExcelXlsxExporter extends AbstractExcelExporter {
 	 * @param chart
 	 * @param categoryData
 	 */
-	private void fillCategoryData(SGeneralChartData chartData, CategoryData categoryData){
+	protected void fillCategoryData(SGeneralChartData chartData, CategoryData categoryData){
 		ChartDataSource<?> categories = createCategoryChartDataSource(chartData);
 		for (int i=0 ; i < chartData.getNumOfSeries() ; i++){
 			SSeries series = chartData.getSeries(i);
@@ -248,7 +248,7 @@ public class ExcelXlsxExporter extends AbstractExcelExporter {
 	 * @param chart
 	 * @param xyData
 	 */
-	private void fillXYData(SGeneralChartData chartData, XYData xyData){
+	protected void fillXYData(SGeneralChartData chartData, XYData xyData){
 		for (int i=0 ; i < chartData.getNumOfSeries() ; i++){
 			final SSeries series = chartData.getSeries(i);
 			ChartTextSource title = createChartTextSource(series);
@@ -261,7 +261,7 @@ public class ExcelXlsxExporter extends AbstractExcelExporter {
 	/**
 	 * reference ChartDataUtil.fillXYZData()
 	 */
-	private void fillXYZData(SGeneralChartData chartData, XYZData xyzData){
+	protected void fillXYZData(SGeneralChartData chartData, XYZData xyzData){
 		for (int i=0 ; i < chartData.getNumOfSeries() ; i++){
 			final SSeries series = chartData.getSeries(i);
 			ChartTextSource title = createChartTextSource(series);
@@ -272,7 +272,7 @@ public class ExcelXlsxExporter extends AbstractExcelExporter {
 		}
 	}
 	
-	private ChartDataSource<Number> createXValueDataSource(final SSeries series) {
+	protected ChartDataSource<Number> createXValueDataSource(final SSeries series) {
 		return new ChartDataSource<Number>() {
 
 			@Override
@@ -310,7 +310,7 @@ public class ExcelXlsxExporter extends AbstractExcelExporter {
 		};
 	}
 
-	private ChartDataSource<Number> createYValueDataSource(final SSeries series) {
+	protected ChartDataSource<Number> createYValueDataSource(final SSeries series) {
 		return new ChartDataSource<Number>() {
 
 			@Override
@@ -348,7 +348,7 @@ public class ExcelXlsxExporter extends AbstractExcelExporter {
 		};
 	}
 	
-	private ChartDataSource<Number> createZValueDataSource(final SSeries series) {
+	protected ChartDataSource<Number> createZValueDataSource(final SSeries series) {
 		return new ChartDataSource<Number>() {
 
 			@Override
@@ -386,7 +386,7 @@ public class ExcelXlsxExporter extends AbstractExcelExporter {
 		};
 	}
 	
-	private ChartTextSource createChartTextSource(final SSeries series){
+	protected ChartTextSource createChartTextSource(final SSeries series){
 		return new ChartTextSource() {
 			
 			@Override
@@ -411,7 +411,7 @@ public class ExcelXlsxExporter extends AbstractExcelExporter {
 		
 	}
 
-	private ChartDataSource<?> createCategoryChartDataSource(final SGeneralChartData chartData){
+	protected ChartDataSource<?> createCategoryChartDataSource(final SGeneralChartData chartData){
 		return new ChartDataSource<String>() {
 
 			@Override
@@ -523,7 +523,7 @@ public class ExcelXlsxExporter extends AbstractExcelExporter {
 	}
 	
 	//ZSS-1019
-	private void exportFilterColumns(XSSFAutoFilter poiAutoFilter, SAutoFilter autoFilter, int numberOfColumn) {
+	protected void exportFilterColumns(XSSFAutoFilter poiAutoFilter, SAutoFilter autoFilter, int numberOfColumn) {
 		for( int i = 0 ; i < numberOfColumn ; i++){
 			NFilterColumn srcFilterColumn = autoFilter.getFilterColumn(i, false);
 			if (srcFilterColumn == null){

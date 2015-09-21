@@ -61,7 +61,7 @@ public class ExcelXlsImporter extends AbstractExcelImporter{
 	 * @param poiSheet
 	 * @return 256
 	 */
-	private int getLastChangedColumnIndex(Sheet poiSheet) {
+	protected int getLastChangedColumnIndex(Sheet poiSheet) {
 		return new HSSFSheetHelper((HSSFSheet)poiSheet).getInternalSheet().getMaxConfiguredColumn();
 	}
 
@@ -91,7 +91,7 @@ public class ExcelXlsImporter extends AbstractExcelImporter{
 		}
 	}
 
-	private void importChart(List<ZssChartX> poiCharts, Sheet poiSheet, SSheet sheet) {
+	protected void importChart(List<ZssChartX> poiCharts, Sheet poiSheet, SSheet sheet) {
 		//reference ChartHelper.drawHSSFChart()
 		for (ZssChartX zssChart : poiCharts){
 			final HSSFChart hssfChart = (HSSFChart)zssChart.getChartInfo();
@@ -136,7 +136,7 @@ public class ExcelXlsImporter extends AbstractExcelImporter{
 	}
 	
 	//ZSS-822
-	private void importAxis(HSSFChart hssfChart, SChart chart) {
+	protected void importAxis(HSSFChart hssfChart, SChart chart) {
 		//TODO: xls axis
 		//20141112, henrichen: POI does not support Chart Axis yet.
 		// [MS-XLS].pdf page 74 ~ 76
@@ -166,7 +166,7 @@ public class ExcelXlsImporter extends AbstractExcelImporter{
 	 * @param hssfChart
 	 * @return
 	 */
-	private ChartType convertChartType(HSSFChart hssfChart){
+	protected ChartType convertChartType(HSSFChart hssfChart){
 		if(hssfChart.getType()!=null){
 			switch(hssfChart.getType()) {
 			case Area:
@@ -281,7 +281,7 @@ public class ExcelXlsImporter extends AbstractExcelImporter{
 	 * @param seriesList
 	 * @param chartData
 	 */
-	private void importSeries(List<HSSFSeries> seriesList, SGeneralChartData chartData) {
+	protected void importSeries(List<HSSFSeries> seriesList, SGeneralChartData chartData) {
 		HSSFSeries firstSeries = null;
 		if ((firstSeries = seriesList.get(0))!=null){
 			chartData.setCategoriesFormula(getCategoryFormula(firstSeries.getDataCategoryLabels()));
@@ -300,7 +300,7 @@ public class ExcelXlsImporter extends AbstractExcelImporter{
 	 * @param seriesList
 	 * @param chartData
 	 */
-	private void importXySeries(List<HSSFSeries> seriesList, SGeneralChartData chartData) {
+	protected void importXySeries(List<HSSFSeries> seriesList, SGeneralChartData chartData) {
 		for (int i =0 ;  i< seriesList.size() ; i++){
 			HSSFSeries sourceSeries = seriesList.get(i);
 			String nameExpression = getTitleFormula(sourceSeries, i);		
@@ -311,7 +311,7 @@ public class ExcelXlsImporter extends AbstractExcelImporter{
 		}
 	}
 	
-	private void importXyzSeries(List<HSSFSeries> seriesList, SGeneralChartData chartData) {
+	protected void importXyzSeries(List<HSSFSeries> seriesList, SGeneralChartData chartData) {
 		for (int i =0 ;  i< seriesList.size() ; i++){
 			HSSFSeries sourceSeries = seriesList.get(i);
 			String nameExpression = getTitleFormula(sourceSeries, i);		
@@ -329,7 +329,7 @@ public class ExcelXlsImporter extends AbstractExcelImporter{
 	 * @param dataValues
 	 * @return
 	 */
-	private String getValueFormula(LinkedDataRecord dataValues) {
+	protected String getValueFormula(LinkedDataRecord dataValues) {
 		if (dataValues.getReferenceType() == LinkedDataRecord.REFERENCE_TYPE_WORKSHEET) {
 			return HSSFFormulaParser.toFormulaString((HSSFWorkbook)workbook, dataValues.getFormulaOfLink());
 		}else{
@@ -342,7 +342,7 @@ public class ExcelXlsImporter extends AbstractExcelImporter{
 	 * @param dataCategoryLabels
 	 * @return
 	 */
-	private String getCategoryFormula(LinkedDataRecord dataCategoryLabels) {
+	protected String getCategoryFormula(LinkedDataRecord dataCategoryLabels) {
 		if (dataCategoryLabels.getReferenceType() == LinkedDataRecord.REFERENCE_TYPE_WORKSHEET) {
 			return HSSFFormulaParser.toFormulaString((HSSFWorkbook)workbook, dataCategoryLabels.getFormulaOfLink());
 		}else{
@@ -350,7 +350,7 @@ public class ExcelXlsImporter extends AbstractExcelImporter{
 		}
 	}
 	
-	private String getTitleFormula(HSSFSeries series, int index) {
+	protected String getTitleFormula(HSSFSeries series, int index) {
 		if (series.getDataName().getReferenceType() == LinkedDataRecord.REFERENCE_TYPE_WORKSHEET){
 			return HSSFFormulaParser.toFormulaString((HSSFWorkbook)workbook, series.getDataName().getFormulaOfLink());
 		}
@@ -358,7 +358,7 @@ public class ExcelXlsImporter extends AbstractExcelImporter{
 		return series.getSeriesTitle() == null ? "\"Series"+index+"\"" : "\""+series.getSeriesTitle()+"\"";
 	}
 	
-	private String getChartTitle(HSSFChart hssfChart) {
+	protected String getChartTitle(HSSFChart hssfChart) {
 		if (!hssfChart.isAutoTitleDeleted()) {
 			return hssfChart.getChartTitle();
 		}

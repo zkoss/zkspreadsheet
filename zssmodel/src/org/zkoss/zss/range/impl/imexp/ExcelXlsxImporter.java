@@ -134,7 +134,7 @@ public class ExcelXlsxImporter extends AbstractExcelImporter{
 	 * Not import X & Y axis title because {@link XSSFCategoryAxis} doesn't provide API to get title. 
 	 * Reference ChartHelper.drawXSSFChart()
 	 */
-	private void importChart(List<ZssChartX> poiCharts, Sheet poiSheet, SSheet sheet) {
+	protected void importChart(List<ZssChartX> poiCharts, Sheet poiSheet, SSheet sheet) {
 		
 		for (ZssChartX zssChart : poiCharts){
 			XSSFChart xssfChart = (XSSFChart)zssChart.getChart();
@@ -250,7 +250,7 @@ public class ExcelXlsxImporter extends AbstractExcelImporter{
 		}
 	}
 	//ZSS-822
-	private void importAxis(XSSFChart xssfChart, SChart chart) {
+	protected void importAxis(XSSFChart xssfChart, SChart chart) {
 		List axises = (List) xssfChart.getAxis();
 		if (axises != null) {
 			for (Object axis0 : axises) {
@@ -280,7 +280,7 @@ public class ExcelXlsxImporter extends AbstractExcelImporter{
 	 * @param seriesList source chart data
 	 * @param chartData destination chart data
 	 */
-	private void importSeries(List<? extends CategoryDataSerie> seriesList, SGeneralChartData chartData) {
+	protected void importSeries(List<? extends CategoryDataSerie> seriesList, SGeneralChartData chartData) {
 		CategoryDataSerie firstSeries = null;
 		if ((firstSeries = seriesList.get(0))!=null){
 			chartData.setCategoriesFormula(getValueFormula(firstSeries.getCategories()));
@@ -294,7 +294,7 @@ public class ExcelXlsxImporter extends AbstractExcelImporter{
 		}
 	}
 	
-	private void importXySeries(List<? extends XYDataSerie> seriesList, SGeneralChartData chartData) {
+	protected void importXySeries(List<? extends XYDataSerie> seriesList, SGeneralChartData chartData) {
 		for (int i =0 ;  i< seriesList.size() ; i++){
 			XYDataSerie sourceSeries = seriesList.get(i);
 			SSeries series = chartData.addSeries();
@@ -309,7 +309,7 @@ public class ExcelXlsxImporter extends AbstractExcelImporter{
 	 * @param seriesList
 	 * @param chart
 	 */
-	private void importXyzSeries(List<? extends XYZDataSerie> seriesList, SGeneralChartData chartData) {
+	protected void importXyzSeries(List<? extends XYZDataSerie> seriesList, SGeneralChartData chartData) {
 		for (int i =0 ;  i< seriesList.size() ; i++){
 			XYZDataSerie sourceSeries = seriesList.get(i);
 			//reference to ChartHelper.prepareTitle()
@@ -329,7 +329,7 @@ public class ExcelXlsxImporter extends AbstractExcelImporter{
 	 * @param textSource
 	 * @return
 	 */
-	private String getTitleFormula(ChartTextSource textSource, int seriesIndex){
+	protected String getTitleFormula(ChartTextSource textSource, int seriesIndex){
 		if (textSource == null){
 			return "\"Series"+seriesIndex+"\"";
 		}else {
@@ -346,7 +346,7 @@ public class ExcelXlsxImporter extends AbstractExcelImporter{
 	 * @param dataSource
 	 * @return
 	 */
-	private String getValueFormula(ChartDataSource<?> dataSource){
+	protected String getValueFormula(ChartDataSource<?> dataSource){
 		if (dataSource.isReference()){
 			return dataSource.getFormulaString();
 		}else{
@@ -426,7 +426,7 @@ public class ExcelXlsxImporter extends AbstractExcelImporter{
 		importPicture(poiPictures, poiSheet, sheet);
 	}
 	
-	private XSSFChartX createXSSFChartX(XSSFDrawing patriarch, CTGraphicalObjectFrame gfrm , XSSFClientAnchor xanchor) {
+	protected XSSFChartX createXSSFChartX(XSSFDrawing patriarch, CTGraphicalObjectFrame gfrm , XSSFClientAnchor xanchor) {
 		//chart
 		final String name = gfrm.getNvGraphicFramePr().getCNvPr().getName();
 		final CTGraphicalObject gobj = gfrm.getGraphic();

@@ -49,7 +49,7 @@ public class ExcelImportAdapter extends AbstractImporter{
 	}
 	
 	//ZSS-873
-	private boolean isImportCache() {
+	protected boolean isImportCache() {
 		String importCache = Library.getProperty("org.zkoss.zss.import.cache", "false");
 		return "true".equalsIgnoreCase(importCache.trim());
 	}

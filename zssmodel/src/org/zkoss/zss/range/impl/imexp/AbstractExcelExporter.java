@@ -50,7 +50,7 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 	//  only for empty rows; not rows with cells. For rows with cells, still 
 	//  have to specifies its height or it will use application's default row 
 	//  height instead.
-	private static final int DEFAULT_ROW_HEIGHT = 20; //ZSS-1012
+	protected static final int DEFAULT_ROW_HEIGHT = 20; //ZSS-1012
 
 	/**
 	 * Exporting destination, POI book model
@@ -613,7 +613,7 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 	 * @param sheet destination sheet
 	 * @param poiSheet source POI sheet
 	 */
-	private void exportSheetProtection(SSheet sheet, Sheet poiSheet) { //ZSS-576
+	protected void exportSheetProtection(SSheet sheet, Sheet poiSheet) { //ZSS-576
 		SSheetProtection ssp = sheet.getSheetProtection();
 		SheetProtection sp = poiSheet.getOrCreateSheetProtection();
 		
@@ -635,7 +635,7 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 	}
 	
 	//ZSS-873: Import formula cache result from an Excel file
-	private boolean _exportCache = false;
+	protected boolean _exportCache = false;
 	/**
 	 * Set whether export cached value into excel file(must be called before
 	 * export() is called.
