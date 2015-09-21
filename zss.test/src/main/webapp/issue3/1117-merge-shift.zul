@@ -1,0 +1,21 @@
+<zk>
+    <label multiline="true">
+Since 3.8.2
+0. Make sure the label in row1 match those in row2; e.g. H7 in row1 should match H7 in row2 
+1. Scroll to right by clicking the scrollbar's right triangle(&gt;) until column "R" appear
+2. If background color of cell R1 is not blue; it is a bug.
+3. Keep on scroll to right by clicking the scrollbar's right triangle(&gt;) until column "V" appear
+4. Everything should be OK.   
+5. Drag scroll handle to move to the right most end.
+6. If you see H27 wrap around to row2, it is a bug.
+7. Scroll to left by clicking the scrollbar's left triangle(&lt;) until column "CT"" appear
+8. Keep on scroll to left by clicking the scrollbar's left triangle(&lt;) until column "CP"" appear
+9. Everything should be OK.
+10. Drag scroll handle to move to the center around label H15. Should be OK.
+</label>
+
+<spreadsheet id="ss" src="/issue3/book/1117-merge-shift.xlsx" maxVisibleRows="800" maxVisibleColumns="111" width="835px" 
+		height="400px" 
+		showContextMenu="true" showSheetbar="true" showToolbar="true" showFormulabar="true" 
+		/>
+</zk>

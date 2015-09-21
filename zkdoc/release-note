@@ -6,6 +6,7 @@ ZK Spreadsheet 3.8.2
   ZSS-1109 The selection box should jump to last filled cell through consecutive filled data when using ctrl + arrow
   ZSS-1118 line breaks splitting words in spreadsheet - regular spaces replaces by nbsp
   ZSS-1116 Wrap a cell which is not in the visible area doesn't work
+  ZSS-1117 Merged cells are shifted after scrolling
   
 ** Upgrade Notes
   
