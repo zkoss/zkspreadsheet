@@ -335,6 +335,7 @@ zss.CellBlockCtrl = zk.$extends(zk.Widget, {
 		}
 		this.shiftRowInfo(index + size, row + size);
 		this.range.extendBottom(size);
+		if (this._newrange) this._newrange.extendBottom(size); //ZSS-1117
 	},
 	/**
 	 * Shift row info
@@ -387,6 +388,7 @@ zss.CellBlockCtrl = zk.$extends(zk.Widget, {
 			ctrl.detach();
 		}
 		this.range.extendBottom(-size);
+		if (this._newrange) this._newrange.extendBottom(-size); //ZSS-1117
 		this.shiftRowInfo(index, row);
 	},
 	/**
@@ -408,6 +410,7 @@ zss.CellBlockCtrl = zk.$extends(zk.Widget, {
 			rows.splice(index, 0, row);
 			if (extendRange) {
 				this.range.extendTop(1);
+				if (this._newrange) this._newrange.extendTop(1); //ZSS-1117
 			}
 			if (htmlContent) {
 				jq(htmlContent).insertBefore(sibling.$n());
@@ -428,6 +431,7 @@ zss.CellBlockCtrl = zk.$extends(zk.Widget, {
 		this.rows.push(row);
 		if (extendRange) {
 			this.range.extendBottom(1);
+			if (this._newrange) this._newrange.extendBottom(1); //ZSS-1117
 		}
 		if (htmlContent) {
 			jq(this.comp).append(htmlContent);
@@ -498,6 +502,7 @@ zss.CellBlockCtrl = zk.$extends(zk.Widget, {
 			rm++;
 		}
 		this.range.extendTop(-rm);
+		if (this._newrange) this._newrange.extendTop(-rm); //ZSS-1117
 		return rm;
 	},
 	removeRowsFromEnd_: function (size) {
@@ -512,6 +517,7 @@ zss.CellBlockCtrl = zk.$extends(zk.Widget, {
 			rm++;
 		}
 		this.range.extendBottom(-rm);
+		if (this._newrange) this._newrange.extendBottom(-rm); //ZSS-1117
 	},
 	//ZSS-1117
 	_tmpMerges: {}, //r_c -> [l,t,r,b]
