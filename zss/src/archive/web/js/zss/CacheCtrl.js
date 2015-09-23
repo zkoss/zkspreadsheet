@@ -195,19 +195,10 @@ Copyright (C) 2012 Potix Corporation. All Rights Reserved.
 					upSize = (upAll || type == ATTR_SIZE),
 					upMerge = (upAll || type == ATTR_MERGE),
 					upComment = (upAll || type == ATTR_COMMENT),
-					cellType = v.ct,
-					//ZSS-1116
-					textChange,
-					fontStyleChange, 
-					fontSizeChange, 
-					rotateChange,
-					indentionChange,
-					processWrap;
-
+					cellType = v.ct;
 				this.cellType = cellType != undefined ? cellType : 3;//default is BLANK_CELL
 				if (upText) {
-					var mergedTextId = v.meft,
-						oldText = this.formatText; //ZSS-1116
+					var mergedTextId = v.meft;
 					if (mergedTextId != undefined) {//index start from 0
 						this.text = this.editText = this.formatText = texts[mergedTextId] || '';
 					} else {
@@ -218,7 +209,6 @@ Copyright (C) 2012 Potix Corporation. All Rights Reserved.
 						this.editText = eId != undefined ? texts[eId] : '';
 						this.formatText = fId != undefined ? texts[fId] : '';
 					}
-					textChange = oldText != this.formatText; //ZSS-1116
 				}
 				if (upStyle) {
 					var sId = v.s,
@@ -230,13 +220,7 @@ Copyright (C) 2012 Potix Corporation. All Rights Reserved.
 						halign = v.ha,
 						valign = v.va,
 						fontSize = v.fs,
-						rotate = v.rot, //ZSS-944
-						//ZSS-1116
-						oldWrap = this.wrap,
-						oldFontStyle = this.fontStyle,
-						oldFontSize = this.fontSize,
-						oldIndention = this.indention,
-						oldRotate = this.rotate;
+						rotate = v.rot; //ZSS-944
 					this.style = sId != undefined ? styles[sId] : '';
 					this.innerStyle = isId != undefined ? styles[isId] : '';
 					this.fontStyle = osId != undefined ? styles[osId] : '';
@@ -261,16 +245,6 @@ Copyright (C) 2012 Potix Corporation. All Rights Reserved.
 						delete this.af_tlbr;
 					//ZSS-944: support 90 degree text rotation
 					this.rotate = rotate; // text rotation
-					
-					//ZSS-1116: see Cell.js#update_()
-					fontStyleChange = oldFontStyle != this.fontStyle; 
-					fontSizeChange = oldFontSize != this.fontSize;
-					var rotate90 = rotate == 90 || rotate == -90, 
-						wrap0 = !rotate90 && wrap,	//  when rotate, wrap must be false!
-						wrapChange = oldWrap != wrap0;
-					rotateChange = oldRotate != this.rotate;
-					indentionChange = oldIndention != this.indention;
-					processWrap = wrapChange || (wrap0 && (textChange || fontSizeChange));
 				}
 				if (upSize) {
 					// ZSS-224: modify overflow flag spec. to carry more status in bitswise format
@@ -303,17 +277,6 @@ Copyright (C) 2012 Potix Corporation. All Rights Reserved.
 					} else {
 						delete this.comment;
 					}
-				}
-				//ZSS-1116: see Cell.js#update_()
-				if (
-					textChange ||
-					fontStyleChange ||
-					fontSizeChange || 
-					rotateChange || 
-					indentionChange ||
-					((this.cellType == 1 /*STR_CELL*/ || this.cellType == 3 /*BLANK_CELL*/) && !this.mergeId && processWrap) //ZSS-528, for wrap case
-				) {
-					this._autoHeight = true; // ZSS-1116: flag for later auto height
 				}
 			}
 		}
