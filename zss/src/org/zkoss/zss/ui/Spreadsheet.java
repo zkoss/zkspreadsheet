@@ -4295,8 +4295,16 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			sb.append("}");
 		}
 
+		//ZSS-952: load only required customColumnWidths
+		int initColSize = getInitColumnSize();
+		
 		List<HeaderPositionInfo> infos = colHelper.getInfos();
 		for (HeaderPositionInfo info : infos) {
+			// ZSS-952: load only required customColumnWidths
+			if (info.index > initColSize) {
+				break;
+			}
+			
 			boolean hidden = info.hidden;
 			int index = info.index;
 			int width = hidden ? 0 : info.size;
@@ -4325,9 +4333,17 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 				sb.append("}");
 			}
 		}
+		
+		// ZSS-952: load only required customRowHeights
+		int initRowSize = getInitRowSize();
 
 		infos = rowHelper.getInfos();
 		for (HeaderPositionInfo info : infos) {
+			// ZSS-952: load only required customRowHeights
+			if (info.index > initRowSize) {
+				break;
+			}
+			
 			boolean hidden = info.hidden;
 			int index = info.index;
 			int height = hidden ? 0 : info.size;
