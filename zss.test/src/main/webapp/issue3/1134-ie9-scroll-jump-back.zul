@@ -1,0 +1,15 @@
+<zk>
+    <label multiline="true">
+Since 3.8.2
+1. IE9 only.
+2. Drag scroll-handle and scroll all the way to right most.
+3. click add-column button on the right-bottom corner 10 times.
+4. If the scroll-handle does not jump back to left most, it is correct.
+5. Otherwise, it is a bug.
+</label>
+
+<spreadsheet id="ss" src="/issue3/book/1134-ie9-scroll-jump-back.xlsx" maxVisibleRows="800" maxVisibleColumns="111" width="835px" 
+		height="400px" 
+		showContextMenu="true" showSheetbar="true" showToolbar="true" showFormulabar="true" 
+		/>
+</zk>

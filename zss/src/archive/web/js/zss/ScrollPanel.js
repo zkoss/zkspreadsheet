@@ -75,6 +75,16 @@ zss.ScrollPanel = zk.$extends(zk.Object, {
 		this.currentTop = top;
 		this.currentLeft = left;
 	},
+	//ZSS-1134: IE9 only. Enforce set scroll position back
+	_resetIE9ScrollPosition: function () {
+		var spcmp = this.comp,
+			sl = spcmp.scrollLeft,
+			st = spcmp.scrollTop,
+			sl0 = this.currentLeft,
+			st0 = this.currentTop;
+		if (sl == 0 && st == 0 && (sl != sl0 || st != st0))
+			this.reset(st0, sl0);
+	},
 	cleanup: function () {
 		var sheet = this.sheet,
 			wgt = sheet._wgt,
@@ -119,6 +129,11 @@ zss.ScrollPanel = zk.$extends(zk.Object, {
 		sinfo.pinXY(data[0], data[1], clickInHor);
 	},
 	_doScrolling: function (evt) {
+		//ZSS-1134: This is patchy; IE9 sometimes wrongly set spcmp.scrollLeft 
+		//   to zero. We enforcly set it back if a call from SSheetCtrl.js#_fixSize()
+		if (!evt && zk.ie && zk.ie == 9) {
+			this._resetIE9ScrollPosition();
+		}
 		var sheet = this.sheet,
 			dtcmp = sheet.dp.comp,
 			sccmp = this.comp,

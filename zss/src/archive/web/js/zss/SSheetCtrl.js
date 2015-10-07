@@ -3250,6 +3250,12 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			rangeRight: rect.right,
 			rangeBottom: rect.bottom
 		}, now ? {toServer: true} : null, (now ? 25 : -1));
+		
+		//ZSS-1134: This is patchy; IE9 sometimes wrongly set spcmp.scrollLeft
+		//	to zero. We enforcelly reset it back.
+		if (zk.ie && zk.ie == 9) {
+			this.sp._resetIE9ScrollPosition();
+		}
 	},
 	_insertNewColumn: function (col, size, extnm) {
 		this.activeBlock.insertNewColumn(col,size);
@@ -3444,6 +3450,12 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		sheet.info = new zss.Info(sheet, sheet.infocmp);
 	},
 	_getVisibleRange: function (sheet) {
+		//ZSS-1134: This is patchy; IE9 sometimes wrongly set spcmp.scrollLeft 
+		//   to zero. We enforcly set it back
+		if (zk.ie && zk.ie == 9) {
+			sheet.sp._resetIE9ScrollPosition();
+		}
+		
 		var //scrollSize = zss.Spreadsheet.scrollWidth, 
 			sp = sheet.sp,
 			spcmp = sp.comp,

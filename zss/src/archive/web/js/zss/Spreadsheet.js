@@ -1119,6 +1119,11 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 			this.sheetCtrl.activeBlock.loadstate = zss.MainBlockCtrl.IDLE;
 			cacheCtrl.getSelectedSheet().fetchUpdate(v);
 			this.sheetCtrl.sendSyncblock();
+			//ZSS-1134: This is patchy; IE9 sometimes wrongly set 
+			//	spcmp.scrollLeft to zero; we enforcely set it back
+			if (zk.ie && zk.ie == 9) {
+				this.sheetCtrl.sp._resetIE9ScrollPosition();
+			}
 		}
 	},
 	_initFrozenArea: function () {
