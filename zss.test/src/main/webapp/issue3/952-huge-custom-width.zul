@@ -1,0 +1,10 @@
+<vbox hflex="1" vflex="1">
+	<label multiline="true">
+1. For IE9 only.
+2. You should see #NAME? on C3:H37
+3. Select to next sheet and then select back; if you see those #NAME? gone(blank), it is a bug. 
+	</label>
+	<spreadsheet id="ss" src="/issue3/book/952-huge-custom-width.xlsx"
+		hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
+		showFormulabar="true" />	
+</vbox>
