@@ -305,6 +305,9 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	private AreaRef _visibleArea = new AreaRef();
 	private AreaRef _highlightArea = null;
 
+	//ZSS-952: remember the current area with css styles
+	private AreaRef _cssArea = new AreaRef();  
+
 	private WidgetHandler _widgetHandler;
 
 	private List<WidgetLoader> _widgetLoaders;
@@ -955,6 +958,12 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			_selectedSheet = sheet;
 			update = true;
 		}
+		
+		//ZSS-952: reset _visibleArea if IE9 so optimize {@link updateIE9StyleSheet} 
+		if (isIE9() && update) {
+			_cssArea = new AreaRef();
+		}
+		
 		return update;
 	}
 	
@@ -3140,10 +3149,40 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		}
 		
 		public void setVisibleRect(int left, int top, int right, int bottom) {
+			//ZSS-952: updateStylesheet if ie9 && visible area changed
+			updateIE9StyleSheet(left, top, right, bottom);
+			
 			_visibleArea.setArea(top, left, bottom, right);
 			getWidgetHandler().onLoadOnDemand(getSelectedSSheet(), left, top, right, bottom);
 		}
 
+		//ZSS-952: avoid IE9 stylesheet upper bound limit by load only inside visisble area
+		private void updateIE9StyleSheet(int left, int top, int right, int bottom) {
+			//updateStylesheet if ie9 && visible area changed
+			if (isIE9()) {
+				int vright = _cssArea.getLastColumn();
+				int vbottom = _cssArea.getLastRow();
+				int vleft = _cssArea.getColumn();
+				int vtop = _cssArea.getRow();
+				if (vright < 0) { // just change to new sheet; original visible area
+					vright = getInitColumnSize();
+					vbottom = getInitRowSize();
+					vtop = left = 0;
+					_cssArea.setArea(vtop, vleft, vbottom, vright);
+					return;
+				}
+				if (vright < right
+						|| vbottom < bottom
+						|| vleft > left
+						|| vtop > top) {
+					_cssArea.setArea(top, left, bottom, right);
+					SSheet sheet = _selectedSheet;
+					String css = getDynamicMediaURI(Spreadsheet.this, _cssVersion++, "ss_" + Spreadsheet.this.getUuid() + "_" + getSelectedSheetId(), "css");
+					smartUpdate("scss", css);
+				}
+			}
+		}
+		
 		public AreaRef getVisibleArea() {
 			return (AreaRef) _visibleArea.cloneSelf();
 		}
@@ -4295,105 +4334,94 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			sb.append("}");
 		}
 
-		//ZSS-952: load only required customColumnWidths
-		int initColSize = getInitColumnSize();
-		
-		List<HeaderPositionInfo> infos = colHelper.getInfos();
-		for (HeaderPositionInfo info : infos) {
-			// ZSS-952: load only required customColumnWidths
-			if (info.index > initColSize) {
-				break;
+		//ZSS-952: avoid ie9 style sheet upper limit by load only in visible area
+		if (isIE9()) {
+			prepareIE9StyleSheet(name, sb, colHelper, rowHelper, cp);
+		} else {
+			List<HeaderPositionInfo> infos = colHelper.getInfos();
+			for (HeaderPositionInfo info : infos) {
+				boolean hidden = info.hidden;
+				int index = info.index;
+				int width = hidden ? 0 : info.size;
+				int cid = info.id;
+	
+				celltextwidth = width - 2 * cp;
+	
+				// bug 1989680
+				if (celltextwidth < 0)
+					celltextwidth = 0;
+	
+				cellwidth = width;
+	
+				if (width <= 0) {
+					sb.append(name).append(" .zsw").append(cid).append("{");
+					sb.append("display:none;");
+					sb.append("}");
+	
+				} else {
+					sb.append(name).append(" .zsw").append(cid).append("{");
+					sb.append("width:").append(cellwidth).append("px;");
+					sb.append("}");
+	
+					sb.append(name).append(" .zswi").append(cid).append("{");
+					sb.append("width:").append(celltextwidth).append("px;");
+					sb.append("}");
+				}
 			}
-			
-			boolean hidden = info.hidden;
-			int index = info.index;
-			int width = hidden ? 0 : info.size;
-			int cid = info.id;
-
-			celltextwidth = width - 2 * cp;
-
-			// bug 1989680
-			if (celltextwidth < 0)
-				celltextwidth = 0;
-
-			cellwidth = width;
-
-			if (width <= 0) {
-				sb.append(name).append(" .zsw").append(cid).append("{");
-				sb.append("display:none;");
-				sb.append("}");
-
-			} else {
-				sb.append(name).append(" .zsw").append(cid).append("{");
-				sb.append("width:").append(cellwidth).append("px;");
-				sb.append("}");
-
-				sb.append(name).append(" .zswi").append(cid).append("{");
-				sb.append("width:").append(celltextwidth).append("px;");
-				sb.append("}");
-			}
-		}
-		
-		// ZSS-952: load only required customRowHeights
-		int initRowSize = getInitRowSize();
-
-		infos = rowHelper.getInfos();
-		for (HeaderPositionInfo info : infos) {
-			// ZSS-952: load only required customRowHeights
-			if (info.index > initRowSize) {
-				break;
-			}
-			
-			boolean hidden = info.hidden;
-			int index = info.index;
-			int height = hidden ? 0 : info.size;
-			int cid = info.id;
-			cellheight = height;
-
-			if (height <= 0) {
-				
-				// ZSS-330, ZSS-382: using "height: 0" and don't use "display: none", latter one cause merge cell to chaos
-				sb.append(name).append(" .zsh").append(cid).append("{");
-				sb.append("height:0px;");
-				sb.append("}");
-
-				// ZSS-500: re-overwrite overflow to hidden when row hidden 
-				sb.append(name).append(" .zshi").append(cid).append("{");
-				sb.append("height:0px;");
-				sb.append("border-bottom-width:0px;");
-				sb.append("overflow:hidden;");
-				sb.append("}");
-
-				sb.append(name).append(" .zslh").append(cid).append("{");
-				sb.append("height:0px;");
-				sb.append("line-height:0px;");
-				sb.append("border-bottom-width:0px;");
-				sb.append("}");
-
-				sb.append(name).append(" .zshr").append(cid).append("{");
-				sb.append("max-height:0px;");
-				sb.append("}");
-
-			} else {
-				sb.append(name).append(" .zsh").append(cid).append("{");
-				sb.append("height:").append(height).append("px;");
-				sb.append("}");
-
-				sb.append(name).append(" .zshi").append(cid).append("{");
-				sb.append("height:").append(cellheight).append("px;");
-				sb.append("border-bottom-width:1px;");
-				sb.append("}");
-
-				sb.append(name).append(" .zslh").append(cid).append("{");
-				sb.append("height:").append(height).append("px;");
-				sb.append("line-height:").append(height).append("px;");
-				sb.append("border-bottom-width:1px;");
-				sb.append("}");
-
-				sb.append(name).append(" .zshr").append(cid).append("{");
-				sb.append("max-height:").append(height).append("px;");
-				sb.append("}");
-
+	
+			infos = rowHelper.getInfos();
+			for (HeaderPositionInfo info : infos) {			
+				boolean hidden = info.hidden;
+				int index = info.index;
+				int height = hidden ? 0 : info.size;
+				int cid = info.id;
+				cellheight = height;
+	
+				if (height <= 0) {
+					
+					// ZSS-330, ZSS-382: using "height: 0" and don't use "display: none", latter one cause merge cell to chaos
+					sb.append(name).append(" .zsh").append(cid).append("{");
+					sb.append("height:0px;");
+					sb.append("}");
+	
+					// ZSS-500: re-overwrite overflow to hidden when row hidden 
+					sb.append(name).append(" .zshi").append(cid).append("{");
+					sb.append("height:0px;");
+					sb.append("border-bottom-width:0px;");
+					sb.append("overflow:hidden;");
+					sb.append("}");
+	
+					sb.append(name).append(" .zslh").append(cid).append("{");
+					sb.append("height:0px;");
+					sb.append("line-height:0px;");
+					sb.append("border-bottom-width:0px;");
+					sb.append("}");
+	
+					sb.append(name).append(" .zshr").append(cid).append("{");
+					sb.append("max-height:0px;");
+					sb.append("}");
+	
+				} else {
+					sb.append(name).append(" .zsh").append(cid).append("{");
+					sb.append("height:").append(height).append("px;");
+					sb.append("}");
+	
+					sb.append(name).append(" .zshi").append(cid).append("{");
+					sb.append("height:").append(cellheight).append("px;");
+					sb.append("border-bottom-width:1px;");
+					sb.append("}");
+	
+					sb.append(name).append(" .zslh").append(cid).append("{");
+					sb.append("height:").append(height).append("px;");
+					sb.append("line-height:").append(height).append("px;");
+					sb.append("border-bottom-width:1px;");
+					sb.append("}");
+	
+					sb.append(name).append(" .zshr").append(cid).append("{");
+					sb.append("max-height:").append(height).append("px;");
+					sb.append("}");
+	
+				}
 			}
 		}
 		//TODO: seems no need
@@ -4491,6 +4519,136 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		return sb.toString();
 	}
 
+	//ZSS-952
+	private boolean isIE9() {
+		final Execution exec = Executions.getCurrent();
+		final Double ver = exec != null ? exec.getBrowser("ie") : null;
+		return ver != null && ver < 10.0 && ver >= 9.0;
+	}
+	
+	//ZSS-952: avoid hit the ie9 StyleSheet upper bound limit, load only inside visible area
+	private void prepareIE9StyleSheet(String name, StringBuffer sb, HeaderPositionHelper colHelper, HeaderPositionHelper rowHelper, int cp) {
+		int right = _cssArea.getLastColumn();
+		int bottom = _cssArea.getLastRow();
+		int left = _cssArea.getColumn();
+		int top = _cssArea.getRow();
+		
+		// first CSS when change sheet
+		if (right < 0) {
+			right = getInitColumnSize();
+			bottom = getInitRowSize();
+			top = left = 0;
+			_cssArea.setArea(top, left, bottom, right);
+		}
+		
+		final int fbottom = getSelectedSheetRowfreeze();
+		final int fright = getSelectedSheetColumnfreeze(); 
+
+		//ZSS-952: load only required customColumnWidths
+		List<HeaderPositionInfo> infos = colHelper.getInfos();
+		for (HeaderPositionInfo info : infos) {
+			// ZSS-952: frozen part
+			if (info.index < left && info.index > fright) {
+				continue;
+			}
+			// ZSS-952: load only required customColumnWidths
+			if (info.index > right) {
+				break;
+			}
+			
+			boolean hidden = info.hidden;
+			int index = info.index;
+			int width = hidden ? 0 : info.size;
+			int cid = info.id;
+
+			int celltextwidth = width - 2 * cp;
+
+			// bug 1989680
+			if (celltextwidth < 0)
+				celltextwidth = 0;
+
+			int cellwidth = width;
+
+			if (width <= 0) {
+				sb.append(name).append(" .zsw").append(cid).append("{");
+				sb.append("display:none;");
+				sb.append("}");
+
+			} else {
+				sb.append(name).append(" .zsw").append(cid).append("{");
+				sb.append("width:").append(cellwidth).append("px;");
+				sb.append("}");
+
+				sb.append(name).append(" .zswi").append(cid).append("{");
+				sb.append("width:").append(celltextwidth).append("px;");
+				sb.append("}");
+			}
+		}
+		
+		infos = rowHelper.getInfos();
+		for (HeaderPositionInfo info : infos) {
+			// ZSS-952: frozen part
+			if (info.index < top && info.index > fbottom) {
+				continue;
+			}
+			// ZSS-952: load only required customRowHeights
+			if (info.index > bottom) {
+				break;
+			}
+			
+			boolean hidden = info.hidden;
+			int index = info.index;
+			int height = hidden ? 0 : info.size;
+			int cid = info.id;
+			int cellheight = height;
+
+			if (height <= 0) {
+				
+				// ZSS-330, ZSS-382: using "height: 0" and don't use "display: none", latter one cause merge cell to chaos
+				sb.append(name).append(" .zsh").append(cid).append("{");
+				sb.append("height:0px;");
+				sb.append("}");
+
+				// ZSS-500: re-overwrite overflow to hidden when row hidden 
+				sb.append(name).append(" .zshi").append(cid).append("{");
+				sb.append("height:0px;");
+				sb.append("border-bottom-width:0px;");
+				sb.append("overflow:hidden;");
+				sb.append("}");
+
+				sb.append(name).append(" .zslh").append(cid).append("{");
+				sb.append("height:0px;");
+				sb.append("line-height:0px;");
+				sb.append("border-bottom-width:0px;");
+				sb.append("}");
+
+				sb.append(name).append(" .zshr").append(cid).append("{");
+				sb.append("max-height:0px;");
+				sb.append("}");
+
+			} else {
+				sb.append(name).append(" .zsh").append(cid).append("{");
+				sb.append("height:").append(height).append("px;");
+				sb.append("}");
+
+				sb.append(name).append(" .zshi").append(cid).append("{");
+				sb.append("height:").append(cellheight).append("px;");
+				sb.append("border-bottom-width:1px;");
+				sb.append("}");
+
+				sb.append(name).append(" .zslh").append(cid).append("{");
+				sb.append("height:").append(height).append("px;");
+				sb.append("line-height:").append(height).append("px;");
+				sb.append("border-bottom-width:1px;");
+				sb.append("}");
+
+				sb.append(name).append(" .zshr").append(cid).append("{");
+				sb.append("max-height:").append(height).append("px;");
+				sb.append("}");
+			}
+		}
+	}
+	
 	/**
 	 * Returns the encoded URL for the dynamic generated content, or empty the
 	 * component doesn't belong to any desktop.
