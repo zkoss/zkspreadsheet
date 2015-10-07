@@ -9,6 +9,7 @@ ZK Spreadsheet 3.8.2
   ZSS-1117 Merged cells are shifted after scrolling
   ZSS-1120 Fails to export named styles
   ZSS-1123 ZSS always shows time out warning when reloading every time
+  ZSS-1134 IE9 only. ScrollPanel position sometimes wrongly reset to 0,0
   
 ** Upgrade Notes
     * org.zkoss.poi.ss.usermodel.CellStyle#getIndex() have been changed to return int instead of short because the 
