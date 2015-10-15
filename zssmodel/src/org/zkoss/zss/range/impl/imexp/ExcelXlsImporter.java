@@ -34,6 +34,7 @@ import org.zkoss.zss.model.SChart.ChartLegendPosition;
 import org.zkoss.zss.model.SChart.ChartType;
 import org.zkoss.zss.model.chart.*;
 import org.zkoss.zss.model.impl.ChartAxisImpl;
+import org.zkoss.zss.model.impl.AbstractBookAdv;
 
 /**
  * 
@@ -72,6 +73,8 @@ public class ExcelXlsImporter extends AbstractExcelImporter{
 	protected void importColumn(Sheet poiSheet, SSheet sheet) {
 		int lastChangedColumnIndex = getLastChangedColumnIndex(poiSheet);
 		int defaultWidth = sheet.getDefaultColumnWidth();
+		final int charWidth = ((AbstractBookAdv)book).getCharWidth(); //ZSS-1132
+		
 		for (int index=0 ; index <= lastChangedColumnIndex ; index++){
 			//reference Spreadsheet.updateColWidth()
 			SColumn column = sheet.getColumn(index);
@@ -79,7 +82,7 @@ public class ExcelXlsImporter extends AbstractExcelImporter{
 			column.setHidden(hidden);
 			boolean isCustomWidth = poiSheet.isColumnCustom(index);
 			column.setCustomWidth(isCustomWidth);
-			int width = ImExpUtils.getWidthAny(poiSheet, index, CHRACTER_WIDTH);
+			int width = ImExpUtils.getWidthAny(poiSheet, index, charWidth);
 			//optimization, avoid creating column arrays
 			if(!(hidden || width == defaultWidth)){
 				column.setWidth(width);
@@ -256,21 +259,23 @@ public class ExcelXlsImporter extends AbstractExcelImporter{
 	 */
 	@Override
 	protected int getAnchorWidthInPx(ClientAnchor anchor, Sheet sheet) {
+		final int charWidth = ((AbstractBookAdv)book).getCharWidth(); //ZSS-1132
+
 	    final int firstColumn = anchor.getCol1();
 	    final int firstXoffset = anchor.getDx1();
-	    final int firstColumnWidthPixel = ImExpUtils.getWidthAny(sheet,firstColumn, CHRACTER_WIDTH);
+	    final int firstColumnWidthPixel = ImExpUtils.getWidthAny(sheet,firstColumn, charWidth);
 	    int offsetInFirstColumn = (int) Math.round(((double)firstColumnWidthPixel) * firstXoffset / 1024);
 	    final int anchorWidthInFirstColumn = firstXoffset >= 1024 ? 0 : (firstColumnWidthPixel - offsetInFirstColumn);  
 	    
 	    final int lastColumn = anchor.getCol2();
-	    final int lastColumnWidth = ImExpUtils.getWidthAny(sheet,lastColumn, CHRACTER_WIDTH);
+	    final int lastColumnWidth = ImExpUtils.getWidthAny(sheet,lastColumn, charWidth);
 	    int anchorWidthInLastColumn = (int) Math.round(((double)lastColumnWidth ) * anchor.getDx2() / 1024);  
 	    
 	    int width = firstColumn == lastColumn ? anchorWidthInLastColumn - offsetInFirstColumn : anchorWidthInFirstColumn + anchorWidthInLastColumn;
 	    
 	    // add inter-column width
 	    for (int col = firstColumn+1; col < lastColumn; col++) {
-	    	width += ImExpUtils.getWidthAny(sheet,col, CHRACTER_WIDTH);
+	    	width += ImExpUtils.getWidthAny(sheet,col, charWidth);
 	    }
 
 	    return width;
@@ -367,10 +372,12 @@ public class ExcelXlsImporter extends AbstractExcelImporter{
 
 	@Override
 	protected int getXoffsetInPixel(ClientAnchor anchor, Sheet poiSheet) {
+		final int charWidth = ((AbstractBookAdv)book).getCharWidth(); //ZSS-1132
+		
 	    final int firstColumn = anchor.getCol1();
 	    final int firstXoffset = anchor.getDx1();
 	    
-	    final int columnWidthPixel = ImExpUtils.getWidthAny(poiSheet,firstColumn, CHRACTER_WIDTH);
+	    final int columnWidthPixel = ImExpUtils.getWidthAny(poiSheet,firstColumn, charWidth);
 	    return firstXoffset >= 1024 ? columnWidthPixel : (int) Math.round(((double)columnWidthPixel) * firstXoffset / 1024);  
 	}
 	

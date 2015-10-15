@@ -17,7 +17,6 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.range.impl.imexp;
 
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
-
 import org.zkoss.poi.ss.usermodel.*;
 import org.zkoss.poi.ss.usermodel.charts.*;
 import org.zkoss.poi.ss.util.*;
@@ -33,6 +32,7 @@ import org.zkoss.zss.model.SFill.FillPattern;
 import org.zkoss.zss.model.STableColumn.STotalsRowFunction;
 import org.zkoss.zss.model.SDataValidation.ValidationType;
 import org.zkoss.zss.model.chart.*;
+import org.zkoss.zss.model.impl.AbstractBookAdv;
 import org.zkoss.zss.model.impl.AbstractDataValidationAdv;
 import org.zkoss.zss.model.impl.SheetImpl;
 /**
@@ -50,13 +50,19 @@ public class ExcelXlsxExporter extends AbstractExcelExporter {
     	if(xssfSheet.getCTWorksheet().sizeOfColsArray() == 0) {
     		xssfSheet.getCTWorksheet().addNewCols();
     	}
-    		
+
+    	//ZSS-1132
+		final int defaultWidth = sheet.getDefaultColumnWidth();
+		final int columnWidth = columnArr.getWidth();
+		final AbstractBookAdv book = (AbstractBookAdv)sheet.getBook();
+		final int charWidth = book.getCharWidth();
+		
     	CTCol col = ctSheet.getColsArray(0).addNewCol();
         col.setMin(columnArr.getIndex()+1);
         col.setMax(columnArr.getLastIndex()+1);
     	col.setStyle(toPOICellStyle(columnArr.getCellStyle()).getIndex());
-    	col.setCustomWidth(true);
-    	col.setWidth(UnitUtil.pxToCTChar(columnArr.getWidth(), AbstractExcelImporter.CHRACTER_WIDTH));
+    	col.setCustomWidth(columnArr.isCustomWidth() || columnWidth != defaultWidth); //ZSS-1132
+    	col.setWidth(UnitUtil.pxToCTChar(columnWidth, charWidth));
     	col.setHidden(columnArr.isHidden());
 	}
 

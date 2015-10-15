@@ -68,13 +68,6 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 	private static final Log _logger = Log.lookup(AbstractExcelImporter.class);
 	
 	/**
-	 * Office Open XML Part 4: Markup Language Reference 3.3.1.12 col (Column
-	 * Width & Formatting) The character width 7 is based on Calibri 11. We can
-	 * get correct column width under Excel 2007, but incorrect column width in
-	 * 2010
-	 */
-	public static final int CHRACTER_WIDTH = 7;
-	/**
 	 * <poi CellStyle index, {@link SCellStyle} object> Keep track of imported
 	 * style during importing to avoid creating duplicated style objects.
 	 */
@@ -101,6 +94,8 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 		if (book.getDefaultCellStyles().isEmpty()) {
 			((AbstractBookAdv)book).initDefaultCellStyles();
 		}
+		//ZSS-1132: setup default font
+		((AbstractBookAdv)book).initDefaultFont();
 	}
 	//ZSS-854
 	protected void importNamedStyles() {
@@ -253,7 +248,7 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 	//ZSS-952
 	protected void importSheetDefaultColumnWidth(Sheet poiSheet, SSheet sheet) {
 		// reference XUtils.getDefaultColumnWidthInPx()
-		int defaultWidth = UnitUtil.defaultColumnWidthToPx(poiSheet.getDefaultColumnWidth(), CHRACTER_WIDTH);
+		int defaultWidth = UnitUtil.defaultColumnWidthToPx(poiSheet.getDefaultColumnWidth(), ((AbstractBookAdv)book).getCharWidth()); //ZSS-1132
 		sheet.setDefaultColumnWidth(defaultWidth);
 	}
 	

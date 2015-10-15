@@ -102,10 +102,13 @@ public class ExcelXlsxImporter extends AbstractExcelImporter{
 		if(worksheet.sizeOfColsArray()<=0){
 			return;
 		}
+
+		//ZSS-1132
+		final int charWidth = ((AbstractBookAdv)book).getCharWidth();
 		
 		//ZSS-952: xssf's default column width includes the 5 pixels padding and is in charwidth unit.
 //		int defaultWidth = UnitUtil.defaultColumnWidthToPx(poiSheet.getDefaultColumnWidth(), CHRACTER_WIDTH);
-		int defaultWidth = UnitUtil.xssfDefaultColumnWidthToPx(((XSSFSheet)poiSheet).getXssfDefaultColumnWidth(), CHRACTER_WIDTH);
+		int defaultWidth = UnitUtil.xssfDefaultColumnWidthToPx(((XSSFSheet)poiSheet).getXssfDefaultColumnWidth(), charWidth);
 		CTCols colsArray = worksheet.getColsArray(0);
 		for (int i = 0; i < colsArray.sizeOfColArray(); i++) {
 			CTCol ctCol = colsArray.getColArray(i);
@@ -116,7 +119,7 @@ public class ExcelXlsxImporter extends AbstractExcelImporter{
 			boolean hidden = ctCol.getHidden();
 			int columnIndex = (int)ctCol.getMin()-1;
 			columnArray.setHidden(hidden);
-			int width = ImExpUtils.getWidthAny(poiSheet, columnIndex, CHRACTER_WIDTH);
+			int width = ImExpUtils.getWidthAny(poiSheet, columnIndex, charWidth);
 			if (!(hidden || width == defaultWidth)){
 				//when CT_Col is hidden with default width, We don't import the width for it's 0.  
 				columnArray.setWidth(width);
@@ -450,8 +453,11 @@ public class ExcelXlsxImporter extends AbstractExcelImporter{
 	 */
 	@Override
 	protected int getAnchorWidthInPx(ClientAnchor anchor, Sheet poiSheet) {
+		//ZSS-1132
+		final int charWidth = ((AbstractBookAdv)book).getCharWidth();
+		
 		final int firstColumn = anchor.getCol1();
-	    final int firstColumnWidth = ImExpUtils.getWidthAny(poiSheet,firstColumn, AbstractExcelImporter.CHRACTER_WIDTH);
+	    final int firstColumnWidth = ImExpUtils.getWidthAny(poiSheet,firstColumn, charWidth);
 	    int offsetInFirstColumn = UnitUtil.emuToPx(anchor.getDx1());
 
 	    final int anchorWidthInFirstColumn = firstColumnWidth - offsetInFirstColumn;  
@@ -463,7 +469,7 @@ public class ExcelXlsxImporter extends AbstractExcelImporter{
 	    width = Math.abs(width); // just in case
 	    
 	    for (int j = firstColumn+1; j < lastColumn; ++j) {
-	    	width += ImExpUtils.getWidthAny(poiSheet,j, AbstractExcelImporter.CHRACTER_WIDTH);
+	    	width += ImExpUtils.getWidthAny(poiSheet,j, charWidth);
 	    }
 	    
 	    return width;
@@ -606,8 +612,11 @@ public class ExcelXlsxImporter extends AbstractExcelImporter{
 	//ZSS-952
 	@Override
 	protected void importSheetDefaultColumnWidth(Sheet poiSheet, SSheet sheet) {
+		//ZSS-1132
+		final int charWidth = ((AbstractBookAdv)book).getCharWidth(); 
+
 		// reference XUtils.getDefaultColumnWidthInPx()
-		int defaultWidth = UnitUtil.xssfDefaultColumnWidthToPx(((XSSFSheet)poiSheet).getXssfDefaultColumnWidth(), CHRACTER_WIDTH);
+		int defaultWidth = UnitUtil.xssfDefaultColumnWidthToPx(((XSSFSheet)poiSheet).getXssfDefaultColumnWidth(), charWidth);
 		sheet.setDefaultColumnWidth(defaultWidth);
 	}
 

@@ -89,7 +89,7 @@ public class BookImpl extends AbstractBookAdv{
 	private final Map<String, SNamedStyle> _namedStyles = new HashMap<String, SNamedStyle>(); //ZSS-854
 	private final List<SCellStyle> _defaultCellStyles = new ArrayList<SCellStyle>(); //ZSS-854
 	private final List<AbstractFontAdv> _fonts = new ArrayList<AbstractFontAdv>();
-	private final AbstractFontAdv _defaultFont;
+	private AbstractFontAdv _defaultFont;
 	private final HashMap<AbstractColorAdv,AbstractColorAdv> _colors = new LinkedHashMap<AbstractColorAdv,AbstractColorAdv>();
 	
 	private final static Random _random = new Random(System.currentTimeMillis());
@@ -1221,5 +1221,33 @@ public class BookImpl extends AbstractBookAdv{
 			linkStyle.setFont(linkFont);
 		}
 		return linkStyle;
+	}
+	
+	//ZSS-1132
+	@Override
+	public void initDefaultFont() {
+		_defaultFont = (AbstractFontAdv) _defaultCellStyles.get(0).getFont();
+	}
+	
+	//ZSS-1132: default character width depends on default font size
+	/**
+	 * Office Open XML Part 4: Markup Language Reference 3.3.1.12 col (Column
+	 * Width & Formatting) The character width 7 is based on Calibri 11 and
+	 * character width 8 is base on Calibri 12.
+	 */
+	//TODO: The character width is get by experiments 
+	@Override
+	public int getCharWidth() {
+		if (_defaultFont != null) {
+			final int pt = _defaultFont.getHeightPoints();
+			switch(pt) {
+			case 12:
+				return 8;
+			case 11:
+			default:
+				return 7;
+			}
+		}
+		return 7;
 	}
 }

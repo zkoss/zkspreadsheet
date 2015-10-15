@@ -34,6 +34,8 @@ import org.zkoss.zss.model.*;
 import org.zkoss.zss.model.SCell.CellType;
 import org.zkoss.zss.model.SFill.FillPattern;
 import org.zkoss.zss.model.SRichText.Segment;
+import org.zkoss.zss.model.impl.AbstractBookAdv;
+import org.zkoss.zss.model.impl.ColumnArrayImpl;
 import org.zkoss.zss.model.impl.HeaderFooterImpl;
 import org.zkoss.zss.model.impl.TableNameImpl;
 import org.zkoss.zss.model.impl.sys.formula.FormulaEngineImpl;
@@ -195,7 +197,9 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 		}
 
 		poiSheet.setDefaultRowHeight((short) UnitUtil.pxToTwip(sheet.getDefaultRowHeight()));
-		poiSheet.setDefaultColumnWidth((int) UnitUtil.pxToDefaultColumnWidth(sheet.getDefaultColumnWidth(), AbstractExcelImporter.CHRACTER_WIDTH));
+		//ZSS-1132
+		final AbstractBookAdv book = (AbstractBookAdv) sheet.getBook();
+		poiSheet.setDefaultColumnWidth((int) UnitUtil.pxToDefaultColumnWidth(sheet.getDefaultColumnWidth(), book.getCharWidth()));
 
 		// Header
 		Header header = poiSheet.getHeader();
@@ -333,6 +337,7 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 		Iterator<SColumnArray> columnArrayIterator = sheet.getColumnArrayIterator();
 		while (columnArrayIterator.hasNext()) {
 			SColumnArray columnArr = columnArrayIterator.next();
+			if (((ColumnArrayImpl)columnArr).shouldSkip()) continue; //ZSS-1132
 			exportColumnArray(sheet, poiSheet, columnArr);
 		}
 	}

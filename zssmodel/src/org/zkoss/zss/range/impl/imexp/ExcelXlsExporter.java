@@ -21,6 +21,7 @@ import org.zkoss.poi.hssf.usermodel.HSSFSheet;
 import org.zkoss.poi.ss.SpreadsheetVersion;
 import org.zkoss.poi.ss.usermodel.*;
 import org.zkoss.zss.model.*;
+import org.zkoss.zss.model.impl.AbstractBookAdv;
 /**
  * 
  * @author dennis, kuro
@@ -34,8 +35,12 @@ public class ExcelXlsExporter extends AbstractExcelExporter {
 		CellStyle poiCellStyle = toPOICellStyle(columnArr.getCellStyle());
 		boolean hidden = columnArr.isHidden();
 		
+		//ZSS-1132
+		final AbstractBookAdv book = (AbstractBookAdv) sheet.getBook();
+		final int charWidth = book.getCharWidth();
+		
 		for(int i = columnArr.getIndex(); i <= columnArr.getLastIndex() && i <= SpreadsheetVersion.EXCEL97.getMaxColumns(); i++) {
-			poiSheet.setColumnWidth(i, UnitUtil.pxToFileChar256(columnArr.getWidth(), AbstractExcelImporter.CHRACTER_WIDTH));
+			poiSheet.setColumnWidth(i, UnitUtil.pxToFileChar256(columnArr.getWidth(), charWidth));
 			poiSheet.setColumnHidden(i, hidden);
 			poiSheet.setDefaultColumnStyle(i, poiCellStyle);
 		}

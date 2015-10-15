@@ -30,6 +30,7 @@ import org.zkoss.zss.model.SCellStyle;
 import org.zkoss.zss.model.SCell.CellType;
 import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.model.STableStyle;
+import org.zkoss.zss.model.impl.AbstractBookAdv;
 import org.zkoss.zss.model.impl.ReadOnlyRichTextImpl;
 import org.zkoss.zss.model.impl.TableStyleNone;
 import org.zkoss.zss.model.sys.EngineFactory;
@@ -269,7 +270,10 @@ public class FormatEngineImpl implements FormatEngine {
 			}
 		}
 		px -= 5;
-		return UnitUtil.pxToFileChar256(px, AbstractExcelImporter.CHRACTER_WIDTH);
+		
+		//ZSS-1132
+		final AbstractBookAdv book = (AbstractBookAdv) sheet.getBook();
+		return UnitUtil.pxToFileChar256(px, book.getCharWidth());
 	}
 	
 	//ZSS-565

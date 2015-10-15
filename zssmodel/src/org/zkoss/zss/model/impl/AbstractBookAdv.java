@@ -17,8 +17,6 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.model.impl;
 
 import java.io.Serializable;
-import java.util.List;
-import java.util.Map;
 
 import org.zkoss.zss.model.ModelEvent;
 import org.zkoss.zss.model.SBook;
@@ -66,4 +64,12 @@ public abstract class AbstractBookAdv implements SBook,EvaluationContributorCont
 	//ZSS-967
 	//return null if newName is not duplicated in the Table
 	public abstract String setTableColumnName(STable table, String oldName, String newName);
+	
+	//ZSS-1132: setup default font
+	//@since 3.8.2
+	public abstract void initDefaultFont();
+	
+	//ZSS-1132: get character width in pixel per the default font of this book
+	//@since 3.8.2
+	public abstract int getCharWidth();
 }
