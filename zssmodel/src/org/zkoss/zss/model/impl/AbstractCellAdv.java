@@ -258,5 +258,21 @@ public abstract class AbstractCellAdv implements SCell,LinkedModelObject,Seriali
 	
 	//ZSS-873
 	//@since 3.7.0
-	public abstract FormulaExpression getFormulaExpression(); 
+	public abstract FormulaExpression getFormulaExpression();
+	
+	//ZSS-1116
+	//@since 3.8.2
+	public abstract void setTextHeight(int height);
+	
+	//ZSS-1116
+	//@since 3.8.2
+	public abstract int getTextHeight();
+	
+	//ZSS-1116
+	//@since 3.8.2
+	public abstract void setCalcAutoHeight(boolean b);
+	
+	//ZSS-1116
+	//@since 3.8.2
+	public abstract boolean isCalcAutoHeight();
 }

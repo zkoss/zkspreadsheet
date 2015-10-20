@@ -8,17 +8,19 @@ Since 3.8.2
    somethings
    omething  
    something
-4. Refresh(press F5)
-5. Scroll to row 23(by clicking on scrollbar once)
-6. Click wrap button.
-7. Check if the text in C23 correctly wrap around as show below
-   something 
-   somethings
-   omething  
-   something
+4. Drag scroll handle to row 800
+5. Check if the text in C800 correctly wrap around as show in item3
+6. Refresh(press F5)
+7. Scroll to row 23(by clicking on scrollbar once)
+8. Click wrap button.
+9. Check if the text in C23 correctly wrap around as show in item 3
+10. Refresh(press F5)
+11. Scroll to row 800(by drag the scrolling handle to bottom)
+12. Click wrap button.
+13. Check if the text in C800 correctly wrap around as show in item 3.
 </label>
 
-<button onClick="wrap()">wrap</button>
+<button onClick="wrap()">wrap at C23 and C800</button>
 <spreadsheet id="ss" src="/issue3/book/1116-wrap-text.xlsx" maxVisibleRows="800" maxVisibleColumns="20" width="100%" 
 		height="400px" 
 		showContextMenu="true" showSheetbar="true" showToolbar="true" showFormulabar="true" 
@@ -27,6 +29,8 @@ Since 3.8.2
 		public void wrap(){
 			CellOperationUtil.applyWrapText(Ranges.range(ss.getSelectedSheet(),22,2), true);
 			Ranges.range(ss.getSelectedSheet(),22, 2).setCellValue("something somethingsomething something");
-		}
+	        CellOperationUtil.applyWrapText(Ranges.range(ss.getSelectedSheet(),799,2), true);
+	        Ranges.range(ss.getSelectedSheet(),799, 2).setCellValue("something somethingsomething something");
+	   	}
 		]]></zscript>
 </zk>

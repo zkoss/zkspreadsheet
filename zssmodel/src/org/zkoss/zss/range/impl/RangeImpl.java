@@ -318,6 +318,9 @@ public class RangeImpl implements SRange {
 				Object cellval = cell.getValue();
 				if (!equalObjects(cellval, value)) {
 					cell.setValue(value);
+					
+					//ZSS-1116: mark might need recalc auto height
+					markCalcAutoHeight(cell);
 				}
 				return true;
 			}
@@ -513,6 +516,10 @@ public class RangeImpl implements SRange {
 					//if there is a suggested format and old format is not general
 					StyleUtil.setDataFormat(cell.getSheet().getBook(), cell, format);
 				}
+				
+				//ZSS-1116: mark might need recalc auto height
+				markCalcAutoHeight(cell);
+
 				return true;
 			}
 			
@@ -2510,5 +2517,14 @@ public class RangeImpl implements SRange {
 				return CellAttribute.ALL;
 			}
 		}).doInWriteLock(getLock());
+	}
+	
+	//ZSS-1116: mark might need recalc auto height
+	//@since 3.8.2
+	private void markCalcAutoHeight(SCell cell) {
+		final SRow row = cell.getSheet().getRow(cell.getRowIndex());
+		if (!row.isNull() && !row.isCustomHeight()) {
+			((AbstractCellAdv)cell).setCalcAutoHeight(true);
+		}
 	}
 }

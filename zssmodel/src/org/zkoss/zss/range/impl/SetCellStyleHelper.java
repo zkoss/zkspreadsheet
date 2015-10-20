@@ -20,13 +20,19 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.zkoss.zss.model.CellStyleHolder;
 import org.zkoss.zss.model.InvalidModelOpException;
 import org.zkoss.zss.model.SCell;
 import org.zkoss.zss.model.SCellStyle;
 import org.zkoss.zss.model.SColumn;
 import org.zkoss.zss.model.SColumnArray;
+import org.zkoss.zss.model.SFont;
 import org.zkoss.zss.model.SRow;
+import org.zkoss.zss.model.SSheet;
+import org.zkoss.zss.model.SCell.CellType;
 import org.zkoss.zss.model.impl.AbstractCellAdv;
+import org.zkoss.zss.model.impl.RowImpl;
+import org.zkoss.zss.model.util.Strings;
 import org.zkoss.zss.range.SRange;
 
 /**
@@ -58,6 +64,7 @@ public class SetCellStyleHelper extends RangeHelperBase{
 			for(int r = getRow(); r <= getLastRow(); r++){
 				for (int c = getColumn(); c <= getLastColumn(); c++){
 					SCell cell = sheet.getCell(r,c);
+					setNewCellStyle(cell, style); //ZSS-1116
 					cell.setCellStyle(style);
 				}
 			}
@@ -114,5 +121,20 @@ public class SetCellStyleHelper extends RangeHelperBase{
 				}
 			}
 		}
+	}
+
+	//ZSS-1116: (See ZSS-958 in Cell.js#update_()) We usually calculate auto 
+	//  height in client side and then send the result back to server via 
+	//  HeaderUpdateCommand#processLeftHeader() and save that information in
+	//  sever. 
+	//  However, in ZSS-1116, if programmer use APIs to cause the change
+	//  of the cell, the Cell.js#update_() might not be called at all
+	//  because the cell is not in active block and ZSS optimize to NOT send
+	//  the update cell information back or skip rendering the cell. In such
+	//  case, we mark the CellImpl.java#_calcAutoHeight flag to true and pass
+	//  it to client. When Cell do the real rendering(i.e. bind_()), we then
+	//  do the real height calculation in client side
+	private void setNewCellStyle(SCell cell, SCellStyle cellStyle) {
+		StyleUtil.setNewCellStyle(cell, cellStyle);
 	}
 }

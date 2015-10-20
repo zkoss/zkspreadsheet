@@ -197,6 +197,8 @@ Copyright (C) 2012 Potix Corporation. All Rights Reserved.
 					upComment = (upAll || type == ATTR_COMMENT),
 					cellType = v.ct;
 				this.cellType = cellType != undefined ? cellType : 3;//default is BLANK_CELL
+				//ZSS-1116: CellImpl.java#_calcAutoHeight from server to client cache
+				this._cah = v._cah;
 				if (upText) {
 					var mergedTextId = v.meft;
 					if (mergedTextId != undefined) {//index start from 0

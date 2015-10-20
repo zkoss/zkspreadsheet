@@ -34,6 +34,7 @@ import org.zkoss.zss.model.SColumnArray;
 import org.zkoss.zss.model.SComment;
 import org.zkoss.zss.model.SHyperlink;
 import org.zkoss.zss.model.SRichText;
+import org.zkoss.zss.model.SRow;
 import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.model.STable;
 import org.zkoss.zss.model.STableColumn;
@@ -66,9 +67,13 @@ public class CellImpl extends AbstractCellAdv {
 	private AbstractCellStyleAdv _cellStyle;
 	transient private FormulaResultCellValue _formulaResultValue;// cache
 	
+	private int _height = -1; //ZSS-1116, text height of this cell
 	
 	//use another object to reduce object reference size
 	private OptFields _opts;
+	
+	//ZSS-1116: flag to be sent to client requesting calculating row's auto height
+	private boolean _calcAutoHeight = false;
 	
 	private static class OptFields implements Serializable{
 		private AbstractHyperlinkAdv _hyperlink;
@@ -633,5 +638,33 @@ public class CellImpl extends AbstractCellAdv {
 	@Internal
 	public Object getFromulaResultValue() {
 		return _formulaResultValue;
+	}
+	
+	//ZSS-1116: (See ZSS-958 in Cell.js#update_()) remember the cell height
+	@Internal
+	@Override
+	public void setTextHeight(int heightPx) {
+		this._height = heightPx;
+		setCalcAutoHeight(false); // auto calculation done
+	}
+	
+	//ZSS-1116
+	@Internal
+	@Override
+	public int getTextHeight() {
+		return this._height < 0 ? getSheet().getDefaultRowHeight() : this._height;
+	}
+	
+	//ZSS-1116
+	//Mark the flag to request calculate the height of this row in client
+	@Internal
+	public void setCalcAutoHeight(boolean b) {
+		this._calcAutoHeight = b;
+	}
+	
+	//ZSS-1116
+	@Internal
+	public boolean isCalcAutoHeight() {
+		return _calcAutoHeight;
 	}
 }

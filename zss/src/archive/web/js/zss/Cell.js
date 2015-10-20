@@ -194,6 +194,10 @@ zss.Cell = zk.$extends(zk.Widget, {
 		
 		//ZSS-944
 		this.rotate = cellData.rotate;
+		
+		//ZSS-1116: CellImpl.java#_calcAutoHeight from cache to model 
+		this._cah = cellData._cah;
+		delete cellData._cah;
 	},
 	getVerticalAlign: function () {
 		switch (this.valign) {
@@ -447,11 +451,18 @@ zss.Cell = zk.$extends(zk.Widget, {
 			indentionChd ||
 			((this.cellType == STR_CELL || this.cellType == BLANK_CELL) && !this.merid && processWrap) //ZSS-528, for wrap case
 		) { 
-			var newHeight = this._getTextHeight0();
-			this.parent.updateAutoHeightDirty(this._txtHgh || -1, newHeight);
-			this._txtHgh = newHeight;
-			this.parent.processCellAutoHeight(this);
+			this._updateCellAutoHeight(r, c);
 		}
+	},
+	//ZSS-1116: prepare auto height calculation
+	_updateCellAutoHeight() {
+		var newHeight = this._getTextHeight0();
+		this.parent.updateAutoHeightDirty(this._txtHgh || -1, newHeight);
+		this._txtHgh = newHeight;
+		this.parent.processCellAutoHeight(this);
+		
+		//send text height back(and clear CellImpl.java#_calcAutoHeight if needed)
+		this.sheet._sendOnTextHeight(this.r, this.c, newHeight);
 	},
 	//ZSS-944
 	/**
@@ -727,6 +738,12 @@ zss.Cell = zk.$extends(zk.Widget, {
 		// ZSS-958: save all cells which aren't same as default height to calculate heighest row height
 		this._saveNoneDefaultHeightCell();
 		
+		//ZSS-1116
+		if (this._cah) {
+			this._updateCellAutoHeight();
+			delete this._cah;
+			this.sheet._cah = true; // mark sheet need calcAutoHeight
+		}
 	},
 	_saveNoneDefaultHeightCell: function () {
 		// not implement in OSE

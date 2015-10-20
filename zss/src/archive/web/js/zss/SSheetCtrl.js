@@ -1844,6 +1844,11 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			data = zk.copy(evt.data, {sheetId: this.serverSheetId, row: row, col: col, href: href, type: type});
 		wgt.fire('onCellHyperlink', data, wgt.isListen('onCellHyperlink') ? {toServer: true} : null);
 	},
+	//ZSS-1116: sync text height calculated in client to server
+	_sendOnTextHeight: function (row, col, height) {
+		var wgt = this._wgt;
+		wgt.fire('onZSSTextHeight', {sheetId: this.serverSheetId, row: row, col : col, height: height}, {toServer: true});
+	},
 	_timeoutId: null,
 	_fireOnOpenAndEdit: function (time) { //open Editbox and start editing
 		clearTimeout(this._timeoutId);

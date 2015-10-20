@@ -23,6 +23,7 @@ import javax.xml.ws.handler.MessageContext.Scope;
 import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.SBorder;
 import org.zkoss.zss.model.SCell;
+import org.zkoss.zss.model.SCell.CellType;
 import org.zkoss.zss.model.SCellStyle;
 import org.zkoss.zss.model.CellStyleHolder;
 import org.zkoss.zss.model.SFill;
@@ -37,8 +38,10 @@ import org.zkoss.zss.model.impl.AbstractCellAdv;
 import org.zkoss.zss.model.impl.AbstractSheetAdv;
 import org.zkoss.zss.model.impl.AbstractTableAdv;
 import org.zkoss.zss.model.impl.RichTextImpl;
+import org.zkoss.zss.model.impl.RowImpl;
 import org.zkoss.zss.model.util.CellStyleMatcher;
 import org.zkoss.zss.model.util.FontMatcher;
+import org.zkoss.zss.model.util.Strings;
 /**
  * A utility class to help spreadsheet set style of a cell
  * @author Dennis.Chen
@@ -92,7 +95,7 @@ public class StyleUtil {
 			style = cloneCellStyle(book,orgStyle);
 			style.setFont(font);
 		}
-		holder.setCellStyle(style);
+		setNewCellStyle(holder, style); //ZSS-1116
 		
 //		if(cache!=null){
 //			cache.put((int)orgStyle.getIndex(), style);
@@ -115,7 +118,7 @@ public class StyleUtil {
 			style = cloneCellStyle(book,orgStyle);
 			style.setFillColor(newColor);
 		}
-		holder.setCellStyle(style);
+		setNewCellStyle(holder, style); //ZSS-1116
 		
 	}
 	
@@ -143,7 +146,7 @@ public class StyleUtil {
 			style.setBackColor(newColor);
 			style.setFillPattern(pattern);
 		}
-		holder.setCellStyle(style);
+		setNewCellStyle(holder, style); //ZSS-1116
 	}
 
 	public static void setFillOptions(SBook book,CellStyleHolder holder, String bgColor, String fillColor, FillPattern pattern){
@@ -172,7 +175,7 @@ public class StyleUtil {
 			style.setFillColor(newFillColor);
 			style.setFillPattern(pattern);
 		}
-		holder.setCellStyle(style);
+		setNewCellStyle(holder, style); //ZSS-1116
 	}
 	
 	public static void setTextWrap(SBook book,CellStyleHolder holder,boolean wrap){
@@ -189,7 +192,7 @@ public class StyleUtil {
 			style  = cloneCellStyle(book,orgStyle);
 			style.setWrapText(wrap);
 		}
-		holder.setCellStyle(style);
+		setNewCellStyle(holder, style); //ZSS-1116
 	}
 	
 	public static void setFontHeightPoints(SBook book,CellStyleHolder holder,int fontHeightPoints){
@@ -220,7 +223,8 @@ public class StyleUtil {
 			style = cloneCellStyle(book,orgStyle);
 			style.setFont(font);
 		}
-		holder.setCellStyle(style);
+		setNewCellStyle(holder, style); //ZSS-1116
+
 	}
 	
 	public static void setFontStrikethrough(SBook book,CellStyleHolder holder, boolean strikeout){
@@ -251,7 +255,7 @@ public class StyleUtil {
 			style = cloneCellStyle(book,orgStyle);
 			style.setFont(font);
 		}
-		holder.setCellStyle(style);
+		setNewCellStyle(holder, style); //ZSS-1116
 		
 	}
 	
@@ -283,7 +287,7 @@ public class StyleUtil {
 			style = cloneCellStyle(book,orgStyle);
 			style.setFont(font);
 		}
-		holder.setCellStyle(style);
+		setNewCellStyle(holder, style); //ZSS-1116
 		
 	}
 	
@@ -378,7 +382,7 @@ public class StyleUtil {
 			}
 		}
 		
-		holder.setCellStyle(style);
+		setNewCellStyle(holder, style); //ZSS-1116
 	}
 	
 //	private static void debugStyle(String msg,int row, int col, Workbook book, NCellStyle style){
@@ -419,7 +423,7 @@ public class StyleUtil {
 			style = cloneCellStyle(book,orgStyle);
 			style.setFont(font);
 		}
-		holder.setCellStyle(style);
+		setNewCellStyle(holder, style); //ZSS-1116
 	}
 	
 	public static void setFontItalic(SBook book,CellStyleHolder holder, boolean italic) {
@@ -450,8 +454,7 @@ public class StyleUtil {
 			style = cloneCellStyle(book,orgStyle);
 			style.setFont(font);
 		}
-		holder.setCellStyle(style);
-		
+		setNewCellStyle(holder, style); //ZSS-1116
 	}
 	
 	public static void setFontUnderline(SBook book,CellStyleHolder holder, SFont.Underline underline){
@@ -482,7 +485,7 @@ public class StyleUtil {
 			style = cloneCellStyle(book,orgStyle);
 			style.setFont(font);
 		}
-		holder.setCellStyle(style);
+		setNewCellStyle(holder, style); //ZSS-1116
 	}
 	
 	public static void setTextHAlign(SBook book,CellStyleHolder holder, SCellStyle.Alignment align){
@@ -499,7 +502,7 @@ public class StyleUtil {
 			style = cloneCellStyle(book,orgStyle);
 			style.setAlignment(align);
 		}
-		holder.setCellStyle(style);
+		setNewCellStyle(holder, style); //ZSS-1116
 	}
 	
 	public static void setTextVAlign(SBook book,CellStyleHolder holder, SCellStyle.VerticalAlignment valign){
@@ -516,8 +519,7 @@ public class StyleUtil {
 			style = cloneCellStyle(book,orgStyle);
 			style.setVerticalAlignment(valign);
 		}
-		holder.setCellStyle(style);
-
+		setNewCellStyle(holder, style); //ZSS-1116
 	}
 	
 	public static void setDataFormat(SBook book,CellStyleHolder holder, String format) {
@@ -535,7 +537,7 @@ public class StyleUtil {
 			style = cloneCellStyle(book,orgStyle);
 			style.setDataFormat(format);
 		}
-		holder.setCellStyle(style);
+		setNewCellStyle(holder, style); //ZSS-1116
 	}
 
 	//ZSS-748
@@ -567,7 +569,7 @@ public class StyleUtil {
 			style = cloneCellStyle(book,orgStyle);
 			style.setFont(font);
 		}
-		holder.setCellStyle(style);
+		setNewCellStyle(holder, style); //ZSS-1116
 	}
 	
 	//ZSS-752
@@ -881,7 +883,7 @@ public class StyleUtil {
 			style = cloneCellStyle(book,orgStyle);
 			style.setRotation(rotation);
 		}
-		holder.setCellStyle(style);
+		setNewCellStyle(holder, style); //ZSS-1116
 	}
 	
 	//ZSS-915
@@ -909,7 +911,7 @@ public class StyleUtil {
 			style = cloneCellStyle(book, orgStyle);
 			style.setIndention(indent);
 		}
-		holder.setCellStyle(style);
+		setNewCellStyle(holder, style); //ZSS-1116
 	}
 
 	
@@ -1007,5 +1009,50 @@ public class StyleUtil {
 		}
 
 		return style;
+	}
+	
+	//ZSS-1116: (See ZSS-958 in Cell.js#update_()) We usually calculate auto 
+	//  height in client side and then send the result back to server via 
+	//  HeaderUpdateCommand#processLeftHeader() and save that information in
+	//  sever. 
+	//  However, in ZSS-1116, if programmer use APIs to cause the change
+	//  of the cell, the Cell.js#update_() might not be called at all
+	//  because the cell is not in active block and ZSS optimize to NOT send
+	//  the update cell information back or skip rendering the cell. In such
+	//  case, we mark the CellImpl.java#_calcAutoHeight flag to true and pass
+	//  it to client. When Cell do the real rendering(i.e. bind_()), we then
+	//  do the real height calculation in client side
+	public static void setNewCellStyle(CellStyleHolder holder, SCellStyle cellStyle) {
+		final SCellStyle cellStyle0 = holder.getCellStyle();
+		final SFont font0 = cellStyle0.getFont();
+		final int rotate0 = cellStyle0.getRotation();
+		final int indent0 = cellStyle0.getIndention();
+		final boolean wrap0 = cellStyle0.isWrapText();
+		
+		final SFont font = cellStyle.getFont();
+		final int rotate = cellStyle.getRotation();
+		final int indent = cellStyle.getIndention();
+		final boolean wrap = cellStyle.isWrapText();
+
+		final boolean to90 = rotate == 90 || rotate == -90;
+		final boolean processWrap = wrap != wrap0 && !to90; 
+
+		holder.setCellStyle(cellStyle);
+		
+		//ZSS-1116, 20151019, henrichen: We don't handle SColumn and SRow; too costly
+		if (holder instanceof SCell) {
+			final SCell cell = (SCell) holder;
+			if (!cell.getSheet().getRow(cell.getRowIndex()).isCustomHeight()) {
+				final CellType type = cell.getType();
+				if (rotate != rotate0
+					|| indent != indent0
+					|| !font.equals(font0)
+					|| (type == CellType.STRING && processWrap)) {
+					
+					// mark flag for client rendering
+					((AbstractCellAdv)cell).setCalcAutoHeight(true);
+				}
+			}
+		}
 	}
 }

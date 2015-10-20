@@ -270,6 +270,13 @@ zss.CellBlockCtrl = zk.$extends(zk.Widget, {
 		this._resetTempMergeCells(nr.left, nr.top, nr.right, nr.bottom);
 		this._setTempMergeCells();
 		delete this._newrange;
+		
+		// ZSS-1116: after Cell.js is bind_() in which it might register to 
+		//    do _calcAutoHeight; so try to really render row height now
+		if (sheet._cah) {
+			sheet.fireProcessAutoHeight_();
+			delete sheet._cah;
+		}
 	},
 	/**
 	 * Sets rows's width position index

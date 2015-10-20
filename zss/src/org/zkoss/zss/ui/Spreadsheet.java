@@ -127,6 +127,7 @@ import org.zkoss.zss.model.STable;
 import org.zkoss.zss.model.impl.AbstractBookAdv;
 import org.zkoss.zss.model.impl.AbstractBookSeriesAdv;
 import org.zkoss.zss.model.impl.AbstractRowAdv;
+import org.zkoss.zss.model.impl.AbstractCellAdv;
 import org.zkoss.zss.model.impl.AbstractSheetAdv;
 import org.zkoss.zss.model.impl.AbstractTableAdv;
 import org.zkoss.zss.model.impl.TableImpl.DummyTable;
@@ -3641,6 +3642,10 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 					attrs.put("rot", rotate);
 				}
 			}
+			
+			//ZSS-1116: pass the _calcAutoHeight flag to client
+			if (((AbstractCellAdv)cell).isCalcAutoHeight())
+				attrs.put("_cah", true);
 			return attrs;
 		}
 
