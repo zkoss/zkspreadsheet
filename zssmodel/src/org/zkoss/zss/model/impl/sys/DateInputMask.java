@@ -16,6 +16,7 @@ import java.text.AttributedCharacterIterator;
 import java.text.CharacterIterator;
 import java.text.DateFormat;
 import java.text.DateFormatSymbols;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
 import java.util.Map;
@@ -50,7 +51,8 @@ public class DateInputMask { //ZSS-67
 //	private static final String NAME_MONTH_G = "([\\p{InBasicLatin}\\p{InLatin-1Supplement}]{3,9})"; //Named Month: Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec
 	private static final String NUM_MONTH_G = "([0]?[1-9]|1[012])"; //Numbed Month: 1 ~ 12
 	private static final String DAY_G = "([0]?[1-9]|[12][0-9]|3[01])"; //Day: 1 ~ 31
-	private static final String YEAR_G = "(19\\d\\d|[2-9]\\d\\d\\d|\\d\\d|\\d)"; //1900 - 9999
+	private static final String YEAR_G = "(19\\d\\d|[2-9]\\d\\d\\d|\\d\\d|\\d)"; //1900 - 9999; + short form
+	private static final String YEAR4_G = "(19\\d\\d|[2-9]\\d\\d\\d)"; //1900 - 9999; 4 digit form  //ZSS-1126, ZSS-1127
 	
 	private static final String HOUR_G = "(\\d{1,4})";
 	private static final String MINUTE_G = "(\\d{1,4})";
@@ -571,6 +573,21 @@ public class DateInputMask { //ZSS-67
 	//"7-18-65": (M-d-y), (d-M-y), or (y-M-d)
 	private String[] getDate4(Locale locale, boolean withTime) {
 		DateFormat format = DateFormat.getDateInstance(DateFormat.SHORT, locale);
+		final boolean digit4 = false; 
+		return getDate4Pattern(format, withTime, digit4);
+	}
+	
+	//ZSS-1126, ZSS-1127
+	//"1965-7-18": (yyyy-M-d)
+	private String[] getDate41(Locale locale, boolean withTime) {
+		DateFormat format = new SimpleDateFormat("yyyy-M-d");
+		final boolean digit4 = true;
+		return getDate4Pattern(format, withTime, digit4);
+	}
+	
+	//ZSS-1126, ZSS-1127
+	//"7-18-65": (M-d-y), (d-M-y), or (y-M-d)
+	private String[] getDate4Pattern(DateFormat format, boolean withTime, boolean digit4) {
 		final TimeZone gmt = TimeZone.getTimeZone("GMT");
 		format.setTimeZone(gmt);
 		final Calendar cal = Calendar.getInstance(gmt);
@@ -618,8 +635,8 @@ public class DateInputMask { //ZSS-67
 					case Calendar.YEAR:
 						if (!alreadyYear) {
 							alreadyYear = true;
-							sb.append(YEAR_G);
-							sb1.append("65");
+							sb.append(digit4 ? YEAR4_G : YEAR_G); //ZSS-1126, ZSS-1127
+							sb1.append(digit4 ? "1965" : "65"); //ZSS-1126, ZSS-1127
 						}
 						break;
 					}
@@ -644,7 +661,7 @@ public class DateInputMask { //ZSS-67
 		if (formatInfos != null) { //in cache
 			return formatInfos;
 		}
-		formatInfos= new FormatInfo[15];
+		formatInfos= new FormatInfo[17];
         int j = 0;
         //formatInfos[j++] = new FormatInfo(Pattern.compile(DATE11_PAT, flags), "d-mmm-yy", "JUL 18, 65", null, locale);
         final String[] date11 = getDate11(locale, false); 
@@ -673,6 +690,11 @@ public class DateInputMask { //ZSS-67
         //_formatInfo[j++] = new FormatInfo(Pattern.compile(DATE4_PAT, flags), "m/d/yyyy", "7-18-65", null, locale);
         final String[] date4 = getDate4(locale, false); 
         formatInfos[j++] = new FormatInfo(Pattern.compile(date4[0], flags), "m/d/yyyy", date4[1], null, locale); //6
+
+        //ZSS-1126, ZSS-1127
+        //"1965-7-18"
+        final String[] date41 = getDate41(locale, false); 
+        formatInfos[j++] = new FormatInfo(Pattern.compile(date41[0], flags), "m/d/yyyy", date41[1], null, locale); //15
 
         formatInfos[j++] = new FormatInfo(Pattern.compile(TIME_PAT, flags), null, "2:3:5.100 A", "2 P", locale); //7
 
@@ -703,7 +725,12 @@ public class DateInputMask { //ZSS-67
         //_formatInfo[j++] = new FormatInfo(Pattern.compile(DATETIME4_PAT, flags), "m/d/yyyy h:mm", "7-18-65 2:3:5.100 A", "7-18-65 2 P", locale);
         final String[] datetime4 = getDate4(locale, true); 
         formatInfos[j++] = new FormatInfo(Pattern.compile(datetime4[0], flags), "m/d/yyyy h:mm", datetime4[1], datetime4[2], locale); //14
-        
+
+        //ZSS-1126, ZSS-1127
+        //"1965-7-18 2:3:5.100 A"
+        final String[] datetime41 = getDate41(locale, true); 
+        formatInfos[j++] = new FormatInfo(Pattern.compile(datetime41[0], flags), "m/d/yyyy h:mm", datetime41[1], datetime41[2], locale); //15
+
         //cache it
         _formatInfosMap.put(locale, formatInfos);
 		return formatInfos;
@@ -764,7 +791,7 @@ public class DateInputMask { //ZSS-67
 	        }
 	        for (int j = 1, len = m.groupCount()+1; j < len; ++j) {
 	        	final String grptxt = m.group(j);
-	        	if ("65".equals(grptxt)) {
+	        	if ("65".equals(grptxt) || ("1965".equals(grptxt))) { //ZSS-1126,ZSS-1127
 	        		_year = j;
 	        	} else if ("7".equals(grptxt)) {
 	        		_month = j;
