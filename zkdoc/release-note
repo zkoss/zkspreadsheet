@@ -4,6 +4,7 @@ ZK Spreadsheet 3.8.2
   ZSS-1121 Declare methods as protected for importers and exporters
   ZSS-1126 value() supports date format like 2015-09-05
   ZSS-1127 smart input can convert such date input "2015-09-20" into the date format in US locale
+  ZSS-807 Hyperlink support link to "Place in this document"
   
 *Bugs:
   ZSS-1109 The selection box should jump to last filled cell through consecutive filled data when using ctrl + arrow
@@ -15,7 +16,6 @@ ZK Spreadsheet 3.8.2
   ZSS-1135 Gridline doesn't appear after exporting
   ZSS-1132 ExcelXlsxExporter always exports columns as custom width
   ZSS-1116 Wrap a cell which is not in the visible area doesn't work
-  ZSS-1134 IE9 only. ScrollPanel position sometimes wrongly reset to 0,0.
   
 ** Upgrade Notes
     * org.zkoss.poi.ss.usermodel.CellStyle#getIndex() have been changed to return int instead of short because the 

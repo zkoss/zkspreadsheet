@@ -1842,7 +1842,8 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 	_sendOnCellHyperlink: function (row, col, href, type, evt) {
 		var wgt = this._wgt,
 			data = zk.copy(evt.data, {sheetId: this.serverSheetId, row: row, col: col, href: href, type: type});
-		wgt.fire('onCellHyperlink', data, wgt.isListen('onCellHyperlink') ? {toServer: true} : null);
+		//ZSS-807: link to document(i.e. type == 2) must go thru server
+		wgt.fire('onCellHyperlink', data, type == 2 || wgt.isListen('onCellHyperlink') ? {toServer: true} : null);
 	},
 	//ZSS-1116: sync text height calculated in client to server
 	_sendOnTextHeight: function (row, col, height) {

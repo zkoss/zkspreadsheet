@@ -41,21 +41,8 @@ import org.zkoss.lang.Library;
 import org.zkoss.lang.Objects;
 import org.zkoss.lang.Strings;
 import org.zkoss.poi.ss.SpreadsheetVersion;
-//import org.zkoss.poi.ss.SpreadsheetVersion;
-//import org.zkoss.poi.ss.usermodel.AutoFilter;
-//import org.zkoss.poi.ss.usermodel.Cell;
-//import org.zkoss.poi.ss.usermodel.CellStyle;
-//import org.zkoss.poi.ss.usermodel.Chart;
-//import org.zkoss.poi.ss.usermodel.DataValidation;
-//import org.zkoss.poi.ss.usermodel.DataValidation.ErrorStyle;
-//import org.zkoss.poi.ss.usermodel.FilterColumn;
-//import org.zkoss.poi.ss.usermodel.Font;
-//import org.zkoss.poi.ss.usermodel.Picture;
-//import org.zkoss.poi.ss.usermodel.Row;
-//import org.zkoss.poi.ss.usermodel.ZssChartX;
-//import org.zkoss.poi.ss.util.CellRangeAddress;
-//import org.zkoss.poi.ss.util.CellRangeAddressList;
-//import org.zkoss.poi.xssf.usermodel.XSSFFont;
+import org.zkoss.poi.ss.util.AreaReference;
+import org.zkoss.poi.ss.util.CellReference;
 import org.zkoss.util.logging.Log;
 import org.zkoss.util.media.AMedia;
 import org.zkoss.util.media.Media;
@@ -83,7 +70,6 @@ import org.zkoss.zk.ui.ext.AfterCompose;
 import org.zkoss.zk.ui.ext.render.DynamicMedia;
 import org.zkoss.zk.ui.sys.ContentRenderer;
 import org.zkoss.zk.ui.util.DesktopCleanup;
-import org.zkoss.zk.ui.util.ExecutionCleanup;
 import org.zkoss.zss.api.AreaRef;
 import org.zkoss.zss.api.CellOperationUtil;
 import org.zkoss.zss.api.CellRef;
@@ -93,9 +79,9 @@ import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.impl.ImporterImpl;
 import org.zkoss.zss.api.model.Book;
-import org.zkoss.zss.api.model.CellStyle;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.api.model.SheetProtection;
+import org.zkoss.zss.api.model.Hyperlink.HyperlinkType;
 import org.zkoss.zss.api.model.impl.BookImpl;
 import org.zkoss.zss.api.model.impl.SheetImpl;
 import org.zkoss.zss.api.model.impl.SimpleRef;
@@ -115,8 +101,8 @@ import org.zkoss.zss.model.SCellStyle.VerticalAlignment;
 import org.zkoss.zss.model.SChart;
 import org.zkoss.zss.model.SColumnArray;
 import org.zkoss.zss.model.SComment;
-import org.zkoss.zss.model.SDataValidation;
 import org.zkoss.zss.model.SFont;
+import org.zkoss.zss.model.SName;
 import org.zkoss.zss.model.SPicture;
 import org.zkoss.zss.model.SRichText;
 import org.zkoss.zss.model.SRow;
@@ -125,13 +111,10 @@ import org.zkoss.zss.model.ViewAnchor;
 import org.zkoss.zss.model.SSheet.SheetVisible;
 import org.zkoss.zss.model.STable;
 import org.zkoss.zss.model.impl.AbstractBookAdv;
-import org.zkoss.zss.model.impl.AbstractBookSeriesAdv;
-import org.zkoss.zss.model.impl.AbstractRowAdv;
 import org.zkoss.zss.model.impl.AbstractCellAdv;
 import org.zkoss.zss.model.impl.AbstractSheetAdv;
 import org.zkoss.zss.model.impl.AbstractTableAdv;
 import org.zkoss.zss.model.impl.TableImpl.DummyTable;
-import org.zkoss.zss.model.impl.sys.DependencyTableImpl;
 import org.zkoss.zss.model.sys.format.FormatResult;
 import org.zkoss.zss.model.sys.formula.EvaluationContributorContainer;
 import org.zkoss.zss.model.util.RichTextHelper;
@@ -5460,6 +5443,43 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		if (Events.ON_CELL_HYPERLINK.equals(cmd)) {
 			final CellHyperlinkEvent evt = CellHyperlinkEvent.getHyperlinkEvent(request);
 			if (evt != null) {
+				//ZSS-807
+				if (evt.getType() == HyperlinkType.DOCUMENT) {
+					// might be a name range
+					final String addr = evt.getAddress();
+					final SName name = getBook().getInternalBook().getNameByName(addr);
+					if (name != null) {
+						final CellRegion rgn = name.getRefersToCellRegion();
+						final String sheetname = name.getRefersToSheetName();
+						if (!getBook().getSheet(sheetname).isHidden()) {
+							final int left = rgn.getColumn();
+							final int top = rgn.getRow();
+							final int row = top;
+							final int col = left;
+							final int right = rgn.getLastColumn();
+							final int bottom = rgn.getLastRow();
+							final boolean cacheInClient = false; // assume no cache
+							setSelectedSheetDirectly(sheetname, cacheInClient, row, col, 
+									left, top, right, bottom);
+						}
+					} else {
+						final AreaReference area = new AreaReference(addr);
+						final CellReference cell1 = area.getFirstCell();
+						final String sheetname = cell1.getSheetName();
+						if (!getBook().getSheet(sheetname).isHidden()) {
+							final int left = cell1.getCol();
+							final int top = cell1.getRow();
+							final int row = top;
+							final int col = left;
+							final CellReference cell2 =  area.isSingleCell() ? null : area.getLastCell();
+							final int right = cell2 == null ? left : cell2.getCol();
+							final int bottom = cell2 == null ? top : cell2.getRow();
+							final boolean cacheInClient = false; // assume no cache
+							setSelectedSheetDirectly(sheetname, cacheInClient, row, col, 
+									left, top, right, bottom);
+						}
+					}
+				}
 				org.zkoss.zk.ui.event.Events.postEvent(evt);
 			}
 			return;

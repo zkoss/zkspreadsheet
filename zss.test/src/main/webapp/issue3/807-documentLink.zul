@@ -1,0 +1,18 @@
+<vbox hflex="1" vflex="1">
+	<label multiline="true">
+Since 3.8.2
+1. Click "Go to sheet2" link in C1 of Main sheet 
+2. You should see the spreadsheet change to Sheet2 and focus on A2
+3. Click "Home" link in B5 of Sheet2
+4. You should see the spreadsheet change to Main and select on A2:A3
+5. Click "Go to sheet3" link in E1 of Main sheet
+6. You should see the spreadsheet change to Sheet3 and focus on A4
+7. Click "Home" link in B5 of Sheet2
+8. You should see the spreadsheet change to Main and select on C4:D5
+9. Click "Go to sheet4" link in G1 of Main sheet
+10. Should nothing happen because Sheet4 is hidden
+</label>
+	<spreadsheet id="ss" src="/issue3/book/807-documentLink.xlsx" maxVisibleRows="200" maxVisibleColumns="40"
+		hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
+		showFormulabar="true" />	
+</vbox>
