@@ -13,6 +13,7 @@ ZK Spreadsheet 3.8.2
   ZSS-1135 Gridline doesn't appear after exporting
   ZSS-1132 ExcelXlsxExporter always exports columns as custom width
   ZSS-1116 Wrap a cell which is not in the visible area doesn't work
+  ZSS-1134 IE9 only. ScrollPanel position sometimes wrongly reset to 0,0.
   
 ** Upgrade Notes
     * org.zkoss.poi.ss.usermodel.CellStyle#getIndex() have been changed to return int instead of short because the 
