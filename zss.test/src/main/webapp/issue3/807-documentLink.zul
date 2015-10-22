@@ -1,16 +1,21 @@
 <vbox hflex="1" vflex="1">
 	<label multiline="true">
 Since 3.8.2
-1. Click "Go to sheet2" link in C1 of Main sheet 
+1. Click "Go to sheet2" link in C1 of "main" sheet 
 2. You should see the spreadsheet change to Sheet2 and focus on A2
-3. Click "Home" link in B5 of Sheet2
-4. You should see the spreadsheet change to Main and select on A2:A3
-5. Click "Go to sheet3" link in E1 of Main sheet
-6. You should see the spreadsheet change to Sheet3 and focus on A4
-7. Click "Home" link in B5 of Sheet2
-8. You should see the spreadsheet change to Main and select on C4:D5
-9. Click "Go to sheet4" link in G1 of Main sheet
-10. Should nothing happen because Sheet4 is hidden
+3. Click on sheet tab "main" and you should see "main" sheet appear; if not, it is a bug
+4. Click "Go to sheet2" link in C1 of "main" sheet again 
+5. Click "Home" link in B5 of Sheet2
+6. You should see the spreadsheet change to "main" and select on A2:A3
+7. Click "Go to sheet3" link in E1 of "main" sheet
+8. You should see the spreadsheet change to Sheet3 and focus on A4
+9. Click "Home" link in B5 of Sheet2
+10. You should see the spreadsheet change to "main" and select on C4:D5
+11. Click "Go to sheet4" link in G1 of "main" sheet
+12. Should nothing happen because Sheet4 is hidden
+13. Click "Sheet''s2'!InSheetName" link in C8 of "main" sheet; should see messagebox show "Reference is not valid"
+14. Press OK to close it.
+14. Click "main!A1" link in E11 of "main" sheet; should see focus move to A1 of "main" sheet.
 </label>
 	<spreadsheet id="ss" src="/issue3/book/807-documentLink.xlsx" maxVisibleRows="200" maxVisibleColumns="40"
 		hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
