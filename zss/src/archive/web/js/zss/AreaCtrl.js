@@ -221,6 +221,15 @@ zss.SelAreaCtrl = zk.$extends(zss.AreaCtrl, {
 					type = elm.getAttribute('z.t');
 				type = parseInt(type);//it is string in attribute
 				this.sheet._wgt.linkTo(href, type, evt);
+				
+				//ZSS-807: "place in document" might link to other sheet; snapshot before leave
+				if (type == 2) {
+					var wgt = this.sheet._wgt,
+						cacheCtrl = wgt._cacheCtrl,
+						currSheetId = wgt.getSheetId();
+					cacheCtrl.snap(currSheetId); //snapshot current sheet status
+				}
+
 				this.sheet._sendOnCellHyperlink(row, col, href, type, evt);
 			}
 		}
