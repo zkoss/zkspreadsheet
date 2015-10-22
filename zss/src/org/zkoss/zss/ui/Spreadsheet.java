@@ -41,6 +41,7 @@ import org.zkoss.lang.Library;
 import org.zkoss.lang.Objects;
 import org.zkoss.lang.Strings;
 import org.zkoss.poi.ss.SpreadsheetVersion;
+import org.zkoss.poi.ss.formula.SheetNameFormatter;
 import org.zkoss.poi.ss.util.AreaReference;
 import org.zkoss.poi.ss.util.CellReference;
 import org.zkoss.util.logging.Log;
@@ -5447,11 +5448,17 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 				if (evt.getType() == HyperlinkType.DOCUMENT) {
 					// might be a name range
 					final String addr = evt.getAddress();
-					final SName name = getBook().getInternalBook().getNameByName(addr);
+					final Object[] objs = parseLinkAddress(getBook(), addr);					
+					final SName name = (SName) objs[0];
+					final String sheetScopeName = (String) objs[1];
 					if (name != null) {
 						final CellRegion rgn = name.getRefersToCellRegion();
 						final String sheetname = name.getRefersToSheetName();
-						if (!getBook().getSheet(sheetname).isHidden()) {
+						final Sheet sheet = getBook().getSheet(sheetname);
+						if (sheet == null) {
+							Messagebox.show(Labels.getLabel("zssex.dlg.hyperlink.ref_not_valid"));
+							return;
+						} else if (!sheet.isHidden()) {
 							final int left = rgn.getColumn();
 							final int top = rgn.getRow();
 							final int row = top;
@@ -5463,20 +5470,29 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 									left, top, right, bottom);
 						}
 					} else {
-						final AreaReference area = new AreaReference(addr);
-						final CellReference cell1 = area.getFirstCell();
-						final String sheetname = cell1.getSheetName();
-						if (!getBook().getSheet(sheetname).isHidden()) {
-							final int left = cell1.getCol();
-							final int top = cell1.getRow();
-							final int row = top;
-							final int col = left;
-							final CellReference cell2 =  area.isSingleCell() ? null : area.getLastCell();
-							final int right = cell2 == null ? left : cell2.getCol();
-							final int bottom = cell2 == null ? top : cell2.getRow();
-							final boolean cacheInClient = false; // assume no cache
-							setSelectedSheetDirectly(sheetname, cacheInClient, row, col, 
-									left, top, right, bottom);
+						try {
+							final AreaReference area = new AreaReference(addr);
+							final CellReference cell1 = area.getFirstCell();
+							final String sheetname = cell1.getSheetName();
+							final Sheet sheet = getBook().getSheet(sheetname);
+							if (sheet == null) {
+								Messagebox.show(Labels.getLabel("zssex.dlg.hyperlink.ref_not_valid"));
+								return;
+							} else if (!sheet.isHidden()) {
+								final int left = cell1.getCol();
+								final int top = cell1.getRow();
+								final int row = top;
+								final int col = left;
+								final CellReference cell2 =  area.isSingleCell() ? null : area.getLastCell();
+								final int right = cell2 == null ? left : cell2.getCol();
+								final int bottom = cell2 == null ? top : cell2.getRow();
+								final boolean cacheInClient = false; // assume no cache
+								setSelectedSheetDirectly(sheetname, cacheInClient, row, col, 
+										left, top, right, bottom);
+							}
+						} catch (IllegalArgumentException ex) {
+							Messagebox.show(Labels.getLabel("zssex.dlg.hyperlink.ref_not_valid"));
+							return;
 						}
 					}
 				}
@@ -6376,5 +6392,20 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	 */
 	public boolean isShowAddColumn() {
 		return _showAddColumn;
+	}
+	
+	// parse Hyperlink linkAddress and return tokens
+	// [0] SName or null if not a valid SName
+	// [1] sheetScope in escaped form
+	// [2] area reference
+	public static Object[] parseLinkAddress(Book book, String linkAddress) {
+		final String[] split = linkAddress.split("!");
+		final String sheetScope = split.length == 1 ? null : split[0];
+		final String ref = split.length > 1 ? split[1] : split[0];
+		//ref could be a Name range
+		final String rawSheetName = sheetScope == null ? null : SheetNameFormatter.unformat(sheetScope);
+		final SName docSelectedName = book.getInternalBook().getNameByName(ref, rawSheetName);
+		
+		return new Object[] {docSelectedName, sheetScope, ref};
 	}
 }
