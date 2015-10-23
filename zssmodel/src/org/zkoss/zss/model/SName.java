@@ -36,4 +36,7 @@ public interface SName extends FormulaContent{
 	public void setRefersToFormula(String refersExpr);
 	
 	public String getApplyToSheetName();
+	//ZSS-1137
+	//@since 3.8.2
+	public void setApplyToSheetName(String name);
 }

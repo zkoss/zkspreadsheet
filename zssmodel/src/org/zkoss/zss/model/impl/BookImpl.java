@@ -295,6 +295,14 @@ public class BookImpl extends AbstractBookAdv{
 			FormulaTunerHelper tuner = new FormulaTunerHelper(bs);
 			tuner.renameSheet(this,oldName,newName,dependents);
 		}
+		
+		//ZSS-1137
+		// rename sheetScope of the SName
+		for (SName name : getNames()) {
+			if (oldName.equalsIgnoreCase(name.getApplyToSheetName())) {
+				name.setApplyToSheetName(newName);
+			}
+		}
 	}
 
 	private void checkLegalSheetName(String name) {
@@ -813,7 +821,7 @@ public class BookImpl extends AbstractBookAdv{
 		return getNameByName(namename,null);
 	}
 	public SName getNameByName(String namename, String sheetName) {
-		if(_names==null)
+		if(_names==null || (sheetName != null && getSheetByName(sheetName) == null)) //ZSS-1137
 			return null;
 		for(SName name:_names){
 			//ZSS-436

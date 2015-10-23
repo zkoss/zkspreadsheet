@@ -5,6 +5,7 @@ ZK Spreadsheet 3.8.2
   ZSS-1126 value() supports date format like 2015-09-05
   ZSS-1127 smart input can convert such date input "2015-09-20" into the date format in US locale
   ZSS-807 Hyperlink support link to "Place in this document"
+  ZSS-1137 Support insert "Place In Document" hyperlink
   
 *Bugs:
   ZSS-1109 The selection box should jump to last filled cell through consecutive filled data when using ctrl + arrow

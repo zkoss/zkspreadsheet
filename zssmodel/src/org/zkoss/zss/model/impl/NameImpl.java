@@ -220,4 +220,11 @@ public class NameImpl extends AbstractNameAdv {
 			evalPtgs(fe, ref);
 		}
 	}
+	
+	//ZSS-1137
+	//@since 3.8.2
+	@Override
+	public void setApplyToSheetName(String sheetName) {
+		_applyToSheetName = sheetName;
+	}
 }
