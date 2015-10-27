@@ -421,4 +421,11 @@ public interface SSheet {
 	 * @since 3.8.1
 	 */
 	public void setAlgName(String algName);
+	
+	/**
+	 * Returns the conditional formatting applied to this sheet.
+	 * @return
+	 * @since 3.8.2
+	 */
+	public List<SConditionalFormatting> getConditonalFormattings();
 }

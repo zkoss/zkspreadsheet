@@ -22,6 +22,7 @@ import java.util.Set;
 import org.zkoss.zss.model.SColumn;
 import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.model.STable;
+import org.zkoss.zss.model.SConditionalFormatting;
 /**
  * 
  * @author dennis
@@ -63,4 +64,8 @@ public abstract class AbstractSheetAdv implements SSheet,LinkedModelObject,Seria
 	
 	//ZSS-1001
 	abstract public void clearTables();
+	
+	//ZSS-1130
+	//@since 3.8.2
+	abstract public void addConditionalFormatting(SConditionalFormatting scf);
 }

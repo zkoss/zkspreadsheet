@@ -7,6 +7,7 @@ ZK Spreadsheet 3.8.2
   ZSS-807  Hyperlink support link to "Place in this document"
   ZSS-1137 Support insert "Place In Document" hyperlink
   ZSS-1140 Support import extra styles (dxfs) into SBook(XLSX only)
+  ZSS-1130 Support to import conditional formatting rules (XLSX only)
   
 *Bugs:
   ZSS-1109 The selection box should jump to last filled cell through consecutive filled data when using ctrl + arrow

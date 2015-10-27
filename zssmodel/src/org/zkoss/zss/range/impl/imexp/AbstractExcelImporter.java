@@ -387,6 +387,9 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 			sheet.setSheetVisible(SheetVisible.VISIBLE);
 		}
 		
+		//ZSS-1130
+		//import conditionalFormatting
+		importConditionalFormatting(sheet, poiSheet);
 		return sheet;
 	}
 
@@ -819,4 +822,7 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 		
 		return font;
 	}
+
+	//ZSS-1130
+	abstract protected void importConditionalFormatting(SSheet sheet, Sheet poiSheet);
 }

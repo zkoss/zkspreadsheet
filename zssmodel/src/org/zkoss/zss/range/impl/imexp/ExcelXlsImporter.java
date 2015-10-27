@@ -454,4 +454,10 @@ public class ExcelXlsImporter extends AbstractExcelImporter{
 	protected void importTables(Sheet poiSheet, SSheet sheet) {
 		// not support in XLS
 	}
+
+	@Override
+	//ZSS-1130
+	protected void importConditionalFormatting(SSheet sheet, Sheet poiSheet) {
+		// not support in XLS
+	}
 }

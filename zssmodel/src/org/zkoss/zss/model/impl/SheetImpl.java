@@ -41,6 +41,7 @@ import org.zkoss.zss.model.SCell;
 import org.zkoss.zss.model.SChart;
 import org.zkoss.zss.model.SColumn;
 import org.zkoss.zss.model.SColumnArray;
+import org.zkoss.zss.model.SConditionalFormatting;
 import org.zkoss.zss.model.SSheetProtection;
 import org.zkoss.zss.model.SDataValidation;
 import org.zkoss.zss.model.SPicture;
@@ -86,6 +87,9 @@ public class SheetImpl extends AbstractSheetAdv {
 	private String _spinCount;
 	private String _algName;
 	private String _saltValue;
+	
+	//ZSS-1130
+	private List<SConditionalFormatting> _conditionalFormattings;
 	
 	private final IndexPool<AbstractRowAdv> _rows = new IndexPool<AbstractRowAdv>(){
 		private static final long serialVersionUID = 1L;
@@ -2088,5 +2092,20 @@ public class SheetImpl extends AbstractSheetAdv {
 		ModelUpdateUtil.addMergeUpdate(this,null, region);
 	}
 
+	//ZSS-1130
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<SConditionalFormatting> getConditonalFormattings() {
+		return _conditionalFormattings == null ? 
+				Collections.EMPTY_LIST : _conditionalFormattings;
+	}
 
+	//ZSS-1130
+	@Override
+	public void addConditionalFormatting(SConditionalFormatting scf) {
+		if (_conditionalFormattings == null) {
+			_conditionalFormattings = new ArrayList<SConditionalFormatting>();
+		}
+		_conditionalFormattings.add(scf);
+	}
 }
