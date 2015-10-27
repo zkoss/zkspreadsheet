@@ -39,7 +39,11 @@ import org.zkoss.zss.model.SPicture.Format;
 import org.zkoss.zss.model.SSheet.SheetVisible;
 import org.zkoss.zss.model.impl.AbstractCellStyleAdv;
 import org.zkoss.zss.model.impl.BookImpl;
+import org.zkoss.zss.model.impl.BorderImpl;
+import org.zkoss.zss.model.impl.BorderLineImpl;
 import org.zkoss.zss.model.impl.CellStyleImpl;
+import org.zkoss.zss.model.impl.ExtraStyleImpl;
+import org.zkoss.zss.model.impl.FillImpl;
 import org.zkoss.zss.model.impl.HeaderFooterImpl;
 import org.zkoss.zss.model.impl.NamedStyleImpl;
 import org.zkoss.zss.model.impl.AbstractBookAdv;
@@ -125,7 +129,8 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 		//ZSS-854
 		importDefaultCellStyles();
 		importNamedStyles();
-		
+		//ZSS-1140
+		importExtraStyles();
 		setBookType(book);
 
 		//ZSS-715: Enforce internal Locale.US Locale so formula is in consistent internal format
@@ -593,6 +598,7 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 
 	protected SFont importFont(CellStyle poiCellStyle) {
 		SFont font = null;
+		
 		final short fontIndex = poiCellStyle.getFontIndex();
 		if (importedFont.containsKey(fontIndex)) {
 			font = importedFont.get(fontIndex);
@@ -751,5 +757,66 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 			}
 		}
 		return false;
+	}
+	
+	//ZSS-1140
+	protected void importExtraStyles() {
+		((AbstractBookAdv)book).clearExtraStyles();
+		for (DxfCellStyle poiStyle : workbook.getDxfCellStyles()) {
+			book.addExtraStyle(importExtraStyle(poiStyle));
+		}
+	}
+
+	//ZSS-1140
+	protected SExtraStyle importExtraStyle(DxfCellStyle poiCellStyle) {
+		String dataFormat = poiCellStyle.getRawDataFormatString();
+		Color fgColor = poiCellStyle.getFillForegroundColorColor();
+		Color bgColor = poiCellStyle.getFillBackgroundColorColor();
+		FillPattern pattern = PoiEnumConversion.toFillPattern(poiCellStyle.getFillPattern());
+		SColor fgSColor = book.createColor(BookHelper.colorToForegroundHTML(workbook, fgColor));
+		SColor bgSColor = book.createColor(BookHelper.colorToBackgroundHTML(workbook, bgColor));
+		if (pattern == FillPattern.SOLID) {
+			SColor tmp = fgSColor;
+			fgSColor = bgSColor;
+			bgSColor = tmp;
+		}
+		SFill fill = new FillImpl(pattern, fgSColor, bgSColor);
+
+		SBorderLine left = new BorderLineImpl(PoiEnumConversion.toBorderType(poiCellStyle.getBorderLeft()), 
+				book.createColor(BookHelper.colorToBorderHTML(workbook, poiCellStyle.getLeftBorderColorColor())));
+		SBorderLine top = new BorderLineImpl(PoiEnumConversion.toBorderType(poiCellStyle.getBorderTop()),
+				book.createColor(BookHelper.colorToBorderHTML(workbook, poiCellStyle.getTopBorderColorColor())));
+		SBorderLine right = new BorderLineImpl(PoiEnumConversion.toBorderType(poiCellStyle.getBorderRight()),
+				book.createColor(BookHelper.colorToBorderHTML(workbook, poiCellStyle.getRightBorderColorColor())));
+		SBorderLine bottom = new BorderLineImpl(PoiEnumConversion.toBorderType(poiCellStyle.getBorderBottom()),
+				book.createColor(BookHelper.colorToBorderHTML(workbook, poiCellStyle.getBottomBorderColorColor())));
+		SBorderLine diagonal = new BorderLineImpl(PoiEnumConversion.toBorderType(poiCellStyle.getBorderDiagonal()), 
+				book.createColor(BookHelper.colorToBorderHTML(workbook, poiCellStyle.getDiagonalBorderColorColor())));
+		SBorderLine vertical = new BorderLineImpl(PoiEnumConversion.toBorderType(poiCellStyle.getBorderVertical()), 
+				book.createColor(BookHelper.colorToBorderHTML(workbook, poiCellStyle.getVerticalBorderColorColor())));
+		SBorderLine horizontal = new BorderLineImpl(PoiEnumConversion.toBorderType(poiCellStyle.getBorderHorizontal()), 
+				book.createColor(BookHelper.colorToBorderHTML(workbook, poiCellStyle.getHorizontalBorderColorColor()))); 
+		SBorder border = new BorderImpl(left, top, right, bottom, diagonal, vertical, horizontal);
+		
+		SFont font = importFont(poiCellStyle);
+
+		return new ExtraStyleImpl(font, fill, border, dataFormat);
+	}
+
+	//ZSS-1140
+	protected SFont createDxfZssFont(Font poiFont) {
+		SFont font = book.createFont(true);
+		// font
+		font.setName(poiFont.getDxfFontName());
+		font.setBoldweight(PoiEnumConversion.toBoldweight(poiFont.getBoldweight()));
+		font.setItalic(poiFont.getItalic());
+		font.setStrikeout(poiFont.getStrikeout());
+		font.setUnderline(PoiEnumConversion.toUnderline(poiFont.getUnderline()));
+
+		font.setHeightPoints(poiFont.getDxfFontHeightInPoints());
+		font.setTypeOffset(PoiEnumConversion.toTypeOffset(poiFont.getTypeOffset()));
+		font.setColor(book.createColor(BookHelper.getFontHTMLColor(workbook, poiFont)));
+		
+		return font;
 	}
 }

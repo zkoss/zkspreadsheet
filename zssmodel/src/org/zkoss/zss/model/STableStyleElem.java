@@ -18,6 +18,6 @@ package org.zkoss.zss.model;
  * @since 3.8.0
  */
 //marker class for CTTableStyleElement: point to CTDxfs via dxfId.
-public interface STableStyleElem extends SCellStyle {
+public interface STableStyleElem extends SExtraStyle {
 
 }

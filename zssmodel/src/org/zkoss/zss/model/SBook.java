@@ -347,4 +347,27 @@ public interface SBook {
 	 * @since 3.8.0
 	 */
 	public SCellStyle getOrCreateDefaultHyperlinkStyle();
+	
+	/**
+	 * Get the extra style of this book
+	 * @param name
+	 * @return
+	 * @since 3.8.2
+	 */
+	public SExtraStyle getExtraStyleAt(int idx);
+	
+	/**
+	 * Add one more extra cell style. 
+	 * @param extraStyle
+	 * @since 3.8.2
+	 */
+	public void addExtraStyle(SExtraStyle extraStyle);
+
+	/**
+	 * Get all extra styles.
+	 * @return
+	 * @since 3.8.2
+	 */
+	public Collection<SExtraStyle> getExtraStyles();
+
 }

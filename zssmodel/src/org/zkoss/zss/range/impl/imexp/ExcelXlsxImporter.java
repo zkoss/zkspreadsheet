@@ -38,7 +38,6 @@ import org.zkoss.zss.model.SChart.ChartType;
 import org.zkoss.zss.model.STableColumn.STotalsRowFunction;
 import org.zkoss.zss.model.chart.*;
 import org.zkoss.zss.model.impl.AbstractDataValidationAdv;
-import org.zkoss.zss.model.impl.AutoFilterImpl;
 import org.zkoss.zss.model.impl.ChartAxisImpl;
 import org.zkoss.zss.model.impl.TableColumnImpl;
 import org.zkoss.zss.model.impl.TableImpl;
@@ -675,6 +674,18 @@ public class ExcelXlsxImporter extends AbstractExcelImporter{
 		SName namedRange = ((AbstractBookAdv)book).createTableName(table);
 		SheetRegion rgn = table.getDataRegion();
 		namedRange.setRefersToFormula(rgn.getReferenceString());
+	}
+	
+	//ZSS-1140
+	@Override
+	protected SFont importFont(CellStyle poiCellStyle) {
+		if (poiCellStyle instanceof DxfCellStyle) {
+			final DxfCellStyle poiDxfCellStyle = (DxfCellStyle) poiCellStyle;
+			final Font poiFont = poiDxfCellStyle.getFont();
+			return poiFont != null ? createDxfZssFont(poiFont) : null;
+		} else {
+			return super.importFont(poiCellStyle);
+		}
 	}
 }
  

@@ -26,7 +26,8 @@ import org.zkoss.zss.model.SColor;
  */
 public class ColorImpl extends AbstractColorAdv {
 	private static final long serialVersionUID = 1L;
-	private final byte[] _rgb;
+	private byte[] _rgb;
+	private byte _alpha = (byte) 0xff;  //ZSS-1140
 
 	public static final AbstractColorAdv WHITE = new ColorImpl("#FFFFFF");
 	public static final AbstractColorAdv BLACK = new ColorImpl("#000000");
@@ -37,10 +38,17 @@ public class ColorImpl extends AbstractColorAdv {
 	public ColorImpl(byte[] rgb) {
 		if (rgb == null) {
 			throw new IllegalArgumentException("null rgb array");
+		} else if (rgb.length == 4) { // ZSS-1140, argb
+			_alpha = rgb[0];
+			_rgb = new byte[3];
+			_rgb[0] = rgb[1];
+			_rgb[1] = rgb[2];
+			_rgb[2] = rgb[3];
 		} else if (rgb.length != 3) {
 			throw new IllegalArgumentException("wrong rgb length");
+		} else {
+			this._rgb = rgb;
 		}
-		this._rgb = rgb;
 	}
 
 	public ColorImpl(byte r, byte g, byte b) {

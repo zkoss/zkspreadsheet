@@ -72,4 +72,8 @@ public abstract class AbstractBookAdv implements SBook,EvaluationContributorCont
 	//ZSS-1132: get character width in pixel per the default font of this book
 	//@since 3.8.2
 	public abstract int getCharWidth();
+	
+	//ZSS-1140
+	//@since 3.8.2
+	public abstract void clearExtraStyles();
 }

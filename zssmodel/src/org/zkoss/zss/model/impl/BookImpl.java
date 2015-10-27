@@ -43,6 +43,7 @@ import org.zkoss.zss.model.SCell;
 import org.zkoss.zss.model.SCellStyle;
 import org.zkoss.zss.model.SColor;
 import org.zkoss.zss.model.SColumnArray;
+import org.zkoss.zss.model.SExtraStyle;
 import org.zkoss.zss.model.SFont;
 import org.zkoss.zss.model.SName;
 import org.zkoss.zss.model.SPicture;
@@ -113,6 +114,9 @@ public class BookImpl extends AbstractBookAdv{
 	
 	//ZSS-855
 	private HashMap<String, STable> _tables; //since 3.8.0
+	
+	//ZSS-1140
+	private List<SExtraStyle> _extraStyles = new ArrayList<SExtraStyle>(); // since 3.8.2
 	
 	/**
 	 * the sheet which is destroying now.
@@ -1258,4 +1262,29 @@ public class BookImpl extends AbstractBookAdv{
 		}
 		return 7;
 	}
+
+	//ZSS-1140
+	@Override
+	public SExtraStyle getExtraStyleAt(int idx) {
+		return _extraStyles.get(idx);
+	}
+
+	//ZSS-1140
+	@Override
+	public void addExtraStyle(SExtraStyle extraStyle) {
+		_extraStyles.add(extraStyle);
+	}
+
+	//ZSS-1140
+	@Override
+	public Collection<SExtraStyle> getExtraStyles() {
+		return _extraStyles;
+	}
+
+	//ZSS-1140
+	@Override
+	public void clearExtraStyles() {
+		_extraStyles.clear();		
+	}
+
 }

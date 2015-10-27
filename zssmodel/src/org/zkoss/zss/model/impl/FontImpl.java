@@ -57,6 +57,10 @@ public class FontImpl extends AbstractFontAdv {
 		_fontItalic = fontItalic;
 		_fontStrikeout = fontStrikeout;
 		_fontUnderline = fontUnderline;
+
+		//ZSS-1140
+		_fontName = null;
+		_fontHeightPoint = -1;
 	}
 	
 	@Override

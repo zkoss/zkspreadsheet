@@ -43,6 +43,12 @@ public class FillImpl extends AbstractFillAdv {
 		this._fillColor = new ColorImpl(fgColor);
 		this._backColor = new ColorImpl(bgColor);
 	}
+	//ZSS-1140
+	public FillImpl(FillPattern pattern, SColor fgColor, SColor bgColor) {
+		this._fillPattern = pattern;
+		this._fillColor = fgColor;
+		this._backColor = bgColor;
+	}
 	@Override
 	public void setFillColor(SColor fillColor) {
 		_fillColor = fillColor;
