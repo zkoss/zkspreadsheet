@@ -3552,7 +3552,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 				SComment comment = cell.getComment();
 				if (comment != null) {
 					SRichText rstr = comment.getRichText();
-					final String html = RichTextHelper.getCellRichTextHtml(rstr, true);
+					final String html = RichTextHelper.getCellRichTextHtml(cell, rstr, true); //ZSS-1138
 					boolean visible = comment.isVisible();
 					Map map = new HashMap();
 					map.put("t", html);

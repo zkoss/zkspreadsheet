@@ -1,0 +1,10 @@
+<vbox hflex="1" vflex="1">
+	<label multiline="true">
+Since 3.8.2
+1. Should see in A1 "人事行政部各岗位职责                   " whose font is "Calibri" and 24 points
+2. If not, it is a bug.
+</label>
+	<spreadsheet id="ss" src="/issue3/book/1138-lost-richtext.xls" maxVisibleRows="200" maxVisibleColumns="40"
+		hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
+		showFormulabar="true" />	
+</vbox>

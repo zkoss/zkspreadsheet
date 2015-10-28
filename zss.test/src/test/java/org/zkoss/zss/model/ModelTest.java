@@ -62,6 +62,7 @@ import org.zkoss.zss.model.sys.dependency.DependencyTable;
 import org.zkoss.zss.model.sys.dependency.Ref;
 import org.zkoss.zss.model.util.CellStyleMatcher;
 import org.zkoss.zss.model.util.FontMatcher;
+import org.zkoss.zss.model.util.RichTextHelper;
 import org.zkoss.zss.range.SRange.DeleteShift;
 import org.zkoss.zss.range.SRange.InsertCopyOrigin;
 import org.zkoss.zss.range.SRange.InsertShift;
@@ -2381,7 +2382,9 @@ public class ModelTest {
 			
 			Assert.assertEquals("ABCD",sheet.getCell(1, 1).getStringValue());
 			Assert.assertEquals("ABC",sheet.getCell(2, 1).getRichTextValue().getText());
-			Assert.assertEquals(book.getDefaultFont(),sheet.getCell(2, 1).getRichTextValue().getSegments().get(0).getFont());
+			final SCell cell = sheet.getCell(2, 1);
+			final SFont font = RichTextHelper.getRichTextRealFont(cell.getRichTextValue().getSegments().get(0).getFont(), cell);
+			Assert.assertEquals(book.getDefaultFont(), font);
 			Assert.assertEquals(99D,sheet.getCell(3, 1).getNumberValue(), 0);
 			Assert.assertEquals(now,sheet.getCell(4, 1).getDateValue());
 			Assert.assertEquals(ErrorValue.INVALID_NAME,sheet.getCell(5, 1).getErrorValue().getCode());

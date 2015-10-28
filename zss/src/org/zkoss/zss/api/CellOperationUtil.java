@@ -43,6 +43,7 @@ import org.zkoss.zss.model.SRichText.Segment;
 import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.model.impl.AbstractRichTextAdv;
 import org.zkoss.zss.model.impl.AbstractCellAdv;
+import org.zkoss.zss.model.util.RichTextHelper;
 import org.zkoss.zss.range.impl.StyleUtil;
 import org.zkoss.zss.range.impl.WholeStyleUtil;
 import org.zkoss.zss.ui.impl.undo.CellRichTextAction;
@@ -239,7 +240,7 @@ public class CellOperationUtil {
 				SCell c = range.getSheet().getInternalSheet().getCell(row, col);
 
 				int fpx = c.isRichTextValue() ? 
-							c.getRichTextValue().getHeightPoints() :
+							RichTextHelper.getRichTextHeightPoints(c, c.getRichTextValue()) : //ZSS-1138
 								c.getCellStyle().getFont().getHeightPoints();
 				
 				if(fpx > highest)

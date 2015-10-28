@@ -21,7 +21,10 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.zkoss.lang.Objects;
+import org.zkoss.zss.model.SCell;
 import org.zkoss.zss.model.SFont;
+import org.zkoss.zss.model.util.RichTextHelper;
 import org.zkoss.zss.model.util.Validations;
 /**
  * 
@@ -54,14 +57,14 @@ public class RichTextImpl extends AbstractRichTextAdv {
 
 	@Override
 	public void addSegment(String text, SFont font) {
-		Validations.argNotNull(text,font);
+		Validations.argNotNull(text);
 		if("".equals(text)) return;
 		
 		if (!_segments.isEmpty()) {
 			final int idx = _segments.size() - 1;
 			final Segment seg = _segments.get(idx);
 			// text merge to previous segment if text is \n' or fonts are the same
-			if ("\n".equals(text) || seg.getFont().equals(font)) { 
+			if ("\n".equals(text) || Objects.equals(seg.getFont(), font)) { 
 				_segments.set(idx, new SegmentImpl(seg.getText()+text, seg.getFont()));
 				return;
 			}
@@ -102,5 +105,4 @@ public class RichTextImpl extends AbstractRichTextAdv {
 		}
 		return highest;
 	}
-
 }

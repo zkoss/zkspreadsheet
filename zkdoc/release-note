@@ -19,16 +19,25 @@ ZK Spreadsheet 3.8.2
   ZSS-1135 Gridline doesn't appear after exporting
   ZSS-1132 ExcelXlsxExporter always exports columns as custom width
   ZSS-1116 Wrap a cell which is not in the visible area doesn't work
+  ZSS-1138 A rich text is lost after importing
   
 ** Upgrade Notes
     * org.zkoss.poi.ss.usermodel.CellStyle#getIndex() have been changed to return int instead of short because the 
-	  limit of the distinct cell styles in Excel 2007 and above is 64000 while that of Excel 97-2003 is only 4000;
-      have to extend it to accommodate the capacity. Thus the corresponding implementation are changed accordingly.
+	limit of the distinct cell styles in Excel 2007 and above is 64000 while that of Excel 97-2003 is only 4000;
+    have to extend it to accommodate the capacity. Thus the corresponding implementation are changed accordingly.
 	  
 	* org.zkoss.poi.ss.usermodel.Workbook#getIndexAt(short idx) have been changed to 
-	  org.zkoss.poi.ss.usermodel.Workbook#getIndexAt(int idx) because the 
-	  limit of the distinct cell styles in Excel 2007 and above is 64000 while that of Excel 97-2003 is only 4000;
-      have to extend it to accommodate the capacity. Thus the corresponding implementation are changed accordingly.
+	org.zkoss.poi.ss.usermodel.Workbook#getIndexAt(int idx) because the 
+	limit of the distinct cell styles in Excel 2007 and above is 64000 while that of Excel 97-2003 is only 4000;
+    have to extend it to accommodate the capacity. Thus the corresponding implementation are changed accordingly.
+	  
+	* org.zkoss.zss.model.util.RichTextHelper.getCellRichTextHtml(SRichText rstr, boolean wrap) have been deprecated
+	and a new util method org.zkoss.zss.model.util.RichTextHelper.getCellRichTextHtml(SCell cell, SRichText rstr, boolean wrap)
+	has been added to provide more accurate information.
+	  
+	* org.zkoss.zss.model.util.RichTextHelper.getCellVRichTextHtml(SRichText rstr, boolean wrap) have been deprecated
+	and a new util method org.zkoss.zss.model.util.RichTextHelper.getCellVRichTextHtml(SCell cell, SRichText rstr, boolean wrap)
+	has been added to provide more accurate information.
 
  ------------
 ZK Spreadsheet 3.8.1

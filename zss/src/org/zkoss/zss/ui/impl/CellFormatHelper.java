@@ -548,7 +548,7 @@ public class CellFormatHelper {
 			final FormatResult ft = EngineFactory.getInstance().createFormatEngine().format(cell, new FormatContext(ZssContext.getCurrent().getLocale()));
 			if (ft.isRichText()) {
 				final SRichText rstr = ft.getRichText();
-				text = vtxt ? getVRichTextHtml(rstr, wrap) : getRichTextHtml(rstr, wrap); //ZSS-918
+				text = vtxt ? getVRichTextHtml(cell, rstr, wrap) : getRichTextHtml(cell, rstr, wrap); //ZSS-918, ZSS-1138
 			} else {
 				text = vtxt ? escapeVText(ft.getText(), wrap) : escapeText(ft.getText(), wrap, true); //ZSS-918
 			}
@@ -570,7 +570,7 @@ public class CellFormatHelper {
 			final FormatResult ft = EngineFactory.getInstance().createFormatEngine().format(cell, new FormatContext(ZssContext.getCurrent().getLocale()));
 			if (ft.isRichText()) {
 				final SRichText rstr = ft.getRichText();
-				text = RichTextHelper.getCellRichTextHtml(rstr, wrap);
+				text = RichTextHelper.getCellRichTextHtml(cell, rstr, wrap); //ZSS-1138
 
 			} else {
 				text = RichTextHelper.getFontTextHtml(escapeText(ft.getText(), wrap, true), cell.getCellStyle().getFont());
@@ -600,8 +600,9 @@ public class CellFormatHelper {
 		return sb.toString();		
 	}
 	
-	private static String getRichTextHtml(SRichText text, boolean wrap) {
-		return RichTextHelper.getCellRichTextHtml(text, wrap);
+	//ZSS-1138
+	private static String getRichTextHtml(SCell cell, SRichText text, boolean wrap) {
+		return RichTextHelper.getCellRichTextHtml(cell, text, wrap);
 	}
 	
 	
@@ -772,9 +773,9 @@ public class CellFormatHelper {
 		return RichTextHelper.escapeVText(text, wrap);
 	}
 	
-	//ZSS-918
-	private static String getVRichTextHtml(SRichText rstr, boolean wrap) {
-		return RichTextHelper.getCellVRichTextHtml(rstr, wrap);
+	//ZSS-918, ZSS-1138
+	private static String getVRichTextHtml(SCell cell, SRichText rstr, boolean wrap) {
+		return RichTextHelper.getCellVRichTextHtml(cell, rstr, wrap);
 	}
 
 	//ZSS-919
@@ -840,7 +841,7 @@ public class CellFormatHelper {
 			
 			if (ft.isRichText()) {
 				final SRichText rstr = ft.getRichText();
-				text = vtxt ? getVRichTextHtml(rstr, wrap) : getRichTextHtml(rstr, wrap); //ZSS-918
+				text = vtxt ? getVRichTextHtml(cell, rstr, wrap) : getRichTextHtml(cell, rstr, wrap); //ZSS-918, ZSS-1138
 			} else {
 				text = vtxt ? escapeVText(ft.getText(), wrap) : escapeText(ft.getText(), wrap, true); //ZSS-918
 			}

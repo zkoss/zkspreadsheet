@@ -2418,7 +2418,7 @@ public class RangeImpl implements SRange {
 				SComment comment = cell.getComment();
 				if (comment != null) {
 					final SRichText rstr = comment.getRichText();
-					final String html = RichTextHelper.getCellRichTextHtml(rstr, true);
+					final String html = RichTextHelper.getCellRichTextHtml(cell, rstr, true); //ZSS-1138
 					r.set(html);
 				} else {
 					r.set(null);

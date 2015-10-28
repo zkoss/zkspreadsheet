@@ -184,10 +184,33 @@ public class RichTextHelper {
 	public static String getCellRichTextHtml(SCell cell) {
 		final boolean wrap = cell.getCellStyle().isWrapText();
 		final SRichText rstr = cell.getRichTextValue();
-		return getCellRichTextHtml(rstr, wrap);
+		return getCellRichTextHtml(cell, rstr, wrap); //ZSS-1138
+	}
+	
+	//ZSS-1138
+	public static SFont getRichTextRealFont(SFont font, SCell cell) {
+		//ZSS-1138
+		if (font == null) {
+			font = cell.getCellStyle().getFont();
+		}
+		if (font == null) {
+			font = cell.getSheet().getBook().getDefaultFont();
+		}
+		return font;
+	}
+	
+	//ZSS-848, ZSS-1138
+	//@since 3.8.2
+	public static String getCellRichTextHtml(SCell cell, SRichText rstr, boolean wrap) {
+		StringBuilder sb = new StringBuilder();
+		for(Segment seg: rstr.getSegments()) {
+			sb.append(getFontTextHtml(escapeText(seg.getText(), wrap, true), getRichTextRealFont(seg.getFont(), cell))); //ZSS-1138
+		}
+		return sb.toString();
 	}
 	
 	//ZSS-848
+	@Deprecated
 	public static String getCellRichTextHtml(SRichText rstr, boolean wrap) {
 		StringBuilder sb = new StringBuilder();
 		for(Segment seg: rstr.getSegments()) {
@@ -311,8 +334,34 @@ public class RichTextHelper {
 		out.append("</div>");
 		return out.toString();
 	}
+
+	//ZSS-918, ZSS-1138
+	//@since 3.8.2
+	public static String getCellVRichTextHtml(SCell cell, SRichText rstr, boolean wrap) {
+		final String between = wrap ? "</div><div class=\"zsvtxt\">" : "&nbsp;"; 
+		StringBuilder sb = new StringBuilder();
+		sb.append("<div class=\"zsvtxt\">");
+		for(Segment seg: rstr.getSegments()) {
+			final String text = seg.getText();
+			if ("\n".equals(text)) { // segment with single \n
+				sb.append(between);
+				continue;
+			}
+			final String[] texts = text.split("\n");
+			final SFont font = getRichTextRealFont(seg.getFont(), cell); //ZSS-1138
+			int j = 0;
+			for (int len = texts.length - 1; j < len; ++j) {
+				sb.append(getFontTextHtml(escapeText(texts[j], wrap, true), font));
+				sb.append(between);
+			}
+			sb.append(getFontTextHtml(escapeText(texts[j], wrap, true), font));
+		}
+		sb.append("</div>");
+		return sb.toString();
+	}
 	
 	//ZSS-918
+	@Deprecated
 	public static String getCellVRichTextHtml(SRichText rstr, boolean wrap) {
 		final String between = wrap ? "</div><div class=\"zsvtxt\">" : "&nbsp;"; 
 		StringBuilder sb = new StringBuilder();
@@ -334,6 +383,19 @@ public class RichTextHelper {
 		}
 		sb.append("</div>");
 		return sb.toString();
+	}
+
+	//ZSS-1138
+	//@since 3.8.2
+	public static int getRichTextHeightPoints(SCell cell, SRichText rstr) {
+		int highest = 0;
+		for (Segment ss : rstr.getSegments()) {
+			final SFont font = getRichTextRealFont(ss.getFont(), cell); //ZSS-1138
+			int p = font.getHeightPoints();
+			if(p > highest) 
+				highest = p;
+		}
+		return highest;
 	}
 }
 

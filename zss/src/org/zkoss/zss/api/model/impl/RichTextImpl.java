@@ -65,7 +65,9 @@ public class RichTextImpl implements RichText {
 		}
 		List<Segment> apisegs = new ArrayList<Segment>(modelsegs.size());
 		for (SRichText.Segment seg : modelsegs) {
-			final Font font = new FontImpl(((BookImpl) _book).getRef(), new SimpleRef<SFont>(seg.getFont()));
+			final SFont sfont = seg.getFont();
+			final Font font = sfont == null ? //ZSS-1138
+					null : new FontImpl(((BookImpl) _book).getRef(), new SimpleRef<SFont>(sfont));
 			apisegs.add(new SegmentImpl(seg.getText(), font));
 		}
 		return apisegs;

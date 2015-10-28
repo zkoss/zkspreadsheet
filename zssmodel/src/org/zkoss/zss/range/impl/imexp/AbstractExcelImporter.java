@@ -529,10 +529,23 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 	
 	protected void importRichText(Cell poiCell, RichTextString poiRichTextString, SRichText richText) {
 		String cellValue = poiRichTextString.getString();
-		for (int i = 0; i < poiRichTextString.numFormattingRuns(); i++) {
-			int nextFormattingRunIndex = (i + 1) >= poiRichTextString.numFormattingRuns() ? cellValue.length() : poiRichTextString.getIndexOfFormattingRun(i + 1);
-			final String content = cellValue.substring(poiRichTextString.getIndexOfFormattingRun(i), nextFormattingRunIndex);
-			richText.addSegment(content, toZssFont(getPoiFontFromRichText(workbook, poiCell, poiRichTextString, i)));
+		//ZSS-1138
+		int count = poiRichTextString.numFormattingRuns();
+		if (count <= 0) {
+			richText.addSegment(cellValue, null); // ZSS-1138: null font means use cell's font
+		} else {
+			//ZSS-1138
+			int prevFormattingRunIndex = poiRichTextString.getIndexOfFormattingRun(0);
+			if (prevFormattingRunIndex > 0) {
+				final String content = cellValue.substring(0, prevFormattingRunIndex);
+				richText.addSegment(content, null); // ZSS-1138: null font means use cell's font
+			}
+			for (int i = 0; i < count; i++) {
+				int nextFormattingRunIndex = (i + 1) >= poiRichTextString.numFormattingRuns() ? cellValue.length() : poiRichTextString.getIndexOfFormattingRun(i + 1);
+				final String content = cellValue.substring(prevFormattingRunIndex, nextFormattingRunIndex);
+				richText.addSegment(content, toZssFont(getPoiFontFromRichText(workbook, poiCell, poiRichTextString, i)));
+				prevFormattingRunIndex = nextFormattingRunIndex;
+			}
 		}
 	}
 
@@ -614,6 +627,8 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 	}
 
 	protected SFont toZssFont(Font poiFont) {
+		if (poiFont == null) return null; //ZSS-1138
+		
 		SFont font = null;
 		final short fontIndex = poiFont.getIndex();
 		if (importedFont.containsKey(fontIndex)) {
@@ -707,6 +722,8 @@ abstract public class AbstractExcelImporter extends AbstractImporter {
 
 	protected org.zkoss.poi.ss.usermodel.Font getPoiFontFromRichText(Workbook book,
 			Cell cell, RichTextString rstr, int run) {
+		if (run < 0) return null; //ZSS-1138
+		
 		org.zkoss.poi.ss.usermodel.Font font = rstr instanceof HSSFRichTextString ? book.getFontAt(((HSSFRichTextString) rstr).getFontOfFormattingRun(run)) : ((XSSFRichTextString) rstr)
 				.getFontOfFormattingRun((XSSFWorkbook)book, run);
 		if (font == null) {

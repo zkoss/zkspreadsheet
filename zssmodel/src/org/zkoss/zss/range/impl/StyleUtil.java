@@ -41,6 +41,7 @@ import org.zkoss.zss.model.impl.RichTextImpl;
 import org.zkoss.zss.model.impl.RowImpl;
 import org.zkoss.zss.model.util.CellStyleMatcher;
 import org.zkoss.zss.model.util.FontMatcher;
+import org.zkoss.zss.model.util.RichTextHelper;
 import org.zkoss.zss.model.util.Strings;
 /**
  * A utility class to help spreadsheet set style of a cell
@@ -581,7 +582,8 @@ public class StyleUtil {
 		SRichText newText = new RichTextImpl();
 		boolean modified = false;
 		for (SRichText.Segment seg : text.getSegments()) {
-			SFont font = seg.getFont();
+			SFont font0 = seg.getFont();
+			SFont font = RichTextHelper.getRichTextRealFont(font0, cell); //ZSS-1138
 			
 			final SFont.TypeOffset orgOffset = font.getTypeOffset();
 			if (!orgOffset.equals(offset)) { //changed, find the font
@@ -598,6 +600,12 @@ public class StyleUtil {
 				modified = true;
 			}
 			
+			//ZSS-1138: change font of the cell's CellStyle
+			if (modified && font0 == null) {
+				updateRichTextCellFont(book, cell, font);
+				font = null; //to be added into segment
+			}
+
 			newText.addSegment(seg.getText(), font);
 		}
 		
@@ -609,6 +617,19 @@ public class StyleUtil {
 		return false;
 	}
 	
+	//ZSS-1138
+	private static void updateRichTextCellFont(SBook book, SCell cell, SFont font) {
+		final SCellStyle cellStyle = cell.getCellStyle();
+		final CellStyleMatcher matcher = new CellStyleMatcher(cellStyle);
+		matcher.setFont(font);
+		final SCellStyle style = book.searchCellStyle(matcher);
+		if (style == null) {
+			final SCellStyle newStyle = cloneCellStyle(book, cellStyle);
+			newStyle.setFont(font);
+			cell.setCellStyle(newStyle);
+		}
+	}
+	
 	//ZSS-752
 	public static boolean setRichTextFontBoldweight(SBook book, SCell cell, SFont.Boldweight bold) {
 		final Object value = ((AbstractCellAdv)cell).isRichTextValue() ? cell.getValue() : null;
@@ -618,7 +639,8 @@ public class StyleUtil {
 		SRichText newText = new RichTextImpl();
 		boolean modified = false;
 		for (SRichText.Segment seg : text.getSegments()) {
-			SFont font = seg.getFont();
+			SFont font0 = seg.getFont();
+			SFont font = RichTextHelper.getRichTextRealFont(font0, cell); //ZSS-1138
 			
 			final SFont.Boldweight orgBold = font.getBoldweight();
 			if (!orgBold.equals(bold)) { //changed, find the font
@@ -635,6 +657,12 @@ public class StyleUtil {
 				modified = true;
 			}
 			
+			//ZSS-1138: change font of the cell's CellStyle
+			if (modified && font0 == null) {
+				updateRichTextCellFont(book, cell, font);
+				font = null; //to be added into segment
+			}
+
 			newText.addSegment(seg.getText(), font);
 		}
 		
@@ -655,7 +683,8 @@ public class StyleUtil {
 		SRichText newText = new RichTextImpl();
 		boolean modified = false;
 		for (SRichText.Segment seg : text.getSegments()) {
-			SFont font = seg.getFont();
+			SFont font0 = seg.getFont();
+			SFont font = RichTextHelper.getRichTextRealFont(font0, cell); //ZSS-1138
 			
 			final boolean orgItalic = font.isItalic();
 			if (orgItalic != italic) { //changed find the font
@@ -670,6 +699,12 @@ public class StyleUtil {
 					font.setItalic(italic);
 				}
 				modified = true;
+			}
+			
+			//ZSS-1138: change font of the cell's CellStyle
+			if (modified && font0 == null) {
+				updateRichTextCellFont(book, cell, font);
+				font = null; //to be added into segment
 			}
 			
 			newText.addSegment(seg.getText(), font);
@@ -692,7 +727,8 @@ public class StyleUtil {
 		SRichText newText = new RichTextImpl();
 		boolean modified = false;
 		for (SRichText.Segment seg : text.getSegments()) {
-			SFont font = seg.getFont();
+			SFont font0 = seg.getFont();
+			SFont font = RichTextHelper.getRichTextRealFont(font0, cell); //ZSS-1138
 			
 			final SFont.Underline orgUnderline = font.getUnderline();
 			if (!orgUnderline.equals(underline)) { //changed, find the font
@@ -707,6 +743,12 @@ public class StyleUtil {
 					font.setUnderline(underline);
 				}
 				modified = true;
+			}
+			
+			//ZSS-1138: change font of the cell's CellStyle
+			if (modified && font0 == null) {
+				updateRichTextCellFont(book, cell, font);
+				font = null; //to be added into segment
 			}
 				
 			newText.addSegment(seg.getText(), font);
@@ -729,7 +771,8 @@ public class StyleUtil {
 		SRichText newText = new RichTextImpl();
 		boolean modified = false;
 		for (SRichText.Segment seg : text.getSegments()) {
-			SFont font = seg.getFont();
+			SFont font0 = seg.getFont();
+			SFont font = RichTextHelper.getRichTextRealFont(font0, cell); //ZSS-1138
 			
 			final String orgName = font.getName();
 			if (!orgName.equals(name)) { //changed, find the font
@@ -746,6 +789,12 @@ public class StyleUtil {
 				modified = true;
 			}
 			
+			//ZSS-1138: change font of the cell's CellStyle
+			if (modified && font0 == null) {
+				updateRichTextCellFont(book, cell, font);
+				font = null; //to be added into segment
+			}
+
 			newText.addSegment(seg.getText(), font);
 		}
 		
@@ -766,7 +815,8 @@ public class StyleUtil {
 		SRichText newText = new RichTextImpl();
 		boolean modified = false;
 		for (SRichText.Segment seg : text.getSegments()) {
-			SFont font = seg.getFont();
+			SFont font0 = seg.getFont();
+			SFont font = RichTextHelper.getRichTextRealFont(font0, cell); //ZSS-1138
 			
 			final int orgHeightPoints = font.getHeightPoints();
 			if (orgHeightPoints != heightPoints) { //changed, find the font
@@ -781,6 +831,12 @@ public class StyleUtil {
 					font.setHeightPoints(heightPoints);
 				}
 				modified = true;
+			}
+			
+			//ZSS-1138: change font of the cell's CellStyle
+			if (modified && font0 == null) {
+				updateRichTextCellFont(book, cell, font);
+				font = null; //to be added into segment
 			}
 			
 			newText.addSegment(seg.getText(), font);
@@ -803,7 +859,8 @@ public class StyleUtil {
 		SRichText newText = new RichTextImpl();
 		boolean modified = false;
 		for (SRichText.Segment seg : text.getSegments()) {
-			SFont font = seg.getFont();
+			SFont font0 = seg.getFont();
+			SFont font = RichTextHelper.getRichTextRealFont(font0, cell); //ZSS-1138
 			
 			final boolean orgStrike = font.isStrikeout();
 			if (orgStrike != strike) { //change, find the font
@@ -820,6 +877,12 @@ public class StyleUtil {
 				modified = true;
 			}
 			
+			//ZSS-1138: change font of the cell's CellStyle
+			if (modified && font0 == null) {
+				updateRichTextCellFont(book, cell, font);
+				font = null; //to be added into segment
+			}
+
 			newText.addSegment(seg.getText(), font);
 		}
 		
@@ -841,7 +904,8 @@ public class StyleUtil {
 		SRichText newText = new RichTextImpl();
 		boolean modified = false;
 		for (SRichText.Segment seg : text.getSegments()) {
-			SFont font = seg.getFont();
+			SFont font0 = seg.getFont();
+			SFont font = RichTextHelper.getRichTextRealFont(font0, cell); //ZSS-1138
 			
 			final SColor orgColor = font.getColor();
 			if (orgColor != newColor && (orgColor == null || !orgColor.equals(newColor))) { //changed, find the font
@@ -857,6 +921,12 @@ public class StyleUtil {
 				modified = true;
 			}
 			
+			//ZSS-1138: change font of the cell's CellStyle
+			if (modified && font0 == null) {
+				updateRichTextCellFont(book, cell, font);
+				font = null; //to be added into segment
+			}
+
 			newText.addSegment(seg.getText(), font);
 		}
 		

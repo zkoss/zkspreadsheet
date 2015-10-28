@@ -20,15 +20,8 @@ import java.io.*;
 import java.util.*;
 import java.util.concurrent.locks.ReadWriteLock;
 
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBorder;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFill;
 import org.zkoss.poi.ss.usermodel.*;
 import org.zkoss.poi.ss.util.CellRangeAddress;
-import org.zkoss.poi.xssf.model.StylesTable;
-import org.zkoss.poi.xssf.usermodel.XSSFFont;
-import org.zkoss.poi.xssf.usermodel.extensions.XSSFCellBorder;
-import org.zkoss.poi.xssf.usermodel.extensions.XSSFCellFill;
-import org.zkoss.poi.xssf.usermodel.XSSFWorkbook;
 import org.zkoss.util.logging.Log;
 import org.zkoss.zss.model.*;
 import org.zkoss.zss.model.SCell.CellType;
@@ -36,9 +29,7 @@ import org.zkoss.zss.model.SFill.FillPattern;
 import org.zkoss.zss.model.SRichText.Segment;
 import org.zkoss.zss.model.impl.AbstractBookAdv;
 import org.zkoss.zss.model.impl.ColumnArrayImpl;
-import org.zkoss.zss.model.impl.HeaderFooterImpl;
 import org.zkoss.zss.model.impl.TableNameImpl;
-import org.zkoss.zss.model.impl.sys.formula.FormulaEngineImpl;
 import org.zkoss.zss.model.util.Strings;
 
 /**
@@ -591,7 +582,8 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 	 * @return
 	 */
 	protected Font toPOIFont(SFont font) {
-
+		if (font == null) return null; //ZSS-1138
+			
 		Font poiFont = fontTable.get(font);
 		if (poiFont != null) {
 			return poiFont;
