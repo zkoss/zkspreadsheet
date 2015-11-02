@@ -267,4 +267,21 @@ public interface SCellStyle {
 	 * @since 3.8.0
 	 */
 	public SFill getFill();
+	
+
+	//ZSS-1145
+	/**
+	 * 
+	 * @return
+	 * @since 3.8.2
+	 */
+    public boolean isShowDiagonalUpBorder();
+
+	//ZSS-1145
+	/**
+	 * 
+	 * @return
+	 * @since 3.8.2
+	 */
+    public boolean isShowDiagonalDownBorder();
 }

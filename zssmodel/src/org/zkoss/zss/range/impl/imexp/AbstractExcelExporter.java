@@ -22,6 +22,7 @@ import java.util.concurrent.locks.ReadWriteLock;
 
 import org.zkoss.poi.ss.usermodel.*;
 import org.zkoss.poi.ss.util.CellRangeAddress;
+import org.zkoss.poi.xssf.usermodel.XSSFFont;
 import org.zkoss.util.logging.Log;
 import org.zkoss.zss.model.*;
 import org.zkoss.zss.model.SCell.CellType;
@@ -109,6 +110,12 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 				NamedStyle  poiStyle = toPOINamedStyle(style); // put the named cellStyle
 				workbook.addNamedStyle(poiStyle);
 			}
+			//ZSS-1145: export Dxf cell styles
+			workbook.clearDxfCellStyles();
+			for (SExtraStyle style: book.getExtraStyles()) {
+				addPOIDxfCellStyle(style); // put the Dxf cellStyle
+			}
+			
 			int tbId = 0;
 			for (int n = 0; n < book.getSheets().size(); n++) {
 				SSheet sheet = book.getSheet(n);
@@ -564,6 +571,8 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 	}
 
 	protected Color toPOIColor(SColor color) {
+		if (color == null) return null; //ZSS-1145
+		
 		Color poiColor = colorTable.get(color);
 
 		if (poiColor != null) {
@@ -649,5 +658,14 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 	 */
 	protected boolean isExportCache() {
 		return _exportCache;
+	}
+	
+	/**
+	 * Add DxfCellStyle as poi Dxf. 
+	 * @param extraStyle
+	 * @since 3.8.2
+	 */
+	protected void addPOIDxfCellStyle(SExtraStyle extraStyle) {
+		//Should be override in ExcelXlsxExporter
 	}
 }

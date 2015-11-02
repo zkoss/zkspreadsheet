@@ -33,19 +33,19 @@ import org.zkoss.zss.model.util.Validations;
 public class CellStyleImpl extends AbstractCellStyleAdv {
 	private static final long serialVersionUID = 1L;
 
-	private AbstractFontAdv _font;
+	protected AbstractFontAdv _font;
 	
 	//SFill
-	private AbstractFillAdv _fill;
+	protected AbstractFillAdv _fill;
 	
 	//SBorder
-	private AbstractBorderAdv _border;
+	protected AbstractBorderAdv _border;
 	
 	private Alignment _alignment = Alignment.GENERAL;
 	private VerticalAlignment _verticalAlignment = VerticalAlignment.BOTTOM;
 	private boolean _wrapText = false;
 
-	private String _dataFormat = FORMAT_GENERAL;
+	protected String _dataFormat; //ZSS-1140
 	private boolean _directFormat = false;
 	private boolean _locked = true;// default locked as excel.
 	private boolean _hidden = false;
@@ -244,7 +244,7 @@ public class CellStyleImpl extends AbstractCellStyleAdv {
 
 	@Override
 	public String getDataFormat() {
-		return _dataFormat;
+		return _dataFormat == null ? FORMAT_GENERAL : _dataFormat; //ZSS-1140
 	}
 	
 	@Override
@@ -327,7 +327,7 @@ public class CellStyleImpl extends AbstractCellStyleAdv {
 		.append(".").append(_alignment.ordinal())
 		.append(".").append(_verticalAlignment.ordinal())
 		.append(".").append(_wrapText?"T":"F")
-		.append(".").append(_dataFormat)
+		.append(".").append(getDataFormat()) //ZSS-1140
 		.append(".").append(_locked?"T":"F")
 		.append(".").append(_hidden?"T":"F")
 		.append(".").append(_rotation);
@@ -393,7 +393,7 @@ public class CellStyleImpl extends AbstractCellStyleAdv {
 		hash = hash * 31 + (_verticalAlignment == null ? 0 : _verticalAlignment.hashCode());
 		hash = hash * 31 + (_wrapText ? 1 : 0);
 		hash = hash * 31 + (_border == null ? 0 : _border.hashCode());
-		hash = hash * 31 + (_dataFormat == null ? 0 : _dataFormat.hashCode());
+		hash = hash * 31 + (getDataFormat() == null ? 0 : getDataFormat().hashCode()); //ZSS-1140
 		hash = hash * 31 + (_directFormat ? 1 : 0);
 		hash = hash * 31 + (_locked ? 1 : 0);
 		hash = hash * 31 + (_hidden ? 1 : 0);
@@ -413,7 +413,7 @@ public class CellStyleImpl extends AbstractCellStyleAdv {
 				&& Objects.equals(this._verticalAlignment, o._verticalAlignment)
 				&& Objects.equals(this._wrapText, o._wrapText)
 				&& Objects.equals(this._border, o._border)
-				&& Objects.equals(this._dataFormat, o._dataFormat)
+				&& Objects.equals(this.getDataFormat(), o.getDataFormat()) //ZSS-1140
 				&& Objects.equals(this._directFormat, o._directFormat)
 				&& Objects.equals(this._locked, o._locked)
 				&& Objects.equals(this._hidden, o._hidden)
@@ -587,4 +587,19 @@ public class CellStyleImpl extends AbstractCellStyleAdv {
 	protected void setFill(SFill fill) {
 		_fill = (AbstractFillAdv) fill;
 	}
+
+
+	//ZSS-1145
+	@Override
+    public boolean isShowDiagonalUpBorder() {
+		if (_border == null) return false;
+		return _border.isShowDiagonalUpBorder();
+    }
+
+	//ZSS-1145
+	@Override
+    public boolean isShowDiagonalDownBorder() {
+    	if (_border == null) return false;
+    	return _border.isShowDiagonalDownBorder();
+    }
 }

@@ -327,6 +327,8 @@ public class PoiEnumConversion {
 	}
 	
 	public static FillPattern toFillPattern(short poiFillPattern) {
+		if (poiFillPattern < 0) return null; //ZSS-1140
+		
 		switch (poiFillPattern) {
 		case CellStyle.SOLID_FOREGROUND:
 			return FillPattern.SOLID;
@@ -405,6 +407,8 @@ public class PoiEnumConversion {
 	}
 	
 	public static BorderType toBorderType(short poiBorder) {
+		if (poiBorder < 0) return null; //ZSS-1140
+		
 		switch (poiBorder) {
 		case CellStyle.BORDER_THIN:
 			return BorderType.THIN;

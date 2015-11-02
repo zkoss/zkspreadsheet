@@ -48,6 +48,16 @@ public class FontImpl extends AbstractFontAdv {
 	private TypeOffset _fontTypeOffset = TypeOffset.NONE;
 	private Underline _fontUnderline = Underline.NONE;
 
+	//ZSS-1140, ZSS-1145
+	private boolean overrideName;
+	private boolean overrideColor;
+	private boolean overrideBold;
+	private boolean overrideItalic;
+	private boolean overrideStrikeout;
+	private boolean overrideUnderline;
+	private boolean overrideHeightPoints;
+	private boolean overrideTypeOffset;
+	
 	public FontImpl(){}
 	
 	//ZSS-977
@@ -57,10 +67,6 @@ public class FontImpl extends AbstractFontAdv {
 		_fontItalic = fontItalic;
 		_fontStrikeout = fontStrikeout;
 		_fontUnderline = fontUnderline;
-
-		//ZSS-1140
-		_fontName = null;
-		_fontHeightPoint = -1;
 	}
 	
 	@Override
@@ -97,7 +103,7 @@ public class FontImpl extends AbstractFontAdv {
 
 	@Override
 	public int getHeightPoints() {
-		return _fontHeightPoint;
+		return _fontHeightPoint < 0 ? 11 : _fontHeightPoint;
 	}
 
 	@Override
@@ -192,5 +198,57 @@ public class FontImpl extends AbstractFontAdv {
 			return false;
 		final FontImpl o = (FontImpl) other;
 		return this.getStyleKey().equals(o.getStyleKey());
+	}
+
+	//ZSS-1140
+	public void setOverrideName(boolean overrideName) {
+		this.overrideName = overrideName;
+	}
+	public void setOverrideColor(boolean overrideColor) {
+		this.overrideColor = overrideColor;
+	}
+	public void setOverrideBold(boolean overrideBold) {
+		this.overrideBold = overrideBold;
+	}
+	public void setOverrideItalic(boolean overrideItalic) {
+		this.overrideItalic = overrideItalic;
+	}
+	public void setOverrideStrikeout(boolean overrideStrikeout) {
+		this.overrideStrikeout = overrideStrikeout;
+	}
+	public void setOverrideUnderline(boolean overrideUnderline) {
+		this.overrideUnderline = overrideUnderline;
+	}
+	public void setOverrideHeightPoints(boolean overrideHeightPoints) {
+		this.overrideHeightPoints = overrideHeightPoints;
+	}
+	public void setOverrideTypeOffset(boolean overrideTypeOffset) {
+		this.overrideTypeOffset = overrideTypeOffset;
+	}
+
+	//ZSS-1145
+	public boolean isOverrideName() {
+		return overrideName;
+	}
+	public boolean isOverrideColor() {
+		return overrideColor;
+	}
+	public boolean isOverrideBold() {
+		return overrideBold;
+	}
+	public boolean isOverrideItalic() {
+		return overrideItalic;
+	}
+	public boolean isOverrideStrikeout() {
+		return overrideStrikeout;
+	}
+	public boolean isOverrideUnderline() {
+		return overrideUnderline;
+	}
+	public boolean isOverrideHeightPoints() {
+		return overrideHeightPoints;
+	}
+	public boolean isOverrideTypeOffset() {
+		return overrideTypeOffset;
 	}
 }

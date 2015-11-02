@@ -31,5 +31,26 @@ public abstract class AbstractFontAdv implements SFont,Serializable{
 	 * gets the string key of this font, the key should combine all the style value in short string as possible
 	 */
 	abstract String getStyleKey();
-
+	
+	//ZSS-1140
+	//@since 3.8.2
+	abstract public void setOverrideName(boolean b);
+	abstract public void setOverrideColor(boolean b);
+	abstract public void setOverrideBold(boolean b);
+	abstract public void setOverrideItalic(boolean b);
+	abstract public void setOverrideStrikeout(boolean b);
+	abstract public void setOverrideUnderline(boolean b);
+	abstract public void setOverrideHeightPoints(boolean b);
+	abstract public void setOverrideTypeOffset(boolean b);
+	
+    //ZSS-1145
+	//@since 3.8.2
+	abstract public boolean isOverrideName();
+	abstract public boolean isOverrideColor();
+	abstract public boolean isOverrideBold();
+	abstract public boolean isOverrideItalic();
+	abstract public boolean isOverrideStrikeout();
+	abstract public boolean isOverrideUnderline();
+	abstract public boolean isOverrideHeightPoints();
+	abstract public boolean isOverrideTypeOffset();
 }

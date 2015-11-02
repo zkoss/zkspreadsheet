@@ -368,6 +368,6 @@ public interface SBook {
 	 * @return
 	 * @since 3.8.2
 	 */
-	public Collection<SExtraStyle> getExtraStyles();
+	public List<SExtraStyle> getExtraStyles();
 
 }

@@ -35,18 +35,25 @@ import org.zkoss.poi.xssf.model.ExternalLink;
 import org.zkoss.poi.xssf.usermodel.*;
 import org.zkoss.poi.xssf.usermodel.charts.*;
 import org.zkoss.zss.model.*;
+import org.zkoss.zss.model.SBorder.BorderType;
 import org.zkoss.zss.model.SChart.ChartType;
 import org.zkoss.zss.model.SConditionalFormattingRule.RuleType;
+import org.zkoss.zss.model.SFill.FillPattern;
 import org.zkoss.zss.model.STableColumn.STotalsRowFunction;
 import org.zkoss.zss.model.chart.*;
 import org.zkoss.zss.model.impl.AbstractDataValidationAdv;
+import org.zkoss.zss.model.impl.AbstractFontAdv;
 import org.zkoss.zss.model.impl.AbstractSheetAdv;
+import org.zkoss.zss.model.impl.BorderImpl;
+import org.zkoss.zss.model.impl.BorderLineImpl;
 import org.zkoss.zss.model.impl.CFValueObjectImpl;
 import org.zkoss.zss.model.impl.ChartAxisImpl;
 import org.zkoss.zss.model.impl.ColorImpl;
 import org.zkoss.zss.model.impl.ColorScaleImpl;
 import org.zkoss.zss.model.impl.ConditonalFormattingRuleImpl;
 import org.zkoss.zss.model.impl.DataBarImpl;
+import org.zkoss.zss.model.impl.ExtraStyleImpl;
+import org.zkoss.zss.model.impl.FillImpl;
 import org.zkoss.zss.model.impl.IconSetImpl;
 import org.zkoss.zss.model.impl.TableColumnImpl;
 import org.zkoss.zss.model.impl.TableImpl;
@@ -686,6 +693,105 @@ public class ExcelXlsxImporter extends AbstractExcelImporter{
 		namedRange.setRefersToFormula(rgn.getReferenceString());
 	}
 	
+	//ZSS-1140
+	protected void importExtraStyles() {
+		((AbstractBookAdv)book).clearExtraStyles();
+		for (DxfCellStyle poiStyle : workbook.getDxfCellStyles()) {
+			book.addExtraStyle(importExtraStyle(poiStyle));
+		}
+	}
+
+	//ZSS-1140
+	protected SExtraStyle importExtraStyle(DxfCellStyle poiCellStyle) {
+		String dataFormat = poiCellStyle.getRawDataFormatString();
+		FillPattern pattern = PoiEnumConversion.toFillPattern(poiCellStyle.getRawFillPattern());
+		Color fgColor = poiCellStyle.getRawFillForegroundColor();
+		Color bgColor = poiCellStyle.getRawFillBackgroundColor();
+		SColor fgSColor = fgColor == null ? null : book.createColor(BookHelper.colorToForegroundHTML(workbook, fgColor));
+		SColor bgSColor = bgColor == null ? null : book.createColor(BookHelper.colorToBackgroundHTML(workbook, bgColor));
+		if (pattern == FillPattern.SOLID) {
+			SColor tmp = fgSColor;
+			fgSColor = bgSColor;
+			bgSColor = tmp;
+		}
+		SFill fill = pattern != null ? new FillImpl(pattern, fgSColor, bgSColor) : null;
+		SBorder border = importBorder(poiCellStyle);
+		SFont font = importFont(poiCellStyle);
+
+		return new ExtraStyleImpl(font, fill, border, dataFormat);
+	}
+
+	//ZSS-1140
+	protected SBorder importBorder(DxfCellStyle poiCellStyle) {
+		if (!poiCellStyle.isOverrideBorder()) return null;
+		
+		BorderType typel = PoiEnumConversion.toBorderType(poiCellStyle.getRawBorderLeft());
+		BorderType typet = PoiEnumConversion.toBorderType(poiCellStyle.getRawBorderTop());
+		BorderType typer = PoiEnumConversion.toBorderType(poiCellStyle.getRawBorderRight());
+		BorderType typeb = PoiEnumConversion.toBorderType(poiCellStyle.getRawBorderBottom());
+		BorderType typed = PoiEnumConversion.toBorderType(poiCellStyle.getRawBorderDiagonal());
+		BorderType typev = PoiEnumConversion.toBorderType(poiCellStyle.getRawBorderVertical());
+		BorderType typeh = PoiEnumConversion.toBorderType(poiCellStyle.getRawBorderHorizontal());
+		
+		Color clrl = poiCellStyle.getRawBorderLeftColor();
+		Color clrt = poiCellStyle.getRawBorderTopColor();
+		Color clrr = poiCellStyle.getRawBorderRightColor();
+		Color clrb = poiCellStyle.getRawBorderBottomColor();
+		Color clrd = poiCellStyle.getRawBorderDiagonalColor();
+		Color clrv = poiCellStyle.getRawBorderVerticalColor();
+		Color clrh = poiCellStyle.getRawBorderHorizontalColor();
+		
+		SBorderLine left = typel == null ? null : new BorderLineImpl(typel, 
+				clrl == null ? null : book.createColor(BookHelper.colorToBorderHTML(workbook, clrl)));
+		SBorderLine top = typet == null ? null : new BorderLineImpl(typet,
+				clrt == null ? null : book.createColor(BookHelper.colorToBorderHTML(workbook, clrt)));
+		SBorderLine right = typer == null ? null : new BorderLineImpl(typer,
+				clrr == null ? null : book.createColor(BookHelper.colorToBorderHTML(workbook, clrr)));
+		SBorderLine bottom = typeb == null ? null : new BorderLineImpl(typeb,
+				clrb == null ? null : book.createColor(BookHelper.colorToBorderHTML(workbook, clrb)));
+		SBorderLine diagonal = typed == null ? null : new BorderLineImpl(typed, 
+				clrd == null ? null : book.createColor(BookHelper.colorToBorderHTML(workbook, clrd)));
+		SBorderLine vertical = typev == null ? null : new BorderLineImpl(typev, 
+				clrv == null ? null : book.createColor(BookHelper.colorToBorderHTML(workbook, clrv)));
+		SBorderLine horizontal = typeh == null ? null : new BorderLineImpl(typeh, 
+				clrh == null ? null : book.createColor(BookHelper.colorToBorderHTML(workbook, clrh)));
+		
+		return new BorderImpl(left, top, right, bottom, diagonal, vertical, horizontal);
+	}
+	
+	//ZSS-1140
+	protected SFont createDxfZssFont(Font poiFont) {
+		AbstractFontAdv font = (AbstractFontAdv) book.createFont(false);
+		
+		// font
+		if (poiFont.isOverrideName())
+			font.setName(poiFont.getFontName());
+		if (poiFont.isOverrideBold())
+			font.setBoldweight(PoiEnumConversion.toBoldweight(poiFont.getBoldweight()));
+		if (poiFont.isOverrideItalic())
+			font.setItalic(poiFont.getItalic());
+		if (poiFont.isOverrideStrikeout())
+			font.setStrikeout(poiFont.getStrikeout());
+		if (poiFont.isOverrideUnderline())
+			font.setUnderline(PoiEnumConversion.toUnderline(poiFont.getUnderline()));
+		if (poiFont.isOverrideHeightPoints())
+			font.setHeightPoints(poiFont.getFontHeightInPoints());
+		if (poiFont.isOverrideTypeOffset())
+			font.setTypeOffset(PoiEnumConversion.toTypeOffset(poiFont.getTypeOffset()));
+		if (poiFont.isOverrideColor())
+			font.setColor(book.createColor(BookHelper.getFontHTMLColor(workbook, poiFont)));
+		
+		font.setOverrideBold(poiFont.isOverrideBold());
+		font.setOverrideColor(poiFont.isOverrideColor());
+		font.setOverrideHeightPoints(poiFont.isOverrideHeightPoints());
+		font.setOverrideItalic(poiFont.isOverrideItalic());
+		font.setOverrideName(poiFont.isOverrideName());
+		font.setOverrideStrikeout(poiFont.isOverrideStrikeout());
+		font.setOverrideTypeOffset(poiFont.isOverrideTypeOffset());
+		font.setOverrideUnderline(poiFont.isOverrideUnderline());
+		return font;
+	}
+
 	//ZSS-1140
 	@Override
 	protected SFont importFont(CellStyle poiCellStyle) {

@@ -1277,7 +1277,7 @@ public class BookImpl extends AbstractBookAdv{
 
 	//ZSS-1140
 	@Override
-	public Collection<SExtraStyle> getExtraStyles() {
+	public List<SExtraStyle> getExtraStyles() {
 		return _extraStyles;
 	}
 

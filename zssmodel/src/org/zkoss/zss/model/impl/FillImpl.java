@@ -32,9 +32,9 @@ import org.zkoss.zss.model.SFill;
 public class FillImpl extends AbstractFillAdv {
 	private static final long serialVersionUID = 1L;
 	
-	private SColor _fillColor = ColorImpl.BLACK; // ZSS-857: default fillColor is black
-	private SColor _backColor = ColorImpl.WHITE;
-	private FillPattern _fillPattern = FillPattern.NONE;
+	private SColor _fillColor; // ZSS-857: default fillColor is black
+	private SColor _backColor;
+	private FillPattern _fillPattern;
 	private String _patternHtml = null; //clear cache
 
 	public FillImpl(){}
@@ -53,7 +53,7 @@ public class FillImpl extends AbstractFillAdv {
 	public void setFillColor(SColor fillColor) {
 		_fillColor = fillColor;
 		_patternHtml = null; //clear cache
-}
+	}
 
 	@Override
 	public void setBackColor(SColor backColor) {
@@ -69,24 +69,24 @@ public class FillImpl extends AbstractFillAdv {
 
 	@Override
 	public SColor getFillColor() {
-		return _fillColor;
+		return _fillColor == null ? ColorImpl.BLACK : _fillColor;
 	}
 
 	@Override
 	public SColor getBackColor() {
-		return _backColor;
+		return _backColor == null ? ColorImpl.WHITE : _backColor;
 	}
 
 	@Override
 	public FillPattern getFillPattern() {
-		return _fillPattern;
+		return _fillPattern == null ? FillPattern.NONE : _fillPattern;
 	}
 
 	//--Object--//
 	public int hashCode() {
-		int hash = (_fillColor == null ? 0 : _fillColor.hashCode());
-		hash = hash * 31 + (_backColor == null ? 0 : _backColor.hashCode());
-		hash = hash * 31 + (_fillPattern == null ? 0 : _fillPattern.hashCode());
+		int hash = getFillColor().hashCode();
+		hash = hash * 31 + getBackColor().hashCode();
+		hash = hash * 31 + getFillPattern().hashCode();
 		return hash;
 	}
 	
@@ -94,9 +94,9 @@ public class FillImpl extends AbstractFillAdv {
 		if (other == this) return true;
 		if (!(other instanceof FillImpl)) return false;
 		FillImpl o = (FillImpl) other;
-		return Objects.equals(this._fillColor, o._fillColor)
-				&& Objects.equals(this._backColor, o._backColor)
-				&& Objects.equals(this._fillPattern, o._fillPattern);
+		return Objects.equals(this.getFillColor(), o.getFillColor())
+				&& Objects.equals(this.getBackColor(), o.getBackColor())
+				&& Objects.equals(this.getFillPattern(), o.getFillPattern());
 	}
 
 	public String getFillPatternHtml() {
@@ -285,5 +285,23 @@ public class FillImpl extends AbstractFillAdv {
 			}
 		}
 		return os.toByteArray();
+	}
+
+	//ZSS-1145
+	@Override
+	public SColor getRawFillColor() {
+		return _fillColor;
+	}
+
+	//ZSS-1145
+	@Override
+	public SColor getRawBackColor() {
+		return _backColor;
+	}
+
+	//ZSS-1145
+	@Override
+	public FillPattern getRawFillPattern() {
+		return _fillPattern;
 	}
 }

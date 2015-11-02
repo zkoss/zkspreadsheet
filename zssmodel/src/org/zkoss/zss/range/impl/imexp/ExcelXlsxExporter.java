@@ -28,12 +28,15 @@ import org.zkoss.poi.xssf.usermodel.extensions.XSSFCellBorder;
 import org.zkoss.poi.xssf.usermodel.extensions.XSSFCellFill;
 import org.zkoss.zss.model.*;
 import org.zkoss.zss.model.SAutoFilter.NFilterColumn;
+import org.zkoss.zss.model.SBorder.BorderType;
 import org.zkoss.zss.model.SFill.FillPattern;
 import org.zkoss.zss.model.STableColumn.STotalsRowFunction;
 import org.zkoss.zss.model.SDataValidation.ValidationType;
 import org.zkoss.zss.model.chart.*;
 import org.zkoss.zss.model.impl.AbstractBookAdv;
 import org.zkoss.zss.model.impl.AbstractDataValidationAdv;
+import org.zkoss.zss.model.impl.AbstractFillAdv;
+import org.zkoss.zss.model.impl.AbstractFontAdv;
 import org.zkoss.zss.model.impl.SheetImpl;
 /**
  * 
@@ -677,4 +680,125 @@ public class ExcelXlsxExporter extends AbstractExcelExporter {
 		
 		return tbId;
 	}
+	
+	//ZSS-1145
+	protected void addPOIDxfCellStyle(SExtraStyle extraStyle) {
+		// instead of creating a new style, use old one if exist
+		XSSFDxfCellStyle poiCellStyle = (XSSFDxfCellStyle) styleTable.get(extraStyle);
+		if (poiCellStyle != null) {
+			workbook.addDxfCellStyle(poiCellStyle);
+			return;
+		}
+		poiCellStyle = (XSSFDxfCellStyle) workbook.createDxfCellStyle(); //will add into workbook
+
+		// Border
+		if (extraStyle.getBorder() != null) {
+			final BorderType btb = extraStyle.getBorderBottom();
+			final BorderType btl = extraStyle.getBorderLeft();
+			final BorderType btr = extraStyle.getBorderRight();
+			final BorderType btt = extraStyle.getBorderTop();
+			final BorderType btd = extraStyle.getBorderDiagonal();
+			final BorderType bth = extraStyle.getBorderHorizontal();
+			final BorderType btv = extraStyle.getBorderVertical();
+			
+			final short bottom = btb == null ? -1 : PoiEnumConversion.toPoiBorderType(btb);
+			final short left = btl == null ? -1 : PoiEnumConversion.toPoiBorderType(btl);
+			final short right = btr == null ? -1 : PoiEnumConversion.toPoiBorderType(btr);
+			final short top =  btt == null ? -1 : PoiEnumConversion.toPoiBorderType(btt);
+			final short diagonal = btd == null ? -1 : PoiEnumConversion.toPoiBorderType(btd);
+			final short horizontal = bth == null ? -1 : PoiEnumConversion.toPoiBorderType(bth);
+			final short vertical = btv == null ? -1 : PoiEnumConversion.toPoiBorderType(btv); 
+			
+			final Color bottomColor = toPOIColor(extraStyle.getBorderBottomColor());
+			final Color leftColor = toPOIColor(extraStyle.getBorderLeftColor());
+			final Color rightColor = toPOIColor(extraStyle.getBorderRightColor());
+			final Color topColor = toPOIColor(extraStyle.getBorderTopColor());
+			final Color diagonalColor = toPOIColor(extraStyle.getBorderDiagonalColor());
+			final Color horizontalColor = toPOIColor(extraStyle.getBorderHorizontalColor());
+			final Color verticalColor = toPOIColor(extraStyle.getBorderVerticalColor());
+			
+			boolean diaUp = extraStyle.isShowDiagonalUpBorder();
+			boolean diaDn = extraStyle.isShowDiagonalDownBorder();
+			
+			poiCellStyle.setBorder(left, leftColor, top, topColor, right, rightColor, bottom, bottomColor, diagonal, diagonalColor, horizontal, horizontalColor, vertical, verticalColor, diaUp, diaDn);
+		}
+
+		// Fill
+		final AbstractFillAdv fill = (AbstractFillAdv) extraStyle.getFill();
+		if (fill != null) {
+			SColor fgColor = fill.getRawFillColor();
+			SColor bgColor = fill.getRawBackColor();
+			FillPattern fillPattern = fill.getRawFillPattern();
+			
+			if (fillPattern == FillPattern.SOLID) {
+				SColor tmp = fgColor;
+				fgColor = bgColor;
+				bgColor = tmp;
+			}
+			Color fillColor = fgColor == null ? null : toPOIColor(fgColor);
+			Color backColor = bgColor == null ? null : toPOIColor(bgColor);
+			short pattern = fillPattern == null ? -1 : PoiEnumConversion.toPoiFillPattern(extraStyle.getFillPattern());
+			poiCellStyle.setFill(fillColor, backColor, pattern);
+		}
+		
+//		//cell Alignment
+//		short hAlign = PoiEnumConversion.toPoiHorizontalAlignment(extraStyle.getAlignment());
+//		short vAlign = PoiEnumConversion.toPoiVerticalAlignment(extraStyle.getVerticalAlignment());
+//		boolean wrapText = extraStyle.isWrapText();
+//		
+//		//ZSS-1020
+//		poiCellStyle.setCellAlignment(hAlign, vAlign, wrapText, (short) extraStyle.getRotation());
+//		
+//		//protect
+//		boolean locked = extraStyle.isLocked();
+//		boolean hidden = extraStyle.isHidden();
+//		poiCellStyle.setProtection(locked, hidden);
+
+		// NumFmt
+		// TODO: if custom formatCode?
+		final String dataFormat = extraStyle.getDataFormat(); 
+		if (dataFormat != null) {
+			DataFormat df = workbook.createDataFormat();
+			short fmt = df.getFormat(dataFormat);
+			poiCellStyle.setDataFormat(fmt);
+		}
+
+		// Font
+		poiCellStyle.setFont(toPOIDxfFont(extraStyle.getFont()));
+
+		// put into table
+		styleTable.put(extraStyle, poiCellStyle);
+		
+//		int indention = extraStyle.getIndention();
+//		if (indention > 0) 
+//			poiCellStyle.setIndention((short) indention);
+	}
+	
+	//ZSS-1145
+	protected Font toPOIDxfFont(SFont font0) {
+		if (font0 == null) return null; //ZSS-1138
+
+		Font poiFont = XSSFFont.createDxfFont();
+		AbstractFontAdv font = (AbstractFontAdv) font0;
+		
+		if (font.isOverrideBold())
+			poiFont.setBoldweight(PoiEnumConversion.toPoiBoldweight(font.getBoldweight()));
+		if (font.isOverrideStrikeout())
+			poiFont.setStrikeout(font.isStrikeout());
+		if (font.isOverrideItalic())
+			poiFont.setItalic(font.isItalic());
+		if (font.isOverrideColor())
+			BookHelper.setFontColor(workbook, poiFont, toPOIColor(font.getColor()));
+		if (font.isOverrideHeightPoints())
+			poiFont.setFontHeightInPoints((short) font.getHeightPoints());
+		if (font.isOverrideName())
+			poiFont.setFontName(font.getName());
+		if (font.isOverrideTypeOffset())
+			poiFont.setTypeOffset(PoiEnumConversion.toPoiTypeOffset(font.getTypeOffset()));
+		if (font.isOverrideUnderline())
+			poiFont.setUnderline(PoiEnumConversion.toPoiUnderline(font.getUnderline()));
+
+		return poiFont;
+	}
+
 }

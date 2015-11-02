@@ -407,4 +407,16 @@ public class NamedStyleImpl implements SNamedStyle, Serializable {
 	public SFill getFill() {
 		return book.getDefaultCellStyle(index).getFill();
 	}
+
+	//ZSS-1145
+	@Override
+	public boolean isShowDiagonalUpBorder() {
+		return book.getDefaultCellStyle(index).isShowDiagonalUpBorder();
+	}
+
+	//ZSS-1145
+	@Override
+	public boolean isShowDiagonalDownBorder() {
+		return book.getDefaultCellStyle(index).isShowDiagonalDownBorder();
+	}
 }

@@ -18,7 +18,12 @@ package org.zkoss.zss.model;
 
 import java.util.List;
 /**
- * A rich text can have multiple segments which have different fonts for each one in a cell.
+ * A rich text can have multiple segments which have different fonts for 
+ * each one in a cell. However, note that the Segment might return a null Font 
+ * if it wants to use the current cell's font. You can use 
+ * {@link RichTextHelper#getRichTextRealFont(SFont font, SCell cell)} to get
+ * the real font used by the Segment.
+ * 
  * @author dennis
  * @since 3.5.0
  */

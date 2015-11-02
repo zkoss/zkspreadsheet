@@ -14,7 +14,9 @@ package org.zkoss.zss.model.impl;
 
 import java.io.Serializable;
 
+import org.zkoss.zss.model.SColor;
 import org.zkoss.zss.model.SFill;
+import org.zkoss.zss.model.SFill.FillPattern;
 
 /**
  * @author henri
@@ -27,4 +29,16 @@ public abstract class AbstractFillAdv implements SFill, Serializable {
 	 * gets the string key of this font, the key should combine all the style value in short string as possible
 	 */
 	abstract String getStyleKey();
+	
+	//ZSS-1145
+	//@since 3.8.2
+	public abstract SColor getRawFillColor();
+
+	//ZSS-1145
+	//@since 3.8.2
+	public abstract SColor getRawBackColor();
+
+	//ZSS-1145
+	//@since 3.8.2
+	public abstract FillPattern getRawFillPattern();
 }
