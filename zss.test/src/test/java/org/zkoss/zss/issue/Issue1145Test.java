@@ -68,7 +68,7 @@ public class Issue1145Test {
 	 * @throws IOException 
 	 */
 	@Test
-	public void testImportConditionalFormatting() throws IOException {
+	public void testExportDxf() throws IOException {
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
 		ByteArrayInputStream is = null;
 		try  {
