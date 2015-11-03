@@ -16,10 +16,14 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.range.impl.imexp;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
 import org.zkoss.poi.ss.usermodel.*;
 import org.zkoss.poi.ss.usermodel.charts.*;
 import org.zkoss.poi.ss.util.*;
+import org.zkoss.poi.ss.usermodel.Sheet;
 import org.zkoss.poi.xssf.usermodel.*;
 import org.zkoss.poi.xssf.usermodel.XSSFAutoFilter.XSSFFilterColumn;
 import org.zkoss.poi.xssf.usermodel.XSSFTableColumn.TotalsRowFunction;
@@ -37,6 +41,7 @@ import org.zkoss.zss.model.impl.AbstractBookAdv;
 import org.zkoss.zss.model.impl.AbstractDataValidationAdv;
 import org.zkoss.zss.model.impl.AbstractFillAdv;
 import org.zkoss.zss.model.impl.AbstractFontAdv;
+import org.zkoss.zss.model.impl.AbstractColorAdv;
 import org.zkoss.zss.model.impl.SheetImpl;
 /**
  * 
@@ -519,7 +524,6 @@ public class ExcelXlsxExporter extends AbstractExcelExporter {
 	/**
 	 * See Javadoc at {@link AbstractExcelImporter} importAutoFilter().
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
 	protected void exportAutoFilter(SSheet sheet, Sheet poiSheet) {
 		SAutoFilter autoFilter = sheet.getAutoFilter();
@@ -799,6 +803,226 @@ public class ExcelXlsxExporter extends AbstractExcelExporter {
 			poiFont.setUnderline(PoiEnumConversion.toPoiUnderline(font.getUnderline()));
 
 		return poiFont;
+	}
+
+	//ZSS-1141
+	@Override
+	protected void exportConditionalFormatting(SSheet sheet, Sheet poiSheet) {
+		final List<SConditionalFormatting> formattings = sheet.getConditonalFormattings();
+		int priority = formattings.size();
+		for (SConditionalFormatting cf : formattings) {
+			final XSSFConditionalFormatting poicf = new XSSFConditionalFormatting((XSSFSheet) poiSheet);
+			((XSSFSheet)poiSheet).addCondtionalFormatting(poicf);
+			final CTConditionalFormatting ctcf = poicf.getCTConditionalFormatting();
+			
+			addSqref(ctcf, cf);
+			
+			for (SConditionalFormattingRule rule : cf.getRules()) {
+				final CTCfRule ctRule = ctcf.addNewCfRule();
+				addPoiRule(sheet, ctRule, rule, priority--);
+			}
+		}
+	}
+	
+	//ZSS-1141
+	protected void addSqref(CTConditionalFormatting ctcf, SConditionalFormatting cf) {
+		StringBuilder sb = new StringBuilder();
+		for (CellRegion rgn : cf.getRegions()) {
+			if (sb.length() > 0) {
+				sb.append(" ");
+			}
+			sb.append(rgn.getReferenceString());
+		}
+		List<String> sqrefs = new ArrayList<String>();
+		sqrefs.add(sb.toString());
+		ctcf.setSqref(sqrefs);
+	}
+	
+	//ZSS-1141
+	protected void addPoiRule(SSheet sheet, CTCfRule ctRule, SConditionalFormattingRule rule, int priority) {
+		ctRule.setType(toConditionalFormattingRuleType(rule.getType()));
+		ctRule.setPriority(priority);
+		if (rule.isStopIfTrue()) {
+			ctRule.setStopIfTrue(true);
+		}
+		if (rule.getExtraStyle() != null) {
+			int index = ((AbstractBookAdv)sheet.getBook()).indexOfExtraStyle(rule.getExtraStyle());
+			if (index >= 0)
+				ctRule.setDxfId(index);
+		}
+		switch(rule.getType()) {
+		case ABOVE_AVERAGE:
+			if (!rule.isAboveAverage())
+				ctRule.setAboveAverage(false);
+			if (rule.isEqualAverage())
+				ctRule.setEqualAverage(true);
+			if (rule.getStandardDeviation() != null)
+				ctRule.setStdDev(rule.getStandardDeviation());
+			break;
+		case CELL_IS:
+			if (rule.getOperator() != null)
+				ctRule.setOperator(toCFRuleOperator(rule.getOperator()));
+			addFormulas(ctRule, rule);
+			break;
+		case COLOR_SCALE:
+			if (rule.getColorScale() != null)
+				addColorScale(ctRule, rule);
+			break;
+		case CONTAINS_BLANKS:
+		case NOT_CONTAINS_BLANKS:
+			addFormulas(ctRule, rule);
+			break;
+		case CONTAINS_ERRORS:
+		case NOT_CONTAINS_ERRORS:
+			addFormulas(ctRule, rule);
+			break;
+		case CONTAINS_TEXT:
+		case NOT_CONTAINS_TEXT:
+			if (rule.getText() != null)
+				ctRule.setText(rule.getText());
+			if (rule.getOperator() != null)
+				ctRule.setOperator(toCFRuleOperator(rule.getOperator()));
+			addFormulas(ctRule, rule);
+			break;
+		case DATA_BAR:
+			if (rule.getDataBar() != null)
+				addDataBar(ctRule, rule);
+			break;
+		case BEGINS_WITH:
+		case ENDS_WITH:
+			if (rule.getText() != null)
+				ctRule.setText(rule.getText());
+			if (rule.getOperator() != null)
+				ctRule.setOperator(toCFRuleOperator(rule.getOperator()));
+			addFormulas(ctRule, rule);
+			break;
+		case EXPRESSION:
+			addFormulas(ctRule, rule);
+			break;
+		case ICON_SET:
+			if (rule.getIconSet() != null)
+				addIconSet(ctRule, rule);
+			break;
+		case TIME_PERIOD:
+			if (rule.getTimePeriod() != null)
+				ctRule.setTimePeriod(toTimePeriod(rule.getTimePeriod()));
+			addFormulas(ctRule, rule);
+			break;
+		case TOP_10:
+			if (rule.getRank() != null)
+				ctRule.setRank(rule.getRank());
+			if (rule.isPercent())
+				ctRule.setPercent(true);
+			if (rule.isBottom())
+				ctRule.setBottom(true);
+			break;
+		case DUPLICATE_VALUES:
+		case UNIQUE_VALUES:
+			// No extra setting
+			break;
+		}
+	}
+	
+	//ZSS-1141
+	protected void addIconSet(CTCfRule ctRule, SConditionalFormattingRule rule) {
+		final CTIconSet ctIconSet = ctRule.addNewIconSet();
+		final SIconSet iconSet = rule.getIconSet();
+		for (SCFValueObject vo : iconSet.getCFValueObjects()) {
+			final CTCfvo ctvo = ctIconSet.addNewCfvo();
+			addValueObject(ctvo, vo);
+		}
+		
+		ctIconSet.setIconSet(toIconSetType(iconSet.getType()));
+		if (iconSet.isPercent())
+			ctIconSet.setPercent(true);
+		if (iconSet.isReverse())
+			ctIconSet.setReverse(true);
+		if (!iconSet.isShowValue())
+			ctIconSet.setShowValue(false);
+	}
+	
+	//ZSS-1141
+	protected void addColorScale(CTCfRule ctRule, SConditionalFormattingRule rule) {
+		final SColorScale colorScale = rule.getColorScale();
+		final CTColorScale ctColorScale = ctRule.addNewColorScale();
+		for (SCFValueObject vo : colorScale.getCFValueObjects()) {
+			final CTCfvo ctvo = ctColorScale.addNewCfvo();
+			addValueObject(ctvo, vo);
+		}
+		
+		for (SColor color : colorScale.getColors()) {
+			CTColor ctColor = ctColorScale.addNewColor();
+			ctColor.setRgb(((AbstractColorAdv)color).getARGB());
+		}
+	}
+	
+	//ZSS-1141
+	protected void addDataBar(CTCfRule ctRule, SConditionalFormattingRule rule) {
+		final CTDataBar ctDataBar = ctRule.addNewDataBar();
+		final SDataBar dataBar = rule.getDataBar();
+		for (SCFValueObject vo : dataBar.getCFValueObjects()) {
+			final CTCfvo ctvo = ctDataBar.addNewCfvo();
+			addValueObject(ctvo, vo);
+		}
+		CTColor ctColor = ctDataBar.addNewColor();
+		ctColor.setRgb(((AbstractColorAdv)dataBar.getColor()).getARGB());
+		
+		if (dataBar.getMaxLength() != null) {
+			ctDataBar.setMaxLength(dataBar.getMaxLength());
+		}
+		if (dataBar.getMinLength() != null) {
+			ctDataBar.setMinLength(dataBar.getMinLength());
+		}
+		if (!dataBar.isShowValue()) {
+			ctDataBar.setShowValue(false);
+		}
+	}
+
+	//ZSS-1141
+	protected void addFormulas(CTCfRule ctRule, SConditionalFormattingRule rule) {
+		for (String formula : rule.getFormulas()) {
+			ctRule.addFormula(formula);
+		}
+	}
+	
+	//ZSS-1141
+	protected void addValueObject(CTCfvo ctvo, SCFValueObject vo) {
+		if (vo.isGreaterOrEqual()) {
+			ctvo.setGte(true);
+		}
+		ctvo.setType(toValueObjectType(vo.getType()));
+		if (vo.getValue() != null) {
+			ctvo.setVal(vo.getValue());
+		}
+	}
+	
+	//ZSS-1141
+	protected STTimePeriod.Enum toTimePeriod(SConditionalFormattingRule.RuleTimePeriod ctPeriod) {
+		return STTimePeriod.Enum.forInt(ctPeriod.value);
+	}
+	//ZSS-1141
+	protected STConditionalFormattingOperator.Enum toCFRuleOperator(SConditionalFormattingRule.RuleOperator ctType) {
+		return STConditionalFormattingOperator.Enum.forInt(ctType.value);
+	}
+	
+	//ZSS-1141
+	protected STIconSetType.Enum toIconSetType(SIconSet.IconSetType  ctType) {
+		return STIconSetType.Enum.forInt(ctType.value);
+	}
+	
+	//ZSS-1141
+	protected STCfvoType.Enum toValueObjectType(SCFValueObject.CFValueObjectType ctType) {
+		return STCfvoType.Enum .forInt(ctType.value);
+	}
+	
+	//ZSS-1141
+	protected STCfType.Enum toConditionalFormattingRuleType(SConditionalFormattingRule.RuleType cfType) {
+		return STCfType.Enum.forInt(cfType.value);
+	}
+	
+	//ZSS-1141
+	protected STCfType.Enum toConditionalFormatingRuleType(SConditionalFormattingRule.RuleType stype) {
+		return STCfType.Enum.forInt(stype.value);
 	}
 
 }

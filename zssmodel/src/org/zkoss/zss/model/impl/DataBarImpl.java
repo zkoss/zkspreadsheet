@@ -26,8 +26,8 @@ import org.zkoss.zss.model.SDataBar;
 public class DataBarImpl implements SDataBar {
 	private List<SCFValueObject> valueObjects;
 	private SColor color;
-	private long minLength;
-	private long maxLength;
+	private Long minLength;
+	private Long maxLength;
 	private boolean showValue;
 	
 	@Override
@@ -52,7 +52,7 @@ public class DataBarImpl implements SDataBar {
 	}
 
 	@Override
-	public long getMinLength() {
+	public Long getMinLength() {
 		return minLength;
 	}
 
@@ -61,7 +61,7 @@ public class DataBarImpl implements SDataBar {
 	}
 	
 	@Override
-	public long getMaxLength() {
+	public Long getMaxLength() {
 		return maxLength;
 	}
 

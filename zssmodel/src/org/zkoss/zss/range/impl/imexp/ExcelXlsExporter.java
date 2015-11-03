@@ -87,4 +87,9 @@ public class ExcelXlsExporter extends AbstractExcelExporter {
 		// not support in XLS
 		return 0;
 	}
+
+	@Override
+	protected void exportConditionalFormatting(SSheet sheet, Sheet poiSheet) {
+		// not support in XLS
+	}
 }

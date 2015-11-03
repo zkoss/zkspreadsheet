@@ -30,10 +30,10 @@ public interface SDataBar {
 	SColor getColor();
 	
 	/** Returns the minimum length of this data bar */
-	long getMinLength();
+	Long getMinLength();
 	
 	/** Returns the maximum length of this data bar */
-	long getMaxLength();
+	Long getMaxLength();
 	
 	/** Returns whether show the value in the data bar */
 	boolean isShowValue();

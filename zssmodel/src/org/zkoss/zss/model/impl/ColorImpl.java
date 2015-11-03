@@ -18,7 +18,6 @@ package org.zkoss.zss.model.impl;
 
 import java.util.Arrays;
 
-import org.zkoss.zss.model.SColor;
 /**
  * 
  * @author dennis
@@ -115,5 +114,14 @@ public class ColorImpl extends AbstractColorAdv {
 	
 	public String toString(){
 		return getHtmlColor();
+	}
+
+	//ZSS-1141
+	@Override
+	public byte[] getARGB() {
+		byte[] c = new byte[_rgb.length+1];
+		c[0] = _alpha;
+		System.arraycopy(_rgb, 0, c, 1, _rgb.length);
+		return c;
 	}
 }

@@ -26,4 +26,11 @@ import org.zkoss.zss.model.SColor;
  */
 public abstract class AbstractColorAdv implements SColor,Serializable{
 	private static final long serialVersionUID = 1L;
+	
+	/**
+	 * Returns byte array in Alpha, Red, Green, Blue order
+	 * @return
+	 * @since 3.8.2
+	 */
+	public abstract byte[] getARGB();
 }

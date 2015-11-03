@@ -12,14 +12,7 @@
 
 package org.zkoss.zss.model;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCfRule;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTIconSet;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCfType;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STTimePeriod;
 
 /**
  * @author henri
@@ -33,7 +26,7 @@ public interface SConditionalFormattingRule {
 	RuleOperator getOperator();
 	
 	/** Returns the applying priority if convered region overlapped */
-	int getPriority();
+	Integer getPriority();
 	
 	/** Returns the applied color if match */
 	SExtraStyle getExtraStyle();
@@ -48,7 +41,7 @@ public interface SConditionalFormattingRule {
 	RuleTimePeriod getTimePeriod();
 
 	/** Returns the rank used with "top10" type */
-	long getRank();
+	Long getRank();
 	
 	/** Returns whether a percentage (used with "top10" type) */
 	boolean isPercent();
@@ -83,7 +76,7 @@ public interface SConditionalFormattingRule {
 	boolean isEqualAverage();
 
 	/** Returns 1st/2nd/3rd standard deviation average (used with "aboveAverage" type */
-	int getStandardDeviation();
+	Integer getStandardDeviation();
 
 
 	public enum RuleTimePeriod {

@@ -22,7 +22,6 @@ import java.util.concurrent.locks.ReadWriteLock;
 
 import org.zkoss.poi.ss.usermodel.*;
 import org.zkoss.poi.ss.util.CellRangeAddress;
-import org.zkoss.poi.xssf.usermodel.XSSFFont;
 import org.zkoss.util.logging.Log;
 import org.zkoss.zss.model.*;
 import org.zkoss.zss.model.SCell.CellType;
@@ -77,6 +76,9 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 	abstract protected void exportPassword(SSheet sheet, Sheet poiSheet);
 	
 	abstract protected int exportTables(SSheet sheet, Sheet poiSheet, int tbId); //ZSS-855
+	
+	abstract protected void exportConditionalFormatting(SSheet sheet, Sheet poiSheet); //ZSS-1141
+	
 	/**
 	 * Export the model according to reversed depended order: book, sheet,
 	 * defined name, cells, chart, pictures, validation. Because named ranges
@@ -122,6 +124,8 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 				exportSheet(sheet);
 				Sheet poiSheet = workbook.getSheetAt(n);
 				tbId = exportTables(sheet, poiSheet, tbId); //ZSS-855, ZSS-1011
+				
+				exportConditionalFormatting(sheet, poiSheet); //ZSS-1141
 			}
 			exportNamedRange(book);
 			exportPictureData(book); //ZSS-735

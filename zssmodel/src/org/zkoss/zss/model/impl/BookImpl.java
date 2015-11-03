@@ -65,7 +65,6 @@ import org.zkoss.zss.model.util.CellStyleMatcher;
 import org.zkoss.zss.model.util.FontMatcher;
 import org.zkoss.zss.model.util.Strings;
 import org.zkoss.zss.model.util.Validations;
-import org.zkoss.zss.range.impl.NotifyChangeHelper;
 import org.zkoss.zss.range.impl.StyleUtil;
 
 /**
@@ -1286,5 +1285,16 @@ public class BookImpl extends AbstractBookAdv{
 	public void clearExtraStyles() {
 		_extraStyles.clear();		
 	}
-
+	
+	//ZSS-1141
+	@Override
+	public int indexOfExtraStyle(SExtraStyle style) {
+		if (_extraStyles == null) return -1;
+		int j = 0;
+		for (SExtraStyle s : _extraStyles) {
+			if (s == style) return j; // 20151103, henrichen: must use "==" instead of equals 
+			j++;
+		}
+		return -1;
+	}
 }
