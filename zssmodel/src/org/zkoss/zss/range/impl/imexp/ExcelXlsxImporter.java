@@ -50,7 +50,7 @@ import org.zkoss.zss.model.impl.CFValueObjectImpl;
 import org.zkoss.zss.model.impl.ChartAxisImpl;
 import org.zkoss.zss.model.impl.ColorImpl;
 import org.zkoss.zss.model.impl.ColorScaleImpl;
-import org.zkoss.zss.model.impl.ConditonalFormattingRuleImpl;
+import org.zkoss.zss.model.impl.ConditionalFormattingRuleImpl;
 import org.zkoss.zss.model.impl.DataBarImpl;
 import org.zkoss.zss.model.impl.ExtraStyleImpl;
 import org.zkoss.zss.model.impl.FillImpl;
@@ -836,14 +836,15 @@ public class ExcelXlsxImporter extends AbstractExcelImporter{
 	}
 	
 	//ZSS-1130
-	protected ConditonalFormattingRuleImpl prepareConditonalFormattingRuleImpl(XSSFConditionalFormattingRule poiRule) {
-		final ConditonalFormattingRuleImpl cfri = new ConditonalFormattingRuleImpl();
+	protected ConditionalFormattingRuleImpl prepareConditonalFormattingRuleImpl(XSSFConditionalFormattingRule poiRule) {
+		final ConditionalFormattingRuleImpl cfri = new ConditionalFormattingRuleImpl();
 		CTCfRule ctRule = poiRule.getCTCfRule();
 		cfri.setPriority(ctRule.getPriority());
 		cfri.setType(toConditionalFormattingRuleType(ctRule.getType()));
 		if (ctRule.isSetStopIfTrue())
 			cfri.setStopIfTrue(ctRule.getStopIfTrue());
-		cfri.setExtraStyle(book.getExtraStyleAt((int)ctRule.getDxfId()));
+		if (ctRule.isSetDxfId())
+			cfri.setExtraStyle(book.getExtraStyleAt((int)ctRule.getDxfId()));
 		switch(cfri.getType()) {
 		case ABOVE_AVERAGE:
 			if (ctRule.isSetAboveAverage())
@@ -965,7 +966,7 @@ public class ExcelXlsxImporter extends AbstractExcelImporter{
 	}
 
 	//ZSS-1130
-	protected void prepareFormulas(ConditonalFormattingRuleImpl cfri, CTCfRule ctRule) {
+	protected void prepareFormulas(ConditionalFormattingRuleImpl cfri, CTCfRule ctRule) {
 		for (String formula : ctRule.getFormulaList()) {
 			cfri.addFormula(formula);
 		}

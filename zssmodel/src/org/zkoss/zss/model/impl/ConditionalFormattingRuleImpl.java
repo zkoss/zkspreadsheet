@@ -28,15 +28,15 @@ import org.zkoss.zss.model.SIconSet;
  * 
  */
 //ZSS-1138
-public class ConditonalFormattingRuleImpl implements SConditionalFormattingRule {
+public class ConditionalFormattingRuleImpl implements SConditionalFormattingRule {
 	private RuleType type;
 	private RuleOperator operator;
-	private int priority;
+	private Integer priority;
 	private SExtraStyle style;
 	private boolean stopIfTrue;
 	private List<String> formulas;
 	private RuleTimePeriod timePeriod;
-	private long rank;
+	private Long rank;
 	private boolean percent;
 	private boolean bottom;
 	private SColorScale colorScale;
@@ -45,7 +45,7 @@ public class ConditonalFormattingRuleImpl implements SConditionalFormattingRule 
 	private String text;
 	private boolean notAboveAverage;
 	private boolean equalAverage;
-	private int standardDeviation; //1 ~ 3
+	private Integer standardDeviation; //1 ~ 3
 	
 	@Override
 	public RuleType getType() {
@@ -66,7 +66,7 @@ public class ConditonalFormattingRuleImpl implements SConditionalFormattingRule 
 	}
 
 	@Override
-	public int getPriority() {
+	public Integer getPriority() {
 		return priority;
 	}
 	
@@ -114,7 +114,7 @@ public class ConditonalFormattingRuleImpl implements SConditionalFormattingRule 
 	}
 
 	@Override
-	public long getRank() {
+	public Long getRank() {
 		return rank;
 	}
 	
@@ -195,7 +195,7 @@ public class ConditonalFormattingRuleImpl implements SConditionalFormattingRule 
 	}
 
 	@Override
-	public int getStandardDeviation() {
+	public Integer getStandardDeviation() {
 		return standardDeviation;
 	}
 	
