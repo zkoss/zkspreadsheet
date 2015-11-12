@@ -22,6 +22,7 @@ ZK Spreadsheet 3.8.2
   ZSS-1132 ExcelXlsxExporter always exports columns as custom width
   ZSS-1116 Wrap a cell which is not in the visible area doesn't work
   ZSS-1138 A rich text is lost after importing
+  ZSS-1147 Data validation / browser locale issue
   
 ** Upgrade Notes
     * org.zkoss.poi.ss.usermodel.CellStyle#getIndex() have been changed to return int instead of short because the 

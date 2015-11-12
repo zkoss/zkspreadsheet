@@ -16,6 +16,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.model.impl;
 
+import java.text.Format;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -37,6 +38,7 @@ import org.zkoss.poi.ss.formula.ptg.IntPtg;
 import org.zkoss.poi.ss.formula.ptg.NumberPtg;
 import org.zkoss.poi.ss.formula.ptg.Ptg;
 import org.zkoss.poi.ss.formula.ptg.StringPtg;
+import org.zkoss.poi.ss.usermodel.DataFormatter;
 import org.zkoss.poi.ss.usermodel.ZssContext;
 import org.zkoss.zss.model.CellRegion;
 import org.zkoss.zss.model.ErrorValue;
@@ -487,12 +489,11 @@ public class DataValidationImpl extends AbstractDataValidationAdv {
 		}
 		//ZSS-994
 		if (isNumber()) {
-			if (isDateFormat()) {
-				final double val = Double.parseDouble(formula);
-				final Locale locale = ZssContext.getCurrent().getLocale();
-				return FormatEngineImpl.getDateTimeString(val, locale);
-			}
-			return formula;
+			final double val = Double.parseDouble(formula);
+			final Locale locale = ZssContext.getCurrent().getLocale();
+			return isDateFormat() ?
+				FormatEngineImpl.getDateTimeString(val, locale) :
+				getNumLocaleString(val); //ZSS-1147
 		}
 		return null;
 	}
@@ -546,7 +547,9 @@ public class DataValidationImpl extends AbstractDataValidationAdv {
 			double num = val instanceof Date ? EngineFactory.getInstance()
 					.getCalendarUtil().dateToDoubleValue((Date) val)
 					: ((Number) val).doubleValue();
-			return Double.toString(num);
+					
+			//ZSS-1147
+			return getNumLocaleString(num);
 		default:
 			return formula;
 		}
@@ -1031,5 +1034,15 @@ public class DataValidationImpl extends AbstractDataValidationAdv {
 	@Override
 	public String getEscapedFormula2() {
 		return _formula2Expr == null ? null : _formula2Expr.getFormulaString();
+	}
+	
+	//ZSS-1147
+	private String getNumLocaleString(double num) {
+		final Locale locale = ZssContext.getCurrent().getLocale();
+		final DataFormatter df= new DataFormatter(locale);
+		final Format format = DataFormatter.isWholeNumber(num) ?
+				df.getGeneralWholeNumJavaFormat() :
+				df.getGeneralDecimalNumJavaFormat();
+		return format.format(num);  
 	}
 }
