@@ -1,0 +1,16 @@
+<zk>
+<vbox hflex="1" vflex="1">
+    <label multiline="true">
+Since 3.8.2
+1. click "populate data", the data should load correctly
+2. If you see "Warning: Unresponsive script", it is a bug
+    </label>
+<div apply="zss.issue.SetMassiveCellsComposer1115" hflex="1" vflex="1">
+<button id="populate" label="populate data"/>
+<button id="publish" label="populate data - event queue"/>
+	<spreadsheet id="ss" width="100%"  vflex="1" showSheetbar="true" 
+		maxVisibleRows="1000" maxVisibleColumns="30"  
+		src="/issue3/book/blank.xlsx"/>
+</div>
+</vbox>
+</zk>

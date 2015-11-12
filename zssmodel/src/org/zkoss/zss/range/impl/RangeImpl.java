@@ -604,6 +604,8 @@ public class RangeImpl implements SRange {
 	}
 	
 	private void notifyChangeInLock(boolean notifyDependent, CellAttribute cellAttr){ //ZSS-939
+		if (!_autoRefresh) return; //ZSS-1115:  do not auto refresh
+		
 		SBookSeries bookSeries = getBookSeries();
 		DependencyTable table = ((AbstractBookSeriesAdv)bookSeries).getDependencyTable();
 		LinkedHashSet<Ref> notifySet = new LinkedHashSet<Ref>();
