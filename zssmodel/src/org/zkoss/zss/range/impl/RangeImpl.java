@@ -729,8 +729,8 @@ public class RangeImpl implements SRange {
 			}
 		}
 
-		new NotifyChangeHelper().notifyRowColumnSizeChange(notifySet);
-		new NotifyChangeHelper().notifyCellChange(notifySet, CellAttribute.ALL); //ZSS-666
+		handleNotifyRowColumnSizeChange(notifySet); //ZSS-1115
+		handleCellNotifyContentChange(notifySet, CellAttribute.ALL); //ZSS-666, ZSS-1115 	
 			// ZSS-944, General format number change precision per the row height for 90deg text
 	}
 
@@ -779,8 +779,8 @@ public class RangeImpl implements SRange {
 				notifySet.add(new SheetRegion(sheet,0,i,maxrow,i));
 			}
 		}
-		new NotifyChangeHelper().notifyRowColumnSizeChange(notifySet);
-		new NotifyChangeHelper().notifyCellChange(notifySet, CellAttribute.ALL); //ZSS-666
+		handleNotifyRowColumnSizeChange(notifySet);
+		handleCellNotifyContentChange(notifySet, CellAttribute.ALL); //ZSS-666, ZSS-1115
 			// ZSS-939, must use CellAttribute.ALL; General format number change precision per the column width
 	}
 
@@ -879,7 +879,7 @@ public class RangeImpl implements SRange {
 			protected void doBeforeNotify() {
 				if(option.getPasteType()==PasteOption.PasteType.COLUMN_WIDTHS){
 					CellRegion effected = effectedRegion.get();
-					new NotifyChangeHelper().notifyRowColumnSizeChange(new SheetRegion(dstRange.getSheet(),effected));
+					handleNotifyRowColumnSizeChange(new SheetRegion(dstRange.getSheet(),effected)); //ZSS-1115
 				}
 			}
 			
@@ -1106,7 +1106,7 @@ public class RangeImpl implements SRange {
 			}
 		}
 		
-		new NotifyChangeHelper().notifyRowColumnSizeChange(notifySet);
+		handleNotifyRowColumnSizeChange(notifySet); //ZSS-1115
 		
 		SBookSeries bookSeries = getSheet().getBook().getBookSeries();
 		DependencyTable table = ((AbstractBookSeriesAdv)bookSeries).getDependencyTable();
@@ -1819,22 +1819,43 @@ public class RangeImpl implements SRange {
 	}
 	
 	private void handleCellNotifyContentChange(SheetRegion cellNotify, CellAttribute cellAttr) { //ZSS-939
+		if (!_autoRefresh) { //ZSS-1115: do not auto refresh
+			return;
+		}
 		new NotifyChangeHelper().notifyCellChange(cellNotify, cellAttr);
 	}
 	private void handleCellNotifyContentChange(Set<SheetRegion> cellNotifySet, CellAttribute cellAttr) { //ZSS-939
+		if (!_autoRefresh) { //ZSS-1115: do not auto refresh
+			return;
+		}
 		new NotifyChangeHelper().notifyCellChange(cellNotifySet, cellAttr);
 	}
 	
+	//ZSS-1115
+	private void handleNotifyRowColumnSizeChange(SheetRegion region) {
+		if (!_autoRefresh) {
+			return;
+		}
+		new NotifyChangeHelper().notifyRowColumnSizeChange(region);
+	}
+	//ZSS-1115
+	private void handleNotifyRowColumnSizeChange(Set<SheetRegion> notifySet) {
+		if (!_autoRefresh) {
+			return;
+		}
+		new NotifyChangeHelper().notifyRowColumnSizeChange(notifySet);
+	}
+	
 	private void handleInsertDeleteNotifyChange(InsertDeleteUpdate insertDeleteNofity) {
+		if (!_autoRefresh) { //ZSS-1115: do not auto refresh
+			return;
+		}
 		new NotifyChangeHelper().notifyInsertDelete(insertDeleteNofity);
 	}
 	
 	//ZSS-988
 	private void handleAutoFitlerNotifyChange(AutoFilterUpdate update) {
 		new NotifyChangeHelper().notifySheetAutoFilterChange(update.getSheet(), update.getTable());
-	}
-	private void handleInsertDeleteNotifyChange(List<InsertDeleteUpdate> insertDeleteNofitySet) {
-		new NotifyChangeHelper().notifyInsertDelete(insertDeleteNofitySet);
 	}
 
 	@Override

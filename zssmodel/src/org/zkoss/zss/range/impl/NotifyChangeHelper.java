@@ -37,7 +37,7 @@ public class NotifyChangeHelper{
 
 	private static final Log _logger = Log.lookup(NotifyChangeHelper.class.getName());
 	
-	public void notifyRowColumnSizeChange(HashSet<SheetRegion> notifySet) {
+	public void notifyRowColumnSizeChange(Set<SheetRegion> notifySet) {
 		for (SheetRegion notify : notifySet) {
 			notifyRowColumnSizeChange(notify);
 		}
