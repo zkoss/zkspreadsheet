@@ -34,6 +34,11 @@ zss.CellBlockCtrl = zk.$extends(zk.Widget, {
 		this.rows = [];
 		this.range = new zss.Range(lCol, tRow, rCol, bRow);
 		
+		//ZSS-1149
+		this._tmpMerges = {};
+		this._toReset = {};
+		this._toSet = {};
+		
 		var rows = data.rows,
 			block = this;
 		for (var r = tRow; r <= bRow; r++) {
@@ -526,10 +531,10 @@ zss.CellBlockCtrl = zk.$extends(zk.Widget, {
 		this.range.extendBottom(-rm);
 		if (this._newrange) this._newrange.extendBottom(-rm); //ZSS-1117
 	},
-	//ZSS-1117
-	_tmpMerges: {}, //r_c -> [l,t,r,b]
-	_toReset: {}, //r_c -> [l,t,r,b]
-	_toSet: {}, //r_c -> [l,t,r,b]
+	//ZSS-1117, ZSS-1149
+	_tmpMerges: null, //r_c -> [l,t,r,b]
+	_toReset: null, //r_c -> [l,t,r,b]
+	_toSet: null, //r_c -> [l,t,r,b]
 	//ZSS-1117: called by Cell.js#bind_() 
 	_addTempMerge: function (mt, ml, l, t, r, b, cutw, cuth) {
 		var k = ""+mt+"_"+ml,
@@ -576,8 +581,8 @@ zss.CellBlockCtrl = zk.$extends(zk.Widget, {
 			}
 		}
 
-		// remove those total out
-		re = [];
+		// remove those total out of range
+		var rms = [];
 		var p = this._tmpMerges;
 		for (var key in p) {
 			if (p.hasOwnProperty(key)) {
@@ -587,12 +592,12 @@ zss.CellBlockCtrl = zk.$extends(zk.Widget, {
 					r = m[2],
 					b = m[3];
 				if (r < rl || l > rr || b < rt || t > rb) {
-					re.push(key);
+					rms.push(key);
 				}
 			}
 		}
-		for (var j = re.length; --j >= 0;) {
-			var key = re[j];
+		for (var j = rms.length; --j >= 0;) {
+			var key = rms[j];
 			delete this._tmpMerges[key];
 		}
 		

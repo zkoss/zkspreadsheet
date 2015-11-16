@@ -1,0 +1,9 @@
+<vbox hflex="1" vflex="1">
+	<label multiline="true">
+Since 3.8.2
+1. You should not see any column mis-alignment or it is a bug.
+</label>
+	<spreadsheet id="ss" src="/issue3/book/1149-border-alignment.xlsx" maxVisibleRows="200" maxVisibleColumns="100"
+		hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
+		showFormulabar="true" />	
+</vbox>
