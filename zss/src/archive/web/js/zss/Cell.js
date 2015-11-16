@@ -455,7 +455,7 @@ zss.Cell = zk.$extends(zk.Widget, {
 		}
 	},
 	//ZSS-1116: prepare auto height calculation
-	_updateCellAutoHeight() {
+	_updateCellAutoHeight: function () {
 		var newHeight = this._getTextHeight0();
 		this.parent.updateAutoHeightDirty(this._txtHgh || -1, newHeight);
 		this._txtHgh = newHeight;
