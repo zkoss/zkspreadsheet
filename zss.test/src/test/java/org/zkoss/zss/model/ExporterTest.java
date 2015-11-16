@@ -290,7 +290,7 @@ public class ExporterTest extends ImExpTestBase {
 	public void exportWidthSplitTest() {
 		SBook book = SBooks.createBook("book1");
 		SSheet sheet1 = book.createSheet("Sheet1");
-		int defaultWidth = 100;
+		int defaultWidth = 96; // must be times of 8
 		sheet1.setDefaultColumnWidth(defaultWidth);
 		sheet1.setDefaultRowHeight(200);
 		Assert.assertEquals(defaultWidth, sheet1.getDefaultColumnWidth());
@@ -337,16 +337,17 @@ public class ExporterTest extends ImExpTestBase {
 		Assert.assertEquals(0, array.getIndex());
 		Assert.assertEquals(8, array.getLastIndex());
 		Assert.assertEquals(10, array.getWidth());
-		
-		array = arrays.next();
-		Assert.assertEquals(9, array.getIndex());
-		Assert.assertEquals(10, array.getLastIndex());
-		Assert.assertEquals(defaultWidth, array.getWidth());
-		
-		array = arrays.next();
-		Assert.assertEquals(11, array.getIndex());
-		Assert.assertEquals(255, array.getLastIndex());
-		Assert.assertEquals(defaultWidth, array.getWidth());
+
+//Since ZSS-1132, we keep only customWidth
+//		array = arrays.next();
+//		Assert.assertEquals(9, array.getIndex());
+//		Assert.assertEquals(10, array.getLastIndex());
+//		Assert.assertEquals(defaultWidth, array.getWidth());
+//		
+//		array = arrays.next();
+//		Assert.assertEquals(11, array.getIndex());
+//		Assert.assertEquals(255, array.getLastIndex());
+//		Assert.assertEquals(defaultWidth, array.getWidth());
 		
 		///////////// second export
 		File outFile2 = ImExpTestUtil.writeBookToFile(outBook, ImExpTestUtil.DEFAULT_EXPORT_TARGET_PATH+ImExpTestUtil.DEFAULT_EXPORT_FILE_NAME_XLSX, EXPORTER_TYPE);
@@ -354,8 +355,8 @@ public class ExporterTest extends ImExpTestBase {
 		
 		sheet1 = outBook2.getSheet(0);
 		
-		// default width become 104px
-		//Assert.assertEquals(100, sheet1.getDefaultColumnWidth());
+		// default width become 96px => 13 * 7 + 5
+		Assert.assertEquals(defaultWidth, sheet1.getDefaultColumnWidth());
 		Assert.assertEquals(200, sheet1.getDefaultRowHeight());
 
 		arrays = sheet1.getColumnArrayIterator();
@@ -367,15 +368,16 @@ public class ExporterTest extends ImExpTestBase {
 		Assert.assertEquals(8, array.getLastIndex());
 		Assert.assertEquals(10, array.getWidth());
 		
-		array = arrays.next();
-		Assert.assertEquals(9, array.getIndex());
-		Assert.assertEquals(10, array.getLastIndex());
-		Assert.assertEquals(100, array.getWidth());
-		
-		array = arrays.next();
-		Assert.assertEquals(11, array.getIndex());
-		Assert.assertEquals(255, array.getLastIndex());
-		Assert.assertEquals(100, array.getWidth());
+//Since ZSS-1132, we keep only customWidth
+//		array = arrays.next();
+//		Assert.assertEquals(9, array.getIndex());
+//		Assert.assertEquals(10, array.getLastIndex());
+//		Assert.assertEquals(100, array.getWidth());
+//		
+//		array = arrays.next();
+//		Assert.assertEquals(11, array.getIndex());
+//		Assert.assertEquals(255, array.getLastIndex());
+//		Assert.assertEquals(100, array.getWidth());
 	}
 	
 	@Test

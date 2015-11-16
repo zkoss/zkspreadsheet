@@ -382,10 +382,11 @@ public class Issue400Test {
 			org.junit.Assert.assertEquals("m/d/yyyy", a7.getCellDataFormat());
 			org.junit.Assert.assertEquals("2/1/2013", a7.getCellFormatText());
 			
+			//ZSS-1127
 			a8.setCellEditText("2013/2/1");
-			org.junit.Assert.assertEquals(CellType.STRING, a8.getCellData().getType());
-			org.junit.Assert.assertEquals("General", a8.getCellDataFormat()); //default format will depends on LOCAL
-			org.junit.Assert.assertEquals("2013/2/1", a8.getCellFormatText());
+			org.junit.Assert.assertEquals(CellType.NUMERIC, a8.getCellData().getType());
+			org.junit.Assert.assertEquals("m/d/yyyy", a7.getCellDataFormat());
+			org.junit.Assert.assertEquals("2/1/2013", a7.getCellFormatText());
 		}finally{
 			Setup.popZssLocale();
 		}

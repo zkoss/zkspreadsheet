@@ -18,7 +18,7 @@ Since 3.8.2
 15. Right click in C8 to open context menu and select "Hyperlink"; you should see the "Edit Hyperlink" dialog popup.
 16. You should see left side the "In document" button is pressed, "Sheet''s 2!InSheetName" by "Text to display", "A1" under "Type the cell reference", and "main" under "Select a place in this document".
 17. Press "Cancel" button to quit the dialog
-18. Right click on Sheet tab "Sheet2" and select "Rename"; Change Sheet2 to Sheet's 2 (not there is a space before "2").
+18. Right click on Sheet tab "Sheet2" and select "Rename"; Change Sheet2 to Sheet's 2 (Note there is a space before "2").
 19. Select back to "main" sheet and right click in C8 to open context menu and select "Hyperlink";
 20. You should see left side the "In document" button is pressed, "Sheet''s 2!InSheetName" by "Text to display", "A1" under "Type the cell reference" (but disabled), and "'Sheet''s 2'!InSheetName ( main!$E$12 )" under "Select a place in this document".
 21. Press "Cancel" button to quit the dialog

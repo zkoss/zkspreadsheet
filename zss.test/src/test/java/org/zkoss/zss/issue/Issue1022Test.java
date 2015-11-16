@@ -66,6 +66,7 @@ public class Issue1022Test {
 			Assert.assertEquals("F29", 5952d, cd.getDoubleValue(), 0d);
 			
 		} catch (Exception e) {
+			e.printStackTrace();
 			Assert.assertTrue("Exception when load \"issue/book/1022-theme-table.xlsx\":\n" + e, false);
 		} finally {
 			 os.close();

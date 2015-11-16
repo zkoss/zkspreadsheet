@@ -54,6 +54,7 @@ public class Issue1010Test {
 			Exporters.getExporter("xlsx").export(book, os);
 //			Filedownload.save(os.toByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "scale0.xlsx"); 
 		} catch (Exception e) {
+			e.printStackTrace();
 			Assert.assertTrue("Exception when load \"issue/book/1010-export-IOOBE.xlsx\":\n" + e, false);
 		} finally {
 			 os.close();

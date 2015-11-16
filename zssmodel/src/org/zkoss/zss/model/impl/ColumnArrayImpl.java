@@ -156,7 +156,7 @@ public class ColumnArrayImpl extends AbstractColumnArrayAdv {
 
 	@Override
 	public boolean isCustomWidth() {
-		return _customWidth;
+		return _customWidth || (_width != null && _width != getSheet().getDefaultColumnWidth());
 	}
 
 	@Override
@@ -178,6 +178,6 @@ public class ColumnArrayImpl extends AbstractColumnArrayAdv {
 	//ZSS-1132: should skip this Column array in exporting
 	//@since 3.8.2
 	public boolean shouldSkip() {
-		return !_customWidth && _cellStyle == null;
+		return !isCustomWidth() && _cellStyle == null;
 	}
 }
