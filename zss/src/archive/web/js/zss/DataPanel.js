@@ -22,7 +22,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
  * A DataPanel represent the spreadsheet cells 
  */
 zss.DataPanel = zk.$extends(zk.Object, {
-	cacheMap: {}, //handle element cache, not implement yet
+	cacheMap: null, 
 	$init: function (sheet) {
 		this.$supers(zss.DataPanel, '$init', []);
 		var wgt = this._wgt = sheet._wgt,
@@ -32,6 +32,7 @@ zss.DataPanel = zk.$extends(zk.Object, {
 			// sheet.$n('fo') are only used when do paste
 			focus = this.focustag = sheet.inlineEditor.getInputNode();
 
+		this.cacheMap = {}; //handle element cache, not implement yet 
 		this.id = dataPanel.id;
 		this.sheet = sheet;
 		this.comp = dataPanel;
