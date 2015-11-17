@@ -25,6 +25,7 @@ ZK Spreadsheet 3.8.2
   ZSS-1147 Data validation / browser locale issue
   ZSS-1115 Encounter "Warning: Unresponsive script" in Firefox when setting massive cells
   ZSS-1149 ZSS renders cell borders incorrectly
+  ZSS-1150 IE9 only. Underscore("_") not seen when bottom vertical alignment
   
 ** Upgrade Notes
     * org.zkoss.poi.ss.usermodel.CellStyle#getIndex() have been changed to return int instead of short because the 

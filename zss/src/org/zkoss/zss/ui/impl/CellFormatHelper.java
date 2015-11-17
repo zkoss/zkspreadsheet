@@ -45,6 +45,7 @@ import org.zkoss.zss.model.sys.format.FormatEngine;
 import org.zkoss.zss.model.sys.format.FormatResult;
 import org.zkoss.zss.model.util.RichTextHelper;
 import org.zkoss.zss.range.impl.StyleUtil;
+import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.impl.undo.ReserveUtil;
 
 /**
@@ -325,7 +326,7 @@ public class CellFormatHelper {
 	}
 	
 	public static String getFontCSSStyle(SCell cell, SFont font) {
-		final StringBuffer sb = new StringBuffer();
+		final StringBuilder sb = new StringBuilder();
 		
 		String fontName = font.getName();
 		if (fontName != null) {
@@ -370,9 +371,29 @@ public class CellFormatHelper {
 			sb.append("vertical-align:").append("super;");
 		else if (font.getTypeOffset() == SFont.TypeOffset.SUB)
 			sb.append("vertical-align:").append("sub;");
+		
+		//ZSS-1150:, 20151117, henrichen: in IE9, the "_" will be clipped 
+		//  and not seen because in cell-cave, the style.display is set to
+		//  table-cell and IE9 will offset cell-cave 2px down for unknown 
+		//  reason. We are forced to use another way to do bottom 
+		//  vertical-align here for IE9 case.
+		SCellStyle cellStyle = cell.getCellStyle();
+		if (cellStyle != null) {
+			VerticalAlignment verticalAlignment = cellStyle.getVerticalAlignment();
+			if (isIE9VerticalAligment(verticalAlignment)
+				&& (verticalAlignment == null || verticalAlignment == VerticalAlignment.BOTTOM)) {
+				sb.append("position:absolute;bottom:0px;padding-right:4px;box-sizing:border-box;");
+			}
+		}
+		
 		return sb.toString();
 	}
 
+	//ZSS-1150: "_" not seen when bottom alignment
+	private static boolean isIE9VerticalAligment(VerticalAlignment verticalAlignment) {
+		return Spreadsheet.isIE9() && verticalAlignment != VerticalAlignment.CENTER;
+	}
+	
 	public String getInnerHtmlStyle() {
 		if (!_cell.isNull()) {
 			
@@ -381,18 +402,20 @@ public class CellFormatHelper {
 			
 			//vertical alignment
 			VerticalAlignment verticalAlignment = _cellStyle.getVerticalAlignment();
-			sb.append("display: table-cell;");
-			switch (verticalAlignment) {
-			case TOP:
-				sb.append("vertical-align: top;");
-				break;
-			case CENTER:
-				sb.append("vertical-align: middle;");
-				break;
-			case BOTTOM:
-			default:
-				sb.append("vertical-align: bottom;");
-				break;
+			if (!isIE9VerticalAligment(verticalAlignment)) { //ZSS-1150
+				sb.append("display: table-cell;");
+				switch (verticalAlignment) {
+				case TOP:
+					sb.append("vertical-align: top;");
+					break;
+				case CENTER:
+					sb.append("vertical-align: middle;");
+					break;
+				case BOTTOM:
+				default:
+					sb.append("vertical-align: bottom;");
+					break;
+				}
 			}
 			
 			//final SFont font = _cellStyle.getFont();

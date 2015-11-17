@@ -4509,7 +4509,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	}
 
 	//ZSS-952
-	private boolean isIE9() {
+	public static boolean isIE9() {
 		final Execution exec = Executions.getCurrent();
 		final Double ver = exec != null ? exec.getBrowser("ie") : null;
 		return ver != null && ver < 10.0 && ver >= 9.0;
