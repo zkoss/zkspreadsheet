@@ -77,6 +77,8 @@ zss.ScrollPanel = zk.$extends(zk.Object, {
 	},
 	//ZSS-1134: IE9 only. Enforce set scroll position back
 	_resetIE9ScrollPosition: function () {
+		if (this._visFlg) return; //ZSS-1134: do NOT enforce if scrollToVisible()
+		
 		var spcmp = this.comp,
 			sl = spcmp.scrollLeft,
 			st = spcmp.scrollTop,
