@@ -68,10 +68,7 @@ public class ZKInsertMerge1115 extends SelectorComposer<Vlayout> {
 	
 	@Listen("onCellClick = #spreadsheet")
 	public void onCellClick(CellMouseEvent event){
-		System.out.println("onCellClick:" +  new CellRef(event.getRow(), event.getColumn()).asString());
-		
 		if (event.getColumn() > 46 && event.getRow() == 10){ //header row, AV ~
-		System.out.println("insert columns");
 			Range cellRange = Ranges.range(this.selectedSheet, event.getRow(), event.getColumn());
 			if (cellRange.getCellValue() != null && cellRange.getCellValue().toString().startsWith(SYMBOL_COLLAPSED)){
 				Ranges.range(this.selectedSheet).unprotectSheet("test");
