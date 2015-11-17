@@ -1,0 +1,11 @@
+<zk>
+<vlayout hflex="1" vflex="1" apply="zss.issue.IE9SuperHighRow1151">
+    <label multiline="true">
+IE9 only. Since 3.8.2.
+1. scroll to see column AV; click AV11, should see 9 new columns appear(AW ~ BE)
+2. If row 18 is expanded to super high, it is a bug.(should be about 20px only)
+    </label>
+	<spreadsheet id="spreadsheet" hflex="1" vflex="1" showToolbar="false" showFormulabar="false" showSheetbar="false" showContextMenu="false"/>
+	<separator height="50px"/>
+</vlayout>
+</zk>
