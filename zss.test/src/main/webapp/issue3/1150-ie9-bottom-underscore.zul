@@ -7,7 +7,7 @@ IE9 only. Since 3.8.2
 4. A3 is vertically top aligned.
 5. If cannot see the underscore or the vertical alignment is not correct; it is a bug.
 </label>
-	<spreadsheet id="ss" src="/issue3/book/1150-bottom-underscore.xlsx" maxVisibleRows="200" maxVisibleColumns="40"
+	<spreadsheet id="ss" src="/issue3/book/1150-ie9-bottom-underscore.xlsx" maxVisibleRows="200" maxVisibleColumns="40"
 		hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
 		showFormulabar="true" />	
 </vbox>
