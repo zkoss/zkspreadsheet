@@ -1,0 +1,13 @@
+<vbox hflex="1" vflex="1">
+	<label multiline="true">
+1. You should three group of text show in A1:C2, E1:G2, and I1:K2.
+2. The upper part(row 1) is the 90 degree formatted text(i.e. top of text is heading to left) 
+   and the lower part(row 2) is the -90 degree formatted text(i.e. top of text is heading to right)
+3. A1:C2 is vertically aligned on top; E1:G2 is vertically aligned on center; while I1:K2 is vertically aligned on bottom.
+4. Column A, E, and I are horizontally aligned on left; B, F, and J are horizontally aligned on center; while C, G and K are horizontally aligned on right.  
+5. If the formatted text does not match the description in 2, 3, and 4; then it is a bug.
+	</label>
+	<spreadsheet id="ss" src="/issue3/book/1108-ie9-long-90deg-text.xlsx" maxVisibleRows="30" maxVisibleColumns="40"
+		hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
+		showFormulabar="true" />	
+</vbox>
