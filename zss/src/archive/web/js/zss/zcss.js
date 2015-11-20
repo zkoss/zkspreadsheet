@@ -60,8 +60,38 @@ zcss.findRule = function (selector, id) {
 	}
 	
 	for (var i = ss.length - 1; i >= 0; i--) {
-		var rules = zcss._getSSRules(ss[i]);
-		if (!rules) continue;
+		var r = zcss._findRuleInStyleSheet(selector, ss[i]); //ZSS-1152
+		if (r) {
+			return r;
+		}
+	}
+	return null;
+};
+
+//ZSS-1152
+zcss._findRuleInStyleSheet = function (selector, ss) {
+	var r = zcss._matchRule(selector, ss);
+	if (r) {
+		return r;
+	}
+	
+	// ZSS-1152: search into imports
+	var imports = ss.imports;
+	if (imports) {
+		for (var j = imports.length; --j >=0;) {
+			r = zcss._findRuleInStyleSheet(selector, imports[j]); // recursive
+			if (r) {
+				return r;
+			}
+		}
+	}
+	return null;
+};
+
+//ZSS-1152
+zcss._matchRule = function (selector, ss) {
+	var rules = zcss._getSSRules(ss);
+	if (rules) {
 		for (var j = rules.length - 1; j >= 0; j--) {
 			var r = rules[j];
 			if(selector.toLowerCase() == r.selectorText.toLowerCase()) {

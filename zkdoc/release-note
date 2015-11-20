@@ -27,6 +27,7 @@ ZK Spreadsheet 3.8.2
   ZSS-1149 ZSS renders cell borders incorrectly
   ZSS-1150 IE9 only. Underscore("_") not seen when bottom vertical alignment
   ZSS-1151 IE9 only. Row height is unresonable large
+  ZSS-1152 IE9 only. Lift the IE9 StyleSheet upper limit (4095 selectors per style sheet)
   
 ** Upgrade Notes
     * org.zkoss.poi.ss.usermodel.CellStyle#getIndex() have been changed to return int instead of short because the 

@@ -123,6 +123,7 @@ import org.zkoss.zss.range.SImporter;
 import org.zkoss.zss.range.SImporters;
 import org.zkoss.zss.range.SRange;
 import org.zkoss.zss.range.SRanges;
+import org.zkoss.zss.range.impl.MergeHelper;
 import org.zkoss.zss.ui.au.in.Command;
 import org.zkoss.zss.ui.au.out.AuCellFocus;
 import org.zkoss.zss.ui.au.out.AuCellFocusTo;
@@ -3009,6 +3010,33 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		}
 		
 		public Media getMedia(String pathInfo) {
+			//ZSS-1152: lift the IE9 stylesheet upper limit (4095 selectors/stylesheet)
+			if (isIE9()) {
+				int bj = pathInfo.indexOf(".basic.x");
+				if (bj > 0) {
+					return new AMedia("css", "css", "text/css;charset=UTF-8", getIE9BasicStyleSheet());
+				}
+				int hj = pathInfo.indexOf(".colheader.");
+				if (hj > 0) {
+					final String dotIndex = pathInfo.substring(hj + 11);
+					return new AMedia("css", "css", "text/css;charset=UTF-8", getIE9ColHeaderStyleSheet(dotIndex));
+				}
+				int rj = pathInfo.indexOf(".rowheader.");
+				if (rj > 0) {
+					final String dotIndex = pathInfo.substring(rj + 11);
+					return new AMedia("css", "css", "text/css;charset=UTF-8", getIE9RowHeaderStyleSheet(dotIndex));
+				}
+				int mj = pathInfo.indexOf(".merge.");
+				if (mj > 0) {
+					final String dotIndex = pathInfo.substring(mj + 7);
+					return new AMedia("css", "css", "text/css;charset=UTF-8", getIE9MergeStyleSheet(dotIndex));
+				}
+				int oj = pathInfo.indexOf(".other.x");
+				if (oj > 0) {
+					return new AMedia("css", "css", "text/css;charset=UTF-8", getIE9OtherStyleSheet());
+				}
+			}
+
 			return new AMedia("css", "css", "text/css;charset=UTF-8",
 					getSheetDefaultRules());
 		}
@@ -4078,8 +4106,37 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		_selectionArea.setLastRow(row);
 	}
 
-	private String getSheetDefaultRules() {
+	//ZSS-1152
+	private String getIE9SheetDefaultRules() {
+		final StringBuilder sb = new StringBuilder();
+		
+		final String importcss0 = getImportStyleSheetUrl("basic", ".x"); // basic css
+		sb.append("@import url(" + importcss0 + ");");
+		
+		final String importcss2 = getImportStyleSheetUrl("colheader", ".x"); // first level header
+		sb.append("@import url(" + importcss2 + ");");
+		
+		final String importcss1 = getImportStyleSheetUrl("rowheader", ".x"); // first level header
+		sb.append("@import url(" + importcss1 + ");");
+		
+		final String importcss3 = getImportStyleSheetUrl("merge", ".x"); // first level merge
+		sb.append("@import url(" + importcss3 + ");");
 
+		final String importcss4 = getImportStyleSheetUrl("other", ".x"); // other css
+		sb.append("@import url(" + importcss4 + ");");
+
+		return sb.toString();
+	}
+	
+	//ZSS-1152
+	private String getIE9BasicStyleSheet() {
+		final StringBuilder sb = new StringBuilder();
+		prepareBasicStyleSheet(sb);
+		return sb.toString();
+	}
+	
+	//ZSS-1152
+	private void prepareBasicStyleSheet(StringBuilder sb) {
 		SSheet sheet = getSelectedSSheet();
 
 		HeaderPositionHelper colHelper = this.getColumnPositionHelper(sheet);
@@ -4119,8 +4176,6 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		cellheight = rh;
 
 		int celltextwidth = cw - 2 * cp;
-
-		StringBuffer sb = new StringBuffer();
 
 		// zcss.setRule(name+" .zsdata",["padding-top","padding-left"],[th+"px",lw+"px"],true,sid);
 		sb.append(name).append(" .zsdata{");
@@ -4322,229 +4377,16 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 //			}
 			sb.append("}");
 		}
-
-		//ZSS-952: avoid ie9 style sheet upper limit by load only in visible area
-		if (isIE9()) {
-			prepareIE9StyleSheet(name, sb, colHelper, rowHelper, cp);
-		} else {
-			List<HeaderPositionInfo> infos = colHelper.getInfos();
-			for (HeaderPositionInfo info : infos) {
-				boolean hidden = info.hidden;
-				int index = info.index;
-				int width = hidden ? 0 : info.size;
-				int cid = info.id;
-	
-				celltextwidth = width - 2 * cp;
-	
-				// bug 1989680
-				if (celltextwidth < 0)
-					celltextwidth = 0;
-	
-				cellwidth = width;
-	
-				if (width <= 0) {
-					sb.append(name).append(" .zsw").append(cid).append("{");
-					sb.append("display:none;");
-					sb.append("}");
-	
-				} else {
-					sb.append(name).append(" .zsw").append(cid).append("{");
-					sb.append("width:").append(cellwidth).append("px;");
-					sb.append("}");
-	
-					sb.append(name).append(" .zswi").append(cid).append("{");
-					sb.append("width:").append(celltextwidth).append("px;");
-					sb.append("}");
-				}
-			}
-	
-			infos = rowHelper.getInfos();
-			for (HeaderPositionInfo info : infos) {			
-				boolean hidden = info.hidden;
-				int index = info.index;
-				int height = hidden ? 0 : info.size;
-				int cid = info.id;
-				cellheight = height;
-	
-				if (height <= 0) {
-					
-					// ZSS-330, ZSS-382: using "height: 0" and don't use "display: none", latter one cause merge cell to chaos
-					sb.append(name).append(" .zsh").append(cid).append("{");
-					sb.append("height:0px;");
-					sb.append("}");
-	
-					// ZSS-500: re-overwrite overflow to hidden when row hidden 
-					sb.append(name).append(" .zshi").append(cid).append("{");
-					sb.append("height:0px;");
-					sb.append("border-bottom-width:0px;");
-					sb.append("overflow:hidden;");
-					sb.append("}");
-	
-					sb.append(name).append(" .zslh").append(cid).append("{");
-					sb.append("height:0px;");
-					sb.append("line-height:0px;");
-					sb.append("border-bottom-width:0px;");
-					sb.append("}");
-	
-					sb.append(name).append(" .zshr").append(cid).append("{");
-					sb.append("max-height:0px;");
-					sb.append("}");
-	
-				} else {
-					sb.append(name).append(" .zsh").append(cid).append("{");
-					sb.append("height:").append(height).append("px;");
-					sb.append("}");
-	
-					sb.append(name).append(" .zshi").append(cid).append("{");
-					sb.append("height:").append(cellheight).append("px;");
-					sb.append("border-bottom-width:1px;");
-					sb.append("}");
-	
-					sb.append(name).append(" .zslh").append(cid).append("{");
-					sb.append("height:").append(height).append("px;");
-					sb.append("line-height:").append(height).append("px;");
-					sb.append("border-bottom-width:1px;");
-					sb.append("}");
-	
-					sb.append(name).append(" .zshr").append(cid).append("{");
-					sb.append("max-height:").append(height).append("px;");
-					sb.append("}");
-	
-				}
-			}
-		}
-		//TODO: seems no need
-		sb.append(".zs_header{}");// for indicating add new rule before this
-
-		// merge size;
-		List ranges = mmhelper.getRanges();
-		Iterator iter = ranges.iterator();
-		final int defaultSize = colHelper.getDefaultSize();
-		final int defaultRowSize = rowHelper.getDefaultSize();
-
-		while (iter.hasNext()) {
-			MergedRect block = (MergedRect) iter.next();
-			int left = block.getColumn();
-			int right = block.getLastColumn();
-			int width = 0;
-			for (int i = left; i <= right; i++) {
-				final HeaderPositionInfo info = colHelper.getInfo(i);
-				if (info != null) {
-					final boolean hidden = info.hidden;
-					final int colSize = hidden ? 0 : info.size;
-					width += colSize;
-				} else {
-					width += defaultSize ;
-				}
-			}
-			int top = block.getRow();
-			int bottom = block.getLastRow();
-			int height = 0;
-			for (int i = top; i <= bottom; i++) {
-				final HeaderPositionInfo info = rowHelper.getInfo(i);
-				if (info != null) {
-					final boolean hidden = info.hidden;
-					final int rowSize = hidden ? 0 : info.size;
-					height += rowSize;
-				} else {
-					height += defaultRowSize ;
-				}
-			}
-
-			if (width <= 0 || height <= 0) { //total hidden
-				sb.append(name).append(" .zsmerge").append(block.getId()).append("{");
-				sb.append("display:none;");
-				sb.append("}");
-
-				sb.append(name).append(" .zsmerge").append(block.getId());
-				sb.append(" .zscelltxt").append("{");
-				sb.append("display:none;");
-				sb.append("}");
-			} else {
-				celltextwidth = width - 2 * cp;
-				int celltextheight = height;
-	
-				cellwidth = width;
-				cellheight = height;
-				
-				sb.append(name).append(" .zsmerge").append(block.getId()).append("{");
-				sb.append("width:").append(cellwidth).append("px;");
-				sb.append("height:").append(cellheight).append("px;");
-				sb.append("display:inline-block;"); // ZSS-330, ZSS-382:  the left-top cell must display
-				sb.append("border-bottom-width: 1px;"); // re-apply bottom border for grid line; Or grid line will be missed if row was hidden
-				sb.append("}");
-
-				sb.append(name).append(" .zsmerge").append(block.getId());
-				sb.append(" .zscelltxt").append("{");
-				sb.append("width:").append(celltextwidth).append("px;");
-				sb.append("height:").append(celltextheight).append("px;");
-				sb.append("}");
-			}
-		}
-
-		//gridline
-//		if (sheet.isDisplayGridlines()) {
-//			sb.append(name).append(" .zscell")
-//			.append("{border-bottom-color:#FFFFFF;border-right-color:#FFFFFF;}");
-//		}
-		sb.append(name).append(" .zs_indicator_" + getSelectedSheetId() + "{}");// for indicating the css is load ready
-		
-		// ZSS-788
-		// filter out HTML element which shouldn't be affected by bootstrap's style "box-sizing:border-box"
-		if(Package.getPackage("org.zkoss.addons.bootstrap") != null) {	
-			sb.append(name).append(" *[class^=zs]{box-sizing: content-box;-moz-box-sizing: content-box;}")
-				.append(name).append(".zssheet{box-sizing:border-box;-moz-box-sizing: border-box;}")
-				.append(name).append(" .zscell{box-sizing:border-box;-moz-box-sizing: border-box;}")
-				.append(name).append(" .zstopcell{box-sizing:border-box;-moz-box-sizing: border-box;}")
-				.append(name).append(" .zsleftcell{box-sizing:border-box;-moz-box-sizing: border-box;}")
-				.append(name).append(" .zsfocmark{box-sizing:border-box;-moz-box-sizing: border-box;}")
-				.append(name).append(" .zsselect{box-sizing:border-box;-moz-box-sizing: border-box;}")
-				.append(name).append(" .zsselchg{box-sizing:border-box;-moz-box-sizing: border-box;}")
-				.append(name).append(" .zshighlight{box-sizing:border-box;-moz-box-sizing: border-box;}")
-				.append("li[class^=zsmenu-] a:hover, li[class^=zsmenuitem-] a:hover{text-decoration: none;}")
-				.append(name).append(" .cleditorMain * {-moz-box-sizing:content-box; -webkit-box-sizing:content-box; box-sizing:content-box}");
-		}
-
-		return sb.toString();
 	}
 
-	//ZSS-952
-	public static boolean isIE9() {
-		final Execution exec = Executions.getCurrent();
-		final Double ver = exec != null ? exec.getBrowser("ie") : null;
-		return ver != null && ver < 10.0 && ver >= 9.0;
-	}
-	
-	//ZSS-952: avoid hit the ie9 StyleSheet upper bound limit, load only inside visible area
-	private void prepareIE9StyleSheet(String name, StringBuffer sb, HeaderPositionHelper colHelper, HeaderPositionHelper rowHelper, int cp) {
-		int right = _cssArea.getLastColumn();
-		int bottom = _cssArea.getLastRow();
-		int left = _cssArea.getColumn();
-		int top = _cssArea.getRow();
-		
-		// first CSS when change sheet
-		if (right < 0) {
-			right = getInitColumnSize();
-			bottom = getInitRowSize();
-			top = left = 0;
-			_cssArea.setArea(top, left, bottom, right);
-		}
-		
-		final int fbottom = getSelectedSheetRowfreeze();
-		final int fright = getSelectedSheetColumnfreeze(); 
-
-		//ZSS-952: load only required customColumnWidths
+	//ZSS-1152
+	private void prepareColHeaderStyleSheet(StringBuilder sb) {
+		final String name = "#" + getUuid();
+		final SSheet sheet = getSelectedSSheet();
+		final HeaderPositionHelper colHelper = this.getColumnPositionHelper(sheet);
+		final int cp = this._cellpadding;
 		List<HeaderPositionInfo> infos = colHelper.getInfos();
 		for (HeaderPositionInfo info : infos) {
-			// ZSS-952: frozen part
-			if (info.index < left && info.index > fright) {
-				continue;
-			}
-			// ZSS-952: load only required customColumnWidths
-			if (info.index > right) {
-				break;
-			}
-			
 			boolean hidden = info.hidden;
 			int index = info.index;
 			int width = hidden ? 0 : info.size;
@@ -4573,18 +4415,16 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 				sb.append("}");
 			}
 		}
+	}
+
+	//ZSS-1152
+	private void prepareRowHeaderStyleSheet(StringBuilder sb) {
+		final String name = "#" + getUuid();
+		final SSheet sheet = getSelectedSSheet();
+		final HeaderPositionHelper rowHelper = this.getRowPositionHelper(sheet);
 		
-		infos = rowHelper.getInfos();
-		for (HeaderPositionInfo info : infos) {
-			// ZSS-952: frozen part
-			if (info.index < top && info.index > fbottom) {
-				continue;
-			}
-			// ZSS-952: load only required customRowHeights
-			if (info.index > bottom) {
-				break;
-			}
-			
+		List<HeaderPositionInfo> infos = rowHelper.getInfos();
+		for (HeaderPositionInfo info : infos) {			
 			boolean hidden = info.hidden;
 			int index = info.index;
 			int height = hidden ? 0 : info.size;
@@ -4634,8 +4474,538 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 				sb.append(name).append(" .zshr").append(cid).append("{");
 				sb.append("max-height:").append(height).append("px;");
 				sb.append("}");
+
 			}
 		}
+		//TODO: seems no need
+		sb.append(".zs_header{}");// for indicating add new rule before this
+	}
+
+	//ZSS-1152
+	private void prepareMergeStyleSheet(StringBuilder sb) {
+		final String name = "#" + getUuid();
+		SSheet sheet = getSelectedSSheet();
+
+		HeaderPositionHelper colHelper = this.getColumnPositionHelper(sheet);
+		HeaderPositionHelper rowHelper = this.getRowPositionHelper(sheet);
+		MergeMatrixHelper mmhelper = this.getMergeMatrixHelper(sheet);
+		
+		final int cp = this._cellpadding;
+		List ranges = mmhelper.getRanges();
+		Iterator iter = ranges.iterator();
+		final int defaultSize = colHelper.getDefaultSize();
+		final int defaultRowSize = rowHelper.getDefaultSize();
+
+		while (iter.hasNext()) {
+			MergedRect block = (MergedRect) iter.next();
+			int left = block.getColumn();
+			int right = block.getLastColumn();
+			int width = 0;
+			for (int i = left; i <= right; i++) {
+				final HeaderPositionInfo info = colHelper.getInfo(i);
+				if (info != null) {
+					final boolean hidden = info.hidden;
+					final int colSize = hidden ? 0 : info.size;
+					width += colSize;
+				} else {
+					width += defaultSize ;
+				}
+			}
+			int top = block.getRow();
+			int bottom = block.getLastRow();
+			int height = 0;
+			for (int i = top; i <= bottom; i++) {
+				final HeaderPositionInfo info = rowHelper.getInfo(i);
+				if (info != null) {
+					final boolean hidden = info.hidden;
+					final int rowSize = hidden ? 0 : info.size;
+					height += rowSize;
+				} else {
+					height += defaultRowSize ;
+				}
+			}
+
+			if (width <= 0 || height <= 0) { //total hidden
+				sb.append(name).append(" .zsmerge").append(block.getId()).append("{");
+				sb.append("display:none;");
+				sb.append("}");
+
+				sb.append(name).append(" .zsmerge").append(block.getId());
+				sb.append(" .zscelltxt").append("{");
+				sb.append("display:none;");
+				sb.append("}");
+			} else {
+				int celltextwidth = width - 2 * cp;
+				int celltextheight = height;
+	
+				int cellwidth = width;
+				int cellheight = height;
+				
+				sb.append(name).append(" .zsmerge").append(block.getId()).append("{");
+				sb.append("width:").append(cellwidth).append("px;");
+				sb.append("height:").append(cellheight).append("px;");
+				sb.append("display:inline-block;"); // ZSS-330, ZSS-382:  the left-top cell must display
+				sb.append("border-bottom-width: 1px;"); // re-apply bottom border for grid line; Or grid line will be missed if row was hidden
+				sb.append("}");
+
+				sb.append(name).append(" .zsmerge").append(block.getId());
+				sb.append(" .zscelltxt").append("{");
+				sb.append("width:").append(celltextwidth).append("px;");
+				sb.append("height:").append(celltextheight).append("px;");
+				sb.append("}");
+			}
+		}
+	}
+
+	//ZSS-1152
+	private String getIE9OtherStyleSheet() {
+		final StringBuilder sb = new StringBuilder();
+		prepareOtherStyleSheet(sb);
+		return sb.toString();
+	}
+	
+	//ZSS-1152
+	private void prepareOtherStyleSheet(StringBuilder sb) {
+		String name = "#" + getUuid();
+		
+		//gridline
+//		if (sheet.isDisplayGridlines()) {
+//			sb.append(name).append(" .zscell")
+//			.append("{border-bottom-color:#FFFFFF;border-right-color:#FFFFFF;}");
+//		}
+		sb.append(name).append(" .zs_indicator_" + getSelectedSheetId() + "{}");// for indicating the css is load ready
+		
+		// ZSS-788
+		// filter out HTML element which shouldn't be affected by bootstrap's style "box-sizing:border-box"
+		if(Package.getPackage("org.zkoss.addons.bootstrap") != null) {	
+			sb.append(name).append(" *[class^=zs]{box-sizing: content-box;-moz-box-sizing: content-box;}")
+				.append(name).append(".zssheet{box-sizing:border-box;-moz-box-sizing: border-box;}")
+				.append(name).append(" .zscell{box-sizing:border-box;-moz-box-sizing: border-box;}")
+				.append(name).append(" .zstopcell{box-sizing:border-box;-moz-box-sizing: border-box;}")
+				.append(name).append(" .zsleftcell{box-sizing:border-box;-moz-box-sizing: border-box;}")
+				.append(name).append(" .zsfocmark{box-sizing:border-box;-moz-box-sizing: border-box;}")
+				.append(name).append(" .zsselect{box-sizing:border-box;-moz-box-sizing: border-box;}")
+				.append(name).append(" .zsselchg{box-sizing:border-box;-moz-box-sizing: border-box;}")
+				.append(name).append(" .zshighlight{box-sizing:border-box;-moz-box-sizing: border-box;}")
+				.append("li[class^=zsmenu-] a:hover, li[class^=zsmenuitem-] a:hover{text-decoration: none;}")
+				.append(name).append(" .cleditorMain * {-moz-box-sizing:content-box; -webkit-box-sizing:content-box; box-sizing:content-box}");
+		}
+	}
+	
+	private String getSheetDefaultRules() {
+		//ZSS-1152: avoid IE9 stylesheet upper limit 
+		return isIE9() ? getIE9SheetDefaultRules() : getSheetDefaultRules0();
+	}
+
+	private String getSheetDefaultRules0() {
+		final StringBuilder sb = new StringBuilder();
+		
+		prepareBasicStyleSheet(sb);
+		prepareColHeaderStyleSheet(sb);
+		prepareRowHeaderStyleSheet(sb);
+		prepareMergeStyleSheet(sb);
+		prepareOtherStyleSheet(sb);
+		
+		return sb.toString();
+	}
+
+	//ZSS-952
+	public static boolean isIE9() {
+		final Execution exec = Executions.getCurrent();
+		final Double ver = exec != null ? exec.getBrowser("ie") : null;
+		return ver != null && ver < 10.0 && ver >= 9.0;
+	}
+
+	//ZSS-1152
+	// number with radix == 31
+	// header.a.b.c = a * (31^2) + b * (31^1) + c * (31^0) 
+	private int dotIndexToNumIndex(String dotIndex) {
+		String[] index = dotIndex.split("\\.");
+		int result = 0;
+		for (int k = 0, len = index.length; k < len; ++k) {
+			final String x = index[k];
+			final int j = Integer.valueOf("x".equals(x) ? "0" : x);
+			result *= IE9_IMPORT_LIMIT;
+			result += j;
+		}
+		return result;
+	}
+	
+	//ZSS-1152
+	private String numIndexToDotIndex(int index) {
+		final List<String> reverse = new ArrayList<String>(4);
+		while (index > 0) {
+			int j = index % IE9_IMPORT_LIMIT;
+			reverse.add(""+j);
+			index /= IE9_IMPORT_LIMIT;
+		}
+		final StringBuilder sb = new StringBuilder();
+		for (int j = reverse.size(); --j >= 0;) {
+			sb.append(".").append(reverse.get(j));
+		}
+		return sb.toString();
+	}
+	
+	//ZSS-1152
+	// number with radix == 31
+	// header.a.b.c = a * (31^2) + b * (31^1) + c * (31^0) 
+	private int dotIndexToNumIndex(String dotIndex, int extraDigits) {
+		int result = dotIndexToNumIndex(dotIndex);
+		for (int k = 0; k < extraDigits; ++k) {
+			result *= IE9_IMPORT_LIMIT;
+		}
+		return result;
+	}
+	
+	//ZSS-1152
+	private int numOfDigits(int num) {
+		if (num <= DIGIT_0_MAX) return 1;
+		if (num <= DIGIT_1_MAX) return 2;
+		if (num <= DIGIT_2_MAX) return 3;
+		return 4;
+	}
+
+	final static int IE9_SELECTOR_LIMIT = 4080; // 15 bytes buffer
+	final static int IE9_IMPORT_LIMIT = 31;
+	final static int IE9_NEST_LIMIT = 4;
+	final static int DIGIT_0_MAX = IE9_IMPORT_LIMIT - 1;
+	final static int DIGIT_1_MAX = IE9_IMPORT_LIMIT * IE9_IMPORT_LIMIT - 1;
+	final static int DIGIT_2_MAX = IE9_IMPORT_LIMIT * IE9_IMPORT_LIMIT * IE9_IMPORT_LIMIT - 1;
+	
+	//ZSS-952: avoid hit the ie9 StyleSheet upper bound limit, load only inside visible area
+	//ZSS-1152:	super complex excel file which hit the ie9 StyleSheet upper bound limit easily. 
+	//	See http://blogs.msdn.com/b/ieinternals/archive/2011/05/14/10164546.aspx
+	//	We use @import to load another style sheet to "work-around" the upper 
+	//	limit(4095 selectors/stylesheet) per style sheet
+	private String getIE9ColHeaderStyleSheet(String dotIndex) {
+		final SSheet sheet = getSelectedSSheet();
+
+		final HeaderPositionHelper colHelper = this.getColumnPositionHelper(sheet);
+		final int cp = this._cellpadding;//
+		final String name = "#" + getUuid();
+	
+		List<HeaderPositionInfo> infos = colHelper.getInfos();
+		final int len = infos.size();
+		
+		if (len == 0) return "";
+		
+		final int infoPerPage = IE9_SELECTOR_LIMIT / 2; // each column header info will generate most 2 css selectors
+		final String imports = prepareIE9ImportStyleSheet(infoPerPage, dotIndex, len, "colheader");
+		if (imports != null)
+			return imports;
+		
+		final StringBuilder sb = new StringBuilder();
+		final int cssPageIndex = dotIndexToNumIndex(dotIndex);
+		final int infoStart = cssPageIndex * infoPerPage; 
+		final int infoEnd = infoStart + infoPerPage; 
+		
+		int right = _cssArea.getLastColumn();
+		int bottom = _cssArea.getLastRow();
+		int left = _cssArea.getColumn();
+		int top = _cssArea.getRow();
+		
+		// first CSS when change sheet
+		if (right < 0) {
+			right = getInitColumnSize();
+			bottom = getInitRowSize();
+			top = left = 0;
+			_cssArea.setArea(top, left, bottom, right);
+		}
+		
+		final int fbottom = getSelectedSheetRowfreeze();
+		final int fright = getSelectedSheetColumnfreeze(); 
+
+		//ZSS-952: load only required customColumnWidths
+		int j = infoStart;
+		for (; j < len; ++j) {
+			// ZSS-1152
+			if (j >= infoEnd) {
+				break;
+			}
+			
+			HeaderPositionInfo info  = infos.get(j);
+			// ZSS-952: frozen part
+			if (info.index < left && info.index > fright) {
+				continue;
+			}
+			// ZSS-952: load only required customColumnWidths
+			if (info.index > right) {
+				break;
+			}
+			
+			boolean hidden = info.hidden;
+			int index = info.index;
+			int width = hidden ? 0 : info.size;
+			int cid = info.id;
+
+			int celltextwidth = width - 2 * cp;
+
+			// bug 1989680
+			if (celltextwidth < 0)
+				celltextwidth = 0;
+
+			int cellwidth = width;
+
+			if (width <= 0) {
+				sb.append(name).append(" .zsw").append(cid).append("{");
+				sb.append("display:none;");
+				sb.append("}");
+				
+			} else {
+				sb.append(name).append(" .zsw").append(cid).append("{");
+				sb.append("width:").append(cellwidth).append("px;");
+				sb.append("}");
+
+				sb.append(name).append(" .zswi").append(cid).append("{");
+				sb.append("width:").append(celltextwidth).append("px;");
+				sb.append("}");
+			}
+		}
+		
+		return sb.toString();
+	}
+	
+	//ZSS-1152
+	private String getIE9RowHeaderStyleSheet(String dotIndex) {
+		final SSheet sheet = getSelectedSSheet();
+
+		final HeaderPositionHelper rowHelper = this.getRowPositionHelper(sheet);
+		final String name = "#" + getUuid();
+	
+		List<HeaderPositionInfo> infos = rowHelper.getInfos();
+		final int len = infos.size();
+		
+		if (len == 0) return "";
+		
+		final int infoPerPage = IE9_SELECTOR_LIMIT / 4; // each row header info will generate most 4 css selectors
+		final String imports = prepareIE9ImportStyleSheet(infoPerPage, dotIndex, len, "rowheader");
+		if (imports != null)
+			return imports;
+		
+		final StringBuilder sb = new StringBuilder();
+		final int cssPageIndex = dotIndexToNumIndex(dotIndex);
+		final int infoStart = cssPageIndex * infoPerPage; 
+		final int infoEnd = infoStart + infoPerPage; 
+		
+		int right = _cssArea.getLastColumn();
+		int bottom = _cssArea.getLastRow();
+		int left = _cssArea.getColumn();
+		int top = _cssArea.getRow();
+		
+		// first CSS when change sheet
+		if (right < 0) {
+			right = getInitColumnSize();
+			bottom = getInitRowSize();
+			top = left = 0;
+			_cssArea.setArea(top, left, bottom, right);
+		}
+		
+		final int fbottom = getSelectedSheetRowfreeze();
+		final int fright = getSelectedSheetColumnfreeze(); 
+
+		int j = infoStart;
+		for (; j < len; ++j) {
+			// ZSS-1152
+			if (j >= infoEnd) {
+				break;
+			}
+			
+			final HeaderPositionInfo info = infos.get(j);
+			// ZSS-952: frozen part
+			if (info.index < top && info.index > fbottom) {
+				continue;
+			}
+			// ZSS-952: load only required customRowHeights
+			if (info.index > bottom) {
+				break;
+			}
+			
+			boolean hidden = info.hidden;
+			int index = info.index;
+			int height = hidden ? 0 : info.size;
+			int cid = info.id;
+			int cellheight = height;
+
+			if (height <= 0) {
+				// ZSS-330, ZSS-382: using "height: 0" and don't use "display: none", latter one cause merge cell to chaos
+				sb.append(name).append(" .zsh").append(cid).append("{");
+				sb.append("height:0px;");
+				sb.append("}");
+
+				// ZSS-500: re-overwrite overflow to hidden when row hidden 
+				sb.append(name).append(" .zshi").append(cid).append("{");
+				sb.append("height:0px;");
+				sb.append("border-bottom-width:0px;");
+				sb.append("overflow:hidden;");
+				sb.append("}");
+
+				sb.append(name).append(" .zslh").append(cid).append("{");
+				sb.append("height:0px;");
+				sb.append("line-height:0px;");
+				sb.append("border-bottom-width:0px;");
+				sb.append("}");
+
+				sb.append(name).append(" .zshr").append(cid).append("{");
+				sb.append("max-height:0px;");
+				sb.append("}");
+			} else {
+				sb.append(name).append(" .zsh").append(cid).append("{");
+				sb.append("height:").append(height).append("px;");
+				sb.append("}");
+
+				sb.append(name).append(" .zshi").append(cid).append("{");
+				sb.append("height:").append(cellheight).append("px;");
+				sb.append("border-bottom-width:1px;");
+				sb.append("}");
+
+				sb.append(name).append(" .zslh").append(cid).append("{");
+				sb.append("height:").append(height).append("px;");
+				sb.append("line-height:").append(height).append("px;");
+				sb.append("border-bottom-width:1px;");
+				sb.append("}");
+
+				sb.append(name).append(" .zshr").append(cid).append("{");
+				sb.append("max-height:").append(height).append("px;");
+				sb.append("}");
+			}
+		}
+		return sb.toString();
+	}
+	
+	//ZSS-1152
+	private String getImportStyleSheetUrl(String type, String dotIndex) {
+		String sheetId = getSelectedSheetId();
+		return getDynamicMediaURI(this, _cssVersion - 1, "ss_" + this.getUuid() + "_" + sheetId + "."+ type + dotIndex, "css");
+	}
+	
+	//ZSS-1152: try return @import contents
+	private String prepareIE9ImportStyleSheet(int infoPerPage, String dotIndex, int len, String fileType) {
+		final int endPageIndex = (len - 1) / infoPerPage;
+		final int numDigits = numOfDigits(endPageIndex);
+		final String[] digits = dotIndex.split("\\.");
+		final int diff = numDigits - digits.length;
+		final int startPageIndex = dotIndexToNumIndex(dotIndex, diff);
+		final int pages = endPageIndex - startPageIndex;
+		
+		// css file ends with "x" can only do @import if cannot hold all in one page
+		if (dotIndex.endsWith("x") && pages > 0) {
+			final StringBuilder sb = new StringBuilder();
+			final String postfix = diff > 0 ? ".x" : "";
+			final String prefix = dotIndex.substring(0, dotIndex.length() - 1);
+			for (int k = 0; k < IE9_IMPORT_LIMIT; ++k) {
+				final String dotIndex0 = prefix + k + postfix;
+				
+				final int nextInfoStart = dotIndexToNumIndex(dotIndex0, diff) * infoPerPage;
+				if (nextInfoStart >= len) break;
+				
+				final String importcss = getImportStyleSheetUrl(fileType, "." + dotIndex0); // first level merge
+				sb.append("@import url(" + importcss + ");");
+			}
+			return sb.toString();
+		}
+		return null;
+	}
+	
+	
+	//ZSS-1152:	super complex excel file which hit the ie9 StyleSheet upper bound limit(see ZSS-1149) easily. 
+	//	See http://blogs.msdn.com/b/ieinternals/archive/2011/05/14/10164546.aspx
+	//	We use @import to load another style sheet to "work-around" the upper 
+	//	limit(4095 selectors/stylesheet) per style sheet
+	private String getIE9MergeStyleSheet(String dotIndex) {
+		final SSheet sheet = getSelectedSSheet();
+
+		final MergeMatrixHelper mmhelper = this.getMergeMatrixHelper(sheet);
+		final int cp = this._cellpadding;//
+		final String name = "#" + getUuid();
+		final int start = dotIndexToNumIndex(dotIndex);
+		final HeaderPositionHelper colHelper = this.getColumnPositionHelper(sheet);
+		final HeaderPositionHelper rowHelper = this.getRowPositionHelper(sheet);
+
+		List<MergedRect> ranges = mmhelper.getRanges();
+		final int len = ranges.size();
+		
+		if (len == 0) return "";
+		
+		final int infoPerPage = IE9_SELECTOR_LIMIT / 2; // each merge rect info will generate most 2 css selectors
+		final String imports = prepareIE9ImportStyleSheet(infoPerPage, dotIndex, len, "merge"); // see if imports file
+		if (imports != null)
+			return imports;
+
+		final StringBuilder sb = new StringBuilder();
+		final int cssPageIndex = dotIndexToNumIndex(dotIndex);
+		
+		final int infoStart = cssPageIndex * infoPerPage; 
+		final int infoEnd = infoStart + infoPerPage; 
+
+		final int defaultSize = colHelper.getDefaultSize();
+		final int defaultRowSize = rowHelper.getDefaultSize();
+
+		int j = infoStart;
+		for (; j < len; ++j) {
+			// ZSS-1152
+			if (j >= infoEnd) {
+				break;
+			}
+			
+			MergedRect block = (MergedRect) ranges.get(j);
+			int left = block.getColumn();
+			int right = block.getLastColumn();
+			int width = 0;
+			for (int i = left; i <= right; i++) {
+				final HeaderPositionInfo info = colHelper.getInfo(i);
+				if (info != null) {
+					final boolean hidden = info.hidden;
+					final int colSize = hidden ? 0 : info.size;
+					width += colSize;
+				} else {
+					width += defaultSize ;
+				}
+			}
+			int top = block.getRow();
+			int bottom = block.getLastRow();
+			int height = 0;
+			for (int i = top; i <= bottom; i++) {
+				final HeaderPositionInfo info = rowHelper.getInfo(i);
+				if (info != null) {
+					final boolean hidden = info.hidden;
+					final int rowSize = hidden ? 0 : info.size;
+					height += rowSize;
+				} else {
+					height += defaultRowSize ;
+				}
+			}
+
+			if (width <= 0 || height <= 0) { //total hidden
+				sb.append(name).append(" .zsmerge").append(block.getId()).append("{");
+				sb.append("display:none;");
+				sb.append("}");
+
+				sb.append(name).append(" .zsmerge").append(block.getId());
+				sb.append(" .zscelltxt").append("{");
+				sb.append("display:none;");
+				sb.append("}");
+			} else {
+				final int celltextwidth = width - 2 * cp;
+				final int celltextheight = height;
+	
+				final int cellwidth = width;
+				final int cellheight = height;
+				
+				sb.append(name).append(" .zsmerge").append(block.getId()).append("{");
+				sb.append("width:").append(cellwidth).append("px;");
+				sb.append("height:").append(cellheight).append("px;");
+				sb.append("display:inline-block;"); // ZSS-330, ZSS-382:  the left-top cell must display
+				sb.append("border-bottom-width: 1px;"); // re-apply bottom border for grid line; Or grid line will be missed if row was hidden
+				sb.append("}");
+
+				sb.append(name).append(" .zsmerge").append(block.getId());
+				sb.append(" .zscelltxt").append("{");
+				sb.append("width:").append(celltextwidth).append("px;");
+				sb.append("height:").append(celltextheight).append("px;");
+				sb.append("}");
+			}
+		}
+		return sb.toString();
 	}
 	
 	/**

@@ -1,0 +1,10 @@
+<vbox hflex="1" vflex="1">
+	<label multiline="true">
+Since 3.8.2, IE9 only.
+1. You should not see any column mis-alignment or it is a bug.
+2. Scroll sheet to right, you should see data until column BV. If not, it is a bug. 
+</label>
+	<spreadsheet id="ss" src="/issue3/book/1152-ie9-stylesheet-limit.xlsx" maxVisibleRows="200" maxVisibleColumns="100"
+		hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
+		showFormulabar="true" />	
+</vbox>
