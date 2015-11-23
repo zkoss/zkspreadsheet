@@ -509,12 +509,13 @@
 }
 
 /* ZSS-918: vertical text */
+/* ZSS-1155: space gone in vertical text */
 .zsvtxt {
     display: -moz-inline-box;
     width:1em;
     font-size:inherit;
     word-wrap:break-word;
-    white-space:normal;
+    white-space:pre-wrap;
     letter-spacing:1em;
     display: inline-block;
     <c:if test="${c:browser('ie') and not c:browser('ie11')}">

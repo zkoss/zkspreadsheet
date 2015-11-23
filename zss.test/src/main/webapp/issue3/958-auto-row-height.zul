@@ -16,7 +16,7 @@
 				CellOperationUtil.applyFontName(Ranges.range(ss.getSelectedSheet(), "A6"), "Arial Black");
 				CellOperationUtil.applyWrapText(Ranges.range(ss.getSelectedSheet(), "A8"), true);
 				CellOperationUtil.applyRotation(Ranges.range(ss.getSelectedSheet(), "A10"), 90);
-				CellOperationUtil.applyRotation(Ranges.range(ss.getSelectedSheet(), "A12"), 180);
+				CellOperationUtil.applyRotation(Ranges.range(ss.getSelectedSheet(), "A12"), -90);
 				CellOperationUtil.applyRotation(Ranges.range(ss.getSelectedSheet(), "A14"), 255);
 			]]></attribute>
 		</button>
@@ -27,7 +27,7 @@
 				Ranges.range(ss.getSelectedSheet(), "I6").setCellRichText("<span style=\"color: rgb(46, 117, 181); font-weight: normal; font-size: 11pt;\"><span style=\"font-family: 'Arial Black';\">this&nbsp;is&nbsp;a</span></span><span style=\"font-family: Calibri; color: rgb(0, 0, 0); font-weight: normal; font-size: 11pt;\">&nbsp;test</span>");
 				CellOperationUtil.applyWrapText(Ranges.range(ss.getSelectedSheet(), "I8"), true);
 				CellOperationUtil.applyRotation(Ranges.range(ss.getSelectedSheet(), "I10"), 90);
-				CellOperationUtil.applyRotation(Ranges.range(ss.getSelectedSheet(), "I12"), 180);
+				CellOperationUtil.applyRotation(Ranges.range(ss.getSelectedSheet(), "I12"), -90);
 				CellOperationUtil.applyRotation(Ranges.range(ss.getSelectedSheet(), "I14"), 255);
 			]]></attribute>
 		</button>
