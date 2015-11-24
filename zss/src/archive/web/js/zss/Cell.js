@@ -647,40 +647,22 @@ zss.Cell = zk.$extends(zk.Widget, {
 			jqcomp = comp ? jq(comp) : null;
 			
 		if (jqcomp) {
-			var jqreal = jq(this.getTextNode()),
-				orgp = jqreal.css("position");
 
 			if (cutw) {
-				var width = this.sheet.custColWidth.getDiffPixel(l, r),
-					mwidth = l != ml || r != mr ? 
-							this.sheet.custColWidth.getDiffPixel(ml, mr) - 4 : width;
+				var width = this.sheet.custColWidth.getDiffPixel(l, r);
 				jqcomp.css("width", width);
+				
+				var mwidth = l != ml || r != mr ? 
+						this.sheet.custColWidth.getDiffPixel(ml, mr) - 4 : width; // -4 is padding(2px) * 2
 				if (width != mwidth) {
+					var jqreal = jq(this.getTextNode());
 					jqreal.css("width", mwidth);
-				}
-				if (l != ml) {
-					var diff = this.sheet.custColWidth.getDiffPixel(ml, l-1) - 2;
-					jqreal.css("position", "absolute");
-					jqreal.css("left", -diff);
-					var mcell = this.block.getCell(mt, ml);
-					if (orgp) {
-						jqreal.attr("orgp", orgp);
-					}
+					jqreal.attr("mergewidth", true);
 				}
 			}
 			if (cuth) {
-				var height = this.sheet.custRowHeight.getDiffPixel(t, b),
-					mheight = t != mt || b != mb ?
-							this.sheet.custRowHeight.getDiffPixel(mt, mb) : height;
+				var height = this.sheet.custRowHeight.getDiffPixel(t, b);
 				jqcomp.css("height", height);
-				if (t != mt) {
-					var diff = this.sheet.custRowHeight.getDiffPixel(mt, t-1);
-					jqreal.css("position", "absolute");
-					jqreal.css("top", -diff);
-					if (orgp) {
-						jqreal.attr("orgp", orgp);
-					}
-				}
 			}
 			if (jqcomp.hasClass("zsmergee")) {
 				jqcomp.removeClass("zsmergee");
@@ -695,15 +677,16 @@ zss.Cell = zk.$extends(zk.Widget, {
 		var comp = this.comp,
 			jqcomp = comp ? jq(comp) : null;
 		if (jqcomp) {
-			var jqreal = jq(this.getTextNode()),
-				orgp = jqreal.attr("orgp");
 			jqcomp.css("width", "");
 			jqcomp.css("height", "");
 			
-			jqreal.css("position", orgp ? orgp : "");
-			jqreal.css("left", "");
-			jqreal.css("top", "");
-			
+			var jqreal = jq(this.getTextNode()),
+				mergewidth = jqreal ? jqreal.attr("mergewidth") : null;
+		
+			if (mergewidth) {
+				jqreal.css("width", "");
+				jqreal.removeAttr("mergewidth");
+			}
 			if (jqcomp.attr("zsmergeex")) {
 				jqcomp.removeAttr("zsmergeex");
 				jqcomp.addClass("zsmergee");
