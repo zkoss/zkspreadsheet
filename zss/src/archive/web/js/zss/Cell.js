@@ -642,18 +642,45 @@ zss.Cell = zk.$extends(zk.Widget, {
 		// not implement in OSE
 	},
 	//ZSS-1117
-	_setTempMergeCellStyle: function (l, t, r, b, cutw, cuth) {
+	_setTempMergeCellStyle: function (l, t, r, b, cutw, cuth, ml, mt, mr, mb) {
 		var comp = this.comp,
 			jqcomp = comp ? jq(comp) : null;
 			
 		if (jqcomp) {
+			var jqreal = jq(this.getTextNode()),
+				orgp = jqreal.css("position");
+
 			if (cutw) {
-				var width = this.sheet.custColWidth.getDiffPixel(l, r);
+				var width = this.sheet.custColWidth.getDiffPixel(l, r),
+					mwidth = l != ml || r != mr ? 
+							this.sheet.custColWidth.getDiffPixel(ml, mr) - 4 : width;
 				jqcomp.css("width", width);
+				if (width != mwidth) {
+					jqreal.css("width", mwidth);
+				}
+				if (l != ml) {
+					var diff = this.sheet.custColWidth.getDiffPixel(ml, l-1) - 2;
+					jqreal.css("position", "absolute");
+					jqreal.css("left", -diff);
+					var mcell = this.block.getCell(mt, ml);
+					if (orgp) {
+						jqreal.attr("orgp", orgp);
+					}
+				}
 			}
 			if (cuth) {
-				var height = this.sheet.custRowHeight.getDiffPixel(t, b);
+				var height = this.sheet.custRowHeight.getDiffPixel(t, b),
+					mheight = t != mt || b != mb ?
+							this.sheet.custRowHeight.getDiffPixel(mt, mb) : height;
 				jqcomp.css("height", height);
+				if (t != mt) {
+					var diff = this.sheet.custRowHeight.getDiffPixel(mt, t-1);
+					jqreal.css("position", "absolute");
+					jqreal.css("top", -diff);
+					if (orgp) {
+						jqreal.attr("orgp", orgp);
+					}
+				}
 			}
 			if (jqcomp.hasClass("zsmergee")) {
 				jqcomp.removeClass("zsmergee");
@@ -668,8 +695,15 @@ zss.Cell = zk.$extends(zk.Widget, {
 		var comp = this.comp,
 			jqcomp = comp ? jq(comp) : null;
 		if (jqcomp) {
+			var jqreal = jq(this.getTextNode()),
+				orgp = jqreal.attr("orgp");
 			jqcomp.css("width", "");
 			jqcomp.css("height", "");
+			
+			jqreal.css("position", orgp ? orgp : "");
+			jqreal.css("left", "");
+			jqreal.css("top", "");
+			
 			if (jqcomp.attr("zsmergeex")) {
 				jqcomp.removeAttr("zsmergeex");
 				jqcomp.addClass("zsmergee");
@@ -706,7 +740,7 @@ zss.Cell = zk.$extends(zk.Widget, {
 			if (candidate) {
 				var cutw = xr < mr || xl > ml,
 					cuth = xb < mb || xt > mt;
-				this.block._addTempMerge(mt, ml, xl, xt, xr, xb, cutw, cuth);
+				this.block._addTempMerge(ml, mt, mr, mb, xl, xt, xr, xb, cutw, cuth);
 			}
 		}
 

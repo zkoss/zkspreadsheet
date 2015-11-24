@@ -536,7 +536,7 @@ zss.CellBlockCtrl = zk.$extends(zk.Widget, {
 	_toReset: null, //r_c -> [l,t,r,b]
 	_toSet: null, //r_c -> [l,t,r,b]
 	//ZSS-1117: called by Cell.js#bind_() 
-	_addTempMerge: function (mt, ml, l, t, r, b, cutw, cuth) {
+	_addTempMerge: function (ml, mt, mr, mb, l, t, r, b, cutw, cuth) {
 		var k = ""+mt+"_"+ml,
 			m = this._tmpMerges[k];
 		if (m) {
@@ -544,7 +544,7 @@ zss.CellBlockCtrl = zk.$extends(zk.Widget, {
 			delete this._tmpMerges[k];
 		}
 		if (cutw || cuth) {
-			this._toSet[k] = [l, t, r, b, cutw, cuth];
+			this._toSet[k] = [l, t, r, b, cutw, cuth, ml, mt, mr, mb];
 		}
 	},
 	//ZSS-1117
@@ -559,9 +559,13 @@ zss.CellBlockCtrl = zk.$extends(zk.Widget, {
 					b = m[3],
 					cutw = m[4],
 					cuth = m[5],
+					ml = m[6],
+					mt = m[7],
+					mr = m[8],
+					mb = m[9],
 					cell = this.getCell(t, l);
 				if (cell) {
-					cell._setTempMergeCellStyle(l, t, r, b, cutw, cuth);
+					cell._setTempMergeCellStyle(l, t, r, b, cutw, cuth, ml, mt, mr, mb);
 				}
 				this._tmpMerges[key] = m;
 			}
