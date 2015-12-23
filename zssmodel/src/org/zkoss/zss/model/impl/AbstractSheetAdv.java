@@ -71,9 +71,9 @@ public abstract class AbstractSheetAdv implements SSheet,LinkedModelObject,Seria
 	
 	//ZSS-1168
 	//@since 3.8.3
-	abstract public void setMergeOutOfSync(boolean b);
+	abstract public void setMergeOutOfSync(int state);
 	
 	//ZSS-1168
 	//@since 3.8.3
-	abstract public boolean isMergeOutOfSync();
+	abstract public int getMergeOutOfSync();
 }

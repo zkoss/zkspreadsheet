@@ -282,6 +282,61 @@ zss.Cell = zk.$extends(zk.Widget, {
 	isLocked: function () {
 		return this.lock;
 	},
+//	/**
+//	 * Update merge class
+//	 * @since 3.8.3
+//	 */
+//	//ZSS-1168
+//	// TODO: need to handle the zcss.removeRule() and zcss.setRule() somewhere
+//	_updateMerge: function (data) {
+//		if (data.mergeId != undefined) { // within new merge
+//			var id = data.mergeId,
+//				mer = data.merge,
+//				l = mer.left,
+//				t = mer.top,
+//				r = mer.right,
+//				b = mer.bottom;
+//			
+//			if (id != this.merid || l != this.merl || t != this.mert 
+//					|| r != this.merr || b != this.merb) {
+//				var jqcomp = jq(this.comp);
+//				// remove old class
+//				if (this.merid != undefined) {
+//					if (this.c == this.merl && this.r == this.merr) {
+//						jqcomp.removeClass("zsmerge" + this.merid); //remove old class
+//					} else {
+//						jqcomp.removeClass(this.r == this.mert ? "zsmergee" : "zsmergeeu");
+//					}
+//				}
+//				// add new class
+//				if (this.c == l && this.r == t) {
+//					jqcomp.addClass("zsmerge" + id); //add new class
+//				} else {
+//					jqcomp.addClass(this.r == t ? "zsmergee" : "zsmergeeu");
+//				}
+//			}
+//				
+//			this.merid = id; 
+//			this.merr = r;
+//			this.merl = l;
+//			this.mert = t;
+//			this.merb = b;
+//		} else { // not in new merge
+//			if (this.merid != undefined) {
+//				var jqcomp = jq(this.comp);
+//				if (this.c == this.merl && this.r == this.merr) {
+//					jqcomp.removeClass("zsmerge" + this.merid); //remove old class
+//				} else {
+//					jqcomp.removeClass(this.r == this.mert ? "zsmergee" : "zsmergeeu");
+//				}
+//				delete this.merid;
+//				delete this.merr;
+//				delete this.merl;
+//				delete this.mert;
+//				delete this.merb;
+//			}
+//		}
+//	},
 	/**
 	 * Update cell
 	 */
@@ -323,6 +378,9 @@ zss.Cell = zk.$extends(zk.Widget, {
 		}
 		this.$n().style.cssText = st;
 		cave.style.cssText = ist;
+		
+//		// ZSS-1168
+//		this._updateMerge(data);
 		
 		// ZSS-865
 		var orgwidth = real && real.style ? real.style.width : null,

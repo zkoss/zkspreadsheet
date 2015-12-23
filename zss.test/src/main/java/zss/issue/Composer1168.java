@@ -65,6 +65,12 @@ public class Composer1168 extends SelectorComposer<Component> {
 		Ranges.range(ss.getSelectedSheet()).notifyChange();
 	}
 	
+	@Listen("onClick= #normal")
+	public void normal(Event e) {
+		Range range = Ranges.range(ss.getSelectedSheet(), 0, 0, 10, 9);
+		range.merge(false);
+	}
+	
 	public void clickMerge(){
 		Range range = Ranges.range(ss.getSelectedSheet(), 0, 0, 10, 9);
 		CellOperationUtil.merge(range, false); //or range.merge(true);

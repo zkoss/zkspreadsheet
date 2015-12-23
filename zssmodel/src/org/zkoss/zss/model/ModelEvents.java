@@ -54,6 +54,7 @@ public class ModelEvents {
 	
 	public static final String ON_MERGE_ADD = "onMergeAdd";
 	public static final String ON_MERGE_DELETE = "onMergeDelete";
+	public static final String ON_MERGE_CLEAR_CACHE = "onMergeClearCache"; //ZSS-1168
 	
 	public static final String ON_DISPLAY_GRIDLINES_CHANGE = "onDisplayGridlinesChange";
 	public static final String ON_PROTECT_SHEET_CHANGE = "onProtectSheetChange";
@@ -211,9 +212,11 @@ public class ModelEvents {
 
 	// ZSS-936
 	public static boolean isCustomEvent(ModelEvent event) {
-		return event.getName().equals(ON_MODEL_FRIEND_FOCUS_MOVE) || 
-			event.getName().equals(ON_MODEL_FRIEND_FOCUS_DELETE) ||
-			event.getName().equals(ON_MODEL_DIRTY_CHANGE); // ZSS-942
+		final String eventName = event.getName();
+		return ON_MODEL_FRIEND_FOCUS_MOVE.equals(eventName) || 
+			ON_MODEL_FRIEND_FOCUS_DELETE.equals(eventName) ||
+			ON_MODEL_DIRTY_CHANGE.equals(eventName) || // ZSS-942
+			ON_MERGE_CLEAR_CACHE.equals(eventName); //ZSS-1168
 	}
 	
 	

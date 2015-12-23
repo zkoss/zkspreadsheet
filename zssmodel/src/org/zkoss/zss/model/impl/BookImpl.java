@@ -53,6 +53,7 @@ import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.model.SNamedStyle;
 import org.zkoss.zss.model.STable;
 import org.zkoss.zss.model.STableColumn;
+import org.zkoss.zss.model.SheetRegion;
 import org.zkoss.zss.model.impl.sys.DependencyTableAdv;
 import org.zkoss.zss.model.impl.sys.formula.ParsingBook;
 import org.zkoss.zss.model.sys.EngineFactory;
@@ -65,6 +66,7 @@ import org.zkoss.zss.model.util.CellStyleMatcher;
 import org.zkoss.zss.model.util.FontMatcher;
 import org.zkoss.zss.model.util.Strings;
 import org.zkoss.zss.model.util.Validations;
+import org.zkoss.zss.range.impl.NotifyChangeHelper;
 import org.zkoss.zss.range.impl.StyleUtil;
 
 /**
@@ -201,23 +203,33 @@ public class BookImpl extends AbstractBookAdv{
 			_listeners.sendModelEvent(event);
 		}
 		
-		if(_queueListeners!=null &&
+		if(_queueListeners!=null) {
 			// System thread doesn't have execution so that it will throw IllegalStateException
 			// e.g. Background Thread created by Executor
-			Executions.getCurrent() != null){
-			//ZSS-1168, 20151223, henrichen:
-			// When {@link MergeHelper#merge()} or {@link MergeHelper#unmerge()}, 
-			// sheet#mergeOutOfSync is set to true.
-			// When {@link Spreadsheet#getMergeMatrixHelper()}, should check 
-			// if merge is out of sync and reset the helper
-			if (ModelEvents.ON_MERGE_ADD.equals(event.getName()) 
-			|| ModelEvents.ON_MERGE_DELETE.equals(event.getName())) {
-				((AbstractSheetAdv)event.getSheet()).setMergeOutOfSync(false);
+			final AbstractSheetAdv sheet = (AbstractSheetAdv)event.getSheet(); 
+			if (Executions.getCurrent() != null) {
+				//ZSS-1168, 20151223, henrichen:
+				// When {@link MergeHelper#merge()} or {@link MergeHelper#unmerge()}, 
+				// sheet#mergeOutOfSync is set to true.
+				final String eventName = event.getName();
+				if ((ModelEvents.ON_MERGE_ADD.equals(eventName) 
+				|| ModelEvents.ON_MERGE_DELETE.equals(eventName))
+				&& sheet.getMergeOutOfSync() == 1) {
+					sheet.setMergeOutOfSync(0);
+				} else if (!ModelEvents.ON_MERGE_CLEAR_CACHE.equals(eventName) 
+					&& sheet.getMergeOutOfSync() == 2) {
+					// notify all associated Spreadsheets to clear the merge cache first 
+					sheet.setMergeOutOfSync(0);
+					new NotifyChangeHelper().notifyMergeClearCache(new SheetRegion((SSheet)sheet, 1, 1)); 
+				}
+				_queueListeners.sendModelEvent(event);
+			} else if (sheet.getMergeOutOfSync() == 1) { 
+				//ZSS-1168: in long operation event queue and merge changed
+				sheet.setMergeOutOfSync(2);
 			}
-			_queueListeners.sendModelEvent(event);
 		}
 		
-		if(!ModelEvents.isCustomEvent(event)) {
+		if(!ModelEvents.isCustomEvent(event) && Executions.getCurrent() != null) {
 			if(!_dirty) {
 				_dirty = true;
 				// ZSS-942, By Jerry 2015/3/5

@@ -1806,12 +1806,14 @@ public class RangeImpl implements SRange {
 	
 	private void handleMergeRemoveNotifyChange(SheetRegion mergeNotify) {
 		if (!_autoRefresh) { //ZSS-1168
+			mantainMergeClearCacheState(mergeNotify);
 			return;
 		}
 		new NotifyChangeHelper().notifyMergeRemove(mergeNotify);
 	}
 	private void handleMergeRemoveNotifyChange(Set<SheetRegion> mergeNotifySet) {
 		if (!_autoRefresh) { //ZSS-1168
+			mantainMergeClearCacheState(mergeNotifySet.iterator().next());
 			return;
 		}
 		new NotifyChangeHelper().notifyMergeRemove(mergeNotifySet);
@@ -1819,15 +1821,24 @@ public class RangeImpl implements SRange {
 
 	private void handleMergeAddNotifyChange(SheetRegion mergeNotify) {
 		if (!_autoRefresh) { //ZSS-1168
+			mantainMergeClearCacheState(mergeNotify);
 			return;
 		}
 		new NotifyChangeHelper().notifyMergeAdd(mergeNotify);
 	}
 	private void handleMergeAddNotifyChange(Set<SheetRegion> mergeNotifySet) {
 		if (!_autoRefresh) { //ZSS-1168
+			mantainMergeClearCacheState(mergeNotifySet.iterator().next());
 			return;
 		}
 		new NotifyChangeHelper().notifyMergeAdd(mergeNotifySet);
+	}
+	//ZSS-1168
+	private void mantainMergeClearCacheState(SheetRegion mergeNotify) {
+		AbstractSheetAdv sheet = (AbstractSheetAdv) mergeNotify.getSheet();
+		if (sheet.getMergeOutOfSync() == 1) {
+			sheet.setMergeOutOfSync(2);
+		}
 	}
 	
 	private void handleCellNotifyContentChange(SheetRegion cellNotify, CellAttribute cellAttr) { //ZSS-939

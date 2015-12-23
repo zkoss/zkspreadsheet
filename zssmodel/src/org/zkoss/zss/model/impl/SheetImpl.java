@@ -120,7 +120,7 @@ public class SheetImpl extends AbstractSheetAdv {
 	private final List<STable> _tables = new ArrayList<STable>();
 	
 	//ZSS-1168
-	private boolean _mergeOutOfSync;
+	private int _mergeOutOfSync;
 	
 	public SheetImpl(AbstractBookAdv book,String id){
 		this._book = book;
@@ -2117,14 +2117,14 @@ public class SheetImpl extends AbstractSheetAdv {
 	//@see MergeHelper#merge
 	//@see MergeHelper#unmerge
 	@Override
-	public void setMergeOutOfSync(boolean b) {
-		_mergeOutOfSync = b;
+	public void setMergeOutOfSync(int state) {
+		_mergeOutOfSync = state;
 	}
 
 	//ZSS-1168
 	// Used to control merge matrix out of sync in long operation
 	@Override
-	public boolean isMergeOutOfSync() {
+	public int getMergeOutOfSync() {
 		return _mergeOutOfSync;
 	}
 }

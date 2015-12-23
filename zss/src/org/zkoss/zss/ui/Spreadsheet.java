@@ -2294,6 +2294,13 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 					onMergeDelete(event);
 				}
 			});
+			//ZSS-1168
+			addEventListener(ModelEvents.ON_MERGE_CLEAR_CACHE, new ModelEventListener() {
+				@Override
+				public void onEvent(ModelEvent event) {
+					onMergeClearCache(event);
+				}
+			});
 			addEventListener(ModelEvents.ON_DISPLAY_GRIDLINES_CHANGE, new ModelEventListener() {
 				@Override
 				public void onEvent(ModelEvent event) {
@@ -2490,6 +2497,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			final int top = region.getRow();
 			final int right = region.getLastColumn();
 			final int bottom = region.getLastRow();
+			
 			//ZSS-939
 			final Integer cellAttrVal = (Integer) event.getData("cellAttr");
 			final CellAttribute cellAttr = cellAttrVal == null ? CellAttribute.ALL : CellAttribute.values()[cellAttrVal - 1];
@@ -2499,6 +2507,13 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			org.zkoss.zk.ui.event.Events.postEvent(new CellAreaEvent(
 					Events.ON_AFTER_CELL_CHANGE, Spreadsheet.this, new SheetImpl(new SimpleRef<SBook>(sheet.getBook()),new SimpleRef<SSheet>(sheet))
 					,top, left, bottom,right));
+
+			//ZSS-1168: if notify the whole sheet; invalidate the component
+			final SBook book = event.getBook();
+			if (left<=0 && right >= book.getMaxColumnIndex()
+			&& top<=0 && bottom >= book.getMaxRowIndex()) {
+				invalidate();
+			}
 		}
 		
 		private void onChartContentChange(ModelEvent event) {
@@ -2606,6 +2621,11 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			CellRegion region = event.getRegion();
 			((ExtraCtrl) getExtraCtrl()).deleteMergeCell(sheet,
 					region.getColumn(), region.getRow(), region.getLastColumn(), region.getLastRow());
+		}
+		//ZSS-1168
+		private void onMergeClearCache(ModelEvent event) {
+			final SSheet sheet = event.getSheet();
+			((ExtraCtrl) getExtraCtrl()).clearMergeCache(sheet);
 		}
 		private void onRowColumnSizeChange(ModelEvent event) {
 			//TODO shall pass the range over to the client side and let client side do it; rather than iterate each column and send multiple command
@@ -2745,16 +2765,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		return activeRangeHelper;
 	}
 	
-	private MergeMatrixHelper getMergeMatrixHelper(SSheet sheet) {
-		//ZSS-1168: must reset MergeMatrixHelper if merge is out of sync
-		// @see BookImpl#sendModelEvent()
-		// @see MergeHelper#merge()
-		// @see MergeHelper#unmerge()
-		if (((AbstractSheetAdv)sheet).isMergeOutOfSync()) {
-			((AbstractSheetAdv)sheet).setMergeOutOfSync(false);
-			removeMergeMatrixHelper(sheet);
-		}
-		
+	private MergeMatrixHelper getMergeMatrixHelper(SSheet sheet) {		
 		HelperContainer<MergeMatrixHelper> helpers = (HelperContainer) getAttribute(MERGE_MATRIX_KEY);
 		if (helpers == null) {
 			helpers = new HelperContainer<MergeMatrixHelper>();
@@ -3951,6 +3962,11 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			updateCell(sheet, left, top, right, bottom, CellAttribute.ALL); //ZSS-939
 		}
 
+		//ZSS-1168
+		public void clearMergeCache(SSheet sheet) {
+			removeMergeMatrixHelper(sheet);
+		}
+		
 		private void updateMergeCell0(SSheet sheet, MergedRect block, String type) {
 			JSONObj result = new JSONObj();
 			result.setData("type", type);

@@ -122,6 +122,15 @@ public class NotifyChangeHelper{
 		((AbstractBookAdv) book).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_MERGE_DELETE,notify.getSheet(),
 				notify.getRegion()));
 	}
+	//ZSS-1168
+	public void notifyMergeClearCache(SheetRegion notify) {
+		SBook book = notify.getSheet().getBook();
+		if(_logger.debugable()){
+			_logger.debug("Notify clear merge cache "+notify.getReferenceString());
+		}
+		((AbstractBookAdv) book).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_MERGE_CLEAR_CACHE,notify.getSheet(),
+				notify.getRegion()));
+	}
 	
 	public void notifyMergeAdd(Set<SheetRegion> toAdd) {
 		for(SheetRegion notify:toAdd){
