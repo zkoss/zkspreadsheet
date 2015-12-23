@@ -2,7 +2,8 @@ ZK Spreadsheet 3.8.3
 *Features:
 
 *Bugs:
-
+  ZSS-1172 Should remove unnecessary ___ (three underscores) style class
+  
 ** Upgrade Notes
 
  ------------
