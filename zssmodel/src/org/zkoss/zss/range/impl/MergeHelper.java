@@ -47,7 +47,9 @@ public class MergeHelper extends RangeHelperBase{
 
 		//ZSS-1168: mark sheet as out of sync in the moment
 		// @see BookImpl#sendModelEvent(); will clear the flag there
-		((AbstractSheetAdv)sheet).setMergeOutOfSync(1);
+		if (((AbstractSheetAdv)sheet).getMergeOutOfSync() == 0) {
+			((AbstractSheetAdv)sheet).setMergeOutOfSync(1);
+		}
 
 //		for(int j = sheet.getNumOfMergedRegion() - 1; j >= 0; --j) {
 //        	final CellRegion merged = sheet.getMergedRegion(j);
@@ -123,7 +125,9 @@ public class MergeHelper extends RangeHelperBase{
 		
 		//ZSS-1168: mark sheet as out of sync in the moment
 		// @see BookImpl#sendModelEvent(); will clear the flag there
-		((AbstractSheetAdv)sheet).setMergeOutOfSync(1);
+		if (((AbstractSheetAdv)sheet).getMergeOutOfSync() == 0) {
+			((AbstractSheetAdv)sheet).setMergeOutOfSync(1);
+		}
 	}
 	
 	private void merge0(SSheet sheet, int tRow, int lCol, int bRow, int rCol) {
