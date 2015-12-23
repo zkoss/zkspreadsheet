@@ -205,6 +205,15 @@ public class BookImpl extends AbstractBookAdv{
 			// System thread doesn't have execution so that it will throw IllegalStateException
 			// e.g. Background Thread created by Executor
 			Executions.getCurrent() != null){
+			//ZSS-1168, 20151223, henrichen:
+			// When {@link MergeHelper#merge()} or {@link MergeHelper#unmerge()}, 
+			// sheet#mergeOutOfSync is set to true.
+			// When {@link Spreadsheet#getMergeMatrixHelper()}, should check 
+			// if merge is out of sync and reset the helper
+			if (ModelEvents.ON_MERGE_ADD.equals(event.getName()) 
+			|| ModelEvents.ON_MERGE_DELETE.equals(event.getName())) {
+				((AbstractSheetAdv)event.getSheet()).setMergeOutOfSync(false);
+			}
 			_queueListeners.sendModelEvent(event);
 		}
 		

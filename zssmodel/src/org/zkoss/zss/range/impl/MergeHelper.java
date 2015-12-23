@@ -16,17 +16,14 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.range.impl;
 
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.zkoss.zss.model.CellRegion;
-import org.zkoss.zss.model.InvalidModelOpException;
 import org.zkoss.zss.model.SCell;
 import org.zkoss.zss.model.SCellStyle;
 import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.model.SBorder.BorderType;
+import org.zkoss.zss.model.impl.AbstractSheetAdv;
 import org.zkoss.zss.range.SRange;
 /**
  * 
@@ -47,7 +44,12 @@ public class MergeHelper extends RangeHelperBase{
 		int rCol = getLastColumn();
 		
 		sheet.removeMergedRegion(new CellRegion(tRow,lCol,bRow,rCol),overlapped);
-		
+
+		//ZSS-1168: mark sheet as out of sync in the moment
+		// @see BookImpl#sendModelEvent(); will clear the flag there
+		// @see Spreadsheet#getMergeMatrixHelper(); check dirty there
+		((AbstractSheetAdv)sheet).setMergeOutOfSync(true);
+
 //		for(int j = sheet.getNumOfMergedRegion() - 1; j >= 0; --j) {
 //        	final CellRegion merged = sheet.getMergedRegion(j);
 //        	
@@ -119,6 +121,11 @@ public class MergeHelper extends RangeHelperBase{
 		} else {
 			merge0(sheet, tRow, lCol, bRow, rCol);
 		}
+		
+		//ZSS-1168: mark sheet as out of sync in the moment
+		// @see BookImpl#sendModelEvent(); will clear the flag there
+		// @see Spreadsheet#getMergeMatrixHelper(); check dirty there
+		((AbstractSheetAdv)sheet).setMergeOutOfSync(true);
 	}
 	
 	private void merge0(SSheet sheet, int tRow, int lCol, int bRow, int rCol) {

@@ -1805,16 +1805,28 @@ public class RangeImpl implements SRange {
 	}
 	
 	private void handleMergeRemoveNotifyChange(SheetRegion mergeNotify) {
+		if (!_autoRefresh) { //ZSS-1168
+			return;
+		}
 		new NotifyChangeHelper().notifyMergeRemove(mergeNotify);
 	}
 	private void handleMergeRemoveNotifyChange(Set<SheetRegion> mergeNotifySet) {
+		if (!_autoRefresh) { //ZSS-1168
+			return;
+		}
 		new NotifyChangeHelper().notifyMergeRemove(mergeNotifySet);
 	}
 
 	private void handleMergeAddNotifyChange(SheetRegion mergeNotify) {
+		if (!_autoRefresh) { //ZSS-1168
+			return;
+		}
 		new NotifyChangeHelper().notifyMergeAdd(mergeNotify);
 	}
 	private void handleMergeAddNotifyChange(Set<SheetRegion> mergeNotifySet) {
+		if (!_autoRefresh) { //ZSS-1168
+			return;
+		}
 		new NotifyChangeHelper().notifyMergeAdd(mergeNotifySet);
 	}
 	

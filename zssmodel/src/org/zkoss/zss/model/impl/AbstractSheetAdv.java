@@ -68,4 +68,12 @@ public abstract class AbstractSheetAdv implements SSheet,LinkedModelObject,Seria
 	//ZSS-1130
 	//@since 3.8.2
 	abstract public void addConditionalFormatting(SConditionalFormatting scf);
+	
+	//ZSS-1168
+	//@since 3.8.3
+	abstract public void setMergeOutOfSync(boolean b);
+	
+	//ZSS-1168
+	//@since 3.8.3
+	abstract public boolean isMergeOutOfSync();
 }

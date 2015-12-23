@@ -2746,6 +2746,15 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	}
 	
 	private MergeMatrixHelper getMergeMatrixHelper(SSheet sheet) {
+		//ZSS-1168: must reset MergeMatrixHelper if merge is out of sync
+		// @see BookImpl#sendModelEvent()
+		// @see MergeHelper#merge()
+		// @see MergeHelper#unmerge()
+		if (((AbstractSheetAdv)sheet).isMergeOutOfSync()) {
+			((AbstractSheetAdv)sheet).setMergeOutOfSync(false);
+			removeMergeMatrixHelper(sheet);
+		}
+		
 		HelperContainer<MergeMatrixHelper> helpers = (HelperContainer) getAttribute(MERGE_MATRIX_KEY);
 		if (helpers == null) {
 			helpers = new HelperContainer<MergeMatrixHelper>();
@@ -2768,6 +2777,15 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			mmhelper.update(fzr, fzc);
 		}
 		return mmhelper;
+	}
+	
+	//ZSS-1168: clear cached MergeMatrixHelper
+	private void removeMergeMatrixHelper(SSheet sheet) {
+		HelperContainer<MergeMatrixHelper> helpers = (HelperContainer) getAttribute(MERGE_MATRIX_KEY);
+		if (helpers == null) return;
+		final String sheetId = sheet.getId();
+		helpers.removeHelper(sheetId);
+		releaseClientCache(sheetId);
 	}
 	
 	private HeaderPositionHelper getRowPositionHelper(SSheet sheet) {
@@ -5942,6 +5960,11 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		
 		public void putHelper(String sheetId, T helper) {
 			helpers.put(sheetId, helper);
+		}
+		
+		//ZSS-1168
+		public void removeHelper(String sheetId) {
+			helpers.remove(sheetId);
 		}
 	}
 
