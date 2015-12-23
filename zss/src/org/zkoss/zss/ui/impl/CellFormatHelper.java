@@ -683,7 +683,9 @@ public class CellFormatHelper {
 				if (top >= 0) {
 					final MergedRect rectT = _mmHelper.getMergeRange(top, _col);
 					//my top merge more than 2 columns
-					if (rectT != null && rectT.getColumn() < rectT.getLastColumn()) { 
+					if (rectT != null && rectT.getColumn() < rectT.getLastColumn()) {
+						db.append('_');
+
 						String color = nextStyle.getBorderTopColor().getHtmlColor();
 						//support only solid line but position correctly
 						return appendMergedBorder(sb, "top", color);
@@ -748,7 +750,9 @@ public class CellFormatHelper {
 				if (left >= 0) {
 					final MergedRect rectT = _mmHelper.getMergeRange(_row, left);
 					//my left merged more than 2 rows
-					if (rectT != null && rectT.getRow() < rectT.getLastRow()) { 
+					if (rectT != null && rectT.getRow() < rectT.getLastRow()) {
+						db.append('_');
+
 						String color = nextStyle.getBorderLeftColor().getHtmlColor();
 						//support only solid line but position correctly
 						return appendMergedBorder(sb, "left", color);
