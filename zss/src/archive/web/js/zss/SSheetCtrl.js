@@ -3410,6 +3410,43 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			cornerPanel.redraw(out);
 		
 	    out.push('</div>');
+	},
+	//ZSS-1164
+	fire: function (evtnm, data, opts, timeout) {
+		if ("onStopEditing" == evtnm && data != undefined) {
+			this._updateCellDomText(data.row, data.col, data.value);
+		}
+		return this.$supers(zss.SSheetCtrl, 'fire', arguments);
+	},
+	//ZSS-1164
+	_updateCellDomText: function (row, col, txt) {
+		// check each blocks
+		if (this._updateBlockCellDomText(this.cp.block, row, col, txt))
+			return;
+		if (this._updateBlockCellDomText(this.tp.block, row, col, txt))
+			return;
+		if (this._updateBlockCellDomText(this.lp.block, row, col, txt))
+			return;
+		this._updateBlockCellDomText(this.activeBlock, row, col, txt);
+	},
+	//ZSS-1164
+	_updateBlockCellDomText: function (block, row, col, txt) {
+		if (block) {
+			var rng = block.range,
+				l = rng.left,
+				t = rng.top,
+				r = rng.right,
+				b = rng.bottom;
+			
+			if (l <= col && col <= r && t <= row && row <= b) {
+				var cell = block.getCell(row, col);
+				if (cell) {
+					cell.getTextNode().innerHTML = txt;
+				}
+				return true;
+			}
+		}
+		return false;
 	}
 }, {
 	NOFOCUS: 0,

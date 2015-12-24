@@ -1,0 +1,19 @@
+<vbox hflex="1" vflex="1">
+    <label multiline="true">
+Since 3.8.3
+0. Open Chrome's developer tool, find Network and change "No throttling" to "Good 2G (450kb/s 150ms RTT)"
+1. Select cell B1
+2. Input "B1" and Enter 
+3. Select back to cell B1
+4. Press "Is B1"
+5. Press ESC key to cancel; you should see "B1" in cell B1
+6. Press "Is B1" and Enter
+7. If you see "B1" appear again and then switch to "Is B1" it is a bug.
+8. Now select E1 and repeat 2~7 accordingly
+9. Now select B5 and repeat 2~7 accordingly
+10. Now select E5 and repeat 2~7 accordingly
+</label>
+<spreadsheet id="ss" width="100%"  vflex="1" showSheetbar="true" 
+        maxVisibleRows="1000" maxVisibleColumns="30"  showFormulabar="true"
+        showContextMenu="true" src="/issue3/book/1164-cell-switch.xlsx" />
+</vbox>
