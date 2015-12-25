@@ -64,9 +64,10 @@ var AU = {au: true},
 	};
 
 zss.FontSizeCombobox = zk.$extends(zul.inp.Combobox, {
-	$init: function (props, wgt) {
+	$init: function (props, wgt, builder) {
 		this.$supers(zss.FontSizeCombobox, '$init', [props]);
 		this._wgt = wgt;
+		this._bd = builder;  //ZSS-1171
 	},
 	_$action: 'fontSize',
 	$define: {
@@ -109,11 +110,34 @@ zss.FontSizeCombobox = zk.$extends(zul.inp.Combobox, {
 		this.unlisten({onSelect: this});
 		this.$supers(zss.FontSizeCombobox, 'unbind_', arguments);
 	},
+	//ZSS-1171
+//	preRow: null,
+//	preCol: null,
+//	preFontSize: null,
 	_onCellSelection: function (evt) {
-		var d = evt.data,
-			c = this._wgt.sheetCtrl.getCell(d.top, d.left);
+		//ZSS-1171: no show context menu, skip
+		if (this._bd._skipNoShow()) {
+			return;
+		}
+
+		var d = evt.data;
+		//ZSS-1171: skip if select on the previous cell
+		if (this.preRow == d.top && this.preCol == d.left) {
+			return;
+		}
+		this.preRow = d.top;
+		this.preCol = d.left;
+		
+		var	c = this._wgt.sheetCtrl.getCell(d.top, d.left);
 		if (c) {
-			this.setValue(c.getFontSize());
+			var fontSize = c.getFontSize();
+			//ZSS-1171: skip if same state
+			if (fontSize == this.preFontSize) {
+				return;
+			}
+			this.preFontSize = fontSize;
+			
+			this.setValue(fontSize);
 		}
 	},
 	onSelect: function (evt) {
@@ -153,9 +177,10 @@ zss.FontSizeCombobox = zk.$extends(zul.inp.Combobox, {
 zk.copy(zss.FontSizeCombobox.prototype, AbstractPopupHandler);
 	
 zss.FontFamilyCombobox = zk.$extends(zul.inp.Combobox, {
-	$init: function (props, wgt) {
+	$init: function (props, wgt, builder) {
 		this.$supers(zss.FontFamilyCombobox, '$init', [props]);
 		this._wgt = wgt;
+		this._bd = builder; //ZSS-1171
 	},
 	_$action: 'fontFamily',
 	$define: {
@@ -198,11 +223,34 @@ zss.FontFamilyCombobox = zk.$extends(zul.inp.Combobox, {
 		}
 		this.$supers(zss.FontFamilyCombobox, 'unbind', arguments);
 	},
+	//ZSS-1171
+//	preRow: null,
+//	preCol: null,
+//	preFontName: null,
 	_onCellSelection: function (evt) {
-		var d = evt.data,
-			c = this._wgt.sheetCtrl.getCell(d.top, d.left);
+		//ZSS-1171: no show context menu, skip
+		if (this._bd._skipNoShow()) {
+			return;
+		}
+		
+		var d = evt.data;
+		//ZSS-1171: skip if select on same cell
+		if (d.top == this.preRow && d.left == this.preCol) {
+			return;
+		}
+		this.preRow = d.top;
+		this.preCol = d.left;
+		
+		var	c = this._wgt.sheetCtrl.getCell(d.top, d.left);
 		if (c) {
-			this.setValue(c.getFontName());
+			var fontName = c.getFontName();
+			//ZSS-1171: skip if same state
+			if (this.preFontName == fontName) {
+				return;
+			}
+			this.preFontName = fontName;
+			
+			this.setValue(fontName);
 		}
 	},
 	unbind_: function () {
@@ -313,11 +361,21 @@ zss.Toolbarbutton = zk.$extends(zul.wgt.Toolbarbutton, {
 		}
 		this.$supers(zss.Toolbarbutton, 'setImage', arguments);
 	},
+//	//ZSS-1171
+	preSel: false,
+//	preMenuItem: null,
 	/**
 	 * @param boolean true set UI selected effect, set false to remove
 	 * @param zss.Menuitem the menuitem that selected
 	 */
 	setSelectedEffect: function (seld, menuitem) {
+		//ZSS-1171: skip if same state
+		if (this.preSel == seld && this.preMenuItem == menuitem) {
+			return;
+		}
+		this.preSel = seld;
+		this.preMenuItem = menuitem;
+		
 		var pp = this.getPopup();
 		var $n = jq(this.$n());
 		var src = null;
@@ -1691,6 +1749,10 @@ zss.ButtonBuilder = zk.$extends(zk.Object, {
 		this._wgt = wgt;
 		this._popupHodler = popupHolder;
 		this.contents = [];
+		
+		//ZSS-1171
+		this.isStylePanel = popupHolder.$instanceof(zss.StylePanel);
+		this.isToolbar = popupHolder.$instanceof(zss.ResizeableToolbar);
 	},
 	applyHolder: function (popup) {
 		if(this._popupHodler) {
@@ -1771,25 +1833,62 @@ zss.ButtonBuilder = zk.$extends(zk.Object, {
 		return new zss.FontFamilyCombobox({
 			$action: 'fontFamily',
 			width: '115px'
-		}, this._wgt);
+		}, this._wgt, this); //ZSS-1171
 	},
 	fontSize: function () {
 		return new zss.FontSizeCombobox({
 			$action: 'fontSize',
 			width: '55px'
-		}, this._wgt);
+		}, this._wgt, this); //ZSS-1171
+	},
+	//ZSS-1171: no toolbar or no context menu
+	_skipNoShow: function () {
+		return (this.isStylePanel && !this._wgt.getShowContextMenu())
+		|| (this.isToolbar && !this._wgt.getShowToolbar());
+	},
+	//ZSS-1171: if not in effect cell, then skip
+	preRow: -1,
+	preCol: -1,
+	_skipEvent: function (evt) {
+		if (this._skipNoShow()) {
+			return true;
+		}
+		if (!this._wgt.getShowContextMenu()) { //no show context menu, skip all
+			return true;
+		}
+		if (evt.name == "onCellSelection") {
+			var d = evt.data;
+			// same cell, skip
+			if (d.top == this.preRow && d.left == this.preCol) {
+				return true;
+			}
+			this.preRow = d.top;
+			this.preCol = d.left;
+			return false;
+		} else if (evt.name == "onCellUpdate") {
+			var d = evt.data;
+			// not on the selected cell, skip
+			return (d.top != this.preRow || d.left != this.preCol);
+		}
+		// not the event concerned, skip
+		return true;
 	},
 	fontBold: function () {
 		var wgt = this._wgt,
 			b = newActionToolbarbutton(wgt, 'fontBold', '/web/zss/img/edit-bold.png'),
+			bd = this, //ZSS-1171
 			fn = function (evt) {
+				//ZSS-1171
+				if (bd._skipEvent(evt)) {
+					return;
+				}
 				var sheet = wgt.sheetCtrl;
 				if (sheet) {
 					var d = evt.data,
 						c = sheet.getCell(d.top, d.left);
 					if (c) {
 						b.setSelectedEffect(c.isFontBold());
-					}	
+					}
 				}
 			};
 		
@@ -1810,7 +1909,12 @@ zss.ButtonBuilder = zk.$extends(zk.Object, {
 	fontItalic: function () {
 		var wgt = this._wgt,
 			b = newActionToolbarbutton(this._wgt, 'fontItalic', '/web/zss/img/edit-italic.png'),
+			bd = this, //ZSS-1171
 			fn = function (evt) {
+				//ZSS-1171
+				if (bd._skipEvent(evt)) {
+					return;
+				}
 				var sheet = wgt.sheetCtrl;
 				if (sheet) {
 					var d = evt.data,
@@ -1838,7 +1942,12 @@ zss.ButtonBuilder = zk.$extends(zk.Object, {
 	fontUnderline: function () {
 		var wgt = this._wgt,
 			b = newActionToolbarbutton(this._wgt, 'fontUnderline', '/web/zss/img/edit-underline.png'),
+			bd = this, //ZSS-1171
 			fn = function (evt) {
+				//ZSS-1171
+				if (bd._skipEvent(evt)) {
+					return;
+				}
 				var sheet = wgt.sheetCtrl;
 				if (sheet) {
 					var d = evt.data,
@@ -1865,7 +1974,12 @@ zss.ButtonBuilder = zk.$extends(zk.Object, {
 	fontStrike: function () {
 		var wgt = this._wgt,
 			b = newActionToolbarbutton(this._wgt, 'fontStrike', '/web/zss/img/edit-strike.png'),
+			bd = this, //ZSS-1171
 			fn = function (evt) {
+				//ZSS-1171
+				if (bd._skipEvent(evt)) {
+					return;
+				}
 				var sheet = wgt.sheetCtrl;
 				if (sheet) {
 					var d = evt.data,
@@ -1947,7 +2061,12 @@ zss.ButtonBuilder = zk.$extends(zk.Object, {
 			b = newActionToolbarbutton(wgt, 'verticalAlign', '/web/zss/img/edit-vertical-alignment-top.png'),
 			p = this.applyHolder(new zss.MenupopupFactory(wgt).verticalAlign()),
 			item = p.firstChild,
+			bd = this, //ZSS-1171
 			fn = function (evt) {
+				//ZSS-1171
+				if (bd._skipEvent(evt)) {
+					return;
+				}
 				var sheet = wgt.sheetCtrl;
 				if (sheet) {
 					var d = evt.data,
@@ -1988,7 +2107,12 @@ zss.ButtonBuilder = zk.$extends(zk.Object, {
 			b = newActionToolbarbutton(wgt, 'horizontalAlign', '/web/zss/img/edit-alignment.png'),
 			p = this.applyHolder(new zss.MenupopupFactory(wgt).horizontalAlign()),
 			item = p.firstChild,
+			bd = this, //ZSS-1171
 			fn = function (evt) {
+				//ZSS-1171
+				if (bd._skipEvent(evt)) {
+					return;
+				}
 				var sheet = wgt.sheetCtrl;
 				if (sheet) {
 					var d = evt.data,
@@ -2033,7 +2157,12 @@ zss.ButtonBuilder = zk.$extends(zk.Object, {
 	wrapText: function () {
 		var wgt = this._wgt,
 			b = newActionToolbarbutton(wgt, 'wrapText', '/web/zss/img/edit-wrap.png'),
+			bd = this, //ZSS-1171
 			fn = function (evt) {
+				//ZSS-1171
+				if (bd._skipEvent(evt)) {
+					return;
+				}
 				var sheet = wgt.sheetCtrl;
 				if (sheet) {
 					var d = evt.data,
