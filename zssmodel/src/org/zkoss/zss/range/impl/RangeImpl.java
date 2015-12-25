@@ -320,7 +320,7 @@ public class RangeImpl implements SRange {
 					cell.setValue(value);
 					
 					//ZSS-1116: mark might need recalc auto height
-					markCalcAutoHeight(cell);
+					markRecalcTextWidthHeight(cell);
 				}
 				return true;
 			}
@@ -518,7 +518,7 @@ public class RangeImpl implements SRange {
 				}
 				
 				//ZSS-1116: mark might need recalc auto height
-				markCalcAutoHeight(cell);
+				markRecalcTextWidthHeight(cell);
 
 				return true;
 			}
@@ -2566,11 +2566,14 @@ public class RangeImpl implements SRange {
 	}
 	
 	//ZSS-1116: mark might need recalc auto height
-	//@since 3.8.2
-	private void markCalcAutoHeight(SCell cell) {
+	//ZSS-1171: mark might need recalc text width
+	//@since 3.8.2 ZSS-1116
+	//@since 3.8.3 ZSS-1171
+	private void markRecalcTextWidthHeight(SCell cell) {
 		final SRow row = cell.getSheet().getRow(cell.getRowIndex());
 		if (!row.isNull() && !row.isCustomHeight()) {
 			((AbstractCellAdv)cell).setCalcAutoHeight(true);
 		}
+		((AbstractCellAdv)cell).setTextWidth(-1);
 	}
 }

@@ -198,6 +198,9 @@ zss.Cell = zk.$extends(zk.Widget, {
 		//ZSS-1116: CellImpl.java#_calcAutoHeight from cache to model 
 		this._cah = cellData._cah;
 		delete cellData._cah;
+		
+		//ZSS-1171: CellImpl.java#_textWidth from cache to model
+		this._txtwd = cellData._txtwd;
 	},
 	getVerticalAlign: function () {
 		switch (this.valign) {

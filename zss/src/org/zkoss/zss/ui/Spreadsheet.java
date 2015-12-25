@@ -3545,6 +3545,8 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 						
 						// appy to response
 						attrs.put("ovf", overflowOptions); 
+					} else {
+						((AbstractCellAdv)cell).setTextWidth(-1); // reset width for overflow
 					}
 				}
 			}
@@ -3687,6 +3689,12 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			//ZSS-1116: pass the _calcAutoHeight flag to client
 			if (((AbstractCellAdv)cell).isCalcAutoHeight())
 				attrs.put("_cah", true);
+
+			//ZSS-1171: pass the calculated text width to client
+			final int textwidth = ((AbstractCellAdv)cell).getTextWidth(); 
+			if (textwidth >= 0) {
+				attrs.put("wd", textwidth);
+			}
 			return attrs;
 		}
 

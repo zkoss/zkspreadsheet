@@ -275,4 +275,12 @@ public abstract class AbstractCellAdv implements SCell,LinkedModelObject,Seriali
 	//ZSS-1116
 	//@since 3.8.2
 	public abstract boolean isCalcAutoHeight();
+	
+	//ZSS-1171: enhance overflow width calc
+	//@since 3.8.3
+	public abstract void setTextWidth(int width);
+
+	//ZSS-1171: enhance overflow width calc
+	//@since 3.8.3
+	public abstract int getTextWidth();
 }

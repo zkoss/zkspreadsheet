@@ -40,6 +40,7 @@ import org.zkoss.zss.ui.au.in.StartEditingCommand;
 import org.zkoss.zss.ui.au.in.StopEditingCommand;
 import org.zkoss.zss.ui.au.in.CtrlArrowCommand;
 import org.zkoss.zss.ui.au.in.TextHeightCommand;
+import org.zkoss.zss.ui.au.in.TextWidthCommand;
 import org.zkoss.zss.ui.event.Events;
 
 /**
@@ -61,6 +62,7 @@ import org.zkoss.zss.ui.event.Events;
 	static final String ON_ZSS_SHIFT_POS = "onZSSShiftPos"; //ZSS-1085
 	
 	static final String ON_ZSS_TEXT_HEIGHT = "onZSSTextHeight"; //ZSS-1116
+	static final String ON_ZSS_TEXT_WIDTH = "onZSSTextWidth"; //ZSS-1171
 	
 	static final Map<String, Command> CMDS;
 	static{
@@ -131,6 +133,9 @@ import org.zkoss.zss.ui.event.Events;
 		
 		//ZSS-1116
 		CMDS.put(ON_ZSS_TEXT_HEIGHT, new TextHeightCommand());
+
+		//ZSS-1171
+		CMDS.put(ON_ZSS_TEXT_WIDTH, new TextWidthCommand());
 	}
 	/**
 	 * 

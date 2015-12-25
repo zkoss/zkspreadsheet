@@ -1850,6 +1850,11 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		var wgt = this._wgt;
 		wgt.fire('onZSSTextHeight', {sheetId: this.serverSheetId, row: row, col : col, height: height}, {toServer: true});
 	},
+	//ZSS-1171: sync text width calculated in client to server
+	_sendOnTextWidth: function (row, col, width) {
+		var wgt = this._wgt;
+		wgt.fire('onZSSTextWidth', {sheetId: this.serverSheetId, row: row, col : col, width: width}, {toServer: true});
+	},
 	_timeoutId: null,
 	_fireOnOpenAndEdit: function (time) { //open Editbox and start editing
 		clearTimeout(this._timeoutId);

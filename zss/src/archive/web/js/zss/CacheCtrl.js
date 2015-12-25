@@ -199,6 +199,8 @@ Copyright (C) 2012 Potix Corporation. All Rights Reserved.
 				this.cellType = cellType != undefined ? cellType : 3;//default is BLANK_CELL
 				//ZSS-1116: CellImpl.java#_calcAutoHeight from server to client cache
 				this._cah = v._cah;
+				//ZSS-1171: CellImpl.java#_textWidth from server to client cache
+				this._txtwd = v.wd;
 				if (upText) {
 					var mergedTextId = v.meft;
 					if (mergedTextId != undefined) {//index start from 0

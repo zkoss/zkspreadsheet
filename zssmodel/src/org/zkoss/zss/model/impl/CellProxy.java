@@ -374,4 +374,23 @@ class CellProxy extends AbstractCellAdv {
 			_proxy.setCalcAutoHeight(b);
 		}
 	}
+
+	//ZSS-1171
+	@Override
+	public void setTextWidth(int width) {
+		loadProxy();
+		if (_proxy != null) {
+			_proxy.setTextWidth(width);
+		}
+	}
+
+	//ZSS-1171
+	@Override
+	public int getTextWidth() {
+		loadProxy();
+		if (_proxy != null) {
+			return _proxy.getTextWidth();
+		}
+		return -1;
+	}
 }

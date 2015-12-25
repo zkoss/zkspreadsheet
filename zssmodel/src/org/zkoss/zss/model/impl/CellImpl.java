@@ -67,7 +67,8 @@ public class CellImpl extends AbstractCellAdv {
 	private AbstractCellStyleAdv _cellStyle;
 	transient private FormulaResultCellValue _formulaResultValue;// cache
 	
-	private int _height = -1; //ZSS-1116, text height of this cell
+	private int _height = -1; //ZSS-1116, text height of this cell (for autoHeight enhancement)
+	private int _width = -1; //ZSS-1171, text width of this cell (for overflow enhancement)
 	
 	//use another object to reduce object reference size
 	private OptFields _opts;
@@ -666,5 +667,19 @@ public class CellImpl extends AbstractCellAdv {
 	@Internal
 	public boolean isCalcAutoHeight() {
 		return _calcAutoHeight;
+	}
+
+	//ZSS-1171
+	@Internal
+	@Override
+	public void setTextWidth(int widthPx) {
+		_width = widthPx;
+	}
+
+	//ZSS-1171
+	@Internal
+	@Override
+	public int getTextWidth() {
+		return this._width;
 	}
 }
