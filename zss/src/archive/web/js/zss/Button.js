@@ -1846,29 +1846,24 @@ zss.ButtonBuilder = zk.$extends(zk.Object, {
 		return (this.isStylePanel && !this._wgt.getShowContextMenu())
 		|| (this.isToolbar && !this._wgt.getShowToolbar());
 	},
-	//ZSS-1171: if not in effect cell, then skip
-	preRow: -1,
-	preCol: -1,
-	_skipEvent: function (evt) {
+	//ZSS-1171: no need to precess the event
+	_skipEvent: function (evt, b) {
 		if (this._skipNoShow()) {
-			return true;
-		}
-		if (!this._wgt.getShowContextMenu()) { //no show context menu, skip all
 			return true;
 		}
 		if (evt.name == "onCellSelection") {
 			var d = evt.data;
 			// same cell, skip
-			if (d.top == this.preRow && d.left == this.preCol) {
+			if (d.top == b.preRow && d.left == b.preCol) {
 				return true;
 			}
-			this.preRow = d.top;
-			this.preCol = d.left;
+			b.preRow = d.top;
+			b.preCol = d.left;
 			return false;
 		} else if (evt.name == "onCellUpdate") {
 			var d = evt.data;
 			// not on the selected cell, skip
-			return (d.top != this.preRow || d.left != this.preCol);
+			return (d.top != b.preRow || d.left != b.preCol);
 		}
 		// not the event concerned, skip
 		return true;
@@ -1879,7 +1874,7 @@ zss.ButtonBuilder = zk.$extends(zk.Object, {
 			bd = this, //ZSS-1171
 			fn = function (evt) {
 				//ZSS-1171
-				if (bd._skipEvent(evt)) {
+				if (bd._skipEvent(evt, b)) {
 					return;
 				}
 				var sheet = wgt.sheetCtrl;
@@ -1912,7 +1907,7 @@ zss.ButtonBuilder = zk.$extends(zk.Object, {
 			bd = this, //ZSS-1171
 			fn = function (evt) {
 				//ZSS-1171
-				if (bd._skipEvent(evt)) {
+				if (bd._skipEvent(evt, b)) {
 					return;
 				}
 				var sheet = wgt.sheetCtrl;
@@ -1945,7 +1940,7 @@ zss.ButtonBuilder = zk.$extends(zk.Object, {
 			bd = this, //ZSS-1171
 			fn = function (evt) {
 				//ZSS-1171
-				if (bd._skipEvent(evt)) {
+				if (bd._skipEvent(evt, b)) {
 					return;
 				}
 				var sheet = wgt.sheetCtrl;
@@ -1977,7 +1972,7 @@ zss.ButtonBuilder = zk.$extends(zk.Object, {
 			bd = this, //ZSS-1171
 			fn = function (evt) {
 				//ZSS-1171
-				if (bd._skipEvent(evt)) {
+				if (bd._skipEvent(evt, b)) {
 					return;
 				}
 				var sheet = wgt.sheetCtrl;
@@ -2064,7 +2059,7 @@ zss.ButtonBuilder = zk.$extends(zk.Object, {
 			bd = this, //ZSS-1171
 			fn = function (evt) {
 				//ZSS-1171
-				if (bd._skipEvent(evt)) {
+				if (bd._skipEvent(evt, b)) {
 					return;
 				}
 				var sheet = wgt.sheetCtrl;
@@ -2110,7 +2105,7 @@ zss.ButtonBuilder = zk.$extends(zk.Object, {
 			bd = this, //ZSS-1171
 			fn = function (evt) {
 				//ZSS-1171
-				if (bd._skipEvent(evt)) {
+				if (bd._skipEvent(evt, b)) {
 					return;
 				}
 				var sheet = wgt.sheetCtrl;
@@ -2160,7 +2155,7 @@ zss.ButtonBuilder = zk.$extends(zk.Object, {
 			bd = this, //ZSS-1171
 			fn = function (evt) {
 				//ZSS-1171
-				if (bd._skipEvent(evt)) {
+				if (bd._skipEvent(evt, b)) {
 					return;
 				}
 				var sheet = wgt.sheetCtrl;
