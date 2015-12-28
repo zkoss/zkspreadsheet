@@ -1,0 +1,5 @@
+<zk>
+<vlayout hflex="1" vflex="1" apply="zss.issue.ZkInsertMerge1171">
+	<spreadsheet id="sSpreadsheet" hflex="1" height="600px" showToolbar="false" preloadColumnSize="30" preloadRowSize="100" maxRenderedCellSize="3000" clientCacheDisabled="false"/>
+</vlayout>
+</zk>

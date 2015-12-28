@@ -110,6 +110,10 @@ zss.Cell = zk.$extends(zk.Widget, {
 	 */
 	fontSize: 11,
 	/**
+	 * The font format: bold(0x01)/italic(0x02)/underline(0x04)/strikout(0x08)
+	 */
+	fontFormat: 0,
+	/**
 	 * The comment
 	 */
 	comment: null,
@@ -238,21 +242,29 @@ zss.Cell = zk.$extends(zk.Widget, {
 		return this.fontSize;
 	},
 	isFontBold: function () {
-		var b = jq(this.getTextNode()).css('font-weight');
-		return b && (b == '700' || b == 'bold');
+		//ZSS-1171: poor performance to access dom
+//		var b = jq(this.getTextNode()).css('font-weight');
+//		return b && (b == '700' || b == 'bold');
+		return (this.fontFormat & 0x01) != 0;
 	},
 	isFontItalic: function () {
-		return jq(this.getTextNode()).css('font-style') == 'italic';
+		//ZSS-1171: poor performance to access dom
+//		return jq(this.getTextNode()).css('font-style') == 'italic';
+		return (this.fontFormat & 0x02) != 0;
 	},
 	isFontUnderline: function () {
-		// ZSS-725
-		var s = jq(this.$n('real')).css('text-decoration');
-		return s && s.indexOf('underline') >= 0;
+		//ZSS-1171: poor performance to access dom
+//		// ZSS-725
+//		var s = jq(this.$n('real')).css('text-decoration');
+//		return s && s.indexOf('underline') >= 0;
+		return (this.fontFormat & 0x04) != 0;
 	},
 	isFontStrikeout: function () {
-		// ZSS-725
-		var s = jq(this.$n('real')).css('text-decoration');
-		return s && s.indexOf('line-through') >= 0;
+		//ZSS-1171: poor performance to access dom
+//		// ZSS-725
+//		var s = jq(this.$n('real')).css('text-decoration');
+//		return s && s.indexOf('line-through') >= 0;
+		return (this.fontFormat & 0x08) != 0;
 	},
 	doClick_: function (evt) {
 		//do nothing. eat the event.
@@ -362,6 +374,7 @@ zss.Cell = zk.$extends(zk.Widget, {
 			cave = this.$n('cave'),
 			prevWidth = cave.style.width,
 			fontSize = data.fontSize,
+			fontFormat = data.fontFormat, //ZSS-1171
 			real = this.$n('real');
 			
 		//ZSS-944: 
@@ -378,6 +391,10 @@ zss.Cell = zk.$extends(zk.Widget, {
 		if (fontSize != undefined) {
 			fontSizeChanged = this.fontSize != data.fontSize
 			this.fontSize = fontSize;
+		}
+		//ZSS-1171
+		if (fontFormat != undefined) {
+			this.fontFormat = fontFormat;
 		}
 		this.$n().style.cssText = st;
 		cave.style.cssText = ist;

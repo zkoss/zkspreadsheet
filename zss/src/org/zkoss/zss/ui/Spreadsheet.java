@@ -99,6 +99,8 @@ import org.zkoss.zss.model.SCell.CellType;
 import org.zkoss.zss.model.SCellStyle;
 import org.zkoss.zss.model.SCellStyle.Alignment;
 import org.zkoss.zss.model.SCellStyle.VerticalAlignment;
+import org.zkoss.zss.model.SFont.Boldweight;
+import org.zkoss.zss.model.SFont.Underline;
 import org.zkoss.zss.model.SChart;
 import org.zkoss.zss.model.SColumnArray;
 import org.zkoss.zss.model.SComment;
@@ -124,6 +126,7 @@ import org.zkoss.zss.range.SImporters;
 import org.zkoss.zss.range.SRange;
 import org.zkoss.zss.range.SRanges;
 import org.zkoss.zss.range.impl.MergeHelper;
+import org.zkoss.zss.range.impl.StyleUtil;
 import org.zkoss.zss.ui.au.in.Command;
 import org.zkoss.zss.ui.au.out.AuCellFocus;
 import org.zkoss.zss.ui.au.out.AuCellFocusTo;
@@ -3676,9 +3679,28 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 					//	break;
 					}
 					
-					SFont font = cellStyle.getFont();
+					//ZSS-1171
+					SFont font = StyleUtil.getFontStyle(sheet.getBook(), cellStyle, tbCellStyle);;
 					int fontSize = font.getHeightPoints();
-					attrs.put("fs", fontSize);
+					attrs.put("fs", fontSize); // fontsize
+					
+					//ZSS-1171: font format: bold(0x01)/italic(0x02)/underline(0x04)/strikout(0x08)
+					int ff = 0; 
+					if (font.isItalic()) {
+						ff |= 0x02;
+					}
+					if (font.isStrikeout()) {
+						ff |= 0x08;
+					}
+					final Underline fontUnderline = font.getUnderline(); 
+					boolean isUnderline = fontUnderline == Underline.SINGLE || fontUnderline == Underline.SINGLE_ACCOUNTING;
+					if (isUnderline) {
+						ff |= 0x04;
+					}
+					if (font.getBoldweight() == Boldweight.BOLD) {
+						ff |= 0x01;
+					}
+					attrs.put("ff", ff);
 					
 					//ZSS-944: pass rotate info to browser
 					final int rotate = cellStyle.getRotation();

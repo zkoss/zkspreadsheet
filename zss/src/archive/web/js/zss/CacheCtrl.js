@@ -99,6 +99,11 @@ Copyright (C) 2012 Potix Corporation. All Rights Reserved.
 			 */
 			//fontSize
 			/**
+			 * Cell font format, default is 0. bold(0x01)/italic(0x02)/underline(0x04)/strikout(0x08)
+			 * @since 3.8.3 
+			 */
+			//fontFormat
+			/**
 			 * Horizontal alignment
 			 * 
 			 * <ul>
@@ -224,6 +229,7 @@ Copyright (C) 2012 Potix Corporation. All Rights Reserved.
 						halign = v.ha,
 						valign = v.va,
 						fontSize = v.fs,
+						fontFormat = v.ff, //ZSS-1171
 						rotate = v.rot; //ZSS-944
 					this.style = sId != undefined ? styles[sId] : '';
 					this.innerStyle = isId != undefined ? styles[isId] : '';
@@ -237,6 +243,8 @@ Copyright (C) 2012 Potix Corporation. All Rights Reserved.
 					this.rightBorder = rbo != undefined;
 					if (fontSize)
 						this.fontSize = fontSize;
+					//ZSS-1171
+					this.fontFormat = fontFormat;
 					//ZSS-568: support double border
 					if (v.db) 
 						this.db_tlbr = v.db;
