@@ -5,6 +5,7 @@ ZK Spreadsheet 3.8.3
   ZSS-1172 Should remove unnecessary ___ (three underscores) style class
   ZSS-1168 merge cells asynchronously in an event queue handler doesn't work
   ZSS-1164 A cell switches from old value to new value after completing edit under a long network latency
+  ZSS-1171 Merge cells cause firefox unresponsive
   
 ** Upgrade Notes
 
