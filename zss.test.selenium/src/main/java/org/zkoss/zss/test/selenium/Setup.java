@@ -90,21 +90,36 @@ public class Setup {
 	
 	
 	static public WebDriver getDriver() throws MalformedURLException{
-		return getChromeDriver();
+//		return getLocalChromeDriver();
+//		return getChromeDriver();
 //		return getFirefoxDriver();
+		return getIE9Driver();
+//		return getIE10Driver();
 //		return getIEDriver();
 	}
 	
-	private static WebDriver getChromeDriver() {
+	private static WebDriver getLocalChromeDriver() {
+		System.out.println("Local ChromeDriver -----------");
 		ChromeDriver driver = new ChromeDriver();
+		
+		String val = getConfig("zss.browserSize","0,0,1200,800");
+		String[] vals = val.split(",");
+		
+		driver.manage().window().setPosition(new Point(Integer.parseInt(vals[0]),Integer.parseInt(vals[1])));
+		driver.manage().window().setSize(new Dimension(Integer.parseInt(vals[2]), Integer.parseInt(vals[3])));
+		return driver;
+	}
+	private static WebDriver getChromeDriver() {
+		System.out.println("ChromeDriver -----------");
+//		ChromeDriver driver = new ChromeDriver();
 		// remote chrome driver
-//		RemoteWebDriver driver = null;
-//		try {
-//			driver = new RemoteWebDriver(new URL("http://10.1.3.223:4444/wd/hub"), DesiredCapabilities.chrome());
-//		} catch (MalformedURLException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
+		RemoteWebDriver driver = null;
+		try {
+			driver = new RemoteWebDriver(new URL("http://10.1.3.223:4444/wd/hub"), DesiredCapabilities.chrome());
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		String val = getConfig("zss.browserSize","0,0,1200,800");
 		String[] vals = val.split(",");
@@ -115,6 +130,7 @@ public class Setup {
 	}
 	
 	private static WebDriver getFirefoxDriver() {
+		System.out.println("FirefoxDriver -----------");
 //		FirefoxDriver driver = new FirefoxDriver();
 		RemoteWebDriver driver = null;
 		try {
@@ -131,8 +147,46 @@ public class Setup {
 		driver.manage().window().setSize(new Dimension(Integer.parseInt(vals[2]), Integer.parseInt(vals[3])));
 		return driver;
 	}
+	private static WebDriver getIE9Driver() {
+		System.out.println("IE9Driver -----------");
+		// remote ie driver
+		RemoteWebDriver driver = null;
+		try {
+//			driver = new RemoteWebDriver(new URL("http://10.1.3.228:4444/wd/hub"), DesiredCapabilities.internetExplorer());
+			driver = new RemoteWebDriver(new URL("http://10.1.3.215:4444/wd/hub"), DesiredCapabilities.internetExplorer());
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		String val = getConfig("zss.browserSize","0,0,1200,800");
+		String[] vals = val.split(",");
+		
+		driver.manage().window().setPosition(new Point(Integer.parseInt(vals[0]),Integer.parseInt(vals[1])));
+		driver.manage().window().setSize(new Dimension(Integer.parseInt(vals[2]), Integer.parseInt(vals[3])));
+		return driver;
+	}
+	private static WebDriver getIE10Driver() {
+		System.out.println("IE10Driver -----------");
+		// remote ie driver
+		RemoteWebDriver driver = null;
+		try {
+			driver = new RemoteWebDriver(new URL("http://10.1.2.230:4444/wd/hub"), DesiredCapabilities.internetExplorer());
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		String val = getConfig("zss.browserSize","0,0,1200,800");
+		String[] vals = val.split(",");
+		
+		driver.manage().window().setPosition(new Point(Integer.parseInt(vals[0]),Integer.parseInt(vals[1])));
+		driver.manage().window().setSize(new Dimension(Integer.parseInt(vals[2]), Integer.parseInt(vals[3])));
+		return driver;
+	}
 	
 	private static WebDriver getIEDriver() {
+		System.out.println("IEDriver -----------");
 		// remote ie driver
 		RemoteWebDriver driver = null;
 		try {
