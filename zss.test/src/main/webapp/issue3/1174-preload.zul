@@ -1,0 +1,12 @@
+<vbox hflex="1" vflex="1">
+	<label multiline="true">
+Since 3.8.3
+1. Open browser's devloper tool
+2. Select column U and scroll sheet to right by press the right-arrow key for three columns
+3. check if onZSSCellFetch is triggered; if so, it is a bug.
+4. Select row 100 and scroll sheet to bottom by press the down-arrow key for three rows
+5. check if onZSSCellFetch is triggered; if so, it is a bug.
+</label>
+	<spreadsheet id="ss2" src="/issue3/book/1174-preload.xlsx" showToolbar="true" maxVisibleRows="500" maxVisibleColumns="200" width="700px"
+        height="500px" preloadColumnSize="100" preloadRowSize="100"/>	
+</vbox>

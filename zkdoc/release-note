@@ -6,6 +6,7 @@ ZK Spreadsheet 3.8.3
   ZSS-1168 merge cells asynchronously in an event queue handler doesn't work
   ZSS-1164 A cell switches from old value to new value after completing edit under a long network latency
   ZSS-1171 Merge cells cause firefox unresponsive
+  ZSS-1174 The preloadColumnSize and preloadRowSize doesn't work as expected
   
 ** Upgrade Notes
 
