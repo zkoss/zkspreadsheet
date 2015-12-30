@@ -414,8 +414,10 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 				tRow = rect.top,
 				lCol = rect.left,
 				rCol = rect.right,
+				bRow = rect.bottom,
 				rowHeadHidden = wgt._rowHeadHidden,
 				colHeadHidden = wgt._columnHeadHidden;
+			
 			//TODO: measure best init size
 			bRow = tRow + 20; //load row size
 			rCol = lCol + 20; //load column size

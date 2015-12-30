@@ -304,25 +304,32 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 			cright = this.range.right,//cleft + cw - 1;
 			cbottom = this.range.bottom;//ctop + ch - 1;
 		
+		//ZSS-1174: same focus and return
+		var sheet = this.sheet,
+			lastFocus = sheet.getLastFocus();
+		if (lastFocus.row == row && lastFocus.column == col) {
+			return true;
+		}
+		
 		if (row >= ctop && row <= cbottom && col >= cleft && col <= cright)
 			return true;
 		if (this.loadstate != zss.MainBlockCtrl.IDLE)//still waiting previous loading.
 			return false;
-		var token = "";
-			sheet = this.sheet,
+		var token = "",
 			range = zss.SSheetCtrl._getVisibleRange(sheet),
 			local = this,
 			fetchw = range.width, //size of cell of width to fetch back
-			fetchh = range.height; //size of cell of height to fetch back
+			fetchh = range.height, //size of cell of height to fetch back
+			//ZSS-1174			
+			rect = sheet._wgt._cacheCtrl.getSelectedSheet().rect;
 		
 		if ((row >= ctop && row <= cbottom)) {//horizontal shift, east or west
 			if (col < cleft) {//minus, west
 				var y = ctop,
 					h = ch,
-					x = cleft - 1;
+					x = rect.left - 1, //cleft - 1, //ZSS-1174
 					w = x - col + 1;
-				
-				if (alwaysjump || w > fetchw) {
+				if (alwaysjump || (w > 0 && w > fetchw)) { //ZSS-1174
 					//jump;
 					token = zkS.addCallback(function () {
 						if (sheet.invalid) return;
@@ -336,11 +343,10 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 					this._sendOnCellFetch(token, "jump", "west", col, row, -1, -1, range);
 				} else {
 					//neighbor
-					w = fetchw;
 					if (x - w < 0)
 						w = x + 1;
-
-					token = zkS.addCallback(function () {
+					//ZSS-1174
+					var fn = function () {
 						if (sheet.invalid) return;
 						var block = sheet.activeBlock,//get current activeBlock again.
 							lastDir = block._lastDir,
@@ -360,15 +366,21 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 						block.loadstate = zss.MainBlockCtrl.IDLE;
 						if(callbackfn) callbackfn();
 						block.loadForVisible();
-					});
-					this._sendOnCellFetch(token, "neighbor", "west", x, y, w, h, range);
+					};
+					//ZSS-1174
+					if (w > 0) {
+						token = zkS.addCallback(fn);
+						this._sendOnCellFetch(token, "neighbor", "west", x, y, w, h, range);
+					} else {
+						fn();
+					}
 				}
 
 			} else {//positive, east
 				var y = ctop,
-					x = cleft + cw,
+					x = rect.right + 1, //cleft + cw, //ZSS-1174
 					w = col-x + 1;
-				if (alwaysjump || w > fetchw) {
+				if (alwaysjump || (w > 0 && w > fetchw)) { //ZSS-1174
 					//jump;
 					token = zkS.addCallback(function () {
 						if (sheet.invalid) return;
@@ -381,12 +393,11 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 					this._sendOnCellFetch(token, "jump", "east", col, row, -1, -1, range);
 				} else {
 					//neighbor
-					w = fetchw;
 					var h = ch;
 					if (x + w > this.sheet.maxCols)
 						w = this.sheet.maxCols - x;
-	
-					token = zkS.addCallback(function () {
+					//ZSS-1174
+					var fn = function () {
 						if (sheet.invalid) return;
 						var block = sheet.activeBlock,//get current activeBlock again.
 							lastDir = block._lastDir,
@@ -406,17 +417,23 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 						block.loadstate = zss.MainBlockCtrl.IDLE;
 						if (callbackfn) callbackfn();
 						block.loadForVisible();
-					});
-					this._sendOnCellFetch(token, "neighbor", "east", x, y, w, h, range);
+					};
+					//ZSS-1174
+					if (w > 0) {
+						token = zkS.addCallback(fn);
+						this._sendOnCellFetch(token, "neighbor", "east", x, y, w, h, range);
+					} else {
+						fn();
+					}
 				}
 			}
 		} else if ((col >= cleft && col <=cright)) {//vertical shift, shouth or north
 			if (row < ctop) {//minus, north
 				var x = cleft,
 					w = cw,
-					y = ctop - 1,
+					y = rect.top - 1, //ctop - 1, //ZSS-1174
 					h = y - row + 1;
-				if (alwaysjump || h > fetchh) {
+				if (alwaysjump || (h > 0 && h > fetchh)) { //ZSS-1174
 					token = zkS.addCallback(function () {
 						if (sheet.invalid) return;
 						var block = sheet.activeBlock ;//get current activeBlock again.
@@ -427,11 +444,10 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 					});
 					this._sendOnCellFetch(token, "jump", "north", col, row, -1, -1, range);
 				} else {
-					h = fetchh;
 					if (y - h < 0)
 						h = y + 1;
-
-					token = zkS.addCallback(function () {
+					//ZSS-1174
+					var fn = function () {
 						if (sheet.invalid) return;
 						var block = sheet.activeBlock,//get current activeBlock again.
 							lastDir = block._lastDir,
@@ -452,16 +468,21 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 						if (callbackfn) callbackfn();
 
 						sheet.activeBlock.loadForVisible();
-					});
-					this._sendOnCellFetch(token, "neighbor", "north", x, y, w, h, range);
+					};
+					//ZSS-1174
+					if (h > 0) {
+						token = zkS.addCallback(fn);
+						this._sendOnCellFetch(token, "neighbor", "north", x, y, w, h, range);
+					} else {
+						fn();
+					}
 				}
 			} else {//positive, south
-				var y = ctop + ch,
+				var y = rect.bottom + 1,//ctop + ch, // ZSS-1174
 					x = cleft,
 					w = cw,
-					h = row-y +1 ;
-
-				if (alwaysjump || h > fetchh) {
+					h = row-y +1;
+				if (alwaysjump || (h > 0 && h > fetchh)) { //ZSS-1174
 					//jump
 					token = zkS.addCallback(function () {
 						if (sheet.invalid) return;
@@ -473,11 +494,10 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 					});
 					this._sendOnCellFetch(token, "jump", "south", col, row, -1, -1, range);
 				} else {
-					h = fetchh;
 					if (y + h > this.sheet.maxRows)
 						h = this.sheet.maxRows - y;
-					
-					token = zkS.addCallback(function () {
+					//ZSS-1174
+					var fn = function () {
 						if (sheet.invalid) return;
 						//get current activeBlock again.
 						var block = sheet.activeBlock,
@@ -498,8 +518,14 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 						block.loadstate = zss.MainBlockCtrl.IDLE;
 						if (callbackfn) callbackfn();
 						block.loadForVisible();
-					});
-					this._sendOnCellFetch(token, "neighbor", "south", x, y, w, h, range);
+					};
+					//ZSS-1174
+					if (h > 0) {
+						token = zkS.addCallback(fn);
+						this._sendOnCellFetch(token, "neighbor", "south", x, y, w, h, range);
+					} else {
+						fn();
+					}
 				}
 			}
 		} else {
@@ -662,13 +688,45 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 		}
 		sheet.dp._fixSize(this);
 	},
-	_getFetchWidth: function (rCol) {
+	//ZSS-1174: Returns the number of columns to preload into client cache
+	_getEastFetchWidth: function (rCol, arRight) {
 		var sheet = this.sheet;
-		return Math.min(sheet._wgt.getMaxColumns(), rCol + Math.round(sheet._wgt.getPreloadColumnSize() / 2)) - this.range.right;
+		return Math.min(sheet._wgt.getMaxColumns(), rCol + sheet._wgt.getPreloadColumnSize()) - arRight;
 	},
-	_getFetchHeight: function (bRow) {
+	//ZSS-1174: Returns the number of rows to preload into client cache
+	_getSouthFetchHeight: function (bRow, arBtm) {
 		var sheet = this.sheet;
-		return Math.min(sheet._wgt.getMaxRows(), bRow + Math.round(sheet._wgt.getPreloadRowSize() / 2)) - this.range.bottom;
+		return Math.min(sheet._wgt.getMaxRows(), bRow + sheet._wgt.getPreloadRowSize()) - arBtm;
+	},
+	//ZSS-1174: Returns the number of columns to preload into client cache
+	_getWestFetchWidth: function (lCol, arLeft) {
+		var sheet = this.sheet;
+		return arLeft - Math.max(0, lCol - sheet._wgt.getPreloadColumnSize());
+	},
+	//ZSS-1174: Returns the number of rows to preload into client cache
+	_getNorthFetchHeight: function (tRow, arTop) {
+		var sheet = this.sheet;
+		return arTop - Math.max(0, tRow - sheet._wgt.getPreloadRowSize());
+	},
+	//ZSS-1174: Returns the most south row to create cells
+	_getSouthRow: function (bRow) {
+		var sheet = this.sheet;
+		return Math.min(sheet._wgt.getMaxRows(), bRow + Math.round(sheet._wgt.getPreloadRowSize()/2));
+	},
+	//ZSS-1174: Returns the most east column to create cells
+	_getEastCol: function (rCol) {
+		var sheet = this.sheet;
+		return Math.min(sheet._wgt.getMaxColumns(), rCol + Math.round(sheet._wgt.getPreloadColumnSize()/2));
+	},
+	//ZSS-1174: Returns the most north row to create cells
+	_getNorthRow: function (tRow) {
+		var sheet = this.sheet;
+		return Math.max(0, tRow - Math.round(sheet._wgt.getPreloadRowSize()/2));
+	},
+	//ZSS-1174: Returns the most west column to create cells
+	_getWestCol: function (lCol) {
+		var sheet = this.sheet;
+		return Math.max(0, lCol - Math.round(sheet._wgt.getPreloadColumnSize()/2));
 	},
 	/**
 	 * Load content and set the range to visible 
@@ -711,7 +769,7 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 			}
 		}
 	},
-	_loadForVisible: function (vrange) {
+	_loadForVisible: function (vrange0) {
 		var local = this,
 			sheet = this.sheet;
 		if (!sheet) {
@@ -728,8 +786,8 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 			}
 			return true;
 		}
-		if (!vrange)
-			vrange = zss.SSheetCtrl._getVisibleRange(sheet);
+		var vrange = vrange0 || zss.SSheetCtrl._getVisibleRange(sheet);
+		
 		//Two phases
 		//1. create cells from cache if possible
 		//2. fetch data from server
@@ -748,11 +806,12 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 		//create east from cache
 		if (right + 1 <= rCol) {
 			var createFromCache = false,
-				fRow = sheet._wgt.getRowFreeze();
-			if (ar.containsRange(top, right + 1, bottom, rCol)) {
-				this.create_('east', top, right + 1, bottom, rCol);
+				fRow = sheet._wgt.getRowFreeze(),
+				rCol0 = this._getEastCol(rCol);  //ZSS-1174: precreate client side cells
+			if (ar.containsRange(top, right + 1, bottom, rCol0)) {
+				this.create_('east', top, right + 1, bottom, rCol0);
 				createFromCache = true;
-			} else if (ar.rect.right > right + 1 && ar.rect.right < rCol && ar.containsRange(top, right + 1, bottom, ar.rect.right)) {
+			} else if (ar.rect.right > right + 1 && ar.rect.right < rCol0 && ar.containsRange(top, right + 1, bottom, ar.rect.right)) {
 				//create partial east from cache
 				this.create_('east', top, right + 1, bottom, ar.rect.right);
 				createFromCache = true;
@@ -769,9 +828,14 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 		//create west from cache
 		if (left - 1 >= lCol) {
 			var createFromCache = false,
-				fRow = sheet._wgt.getRowFreeze();
-			if (ar.containsRange(top, lCol, bottom, left - 1)) {
-				this.create_('west', top, lCol, bottom, left - 1);
+				fRow = sheet._wgt.getRowFreeze(),
+				lCol0 = this._getWestCol(lCol);  //ZSS-1174: precreate client side cells
+			if (ar.containsRange(top, lCol0, bottom, left - 1)) {
+				this.create_('west', top, lCol0, bottom, left - 1);
+				createFromCache = true;
+			} else if (ar.rect.left > lCol0 && ar.rect.left <= left - 1 && ar.containsRange(top, ar.rect.left, bottom, left - 1)) {
+				//create partial west from cache
+				this.create_('west', top, ar.rect.left, bottom, left - 1);
 				createFromCache = true;
 			}
 			if (createFromCache) { //after create cell from cache, range's value may changed
@@ -786,11 +850,12 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 		//create south from cache
 		if (bottom + 1 <= bRow) {
 			var createFromCache = false,
-				fCol = sheet._wgt.getColumnFreeze();
-			if (ar.containsRange(bottom + 1, left, bRow, right)) {
-				this.create_('south', bottom + 1, left, bRow, right);
+				fCol = sheet._wgt.getColumnFreeze(),
+				bRow0 = this._getSouthRow(bRow); //ZSS-1174: precreate client side cells
+			if (ar.containsRange(bottom + 1, left, bRow0, right)) {
+				this.create_('south', bottom + 1, left, bRow0, right);
 				createFromCache = true;
-			} else if (ar.rect.bottom > bottom + 1 && ar.rect.bottom < bRow && ar.containsRange(bottom + 1, left, ar.rect.bottom, right)) {
+			} else if (ar.rect.bottom > bottom + 1 && ar.rect.bottom < bRow0 && ar.containsRange(bottom + 1, left, ar.rect.bottom, right)) {
 				//create partial south from cache
 				this.create_('south', bottom + 1, left, ar.rect.bottom, right);
 				createFromCache = true;
@@ -807,11 +872,12 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 		//create north from cache
 		if (tRow < top) {
 			var createFromCache = false,
-				fCol = sheet._wgt.getColumnFreeze();
-			if (ar.containsRange(tRow, left, top - 1, right)) {
-				this.create_('north', tRow, left, top - 1, right);
+				fCol = sheet._wgt.getColumnFreeze(),
+				tRow0 = this._getNorthRow(tRow); //ZSS-1174: precreate client side cells
+			if (ar.containsRange(tRow0, left, top - 1, right)) {
+				this.create_('north', tRow0, left, top - 1, right);
 				createFromCache = true;
-			} else if (ar.rect.top > tRow && ar.rect.top < top - 1 && ar.containsRange(ar.rect.top, left, top - 1, right)) {
+			} else if (ar.rect.top > tRow0 && ar.rect.top < top - 1 && ar.containsRange(ar.rect.top, left, top - 1, right)) {
 				//create partial north from cache
 				this.create_('north', ar.rect.top, left, top - 1, right);
 				createFromCache = true;
@@ -833,19 +899,25 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 			return true;
 		} else if (!(tRow >= top && lCol >= left && bRow <= bottom && rCol <= right)) {
 
-			var fetchHeight = fetchWidth = -1,
+			//ZSS-1174
+			var southFetchHeight = -1,
+				eastFetchWidth = -1,
+				northFetchHeight = -1,
+				westFetchWidth = -1,
 				arRight = ar.rect.right,
-				arBtm = ar.rect.bottom;
-			if (arRight < rCol && arBtm < bRow) {
-				//preload east and south
-				fetchWidth = this._getFetchWidth(rCol);
-				fetchHeight = this._getFetchHeight(bRow);
-			} else if (ar.rect.right < rCol) { //preload east only
-				fetchWidth = this._getFetchWidth(rCol);
-				fetchHeight = ar.rect.bottom - bottom + 1;
-			} else if (ar.rect.bottom < bRow) { //preload south only
-				fetchHeight = this._getFetchHeight(bRow);
-				fetchWidth = ar.rect.right - right + 1;
+				arBtm = ar.rect.bottom,
+				arLeft = ar.rect.left,
+				arTop = ar.rect.top;
+
+			if (arRight < rCol) {
+				eastFetchWidth = this._getEastFetchWidth(rCol, arRight);
+			} else if (arLeft > lCol) {
+				westFetchWidth = this._getWestFetchWidth(lCol, arLeft);
+			}
+			if (arBtm < bRow) {
+				southFetchHeight = this._getSouthFetchHeight(bRow, arBtm);
+			} else if (arTop > tRow) {
+				northFetchHeight = this._getNorthFetchHeight(tRow, arTop);
 			}
 
 			var token = zkS.addCallback(function () {
@@ -857,11 +929,22 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 				if (local.invalid || !local.range) return; //ZSS-1101: when change sheet, local.range could be undefined
 				var b = sheet.activeBlock;
 				b.loadstate = zss.MainBlockCtrl.IDLE;
-				b.loadForVisible();;
+				b.loadForVisible();
 				sheet.dp._fixSize(local);
 			});
-			this.loadstate = zss.MainBlockCtrl.LOADING;
-			this._sendOnCellFetch(token, "visible", "", -1, -1, fetchWidth, fetchHeight, vrange);
+			
+			//ZSS-1174
+			var fetchWidth = eastFetchWidth > 0 ? eastFetchWidth : westFetchWidth,
+				fetchHeight = southFetchHeight > 0  ? southFetchHeight : northFetchHeight;
+				
+			if (fetchWidth < 0)
+				fetchWidth = 0;
+			if (fetchHeight < 0)
+				fetchHeight = 0;
+			if (fetchHeight > 0 || fetchWidth > 0) {
+				this.loadstate = zss.MainBlockCtrl.LOADING;
+				this._sendOnCellFetch(token, "visible", "", -1, -1, fetchWidth, fetchHeight, vrange);
+			}
 			return true;
 		}
 		sheet.dp._fixSize(this);
