@@ -79,7 +79,7 @@ public class FillImpl extends AbstractFillAdv {
 
 	@Override
 	public FillPattern getFillPattern() {
-		return _fillPattern == null ? FillPattern.NONE : _fillPattern; //ZSS-1145
+		return _fillPattern == null ? FillPattern.SOLID : _fillPattern; //ZSS-1145, ZSS-1162
 	}
 
 	//--Object--//

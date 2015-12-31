@@ -709,12 +709,12 @@ public class ExcelXlsxImporter extends AbstractExcelImporter{
 		Color bgColor = poiCellStyle.getRawFillBackgroundColor();
 		SColor fgSColor = fgColor == null ? null : book.createColor(BookHelper.colorToForegroundHTML(workbook, fgColor));
 		SColor bgSColor = bgColor == null ? null : book.createColor(BookHelper.colorToBackgroundHTML(workbook, bgColor));
-		if (pattern == FillPattern.SOLID) {
+		if (pattern == null || pattern == FillPattern.SOLID) { //ZSS-1162
 			SColor tmp = fgSColor;
 			fgSColor = bgSColor;
 			bgSColor = tmp;
 		}
-		SFill fill = pattern != null ? new FillImpl(pattern, fgSColor, bgSColor) : null;
+		SFill fill = new FillImpl(pattern, fgSColor, bgSColor); //ZSS-1162
 		SBorder border = importBorder(poiCellStyle);
 		SFont font = importFont(poiCellStyle);
 

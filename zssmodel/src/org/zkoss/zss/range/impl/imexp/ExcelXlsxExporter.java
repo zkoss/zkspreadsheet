@@ -734,7 +734,7 @@ public class ExcelXlsxExporter extends AbstractExcelExporter {
 			SColor bgColor = fill.getRawBackColor();
 			FillPattern fillPattern = fill.getRawFillPattern();
 			
-			if (fillPattern == FillPattern.SOLID) {
+			if (fillPattern == null || fillPattern == FillPattern.SOLID) { //ZSS-1162
 				SColor tmp = fgColor;
 				fgColor = bgColor;
 				bgColor = tmp;
