@@ -9,6 +9,7 @@ ZK Spreadsheet 3.8.3
   ZSS-1174 The preloadColumnSize and preloadRowSize doesn't work as expected
   ZSS-1165 Inconsistent cell editing behavior according to IME/language setting
   ZSS-1162 The format of conditional formatting is changed after exporting
+  ZSS-1161 a conditional formatting rule's "show icon only" is checked after exporting
   
 ** Upgrade Notes
 

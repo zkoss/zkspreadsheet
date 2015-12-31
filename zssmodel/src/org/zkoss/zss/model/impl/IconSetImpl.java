@@ -27,7 +27,7 @@ public class IconSetImpl implements SIconSet {
 	private List<SCFValueObject> valueObjects;
 	private boolean percent;
 	private boolean reverse;
-	private boolean showValue;
+	private boolean showValue = true; //ZSS-1161: default true
 	
 	@Override
 	public IconSetType getType() {

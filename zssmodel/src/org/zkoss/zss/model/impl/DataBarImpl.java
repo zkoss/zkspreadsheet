@@ -28,7 +28,7 @@ public class DataBarImpl implements SDataBar {
 	private SColor color;
 	private Long minLength;
 	private Long maxLength;
-	private boolean showValue;
+	private boolean showValue = true; //ZSS-1161: default to true
 	
 	@Override
 	public List<SCFValueObject> getCFValueObjects() {
