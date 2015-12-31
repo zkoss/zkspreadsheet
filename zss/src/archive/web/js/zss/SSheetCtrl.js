@@ -1883,6 +1883,13 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			evt.stop();
 		}
 	},
+	//ZSS-1165: To enter IME editing mode
+	//@since 3.8.3
+	_enterIMEEditing: function (evt) {
+		if (this.dp.startEditing(evt, undefined, undefined, undefined, true)) { //evt, val, type, pos, noServer
+			this.dp._openEditbox("");
+		}
+	},
 	_enterEditing: function(evt) {
 		var p = this.getLastFocus();
 		this.dp.startEditing(evt, this.getCell(p.row, p.column).edit);
@@ -1964,7 +1971,8 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		case 229: //ZSS-378 Chinese Input keyCode is always 229 in chrome/IE(8-10) (no spec.)
 			// ZSS-737: other browsers listen composition event to catch IME input.
 			if (zk.ie && zk.ie < 10 && this.state == zss.SSheetCtrl.FOCUSED) { //enter editing mode only when focused
-				this._enterEditing(evt);
+				//ZSS-1165
+				this._enterIMEEditing(evt);
 			}
 			break;
 		case 113: //F2

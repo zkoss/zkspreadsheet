@@ -1,0 +1,17 @@
+<vbox hflex="1" vflex="1">
+	<label multiline="true">
+Since 3.8.3
+1. Select cell A1
+2. Type "test" into A1
+3. Should see the text "test" in Cell A1
+4. Type "A1" in cell A1 directly, the cell in editing mode automatically.
+5. Should see "A1" in editing box; press Enter key and Cell A1 left editing mode
+6. Should see "A1" in cell A1.
+7. Change IME to Chinese Input Method
+8. Type "中文" in cell A1 directly, the cell in editing mode automatically.
+9. Should see ONLY "中文" in editing box; press Enter key and Cell A1 left editing mode
+10. Should see ONLY "中文" in Cell A1; if not, it is a bug.
+</label>
+	<spreadsheet id="ss2" src="/issue3/book/blank.xlsx" showToolbar="true" maxVisibleRows="100" maxVisibleColumns="100" width="700px"
+        height="500px" preloadColumnSize="100" preloadRowSize="100"/>	
+</vbox>

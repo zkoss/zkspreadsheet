@@ -130,17 +130,18 @@ zss.DataPanel = zk.$extends(zk.Object, {
 	 * Start editing on cell
 	 * 
 	 * @param evt
-	 * @param val
+	 * @param val value to be sent to server
 	 * @param type editing type. Either 'inlineEditing' or 'formulabarEditing'
-	 * @param pos optional, specify the row & column index of a cell to start editing 
+	 * @param pos optional, specify the row & column index of a cell to start editing
+	 * @param noServer whether NOT to send to server 
 	 */
-	startEditing: function (evt, val, type, pos) {
+	startEditing: function (evt, val, type, pos, noServer) { 
 		var sheet = this.sheet;
 		if (sheet.config.readonly) 
 			return false;
 		
 		var row, col;
-		if (typeof pos != 'undefined'){
+		if (pos) { //ZSS-1165
 			row = pos.row;
 			col = pos.col;
 		}else{ 
@@ -173,9 +174,12 @@ zss.DataPanel = zk.$extends(zk.Object, {
 			this._openEditbox(null, true); 
 		}
 		
-		sheet.fire('onStartEditing', {row: row, col: col, value: val, type: type});
-		sheet._wgt.fire('onStartEditing',
-				{token: "", sheetId: sheet.serverSheetId, row: row, col: col, clienttxt: val, type: type}, null, 25);
+		//ZSS-1165: IME no need to send to server
+		if (!noServer) {
+			sheet.fire('onStartEditing', {row: row, col: col, value: val, type: type});
+			sheet._wgt.fire('onStartEditing',
+					{token: "", sheetId: sheet.serverSheetId, row: row, col: col, clienttxt: val, type: type}, null, 25);
+		}
 		return true;
 	},
 	_isProtect: function (tRow, lCol, bRow, rCol) {
@@ -334,7 +338,7 @@ zss.DataPanel = zk.$extends(zk.Object, {
 			if( sheet.state == zss.SSheetCtrl.START_EDIT) {
 				var editor = sheet.inlineEditor,
 					pos = sheet.getLastFocus(),
-					value = initval || cell.edit;
+					value = !initval && initval != "" ? cell.edit : initval; //ZSS-1165: allow empty
 				editor.edit(cell.comp, pos.row, pos.column, value ? value : '', noFocus);
 				sheet.state = zss.SSheetCtrl.EDITING;
 			}

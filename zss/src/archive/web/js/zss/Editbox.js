@@ -915,7 +915,8 @@ zss.Editbox = zk.$extends(zul.inp.InputWidget, {
 			if (zk.webkit) {
 				this.prepareComposition = true;
 			}
-			sheet._enterEditing(evt);
+			//ZSS-1165
+			sheet._enterIMEEditing(evt);
 		}
 	},
 	_doCompositionEnd: function (evt) {
