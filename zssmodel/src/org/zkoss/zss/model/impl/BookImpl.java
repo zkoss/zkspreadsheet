@@ -216,11 +216,11 @@ public class BookImpl extends AbstractBookAdv{
 				|| ModelEvents.ON_MERGE_DELETE.equals(eventName))
 				&& sheet.getMergeOutOfSync() == 1) {
 					sheet.setMergeOutOfSync(0);
-				} else if (!ModelEvents.ON_MERGE_CLEAR_CACHE.equals(eventName) 
+				} else if (!ModelEvents.ON_MERGE_SYNC.equals(eventName) 
 					&& sheet.getMergeOutOfSync() == 2) {
 					// notify all associated Spreadsheets to clear the merge cache first 
 					sheet.setMergeOutOfSync(0);
-					new NotifyChangeHelper().notifyMergeClearCache(new SheetRegion((SSheet)sheet, 1, 1)); 
+					new NotifyChangeHelper().notifyMergeSync(new SheetRegion((SSheet)sheet, 1, 1)); 
 				}
 				_queueListeners.sendModelEvent(event);
 			} else if (sheet.getMergeOutOfSync() == 1) { 

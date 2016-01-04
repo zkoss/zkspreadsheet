@@ -258,4 +258,20 @@ zss.MergeMatrix =  zk.$extends(zk.Object, {
 		}
 		return left;
 	}
+	,
+	//ZSS-1168
+	/**
+	 * Remove All merge range and execute fn per merge range
+	 */
+	removeAllMergeRange: function (owner, fn) {
+		if (fn) {
+			var mm = this.mergeMatrix,
+				size = mm.length;
+			for (var i = 0; i < size; i++) {
+				var range = mm[i];
+				fn.call(owner, range);
+			}
+		}
+		this.mergeMatrix = [];
+	}
 });

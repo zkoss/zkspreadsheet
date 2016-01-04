@@ -8,8 +8,10 @@ Since 3.8.3
 5. You should see a merge area on A1:J11; if not, it is a bug.
     </label>
 <div apply="zss.issue.Composer1168" vflex="1">
-<button id="eventQueue" label="async event queue"/>
-<button id="doRefresh" label="autoRefresh(false)"/>
+<button id="eventQueue" label="async event queue (invalidate)"/>
+<button id="eventQueueSync" label="async event queue (sync merge)"/>
+<button id="doRefresh" label="autoRefresh(false) (invalidate)"/>
+<button id="doRefreshSync" label="autoRefresh(false) (sync merge)"/>
 <button id="normal" label="normal event"/>
     <spreadsheet id="ss" width="100%"  vflex="1" showSheetbar="true" 
         maxVisibleRows="1000" maxVisibleColumns="30"  showFormulabar="true"

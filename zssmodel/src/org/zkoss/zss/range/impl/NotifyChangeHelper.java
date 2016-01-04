@@ -123,12 +123,12 @@ public class NotifyChangeHelper{
 				notify.getRegion()));
 	}
 	//ZSS-1168
-	public void notifyMergeClearCache(SheetRegion notify) {
+	public void notifyMergeSync(SheetRegion notify) {
 		SBook book = notify.getSheet().getBook();
 		if(_logger.debugable()){
 			_logger.debug("Notify clear merge cache "+notify.getReferenceString());
 		}
-		((AbstractBookAdv) book).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_MERGE_CLEAR_CACHE,notify.getSheet(),
+		((AbstractBookAdv) book).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_MERGE_SYNC,notify.getSheet(),
 				notify.getRegion()));
 	}
 	

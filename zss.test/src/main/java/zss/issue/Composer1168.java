@@ -48,6 +48,28 @@ public class Composer1168 extends SelectorComposer<Component> {
 				}
 			}
 		});
+		
+		queue.subscribe(new EventListener<Event>() {
+			
+			@Override
+			public void onEvent(Event e) throws Exception {
+				if (e.getName().equals("onPopulateSync")){
+					clickMerge();
+					queue.publish(new Event("completeSync"));
+				}
+			}
+		}, true);
+		
+		queue.subscribe(new EventListener<Event>() {
+			@Override
+			public void onEvent(Event e) throws Exception {
+				if (e.getName().equals("completeSync")){
+					Ranges.range(ss.getSelectedSheet(), 0, 0, 10, 9).notifyChange();
+//					Ranges.range(ss.getSelectedSheet()).notifyChange();
+					Clients.clearBusy();
+				}
+			}
+		});
 		//publish(null);
 	}
 	
@@ -56,15 +78,32 @@ public class Composer1168 extends SelectorComposer<Component> {
 		queue.publish(new Event("onPopulate"));
 		Clients.showBusy("populating");
 	}
-	
+
+	@Listen("onClick= #eventQueueSync")
+	public void publishSync(Event e){
+		queue.publish(new Event("onPopulateSync"));
+		Clients.showBusy("populatingSync");
+	}
+
 	@Listen("onClick= #doRefresh")
 	public void merge(Event e){
 		Range range = Ranges.range(ss.getSelectedSheet(), 0, 0, 10, 9);
 		range.setAutoRefresh(false);
 		range.merge(false);
+		range.setAutoRefresh(true);
 		Ranges.range(ss.getSelectedSheet()).notifyChange();
 	}
-	
+
+	@Listen("onClick= #doRefreshSync")
+	public void mergeSync(Event e){
+		Range range = Ranges.range(ss.getSelectedSheet(), 0, 0, 10, 9);
+		range.setAutoRefresh(false);
+		range.merge(false);
+		range.setAutoRefresh(true);
+		range.notifyChange();
+//		Ranges.range(ss.getSelectedSheet()).notifyChange();
+	}
+
 	@Listen("onClick= #normal")
 	public void normal(Event e) {
 		Range range = Ranges.range(ss.getSelectedSheet(), 0, 0, 10, 9);

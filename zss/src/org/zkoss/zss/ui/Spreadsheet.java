@@ -2298,10 +2298,10 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 				}
 			});
 			//ZSS-1168
-			addEventListener(ModelEvents.ON_MERGE_CLEAR_CACHE, new ModelEventListener() {
+			addEventListener(ModelEvents.ON_MERGE_SYNC, new ModelEventListener() {
 				@Override
 				public void onEvent(ModelEvent event) {
-					onMergeClearCache(event);
+					onMergeSync(event);
 				}
 			});
 			addEventListener(ModelEvents.ON_DISPLAY_GRIDLINES_CHANGE, new ModelEventListener() {
@@ -2626,9 +2626,9 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 					region.getColumn(), region.getRow(), region.getLastColumn(), region.getLastRow());
 		}
 		//ZSS-1168
-		private void onMergeClearCache(ModelEvent event) {
+		private void onMergeSync(ModelEvent event) {
 			final SSheet sheet = event.getSheet();
-			((ExtraCtrl) getExtraCtrl()).clearMergeCache(sheet);
+			((ExtraCtrl) getExtraCtrl()).syncMergeCells(sheet);
 		}
 		private void onRowColumnSizeChange(ModelEvent event) {
 			//TODO shall pass the range over to the client side and let client side do it; rather than iterate each column and send multiple command
@@ -3993,13 +3993,37 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		}
 
 		//ZSS-1168
-		public void clearMergeCache(SSheet sheet) {
+		public void syncMergeCells(SSheet sheet) {
 			removeMergeMatrixHelper(sheet);
+			
+			MergeMatrixHelper mmhelper = this.getMergeMatrixHelper(sheet);
+			JSONObj results = new JSONObj();
+			results.setData("type", "sync");
+			JSONArray jarray = new JSONArray();
+			results.setData("rects", jarray);
+			for (MergedRect block : mmhelper.getRanges()) {
+				JSONObj result = new JSONObj();
+				prepareMergeCell0(sheet, block, result);
+				jarray.add(result);
+			}
+			response("mergeCell" + XUtils.nextUpdateId(), new AuMergeCell(Spreadsheet.this, "", sheet.getId(), results.toString()));		
 		}
 		
 		private void updateMergeCell0(SSheet sheet, MergedRect block, String type) {
 			JSONObj result = new JSONObj();
 			result.setData("type", type);
+			
+			//ZSS-1168
+			prepareMergeCell0(sheet, block, result);
+
+			/**
+			 * merge_ -> mergeCell
+			 */
+			response("mergeCell" + XUtils.nextUpdateId(), new AuMergeCell(Spreadsheet.this, "", sheet.getId(), result.toString()));
+		}
+
+		//ZSS-1168
+		private void prepareMergeCell0(SSheet sheet, MergedRect block, JSONObj result) {
 			result.setData("id", block.getId());
 			int left = block.getColumn();
 			int top = block.getRow();
@@ -4023,11 +4047,6 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 					.getRowPositionHelper(sheet);
 			final int h = rhelper.getStartPixel(block.getLastRow() + 1) - rhelper.getStartPixel(block.getRow());
 			result.setData("height", h);
-
-			/**
-			 * merge_ -> mergeCell
-			 */
-			response("mergeCell" + XUtils.nextUpdateId(), new AuMergeCell(Spreadsheet.this, "", sheet.getId(), result.toString()));
 		}
 
 		public void addMergeCell(SSheet sheet, int left, int top, int right, int bottom) {

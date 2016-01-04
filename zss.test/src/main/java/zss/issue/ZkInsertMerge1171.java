@@ -30,8 +30,9 @@ public class ZkInsertMerge1171 extends SelectorComposer<Vlayout> {
 	public final static String SYMBOL_COLLAPSED = "\u25C4\u25BA";
 	public final static String SYMBOL_EXPANDED = "\u25BA\u25C4";
 
-	   private Spreadsheet spreadsheet;
+		private Spreadsheet spreadsheet;
 		private Sheet selectedSheet;
+		private int left, top, right, bottom;
 		
 		private EventQueue<Event> queue = EventQueues.lookup("heavyOperation");
 		
@@ -84,7 +85,9 @@ public class ZkInsertMerge1171 extends SelectorComposer<Vlayout> {
 				public void onEvent(Event e) throws Exception {					
 					spreadsheet.setMaxVisibleColumns(selectedSheet.getLastColumn(13)+20);
 					spreadsheet.setMaxVisibleRows(selectedSheet.getLastRow());
-					Ranges.range(spreadsheet.getSelectedSheet()).notifyChange();
+					Range range = Ranges.range(selectedSheet, top, left, bottom, right);
+					range.notifyChange();
+//					Ranges.range(spreadsheet.getSelectedSheet()).notifyChange();
 					Clients.clearBusy();
 				}
 			});
@@ -92,14 +95,11 @@ public class ZkInsertMerge1171 extends SelectorComposer<Vlayout> {
 		
 		@Listen("onCellClick = #sSpreadsheet")
 		public void onCellClick(CellMouseEvent event){
-			System.out.println("onCellClick:" +  new CellRef(event.getRow(), event.getColumn()).asString());
-			
 			if (event.getColumn() > 46 && event.getRow() == 10){ //header row
 				queue.publish(event);
 				Clients.showBusy("inserting");
 			}
 		}
-		
 		public void performHeavyOperation(CellMouseEvent event){
 			Range cellRange = Ranges.range(this.selectedSheet, event.getRow(), event.getColumn());
 			cellRange.setAutoRefresh(false);
@@ -110,11 +110,16 @@ public class ZkInsertMerge1171 extends SelectorComposer<Vlayout> {
 				
 				Range range = null;
 				
-				range = Ranges.range(selectedSheet, 0, event.getColumn() + 1, 0, event.getColumn() + 9).toColumnRange();
+				left = event.getColumn();
+				top = 0;
+				right = left + 9;
+				bottom = 10;
+
+				range = Ranges.range(selectedSheet, 0, left + 1, 0, left + 9).toColumnRange();
 				range.setAutoRefresh(false);
 				CellOperationUtil.insert(range, InsertShift.RIGHT, InsertCopyOrigin.FORMAT_LEFT_ABOVE);
 				
-				range = Ranges.range(selectedSheet, 0, event.getColumn(), 10, event.getColumn() + 9);
+				range = Ranges.range(selectedSheet, top, left, bottom, right);
 				range.setAutoRefresh(false);
 				CellOperationUtil.merge(range, true); //or range.merge(true);
 								

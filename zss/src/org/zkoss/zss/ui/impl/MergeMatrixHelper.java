@@ -38,8 +38,6 @@ import org.zkoss.zss.api.AreaRef;
  *
  */
 public class MergeMatrixHelper {
-
-	
 	private Map _leftTopIndex = new HashMap(5);
 	private Map _mergeByIndex = new HashMap(20);
 	private List<MergedRect> _mergeRanges = new LinkedList<MergedRect>();
@@ -116,7 +114,7 @@ public class MergeMatrixHelper {
 	 * Get all merged range. 
 	 * @return a list which contains all merged range
 	 */
-	public List getRanges(){
+	public List<MergedRect> getRanges(){
 		return _mergeRanges;
 	}
 	
@@ -287,16 +285,28 @@ public class MergeMatrixHelper {
 		rebuildIndex();
 	}
 
+	//ZSS-1168
 	public void deleteMergeRange(int left, int top, int right, int bottom, Set torem) {
+		deleteMergeRangeX(left, top, right, bottom, torem, true);
+		
+	}
+	//ZSS-1168
+	public void deleteMergeRangeX(int left, int top, int right, int bottom, Set torem, boolean rebuildIndex) {
 		final MergedRect mblock = getMergeRange(top, left);
 		if(mblock!=null){
 			torem.add(mblock);
 			_mergeRanges.remove(mblock);
 		}
-		rebuildIndex();
+		if (rebuildIndex)
+			rebuildIndex();
 	}
 
+	//ZSS-1168
 	public void addMergeRange(int left, int top, int right, int bottom, Set toadd, Set torem) {
+		addMergeRangeX(left, top, right, bottom, toadd, torem, true);
+	}
+	//ZSS-1168
+	public void addMergeRangeX(int left, int top, int right, int bottom, Set toadd, Set torem, boolean rebuildIndex) {
 		MergedRect mblock = getMergeRange(top, left);
 		if(mblock!=null){
 			torem.add(mblock);
@@ -307,7 +317,8 @@ public class MergeMatrixHelper {
 		toadd.add(mblock);
 		_mergeRanges.add(mblock);
 		
-		rebuildIndex();
+		if (rebuildIndex)  //ZSS-1168
+			rebuildIndex();
 	}
 
 	public void deleteAffectedMergeRangeByColumn(int col,Set removed) {

@@ -1146,8 +1146,10 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		var type = result.type;
 		if (type == "remove")
 			this._removeMergeRange(result);
-		else if(type == "add")
+		else if (type == "add")
 			this._addMergeRange(result);
+		else if (type == "sync") //ZSS-1168
+			this._syncMergeRange(result);
 	},
 	_cmdSelection: function (result) {
 		var type = result.type,
@@ -3315,7 +3317,37 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		}
 		this.lp.removeRow(row, size, extnm);
 	},
+	//ZSS-1168
+	_syncMergeRange: function (results) {
+		var lastFocus = this.getLastFocus();
+		
+		var fn = this._removeMergeRangeX,
+			rects = results.rects;
+		
+		this.mergeMatrix.removeAllMergeRange(this, fn);
+
+		
+		for (var i = 0, len = rects.length; i < len; ++i) {
+			var result = rects[i];
+			this._addMergeRangeX(result);
+		}
+		
+		if (!(this.state == zss.SSheetCtrl.NOFOCUS) && lastFocus) {
+			var left = lastFocus.column,
+				top = lastFocus.row;
+			//ZSS-930
+			this.moveCellSelection(left, top, left, top, false, true);
+			this.moveCellFocus(top, left);
+		}
+	},
+	//ZSS-1168
 	_removeMergeRange: function (result) {
+		var id = result.id;
+		this.mergeMatrix.removeMergeRange(id);
+		this._removeMergeRangeX(result);
+	},
+	//ZSS-1168
+	_removeMergeRangeX: function (result) {
 		var id = result.id,
 			left = result.left,
 			top = result.top,
@@ -3330,7 +3362,6 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		zcss.removeRule(name + " .zsmerge" + id, cssid);
 		zcss.removeRule(name + " .zsmerge" + id + " .zscelltxt", cssid);
 		
-		this.mergeMatrix.removeMergeRange(id);
 		this.activeBlock.removeMergeRange(id, left, top, right, bottom);
 
 		if(cBlock)
@@ -3340,7 +3371,21 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		if(lBlock)
 			lBlock.removeMergeRange(id, left, top, right, bottom);
 	},
+	//ZSS-1168
 	_addMergeRange: function (result) {
+		this._addMergeRangeX(result);
+		
+		//ZSS-861: move focus only if current state is not NOFOCUS
+		if (!(this.state == zss.SSheetCtrl.NOFOCUS)) {
+			var left = result.left,
+				top = result.top;
+			//ZSS-930
+			this.moveCellSelection(left, top, left, top, false, true);
+			this.moveCellFocus(top, left);
+		}
+	},
+	//ZSS-1168
+	_addMergeRangeX: function (result) {
 		var id = result.id,
 			left = result.left,
 			top = result.top,
@@ -3359,11 +3404,20 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			cBlock = this.cp.block,
 			tBlock = this.tp.block,
 			lBlock = this.lp.block;
-
-		zcss.setRule(name + " .zsmerge" + id, "width", cellwidth + "px", true, cssId);
-		zcss.setRule(name + " .zsmerge" + id + " .zscelltxt", "width", celltextwidth + "px", true, cssId);
-		zcss.setRule(name + " .zsmerge" + id, "height", cellheight + "px", true, cssId);
-		zcss.setRule(name + " .zsmerge" + id + " .zscelltxt", "height", celltextheight + "px", true, cssId);
+		
+		//ZSS-1168
+		if (width <= 0 || height <= 0) { //total hidden
+			zcss.setRule(name + " .zsmerge" + id, "display", "none", true, cssId);
+			zcss.setRule(name + " .zsmerge" + id + " .zscelltxt", "display", "none", true, cssId);
+		} else {
+			zcss.setRule(name + " .zsmerge" + id, 
+					["width", "height", "display", "border-bottom-width"], 
+					[cellwidth + "px", cellheight + "px", "inline-block", "1px"], true, cssId);
+			
+			zcss.setRule(name + " .zsmerge" + id + " .zscelltxt", 
+					["width", "height"],
+					[celltextwidth + "px", celltextheight + "px"], true, cssId);
+		}
 		
 		this.mergeMatrix.addMergeRange(id, left, top, right, bottom);	
 		this.activeBlock.addMergeRange(id, left, top, right, bottom);
@@ -3374,13 +3428,6 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			tBlock.addMergeRange(id, left, top, right, bottom);
 		if(lBlock)
 			lBlock.addMergeRange(id, left, top, right, bottom);
-		
-		//ZSS-861: move focus only if current state is not NOFOCUS
-		if (!(this.state == zss.SSheetCtrl.NOFOCUS)) {
-			//ZSS-930
-			this.moveCellSelection(left, top, left, top, false, true);
-			this.moveCellFocus(top, left);
-		}
 	},
 	afterKeyDown_: function (wevt) {
 		var wgt = this._wgt; 
