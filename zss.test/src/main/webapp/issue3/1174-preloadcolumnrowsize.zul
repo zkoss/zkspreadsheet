@@ -1,0 +1,16 @@
+<zk>
+	<label multiline="true">
+1. Open browser's developer tool
+2. click A1
+3. move selection box to right with the right arrow key to column T
+(drag the scrollbar to the column T also produces the same issue.)
+
+expected result:
+no onZSSCellFetch event sent.
+
+bug result:
+zss keeps sending onZSSCellFetch events.
+</label>
+	<spreadsheet id="ss" src="/issue3/book/1174-preload.xlsx" showToolbar="true" maxVisibleRows="500" maxVisibleColumns="200" width="700px"
+        height="500px" preloadColumnSize="20" preloadRowSize="20"/>        	
+</zk>
