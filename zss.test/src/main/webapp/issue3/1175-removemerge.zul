@@ -1,0 +1,45 @@
+<zk>
+    <label multiline="true">
+Since 3.8.3
+1. Merge A1:D1
+2. Press "delete 4 columns with false autoRefresh"
+3. You should see the merged A1:D1 is gone because column A:D is deleted.
+4. If you still see the merged cell A1:D1, it is a bug.
+</label>
+
+<button label="delete 4 columns with false autoRefresh" id="delete" onClick="delete()"/>
+<button label="delete 4 columns directly" id="delete2" onClick="delete2()"/>
+	<spreadsheet id="spreadsheet" hflex="1" height="500px"
+	src="/issue3/book/blank.xlsx" 
+	showToolbar="true"
+	showFormulabar="false"
+	showSheetbar="true"
+	showContextMenu="false"
+/>
+<zscript><![CDATA[
+import org.zkoss.zk.ui.Component;
+import org.zkoss.zk.ui.select.SelectorComposer;
+import org.zkoss.zk.ui.select.annotation.Listen;
+import org.zkoss.zk.ui.select.annotation.Wire;
+import org.zkoss.zss.api.CellOperationUtil;
+import org.zkoss.zss.api.Range;
+import org.zkoss.zss.api.Ranges;
+import org.zkoss.zss.api.Range.DeleteShift;
+import org.zkoss.zss.ui.Spreadsheet;                  
+            	public void delete(){
+            		Range range = Ranges.range(spreadsheet.getSelectedSheet(), 
+            				0, spreadsheet.getSelection().getColumn(),
+            				spreadsheet.getSelection().getRow(), spreadsheet.getSelection().getColumn()+3).toColumnRange();
+            		range.setAutoRefresh(false);
+            		CellOperationUtil.delete(range, DeleteShift.LEFT);
+            		Ranges.range(spreadsheet.getSelectedSheet()).notifyChange();
+            	}
+            	
+            	public void delete2(){
+            		Range range = Ranges.range(spreadsheet.getSelectedSheet(), 
+            				0, spreadsheet.getSelection().getColumn(),
+            				spreadsheet.getSelection().getRow(), spreadsheet.getSelection().getColumn()+3).toColumnRange();
+            		CellOperationUtil.delete(range, DeleteShift.LEFT);
+            	}                  
+]]></zscript>
+</zk>

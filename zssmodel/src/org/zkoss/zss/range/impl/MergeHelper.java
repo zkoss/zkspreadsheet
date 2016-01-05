@@ -45,12 +45,6 @@ public class MergeHelper extends RangeHelperBase{
 		
 		sheet.removeMergedRegion(new CellRegion(tRow,lCol,bRow,rCol),overlapped);
 
-		//ZSS-1168: mark sheet as out of sync in the moment
-		// @see BookImpl#sendModelEvent(); will clear the flag there
-		if (((AbstractSheetAdv)sheet).getMergeOutOfSync() == 0) {
-			((AbstractSheetAdv)sheet).setMergeOutOfSync(1);
-		}
-
 //		for(int j = sheet.getNumOfMergedRegion() - 1; j >= 0; --j) {
 //        	final CellRegion merged = sheet.getMergedRegion(j);
 //        	
@@ -121,12 +115,6 @@ public class MergeHelper extends RangeHelperBase{
 			}
 		} else {
 			merge0(sheet, tRow, lCol, bRow, rCol);
-		}
-		
-		//ZSS-1168: mark sheet as out of sync in the moment
-		// @see BookImpl#sendModelEvent(); will clear the flag there
-		if (((AbstractSheetAdv)sheet).getMergeOutOfSync() == 0) {
-			((AbstractSheetAdv)sheet).setMergeOutOfSync(1);
 		}
 	}
 	

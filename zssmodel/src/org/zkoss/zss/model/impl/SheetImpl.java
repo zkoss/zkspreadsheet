@@ -1576,10 +1576,21 @@ public class SheetImpl extends AbstractSheetAdv {
 
 	@Override
 	public void removeMergedRegion(CellRegion region,boolean removeOverlaps) {
+		boolean removed = false;
 		for(CellRegion r:new ArrayList<CellRegion>(_mergedRegions)){
 			if((removeOverlaps && region.overlaps(r)) || region.contains(r)){
 				_mergedRegions.remove(r);
 				ModelUpdateUtil.addMergeUpdate(this,r, null);
+				removed = true;
+			}
+		}
+		
+		//ZSS-1175: some other operation might cause remove merge
+		//ZSS-1168: mark sheet as out of sync in the moment
+		// @see BookImpl#sendModelEvent(); will clear the flag there
+		if (removed) {
+			if (getMergeOutOfSync() == 0) {
+				setMergeOutOfSync(1);
 			}
 		}
 	}
@@ -1597,6 +1608,13 @@ public class SheetImpl extends AbstractSheetAdv {
 		}
 		_mergedRegions.add(region);
 		ModelUpdateUtil.addMergeUpdate(this,null, region);
+		
+		//ZSS-1175: some other operation might cause add merge
+		//ZSS-1168: mark sheet as out of sync in the moment
+		// @see BookImpl#sendModelEvent(); will clear the flag there
+		if (getMergeOutOfSync() == 0) {
+			setMergeOutOfSync(1);
+		}
 	}
 
 	@Override
