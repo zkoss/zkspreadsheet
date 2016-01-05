@@ -593,13 +593,14 @@ public class CellFetchCommandHelper{
 		
 		//append row
 		int cs = blockRight + 1;
-		int ce = cs + fetchWidth;
+		int ce = blockRight + fetchWidth;
 		json.put("top", blockTop);
 		json.put("left", cs);
 		
-		int rangeTop = rangeTopHeight > 0 ? blockTop - rangeTopHeight + 1 : blockTop;
-		int rangeRight = rangeWidth > fetchWidth ? cs + rangeWidth - 1 : ce - 1; 
-		int rangeBottom = rangeBtmHeight < 0 ? blockBottom : blockBottom + rangeBtmHeight - 1;
+		int rangeTop = rangeTopHeight > 0 ? blockTop - rangeTopHeight : blockTop;
+		if (rangeTop < 0) rangeTop = 0;
+		int rangeRight = rangeWidth > fetchWidth ? cs + rangeWidth - 1 : ce; 
+		int rangeBottom = rangeBtmHeight < 0 ? blockBottom : blockBottom + rangeBtmHeight;
 		final SpreadsheetCtrl spreadsheetCtrl = ((SpreadsheetCtrl) _spreadsheet.getExtraCtrl());
 		//ZSS-1075: always load header info no matter hide the head or not(must cached in client side)
 		JSONObject mainBlock = spreadsheetCtrl.getRangeAttrs(sheet, SpreadsheetCtrl.Header.COLUMN, 
@@ -608,7 +609,7 @@ public class CellFetchCommandHelper{
 		json.put("data", mainBlock);
 	
 		_lastleft = blockLeft;
-		_lastright = ce - 1;
+		_lastright = ce;
 		_lasttop = blockTop;
 		_lastbottom = blockBottom;
 
@@ -633,15 +634,18 @@ public class CellFetchCommandHelper{
 		
 		// append row
 		int cs = blockLeft - 1;
-		int ce = cs - fetchWidth;
+		if (cs < 0) cs = 0;
+		int ce = blockLeft - fetchWidth;
+		if (ce < 0) ce = 0;
 		json.put("top", blockTop);
-		json.put("left", ce + 1);
+		json.put("left", ce);
 		
-		int rangeTop = rangeTopHeight > 0 ? blockTop - rangeTopHeight + 1 : blockTop;
-		int rangeLeft = rangeWidth > fetchWidth ? blockLeft - rangeWidth - 1: ce + 1;
+		int rangeTop = rangeTopHeight > 0 ? blockTop - rangeTopHeight : blockTop;
+		if (rangeTop < 0) rangeTop = 0;
+		int rangeLeft = rangeWidth > fetchWidth ? blockLeft - rangeWidth: ce;
 		if (rangeLeft < 0)
 			rangeLeft = 0;
-		int rangeBottom = rangeBtmHeight < 0 ? blockBottom : blockBottom + rangeBtmHeight - 1;
+		int rangeBottom = rangeBtmHeight < 0 ? blockBottom : blockBottom + rangeBtmHeight;
 		final SpreadsheetCtrl spreadsheetCtrl = ((SpreadsheetCtrl) _spreadsheet.getExtraCtrl());
 		//ZSS-1075: always load header info no matter hide the head or not(must cached in client side)
 		JSONObject mainBlock = spreadsheetCtrl.getRangeAttrs(sheet, SpreadsheetCtrl.Header.COLUMN, 
@@ -649,7 +653,7 @@ public class CellFetchCommandHelper{
 		mainBlock.put("dir", "west");
 		json.put("data", mainBlock);
 		
-		_lastleft = ce+1;
+		_lastleft = ce;
 		_lastright = blockRight;
 		_lasttop = blockTop;
 		_lastbottom = blockBottom;
@@ -673,11 +677,11 @@ public class CellFetchCommandHelper{
 		json.put("height", fetchHeight);
 
 		int rs = blockBottom + 1;
-		int re = rs + fetchHeight;
+		int re = blockBottom + fetchHeight;
 		json.put("top", rs);
 		json.put("left", blockLeft);
 		
-		int rangeBottom = Math.min(cacheRangeHeight > fetchHeight ? rs + cacheRangeHeight - 1 : re - 1, _spreadsheet.getCurrentMaxVisibleRows() - 1); //ZSS-1084
+		int rangeBottom = Math.min(cacheRangeHeight > fetchHeight ? rs + cacheRangeHeight - 1 : re, _spreadsheet.getCurrentMaxVisibleRows() - 1); //ZSS-1084
 		rangeLeft = rangeLeft > 0 && rangeLeft < blockLeft ? rangeLeft : blockLeft;
 		cacheRight = Math.max(blockRight, cacheRight);
 		final SpreadsheetCtrl spreadsheetCtrl = ((SpreadsheetCtrl) _spreadsheet.getExtraCtrl());
@@ -690,7 +694,7 @@ public class CellFetchCommandHelper{
 		_lastleft = blockLeft;
 		_lastright = blockRight;
 		_lasttop = blockTop;
-		_lastbottom = re-1;
+		_lastbottom = re;
 		
 		// process frozen left
 		int fzc = spreadsheetCtrl.getFreezeInfoLoader().getColumnFreeze(sheet);
@@ -712,11 +716,14 @@ public class CellFetchCommandHelper{
 		json.put("height", fetchHeight);
 		
 		int rs = blockTop - 1;
-		int re = rs - fetchHeight;
-		json.put("top", re + 1);
+		int re = blockTop - fetchHeight;
+		if (rs < 0) rs = 0;
+		if (re < 0) re = 0;
+		json.put("top", re);
 		json.put("left", blockLeft);
 		
-		int rangeTop = cacheRangeHeight > fetchHeight ? rs - cacheRangeHeight - 1 : re + 1;
+		int rangeTop = cacheRangeHeight > fetchHeight ? rs - cacheRangeHeight + 1 : re;
+		if (rangeTop < 0) rangeTop = 0;
 		rangeLeft = rangeLeft > 0 && rangeLeft < blockLeft ? rangeLeft : blockLeft;
 //		rangeRight = Math.min(Math.max(blockRight, rangeRight), _spreadsheet.getMaxcolumns() - 1);
 		rangeRight = Math.max(blockRight, rangeRight);
@@ -729,7 +736,7 @@ public class CellFetchCommandHelper{
 		
 		_lastleft = blockLeft;
 		_lastright = blockRight;
-		_lasttop = re + 1;
+		_lasttop = re;
 		_lastbottom = blockBottom;
 		
 		// process frozen left

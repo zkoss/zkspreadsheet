@@ -811,7 +811,7 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 			if (ar.containsRange(top, right + 1, bottom, rCol0)) {
 				this.create_('east', top, right + 1, bottom, rCol0);
 				createFromCache = true;
-			} else if (ar.rect.right > right + 1 && ar.rect.right < rCol0 && ar.containsRange(top, right + 1, bottom, ar.rect.right)) {
+			} else if (ar.rect.right >= right + 1 && ar.rect.right < rCol0 && ar.containsRange(top, right + 1, bottom, ar.rect.right)) {
 				//create partial east from cache
 				this.create_('east', top, right + 1, bottom, ar.rect.right);
 				createFromCache = true;
@@ -855,7 +855,7 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 			if (ar.containsRange(bottom + 1, left, bRow0, right)) {
 				this.create_('south', bottom + 1, left, bRow0, right);
 				createFromCache = true;
-			} else if (ar.rect.bottom > bottom + 1 && ar.rect.bottom < bRow0 && ar.containsRange(bottom + 1, left, ar.rect.bottom, right)) {
+			} else if (ar.rect.bottom >= bottom + 1 && ar.rect.bottom < bRow0 && ar.containsRange(bottom + 1, left, ar.rect.bottom, right)) {
 				//create partial south from cache
 				this.create_('south', bottom + 1, left, ar.rect.bottom, right);
 				createFromCache = true;
@@ -877,7 +877,7 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 			if (ar.containsRange(tRow0, left, top - 1, right)) {
 				this.create_('north', tRow0, left, top - 1, right);
 				createFromCache = true;
-			} else if (ar.rect.top > tRow0 && ar.rect.top < top - 1 && ar.containsRange(ar.rect.top, left, top - 1, right)) {
+			} else if (ar.rect.top > tRow0 && ar.rect.top <= top - 1 && ar.containsRange(ar.rect.top, left, top - 1, right)) {
 				//create partial north from cache
 				this.create_('north', ar.rect.top, left, top - 1, right);
 				createFromCache = true;
@@ -937,10 +937,10 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 			var fetchWidth = eastFetchWidth > 0 ? eastFetchWidth : westFetchWidth,
 				fetchHeight = southFetchHeight > 0  ? southFetchHeight : northFetchHeight;
 				
-			if (fetchWidth < 0)
-				fetchWidth = 0;
-			if (fetchHeight < 0)
-				fetchHeight = 0;
+//			if (fetchWidth < 0)
+//				fetchWidth = 0;
+//			if (fetchHeight < 0)
+//				fetchHeight = 0;
 			if (fetchHeight > 0 || fetchWidth > 0) {
 				this.loadstate = zss.MainBlockCtrl.LOADING;
 				this._sendOnCellFetch(token, "visible", "", -1, -1, fetchWidth, fetchHeight, vrange);
