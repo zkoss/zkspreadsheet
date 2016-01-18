@@ -1355,6 +1355,12 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 			this._cacheCtrl.releaseCache(sheetId);
 		}
 	},
+	//ZSS-1181
+	_releaseSelectedCache: function (sheetId) {
+		if(this._cacheCtrl){
+			this._cacheCtrl.releaseSelectedCache(sheetId);
+		}
+	},
 	sendAU_: function (evt, timeout, opts) {
 		if (evt.name == 'onCtrlKey') {
 			//client side need to know whether server do paste action at server side or not

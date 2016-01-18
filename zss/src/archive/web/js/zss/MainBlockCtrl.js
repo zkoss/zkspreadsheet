@@ -70,13 +70,13 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 	 * @param string dir direction
 	 * @param int prune reserve when prune, -1 means don't prune, 0 means don't reserve 
 	 */
-	_createCellsIfCached: function (dir, size, jump) {
+	_createCellsIfCached: function (dir, size, jump, vr0) {
 		var sheet = this.sheet,
 			wgt = sheet._wgt,
 			cr = this.range,
 			maxCellSize = wgt.getMaxRenderedCellSize(),
 			ar = wgt._cacheCtrl.getSelectedSheet(),
-			vr = zss.SSheetCtrl._getVisibleRange(sheet);
+			vr = vr0 || zss.SSheetCtrl._getVisibleRange(sheet); //ZSS-1181
 		switch (dir) {
 		case 'south':
 			var tRow = cr.bottom + 1,
@@ -809,11 +809,13 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 				fRow = sheet._wgt.getRowFreeze(),
 				rCol0 = this._getEastCol(rCol);  //ZSS-1174: precreate client side cells
 			if (ar.containsRange(top, right + 1, bottom, rCol0)) {
-				this.create_('east', top, right + 1, bottom, rCol0);
+//				this.create_('east', top, right + 1, bottom, rCol0);
+				this._createCellsIfCached("east", rCol0 - right, null, vrange); //ZSS-1181
 				createFromCache = true;
 			} else if (ar.rect.right >= right + 1 && ar.rect.right < rCol0 && ar.containsRange(top, right + 1, bottom, ar.rect.right)) {
 				//create partial east from cache
-				this.create_('east', top, right + 1, bottom, ar.rect.right);
+//				this.create_('east', top, right + 1, bottom, ar.rect.right);
+				this._createCellsIfCached("east", ar.rect.right - right, null, vrange); //ZSS-1181
 				createFromCache = true;
 			}
 			if (createFromCache) { //after create cell from cache, range's value may changed
@@ -831,11 +833,13 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 				fRow = sheet._wgt.getRowFreeze(),
 				lCol0 = this._getWestCol(lCol);  //ZSS-1174: precreate client side cells
 			if (ar.containsRange(top, lCol0, bottom, left - 1)) {
-				this.create_('west', top, lCol0, bottom, left - 1);
+//  			this.create_('west', top, lCol0, bottom, left - 1);
+				this._createCellsIfCached("west", left - lCol0, null, vrange); //ZSS-1181
 				createFromCache = true;
 			} else if (ar.rect.left > lCol0 && ar.rect.left <= left - 1 && ar.containsRange(top, ar.rect.left, bottom, left - 1)) {
 				//create partial west from cache
-				this.create_('west', top, ar.rect.left, bottom, left - 1);
+//				this.create_('west', top, ar.rect.left, bottom, left - 1);
+				this._createCellsIfCached("west", left - ar.rect.left, null, vrange); //ZSS-1181
 				createFromCache = true;
 			}
 			if (createFromCache) { //after create cell from cache, range's value may changed
@@ -853,11 +857,13 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 				fCol = sheet._wgt.getColumnFreeze(),
 				bRow0 = this._getSouthRow(bRow); //ZSS-1174: precreate client side cells
 			if (ar.containsRange(bottom + 1, left, bRow0, right)) {
-				this.create_('south', bottom + 1, left, bRow0, right);
+//				this.create_('south', bottom + 1, left, bRow0, right);
+				this._createCellsIfCached("south", bRow0 - bottom, null, vrange); //ZSS-1181
 				createFromCache = true;
 			} else if (ar.rect.bottom >= bottom + 1 && ar.rect.bottom < bRow0 && ar.containsRange(bottom + 1, left, ar.rect.bottom, right)) {
 				//create partial south from cache
-				this.create_('south', bottom + 1, left, ar.rect.bottom, right);
+//				this.create_('south', bottom + 1, left, ar.rect.bottom, right);
+				this._createCellsIfCached("south", ar.rect.bottom - bottom, null, vrange); //ZSS-1181
 				createFromCache = true;
 			}
 			if (createFromCache) {
@@ -875,11 +881,13 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 				fCol = sheet._wgt.getColumnFreeze(),
 				tRow0 = this._getNorthRow(tRow); //ZSS-1174: precreate client side cells
 			if (ar.containsRange(tRow0, left, top - 1, right)) {
-				this.create_('north', tRow0, left, top - 1, right);
+//				this.create_('north', tRow0, left, top - 1, right);
+				this._createCellsIfCached("north", top - tRow0, null, vrange); //ZSS-1181
 				createFromCache = true;
 			} else if (ar.rect.top > tRow0 && ar.rect.top <= top - 1 && ar.containsRange(ar.rect.top, left, top - 1, right)) {
 				//create partial north from cache
-				this.create_('north', ar.rect.top, left, top - 1, right);
+//				this.create_('north', ar.rect.top, left, top - 1, right);
+				this._createCellsIfCached("north", top - ar.rect.top, null, vrange); //ZSS-1181
 				createFromCache = true;
 			}
 			if (createFromCache) {

@@ -11,6 +11,7 @@ ZK Spreadsheet 3.8.3
   ZSS-1162 The format of conditional formatting is changed after exporting
   ZSS-1161 a conditional formatting rule's "show icon only" is checked after exporting
   ZSS-1175 Deleting columns doesn't remove a merged cell with auto refresh disabled
+  ZSS-1181 Notify a loaded range is slower than notify an affected range
   
 ** Upgrade Notes
 

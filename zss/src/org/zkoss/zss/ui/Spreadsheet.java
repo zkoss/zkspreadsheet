@@ -3996,6 +3996,12 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		public void syncMergeCells(SSheet sheet) {
 			removeMergeMatrixHelper(sheet);
 			
+			//ZSS-1168: so will NOT sync merge if NOT current selected sheet
+			if (!getSelectedSSheet().equals(sheet)){ 
+				releaseClientCache(sheet.getId());
+				return;
+			}
+			
 			MergeMatrixHelper mmhelper = this.getMergeMatrixHelper(sheet);
 			JSONObj results = new JSONObj();
 			results.setData("type", "sync");
@@ -6865,5 +6871,51 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		final SName docSelectedName = book.getInternalBook().getNameByName(ref, rawSheetName);
 		
 		return new Object[] {docSelectedName, sheetScope, ref};
+	}
+	
+	//ZSS-1181
+	/**
+	 * NotifyChange the currently loaded area and freeze area if exists.
+	 * @since 3.8.3
+	 */
+	public void notifyLoadedAreaChange() {
+		SpreadsheetCtrl ssctrl = (SpreadsheetCtrl) this.getExtraCtrl();
+		notifyAreaChange(ssctrl.getLoadedArea());
+	}
+	
+	//ZSS-1181
+	/**
+	 * NotifyChange the currently visible area and freeze area if exists.
+	 * @since 3.8.3
+	 */
+	public void notifyVisibleAreaChange() {
+		SSheet currentSheet = getSelectedSSheet(); 
+		response(new AuInvoke(this, "_releaseSelectedCache", currentSheet.getId()));
+		SpreadsheetCtrl ssctrl = (SpreadsheetCtrl) this.getExtraCtrl();
+		notifyAreaChange(ssctrl.getVisibleArea());
+	}
+	
+	//ZSS-1181
+	private void notifyAreaChange(AreaRef area) {
+		final int l = area.getColumn();
+		final int t = area.getRow();
+		final int r = area.getLastColumn();
+		final int b = area.getLastRow();
+		
+		SpreadsheetCtrl ssctrl = (SpreadsheetCtrl) this.getExtraCtrl();
+		FreezeInfoLoader freezeInfo = ssctrl.getFreezeInfoLoader();
+		Sheet sheet = this.getSelectedSheet();
+		Ranges.range(sheet, area).notifyChange();
+		final int col = freezeInfo.getColumnFreeze(sheet);
+		final int row = freezeInfo.getRowFreeze(sheet);
+		if (row >= 0 && col >= 0 && t != 0 && l != 0) { // corner
+			Ranges.range(sheet, 0, 0, row, col).notifyChange();
+		} 
+		if (row >= 0 && t != 0) { // top panel
+			Ranges.range(sheet, 0, l, row, r).notifyChange();
+		}
+		if (col >= 0 && l != 0) { // left panel
+			Ranges.range(sheet, t, 0, b, col).notifyChange();
+		}
 	}
 }

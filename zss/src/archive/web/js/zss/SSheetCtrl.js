@@ -785,7 +785,12 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 				cacheSheet = cCtl.getSheetBy(shtId),
 				selSheet = cCtl.getSelectedSheet(),
 				ls = this.getLastSelection();
-			if (cacheSheet) {
+			//ZSS-1181
+			if (!selSheet && !cacheSheet) {
+				cCtl.setSelectedSheet(data);
+				wgt._triggerContentsChanged = true;
+				this.sendSyncblock(true);
+			} else if (cacheSheet) {
 				cacheSheet.update(data); // update cell model 
 				if (cacheSheet.id == selSheet.id) {//update current sheet
 					// ZSS-392: update every panel separately 
@@ -1849,7 +1854,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		//ZSS-807: link to document(i.e. type == 2) must go thru server
 		wgt.fire('onCellHyperlink', data, type == 2 || wgt.isListen('onCellHyperlink') ? {toServer: true} : null);
 	},
-	//ZSS-1116: sync text height calculated in client to server
+	//ZSS-1116: sync text height calculated in client to server (see Cell.js)
 	_sendOnTextHeight: function (row, col, height) {
 		var wgt = this._wgt;
 		wgt.fire('onZSSTextHeight', {sheetId: this.serverSheetId, row: row, col : col, height: height}, {toServer: true});
@@ -3252,7 +3257,9 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		var spcmp = this.sp.comp,
 			dp = this.dp,
 			brange = this.activeBlock.range,
-			rect = this._wgt._cacheCtrl.getSelectedSheet().rect;
+			cachesheet = this._wgt._cacheCtrl.getSelectedSheet();
+		if (!cachesheet) return; //ZSS-1181: sometimes it can be null; see Spreadsheet.java#notifyVisibleRangeChange()
+		var rect = this._wgt._cacheCtrl.getSelectedSheet().rect;
 
 		this._wgt.fire('onZSSSyncBlock', {
 			sheetId: this.sheetid,

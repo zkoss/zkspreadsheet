@@ -128,8 +128,9 @@ zss.DeferLoader = zk.$extends(zk.Object, {
 		var vrng = activeBlock.range,
 			maxRow = wgt.getMaxRows() - 1,
 			maxCol = wgt.getMaxColumns() - 1,
-			ar = wgt._cacheCtrl.getSelectedSheet(),
-			rect = ar.rect,
+			ar = wgt._cacheCtrl.getSelectedSheet();
+		if (!ar) return false; //ZSS-1181: sometimes it would be null; see Spreadsheet.java#notifyVisibleRangeChange()
+		var	rect = ar.rect,
 			size = ((rect.right - rect.left + 1) * (rect.bottom - vrng.bottom + 1));
 		switch (dir) {
 		case 'south':
