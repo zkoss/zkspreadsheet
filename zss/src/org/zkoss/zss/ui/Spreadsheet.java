@@ -379,6 +379,10 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	private boolean _keepCellSelection = 
 		!"false".equalsIgnoreCase(Library.getProperty("org.zkoss.zss.ui.keepCellSelection", "true"));
 	
+	//ZSS-1184
+	// default to false
+	private boolean _ignoreAutoHeight = false;
+	
 	public Spreadsheet() {
 		this.addEventListener("onStartEditingImpl", new SerializableEventListener() {
 			private static final long serialVersionUID = 2401696322103957589L;
@@ -1826,6 +1830,10 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			renderer.render("dataValidations", (String) null);
 		}
 
+		//ZSS-1184
+		if (_ignoreAutoHeight) {
+			renderer.render("ignoreAutoHeight", _ignoreAutoHeight);
+		}
 	}
 	
 	private Boolean isColorPickerExUsed() {
@@ -6916,6 +6924,34 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		}
 		if (col >= 0 && l != 0) { // left panel
 			Ranges.range(sheet, t, 0, b, col).notifyChange();
+		}
+	}
+	
+	//ZSS-1184
+	/**
+	 * Whether ignore row's autoHeight calculation. Default to false. 
+	 * Calculating text height and doing row's autoHeight adjustment is an 
+	 * expensive operation. In application, if your cell height is fixed then 
+	 * you can set this flag to true to avoid ZK Spreadsheet to calculate 
+	 * this information and thus speed up your application a bit.
+	 * 
+	 * However, if you need ZK Spreadsheet to calculate row's autoHeight, you 
+	 * have to keep it at false.
+	 * 
+	 * Though not encouraged, note that whenever you set it from true to false, 
+	 * Spreadsheet will invalidate itself to gurantee the autocalculation works.
+	 * 
+	 * @param b
+	 * @since 3.8.3
+	 */
+	public void setIgnoreAutoHeight(boolean b) {
+		if (_ignoreAutoHeight != b) {
+			_ignoreAutoHeight = b;
+			if (!b) {
+				invalidate();
+			} else {
+				smartUpdate("ignoreAutoHeight", b);
+			}
 		}
 	}
 }

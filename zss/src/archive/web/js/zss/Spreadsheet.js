@@ -204,7 +204,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 	}
 	
 /**
- * Spreadsheet is a is a rich ZK Component to handle EXCEL like behavior
+ * Spreadsheet is a rich ZK Component to handle EXCEL like behavior
  */
 var Spreadsheet = 
 zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
@@ -722,6 +722,8 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 		colorPickerExUsed: null,
 		//ZSS-1044: Whether keep cell selection box when lost focus
 		keepCellSelection: false,
+		//ZSS-1184: Whether ignore calculating auto height
+		ignoreAutoHeight: false,
 		//ZSS-1082: end user be to increase max visible rows/columns
 		/**
 		 * Sets whether show add-max-visible-row button
