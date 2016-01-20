@@ -201,13 +201,28 @@ zss.CellBlockCtrl = zk.$extends(zk.Widget, {
 	/**
 	 * Update cells
 	 */
-	update_: function (tRow, lCol, bRow, rCol) {
+	update_: function (tRow, lCol, bRow, rCol, updateSrc) {
 		for (var r = tRow; r <= bRow; r++) {
+			if (updateSrc) { //ZSS-1181
+				this._updateRowCacheSrc(r);
+			}
 			for (var c = lCol; c <= rCol; c++) {
 				var cell = this.getCell(r, c);
 				if (cell)
-					cell.update_();
+					cell.update_(updateSrc);
 			}
+		}
+	},
+	//ZSS-1181
+	_updateRowCacheSrc: function (row) {
+		var range = this.range;
+		if(!range || row < range.top || row > range.bottom)
+			return;
+		
+		var cctrl = this.sheet._wgt._cacheCtrl,
+			csrc = cctrl ? cctrl.getSelectedSheet() : null;
+		if (csrc) {
+			this.rows[row - range.top]._updateCacheSrc(csrc);
 		}
 	},
 	/**

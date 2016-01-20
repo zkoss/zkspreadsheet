@@ -788,6 +788,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			//ZSS-1181
 			if (!selSheet && !cacheSheet) {
 				cCtl.setSelectedSheet(data);
+				this.update_(data, true); // update cell DOM and update cached src (ZSS-1181)
 				wgt._triggerContentsChanged = true;
 				this.sendSyncblock(true);
 			} else if (cacheSheet) {
@@ -2490,25 +2491,25 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 	/**
 	 * Update cells
 	 */
-	update_: function (data) {
+	update_: function (data, updateSrc) { //ZSS-1181
 		var cb = this.cp.block;
 		var tb = this.tp.block;
 		var lb = this.lp.block;
 		var d;
 
 		// ZSS-392: update cells separately (data panel and freeze panels)
-		this.activeBlock.update_(data.t, data.l, data.b, data.r);
+		this.activeBlock.update_(data.t, data.l, data.b, data.r, updateSrc); //ZSS-1181
 		if (cb && data.cornerFrozen) {
 			d = data.cornerFrozen;
-			cb.update_(d.t, d.l, d.b, d.r);
+			cb.update_(d.t, d.l, d.b, d.r, updateSrc); //ZSS-1181
 		}
 		if (tb && data.topFrozen) {
 			d = data.topFrozen;
-			tb.update_(d.t, d.l, d.b, d.r);
+			tb.update_(d.t, d.l, d.b, d.r, updateSrc); //ZSS-1181
 		}
 		if (lb && data.leftFrozen) {
 			d = data.leftFrozen;
-			lb.update_(d.t, d.l, d.b, d.r);
+			lb.update_(d.t, d.l, d.b, d.r, updateSrc); //ZSS-1181
 		}
 		
 		/* ZSS-169: prepare client side paste src when user set selection by drag cells 

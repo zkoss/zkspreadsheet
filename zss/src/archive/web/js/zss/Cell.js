@@ -137,11 +137,16 @@ zss.Cell = zk.$extends(zk.Widget, {
 		this.block = block;
 		this.r = row;
 		this.c = col;
+		
+		this._updateCacheSrc(src);
+	},
+	//ZSS-1181
+	_updateCacheSrc: function (src) {
 		this.src = src;
 		
-		var	cellData = src.getRow(row).getCell(col),
-			colHeader = src.columnHeaders[col],
-			rowHeader = src.rowHeaders[row];
+		var	cellData = src.getRow(this.r).getCell(this.c),
+			colHeader = src.columnHeaders[this.c],
+			rowHeader = src.rowHeaders[this.r];
 		this.text = cellData.text || '';
 		this.indention = cellData.indention;
 		if (colHeader && rowHeader) {
@@ -149,8 +154,8 @@ zss.Cell = zk.$extends(zk.Widget, {
 		}
 		this.edit = cellData.editText ? cellData.editText : '';
 		this.hastxt = !!this.text;
-		this.zsw = src.getColumnWidthId(col);
-		this.zsh = src.getRowHeightId(row);
+		this.zsw = src.getColumnWidthId(this.c);
+		this.zsh = src.getRowHeightId(this.r);
 		this.lock = cellData.lock;
 		this.cellType = cellData.cellType;
 		
@@ -355,7 +360,14 @@ zss.Cell = zk.$extends(zk.Widget, {
 	/**
 	 * Update cell
 	 */
-	update_: function () {
+	update_: function (updateSrc) {
+		if (updateSrc) { //ZSS-1181
+			var cctl = this.sheet._wgt._cacheCtrl,
+				csrc = cctl ? cctl.getSelectedSheet() : null;
+			if (csrc) {
+				this._updateCacheSrc(csrc);
+			}
+		}
 		var r = this.r,
 			c = this.c,
 			data = this.src.getRow(r).getCell(c),

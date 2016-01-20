@@ -29,13 +29,18 @@ zss.Row = zk.$extends(zk.Widget, {
 		
 		this.sheet = sheet; //an object of zss.SSheetCtrl
 		this.block = block;
-		this.src = src;
+		
 		this.r = row;
 		
-		this.zsh = src.getRowHeightId(row); // an ID to retrieve the row's custom height from the pool (this.sheet.custRowHeight)
 		this.cells = [];
 		this.wrapedCells = [];
-		
+
+		this._updateCacheSrc(src);
+	},
+	//ZSS-1181
+	_updateCacheSrc: function (src) {
+		this.src = src;
+		this.zsh = src.getRowHeightId(this.r); // an ID to retrieve the row's custom height from the pool (this.sheet.custRowHeight)
 	},
 	bind_: function (desktop, skipper, after) {
 		this.$supers(zss.Row, 'bind_', arguments);//after bind cells, may need to process wrap height
