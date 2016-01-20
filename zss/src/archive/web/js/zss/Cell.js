@@ -137,16 +137,11 @@ zss.Cell = zk.$extends(zk.Widget, {
 		this.block = block;
 		this.r = row;
 		this.c = col;
-		
-		this._updateCacheSrc(src);
-	},
-	//ZSS-1181
-	_updateCacheSrc: function (src) {
 		this.src = src;
 		
-		var	cellData = src.getRow(this.r).getCell(this.c),
-			colHeader = src.columnHeaders[this.c],
-			rowHeader = src.rowHeaders[this.r];
+		var	cellData = src.getRow(row).getCell(col),
+			colHeader = src.columnHeaders[col],
+			rowHeader = src.rowHeaders[row];
 		this.text = cellData.text || '';
 		this.indention = cellData.indention;
 		if (colHeader && rowHeader) {
@@ -154,8 +149,8 @@ zss.Cell = zk.$extends(zk.Widget, {
 		}
 		this.edit = cellData.editText ? cellData.editText : '';
 		this.hastxt = !!this.text;
-		this.zsw = src.getColumnWidthId(this.c);
-		this.zsh = src.getRowHeightId(this.r);
+		this.zsw = src.getColumnWidthId(col);
+		this.zsh = src.getRowHeightId(row);
 		this.lock = cellData.lock;
 		this.cellType = cellData.cellType;
 		
@@ -210,6 +205,10 @@ zss.Cell = zk.$extends(zk.Widget, {
 		
 		//ZSS-1171: CellImpl.java#_textWidth from cache to model
 		this._txtwd = cellData._txtwd;
+	},
+	//ZSS-1181
+	_updateCacheSrc: function (src) {
+		this.src = src;
 	},
 	getVerticalAlign: function () {
 		switch (this.valign) {
