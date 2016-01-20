@@ -1,0 +1,21 @@
+<zk>
+<vlayout hflex="1" vflex="1" apply="zss.issue.Composer1181">
+    <label multiline="true">
+Since 3.8.3
+1. scroll to show AW. 
+2. Open browser's devloper tool
+3. click 9013 to expand
+4. check the timing, it should be less than 400ms
+</label>
+	<spreadsheet id="sSpreadsheet" hflex="1" height="500px" 
+	clientCacheDisabled="false"
+	showToolbar="false"
+	showFormulabar="false"
+	showSheetbar="true"
+	showContextMenu="false"
+	maxRenderedCellSize="3000"
+    preloadColumnSize="30"
+    preloadRowSize="100"
+    ignoreAutoHeight="true"/>
+</vlayout>
+</zk>
