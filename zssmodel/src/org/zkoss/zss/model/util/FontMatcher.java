@@ -17,6 +17,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 
 package org.zkoss.zss.model.util;
 
+import java.io.Serializable;
 import java.util.*;
 import java.util.Map.Entry;
 
@@ -28,8 +29,8 @@ import org.zkoss.zss.model.SFont;
  * @author dennis
  * @since 3.5.0
  */
-public class FontMatcher {
-
+public class FontMatcher implements Serializable {
+	private static final long serialVersionUID = 86150086080697469L;
 	
 	Map<Property,Object> _criteria = new LinkedHashMap<Property, Object>();
 	

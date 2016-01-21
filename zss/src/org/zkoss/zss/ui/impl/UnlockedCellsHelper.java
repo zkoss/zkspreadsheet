@@ -31,8 +31,9 @@ import java.util.List;
  * @since 3.8.1
  */
 //ZSS-1085
-public class UnlockedCellsHelper {
-
+public class UnlockedCellsHelper implements Serializable {
+	private static final long serialVersionUID = -48813257946884503L;
+	
 	int _defaultSize;
 	private List<UnlockedCellInfo> _infos;
 

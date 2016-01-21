@@ -16,6 +16,8 @@ Copyright (C) 2014 Potix Corporation. All Rights Reserved.
 
 package org.zkoss.zss.api.model.impl;
 
+import java.io.Serializable;
+
 import org.zkoss.zss.api.model.Chart;
 import org.zkoss.zss.api.model.Validation;
 import org.zkoss.zss.model.SChart;
@@ -26,7 +28,9 @@ import org.zkoss.zss.model.SSheet;
  * @author henri
  *
  */
-public class ValidationImpl implements Validation {
+public class ValidationImpl implements Validation, Serializable {
+	private static final long serialVersionUID = -371159917241793588L;
+	
 	private ModelRef<SDataValidation> _validationRef;
 	
 	public ValidationImpl(ModelRef<SDataValidation> validationRef) {

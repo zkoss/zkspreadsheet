@@ -1,13 +1,16 @@
 package org.zkoss.zss.model;
 
+import java.io.Serializable;
+
 import org.zkoss.zss.model.util.Validations;
 
 /**
  * This class contains various paste options used for {@link SSheet#pasteCell(SheetRegion, CellRegion, PasteOption)}.
  * @since 3.5.0
  */
-public class PasteOption {
-
+public class PasteOption implements Serializable {
+	private static final long serialVersionUID = 6019654428559093817L;
+	
 	public enum PasteType{
 		ALL,/*BookHelper.INNERPASTE_FORMATS + BookHelper.INNERPASTE_VALUES_AND_FORMULAS + BookHelper.INNERPASTE_COMMENTS + BookHelper.INNERPASTE_VALIDATION;*/ 
 		ALL_EXCEPT_BORDERS,/*PASTE_ALL - BookHelper.INNERPASTE_BORDERS;*/

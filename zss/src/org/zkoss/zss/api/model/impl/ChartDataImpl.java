@@ -16,6 +16,8 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.api.model.impl;
 
+import java.io.Serializable;
+
 import org.zkoss.zss.api.model.ChartData;
 import org.zkoss.zss.model.chart.SChartData;
 /**
@@ -23,8 +25,9 @@ import org.zkoss.zss.model.chart.SChartData;
  * @author dennis
  * @since 3.0.0
  */
-public class ChartDataImpl implements ChartData{
-
+public class ChartDataImpl implements ChartData, Serializable {
+	private static final long serialVersionUID = 1762723976472490812L;
+	
 	private ModelRef<SChartData> _chartDataRef;
 	
 	public ChartDataImpl(ModelRef<SChartData> chartDataRef) {

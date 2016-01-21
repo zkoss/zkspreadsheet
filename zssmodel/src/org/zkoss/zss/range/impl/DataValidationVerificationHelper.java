@@ -16,7 +16,9 @@ Copyright (C) 2015 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.range.impl;
 
+import java.io.Serializable;
 import java.util.Date;
+
 import org.zkoss.poi.ss.usermodel.ZssContext;
 import org.zkoss.zss.model.InvalidDataValidationException;
 import org.zkoss.zss.model.SCellStyle;
@@ -34,7 +36,9 @@ import org.zkoss.zss.model.sys.input.InputResult;
  * @since 3.8.0
  */
 //ZSS-981
-public class DataValidationVerificationHelper {
+public class DataValidationVerificationHelper implements Serializable {
+	private static final long serialVersionUID = -5730156448383762080L;
+	
 	ValidationType _validationType;
 	boolean _ignoreBlank; 
 	OperatorType _operatorType;

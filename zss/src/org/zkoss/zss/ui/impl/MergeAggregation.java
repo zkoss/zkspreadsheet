@@ -16,6 +16,7 @@ Copyright (C) 2012 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.ui.impl;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -27,7 +28,8 @@ import org.zkoss.json.JSONObject;
  * @author sam
  *
  */
-public class MergeAggregation {
+public class MergeAggregation implements Serializable {
+	private static final long serialVersionUID = 4027477853452038589L;
 
 	private MergeMatrixHelper _helper;
 	

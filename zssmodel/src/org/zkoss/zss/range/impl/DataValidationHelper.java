@@ -16,6 +16,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.range.impl;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.Locale;
 
@@ -40,8 +41,9 @@ import org.zkoss.zss.model.sys.input.InputResult;
  * @author Dennis
  * @since 3.5.0
  */
-public class DataValidationHelper {
-
+public class DataValidationHelper implements Serializable {
+	private static final long serialVersionUID = 8830650650352922612L;
+	
 	private final SDataValidation _validation;
 	private final SSheet _sheet;
 	

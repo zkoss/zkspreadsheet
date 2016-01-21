@@ -16,6 +16,8 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.model.impl.sys;
 
+import java.io.Serializable;
+
 import org.zkoss.zss.model.SCell.CellType;
 import org.zkoss.zss.model.sys.input.InputResult;
 /**
@@ -23,8 +25,9 @@ import org.zkoss.zss.model.sys.input.InputResult;
  * @author Dennis
  * @since 3.5.0
  */
-public class InputResultImpl implements InputResult{
-
+public class InputResultImpl implements InputResult, Serializable{
+	private static final long serialVersionUID = 4291145732915114386L;
+	
 	private String _editText = null;
 	private Object _value = null;
 	private CellType _type = CellType.BLANK;

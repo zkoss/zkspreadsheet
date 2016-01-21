@@ -13,6 +13,8 @@ Copyright (C) 2010 Potix Corporation. All Rights Reserved.
 
 package org.zkoss.zss.range.impl;
 
+import java.io.Serializable;
+
 import org.zkoss.zss.model.CellRegion;
 import org.zkoss.zss.model.SSheet;
 
@@ -22,7 +24,9 @@ import org.zkoss.zss.model.SSheet;
  * @author dennischen
  * @since 3.5.0
  */
-public class MergeUpdate {
+public class MergeUpdate implements Serializable {
+	private static final long serialVersionUID = 589681548806615909L;
+	
 	final private SSheet _sheet;
 	final private CellRegion _origMerge; //original merge range
 	final private CellRegion _merge; //merge range changed

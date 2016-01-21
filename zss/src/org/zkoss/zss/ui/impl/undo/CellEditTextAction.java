@@ -32,6 +32,7 @@ import org.zkoss.zss.api.model.Sheet;
  *
  */
 public class CellEditTextAction extends AbstractEditTextAction {
+	private static final long serialVersionUID = -4091069271521601441L;
 	
 	private final String _editText;
 	private final String[][] _editTexts;

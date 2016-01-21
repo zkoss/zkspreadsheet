@@ -16,6 +16,8 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.ui.impl;
 
+import java.io.Serializable;
+
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.event.Events;
 import org.zkoss.zss.ui.event.UndoableActionManagerEvent;
@@ -27,9 +29,9 @@ import org.zkoss.zss.ui.sys.UndoableActionManager;
  * @author dennis
  *
  */
-public class DummyUndoableActionManager implements UndoableActionManager {
+public class DummyUndoableActionManager implements UndoableActionManager, Serializable {
+	private static final long serialVersionUID = -7414869947164166004L;
 
-	
 	private Spreadsheet _spreadsheet;
 	
 	@Override

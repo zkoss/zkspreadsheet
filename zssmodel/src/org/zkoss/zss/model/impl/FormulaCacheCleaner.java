@@ -1,5 +1,6 @@
 package org.zkoss.zss.model.impl;
 
+import java.io.Serializable;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -12,7 +13,8 @@ import org.zkoss.zss.model.sys.dependency.Ref;
  * @author dennis
  * @since 3.5.0
  */
-public class FormulaCacheCleaner {
+public class FormulaCacheCleaner implements Serializable{
+	private static final long serialVersionUID = 1832529508263194818L;
 
 	static private ThreadLocal<FormulaCacheCleaner>  _current = new ThreadLocal<FormulaCacheCleaner>();
 	

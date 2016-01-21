@@ -16,6 +16,8 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.range.impl;
 
+import java.io.Serializable;
+
 import org.zkoss.poi.ss.usermodel.ZssContext;
 import org.zkoss.util.Locales;
 import org.zkoss.zss.model.SCell;
@@ -31,7 +33,9 @@ import org.zkoss.zss.range.SRange;
  * @author Dennis
  * @since 3.5.0
  */
-public class RangeHelperBase {
+public class RangeHelperBase implements Serializable{
+	private static final long serialVersionUID = 1611119134706736160L;
+	
 	protected final SRange range;
 	protected final SSheet sheet;
 	private FormatEngine _formatEngine;

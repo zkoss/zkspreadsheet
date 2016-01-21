@@ -18,6 +18,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
  */
 package org.zkoss.zss.ui.impl.undo;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -301,7 +302,9 @@ public class ReserveUtil {
 		return array.size()==0?null:array.toArray(new CellRegion[array.size()]);
 	}
 
-	public static class ReservedResult {
+	public static class ReservedResult implements Serializable {
+		private static final long serialVersionUID = -2246554370978004481L;
+		
 		private final int _reserveType;
 		private final SSheet _sheet;
 		private Map<Integer,ReservedRow> _rows = null;
@@ -467,7 +470,9 @@ public class ReserveUtil {
 		}
 	}
 	
-	public static class ReservedColumn {
+	public static class ReservedColumn implements Serializable {
+		private static final long serialVersionUID = 47651964378902990L;
+		
 		private int _index;
 		private SCellStyle _style;
 		private int _width;
@@ -499,7 +504,9 @@ public class ReserveUtil {
 		
 	}
 	
-	public static class ReservedRow {
+	public static class ReservedRow implements Serializable {
+		private static final long serialVersionUID = 8447463993307217267L;
+		
 		private int _index;
 		private Map<Integer,ReservedCell> cells;
 		private SCellStyle _style;
@@ -548,7 +555,9 @@ public class ReserveUtil {
 		
 	}
 	
-	public static class ReservedCell {
+	public static class ReservedCell implements Serializable {
+		private static final long serialVersionUID = 9009281980152721331L;
+		
 		private SCellStyle _style;
 		private ReservedCellContent _content;
 		int _columnIdx;
@@ -573,8 +582,9 @@ public class ReserveUtil {
 		
 	}
 	
-	public static class ReservedCellContent {
-
+	public static class ReservedCellContent implements Serializable {
+		private static final long serialVersionUID = 8802989924793650560L;
+		
 		CellType _type;
 		String _editText;
 		Object _value;

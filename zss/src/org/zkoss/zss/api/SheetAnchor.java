@@ -16,6 +16,8 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.api;
 
+import java.io.Serializable;
+
 import org.zkoss.zss.api.model.Chart;
 import org.zkoss.zss.api.model.Picture;
 
@@ -28,8 +30,9 @@ import org.zkoss.zss.api.model.Picture;
  * @see Range#addChart(SheetAnchor, org.zkoss.zss.api.model.ChartData, org.zkoss.zss.api.model.Chart.Type, org.zkoss.zss.api.model.Chart.Grouping, org.zkoss.zss.api.model.Chart.LegendPosition)
  * @since 3.0.0
  */
-public class SheetAnchor {
-
+public class SheetAnchor implements Serializable {
+	private static final long serialVersionUID = -5000604128739819965L;
+	
 	private int _row;
 	private int _column;
 	private int _lastRow;

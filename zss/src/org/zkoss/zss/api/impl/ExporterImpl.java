@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.Serializable;
 
 import org.zkoss.zss.api.AreaRef;
 import org.zkoss.zss.api.Exporter;
@@ -36,7 +37,9 @@ import org.zkoss.zss.range.SExporter;
  * @author dennis
  * @since 3.0.0
  */
-public class ExporterImpl implements Exporter {
+public class ExporterImpl implements Exporter, Serializable {
+	private static final long serialVersionUID = 7397284261685721810L;
+	
 	private SExporter _exporter;
 	public ExporterImpl(SExporter exporter){
 		if(exporter==null){

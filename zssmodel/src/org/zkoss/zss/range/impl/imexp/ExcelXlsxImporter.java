@@ -68,7 +68,9 @@ import org.zkoss.zss.model.impl.ConditionalFormattingImpl;
  * @author Hawk
  * @since 3.5.0
  */
-public class ExcelXlsxImporter extends AbstractExcelImporter{
+public class ExcelXlsxImporter extends AbstractExcelImporter {
+	private static final long serialVersionUID = -1531963712987770117L;
+	
 	private static final Logger logger = Logger.getLogger(ExcelXlsxImporter.class.getName());
 
 	@Override

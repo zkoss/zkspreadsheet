@@ -32,6 +32,7 @@ import org.zkoss.zss.model.SRichText.Segment;
  * @since 3.6.0
  */
 public class CellRichTextAction extends AbstractEditTextAction {
+	private static final long serialVersionUID = 2048936590673390771L;
 	
 	private final String _richText;
 	private final CellStyleApplier _applier;

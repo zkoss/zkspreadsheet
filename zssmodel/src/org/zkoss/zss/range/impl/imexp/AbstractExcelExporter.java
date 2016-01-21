@@ -39,6 +39,8 @@ import org.zkoss.zss.model.util.Strings;
  * @since 3.5.0
  */
 abstract public class AbstractExcelExporter extends AbstractExporter {
+	private static final long serialVersionUID = -453628222967064565L;
+
 	//Though there is customHeight defined in <sheetFormatPr>. However, it is 
 	//  only for empty rows; not rows with cells. For rows with cells, still 
 	//  have to specifies its height or it will use application's default row 

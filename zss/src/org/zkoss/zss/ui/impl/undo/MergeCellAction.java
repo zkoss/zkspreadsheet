@@ -29,6 +29,7 @@ import org.zkoss.zss.api.model.Sheet;
  *
  */
 public class MergeCellAction extends AbstractCellDataStyleAction {
+	private static final long serialVersionUID = 4263898015757568411L;
 	
 	private final boolean _accross;
 	

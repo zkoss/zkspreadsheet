@@ -45,7 +45,9 @@ import org.zkoss.zss.model.impl.AbstractBookAdv;
  * @author Pao
  * @since 3.5.0
  */
-public class ParsingBook implements FormulaParsingWorkbook, FormulaRenderingWorkbook {
+public class ParsingBook implements FormulaParsingWorkbook, FormulaRenderingWorkbook, Serializable {
+	private static final long serialVersionUID = 6254892443337634145L;
+
 	private static final Log logger = Log.lookup(ParsingBook.class.getName());
 
 	private SBook book;

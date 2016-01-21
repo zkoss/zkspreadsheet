@@ -12,6 +12,7 @@
 
 package org.zkoss.zss.model.impl;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,7 +25,9 @@ import org.zkoss.zss.model.SColorScale;
  * @author henri
  * @since 3.8.2
  */
-public class ColorScaleImpl implements SColorScale {
+public class ColorScaleImpl implements SColorScale, Serializable {
+	private static final long serialVersionUID = -3075404487398257945L;
+	
 	private List<SCFValueObject> valueObjects;
 	private List<SColor> colors;
 	

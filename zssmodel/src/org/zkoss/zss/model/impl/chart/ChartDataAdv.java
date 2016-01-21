@@ -26,5 +26,6 @@ import org.zkoss.zss.model.impl.LinkedModelObject;
  * @since 3.5.0
  */
 public abstract class ChartDataAdv implements SChartData,LinkedModelObject,Serializable{
+	private static final long serialVersionUID = 6891093233821098869L;
 
 }

@@ -18,6 +18,8 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.ui.impl.undo;
 
+import java.io.Serializable;
+
 import org.zkoss.zss.api.AreaRef;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.ui.sys.UndoableAction;
@@ -26,8 +28,9 @@ import org.zkoss.zss.ui.sys.UndoableAction;
  * @author dennis
  *
  */
-public class AggregatedAction implements UndoableAction {
-
+public class AggregatedAction implements UndoableAction, Serializable {
+	private static final long serialVersionUID = 3941250543039868977L;
+	
 	private final UndoableAction[] _actions;
 	private final String _label;
 	

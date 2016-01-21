@@ -1,0 +1,11 @@
+<vbox hflex="1" vflex="1" apply="zss.issue.Composer1179">
+	<label multiline="true">
+Since 3.8.3
+1. Press "Serialize" button, and you should NOT see any exception.
+2. If there is any exception, it is a bug.
+	</label>
+<button id="serialize" label="Serialize"/>
+	<spreadsheet id="ss" src="/issue3/book/1179_serialize.xlsx" maxVisibleRows="60" maxVisibleColumns="40"
+		hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
+		showFormulabar="true" />
+</vbox>

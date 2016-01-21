@@ -16,6 +16,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.model.impl;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,8 +39,9 @@ import org.zkoss.zss.range.impl.StyleUtil;
  * @author Dennis
  * @since 3.5.0
  */
-public class CellBuffer {
-	
+public class CellBuffer implements Serializable {
+	private static final long serialVersionUID = -364582164612926619L;
+
 	private boolean _null = true;;
 	
 	private CellType _type;

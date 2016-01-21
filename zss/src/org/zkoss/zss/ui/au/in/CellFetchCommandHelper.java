@@ -19,6 +19,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.ui.au.in;
 
 
+import java.io.Serializable;
 import java.util.Map;
 
 import org.zkoss.json.JSONObject;
@@ -43,7 +44,9 @@ import org.zkoss.zss.ui.sys.SpreadsheetInCtrl;
  * @author Dennis.Chen
  *
  */
-public class CellFetchCommandHelper{
+public class CellFetchCommandHelper implements Serializable {
+	private static final long serialVersionUID = -8772574024823251988L;
+
 	private static final Log log = Log.lookup(CellFetchCommandHelper.class);
 	
 	private Spreadsheet _spreadsheet;

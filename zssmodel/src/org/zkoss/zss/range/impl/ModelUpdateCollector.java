@@ -16,6 +16,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.range.impl;
 
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -35,7 +36,9 @@ import org.zkoss.zss.range.impl.ModelUpdate.UpdateType;
  * @author Dennis
  * @since 3.5.0
  */
-public class ModelUpdateCollector {
+public class ModelUpdateCollector implements Serializable{
+	private static final long serialVersionUID = 1310348139144036698L;
+
 	static ThreadLocal<ModelUpdateCollector> _current = new ThreadLocal<ModelUpdateCollector>();
 
 	private List<ModelUpdate> _updates;

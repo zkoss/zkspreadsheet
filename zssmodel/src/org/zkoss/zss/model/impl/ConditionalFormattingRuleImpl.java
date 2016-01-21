@@ -12,6 +12,7 @@
 
 package org.zkoss.zss.model.impl;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,7 +29,9 @@ import org.zkoss.zss.model.SIconSet;
  * 
  */
 //ZSS-1138
-public class ConditionalFormattingRuleImpl implements SConditionalFormattingRule {
+public class ConditionalFormattingRuleImpl implements SConditionalFormattingRule, Serializable {
+	private static final long serialVersionUID = 5733467761359067350L;
+	
 	private RuleType type;
 	private RuleOperator operator;
 	private Integer priority;

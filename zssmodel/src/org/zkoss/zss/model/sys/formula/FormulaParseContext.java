@@ -16,6 +16,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
  */
 package org.zkoss.zss.model.sys.formula;
 
+import java.io.Serializable;
 import java.util.Locale;
 
 import org.zkoss.zss.model.SBook;
@@ -29,7 +30,9 @@ import org.zkoss.zss.model.sys.dependency.Ref;
  * @author dennis
  * @since 3.5.0
  */
-public class FormulaParseContext extends AbstractContext {
+public class FormulaParseContext extends AbstractContext implements Serializable {
+	private static final long serialVersionUID = 156103193833822863L;
+
 	private final Ref _dependent;
 
 	private final SBook _book;

@@ -1,6 +1,7 @@
 package org.zkoss.zss.app.impl;
 
 import java.io.IOException;
+import java.io.Serializable;
 
 import org.zkoss.lang.Library;
 import org.zkoss.util.logging.Log;
@@ -9,7 +10,8 @@ import org.zkoss.zss.app.BookManager;
 import org.zkoss.zss.app.BookInfo;
 import org.zkoss.zss.app.BookRepository;
 
-public class BookManagerImpl implements BookManager {
+public class BookManagerImpl implements BookManager, Serializable {
+	private static final long serialVersionUID = -2811375696946379394L;
 	private static final Log logger = Log.lookup(BookManagerImpl.class.getName());
 	protected BookRepository repo;
 	

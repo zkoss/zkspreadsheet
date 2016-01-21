@@ -16,6 +16,8 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.api.model.impl;
 
+import java.io.Serializable;
+
 import org.zkoss.poi.ss.usermodel.ClientAnchor;
 import org.zkoss.zss.api.SheetAnchor;
 import org.zkoss.zss.api.model.Picture;
@@ -27,7 +29,8 @@ import org.zkoss.zss.model.ViewAnchor;
  * @author dennis
  * @since 3.0.0
  */
-public class PictureImpl implements Picture{
+public class PictureImpl implements Picture, Serializable {
+	private static final long serialVersionUID = 7816263162242619441L;
 	
 	private ModelRef<SSheet> _sheetRef;
 	private ModelRef<SPicture> _picRef;

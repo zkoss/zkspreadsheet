@@ -25,7 +25,8 @@ import java.io.Serializable;
  *
  */
 public class SequenceId implements Serializable{
-
+	private static final long serialVersionUID = -5829725371116318262L;
+	
 	int _last;
 	int _increase;
 	public SequenceId(int init,int increase){

@@ -16,6 +16,8 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.range.impl;
 
+import java.io.Serializable;
+
 import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.SBorder;
 import org.zkoss.zss.model.SCell;
@@ -30,8 +32,9 @@ import org.zkoss.zss.range.SRange.ApplyBorderType;
  * @author Dennis
  * @since 3.5.0
  */
-public class BorderHelper extends RangeHelperBase {
-
+public class BorderHelper extends RangeHelperBase implements Serializable {
+	private static final long serialVersionUID = 1936875730898900557L;
+	
 	static final short TOP = 0x01;
 	static final short BOTTOM = 0x02;
 	static final short LEFT = 0x04;

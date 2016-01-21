@@ -35,6 +35,7 @@ import org.zkoss.zss.ui.impl.undo.ReserveUtil.ReservedResult;
  *
  */
 public class DeleteCellAction extends AbstractUndoableAction {
+	private static final long serialVersionUID = -3233822438103730541L;
 	
 	private DeleteShift _shift;
 	private ReservedResult _reserve = null;

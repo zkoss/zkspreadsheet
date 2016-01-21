@@ -11,6 +11,8 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
  */
 package org.zkoss.zss.model.impl.sys.formula;
 
+import java.io.Serializable;
+
 import org.zkoss.poi.ss.SpreadsheetVersion;
 import org.zkoss.poi.ss.formula.EvaluationCell;
 import org.zkoss.poi.ss.formula.EvaluationName;
@@ -38,8 +40,9 @@ import org.zkoss.zss.model.impl.AbstractBookAdv;
  * modified from org.zkoss.poi.xssf.usermodel.XSSFEvaluationWorkbook
  * @author Josh Micich, Pao
  */
-public final class EvalBook implements EvaluationWorkbook, FormulaParsingWorkbook /* implements parsing book for ugly typecast in POI OperationEvaluationContext.getDynamicReference() */ {
-
+public final class EvalBook implements EvaluationWorkbook, FormulaParsingWorkbook,Serializable /* implements parsing book for ugly typecast in POI OperationEvaluationContext.getDynamicReference() */ {
+	private static final long serialVersionUID = 296252202526323617L;
+	
 	private SBook _nbook;
 	private IndexedUDFFinder _udfFinder = new IndexedUDFFinder(UDFFinder.DEFAULT);
 	private ParsingBook _parsingBook; // create new one when parsing new formula

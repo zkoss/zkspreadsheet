@@ -40,8 +40,9 @@ import org.zkoss.zss.range.SRange;
  * @author Dennis
  *
  */
-public class SetCellStyleHelper extends RangeHelperBase{
-
+public class SetCellStyleHelper extends RangeHelperBase {
+	private static final long serialVersionUID = 7100312833600659286L;
+	
 	SCellStyle _defaultStyle;
 	
 	public SetCellStyleHelper(SRange range) {

@@ -12,6 +12,7 @@ Copyright (C) 2010 Potix Corporation. All Rights Reserved.
 
 package org.zkoss.zss.range.impl.imexp;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,7 +22,8 @@ import java.util.Map;
  * @author henrichen
  *
  */
-/*package*/ class IndexedRGB {
+/*package*/ class IndexedRGB implements Serializable {
+	private static final long serialVersionUID = 5302925420858251283L;
 	private static final Map<Integer, IndexedRGB> IndexToRGB = new HashMap<Integer, IndexedRGB>();
 	private static final Map<IndexedRGB, Integer> RGBToIndex = new HashMap<IndexedRGB, Integer>();
 	

@@ -12,6 +12,7 @@
 
 package org.zkoss.zss.model.impl;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,7 +23,9 @@ import org.zkoss.zss.model.SIconSet;
  * @author henri
  * @since 3.8.2
  */
-public class IconSetImpl implements SIconSet {
+public class IconSetImpl implements SIconSet, Serializable {
+	private static final long serialVersionUID = 167905784918493054L;
+	
 	private IconSetType type;
 	private List<SCFValueObject> valueObjects;
 	private boolean percent;

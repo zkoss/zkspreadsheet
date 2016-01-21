@@ -17,6 +17,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 
 package org.zkoss.zss.model.util;
 
+import java.io.Serializable;
 import java.util.*;
 import java.util.Map.Entry;
 
@@ -28,8 +29,8 @@ import org.zkoss.zss.model.*;
  * @author dennis
  * @since 3.5.0
  */
-public class CellStyleMatcher {
-
+public class CellStyleMatcher implements Serializable {
+	private static final long serialVersionUID = 7519529397643898059L;
 	
 	Map<Property,Object> _criteria = new LinkedHashMap<Property, Object>();
 	

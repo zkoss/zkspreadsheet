@@ -16,6 +16,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.api.model.impl;
 
+import java.io.Serializable;
 import java.util.concurrent.locks.ReadWriteLock;
 
 import org.zkoss.zss.api.model.Book;
@@ -28,8 +29,9 @@ import org.zkoss.zss.range.impl.imexp.AbstractExcelImporter;
  * @author dennis
  * @since 3.0.0
  */
-public class BookImpl implements Book{
-
+public class BookImpl implements Book, Serializable {
+	private static final long serialVersionUID = -9005486925669208704L;
+	
 	private ModelRef<SBook> _bookRef;
 	private BookType _type;
 	

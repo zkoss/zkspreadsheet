@@ -12,6 +12,8 @@ Copyright (C) 2010 Potix Corporation. All Rights Reserved.
 
 package org.zkoss.poi.hssf.usermodel;
 
+import java.io.Serializable;
+
 import org.zkoss.poi.ddf.EscherContainerRecord;
 import org.zkoss.poi.hssf.record.EscherAggregate;
 import org.zkoss.poi.hssf.record.aggregates.BOFRecordAggregate;
@@ -22,7 +24,9 @@ import org.zkoss.poi.hssf.record.aggregates.BOFRecordAggregate;
  * @author henrichen
  * @author dennischen
  */
-public class HSSFPatriarchHelper {
+public class HSSFPatriarchHelper implements Serializable {
+	private static final long serialVersionUID = 2502267545564684052L;
+	
 	private HSSFPatriarch _patriarch;
 	
 	public HSSFPatriarchHelper(HSSFPatriarch patriarch) {

@@ -15,6 +15,7 @@ Copyright (C) 2011 Potix Corporation. All Rights Reserved.
 
 package org.zkoss.zss.range.impl.autofill;
 
+import java.io.Serializable;
 import java.util.Locale;
 
 import org.zkoss.zss.model.SCell;
@@ -24,7 +25,9 @@ import org.zkoss.zss.model.SCell;
  * @author henrichen
  *
  */
-/*package*/ class FullMonthStep implements Step {
+/*package*/ class FullMonthStep implements Step, Serializable {
+	private static final long serialVersionUID = -2664349309934924971L;
+	
 	private final CircularStep _innerStep;
 	private final int _type;
 	public FullMonthStep(int initial, int step, int type, int datatype, Locale locale) { //ZSS-69

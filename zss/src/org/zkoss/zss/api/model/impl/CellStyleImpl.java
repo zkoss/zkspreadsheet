@@ -16,6 +16,8 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.api.model.impl;
 
+import java.io.Serializable;
+
 import org.zkoss.zss.api.model.CellStyle;
 import org.zkoss.zss.api.model.Color;
 import org.zkoss.zss.model.SBook;
@@ -28,7 +30,8 @@ import org.zkoss.zss.model.SColor;
  * @author dennis
  * @since 3.0.0
  */
-public class CellStyleImpl implements CellStyle{
+public class CellStyleImpl implements CellStyle, Serializable {
+	private static final long serialVersionUID = -8871372867390897750L;
 	
 	protected ModelRef<SBook> _bookRef;
 	protected ModelRef<SCellStyle> _styleRef;

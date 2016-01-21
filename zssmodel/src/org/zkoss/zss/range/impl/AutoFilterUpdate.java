@@ -12,6 +12,8 @@
 
 package org.zkoss.zss.range.impl;
 
+import java.io.Serializable;
+
 import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.model.STable;
 
@@ -20,7 +22,9 @@ import org.zkoss.zss.model.STable;
  * @author henri
  * @since 3.8.0
  */
-public class AutoFilterUpdate {
+public class AutoFilterUpdate implements Serializable {
+	private static final long serialVersionUID = -2106926993711688444L;
+	
 	final SSheet sheet;
 	final STable table;
 	

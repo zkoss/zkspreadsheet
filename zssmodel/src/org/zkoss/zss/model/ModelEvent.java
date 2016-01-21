@@ -16,6 +16,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.model;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,7 +25,9 @@ import java.util.Map;
  * @author dennis
  * @since 3.5.0
  */
-public class ModelEvent {
+public class ModelEvent implements Serializable {
+	private static final long serialVersionUID = -3146584806063875161L;
+
 	private String _name;
 	
 	private Map<String,Object> data;

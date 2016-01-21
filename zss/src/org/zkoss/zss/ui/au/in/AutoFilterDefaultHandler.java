@@ -18,6 +18,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.ui.au.in;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Comparator;
@@ -61,8 +62,9 @@ import org.zkoss.zss.ui.Spreadsheet;
  * @author dennis
  *
  */
-/*package*/ class AutoFilterDefaultHandler {
-
+/*package*/ class AutoFilterDefaultHandler implements Serializable {
+	private static final long serialVersionUID = -8371978786540085707L;
+	
 	private FilterRowInfo blankRowInfo;
 	
 	/*package*/ AreaRef processFilter(Spreadsheet spreadsheet,Sheet sheet,int row, int col, int field) {

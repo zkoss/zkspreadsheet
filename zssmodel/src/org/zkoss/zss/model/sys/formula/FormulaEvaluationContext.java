@@ -16,6 +16,8 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
  */
 package org.zkoss.zss.model.sys.formula;
 
+import java.io.Serializable;
+
 import org.zkoss.xel.FunctionMapper;
 import org.zkoss.xel.VariableResolver;
 import org.zkoss.zss.model.SBook;
@@ -29,8 +31,9 @@ import org.zkoss.zss.model.sys.dependency.Ref;
  * @author dennis
  * @since 3.5.0
  */
-public class FormulaEvaluationContext extends AbstractContext {
-
+public class FormulaEvaluationContext extends AbstractContext implements Serializable {
+	private static final long serialVersionUID = 2411072362379525686L;
+	
 	private final SBook _book;
 	private final SSheet _sheet;
 	private final SCell _cell;

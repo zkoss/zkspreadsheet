@@ -16,6 +16,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.range.impl;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -36,8 +37,8 @@ import org.zkoss.zss.range.SRange;
  * @author Dennis
  *
  */
-public class ClearCellHelper extends RangeHelperBase{
-
+public class ClearCellHelper extends RangeHelperBase implements Serializable {
+	private static final long serialVersionUID = 1502958207878149903L;
 	SCellStyle _defaultStyle;
 	
 	public ClearCellHelper(SRange range) {

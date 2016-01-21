@@ -24,7 +24,7 @@ import java.io.Serializable;
  * @since 3.5.0
  */
 public class ViewAnchor implements Serializable {
-
+	private static final long serialVersionUID = -4107500339387716449L;
 	private int rowIndex;
 	private int columnIndex;
 	private int xOffset;

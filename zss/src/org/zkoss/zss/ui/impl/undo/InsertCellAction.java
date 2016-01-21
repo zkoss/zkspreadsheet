@@ -35,6 +35,7 @@ import org.zkoss.zss.api.model.Sheet;
  *
  */
 public class InsertCellAction extends AbstractUndoableAction {
+	private static final long serialVersionUID = 2494062898483762218L;
 	
 	InsertShift _shift;
 	InsertCopyOrigin _copyOrigin;

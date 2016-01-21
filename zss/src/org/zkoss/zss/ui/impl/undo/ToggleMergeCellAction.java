@@ -29,7 +29,8 @@ import org.zkoss.zss.api.model.Sheet;
  *
  */
 public class ToggleMergeCellAction extends AbstractCellDataStyleAction {
-	
+	private static final long serialVersionUID = 2517143762070769535L;
+
 	public ToggleMergeCellAction(String label,Sheet sheet,int row, int column, int lastRow,int lastColumn){
 		super(label,sheet,row,column,lastRow,lastColumn,RESERVE_ALL);
 	}

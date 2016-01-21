@@ -37,7 +37,8 @@ import org.zkoss.zss.range.SRange.SortDataOption;
  */
 //porting implementation from BookHelper.sort()
 public class SortHelper extends RangeHelperBase {
-
+	private static final long serialVersionUID = -7415497327961609453L;
+	
 	public static final int SORT_HEADER_NO  = 0;
 	public static final int SORT_HEADER_YES = 1;
 	static final Double ZERO = new Double(0);

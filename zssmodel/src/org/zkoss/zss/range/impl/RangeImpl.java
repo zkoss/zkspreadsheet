@@ -16,6 +16,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.range.impl;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -101,8 +102,9 @@ import org.zkoss.zss.range.impl.autofill.AutoFillHelper;
  * @author dennis
  * @since 3.5.0
  */
-public class RangeImpl implements SRange {
-
+public class RangeImpl implements SRange, Serializable {
+	private static final long serialVersionUID = -4398318214128960856L;
+	
 	private SBook _book;
 	private final LinkedHashSet<SheetRegion> _rangeRefs = new LinkedHashSet<SheetRegion>(2);
 

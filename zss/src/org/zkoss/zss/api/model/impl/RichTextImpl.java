@@ -16,6 +16,7 @@ Copyright (C) 2014 Potix Corporation. All Rights Reserved.
 
 package org.zkoss.zss.api.model.impl;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -31,7 +32,9 @@ import org.zkoss.zss.model.util.Validations;
  * @author henri
  *
  */
-public class RichTextImpl implements RichText {
+public class RichTextImpl implements RichText, Serializable {
+	private static final long serialVersionUID = 4459139353293789714L;
+	
 	final Book _book;
 	final SRichText _native;
 	

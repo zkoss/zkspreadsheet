@@ -29,6 +29,7 @@ import org.zkoss.zss.ui.impl.undo.ResizeHeaderAction.Type;
  *
  */
 public class HideHeaderAction extends AbstractUndoableAction {
+	private static final long serialVersionUID = 1589502605376615645L;
 
 	public enum Type{
 		ROW,COLUMN

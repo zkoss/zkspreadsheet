@@ -28,7 +28,7 @@ import org.zkoss.zss.model.SBook;
  * @author Hawk
  * @since 3.5.0
  */
-public class ExcelImportAdapter extends AbstractImporter{
+public class ExcelImportAdapter extends AbstractImporter {
 
 	@Override
 	public SBook imports(InputStream is, String bookName) throws IOException {

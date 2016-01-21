@@ -12,6 +12,7 @@
 
 package org.zkoss.zss.model.impl;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,8 +28,9 @@ import org.zkoss.zss.model.SSheet;
  * @author henri
  * @since 3.8.2
  */
-public class ConditionalFormattingImpl implements SConditionalFormatting {
-
+public class ConditionalFormattingImpl implements SConditionalFormatting, Serializable {
+	private static final long serialVersionUID = -2075561905182660069L;
+	
 	private SSheet sheet;
 	private List<CellRegion> regions;
 	private List<SConditionalFormattingRule> rules;

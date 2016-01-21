@@ -30,6 +30,7 @@ import org.zkoss.zss.api.model.Sheet;
  *
  */
 public class FontStyleAction extends AbstractCellDataStyleAction {
+	private static final long serialVersionUID = 5887976544738735541L;
 	
 	private final CellStyleApplier _fontStyleApplier;
 	

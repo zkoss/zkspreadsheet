@@ -16,6 +16,8 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.api.model.impl;
 
+import java.io.Serializable;
+
 import org.zkoss.zss.api.model.Hyperlink;
 import org.zkoss.zss.model.SHyperlink;
 
@@ -24,8 +26,9 @@ import org.zkoss.zss.model.SHyperlink;
  * @author dennis
  * @since 3.0.0
  */
-public class HyperlinkImpl implements Hyperlink{
-
+public class HyperlinkImpl implements Hyperlink, Serializable {
+	private static final long serialVersionUID = 2226546912816394855L;
+	
 	private ModelRef<SHyperlink> _linkRef;
 	private String _label;
 

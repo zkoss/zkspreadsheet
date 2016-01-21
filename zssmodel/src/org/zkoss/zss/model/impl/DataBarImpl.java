@@ -12,6 +12,7 @@
 
 package org.zkoss.zss.model.impl;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,7 +24,9 @@ import org.zkoss.zss.model.SDataBar;
  * @author henri
  *
  */
-public class DataBarImpl implements SDataBar {
+public class DataBarImpl implements SDataBar, Serializable {
+	private static final long serialVersionUID = -4969929958321921242L;
+	
 	private List<SCFValueObject> valueObjects;
 	private SColor color;
 	private Long minLength;

@@ -32,7 +32,8 @@ import org.zkoss.zss.ui.impl.undo.ReserveUtil.ReservedResult;
  * 
  */
 public class AutoFillCellAction extends Abstract2DCellDataStyleAction {
-
+	private static final long serialVersionUID = -1425828318191238422L;
+	
 	private final AutoFillType _fillType;
 	
 	public AutoFillCellAction(String label,Sheet sheet,int srcRow, int srcColumn, int srcLastRow,int srcLastColumn,

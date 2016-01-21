@@ -29,7 +29,8 @@ import org.zkoss.zss.api.model.Sheet;
  *
  */
 public class UnmergeCellAction extends AbstractCellDataStyleAction {
-	
+	private static final long serialVersionUID = 6792979645451224216L;
+
 	public UnmergeCellAction(String label,Sheet sheet,int row, int column, int lastRow,int lastColumn){
 		super(label,sheet,row,column,lastRow,lastColumn,RESERVE_ALL);
 	}

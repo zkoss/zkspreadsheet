@@ -16,6 +16,7 @@ Copyright (C) 2012 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.ui.impl;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -28,8 +29,9 @@ import org.zkoss.zss.model.SSheet;
  * @author sam
  *
  */
-public class ActiveRangeHelper {
-
+public class ActiveRangeHelper implements Serializable {
+	private static final long serialVersionUID = 4594859931532849803L;
+	
 	private HashMap<SSheet, AreaRef> activeRanges = new HashMap<SSheet, AreaRef>();
 	
 	public void setActiveRange(SSheet sheet, int tRow, int lCol, int bRow, int rCol) {

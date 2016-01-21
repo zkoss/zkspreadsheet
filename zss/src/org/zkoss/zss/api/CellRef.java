@@ -18,6 +18,8 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.api;
 
+import java.io.Serializable;
+
 import org.zkoss.zss.model.CellRegion;
 
 /**
@@ -25,8 +27,9 @@ import org.zkoss.zss.model.CellRegion;
  * @author Dennis.Chen
  * @since 3.0.0
  */
-public class CellRef {
-
+public class CellRef implements Serializable {
+	private static final long serialVersionUID = -4342014968249759723L;
+	
 	private int _row;
 	private int _column;
 	

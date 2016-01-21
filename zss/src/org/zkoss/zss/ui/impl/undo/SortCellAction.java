@@ -29,6 +29,7 @@ import org.zkoss.zss.api.model.Sheet;
  *
  */
 public class SortCellAction extends AbstractCellDataStyleAction {
+	private static final long serialVersionUID = 8544231680864460310L;
 	
 	private boolean _simpleMode;
 	private final boolean _desc;

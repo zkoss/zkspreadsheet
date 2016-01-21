@@ -32,8 +32,9 @@ import java.util.List;
  * @author Dennis.Chen
  * 
  */
-public class HeaderPositionHelper {
-
+public class HeaderPositionHelper implements Serializable {
+	private static final long serialVersionUID = 5465053151036240304L;
+	
 	int _defaultSize;
 	private List<HeaderPositionInfo> _infos;
 	//int[][] _customizedSize; //[0]: column/row index, [1]: width/height, [2]: column/row id

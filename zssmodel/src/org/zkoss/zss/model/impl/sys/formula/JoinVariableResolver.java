@@ -12,6 +12,7 @@ Copyright (C) 2010 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.model.impl.sys.formula;
 
+import java.io.Serializable;
 import java.util.LinkedHashSet;
 
 import org.zkoss.xel.VariableResolver;
@@ -23,7 +24,9 @@ import org.zkoss.xel.XelException;
  * 
  * @author henrichen
  */
-public class JoinVariableResolver implements VariableResolver {
+public class JoinVariableResolver implements VariableResolver, Serializable {
+	private static final long serialVersionUID = 2119132971065974484L;
+	
 	private LinkedHashSet<VariableResolver> _resolvers;
 	
 	public JoinVariableResolver() {

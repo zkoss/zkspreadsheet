@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.net.URL;
 
 import org.zkoss.zss.api.Importer;
@@ -34,7 +35,9 @@ import org.zkoss.zss.range.SImporter;
  * @author dennis
  * @since 3.0.0
  */
-public class ImporterImpl implements Importer{
+public class ImporterImpl implements Importer, Serializable {
+	private static final long serialVersionUID = 4040976617940828919L;
+	
 	private SImporter _importer;
 	public ImporterImpl(SImporter importer) {
 		this._importer = importer;

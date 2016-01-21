@@ -31,8 +31,8 @@ import org.zkoss.zss.api.model.Sheet;
  *
  */
 public class ClearCellAction extends AbstractCellDataStyleAction {
+	private static final long serialVersionUID = 3441368688115033569L;
 
-	
 	public enum Type{
 		CONTENT,
 		STYLE,

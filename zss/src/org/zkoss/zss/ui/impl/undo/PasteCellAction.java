@@ -30,7 +30,8 @@ import org.zkoss.zss.api.model.Sheet;
  * 
  */
 public class PasteCellAction extends AbstractCellDataStyleAction {
-
+	private static final long serialVersionUID = 603418025542199316L;
+	
 	protected final int _destRow,_destColumn,_destLastRow,_destLastColumn;
 	protected final int _reservedDestLastRow,_reservedDestLastColumn;
 	protected final Sheet _destSheet;

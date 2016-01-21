@@ -16,6 +16,7 @@ Copyright (C) 2012 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.ui.impl;
 
+import java.io.Serializable;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 
@@ -25,7 +26,8 @@ import org.zkoss.json.JSONArray;
  * @author sam
  *
  */
-public class StringAggregation {
+public class StringAggregation implements Serializable {
+	private static final long serialVersionUID = 8583756133481232469L;
 	
 	private LinkedHashMap<String, Integer> _values = new LinkedHashMap<String, Integer>();
 	

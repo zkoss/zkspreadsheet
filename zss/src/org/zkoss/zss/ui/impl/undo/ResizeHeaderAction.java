@@ -30,6 +30,7 @@ import org.zkoss.zss.api.model.Sheet;
  *
  */
 public class ResizeHeaderAction extends AbstractUndoableAction {
+	private static final long serialVersionUID = -4685070960700584779L;
 
 	public enum Type{
 		ROW,COLUMN

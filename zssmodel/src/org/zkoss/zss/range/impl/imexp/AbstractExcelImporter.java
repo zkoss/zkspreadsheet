@@ -69,7 +69,9 @@ import org.zkoss.zss.model.sys.formula.FormulaExpression;
  * @author Hawk
  * @since 3.5.0
  */
-abstract public class AbstractExcelImporter extends AbstractImporter {
+abstract public class AbstractExcelImporter extends AbstractImporter implements Serializable {
+	private static final long serialVersionUID = 6978036306999098019L;
+
 	private static final Log _logger = Log.lookup(AbstractExcelImporter.class);
 	
 	/**

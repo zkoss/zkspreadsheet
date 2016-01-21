@@ -11,6 +11,8 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
  */
 package org.zkoss.zss.model.impl.sys.formula;
 
+import java.io.Serializable;
+
 import org.zkoss.poi.ss.formula.EvaluationCell;
 import org.zkoss.poi.ss.formula.EvaluationSheet;
 import org.zkoss.poi.ss.usermodel.Cell;
@@ -29,8 +31,9 @@ import org.zkoss.zss.model.impl.AbstractSheetAdv;
  * @author Pao
  * @since 3.5.0
  */
-public class EvalSheet implements EvaluationSheet {
-
+public class EvalSheet implements EvaluationSheet, Serializable {
+	private static final long serialVersionUID = -4811427512834490081L;
+	
 	private SSheet _sheet;
 
 	public EvalSheet(SSheet sheet) {

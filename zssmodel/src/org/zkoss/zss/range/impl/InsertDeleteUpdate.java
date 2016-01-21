@@ -11,6 +11,8 @@ Copyright (C) 2014 Potix Corporation. All Rights Reserved.
  */
 package org.zkoss.zss.range.impl;
 
+import java.io.Serializable;
+
 import org.zkoss.zss.model.SSheet;
 
 /**
@@ -18,7 +20,9 @@ import org.zkoss.zss.model.SSheet;
  * @author Pao
  * @since 3.5.0
  */
-public class InsertDeleteUpdate {
+public class InsertDeleteUpdate implements Serializable {
+	private static final long serialVersionUID = -4132587300967530689L;
+	
 	private SSheet _sheet;
 	private boolean _inserted;
 	private boolean _row;

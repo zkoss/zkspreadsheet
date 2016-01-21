@@ -13,6 +13,8 @@ Copyright (C) 2010 Potix Corporation. All Rights Reserved.
 
 package org.zkoss.poi.hssf.usermodel;
 
+import java.io.Serializable;
+
 import org.zkoss.poi.hssf.model.InternalSheet;
 
 /**
@@ -21,7 +23,9 @@ import org.zkoss.poi.hssf.model.InternalSheet;
  * @author henrichen
  *
  */
-public class HSSFSheetHelper {
+public class HSSFSheetHelper implements Serializable {
+	private static final long serialVersionUID = 5876202784233013121L;
+	
 	private final HSSFSheet _sheet;
 	public HSSFSheetHelper(HSSFSheet sheet) {
 		_sheet = sheet;

@@ -16,6 +16,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.model.impl;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -49,7 +50,9 @@ import org.zkoss.zss.range.impl.StyleUtil;
  * @author Dennis
  * @since 3.5.0
  */
-public class PasteCellHelper { //ZSS-693: promote visibility
+//ZSS-693: promote visibility
+public class PasteCellHelper implements Serializable {
+	private static final long serialVersionUID = 1420865992143581147L;
 
 	private final SSheet _destSheet;
 	private final SBook _book;

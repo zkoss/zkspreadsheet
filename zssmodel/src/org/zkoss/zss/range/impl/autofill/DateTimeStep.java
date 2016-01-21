@@ -15,11 +15,13 @@ Copyright (C) 2011 Potix Corporation. All Rights Reserved.
 
 package org.zkoss.zss.range.impl.autofill;
 
+import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
 
 
 //import org.zkoss.poi.ss.usermodel.DateUtil;
+
 
 
 
@@ -33,7 +35,9 @@ import org.zkoss.zss.model.sys.EngineFactory;
  */
 //ZSS-541 date autofill timestamp is incorrect. 
 //use calendar to calculate date step to fix 
-public class DateTimeStep implements Step {
+public class DateTimeStep implements Step, Serializable {
+	private static final long serialVersionUID = -4054582264807792037L;
+	
 	private final Calendar _cal = Calendar.getInstance(); //TODO timezone?
 	private long _current;
 	private final int _yearStep;

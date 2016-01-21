@@ -15,6 +15,7 @@ Copyright (C) 2011 Potix Corporation. All Rights Reserved.
 
 package org.zkoss.zss.model.impl.sys;
 
+import java.io.Serializable;
 import java.util.Locale;
 
 import org.zkoss.util.Locales;
@@ -23,7 +24,9 @@ import org.zkoss.util.Locales;
  * @author henrichen
  *
  */
-public class CircularData {
+public class CircularData implements Serializable {
+	private static final long serialVersionUID = -4278445336275151609L;
+	
 	public static final int UPPER = 2;
 	public static final int LOWER = 1;
 	public static final int NORMAL = 0;

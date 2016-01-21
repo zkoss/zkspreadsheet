@@ -107,7 +107,8 @@ import org.zkoss.zss.model.sys.formula.FunctionResolverFactory;
  * A formula engine implemented by ZPOI
  * @author Pao
  */
-public class FormulaEngineImpl implements FormulaEngine {
+public class FormulaEngineImpl implements FormulaEngine, Serializable {
+	private static final long serialVersionUID = -2283899323000274392L;
 
 	public final static String KEY_EVALUATORS = "$ZSS_EVALUATORS$";
 

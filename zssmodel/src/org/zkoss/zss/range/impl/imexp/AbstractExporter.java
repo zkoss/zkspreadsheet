@@ -29,6 +29,8 @@ import org.zkoss.zss.range.SExporter;
  * @since 3.5.0
  */
 public abstract class AbstractExporter implements SExporter, Serializable{
+	private static final long serialVersionUID = -3401645352937439291L;
+
 	@Override
 	public void export(SBook book, File file) throws IOException {
 		OutputStream os = null;

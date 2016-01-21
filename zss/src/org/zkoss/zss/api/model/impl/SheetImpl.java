@@ -16,6 +16,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.api.model.impl;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,7 +35,9 @@ import org.zkoss.zss.model.ViewAnchor;
  * @author dennis
  * @since 3.0.0
  */
-public class SheetImpl implements Sheet{
+public class SheetImpl implements Sheet, Serializable {
+	private static final long serialVersionUID = -4032733599166150544L;
+	
 	private ModelRef<SSheet> _sheetRef;
 	private ModelRef<SBook> _bookRef;
 	private Book _book;

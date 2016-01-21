@@ -31,8 +31,9 @@ import java.util.List;
  * @since 3.8.1
  */
 //ZSS-1000
-public class NonBlankCellsHelper {
-
+public class NonBlankCellsHelper implements Serializable {
+	private static final long serialVersionUID = 1651809355142266854L;
+	
 	int _defaultSize;
 	private List<NonBlankCellInfo> _infos;
 

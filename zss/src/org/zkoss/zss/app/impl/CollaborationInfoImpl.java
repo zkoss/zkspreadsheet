@@ -1,5 +1,6 @@
 package org.zkoss.zss.app.impl;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -14,7 +15,8 @@ import org.zkoss.zss.app.CollaborationInfo;
  *
  */
 
-public class CollaborationInfoImpl implements CollaborationInfo {
+public class CollaborationInfoImpl implements CollaborationInfo, Serializable {
+	private static final long serialVersionUID = 6857473475844968874L;
 	
 	private static final Log logger = Log.lookup(CollaborationInfoImpl.class.getName());
 	protected static CollaborationInfo collaborationInfo;

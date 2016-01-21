@@ -16,6 +16,8 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.api.model.impl;
 
+import java.io.Serializable;
+
 import org.zkoss.zss.api.model.Color;
 import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.SColor;
@@ -24,8 +26,9 @@ import org.zkoss.zss.model.SColor;
  * @author dennis
  * @since 3.0.0
  */
-public class ColorImpl implements Color{
-
+public class ColorImpl implements Color, Serializable{
+	private static final long serialVersionUID = -9062133825841528841L;
+	
 	private ModelRef<SBook> _bookRef;
 	private ModelRef<SColor> _colorRef;
 

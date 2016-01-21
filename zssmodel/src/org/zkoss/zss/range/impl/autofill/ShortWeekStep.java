@@ -15,6 +15,7 @@ Copyright (C) 2011 Potix Corporation. All Rights Reserved.
 
 package org.zkoss.zss.range.impl.autofill;
 
+import java.io.Serializable;
 import java.util.Locale;
 
 import org.zkoss.zss.model.SCell;
@@ -24,7 +25,9 @@ import org.zkoss.zss.model.SCell;
  * @author henrichen
  *
  */
-/*package*/ class ShortWeekStep implements Step {
+/*package*/ class ShortWeekStep implements Step, Serializable {
+	private static final long serialVersionUID = 2717185483097352450L;
+	
 	private final CircularStep _innerStep;
 	private final int _type;
 	public ShortWeekStep(int initial, int step, int type, int datatype, Locale locale) { //ZSS-69

@@ -12,6 +12,7 @@ Copyright (C) 2014 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.theme;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 
@@ -23,7 +24,9 @@ import org.zkoss.zk.ui.util.ThemeProvider;
  * @author RaymondChao
  * @since 3.5.0
  */
-public class SpreadsheetThemeProvider implements ThemeProvider {
+public class SpreadsheetThemeProvider implements ThemeProvider, Serializable {
+	private static final long serialVersionUID = -7017747233047128735L;
+	
 	private final ThemeProvider _themeProvider;
 	public SpreadsheetThemeProvider(ThemeProvider themeProvider) {
 		_themeProvider = themeProvider; 

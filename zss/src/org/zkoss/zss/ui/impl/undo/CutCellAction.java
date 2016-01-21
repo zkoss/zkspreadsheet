@@ -30,7 +30,8 @@ import org.zkoss.zss.api.model.Sheet;
  * 
  */
 public class CutCellAction extends Abstract2DCellDataStyleAction {
-
+	private static final long serialVersionUID = -7964993492937174380L;
+	
 	protected final int _reservedDestLastRow,_reservedDestLastColumn;
 	private Range _pastedRange;
 	public CutCellAction(String label,Sheet sheet,int srcRow, int srcColumn, int srcLastRow,int srcLastColumn,

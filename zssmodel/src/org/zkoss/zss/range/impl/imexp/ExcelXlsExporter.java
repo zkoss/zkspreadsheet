@@ -28,7 +28,8 @@ import org.zkoss.zss.model.impl.AbstractBookAdv;
  * @since 3.5.0
  */
 public class ExcelXlsExporter extends AbstractExcelExporter {
-	
+	private static final long serialVersionUID = 4653748601821482540L;
+
 	@Override
 	protected void exportColumnArray(SSheet sheet, Sheet poiSheet, SColumnArray columnArr) {
 		

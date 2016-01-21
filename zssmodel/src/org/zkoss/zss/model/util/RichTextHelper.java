@@ -12,6 +12,7 @@ Copyright (C) 2014 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.model.util;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,7 +40,8 @@ import org.zkoss.zss.range.SRange;
  * @author RaymondChao
  * @since 3.6.0
  */
-public class RichTextHelper {
+public class RichTextHelper implements Serializable {
+	private static final long serialVersionUID = 673839590374447339L;
 	private static final String NEW_LINE = "\u4a3a\u0000\u9f98";
 	private static final Pattern rgbPattern = 
 			Pattern.compile("rgb *\\( *([0-9]+), *([0-9]+), *([0-9]+) *\\)");

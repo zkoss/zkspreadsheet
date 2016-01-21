@@ -18,6 +18,8 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.ui.impl.undo;
 
+import java.io.Serializable;
+
 import org.zkoss.zss.api.AreaRef;
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.Sheet;
@@ -28,8 +30,9 @@ import org.zkoss.zss.ui.sys.UndoableAction;
  * @author dennis
  *
  */
-abstract public class AbstractUndoableAction implements UndoableAction {
-
+abstract public class AbstractUndoableAction implements UndoableAction, Serializable {
+	private static final long serialVersionUID = 8195847130717516048L;
+	
 	protected final String _label;
 	protected final Sheet _sheet;
 	protected final int _row,_column,_lastRow,_lastColumn;

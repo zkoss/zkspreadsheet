@@ -31,7 +31,8 @@ import org.zkoss.zss.api.model.Sheet;
  *
  */
 public abstract class AbstractEditTextAction extends AbstractUndoableAction {
-
+	private static final long serialVersionUID = -6522834005902486990L;
+	
 	private String[][] oldTexts = null;
 	private boolean[][] isRichTexts = null;
 	private boolean[][] isWrapTexts = null;

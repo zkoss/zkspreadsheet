@@ -13,9 +13,11 @@ Copyright (C) 2010 Potix Corporation. All Rights Reserved.
 
 package org.zkoss.zss.model.impl.sys.formula;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
+
 import org.zkoss.xel.Function;
 import org.zkoss.xel.FunctionMapper;
 import org.zkoss.xel.XelException;
@@ -26,7 +28,9 @@ import org.zkoss.xel.XelException;
  * @author henrichen
  *
  */
-public class JoinFunctionMapper implements FunctionMapper {
+public class JoinFunctionMapper implements FunctionMapper, Serializable {
+	private static final long serialVersionUID = 1199148162868283007L;
+	
 	private LinkedHashSet<FunctionMapper> _mappers;
 	
 	public JoinFunctionMapper(FunctionMapper mapper) {

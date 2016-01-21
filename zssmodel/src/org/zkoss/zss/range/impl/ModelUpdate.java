@@ -16,6 +16,8 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.range.impl;
 
+import java.io.Serializable;
+
 import org.zkoss.zss.model.impl.CellAttribute;
 
 /**
@@ -23,7 +25,9 @@ import org.zkoss.zss.model.impl.CellAttribute;
  * @author Dennis
  * @since 3.5.0
  */
-public class ModelUpdate {
+public class ModelUpdate implements Serializable{
+	private static final long serialVersionUID = -9132950662332114378L;
+
 	/**
 	 * @since 3.5.0
 	 */

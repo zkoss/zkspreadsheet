@@ -16,6 +16,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.model.impl;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -56,7 +57,9 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
  * @author Dennis
  * @since 3.5.0
  */
-/*package*/ class FormulaTunerHelper {
+/*package*/ class FormulaTunerHelper implements Serializable {
+	private static final long serialVersionUID = 1102626197326199285L;
+	
 	private final SBookSeries _bookSeries;
 
 	public FormulaTunerHelper(SBookSeries bookSeries) {

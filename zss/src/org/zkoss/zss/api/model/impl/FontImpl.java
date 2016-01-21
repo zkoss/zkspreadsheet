@@ -16,6 +16,8 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.api.model.impl;
 
+import java.io.Serializable;
+
 import org.zkoss.zss.api.UnitUtil;
 import org.zkoss.zss.api.model.Color;
 import org.zkoss.zss.api.model.Font;
@@ -26,7 +28,8 @@ import org.zkoss.zss.model.SFont;
  * @author dennis
  * @since 3.0.0
  */
-public class FontImpl implements Font{
+public class FontImpl implements Font, Serializable{
+	private static final long serialVersionUID = -349583235023683769L;
 	
 	protected ModelRef<SBook> _bookRef;
 	protected ModelRef<SFont> _fontRef;

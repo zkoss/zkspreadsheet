@@ -42,8 +42,8 @@ import org.zkoss.zss.model.impl.AbstractBookAdv;
  * @since 3.5.0
  */
 public class ExcelXlsImporter extends AbstractExcelImporter{
+	private static final long serialVersionUID = 4264381303912394965L;
 
-	
 	@Override
 	protected Workbook createPoiBook(InputStream is) throws IOException{
 		return new HSSFWorkbook(is);

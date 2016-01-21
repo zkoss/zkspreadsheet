@@ -16,6 +16,8 @@ Copyright (C) 2014 Potix Corporation. All Rights Reserved.
 
 package org.zkoss.zss.api.model.impl;
 
+import java.io.Serializable;
+
 import org.zkoss.zss.api.model.Font;
 import org.zkoss.zss.api.model.RichText;
 
@@ -23,7 +25,9 @@ import org.zkoss.zss.api.model.RichText;
  * @author henri
  * @since 3.6.0
  */
-class SegmentImpl implements RichText.Segment {
+class SegmentImpl implements RichText.Segment, Serializable {
+	private static final long serialVersionUID = 6796093491667252184L;
+	
 	final private String text;
 	final private Font font;
 	

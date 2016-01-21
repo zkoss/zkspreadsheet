@@ -32,7 +32,8 @@ import org.zkoss.zss.api.model.Sheet;
  * 
  */
 public class CellBorderAction extends AbstractCellDataStyleAction {
-
+	private static final long serialVersionUID = -235160919724611839L;
+	
 	private final ApplyBorderType _applyType;
 	private final BorderType _borderType;
 	private final String _htmlColor;

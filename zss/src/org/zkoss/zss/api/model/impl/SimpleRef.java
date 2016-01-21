@@ -16,6 +16,8 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.api.model.impl;
 
+import java.io.Serializable;
+
 import org.zkoss.zss.model.SColor;
 
 /**
@@ -24,8 +26,9 @@ import org.zkoss.zss.model.SColor;
  * @author dennis
  * @since 3.0.0
  */
-public class SimpleRef<T> implements ModelRef<T>{
-
+public class SimpleRef<T> implements ModelRef<T>, Serializable {
+	private static final long serialVersionUID = -3654705603170902753L;
+	
 	T _instance;
 	
 	public SimpleRef(T instance){

@@ -18,6 +18,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.ui.impl;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -37,7 +38,9 @@ import org.zkoss.zss.api.AreaRef;
  * @author Dennis.Chen
  *
  */
-public class MergeMatrixHelper {
+public class MergeMatrixHelper implements Serializable {
+	private static final long serialVersionUID = -8360458859084652393L;
+	
 	private Map _leftTopIndex = new HashMap(5);
 	private Map _mergeByIndex = new HashMap(20);
 	private List<MergedRect> _mergeRanges = new LinkedList<MergedRect>();

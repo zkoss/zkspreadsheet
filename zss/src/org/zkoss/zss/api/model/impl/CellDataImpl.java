@@ -16,6 +16,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.api.model.impl;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import org.zkoss.zss.api.impl.RangeImpl;
@@ -29,7 +30,8 @@ import org.zkoss.zss.range.SRange;
  * @author dennis
  * @since 3.0.0
  */
-public class CellDataImpl implements CellData{
+public class CellDataImpl implements CellData, Serializable {
+	private static final long serialVersionUID = -1618615187748044449L;
 
 	private RangeImpl _range;
 	

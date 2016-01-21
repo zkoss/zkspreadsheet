@@ -16,6 +16,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.model.impl.sys;
 
+import java.io.Serializable;
 import java.text.Format;
 
 import org.zkoss.poi.ss.format.CellFormatResult;
@@ -28,7 +29,8 @@ import org.zkoss.zss.model.sys.format.FormatResult;
  * @author Hawk
  * @since 3.5.0
  */
-public class FormatResultImpl implements FormatResult {
+public class FormatResultImpl implements FormatResult, Serializable {
+	private static final long serialVersionUID = -289137517055850524L;
 	
 	private String _text;
 	private SColor _textColor;//it is possible no format result color

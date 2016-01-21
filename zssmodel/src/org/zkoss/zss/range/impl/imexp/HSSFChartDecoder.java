@@ -16,6 +16,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.range.impl.imexp;
 
+import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -66,7 +67,9 @@ import org.zkoss.poi.hssf.usermodel.HSSFShape;
  * @author dennis
  * @since 3.0.0 (ZPOI 3.9)
  */
-public class HSSFChartDecoder {
+public class HSSFChartDecoder implements Serializable {
+	private static final long serialVersionUID = -5941459337127878146L;
+	
 	private HSSFChartShape _chart;
 	HSSFPatriarchHelper _helper;
 	public HSSFChartDecoder(HSSFPatriarchHelper helper,HSSFChartShape chart) {

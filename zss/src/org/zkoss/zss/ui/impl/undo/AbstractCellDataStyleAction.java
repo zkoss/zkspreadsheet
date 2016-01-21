@@ -31,7 +31,8 @@ import org.zkoss.zss.ui.impl.undo.ReserveUtil.ReservedResult;
  *
  */
 public abstract class AbstractCellDataStyleAction extends AbstractUndoableAction {
-
+	private static final long serialVersionUID = 8871042158772358009L;
+	
 	public static final int RESERVE_CONTENT = ReserveUtil.RESERVE_CONTENT;
 	public static final int RESERVE_STYLE = ReserveUtil.RESERVE_STYLE;
 	public static final int RESERVE_MERGE = ReserveUtil.RESERVE_MERGE;

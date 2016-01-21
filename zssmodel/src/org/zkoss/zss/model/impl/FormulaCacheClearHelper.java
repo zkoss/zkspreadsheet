@@ -1,5 +1,6 @@
 package org.zkoss.zss.model.impl;
 
+import java.io.Serializable;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -21,7 +22,9 @@ import org.zkoss.zss.model.sys.dependency.Ref.RefType;
  * @author dennis
  * @since 3.5.0
  */
-/*package*/ class FormulaCacheClearHelper {
+/*package*/ class FormulaCacheClearHelper implements Serializable{
+	private static final long serialVersionUID = 8757672812896139208L;
+
 	private final SBookSeries _bookSeries;
 	
 	private static final Log logger = Log.lookup(FormulaCacheClearHelper.class.getName());

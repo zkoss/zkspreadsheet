@@ -11,7 +11,8 @@ import org.zkoss.zss.ui.sys.WidgetHandler;
  * Default widget implementation, don't provide any function.
  */
 public class VoidWidgetHandler implements WidgetHandler, Serializable {
-
+	private static final long serialVersionUID = -1715862041912291146L;
+	
 	Spreadsheet spreadsheet;
 
 	public VoidWidgetHandler() {

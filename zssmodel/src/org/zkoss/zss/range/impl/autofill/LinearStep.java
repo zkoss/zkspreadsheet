@@ -15,6 +15,8 @@ Copyright (C) 2011 Potix Corporation. All Rights Reserved.
 
 package org.zkoss.zss.range.impl.autofill;
 
+import java.io.Serializable;
+
 import org.zkoss.zss.model.SCell;
 import org.zkoss.zss.model.SCell.CellType;
 
@@ -23,7 +25,9 @@ import org.zkoss.zss.model.SCell.CellType;
  * @author henrichen
  * @since 2.1.0
  */
-public class LinearStep implements Step {
+public class LinearStep implements Step, Serializable {
+	private static final long serialVersionUID = -4640478082136298919L;
+	
 	private double _current;
 	private final double _step;
 	private final int _type;

@@ -16,6 +16,8 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.range.impl.imexp;
 
+import java.io.Serializable;
+
 import org.zkoss.lang.Library;
 import org.zkoss.zss.range.SExporterFactory;
 import org.zkoss.zss.range.SExporter;
@@ -25,7 +27,9 @@ import org.zkoss.zss.range.SExporter;
  * @author Hawk
  * @since 3.5.0
  */
-public class ExcelExportFactory implements SExporterFactory{
+public class ExcelExportFactory implements SExporterFactory, Serializable{
+	private static final long serialVersionUID = 3353051395707563537L;
+
 	/**
 	 * @since 3.5.0
 	 */

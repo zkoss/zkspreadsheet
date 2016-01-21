@@ -16,12 +16,16 @@ Copyright (C) 2012 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.ui.impl;
 
+import java.io.Serializable;
+
 
 /**
  * @author Sam
  *
  */
-public class JavaScriptValue implements org.zkoss.json.JSONAware {
+public class JavaScriptValue implements org.zkoss.json.JSONAware, Serializable {
+	private static final long serialVersionUID = -3369271307400165253L;
+	
 	private final String _js;
 
 	/** Constructor

@@ -45,7 +45,6 @@ import org.zkoss.zss.ui.Spreadsheet;
 // * @author Dennis.Chen
 // *
 // */
-@Deprecated
 public class XUtils {
 //	private static final Log log = Log.lookup(XUtils.class);
 //	

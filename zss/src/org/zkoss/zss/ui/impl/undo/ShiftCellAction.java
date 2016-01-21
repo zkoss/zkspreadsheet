@@ -29,6 +29,7 @@ import org.zkoss.zss.api.model.Sheet;
  *
  */
 public class ShiftCellAction extends Abstract2DCellDataStyleAction {
+	private static final long serialVersionUID = -2778906215535785051L;
 	
 	private final int _rowNumber;
 	private final int _columnNumber;

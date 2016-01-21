@@ -16,6 +16,8 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.api.impl;
 
+import java.io.Serializable;
+
 import org.zkoss.zss.api.Range.CellStyleHelper;
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.CellStyle;
@@ -42,8 +44,9 @@ import org.zkoss.zss.model.util.FontMatcher;
  * @author dennis
  * @since 3.0.0
  */
-/*package*/ class CellStyleHelperImpl implements CellStyleHelper{
-
+/*package*/ class CellStyleHelperImpl implements CellStyleHelper, Serializable {
+	private static final long serialVersionUID = 5913867573087033877L;
+	
 	private Book _book;
 	
 	public CellStyleHelperImpl(Book book) {

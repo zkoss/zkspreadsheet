@@ -16,6 +16,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.api.impl;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.locks.ReadWriteLock;
@@ -90,8 +91,9 @@ import org.zkoss.zss.model.impl.AbstractSheetAdv;
  * @author dennis
  * @since 3.0.0
  */
-public class RangeImpl implements Range{
-	
+public class RangeImpl implements Range, Serializable {
+	private static final long serialVersionUID = 500576741914800746L;
+
 	private SRange _range;
 	
 	private CellStyleHelper _cellStyleHelper;

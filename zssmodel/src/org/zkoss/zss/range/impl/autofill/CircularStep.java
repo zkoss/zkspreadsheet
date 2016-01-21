@@ -15,6 +15,8 @@ Copyright (C) 2011 Potix Corporation. All Rights Reserved.
 
 package org.zkoss.zss.range.impl.autofill;
 
+import java.io.Serializable;
+
 import org.zkoss.zss.model.SCell;
 
 
@@ -23,7 +25,9 @@ import org.zkoss.zss.model.SCell;
  * @author henrichen
  *
  */
-/*package*/ class CircularStep implements Step {
+/*package*/ class CircularStep implements Step, Serializable {
+	private static final long serialVersionUID = 5995931437760902734L;
+	
 	private final int _step;
 	private int _current;
 	private final CircularData _data;

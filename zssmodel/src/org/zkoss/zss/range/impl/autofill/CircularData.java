@@ -15,13 +15,16 @@ Copyright (C) 2011 Potix Corporation. All Rights Reserved.
 
 package org.zkoss.zss.range.impl.autofill;
 
+import java.io.Serializable;
 import java.util.Locale;
 
 /**
  * @author henrichen
  *
  */
-public class CircularData {
+public class CircularData implements Serializable {
+	private static final long serialVersionUID = -1802020608247100508L;
+	
 	public static final int UPPER = 2;
 	public static final int LOWER = 1;
 	public static final int NORMAL = 0;

@@ -18,6 +18,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.ui.impl;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -29,8 +30,9 @@ import java.util.Map;
  * @author Dennis.Chen
  *
  */
-public class JSONObj {
-
+public class JSONObj implements Serializable {
+	private static final long serialVersionUID = 4074301876831554811L;
+	
 	Map _data = new LinkedHashMap();
 	
 	public void setData(String name,String value){

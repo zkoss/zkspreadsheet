@@ -12,13 +12,17 @@
 
 package org.zkoss.zss.model.impl;
 
+import java.io.Serializable;
+
 import org.zkoss.zss.model.SCFValueObject;
 
 /**
  * @author henri
  * @since 3.8.2
  */
-public class CFValueObjectImpl implements SCFValueObject {
+public class CFValueObjectImpl implements SCFValueObject, Serializable {
+	private static final long serialVersionUID = 189125364763803062L;
+	
 	private CFValueObjectType type;
 	private String value;
 	private boolean gte;

@@ -18,6 +18,8 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
  */
 package org.zkoss.zss.ui.impl;
 
+import java.io.Serializable;
+
 import org.zkoss.poi.ss.usermodel.ZssContext;
 import org.zkoss.zss.model.CellRegion;
 import org.zkoss.zss.model.SAutoFilter;
@@ -52,8 +54,9 @@ import org.zkoss.zss.ui.impl.undo.ReserveUtil;
  * @author Dennis.Chen
  * 
  */
-public class CellFormatHelper {
-	
+public class CellFormatHelper implements Serializable{
+	private static final long serialVersionUID = 8480097718738495064L;
+
 	private static final int RESERVE_CELL_MARGIN = ReserveUtil.RESERVE_STYLE * 2; // double side 
 
 	/**

@@ -1,5 +1,6 @@
 package org.zkoss.zss.range.impl;
 
+import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
@@ -19,7 +20,8 @@ import org.zkoss.zss.model.sys.dependency.Ref.RefType;
  * @author Dennis
  * @since 3.5.0
  */
-/*package*/ class RefNotifyContentChangeHelper extends RefHelperBase{
+/*package*/ class RefNotifyContentChangeHelper extends RefHelperBase implements Serializable {
+	private static final long serialVersionUID = -816763214525819388L;
 
 	private static final Log _logger = Log.lookup(RefNotifyContentChangeHelper.class);
 			
