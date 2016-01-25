@@ -560,6 +560,8 @@ zss.CellBlockCtrl = zk.$extends(zk.Widget, {
 		}
 		if (cutw || cuth) {
 			this._toSet[k] = [l, t, r, b, cutw, cuth, ml, mt, mr, mb];
+		} else { //ZSS-1178
+			delete this._toSet[k];
 		}
 	},
 	//ZSS-1117

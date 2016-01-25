@@ -17,6 +17,7 @@ ZK Spreadsheet 3.8.3
   ZSS-1179 java.io.NotSerializableException: org.zkoss.zssex.ui.impl.UndoableActionManagerImpl
   ZSS-717 Copy/Cut paste a column did not copy the column width over
   ZSS-1186 Importing an Excel table without a header row causes a javascript error
+  ZSS-1178 Render a merged cell incorrectly
   
 ** Upgrade Notes
 
