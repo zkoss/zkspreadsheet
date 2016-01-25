@@ -1,0 +1,11 @@
+<vbox hflex="1" vflex="1">
+	<label multiline="true">
+Since 3.8.3
+1. Press F12 to open the console of browser developer tool
+2. Select Sheet 資產負債表 （2） 
+3. You should NOT see any JavaScript error in developer tool console.
+</label>
+	<spreadsheet id="ss" src="/issue3/book/1186-load-no-tableheader.xlsx" maxVisibleRows="100" maxVisibleColumns="40"
+		hflex="1" height="800px" showContextMenu="true" showSheetbar="true" showToolbar="true" 
+		showFormulabar="true" />	
+</vbox>

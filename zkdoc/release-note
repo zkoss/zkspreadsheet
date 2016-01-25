@@ -16,6 +16,7 @@ ZK Spreadsheet 3.8.3
   ZSS-1170 Alignment problem when export a sheet with hidden columns to PDF
   ZSS-1179 java.io.NotSerializableException: org.zkoss.zssex.ui.impl.UndoableActionManagerImpl
   ZSS-717 Copy/Cut paste a column did not copy the column width over
+  ZSS-1186 Importing an Excel table without a header row causes a javascript error
   
 ** Upgrade Notes
 
