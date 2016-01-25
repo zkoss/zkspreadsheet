@@ -18,6 +18,8 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.ui.sys;
 
+import org.zkoss.zss.ui.CellSelectionType;
+
 
 
 /**
@@ -84,4 +86,12 @@ public interface SpreadsheetInCtrl {
 			int left, int top, int right, int bottom,
 			int highlightLeft, int highlightTop, int highlightRight, int highlightBottom,
 			int rowfreeze, int colfreeze);
+	
+	//ZSS-717
+	/**
+	 * 
+	 * @param type
+	 * @since 3.8.3
+	 */
+	public void setSelType(CellSelectionType type);
 }

@@ -72,6 +72,7 @@ import org.zkoss.zk.ui.ext.render.DynamicMedia;
 import org.zkoss.zk.ui.sys.ContentRenderer;
 import org.zkoss.zk.ui.util.DesktopCleanup;
 import org.zkoss.zss.api.AreaRef;
+import org.zkoss.zss.api.AreaRefWithType;
 import org.zkoss.zss.api.CellOperationUtil;
 import org.zkoss.zss.api.CellRef;
 import org.zkoss.zss.api.IllegalFormulaException;
@@ -290,7 +291,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	private String _selfFocusId;
 
 	private AreaRef _focusArea = new AreaRef(0, 0, 0, 0);
-	private AreaRef _selectionArea = new AreaRef(0, 0, 0, 0);
+	private AreaRefWithType _selectionArea = new AreaRefWithType(0, 0, 0, 0, CellSelectionType.CELL); //ZSS-717
 	private AreaRef _visibleArea = new AreaRef();
 	private AreaRef _highlightArea = null;
 
@@ -1771,6 +1772,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		renderer.render("sheetId", getSelectedSheetId());
 		renderer.render("focusRect", getRectStr(_focusArea));
 		renderer.render("selectionRect", getRectStr(_selectionArea));
+		renderer.render("selType", getSelTypeStr(_selectionArea)); //ZSS-717
 		if (_highlightArea != null) {
 			renderer.render("highLightRect", getRectStr(_highlightArea));
 		}
@@ -4153,6 +4155,19 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		public FreezeInfoLoader getFreezeInfoLoader() {
 			return Spreadsheet.this.getFreezeInfoLoader();
 		}
+
+		//ZSS-717
+		@Override
+		public void setSelType(CellSelectionType type) {
+			_selectionArea.setSelType(type);
+		}
+		
+		//ZSS-717
+		@Override
+		public CellSelectionType getSelType() {
+			return _selectionArea.getSelType();
+		}
+
 	}
 
 	public void invalidate() {
@@ -4201,6 +4216,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		_selectionArea.setLastColumn(column);
 		_selectionArea.setRow(row);
 		_selectionArea.setLastRow(row);
+		_selectionArea.setSelType(CellSelectionType.CELL); //ZSS-717
 	}
 
 	//ZSS-1152
@@ -5147,6 +5163,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		
 //		_loadedRect.set(-1, -1, -1, -1);
 		_selectionArea.setArea(0, 0, 0, 0);
+		_selectionArea.setSelType(CellSelectionType.CELL); //ZSS-717
 		_focusArea.setArea(0, 0, 0, 0);
 		
 		_selectedSheet = null;
@@ -5289,6 +5306,17 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		sb.append(rect.getColumn()).append(",").append(rect.getRow()).append(",")
 				.append(rect.getLastColumn()).append(",").append(rect.getLastRow());
 		return sb.toString();
+	}
+	
+	//ZSS-717
+	static private String getSelTypeStr(AreaRefWithType area) {
+		final CellSelectionType type = area.getSelType();
+		switch(type) {
+		case ALL: return "all";
+		case COLUMN: return "col";
+		case ROW: return "row";
+		default: return "cell";
+		}
 	}
 
 	private void doInvalidate() {

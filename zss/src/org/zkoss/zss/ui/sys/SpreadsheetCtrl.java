@@ -23,6 +23,7 @@ package org.zkoss.zss.ui.sys;
 import org.zkoss.json.JSONObject;
 import org.zkoss.zss.api.AreaRef;
 import org.zkoss.zss.model.SSheet;
+import org.zkoss.zss.ui.CellSelectionType;
 import org.zkoss.zss.ui.Widget;
 import org.zkoss.zss.ui.impl.HeaderPositionHelper;
 import org.zkoss.zss.ui.impl.MergeMatrixHelper;
@@ -129,4 +130,13 @@ public interface SpreadsheetCtrl {
 	 * @return
 	 */
 	public JSONObject getRangeAttrs(SSheet sheet, Header containsHeader, CellAttribute type, int left, int top, int right, int bottom);
+	
+	//ZSS-717
+	/**
+	 * 
+	 * @return
+	 * @since 3.8.3
+	 * @see #getSelectionArea()
+	 */
+	public CellSelectionType getSelType();
 }

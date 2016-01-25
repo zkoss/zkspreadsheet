@@ -97,6 +97,7 @@ public class CellSelectionUpdateCommand extends AbstractCommand implements Comma
 
 		SpreadsheetInCtrl ctrl = ((SpreadsheetInCtrl)((Spreadsheet)comp).getExtraCtrl());
 		ctrl.setSelectionRect(left, top, right, bottom);		
+		ctrl.setSelType(type); //ZSS-717
 		
 		final CellSelectionUpdateEvent evt = new CellSelectionUpdateEvent(
 				org.zkoss.zss.ui.event.Events.ON_CELL_SELECTION_UPDATE, comp, sheet, 

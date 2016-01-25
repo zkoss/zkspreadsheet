@@ -36,13 +36,21 @@ abstract public class AbstractUndoableAction implements UndoableAction, Serializ
 	protected final String _label;
 	protected final Sheet _sheet;
 	protected final int _row,_column,_lastRow,_lastColumn;
-	public AbstractUndoableAction(String label,Sheet sheet,int row, int column, int lastRow,int lastColumn){
+	protected final boolean _wholeColumn;
+	//ZSS-717
+	//@since 3.8.3
+	public AbstractUndoableAction(String label,Sheet sheet,int row, int column, int lastRow,int lastColumn, boolean wholeColumn){
 		this._label = label;
 		this._sheet = sheet;
 		this._row = row;
 		this._column = column;
 		this._lastRow = lastRow;
 		this._lastColumn = lastColumn;
+		this._wholeColumn = wholeColumn;
+	}
+	@Deprecated
+	public AbstractUndoableAction(String label,Sheet sheet,int row, int column, int lastRow,int lastColumn){
+		this(label,sheet,row, column, lastRow,lastColumn, false);
 	}
 	
 	public String getLabel(){

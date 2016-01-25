@@ -149,10 +149,12 @@ zss.FontSizeCombobox = zk.$extends(zul.inp.Combobox, {
 				tRow = s.top,
 				lCol = s.left,
 				bRow = s.bottom,
-				rCol = s.right;
+				rCol = s.right,
+				selType = sheet.selType ? sheet.selType : zss.SEL.CELL; //ZSS-717
+
 			sheet.triggerSelection(tRow, lCol, bRow, rCol);
 			wgt.fireToolbarAction('fontSize', 
-				{size: sel.getLabel(), tRow: tRow, lCol: lCol, bRow: bRow, rCol: rCol});
+				{size: sel.getLabel(), tRow: tRow, lCol: lCol, bRow: bRow, rCol: rCol, type: selType}); //ZSS-717
 		}
 	},
 	_doBtnClick: function (evt) {
@@ -266,10 +268,12 @@ zss.FontFamilyCombobox = zk.$extends(zul.inp.Combobox, {
 				tRow = s.top,
 				lCol = s.left,
 				bRow = s.bottom,
-				rCol = s.right;
+				rCol = s.right,
+				selType = sheet.selType ? sheet.selType : zss.SEL.CELL; //ZSS-717
+
 			sheet.triggerSelection(tRow, lCol, bRow, rCol);
 			wgt.fireToolbarAction('fontFamily', 
-				{name: sel.getLabel(), tRow: tRow, lCol: lCol, bRow: bRow, rCol: rCol});
+				{name: sel.getLabel(), tRow: tRow, lCol: lCol, bRow: bRow, rCol: rCol, type: selType}); //ZSS-717
 		}
 	},
 	_doBtnClick: function (evt) {
@@ -1136,9 +1140,10 @@ zss.StateMenupopup = zk.$extends(zss.Menupopup, {
 						tRow = s.top,
 						lCol = s.left,
 						bRow = s.bottom,
-						rCol = s.right;
+						rCol = s.right,
+						selType = sheet.selType ? sheet.selType : zss.SEL.CELL; //ZSS-717
 					sheet.triggerSelection(tRow, lCol, bRow, rCol);
-					wgt.fireToolbarAction(action, {tRow: tRow, lCol: lCol, bRow: bRow, rCol: rCol});
+					wgt.fireToolbarAction(action, {tRow: tRow, lCol: lCol, bRow: bRow, rCol: rCol, type: selType}); //ZSS-717
 				}
 			},
 			updateState: updateStateFunc
@@ -1157,9 +1162,10 @@ zss.StateMenupopup = zk.$extends(zss.Menupopup, {
 						tRow = s.top,
 						lCol = s.left,
 						bRow = s.bottom,
-						rCol = s.right;
+						rCol = s.right,
+						selType = sheet.selType ? sheet.selType : zss.SEL.CELL; //ZSS-717
 					sheet.triggerSelection(tRow, lCol, bRow, rCol);
-					wgt.fireToolbarAction(action, {tRow: tRow, lCol: lCol, bRow: bRow, rCol: rCol});
+					wgt.fireToolbarAction(action, {tRow: tRow, lCol: lCol, bRow: bRow, rCol: rCol, type: selType}); //ZSS-717
 				}
 			}
 		},wgt);
@@ -1176,9 +1182,10 @@ zss.StateMenupopup = zk.$extends(zss.Menupopup, {
 						tRow = s.top,
 						lCol = s.left,
 						bRow = s.bottom,
-						rCol = s.right;
+						rCol = s.right,
+						selType = sheet.selType ? sheet.selType : zss.SEL.CELL; //ZSS-717
 					sheet.triggerSelection(tRow, lCol, bRow, rCol);
-					wgt.fireToolbarAction(action, {tRow: tRow, lCol: lCol, bRow: bRow, rCol: rCol});
+					wgt.fireToolbarAction(action, {tRow: tRow, lCol: lCol, bRow: bRow, rCol: rCol, type: selType}); //ZSS-717
 				}
 			}
 		}, wgt);
@@ -1193,8 +1200,10 @@ zss.StateMenupopup = zk.$extends(zss.Menupopup, {
 				var sheet = wgt.sheetCtrl;
 				if (sheet) {
 					var s = sheet.getLastSelection(),
-						color = colorWidget ? colorWidget.getColor() : '';
-					wgt.fireToolbarAction(action, {color: color, tRow: s.top, lCol: s.left, bRow: s.bottom, rCol: s.right});
+						color = colorWidget ? colorWidget.getColor() : '',
+						selType = sheet.selType ? sheet.selType : zss.SEL.CELL; //ZSS-717
+
+					wgt.fireToolbarAction(action, {color: color, tRow: s.top, lCol: s.left, bRow: s.bottom, rCol: s.right, type: selType}); //ZSS-717
 				}
 			}
 		},wgt);
@@ -1724,11 +1733,13 @@ zss.Buttons = zk.$extends(zk.Object, {
 						tRow = s.top,
 						lCol = s.left,
 						bRow = s.bottom,
-						rCol = s.right;
+						rCol = s.right,
+						selType = sheet.selType ? sheet.selType : zss.SEL.CELL; //ZSS-717
+
 					sheet.triggerSelection(tRow, lCol, bRow, rCol);
-					wgt.fireToolbarAction(action, {tRow: tRow, lCol: lCol, bRow: bRow, rCol: rCol});
+					wgt.fireToolbarAction(action, {tRow: tRow, lCol: lCol, bRow: bRow, rCol: rCol, type: selType}); //ZSS-717
 				} else {
-					wgt.fireToolbarAction(action, {tRow: -1, lCol: -1, bRow: -1, rCol: -1});
+					wgt.fireToolbarAction(action, {tRow: -1, lCol: -1, bRow: -1, rCol: -1, type: zss.SEL.ALL});  //ZSS-717
 				}
 			}
 		}, wgt);
@@ -2009,8 +2020,10 @@ zss.ButtonBuilder = zk.$extends(zk.Object, {
 					var sht = wgt.sheetCtrl;
 					if (sht) {
 						var s = sht.getLastSelection(),
-							color = pp.colorMenu ? pp.colorMenu.getColor() : '' ;
-						wgt.fireToolbarAction('border', {color: color, tRow: s.top, lCol: s.left, bRow: s.bottom, rCol: s.right});	
+							color = pp.colorMenu ? pp.colorMenu.getColor() : '',
+							selType = sht.selType ? sht.selType : zss.SEL.CELL; //ZSS-717
+							
+						wgt.fireToolbarAction('border', {color: color, tRow: s.top, lCol: s.left, bRow: s.bottom, rCol: s.right, type: selType});  //ZSS-717	
 					}
 				}
 			}, wgt);
@@ -2028,8 +2041,10 @@ zss.ButtonBuilder = zk.$extends(zk.Object, {
 			onClick: function () {
 				var sht = wgt.sheetCtrl;
 				if (sht) {
-					var s = sht.getLastSelection();
-					wgt.fireToolbarAction('backColor', {color: this.getColor(), tRow: s.top, lCol: s.left, bRow: s.bottom, rCol: s.right});	
+					var s = sht.getLastSelection(),
+						selType = sht.selType ? sht.selType : zss.SEL.CELL; //ZSS-717
+
+					wgt.fireToolbarAction('backColor', {color: this.getColor(), tRow: s.top, lCol: s.left, bRow: s.bottom, rCol: s.right, type: selType}); //ZSS-717	
 				}
 			}
 		}, wgt, this._popupHodler);
@@ -2045,8 +2060,10 @@ zss.ButtonBuilder = zk.$extends(zk.Object, {
 			onClick: function () {
 				var sht = wgt.sheetCtrl;
 				if (sht) {
-					var s = sht.getLastSelection();
-					wgt.fireToolbarAction('fontColor', {color: this.getColor(), tRow: s.top, lCol: s.left, bRow: s.bottom, rCol: s.right});
+					var s = sht.getLastSelection(),
+						selType = sht.selType ? sht.selType : zss.SEL.CELL; //ZSS-717
+
+					wgt.fireToolbarAction('fontColor', {color: this.getColor(), tRow: s.top, lCol: s.left, bRow: s.bottom, rCol: s.right, type: selType}); //ZSS-717
 				}
 			}
 		}, wgt, this._popupHodler);

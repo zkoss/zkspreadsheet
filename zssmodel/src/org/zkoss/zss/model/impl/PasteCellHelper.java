@@ -25,12 +25,15 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import org.zkoss.poi.ss.SpreadsheetVersion;
 import org.zkoss.poi.ss.formula.FormulaRenderer;
 import org.zkoss.poi.ss.formula.ptg.Ptg;
 import org.zkoss.zss.model.CellRegion;
 import org.zkoss.zss.model.InvalidModelOpException;
 import org.zkoss.zss.model.PasteOption;
 import org.zkoss.zss.model.PasteOption.PasteType;
+import org.zkoss.zss.model.PasteSheetRegion;
+import org.zkoss.zss.model.PasteCellRegion;
 import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.SCell;
 import org.zkoss.zss.model.SCell.CellType;
@@ -62,6 +65,74 @@ public class PasteCellHelper implements Serializable {
 		this._book = destSheet.getBook();
 		_defaultStyle = _book.getDefaultCellStyle();
 	}
+	//ZSS-717
+	private CellRegion pasteColumnWidths(SheetRegion src, CellRegion dest, int destColCount) {
+		int[] widthBuffer = prepareColumnWidth(src);
+		int srcColCount = widthBuffer.length;
+		boolean wrongColMultiple = (destColCount>1 && destColCount%srcColCount!=0);
+		//ZSS-717
+		if (wrongColMultiple) {
+			throw new InvalidModelOpException("The operation can only be applied on the Paste area which is the Same size and shape of the Copy/Cut area"); //ZSS-988			
+		}
+		int colMultiple = destColCount<=1||wrongColMultiple?1:destColCount/srcColCount;
+		for(int j=0;j<colMultiple;j++){
+				int colMultipleOffset = j*srcColCount;
+				CellRegion destRegion = new CellRegion(dest.getRow(),dest.getColumn()+colMultipleOffset,
+						dest.getRow(),dest.getColumn()+srcColCount -1 + colMultipleOffset);
+				pasteColumnWidth(widthBuffer,destRegion);
+		}
+		return new CellRegion(0,dest.getColumn(),_destSheet.getBook().getMaxRowIndex(),dest.getColumn()+srcColCount*colMultiple-1);
+	}
+	//ZSS-717
+	//We don't notify the real effected region; rather we notify the whole 
+	// source range to simplified the program (see RangeImpl#pastSpecial0())
+	private void cutColumnWidths(SheetRegion src, CellRegion dest, int srcColCount, int destColCount) {
+		boolean wrongColMultiple = (destColCount>1 && destColCount%srcColCount!=0);
+		if (wrongColMultiple) {
+			throw new InvalidModelOpException("The operation can only be applied on the Paste area which is the Same size and shape of the Copy/Cut area"); //ZSS-988			
+		}
+		dest = destColCount<=1||wrongColMultiple ? 
+				new CellRegion(dest.getRow(), dest.getColumn(), dest.getRow(), dest.getColumn()+srcColCount-1) 
+				: dest;  
+
+		final SSheet srcSheet  = src.getSheet();
+		final int defaultWidth = srcSheet.getDefaultColumnWidth();
+		final int destCol1 = dest.getColumn();
+		final int destCol2 = dest.getLastColumn();
+//		int effCol1 = -1;
+//		int effCol2 = -1;
+//		int effCol3 = -1;
+//		int effCol4 = -1;
+//		boolean overlap = false;
+		for (int j = src.getColumn(), len = src.getLastColumn(); j <= len; ++j) {
+			if (destCol1 <= j && j <= destCol2) { //should skip overlapped column
+//				overlap = true;
+				continue;
+			}
+//			if (!overlap) {
+//				if (effCol1 < 0) {
+//					effCol1 = effCol2 = j;
+//				} else if (effCol2 < j) {
+//					effCol2 = j;
+//				}
+//			} else {
+//				if (effCol3 < 0) {
+//					effCol3 = effCol4 = j;
+//				} else if (effCol4 < j) {
+//					effCol4 = j;
+//				}
+//			}
+			srcSheet.getColumn(j).setWidth(defaultWidth);
+		}
+//		List<CellRegion> effected = new ArrayList<CellRegion>(4);
+//		if (effCol1 >= 0) {
+//			effected.add(new CellRegion(0, effCol1, 0, effCol2));  
+//		}
+//		if (effCol3 >= 0) {
+//			effected.add(new CellRegion(0, effCol3, 0, effCol4));
+//		}
+//		return effected;
+	}
 	
 	public CellRegion pasteCell(SheetRegion src, CellRegion dest, PasteOption option) {
 		Validations.argNotNull(src);
@@ -81,24 +152,31 @@ public class PasteCellHelper implements Serializable {
 		int destColCount = dest.getColumnCount();
 		int destRowCount = dest.getRowCount();
 		
+		//ZSS-717
+		final boolean wrongColSize = (src instanceof PasteSheetRegion ? ((PasteSheetRegion)src).isWholeColumn() : false)
+				&& dest.getRow() != 0;
+		if (wrongColSize) {
+			throw new InvalidModelOpException("The operation can only be applied on the Paste area which is the Same size and shape of the Copy/Cut area"); //ZSS-988			
+		}
+		
+		//ZSS-717
+		final boolean wholeColumn = (src instanceof PasteSheetRegion ? ((PasteSheetRegion)src).isWholeColumn() : false)
+				&& dest.getRow() == 0;
+		
 		if(option.getPasteType()==PasteType.COLUMN_WIDTHS){
 			if(option.isCut()){
 				throw new InvalidModelOpException("can't do cut when copying column width");
 			}else if(option.isTranspose()){
 				throw new InvalidModelOpException("can't do transport when copying column width");
 			}
-			int[] widthBuffer = prepareColumnWidth(src);
-			int srcColCount = widthBuffer.length;
-			boolean wrongColMultiple = (destColCount>1 && destColCount%srcColCount!=0);
-			int colMultiple = destColCount<=1||wrongColMultiple?1:destColCount/srcColCount;
-			for(int j=0;j<colMultiple;j++){
-					int colMultipleOffset = j*srcColCount;
-					CellRegion destRegion = new CellRegion(dest.getRow(),dest.getColumn()+colMultipleOffset,
-							dest.getRow(),dest.getColumn()+srcColCount -1 + colMultipleOffset);
-					pasteColumnWidth(widthBuffer,destRegion);
+			return pasteColumnWidths(src, dest, destColCount); //ZSS-717
+		} else if (option.getPasteType() == PasteType.ALL || option.getPasteType() == PasteType.ALL_EXCEPT_BORDERS) { 
+			//ZSS-717
+			if (wholeColumn) {
+				pasteColumnWidths(src, dest, destColCount);
 			}
-			return new CellRegion(0,dest.getColumn(),_destSheet.getBook().getMaxRowIndex(),dest.getColumn()+srcColCount*colMultiple-1);
 		}
+		
 		PasteType pasteType = option.getPasteType();
 		boolean handleMerge = shouldHandleMerge(pasteType);
 		
@@ -128,6 +206,11 @@ public class PasteCellHelper implements Serializable {
 			clearMergeRegion(src);
 			cutFrom = src;
 			srcSheet.deleteDataValidationRegion(srcRegion);
+			
+			//ZSS-717
+			if (wholeColumn) {
+				cutColumnWidths(src, dest, src.getColumnCount(), destColCount);
+			}
 		}
 		
 		// ZSS-608: Special Case - Copy a single cell to a merge cell

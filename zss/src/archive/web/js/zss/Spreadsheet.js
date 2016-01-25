@@ -1395,6 +1395,7 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 				data.lCol = sel.left;
 				data.bRow = sel.bottom;
 				data.rCol = sel.right;
+				data.type = sheet.selType ? sheet.selType : zss.SEL.CELL; //ZSS-717
 			}
 			data.sheetId = this.getSheetId();
 			this.$supers('afterKeyDown_', arguments);

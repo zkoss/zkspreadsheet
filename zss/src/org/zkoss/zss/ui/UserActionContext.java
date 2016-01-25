@@ -18,6 +18,7 @@ package org.zkoss.zss.ui;
 
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zss.api.AreaRef;
+import org.zkoss.zss.api.AreaRefWithType;
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.Sheet;
 
@@ -58,6 +59,15 @@ public interface UserActionContext {
 		
 		public boolean isCutMode();
 		
+		//ZSS-717
+		//@since 3.8.3
+		public AreaRefWithType getSelectionWithType();
+		
+		//ZSS-717
+		public int getSheetMaxVisibleRows();
+		
+		//ZSS-717
+		public int getSheetMaxVisibleColumns();
 	}
 	
 	public Clipboard getClipboard();
@@ -66,6 +76,13 @@ public interface UserActionContext {
 	
 	public void setClipboard(Sheet sheet,AreaRef selection,boolean cutMode,Object info);
 
+	//ZSS-717
+	//@since 3.8.3
+	public AreaRefWithType getSelectionWithType();
 	
+	//ZSS-717
+	public int getSheetMaxVisibleRows();
 	
+	//ZSS-717
+	public int getSheetMaxVisibleColumns();
 }

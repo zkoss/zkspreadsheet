@@ -1552,6 +1552,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			var wgt = this._wgt;
 			p = this._rowHeaderMenupopup = new zss.MenupopupFactory(wgt).rowHeader();
 			p.setDisabled(wgt.getActionDisabled());
+			p._zssType = "row"; //ZSS-717
 		}
 		return p;
 	},
@@ -1568,6 +1569,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			var wgt = this._wgt;
 			p = this._columnHeaderMenupopup = new zss.MenupopupFactory(this._wgt).columnHeader();
 			p.setDisabled(wgt.getActionDisabled());
+			p._zssType = "col"; //ZSS-717
 		}
 		return p;
 	},
@@ -1584,6 +1586,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			var wgt = this._wgt;
 			p = this._cellMenupopup = new zss.MenupopupFactory(wgt).cell();
 			p.setDisabled(wgt.getActionDisabled());
+			p._zssType = "cell"; //ZSS-717
 		}
 		return p;
 	},

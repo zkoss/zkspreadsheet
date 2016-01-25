@@ -26,7 +26,7 @@ public class CopyHandler extends AbstractSheetHandler {
 	@Override
 	protected boolean processAction(UserActionContext ctx) {
 		Sheet sheet = ctx.getSheet();
-		AreaRef selection = ctx.getSelection();
+		AreaRef selection = ctx.getSelectionWithType(); //ZSS-717
 		ctx.setClipboard(sheet,selection,false,null);
 		return true;
 	}

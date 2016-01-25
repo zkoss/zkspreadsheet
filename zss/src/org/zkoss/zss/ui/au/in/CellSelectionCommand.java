@@ -85,6 +85,7 @@ public class CellSelectionCommand extends AbstractCommand implements Command {
 		
 		SpreadsheetInCtrl ctrl = ((SpreadsheetInCtrl)((Spreadsheet)comp).getExtraCtrl());
 		ctrl.setSelectionRect(left, top, right, bottom);	
+		ctrl.setSelType(type); //ZSS-717
 		
 		Events.postEvent(new CellSelectionEvent(
 				org.zkoss.zss.ui.event.Events.ON_CELL_SELECTION, comp, sheet,

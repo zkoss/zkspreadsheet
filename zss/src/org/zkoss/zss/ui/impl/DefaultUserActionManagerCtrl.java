@@ -30,6 +30,7 @@ import org.zkoss.lang.Strings;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zss.api.AreaRef;
+import org.zkoss.zss.api.AreaRefWithType;
 import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.Range.ApplyBorderType;
@@ -408,6 +409,18 @@ public class DefaultUserActionManagerCtrl implements UserActionManagerCtrl,UserA
 		return Collections.unmodifiableSet(_interestedEvents);
 	}
 	
+	//ZSS-717
+	private CellSelectionType getCellSelectionType(String type) {
+		if ("col".equals(type)) {
+			return CellSelectionType.COLUMN;
+		} else if ("row".equals(type)) {
+			return CellSelectionType.ROW;
+		} else if ("all".equals(type)) {
+			return CellSelectionType.ALL;
+		}
+		return CellSelectionType.CELL;
+	}
+	
 	@Override
 	public void onEvent(Event event) throws Exception {
 		String nm = event.getName();
@@ -443,20 +456,21 @@ public class DefaultUserActionManagerCtrl implements UserActionManagerCtrl,UserA
 		AreaRef visibleSelection = new AreaRef(selection.getRow(), selection.getColumn(), 
 				Math.min(spreadsheet.getCurrentMaxVisibleRows(), selection.getLastRow()), //ZSS-1084 
 				Math.min(spreadsheet.getCurrentMaxVisibleColumns(), selection.getLastColumn())); //ZSS-1084
-		CellSelectionType _selectionType = CellSelectionType.CELL;
+		
+		CellSelectionType selType = getCellSelectionType((String) extraData.get("type")); //ZSS-717
 		
 		//book could be null after close -> new book
 		SBook sbook = book==null?null:book.getInternalBook();
-		if(sbook!=null){
+		if(sbook!=null) {
 			boolean wholeRow = uiSelection.getColumn()==0 && uiSelection.getLastColumn()>=sbook.getMaxColumnIndex();
 			boolean wholeColumn = uiSelection.getRow()==0 && uiSelection.getLastRow()>=sbook.getMaxRowIndex();
 			boolean wholeSheet = wholeRow&&wholeColumn;
 			
-			_selectionType = wholeSheet?CellSelectionType.ALL:wholeRow?CellSelectionType.ROW:wholeColumn?CellSelectionType.COLUMN:CellSelectionType.CELL;
+			selType = wholeSheet?CellSelectionType.ALL:wholeRow?CellSelectionType.ROW:wholeColumn?CellSelectionType.COLUMN:CellSelectionType.CELL;
 		}
 		
 		if(Events.ON_AUX_ACTION.equals(nm)){
-			UserActionContextImpl ctx = new UserActionContextImpl(_sparedsheet,event,book,sheet,visibleSelection,_selectionType,extraData,Category.AUXACTION.getName(),action);
+			UserActionContextImpl ctx = new UserActionContextImpl(_sparedsheet,event,book,sheet,visibleSelection,selType,extraData,Category.AUXACTION.getName(),action);
 			dispatchAuxAction(ctx);//aux action
 		}else if(Events.ON_SHEET_SELECT.equals(nm)){
 			
@@ -469,7 +483,7 @@ public class DefaultUserActionManagerCtrl implements UserActionManagerCtrl,UserA
 		}else if(Events.ON_CTRL_KEY.equals(nm)){
 			KeyEvent kevt = (KeyEvent)event;
 			
-			UserActionContextImpl ctx = new UserActionContextImpl(_sparedsheet,event,book,sheet,visibleSelection,_selectionType,extraData,Category.KEYSTROKE.getName(),action);
+			UserActionContextImpl ctx = new UserActionContextImpl(_sparedsheet,event,book,sheet,visibleSelection,selType,extraData,Category.KEYSTROKE.getName(),action);
 			
 			boolean r = dispatchKeyAction(ctx);
 			if(r){
@@ -605,6 +619,7 @@ public class DefaultUserActionManagerCtrl implements UserActionManagerCtrl,UserA
 		String _category;
 		String _action;
 		Event _event;
+		
 		public UserActionContextImpl(Spreadsheet ss,Event event,Book book,Sheet sheet,AreaRef selection,CellSelectionType selectionType,Map<String,Object> data,
 				String category,String action){
 			this._spreadsheet = ss;
@@ -615,7 +630,18 @@ public class DefaultUserActionManagerCtrl implements UserActionManagerCtrl,UserA
 			this._data = data;
 			this._category = category;
 			this._action = action;
-			this._event = event;
+			this._event = event;		
+		}
+		
+		//ZSS-717
+		//@since 3.8.3
+		public int getSheetMaxVisibleRows() {
+			return _spreadsheet.getSheetMaxVisibleRows(_sheet.getInternalSheet());
+		}
+		//ZSS-717
+		//@since 3.8.3
+		public int getSheetMaxVisibleColumns() {
+			return _spreadsheet.getSheetMaxVisibleColumns(_sheet.getInternalSheet());
 		}
 		
 		public Book getBook(){
@@ -639,6 +665,12 @@ public class DefaultUserActionManagerCtrl implements UserActionManagerCtrl,UserA
 		@Override
 		public AreaRef getSelection() {
 			return _selection;
+		}
+		
+		//ZSS-717
+		@Override
+		public AreaRefWithType getSelectionWithType() {
+			return new AreaRefWithType(_selection.getRow(), _selection.getColumn(), _selection.getLastRow(), _selection.getLastColumn(), _selectionType);
 		}
 		
 		public CellSelectionType getSelectionType(){
@@ -687,7 +719,7 @@ public class DefaultUserActionManagerCtrl implements UserActionManagerCtrl,UserA
 
 		@Override
 		public void setClipboard(Sheet sheet, AreaRef selection, boolean cutMode,Object info) {
-			getSpreadsheet().setAttribute(CLIPBOARD_KEY,new ClipboardImpl(sheet, selection,cutMode, info));
+			getSpreadsheet().setAttribute(CLIPBOARD_KEY,new ClipboardImpl(_spreadsheet, sheet, selection,cutMode, info));
 			if(sheet.equals(getSpreadsheet().getSelectedSheet())){
 				getSpreadsheet().setHighlight(selection);
 			}
@@ -701,19 +733,20 @@ public class DefaultUserActionManagerCtrl implements UserActionManagerCtrl,UserA
 	 *
 	 */
 	public static class ClipboardImpl implements Clipboard{
-
+		final Spreadsheet _ss;
 		final AreaRef _selection;
 		final Sheet _sheet;
 		final boolean _cutMode;
 		final Object _info;
 		
-		public ClipboardImpl(Sheet sheet,AreaRef selection, boolean cutMode,Object info) {
+		public ClipboardImpl(Spreadsheet ss, Sheet sheet,AreaRef selection, boolean cutMode,Object info) {
 			if(sheet==null){
 				throw new IllegalArgumentException("Sheet is null");
 			}
 			if(selection==null){
 				throw new IllegalArgumentException("selection is null");
 			}
+			this._ss = ss;
 			this._sheet = sheet;
 			this._selection = selection;
 			this._cutMode = cutMode;
@@ -738,6 +771,23 @@ public class DefaultUserActionManagerCtrl implements UserActionManagerCtrl,UserA
 		public boolean isCutMode(){
 			return _cutMode;
 		}
+		
+		//ZSS-717
+		@Override
+		public AreaRefWithType getSelectionWithType() {
+			return (AreaRefWithType) _selection;
+		}
+		
+		//ZSS-717
+		@Override
+		public int getSheetMaxVisibleRows() {
+			return _ss.getSheetMaxVisibleRows(_sheet.getInternalSheet());
+		}
+		
+		//ZSS-717
+		@Override
+		public int getSheetMaxVisibleColumns() {
+			return _ss.getSheetMaxVisibleColumns(_sheet.getInternalSheet());
+		}
 	}
-
 }

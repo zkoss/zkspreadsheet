@@ -16,12 +16,17 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.ui.impl.ua;
 
+import org.zkoss.poi.ss.SpreadsheetVersion;
 import org.zkoss.util.resource.Labels;
+import org.zkoss.zss.api.AreaRefWithType;
 import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.AreaRef;
+import org.zkoss.zss.api.impl.RangeImpl;
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.Sheet;
+import org.zkoss.zss.range.impl.PasteRangeImpl;
+import org.zkoss.zss.ui.CellSelectionType;
 import org.zkoss.zss.ui.UserActionContext;
 import org.zkoss.zss.ui.UserActionContext.Clipboard;
 import org.zkoss.zss.ui.impl.undo.CutCellAction;
@@ -47,15 +52,39 @@ public class PasteHandler extends AbstractHandler {
 			ctx.clearClipboard();
 			return true;
 		}
-		AreaRef src = cb.getSelection();
-		
-		AreaRef selection = ctx.getSelection();
-		
-		Range srcRange = Ranges.range(srcSheet, src.getRow(),
-				src.getColumn(), src.getLastRow(),src.getLastColumn());
+		//ZSS-717
+		// 20160125, henrichen: The spec is we copy only those values within 
+		// MaxVisible range so we save some time 
+		AreaRefWithType src = cb.getSelectionWithType();
+		AreaRefWithType selection = ctx.getSelectionWithType();
+		CellSelectionType srcType = src.getSelType();
+		CellSelectionType dstType = selection.getSelType();
+		final boolean srcWholeRow = srcType == CellSelectionType.ALL || srcType == CellSelectionType.ROW;
+		final boolean srcWholeColumn = srcType == CellSelectionType.ALL || srcType == CellSelectionType.COLUMN;
+		final boolean dstWholeRow = dstType == CellSelectionType.ALL || dstType == CellSelectionType.ROW;
+		final boolean dstWholeColumn = dstType == CellSelectionType.ALL || dstType == CellSelectionType.COLUMN;
+				
+		int srcLastRow = srcWholeColumn ? 
+				Math.max(cb.getSheetMaxVisibleRows() - 1, src.getLastRow()) : src.getLastRow();
+		int srcLastCol = srcWholeRow ?
+				Math.max(cb.getSheetMaxVisibleColumns() - 1, src.getLastColumn()) : src.getLastColumn();
+		int dstLastRow = dstWholeColumn ?
+				Math.max(ctx.getSheetMaxVisibleRows() - 1, selection.getLastRow()) : selection.getLastRow();
+		int dstLastCol = dstWholeRow ?
+				Math.max(ctx.getSheetMaxVisibleColumns() - 1,  selection.getLastColumn()) : selection.getLastColumn();
+				
+		if (srcWholeColumn && dstWholeColumn && srcLastRow != dstLastRow) {
+			dstLastRow = srcLastRow = Math.max(dstLastRow, srcLastRow);
+		}
+		if (srcWholeRow && dstWholeRow && srcLastCol != dstLastCol) {
+			dstLastCol = srcLastCol = Math.max(dstLastCol, srcLastCol);
+		}
+				
+		Range srcRange = new RangeImpl(new PasteRangeImpl(srcSheet.getInternalSheet(), src.getRow(),
+				src.getColumn(), srcLastRow,srcLastCol, srcWholeRow, srcWholeColumn), srcSheet);
 
-		Range destRange = Ranges.range(destSheet, selection.getRow(),
-				selection.getColumn(), selection.getLastRow(), selection.getLastColumn());
+		Range destRange = new RangeImpl(new PasteRangeImpl(destSheet.getInternalSheet(), selection.getRow(),
+				selection.getColumn(), dstLastRow, dstLastCol, dstWholeRow, dstWholeColumn), destSheet);
 		
 		if (destRange.isProtected()) {
 			showProtectMessage();
@@ -69,13 +98,13 @@ public class PasteHandler extends AbstractHandler {
 		
 		if(cb.isCutMode()){
 			uam.doAction(new CutCellAction(Labels.getLabel("zss.undo.cut"),
-				srcSheet, src.getRow(), src.getColumn(),src.getLastRow(), src.getLastColumn(), 
-				destSheet, selection.getRow(), selection.getColumn(),selection.getLastRow(), selection.getLastColumn()));
+				srcSheet, srcRange.getRow(), srcRange.getColumn(),srcRange.getLastRow(), srcRange.getLastColumn(),srcRange.isWholeColumn(), 
+				destSheet, destRange.getRow(), destRange.getColumn(),destRange.getLastRow(), destRange.getLastColumn(),destRange.isWholeColumn()));
 			ctx.clearClipboard();
 		}else{
 			uam.doAction(new PasteCellAction(Labels.getLabel("zss.undo.paste"),
-				srcSheet, src.getRow(), src.getColumn(),src.getLastRow(), src.getLastColumn(), 
-				destSheet, selection.getRow(), selection.getColumn(),selection.getLastRow(), selection.getLastColumn()));
+				srcSheet, srcRange.getRow(), srcRange.getColumn(),srcRange.getLastRow(), srcRange.getLastColumn(),srcRange.isWholeColumn(), 
+				destSheet, destRange.getRow(), destRange.getColumn(),destRange.getLastRow(), destRange.getLastColumn(),destRange.isWholeColumn()));
 		}
 		return true;
 	}

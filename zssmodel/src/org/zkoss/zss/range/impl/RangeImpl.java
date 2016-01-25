@@ -34,7 +34,9 @@ import org.zkoss.poi.ss.util.WorkbookUtil;
 import org.zkoss.zss.model.CellRegion;
 import org.zkoss.zss.model.ErrorValue;
 import org.zkoss.zss.model.InvalidModelOpException;
+import org.zkoss.zss.model.PasteCellRegion;
 import org.zkoss.zss.model.PasteOption;
+import org.zkoss.zss.model.PasteSheetRegion;
 import org.zkoss.zss.model.SAutoFilter;
 import org.zkoss.zss.model.SAutoFilter.FilterOp;
 import org.zkoss.zss.model.SBook;
@@ -871,17 +873,35 @@ public class RangeImpl implements SRange, Serializable {
 		return (SRange)new ModelManipulationTask(){
 			@Override
 			protected Object doInvoke() {
-				CellRegion effected = dstRange.getSheet().pasteCell(new SheetRegion(getSheet(),getRow(),getColumn(),getLastRow(),getLastColumn()), 
-						new CellRegion(dstRange.getRow(),dstRange.getColumn(),dstRange.getLastRow(),dstRange.getLastColumn()),
+				CellRegion effected = dstRange.getSheet().pasteCell(new PasteSheetRegion(getSheet(),getRow(),getColumn(),getLastRow(),getLastColumn(),isWholeColumn()), 
+						new PasteCellRegion(dstRange.getRow(),dstRange.getColumn(),dstRange.getLastRow(),dstRange.getLastColumn(),dstRange.isWholeColumn()),
 						option);
 				effectedRegion.set(effected);
 				return new RangeImpl(getSheet(),effected.getRow(),effected.getColumn(),effected.getLastRow(),effected.getLastColumn());
 			}
 			@Override
 			protected void doBeforeNotify() {
-				if(option.getPasteType()==PasteOption.PasteType.COLUMN_WIDTHS){
+				//ZSS-717
+				final PasteOption.PasteType ptype = option.getPasteType();
+				final boolean wholeColumn = dstRange.getRow() == 0 && isWholeColumn(); 
+				if (ptype==PasteOption.PasteType.COLUMN_WIDTHS ||
+					((ptype==PasteOption.PasteType.ALL || ptype==PasteOption.PasteType.ALL_EXCEPT_BORDERS) 
+							&& wholeColumn)) {
 					CellRegion effected = effectedRegion.get();
-					handleNotifyRowColumnSizeChange(new SheetRegion(dstRange.getSheet(),effected)); //ZSS-1115
+					final int row = effected.getRow();
+					final int lastRow = dstRange.getSheet().getBook().getMaxRowIndex(); //ZSS-717 enforce whole column
+					final int col = effected.getColumn();
+					final int lastCol = effected.getLastColumn();
+					handleNotifyRowColumnSizeChange(new SheetRegion(dstRange.getSheet(),row,col,lastRow,lastCol)); //ZSS-1115
+				}
+				//ZSS-717
+				if (option.isCut() && wholeColumn) {
+					final int row = getRow();
+					final SSheet srcSheet = getSheet(); 
+					final int lastRow = srcSheet.getBook().getMaxRowIndex(); //ZSS-717 enforce whole column
+					final int col = getColumn();
+					final int lastCol = getLastColumn();
+					handleNotifyRowColumnSizeChange(new SheetRegion(srcSheet,row,col,lastRow,lastCol));
 				}
 			}
 			

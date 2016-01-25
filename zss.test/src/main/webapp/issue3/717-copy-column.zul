@@ -1,0 +1,24 @@
+<vbox hflex="1" height="100%">
+	<label multiline="true">
+Since 3.8.3
+1. Select column B
+2. Right click to pop context menu; select Copy
+3. Select cell C2
+4. Right click to pop context menu; select Paste
+5. Should see a warning window saying: "Cannot perform this operation on current selection: The operation can only be applied on the Paste area which..."
+6. Select column C
+7. Right click to pop context menu; select Paste. You should see value and column width of column B copy to column C
+8. Select cell D1; right click and select Paste.  You should see value and column width of column B copy to column D (no warning window)
+9. Select cell E1; press CTRL-V. You should see value and column width of column B copy to column E (no warning window)
+10. Select column B; right click and select Cut.
+11. Select cell F2; right click and select Paste. Should see the warning window.
+12. Select column F; right click and select Paste. You should see value and column width of column B copy to column F. The column B is cleared and column B width is reset to default width.
+13. Select column C; right click and select Cut.
+14. Select cell G1;  right click and select Paste. You should see value and column width of column C copy to column G. The column C is cleared and column C width is reset to default width.
+15. Select column D; right click and select Cut.
+16. Select column H; press CTRL-V. You should see value and column width of column D copy to column H. The column D is cleared and column D width is reset to default width.
+	</label>
+	<spreadsheet id="ss" src="/issue3/book/717-copy-column.xlsx" maxVisibleRows="60" maxVisibleColumns="40"
+		hflex="1" height="500px" showContextMenu="true" showSheetbar="true" showToolbar="true" 
+		showFormulabar="true" />
+</vbox>
