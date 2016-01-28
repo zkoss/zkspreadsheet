@@ -1,0 +1,7 @@
+<vbox hflex="1" vflex="1">
+	<label multiline="true">
+1. background color of A12:D12 should be equals to backgournd color of F12	</label>
+	<spreadsheet id="ss" src="/issue3/book/1185-custom-table.xlsx" maxVisibleRows="30" maxVisibleColumns="40"
+		hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
+		showFormulabar="true" />	
+</vbox>

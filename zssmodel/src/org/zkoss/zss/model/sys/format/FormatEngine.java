@@ -16,6 +16,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.model.sys.format;
 
+import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.SCell;
 import org.zkoss.zss.model.SCellStyle;
 import org.zkoss.zss.model.STableStyle;
@@ -58,6 +59,15 @@ public interface FormatEngine {
 	 * @param name
 	 * @return
 	 * @since 3.8.0
+	 * @deprecated
 	 */
 	STableStyle getTableStyle(String name);
+
+	/**
+	 * Returns TableStyle of the specified name of the specified book.
+	 * @param name
+	 * @return
+	 * @since 3.8.3
+	 */
+	STableStyle getTableStyle(SBook book, String name);
 }

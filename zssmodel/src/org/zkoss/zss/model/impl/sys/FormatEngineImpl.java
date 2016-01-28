@@ -25,6 +25,7 @@ import org.zkoss.poi.ss.usermodel.DataFormatter;
 import org.zkoss.poi.ss.usermodel.ZssContext;
 import org.zkoss.poi.ss.util.NumberToTextConverter;
 import org.zkoss.zss.model.CellRegion;
+import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.SCell;
 import org.zkoss.zss.model.SCellStyle;
 import org.zkoss.zss.model.SCell.CellType;
@@ -282,7 +283,13 @@ public class FormatEngineImpl implements FormatEngine {
 	}
 	
 	//ZSS-977
+	@Deprecated
 	public STableStyle getTableStyle(String name) {
+		return TableStyleNone.instance;
+	}
+
+	//ZSS-1185
+	public STableStyle getTableStyle(SBook book, String name) {
 		return TableStyleNone.instance;
 	}
 }

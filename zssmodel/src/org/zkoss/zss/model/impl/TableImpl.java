@@ -378,7 +378,7 @@ public class TableImpl extends AbstractTableAdv implements LinkedModelObject {
 	public SCellStyle getCellStyle(int row, int col) {
 		final CellStylePicker picker = new CellStylePicker();
 		final CellRegion all = _region.getRegion();
-		final STableStyle tbStyle = _tableStyleInfo.getTableStyle();
+		STableStyle tbStyle = _tableStyleInfo.getTableStyle(_book); //ZSS-1185
 		final boolean firstCol = col == all.getColumn();
 		final boolean lastCol = col == all.getLastColumn();
 		final boolean firstRow = row == all.getRow();
@@ -408,7 +408,7 @@ public class TableImpl extends AbstractTableAdv implements LinkedModelObject {
 		} else if (headerRow) {
 			if (_tableStyleInfo.isShowLastColumn() && lastCol) {
 				//Last Header Cell
-				final STableStyleElem result = _tableStyleInfo.getTableStyle().getLastHeaderCellStyle();
+				final STableStyleElem result = _tableStyleInfo.getTableStyle(_book).getLastHeaderCellStyle(); //ZSS-1185
 				if (picker.pickDataStyle(result, null)) {
 					return picker.getCellStyle();
 				}
@@ -421,7 +421,7 @@ public class TableImpl extends AbstractTableAdv implements LinkedModelObject {
 				}
 			}
 			//Header Row
-			final STableStyleElem result = _tableStyleInfo.getTableStyle().getHeaderRowStyle();
+			final STableStyleElem result = _tableStyleInfo.getTableStyle(_book).getHeaderRowStyle();  //ZSS-1185
 			if (picker.pickDataStyle(result, null)) {
 				return picker.getCellStyle();
 			}
@@ -430,7 +430,7 @@ public class TableImpl extends AbstractTableAdv implements LinkedModelObject {
 		final boolean nextTotalsRow = isNextTotalsRow(_region.getSheet(), row, all.getLastRow() - getTotalsRowCount()); 
 		if (_tableStyleInfo.isShowFirstColumn() && firstCol) {
 			//First Column
-			final STableStyleElem result = _tableStyleInfo.getTableStyle().getFirstColumnStyle();
+			final STableStyleElem result = _tableStyleInfo.getTableStyle(_book).getFirstColumnStyle();  //ZSS-1185
 			if (picker.pickDataStyle(result, nextTotalsRow ? tbStyle.getTotalRowStyle() : null)) {
 				return picker.getCellStyle();
 			}
@@ -438,7 +438,7 @@ public class TableImpl extends AbstractTableAdv implements LinkedModelObject {
 		
 		if (_tableStyleInfo.isShowLastColumn() && lastCol) {  
 			//Last Column
-			final STableStyleElem result = _tableStyleInfo.getTableStyle().getLastColumnStyle();
+			final STableStyleElem result = _tableStyleInfo.getTableStyle(_book).getLastColumnStyle();  //ZSS-1185
 			if (picker.pickDataStyle(result, nextTotalsRow ? tbStyle.getTotalRowStyle() : null)) {
 				return picker.getCellStyle();
 			}
@@ -448,7 +448,7 @@ public class TableImpl extends AbstractTableAdv implements LinkedModelObject {
 			//Row Stripe
 			if (_tableStyleInfo.isShowRowStripes()) {
 				final int topDataRow = all.getRow() + getHeaderRowCount();
-				final STableStyle nmTableStyle = _tableStyleInfo.getTableStyle();
+				final STableStyle nmTableStyle = _tableStyleInfo.getTableStyle(_book);  //ZSS-1185
 				final int rowStripe1Size = nmTableStyle.getRowStrip1Size();
 				final int rowStripe2Size = nmTableStyle.getRowStrip2Size();
 				int rowStripeSize = (row - topDataRow) % (rowStripe1Size + rowStripe2Size);
@@ -462,7 +462,7 @@ public class TableImpl extends AbstractTableAdv implements LinkedModelObject {
 			} 
 			//Column Stripe
 			if (_tableStyleInfo.isShowColumnStripes()) {
-				final STableStyle nmTableStyle = _tableStyleInfo.getTableStyle();
+				final STableStyle nmTableStyle = _tableStyleInfo.getTableStyle(_book);  //ZSS-1185
 				final int colStripe1Size = nmTableStyle.getColStrip1Size();
 				final int colStripe2Size = nmTableStyle.getColStrip2Size();
 				int colStripeSize = (col - all.getColumn()) % (colStripe1Size + colStripe2Size);
@@ -477,7 +477,7 @@ public class TableImpl extends AbstractTableAdv implements LinkedModelObject {
 		}
 		
 		//Whole Table
-		final STableStyleElem result = _tableStyleInfo.getTableStyle().getWholeTableStyle();
+		final STableStyleElem result = _tableStyleInfo.getTableStyle(_book).getWholeTableStyle();  //ZSS-1185
 		picker.pickWholeTableStyle(result, 
 				nextTotalsRow ? tbStyle.getTotalRowStyle() : null, 
 						firstRow, firstCol, lastRow, lastCol);

@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.zkoss.lang.Objects;
+import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.STableStyle;
 import org.zkoss.zss.model.STableStyleInfo;
 import org.zkoss.zss.model.sys.EngineFactory;
@@ -97,12 +98,20 @@ public class TableStyleInfoImpl implements STableStyleInfo, Serializable {
 		showFirstColumn = b;
 	}
 	
+	
 	//ZSS-977
+	@Deprecated
 	@Override
 	public STableStyle getTableStyle() {
+		return getTableStyle(null);
+	}
+	
+	//ZSS-1185
+	@Override
+	public STableStyle getTableStyle(SBook book) {
 		if (tableStyle == null) {
 			tableStyle = EngineFactory.getInstance()
-							.createFormatEngine().getTableStyle(name);
+							.createFormatEngine().getTableStyle(book, name);
 		}
 		return tableStyle;
 	}

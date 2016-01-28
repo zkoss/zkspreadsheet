@@ -36,6 +36,17 @@ public interface STableStyleInfo {
 	/**
 	 * Returns styles used in this TableStyleInfo.
 	 * @return
+	 * @since 3.8.3
 	 */
+	@Deprecated
 	public STableStyle getTableStyle();
+	
+	/**
+	 * Returns styles used in this TableStyleInfo associated with the 
+	 * specified book.
+	 * @param book
+	 * @return
+	 * @since 3.8.3
+	 */
+	public STableStyle getTableStyle(SBook book);
 }

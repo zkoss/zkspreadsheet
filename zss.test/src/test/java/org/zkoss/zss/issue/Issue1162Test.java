@@ -65,8 +65,8 @@ public class Issue1162Test {
 			Book book = Importers.getImporter().imports(is, bookName);
 
 			SExtraStyle  extraStyle = book.getInternalBook().getExtraStyleAt(0);
-			SColor fgcolor = extraStyle.getFillColor();
-			Assert.assertEquals("fillColor", "#ffc7ce", fgcolor.getHtmlColor());
+			SColor bgcolor = extraStyle.getBackColor();
+			Assert.assertEquals("bgColor", "#ffc7ce", bgcolor.getHtmlColor());
 			AbstractFillAdv fill = (AbstractFillAdv)extraStyle.getFill();
 			FillPattern fillPattern = fill.getRawFillPattern();
 			Assert.assertNull("fillPattern", fillPattern);

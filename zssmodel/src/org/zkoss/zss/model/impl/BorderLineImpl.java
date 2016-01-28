@@ -54,7 +54,7 @@ public class BorderLineImpl extends AbstractBorderLineAdv implements SBorderLine
 	}
 	
 	public SColor getColor() {
-		return color;
+		return color == null ? ColorImpl.BLACK : color; //ZSS-1185
 	}
 	
 	public void setColor(SColor color) {
