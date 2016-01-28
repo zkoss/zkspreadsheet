@@ -370,4 +370,60 @@ public interface SBook {
 	 */
 	public List<SExtraStyle> getExtraStyles();
 
+	/**
+	 * Get table style of the specified name.
+	 * @param name
+	 * @return
+	 * @since 3.8.3
+	 */
+	public STableStyle getTableStyle(String name);
+
+	/**
+	 * Add table style into this book.
+	 * @param tableStyle
+	 * @since 3.8.3
+	 */
+	public void addTableStyle(STableStyle tableStyle);
+
+	/**
+	 * Returns table styles of this book.
+	 * @return
+	 * @since 3.8.3
+	 */
+	public List<STableStyle> getTableStyles();
+
+
+	/**
+	 * Clear custom table styles of this book.
+	 * @since 3.8.3
+	 */
+	public void clearTableStyles();
+
+	/**
+	 * Set default pivot style name.
+	 * @param name
+	 * @since 3.8.3
+	 */
+	public void setDefaultPivotStyleName(String name);
+
+	/**
+	 * Get default pivot style name.
+	 * @return
+	 * @since 3.8.3
+	 */
+	public String getDefaultPivotStyleName();
+
+	/**
+	 * Set default table style name
+	 * @param name
+	 * @since 3.8.3
+	 */
+	public void setDefaultTableStyleName(String name);
+
+	/**
+	 * Get default table style name
+	 * @return
+	 * @since 3.8.3
+	 */
+	public String getDefaultTableStyleName();
 }

@@ -134,6 +134,8 @@ abstract public class AbstractExcelImporter extends AbstractImporter implements 
 		importNamedStyles();
 		//ZSS-1140
 		importExtraStyles();
+		//ZSS-992
+		importTableStyles();
 		setBookType(book);
 
 		//ZSS-715: Enforce internal Locale.US Locale so formula is in consistent internal format
@@ -787,6 +789,11 @@ abstract public class AbstractExcelImporter extends AbstractImporter implements 
 	
 	//ZSS-1140
 	protected void importExtraStyles() {
+		// do nothing; ExcelXlsxImporter should override it
+	}
+	
+	//ZSS-992
+	protected void importTableStyles() {
 		// do nothing; ExcelXlsxImporter should override it
 	}
 }

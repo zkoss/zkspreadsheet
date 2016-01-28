@@ -733,12 +733,13 @@ public class ExcelXlsxExporter extends AbstractExcelExporter {
 			SColor fgColor = fill.getRawFillColor();
 			SColor bgColor = fill.getRawBackColor();
 			FillPattern fillPattern = fill.getRawFillPattern();
-			
-			if (fillPattern == null || fillPattern == FillPattern.SOLID) { //ZSS-1162
-				SColor tmp = fgColor;
-				fgColor = bgColor;
-				bgColor = tmp;
-			}
+
+// ZSS-992: in <dxf>, bgColor and fgColor is set as is; (whilst <xf> is reversed)		
+//			if (fillPattern == null || fillPattern == FillPattern.SOLID) { //ZSS-1162
+//				SColor tmp = fgColor;
+//				fgColor = bgColor;
+//				bgColor = tmp;
+//			}
 			Color fillColor = fgColor == null ? null : toPOIColor(fgColor);
 			Color backColor = bgColor == null ? null : toPOIColor(bgColor);
 			short pattern = fillPattern == null ? -1 : PoiEnumConversion.toPoiFillPattern(extraStyle.getFillPattern());

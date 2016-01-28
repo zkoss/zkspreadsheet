@@ -1,6 +1,7 @@
 ZK Spreadsheet 3.8.3
 *Features:
   ZSS-1184 Provide an ignoreAutoHeight flag so user can fine tune the performance
+  ZSS-992 Support import customized TableStyles
   
 *Bugs:
   ZSS-1172 Should remove unnecessary ___ (three underscores) style class

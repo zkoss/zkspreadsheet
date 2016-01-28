@@ -41,7 +41,9 @@ import org.zkoss.zss.model.SConditionalFormattingRule.RuleType;
 import org.zkoss.zss.model.SFill.FillPattern;
 import org.zkoss.zss.model.STableColumn.STotalsRowFunction;
 import org.zkoss.zss.model.chart.*;
+import org.zkoss.zss.model.impl.AbstractBorderAdv;
 import org.zkoss.zss.model.impl.AbstractDataValidationAdv;
+import org.zkoss.zss.model.impl.AbstractFillAdv;
 import org.zkoss.zss.model.impl.AbstractFontAdv;
 import org.zkoss.zss.model.impl.AbstractSheetAdv;
 import org.zkoss.zss.model.impl.BorderImpl;
@@ -57,7 +59,9 @@ import org.zkoss.zss.model.impl.FillImpl;
 import org.zkoss.zss.model.impl.IconSetImpl;
 import org.zkoss.zss.model.impl.TableColumnImpl;
 import org.zkoss.zss.model.impl.TableImpl;
+import org.zkoss.zss.model.impl.TableStyleImpl;
 import org.zkoss.zss.model.impl.TableStyleInfoImpl;
+import org.zkoss.zss.model.impl.TableStyleElemImpl;
 import org.zkoss.zss.model.sys.formula.FormulaEngine;
 import org.zkoss.zss.model.impl.AbstractBookAdv;
 import org.zkoss.zss.model.impl.ConditionalFormattingImpl;
@@ -711,11 +715,12 @@ public class ExcelXlsxImporter extends AbstractExcelImporter {
 		Color bgColor = poiCellStyle.getRawFillBackgroundColor();
 		SColor fgSColor = fgColor == null ? null : book.createColor(BookHelper.colorToForegroundHTML(workbook, fgColor));
 		SColor bgSColor = bgColor == null ? null : book.createColor(BookHelper.colorToBackgroundHTML(workbook, bgColor));
-		if (pattern == null || pattern == FillPattern.SOLID) { //ZSS-1162
-			SColor tmp = fgSColor;
-			fgSColor = bgSColor;
-			bgSColor = tmp;
-		}
+// ZSS-992: in <dxf>, bgColor and fgColor is set as is; (whilst <xf> is reversed)		
+//		if (pattern == null || pattern == FillPattern.SOLID) { //ZSS-1162
+//			SColor tmp = fgSColor;
+//			fgSColor = bgSColor;
+//			bgSColor = tmp;
+//		}
 		SFill fill = new FillImpl(pattern, fgSColor, bgSColor); //ZSS-1162
 		SBorder border = importBorder(poiCellStyle);
 		SFont font = importFont(poiCellStyle);
@@ -1013,6 +1018,63 @@ public class ExcelXlsxImporter extends AbstractExcelImporter {
 	//ZSS-1130
 	protected STCfType.Enum toConditionalFormatingRuleType(SConditionalFormattingRule.RuleType stype) {
 		return STCfType.Enum.forInt(stype.value);
+	}
+
+	//ZSS-992
+	protected void importTableStyles() {
+		((AbstractBookAdv)book).clearTableStyles();
+		for (TableStyle poiStyle : workbook.getTableStyles()) {
+			book.addTableStyle(importTableStyle(poiStyle));
+		}
+		book.setDefaultPivotStyleName(workbook.getDefaultPivotStyle());
+		book.setDefaultTableStyleName(workbook.getDefaultTableStyle());
+	}
+
+	//ZSS-992
+	protected STableStyleElem importTableStyleElem(TableStyle poiTableStyle, String name) {
+		final DxfCellStyle dxfStyle = (DxfCellStyle) poiTableStyle.getDxfCellStyle(name);
+		if (dxfStyle == null) return null;
+		SExtraStyle extraStyle = book.getExtraStyleAt(dxfStyle.getIndex());
+		return new TableStyleElemImpl(extraStyle.getFont(), extraStyle.getFill(), extraStyle.getBorder());
+	}
+	
+	//ZSS-992
+	protected STableStyle importTableStyle(TableStyle poiTableStyle) {
+		final String name = poiTableStyle.getName();
+		final STableStyleElem wholeTable = importTableStyleElem(poiTableStyle, "wholeTable");
+		final STableStyleElem colStripe1 = importTableStyleElem(poiTableStyle, "firstColumnStripe");
+		final STableStyleElem colStripe2 = importTableStyleElem(poiTableStyle, "SecondColumnStripe");
+		final STableStyleElem rowStripe1 = importTableStyleElem(poiTableStyle, "firstRowStripe");
+		final STableStyleElem rowStripe2 = importTableStyleElem(poiTableStyle, "SecondRowStripe");
+		final STableStyleElem lastCol = importTableStyleElem(poiTableStyle, "lastColumn");
+		final STableStyleElem firstCol = importTableStyleElem(poiTableStyle, "firstColumn");
+		final STableStyleElem headerRow = importTableStyleElem(poiTableStyle, "headerRow");
+		final STableStyleElem totalRow = importTableStyleElem(poiTableStyle, "totalRow");
+		final STableStyleElem firstHeaderCell = importTableStyleElem(poiTableStyle, "firstHeaderCell");
+		final STableStyleElem lastHeaderCell = importTableStyleElem(poiTableStyle, "lastHeaderCell");
+		final STableStyleElem firstTotalCell = importTableStyleElem(poiTableStyle, "firstTotalCell");
+		final STableStyleElem lastTotalCell = importTableStyleElem(poiTableStyle, "lastTotalCell");
+
+		return new TableStyleImpl(
+				name,
+				wholeTable,
+				colStripe1,
+				1, 		//colStripe1Size,
+				colStripe2,
+				1, 		//colStripe2Size,
+				rowStripe1,
+				1, 		//rowStripe1Size,
+				rowStripe2,
+				1, 		//rowStripe2Size,
+				lastCol,
+				firstCol,
+				headerRow,
+				totalRow,
+				firstHeaderCell,
+				lastHeaderCell,
+				firstTotalCell,
+				lastTotalCell
+		);
 	}
 }
  

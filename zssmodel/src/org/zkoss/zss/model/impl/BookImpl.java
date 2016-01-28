@@ -38,6 +38,7 @@ import org.zkoss.zss.model.InvalidModelOpException;
 import org.zkoss.zss.model.ModelEvent;
 import org.zkoss.zss.model.ModelEventListener;
 import org.zkoss.zss.model.ModelEvents;
+import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.SBookSeries;
 import org.zkoss.zss.model.SCell;
 import org.zkoss.zss.model.SCellStyle;
@@ -53,6 +54,7 @@ import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.model.SNamedStyle;
 import org.zkoss.zss.model.STable;
 import org.zkoss.zss.model.STableColumn;
+import org.zkoss.zss.model.STableStyle;
 import org.zkoss.zss.model.SheetRegion;
 import org.zkoss.zss.model.impl.sys.DependencyTableAdv;
 import org.zkoss.zss.model.impl.sys.formula.ParsingBook;
@@ -118,6 +120,13 @@ public class BookImpl extends AbstractBookAdv{
 	
 	//ZSS-1140
 	private List<SExtraStyle> _extraStyles = new ArrayList<SExtraStyle>(); // since 3.8.2
+	
+	//ZSS-992
+	private LinkedHashMap<String, STableStyle> _tableStyles = new LinkedHashMap<String, STableStyle>(); // since 3.8.3
+	//ZSS-992
+	private String _defaultPivotStyle; //default pivot style name; since 3.8.3
+	//ZSS-992
+	private String _defaultTableStyle; //default table style name; since 3.8.3
 	
 	/**
 	 * the sheet which is destroying now.
@@ -1317,5 +1326,54 @@ public class BookImpl extends AbstractBookAdv{
 			j++;
 		}
 		return -1;
+	}
+
+	//ZSS-992
+	@Override
+	public STableStyle getTableStyle(String name) {
+		return _tableStyles.get(name);
+	}
+
+	//ZSS-992
+	@Override
+	public void addTableStyle(STableStyle tableStyle) {
+		_tableStyles.put(tableStyle.getName(), tableStyle);
+	}
+
+	//ZSS-992
+	@Override
+	public List<STableStyle> getTableStyles() {
+		return new ArrayList<STableStyle>(_tableStyles.values());
+	}
+
+	//ZSS-992
+	@Override
+	public void clearTableStyles() {
+		_tableStyles.clear();		
+	}
+	
+	//ZSS-992
+	@Override
+	public void setDefaultPivotStyleName(String name) {
+		_defaultPivotStyle = name;
+	}
+	
+	//ZSS-992
+	//@since 3.8.3
+	@Override
+	public String getDefaultPivotStyleName() {
+		return _defaultPivotStyle;
+	}
+	
+	//ZSS-992
+	@Override
+	public void setDefaultTableStyleName(String name) {
+		_defaultTableStyle = name;
+	}
+	
+	//ZSS-992
+	@Override
+	public String getDefaultTableStyleName() {
+		return _defaultTableStyle;
 	}
 }
