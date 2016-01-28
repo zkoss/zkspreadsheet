@@ -1026,4 +1026,117 @@ public class ExcelXlsxExporter extends AbstractExcelExporter {
 		return STCfType.Enum.forInt(stype.value);
 	}
 
+	//ZSS-1188
+	protected void addPOITableStyle(STableStyle tbStyle) {
+		// instead of creating a new style, use old one if exist
+		XSSFTableStyle poiTbStyle = (XSSFTableStyle) tbStyleTable.get(tbStyle);
+		if (poiTbStyle != null) {
+			workbook.addTableStyle(poiTbStyle);
+			return;
+		}
+		poiTbStyle = (XSSFTableStyle) workbook.createTableStyle(tbStyle.getName()); //will add into workbook
+
+		final STableStyleElem wholeTable = tbStyle.getWholeTableStyle();
+		if (wholeTable != null) {
+			final int dxfId = getOrCreateDxfId(wholeTable);
+			poiTbStyle.addTableStyleElement(dxfId, "wholeTable");
+		}
+		
+		final STableStyleElem colStripe1 = tbStyle.getColStripe1Style();
+		if (colStripe1 != null) {
+			final int colStripe1Size = tbStyle.getColStripe1Size();
+			final int dxfId = getOrCreateDxfId(colStripe1);
+			poiTbStyle.addTableStyleElement(dxfId, "firstColumnStripe", colStripe1Size);
+		}
+		
+		final STableStyleElem colStripe2 = tbStyle.getColStripe2Style();
+		if (colStripe2 != null) {
+			final int colStripe2Size = tbStyle.getColStripe2Size();
+			final int dxfId = getOrCreateDxfId(colStripe2);
+			poiTbStyle.addTableStyleElement(dxfId, "SecondColumnStripe", colStripe2Size);
+		}
+		
+		final STableStyleElem rowStripe1 = tbStyle.getRowStripe1Style();
+		if (rowStripe1 != null) {
+			final int rowStripe1Size = tbStyle.getRowStripe1Size();
+			final int dxfId = getOrCreateDxfId(rowStripe1);
+			poiTbStyle.addTableStyleElement(dxfId, "firstRowStripe", rowStripe1Size);
+		}
+		
+		final STableStyleElem rowStripe2 = tbStyle.getRowStripe2Style();
+		if (rowStripe2 != null) {
+			final int rowStripe2Size = tbStyle.getRowStripe2Size();
+			final int dxfId = getOrCreateDxfId(rowStripe2);
+			poiTbStyle.addTableStyleElement(dxfId, "firstColumnStripe", rowStripe2Size);
+		}
+		
+		final STableStyleElem lastColumn = tbStyle.getLastColumnStyle();
+		if (lastColumn != null) {
+			final int dxfId = getOrCreateDxfId(lastColumn);
+			poiTbStyle.addTableStyleElement(dxfId, "lastColumn");
+		}
+			
+		final STableStyleElem firstColumn = tbStyle.getFirstColumnStyle();
+		if (firstColumn != null) {
+			final int dxfId = getOrCreateDxfId(firstColumn);
+			poiTbStyle.addTableStyleElement(dxfId, "firstColumn");
+		}
+		
+		final STableStyleElem headerRow = tbStyle.getHeaderRowStyle();
+		if (headerRow != null) {
+			final int dxfId = getOrCreateDxfId(headerRow);
+			poiTbStyle.addTableStyleElement(dxfId, "headerRow");
+		}
+		
+		final STableStyleElem totalRow = tbStyle.getTotalRowStyle();
+		if (totalRow != null) {
+			final int dxfId = getOrCreateDxfId(totalRow);
+			poiTbStyle.addTableStyleElement(dxfId, "totalRow");
+		}
+		
+		final STableStyleElem firstHeaderCell = tbStyle.getFirstHeaderCellStyle();
+		if (firstHeaderCell != null) {
+			final int dxfId = getOrCreateDxfId(firstHeaderCell);
+			poiTbStyle.addTableStyleElement(dxfId, "firstHeaderCell");
+		}
+		
+		final STableStyleElem lastHeaderCell = tbStyle.getLastHeaderCellStyle();
+		if (lastHeaderCell != null) {
+			final int dxfId = getOrCreateDxfId(lastHeaderCell);
+			poiTbStyle.addTableStyleElement(dxfId, "lastHeaderCell");
+		}
+
+		final STableStyleElem firstTotalCell = tbStyle.getFirstTotalCellStyle();
+		if (firstTotalCell != null) {
+			final int dxfId = getOrCreateDxfId(firstTotalCell);
+			poiTbStyle.addTableStyleElement(dxfId, "firstTotalCell");
+		}
+		
+		final STableStyleElem lastTotalCell = tbStyle.getLastTotalCellStyle();
+		if (lastTotalCell != null) {
+			final int dxfId = getOrCreateDxfId(lastTotalCell);
+			poiTbStyle.addTableStyleElement(dxfId, "lastTotalCell");
+		}
+
+		// put into table
+		tbStyleTable.put(tbStyle, poiTbStyle);
+	}
+	
+	//ZSS-1188
+	protected int getOrCreateDxfId(STableStyleElem tbStyleElem) {
+		int index = getOrCreateDxfId0(tbStyleElem);
+		if (index < 0) {
+			addPOIDxfCellStyle(tbStyleElem);
+			return getOrCreateDxfId0(tbStyleElem);
+		}
+		return index;
+	}
+	//ZSS-1188
+	private int getOrCreateDxfId0(STableStyleElem tbStyleElem) {
+		XSSFDxfCellStyle poiCellStyle = (XSSFDxfCellStyle) styleTable.get(tbStyleElem);
+		if (poiCellStyle != null) {
+			return workbook.getDxfIndex(poiCellStyle);
+		}
+		return -1;
+	}
 }

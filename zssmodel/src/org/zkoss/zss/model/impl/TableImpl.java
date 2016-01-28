@@ -449,8 +449,8 @@ public class TableImpl extends AbstractTableAdv implements LinkedModelObject {
 			if (_tableStyleInfo.isShowRowStripes()) {
 				final int topDataRow = all.getRow() + getHeaderRowCount();
 				final STableStyle nmTableStyle = _tableStyleInfo.getTableStyle(_book);  //ZSS-1185
-				final int rowStripe1Size = nmTableStyle.getRowStrip1Size();
-				final int rowStripe2Size = nmTableStyle.getRowStrip2Size();
+				final int rowStripe1Size = nmTableStyle.getRowStripe1Size();
+				final int rowStripe2Size = nmTableStyle.getRowStripe2Size();
 				int rowStripeSize = (row - topDataRow) % (rowStripe1Size + rowStripe2Size);
 				final STableStyleElem result = 
 						rowStripeSize < rowStripe1Size ?  // rowStripe1
@@ -463,8 +463,8 @@ public class TableImpl extends AbstractTableAdv implements LinkedModelObject {
 			//Column Stripe
 			if (_tableStyleInfo.isShowColumnStripes()) {
 				final STableStyle nmTableStyle = _tableStyleInfo.getTableStyle(_book);  //ZSS-1185
-				final int colStripe1Size = nmTableStyle.getColStrip1Size();
-				final int colStripe2Size = nmTableStyle.getColStrip2Size();
+				final int colStripe1Size = nmTableStyle.getColStripe1Size();
+				final int colStripe2Size = nmTableStyle.getColStripe2Size();
 				int colStripeSize = (col - all.getColumn()) % (colStripe1Size + colStripe2Size);
 				final STableStyleElem result = 
 						colStripeSize < colStripe1Size ? // colStripe1

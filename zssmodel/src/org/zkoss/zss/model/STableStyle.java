@@ -22,16 +22,16 @@ public interface STableStyle {
 	public STableStyleElem getWholeTableStyle();
 	
 	public STableStyleElem getColStripe1Style();
-	public int getColStrip1Size();
+	public int getColStripe1Size();
 	
 	public STableStyleElem getColStripe2Style();
-	public int getColStrip2Size();
+	public int getColStripe2Size();
 	
 	public STableStyleElem getRowStripe1Style();
-	public int getRowStrip1Size();
+	public int getRowStripe1Size();
 	
 	public STableStyleElem getRowStripe2Style();
-	public int getRowStrip2Size();
+	public int getRowStripe2Size();
 	
 	public STableStyleElem getLastColumnStyle();
 	public STableStyleElem getFirstColumnStyle();

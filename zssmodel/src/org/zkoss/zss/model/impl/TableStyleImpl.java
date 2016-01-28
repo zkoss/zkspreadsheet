@@ -98,7 +98,7 @@ public class TableStyleImpl implements STableStyle, Serializable {
 	}
 
 	@Override
-	public int getColStrip1Size() {
+	public int getColStripe1Size() {
 		return colStripe1Size;
 	}
 
@@ -108,7 +108,7 @@ public class TableStyleImpl implements STableStyle, Serializable {
 	}
 
 	@Override
-	public int getColStrip2Size() {
+	public int getColStripe2Size() {
 		return colStripe2Size;
 	}
 
@@ -118,7 +118,7 @@ public class TableStyleImpl implements STableStyle, Serializable {
 	}
 
 	@Override
-	public int getRowStrip1Size() {
+	public int getRowStripe1Size() {
 		return rowStripe1Size;
 	}
 
@@ -128,7 +128,7 @@ public class TableStyleImpl implements STableStyle, Serializable {
 	}
 
 	@Override
-	public int getRowStrip2Size() {
+	public int getRowStripe2Size() {
 		return rowStripe2Size;
 	}
 

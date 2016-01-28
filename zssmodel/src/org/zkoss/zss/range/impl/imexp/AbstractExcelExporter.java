@@ -59,7 +59,9 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 	protected Map<SFont, Font> fontTable = new HashMap<SFont, Font>();
 	protected Map<SColor, Color> colorTable = new HashMap<SColor, Color>();
 	//ZSS-688: SPictureData index -> poi PictureData index
-	protected Map<Integer, Integer> exportedPicDataMap = new HashMap<Integer, Integer>(); 
+	protected Map<Integer, Integer> exportedPicDataMap = new HashMap<Integer, Integer>();
+	//ZSS-1188
+	protected Map<STableStyle, TableStyle> tbStyleTable = new HashMap<STableStyle, TableStyle>();
 	
 	private static final Log _logger = Log.lookup(AbstractExcelExporter.class.getName());
 
@@ -99,6 +101,7 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 			styleTable.clear();
 			fontTable.clear();
 			colorTable.clear();
+			tbStyleTable.clear(); //ZSS-1188
 			
 			workbook = createPoiBook();
 			//ZSS-854: export default cell styles
@@ -118,6 +121,14 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 			workbook.clearDxfCellStyles();
 			for (SExtraStyle style: book.getExtraStyles()) {
 				addPOIDxfCellStyle(style); // put the Dxf cellStyle
+			}
+			
+			//ZSS-1188: export TableStyles
+			workbook.setDefaultPivotStyle(book.getDefaultPivotStyleName());
+			workbook.setDefaultTableStyle(book.getDefaultTableStyleName());
+			workbook.clearTableStyles();
+			for (STableStyle style: book.getTableStyles()) {
+				addPOITableStyle(style); // put the POI TableStyle
 			}
 			
 			int tbId = 0;
@@ -672,6 +683,15 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 	 * @since 3.8.2
 	 */
 	protected void addPOIDxfCellStyle(SExtraStyle extraStyle) {
+		//Should be override in ExcelXlsxExporter
+	}
+	
+	/**
+	 * Add TableStyle as poi TableStyle
+	 * @param tableStyle
+	 * @since 3.8.3
+	 */
+	protected void addPOITableStyle(STableStyle tableStyle) {
 		//Should be override in ExcelXlsxExporter
 	}
 }
