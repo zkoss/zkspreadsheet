@@ -965,4 +965,12 @@ public interface SRange {
 	 * @since 3.8.0
 	 */
 	public void setStringValue(String value);
+
+	/**
+	 * Returns the merged region of the left top cell of this Range if any; 
+	 * otherwise, returns null if not a merged region. 
+	 * @return the merged region of the left top cell of this Range if any
+	 * @since 3.8.3
+	 */
+	public CellRegion getMergedRegion();
 }

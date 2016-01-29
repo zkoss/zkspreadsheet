@@ -2598,4 +2598,15 @@ public class RangeImpl implements SRange, Serializable {
 		}
 		((AbstractCellAdv)cell).setTextWidth(-1);
 	}
+	
+	//ZSS-1125
+	//@since 3.8.3
+	public CellRegion getMergedRegion() {
+		return (CellRegion) new ReadWriteTask() {
+			@Override
+			public Object invoke() {
+				return getSheet().getMergedRegion(_row, _column);
+			}
+		}.doInReadLock(getLock());
+	}
 }

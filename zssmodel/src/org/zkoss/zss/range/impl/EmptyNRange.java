@@ -577,4 +577,9 @@ import org.zkoss.zss.range.*;
 	public void setStringValue(String value) {
 		// do nothing
 	}
+
+	@Override
+	public CellRegion getMergedRegion() {
+		return null;
+	}
 }

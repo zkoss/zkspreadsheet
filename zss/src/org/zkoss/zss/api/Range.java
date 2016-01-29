@@ -44,6 +44,7 @@ import org.zkoss.zss.api.model.Validation;
 import org.zkoss.zss.api.model.Validation.AlertStyle;
 import org.zkoss.zss.api.model.Validation.OperatorType;
 import org.zkoss.zss.api.model.Validation.ValidationType;
+import org.zkoss.zss.model.CellRegion;
 import org.zkoss.zss.range.SRange;
 
 /**
@@ -1082,4 +1083,12 @@ public interface Range {
 	 * @since 3.8.0
 	 */
 	public void setStringValue(String value);
+
+	/**
+	 * Returns the merged region of the left top cell of this Range if any; 
+	 * otherwise, returns null if not a merged region. 
+	 * @return the merged region of the left top cell of this Range if any
+	 * @since 3.8.3
+	 */
+	public CellRegion getMergedRegion();
 }
