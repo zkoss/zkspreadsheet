@@ -353,6 +353,11 @@ public class RangeImpl implements Range, Serializable {
 		return _range.getMergedRegion();
 	}
 	
+	//ZSS-1124
+	//@since 3.8.3
+	public CellRegion getDataRegion() {
+		return _range.getDataRegion();
+	}
 	
 	static private class Result<T> {
 		T r;

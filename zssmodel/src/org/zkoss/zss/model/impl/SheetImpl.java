@@ -42,6 +42,7 @@ import org.zkoss.zss.model.SChart;
 import org.zkoss.zss.model.SColumn;
 import org.zkoss.zss.model.SColumnArray;
 import org.zkoss.zss.model.SConditionalFormatting;
+import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.model.SSheetProtection;
 import org.zkoss.zss.model.SDataValidation;
 import org.zkoss.zss.model.SPicture;
@@ -2144,5 +2145,115 @@ public class SheetImpl extends AbstractSheetAdv {
 	@Override
 	public int getMergeOutOfSync() {
 		return _mergeOutOfSync;
+	}
+	
+	//ZSS-1084, ZSS-1124
+	@Override
+	public CellRegion getDataRegion() {
+		// or find print area for real data
+		int firstCol = 0;
+		int endCol = -1;
+		int firstRow = 0;
+		int endRow = -1;
+		SBook _wb = getBook();
+
+		// Boundary for cell data
+		Iterator<SRow> rowIter = this.getRowIterator();
+		while (rowIter.hasNext()) {
+			SRow row = rowIter.next();
+			int rowIdx = row.getIndex();
+			int lastCol = this.getEndCellIndex(rowIdx);
+			if (lastCol < 0) {
+				//ZSS-1074: fill is different to default; should print it!
+				if (row.getCellStyle(true) != null && !row.getCellStyle().getFill().equals(_wb.getDefaultCellStyle().getFill())) {
+					endRow = Math.max(endRow, rowIdx);
+				} else {
+					continue; //skip blank row
+				}
+			}
+			int lastNonBlankCol = searchNonBlankEndColumn(rowIdx, lastCol);
+			//ZSS-772: could be a long merged cell that exceeds the endColumn
+			//mergedcell cannot overflow to next sibling
+			CellRegion mergedRegion = getMergedRegionIfAny(rowIdx, lastNonBlankCol);
+			if (mergedRegion != null) {
+				 int col = mergedRegion.getLastColumn();
+				 if (col > lastCol) {
+					 lastCol = col;
+				 }
+			} else { //ZSS-772: could be a long text that exceeds the endColumn
+				//20150722, henrichen: Cannot calcuate the text length in server side
+				// we are forced to ignore this case.
+				//SCell zssCell = sheet.getCell(rowIdx, lastNonBlankCol);
+				//final int col = getExtendedEndColumn(sheet, zssCell, lastNonBlankCol);
+				final int col = lastNonBlankCol;
+				if (col > lastCol) {
+					lastCol = col;
+				}
+			}
+			endCol = Math.max(endCol, lastCol);
+			endRow = Math.max(endRow, row.getIndex());
+		}
+		
+		// Boundary for pictures
+		List<SPicture> pics = this.getPictures();
+		if (pics != null && pics.size() != 0) {
+			for(SPicture pic : pics) {
+				ViewAnchor anchor1 = pic.getAnchor();
+				ViewAnchor anchor2 = anchor1.getRightBottomAnchor(this);
+				if(anchor2.getColumnIndex() > endCol) {
+					endCol = anchor2.getColumnIndex(); 
+				}
+				if(anchor2.getRowIndex() > endRow) {
+					endRow = anchor2.getRowIndex();
+				}
+			}
+		}
+		
+		// Boundary for charts
+		List<SChart> charts = this.getCharts();
+		if (charts != null && charts.size() != 0) {
+			for(SChart chart : charts) {
+				ViewAnchor anchor1 = chart.getAnchor();
+				ViewAnchor anchor2 = anchor1.getRightBottomAnchor(this);
+				if(anchor2.getColumnIndex() > endCol) {
+					endCol = anchor2.getColumnIndex(); 
+				}
+				if(anchor2.getRowIndex() > endRow) {
+					endRow = anchor2.getRowIndex();
+				}
+			}
+		}
+		
+		return endRow < 0 || endCol < 0 ? null : new CellRegion(firstRow, firstCol, endRow , endCol);
+	}
+	
+	// Returns merged region cell range for a given cell
+	//ZSS-1084, ZSS-1124
+	private CellRegion getMergedRegionIfAny(int rowIdx, int colIdx) {
+		CellRegion partOfRange = null;
+
+		for(CellRegion range : getMergedRegions()) {
+			if (colIdx >= range.getColumn() && colIdx <= range.getLastColumn()
+				&& rowIdx >= range.getRow() && rowIdx <= range.getLastRow()) {
+				partOfRange = range;
+				break;
+			}
+		}
+
+		return partOfRange;
+	}
+	
+	//Search non-blank end column
+	//ZSS-1084, ZSS-1124
+	private int searchNonBlankEndColumn(int rowIdx, int lastColIdx) {
+		int last = -1;
+		for (int i = lastColIdx; i >= 0; i--) {
+			final SCell cell = this.getCell(rowIdx, i);
+			if (!cell.isNull() && cell.getType() != SCell.CellType.BLANK) {
+				last = i;
+				break;
+			}
+		}
+		return last;
 	}
 }

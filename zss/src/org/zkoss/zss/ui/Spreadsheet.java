@@ -6618,116 +6618,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			smartUpdate("keepCellSelection", _keepCellSelection);
 		}
 	}
-	
-	//ZSS-1084
-	private CellRegion findDataBoundary(SSheet sheet) {
-		// or find print area for real data
-		int firstCol = 0;
-		int endCol = -1;
-		int firstRow = 0;
-		int endRow = -1;
-		SBook _wb = getSBook();
-
-		// Boundary for cell data
-		Iterator<SRow> rowIter = sheet.getRowIterator();
-		while (rowIter.hasNext()) {
-			SRow row = rowIter.next();
-			int rowIdx = row.getIndex();
-			int lastCol = sheet.getEndCellIndex(rowIdx);
-			if (lastCol < 0) {
-				//ZSS-1074: fill is different to default; should print it!
-				if (row.getCellStyle(true) != null && !row.getCellStyle().getFill().equals(_wb.getDefaultCellStyle().getFill())) {
-					endRow = Math.max(endRow, rowIdx);
-				} else {
-					continue; //skip blank row
-				}
-			}
-			int lastNonBlankCol = searchNonBlankEndColumn(sheet, rowIdx, lastCol);
-			//ZSS-772: could be a long merged cell that exceeds the endColumn
-			//mergedcell cannot overflow to next sibling
-			CellRegion mergedRegion = getMergedRegionIfAny(sheet, rowIdx, lastNonBlankCol);
-			if (mergedRegion != null) {
-				 int col = mergedRegion.getLastColumn();
-				 if (col > lastCol) {
-					 lastCol = col;
-				 }
-			} else { //ZSS-772: could be a long text that exceeds the endColumn
-				//20150722, henrichen: Cannot calcuate the text length in server side
-				// we are forced to ignore this case.
-				//SCell zssCell = sheet.getCell(rowIdx, lastNonBlankCol);
-				//final int col = getExtendedEndColumn(sheet, zssCell, lastNonBlankCol);
-				final int col = lastNonBlankCol;
-				if (col > lastCol) {
-					lastCol = col;
-				}
-			}
-			endCol = Math.max(endCol, lastCol);
-			endRow = Math.max(endRow, row.getIndex());
-		}
 		
-		// Boundary for pictures
-		List<SPicture> pics = sheet.getPictures();
-		if (pics != null && pics.size() != 0) {
-			for(SPicture pic : pics) {
-				ViewAnchor anchor1 = pic.getAnchor();
-				ViewAnchor anchor2 = anchor1.getRightBottomAnchor(sheet);
-				if(anchor2.getColumnIndex() > endCol) {
-					endCol = anchor2.getColumnIndex(); 
-				}
-				if(anchor2.getRowIndex() > endRow) {
-					endRow = anchor2.getRowIndex();
-				}
-			}
-		}
-		
-		// Boundary for charts
-		List<SChart> charts = sheet.getCharts();
-		if (charts != null && charts.size() != 0) {
-			for(SChart chart : charts) {
-				ViewAnchor anchor1 = chart.getAnchor();
-				ViewAnchor anchor2 = anchor1.getRightBottomAnchor(sheet);
-				if(anchor2.getColumnIndex() > endCol) {
-					endCol = anchor2.getColumnIndex(); 
-				}
-				if(anchor2.getRowIndex() > endRow) {
-					endRow = anchor2.getRowIndex();
-				}
-			}
-		}
-		
-		return new CellRegion(firstRow, firstCol, endRow < 0 ? 0 : endRow , endCol < 0 ? 0 : endCol) ;
-	}
-	
-	// Returns merged region cell range for a given cell
-	//ZSS-1084
-	private CellRegion getMergedRegionIfAny(SSheet sheet, int rowIdx, int colIdx) {
-		CellRegion partOfRange = null;
-
-		for(CellRegion range : sheet.getMergedRegions()) {
-			if (colIdx >= range.getColumn() && colIdx <= range.getLastColumn()
-				&& rowIdx >= range.getRow() && rowIdx <= range.getLastRow()) {
-				partOfRange = range;
-				break;
-			}
-		}
-
-		return partOfRange;
-	}
-
-	//Search non-blank end column
-	//ZSS-1084
-	private int searchNonBlankEndColumn(SSheet sheet, int rowIdx, int lastColIdx) {
-		int last = -1;
-		for (int i = lastColIdx; i >= 0; i--) {
-			final SCell cell = sheet.getCell(rowIdx, i);
-			if (!cell.isNull() && cell.getType() != SCell.CellType.BLANK) {
-				last = i;
-				break;
-			}
-		}
-		return last;
-	}
-	
 	//ZSS-1084
 	/**
 	 * Returns the max visible rows of the specified sheet
@@ -6768,7 +6659,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	
 	//ZSS-1084
 	private void initSheetMaxRowsCols(SSheet sheet, int[] maxRowsCols) {
-		CellRegion region = findDataBoundary(sheet);
+		CellRegion region = sheet.getDataRegion(); //ZSS-1124
 		if (region != null) {
 			int maxRows = region.lastRow + 2;
 			int maxCols = region.lastColumn + 2;
@@ -6784,12 +6675,11 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			}
 			maxRowsCols[0] = maxRows;
 			maxRowsCols[1] = maxCols;
-			_sheetMaxRowsCols.put(sheet.getId(), maxRowsCols);
 		} else {
-			maxRowsCols = new int[2];
 			maxRowsCols[0] = DEFAULT_MAX_ROWS;
 			maxRowsCols[1] = DEFAULT_MAX_COLUMNS;
 		}
+		_sheetMaxRowsCols.put(sheet.getId(), maxRowsCols);
 	}
 	
 	//ZSS-1082

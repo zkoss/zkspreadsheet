@@ -2609,4 +2609,15 @@ public class RangeImpl implements SRange, Serializable {
 			}
 		}.doInReadLock(getLock());
 	}
+
+	//ZSS-1124
+	//@since 3.8.3
+	public CellRegion getDataRegion() {
+		return (CellRegion) new ReadWriteTask() {
+			@Override
+			public Object invoke() {
+				return getSheet().getDataRegion();
+			}
+		}.doInReadLock(getLock());
+	}
 }

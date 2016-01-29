@@ -5,6 +5,7 @@ ZK Spreadsheet 3.8.3
   ZSS-1185 Support custom table style
   ZSS-1188 Support exporting customized TableStyles
   ZSS-1125 Support to get merged regions
+  ZSS-1124 Support to get last column/row which contains data
   
 *Bugs:
   ZSS-1172 Should remove unnecessary ___ (three underscores) style class

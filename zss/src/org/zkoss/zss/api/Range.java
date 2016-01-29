@@ -1091,4 +1091,13 @@ public interface Range {
 	 * @since 3.8.3
 	 */
 	public CellRegion getMergedRegion();
+
+	/**
+	 * Returns the region which contains data(including chart, picture, and 
+	 * fills) in the sheet of this Range; return null if empty sheet.
+	 * @return the region which contains data(including chart, picture, and 
+	 * fills) in the sheet of this Range; return null if empty sheet.
+	 * @since 3.8.3
+	 */
+	public CellRegion getDataRegion();
 }

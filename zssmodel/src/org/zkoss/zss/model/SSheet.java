@@ -428,4 +428,13 @@ public interface SSheet {
 	 * @since 3.8.2
 	 */
 	public List<SConditionalFormatting> getConditonalFormattings();
+	
+	/**
+	 * Returns the region which contains data(including chart, picture, and 
+	 * fills) in this sheet; return null if empty sheet.
+	 * @return the region which contains data(including chart, picture, and 
+	 * fills) in this sheet; return null if empty sheet.
+	 * @since 3.8.3
+	 */
+	public CellRegion getDataRegion();
 }

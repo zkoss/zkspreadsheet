@@ -582,4 +582,9 @@ import org.zkoss.zss.range.*;
 	public CellRegion getMergedRegion() {
 		return null;
 	}
+
+	@Override
+	public CellRegion getDataRegion() {
+		return null;
+	}
 }
