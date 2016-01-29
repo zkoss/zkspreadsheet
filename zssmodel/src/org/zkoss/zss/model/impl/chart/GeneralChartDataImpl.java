@@ -135,7 +135,7 @@ public class GeneralChartDataImpl extends AbstractGeneralChartDataAdv implements
 		
 		clearFormulaDependency();
 		
-		if(expr!=null){
+		if(expr!=null && expr != ""){ //ZSS-1129
 			FormulaEngine fe = EngineFactory.getInstance().createFormulaEngine();
 			_catFormulaExpr = fe.parse(expr, new FormulaParseContext(_chart.getSheet(),getRef()));
 		}else{
