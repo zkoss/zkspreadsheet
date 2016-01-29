@@ -72,7 +72,7 @@ public class Issue1125Test {
 			
 		} catch (Exception e) {
 			e.printStackTrace();
-			Assert.assertTrue("Exception when load \"issue/book/1022-theme-table.xlsx\":\n" + e, false);
+			Assert.assertTrue("Exception when load \"issue/book/1125-get-mergedRegion.xlsx\":\n" + e, false);
 		} finally {
 			 os.close();
 		}
