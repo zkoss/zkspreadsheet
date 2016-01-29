@@ -22,6 +22,7 @@ ZK Spreadsheet 3.8.3
   ZSS-1186 Importing an Excel table without a header row causes a javascript error
   ZSS-1178 Render a merged cell incorrectly
   ZSS-1180 import bottom alignement incorrectly
+  ZSS-1119 Border missing when overlap merged cell
   
 ** Upgrade Notes
 

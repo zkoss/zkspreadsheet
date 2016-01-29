@@ -19,6 +19,8 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.ui.impl;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.zkoss.poi.ss.usermodel.ZssContext;
 import org.zkoss.zss.model.CellRegion;
@@ -113,8 +115,13 @@ public class CellFormatHelper implements Serializable{
 		
 		//ZSS-568: double border is composed by this and adjacent cells
 		//ZSS-977: consider table style
-		processTopBorder(sb, doubleBorder, fillStyle, tbStyle);
-		processLeftBorder(sb, doubleBorder, fillStyle, tbStyle);
+		//ZSS-1119: merged border could occur both on top and left sides 
+		Map<String, String> mergedBorder = new HashMap<String, String>(4);
+		processTopBorder(sb, doubleBorder, fillStyle, tbStyle, mergedBorder);
+		processLeftBorder(sb, doubleBorder, fillStyle, tbStyle, mergedBorder);
+		if (!mergedBorder.isEmpty()) {
+			appendMergedBorder(sb, mergedBorder);
+		}
 		processBottomBorder(sb, doubleBorder, fillStyle, tbStyle);
 		processRightBorder(sb, doubleBorder, fillStyle, tbStyle);
 
@@ -658,7 +665,7 @@ public class CellFormatHelper implements Serializable{
 	}
 
 	//ZSS-568
-	private boolean processTopBorder(StringBuffer sb, StringBuffer db, SCellStyle fillStyle, SCellStyle tbStyle) { //ZSS-977
+	private boolean processTopBorder(StringBuffer sb, StringBuffer db, SCellStyle fillStyle, SCellStyle tbStyle, Map<String, String> mergedBorder) { //ZSS-977
 
 		boolean hitTop = false;
 		MergedRect rect = null;
@@ -683,18 +690,33 @@ public class CellFormatHelper implements Serializable{
 			} else if (bb != BorderType.NONE) {
 				//ZSS-919: check if my top is a merged cell 
 				top = hitMerge ? rect.getRow() - 1 : _row - 1;
-				if (top >= 0) {
-					final MergedRect rectT = _mmHelper.getMergeRange(top, _col);
-					//my top merge more than 2 columns
-					if (rectT != null && rectT.getColumn() < rectT.getLastColumn()) {
-						db.append('_');
-
-						String color = nextStyle.getBorderTopColor().getHtmlColor();
-						//support only solid line but position correctly
-						return appendMergedBorder(sb, "top", color);
-						
-//						//offset 1px to bottom but support more line styles
-//						return hitTop = appendBorderStyle(sb, "top", bb, color);
+				if (!hitMerge || _row == rect.getRow() && _col == rect.getColumn()) { //ZSS-1119, single cell or mareger cell only
+					if (top >= 0) {
+						final MergedRect rectT = _mmHelper.getMergeRange(top, _col);
+						//my top merge more than 2 columns
+						if (rectT != null && rectT.getColumn() < rectT.getLastColumn()) {
+							db.append('_');
+	
+							String color = nextStyle.getBorderTopColor().getHtmlColor();
+							
+							//support only solid line but position correctly
+							mergedBorder.put("top", color);
+							return true;
+						}
+					}
+				
+					//ZSS-1119: a merger cell; check its right mergee top border
+					if (hitMerge) {
+						int right = _col + 1;
+						SCellStyle rightStyle = StyleUtil.getTopStyle(_sheet.getCell(_row, right).getCellStyle(), tbStyle);
+						if (rightStyle != null && rightStyle.getBorderTop() != BorderType.NONE) {
+							db.append('_');
+							
+							String color = nextStyle.getBorderTopColor().getHtmlColor();
+							//support only solid line but position correctly
+							mergedBorder.put("top", color);
+							return true;
+						}
 					}
 				}
 			}
@@ -730,7 +752,7 @@ public class CellFormatHelper implements Serializable{
 		return hitTop;
 	}
 
-	private boolean processLeftBorder(StringBuffer sb, StringBuffer db, SCellStyle fillStyle, SCellStyle tbStyle) { //ZSS-977
+	private boolean processLeftBorder(StringBuffer sb, StringBuffer db, SCellStyle fillStyle, SCellStyle tbStyle, Map<String, String> mergedBorder) { //ZSS-977,ZSS-1119
 		boolean hitLeft = false;
 		MergedRect rect=null;
 		boolean hitMerge = false;
@@ -750,7 +772,7 @@ public class CellFormatHelper implements Serializable{
 			} else if (bb != BorderType.NONE) { 
 				//ZSS-919: check if my left is a merged cell 
 				left = hitMerge?rect.getColumn()-1:_col-1;
-				if (left >= 0) {
+				if (left >= 0) { //single cell, merger cell, or mergee cell
 					final MergedRect rectT = _mmHelper.getMergeRange(_row, left);
 					//my left merged more than 2 rows
 					if (rectT != null && rectT.getRow() < rectT.getLastRow()) {
@@ -758,10 +780,8 @@ public class CellFormatHelper implements Serializable{
 
 						String color = nextStyle.getBorderLeftColor().getHtmlColor();
 						//support only solid line but position correctly
-						return appendMergedBorder(sb, "left", color);
-						
-//						//offset 1px to right but support more line styles
-//						return hitLeft = appendBorderStyle(sb, "left", bb, color); 
+						mergedBorder.put("left", color); //ZSS-1119
+						return true;
 					}
 				}
 			}
@@ -808,9 +828,14 @@ public class CellFormatHelper implements Serializable{
 		return RichTextHelper.getCellVRichTextHtml(cell, rstr, wrap);
 	}
 
-	//ZSS-919
-	private boolean appendMergedBorder(StringBuffer sb, String locate, String color) {
-		sb.append("box-shadow:").append("top".equals(locate) ? "0px -1px " : "-1px 0px ").append(color).append(";");
+	//ZSS-919, ZSS-1119: handle when has to deal with both top and left borders 
+	private boolean appendMergedBorder(StringBuffer sb, Map<String, String> mergedBorder) {
+		String topColor = mergedBorder.get("top");
+		String topPx = topColor != null ? "-1px" : "0px";
+		String leftColor = mergedBorder.get("left");
+		String leftPx = leftColor != null ? "-1px" : "0px";
+		
+		sb.append("box-shadow:").append(leftPx).append(" ").append(topPx).append(" ").append(topColor != null ? topColor : leftColor).append(";");
 		return true;
 	}
 	
