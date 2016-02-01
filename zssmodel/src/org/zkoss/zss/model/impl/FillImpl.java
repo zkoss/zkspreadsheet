@@ -32,10 +32,10 @@ import org.zkoss.zss.model.SFill;
 public class FillImpl extends AbstractFillAdv {
 	private static final long serialVersionUID = 1L;
 	
-	private SColor _fillColor; // ZSS-857: default fillColor is black
-	private SColor _backColor;
-	private FillPattern _fillPattern;
-	private String _patternHtml = null; //clear cache
+	protected SColor _fillColor; // ZSS-857: default fillColor is black
+	protected SColor _backColor;
+	protected FillPattern _fillPattern;
+	protected String _patternHtml = null; //clear cache
 
 	public FillImpl(){}
 	public FillImpl(FillPattern pattern, String fgColor, String bgColor) {
@@ -79,7 +79,7 @@ public class FillImpl extends AbstractFillAdv {
 
 	@Override
 	public FillPattern getFillPattern() {
-		return _fillPattern == null ? FillPattern.SOLID : _fillPattern; //ZSS-1145, ZSS-1162
+		return _fillPattern == null ? FillPattern.NONE : _fillPattern; //ZSS-1145
 	}
 
 	//--Object--//

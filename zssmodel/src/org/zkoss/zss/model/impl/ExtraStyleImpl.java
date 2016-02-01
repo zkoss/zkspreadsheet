@@ -14,11 +14,14 @@ package org.zkoss.zss.model.impl;
 
 import org.zkoss.zss.model.SBorder;
 import org.zkoss.zss.model.SBorderLine;
+import org.zkoss.zss.model.SColor;
 import org.zkoss.zss.model.SExtraStyle;
 import org.zkoss.zss.model.SFill;
 import org.zkoss.zss.model.SFont;
 import org.zkoss.zss.model.SBorder.BorderType;
+import org.zkoss.zss.model.SFill.FillPattern;
 import org.zkoss.zss.model.util.Strings;
+import org.zkoss.zss.model.util.Validations;
 
 /**
  * @author henri
@@ -93,5 +96,35 @@ public class ExtraStyleImpl extends CellStyleImpl implements SExtraStyle {
 	@Override
 	public String getDataFormat() {
 		return _dataFormat;
+	}
+	
+	//ZSS-1162: Use ExtraFillImpl
+	@Override
+	public void setBackColor(SColor backColor) {
+		Validations.argNotNull(backColor);
+		if (_fill == null) {
+			_fill = new ExtraFillImpl();
+		}
+		_fill.setBackColor(backColor);
+	}
+
+	//ZSS-1162: Use ExtraFillImpl
+	@Override
+	public void setFillColor(SColor fillColor) {
+		Validations.argNotNull(fillColor);
+		if (_fill == null) {
+			_fill = new ExtraFillImpl();
+		}
+		_fill.setFillColor(fillColor);
+	}
+
+	//ZSS-1162: Use ExtraFillImpl
+	@Override
+	public void setFillPattern(FillPattern fillPattern) {
+		Validations.argNotNull(fillPattern);
+		if (_fill == null) {
+			_fill = new ExtraFillImpl();
+		}
+		_fill.setFillPattern(fillPattern);
 	}
 }

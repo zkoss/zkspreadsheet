@@ -54,6 +54,7 @@ import org.zkoss.zss.model.impl.ColorImpl;
 import org.zkoss.zss.model.impl.ColorScaleImpl;
 import org.zkoss.zss.model.impl.ConditionalFormattingRuleImpl;
 import org.zkoss.zss.model.impl.DataBarImpl;
+import org.zkoss.zss.model.impl.ExtraFillImpl;
 import org.zkoss.zss.model.impl.ExtraStyleImpl;
 import org.zkoss.zss.model.impl.FillImpl;
 import org.zkoss.zss.model.impl.IconSetImpl;
@@ -721,7 +722,7 @@ public class ExcelXlsxImporter extends AbstractExcelImporter {
 //			fgSColor = bgSColor;
 //			bgSColor = tmp;
 //		}
-		SFill fill = new FillImpl(pattern, fgSColor, bgSColor); //ZSS-1162
+		SFill fill = new ExtraFillImpl(pattern, fgSColor, bgSColor); //ZSS-1162
 		SBorder border = importBorder(poiCellStyle);
 		SFont font = importFont(poiCellStyle);
 
