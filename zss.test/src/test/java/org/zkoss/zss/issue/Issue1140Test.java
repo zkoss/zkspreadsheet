@@ -176,7 +176,7 @@ public class Issue1140Test {
 		Assert.assertEquals("getColor", new ColorImpl("9c0006"), font.getColor());
 		
 		//fill
-		Assert.assertEquals("fillPatternType", FillPattern.NONE, fill.getRawFillPattern());
+		Assert.assertNull("fillPatternType", fill.getRawFillPattern());
 		Assert.assertNull("fillFgColor", fill.getRawFillColor());
 		Assert.assertEquals("fillBgColor", new ColorImpl("ffc7ce"), fill.getRawBackColor());
 	}
@@ -205,7 +205,7 @@ public class Issue1140Test {
 		Assert.assertEquals("getColor", new ColorImpl("9c6500"), font.getColor());
 		
 		//fill
-		Assert.assertEquals("fillPatternType", FillPattern.NONE, fill.getRawFillPattern());
+		Assert.assertNull("fillPatternType", fill.getRawFillPattern());
 		Assert.assertNull("fillFgColor", fill.getRawFillColor());
 		Assert.assertEquals("fillBgColor", new ColorImpl("ffeb9c"), fill.getRawBackColor());
 	}

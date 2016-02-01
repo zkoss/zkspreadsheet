@@ -238,7 +238,7 @@ public class BookImpl extends AbstractBookAdv{
 			}
 		}
 		
-		if(!ModelEvents.isCustomEvent(event) && Executions.getCurrent() != null) {
+		if(!ModelEvents.isCustomEvent(event)) {
 			if(!_dirty) {
 				_dirty = true;
 				// ZSS-942, By Jerry 2015/3/5

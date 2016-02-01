@@ -39,7 +39,7 @@ public class Issue1030Test {
 	public void exportRepeatColumnTitles() {
 		Book book = Util.loadBook(this, "book/1030-border-pdf.xlsx");
 		
-		File temp = Setup.getTempFile("Issue1035ExportBorder",".pdf");
+		File temp = Setup.getTempFile("Issue1030ExportBorder",".pdf");
 		
 		exportBook(book.getInternalBook(), temp);
 		
