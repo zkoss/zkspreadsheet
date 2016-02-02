@@ -30,10 +30,12 @@ import org.zkoss.poi.xssf.usermodel.XSSFTableColumn.TotalsRowFunction;
 import org.zkoss.poi.xssf.usermodel.charts.*;
 import org.zkoss.poi.xssf.usermodel.extensions.XSSFCellBorder;
 import org.zkoss.poi.xssf.usermodel.extensions.XSSFCellFill;
+import org.zkoss.poi.xssf.usermodel.XSSFRichTextString;
 import org.zkoss.zss.model.*;
 import org.zkoss.zss.model.SAutoFilter.NFilterColumn;
 import org.zkoss.zss.model.SBorder.BorderType;
 import org.zkoss.zss.model.SFill.FillPattern;
+import org.zkoss.zss.model.SRichText.Segment;
 import org.zkoss.zss.model.STableColumn.STotalsRowFunction;
 import org.zkoss.zss.model.SDataValidation.ValidationType;
 import org.zkoss.zss.model.chart.*;
@@ -1139,4 +1141,21 @@ public class ExcelXlsxExporter extends AbstractExcelExporter {
 		}
 		return -1;
 	}
+	//ZSS-1189
+	@Override
+	protected RichTextString toPOIRichText(SRichText richText) {
+		//ZSS-1189
+		CreationHelper helper = workbook.getCreationHelper();
+		XSSFRichTextString poiRichTextString = 
+				(XSSFRichTextString) helper.createRichTextString(richText.getText());
+
+		for (Segment sg : richText.getSegments()) {
+			SFont font = sg.getFont();
+			String text = sg.getText();
+			poiRichTextString.addRun(text, (XSSFFont)toPOIFont(font));
+		}
+
+		return poiRichTextString;
+	}
+
 }

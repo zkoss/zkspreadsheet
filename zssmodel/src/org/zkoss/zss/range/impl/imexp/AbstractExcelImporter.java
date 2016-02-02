@@ -533,23 +533,23 @@ abstract public class AbstractExcelImporter extends AbstractImporter implements 
 	}
 	
 	protected void importRichText(Cell poiCell, RichTextString poiRichTextString, SRichText richText) {
-		String cellValue = poiRichTextString.getString();
-		//ZSS-1138
+		//ZSS-1138, ZSS-1189
 		int count = poiRichTextString.numFormattingRuns();
 		if (count <= 0) {
+			String cellValue = poiRichTextString.getString();
 			richText.addSegment(cellValue, null); // ZSS-1138: null font means use cell's font
 		} else {
-			//ZSS-1138
+			//ZSS-1138, ZSS-1189
+			int i = 0;
 			int prevFormattingRunIndex = poiRichTextString.getIndexOfFormattingRun(0);
 			if (prevFormattingRunIndex > 0) {
-				final String content = cellValue.substring(0, prevFormattingRunIndex);
+				final String content = poiRichTextString.getStringAt(i);
 				richText.addSegment(content, null); // ZSS-1138: null font means use cell's font
+				++i;
 			}
-			for (int i = 0; i < count; i++) {
-				int nextFormattingRunIndex = (i + 1) >= poiRichTextString.numFormattingRuns() ? cellValue.length() : poiRichTextString.getIndexOfFormattingRun(i + 1);
-				final String content = cellValue.substring(prevFormattingRunIndex, nextFormattingRunIndex);
+			for (; i < count; i++) {
+				final String content = poiRichTextString.getStringAt(i);
 				richText.addSegment(content, toZssFont(getPoiFontFromRichText(workbook, poiCell, poiRichTextString, i)));
-				prevFormattingRunIndex = nextFormattingRunIndex;
 			}
 		}
 	}
