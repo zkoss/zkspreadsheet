@@ -853,10 +853,11 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		case 'jump'://jump to another bolck, not a neighbor
 			var oldBlock = this.activeBlock,
 				wgt = this._wgt,
-				data = wgt._cacheCtrl.getSelectedSheet();
-			oldBlock.replaceWidget(this.activeBlock = new zss.MainBlockCtrl(this, tRow, lCol, bRow, rCol, data));
+				data = wgt._cacheCtrl.getSelectedSheet(),
+				vrange = new zss.Range(lCol, tRow, rCol, bRow);
+			oldBlock.replaceWidget(this.activeBlock = new zss.MainBlockCtrl(this, tRow, lCol, bRow, rCol, data)); // rebuild cell DOM from cache 
 			this.dp._fixSize(this.activeBlock);
-			this.activeBlock.loadForVisible();
+			this.activeBlock.loadForVisible(vrange); //20160203,henrichen: jump, so visible change accordingly
 			break;
 		case 'error': //fetch cell with exception
 			break;
@@ -3267,10 +3268,10 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 
 		this._wgt.fire('onZSSSyncBlock', {
 			sheetId: this.sheetid,
-			dpWidth: dp.width,
-			dpHeight: dp.height,
-			viewWidth: spcmp.clientWidth,
-			viewHeight: spcmp.clientHeight,
+			dpWidth: -1, //dp.width,
+			dpHeight: -1, //dp.height,
+			viewWidth: -1, //spcmp.clientWidth,
+			viewHeight: -1, //spcmp.clientHeight,
 			blockLeft: brange.left,
 			blockTop: brange.top,
 			blockRight: brange.right,

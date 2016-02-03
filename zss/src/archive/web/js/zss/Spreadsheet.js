@@ -1120,6 +1120,7 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 		if (cacheCtrl) {
 			this.sheetCtrl.activeBlock.loadstate = zss.MainBlockCtrl.IDLE;
 			cacheCtrl.getSelectedSheet().fetchUpdate(v);
+			this.sheetCtrl.activeBlock.loadForVisible(); // 20160203, henrichen: load cell from cache
 			this.sheetCtrl.sendSyncblock();
 			//ZSS-1134: This is patchy; IE9 sometimes wrongly set 
 			//	spcmp.scrollLeft to zero; we enforcely set it back
