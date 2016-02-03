@@ -223,16 +223,16 @@ public class BookImpl extends AbstractBookAdv{
 				final String eventName = event.getName();
 				if ((ModelEvents.ON_MERGE_ADD.equals(eventName) 
 				|| ModelEvents.ON_MERGE_DELETE.equals(eventName))
-				&& sheet.getMergeOutOfSync() == 1) {
+				&& sheet != null && sheet.getMergeOutOfSync() == 1) {
 					sheet.setMergeOutOfSync(0);
 				} else if (!ModelEvents.ON_MERGE_SYNC.equals(eventName) 
-					&& sheet.getMergeOutOfSync() == 2) {
+					&& sheet != null && sheet.getMergeOutOfSync() == 2) {
 					// notify all associated Spreadsheets to clear the merge cache first 
 					sheet.setMergeOutOfSync(0);
 					new NotifyChangeHelper().notifyMergeSync(new SheetRegion((SSheet)sheet, 1, 1)); 
 				}
 				_queueListeners.sendModelEvent(event);
-			} else if (sheet.getMergeOutOfSync() == 1) { 
+			} else if (sheet != null && sheet.getMergeOutOfSync() == 1) { 
 				//ZSS-1168: in long operation event queue and merge changed
 				sheet.setMergeOutOfSync(2);
 			}

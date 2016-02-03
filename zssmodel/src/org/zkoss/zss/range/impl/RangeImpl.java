@@ -1858,7 +1858,7 @@ public class RangeImpl implements SRange, Serializable {
 	//ZSS-1168
 	private void mantainMergeClearCacheState(SheetRegion mergeNotify) {
 		AbstractSheetAdv sheet = (AbstractSheetAdv) mergeNotify.getSheet();
-		if (sheet.getMergeOutOfSync() == 1) {
+		if (sheet != null && sheet.getMergeOutOfSync() == 1) {
 			sheet.setMergeOutOfSync(2);
 		}
 	}
