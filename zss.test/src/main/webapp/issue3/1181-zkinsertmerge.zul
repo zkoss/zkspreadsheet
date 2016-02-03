@@ -4,7 +4,7 @@
 Since 3.8.3
 1. scroll to show AW. 
 2. Open browser's devloper tool
-3. click 9013 to expand
+3. click 9013 at Cell AW11 to expand
 4. check the timing, it should be less than 400ms
 </label>
 	<spreadsheet id="sSpreadsheet" hflex="1" height="500px" 
