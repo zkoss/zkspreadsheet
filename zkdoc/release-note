@@ -27,6 +27,7 @@ ZK Spreadsheet 3.8.3
   ZSS-1119 Border missing when overlap merged cell
   ZSS-1129 Importing a chart with a FormulaParseException
   ZSS-1189 Fail to import a rich text
+  ZSS-1190 Hidden column not saved
   
 ** Upgrade Notes
 

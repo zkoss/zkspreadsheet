@@ -352,7 +352,7 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 		Iterator<SColumnArray> columnArrayIterator = sheet.getColumnArrayIterator();
 		while (columnArrayIterator.hasNext()) {
 			SColumnArray columnArr = columnArrayIterator.next();
-			if (((ColumnArrayImpl)columnArr).shouldSkip()) continue; //ZSS-1132
+			if (((ColumnArrayImpl)columnArr).shouldSkip()) continue; //ZSS-1132, ZSS-1190
 			exportColumnArray(sheet, poiSheet, columnArr);
 		}
 	}
