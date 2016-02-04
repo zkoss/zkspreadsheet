@@ -387,7 +387,7 @@ zss.Cell = zk.$extends(zk.Widget, {
 			fontSize = data.fontSize,
 			fontFormat = data.fontFormat, //ZSS-1171
 			real = this.$n('real');
-			
+
 		//ZSS-944: 
 		var wasRotate90 = this.rotate == 90 || this.rotate == -90, //ZSS-1020
 			toRotate90 = data.rotate == 90 || data.rotate == -90, //ZSS-1020
@@ -425,7 +425,9 @@ zss.Cell = zk.$extends(zk.Widget, {
 		}
 
 		//ZSS-944: invalidate the cached text width
-		if (txtChd || fontSizeChanged || orgFamily != real.style.fontFamily) delete this._tw;  
+		//ZSS-1171: overflow might change
+		var overflowChd = txtChd || fontSizeChanged || orgFamily != real.style.fontFamily || indentionChd; 
+		if (overflowChd) delete this._txtwd;  
 
 		// ZSS-944
 		if (toRotate90) {
@@ -491,7 +493,7 @@ zss.Cell = zk.$extends(zk.Widget, {
 		}
 		
 		if (this.overflow != overflow // overflow changed
-			|| (this.overflow && (txtChd || indentionChd))) { // already overflow and text, indention changed
+			|| (this.overflow && overflowChd)) { // already overflow and //ZSS-1171: overflow might change
 			var processedOverflow = false;
 			if (this.overflow && !overflow) {
 				this._clearOverflow();
