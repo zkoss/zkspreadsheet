@@ -12,6 +12,11 @@ Since 3.8.3
 8. Now select E1 and repeat 2~7 accordingly
 9. Now select B5 and repeat 2~7 accordingly
 10. Now select E5 and repeat 2~7 accordingly
+11. Select cell A1 whose value was 123; type in 15 and Enter
+12. Should see Validation complains; press Cancel; should see A1 back to 123
+13. Type in 15 into cell A1 and Enter; should see Validation complains; press Retry; should see A1's in editing mode with value 15
+14. Press ESC; should see A1 back to 123.
+
 </label>
 <spreadsheet id="ss" width="100%"  vflex="1" showSheetbar="true" 
         maxVisibleRows="1000" maxVisibleColumns="30"  showFormulabar="true"
