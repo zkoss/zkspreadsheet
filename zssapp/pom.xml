@@ -4,7 +4,7 @@
 	<groupId>org.zkoss.zss</groupId>
 	<artifactId>zssapp</artifactId>
 	<properties>
-		<zk.version>7.0.5.2-Eval</zk.version>
+		<zk.version>7.0.5.2</zk.version>
 		<commons-lang.version>2.4</commons-lang.version>
 		<bsh.version>2.0b4</bsh.version>
 		<commons-fileupload.version>1.2.1</commons-fileupload.version>
@@ -13,7 +13,7 @@
 		<servlet.version>2.4</servlet.version>
 		<jfreechart.version>1.0.13</jfreechart.version>
 	</properties>
-	<version>3.8.3-SNAPSHOT</version>
+	<version>3.8.3.RC</version>
 	<packaging>jar</packaging>
 	<name>ZK Spreadsheet App</name>
 	<url>http://www.zkoss.org/zssapp</url>
