@@ -28,6 +28,7 @@ ZK Spreadsheet 3.8.3
   ZSS-1129 Importing a chart with a FormulaParseException
   ZSS-1189 Fail to import a rich text
   ZSS-1190 Hidden column not saved
+  ZSS-1197 a formula becomes a text after being edited
   
 ** Upgrade Notes
 

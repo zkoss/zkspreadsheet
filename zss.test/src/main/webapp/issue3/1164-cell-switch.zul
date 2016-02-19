@@ -2,21 +2,23 @@
     <label multiline="true">
 Since 3.8.3
 0. Open Chrome's developer tool, find Network and change "No throttling" to "Good 2G (450kb/s 150ms RTT)"
-1. Select cell B1
-2. Input "B1" and Enter 
-3. Select back to cell B1
-4. Press "Is B1"
-5. Press ESC key to cancel; you should see "B1" in cell B1
-6. Press "Is B1" and Enter
-7. If you see "B1" appear again and then switch to "Is B1" it is a bug.
-8. Now select E1 and repeat 2~7 accordingly
-9. Now select B5 and repeat 2~7 accordingly
-10. Now select E5 and repeat 2~7 accordingly
-11. Select cell A1 whose value was 123; type in 15 and Enter
-12. Should see Validation complains; press Cancel; should see A1 back to 123
-13. Type in 15 into cell A1 and Enter; should see Validation complains; press Retry; should see A1's in editing mode with value 15
-14. Press ESC; should see A1 back to 123.
-
+1. Input "B1" in Cell B1 and Enter; Should see "B1" in Cell B1 
+2. Input "Is B1" in Cell B1 and ESC; Should still see "B1" in Cell B1
+3. Input "Is B1" in Cell B1 and Enter
+4. If you see "B1" appear again and then switch to "Is B1" it is a bug.
+5. Input "=1" in Cell B1 and Enter; Should see 1 in Cell B1
+6. Press F2 when focus on Cell B1, Should see "=1"; now press "Enter"
+7. Should see 1 in Cell B1; if not, it is a bug.
+8. Input "0.3" in Cell B1 and Enter; Right click to change format to "Percentage"; should see "30.00%" in Cell B1
+9. Press F2 when focus on Cell B1, Should see "0.3"; now press "Enter"
+10. Should see "30.00%" in Cell B1; if not, it is a bug. 
+11. Now select E1 and repeat 2~10 accordingly
+12. Now select B5 and repeat 2~10 accordingly
+13. Now select E5 and repeat 2~10 accordingly
+14. Select cell A1 whose value was 123; type in 15 and Enter
+15. Should see Validation complains; press Cancel; should see A1 back to 123
+16. Type in 15 into cell A1 and Enter; should see Validation complains; press Retry; should see A1's in editing mode with value 15
+17. Press ESC; should see A1 back to 123.
 </label>
 <spreadsheet id="ss" width="100%"  vflex="1" showSheetbar="true" 
         maxVisibleRows="1000" maxVisibleColumns="30"  showFormulabar="true"

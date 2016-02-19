@@ -3522,7 +3522,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			
 			if (l <= col && col <= r && t <= row && row <= b) {
 				var cell = block.getCell(row, col);
-				if (cell) {
+				if (cell && cell.edit != txt) { //ZSS-1197
 					cell.getTextNode().innerHTML = txt;
 				}
 				return true;
