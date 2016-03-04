@@ -316,7 +316,7 @@ public class RangeImpl implements Range, Serializable {
 	}
 
 	public Book getBook() {
-		return getSheet().getBook();
+		return _sharedCtx.getBook(); //ZSS-1201: should get book from _sharedCtx
 	}
 	
 	public void applyBordersAround(BorderType borderType,String htmlColor){
