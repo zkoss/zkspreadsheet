@@ -225,7 +225,8 @@ public class BookImpl extends AbstractBookAdv{
 				|| ModelEvents.ON_MERGE_DELETE.equals(eventName))
 				&& sheet != null && sheet.getMergeOutOfSync() == 1) {
 					sheet.setMergeOutOfSync(0);
-				} else if (!ModelEvents.ON_MERGE_SYNC.equals(eventName) 
+				} else if (!ModelEvents.ON_MERGE_SYNC.equals(eventName)
+					&& !ModelEvents.ON_SHEET_DELETE.equals(eventName) //ZSS-1200: sheet is to be deleted, no need to handle the sheet
 					&& sheet != null && sheet.getMergeOutOfSync() == 2) {
 					// notify all associated Spreadsheets to clear the merge cache first 
 					sheet.setMergeOutOfSync(0);

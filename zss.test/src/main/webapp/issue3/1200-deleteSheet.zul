@@ -1,0 +1,30 @@
+<zk>
+<button label="create sheet" onClick="create3()"/>
+<button label="delete sheet" onClick="delete()"/>
+<spreadsheet id="ss" src="/issue3/book/blank.xlsx" maxVisibleRows="800" maxVisibleColumns="100" width="100%" 
+		height="90%" preloadColumnSize="5" preloadRowSize="5"
+		showContextMenu="true" showSheetbar="true" showToolbar="true" showFormulabar="true"/>
+<!-- 
+keepCellSelection="true"
+-->
+	<zscript><![CDATA[
+	import java.io.*;
+	import org.zkoss.zss.api.*;
+	import org.zkoss.util.media.*;
+	import org.zkoss.zss.api.Range.InsertCopyOrigin;
+	import org.zkoss.zss.api.Range.InsertShift;
+	import support.exporter.*;
+	
+	public void delete(){
+		Ranges.range(ss.getBook().getSheet("temp")).deleteSheet();
+	}
+	public void create3(){
+		Ranges.range(ss.getSelectedSheet()).createSheet("temp");
+		Sheet sheet = ss.getBook().getSheet("temp");
+	 	Range range = Ranges.range(sheet, 0, 0, 2, 2);
+	 	range.setAutoRefresh(false);
+	 	range.merge(false);
+	}
+	
+]]></zscript>
+</zk>
