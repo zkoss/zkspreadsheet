@@ -4,6 +4,7 @@ ZK Spreadsheet 3.8.3
 *Bugs:
   ZSS-1200 Fail to delete a sheet
   ZSS-1201 Creating a sheet with a book range causes NullPointerException
+  ZSS-1199 a text is cut in a merged cell
   
 ** Upgrade Notes
 

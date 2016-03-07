@@ -936,7 +936,8 @@ public class CellFormatHelper implements Serializable{
 		if (!_cell.isNull()) {
 			final StringBuffer sb = new StringBuffer();
 			sb.append(getFontHtmlStyle(_sheet, _cell, _cell.getCellStyle(), ft, tbCellStyle)); //ZSS-977, ZSS-1018
-			sb.append(getIndentCSSStyle(_cell));			
+			sb.append(getIndentCSSStyle(_cell));
+			sb.append(getMergedMaxHeightStyle(_cell)); //ZSS-1199
 			return sb.toString();
 		}
 		
@@ -957,6 +958,16 @@ public class CellFormatHelper implements Serializable{
 		return "";
 	}
 
+	//@since 3.8.3
+	//ZSS-1199
+	private String getMergedMaxHeightStyle(SCell cell) {
+		MergedRect rect = _mmHelper.getMergeRange(cell.getRowIndex(), cell.getColumnIndex());
+		if(rect != null) {
+			return "max-height: none;";
+		}
+		return "";
+	}
+	
 	//ZSS-901
 	public String getAutoFilterBorder() {
 
