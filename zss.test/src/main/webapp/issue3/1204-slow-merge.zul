@@ -1,0 +1,15 @@
+<zk>
+<vlayout id="meroot" hflex="1" vflex="1" apply="zss.issue.Composer1204">
+<button id="rebuildsheet" label="Rebuild Sheet"/>
+	<spreadsheet id="sSpreadsheet" hflex="1" height="500px"
+		clientCacheDisabled="false"
+		showToolbar="false"
+		showFormulabar="false"
+		showSheetbar="true"
+		showContextMenu="false"
+		maxRenderedCellSize="3000"
+	    preloadColumnSize="20"
+	    preloadRowSize="100"/>
+	    <!-- ignoreAutoHeight="true"-->
+</vlayout>
+</zk>

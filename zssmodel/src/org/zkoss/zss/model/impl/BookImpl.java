@@ -80,6 +80,8 @@ public class BookImpl extends AbstractBookAdv{
 	
 	private static final Log _logger = Log.lookup(BookImpl.class);
 
+	private static final String SYNC_MERGE_FIRED = "_ZSS_MER";
+	
 	private final String _bookName;
 	
 	private String _shareScope;
@@ -230,7 +232,12 @@ public class BookImpl extends AbstractBookAdv{
 					&& sheet != null && sheet.getMergeOutOfSync() == 2) {
 					// notify all associated Spreadsheets to clear the merge cache first 
 					sheet.setMergeOutOfSync(0);
-					new NotifyChangeHelper().notifyMergeSync(new SheetRegion((SSheet)sheet, 1, 1)); 
+					//ZSS-1204: notifyMergeSync should be called only once in an execution
+					Boolean syncMerged = (Boolean) Executions.getCurrent().getAttribute(SYNC_MERGE_FIRED, false);
+					if (syncMerged == null) {
+						Executions.getCurrent().setAttribute(SYNC_MERGE_FIRED, Boolean.TRUE, false);
+						new NotifyChangeHelper().notifyMergeSync(new SheetRegion((SSheet)sheet, 1, 1));
+					}
 				}
 				_queueListeners.sendModelEvent(event);
 			} else if (sheet != null && sheet.getMergeOutOfSync() == 1) { 

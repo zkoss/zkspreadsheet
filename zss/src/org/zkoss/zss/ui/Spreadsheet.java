@@ -4001,10 +4001,13 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			//updateCell(sheet, left > 0 ? left - 1 : 0, top > 1 ? top - 1 : 0, right + 1, bottom + 1);
 			updateCell(sheet, left, top, right, bottom, CellAttribute.ALL); //ZSS-939
 		}
-
 		//ZSS-1168
 		public void syncMergeCells(SSheet sheet) {
-			removeMergeMatrixHelper(sheet);
+			removeMergeMatrixHelper(sheet);  //ZSS-1204
+			
+			//ZSS-1204
+			if (Spreadsheet.this.isInvalidated())
+				return;// since it is invalidate, we don't need to do anymore
 			
 			//ZSS-1168: so will NOT sync merge if NOT current selected sheet
 			if (!getSelectedSSheet().equals(sheet)){ 
