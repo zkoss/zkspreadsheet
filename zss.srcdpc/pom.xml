@@ -4,7 +4,7 @@
 
 	<groupId>org.zkoss.zss</groupId>
 	<artifactId>zk.src.dpc</artifactId>
-	<version>3.8.3</version>
+	<version>3.9.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<name>srcdpc</name>
 	<url>http://maven.apache.org</url>
