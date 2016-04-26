@@ -2,12 +2,14 @@ package org.zkoss.zss.app.repository.impl;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.List;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
 import org.zkoss.util.logging.Log;
 import org.zkoss.zk.ui.WebApps;
+import org.zkoss.zss.app.BookInfo;
 import org.zkoss.zss.app.BookManager;
 import org.zkoss.zss.app.impl.BookManagerImpl;
 import org.zkoss.zss.app.repository.BookRepositoryFactory;
@@ -26,7 +28,12 @@ public class ServletContextListenerImpl implements ServletContextListener, Seria
 			BookManager manager = BookManagerImpl.getInstance(BookRepositoryFactory.getInstance().getRepository());
 			manager.shutdownAutoFileSaving();
 			try {
-				manager.saveAll();
+				List<BookInfo> bookInfos = BookRepositoryFactory.getInstance().getRepository().list();
+				for (BookInfo info: bookInfos){
+					//if a book is open as VIEWER, do not save (update) the book
+					manager.updateBook(info, null);
+				}
+				//manager.saveAll();
 			} catch (IOException e) {
 				e.printStackTrace();
 				logger.error("Saving all files causes error: " + e.getMessage());

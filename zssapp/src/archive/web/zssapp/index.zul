@@ -2,6 +2,10 @@
 <?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
 <zk xmlns:w="http://www.zkoss.org/2005/zk/client">
 	<window id="mainWin" hflex="1" vflex="1" apply="org.zkoss.zss.app.ui.AppCtrl">
+		<caption>
+        <toolbarbutton id="logOutBtn" label="LogOut" onClick="logOut()" />
+        <checkbox id="viewer" checked="true" label="VIEWER"></checkbox>
+        </caption>
 		<vlayout hflex="1" vflex="1" spacing="0">
 			<include hflex="1" src="~./zssapp/mainMenubar.zul" />
 			<spreadsheet id="ss" hflex="1" vflex="1"

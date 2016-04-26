@@ -13,8 +13,8 @@
 		<servlet.version>2.4</servlet.version>
 		<jfreechart.version>1.0.13</jfreechart.version>
 	</properties>
-	<version>3.8.3</version>
-	<packaging>jar</packaging>
+	<version>3.8.3-Eval</version>
+	<packaging>war</packaging>
 	<name>ZK Spreadsheet App</name>
 	<url>http://www.zkoss.org/zssapp</url>
 	<description>The Excel-like Web Application for ZK Spreadsheet</description>
@@ -149,7 +149,11 @@
 			<artifactId>zssex</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-		
+	 	<dependency>
+			<groupId>org.zkoss.zss</groupId>
+			<artifactId>zssessentials</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 	</dependencies>
   <build>
 		<sourceDirectory>${project.basedir}/src/</sourceDirectory>

@@ -11,7 +11,9 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.app.ui;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Arrays;
 import java.util.Collection;
@@ -28,43 +30,73 @@ import org.zkoss.util.media.AMedia;
 import org.zkoss.util.media.Media;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.web.servlet.http.Encodes;
-import org.zkoss.zk.ui.*;
-import org.zkoss.zk.ui.event.*;
+import org.zkoss.zk.ui.Component;
+import org.zkoss.zk.ui.Desktop;
+import org.zkoss.zk.ui.DesktopUnavailableException;
+import org.zkoss.zk.ui.Execution;
+import org.zkoss.zk.ui.Executions;
+import org.zkoss.zk.ui.event.BookmarkEvent;
+import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zk.ui.event.EventQueues;
+import org.zkoss.zk.ui.event.SerializableEventListener;
+import org.zkoss.zk.ui.event.UploadEvent;
+import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zk.ui.util.DesktopCleanup;
-import org.zkoss.zss.api.*;
-import org.zkoss.zss.api.model.*;
+import org.zkoss.zss.api.AreaRef;
+import org.zkoss.zss.api.CellOperationUtil;
+import org.zkoss.zss.api.Importer;
+import org.zkoss.zss.api.Importers;
+import org.zkoss.zss.api.Range;
+import org.zkoss.zss.api.Ranges;
+import org.zkoss.zss.api.SheetAnchor;
+import org.zkoss.zss.api.SheetOperationUtil;
+import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.Book.BookType;
+import org.zkoss.zss.api.model.Chart;
+import org.zkoss.zss.api.model.Hyperlink;
 import org.zkoss.zss.api.model.Hyperlink.HyperlinkType;
+import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.app.BookInfo;
+import org.zkoss.zss.app.BookManager;
 import org.zkoss.zss.app.BookRepository;
 import org.zkoss.zss.app.CollaborationInfo;
-import org.zkoss.zss.app.CollaborationInfo.CollaborationEventListener;
-import org.zkoss.zss.app.impl.CollaborationInfoImpl;
 import org.zkoss.zss.app.CollaborationInfo.CollaborationEvent;
-import org.zkoss.zss.app.repository.*;
-import org.zkoss.zss.app.BookManager;
+import org.zkoss.zss.app.CollaborationInfo.CollaborationEventListener;
 import org.zkoss.zss.app.impl.BookManagerImpl;
+import org.zkoss.zss.app.impl.CollaborationInfoImpl;
+import org.zkoss.zss.app.repository.BookRepositoryFactory;
 import org.zkoss.zss.app.repository.impl.BookUtil;
 import org.zkoss.zss.app.repository.impl.SimpleBookInfo;
-import org.zkoss.zss.app.ui.dlg.*;
+import org.zkoss.zss.app.ui.dlg.DlgCallbackEvent;
+import org.zkoss.zss.app.ui.dlg.HyperlinkCtrl;
+import org.zkoss.zss.app.ui.dlg.OpenManageBookCtrl;
+import org.zkoss.zss.app.ui.dlg.SaveBookAsCtrl;
+import org.zkoss.zss.app.ui.dlg.ShareBookCtrl;
+import org.zkoss.zss.app.ui.dlg.UsernameCtrl;
+import org.zkoss.zss.essential.advanced.permission.AuthorityService;
+import org.zkoss.zss.essential.advanced.permission.Role;
 import org.zkoss.zss.model.ModelEvent;
 import org.zkoss.zss.model.ModelEventListener;
 import org.zkoss.zss.model.ModelEvents;
-import org.zkoss.zss.ui.*;
+import org.zkoss.zss.ui.AuxAction;
+import org.zkoss.zss.ui.Spreadsheet;
+import org.zkoss.zss.ui.UserActionContext;
+import org.zkoss.zss.ui.UserActionHandler;
+import org.zkoss.zss.ui.UserActionManager;
+import org.zkoss.zss.ui.Version;
 import org.zkoss.zss.ui.event.Events;
 import org.zkoss.zss.ui.event.SyncFriendFocusEvent;
 import org.zkoss.zss.ui.impl.DefaultUserActionManagerCtrl;
 import org.zkoss.zss.ui.impl.Focus;
 import org.zkoss.zss.ui.sys.UndoableActionManager;
+import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Filedownload;
 import org.zkoss.zul.Fileupload;
 import org.zkoss.zul.Html;
 import org.zkoss.zul.Messagebox;
-import org.zkoss.zul.Popup;
 import org.zkoss.zul.Script;
-
 /**
  * 
  * @author dennis
@@ -119,6 +151,9 @@ public class AppCtrl extends CtrlBase<Component>{
 	
 	@Wire
 	Html usersPopContent; //ZSS-998
+	
+	@Wire
+	Checkbox viewer;
 	
 	BookInfo selectedBookInfo;
 	Book loadedBook;
@@ -548,6 +583,8 @@ public class AppCtrl extends CtrlBase<Component>{
 	}
 	
 	private void doCloseBook(boolean isChangeBookmark){
+		//TODO
+		revokeSheetProtection(ss);
 		removeSaveNotification(loadedBook);
 		ss.setBook(null);
 		setBook(null, null);
@@ -559,6 +596,13 @@ public class AppCtrl extends CtrlBase<Component>{
 		updatePageInfo();
 	}
 	
+	private void revokeSheetProtection(Spreadsheet ss) {
+		//if current role is VIEWER, then revoke sheet protection
+		for (int i=0 ; i < ss.getBook().getNumberOfSheets() ; i++){
+			Ranges.range(ss.getBook().getSheetAt(i)).unprotectSheet("");
+		}
+	}
+
 	//ZSS-697
 	private void doAsyncCloseBook(final boolean isChangeBookmark, final AsyncFunction callback){
 		if(isNeedUnsavedAlert == UnsavedAlertState.ENABLED) {
@@ -720,6 +764,10 @@ public class AppCtrl extends CtrlBase<Component>{
 		if(book==null){
 			try {
 				book = bookManager.readBook(info);
+				//TODO 
+				if (viewer.isChecked()){
+					book.setShareScope(EventQueues.DESKTOP);
+				}
 			}catch (IOException e) {
 				log.error(e.getMessage(),e);
 				UiUtil.showWarnMessage("Can't load the specified book: " + info.getName());
@@ -731,7 +779,10 @@ public class AppCtrl extends CtrlBase<Component>{
 			doCloseBook(false);
 		
 		setBook(book, info);
-		collaborationInfo.setRelationship(username, book);
+		//TODO
+		if (!viewer.isChecked()){
+			collaborationInfo.setRelationship(username, book);
+		}
 		ss.setBook(loadedBook);
 		if(!Strings.isBlank(sheetName)){
 			if(loadedBook.getSheet(sheetName)!=null){
@@ -756,9 +807,10 @@ public class AppCtrl extends CtrlBase<Component>{
 	}
 	
 	private void initSaveNotification(Book book) {
-		if(book == null || !"EE".equals(Version.getEdition()))
+		//TODO avoid activate a desktop in a VIEWER
+		if(book == null || !"EE".equals(Version.getEdition()) || viewer.isChecked())
 			return;
-
+		
 		dirtyChangeEventListener = new ModelEventListener() {
 			private static final long serialVersionUID = -281657389731703778L;
 
@@ -950,6 +1002,19 @@ public class AppCtrl extends CtrlBase<Component>{
 			setupUsername(true);
 		} else if (AppEvts.ON_SHARE_BOOK.equals(event)) {
 			shareBook();
+		}
+	}
+
+	//TODO apply permission
+	@Listen("onAppEvent = #mainWin")
+	public void applyPermission(Event e) {
+		AppEvent event = (AppEvent)e.getData();
+		if (AppEvts.ON_LOADED_BOOK.equals(event.getName())) {
+			if (viewer.isChecked()){				
+				AuthorityService.applyPermission(ss, Role.Name.VIEWER);
+			}else{
+				AuthorityService.applyPermission(ss, Role.Name.EDITOR);
+			}
 		}
 	}
 
