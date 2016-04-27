@@ -182,3 +182,16 @@ zkS.isOverlapByPoint = function(element, x, y) {
 		y2 = y1 + zkElement.offsetHeight();
 	return x >= x1 && x <= x2 && y >= y1 && y <= y2;
 }
+
+//ZSS-1214
+zkS._ZERO = '0'.charAt(0);
+zkS._NINE = '9'.charAt(0);
+// Returns whether the character provided is a single digit
+zkS.isSingleDigit = function(val) {
+	if (val === undefined || val.length != 1) {
+		return false;
+	}
+	var char = val.charAt(0);
+	return zkS._ZERO <= char && char <= zkS._NINE;
+}
+

@@ -173,6 +173,40 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 				return zk.$void;
 			}
 		}(),
+		//ZSS-1214
+		placeCaretBeforeEnd = function () {
+			if (supportGetSelection) {
+				return function (node) {
+					var selection = window.getSelection(),
+						range;
+					if (selection.rangeCount > 0)
+						selection.removeAllRanges();
+					range = document.createRange();
+					
+					var textnodes = $(node).contents().filter(function(){
+						return this.nodeType == 3;
+					});
+					var textnode = textnodes[textnodes.length - 1];
+					var pos = textnode.textContent.length - 1;
+					
+					range.selectNodeContents(textnode);
+					range.collapse(true); // collaps to start
+					range.setStart(textnode, pos);
+					selection.addRange(range);
+				};
+			} else if (supportDocumentSelection) {
+				return function (node) {
+					var textRange = document.body.createTextRange();
+					textRange.moveToElementText(node);
+					var pos = getTextOffset(textRange, true) - 1;
+					textRange.moveEnd('Character', pos);
+					textRange.moveStart('Character', pos);
+					textRange.select();
+				};
+			} else {
+				return zk.$void;
+			}
+		}(),
 		complementHTML = function () {
 			if (zk.webkit) { 
 				return function (node) {
@@ -593,10 +627,14 @@ zss.FormulabarEditor = zk.$extends(zul.inp.InputWidget, {
    		if (sheet) {
    			if (sheet.state == zss.SSheetCtrl.FOCUSED) {
    			   	var d = evt.data,
-   			   		cell = sheet.getCell(d.top, d.left);
+   			   		row = d.top,
+   			   		col = d.left,
+   			   		cell = sheet.getCell(row, col);
    			   	if (cell) {
+   			   		// ZSS-1214
+   			   		var value = sheet.isPercentCell(row, col) ? cell.text : (cell.edit || '');
    			   		// ZSS-205: should call setValue(), don't change DOM directly
-   			   		this.setValue(cell.edit || '', 0);
+   			   		this.setValue(value, 0);
    			   	} else {
    			   	}
    			} else if (sheet.state == zss.SSheetCtrl.EDITING) {
@@ -1035,6 +1073,12 @@ zss.Editbox = zk.$extends(zul.inp.InputWidget, {
 			editorcmp = this.comp,
 			$edit = jq(editorcmp);
 
+		//ZSS-1214
+		var percent = sheet.isPercentCell(row, col) && zkS.isSingleDigit(value);
+		if (percent) {
+			value = value + "%";
+		}
+		
 		this.setValue(value);
 		var w = cellcmp.ctrl.overflowed ? (cellcmp.firstChild.offsetWidth + this.sheet.cellPad) : (cellcmp.offsetWidth);
 		var h = cellcmp.offsetHeight;
@@ -1082,7 +1126,12 @@ zss.Editbox = zk.$extends(zul.inp.InputWidget, {
 			} else {
 				setTimeout(function() {
 					$edit.focus();
-					placeCaretAtEnd(editorcmp);
+					//ZSS-1214
+					if (percent) {
+						placeCaretBeforeEnd(editorcmp);
+					} else {
+						placeCaretAtEnd(editorcmp);
+					}
 				}, 25);
 			}
 		}

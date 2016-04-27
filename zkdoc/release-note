@@ -1,5 +1,6 @@
 ZK Spreadsheet 3.9.0
 *Features:
+  ZSS-1214 Support percentage mask when editing a cell applied with "Percentage" format
   
 *Bugs:
   

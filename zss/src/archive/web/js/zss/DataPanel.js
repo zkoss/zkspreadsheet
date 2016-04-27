@@ -338,7 +338,10 @@ zss.DataPanel = zk.$extends(zk.Object, {
 			if( sheet.state == zss.SSheetCtrl.START_EDIT) {
 				var editor = sheet.inlineEditor,
 					pos = sheet.getLastFocus(),
-					value = !initval && initval != "" ? cell.edit : initval; //ZSS-1165: allow empty
+					value = !initval && initval != "" ?
+							//ZSS-1214
+							sheet.isPercentCell(cell.r, cell.c) ? 
+									cell.text : cell.edit : initval; //ZSS-1165: allow empty
 				editor.edit(cell.comp, pos.row, pos.column, value ? value : '', noFocus);
 				sheet.state = zss.SSheetCtrl.EDITING;
 			}

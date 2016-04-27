@@ -3529,6 +3529,18 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			}
 		}
 		return false;
+	},
+	//ZSS-1214
+	// Returns whether the cell specified is a number in percent form
+	isPercentCell: function (row, col) {
+		var cellData = this.getCell(row, col);
+		if (cellData != null) {
+			// a number and text ends with "%"
+			if (cellData.cellType == 0 && cellData.text.endsWith("%")) {
+				return true;
+			}
+		}
+		return false;
 	}
 }, {
 	NOFOCUS: 0,
