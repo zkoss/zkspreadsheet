@@ -1,0 +1,14 @@
+<zk>
+<label multiline="true">Since 3.9.0
+1. Select cell B2 and click the right-most toolbar icon "Hyperlink"
+2. If exception, it is a bug.
+3. If "Insert Hyperlink"" dialog appear and "In Document" button is pressed and empty text in "Type the cell reference", it is correct.
+4. Press "Cancel" button to close the dialog. 
+</label>
+	<vbox width="100%" vflex="1">
+		<spreadsheet id="source" src="/issue3/book/1211-empty-hyperlink.xlsx"
+			maxVisibleRows="100" maxVisibleColumns="30" hflex="1" vflex="1"
+			showContextMenu="true" showSheetbar="true" showToolbar="true"
+			showFormulabar="true" />
+	</vbox>
+</zk>

@@ -5967,7 +5967,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 							setSelectedSheetDirectly(sheetname, cacheInClient, row, col, 
 									left, top, right, bottom);
 						}
-					} else {
+					} else if (!Strings.isBlank(addr)) { // ZSS-1211: should skip empty address
 						try {
 							final AreaReference area = new AreaReference(addr);
 							final CellReference cell1 = area.getFirstCell();
@@ -5988,7 +5988,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 								setSelectedSheetDirectly(sheetname, cacheInClient, row, col, 
 										left, top, right, bottom);
 							}
-						} catch (IllegalArgumentException ex) {
+						} catch (Exception ex) { //ZSS-1211: illegal address
 							Messagebox.show(Labels.getLabel("zssex.dlg.hyperlink.ref_not_valid"));
 							return;
 						}
