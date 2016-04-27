@@ -1,8 +1,7 @@
 <zk>
+        <label multiline="true" >1.select sheet 'TEST_SHEET_2', it should display well and no javascript error.
+        </label>
 	<vbox vflex="1" hflex="1">
-		<label multiline="true" >
-		1.select sheet 'TEST_SHEET_2', it should display well and no javascript error.
-		</label>
 		<hbox>
 			<button label="CHANGE SHEET" onClick='ss.setSelectedSheet("TEST_SHEET_2")'></button>
 		</hbox>

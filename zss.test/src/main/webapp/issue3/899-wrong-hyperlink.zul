@@ -1,7 +1,5 @@
-<?page title="ShowCommentInSelectArea"?>
 <zk>
-<label multiline="true">
-Since 3.7.0
+<label multiline="true">Since 3.7.0
 1. Move to E5; right click to popup the context menu.
 2. Select 'Hyperlink'; should see the Insert Hyperlink dialog.
 3. Press 'Web Page' button.
@@ -13,8 +11,9 @@ Since 3.7.0
 9. You should see in E5 a hyperlink: http://www.zkoss.org.
 10. Move mouse to cell E5, you should see mouse cursor changed to 'pointer' shape.  
 11. Click the link and you browser shall create a new tab and visit http://www.zkoss.org.
-
 </label>
-    <spreadsheet id="spreadsheet" src="/issue3/book/blank.xlsx" maxVisibleRows="50" vflex="1" width="100%" 
+<vbox vflex="1" hflex="1">
+    <spreadsheet id="spreadsheet" src="/issue3/book/blank.xlsx" maxVisibleRows="50" vflex="1" hflex="1"
     showSheetbar="true" showContextMenu="true" showFormulabar="true"></spreadsheet>
+    </vbox>
 </zk>

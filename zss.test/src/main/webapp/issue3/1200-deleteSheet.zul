@@ -1,8 +1,11 @@
 <zk>
+<label multiline="true">1. Press "create sheet" button; you should see a new sheet "temp" created
+2. Press "delete sheet" button; you should see the new created sheet "temp" removed</label>
+<vbox vflex="1" width="100%">
 <button label="create sheet" onClick="create3()"/>
 <button label="delete sheet" onClick="delete()"/>
-<spreadsheet id="ss" src="/issue3/book/blank.xlsx" maxVisibleRows="800" maxVisibleColumns="100" width="100%" 
-		height="90%" preloadColumnSize="5" preloadRowSize="5"
+<spreadsheet id="ss" src="/issue3/book/blank.xlsx" maxVisibleRows="800" maxVisibleColumns="100" hflex="1" 
+		vflex="1" preloadColumnSize="5" preloadRowSize="5"
 		showContextMenu="true" showSheetbar="true" showToolbar="true" showFormulabar="true"/>
 <!-- 
 keepCellSelection="true"
@@ -13,7 +16,6 @@ keepCellSelection="true"
 	import org.zkoss.util.media.*;
 	import org.zkoss.zss.api.Range.InsertCopyOrigin;
 	import org.zkoss.zss.api.Range.InsertShift;
-	import support.exporter.*;
 	
 	public void delete(){
 		Ranges.range(ss.getBook().getSheet("temp")).deleteSheet();
@@ -27,4 +29,5 @@ keepCellSelection="true"
 	}
 	
 ]]></zscript>
+</vbox>
 </zk>
