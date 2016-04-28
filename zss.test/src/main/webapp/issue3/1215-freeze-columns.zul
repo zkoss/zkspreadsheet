@@ -1,0 +1,39 @@
+<zk>
+	<window hflex="1" vflex="1">
+		<hlayout hflex="1" vflex="1">
+			<spreadsheet id="ss" hflex="1" vflex="1"
+				showFormulabar="true" showContextMenu="true" showToolbar="true"
+				showSheetbar="true" maxVisibleRows="100" maxVisibleColumns="40"
+				preloadColumnSize="5"
+				src="/issue3/book/1215-freeze-columns.xlsx" />
+			<vlayout width="200px" vflex="1">
+				<groupbox hflex="1" >
+					<caption label="Freeze" />
+					<grid >
+						<columns>
+							<column />
+						</columns>
+						<rows>
+							<row spans="2">Select F5 and click Freeze
+							</row>
+							<row  align="right">
+								<button id="freezeButton" label="Freeze" onClick="freeze()"/>
+							</row>
+						</rows>
+					</grid>
+					<label multiline="true">
+Since 3.9.0
+1. Select cell F5 and click "Freeze" button.
+2. If cells to the right of column E are all white, it is a bug.
+</label>
+					<zscript><![CDATA[
+					              	public void freeze() {
+					            		Ranges.range(ss.getSelectedSheet())
+					            		.setFreezePanel(ss.getSelection().getRow(), ss.getSelection().getColumn());
+					            	}					                  
+					]]></zscript>
+				</groupbox>
+			</vlayout>
+		</hlayout>
+	</window>
+</zk>

@@ -1102,12 +1102,16 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	 * @return int
 	 */
 	private int getInitRowSize() {
-		int rowSize = SpreadsheetCtrl.DEFAULT_LOAD_ROW_SIZE;
+		//ZSS-1215: invalidate() would call into this via renderProperties0() to setup the activeRange
+		//Thus we have to use _visibleArea information when doing invalidate()
+		final AreaRef vArea = _visibleArea;
+		int rowSize = vArea.getLastRow() < 0 ?  // _visibleArea is not sync yet
+				SpreadsheetCtrl.DEFAULT_LOAD_ROW_SIZE : vArea.getLastRow();
 		int preloadRowSize = getPreloadRowSize();
-		if (preloadRowSize == -1) {
+		if (preloadRowSize < 0) { // preloadRowSize is not set 
 			rowSize = Math.min(rowSize, getCurrentMaxVisibleRows() - 1); //ZSS-1084
-		} else {
-			rowSize = Math.min(preloadRowSize - 1, getCurrentMaxVisibleRows() - 1); //ZSS-1084
+		} else { // preloadRowSize is set; use it
+			rowSize = Math.min(rowSize + preloadRowSize, getCurrentMaxVisibleRows() - 1); //ZSS-1084
 		}
 		return rowSize;
 	}
@@ -1138,7 +1142,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	public void setPreloadColumnSize(int size) {
 		if (_preloadColumnSize != size) {
 			_preloadColumnSize = size < 0 ? 0 : size;
-			smartUpdate("preloadColSize", _preloadColumnSize);
+			smartUpdate("preloadColumnSize", _preloadColumnSize); //ZSS-1215
 		}
 	}
 	
@@ -1151,12 +1155,16 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	 * @return int
 	 */
 	private int getInitColumnSize() {
-		int colSize = SpreadsheetCtrl.DEFAULT_LOAD_COLUMN_SIZE;
+		//ZSS-1215: invalidate() would call into this via renderProperties0() to setup the activeRange
+		//Thus we have to use _visibleArea information when doing invalidate()
+		final AreaRef vArea = _visibleArea;
+		int colSize = vArea.getLastColumn() < 0 ? // _visibleArea is not sync yet 
+			SpreadsheetCtrl.DEFAULT_LOAD_COLUMN_SIZE : vArea.getLastColumn();
 		int preloadColSize = getPreloadColumnSize();
-		if (preloadColSize == -1) {
+		if (preloadColSize < 0) { // preloadColSize is not set
 			colSize = Math.min(colSize, getCurrentMaxVisibleColumns() - 1); //ZSS-1084
-		} else {
-			colSize = Math.min(preloadColSize - 1, getCurrentMaxVisibleColumns() - 1); //ZSS-1084
+		} else { // preloadColSize is set; use it
+			colSize = Math.min(colSize + preloadColSize, getCurrentMaxVisibleColumns() - 1); //ZSS-1084
 		}
 		return colSize;
 	}
