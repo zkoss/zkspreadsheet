@@ -1011,9 +1011,9 @@ public class AppCtrl extends CtrlBase<Component>{
 		AppEvent event = (AppEvent)e.getData();
 		if (AppEvts.ON_LOADED_BOOK.equals(event.getName())) {
 			if (viewer.isChecked()){				
-				AuthorityService.applyPermission(ss, Role.Name.VIEWER);
+				AuthorityService.applyRestriction(ss, AuthorityService.VIEWER);
 			}else{
-				AuthorityService.applyPermission(ss, Role.Name.EDITOR);
+				AuthorityService.applyRestriction(ss, AuthorityService.OWNER);
 			}
 		}
 	}
