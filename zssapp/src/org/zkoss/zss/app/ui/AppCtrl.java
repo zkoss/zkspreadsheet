@@ -76,7 +76,6 @@ import org.zkoss.zss.app.ui.dlg.SaveBookAsCtrl;
 import org.zkoss.zss.app.ui.dlg.ShareBookCtrl;
 import org.zkoss.zss.app.ui.dlg.UsernameCtrl;
 import org.zkoss.zss.essential.advanced.permission.AuthorityService;
-import org.zkoss.zss.essential.advanced.permission.Role;
 import org.zkoss.zss.model.ModelEvent;
 import org.zkoss.zss.model.ModelEventListener;
 import org.zkoss.zss.model.ModelEvents;
@@ -583,8 +582,6 @@ public class AppCtrl extends CtrlBase<Component>{
 	}
 	
 	private void doCloseBook(boolean isChangeBookmark){
-		//TODO
-		revokeSheetProtection(ss);
 		removeSaveNotification(loadedBook);
 		ss.setBook(null);
 		setBook(null, null);
@@ -596,12 +593,6 @@ public class AppCtrl extends CtrlBase<Component>{
 		updatePageInfo();
 	}
 	
-	private void revokeSheetProtection(Spreadsheet ss) {
-		//if current role is VIEWER, then revoke sheet protection
-		for (int i=0 ; i < ss.getBook().getNumberOfSheets() ; i++){
-			Ranges.range(ss.getBook().getSheetAt(i)).unprotectSheet("");
-		}
-	}
 
 	//ZSS-697
 	private void doAsyncCloseBook(final boolean isChangeBookmark, final AsyncFunction callback){
@@ -1010,6 +1001,7 @@ public class AppCtrl extends CtrlBase<Component>{
 	public void applyPermission(Event e) {
 		AppEvent event = (AppEvent)e.getData();
 		if (AppEvts.ON_LOADED_BOOK.equals(event.getName())) {
+			AuthorityService.clearRestriction(ss);
 			if (viewer.isChecked()){				
 				AuthorityService.applyRestriction(ss, AuthorityService.VIEWER);
 			}else{
