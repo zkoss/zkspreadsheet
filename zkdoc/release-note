@@ -4,9 +4,11 @@ ZK Spreadsheet 3.9.0
   
 *Bugs:
   ZSS-1211 StringIndexOutOfBoundsException if click a hyperlink with empty address
-  
-** Upgrade Notes
+  ZSS-1212 Select a sheet and a javascript error is thrown
+  ZSS-1215 when the frozen columns number is larger than preloadColumnSize, some areas become blank
 
+** Upgrade Notes
+  
  ------------
 ZK Spreadsheet 3.8.3
 *Features:
