@@ -167,17 +167,25 @@ public class ColumnArrayImpl extends AbstractColumnArrayAdv {
 	//ZSS-688
 	//@since 3.6.0
 	/*package*/ ColumnArrayImpl cloneColumnArrayImpl(AbstractSheetAdv sheet) {
-		final ColumnArrayImpl tgt = new ColumnArrayImpl(sheet, this._index, this._lastIndex);
-		tgt._width = this._width;
-		tgt._hidden = this._hidden;
-		tgt._customWidth = this._customWidth;
-		tgt._cellStyle = this._cellStyle;
-		return tgt;
+		return cloneColumnArray(sheet, null);
 	}
 	
 	//ZSS-1132: should skip this Column array in exporting
 	//@since 3.8.2
 	public boolean shouldSkip() {
 		return !isCustomWidth() && _cellStyle == null && !_hidden; //ZSS-1190
+	}
+
+	//ZSS-1183
+	//@since 3.9.0
+	/*package*/ ColumnArrayImpl cloneColumnArray(AbstractSheetAdv sheet, SBook book) {
+		final ColumnArrayImpl tgt = new ColumnArrayImpl(sheet, this._index, this._lastIndex);
+		tgt._width = this._width;
+		tgt._hidden = this._hidden;
+		tgt._customWidth = this._customWidth;
+		tgt._cellStyle = (AbstractCellStyleAdv) 
+				(this._cellStyle == null ? null : 
+						this._cellStyle.cloneCellStyle(book));
+		return tgt;
 	}
 }

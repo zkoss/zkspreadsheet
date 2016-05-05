@@ -16,12 +16,13 @@ import java.io.Serializable;
 
 import org.zkoss.zss.model.STableStyle;
 import org.zkoss.zss.model.STableStyleElem;
+import org.zkoss.zss.model.SBook;
 
 /**
  * @author henri
  * @since 3.8.0
  */
-public class TableStyleImpl implements STableStyle, Serializable {
+public class TableStyleImpl extends AbstractTableStyleAdv {
 	private static final long serialVersionUID = 1378512655196539803L;
 	private final String name;
 	private final STableStyleElem wholeTable;
@@ -170,5 +171,35 @@ public class TableStyleImpl implements STableStyle, Serializable {
 	@Override
 	public STableStyleElem getLastTotalCellStyle() {
 		return lastTotalCell;
+	}
+	
+	//ZSS-1183
+	//@since 3.9.0
+	@Override
+	/*package*/ AbstractTableStyleAdv cloneTableStyle(SBook book) {
+		if (book == null) {
+			return new TableStyleImpl(
+				name,
+				wholeTable,
+				colStripe1,
+				colStripe1Size,
+				colStripe2,
+				colStripe2Size,
+				rowStripe1,
+				rowStripe1Size,
+				rowStripe2,
+				rowStripe2Size,
+				lastCol,
+				firstCol,
+				headerRow,
+				totalRow,
+				firstHeaderCell,
+				lastHeaderCell,
+				firstTotalCell,
+				lastTotalCell);
+		} else {
+			return (AbstractTableStyleAdv)
+				((AbstractBookAdv)book).getOrCreateTableStyle(this);
+		}
 	}
 }

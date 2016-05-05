@@ -1,0 +1,41 @@
+<vlayout hflex="1" vflex="1">
+	<label multiline="true">
+		1. Select a sheet on top Spreadsheet
+		2. Press the "clone sheet" button.
+		3. Should see a cloned new sheet added to the end of the bottom Spreadsheet.
+		4. Select the new cloned sheet and check if it copied everything
+		5. Select next sheet on top Spreadsheet and repeat step 2 ~ 4.
+		6. When all sheets were cloned; press "Export to Excel"" button to export the bottom Spreadsheet
+		7. Open the exported file with Excel and check if it works.
+	</label>
+	<hlayout>
+		<button onClick="cloneSheetFrom()">Clone sheet</button>
+        <button onClick="export()">Export to Excel</button>
+        <button onClick="ss.invalidate()">Invalidate() bottom Spreadsheet</button>
+	</hlayout>
+	
+	<spreadsheet id="ss1" src="/issue3/book/1183-clone-sheet-from.xlsx" maxVisibleRows="200" maxVisibleColumns="40"
+		hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
+		showFormulabar="true"/>
+	<spreadsheet id="ss" src="/issue3/book/blank.xlsx" maxVisibleRows="200" maxVisibleColumns="40"
+        hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
+        showFormulabar="true"/>
+	<zscript><![CDATA[
+	import java.io.ByteArrayOutputStream;
+	
+	public void export() throws java.io.IOException {
+		Book wb = ss.getBook();
+	    Exporter c = Exporters.getExporter("excel");
+	    ByteArrayOutputStream out = new ByteArrayOutputStream();
+	    c.export(wb, out);
+	    Filedownload.save(out.toByteArray(), "application/file", wb.getBookName());
+	}
+	
+	public void cloneSheetFrom() {
+		Sheet src = ss1.getSelectedSheet();
+		Book tgt = ss.getBook();
+		Range range = Ranges.range(tgt);
+		range.cloneSheetFrom(null, src);
+	}
+	]]></zscript>
+</vlayout>

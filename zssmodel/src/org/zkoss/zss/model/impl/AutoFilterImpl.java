@@ -99,7 +99,7 @@ public class AutoFilterImpl extends AbstractAutoFilterAdv {
 		for (SAutoFilter.NFilterColumn value : this._columns.values()) {
 			final FilterColumnImpl srccol = (FilterColumnImpl) value;
 			final FilterColumnImpl tgtcol = srccol.cloneFilterColumnImpl(); 
-			_columns.put(tgtcol.getIndex(), tgtcol);
+			tgt._columns.put(tgtcol.getIndex(), tgtcol); //ZSS-1183
 		}
 		
 		return tgt;

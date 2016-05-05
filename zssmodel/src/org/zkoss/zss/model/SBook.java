@@ -97,8 +97,13 @@ public interface SBook {
 	public List<SSheet> getSheets();
 	
 	/**
-	 * Create a sheet and copy the contain form the sheet sheet
-	 * @param name the name of sheet
+	 * Create a sheet and copy the content from the specified src sheet; note
+	 * the owner book of the specified src sheet can be different from this
+	 * book. 
+	 * @param name the name of the new created sheet; null would try to use
+	 * the sheet name of the specified src sheet; if the same sheet name 
+	 * already used in this book then use default "SheetX" name where X is 
+	 * the next sheet number of this book.
 	 * @param src the source sheet to copy
 	 * @return the sheet
 	 */
@@ -160,6 +165,14 @@ public interface SBook {
 	 */
 	public SCellStyle searchCellStyle(CellStyleMatcher matcher);
 	
+	//ZSS-1183
+	/**
+	 * Search the style table and return the first matched style. 
+	 * @param matcher the style matcher
+	 * @return the matched style.
+	 * @since 3.9.0
+	 */
+	public SExtraStyle searchExtraStyle(CellStyleMatcher matcher);
 	
 	public SFont getDefaultFont();
 

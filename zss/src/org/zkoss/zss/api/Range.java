@@ -45,6 +45,7 @@ import org.zkoss.zss.api.model.Validation.AlertStyle;
 import org.zkoss.zss.api.model.Validation.OperatorType;
 import org.zkoss.zss.api.model.Validation.ValidationType;
 import org.zkoss.zss.model.CellRegion;
+import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.range.SRange;
 
 /**
@@ -1100,4 +1101,20 @@ public interface Range {
 	 * @since 3.8.3
 	 */
 	public CellRegion getDataRegion();
+
+	/**
+	 * Clone from the specified source sheet to the owner book of this range.
+	 * The book can be different between the owner book of this range and
+	 * of the specified source sheet.
+	 *    
+	 * @param name the name of the new created sheet; null would try to use
+	 * the sheet name of the specified source sheet; if the same sheet name 
+	 * already used in the owner book of this range then use default "SheetX" 
+	 * name where X is the next sheet number of the owner book of this range.
+	 * @param sheet the source sheet to clone from to the owner book of this 
+	 * range.
+	 * @return the new created sheet
+	 * @since 3.9.0
+	 */
+	public Sheet cloneSheetFrom(String name, Sheet sheet);	
 }

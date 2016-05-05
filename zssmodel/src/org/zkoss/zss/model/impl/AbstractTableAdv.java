@@ -17,6 +17,7 @@ import java.io.Serializable;
 import org.zkoss.zss.model.SCellStyle;
 import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.model.STable;
+import org.zkoss.zss.model.SBook;
 
 /**
  * @author henri
@@ -48,5 +49,9 @@ public abstract class AbstractTableAdv implements STable, Serializable {
 	//ZSS-988
 	//delete old filter; shift; add new filter
 	public abstract void refreshFilter();
+	
+	//ZSS-1183
+	//@since 3.9.0
+	/*package*/abstract AbstractTableAdv cloneTable(SSheet sheet, SBook book);
 }
 

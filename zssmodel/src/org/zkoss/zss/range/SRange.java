@@ -665,7 +665,7 @@ public interface SRange {
 	
 	/**
 	 * Clone sheet as specified in this Range.
-	 * @param name the name of the new created sheet; null would use defulat
+	 * @param name the name of the new created sheet; null would use default
 	 * "SheetX" name where X is the next sheet number.
 	 */
 	public SSheet cloneSheet(String name);
@@ -982,4 +982,20 @@ public interface SRange {
 	 * @since 3.8.3
 	 */
 	public CellRegion getDataRegion();
+	
+	/**
+	 * Clone from the specified source sheet to the owner book of this range.
+	 * The book can be different between the owner book of this range and
+	 * of the specified source sheet.
+	 *    
+	 * @param name the name of the new created sheet; null would try to use
+	 * the sheet name of the specified source sheet; if the same sheet name 
+	 * already used in the owner book of this range then use default "SheetX" 
+	 * name where X is the next sheet number of the owner book of this range.
+	 * @param sheet the source sheet to clone from to the owner book of this 
+	 * range.
+	 * @return the new created sheet
+	 * @since 3.9.0
+	 */
+	public SSheet cloneSheetFrom(String name, SSheet sheet);
 }

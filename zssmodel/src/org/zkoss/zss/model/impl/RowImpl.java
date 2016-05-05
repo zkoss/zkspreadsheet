@@ -26,6 +26,7 @@ import org.zkoss.zss.model.SCell;
 import org.zkoss.zss.model.SCellStyle;
 import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.model.util.Validations;
+
 /**
  * 
  * @author dennis
@@ -291,23 +292,30 @@ public class RowImpl extends AbstractRowAdv {
 	
 	//ZSS-688
 	/*package*/ AbstractRowAdv cloneRow(AbstractSheetAdv sheet) {
-		final RowImpl tgt = new RowImpl(sheet, this._index);
-		
-		for (SCell cell : this.cells.values()) {
-			tgt.cells.put(cell.getColumnIndex(), ((CellImpl)cell).cloneCell(tgt));
-		}
-
-		tgt.cellStyle = this.cellStyle;
-		tgt.height = this.height;
-		tgt.hidden = this.hidden;
-		tgt.customHeight = this.customHeight;
-		
-		return tgt;
+		return cloneRow(sheet, null);
 	}
 	
 	//ZSS-816
 	@Override
 	public Iterator<SCell> getCellIterator() {
 		return Collections.unmodifiableCollection(cells.values()).iterator();
+	}
+
+	//ZSS-1183
+	//@since 3.9.0
+	/*package*/ AbstractRowAdv cloneRow(AbstractSheetAdv sheet, SBook tgtBook) {
+		final RowImpl tgt = new RowImpl(sheet, this._index);
+		
+		for (SCell cell : this.cells.values()) {
+			tgt.cells.put(cell.getColumnIndex(), ((CellImpl)cell).cloneCell(tgt, sheet));
+		}
+
+		final AbstractCellStyleAdv style = this.cellStyle;
+		tgt.cellStyle = (AbstractCellStyleAdv) (style == null ? null : style.cloneCellStyle(tgtBook));
+		tgt.height = this.height;
+		tgt.hidden = this.hidden;
+		tgt.customHeight = this.customHeight;
+		
+		return tgt;
 	}
 }

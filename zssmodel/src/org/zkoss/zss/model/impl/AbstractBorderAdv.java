@@ -15,6 +15,7 @@ package org.zkoss.zss.model.impl;
 import java.io.Serializable;
 
 import org.zkoss.zss.model.SBorder;
+import org.zkoss.zss.model.SBook;
 
 /**
  * @author henri
@@ -27,4 +28,8 @@ public abstract class AbstractBorderAdv implements SBorder, Serializable {
 	 * gets the string key of this font, the key should combine all the style value in short string as possible
 	 */
 	abstract String getStyleKey();
+	
+	//ZSS-1183
+	//@since 3.9.0
+	/*package*/ abstract SBorder cloneBorder(SBook book);
 }

@@ -20,6 +20,7 @@ import java.lang.ref.WeakReference;
 import java.util.Collections;
 import java.util.Iterator;
 
+import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.SCell;
 import org.zkoss.zss.model.SCellStyle;
 import org.zkoss.zss.model.SSheet;
@@ -220,5 +221,15 @@ class RowProxy extends AbstractRowAdv{
 	@Override
 	public Iterator<SCell> getCellIterator() {
 		return getCellIterator(false);
+	}
+	
+	//ZSS-1183
+	//@since 3.9.0
+	@Override
+	AbstractRowAdv cloneRow(AbstractSheetAdv sheet, SBook book) {
+		if (!isNull()) {
+			return _proxy.cloneRow(sheet, book);
+		}
+		return null;
 	}
 }

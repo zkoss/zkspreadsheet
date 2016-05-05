@@ -24,6 +24,7 @@ import org.zkoss.zss.model.SFill;
 import org.zkoss.zss.model.SFill.FillPattern;
 import org.zkoss.zss.model.SBorder.BorderType;
 import org.zkoss.zss.model.SFont;
+import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.util.Validations;
 /**
  * 
@@ -41,17 +42,37 @@ public class CellStyleImpl extends AbstractCellStyleAdv {
 	//SBorder
 	protected AbstractBorderAdv _border;
 	
-	private Alignment _alignment = Alignment.GENERAL;
-	private VerticalAlignment _verticalAlignment = VerticalAlignment.BOTTOM;
-	private boolean _wrapText = false;
+	protected Alignment _alignment = Alignment.GENERAL;
+	protected VerticalAlignment _verticalAlignment = VerticalAlignment.BOTTOM;
+	protected boolean _wrapText = false;
 
 	protected String _dataFormat; //ZSS-1140
-	private boolean _directFormat = false;
-	private boolean _locked = true;// default locked as excel.
-	private boolean _hidden = false;
-	private int _rotation; //ZSS-918
-	private int _indention; //ZSS-915
+	protected boolean _directFormat = false;
+	protected boolean _locked = true;// default locked as excel.
+	protected boolean _hidden = false;
+	protected int _rotation; //ZSS-918
+	protected int _indention; //ZSS-915
 
+	//ZSS-1183
+	//@since 3.9.0
+	/*package*/ CellStyleImpl(CellStyleImpl src, BookImpl book) {
+		this._font = (AbstractFontAdv)
+				(src._font == null ? null : ((AbstractFontAdv)src._font).cloneFont(book));
+		this._fill = (AbstractFillAdv)
+				(src._fill == null ? null : ((AbstractFillAdv)src._fill).cloneFill(book));
+		this._border = (AbstractBorderAdv)
+				(src._border == null ? null : ((AbstractBorderAdv)src._border).cloneBorder(book));
+		this._alignment = src._alignment;
+		this._verticalAlignment = src._verticalAlignment;
+		this._wrapText = src._wrapText;
+		this._dataFormat = src._dataFormat;
+		this._directFormat = src._directFormat;
+		this._locked = src._locked;
+		this._hidden = src._hidden;
+		this._rotation = src._rotation;
+		this._indention = src._indention;	
+	}
+	
 	public CellStyleImpl(AbstractFontAdv font){
 		this._font = font;
 	}
@@ -602,4 +623,19 @@ public class CellStyleImpl extends AbstractCellStyleAdv {
     	if (_border == null) return false;
     	return _border.isShowDiagonalDownBorder();
     }
+	
+	//ZSS-1183
+	//@since 3.9.0
+	@Override
+	/*package*/ SCellStyle cloneCellStyle(SBook book) {
+		return book == null ? 
+				this : ((AbstractBookAdv)book).getOrCreateCellStyle(this);
+	}
+	
+	//ZSS-1183
+	//@since 3.9.0
+	@Override
+	/*package*/ SCellStyle createCellStyle(SBook book) {
+		return new CellStyleImpl(this, (BookImpl) book);
+	}
 }

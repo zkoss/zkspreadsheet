@@ -22,6 +22,8 @@ import java.util.Iterator;
 import org.zkoss.zss.model.SCell;
 import org.zkoss.zss.model.SCellStyle;
 import org.zkoss.zss.model.SRow;
+import org.zkoss.zss.model.SBook;
+
 /**
  * 
  * @author dennis
@@ -55,4 +57,8 @@ public abstract class AbstractRowAdv implements SRow,LinkedModelObject,Serializa
 	/*package*/ abstract AbstractRowAdv cloneRow(AbstractSheetAdv sheet);
 	
 	public abstract Iterator<SCell> getCellIterator(boolean reverse, int start, int end);
+	
+	//ZSS-1183
+	//@since 3.9.0
+	/*package*/ abstract AbstractRowAdv cloneRow(AbstractSheetAdv sheet, SBook book);
 }

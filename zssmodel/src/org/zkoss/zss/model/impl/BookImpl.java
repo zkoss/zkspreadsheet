@@ -45,6 +45,7 @@ import org.zkoss.zss.model.SCellStyle;
 import org.zkoss.zss.model.SColor;
 import org.zkoss.zss.model.SColumnArray;
 import org.zkoss.zss.model.SExtraStyle;
+import org.zkoss.zss.model.SCellStyle;
 import org.zkoss.zss.model.SFont;
 import org.zkoss.zss.model.SName;
 import org.zkoss.zss.model.SPicture;
@@ -55,6 +56,7 @@ import org.zkoss.zss.model.SNamedStyle;
 import org.zkoss.zss.model.STable;
 import org.zkoss.zss.model.STableColumn;
 import org.zkoss.zss.model.STableStyle;
+import org.zkoss.zss.model.STableStyleElem;
 import org.zkoss.zss.model.SheetRegion;
 import org.zkoss.zss.model.impl.sys.DependencyTableAdv;
 import org.zkoss.zss.model.impl.sys.formula.ParsingBook;
@@ -277,10 +279,13 @@ public class BookImpl extends AbstractBookAdv{
 	}
 	
 	@Override
-	public SSheet createSheet(String name,SSheet src) {
+	public SSheet createSheet(String name, SSheet src) {
 		checkLegalSheetName(name);
-		if(src!=null)
-			checkOwnership(src);
+		
+		// ZSS-1183: Support createSheet from a source sheet no matter the sheet is
+		// in the same book or not. So we mark out the ownership checking		
+//		if(src!=null)
+//			checkOwnership(src);
 		
 
 		AbstractSheetAdv sheet = new SheetImpl(this,nextObjId("sheet"));
@@ -559,7 +564,17 @@ public class BookImpl extends AbstractBookAdv{
 		}
 		return null;
 	}
-	
+
+	//ZSS-1183
+	@Override
+	public SExtraStyle searchExtraStyle(CellStyleMatcher matcher) {
+		for(SExtraStyle style:_extraStyles){
+			if(matcher.match(style)){
+				return style;
+			}
+		}
+		return null;
+	}
 	
 	@Override
 	public SFont getDefaultFont() {
@@ -1383,5 +1398,112 @@ public class BookImpl extends AbstractBookAdv{
 	@Override
 	public String getDefaultTableStyleName() {
 		return _defaultTableStyle;
+	}
+	
+	//ZSS-1183
+	@Override
+	/*package*/ SCellStyle getOrCreateCellStyle(SCellStyle src) {
+		if(src!=null) {
+			Validations.argInstance(src, AbstractCellStyleAdv.class);
+		}
+		SCellStyle style = null;
+		if (src instanceof SExtraStyle) {
+			CellStyleMatcher matcher = new CellStyleMatcher(src);
+			style = searchExtraStyle(matcher);
+			
+			if(style==null){
+				style = ((AbstractCellStyleAdv)src).createCellStyle(this);
+			}
+			_extraStyles.add((SExtraStyle)style);
+		} else {
+			CellStyleMatcher matcher = new CellStyleMatcher(src);
+			style = searchCellStyle(matcher);
+			
+			if(style==null){
+				style = ((AbstractCellStyleAdv)src).createCellStyle(this);
+			}
+			_cellStyles.add(style);
+		}
+		
+		return style;
+	}
+	
+	//ZSS-1183
+	@Override
+	/*package*/ SFont getOrCreateFont(SFont src) {
+		final FontMatcher fontMatcher = new FontMatcher(src);
+		SFont dest = this.searchFont(fontMatcher);
+		
+		if (dest == null) {
+			dest = this.createFont(src, true);
+			dest.setColor(this.createColor(dest.getColor().getHtmlColor()));
+		}
+		return dest;
+	}
+	
+	//ZSS-1183
+	@Override
+	/*package*/ SName getOrCreateName(SName src, String sheetName) {
+		final String namename = src.getName();
+		SName dest = this.getNameByName(namename, sheetName);
+		if (dest == null) {
+			dest = this.createName(namename, sheetName);
+			dest.setRefersToFormula(src.getRefersToFormula());
+		}
+		return dest;
+	}
+
+	//ZSS-1183
+	private STableStyleElem _getOrClone(STableStyleElem src) {
+		return (STableStyleElem) (src == null ? null :
+				((AbstractCellStyleAdv)src).cloneCellStyle(this)); 
+	}
+	
+	//ZSS-1183
+	//@since 3.9.0
+	@Override
+	/*package*/ STableStyle getOrCreateTableStyle(STableStyle src) {
+		final String name = src.getName();
+		STableStyle tableStyle = EngineFactory.getInstance()
+				.createFormatEngine().getExistTableStyle(this, name);
+		if (tableStyle == null) {
+			final STableStyleElem wholeTable = _getOrClone(src.getWholeTableStyle());
+			final STableStyleElem colStripe1 = _getOrClone(src.getColStripe1Style());
+			final STableStyleElem colStripe2 = _getOrClone(src.getColStripe2Style());
+			final STableStyleElem rowStripe1 = _getOrClone(src.getRowStripe1Style());
+			final STableStyleElem rowStripe2 = _getOrClone(src.getRowStripe2Style());
+			final STableStyleElem lastCol = _getOrClone(src.getLastColumnStyle());
+			final STableStyleElem firstCol = _getOrClone(src.getFirstColumnStyle());
+			final STableStyleElem headerRow = _getOrClone(src.getHeaderRowStyle());
+			final STableStyleElem totalRow = _getOrClone(src.getTotalRowStyle());
+			final STableStyleElem firstHeaderCell = _getOrClone(src.getFirstHeaderCellStyle());
+			final STableStyleElem lastHeaderCell = _getOrClone(src.getLastHeaderCellStyle());
+			final STableStyleElem firstTotalCell = _getOrClone(src.getFirstTotalCellStyle());
+			final STableStyleElem lastTotalCell = _getOrClone(src.getLastTotalCellStyle()); 
+			
+			tableStyle = new TableStyleImpl(
+					name,
+					wholeTable,
+					colStripe1,
+					src.getColStripe1Size(),
+					colStripe2,
+					src.getColStripe2Size(),
+					rowStripe1,
+					src.getRowStripe1Size(),
+					rowStripe2,
+					src.getRowStripe2Size(),
+					lastCol,
+					firstCol,
+					headerRow,
+					totalRow,
+					firstHeaderCell,
+					lastHeaderCell,
+					firstTotalCell,
+					lastTotalCell);
+			
+			addTableStyle(tableStyle);
+		}
+		
+		return tableStyle;
 	}
 }

@@ -227,7 +227,8 @@ public class ParsingBook implements FormulaParsingWorkbook, FormulaRenderingWork
 		Object[] info = getNameInfo(namePtg);
 		String nameName = (String) info[1];
 		int sheetIndex = ((Integer)info[0]).intValue();
-		return sheetIndex < 0 ? nameName : (book.getSheet(sheetIndex).getSheetName() + '!' + nameName);
+		final String sheetName = sheetIndex < 0 ? null : getSheetNameByExternSheet(sheetIndex); //ZSS-1183 
+		return sheetIndex < 0 ? nameName : (sheetName + '!' + nameName);
 	}
 	
 	public Object[] getNameInfo(NamePtg namePtg) {
@@ -482,7 +483,8 @@ public class ParsingBook implements FormulaParsingWorkbook, FormulaRenderingWork
 		}
 		String tableName0 = tableName;
 		String tableName1 = null; //ZSS-1002
-		final SSheet sheetx = book.getSheet(sheetIndex);
+		final String sheetName = getSheetNameByExternSheet(sheetIndex); //ZSS-1183
+		final SSheet sheetx = book.getSheetByName(sheetName);
 		final STable tablex = ((AbstractSheetAdv)sheetx).getTableByRowCol(rowIdx, colIdx);
 		if (tableName0 == null) {
 			tableName0 = tablex == null ? null : tablex.getName();

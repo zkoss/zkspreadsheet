@@ -70,4 +70,13 @@ public interface FormatEngine {
 	 * @since 3.8.3
 	 */
 	STableStyle getTableStyle(SBook book, String name);
+
+	/**
+	 * Returns TableStyle of the specified name of the specified book if exists;
+	 * or return null if not exists.
+	 * @param name
+	 * @return
+	 * @since 3.9.0
+	 */
+	STableStyle getExistTableStyle(SBook book, String name);
 }

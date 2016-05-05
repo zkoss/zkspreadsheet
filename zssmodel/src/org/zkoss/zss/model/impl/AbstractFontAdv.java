@@ -19,6 +19,8 @@ package org.zkoss.zss.model.impl;
 import java.io.Serializable;
 
 import org.zkoss.zss.model.SFont;
+import org.zkoss.zss.model.SBook;
+
 /**
  * 
  * @author dennis
@@ -53,4 +55,8 @@ public abstract class AbstractFontAdv implements SFont,Serializable{
 	abstract public boolean isOverrideUnderline();
 	abstract public boolean isOverrideHeightPoints();
 	abstract public boolean isOverrideTypeOffset();
+	
+	//ZSS-1183
+	//@since 3.9.0
+	/*package*/ abstract SFont cloneFont(SBook book);
 }

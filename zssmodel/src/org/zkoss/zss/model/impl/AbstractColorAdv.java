@@ -19,6 +19,8 @@ package org.zkoss.zss.model.impl;
 import java.io.Serializable;
 
 import org.zkoss.zss.model.SColor;
+import org.zkoss.zss.model.SBook;
+
 /**
  * 
  * @author dennis
@@ -33,4 +35,8 @@ public abstract class AbstractColorAdv implements SColor,Serializable{
 	 * @since 3.8.2
 	 */
 	public abstract byte[] getARGB();
+	
+	// ZSS-1183
+	// @since 3.9.0
+	/*package*/ abstract SColor cloneColor(SBook book);
 }

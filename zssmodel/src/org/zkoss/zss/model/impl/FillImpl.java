@@ -24,6 +24,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.zkoss.lang.Objects;
 import org.zkoss.zss.model.SColor;
 import org.zkoss.zss.model.SFill;
+import org.zkoss.zss.model.SBook;
 
 /**
  * @author henri
@@ -37,6 +38,16 @@ public class FillImpl extends AbstractFillAdv {
 	protected FillPattern _fillPattern;
 	protected String _patternHtml = null; //clear cache
 
+	//ZSS-1183
+	//@since 3.9.0
+	/*package*/ FillImpl(FillImpl src, SBook book) {
+		this._backColor = src._backColor == null ? 
+				null : ((AbstractColorAdv)src._backColor).cloneColor(book);
+		this._fillColor = src._fillColor == null ?
+				null : ((AbstractColorAdv)src._fillColor).cloneColor(book);
+		this._fillPattern = src._fillPattern;
+	}
+	
 	public FillImpl(){}
 	public FillImpl(FillPattern pattern, String fgColor, String bgColor) {
 		this._fillPattern = pattern;
@@ -303,5 +314,12 @@ public class FillImpl extends AbstractFillAdv {
 	@Override
 	public FillPattern getRawFillPattern() {
 		return _fillPattern;
+	}
+	
+	//ZSS-1183
+	//@since 3.9.0
+	@Override
+	/*package*/ SFill cloneFill(SBook book) {
+		return book == null ? this : new FillImpl(this, book);
 	}
 }

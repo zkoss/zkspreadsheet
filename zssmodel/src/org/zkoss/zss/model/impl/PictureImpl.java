@@ -16,6 +16,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.model.impl;
 
+import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.SPictureData;
 import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.model.ViewAnchor;
@@ -109,7 +110,22 @@ public class PictureImpl extends AbstractPictureAdv {
 	//ZSS-688
 	//@since 3.6.0
 	/*package*/ PictureImpl clonePictureImpl(AbstractSheetAdv sheet) {
-		return new PictureImpl(sheet, this._id, this._picData.getIndex(),
-				this._anchor.cloneViewAnchor());
+		return clonePicture(sheet, null);
+	}
+	
+	//ZSS-1183
+	//@since 3.9.0
+	@Override
+	/*package*/ PictureImpl clonePicture(AbstractSheetAdv sheet, SBook book) {
+		if (book == null) {
+			return new PictureImpl(sheet, this._id, this._picData.getIndex(),
+					this._anchor.cloneViewAnchor());
+		} else {
+			SPictureData srcPicData = this._picData;
+			final byte[] tgtData = srcPicData.getData().clone();
+			SPictureData tgtPicData = book.addPictureData(srcPicData.getFormat(), tgtData);
+			return new PictureImpl(sheet, this._id, tgtPicData.getIndex(),
+					this._anchor.cloneViewAnchor());
+		}
 	}
 }

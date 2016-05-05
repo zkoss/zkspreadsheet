@@ -15,6 +15,7 @@ package org.zkoss.zss.model.impl;
 import java.io.Serializable;
 
 import org.zkoss.zss.model.SBorderLine;
+import org.zkoss.zss.model.SBook;
 
 /**
  * @author henri
@@ -24,4 +25,8 @@ public abstract class AbstractBorderLineAdv implements Serializable, SBorderLine
 	private static final long serialVersionUID = 1L;
 
 	abstract String getStyleKey();
+	
+	//ZSS-1183
+	//@since 3.9.0
+	/*package*/ abstract SBorderLine cloneBorderLine(SBook book);
 }

@@ -195,7 +195,7 @@ public class GeneralChartDataImpl extends AbstractGeneralChartDataAdv implements
 	//ZSS-688
 	//@since 3.6.0
 	public void copyFrom(GeneralChartDataImpl src) {
-		final String expr = this.getCategoriesFormula();
+		final String expr = src.getCategoriesFormula(); //ZSS-1183
 		if (expr != null) {
 			this.setCategoriesFormula(expr);
 		}

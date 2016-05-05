@@ -22,7 +22,7 @@ import org.zkoss.zss.model.STableColumn;
  * @author henri
  * @since 3.8.0
  */
-public class TableColumnImpl implements STableColumn, Serializable {
+public class TableColumnImpl extends AbstractTableColumnAdv {
 	private static final long serialVersionUID = 4333495215409538027L;
 	
 	String _name;
@@ -69,5 +69,16 @@ public class TableColumnImpl implements STableColumn, Serializable {
 	@Override
 	public void setTotalsRowFormula(String formula) {
 		_totalsRowFormula = formula;
+	}
+	//ZSS-1183
+	//@since 3.9.0
+	@Override
+	/*package*/ AbstractTableColumnAdv cloneTableColumn() {
+		TableColumnImpl tb = new TableColumnImpl(this._name);
+		tb._totalsRowLabel = this._totalsRowLabel;
+		tb._totalsRowFormula = this._totalsRowFormula;
+		tb._totalsRowFunction = this._totalsRowFunction;
+		
+		return tb;
 	}
 }

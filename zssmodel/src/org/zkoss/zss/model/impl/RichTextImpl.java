@@ -24,6 +24,7 @@ import java.util.List;
 import org.zkoss.lang.Objects;
 import org.zkoss.zss.model.SCell;
 import org.zkoss.zss.model.SFont;
+import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.util.RichTextHelper;
 import org.zkoss.zss.model.util.Validations;
 /**
@@ -88,11 +89,7 @@ public class RichTextImpl extends AbstractRichTextAdv {
 
 	@Override
 	public AbstractRichTextAdv clone() {
-		RichTextImpl richText = new RichTextImpl();
-		for(Segment s:_segments){
-			richText.addSegment(s.getText(), s.getFont());
-		}
-		return richText;
+		return cloneRichText(null); //ZSS-1183
 	}
 	
 	@Override
@@ -104,5 +101,16 @@ public class RichTextImpl extends AbstractRichTextAdv {
 				highest = p;
 		}
 		return highest;
+	}
+	
+	//ZSS-1183
+	//@since 3.9.0
+	/*package*/ AbstractRichTextAdv cloneRichText(SBook book) {
+		RichTextImpl richText = new RichTextImpl();
+		for(Segment s:_segments){
+			final AbstractFontAdv font = (AbstractFontAdv) s.getFont();
+			richText.addSegment(s.getText(), font == null ? null : font.cloneFont(book));
+		}
+		return richText;
 	}
 }

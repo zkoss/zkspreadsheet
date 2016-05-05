@@ -15,6 +15,7 @@ package org.zkoss.zss.model.impl;
 import org.zkoss.zss.model.SBorder.BorderType;
 import org.zkoss.zss.model.SBorderLine;
 import org.zkoss.zss.model.SColor;
+import org.zkoss.zss.model.SBook;
 
 /**
  * A border line.
@@ -83,5 +84,14 @@ public class BorderLineImpl extends AbstractBorderLineAdv implements SBorderLine
 			.append(".").append(color == null ? "" : color.getHtmlColor())
 			.append(".").append(showUp ? "1" : "0")
 			.append(".").append(showDown ? "1" : "0").toString();
+	}
+	
+	//ZSS-1183
+	//@since 3.9.0
+	@Override
+	/*package*/ SBorderLine cloneBorderLine(SBook book) {
+		final AbstractColorAdv srcColor = (AbstractColorAdv)this.getColor(); 
+		final SColor color = srcColor == null ? null : srcColor.cloneColor(book);  
+		return new BorderLineImpl(this.type, color, this.showUp, this.showDown);		
 	}
 }

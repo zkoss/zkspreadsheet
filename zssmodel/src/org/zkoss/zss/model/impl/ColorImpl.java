@@ -18,6 +18,9 @@ package org.zkoss.zss.model.impl;
 
 import java.util.Arrays;
 
+import org.zkoss.zss.model.SBook;
+import org.zkoss.zss.model.SColor;
+
 /**
  * 
  * @author dennis
@@ -93,7 +96,7 @@ public class ColorImpl extends AbstractColorAdv {
 	@Override
 	public int hashCode() {
 		final int prime = 31;
-		int result = 1;
+		int result = _alpha;
 		result = prime * result + Arrays.hashCode(_rgb);
 		return result;
 	}
@@ -109,7 +112,7 @@ public class ColorImpl extends AbstractColorAdv {
 		ColorImpl other = (ColorImpl) obj;
 		if (!Arrays.equals(_rgb, other._rgb))
 			return false;
-		return true;
+		return this._alpha == other._alpha;
 	}
 	
 	public String toString(){
@@ -123,5 +126,12 @@ public class ColorImpl extends AbstractColorAdv {
 		c[0] = _alpha;
 		System.arraycopy(_rgb, 0, c, 1, _rgb.length);
 		return c;
+	}
+	
+	//ZSS-1183
+	//@since 3.9.0
+	@Override
+	/*package*/ SColor cloneColor(SBook book) {
+		return book == null ? this : book.createColor(getHtmlColor());
 	}
 }

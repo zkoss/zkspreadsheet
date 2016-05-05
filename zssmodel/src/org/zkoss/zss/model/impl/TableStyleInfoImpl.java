@@ -27,7 +27,7 @@ import org.zkoss.zss.model.sys.EngineFactory;
  * @author henri
  * @since 3.8.0
  */
-public class TableStyleInfoImpl implements STableStyleInfo, Serializable {
+public class TableStyleInfoImpl extends AbstractTableStyleInfoAdv {
 	private static final long serialVersionUID = 7484917725933371393L;
 	private String name;
 	private boolean showColumnStripes;
@@ -114,5 +114,18 @@ public class TableStyleInfoImpl implements STableStyleInfo, Serializable {
 							.createFormatEngine().getTableStyle(book, name);
 		}
 		return tableStyle;
+	}
+	
+	//ZSS-1183
+	@Override
+	/*package*/ AbstractTableStyleInfoAdv cloneTableStyleInfo(SBook book) {
+		TableStyleInfoImpl dest = new TableStyleInfoImpl(this.name, 
+				this.showColumnStripes, this.showRowStripes,
+				this.showFirstColumn, this.showLastColumn);
+		
+		dest.tableStyle = tableStyle == null ? 
+				null : ((AbstractTableStyleAdv)tableStyle).cloneTableStyle(book);
+		
+		return dest;
 	}
 }

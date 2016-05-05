@@ -33,6 +33,7 @@ import org.zkoss.zss.model.SComment;
 import org.zkoss.zss.model.SHyperlink;
 import org.zkoss.zss.model.SRichText;
 import org.zkoss.zss.model.SSheet;
+import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.SHyperlink.HyperlinkType;
 import org.zkoss.zss.model.sys.EngineFactory;
 import org.zkoss.zss.model.sys.dependency.Ref;
@@ -283,4 +284,9 @@ public abstract class AbstractCellAdv implements SCell,LinkedModelObject,Seriali
 	//ZSS-1171: enhance overflow width calc
 	//@since 3.8.3
 	public abstract int getTextWidth();
+	
+	//ZSS-1183
+	//@since 3.9.0
+	/*package*/ abstract AbstractCellAdv cloneCell(AbstractRowAdv row, SSheet sheet);
+
 }

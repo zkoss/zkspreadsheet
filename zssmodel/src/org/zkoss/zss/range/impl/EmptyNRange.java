@@ -587,4 +587,10 @@ import org.zkoss.zss.range.*;
 	public CellRegion getDataRegion() {
 		return null;
 	}
+
+	//ZSS-1183
+	@Override
+	public SSheet cloneSheetFrom(String name, SSheet sheet) {
+		return null;
+	}
 }

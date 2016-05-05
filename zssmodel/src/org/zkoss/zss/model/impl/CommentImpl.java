@@ -17,6 +17,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.model.impl;
 
 import org.zkoss.zss.model.SRichText;
+import org.zkoss.zss.model.SBook;
 /**
  * 
  * @author dennis
@@ -78,17 +79,7 @@ public class CommentImpl extends AbstractCommentAdv {
 
 	@Override
 	public AbstractCommentAdv clone() {
-		CommentImpl comment = new CommentImpl();
-		comment.setAuthor(_author);
-		comment.setVisible(_visible);
-		if(this._text instanceof SRichText){
-			comment.setRichText(((AbstractRichTextAdv)_text).clone());
-		}else if(this._text instanceof String){
-			comment.setText((String)_text);
-		}
-		
-		
-		return comment;
+		return cloneComment(null);
 	}
 
 	@Override
@@ -96,4 +87,18 @@ public class CommentImpl extends AbstractCommentAdv {
 		return _text instanceof SRichText;
 	}
 
+	//ZSS-1183
+	//@since 3.9.0
+	/*package*/ AbstractCommentAdv cloneComment(SBook book) {
+		CommentImpl comment = new CommentImpl();
+		comment.setAuthor(_author);
+		comment.setVisible(_visible);
+		if(this._text instanceof SRichText){
+			comment.setRichText(((AbstractRichTextAdv)_text).cloneRichText(book));
+		}else if(this._text instanceof String){
+			comment.setText((String)_text);
+		}
+		
+		return comment;
+	}
 }

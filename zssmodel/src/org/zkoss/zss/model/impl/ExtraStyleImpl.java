@@ -14,10 +14,12 @@ package org.zkoss.zss.model.impl;
 
 import org.zkoss.zss.model.SBorder;
 import org.zkoss.zss.model.SBorderLine;
+import org.zkoss.zss.model.SCellStyle;
 import org.zkoss.zss.model.SColor;
 import org.zkoss.zss.model.SExtraStyle;
 import org.zkoss.zss.model.SFill;
 import org.zkoss.zss.model.SFont;
+import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.SBorder.BorderType;
 import org.zkoss.zss.model.SFill.FillPattern;
 import org.zkoss.zss.model.util.Strings;
@@ -30,8 +32,19 @@ import org.zkoss.zss.model.util.Validations;
 public class ExtraStyleImpl extends CellStyleImpl implements SExtraStyle {
 	private static final long serialVersionUID = -3304797955338410853L;
 
+	//ZSS-1183
+	//@since 3.9.0
+	/*package*/ ExtraStyleImpl(ExtraStyleImpl src, BookImpl book) {
+		super(src, book);
+	}
+	
 	public ExtraStyleImpl(SFont font, SFill fill, SBorder border, String dataFormat) {
 		super((AbstractFontAdv)font, (AbstractFillAdv) fill, (AbstractBorderAdv) border);
+		//ZSS-1183
+		if(fill!=null) {
+			Validations.argInstance(fill, ExtraFillImpl.class);
+		}
+
 		if (dataFormat != null && !Strings.isBlank(dataFormat))
 			setDataFormat(dataFormat);
 	}
@@ -126,5 +139,12 @@ public class ExtraStyleImpl extends CellStyleImpl implements SExtraStyle {
 			_fill = new ExtraFillImpl();
 		}
 		_fill.setFillPattern(fillPattern);
+	}
+	
+	//ZSS-1183
+	//@since 3.9.0
+	@Override
+	/*package*/ SCellStyle createCellStyle(SBook book) {
+		return new ExtraStyleImpl(this, (BookImpl) book);
 	}
 }

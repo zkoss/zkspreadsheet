@@ -14,9 +14,9 @@ package org.zkoss.zss.model.impl;
 
 import java.io.Serializable;
 
+import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.SColor;
 import org.zkoss.zss.model.SFill;
-import org.zkoss.zss.model.SFill.FillPattern;
 
 /**
  * @author henri
@@ -41,4 +41,8 @@ public abstract class AbstractFillAdv implements SFill, Serializable {
 	//ZSS-1145
 	//@since 3.8.2
 	public abstract FillPattern getRawFillPattern();
+	
+	//ZSS-1183
+	//@since 3.9.0
+	/*package*/ abstract SFill cloneFill(SBook book);
 }

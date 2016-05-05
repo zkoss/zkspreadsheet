@@ -21,6 +21,7 @@ import java.util.Locale;
 
 import org.zkoss.poi.ss.formula.eval.ValueEval;
 import org.zkoss.zss.model.CellRegion;
+import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.SCellStyle;
 import org.zkoss.zss.model.SColumnArray;
 import org.zkoss.zss.model.SComment;
@@ -392,5 +393,14 @@ class CellProxy extends AbstractCellAdv {
 			return _proxy.getTextWidth();
 		}
 		return -1;
+	}
+
+	//ZSS-1183
+	@Override
+	AbstractCellAdv cloneCell(AbstractRowAdv row, SSheet sheet) {
+		if (!isNull()) {
+			return _proxy.cloneCell(row, sheet);
+		}
+		return null;
 	}
 }

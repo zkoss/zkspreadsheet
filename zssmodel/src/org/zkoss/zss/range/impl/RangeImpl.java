@@ -74,6 +74,7 @@ import org.zkoss.zss.model.impl.AbstractCellAdv;
 import org.zkoss.zss.model.impl.AbstractDataValidationAdv;
 import org.zkoss.zss.model.impl.AbstractNameAdv;
 import org.zkoss.zss.model.impl.AbstractSheetAdv;
+import org.zkoss.zss.model.impl.BookSeriesImpl;
 import org.zkoss.zss.model.impl.CellAttribute;
 import org.zkoss.zss.model.impl.ColorImpl;
 import org.zkoss.zss.model.impl.FormulaCacheCleaner;
@@ -2619,5 +2620,60 @@ public class RangeImpl implements SRange, Serializable {
 				return getSheet().getDataRegion();
 			}
 		}.doInReadLock(getLock());
+	}
+	
+	//ZSS-1183
+	//@since 3.9.0
+	@Override
+	public SSheet cloneSheetFrom(final String name, final SSheet sheet) {
+		if (getBook().equals(sheet.getBook())) {
+			RangeImpl rng = new RangeImpl(sheet);
+			return rng.cloneSheet(name);
+		}
+		final SBookSeries srcSeries = 
+				(SBookSeries) sheet.getBook().getBookSeries();
+		final ReadWriteLock srcLock = srcSeries.equals(getBookSeries()) ? 
+				null : srcSeries.getLock();
+		
+		final ResultWrap<SSheet> resultSheet = new ResultWrap<SSheet>();
+		//it just handle the first ref
+		return (SSheet)new ModelManipulationTask() {			
+			@Override
+			protected Object doInvoke() {
+				if (srcLock != null) {
+					srcLock.readLock().lock();
+					try{
+						return this._cloneSheetFrom(resultSheet, name, sheet);
+					}finally{
+						srcLock.readLock().unlock();
+					}
+				} else {
+					return this._cloneSheetFrom(resultSheet, name, sheet);
+				}
+			}
+			
+			SSheet _cloneSheetFrom(final ResultWrap<SSheet> resultSheet, 
+					final String name, final SSheet srcsheet) {
+				SBook book = getBook();
+				SSheet sheet;
+				if (Strings.isBlank(name)) {
+					final String name0 = srcsheet.getSheetName();
+					final String name1 = book.getSheetByName(name0) != null ? 
+							nextSheetName() : name0;
+					sheet = book.createSheet(name1, srcsheet);
+				} else {
+					sheet = book.createSheet(name, srcsheet);
+				}
+				resultSheet.set(sheet);
+				return sheet;
+			}
+
+			@Override
+			protected void doBeforeNotify() {
+				if(resultSheet.get()!=null){
+					new NotifyChangeHelper().notifySheetCreate(resultSheet.get());
+				}
+			}
+		}.doInWriteLock(getLock());	
 	}
 }

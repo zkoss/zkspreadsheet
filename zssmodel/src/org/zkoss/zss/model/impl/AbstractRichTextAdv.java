@@ -19,6 +19,8 @@ package org.zkoss.zss.model.impl;
 import java.io.Serializable;
 
 import org.zkoss.zss.model.SRichText;
+import org.zkoss.zss.model.SBook;
+
 /**
  * 
  * @author dennis
@@ -28,5 +30,9 @@ public abstract class AbstractRichTextAdv implements SRichText,Serializable {
 	private static final long serialVersionUID = 1L;
 
 	public abstract AbstractRichTextAdv clone();
+	
+	//ZSS-1183
+	//@since 3.9.0
+	/*package*/ abstract AbstractRichTextAdv cloneRichText(SBook book);
 
 }

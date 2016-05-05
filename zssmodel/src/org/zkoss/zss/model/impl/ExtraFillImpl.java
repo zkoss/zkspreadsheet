@@ -13,6 +13,8 @@
 package org.zkoss.zss.model.impl;
 
 import org.zkoss.zss.model.SColor;
+import org.zkoss.zss.model.SFill;
+import org.zkoss.zss.model.SBook;
 
 //ZSS-1162
 /**
@@ -24,6 +26,12 @@ import org.zkoss.zss.model.SColor;
 public class ExtraFillImpl extends FillImpl {
 	private static final long serialVersionUID = -6167978135008154858L;
 
+	//ZSS-1183
+	//@since 3.9.0
+	/*package*/ ExtraFillImpl(ExtraFillImpl src, SBook book) {
+		super(src, book);
+	}
+	
 	public ExtraFillImpl() {
 		super();
 	}
@@ -40,5 +48,11 @@ public class ExtraFillImpl extends FillImpl {
 	@Override
 	public FillPattern getFillPattern() {
 		return _fillPattern == null ? FillPattern.SOLID : _fillPattern; //ZSS-1145
+	}
+	
+	//ZSS-1183
+	@Override
+	/*package*/ SFill cloneFill(SBook book) {
+		return book == null ? this : new ExtraFillImpl(this, book);
 	}
 }

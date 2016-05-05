@@ -17,6 +17,8 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.model.impl;
 
 import org.zkoss.zss.model.CellRegion;
+import org.zkoss.zss.model.SSheet;
+import org.zkoss.zss.model.SCellStyle;
 import org.zkoss.zss.model.sys.EngineFactory;
 import org.zkoss.zss.model.sys.dependency.Ref;
 import org.zkoss.zss.model.sys.formula.FormulaEngine;
@@ -226,5 +228,14 @@ public class NameImpl extends AbstractNameAdv {
 	@Override
 	public void setApplyToSheetName(String sheetName) {
 		_applyToSheetName = sheetName;
+	}
+	
+	//ZSS-1183
+	//@since 3.9.0
+	@Override
+	/*package*/ AbstractNameAdv cloneName(SSheet sheet) {
+		return (AbstractNameAdv) (sheet == null ? 
+				this : ((AbstractBookAdv)sheet.getBook()).
+							getOrCreateName(this, sheet.getSheetName()));	
 	}
 }

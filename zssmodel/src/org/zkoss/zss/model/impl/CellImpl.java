@@ -19,11 +19,14 @@ package org.zkoss.zss.model.impl;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Set;
 
 import org.zkoss.poi.ss.formula.eval.EvaluationException;
 import org.zkoss.poi.ss.formula.eval.ValueEval;
 import org.zkoss.poi.ss.usermodel.ZssContext;
 import org.zkoss.poi.util.Internal;
+import org.zkoss.poi.ss.formula.ptg.Ptg;
+import org.zkoss.poi.ss.formula.ptg.NamePtg;
 import org.zkoss.zss.model.CellRegion;
 import org.zkoss.zss.model.ErrorValue;
 import org.zkoss.zss.model.InvalidFormulaException;
@@ -36,13 +39,16 @@ import org.zkoss.zss.model.SHyperlink;
 import org.zkoss.zss.model.SRichText;
 import org.zkoss.zss.model.SRow;
 import org.zkoss.zss.model.SSheet;
+import org.zkoss.zss.model.SName;
 import org.zkoss.zss.model.STable;
 import org.zkoss.zss.model.STableColumn;
 import org.zkoss.zss.model.STableColumn.STotalsRowFunction;
 import org.zkoss.zss.model.impl.sys.formula.FormulaEngineImpl;
+import org.zkoss.zss.model.impl.sys.DependencyTableAdv;
 import org.zkoss.zss.model.sys.EngineFactory;
 import org.zkoss.zss.model.sys.dependency.DependencyTable;
 import org.zkoss.zss.model.sys.dependency.Ref;
+import org.zkoss.zss.model.sys.dependency.NameRef;
 import org.zkoss.zss.model.sys.format.FormatContext;
 import org.zkoss.zss.model.sys.format.FormatEngine;
 import org.zkoss.zss.model.sys.format.FormatResult;
@@ -578,34 +584,7 @@ public class CellImpl extends AbstractCellAdv {
 	//@since 3.6.0
 	@Override
 	/*package*/ AbstractCellAdv cloneCell(AbstractRowAdv row) {
-		final CellImpl tgt = new CellImpl(row, this._index);
-		
-		if (_localValue != null) {
-			Object newVal = _localValue.getValue();
-			if (newVal instanceof SRichText) {
-				newVal = ((AbstractRichTextAdv)newVal).clone();
-			} else if (newVal instanceof FormulaExpression) {
-				newVal = "="+((FormulaExpression)newVal).getFormulaString();
-			}
-			tgt.setValue(newVal);
-		}
-		
-		tgt._cellStyle = this._cellStyle;
-		
-		// do not clone _formulaResultValue
-		//transient private FormulaResultCellValue _formulaResultValue;// cache
-		
-		if (this._opts != null) {
-			final OptFields opts = tgt.getOpts(true);
-			if (this._opts._comment != null) {
-				opts._comment = this._opts._comment.clone();
-			}
-			if (this._opts._hyperlink != null) {
-				opts._hyperlink = this._opts._hyperlink.clone();
-			}
-		}
-		
-		return tgt;
+		return cloneCell(row, null);
 	}
 	
 	//ZSS-818
@@ -681,5 +660,73 @@ public class CellImpl extends AbstractCellAdv {
 	@Override
 	public int getTextWidth() {
 		return this._width;
+	}
+
+	//ZSS-1183
+	//@since 3.9.0
+	@Override
+	/*package*/ AbstractCellAdv cloneCell(AbstractRowAdv row, SSheet sheet) {
+		final CellImpl tgt = new CellImpl(row, this._index);
+		final SBook book = sheet == null ? null : sheet.getBook();
+		if (_localValue != null) {
+			Object newVal = _localValue.getValue();
+			if (newVal instanceof SRichText) {
+				newVal = ((AbstractRichTextAdv)newVal).cloneRichText(book);
+			} else if (newVal instanceof FormulaExpression) {
+				newVal = "="+cloneFormulaString((FormulaExpression) newVal, sheet);
+			}
+			tgt.setValue(newVal);
+		}
+		
+		final SCellStyle srcStyle = this._cellStyle;
+		tgt._cellStyle = (AbstractCellStyleAdv)
+				(srcStyle == null ? null : 
+					((AbstractCellStyleAdv)srcStyle).cloneCellStyle(book));
+		
+		// do not clone _formulaResultValue
+		//transient private FormulaResultCellValue _formulaResultValue;// cache
+		
+		if (this._opts != null) {
+			final OptFields opts = tgt.getOpts(true);
+			if (this._opts._comment != null) {
+				opts._comment = this._opts._comment.cloneComment(book);
+			}
+			if (this._opts._hyperlink != null) {
+				opts._hyperlink = this._opts._hyperlink.clone();
+			}
+		}
+		
+		return tgt;
+	}
+	
+	//ZSS-1183
+	private String cloneFormulaString(FormulaExpression expr, SSheet sheet) {
+		// prepare SName used in formula in the target book
+		if (sheet != null) {
+			final SBook book = sheet.getBook();
+			final SSheet srcSheet = this._row.getSheet();
+			final SBook srcBook = srcSheet.getBook();
+			if (!srcBook.equals(book)) {
+				final String srcSheetName = srcSheet.getSheetName();
+				for (Ptg ptg : expr.getPtgs()) {
+					if (ptg instanceof NamePtg) {
+						final String nameName = ((NamePtg)ptg).getNameName();
+						// search in sheet scope
+						SName srcName = srcBook.getNameByName(nameName, srcSheetName);
+						
+						// search in book scope
+						if (srcName == null) {
+							srcName = srcBook.getNameByName(nameName);
+						}
+						
+						// found
+						if (srcName != null) {
+							((AbstractNameAdv)srcName).cloneName(sheet);
+						}
+					}
+				}
+			}
+		}
+		return expr.getFormulaString();
 	}
 }

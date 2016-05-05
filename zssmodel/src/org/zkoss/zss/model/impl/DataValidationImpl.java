@@ -789,7 +789,7 @@ public class DataValidationImpl extends AbstractDataValidationAdv {
 		final String f1 = getEscapedFormula1();
 		if (f1 != null) {
 			final String f2 = getEscapedFormula2();
-			setEscapedFormulas(f1, f2);
+			tgt.setEscapedFormulas(f1, f2); //ZSS-1183
 		}
 
 		// Do NOT clone _evalValue1Result, _evalValue2Result, and _evaluated

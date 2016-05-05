@@ -18,6 +18,7 @@ package org.zkoss.zss.model.impl;
 
 import java.io.Serializable;
 
+import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.SPicture;
 /**
  * 
@@ -26,4 +27,8 @@ import org.zkoss.zss.model.SPicture;
  */
 public abstract class AbstractPictureAdv implements SPicture,LinkedModelObject,Serializable{
 	private static final long serialVersionUID = 1L;
+	
+	//ZSS-1183
+	//@since 3.9.0
+	/*package*/ abstract SPicture clonePicture(AbstractSheetAdv sheet, SBook book);
 }

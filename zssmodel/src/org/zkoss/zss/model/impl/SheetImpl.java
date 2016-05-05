@@ -872,9 +872,15 @@ public class SheetImpl extends AbstractSheetAdv {
 		
 		checkOrphan();
 		sheet.checkOrphan();
-		if(!getBook().equals(sheet.getBook())){
-			throw new InvalidModelOpException("the source book is different");
-		}
+		
+		//ZSS-1183: if copyTo the sheet in the same book; pass null book.
+		copyToBook(sheet, getBook().equals(sheet.getBook()) ? null : sheet.getBook());
+	}
+
+	//ZSS-1183
+	//@since 3.9.0
+	private void copyToBook(AbstractSheetAdv sheet, SBook book0) {
+		BookImpl book = (BookImpl) book0;
 		
 		//ZSS-688
 		//can only clone on the begining.
@@ -901,18 +907,25 @@ public class SheetImpl extends AbstractSheetAdv {
 		if (this._sheetProtection != null) {
 			tgt._sheetProtection =  ((SheetProtectionImpl)this._sheetProtection).cloneSheetProtectionImpl();
 		}
+		
+		//ZSS-1183: must clone before clone rows where formula might need to refere tables
+		//_tables
+		for (STable tb : this._tables) {
+			tgt._tables.add(((AbstractTableAdv)tb).cloneTable(tgt, book)); //ZSS-1183
+		}
+
 		// _rows
 		for (AbstractRowAdv srcrow : this._rows.values()) {
-			AbstractRowAdv tgtrow = srcrow.cloneRow(tgt); 
+			AbstractRowAdv tgtrow = srcrow.cloneRow(tgt, book); //ZSS-1183 
 			tgt._rows.put(tgtrow.getIndex(), tgtrow);
 		}
 		//_columnArrays
 		for (AbstractColumnArrayAdv ca : this._columnArrays.values()) {
-			tgt._columnArrays.put(((ColumnArrayImpl)ca).cloneColumnArrayImpl(tgt));
+			tgt._columnArrays.put(((ColumnArrayImpl)ca).cloneColumnArray(tgt, book)); //ZSS-1183
 		}
 		//_pictures
 		for (AbstractPictureAdv pic : this._pictures) {
-			tgt._pictures.add(((PictureImpl)pic).clonePictureImpl(tgt));
+			tgt._pictures.add(((PictureImpl)pic).clonePicture(tgt, book)); //ZSS-1183
 		}
 		//_charts
 		for (AbstractChartAdv chart : this._charts) {
@@ -940,6 +953,7 @@ public class SheetImpl extends AbstractSheetAdv {
 		tgt._saltValue = this._saltValue;
 		tgt._spinCount = this._spinCount;
 		tgt._algName = this._algName;
+		
 	}
 
 	public void dump(StringBuilder builder) {

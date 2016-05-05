@@ -18,6 +18,7 @@ package org.zkoss.zss.model.impl;
 
 import org.zkoss.zss.model.SColor;
 import org.zkoss.zss.model.SFont;
+import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.util.Validations;
 /**
  * 
@@ -153,8 +154,6 @@ public class FontImpl extends AbstractFontAdv {
 		this._fontUnderline = fontUnderline;
 	}
 
-	
-
 	@Override
 	public void copyFrom(SFont src) {
 		if (src == this)
@@ -250,5 +249,12 @@ public class FontImpl extends AbstractFontAdv {
 	}
 	public boolean isOverrideTypeOffset() {
 		return overrideTypeOffset;
+	}
+
+	//ZSS-1183
+	//@since 3.9.0
+	@Override
+	/*package*/ SFont cloneFont(SBook book) {
+		return book == null ? this : ((AbstractBookAdv)book).getOrCreateFont(this);
 	}
 }

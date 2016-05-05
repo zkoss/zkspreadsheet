@@ -292,4 +292,9 @@ public class FormatEngineImpl implements FormatEngine {
 	public STableStyle getTableStyle(SBook book, String name) {
 		return TableStyleNone.instance;
 	}
+
+	//ZSS-1183
+	public STableStyle getExistTableStyle(SBook book, String name) {
+		return null;
+	}
 }

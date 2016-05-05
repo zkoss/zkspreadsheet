@@ -913,4 +913,12 @@ public class RangeImpl implements Range, Serializable {
 	public void setStringValue(String text) {
 		_range.setStringValue(text);
 	}
+	
+	//ZSS-1183
+	//@since 3.9.0
+	@Override
+	public Sheet cloneSheetFrom(String name, Sheet sheet) {
+		final SSheet sheet0 = _range.cloneSheetFrom(name, sheet.getInternalSheet());
+		return new SheetImpl(getBookRef(),new SimpleRef(sheet0));
+	}
 }

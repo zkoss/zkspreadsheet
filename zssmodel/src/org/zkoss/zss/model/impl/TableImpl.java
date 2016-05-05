@@ -33,6 +33,7 @@ import org.zkoss.zss.model.SBorderLine;
 import org.zkoss.zss.model.SCellStyle;
 import org.zkoss.zss.model.SFill;
 import org.zkoss.zss.model.SFont;
+import org.zkoss.zss.model.SName;
 import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.model.STable;
 import org.zkoss.zss.model.STableColumn;
@@ -793,5 +794,34 @@ public class TableImpl extends AbstractTableAdv implements LinkedModelObject {
 		public SheetRegion getItemRegion(Item item, int rowIdx) {
 			return tb.getItemRegion(item, rowIdx);
 		}
+	}
+	
+	//ZSS-1183
+	//@since 3.9.0
+	@Override
+	/*package*/ AbstractTableAdv cloneTable(SSheet sheet, SBook book) {
+		final SheetRegion region = 
+				new SheetRegion(sheet, _region.getRow(), _region.getColumn(), 
+						_region.getLastRow(), _region.getLastColumn());
+		final STableStyleInfo info = _tableStyleInfo == null ? null :
+			((AbstractTableStyleInfoAdv)_tableStyleInfo).cloneTableStyleInfo(book);
+		final TableImpl dest = new TableImpl((AbstractBookAdv) sheet.getBook(), 
+				this._name, 
+				this._displayName, region, 
+				_headerRowCount, _totalsRowCount, info);
+		for (STableColumn tbc : this._columns) {
+			dest.addColumn(tbc == null ? null : 
+				((AbstractTableColumnAdv)tbc).cloneTableColumn());
+		}
+		if (this._filter != null) {
+			dest.createAutoFilter();
+		}
+		if (book != null) {
+			SName namedRange = ((AbstractBookAdv)book).createTableName(dest);
+			SheetRegion rgn = dest.getDataRegion();
+			namedRange.setRefersToFormula(rgn.getReferenceString());
+			((AbstractBookAdv)book).addTable(dest);
+		}
+		return dest;
 	}
 }

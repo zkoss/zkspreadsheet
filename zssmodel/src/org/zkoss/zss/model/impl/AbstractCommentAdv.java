@@ -18,7 +18,9 @@ package org.zkoss.zss.model.impl;
 
 import java.io.Serializable;
 
+import org.zkoss.zss.model.SBook; 
 import org.zkoss.zss.model.SComment;
+
 /**
  * 
  * @author dennis
@@ -29,5 +31,8 @@ public abstract class AbstractCommentAdv implements SComment, Serializable{
 	private static final long serialVersionUID = 1L;
 	
 	public abstract AbstractCommentAdv clone();
-
+	
+	//ZSS-1183
+	//@since 3.9.0
+	/*package*/ abstract AbstractCommentAdv cloneComment(SBook book);
 }

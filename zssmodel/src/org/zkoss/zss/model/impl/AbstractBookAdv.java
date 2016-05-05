@@ -21,9 +21,12 @@ import java.io.Serializable;
 import org.zkoss.zss.model.ModelEvent;
 import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.SBookSeries;
+import org.zkoss.zss.model.SCellStyle;
 import org.zkoss.zss.model.SExtraStyle;
+import org.zkoss.zss.model.SFont;
 import org.zkoss.zss.model.SName;
 import org.zkoss.zss.model.STable;
+import org.zkoss.zss.model.STableStyle;
 import org.zkoss.zss.model.sys.formula.EvaluationContributorContainer;
 /**
  * 
@@ -81,4 +84,20 @@ public abstract class AbstractBookAdv implements SBook,EvaluationContributorCont
 	//ZSS-1141
 	//@since 3.8.2
 	public abstract int indexOfExtraStyle(SExtraStyle style);
+	
+	//ZSS-1183
+	//@since 3.9.0
+	/*package*/ abstract SCellStyle getOrCreateCellStyle(SCellStyle style);
+	
+	//ZSS-1183
+	//@since 3.9.0
+	/*package*/ abstract SFont getOrCreateFont(SFont font);
+	
+	//ZSS-1183
+	//@since 3.9.0
+	/*package*/ abstract SName getOrCreateName(SName name, String sheetName);
+	
+	//ZSS-1183
+	//@since 3.9.0
+	/*package*/ abstract STableStyle getOrCreateTableStyle(STableStyle src);
 }

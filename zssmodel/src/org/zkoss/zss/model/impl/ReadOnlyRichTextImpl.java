@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.SFont;
 import org.zkoss.zss.model.SRichText;
 import org.zkoss.zss.model.SRichText.Segment;
@@ -83,6 +84,20 @@ public class ReadOnlyRichTextImpl extends AbstractRichTextAdv {
 				highest = p;
 		}
 		return highest;
+	}
+	
+	//ZSS-1183
+	@Override
+	/*package*/ AbstractRichTextAdv cloneRichText(SBook book) {
+		if (_richText == null) {
+			final SFont font0 = _segments.get(0).getFont();
+			final SFont font = font0 == null ? null :
+				((AbstractFontAdv)font0).cloneFont(book);
+			return new ReadOnlyRichTextImpl(_segments.get(0).getText(), font);
+		} else {
+			AbstractRichTextAdv richText = ((AbstractRichTextAdv)_richText).cloneRichText(book);
+			return new ReadOnlyRichTextImpl(richText);
+		}
 	}
 
 }

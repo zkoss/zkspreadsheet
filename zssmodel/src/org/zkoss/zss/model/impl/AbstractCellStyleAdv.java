@@ -19,6 +19,8 @@ package org.zkoss.zss.model.impl;
 import java.io.Serializable;
 
 import org.zkoss.zss.model.SCellStyle;
+import org.zkoss.zss.model.SBook;
+
 /**
  * 
  * @author dennis
@@ -37,4 +39,12 @@ public abstract class AbstractCellStyleAdv implements SCellStyle,Serializable{
 	 * @since 3.7.0
 	 */
 	abstract public String getFillPatternHtml();
+	
+	//ZSS-1183
+	//@since 3.9.0
+	/*package*/ abstract SCellStyle cloneCellStyle(SBook book);
+	
+	//ZSS-1183
+	//@since 3.9.0
+	/*package*/ abstract SCellStyle createCellStyle(SBook book);
 }

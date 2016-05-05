@@ -15,6 +15,8 @@ package org.zkoss.zss.model.impl;
 import org.zkoss.lang.Objects;
 import org.zkoss.zss.model.SBorderLine;
 import org.zkoss.zss.model.SColor;
+import org.zkoss.zss.model.SBorder;
+import org.zkoss.zss.model.SBook;
 
 /**
  * @author henri
@@ -343,5 +345,27 @@ public class BorderImpl extends AbstractBorderAdv {
 				&& Objects.equals(this._diagonalLine, o._diagonalLine)
 				&& Objects.equals(this._verticalLine, o._verticalLine)
 				&& Objects.equals(this._horizontalLine, o._horizontalLine);
+	}
+	
+	//ZSS-1183
+	//@since 3.9.0
+	/*package*/ SBorder cloneBorder(SBook book) {
+		final SBorderLine left = this._leftLine == null ? null :  
+			((AbstractBorderLineAdv)this._leftLine).cloneBorderLine(book);
+		final SBorderLine top = this._topLine == null ? null :  
+			((AbstractBorderLineAdv)this._topLine).cloneBorderLine(book);
+		final SBorderLine right = this._rightLine == null ? null :  
+			((AbstractBorderLineAdv)this._rightLine).cloneBorderLine(book);
+		final SBorderLine bottom = this._bottomLine == null ? null :  
+			((AbstractBorderLineAdv)this._bottomLine).cloneBorderLine(book);
+		final SBorderLine diagonal = this._diagonalLine == null ? null :  
+			((AbstractBorderLineAdv)this._diagonalLine).cloneBorderLine(book);
+		final SBorderLine vertical = this._verticalLine == null ? null :  
+			((AbstractBorderLineAdv)this._verticalLine).cloneBorderLine(book);
+		final SBorderLine horizontal = this._horizontalLine == null ? null :  
+			((AbstractBorderLineAdv)this._horizontalLine).cloneBorderLine(book);
+		
+		return new BorderImpl(left, top, right, bottom, diagonal,
+				vertical, horizontal);
 	}
 }
