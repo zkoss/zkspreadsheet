@@ -7,6 +7,7 @@ ZK Spreadsheet 3.9.0
   ZSS-1211 StringIndexOutOfBoundsException if click a hyperlink with empty address
   ZSS-1212 Select a sheet and a javascript error is thrown
   ZSS-1215 when the frozen columns number is larger than preloadColumnSize, some areas become blank
+  ZSS-1220 Forget to copy over the new attibute in EditableFont
 
 ** Upgrade Notes
   

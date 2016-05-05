@@ -20,6 +20,7 @@ import org.zkoss.zss.api.UnitUtil;
 import org.zkoss.zss.api.model.Color;
 import org.zkoss.zss.api.model.EditableFont;
 import org.zkoss.zss.api.model.Font;
+import org.zkoss.zss.model.impl.AbstractFontAdv;
 import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.SFont;
 /**
@@ -69,6 +70,17 @@ public class EditableFontImpl extends FontImpl implements EditableFont{
 		font.setStrikeout(sfont.isStrikeout());
 		font.setTypeOffset(sfont.getTypeOffset());
 		font.setUnderline(sfont.getUnderline());
+		
+		//ZSS-1220
+		((AbstractFontAdv)font).setOverrideName(((AbstractFontAdv)sfont).isOverrideName());
+		((AbstractFontAdv)font).setOverrideColor(((AbstractFontAdv)sfont).isOverrideColor());
+		((AbstractFontAdv)font).setOverrideBold(((AbstractFontAdv)sfont).isOverrideBold());
+		((AbstractFontAdv)font).setOverrideItalic(((AbstractFontAdv)sfont).isOverrideItalic());
+		((AbstractFontAdv)font).setOverrideStrikeout(((AbstractFontAdv)sfont).isOverrideStrikeout());
+		((AbstractFontAdv)font).setOverrideUnderline(((AbstractFontAdv)sfont).isOverrideUnderline());
+		((AbstractFontAdv)font).setOverrideHeightPoints(((AbstractFontAdv)sfont).isOverrideHeightPoints());
+		((AbstractFontAdv)font).setOverrideTypeOffset(((AbstractFontAdv)sfont).isOverrideTypeOffset());
+		
 	}
 	public void setFontName(String fontName) {
 		getNative().setName(fontName);
