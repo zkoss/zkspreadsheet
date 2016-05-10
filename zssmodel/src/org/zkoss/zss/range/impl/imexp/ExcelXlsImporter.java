@@ -30,6 +30,7 @@ import org.zkoss.poi.ss.usermodel.charts.ValueAxis;
 import org.zkoss.poi.xssf.usermodel.XSSFChart;
 import org.zkoss.poi.xssf.usermodel.XSSFSheet;
 import org.zkoss.zss.model.*;
+import org.zkoss.zss.model.SAutoFilter.SColorFilter;
 import org.zkoss.zss.model.SChart.ChartLegendPosition;
 import org.zkoss.zss.model.SChart.ChartType;
 import org.zkoss.zss.model.chart.*;
@@ -459,5 +460,12 @@ public class ExcelXlsImporter extends AbstractExcelImporter{
 	//ZSS-1130
 	protected void importConditionalFormatting(SSheet sheet, Sheet poiSheet) {
 		// not support in XLS
+	}
+
+	@Override
+	//ZSS-1191
+	protected SColorFilter importColorFilter(ColorFilter colorFilter) {
+		// not support in XLS
+		return null;
 	}
 }

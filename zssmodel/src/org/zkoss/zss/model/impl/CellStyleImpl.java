@@ -22,6 +22,7 @@ import org.zkoss.zss.model.SCellStyle;
 import org.zkoss.zss.model.SColor;
 import org.zkoss.zss.model.SFill;
 import org.zkoss.zss.model.SFill.FillPattern;
+import org.zkoss.zss.model.SFont.Underline;
 import org.zkoss.zss.model.SBorder.BorderType;
 import org.zkoss.zss.model.SFont;
 import org.zkoss.zss.model.SBook;
@@ -638,4 +639,10 @@ public class CellStyleImpl extends AbstractCellStyleAdv {
 	/*package*/ SCellStyle createCellStyle(SBook book) {
 		return new CellStyleImpl(this, (BookImpl) book);
 	}
+	
+	//ZSS-1191
+	//@since 3.9.0
+	public final static SCellStyle BLANK_STYLE = 
+			new CellStyleImpl((AbstractFontAdv)FontImpl.BLANK_FONT, 
+					(AbstractFillAdv)FillImpl.BLANK_FILL, null); 	
 }

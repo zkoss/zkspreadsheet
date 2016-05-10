@@ -19,6 +19,8 @@ package org.zkoss.zss.model;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import java.util.Map;
+
 /**
  * Contains autofilter's setting.
  * @author Dennis
@@ -51,8 +53,26 @@ public interface SAutoFilter {
 		
 		public FilterOp getOperator();
 		
+		@Deprecated
 		public void setProperties(FilterOp filterOp, Object criteria1, Object criteria2, Boolean showButton);
 
+		//ZSS-1191
+		//@since 3.9.0
+		public void setProperties(FilterOp filterOp, Object criteria1, Object criteria2, Boolean showButton, Map<String, Object> extra);
+		
+		//ZSS-1191
+		//@since 3.9.0
+		public SColorFilter getColorFilter();
+	}
+	
+	/**
+	 * Color filter
+	 * @author henri
+	 * @since 3.9.0
+	 */
+	public interface SColorFilter {
+		public boolean isByFontColor();
+		public SExtraStyle getExtraStyle();
 	}
 	
 	/**
@@ -61,7 +81,7 @@ public interface SAutoFilter {
 	 * @since 3.5.0
 	 */
 	public enum FilterOp{
-		AND, BOTTOM10, BOTOOM10_PERCENT, OR, TOP10, TOP10_PERCENT, VALUES;
+		AND, BOTTOM10, BOTOOM10_PERCENT, OR, TOP10, TOP10_PERCENT, VALUES, CELL_COLOR, FONT_COLOR; //ZSS-1191
 	}
 	
 

@@ -322,4 +322,9 @@ public class FillImpl extends AbstractFillAdv {
 	/*package*/ SFill cloneFill(SBook book) {
 		return book == null ? this : new FillImpl(this, book);
 	}
+	
+	//ZSS-1191
+	//@since 3.9.0
+	public final static SFill BLANK_FILL = 
+			new FillImpl(SFill.FillPattern.NONE, ColorImpl.BLACK, ColorImpl.WHITE);
 }

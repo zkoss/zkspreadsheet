@@ -154,14 +154,16 @@ public class CellStyleMatcher implements Serializable {
 	}
 	
 	public void setFont(SFont font) {
-		setFontColor(font.getColor().getHtmlColor());
-		setFontName(font.getName());
-		setFontBoldweight(font.getBoldweight());
-		setFontHeightPoints(font.getHeightPoints());
-		setFontItalic(font.isItalic());
-		setFontStrikeout(font.isStrikeout());
-		setFontTypeOffset(font.getTypeOffset());
-		setFontUnderline(font.getUnderline());
+		if (font != null) { //ZSS-1191
+			setFontColor(font.getColor().getHtmlColor());
+			setFontName(font.getName());
+			setFontBoldweight(font.getBoldweight());
+			setFontHeightPoints(font.getHeightPoints());
+			setFontItalic(font.isItalic());
+			setFontStrikeout(font.isStrikeout());
+			setFontTypeOffset(font.getTypeOffset());
+			setFontUnderline(font.getUnderline());
+		}
 	}
 	public void removeFont() {
 		removeFontColor();

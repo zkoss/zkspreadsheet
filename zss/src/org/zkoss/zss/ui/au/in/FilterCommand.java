@@ -22,6 +22,7 @@ import org.zkoss.zk.au.AuRequest;
 import org.zkoss.zk.mesg.MZk;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.UiException;
+import org.zkoss.zss.model.SAutoFilter.FilterOp;
 import org.zkoss.zss.ui.Spreadsheet;
 
 /**
@@ -38,12 +39,13 @@ public class FilterCommand extends AbstractCommand implements Command {
 		
 		final Map data = request.getData();
 		String type = (String) data.get("type");
+		String op = (String) data.get("op"); //ZSS-1191
 		if ("apply".equals(type)) {
 			final boolean selectAll = (Boolean) data.get("all");
 			final String cellRangeAddr = (String) data.get("range");
 			final int field = (Integer) data.get("field");
 			final Object criteria = data.get("criteria");
-			new AutoFilterDefaultHandler().applyFilter(((Spreadsheet) comp),((Spreadsheet) comp).getSelectedSheet(),cellRangeAddr,selectAll,field,criteria);
+			new AutoFilterDefaultHandler().applyFilter(((Spreadsheet) comp),((Spreadsheet) comp).getSelectedSheet(),cellRangeAddr,selectAll,field,criteria, FilterOp.valueOf(op)); //ZSS-1191
 		}
 	}
 

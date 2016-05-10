@@ -94,12 +94,14 @@ import org.zkoss.zss.model.ModelEventListener;
 import org.zkoss.zss.model.ModelEvents;
 import org.zkoss.zss.model.SAutoFilter;
 import org.zkoss.zss.model.SAutoFilter.NFilterColumn;
+import org.zkoss.zss.model.SAutoFilter.SColorFilter;
 import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.SCell;
 import org.zkoss.zss.model.SCell.CellType;
 import org.zkoss.zss.model.SCellStyle;
 import org.zkoss.zss.model.SCellStyle.Alignment;
 import org.zkoss.zss.model.SCellStyle.VerticalAlignment;
+import org.zkoss.zss.model.SFill;
 import org.zkoss.zss.model.SFont.Boldweight;
 import org.zkoss.zss.model.SFont.Underline;
 import org.zkoss.zss.model.SChart;
@@ -1535,6 +1537,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		return _showContextMenu;
 	}
 	
+	//See autofilter.js#setAutoFilter()
 	private Map convertAutoFilterToJSON(SAutoFilter af) {
 		if (af != null) {
 			final CellRegion addr = af.getRegion();
@@ -1555,6 +1558,13 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			final List<Map> fcsary = fcs != null ? new ArrayList<Map>(fcs.size()) : null;
 			if (fcsary != null) {
 				List<String> filters = null;
+				
+				//ZSS-1191
+				boolean byFontColor = false;
+				String pattern = null;
+				String fgColor = null;
+				String bgColor = null;
+				
 				boolean on = true;
 				int field = 0;
 				for(int col = left; col <= right; ++col) {
@@ -1568,6 +1578,16 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 						filters = fc.getFilters();
 						on = fc.isShowButton();
 						field = col - left + 1;
+						
+						//ZSS-1191
+						SColorFilter cfilter = fc.getColorFilter();
+						if (cfilter != null) {
+							final SFill fill = cfilter.getExtraStyle().getFill();
+							pattern = fill.getFillPattern().name();
+							fgColor = fill.getFillColor().getHtmlColor();
+							bgColor = fill.getBackColor().getHtmlColor();
+							byFontColor = cfilter.isByFontColor();
+						}
 					} // ZSS-705: if previous showButton is off; use previous field and filters(in merged cell case)
 					
 					Map fcmap = new HashMap();
@@ -1575,6 +1595,18 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 					fcmap.put("filter", filters);
 					fcmap.put("on", on);
 					fcmap.put("field", field);
+					
+					//ZSS-1911: in filter; fg/bg should reversed to follow SCellStyle in CELL_COLOR operation
+					if ("SOLID".equals(pattern) && !byFontColor) {
+						final String tmp = fgColor;
+						fgColor = bgColor;
+						bgColor = tmp;
+					}
+					fcmap.put("colorpat", pattern);
+					fcmap.put("colorfg", fgColor); 
+					fcmap.put("colorbg", bgColor);
+					fcmap.put("fontColor", byFontColor);
+					
 					fcsary.add(fcmap);
 				}
 			}

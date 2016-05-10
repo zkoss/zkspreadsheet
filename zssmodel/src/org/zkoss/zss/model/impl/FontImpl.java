@@ -17,6 +17,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.model.impl;
 
 import org.zkoss.zss.model.SColor;
+import org.zkoss.zss.model.SFill;
 import org.zkoss.zss.model.SFont;
 import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.util.Validations;
@@ -257,4 +258,9 @@ public class FontImpl extends AbstractFontAdv {
 	/*package*/ SFont cloneFont(SBook book) {
 		return book == null ? this : ((AbstractBookAdv)book).getOrCreateFont(this);
 	}
+
+	//ZSS-1191
+	//@since 3.9.0
+	public final static SFont BLANK_FONT = 
+			new FontImpl(null, false, false, false, Underline.NONE); 	
 }

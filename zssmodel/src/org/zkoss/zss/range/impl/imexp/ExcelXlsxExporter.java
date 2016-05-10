@@ -17,7 +17,9 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.range.impl.imexp;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
 import org.zkoss.poi.ss.usermodel.*;
@@ -33,6 +35,7 @@ import org.zkoss.poi.xssf.usermodel.extensions.XSSFCellFill;
 import org.zkoss.poi.xssf.usermodel.XSSFRichTextString;
 import org.zkoss.zss.model.*;
 import org.zkoss.zss.model.SAutoFilter.NFilterColumn;
+import org.zkoss.zss.model.SAutoFilter.SColorFilter;
 import org.zkoss.zss.model.SBorder.BorderType;
 import org.zkoss.zss.model.SFill.FillPattern;
 import org.zkoss.zss.model.SRichText.Segment;
@@ -539,6 +542,7 @@ public class ExcelXlsxExporter extends AbstractExcelExporter {
 	
 	//ZSS-1019
 	protected void exportFilterColumns(XSSFAutoFilter poiAutoFilter, SAutoFilter autoFilter, int numberOfColumn) {
+		final Map<String, Object> extra = new HashMap<String, Object>();
 		for( int i = 0 ; i < numberOfColumn ; i++){
 			NFilterColumn srcFilterColumn = autoFilter.getFilterColumn(i, false);
 			if (srcFilterColumn == null){
@@ -553,8 +557,23 @@ public class ExcelXlsxExporter extends AbstractExcelExporter {
 			if (srcFilterColumn.getCriteria1()!=null){
 				criteria2 = srcFilterColumn.getCriteria2().toArray(new String[0]);
 			}
+			
+			//ZSS-1191
+			final SColorFilter colorFilter = srcFilterColumn.getColorFilter();
+			XSSFColorFilter poiFilter = null;
+			if (colorFilter != null) {
+				final SExtraStyle extraStyle = colorFilter.getExtraStyle();
+				addPOIDxfCellStyle(extraStyle);
+				final XSSFDxfCellStyle poiCellStyle = 
+						(XSSFDxfCellStyle) styleTable.get(extraStyle);
+				poiFilter = new XSSFColorFilter(poiCellStyle, colorFilter.isByFontColor());
+			}
+			extra.put("colorFilter", poiFilter);
+			
+			//ZSS-1191
 			destFilterColumn.setProperties(criteria1, PoiEnumConversion.toPoiFilterOperator(srcFilterColumn.getOperator()),
-					criteria2, srcFilterColumn.isShowButton());
+					criteria2, srcFilterColumn.isShowButton(), extra);
+			
 		}
 	}
 	
@@ -692,7 +711,7 @@ public class ExcelXlsxExporter extends AbstractExcelExporter {
 		// instead of creating a new style, use old one if exist
 		XSSFDxfCellStyle poiCellStyle = (XSSFDxfCellStyle) styleTable.get(extraStyle);
 		if (poiCellStyle != null) {
-			workbook.addDxfCellStyle(poiCellStyle);
+//			workbook.addDxfCellStyle(poiCellStyle); //ZSS-1191: already in workbook; no need to add again
 			return;
 		}
 		poiCellStyle = (XSSFDxfCellStyle) workbook.createDxfCellStyle(); //will add into workbook

@@ -22,6 +22,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.Map;
 
 import org.zkoss.zss.model.SAutoFilter;
 import org.zkoss.zss.model.SBook;
@@ -47,6 +48,7 @@ public abstract class AbstractAutoFilterAdv implements SAutoFilter,Serializable{
 		private Set _criteria2;
 		private Boolean _showButton;
 		private FilterOp _op = FilterOp.AND;
+		private SColorFilter _colorFilter; //ZSS-1191
 		
 		public FilterColumnImpl(int index){
 			this._index = index;
@@ -98,6 +100,23 @@ public abstract class AbstractAutoFilterAdv implements SAutoFilter,Serializable{
 		@Override
 		public void setProperties(FilterOp filterOp, Object criteria1,
 				Object criteria2, Boolean showButton) {
+			_setProperties(filterOp, criteria1, criteria2, showButton, Collections.EMPTY_MAP);
+		}
+		
+		//ZSS-1191: for import
+		@Override
+		public void setProperties(FilterOp filterOp, Object criteria1,
+				Object criteria2, Boolean showButton, Map<String, Object> extra) {
+			_setProperties(filterOp, criteria1, criteria2, showButton, extra);
+		}
+		
+		//ZSS-1191
+		private void _setProperties(FilterOp filterOp, Object criteria1,
+				Object criteria2, Boolean showButton, Map<String, Object> extra) {
+			
+			//ZSS-1191
+			_colorFilter = (SColorFilter) extra.get("colorFilter");
+			
 			this._op = filterOp;
 			this._criteria1 = getCriteriaSet(criteria1);
 			this._criteria2 = getCriteriaSet(criteria2);
@@ -129,7 +148,7 @@ public abstract class AbstractAutoFilterAdv implements SAutoFilter,Serializable{
 				}
 			}
 		}
-		
+
 		//ZSS-688
 		//@since 3.6.0
 		/*package*/ FilterColumnImpl cloneFilterColumnImpl() {
@@ -156,6 +175,13 @@ public abstract class AbstractAutoFilterAdv implements SAutoFilter,Serializable{
 			tgt._op = this._op;
 			
 			return tgt;
+		}
+		
+		//ZSS-1191
+		//@since 3.9.0
+		@Override
+		public SColorFilter getColorFilter() {
+			return _colorFilter;
 		}
 	}
 }

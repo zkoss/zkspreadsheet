@@ -90,6 +90,10 @@ public class PoiEnumConversion {
 				return AutoFilter.FILTEROP_TOP10;
 			case TOP10_PERCENT:
 				return AutoFilter.FILTEROP_TOP10PERCENT;
+			case CELL_COLOR: //ZSS-1191
+				return AutoFilter.FILTEROP_CELL_COLOR;
+			case FONT_COLOR: //ZSS-1191
+				return AutoFilter.FILTEROP_FONT_COLOR;
 			case VALUES:
 			default:
 				return AutoFilter.FILTEROP_VALUES;
@@ -110,6 +114,10 @@ public class PoiEnumConversion {
 			return FilterOp.TOP10;
 		case AutoFilter.FILTEROP_TOP10PERCENT:
 			return FilterOp.TOP10_PERCENT;
+		case AutoFilter.FILTEROP_CELL_COLOR: //ZSS-1191
+			return FilterOp.CELL_COLOR;
+		case AutoFilter.FILTEROP_FONT_COLOR: //ZSS-1191
+			return FilterOp.FONT_COLOR;
 		case AutoFilter.FILTEROP_VALUES:
 		default:
 			return FilterOp.VALUES;

@@ -1198,13 +1198,179 @@
 
 .zsafp-popup, .zsafp-popup-cave {
 	height: 235px;
-	width: 240px;
+	white-space: nowrap;
+}
+
+.zsafp-valuedlg {
+    width: 240px;
+    height: 100%;
+    position: relative;
+    display: inline-block;
+    background: #FFFFFF;
+    border: 1px solid #868686;
+    box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.zsafp-color {
+    width: 100%;
+    padding: 2px 2px 2px 20px;
+    background-position: left center;
+    font-size: 13px;
+    border-bottom: 1px solid #D8D8D8;
+    position: relative;
+    box-sizing: border-box;
+    cursor: pointer;
+}
+
+.zsafp-color:hover {
+    background: #D6F0FD;
+}
+
+.zsafp-color-checkbox {
+    height: 16px;
+    width: 16px;
+    background-repeat: no-repeat;
+    position: absolute;
+    left: 3px;
+    top: 2px;
+    cursor: pointer;
+}
+
+.zsafp-color-seld.zsafp-color-checkbox {
+    background: url(${c:encodeURL('~./zss/img/tick-small.png')}) no-repeat transparent;
+    cursor: pointer;
+    <c:if test="${c:browser('ie6-')}">
+        background-image: url(${c:encodeURL('~./zss/img/tick.gif')});
+    </c:if>
+}
+
+.zsafp-color-more {
+    border-top: 4px solid transparent;
+    border-bottom: 4px solid transparent;
+    border-left: 4px solid #4A5473;
+    display: inline-block;
+    position: absolute;
+    right: 5px;
+    top: 5px;
+    width: 0px;
+    height: 0px;
+}
+
+.zsafp-colordlg {
+    width: 146px;
+    display: none;
+    background: #FFFFFF;
+    border: 1px solid #868686;
+    box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    vertical-align: top;
+    position: absolute;
+    top: 0px;
+}
+
+.zsafp-colordlg-title {
+    background: #DDE7EE;
+    padding-left: 4px;
+    font-size: 12px;
+    font-weight: bold;
+    vertical-align: middle;
+    border-bottom: 1px solid #D8D8D8;
+}
+
+.zsafp-ccitems {
+    overflow-y: auto;
+    overflow-x: hidden;
+    max-height: 139px;
+    width: 100%;
+    border-bottom: 1px solid #D8D8D8;
+    position: relative;
+}
+
+.zsafp-ccitem {
+    padding: 2px 2px 2px 20px;
+    position: relative;
+    background-position: left center;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.zsafp-ccitem:hover {
+    background: #D6F0FD;
+}
+
+.zsafp-ccitem-fill {
+    position: relative;
+    background-position: left center;
+    font-size: 12px;
+    height: 14px;
+    width: 50px;
+    border: 1px solid black;
+    cursor: pointer;
+    text-align: center;
+}
+
+.zsafp-ccitem-checkbox {
+    height: 16px;
+    width: 16px;
+    background-repeat: no-repeat;
+    position: absolute;
+    left: 3px;
+    top: 2px;
+}
+
+.zsafp-ccitem-seld .zsafp-ccitem-checkbox {
+    background: url(${c:encodeURL('~./zss/img/tick-small.png')}) no-repeat transparent;
+}
+
+.zsafp-fcitems {
+    overflow-y: auto;
+    overflow-x: hidden;
+    max-height: 139px;
+    width: 100%;
+    border-bottom: 1px solid #D8D8D8;
+    position: relative;
+}
+
+.zsafp-fcitem {
+    padding: 2px 2px 2px 20px;
+    position: relative;
+    background-position: left center;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.zsafp-fcitem:hover {
+    background: #D6F0FD;
+}
+
+.zsafp-fcitem-fill {
+    position: relative;
+    background-position: left center;
+    font-size: 12px;
+    height: 14px;
+    width: 50px;
+    border: 1px solid black;
+    cursor: pointer;
+    text-align: center;
+}
+
+.zsafp-fcitem-checkbox {
+    height: 16px;
+    width: 16px;
+    background-repeat: no-repeat;
+    position: absolute;
+    left: 3px;
+    top: 2px;
+}
+
+.zsafp-fcitem-seld .zsafp-fcitem-checkbox {
+    background: url(${c:encodeURL('~./zss/img/tick-small.png')}) no-repeat transparent;
 }
 
 .zsafp-search {
 	border-bottom: 1px solid #D8D8D8;
 	width: 100%;
 	padding: 2px;
+    box-sizing: border-box;
 }
 
 .zsafp-search-inp {
@@ -1217,7 +1383,7 @@
 .zsafp-items {
 	overflow-y: auto;
 	overflow-x: hidden;
-	height: 158px;
+	height: 139px;
 	width: 100%;
 	border-bottom: 1px solid #D8D8D8;
 	position: relative;
@@ -1280,7 +1446,7 @@
 	display: inline-block;
 	position: absolute;
 	right: 4px;
-	top: 4px;
+	top: 23px;
 	width: 16px;
 	height: 16px;
 	<c:if test="${c:browser('ie6-')}">

@@ -35,6 +35,7 @@ import org.zkoss.poi.xssf.model.ExternalLink;
 import org.zkoss.poi.xssf.usermodel.*;
 import org.zkoss.poi.xssf.usermodel.charts.*;
 import org.zkoss.zss.model.*;
+import org.zkoss.zss.model.SAutoFilter.SColorFilter;
 import org.zkoss.zss.model.SBorder.BorderType;
 import org.zkoss.zss.model.SChart.ChartType;
 import org.zkoss.zss.model.SConditionalFormattingRule.RuleType;
@@ -50,6 +51,7 @@ import org.zkoss.zss.model.impl.BorderImpl;
 import org.zkoss.zss.model.impl.BorderLineImpl;
 import org.zkoss.zss.model.impl.CFValueObjectImpl;
 import org.zkoss.zss.model.impl.ChartAxisImpl;
+import org.zkoss.zss.model.impl.ColorFilterImpl;
 import org.zkoss.zss.model.impl.ColorImpl;
 import org.zkoss.zss.model.impl.ColorScaleImpl;
 import org.zkoss.zss.model.impl.ConditionalFormattingRuleImpl;
@@ -64,6 +66,7 @@ import org.zkoss.zss.model.impl.TableStyleImpl;
 import org.zkoss.zss.model.impl.TableStyleInfoImpl;
 import org.zkoss.zss.model.impl.TableStyleElemImpl;
 import org.zkoss.zss.model.sys.formula.FormulaEngine;
+import org.zkoss.zss.model.util.CellStyleMatcher;
 import org.zkoss.zss.model.impl.AbstractBookAdv;
 import org.zkoss.zss.model.impl.ConditionalFormattingImpl;
 
@@ -1076,6 +1079,21 @@ public class ExcelXlsxImporter extends AbstractExcelImporter {
 				firstTotalCell,
 				lastTotalCell
 		);
+	}
+	
+	//ZSS-1191
+	//@since 3.9.0
+	@Override
+	protected SColorFilter importColorFilter(ColorFilter colorFilter) {
+		if (colorFilter == null) return null;
+		final SExtraStyle src = importExtraStyle(colorFilter.getDxfCellStyle());
+		final CellStyleMatcher matcher = new CellStyleMatcher(src);
+		SExtraStyle style = book.searchExtraStyle(matcher);
+		if (style == null) {
+			book.addExtraStyle(src);
+			style = src;
+		}
+		return new ColorFilterImpl(style, colorFilter.isByFontColor());
 	}
 }
  

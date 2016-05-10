@@ -34,6 +34,7 @@ import org.zkoss.util.Locales;
 import org.zkoss.util.logging.Log;
 import org.zkoss.zss.model.*;
 import org.zkoss.zss.model.SAutoFilter.NFilterColumn;
+import org.zkoss.zss.model.SAutoFilter.SColorFilter;
 import org.zkoss.zss.model.SFill.FillPattern;
 import org.zkoss.zss.model.SPicture.Format;
 import org.zkoss.zss.model.SSheet.SheetVisible;
@@ -715,16 +716,25 @@ abstract public class AbstractExcelImporter extends AbstractImporter implements 
 	
 	//ZSS-1019
 	protected void importAutoFilterColumns(AutoFilter poiFilter, SAutoFilter zssFilter, int numberOfColumn) {
+		Map<String, Object> extra = new HashMap<String, Object>();
 		for (int i = 0; i < numberOfColumn; i++) {
 			FilterColumn srcColumn = poiFilter.getFilterColumn(i);
 			if (srcColumn == null) {
 				continue;
 			}
 			NFilterColumn destColumn = zssFilter.getFilterColumn(i, true);
-			destColumn.setProperties(PoiEnumConversion.toFilterOperator(srcColumn.getOperator()), srcColumn.getCriteria1(), srcColumn.getCriteria2(), srcColumn.isOn());
+			
+			//ZSS-1191
+			final ColorFilter srcColorFilter = srcColumn.getColorFilter();
+			final SColorFilter destColorFilter = importColorFilter(srcColorFilter);
+			extra.put("colorFilter", destColorFilter);
+			destColumn.setProperties(PoiEnumConversion.toFilterOperator(srcColumn.getOperator()), srcColumn.getCriteria1(), srcColumn.getCriteria2(), srcColumn.isOn(), extra);
 		}
 	}
 
+	//ZSS-1191
+	abstract protected SColorFilter importColorFilter(ColorFilter colorFilter);
+	
 	protected org.zkoss.poi.ss.usermodel.Font getPoiFontFromRichText(Workbook book,
 			Cell cell, RichTextString rstr, int run) {
 		if (run < 0) return null; //ZSS-1138

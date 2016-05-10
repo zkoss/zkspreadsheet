@@ -18,24 +18,46 @@ package org.zkoss.zss.range.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.zkoss.lang.Integers;
+import org.zkoss.poi.ss.usermodel.Color;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zss.model.CellRegion;
 import org.zkoss.zss.model.InvalidModelOpException;
 import org.zkoss.zss.model.SAutoFilter;
+import org.zkoss.zss.model.SAutoFilter.SColorFilter;
+import org.zkoss.zss.model.SBook;
+import org.zkoss.zss.model.SBorder;
 import org.zkoss.zss.model.SCell;
+import org.zkoss.zss.model.SCellStyle;
+import org.zkoss.zss.model.SColor;
+import org.zkoss.zss.model.SExtraStyle;
+import org.zkoss.zss.model.SFill;
+import org.zkoss.zss.model.SFont;
 import org.zkoss.zss.model.SRow;
 import org.zkoss.zss.model.STable;
 import org.zkoss.zss.model.SAutoFilter.FilterOp;
 import org.zkoss.zss.model.SAutoFilter.NFilterColumn;
+import org.zkoss.zss.model.SFill.FillPattern;
+import org.zkoss.zss.model.impl.AbstractBorderAdv;
+import org.zkoss.zss.model.impl.AbstractFillAdv;
+import org.zkoss.zss.model.impl.AbstractFontAdv;
 import org.zkoss.zss.model.impl.AbstractSheetAdv;
+import org.zkoss.zss.model.impl.CellStyleImpl;
+import org.zkoss.zss.model.impl.ColorFilterImpl;
+import org.zkoss.zss.model.impl.ExtraFillImpl;
+import org.zkoss.zss.model.impl.ExtraStyleImpl;
+import org.zkoss.zss.model.util.CellStyleMatcher;
 import org.zkoss.zss.range.SRange;
 import org.zkoss.zss.range.SRanges;
 import org.zkoss.zss.range.impl.DataRegionHelper.FilterRegionHelper;
+import org.zkoss.zss.range.impl.imexp.BookHelper;
+import org.zkoss.zss.range.impl.imexp.PoiEnumConversion;
 
 /**
  * 
@@ -44,7 +66,8 @@ import org.zkoss.zss.range.impl.DataRegionHelper.FilterRegionHelper;
  */
 //these code if from XRangeImpl,XBookHelper and migrate to new model
 /*package*/ class AutoFilterHelper extends RangeHelperBase{
-
+	private static final SCellStyle BLANK_STYLE = CellStyleImpl.BLANK_STYLE;
+	
 	public AutoFilterHelper(SRange range){
 		super(range);
 	}
@@ -122,20 +145,79 @@ import org.zkoss.zss.range.impl.DataRegionHelper.FilterRegionHelper;
 		return filter;
 	}
 	
-	//ZSS-988
-	private void enableAutoFilter0(STable table, SAutoFilter filter, final int field, final FilterOp filterOp,
-			final Object criteria1, final Object criteria2, final Boolean showButton) {
+	//ZSS-1191
+	// criteria[0]: pattern name(see FillPattern); [1]: foreground color; [2]: background color 
+	private SColorFilter _prepareColorFilter(String[] criteria, boolean byFontColor) {
+		final FillPattern pattern = FillPattern.valueOf(criteria[0]);
+		final String fg = criteria[1];
+		final String bg = criteria[2];
 		
-		final NFilterColumn fc = filter.getFilterColumn(field-1,true);	
-		fc.setProperties(filterOp, criteria1, criteria2, showButton);
+		final SFill fill = new ExtraFillImpl(pattern, fg, bg);
+		final SExtraStyle src = new ExtraStyleImpl(null, fill, null, null);
+		final CellStyleMatcher matcher = new CellStyleMatcher(src);
+		final SBook book = range.getSheet().getBook();
+		
+		SExtraStyle style = book.searchExtraStyle(matcher);
+		if (style == null) {
+			book.addExtraStyle(src);
+			style = src;
+		}
+		return new ColorFilterImpl(style, byFontColor);
+	}
 
-		//update rows
+	//ZSS-1191
+	private boolean _match(SCellStyle style, SFill fill, boolean byFontColor) {
+		if (byFontColor) {
+			return fill.getFillColor().equals(style.getFont().getColor());
+		} else {
+			return fill.equals(style.getFill());
+		}
+	}
+	
+	//ZSS-1191
+	private LinkedHashMap<Integer, Boolean> _filterByColor(SAutoFilter filter, NFilterColumn fc, int field) {
 		final CellRegion affectedArea = filter.getRegion();
 		final int row1 = affectedArea.getRow();
 		final int col1 = affectedArea.getColumn(); 
 		final int col =  col1 + field - 1;
 		final int row = row1 + 1;
 		final int row2 = affectedArea.getLastRow();
+
+		SFill fill = fc.getColorFilter().getExtraStyle().getFill();
+		final boolean byFontColor = fc.getColorFilter().isByFontColor();
+		
+		if (!byFontColor && fill.getFillPattern() == FillPattern.SOLID) {
+			fill = new ExtraFillImpl(FillPattern.SOLID, fill.getBackColor(), fill.getFillColor());
+		}
+		
+		LinkedHashMap<Integer, Boolean> affectedRows = new LinkedHashMap<Integer, Boolean>(); 
+		for (int r = row; r <= row2; ++r) {
+			final SCell cell = sheet.getCell(r, col);
+			final SCellStyle style = cell.isNull() ? null : cell.getCellStyle();
+			if (!_match(style, fill, byFontColor)) { //to be hidden
+				final SRow rowobj = sheet.getRow(r);
+				if (!rowobj.isHidden()) { //a non-hidden row
+					affectedRows.put(r, true);
+				}
+			} else { //candidate to be shown (other FieldColumn might still hide this row!
+				final SRow rowobj = sheet.getRow(r);
+				if (rowobj.isHidden() && canUnhide(filter, fc, r, col1)) { //a hidden row and no other hidden filtering
+					affectedRows.put(r, false);
+				}
+			}
+		}
+		return affectedRows;
+	}
+	
+	//ZSS-1191
+	LinkedHashMap<Integer, Boolean> _filterByValues(SAutoFilter filter, NFilterColumn fc, int field) {
+		final CellRegion affectedArea = filter.getRegion();
+		final int row1 = affectedArea.getRow();
+		final int col1 = affectedArea.getColumn(); 
+		final int col =  col1 + field - 1;
+		final int row = row1 + 1;
+		final int row2 = affectedArea.getLastRow();
+
 		final Set cr1 = fc.getCriteria1();
 		//ZSS-1083(refix ZSS-838): Collect affected rows first
 		LinkedHashMap<Integer, Boolean> affectedRows = new LinkedHashMap<Integer, Boolean>(); 
@@ -166,6 +248,67 @@ import org.zkoss.zss.range.impl.DataRegionHelper.FilterRegionHelper;
 				}
 			}
 		}
+		return affectedRows;
+	}
+	
+	//ZSS-988
+	private void enableAutoFilter0(STable table, SAutoFilter filter, final int field, final FilterOp filterOp,
+			Object criteria1, final Object criteria2, final Boolean showButton) {
+		final NFilterColumn fc = filter.getFilterColumn(field-1,true);
+		
+		//ZSS-1191
+		Map<String, Object> extra = new HashMap<String, Object>();
+		if (filterOp == FilterOp.CELL_COLOR || filterOp == FilterOp.FONT_COLOR) {
+			extra.put("colorFilter", _prepareColorFilter((String[])criteria1, filterOp == FilterOp.FONT_COLOR));
+			criteria1 = null;
+		}
+		
+		fc.setProperties(filterOp, criteria1, criteria2, showButton, extra);
+
+		//update rows
+		//ZSS-1191
+		LinkedHashMap<Integer, Boolean> affectedRows = 
+				filterOp == FilterOp.CELL_COLOR || filterOp == FilterOp.FONT_COLOR ?
+				_filterByColor(filter, fc, field) :
+				_filterByValues(filter, fc, field);
+				
+//		final CellRegion affectedArea = filter.getRegion();
+//		final int row1 = affectedArea.getRow();
+//		final int col1 = affectedArea.getColumn(); 
+//		final int col =  col1 + field - 1;
+//		final int row = row1 + 1;
+//		final int row2 = affectedArea.getLastRow();
+//
+//		final Set cr1 = fc.getCriteria1();
+//		//ZSS-1083(refix ZSS-838): Collect affected rows first
+//		LinkedHashMap<Integer, Boolean> affectedRows = new LinkedHashMap<Integer, Boolean>(); 
+////		final Set<Ref> all = new HashSet<Ref>();
+//		for (int r = row; r <= row2; ++r) {
+//			final SCell cell = sheet.getCell(r, col); 
+//			final String val = isBlank(cell) ? "=" : getFormattedText(cell); //"=" means blank!
+//			if (cr1 != null && !cr1.isEmpty() && !cr1.contains(val)) { //to be hidden
+//				final SRow rowobj = sheet.getRow(r);
+//				if (!rowobj.isHidden()) { //a non-hidden row
+//					//ZSS-1083(refix ZSS-838): Collect affected rows first 
+////					SRanges.range(sheet,r,0).getRows().setHidden(true);
+//					affectedRows.put(r, true);
+//				}
+//			} else { //candidate to be shown (other FieldColumn might still hide this row!
+//				final SRow rowobj = sheet.getRow(r);
+//				if (rowobj.isHidden() && canUnhide(filter, fc, r, col1)) { //a hidden row and no other hidden filtering
+//					// ZSS-646: we don't care about the columns at all; use 0.
+////					final int left = sheet.getStartCellIndex(r);
+////					final int right = sheet.getEndCellIndex(r);
+//					//ZSS-1083(refix ZSS-838): Collect affected rows first
+////					final SRange rng = SRanges.range(sheet,r,0,r,0);  
+////					all.addAll(rng.getRefs());
+////					rng.getRows().setHidden(false); //unhide row
+//					affectedRows.put(r, false);
+//					
+////					rng.notifyChange(); //why? text overflow? ->  //BookHelper.notifyCellChanges(_sheet.getBook(), all); //unhidden row must reevaluate
+//				}
+//			}
+//		}
 		
 		//ZSS-1083(refix ZSS-838): Handle affected rows
 		if (!affectedRows.isEmpty()) {
@@ -200,12 +343,21 @@ import org.zkoss.zss.range.impl.DataRegionHelper.FilterRegionHelper;
 	
 	private boolean shallHide(NFilterColumn fc, int row, int col) {
 		final SCell cell = sheet.getCell(row, col + fc.getIndex());
+
+		//ZSS-1191
+		SColorFilter colorFilter = fc.getColorFilter();
+		if (colorFilter != null) {
+			SCellStyle style = cell.isNull() ? BLANK_STYLE : cell.getCellStyle();
+			return !_match(style, colorFilter.getExtraStyle().getFill(), colorFilter.isByFontColor());
+		}
+		
+		
 		final boolean blank = isBlank(cell); 
 		final String val =  blank ? "=" : getFormattedText(cell); //"=" means blank!
 		final Set critera1 = fc.getCriteria1();
 		return critera1 != null && !critera1.isEmpty() && !critera1.contains(val);
 	}
-
+	
 	@Deprecated
 	//refer to XRangeImpl#showAllData
 	public void resetAutoFilter() {
