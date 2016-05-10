@@ -5,6 +5,9 @@ Since 3.9.0
 2. Press the button and you should see "Filtered by Color" is checked
 3. Press "Filter by Color" to open the "Filtered by Cell Color" sub dialog
 4. You should see the "Yellow" color is checked.
+5. Press "Filter" icon on toolbar to disable the filter
+6. Select E1 and press "filter" icon on toolbar to enable an new filter.
+7. Press the filter button on E1 and you should see "Filter by Color" is disabled.
 </label>
 <button id="export" label="Export to Excel" onClick="doExport()"/>
 <zscript><![CDATA[

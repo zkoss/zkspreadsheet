@@ -1222,8 +1222,17 @@
     cursor: pointer;
 }
 
+.zsafp-color.zsafp-color-disabled {
+    color: #C3A7B5;
+    cursor: default;
+}
+
 .zsafp-color:hover {
     background: #D6F0FD;
+}
+
+.zsafp-color.zsafp-color-disabled:hover {
+    background: transparent;
 }
 
 .zsafp-color-checkbox {
