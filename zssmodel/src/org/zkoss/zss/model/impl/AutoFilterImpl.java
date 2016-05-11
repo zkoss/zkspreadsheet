@@ -93,12 +93,17 @@ public class AutoFilterImpl extends AbstractAutoFilterAdv {
 	//ZSS-688
 	//@since 3.6.0
 	/*package*/ AutoFilterImpl cloneAutoFilterImpl() {
+		return cloneAutofilterImpl(null);
+	}
+	
+	//ZSS-1183, ZSS-1191
+	/*package*/ AutoFilterImpl cloneAutofilterImpl(SBook book) {
 		final AutoFilterImpl tgt = 
 				new AutoFilterImpl(new CellRegion(this._region.row, this._region.column, this._region.lastRow, this._region.lastColumn));
 
 		for (SAutoFilter.NFilterColumn value : this._columns.values()) {
 			final FilterColumnImpl srccol = (FilterColumnImpl) value;
-			final FilterColumnImpl tgtcol = srccol.cloneFilterColumnImpl(); 
+			final FilterColumnImpl tgtcol = srccol.cloneFilterColumnImpl(book); 
 			tgt._columns.put(tgtcol.getIndex(), tgtcol); //ZSS-1183
 		}
 		

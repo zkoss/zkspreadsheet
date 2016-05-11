@@ -157,7 +157,13 @@ public abstract class AbstractAutoFilterAdv implements SAutoFilter,Serializable{
 
 		//ZSS-688
 		//@since 3.6.0
-		/*package*/ FilterColumnImpl cloneFilterColumnImpl() {
+		/*package*/ FilterColumnImpl cloneFilterColumnImpl() { //ZSS-1191
+			return cloneFilterColumnImpl(null);
+		}
+		
+		//ZSS-1183, ZSS-1191
+		//@since 3.9.0
+		/*package*/ FilterColumnImpl cloneFilterColumnImpl(SBook book) { //ZSS-1191
 			FilterColumnImpl tgt = new FilterColumnImpl(this._index);
 			if (this._filters != null) {
 				tgt._filters = new LinkedList<String>();
@@ -179,6 +185,16 @@ public abstract class AbstractAutoFilterAdv implements SAutoFilter,Serializable{
 			}
 			tgt._showButton = this._showButton;
 			tgt._op = this._op;
+			
+			//ZSS-1183, ZSS-1191
+			if (this._colorFilter != null) {
+				tgt._colorFilter = ((ColorFilterImpl)this._colorFilter).cloneColorFilter(book);
+			}
+			
+			//ZSS-1183, ZSS-1224
+			if (this._customFilters != null) {
+				tgt._customFilters = ((CustomFiltersImpl)this._customFilters).cloneCustomFilters(); 
+			}
 			
 			return tgt;
 		}

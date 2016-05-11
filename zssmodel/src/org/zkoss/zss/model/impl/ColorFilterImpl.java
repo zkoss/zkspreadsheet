@@ -14,6 +14,7 @@ package org.zkoss.zss.model.impl;
 
 import java.io.Serializable;
 
+import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.SColorFilter;
 import org.zkoss.zss.model.SExtraStyle;
 
@@ -40,5 +41,12 @@ public class ColorFilterImpl implements SColorFilter, Serializable {
 	@Override
 	public boolean isByFontColor() {
 		return _byFontColor;
+	}
+
+	//ZSS-1183, ZSS-1191
+	//@since 3.9.0
+	/*package*/ ColorFilterImpl cloneColorFilter(SBook book) {
+		return new ColorFilterImpl((SExtraStyle)(_extraStyle == null ? null :
+			((AbstractCellStyleAdv)_extraStyle).cloneCellStyle(book)), _byFontColor);
 	}
 }

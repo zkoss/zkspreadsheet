@@ -41,4 +41,8 @@ public class CustomFilterImpl implements SCustomFilter, Serializable {
 		return operator;
 	}
 
+	//ZSS-1183, ZSS-1224
+	/*package*/ CustomFilterImpl cloneCustomFilter() {
+		return new CustomFilterImpl(value, operator);
+	}
 }

@@ -53,4 +53,13 @@ public class CustomFiltersImpl implements SCustomFilters, Serializable {
 	public SCustomFilter getCustomFilter2() {
 		return filters.size() > 1 ? filters.get(1) : null;
 	}
+	
+	//ZSS-1183, ZSS-1224
+	//@since 3.9.0
+	/*package*/ CustomFiltersImpl cloneCustomFilters() {
+		final CustomFilterImpl filter1 = (CustomFilterImpl)getCustomFilter1();
+		final CustomFilterImpl filter2 = (CustomFilterImpl)getCustomFilter2();
+		return new CustomFiltersImpl(filter1.cloneCustomFilter(), 
+				filter2 == null ? null : filter2.cloneCustomFilter(), isAnd());
+	}
 }
