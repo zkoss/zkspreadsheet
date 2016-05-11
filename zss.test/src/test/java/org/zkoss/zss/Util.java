@@ -51,6 +51,14 @@ public class Util {
 		}
 	}
 	
+	public static Book loadBook(InputStream is, String bookName) {
+		try {
+			return Importers.getImporter().imports(is, bookName);
+		} catch (IOException e) {
+			throw new RuntimeException(e.getMessage(),e);
+		}
+	}
+	
 	public static Book loadBook(Object base,String respath) {
 		if(base==null){
 			base = Util.class;

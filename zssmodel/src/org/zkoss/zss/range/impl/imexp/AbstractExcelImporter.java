@@ -34,7 +34,6 @@ import org.zkoss.util.Locales;
 import org.zkoss.util.logging.Log;
 import org.zkoss.zss.model.*;
 import org.zkoss.zss.model.SAutoFilter.NFilterColumn;
-import org.zkoss.zss.model.SAutoFilter.SColorFilter;
 import org.zkoss.zss.model.SFill.FillPattern;
 import org.zkoss.zss.model.SPicture.Format;
 import org.zkoss.zss.model.SSheet.SheetVisible;
@@ -718,20 +717,28 @@ abstract public class AbstractExcelImporter extends AbstractImporter implements 
 	protected void importAutoFilterColumns(AutoFilter poiFilter, SAutoFilter zssFilter, int numberOfColumn) {
 		Map<String, Object> extra = new HashMap<String, Object>();
 		for (int i = 0; i < numberOfColumn; i++) {
-			FilterColumn srcColumn = poiFilter.getFilterColumn(i);
-			if (srcColumn == null) {
+			FilterColumn poiColumn = poiFilter.getFilterColumn(i);
+			if (poiColumn == null) {
 				continue;
 			}
 			NFilterColumn destColumn = zssFilter.getFilterColumn(i, true);
 			
 			//ZSS-1191
-			final ColorFilter srcColorFilter = srcColumn.getColorFilter();
-			final SColorFilter destColorFilter = importColorFilter(srcColorFilter);
+			final ColorFilter poiColorFilter = poiColumn.getColorFilter();
+			final SColorFilter destColorFilter = importColorFilter(poiColorFilter);
 			extra.put("colorFilter", destColorFilter);
-			destColumn.setProperties(PoiEnumConversion.toFilterOperator(srcColumn.getOperator()), srcColumn.getCriteria1(), srcColumn.getCriteria2(), srcColumn.isOn(), extra);
+			
+			//ZSS-1224
+			final CustomFilters poiCustomFilters = poiColumn.getCustomFilters();
+			final SCustomFilters destCustomFilters = importCustomFilters(poiCustomFilters);
+			extra.put("customFilters", destCustomFilters);
+			
+			destColumn.setProperties(PoiEnumConversion.toFilterOperator(poiColumn.getOperator()), poiColumn.getCriteria1(), poiColumn.getCriteria2(), poiColumn.isOn(), extra);
 		}
 	}
 
+	//ZSS-1224
+	abstract protected SCustomFilters importCustomFilters(CustomFilters customFilters);
 	//ZSS-1191
 	abstract protected SColorFilter importColorFilter(ColorFilter colorFilter);
 	

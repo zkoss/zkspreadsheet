@@ -35,10 +35,10 @@ import org.zkoss.poi.xssf.model.ExternalLink;
 import org.zkoss.poi.xssf.usermodel.*;
 import org.zkoss.poi.xssf.usermodel.charts.*;
 import org.zkoss.zss.model.*;
-import org.zkoss.zss.model.SAutoFilter.SColorFilter;
 import org.zkoss.zss.model.SBorder.BorderType;
 import org.zkoss.zss.model.SChart.ChartType;
 import org.zkoss.zss.model.SConditionalFormattingRule.RuleType;
+import org.zkoss.zss.model.SCustomFilter.Operator;
 import org.zkoss.zss.model.SFill.FillPattern;
 import org.zkoss.zss.model.STableColumn.STotalsRowFunction;
 import org.zkoss.zss.model.chart.*;
@@ -55,6 +55,8 @@ import org.zkoss.zss.model.impl.ColorFilterImpl;
 import org.zkoss.zss.model.impl.ColorImpl;
 import org.zkoss.zss.model.impl.ColorScaleImpl;
 import org.zkoss.zss.model.impl.ConditionalFormattingRuleImpl;
+import org.zkoss.zss.model.impl.CustomFilterImpl;
+import org.zkoss.zss.model.impl.CustomFiltersImpl;
 import org.zkoss.zss.model.impl.DataBarImpl;
 import org.zkoss.zss.model.impl.ExtraFillImpl;
 import org.zkoss.zss.model.impl.ExtraStyleImpl;
@@ -1094,6 +1096,27 @@ public class ExcelXlsxImporter extends AbstractExcelImporter {
 			style = src;
 		}
 		return new ColorFilterImpl(style, colorFilter.isByFontColor());
+	}
+	
+	//ZSS-1224
+	//@since 3.9.0
+	@Override
+	protected SCustomFilters importCustomFilters(CustomFilters poiCustomFilters) {
+		if (poiCustomFilters == null) return null;
+		final boolean and = poiCustomFilters.isAnd();
+		final CustomFilter poiFilter1 = poiCustomFilters.getCustomFilter1();
+		final CustomFilter poiFilter2 = poiCustomFilters.getCustomFilter2();
+		final SCustomFilter filter1 = 
+				new CustomFilterImpl(poiFilter1.getValue(), toZSSOperator(poiFilter1.getOperator()));
+		final SCustomFilter filter2 = poiFilter2 == null ? null : 
+				new CustomFilterImpl(poiFilter2.getValue(), toZSSOperator(poiFilter2.getOperator()));
+		return new CustomFiltersImpl(filter1, filter2, and);
+	}
+
+	//ZSS-1224
+	//@since 3.9.0
+	private SCustomFilter.Operator toZSSOperator(CustomFilter.Operator op) {
+		return SCustomFilter.Operator.valueOf(op.name());
 	}
 }
  

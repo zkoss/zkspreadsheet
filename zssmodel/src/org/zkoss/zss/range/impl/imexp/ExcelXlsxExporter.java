@@ -35,7 +35,6 @@ import org.zkoss.poi.xssf.usermodel.extensions.XSSFCellFill;
 import org.zkoss.poi.xssf.usermodel.XSSFRichTextString;
 import org.zkoss.zss.model.*;
 import org.zkoss.zss.model.SAutoFilter.NFilterColumn;
-import org.zkoss.zss.model.SAutoFilter.SColorFilter;
 import org.zkoss.zss.model.SBorder.BorderType;
 import org.zkoss.zss.model.SFill.FillPattern;
 import org.zkoss.zss.model.SRichText.Segment;
@@ -570,11 +569,30 @@ public class ExcelXlsxExporter extends AbstractExcelExporter {
 			}
 			extra.put("colorFilter", poiFilter);
 			
+			//ZSS-1224
+			final SCustomFilters customFilters = srcFilterColumn.getCustomFilters();
+			XSSFCustomFilters poiCustomFilters = null;
+			if (customFilters != null) {
+				poiCustomFilters = new XSSFCustomFilters(destFilterColumn);
+				poiCustomFilters.setAnd(customFilters.isAnd());
+				final SCustomFilter srcFilter1 = customFilters.getCustomFilter1();
+				final SCustomFilter srcFilter2 = customFilters.getCustomFilter2();
+				poiCustomFilters.addCustomFilter(toPOIOpertor(srcFilter1.getOperator()), srcFilter1.getValue());
+				if (srcFilter2 != null) {
+					poiCustomFilters.addCustomFilter(toPOIOpertor(srcFilter2.getOperator()), srcFilter2.getValue());
+				}
+			}
+			
 			//ZSS-1191
 			destFilterColumn.setProperties(criteria1, PoiEnumConversion.toPoiFilterOperator(srcFilterColumn.getOperator()),
 					criteria2, srcFilterColumn.isShowButton(), extra);
 			
 		}
+	}
+	
+	//ZSS-1224
+	private CustomFilter.Operator toPOIOpertor(SCustomFilter.Operator op) {
+		return CustomFilter.Operator.valueOf(op.name());
 	}
 	
 	/**

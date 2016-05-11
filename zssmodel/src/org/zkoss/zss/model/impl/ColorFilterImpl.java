@@ -14,7 +14,7 @@ package org.zkoss.zss.model.impl;
 
 import java.io.Serializable;
 
-import org.zkoss.zss.model.SAutoFilter.SColorFilter;
+import org.zkoss.zss.model.SColorFilter;
 import org.zkoss.zss.model.SExtraStyle;
 
 //ZSS-1191

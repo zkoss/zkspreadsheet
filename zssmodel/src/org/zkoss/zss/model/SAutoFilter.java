@@ -63,16 +63,10 @@ public interface SAutoFilter {
 		//ZSS-1191
 		//@since 3.9.0
 		public SColorFilter getColorFilter();
-	}
-	
-	/**
-	 * Color filter
-	 * @author henri
-	 * @since 3.9.0
-	 */
-	public interface SColorFilter {
-		public boolean isByFontColor();
-		public SExtraStyle getExtraStyle();
+		
+		//ZSS-1224
+		//@since 3.9.0
+		public SCustomFilters getCustomFilters();
 	}
 	
 	/**

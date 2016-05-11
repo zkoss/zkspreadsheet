@@ -26,6 +26,8 @@ import java.util.Map;
 
 import org.zkoss.zss.model.SAutoFilter;
 import org.zkoss.zss.model.SBook;
+import org.zkoss.zss.model.SColorFilter;
+import org.zkoss.zss.model.SCustomFilters;
 
 /**
  * 
@@ -49,6 +51,7 @@ public abstract class AbstractAutoFilterAdv implements SAutoFilter,Serializable{
 		private Boolean _showButton;
 		private FilterOp _op = FilterOp.AND;
 		private SColorFilter _colorFilter; //ZSS-1191
+		private SCustomFilters _customFilters; //ZSS-1224
 		
 		public FilterColumnImpl(int index){
 			this._index = index;
@@ -117,6 +120,9 @@ public abstract class AbstractAutoFilterAdv implements SAutoFilter,Serializable{
 			//ZSS-1191
 			_colorFilter = (SColorFilter) extra.get("colorFilter");
 			
+			//ZSS-1224
+			_customFilters = (SCustomFilters) extra.get("customFilters");
+			
 			this._op = filterOp;
 			this._criteria1 = getCriteriaSet(criteria1);
 			this._criteria2 = getCriteriaSet(criteria2);
@@ -182,6 +188,13 @@ public abstract class AbstractAutoFilterAdv implements SAutoFilter,Serializable{
 		@Override
 		public SColorFilter getColorFilter() {
 			return _colorFilter;
+		}
+		
+		//ZSS-1224
+		//@since 3.9.0
+		@Override
+		public SCustomFilters getCustomFilters() {
+			return _customFilters;
 		}
 	}
 }
