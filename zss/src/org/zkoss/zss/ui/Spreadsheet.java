@@ -101,6 +101,8 @@ import org.zkoss.zss.model.SCellStyle;
 import org.zkoss.zss.model.SCellStyle.Alignment;
 import org.zkoss.zss.model.SCellStyle.VerticalAlignment;
 import org.zkoss.zss.model.SColorFilter;
+import org.zkoss.zss.model.SCustomFilter;
+import org.zkoss.zss.model.SCustomFilters;
 import org.zkoss.zss.model.SFill;
 import org.zkoss.zss.model.SFont.Boldweight;
 import org.zkoss.zss.model.SFont.Underline;
@@ -1559,12 +1561,6 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			if (fcsary != null) {
 				List<String> filters = null;
 				
-				//ZSS-1191
-				boolean byFontColor = false;
-				String pattern = null;
-				String fgColor = null;
-				String bgColor = null;
-				
 				boolean on = true;
 				int field = 0;
 				for(int col = left; col <= right; ++col) {
@@ -1573,6 +1569,17 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 						on = true;
 						continue; //ZSS-705: no filterColumn; default on and skip
 					}
+					
+					//ZSS-1191
+					boolean byFontColor = false;
+					String pattern = null;
+					String fgColor = null;
+					String bgColor = null;
+
+					//ZSS-1192
+					boolean isAnd = false;
+					SCustomFilter f1 = null;
+					SCustomFilter f2 = null;
 					
 					if (on) { // ZSS-705: only when previous showButton is on
 						filters = fc.getFilters();
@@ -1587,6 +1594,14 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 							fgColor = fill.getFillColor().getHtmlColor();
 							bgColor = fill.getBackColor().getHtmlColor();
 							byFontColor = cfilter.isByFontColor();
+						}
+						
+						//ZSS-1192
+						SCustomFilters cusFilters = fc.getCustomFilters();
+						if (cusFilters != null) {
+							isAnd = cusFilters.isAnd();
+							f1 = cusFilters.getCustomFilter1();
+							f2 = cusFilters.getCustomFilter2();
 						}
 					} // ZSS-705: if previous showButton is off; use previous field and filters(in merged cell case)
 					
@@ -1606,6 +1621,24 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 					fcmap.put("colorfg", fgColor); 
 					fcmap.put("colorbg", bgColor);
 					fcmap.put("fontColor", byFontColor);
+					
+					//ZSS-1192
+					if (f1 != null) {
+						fcmap.put("and", isAnd);
+						Map f1map = new HashMap();
+						fcmap.put("f1", f1map);
+						
+						f1map.put("val", f1.getValue());
+						f1map.put("op", f1.getOperator().name());
+						
+						if (f2 != null) {
+							Map f2map = new HashMap();
+							fcmap.put("f2", f2map);
+							
+							f2map.put("val", f2.getValue());
+							f2map.put("op", f2.getOperator().name());
+						}
+					}
 					
 					fcsary.add(fcmap);
 				}

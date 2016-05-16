@@ -87,6 +87,8 @@ public class AuxActionCommand extends AbstractCommand implements Command {
 				action = AuxAction.MOVE_SHEET_LEFT.getAction();
 			} else if ("moveRight".equals(action)) {
 				action = AuxAction.MOVE_SHEET_RIGHT.getAction();
+			} else if ("customFilters".equals(action)) {
+				action = AuxAction.CUSTOM_FILTERS.getAction();
 			} else {
 				throw new UiException(MZk.ILLEGAL_REQUEST_WRONG_DATA,
 						new Object[] { Objects.toString(data),

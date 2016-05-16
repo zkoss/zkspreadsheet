@@ -25,6 +25,7 @@ import org.zkoss.zss.model.SCustomFilters;
  * @since 3.9.0
  */
 public class CustomFiltersImpl implements SCustomFilters, Serializable {
+	private int type = 2; //Date 0, Number 1, String 2
 	private boolean and;
 	private List<SCustomFilter> filters;
 	
@@ -36,6 +37,7 @@ public class CustomFiltersImpl implements SCustomFilters, Serializable {
 			filters.add(filter2);
 		}
 	}
+	
 	@Override
 	public boolean isAnd() {
 		return and;

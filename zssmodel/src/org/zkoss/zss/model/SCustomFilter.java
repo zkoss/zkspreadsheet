@@ -12,6 +12,8 @@
 
 package org.zkoss.zss.model;
 
+import org.zkoss.util.resource.Labels;
+
 //ZSS-1224
 /**
  * @author henri
@@ -23,6 +25,6 @@ public interface SCustomFilter {
 	
 	enum Operator {
 		equal, notEqual, greaterThan, greaterThanOrEqual, lessThan, lessThanOrEqual, 
-		beginWith, notBeginWith, endWith, notEndWith, contains, notContains,
+		beginWith, notBeginWith, endWith, notEndWith, contains, notContains, none, custom,
 	}
 }

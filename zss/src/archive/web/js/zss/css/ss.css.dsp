@@ -1201,7 +1201,7 @@
 	white-space: nowrap;
 }
 
-.zsafp-valuedlg {
+.zsafp-itemsdlg {
     width: 240px;
     height: 100%;
     position: relative;
@@ -1210,6 +1210,97 @@
     border: 1px solid #868686;
     box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
 }
+
+.zsafp-valuedlg {
+    width: 146px;
+    display: none;
+    background: #FFFFFF;
+    border: 1px solid #868686;
+    box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    vertical-align: top;
+    position: absolute;
+    top: 19px;
+}
+
+.zsafp-value {
+    width: 100%;
+    padding: 2px 2px 2px 20px;
+    background-position: left center;
+    font-size: 13px;
+    border-bottom: 1px solid #D8D8D8;
+    position: relative;
+    box-sizing: border-box;
+    cursor: pointer;
+}
+
+.zsafp-value:hover {
+    background: #D6F0FD;
+}
+
+.zsafp-value-checkbox {
+    height: 16px;
+    width: 16px;
+    background-repeat: no-repeat;
+    position: absolute;
+    left: 3px;
+    top: 2px;
+    cursor: pointer;
+}
+
+.zsafp-value-seld.zsafp-value-checkbox {
+    background: url(${c:encodeURL('~./zss/img/tick-small.png')}) no-repeat transparent;
+    cursor: pointer;
+    <c:if test="${c:browser('ie6-')}">
+        background-image: url(${c:encodeURL('~./zss/img/tick.gif')});
+    </c:if>
+}
+
+.zsafp-value-more {
+    border-top: 4px solid transparent;
+    border-bottom: 4px solid transparent;
+    border-left: 4px solid #4A5473;
+    display: inline-block;
+    position: absolute;
+    right: 5px;
+    top: 5px;
+    width: 0px;
+    height: 0px;
+}
+
+.zsafp-vitems {
+    overflow-y: auto;
+    overflow-x: hidden;
+    max-height: 139px;
+    width: 100%;
+    border-bottom: 1px solid #D8D8D8;
+    position: relative;
+}
+
+.zsafp-vitem {
+    padding: 2px 2px 2px 20px;
+    position: relative;
+    background-position: left center;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.zsafp-vitem:hover {
+    background: #D6F0FD;
+}
+
+.zsafp-vitem-checkbox {
+    height: 16px;
+    width: 16px;
+    background-repeat: no-repeat;
+    position: absolute;
+    left: 3px;
+    top: 2px;
+}
+
+.zsafp-vitem-seld .zsafp-vitem-checkbox {
+    background: url(${c:encodeURL('~./zss/img/tick-small.png')}) no-repeat transparent;
+}
+
 
 .zsafp-color {
     width: 100%;
@@ -1380,6 +1471,7 @@
 	width: 100%;
 	padding: 2px;
     box-sizing: border-box;
+    position: relative;
 }
 
 .zsafp-search-inp {
@@ -1392,7 +1484,7 @@
 .zsafp-items {
 	overflow-y: auto;
 	overflow-x: hidden;
-	height: 139px;
+	height: 120px;
 	width: 100%;
 	border-bottom: 1px solid #D8D8D8;
 	position: relative;
@@ -1455,7 +1547,7 @@
 	display: inline-block;
 	position: absolute;
 	right: 4px;
-	top: 23px;
+	top: 4px;
 	width: 16px;
 	height: 16px;
 	<c:if test="${c:browser('ie6-')}">

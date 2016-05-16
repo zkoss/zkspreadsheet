@@ -17,7 +17,9 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.range.impl;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -36,6 +38,8 @@ import org.zkoss.zss.model.SCell;
 import org.zkoss.zss.model.SCellStyle;
 import org.zkoss.zss.model.SColor;
 import org.zkoss.zss.model.SColorFilter;
+import org.zkoss.zss.model.SCustomFilter;
+import org.zkoss.zss.model.SCustomFilters;
 import org.zkoss.zss.model.SExtraStyle;
 import org.zkoss.zss.model.SFill;
 import org.zkoss.zss.model.SFont;
@@ -50,12 +54,16 @@ import org.zkoss.zss.model.impl.AbstractFontAdv;
 import org.zkoss.zss.model.impl.AbstractSheetAdv;
 import org.zkoss.zss.model.impl.CellStyleImpl;
 import org.zkoss.zss.model.impl.ColorFilterImpl;
+import org.zkoss.zss.model.impl.CustomFilterImpl;
+import org.zkoss.zss.model.impl.CustomFiltersImpl;
 import org.zkoss.zss.model.impl.ExtraFillImpl;
 import org.zkoss.zss.model.impl.ExtraStyleImpl;
+import org.zkoss.zss.model.impl.AbstractAutoFilterAdv.FilterColumnImpl;
 import org.zkoss.zss.model.util.CellStyleMatcher;
 import org.zkoss.zss.range.SRange;
 import org.zkoss.zss.range.SRanges;
 import org.zkoss.zss.range.impl.DataRegionHelper.FilterRegionHelper;
+import org.zkoss.zss.range.impl.autofill.StringCellMatch;
 import org.zkoss.zss.range.impl.imexp.BookHelper;
 import org.zkoss.zss.range.impl.imexp.PoiEnumConversion;
 
@@ -67,7 +75,12 @@ import org.zkoss.zss.range.impl.imexp.PoiEnumConversion;
 //these code if from XRangeImpl,XBookHelper and migrate to new model
 /*package*/ class AutoFilterHelper extends RangeHelperBase{
 	private static final SCellStyle BLANK_STYLE = CellStyleImpl.BLANK_STYLE;
-	
+	private static Date MIN_DATE;
+	static {
+		Calendar cal = Calendar.getInstance();
+		cal.set(0, 0, 0, 0, 0, 0);
+		MIN_DATE = cal.getTime();
+	}
 	public AutoFilterHelper(SRange range){
 		super(range);
 	}
@@ -144,6 +157,20 @@ import org.zkoss.zss.range.impl.imexp.PoiEnumConversion;
 		enableAutoFilter0(table, filter, field, filterOp, criteria1, criteria2, showButton);
 		return filter;
 	}
+	//ZSS-1192
+	// criteria: [SCustomFitler.Operator1, val1, SCustomFilter.Operator2, val2]
+	private SCustomFilters _prepareCustomFilters(String[] criteria1, String[] criteria2, boolean isAnd) {
+		final SCustomFilter.Operator op1 = SCustomFilter.Operator.valueOf(criteria1[0]);
+		final String val1 = criteria1[1];
+		final SCustomFilter f1 = new CustomFilterImpl(val1, op1);
+		
+		final SCustomFilter.Operator op2 = criteria2 != null ? 
+				SCustomFilter.Operator.valueOf(criteria2[0]) : null;
+		final String val2 = criteria2 != null ? criteria2[1] : null;
+		final SCustomFilter f2 = op2 == null ? null : new CustomFilterImpl(val2, op2);
+		
+		return new CustomFiltersImpl(f1, f2, isAnd);
+	}
 	
 	//ZSS-1191
 	// criteria[0]: pattern name(see FillPattern); [1]: foreground color; [2]: background color 
@@ -165,6 +192,40 @@ import org.zkoss.zss.range.impl.imexp.PoiEnumConversion;
 		return new ColorFilterImpl(style, byFontColor);
 	}
 
+	//ZSS-1192
+	private LinkedHashMap<Integer, Boolean> _filterByCustomFilters(SAutoFilter filter, NFilterColumn fc, int field) {
+		final CellRegion affectedArea = filter.getRegion();
+		final int row1 = affectedArea.getRow();
+		final int col1 = affectedArea.getColumn(); 
+		final int col =  col1 + field - 1;
+		final int row = row1 + 1;
+		final int row2 = affectedArea.getLastRow();
+
+		final SCustomFilters filters = fc.getCustomFilters();
+		final SCustomFilter f1 = filters.getCustomFilter1();
+		final SCustomFilter f2 = filters.getCustomFilter2();
+		final boolean isAnd = filters.isAnd();
+		
+		final StringCellMatch match = new StringCellMatch(f1, f2, isAnd);
+		
+		LinkedHashMap<Integer, Boolean> affectedRows = new LinkedHashMap<Integer, Boolean>(); 
+		for (int r = row; r <= row2; ++r) {
+			final SCell cell = sheet.getCell(r, col);
+			if (!match.match(cell.isNull() ? null : cell)) { //to be hidden
+				final SRow rowobj = sheet.getRow(r);
+				if (!rowobj.isHidden()) { //a non-hidden row
+					affectedRows.put(r, true);
+				}
+			} else { //candidate to be shown (other FieldColumn might still hide this row!
+				final SRow rowobj = sheet.getRow(r);
+				if (rowobj.isHidden() && canUnhide(filter, fc, r, col1)) { //a hidden row and no other hidden filtering
+					affectedRows.put(r, false);
+				}
+			}
+		}
+		return affectedRows;
+	}
+	
 	//ZSS-1191
 	private boolean _match(SCellStyle style, SFill fill, boolean byFontColor) {
 		if (byFontColor) {
@@ -263,13 +324,20 @@ import org.zkoss.zss.range.impl.imexp.PoiEnumConversion;
 			criteria1 = null;
 		}
 		
+		//ZSS-1192
+		if (filterOp == FilterOp.AND || filterOp == FilterOp.OR) {
+			extra.put("customFilters", _prepareCustomFilters((String[])criteria1, (String[])criteria2, filterOp == FilterOp.AND));
+			criteria1 = null;
+		}
+		
 		fc.setProperties(filterOp, criteria1, criteria2, showButton, extra);
 
 		//update rows
-		//ZSS-1191
 		LinkedHashMap<Integer, Boolean> affectedRows = 
-				filterOp == FilterOp.CELL_COLOR || filterOp == FilterOp.FONT_COLOR ?
+				filterOp == FilterOp.CELL_COLOR || filterOp == FilterOp.FONT_COLOR ? //ZSS-1191
 				_filterByColor(filter, fc, field) :
+				filterOp == FilterOp.OR || filterOp == FilterOp.AND ? //ZSS-1192 
+				_filterByCustomFilters(filter, fc, field) :
 				_filterByValues(filter, fc, field);
 				
 //		final CellRegion affectedArea = filter.getRegion();

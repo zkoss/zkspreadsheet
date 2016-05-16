@@ -4,6 +4,7 @@ ZK Spreadsheet 3.9.0
   ZSS-1183 Copy a sheet between books
   ZSS-1191 Filter by color
   ZSS-1224 Support Import/export CustomFilters
+  ZSS-1192 Support the text filter
   
 *Bugs:
   ZSS-1211 StringIndexOutOfBoundsException if click a hyperlink with empty address

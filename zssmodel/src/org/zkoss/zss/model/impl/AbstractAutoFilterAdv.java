@@ -28,7 +28,6 @@ import org.zkoss.zss.model.SAutoFilter;
 import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.SColorFilter;
 import org.zkoss.zss.model.SCustomFilters;
-
 /**
  * 
  * @author Dennis
@@ -52,6 +51,7 @@ public abstract class AbstractAutoFilterAdv implements SAutoFilter,Serializable{
 		private FilterOp _op = FilterOp.AND;
 		private SColorFilter _colorFilter; //ZSS-1191
 		private SCustomFilters _customFilters; //ZSS-1224
+		private int type; //ZSS-1192: //Date 0, Number 1, String 2
 		
 		public FilterColumnImpl(int index){
 			this._index = index;
