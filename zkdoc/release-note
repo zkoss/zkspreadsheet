@@ -6,6 +6,7 @@ ZK Spreadsheet 3.9.0
   ZSS-1224 Support Import/export CustomFilters
   ZSS-1192 Support the text filter
   ZSS-1226 Support Import/export DynamicFilter
+  ZSS-1227 Support Import/export Top10Filter
   
 *Bugs:
   ZSS-1211 StringIndexOutOfBoundsException if click a hyperlink with empty address

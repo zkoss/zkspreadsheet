@@ -71,6 +71,10 @@ public interface SAutoFilter {
 		//ZSS-1226
 		//@since 3.9.0
 		public SDynamicFilter getDynamicFilter();
+		
+		//ZSS-1227
+		//@since 3.9.0
+		public STop10Filter getTop10Filter();
 	}
 	
 	/**

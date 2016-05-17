@@ -738,10 +738,17 @@ abstract public class AbstractExcelImporter extends AbstractImporter implements 
 			final SDynamicFilter destDynamicFilter = importDynamicFilter(poiDynamicFilter);
 			extra.put("dynamicFilter", destDynamicFilter);
 			
+			//ZSS-1227
+			final Top10Filter poiTop10Filter = poiColumn.getTop10Filter();
+			final STop10Filter destTop10Filter = importTop10Filter(poiTop10Filter);
+			extra.put("top10Filter", destTop10Filter);
+			
 			destColumn.setProperties(PoiEnumConversion.toFilterOperator(poiColumn.getOperator()), poiColumn.getCriteria1(), poiColumn.getCriteria2(), poiColumn.isOn(), extra);
 		}
 	}
 
+	//ZSS-1227
+	abstract protected STop10Filter importTop10Filter(Top10Filter top10Filter);
 	//ZSS-1226
 	abstract protected SDynamicFilter importDynamicFilter(DynamicFilter dynamicFilter);
 	//ZSS-1224

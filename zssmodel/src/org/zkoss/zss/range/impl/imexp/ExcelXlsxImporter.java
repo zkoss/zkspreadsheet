@@ -68,6 +68,7 @@ import org.zkoss.zss.model.impl.TableImpl;
 import org.zkoss.zss.model.impl.TableStyleImpl;
 import org.zkoss.zss.model.impl.TableStyleInfoImpl;
 import org.zkoss.zss.model.impl.TableStyleElemImpl;
+import org.zkoss.zss.model.impl.Top10FilterImpl;
 import org.zkoss.zss.model.sys.formula.FormulaEngine;
 import org.zkoss.zss.model.util.CellStyleMatcher;
 import org.zkoss.zss.model.impl.AbstractBookAdv;
@@ -1129,6 +1130,17 @@ public class ExcelXlsxImporter extends AbstractExcelImporter {
 		Double val = poiDynamicFilter.getValue();
 		boolean isAbove = poiDynamicFilter.isAbove();
 		return new DynamicFilterImpl(maxval, val, isAbove);
+	}
+	
+	//ZSS-1227
+	//@since 3.9.0
+	@Override
+	protected STop10Filter importTop10Filter(Top10Filter poiTop10Filter) {
+		if (poiTop10Filter == null) return null;
+		return new Top10FilterImpl(poiTop10Filter.isTop(), 
+				poiTop10Filter.getValue(), 
+				poiTop10Filter.isPercent(), 
+				poiTop10Filter.getFilterValue());
 	}
 }
  

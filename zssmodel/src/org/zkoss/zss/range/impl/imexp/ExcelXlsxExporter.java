@@ -571,9 +571,8 @@ public class ExcelXlsxExporter extends AbstractExcelExporter {
 			
 			//ZSS-1224
 			final SCustomFilters customFilters = srcFilterColumn.getCustomFilters();
-			XSSFCustomFilters poiCustomFilters = null;
 			if (customFilters != null) {
-				poiCustomFilters = new XSSFCustomFilters(destFilterColumn);
+				XSSFCustomFilters poiCustomFilters = new XSSFCustomFilters(destFilterColumn);
 				poiCustomFilters.setAnd(customFilters.isAnd());
 				final SCustomFilter srcFilter1 = customFilters.getCustomFilter1();
 				final SCustomFilter srcFilter2 = customFilters.getCustomFilter2();
@@ -581,17 +580,24 @@ public class ExcelXlsxExporter extends AbstractExcelExporter {
 				if (srcFilter2 != null) {
 					poiCustomFilters.addCustomFilter(toPOIOpertor(srcFilter2.getOperator()), srcFilter2.getValue());
 				}
+				extra.put("customFilters", poiCustomFilters); //ZSS-1224
 			}
-			extra.put("customFilters", poiCustomFilters); //ZSS-1224
 			
 			//ZSS-1226
 			final SDynamicFilter dynamicFilter = srcFilterColumn.getDynamicFilter();
-			XSSFDynamicFilter poiDynamicFilter = null;
 			if (dynamicFilter != null) {
-				poiDynamicFilter = new XSSFDynamicFilter(destFilterColumn);
+				XSSFDynamicFilter poiDynamicFilter = new XSSFDynamicFilter(destFilterColumn);
 				poiDynamicFilter.setProperties(dynamicFilter.getMaxValue(), dynamicFilter.getValue(), dynamicFilter.isAbove());
+				extra.put("dynamicFilter", poiDynamicFilter);
 			}
-			extra.put("dynamicFilter", poiDynamicFilter);
+			
+			//ZSS-1227
+			final STop10Filter top10Filter = srcFilterColumn.getTop10Filter();
+			if (top10Filter != null) {
+				XSSFTop10Filter poiTop10Filter = new XSSFTop10Filter(destFilterColumn);
+				poiTop10Filter.setProperties(top10Filter.isTop(), top10Filter.getValue(), top10Filter.isPercent(), top10Filter.getFilterValue());
+				extra.put("top10Filter", poiTop10Filter);
+			}
 			
 			//ZSS-1191
 			destFilterColumn.setProperties(criteria1, PoiEnumConversion.toPoiFilterOperator(srcFilterColumn.getOperator()),

@@ -29,6 +29,7 @@ import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.SColorFilter;
 import org.zkoss.zss.model.SCustomFilters;
 import org.zkoss.zss.model.SDynamicFilter;
+import org.zkoss.zss.model.STop10Filter;
 /**
  * 
  * @author Dennis
@@ -54,6 +55,7 @@ public abstract class AbstractAutoFilterAdv implements SAutoFilter,Serializable{
 		private SCustomFilters _customFilters; //ZSS-1224
 		private int type; //ZSS-1192: //Date 0, Number 1, String 2
 		private SDynamicFilter _dynamicFilter; //ZSS-1226
+		private STop10Filter _top10Filter; //ZSS-1127
 		
 		public FilterColumnImpl(int index){
 			this._index = index;
@@ -127,6 +129,9 @@ public abstract class AbstractAutoFilterAdv implements SAutoFilter,Serializable{
 			
 			//ZSS-1226
 			_dynamicFilter = (SDynamicFilter) extra.get("dynamicFilter");
+			
+			//ZSS-1227
+			_top10Filter = (STop10Filter) extra.get("top10Filter");
 			
 			this._op = filterOp;
 			this._criteria1 = getCriteriaSet(criteria1);
@@ -205,6 +210,11 @@ public abstract class AbstractAutoFilterAdv implements SAutoFilter,Serializable{
 			if (this._dynamicFilter != null) {
 				tgt._dynamicFilter = ((DynamicFilterImpl)this._dynamicFilter).cloneDynamicFilter();
 			}
+			
+			//ZSS-1183, ZSS-1227
+			if (this._top10Filter != null) {
+				tgt._top10Filter = ((Top10FilterImpl)this._top10Filter).cloneTop10Filter();
+			}
 			return tgt;
 		}
 		
@@ -227,6 +237,13 @@ public abstract class AbstractAutoFilterAdv implements SAutoFilter,Serializable{
 		@Override
 		public SDynamicFilter getDynamicFilter() {
 			return _dynamicFilter;
+		}
+		
+		//ZSS-1227
+		//@since 3.9.0
+		@Override
+		public STop10Filter getTop10Filter() {
+			return _top10Filter;
 		}
 	}
 }

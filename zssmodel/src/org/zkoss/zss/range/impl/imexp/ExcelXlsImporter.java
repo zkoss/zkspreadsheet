@@ -481,4 +481,10 @@ public class ExcelXlsImporter extends AbstractExcelImporter{
 		// not support in XLS
 		return null;
 	}
+
+	@Override
+	protected STop10Filter importTop10Filter(Top10Filter top10Filter) {
+		// not support in XLS
+		return null;
+	}
 }
