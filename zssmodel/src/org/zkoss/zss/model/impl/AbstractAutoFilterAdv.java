@@ -28,6 +28,7 @@ import org.zkoss.zss.model.SAutoFilter;
 import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.SColorFilter;
 import org.zkoss.zss.model.SCustomFilters;
+import org.zkoss.zss.model.SDynamicFilter;
 /**
  * 
  * @author Dennis
@@ -52,6 +53,7 @@ public abstract class AbstractAutoFilterAdv implements SAutoFilter,Serializable{
 		private SColorFilter _colorFilter; //ZSS-1191
 		private SCustomFilters _customFilters; //ZSS-1224
 		private int type; //ZSS-1192: //Date 0, Number 1, String 2
+		private SDynamicFilter _dynamicFilter; //ZSS-1226
 		
 		public FilterColumnImpl(int index){
 			this._index = index;
@@ -122,6 +124,9 @@ public abstract class AbstractAutoFilterAdv implements SAutoFilter,Serializable{
 			
 			//ZSS-1224
 			_customFilters = (SCustomFilters) extra.get("customFilters");
+			
+			//ZSS-1226
+			_dynamicFilter = (SDynamicFilter) extra.get("dynamicFilter");
 			
 			this._op = filterOp;
 			this._criteria1 = getCriteriaSet(criteria1);
@@ -196,6 +201,10 @@ public abstract class AbstractAutoFilterAdv implements SAutoFilter,Serializable{
 				tgt._customFilters = ((CustomFiltersImpl)this._customFilters).cloneCustomFilters(); 
 			}
 			
+			//ZSS-1183, ZSS-1226
+			if (this._dynamicFilter != null) {
+				tgt._dynamicFilter = ((DynamicFilterImpl)this._dynamicFilter).cloneDynamicFilter();
+			}
 			return tgt;
 		}
 		
@@ -211,6 +220,13 @@ public abstract class AbstractAutoFilterAdv implements SAutoFilter,Serializable{
 		@Override
 		public SCustomFilters getCustomFilters() {
 			return _customFilters;
+		}
+		
+		//ZSS-1226
+		//@since 3.9.0
+		@Override
+		public SDynamicFilter getDynamicFilter() {
+			return _dynamicFilter;
 		}
 	}
 }

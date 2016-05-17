@@ -474,4 +474,11 @@ public class ExcelXlsImporter extends AbstractExcelImporter{
 		// not support in XLS
 		return null;
 	}
+
+	@Override
+	//ZSS-1226
+	protected SDynamicFilter importDynamicFilter(DynamicFilter dynamicFilter) {
+		// not support in XLS
+		return null;
+	}
 }

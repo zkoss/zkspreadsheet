@@ -58,6 +58,7 @@ import org.zkoss.zss.model.impl.ConditionalFormattingRuleImpl;
 import org.zkoss.zss.model.impl.CustomFilterImpl;
 import org.zkoss.zss.model.impl.CustomFiltersImpl;
 import org.zkoss.zss.model.impl.DataBarImpl;
+import org.zkoss.zss.model.impl.DynamicFilterImpl;
 import org.zkoss.zss.model.impl.ExtraFillImpl;
 import org.zkoss.zss.model.impl.ExtraStyleImpl;
 import org.zkoss.zss.model.impl.FillImpl;
@@ -1117,6 +1118,17 @@ public class ExcelXlsxImporter extends AbstractExcelImporter {
 	//@since 3.9.0
 	private SCustomFilter.Operator toZSSOperator(CustomFilter.Operator op) {
 		return SCustomFilter.Operator.valueOf(op.name());
+	}
+	
+	//ZSS-1226
+	//@since 3.9.0
+	@Override
+	protected SDynamicFilter importDynamicFilter(DynamicFilter poiDynamicFilter) {
+		if (poiDynamicFilter == null) return null;
+		Double maxval = poiDynamicFilter.getMaxValue();
+		Double val = poiDynamicFilter.getValue();
+		boolean isAbove = poiDynamicFilter.isAbove();
+		return new DynamicFilterImpl(maxval, val, isAbove);
 	}
 }
  

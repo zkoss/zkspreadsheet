@@ -582,6 +582,16 @@ public class ExcelXlsxExporter extends AbstractExcelExporter {
 					poiCustomFilters.addCustomFilter(toPOIOpertor(srcFilter2.getOperator()), srcFilter2.getValue());
 				}
 			}
+			extra.put("customFilters", poiCustomFilters); //ZSS-1224
+			
+			//ZSS-1226
+			final SDynamicFilter dynamicFilter = srcFilterColumn.getDynamicFilter();
+			XSSFDynamicFilter poiDynamicFilter = null;
+			if (dynamicFilter != null) {
+				poiDynamicFilter = new XSSFDynamicFilter(destFilterColumn);
+				poiDynamicFilter.setProperties(dynamicFilter.getMaxValue(), dynamicFilter.getValue(), dynamicFilter.isAbove());
+			}
+			extra.put("dynamicFilter", poiDynamicFilter);
 			
 			//ZSS-1191
 			destFilterColumn.setProperties(criteria1, PoiEnumConversion.toPoiFilterOperator(srcFilterColumn.getOperator()),

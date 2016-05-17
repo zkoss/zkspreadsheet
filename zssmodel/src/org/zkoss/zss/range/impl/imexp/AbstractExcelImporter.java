@@ -732,11 +732,18 @@ abstract public class AbstractExcelImporter extends AbstractImporter implements 
 			final CustomFilters poiCustomFilters = poiColumn.getCustomFilters();
 			final SCustomFilters destCustomFilters = importCustomFilters(poiCustomFilters);
 			extra.put("customFilters", destCustomFilters);
+
+			//ZSS-1226
+			final DynamicFilter poiDynamicFilter = poiColumn.getDynamicFilter();
+			final SDynamicFilter destDynamicFilter = importDynamicFilter(poiDynamicFilter);
+			extra.put("dynamicFilter", destDynamicFilter);
 			
 			destColumn.setProperties(PoiEnumConversion.toFilterOperator(poiColumn.getOperator()), poiColumn.getCriteria1(), poiColumn.getCriteria2(), poiColumn.isOn(), extra);
 		}
 	}
 
+	//ZSS-1226
+	abstract protected SDynamicFilter importDynamicFilter(DynamicFilter dynamicFilter);
 	//ZSS-1224
 	abstract protected SCustomFilters importCustomFilters(CustomFilters customFilters);
 	//ZSS-1191

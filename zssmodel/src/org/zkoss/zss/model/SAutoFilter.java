@@ -67,6 +67,10 @@ public interface SAutoFilter {
 		//ZSS-1224
 		//@since 3.9.0
 		public SCustomFilters getCustomFilters();
+		
+		//ZSS-1226
+		//@since 3.9.0
+		public SDynamicFilter getDynamicFilter();
 	}
 	
 	/**
@@ -75,7 +79,9 @@ public interface SAutoFilter {
 	 * @since 3.5.0
 	 */
 	public enum FilterOp{
-		AND, BOTTOM10, BOTOOM10_PERCENT, OR, TOP10, TOP10_PERCENT, VALUES, CELL_COLOR, FONT_COLOR; //ZSS-1191
+		AND, BOTTOM10, BOTOOM10_PERCENT, OR, TOP10, TOP10_PERCENT, VALUES, 
+		CELL_COLOR, FONT_COLOR, //ZSS-1191
+		ABOVE_AVERAGE, BELOW_AVERAGE; //ZSS-1226
 	}
 	
 
