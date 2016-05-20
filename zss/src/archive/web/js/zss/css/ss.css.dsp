@@ -1146,6 +1146,45 @@
 	padding: 0;
 }
 
+.zsafp-clear {
+    width: 100%;
+    padding: 2px 2px 2px 20px;
+    background-position: left center;
+    font-size: 13px;
+    border-bottom: 1px solid #D8D8D8;
+    position: relative;
+    box-sizing: border-box;
+    cursor: pointer;
+}
+
+.zsafp-clear.zsafp-clear-disabled {
+    color: #C3A7B5;
+    cursor: default;
+}
+
+.zsafp-clear:hover {
+    background: #D6F0FD;
+}
+
+.zsafp-clear.zsafp-clear-disabled:hover {
+    background: transparent;
+}
+
+.zsafp-clear-icon {
+    height: 16px;
+    width: 16px;
+    background: url(${c:encodeURL('~./zss/img/filter-clear-disable.png')}) no-repeat transparent;
+    position: absolute;
+    left: 3px;
+    top: 2px;
+    cursor: default;
+}
+
+.zsafp-clear-seld.zsafp-clear-icon {
+    background: url(${c:encodeURL('~./zss/img/filter-clear.png')}) no-repeat transparent;
+    cursor: pointer;
+}
+
 .zsdv-item {
 	list-style: none;
 	padding: 2px;
@@ -1197,7 +1236,7 @@
 }
 
 .zsafp-popup, .zsafp-popup-cave {
-	height: 235px;
+	height: 254px;
 	white-space: nowrap;
 }
 
@@ -1302,7 +1341,6 @@
 .zsafp-vitem-seld .zsafp-vitem-checkbox {
     background: url(${c:encodeURL('~./zss/img/tick-small.png')}) no-repeat transparent;
 }
-
 
 .zsafp-color {
     width: 100%;
@@ -1486,7 +1524,7 @@
 .zsafp-items {
 	overflow-y: auto;
 	overflow-x: hidden;
-	height: 120px;
+	height: 126px;
 	width: 100%;
 	border-bottom: 1px solid #D8D8D8;
 	position: relative;
