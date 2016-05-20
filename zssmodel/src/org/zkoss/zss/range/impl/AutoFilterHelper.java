@@ -607,6 +607,14 @@ import org.zkoss.zss.range.impl.LessThanOrEqual;
 			return cv.getType() != CellType.NUMBER || !match.match((Double)cv.getValue());
 		}
 		
+		//ZSS-1193
+		STop10Filter top10Filter = fc.getTop10Filter();
+		if (top10Filter != null) {
+			Matchable<Double> match = getMatchByTop10Filter(top10Filter);
+			CellValue cv = ((AbstractCellAdv)cell).getEvalCellValue(true);
+			return cv.getType() != CellType.NUMBER || !match.match((Double)cv.getValue());
+		}
+		
 		final boolean blank = isBlank(cell); 
 		final String val =  blank ? "=" : getFormattedText(cell); //"=" means blank!
 		final Set critera1 = fc.getCriteria1();
