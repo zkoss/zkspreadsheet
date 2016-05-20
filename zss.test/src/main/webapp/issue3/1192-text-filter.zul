@@ -4,7 +4,8 @@ Since 3.9.0
 1. You should see an filter button on A1.
 2. Press the button and you should see "Text Filters" is checked
 3. Hover to "Text Filters" to open the "Text Filters" sub dialog
-4. You should see the "Custom Filter..." is checked. 
+4. You should see the "Custom Filter..." is checked.
+5. Press the Custom Filter..., you should see CustomFilters dialog pop up. 
 </label>
 	<spreadsheet id="ss" src="/issue3/book/1192-text-filter.xlsx" maxVisibleRows="200" maxVisibleColumns="40"
 		hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 

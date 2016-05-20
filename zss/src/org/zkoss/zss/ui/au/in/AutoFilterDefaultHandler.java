@@ -49,6 +49,7 @@ import org.zkoss.zss.model.SColorFilter;
 import org.zkoss.zss.model.SCustomFilter;
 import org.zkoss.zss.model.SCustomFilter.Operator;
 import org.zkoss.zss.model.SCustomFilters;
+import org.zkoss.zss.model.SDynamicFilter;
 import org.zkoss.zss.model.SExtraStyle;
 import org.zkoss.zss.model.SFill.FillPattern;
 import org.zkoss.zss.model.SFont;
@@ -58,13 +59,17 @@ import org.zkoss.zss.model.SAutoFilter.NFilterColumn;
 import org.zkoss.zss.model.SCell.CellType;
 import org.zkoss.zss.model.STable;
 import org.zkoss.zss.model.SFill;
+import org.zkoss.zss.model.STop10Filter;
 import org.zkoss.zss.model.sys.EngineFactory;
 import org.zkoss.zss.model.sys.format.FormatContext;
 import org.zkoss.zss.model.sys.format.FormatEngine;
 import org.zkoss.zss.model.sys.format.FormatResult;
 import org.zkoss.zss.model.impl.AbstractAutoFilterAdv;
+import org.zkoss.zss.model.impl.AbstractAutoFilterAdv.FilterColumnImpl;
 import org.zkoss.zss.model.impl.AbstractSheetAdv;
 import org.zkoss.zss.model.impl.FillImpl;
+import org.zkoss.zss.range.impl.FilterRowInfo;
+import org.zkoss.zss.range.impl.FilterRowInfoComparator;
 import org.zkoss.zss.model.impl.FontImpl;
 import org.zkoss.zss.model.impl.CustomFiltersImpl;
 import org.zkoss.zss.range.SRange;
@@ -103,18 +108,28 @@ import org.zkoss.zss.ui.Spreadsheet;
 		//ZSS-1192
 		final SCustomFilters custFilters = filterColumn == null ? null : filterColumn.getCustomFilters();
 		
+		//ZSS-1193
+		final SDynamicFilter dynaFilter = filterColumn == null ? null : filterColumn.getDynamicFilter();
+		
+		//ZSS-1193
+		final STop10Filter top10Filter = filterColumn == null ? null : filterColumn.getTop10Filter();
+		
 		//ZSS-704: Note that scanRows() could provide new bottom
 		final int bottom = range.getLastRow();
 		Object[] results = scanRows(field, filterColumn, range, worksheet, 
-				table, filterFill, byFontColor, custFilters); //ZSS-988, ZSS-1191, ZSS-1192
+				table, //ZSS-988 
+				filterFill, byFontColor, //ZSS-1191 
+				custFilters, //ZSS-1192
+				dynaFilter, top10Filter); //ZSS-1193
 		@SuppressWarnings("unchecked")
 		SortedSet<FilterRowInfo> orderedRowInfos = (SortedSet<FilterRowInfo>) results[0];
+		
 		if (bottom != ((Integer) results[1]).intValue()) {
 			CellRegion region = new CellRegion(range.getRow(), range.getColumn(), bottom, range.getLastColumn()); 
 			rangeAddr = region.getReferenceString(); 
 		}
 		
-		//ZSS-1191
+		//ZSS-1191: 1: Date; 2: Number; 3: Text
 		int type = ((Integer)results[3]).intValue();
 		
 		Set<SFill> ccitems = (Set<SFill>) results[2];
@@ -123,9 +138,16 @@ import org.zkoss.zss.ui.Spreadsheet;
 		//ZSS-1192
 		final SCustomFilters customFilters = filterColumn == null ? null : filterColumn.getCustomFilters();
 		
+		//ZSS-1193
+		if (filterColumn != null) {
+			((FilterColumnImpl)filterColumn).setCachedSet(orderedRowInfos);
+			((FilterColumnImpl)filterColumn).setFilterType(type);
+		}
+
 		spreadsheet.smartUpdate("autoFilterPopup", 
 			convertFilterInfoToJSON(row, col, field, rangeAddr, orderedRowInfos,
-					type, ccitems, filterFill, fcitems, byFontColor, customFilters)); //ZSS-1191, ZSS-1192
+					type, ccitems, filterFill, fcitems, byFontColor, customFilters,
+					dynaFilter, top10Filter)); //ZSS-1191, ZSS-1192
 		
 		AreaRef filterArea = new AreaRef(rangeAddr);
 		
@@ -135,17 +157,20 @@ import org.zkoss.zss.ui.Spreadsheet;
 	//see Popup.js#zssex.AutoFilterPopup 
 	private Map convertFilterInfoToJSON(int row, int col, int field,
 			String rangeAddr, SortedSet<FilterRowInfo> orderedRowInfos,
-			int type, Set<SFill> ccitems, SFill filterFill, Set<SFill> fcitems, 
-			boolean byFontColor, SCustomFilters custFilters) { //ZSS-1191, ZSS-1192
+			int type, Set<SFill> ccitems, SFill filterFill, Set<SFill> fcitems, //ZSS-1191 
+			boolean byFontColor, SCustomFilters custFilters, //ZSS-1192
+			SDynamicFilter dynaFilter, STop10Filter top10Filter) { //ZSS-1193
 		final Map data = new HashMap();
 		
-		boolean selectAll = filterFill == null && custFilters == null; //ZSS-1191, ZSS-1192
+		boolean selectAll = filterFill == null //ZSS-1191
+				&& custFilters == null  //ZSS-1192
+				&& dynaFilter == null && top10Filter == null; //ZSS-1193
 		boolean select = false;
 		final ArrayList<Map> sortedItems = new ArrayList<Map>();
 		for (FilterRowInfo info : orderedRowInfos) {			
 			if (info == blankRowInfo) {
-				data.put("blank", info.seld);
-				if (info.seld) {
+				data.put("blank", info.isSelected());
+				if (info.isSelected()) {
 					select = true;
 				} else {
 					selectAll = false;
@@ -153,7 +178,7 @@ import org.zkoss.zss.ui.Spreadsheet;
 			} else {
 				HashMap item = new HashMap();
 				sortedItems.add(item);
-				item.put("v", info.display);
+				item.put("v", info.getDisplay());
 				if (info.isSelected()) {
 					item.put("s", "t"); //selected, "t" stand for true
 					select = true;
@@ -246,16 +271,36 @@ import org.zkoss.zss.ui.Spreadsheet;
 		}
 
 		final ArrayList<Map> vitems = new ArrayList<Map>();
-		final Operator targetOp = f1 != null && f2 == null ? f1.getOperator() : 
-			f1 != null && f2 != null ? Operator.custom : null;
-		if (type == 3) { //1: Date; 2: Number, 3: Text
-			opToJson(vitems, Operator.equal, targetOp);
-			opToJson(vitems, Operator.notEqual, targetOp);
-			opToJson(vitems, Operator.beginWith, targetOp);
-			opToJson(vitems, Operator.endWith, targetOp);
-			opToJson(vitems, Operator.contains, targetOp);
-			opToJson(vitems, Operator.notContains, targetOp);
-			opToJson(vitems, Operator.custom, targetOp);
+		Operator targetOp = null;
+		if (custFilters != null) { //ZSS-1192
+			targetOp = f1 != null && f2 == null ? f1.getOperator() : 
+				f1 != null && f2 != null ? Operator.custom : null;
+		} else if (dynaFilter != null) { //ZSS-1193: SDynamicFilter
+			targetOp = dynaFilter.isAbove() ? 
+					Operator.aboveAverage : Operator.belowAverage;
+		} else if (top10Filter != null) { //ZSS-1193: STop10Filter
+			targetOp = Operator.top10; 
+		}
+		if (type == 3) { //ZSS-1192: 1: Date; 2: Number, 3: Text
+			opToJson(vitems, Operator.equal, targetOp, false);
+			opToJson(vitems, Operator.notEqual, targetOp, true);
+			opToJson(vitems, Operator.beginWith, targetOp, false);
+			opToJson(vitems, Operator.endWith, targetOp, true);
+			opToJson(vitems, Operator.contains, targetOp, false);
+			opToJson(vitems, Operator.notContains, targetOp, true);
+			opToJson(vitems, Operator.custom, targetOp, false);
+		} else if (type == 2 || type == 1) { //ZSS-1193
+			opToJson(vitems, Operator.equal, targetOp, false);
+			opToJson(vitems, Operator.notEqual, targetOp, true);
+			opToJson(vitems, Operator.greaterThan, targetOp, false);
+			opToJson(vitems, Operator.greaterThanOrEqual, targetOp, false);
+			opToJson(vitems, Operator.lessThan, targetOp, false);
+			opToJson(vitems, Operator.lessThanOrEqual, targetOp, false);
+			opToJson(vitems, Operator.between, targetOp, true);
+			opToJson(vitems, Operator.top10, targetOp, false);
+			opToJson(vitems, Operator.aboveAverage, targetOp, false);
+			opToJson(vitems, Operator.belowAverage, targetOp, true);
+			opToJson(vitems, Operator.custom, targetOp, false);
 		}
 		data.put("vitems", vitems);
 		data.put("vitem", targetOp == null ? null : targetOp.name());
@@ -270,13 +315,16 @@ import org.zkoss.zss.ui.Spreadsheet;
 	}
 
 	//ZSS-1192
-	private void opToJson(ArrayList<Map> vitems, Operator op, Operator targetOp) {
+	private void opToJson(ArrayList<Map> vitems, Operator op, Operator targetOp, boolean border) {
 		HashMap item = new HashMap();
 		vitems.add(item);
 		item.put("op", op.name());
 		item.put("t", Labels.getLabel("zssex.valuedlg."+op.name()));
 		if (targetOp == op) {
 			item.put("s", true);
+		}
+		if (border) {
+			item.put("b", true);
 		}
 	}
 	
@@ -287,8 +335,12 @@ import org.zkoss.zss.ui.Spreadsheet;
 	// [3]: which kind of filter(Number Filter/ Date Filter/ Text Filter);
 	// [4]: LinkedHashSet<SFill> for FONT_COLOR 
 	private Object[] scanRows(int field, NFilterColumn fc, SRange range, 
-			SSheet worksheet, STable table, SFill filterFill, boolean byFontColor, SCustomFilters custFilters) { //ZSS-988, ZSS-1191, ZSS-1192
-		SortedSet<FilterRowInfo> orderedRowInfos = new TreeSet<FilterRowInfo>(new FilterRowInfoComparator());
+			SSheet worksheet, STable table, //ZSS-988 
+			SFill filterFill, boolean byFontColor, //ZSS-1191 
+			SCustomFilters custFilters,
+			SDynamicFilter dynaFilter, STop10Filter top10Filter) { //ZSS-1192
+		SortedSet<FilterRowInfo> orderedRowInfos = 
+				new TreeSet<FilterRowInfo>(new FilterRowInfoComparator());
 		
 		//ZSS-1191
 		LinkedHashSet<SFill> ccitems = new LinkedHashSet<SFill>(); //ZSS-1191: CELL_COLOR
@@ -305,9 +357,12 @@ import org.zkoss.zss.ui.Spreadsheet;
 		final int columnIndex = range.getColumn() + field - 1;
 		final SFont defaultFont = worksheet.getBook().getDefaultFont(); //ZSS-1191
 		FormatEngine fe = EngineFactory.getInstance().createFormatEngine();
+		boolean isItemFilter = filterFill == null  //ZSS-1191 
+				&& custFilters == null  //ZSS-1192
+				&& dynaFilter == null && top10Filter == null; //ZSS-1193
 		for (int i = top; i <= bottom; i++) {
 			//ZSS-988: filter column with no criteria should not show option of hidden row 
-			if ((criteria1 == null || criteria1.isEmpty()) && filterFill == null && custFilters == null) { //ZSS-1191, ZSS-1192
+			if (isItemFilter && (criteria1 == null || criteria1.isEmpty())) { //ZSS-1191, ZSS-1192, ZSS-1193
 				if (worksheet.getRow(i).isHidden())
 					continue;
 			}
@@ -329,7 +384,7 @@ import org.zkoss.zss.ui.Spreadsheet;
 				String displaytxt = fr.getText();
 				if(!hasBlank && displaytxt.trim().isEmpty()) { //ZSS-707: show as blank; then it is blank
 					hasBlank = true;
-					hasSelectedBlank = prepareBlankRow(criteria1, hasSelectedBlank, filterFill, custFilters); //ZSS-1191, ZSS-1192
+					hasSelectedBlank = prepareBlankRow(criteria1, hasSelectedBlank, isItemFilter); //ZSS-1191, ZSS-1192, ZSS-1193
 				} else {				
 					Object val = c.getValue(); // ZSS-707
 					if(c.getType()==CellType.NUMBER && fr.isDateFormatted()){
@@ -337,13 +392,14 @@ import org.zkoss.zss.ui.Spreadsheet;
 					}
 					
 					//ZSS-1191: Date 1, Number 2, String 3, Boolean 4 is Number; Error 5 and Blank 6 is String.
-					final int type = getType(val);
+					final int type = FilterRowInfo.getType(val);
 					type0 = (type == 4 ? 2 : type >= 5 ? 3 : type) - 1;
 					
 					FilterRowInfo rowInfo = new FilterRowInfo(val, displaytxt);
 					//ZSS-299
 					orderedRowInfos.add(rowInfo);
-					if (filterFill == null && custFilters == null) { //ZSS-1191, ZSS-1192: color filter and custom filter excludes value filter
+					//ZSS-1191, ZSS-1192, ZSS-1193: color/custom/dynamic/top10 filter excludes item filter
+					if (isItemFilter) { 
 						if (criteria1 == null || criteria1.isEmpty() || criteria1.contains(displaytxt)) { //selected
 							rowInfo.setSelected(true);
 						}
@@ -351,7 +407,7 @@ import org.zkoss.zss.ui.Spreadsheet;
 				}
 			} else if (!hasBlank){
 				hasBlank = true;
-				hasSelectedBlank = prepareBlankRow(criteria1, hasSelectedBlank, filterFill, custFilters); //ZSS-1191, ZSS-1192
+				hasSelectedBlank = prepareBlankRow(criteria1, hasSelectedBlank, isItemFilter); //ZSS-1191, ZSS-1192, ZSS-1193
 			}
 			
 			//ZSS-1191: Date 0, Number 1, String 2
@@ -396,7 +452,7 @@ import org.zkoss.zss.ui.Spreadsheet;
 					String displaytxt = fr.getText();
 					if(!hasBlank && displaytxt.trim().isEmpty()) { //ZSS-707: show as blank; then it is blank
 						hasBlank = true;
-						hasSelectedBlank = prepareBlankRow(criteria1, hasSelectedBlank, filterFill, custFilters); //ZSS-1191, ZSS-1192
+						hasSelectedBlank = prepareBlankRow(criteria1, hasSelectedBlank, isItemFilter); //ZSS-1191, ZSS-1192, ZSS-1193
 					} else {
 						Object val = c.getValue(); // ZSS-707
 						if(c.getType()==CellType.NUMBER && fr.isDateFormatted()){
@@ -404,13 +460,14 @@ import org.zkoss.zss.ui.Spreadsheet;
 						}
 						
 						//ZSS-1191: Date 1, Number 2, String 3, Boolean 4 is Number; Error 5 and Blank 6 is String.
-						final int type = getType(val);
+						final int type = FilterRowInfo.getType(val);
 						type0 = (type == 4 ? 2 : type >= 5 ? 3 : type) - 1;
 						
 						FilterRowInfo rowInfo = new FilterRowInfo(val, displaytxt);
 						//ZSS-299
 						orderedRowInfos.add(rowInfo);
-						if (filterFill == null && custFilters == null) { //ZSS-1191, ZSS-1192: color filter and custom filters excludes value filter
+						//ZSS-1191, ZSS-1192: color/custom/dynamic/top10 filter excludes item filter
+						if (filterFill == null && custFilters == null) { 
 							if (criteria1 == null || criteria1.isEmpty() || criteria1.contains(displaytxt)) { //selected
 								rowInfo.setSelected(true);
 							}
@@ -429,7 +486,7 @@ import org.zkoss.zss.ui.Spreadsheet;
 					}
 					if (!hasBlank) {
 						hasBlank = true;
-						hasSelectedBlank = prepareBlankRow(criteria1, hasSelectedBlank, filterFill, custFilters); //ZSS-1191, ZSS-1192
+						hasSelectedBlank = prepareBlankRow(criteria1, hasSelectedBlank, isItemFilter); //ZSS-1191, ZSS-1192, ZSS-1193
 					}
 				}
 				
@@ -454,9 +511,11 @@ import org.zkoss.zss.ui.Spreadsheet;
 	}
 
 	//ZSS-707
-	private boolean prepareBlankRow(Set criteria1, boolean hasSelectedBlank, SFill filterFill, SCustomFilters custFilters) { //ZSS-1191, ZSS-1192
-		boolean noFilterApplied = criteria1 == null || criteria1.isEmpty(); 
-		if (filterFill == null && custFilters == null) { //ZSS-1911, ZSS-1192: color filter and custFilters excludes value filter
+	private boolean prepareBlankRow(Set criteria1, boolean hasSelectedBlank, 
+			boolean isItemFilter) { //ZSS-1191, ZSS-1192, ZSS-1193
+		boolean noFilterApplied = criteria1 == null || criteria1.isEmpty();
+		//ZSS-1911, ZSS-1192, ZSS-1193: color/custom/dynamic/top10 filter excludes item filter
+		if (isItemFilter) { 
 			if (!hasSelectedBlank && (noFilterApplied || criteria1.contains("="))) { //"=" means blank is selected
 				blankRowInfo.setSelected(true);
 				return true;
@@ -517,162 +576,7 @@ import org.zkoss.zss.ui.Spreadsheet;
 			return BLANK_VALUE.equals(o) ? 0 : 1; //unless same otherwise BLANK_VALUE is always the biggest!
 		}
 	};
-	
-	private static class FilterRowInfo {
-		private Object value;
-		private String display;
-		private boolean seld;
-		
-		FilterRowInfo(Object val, String displayVal) {
-			value = val;
-			display = displayVal;
-		}
-		
-		Object getValue() {
-			return value;
-		}
-		
-		String getDisplay() {
-			return display;
-		}
-		
-		void setSelected(boolean selected) {
-			seld = selected;
-		}
-		
-		boolean isSelected() {
-			return seld;
-		}
-
-		public int hashCode() {
-			return value == null ? 0 : value.hashCode();
-		}
-
-		@Override
-		public boolean equals(Object obj) {
-			if (this == obj)
-				return true;
-			if (!(obj instanceof FilterRowInfo))
-				return false;
-			final FilterRowInfo other = (FilterRowInfo) obj;
-			return Objects.equals(other.value, this.value);
-		}
-	}
-	
-	private static class FilterRowInfoComparator implements Comparator<FilterRowInfo> {		
-		@Override
-		public int compare(FilterRowInfo o1, FilterRowInfo o2) {
-			final Object val1 = o1.value;
-			final Object val2 = o2.value;
-			final int type1 = getType(val1);
-			final int type2 = getType(val2);
-			final int typediff = type1 - type2;
-			if (typediff != 0) {
-				return typediff;
-			}
-			switch(type1) {
-			case 1: //Date
-				return compareDates((Date)val1, (Date)val2);
-			case 2: //Number
-				return ((Double)val1).compareTo((Double)val2);
-			case 3: //String
-				return ((String)val1).compareTo((String)val2);
-			case 4: //Boolean
-				final boolean b1 = ((Boolean)val1).booleanValue();
-				final boolean b2 = ((Boolean)val2).booleanValue();
-				return !b1 && b2 ? -1 : b1 && !b2 ? 1 : 0;
-			case 5: //Error(Byte)
-				//ZSS-935
-				final byte by1 = val1 instanceof ErrorValue ? Byte.valueOf(((ErrorValue)val1).getCode()) : ((Byte) val1).byteValue();
-				final byte by2 = val2 instanceof ErrorValue ? Byte.valueOf(((ErrorValue)val2).getCode()) : ((Byte) val2).byteValue();
-				return by1 - by2;
-			default:
-			case 6: //(Blanks)
-				return 0;
-			}
-		}
-		private int compareDates(Date val1, Date val2) {
-			final Calendar cal1 = Calendar.getInstance();
-			final Calendar cal2 = Calendar.getInstance();
-			cal1.setTime((Date)val1);
-			cal2.setTime((Date)val2);
-			
-			//year
-			final int y1 = cal1.get(Calendar.YEAR);
-			final int y2 = cal2.get(Calendar.YEAR);
-			final int ydiff = y2 - y1; //bigger year is less in sorting
-			if (ydiff != 0) {
-				return ydiff;
-			}
-			
-			//month
-			final int m1 = cal1.get(Calendar.MONTH);
-			final int m2 = cal2.get(Calendar.MONTH);
-			final int mdiff = m1 - m2; 
-			if (mdiff != 0) {
-				return mdiff;
-			}
-			
-			//day
-			final int d1 = cal1.get(Calendar.DAY_OF_MONTH);
-			final int d2 = cal2.get(Calendar.DAY_OF_MONTH);
-			final int ddiff = d1 - d2; //smaller month is bigger in sorting 
-			if (ddiff != 0) {
-				return ddiff;
-			}
-			
-			//hour
-			final int h1 = cal1.get(Calendar.HOUR_OF_DAY);
-			final int h2 = cal2.get(Calendar.HOUR_OF_DAY);
-			final int hdiff = h1 - h2;
-			if (hdiff != 0) {
-				return hdiff;
-			}
-			
-			//minutes
-			final int mm1 = cal1.get(Calendar.MINUTE);
-			final int mm2 = cal2.get(Calendar.MINUTE);
-			final int mmdiff = mm1 - mm2;
-			if (mmdiff != 0) {
-				return mmdiff;
-			}
-			
-			//seconds
-			final int s1 = cal1.get(Calendar.SECOND);
-			final int s2 = cal2.get(Calendar.SECOND);
-			final int sdiff = s1 - s2;
-			if (sdiff != 0) {
-				return sdiff;
-			}
-			
-			//millseconds
-			final int ms1 = cal1.get(Calendar.MILLISECOND);
-			final int ms2 = cal2.get(Calendar.MILLISECOND);
-			return ms1 - ms2;
-		}
-	}
-	
-	//ZSS-1191
-	//Date < Number < String < Boolean(FALSE < TRUE) < Error(byte) < (Blanks)
-	private static int getType(Object val) {
-		if (val instanceof Date) {
-			return 1;
-		}
-		if (val instanceof ErrorValue || val instanceof Byte) { //error, ZSS-707
-			return 5;
-		}
-		if (val instanceof Number) {
-			return 2;
-		}
-		if (val instanceof String) {
-			return Strings.isEmpty((String)val) ? 6 : 3;
-		}
-		if (val instanceof Boolean) {
-			return 4;
-		}
-		return 6;
-	}
- 
+	 
 	/*package*/ void applyFilter(Spreadsheet spreadsheet, Sheet selectedSheet,
 			String cellRangeAddr, boolean selectAll, int field, Object criteria, FilterOp op) { //ZSS-1191
 		final SRange range = SRanges.range(((SheetImpl)selectedSheet).getNative(), cellRangeAddr);
@@ -681,6 +585,8 @@ import org.zkoss.zss.ui.Spreadsheet;
 			|| FilterOp.AND == op || FilterOp.OR == op) { //ZSS-1192: criteria: [SCustomFilter.Operator1, val1, SCustomFilter.Operator2, val2] 
 			JSONArray ary = (JSONArray) criteria;
 			range.enableAutoFilter(field, op, ary.toArray(new String[ary.size()]), null, true);
+		} else if (FilterOp.ABOVE_AVERAGE == op || FilterOp.BELOW_AVERAGE == op) { //ZSS-1193
+			range.enableAutoFilter(field, op, null, null, true);
 		} else {
 			if (selectAll) {
 				range.enableAutoFilter(field, FilterOp.VALUES, null, null, true);

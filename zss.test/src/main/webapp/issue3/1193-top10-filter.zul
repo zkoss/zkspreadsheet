@@ -1,0 +1,33 @@
+<vbox hflex="1" vflex="1">
+	<label multiline="true">
+Since 3.9.0
+1. You should see an filter button on A1.
+2. Press the button and you should see "Number Filter" is checked
+3. Hover to "Number Filter" to open the "Number Filter" sub dialog
+4. You should see the "Top 10..." is checked.
+5. Press the Top 10...; should see the Top 10 dialog pop up showing Bottom / 20 / Percent
+6. Press "Cancel" button to close the dialog
+7. Now repeat 2 ~ 4 and then press "Custom Filters..."
+8. You should see the "Custom AutoFilter" dialog pop showing "is less than or equal to / 2.0"
+9. Press "Cancel" button to close the dialog
+</label>
+<button id="export" label="Export to Excel" onClick="doExport()"/>
+<zscript><![CDATA[
+     import java.io.*;
+     import org.zkoss.zss.api.Exporters;
+     import org.zkoss.zul.*;
+     void doExport() throws IOException {
+         ByteArrayOutputStream os = new ByteArrayOutputStream();
+         try {
+              Exporters.getExporter("excel").export(ss.getBook(), os);
+         } catch (Exception ex) {
+              os.close();
+         }
+         Filedownload.save(os.toByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "1193-export-top10-filter.xlsx"); 
+     }
+]]>
+</zscript> 
+	<spreadsheet id="ss" src="/issue3/book/1193-top10-filter.xlsx" maxVisibleRows="200" maxVisibleColumns="40"
+		hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
+		showFormulabar="true" />	
+</vbox>

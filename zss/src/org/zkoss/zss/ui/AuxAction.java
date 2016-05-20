@@ -132,6 +132,7 @@ public enum AuxAction {
 	 ADD_ROW("addRow"), //ZSS-1082
 	 ADD_COLUMN("addColumn"), //ZSS-1082
 	 CUSTOM_FILTERS("customFilters"), //ZSS-1192
+	 TOP10_FILTER("top10Filter"), //ZSS-1193
 	 
 	 /* following are fold item only, doesn't send auxevent to server*/
 	 VERTICAL_ALIGN("verticalAlign"),

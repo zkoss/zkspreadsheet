@@ -10,12 +10,12 @@
 	Copyright (C) 2016 Potix Corporation. All Rights Reserved.
 */
 
-package org.zkoss.zss.range.impl.autofill;
+package org.zkoss.zss.range.impl;
 
 /**
  * @author henri
  * @since 3.9.0
  */
-public interface Matchable<T extends Comparable<T>> {
+public interface Matchable<T> {
 	boolean match(T value);
 }

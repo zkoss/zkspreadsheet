@@ -23,6 +23,7 @@ import org.zkoss.zss.model.STop10Filter;
  */
 public class Top10FilterImpl implements STop10Filter, Serializable {
 	private static final long serialVersionUID = 1417793891432418239L;
+	public static final Top10FilterImpl NOOP_TOP10FILTER = new Top10FilterImpl(true, 0, true, 0); //ZSS-1193
 	
 	private boolean isTop;
 	private boolean isPercent;

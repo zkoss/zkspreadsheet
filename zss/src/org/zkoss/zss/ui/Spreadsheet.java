@@ -103,6 +103,7 @@ import org.zkoss.zss.model.SCellStyle.VerticalAlignment;
 import org.zkoss.zss.model.SColorFilter;
 import org.zkoss.zss.model.SCustomFilter;
 import org.zkoss.zss.model.SCustomFilters;
+import org.zkoss.zss.model.SDynamicFilter;
 import org.zkoss.zss.model.SFill;
 import org.zkoss.zss.model.SFont.Boldweight;
 import org.zkoss.zss.model.SFont.Underline;
@@ -115,6 +116,7 @@ import org.zkoss.zss.model.SPicture;
 import org.zkoss.zss.model.SRichText;
 import org.zkoss.zss.model.SRow;
 import org.zkoss.zss.model.SSheet;
+import org.zkoss.zss.model.STop10Filter;
 import org.zkoss.zss.model.ViewAnchor;
 import org.zkoss.zss.model.SSheet.SheetVisible;
 import org.zkoss.zss.model.STable;
@@ -1581,6 +1583,16 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 					SCustomFilter f1 = null;
 					SCustomFilter f2 = null;
 					
+					//ZSS-1193
+					boolean isAbove = false;
+					Double avgVal = null;
+					
+					//ZSS-1193
+					boolean isTop = false;
+					boolean isPercent = false;
+					Double filterVal = null;
+					int countVal = 0;
+					
 					if (on) { // ZSS-705: only when previous showButton is on
 						filters = fc.getFilters();
 						on = fc.isShowButton();
@@ -1602,6 +1614,22 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 							isAnd = cusFilters.isAnd();
 							f1 = cusFilters.getCustomFilter1();
 							f2 = cusFilters.getCustomFilter2();
+						}
+						
+						//ZSS-1193
+						SDynamicFilter dynaFilter = fc.getDynamicFilter();
+						if (dynaFilter != null) {
+							isAbove = dynaFilter.isAbove();
+							avgVal = dynaFilter.getValue();
+						}
+						
+						//ZSS-1193
+						STop10Filter top10Filter = fc.getTop10Filter();
+						if (top10Filter != null) {
+							isTop = top10Filter.isTop();
+							isPercent = top10Filter.isPercent();
+							filterVal = top10Filter.getFilterValue();
+							countVal = (int) top10Filter.getValue();
 						}
 					} // ZSS-705: if previous showButton is off; use previous field and filters(in merged cell case)
 					
@@ -1638,6 +1666,20 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 							f2map.put("val", f2.getValue());
 							f2map.put("op", f2.getOperator().name());
 						}
+					}
+					
+					//ZSS-1193: DynamicFilter (aboveAverage/belowAverage)
+					if (avgVal != null) {
+						fcmap.put("avgVal", avgVal);
+						fcmap.put("isAbove", isAbove);
+					}
+					
+					//ZSS-1193: Top10Filter
+					if (filterVal != null) {
+						fcmap.put("filterVal", filterVal);
+						fcmap.put("isTop", isTop);
+						fcmap.put("isPercent", isPercent);
+						fcmap.put("countVal", countVal);
 					}
 					
 					fcsary.add(fcmap);

@@ -526,8 +526,8 @@ public class EnumUtil {
 			return FilterOp.TOP10_PERCENT;
 		case BOTTOM10:
 			return FilterOp.BOTTOM10;
-		case BOTOOM10PERCENT:
-			return FilterOp.BOTOOM10_PERCENT;
+		case BOTTOM10PERCENT:
+			return FilterOp.BOTTOM10_PERCENT;
 		case VALUES:
 			return FilterOp.VALUES;
 		}

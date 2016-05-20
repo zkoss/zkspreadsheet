@@ -729,4 +729,20 @@ public class CellImpl extends AbstractCellAdv {
 		}
 		return expr.getFormulaString();
 	}
+	
+	//ZSS-1193
+	//Returns the evaluated CellValue (value, type). If evaluatedVal is true;
+	// and the cell is a formula, it will
+	// evaluate the formula and return the evaluated value and type
+	// @since 3.9.0
+	@Override
+	public CellValue getEvalCellValue(boolean evaluatedVal) {
+		CellValue val = getCellValue();
+		if (evaluatedVal && val!=null && val.getType() == CellType.FORMULA) {
+			evalFormula();
+			return this._formulaResultValue;
+		}
+		return val==null ? null : val;
+	}
+
 }

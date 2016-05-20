@@ -19,6 +19,7 @@ package org.zkoss.zss.range.impl;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -27,45 +28,48 @@ import java.util.Map;
 import java.util.Set;
 
 import org.zkoss.lang.Integers;
-import org.zkoss.poi.ss.usermodel.Color;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zss.model.CellRegion;
 import org.zkoss.zss.model.InvalidModelOpException;
 import org.zkoss.zss.model.SAutoFilter;
 import org.zkoss.zss.model.SBook;
-import org.zkoss.zss.model.SBorder;
 import org.zkoss.zss.model.SCell;
+import org.zkoss.zss.model.SCell.CellType;
 import org.zkoss.zss.model.SCellStyle;
-import org.zkoss.zss.model.SColor;
 import org.zkoss.zss.model.SColorFilter;
 import org.zkoss.zss.model.SCustomFilter;
 import org.zkoss.zss.model.SCustomFilters;
+import org.zkoss.zss.model.SDynamicFilter;
 import org.zkoss.zss.model.SExtraStyle;
 import org.zkoss.zss.model.SFill;
-import org.zkoss.zss.model.SFont;
 import org.zkoss.zss.model.SRow;
 import org.zkoss.zss.model.STable;
 import org.zkoss.zss.model.SAutoFilter.FilterOp;
 import org.zkoss.zss.model.SAutoFilter.NFilterColumn;
 import org.zkoss.zss.model.SFill.FillPattern;
-import org.zkoss.zss.model.impl.AbstractBorderAdv;
-import org.zkoss.zss.model.impl.AbstractFillAdv;
-import org.zkoss.zss.model.impl.AbstractFontAdv;
+import org.zkoss.zss.model.STop10Filter;
 import org.zkoss.zss.model.impl.AbstractSheetAdv;
+import org.zkoss.zss.model.impl.AbstractCellAdv;
 import org.zkoss.zss.model.impl.CellStyleImpl;
+import org.zkoss.zss.model.impl.CellValue;
 import org.zkoss.zss.model.impl.ColorFilterImpl;
 import org.zkoss.zss.model.impl.CustomFilterImpl;
 import org.zkoss.zss.model.impl.CustomFiltersImpl;
 import org.zkoss.zss.model.impl.ExtraFillImpl;
 import org.zkoss.zss.model.impl.ExtraStyleImpl;
+import org.zkoss.zss.model.impl.DynamicFilterImpl;
 import org.zkoss.zss.model.impl.AbstractAutoFilterAdv.FilterColumnImpl;
+import org.zkoss.zss.model.impl.Top10FilterImpl;
 import org.zkoss.zss.model.util.CellStyleMatcher;
 import org.zkoss.zss.range.SRange;
 import org.zkoss.zss.range.SRanges;
 import org.zkoss.zss.range.impl.DataRegionHelper.FilterRegionHelper;
-import org.zkoss.zss.range.impl.autofill.StringCellMatch;
-import org.zkoss.zss.range.impl.imexp.BookHelper;
-import org.zkoss.zss.range.impl.imexp.PoiEnumConversion;
+import org.zkoss.zss.range.impl.CellMatch;
+import org.zkoss.zss.range.impl.Matchable;
+import org.zkoss.zss.range.impl.GreaterThan;
+import org.zkoss.zss.range.impl.GreaterThanOrEqual;
+import org.zkoss.zss.range.impl.LessThan;
+import org.zkoss.zss.range.impl.LessThanOrEqual;
 
 /**
  * 
@@ -74,6 +78,7 @@ import org.zkoss.zss.range.impl.imexp.PoiEnumConversion;
  */
 //these code if from XRangeImpl,XBookHelper and migrate to new model
 /*package*/ class AutoFilterHelper extends RangeHelperBase{
+	private static final long serialVersionUID = 764704415825488241L;
 	private static final SCellStyle BLANK_STYLE = CellStyleImpl.BLANK_STYLE;
 	private static Date MIN_DATE;
 	static {
@@ -157,6 +162,144 @@ import org.zkoss.zss.range.impl.imexp.PoiEnumConversion;
 		enableAutoFilter0(table, filter, field, filterOp, criteria1, criteria2, showButton);
 		return filter;
 	}
+	
+	//ZSS-1193
+	private Matchable<Double> getMatchByTop10Filter(STop10Filter top10Filter) {
+		final boolean isTop = top10Filter.isTop();
+		final Double filterVal = top10Filter.getFilterValue();
+		return isTop ? 
+				new GreaterThanOrEqual<Double>(filterVal) : 
+				new LessThanOrEqual<Double>(filterVal);
+	}
+	
+	//ZSS-1193
+	private Matchable<Double> getMatchByDynamicFilter(SDynamicFilter dynaFilter) {
+		final boolean isAbove = dynaFilter.isAbove();
+		final Double avg = dynaFilter.getValue();
+		return isAbove ? 
+				new GreaterThan<Double>(avg) : 
+				new LessThan<Double>(avg);
+	}
+	
+	//ZSS-1193
+	private Double _pickTop10(int col, int row, int row2, int value, boolean isTop, boolean isPercent) {
+		if (value <= 0) return null;
+		
+		int count = 0;
+		boolean error = false;
+		List<Double> list = new ArrayList<Double>();
+		for (int r = row; r <= row2; ++r) {
+			final SCell cell = sheet.getCell(r, col);
+			final CellValue cellval = ((AbstractCellAdv)cell).getEvalCellValue(true);
+			if (cellval.getType() == CellType.ERROR) {
+				error = true;
+				break;
+			}
+			if (cellval.getType() == CellType.NUMBER) {
+				list.add(((Number)cellval.getValue()).doubleValue());
+				++count;
+			}
+		}
+		
+		if (error) return null; // no filtering
+		
+		Collections.sort(list);
+		if (isPercent) {
+			count = Math.min((int) (count * value / 100), count);
+		} else {
+			count = Math.min(count, value);
+		}
+		
+		return isTop ? list.get(list.size()-count) : list.get(count-1);
+	}
+	
+
+	//ZSS-1193
+	private Double _calcAverage(int col, int row, int row2) {
+		double total = 0;
+		int count = 0;
+		boolean error = false;
+		for (int r = row; r <= row2; ++r) {
+			final SCell cell = sheet.getCell(r, col);
+			final CellValue cellval = ((AbstractCellAdv)cell).getEvalCellValue(true);
+			if (cellval.getType() == CellType.ERROR) {
+				error = true;
+				break;
+			}
+			if (cellval.getType() == CellType.NUMBER) {
+				total += ((Number)cellval.getValue()).doubleValue();
+				++count;
+			}
+		}
+		
+		if (error) return null; // no filtering
+		return Double.valueOf(total / count);
+	}
+	
+	//ZSS-1193: Top10/Top10Percent/Bottom10/Bottom10Percent
+	private LinkedHashMap<Integer, Boolean> _filterByTop10Filter(SAutoFilter filter, NFilterColumn fc, int field) {
+		final STop10Filter top10Filter = fc.getTop10Filter();
+		final Matchable<Double> match = getMatchByTop10Filter(top10Filter);
+		return _filterByNumber(filter, fc, field, match);
+	}
+	
+	//ZSS-1193: AboveAverage/BelowAverage
+	private LinkedHashMap<Integer, Boolean> _filterByDynamicFilter(SAutoFilter filter, NFilterColumn fc, int field) {
+		final SDynamicFilter dynaFilter = fc.getDynamicFilter();
+		final Matchable<Double> match = getMatchByDynamicFilter(dynaFilter);
+		return _filterByNumber(filter, fc, field, match);
+	}
+		
+	private LinkedHashMap<Integer, Boolean> _filterByNumber(SAutoFilter filter, NFilterColumn fc, int field, Matchable<Double> match) {
+		final CellRegion affectedArea = filter.getRegion();
+		final int row1 = affectedArea.getRow();
+		final int col1 = affectedArea.getColumn(); 
+		final int col =  col1 + field - 1;
+		final int row = row1 + 1;
+		final int row2 = affectedArea.getLastRow();
+		
+		LinkedHashMap<Integer, Boolean> affectedRows = new LinkedHashMap<Integer, Boolean>();
+		for (int r = row; r <= row2; ++r) {
+			final SCell cell = sheet.getCell(r, col);
+			final CellValue cellval = ((AbstractCellAdv)cell).getEvalCellValue(true);
+			if (cellval.getType() == CellType.NUMBER
+				&& match.match((Double)cellval.getValue())) {
+				 //candidate to be shown (other fildColumn might still hide this row!
+				final SRow rowobj = sheet.getRow(r);
+				if (rowobj.isHidden() && canUnhide(filter, fc, r, col1)) { //a hidden row and no other hidden filtering
+					affectedRows.put(r, false);
+				}
+			} else { //to be hidden
+				final SRow rowobj = sheet.getRow(r);
+				if (!rowobj.isHidden()) { //a non-hidden row
+					affectedRows.put(r, true);
+				}
+			}
+		}
+		return affectedRows;
+	}
+
+	//ZSS-1193
+	private STop10Filter _prepareTop10Filter(Integer[] criteria, CellRegion region, int field, FilterOp op) {
+		final int row = region.getRow();
+		final int row2 = region.getLastRow();
+		final int col = region.getColumn() + field - 1;
+		final boolean isTop = op == FilterOp.TOP10 || op == FilterOp.TOP10_PERCENT;
+		final boolean isPercent = op == FilterOp.BOTTOM10_PERCENT || op == FilterOp.TOP10_PERCENT;
+		final int value = criteria[0].intValue();
+		final Double filterVal = _pickTop10(col, row, row2, value, isTop, isPercent);
+		return filterVal == null ? null : new Top10FilterImpl(isTop, value, isPercent, filterVal);
+	}
+	
+	//ZSS-1193
+	private SDynamicFilter _prepareDynamicFilter(CellRegion region, int field, boolean isAbove) {
+		final int row = region.getRow();
+		final int row2 = region.getLastRow();
+		final int col = region.getColumn() + field - 1;
+		final Double avg = _calcAverage(col, row, row2);
+		return avg == null ? null : new DynamicFilterImpl(null, avg, isAbove);
+	}
+	
 	//ZSS-1192
 	// criteria: [SCustomFitler.Operator1, val1, SCustomFilter.Operator2, val2]
 	private SCustomFilters _prepareCustomFilters(String[] criteria1, String[] criteria2, boolean isAnd) {
@@ -193,6 +336,16 @@ import org.zkoss.zss.range.impl.imexp.PoiEnumConversion;
 	}
 
 	//ZSS-1192
+	private Matchable<SCell> getMatchByCustomFilters(SCustomFilters filters, int filterType) {
+		final SCustomFilter f1 = filters.getCustomFilter1();
+		final SCustomFilter f2 = filters.getCustomFilter2();
+		final boolean isAnd = filters.isAnd();
+		
+		return new CellMatch(f1, f2, isAnd);
+				
+	}
+	
+	//ZSS-1192
 	private LinkedHashMap<Integer, Boolean> _filterByCustomFilters(SAutoFilter filter, NFilterColumn fc, int field) {
 		final CellRegion affectedArea = filter.getRegion();
 		final int row1 = affectedArea.getRow();
@@ -202,11 +355,9 @@ import org.zkoss.zss.range.impl.imexp.PoiEnumConversion;
 		final int row2 = affectedArea.getLastRow();
 
 		final SCustomFilters filters = fc.getCustomFilters();
-		final SCustomFilter f1 = filters.getCustomFilter1();
-		final SCustomFilter f2 = filters.getCustomFilter2();
-		final boolean isAnd = filters.isAnd();
+		final int filterType = ((FilterColumnImpl)fc).getFilterType();
 		
-		final StringCellMatch match = new StringCellMatch(f1, f2, isAnd);
+		final Matchable<SCell> match = getMatchByCustomFilters(filters, filterType);
 		
 		LinkedHashMap<Integer, Boolean> affectedRows = new LinkedHashMap<Integer, Boolean>(); 
 		for (int r = row; r <= row2; ++r) {
@@ -319,67 +470,88 @@ import org.zkoss.zss.range.impl.imexp.PoiEnumConversion;
 		
 		//ZSS-1191
 		Map<String, Object> extra = new HashMap<String, Object>();
-		if (filterOp == FilterOp.CELL_COLOR || filterOp == FilterOp.FONT_COLOR) {
+		
+		SDynamicFilter dynaFilter = null; //ZSS-1193
+		STop10Filter top10Filter = null; //ZSS-1193
+		switch(filterOp) {
+		//ZSS-1191
+		case CELL_COLOR:
+		case FONT_COLOR:
 			extra.put("colorFilter", _prepareColorFilter((String[])criteria1, filterOp == FilterOp.FONT_COLOR));
 			criteria1 = null;
-		}
+			break;
 		
 		//ZSS-1192
-		if (filterOp == FilterOp.AND || filterOp == FilterOp.OR) {
+		case AND:
+		case OR:
 			extra.put("customFilters", _prepareCustomFilters((String[])criteria1, (String[])criteria2, filterOp == FilterOp.AND));
 			criteria1 = null;
+			break;
+		
+		//ZSS-1193: SDynamicFilter
+		case ABOVE_AVERAGE:
+		case BELOW_AVERAGE:
+			//if #Error in row; the dynamic filter will be ignored
+			dynaFilter = 
+				_prepareDynamicFilter(filter.getRegion(), field, filterOp == FilterOp.ABOVE_AVERAGE); 
+			extra.put("dynamicFilter", dynaFilter == null ? DynamicFilterImpl.NOOP_DYNAFILTER : dynaFilter);
+			criteria1 = null;
+			break;
+
+		//ZSS-1193: STop10Filter
+		case TOP10:
+		case TOP10_PERCENT:
+		case BOTTOM10:
+		case BOTTOM10_PERCENT:
+			//if #Error in row; the top10 filter will be ignored
+			top10Filter = 
+				_prepareTop10Filter((Integer[])criteria1, filter.getRegion(), field, filterOp);
+			extra.put("top10Filter", top10Filter == null ? Top10FilterImpl.NOOP_TOP10FILTER : top10Filter);
+			criteria1 = null;
+			break;
 		}
 		
 		fc.setProperties(filterOp, criteria1, criteria2, showButton, extra);
 
 		//update rows
-		LinkedHashMap<Integer, Boolean> affectedRows = 
-				filterOp == FilterOp.CELL_COLOR || filterOp == FilterOp.FONT_COLOR ? //ZSS-1191
-				_filterByColor(filter, fc, field) :
-				filterOp == FilterOp.OR || filterOp == FilterOp.AND ? //ZSS-1192 
-				_filterByCustomFilters(filter, fc, field) :
-				_filterByValues(filter, fc, field);
-				
-//		final CellRegion affectedArea = filter.getRegion();
-//		final int row1 = affectedArea.getRow();
-//		final int col1 = affectedArea.getColumn(); 
-//		final int col =  col1 + field - 1;
-//		final int row = row1 + 1;
-//		final int row2 = affectedArea.getLastRow();
-//
-//		final Set cr1 = fc.getCriteria1();
-//		//ZSS-1083(refix ZSS-838): Collect affected rows first
-//		LinkedHashMap<Integer, Boolean> affectedRows = new LinkedHashMap<Integer, Boolean>(); 
-////		final Set<Ref> all = new HashSet<Ref>();
-//		for (int r = row; r <= row2; ++r) {
-//			final SCell cell = sheet.getCell(r, col); 
-//			final String val = isBlank(cell) ? "=" : getFormattedText(cell); //"=" means blank!
-//			if (cr1 != null && !cr1.isEmpty() && !cr1.contains(val)) { //to be hidden
-//				final SRow rowobj = sheet.getRow(r);
-//				if (!rowobj.isHidden()) { //a non-hidden row
-//					//ZSS-1083(refix ZSS-838): Collect affected rows first 
-////					SRanges.range(sheet,r,0).getRows().setHidden(true);
-//					affectedRows.put(r, true);
-//				}
-//			} else { //candidate to be shown (other FieldColumn might still hide this row!
-//				final SRow rowobj = sheet.getRow(r);
-//				if (rowobj.isHidden() && canUnhide(filter, fc, r, col1)) { //a hidden row and no other hidden filtering
-//					// ZSS-646: we don't care about the columns at all; use 0.
-////					final int left = sheet.getStartCellIndex(r);
-////					final int right = sheet.getEndCellIndex(r);
-//					//ZSS-1083(refix ZSS-838): Collect affected rows first
-////					final SRange rng = SRanges.range(sheet,r,0,r,0);  
-////					all.addAll(rng.getRefs());
-////					rng.getRows().setHidden(false); //unhide row
-//					affectedRows.put(r, false);
-//					
-////					rng.notifyChange(); //why? text overflow? ->  //BookHelper.notifyCellChanges(_sheet.getBook(), all); //unhidden row must reevaluate
-//				}
-//			}
-//		}
-		
+		LinkedHashMap<Integer, Boolean> affectedRows = null;
+		switch(filterOp) {
+		//ZSS-1191
+		case CELL_COLOR: 
+		case FONT_COLOR:
+			affectedRows = _filterByColor(filter, fc, field);
+			break;
+			
+		//ZSS-1192
+		case OR:
+		case AND:
+			affectedRows = _filterByCustomFilters(filter, fc, field);
+			break;
+			
+		//ZSS-1193
+		case ABOVE_AVERAGE:
+		case BELOW_AVERAGE:
+			if (dynaFilter != null) {
+				affectedRows = _filterByDynamicFilter(filter, fc, field);
+			}
+			break;
+			
+		//ZSS-1193
+		case TOP10:
+		case TOP10_PERCENT:
+		case BOTTOM10:
+		case BOTTOM10_PERCENT:
+			if (top10Filter != null) {
+				affectedRows = _filterByTop10Filter(filter, fc, field);
+			}
+			break;
+			
+		default:
+			affectedRows = _filterByValues(filter, fc, field);
+		}
+						
 		//ZSS-1083(refix ZSS-838): Handle affected rows
-		if (!affectedRows.isEmpty()) {
+		if (affectedRows != null && !affectedRows.isEmpty()) {
 			final String key = (table == null ? sheet.getId() : table.getName())+"_ZSS_AFFECTED_ROWS"; 
 			Executions.getCurrent().setAttribute("CONTAINS_"+key, true);
 			int sz = affectedRows.size();
@@ -419,6 +591,21 @@ import org.zkoss.zss.range.impl.imexp.PoiEnumConversion;
 			return !_match(style, colorFilter.getExtraStyle().getFill(), colorFilter.isByFontColor());
 		}
 		
+		//ZSS-1192
+		SCustomFilters custFilters = fc.getCustomFilters();
+		final int filterType = ((FilterColumnImpl)fc).getFilterType();
+		if (custFilters != null) {
+			Matchable<SCell> match = getMatchByCustomFilters(custFilters, filterType);
+			return !match.match(cell.isNull() ? null : cell);
+		}
+		
+		//ZSS-1193
+		SDynamicFilter dynaFilter = fc.getDynamicFilter();
+		if (dynaFilter != null) {
+			Matchable<Double> match = getMatchByDynamicFilter(dynaFilter);
+			CellValue cv = ((AbstractCellAdv)cell).getEvalCellValue(true);
+			return cv.getType() != CellType.NUMBER || !match.match((Double)cv.getValue());
+		}
 		
 		final boolean blank = isBlank(cell); 
 		final String val =  blank ? "=" : getFormattedText(cell); //"=" means blank!

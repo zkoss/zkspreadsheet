@@ -17,19 +17,25 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.model.impl;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.Map;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
+import org.apache.commons.logging.impl.NoOpLog;
 import org.zkoss.zss.model.SAutoFilter;
 import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.SColorFilter;
 import org.zkoss.zss.model.SCustomFilters;
 import org.zkoss.zss.model.SDynamicFilter;
 import org.zkoss.zss.model.STop10Filter;
+import org.zkoss.zss.range.impl.FilterRowInfo;
+import org.zkoss.zss.range.impl.FilterRowInfoComparator;
 /**
  * 
  * @author Dennis
@@ -56,6 +62,10 @@ public abstract class AbstractAutoFilterAdv implements SAutoFilter,Serializable{
 		private int type; //ZSS-1192: //Date 0, Number 1, String 2
 		private SDynamicFilter _dynamicFilter; //ZSS-1226
 		private STop10Filter _top10Filter; //ZSS-1127
+		
+		//ZSS-1193
+		private List<FilterRowInfo> orderedRowInfos;
+		private int filterType;
 		
 		public FilterColumnImpl(int index){
 			this._index = index;
@@ -128,7 +138,10 @@ public abstract class AbstractAutoFilterAdv implements SAutoFilter,Serializable{
 			_customFilters = (SCustomFilters) extra.get("customFilters");
 			
 			//ZSS-1226
-			_dynamicFilter = (SDynamicFilter) extra.get("dynamicFilter");
+			SDynamicFilter dynaFilter = (SDynamicFilter) extra.get("dynamicFilter");
+			if (!DynamicFilterImpl.NOOP_DYNAFILTER.equals(dynaFilter)) { //ZSS-1193
+				_dynamicFilter = dynaFilter;
+			}
 			
 			//ZSS-1227
 			_top10Filter = (STop10Filter) extra.get("top10Filter");
@@ -245,5 +258,41 @@ public abstract class AbstractAutoFilterAdv implements SAutoFilter,Serializable{
 		public STop10Filter getTop10Filter() {
 			return _top10Filter;
 		}
+		
+		//ZSS-1193
+		//@since 3.9.0
+		//@Internal
+		//@See AutoFilterDefaultHandler
+		public void setCachedSet(SortedSet<FilterRowInfo> orderedRowInfos) {
+			this.orderedRowInfos = orderedRowInfos == null ? null: 
+					new ArrayList<FilterRowInfo>(orderedRowInfos);
+		}
+		
+		//ZSS-1193
+		//@since 3.9.0
+		//@Internal
+		//@See CustomFiltersCtrl
+		public List<FilterRowInfo> getCachedSet() {
+			return this.orderedRowInfos;
+		}
+		
+		//ZSS-1193
+		//@since 3.9.0
+		//@Internal
+		//@See AutoFitlerDefaultHandler
+		//1: Date; 2: Number; 3: Text
+		public void setFilterType(int type) {
+			this.filterType = type;
+		}
+		
+		//ZSS-1193
+		//@since 3.9.0
+		//@Internal
+		//@See CustomFiltersCtrl
+		//1: Date; 2: Number; 3: Text
+		public int getFilterType() {
+			return this.filterType;
+		}
+		
 	}
 }

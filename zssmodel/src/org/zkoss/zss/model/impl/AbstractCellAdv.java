@@ -289,4 +289,10 @@ public abstract class AbstractCellAdv implements SCell,LinkedModelObject,Seriali
 	//@since 3.9.0
 	/*package*/ abstract AbstractCellAdv cloneCell(AbstractRowAdv row, SSheet sheet);
 
+	//ZSS-1193
+	//Returns the evaluated cell value (value, type). If evaluatedVal is true;
+	// and the cell is a formula, it will
+	// evaluate the formula and return the evaluated value and type
+	// @since 3.9.0
+	public abstract CellValue getEvalCellValue(boolean evaluatedVal);
 }

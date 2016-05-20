@@ -137,7 +137,7 @@ public interface Range {
 	public enum AutoFilterOperation{
 		AND,
 		BOTTOM10,
-		BOTOOM10PERCENT,
+		BOTTOM10PERCENT,
 		OR,
 		TOP10,
 		TOP10PERCENT,

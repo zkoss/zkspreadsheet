@@ -82,7 +82,7 @@ public class PoiEnumConversion {
 				return AutoFilter.FILTEROP_AND;
 			case BOTTOM10:
 				return AutoFilter.FILTEROP_BOTTOM10;
-			case BOTOOM10_PERCENT:
+			case BOTTOM10_PERCENT:
 				return AutoFilter.FILTEROP_BOTOOM10PERCENT;
 			case OR:
 				return AutoFilter.FILTEROP_OR;
@@ -107,7 +107,7 @@ public class PoiEnumConversion {
 		case AutoFilter.FILTEROP_BOTTOM10:
 			return FilterOp.BOTTOM10;
 		case AutoFilter.FILTEROP_BOTOOM10PERCENT:
-			return FilterOp.BOTOOM10_PERCENT;
+			return FilterOp.BOTTOM10_PERCENT;
 		case AutoFilter.FILTEROP_OR:
 			return FilterOp.OR;
 		case AutoFilter.FILTEROP_TOP10:

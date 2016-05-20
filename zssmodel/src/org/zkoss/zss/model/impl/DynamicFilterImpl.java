@@ -23,6 +23,8 @@ import org.zkoss.zss.model.SDynamicFilter;
  *
  */
 public class DynamicFilterImpl implements SDynamicFilter, Serializable {
+	public static final SDynamicFilter NOOP_DYNAFILTER = new DynamicFilterImpl(null, null, true); //ZSS-1193
+
 	private Double maxValue;
 	private Double value;
 	private boolean isAbove;

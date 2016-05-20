@@ -10,7 +10,7 @@
 	Copyright (C) 2016 Potix Corporation. All Rights Reserved.
 */
 
-package org.zkoss.zss.range.impl.autofill;
+package org.zkoss.zss.range.impl;
 
 import java.io.Serializable;
 import java.util.regex.Matcher;
@@ -20,6 +20,7 @@ import org.zkoss.poi.ss.usermodel.ZssContext;
 import org.zkoss.zss.model.SCell;
 import org.zkoss.zss.model.SCell.CellType;
 import org.zkoss.zss.model.SCustomFilter;
+import org.zkoss.zss.model.SCustomFilter.Operator;
 import org.zkoss.zss.model.sys.EngineFactory;
 import org.zkoss.zss.model.sys.format.FormatContext;
 import org.zkoss.zss.model.sys.format.FormatEngine;
@@ -31,11 +32,13 @@ import org.zkoss.zss.model.sys.formula.FormulaEngine;
  * @author henri
  * @since 3.9.0
  */
-public class StringCellMatch implements Serializable {
+public class CellMatch implements Matchable<SCell>, Serializable {
+	private static final long serialVersionUID = 4775550316177451879L;
+	
 	private FilterMatch f1;
 	private FilterMatch f2;
 	private boolean isAnd;
-	public StringCellMatch(SCustomFilter f1, SCustomFilter f2, boolean isAnd) {
+	public CellMatch(SCustomFilter f1, SCustomFilter f2, boolean isAnd) {
 		this.f1 = new FilterMatch(f1);
 		this.f2 = f2 == null ? null : new FilterMatch(f2);
 		this.isAnd = isAnd;
@@ -59,18 +62,41 @@ public class StringCellMatch implements Serializable {
 	static class FilterMatch implements Serializable {
 		private boolean _not;
 		private Pattern _pattern;
-		private Matchable<String> _matchable;
-		private String value;
+		private Matchable<?> _matchable;
+		private Object value;
 		private SCustomFilter.Operator op;
 		private CellType type;
 		private FormatEngine _formatEngine;
 		
 		FilterMatch(SCustomFilter filter) {
-			value = filter.getValue();
-			type = CellType.STRING;
 			op = filter.getOperator();
+			// Match depends on the Operator
+			// equal/notEqual/beginWidth/notBeginWidth/endWith/notEndWidth/contains/notContains: always check as a String
+			// greaterThan/greaterThanOrEqual/lessThan/lessThanOrEqual: depends on the input type
+			switch(op) {
+			case equal:
+			case notEqual:
+			case beginWith:
+			case notBeginWith:
+			case endWith:
+			case notEndWith:
+			case contains:
+			case notContains:
+				value = filter.getValue();
+				type = CellType.STRING;
+				break;
+				
+			default:
+				try {
+					value = Double.valueOf(filter.getValue());
+					type = CellType.NUMBER;
+				} catch (NumberFormatException ex) {
+					value = filter.getValue();
+					type = CellType.STRING;
+				}
+			}
 			
-			_prepareStringMatch();
+			_prepareMatch();
 		}
 		
 		public String _getFormattedText(SCell cell){
@@ -95,29 +121,35 @@ public class StringCellMatch implements Serializable {
 					&& op != SCustomFilter.Operator.notEqual) {
 				return _not;
 			}
-			final boolean ret = match0(cell);
+			final boolean ret = type == CellType.STRING ? 
+					matchString(cell) : matchDouble(cell);
 			return _not ? !ret : ret;
 		}
 		
-		private boolean match0(SCell cell) {
+		private boolean matchString(SCell cell) {
 			final String formattedText = _getFormattedText(cell);
 			if (_pattern != null) {
 				final Matcher matcher = _pattern.matcher(formattedText);
 				return matcher.matches();
 			} else if (_matchable != null) {
-				return _matchable.match(formattedText);
+				return ((Matchable<String>)_matchable).match(formattedText);
 			} else {
 				return false;
 			}
 		}
 		
-		private void _prepareStringMatch() {
+		private boolean matchDouble(SCell cell) {
+			final Double val = cell.getNumberValue();
+			return ((Matchable<Double>)_matchable).match(val);
+		}
+		
+		private void _prepareMatch() {
 			switch(op) {
 			case notBeginWith:
 				_not = true;
 			case beginWith:
 			{
-				String val = _escape(value);
+				String val = _escape(value.toString());
 				val = val + ".*";
 				_pattern = Pattern.compile(val);
 				break;
@@ -126,7 +158,7 @@ public class StringCellMatch implements Serializable {
 				_not = true;
 			case endWith:
 			{
-				String val = _escape(value);
+				String val = _escape(value.toString());
 				val = ".*" + val;
 				_pattern = Pattern.compile(val);
 				break;
@@ -135,7 +167,7 @@ public class StringCellMatch implements Serializable {
 				_not = true;
 			case contains:
 			{
-				String val = _escape(value);
+				String val = _escape(value.toString());
 				val = ".*" + val + ".*";
 				_pattern = Pattern.compile(val);
 				break;
@@ -144,24 +176,32 @@ public class StringCellMatch implements Serializable {
 				_not = true;
 			case equal:
 			{
-				String val = _escape(value);
+				String val = _escape(value.toString());
 				_pattern = Pattern.compile(val);
 				break;
 			}				
 			case greaterThan:
-				_matchable = new GreaterThan<String>(value);
+				_matchable = type == CellType.STRING ? 
+						new GreaterThan<String>(value.toString()):
+						new GreaterThan<Double>((Double) value);
 				break;
 				
 			case greaterThanOrEqual:
-				_matchable = new GreaterThanOrEqual<String>(value);
+				_matchable = type == CellType.STRING ?
+						new GreaterThanOrEqual<String>(value.toString()):
+						new GreaterThanOrEqual<Double>((Double) value);
 				break;
 				
 			case lessThan:
-				_matchable = new LessThan<String>(value);
+				_matchable = type == CellType.STRING ?
+						new LessThan<String>(value.toString()):
+						new LessThan<Double>((Double) value);
 				break;
 
 			case lessThanOrEqual:
-				_matchable = new LessThanOrEqual<String>(value);
+				_matchable = type == CellType.STRING ?
+						new LessThanOrEqual<String>(value.toString()):
+						new LessThanOrEqual<Double>((Double) value);
 				break;
 			}
 		}
@@ -173,48 +213,4 @@ public class StringCellMatch implements Serializable {
 		}
 	}
 	
-}
-
-final class GreaterThan<T extends Comparable<T>> implements Matchable<T> {
-	final private T base;
-	GreaterThan(T b) {
-		base = b;
-	}
-	@Override
-	public boolean match(T value) {
-		return value.compareTo(base) > 0;
-	}
-}
-
-final class GreaterThanOrEqual<T extends Comparable<T>> implements Matchable<T> {
-	final private T base;
-	GreaterThanOrEqual(T b) {
-		base = b;
-	}
-	@Override
-	public boolean match(T value) {
-		return value.compareTo(base) >= 0;
-	}
-}
-
-final class LessThan<T extends Comparable<T>> implements Matchable<T> {
-	final private T base;
-	LessThan(T b) {
-		base = b;
-	}
-	@Override
-	public boolean match(T value) {
-		return value.compareTo(base) < 0;
-	}
-}
-
-final class LessThanOrEqual<T extends Comparable<T>> implements Matchable<T> {
-	final private T base;
-	LessThanOrEqual(T b) {
-		base = b;
-	}
-	@Override
-	public boolean match(T value) {
-		return value.compareTo(base) <= 0;
-	}
 }

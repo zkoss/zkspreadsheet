@@ -403,4 +403,15 @@ class CellProxy extends AbstractCellAdv {
 		}
 		return null;
 	}
+
+	//ZSS-1193
+	@Override
+	public CellValue getEvalCellValue(boolean evaluatedVal) {
+		loadProxy();
+		if(_proxy==null){
+			return new CellValue();
+		}else{
+			return  _proxy.getEvalCellValue(evaluatedVal);
+		}
+	}
 }
