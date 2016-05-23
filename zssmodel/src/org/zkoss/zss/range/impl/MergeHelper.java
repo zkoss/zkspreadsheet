@@ -21,6 +21,7 @@ import java.util.List;
 import org.zkoss.zss.model.CellRegion;
 import org.zkoss.zss.model.SCell;
 import org.zkoss.zss.model.SCellStyle;
+import org.zkoss.zss.model.SRow;
 import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.model.SBorder.BorderType;
 import org.zkoss.zss.model.impl.AbstractSheetAdv;
@@ -118,6 +119,16 @@ public class MergeHelper extends RangeHelperBase{
 		}
 	}
 	
+	//ZSS-1217
+	private void setRowCustomHeight(SSheet sheet, int r) {
+		final SRow row = sheet.getRow(r);
+		final int ht = row.getHeight();
+		final int defaultHt = sheet.getDefaultRowHeight();
+		if (ht != defaultHt) {
+			row.setCustomHeight(true);
+		}
+	}
+	
 	private void merge0(SSheet sheet, int tRow, int lCol, int bRow, int rCol) {
 		if(tRow==bRow && lCol==rCol)
 			return;
@@ -162,6 +173,8 @@ public class MergeHelper extends RangeHelperBase{
 				target.setCellStyle(style); //set all cell in the merged range to CellStyle of the target minus border
 			}
 			//1st row (exclude 1st cell)
+			//ZSS-1217
+			setRowCustomHeight(sheet, tRow);
 			for (int c = lCol + 1; c <= rCol; ++c) {
 				final SCell cell = sheet.getCell(tRow, c);
 				cell.setCellStyle(style); //set all cell in the merged range to CellStyle of the target minus border
@@ -184,6 +197,8 @@ public class MergeHelper extends RangeHelperBase{
 //						all.addAll(refs[1]);
 //					}
 				}
+				//ZSS-1217
+				setRowCustomHeight(sheet, r);
 			}
 		}
 		final CellRegion mergeArea = new CellRegion(tRow, lCol,bRow,rCol);
