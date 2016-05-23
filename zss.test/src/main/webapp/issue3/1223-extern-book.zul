@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<zk>
+    <label multiline="true">
+Since 3.9.0
+1. Check Server's console for SEVERE log.
+2. If you see SEVERE: Cannot find the specified book "profile.xlsx" in this book series: [resume.xlsx]
+3. Then it is a bug.
+</label>
+	<window width="900px" apply="zss.issue.BookReferenceController1223">
+<button id="switchBook" label="switch book"/>
+		<!-- 
+		<groupbox >
+			<caption><label sclass="subtitle">profile.xlsx</label></caption>
+			<spreadsheet id="profileSpreadsheet"
+				width="840px" height="200px" maxrows="2" maxcolumns="7"
+				showFormulabar="true" />
+		</groupbox>
+		 -->
+		<groupbox>
+			<caption><label sclass="subtitle">resume.xlsx</label></caption>
+			<spreadsheet id="resumeSpreadsheet"
+				width="840px" height="400px" maxrows="12" maxcolumns="7" 
+				showFormulabar="true"/>
+		</groupbox>
+	</window>
+</zk>
