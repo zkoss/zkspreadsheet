@@ -1,0 +1,37 @@
+<vbox hflex="1" vflex="1">
+	<label multiline="true">
+Since 3.9.0
+1. You should see filter buttons on B2 and C2; row5 ~ row6 is hidden; column D is hidden
+2. Now select B4:E7 and press CTRL-C to start a copy; should see copy area marked
+3. Now select F13 and press CTRL-V to paste.
+4. You should see F13:H16 show values: 2/b/B; 3/c/C; 4/d/D; 5/e/E;
+5. Press F5 to reload.
+6. Now press filter dropdown button on B2 and select "Number Filters/Greater Than".
+7. Should see Custom AutoFilter dialog and fill in 0 into textbox beside the "is greater than" option.
+8. Press OK button and you should see the dropdown button become drop filter button and row 5 and row 6 now appear.
+9. Select row 5 and row 6 and right click to show the context menu and hide row.
+10. Now row 5 and row 6 is hidden
+11. Now select B4:E7 and press CTRL-C to start a copy; should see copy area marked
+12. Now select F13 and press CTRL-V to paste.
+13. You should see F13:G14 show values: 2/b; 5/e;
+</label>
+<button id="export" label="Export to Excel" onClick="doExport()"/>
+<zscript><![CDATA[
+     import java.io.*;
+     import org.zkoss.zss.api.Exporters;
+     import org.zkoss.zul.*;
+     void doExport() throws IOException {
+         ByteArrayOutputStream os = new ByteArrayOutputStream();
+         try {
+              Exporters.getExporter("excel").export(ss.getBook(), os);
+         } catch (Exception ex) {
+              os.close();
+         }
+         Filedownload.save(os.toByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "1129-export-copy-filter.xlsx"); 
+     }
+]]>
+</zscript> 
+	<spreadsheet id="ss" src="/issue3/book/1229-copy-filter.xlsx" maxVisibleRows="200" maxVisibleColumns="40"
+		hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
+		showFormulabar="true" />	
+</vbox>

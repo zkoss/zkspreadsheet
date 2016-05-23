@@ -41,7 +41,8 @@ public class FilterCommand extends AbstractCommand implements Command {
 		String type = (String) data.get("type");
 		String op = (String) data.get("op"); //ZSS-1191
 		if ("apply".equals(type)) {
-			final boolean selectAll = (Boolean) data.get("all");
+			final Boolean all = (Boolean) data.get("all");
+			final boolean selectAll = all == null ? false : all.booleanValue();
 			final String cellRangeAddr = (String) data.get("range");
 			final int field = (Integer) data.get("field");
 			final Object criteria = data.get("criteria");

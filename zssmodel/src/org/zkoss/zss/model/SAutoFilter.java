@@ -75,6 +75,10 @@ public interface SAutoFilter {
 		//ZSS-1227
 		//@since 3.9.0
 		public STop10Filter getTop10Filter();
+		
+		//ZSS-1229
+		//@since 3.9.0
+		public boolean isFiltered();
 	}
 	
 	/**
@@ -109,4 +113,8 @@ public interface SAutoFilter {
 	public void clearFilterColumn(int index);
 	
 	public void clearFilterColumns();
+	
+	//ZSS-1229
+	//@since 3.9.0
+	public boolean isFiltered();
 }

@@ -25,9 +25,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.Map;
 import java.util.SortedSet;
-import java.util.TreeSet;
 
-import org.apache.commons.logging.impl.NoOpLog;
 import org.zkoss.zss.model.SAutoFilter;
 import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.SColorFilter;
@@ -35,7 +33,6 @@ import org.zkoss.zss.model.SCustomFilters;
 import org.zkoss.zss.model.SDynamicFilter;
 import org.zkoss.zss.model.STop10Filter;
 import org.zkoss.zss.range.impl.FilterRowInfo;
-import org.zkoss.zss.range.impl.FilterRowInfoComparator;
 /**
  * 
  * @author Dennis
@@ -294,5 +291,15 @@ public abstract class AbstractAutoFilterAdv implements SAutoFilter,Serializable{
 			return this.filterType;
 		}
 		
+		//ZSS-1229
+		//@since 3.9.0
+		//Whether this FilterColumn filtered out some rows?
+		public boolean isFiltered() {
+			return (_filters != null && !_filters.isEmpty())
+				|| (_colorFilter != null)
+				|| (_customFilters != null)
+				|| (_dynamicFilter != null)
+				|| (_top10Filter != null);
+		}
 	}
 }

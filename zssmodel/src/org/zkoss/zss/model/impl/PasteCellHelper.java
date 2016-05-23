@@ -34,6 +34,7 @@ import org.zkoss.zss.model.PasteOption;
 import org.zkoss.zss.model.PasteOption.PasteType;
 import org.zkoss.zss.model.PasteSheetRegion;
 import org.zkoss.zss.model.PasteCellRegion;
+import org.zkoss.zss.model.SAutoFilter;
 import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.SCell;
 import org.zkoss.zss.model.SCell.CellType;
@@ -414,10 +415,27 @@ public class PasteCellHelper implements Serializable {
 		int srcColCount = transpose?src.getRowCount():src.getColumnCount();
 		final SSheet sheet = src.getSheet();
 		
-		CellBuffer[][] srcBuffer = new CellBuffer[srcRowCount][srcColCount];
+//		CellBuffer[][] srcBuffer = new CellBuffer[srcRowCount][srcColCount];
 		SSheet srcSheet = src.getSheet();
+		
+		//ZSS-1229: Whether any rows filtered
+		List<CellBuffer[]> rowBuf = new ArrayList<CellBuffer[]>();
+		final SAutoFilter af = srcSheet.getAutoFilter();
+		boolean isFiltered = af == null ? false : af.isFiltered();
+		
 		for(int r = row; r <= lastRow;r++){
+			//ZSS-1229 
+			if (isFiltered && srcSheet.getRow(r).isHidden()) {
+				continue;
+			}
+			List<CellBuffer> colBuf = new ArrayList<CellBuffer>();
+			
 			for(int c = column; c <= lastColumn;c++){
+				//ZSS-1229
+				if (isFiltered && srcSheet.getColumn(c).isHidden()) {
+					continue;
+				}
+				
 				SCell srcCell = srcSheet.getCell(r,c);
 				PasteType pt = option.getPasteType();
 
@@ -428,8 +446,11 @@ public class PasteCellHelper implements Serializable {
 				
 				if(srcCell.isNull() && !handleStyle) //to avoid unnecessary create
 					continue;
-				
-				CellBuffer buffer = srcBuffer[transpose?c-column:r-row][transpose?r-row:c-column] = new CellBuffer();
+	
+				//ZSS-1229
+				//CellBuffer buffer = srcBuffer[transpose?c-column:r-row][transpose?r-row:c-column] = new CellBuffer();
+				CellBuffer buffer = new CellBuffer();
+				colBuf.add(buffer);
 				
 				buffer.setType(srcCell.getType());
 				
@@ -465,8 +486,12 @@ public class PasteCellHelper implements Serializable {
 					break;
 				}
 			}
+			//ZSS-1229
+			rowBuf.add(colBuf.toArray(new CellBuffer[colBuf.size()]));
 		}
-		return srcBuffer;
+		
+		//ZSS-1229
+		return rowBuf.toArray(new CellBuffer[rowBuf.size()][]);
 	}
 
 

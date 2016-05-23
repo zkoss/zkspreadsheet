@@ -109,4 +109,15 @@ public class AutoFilterImpl extends AbstractAutoFilterAdv {
 		
 		return tgt;
 	}
+	
+	//ZSS-1229
+	@Override
+	public boolean isFiltered() {
+		for (SAutoFilter.NFilterColumn value : this._columns.values()) {
+			if (value.isFiltered()) {
+				return true;
+			}
+		}
+		return false;
+	}
 }
