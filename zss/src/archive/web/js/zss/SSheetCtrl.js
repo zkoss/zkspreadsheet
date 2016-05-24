@@ -1242,6 +1242,9 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		return false;
 	},
 	_doMousedown: function (evt) {
+		//ZSS-1225
+		this._wgt._checkContext(); 
+		
 		this.innerClicking++;
 		var sheet = this;
 		setTimeout(function() {

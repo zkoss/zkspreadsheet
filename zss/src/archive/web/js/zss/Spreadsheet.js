@@ -1328,6 +1328,37 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 			this.sheetCtrl._doMousedown(evt);
 		this.$supers('doMouseDown_', arguments);
 	},
+	//ZSS-1225
+	_checkContext : function () {
+		var ctxnm = this.getContext(),
+			ctxpop = ctxnm ? this.$f(ctxnm) : null,
+			ss = this;
+		if (ctxpop != this._ctxpopwgt) {
+			if (this._ctxpopwgt) {
+				this._ctxpopwgt.unlisten({onOpen: [ss, ss._onOpenCtxpop]});
+				delete this._ctxpopwgt;
+			}
+			if (ctxpop) {
+				this._ctxpopwgt = ctxpop;
+				ctxpop.listen({onOpen: [ss, ss._onOpenCtxpop]})
+			}
+		}
+		if (this._closingCtxpop) {
+			this.focus(); // force set focus back to Spreadsheet
+			this._closingCtxpop = false;
+		}
+		
+	},
+	//ZSS-1225
+	_onOpenCtxpop : function (evt) {
+		this._closingCtxpop = !evt.open;
+		var ss = this;
+		if (!evt.open) {
+			setTimeout(function() { //auto set to false if not closed by checkContext()
+				ss._closingCtxpop = false;
+			}, 0);
+		}
+	},
 	doMouseUp_: function (evt) {
 		if (this.sheetCtrl)
 			this.sheetCtrl._doMouseup(evt);

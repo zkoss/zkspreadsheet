@@ -19,6 +19,7 @@ ZK Spreadsheet 3.9.0
   ZSS-1217 Export to Excel does not match presentation merged cells in Spreadsheet
   ZSS-1223 Cannot find the specified book "profile.xlsx" in this book series: [resume.xlsx]
   ZSS-1222 Problem with external references
+  ZSS-1225 right clicking doesn't open a custom context menu
 
 ** Upgrade Notes
   
