@@ -276,8 +276,22 @@ public class DependencyTableImpl extends DependencyTableAdv {
 
 		// simply, just put everything in
 		DependencyTableImpl another = (DependencyTableImpl)dependencyTable;
-		_map.putAll(another._map);
-		_evaledMap.putAll(another._evaledMap);
+		mergeAllRefs(_map, another._map); //ZSS-1222
+		mergeAllRefs(_evaledMap, another._evaledMap); //ZSS-1222
+	}
+	
+	//ZSS-1222
+	protected <K> void mergeAllRefs(Map<K, Set<Ref>> tgt, Map<K, Set<Ref>> src) {
+		for (Entry<K, Set<Ref>> e : src.entrySet()) {
+			final K key =  e.getKey();
+			final Set<Ref> refs = e.getValue();
+			Set<Ref> tgtRefs = tgt.get(key);
+			if (tgtRefs == null) {
+				tgt.put(key, refs);
+			} else {
+				tgtRefs.addAll(refs);
+			}
+		}
 	}
 	
 	@Override

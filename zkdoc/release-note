@@ -18,6 +18,7 @@ ZK Spreadsheet 3.9.0
   ZSS-1220 Forget to copy over the new attibute in EditableFont
   ZSS-1217 Export to Excel does not match presentation merged cells in Spreadsheet
   ZSS-1223 Cannot find the specified book "profile.xlsx" in this book series: [resume.xlsx]
+  ZSS-1222 Problem with external references
 
 ** Upgrade Notes
   
