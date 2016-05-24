@@ -8,14 +8,6 @@ Since 3.9.0
 </label>
 	<window width="900px" apply="zss.issue.BookReferenceController1223">
 <button id="switchBook" label="switch book"/>
-		<!-- 
-		<groupbox >
-			<caption><label sclass="subtitle">profile.xlsx</label></caption>
-			<spreadsheet id="profileSpreadsheet"
-				width="840px" height="200px" maxrows="2" maxcolumns="7"
-				showFormulabar="true" />
-		</groupbox>
-		 -->
 		<groupbox>
 			<caption><label sclass="subtitle">resume.xlsx</label></caption>
 			<spreadsheet id="resumeSpreadsheet"
