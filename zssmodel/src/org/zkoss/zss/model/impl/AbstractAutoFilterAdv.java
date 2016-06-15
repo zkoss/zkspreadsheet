@@ -301,5 +301,12 @@ public abstract class AbstractAutoFilterAdv implements SAutoFilter,Serializable{
 				|| (_dynamicFilter != null)
 				|| (_top10Filter != null);
 		}
+		
+		//ZSS-1230
+		//@since 3.9.0
+		//@internal
+		public void setIndex(int index0) {
+			this._index = index0;
+		}
 	}
 }

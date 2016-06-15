@@ -10,6 +10,7 @@ import org.zkoss.zss.model.CellRegion;
 import org.zkoss.zss.model.SAutoFilter;
 import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.SSheet;
+import org.zkoss.zss.model.SAutoFilter.NFilterColumn;
 import org.zkoss.zss.model.impl.sys.DependencyTableAdv;
 import org.zkoss.zss.model.sys.dependency.DependencyTable;
 import org.zkoss.zss.model.sys.dependency.ObjectRef.ObjectType;
@@ -119,5 +120,12 @@ public class AutoFilterImpl extends AbstractAutoFilterAdv {
 			}
 		}
 		return false;
+	}
+	
+	//ZSS-1230
+	//@since 3.9
+	//@Internal
+	public void putFilterColumn(int index, NFilterColumn filterColumn) {
+		_columns.put(index, filterColumn);
 	}
 }

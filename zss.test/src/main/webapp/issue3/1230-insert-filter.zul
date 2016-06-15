@@ -1,0 +1,17 @@
+<vbox hflex="1" vflex="1">
+	<label multiline="true">
+		1. Press filter drop down button on B1. Should see [v] b, [v] c, [ ] d, [ ] f.
+		2. Insert a column on column B.
+		3. Press filter drop down button on C1. Should still see [v] b, [v] c, [ ] d, [ ] f.
+		4. Delete a column on column B.
+		5. Press filter drop down button on B1. Should still see [v] b, [v] c, [ ] d, [ ] f.
+		6. Insert a column on column A.
+		7. Press filter drop down button on C1. Should still see [v] b, [v] c, [ ] d, [ ] f.
+		8. Delete two columns on A:B.
+        9. Press filter drop down button on A1. Should still see [v] b, [v] c, [ ] d, [ ] f.
+	</label>
+	
+	<spreadsheet id="ss" src="/issue3/book/1230-insert-filter.xlsx" maxVisibleRows="50" maxVisibleColumns="50"
+		hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
+		showFormulabar="true" />
+</vbox>

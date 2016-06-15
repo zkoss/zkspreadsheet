@@ -28,6 +28,7 @@ import java.util.Set;
 
 import org.zkoss.zss.model.CellRegion;
 import org.zkoss.zss.model.SAutoFilter;
+import org.zkoss.zss.model.SAutoFilter.NFilterColumn;
 import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.SBookSeries;
 import org.zkoss.zss.model.SCell;
@@ -42,6 +43,7 @@ import org.zkoss.zss.model.chart.SChartData;
 import org.zkoss.zss.model.chart.SGeneralChartData;
 import org.zkoss.zss.model.chart.SSeries;
 import org.zkoss.zss.model.impl.chart.AbstractGeneralChartDataAdv;
+import org.zkoss.zss.model.impl.AbstractAutoFilterAdv.FilterColumnImpl;
 import org.zkoss.zss.model.sys.EngineFactory;
 import org.zkoss.zss.model.sys.dependency.DependencyTable;
 import org.zkoss.zss.model.sys.dependency.NameRef;
@@ -526,12 +528,26 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 		FormulaExpression fexpr = engine.parse(area, context);
 		FormulaExpression expr2 = engine.extendPtgs(fexpr, sheetRegion, horizontal, context);//null ref, no trace dependence here
 		if(!expr2.hasError() && !area.equals(expr2.getFormulaString())) {
+			final Collection<NFilterColumn> fcols = horizontal ? filter.getFilterColumns() : null; //ZSS-1230 
 			sheet.deleteAutoFilter();
 			if ("#REF!".equals(expr2.getFormulaString())) { // should delete the region
 				// delete
 			} else { // delete than add
 				final CellRegion region2 = new CellRegion(expr2.getFormulaString());
-				sheet.createAutoFilter(region2);
+				final AutoFilterImpl nfilter = (AutoFilterImpl) sheet.createAutoFilter(region2); //ZSS-1230
+				//ZSS-1230
+				if (fcols != null) {
+					// start == 0 means whole filter push to right; no change on filterColumn indexes
+					// offset is sheetRegion.getColumnCount() if filterColumn index >= start
+					int start = sheetRegion.getColumn() - region.getColumn();
+					int offset = start > 0 ? sheetRegion.getColumnCount() : 0;
+					for (NFilterColumn fcol : fcols) {
+						final int index0 = 
+							fcol.getIndex() + (fcol.getIndex() >= start ? offset : 0);
+						((FilterColumnImpl)fcol).setIndex(index0);
+						nfilter.putFilterColumn(fcol.getIndex(), fcol);
+					}
+				}
 			}
 		}
 
@@ -784,12 +800,30 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 		FormulaExpression fexpr = engine.parse(area, context);
 		FormulaExpression expr2 = engine.shrinkPtgs(fexpr, sheetRegion, horizontal, context);//null ref, no trace dependence here
 		if(!expr2.hasError() && !area.equals(expr2.getFormulaString())) {
+			final Collection<NFilterColumn> fcols = horizontal ? filter.getFilterColumns() : null; //ZSS-1230 
 			sheet.deleteAutoFilter();
 			if ("#REF!".equals(expr2.getFormulaString())) { // should delete the region
 				//delete
 			} else { // delete then add
 				final CellRegion region2 = new CellRegion(expr2.getFormulaString());
-				sheet.createAutoFilter(region2);
+				final AutoFilterImpl nfilter = (AutoFilterImpl) sheet.createAutoFilter(region2); //ZSS-1230
+				//ZSS-1230
+				if (fcols != null) {
+					// start < 0 means whole filter push to right; no change on filterColumn indexes
+					// offset is -(start + 1) if filterColumn index > start
+					int start = sheetRegion.getColumn() - region.getColumn();
+					int end = sheetRegion.getLastColumn() - region.getColumn();
+					int offset = end >= 0 ? Math.min(sheetRegion.getColumnCount(), end + 1) : 0;
+					for (NFilterColumn fcol : fcols) {
+						final int fcolj = fcol.getIndex();
+						if (start <= fcolj && fcolj <= end) { // deleted column
+							continue;
+						}
+						final int index0 = fcol.getIndex() - (fcolj < start ? 0 : offset);
+						((FilterColumnImpl)fcol).setIndex(index0);
+						nfilter.putFilterColumn(fcol.getIndex(), fcol);
+					}
+				}
 			}
 		}
 

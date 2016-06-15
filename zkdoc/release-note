@@ -20,6 +20,7 @@ ZK Spreadsheet 3.9.0
   ZSS-1223 Cannot find the specified book "profile.xlsx" in this book series: [resume.xlsx]
   ZSS-1222 Problem with external references
   ZSS-1225 right clicking doesn't open a custom context menu
+  ZSS-1230 Insert a column inside a filter range makes a filter works incorrectly
 
 ** Upgrade Notes
   
