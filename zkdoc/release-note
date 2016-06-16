@@ -10,6 +10,7 @@ ZK Spreadsheet 3.9.0
   ZSS-1193 Support the number filter
   ZSS-1195 clear filter for a column
   ZSS-1229 Copy and paste only those visible cells when a filter is enabled
+  ZSS-1167 Support ZK 8 new specification: <config-name> is required in config.xml
   
 *Bugs:
   ZSS-1211 StringIndexOutOfBoundsException if click a hyperlink with empty address
