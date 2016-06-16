@@ -452,13 +452,6 @@ import org.zkoss.zss.ui.Spreadsheet;
 			for (int i = bottom+1; i <= maxblm ; ++i) {
 				final SCell c = worksheet.getCell(i, columnIndex);
 				
-				//ZSS-1191
-				final SCellStyle style = c.isNull() ? null : c.getCellStyle();
-				final SFill ccfill = style == null ? BLANK_FILL : style.getFill();
-				ccitems.add(ccfill);
-				final SFont font = style == null ? null : style.getFont();
-				final SFill fcfill = font == null ? BLANK_FILL : new FillImpl(FillPattern.SOLID, font.getColor(), null);
-				fcitems.add(fcfill);
 				int type0 = 2;
 
 				if (!c.isNull() && c.getType() != CellType.BLANK) {
@@ -513,6 +506,14 @@ import org.zkoss.zss.ui.Spreadsheet;
 				if (leaveLoop) {
 					break;
 				}
+				
+				//ZSS-1191
+				final SCellStyle style = c.isNull() ? null : c.getCellStyle();
+				final SFill ccfill = style == null ? BLANK_FILL : style.getFill();
+				ccitems.add(ccfill);
+				final SFont font = style == null ? null : style.getFont();
+				final SFill fcfill = font == null ? BLANK_FILL : new FillImpl(FillPattern.SOLID, font.getColor(), null);
+				fcitems.add(fcfill);
 			}
 		}
 		if (hasBlank) {
