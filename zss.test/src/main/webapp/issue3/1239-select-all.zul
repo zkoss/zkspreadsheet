@@ -1,0 +1,12 @@
+<vbox hflex="1" vflex="1">
+	<label multiline="true">
+		1. Press filter drop down button on B1. Should see [*] (Select All)[v] b, [v] c, [ ] d, [ ] f.
+		2. Click the [*] (Select All) item; should see it changes to [v] (Select All), [v] b, [v] c, [v] d, [v] f; all checked. 
+		3. Click the [v] (Select All) again; should see it changes to [ ] (Select All), [ ] b, [ ] c, [ ] d, [ ] f; all cleared.
+		4. Click the [ ] b; should see it changes to [*] (Select All), [v] b, [ ] c, [ ] d, [ ] f.
+	</label>
+	
+	<spreadsheet id="ss" src="/issue3/book/1239-select-all.xlsx" maxVisibleRows="50" maxVisibleColumns="50"
+		hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
+		showFormulabar="true" />
+</vbox>

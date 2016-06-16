@@ -21,6 +21,7 @@ ZK Spreadsheet 3.9.0
   ZSS-1222 Problem with external references
   ZSS-1225 right clicking doesn't open a custom context menu
   ZSS-1230 Insert a column inside a filter range makes a filter works incorrectly
+  ZSS-1239 Cannot click "Select All" when opening the filter dropdown
 
 ** Upgrade Notes
   
