@@ -17,14 +17,12 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.model.impl;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.Map;
-import java.util.SortedSet;
 
 import org.zkoss.zss.model.SAutoFilter;
 import org.zkoss.zss.model.SBook;
@@ -32,7 +30,7 @@ import org.zkoss.zss.model.SColorFilter;
 import org.zkoss.zss.model.SCustomFilters;
 import org.zkoss.zss.model.SDynamicFilter;
 import org.zkoss.zss.model.STop10Filter;
-import org.zkoss.zss.range.impl.FilterRowInfo;
+
 /**
  * 
  * @author Dennis
@@ -61,7 +59,6 @@ public abstract class AbstractAutoFilterAdv implements SAutoFilter,Serializable{
 		private STop10Filter _top10Filter; //ZSS-1127
 		
 		//ZSS-1193
-		private List<FilterRowInfo> orderedRowInfos;
 		private int filterType;
 		
 		public FilterColumnImpl(int index){
@@ -254,23 +251,6 @@ public abstract class AbstractAutoFilterAdv implements SAutoFilter,Serializable{
 		@Override
 		public STop10Filter getTop10Filter() {
 			return _top10Filter;
-		}
-		
-		//ZSS-1193
-		//@since 3.9.0
-		//@Internal
-		//@See AutoFilterDefaultHandler
-		public void setCachedSet(SortedSet<FilterRowInfo> orderedRowInfos) {
-			this.orderedRowInfos = orderedRowInfos == null ? null: 
-					new ArrayList<FilterRowInfo>(orderedRowInfos);
-		}
-		
-		//ZSS-1193
-		//@since 3.9.0
-		//@Internal
-		//@See CustomFiltersCtrl
-		public List<FilterRowInfo> getCachedSet() {
-			return this.orderedRowInfos;
 		}
 		
 		//ZSS-1193

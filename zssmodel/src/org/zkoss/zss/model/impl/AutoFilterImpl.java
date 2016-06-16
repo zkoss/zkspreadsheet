@@ -1,21 +1,22 @@
 package org.zkoss.zss.model.impl;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.SortedSet;
 import java.util.TreeMap;
 
 import org.zkoss.zss.model.CellRegion;
 import org.zkoss.zss.model.SAutoFilter;
 import org.zkoss.zss.model.SBook;
-import org.zkoss.zss.model.SSheet;
-import org.zkoss.zss.model.SAutoFilter.NFilterColumn;
-import org.zkoss.zss.model.impl.sys.DependencyTableAdv;
 import org.zkoss.zss.model.sys.dependency.DependencyTable;
 import org.zkoss.zss.model.sys.dependency.ObjectRef.ObjectType;
 import org.zkoss.zss.model.sys.dependency.Ref;
 import org.zkoss.zss.model.util.Validations;
+import org.zkoss.zss.range.impl.FilterRowInfo;
 /**
  * The auto fitler implement
  * @author dennis
@@ -26,10 +27,12 @@ public class AutoFilterImpl extends AbstractAutoFilterAdv {
 	
 	private final CellRegion _region;
 	private final TreeMap<Integer,NFilterColumn> _columns;
+	private Map<Integer, List<FilterRowInfo>> orderedRowInfosMap;
 
 	public AutoFilterImpl(CellRegion region){
 		this._region = region;
 		_columns = new TreeMap<Integer,NFilterColumn>();
+		orderedRowInfosMap = new HashMap<Integer, List<FilterRowInfo>>();
 	}
 	
 	@Override
@@ -128,4 +131,22 @@ public class AutoFilterImpl extends AbstractAutoFilterAdv {
 	public void putFilterColumn(int index, NFilterColumn filterColumn) {
 		_columns.put(index, filterColumn);
 	}
+	
+	//ZSS-1193, ZSS-1233: should cached in autofilter by column index
+	//@since 3.9.0
+	//@Internal
+	//@See AutoFilterDefaultHandler
+	public void setCachedSet(int index, SortedSet<FilterRowInfo> orderedRowInfos) {
+		this.orderedRowInfosMap.put(index, orderedRowInfos == null ? null: 
+				new ArrayList<FilterRowInfo>(orderedRowInfos));
+	}
+	
+	//ZSS-1193, ZSS-1233: should cached in autofilter by column index
+	//@since 3.9.0
+	//@Internal
+	//@See CustomFiltersCtrl
+	public List<FilterRowInfo> getCachedSet(int index) {
+		return this.orderedRowInfosMap.get(index);
+	}
+	
 }

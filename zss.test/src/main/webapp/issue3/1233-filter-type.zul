@@ -1,0 +1,12 @@
+<vbox hflex="1" vflex="1">
+	<label multiline="true">
+		1. Press filter drop down button on A3.
+		2. Select "Text Filters / Equals..." 
+		3. Click the drop down button of the combobox at the right side by the "equals" listbox.
+		4. Should see a, b, c, d, e, and f; total six options under combobox.
+	</label>
+	
+	<spreadsheet id="ss" src="/issue3/book/1233-filter-type.xlsx" maxVisibleRows="50" maxVisibleColumns="50"
+		hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
+		showFormulabar="true" />
+</vbox>

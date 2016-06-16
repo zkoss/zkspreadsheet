@@ -62,9 +62,10 @@ import org.zkoss.zss.model.util.Strings;
 import org.zkoss.zss.model.impl.AbstractAutoFilterAdv.FilterColumnImpl;
 import org.zkoss.zss.model.impl.AbstractSheetAdv;
 import org.zkoss.zss.model.impl.FillImpl;
+import org.zkoss.zss.model.impl.FontImpl;
+import org.zkoss.zss.model.impl.AutoFilterImpl;
 import org.zkoss.zss.range.impl.FilterRowInfo;
 import org.zkoss.zss.range.impl.FilterRowInfoComparator;
-import org.zkoss.zss.model.impl.FontImpl;
 import org.zkoss.zss.range.SRange;
 import org.zkoss.zss.range.SRanges;
 import org.zkoss.zss.ui.Spreadsheet;
@@ -87,8 +88,8 @@ import org.zkoss.zss.ui.Spreadsheet;
 		//ZSS-988
 		STable table = ((AbstractSheetAdv)worksheet).getTableByRowCol(row, col);
 		final SAutoFilter autoFilter = table == null ? worksheet.getAutoFilter() : table.getAutoFilter();
-		
-		final NFilterColumn filterColumn = autoFilter.getFilterColumn(field - 1,false);
+		final int index = field - 1; //ZSS-1233
+		final NFilterColumn filterColumn = autoFilter.getFilterColumn(index, false);
 		String rangeAddr = autoFilter.getRegion().getReferenceString();
 		final SRange range = SRanges.range(worksheet, rangeAddr);
 
@@ -136,9 +137,11 @@ import org.zkoss.zss.ui.Spreadsheet;
 		
 		//ZSS-1193
 		if (filterColumn != null) {
-			((FilterColumnImpl)filterColumn).setCachedSet(orderedRowInfos);
 			((FilterColumnImpl)filterColumn).setFilterType(type);
 		}
+		
+		//ZSS-1233
+		((AutoFilterImpl)autoFilter).setCachedSet(index, orderedRowInfos);
 
 		spreadsheet.smartUpdate("autoFilterPopup", 
 			convertFilterInfoToJSON(row, col, field, rangeAddr, orderedRowInfos,
@@ -495,7 +498,7 @@ import org.zkoss.zss.ui.Spreadsheet;
 					} else {
 						i = ltrb[3];
 					}
-					if (!hasBlank) {
+					if (!leaveLoop && !hasBlank) { //ZSS-1233
 						hasBlank = true;
 						hasSelectedBlank = prepareBlankRow(criteria1, hasSelectedBlank, isItemFilter); //ZSS-1191, ZSS-1192, ZSS-1193
 					}
