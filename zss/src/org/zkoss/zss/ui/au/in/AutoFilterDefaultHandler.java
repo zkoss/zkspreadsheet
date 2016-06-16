@@ -348,7 +348,6 @@ import org.zkoss.zss.ui.Spreadsheet;
 		LinkedHashSet<SFill> ccitems = new LinkedHashSet<SFill>(); //ZSS-1191: CELL_COLOR
 		LinkedHashSet<SFill> fcitems = new LinkedHashSet<SFill>(); //ZSS-1191: FONT_COLOR
 		int[] types = new int[] {0, 0, 0}; //0: date, 1: number, 2: string
-		int candidate = 0; // which kind of filter (DateFilter/NumberFilter/TextFilter)
 		
 		blankRowInfo = new FilterRowInfo(BLANK_VALUE, "(Blanks)");
 		final Set criteria1 = fc == null ? null : fc.getCriteria1();
@@ -391,7 +390,7 @@ import org.zkoss.zss.ui.Spreadsheet;
 			final SFill fcfill = font == null || isDefaultFont ? 
 				BLANK_FILL : new FillImpl(FillPattern.SOLID, font.getColor(), null);
 			fcitems.add(fcfill);			
-			int type0 = 2;
+			int type0 = 3; //ZSS-1241
 			
 			if (!c.isNull() && c.getType() != CellType.BLANK) {
 				FormatResult fr = fe.format(c, new FormatContext(ZssContext.getCurrent().getLocale()));
@@ -405,9 +404,9 @@ import org.zkoss.zss.ui.Spreadsheet;
 						val = c.getDateValue();
 					}
 					
-					//ZSS-1191: Date 1, Number 2, String 3, Boolean 4 is Number; Error 5 and Blank 6 is String.
+					//ZSS-1191: Date 1, Number 2, String 3, Boolean 4 is Number; Error 5 and Blank 6.
 					final int type = FilterRowInfo.getType(val);
-					type0 = (type == 4 ? 2 : type >= 5 ? 3 : type) - 1;
+					type0 = (type == 4 ? 2 : type) - 1; //ZSS-1241
 					
 					FilterRowInfo rowInfo = new FilterRowInfo(val, displaytxt);
 					//ZSS-299
@@ -424,10 +423,9 @@ import org.zkoss.zss.ui.Spreadsheet;
 				hasSelectedBlank = prepareBlankRow(criteria1, hasSelectedBlank, isItemFilter); //ZSS-1191, ZSS-1192, ZSS-1193
 			}
 			
-			//ZSS-1191: Date 0, Number 1, String 2
-			types[type0] = types[type0] + 1;
-			if (types[type0] > types[candidate]) {
-				candidate = type0;
+			//ZSS-1241: Date 0, Number 1, String 2
+			if (type0 < 3) {
+				types[type0] = types[type0] + 1;
 			}
 		}
 		//ZSS-988: Only when it is not a table filter, it is possible to change the last row.
@@ -452,7 +450,7 @@ import org.zkoss.zss.ui.Spreadsheet;
 			for (int i = bottom+1; i <= maxblm ; ++i) {
 				final SCell c = worksheet.getCell(i, columnIndex);
 				
-				int type0 = 2;
+				int type0 = 3; //ZSS-1241
 
 				if (!c.isNull() && c.getType() != CellType.BLANK) {
 					FormatResult fr = fe.format(c, new FormatContext(ZssContext.getCurrent().getLocale()));
@@ -466,9 +464,9 @@ import org.zkoss.zss.ui.Spreadsheet;
 							val = c.getDateValue();
 						}
 						
-						//ZSS-1191: Date 1, Number 2, String 3, Boolean 4 is Number; Error 5 and Blank 6 is String.
+						//ZSS-1191: Date 1, Number 2, String 3, Boolean 4 is Number; Error 5 and Blank 6
 						final int type = FilterRowInfo.getType(val);
-						type0 = (type == 4 ? 2 : type >= 5 ? 3 : type) - 1;
+						type0 = (type == 4 ? 2 : type) - 1; // ZSS-1241
 						
 						FilterRowInfo rowInfo = new FilterRowInfo(val, displaytxt);
 						//ZSS-299
@@ -497,14 +495,13 @@ import org.zkoss.zss.ui.Spreadsheet;
 					}
 				}
 				
-				//ZSS-1191: Date 0, Number 1, String 2
-				types[type0] = types[type0] + 1;
-				if (types[type0] > types[candidate]) {
-					candidate = type0;
-				}
-				
 				if (leaveLoop) {
 					break;
+				}
+				
+				//ZSS-1241: Date 0, Number 1, String 2
+				if (type0 < 3) {
+					types[type0] = types[type0] + 1;
 				}
 				
 				//ZSS-1191
@@ -519,6 +516,20 @@ import org.zkoss.zss.ui.Spreadsheet;
 		if (hasBlank) {
 			orderedRowInfos.add(blankRowInfo);
 		}
+		
+		//ZSS-1241 determine the candidate
+		//which kind of filter (DateFilter/NumberFilter/TextFilter); 
+		//0: date, 1: number, 2: string; if same count; Text > Number > Date
+		int candidate = 2; 
+		int max = types[2];
+		if (max < types[1]) {
+			candidate = 1;
+			max = types[1];
+		}
+		if (max < types[0]) {
+			candidate = 0;
+		}
+		
 		return new Object[] {orderedRowInfos, bottom, 
 				ccitems.size() > 1 ? ccitems : Collections.EMPTY_SET, //ZSS-1191 
 				new Integer(candidate+1), //ZSS-1192

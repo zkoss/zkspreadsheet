@@ -1,0 +1,11 @@
+<vbox hflex="1" vflex="1">
+	<label multiline="true">
+		1. Press filter drop down button on row 3.
+		2. Check if the "XXX Filters" match that show on row 2.
+		3. If not, it is a bug.
+	</label>
+	
+	<spreadsheet id="ss" src="/issue3/book/1241-determine-filter-type.xlsx" maxVisibleRows="50" maxVisibleColumns="50"
+		hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
+		showFormulabar="true" />
+</vbox>

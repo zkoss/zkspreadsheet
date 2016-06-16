@@ -24,6 +24,7 @@ ZK Spreadsheet 3.9.0
   ZSS-1230 Insert a column inside a filter range makes a filter works incorrectly
   ZSS-1239 Cannot click "Select All" when opening the filter dropdown
   ZSS-1233 The dropdown in Custom autofilter doesn't list all cell values
+  ZSS-1241 The filter type should follow the Excel spec.
 
 ** Upgrade Notes
   
