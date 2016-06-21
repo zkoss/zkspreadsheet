@@ -21,11 +21,5 @@ import org.zkoss.util.resource.Labels;
  */
 public interface SCustomFilter {
 	String getValue();
-	Operator getOperator();
-	
-	enum Operator {
-		equal, notEqual, greaterThan, greaterThanOrEqual, lessThan, lessThanOrEqual, 
-		beginWith, notBeginWith, endWith, notEndWith, contains, notContains, none, custom,
-		between, top10, aboveAverage, belowAverage,
-	}
+	SAutoFilter.FilterOp getOperator();
 }

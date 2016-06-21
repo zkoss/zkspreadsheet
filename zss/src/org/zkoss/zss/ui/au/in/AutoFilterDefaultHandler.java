@@ -41,7 +41,6 @@ import org.zkoss.zss.model.SCell;
 import org.zkoss.zss.model.SCellStyle;
 import org.zkoss.zss.model.SColorFilter;
 import org.zkoss.zss.model.SCustomFilter;
-import org.zkoss.zss.model.SCustomFilter.Operator;
 import org.zkoss.zss.model.SCustomFilters;
 import org.zkoss.zss.model.SDynamicFilter;
 import org.zkoss.zss.model.SExtraStyle;
@@ -102,7 +101,7 @@ import org.zkoss.zss.ui.Spreadsheet;
 		//ZSS-1192
 		final SCustomFilters custFilters = filterColumn == null ? null : filterColumn.getCustomFilters();
 		
-		//ZSS-1193
+		//ZSS-1193, ZSS-1234
 		final SDynamicFilter dynaFilter = filterColumn == null ? null : filterColumn.getDynamicFilter();
 		
 		//ZSS-1193
@@ -142,6 +141,9 @@ import org.zkoss.zss.ui.Spreadsheet;
 		
 		//ZSS-1233
 		((AutoFilterImpl)autoFilter).setCachedSet(index, orderedRowInfos);
+		
+		//ZSS-1234
+		((AutoFilterImpl)autoFilter).setFilterType(index, type);
 
 		spreadsheet.smartUpdate("autoFilterPopup", 
 			convertFilterInfoToJSON(row, col, field, rangeAddr, orderedRowInfos,
@@ -253,6 +255,8 @@ import org.zkoss.zss.ui.Spreadsheet;
 		//ZSS-1192
 		final SCustomFilter f1 = custFilters == null ? null : custFilters.getCustomFilter1();
 		final SCustomFilter f2 = custFilters == null ? null : custFilters.getCustomFilter2();
+		FilterOp f1op = null; //ZSS-1234
+		FilterOp f2op = null; //ZSS-1234
 		if (custFilters != null) {
 			final boolean isAnd = custFilters.isAnd();
 			data.put("and", isAnd);
@@ -260,50 +264,122 @@ import org.zkoss.zss.ui.Spreadsheet;
 			final Map f1Map = new HashMap();
 			data.put("f1", f1Map);
 			f1Map.put("val", f1.getValue());
-			f1Map.put("op", f1.getOperator().name());
+			f1Map.put("op", (f1op = f1.getOperator()).name()); //ZSS-1234
 			
 			if (f2 != null) {
 				final Map f2Map = new HashMap();
 				data.put("f2", f2Map);
 				f2Map.put("val", f1.getValue());
-				f2Map.put("op", f2.getOperator().name());
+				f2Map.put("op", (f2op = f2.getOperator()).name()); //ZSS-1234
 			}
 		}
 
 		final ArrayList<Map> vitems = new ArrayList<Map>();
-		Operator targetOp = null;
+		final ArrayList<Map> pitems = new ArrayList<Map>(); //ZSS-1234
+		FilterOp targetOp = null;
+		FilterOp targetOp2 = null;
 		if (custFilters != null) { //ZSS-1192
-			targetOp = f1 != null && f2 == null ? f1.getOperator() : 
-				f1 != null && f2 != null ? Operator.custom : null;
-		} else if (dynaFilter != null) { //ZSS-1193: SDynamicFilter
-			targetOp = dynaFilter.isAbove() ? 
-					Operator.aboveAverage : Operator.belowAverage;
+			if (f1op == FilterOp.greaterThanOrEqual && f2op == FilterOp.lessThanOrEqual && type != 3) {
+				f1op = type == 1 ? FilterOp.betweenDates : FilterOp.between;
+				f2op = null;
+			}
+			targetOp = f1op != null && f2op == null ? f1op : 
+				f1op != null && f2op != null ? FilterOp.custom : null;
+		} else if (dynaFilter != null) { //ZSS-1193, ZSS-1234: SDynamicFilter
+			targetOp = FilterOp.valueOf(dynaFilter.getType());
+			switch(targetOp) {
+			case Q1:
+			case Q2:
+			case Q3:
+			case Q4:
+			case M1:
+			case M2:
+			case M3:
+			case M4:
+			case M5:
+			case M6:
+			case M7:
+			case M8:
+			case M9:
+			case M10:
+			case M11:
+			case M12:
+				targetOp2 = targetOp;
+				targetOp = FilterOp.allDatesInPeriod;
+				break;
+			}
 		} else if (top10Filter != null) { //ZSS-1193: STop10Filter
-			targetOp = Operator.top10; 
+			targetOp = FilterOp.top10; 
 		}
 		if (type == 3) { //ZSS-1192: 1: Date; 2: Number, 3: Text
-			opToJson(vitems, Operator.equal, targetOp, false);
-			opToJson(vitems, Operator.notEqual, targetOp, true);
-			opToJson(vitems, Operator.beginWith, targetOp, false);
-			opToJson(vitems, Operator.endWith, targetOp, true);
-			opToJson(vitems, Operator.contains, targetOp, false);
-			opToJson(vitems, Operator.notContains, targetOp, true);
-			opToJson(vitems, Operator.custom, targetOp, false);
-		} else if (type == 2 || type == 1) { //ZSS-1193
-			opToJson(vitems, Operator.equal, targetOp, false);
-			opToJson(vitems, Operator.notEqual, targetOp, true);
-			opToJson(vitems, Operator.greaterThan, targetOp, false);
-			opToJson(vitems, Operator.greaterThanOrEqual, targetOp, false);
-			opToJson(vitems, Operator.lessThan, targetOp, false);
-			opToJson(vitems, Operator.lessThanOrEqual, targetOp, false);
-			opToJson(vitems, Operator.between, targetOp, true);
-			opToJson(vitems, Operator.top10, targetOp, false);
-			opToJson(vitems, Operator.aboveAverage, targetOp, false);
-			opToJson(vitems, Operator.belowAverage, targetOp, true);
-			opToJson(vitems, Operator.custom, targetOp, false);
+			opToJson(vitems, FilterOp.equal, targetOp, false);
+			opToJson(vitems, FilterOp.notEqual, targetOp, true);
+			opToJson(vitems, FilterOp.beginWith, targetOp, false);
+			opToJson(vitems, FilterOp.endWith, targetOp, true);
+			opToJson(vitems, FilterOp.contains, targetOp, false);
+			opToJson(vitems, FilterOp.notContains, targetOp, true);
+			opToJson(vitems, FilterOp.custom, targetOp, false);
+		} else if (type == 2) { //ZSS-1193: number
+			opToJson(vitems, FilterOp.equal, targetOp, false);
+			opToJson(vitems, FilterOp.notEqual, targetOp, true);
+			opToJson(vitems, FilterOp.greaterThan, targetOp, false);
+			opToJson(vitems, FilterOp.greaterThanOrEqual, targetOp, false);
+			opToJson(vitems, FilterOp.lessThan, targetOp, false);
+			opToJson(vitems, FilterOp.lessThanOrEqual, targetOp, false);
+			opToJson(vitems, FilterOp.between, targetOp, true);
+			opToJson(vitems, FilterOp.top10, targetOp, false);
+			opToJson(vitems, FilterOp.aboveAverage, targetOp, false);
+			opToJson(vitems, FilterOp.belowAverage, targetOp, true);
+			opToJson(vitems, FilterOp.custom, targetOp, false);
+		} else if (type == 1) { //ZSS-1234: Date
+			opToJson(vitems, FilterOp.equal, targetOp, true);
+			opToJson(vitems, FilterOp.before, targetOp == FilterOp.lessThan ? FilterOp.before : targetOp, false);
+			opToJson(vitems, FilterOp.after, targetOp == FilterOp.greaterThan ? FilterOp.after : targetOp, false);
+			opToJson(vitems, FilterOp.betweenDates, targetOp, true);
+			opToJson(vitems, FilterOp.tomorrow, targetOp, false);
+			opToJson(vitems, FilterOp.today, targetOp, false);
+			opToJson(vitems, FilterOp.yesterday, targetOp, true);
+			opToJson(vitems, FilterOp.nextWeek, targetOp, false);
+			opToJson(vitems, FilterOp.thisWeek, targetOp, false);
+			opToJson(vitems, FilterOp.lastWeek, targetOp, true);
+			opToJson(vitems, FilterOp.nextMonth, targetOp, false);
+			opToJson(vitems, FilterOp.thisMonth, targetOp, false);
+			opToJson(vitems, FilterOp.lastMonth, targetOp, true);
+			opToJson(vitems, FilterOp.nextQuarter, targetOp, false);
+			opToJson(vitems, FilterOp.thisQuarter, targetOp, false);
+			opToJson(vitems, FilterOp.lastQuarter, targetOp, true);
+			opToJson(vitems, FilterOp.nextYear, targetOp, false);
+			opToJson(vitems, FilterOp.thisYear, targetOp, false);
+			opToJson(vitems, FilterOp.lastYear, targetOp, true);
+			opToJson(vitems, FilterOp.yearToDate, targetOp, true);
+			opToJson(vitems, FilterOp.allDatesInPeriod, targetOp, true);
+			opToJson(vitems, FilterOp.custom, targetOp, false);
+			
+			opToJson2(pitems, FilterOp.Q1, targetOp2, false);
+			opToJson2(pitems, FilterOp.Q2, targetOp2, false);
+			opToJson2(pitems, FilterOp.Q3, targetOp2, false);
+			opToJson2(pitems, FilterOp.Q4, targetOp2, true);
+			opToJson2(pitems, FilterOp.M1, targetOp2, false);
+			opToJson2(pitems, FilterOp.M2, targetOp2, false);
+			opToJson2(pitems, FilterOp.M3, targetOp2, false);
+			opToJson2(pitems, FilterOp.M4, targetOp2, false);
+			opToJson2(pitems, FilterOp.M5, targetOp2, false);
+			opToJson2(pitems, FilterOp.M6, targetOp2, false);
+			opToJson2(pitems, FilterOp.M7, targetOp2, false);
+			opToJson2(pitems, FilterOp.M8, targetOp2, false);
+			opToJson2(pitems, FilterOp.M9, targetOp2, false);
+			opToJson2(pitems, FilterOp.M10, targetOp2, false);
+			opToJson2(pitems, FilterOp.M11, targetOp2, false);
+			opToJson2(pitems, FilterOp.M12, targetOp2, false);
 		}
 		data.put("vitems", vitems);
 		data.put("vitem", targetOp == null ? null : targetOp.name());
+
+		//ZSS-1234
+		if (!pitems.isEmpty()) {
+			data.put("pitems", pitems);
+			data.put("pitem", targetOp2 == null ? null : targetOp2.name());
+		}
 
 		data.put("items", sortedItems);
 		data.put("row", row);
@@ -315,8 +391,8 @@ import org.zkoss.zss.ui.Spreadsheet;
 		return data;
 	}
 
-	//ZSS-1192
-	private void opToJson(ArrayList<Map> vitems, Operator op, Operator targetOp, boolean border) {
+	//ZSS-1192, ZSS-1234
+	private void opToJson(ArrayList<Map> vitems, FilterOp op, FilterOp targetOp, boolean border) {
 		HashMap item = new HashMap();
 		vitems.add(item);
 		item.put("op", op.name());
@@ -328,7 +404,21 @@ import org.zkoss.zss.ui.Spreadsheet;
 			item.put("b", true);
 		}
 	}
-	
+
+	//ZSS-1234
+	private void opToJson2(ArrayList<Map> vitems, Enum op, Enum targetOp, boolean border) {
+		HashMap item = new HashMap();
+		vitems.add(item);
+		item.put("op", op.name());
+		item.put("t", Labels.getLabel("zssex.perdlg."+op.name()));
+		if (targetOp == op) {
+			item.put("s", true);
+		}
+		if (border) {
+			item.put("b", true);
+		}
+	}
+
 	// ZSS-704
 	// [0]: SortedSet<FilterRowInfo>; 
 	// [1]: new bottom; 
@@ -607,19 +697,68 @@ import org.zkoss.zss.ui.Spreadsheet;
 	/*package*/ void applyFilter(Spreadsheet spreadsheet, Sheet selectedSheet,
 			String cellRangeAddr, boolean selectAll, int field, Object criteria, FilterOp op) { //ZSS-1191
 		final SRange range = SRanges.range(((SheetImpl)selectedSheet).getNative(), cellRangeAddr);
-		
-		if (FilterOp.CELL_COLOR == op || FilterOp.FONT_COLOR == op //ZSS-1191: criteria: [pattern, fgcolor, bgcolor] 
-			|| FilterOp.AND == op || FilterOp.OR == op) { //ZSS-1192: criteria: [SCustomFilter.Operator1, val1, SCustomFilter.Operator2, val2] 
+
+		//ZSS-1234
+		switch(op) {
+		//ZSS-1191: criteria: [pattern, fgcolor, bgcolor]
+		case cellColor:
+		case fontColor:
+			
+		//ZSS-1192: criteria: [SCustomFilter.Operator1, val1, SCustomFilter.Operator2, val2]
+		case and:
+		case or:
+		{
 			JSONArray ary = (JSONArray) criteria;
 			range.enableAutoFilter(field, op, ary.toArray(new String[ary.size()]), null, true);
-		} else if (FilterOp.ABOVE_AVERAGE == op || FilterOp.BELOW_AVERAGE == op) { //ZSS-1193
+			break;
+		}
+		
+		//ZSS-1193
+		case aboveAverage:
+		case belowAverage:
+			
+		//ZSS-1234
+		case tomorrow:
+		case today:
+		case yesterday:
+		case nextWeek:
+		case thisWeek:
+		case lastWeek:
+		case nextMonth:
+		case thisMonth:
+		case lastMonth:
+		case nextQuarter:
+		case thisQuarter:
+		case lastQuarter:
+		case nextYear:
+		case thisYear:
+		case lastYear:
+		case yearToDate:
+		case Q1:
+		case Q2:
+		case Q3:
+		case Q4:
+		case M1:
+		case M2:
+		case M3:
+		case M4:
+		case M5:
+		case M6:
+		case M7:
+		case M8:
+		case M9:
+		case M10:
+		case M11:
+		case M12:
 			range.enableAutoFilter(field, op, null, null, true);
-		} else {
+			break;
+			
+		default:
 			if (selectAll) {
-				range.enableAutoFilter(field, FilterOp.VALUES, null, null, true);
+				range.enableAutoFilter(field, FilterOp.values, null, null, true);
 			} else { //partial selection
 				JSONArray ary = (JSONArray) criteria;
-				range.enableAutoFilter(field, FilterOp.VALUES, ary.toArray(new String[ary.size()]), null, true);
+				range.enableAutoFilter(field, FilterOp.values, ary.toArray(new String[ary.size()]), null, true);
 			}
 		}
 	}

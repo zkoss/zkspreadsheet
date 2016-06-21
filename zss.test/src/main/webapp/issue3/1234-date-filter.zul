@@ -1,0 +1,14 @@
+<vbox hflex="1" vflex="1">
+	<label multiline="true">
+		1. Press filter drop down button on A3.
+		2. Hover to "Date Filters"; should see Between... checked
+		3. Select Between...; should see CustomAutoFilter pop out "is after or equal to" -> 2016/2/3; "is before or equal to" -> 2016/7/8
+		4. Press cancel and press filter drop down button on A3.
+		5. Hover to "Date Fitlers"; should see Between... checked
+		6. Select Custom Filter...;  should see CustomAutoFilter pop out "is after or equal to" -> 2016/2/3; "is before or equal to" -> 2016/7/8
+	</label>
+	
+	<spreadsheet id="ss" src="/issue3/book/1234-date-filter.xlsx" maxVisibleRows="50" maxVisibleColumns="50"
+		hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
+		showFormulabar="true" />
+</vbox>

@@ -51,7 +51,7 @@ public abstract class AbstractAutoFilterAdv implements SAutoFilter,Serializable{
 		private Set _criteria1;
 		private Set _criteria2;
 		private Boolean _showButton;
-		private FilterOp _op = FilterOp.AND;
+		private FilterOp _op = FilterOp.and;
 		private SColorFilter _colorFilter; //ZSS-1191
 		private SCustomFilters _customFilters; //ZSS-1224
 		private int type; //ZSS-1192: //Date 0, Number 1, String 2
@@ -157,7 +157,7 @@ public abstract class AbstractAutoFilterAdv implements SAutoFilter,Serializable{
 			
 			//TODO, more filtering operation
 			switch(filterOp) {
-			case VALUES:
+			case values:
 				
 				_filters =  new LinkedList<String>();
 				

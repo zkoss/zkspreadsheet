@@ -23,16 +23,22 @@ import org.zkoss.zss.model.SDynamicFilter;
  *
  */
 public class DynamicFilterImpl implements SDynamicFilter, Serializable {
-	public static final SDynamicFilter NOOP_DYNAFILTER = new DynamicFilterImpl(null, null, true); //ZSS-1193
+	public static final SDynamicFilter NOOP_DYNAFILTER = new DynamicFilterImpl(null, null, null); //ZSS-1193, ZSS-1234
 
+	private String type; //ZSS-1234
 	private Double maxValue;
 	private Double value;
-	private boolean isAbove;
 
-	public DynamicFilterImpl(Double maxValue, Double value, boolean isAbove) {
+	public DynamicFilterImpl(Double maxValue, Double value, String type) {
 		this.maxValue = maxValue;
 		this.value = value;
-		this.isAbove = isAbove;
+		this.type = type == null ? "null" : type;
+	}
+	
+	//ZSS-1234
+	@Override
+	public String getType() {
+		return type;
 	}
 	
 	@Override
@@ -45,12 +51,7 @@ public class DynamicFilterImpl implements SDynamicFilter, Serializable {
 		return value;
 	}
 	
-	@Override
-	public boolean isAbove() {
-		return isAbove;
-	}
-	
 	DynamicFilterImpl cloneDynamicFilter() {
-		return new DynamicFilterImpl(this.maxValue, this.value, this.isAbove);
+		return new DynamicFilterImpl(this.maxValue, this.value, this.type); //ZSS-1234
 	}
 }

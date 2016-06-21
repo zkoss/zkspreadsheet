@@ -1258,7 +1258,35 @@
     box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
     vertical-align: top;
     position: absolute;
-    top: 19px;
+    left: 240px;
+    top: 38px;
+}
+
+.zsafp-perioddlg {
+    width: 100px;
+    display: none;
+    background: #FFFFFF;
+    border: 1px solid #868686;
+    box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    vertical-align: top;
+    position: absolute;
+    left:426px;
+    top: 154px;
+}
+
+.zsafp-vitem-inp {
+}
+
+.zsafp-vitem-inp-more {
+    border-top: 4px solid transparent;
+    border-bottom: 4px solid transparent;
+    border-left: 4px solid #4A5473;
+    display: inline-block;
+    position: absolute;
+    right: 5px;
+    top: 5px;
+    width: 0px;
+    height: 0px;
 }
 
 .zsafp-value {

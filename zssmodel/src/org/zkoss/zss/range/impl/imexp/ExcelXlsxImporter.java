@@ -38,7 +38,6 @@ import org.zkoss.zss.model.*;
 import org.zkoss.zss.model.SBorder.BorderType;
 import org.zkoss.zss.model.SChart.ChartType;
 import org.zkoss.zss.model.SConditionalFormattingRule.RuleType;
-import org.zkoss.zss.model.SCustomFilter.Operator;
 import org.zkoss.zss.model.SFill.FillPattern;
 import org.zkoss.zss.model.STableColumn.STotalsRowFunction;
 import org.zkoss.zss.model.chart.*;
@@ -1117,8 +1116,8 @@ public class ExcelXlsxImporter extends AbstractExcelImporter {
 
 	//ZSS-1224
 	//@since 3.9.0
-	private SCustomFilter.Operator toZSSOperator(CustomFilter.Operator op) {
-		return SCustomFilter.Operator.valueOf(op.name());
+	private SAutoFilter.FilterOp toZSSOperator(CustomFilter.Operator op) {
+		return SAutoFilter.FilterOp.valueOf(op.name());
 	}
 	
 	//ZSS-1226
@@ -1128,8 +1127,8 @@ public class ExcelXlsxImporter extends AbstractExcelImporter {
 		if (poiDynamicFilter == null) return null;
 		Double maxval = poiDynamicFilter.getMaxValue();
 		Double val = poiDynamicFilter.getValue();
-		boolean isAbove = poiDynamicFilter.isAbove();
-		return new DynamicFilterImpl(maxval, val, isAbove);
+		String type = poiDynamicFilter.getType(); //ZSS-1234
+		return new DynamicFilterImpl(maxval, val, type); //ZSS-1234
 	}
 	
 	//ZSS-1227

@@ -78,23 +78,17 @@ public class PoiEnumConversion {
 
 	public static int toPoiFilterOperator(FilterOp operator){
 		switch(operator){
-			case AND:
+			case and:
 				return AutoFilter.FILTEROP_AND;
-			case BOTTOM10:
-				return AutoFilter.FILTEROP_BOTTOM10;
-			case BOTTOM10_PERCENT:
-				return AutoFilter.FILTEROP_BOTOOM10PERCENT;
-			case OR:
+			case or:
 				return AutoFilter.FILTEROP_OR;
-			case TOP10:
+			case top10:
 				return AutoFilter.FILTEROP_TOP10;
-			case TOP10_PERCENT:
-				return AutoFilter.FILTEROP_TOP10PERCENT;
-			case CELL_COLOR: //ZSS-1191
+			case cellColor: //ZSS-1191
 				return AutoFilter.FILTEROP_CELL_COLOR;
-			case FONT_COLOR: //ZSS-1191
+			case fontColor: //ZSS-1191
 				return AutoFilter.FILTEROP_FONT_COLOR;
-			case VALUES:
+			case values:
 			default:
 				return AutoFilter.FILTEROP_VALUES;
 		}
@@ -103,24 +97,22 @@ public class PoiEnumConversion {
 	public static FilterOp toFilterOperator(int operator) {
 		switch (operator) {
 		case AutoFilter.FILTEROP_AND:
-			return FilterOp.AND;
-		case AutoFilter.FILTEROP_BOTTOM10:
-			return FilterOp.BOTTOM10;
-		case AutoFilter.FILTEROP_BOTOOM10PERCENT:
-			return FilterOp.BOTTOM10_PERCENT;
+			return FilterOp.and;
 		case AutoFilter.FILTEROP_OR:
-			return FilterOp.OR;
-		case AutoFilter.FILTEROP_TOP10:
-			return FilterOp.TOP10;
+			return FilterOp.or;
+		//ZSS-1234
+		case AutoFilter.FILTEROP_BOTTOM10:
+		case AutoFilter.FILTEROP_BOTOOM10PERCENT:
 		case AutoFilter.FILTEROP_TOP10PERCENT:
-			return FilterOp.TOP10_PERCENT;
+		case AutoFilter.FILTEROP_TOP10:
+			return FilterOp.top10;
 		case AutoFilter.FILTEROP_CELL_COLOR: //ZSS-1191
-			return FilterOp.CELL_COLOR;
+			return FilterOp.cellColor;
 		case AutoFilter.FILTEROP_FONT_COLOR: //ZSS-1191
-			return FilterOp.FONT_COLOR;
+			return FilterOp.fontColor;
 		case AutoFilter.FILTEROP_VALUES:
 		default:
-			return FilterOp.VALUES;
+			return FilterOp.values;
 		}
 	}
 

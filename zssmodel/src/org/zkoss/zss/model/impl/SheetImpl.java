@@ -1914,7 +1914,7 @@ public class SheetImpl extends AbstractSheetAdv {
 	        	for(int c = l; c < r; ++c) {
 		        	final int colId = c - left; 
 		        	final NFilterColumn col = _autoFilter.getFilterColumn(colId, true);
-		        	col.setProperties(FilterOp.AND, null, null, false);
+		        	col.setProperties(FilterOp.and, null, null, false);
 	        	}
 	        }
 		}

@@ -21,6 +21,6 @@ import org.zkoss.zss.model.SAutoFilter.FilterOp;
  */
 public interface SDynamicFilter {
 	Double getValue();
-	boolean isAbove();
 	Double getMaxValue();
+	String getType(); //ZSS-1234
 }

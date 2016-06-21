@@ -87,9 +87,21 @@ public interface SAutoFilter {
 	 * @since 3.5.0
 	 */
 	public enum FilterOp{
-		AND, BOTTOM10, BOTTOM10_PERCENT, OR, TOP10, TOP10_PERCENT, VALUES, 
-		CELL_COLOR, FONT_COLOR, //ZSS-1191
-		ABOVE_AVERAGE, BELOW_AVERAGE; //ZSS-1226
+		equal, notEqual, greaterThan, greaterThanOrEqual, lessThan, lessThanOrEqual, 
+		beginWith, notBeginWith, endWith, notEndWith, contains, notContains, none, custom,
+		between, before, after, beforeEq, afterEq, betweenDates,
+
+		and, bottom, or, top10, values,
+		//ZSS-1191
+		cellColor, fontColor,
+		//ZSS-1226
+		aboveAverage, belowAverage,
+		//ZSS-1234
+		tomorrow, today, yesterday, nextWeek, thisWeek, lastWeek,
+		nextMonth, thisMonth, lastMonth, nextQuarter, thisQuarter, lastQuarter,
+		nextYear, thisYear, lastYear, yearToDate, within,
+		Q1, Q2, Q3, Q4,	M1, M2, M3, M4, M5, M6, M7, M8, M9, M10, M11, M12, allDatesInPeriod,
+		
 	}
 	
 

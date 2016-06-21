@@ -21,13 +21,16 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TimeZone;
 
 import org.zkoss.lang.Integers;
+import org.zkoss.poi.ss.usermodel.DateUtil;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zss.model.CellRegion;
 import org.zkoss.zss.model.InvalidModelOpException;
@@ -174,11 +177,72 @@ import org.zkoss.zss.range.impl.LessThanOrEqual;
 	
 	//ZSS-1193
 	private Matchable<Double> getMatchByDynamicFilter(SDynamicFilter dynaFilter) {
-		final boolean isAbove = dynaFilter.isAbove();
+		final boolean isAbove = "aboveAverage".equals(dynaFilter.getType()); //ZSS-1234
 		final Double avg = dynaFilter.getValue();
 		return isAbove ? 
 				new GreaterThan<Double>(avg) : 
 				new LessThan<Double>(avg);
+	}
+	
+	//ZSS-1234
+	private Matchable<Date> getMatchDateByDynamicFilter(SDynamicFilter dynaFilter) {
+		final FilterOp op = FilterOp.valueOf(dynaFilter.getType());
+		switch(op) {
+		case tomorrow:
+		case today:
+		case yesterday:
+		case nextWeek:
+		case thisWeek:
+		case lastWeek:
+		case nextMonth:
+		case thisMonth:
+		case lastMonth:
+		case nextQuarter:
+		case thisQuarter:
+		case lastQuarter:
+		case nextYear:
+		case thisYear:
+		case lastYear:
+		case yearToDate:
+		{
+			final Double min = dynaFilter.getValue();
+			final Double max = dynaFilter.getMaxValue();
+			return new DatesMatch(min.intValue(), max.intValue());
+		}
+		case Q1:
+			return new QuarterMatch(0, 3);
+		case Q2:
+			return new QuarterMatch(3, 6);
+		case Q3:
+			return new QuarterMatch(6, 9);
+		case Q4:
+			return new QuarterMatch(9, 12);
+		case M1:
+			return new MonthMatch(0);
+		case M2:
+			return new MonthMatch(1);
+		case M3:
+			return new MonthMatch(2);
+		case M4:
+			return new MonthMatch(3);
+		case M5:
+			return new MonthMatch(4);
+		case M6:
+			return new MonthMatch(5);
+		case M7:
+			return new MonthMatch(6);
+		case M8:
+			return new MonthMatch(7);
+		case M9:
+			return new MonthMatch(8);
+		case M10:
+			return new MonthMatch(9);
+		case M11:
+			return new MonthMatch(10);
+		case M12:
+			return new MonthMatch(11);
+		}
+		return null;
 	}
 	
 	//ZSS-1193
@@ -188,7 +252,7 @@ import org.zkoss.zss.range.impl.LessThanOrEqual;
 		int count = 0;
 		boolean error = false;
 		List<Double> list = new ArrayList<Double>();
-		for (int r = row; r <= row2; ++r) {
+		for (int r = row+1; r <= row2; ++r) { // should exclude the cell with the dropdown button
 			final SCell cell = sheet.getCell(r, col);
 			final CellValue cellval = ((AbstractCellAdv)cell).getEvalCellValue(true);
 			if (cellval.getType() == CellType.ERROR) {
@@ -205,7 +269,7 @@ import org.zkoss.zss.range.impl.LessThanOrEqual;
 		
 		Collections.sort(list);
 		if (isPercent) {
-			count = Math.min((int) (count * value / 100), count);
+			count = Math.min((int) Math.ceil(count * value / 100.0), count); // 0.+ should be 1
 		} else {
 			count = Math.min(count, value);
 		}
@@ -246,8 +310,17 @@ import org.zkoss.zss.range.impl.LessThanOrEqual;
 	//ZSS-1193: AboveAverage/BelowAverage
 	private LinkedHashMap<Integer, Boolean> _filterByDynamicFilter(SAutoFilter filter, NFilterColumn fc, int field) {
 		final SDynamicFilter dynaFilter = fc.getDynamicFilter();
-		final Matchable<Double> match = getMatchByDynamicFilter(dynaFilter);
-		return _filterByNumber(filter, fc, field, match);
+		SAutoFilter.FilterOp op = SAutoFilter.FilterOp.valueOf(dynaFilter.getType());
+		switch(op) {
+		case aboveAverage:
+		case belowAverage:
+			final Matchable<Double> match = getMatchByDynamicFilter(dynaFilter);
+			return _filterByNumber(filter, fc, field, match);
+		default:
+			//ZSS-1234
+			final Matchable<Date> matchDate = getMatchDateByDynamicFilter(dynaFilter);
+			return _filterByDate(filter, fc, field, matchDate);
+		}
 	}
 		
 	private LinkedHashMap<Integer, Boolean> _filterByNumber(SAutoFilter filter, NFilterColumn fc, int field, Matchable<Double> match) {
@@ -262,8 +335,48 @@ import org.zkoss.zss.range.impl.LessThanOrEqual;
 		for (int r = row; r <= row2; ++r) {
 			final SCell cell = sheet.getCell(r, col);
 			final CellValue cellval = ((AbstractCellAdv)cell).getEvalCellValue(true);
+			Object val = cellval.getValue();
+			//ZSS-1234
+			if (val instanceof Date) {
+				val = DateUtil.getExcelDate((Date)val);
+			}
 			if (cellval.getType() == CellType.NUMBER
-				&& match.match((Double)cellval.getValue())) {
+				&& match.match((Double)val)) {
+				 //candidate to be shown (other fildColumn might still hide this row!
+				final SRow rowobj = sheet.getRow(r);
+				if (rowobj.isHidden() && canUnhide(filter, fc, r, col1)) { //a hidden row and no other hidden filtering
+					affectedRows.put(r, false);
+				}
+			} else { //to be hidden
+				final SRow rowobj = sheet.getRow(r);
+				if (!rowobj.isHidden()) { //a non-hidden row
+					affectedRows.put(r, true);
+				}
+			}
+		}
+		return affectedRows;
+	}
+
+	//ZSS-1234
+	private LinkedHashMap<Integer, Boolean> _filterByDate(SAutoFilter filter, NFilterColumn fc, int field, Matchable<Date> match) {
+		final CellRegion affectedArea = filter.getRegion();
+		final int row1 = affectedArea.getRow();
+		final int col1 = affectedArea.getColumn(); 
+		final int col =  col1 + field - 1;
+		final int row = row1 + 1;
+		final int row2 = affectedArea.getLastRow();
+		
+		LinkedHashMap<Integer, Boolean> affectedRows = new LinkedHashMap<Integer, Boolean>();
+		for (int r = row; r <= row2; ++r) {
+			final SCell cell = sheet.getCell(r, col);
+			final CellValue cellval = ((AbstractCellAdv)cell).getEvalCellValue(true);
+			Object val = cellval.getValue();
+			if (cellval.getType() == CellType.NUMBER && !(val instanceof Date)) {
+				val = DateUtil.getJavaDate((Double) val, TimeZone.getTimeZone("UTC"));
+			}
+			
+			if (cellval.getType() == CellType.NUMBER
+				&& match.match((Date)val)) {
 				 //candidate to be shown (other fildColumn might still hide this row!
 				final SRow rowobj = sheet.getRow(r);
 				if (rowobj.isHidden() && canUnhide(filter, fc, r, col1)) { //a hidden row and no other hidden filtering
@@ -280,35 +393,338 @@ import org.zkoss.zss.range.impl.LessThanOrEqual;
 	}
 
 	//ZSS-1193
-	private STop10Filter _prepareTop10Filter(Integer[] criteria, CellRegion region, int field, FilterOp op) {
+	// criteria1: [count, isTop, isPercent]
+	private STop10Filter _prepareTop10Filter(Object[] criteria, CellRegion region, int field, FilterOp op) {
 		final int row = region.getRow();
 		final int row2 = region.getLastRow();
 		final int col = region.getColumn() + field - 1;
-		final boolean isTop = op == FilterOp.TOP10 || op == FilterOp.TOP10_PERCENT;
-		final boolean isPercent = op == FilterOp.BOTTOM10_PERCENT || op == FilterOp.TOP10_PERCENT;
-		final int value = criteria[0].intValue();
+		final boolean isTop = criteria[1] == Boolean.TRUE; // top or bottom
+		final boolean isPercent = criteria[2] == Boolean.TRUE; // percent or value
+		final int value = ((Integer)criteria[0]).intValue();
 		final Double filterVal = _pickTop10(col, row, row2, value, isTop, isPercent);
 		return filterVal == null ? null : new Top10FilterImpl(isTop, value, isPercent, filterVal);
 	}
 	
-	//ZSS-1193
-	private SDynamicFilter _prepareDynamicFilter(CellRegion region, int field, boolean isAbove) {
+	//ZSS-1193, ZSS-1234
+	private SDynamicFilter _prepareDynamicFilter(CellRegion region, int field, FilterOp op) {
 		final int row = region.getRow();
 		final int row2 = region.getLastRow();
 		final int col = region.getColumn() + field - 1;
-		final Double avg = _calcAverage(col, row, row2);
-		return avg == null ? null : new DynamicFilterImpl(null, avg, isAbove);
+		Double maxVal = null;
+		Double val = null;
+		boolean fail = false;
+		switch(op) {
+		case aboveAverage:
+			val = _calcAverage(col, row, row2);
+			if (val == null) {
+				fail = true;
+			}
+			break;
+			
+		case belowAverage:	
+			val = _calcAverage(col, row, row2);
+			if (val == null) {
+				fail = true;
+			}
+			break;
+
+		//ZSS-1234
+		case tomorrow:
+			val = _calcTomorrow();
+			maxVal = val + 1;
+			break;
+			
+		case today:
+			val = _calcToday();
+			maxVal = val + 1;
+			break;
+			
+		case yesterday:
+			val = _calcYesterday();
+			maxVal = val + 1;
+			break;
+			
+		case nextWeek:
+		{
+			double[] res = _calcNextWeek();
+			val = res[0];
+			maxVal = res[1];
+			break;
+		}	
+		case thisWeek:
+		{
+			double[] res = _calcThisWeek();
+			val = res[0];
+			maxVal = res[1];
+			break;
+		}
+		case lastWeek:
+		{
+			double[] res = _calcLastWeek();
+			val = res[0];
+			maxVal = res[1];
+			break;
+		}
+		case nextMonth:
+		{
+			double[] res = _calcNextMonth();
+			val = res[0];
+			maxVal = res[1];
+			break;
+		}	
+		case thisMonth:
+		{
+			double[] res = _calcThisMonth();
+			val = res[0];
+			maxVal = res[1];
+			break;
+		}
+		case lastMonth:
+		{
+			double[] res = _calcLastMonth();
+			val = res[0];
+			maxVal = res[1];
+			break;
+		}
+		case nextQuarter:
+		{
+			double[] res = _calcNextQuarter();
+			val = res[0];
+			maxVal = res[1];
+			break;
+		}	
+		case thisQuarter:
+		{
+			double[] res = _calcThisQuarter();
+			val = res[0];
+			maxVal = res[1];
+			break;
+		}
+		case lastQuarter:
+		{
+			double[] res = _calcLastQuarter();
+			val = res[0];
+			maxVal = res[1];
+			break;
+		}
+		case nextYear:
+		{
+			double[] res = _calcNextYear();
+			val = res[0];
+			maxVal = res[1];
+			break;
+		}	
+		case thisYear:
+		{
+			double[] res = _calcThisYear();
+			val = res[0];
+			maxVal = res[1];
+			break;
+		}
+		case lastYear:
+		{
+			double[] res = _calcLastYear();
+			val = res[0];
+			maxVal = res[1];
+			break;
+		}
+		case yearToDate:
+		{
+			double[] res = _calcYearToDate();
+			val = res[0];
+			maxVal = res[1];
+			break;
+		}
+		}
+		return fail ? null : new DynamicFilterImpl(maxVal, val, op.name()); //ZSS-1234
 	}
 	
+	//ZSS-1234
+	private double _calcToday() {
+		Calendar now = new GregorianCalendar();
+		now.set(Calendar.MILLISECOND, 0);
+		now.set(now.get(Calendar.YEAR), now.get(Calendar.MONTH), now.get(Calendar.DATE),0,0,0);
+		return DateUtil.getExcelDate(now.getTime());
+	}
+	
+	//ZSS-1234
+	private double _calcTomorrow() {
+		return _calcToday() + 1;
+	}
+	
+	//ZSS-1234
+	private double _calcYesterday() {
+		return _calcToday() - 1; 
+	}
+	
+	//ZSS-1234
+	private double[] _calcThisMonth() {
+		Calendar now = new GregorianCalendar();
+		now.set(Calendar.MILLISECOND, 0);
+		now.setLenient(true);
+		now.set(now.get(Calendar.YEAR), now.get(Calendar.MONTH), 1,0,0,0);
+		final double d1 = DateUtil.getExcelDate(now.getTime());
+		now.set(now.get(Calendar.YEAR), now.get(Calendar.MONTH) + 1, 1,0,0,0);
+		final double d2 = DateUtil.getExcelDate(now.getTime());
+		return new double[] {d1, d2};
+	}
+	
+	//ZSS-1234
+	private double[] _calcNextMonth() {
+		Calendar now = new GregorianCalendar();
+		now.set(Calendar.MILLISECOND, 0);
+		now.setLenient(true);
+		now.set(now.get(Calendar.YEAR), now.get(Calendar.MONTH) + 1, 1,0,0,0);
+		final double d1 = DateUtil.getExcelDate(now.getTime());
+		now.set(now.get(Calendar.YEAR), now.get(Calendar.MONTH) + 1, 1,0,0,0);
+		final double d2 = DateUtil.getExcelDate(now.getTime());
+		return new double[] {d1, d2};
+	}
+	
+	//ZSS-1234
+	private double[] _calcLastMonth() {
+		Calendar now = new GregorianCalendar();
+		now.set(Calendar.MILLISECOND, 0);
+		now.setLenient(true);
+		now.set(now.get(Calendar.YEAR), now.get(Calendar.MONTH), 1,0,0,0);
+		final double d2 = DateUtil.getExcelDate(now.getTime());
+		now.set(now.get(Calendar.YEAR), now.get(Calendar.MONTH) - 1, 1,0,0,0);
+		final double d1 = DateUtil.getExcelDate(now.getTime());
+		return new double[] {d1, d2};
+	}
+
+	//ZSS-1234
+	private double[] _calcThisQuarter() {
+		Calendar now = new GregorianCalendar();
+		now.set(Calendar.MILLISECOND, 0);
+		now.setLenient(true);
+		final int m = now.get(Calendar.MONTH);
+		final int sm = m < 3 ? 0 : m < 6 ? 3 : m < 9 ? 6 : 9;
+		now.set(now.get(Calendar.YEAR), sm, 1,0,0,0);
+		final double d1 = DateUtil.getExcelDate(now.getTime());
+		now.set(now.get(Calendar.YEAR), sm + 3, 1,0,0,0);
+		final double d2 = DateUtil.getExcelDate(now.getTime());
+		return new double[] {d1, d2};
+	}
+	
+	//ZSS-1234
+	private double[] _calcNextQuarter() {
+		Calendar now = new GregorianCalendar();
+		now.set(Calendar.MILLISECOND, 0);
+		now.setLenient(true);
+		final int m = now.get(Calendar.MONTH);
+		final int sm = (m < 3 ? 0 : m < 6 ? 3 : m < 9 ? 6 : 9) + 3;
+		now.set(now.get(Calendar.YEAR), sm, 1,0,0,0);
+		final double d1 = DateUtil.getExcelDate(now.getTime());
+		now.set(now.get(Calendar.YEAR), sm + 3, 1,0,0,0);
+		final double d2 = DateUtil.getExcelDate(now.getTime());
+		return new double[] {d1, d2};
+	}
+	
+	//ZSS-1234
+	private double[] _calcLastQuarter() {
+		Calendar now = new GregorianCalendar();
+		now.set(Calendar.MILLISECOND, 0);
+		now.setLenient(true);
+		final int m = now.get(Calendar.MONTH);
+		final int sm = (m < 3 ? 0 : m < 6 ? 3 : m < 9 ? 6 : 9) - 3;
+		now.set(now.get(Calendar.YEAR), sm, 1,0,0,0);
+		final double d1 = DateUtil.getExcelDate(now.getTime());
+		now.set(now.get(Calendar.YEAR), sm + 3, 1,0,0,0);
+		final double d2 = DateUtil.getExcelDate(now.getTime());
+		return new double[] {d1, d2};
+	}
+	
+	//ZSS-1234
+	private double[] _calcThisYear() {
+		Calendar now = new GregorianCalendar();
+		now.set(Calendar.MILLISECOND, 0);
+		now.setLenient(true);
+		now.set(now.get(Calendar.YEAR), 0, 1,0,0,0);
+		final double d1 = DateUtil.getExcelDate(now.getTime());
+		now.set(now.get(Calendar.YEAR) + 1, 0, 1,0,0,0);
+		final double d2 = DateUtil.getExcelDate(now.getTime());
+		return new double[] {d1, d2};		
+	}
+	
+	//ZSS-1234
+	private double[] _calcNextYear() {
+		Calendar now = new GregorianCalendar();
+		now.set(Calendar.MILLISECOND, 0);
+		now.setLenient(true);
+		now.set(now.get(Calendar.YEAR) + 1, 0, 1,0,0,0);
+		final double d1 = DateUtil.getExcelDate(now.getTime());
+		now.set(now.get(Calendar.YEAR) + 1, 0, 1,0,0,0);
+		final double d2 = DateUtil.getExcelDate(now.getTime());
+		return new double[] {d1, d2};		
+	}
+	
+	//ZSS-1234
+	private double[] _calcLastYear() {
+		Calendar now = new GregorianCalendar();
+		now.set(Calendar.MILLISECOND, 0);
+		now.setLenient(true);
+		now.set(now.get(Calendar.YEAR), 0, 1,0,0,0);
+		final double d2 = DateUtil.getExcelDate(now.getTime());
+		now.set(now.get(Calendar.YEAR) - 1, 0, 1,0,0,0);
+		final double d1 = DateUtil.getExcelDate(now.getTime());
+		return new double[] {d1, d2};		
+	}
+	
+	//ZSS-1234
+	private double[] _calcThisWeek() {
+		Calendar now = new GregorianCalendar();
+		now.set(Calendar.MILLISECOND, 0);
+		now.setLenient(true);
+		now.set(now.get(Calendar.YEAR), now.get(Calendar.MONTH), now.get(Calendar.DATE),0,0,0);
+		final int fdw = now.getFirstDayOfWeek();
+		final int wd = now.get(Calendar.DAY_OF_WEEK);
+		int diff = fdw - wd;
+		if (diff > 0) {
+			diff -= 7;
+		}
+		final double d1 = DateUtil.getExcelDate(now.getTime()) + diff;
+		final double d2 = d1 + 7;
+		return new double[] {d1, d2};
+	}
+
+	//ZSS-1234
+	private double[] _calcNextWeek() {
+		final double[] tw = _calcThisWeek();
+		final double d1 = tw[1];
+		final double d2 = d1 + 7;
+		return new double[] {d1, d2};
+	}
+
+	//ZSS-1234
+	private double[] _calcLastWeek() {
+		final double[] tw = _calcThisWeek();
+		final double d2 = tw[0];
+		final double d1 = d2 - 7;
+		return new double[] {d1, d2};
+	}
+	
+	//ZSS-1234
+	private double[] _calcYearToDate() {
+		Calendar now = new GregorianCalendar();
+		now.set(Calendar.MILLISECOND, 0);
+		now.setLenient(true);
+		now.set(now.get(Calendar.YEAR), now.get(Calendar.MONTH), now.get(Calendar.DATE),0,0,0);
+		final double d2 = DateUtil.getExcelDate(now.getTime()) + 1;
+		now.set(now.get(Calendar.YEAR), 0, 1,0,0,0);
+		final double d1 = DateUtil.getExcelDate(now.getTime());
+		return new double[] {d1, d2};		
+	}
+
 	//ZSS-1192
 	// criteria: [SCustomFitler.Operator1, val1, SCustomFilter.Operator2, val2]
 	private SCustomFilters _prepareCustomFilters(String[] criteria1, String[] criteria2, boolean isAnd) {
-		final SCustomFilter.Operator op1 = SCustomFilter.Operator.valueOf(criteria1[0]);
+		final FilterOp op1 = FilterOp.valueOf(criteria1[0]);
 		final String val1 = criteria1[1];
 		final SCustomFilter f1 = new CustomFilterImpl(val1, op1);
 		
-		final SCustomFilter.Operator op2 = criteria2 != null ? 
-				SCustomFilter.Operator.valueOf(criteria2[0]) : null;
+		final FilterOp op2 = criteria2 != null ? 
+				FilterOp.valueOf(criteria2[0]) : null;
 		final String val2 = criteria2 != null ? criteria2[1] : null;
 		final SCustomFilter f2 = op2 == null ? null : new CustomFilterImpl(val2, op2);
 		
@@ -475,37 +891,68 @@ import org.zkoss.zss.range.impl.LessThanOrEqual;
 		STop10Filter top10Filter = null; //ZSS-1193
 		switch(filterOp) {
 		//ZSS-1191
-		case CELL_COLOR:
-		case FONT_COLOR:
-			extra.put("colorFilter", _prepareColorFilter((String[])criteria1, filterOp == FilterOp.FONT_COLOR));
+		case cellColor:
+		case fontColor:
+			extra.put("colorFilter", _prepareColorFilter((String[])criteria1, filterOp == FilterOp.fontColor));
 			criteria1 = null;
 			break;
 		
 		//ZSS-1192
-		case AND:
-		case OR:
-			extra.put("customFilters", _prepareCustomFilters((String[])criteria1, (String[])criteria2, filterOp == FilterOp.AND));
+		case and:
+		case or:
+			extra.put("customFilters", _prepareCustomFilters((String[])criteria1, (String[])criteria2, filterOp == FilterOp.and));
 			criteria1 = null;
 			break;
 		
 		//ZSS-1193: SDynamicFilter
-		case ABOVE_AVERAGE:
-		case BELOW_AVERAGE:
+		case aboveAverage:
+		case belowAverage:
+			
+		//ZSS-1234: SDynamicFilter
+		case tomorrow:
+		case today:
+		case yesterday:
+		case nextWeek:
+		case thisWeek:
+		case lastWeek:
+		case nextMonth:
+		case thisMonth:
+		case lastMonth:
+		case nextQuarter:
+		case thisQuarter:
+		case lastQuarter:
+		case nextYear:
+		case thisYear:
+		case lastYear:
+		case yearToDate:
+		case Q1:
+		case Q2:
+		case Q3:
+		case Q4:
+		case M1:
+		case M2:
+		case M3:
+		case M4:
+		case M5:
+		case M6:
+		case M7:
+		case M8:
+		case M9:
+		case M10:
+		case M11:
+		case M12:
 			//if #Error in row; the dynamic filter will be ignored
 			dynaFilter = 
-				_prepareDynamicFilter(filter.getRegion(), field, filterOp == FilterOp.ABOVE_AVERAGE); 
+				_prepareDynamicFilter(filter.getRegion(), field, filterOp); //ZSS-1234 
 			extra.put("dynamicFilter", dynaFilter == null ? DynamicFilterImpl.NOOP_DYNAFILTER : dynaFilter);
 			criteria1 = null;
 			break;
 
 		//ZSS-1193: STop10Filter
-		case TOP10:
-		case TOP10_PERCENT:
-		case BOTTOM10:
-		case BOTTOM10_PERCENT:
+		case top10:
 			//if #Error in row; the top10 filter will be ignored
 			top10Filter = 
-				_prepareTop10Filter((Integer[])criteria1, filter.getRegion(), field, filterOp);
+				_prepareTop10Filter((Object[])criteria1, filter.getRegion(), field, filterOp);
 			extra.put("top10Filter", top10Filter == null ? Top10FilterImpl.NOOP_TOP10FILTER : top10Filter);
 			criteria1 = null;
 			break;
@@ -517,30 +964,61 @@ import org.zkoss.zss.range.impl.LessThanOrEqual;
 		LinkedHashMap<Integer, Boolean> affectedRows = null;
 		switch(filterOp) {
 		//ZSS-1191
-		case CELL_COLOR: 
-		case FONT_COLOR:
+		case cellColor: 
+		case fontColor:
 			affectedRows = _filterByColor(filter, fc, field);
 			break;
 			
 		//ZSS-1192
-		case OR:
-		case AND:
+		case or:
+		case and:
 			affectedRows = _filterByCustomFilters(filter, fc, field);
 			break;
 			
 		//ZSS-1193
-		case ABOVE_AVERAGE:
-		case BELOW_AVERAGE:
+		case aboveAverage:
+		case belowAverage:
+			
+		//ZSS-1234
+		case tomorrow:
+		case today:
+		case yesterday:
+		case nextWeek:
+		case thisWeek:
+		case lastWeek:
+		case nextMonth:
+		case thisMonth:
+		case lastMonth:
+		case nextQuarter:
+		case thisQuarter:
+		case lastQuarter:
+		case nextYear:
+		case thisYear:
+		case lastYear:
+		case yearToDate:
+		case Q1:
+		case Q2:
+		case Q3:
+		case Q4:
+		case M1:
+		case M2:
+		case M3:
+		case M4:
+		case M5:
+		case M6:
+		case M7:
+		case M8:
+		case M9:
+		case M10:
+		case M11:
+		case M12:
 			if (dynaFilter != null) {
 				affectedRows = _filterByDynamicFilter(filter, fc, field);
 			}
 			break;
 			
 		//ZSS-1193
-		case TOP10:
-		case TOP10_PERCENT:
-		case BOTTOM10:
-		case BOTTOM10_PERCENT:
+		case top10:
 			if (top10Filter != null) {
 				affectedRows = _filterByTop10Filter(filter, fc, field);
 			}
@@ -599,12 +1077,25 @@ import org.zkoss.zss.range.impl.LessThanOrEqual;
 			return !match.match(cell.isNull() ? null : cell);
 		}
 		
-		//ZSS-1193
+		//ZSS-1193, ZSS-1234
 		SDynamicFilter dynaFilter = fc.getDynamicFilter();
 		if (dynaFilter != null) {
-			Matchable<Double> match = getMatchByDynamicFilter(dynaFilter);
-			CellValue cv = ((AbstractCellAdv)cell).getEvalCellValue(true);
-			return cv.getType() != CellType.NUMBER || !match.match((Double)cv.getValue());
+			final String type = dynaFilter.getType();
+			if ("aboveAverage".equals(type) || "belowAverage".equals(type)) { 
+				//ZSS-1193
+				Matchable<Double> match = getMatchByDynamicFilter(dynaFilter);
+				CellValue cv = ((AbstractCellAdv)cell).getEvalCellValue(true);
+				return cv.getType() != CellType.NUMBER || !match.match((Double)cv.getValue());
+			} else { 
+				//ZSS-1234
+				Matchable<Date> match = getMatchDateByDynamicFilter(dynaFilter);
+				CellValue cv = ((AbstractCellAdv)cell).getEvalCellValue(true);
+				Object val = cv.getValue();
+				if (cv.getType() == CellType.NUMBER && !(val instanceof Date)) {
+					val = DateUtil.getJavaDate((Double)val, TimeZone.getTimeZone("UTC"));
+				}
+				return cv.getType() != CellType.NUMBER || !match.match((Date)val);
+			}
 		}
 		
 		//ZSS-1193
@@ -667,7 +1158,7 @@ import org.zkoss.zss.range.impl.LessThanOrEqual;
 		validFiltered(af);
 		
 		for(NFilterColumn fc : fcs) {
-			fc.setProperties(FilterOp.VALUES, null, null, null); //clear all filter
+			fc.setProperties(FilterOp.values, null, null, null); //clear all filter
 		}
 		final int row1 = afrng.getRow();
 		final int row = row1 + 1;

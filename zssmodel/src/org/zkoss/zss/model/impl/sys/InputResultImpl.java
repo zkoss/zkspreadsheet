@@ -49,11 +49,11 @@ public class InputResultImpl implements InputResult, Serializable{
 		return _type;
 	}
 
-	void setValue(Object value) {
+	public void setValue(Object value) { //ZSS-1234
 		this._value = value;
 	}
 
-	void setType(CellType type) {
+	public void setType(CellType type) { //ZSS-1234
 		this._type = type;
 	}
 	public String getFormat() {

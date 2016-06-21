@@ -1583,6 +1583,9 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 					SCustomFilter f1 = null;
 					SCustomFilter f2 = null;
 					
+					//ZSS-1234
+					boolean dynaf = false;
+					
 					//ZSS-1193
 					boolean isAbove = false;
 					Double avgVal = null;
@@ -1619,7 +1622,8 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 						//ZSS-1193
 						SDynamicFilter dynaFilter = fc.getDynamicFilter();
 						if (dynaFilter != null) {
-							isAbove = dynaFilter.isAbove();
+							dynaf = true; //ZSS-1234
+							isAbove = "aboveAverage".equals(dynaFilter.getType());
 							avgVal = dynaFilter.getValue();
 						}
 						
@@ -1668,10 +1672,14 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 						}
 					}
 					
-					//ZSS-1193: DynamicFilter (aboveAverage/belowAverage)
-					if (avgVal != null) {
-						fcmap.put("avgVal", avgVal);
-						fcmap.put("isAbove", isAbove);
+					//ZSS-1234
+					if (dynaf) {
+						fcmap.put("dynaf", Boolean.valueOf(dynaf));
+						//ZSS-1193: DynamicFilter (aboveAverage/belowAverage)
+						if (avgVal != null) {
+							fcmap.put("avgVal", avgVal);
+							fcmap.put("isAbove", isAbove);
+						}
 					}
 					
 					//ZSS-1193: Top10Filter

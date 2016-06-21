@@ -22,7 +22,6 @@ import org.zkoss.zss.model.SAutoFilter.NFilterColumn;
 import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.SBooks;
 import org.zkoss.zss.model.SCustomFilter;
-import org.zkoss.zss.model.SCustomFilter.Operator;
 import org.zkoss.zss.model.SCustomFilters;
 import org.zkoss.zss.model.SDynamicFilter;
 import org.zkoss.zss.model.SSheet;
@@ -70,7 +69,7 @@ public class Issue1226ImportExportDynamicFilterTest {
 			
 			SDynamicFilter cfilters = fc.getDynamicFilter();
 			Assert.assertNotNull(cfilters);
-			Assert.assertFalse(cfilters.isAbove());
+			Assert.assertEquals("belowAverage", cfilters.getType());
 			Assert.assertEquals(5.5, cfilters.getValue(), 0.00000000000001);
 			Assert.assertNull(cfilters.getMaxValue());
 		} catch (Exception e) {

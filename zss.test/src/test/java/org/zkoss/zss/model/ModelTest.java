@@ -3231,9 +3231,6 @@ public class ModelTest {
 		Assert.assertEquals("C6:D7", sheet1.getMergedRegion("C7").getReferenceString());
 		Assert.assertEquals("C6:D7", sheet1.getMergedRegion("D6").getReferenceString());
 		Assert.assertEquals("C6:D7", sheet1.getMergedRegion("D7").getReferenceString());
-		
-		
-		
 	}
 	
 	@Test
@@ -3253,7 +3250,7 @@ public class ModelTest {
 		NFilterColumn col0 = filter.getFilterColumn(0, true);
 		Assert.assertEquals(col0, filter.getFilterColumn(0, true));
 		
-		col0.setProperties(FilterOp.VALUES, new String[]{"ABC","DEF"}, null, false);
+		col0.setProperties(FilterOp.values, new String[]{"ABC","DEF"}, null, false);
 
 		@SuppressWarnings("unused")
 		NFilterColumn col1 = filter.getFilterColumn(1, true);
@@ -3262,7 +3259,7 @@ public class ModelTest {
 			Assert.fail();
 		}catch(IllegalStateException x){}
 		
-		Assert.assertEquals(FilterOp.VALUES, col0.getOperator());
+		Assert.assertEquals(FilterOp.values, col0.getOperator());
 		Assert.assertEquals(2,col0.getCriteria1().size());
 		Assert.assertEquals("ABC",col0.getCriteria1().iterator().next());
 		Assert.assertEquals(0,col0.getCriteria2().size());

@@ -517,19 +517,18 @@ public class EnumUtil {
 	public static FilterOp toRangeAutoFilterOperation(AutoFilterOperation filterOp) {
 		switch(filterOp){
 		case AND:
-			return FilterOp.AND;
+			return FilterOp.and;
 		case OR:
-			return FilterOp.OR;
+			return FilterOp.or;
+			
+			//ZSS-1234
 		case TOP10:
-			return FilterOp.TOP10;
 		case TOP10PERCENT:
-			return FilterOp.TOP10_PERCENT;
 		case BOTTOM10:
-			return FilterOp.BOTTOM10;
 		case BOTTOM10PERCENT:
-			return FilterOp.BOTTOM10_PERCENT;
+			return FilterOp.top10;
 		case VALUES:
-			return FilterOp.VALUES;
+			return FilterOp.values;
 		}
 		throw new IllegalArgumentException("unknow autofilter operation "+filterOp);
 	}

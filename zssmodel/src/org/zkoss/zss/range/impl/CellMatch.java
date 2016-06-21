@@ -17,10 +17,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.zkoss.poi.ss.usermodel.ZssContext;
+import org.zkoss.zss.model.SAutoFilter.FilterOp;
 import org.zkoss.zss.model.SCell;
 import org.zkoss.zss.model.SCell.CellType;
 import org.zkoss.zss.model.SCustomFilter;
-import org.zkoss.zss.model.SCustomFilter.Operator;
 import org.zkoss.zss.model.sys.EngineFactory;
 import org.zkoss.zss.model.sys.format.FormatContext;
 import org.zkoss.zss.model.sys.format.FormatEngine;
@@ -64,7 +64,7 @@ public class CellMatch implements Matchable<SCell>, Serializable {
 		private Pattern _pattern;
 		private Matchable<?> _matchable;
 		private Object value;
-		private SCustomFilter.Operator op;
+		private FilterOp op;
 		private CellType type;
 		private FormatEngine _formatEngine;
 		
@@ -117,8 +117,8 @@ public class CellMatch implements Matchable<SCell>, Serializable {
 						cell.getFormulaResultType() : cell.getType());
 						
 			if (t != type 
-					&& op != SCustomFilter.Operator.equal 
-					&& op != SCustomFilter.Operator.notEqual) {
+					&& op != FilterOp.equal 
+					&& op != FilterOp.notEqual) {
 				return _not;
 			}
 			final boolean ret = type == CellType.STRING ? 
@@ -179,25 +179,29 @@ public class CellMatch implements Matchable<SCell>, Serializable {
 				String val = _escape(value.toString());
 				_pattern = Pattern.compile(val);
 				break;
-			}				
+			}
+			case after: //ZSS-1234
 			case greaterThan:
 				_matchable = type == CellType.STRING ? 
 						new GreaterThan<String>(value.toString()):
 						new GreaterThan<Double>((Double) value);
 				break;
 				
+			case afterEq: //ZSS-1234
 			case greaterThanOrEqual:
 				_matchable = type == CellType.STRING ?
 						new GreaterThanOrEqual<String>(value.toString()):
 						new GreaterThanOrEqual<Double>((Double) value);
 				break;
 				
+			case before: //ZSS-1234
 			case lessThan:
 				_matchable = type == CellType.STRING ?
 						new LessThan<String>(value.toString()):
 						new LessThan<Double>((Double) value);
 				break;
 
+			case beforeEq: //ZSS-1234
 			case lessThanOrEqual:
 				_matchable = type == CellType.STRING ?
 						new LessThanOrEqual<String>(value.toString()):

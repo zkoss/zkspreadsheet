@@ -571,7 +571,7 @@ public class ImExpTestBase {
 		SAutoFilter filter1 = book.getSheetByName("1 column").getAutoFilter();
 		assertEquals("B1:D10", filter1.getRegion().getReferenceString());
 		assertEquals(1, filter1.getFilterColumns().size());
-		assertEquals(FilterOp.VALUES, filter1.getFilterColumn(1, false).getOperator());
+		assertEquals(FilterOp.values, filter1.getFilterColumn(1, false).getOperator());
 		assertEquals(1, filter1.getFilterColumn(1, false).getFilters().size());
 		assertEquals(1, filter1.getFilterColumn(1, false).getCriteria1().size());
 		assertTrue(filter1.getFilterColumn(1, false).getCriteria1().contains("Davolio"));
@@ -582,7 +582,7 @@ public class ImExpTestBase {
 		assertEquals(2, filter2.getFilterColumns().size());
 		
 		NFilterColumn firstFilterColumn = filter2.getFilterColumn(0, false);
-		assertEquals(FilterOp.VALUES, firstFilterColumn.getOperator());
+		assertEquals(FilterOp.values, firstFilterColumn.getOperator());
 		assertEquals(3, firstFilterColumn.getFilters().size());
 		assertEquals(3, firstFilterColumn.getCriteria1().size());
 		assertTrue(firstFilterColumn.getCriteria1().contains("XL"));

@@ -14,6 +14,7 @@ package org.zkoss.zss.model.impl;
 
 import java.io.Serializable;
 
+import org.zkoss.zss.model.SAutoFilter;
 import org.zkoss.zss.model.SCustomFilter;
 
 //ZSS-1224
@@ -23,9 +24,9 @@ import org.zkoss.zss.model.SCustomFilter;
  */
 public class CustomFilterImpl implements SCustomFilter, Serializable {
 	private String value;
-	private SCustomFilter.Operator operator;
+	private SAutoFilter.FilterOp operator;
 	
-	public CustomFilterImpl(String value, Operator operator) {
+	public CustomFilterImpl(String value, SAutoFilter.FilterOp operator) {
 		this.value = value;
 		this.operator = operator;
 	}
@@ -36,7 +37,7 @@ public class CustomFilterImpl implements SCustomFilter, Serializable {
 	}
 
 	@Override
-	public Operator getOperator() {
+	public SAutoFilter.FilterOp getOperator() {
 		// TODO Auto-generated method stub
 		return operator;
 	}

@@ -34,6 +34,7 @@ import org.zkoss.poi.xssf.usermodel.extensions.XSSFCellBorder;
 import org.zkoss.poi.xssf.usermodel.extensions.XSSFCellFill;
 import org.zkoss.poi.xssf.usermodel.XSSFRichTextString;
 import org.zkoss.zss.model.*;
+import org.zkoss.zss.model.SAutoFilter.FilterOp;
 import org.zkoss.zss.model.SAutoFilter.NFilterColumn;
 import org.zkoss.zss.model.SBorder.BorderType;
 import org.zkoss.zss.model.SFill.FillPattern;
@@ -587,7 +588,7 @@ public class ExcelXlsxExporter extends AbstractExcelExporter {
 			final SDynamicFilter dynamicFilter = srcFilterColumn.getDynamicFilter();
 			if (dynamicFilter != null) {
 				XSSFDynamicFilter poiDynamicFilter = new XSSFDynamicFilter(destFilterColumn);
-				poiDynamicFilter.setProperties(dynamicFilter.getMaxValue(), dynamicFilter.getValue(), dynamicFilter.isAbove());
+				poiDynamicFilter.setProperties(dynamicFilter.getMaxValue(), dynamicFilter.getValue(), dynamicFilter.getType()); //ZSS-1234
 				extra.put("dynamicFilter", poiDynamicFilter);
 			}
 			
@@ -607,7 +608,7 @@ public class ExcelXlsxExporter extends AbstractExcelExporter {
 	}
 	
 	//ZSS-1224
-	private CustomFilter.Operator toPOIOpertor(SCustomFilter.Operator op) {
+	private CustomFilter.Operator toPOIOpertor(FilterOp op) {
 		return CustomFilter.Operator.valueOf(op.name());
 	}
 	

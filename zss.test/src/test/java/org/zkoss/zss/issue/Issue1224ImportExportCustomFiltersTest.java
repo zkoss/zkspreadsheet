@@ -18,11 +18,11 @@ import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.CellData;
 import org.zkoss.zss.api.model.CellData.CellType;
 import org.zkoss.zss.api.model.Sheet;
+import org.zkoss.zss.model.SAutoFilter.FilterOp;
 import org.zkoss.zss.model.SAutoFilter.NFilterColumn;
 import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.SBooks;
 import org.zkoss.zss.model.SCustomFilter;
-import org.zkoss.zss.model.SCustomFilter.Operator;
 import org.zkoss.zss.model.SCustomFilters;
 import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.range.SRange;
@@ -74,12 +74,12 @@ public class Issue1224ImportExportCustomFiltersTest {
 			SCustomFilter f1 = cfilters.getCustomFilter1();
 			Assert.assertNotNull(f1);
 			Assert.assertEquals("a?", f1.getValue());
-			Assert.assertEquals(Operator.notEqual, f1.getOperator());
+			Assert.assertEquals(FilterOp.notEqual, f1.getOperator());
 			
 			SCustomFilter f2 = cfilters.getCustomFilter2();
 			Assert.assertNotNull(f2);
 			Assert.assertEquals("a", f2.getValue());
-			Assert.assertEquals(Operator.contains, f2.getOperator());
+			Assert.assertEquals(FilterOp.contains, f2.getOperator());
 		} catch (Exception e) {
 			e.printStackTrace();
 			Assert.assertTrue("Exception when import or export \"issue/book/1224-custom-filters.xlsx\":\n" + e, false);

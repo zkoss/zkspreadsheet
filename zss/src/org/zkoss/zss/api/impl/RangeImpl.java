@@ -24,6 +24,7 @@ import java.util.concurrent.locks.ReadWriteLock;
 import org.zkoss.zss.api.CellVisitor;
 import org.zkoss.zss.api.IllegalFormulaException;
 import org.zkoss.zss.api.Range;
+import org.zkoss.zss.api.Range.AutoFilterOperation;
 import org.zkoss.zss.api.RangeRunner;
 import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.SheetAnchor;
@@ -512,7 +513,20 @@ public class RangeImpl implements Range, Serializable {
 	}
 	/** enable filter with condition **/
 	//TODO have to review this after I know more detail
-	public void enableAutoFilter(int field, AutoFilterOperation filterOp, Object criteria1, Object criteria2, Boolean showButton){ 
+	public void enableAutoFilter(int field, AutoFilterOperation filterOp, Object criteria1, Object criteria2, Boolean showButton){
+		//ZSS-1234
+		final boolean isTop10 = filterOp == AutoFilterOperation.TOP10 || filterOp == AutoFilterOperation.TOP10PERCENT
+				|| filterOp == AutoFilterOperation.BOTTOM10 || filterOp == AutoFilterOperation.BOTTOM10PERCENT;
+		if (isTop10) {
+			int count = 10;
+			if (criteria1 instanceof Object[] && ((Object[])criteria1).length > 0) {
+				count = (Integer) ((Object[])criteria1)[0];
+			}
+			final boolean isTop = filterOp == AutoFilterOperation.TOP10 || filterOp == AutoFilterOperation.TOP10PERCENT;
+			final boolean isPercent = filterOp == AutoFilterOperation.TOP10PERCENT || filterOp == AutoFilterOperation.BOTTOM10PERCENT;
+			criteria1 = new Object[] {Integer.valueOf(count), isTop ? Boolean.TRUE : Boolean.FALSE, isPercent ? Boolean.TRUE : Boolean.FALSE};
+		}
+
 		_range.enableAutoFilter(field,EnumUtil.toRangeAutoFilterOperation(filterOp),criteria1,criteria2,showButton);
 	}
 	

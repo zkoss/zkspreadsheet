@@ -28,11 +28,13 @@ public class AutoFilterImpl extends AbstractAutoFilterAdv {
 	private final CellRegion _region;
 	private final TreeMap<Integer,NFilterColumn> _columns;
 	private Map<Integer, List<FilterRowInfo>> orderedRowInfosMap;
+	private Map<Integer, Integer> filterTypes; //ZSS-1234. 1: Date, 2: Number, 3: String
 
 	public AutoFilterImpl(CellRegion region){
 		this._region = region;
 		_columns = new TreeMap<Integer,NFilterColumn>();
 		orderedRowInfosMap = new HashMap<Integer, List<FilterRowInfo>>();
+		filterTypes = new HashMap<Integer, Integer>(); //ZSS-1234
 	}
 	
 	@Override
@@ -149,4 +151,19 @@ public class AutoFilterImpl extends AbstractAutoFilterAdv {
 		return this.orderedRowInfosMap.get(index);
 	}
 	
+	//ZSS-1234
+	//@since 3.9.0
+	//@Internal
+	//@See CustomFiltersCtrl
+	public void setFilterType(int index, int type) {
+		this.filterTypes.put(index, type);
+	}
+	
+	//ZSS-1234
+	//@since 3.9.0
+	//@Internal
+	//@See CustomFiltersCtrl
+	public int getFilterType(int index) {
+		return this.filterTypes.get(index);
+	}	
 }
