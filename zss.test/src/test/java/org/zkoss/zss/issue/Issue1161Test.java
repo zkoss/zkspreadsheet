@@ -62,7 +62,7 @@ public class Issue1161Test {
 			Book book = Importers.getImporter().imports(is, bookName);
 			SSheet sheet = book.getSheetAt(0).getInternalSheet();
 			
-			final List<SConditionalFormatting> list = sheet.getConditonalFormattings();
+			final List<SConditionalFormatting> list = sheet.getConditionalFormattings();
 			Assert.assertEquals("number of condition formatting", 6, list.size());
 			for (SConditionalFormatting cf0 : list) {
 				final List<SConditionalFormattingRule> rules = cf0.getRules();

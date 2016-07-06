@@ -40,20 +40,26 @@ public class FormulaEvaluationContext extends AbstractContext implements Seriali
 	private FunctionMapper _functionMapper;
 	private VariableResolver _vairableResolver;
 	private final Ref _dependent;
+	private final int[] _offset; //ZSS-1142: [rowOffset, colOffset] for ConditionalFormatting relative formula evaluation
 
 	public FormulaEvaluationContext(SCell cell,Ref dependent) {
-		this(cell.getSheet().getBook(), cell.getSheet(), cell,dependent);
+		this(cell.getSheet().getBook(), cell.getSheet(), cell,dependent, null);
 	}
 
 	public FormulaEvaluationContext(SSheet sheet,Ref dependent) {
-		this(sheet.getBook(), sheet, null,dependent);
+		this(sheet.getBook(), sheet, null,dependent, null);
 	}
 
 	public FormulaEvaluationContext(SBook book,Ref dependent) {
-		this(book, null, null,dependent);
+		this(book, null, null,dependent, null);
 	}
 
-	private FormulaEvaluationContext(SBook book, SSheet sheet, SCell cell,Ref dependent) {
+	//ZSS-1142
+	public FormulaEvaluationContext(SSheet sheet,Ref dependent, int[] offset) {
+		this(sheet.getBook(), sheet, null,dependent, offset);
+	}
+
+	private FormulaEvaluationContext(SBook book, SSheet sheet, SCell cell,Ref dependent, int[] offset) { //ZSS-1142
 		this._book = book;
 		this._sheet = sheet;
 		this._cell = cell;
@@ -64,6 +70,7 @@ public class FormulaEvaluationContext extends AbstractContext implements Seriali
 			_functionMapper = contributor.getFunctionMaper(book);
 			_vairableResolver = contributor.getVariableResolver(book);
 		}
+		this._offset = offset; //ZSS-1142
 	}
 
 	public SBook getBook() {
@@ -87,5 +94,10 @@ public class FormulaEvaluationContext extends AbstractContext implements Seriali
 	
 	public VariableResolver getVariableResolver() {
 		return _vairableResolver;
+	}
+	
+	//ZSS-1142
+	public int[] getOffset() {
+		return _offset;
 	}
 }

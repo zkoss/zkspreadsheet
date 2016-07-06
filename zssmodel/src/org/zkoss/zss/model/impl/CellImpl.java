@@ -742,7 +742,7 @@ public class CellImpl extends AbstractCellAdv {
 			evalFormula();
 			return this._formulaResultValue;
 		}
-		return val==null ? null : val;
+		return val==null ? new CellValue() : val;
 	}
 
 }

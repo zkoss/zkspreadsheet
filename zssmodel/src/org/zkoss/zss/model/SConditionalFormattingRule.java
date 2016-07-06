@@ -12,7 +12,14 @@
 
 package org.zkoss.zss.model;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
+
+import org.zkoss.poi.ss.formula.eval.ValueEval;
+import org.zkoss.zss.model.impl.ConditionalFormattingImpl;
+import org.zkoss.zss.model.impl.ConditionalFormattingRuleImpl;
+import org.zkoss.zss.model.sys.formula.FormulaExpression;
 
 /**
  * @author henri
@@ -25,7 +32,7 @@ public interface SConditionalFormattingRule {
 	/** Returns the comparison operator if needed */
 	RuleOperator getOperator();
 	
-	/** Returns the applying priority if convered region overlapped */
+	/** Returns the applying priority if covered region overlapped */
 	Integer getPriority();
 	
 	/** Returns the applied color if match */
@@ -34,13 +41,15 @@ public interface SConditionalFormattingRule {
 	/** Returns whether stop if true */
 	boolean isStopIfTrue();  // default false
 	
-	/** Returns the associated formulas (used with "cellIs" type) */
+	/** Returns the associated formulas (used with "cellIs" type)
+	 * @deprecated 
+	 */
 	List<String> getFormulas();
 	
 	/** Returns the timePeriod operator (used with "timePeriod" type)*/
 	RuleTimePeriod getTimePeriod();
 
-	/** Returns the rank used with "top10" type */
+	/** Returns the rank used with "top10" type; rank is the 10 in top10, 6 in top6... */
 	Long getRank();
 	
 	/** Returns whether a percentage (used with "top10" type) */
@@ -75,7 +84,7 @@ public interface SConditionalFormattingRule {
 	/** Returns whether equal average (used with "aboveAverage" type). */
 	boolean isEqualAverage();
 
-	/** Returns 1st/2nd/3rd standard deviation average (used with "aboveAverage" type */
+	/** Returns 1st/2nd/3rd standard deviation average (used with "aboveAverage" type; aka. stdDev */
 	Integer getStandardDeviation();
 
 
@@ -151,4 +160,150 @@ public interface SConditionalFormattingRule {
 			this.value = value;
 		}
 	}
+
+	/**
+	 * Copy state from the src rule with an row/column offset.
+	 * @param src
+	 * @param rowOff
+	 * @param colOff
+	 * @since 3.9.0
+	 */
+	void copyFrom(SConditionalFormattingRule src, int rowOff, int colOff);
+
+	/**
+	 * destroy this rule. 
+	 * @since 3.9.0
+	 */
+	void destroy();
+
+	/**
+	 * Get applied regions.
+	 * @return
+	 * @since 3.9.0
+	 */
+	Collection<CellRegion> getRegions();
+	
+	/**
+	 * Whether the formula parsed error
+	 * @return
+	 * @since 3.9.0
+	 */
+	boolean isFormulaParsingError();
+
+	/** Returns the associated formulas (used with "cellIs" type) 
+	 * @since 3.9.0
+	 */
+	String getFormula1();
+
+	/** Returns the associated formulas (used with "cellIs" type) 
+	 * @since 3.9.0
+	 */
+	String getFormula2();
+
+	/** Returns the associated formulas (used with "cellIs" type)
+	 * 
+	 * @return
+	 * @since 3.9.0
+	 */
+	String getFormula3();
+
+	/**
+	 * 
+	 * @param formula1
+	 * @since 3.9.0
+	 */
+	//@Internal
+	void setFormula1(String formula1);
+
+	/**
+	 * 
+	 * @param formula2
+	 * @since 3.9.0
+	 */
+	//@Internal
+	void setFormula2(String formula2);
+
+	/**
+	 * 
+	 * @param formula3
+	 * @since 3.9.0
+	 */
+	//@Internal
+	void setFormula3(String formula3);
+
+	/**
+	 * 
+	 * @param formula1
+	 * @param formula2
+	 * @param formula3
+	 * @since 3.9.0
+	 */
+	//@Internal
+	void setFormulas(String formula1, String formula2, String formula3);
+
+	/**
+	 * 
+	 * @param formula1
+	 * @param formula2
+	 * @param formula3
+	 * @since 3.9.0
+	 */
+	//@Internal
+	void setEscapedFormulas(String formula1, String formula2, String formula3);
+
+	/**
+	 * 
+	 * @return
+	 * @since 3.9.0
+	 */
+	//@Internal
+	String getEscapedFormula1();
+
+	/**
+	 * 
+	 * @return
+	 * @since 3.9.0
+	 */
+	//@Internal
+	String getEscapedFormula2();
+
+	/**
+	 * 
+	 * @return
+	 * @since 3.9.0
+	 */
+	//@Internal
+	String getEscapedFormula3();
+
+	/**
+	 * 
+	 * @return
+	 * @since 3.9.0
+	 */
+	//@Internal
+	SSheet getSheet();	
+
+	/**
+	 * 
+	 * @since 3.9.0
+	 */
+	//@Internal
+	void clearFormulaResultCache();
+
+	/**
+	 * 
+	 * @return
+	 * @since 3.9.0
+	 */
+	//@Internal
+	SConditionalFormatting getFormatting();
+
+	/**
+	 * 
+	 * @param rowOff
+	 * @param colOff
+	 * @since 3.9.0
+	 */
+	//@Internal
+	void shiftFormulas(int rowOff, int colOff);
 }

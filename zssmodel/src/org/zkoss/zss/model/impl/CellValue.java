@@ -53,4 +53,20 @@ public class CellValue implements Serializable {
 	public Object getValue() {
 		return value;
 	}
+	
+	public int hashCode() {
+		return cellType.ordinal()*31 + (value == null ? 0 : value.hashCode());
+	}
+	
+	public boolean equals(Object o) {
+		if (o == this) {
+			return true;
+		}
+		if (!(o instanceof CellValue))
+			return false;
+		final CellValue other = (CellValue) o;
+		return other.cellType == this.cellType &&
+				(this.value == other.value ||
+				(this.value != null && this.value.equals(other.value))); 
+	}
 }

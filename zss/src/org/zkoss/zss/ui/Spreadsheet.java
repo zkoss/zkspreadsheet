@@ -101,6 +101,8 @@ import org.zkoss.zss.model.SCellStyle;
 import org.zkoss.zss.model.SCellStyle.Alignment;
 import org.zkoss.zss.model.SCellStyle.VerticalAlignment;
 import org.zkoss.zss.model.SColorFilter;
+import org.zkoss.zss.model.SConditionalFormatting;
+import org.zkoss.zss.model.SConditionalFormattingRule;
 import org.zkoss.zss.model.SCustomFilter;
 import org.zkoss.zss.model.SCustomFilters;
 import org.zkoss.zss.model.SDynamicFilter;
@@ -124,6 +126,7 @@ import org.zkoss.zss.model.impl.AbstractBookAdv;
 import org.zkoss.zss.model.impl.AbstractCellAdv;
 import org.zkoss.zss.model.impl.AbstractSheetAdv;
 import org.zkoss.zss.model.impl.AbstractTableAdv;
+import org.zkoss.zss.model.impl.ConditionalStyleImpl;
 import org.zkoss.zss.model.impl.TableImpl.DummyTable;
 import org.zkoss.zss.model.sys.format.FormatResult;
 import org.zkoss.zss.model.sys.formula.EvaluationContributorContainer;
@@ -3686,8 +3689,12 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 					}
 				}
 			}
+			//ZSS-1142
+			ConditionalStyleImpl cdCellStyle = 
+					((AbstractSheetAdv)sheet).getConditionalFormattingStyle(row, col);
+			
 			SCellStyle cellStyle = sheet.getCell(row, col).getCellStyle();
-			CellFormatHelper cfh = new CellFormatHelper(sheet, row, col, getMergeMatrixHelper(sheet));
+			CellFormatHelper cfh = new CellFormatHelper(sheet, row, col, getMergeMatrixHelper(sheet), cdCellStyle);
 			StringBuffer doubleBorder = new StringBuffer(8);
 			//ZSS-945: optimize calling CellFormatHelper#getFormatResult()
 			//This implementation is super dirty! However, works. 
@@ -3702,7 +3709,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			
 			//style attr
 			if (updateStyle) {
-				String style = cfh.getHtmlStyle(doubleBorder, table, tbCellStyle);
+				String style = cfh.getHtmlStyle(doubleBorder, table, tbCellStyle); //ZSS-1142
 				
 				if (!Strings.isEmpty(style)) {
 					int idx = styleAggregation.add(style);
@@ -3714,12 +3721,12 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 					attrs.put("is", idx);
 				}
 				// ZSS-915
-				String fontStyle = cfh.getRealHtmlStyle(ft, tbCellStyle); //ZSS-945, ZSS-977
+				String fontStyle = cfh.getRealHtmlStyle(ft, tbCellStyle); //ZSS-945, ZSS-977, ZSS-1142
 				if (!Strings.isEmpty(fontStyle)) {
 					int idx = styleAggregation.add(fontStyle);
 					attrs.put("os", idx);
 				}
-				if (cfh.hasRightBorder(table, tbCellStyle)) { //ZSS-977
+				if (cfh.hasRightBorder(table, tbCellStyle)) { //ZSS-977, ZSS-1142
 					attrs.put("rb", 1); 
 				}
 				
@@ -3738,6 +3745,12 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 				final String af = cfh.getAutoFilterBorder();
 				if (!"____".equals(af)) {
 					attrs.put("af", "af"+af);
+				}
+				
+				//ZSS-1142, handle dataBar border
+				final boolean dbar = cfh.withDataBarBorder();
+				if (dbar) {
+					attrs.put("dbar", true);
 				}
 			}
 			
@@ -3763,7 +3776,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 				
 				if (updateText) {
 					if (cellType != CellType.BLANK || cell.getHyperlink() != null) {
-						String cellText = getCellDisplayLoader().getCellHtmlText(sheet, row, col, ft, tbCellStyle); //ZSS-945, ZSS-1018
+						String cellText = getCellDisplayLoader().getCellHtmlText(sheet, row, col, ft, tbCellStyle, cdCellStyle); //ZSS-945, ZSS-1018, ZSS-1142
 						final String editText = cfh.getCellEditText();
 						final String formatText = cfh.getCellFormattedText(ft); //ZSS-945
 						
@@ -3813,7 +3826,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 					}
 					
 					//ZSS-1171
-					SFont font = StyleUtil.getFontStyle(sheet.getBook(), cellStyle, tbCellStyle);;
+					SFont font = StyleUtil.getFontStyle(sheet.getBook(), cellStyle, tbCellStyle, cdCellStyle); //ZSS-1142
 					int fontSize = font.getHeightPoints();
 					attrs.put("fs", fontSize); // fontsize
 					

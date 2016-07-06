@@ -500,6 +500,19 @@
 	white-space: pre; /* ZSS-1118 */
 }
 
+/* ZSS-1142: databar border. henrichen: would cover cell text; don't use it */
+//.zscelltxt.dbar:before {
+//    content:"";
+//    position:absolute;
+//    background-position: 0px 0px;
+//    top:1px;left:1px;bottom:2px;
+//    border:solid 1px;
+//    
+//    background-image:inherit;
+//    right:inherit;
+//    border-color:inherit;
+//}
+
 .zscelltxt-real {
 	width: 100%;
 	<c:if test="${c:browser('ie7-') || c:browser('ie6-')}">

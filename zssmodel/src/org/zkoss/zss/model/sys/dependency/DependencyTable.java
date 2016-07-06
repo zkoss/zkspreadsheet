@@ -46,7 +46,11 @@ public interface DependencyTable {
 	
 	public void clearDependents(Ref dependant);
 	public Set<Ref> searchPrecedents(RefFilter filter);
-	
+
+	//ZSS-1251
+	// Clear the dependency between dependent and precedent
+	//@since 3.9.0
+	public void del(Ref dependent, Ref precedent);
 //	to merge dependency for book series.
 //	public void mergeTable(DependencyTable another);
 }

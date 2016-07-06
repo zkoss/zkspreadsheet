@@ -24,6 +24,7 @@ import org.zkoss.poi.ss.usermodel.DateUtil;
  * @since 3.9.0
  */
 public class DatesMatch implements Matchable<Date>, Serializable {
+	private static final long serialVersionUID = 3180841702616760127L;
 	final private int min;
 	final private int max;
 	public DatesMatch(int min, int max) {

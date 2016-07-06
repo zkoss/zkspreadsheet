@@ -31,7 +31,7 @@ public interface SCFValueObject {
 		NUM("num", 1),
 		PERCENT("percent", 2),
 		MAX("max", 3),
-		MIN("mini", 4),
+		MIN("min", 4),
 		FORMULA("formula", 5),
 		PERCENTILE("percentile", 6);
 	

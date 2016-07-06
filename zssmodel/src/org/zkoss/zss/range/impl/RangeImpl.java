@@ -87,6 +87,7 @@ import org.zkoss.zss.model.sys.dependency.DependencyTable.RefFilter;
 import org.zkoss.zss.model.sys.dependency.NameRef;
 import org.zkoss.zss.model.sys.dependency.Ref;
 import org.zkoss.zss.model.sys.dependency.Ref.RefType;
+import org.zkoss.zss.model.sys.dependency.StyleRef;
 import org.zkoss.zss.model.sys.format.FormatContext;
 import org.zkoss.zss.model.sys.format.FormatEngine;
 import org.zkoss.zss.model.sys.input.InputEngine;
@@ -275,6 +276,12 @@ public class RangeImpl implements SRange, Serializable {
 	}
 
 	private void handleRefNotifyContentChange(SBookSeries bookSeries,Set<Ref> notifySet, CellAttribute cellAttr) { //ZSS-939
+		//ZSS-1142: check if should update style, too.
+		final boolean updateStyle = notifySet.remove(StyleRef.inst);
+		if (updateStyle && cellAttr != CellAttribute.STYLE) {
+			cellAttr = CellAttribute.ALL;
+		}
+		
 		// notify changes
 		new RefNotifyContentChangeHelper(bookSeries).notifyContentChange(notifySet, cellAttr);
 	}

@@ -184,6 +184,10 @@ Copyright (C) 2012 Potix Corporation. All Rights Reserved.
 			 */
 			//af_tlbr: v.af
 			/**
+			 * Cell with dataBar border style; undefined if no dataBar border.
+			 */
+			//dbar: v.dbar
+			/**
 			 * Update Cell model
 			 * 
 			 * @param JSON Object v data from server
@@ -255,6 +259,11 @@ Copyright (C) 2012 Potix Corporation. All Rights Reserved.
 						this.af_tlbr = v.af;
 					else
 						delete this.af_tlbr;
+					//ZSS-1142: dataBar border
+					if (v.dbar)
+						this.dbar = v.dbar;
+					else
+						delete this.dbar;
 					//ZSS-944: support 90 degree text rotation
 					this.rotate = rotate; // text rotation
 				}

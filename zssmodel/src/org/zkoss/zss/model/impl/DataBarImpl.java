@@ -16,6 +16,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.SCFValueObject;
 import org.zkoss.zss.model.SColor;
 import org.zkoss.zss.model.SDataBar;
@@ -81,4 +82,19 @@ public class DataBarImpl implements SDataBar, Serializable {
 		showValue = b;
 	}
 
+	//ZSS-1142
+	public DataBarImpl cloneDataBar(SBook book) {
+		DataBarImpl bar = new DataBarImpl();
+		for (SCFValueObject vo : valueObjects) {
+			CFValueObjectImpl vo0 = (CFValueObjectImpl) vo;
+			bar.addValueObject(vo0.cloneCFValueObject());
+		}
+		ColorImpl color0 = (ColorImpl) color;
+		bar.color = color0.cloneColor(book);
+		bar.minLength = minLength;
+		bar.maxLength = maxLength;
+		bar.showValue = showValue;
+		
+		return bar;
+	}
 }

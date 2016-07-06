@@ -430,290 +430,120 @@ import org.zkoss.zss.range.impl.LessThanOrEqual;
 
 		//ZSS-1234
 		case tomorrow:
-			val = _calcTomorrow();
-			maxVal = val + 1;
+		{
+			double[] res = DateUtil.calcTomorrow(); //ZSS-1142
+			val = res[0];
+			maxVal = res[1];
 			break;
-			
+		}
 		case today:
-			val = _calcToday();
-			maxVal = val + 1;
+		{
+			double[] res = DateUtil.calcToday(); //ZSS-1142
+			val = res[0];
+			maxVal = res[1];
 			break;
-			
+		}	
 		case yesterday:
-			val = _calcYesterday();
-			maxVal = val + 1;
+		{
+			double[] res = DateUtil.calcYesterday(); //ZSS-1142
+			val = res[0];
+			maxVal = res[1];
 			break;
+		}
 			
 		case nextWeek:
 		{
-			double[] res = _calcNextWeek();
+			double[] res = DateUtil.calcNextWeek(); //ZSS-1142
 			val = res[0];
 			maxVal = res[1];
 			break;
 		}	
 		case thisWeek:
 		{
-			double[] res = _calcThisWeek();
+			double[] res = DateUtil.calcThisWeek(); //ZSS-1142
 			val = res[0];
 			maxVal = res[1];
 			break;
 		}
 		case lastWeek:
 		{
-			double[] res = _calcLastWeek();
+			double[] res = DateUtil.calcLastWeek(); //ZSS-1142
 			val = res[0];
 			maxVal = res[1];
 			break;
 		}
 		case nextMonth:
 		{
-			double[] res = _calcNextMonth();
+			double[] res = DateUtil.calcNextMonth(); //ZSS-1142
 			val = res[0];
 			maxVal = res[1];
 			break;
 		}	
 		case thisMonth:
 		{
-			double[] res = _calcThisMonth();
+			double[] res = DateUtil.calcThisMonth(); //ZSS-1142
 			val = res[0];
 			maxVal = res[1];
 			break;
 		}
 		case lastMonth:
 		{
-			double[] res = _calcLastMonth();
+			double[] res = DateUtil.calcLastMonth();//ZSS-1142
 			val = res[0];
 			maxVal = res[1];
 			break;
 		}
 		case nextQuarter:
 		{
-			double[] res = _calcNextQuarter();
+			double[] res = DateUtil.calcNextQuarter();//ZSS-1142
 			val = res[0];
 			maxVal = res[1];
 			break;
 		}	
 		case thisQuarter:
 		{
-			double[] res = _calcThisQuarter();
+			double[] res = DateUtil.calcThisQuarter();//ZSS-1142
 			val = res[0];
 			maxVal = res[1];
 			break;
 		}
 		case lastQuarter:
 		{
-			double[] res = _calcLastQuarter();
+			double[] res = DateUtil.calcLastQuarter();//ZSS-1142
 			val = res[0];
 			maxVal = res[1];
 			break;
 		}
 		case nextYear:
 		{
-			double[] res = _calcNextYear();
+			double[] res = DateUtil.calcNextYear();//ZSS-1142
 			val = res[0];
 			maxVal = res[1];
 			break;
 		}	
 		case thisYear:
 		{
-			double[] res = _calcThisYear();
+			double[] res = DateUtil.calcThisYear();//ZSS-1142
 			val = res[0];
 			maxVal = res[1];
 			break;
 		}
 		case lastYear:
 		{
-			double[] res = _calcLastYear();
+			double[] res = DateUtil.calcLastYear();//ZSS-1142
 			val = res[0];
 			maxVal = res[1];
 			break;
 		}
 		case yearToDate:
 		{
-			double[] res = _calcYearToDate();
+			double[] res = DateUtil.calcYearToDate();//ZSS-1142
 			val = res[0];
 			maxVal = res[1];
 			break;
 		}
 		}
 		return fail ? null : new DynamicFilterImpl(maxVal, val, op.name()); //ZSS-1234
-	}
-	
-	//ZSS-1234
-	private double _calcToday() {
-		Calendar now = new GregorianCalendar();
-		now.set(Calendar.MILLISECOND, 0);
-		now.set(now.get(Calendar.YEAR), now.get(Calendar.MONTH), now.get(Calendar.DATE),0,0,0);
-		return DateUtil.getExcelDate(now.getTime());
-	}
-	
-	//ZSS-1234
-	private double _calcTomorrow() {
-		return _calcToday() + 1;
-	}
-	
-	//ZSS-1234
-	private double _calcYesterday() {
-		return _calcToday() - 1; 
-	}
-	
-	//ZSS-1234
-	private double[] _calcThisMonth() {
-		Calendar now = new GregorianCalendar();
-		now.set(Calendar.MILLISECOND, 0);
-		now.setLenient(true);
-		now.set(now.get(Calendar.YEAR), now.get(Calendar.MONTH), 1,0,0,0);
-		final double d1 = DateUtil.getExcelDate(now.getTime());
-		now.set(now.get(Calendar.YEAR), now.get(Calendar.MONTH) + 1, 1,0,0,0);
-		final double d2 = DateUtil.getExcelDate(now.getTime());
-		return new double[] {d1, d2};
-	}
-	
-	//ZSS-1234
-	private double[] _calcNextMonth() {
-		Calendar now = new GregorianCalendar();
-		now.set(Calendar.MILLISECOND, 0);
-		now.setLenient(true);
-		now.set(now.get(Calendar.YEAR), now.get(Calendar.MONTH) + 1, 1,0,0,0);
-		final double d1 = DateUtil.getExcelDate(now.getTime());
-		now.set(now.get(Calendar.YEAR), now.get(Calendar.MONTH) + 1, 1,0,0,0);
-		final double d2 = DateUtil.getExcelDate(now.getTime());
-		return new double[] {d1, d2};
-	}
-	
-	//ZSS-1234
-	private double[] _calcLastMonth() {
-		Calendar now = new GregorianCalendar();
-		now.set(Calendar.MILLISECOND, 0);
-		now.setLenient(true);
-		now.set(now.get(Calendar.YEAR), now.get(Calendar.MONTH), 1,0,0,0);
-		final double d2 = DateUtil.getExcelDate(now.getTime());
-		now.set(now.get(Calendar.YEAR), now.get(Calendar.MONTH) - 1, 1,0,0,0);
-		final double d1 = DateUtil.getExcelDate(now.getTime());
-		return new double[] {d1, d2};
-	}
-
-	//ZSS-1234
-	private double[] _calcThisQuarter() {
-		Calendar now = new GregorianCalendar();
-		now.set(Calendar.MILLISECOND, 0);
-		now.setLenient(true);
-		final int m = now.get(Calendar.MONTH);
-		final int sm = m < 3 ? 0 : m < 6 ? 3 : m < 9 ? 6 : 9;
-		now.set(now.get(Calendar.YEAR), sm, 1,0,0,0);
-		final double d1 = DateUtil.getExcelDate(now.getTime());
-		now.set(now.get(Calendar.YEAR), sm + 3, 1,0,0,0);
-		final double d2 = DateUtil.getExcelDate(now.getTime());
-		return new double[] {d1, d2};
-	}
-	
-	//ZSS-1234
-	private double[] _calcNextQuarter() {
-		Calendar now = new GregorianCalendar();
-		now.set(Calendar.MILLISECOND, 0);
-		now.setLenient(true);
-		final int m = now.get(Calendar.MONTH);
-		final int sm = (m < 3 ? 0 : m < 6 ? 3 : m < 9 ? 6 : 9) + 3;
-		now.set(now.get(Calendar.YEAR), sm, 1,0,0,0);
-		final double d1 = DateUtil.getExcelDate(now.getTime());
-		now.set(now.get(Calendar.YEAR), sm + 3, 1,0,0,0);
-		final double d2 = DateUtil.getExcelDate(now.getTime());
-		return new double[] {d1, d2};
-	}
-	
-	//ZSS-1234
-	private double[] _calcLastQuarter() {
-		Calendar now = new GregorianCalendar();
-		now.set(Calendar.MILLISECOND, 0);
-		now.setLenient(true);
-		final int m = now.get(Calendar.MONTH);
-		final int sm = (m < 3 ? 0 : m < 6 ? 3 : m < 9 ? 6 : 9) - 3;
-		now.set(now.get(Calendar.YEAR), sm, 1,0,0,0);
-		final double d1 = DateUtil.getExcelDate(now.getTime());
-		now.set(now.get(Calendar.YEAR), sm + 3, 1,0,0,0);
-		final double d2 = DateUtil.getExcelDate(now.getTime());
-		return new double[] {d1, d2};
-	}
-	
-	//ZSS-1234
-	private double[] _calcThisYear() {
-		Calendar now = new GregorianCalendar();
-		now.set(Calendar.MILLISECOND, 0);
-		now.setLenient(true);
-		now.set(now.get(Calendar.YEAR), 0, 1,0,0,0);
-		final double d1 = DateUtil.getExcelDate(now.getTime());
-		now.set(now.get(Calendar.YEAR) + 1, 0, 1,0,0,0);
-		final double d2 = DateUtil.getExcelDate(now.getTime());
-		return new double[] {d1, d2};		
-	}
-	
-	//ZSS-1234
-	private double[] _calcNextYear() {
-		Calendar now = new GregorianCalendar();
-		now.set(Calendar.MILLISECOND, 0);
-		now.setLenient(true);
-		now.set(now.get(Calendar.YEAR) + 1, 0, 1,0,0,0);
-		final double d1 = DateUtil.getExcelDate(now.getTime());
-		now.set(now.get(Calendar.YEAR) + 1, 0, 1,0,0,0);
-		final double d2 = DateUtil.getExcelDate(now.getTime());
-		return new double[] {d1, d2};		
-	}
-	
-	//ZSS-1234
-	private double[] _calcLastYear() {
-		Calendar now = new GregorianCalendar();
-		now.set(Calendar.MILLISECOND, 0);
-		now.setLenient(true);
-		now.set(now.get(Calendar.YEAR), 0, 1,0,0,0);
-		final double d2 = DateUtil.getExcelDate(now.getTime());
-		now.set(now.get(Calendar.YEAR) - 1, 0, 1,0,0,0);
-		final double d1 = DateUtil.getExcelDate(now.getTime());
-		return new double[] {d1, d2};		
-	}
-	
-	//ZSS-1234
-	private double[] _calcThisWeek() {
-		Calendar now = new GregorianCalendar();
-		now.set(Calendar.MILLISECOND, 0);
-		now.setLenient(true);
-		now.set(now.get(Calendar.YEAR), now.get(Calendar.MONTH), now.get(Calendar.DATE),0,0,0);
-		final int fdw = now.getFirstDayOfWeek();
-		final int wd = now.get(Calendar.DAY_OF_WEEK);
-		int diff = fdw - wd;
-		if (diff > 0) {
-			diff -= 7;
-		}
-		final double d1 = DateUtil.getExcelDate(now.getTime()) + diff;
-		final double d2 = d1 + 7;
-		return new double[] {d1, d2};
-	}
-
-	//ZSS-1234
-	private double[] _calcNextWeek() {
-		final double[] tw = _calcThisWeek();
-		final double d1 = tw[1];
-		final double d2 = d1 + 7;
-		return new double[] {d1, d2};
-	}
-
-	//ZSS-1234
-	private double[] _calcLastWeek() {
-		final double[] tw = _calcThisWeek();
-		final double d2 = tw[0];
-		final double d1 = d2 - 7;
-		return new double[] {d1, d2};
-	}
-	
-	//ZSS-1234
-	private double[] _calcYearToDate() {
-		Calendar now = new GregorianCalendar();
-		now.set(Calendar.MILLISECOND, 0);
-		now.setLenient(true);
-		now.set(now.get(Calendar.YEAR), now.get(Calendar.MONTH), now.get(Calendar.DATE),0,0,0);
-		final double d2 = DateUtil.getExcelDate(now.getTime()) + 1;
-		now.set(now.get(Calendar.YEAR), 0, 1,0,0,0);
-		final double d1 = DateUtil.getExcelDate(now.getTime());
-		return new double[] {d1, d2};		
 	}
 
 	//ZSS-1192

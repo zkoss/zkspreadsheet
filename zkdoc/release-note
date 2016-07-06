@@ -12,6 +12,7 @@ ZK Spreadsheet 3.9.0
   ZSS-1229 Copy and paste only those visible cells when a filter is enabled
   ZSS-1167 Support ZK 8 new specification: <config-name> is required in config.xml
   ZSS-1234 Support date filter
+  ZSS-1142 Support to show conditional formatting in the client side
   
 *Bugs:
   ZSS-1211 StringIndexOutOfBoundsException if click a hyperlink with empty address
@@ -28,6 +29,8 @@ ZK Spreadsheet 3.9.0
   ZSS-1241 The filter type should follow the Excel spec.
 
 ** Upgrade Notes
+  * Fix the method typo from SSheet#getConditonalFormattings() to getConditionalFormattings()
+  * Change the return type of the SConditionalFormatting#getRegions() method from List<CellRegion> to Set<CellRegion> 
   
  ------------
 ZK Spreadsheet 3.8.3

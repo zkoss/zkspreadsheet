@@ -54,6 +54,6 @@ public interface SIconSet {
 		X_5_QUARTERS("5Quarters", 17);
 	
 		public final String name;
-	   	public final int value;	    		   	IconSetType(String name, int value) {	  		this.name = name;	   		this.value = value;	   	}    			}
+	   	public final int value;	    		   	IconSetType(String name, int value) {	  		this.name = name;	   		this.value = value;	   	}	}
 	
 	}    

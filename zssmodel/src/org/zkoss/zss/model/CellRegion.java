@@ -234,11 +234,6 @@ public class CellRegion implements Serializable {
 					result.add(new CellRegion(this.row, this.column, overlapRegion.row - 1, this.lastColumn));
 				}
 				
-				// Bottom
-				if(this.lastRow - overlapRegion.lastRow > 0) {
-					result.add(new CellRegion(overlapRegion.lastRow + 1, this.column, this.lastRow, this.lastColumn));
-				}
-				
 				// Left
 				if(overlapRegion.column - this.column > 0) {
 					result.add(new CellRegion(overlapRegion.row, this.column, overlapRegion.lastRow, overlapRegion.column - 1));
@@ -247,6 +242,11 @@ public class CellRegion implements Serializable {
 				// Right
 				if(this.lastColumn - overlapRegion.lastColumn > 0) {
 					result.add(new CellRegion(overlapRegion.row, overlapRegion.lastColumn + 1, overlapRegion.lastRow, this.lastColumn));
+				}
+				
+				// Bottom
+				if(this.lastRow - overlapRegion.lastRow > 0) {
+					result.add(new CellRegion(overlapRegion.lastRow + 1, this.column, this.lastRow, this.lastColumn));
 				}
 			}
 		}
@@ -276,5 +276,21 @@ public class CellRegion implements Serializable {
 	 */
 	public int getCellCount() {
 		return getRowCount() * getColumnCount();
+	}
+
+	//ZSS-1251
+	public CellRegion cloneCellRegion() {
+		return new CellRegion(this.row, this.column, this.lastRow, this.lastColumn);
+	}
+
+	//ZSS-1251
+	public CellRegion intersect(CellRegion target) {
+		final int row1 = Math.max(this.row, target.row);
+		final int row2 = Math.min(this.lastRow, target.lastRow);
+		final int col1 = Math.max(this.column, target.column);
+		final int col2 = Math.min(this.lastColumn, target.lastColumn);
+		if (row1 > row2 || col1 > col2) return null;
+		
+		return new CellRegion(row1, col1, row2, col2);
 	}
 }

@@ -19,6 +19,7 @@ package org.zkoss.zss.model.impl;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -29,6 +30,7 @@ import java.util.Set;
 import java.util.SortedMap;
 
 import org.zkoss.lang.Library;
+import org.zkoss.poi.ss.usermodel.DateUtil;
 import org.zkoss.poi.ss.util.CellReference;
 import org.zkoss.poi.ss.util.SheetUtil;
 import org.zkoss.poi.ss.util.WorkbookUtil;
@@ -37,11 +39,20 @@ import org.zkoss.zss.model.CellRegion;
 import org.zkoss.zss.model.InvalidModelOpException;
 import org.zkoss.zss.model.SAutoFilter;
 import org.zkoss.zss.model.SBook;
+import org.zkoss.zss.model.SBorder;
 import org.zkoss.zss.model.SCell;
+import org.zkoss.zss.model.SCell.CellType;
 import org.zkoss.zss.model.SChart;
+import org.zkoss.zss.model.SColorScale;
 import org.zkoss.zss.model.SColumn;
 import org.zkoss.zss.model.SColumnArray;
 import org.zkoss.zss.model.SConditionalFormatting;
+import org.zkoss.zss.model.SConditionalFormattingRule;
+import org.zkoss.zss.model.SDataBar;
+import org.zkoss.zss.model.SExtraStyle;
+import org.zkoss.zss.model.SFill;
+import org.zkoss.zss.model.SFont;
+import org.zkoss.zss.model.SIconSet;
 import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.model.SSheetProtection;
 import org.zkoss.zss.model.SDataValidation;
@@ -91,6 +102,9 @@ public class SheetImpl extends AbstractSheetAdv {
 	
 	//ZSS-1130
 	private List<SConditionalFormatting> _conditionalFormattings;
+	// ZSS-1251
+	private int _conditionalId = 0;
+	private Map<Integer, SConditionalFormatting> _conditionalMap;
 	
 	private final IndexPool<AbstractRowAdv> _rows = new IndexPool<AbstractRowAdv>(){
 		private static final long serialVersionUID = 1L;
@@ -2131,7 +2145,7 @@ public class SheetImpl extends AbstractSheetAdv {
 	//ZSS-1130
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<SConditionalFormatting> getConditonalFormattings() {
+	public List<SConditionalFormatting> getConditionalFormattings() {
 		return _conditionalFormattings == null ? 
 				Collections.EMPTY_LIST : _conditionalFormattings;
 	}
@@ -2143,6 +2157,12 @@ public class SheetImpl extends AbstractSheetAdv {
 			_conditionalFormattings = new ArrayList<SConditionalFormatting>();
 		}
 		_conditionalFormattings.add(scf);
+
+		// ZSS-1251
+		if (_conditionalMap == null) {
+			_conditionalMap = new HashMap<Integer, SConditionalFormatting>();
+		}
+		_conditionalMap.put(Integer.valueOf(scf.getId()), scf);
 	}
 
 	//ZSS-1168
@@ -2269,5 +2289,196 @@ public class SheetImpl extends AbstractSheetAdv {
 			}
 		}
 		return last;
+	}
+
+	//ZSS-1142
+	public ConditionalStyleImpl getConditionalFormattingStyle(int row, int col) {
+		String dataFormat = null;
+		SFont font = null;
+		SBorder border = null;
+		SFill fill = null;
+		SColorScale scale = null;
+		SIconSet iconSet = null;
+		SDataBar dataBar = null;
+		Double barPercent = null;
+		Integer iconSetId = null;
+
+		// filter in condtionalFormattings that affect the specified cell
+		// we assume getCondtionalFormattings() will iterate from high
+		// priority(less number)
+		// to low priority(greater number)
+		List<SConditionalFormatting> cdfmts = new ArrayList<SConditionalFormatting>();
+		for (SConditionalFormatting fmt : getConditionalFormattings()) {
+			for (CellRegion rgn : fmt.getRegions()) {
+				if (rgn.contains(row, col)) {
+					cdfmts.add(fmt);
+					break;
+				}
+			}
+		}
+
+		SCell cell = this.getCell(row, col);
+		CellValue cv = ((AbstractCellAdv) cell).getEvalCellValue(true);
+		CellType type = cv.getType();
+		Object value = cv.getValue();
+		boolean found = false;
+		for (SConditionalFormatting fmt : cdfmts) {
+			Set<CellRegion> rgns = fmt.getRegions();
+			for (SConditionalFormattingRule rule : fmt.getRules()) {
+				if (((ConditionalFormattingRuleImpl) rule).match(cell)) {
+					SExtraStyle extraStyle = rule.getExtraStyle();
+					if (extraStyle != null) {
+						if (dataFormat == null) {
+							dataFormat = extraStyle.getDataFormat();
+						}
+						if (font == null) {
+							font = extraStyle.getFont();
+						}
+						if (border == null) {
+							border = extraStyle.getBorder();
+						}
+						if (fill == null) {
+							fill = extraStyle.getFill();
+						}
+					}
+					if (type == CellType.NUMBER) {
+						if (value instanceof Date) {
+							value = DateUtil.getExcelDate((Date) value);
+						}
+						if (scale == null) { // use the first found
+							scale = rule.getColorScale();
+							if (scale != null) {
+								SFill fill0 = ((ConditionalFormattingRuleImpl) rule)
+										.getColorScaleFill(((Double) value)
+												.doubleValue());
+								if (fill0 != null) {
+									fill = fill0;
+								}
+							}
+						}
+						if (iconSet == null) { // use the first found
+							iconSet = rule.getIconSet();
+							if (iconSet != null) {
+								iconSetId = ((ConditionalFormattingRuleImpl) rule)
+										.getIconSetId(((Double) value)
+												.doubleValue());
+							}
+						}
+						if (dataBar == null) { // use the first found
+							dataBar = rule.getDataBar();
+							if (dataBar != null) {
+								barPercent = ((ConditionalFormattingRuleImpl) rule)
+										.getDataBarPercent(((Double) value)
+												.doubleValue());
+							}
+						}
+					}
+					found = true;
+					if (rule.isStopIfTrue()) {
+						break;
+					}
+				}
+			}
+		}
+
+		return !found ? null : new ConditionalStyleImpl(font, fill, border,
+				dataFormat, scale, dataBar, barPercent, iconSet, iconSetId);
+	}
+
+	//ZSS-1251
+	@Override
+	public void removeConditionalFormatting(SConditionalFormatting scf) {
+		if (_conditionalFormattings == null)
+			return;
+
+		for (int j = 0, len = _conditionalFormattings.size(); j < len; ++j) {
+			final SConditionalFormatting scf0 = _conditionalFormattings.get(j);
+			if (scf0.equals(scf)) {
+				_conditionalFormattings.remove(j);
+				_conditionalMap.remove(Integer.valueOf(scf0.getId()));
+				break;
+			}
+		}
+	}
+
+	//ZSS-1251
+	public SConditionalFormatting addConditionalFormatting(CellRegion srcrgn, 
+			CellRegion dstrgn, SConditionalFormatting src, int rowOff, int colOff) {
+		checkOrphan();
+		Validations.argInstance(src, ConditionalFormattingImpl.class);
+		ConditionalFormattingImpl dstcfmt = new ConditionalFormattingImpl(this);
+		if (src != null) {
+			dstcfmt.copyFrom((ConditionalFormattingImpl) src, rowOff, colOff);
+		}
+		if (dstrgn != null) {
+			for (CellRegion rgn: src.getRegions()) {
+				final CellRegion xrgn = rgn.intersect(srcrgn);
+				if (xrgn == null) continue;
+				
+				final int r1 = xrgn.getRow() + rowOff;
+				final int r2 = xrgn.getLastRow() + rowOff;
+				final int c1 = xrgn.getColumn() + colOff;
+				final int c2 = xrgn.getLastColumn() + colOff;
+				dstcfmt.addRegion(new CellRegion(r1,c1,r2,c2));
+			}
+		}
+		addConditionalFormatting(dstcfmt);
+		return dstcfmt;
+	}
+	
+	// ZSS-1251
+	public int nextConditionalId() {
+		return _conditionalId++;
+	}
+
+	// ZSS-1251
+	public SConditionalFormatting getConditionalFormatting(int id) {
+		return _conditionalMap != null ? _conditionalMap.get(id) : null;
+	}
+
+	// ZSS-1251
+	@Override
+	public SConditionalFormatting  getConditionalFormatting(int row, int col) {
+		if (_conditionalFormattings == null) {
+			return null;
+		}
+		for (SConditionalFormatting scf0 : _conditionalFormattings) {
+			for (CellRegion rgn : scf0.getRegions()) {
+				if (rgn.contains(row, col)) {
+					return scf0;
+				}
+			}
+		}
+		return null;
+	}
+
+	//ZSS-1251
+	@Override
+	public void deleteConditionalFormatting(SConditionalFormatting cfmt) {
+		checkOrphan();
+		((ConditionalFormattingImpl) cfmt).destroy();
+		_conditionalFormattings.remove(cfmt);
+	}
+
+	//ZSS-1251
+	@Override
+	public void removeConditionalFormattingRegion(CellRegion region) {
+		deleteConditionalFormattingRegion(region);
+	}
+
+	//ZSS-1251
+	@Override
+	public List<SConditionalFormatting> deleteConditionalFormattingRegion(CellRegion region) {
+		List<SConditionalFormatting> dels = new ArrayList<SConditionalFormatting>();
+		for (SConditionalFormatting cfmt : getConditionalFormattings()) {
+			cfmt.removeRegion(region);
+			if (cfmt.getRegions() == null) {
+				dels.add(cfmt);
+			}
+		}
+		for (SConditionalFormatting cfmt : dels) {
+			deleteConditionalFormatting(cfmt);
+		}
+		return dels;
 	}
 }

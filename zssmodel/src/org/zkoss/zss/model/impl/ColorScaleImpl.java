@@ -16,6 +16,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.SCFValueObject;
 import org.zkoss.zss.model.SColor;
 import org.zkoss.zss.model.SColorScale;
@@ -55,4 +56,17 @@ public class ColorScaleImpl implements SColorScale, Serializable {
 		colors.add(color);
 	}
 
+	//ZSS-1142
+	public ColorScaleImpl cloneColorScale(SBook book) {
+		ColorScaleImpl scale = new ColorScaleImpl();
+		for (SCFValueObject vo : valueObjects) {
+			CFValueObjectImpl vo0 = (CFValueObjectImpl) vo;
+			scale.addValueObject(vo0.cloneCFValueObject());
+		}
+		for (SColor color : colors) {
+			ColorImpl color0 = (ColorImpl) color;
+			scale.addColor(color0.cloneColor(book));
+		}
+		return scale;
+	}
 }

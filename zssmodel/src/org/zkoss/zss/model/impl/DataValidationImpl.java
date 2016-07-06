@@ -20,7 +20,6 @@ import java.text.Format;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -304,7 +303,7 @@ public class DataValidationImpl extends AbstractDataValidationAdv {
 	
 	@Override
 	public void setRegions(Set<CellRegion> regions) {
-		_regions = new HashSet<CellRegion>(regions.size() * 4 / 3 + 1);
+		_regions = new LinkedHashSet<CellRegion>(regions.size() * 4 / 3 + 1);
 		for (CellRegion rgn : regions) {
 			addRegion(rgn);
 		}
@@ -780,7 +779,7 @@ public class DataValidationImpl extends AbstractDataValidationAdv {
 		tgt._operatorType = this._operatorType;
 
 		if (this._regions != null) {
-			tgt._regions = new HashSet<CellRegion>(this._regions.size() * 4 / 3);
+			tgt._regions = new LinkedHashSet<CellRegion>(this._regions.size() * 4 / 3);
 			for (CellRegion rgn : this._regions) {
 				tgt._regions.add(new CellRegion(rgn.row, rgn.column, rgn.lastRow, rgn.lastColumn));
 			}

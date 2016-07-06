@@ -196,6 +196,12 @@ zss.Cell = zk.$extends(zk.Widget, {
 		else
 			delete this.af_tlbr;
 		
+		//ZSS-1142: dataBar border
+		if (cellData.dbar)
+			this.dbar = cellData.dbar;
+		else
+			delete this.dbar;
+		
 		//ZSS-944
 		this.rotate = cellData.rotate;
 		
@@ -937,6 +943,12 @@ zss.Cell = zk.$extends(zk.Widget, {
 			cls += (' zshi' + hId);
 		if (wId)
 			cls += (' zswi' + wId);
+		
+		//ZSS-1142: dataBar boarder. use .dbar:before would block cell text; 
+		// so give up using this to draw data bar border.
+//		if (this.dbar) {
+//			cls += (' dbar');
+//		}
 		return cls;
 	},
 	_getRealClass: function() {

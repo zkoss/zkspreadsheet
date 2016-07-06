@@ -2,6 +2,7 @@ package org.zkoss.zss.issue;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
@@ -60,7 +61,7 @@ public class Issue1130Test {
 			Assert.assertTrue("No Exception", true);
 			Sheet sheet1 = book.getSheetAt(0);
 			SSheet sheet = sheet1.getInternalSheet();
-			final List<SConditionalFormatting> list = sheet.getConditonalFormattings();
+			final List<SConditionalFormatting> list = sheet.getConditionalFormattings();
 			SConditionalFormatting[] cfs = list.toArray(new SConditionalFormatting[list.size()]);
 			Assert.assertEquals("number of <conditionalFormatting>", 20, cfs.length);
 			
@@ -105,9 +106,9 @@ public class Issue1130Test {
 	
 	//[0]
 	private void test0(AbstractBookAdv book, SConditionalFormatting cf0) {
-		final List<CellRegion> regions = cf0.getRegions();
+		final Set<CellRegion> regions = cf0.getRegions();
 		Assert.assertEquals("number of regions",  1, regions.size());
-		final CellRegion rgn00 = regions.get(0);
+		final CellRegion rgn00 = regions.iterator().next();
 		Assert.assertEquals("A1:A10",  rgn00.getReferenceString());
 		final List<SConditionalFormattingRule> rules = cf0.getRules();
 		Assert.assertEquals("number of rules",  1, rules.size());
@@ -115,9 +116,10 @@ public class Issue1130Test {
 		Assert.assertEquals("rule's type", RuleType.CELL_IS, rule00.getType());
 		Assert.assertEquals("rule's priority", 20, rule00.getPriority().intValue());
 		Assert.assertEquals("rule's operator", RuleOperator.GREATER_THAN, rule00.getOperator());
-		final List<String> formulas = rule00.getFormulas();
-		Assert.assertEquals("number of formulas",  1, formulas.size());
-		final String formula00 = formulas.get(0);
+		Assert.assertNotNull(rule00.getFormula1());
+		Assert.assertNull(rule00.getFormula2());
+		Assert.assertNull(rule00.getFormula3());
+		final String formula00 = rule00.getFormula1();
 		Assert.assertEquals("rule's formula", "80", formula00);
 		
 		testDxfId(book, Long.valueOf(9), rule00.getExtraStyle());
@@ -125,9 +127,9 @@ public class Issue1130Test {
 
 	//[1]
 	private void test1(AbstractBookAdv book, SConditionalFormatting cf0) {
-		final List<CellRegion> regions = cf0.getRegions();
+		final Set<CellRegion> regions = cf0.getRegions();
 		Assert.assertEquals("number of regions",  1, regions.size());
-		final CellRegion rgn00 = regions.get(0);
+		final CellRegion rgn00 = regions.iterator().next();
 		Assert.assertEquals("A8:A10",  rgn00.getReferenceString());
 		final List<SConditionalFormattingRule> rules = cf0.getRules();
 		Assert.assertEquals("number of rules",  1, rules.size());
@@ -135,9 +137,10 @@ public class Issue1130Test {
 		Assert.assertEquals("rule's type", RuleType.TIME_PERIOD, rule00.getType());
 		Assert.assertEquals("rule's priority", 19, rule00.getPriority().intValue());
 		Assert.assertEquals("rule's timePeriod", RuleTimePeriod.YESTERDAY, rule00.getTimePeriod());
-		final List<String> formulas = rule00.getFormulas();
-		Assert.assertEquals("number of formulas",  1, formulas.size());
-		final String formula00 = formulas.get(0);
+		Assert.assertNotNull(rule00.getFormula1());
+		Assert.assertNull(rule00.getFormula2());
+		Assert.assertNull(rule00.getFormula3());
+		final String formula00 = rule00.getFormula1();
 		Assert.assertEquals("rule's formula", "FLOOR(A8,1)=TODAY()-1", formula00);
 
 		testDxfId(book, Long.valueOf(8), rule00.getExtraStyle());
@@ -145,9 +148,9 @@ public class Issue1130Test {
 
 	//[2]
 	private void test2(AbstractBookAdv book, SConditionalFormatting cf0) {
-		final List<CellRegion> regions = cf0.getRegions();
+		final Set<CellRegion> regions = cf0.getRegions();
 		Assert.assertEquals("number of regions",  1, regions.size());
-		final CellRegion rgn00 = regions.get(0);
+		final CellRegion rgn00 = regions.iterator().next();
 		Assert.assertEquals("B1:B4",  rgn00.getReferenceString());
 		final List<SConditionalFormattingRule> rules = cf0.getRules();
 		Assert.assertEquals("number of rules",  1, rules.size());
@@ -174,9 +177,9 @@ public class Issue1130Test {
 
 	//[3]
 	private void test3(AbstractBookAdv book, SConditionalFormatting cf0) {
-		final List<CellRegion> regions = cf0.getRegions();
+		final Set<CellRegion> regions = cf0.getRegions();
 		Assert.assertEquals("number of regions",  1, regions.size());
-		final CellRegion rgn00 = regions.get(0);
+		final CellRegion rgn00 = regions.iterator().next();
 		Assert.assertEquals("C1:C6",  rgn00.getReferenceString());
 		final List<SConditionalFormattingRule> rules = cf0.getRules();
 		Assert.assertEquals("number of rules",  1, rules.size());
@@ -190,9 +193,9 @@ public class Issue1130Test {
 
 	//[4]
 	private void test4(AbstractBookAdv book, SConditionalFormatting cf0) {
-		final List<CellRegion> regions = cf0.getRegions();
+		final Set<CellRegion> regions = cf0.getRegions();
 		Assert.assertEquals("number of regions",  1, regions.size());
-		final CellRegion rgn00 = regions.get(0);
+		final CellRegion rgn00 = regions.iterator().next();
 		Assert.assertEquals("D1:D4",  rgn00.getReferenceString());
 		final List<SConditionalFormattingRule> rules = cf0.getRules();
 		Assert.assertEquals("number of rules",  1, rules.size());
@@ -228,9 +231,9 @@ public class Issue1130Test {
 
 	//[5]
 	private void test5(AbstractBookAdv book, SConditionalFormatting cf0) {
-		final List<CellRegion> regions = cf0.getRegions();
+		final Set<CellRegion> regions = cf0.getRegions();
 		Assert.assertEquals("number of regions",  1, regions.size());
-		final CellRegion rgn00 = regions.get(0);
+		final CellRegion rgn00 = regions.iterator().next();
 		Assert.assertEquals("E1:E9",  rgn00.getReferenceString());
 		final List<SConditionalFormattingRule> rules = cf0.getRules();
 		Assert.assertEquals("number of rules",  1, rules.size());
@@ -255,9 +258,9 @@ public class Issue1130Test {
 
 	//[6]
 	private void test6(AbstractBookAdv book, SConditionalFormatting cf0) {
-		final List<CellRegion> regions = cf0.getRegions();
+		final Set<CellRegion> regions = cf0.getRegions();
 		Assert.assertEquals("number of regions",  1, regions.size());
-		final CellRegion rgn00 = regions.get(0);
+		final CellRegion rgn00 = regions.iterator().next();
 		Assert.assertEquals("F1:F6",  rgn00.getReferenceString());
 		final List<SConditionalFormattingRule> rules = cf0.getRules();
 		Assert.assertEquals("number of rules",  1, rules.size());
@@ -272,9 +275,9 @@ public class Issue1130Test {
 
 	//[7]
 	private void test7(AbstractBookAdv book, SConditionalFormatting cf0) {
-		final List<CellRegion> regions = cf0.getRegions();
+		final Set<CellRegion> regions = cf0.getRegions();
 		Assert.assertEquals("number of regions",  1, regions.size());
-		final CellRegion rgn00 = regions.get(0);
+		final CellRegion rgn00 = regions.iterator().next();
 		Assert.assertEquals("G1:G8",  rgn00.getReferenceString());
 		final List<SConditionalFormattingRule> rules = cf0.getRules();
 		Assert.assertEquals("number of rules",  1, rules.size());
@@ -289,9 +292,9 @@ public class Issue1130Test {
 
 	//[8]
 	private void test8(AbstractBookAdv book, SConditionalFormatting cf0) {
-		final List<CellRegion> regions = cf0.getRegions();
+		final Set<CellRegion> regions = cf0.getRegions();
 		Assert.assertEquals("number of regions",  1, regions.size());
-		final CellRegion rgn00 = regions.get(0);
+		final CellRegion rgn00 = regions.iterator().next();
 		Assert.assertEquals("H1:H6",  rgn00.getReferenceString());
 		final List<SConditionalFormattingRule> rules = cf0.getRules();
 		Assert.assertEquals("number of rules",  1, rules.size());
@@ -299,9 +302,10 @@ public class Issue1130Test {
 		Assert.assertEquals("rule's type", RuleType.CONTAINS_TEXT, rule00.getType());
 		Assert.assertEquals("rule's priority", 12, rule00.getPriority().intValue());
 		Assert.assertEquals("rule's text", "Henri", rule00.getText());
-		final List<String> formulas = rule00.getFormulas();
-		Assert.assertEquals("number of formulas",  1, formulas.size());
-		final String formula00 = formulas.get(0);
+		Assert.assertNotNull(rule00.getFormula1());
+		Assert.assertNull(rule00.getFormula2());
+		Assert.assertNull(rule00.getFormula3());
+		final String formula00 = rule00.getFormula1();
 		Assert.assertEquals("rule's formula", "NOT(ISERROR(SEARCH(\"Henri\",H1)))", formula00);
 		
 		testDxfId(book, Long.valueOf(4), rule00.getExtraStyle());
@@ -309,9 +313,9 @@ public class Issue1130Test {
 
 	//[9]
 	private void test9(AbstractBookAdv book, SConditionalFormatting cf0) {
-		final List<CellRegion> regions = cf0.getRegions();
+		final Set<CellRegion> regions = cf0.getRegions();
 		Assert.assertEquals("number of regions",  1, regions.size());
-		final CellRegion rgn00 = regions.get(0);
+		final CellRegion rgn00 = regions.iterator().next();
 		Assert.assertEquals("I1:I10",  rgn00.getReferenceString());
 		final List<SConditionalFormattingRule> rules = cf0.getRules();
 		Assert.assertEquals("number of rules",  1, rules.size());
@@ -325,9 +329,9 @@ public class Issue1130Test {
 	
 	//[10]
 	private void test10(AbstractBookAdv book, SConditionalFormatting cf0) {
-		final List<CellRegion> regions = cf0.getRegions();
+		final Set<CellRegion> regions = cf0.getRegions();
 		Assert.assertEquals("number of regions",  1, regions.size());
-		final CellRegion rgn00 = regions.get(0);
+		final CellRegion rgn00 = regions.iterator().next();
 		Assert.assertEquals("J3:J7",  rgn00.getReferenceString());
 		final List<SConditionalFormattingRule> rules = cf0.getRules();
 		Assert.assertEquals("number of rules",  1, rules.size());
@@ -335,11 +339,12 @@ public class Issue1130Test {
 		Assert.assertEquals("rule's type", RuleType.CELL_IS, rule00.getType());
 		Assert.assertEquals("rule's priority", 10, rule00.getPriority().intValue());
 		Assert.assertEquals("rule's operator", RuleOperator.BETWEEN, rule00.getOperator());
-		final List<String> formulas = rule00.getFormulas();
-		Assert.assertEquals("number of formulas",  2, formulas.size());
-		final String formula00 = formulas.get(0);
+		Assert.assertNotNull(rule00.getFormula1());
+		Assert.assertNotNull(rule00.getFormula2());
+		Assert.assertNull(rule00.getFormula3());
+		final String formula00 = rule00.getFormula1();
 		Assert.assertEquals("rule's formula0", "11", formula00);
-		final String formula01 = formulas.get(1);
+		final String formula01 = rule00.getFormula2();
 		Assert.assertEquals("rule's formula1", "23", formula01);
 		
 		testDxfId(book, Long.valueOf(2), rule00.getExtraStyle());
@@ -347,9 +352,9 @@ public class Issue1130Test {
 	
 	//[11]
 	private void test11(AbstractBookAdv book, SConditionalFormatting cf0) {
-		final List<CellRegion> regions = cf0.getRegions();
+		final Set<CellRegion> regions = cf0.getRegions();
 		Assert.assertEquals("number of regions",  1, regions.size());
-		final CellRegion rgn00 = regions.get(0);
+		final CellRegion rgn00 = regions.iterator().next();
 		Assert.assertEquals("K3:K8",  rgn00.getReferenceString());
 		final List<SConditionalFormattingRule> rules = cf0.getRules();
 		Assert.assertEquals("number of rules",  1, rules.size());
@@ -363,9 +368,9 @@ public class Issue1130Test {
 	
 	//[12]
 	private void test12(AbstractBookAdv book, SConditionalFormatting cf0) {
-		final List<CellRegion> regions = cf0.getRegions();
+		final Set<CellRegion> regions = cf0.getRegions();
 		Assert.assertEquals("number of regions",  1, regions.size());
-		final CellRegion rgn00 = regions.get(0);
+		final CellRegion rgn00 = regions.iterator().next();
 		Assert.assertEquals("L3:L7",  rgn00.getReferenceString());
 		final List<SConditionalFormattingRule> rules = cf0.getRules();
 		Assert.assertEquals("number of rules",  1, rules.size());
@@ -379,9 +384,9 @@ public class Issue1130Test {
 	
 	//[13]
 	private void test13(AbstractBookAdv book, SConditionalFormatting cf0) {
-		final List<CellRegion> regions = cf0.getRegions();
+		final Set<CellRegion> regions = cf0.getRegions();
 		Assert.assertEquals("number of regions",  1, regions.size());
-		final CellRegion rgn00 = regions.get(0);
+		final CellRegion rgn00 = regions.iterator().next();
 		Assert.assertEquals("M2:M7",  rgn00.getReferenceString());
 		final List<SConditionalFormattingRule> rules = cf0.getRules();
 		Assert.assertEquals("number of rules",  1, rules.size());
@@ -394,9 +399,9 @@ public class Issue1130Test {
 
 	//[14]
 	private void test14(AbstractBookAdv book, SConditionalFormatting cf0) {
-		final List<CellRegion> regions = cf0.getRegions();
+		final Set<CellRegion> regions = cf0.getRegions();
 		Assert.assertEquals("number of regions",  1, regions.size());
-		final CellRegion rgn00 = regions.get(0);
+		final CellRegion rgn00 = regions.iterator().next();
 		Assert.assertEquals("N2:N11",  rgn00.getReferenceString());
 		final List<SConditionalFormattingRule> rules = cf0.getRules();
 		Assert.assertEquals("number of rules",  1, rules.size());
@@ -411,18 +416,19 @@ public class Issue1130Test {
 
 	//[15]
 	private void test15(AbstractBookAdv book, SConditionalFormatting cf0) {
-		final List<CellRegion> regions = cf0.getRegions();
+		final Set<CellRegion> regions = cf0.getRegions();
 		Assert.assertEquals("number of regions",  1, regions.size());
-		final CellRegion rgn00 = regions.get(0);
+		final CellRegion rgn00 = regions.iterator().next();
 		Assert.assertEquals("A20:A26",  rgn00.getReferenceString());
 		final List<SConditionalFormattingRule> rules = cf0.getRules();
 		Assert.assertEquals("number of rules",  1, rules.size());
 		final SConditionalFormattingRule rule00 = rules.get(0);
 		Assert.assertEquals("rule's type", RuleType.EXPRESSION, rule00.getType());
 		Assert.assertEquals("rule's priority", 5, rule00.getPriority().intValue());
-		final List<String> formulas = rule00.getFormulas();
-		Assert.assertEquals("number of formulas",  1, formulas.size());
-		final String formula00 = formulas.get(0);
+		Assert.assertNotNull(rule00.getFormula1());
+		Assert.assertNull(rule00.getFormula2());
+		Assert.assertNull(rule00.getFormula3());
+		final String formula00 = rule00.getFormula1();
 		Assert.assertEquals("rule's formula", "131", formula00);
 		
 		testDxfId(book, null, rule00.getExtraStyle());
@@ -431,18 +437,19 @@ public class Issue1130Test {
 
 	//[16]
 	private void test16(AbstractBookAdv book, SConditionalFormatting cf0) {
-		final List<CellRegion> regions = cf0.getRegions();
+		final Set<CellRegion> regions = cf0.getRegions();
 		Assert.assertEquals("number of regions",  1, regions.size());
-		final CellRegion rgn00 = regions.get(0);
+		final CellRegion rgn00 = regions.iterator().next();
 		Assert.assertEquals("B20:B25",  rgn00.getReferenceString());
 		final List<SConditionalFormattingRule> rules = cf0.getRules();
 		Assert.assertEquals("number of rules",  1, rules.size());
 		final SConditionalFormattingRule rule00 = rules.get(0);
 		Assert.assertEquals("rule's type", RuleType.CONTAINS_BLANKS, rule00.getType());
 		Assert.assertEquals("rule's priority", 4, rule00.getPriority().intValue());
-		final List<String> formulas = rule00.getFormulas();
-		Assert.assertEquals("number of formulas",  1, formulas.size());
-		final String formula00 = formulas.get(0);
+		Assert.assertNotNull(rule00.getFormula1());
+		Assert.assertNull(rule00.getFormula2());
+		Assert.assertNull(rule00.getFormula3());
+		final String formula00 = rule00.getFormula1();
 		Assert.assertEquals("rule's formula", "LEN(TRIM(B20))=0", formula00);
 		
 		testDxfId(book, null, rule00.getExtraStyle());
@@ -450,18 +457,19 @@ public class Issue1130Test {
 	
 	//[17]
 	private void test17(AbstractBookAdv book, SConditionalFormatting cf0) {
-		final List<CellRegion> regions = cf0.getRegions();
+		final Set<CellRegion> regions = cf0.getRegions();
 		Assert.assertEquals("number of regions",  1, regions.size());
-		final CellRegion rgn00 = regions.get(0);
+		final CellRegion rgn00 = regions.iterator().next();
 		Assert.assertEquals("C20:C24",  rgn00.getReferenceString());
 		final List<SConditionalFormattingRule> rules = cf0.getRules();
 		Assert.assertEquals("number of rules",  1, rules.size());
 		final SConditionalFormattingRule rule00 = rules.get(0);
 		Assert.assertEquals("rule's type", RuleType.CONTAINS_ERRORS, rule00.getType());
 		Assert.assertEquals("rule's priority", 3, rule00.getPriority().intValue());
-		final List<String> formulas = rule00.getFormulas();
-		Assert.assertEquals("number of formulas",  1, formulas.size());
-		final String formula00 = formulas.get(0);
+		Assert.assertNotNull(rule00.getFormula1());
+		Assert.assertNull(rule00.getFormula2());
+		Assert.assertNull(rule00.getFormula3());
+		final String formula00 = rule00.getFormula1();
 		Assert.assertEquals("rule's formula", "ISERROR(C20)", formula00);
 
 		testDxfId(book, null, rule00.getExtraStyle());
@@ -469,9 +477,9 @@ public class Issue1130Test {
 
 	//[18]
 	private void test18(AbstractBookAdv book, SConditionalFormatting cf0) {
-		final List<CellRegion> regions = cf0.getRegions();
+		final Set<CellRegion> regions = cf0.getRegions();
 		Assert.assertEquals("number of regions",  1, regions.size());
-		final CellRegion rgn00 = regions.get(0);
+		final CellRegion rgn00 = regions.iterator().next();
 		Assert.assertEquals("D20:D24",  rgn00.getReferenceString());
 		final List<SConditionalFormattingRule> rules = cf0.getRules();
 		Assert.assertEquals("number of rules",  1, rules.size());
@@ -480,9 +488,10 @@ public class Issue1130Test {
 		Assert.assertEquals("rule's priority", 2, rule00.getPriority().intValue());
 		Assert.assertEquals("rule's operator", RuleOperator.NOT_CONTAINS, rule00.getOperator());
 		Assert.assertEquals("rule's text", "Hello", rule00.getText());
-		final List<String> formulas = rule00.getFormulas();
-		Assert.assertEquals("number of formulas",  1, formulas.size());
-		final String formula00 = formulas.get(0);
+		Assert.assertNotNull(rule00.getFormula1());
+		Assert.assertNull(rule00.getFormula2());
+		Assert.assertNull(rule00.getFormula3());
+		final String formula00 = rule00.getFormula1();
 		Assert.assertEquals("rule's formula", "ISERROR(SEARCH(\"Hello\",D20))", formula00);
 		
 		testDxfId(book, Long.valueOf(0), rule00.getExtraStyle());
@@ -490,9 +499,9 @@ public class Issue1130Test {
 
 	//[19]
 	private void test19(AbstractBookAdv book, SConditionalFormatting cf0) {
-		final List<CellRegion> regions = cf0.getRegions();
+		final Set<CellRegion> regions = cf0.getRegions();
 		Assert.assertEquals("number of regions",  1, regions.size());
-		final CellRegion rgn00 = regions.get(0);
+		final CellRegion rgn00 = regions.iterator().next();
 		Assert.assertEquals("E20:E24",  rgn00.getReferenceString());
 		final List<SConditionalFormattingRule> rules = cf0.getRules();
 		Assert.assertEquals("number of rules",  1, rules.size());
@@ -501,9 +510,10 @@ public class Issue1130Test {
 		Assert.assertEquals("rule's priority", 1, rule00.getPriority().intValue());
 		Assert.assertEquals("rule's operator", RuleOperator.BEGINS_WITH, rule00.getOperator());
 		Assert.assertEquals("rule's text", "xyz", rule00.getText());
-		final List<String> formulas = rule00.getFormulas();
-		Assert.assertEquals("number of formulas",  1, formulas.size());
-		final String formula00 = formulas.get(0);
+		Assert.assertNotNull(rule00.getFormula1());
+		Assert.assertNull(rule00.getFormula2());
+		Assert.assertNull(rule00.getFormula3());
+		final String formula00 = rule00.getFormula1();
 		Assert.assertEquals("rule's formula", "LEFT(E20,3)=\"xyz\"", formula00);
 		
 		testDxfId(book, null, rule00.getExtraStyle());

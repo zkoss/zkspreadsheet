@@ -22,7 +22,12 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.ServletException;
+
 import org.zkoss.poi.ss.usermodel.ZssContext;
+import org.zkoss.web.fn.ServletFns;
+import org.zkoss.zk.ui.WebApp;
+import org.zkoss.zk.ui.WebApps;
 import org.zkoss.zss.model.CellRegion;
 import org.zkoss.zss.model.SAutoFilter;
 import org.zkoss.zss.model.SBorder.BorderType;
@@ -32,17 +37,22 @@ import org.zkoss.zss.model.SCellStyle;
 import org.zkoss.zss.model.SCellStyle.Alignment;
 import org.zkoss.zss.model.SCellStyle.VerticalAlignment;
 import org.zkoss.zss.model.SColor;
+import org.zkoss.zss.model.SConditionalStyle;
+import org.zkoss.zss.model.SDataBar;
 import org.zkoss.zss.model.SFill.FillPattern;
 import org.zkoss.zss.model.SFont;
 import org.zkoss.zss.model.SFont.Boldweight;
 import org.zkoss.zss.model.SFont.Underline;
 import org.zkoss.zss.model.SHyperlink;
+import org.zkoss.zss.model.SIconSet;
+import org.zkoss.zss.model.SIconSet.IconSetType;
 import org.zkoss.zss.model.SRichText;
 import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.model.STable;
 import org.zkoss.zss.model.impl.AbstractCellStyleAdv;
 import org.zkoss.zss.model.impl.AbstractSheetAdv;
 import org.zkoss.zss.model.impl.AbstractTableAdv;
+import org.zkoss.zss.model.impl.IconSetImpl;
 import org.zkoss.zss.model.sys.EngineFactory;
 import org.zkoss.zss.model.sys.format.FormatContext;
 import org.zkoss.zss.model.sys.format.FormatEngine;
@@ -85,7 +95,16 @@ public class CellFormatHelper implements Serializable{
 
 	private FormatEngine _formatEngine;
 	
+	//ZSS-1142
+	private SConditionalStyle _cdStyle;
+
+	@Deprecated
 	public CellFormatHelper(SSheet sheet, int row, int col, MergeMatrixHelper mmhelper) {
+		this(sheet, row, col, mmhelper, null);
+	}
+	
+	//ZSS-1142
+	public CellFormatHelper(SSheet sheet, int row, int col, MergeMatrixHelper mmhelper, SConditionalStyle cdStyle) {
 		_sheet = sheet;
 		_row = row;
 		_col = col;
@@ -93,6 +112,7 @@ public class CellFormatHelper implements Serializable{
 		_cellStyle =_cell.getCellStyle();
 		_mmHelper = mmhelper;
 		_formatEngine = EngineFactory.getInstance().createFormatEngine();
+		_cdStyle = cdStyle; //ZSS-1142
 	}
 
 	public String getHtmlStyle(StringBuffer doubleBorder, STable table, SCellStyle tbStyle) { //ZSS-977
@@ -101,7 +121,7 @@ public class CellFormatHelper implements Serializable{
 		//ZSS-34 cell background color does not show in excel
 		//20110819, henrichen: if fill pattern is NONE, shall not show the cell background color
 		//ZSS-857, ZSS-977: consider Table background
-		SCellStyle fillStyle = StyleUtil.getFillStyle(_cellStyle, tbStyle);
+		SCellStyle fillStyle = StyleUtil.getFillStyle(_cellStyle, tbStyle, _cdStyle); //ZSS-1142
 		
 		String backColor = fillStyle != null ? 
 			fillStyle.getBackColor().getHtmlColor() : null;
@@ -128,7 +148,7 @@ public class CellFormatHelper implements Serializable{
 		return sb.toString();
 	}
 	
-	private boolean processBottomBorder(StringBuffer sb, StringBuffer db, SCellStyle fillStyle, SCellStyle tbStyle) { //ZSS-977
+	private boolean processBottomBorder(StringBuffer sb, StringBuffer db, SCellStyle fillStyle, SCellStyle tbStyle) { //ZSS-977, ZSS-1142
 
 		boolean hitBottom = false;
 		MergedRect rect = null;
@@ -143,7 +163,7 @@ public class CellFormatHelper implements Serializable{
 			hitMerge = true;
 			bottom = rect.getLastRow();
 		}
-		SCellStyle nextStyle = StyleUtil.getBottomStyle(_sheet.getCell(bottom,_col).getCellStyle(), tbStyle); //ZSS-977 
+		SCellStyle nextStyle = StyleUtil.getBottomStyle(_sheet.getCell(bottom,_col).getCellStyle(), tbStyle, _cdStyle); //ZSS-977, ZSS-1142 
 		BorderType bb = null;
 		if (nextStyle != null){
 			bb = nextStyle.getBorderBottom();
@@ -166,13 +186,14 @@ public class CellFormatHelper implements Serializable{
 			//ZSS-919: merge more than 2 columns; must use top border of bottom cell
 			if (!hitMerge || rect.getColumn() == rect.getLastColumn()) {
 				nextFillStyle = nextStyle = _sheet.getCell(bottom,_col).getCellStyle();
-				//ZSS-977
-				SCellStyle nextTbStyle = null;
+				SCellStyle nextTbStyle = null; //ZSS-977
+				SConditionalStyle nextCdStyle = null; //ZSS-1142
 				if (nextStyle.getBorderTop() == BorderType.NONE) { 
+					nextCdStyle = ((AbstractSheetAdv)_sheet).getConditionalFormattingStyle(bottom, _col); //ZSS-1142
 					final STable table0 = ((AbstractSheetAdv)_sheet).getTableByRowCol(bottom, _col);
 					nextTbStyle = table0 == null ? null : 
 						((AbstractTableAdv)table0).getCellStyle(bottom, _col);
-					nextStyle = StyleUtil.getTopStyle(nextStyle, nextTbStyle);
+					nextStyle = StyleUtil.getTopStyle(nextStyle, nextTbStyle, nextCdStyle); //ZSS-1142
 				}
 
 				if (nextStyle != null){
@@ -184,7 +205,7 @@ public class CellFormatHelper implements Serializable{
 				
 				//ZSS-977
 				if (!hitBottom) {
-					nextFillStyle = StyleUtil.getFillStyle(nextFillStyle, nextTbStyle);
+					nextFillStyle = StyleUtil.getFillStyle(nextFillStyle, nextTbStyle, nextCdStyle); //ZSS-1142
 				}
 			}
 		}
@@ -221,7 +242,7 @@ public class CellFormatHelper implements Serializable{
 		return hitBottom;
 	}
 
-	private boolean processRightBorder(StringBuffer sb, StringBuffer db, SCellStyle fillStyle, SCellStyle tbStyle) { //ZSS-977
+	private boolean processRightBorder(StringBuffer sb, StringBuffer db, SCellStyle fillStyle, SCellStyle tbStyle) { //ZSS-977, ZSS-1142
 		boolean hitRight = false;
 		MergedRect rect=null;
 		boolean hitMerge = false;
@@ -233,7 +254,7 @@ public class CellFormatHelper implements Serializable{
 			right = rect.getLastColumn();
 		}
 		BorderType bb = null;
-		SCellStyle nextStyle = StyleUtil.getRightStyle(_sheet.getCell(_row, right).getCellStyle(), tbStyle); //ZSS-977
+		SCellStyle nextStyle = StyleUtil.getRightStyle(_sheet.getCell(_row, right).getCellStyle(), tbStyle, _cdStyle); //ZSS-977, ZSS-1142
 		if (nextStyle != null){
 			bb = nextStyle.getBorderRight();
 			String color = nextStyle.getBorderRightColor().getHtmlColor();
@@ -251,11 +272,13 @@ public class CellFormatHelper implements Serializable{
 				nextFillStyle = nextStyle = _sheet.getCell(_row,right).getCellStyle();
 				//ZSS-977
 				SCellStyle nextTbStyle = null;
-				if (nextStyle.getBorderLeft() == BorderType.NONE) { 
+				SConditionalStyle nextCdStyle = null; //ZSS-1142
+				if (nextStyle.getBorderLeft() == BorderType.NONE) {
+					nextCdStyle = ((AbstractSheetAdv)_sheet).getConditionalFormattingStyle(_row, right); //ZSS-1142
 					final STable table0 = ((AbstractSheetAdv)_sheet).getTableByRowCol(_row, right);
 					nextTbStyle = table0 == null ? null : 
 						((AbstractTableAdv)table0).getCellStyle(_row, right);
-					nextStyle = StyleUtil.getLeftStyle(nextStyle, nextTbStyle);
+					nextStyle = StyleUtil.getLeftStyle(nextStyle, nextTbStyle, nextCdStyle); //ZSS-1142
 				}
 				
 				if (nextStyle != null){
@@ -268,7 +291,7 @@ public class CellFormatHelper implements Serializable{
 				
 				//ZSS-977
 				if (!hitRight) {
-					nextFillStyle = StyleUtil.getFillStyle(nextFillStyle, nextTbStyle);
+					nextFillStyle = StyleUtil.getFillStyle(nextFillStyle, nextTbStyle, nextCdStyle); //ZSS-1142
 				}
 			}
 		}
@@ -404,9 +427,9 @@ public class CellFormatHelper implements Serializable{
 		return Spreadsheet.isIE9() && verticalAlignment != VerticalAlignment.CENTER;
 	}
 	
-	public String getInnerHtmlStyle() {
+	//style in element with id="xxx-cave" or class=".zsscelltxt"
+	public String getInnerHtmlStyle() { 
 		if (!_cell.isNull()) {
-			
 			final StringBuffer sb = new StringBuffer();
 			sb.append(getTextCSSStyle( _cell));
 			
@@ -428,21 +451,48 @@ public class CellFormatHelper implements Serializable{
 				}
 			}
 			
-			//final SFont font = _cellStyle.getFont();
-			
-			//sb.append(BookHelper.getFontCSSStyle(_book, font));
-			//sb.append(getFontCSSStyle(_cell, font));
-
-			//condition color
-			//final FormatResult ft = _formatEngine.format(_cell, new FormatContext(ZssContext.getCurrent().getLocale()));
-			//final boolean isRichText = ft.isRichText();
-			//if (!isRichText) {
-			//	final SColor color = ft.getColor();
-			//	if(color!=null){
-			//		final String htmlColor = color.getHtmlColor();
-			//		sb.append("color:").append(htmlColor).append(";");
-			//	}
-			//}
+			//ZSS-1142
+			if (_cdStyle != null) {
+				final SDataBar dataBar = _cdStyle.getDataBar();
+				final SIconSet iconSet = _cdStyle.getIconSet();
+				if (dataBar != null) {
+					final Double barPercent = _cdStyle.getBarPercent();
+					if (barPercent != null) {
+						sb.append("background-repeat:no-repeat;")
+//20160630, henrichen: Was using .dbar::before to draw the data bar with border;
+//unfortunally, it will block/cover the cell text; give up the .dbar::before way. 
+//							.append("background-position:-20000px -20000px;")
+							.append("background-position:0px 1px;")
+							.append("background-size: ").append(barPercent).append("% calc(100% - 4px);")
+							.append("background-image: linear-gradient(to right, ");
+						final String htmlColor = dataBar.getColor().getHtmlColor(); 
+						sb.append(htmlColor).append(", #e5ecf5);");
+//						final String borderColor = htmlColor;
+//						sb.append("border: none 1px ").append(borderColor).append(";");
+//						final double rightPercent = 100.0 - barPercent.doubleValue();
+//						sb.append("right: ").append(rightPercent).append("%;");
+					}
+				} else if (iconSet != null) {
+					final IconSetType type = iconSet.getType();
+					final String iconSetName = type != null ? type.name : null;
+					final Integer iconSetId = _cdStyle.getIconSetId();
+					final WebApp app = WebApps.getCurrent();
+					if (iconSetId != null && app != null && iconSetName != null) {
+						final String name = IconSetImpl.getIconSetName(iconSetName, iconSetId, iconSet.isReverse());
+						if (name != null) {
+							String path;
+							try {
+								path = ServletFns.encodeURL("~./zss/img/"+name+".png");
+								sb.append("background-repeat:no-repeat;")
+								.append("background-position:0px 2px;")
+								.append("background-image: url(").append(path).append(");");
+							} catch (ServletException e) {
+								// ignore.
+							}
+						}
+					}
+				}
+			}
 
 			return sb.toString();
 		}
@@ -551,8 +601,8 @@ public class CellFormatHelper implements Serializable{
 		if(hasRightBorder_set){
 			return hasRightBorder;
 		}else{
-			SCellStyle fillStyle = StyleUtil.getFillStyle(_cellStyle, tbStyle); //ZSS-977
-			hasRightBorder = processRightBorder(new StringBuffer(), new StringBuffer(), fillStyle, tbStyle);
+			SCellStyle fillStyle = StyleUtil.getFillStyle(_cellStyle, tbStyle, _cdStyle); //ZSS-977, ZSS-1142
+			hasRightBorder = processRightBorder(new StringBuffer(), new StringBuffer(), fillStyle, tbStyle); //ZSS-1142
 			hasRightBorder_set = true;
 		}
 		return hasRightBorder;
@@ -587,7 +637,7 @@ public class CellFormatHelper implements Serializable{
 			}
 			final SHyperlink hlink = cell.getHyperlink();
 			if (hlink != null) {
-				text = getHyperlinkHtml(text, hlink, sheet, cell, style, ft, null); //ZSS-1018
+				text = getHyperlinkHtml(text, hlink, sheet, cell, style, ft, null, null); //ZSS-1018, ZSS-1142
 			}				
 		}
 		return text;
@@ -613,7 +663,7 @@ public class CellFormatHelper implements Serializable{
 	}
 	
 	private static String getHyperlinkHtml(String label, SHyperlink link, 
-			SSheet sheet, SCell cell, SCellStyle cellStyle, FormatResult ft, SCellStyle tbStyle) { //ZSS-1018
+			SSheet sheet, SCell cell, SCellStyle cellStyle, FormatResult ft, SCellStyle tbStyle, SConditionalStyle cdStyle) { //ZSS-1018, ZSS-1142
 		String addr = escapeText(link.getAddress()==null?"":link.getAddress(), false, false); //TODO escape something?
 		if (label == null) {
 			label = escapeText(link.getLabel(), false, false);
@@ -626,7 +676,7 @@ public class CellFormatHelper implements Serializable{
 		sb.append("<a zs.t=\"SHyperlink\" z.t=\"").append(link.getType().getValue()).append("\" href=\"javascript:\" z.href=\"")
 			.append(addr)
 			.append("\" style=\"") //ZSS-1018
-			.append(getFontHtmlStyle(sheet, cell, cellStyle, ft, tbStyle)) //ZSS-1018
+			.append(getFontHtmlStyle(sheet, cell, cellStyle, ft, tbStyle, cdStyle)) //ZSS-1018, ZSS-1142
 			.append("\">")
 			.append(label==null?"":label)
 			.append("</a>");
@@ -680,7 +730,7 @@ public class CellFormatHelper implements Serializable{
 			hitMerge = true;
 			top = rect.getRow();
 		}
-		SCellStyle nextStyle = StyleUtil.getTopStyle(_sheet.getCell(top,_col).getCellStyle(), tbStyle); //ZSS-977
+		SCellStyle nextStyle = StyleUtil.getTopStyle(_sheet.getCell(top,_col).getCellStyle(), tbStyle, _cdStyle); //ZSS-977, ZSS-1142
 		
 		if (nextStyle != null){
 			BorderType bb = nextStyle.getBorderTop();
@@ -708,7 +758,7 @@ public class CellFormatHelper implements Serializable{
 					//ZSS-1119: a merger cell; check its right mergee top border
 					if (hitMerge) {
 						int right = _col + 1;
-						SCellStyle rightStyle = StyleUtil.getTopStyle(_sheet.getCell(_row, right).getCellStyle(), tbStyle);
+						SCellStyle rightStyle = StyleUtil.getTopStyle(_sheet.getCell(_row, right).getCellStyle(), tbStyle, _cdStyle); //ZSS-1142
 						if (rightStyle != null && rightStyle.getBorderTop() != BorderType.NONE) {
 							db.append('_');
 							
@@ -734,7 +784,8 @@ public class CellFormatHelper implements Serializable{
 					final STable table0 = ((AbstractSheetAdv)_sheet).getTableByRowCol(top, _col);
 					final SCellStyle tbStyle0 = 
 							table0 == null ? null : ((AbstractTableAdv)table0).getCellStyle(top, _col);
-					nextStyle = StyleUtil.getBottomStyle(nextStyle, tbStyle0);
+					final SConditionalStyle cdStyle0 = ((AbstractSheetAdv)_sheet).getConditionalFormattingStyle(top, _col); //ZSS-1142
+					nextStyle = StyleUtil.getBottomStyle(nextStyle, tbStyle0, cdStyle0); //ZSS-1142
 				}
 				
 				if (nextStyle != null){
@@ -752,7 +803,7 @@ public class CellFormatHelper implements Serializable{
 		return hitTop;
 	}
 
-	private boolean processLeftBorder(StringBuffer sb, StringBuffer db, SCellStyle fillStyle, SCellStyle tbStyle, Map<String, String> mergedBorder) { //ZSS-977,ZSS-1119
+	private boolean processLeftBorder(StringBuffer sb, StringBuffer db, SCellStyle fillStyle, SCellStyle tbStyle, Map<String, String> mergedBorder) { //ZSS-977,ZSS-1119, ZSS-1142
 		boolean hitLeft = false;
 		MergedRect rect=null;
 		boolean hitMerge = false;
@@ -763,7 +814,7 @@ public class CellFormatHelper implements Serializable{
 			hitMerge = true;
 			left = rect.getColumn();
 		}
-		SCellStyle nextStyle = StyleUtil.getLeftStyle(_sheet.getCell(_row,left).getCellStyle(), tbStyle); //ZSS-977
+		SCellStyle nextStyle = StyleUtil.getLeftStyle(_sheet.getCell(_row,left).getCellStyle(), tbStyle, _cdStyle); //ZSS-977, ZSS-1142
 		if (nextStyle != null){
 			BorderType bb = nextStyle.getBorderLeft();
 			if (bb == BorderType.DOUBLE) {
@@ -796,11 +847,12 @@ public class CellFormatHelper implements Serializable{
 			if (left >= 0) {
 				nextStyle = _sheet.getCell(_row,left).getCellStyle();
 				//ZSS-977
-				if (nextStyle.getBorderRight() == BorderType.NONE) { 
+				if (nextStyle.getBorderRight() == BorderType.NONE) {
+					final SConditionalStyle cdStyle0 = ((AbstractSheetAdv)_sheet).getConditionalFormattingStyle(_row, left); //ZSS-1142
 					final STable table0 = ((AbstractSheetAdv)_sheet).getTableByRowCol(_row, left);
 					final SCellStyle tbStyle0 = 
 							table0 == null ? null : ((AbstractTableAdv)table0).getCellStyle(_row, left);
-					nextStyle = StyleUtil.getRightStyle(nextStyle, tbStyle0);
+					nextStyle = StyleUtil.getRightStyle(nextStyle, tbStyle0, cdStyle0); //ZSS-1142
 				}
 				if (nextStyle != null){
 					BorderType bb = nextStyle.getBorderRight();//get right here
@@ -857,12 +909,11 @@ public class CellFormatHelper implements Serializable{
 	//ZSS-945, ZSS-1018
 	//@since 3.8.0
 	//@Internal
-	public static String getFontHtmlStyle(SSheet sheet, SCell cell, SCellStyle cellStyle, FormatResult ft, SCellStyle tbCellStyle) { //ZSS-977
+	public static String getFontHtmlStyle(SSheet sheet, SCell cell, SCellStyle cellStyle, FormatResult ft, SCellStyle tbCellStyle, SConditionalStyle cdStyle) { //ZSS-977, ZSS-1142
 		if (!cell.isNull()) {
-			
 			final StringBuffer sb = new StringBuffer();
 			//ZSS-977
-			SFont font = StyleUtil.getFontStyle(sheet.getBook(), cellStyle, tbCellStyle);;
+			SFont font = StyleUtil.getFontStyle(sheet.getBook(), cellStyle, tbCellStyle, cdStyle); //ZSS-1142
 			sb.append(getFontCSSStyle(cell, font));
 
 			//condition color
@@ -886,7 +937,7 @@ public class CellFormatHelper implements Serializable{
 	/**
 	 * Gets Cell text by given row and column, it handling
 	 */
-	static public String getRichCellHtmlText(SSheet sheet, int row,int column, FormatResult ft, SCellStyle tbStyle){ //ZSS-1018
+	static public String getRichCellHtmlText(SSheet sheet, int row,int column, FormatResult ft, SCellStyle tbStyle, SConditionalStyle cdStyle){ //ZSS-1018, ZSS-1142
 		final SCell cell = sheet.getCell(row, column);
 		String text = "";
 		if (!cell.isNull()) {
@@ -902,7 +953,7 @@ public class CellFormatHelper implements Serializable{
 			}
 			final SHyperlink hlink = cell.getHyperlink();
 			if (hlink != null) {
-				text = getHyperlinkHtml(text, hlink, sheet, cell, style, ft, tbStyle); //ZSS-1018
+				text = getHyperlinkHtml(text, hlink, sheet, cell, style, ft, tbStyle, cdStyle); //ZSS-1018, ZSS-1142
 			}				
 		}
 		return text;
@@ -914,7 +965,7 @@ public class CellFormatHelper implements Serializable{
 	/**
 	 * Gets Cell text by given row and column
 	 */
-	static public String getCellHtmlText(SSheet sheet, int row,int column, FormatResult ft, SCellStyle tbStyle){ //ZSS-1018
+	static public String getCellHtmlText(SSheet sheet, int row,int column, FormatResult ft, SCellStyle tbStyle, SConditionalStyle cdStyle){ //ZSS-1018, ZSS-1142
 		final SCell cell = sheet.getCell(row, column);
 		String text = "";
 		if (cell != null) {
@@ -935,7 +986,7 @@ public class CellFormatHelper implements Serializable{
 	public String getRealHtmlStyle(FormatResult ft, SCellStyle tbCellStyle) { //ZSS-977
 		if (!_cell.isNull()) {
 			final StringBuffer sb = new StringBuffer();
-			sb.append(getFontHtmlStyle(_sheet, _cell, _cell.getCellStyle(), ft, tbCellStyle)); //ZSS-977, ZSS-1018
+			sb.append(getFontHtmlStyle(_sheet, _cell, _cell.getCellStyle(), ft, tbCellStyle, _cdStyle)); //ZSS-977, ZSS-1018, ZSS-1142
 			sb.append(getIndentCSSStyle(_cell));
 			sb.append(getMergedMaxHeightStyle(_cell)); //ZSS-1199
 			return sb.toString();
@@ -990,5 +1041,19 @@ public class CellFormatHelper implements Serializable{
 		sb.append(r0 == b && l <= c0 && c0 <= r ? "b" : "_");
 		sb.append(c0 == r && t <= r0 && r0 <= b ? "r" : "_");
 		return sb.toString();
+	}
+	
+	//ZSS-1142
+	public boolean withDataBarBorder() {
+		if (_cdStyle != null) {
+			final SDataBar dataBar = _cdStyle.getDataBar();
+			if (dataBar != null) {
+				final Double barPercent = _cdStyle.getBarPercent();
+				if (barPercent != null && barPercent > 0.0) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 }

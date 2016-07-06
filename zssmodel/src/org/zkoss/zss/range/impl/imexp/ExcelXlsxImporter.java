@@ -844,14 +844,16 @@ public class ExcelXlsxImporter extends AbstractExcelImporter {
 		
 		for (int j = 0, len = cf.getNumberOfRules(); j < len; ++j) {
 			final XSSFConditionalFormattingRule rule = cf.getRule(j);
-			cfi.addRule(prepareConditonalFormattingRuleImpl(rule));
+			cfi.addRule(prepareConditonalFormattingRuleImpl(cfi, rule)); //ZSS-1142
 		}
 		return cfi;
 	}
 	
 	//ZSS-1130
-	protected ConditionalFormattingRuleImpl prepareConditonalFormattingRuleImpl(XSSFConditionalFormattingRule poiRule) {
-		final ConditionalFormattingRuleImpl cfri = new ConditionalFormattingRuleImpl();
+	protected ConditionalFormattingRuleImpl prepareConditonalFormattingRuleImpl(
+			SConditionalFormatting cfi, 
+			XSSFConditionalFormattingRule poiRule) {
+		final ConditionalFormattingRuleImpl cfri = new ConditionalFormattingRuleImpl(cfi); //ZSS-1142
 		CTCfRule ctRule = poiRule.getCTCfRule();
 		cfri.setPriority(ctRule.getPriority());
 		cfri.setType(toConditionalFormattingRuleType(ctRule.getType()));
@@ -981,8 +983,22 @@ public class ExcelXlsxImporter extends AbstractExcelImporter {
 
 	//ZSS-1130
 	protected void prepareFormulas(ConditionalFormattingRuleImpl cfri, CTCfRule ctRule) {
-		for (String formula : ctRule.getFormulaList()) {
-			cfri.addFormula(formula);
+		//ZSS-1142
+		Iterator<String> it = ctRule.getFormulaList().iterator();
+		if (it.hasNext()) {
+			cfri.setFormula1(it.next());
+		} else {
+			return;
+		}
+		if (it.hasNext()) {
+			cfri.setFormula2(it.next());
+		} else {
+			return;
+		}
+		if (it.hasNext()) {
+			cfri.setFormula3(it.next());
+		} else {
+			return;
 		}
 	}
 	

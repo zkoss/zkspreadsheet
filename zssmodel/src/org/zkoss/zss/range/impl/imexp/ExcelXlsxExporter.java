@@ -865,7 +865,7 @@ public class ExcelXlsxExporter extends AbstractExcelExporter {
 	//ZSS-1141
 	@Override
 	protected void exportConditionalFormatting(SSheet sheet, Sheet poiSheet) {
-		final List<SConditionalFormatting> formattings = sheet.getConditonalFormattings();
+		final List<SConditionalFormatting> formattings = sheet.getConditionalFormattings();
 		int priority = formattings.size();
 		for (SConditionalFormatting cf : formattings) {
 			final XSSFConditionalFormatting poicf = new XSSFConditionalFormatting((XSSFSheet) poiSheet);
@@ -1037,15 +1037,25 @@ public class ExcelXlsxExporter extends AbstractExcelExporter {
 
 	//ZSS-1141
 	protected void addFormulas(CTCfRule ctRule, SConditionalFormattingRule rule) {
-		for (String formula : rule.getFormulas()) {
-			ctRule.addFormula(formula);
+		//ZSS-1142
+		if (rule.getFormula1() != null) {
+			ctRule.addFormula(rule.getFormula1().substring(1)); // don't include the leading = character
+		}
+		if (rule.getFormula2() != null) {
+			ctRule.addFormula(rule.getFormula2().substring(1)); // don't include the leading = character
+		}
+		if (rule.getFormula3() != null) {
+			ctRule.addFormula(rule.getFormula3().substring(1)); // don't include the leading = character
 		}
 	}
 	
 	//ZSS-1141
 	protected void addValueObject(CTCfvo ctvo, SCFValueObject vo) {
 		if (vo.isGreaterOrEqual()) {
-			ctvo.setGte(true);
+			//ZSS-1142
+			if (ctvo.isSetGte()) {
+				ctvo.unsetGte();
+			}
 		}
 		ctvo.setType(toValueObjectType(vo.getType()));
 		if (vo.getValue() != null) {

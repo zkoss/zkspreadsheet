@@ -26,6 +26,7 @@ import org.zkoss.zss.model.SCell;
 import org.zkoss.zss.model.SCell.CellType;
 import org.zkoss.zss.model.SCellStyle;
 import org.zkoss.zss.model.CellStyleHolder;
+import org.zkoss.zss.model.SConditionalStyle;
 import org.zkoss.zss.model.SFill;
 import org.zkoss.zss.model.STable;
 import org.zkoss.zss.model.SBorder.BorderType;
@@ -987,7 +988,18 @@ public class StyleUtil {
 	
 	//ZSS-977
 	//@since 3.8.0
+	@Deprecated
 	public static SFont getFontStyle(SBook book, SCellStyle cellStyle, SCellStyle tbCellStyle) {
+		return getFontStyle(book, cellStyle, tbCellStyle, null);
+	}
+	
+	//ZSS-1142
+	//@since 3.9.0
+	public static SFont getFontStyle(SBook book, SCellStyle cellStyle, SCellStyle tbCellStyle, SConditionalStyle cdStyle) {
+		if (cdStyle != null && cdStyle.getFont() != null) {
+			return cdStyle.getFont();
+		}
+		
 		SFont font = cellStyle.getFont();
 		
 		if (tbCellStyle != null && book.getDefaultFont().equals(font)) {
@@ -1002,50 +1014,90 @@ public class StyleUtil {
 	
 	//ZSS-977
 	//@since 3.8.0
+	@Deprecated
 	public static SCellStyle getFillStyle(SCellStyle cellStyle, SCellStyle tbStyle) {
-		return cellStyle.getFillPattern() != SFill.FillPattern.NONE ?
-			cellStyle : tbStyle;
-	}
-	
-	//ZSS-977
-	//@since 3.8.0
-	public static SCellStyle getLeftStyle(SCellStyle cellStyle, SCellStyle tbStyle) {
-		return tbStyle == null || cellStyle.getBorderLeft() != BorderType.NONE ? cellStyle : tbStyle; 
-	}
-	//ZSS-977
-	//@since 3.8.0
-	public static SCellStyle getTopStyle(SCellStyle cellStyle, SCellStyle tbStyle) {
-		return tbStyle == null || cellStyle.getBorderTop() != BorderType.NONE ? cellStyle : tbStyle;
-	}
-	//ZSS-977
-	//@since 3.8.0
-	public static SCellStyle getRightStyle(SCellStyle cellStyle, SCellStyle tbStyle) {
-		return tbStyle == null || cellStyle.getBorderRight() != BorderType.NONE ? cellStyle : tbStyle;
-	}
-	//ZSS-977
-	//@since 3.8.0
-	public static SCellStyle getBottomStyle(SCellStyle cellStyle, SCellStyle tbStyle) {
-		return tbStyle == null || cellStyle.getBorderBottom() != BorderType.NONE ? cellStyle : tbStyle;
+		return getFillStyle(cellStyle, tbStyle, null);
 	}
 
+	//ZSS-1142
+	//@since 3.9.0
+	public static SCellStyle getFillStyle(SCellStyle cellStyle, SCellStyle tbStyle, SConditionalStyle cdStyle) {
+		return cdStyle != null && cdStyle.getFill() != null ? cdStyle : 
+			cellStyle.getFillPattern() != SFill.FillPattern.NONE ?
+					cellStyle : tbStyle;
+	}
+
+	//ZSS-977
+	//@since 3.8.0
+	@Deprecated
+	public static SCellStyle getLeftStyle(SCellStyle cellStyle, SCellStyle tbStyle) {
+		return getLeftStyle(cellStyle, tbStyle, null);
+	}
+	//ZSS-1142
+	//@since 3.9.0
+	public static SCellStyle getLeftStyle(SCellStyle cellStyle, SCellStyle tbStyle, SConditionalStyle cdStyle) {
+		return cdStyle != null && cdStyle.getBorderLeft() != null ? cdStyle : 
+			tbStyle == null || cellStyle.getBorderLeft() != BorderType.NONE ? cellStyle : tbStyle; 
+	}
+	//ZSS-977
+	//@since 3.8.0
+	@Deprecated
+	public static SCellStyle getTopStyle(SCellStyle cellStyle, SCellStyle tbStyle) {
+		return getTopStyle(cellStyle, tbStyle, null);
+	}
+	//ZSS-1142
+	//@since 3.9.0
+	public static SCellStyle getTopStyle(SCellStyle cellStyle, SCellStyle tbStyle, SConditionalStyle cdStyle) {
+		return cdStyle != null && cdStyle.getBorderTop() != null ? cdStyle :
+				tbStyle == null || cellStyle.getBorderTop() != BorderType.NONE ? cellStyle : tbStyle;
+	}
+	//ZSS-977
+	//@since 3.8.0
+	@Deprecated
+	public static SCellStyle getRightStyle(SCellStyle cellStyle, SCellStyle tbStyle) {
+		return getRightStyle(cellStyle, tbStyle, null);
+	}
+	//ZSS-1142
+	//@since 3.9.0
+	public static SCellStyle getRightStyle(SCellStyle cellStyle, SCellStyle tbStyle, SConditionalStyle cdStyle) {
+		return cdStyle != null && cdStyle.getBorderRight() != null ? cdStyle :
+				tbStyle == null || cellStyle.getBorderRight() != BorderType.NONE ? cellStyle : tbStyle;
+	}
+	//ZSS-977
+	//@since 3.8.0
+	@Deprecated
+	public static SCellStyle getBottomStyle(SCellStyle cellStyle, SCellStyle tbStyle) {
+		return getBottomStyle(cellStyle, tbStyle, null);
+	}
+	
+	//ZSS-1142
+	//@since 3.9.0
+	public static SCellStyle getBottomStyle(SCellStyle cellStyle, SCellStyle tbStyle, SConditionalStyle cdStyle) {
+		return cdStyle != null && cdStyle.getBorderBottom() != null ? cellStyle :
+			tbStyle == null || cellStyle.getBorderBottom() != BorderType.NONE ? cellStyle : tbStyle;
+	}
+
+	
 	//ZSS-1002
 	//@since 3.8.0
 	public static SCellStyle prepareStyle(SCell srcCell) {
 		final int row = srcCell.getRowIndex();
 		final int col = srcCell.getColumnIndex();
 		SSheet sheet = srcCell.getSheet();
+		//ZSS-1142: ConsidtionalStyle is a format, NOT a style, in copy-paste operation; so make it null. 
+		SConditionalStyle cdStyle = null; //((AbstractSheetAdv)sheet).getConditionalFormattingStyle(row, col);
 		STable table = ((AbstractSheetAdv)sheet).getTableByRowCol(row, col);
 		SCellStyle tbStyle = table != null ? ((AbstractTableAdv)table).getCellStyle(row, col) : null;
 		SCellStyle cellStyle = srcCell.getCellStyle();
-		if (tbStyle == null) return cellStyle;
+		if (tbStyle == null && cdStyle == null) return cellStyle;
 
 		SBook book = sheet.getBook();
-		SFont font = StyleUtil.getFontStyle(book, cellStyle, tbStyle);
-		SCellStyle fillStyle = getFillStyle(cellStyle, tbStyle);
-		SCellStyle leftStyle = getLeftStyle(cellStyle, tbStyle);
-		SCellStyle topStyle = getTopStyle(cellStyle, tbStyle);
-		SCellStyle rightStyle = getRightStyle(cellStyle, tbStyle);
-		SCellStyle bottomStyle = getBottomStyle(cellStyle, tbStyle);
+		SFont font = StyleUtil.getFontStyle(book, cellStyle, tbStyle, cdStyle); //ZSS-1142
+		SCellStyle fillStyle = getFillStyle(cellStyle, tbStyle, cdStyle); //ZSS-1142
+		SCellStyle leftStyle = getLeftStyle(cellStyle, tbStyle, cdStyle); //ZSS-1142
+		SCellStyle topStyle = getTopStyle(cellStyle, tbStyle, cdStyle); //ZSS-1142
+		SCellStyle rightStyle = getRightStyle(cellStyle, tbStyle, cdStyle); //ZSS-1142
+		SCellStyle bottomStyle = getBottomStyle(cellStyle, tbStyle, cdStyle); //ZSS-1142
 		
 		CellStyleMatcher matcher = new CellStyleMatcher(cellStyle);
 		matcher.setBackColor(fillStyle.getBackColor().getHtmlColor());

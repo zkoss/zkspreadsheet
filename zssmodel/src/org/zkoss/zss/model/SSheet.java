@@ -20,6 +20,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.zkoss.zss.model.impl.ConditionalFormattingImpl;
+
 /**
  * A sheet of a book. It's the main class you can manipulate rows, columns, cells, pictures, charts, and data validation.
  * @author dennis
@@ -427,7 +429,7 @@ public interface SSheet {
 	 * @return
 	 * @since 3.8.2
 	 */
-	public List<SConditionalFormatting> getConditonalFormattings();
+	public List<SConditionalFormatting> getConditionalFormattings();
 	
 	/**
 	 * Returns the region which contains data(including chart, picture, and 

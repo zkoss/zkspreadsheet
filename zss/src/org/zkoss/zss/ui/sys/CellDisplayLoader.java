@@ -17,6 +17,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.ui.sys;
 
 import org.zkoss.zss.model.SCellStyle;
+import org.zkoss.zss.model.SConditionalStyle;
 import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.model.sys.format.FormatResult;
 
@@ -40,6 +41,21 @@ public interface CellDisplayLoader {
 	 * @param column
 	 * @return
 	 * @since 3.8.0
+	 * @deprecated
 	 */
 	public String getCellHtmlText(SSheet sheet,int row, int column, FormatResult ft, SCellStyle tbStyle);
+	
+	//ZSS-1142
+	/**
+	 * 
+	 * @param sheet
+	 * @param row
+	 * @param column
+	 * @param ft
+	 * @param tbStyle
+	 * @param cdStyle
+	 * @since 3.9.0
+	 * @return
+	 */
+	public String getCellHtmlText(SSheet sheet,int row, int column, FormatResult ft, SCellStyle tbStyle, SConditionalStyle cdStyle);
 }
