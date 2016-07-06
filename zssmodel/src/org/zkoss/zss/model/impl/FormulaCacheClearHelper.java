@@ -9,9 +9,11 @@ import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.SBookSeries;
 import org.zkoss.zss.model.SCell;
 import org.zkoss.zss.model.SChart;
+import org.zkoss.zss.model.SConditionalFormattingRule;
 import org.zkoss.zss.model.SDataValidation;
 import org.zkoss.zss.model.SRow;
 import org.zkoss.zss.model.SSheet;
+import org.zkoss.zss.model.sys.dependency.ConditionalRef;
 import org.zkoss.zss.model.sys.dependency.ObjectRef;
 import org.zkoss.zss.model.sys.dependency.Ref;
 import org.zkoss.zss.model.sys.dependency.ObjectRef.ObjectType;
@@ -48,8 +50,9 @@ import org.zkoss.zss.model.sys.dependency.Ref.RefType;
 				}else if(((ObjectRef)ref).getObjectType()==ObjectType.DATA_VALIDATION){
 					handleDataValidationRef((ObjectRef)ref);
 				}
+			} else if (ref.getType() == RefType.CONDITIONAL) { //ZSS-1251
+				handleConditionalRef((ConditionalRef)ref);
 			} else {// TODO another
-
 			}
 		}
 	}
@@ -64,6 +67,27 @@ import org.zkoss.zss.model.sys.dependency.Ref.RefType;
 			chart.getData().clearFormulaResultCache();
 		}
 	}
+	//ZSS-1251
+	private void handleConditionalRef(ConditionalRef ref) {
+		SBook book = _bookSeries.getBook(ref.getBookName());
+		if(book==null) return;
+		SSheet sheet = book.getSheetByName(ref.getSheetName());
+		if(sheet==null) return;
+		int id = ref.getConditionalId();
+		ConditionalFormattingImpl cfmt = (ConditionalFormattingImpl)((AbstractSheetAdv)sheet).getConditionalFormatting(id);
+		for (SConditionalFormattingRule rule0 : cfmt.getRules()) {
+			final ConditionalFormattingRuleImpl rule = (ConditionalFormattingRuleImpl) rule0;
+			if (rule.getRuleInfo1() == null) {
+				rule.clearFormulaResultCache();
+			} else {
+				rule.getRuleInfo1().clearCacheMap();
+				if (rule.getRuleInfo2() != null) {
+					rule.getRuleInfo2().clearCacheMap();
+				}
+			}
+		}
+	}
+	
 	private void handleDataValidationRef(ObjectRef ref) {
 		SBook book = _bookSeries.getBook(ref.getBookName());
 		if(book==null) return;

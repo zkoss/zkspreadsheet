@@ -25,6 +25,8 @@ import org.zkoss.poi.ss.formula.ptg.Ptg;
 import org.zkoss.zss.model.SCell;
 import org.zkoss.zss.model.SCellStyle;
 import org.zkoss.zss.model.SComment;
+import org.zkoss.zss.model.SConditionalFormatting;
+import org.zkoss.zss.model.SConditionalFormattingRule;
 import org.zkoss.zss.model.SDataValidation;
 import org.zkoss.zss.model.SHyperlink;
 import org.zkoss.zss.model.SCell.CellType;
@@ -52,6 +54,9 @@ public class CellBuffer implements Serializable {
 	private SComment _comment;
 	private SDataValidation _validation;
 	private SHyperlink _hyperlink;
+	
+	//ZSS-1251
+	private SConditionalFormatting _cfmt;
 	
 	public CellBuffer(){
 	}
@@ -127,7 +132,13 @@ public class CellBuffer implements Serializable {
 			buffer.setStyle(StyleUtil.prepareStyle(cell));
 			buffer.setHyperlink(cell.getHyperlink());
 			buffer.setComment(cell.getComment());
-			buffer.setValidation(cell.getSheet().getDataValidation(cell.getRowIndex(), cell.getColumnIndex()));
+			final int row = cell.getRowIndex();
+			final int col = cell.getColumnIndex();
+			buffer.setValidation(cell.getSheet().getDataValidation(row, col));
+			
+			//ZSS-1251
+			final AbstractSheetAdv sheet = (AbstractSheetAdv) cell.getSheet();
+			buffer.setConditionalFormatting(sheet.getConditionalFormatting(row, col));
 		}
 		return buffer;
 	}
@@ -153,4 +164,14 @@ public class CellBuffer implements Serializable {
 		SHyperlink link = getHyperlink();
 		destCell.setHyperlink(link==null?null:((AbstractHyperlinkAdv)link).clone());
 	}
+	
+	//ZSS-1251
+	public SConditionalFormatting getConditionalFormatting() {
+		return _cfmt;
+	}
+	//ZSS-1251
+	public void setConditionalFormatting(SConditionalFormatting cfmt) {
+		this._cfmt = cfmt;
+	}
+
 }

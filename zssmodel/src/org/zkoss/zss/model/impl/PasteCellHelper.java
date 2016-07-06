@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -39,6 +40,8 @@ import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.SCell;
 import org.zkoss.zss.model.SCell.CellType;
 import org.zkoss.zss.model.SCellStyle;
+import org.zkoss.zss.model.SConditionalFormatting;
+import org.zkoss.zss.model.SConditionalFormattingRule;
 import org.zkoss.zss.model.SDataValidation;
 import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.model.SheetRegion;
@@ -138,7 +141,7 @@ public class PasteCellHelper implements Serializable {
 	public CellRegion pasteCell(SheetRegion src, CellRegion dest, PasteOption option) {
 		Validations.argNotNull(src);
 		Validations.argNotNull(dest);
-		SSheet srcSheet = src.getSheet();
+		final AbstractSheetAdv srcSheet = (AbstractSheetAdv) src.getSheet();
 		boolean sameSheet = srcSheet == _destSheet;
 		if(!sameSheet && srcSheet.getBook()!= _book){
 			throw new IllegalArgumentException("the src sheet must be in the same book");
@@ -200,6 +203,9 @@ public class PasteCellHelper implements Serializable {
 		//the ValidationBuffer might be transported
 		List<ValidationBuffer> srcVBuffer = prepareValidationBuffer(src, option);
 		
+		//ZSS-1251: the ConditionalFormattingBuffer might be transported
+		List<ConditionalFormattingBuffer> srcCBuffer = prepareConditionalFormattingBuffer(src, option);
+		
 		SheetRegion cutFrom = null;
 		if(option.isCut()){
 			//clear the src's value and merge
@@ -207,6 +213,7 @@ public class PasteCellHelper implements Serializable {
 			clearMergeRegion(src);
 			cutFrom = src;
 			srcSheet.deleteDataValidationRegion(srcRegion);
+			srcSheet.deleteConditionalFormattingRegion(srcRegion); //ZSS-1251
 			
 			//ZSS-717
 			if (wholeColumn) {
@@ -222,6 +229,7 @@ public class PasteCellHelper implements Serializable {
 					pasteCells(srcBuffer,destRegion,cutFrom,option,rowOffset,columnOffset);
 					if (option.isCut()) { //ZSS-696: if cut and paste, must unmerge
 						pasteDataValidations(srcVBuffer, src, dest, option); // ZSS-694: only when CUT and paste
+						pasteConditionalFormatting(srcCBuffer, src, dest, option); //ZSS-1251: only when CUT and paste
 						_destSheet.removeMergedRegion(mergedRegion, true); // ZSS-696: should unmerge when cut and paste
 					}
 					return dest;
@@ -249,7 +257,7 @@ public class PasteCellHelper implements Serializable {
 						dest.getColumn()+srcColCount -1 + colMultipleOffset);
 				pasteCells(srcBuffer,destRegion,cutFrom,option,rowOffset+rowMultpleOffset,columnOffset+colMultipleOffset);
 				pasteDataValidations(srcVBuffer, src, destRegion, option); // ZSS-694
-				
+				pasteConditionalFormatting(srcCBuffer, src, destRegion, option); //ZSS-1251
 				if(mergeBuffer!=null && mergeBuffer.size()>0){
 					pasteMergeRegion(mergeBuffer,rowOffset+rowMultpleOffset,columnOffset+colMultipleOffset);
 				}
@@ -286,7 +294,36 @@ public class PasteCellHelper implements Serializable {
 		}
 		return vbs;
 	}
-	
+
+	// ZSS-1251
+	List<ConditionalFormattingBuffer> prepareConditionalFormattingBuffer(SheetRegion src, PasteOption option) {
+		final PasteType type = option.getPasteType();
+		if (type != PasteType.ALL && type != PasteType.ALL_EXCEPT_BORDERS 
+				&& type != PasteType.FORMATS 
+				&& type != PasteType.FORMULAS_AND_NUMBER_FORMATS 
+				&& type != PasteType.VALUES_AND_NUMBER_FORMATS)
+			return Collections.emptyList();
+		
+		boolean transpose = option.isTranspose();
+		SSheet srcSheet = src.getSheet();
+		CellRegion srcRegion = src.getRegion();
+		List<ConditionalFormattingBuffer> cbs = new ArrayList<ConditionalFormattingBuffer>();
+		for (SConditionalFormatting cv : srcSheet.getConditionalFormattings()) {
+			final Set<CellRegion> overlaps = new HashSet<CellRegion>();
+			for (CellRegion rgn : cv.getRegions()) {
+				CellRegion overlap = srcRegion.getOverlap(rgn);
+				if (overlap != null) {
+					overlaps.add(transpose ? 
+							new CellRegion(overlap.getColumn(), overlap.getRow(),
+									overlap.getLastColumn(), overlap.getLastRow()) : overlap);
+				}
+			}
+			if (overlaps.isEmpty()) continue;
+			cbs.add(new ConditionalFormattingBuffer(cv, overlaps));
+		}
+		return cbs;
+	}
+
 	// ZSS-694
 	private void pasteDataValidations(List<ValidationBuffer> vbs, 
 			SheetRegion src, CellRegion dst, PasteOption option) {
@@ -321,7 +358,36 @@ public class PasteCellHelper implements Serializable {
 			}
 		}
 	}
+
+	//ZSS-1251
+	private void pasteConditionalFormatting(List<ConditionalFormattingBuffer> cbs, 
+			SheetRegion src, CellRegion dst, PasteOption option) {
+		final PasteType type = option.getPasteType();
+		if (type != PasteType.ALL && type != PasteType.ALL_EXCEPT_BORDERS 
+				&& type != PasteType.FORMATS 
+				&& type != PasteType.FORMULAS_AND_NUMBER_FORMATS 
+				&& type != PasteType.VALUES_AND_NUMBER_FORMATS)
+			return;
+		
+		if (cbs.isEmpty()) return;
+		
+		// paste to destination
+		final int dstRow = dst.row;
+		final int dstCol = dst.column;
+		final AbstractSheetAdv destSheet = (AbstractSheetAdv)_destSheet;
+		destSheet.deleteConditionalFormattingRegion(dst);
+		
+		final int rowOff = dstRow - src.getRow();
+		final int colOff = dstCol - src.getColumn();
+		final CellRegion srcrgn = src.getRegion();
+		for (ConditionalFormattingBuffer cb : cbs) {
+			// past
+			SConditionalFormatting cfmt = cb.cfmt;
+			destSheet.addConditionalFormatting(src.getRegion(), dst, cfmt, rowOff, colOff);
+		}
+	}
 	
+
 	// ZSS-694
 	private Set<CellRegion> convertRegions(Set<CellRegion> srcRegions, int rowOffset, int colOffset) {
 		Set<CellRegion> dstRegions = new HashSet<CellRegion>();
@@ -341,6 +407,16 @@ public class PasteCellHelper implements Serializable {
 		final Set<CellRegion> regions;
 		ValidationBuffer(SDataValidation validation, Set<CellRegion> regions) {
 			this.validation  = validation;
+			this.regions = regions;
+		}
+	}
+	
+	//ZSS-1251
+	private final static class ConditionalFormattingBuffer {
+		final SConditionalFormatting cfmt;
+		final Set<CellRegion> regions;
+		ConditionalFormattingBuffer(SConditionalFormatting cfmt, Set<CellRegion> regions) {
+			this.cfmt = cfmt;
 			this.regions = regions;
 		}
 	}
@@ -416,7 +492,7 @@ public class PasteCellHelper implements Serializable {
 		final SSheet sheet = src.getSheet();
 		
 //		CellBuffer[][] srcBuffer = new CellBuffer[srcRowCount][srcColCount];
-		SSheet srcSheet = src.getSheet();
+		final AbstractSheetAdv srcSheet = (AbstractSheetAdv) src.getSheet();
 		
 		//ZSS-1229: Whether any rows filtered
 		List<CellBuffer[]> rowBuf = new ArrayList<CellBuffer[]>();
@@ -462,15 +538,22 @@ public class PasteCellHelper implements Serializable {
 					buffer.setHyperlink(srcCell.getHyperlink());
 					buffer.setComment(srcCell.getComment());
 					buffer.setValidation(srcSheet.getDataValidation(r, c));
+					//ZSS-1251
+					buffer.setConditionalFormatting(srcSheet.getConditionalFormatting(r,  c));
 					break;
 				case COMMENTS:
 					buffer.setComment(srcCell.getComment());
 					break;
 				case FORMATS:
 					buffer.setStyle(srcCell.getCellStyle());
+					//ZSS-1251
+					buffer.setConditionalFormatting(srcSheet.getConditionalFormatting(r,  c));
 					break;
 				case FORMULAS_AND_NUMBER_FORMATS:
 					buffer.setStyle(srcCell.getCellStyle());
+					//ZSS-1251
+					buffer.setConditionalFormatting(srcSheet.getConditionalFormatting(r,  c));
+					//fall thru
 				case FORMULAS:
 					prepareValue(buffer,srcCell,true);
 					break;
@@ -479,6 +562,9 @@ public class PasteCellHelper implements Serializable {
 					buffer.setValidation(srcSheet.getDataValidation(r, c));
 				case VALUES_AND_NUMBER_FORMATS:
 					buffer.setStyle(srcCell.getCellStyle());
+					//ZSS-1251
+					buffer.setConditionalFormatting(srcSheet.getConditionalFormatting(r,  c));
+					//fall thru
 				case VALUES:
 					prepareValue(buffer,srcCell,false);
 					break;

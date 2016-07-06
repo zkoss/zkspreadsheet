@@ -73,6 +73,25 @@ public class DependencyTableImpl extends DependencyTableAdv {
 		_evaledMap.remove(dependant);
 	}
 
+	//ZSS-1251
+	@Override
+	public void del(Ref dependant, Ref precedent) {
+		Set<Ref> precedents = _map.get(dependant);
+		if (precedents != null) {
+			precedents.remove(precedent);
+			if (precedents.isEmpty()) {
+				_map.remove(dependant);
+			}
+		}
+		Set<Ref> evaled = _evaledMap.get(dependant);
+		if (evaled != null) {
+			evaled.remove(precedent);
+			if (evaled.isEmpty()) {
+				_evaledMap.remove(dependant);
+			}
+		}
+	}
+
 	@Override
 	public Set<Ref> getDependents(Ref precedent) {
 		return getDependents(precedent,_map);

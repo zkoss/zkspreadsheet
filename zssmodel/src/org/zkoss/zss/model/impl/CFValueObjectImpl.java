@@ -15,6 +15,7 @@ package org.zkoss.zss.model.impl;
 import java.io.Serializable;
 
 import org.zkoss.zss.model.SCFValueObject;
+import org.zkoss.zss.model.sys.formula.FormulaExpression;
 
 /**
  * @author henri
@@ -25,8 +26,9 @@ public class CFValueObjectImpl implements SCFValueObject, Serializable {
 	
 	private CFValueObjectType type;
 	private String value;
-	private boolean gte;
-	
+	private boolean gte = true; //default to true
+	private FormulaExpression _formulaExpr;
+
 	@Override
 	public CFValueObjectType getType() {
 		return type;
@@ -52,5 +54,25 @@ public class CFValueObjectImpl implements SCFValueObject, Serializable {
 	
 	public void setGreaterOrEqual(boolean b) {
 		gte = b;
+	}
+
+	//ZSS-1142
+	public CFValueObjectImpl cloneCFValueObject() {
+		CFValueObjectImpl vo = new CFValueObjectImpl();
+		vo.type = this.type;
+		vo.value = this.value;
+		vo.gte = this.gte;
+		return vo;
+	}
+	
+	//ZSS-1251
+	public FormulaExpression getFormulaExpression() {
+		return _formulaExpr;
+	}
+	
+	//ZSS-1251
+	public void setFormulaExpression(FormulaExpression expr) {
+		_formulaExpr = expr;
+		value = expr.getFormulaString();
 	}
 }

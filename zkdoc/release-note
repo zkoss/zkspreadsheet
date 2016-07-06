@@ -13,6 +13,7 @@ ZK Spreadsheet 3.9.0
   ZSS-1167 Support ZK 8 new specification: <config-name> is required in config.xml
   ZSS-1234 Support date filter
   ZSS-1142 Support to show conditional formatting in the client side
+  ZSS-1251 Support copy/paste conditional formatting
   
 *Bugs:
   ZSS-1211 StringIndexOutOfBoundsException if click a hyperlink with empty address
