@@ -1,9 +1,10 @@
 <vbox hflex="1" vflex="1">
 	<label multiline="true">
 Since 3.9.0
-1. Conditional formatting
-4. Press export button to export this sheet as 1142-export-conditional.xlsx.
-3. Open the exported file with Excel and check with original sheet; should be the same. 
+1. copy A1:A3
+2. Paste to G1
+3. Press export button to export this sheet as 1142-export-conditional.xlsx.
+4. Open the exported file with Excel and check with original sheet; should be the same. 
 	</label>
 <button id="export" label="Export to Excel" onClick="doExport()"/>
 <zscript><![CDATA[
@@ -17,11 +18,11 @@ Since 3.9.0
          } catch (Exception ex) {
               os.close();
          }
-         Filedownload.save(os.toByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "1142-export-conditional-paste.xlsx"); 
+         Filedownload.save(os.toByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "1251-export-conditional-paste.xlsx"); 
      }
 ]]>
 </zscript>
-	<spreadsheet id="ss" src="/issue3/book/1142-conditional-paste.xlsx" maxVisibleRows="60" maxVisibleColumns="40"
+	<spreadsheet id="ss" src="/issue3/book/1251-conditional-paste.xlsx" maxVisibleRows="60" maxVisibleColumns="40"
 		hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
 		showFormulabar="true" />	
 </vbox>
