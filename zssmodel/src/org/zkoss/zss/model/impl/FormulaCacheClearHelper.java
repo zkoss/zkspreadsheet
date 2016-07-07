@@ -77,13 +77,37 @@ import org.zkoss.zss.model.sys.dependency.Ref.RefType;
 		ConditionalFormattingImpl cfmt = (ConditionalFormattingImpl)((AbstractSheetAdv)sheet).getConditionalFormatting(id);
 		for (SConditionalFormattingRule rule0 : cfmt.getRules()) {
 			final ConditionalFormattingRuleImpl rule = (ConditionalFormattingRuleImpl) rule0;
-			if (rule.getRuleInfo1() == null) {
-				rule.clearFormulaResultCache();
-			} else {
-				rule.getRuleInfo1().clearCacheMap();
-				if (rule.getRuleInfo2() != null) {
-					rule.getRuleInfo2().clearCacheMap();
+			switch(rule.getType()) {
+			case CELL_IS:
+			case BEGINS_WITH:
+			case ENDS_WITH:
+			case CONTAINS_TEXT:
+			case NOT_CONTAINS_TEXT:
+			case CONTAINS_BLANKS:
+			case NOT_CONTAINS_BLANKS:
+			case CONTAINS_ERRORS:
+			case NOT_CONTAINS_ERRORS:
+			case EXPRESSION:
+				if (rule.getRuleInfo1() != null) {
+					rule.getRuleInfo1().clearCacheMap();
+					if (rule.getRuleInfo2() != null) {
+						rule.getRuleInfo2().clearCacheMap();
+					}
+				} else {
+					rule.clearFormulaResultCache();
 				}
+				break;
+				
+			case ABOVE_AVERAGE:
+			case COLOR_SCALE:
+			case DATA_BAR:
+			case DUPLICATE_VALUES:
+			case ICON_SET:
+			case TIME_PERIOD:
+			case TOP_10:
+			case UNIQUE_VALUES:
+				rule.clearFormulaResultCache();
+				break;
 			}
 		}
 	}
