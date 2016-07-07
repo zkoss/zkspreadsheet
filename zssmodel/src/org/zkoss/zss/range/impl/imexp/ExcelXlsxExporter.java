@@ -902,8 +902,11 @@ public class ExcelXlsxExporter extends AbstractExcelExporter {
 		if (rule.isStopIfTrue()) {
 			ctRule.setStopIfTrue(true);
 		}
-		if (rule.getExtraStyle() != null) {
-			int index = ((AbstractBookAdv)sheet.getBook()).indexOfExtraStyle(rule.getExtraStyle());
+		final SExtraStyle extraStyle = rule.getExtraStyle();
+		if (extraStyle != null) {
+			addPOIDxfCellStyle(extraStyle);
+			final XSSFDxfCellStyle poiCellStyle = (XSSFDxfCellStyle) styleTable.get(extraStyle);
+			int index = poiCellStyle.getIndex();
 			if (index >= 0)
 				ctRule.setDxfId(index);
 		}
@@ -1024,10 +1027,10 @@ public class ExcelXlsxExporter extends AbstractExcelExporter {
 		CTColor ctColor = ctDataBar.addNewColor();
 		ctColor.setRgb(((AbstractColorAdv)dataBar.getColor()).getARGB());
 		
-		if (dataBar.getMaxLength() != null) {
+		if (dataBar.getMaxLength() != 90) {
 			ctDataBar.setMaxLength(dataBar.getMaxLength());
 		}
-		if (dataBar.getMinLength() != null) {
+		if (dataBar.getMinLength() != 10) {
 			ctDataBar.setMinLength(dataBar.getMinLength());
 		}
 		if (!dataBar.isShowValue()) {
