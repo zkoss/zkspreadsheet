@@ -972,9 +972,9 @@ public class ExcelXlsxImporter extends AbstractExcelImporter {
 		final SColor color = new ColorImpl(rgb); 
 		dataBar.setColor(color);
 		if (ctDataBar.isSetMaxLength())
-			dataBar.setMaxLength(ctDataBar.getMaxLength());
+			dataBar.setMaxLength((int)ctDataBar.getMaxLength());
 		if (ctDataBar.isSetMinLength())
-			dataBar.setMinLength(ctDataBar.getMinLength());
+			dataBar.setMinLength((int)ctDataBar.getMinLength());
 		if (ctDataBar.isSetShowValue())
 			dataBar.setShowValue(ctDataBar.getShowValue());
 		

@@ -29,11 +29,11 @@ public interface SDataBar {
 	/** Returns the color of the bar */
 	SColor getColor();
 	
-	/** Returns the minimum length of this data bar */
-	Long getMinLength();
+	/** Returns the minimum length in percentage of this data bar; default to 10. */
+	int getMinLength();
 	
-	/** Returns the maximum length of this data bar */
-	Long getMaxLength();
+	/** Returns the maximum length in percentage of this data bar; default to 90 */
+	int getMaxLength();
 	
 	/** Returns whether show the value in the data bar */
 	boolean isShowValue();

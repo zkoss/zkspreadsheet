@@ -1031,14 +1031,17 @@ public class ConditionalFormattingRuleImpl implements SConditionalFormattingRule
 	public double getDataBarPercent(Double value) {
 		final double min = _min.doubleValue();
 		final double max = _max.doubleValue();
+		final int maxlen = dataBar.getMaxLength();
+		final int minlen = dataBar.getMinLength();
+		final int difflen = maxlen - minlen;
 		final double diff0 = max - min;
 		if (diff0 == 0.0) {
-			return max == 0.0 ? 0.0 : 100.0;
+			return max == 0.0 ? minlen : maxlen;
 		} else {
 			if (value <= min) {
-				return 0.0;
+				return minlen;
 			} else {
-				return (value - min) / diff0 * 100.0;
+				return minlen + (value - min) / diff0 * difflen;
 			}
 		}
 	}

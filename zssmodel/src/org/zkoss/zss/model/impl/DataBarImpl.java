@@ -30,8 +30,8 @@ public class DataBarImpl implements SDataBar, Serializable {
 	
 	private List<SCFValueObject> valueObjects;
 	private SColor color;
-	private Long minLength;
-	private Long maxLength;
+	private int minLength = 10; //ZSS-1142: default to 10
+	private int maxLength = 90; //ZSS-1142: default to 90
 	private boolean showValue = true; //ZSS-1161: default to true
 	
 	@Override
@@ -56,20 +56,20 @@ public class DataBarImpl implements SDataBar, Serializable {
 	}
 
 	@Override
-	public Long getMinLength() {
+	public int getMinLength() {
 		return minLength;
 	}
 
-	public void setMinLength(long minLength) {
+	public void setMinLength(int minLength) {
 		this.minLength = minLength;
 	}
 	
 	@Override
-	public Long getMaxLength() {
+	public int getMaxLength() {
 		return maxLength;
 	}
 
-	public void setMaxLength(long maxLength) {
+	public void setMaxLength(int maxLength) {
 		this.maxLength = maxLength;
 	}
 	
