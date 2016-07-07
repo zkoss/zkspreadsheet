@@ -30,8 +30,9 @@ ZK Spreadsheet 3.9.0
   ZSS-1241 The filter type should follow the Excel spec.
 
 ** Upgrade Notes
-  * Fix the method typo from SSheet#getConditonalFormattings() to getConditionalFormattings()
+  * Fix the method typo from SSheet#getConditonalFormattings() to getConditionalFormattings().
   * Change the return type of the SConditionalFormatting#getRegions() method from List<CellRegion> to Set<CellRegion> 
+  * Change the return type of the SDataBar#getMaxLength() and SDataBar#getMinLenght() from Long to int.
   
  ------------
 ZK Spreadsheet 3.8.3
