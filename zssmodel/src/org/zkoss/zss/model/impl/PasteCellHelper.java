@@ -495,7 +495,7 @@ public class PasteCellHelper implements Serializable {
 		final AbstractSheetAdv srcSheet = (AbstractSheetAdv) src.getSheet();
 		
 		//ZSS-1229: Whether any rows filtered
-		List<CellBuffer[]> rowBuf = new ArrayList<CellBuffer[]>();
+		List<List<CellBuffer>> rowBuf = new ArrayList<List<CellBuffer>>();
 		final SAutoFilter af = srcSheet.getAutoFilter();
 		boolean isFiltered = af == null ? false : af.isFiltered();
 		
@@ -520,8 +520,10 @@ public class PasteCellHelper implements Serializable {
 						|| srcSheet.getColumn(c).getCellStyle(true) != null)
 						|| ((AbstractSheetAdv)sheet).getTableByRowCol(r, c) != null; //ZSS-1002
 				
-				if(srcCell.isNull() && !handleStyle) //to avoid unnecessary create
+				if(srcCell.isNull() && !handleStyle) {//to avoid unnecessary create
+					colBuf.add(null); //ZSS-1229: have to put a place holder anyway
 					continue;
+				}
 	
 				//ZSS-1229
 				//CellBuffer buffer = srcBuffer[transpose?c-column:r-row][transpose?r-row:c-column] = new CellBuffer();
@@ -573,11 +575,36 @@ public class PasteCellHelper implements Serializable {
 				}
 			}
 			//ZSS-1229
-			rowBuf.add(colBuf.toArray(new CellBuffer[colBuf.size()]));
+			rowBuf.add(colBuf);
 		}
 		
 		//ZSS-1229
-		return rowBuf.toArray(new CellBuffer[rowBuf.size()][]);
+		if (transpose) {
+			final int rowLen = rowBuf.size();
+			if (rowLen > 0) {
+				final List<CellBuffer> colBuf0 = rowBuf.get(0);
+				final int colLen = colBuf0.size();
+				CellBuffer[][] srcBuffer = new CellBuffer[colLen][rowLen];
+				for (int r = 0; r < rowLen; ++r) {
+					final List<CellBuffer> colBuf = rowBuf.get(r);
+					for (int c = 0; c < colLen; ++c) {
+						final CellBuffer buf = colBuf.get(c);
+						srcBuffer[c][r] = buf;
+					}
+				}
+				return srcBuffer;
+			} else {
+				return new CellBuffer[0][];
+			}
+		} else {
+			final int len = rowBuf.size();
+			CellBuffer[][] srcBuffer = new CellBuffer[len][];
+			for (int j = 0; j < len; ++j) {
+				final List<CellBuffer> colBuf = rowBuf.get(j);
+				srcBuffer[j] = colBuf.toArray(new CellBuffer[colBuf.size()]); 
+			}
+			return srcBuffer;
+		}
 	}
 
 
