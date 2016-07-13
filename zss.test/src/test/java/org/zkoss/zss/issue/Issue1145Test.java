@@ -82,18 +82,11 @@ public class Issue1145Test {
 			Book book = Importers.getImporter().imports(is, bookName);
 			
 			List<SExtraStyle> styles = book.getInternalBook().getExtraStyles();
-			Assert.assertEquals("number of SExtraStyles", 10, styles.size());
+			Assert.assertEquals("number of SExtraStyles", 3, styles.size());
 			
 			test0(styles.get(0));
 			test1_7_9(styles.get(1));
-			test1_7_9(styles.get(2));
-			test1_7_9(styles.get(3));
-			test1_7_9(styles.get(4));
-			test1_7_9(styles.get(5));
-			test1_7_9(styles.get(6));
-			test1_7_9(styles.get(7));
-			test8(styles.get(8));
-			test1_7_9(styles.get(9));
+			test8(styles.get(2));
 			
 			File temp = Setup.getTempFile("Issue1145ExportDxf",".xlsx");
 			Exporters.getExporter("xlsx").export(book0, temp);

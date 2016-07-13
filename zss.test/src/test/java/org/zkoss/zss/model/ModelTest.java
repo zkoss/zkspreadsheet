@@ -3562,12 +3562,12 @@ public class ModelTest {
 		testDiff_0(rr1, cc1.toArray(new CellRegion[cc1.size()]));
 		
 		CellRegion rightTop = new CellRegion("E2:H3");
-		CellRegion[] rr2 = {new CellRegion("C4:F6"), new CellRegion("C3:D3")};
+		CellRegion[] rr2 = {new CellRegion("C3:D3"), new CellRegion("C4:F6")};
 		List<CellRegion> cc2 = r1.diff(rightTop);
 		testDiff_0(rr2, cc2.toArray(new CellRegion[cc2.size()]));
 		
 		CellRegion leftTop = new CellRegion("B2:E4");
-		CellRegion[] rr3 = {new CellRegion("C5:F6"), new CellRegion("F3:F4")};
+		CellRegion[] rr3 = {new CellRegion("F3:F4"), new CellRegion("C5:F6")};
 		List<CellRegion> cc3 = r1.diff(leftTop);
 		testDiff_0(rr3, cc3.toArray(new CellRegion[cc3.size()]));
 		
@@ -3597,7 +3597,7 @@ public class ModelTest {
 		testDiff_0(rr8, cc8.toArray(new CellRegion[cc8.size()]));
 		
 		CellRegion center = new CellRegion("D4:E5");
-		CellRegion[] rr9 = {new CellRegion("C3:F3"), new CellRegion("C6:F6"), new CellRegion("C4:C5"), new CellRegion("F4:F5")};
+		CellRegion[] rr9 = {new CellRegion("C3:F3"), new CellRegion("C4:C5"), new CellRegion("F4:F5"), new CellRegion("C6:F6")};
 		List<CellRegion> cc9 = r1.diff(center);
 		testDiff_0(rr9, cc9.toArray(new CellRegion[cc9.size()]));
 	}

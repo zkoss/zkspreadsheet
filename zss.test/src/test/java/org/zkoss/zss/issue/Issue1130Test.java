@@ -120,7 +120,7 @@ public class Issue1130Test {
 		Assert.assertNull(rule00.getFormula2());
 		Assert.assertNull(rule00.getFormula3());
 		final String formula00 = rule00.getFormula1();
-		Assert.assertEquals("rule's formula", "80", formula00);
+		Assert.assertEquals("rule's formula", "=80", formula00);
 		
 		testDxfId(book, Long.valueOf(9), rule00.getExtraStyle());
 	}
@@ -141,7 +141,7 @@ public class Issue1130Test {
 		Assert.assertNull(rule00.getFormula2());
 		Assert.assertNull(rule00.getFormula3());
 		final String formula00 = rule00.getFormula1();
-		Assert.assertEquals("rule's formula", "FLOOR(A8,1)=TODAY()-1", formula00);
+		Assert.assertEquals("rule's formula", "=FLOOR(A8,1)=TODAY()-1", formula00);
 
 		testDxfId(book, Long.valueOf(8), rule00.getExtraStyle());
 	}
@@ -306,7 +306,7 @@ public class Issue1130Test {
 		Assert.assertNull(rule00.getFormula2());
 		Assert.assertNull(rule00.getFormula3());
 		final String formula00 = rule00.getFormula1();
-		Assert.assertEquals("rule's formula", "NOT(ISERROR(SEARCH(\"Henri\",H1)))", formula00);
+		Assert.assertEquals("rule's formula", "=NOT(ISERROR(SEARCH(\"Henri\",H1)))", formula00);
 		
 		testDxfId(book, Long.valueOf(4), rule00.getExtraStyle());
 	}
@@ -343,9 +343,9 @@ public class Issue1130Test {
 		Assert.assertNotNull(rule00.getFormula2());
 		Assert.assertNull(rule00.getFormula3());
 		final String formula00 = rule00.getFormula1();
-		Assert.assertEquals("rule's formula0", "11", formula00);
+		Assert.assertEquals("rule's formula0", "=11", formula00);
 		final String formula01 = rule00.getFormula2();
-		Assert.assertEquals("rule's formula1", "23", formula01);
+		Assert.assertEquals("rule's formula1", "=23", formula01);
 		
 		testDxfId(book, Long.valueOf(2), rule00.getExtraStyle());
 	}
@@ -429,7 +429,7 @@ public class Issue1130Test {
 		Assert.assertNull(rule00.getFormula2());
 		Assert.assertNull(rule00.getFormula3());
 		final String formula00 = rule00.getFormula1();
-		Assert.assertEquals("rule's formula", "131", formula00);
+		Assert.assertEquals("rule's formula", "=131", formula00);
 		
 		testDxfId(book, null, rule00.getExtraStyle());
 
@@ -450,7 +450,7 @@ public class Issue1130Test {
 		Assert.assertNull(rule00.getFormula2());
 		Assert.assertNull(rule00.getFormula3());
 		final String formula00 = rule00.getFormula1();
-		Assert.assertEquals("rule's formula", "LEN(TRIM(B20))=0", formula00);
+		Assert.assertEquals("rule's formula", "=LEN(TRIM(B20))=0", formula00);
 		
 		testDxfId(book, null, rule00.getExtraStyle());
 	}
@@ -470,7 +470,7 @@ public class Issue1130Test {
 		Assert.assertNull(rule00.getFormula2());
 		Assert.assertNull(rule00.getFormula3());
 		final String formula00 = rule00.getFormula1();
-		Assert.assertEquals("rule's formula", "ISERROR(C20)", formula00);
+		Assert.assertEquals("rule's formula", "=ISERROR(C20)", formula00);
 
 		testDxfId(book, null, rule00.getExtraStyle());
 	}
@@ -492,7 +492,7 @@ public class Issue1130Test {
 		Assert.assertNull(rule00.getFormula2());
 		Assert.assertNull(rule00.getFormula3());
 		final String formula00 = rule00.getFormula1();
-		Assert.assertEquals("rule's formula", "ISERROR(SEARCH(\"Hello\",D20))", formula00);
+		Assert.assertEquals("rule's formula", "=ISERROR(SEARCH(\"Hello\",D20))", formula00);
 		
 		testDxfId(book, Long.valueOf(0), rule00.getExtraStyle());
 	}
@@ -514,7 +514,7 @@ public class Issue1130Test {
 		Assert.assertNull(rule00.getFormula2());
 		Assert.assertNull(rule00.getFormula3());
 		final String formula00 = rule00.getFormula1();
-		Assert.assertEquals("rule's formula", "LEFT(E20,3)=\"xyz\"", formula00);
+		Assert.assertEquals("rule's formula", "=LEFT(E20,3)=\"xyz\"", formula00);
 		
 		testDxfId(book, null, rule00.getExtraStyle());
 	}

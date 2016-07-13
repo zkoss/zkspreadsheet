@@ -752,10 +752,7 @@ public class ConditionalFormattingRuleImpl implements SConditionalFormattingRule
 			if (ptgs.length > 1 || !isLiteralPtg(ptgs[0]))
 				return sb.append("=").append(formula).toString(); //leading with '='  
 		}
-		if (ptgs.length == 1 && isLiteralPtg(ptgs[0])) {
-			return ptgs[0] instanceof StringPtg ? ("=\""+formula+"\"") : ("="+formula);
-		}
-		return null;
+		return "="+formula;
 	}
 	
 	//ZSS-1142
@@ -763,6 +760,26 @@ public class ConditionalFormattingRuleImpl implements SConditionalFormattingRule
 	private String _escapeToPoi(String formula) {
 		if (Strings.isBlank(formula))
 			return null;
+		
+		// POI CTRule will generate two adjacent double; must unescape adjacent 
+		// double quote to only one double quote first;
+		// e.g. ""abc"" => "abc" 
+		if (formula.startsWith("\"\"") && formula.endsWith("\"\"")) {
+			final StringBuilder sb = new StringBuilder();
+			int pre = -2;
+			for (int j = 0; j < formula.length(); ++j) { 
+				char ch = formula.charAt(j);
+				if (ch == '"') {
+					if (pre == j - 1) { // adjacent double quote; skip 2nd one
+						continue;
+					}
+					pre = j;
+				}
+				sb.append(ch);
+			}
+			formula = sb.toString();
+		}
+
 		InputResult input = parseInput(formula);
 		switch (input.getType()) {
 		case FORMULA:

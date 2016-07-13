@@ -283,9 +283,10 @@ public class BookImpl extends AbstractBookAdv{
 		checkLegalSheetName(name);
 		
 		// ZSS-1183: Support createSheet from a source sheet no matter the sheet is
-		// in the same book or not. So we mark out the ownership checking		
-//		if(src!=null)
-//			checkOwnership(src);
+		// in the same book or not. However, still have to check if the src
+		// sheet is an orphan sheet.		
+		if(src!=null)
+			((SheetImpl)src).checkOrphan();
 		
 
 		AbstractSheetAdv sheet = new SheetImpl(this,nextObjId("sheet"));
