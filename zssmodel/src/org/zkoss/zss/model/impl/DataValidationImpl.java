@@ -83,7 +83,7 @@ public class DataValidationImpl extends AbstractDataValidationAdv {
 	private String _inputMessage;
 	private String _errorTitle;
 	private String _errorMessage;
-	private Set<CellRegion> _regions;
+	private LinkedHashSet<CellRegion> _regions;
 	private ValidationType _validationType = ValidationType.ANY;
 	private OperatorType _operatorType = OperatorType.BETWEEN;
 	

@@ -576,7 +576,7 @@ public class ExcelXlsxImporter extends AbstractExcelImporter {
 			 * According to ISO/IEC 29500-1 \ 18.18.76  ST_Sqref (Reference Sequence) and A.2 
 			 * Its XML Schema indicates it's a required attribute, so CellRangeAddresses must have at least one address. 
 			 */
-			Set<CellRegion> regions = new HashSet<CellRegion>();
+			LinkedHashSet<CellRegion> regions = new LinkedHashSet<CellRegion>();
 			for(CellRangeAddress cellRangeAddr:cellRangeAddresses){
 				regions.add(new CellRegion(cellRangeAddr.formatAsString()));
 			}

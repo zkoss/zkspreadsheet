@@ -280,7 +280,7 @@ public class PasteCellHelper implements Serializable {
 		CellRegion srcRegion = src.getRegion();
 		List<ValidationBuffer> vbs = new ArrayList<ValidationBuffer>();
 		for (SDataValidation dv : srcSheet.getDataValidations()) {
-			final Set<CellRegion> overlaps = new HashSet<CellRegion>();
+			final LinkedHashSet<CellRegion> overlaps = new LinkedHashSet<CellRegion>();
 			for (CellRegion rgn : dv.getRegions()) {
 				CellRegion overlap = srcRegion.getOverlap(rgn);
 				if (overlap != null) {
@@ -338,7 +338,7 @@ public class PasteCellHelper implements Serializable {
 		final int rowOffset = dst.getRow() - src.getRegion().getRow();
 		final int colOffset = dst.getColumn() - src.getRegion().getColumn();
 		for (ValidationBuffer vb : vbs) {
-			Set<CellRegion> destRegions = convertRegions(vb.regions, rowOffset, colOffset);
+			LinkedHashSet<CellRegion> destRegions = convertRegions(vb.regions, rowOffset, colOffset);
 			// clear Validation at destRegions 
 			for (CellRegion rgn : destRegions) {
 				_destSheet.deleteDataValidationRegion(rgn);
@@ -389,8 +389,8 @@ public class PasteCellHelper implements Serializable {
 	
 
 	// ZSS-694
-	private Set<CellRegion> convertRegions(Set<CellRegion> srcRegions, int rowOffset, int colOffset) {
-		Set<CellRegion> dstRegions = new HashSet<CellRegion>();
+	private LinkedHashSet<CellRegion> convertRegions(Set<CellRegion> srcRegions, int rowOffset, int colOffset) {
+		LinkedHashSet<CellRegion> dstRegions = new LinkedHashSet<CellRegion>();
 		for (CellRegion rgn : srcRegions) {
 			final int row1 = rgn.getRow() + rowOffset;
 			final int col1 = rgn.getColumn() + colOffset;
@@ -404,8 +404,8 @@ public class PasteCellHelper implements Serializable {
 	// ZSS-694
 	private final static class ValidationBuffer {
 		final SDataValidation validation;
-		final Set<CellRegion> regions;
-		ValidationBuffer(SDataValidation validation, Set<CellRegion> regions) {
+		final LinkedHashSet<CellRegion> regions;
+		ValidationBuffer(SDataValidation validation, LinkedHashSet<CellRegion> regions) {
 			this.validation  = validation;
 			this.regions = regions;
 		}
