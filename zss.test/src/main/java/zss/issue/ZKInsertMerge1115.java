@@ -15,6 +15,7 @@ import org.zkoss.zss.api.Range.InsertCopyOrigin;
 import org.zkoss.zss.api.Range.InsertShift;
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.Sheet;
+import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.event.CellMouseEvent;
 import org.zkoss.zul.Vlayout;
@@ -49,9 +50,10 @@ public class ZKInsertMerge1115 extends SelectorComposer<Vlayout> {
 		for(int i=destRange.getColumn(); i<destRange.getLastColumn()+1; i++){
 			Ranges.range(newSheet, 0, i, 0, i).toColumnRange().setColumnWidth(selectedSheet.getColumnWidth(i));
 		}
-		
+		SSheet ssheet = selectedSheet.getInternalSheet();
 		for(int i=destRange.getRow(); i<destRange.getLastRow()+1; i++){
-			Ranges.range(newSheet, 0, i, 0, i).toRowRange().setRowHeight(selectedSheet.getRowHeight(i));
+			final boolean isCustom = ssheet.getRow(i).isCustomHeight();
+			Ranges.range(newSheet, i, 0, i, 0).toRowRange().setRowHeight(selectedSheet.getRowHeight(i), isCustom);
 		}
 		Ranges.range(newSheet,0,0).toColumnRange().setHidden(true);
 		selectedSheet = newSheet;

@@ -10,7 +10,7 @@ Since 3.8.3
 6. Press F2 when focus on Cell B1, Should see "=1"; now press "Enter"
 7. Should see 1 in Cell B1; if not, it is a bug.
 8. Input "0.3" in Cell B1 and Enter; Right click to change format to "Percentage"; should see "30.00%" in Cell B1
-9. Press F2 when focus on Cell B1, Should see "0.3"; now press "Enter"
+9. Press F2 when focus on Cell B1, Should still see "30.00%"; now press "Enter"
 10. Should see "30.00%" in Cell B1; if not, it is a bug. 
 11. Now select E1 and repeat 2~10 accordingly
 12. Now select B5 and repeat 2~10 accordingly
