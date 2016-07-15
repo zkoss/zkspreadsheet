@@ -2174,6 +2174,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		var wgt = this._wgt,
 			sheetid = this.sheetid,
 			custColWidth = this.custColWidth,
+			custRowHeight = this.custRowHeight,
 			oldw = custColWidth.getSize(col);
 		if (width < 0)
 			width = 0;
@@ -2238,6 +2239,11 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			range = ranges[i];
 			var w = custColWidth.getStartPixel(range.right + 1);
 			w -= custColWidth.getStartPixel(range.left);
+			
+			//ZSS-1115: see test case 1115-insert-merge.zul; 
+			// hidden row and horizontal merge; should still hide the cell
+			var h = custRowHeight.getStartPixel(range.bottom + 1);
+			h -= custRowHeight.getStartPixel(range.top);
 
 			celltextwidth = w - 2 * cp;
 			fixpadding = false;
@@ -2246,8 +2252,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 				celltextwidth = w;
 			}
 			cellwidth = w;
-
-			if (w <= 0) 
+			if (w <= 0 || h <= 0) //ZSS-1115: hidden row + horizontal merge 
 				zcss.setRule(name+" .zsmerge"+range.id,"display","none",true, cssId);
 			else {
 				// ZSS-330, ZSS-382: when column was hidden, the left-top cell of merge is also hidden by column style.  
@@ -2369,6 +2374,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 	_setRowHeight: function(row, height, fireevent, loadvis, hidden, metaid, isCustom) {
 		var wgt = this._wgt,
 			sheetid = this.sheetid,
+			custColWidth = this.custColWidth,
 			custRowHeight = this.custRowHeight,
 			oldh = custRowHeight.getSize(row);
 		height = height <= 0 ? 0 : height;
@@ -2431,10 +2437,15 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			var h = custRowHeight.getStartPixel(range.bottom + 1);
 			h -= custRowHeight.getStartPixel(range.top);
 
+			//ZSS-1115: see test case 1115-insert-merge.zul; hidden column
+			// and vertical merge; should still hide the cell
+			var w = custColWidth.getStartPixel(range.right + 1);
+			w -= custColWidth.getStartPixel(range.left);
+
 			celltextheight = h;
 			cellheight = (zk.ie && zk.ie < 11) || zk.safari || zk.opera ? celltextheight : h;
 
-			if (h <= 0) {
+			if (h <= 0 || w <= 0) { //ZSS-1115: @see test ase 1115-insert-merge.zul; must check w, too. 
 				zcss.setRule(name+" .zsmerge"+range.id,"display","none",true, cssId);
 			} else {
 				// ZSS-330, ZSS-382: when row was hidden, the left-top cell of merge is also hidden by row style.  
