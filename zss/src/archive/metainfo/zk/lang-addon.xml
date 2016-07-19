@@ -23,10 +23,10 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 
 	<message-loader-class>org.zkoss.zss.ui.impl.ZssMessageLoader</message-loader-class>
 
-    <javascript-module name="zss" version="3.9.0"/>
+    <javascript-module name="zss" version="3.9.1"/>
 	<version>
 		<version-class>org.zkoss.zss.ui.Version</version-class>
-		<version-uid>3.9.0</version-uid>
+		<version-uid>3.9.1</version-uid>
 		<zk.version>7.0.3</zk.version><!-- or later -->
 	</version>
 
