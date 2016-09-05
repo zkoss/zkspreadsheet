@@ -82,7 +82,7 @@ zss.PositionHelper = zk.$extends(zk.Object, {
 	 * get cell index from a pixel
 	 * @param int px
 	 */
-	getCellIndex: function (px) {
+	getCellIndex: function (px, firstHidden) { // ZSS-1266
 		if (px < 0) px = 0; //col1/row1 can be hidden...
 		var sum = 0,
 			sum2 = 0,
@@ -103,12 +103,12 @@ zss.PositionHelper = zk.$extends(zk.Object, {
 				var incx = Math.floor(inc / defaultSize),
 					cpx = inc - incx * defaultSize;
 				index = index + incx;
-				return [index, cpx];
+				return [firstHidden ? this.getFirstHiddenIndex(i, index) : index, cpx]; //ZSS-1266
 			}
 			sum2 = sum2 + v1;
 			if (sum2 > px) {
 				var cpx = px - sum2 + v1;
-				return [v0, cpx];
+				return [firstHidden ? this.getFirstHiddenIndex(i, v0) : v0, cpx]; //ZSS-1266
 			}
 			sum = sum2;
 			index = v0+1;
@@ -117,7 +117,16 @@ zss.PositionHelper = zk.$extends(zk.Object, {
 		var incx = Math.floor(inc / defaultSize),
 			cpx = inc - incx * defaultSize;
 		index = index + incx;
-		return [index, cpx];
+		return [firstHidden ? this.getFirstHiddenIndex(i, index) : index, cpx]; //ZSS-1266
+	},
+	//ZSS-1266
+	// find backward the 1st consecutive hidden row/col index 
+	getFirstHiddenIndex: function (i, index) {
+		while (--i >= 0 && this.custom[i][3] && this.custom[i][0] == index - 1) {
+			// locate index
+			--index;
+		}
+		return index;
 	},
 	/**
 	 * Returns start pixel(left or top) of a cell, 

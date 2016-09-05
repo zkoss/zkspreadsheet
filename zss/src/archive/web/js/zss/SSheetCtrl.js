@@ -3637,9 +3637,10 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 	 * @param zss.SSheetCtrl
 	 * @param int x page offset
 	 * @param int y page offset
-	 * @param boolean ignorefrezon don't care if over a frezon panel 
+	 * @param boolean ignorefrezon don't care if over a frezon panel
+	 * @param boolean firstHidden whether pick previous hidden column instead 
 	 */
-	_calCellPos: function (sheet, x, y, ignorefrezon) {
+	_calCellPos: function (sheet, x, y, ignorefrezon, firstHidden) { // ZSS-1266
 		var row = col = -1,
 			dpofs = zk(sheet.dp.comp).revisedOffset(),
 			custColWidth = sheet.custColWidth,
@@ -3672,7 +3673,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			ry = y - dpofs[1] - sheet.topHeight;
 		}
 		
-		var xcol = custColWidth.getCellIndex(rx),
+		var xcol = custColWidth.getCellIndex(rx, firstHidden), // ZSS-1266
 			xrow = custRowHeight.getCellIndex(ry);
 		return [xrow[0], xcol[0], rx, ry, xcol[1], xrow[1]];
 	}
