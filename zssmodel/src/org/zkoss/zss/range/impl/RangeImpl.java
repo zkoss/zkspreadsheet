@@ -2251,7 +2251,7 @@ public class RangeImpl implements SRange, Serializable {
 		//ZSS-980: remove existing validation or do nothing, if parameters are default value
 		if (isDefaultValidationParameter(validationType, ignoreBlank, operatorType, inCellDropDown, formula1, formula2,
 				showInput, inputTitle, inputMessage, showError, alertStyle, errorTitle, errorMessage)) {
-			return deletedDataValidations != null ? deletedDataValidations.get(0) : null;
+			return deletedDataValidations != null && deletedDataValidations.size() > 0 ? deletedDataValidations.get(0) : null;
 		}
 
 		SDataValidation dv = getSheet().addDataValidation(new CellRegion(getRow(), getColumn(), getLastRow(), getLastColumn()));
