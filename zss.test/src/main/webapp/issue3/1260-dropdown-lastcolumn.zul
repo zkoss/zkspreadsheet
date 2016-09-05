@@ -1,0 +1,10 @@
+<vlayout vflex="1" hflex="1">
+    <label multiline="true">
+Since 3.9.1
+        1. Click D2; should see a drop down button.
+        2. If not, it is a bug.
+    </label>
+	<spreadsheet id="ss" src="/issue3/book/1260-dropdown-lastcolumn.xlsx" maxVisibleRows="60" maxVisibleColumns="4"
+		hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
+		showFormulabar="true" />	
+</vlayout>

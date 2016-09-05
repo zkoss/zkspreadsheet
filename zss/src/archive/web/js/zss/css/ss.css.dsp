@@ -41,7 +41,7 @@
 	position: relative;
 	padding-top: 20px;
 	padding-left: 36px;
-	overflow: hidden;
+	overflow: visible;
 	background-color:#FFFFFF;
 }
 .zsdatapad{
