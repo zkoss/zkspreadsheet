@@ -1,0 +1,12 @@
+<vlayout vflex="1" hflex="1">
+    <label multiline="true">
+Since 3.9.1
+        1. Click from bottom row of B column; should see a drop down button.
+        2. Click the button, you should see the list above the cell.
+        3. Until the list can be accommodated below the cell.
+        4. Scroll down the sheet and try again; should be the same behavior.
+    </label>
+	<spreadsheet id="ss" src="/issue3/book/1259-dropdown-lastrow.xlsx" maxVisibleRows="60" maxVisibleColumns="4"
+		hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
+		showFormulabar="true" />	
+</vlayout>

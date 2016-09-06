@@ -4,6 +4,7 @@ ZK Spreadsheet 3.9.1
 *Bugs:
   ZSS-1266 Cannot select an item in a validation dropdown
   ZSS-1260 The validation dropdown doesn't appear in the last column
+  ZSS-1259 The validation dropdown is cut when it is in the last row
 
 ** Upgrade Notes
   
