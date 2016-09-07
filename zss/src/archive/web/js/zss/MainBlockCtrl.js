@@ -270,6 +270,8 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 				ar.pruneRight(rightWidth);
 			}
 		}
+		//ZSS-1267: start rendering message
+		this.sheet.startRenderingMessage();
 
 		wgt.fire('onZSSCellFetch', 
 		 {token: token, sheetId: sheet.serverSheetId, type: type, direction: direction,

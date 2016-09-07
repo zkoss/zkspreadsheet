@@ -3314,6 +3314,33 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			this.sp._resetIE9ScrollPosition();
 		}
 	},
+	//ZSS-1267: close the "Rendering" message
+	closeRenderingMessage: function () {
+		if (this.renderingWin) {
+			jq(this.renderingcmp).css('display', 'none');
+			delete this.renderingWin;
+		}
+	},
+	//ZSS-1267: Set a timer to start rendering; see MainBlockCtrl.js#_sendOnCellFetch()
+	startRenderingMessage: function () {
+		if (!this.renderingWin) {
+			delete this.renderingTimer;
+			this.renderingWin = true;
+			var $rn = jq(this.renderingcmp);
+			$rn.css('display', 'block');
+			var rw = this.renderingcmp.offsetWidth,
+				rh = this.renderingcmp.offsetHeight,
+				ch = this.cpcmp.offsetHeight,
+				cw = this.cpcmp.offsetWidth,
+				sheetcmp = this.comp,
+				w = sheetcmp.offsetWidth,
+				h = sheetcmp.offsetHeight,
+				l = (w + cw - rw) / 2,
+				t = (h + ch - rh) / 2;
+			$rn.css('left', ''+l+'px');
+			$rn.css('top', ''+t+'px');
+		}
+	},
 	_insertNewColumn: function (col, size, extnm) {
 		this.activeBlock.insertNewColumn(col,size);
 		var fzc = this.frozenCol;
@@ -3478,7 +3505,8 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			hidecolhead = wgt.isColumnHeadHidden(),
 			hiderowhead = wgt.isRowHeadHidden();
 		out.push('<div ' + this.domAttrs_() + '><textarea id="', uuid, '-fo" class="zsfocus"></textarea>',
-				'<div id="', uuid, '-mask" class="zssmask" zs.t="SMask"><div class="zssmask2"><div id="', uuid, '-masktxt" class="zssmasktxt" align="center"></div></div></div>', 
+				'<div id="', uuid, '-mask" class="zssmask" zs.t="SMask"><div class="zssmask2"><div id="', uuid, '-masktxt" class="zssmasktxt" align="center"></div></div></div>',
+				'<div id="', uuid, '-rendering" class="zsrendering"><span class="zsrendering-icon"></span>  Rendering...</div>',
 				'<div id="', uuid, '-sp" class="zsscroll" zs.t="SScrollpanel">',
 				'<div id="', uuid, '-dp" class="zsdata" zs.t="SDatapanel">',
 				'<div id="', uuid, '-datapad" class="zsdatapad"></div>');
@@ -3571,6 +3599,8 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		sheet.wpcmp = sheet.$n('wp');//widget panel comp
 		sheet.sinfocmp = sheet.$n('sinfo');
 		sheet.infocmp = sheet.$n('info');
+		sheet.renderingcmp = sheet.$n('rendering'); //ZSS-1267
+		sheet.cpcmp = sheet.cp.$n(); //ZSS-1267
 
 		sheet.dp = new zss.DataPanel(sheet);
 		sheet.sp = new zss.ScrollPanel(sheet); //ScrollPanel depends DataPanel

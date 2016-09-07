@@ -48,6 +48,11 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 	}
 
 	function doBlockUpdate(wgt, json, token) {
+		//ZSS-1267: start the rendering message...
+		if (wgt.sheetCtrl) {
+			wgt.sheetCtrl.startRenderingMessage();
+		}
+
 		var ar = wgt._cacheCtrl.getSelectedSheet(),
 			tp = json.type;
 		if (ar && tp != 'ack') { //fetch cell will empty return,(not thing need to fetch)
@@ -61,6 +66,11 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 		}
 		if (token)
 			zkS.doCallback(token);
+		
+		//ZSS-1267: close the rendering message...
+		if (wgt.sheetCtrl) {
+			wgt.sheetCtrl.closeRenderingMessage();
+		}
 	}
 	
 	function _doInsertRCCmd (sheet, data, token) {

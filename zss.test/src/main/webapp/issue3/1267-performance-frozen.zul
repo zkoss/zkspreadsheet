@@ -1,0 +1,11 @@
+<vlayout hflex="1" vflex="1">
+	<label multiline="true">
+Since 3.9.1
+        1. Drag scroll down to show blank page
+        2. Should see the "Rendering..." message on blank page then go away when the cell is doing rendering.
+        3. If not, it is a bug.
+	</label>
+	<spreadsheet id="ss" src="/issue3/book/1267-performance-frozen.xlsx" maxVisibleRows="1200" maxVisibleColumns="800"
+		hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
+		showFormulabar="true" />	
+</vlayout>

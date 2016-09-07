@@ -1,5 +1,6 @@
 ZK Spreadsheet 3.9.1
 *Features:
+  ZSS-1267 Show busy message for client-side rendering
   
 *Bugs:
   ZSS-1266 Cannot select an item in a validation dropdown

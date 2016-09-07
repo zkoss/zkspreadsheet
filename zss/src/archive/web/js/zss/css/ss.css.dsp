@@ -1133,6 +1133,29 @@
 	background-image: url(${c:encodeURL('~./zss/img/filter.gif')});
 }
 
+.zsrendering-icon {
+    width: 16px;
+    height: 16px;
+    display: inline-block;
+    vertical-align: top;
+    background: transparent no-repeat center;
+    background-image: url(${c:encodeURL('~./zss/img/progress.gif')});
+}
+
+.zsrendering {
+    position:absolute;
+    top:100px;
+    left:100px;
+    padding:6px;
+    background:white;
+    font-size:10pt;
+    overflow:visible;
+    z-index:10;
+    border: 1px solid #868686;
+    box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    display: none;
+}
+
 .zspopuppanel {
 	position:absolute;
 	width:0px;
