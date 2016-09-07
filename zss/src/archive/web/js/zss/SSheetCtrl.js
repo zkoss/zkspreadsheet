@@ -3328,11 +3328,11 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			this.renderingWin = true;
 			var $rn = jq(this.renderingcmp);
 			$rn.css('display', 'block');
-			var rw = this.renderingcmp.offsetWidth,
+			var sheetcmp = this.comp,
+				rw = this.renderingcmp.offsetWidth,
 				rh = this.renderingcmp.offsetHeight,
 				ch = this.cpcmp.offsetHeight,
 				cw = this.cpcmp.offsetWidth,
-				sheetcmp = this.comp,
 				w = sheetcmp.offsetWidth,
 				h = sheetcmp.offsetHeight,
 				l = (w + cw - rw) / 2,
