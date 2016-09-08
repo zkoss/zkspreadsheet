@@ -166,7 +166,8 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 	doScroll: function (vertical) {
 		var sheet = this.sheet,
 			range = zss.SSheetCtrl._getVisibleRange(sheet),
-			alwaysjump = false;
+			alwaysjump = false,
+			scrolling = true; //ZSS-1267
 		/*if(!sheet.snapedBlock && sheet.snapedBlock!=sheet.activeBlock){
 			sheet._snapActiveBlock();
 			alwaysjump = true; 
@@ -176,28 +177,35 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 			var ctop = this.range.top,
 				cbottom = this.range.bottom;
 			if (range.top >= ctop && range.top <= cbottom) {
-				if(range.bottom < cbottom)
+				if(range.bottom < cbottom) {
+					//ZSS-1267
+					var wasRendering = sheet.renderingWin;
+					sheet.startRenderingMessage();
+					if (!wasRendering) {
+						sheet.closeRenderingMessage();
+					}
 					return; //the visible is be contained.
+				}
 				var hgh = range.bottom - cbottom + 1;
 				//neighbor south
 				if (hgh > 0 && !this._createCellsIfCached('south', hgh)) {
-					sheet.activeBlock.loadCell(range.bottom, range.left, (alwaysjump ? -1 : 20), null, alwaysjump);
+					sheet.activeBlock.loadCell(range.bottom, range.left, (alwaysjump ? -1 : 20), null, alwaysjump, scrolling);//ZSS-1267
 				}
 			} else if(ctop >= range.top && ctop <= range.bottom) {
 				var hgh = ctop - range.top + 1;
 				//neighbor north;
 				if (!this._createCellsIfCached('north', hgh)) {
-					sheet.activeBlock.loadCell(range.top,range.left, (alwaysjump ? -1 : 20), null, alwaysjump);
+					sheet.activeBlock.loadCell(range.top,range.left, (alwaysjump ? -1 : 20), null, alwaysjump, scrolling); //ZSS-1267
 				}
 			} else if(range.top > cbottom) {
 				//jump south
 				if (!this._createCellsIfCached('south', range.height, true)) {
-					sheet.activeBlock.loadCell(range.bottom, range.left,-1, null, alwaysjump);
+					sheet.activeBlock.loadCell(range.bottom, range.left,-1, null, alwaysjump, scrolling); //ZSS-1267
 				}
 			} else if(ctop > range.bottom) {
 				//jump north;
 				if (!this._createCellsIfCached('north', range.height, true)) {
-					sheet.activeBlock.loadCell(range.top, range.left, -1, null, alwaysjump);
+					sheet.activeBlock.loadCell(range.top, range.left, -1, null, alwaysjump, scrolling); //ZSS-1267
 				}
 			} else{
 				return;
@@ -211,23 +219,23 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 				var width = range.right - cright + 1;
 				//neighbor east
 				if (width > 0 && !this._createCellsIfCached('east', width)) {
-					sheet.activeBlock.loadCell(range.top, range.right, (alwaysjump ? -1 : 5), null, alwaysjump);
+					sheet.activeBlock.loadCell(range.top, range.right, (alwaysjump ? -1 : 5), null, alwaysjump, scrolling); //ZSS-1267
 				}
 			} else if (cleft >= range.left && cleft <= range.right) {
 				var width = cleft - range.left + 1;
 				//neighbor west;
 				if (!this._createCellsIfCached('west', width)) {
-					sheet.activeBlock.loadCell(range.top, range.left, (alwaysjump ? -1 : 5), null, alwaysjump);
+					sheet.activeBlock.loadCell(range.top, range.left, (alwaysjump ? -1 : 5), null, alwaysjump, scrolling); //ZSS-1267
 				}
 			} else if (range.left>cright) {
 				//jump east
 				if (!this._createCellsIfCached('east', range.width, true)) {
-					sheet.activeBlock.loadCell(range.top, range.right, -1, null, alwaysjump);
+					sheet.activeBlock.loadCell(range.top, range.right, -1, null, alwaysjump, scrolling); //ZSS-1267
 				}
 			} else if (cleft > range.right) {
 				//jump west;
 				if (!this._createCellsIfCached('west', range.width, true)) {
-					sheet.activeBlock.loadCell(range.top, range.left, -1, null, alwaysjump);
+					sheet.activeBlock.loadCell(range.top, range.left, -1, null, alwaysjump, scrolling); //ZSS-1267
 				}
 			} else {
 				return;
@@ -296,9 +304,14 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 	 * @param {Object} pruneres reserve when prune, -1 means don't prune, 0 means don't reserve 
 	 * @param {Object} callbackfn callback function after cell be loaded
 	 * @param {Object} alwaysjump always jump to this cell, this means skip this block, use a new bolck instead.
+	 * @param {Object} scrolling called from doScroll()
 	 * @return true if already loaded, false if need to asynchronize loading.
 	 */
-	loadCell: function (row, col, pruneres, callbackfn, alwaysjump) {
+	loadCell: function (row, col, pruneres, callbackfn, alwaysjump, scrolling) {
+		//ZSS-1267
+		if (scrolling) {
+			this.sheet.startRenderingMessage();
+		}
 		var cleft = this.range.left,
 			ctop = this.range.top,
 			cw = this.range.width,
@@ -312,7 +325,7 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 		if (lastFocus.row == row && lastFocus.column == col) {
 			return true;
 		}
-		
+
 		if (row >= ctop && row <= cbottom && col >= cleft && col <= cright)
 			return true;
 		if (this.loadstate != zss.MainBlockCtrl.IDLE)//still waiting previous loading.
@@ -324,7 +337,6 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 			fetchh = range.height, //size of cell of height to fetch back
 			//ZSS-1174			
 			rect = sheet._wgt._cacheCtrl.getSelectedSheet().rect;
-		
 		if ((row >= ctop && row <= cbottom)) {//horizontal shift, east or west
 			if (col < cleft) {//minus, west
 				var y = ctop,
@@ -911,7 +923,9 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 			
 			//visible range not cross this block,  this should invoke a jump 
 			//invoke a jump to top,left of visual range.
-			this.loadCell(vrange.top, vrange.left, 0, null, true);
+			var alwaysjump = true,
+				scrolling = true;
+			this.loadCell(vrange.top, vrange.left, 0, null, alwaysjump, scrolling);
 			return true;
 		} else if (!(tRow >= top && lCol >= left && bRow <= bottom && rCol <= right)) {
 

@@ -3316,15 +3316,27 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 	},
 	//ZSS-1267: close the "Rendering" message
 	closeRenderingMessage: function () {
-		if (this.renderingWin) {
-			jq(this.renderingcmp).css('display', 'none');
-			delete this.renderingWin;
-		}
-	},
-	//ZSS-1267: Set a timer to start rendering; see MainBlockCtrl.js#_sendOnCellFetch()
-	startRenderingMessage: function () {
-		if (!this.renderingWin) {
+		if (this.renderingTimer) {
+			clearTimeout(this.renderingTimer);
 			delete this.renderingTimer;
+		}
+		// put in timer to allow browser to rendering cells first
+		// and then close this rendering message
+		var sht = this;
+		this.renderingTimer = setTimeout(function(){
+			if (sht.renderingWin) {
+				delete sht.renderingWin;
+				jq(sht.renderingcmp).css('display', 'none');
+			}
+		}, 0);
+	},
+	//ZSS-1267: see Spreadsheet.js#doBlockUpdate() and MainBlockCtrl.js#_sendOnCellFetch()
+	startRenderingMessage: function () {
+		if (this.renderingTimer) {
+			clearTimeout(this.renderingTimer);
+			delete this.renderingTimer;
+		}
+		if (!this.renderingWin) {
 			this.renderingWin = true;
 			var $rn = jq(this.renderingcmp);
 			$rn.css('display', 'block');
