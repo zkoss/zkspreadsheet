@@ -41,29 +41,30 @@ public class FormulaEvaluationContext extends AbstractContext implements Seriali
 	private VariableResolver _vairableResolver;
 	private final Ref _dependent;
 	private final int[] _offset; //ZSS-1142: [rowOffset, colOffset] for ConditionalFormatting relative formula evaluation
+	private final boolean _externFormula; //ZSS-1271: indicate a ConditionalFormatting formula evaluation(formula not defined inside the cell) 
 
 	public FormulaEvaluationContext(SCell cell,Ref dependent) {
-		this(cell.getSheet().getBook(), cell.getSheet(), cell,dependent, null);
+		this(cell.getSheet().getBook(), cell.getSheet(), cell,dependent, null, false); //ZSS-1271
 	}
 
 	public FormulaEvaluationContext(SSheet sheet,Ref dependent) {
-		this(sheet.getBook(), sheet, null,dependent, null);
+		this(sheet.getBook(), sheet, null,dependent, null, false);//ZSS-1271
 	}
 
 	public FormulaEvaluationContext(SBook book,Ref dependent) {
-		this(book, null, null,dependent, null);
+		this(book, null, null,dependent, null, false);//ZSS-1271
 	}
 
 	//ZSS-1142
 	public FormulaEvaluationContext(SSheet sheet,Ref dependent, int[] offset) {
-		this(sheet.getBook(), sheet, null,dependent, offset);
+		this(sheet.getBook(), sheet, null,dependent, offset, true);//ZSS-1271
 	}
 	//ZSS-1257
-	public FormulaEvaluationContext(SSheet sheet,SCell cell, Ref dependent, int[] offset) {
-		this(sheet.getBook(), sheet, cell,dependent, offset);
+	public FormulaEvaluationContext(SSheet sheet,SCell cell, Ref dependent, int[] offset, boolean externFormula) {
+		this(sheet.getBook(), sheet, cell,dependent, offset, externFormula);//ZSS-1271
 	}
 
-	private FormulaEvaluationContext(SBook book, SSheet sheet, SCell cell,Ref dependent, int[] offset) { //ZSS-1142
+	private FormulaEvaluationContext(SBook book, SSheet sheet, SCell cell,Ref dependent, int[] offset, boolean externformula) { //ZSS-1142, ZSS-1271
 		this._book = book;
 		this._sheet = sheet;
 		this._cell = cell;
@@ -75,6 +76,7 @@ public class FormulaEvaluationContext extends AbstractContext implements Seriali
 			_vairableResolver = contributor.getVariableResolver(book);
 		}
 		this._offset = offset; //ZSS-1142
+		this._externFormula = externformula; //ZSS-1271
 	}
 
 	public SBook getBook() {
@@ -103,5 +105,10 @@ public class FormulaEvaluationContext extends AbstractContext implements Seriali
 	//ZSS-1142
 	public int[] getOffset() {
 		return _offset;
+	}
+	
+	//ZSS-1271
+	public boolean isExternalFormula() {
+		return _externFormula;
 	}
 }

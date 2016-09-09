@@ -11,10 +11,14 @@ ZK Spreadsheet 3.9.1
   ZSS-1238 Inserting a URL into a cell causes it locked
   ZSS-1275 When sheet protected and not allowed to insert link; the inserted LINK should be a String
   ZSS-1257 Conditional formatting displays incorrect result when using row()
+  ZSS-1271 Conditional formatting work incorrectly when using a formula
 
 ** Upgrade Notes
   * Following apis are deprecated:
 	* SBook.getOrCreateDefaultHyperlinkStyle(): use SBook.getOrCreateDefaultHyperlinkStyle(SCell cell) instead.
+	* WorkbookEvaluator.evaluate(int sheetIndex, String formula, boolean ignoreDereference, Object ref, int[] offset): use
+		WorkbookEvaluator.evaluate(int sheetIndex, int rowIndex, int columnIndex, 
+				String formula, boolean ignoreDereference, Object ref, int[] offset) instead.
 	
  ------------
 ZK Spreadsheet 3.9.0

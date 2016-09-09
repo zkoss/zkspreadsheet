@@ -504,7 +504,7 @@ public class FormulaEngineImpl implements FormulaEngine, Serializable {
 		SCell cell = context.getCell();
 		ValueEval value = null;
 		boolean multipleArea = isMultipleAreaFormula(expr.getFormulaString());
-		if(cell == null || cell.isNull()) {
+		if(cell == null || cell.isNull() || context.isExternalFormula()) { // ZSS-1271
 			// evaluation formula directly
 			if(multipleArea){
 				String[] formulas = unwrapeAreaFormula(expr.getFormulaString());

@@ -14,6 +14,7 @@ package org.zkoss.zss.range.impl;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 import org.zkoss.poi.ss.usermodel.DateUtil;
 import org.zkoss.zss.model.SCell;
@@ -40,15 +41,31 @@ public class ExpressionMatch implements Matchable<SCell>, Serializable {
 		final EvaluationResult result = ruleInfo.evalFormula(cell);
 		if(result.getType() == ResultType.SUCCESS){
 			final Object val = result.getValue();
-			if (val instanceof Double) {
-				return ((Double)val).doubleValue() != 0;
+			return matchVal(val); //ZSS-1271 
+		}
+		//blank, string and error is false
+		return false;
+	}
+	//ZSS-1271
+	private boolean matchVal(Object val) {
+		if (val instanceof Double) {
+			return ((Double)val).doubleValue() != 0;
+		}
+		if (val instanceof Boolean) {
+			return ((Boolean)val).booleanValue();
+		}
+		if (val instanceof Date) {
+			return DateUtil.getExcelDate((Date)val) != 0;
+		}
+		//ZSS-1271
+		if (val instanceof List) {
+			for (Object val0 : (List) val) {
+				final boolean result = matchVal(val0); // recursive
+				if (!result) {
+					return false;
+				}
 			}
-			if (val instanceof Boolean) {
-				return ((Boolean)val).booleanValue();
-			}
-			if (val instanceof Date) {
-				return DateUtil.getExcelDate((Date)val) != 0;
-			}
+			return true;
 		}
 		//blank, string and error is false
 		return false;

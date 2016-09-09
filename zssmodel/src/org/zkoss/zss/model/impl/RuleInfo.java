@@ -85,7 +85,7 @@ public class RuleInfo {
 //				}
 				final EvaluationResult result = 
 					fe.evaluate(_formulaExpr,new FormulaEvaluationContext(
-							_sheet, cell, null, new int[] {rowOffset, colOffset})); //ZSS-1257
+							_sheet, cell, null, new int[] {rowOffset, colOffset}, true)); //ZSS-1257, ZSS-1271
 				_cacheMap.put(key, result);
 				return result;
 			}
