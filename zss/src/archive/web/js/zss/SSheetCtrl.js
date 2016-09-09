@@ -2001,6 +2001,9 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		case 113: //F2
 			if(this.state == zss.SSheetCtrl.FOCUSED)
 				this._enterEditing(evt);
+			//ZSS-1274 Support F2 to toggle arrow keys's function when editing formula
+			else if (this.state == zss.SSheetCtrl.EDITING)
+				this.enableKeyNavigation = !this.enableKeyNavigation;
 			evt.stop();
 			break;
 		case 13://Enter
