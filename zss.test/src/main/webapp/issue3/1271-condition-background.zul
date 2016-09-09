@@ -3,6 +3,8 @@
 Since 3.9.1	
 1. Should see blue background on A3:B4
 2. If not, it is a bug.
+3. Enter 3 to cell A3, background of cell A3 should be changed to white.
+4. Enter 4 to cell B4, background of cell B4 should be changed to white. 
 </label>
 	<spreadsheet id="ss" src="/issue3/book/1271-condition-background.xlsx" maxVisibleRows="30" maxVisibleColumns="40"
 		hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 

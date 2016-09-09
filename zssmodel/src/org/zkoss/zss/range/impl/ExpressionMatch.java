@@ -58,14 +58,8 @@ public class ExpressionMatch implements Matchable<SCell>, Serializable {
 			return DateUtil.getExcelDate((Date)val) != 0;
 		}
 		//ZSS-1271
-		if (val instanceof List) {
-			for (Object val0 : (List) val) {
-				final boolean result = matchVal(val0); // recursive
-				if (!result) {
-					return false;
-				}
-			}
-			return true;
+		if (val instanceof List && !((List)val).isEmpty()) {
+			return matchVal(((List)val).get(0));
 		}
 		//blank, string and error is false
 		return false;
