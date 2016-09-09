@@ -359,7 +359,8 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 				return {start: start, end: end, type: tp};
 			} else {
 				if (!start) {
-					return {start: 0, end: 0, type: tp};
+					return null; // ZSS-1005, ZSS-1209
+//					return {start: 0, end: 0, type: tp};
 				} else {
 					var DELIMITERS = ['=', '+', '-', '*', '/', '!', ':', '^', '&', '(',  ',', '.'],
 						i = start - 1,
@@ -849,10 +850,6 @@ zss.Editbox = zk.$extends(zul.inp.InputWidget, {
 		}
 	},
 	doBlur_: function () {
-		var sheet = this.sheet;
-		if (sheet && sheet.enableKeyNavigation) {
-			sheet.enableKeyNavigation = null;
-		}
 		blurEditor(this);
 	},
 	doMouseDown_: function (evt) {
@@ -861,9 +858,6 @@ zss.Editbox = zk.$extends(zul.inp.InputWidget, {
 			if (sheet.state == zss.SSheetCtrl.EDITING) {
 				if (!this.isFocused) {
 					sheet.isSwitchingFocus = true;
-				}
-				if (sheet.enableKeyNavigation) {
-					sheet.enableKeyNavigation = null;
 				}
 				var info = sheet.editingFormulaInfo;
 				if (info && info.moveCell) {//re-eval editing formula info
@@ -1000,6 +994,9 @@ zss.Editbox = zk.$extends(zul.inp.InputWidget, {
 			} else {
 				//ZSS-1005 when mouse click on a editing input, enableKeyNavigation will became false.
 				//we won't give a cell reference navigation again for it till next startEditing
+				//ZSS-1209: 20160908, henrichen: side effect of ZSS-1005. We now, like
+				// excel, use F2 to control sheet.enableKeyNavigation to determine
+				// whether select a cell refence or move Caret in edit box
 				if(sheet.enableKeyNavigation)
 					sheet.editingFormulaInfo = getEditingFormulaInfo(type, input, position);
 			}
