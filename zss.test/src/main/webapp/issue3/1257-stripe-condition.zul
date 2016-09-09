@@ -1,0 +1,10 @@
+<vlayout hflex="1" vflex="1">
+	<label multiline="true">
+Since 3.9.1	
+1. Should see stripe colors in area E4:S11 where even row is white background and odd row is colored background
+2. If you see the whole area is colored background, it is a bug.
+</label>
+	<spreadsheet id="ss" src="/issue3/book/1257-stripe-condition.xlsx" maxVisibleRows="30" maxVisibleColumns="40"
+		hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
+        showFormulabar="true"  />	
+</vlayout>

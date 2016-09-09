@@ -58,6 +58,10 @@ public class FormulaEvaluationContext extends AbstractContext implements Seriali
 	public FormulaEvaluationContext(SSheet sheet,Ref dependent, int[] offset) {
 		this(sheet.getBook(), sheet, null,dependent, offset);
 	}
+	//ZSS-1257
+	public FormulaEvaluationContext(SSheet sheet,SCell cell, Ref dependent, int[] offset) {
+		this(sheet.getBook(), sheet, cell,dependent, offset);
+	}
 
 	private FormulaEvaluationContext(SBook book, SSheet sheet, SCell cell,Ref dependent, int[] offset) { //ZSS-1142
 		this._book = book;

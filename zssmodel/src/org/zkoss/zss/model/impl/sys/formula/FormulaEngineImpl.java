@@ -515,7 +515,9 @@ public class FormulaEngineImpl implements FormulaEngine, Serializable {
 				}
 				value = new ValuesEval(evals.toArray(new ValueEval[evals.size()]));
 			}else{
-				value = evaluateFormulaExpression(evaluator, currentSheetIndex, expr, true, context.getDependent(), context.getOffset()); //ZSS-759, ZSS-834, ZSS-1142
+				final int columnIndex = cell == null ? 0 : cell.getColumnIndex(); //ZSS-1257
+				final int rowIndex = cell == null ? 0 : cell.getRowIndex(); //ZSS-1257
+				value = evaluateFormulaExpression(evaluator, currentSheetIndex, rowIndex, columnIndex, expr, true, context.getDependent(), context.getOffset()); //ZSS-759, ZSS-834, ZSS-1142, ZSS-1257
 			}
 		} else {
 			if(multipleArea){//is multipleArea formula in cell, should return #VALUE!
@@ -1346,8 +1348,14 @@ public class FormulaEngineImpl implements FormulaEngine, Serializable {
 	}
 
 	//ZSS-1142
+	@Deprecated
 	protected ValueEval evaluateFormulaExpression(WorkbookEvaluator evaluator, int sheetIndex, FormulaExpression expr, boolean ignoreDereference, Ref dependent, int[] offset) {
 		return evaluator.evaluate(sheetIndex, expr.getFormulaString(), ignoreDereference, dependent, offset);
+	}
+	//ZSS-1257
+	protected ValueEval evaluateFormulaExpression(WorkbookEvaluator evaluator, int sheetIndex, 
+			int rowIndex, int columnIndex, FormulaExpression expr, boolean ignoreDereference, Ref dependent, int[] offset) {
+		return evaluator.evaluate(sheetIndex, rowIndex, columnIndex, expr.getFormulaString(), ignoreDereference, dependent, offset);
 	}
 
 	//ZSS-810

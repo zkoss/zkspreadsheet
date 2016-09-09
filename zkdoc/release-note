@@ -10,6 +10,7 @@ ZK Spreadsheet 3.9.1
   ZSS-1209 error message inserting math operators after parenthesis
   ZSS-1238 Inserting a URL into a cell causes it locked
   ZSS-1275 When sheet protected and not allowed to insert link; the inserted LINK should be a String
+  ZSS-1257 Conditional formatting displays incorrect result when using row()
 
 ** Upgrade Notes
   * Following apis are deprecated:
