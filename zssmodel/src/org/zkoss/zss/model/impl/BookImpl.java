@@ -1266,6 +1266,11 @@ public class BookImpl extends AbstractBookAdv{
 	//ZSS-1041
 	@Override
 	public SCellStyle getOrCreateDefaultHyperlinkStyle() {
+		return getOrCreateDefaultHyperlinkStyle(null);
+	}
+	//ZSS-1238
+	@Override
+	public SCellStyle getOrCreateDefaultHyperlinkStyle(SCell cell) {
 		final SFont defaultFont = this.getDefaultFont();
 		final FontMatcher fontMatcher = new FontMatcher(defaultFont);
 		fontMatcher.setColor("0000FF");
@@ -1277,12 +1282,12 @@ public class BookImpl extends AbstractBookAdv{
 			linkFont.setColor(this.createColor("#0000FF"));
 			linkFont.setUnderline(SFont.Underline.SINGLE);
 		}
-		final SCellStyle defaultStyle = this.getDefaultCellStyle();
-		final CellStyleMatcher matcher = new CellStyleMatcher(defaultStyle);
+		final SCellStyle baseStyle = cell == null ? this.getDefaultCellStyle() : cell.getCellStyle(); //ZSS-1238
+		final CellStyleMatcher matcher = new CellStyleMatcher(baseStyle);
 		matcher.setFont(linkFont);
 		SCellStyle linkStyle = this.searchCellStyle(matcher);
 		if (linkStyle == null) {
-			linkStyle = StyleUtil.cloneCellStyle(this, defaultStyle); //will store into book's styleTable
+			linkStyle = StyleUtil.cloneCellStyle(this, baseStyle); //will store into book's styleTable
 			linkStyle.setFont(linkFont);
 		}
 		return linkStyle;

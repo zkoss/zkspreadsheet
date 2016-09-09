@@ -562,7 +562,7 @@ public class RangeImpl implements SRange, Serializable {
 		}
 		//ZSS-1041: should use default hyperlink style
 		final SBook book = cell.getSheet().getBook();
-		SCellStyle linkStyle = book.getOrCreateDefaultHyperlinkStyle();
+		SCellStyle linkStyle = book.getOrCreateDefaultHyperlinkStyle(cell); //ZSS-1238
 		cell.setCellStyle(linkStyle);
 		
 		return cell.setupHyperlink(type, address, label);

@@ -359,7 +359,15 @@ public interface SBook {
 	 * @return
 	 * @since 3.8.0
 	 */
+	@Deprecated
 	public SCellStyle getOrCreateDefaultHyperlinkStyle();
+	/**
+	 * Returns existing or create SCellStyle for hyperlink on the specified cell 
+	 * @param cell
+	 * @return
+	 * @since 3.9.1
+	 */
+	public SCellStyle getOrCreateDefaultHyperlinkStyle(SCell cell);
 	
 	/**
 	 * Get the extra style of this book

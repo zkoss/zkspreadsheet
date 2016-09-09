@@ -8,9 +8,12 @@ ZK Spreadsheet 3.9.1
   ZSS-1260 The validation dropdown doesn't appear in the last column
   ZSS-1259 The validation dropdown is cut when it is in the last row
   ZSS-1209 error message inserting math operators after parenthesis
+  ZSS-1238 Inserting a URL into a cell causes it locked
 
 ** Upgrade Notes
-  
+  * Following apis are deprecated:
+	* SBook.getOrCreateDefaultHyperlinkStyle(): use SBook.getOrCreateDefaultHyperlinkStyle(SCell cell) instead.
+	
  ------------
 ZK Spreadsheet 3.9.0
 *Features:
