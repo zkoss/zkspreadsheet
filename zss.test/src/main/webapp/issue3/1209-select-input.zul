@@ -1,0 +1,11 @@
+<vlayout hflex="1" vflex="1">
+	<label multiline="true">
+1. in A1, enter =sum(
+2. click B1, the formula becomes =sum(B1
+3. enter )+; the formula becomes =sum(B1)+
+4. click B2; the formula becomes =sum(B1)+B2
+5. Press right arrow key once; the formula becomes =sum(B1)+C2
+    </label>
+	<spreadsheet id="ss" src="/issue3/book/blank.xlsx" maxVisibleRows="30" maxVisibleColumns="40"
+		hflex="1" vflex="1" />	
+</vlayout>
