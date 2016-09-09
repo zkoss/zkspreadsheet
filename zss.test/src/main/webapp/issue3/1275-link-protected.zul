@@ -1,0 +1,15 @@
+<vlayout hflex="1" vflex="1">
+	<label multiline="true">
+Since 3.9.1	
+1. Protect sheet but keep "insert hyperlinks" UNCHECKED; i.e. disallow insert hyper-link.
+2. In unlocked cell A1; enter http://www.zkoss.org
+3. Should see A1 appear a STRING http://www.zkoss.org
+4. Press F5 to reload the test case.
+5. Protect sheet but keep "insert link" CHECKED; i.e. allow insert hyper-link.
+6. In unlocked cell A1; enter http://www.zkoss.org
+7. Should see A1 appear as a LINK with underline.
+</label>
+	<spreadsheet id="ss" src="/issue3/book/1275-link-protected.xlsx" maxVisibleRows="30" maxVisibleColumns="40"
+		hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
+        showFormulabar="true"  />	
+</vlayout>
