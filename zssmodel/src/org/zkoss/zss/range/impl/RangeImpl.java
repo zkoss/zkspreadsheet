@@ -512,7 +512,7 @@ public class RangeImpl implements SRange, Serializable {
 					break;
 				case STRING:
 					cell.setStringValue((String) resultVal);
-					if(hyperlinkType.get()!=null && getSheetProtection().isInsertHyperlinks()) { //ZSS-1275
+					if(hyperlinkType.get()!=null && (!getSheet().isProtected() || getSheetProtection().isInsertHyperlinks())) { //ZSS-1275
 						setupHyperlink0(cell, hyperlinkType.get(),(String)resultVal,(String)resultVal);
 					}
 					break;
