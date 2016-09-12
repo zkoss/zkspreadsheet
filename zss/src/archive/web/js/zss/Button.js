@@ -76,9 +76,13 @@ zss.FontSizeCombobox = zk.$extends(zul.inp.Combobox, {
 		 */
 		$action: null
 	},
+	//ZSS-1276
+	$getAction: function () {
+		return this._$aciton || this.$action;
+	},
 	setDisabled: function (actions) {
 		var d = this.isDisabled();
-		if (actions.$contains(this.get$action())) {
+		if (actions.$contains(this.$getAction())) { //ZSS-1276
 			if (!d) {
 				this.$supers(zss.FontSizeCombobox, 'setDisabled', [true]);
 			}
@@ -191,9 +195,13 @@ zss.FontFamilyCombobox = zk.$extends(zul.inp.Combobox, {
 		 */
 		$action: null
 	},
+	//ZSS-1276
+	$getAction: function () {
+		return this._$aciton || this.$action;
+	},
 	setDisabled: function (actions) {
 		var d = this.isDisabled();
-		if (actions.$contains(this.get$action())) {
+		if (actions.$contains(this.$getAction())) { // ZSS-1276
 			if (!d) {
 				this.$supers(zss.FontFamilyCombobox, 'setDisabled', [true]);
 			}
@@ -344,10 +352,14 @@ zss.Toolbarbutton = zk.$extends(zul.wgt.Toolbarbutton, {
 		$action: null,
 		clickDisabled: null
 	},
+	//ZSS-1276
+	$getAction: function () {
+		return this._$aciton || this.$action;
+	},
 	setDisabled: function (actions) {
 		if (actions) {
 			var disable = this.isDisabled();
-			if (actions.$contains(this.get$action())) {
+			if (actions.$contains(this.$getAction())) { //ZSS-1276
 				if (!disable){
 					this.$supers(zss.Toolbarbutton, 'setDisabled', [true]);
 				}
@@ -481,7 +493,7 @@ zss.Toolbarbutton = zk.$extends(zul.wgt.Toolbarbutton, {
 		return 'zstbtn';
 	},
 	getSclass: function () {
-		return 'zstbtn-' + this.get$action() + ' ' + this._getSclass();
+		return 'zstbtn-' + this.$getAction() + ' ' + this._getSclass(); //ZSS-1276
 	}
 }, {
 	_rmActive: function (wgt) {
@@ -522,9 +534,13 @@ zss.CheckableToolbarButton = zk.$extends(zul.wgt.Toolbarbutton, {
 			}
 		}
 	},
+	//ZSS-1276
+	$getAction: function () {
+		return this._$aciton || this.$action;
+	},
 	setDisabled: function (actions) {
 		var d = this.isDisabled();
-		if (actions.$contains(this.get$action())) {
+		if (actions.$contains(this.$getAction())) { //ZSS-1276
 			if (!d)
 				this.$supers(zss.CheckableToolbarButton, 'setDisabled', [true]);
 		} else if (d) {//clear disabled
@@ -539,7 +555,7 @@ zss.CheckableToolbarButton = zk.$extends(zul.wgt.Toolbarbutton, {
 			this.getCheckImage() +') no-repeat transparent;"></div>' + this.$supers(zul.wgt.Toolbarbutton, 'domContent_', arguments);
 	},
 	getSclass: function () {
-		return 'zschktbtn-' + this.get$action() + ' zschktbtn';
+		return 'zschktbtn-' + this.$getAction() + ' zschktbtn'; //ZSS-1276
 	}
 });
 zk.copy(zss.CheckableToolbarButton.prototype, AbstractButtonHandler);
@@ -847,10 +863,14 @@ zss.Menuitem = zk.$extends(zul.menu.Menuitem, {
 		 */
 		$action: null
 	},
+	//ZSS-1276
+	$getAction: function () {
+		return this._$aciton || this.$action;
+	},
 	setDisabled: function (actions) {
 		if (jq.isArray(actions)) {
 			var d = this.isDisabled();
-			if (actions.$contains(this.get$action())) {
+			if (actions.$contains(this.$getAction())) { //ZSS-1276
 				if (!d)
 					this.$supers(zss.Menuitem, 'setDisabled', [true]);
 			} else if (d) {//clear disabled
@@ -861,7 +881,7 @@ zss.Menuitem = zk.$extends(zul.menu.Menuitem, {
 		}
 	},
 	getSclass: function () {
-		return 'zsmenuitem-' + this.get$action();
+		return 'zsmenuitem-' + this.$getAction(); //ZSS-1276
 	}
 });
 zk.copy(zss.Menuitem.prototype, AbstractPopupHandler);
@@ -2087,7 +2107,7 @@ zss.ButtonBuilder = zk.$extends(zk.Object, {
 						var a = c.getVerticalAlign(),
 							item = p.firstChild;
 						for (; item; item = item.nextSibling) {
-							if (item.get$action() == a) {
+							if (item.$getAction() == a) { //ZSS-1276
 								b.setSelectedEffect(true, item);
 								break;
 							}
@@ -2133,7 +2153,7 @@ zss.ButtonBuilder = zk.$extends(zk.Object, {
 						var a = c.getHorizontalAlign(),
 							item = p.firstChild;
 						for (; item; item = item.nextSibling) {
-							if (item.get$action() == a) {
+							if (item.$getAction() == a) { // ZSS-1276
 								b.setSelectedEffect(true, item);
 								break;
 							}
@@ -2321,6 +2341,7 @@ zss.ButtonBuilder = zk.$extends(zk.Object, {
 	protectSheet: function () {
 		var wgt = this._wgt,
 			b = new zss.ProtectSheetCheckbutton({
+				$action: 'protectSheet', // ZSS-1269
 				checked: wgt.isProtect(),
 				tooltiptext: msgzss.action.protectSheet,
 				image: zk.ajaxURI('/web/zss/img/lock.png', AU),
@@ -2333,6 +2354,7 @@ zss.ButtonBuilder = zk.$extends(zk.Object, {
 	gridlines: function () {
 		var wgt = this._wgt,
 			b = new zss.DisplayGridlinesCheckbutton({
+			$action: 'gridlines', //ZSS-1269
 			checked: wgt.isDisplayGridlines(),
 			tooltiptext: msgzss.action.gridlines,
 			image: zk.ajaxURI('/web/zss/img/grid.png', AU),

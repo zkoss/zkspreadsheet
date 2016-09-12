@@ -13,6 +13,7 @@ ZK Spreadsheet 3.9.1
   ZSS-1257 Conditional formatting displays incorrect result when using row()
   ZSS-1271 Conditional formatting work incorrectly when using a formula
   ZSS-1269 Cannot evaluate eomonth()
+  ZSS-1276 Some CSS class names are generated incorrectly with ZK 8.0.2
 
 ** Upgrade Notes
   * Following apis are deprecated:
