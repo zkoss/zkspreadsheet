@@ -761,10 +761,10 @@ public class ConditionalFormattingRuleImpl implements SConditionalFormattingRule
 		if (Strings.isBlank(formula))
 			return null;
 		
-		// POI CTRule will generate two adjacent double; must unescape adjacent 
+		// POI CTRule will generate two adjacent double quote; must unescape adjacent 
 		// double quote to only one double quote first;
 		// e.g. ""abc"" => "abc" 
-		if (formula.startsWith("\"\"") && formula.endsWith("\"\"")) {
+		if (!"\"\"".equals(formula) && formula.startsWith("\"\"") && formula.endsWith("\"\"")) { //ZSS-1270
 			final StringBuilder sb = new StringBuilder();
 			int pre = -2;
 			for (int j = 0; j < formula.length(); ++j) { 

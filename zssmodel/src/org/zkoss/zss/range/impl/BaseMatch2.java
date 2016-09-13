@@ -44,9 +44,10 @@ abstract public class BaseMatch2 implements Matchable<SCell>, Serializable {
 		
 	@Override
 	public boolean match(SCell cell) {
-		if (cell == null || cell.isNull()) {
-			return false;
-		}
+//ZSS-1270: mark out; cell could be blank
+//		if (cell == null || cell.isNull()) {
+//			return false;
+//		}
 		if (base != null) {
 			if (base instanceof String) {
 				return matchString0(cell, (String)base);
@@ -73,7 +74,11 @@ abstract public class BaseMatch2 implements Matchable<SCell>, Serializable {
 	}
 	
 	private boolean matchString0(SCell cell, String b) {
-		final Object value =  CellValueHelper.inst.getValue(cell);
+		Object value =  CellValueHelper.inst.getValue(cell);
+		//ZSS-1270
+		if (value == null) {
+			value = "";
+		}
 		if (value instanceof String) {
 			final String formattedText = CellValueHelper.inst.getFormattedText(cell);
 			return matchString(formattedText, b);

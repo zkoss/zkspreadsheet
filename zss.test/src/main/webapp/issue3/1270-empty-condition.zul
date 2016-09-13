@@ -1,0 +1,10 @@
+<vlayout hflex="1" vflex="1">
+	<label multiline="true">
+Since 3.9.1	
+1. You should see light green background on A1:B2.
+2. If not, it is a bug.
+</label>
+	<spreadsheet id="ss" src="/issue3/book/1270-empty-condition.xlsx" maxVisibleRows="30" maxVisibleColumns="40"
+		hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
+        showFormulabar="true"  />	
+</vlayout>

@@ -14,6 +14,7 @@ ZK Spreadsheet 3.9.1
   ZSS-1271 Conditional formatting work incorrectly when using a formula
   ZSS-1269 Cannot evaluate eomonth()
   ZSS-1276 Some CSS class names are generated incorrectly with ZK 8.0.2
+  ZSS-1270 Conditional formatting cannot accept empty string formula
 
 ** Upgrade Notes
   * Following apis are deprecated:
