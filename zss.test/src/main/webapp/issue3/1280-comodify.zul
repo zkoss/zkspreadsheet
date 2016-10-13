@@ -1,0 +1,11 @@
+<vlayout hflex="1" vflex="1">
+	<label multiline="true">
+Since 3.8.3
+1. delete row 15
+2. delete row 17
+3. You should not see ConcurrentModificationException; otherwise, it is a bug.
+</label>
+    <spreadsheet id="ss2" src="/issue3/book/1280-comodify.xlsx" showContextMenu="true"
+    showToolbar="true" maxVisibleRows="500" maxVisibleColumns="200" hflex="1"
+    vflex="1"/> 
+</vlayout>

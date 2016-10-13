@@ -259,7 +259,8 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 		}
 		
 		// update Validation's region (sqref)
-		for (CellRegion region : validation.getRegions()) {
+		final Collection<CellRegion> regions = new ArrayList<CellRegion>(validation.getRegions()); //ZSS-1280 avoid Comodification...
+		for (CellRegion region : regions) { //ZSS-1280
 			String sqref = region.getReferenceString();
 			FormulaParseContext context = new FormulaParseContext(sheet, null); //null ref, no trace dependence here
 			FormulaExpression fexpr = engine.parse(sqref, context);
@@ -271,6 +272,7 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 						sheet.deleteDataValidation(validation);
 					}
 				} else {
+					((AbstractDataValidationAdv)validation).removeRegion(region); //ZSS-1280
 					region = new CellRegion(expr2.getFormulaString());
 					((AbstractDataValidationAdv)validation).addRegion(region);
 				}
@@ -379,7 +381,8 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 		}
 		
 		// update Validation's region (sqref)
-		for (CellRegion region : cfmt.getRegions()) {
+		final Collection<CellRegion> regions = new ArrayList<CellRegion>(cfmt.getRegions()); //ZSS-1280 avoid Comodification...
+		for (CellRegion region : regions) { // ZSS-1280
 			String sqref = region.getReferenceString();
 			FormulaParseContext context = new FormulaParseContext(sheet, null); //null ref, no trace dependence here
 			FormulaExpression fexpr = engine.parse(sqref, context);
@@ -391,6 +394,7 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 						sheet.deleteConditionalFormatting(cfmt);
 					}
 				} else {
+					cfmt.removeRegion(region); //ZSS-1280
 					region = new CellRegion(expr2.getFormulaString());
 					cfmt.addRegion(region);
 				}
@@ -1015,7 +1019,8 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 		}
 		
 		// update Validation's region (sqref)
-		for (CellRegion region : validation.getRegions()) {
+		final Collection<CellRegion> regions = new ArrayList<CellRegion>(validation.getRegions()); //ZSS-1280 avoid Comodification...
+		for (CellRegion region : regions) { //ZSS-1280
 			String sqref = region.getReferenceString();
 			FormulaParseContext context = new FormulaParseContext(sheet, null); //null ref, no trace dependence here
 			FormulaExpression fexpr = engine.parse(sqref, context);
@@ -1027,6 +1032,7 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 						sheet.deleteDataValidation(validation);
 					}
 				} else {
+					((AbstractDataValidationAdv)validation).removeRegion(region); //ZSS-1280
 					region = new CellRegion(expr2.getFormulaString());
 					((AbstractDataValidationAdv)validation).addRegion(region);
 				}
@@ -1135,7 +1141,8 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 		}
 		
 		// update Conditional's region (sqref)
-		for (CellRegion region : cfmt.getRegions()) {
+		final Collection<CellRegion> regions = new ArrayList<CellRegion>(cfmt.getRegions()); //ZSS-1280 avoid Comodification...		
+		for (CellRegion region : regions) { // ZSS-1280
 			String sqref = region.getReferenceString();
 			FormulaParseContext context = new FormulaParseContext(sheet, null); //null ref, no trace dependence here
 			FormulaExpression fexpr = engine.parse(sqref, context);
@@ -1147,6 +1154,7 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 						sheet.deleteConditionalFormatting(cfmt);
 					}
 				} else {
+					cfmt.removeRegion(region); // ZSS-1280
 					region = new CellRegion(expr2.getFormulaString());
 					cfmt.addRegion(region);
 				}
