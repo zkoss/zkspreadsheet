@@ -2,9 +2,9 @@
 	<label multiline="true">
 Since 3.8.3
 1. Scroll down 10 rows
-2. If you do not see a grey area cover the left-bottom part, it is ok; otherwise, it is a bug.
+2. You should not see a grey area cover part of the left-bottom part; otherwise, it is a bug.
 </label>
-	<spreadsheet id="ss2" src="/issue3/book/1281-greyarea.xlsx" 
-	showToolbar="true" maxVisibleRows="500" maxVisibleColumns="200" hflex="1"
-    vflex="1"/>	
+    <spreadsheet id="ss2" src="/issue3/book/1281-greyarea.xlsx" 
+    showToolbar="true" maxVisibleRows="500" maxVisibleColumns="200" hflex="1"
+    vflex="1"/> 
 </vlayout>
