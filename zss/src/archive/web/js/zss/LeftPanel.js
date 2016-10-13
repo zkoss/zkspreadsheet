@@ -508,13 +508,15 @@ zss.LeftPanel = zk.$extends(zss.Panel, {
 		if (!this.block) return;
 		var height = this.height,
 			toppos = this.toppos,
-			toppad = this.toppad,
-			//ZSS-1117
-			range = this.block.range,
-			top = range.top,
-			bottom = range.bottom;
-		
-		height = this.sheet.custRowHeight.getDiffPixel(top, bottom);//ZSS-1117
+			toppad = this.toppad;
+		// ZSS-1281: grey area; side effect of fixing ZSS-1117; revert
+		height = height - (toppos ? toppos : 0) - (toppad ? toppad : 0);
+//			//ZSS-1117
+//			range = this.block.range,
+//			top = range.top,
+//			bottom = range.bottom;
+//		
+//		height = this.sheet.custRowHeight.getDiffPixel(top, bottom);//ZSS-1117
 		if (height < 0) height = 0;
 		jq(this.block.comp).css('height', jq.px0(height));
 	},
