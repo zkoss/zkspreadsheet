@@ -18,6 +18,7 @@ ZK Spreadsheet 3.9.1
   ZSS-1281 display an unexpected grey area in a file with a frozen panel
   ZSS-1280 Deleting rows causes ConcurrentModificationException
   ZSS-1261 custom sort doesn't show available column when selecting 1 cell
+  ZSS-1256 deleting a row causes ArrayIndexOutOfBoundsException
 
 ** Upgrade Notes
   * Following apis are deprecated:

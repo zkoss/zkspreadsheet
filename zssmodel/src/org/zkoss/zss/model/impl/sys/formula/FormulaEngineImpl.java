@@ -566,7 +566,11 @@ public class FormulaEngineImpl implements FormulaEngine, Serializable {
 			ValueEval[] values = ((ValuesEval)value).getValueEvals();
 			Object[] array = new Object[values.length];
 			for(int i = 0; i < values.length; ++i) {
-				array[i] = getResolvedValue(values[i]).value; //ZSS-810
+				try { //ZSS-1256
+					array[i] = getResolvedValue(values[i]).value; //ZSS-810
+				} catch (EvaluationException ex) { // ZSS-1256: array evaluation should maintain each one
+					array[i] = ErrorValue.valueOf((byte)ex.getErrorEval().getErrorCode());
+				}
 			}
 			return new ResultValueEval(array, value); //ZSS-810
 		} else if(value instanceof AreaEval) {
