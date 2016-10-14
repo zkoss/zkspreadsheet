@@ -1,0 +1,18 @@
+<vlayout hflex="1" vflex="1">
+	<label multiline="true">
+Since 3.9.1
+1. Select B2; right click to open the context menu dialog
+2. Select Sort | Custom Sort to open the Custom Sort dialog
+3. In the dialog, the title shows "Custom Sort - (A1:D71)"; Sort by "Column A"; "From A to Z".
+4. Now click "My data has headers"
+5. In the dialog, the title shows "Custom Sort - (A2:D71)"; Sort by "Name".
+6. Now select Sort by "Age"; should see "Smallest to Largest".
+7. Now select "Sort left to right".
+8. In the dialog, the title shows "Custom Sort - (A1:D71)"; Sort by "Row 2"; disabled "My data has headers"; "From A to Z"
+9. Now select "Sort top to bottom" and "Age"; then press OK.
+10. You should see range A2:D71 sort by "Age" with value 30 at column B from Row2 to Row15.
+</label>
+    <spreadsheet id="ss2" src="/issue3/book/1261-custom-sort.xlsx" showContextMenu="true"
+    showToolbar="true" maxVisibleRows="500" maxVisibleColumns="200" hflex="1"
+    vflex="1"/> 
+</vlayout>

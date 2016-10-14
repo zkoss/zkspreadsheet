@@ -19,6 +19,7 @@ package org.zkoss.zss.range.impl;
 import java.util.List;
 
 import org.zkoss.zss.model.CellRegion;
+import org.zkoss.zss.model.InvalidModelOpException;
 import org.zkoss.zss.model.SCell;
 import org.zkoss.zss.model.SRow;
 import org.zkoss.zss.model.SSheet;
@@ -31,12 +32,26 @@ import org.zkoss.zss.range.SRange;
  * @since 3.5.0
  */
 //these code if from XRangeImpl and migrate to new model
-/*package*/ class DataRegionHelper extends RangeHelperBase{
+public class DataRegionHelper extends RangeHelperBase{ //ZSS-1261
 	
 	public DataRegionHelper(SRange range){
 		super(range);
 	}
-
+	// ZSS-1261: give an API for user to select all range from selecting a cell
+	public CellRegion findCustomSortRegion() {
+		CellRegion currentArea = new CellRegion(getRow(), getColumn(), getLastRow(), getLastColumn());
+		//If it's a single cell range, it has to be extend to a continuous range by looking up the near 8 cells of the single cell.
+		if (isOneCell(sheet,currentArea)){
+			FilterRegionHelper frHelper = new FilterRegionHelper();
+			CellRegion cra = frHelper.findCurrentRegion(sheet, getRow(), getColumn());
+			if (cra == null) { // cannot extend
+				throw new InvalidModelOpException("This cannot be applied to the selected range");
+			}
+			return cra;
+		} else {
+			return currentArea;
+		}
+	}
 	// ZSS-246: give an API for user checking the auto-filtering range before applying it.
 	public CellRegion findAutoFilterDataRegion() {
 		

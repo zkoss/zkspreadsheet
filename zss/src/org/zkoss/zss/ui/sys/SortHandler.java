@@ -23,6 +23,9 @@ import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.AreaRef;
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.Sheet;
+import org.zkoss.zss.model.CellRegion;
+import org.zkoss.zss.range.SRange;
+import org.zkoss.zss.range.impl.DataRegionHelper;
 import org.zkoss.zss.ui.UserActionContext;
 import org.zkoss.zss.ui.impl.ua.AbstractHandler;
 import org.zkoss.zss.ui.impl.undo.SortCellAction;
@@ -46,14 +49,21 @@ public class SortHandler extends AbstractHandler {
 	protected boolean processAction(UserActionContext ctx) {
 		Sheet sheet = ctx.getSheet();
 		AreaRef selection = ctx.getSelection();
-		final Range range = Ranges.range(sheet, selection);
+		//ZSS-1261: select one cell == select all valid range
+		SRange srcrng = Ranges.range(sheet, selection.getRow(), selection.getColumn(), selection.getLastRow(), selection.getLastColumn()).getInternalRange();
+		CellRegion rng = new DataRegionHelper(srcrng).findCustomSortRegion();
+		final AreaRef selection0 = new AreaRef(rng.getRow(),rng.getColumn(),rng.getLastRow(),rng.getLastColumn());
+		
+		final Range range = Ranges.range(sheet, selection0);
 		if (range.isProtected()) {
 			showProtectMessage();
 			return true;
 		}
+		//ZSS-1261: index is based on currently selected cell/range.
+		Range index1 = Ranges.range(sheet, rng.getRow(), selection.getColumn(), rng.getLastRow(), selection.getColumn());
 		UndoableActionManager uam = ctx.getSpreadsheet().getUndoableActionManager();
-		uam.doAction(new SortCellAction(Labels.getLabel("zss.undo.sortAsc"),sheet, selection.getRow(), selection.getColumn(),
-			selection.getLastRow(), selection.getLastColumn(),_desc));
+		uam.doAction(new SortCellAction(Labels.getLabel("zss.undo.sortAsc"),sheet, selection0.getRow(), selection0.getColumn(),
+			selection0.getLastRow(), selection0.getLastColumn(), index1, _desc));
 		ctx.clearClipboard();
 		return true;
 	}

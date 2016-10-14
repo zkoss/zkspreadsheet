@@ -47,7 +47,28 @@ public class SortCellAction extends AbstractCellDataStyleAction {
 	boolean _matchCase; 
 	boolean _sortByRows; 
 	
-	
+	//ZSS-1261: For direct Ascending/Descending sort 
+	public SortCellAction(String label,Sheet sheet,int row, int column, int lastRow,int lastColumn,Range index1, boolean desc1){
+		super(label,sheet,row,column,lastRow,lastColumn,RESERVE_ALL);
+		_simpleMode = false;
+		this._desc = false;
+		
+		_index1 = index1;
+		_desc1 = desc1;
+		_dataOption1 = null;
+		_index2 = null;
+		_desc2 = false;
+		_dataOption2 = null;
+		_index3 = null;
+		_desc3 = false;
+		_dataOption3 = null;
+		_header = false;
+		_matchCase = false;
+		_sortByRows = false;
+		
+	}
+	// This assume the index key is always the 1st column or 1st row which is not very useful.
+	@Deprecated
 	public SortCellAction(String label,Sheet sheet,int row, int column, int lastRow,int lastColumn,boolean desc){
 		super(label,sheet,row,column,lastRow,lastColumn,RESERVE_ALL);
 		_simpleMode = true;
