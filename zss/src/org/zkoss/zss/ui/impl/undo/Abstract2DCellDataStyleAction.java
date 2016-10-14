@@ -58,12 +58,13 @@ public abstract class Abstract2DCellDataStyleAction extends AbstractUndoableActi
 	protected final int _destRow,_destColumn,_destLastRow,_destLastColumn;
 	private Range _pastedRange;
 	protected final boolean _destWholeColumn; //ZSS-717
+	protected final boolean _destWholeRow; //ZSS-1277
 	
-	//ZSS-717
-	//@since 3.8.3
-	public Abstract2DCellDataStyleAction(String label,Sheet sheet,int srcRow, int srcColumn, int srcLastRow,int srcLastColumn,boolean srcWholeColumn,
-			Sheet destSheet,int destRow, int destColumn, int destLastRow,int destLastColumn,boolean destWholeColumn, int reserveType){
-		super(label,sheet,srcRow,srcColumn,srcLastRow,srcLastColumn,srcWholeColumn);
+	//ZSS-1277
+	//@since 3.9.1
+	public Abstract2DCellDataStyleAction(String label,Sheet sheet,int srcRow, int srcColumn, int srcLastRow,int srcLastColumn,boolean srcWholeColumn,boolean srcWholeRow,
+			Sheet destSheet,int destRow, int destColumn, int destLastRow,int destLastColumn,boolean destWholeColumn, boolean destWholeRow, int reserveType){
+		super(label,sheet,srcRow,srcColumn,srcLastRow,srcLastColumn,srcWholeColumn,srcWholeRow);
 		_destSheet = destSheet;
 		_destRow = destRow;
 		_destColumn = destColumn;
@@ -71,12 +72,20 @@ public abstract class Abstract2DCellDataStyleAction extends AbstractUndoableActi
 		_destLastColumn = destLastColumn;
 		_reserveType = reserveType;
 		_destWholeColumn = destWholeColumn;
+		_destWholeRow = destWholeRow; //ZSS-1277
 	}
+	//ZSS-717
+	//@since 3.8.3
 	@Deprecated
+	public Abstract2DCellDataStyleAction(String label,Sheet sheet,int srcRow, int srcColumn, int srcLastRow,int srcLastColumn,boolean srcWholeColumn,
+			Sheet destSheet,int destRow, int destColumn, int destLastRow,int destLastColumn,boolean destWholeColumn, int reserveType){
+		this(label,sheet,srcRow,srcColumn,srcLastRow,srcLastColumn,srcWholeColumn,false,
+				destSheet,destRow,destColumn,destLastRow,destLastColumn,destWholeColumn,false,reserveType);
+	}
 	public Abstract2DCellDataStyleAction(String label,Sheet sheet,int srcRow, int srcColumn, int srcLastRow,int srcLastColumn,
 			Sheet destSheet,int destRow, int destColumn, int destLastRow,int destLastColumn,int reserveType){
-		this(label,sheet,srcRow, srcColumn, srcLastRow,srcLastColumn,false,
-			destSheet,destRow, destColumn, destLastRow,destLastColumn,false,reserveType);
+		this(label,sheet,srcRow, srcColumn, srcLastRow,srcLastColumn,false,false, //ZSS-1277
+			destSheet,destRow, destColumn, destLastRow,destLastColumn,false,false,reserveType); //ZSS-1277
 	}
 	
 	@Override

@@ -39,17 +39,18 @@ public class PasteCellAction extends AbstractCellDataStyleAction {
 	protected final int _reservedDestLastRow,_reservedDestLastColumn;
 	protected final Sheet _destSheet;
 	protected final boolean _destWholeColumn; //ZSS-717
+	protected final boolean _destWholeRow; //ZSS-1277
 	
 	private Range _pastedRange;
 	
 //	private final int rlastRow;
 //	private final int rlastColumn;
-	//ZSS-717
-	//@since 3.8.3
+	// ZSS-1277
+	//@since 3.9.1
 	public PasteCellAction(String label, 
-			Sheet sheet, int srcRow, int srcColumn,int srcLastRow, int srcLastColumn, boolean srcWholeColumn,
-			Sheet destSheet, int destRow, int destColumn,int destLastRow, int destLastColumn, boolean destWholeColumn) {
-		super(label, sheet, srcRow, srcColumn, srcLastRow, srcLastColumn,srcWholeColumn,RESERVE_ALL);
+			Sheet sheet, int srcRow, int srcColumn,int srcLastRow, int srcLastColumn, boolean srcWholeColumn, boolean srcWholeRow,
+			Sheet destSheet, int destRow, int destColumn,int destLastRow, int destLastColumn, boolean destWholeColumn, boolean destWholeRow) {
+		super(label, sheet, srcRow, srcColumn, srcLastRow, srcLastColumn,srcWholeColumn,srcWholeRow,RESERVE_ALL);
 		
 		this._destRow = destRow;
 		this._destColumn = destColumn;
@@ -67,14 +68,24 @@ public class PasteCellAction extends AbstractCellDataStyleAction {
 		
 		this._destSheet = destSheet;
 		this._destWholeColumn = destWholeColumn; //ZSS-717
+		this._destWholeRow = destWholeRow; //ZSS-1277
+	}
+	//ZSS-717
+	//@since 3.8.3
+	@Deprecated
+	public PasteCellAction(String label, 
+			Sheet sheet, int srcRow, int srcColumn,int srcLastRow, int srcLastColumn, boolean srcWholeColumn,
+			Sheet destSheet, int destRow, int destColumn,int destLastRow, int destLastColumn, boolean destWholeColumn) {
+		this(label,sheet,srcRow,srcColumn,srcLastRow,srcLastColumn,srcWholeColumn,false,
+			destSheet, destRow, destColumn, destLastRow,destLastColumn,destWholeColumn, false);
 	}
 	@Deprecated
 	public PasteCellAction(String label, 
 			Sheet sheet, int srcRow, int srcColumn,int srcLastRow, int srcLastColumn, 
 			Sheet destSheet, int destRow, int destColumn,int destLastRow, int destLastColumn) {
 		this(label, 
-			sheet, srcRow, srcColumn, srcLastRow, srcLastColumn, false, 
-			destSheet, destRow, destColumn, destLastRow, destLastColumn, false);
+			sheet, srcRow, srcColumn, srcLastRow, srcLastColumn, false,false,
+			destSheet, destRow, destColumn, destLastRow, destLastColumn, false,false);
 	}
 	
 	@Override
@@ -126,8 +137,8 @@ public class PasteCellAction extends AbstractCellDataStyleAction {
 	
 	protected void applyAction() {
 		//ZSS-717
-		Range src = new RangeImpl(new PasteRangeImpl(_sheet.getInternalSheet(), _row, _column, _lastRow, _lastColumn, false, _wholeColumn), _sheet);
-		Range dest = new RangeImpl(new PasteRangeImpl(_destSheet.getInternalSheet(), _destRow, _destColumn, _destLastRow, _destLastColumn, false, _destWholeColumn), _destSheet);
+		Range src = new RangeImpl(new PasteRangeImpl(_sheet.getInternalSheet(), _row, _column, _lastRow, _lastColumn, _wholeRow, _wholeColumn), _sheet); //ZSS-1277
+		Range dest = new RangeImpl(new PasteRangeImpl(_destSheet.getInternalSheet(), _destRow, _destColumn, _destLastRow, _destLastColumn, _wholeRow, _destWholeColumn), _destSheet); //ZSS-1277
 		_pastedRange = CellOperationUtil.paste(src, dest);
 		
 		CellOperationUtil.fitFontHeightPoints(Ranges.range(_destSheet, dest.getRow(), dest.getColumn(),

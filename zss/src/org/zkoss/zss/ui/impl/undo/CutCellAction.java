@@ -37,21 +37,30 @@ public class CutCellAction extends Abstract2DCellDataStyleAction {
 	protected final int _reservedDestLastRow,_reservedDestLastColumn;
 	private Range _pastedRange;
 	
-	//ZSS-717
-	//@since 3.8.3
-	public CutCellAction(String label,Sheet sheet,int srcRow, int srcColumn, int srcLastRow,int srcLastColumn, boolean srcWholeColumn,
-			Sheet destSheet,int destRow, int destColumn, int destLastRow,int destLastColumn, boolean destWholeColumn){
-		super(label,sheet,srcRow,srcColumn,srcLastRow,srcLastColumn,srcWholeColumn,destSheet,destRow,destColumn,destLastRow,destLastColumn,destWholeColumn,RESERVE_ALL);
+	//ZSS-1277
+	//@since 3.9.1
+	public CutCellAction(String label,Sheet sheet,int srcRow, int srcColumn, int srcLastRow,int srcLastColumn, boolean srcWholeColumn,boolean srcWholeRow,
+			Sheet destSheet,int destRow, int destColumn, int destLastRow,int destLastColumn, boolean destWholeColumn, boolean destWholeRow){
+		super(label,sheet,srcRow,srcColumn,srcLastRow,srcLastColumn,srcWholeColumn,srcWholeRow,
+				destSheet,destRow,destColumn,destLastRow,destLastColumn,destWholeColumn,destWholeRow,RESERVE_ALL);
 		
 		//enlarge it, since xrange did
 		_reservedDestLastRow = _destRow + Math.max(destLastRow-destRow, srcLastRow-srcRow);
 		_reservedDestLastColumn = _destColumn + Math.max(destLastColumn-destColumn, srcLastColumn-srcColumn);
 	}
+	//ZSS-717
+	//@since 3.8.3
+	@Deprecated
+	public CutCellAction(String label,Sheet sheet,int srcRow, int srcColumn, int srcLastRow,int srcLastColumn, boolean srcWholeColumn,
+			Sheet destSheet,int destRow, int destColumn, int destLastRow,int destLastColumn, boolean destWholeColumn){
+		this(label,sheet,srcRow,srcColumn,srcLastRow,srcLastColumn,srcWholeColumn,false,
+				destSheet,destRow,destColumn,destLastRow,destLastColumn,destWholeColumn,false);
+	}
 	@Deprecated
 	public CutCellAction(String label,Sheet sheet,int srcRow, int srcColumn, int srcLastRow,int srcLastColumn,
 			Sheet destSheet,int destRow, int destColumn, int destLastRow,int destLastColumn){
-		this(label,sheet,srcRow, srcColumn, srcLastRow,srcLastColumn,false,
-			destSheet,destRow, destColumn, destLastRow,destLastColumn,false);
+		this(label,sheet,srcRow, srcColumn, srcLastRow,srcLastColumn,false,false,
+			destSheet,destRow, destColumn, destLastRow,destLastColumn,false,false);
 	}
 
 	protected int getReservedDestLastRow(){
@@ -63,8 +72,8 @@ public class CutCellAction extends Abstract2DCellDataStyleAction {
 	
 	protected void applyAction(){
 		//ZSS-717
-		Range src = new RangeImpl(new PasteRangeImpl(_sheet.getInternalSheet(), _row, _column, _lastRow, _lastColumn, false, _wholeColumn), _sheet);
-		Range dest = new RangeImpl(new PasteRangeImpl(_destSheet.getInternalSheet(), _destRow, _destColumn, _destLastRow, _destLastColumn, false, _destWholeColumn), _destSheet);
+		Range src = new RangeImpl(new PasteRangeImpl(_sheet.getInternalSheet(), _row, _column, _lastRow, _lastColumn, _wholeRow, _wholeColumn), _sheet); //ZSS-1277
+		Range dest = new RangeImpl(new PasteRangeImpl(_destSheet.getInternalSheet(), _destRow, _destColumn, _destLastRow, _destLastColumn, _wholeRow, _destWholeColumn), _destSheet); //ZSS-1277
 		_pastedRange = CellOperationUtil.cut(src, dest);
 		
 		CellOperationUtil.fitFontHeightPoints(Ranges.range(_destSheet, dest.getRow(), dest.getColumn(),  

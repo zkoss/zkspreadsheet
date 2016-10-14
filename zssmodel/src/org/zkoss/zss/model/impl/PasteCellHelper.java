@@ -40,9 +40,11 @@ import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.SCell;
 import org.zkoss.zss.model.SCell.CellType;
 import org.zkoss.zss.model.SCellStyle;
+import org.zkoss.zss.model.SColumn;
 import org.zkoss.zss.model.SConditionalFormatting;
 import org.zkoss.zss.model.SConditionalFormattingRule;
 import org.zkoss.zss.model.SDataValidation;
+import org.zkoss.zss.model.SRow;
 import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.model.SheetRegion;
 import org.zkoss.zss.model.impl.sys.formula.ParsingBook;
@@ -68,6 +70,58 @@ public class PasteCellHelper implements Serializable {
 		this._destSheet = destSheet;
 		this._book = destSheet.getBook();
 		_defaultStyle = _book.getDefaultCellStyle();
+	}
+	//ZSS-1277
+	private static class HeightInfo {
+		int height;
+		boolean custom;
+		HeightInfo(int h, boolean c) {
+			this.height = h;
+			this.custom = c;
+		}
+	}
+	//ZSS-1277
+	private CellRegion pasteRowHeights(SheetRegion src, CellRegion dest, int destRowCount) {
+		List<HeightInfo> heightBuffer = prepareRowHeight(src);
+		int srcRowCount = heightBuffer.size();
+		boolean wrongRowMultiple = (destRowCount>1 && destRowCount%srcRowCount!=0);
+		if (wrongRowMultiple) {
+			throw new InvalidModelOpException("The operation can only be applied on the Paste area which is the Same size and shape of the Copy/Cut area"); //ZSS-988			
+		}
+		int rowMultiple = destRowCount<=1||wrongRowMultiple?1:destRowCount/srcRowCount;
+		for(int j=0;j<rowMultiple;j++){
+				int rowMultipleOffset = j*srcRowCount;
+				CellRegion destRegion = new CellRegion(dest.getRow()+rowMultipleOffset,dest.getColumn(),
+						dest.getRow()+srcRowCount-1+rowMultipleOffset,dest.getColumn());
+				pasteRowHeight(heightBuffer,destRegion);
+		}
+		return new CellRegion(dest.getRow(),0,dest.getRow()+srcRowCount*rowMultiple-1,_destSheet.getBook().getMaxColumnIndex());
+	}
+	//ZSS-1277
+	//We don't notify the real effected region; rather we notify the whole 
+	// source range to simplified the program (see RangeImpl#pastSpecial0())
+	private void cutRowHeights(SheetRegion src, CellRegion dest, int srcRowCount, int destRowCount) {
+		boolean wrongRowMultiple = (destRowCount>1 && destRowCount%srcRowCount!=0);
+		if (wrongRowMultiple) {
+			throw new InvalidModelOpException("The operation can only be applied on the Paste area which is the Same size and shape of the Copy/Cut area"); //ZSS-988			
+		}
+		dest = destRowCount<=1||wrongRowMultiple ? 
+				new CellRegion(dest.getRow(), dest.getColumn(), dest.getRow()+srcRowCount-1, dest.getColumn()) 
+				: dest;  
+
+		final SSheet srcSheet  = src.getSheet();
+		final int defaultHeight = srcSheet.getDefaultRowHeight();
+		final int destRow1 = dest.getRow();
+		final int destRow2 = dest.getLastRow();
+		for (int j = src.getRow(), len = src.getLastRow(); j <= len; ++j) {
+			if (destRow1 <= j && j <= destRow2) { //should skip overlapped row
+				continue;
+			}
+			SRow srow = srcSheet.getRow(j);
+			srow.setHeight(defaultHeight);
+			srow.setCustomHeight(false);
+			srow.setHidden(false);
+		}
 	}
 	//ZSS-717
 	private CellRegion pasteColumnWidths(SheetRegion src, CellRegion dest, int destColCount) {
@@ -103,39 +157,16 @@ public class PasteCellHelper implements Serializable {
 		final int defaultWidth = srcSheet.getDefaultColumnWidth();
 		final int destCol1 = dest.getColumn();
 		final int destCol2 = dest.getLastColumn();
-//		int effCol1 = -1;
-//		int effCol2 = -1;
-//		int effCol3 = -1;
-//		int effCol4 = -1;
-//		boolean overlap = false;
 		for (int j = src.getColumn(), len = src.getLastColumn(); j <= len; ++j) {
 			if (destCol1 <= j && j <= destCol2) { //should skip overlapped column
-//				overlap = true;
 				continue;
 			}
-//			if (!overlap) {
-//				if (effCol1 < 0) {
-//					effCol1 = effCol2 = j;
-//				} else if (effCol2 < j) {
-//					effCol2 = j;
-//				}
-//			} else {
-//				if (effCol3 < 0) {
-//					effCol3 = effCol4 = j;
-//				} else if (effCol4 < j) {
-//					effCol4 = j;
-//				}
-//			}
-			srcSheet.getColumn(j).setWidth(defaultWidth);
+			//ZSS-1277: cut should unhide
+			SColumn scol = srcSheet.getColumn(j);
+			scol.setWidth(defaultWidth);
+			scol.setCustomWidth(false);
+			scol.setHidden(false);
 		}
-//		List<CellRegion> effected = new ArrayList<CellRegion>(4);
-//		if (effCol1 >= 0) {
-//			effected.add(new CellRegion(0, effCol1, 0, effCol2));  
-//		}
-//		if (effCol3 >= 0) {
-//			effected.add(new CellRegion(0, effCol3, 0, effCol4));
-//		}
-//		return effected;
 	}
 	
 	public CellRegion pasteCell(SheetRegion src, CellRegion dest, PasteOption option) {
@@ -162,11 +193,18 @@ public class PasteCellHelper implements Serializable {
 		if (wrongColSize) {
 			throw new InvalidModelOpException("The operation can only be applied on the Paste area which is the Same size and shape of the Copy/Cut area"); //ZSS-988			
 		}
-		
+		//ZSS-1277
+		final boolean wrongRowSize = (src instanceof PasteSheetRegion ? ((PasteSheetRegion)src).isWholeRow() : false)
+			&& dest.getColumn() != 0;
+		if (wrongRowSize) {
+			throw new InvalidModelOpException("The operation can only be applied on the Paste area which is the Same size and shape of the Copy/Cut area"); //ZSS-988			
+		}
 		//ZSS-717
 		final boolean wholeColumn = (src instanceof PasteSheetRegion ? ((PasteSheetRegion)src).isWholeColumn() : false)
 				&& dest.getRow() == 0;
-		
+		//ZSS-1277
+		final boolean wholeRow = !wholeColumn && (src instanceof PasteSheetRegion ? ((PasteSheetRegion)src).isWholeRow() : false)
+				&& dest.getColumn() == 0;
 		if(option.getPasteType()==PasteType.COLUMN_WIDTHS){
 			if(option.isCut()){
 				throw new InvalidModelOpException("can't do cut when copying column width");
@@ -178,6 +216,8 @@ public class PasteCellHelper implements Serializable {
 			//ZSS-717
 			if (wholeColumn) {
 				pasteColumnWidths(src, dest, destColCount);
+			} else if (wholeRow) { //ZSS-1277
+				pasteRowHeights(src, dest, destRowCount);
 			}
 		}
 		
@@ -218,6 +258,8 @@ public class PasteCellHelper implements Serializable {
 			//ZSS-717
 			if (wholeColumn) {
 				cutColumnWidths(src, dest, src.getColumnCount(), destColCount);
+			} else if (wholeRow) { //ZSS-1277
+				cutRowHeights(src, dest, src.getRowCount(), destRowCount);
 			}
 		}
 		
@@ -435,7 +477,29 @@ public class PasteCellHelper implements Serializable {
 				pasteType == PasteType.ALL_EXCEPT_BORDERS ||
 				pasteType == PasteType.FORMATS;
 	}
-
+	//ZSS-1277
+	private void pasteRowHeight(List<HeightInfo> heightBuffer, CellRegion dest) {
+		int row = dest.getRow();
+		int lastRow = dest.getLastRow();
+		for (int c = row; c <= lastRow;c++){
+			final HeightInfo info = heightBuffer.get(c-row);
+			final SRow srow = _destSheet.getRow(c);
+			srow.setHeight(info.height);
+			srow.setCustomHeight(info.custom);
+		}
+	}
+	//ZSS-1277
+	private List<HeightInfo> prepareRowHeight(SheetRegion src){
+		int row = src.getRow();
+		int lastRow = src.getLastRow();
+		List<HeightInfo> heightBuffer = new ArrayList<HeightInfo>();
+		SSheet srcSheet = src.getSheet();
+		for(int c = row; c <= lastRow;c++){
+			final SRow srow = srcSheet.getRow(c);
+			heightBuffer.add(new HeightInfo(srow.getHeight(), srow.isCustomHeight()));
+		}
+		return heightBuffer;
+	}
 
 	private int[] prepareColumnWidth(SheetRegion src){
 		int column = src.getColumn();

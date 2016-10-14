@@ -98,13 +98,13 @@ public class PasteHandler extends AbstractHandler {
 		
 		if(cb.isCutMode()){
 			uam.doAction(new CutCellAction(Labels.getLabel("zss.undo.cut"),
-				srcSheet, srcRange.getRow(), srcRange.getColumn(),srcRange.getLastRow(), srcRange.getLastColumn(),srcRange.isWholeColumn(), 
-				destSheet, destRange.getRow(), destRange.getColumn(),destRange.getLastRow(), destRange.getLastColumn(),destRange.isWholeColumn()));
+				srcSheet, srcRange.getRow(), srcRange.getColumn(),srcRange.getLastRow(), srcRange.getLastColumn(),srcRange.isWholeColumn(),srcRange.isWholeRow(), //ZSS-1277
+				destSheet, destRange.getRow(), destRange.getColumn(),destRange.getLastRow(), destRange.getLastColumn(),destRange.isWholeColumn(),destRange.isWholeRow())); //ZSS-1277
 			ctx.clearClipboard();
 		}else{
 			uam.doAction(new PasteCellAction(Labels.getLabel("zss.undo.paste"),
-				srcSheet, srcRange.getRow(), srcRange.getColumn(),srcRange.getLastRow(), srcRange.getLastColumn(),srcRange.isWholeColumn(), 
-				destSheet, destRange.getRow(), destRange.getColumn(),destRange.getLastRow(), destRange.getLastColumn(),destRange.isWholeColumn()));
+				srcSheet, srcRange.getRow(), srcRange.getColumn(),srcRange.getLastRow(), srcRange.getLastColumn(),srcRange.isWholeColumn(),srcRange.isWholeRow(), //ZSS-1277
+				destSheet, destRange.getRow(), destRange.getColumn(),destRange.getLastRow(), destRange.getLastColumn(),destRange.isWholeColumn(),destRange.isWholeRow())); //ZSS-1277
 		}
 		return true;
 	}

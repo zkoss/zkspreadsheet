@@ -50,15 +50,21 @@ public abstract class AbstractCellDataStyleAction extends AbstractUndoableAction
 	ReservedResult _oldReserve;
 	ReservedResult _newReserve;
 
-	//ZSS-717
-	//@since 3.8.3
-	public AbstractCellDataStyleAction(String label,Sheet sheet,int row, int column, int lastRow,int lastColumn, boolean wholeColumn, int reserveType){
-		super(label,sheet,row,column,lastRow,lastColumn,wholeColumn);
+	//ZSS-1277
+	//@since 3.9.1
+	public AbstractCellDataStyleAction(String label,Sheet sheet,int row, int column, int lastRow,int lastColumn, 
+			boolean wholeColumn, boolean wholeRow, int reserveType){
+		super(label,sheet,row,column,lastRow,lastColumn,wholeColumn,wholeRow);
 		this._reserveType=reserveType;
 	}
+	//ZSS-717
+	//@since 3.8.3
 	@Deprecated
+	public AbstractCellDataStyleAction(String label,Sheet sheet,int row, int column, int lastRow,int lastColumn, boolean wholeColumn, int reserveType){
+		this(label,sheet,row,column,lastRow,lastColumn,wholeColumn, false, reserveType); //ZSS-1277
+	}
 	public AbstractCellDataStyleAction(String label,Sheet sheet,int row, int column, int lastRow,int lastColumn,int reserveType){
-		this(label,sheet,row, column, lastRow,lastColumn,false, reserveType);
+		this(label,sheet,row, column, lastRow,lastColumn,false,false,reserveType); //ZSS-1277
 	}
 	
 	protected int getReservedRow(){

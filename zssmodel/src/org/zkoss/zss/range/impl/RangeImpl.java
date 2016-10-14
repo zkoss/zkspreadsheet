@@ -881,8 +881,8 @@ public class RangeImpl implements SRange, Serializable {
 		return (SRange)new ModelManipulationTask(){
 			@Override
 			protected Object doInvoke() {
-				CellRegion effected = dstRange.getSheet().pasteCell(new PasteSheetRegion(getSheet(),getRow(),getColumn(),getLastRow(),getLastColumn(),isWholeColumn()), 
-						new PasteCellRegion(dstRange.getRow(),dstRange.getColumn(),dstRange.getLastRow(),dstRange.getLastColumn(),dstRange.isWholeColumn()),
+				CellRegion effected = dstRange.getSheet().pasteCell(new PasteSheetRegion(getSheet(),getRow(),getColumn(),getLastRow(),getLastColumn(),isWholeColumn(),isWholeRow()), //ZSS-1277 
+						new PasteCellRegion(dstRange.getRow(),dstRange.getColumn(),dstRange.getLastRow(),dstRange.getLastColumn(),dstRange.isWholeColumn(),dstRange.isWholeRow()), //ZSS-1277
 						option);
 				effectedRegion.set(effected);
 				return new RangeImpl(getSheet(),effected.getRow(),effected.getColumn(),effected.getLastRow(),effected.getLastColumn());
@@ -891,7 +891,9 @@ public class RangeImpl implements SRange, Serializable {
 			protected void doBeforeNotify() {
 				//ZSS-717
 				final PasteOption.PasteType ptype = option.getPasteType();
-				final boolean wholeColumn = dstRange.getRow() == 0 && isWholeColumn(); 
+				final boolean wholeColumn = dstRange.getRow() == 0 && isWholeColumn();
+				final boolean wholeRow = dstRange.getColumn() == 0 && isWholeRow(); //ZSS-1277
+				// notify destination
 				if (ptype==PasteOption.PasteType.COLUMN_WIDTHS ||
 					((ptype==PasteOption.PasteType.ALL || ptype==PasteOption.PasteType.ALL_EXCEPT_BORDERS) 
 							&& wholeColumn)) {
@@ -901,18 +903,34 @@ public class RangeImpl implements SRange, Serializable {
 					final int col = effected.getColumn();
 					final int lastCol = effected.getLastColumn();
 					handleNotifyRowColumnSizeChange(new SheetRegion(dstRange.getSheet(),row,col,lastRow,lastCol)); //ZSS-1115
+				} else if (wholeRow) { //ZSS-1277
+					CellRegion effected = effectedRegion.get();
+					final int row = effected.getRow();
+					final int lastRow = effected.getLastRow();
+					final int col = effected.getColumn();
+					final int lastCol = dstRange.getSheet().getBook().getMaxColumnIndex(); //ZSS-1277 enforce whole row
+					handleNotifyRowColumnSizeChange(new SheetRegion(dstRange.getSheet(),row,col,lastRow,lastCol)); //ZSS-1115
 				}
-				//ZSS-717
-				if (option.isCut() && wholeColumn) {
-					final int row = getRow();
-					final SSheet srcSheet = getSheet(); 
-					final int lastRow = srcSheet.getBook().getMaxRowIndex(); //ZSS-717 enforce whole column
-					final int col = getColumn();
-					final int lastCol = getLastColumn();
-					handleNotifyRowColumnSizeChange(new SheetRegion(srcSheet,row,col,lastRow,lastCol));
+
+				//ZSS-717: notify source if cut
+				if (option.isCut()) {
+					if (wholeColumn) {
+						final int row = getRow();
+						final SSheet srcSheet = getSheet(); 
+						final int lastRow = srcSheet.getBook().getMaxRowIndex(); //ZSS-717 enforce whole column
+						final int col = getColumn();
+						final int lastCol = getLastColumn();
+						handleNotifyRowColumnSizeChange(new SheetRegion(srcSheet,row,col,lastRow,lastCol));
+					} else if (wholeRow) { //ZSS-1277
+						final int row = getRow();
+						final SSheet srcSheet = getSheet(); 
+						final int lastRow = getLastRow();
+						final int col = getColumn();
+						final int lastCol = srcSheet.getBook().getMaxColumnIndex(); //ZSS-1277 enforce whole row
+						handleNotifyRowColumnSizeChange(new SheetRegion(srcSheet,row,col,lastRow,lastCol));
+					}
 				}
 			}
-			
 		}.doInWriteLock(getLock());		
 		
 	}

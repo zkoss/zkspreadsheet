@@ -19,11 +19,22 @@ package org.zkoss.zss.model;
  */
 public class PasteSheetRegion extends SheetRegion {
 	final private boolean _wholeColumn;
-	public PasteSheetRegion(SSheet sheet,int row, int column, int lastRow, int lastColumn, boolean wholeColumn){
+	final private boolean _wholeRow; //ZSS-1277
+	//ZSS-1277
+	public PasteSheetRegion(SSheet sheet,int row, int column, int lastRow, int lastColumn, boolean wholeColumn, boolean wholeRow){
 		super(sheet,row, column, lastRow, lastColumn);
 		_wholeColumn = wholeColumn;
+		_wholeRow = wholeRow;
+	}
+	@Deprecated
+	public PasteSheetRegion(SSheet sheet,int row, int column, int lastRow, int lastColumn, boolean wholeColumn){
+		this(sheet, row, column, lastRow, lastColumn, wholeColumn, false);
 	}
 	public boolean isWholeColumn() {
 		return _wholeColumn;
+	}
+	//ZSS-1277
+	public boolean isWholeRow() {
+		return _wholeRow;
 	}
 }

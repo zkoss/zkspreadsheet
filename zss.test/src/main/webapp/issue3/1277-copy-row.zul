@@ -1,0 +1,24 @@
+<vbox hflex="1" height="100%">
+	<label multiline="true">
+Since 3.9.1
+1. Select row 2
+2. Right click to pop context menu; select Copy
+3. Select cell B3
+4. Right click to pop context menu; select Paste
+5. Should see a warning window saying: "Cannot perform this operation on current selection: The operation can only be applied on the Paste area which..."
+6. Select row 3
+7. Right click to pop context menu; select Paste. You should see value and row height of row 2 copy to row 3
+8. Select cell A4; right click and select Paste.  You should see value and row height of row 2 copy to row 4 (no warning window)
+9. Select cell A5; press CTRL-V. You should see value and row height of row 2 copy to row 5 (no warning window)
+10. Select row 2; right click and select Cut.
+11. Select cell B6; right click and select Paste. Should see the warning window.
+12. Select row 6; right click and select Paste. You should see value and row height of row 2 copy to row 6. The row 2 is cleared and row 2 height is reset to default height.
+13. Select row 3; right click and select Cut.
+14. Select cell A7;  right click and select Paste. You should see value and row height of row 3 copy to row 7. The row 3 is cleared and row 3 height is reset to default height.
+15. Select row 4; right click and select Cut.
+16. Select row 8; press CTRL-V. You should see value and row height of row 4 copy to row 8. The row 4 is cleared and row 4 height is reset to default height.
+	</label>
+	<spreadsheet id="ss" src="/issue3/book/1277-copy-row.xlsx" maxVisibleRows="60" maxVisibleColumns="40"
+		hflex="1" height="500px" showContextMenu="true" showSheetbar="true" showToolbar="true" 
+		showFormulabar="true" />
+</vbox>

@@ -37,9 +37,10 @@ abstract public class AbstractUndoableAction implements UndoableAction, Serializ
 	protected final Sheet _sheet;
 	protected final int _row,_column,_lastRow,_lastColumn;
 	protected final boolean _wholeColumn;
-	//ZSS-717
-	//@since 3.8.3
-	public AbstractUndoableAction(String label,Sheet sheet,int row, int column, int lastRow,int lastColumn, boolean wholeColumn){
+	protected final boolean _wholeRow; //ZSS-1277
+	//ZSS-1277
+	//@since 3.9.1
+	public AbstractUndoableAction(String label,Sheet sheet,int row, int column, int lastRow,int lastColumn, boolean wholeColumn,boolean wholeRow){
 		this._label = label;
 		this._sheet = sheet;
 		this._row = row;
@@ -47,10 +48,16 @@ abstract public class AbstractUndoableAction implements UndoableAction, Serializ
 		this._lastRow = lastRow;
 		this._lastColumn = lastColumn;
 		this._wholeColumn = wholeColumn;
+		this._wholeRow = wholeRow; //ZSS-1277
 	}
+	//ZSS-717
+	//@since 3.8.3
 	@Deprecated
+	public AbstractUndoableAction(String label,Sheet sheet,int row, int column, int lastRow,int lastColumn, boolean wholeColumn){
+		this(label,sheet,row,column,lastRow,lastColumn,wholeColumn,false); //ZSS-1277
+	}
 	public AbstractUndoableAction(String label,Sheet sheet,int row, int column, int lastRow,int lastColumn){
-		this(label,sheet,row, column, lastRow,lastColumn, false);
+		this(label,sheet,row, column, lastRow,lastColumn, false, false); //ZSS-1277
 	}
 	
 	public String getLabel(){

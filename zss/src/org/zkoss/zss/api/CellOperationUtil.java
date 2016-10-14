@@ -40,6 +40,7 @@ import org.zkoss.zss.api.model.impl.EnumUtil;
 import org.zkoss.zss.model.SCell;
 import org.zkoss.zss.model.SCellStyle;
 import org.zkoss.zss.model.SRichText.Segment;
+import org.zkoss.zss.model.SRow;
 import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.model.impl.AbstractRichTextAdv;
 import org.zkoss.zss.model.impl.AbstractCellAdv;
@@ -232,6 +233,11 @@ public class CellOperationUtil {
 		Sheet sheet = range.getSheet();
 		
 		for(;row <= endRow; row++) {
+			//ZSS-1277: a row with custom height; no way to change it
+			final SRow srow = sheet.getInternalSheet().getRow(row);
+			if (srow.isCustomHeight()) {
+				continue;
+			}
 			int highest = 0;
 			int col = range.getColumn();
 			int endCol = range.getLastColumn();
@@ -248,11 +254,10 @@ public class CellOperationUtil {
 				
 			}
 			
-			int fpx = UnitUtil.pointToPx(highest);
+			int fpx = UnitUtil.pointToPx(highest) + 4; //4 is padding
 			int px = sheet.getRowHeight(row);
-			
 			if(fpx>px) {
-				Ranges.range(range.getSheet(), row, endCol).setRowHeight(fpx+4, false);//4 is padding
+				Ranges.range(range.getSheet(), row, endCol).setRowHeight(fpx, false);
 			}
 		}
 	}
