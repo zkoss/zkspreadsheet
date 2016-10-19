@@ -8,7 +8,8 @@ ZK Spreadsheet 3.9.1
   ZSS-1235 Support those statistical functions renamed in Excel 2010: BINOM.DIST,CHISQ.DIST.RT,CHISQ.INV.RT,
            EXPON.DIST,F.DIST.RT,F.INV.RT,GAMMA.DIST,GAMMA.INV,HYPGEOM.DIST,MODE.SNGL,NORM.DIST,POISSON.DIST,
 		   RANK.EQ,STDEV.S,STDEV.P,T.INV.2T,VAR.P,VAR.S,WEIBULL.DIST		   
-
+  ZSS-1236 Support T.DIST.2T and T.DIST.RT from Excel 2010
+  
 *Bugs:
   ZSS-1266 Cannot select an item in a validation dropdown
   ZSS-1260 The validation dropdown doesn't appear in the last column

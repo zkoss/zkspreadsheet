@@ -1,0 +1,10 @@
+<vlayout hflex="1" vflex="1">
+	<label multiline="true">
+Since 3.9.1
+1. The value in B column and C column should be the same.
+2. The value in even row and odd row should be the same.
+</label>
+    <spreadsheet id="ss2" src="/issue3/book/1236-tdist.xlsx" showContextMenu="true"
+    showToolbar="true" showFormulabar="true" maxVisibleRows="500" maxVisibleColumns="200" hflex="1"
+    vflex="1"/> 
+</vlayout>
