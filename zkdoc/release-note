@@ -2,7 +2,10 @@ ZK Spreadsheet 3.9.1
 *Features:
   ZSS-1267 Show busy message for client-side rendering
   ZSS-1274 Support F2 to toggle arrow keys's function when editing formula
-  
+  ZSS-1210 Support Excel 2010 statistical functions: BINOM.INV,NORM.INV,LOGNORM.DIST,LOGNORM.INV,
+		   BETADIST,BETAINV,CRITBINOM,CHISQ.DIST,CHISQ.INV,CORREL,EXPONDIST,LOGINV,NORMDIST,
+		   NEGBINOMDIST,POISSON,POISSON.INV
+
 *Bugs:
   ZSS-1266 Cannot select an item in a validation dropdown
   ZSS-1260 The validation dropdown doesn't appear in the last column
@@ -19,7 +22,7 @@ ZK Spreadsheet 3.9.1
   ZSS-1280 Deleting rows causes ConcurrentModificationException
   ZSS-1261 custom sort doesn't show available column when selecting 1 cell
   ZSS-1256 deleting a row causes ArrayIndexOutOfBoundsException
-  ZSS-1277 copy the whole row doesn't copy the row heigh
+  ZSS-1277 copy the whole row doesn't copy the row height
 
 ** Upgrade Notes
   * Following apis are deprecated:
