@@ -5,7 +5,7 @@
 	<groupId>org.zkoss.zss</groupId>
 	<artifactId>zss</artifactId>
 	<properties>
-		<zk.version>8.0.2.1</zk.version>
+		<zk.version>8.0.1.1</zk.version>
 		<zpoi.version>3.9.12-SNAPSHOT</zpoi.version>
 		<commons-math.version>2.2</commons-math.version>
 		<servlet.version>2.4</servlet.version>
