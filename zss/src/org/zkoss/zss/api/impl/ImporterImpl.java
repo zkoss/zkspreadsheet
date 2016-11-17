@@ -55,18 +55,16 @@ public class ImporterImpl implements Importer, Serializable {
 		if(bookName == null){
 			throw new IllegalArgumentException("null book name");
 		}
-		BookImpl book = null;
-		try {
-			book = new BookImpl(new SimpleRef<SBook>(_importer.imports(is, bookName)));
-			if (postImport != null) {
+		BookImpl book = new BookImpl(new SimpleRef<SBook>(_importer.imports(is, bookName)));
+		if (postImport != null) {
+			try {
+				((AbstractBookAdv)book.getNative()).setPostProcessing(true);
 				postImport.process(book);
-			}
-			return book;
-		} finally {
-			if (book != null) {
+			} finally {
 				((AbstractBookAdv)book.getNative()).setPostProcessing(false);
 			}
 		}
+		return book;
 	}
 
 	public SImporter getNative() {

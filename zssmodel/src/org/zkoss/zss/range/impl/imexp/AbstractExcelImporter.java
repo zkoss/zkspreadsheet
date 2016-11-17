@@ -172,6 +172,8 @@ abstract public class AbstractExcelImporter extends AbstractImporter implements 
 		} finally {
 			book.getBookSeries().setAutoFormulaCacheClean(isCacheClean);
 			Locales.setThreadLocal(old);
+			//ZSS-1283
+			((AbstractBookAdv)book).setPostProcessing(false);
 		}
 
 		return book;
