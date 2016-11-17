@@ -2010,17 +2010,25 @@ public class RangeImpl implements SRange, Serializable {
 	public void sort(final SRange key1, final boolean descending1, final SortDataOption dataOption1, final SRange key2, final boolean descending2,
 			final SortDataOption dataOption2, final SRange key3, final boolean descending3, final SortDataOption dataOption3,
 			final int hasHeader, final boolean matchCase,final boolean sortByRows) {
-		new ModelManipulationTask() {			
-			@Override
-			protected Object doInvoke() {
-				new SortHelper(RangeImpl.this).sort(key1, descending1, dataOption1, key2, descending2, dataOption2,
-					key3, descending3, dataOption3, hasHeader, matchCase, sortByRows);
-				return null;
+		final boolean old = this.setAutoRefresh(false); // ZSS-1262
+		try {
+			new ModelManipulationTask() {			
+				@Override
+				protected Object doInvoke() {
+					new SortHelper(RangeImpl.this).sort(key1, descending1, dataOption1, key2, descending2, dataOption2,
+						key3, descending3, dataOption3, hasHeader, matchCase, sortByRows);
+					return null;
+				}
+	
+				@Override
+				protected void doBeforeNotify() {}
+			}.doInWriteLock(getLock());
+		} finally {
+			if (old) { // if user want auto refresh
+				this.notifyChange(); // ZSS-1262
 			}
-
-			@Override
-			protected void doBeforeNotify() {}
-		}.doInWriteLock(getLock());			
+			this.setAutoRefresh(old); // ZSS-1262
+		}
 	}
 
 	//ZSS-294

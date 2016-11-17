@@ -1,0 +1,22 @@
+<zk>
+<vlayout vflex="1">
+    <label multiline="true">
+Since 3.9.1
+1. Open the develop tools and profile timeline
+2. Press `sort` button and profile the sorting time(remember the time)
+3. F5 to refresh
+4. Press `sort-manual notify` button and profile the sorting time
+5. Compare the time at step 2 and step4; they should be about the same.
+    </label>
+	<window hflex="1" vflex="1" apply="zss.issue.Composer1262SortPerformance">
+		<button id="sort" label="sort" />
+		<button id="sort2" label="sort - manual notify" />
+			<spreadsheet id="ss" hflex="1" vflex="1"
+				showFormulabar="true" showContextMenu="true" showToolbar="true"
+				showSheetbar="true" maxVisibleRows="166" maxVisibleColumns="34"
+			    maxRenderedCellSize="9000" preloadColumnSize="24" preloadRowSize="80" ignoreAutoHeight="true"
+				src="/issue3/book/1262-sort-performance.xlsx" />
+	
+	</window>
+</vlayout>
+</zk>
