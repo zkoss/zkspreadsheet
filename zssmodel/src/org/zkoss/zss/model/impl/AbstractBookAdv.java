@@ -100,4 +100,11 @@ public abstract class AbstractBookAdv implements SBook,EvaluationContributorCont
 	//ZSS-1183
 	//@since 3.9.0
 	/*package*/ abstract STableStyle getOrCreateTableStyle(STableStyle src);
+	//ZSS-1283
+	//Returns whether this book is in post import processing. In this life 
+	//cycle, none of Range.xxx() methods will do clear cell cache and do auto
+	//refresh and thus speed up data population.
+	//@since 3.9.1
+	public abstract boolean isPostProcessing();
+	public abstract void setPostProcessing(boolean b);
 }

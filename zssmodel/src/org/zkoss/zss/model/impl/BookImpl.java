@@ -131,7 +131,8 @@ public class BookImpl extends AbstractBookAdv{
 	private String _defaultPivotStyle; //default pivot style name; since 3.8.3
 	//ZSS-992
 	private String _defaultTableStyle; //default table style name; since 3.8.3
-	
+	//ZSS-1283
+	private boolean _inPostProcessing = true; // whether the book is in post import processing cycle
 	/**
 	 * the sheet which is destroying now.
 	 */
@@ -300,7 +301,10 @@ public class BookImpl extends AbstractBookAdv{
 		//create formula cache for any sheet, sheet name, position change
 		EngineFactory.getInstance().createFormulaEngine().clearCache(new FormulaClearContext(this));
 
-		ModelUpdateUtil.handlePrecedentUpdate(getBookSeries(),new RefImpl(sheet, -1));
+		//ZSS-1283
+		if (!this.isPostProcessing()) {
+			ModelUpdateUtil.handlePrecedentUpdate(getBookSeries(),new RefImpl(sheet, -1));
+		}
 
 		return sheet;
 	}
@@ -321,8 +325,11 @@ public class BookImpl extends AbstractBookAdv{
 		//create formula cache for any sheet, sheet name, position change
 		EngineFactory.getInstance().createFormulaEngine().clearCache(new FormulaClearContext(this));
 		
-		ModelUpdateUtil.handlePrecedentUpdate(getBookSeries(),new RefImpl(this.getBookName(),newname, index));//to clear the cache of formula that has unexisted name
-		ModelUpdateUtil.handlePrecedentUpdate(getBookSeries(),new RefImpl(this.getBookName(),oldname, index));
+		//ZSS-1283
+		if (!this.isPostProcessing()) {
+			ModelUpdateUtil.handlePrecedentUpdate(getBookSeries(),new RefImpl(this.getBookName(),newname, index));//to clear the cache of formula that has unexisted name
+			ModelUpdateUtil.handlePrecedentUpdate(getBookSeries(),new RefImpl(this.getBookName(),oldname, index));
+		}
 		
 		renameSheetFormula(oldname,newname,index);
 	}
@@ -456,7 +463,10 @@ public class BookImpl extends AbstractBookAdv{
 //		sendModelInternalEvent(ModelInternalEvents.createModelInternalEvent(ModelInternalEvents.ON_SHEET_DELETED, 
 //				this,ModelInternalEvents.createDataMap(ModelInternalEvents.PARAM_SHEET_OLD_INDEX, index)));
 		
-		ModelUpdateUtil.handlePrecedentUpdate(getBookSeries(),new RefImpl(this.getBookName(),sheet.getSheetName(), index));
+		//ZSS-1283
+		if (!this.isPostProcessing()) {
+			ModelUpdateUtil.handlePrecedentUpdate(getBookSeries(),new RefImpl(this.getBookName(),sheet.getSheetName(), index));
+		}
 		
 		renameSheetFormula(oldName, null, index);
 		
@@ -491,10 +501,12 @@ public class BookImpl extends AbstractBookAdv{
 		//create formula cache for any sheet, sheet name, position change
 		EngineFactory.getInstance().createFormulaEngine().clearCache(new FormulaClearContext(this));
 
-		ModelUpdateUtil.handlePrecedentUpdate(getBookSeries(),new RefImpl(this.getBookName(),sheet.getSheetName(), index));
-		//ZSS-1049: should consider formulas that referred to the old index 
-		ModelUpdateUtil.handlePrecedentUpdate(getBookSeries(),new RefImpl(this.getBookName(),sheet.getSheetName(), oldindex));
-		
+		//ZSS-1283
+		if (!this.isPostProcessing()) {		
+			ModelUpdateUtil.handlePrecedentUpdate(getBookSeries(),new RefImpl(this.getBookName(),sheet.getSheetName(), index));
+			//ZSS-1049: should consider formulas that referred to the old index 
+			ModelUpdateUtil.handlePrecedentUpdate(getBookSeries(),new RefImpl(this.getBookName(),sheet.getSheetName(), oldindex));
+		}
 		// adjust sheet index
 		moveSheetIndex(getBookName(), oldindex, index);
 	}
@@ -800,12 +812,16 @@ public class BookImpl extends AbstractBookAdv{
 		EngineFactory.getInstance().createFormulaEngine().clearCache(new FormulaClearContext(this));
 		
 		//notify the (old) name is change before update name
-		ModelUpdateUtil.handlePrecedentUpdate(getBookSeries(),new NameRefImpl((AbstractNameAdv)name));
+		//ZSS-1283
+		if (!this.isPostProcessing()) {
+			ModelUpdateUtil.handlePrecedentUpdate(getBookSeries(),new NameRefImpl((AbstractNameAdv)name));
+		}
 		
 		final String oldName = name.getName(); // ZSS-661
 		
 		//ZSS-966: notify the (old) table name is change before update name
-		if (name instanceof TableNameImpl) {
+		//ZSS-1283
+		if (name instanceof TableNameImpl && !this.isPostProcessing()) {
 			ModelUpdateUtil.handlePrecedentUpdate(getBookSeries(), new TablePrecedentRefImpl(this.getBookName(), oldName));
 		}
 		
@@ -1511,5 +1527,13 @@ public class BookImpl extends AbstractBookAdv{
 		}
 		
 		return tableStyle;
+	}
+	//ZSS-1283
+	public boolean isPostProcessing() {
+		return _inPostProcessing;
+	}
+	//ZSS-1283
+	public void setPostProcessing(boolean b) {
+		_inPostProcessing = b;
 	}
 }

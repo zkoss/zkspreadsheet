@@ -345,7 +345,10 @@ public class CellImpl extends AbstractCellAdv {
 		//clear the dependent's formula result cache
 		SBook book = getSheet().getBook();
 		SBookSeries bookSeries = book.getBookSeries();
-		ModelUpdateUtil.handlePrecedentUpdate(bookSeries,getRef());
+		//ZSS-1283
+		if (!((AbstractBookAdv)book).isPostProcessing()) {
+			ModelUpdateUtil.handlePrecedentUpdate(bookSeries,getRef());
+		}
 
 		//ZSS-985: if it is not destroying this cell
 		if (!destroy) {

@@ -144,7 +144,10 @@ public class RangeImpl implements SRange, Serializable {
 			addRangeRef(region.getSheet(), region.getRow(), region.getColumn(), region.getLastRow(), region.getLastColumn());
 		}
 	}
-
+	//ZSS-1283
+	private boolean isAutoRefresh() {
+		return this._autoRefresh && !((AbstractBookAdv)getBook()).isPostProcessing();
+	}
 	private void addRangeRef(SSheet sheet, int tRow, int lCol, int bRow,
 			int rCol) {
 		Validations.argNotNull(sheet);
@@ -227,7 +230,7 @@ public class RangeImpl implements SRange, Serializable {
 	private abstract class CellVisitorForUpdate extends CellVisitor{
 		@Override
 		public void afterVisitAll(){
-			if (!_autoRefresh) return; // do not auto refresh
+			if (!RangeImpl.this.isAutoRefresh()) return; // do not auto refresh, ZSS-1283
 			
 			SBookSeries bookSeries = getSheet().getBook().getBookSeries();
 			DependencyTable table = ((AbstractBookSeriesAdv)bookSeries).getDependencyTable();
@@ -243,7 +246,6 @@ public class RangeImpl implements SRange, Serializable {
 		//ZSS-939
 		abstract CellAttribute getCellAttr();
 	}
-	
 
 	/**
 	 * travels all the cells in this range
@@ -616,7 +618,7 @@ public class RangeImpl implements SRange, Serializable {
 	}
 	
 	private void notifyChangeInLock(boolean notifyDependent, CellAttribute cellAttr){ //ZSS-939
-		if (!_autoRefresh) return; //ZSS-1115:  do not auto refresh
+		if (!isAutoRefresh()) return; //ZSS-1115:  do not auto refresh, ZSS-1283
 		
 		SBookSeries bookSeries = getBookSeries();
 		DependencyTable table = ((AbstractBookSeriesAdv)bookSeries).getDependencyTable();
@@ -1853,14 +1855,14 @@ public class RangeImpl implements SRange, Serializable {
 	}
 	
 	private void handleMergeRemoveNotifyChange(SheetRegion mergeNotify) {
-		if (!_autoRefresh) { //ZSS-1168
+		if (!isAutoRefresh()) { //ZSS-1168, ZSS-1283
 			mantainMergeClearCacheState(mergeNotify);
 			return;
 		}
 		new NotifyChangeHelper().notifyMergeRemove(mergeNotify);
 	}
 	private void handleMergeRemoveNotifyChange(Set<SheetRegion> mergeNotifySet) {
-		if (!_autoRefresh) { //ZSS-1168
+		if (!isAutoRefresh()) { //ZSS-1168, ZSS-1283
 			mantainMergeClearCacheState(mergeNotifySet.iterator().next());
 			return;
 		}
@@ -1868,14 +1870,14 @@ public class RangeImpl implements SRange, Serializable {
 	}
 
 	private void handleMergeAddNotifyChange(SheetRegion mergeNotify) {
-		if (!_autoRefresh) { //ZSS-1168
+		if (!isAutoRefresh()) { //ZSS-1168, ZSS-1283
 			mantainMergeClearCacheState(mergeNotify);
 			return;
 		}
 		new NotifyChangeHelper().notifyMergeAdd(mergeNotify);
 	}
 	private void handleMergeAddNotifyChange(Set<SheetRegion> mergeNotifySet) {
-		if (!_autoRefresh) { //ZSS-1168
+		if (!isAutoRefresh()) { //ZSS-1168, ZSS-1283
 			mantainMergeClearCacheState(mergeNotifySet.iterator().next());
 			return;
 		}
@@ -1890,13 +1892,13 @@ public class RangeImpl implements SRange, Serializable {
 	}
 	
 	private void handleCellNotifyContentChange(SheetRegion cellNotify, CellAttribute cellAttr) { //ZSS-939
-		if (!_autoRefresh) { //ZSS-1115: do not auto refresh
+		if (!isAutoRefresh()) { //ZSS-1115: do not auto refresh, ZSS-1283
 			return;
 		}
 		new NotifyChangeHelper().notifyCellChange(cellNotify, cellAttr);
 	}
 	private void handleCellNotifyContentChange(Set<SheetRegion> cellNotifySet, CellAttribute cellAttr) { //ZSS-939
-		if (!_autoRefresh) { //ZSS-1115: do not auto refresh
+		if (!isAutoRefresh()) { //ZSS-1115: do not auto refresh, ZSS-1283
 			return;
 		}
 		new NotifyChangeHelper().notifyCellChange(cellNotifySet, cellAttr);
@@ -1904,21 +1906,21 @@ public class RangeImpl implements SRange, Serializable {
 	
 	//ZSS-1115
 	private void handleNotifyRowColumnSizeChange(SheetRegion region) {
-		if (!_autoRefresh) {
+		if (!isAutoRefresh()) { //ZSS-1283
 			return;
 		}
 		new NotifyChangeHelper().notifyRowColumnSizeChange(region);
 	}
 	//ZSS-1115
 	private void handleNotifyRowColumnSizeChange(Set<SheetRegion> notifySet) {
-		if (!_autoRefresh) {
+		if (!isAutoRefresh()) { //ZSS-1283
 			return;
 		}
 		new NotifyChangeHelper().notifyRowColumnSizeChange(notifySet);
 	}
 	
 	private void handleInsertDeleteNotifyChange(InsertDeleteUpdate insertDeleteNofity) {
-		if (!_autoRefresh) { //ZSS-1115: do not auto refresh
+		if (!isAutoRefresh()) { //ZSS-1115: do not auto refresh, ZSS-1283
 			return;
 		}
 		new NotifyChangeHelper().notifyInsertDelete(insertDeleteNofity);

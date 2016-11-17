@@ -1,0 +1,26 @@
+<zk  xmlns:n="native" xmlns:w="client" xmlns:h="xhtml" xmlns:zk="zk">
+<vlayout vflex="1">
+    <label multiline="true">
+Since 3.9.1
+1. Press `usual way` button and wait
+2. Should see time used in blue text (remember it).
+3. F5 to refresh
+4. Press `postImport` button and wait; should see another time used in blue text.
+5. Compare the time at step 2 and step4; time of step 2 should be greater than that of step 4
+    </label>
+<hlayout vflex="1" width="100%">
+   <vlayout vflex="1" hflex="1">
+	<window hflex="1" vflex="1" apply="zss.issue.Composer1283PopulatePerformance">
+        <button id="usual" label="usual way" />
+        <button id="postImport" label="postImport" />
+     <label width="700px" id="metaLabel" style="color:blue;" value="Sheet population time here..."  />  
+		 <hlayout hflex="1" vflex="1">		  
+			<spreadsheet id="ss" hflex="1" vflex="1"
+				showFormulabar="true" showContextMenu="false" showToolbar="false"
+				showSheetbar="true" maxVisibleRows="1000" maxVisibleColumns="512" />
+	     </hlayout>
+	</window>
+	 </vlayout>
+	 </hlayout>
+</vlayout>
+</zk>

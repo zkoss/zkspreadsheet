@@ -127,9 +127,12 @@ public class ColumnArrayImpl extends AbstractColumnArrayAdv {
 		if (row1 >= 0 && row2 >= 0 && col1 >= 0 && col2 >=0) {
 			//ZSS-1047: (side-effect of ZSS-988 and ZSS-1007 which consider setHidden() of SUBTOTAL() function)
 			final boolean includePrecedent = false;
-			ModelUpdateUtil.handlePrecedentUpdate(book.getBookSeries(),
+			//ZSS-1283
+			if (!((AbstractBookAdv)book).isPostProcessing()) {
+				ModelUpdateUtil.handlePrecedentUpdate(book.getBookSeries(),
 					new RefImpl(book.getBookName(), _sheet.getSheetName(), 
 							row1, col1, row2, col2), includePrecedent);
+			}
 		}
 	}
 

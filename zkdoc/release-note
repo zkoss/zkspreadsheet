@@ -10,6 +10,7 @@ ZK Spreadsheet 3.9.1
 		   RANK.EQ,STDEV.S,STDEV.P,T.INV.2T,VAR.P,VAR.S,WEIBULL.DIST		   
   ZSS-1236 Support T.DIST.2T and T.DIST.RT from Excel 2010
   ZSS-1262 Improve sorting performance
+  ZSS-1283 Improve the performance for initializing cells with formulas
   
 *Bugs:
   ZSS-1266 Cannot select an item in a validation dropdown

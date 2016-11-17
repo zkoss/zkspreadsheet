@@ -1400,14 +1400,16 @@ public class SheetImpl extends AbstractSheetAdv {
 		}
 		
 		//should use precedent update since the value might be changed and need to clear cache
-		ModelUpdateUtil.handlePrecedentUpdate(getBook().getBookSeries(),
-				new RefImpl(getBook().getBookName(), getSheetName(), rowIdx,
-						columnIdx, lastRowIdx, lastColumnIdx));
-		ModelUpdateUtil.handlePrecedentUpdate(getBook().getBookSeries(),
-				new RefImpl(getBook().getBookName(), getSheetName(), rowIdx
-						+ rowOffset, columnIdx + columnOffset, lastRowIdx
-						+ rowOffset, lastColumnIdx + columnOffset));
-		
+		//ZSS-1283
+		if (!this._book.isPostProcessing()) {
+			ModelUpdateUtil.handlePrecedentUpdate(getBook().getBookSeries(),
+					new RefImpl(getBook().getBookName(), getSheetName(), rowIdx,
+							columnIdx, lastRowIdx, lastColumnIdx));
+			ModelUpdateUtil.handlePrecedentUpdate(getBook().getBookSeries(),
+					new RefImpl(getBook().getBookName(), getSheetName(), rowIdx
+							+ rowOffset, columnIdx + columnOffset, lastRowIdx
+							+ rowOffset, lastColumnIdx + columnOffset));
+		}
 		//shift the merge
 		_mergedRegions.removeAll(containsMerge);
 		for(CellRegion merge:containsMerge){

@@ -218,9 +218,12 @@ public class RowImpl extends AbstractRowAdv {
 		if (col1 >= 0 && col2 >= 0) { //handle dependency if with data
 			//ZSS-1047: (side-effect of ZSS-988 and ZSS-1007 which consider setHidden() of SUBTOTAL() function)
 			final boolean includePrecedent = false;
-			ModelUpdateUtil.handlePrecedentUpdate(book.getBookSeries(),
+			//ZSS-1283
+			if (!((AbstractBookAdv)book).isPostProcessing()) {
+				ModelUpdateUtil.handlePrecedentUpdate(book.getBookSeries(),
 					new RefImpl(book.getBookName(), _sheet.getSheetName(), getIndex(),
 							col1, getIndex(), col2), includePrecedent);
+			}
 		}
 	}
 	

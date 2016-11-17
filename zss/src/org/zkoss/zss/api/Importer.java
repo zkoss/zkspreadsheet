@@ -57,4 +57,39 @@ public interface Importer {
 	 */
 	public Book imports(URL url, String bookName) throws IOException;
 	
+	/**
+	 * Import book from a input stream
+	 * @param is the input stream
+	 * @param bookName the book name for imported book
+	 * @param postImport Object to do post processing after book is imported.
+	 * @return the book instance
+	 * @throws IOException
+	 * @see PostImport
+	 * @since 3.9.1
+	 */
+	public Book imports(InputStream is, String bookName, PostImport postImport) throws IOException;
+	
+	/**
+	 * Import book from a file
+	 * @param file the file
+	 * @param bookName the book name for imported book
+	 * @param postImport Object to do post processing after book is imported.
+	 * @return the book instance
+	 * @throws IOException
+	 * @see PostImport
+	 * @since 3.9.1
+	 */
+	public Book imports(File file, String bookName, PostImport postImport) throws IOException;
+	
+	/**
+	 * Import book from a URL
+	 * @param url the url
+	 * @param bookName the book name for imported book
+	 * @param postImport Object to do post processing after book is imported.
+	 * @return the book instance
+	 * @throws IOException
+	 * @see PostImport
+	 * @since 3.9.1
+	 */
+	public Book imports(URL url, String bookName, PostImport postImport) throws IOException;
 }
