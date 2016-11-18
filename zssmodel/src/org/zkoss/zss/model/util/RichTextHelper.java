@@ -244,6 +244,12 @@ public class RichTextHelper implements Serializable {
 
 	// ZSS-725
 	public static String getFontTextHtml(String text, SFont font) {
+		return getFontTextHtml(text, font, false);
+	}
+	// ZSS-918: in vertical text, segment must use <div>
+	public static String getFontTextHtml(String text, SFont font, boolean vtext) {
+		final String spanb = vtext ? "<div" : "<span"; // ZSS-918
+		final String spane = vtext ? "</div>" : "</span>"; // ZSS-918
 		StringBuilder sb = new StringBuilder();
 		final String startTag;
 		final String endTag;
@@ -257,11 +263,11 @@ public class RichTextHelper implements Serializable {
 			startTag = "";
 			endTag = "";
 		}
-		sb.append("<span style=\"")
+		sb.append(spanb).append(" style=\"") //ZSS-918
 			.append(getFontCSSStyle(font, false))
 			.append("\">");
 		sb.append(startTag).append(text).append(endTag);
-		sb.append("</span>");
+		sb.append(spane); //ZSS-918
 		return sb.toString();
 	}
 	
@@ -353,10 +359,10 @@ public class RichTextHelper implements Serializable {
 			final SFont font = getRichTextRealFont(seg.getFont(), cell); //ZSS-1138
 			int j = 0;
 			for (int len = texts.length - 1; j < len; ++j) {
-				sb.append(getFontTextHtml(escapeText(texts[j], wrap, true), font));
+				sb.append(getFontTextHtml(escapeText(texts[j], wrap, true), font, true)); //ZSS-918
 				sb.append(between);
 			}
-			sb.append(getFontTextHtml(escapeText(texts[j], wrap, true), font));
+			sb.append(getFontTextHtml(escapeText(texts[j], wrap, true), font, true)); //ZSS-918
 		}
 		sb.append("</div>");
 		return sb.toString();
