@@ -1,4 +1,4 @@
-<vbox hflex="1" vflex="1">
+<vlayout hflex="1" vflex="1">
 	<label multiline="true">
 Since 3.8.2
 1. Click "Go to sheet2" link in C1 of "main" sheet 
@@ -20,4 +20,4 @@ Since 3.8.2
 	<spreadsheet id="ss" src="/issue3/book/807-documentLink.xlsx" maxVisibleRows="200" maxVisibleColumns="40"
 		hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
 		showFormulabar="true" />	
-</vbox>
+</vlayout>

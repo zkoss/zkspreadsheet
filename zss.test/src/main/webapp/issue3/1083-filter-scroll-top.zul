@@ -1,4 +1,4 @@
-<vbox hflex="1" vflex="1">
+<vlayout hflex="1" vflex="1">
 	<label multiline="true">
 Since 3.8.1
 1. Select A1; enable filter.
@@ -10,4 +10,4 @@ Since 3.8.1
 	<spreadsheet id="ss" src="/issue3/book/1083-filter-scroll-top.xlsx"
 		hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
 		showFormulabar="true" />
-</vbox>
+</vlayout>

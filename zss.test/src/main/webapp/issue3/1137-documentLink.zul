@@ -1,4 +1,4 @@
-<vbox hflex="1" vflex="1">
+<vlayout hflex="1" vflex="1">
 	<label multiline="true">
 Since 3.8.2
 1. Right click in C1 to open context menu and select "Hyperlink"; you should see the "Edit Hyperlink" dialog popup.
@@ -33,4 +33,4 @@ Since 3.8.2
 	<spreadsheet id="ss" src="/issue3/book/1137-documentLink.xlsx" maxVisibleRows="200" maxVisibleColumns="40"
 		hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
 		showFormulabar="true" />	
-</vbox>
+</vlayout>

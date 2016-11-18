@@ -1,4 +1,4 @@
-<vbox hflex="1" vflex="1">
+<vlayout hflex="1" vflex="1">
     <label multiline="true">
 Since 3.8.1
 1. Press "Freeze" button, you should see the column A and B is freezed.
@@ -16,4 +16,4 @@ Since 3.8.1
 <spreadsheet id="ss" src="/issue3/book/926-freeze-column-jump-top.xlsx" maxVisibleRows="200" maxVisibleColumns="40"
     hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
     showFormulabar="true"/>
-</vbox>
+</vlayout>

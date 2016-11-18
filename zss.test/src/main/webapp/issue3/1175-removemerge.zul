@@ -28,8 +28,8 @@ import org.zkoss.zss.api.Range.DeleteShift;
 import org.zkoss.zss.ui.Spreadsheet;                  
             	public void delete(){
             		Range range = Ranges.range(spreadsheet.getSelectedSheet(), 
-            				0, spreadsheet.getSelection().getColumn(),
-            				spreadsheet.getSelection().getRow(), spreadsheet.getSelection().getColumn()+3).toColumnRange();
+            				0, 0,
+            				spreadsheet.getSelection().getRow(), 3).toColumnRange();
             		range.setAutoRefresh(false);
             		CellOperationUtil.delete(range, DeleteShift.LEFT);
             		Ranges.range(spreadsheet.getSelectedSheet()).notifyChange();
@@ -37,8 +37,8 @@ import org.zkoss.zss.ui.Spreadsheet;
             	
             	public void delete2(){
             		Range range = Ranges.range(spreadsheet.getSelectedSheet(), 
-            				0, spreadsheet.getSelection().getColumn(),
-            				spreadsheet.getSelection().getRow(), spreadsheet.getSelection().getColumn()+3).toColumnRange();
+            				0, 0,
+            				spreadsheet.getSelection().getRow(), 3).toColumnRange();
             		CellOperationUtil.delete(range, DeleteShift.LEFT);
             	}                  
 ]]></zscript>

@@ -1,4 +1,4 @@
-<vbox hflex="1" vflex="1">
+<vlayout hflex="1" vflex="1">
     <label multiline="true">
 Firefox. Since 3.8.1
 1. Enter in cell A1 of Sheet1 the formula =sum(1
@@ -13,4 +13,4 @@ Firefox. Since 3.8.1
 <spreadsheet id="ss" src="/issue3/book/blank.xlsx" maxVisibleRows="60" maxVisibleColumns="40"
     hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
     showFormulabar="true"/>
-</vbox>
+</vlayout>
