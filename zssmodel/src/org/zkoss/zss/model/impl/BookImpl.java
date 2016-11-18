@@ -132,7 +132,7 @@ public class BookImpl extends AbstractBookAdv{
 	//ZSS-992
 	private String _defaultTableStyle; //default table style name; since 3.8.3
 	//ZSS-1283
-	private boolean _inPostProcessing = true; // whether the book is in post import processing cycle
+	private boolean _inPostProcessing; // whether the book is in post import processing cycle
 	/**
 	 * the sheet which is destroying now.
 	 */

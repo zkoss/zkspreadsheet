@@ -128,21 +128,23 @@ abstract public class AbstractExcelImporter extends AbstractImporter implements 
 
 		workbook = createPoiBook(is);
 		book = SBooks.createBook(bookName);
-//		book.setDefaultCellStyle(importCellStyle(workbook.getCellStyleAt((short) 0), false)); //ZSS-780
-		//ZSS-854
-		importDefaultCellStyles();
-		importNamedStyles();
-		//ZSS-1140
-		importExtraStyles();
-		//ZSS-992
-		importTableStyles();
-		setBookType(book);
 
 		//ZSS-715: Enforce internal Locale.US Locale so formula is in consistent internal format
 		Locale old = Locales.setThreadLocal(Locale.US);
 		SBookSeries bookSeries = book.getBookSeries();
 		boolean isCacheClean = bookSeries.isAutoFormulaCacheClean();
 		try {
+			((AbstractBookAdv)book).setPostProcessing(true); //ZSS-1283
+//			book.setDefaultCellStyle(importCellStyle(workbook.getCellStyleAt((short) 0), false)); //ZSS-780
+			//ZSS-854
+			importDefaultCellStyles();
+			importNamedStyles();
+			//ZSS-1140
+			importExtraStyles();
+			//ZSS-992
+			importTableStyles();
+			setBookType(book);
+
 			bookSeries.setAutoFormulaCacheClean(false);// disable it to avoid
 														// unnecessary clean up
 														// during importing

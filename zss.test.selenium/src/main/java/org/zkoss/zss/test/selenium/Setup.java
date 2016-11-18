@@ -91,16 +91,39 @@ public class Setup {
 	
 	static public WebDriver getDriver() throws MalformedURLException{
 //		return getLocalChromeDriver();
+		return getLocalIEDriver();
 //		return getChromeDriver();
 //		return getFirefoxDriver();
-		return getIE9Driver();
+//		return getIE9Driver();
 //		return getIE10Driver();
 //		return getIEDriver();
 	}
 	
+	private static WebDriver getLocalIEDriver() {
+		System.out.println("Local IEDriver -----------");
+		InternetExplorerDriver driver=new InternetExplorerDriver();
+		
+		String val = getConfig("zss.browserSize","0,0,1200,800");
+		String[] vals = val.split(",");
+		
+		driver.manage().window().setPosition(new Point(Integer.parseInt(vals[0]),Integer.parseInt(vals[1])));
+		driver.manage().window().setSize(new Dimension(Integer.parseInt(vals[2]), Integer.parseInt(vals[3])));
+		return driver;
+	}
 	private static WebDriver getLocalChromeDriver() {
 		System.out.println("Local ChromeDriver -----------");
 		ChromeDriver driver = new ChromeDriver();
+		
+		String val = getConfig("zss.browserSize","0,0,1200,800");
+		String[] vals = val.split(",");
+		
+		driver.manage().window().setPosition(new Point(Integer.parseInt(vals[0]),Integer.parseInt(vals[1])));
+		driver.manage().window().setSize(new Dimension(Integer.parseInt(vals[2]), Integer.parseInt(vals[3])));
+		return driver;
+	}
+	private static WebDriver getLocalFirefoxDriver() {
+		System.out.println("Local FirefoxDriver -----------");
+		FirefoxDriver driver = new FirefoxDriver();
 		
 		String val = getConfig("zss.browserSize","0,0,1200,800");
 		String[] vals = val.split(",");
