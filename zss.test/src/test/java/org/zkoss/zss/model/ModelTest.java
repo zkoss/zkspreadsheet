@@ -3422,7 +3422,7 @@ public class ModelTest {
 		
 		SSeries series = data.addSeries();
 		series.setFormula(null, "(C1,C3)");
-		Assert.assertEquals(0, series.getNumOfValue());
+		Assert.assertEquals(2, series.getNumOfValue()); // ZSS-1256: [#N/A, #N/A]
 //		Assert.assertEquals(0D, series.getValue(0));
 //		Assert.assertEquals(0D, series.getValue(1));
 		
