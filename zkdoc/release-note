@@ -29,6 +29,7 @@ ZK Spreadsheet 3.9.1
   ZSS-1261 custom sort doesn't show available column when selecting 1 cell
   ZSS-1256 deleting a row causes ArrayIndexOutOfBoundsException
   ZSS-1277 copy the whole row doesn't copy the row height
+  ZSS-1284 Row insertion during initialization causes NPE
 
 ** Upgrade Notes
   * Following apis are deprecated:

@@ -1,0 +1,41 @@
+<zk>
+    <label multiline="true">
+Since 3.9.1
+1. You see the words 'initial text' in A1:A2 and A5:A9. A3:A4 is blank.
+2. otherwise, it is a bug.
+3. Press the `insert rows via ajax` button, you should see empty rows insert
+   into row 3 and row 4. i.e. A3:A6 is blank and words 'initial text' now in
+   A1:A2 and A7:A11.
+4. If not, it is a bug
+</label>
+	<zscript><![CDATA[
+	    import org.zkoss.zss.api.Range.InsertShift;
+	    import org.zkoss.zss.api.Range.InsertCopyOrigin;
+	    import org.zkoss.zk.ui.util.Composer;
+
+	    public void initCells(Spreadsheet sscomp) {
+		    Sheet sheet1 = sscomp.getBook().getSheetAt(0);
+			Range initRange = Ranges.range(sheet1, 0, 0, 6, 0);
+			initRange.setCellEditText("initial text");
+	    }
+	    public void insertRows(Spreadsheet sscomp) {
+		    Sheet sheet1 = sscomp.getBook().getSheetAt(0);
+			Range insertRange = Ranges.range(sheet1, 2, 0, 3, 0);
+			insertRange = insertRange.toRowRange(); //commenting out this line does not trigger an error
+			insertRange.insert(InsertShift.DOWN, InsertCopyOrigin.FORMAT_LEFT_ABOVE);
+	    }
+	                  
+	]]></zscript>
+<!-- 	later ajax update does not cause an NPE -->
+	<button onClick="insertRows(ss)" label="insert rows via ajax"/>
+
+	<spreadsheet id="ss" vflex="1" hflex="1" src="/issue3/book/1284-blank.xlsx" 
+		showToolbar="true" showSheetbar="true" showFormulabar="true" showContextMenu="true"
+		/>
+
+	<zscript><![CDATA[
+		initCells(ss);
+		insertRows(ss);//causes NPE
+	]]></zscript>	
+
+</zk>

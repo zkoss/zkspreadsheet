@@ -3890,6 +3890,10 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			result.put("size", size);
 
 			final AreaRef rect = getActiveRangeHelper().getArea(_selectedSheet);
+			//ZSS-1284
+			if (rect == null) { // Spreadsheet not loaded with data yet
+				return;
+			}
 			int right = size + rect.getLastColumn();
 			
 			HeaderPositionHelper colHelper = Spreadsheet.this.getColumnPositionHelper(sheet);
@@ -3967,6 +3971,10 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			result.put("size", size);
 
 			final AreaRef rect = getActiveRangeHelper().getArea(_selectedSheet);
+			//ZSS-1284
+			if (rect == null) { // Spreadsheet not loaded with data yet
+				return;
+			}
 			int bottom = size + rect.getLastRow();
 
 			HeaderPositionHelper rowHelper = Spreadsheet.this.getRowPositionHelper(sheet);
@@ -4034,6 +4042,10 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			result.put("size", size);
 
 			final AreaRef rect = getActiveRangeHelper().getArea(_selectedSheet);
+			//ZSS-1284
+			if (rect == null) { // Spreadsheet not loaded with data yet
+				return;
+			}
 			int right = rect.getLastColumn() - size;
 			if (right < col) {
 				right = col - 1;
@@ -4090,6 +4102,10 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			result.put("size", size);
 			
 			final AreaRef rect = getActiveRangeHelper().getArea(_selectedSheet);
+			//ZSS-1284
+			if (rect == null) { // Spreadsheet not loaded with data yet
+				return;
+			}
 			int bottom = rect.getLastRow() - size;
 			if (bottom < row) {
 				bottom = row - 1;
