@@ -1,4 +1,4 @@
-<vbox hflex="1" vflex="1">
+<vlayout hflex="1" vflex="1">
 	<label multiline="true">
 Since 3.8.1
 1. Make sure you are on Sheet1.
@@ -34,4 +34,4 @@ Since 3.8.1
 	<spreadsheet id="ss" src="/issue3/book/1062-protect-sheet.xlsx" maxVisibleRows="60" maxVisibleColumns="40"
 		hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
 		showFormulabar="true" />	
-</vbox>
+</vlayout>

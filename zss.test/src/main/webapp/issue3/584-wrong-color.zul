@@ -1,4 +1,4 @@
-<vbox hflex="1" vflex="1">
+<vlayout hflex="1" vflex="1">
 	<label multiline="true">
 	1.delete row 7, the remain rows should keep red
 	</label>
@@ -17,4 +17,4 @@
 	}
 	
 	]]></zscript>		
-</vbox>
+</vlayout>

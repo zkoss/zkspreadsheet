@@ -1,4 +1,4 @@
-<vbox hflex="1" vflex="1">
+<vlayout hflex="1" vflex="1">
 	<label multiline="true">
 		right click on A1 and set data validation parameters.
 		1. choose "whole number", "between", 1, 10, checked ignore blank in Settings. Checked show input with title "title1", message "message1" in Input message.
@@ -87,4 +87,4 @@
 		ListModelList alertStyles = new ListModelList(org.zkoss.zss.api.model.Validation.AlertStyle.values());
 		alertStyle.setModel(alertStyles);
 	]]></zscript>
-</vbox>
+</vlayout>

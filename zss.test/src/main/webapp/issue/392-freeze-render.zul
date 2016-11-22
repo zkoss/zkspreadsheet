@@ -1,7 +1,7 @@
 
 <?page title="new page title" contentType="text/html;charset=UTF-8"?>
 <zk>
-	<vbox width="100%" height="100%">
+	<vlayout width="100%" height="100%">
 		<button label="export" onClick="export();"></button>
 		<spreadsheet id="ss" src="/issue/book/392-freeze-render.xlsx"  hflex="1" vflex="1"
 			ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e"
@@ -32,5 +32,5 @@
 				window.debug.dp = debug.ssc.dp;
 			})();
 		]]></script>
-	</vbox>
+	</vlayout>
 </zk>

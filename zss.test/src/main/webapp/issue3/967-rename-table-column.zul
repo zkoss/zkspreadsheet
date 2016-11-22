@@ -1,4 +1,4 @@
-<vbox hflex="1" vflex="1">
+<vlayout hflex="1" vflex="1">
 	<label multiline="true">
 Since 3.8.0
 1. Select J1 and change it from "Column10" to "ColumnX";
@@ -36,4 +36,4 @@ Since 3.8.0
 	<spreadsheet id="ss" src="/issue3/book/967-rename-table-column.xlsx" maxVisibleRows="30" maxVisibleColumns="40"
 		hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
 		showFormulabar="true" />	
-</vbox>
+</vlayout>

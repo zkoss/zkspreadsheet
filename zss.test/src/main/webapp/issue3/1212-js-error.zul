@@ -3,10 +3,10 @@
 1. Open browser tool console.
 2. Select sheet GG. If you see HTTP ERROR 500any JavaScript exception, it is a bug.
 </label>
-	<vbox width="100%" vflex="1">
+	<vlayout width="100%" vflex="1">
 		<spreadsheet id="ss" src="/issue3/book/1212-js-error.xlsx" 
 		maxVisibleRows="800" maxVisibleColumns="100" hflex="1" 
         vflex="1" preloadColumnSize="8" preloadRowSize="5"
         showContextMenu="true" showSheetbar="true" showToolbar="true" showFormulabar="true"/>
-	</vbox>
+	</vlayout>
 </zk>

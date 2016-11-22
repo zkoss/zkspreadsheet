@@ -1,4 +1,4 @@
-<vbox hflex="1" vflex="1">
+<vlayout hflex="1" vflex="1">
 	<label multiline="true">
 	 1. set Row(3:4) style to red
 	 2. set Column(D:F) style to blue
@@ -57,4 +57,4 @@
 	}
 	
 	]]></zscript>		
-</vbox>
+</vlayout>

@@ -1,4 +1,4 @@
-<vbox hflex="1" vflex="1">
+<vlayout hflex="1" vflex="1">
     <label multiline="true">
 Since 3.8.1
 1. Select B2:E5; then drop down filter menu by click on filter icon right drop-down triangle.
@@ -9,4 +9,4 @@ Since 3.8.1
 <spreadsheet src="/issue3/book/blank.xlsx" hflex="1" vflex="1"
         maxrows="2000" maxcolumns="20"
         showToolbar="true" showFormulabar="true" showSheetbar="true"/>
-</vbox>
+</vlayout>

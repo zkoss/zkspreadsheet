@@ -1,4 +1,4 @@
-<vbox hflex="1" vflex="1">
+<vlayout hflex="1" vflex="1">
 	<label multiline="true">
 Since 3.8.0
 0. Should see Auto Filter dropdown buttons on header row of each Table; and a Sheet Auto Filter dropdown button on G16.
@@ -34,4 +34,4 @@ Since 3.8.0
 	<spreadsheet id="ss" src="/issue3/book/988-table-filters.xlsx" maxVisibleRows="60" maxVisibleColumns="40"
 		hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
 		showFormulabar="true" />	
-</vbox>
+</vlayout>

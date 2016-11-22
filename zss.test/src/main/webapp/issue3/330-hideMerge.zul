@@ -1,5 +1,5 @@
 <zk>
-	<vbox hflex="1" vflex="1">
+	<vlayout hflex="1" vflex="1">
 		<label multiline="true">
 			1.merge B2: D4
 			2.key in some text into such merged cell ex. "Hello"
@@ -15,5 +15,5 @@
 			ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e" maxrows="500" maxcolumns="100" showToolbar="true" showFormulabar="true"
 			showSheetbar="true" showContextMenu="true">
 		</spreadsheet>
-	</vbox>
+	</vlayout>
 </zk>

@@ -1,4 +1,4 @@
-<vbox hflex="1" vflex="1">
+<vlayout hflex="1" vflex="1">
 	<label multiline="true">
 1. You should three group of text show in A1:C2, E1:G2, and I1:K2.
 2. The upper part(row 1) is the 90 degree formatted text(i.e. top of text is heading to left) 
@@ -10,4 +10,4 @@
 	<spreadsheet id="ss" src="/issue3/book/1108-ie9-long-90deg-text.xlsx" maxVisibleRows="30" maxVisibleColumns="40"
 		hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
 		showFormulabar="true" />	
-</vbox>
+</vlayout>

@@ -1,5 +1,5 @@
 <zk>
-	<vbox hflex="1" vflex="1">
+	<vlayout hflex="1" vflex="1">
 		<label pre="true">
 1. scroll down (by mouse scroll wheel) to row 200
 2. select column and insert 1 column
@@ -90,5 +90,5 @@
 				window.debug.cc = debug.ss._cacheCtrl.getSelectedSheet();
 			})();
 		]]></script>
-	</vbox>
+	</vlayout>
 </zk>

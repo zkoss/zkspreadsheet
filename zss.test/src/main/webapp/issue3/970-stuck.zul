@@ -1,4 +1,4 @@
-<vbox hflex="1" vflex="1">
+<vlayout hflex="1" vflex="1">
 	<label multiline="true">
 		you should do this test in zssapp.
 		1. set period saved time to 5 seconds in zk.xml
@@ -8,4 +8,4 @@
 		1. click on A1, enter "A", press arrow down.
 		2. enter "A" press arrow down. etc.
 	</label>
-</vbox>
+</vlayout>

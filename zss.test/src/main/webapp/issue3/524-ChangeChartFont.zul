@@ -21,12 +21,12 @@
 		}
 	]]>
 	</zscript>
-	<vbox hflex="1" vflex="1">
+	<vlayout hflex="1" vflex="1">
 		<hbox>
 			<button label="Reset" onClick="resetLibrary()"></button>
 		</hbox>
 		<spreadsheet id="source" src="/issue3/book/524-ChangeChartFont.xlsx" maxVisibleRows="150"
 			maxVisibleColumns="40" hflex="1" vflex="1" showContextMenu="true" showSheetbar="true"
 			showToolbar="true" ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e" />
-	</vbox>
+	</vlayout>
 </zk>

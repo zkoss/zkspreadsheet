@@ -17,19 +17,19 @@
 		]]></label>
 	</hbox>
 	<hbox>
-		<vbox>
+		<vlayout>
 			<label>XLSX</label>
 			<spreadsheet id="ss" src="/issue3/book/547-sheet-index.xlsx" maxrows="1000" maxcolumns="100"
 				width="800px" height="700px"
 				ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e"
 				showContextMenu="true" showSheetbar="true" showToolbar="true" showFormulabar="true" />
-		</vbox>
-		<vbox>
+		</vlayout>
+		<vlayout>
 			<label>XLS</label>
 			<spreadsheet id="ss2" src="/issue3/book/547-sheet-index.xls" maxrows="1000" maxcolumns="100"
 				width="800px" height="700px"
 				ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e"
 				showContextMenu="true" showSheetbar="true" showToolbar="true" showFormulabar="true" />
-		</vbox>
+		</vlayout>
 	</hbox>
 </zk>

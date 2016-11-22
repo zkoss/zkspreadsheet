@@ -1,10 +1,10 @@
-<vbox hflex="1" vflex="1">
+<vlayout hflex="1" vflex="1">
 <label multiline="true">
 To test this issue, you have to start zss by add -Duser.timezone=America/New_York in JVM
 1.click following fill button to fill cells
 2.click following check button to check values
 </label>
-	<vbox hflex="1" vflex="1" id="main" apply="zss.testapp.issue.ZSS541Composer">
+	<vlayout hflex="1" vflex="1" id="main" apply="zss.testapp.issue.ZSS541Composer">
 		<hbox hflex="1">
 			<button label="Fill A" onClick='main$composer.autoFill("A2","A2:A12",self)'/>
 			<button label="Fill B" onClick='main$composer.autoFill("B12","B2:B12",self)'/>
@@ -36,5 +36,5 @@ To test this issue, you have to start zss by add -Duser.timezone=America/New_Yor
 		<spreadsheet id="ss" src="/issue/book/541-daylightsave.xlsx" width="100%" maxrows="200" maxcolumns="40" 
 			hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
 			showFormulabar="true" />
-	</vbox>
-</vbox>
+	</vlayout>
+</vlayout>

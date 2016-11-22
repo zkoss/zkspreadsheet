@@ -1,4 +1,4 @@
-<vbox hflex="1" vflex="1">
+<vlayout hflex="1" vflex="1">
 	<label multiline="true">
 1. You should see the filter dropdown button on Cell B2, C2, and D2.
 2. You should see a blue dashed border outlined B2:D5, too; which indicate where the filter range is.
@@ -10,4 +10,4 @@
 	<spreadsheet id="ss" src="/issue3/book/901-filter-range.xlsx" maxVisibleRows="30" maxVisibleColumns="40"
 		hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
 		showFormulabar="true" />	
-</vbox>
+</vlayout>

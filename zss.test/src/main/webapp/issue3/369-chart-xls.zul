@@ -1,9 +1,9 @@
 <zk>
 	it doesn't cause any java error.
-	<vbox hflex="1" vflex="1">
+	<vlayout hflex="1" vflex="1">
 		<spreadsheet id="ss" src="/issue3/book/369-chart.xls" hflex="1" vflex="1"
 			maxVisibleRows="500" maxVisibleColumns="100" showToolbar="true" showFormulabar="true"
 			showSheetbar="true" showContextMenu="true">
 		</spreadsheet>
-	</vbox>
+	</vlayout>
 </zk>

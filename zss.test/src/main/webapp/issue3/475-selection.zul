@@ -1,5 +1,5 @@
 <zk>
-	<vbox>
+	<vlayout>
 		<label multiline="true">
 			select successive cell using key shift and arrow down will trigger automatically scrolling when we reach the viewport boundary.
 			if it donesn't do that, it's a bug.
@@ -9,5 +9,5 @@
 			width="600px" height="600px"
 			ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e"
 			showContextMenu="true" showSheetbar="true" showToolbar="true" showFormulabar="true" />
-	</vbox>
+	</vlayout>
 </zk>

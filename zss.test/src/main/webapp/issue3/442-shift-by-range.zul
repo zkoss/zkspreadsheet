@@ -1,5 +1,5 @@
 <zk>
-	<vbox hflex="1" vflex="1" apply="zss.testapp.issue.ZSS442Composer">
+	<vlayout hflex="1" vflex="1" apply="zss.testapp.issue.ZSS442Composer">
 		<vlayout>
 			<zscript><![CDATA[
 				import java.io.*;
@@ -42,7 +42,7 @@
 			ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e" maxrows="500" maxcolumns="100" showToolbar="true" showFormulabar="true"
 			showSheetbar="true" showContextMenu="true">
 		</spreadsheet>
-	</vbox>
+	</vlayout>
 	<!-- for debug -->
 	<script defer="true"><![CDATA[
 		(function() {

@@ -1,4 +1,4 @@
-<vbox hflex="1" vflex="1">
+<vlayout hflex="1" vflex="1">
 	<label multiline="true">
 1. Press the button "Change A1 background color to Red"
 2. You should then see A1's background color change to Red.
@@ -22,4 +22,4 @@
 	</zscript>
 	<spreadsheet id="ss" src="/issue3/book/blank.xlsx" maxVisibleRows="30" maxVisibleColumns="40"
 		hflex="1" vflex="1" />	
-</vbox>
+</vlayout>

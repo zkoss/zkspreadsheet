@@ -1,4 +1,4 @@
-<vbox hflex="1" vflex="1">
+<vlayout hflex="1" vflex="1">
 	<label multiline="true">
 Since 3.8.0
 1. Press the "Rename a Name from NameK1 to NewNameK1" button.
@@ -42,4 +42,4 @@ Since 3.8.0
 	<spreadsheet id="ss" src="/issue3/book/966-rename-table.xlsx" maxVisibleRows="30" maxVisibleColumns="40"
 		hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
 		showFormulabar="true" />	
-</vbox>
+</vlayout>

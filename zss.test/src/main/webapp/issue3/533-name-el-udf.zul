@@ -5,7 +5,7 @@
 <?taglib uri="/WEB-INF/tld/formula.tld" prefix="zss" ?>
 
 <zk>
-	<vbox hflex="1" vflex="1">
+	<vlayout hflex="1" vflex="1">
 		<hbox hflex="1">
 			<button label="download">
 				<attribute name="onClick"><![CDATA[
@@ -33,5 +33,5 @@
 	int variable1 = 1;
 	Person variable2 = new Person();
 ]]></zscript>
-	</vbox>
+	</vlayout>
 </zk>

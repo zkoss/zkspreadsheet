@@ -1,7 +1,7 @@
 <zk>
 	<vlayout width="100%" height="100%">
 		<hbox>
-			<vbox align="end">
+			<vlayout align="end">
 				<hlayout> 
 					<button label="fill down" onClick='filldown();'></button>
 					<button label="fill up" onClick='fillup();'></button>
@@ -10,7 +10,7 @@
 					<button label="fill down 2" onClick='filldown2();'></button>
 					<button label="fill up 2" onClick='fillup2();'></button>
 				</hlayout>
-			</vbox>
+			</vlayout>
 			<label pre="true"><![CDATA[
 
 			]]></label>

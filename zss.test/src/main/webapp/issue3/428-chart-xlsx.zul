@@ -1,8 +1,8 @@
 <zk>
-	<vbox hflex="1" vflex="1">
+	<vlayout hflex="1" vflex="1">
 		<spreadsheet id="ss" src="/issue3/book/428-chart.xlsx" vflex="1" hflex="1" selectedSheet="cell-border"
 			maxVisibleRows="500" maxVisibleColumns="100" showToolbar="true" showFormulabar="true"
 			showSheetbar="true" showContextMenu="true">
 		</spreadsheet>
-	</vbox>
+	</vlayout>
 </zk>

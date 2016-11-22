@@ -1,4 +1,4 @@
-<vbox hflex="1" vflex="1">
+<vlayout hflex="1" vflex="1">
 	<label multiline="true">
 	1.type text in first textbox, cell A1 should change correspondingly
 	2.type text in A1, the textbox value shold change automatically
@@ -89,4 +89,4 @@
 
 	]]>
  </zscript>
-</vbox>
+</vlayout>

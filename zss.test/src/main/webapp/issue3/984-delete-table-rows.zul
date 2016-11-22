@@ -1,4 +1,4 @@
-<vbox hflex="1" vflex="1">
+<vlayout hflex="1" vflex="1">
 	<label multiline="true">
 Since 3.8.0
 0. Doing operation 1 ~ 6, You should see message box tell you that you cannot do that. 
@@ -28,4 +28,4 @@ Since 3.8.0
 	<spreadsheet id="ss" src="/issue3/book/984-delete-table-rows.xlsx" maxVisibleRows="60" maxVisibleColumns="40"
 		hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
 		showFormulabar="true" />	
-</vbox>
+</vlayout>

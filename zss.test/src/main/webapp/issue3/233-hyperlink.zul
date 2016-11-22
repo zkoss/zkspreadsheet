@@ -1,10 +1,10 @@
 <zk>
 	<window width="100%" height="100%">
-	<vbox>
+	<vlayout>
 		<label multiline="true">
 	click link to get new page.
 		</label>
-	</vbox>
+	</vlayout>
 	<label id="msg1"/>
 	<label id="msg2"/>
 		<spreadsheet id="ss" src="/issue3/book/blank.xlsx" hflex="1" vflex="1" onCellHyperlink="onCellHyperLink(event)"

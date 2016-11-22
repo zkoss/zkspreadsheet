@@ -1,5 +1,5 @@
 <zk>
-	<vbox hflex="1" vflex="1">
+	<vlayout hflex="1" vflex="1">
 		<hbox>
 		<button label="set A31 border" onClick='test1("A31","#0000FF")'/>
 		<button label="set A31 border(shoult's effect D30 bottom)" onClick='test1("A31","#CC0000")'/>
@@ -30,5 +30,5 @@
 				showToolbar="true" showContextMenu="true" />
 			<separator height="20px" />
 		</hbox>
-	</vbox>
+	</vlayout>
 </zk>

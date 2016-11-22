@@ -4,7 +4,7 @@
 3. select row 140 again and delete this row by right-click
 4. the last row's text will be same as the row 140
 		</label>
-    <vbox hflex="1" vflex="1">
+    <vlayout hflex="1" vflex="1">
 		<hlayout>
 			<button label="focus to last row" onClick="ss.focusTo(151,0)"></button>
 			<button label="insert row at row 140" onClick='Ranges.range(ss.getSelectedSheet(), "A140").toRowRange().insert(org.zkoss.zss.api.Range.InsertShift.DEFAULT, org.zkoss.zss.api.Range.InsertCopyOrigin.FORMAT_NONE)'></button>
@@ -45,5 +45,5 @@
 				window.debug.cc = debug.ss._cacheCtrl.getSelectedSheet();
 			})();
 		]]></script>
-	</vbox>
+	</vlayout>
 </zk>

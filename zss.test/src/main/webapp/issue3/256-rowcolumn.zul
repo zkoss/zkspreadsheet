@@ -1,5 +1,5 @@
 <zk>
-	<vbox hflex="1" vflex="1">
+	<vlayout hflex="1" vflex="1">
 		<label multiline="true">
 			1.the column E and row 6 should both hidden in the sheet,
 			2.the column K and row 14 should both has larger size in the sheet
@@ -9,5 +9,5 @@
 			maxVisibleColumns="100" showToolbar="true" showFormulabar="true"
 			showSheetbar="true" showContextMenu="true">
 		</spreadsheet>
-	</vbox>
+	</vlayout>
 </zk>

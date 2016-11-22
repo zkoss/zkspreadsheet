@@ -1,5 +1,5 @@
 <zk>
-<!-- 	<vbox align="end">
+<!-- 	<vlayout align="end">
 		<hlayout>
 			<label>A1 </label> 
 			<button label="copy" onClick='copy("A1", org.zkoss.zss.api.Range.PasteType.ALL);'></button>
@@ -18,7 +18,7 @@
 			<button label="copy formula only" onClick='copy("A3:B3", org.zkoss.zss.api.Range.PasteType.FORMULAS, "A3:D3");'></button>
 			<button label="copy value only" onClick='copy("A3:B3", org.zkoss.zss.api.Range.PasteType.VALUES, "A3:D3");'></button>
 		</hlayout>
-	</vbox> -->
+	</vlayout> -->
 	<vlayout width="100%" height="100%">
 		<label multiline="true">
 			1. copy A1 then paste to A1

@@ -1,5 +1,5 @@
 <zk>
-	<vbox width="90%" height="90%">
+	<vlayout width="90%" height="90%">
 		<label pre="true">
 			1.set D4 to 2, C2 should become 22
 		</label>
@@ -13,5 +13,5 @@
 			showFormulabar="true" showContextMenu="true" showSheetbar="true" showToolbar="true">
 		</spreadsheet>
 		</hbox>
-	</vbox>
+	</vlayout>
 </zk>

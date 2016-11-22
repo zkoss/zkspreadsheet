@@ -1,4 +1,4 @@
-<vbox hflex="1" vflex="1">
+<vlayout hflex="1" vflex="1">
 	<label multiline="true">
 	1.type text in first textbox, cell A1 should change correspondingly
 	2.type text in 2nd textobx, cell C2 should change correspondingly and C3 with a prefix value
@@ -34,4 +34,4 @@
 	}
 	]]>
  </zscript>
-</vbox>
+</vlayout>

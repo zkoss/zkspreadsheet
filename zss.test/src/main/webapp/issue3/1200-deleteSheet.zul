@@ -1,7 +1,7 @@
 <zk>
 <label multiline="true">1. Press "create sheet" button; you should see a new sheet "temp" created
 2. Press "delete sheet" button; you should see the new created sheet "temp" removed</label>
-<vbox vflex="1" width="100%">
+<vlayout vflex="1" width="100%">
 <button label="create sheet" onClick="create3()"/>
 <button label="delete sheet" onClick="delete()"/>
 <spreadsheet id="ss" src="/issue3/book/blank.xlsx" maxVisibleRows="800" maxVisibleColumns="100" hflex="1" 
@@ -29,5 +29,5 @@ keepCellSelection="true"
 	}
 	
 ]]></zscript>
-</vbox>
+</vlayout>
 </zk>
