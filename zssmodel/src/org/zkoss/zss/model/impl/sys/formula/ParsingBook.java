@@ -255,10 +255,6 @@ public class ParsingBook implements FormulaParsingWorkbook, FormulaRenderingWork
 	public ExternalSheet getAnyExternalSheet(int externSheetIndex) {
 		//ZSS-747
 		synchronized (_indexes) {
-			if (externSheetIndex >= _indexes.index2sheet.size()) {
-				// look-ahead-reference; how to do that?
-				System.out.print("look-ahead-reference?");
-			}
 			return _indexes.index2sheet.get(externSheetIndex);
 		}
 	}
