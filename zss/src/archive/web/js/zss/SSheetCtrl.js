@@ -3318,7 +3318,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		}
 	},
 	//ZSS-1267: close the "Rendering" message
-	closeRenderingMessage: function () {
+	closeRenderingMessage: function (time) {
 		if (this.renderingTimer) {
 			clearTimeout(this.renderingTimer);
 			delete this.renderingTimer;
@@ -3331,7 +3331,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 				delete sht.renderingWin;
 				jq(sht.renderingcmp).css('display', 'none');
 			}
-		}, 0);
+		}, time ? time : 0);
 	},
 	//ZSS-1267: see Spreadsheet.js#doBlockUpdate() and MainBlockCtrl.js#_sendOnCellFetch()
 	startRenderingMessage: function () {
@@ -3339,7 +3339,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			clearTimeout(this.renderingTimer);
 			delete this.renderingTimer;
 		}
-		if (!this.renderingWin) {
+//		if (!this.renderingWin) {
 			this.renderingWin = true;
 			var $rn = jq(this.renderingcmp);
 			$rn.css('display', 'block');
@@ -3354,7 +3354,8 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 				t = (h + ch - rh) / 2;
 			$rn.css('left', ''+l+'px');
 			$rn.css('top', ''+t+'px');
-		}
+			this.closeRenderingMessage(10000); // will clear the 'rendering' message after 10 seconds no matter what
+//		}
 	},
 	_insertNewColumn: function (col, size, extnm) {
 		this.activeBlock.insertNewColumn(col,size);
