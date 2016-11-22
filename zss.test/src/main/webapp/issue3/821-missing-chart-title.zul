@@ -1,5 +1,5 @@
 <?page title="MissingChartTitleIssue"?>
-<zk>
+<vlayout hflex="1" vflex="1">
 <label multiline="true">
 1. Select Sheet "fin_charts"
 2. You should see total 7 charts
@@ -10,4 +10,4 @@ top side of the first 6 charts.
 6. If not, the title is missing and is incorrect.
 </label>
     <spreadsheet id="spreadsheet" src="/issue3/book/821-missing-chart-title.xlsx" maxVisibleRows="50" vflex="1" width="100%" showSheetbar="true"></spreadsheet>
-</zk>
+</vlayout>

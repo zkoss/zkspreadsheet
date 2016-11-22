@@ -1,8 +1,7 @@
 <vlayout hflex="1" vflex="1">
 	<label multiline="true">
-1. You should see a green dotted border outline A1:A3; on A1 there is a filter dropdown button.
-2. Check carefully that you should see 1 pixel space between the top green dotted border line and the bottom border of the heading row.
-3. If not, it is a bug.
+1. You should see a blue dotted border 2px wide outline A1:A3; on A1 there is a filter dropdown button.
+2. If not, it is a bug.
 	</label>
 	<spreadsheet id="ss" src="/issue3/book/948-toprow-1px.xlsx" maxVisibleRows="30" maxVisibleColumns="40"
 		hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
