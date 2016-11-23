@@ -3,7 +3,7 @@
 		<hlayout hflex="1" vflex="1">
 			<spreadsheet id="ss" src="/issue3/book/562-bean.xlsx" maxrows="200" maxcolumns="40"
 				showFormulabar="true" showContextMenu="true" showToolbar="true" showSheetbar="true" 
-				hflex="1" vflex="1" width="100%" >
+				hflex="1" vflex="1">
 			</spreadsheet>
 			<vlayout width="250px">
 			<label>
