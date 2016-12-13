@@ -19,13 +19,12 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.ui.impl.undo;
 
 
-import org.zkoss.zss.api.IllegalFormulaException;
-import org.zkoss.zss.api.Range;
-import org.zkoss.zss.api.Ranges;
-import org.zkoss.zss.api.model.CellStyle;
 import org.zkoss.zss.api.model.Sheet;
+import org.zkoss.zss.model.CellRegion;
+import org.zkoss.zss.range.SRanges;
 import org.zkoss.zss.ui.impl.undo.ReserveUtil.ReservedResult;
 /**
+ * patched version to allow unlocked cells perform some aux action like paste, delete.
  * abstract class handle src content/style reservation
  * @author dennis
  *
@@ -85,7 +84,7 @@ public abstract class AbstractCellDataStyleAction extends AbstractUndoableAction
 
 	@Override
 	public void doAction() {
-		if(isSheetProtected()) return;
+		//FIXME not check protection here, since copy a locked cell is permitted
 		//keep old style
 
 		int row = getReservedRow();
@@ -120,7 +119,8 @@ public abstract class AbstractCellDataStyleAction extends AbstractUndoableAction
 
 	@Override
 	public void undoAction() {
-		if(isSheetProtected()) return;
+		if(isAnyCellProtected(_sheet, new CellRegion(_row, _column,_lastRow,_lastColumn))) 
+			return;
 		
 		int row = getReservedRow();
 		int column = getReservedColumn();
@@ -135,9 +135,9 @@ public abstract class AbstractCellDataStyleAction extends AbstractUndoableAction
 		_oldReserve = null;
 	}
 	
-	@Override
-	protected boolean isSheetProtected(){
-		return super.isSheetProtected() && !Ranges.range(_sheet).getSheetProtection().isFormatCellsAllowed();
-	}
-
+//	@Override
+//	protected boolean isSheetProtected(){
+//		return super.isSheetProtected() && !Ranges.range(_sheet).getSheetProtection().isFormatCellsAllowed();
+//	}
+	
 }

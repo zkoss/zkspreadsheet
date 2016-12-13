@@ -23,6 +23,8 @@ import java.io.Serializable;
 import org.zkoss.zss.api.AreaRef;
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.Sheet;
+import org.zkoss.zss.model.CellRegion;
+import org.zkoss.zss.range.SRanges;
 import org.zkoss.zss.ui.sys.UndoableAction;
 
 /**
@@ -85,6 +87,10 @@ abstract public class AbstractUndoableAction implements UndoableAction, Serializ
 			return _sheet.isProtected();
 		}catch(Exception x){}
 		return true;
+	}
+	
+	protected boolean isAnyCellProtected(Sheet sheet, CellRegion cellRegion){
+		return SRanges.range(sheet.getInternalSheet(), cellRegion).isAnyCellProtected(); 
 	}
 	
 	@Override

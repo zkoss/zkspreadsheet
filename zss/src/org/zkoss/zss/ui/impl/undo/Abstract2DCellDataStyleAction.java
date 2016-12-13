@@ -26,6 +26,8 @@ import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.AreaRef;
 import org.zkoss.zss.api.model.CellStyle;
 import org.zkoss.zss.api.model.Sheet;
+import org.zkoss.zss.model.CellRegion;
+import org.zkoss.zss.range.SRanges;
 import org.zkoss.zss.ui.impl.undo.ReserveUtil.ReservedResult;
 /**
  * abstract class handle src and destination content/style reservation
@@ -140,7 +142,9 @@ public abstract class Abstract2DCellDataStyleAction extends AbstractUndoableActi
 
 	@Override
 	public void doAction() {
-		if(isSheetProtected()) return;
+		if (isAnyCellProtected(_sheet, new CellRegion(_row, _column, _lastRow, _lastColumn))){
+			return;
+		}
 		//keep old style/data of src and dest
 		
 		int srcRow = getReservedSrcRow();

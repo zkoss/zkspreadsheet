@@ -23,6 +23,7 @@ import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.AreaRef;
 import org.zkoss.zss.api.impl.RangeImpl;
+import org.zkoss.zss.api.model.EditableCellStyle;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.range.impl.PasteRangeImpl;
 
@@ -75,6 +76,11 @@ public class CutCellAction extends Abstract2DCellDataStyleAction {
 		Range src = new RangeImpl(new PasteRangeImpl(_sheet.getInternalSheet(), _row, _column, _lastRow, _lastColumn, _wholeRow, _wholeColumn), _sheet); //ZSS-1277
 		Range dest = new RangeImpl(new PasteRangeImpl(_destSheet.getInternalSheet(), _destRow, _destColumn, _destLastRow, _destLastColumn, _wholeRow, _destWholeColumn), _destSheet); //ZSS-1277
 		_pastedRange = CellOperationUtil.cut(src, dest);
+		if (isSheetProtected()){
+			EditableCellStyle recoveredStyle = src.getCellStyleHelper().createCellStyle(src.getCellStyle());
+			recoveredStyle.setLocked(false);
+			src.setCellStyle(recoveredStyle);
+		}
 		
 		CellOperationUtil.fitFontHeightPoints(Ranges.range(_destSheet, dest.getRow(), dest.getColumn(),  
 				dest.getRow() + (_lastRow - _row), dest.getColumn() + (_lastColumn - _column)));
