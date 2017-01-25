@@ -187,8 +187,10 @@ public class AppCtrl extends CtrlBase<Component>{
 			
 			// ZSS-940 remove GA code for EE customer
 			Object evalOnly = Executions.getCurrent().getDesktop().getWebApp().getAttribute("Evaluation Only");
-			if(!(evalOnly == null ? false : (Boolean)evalOnly))
+			if(!(evalOnly == null ? false : (Boolean)evalOnly)){
 				gaScript.setParent(null);
+			}
+			comp.getDesktop().enableServerPush(true);//for the working thread of auto-save
 		}
 		
 		//do after default
