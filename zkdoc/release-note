@@ -2,6 +2,7 @@ ZK Spreadsheet 3.9.2
 *Features:
   
 *Bugs:
+  ZSS-1345 Slow performance when using XMLBean.getXxxList()
 
 ** Upgrade Notes
   
