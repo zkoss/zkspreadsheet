@@ -675,5 +675,4 @@ public class CutAPITest {
 			row += 3;
 		}
 	}
-	
 }
