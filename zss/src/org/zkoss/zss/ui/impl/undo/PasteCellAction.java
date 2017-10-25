@@ -18,13 +18,14 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
  */
 package org.zkoss.zss.ui.impl.undo;
 
+import org.zkoss.zss.api.AreaRef;
 import org.zkoss.zss.api.CellOperationUtil;
 import org.zkoss.zss.api.Range;
-import org.zkoss.zss.api.AreaRef;
 import org.zkoss.zss.api.Ranges;
-import org.zkoss.zss.api.model.Sheet;
-import org.zkoss.zss.ui.CellSelectionType;
 import org.zkoss.zss.api.impl.RangeImpl;
+import org.zkoss.zss.api.model.EditableCellStyle;
+import org.zkoss.zss.api.model.Sheet;
+import org.zkoss.zss.model.CellRegion;
 import org.zkoss.zss.range.impl.PasteRangeImpl;
 
 /**
@@ -90,10 +91,7 @@ public class PasteCellAction extends AbstractCellDataStyleAction {
 	
 	@Override
 	protected boolean isSheetProtected(){
-		try{
-			return _destSheet.isProtected();
-		}catch(Exception x){}
-		return true;
+		return isAnyCellProtected(_destSheet, computePastingRegion());
 	}
 	
 	@Override
@@ -140,10 +138,35 @@ public class PasteCellAction extends AbstractCellDataStyleAction {
 		Range src = new RangeImpl(new PasteRangeImpl(_sheet.getInternalSheet(), _row, _column, _lastRow, _lastColumn, _wholeRow, _wholeColumn), _sheet); //ZSS-1277
 		Range dest = new RangeImpl(new PasteRangeImpl(_destSheet.getInternalSheet(), _destRow, _destColumn, _destLastRow, _destLastColumn, _wholeRow, _destWholeColumn), _destSheet); //ZSS-1277
 		_pastedRange = CellOperationUtil.paste(src, dest);
-		
+		if (isDstSheetProtected()){
+			//recover overriden locked status  during copying from locked cells
+			EditableCellStyle recoveredStyle = _pastedRange.getCellStyleHelper().createCellStyle(dest.getCellStyle());
+			recoveredStyle.setLocked(false);
+			_pastedRange.setCellStyle(recoveredStyle);
+		}
 		CellOperationUtil.fitFontHeightPoints(Ranges.range(_destSheet, dest.getRow(), dest.getColumn(),
 				dest.getRow() + (_lastRow - _row), dest.getColumn() + (_lastColumn - _column)));
 			
 	}
+	
+	/**
+	 * compute the pasting region based on source range if users just select 1 cell to paste.
+	 * @return
+	 */
+	private CellRegion computePastingRegion(){
+		CellRegion destinationRegion = new CellRegion(_destRow, _destColumn, _destLastRow, _destLastColumn);
+		
+		if (destinationRegion.isSingle()){
+			return new CellRegion(_destRow, _destColumn, _destRow + (_lastRow - _row), _destColumn + (_lastColumn - _column));
+		}else{
+			return destinationRegion;
+		}
+	}
 
+	protected boolean isDstSheetProtected(){
+		try{
+			return _destSheet.isProtected();
+		}catch(Exception x){}
+		return true;
+	}
 }

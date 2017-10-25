@@ -22,8 +22,11 @@ import org.zkoss.zss.api.CellOperationUtil;
 import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.AreaRef;
 import org.zkoss.zss.api.Range.AutoFillType;
+import org.zkoss.zss.api.Range.PasteType;
 import org.zkoss.zss.api.Ranges;
+import org.zkoss.zss.api.model.EditableCellStyle;
 import org.zkoss.zss.api.model.Sheet;
+import org.zkoss.zss.model.CellRegion;
 import org.zkoss.zss.ui.impl.undo.ReserveUtil.ReservedResult;
 
 /**
@@ -41,12 +44,21 @@ public class AutoFillCellAction extends Abstract2DCellDataStyleAction {
 		super(label,sheet,srcRow,srcColumn,srcLastRow,srcLastColumn,destSheet,destRow,destColumn,destLastRow,destLastColumn,RESERVE_ALL);
 		_fillType = fillType;
 	}
-
 	
+	@Override
+	protected boolean isSheetProtected(){
+		return isAnyCellProtected(_destSheet, new CellRegion(_destRow, _destColumn, _destLastRow, _destLastColumn));
+	}
+
 	protected void applyAction(){
 		Range src = Ranges.range(_sheet,_row,_column,_lastRow,_lastColumn);
 		Range dest = Ranges.range(_destSheet,_destRow,_destColumn,_destLastRow,_destLastColumn);
 		CellOperationUtil.autoFill(src, dest, _fillType);
+		if (isDstSheetProtected()){
+			//recover overriden locked status  during copying from locked cells
+			EditableCellStyle recoveredStyle = dest.getCellStyleHelper().createCellStyle(dest.getCellStyle());
+			recoveredStyle.setLocked(false);
+			dest.setCellStyle(recoveredStyle);
+		}
 	}
-
 }

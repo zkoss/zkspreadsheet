@@ -24,7 +24,9 @@ import org.zkoss.zss.api.AreaRef;
 import org.zkoss.zss.api.Range.PasteOperation;
 import org.zkoss.zss.api.Range.PasteType;
 import org.zkoss.zss.api.Ranges;
+import org.zkoss.zss.api.model.EditableCellStyle;
 import org.zkoss.zss.api.model.Sheet;
+import org.zkoss.zss.model.CellRegion;
 
 /**
  * 
@@ -77,10 +79,8 @@ public class PasteSpecialCellAction extends AbstractCellDataStyleAction {
 	
 	@Override
 	protected boolean isSheetProtected(){
-		try{
-			return _destSheet.isProtected();
-		}catch(Exception x){}
-		return true;
+		return isAnyCellProtected(_destSheet, computePastingRegion()) 
+			&& (_pasteType != PasteType.FORMATS || !Ranges.range(_sheet).getSheetProtection().isFormatCellsAllowed());
 	}
 	
 	@Override
@@ -127,6 +127,34 @@ public class PasteSpecialCellAction extends AbstractCellDataStyleAction {
 		Range src = Ranges.range(_sheet, _row, _column, _lastRow, _lastColumn);
 		Range dest = Ranges.range(_destSheet, _destRow, _destColumn, _destLastRow, _destLastColumn);
 		_pastedRange = CellOperationUtil.pasteSpecial(src, dest, _pasteType, _pasteOperation, _skipBlank, _transpose);
+		if (isDstSheetProtected()){
+			//recover overriden locked status  during copying from locked cells
+			EditableCellStyle recoveredStyle = _pastedRange.getCellStyleHelper().createCellStyle(dest.getCellStyle());
+			recoveredStyle.setLocked(false);
+			_pastedRange.setCellStyle(recoveredStyle);
+		}
+		CellOperationUtil.fitFontHeightPoints(Ranges.range(_destSheet, dest.getRow(), dest.getColumn(),
+				dest.getRow() + (_lastRow - _row), dest.getColumn() + (_lastColumn - _column)));
+	}
+	
+	/**
+	 * compute the pasting region based on source range if users just select 1 cell to paste.
+	 * @return
+	 */
+	private CellRegion computePastingRegion(){
+		CellRegion destinationRegion = new CellRegion(_destRow, _destColumn, _destLastRow, _destLastColumn);
+		
+		if (destinationRegion.isSingle()){
+			return new CellRegion(_destRow, _destColumn, _destRow + (_lastRow - _row), _destColumn + (_lastColumn - _column));
+		}else{
+			return destinationRegion;
+		}
 	}
 
+	protected boolean isDstSheetProtected(){
+		try{
+			return _destSheet.isProtected();
+		}catch(Exception x){}
+		return true;
+	}
 }
