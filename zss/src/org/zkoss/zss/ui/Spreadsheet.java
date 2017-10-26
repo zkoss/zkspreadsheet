@@ -487,11 +487,13 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			String cls = (String) getAttribute(USER_ACTION_MANAGER_CTRL_CLS,true);
 			
 			if(cls==null){
-				cls = (String) Library.getProperty(USER_ACTION_MANAGER_CTRL_CLS);
+				cls = Library.getProperty(USER_ACTION_MANAGER_CTRL_CLS);
 			}
 			if (cls != null) {
 				try {
-					_actionManagerCtrl = (UserActionManagerCtrl) Classes.newInstance(cls, null, null);
+					//ZSS-1319
+					Class actionManagerClass = Class.forName(cls);
+					_actionManagerCtrl = (UserActionManagerCtrl) Classes.newInstance(actionManagerClass, null, null);
 				} catch (Exception x) {
 					throw new UiException(x);
 				}
@@ -5507,7 +5509,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		if (_widgetLoaders != null)
 			return _widgetLoaders;
 		_widgetLoaders = new ArrayList<WidgetLoader>();
-		final String loaderclzs = (String) Library.getProperty(WIDGET_LOADERS);
+		final String loaderclzs = Library.getProperty(WIDGET_LOADERS);
 		if (loaderclzs != null) {
 			try {
 				String[] clzs = loaderclzs.split(",");
@@ -5516,7 +5518,9 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 					clzs[i] = clzs[i].trim();
 					if ("".equals(clzs[i]))
 						continue;
-					wl = (WidgetLoader) Classes.newInstance(clzs[i], null, null);
+					//ZSS-1391
+					Class wgtClass = Class.forName(clzs[i]);
+					wl = (WidgetLoader) Classes.newInstance(wgtClass, null, null);
 					wl.init(this);
 					_widgetLoaders.add(wl);
 				}
@@ -5576,10 +5580,13 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	 * @return
 	 */
 	private WidgetHandler newWidgetHandler() {
-		final String handlerclz = (String) Library.getProperty(WIDGET_HANDLER_CLS);
+		final String handlerclz = Library.getProperty(WIDGET_HANDLER_CLS);
 		if (handlerclz != null) {
 			try {
-				_widgetHandler = (WidgetHandler) Classes.newInstance(handlerclz, null, null);
+				//ZSS-1319
+				Class widgetHandlerClass = Class.forName(handlerclz);
+
+				_widgetHandler = (WidgetHandler) Classes.newInstance(widgetHandlerClass, null, null);
 				_widgetHandler.init(this);
 			} catch (Exception x) {
 				throw new UiException(x);
@@ -6642,10 +6649,12 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 
 	private CellDisplayLoader getCellDisplayLoader() {
 		if(_cellDisplayLoader==null){
-			String cls = (String) Library.getProperty(CELL_DISPLAY_LOADER_CLS);
+			String cls = Library.getProperty(CELL_DISPLAY_LOADER_CLS);
 			if (cls != null) {
 				try {
-					_cellDisplayLoader = (CellDisplayLoader) Classes.newInstance(cls, null, null);
+					//ZSS-1319
+					Class cellDisplayLoaderClass = Class.forName(cls);
+					_cellDisplayLoader = (CellDisplayLoader) Classes.newInstance(cellDisplayLoaderClass, null, null);
 				} catch (Exception x) {
 					throw new UiException(x);
 				}
@@ -6658,10 +6667,12 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	
 	private DataValidationHandler getDataValidationHandler() {
 		if(_dataValidationHandler==null){
-			String cls = (String) Library.getProperty(DATA_VALIDATION_HANDLER_CLS);
+			String cls = Library.getProperty(DATA_VALIDATION_HANDLER_CLS);
 			if (cls != null) {
 				try {
-					_dataValidationHandler = (DataValidationHandler) Classes.newInstance(cls, null, null);
+					//ZSS-1319
+					Class dataValidationHandlerClass = Class.forName(cls);
+					_dataValidationHandler = (DataValidationHandler) Classes.newInstance(dataValidationHandlerClass, null, null);
 				} catch (Exception x) {
 					throw new UiException(x);
 				}
@@ -6674,10 +6685,12 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	
 	private FreezeInfoLoader getFreezeInfoLoader() {
 		if(_freezeInfoLoader==null){
-			String cls = (String) Library.getProperty(FREEZE_INFO_LOCADER_CLS);
+			String cls = Library.getProperty(FREEZE_INFO_LOCADER_CLS);
 			if (cls != null) {
 				try {
-					_freezeInfoLoader = (FreezeInfoLoader) Classes.newInstance(cls, null, null);
+					//ZSS-1319
+					Class freezeInfoLoaderClass = Class.forName(cls);
+					_freezeInfoLoader = (FreezeInfoLoader) Classes.newInstance(freezeInfoLoaderClass, null, null);
 				} catch (Exception x) {
 					throw new UiException(x);
 				}
@@ -6693,11 +6706,13 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			String cls = (String) getAttribute(UNDOABLE_ACTION_MANAGER_CLS,true);
 			
 			if(cls==null){
-				cls = (String) Library.getProperty(UNDOABLE_ACTION_MANAGER_CLS);
+				cls = Library.getProperty(UNDOABLE_ACTION_MANAGER_CLS);
 			}
 			if (cls != null) {
 				try {
-					_undoableActionManager = (UndoableActionManager) Classes.newInstance(cls, null, null);
+					//ZSS-1319
+					Class undoableActionManagerClass = Class.forName(cls);
+					_undoableActionManager = (UndoableActionManager) Classes.newInstance(undoableActionManagerClass, null, null);
 				} catch (Exception x) {
 					throw new UiException(x);
 				}
