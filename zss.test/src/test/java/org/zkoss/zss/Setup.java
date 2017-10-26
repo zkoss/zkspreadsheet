@@ -21,6 +21,7 @@ public class Setup {
 		try {
 			props.load(new FileInputStream("zss.test.properties"));
 		} catch (FileNotFoundException e) {
+			System.out.println("** Have to copy file \"zsscml/cmldoc/zss.test.properties\" to folder \"" + System.getProperty("user.dir") + "\" first");
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
