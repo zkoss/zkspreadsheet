@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.locks.ReadWriteLock;
+import java.lang.reflect.InvocationTargetException;
 
 import org.zkoss.json.JSONArray;
 import org.zkoss.json.JSONObject;
@@ -491,7 +492,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			}
 			if (cls != null) {
 				try {
-					_actionManagerCtrl = (UserActionManagerCtrl) Classes.newInstance(cls, null, null);
+					_actionManagerCtrl = (UserActionManagerCtrl) Spreadsheet.newInstance(cls); //ZSS-1319
 				} catch (Exception x) {
 					throw new UiException(x);
 				}
@@ -5516,7 +5517,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 					clzs[i] = clzs[i].trim();
 					if ("".equals(clzs[i]))
 						continue;
-					wl = (WidgetLoader) Classes.newInstance(clzs[i], null, null);
+					wl = (WidgetLoader) Spreadsheet.newInstance(clzs[i]);  //ZSS-1319
 					wl.init(this);
 					_widgetLoaders.add(wl);
 				}
@@ -5579,7 +5580,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		final String handlerclz = (String) Library.getProperty(WIDGET_HANDLER_CLS);
 		if (handlerclz != null) {
 			try {
-				_widgetHandler = (WidgetHandler) Classes.newInstance(handlerclz, null, null);
+				_widgetHandler = (WidgetHandler) Spreadsheet.newInstance(handlerclz);  //ZSS-1319
 				_widgetHandler.init(this);
 			} catch (Exception x) {
 				throw new UiException(x);
@@ -6645,7 +6646,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			String cls = (String) Library.getProperty(CELL_DISPLAY_LOADER_CLS);
 			if (cls != null) {
 				try {
-					_cellDisplayLoader = (CellDisplayLoader) Classes.newInstance(cls, null, null);
+					_cellDisplayLoader = (CellDisplayLoader) Spreadsheet.newInstance(cls);  //ZSS-1319
 				} catch (Exception x) {
 					throw new UiException(x);
 				}
@@ -6661,7 +6662,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			String cls = (String) Library.getProperty(DATA_VALIDATION_HANDLER_CLS);
 			if (cls != null) {
 				try {
-					_dataValidationHandler = (DataValidationHandler) Classes.newInstance(cls, null, null);
+					_dataValidationHandler = (DataValidationHandler) Spreadsheet.newInstance(cls);  //ZSS-1319
 				} catch (Exception x) {
 					throw new UiException(x);
 				}
@@ -6677,7 +6678,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			String cls = (String) Library.getProperty(FREEZE_INFO_LOCADER_CLS);
 			if (cls != null) {
 				try {
-					_freezeInfoLoader = (FreezeInfoLoader) Classes.newInstance(cls, null, null);
+					_freezeInfoLoader = (FreezeInfoLoader) Spreadsheet.newInstance(cls);  //ZSS-1319
 				} catch (Exception x) {
 					throw new UiException(x);
 				}
@@ -6697,7 +6698,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			}
 			if (cls != null) {
 				try {
-					_undoableActionManager = (UndoableActionManager) Classes.newInstance(cls, null, null);
+					_undoableActionManager = (UndoableActionManager) Spreadsheet.newInstance(cls);  //ZSS-1319
 				} catch (Exception x) {
 					throw new UiException(x);
 				}
@@ -7026,5 +7027,29 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 				smartUpdate("ignoreAutoHeight", b);
 			}
 		}
+	}
+	
+	//ZSS-1319
+	/**
+	 * Instantiates a new instance of the specified class name
+	 * with the specified arguments.
+	 *
+	 * <p>It uses Class.forName to get the class(i.e. use defining classLoader of this Spreadsheet class).
+	 *
+	 * @param clsName the class name of the instance to create
+	 * @return the new instance
+	 *
+	 * @exception NoSuchMethodException if a matching method is not found
+	 * @exception InstantiationException if the class that declares the
+	 * underlying constructor represents an abstract class
+	 * @exception InvocationTargetException if the underlying constructor
+	 * throws an exception
+	 * @exception ClassNotFoundException if the specified class name is not a class
+	 * @see Classes#newInstance(Class, Class[], Object[])
+	 */
+	private static final Object newInstance(String clsName)
+	throws NoSuchMethodException, InstantiationException,
+		InvocationTargetException, ClassNotFoundException, IllegalAccessException {
+	 	return Classes.newInstance(Class.forName(clsName), null, null);
 	}
 }

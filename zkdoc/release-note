@@ -6,6 +6,7 @@ ZK Spreadsheet 3.9.2
   ZSS-1311 Unimplemented excel function placeholder prevents from defining a custom function with the same name
   ZSS-1315 when moving a chart in zssapp, it throws an IllegalStateException
   ZSS-1317 conditional format formulas not adjusted correctly when copy/paste
+  ZSS-1319 Impossible to use spreadsheet component from another classloader
   ZSS-1320 Auto-fill can fill unlocked cells within a protected sheet
   ZSS-1323 AbstractExcelExporter doesn't export row break and column break
   ZSS-1345 Slow performance when using XMLBean.getXxxList()
