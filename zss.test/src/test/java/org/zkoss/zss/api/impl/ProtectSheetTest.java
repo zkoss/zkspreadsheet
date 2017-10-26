@@ -290,7 +290,7 @@ public class ProtectSheetTest {
         Assert.assertEquals(verticalAlignHandler.isEnabled(book, sheet), enabled);
         Assert.assertEquals(horizontalAlignHandler.isEnabled(book, sheet), enabled);
         Assert.assertEquals(wrapTextHandler.isEnabled(book, sheet), enabled);
-        Assert.assertEquals(autoFillHandler.isEnabled(book, sheet), enabled);
+        Assert.assertEquals(autoFillHandler.isEnabled(book, sheet), book!= null && sheet!= null);
         Assert.assertEquals(formatCellHandler.isEnabled(book, sheet), enabled);
 	}
 	

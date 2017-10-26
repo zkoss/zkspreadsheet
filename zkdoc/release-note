@@ -3,6 +3,7 @@ ZK Spreadsheet 3.9.2
   
 *Bugs:
   ZSS-1310 Can't perform some edit operations on unlocked cells in a protected sheet
+  ZSS-1320 Auto-fill can fill unlocked cells within a protected sheet
   ZSS-1345 Slow performance when using XMLBean.getXxxList()
 
 ** Upgrade Notes
