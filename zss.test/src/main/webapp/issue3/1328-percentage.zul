@@ -1,0 +1,13 @@
+<zk>
+<label multiline="true">
+1. Should see E4 show 2%
+2. Select E4 and press F2; should see editor show 1.5%
+3. Press Enter; should see E4 show 2%
+4. Double click E4 to enter editor mode; should see editor show 1.5%
+5. Press Esc; should see E4 show 2%
+</label>
+	<window title="Bare ZK Spreadsheet" border="normal" height="100%">
+		<spreadsheet src="/issue3/book/1328-percentage.xlsx" maxVisibleRows="250" maxVisibleColumns="40" width="100%"
+			height="100%" showContextMenu="true" showSheetbar="true" showToolbar="true"/>
+	</window>
+</zk>
