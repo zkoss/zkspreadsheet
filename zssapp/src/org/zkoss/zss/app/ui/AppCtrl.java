@@ -190,7 +190,7 @@ public class AppCtrl extends CtrlBase<Component>{
 			if(!(evalOnly == null ? false : (Boolean)evalOnly)){
 				gaScript.setParent(null);
 			}
-			comp.getDesktop().enableServerPush(true);//for the working thread of auto-save
+			comp.getDesktop().enableServerPush(true);//for the working thread of auto-save; ZSS-1315
 		}
 		
 		//do after default
