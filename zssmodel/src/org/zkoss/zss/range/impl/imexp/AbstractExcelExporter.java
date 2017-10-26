@@ -201,6 +201,12 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 		poiSheet.createFreezePane(freezeCol <= 0 ? 0 : freezeCol, freezeRow <= 0 ? 0 : freezeRow);
 
 		poiSheet.setDisplayGridlines(sheet.getViewInfo().isDisplayGridlines());
+		for (Integer rowIndex : sheet.getViewInfo().getRowBreaks()){
+			poiSheet.setRowBreak(rowIndex);
+		}
+		for (Integer colIndex : sheet.getViewInfo().getColumnBreaks()){
+			poiSheet.setColumnBreak(colIndex);
+		}
 
 		exportSheetProtection(sheet, poiSheet); //ZSS-576
 		if (sheet.isProtected()) {
