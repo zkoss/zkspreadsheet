@@ -15,6 +15,7 @@ ZK Spreadsheet 3.9.2
   ZSS-1335 NPE when evaluating Conditional formattings
   ZSS-1336 conditional formatting triggers on formula errors
   ZSS-1337 Same name for range in sheet and workbook scope not found in FormulaTunerHelper, cause failed updates
+  ZSS-1339 potential session memory leak
   ZSS-1345 Slow performance when using XMLBean.getXxxList()
 
 ** Upgrade Notes
