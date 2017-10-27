@@ -10,6 +10,7 @@ ZK Spreadsheet 3.9.2
   ZSS-1320 Auto-fill can fill unlocked cells within a protected sheet
   ZSS-1323 AbstractExcelExporter doesn't export row break and column break
   ZSS-1328 ZSS percentage edition changes value of cell if rounded
+  ZSS-1329 Potential VERY expensive StackOverflowError
   ZSS-1345 Slow performance when using XMLBean.getXxxList()
 
 ** Upgrade Notes
