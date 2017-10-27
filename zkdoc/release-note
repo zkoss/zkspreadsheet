@@ -11,6 +11,7 @@ ZK Spreadsheet 3.9.2
   ZSS-1323 AbstractExcelExporter doesn't export row break and column break
   ZSS-1328 ZSS percentage edition changes value of cell if rounded
   ZSS-1329 Potential VERY expensive StackOverflowError
+  ZSS-1332 broken styles below merged cells after scrolling vertically
   ZSS-1334 zss warning dialog header change from "warn" to "warning"
   ZSS-1335 NPE when evaluating Conditional formattings
   ZSS-1336 conditional formatting triggers on formula errors

@@ -796,6 +796,21 @@ zss.Cell = zk.$extends(zk.Widget, {
 		}
 	},
 	bind_: function (desktop, skipper, after) {
+		//ZSS-1332
+		var tmp = this.block._newrange,
+		    finalNewrange = this.block._finalNewrange;
+		try {
+			if(finalNewrange) {
+				this.block._newrange = finalNewrange;
+			}
+			this.bind0_(desktop, skipper, after);
+		} finally {
+			if(finalNewrange) {
+				this.block._newrange = tmp;
+			}
+		}
+	},
+	bind0_: function (desktop, skipper, after) {
 		this.$supers(zss.Cell, 'bind_', arguments);
 		
 		var n = this.comp = this.$n(),

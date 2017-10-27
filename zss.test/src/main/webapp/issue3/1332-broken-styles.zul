@@ -1,0 +1,15 @@
+<zk>
+<label multiline="true">
+1. Scroll to the bottom of the sheet below row 150
+2. Scroll slowly up to the top
+3. If you see white background in column B below row 6; it is a bug.
+</label>
+	<vlayout height="100%">
+		<spreadsheet id="ss" vflex="1" hflex="1" src="/issue3/book/1332-broken-styles.xlsx" 
+			hiderowhead="false" hidecolumnhead="false" showSheetbar="true" showContextMenu="false"			
+			ignoreAutoHeight="true"
+			preloadRowSize="100"
+			preloadColumnSize="50"
+			/>
+	</vlayout>
+</zk>

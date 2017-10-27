@@ -248,7 +248,22 @@ zss.CellBlockCtrl = zk.$extends(zk.Widget, {
 			isLeft = 'west' == dir,
 			isRight = 'east' == dir,
 			nr = new zss.Range(cr.left, cr.top, cr.width, cr.height, true), //ZSS-1117
-			width = rCol - lCol + 1; //ZSS-1117
+			width = rCol - lCol + 1, //ZSS-1117
+			//ZSS-1132
+			height = bRow - tRow + 1,
+			finalNewrange = new zss.Range(cr.left, cr.top, cr.width, cr.height, true);
+		
+		//ZSS-1132
+		if (isLeft) {
+			finalNewrange.extendLeft(width);
+		} else if (isRight) {
+			finalNewrange.extendRight(width);
+		} else if (isTop) {
+			finalNewrange.extendTop(height);
+		} else if (isBtm) {
+			finalNewrange.extendBottom(height);
+		}
+		this._finalNewrange = finalNewrange;
 		
 		//ZSS-1117
 		if (isLeft)
@@ -297,6 +312,7 @@ zss.CellBlockCtrl = zk.$extends(zk.Widget, {
 			sheet.fireProcessAutoHeight_();
 			delete sheet._cah;
 		}
+		delete this._finalNewrange;	// ZSS-1332	
 	},
 	/**
 	 * Sets rows's width position index
