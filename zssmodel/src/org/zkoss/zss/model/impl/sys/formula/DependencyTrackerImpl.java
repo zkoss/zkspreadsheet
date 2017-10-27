@@ -73,12 +73,14 @@ public class DependencyTrackerImpl implements DependencyTracker {
 				final DependencyTableAdv table = (DependencyTableAdv) series.getDependencyTable();
 				final int ptgIndex = ec.getPtgIndex();
 				final Set<Ref> precedents = table.getDirectPrecedents(dependent);
-				for (Ref precedent : precedents) {
-					if (precedent.getType() == RefType.INDIRECT 
-							&& ((IndirectRef)precedent).getPtgIndex() == ptgIndex) {
-						// clear precedents of the found IndirectRef
-						table.clearDependents(precedent);
-						break;
+				if (precedents != null) { //ZSS-1335
+					for (Ref precedent : precedents) {
+						if (precedent.getType() == RefType.INDIRECT 
+								&& ((IndirectRef)precedent).getPtgIndex() == ptgIndex) {
+							// clear precedents of the found IndirectRef
+							table.clearDependents(precedent);
+							break;
+						}
 					}
 				}
 			}

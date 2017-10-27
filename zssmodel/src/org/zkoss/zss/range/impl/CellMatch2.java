@@ -13,21 +13,14 @@
 package org.zkoss.zss.range.impl;
 
 import java.io.Serializable;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.zkoss.poi.ss.usermodel.ZssContext;
-import org.zkoss.zss.model.SAutoFilter.FilterOp;
 import org.zkoss.zss.model.SCell;
-import org.zkoss.zss.model.SCell.CellType;
-import org.zkoss.zss.model.SConditionalFormattingRule;
 import org.zkoss.zss.model.SConditionalFormattingRule.RuleOperator;
-import org.zkoss.zss.model.SCustomFilter;
 import org.zkoss.zss.model.impl.RuleInfo;
 import org.zkoss.zss.model.sys.EngineFactory;
 import org.zkoss.zss.model.sys.format.FormatContext;
 import org.zkoss.zss.model.sys.format.FormatEngine;
-import org.zkoss.zss.model.sys.formula.FormulaEngine;
 
 //ZSS-1142
 /**
@@ -70,7 +63,6 @@ public class CellMatch2 implements Matchable<SCell>, Serializable {
 	
 	static class MatchOne implements Serializable {
 		private static final long serialVersionUID = -7474902362367302742L;
-		private boolean _not;
 		private Matchable<SCell> _matchable;
 		private RuleOperator op;
 		private FormatEngine _formatEngine;
@@ -97,11 +89,6 @@ public class CellMatch2 implements Matchable<SCell>, Serializable {
 		}
 		
 		public boolean match(SCell cell) {
-			final boolean ret = match0(cell);
-			return _not ? !ret : ret;
-		}
-		
-		private boolean match0(SCell cell) {
 			if (_matchable != null) {
 				return ((Matchable<SCell>)_matchable).match(cell);
 			} else {
@@ -123,7 +110,12 @@ public class CellMatch2 implements Matchable<SCell>, Serializable {
 				break;
 
 			case NOT_CONTAINS:
-				_not = true;
+				//ZSS-1336
+				_matchable = ruleInfo == null ? 
+						new NotContainsText(value.toString()):
+						new NotContainsText(ruleInfo);
+				break;
+
 			case CONTAINS_TEXT:
 				_matchable = ruleInfo == null ? 
 						new ContainsText(value.toString()):
@@ -131,7 +123,12 @@ public class CellMatch2 implements Matchable<SCell>, Serializable {
 				break;
 				
 			case NOT_EQUAL:
-				_not = true;
+				//ZSS-1336
+				_matchable = ruleInfo == null ?
+						new NotEquals(value.toString()):
+						new NotEquals(ruleInfo);
+				break;
+				
 			case EQUAL:
 				_matchable = ruleInfo == null ?
 						new Equals(value.toString()):
@@ -139,7 +136,12 @@ public class CellMatch2 implements Matchable<SCell>, Serializable {
 				break;
 				
 			case LESS_THAN_OR_EQUAL:
-				_not = true;
+				//ZSS-1336
+				_matchable = ruleInfo == null ? 
+						new LessThanOrEqual2(value.toString()):
+						new LessThanOrEqual2(ruleInfo);
+				break;
+
 			case GREATER_THAN:
 				_matchable = ruleInfo == null ? 
 						new GreaterThan2(value.toString()):
@@ -147,7 +149,12 @@ public class CellMatch2 implements Matchable<SCell>, Serializable {
 				break;
 
 			case GREATER_THAN_OR_EQUAL:
-				_not = true;
+				//ZSS-1336
+				_matchable = ruleInfo == null ?
+						new GreaterThanOrEqual2(value.toString()):
+						new GreaterThanOrEqual2(ruleInfo);
+				break;
+
 			case LESS_THAN:
 				_matchable = ruleInfo == null ?
 						new LessThan2(value.toString()):

@@ -1,0 +1,10 @@
+<zk>
+<label multiline="true">
+1. Should see WHITE background on A6:B6
+2. If not(especially if the background is RED) it is a bug
+</label>
+	<window title="Bare ZK Spreadsheet" border="normal" height="100%">
+		<spreadsheet src="/issue3/book/1336-conditional-formatting.xlsx" maxVisibleRows="250" maxVisibleColumns="40" width="100%"
+			height="100%" showContextMenu="true" showSheetbar="true" showToolbar="true"/>
+	</window>
+</zk>
