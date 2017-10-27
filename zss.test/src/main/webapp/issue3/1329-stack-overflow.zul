@@ -1,0 +1,11 @@
+<zk>
+	<spreadsheet id="ss1" height="300px" hflex="1" src="/issue3/book/1329-stack-overflow.xlsx"
+		showSheetbar="true" showFormulabar="true" showContextMenu="true" apply="zss.issue.Composer1329"
+		/>
+<!-- workaround for ZK1329 -->
+<!-- 	<spreadsheet id="ss1" height="300px" hflex="1" src="/4442-zss-background-cleanup/empty.xlsx" -->
+<!-- 		use="zk.support.Spreadsheet_Patch_ZK1329" -->
+<!-- 		showSheetbar="true" showFormulabar="true" showContextMenu="true" apply="zk.support.BackgroundComposer4442" -->
+<!-- 		/> -->
+
+</zk>

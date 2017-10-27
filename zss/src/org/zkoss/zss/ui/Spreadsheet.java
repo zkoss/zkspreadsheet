@@ -6733,6 +6733,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			if(comp instanceof Spreadsheet){
 				try{
 					((Spreadsheet)comp).releaseBook();
+					((Spreadsheet)comp).setSrc(null); //ZSS-1329
 				}catch(Exception x){}//eat
 			}
 		}
