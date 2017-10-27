@@ -433,7 +433,8 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 	private void moveNameRef(SheetRegion sheetRegion,NameRef dependent,int rowOffset, int columnOffset) {
 		SBook book = _bookSeries.getBook(dependent.getBookName());
 		if(book==null) return;
-		SName name = book.getNameByName(dependent.getNameName());
+		// ZSS-1337 must consider the NameRef's sheet scope
+		final SName name = book.getNameByName(dependent.getNameName(), dependent.getSheetName());
 		if(name==null) return;
 		SSheet sheet = book.getSheetByName(name.getRefersToSheetName());
 		if(sheet==null) return;
@@ -842,7 +843,8 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 	private void extendNameRef(SheetRegion sheetRegion, NameRef dependent, boolean horizontal) {
 		SBook book = _bookSeries.getBook(dependent.getBookName());
 		if(book==null) return;
-		SName name = book.getNameByName(dependent.getNameName());
+		// ZSS-1337 must consider the NameRef's sheet scope
+		final SName name = book.getNameByName(dependent.getNameName(), dependent.getSheetName());
 		if (name == null) return;
 		SSheet sheet = book.getSheetByName(name.getRefersToSheetName());
 		if(sheet==null) return;
@@ -1247,7 +1249,8 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 	private void shrinkNameRef(SheetRegion sheetRegion, NameRef dependent, boolean horizontal) {
 		SBook book = _bookSeries.getBook(dependent.getBookName());
 		if(book==null) return;
-		SName name = book.getNameByName(dependent.getNameName());
+		// ZSS-1337must consider the NameRef's sheet scope
+		final SName name = book.getNameByName(dependent.getNameName(), dependent.getSheetName());
 		if(name==null) return;
 		SSheet sheet = book.getSheetByName(name.getRefersToSheetName());
 		if(sheet==null) return;
@@ -1603,7 +1606,8 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 	private void renameSheetNameRef(SBook bookOfSheet, String oldName, String newName, NameRef dependent) {
 		SBook book = _bookSeries.getBook(dependent.getBookName());
 		if(book==null) return;
-		SName name = book.getNameByName(dependent.getNameName());
+		// ZSS-1337 must consider the NameRef's sheet scope
+		final SName name = book.getNameByName(dependent.getNameName(), dependent.getSheetName());
 		if(name==null) return;
 		String sheetName = null;
 		SSheet sheet = book.getSheetByName(name.getRefersToSheetName());
@@ -1933,7 +1937,8 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 	private void reorderSheetNameRef(SBook bookOfSheet, int oldIndex, int newIndex, NameRef dependent) {
 		SBook book = _bookSeries.getBook(dependent.getBookName());
 		if(book==null) return;
-		SName name = book.getNameByName(dependent.getNameName());
+		// ZSS-1337 must consider the NameRef's sheet scope
+		final SName name = book.getNameByName(dependent.getNameName(), dependent.getSheetName());
 		if(name==null) return;
 		SSheet sheet = book.getSheetByName(name.getRefersToSheetName());
 		if(sheet==null) return;

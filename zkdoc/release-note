@@ -14,6 +14,7 @@ ZK Spreadsheet 3.9.2
   ZSS-1334 zss warning dialog header change from "warn" to "warning"
   ZSS-1335 NPE when evaluating Conditional formattings
   ZSS-1336 conditional formatting triggers on formula errors
+  ZSS-1337 Same name for range in sheet and workbook scope not found in FormulaTunerHelper, cause failed updates
   ZSS-1345 Slow performance when using XMLBean.getXxxList()
 
 ** Upgrade Notes

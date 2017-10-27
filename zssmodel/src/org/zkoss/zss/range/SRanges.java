@@ -71,7 +71,13 @@ public class SRanges {
 	 */
 	public static SRange rangeByName(SSheet sheet, String name){
 		SBook book = sheet.getBook();
-		SName n = book.getNameByName(name);
+		//ZSS-1337
+		// search sheet scope first
+		SName n = book.getNameByName(name, sheet.getSheetName());
+		if (n==null) {
+			// search workbook scope
+			n = book.getNameByName(name, null);
+		}
 		if(n==null){
 			throw new InvalidModelOpException("can't find name "+name);
 		}
