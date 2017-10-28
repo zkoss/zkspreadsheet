@@ -23,6 +23,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 			typeof window.getSelection == 'function',
 		supportDocumentSelection =
 			document.selection && document.selection.type != 'Control', // IE
+		isEdge = /Edge\/\d+/.test(navigator.userAgent),	// MS Edge; ZSS-1342
 		newLine = function () {
 			if (supportGetSelection) {
 				return function (node) {
@@ -208,7 +209,9 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 			}
 		}(),
 		complementHTML = function () {
-			if (zk.webkit) { 
+			if (isEdge) { //ZSS-1342
+				return zk.$void;
+			} else if (zk.webkit) { 
 				return function (node) {
 					node.appendChild(createBrNode());
 				};

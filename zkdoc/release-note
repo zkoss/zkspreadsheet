@@ -18,6 +18,7 @@ ZK Spreadsheet 3.9.2
   ZSS-1337 Same name for range in sheet and workbook scope not found in FormulaTunerHelper, cause failed updates
   ZSS-1339 potential session memory leak
   ZSS-1341 quick typing sometimes produces a reversed order string
+  ZSS-1342 ZSS inserts new line <br> among input characters in MS Edge
   ZSS-1345 Slow performance when using XMLBean.getXxxList()
 
 ** Upgrade Notes
