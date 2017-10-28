@@ -1120,7 +1120,7 @@ zss.Editbox = zk.$extends(zul.inp.InputWidget, {
 			// ZSS-737: do not move caret's position when prepare composition
 			if (this.prepareComposition) {
 				$edit.focus();
-			} else {
+			} else if (zk.ie && zk.ie < 11) { //ZSS-1341
 				setTimeout(function() {
 					$edit.focus();
 					//ZSS-1214
@@ -1130,6 +1130,14 @@ zss.Editbox = zk.$extends(zul.inp.InputWidget, {
 						placeCaretAtEnd(editorcmp);
 					}
 				}, 25);
+			} else { // ZSS-1341
+				$edit.focus();
+				//ZSS-1214
+				if (percent) {
+					placeCaretBeforeEnd(editorcmp);
+				} else {
+					placeCaretAtEnd(editorcmp);
+				}				
 			}
 		}
 
