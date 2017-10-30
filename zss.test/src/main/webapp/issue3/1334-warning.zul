@@ -1,0 +1,10 @@
+<zk>
+<label multiline="true">
+1. Enter in A1 =A( and press Enter
+2. Should see a popup dialog whose title is "Warning"; if you see "Warn" then it is a bug.
+</label>
+	<window title="Bare ZK Spreadsheet" border="normal" height="100%">
+		<spreadsheet src="/issue3/book/blank.xlsx" maxVisibleRows="250" maxVisibleColumns="40" width="100%"
+			height="100%" showContextMenu="true" showSheetbar="true" showToolbar="true"/>
+	</window>
+</zk>
