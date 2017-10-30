@@ -1,0 +1,15 @@
+<zk>
+MS Edge ONLY
+<label multiline="true">
+1. In A1; type 123
+2. If you see 123 in the same line, it is OK.
+3. If you see 1 in 1st line and 23 on 2nd line, it is a bug
+4. Press ALT-Enter; should see the keyboard caret(blink I bar) move to next line below 123
+5. Type 456, you should see 456 is on 2nd line
+6. If you see an empty line between 123 and 456, it is a bug.
+</label>
+	<window title="Bare ZK Spreadsheet" border="normal" height="100%">
+		<spreadsheet src="/issue3/book/blank.xlsx" maxVisibleRows="250" maxVisibleColumns="40" width="100%"
+			height="100%" showContextMenu="true" showSheetbar="true" showToolbar="true"/>
+	</window>
+</zk>
