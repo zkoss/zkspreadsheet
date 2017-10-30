@@ -63,6 +63,7 @@ import org.zkoss.poi.ss.formula.ptg.RefPtg;
 import org.zkoss.poi.ss.formula.ptg.RefPtgBase;
 import org.zkoss.poi.ss.formula.ptg.TablePtg;
 import org.zkoss.poi.ss.formula.ptg.TablePtg.Item;
+import org.zkoss.poi.ss.formula.ptg.Parenthesis2Ptg;
 import org.zkoss.poi.ss.formula.udf.UDFFinder;
 import org.zkoss.poi.xssf.model.IndexedUDFFinder;
 import org.zkoss.util.logging.Log;
@@ -161,7 +162,7 @@ public class FormulaEngineImpl implements FormulaEngine, Serializable {
 				tokens.add(ptgs[k]);
 			}
 		}
-		tokens.add(new ParenthesisPtg(tokens.size()));
+		tokens.add(new Parenthesis2Ptg(tokens.size())); //ZSS-1317
 		Ptg[] ptgArray = tokens.toArray(new Ptg[tokens.size()]);
 		String renderedFormula = renderFormula(new ParsingBook(context.getBook()), formula, ptgArray, true);
 		return new FormulaExpressionImpl(renderedFormula, ptgArray, areaRefs.toArray(new Ref[areaRefs.size()]), false, null, true);
@@ -886,7 +887,7 @@ public class FormulaEngineImpl implements FormulaEngine, Serializable {
 				tokens.add(ptgs[k]);
 			}
 		}
-		tokens.add(new ParenthesisPtg(tokens.size()));
+		tokens.add(new Parenthesis2Ptg(tokens.size())); // ZSS-1317
 		return new FormulaExpressionImpl(formula, tokens.toArray(new Ptg[tokens.size()]),  areaRefs.size()==0?null:areaRefs.toArray(new Ref[areaRefs.size()]));
 	}
 	
@@ -1403,7 +1404,7 @@ public class FormulaEngineImpl implements FormulaEngine, Serializable {
 				tokens.add(ptgs[k]);
 			}
 		}
-		tokens.add(new ParenthesisPtg(tokens.size()));
+		tokens.add(new Parenthesis2Ptg(tokens.size())); // ZSS-1317
 		return new FormulaExpressionImpl(formula, tokens.toArray(new Ptg[tokens.size()]),  areaRefs.size()==0?null:areaRefs.toArray(new Ref[areaRefs.size()]));
 	}
 
