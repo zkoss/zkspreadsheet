@@ -1,0 +1,12 @@
+<zk>
+<label multiline="true">
+1. Select the chart and drag it around 5 times
+2. If no exception then it is OK
+</label>
+	<window width="100%" height="100%">
+		<spreadsheet id="ss" src="/issue3/book/1315-demo_sample.xlsx" hflex="1" vflex="1"
+			maxVisibleRows="500" maxVisibleColumns="200" showToolbar="true" showFormulabar="true"
+			showSheetbar="true" showContextMenu="true" > 
+		</spreadsheet>
+	</window>
+</zk>
