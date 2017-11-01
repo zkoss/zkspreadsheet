@@ -486,6 +486,17 @@
 	z-index: 11; /* ZSS-917 see zscell's z-index */
 }
 
+/* ZSS-1338 */
+.zscell-overflow-right-alignment{
+	overflow: visible;
+}
+
+/* ZSS-1338 */
+.zscell-overflow-right-alignment-text{
+	position: relative;
+	padding-right: 2px;
+}
+
 .zscelltxt {
 	font-family: Calibri;
 	font-size: 11pt;

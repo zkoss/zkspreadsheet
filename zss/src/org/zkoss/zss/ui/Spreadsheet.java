@@ -3663,11 +3663,11 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			//width, height id
 			if (updateSize) {
 				if (cell != null) {
-					//process overflow when cell type is string, halign is left, no wrap, no merge
+					//process overflow when cell type is string, no wrap, no merge
+					//ZSS-1338: apply overflow on both left and right alignment
 					SCellStyle cellStyle = cell.getCellStyle();
 					if (cell.getType() == CellType.STRING && 
-						mergeIndex == null && !cellStyle.isWrapText() &&
-								CellFormatHelper.getRealAlignment(cell) == SCellStyle.Alignment.LEFT) {
+						mergeIndex == null && !cellStyle.isWrapText()) {
 
 						// ZSS-224: modify overflow flag spec. to carry more status in bitswise format
 						// 1: needs overflow
