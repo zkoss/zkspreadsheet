@@ -2266,15 +2266,17 @@ public class RangeImpl implements SRange, Serializable {
 			boolean showInput, String inputTitle, String inputMessage,
 			boolean showError, AlertStyle alertStyle, String errorTitle,
 			String errorMessage) {
-		
-		List<SDataValidation> dataValidations = getValidations();
+
+		//ZSS-1304, getValidations() for overlapped regions is redundant
+		//          since deleteDataValidationRegion() will iterate all Validations with same region anyway		
+//		List<SDataValidation> dataValidations = getValidations();
 		List<SDataValidation> deletedDataValidations = null;
 		
 		//ZSS-979: remove validation for either new value or default value modification 
-		if(dataValidations.size() > 0) {
+//		if(dataValidations.size() > 0) { 
 			deletedDataValidations = getSheet().deleteDataValidationRegion( 
 					new CellRegion(getRow(), getColumn(), getLastRow(), getLastColumn()));
-		}
+//		}
 		
 		//ZSS-980: remove existing validation or do nothing, if parameters are default value
 		if (isDefaultValidationParameter(validationType, ignoreBlank, operatorType, inCellDropDown, formula1, formula2,
