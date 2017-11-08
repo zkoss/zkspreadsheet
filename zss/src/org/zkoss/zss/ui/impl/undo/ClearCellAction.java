@@ -25,6 +25,8 @@ import org.zkoss.zss.api.CellOperationUtil.CellStyleApplier;
 import org.zkoss.zss.api.model.CellData;
 import org.zkoss.zss.api.model.CellStyle;
 import org.zkoss.zss.api.model.Sheet;
+import org.zkoss.zss.model.CellRegion;
+
 /**
  * 
  * @author dennis
@@ -74,5 +76,11 @@ public class ClearCellAction extends AbstractCellDataStyleAction {
 			CellOperationUtil.clearAll(r);
 			break;
 		}
+	}
+	
+	//ZSS-1310
+	@Override
+	protected boolean isSheetProtected() {
+		return isAnyCellProtected(_sheet, new CellRegion(_row, _column, _lastRow, _lastColumn));
 	}
 }

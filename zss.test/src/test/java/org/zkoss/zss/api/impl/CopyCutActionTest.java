@@ -9,6 +9,7 @@ import org.zkoss.zss.*;
 import org.zkoss.zss.api.*;
 import org.zkoss.zss.api.model.*;
 import org.zkoss.zss.ui.impl.undo.*;
+import org.zkoss.zss.ui.impl.undo.ClearCellAction.Type;
 import org.zkoss.zss.ui.sys.UndoableAction;
 
 /**
@@ -38,7 +39,120 @@ public class CopyCutActionTest{
 	public void tearDown() throws Exception {
 		Setup.popZssLocale();
 	}
+	
+	/**
+	 * In a protected sheet,
+	 * - users can clearFormat among unlocked cells
+	 */
+	@Test	
+	public void clearFormatUnlockedCells() {
+		assertEquals(true, sheet.isProtected());
+		UndoableAction action  = new ClearCellAction("clear", sheet, 0, 0, 1, 2, ClearCellAction.Type.STYLE);
+		action.doAction();
 		
+		for (int row = 0; row < 2; row++) {
+			for (int column = 0 ; column <3 ; column++){
+				final int v = row * 3 + column + 1; 
+				Range srcCell = Ranges.range(sheet, row, column);
+				assertEquals(true, srcCell.getCellStyle().isLocked());
+				assertEquals(v, ((Number)srcCell.getCellValue()).intValue());
+			}
+		}
+		
+	}
+	/**
+	 * In a protected sheet,
+	 * - users can NOT clearFormat among locked cells
+	 */
+	@Test	
+	public void clearFormatLockedCells() {
+		assertEquals(true, sheet.isProtected());
+		UndoableAction action  = new ClearCellAction("clear", sheet, 0, 0, 2, 2, ClearCellAction.Type.STYLE);
+		action.doAction();
+		for (int row = 0; row < 2; row++) {
+			for (int column = 0 ; column <3 ; column++){
+				final int v = row * 3 + column + 1; 
+				Range srcCell = Ranges.range(sheet, row, column);
+				assertEquals(false, srcCell.getCellStyle().isLocked());
+				assertEquals(v, ((Number)srcCell.getCellValue()).intValue());
+			}
+		}
+		
+	}
+	/**
+	 * In a protected sheet,
+	 * - users can clearContent among unlocked cells
+	 */
+	@Test	
+	public void clearContentUnlockedCells() {
+		assertEquals(true, sheet.isProtected());
+		UndoableAction action  = new ClearCellAction("clear", sheet, 0, 0, 1, 2, ClearCellAction.Type.CONTENT);
+		action.doAction();
+		
+		for (int row = 0; row < 2; row++) {
+			for (int column = 0 ; column <3 ; column++){
+				Range srcCell = Ranges.range(sheet, row, column);
+				assertEquals(false, srcCell.getCellStyle().isLocked());
+				assertEquals(null, srcCell.getCellValue());
+			}
+		}
+	}
+	/**
+	 * In a protected sheet,
+	 * - users can NOT clearContent among locked cells
+	 */
+	@Test	
+	public void clearContentLockedCells() {
+		assertEquals(true, sheet.isProtected());
+		UndoableAction action  = new ClearCellAction("clear", sheet, 0, 0, 2, 2, ClearCellAction.Type.CONTENT);
+		action.doAction();
+		
+		for (int row = 0; row < 2; row++) {
+			for (int column = 0 ; column <3 ; column++){
+				final int v = row * 3 + column + 1; 
+				Range srcCell = Ranges.range(sheet, row, column);
+				assertEquals(false, srcCell.getCellStyle().isLocked());
+				assertEquals(v, ((Number)srcCell.getCellValue()).intValue());
+			}
+		}
+	}
+	/**
+	 * In a protected sheet,
+	 * - users can clearAll among unlocked cells
+	 */
+	@Test	
+	public void clearAllUnlockedCells() {
+		assertEquals(true, sheet.isProtected());
+		UndoableAction action  = new ClearCellAction("clear", sheet, 0, 0, 1, 2, ClearCellAction.Type.ALL);
+		action.doAction();
+		
+		for (int row = 0; row < 2; row++) {
+			for (int column = 0 ; column <3 ; column++){
+				Range srcCell = Ranges.range(sheet, row, column);
+				assertEquals(true, srcCell.getCellStyle().isLocked());
+				assertEquals(null, srcCell.getCellValue());
+			}
+		}
+	}
+	/**
+	 * In a protected sheet,
+	 * - users can NOT clearAll among locked cells
+	 */
+	@Test	
+	public void clearAllLockedCells() {
+		assertEquals(true, sheet.isProtected());
+		UndoableAction action  = new ClearCellAction("clear", sheet, 0, 0, 2, 2, ClearCellAction.Type.ALL);
+		action.doAction();
+		
+		for (int row = 0; row < 2; row++) {
+			for (int column = 0 ; column <3 ; column++){
+				final int v = row * 3 + column + 1; 
+				Range srcCell = Ranges.range(sheet, row, column);
+				assertEquals(false, srcCell.getCellStyle().isLocked());
+				assertEquals(v, ((Number)srcCell.getCellValue()).intValue());
+			}
+		}
+	}
 	/**
 	 * In a protected sheet,
 	 * - users can copy among unlocked cells
