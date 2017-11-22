@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
 Specification-Title: zss.test
-Specification-Version: 0.0.1-SNAPSHOT
+Specification-Version: 0.0.1
 Implementation-Title: foo
-Implementation-Version: 0.0.1-SNAPSHOT
+Implementation-Version: 0.0.1
