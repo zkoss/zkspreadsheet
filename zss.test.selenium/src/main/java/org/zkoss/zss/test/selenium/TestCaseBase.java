@@ -79,7 +79,7 @@ public class TestCaseBase {
 	
 	@After
 	public void afterTest() {
-		//assertFinally();
+		assertFinally();
 	}
 	
 	public static WebDriver driver() {
