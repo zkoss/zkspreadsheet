@@ -3678,13 +3678,17 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 						
 						// ZSS-224: pre-check sibling cell's status and give current cell a hint 
 						// to process overflow or not when initializing. 
-						SCell sibling = sheet.getCell(row, col + 1);
-						if(sibling.getType() != CellType.BLANK) {
+						// ZSS-1338 check the right/left adjacent cell for left/right alignment
+						SCell sibling = null;
+						if (CellFormatHelper.getRealAlignment(cell) == SCellStyle.Alignment.LEFT) {
+							sibling = sheet.getCell(row, col + 1);
+						}else if (CellFormatHelper.getRealAlignment(cell) == Alignment.RIGHT) {
+							sibling = sheet.getCell(row, col - 1);
+						}
+						if(sibling!= null && sibling.getType() != CellType.BLANK) {
 							overflowOptions |= 2; // skip overflow when initializing
 						}
-						
-						// appy to response
-						attrs.put("ovf", overflowOptions); 
+						attrs.put("ovf", overflowOptions);
 					} else {
 						((AbstractCellAdv)cell).setTextWidth(-1); // reset width for overflow
 					}

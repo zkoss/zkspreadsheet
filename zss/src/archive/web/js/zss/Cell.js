@@ -852,6 +852,7 @@ zss.Cell = zk.$extends(zk.Widget, {
 			this._updateVerticalAlign();
 		}
 
+        this.renderRightAlignment();
 		// ZSS-224: skip process overflow according to the hint from server
 		// it indicates that this cell's silbing isn't blank
 		var skipOverflowOnBinding = (this.overflowOpt & 2) != 0; // skip overflow when initializing
@@ -891,6 +892,26 @@ zss.Cell = zk.$extends(zk.Widget, {
 		
 		this.$supers(zss.Cell, 'unbind_', arguments);
 	},
+    /** ZSS-1338
+    * render a cell text in right alignment (don't care overflow).
+    * zss clears inline style after changing align or editing.
+    * right align requires to handle separately from text overflow, e.g a merged cell is in right alignment without overflow.
+    */
+    renderRightAlignment: function() {
+        var RIGHT_ALIGN = "zscell-right-alignment"; //ie9 doesn't support const
+        var notxtwd = (this._txtwd == undefined || this._txtwd < 0);  //ZSS-1171
+        var sw = notxtwd ? this.getTextNode().scrollWidth : this._txtwd;
+        var textWidth = zk.ie9_ ? sw : jq(this.$n('cave')).width();
+        var $textNode = jq(this.getTextNode());
+        //shift left a text longer than the cell width in right alignment
+        if (this.halign == 'r' && textWidth > this.sheet.custColWidth.getSize(this.c)){
+            $textNode .addClass(RIGHT_ALIGN);
+            //set inline style, can be reset by update_()
+            $textNode .css('left', jq.px(jq(this.$n()).width() - textWidth));
+        }else{
+            $textNode .removeClass(RIGHT_ALIGN);
+        }
+    },
 	//ZSS-944
 	/**
 	 * When this cell's rotate changed
