@@ -64,7 +64,6 @@
 		</dependency>
 	</dependencies>
 	<build>
-		<sourceDirectory>${project.basedir}/src/</sourceDirectory>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>

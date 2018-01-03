@@ -27,6 +27,10 @@
 			<id>zk repository</id>
 			<url>http://mavensync.zkoss.org/maven2</url>
 		</repository>
+		<repository>
+			<id>ZK EE</id>
+			<url>https://maven.zkoss.org/repo/zk/ee</url>
+		</repository>
 	</repositories>
 	<pluginRepositories>
 		<pluginRepository>
