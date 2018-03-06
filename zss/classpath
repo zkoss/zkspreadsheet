@@ -5,7 +5,6 @@ $ZSS/dist/lib/zk.jar
 $ZSS/dist/lib/zul.jar
 $ZSS/dist/lib/zpoi.jar
 $ZSS/dist/lib/zssmodel.jar
-$ZSS/dist/lib/ext/javassist.jar
 $ZSS/dist/lib/ext/commons-math.jar
 $ZSS/dist/lib/ext/ooxml-schemas.jar
 $ZSS/dist/lib/ext/xmlbeans.jar
