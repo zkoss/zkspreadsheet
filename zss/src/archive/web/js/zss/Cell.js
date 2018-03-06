@@ -383,7 +383,7 @@ zss.Cell = zk.$extends(zk.Widget, {
 			fst = this.fontStyle = data.fontStyle,
 			n = this.comp,
 			overflow = data.overflow,
-			cellType = data.cellType,
+			cellTypeAfter = data.cellType, //the cell type after updated
 			txt = data.text,
 			txtChd = txt != this.text,
 			indention = data.indention,
@@ -510,13 +510,12 @@ zss.Cell = zk.$extends(zk.Widget, {
 				this._processOverflow();	
 		}
 		
-		//trigger process overflow event when empty cell <-> string cell
-		//overflow cells before this cell need to re-evaluate overflow
-		if (this.cellType != cellType
-			&& (this.cellType == STR_CELL || this.cellType == BLANK_CELL)) {//when cell type become empty, cells that before this cell have to re-process overflow
+		//need to process overflow again when a cell changes between empty and non-empty
+		if (this.cellType != cellTypeAfter
+			&& (this.cellType == BLANK_CELL || cellTypeAfter == BLANK_CELL)) {
 			this.sheet.triggerOverflowColumn_(this.r, this.c);
 		}
-		this.cellType = cellType;
+		this.cellType = cellTypeAfter;
 
 		var processWrap = wrapChanged || (wrap0 && (txtChd || fontSizeChanged));
 		if (this._justCopied === true){	//zss-528, when a cell is just inserted, its status is not synchronized with server, we ignore its status difference from server's.
