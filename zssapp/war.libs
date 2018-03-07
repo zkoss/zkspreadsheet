@@ -14,6 +14,7 @@ jfreechart.jar
 jcommon.jar
 filters.jar
 jasperreports.jar
+javassist.jar
 commons-collections.jar
 commons-logging.jar
 commons-digester.jar
