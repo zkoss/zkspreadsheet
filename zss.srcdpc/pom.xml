@@ -4,12 +4,12 @@
 
 	<groupId>org.zkoss.zss</groupId>
 	<artifactId>zk.src.dpc</artifactId>
-	<version>3.9.3</version>
+	<version>3.9.4-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<name>srcdpc</name>
 	<url>http://maven.apache.org</url>
 	<properties>
-		<zk.version>8.0.1.1</zk.version>
+		<zk.version>8.0.1.1-Eval</zk.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 	<repositories>
