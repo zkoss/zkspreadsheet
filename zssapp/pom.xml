@@ -12,8 +12,10 @@
 		<commons-logging.version>1.1.1</commons-logging.version>
 		<servlet.version>2.4</servlet.version>
 		<jfreechart.version>1.0.13</jfreechart.version>
+		<maven.compiler.source>1.6</maven.compiler.source>
+		<maven.compiler.target>1.6</maven.compiler.target>
 	</properties>
-	<version>3.9.3</version>
+	<version>3.9.4-SNAPSHOT</version>
 	<packaging>war</packaging>
 	<name>ZK Spreadsheet App</name>
 	<url>http://www.zkoss.org/zssapp</url>
@@ -61,27 +63,6 @@
 		</pluginRepository>
 	</pluginRepositories>
 	<dependencies>
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>servlet-api</artifactId>
-			<version>${servlet.version}</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>commons-lang</groupId>
-			<artifactId>commons-lang</artifactId>
-			<version>${commons-lang.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.zkoss.zk</groupId>
-			<artifactId>zkplus</artifactId>
-			<version>${zk.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.zkoss.zk</groupId>
-			<artifactId>zkex</artifactId>
-			<version>${zk.version}</version>
-		</dependency>
  		<!-- ZSS EE dependencies -->
 		<dependency>
 			<groupId>org.zkoss.zss</groupId>
@@ -92,7 +73,7 @@
 			<groupId>org.zkoss.zss</groupId>
 			<artifactId>zsshtml</artifactId>
 			<version>${project.version}</version>
-		</dependency>		
+		</dependency>
 		<dependency>
 			<groupId>org.zkoss.zss</groupId>
 			<artifactId>zssex</artifactId>
@@ -108,19 +89,34 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+		<!-- ZK PE-->
+		<dependency>
+			<groupId>org.zkoss.zk</groupId>
+			<artifactId>zkplus</artifactId>
+			<version>${zk.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.zkoss.zk</groupId>
+			<artifactId>zkex</artifactId>
+			<version>${zk.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>servlet-api</artifactId>
+			<version>${servlet.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>commons-lang</groupId>
+			<artifactId>commons-lang</artifactId>
+			<version>${commons-lang.version}</version>
+		</dependency>
 	</dependencies>
   <build>
-		<sourceDirectory>${project.basedir}/src/</sourceDirectory>
-		<resources>
-			<resource>
-				<directory>${project.basedir}/src/archive/</directory>
-			</resource>
-		</resources>
 		<plugins>
 			<plugin>
 				<groupId>org.eclipse.jetty</groupId>
 				<artifactId>jetty-maven-plugin</artifactId>
-				<!--<version>9.2.22.v20170606</version>-->
 				<version>9.4.8.v20171121</version>
 				<configuration>
 					<webAppConfig>
@@ -131,7 +127,6 @@
 						<containerIncludeJarPattern>^$</containerIncludeJarPattern>
 					</webAppConfig>
 					<scanIntervalSeconds>5</scanIntervalSeconds>
-					<webAppSourceDirectory>${project.basedir}/WebContent</webAppSourceDirectory>
 				</configuration>
 			</plugin>
 			<!--<plugin>
@@ -146,15 +141,6 @@
 					</execution>
 				</executions>
 			</plugin>-->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.3.2</version>
-				<configuration>
-					<source>1.6</source>
-					<target>1.6</target>
-				</configuration>
-			</plugin>
 		</plugins>
 	</build>
 </project>
