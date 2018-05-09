@@ -13,8 +13,8 @@
 		<servlet.version>2.4</servlet.version>
 		<jfreechart.version>1.0.13</jfreechart.version>
 	</properties>
-	<version>3.9.4-SNAPSHOT</version>
-	<packaging>jar</packaging>
+	<version>3.9.3</version>
+	<packaging>war</packaging>
 	<name>ZK Spreadsheet App</name>
 	<url>http://www.zkoss.org/zssapp</url>
 	<description>The Excel-like Web Application for ZK Spreadsheet</description>
@@ -26,7 +26,7 @@
 		</license>
 	</licenses>
 	<scm>
-		<url>https://zkspreadsheet.googlecode.com/releases/${project.version}/zssapp</url>
+		<url></url>
 	</scm>
 	<repositories>
 		<repository>
@@ -68,36 +68,10 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>commons-logging</groupId>
-			<artifactId>commons-logging</artifactId>
-			<version>${commons-logging.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>commons-fileupload</groupId>
-			<artifactId>commons-fileupload</artifactId>
-			<version>${commons-fileupload.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>commons-io</groupId>
-			<artifactId>commons-io</artifactId>
-			<version>${commons-io.version}</version>
-		</dependency>
-		<dependency>
 			<groupId>commons-lang</groupId>
 			<artifactId>commons-lang</artifactId>
 			<version>${commons-lang.version}</version>
 		</dependency>
-		<dependency>
-			<groupId>org.beanshell</groupId>
-			<artifactId>bsh</artifactId>
-			<version>${bsh.version}</version>
-			<scope>runtime</scope>
-		</dependency>
-		<dependency><!-- to override version dependency from zpoi -->
-			<groupId>org.zkoss.common</groupId>
-			<artifactId>zcommon</artifactId>
-			<version>${zk.version}</version>
-		</dependency>			
 		<dependency>
 			<groupId>org.zkoss.zk</groupId>
 			<artifactId>zkplus</artifactId>
@@ -105,35 +79,10 @@
 		</dependency>
 		<dependency>
 			<groupId>org.zkoss.zk</groupId>
-			<artifactId>zk</artifactId>
-			<version>${zk.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.zkoss.zk</groupId>
-			<artifactId>zul</artifactId>
-			<version>${zk.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.zkoss.zss</groupId>
-			<artifactId>zss</artifactId>
-			<version>${project.version}</version>
-			<exclusions>
-				<exclusion>
-					<artifactId>zk</artifactId>
-					<groupId>org.zkoss.zk</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>zul</artifactId>
-					<groupId>org.zkoss.zk</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
- 		<!-- ZSS EE dependencies -->
-		<dependency>
-			<groupId>org.zkoss.zk</groupId>
 			<artifactId>zkex</artifactId>
 			<version>${zk.version}</version>
-		</dependency>		 
+		</dependency>
+ 		<!-- ZSS EE dependencies -->
 		<dependency>
 			<groupId>org.zkoss.zss</groupId>
 			<artifactId>zsspdf</artifactId>
@@ -148,8 +97,17 @@
 			<groupId>org.zkoss.zss</groupId>
 			<artifactId>zssex</artifactId>
 			<version>${project.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.zkoss.zk</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.zkoss.common</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
-		
 	</dependencies>
   <build>
 		<sourceDirectory>${project.basedir}/src/</sourceDirectory>
@@ -159,6 +117,23 @@
 			</resource>
 		</resources>
 		<plugins>
+			<plugin>
+				<groupId>org.eclipse.jetty</groupId>
+				<artifactId>jetty-maven-plugin</artifactId>
+				<!--<version>9.2.22.v20170606</version>-->
+				<version>9.4.8.v20171121</version>
+				<configuration>
+					<webAppConfig>
+						<contextPath>/${project.artifactId}</contextPath>
+						<allowDuplicateFragmentNames>true</allowDuplicateFragmentNames>
+						<!-- no need to scan anything as we're using servlet 2.5 to reduce start-up time-->
+						<webInfIncludeJarPattern>^$</webInfIncludeJarPattern>
+						<containerIncludeJarPattern>^$</containerIncludeJarPattern>
+					</webAppConfig>
+					<scanIntervalSeconds>5</scanIntervalSeconds>
+					<webAppSourceDirectory>${project.basedir}/WebContent</webAppSourceDirectory>
+				</configuration>
+			</plugin>
 			<!--<plugin>
 				<groupId>org.zkoss.maven</groupId>
 				<artifactId>yuicompressor-maven-plugin-zk</artifactId>
