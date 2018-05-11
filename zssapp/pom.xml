@@ -71,11 +71,6 @@
 		</dependency>
 		<dependency>
 			<groupId>org.zkoss.zss</groupId>
-			<artifactId>zsshtml</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.zkoss.zss</groupId>
 			<artifactId>zssex</artifactId>
 			<version>${project.version}</version>
 			<exclusions>
