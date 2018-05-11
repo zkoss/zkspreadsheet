@@ -610,11 +610,12 @@ zss.FormulabarEditor = zk.$extends(zul.inp.InputWidget, {
    		var sheet = this.sheet;
    		if (sheet && this.isRealVisible() && !sheet.editingFormulaInfo) {
    			var p = sheet.getLastFocus(),
-   				c = sheet.getCell(p.row, p.column);
-   			if (c) {
+   				  c = sheet.getCell(p.row, p.column);
+   			if (!this.isEditing() //ZSS-1360, doesn't accept a content change under editing
+   			  && c) {
    				// ZSS-205: called by server updating cells
-   				// should call setValue(), don't change DOM directly 
-   				this.setValue(c.edit || '', 0);
+   				// should call setValue(), don't change DOM directly
+   			    this.setValue(c.edit || '', 0);
    			}
    		}
    	},
