@@ -60,6 +60,16 @@ public class Issue1330Test extends ZSSTestCase {
         click(sheetCtrl.getCell("A1"));
         captureOrAssert("partial2");
     }
+
+    @Test
+    public void testZSS1364SheetSwitching(){
+        getTo("/issue3/1338-overflow-right-align.zul");
+        basename();
+        sheetFunction().gotoTab(2);
+        waitForTime(Setup.getTimeoutL0());
+        sheetFunction().gotoTab(1);
+        captureOrAssert("1");
+    }
 }
 
 
