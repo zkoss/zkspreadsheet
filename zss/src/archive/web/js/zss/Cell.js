@@ -851,7 +851,11 @@ zss.Cell = zk.$extends(zk.Widget, {
 			this._updateVerticalAlign();
 		}
 
-        this.renderRightAlignment();
+        var thisCell = this;
+        sheet.addSSInitLater(function () {
+            //ZSS-1364, right alignment requires the actual cell width after applying a sheet CSS
+            thisCell.renderRightAlignment();
+        });
 		// ZSS-224: skip process overflow according to the hint from server
 		// it indicates that this cell's silbing isn't blank
 		var skipOverflowOnBinding = (this.overflowOpt & 2) != 0; // skip overflow when initializing
