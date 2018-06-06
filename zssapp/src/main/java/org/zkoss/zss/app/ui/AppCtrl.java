@@ -280,7 +280,7 @@ public class AppCtrl extends CtrlBase<Component>{
 		Executions.getCurrent().getDesktop().addListener(new DesktopCleanup(){
 			@Override
 			public void cleanup(Desktop desktop) throws Exception {
-				doCloseBook();
+				removeSaveNotification(loadedBook);
 				collaborationInfo.removeUsername(username);
 			}
 		});
