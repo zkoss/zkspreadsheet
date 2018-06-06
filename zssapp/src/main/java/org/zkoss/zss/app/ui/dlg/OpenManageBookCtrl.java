@@ -137,38 +137,39 @@ public class OpenManageBookCtrl extends DlgCtrlBase{
 	
 	@Listen("onClick=#delete")
 	public void onDelete(){
-		if(UiUtil.isRepositoryReadonly()){
-			return;
-		}
-		Map<String,Object> selection = (Map<String,Object>)UiUtil.getSingleSelection(bookListModel);
-		if(selection==null){
-			UiUtil.showWarnMessage("Please select a book first");
-			return;
-		}
-		
-		final BookInfo bookinfo = (BookInfo)selection.get("bookinfo");
-		
-		synchronized (bookManager) {
-			String bookName = bookinfo.getName();
-			if(bookManager.isBookAttached(bookinfo)) {
-				String users = Arrays.toString(collaborationInfo.getUsedUsernames(bookName).toArray());
-				UiUtil.showInfoMessage("Book \"" + bookinfo.getName() + "\" is in used by " + users + ".");
-				return;
-			}
-				
-			Messagebox.show("want to delete file \"" + bookName + "\" ?", "ZK Spreadsheet", 
-					Messagebox.OK + Messagebox.CANCEL, Messagebox.INFORMATION, new SerializableEventListener<Event>() {
-				private static final long serialVersionUID = 4698610847862970542L;
+        if (UiUtil.isRepositoryReadonly()) {
+            return;
+        }
+        Map<String, Object> selection = (Map<String, Object>) UiUtil.getSingleSelection(bookListModel);
+        if (selection == null) {
+            UiUtil.showWarnMessage("Please select a book first");
+            return;
+        }
 
-				@Override
-				public void onEvent(Event event) throws Exception {
-					if(event.getData().equals(Messagebox.OK)) {
-						bookManager.deleteBook(bookinfo);
-						reloadBookModel();
-					}
-				}
-			});
-		}
+
+        synchronized (bookManager) {
+            final BookInfo bookinfo = (BookInfo) selection.get("bookinfo");
+            String bookName = bookinfo.getName();
+            String message = "";
+            if (bookManager.isBookAttached(bookinfo)) {
+                String users = Arrays.toString(collaborationInfo.getUsedUsernames(bookName).toArray());
+                message += "Book \"" + bookinfo.getName() + "\" is in used by " + users + ".\n";
+            }
+
+            message += "Do you want to delete file \"" + bookName + "\" ?";
+            Messagebox.show(message, "ZK Spreadsheet",
+                    Messagebox.OK + Messagebox.CANCEL, Messagebox.INFORMATION, new SerializableEventListener<Event>() {
+                        private static final long serialVersionUID = 4698610847862970542L;
+
+                        @Override
+                        public void onEvent(Event event) throws Exception {
+                            if (event.getData().equals(Messagebox.OK)) {
+                                bookManager.deleteBook(bookinfo);
+                                reloadBookModel();
+                            }
+                        }
+                    });
+        }
 	}
 	
 	@Listen("onClick=#cancel;onCancel=#openBookDlg")
