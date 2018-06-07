@@ -902,17 +902,21 @@ zss.Cell = zk.$extends(zk.Widget, {
     */
     renderRightAlignment: function() {
         var RIGHT_ALIGN = "zscell-right-alignment"; //ie9 doesn't support const
-        var notxtwd = (this._txtwd == undefined || this._txtwd < 0);  //ZSS-1171
-        var sw = notxtwd ? this.getTextNode().scrollWidth : this._txtwd;
-        var textWidth = zk.ie9_ ? sw : jq(this.$n('cave')).width();
-        var $textNode = jq(this.getTextNode());
-        //shift left a text longer than the cell width in right alignment
-        if (this.halign == 'r' && textWidth > this.sheet.custColWidth.getSize(this.c)){
-            $textNode .addClass(RIGHT_ALIGN);
-            //set inline style, can be reset by update_()
-            $textNode .css('left', jq.px(jq(this.$n()).width() - textWidth));
-        }else{
-            $textNode .removeClass(RIGHT_ALIGN);
+		var $textNode = jq(this.getTextNode());
+        if (this.halign == 'r'){
+			//calculating width only in a right-align cell for it's a high cost operation
+            var notxtwd = (this._txtwd == undefined || this._txtwd < 0);  //ZSS-1171
+            var sw = notxtwd ? this.getTextNode().scrollWidth : this._txtwd;
+            var textWidth = zk.ie9_ ? sw : jq(this.$n('cave')).width();
+			if((textWidth > this.sheet.custColWidth.getSize(this.c))
+				&& !textNode.hasClass(RIGHT_ALIGN)){
+				$textNode .addClass(RIGHT_ALIGN);
+				//shift left a text longer than the cell width in right alignment
+				//set inline style, can be reset by update_()
+				$textNode .css('left', jq.px(jq(this.$n()).width() - textWidth));
+			}
+        }else{ //left && center
+            $textNode.removeClass(RIGHT_ALIGN);
         }
     },
 	//ZSS-944
