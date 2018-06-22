@@ -855,14 +855,14 @@ zss.Cell = zk.$extends(zk.Widget, {
         sheet.addSSInitLater(function () {
             //ZSS-1364, right alignment requires the actual cell width after applying a sheet CSS
             thisCell.renderRightAlignment();
+            // ZSS-224: skip process overflow according to the hint from server
+            // it indicates that this cell's silbing isn't blank
+            var skipOverflowOnBinding = (thisCell.overflowOpt & 2) != 0; // skip overflow when initializing
+            if (thisCell.overflow && !skipOverflowOnBinding) {
+                thisCell._processOverflow(); // heavy duty
+            }
         });
-		// ZSS-224: skip process overflow according to the hint from server
-		// it indicates that this cell's silbing isn't blank
-		var skipOverflowOnBinding = (this.overflowOpt & 2) != 0; // skip overflow when initializing
-		if (this.overflow && !skipOverflowOnBinding) {
-			this._processOverflow(); // heavy duty
-		}
-		
+
 		//ZSS-944
 		var toRotate90 = this.rotate == 90 || this.rotate == -90; //ZSS-1020
 		this._updateListenRotate(toRotate90);
@@ -908,11 +908,10 @@ zss.Cell = zk.$extends(zk.Widget, {
             var notxtwd = (this._txtwd == undefined || this._txtwd < 0);  //ZSS-1171
             var sw = notxtwd ? this.getTextNode().scrollWidth : this._txtwd;
             var textWidth = zk.ie9_ ? sw : jq(this.$n('cave')).width();
-			if((textWidth > this.sheet.custColWidth.getSize(this.c))
-				&& !textNode.hasClass(RIGHT_ALIGN)){
+			if (textWidth > this.sheet.custColWidth.getSize(this.c)){
 				$textNode .addClass(RIGHT_ALIGN);
-				//shift left a text longer than the cell width in right alignment
-				//set inline style, can be reset by update_()
+				//shift left a text longer than the cell width for right alignment
+				//need to set inline style for every edit, will be reset by update_()
 				$textNode .css('left', jq.px(jq(this.$n()).width() - textWidth));
 			}
         }else{ //left && center
