@@ -2,9 +2,14 @@ ZK Spreadsheet 3.9.4
 *Features:
 
 *Bugs:
-  
+* ZSS-1360 a focus position in a formula editor is reset when other users edit cells under the collaboration mode
+* ZSS-1361 Can't delete a file even no user is currently opening the file
+* ZSS-1363 a session expiration causes an IllegalStateException
+* ZSS-1364 spreadsheet displays right align text incorrectly after switching sheets
+* ZSS-1366 clicking a cell causes a dragging selection
+
 ** Upgrade Notes
-  
+
  ------------
 ZK Spreadsheet 3.9.3
 *Features:
@@ -14,13 +19,13 @@ ZK Spreadsheet 3.9.3
   ZSS-1349 ZSS displays a long text in right alignment incorrectly in a merged cell
 
 ** Upgrade Notes
-  
+
  ------------
 
 ZK Spreadsheet 3.9.2
 *Features:
   ZSS-1320 Auto-fill can fill unlocked cells within a protected sheet
-  ZSS-1338 support text overflow with right alignment  
+  ZSS-1338 support text overflow with right alignment
 
 *Bugs:
   ZSS-1247 - Problem with input into cell in ZK Spreadsheet in Microsoft Edge browser (Windows 10)
@@ -43,7 +48,7 @@ ZK Spreadsheet 3.9.2
   ZSS-1345 Slow performance when using XMLBean.getXxxList()
 
 ** Upgrade Notes
-  
+
  ------------
 ZK Spreadsheet 3.9.1
 *Features:
@@ -54,11 +59,11 @@ ZK Spreadsheet 3.9.1
 		   NEGBINOMDIST,POISSON,POISSON.INV
   ZSS-1235 Support those statistical functions renamed in Excel 2010: BINOM.DIST,CHISQ.DIST.RT,CHISQ.INV.RT,
            EXPON.DIST,F.DIST.RT,F.INV.RT,GAMMA.DIST,GAMMA.INV,HYPGEOM.DIST,MODE.SNGL,NORM.DIST,POISSON.DIST,
-		   RANK.EQ,STDEV.S,STDEV.P,T.INV.2T,VAR.P,VAR.S,WEIBULL.DIST		   
+		   RANK.EQ,STDEV.S,STDEV.P,T.INV.2T,VAR.P,VAR.S,WEIBULL.DIST
   ZSS-1236 Support T.DIST.2T and T.DIST.RT from Excel 2010
   ZSS-1262 Improve sorting performance
   ZSS-1283 Improve the performance for initializing cells with formulas
-  
+
 *Bugs:
   ZSS-1266 Cannot select an item in a validation dropdown
   ZSS-1260 The validation dropdown doesn't appear in the last column
@@ -82,9 +87,9 @@ ZK Spreadsheet 3.9.1
   * Following apis are deprecated:
 	* SBook.getOrCreateDefaultHyperlinkStyle(): use SBook.getOrCreateDefaultHyperlinkStyle(SCell cell) instead.
 	* WorkbookEvaluator.evaluate(int sheetIndex, String formula, boolean ignoreDereference, Object ref, int[] offset): use
-		WorkbookEvaluator.evaluate(int sheetIndex, int rowIndex, int columnIndex, 
+		WorkbookEvaluator.evaluate(int sheetIndex, int rowIndex, int columnIndex,
 				String formula, boolean ignoreDereference, Object ref, int[] offset) instead.
-	
+
  ------------
 ZK Spreadsheet 3.9.0
 *Features:
@@ -102,7 +107,7 @@ ZK Spreadsheet 3.9.0
   ZSS-1234 Support date filter
   ZSS-1142 Support to show conditional formatting in the client side
   ZSS-1251 Support copy/paste conditional formatting
-  
+
 *Bugs:
   ZSS-1211 StringIndexOutOfBoundsException if click a hyperlink with empty address
   ZSS-1212 Select a sheet and a javascript error is thrown
@@ -119,19 +124,19 @@ ZK Spreadsheet 3.9.0
 
 ** Upgrade Notes
   * Fix the method typo from SSheet#getConditonalFormattings() to getConditionalFormattings().
-  * Change the return type of the SConditionalFormatting#getRegions() method from List<CellRegion> to Set<CellRegion> 
+  * Change the return type of the SConditionalFormatting#getRegions() method from List<CellRegion> to Set<CellRegion>
   * Change the return type of the SDataBar#getMaxLength() and SDataBar#getMinLenght() from Long to int.
-  
+
  ------------
 ZK Spreadsheet 3.8.3
 *Features:
-  
+
 *Bugs:
   ZSS-1200 Fail to delete a sheet
   ZSS-1201 Creating a sheet with a book range causes NullPointerException
   ZSS-1199 a text is cut in a merged cell
   ZSS-1204 Client performance degrades obviously than 3.8.2
-  
+
 ** Upgrade Notes
 
  ------------
@@ -143,7 +148,7 @@ ZK Spreadsheet 3.8.3.RC
   ZSS-1188 Support exporting customized TableStyles
   ZSS-1125 Support to get merged regions
   ZSS-1124 Support to get last column/row which contains data
-  
+
 *Bugs:
   ZSS-1172 Should remove unnecessary ___ (three underscores) style class
   ZSS-1168 merge cells asynchronously in an event queue handler doesn't work
@@ -166,7 +171,7 @@ ZK Spreadsheet 3.8.3.RC
   ZSS-1189 Fail to import a rich text
   ZSS-1190 Hidden column not saved
   ZSS-1197 a formula becomes a text after being edited
-  
+
 ** Upgrade Notes
 
  ------------
@@ -182,7 +187,7 @@ ZK Spreadsheet 3.8.2
   ZSS-1130 Support to import conditional formatting rules (XLSX only)
   ZSS-1145 Support exporting Dxf styles (XLSX only)
   ZSS-1141 Support to export conditionalFormatting rules (XLSX only)
-  
+
 *Bugs:
   ZSS-1109 The selection box should jump to last filled cell through consecutive filled data when using ctrl + arrow
   ZSS-1118 line breaks splitting words in spreadsheet - regular spaces replaces by nbsp
@@ -201,21 +206,21 @@ ZK Spreadsheet 3.8.2
   ZSS-1151 IE9 only. Row height is unresonable large
   ZSS-1152 IE9 only. Lift the IE9 StyleSheet upper limit (4095 selectors per style sheet)
   ZSS-1155 Space gone in Vertical rotated text (rotate == 255)
-  
+
 ** Upgrade Notes
-    * org.zkoss.poi.ss.usermodel.CellStyle#getIndex() have been changed to return int instead of short because the 
+    * org.zkoss.poi.ss.usermodel.CellStyle#getIndex() have been changed to return int instead of short because the
 	limit of the distinct cell styles in Excel 2007 and above is 64000 while that of Excel 97-2003 is only 4000;
     have to extend it to accommodate the capacity. Thus the corresponding implementation are changed accordingly.
-	  
-	* org.zkoss.poi.ss.usermodel.Workbook#getIndexAt(short idx) have been changed to 
-	org.zkoss.poi.ss.usermodel.Workbook#getIndexAt(int idx) because the 
+
+	* org.zkoss.poi.ss.usermodel.Workbook#getIndexAt(short idx) have been changed to
+	org.zkoss.poi.ss.usermodel.Workbook#getIndexAt(int idx) because the
 	limit of the distinct cell styles in Excel 2007 and above is 64000 while that of Excel 97-2003 is only 4000;
     have to extend it to accommodate the capacity. Thus the corresponding implementation are changed accordingly.
-	  
+
 	* org.zkoss.zss.model.util.RichTextHelper.getCellRichTextHtml(SRichText rstr, boolean wrap) have been deprecated
 	and a new util method org.zkoss.zss.model.util.RichTextHelper.getCellRichTextHtml(SCell cell, SRichText rstr, boolean wrap)
 	has been added to provide more accurate information.
-	  
+
 	* org.zkoss.zss.model.util.RichTextHelper.getCellVRichTextHtml(SRichText rstr, boolean wrap) have been deprecated
 	and a new util method org.zkoss.zss.model.util.RichTextHelper.getCellVRichTextHtml(SCell cell, SRichText rstr, boolean wrap)
 	has been added to provide more accurate information.
@@ -230,7 +235,7 @@ ZK Spreadsheet 3.8.1
   ZSS-1084 Can initialize max row and column automatically by detecting file content
   ZSS-1082 Users can increase max visible rows
   ZSS-1050 Filter by searching for AutoFilter
-  
+
 *Bugs:
   ZSS-1020 Rotation info should be included into exported excel file
   ZSS-1064 ZSS does not recognize @Listen events after 3.8.0 update
@@ -270,24 +275,24 @@ ZK Spreadsheet 3.8.1
   ZSS-1100 UiException: Illegal request when change sheet
   ZSS-1101 JavaScript NPE
   ZSS-1108 IE only. +90/-90 degree text not showing correctly
-  
+
 ** Upgrade Notes
   * Set org.zkoss.zss.ui.Spreadsheet#setMaxVisibleRows() to zero or leave as default; then
     ZK Spreadsheet will determine the max visible rows per the sheet's content.
   * Set org.zkoss.zss.ui.Spreadsheet#setMaxVisibleColumns() to zero or leave as default; then
     ZK Spreadsheet will determine the max visible columns per the sheet's content.
-  * org.zkoss.zss.ui.Spreadsheet#getCurrentMaxVisibleRows(): new API which returns the max 
+  * org.zkoss.zss.ui.Spreadsheet#getCurrentMaxVisibleRows(): new API which returns the max
 	number of visible rows of the currently selected sheet. If you ever used getMaxVisibleRows() or
 	getMaxRows() in application should replace with this new API instead.
-  * org.zkoss.zss.ui.Spreadsheet#getCurrentMaxVisibleColumns() now API which returns the max 
+  * org.zkoss.zss.ui.Spreadsheet#getCurrentMaxVisibleColumns() now API which returns the max
 	number of visible columns of the currently selected sheet. If you ever used getMaxVisibleColumns() or
 	getMaxColumns() in application should replace with this new API instead.
-  
+
  ------------
 ZK Spreadsheet 3.8.0.1
 *Features:
   ZSS-1054 Support bookmark disabled
-  
+
 *Bugs:
   ZSS-1052 Shutdown in jetty will cause NPE
 
@@ -329,7 +334,7 @@ ZK Spreadsheet 3.8.0
   ZSS-988 Support auto filter on Table
   ZSS-982 Add a parameter to show/hide chart when the data source is in hidden columns and rows
   ZSS-1014 Support EOMONTH function
-  
+
 *Bugs:
   ZSS-910 Problem referencing a cell with formula in same position of other file
   ZSS-914 java.lang.IndexOutOfBoundsException on HSSFRow.getRowStyle()
@@ -351,7 +356,7 @@ ZK Spreadsheet 3.8.0
   ZSS-943 Turn off filter shouldn't cause NPE
   ZSS-946 Cannot upload a file in zssapp
   ZSS-947 Cannot upload a file with a print area
-  ZSS-941 zss.wpd file is loaded even if spreadsheet component is not used  
+  ZSS-941 zss.wpd file is loaded even if spreadsheet component is not used
   ZSS-948 The top border of the first row is incorrectly covered by the column heading.
   ZSS-927 Problem with cell's format after merge cells in frozen column
   ZSS-952 Too many columns with custom width causes incorrectly rendering
@@ -403,7 +408,7 @@ ZK Spreadsheet 3.8.0
   ZSS-1032 Multiple copied Cell case across frozen panel causes js error
   ZSS-1048 Start selection from hyperlink cell should work
   ZSS-1049 When sheet move, the corresponding formula does not update
-    
+
 ** Upgrade Notes
   * Default period for automatically saving in zssapp is 15 minutes.
   * Zssapp supports saving all in-memory saved book when server is shutting down.
@@ -440,7 +445,7 @@ ZK Spreadsheet 3.7.0
   ZSS-878 Support adding custom formats and show them in Format Cell dialog
   ZSS-902 ZSS can throw more specific information when importing fails
   ZSS-897 Zssapp should support alert when close window without saving
-  
+
 *Bugs:
   ZSS-820 Formula should change sheet name if reordered sheet goes beyond the formula's sheet boundary.
   ZSS-818 Formula not update outside the preload rows
@@ -486,7 +491,7 @@ ZK Spreadsheet 3.7.0
   ZSS-899 After saving cell's hyper link doesn't work anymore
   ZSS-900 Desktop removed when click a mailto hyperlink in cell
   ZSS-903 Unable to copy cell content to another application
-  
+
 ** Upgrade Notes
   * The format of arguments "formula1" and "formula2" in following data validation api has changed:
 	* Range.setValidation(
@@ -496,11 +501,11 @@ ZK Spreadsheet 3.7.0
 			boolean inCellDropDown,
 			String formula1,
 			String formula2,
-			
+
 			boolean showInput,
 			String inputTitle,
 			String inputMessage,
-			
+
 			boolean showError,
 			AlertStyle alertStyle,
 			String errorTitle,
@@ -513,7 +518,7 @@ ZK Spreadsheet 3.7.0
   * Chart now uses ZK Charts as default chart engine whose exporting needs extra export server. For more detail, please see "export" section in ZK Spreadsheet Essentials.
   * Enumeration name of CellStyle.FillPattern is changed to comply with Excel's term:
 	NO_FILL -> NONE, SOLID_FOREGROUND -> SOLID, FINE_DOTS -> MEDIUM_GRAY, ALT_BARS -> DARK_GRAY, SPARSE_DOTS -> LIGHT_GRAY, THICK_HORZ_BANDS -> DARK_HORIZONTAL, THICK_VERT_BANDS -> DARK_VERTICAL, THICK_BACKWARD_DIAG -> DARK_DOWN, THICK_FORWARD_DIAG -> DARK_UP, BIG_SPOTS -> DARK_GRID, BRICKS -> DARK_TRELLIS, THIN_HORZ_BANDS -> LIGHT_HORIZONTAL, THIN_VERT_BANDS -> LIGHT_VERTICAL, THIN_BACKWARD_DIAG -> LIGHT_DOWN, THIN_FORWARD_DIAG -> LIGHT_UP, SQUARES -> LIGHT_GRID, DIAMONDS -> LIGHT_TRELLIS, GRAY125 -> LESS_DOTS, GRAY0625 -> LEAST_DOTS
-  
+
  ------------
 ZK Spreadsheet 3.6.0
 *Features:
@@ -541,7 +546,7 @@ ZK Spreadsheet 3.6.0
   ZSS-695 PDF exporter supports to shrink a sheet to fit a page
   ZSS-778 Support print header and footer when export to PDF
   ZSS-789 Support print double underline and account underline when export to PDF.
-  
+
 *Bugs:
   ZSS-722 autoFill() with non-VALUE option should not copy value over.
   ZSS-726 Error when typing a locale specific Currency symbol
@@ -589,10 +594,10 @@ ZK Spreadsheet 3.6.0
   ZSS-783 rich text should be hidden by other cells when content height is larger than cell's
   ZSS-788 ZK Spreadsheet incompatible with zk-bootstrap
   ZSS-810 Validation formula that evaluated to an AreaEval should list its formatted text.
-  
+
 ** Upgrade Notes
   * Following api are deprecated
-    * void SSheet.removeDataValidationRegion(CellRegion region): Use the new 
+    * void SSheet.removeDataValidationRegion(CellRegion region): Use the new
       List<SDataValidation> SSheet.deleteDataValidationRegion(CellRegion region) instead.
 
 
@@ -609,12 +614,12 @@ ZK Spreadsheet 3.5.0
   ZSS-678 Support creating reference between two sheets
   ZSS-691 Support calculation in Excel's double precision
   ZSS-459 VALUE function support smart input format
-  ZSS-702 Fine tune DataValidation to hold multiple regions 
+  ZSS-702 Fine tune DataValidation to hold multiple regions
   ZSS-708 Support theme customization
   ZSS-703 Allow user to use use their own PivotTableHelper implementation
   ZSS-713 Make a modern design theme as default
   ZSS-714 When in collaboration edit, hover on other editor's current selection will show its name
- 
+
 *Bugs:
   ZSS-652 Cut Formula shouldn't be shifted when it is not in cut range
   ZSS-655 Formula that contains Name doesn't update
@@ -663,22 +668,22 @@ ZK Spreadsheet 3.5.0
   ZSS-715 InvalidFormulaException while importing an XLS file with formula in pt_BR Locale
   ZSS-716 Insert function which takes no arguments by "Insert Function" dialog will get wrong formula
   ZSS-719 Insert bad formula may show unexpected error message
-  
+
 ** Upgrade Notes
   * Following api are deprecated
-    * Range.protectSheet(String password): Use the new 
-      Range.protectSheet(String password,  
-        boolean allowSelectingLockedCells, boolean allowSelectingUnlockedCells,  
-        boolean allowFormattingCells, boolean allowFormattingColumns, boolean allowFormattingRows, 
+    * Range.protectSheet(String password): Use the new
+      Range.protectSheet(String password,
+        boolean allowSelectingLockedCells, boolean allowSelectingUnlockedCells,
+        boolean allowFormattingCells, boolean allowFormattingColumns, boolean allowFormattingRows,
         boolean allowInsertColumns, boolean allowInsertRows, boolean allowInsertingHyperlinks,
-        boolean allowDeletingColumns, boolean allowDeletingRows, 
-        boolean allowSorting, boolean allowFiltering, boolean allowUsingPivotTables, 
-        boolean drawingObjects, boolean scenarios) 
-        
+        boolean allowDeletingColumns, boolean allowDeletingRows,
+        boolean allowSorting, boolean allowFiltering, boolean allowUsingPivotTables,
+        boolean drawingObjects, boolean scenarios)
+
       API instead to protect the sheet with more protection options; use the new
       Range.unprotectSheet(String password) to unprotect the sheet; use the new
       Range.getSheetProtection() to tell the current protection options.
-    * Customized theme can be registered using SpreadsheetThemes.register(themeName, displayName, priority) 
+    * Customized theme can be registered using SpreadsheetThemes.register(themeName, displayName, priority)
       API. The user could switch to any registered themes by setting 'zsstheme=default' in cookie or
       library property:
       <library-property>
@@ -692,7 +697,7 @@ ZK Spreadsheet 3.5.0 RC
   ZSS-606 Support to handle multiple-area formula
   ZSS-623 Support handling row/column style
   ZSS-634 Support chart and picture operation for XLS format
-  
+
 *Bugs:
   ZSS-350 When using cell validation with cell list, the drop-down list won't update after the referred cells changed
   ZSS-581 Formula lost to update after rename 2 sheet
@@ -742,7 +747,7 @@ ZK Spreadsheet 3.5.0 RC
   ZSS-586 Select all then insert row cause javascript error (insert column work fines)
   ZSS-553 "clear style" and "clear all" can unmerge cells, but undo can't merge them back
   ZSS-481 Undo doesn't work correctly when delete a row with merged cell
-  
+
 ** Upgrade Notes
   * Following api are removed
     * Book.getPoiBook() : you can't get any poi model object from this verion, instead of you get internal book model by getInternalBook()
@@ -754,8 +759,8 @@ ZK Spreadsheet 3.5.0 RC
     * CellSelectionType is moved from org.zkoss.zss.ui.event to org.zkoss.zss.ui
 
   * Following api are deprecated
-    * Range.SyncLevel and Range.setSyncLevel() :  It is always synchronized on Book by a read-write lock.  
-    * Book.getSync() : we use a new ReadWriteSync, you can get the lock by getLock()  
+    * Range.SyncLevel and Range.setSyncLevel() :  It is always synchronized on Book by a read-write lock.
+    * Book.getSync() : we use a new ReadWriteSync, you can get the lock by getLock()
     * CellStyle.getBackgroundColor() : use getFillColor()
     * EditableCellStyle.setBackgroundColor : use setFillColor()
     * Exporter.export(Sheet sheet, OutputStream fos) and export(Sheet sheet,AreaRef selection,OutputStream fos)
@@ -764,8 +769,8 @@ ZK Spreadsheet 3.5.0 RC
  ------------
 ZK Spreadsheet 3.0.2
 *Features:
-  
-  
+
+
 *Bugs:
   ZSS-541 date autofill timestamp is incorrect
   ZSS-547 Sheet index (31) is out of range (0..30) error when deleting sheets in a workbook
@@ -780,9 +785,9 @@ ZK Spreadsheet 3.0.2
   ZSS-622 Spreadsheet toolbar function not work correctly if creating the instance at runtime
   ZSS-621 Delete the cell with a shared formula and export, spreadsheet cannot load the file back correctly
   ZSS-624 Copy a row on top of itself, get an error
-  
+
 ** Upgrade Notes
-  
+
 
  ------------
 ZK Spreadsheet 3.0.1
@@ -792,7 +797,7 @@ ZK Spreadsheet 3.0.1
   ZSS-537 Spreadsheet supports Internet Explorer 11
   ZSS-544 Support ignore row break and column break when export PDF
   ZSS-475 Select shift and down arrow, scroll the screen automatically
-  
+
 *Bugs:
   ZSS-510 ApplyDataFormat with "" then getCellFormatText from range will cause IndexOutOfBoundaryException and spreadsheet crash.
   ZSS-515 Delete freeze row then insert a row causes javascript exception
@@ -811,7 +816,7 @@ ZK Spreadsheet 3.0.1
   ZSS-205 scroll bar in function bar is not persistent
   ZSS-528 Unwrapping text in a cell does not resize cell
   ZSS-561 Closing a book than open a book, the cell will become chaos when using IE 10 and IE 11
-  
+
 ** Upgrade Notes
   * Members of BookType of Book are changed from EXCEL_2003,EXCEL_2007 to XLS,XLSX because of Spreadsheet depends on file format not Excel version.
 
@@ -822,7 +827,7 @@ ZK Spreadsheet 3.0.0
   ZSS-251 Support to override the default formula implementation
   ZSS-10 Support to display chart/picture in freeze panel
   ZSS-463 support configurable font color popup
-  
+
 *Bugs:
   ZSS-399 export to PDF - no gridlines
   ZSS-420 Cannot focus on cell when set rowfreeze="0" or columnfreeze="0"
@@ -863,7 +868,7 @@ ZK Spreadsheet 3.0.0
   ZSS-455 Chart/Image doesn't move location after change column/row width/height
   ZSS-312 A picture (or chart) should not be allowed to move out of the cell area's top and bottom border
   ZSS-458 Strange behavior when re-sizing North or West of chart/image in scrolling
-  ZSS-311 When you move a chart, it should become selected  
+  ZSS-311 When you move a chart, it should become selected
   ZSS-452 Inserting a row at non-selected sheet with API doesn't work
   ZSS-252 A Javascript error thrown when right clicking spreadsheet without showing toolbar
   ZSS-280 reapply autofilter doesn't filter newly added the data
@@ -922,7 +927,7 @@ ZK Spreadsheet 3.0.0
   ZSS-500 After hiding a row contained overflow cells, the hidden row's cell text is still shown and overlap
   ZSS-504 hide all column and all row only can recover by undo (not by drag UI)
 
-  
+
 ** Upgrade Notes
   * For the fix of ZSS-464, interface of CellStyleApplier(of CellOperationUtil) was simplified and FontStyleApplier was removed (replace by CellStyleApplier directly). If you still need the visit logic of this utility, please refer to original implementation at github (https://github.com/zkoss/zkspreadsheet/blob/e7b51d029fbc6462b1b071603531efb64b26b1c4/zss/src/org/zkoss/zss/api/CellOperationUtil.java).
 
@@ -1032,7 +1037,7 @@ ZK Spreadsheet 3.0.0 RC
   * Spreadsheet Api changes:
     * get/set Book/Sheet API use the new classes of Book & Sheet that inside 'org.zkoss.zss.api.model'
     * get/set rowfreeze and columnfreeze are deprecated, use Sheet#getColumnFreeze(),Sheet#getRowFreeze() and Range#setFreezePanel(int, int)
-  * Rect and Position (in org.zkoss.zss.ui) are deprecated, please use CellRef and AreaRef instead (in org.zkoss.zss.api) 
+  * Rect and Position (in org.zkoss.zss.ui) are deprecated, please use CellRef and AreaRef instead (in org.zkoss.zss.api)
   * Action, ActionHandler are removed. To override a default action, use AuxAction, UserActionManager instead.
   * Constructor of CellSelectionEvent is changed from left,top,right,bottom to topRow,leftCol,bottomRow,rightColumn
   * SelectionChangeEvent is renamed to CellSelectionUpdateEvent and arguments sequence is also redefined.
@@ -1084,14 +1089,14 @@ ZK Spreadsheet 2.6.0
   ZSS-212 Missing characters when export to PDF
   ZSS-216 Disable button cause the button expand
   ZSS-217 Javascript error with ZK 6.5.1.1 version
-  ZSS-218 get NotImplementedException exception  
+  ZSS-218 get NotImplementedException exception
   ZSS-220 Can't get correct selection if I didn't listen to onCellSelection
 
 ZK Spreadsheet 2.5.0
-*Features:   
+*Features:
 	ZSS-124 Support import pivot table API
 	ZSS-128 Support export pivot table API
-	
+
 *Bug
 	ZSS-125 Zk Spreedsheet performances problem with an excel file generated with jexcel
 	ZSS-126 ZKS performances problem with an excel file generated AND FORMATTED with Apache POI
@@ -1104,7 +1109,7 @@ ZK Spreadsheet 2.5.0
 	ZSS-141 Export sheet to PDF doesn't show last column
 	ZSS-142 Invalid format cause NullPointerException
 	ZSS-143 Cell addres gets into cell value on user input
-	ZSS-145	Freezing a row causes the rows above the frozen row to be unselectable.	
+	ZSS-145	Freezing a row causes the rows above the frozen row to be unselectable.
   	ZSS-147 Exporting to pdf throws NullPointerException
 	ZSS-148 Open sheet with chart without label cause exception
 	ZSS-149 DateValue does not reconize Leap day
@@ -1130,10 +1135,10 @@ ZK Spreadsheet 2.5.0
 	ZSS-171 Input "=" on cell shall not append cell reference
 	ZSS-172 Edit cell formula and use mouse to select cell, press enter cause wrong cell selection
 	ZSS-173 Set row freeze and column freeze, scroll down, cause JS error
-	
+
 	------------
 ZK Spreadsheet 2.3.0
-*Features:   
+*Features:
    ZSS-85 Range support createSheet API that supports collaboration
    ZSS-86 Range support setSheetName API that supports collaboration
    ZSS-87 Range support setSheetOrder API that supports collaboration
@@ -1167,7 +1172,7 @@ ZK Spreadsheet 2.3.0
    ZSS-120 insert new row not work well
    ZSS-122 Cell editing is blocked with regular expression check in Japanese locale
    ZSS-123 zssapp insert image cause exception, xls format only
-   
+
 	------------
 ZK Spreadsheet 2.2.0
 *Features:
@@ -1191,8 +1196,8 @@ ZK Spreadsheet 2.2.0
    ZSS-62 ZPOI upgrade to POI 3.8 beta5
    ZSS-64 ZK Spreadsheet App shall support sheet deletion collaboration
    ZSS-66 POI row object should provide information about the height is changed by end user or not
-   ZSS-67 Support locale aware Date and Number input 
-   ZSS-68 Support showing Date and Number with current locale 
+   ZSS-67 Support locale aware Date and Number input
+   ZSS-68 Support showing Date and Number with current locale
    ZSS-69 Support locale aware drag fill for Month and Week
 
 *Bug
@@ -1220,17 +1225,17 @@ ZK Spreadsheet 2.2.0
    ZSS-77 Drag fill "Jan" on new sheet, cause NPE
    ZSS-78 Implementation of RangeImpl#setValue() is not correct
    ZSS-79 zss JSF component cause JS error
-   
+
 * Upgrade Notes
-  + Per the feature ZSS-13, Spreadsheet will always open hyperlink in a separate browser tab window. 
-    If you need to keep the original behavior (click to open hyperlink in the same browser tab window; 
-	CTRL-click to open hyperlink in a separate browser tab window), please specify in zk.xml the 
+  + Per the feature ZSS-13, Spreadsheet will always open hyperlink in a separate browser tab window.
+    If you need to keep the original behavior (click to open hyperlink in the same browser tab window;
+	CTRL-click to open hyperlink in a separate browser tab window), please specify in zk.xml the
 	following library property to false:
 	<library-property>
 		<name>org.zkoss.zss.ui.Spreadsheet.linkToNewTab</name>
 		<value>false</value>
 	</library-property>
-	
+
 	------------
 ZK Spreadsheet 2.1.1
 *Features:
@@ -1246,7 +1251,7 @@ ZK Spreadsheet 2.1.1
    ZSS-36 Exception when exporting excel twice
    ZSS-37 A timer doesn't cleanup, cause tomcat cannot stop
    ZSS-39 Hide row on IE7 will popup javascript error message
-   
+
 	------------
 ZK Spreadsheet 2.1.0
 
@@ -1266,7 +1271,7 @@ ZK Spreadsheet 2.1.0
   330 Support Range#applyFilter for 2007 file format(.xlsx)
   331 Support Range#showAllData for 2007 file format(.xlsx)
 
-*Bug 
+*Bug
   290 Formula cells not always updated
   296 Can't insert formula "=A1" by java
   297 cell color is not right in xls file
@@ -1279,7 +1284,7 @@ ZK Spreadsheet 2.1.0
   308 Set empty String to cell shall be deemed as blank cell
   311 =20.6+3.6 formula shows incorrect number
   313 Typemismatch exception when Copy formula onto a Text cell
-  315 freezed pane rows/columns don t work when setting Spreadsheet from Composer.  
+  315 freezed pane rows/columns don t work when setting Spreadsheet from Composer.
   317 Number 0 shall be date 1900/1/0 0:00 (Java Date 1899/12/31 0:00)
   318 xlsx only. IllegalArgumentException when formula cause a circular reference
   320 NullPointerException when move cell focus
@@ -1292,7 +1297,7 @@ ZK Spreadsheet 2.1.0
   332 Scroll sheet down and up cause javascript error
   333 Merged cell with auto filter has more one filter button
   334 AutoFilter cause exception
-  336 Showing incorrect contents when press filter drop button in merge cell 
+  336 Showing incorrect contents when press filter drop button in merge cell
   337 Filter dropdown button incorrectly change to "filter icon" after click the dropdown button and press OK.
   338 Reapply filter fail to work
   339 "=" + mouse click to input formula
@@ -1305,8 +1310,8 @@ ZK Spreadsheet 2.1.0
   346 ZK Spreadsheet App: compose formula dialog input formula to wrong cell
   347 Wrong page orientation for PDF export in Portrait mode
   348 Formula cell formatting lost in PDF export file
-  
-  
+
+
 	------------
 ZK Spreadsheet 2.0.1
 
@@ -1315,8 +1320,8 @@ ZK Spreadsheet 2.0.1
   277 ZK Spreadsheet App: Formula Editor shall support multiple line and extensible
   281 Support wrapping of ZK Spreadsheet as a JSP tag
   278 ZK Spreadsheet App: press ESC shall close(cancel) any wizards/dialogs
-  
-*Bug 
+
+*Bug
   268 Enter multiple line in cell but show as one single line only
   269 ZK Spreadsheet App: multiple line in cell but single line in formula bar
   270 Set font style with a cell has white color cause NPL
@@ -1336,7 +1341,7 @@ ZK Spreadsheet 2.0.1
   287 click on specific cell and set font bold, cause NPE
   288 ZK Spreadsheet App: number format dialog select "General" cause error dialog
   289 xls font color does not match to what was in Excel
-  
+
 	------------
 ZK Spreadsheet 2.0.0
 
@@ -1365,8 +1370,8 @@ ZK Spreadsheet 2.0.0
   246 ZK Spreadsheet App support save file
   247 ZK Spreadsheet App editor shall support tab and cancel key control
   251 ZK Spreadsheet App support set column width and row height
-  
-*Bug 
+
+*Bug
   132 view ZK Spreadsheet App index.zul cause NullPointerException
   139 "Unexpected ptg class" RuntimeException when loading Excel file with special formula
   144 copy from a cell to a range
@@ -1447,24 +1452,24 @@ ZK Spreadsheet 2.0.0
   264 ZK Spreadsheet App: Cut should has no memory of area after once copied
   266 ZK Spreadsheet App: Toolbar button Grid line easily unsync
   267 ZK Spreadsheet App: cut & paste column takes too long
-  
+
 * Upgrade Notes
-  + Package names of classes in zpoi.jar are renamed from org.apache.poi.* to org.zkoss.poi.* to avoid class 
+  + Package names of classes in zpoi.jar are renamed from org.apache.poi.* to org.zkoss.poi.* to avoid class
     name conflicts with of those in poi.jar, so it is now OK to put both zpoi.jar and poi.jar in class path.
-  + Spec. of Range#getColumn(), Range#getRow(), Range#getLastColumn(), Range#getLastRow(), Range#getCells() has 
-    changed from 1-based to 0-based so it consists with other APIs. That is, in new spec, Range#getColumn() 
+  + Spec. of Range#getColumn(), Range#getRow(), Range#getLastColumn(), Range#getLastRow(), Range#getCells() has
+    changed from 1-based to 0-based so it consists with other APIs. That is, in new spec, Range#getColumn()
 	return 0 for column A (1st column) and Range#getRow() return 0 for row 1 (1st row).
   + Spreadsheet#getSelectedSheet() return org.zkoss.zss.model.Worksheet
-  + Methods range(org.apache.poi.ss.usermodel.Sheet sheet, ...) in org.zkoss.zss.model.Ranges changed signature 
+  + Methods range(org.apache.poi.ss.usermodel.Sheet sheet, ...) in org.zkoss.zss.model.Ranges changed signature
     to range(org.zkoss.zss.model.Worksheet sheet, ...)
-	
+
 	------------
 ZK Spreadsheet 2.0.0 RC
 
 *Features:
-  65 Honer displayGridlines parameter   	 
+  65 Honer displayGridlines parameter
   70 Support insert rows(Excel 2007, xlsx)
-  71 Support delete rows(Excel 2007, xlsx) 
+  71 Support delete rows(Excel 2007, xlsx)
   74 Support insert columns(Excel 2007, xlsx)
   75 Support delete columns(Excel 2007, xlsx)
   76 ZK Spreadsheet App support set font by toolbarbutton and menu
@@ -1476,10 +1481,10 @@ ZK Spreadsheet 2.0.0 RC
   82 ZK Spreadsheet App support set font strike by menu and toolbarbutton
   83 ZK Spreadsheet App support set cell alignment by menu and toolbarbutton
   84 ZK Spreadsheet App support clear cell style by menu
-  85 Support insertRange(Excel 2007, xlsx)   	 
+  85 Support insertRange(Excel 2007, xlsx)
   86 Support deleteRange(Excel 2007, xlsx)
-  88 Support moveRange(Excel 2007, xlsx)   	 
-  89 Support merge(Excel 2007, xlsx) 
+  88 Support moveRange(Excel 2007, xlsx)
+  89 Support merge(Excel 2007, xlsx)
   95 Support for ACCRINT financial funcion
   96 Support for ACCRINTM financial funcion
   100 Support COUPON financial functions
@@ -1509,17 +1514,17 @@ ZK Spreadsheet 2.0.0 RC
 *Bug
   44 Locale is not respected
   61 Fronzen row/column does not comply with Spreadsheet's maxrows/maxcolumn
-  64 pasteSpecial copy Validation cause Null pointer exception (Ptgs must not be null) 
-  66 Unexpected gridlines shown 
+  64 pasteSpecial copy Validation cause Null pointer exception (Ptgs must not be null)
+  66 Unexpected gridlines shown
   67 Exception when enter value 0.3308589607635 into cell with text format "# ???/???"
   68 Exception when set text format to ?/2, ?/4, ?/8, ?/16, ??/100
   69 Incorrect text output when enter value 0 into cell with text format "???/???"
-  72 IE6 rendering issue - fixed column & row sizes/positions 
+  72 IE6 rendering issue - fixed column & row sizes/positions
   73 Edit on the shorter last visible row cause the grid moving up
   87 =HYPERLINK() function in Excel 2007xlsx not follow as a hyperlink
   91 NPE when load cell with color style(Excel 2007, xlsx)
   93 NPE when load sheet with merge cell
-  97 StringIndexOutOfBoundsException if cell text format is _(*"_"??_) 
+  97 StringIndexOutOfBoundsException if cell text format is _(*"_"??_)
   98 Freeze area is not rendered if it is on the second sheet
   99 freeze column and freeze row is not reset.
   103 Freeze row/column is not correctly interpreted
@@ -1528,7 +1533,7 @@ ZK Spreadsheet 2.0.0 RC
   110 merge area is not reset
   117 Barcode Scanner data incomplete
   119 Typing in 234-6 or 344/2 into cell cause junk number value
-  
+
 	------------
 ZK Spreadsheet 2.0.0 beta3
 
@@ -1540,12 +1545,12 @@ ZK Spreadsheet 2.0.0 beta3
   41 Support Range.fillDown
   42 Support Range.fillRight
   43 Support Range.fillLeft
-  48 Honer hidden columns	 
-  49 Honer hidden rows	 
-  50 Support drag to hide column	 
-  51 Support drag to hide row	 
-  52 Support drag to sizing so un-hide a hidden column	 
-  53 Support drag to sizing so un-hide a hidden row	 
+  48 Honer hidden columns
+  49 Honer hidden rows
+  50 Support drag to hide column
+  51 Support drag to hide row
+  52 Support drag to sizing so un-hide a hidden column
+  53 Support drag to sizing so un-hide a hidden row
   28 Support hideRows
   29 Support unhideRows
   30 Support hideColumns
@@ -1557,7 +1562,7 @@ ZK Spreadsheet 2.0.0 beta3
   63 ZK Spreadsheet App support copy/paste/pastSpecial menu and toolbarbutton
 
 *Bug
-  56 zss error in log   
+  56 zss error in log
   47 zss2 beta 2 IE support
   54 data input errors - lost characters when switching to edit mode
   60 Sort function when select multiple columns cause Nullpointer exception
@@ -1584,16 +1589,16 @@ ZK Spreadsheet 2.0.0 beta2
   23 Support setRowHeight
   25 Support pasteSpecial
   27 Support Hyperlink follow up.
-  
+
 *Bug
   11 NPE when click on an empty cell
   14 Picture is not correctly shown(ZK Spreadsheet EE)
   24 Drag selecting an area shall snap to the boundary of merged cells
   32 Wrong height when insert rows
-  33 Wrong width when insert columns 
+  33 Wrong width when insert columns
   34 moveRange fail to shift formula correctly
   35 Hyperlink should show the formated text
-  
+
 	------------
 ZK Spreadsheet 2.0.0 beta (Work with ZK 5 and after)
 
@@ -1603,27 +1608,27 @@ ZK Spreadsheet 2.0.0 beta (Work with ZK 5 and after)
   3 Showing rich text
   4 Efficient formula dependency tracking
   5 Consistent column width on the browser and Excel application
-	
+
 * Upgrade Notes:
   + Ported to work with ZK 5
   + The backend data model and formula evaluation engine is completly _REWRITTEN_
-    to be based on Apache POI library(Java API To Access Microsoft Excel Format 
-	Files) such that we can support more features. The consequence are most classes 
+    to be based on Apache POI library(Java API To Access Microsoft Excel Format
+	Files) such that we can support more features. The consequence are most classes
 	and APIs that were in org.zkoss.zss.model of version 1.x are no longer existed.
-  + Spreadsheet remove deprecated method setUrl and getUrl. Use setSrc and getSrc 
+  + Spreadsheet remove deprecated method setUrl and getUrl. Use setSrc and getSrc
     instead
   + Spreadsheet remove deprecated method setMaxrow and getMaxrow. Use getMaxrows and
     setMaxrows instead
-  + Spreadsheet remove deprecated method setMaxcolumn and getMaxcolumn. Use 
+  + Spreadsheet remove deprecated method setMaxcolumn and getMaxcolumn. Use
     getMaxcolumns and setMaxcolumns instead
-  
+
 	------------
 ZK Spreadsheet 1.0.0 RC1 (Work with ZK 3 and before)
 
 Feature:
   1984354 Support fire size change event after set column/row size
   1984356 UI Support handle column/row size change event.
-  1989663 Support showing a highlight area 
+  1989663 Support showing a highlight area
   1990401 Change setColumnnames to setColumntitles
   1990704 Support tab key to control move right and left
   1991532 Supports client can start editing by press on keys
@@ -1631,7 +1636,7 @@ Feature:
   1995825 Modify css(.zk) to compete future version of ZK
   2001369 Provide auto adapting FunctionMap of Page to Book
   2001613 A way to enlarge the editing box
-  
+
 Bug:
   1986288 Head override scroll bar in some firefox/IE
   1989337 Merged cell error after insert/remove a row
@@ -1664,11 +1669,11 @@ Bug:
   1989680 setColumnWidth Bug
   1991731 SUM(A3:A1) won't be calculated
   2002276 Wrong image widget size
-  
+
 * Upgrade Notes
-  + setColumnnames/setRownames/getColumnnames/getRownames of UI Spreadsheet were removed, use  
-    setColumntitles/setRowtitles/getColumntitles/getRowtitles instead.  
-  
+  + setColumnnames/setRownames/getColumnnames/getRownames of UI Spreadsheet were removed, use
+    setColumntitles/setRowtitles/getColumntitles/getRowtitles instead.
+
   --------
 ZK Spreadsheet 1.0.0 beta3
 
@@ -1683,12 +1688,12 @@ Feature:
   1977477 setMaxrow/column support smartUpdate
   1981665 Change setMaxrow to setMaxrows, also at columm
   1981776 Model:Support MERGE events when call merge/unmerge cell
-  1977531 UI Support Row/Column Insert/Delete Event of Model    
+  1977531 UI Support Row/Column Insert/Delete Event of Model
   1977528 UI Support Merge Event of Model
   1984094 Provide API to get last focus and selection of spreadsheet
   1985245 Change setUrl to setSrc of Spreadsheet
   1985320 Get custom column widths/custom row heights
-  
+
 Bug:
   1964249 Move/modify selection doesn't work in freeze row/col mode
   1964255 Reselection in selected range doesn't work in freeze mode
@@ -1700,7 +1705,7 @@ Bug:
   1978676 Model exception when remove/insert a column/row
   1978860 When delete a column/row,no need to send CONTENTS_CHANGE
   1979032 zss css not applied in zssdemo, IE only
-  1978933 Exception when delete a row which contains a merge cell 
+  1978933 Exception when delete a row which contains a merge cell
   1981657 Load extra 1 cell to client side
   1981771 Call unmergeCells twice throws exception
   1982844 Wrong MERGE_CHANGE data when inert column
@@ -1714,12 +1719,12 @@ Bug:
   1984347 Destination reference should be delete and cause #REF!
   1985264 Column/row size back to default after invalidate
   1986025 Custom width is not correctly imported
-  
+
 * Upgrade Notes
-  + setMaxrow/getMaxrow/setMaxcolumn/getMaxcolumn of UI Spreadsheet were deprecated, use  
+  + setMaxrow/getMaxrow/setMaxcolumn/getMaxcolumn of UI Spreadsheet were deprecated, use
     setMaxrows/getMaxrows/setMaxcolumns/getMaxcolumns instead.
   +	setUrl/getUrl of UI Spreadsheet were deprecated, use setSrc/getSrc instead.
-  
+
   --------
 ZK Spreadsheet 1.0.0 beta2
 
@@ -1732,7 +1737,7 @@ Feature:
   1953243 Support initial mask
   1950481 Support displaying Image in Spreadsheet
   1953297 Support retrieve spreadsheet focus
-  
+
 Bug:
   1939913 var name loss when import an unknown variable in formula
   1939916 importer throws Unrecognized Function if use unknown func
@@ -1746,7 +1751,7 @@ Bug:
   1953126 command should be delay when spreadsheet is invalidate
   1953830 Unnecessary command was sent and break the processing
   1954061 setWidth setHeight doesn't work
-  
+
   --------
 ZK Spreadsheet 1.0.0 beta
 
@@ -1765,7 +1770,7 @@ Feature:
   1931942 Support resolve a.b.c varible expression
   1930766 Supports Hide Row and Column Header
   1871756 Provides Forzen Panel in UI
-  
+
 Bug:
   1891619 Cann't use character ">","<","""
   1906208 Empty String should be deemed as 0d
@@ -1789,7 +1794,7 @@ Bug:
   1933107 Cell refer to a Range show Range.toString()
   1919118 Cell display time format at first time editing.
   1933186 Range.getCellsArray() throws IndexOutOfBoundException
-  
+
   --------
 ZK Spreadsheet 0.7.0
 (ZK Spreadsheet project move to https://sourceforge.net/projects/zss/ after 0.6.0)
@@ -1801,7 +1806,7 @@ Feature:
   1871759 Load Cell by demand in UI.
   1883400 The size of column and row can set to zero in UI
   1883403 Supports highlight column and row header of selection range.
-  
+
 Bug:
   1882263 Cell.getText() throw exception when has formula.
   1885998 Error when moving focus to a cell which column width is 0
@@ -1818,12 +1823,12 @@ Feature:
   1859511 Sheet support defaultColumnWidth, defalutRowHeight
   1859512 Sheet support columnWidth and rowHeight
   1861271 Sheet support columnFreeze and rowFreeze
-  
+
 Bug:
   1855748 EmptyStackException when type "=" in cell
   1855750 FormulaListener not work if change the formula value
   1861948 [ZSS] NullPointerException - getMergeRanges()
-  
+
   --------
 ZK Spreadsheet 0.2.0
 * Support Spread Sheet UI (1st draft)
