@@ -31,13 +31,31 @@ public class Issue1330Test extends ZSSTestCase {
         dragAndDrop(ctrl.getCell("F5").toWebElement(), ctrl.getCell("F10").toWebElement());
         click(ZSStyle.HORIZONTAL_ALIGN + " .zstbtn-cave");
         click(ZSStyle.MENUPOPUP_OPEN.toString() + " " + ZSStyle.ALIGN_LEFT.toString());
-        click(ctrl.getCell("A1"));
+        focusSheet();
         captureOrAssert("changeToLeftAlign");
 
         dragAndDrop(ctrl.getCell("F5").toWebElement(), ctrl.getCell("F10").toWebElement());
         click(ZSStyle.HORIZONTAL_ALIGN + " .zstbtn-cave");
         click(ZSStyle.MENUPOPUP_OPEN.toString() + " " + ZSStyle.ALIGN_RIGHT.toString());
-        click(ctrl.getCell("A1"));
+        focusSheet();
+        captureOrAssert("changeToRightAlign");
+    }
+
+    @Test
+    public void testZSS1338ChangeAlignMergedCell() throws Exception {
+        getTo("/issue3/1338-overflow-right-align.zul");
+        basename();
+        SpreadsheetWidget ss = focusSheet();
+        SheetCtrlWidget ctrl = ss.getSheetCtrl();
+        click(ctrl.getCell("E11"));
+        click(ZSStyle.HORIZONTAL_ALIGN + " .zstbtn-cave");
+        click(ZSStyle.MENUPOPUP_OPEN.toString() + " " + ZSStyle.ALIGN_LEFT.toString());
+        focusSheet();
+        captureOrAssert("changeToLeftAlign");
+
+        click(ZSStyle.HORIZONTAL_ALIGN + " .zstbtn-cave");
+        click(ZSStyle.MENUPOPUP_OPEN.toString() + " " + ZSStyle.ALIGN_RIGHT.toString());
+        focusSheet();
         captureOrAssert("changeToRightAlign");
     }
 
@@ -65,6 +83,24 @@ public class Issue1330Test extends ZSSTestCase {
     public void testZSS1364SheetSwitching(){
         getTo("/issue3/1338-overflow-right-align.zul");
         basename();
+        sheetFunction().gotoTab(2);
+        waitForTime(Setup.getTimeoutL0());
+        sheetFunction().gotoTab(1);
+        waitForTime(Setup.getTimeoutL0());
+        captureOrAssert("1");
+
+    }
+    @Test
+    public void testZSS1364EditSheetSwitching() {
+        getTo("/issue3/1338-overflow-right-align.zul");
+        basename();
+        SpreadsheetWidget ss = focusSheet();
+        SheetCtrlWidget sheetCtrl = ss.getSheetCtrl();
+        doubleClick(sheetCtrl.getCell("D5"));
+        waitForTime(Setup.getTimeoutL0());
+        EditorWidget editor = sheetCtrl.getInlineEditor();
+        sendKeys(editor, "cut");
+        sendKeys(editor, Keys.chord(Keys.ENTER));
         sheetFunction().gotoTab(2);
         waitForTime(Setup.getTimeoutL0());
         sheetFunction().gotoTab(1);
