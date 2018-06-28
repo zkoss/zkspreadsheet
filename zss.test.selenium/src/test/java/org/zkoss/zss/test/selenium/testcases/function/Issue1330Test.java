@@ -4,8 +4,7 @@ import org.junit.*;
 import org.openqa.selenium.*;
 import org.zkoss.zss.test.selenium.*;
 import org.zkoss.zss.test.selenium.entity.*;
-
-import static org.junit.Assert.*;
+import org.zkoss.zss.test.selenium.util.*;
 
 
 public class Issue1330Test extends ZSSTestCase {
@@ -17,7 +16,7 @@ public class Issue1330Test extends ZSSTestCase {
     public void testZSS1338Import() throws Exception {
         getTo("/issue3/1338-overflow-right-align.zul");
         basename();
-        captureOrAssert("import");
+        captureOrAssert("import", MyPngCropper.TOOLBAR_CROPPER);
     }
 
     // always move selection box to A1 before capturing a screenshot to avoid image comparison being affected by selection box
@@ -32,13 +31,13 @@ public class Issue1330Test extends ZSSTestCase {
         click(ZSStyle.HORIZONTAL_ALIGN + " .zstbtn-cave");
         click(ZSStyle.MENUPOPUP_OPEN.toString() + " " + ZSStyle.ALIGN_LEFT.toString());
         focusSheet();
-        captureOrAssert("changeToLeftAlign");
+        captureOrAssert("changeToLeftAlign", MyPngCropper.TOOLBAR_CROPPER);
 
         dragAndDrop(ctrl.getCell("F5").toWebElement(), ctrl.getCell("F10").toWebElement());
         click(ZSStyle.HORIZONTAL_ALIGN + " .zstbtn-cave");
         click(ZSStyle.MENUPOPUP_OPEN.toString() + " " + ZSStyle.ALIGN_RIGHT.toString());
         focusSheet();
-        captureOrAssert("changeToRightAlign");
+        captureOrAssert("changeToRightAlign", MyPngCropper.TOOLBAR_CROPPER);
     }
 
     @Test
@@ -51,12 +50,12 @@ public class Issue1330Test extends ZSSTestCase {
         click(ZSStyle.HORIZONTAL_ALIGN + " .zstbtn-cave");
         click(ZSStyle.MENUPOPUP_OPEN.toString() + " " + ZSStyle.ALIGN_LEFT.toString());
         focusSheet();
-        captureOrAssert("changeToLeftAlign");
+        captureOrAssert("changeToLeftAlign", MyPngCropper.TOOLBAR_CROPPER);
 
         click(ZSStyle.HORIZONTAL_ALIGN + " .zstbtn-cave");
         click(ZSStyle.MENUPOPUP_OPEN.toString() + " " + ZSStyle.ALIGN_RIGHT.toString());
         focusSheet();
-        captureOrAssert("changeToRightAlign");
+        captureOrAssert("changeToRightAlign", MyPngCropper.TOOLBAR_CROPPER);
     }
 
     @Test
@@ -87,7 +86,7 @@ public class Issue1330Test extends ZSSTestCase {
         waitForTime(Setup.getTimeoutL0());
         sheetFunction().gotoTab(1);
         waitForTime(Setup.getTimeoutL0());
-        captureOrAssert("1");
+        captureOrAssert("1", MyPngCropper.TOOLBAR_CROPPER);
 
     }
     @Test
@@ -106,6 +105,7 @@ public class Issue1330Test extends ZSSTestCase {
         sheetFunction().gotoTab(1);
         captureOrAssert("1");
     }
+
 }
 
 
