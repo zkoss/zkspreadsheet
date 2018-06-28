@@ -7,7 +7,7 @@ removeSnapshot='versions:set -DremoveSnapshot'
 
 function buildZpoi(){
     # a relative path based on the current path
-    zpoiPom='../../zsspoi/zpoi'
+    zpoiPom='zsspoi/zpoi/'
     # remove '-SNAPSHOT' from project version
     mvn -f ${zpoiPom} versions:set -DremoveSnapshot
     # http://maven.apache.org/plugins/maven-repository-plugin/usage.html
@@ -16,7 +16,7 @@ function buildZpoi(){
 }
 
 function buildZssmodel(){
-    zssmodelPom='../zssmodel/pom.xml'
+    zssmodelPom='zkspreadsheet/zssmodel/'
     # remove SNAPSHOT
     mvn -f ${zssmodelPom} versions:update-property -Dproperty=zpoi.version
     # update to FL version
@@ -26,7 +26,7 @@ function buildZssmodel(){
 }
 
 function buildZss(){
-    zssPom='../zss/pom.xml'
+    zssPom='zkspreadsheet/zss/'
     # remove SNAPSHOT
     mvn -f ${zssmodelPom} versions:update-property -Dproperty=zpoi.version    
     # update zpoi version to the latest one
