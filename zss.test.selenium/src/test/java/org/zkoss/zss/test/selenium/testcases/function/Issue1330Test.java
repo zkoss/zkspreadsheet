@@ -89,6 +89,7 @@ public class Issue1330Test extends ZSSTestCase {
         captureOrAssert("1", MyPngCropper.TOOLBAR_CROPPER);
 
     }
+
     @Test
     public void testZSS1364EditSheetSwitching() {
         getTo("/issue3/1338-overflow-right-align.zul");
@@ -106,6 +107,15 @@ public class Issue1330Test extends ZSSTestCase {
         captureOrAssert("1");
     }
 
+    @Test //ZSS-1364
+    public void notRenderedCellAtFirst(){
+        getTo("/issue3/1338-overflow-right-align.zul");
+        basename();
+        SpreadsheetWidget ss = focusSheet();
+        setZSSScrollTop(1400);
+        waitForTime(Setup.getTimeoutL1());
+        captureOrAssert("1", new MyPngCropper(100, 600, 400, 0));
+    }
 }
 
 

@@ -16,11 +16,17 @@ public class ZSSTestCase extends ZKClientTestCase {
 		spreadsheet.focus();
 		return spreadsheet;
 	}
-	
+
+	/**
+	 * @param val number of pixels
+	 */
 	public void setZSSScrollTop(int val) {
 		((RemoteWebDriver)driver()).executeScript("jq('@spreadsheet .zsscroll').scrollTop("+ val +");");
 	}
-	
+
+	/**
+	 * @param val number of pixels
+	 */
 	public void setZSSScrollLeft(int val) {
 		((RemoteWebDriver)driver()).executeScript("jq('@spreadsheet .zsscroll').scrollLeft("+ val +");");
 	}
