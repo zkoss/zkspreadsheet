@@ -6,7 +6,6 @@
 	<artifactId>zssmodel</artifactId>
 	<properties>
 		<zk.version>8.0.1.1-Eval</zk.version>
-		<zpoi.version>3.9.15-SNAPSHOT</zpoi.version>
 		<jsoup.version>1.7.3</jsoup.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>1.5</maven.compiler.source>
@@ -63,7 +62,7 @@
 		<dependency>
 			<groupId>org.zkoss.poi</groupId>
 			<artifactId>zpoi</artifactId>
-			<version>${zpoi.version}</version>
+			<version>3.9.15-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.zkoss.zk</groupId>
