@@ -10,16 +10,11 @@ import java.util.Map;
 
 import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.Rule;
 
 import static org.junit.Assert.fail;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.rules.ExternalResource;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.Point;
@@ -27,7 +22,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.zkoss.zss.test.selenium.VisionAssert.FailAssertion;
 import org.zkoss.zss.test.selenium.entity.ClientWidget;
-import org.zkoss.zss.test.selenium.util.ConfigHelper;
+import org.zkoss.zss.test.selenium.util.*;
 
 //@RunWith(Parameterized.class)
 public class TestCaseBase {
@@ -118,7 +113,14 @@ public class TestCaseBase {
 		}
 		visionAssert.captureOrAssert(caseName);
 	}
-	
+
+	public void captureOrAssert(String caseName, PngCropper imgFilter){
+		if(visionAssert==null){
+			throw new IllegalStateException("set basename first");
+		}
+		visionAssert.captureOrAssert(caseName, imgFilter);
+	}
+
 	public void capture(String caseName){
 		if(visionAssert==null){
 			throw new IllegalStateException("set basename first");
