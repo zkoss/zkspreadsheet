@@ -17,24 +17,20 @@ function buildZpoi(){
 
 function buildZssmodel(){
     zssmodelPom='zkspreadsheet/zssmodel/'
-    # remove SNAPSHOT
-    mvn -f ${zssmodelPom} versions:update-property -Dproperty=zpoi.version
-    # update to FL version
-    mvn -f ${zssmodelPom} versions:update-property -Dproperty=zpoi.version
+    mvn -f ${zssmodelPom} versions:update-property -Dproperty=zpoi.version -DnewVersion=${zpoiFlVersion}
     mvn -f ${zssmodelPom} versions:set -DremoveSnapshot
     mvn -B -f ${zssmodelPom} ${flBundleGoals}
 }
 
 function buildZss(){
     zssPom='zkspreadsheet/zss/'
-    # remove SNAPSHOT
-    mvn -f ${zssmodelPom} versions:update-property -Dproperty=zpoi.version    
-    # update zpoi version to the latest one
     mvn -f ${zssPom} versions:set -DremoveSnapshot
-    mvn -f ${zssPom} versions:update-property -Dproperty=zpoi.version
     mvn -B -f ${zssPom} ${flBundleGoals}
 }
 
 buildZpoi
+# get zpoi fl version
+zpoiFlVersion=$(mvn -f ${zpoiPom} help:evaluate -Dexpression=project.version | egrep -v '\[|Downloading:' | tr -d '\n')
+echo zpoi fl version: ${zpoiFlVersion}
 buildZssmodel
 buildZss
