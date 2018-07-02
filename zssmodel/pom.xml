@@ -13,7 +13,7 @@
 		<maven.compiler.target>1.5</maven.compiler.target>
 		<maven.build.timestamp.format>yyyyMMdd</maven.build.timestamp.format>
 	</properties>
-	<version>3.9.4.FL.20180702-Eval</version>
+	<version>3.9.4-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<name>ZK Spreadsheet Model</name>
 	<url>http://www.zkoss.org/zss</url>
@@ -31,8 +31,16 @@
 	</scm>
 	<repositories>
 		<repository>
-			<id>zk repository</id>
+			<id>zk CE</id>
 			<url>http://mavensync.zkoss.org/maven2</url>
+		</repository>
+		<repository>
+			<id>ZK EE Evaluation</id>
+			<url>http://mavensync.zkoss.org/zk/ee-eval</url>
+		</repository>
+		<repository>
+			<id>ZK EE</id>
+			<url>https://maven.zkoss.org/repo/zk/ee</url>
 		</repository>
 	</repositories>
 	<pluginRepositories>
