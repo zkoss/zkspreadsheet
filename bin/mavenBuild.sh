@@ -3,18 +3,20 @@
 # build zk spreadsheet with maven. Because the whole process requires many steps, therefore I write it as script instead of configuring in jenkins
 
 flBundleGoals='clean source:jar javadoc:jar repository:bundle-create -Dmaven.test.skip=true'
-removeSnapshot='versions:set -DremoveSnapshot'
 # a relative path based on the current path
 zpoiPom='zsspoi/zpoi/'
 zssmodelPom='zkspreadsheet/zssmodel/'
 zssPom='zkspreadsheet/zss/'
+zpoiexPom='zsscml/zpoiex/'
+zssexPom='zsscml/zssex/'
+zssjsfPom='zsscml/zssjsf/'
+zssjspPom='zsscml/zssjsp/'
+zsspdfPom='zsscml/zsspdf/'
+
+zpoiFlVersion='unset'
 
 function buildZpoi(){
-    # remove '-SNAPSHOT' from project version
-    mvn -f ${zpoiPom} versions:set -DremoveSnapshot
-    mvn -f ${zpoiPom} -P build-fl validate
-    # http://maven.apache.org/plugins/maven-repository-plugin/usage.html
-    mvn -B -f ${zpoiPom} ${flBundleGoals}
+    buildBundle ${zpoiPom}
     mvn -B -f ${zpoiPom} install -Dmaven.test.skip=true
 }
 
@@ -25,22 +27,42 @@ function buildZssmodel(){
     # versions:use-latest-releases, version:update-property both failed in Jenkins
     sed -i.bak "s/zpoi.version>.*<\/zpoi.version>/zpoi.version>${zpoiFlVersion}<\/zpoi.version>/" ${zssmodelPom}pom.xml
 
-    mvn -f ${zssmodelPom} versions:set -DremoveSnapshot
-    mvn -f ${zssmodelPom} -P build-fl validate
-    mvn -B -f ${zssmodelPom} ${flBundleGoals}
+    buildBundle ${zssmodelPom}
     # for zss to resolve
     mvn -f ${zssmodelPom} install -Dmaven.test.skip=true
 }
 
 function buildZss(){
-    #remove snapshot
-    mvn -f ${zssPom} versions:set -DremoveSnapshot
-    # set FL version
-    mvn -f ${zssPom} -P build-fl validate
-    mvn -B -f ${zssPom} clean source:jar javadoc:jar repository:bundle-create -Dmaven.test.skip=true
+    buildBundle ${zssPom}
     mvn -f ${zssPom} install -Dmaven.test.skip=true
+}
+
+function buildZpoiex(){
+    buildBundle ${zpoiexPom}
+    mvn -B -f ${zpoiexPom} install -Dmaven.test.skip=true
+}
+
+function buildZssex(){
+    sed -i.bak "s/zpoi.version>.*<\/zpoi.version>/zpoi.version>${zpoiFlVersion}<\/zpoi.version>/" ${zssexPom}pom.xml
+
+    buildBundle ${zssexPom}
+    # for zssjsp to resolve
+    mvn -f ${zssexPom} install -Dmaven.test.skip=true
+}
+
+# build a maven bundle file
+function buildBundle(){
+    mvn -f $1 versions:set -DremoveSnapshot #remove '-SNAPSHOT' from project version
+    mvn -f $1 -P build-fl validate # set freshly version
+    # http://maven.apache.org/plugins/maven-repository-plugin/usage.html
+    mvn -B -f $1 ${flBundleGoals}
 }
 
 buildZpoi
 buildZssmodel
 buildZss
+buildZpoiex
+buildZssex
+buildBundle ${zsspdfPom}
+buildBundle ${zssjsfPom}
+buildBundle ${zssjspPom}
