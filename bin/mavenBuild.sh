@@ -36,7 +36,7 @@ function buildZss(){
     # set FL version
     mvn -f ${zssPom} -P build-fl validate
     mvn -B -f ${zssPom} clean source:jar javadoc:jar repository:bundle-create -Dmaven.test.skip=true
-    mvn -f ${zssmodelPom} install -Dmaven.test.skip=true
+    mvn -f ${zssPom} install -Dmaven.test.skip=true
 }
 
 buildZpoi
