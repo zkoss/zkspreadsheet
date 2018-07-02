@@ -2,7 +2,7 @@
 # Purpose:
 # build zk spreadsheet with maven. Because the whole process requires many steps, therefore I write it as script instead of configuring in jenkins
 
-flBundleGoals='-P build-fl clean source:jar javadoc:jar repository:bundle-create -Dmaven.test.skip=true'
+flBundleGoals='clean source:jar javadoc:jar repository:bundle-create -Dmaven.test.skip=true'
 removeSnapshot='versions:set -DremoveSnapshot'
 # a relative path based on the current path
 zpoiPom='zsspoi/zpoi/'
@@ -12,6 +12,7 @@ zssPom='zkspreadsheet/zss/'
 function buildZpoi(){
     # remove '-SNAPSHOT' from project version
     mvn -f ${zpoiPom} versions:set -DremoveSnapshot
+    mvn -f ${zpoiPom} -P build-fl validate
     # http://maven.apache.org/plugins/maven-repository-plugin/usage.html
     mvn -B -f ${zpoiPom} ${flBundleGoals}
     mvn -B -f ${zpoiPom} install -Dmaven.test.skip=true
@@ -25,6 +26,7 @@ function buildZssmodel(){
     sed -i.bak "s/zpoi.version>.*<\/zpoi.version>/zpoi.version>${zpoiFlVersion}<\/zpoi.version>/" ${zssmodelPom}pom.xml
 
     mvn -f ${zssmodelPom} versions:set -DremoveSnapshot
+    mvn -f ${zssmodelPom} -P build-fl validate
     mvn -B -f ${zssmodelPom} ${flBundleGoals}
     # for zss to resolve
     mvn -f ${zssmodelPom} install -Dmaven.test.skip=true
