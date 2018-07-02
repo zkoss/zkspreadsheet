@@ -13,7 +13,7 @@
 		<maven.compiler.target>1.5</maven.compiler.target>
 		<maven.build.timestamp.format>yyyyMMdd</maven.build.timestamp.format>
 	</properties>
-	<version>3.9.4-SNAPSHOT</version>
+	<version>3.9.4.FL.20180702-Eval</version>
 	<packaging>jar</packaging>
 	<name>ZK Spreadsheet Model</name>
 	<url>http://www.zkoss.org/zss</url>

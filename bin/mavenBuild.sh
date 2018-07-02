@@ -4,10 +4,12 @@
 
 flBundleGoals='-P build-fl clean source:jar javadoc:jar repository:bundle-create -Dmaven.test.skip=true'
 removeSnapshot='versions:set -DremoveSnapshot'
+# a relative path based on the current path
+zpoiPom='zsspoi/zpoi/'
+zssmodelPom='zkspreadsheet/zssmodel/'
+zssPom='zkspreadsheet/zss/'
 
 function buildZpoi(){
-    # a relative path based on the current path
-    zpoiPom='zsspoi/zpoi/'
     # remove '-SNAPSHOT' from project version
     mvn -f ${zpoiPom} versions:set -DremoveSnapshot
     # http://maven.apache.org/plugins/maven-repository-plugin/usage.html
@@ -16,21 +18,27 @@ function buildZpoi(){
 }
 
 function buildZssmodel(){
-    zssmodelPom='zkspreadsheet/zssmodel/'
-    mvn -f ${zssmodelPom} versions:update-property -Dproperty=zpoi.version -DnewVersion=${zpoiFlVersion}
+    # get zpoi fl version
+    zpoiFlVersion=$(mvn -f ${zpoiPom} help:evaluate -Dexpression=project.version | egrep -v '\[|Downloading:' | tr -d '\n')
+    echo zpoi freshly version: ${zpoiFlVersion}
+    # versions:use-latest-releases, version:update-property both failed in Jenkins
+    sed -i.bak "s/zpoi.version>.*<\/zpoi.version>/zpoi.version>${zpoiFlVersion}<\/zpoi.version>/" ${zssmodelPom}pom.xml
+
     mvn -f ${zssmodelPom} versions:set -DremoveSnapshot
     mvn -B -f ${zssmodelPom} ${flBundleGoals}
+    # for zss to resolve
+    mvn -f ${zssmodelPom} install -Dmaven.test.skip=true
 }
 
 function buildZss(){
-    zssPom='zkspreadsheet/zss/'
+    #remove snapshot
     mvn -f ${zssPom} versions:set -DremoveSnapshot
-    mvn -B -f ${zssPom} ${flBundleGoals}
+    # set FL version
+    mvn -f ${zssPom} -P build-fl validate
+    mvn -B -f ${zssPom} clean source:jar javadoc:jar repository:bundle-create -Dmaven.test.skip=true
+    mvn -f ${zssmodelPom} install -Dmaven.test.skip=true
 }
 
 buildZpoi
-# get zpoi fl version
-zpoiFlVersion=$(mvn -f ${zpoiPom} help:evaluate -Dexpression=project.version | egrep -v '\[|Downloading:' | tr -d '\n')
-echo zpoi fl version: ${zpoiFlVersion}
 buildZssmodel
 buildZss
