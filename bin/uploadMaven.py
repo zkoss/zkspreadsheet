@@ -10,6 +10,7 @@ import os
 import subprocess
 import logging
 import shutil
+import ConfigParser
 
 # find zss, zpoi version from pom.xml
 def findProjectVersion(pomFilePath):
@@ -118,6 +119,18 @@ def getLocalBundleFolder(projectName):
     return os.path.join(PROJECT_PATH[projectName], projectName, 'target/')
 
 
+# create a version properties file as parameters for jenkins to run the next job
+def createVersionProperties():
+    Config = ConfigParser.ConfigParser()
+    properties_file = open("version.properties",'w')
+    Config.add_section('version')
+    Config.set('version','zss_version',zss_version)
+    Config.set('version','zpoi_version',zpoi_version)
+    Config.set('version','maven', 'ee-eval')
+    Config.write(properties_file)
+    properties_file.close()
+
+
 logger = logging.getLogger('uploadMaven')
 logging.basicConfig(level='INFO')
 
@@ -131,3 +144,4 @@ if not os.path.exists(DESTINATION_PATH_JENKINS):
 logger.info("destination: " + destination_path)
 createArtifactFolder()
 copyMavenBundle()
+createVersionProperties()
