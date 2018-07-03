@@ -46,9 +46,11 @@ ZSS_PROJECT_LIST = ['zss','zssmodel', 'zssex', 'zssjsf','zssjsp','zsspdf']
 ZPOI_PROJECT_LIST = ['zpoi', 'zpoiex']
 
 # create folders in file server
-def createArtifactFolder():
-    for project in ZSS_PROJECT_LIST + ZPOI_PROJECT_LIST:
-        createFolderIfNotExist(getBundleFileTargetFolder(project))
+# all bundles in ZSS_PROJECT_LIST => zss/releases/[version]/maven/
+# all bundles in ZPOI_PROJECT_LIST => zpoi/releases/[version]/maven/
+def createDestinationFolder():
+    createFolderIfNotExist(getBundleFileTargetFolder('zss')) # for ZSS_PROJECT_LIST
+    createFolderIfNotExist(getBundleFileTargetFolder('zpoi')) # for ZPOI_PROJECT_LIST
     global isFreshlyVersion
     if (not isFreshlyVersion):
         for project in ZSS_PROJECT_LIST + ZPOI_PROJECT_LIST:
@@ -64,7 +66,11 @@ def createFolderIfNotExist(path):
 
 
 def getBundleFileTargetFolder(projectName):
-    return destination_path+projectName+'/releases/'+getProjectVersion(projectName)+'/maven/EE-Eval'
+    if (projectName in ZSS_PROJECT_LIST):
+        project_folder = 'zss'
+    else:
+        project_folder = 'zpoi'
+    return destination_path + project_folder +'/releases/'+getProjectVersion(projectName)+'/maven/EE-Eval'
 
 
 def getProprietaryFileTargetFolder(projectName):
@@ -142,6 +148,6 @@ zpoi_version = findProjectVersion('zsspoi/zpoi/pom.xml')
 if not os.path.exists(DESTINATION_PATH_JENKINS):
     mountRemoteFolder()
 logger.info("destination: " + destination_path)
-createArtifactFolder()
+createDestinationFolder()
 copyMavenBundle()
 createVersionProperties()
