@@ -38,7 +38,7 @@ def mountRemoteFolder():
         os.rmdir(MOUNTED_RELEASE_PATH)
     os.mkdir(MOUNTED_RELEASE_PATH)
     subprocess.check_call(["mount_smbfs", "-N", REMOTE_RELEASE_PATH, MOUNTED_RELEASE_PATH])
-    MOUNTED_RELEASE_PATH = MOUNTED_RELEASE_PATH
+    destination_path = MOUNTED_RELEASE_PATH
 
 
 ZSS_PROJECT_LIST = ['zss','zssmodel', 'zssex', 'zssjsf','zssjsp','zsspdf']
@@ -63,11 +63,11 @@ def createFolderIfNotExist(path):
 
 
 def getBundleFileTargetFolder(projectName):
-    return MOUNTED_RELEASE_PATH+projectName+'/releases/'+getProjectVersion(projectName)+'/maven/EE-Eval'
+    return destination_path+projectName+'/releases/'+getProjectVersion(projectName)+'/maven/EE-Eval'
 
 
 def getProprietaryFileTargetFolder(projectName):
-    return MOUNTED_RELEASE_PATH+projectName+'/releases/'+getProjectVersion(projectName)+'/maven/proprietary/EE'
+    return destination_path+projectName+'/releases/'+getProjectVersion(projectName)+'/maven/proprietary/EE'
 
 
 def getProjectVersion(projectName):
@@ -82,9 +82,10 @@ def copyMavenBundle():
     for projectName in ZSS_PROJECT_LIST + ZPOI_PROJECT_LIST:
         bundleFileName = projectName+"-"+getProjectVersion(projectName)+"-bundle.jar"
         sourceBundleFile = getLocalBundleFolder(projectName) + bundleFileName
+        destinationFolder = getBundleFileTargetFolder(projectName)
         if os.path.exists(sourceBundleFile):
-            shutil.copyfile(getLocalBundleFolder(projectName)+bundleFileName, getBundleFileTargetFolder(projectName)+"/"+bundleFileName)
-            logger.info("copied "+sourceBundleFile)
+            shutil.copyfile(getLocalBundleFolder(projectName)+bundleFileName, destinationFolder+"/"+bundleFileName)
+            logger.info("copied "+sourceBundleFile + " to " + destinationFolder)
 
     #copy proprietary bundle files into zss project maven folder
     global isFreshlyVersion
@@ -124,7 +125,9 @@ isFreshlyVersion = True
 zss_version = findProjectVersion('zkspreadsheet/zss/pom.xml')
 zpoi_version = findProjectVersion('zsspoi/zpoi/pom.xml')
 
+
 if not os.path.exists(DESTINATION_PATH_JENKINS):
     mountRemoteFolder()
+logger.info("destination: " + destination_path)
 createArtifactFolder()
 copyMavenBundle()
