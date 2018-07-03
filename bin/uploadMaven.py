@@ -22,8 +22,10 @@ def findProjectVersion(pomFilePath):
 ZSS_MAVEN_PATH = '/zss/maven/' 
 ZPOI_MAVEN_PATH = '/zpoi/maven/'
 LOCAL_RELEASE_PATH = "/tmp"
+DESTINATION_PATH_JENKINS = "/media/potix/rd/"
 REMOTE_RELEASE_PATH = "//guest@10.1.3.252/potix/rd" #fileserver
 MOUNTED_RELEASE_PATH = LOCAL_RELEASE_PATH + "/potix-rd/"
+destination_path = DESTINATION_PATH_JENKINS
 
 # mount the ZK release file vault on the file server after removing previous one
 # no need to mount the folder on jenkins
@@ -34,8 +36,9 @@ def mountRemoteFolder():
 
     if (os.path.exists(MOUNTED_RELEASE_PATH)):
         os.rmdir(MOUNTED_RELEASE_PATH)
-    os.mkdir(MOUNTED_RELEASE_PATH);
+    os.mkdir(MOUNTED_RELEASE_PATH)
     subprocess.check_call(["mount_smbfs", "-N", REMOTE_RELEASE_PATH, MOUNTED_RELEASE_PATH])
+    MOUNTED_RELEASE_PATH = MOUNTED_RELEASE_PATH
 
 
 ZSS_PROJECT_LIST = ['zss','zssmodel', 'zssex', 'zssjsf','zssjsp','zsspdf']
@@ -121,6 +124,7 @@ isFreshlyVersion = True
 zss_version = findProjectVersion('zkspreadsheet/zss/pom.xml')
 zpoi_version = findProjectVersion('zsspoi/zpoi/pom.xml')
 
-mountRemoteFolder()
+if not os.path.exists(DESTINATION_PATH_JENKINS):
+    mountRemoteFolder()
 createArtifactFolder()
 copyMavenBundle()
