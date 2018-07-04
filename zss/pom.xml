@@ -6,9 +6,11 @@
 	<artifactId>zss</artifactId>
 	<properties>
 		<zk.version>8.0.1.1-Eval</zk.version>
-		<zpoi.version>3.9.15-SNAPSHOT</zpoi.version>
 		<commons-math.version>2.2</commons-math.version>
 		<servlet.version>2.4</servlet.version>
+		<maven.compiler.source>1.6</maven.compiler.source>
+		<maven.compiler.target>1.6</maven.compiler.target>
+		<maven.build.timestamp.format>yyyyMMdd</maven.build.timestamp.format>
 	</properties>
 	<version>3.9.4-SNAPSHOT</version>
 	<packaging>jar</packaging>
@@ -22,10 +24,18 @@
 			<distribution>repo</distribution>
 		</license>
 	</licenses>
+	<scm>
+		<url>https://github.com/zkoss/zkspreadsheet</url>
+		<connection>scm:git:git@github.com:zkoss/zkspreadsheet.git</connection>
+	</scm>
 	<repositories>
 		<repository>
 			<id>zk repository</id>
 			<url>http://mavensync.zkoss.org/maven2</url>
+		</repository>
+		<repository>
+			<id>ZK EE Evaluation</id>
+			<url>http://mavensync.zkoss.org/zk/ee-eval</url>
 		</repository>
 		<repository>
 			<id>ZK EE</id>
@@ -57,11 +67,6 @@
 			<version>${project.version}</version>
 		</dependency>	
 		<dependency>
-			<groupId>org.zkoss.poi</groupId>
-			<artifactId>zpoi</artifactId>
-			<version>${zpoi.version}</version>
-		</dependency>
-		<dependency>
 			<groupId>org.zkoss.zk</groupId>
 			<artifactId>zul</artifactId>
 			<version>${zk.version}</version>
@@ -91,6 +96,7 @@
 				<directory>${project.basedir}/src/archive</directory>
 			</resource>
 		</resources>
+		<finalName>${project.artifactId}-${project.version}</finalName>
 		<plugins>
 			<!--<plugin>
 				<groupId>org.zkoss.maven</groupId>
@@ -106,13 +112,47 @@
 			</plugin> -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.3.2</version>
-				<configuration>
-					<source>1.6</source>
-					<target>1.6</target>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>3.0.1</version>
+				<configuration> <!-- disable javadoc error -->
+					<doclint>none</doclint>
 				</configuration>
 			</plugin>
 		</plugins>
 	</build>
-</project> 
+	<profiles>
+		<profile>
+			<id>build-fl</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>versions-maven-plugin</artifactId>
+						<version>2.5</version>
+						<executions>
+							<execution>
+								<id>set-fl-version</id>
+								<phase>validate</phase>
+								<goals>
+									<goal>set</goal>
+								</goals>
+								<configuration>
+									<newVersion>
+										${project.version}.FL.${maven.build.timestamp}
+									</newVersion>
+								</configuration>
+							</execution>
+							<execution>
+								<id>update-pom2</id>
+								<phase>validate</phase>
+								<goals>
+									<goal>commit</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+</project>
