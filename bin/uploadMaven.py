@@ -42,7 +42,7 @@ def mountRemoteFolder():
     destination_path = MOUNTED_RELEASE_PATH
 
 
-ZSS_PROJECT_LIST = ['zss','zssmodel', 'zssex', 'zssjsf','zssjsp','zsspdf']
+ZSS_PROJECT_LIST = ['zss','zssmodel', 'zssex', 'zssjsf','zssjsp','zsspdf', 'zsshtml']
 ZPOI_PROJECT_LIST = ['zpoi', 'zpoiex']
 
 # create folders in file server
@@ -121,6 +121,7 @@ def getLocalBundleFolder(projectName):
         'zssjsf'    : 'zsscml',
         'zssjsp'    : 'zsscml',
         'zsspdf'    : 'zsscml',
+        'zsshtml'   : 'zsscml',
     }
     return os.path.join(PROJECT_PATH[projectName], projectName, 'target/')
 
