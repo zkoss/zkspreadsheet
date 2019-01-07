@@ -6,9 +6,19 @@ import java.io.*;
 
 /**
  * crop PNG with an offset of top, right, bottom, or left.
+ * Crop an image to compare only the concerned area of an image, prevent being affected by an irrelevant change.
  */
 public class MyPngCropper implements PngCropper {
-    public static PngCropper TOOLBAR_CROPPER = new MyPngCropper(100, 0, 0, 0); //cut toolbar & formula bar on the top
+    /**
+     * cut toolbar & formula bar on the top.
+     * sometimes even Chrome renders drop-down icon differently among several captured screenshots. Remove the toolbar to avoid being compared.
+     */
+    public static PngCropper TOOLBAR_CROPPER = new MyPngCropper(100, 0, 0, 0);
+    /**
+     * Cut toolbar, sheet bar and some bottom rows.
+     * Because a browser might render slightly different number of rows.
+     */
+    public static PngCropper TOP_BOTTOM_CROPPER = new MyPngCropper(100, 0, 150, 0);
     private final int left;
     private final int top;
     private final int right;
