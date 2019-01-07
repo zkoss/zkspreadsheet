@@ -101,7 +101,11 @@ public class ZSSTestCase extends ZKClientTestCase {
 	public void dragAndDrop(WebElement from, WebElement to) {
 		new Actions(driver()).dragAndDrop(from, to).perform();
 	}
-	
+
+	public void dragAndDropBy(WebElement from, int xOffset, int yOffset) {
+		new Actions(driver()).dragAndDropBy(from, xOffset, yOffset).perform();
+	}
+
 	public void closeMessageWindow() {
 		
 	}
