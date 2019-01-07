@@ -9,7 +9,7 @@ import org.zkoss.zss.test.selenium.util.*;
 import static org.zkoss.zss.test.selenium.util.MyPngCropper.TOP_BOTTOM_CROPPER;
 
 
-public class Issue1330Test extends ZSSTestCase {
+public class Issue1300RightAlignOverflowTest extends ZSSTestCase {
 
     /*
      * verify the importing result
