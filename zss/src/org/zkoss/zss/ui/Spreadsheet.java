@@ -3222,7 +3222,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			helper.setInfoValues(column, newsize, id, hidden, true);
 
 			Sheet sheet = new SheetImpl(new SimpleRef<SBook>(xsheet.getBook()),new SimpleRef<SSheet>(xsheet));
-			if(sheet.isProtected()){
+			if(sheet.isProtected() && !xsheet.getSheetProtection().isFormatColumns()){ //ZSS-1375
 				return;
 			}
 			UndoableActionManager uam = getUndoableActionManager();
