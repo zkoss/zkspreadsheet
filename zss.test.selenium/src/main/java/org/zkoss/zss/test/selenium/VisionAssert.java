@@ -1,17 +1,12 @@
 package org.zkoss.zss.test.selenium;
 
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FileFilter;
-import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
-
 import org.apache.commons.io.FileUtils;
-import org.openqa.selenium.OutputType;
-import org.openqa.selenium.TakesScreenshot;
-import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.*;
 import org.zkoss.zss.test.selenium.util.PngCropper;
+
+import java.awt.image.BufferedImage;
+import java.io.*;
+import java.util.*;
 
 public class VisionAssert {
 
@@ -21,7 +16,7 @@ public class VisionAssert {
 
     private List<File> screenshots = new LinkedList<File>();
     // private List<File> results = new LinkedList<File>();
-    private List<FailAssertion> assertions = new LinkedList<FailAssertion>();
+    private List<FailAssertion> failedAssertions = new LinkedList<FailAssertion>();
 
     public VisionAssert(WebDriver driver, String baseName) {
         this.baseName = baseName;
@@ -39,7 +34,7 @@ public class VisionAssert {
     // }
 
     public List<FailAssertion> getFailAssertioins() {
-        return assertions;
+        return failedAssertions;
     }
 
     public void cleanScreenshots() {
@@ -50,7 +45,7 @@ public class VisionAssert {
     // results.clear();
     // }
     public void cleanFailAssertions() {
-        assertions.clear();
+        failedAssertions.clear();
     }
 
     private void cleanResultFiles() {
@@ -70,10 +65,10 @@ public class VisionAssert {
     }
 
     public void captureOrAssert(String caseName, PngCropper imgFilter) {
-        File screenshotFolder = Setup.getScreenshotFolder();
-        File caseScreenshotFile = new File(screenshotFolder, resultPrefix
+        File expectedScreenshotFolder = Setup.getScreenshotFolder();
+        File expectedCaseScreenshotFile = new File(expectedScreenshotFolder, resultPrefix
                 + caseName + ".png");
-        if (!caseScreenshotFile.exists()) {
+        if (!expectedCaseScreenshotFile.exists()) {
             capture(caseName, imgFilter);
         } else {
             assertIt(caseName, imgFilter);
@@ -110,11 +105,9 @@ public class VisionAssert {
     }
 
     private void assertIt(String caseName, PngCropper imgFilter) {
-        File resultFolder = Setup.getResultFolder();
-        File screenshotFolder = Setup.getScreenshotFolder();
-        File caseScreenshotFile = new File(screenshotFolder, resultPrefix
+        File expectedCaseScreenshotFile = new File(Setup.getScreenshotFolder(), resultPrefix
                 + caseName + ".png");
-        File caseResultFile = new File(resultFolder, resultPrefix + caseName
+        File caseResultFile = new File(Setup.getResultFolder(), resultPrefix + caseName
                 + ".png");
 
         byte[] currentScreenshot = ((TakesScreenshot) driver)
@@ -130,17 +123,17 @@ public class VisionAssert {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        if (!caseScreenshotFile.exists()) {
-            assertions.add(
+        if (!expectedCaseScreenshotFile.exists()) {
+            failedAssertions.add(
                     new FailAssertion("no screenshot to assert",
                             null));
         } else {
             // verify
-            boolean r = checkScreenshot(caseScreenshotFile, currentScreenshotFile,
+            boolean passed = checkScreenshot(expectedCaseScreenshotFile, currentScreenshotFile,
                     caseResultFile);
-            if (!r) {
+            if (!passed) {
                 // Assert.fail("screenshot assert fail and store at "+caseResultFile.getAbsolutePath());
-                assertions.add(
+                failedAssertions.add(
                         new FailAssertion("screenshot assert fail and store at " + caseResultFile.getAbsolutePath(),
                                 caseResultFile));
             }
@@ -153,19 +146,20 @@ public class VisionAssert {
 
     public static boolean checkScreenshot(File expect, File result,
                                           File assertFail) {
-        Comparator compar = Setup.getImageComparator();
+        Comparator comparator = Setup.getImageComparator();
         try {
             BufferedImage img1 = Files.readImage(expect);
             BufferedImage img2 = Files.readImage(result);
-            BufferedImage r = compar.compare(img1, img2);
+            BufferedImage r = comparator.compare(img1, img2);
             if (r != null) {
                 Files.writeImage(assertFail, r);
                 return false;
             }
             return true;
         } catch (Exception x) {
-            throw new RuntimeException(x.getMessage(), x);
+            x.printStackTrace();
         }
+        return false;
     }
 
     static class FailAssertion {

@@ -51,8 +51,17 @@ public class DefaultComparator implements Comparator{
         float[] hsb = Color.RGBtoHSB(c.getRed(), c.getGreen(), c.getBlue(), null);
         return (float) (hsb[2] * 0.5 + ((hsb[0] / 360) * 50/* 1/2 of 100 */));
     }
-    
+
+    /**
+     * Compare 2 images with the same size
+     * @param bi1
+     * @param bi2
+     * @return an image that shows the difference or null for 2 images are equivalent
+     */
 	public BufferedImage compare(BufferedImage bi1, BufferedImage bi2) {
+	    if (bi1.getWidth() != bi2.getWidth() || bi1.getHeight() != bi2.getHeight()){
+	        return bi2;
+        }
     	int[][] m1 = getImageMap(bi1);
         int[][] m2 = getImageMap(bi2);
     	BufferedImage imgc = imageToBufferedImage(bi2);
