@@ -118,6 +118,21 @@ public class Issue1300RightAlignOverflowTest extends ZSSTestCase {
         waitForTime(Setup.getTimeoutL1());
         captureOrAssert("1", new MyPngCropper(100, 600, 400, 0));
     }
+
+    @Test //ZSS-1375
+    public void resizeColumnProtectedSheet(){
+        getTo("/issue3/1338-overflow-right-align.zul");
+        basename();
+        SpreadsheetWidget ss = focusSheet();
+        sheetFunction().gotoTab(3);
+        waitForTime(Setup.getTimeoutL1());
+        //enlarge a column width
+        dragAndDropBy(jq(".zshbouni").get(5), 100, 0);
+        click(ss.getSheetCtrl().getCell("A1"));
+        waitForTime(Setup.getTimeoutL1());
+        captureOrAssert("1", TOP_BOTTOM_CROPPER);
+    }
+
 }
 
 
