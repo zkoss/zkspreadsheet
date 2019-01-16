@@ -8,7 +8,8 @@ import java.util.*;
 
 import org.junit.*;
 import org.zkoss.util.Locales;
-import org.zkoss.zss.Setup;
+import org.zkoss.zss.*;
+import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.SBooks;
 import org.zkoss.zss.model.SCell;
@@ -468,5 +469,15 @@ public class ExporterTest extends ImExpTestBase {
 		File outFile = ImExpTestUtil.write(ImExpTestUtil.loadBook(FILTER_IMPORT_FILE_UNDER_TEST, "XSSFBook"), EXPORTER_TYPE);
 		SBook book = ImExpTestUtil.loadBook(outFile, DEFAULT_BOOK_NAME);
 		autoFilter(book);
+	}
+
+	@Test //ZSS-1376
+	public void explicitNumberFormat(){
+		Book sourceBook = Util.loadBook(this, "book/explicitNumberFormat.xlsx");
+		File outFile = ImExpTestUtil.write(sourceBook.getInternalBook(), EXPORTER_TYPE);
+		SBook book = ImExpTestUtil.loadBook(outFile, DEFAULT_BOOK_NAME);
+
+		assertEquals(sourceBook.getInternalBook().getSheet(0).getCell(0, 0).getCellStyle().isDirectDataFormat(),
+				book.getSheet(0).getCell(0, 0).getCellStyle().isDirectDataFormat());
 	}
 }
