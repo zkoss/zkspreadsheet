@@ -574,10 +574,15 @@ abstract public class AbstractExcelExporter extends AbstractExporter {
 		boolean hidden = cellStyle.isHidden();
 		poiCellStyle.setProtection(locked, hidden);
 
-		// refer from BookHelper#setDataFormat
-		DataFormat df = workbook.createDataFormat();
-		short fmt = df.getFormat(cellStyle.getDataFormat());
-		poiCellStyle.setDataFormat(fmt);
+		// number format, refer from BookHelper#setDataFormat
+		DataFormat dataFormat = workbook.createDataFormat();
+		if(cellStyle.isDirectDataFormat()){ // explicit number format
+			short index = dataFormat.newFormat(cellStyle.getDataFormat());
+			poiCellStyle.setDataFormat(index);
+		}else { // implied number format
+			short index = dataFormat.getFormat(cellStyle.getDataFormat());
+			poiCellStyle.setDataFormat(index);
+		}
 
 		// font
 		poiCellStyle.setFont(toPOIFont(cellStyle.getFont()));
