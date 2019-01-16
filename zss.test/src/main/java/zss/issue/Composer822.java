@@ -11,28 +11,19 @@
 
 package zss.issue;
 
-import java.awt.Desktop;
-import java.awt.Desktop.Action;
-import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-
 import org.zkoss.zk.ui.select.SelectorComposer;
-import org.zkoss.zk.ui.select.annotation.Listen;
-import org.zkoss.zk.ui.select.annotation.Wire;
-import org.zkoss.zss.Setup;
-import org.zkoss.zss.Util;
-import org.zkoss.zss.api.Range;
-import org.zkoss.zss.api.Ranges;
-import org.zkoss.zss.api.model.CellData.CellType;
+import org.zkoss.zk.ui.select.annotation.*;
 import org.zkoss.zss.api.model.Book;
-import org.zkoss.zss.api.model.Sheet;
-import org.zkoss.zss.model.CellRegion;
 import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.impl.pdf.PdfExporter;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Window;
+
+import java.awt.*;
+import java.awt.Desktop.Action;
+import java.io.*;
+import java.text.SimpleDateFormat;
 
 public class Composer822 extends SelectorComposer<Window> {
 

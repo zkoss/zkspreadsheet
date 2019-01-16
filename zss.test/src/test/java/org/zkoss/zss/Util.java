@@ -58,8 +58,11 @@ public class Util {
 			throw new RuntimeException(e.getMessage(),e);
 		}
 	}
-	
-	public static Book loadBook(Object base,String respath) {
+
+	/**
+	 * load an Excel file with base.getResourceAsStream(filePath)
+	 */
+	public static Book loadBook(Object base,String filePath) {
 		if(base==null){
 			base = Util.class;
 		}
@@ -68,10 +71,10 @@ public class Util {
 		}
 		
 		@SuppressWarnings("rawtypes")
-		final InputStream is = ((Class)base).getResourceAsStream(respath);
+		final InputStream is = ((Class)base).getResourceAsStream(filePath);
 		try {
-			int index = respath.lastIndexOf("/");
-			String bookName = index==-1?respath:respath.substring(index+1);
+			int index = filePath.lastIndexOf("/");
+			String bookName = index==-1?filePath:filePath.substring(index+1);
 			return Importers.getImporter().imports(is, bookName);
 		} catch (IOException e) {
 			throw new RuntimeException(e.getMessage(),e);
