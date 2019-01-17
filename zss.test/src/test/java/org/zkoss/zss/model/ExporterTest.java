@@ -1,31 +1,20 @@
 package org.zkoss.zss.model;
 
 
-import static org.junit.Assert.assertEquals;
-
-import java.io.File;
-import java.util.*;
-
 import org.junit.*;
 import org.zkoss.util.Locales;
 import org.zkoss.zss.*;
 import org.zkoss.zss.api.model.Book;
-import org.zkoss.zss.model.SBook;
-import org.zkoss.zss.model.SBooks;
-import org.zkoss.zss.model.SCell;
-import org.zkoss.zss.model.SCellStyle;
-import org.zkoss.zss.model.SColumnArray;
-import org.zkoss.zss.model.SFont;
-import org.zkoss.zss.model.SHyperlink;
-import org.zkoss.zss.model.SPicture;
-import org.zkoss.zss.model.SRichText;
-import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.model.SBorder.BorderType;
-import org.zkoss.zss.model.SFont.Boldweight;
-import org.zkoss.zss.model.SFont.Underline;
+import org.zkoss.zss.model.SFont.*;
 import org.zkoss.zss.model.SPicture.Format;
-import org.zkoss.zss.range.impl.imexp.*;
+import org.zkoss.zss.range.impl.imexp.ExcelExportFactory;
 import org.zkoss.zss.range.impl.imexp.ExcelExportFactory.Type;
+
+import java.io.File;
+import java.util.*;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * XLSX exporter test cases.
@@ -480,4 +469,19 @@ public class ExporterTest extends ImExpTestBase {
 		assertEquals(sourceBook.getInternalBook().getSheet(0).getCell(0, 0).getCellStyle().isDirectDataFormat(),
 				book.getSheet(0).getCell(0, 0).getCellStyle().isDirectDataFormat());
 	}
+
+    @Test //ZSS-1353
+    public void verticalAlign() {
+        Book sourceBook = Util.loadBook(this, "book/verticalAlign.xlsx");
+        File outFile = ImExpTestUtil.write(sourceBook.getInternalBook(), EXPORTER_TYPE);
+        SBook book = ImExpTestUtil.loadBook(outFile, DEFAULT_BOOK_NAME);
+
+        System.out.println(book.getSheet(0).getCell(0, 0).getCellStyle().getVerticalAlignment());
+        assertEquals(sourceBook.getInternalBook().getSheet(0).getCell(0, 0).getCellStyle().getVerticalAlignment(),
+                book.getSheet(0).getCell(0, 0).getCellStyle().getVerticalAlignment());
+        assertEquals(sourceBook.getInternalBook().getSheet(0).getCell(0, 1).getCellStyle().getVerticalAlignment(),
+                book.getSheet(0).getCell(0, 1).getCellStyle().getVerticalAlignment());
+        assertEquals(sourceBook.getInternalBook().getSheet(0).getCell(0, 2).getCellStyle().getVerticalAlignment(),
+                book.getSheet(0).getCell(0, 2).getCellStyle().getVerticalAlignment());
+    }
 }
