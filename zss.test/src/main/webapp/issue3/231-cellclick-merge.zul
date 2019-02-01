@@ -1,11 +1,12 @@
 <zk>
 	<vlayout width="600px" height="100%">
 		<label>
-			select merged cell, you can see the direction pointed to top-left one.
+			click a merged cell, the server gets top-left corner cell
 		</label>
 		<hlayout>
 			<label id="msg" value="no msg"></label>
-			
+			<label id="timeString"></label>
+
 		</hlayout>
 		
 		<spreadsheet id="ss" src="/issue3/book/blank.xlsx"  hflex="1" vflex="1"
@@ -16,29 +17,28 @@
 		</spreadsheet>
 		
 		<zscript><![CDATA[//@DECLARATION
-		                  
-			public void buildCase(){
-				Range r = Ranges.range(ss.getSelectedSheet(),"B2:C3");
+			public void merge(String rangeAddress){
+				r = Ranges.range(ss.getSelectedSheet(),rangeAddress);
 				r.merge(false);
-				r.setCellEditText("B2:C3");
-				
-				r = Ranges.range(ss.getSelectedSheet(),"D5:D8");
-				r.merge(false);
-				r.setCellEditText("D5:D8");
+				r.setCellEditText(rangeAddress);
 			}
-		
+
 			public void onCellClick(String type,Event event){
 				org.zkoss.zss.ui.event.CellMouseEvent evt = (org.zkoss.zss.ui.event.CellMouseEvent) event;
-				msg.setValue("onCellClick "+type+" "+Ranges.getCellRefString(evt.getRow(),evt.getColumn())+":"+System.currentTimeMillis());
+				msg.setValue("onCellClick "+type+" "+Ranges.getCellRefString(evt.getRow(),evt.getColumn()));
+				timeString.setValue(System.currentTimeMillis()+"");
 			}
+
 			public void onHeaderClick(String type,Event event){
 				org.zkoss.zss.ui.event.HeaderMouseEvent evt = (org.zkoss.zss.ui.event.HeaderMouseEvent) event;
-				msg.setValue("onHeaderClick "+type+" "+evt.getType()+" "+evt.getIndex()+":"+System.currentTimeMillis());
+				msg.setValue("onHeaderClick "+type+" "+evt.getType()+" "+evt.getIndex());
+				timeString.setValue(System.currentTimeMillis()+"");
 			}
-			
 		]]></zscript>
 		<zscript><![CDATA[
-		buildCase();
+		merge("B2:C3");
+		merge("D5:D8");
+		merge("A1:A2");
 		]]></zscript>
 	</vlayout>
 </zk>
