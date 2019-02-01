@@ -94,6 +94,9 @@ zkS.doCallback = function (token) {
 	}
 };
 
+/**
+ * find the element's ancestor with "zs.t" attribute that matches specified types
+ */
 zkS.parentByZSType = function(el, type, pathlen) {
 	if (el) {
 		if (!(type instanceof Array))

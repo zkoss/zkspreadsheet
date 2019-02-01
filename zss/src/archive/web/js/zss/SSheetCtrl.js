@@ -1278,7 +1278,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			row = cellpos[0];
 			col = cellpos[1];
 			var cell = this.getCell(row, col);
-			if (cell != null && cell.merr) {
+			if (cell.isMerged()) {
 				row = cell.mert;
 				col = cell.merl;
 			}
@@ -1316,7 +1316,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			row = cellpos[0];
 			col = cellpos[1];
 			var cell = this.getCell(row, col);
-			if (cell && cell.merr) {
+			if (cell.isMerged()) {
 				row = cell.mert;
 				col = cell.merl;
 				elm = cell.comp;
@@ -1357,7 +1357,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			row = cellpos[0];
 			col = cellpos[1];
 			var cell = this.getCell(row, col);
-			if (cell != null && cell.merr) {
+			if (cell.isMerged()) {
 				row = cell.mert;
 				col = cell.merl;
 			}
@@ -1396,7 +1396,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			row = cellpos[0];
 			col = cellpos[1];
 			var cell = this.getCell(row, col);
-			if (cell != null && cell.merr) {
+			if (cell.isMerged()) {
 				row = cell.mert;
 				col = cell.merl;
 			}
@@ -1517,7 +1517,9 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			return;
 		//bug#1974069, leftkey & has last mouse down element 
 		//ZSS233,348 add SHyperlink and remove the fix of zss-30 
-		if (_isLeftMouseEvt(evt) && this._lastmdelm && zkS.parentByZSType(this._lastmdelm, ["SCell", "SHighlight", "SSelInner", "SHyperlink"], 1) != null) {
+		if (_isLeftMouseEvt(evt)
+		    && this._lastmdelm
+		    && zkS.parentByZSType(this._lastmdelm, ["SCell", "SHighlight", "SSelInner", "SHyperlink"], 1) != null) {
 			this._doMouseclick(evt, "lc", this._lastmdelm);
 		}
 		this._lastmdelm = null;
@@ -1725,7 +1727,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			row = cellpos[0];
 			col = cellpos[1];
 			var cell = this.getCell(row, col);
-			if (cell != null && cell.merr) {
+			if (cell.isMerged()) {
 				row = cell.mert;
 				col = cell.merl;
 			}
@@ -1740,7 +1742,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			}
 				
 			if (type == 'lc' && this.selArea) {
-				if (cell!=null && cell.merr) {
+				if (cell.isMerged()) {
 					var anchorA;
 					// go to real merged cell
 					cell = sheet.getCell(cell.mert,cell.merl);
@@ -1769,7 +1771,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			row = cellpos[0];
 			col = cellpos[1];
 			var cell = this.getCell(row, col);
-			if (cell != null && cell.merr) {
+			if (cell.isMerged()) {
 				row = cell.mert;
 				col = cell.merl;
 				elm = cell.comp;
@@ -1797,7 +1799,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			row = cellpos[0];
 			col = cellpos[1];
 			var cell = this.getCell(row, col);
-			if (cell != null && cell.merr) {
+			if (cell.isMerged()) {
 				row = cell.mert;
 				col = cell.merl;
 			}

@@ -1057,6 +1057,12 @@ zss.Cell = zk.$extends(zk.Widget, {
 	isInRange: function (row, col) {
 		return this.merid ? this.mert <= row && this.merb >= row && this.merl <= col && this.merr >= col:
 			this.r == row && this.c == col;
+	},
+	/**
+	 * Return whether the cell is in a merged cell or not
+	 */
+	isMerged: function(){
+	    return this.merid != null;
 	}
 });
 })();

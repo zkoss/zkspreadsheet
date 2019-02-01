@@ -280,7 +280,7 @@ zss.Row = zk.$extends(zk.Widget, {
 			cell = sheet.getCell(row, column);
 
 		//ZSS-454 Cannot click on hyperlink in the merge cell.
-		if (cell!=null && cell.merr) {
+		if (cell.isMerged()) {
 			cell = sheet.getCell(cell.mert,cell.merl);
 		}
 
