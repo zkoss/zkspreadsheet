@@ -2,7 +2,7 @@
 # Purpose:
 # build zk spreadsheet with maven. Because the whole process requires many steps, therefore I write it as script instead of configuring in jenkins
 
-flBundleGoals='clean source:jar javadoc:jar repository:bundle-create -Dmaven.test.skip=true'
+bundleGoals='clean source:jar javadoc:jar repository:bundle-create -Dmaven.test.skip=true'
 # a relative path based on the current path
 zpoiPom='zsspoi/zpoi/pom.xml'
 zssmodelPom='zkspreadsheet/zssmodel/'
@@ -14,41 +14,55 @@ zssjspPom='zsscml/zssjsp/'
 zsspdfPom='zsscml/zsspdf/'
 zsshtmlPom='zsscml/zsshtml/'
 
-zpoiFlVersion='unset'
+zpoiVersion='unset'
 
 
 function buildBundleInstall(){
-    buildBundle $1
-    # for dependent artifact to resolve correctly
+   buildBundle $1 $2
+    # install an artifact for resolving dependencies correctly
     mvn -f $1 install -Dmaven.test.skip=true
 }
 
 # build a maven bundle file
 function buildBundle(){
     mvn -f $1 versions:set -DremoveSnapshot #remove '-SNAPSHOT' from project version
-    mvn -f $1 -P build-fl validate # set freshly version
+    if [[ $2 != "official" ]]
+    then
+        mvn -f $1 -P build-fl validate # set freshly version
+    fi
     # http://maven.apache.org/plugins/maven-repository-plugin/usage.html
-    mvn -B -f $1 ${flBundleGoals}
+    mvn -B -f $1 ${bundleGoals}
 }
+
 
 function setZpoiVersion(){
-    sed -i.bak "s/zpoi.version>.*<\/zpoi.version>/zpoi.version>${zpoiFlVersion}<\/zpoi.version>/" $1pom.xml
+    sed -i.bak "s/zpoi.version>.*<\/zpoi.version>/zpoi.version>${zpoiVersion}<\/zpoi.version>/" $1pom.xml
 }
 
-buildBundleInstall ${zpoiPom}
+
+if [[ "official" = $1 ]]
+then
+    echo "build official"
+else
+    echo "build freshly"
+fi
+
+buildBundleInstall ${zpoiPom} $1
+
 # get zpoi fl version
 # get project version with a maven plugin sometimes requires a download and failed to obtain the version
 # zpoiFlVersion=$(mvn -f ${zpoiPom} help:evaluate -Dexpression=project.version | egrep -v '\[|Downloading:' | tr -d '\n')
-zpoiFlVersion=$(python zkspreadsheet/bin/read_pom_version.py ${zpoiPom})
-echo zpoi freshly version: ${zpoiFlVersion}
+zpoiVersion=$(python zkspreadsheet/bin/read_pom_version.py ${zpoiPom})
+echo zpoi version: ${zpoiVersion}
+
 # versions:use-latest-releases, version:update-property both failed set zpoi version in Jenkins
 setZpoiVersion ${zssmodelPom}
-buildBundleInstall ${zssmodelPom}
-buildBundleInstall ${zssPom}
-buildBundleInstall ${zpoiexPom}
+buildBundleInstall ${zssmodelPom} $1
+buildBundleInstall ${zssPom} $1
+buildBundleInstall ${zpoiexPom} $1
 setZpoiVersion ${zssexPom}
-buildBundleInstall ${zssexPom}
-buildBundle ${zsspdfPom}
-buildBundle ${zssjsfPom}
-buildBundle ${zssjspPom}
-buildBundle ${zsshtmlPom}
+buildBundleInstall ${zssexPom} $1
+buildBundle ${zsspdfPom} $1
+buildBundle ${zssjsfPom} $1
+buildBundle ${zssjspPom} $1
+buildBundle ${zsshtmlPom} $1
