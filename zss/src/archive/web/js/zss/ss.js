@@ -194,7 +194,7 @@ zkS.isSingleDigit = function(val) {
 	if (val === undefined || val.length != 1) {
 		return false;
 	}
-	var char = val.charAt(0);
-	return zkS._ZERO <= char && char <= zkS._NINE;
+	var character = val.charAt(0);
+	return zkS._ZERO <= character && character <= zkS._NINE;
 }
 
