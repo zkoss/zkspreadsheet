@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.zkoss.zss.parent</groupId>
+    <artifactId>build</artifactId>
+    <version>1</version>
+    <packaging>pom</packaging>
+    <name>ZK Spreadsheet Build</name>
+    <description>
+        https://maven.apache.org/guides/introduction/introduction-to-the-pom.html#Project_Aggregation
+    </description>
+    <modules>
+        <module>../zsspoi/zpoi</module>
+        <module>zssmodel</module>
+        <module>zss</module>
+    </modules>
+    <build>
+    </build>
+</project>
