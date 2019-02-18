@@ -40,7 +40,46 @@
             <url>http://mavensync.zkoss.org/zk/ee-eval</url>
         </pluginRepository>
     </pluginRepositories>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.0.1</version>
+                <configuration> <!-- disable javadoc error -->
+                    <doclint>none</doclint>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
     <profiles>
+        <profile>
+            <id>build-fl</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>versions-maven-plugin</artifactId>
+                        <version>2.5</version>
+                        <executions>
+                            <execution>
+                                <id>set-fl-version</id>
+                                <phase>validate</phase>
+                                <goals>
+                                    <goal>set</goal>
+                                    <goal>commit</goal>
+                                </goals>
+                                <configuration>
+                                    <newVersion>
+                                        ${project.version}.FL.${maven.build.timestamp}
+                                    </newVersion>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
         <profile>
             <id>remove-snapshot</id>
             <build>

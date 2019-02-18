@@ -47,9 +47,9 @@ function setZpoiVersion(){
 
 if [[ "official" = $1 ]]
 then
-    echo "build official"
+    echo "=== Build official ==="
 else
-    echo "build freshly"
+    echo "=== Build freshly ==="
 fi
 
 buildBundleInstall ${zpoiPom} $1
