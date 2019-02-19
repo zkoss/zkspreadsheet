@@ -1,7 +1,12 @@
-# A script to upload ZSS Maven bundle files to POTIX release file server
-# Bundle Location for Maven CE: \\fileserver\potix\rd\[project]\releases\[version]\maven\ 
-# Bundles Location for Maven EE-eval: \\fileserver\potix\rd\[project]\releases\[version]\maven\EE-eval\ 
-# Bundle file format: [project]-[version]-bundle.* 
+# A script to upload ZSS Maven bundle files to POTIX file server.
+# If bundle file is freshly release (determined by version string), copy to EE-eval folder
+# If bundle file is official release, copy to EE folder
+# Bundle Location:
+# * Maven CE: \\fileserver\potix\rd\[project]\releases\[version]\maven\
+# * Maven EE-eval: \\fileserver\potix\rd\[project]\releases\[version]\maven\EE-eval\ 
+# * Maven EE: \\fileserver\potix\rd\zss\releases\$Version\maven\proprietary\EE\ 
+# Bundle file naming: [project]-[version]-bundle.* 
+
 # could be refined to a MavenUploader which knows their version, project list, bundle files, 
 # target path respectively and just create 2 instances with different parameters and ask them to upload.  
 
@@ -10,7 +15,7 @@ import os
 import subprocess
 import logging
 import shutil
-import ConfigParser
+import configparser
 
 # find zss, zpoi version from pom.xml
 def findProjectVersion(pomFilePath):
@@ -22,13 +27,12 @@ def findProjectVersion(pomFilePath):
 
 ZSS_MAVEN_PATH = '/zss/maven/' 
 ZPOI_MAVEN_PATH = '/zpoi/maven/'
-LOCAL_RELEASE_PATH = "/tmp"
-DESTINATION_PATH_JENKINS = "/media/potix/rd/"
-REMOTE_RELEASE_PATH = "//guest@10.1.3.252/potix/rd" #fileserver
-MOUNTED_RELEASE_PATH = LOCAL_RELEASE_PATH + "/potix-rd/"
-destination_path = DESTINATION_PATH_JENKINS
+REMOTE_RELEASE_PATH = "//guest@10.1.3.252/potix/rd/" #fileserver
+# mount at /tmp can avoid permission denied
+MOUNTED_RELEASE_PATH = "/tmp/zss-release/"
+destination_path = MOUNTED_RELEASE_PATH
 
-# mount the ZK release file vault on the file server after removing previous one
+# mount the ZK release file vault on the file server
 # no need to mount the folder on jenkins
 def mountRemoteFolder():
     if (os.path.ismount(MOUNTED_RELEASE_PATH)):
@@ -40,6 +44,7 @@ def mountRemoteFolder():
     os.mkdir(MOUNTED_RELEASE_PATH)
     subprocess.check_call(["mount_smbfs", "-N", REMOTE_RELEASE_PATH, MOUNTED_RELEASE_PATH])
     destination_path = MOUNTED_RELEASE_PATH
+    logger.info("destination: " + destination_path)
 
 
 ZSS_PROJECT_LIST = ['zss','zssmodel', 'zssex', 'zssjsf','zssjsp','zsspdf', 'zsshtml']
@@ -51,10 +56,6 @@ ZPOI_PROJECT_LIST = ['zpoi', 'zpoiex']
 def createDestinationFolder():
     createFolderIfNotExist(getBundleFileTargetFolder('zss')) # for ZSS_PROJECT_LIST
     createFolderIfNotExist(getBundleFileTargetFolder('zpoi')) # for ZPOI_PROJECT_LIST
-    global isFreshlyVersion
-    if (not isFreshlyVersion):
-        for project in ZSS_PROJECT_LIST + ZPOI_PROJECT_LIST:
-            createFolderIfNotExist(getProprietaryFileTargetFolder(project))
 
 
 def createFolderIfNotExist(path):
@@ -65,16 +66,16 @@ def createFolderIfNotExist(path):
         logger.info('created folder: '+path)
 
 
+# get target folder for EE-Eval and EE
 def getBundleFileTargetFolder(projectName):
     if (projectName in ZSS_PROJECT_LIST):
         project_folder = 'zss'
     else:
         project_folder = 'zpoi'
-    return destination_path + project_folder +'/releases/'+getProjectVersion(projectName)+'/maven/EE-Eval'
-
-
-def getProprietaryFileTargetFolder(projectName):
-    return destination_path+projectName+'/releases/'+getProjectVersion(projectName)+'/maven/proprietary/EE'
+    if (isEval()):
+        return destination_path + project_folder +'/releases/'+getProjectVersion(projectName)+'/maven/EE-Eval'
+    else:
+        return destination_path + project_folder + '/releases/' + getProjectVersion(projectName) + '/maven/proprietary/EE'
 
 
 def getProjectVersion(projectName):
@@ -87,27 +88,12 @@ def getProjectVersion(projectName):
 # copy to potix fileserver server \ release folder
 def copyMavenBundle():
     for projectName in ZSS_PROJECT_LIST + ZPOI_PROJECT_LIST:
-        bundleFileName = projectName+"-"+getProjectVersion(projectName)+"-bundle.jar"
-        sourceBundleFile = getLocalBundleFolder(projectName) + bundleFileName
+        bundle_file_name = projectName+"-"+getProjectVersion(projectName)+"-bundle.jar"
+        sourceBundleFile = getLocalBundleFolder(projectName) + bundle_file_name
         destinationFolder = getBundleFileTargetFolder(projectName)
         if os.path.exists(sourceBundleFile):
-            shutil.copyfile(getLocalBundleFolder(projectName)+bundleFileName, destinationFolder+"/"+bundleFileName)
+            shutil.copyfile(getLocalBundleFolder(projectName)+bundle_file_name, destinationFolder+"/"+bundle_file_name)
             logger.info("copied "+sourceBundleFile + " to " + destinationFolder)
-
-    #copy proprietary bundle files into zss project maven folder
-    global isFreshlyVersion
-    if (not isFreshlyVersion):
-        for projectName in ZSS_PROJECT_LIST+ZPOI_PROJECT_LIST:
-            bundleFileName = projectName+"-"+getProjectVersion(projectName)+"-bundle.jar"
-            shutil.copyfile(getProprietaryFilePath("projectName")+bundleFileName, getProprietaryFileTargetFolder("zss")+"/"+bundleFileName)
-            logger.info("copied "+bundleFileName )
-
-
-def getProprietaryFilePath(projectName):
-    if projectName in ZSS_PROJECT_LIST:
-        return LOCAL_RELEASE_PATH+ZSS_MAVEN_PATH+'proprietary/'
-    elif projectName in ZPOI_PROJECT_LIST:
-        return LOCAL_RELEASE_PATH+ZPOI_MAVEN_PATH+'proprietary/'
 
 
 # get local bundle file path
@@ -126,14 +112,20 @@ def getLocalBundleFolder(projectName):
     return os.path.join(PROJECT_PATH[projectName], projectName, 'target/')
 
 
+def isEval():
+    return "Eval" in zss_version
+
 # create a version properties file as parameters for jenkins to run the next job
 def createVersionProperties():
-    Config = ConfigParser.ConfigParser()
+    Config = configparser.ConfigParser()
     properties_file = open("version.properties",'w')
     Config.add_section('version')
     Config.set('version','zss_version',zss_version)
     Config.set('version','zpoi_version',zpoi_version)
-    Config.set('version','maven', 'ee-eval')
+    if (isEval()):
+        Config.set('version','maven', 'ee-eval')
+    else:
+        Config.set('version','maven', 'ee')
     Config.write(properties_file)
     properties_file.close()
 
@@ -141,14 +133,10 @@ def createVersionProperties():
 logger = logging.getLogger('uploadMaven')
 logging.basicConfig(level='INFO')
 
-isFreshlyVersion = True
 zss_version = findProjectVersion('zkspreadsheet/zss/pom.xml')
 zpoi_version = findProjectVersion('zsspoi/zpoi/pom.xml')
 
-
-if not os.path.exists(DESTINATION_PATH_JENKINS):
-    mountRemoteFolder()
-logger.info("destination: " + destination_path)
+mountRemoteFolder()
 createDestinationFolder()
 copyMavenBundle()
 createVersionProperties()

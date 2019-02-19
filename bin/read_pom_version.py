@@ -25,7 +25,7 @@ def main():
         logger.error('not a pom.xml')
         return 2
     version = findProjectVersion(pom_file)
-    print version
+    print(version)
 
 if __name__== "__main__":
   main()        
