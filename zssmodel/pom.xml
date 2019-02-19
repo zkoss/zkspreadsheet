@@ -11,14 +11,14 @@
 	<groupId>org.zkoss.zss</groupId>
 	<artifactId>zssmodel</artifactId>
 	<properties>
-		<zpoi.version>3.9.15.FL.20190218</zpoi.version>
+		<zpoi.version>3.9.15-SNAPSHOT</zpoi.version>
 		<jsoup.version>1.7.3</jsoup.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>1.6</maven.compiler.source>
 		<maven.compiler.target>1.6</maven.compiler.target>
 		<maven.build.timestamp.format>yyyyMMdd</maven.build.timestamp.format>
 	</properties>
-	<version>3.9.4.FL.20190218</version>
+	<version>3.9.4-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<name>ZK Spreadsheet Model</name>
 	<url>http://www.zkoss.org/zss</url>
