@@ -30,11 +30,16 @@ ZPOI_MAVEN_PATH = '/zpoi/maven/'
 REMOTE_RELEASE_PATH = "//guest@10.1.3.252/potix/rd/" #fileserver
 # mount at /tmp can avoid permission denied
 MOUNTED_RELEASE_PATH = "/tmp/zss-release/"
-destination_path = MOUNTED_RELEASE_PATH
+DESTINATION_PATH_JENKINS = "/media/potix/rd/" # the path to file server at Jenkins
+destination_path = DESTINATION_PATH_JENKINS
 
 # mount the ZK release file vault on the file server
 # no need to mount the folder on jenkins
 def mountRemoteFolder():
+    # run on Jenkins
+    if os.path.exists(DESTINATION_PATH_JENKINS):
+       return
+
     if (os.path.ismount(MOUNTED_RELEASE_PATH)):
         return
     # subprocess.check_call(["umount", MOUNTED_RELEASE_PATH])
@@ -43,6 +48,7 @@ def mountRemoteFolder():
         os.rmdir(MOUNTED_RELEASE_PATH)
     os.mkdir(MOUNTED_RELEASE_PATH)
     subprocess.check_call(["mount_smbfs", "-N", REMOTE_RELEASE_PATH, MOUNTED_RELEASE_PATH])
+    global  destination_path
     destination_path = MOUNTED_RELEASE_PATH
     logger.info("destination: " + destination_path)
 
@@ -85,7 +91,7 @@ def getProjectVersion(projectName):
         return zpoi_version
 
 
-# copy to potix fileserver server \ release folder
+# copy to Potix file server / release folder
 def copyMavenBundle():
     for projectName in ZSS_PROJECT_LIST + ZPOI_PROJECT_LIST:
         bundle_file_name = projectName+"-"+getProjectVersion(projectName)+"-bundle.jar"
