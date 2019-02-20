@@ -94,4 +94,26 @@ public class BorderLineImpl extends AbstractBorderLineAdv implements SBorderLine
 		final SColor color = srcColor == null ? null : srcColor.cloneColor(book);  
 		return new BorderLineImpl(this.type, color, this.showUp, this.showDown);		
 	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		BorderLineImpl that = (BorderLineImpl) o;
+
+		if (showUp != that.showUp) return false;
+		if (showDown != that.showDown) return false;
+		if (type != that.type) return false;
+		return color != null ? color.equals(that.color) : that.color == null;
+	}
+
+	@Override
+	public int hashCode() {
+		int result = type != null ? type.hashCode() : 0;
+		result = 31 * result + (color != null ? color.hashCode() : 0);
+		result = 31 * result + (showUp ? 1 : 0);
+		result = 31 * result + (showDown ? 1 : 0);
+		return result;
+	}
 }
