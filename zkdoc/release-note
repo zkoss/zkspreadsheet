@@ -1,12 +1,15 @@
 ZK Spreadsheet 3.9.4
-*Features:
 
 *Bugs:
-* ZSS-1360 a focus position in a formula editor is reset when other users edit cells under the collaboration mode
-* ZSS-1361 Can't delete a file even no user is currently opening the file
-* ZSS-1363 a session expiration causes an IllegalStateException
-* ZSS-1364 spreadsheet displays right align text incorrectly after switching sheets
-* ZSS-1366 clicking a cell causes a dragging selection
+[ZSS-1360] - a focus position in a formula editor is reset when other users edit cells under the collaboration mode
+[ZSS-1361] - Can't delete a file even no user is currently opening the file
+[ZSS-1363] - a session expiration causes an IllegalStateException
+[ZSS-1364] - spreadsheet displays right align text incorrectly after switching sheets
+[ZSS-1366] - clicking a cell causes a dragging selection
+[ZSS-1374] - inserting many hyperlinks takes unexpectedly long time
+[ZSS-1375] - resize a column of a protected sheet and a right align text doesn't move accordingly
+[ZSS-1376] - exporting causes an unexpected change of a currency number format in Excel
+[ZSS-1377] - onCellClick doesn't fire on a merged cell at the first column (A)
 
 ** Upgrade Notes
 
