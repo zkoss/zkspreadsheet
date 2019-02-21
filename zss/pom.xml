@@ -1,16 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<parent>
-		<groupId>org.zkoss.zss</groupId>
-		<artifactId>parent</artifactId>
-		<version>1</version>
-		<relativePath>../zssparent/</relativePath>
-	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.zkoss.zss</groupId>
 	<artifactId>zss</artifactId>
 	<properties>
+		<zk.version>8.0.1.1</zk.version>
 		<commons-math.version>2.2</commons-math.version>
 		<servlet.version>2.4</servlet.version>
 		<maven.compiler.source>1.6</maven.compiler.source>
@@ -94,6 +89,7 @@
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>
+	<!-- there are common build settings among multiple projects, if using parent pom, we also need to publish parent pom -->
 	<build>
 		<sourceDirectory>${project.basedir}/src/</sourceDirectory>
 		<resources>
@@ -102,5 +98,106 @@
 			</resource>
 		</resources>
 		<finalName>${project.artifactId}-${project.version}</finalName>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>3.0.1</version>
+				<configuration> <!-- disable javadoc error -->
+					<doclint>none</doclint>
+				</configuration>
+			</plugin>
+		</plugins>
 	</build>
+	<profiles>
+		<profile>
+			<id>build-fl</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>versions-maven-plugin</artifactId>
+						<version>2.5</version>
+						<executions>
+							<execution>
+								<id>set-fl-version</id>
+								<phase>validate</phase>
+								<goals>
+									<goal>set</goal>
+									<goal>commit</goal>
+								</goals>
+								<configuration>
+									<newVersion>
+										${project.version}.FL.${maven.build.timestamp}
+									</newVersion>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>official</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.zkoss.maven</groupId>
+						<artifactId>yuicompressor-maven-plugin-zk</artifactId>
+						<version>1.2.0</version>
+						<executions>
+							<execution>
+								<goals>
+									<goal>compress</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<nosuffix>true</nosuffix>
+							<force>true</force>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>eval</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>versions-maven-plugin</artifactId>
+						<version>2.5</version>
+						<executions>
+							<execution>
+								<id>set-eval-version</id>
+								<phase>validate</phase>
+								<goals>
+									<goal>set</goal>
+								</goals>
+								<configuration>
+									<newVersion>
+										${project.version}-Eval
+									</newVersion>
+								</configuration>
+							</execution>
+							<execution>
+								<id>set-zk-eval</id>
+								<phase>validate</phase>
+								<goals>
+									<goal>set-property</goal>
+								</goals>
+								<configuration>
+									<property>zk.version</property>
+									<newVersion>
+										${zk.version}-Eval
+									</newVersion>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 </project>
