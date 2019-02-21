@@ -1,15 +1,17 @@
 #!/bin/bash
 # Purpose:
 # build zk spreadsheet with maven. Because the whole process requires many steps, therefore I write it as script instead of configuring in jenkins
+# command parameters:
+# no parameter : freshly
+# official
+# eval: ee evaluation
 
 bundleGoals='clean source:jar javadoc:jar repository:bundle-create -Dmaven.test.skip=true'
 # a relative path based on the current path
 zpoiPom='zsspoi/zpoi/pom.xml'
-zssParent='zkspreadsheet/zssparent/'
 zssmodelPom='zkspreadsheet/zssmodel/'
 zssPom='zkspreadsheet/zss/'
 
-zsscmlParent='zsscml/zsscmlparent/'
 zpoiexPom='zsscml/zpoiex/'
 zssexPom='zsscml/zssex/'
 zssjsfPom='zsscml/zssjsf/'
@@ -32,6 +34,10 @@ function buildBundle(){
     if [[ $2 = "official" ]]
     then
         mvn -B -f $1 -P official ${bundleGoals}
+    elif [[ $2 = "eval" ]]
+    then
+        mvn -f $1 -P $edition validate # append -Eval
+        mvn -B -f $1 ${bundleGoals}
     else
         mvn -f $1 -P build-fl validate # set freshly version
         # http://maven.apache.org/plugins/maven-repository-plugin/usage.html
@@ -44,15 +50,18 @@ function setZpoiVersion(){
     sed -i.bak "s/zpoi.version>.*<\/zpoi.version>/zpoi.version>${zpoiVersion}<\/zpoi.version>/" $1pom.xml
 }
 
-
-if [[ "official" = $1 ]]
+edition=$1
+if [[ "official" = $edition ]]
 then
     echo "=== Build official ==="
+elif [[ "eval" = $edition ]]
+then
+    echo "=== Build Evaluation ==="
 else
     echo "=== Build freshly ==="
 fi
 
-buildBundleInstall ${zpoiPom} $1
+buildBundleInstall ${zpoiPom} $edition
 
 # get zpoi fl version
 # get project version with a maven plugin sometimes requires a download and failed to obtain the version
@@ -60,18 +69,16 @@ buildBundleInstall ${zpoiPom} $1
 zpoiVersion=$(python zkspreadsheet/bin/read_pom_version.py ${zpoiPom})
 echo zpoi version: ${zpoiVersion}
 
-mvn -f ${zssParent} install # install parent pom so that child project can resolve during building
-# versions:use-latest-releases, version:update-property both failed set zpoi version in Jenkins
+
+# versions:use-latest-releases, version:update-property both failed to set zpoi version in Jenkins
 setZpoiVersion ${zssmodelPom}
-buildBundleInstall ${zssmodelPom} $1
-buildBundleInstall ${zssPom} $1
+buildBundleInstall ${zssmodelPom} $edition
+buildBundleInstall ${zssPom} $edition
 
-
-mvn -f ${zsscmlParent} install # install parent pom so that child project can resolve during building
-buildBundleInstall ${zpoiexPom} $1
+buildBundleInstall ${zpoiexPom} $edition
 setZpoiVersion ${zssexPom}
-buildBundleInstall ${zssexPom} $1
-buildBundle ${zsspdfPom} $1
-buildBundle ${zssjsfPom} $1
-buildBundle ${zssjspPom} $1
-buildBundle ${zsshtmlPom} $1
+buildBundleInstall ${zssexPom} $edition
+buildBundle ${zsspdfPom} $edition
+buildBundle ${zssjsfPom} $edition
+buildBundle ${zssjspPom} $edition
+buildBundle ${zsshtmlPom} $edition
