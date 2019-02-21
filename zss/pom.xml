@@ -160,44 +160,5 @@
 				</plugins>
 			</build>
 		</profile>
-		<profile>
-			<id>eval</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.codehaus.mojo</groupId>
-						<artifactId>versions-maven-plugin</artifactId>
-						<version>2.5</version>
-						<executions>
-							<execution>
-								<id>set-eval-version</id>
-								<phase>validate</phase>
-								<goals>
-									<goal>set</goal>
-								</goals>
-								<configuration>
-									<newVersion>
-										${project.version}-Eval
-									</newVersion>
-								</configuration>
-							</execution>
-							<execution>
-								<id>set-zk-eval</id>
-								<phase>validate</phase>
-								<goals>
-									<goal>set-property</goal>
-								</goals>
-								<configuration>
-									<property>zk.version</property>
-									<newVersion>
-										${zk.version}-Eval
-									</newVersion>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
 	</profiles>
 </project>
