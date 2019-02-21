@@ -11,6 +11,7 @@
 # eval: EE evaluation
 
 bundleGoals='clean source:jar javadoc:jar repository:bundle-create -Dmaven.test.skip=true'
+evalBundleGoals='clean repository:bundle-create -Dmaven.test.skip=true'
 # a relative path based on the current path
 zpoiPom='zsspoi/zpoi/pom.xml'
 zssmodelPom='zkspreadsheet/zssmodel/'
@@ -34,14 +35,14 @@ function buildBundleInstall(){
 
 # build a maven bundle file
 function buildBundle(){
-    mvn -f $1 versions:set -DremoveSnapshot #remove '-SNAPSHOT' from project version
-    if [[ $2 = "official" ]]
+    mvn -B -f $1 versions:set -DremoveSnapshot #remove '-SNAPSHOT' from project version
+    if [[ $edition = "official" ]]
     then
         mvn -B -f $1 -P $edition ${bundleGoals}
     else
-        mvn -f $1 -P $edition validate # append -Eval or freshly version
+        mvn -f $1 -P $edition validate # set freshly version
         # http://maven.apache.org/plugins/maven-repository-plugin/usage.html
-        mvn -B -f $1 ${bundleGoals}
+        mvn -B -f $1 ${evalBundleGoals}
     fi
 }
 
@@ -56,10 +57,10 @@ then
     echo "=== Build $edition ==="
 else
     echo "=== Build freshly ==="
-    $edition="freshly"
+    edition="freshly"
 fi
 
-buildBundleInstall ${zpoiPom} $edition
+buildBundleInstall ${zpoiPom}
 
 # get project version with a maven plugin sometimes requires a download and failed to obtain the version
 # zpoiFlVersion=$(mvn -f ${zpoiPom} help:evaluate -Dexpression=project.version | egrep -v '\[|Downloading:' | tr -d '\n')
@@ -69,13 +70,13 @@ echo zpoi version: ${zpoiVersion}
 
 # versions:use-latest-releases, version:update-property both failed to set zpoi version in Jenkins
 setZpoiVersion ${zssmodelPom}
-buildBundleInstall ${zssmodelPom} $edition
-buildBundleInstall ${zssPom} $edition
-
-buildBundleInstall ${zpoiexPom} $edition
+buildBundleInstall ${zssmodelPom}
+buildBundleInstall ${zssPom}
+buildBundleInstall ${zpoiexPom}
 setZpoiVersion ${zssexPom}
-buildBundleInstall ${zssexPom} $edition
-buildBundle ${zsspdfPom} $edition
-buildBundle ${zssjsfPom} $edition
-buildBundle ${zssjspPom} $edition
-buildBundle ${zsshtmlPom} $edition
+buildBundleInstall ${zssexPom}
+buildBundle ${zsspdfPom}
+buildBundle ${zssjsfPom}
+buildBundle ${zssjspPom}
+buildBundle ${zsshtmlPom}
+python3 zkspreadsheet/bin/uploadMaven.py $edition

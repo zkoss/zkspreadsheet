@@ -16,6 +16,7 @@ import subprocess
 import logging
 import shutil
 import configparser
+import sys
 
 # find zss, zpoi version from pom.xml
 def findProjectVersion(pomFilePath):
@@ -40,7 +41,9 @@ def mountRemoteFolder():
     if os.path.exists(DESTINATION_PATH_JENKINS):
        return
 
+    global  destination_path
     if (os.path.ismount(MOUNTED_RELEASE_PATH)):
+        destination_path = MOUNTED_RELEASE_PATH
         return
     # subprocess.check_call(["umount", MOUNTED_RELEASE_PATH])
 
@@ -48,7 +51,6 @@ def mountRemoteFolder():
         os.rmdir(MOUNTED_RELEASE_PATH)
     os.mkdir(MOUNTED_RELEASE_PATH)
     subprocess.check_call(["mount_smbfs", "-N", REMOTE_RELEASE_PATH, MOUNTED_RELEASE_PATH])
-    global  destination_path
     destination_path = MOUNTED_RELEASE_PATH
     logger.info("destination: " + destination_path)
 
@@ -119,7 +121,7 @@ def getLocalBundleFolder(projectName):
 
 
 def isEval():
-    return "Eval" in zss_version
+    return "FL" in zss_version or (len(sys.argv) >=2 and "eval" in sys.argv[1])
 
 # create a version properties file as parameters for jenkins to run the next job
 def createVersionProperties():
