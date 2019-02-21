@@ -1,10 +1,14 @@
 #!/bin/bash
 # Purpose:
 # build zk spreadsheet with maven. Because the whole process requires many steps, therefore I write it as script instead of configuring in jenkins
-# command parameters:
-# no parameter : freshly
-# official
-# eval: ee evaluation
+
+# Usage:
+# run the script on top of 3 folders checked out from 3 repositories (zsspoi, zkspreadsheet, zsscml)
+
+# Command parameters:
+# no parameter: freshly
+# official: official EE
+# eval: EE evaluation
 
 bundleGoals='clean source:jar javadoc:jar repository:bundle-create -Dmaven.test.skip=true'
 # a relative path based on the current path
@@ -33,13 +37,9 @@ function buildBundle(){
     mvn -f $1 versions:set -DremoveSnapshot #remove '-SNAPSHOT' from project version
     if [[ $2 = "official" ]]
     then
-        mvn -B -f $1 -P official ${bundleGoals}
-    elif [[ $2 = "eval" ]]
-    then
-        mvn -f $1 -P $edition validate # append -Eval
-        mvn -B -f $1 ${bundleGoals}
+        mvn -B -f $1 -P $edition ${bundleGoals}
     else
-        mvn -f $1 -P build-fl validate # set freshly version
+        mvn -f $1 -P $edition validate # append -Eval or freshly version
         # http://maven.apache.org/plugins/maven-repository-plugin/usage.html
         mvn -B -f $1 ${bundleGoals}
     fi
@@ -51,19 +51,16 @@ function setZpoiVersion(){
 }
 
 edition=$1
-if [[ "official" = $edition ]]
+if [[ "official" = $edition ]] || [[ "eval" = $edition ]]
 then
-    echo "=== Build official ==="
-elif [[ "eval" = $edition ]]
-then
-    echo "=== Build Evaluation ==="
+    echo "=== Build $edition ==="
 else
     echo "=== Build freshly ==="
+    $edition="freshly"
 fi
 
 buildBundleInstall ${zpoiPom} $edition
 
-# get zpoi fl version
 # get project version with a maven plugin sometimes requires a download and failed to obtain the version
 # zpoiFlVersion=$(mvn -f ${zpoiPom} help:evaluate -Dexpression=project.version | egrep -v '\[|Downloading:' | tr -d '\n')
 zpoiVersion=$(python zkspreadsheet/bin/read_pom_version.py ${zpoiPom})

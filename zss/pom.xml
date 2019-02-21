@@ -111,7 +111,7 @@
 	</build>
 	<profiles>
 		<profile>
-			<id>build-fl</id>
+			<id>freshly</id>
 			<build>
 				<plugins>
 					<plugin>
