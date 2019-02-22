@@ -124,6 +124,68 @@
 					<scanIntervalSeconds>5</scanIntervalSeconds>
 				</configuration>
 			</plugin>
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.2</version>
+				<executions>
+					<execution>
+						<id>project</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+						<configuration>
+							<finalName>zssee-app-${project.version}</finalName>
+							<appendAssemblyId>false</appendAssemblyId>
+							<descriptors>
+								<descriptor>assembly/webapp.xml</descriptor>
+							</descriptors>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
 		</plugins>
 	</build>
+	<profiles>
+		<profile>
+			<id>eval</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>versions-maven-plugin</artifactId>
+						<version>2.5</version>
+						<executions>
+							<execution>
+								<id>set-eval</id>
+								<phase>validate</phase>
+								<goals>
+									<goal>set</goal>
+								</goals>
+								<configuration>
+									<newVersion>
+										${project.version}-Eval
+									</newVersion>
+								</configuration>
+							</execution>
+							<execution>
+								<id>zk-eval</id>
+								<phase>validate</phase>
+								<goals>
+									<goal>set-property</goal>
+								</goals>
+								<configuration>
+									<property>zk.version</property>
+									<newVersion>
+										${zk.version}-Eval
+									</newVersion>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 </project>
