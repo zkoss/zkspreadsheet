@@ -14,6 +14,12 @@
         <module>../zsspoi/zpoi</module>
         <module>zssmodel</module>
         <module>zss</module>
+        <module>../zsscml/zpoiex</module>
+        <module>../zsscml/zssex</module>
+        <module>../zsscml/zssjsf</module>
+        <module>../zsscml/zssjsp</module>
+        <module>../zsscml/zsspdf</module>
+        <module>../zsscml/zsshtml</module>
     </modules>
     <build>
     </build>
