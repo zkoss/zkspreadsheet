@@ -1,6 +1,5 @@
 <zk>
 	<spreadsheet id="ss" src="/book/blank.xlsx" maxVisibleRows="1003" maxVisibleColumns="1003" width="100%"
 		vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" showFormulabar="true"
-				 MaxRenderedCellSize="100" ignoreAutoHeight="true"
-	apply="zss.performance.Fill1MillionComposer"/>
+				 MaxRenderedCellSize="500" 	apply="zss.performance.Fill1MillionComposer"/>
 </zk>
