@@ -1,0 +1,23 @@
+<Configure id="Server" class="org.eclipse.jetty.server.Server">
+<!--https://www.eclipse.org/jetty/documentation/9.4.x/jetty-maven-plugin.html-->
+    <Call name="setAttribute">
+        <Arg>org.eclipse.jetty.server.Request.maxFormKeys</Arg>
+        <Arg>5000000</Arg>
+    </Call>
+    <Call name="setAttribute">
+        <Arg>org.eclipse.jetty.server.Request.maxFormContentSize</Arg>
+        <Arg>5000000</Arg>
+    </Call>
+</Configure>
+<!--<Configure class="org.eclipse.jetty.webapp.WebAppContext">-->
+    <!--<Get name="securityHandler">-->
+        <!--<Set name="loginService">-->
+            <!--<New class="org.eclipse.jetty.security.HashLoginService">-->
+                <!--<Set name="name">MySecurityRealm</Set>-->
+                <!--<Set name="config">src/test/resources/jetty-realm.properties</Set>-->
+                <!--<Call name="start"/>-->
+            <!--</New>-->
+        <!--</Set>-->
+        <!--<Set name="checkWelcomeFiles">true</Set>-->
+    <!--</Get>-->
+<!--</Configure>-->
