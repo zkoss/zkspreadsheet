@@ -24,7 +24,7 @@ public class CellWidget extends Widget {
 	private static final Pattern refPattern = 
 			Pattern.compile("([A-Z]+)(\\d+)");
 	public CellWidget(SheetCtrlWidget spreadsheet, int row, int column) {
-		setSelector(spreadsheet.getSelector().toString() + String.format(CELL, row, column));
+		setSelector(spreadsheet.getSelector() + String.format(CELL, row, column));
 	}
 	
 	public CellWidget(SheetCtrlWidget spreadsheet, String cellRef) {
@@ -35,7 +35,7 @@ public class CellWidget extends Widget {
 		if (refMatcher.matches()) {
 			final int column = toColumn(refMatcher.group(1)) - 1;
 			final int row = Integer.parseInt(refMatcher.group(2)) - 1;
-			setSelector(spreadsheet.getSelector().toString() + String.format(CELL, row, column));
+			setSelector(spreadsheet.getSelector() + String.format(CELL, row, column));
 		} else {
 			throw new NullPointerException("cell reference format is wrong, it should be \"C11\".");
 		}
