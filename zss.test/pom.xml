@@ -7,7 +7,7 @@
 	<properties>
 		<maven.build.timestamp.format>yyyy-MM-dd</maven.build.timestamp.format>
 		<packname>-0.0.1-SNAPSHOT-FL-${maven.build.timestamp}</packname>
-		<zk.version>8.0.1.1</zk.version>
+		<zk.version>8.0.5</zk.version>
 	</properties>
 	<packaging>war</packaging>
 	<name>The ZK Spreadsheet Test Project</name>
