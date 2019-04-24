@@ -24,7 +24,7 @@ import org.zkoss.zss.ui.CellSelectionType;
 /**
  * A class that represents an area reference with 4 value : 
  * 		row(top row), column(left column), last row(bottom row) and last column(right column)
- *      and an extra seletion type. (CELL, COL, ROW, ALL) 
+ *      and an extra selection type. (CELL, COL, ROW, ALL)
 
  * @author Henri Chen
  * @since 3.8.3
@@ -57,10 +57,14 @@ public class AreaRefWithType extends AreaRef {
 	public boolean overlap(int bTopRow, int bLeftCol, int bBottomRow, int bRightCol) {
 		boolean xOverlap = _type == CellSelectionType.COLUMN || isBetween(_column, bLeftCol, bRightCol) || isBetween(bLeftCol, _column, _lastColumn);
 		boolean yOverlap = _type == CellSelectionType.ROW || isBetween(_row, bTopRow, bBottomRow) || isBetween(bTopRow, _row, _lastRow);
-		
+
 		return xOverlap && yOverlap;
 	}
-	
+
+	public boolean overlap(AreaRefWithType areaRef) {
+		return overlap(areaRef._row, areaRef._column, areaRef._lastRow, areaRef._lastColumn);
+	}
+
 	private boolean isBetween(int value, int min, int max) {
 		return (value >= min) && (value <= max);
 	}

@@ -105,6 +105,11 @@ public class PasteHandler extends AbstractHandler {
 			uam.doAction(new PasteCellAction(Labels.getLabel("zss.undo.paste"),
 				srcSheet, srcRange.getRow(), srcRange.getColumn(),srcRange.getLastRow(), srcRange.getLastColumn(),srcRange.isWholeColumn(),srcRange.isWholeRow(), //ZSS-1277
 				destSheet, destRange.getRow(), destRange.getColumn(),destRange.getLastRow(), destRange.getLastColumn(),destRange.isWholeColumn(),destRange.isWholeRow())); //ZSS-1277
+			// ZSS-1380 clear highlight when pasting range overlaps the source range
+			if (srcSheet.equals(destSheet) && src.overlap(selection)){
+				ctx.clearClipboard();
+			}
+
 		}
 		return true;
 	}
