@@ -24,6 +24,10 @@ Copyright (C) 2006 Potix Corporation. All Rights Reserved.
 	<client-config>
 		<debug-js>true</debug-js>
 	</client-config>
+	<library-property>
+		<name>org.zkoss.zk.WPD.cache</name>
+		<value>false</value>
+	</library-property>
 	
 	<!-- To specify which color picker (CE & PE) Spreadsheet uses  
 	<library-property>
