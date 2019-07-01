@@ -1727,7 +1727,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			row = cellpos[0];
 			col = cellpos[1];
 			var cell = this.getCell(row, col);
-			if (cell.isMerged()) {
+			if (cell && cell.isMerged()) {
 				row = cell.mert;
 				col = cell.merl;
 			}

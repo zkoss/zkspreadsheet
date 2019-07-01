@@ -190,7 +190,7 @@ zss.SelAreaCtrl = zk.$extends(zss.AreaCtrl, {
 			row = cellpos[0],
 			col = cellpos[1],
 			cell = sheet.getCell(row, col);
-		if (cell.isMerged()) {
+		if (cell && cell.isMerged()) {
 			cell = sheet.getCell(cell.mert,cell.merl);
 		}
 		if (cell && sheet._showCellComment) {
