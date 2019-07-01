@@ -755,7 +755,6 @@ zss.Cell = zk.$extends(zk.Widget, {
 						this.sheet.custColWidth.getDiffPixel(ml, mr) - 4 : width; // -4 is padding(2px) * 2
 				if (width != mwidth) {
 					var jqreal = jq(this.getTextNode());
-					jqreal.css("width", mwidth);
 					jqreal.attr("mergewidth", true);
 				}
 			}
@@ -851,9 +850,10 @@ zss.Cell = zk.$extends(zk.Widget, {
 			this._updateVerticalAlign();
 		}
 
+        // when page creation or scrolling to render
         if (this.sheet._wgt.isSheetCSSReady()) {
             this._processRightAlignmentOverflow();
-        }else{
+        }else{ // when sheet switching
             this.sheet.addSSInitLater(this._processRightAlignmentOverflow.bind(this));
         }
 
@@ -890,26 +890,40 @@ zss.Cell = zk.$extends(zk.Widget, {
 		this.$supers(zss.Cell, 'unbind_', arguments);
 	},
     /** ZSS-1338
-    * render a cell text in right alignment (don't care overflow).
-    * zss clears inline style after changing align or editing.
-    * right align requires to handle separately from text overflow, e.g a merged cell is in right alignment without overflow.
+    * Shift a cell text under right alignment.
+    * Zss clears inline style after changing align or editing.
+    * Don't handle overflow here. right align requires to handle separately from text overflow, e.g a merged cell is in right alignment without overflow.
     */
-    renderRightAlignment: function() {
+    shiftRightAlignText: function() {
         var RIGHT_ALIGN = "zscell-right-alignment"; //ie9 doesn't support const
 		var $textNode = jq(this.getTextNode());
         if (this.halign == 'r'){
 			//calculating width only in a right-align cell for it's a high cost operation
-            var notxtwd = (this._txtwd == undefined || this._txtwd < 0);  //ZSS-1171
-            var sw = notxtwd ? this.getTextNode().scrollWidth : this._txtwd;
+            var noTextWidth = (this._txtwd == undefined || this._txtwd < 0);  //ZSS-1171
+            var sw = noTextWidth ? this.getTextNode().scrollWidth : this._txtwd;
             var textWidth = zk.ie9_ ? sw : jq(this.$n('cave')).width();
 			if (textWidth > this.sheet.custColWidth.getSize(this.c)){
-				$textNode .addClass(RIGHT_ALIGN);
+				$textNode.addClass(RIGHT_ALIGN);
 				//shift left a text longer than the cell width for right alignment
 				//need to set inline style for every edit, will be reset by update_()
-				$textNode .css('left', jq.px(jq(this.$n()).width() - textWidth));
+				cellWidth = this.getCellWidth();
+				$textNode.css('left', jq.px(cellWidth - textWidth));
 			}
         }else{ //left && center
             $textNode.removeClass(RIGHT_ALIGN);
+        }
+    },
+    getCellWidth: function(){
+        //in left frozen panel
+        if (this.block.type == 'left' && this.isMergedAcrossFrozenColumn()){
+            var mergedWidth = -4; //remove left right padding 2 * 2
+            //sum up all merged column width
+            for (var col = this.merl ; col <= this.merr ; col++){
+                mergedWidth += this.sheet.custColWidth.getSize(col);
+            }
+            return mergedWidth;
+        }else{
+            return  jq(this.$n()).width(); //without padding
         }
     },
 	//ZSS-944
@@ -952,14 +966,14 @@ zss.Cell = zk.$extends(zk.Widget, {
 		}
 	},
 	_processRightAlignmentOverflow: function(){
-        //ZSS-1364, right alignment requires the actual cell width after applying a sheet CSS
-        this.renderRightAlignment();
         // ZSS-224: skip process overflow according to the hint from server
-        // it indicates that this cell's silbing isn't blank
+        // it indicates that this cell's sibling isn't blank
         var skipOverflowOnBinding = (this.overflowOpt & 2) != 0; // skip overflow when initializing
         if (this.overflow && !skipOverflowOnBinding) {
             this._processOverflow(); // heavy duty
         }
+        //ZSS-1364, right alignment requires the actual cell width after applying a sheet CSS
+        this.shiftRightAlignText();
 	},
 	//super//
 	getZclass: function () {
@@ -1063,6 +1077,16 @@ zss.Cell = zk.$extends(zk.Widget, {
 	 */
 	isMerged: function(){
 	    return this.merid != null;
+	},
+	/**
+	 * return true if this cell is merged and across frozen column, otherwise return false.
+	 * For example, frozen column range is 0 ~ 3, this merged cell is 1 ~ 4.
+	 */
+	isMergedAcrossFrozenColumn: function(){
+        return this.isMerged()
+        && this.block.type == 'left'
+        && this.merl <= this.block.range.right
+        && this.merr > this.block.range.right;
 	}
 });
 })();
