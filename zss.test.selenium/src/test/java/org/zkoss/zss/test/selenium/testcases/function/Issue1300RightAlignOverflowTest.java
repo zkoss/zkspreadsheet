@@ -77,6 +77,7 @@ public class Issue1300RightAlignOverflowTest extends ZSSTestCase {
         doubleClick(sheetCtrl.getCell("E9"));
         sendKeys(editor, "cut");
         click(sheetCtrl.getCell("A1"));
+        waitForTime(Setup.getTimeoutL0());
         captureOrAssert("partial2");
     }
 
@@ -130,6 +131,16 @@ public class Issue1300RightAlignOverflowTest extends ZSSTestCase {
         dragAndDropBy(jq(".zshbouni").get(5), 100, 0);
         click(ss.getSheetCtrl().getCell("A1"));
         waitForTime(Setup.getTimeoutL1());
+        captureOrAssert("1", TOP_BOTTOM_CROPPER);
+    }
+
+    @Test //ZSS-1384
+    public void mergedAcrossFrozenColumn() {
+        getTo("/issue3/1338-overflow-right-align.zul");
+        basename();
+        SpreadsheetWidget ss = focusSheet();
+        sheetFunction().gotoTab(2);
+        waitForTime(Setup.getTimeoutL0());
         captureOrAssert("1", TOP_BOTTOM_CROPPER);
     }
 
