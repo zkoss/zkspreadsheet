@@ -850,11 +850,14 @@ zss.Cell = zk.$extends(zk.Widget, {
 			this._updateVerticalAlign();
 		}
 
-        // when page creation or scrolling to render
-        if (this.sheet._wgt.isSheetCSSReady()) {
-            this._processRightAlignmentOverflow();
-        }else{ // when sheet switching
-            this.sheet.addSSInitLater(this._processRightAlignmentOverflow.bind(this));
+        // only text need to render overflow
+        if (this.cellType == STR_CELL || this.cellType == FORMULA_CELL){
+            // when page creation or scrolling to render
+            if (this.sheet._wgt.isSheetCSSReady()) {
+                this._processRightAlignmentOverflow();
+            }else{ // when sheet switching
+                this.sheet.addSSInitLater(this._processRightAlignmentOverflow.bind(this));
+            }
         }
 
 		//ZSS-944
@@ -890,11 +893,16 @@ zss.Cell = zk.$extends(zk.Widget, {
 		this.$supers(zss.Cell, 'unbind_', arguments);
 	},
     /** ZSS-1338
-    * Shift a cell text under right alignment.
+    * Shift a cell text under right alignment under the following cases:
+    * - an overflowed text
+    * - a merged cell
     * Zss clears inline style after changing align or editing.
     * Don't handle overflow here. right align requires to handle separately from text overflow, e.g a merged cell is in right alignment without overflow.
     */
     shiftRightAlignText: function() {
+        if (!(this.overflow || this.isMerged())){
+            return;
+        }
         var RIGHT_ALIGN = "zscell-right-alignment"; //ie9 doesn't support const
 		var $textNode = jq(this.getTextNode());
         if (this.halign == 'r'){
@@ -1084,9 +1092,8 @@ zss.Cell = zk.$extends(zk.Widget, {
 	 */
 	isMergedAcrossFrozenColumn: function(){
         return this.isMerged()
-        && this.block.type == 'left'
-        && this.merl <= this.block.range.right
-        && this.merr > this.block.range.right;
+        && this.merl <= this.sheet.frozenCol
+        && this.merr > this.sheet.frozenCol;
 	}
 });
 })();
