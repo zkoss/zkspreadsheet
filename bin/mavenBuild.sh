@@ -41,7 +41,7 @@ function buildBundle(){
         mvn -B -f $1 -P $edition ${bundleGoals}
     else
         mvn -f $1 -P $edition validate # set freshly version
-        if [[ $1 = ${zssPom} ]]
+        if [[ $1 = ${zssPom} || $1 = ${zssexPom} ]]
         then
             mvn -B -f $1 config-processor:process 
         fi
