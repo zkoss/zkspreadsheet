@@ -1,0 +1,7 @@
+<!-- set freshly version to break javascript cache-->
+<processor>
+	<modify>
+		<name>/language-addon/javascript-module/@version</name>
+		<value>${project.version}</value>
+	</modify>
+</processor>

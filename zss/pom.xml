@@ -107,6 +107,21 @@
 					<doclint>none</doclint>
 				</configuration>
 			</plugin>
+			<!--http://config-processor-maven-plugin.appspot.com/index.html-->
+			<plugin>
+				<groupId>com.google.code.maven-config-processor-plugin</groupId>
+				<artifactId>config-processor-maven-plugin</artifactId>
+				<version>2.7</version>
+				<configuration>
+					<transformations>
+						<transformation>
+							<input>src/archive/metainfo/zk/lang-addon.xml</input>
+							<!--output to the original file -->
+							<config>addon-processor.xml</config>
+						</transformation>
+					</transformations>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 	<profiles>

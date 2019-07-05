@@ -11,7 +11,7 @@
 # eval: EE evaluation
 
 bundleGoals='clean source:jar javadoc:jar repository:bundle-create -Dmaven.test.skip=true'
-evalBundleGoals='clean repository:bundle-create -Dmaven.test.skip=true'
+evalBundleGoals='clean repository:bundle-create -Dmaven.test.skip=true' # no need source javadoc
 # a relative path based on the current path
 zpoiPom='zsspoi/zpoi/pom.xml'
 zssmodelPom='zkspreadsheet/zssmodel/'
@@ -41,6 +41,10 @@ function buildBundle(){
         mvn -B -f $1 -P $edition ${bundleGoals}
     else
         mvn -f $1 -P $edition validate # set freshly version
+        if [[ $1 = ${zssPom} ]]
+        then
+            mvn -B -f $1 config-processor:process 
+        fi
         # http://maven.apache.org/plugins/maven-repository-plugin/usage.html
         mvn -B -f $1 ${evalBundleGoals}
     fi
