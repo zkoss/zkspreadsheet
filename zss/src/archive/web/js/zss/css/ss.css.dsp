@@ -945,6 +945,7 @@
 	z-index: 4;
 	top : -10005px;
 	left : -10005px;
+	box-sizing: border-box;
 }
 
 .zsfocus{

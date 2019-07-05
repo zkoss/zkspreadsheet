@@ -1089,10 +1089,10 @@ zss.Editbox = zk.$extends(zul.inp.InputWidget, {
 		var l = sheet.custColWidth.getStartPixel($cell.c) + sheet.leftWidth - (sheet.frozenCol >= 0 && col <= sheet.frozenCol ? 0 : scrollPanel.currentLeft);
 		var t = sheet.custRowHeight.getStartPixel($cell.r) + sheet.topHeight - (sheet.frozenRow >= 0 && row <= sheet.frozenRow ? 0 : scrollPanel.currentTop);
 		
-		t -= 1;//position adjust
+		t += 1;//position adjust
 		w -= 1;
 		h -= 1;
-		l -= 1;
+		l -= 0;
 		
 		if (zk.safari || zk.opera)
 			//the display in different browser. 
