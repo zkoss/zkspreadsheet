@@ -24,7 +24,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
  */
 zss.CellBlockCtrl = zk.$extends(zk.Widget, {
 	widgetName: 'CellBlock',
-	range: null,
+	range: null, //zss.Range
 	_lastDir: null,
 	$o: zk.$void, //owner, fellows relationship no needed
 	$init: function (sheet, tRow, lCol, bRow, rCol, data, type) {

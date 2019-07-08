@@ -749,9 +749,7 @@ zss.Cell = zk.$extends(zk.Widget, {
 
 			if (cutw) { //merge across frozen column
 				var width = this.sheet.custColWidth.getDiffPixel(l, r); //frozen columns total width
-				jqcomp.css("width", width);
-				
-				var mwidth = l != ml || r != mr ? 
+				var mwidth = l != ml || r != mr ?
 						this.sheet.custColWidth.getDiffPixel(ml, mr) - 4 : width; // -4 is padding(2px) * 2
 				if (width != mwidth) { //merged across frozen columns
 					var jqreal = jq(this.getTextNode());
@@ -831,8 +829,8 @@ zss.Cell = zk.$extends(zk.Widget, {
 				xt = Math.max(rt, mt),
 				xr = Math.min(rr, mr),
 				xb = Math.min(rb, mb),
-				candidate = (xl == this.c && xt == this.r)  	//left-top
-							|| (xr == this.c && xb == this.r); 	//right-bottom
+				candidate = (xl == this.c && xt == this.r)  	//left-top cell
+							|| (xr == this.c && xb == this.r); 	//right-bottom cell
 			if (candidate) {
 				var cutw = xr < mr || xl > ml,
 					cuth = xb < mb || xt > mt;
@@ -900,7 +898,7 @@ zss.Cell = zk.$extends(zk.Widget, {
     * Don't handle overflow here. right align requires to handle separately from text overflow, e.g a merged cell is in right alignment without overflow.
     */
     shiftRightAlignText: function() {
-        if (!(this.overflow || this.isMerged())){
+        if (!(this.overflow || this.isMerged())){ //ignore some irrelevant cells to avoid width calculation cost
             return;
         }
         var RIGHT_ALIGN = "zscell-right-alignment"; //ie9 doesn't support const
@@ -910,28 +908,14 @@ zss.Cell = zk.$extends(zk.Widget, {
             var noTextWidth = (this._txtwd == undefined || this._txtwd < 0);  //ZSS-1171
             var sw = noTextWidth ? this.getTextNode().scrollWidth : this._txtwd;
             var textWidth = zk.ie9_ ? sw : jq(this.$n('cave')).width();
-			if (textWidth > this.sheet.custColWidth.getSize(this.c)){
+			var cellInnerWidth = jq(this.$n()).width(); // without padding
+			if (textWidth > cellInnerWidth){
 				$textNode.addClass(RIGHT_ALIGN);
-				//shift left a text longer than the cell width for right alignment
 				//need to set inline style for every edit, will be reset by update_()
-				cellWidth = this.getCellWidth();
-				$textNode.css('left', jq.px(cellWidth - textWidth));
+				$textNode.css('left', jq.px(cellInnerWidth - textWidth));
 			}
-        }else{ //left && center
+        }else{ //left or center
             $textNode.removeClass(RIGHT_ALIGN);
-        }
-    },
-    getCellWidth: function(){
-        //in left frozen panel
-        if (this.block.type == 'left' && this.isMergedAcrossFrozenColumn()){
-            var mergedWidth = -4; //remove left right padding 2 * 2
-            //sum up all merged column width
-            for (var col = this.merl ; col <= this.merr ; col++){
-                mergedWidth += this.sheet.custColWidth.getSize(col);
-            }
-            return mergedWidth;
-        }else{
-            return  jq(this.$n()).width(); //without padding
         }
     },
 	//ZSS-944
