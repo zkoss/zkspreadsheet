@@ -168,7 +168,8 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
  *  </ul>
  *  
  */
-zss.SSheetCtrl = zk.$extends(zk.Widget, {	
+zss.SSheetCtrl = zk.$extends(zk.Widget, {
+    widgetName: 'SSheetCtrl',
 	$o: zk.$void, //no need to invoke _addIdSpaceDown, no fellows relationship
 	/**
 	 * Editing formula info

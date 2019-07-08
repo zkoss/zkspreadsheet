@@ -11,12 +11,15 @@ import static org.zkoss.zss.test.selenium.util.MyPngCropper.TOP_BOTTOM_CROPPER;
 
 public class Issue1300RightAlignOverflowTest extends ZSSTestCase {
 
+    private static final String OVERFLOW_RIGHT_ALIGN_ZUL = "/issue3/1338-overflow-right-align.zul";
+    private static final String RIGHT_ALIGN_FROZEN_ZUL = "/issue3/1384-right-align-frozen.zul";
+
     /*
      * verify the importing result
      */
     @Test
     public void testZSS1338Import() throws Exception {
-        getTo("/issue3/1338-overflow-right-align.zul");
+        getTo(OVERFLOW_RIGHT_ALIGN_ZUL);
         basename();
         captureOrAssert("import", TOP_BOTTOM_CROPPER);
     }
@@ -24,7 +27,7 @@ public class Issue1300RightAlignOverflowTest extends ZSSTestCase {
     // always move selection box to A1 before capturing a screenshot to avoid image comparison being affected by selection box
     @Test
     public void testZSS1338ChangeAlign() throws Exception {
-        getTo("/issue3/1338-overflow-right-align.zul");
+        getTo(OVERFLOW_RIGHT_ALIGN_ZUL);
         basename();
         SpreadsheetWidget ss = focusSheet();
         SheetCtrlWidget ctrl = ss.getSheetCtrl();
@@ -44,7 +47,7 @@ public class Issue1300RightAlignOverflowTest extends ZSSTestCase {
 
     @Test
     public void testZSS1338ChangeAlignMergedCell() throws Exception {
-        getTo("/issue3/1338-overflow-right-align.zul");
+        getTo(OVERFLOW_RIGHT_ALIGN_ZUL);
         basename();
         SpreadsheetWidget ss = focusSheet();
         SheetCtrlWidget ctrl = ss.getSheetCtrl();
@@ -62,7 +65,7 @@ public class Issue1300RightAlignOverflowTest extends ZSSTestCase {
 
     @Test
     public void testZSS1338PartialOverflow() throws Exception {
-        getTo("/issue3/1338-overflow-right-align.zul");
+        getTo(OVERFLOW_RIGHT_ALIGN_ZUL);
         basename();
         SpreadsheetWidget ss = focusSheet();
         SheetCtrlWidget sheetCtrl = ss.getSheetCtrl();
@@ -83,7 +86,7 @@ public class Issue1300RightAlignOverflowTest extends ZSSTestCase {
 
     @Test
     public void testZSS1364SheetSwitching(){
-        getTo("/issue3/1338-overflow-right-align.zul");
+        getTo(OVERFLOW_RIGHT_ALIGN_ZUL);
         basename();
         sheetFunction().gotoTab(2);
         waitForTime(Setup.getTimeoutL0());
@@ -95,7 +98,7 @@ public class Issue1300RightAlignOverflowTest extends ZSSTestCase {
 
     @Test
     public void testZSS1364EditSheetSwitching() {
-        getTo("/issue3/1338-overflow-right-align.zul");
+        getTo(OVERFLOW_RIGHT_ALIGN_ZUL);
         basename();
         SpreadsheetWidget ss = focusSheet();
         SheetCtrlWidget sheetCtrl = ss.getSheetCtrl();
@@ -107,12 +110,13 @@ public class Issue1300RightAlignOverflowTest extends ZSSTestCase {
         sheetFunction().gotoTab(2);
         waitForTime(Setup.getTimeoutL0());
         sheetFunction().gotoTab(1);
+        waitForTime(Setup.getTimeoutL0());
         captureOrAssert("1", TOP_BOTTOM_CROPPER);
     }
 
     @Test //ZSS-1364
     public void notRenderedCellAtFirst(){
-        getTo("/issue3/1338-overflow-right-align.zul");
+        getTo(OVERFLOW_RIGHT_ALIGN_ZUL);
         basename();
         SpreadsheetWidget ss = focusSheet();
         setZSSScrollTop(1400);
@@ -122,7 +126,7 @@ public class Issue1300RightAlignOverflowTest extends ZSSTestCase {
 
     @Test //ZSS-1375
     public void resizeColumnProtectedSheet(){
-        getTo("/issue3/1338-overflow-right-align.zul");
+        getTo(OVERFLOW_RIGHT_ALIGN_ZUL);
         basename();
         SpreadsheetWidget ss = focusSheet();
         sheetFunction().gotoTab(3);
@@ -136,10 +140,21 @@ public class Issue1300RightAlignOverflowTest extends ZSSTestCase {
 
     @Test //ZSS-1384
     public void mergedAcrossFrozenColumn() {
-        getTo("/issue3/1338-overflow-right-align.zul");
+        getTo(RIGHT_ALIGN_FROZEN_ZUL);
+        basename();
+        SpreadsheetWidget ss = focusSheet();
+        waitForTime(Setup.getTimeoutL0());
+        captureOrAssert("1", TOP_BOTTOM_CROPPER);
+    }
+
+    @Test //ZSS-1384
+    public void mergedAcrossFrozenColumnSwitchSheets() {
+        getTo(RIGHT_ALIGN_FROZEN_ZUL);
         basename();
         SpreadsheetWidget ss = focusSheet();
         sheetFunction().gotoTab(2);
+        waitForTime(Setup.getTimeoutL0());
+        sheetFunction().gotoTab(1);
         waitForTime(Setup.getTimeoutL0());
         captureOrAssert("1", TOP_BOTTOM_CROPPER);
     }

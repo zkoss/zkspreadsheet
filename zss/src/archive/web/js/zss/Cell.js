@@ -133,8 +133,8 @@ zss.Cell = zk.$extends(zk.Widget, {
 	$init: function (sheet, block, row, col, src) {
 		this.$supers(zss.Cell, '$init', []);
 		
-		this.sheet = sheet;
-		this.block = block;
+		this.sheet = sheet; //SSheetCtrl
+		this.block = block; //CellBlockCtrl
 		this.r = row;
 		this.c = col;
 		this.src = src;
@@ -742,18 +742,18 @@ zss.Cell = zk.$extends(zk.Widget, {
 	},
 	//ZSS-1117
 	_setTempMergeCellStyle: function (l, t, r, b, cutw, cuth, ml, mt, mr, mb) {
-		var comp = this.comp,
+		var comp = this.comp, //cell DOM
 			jqcomp = comp ? jq(comp) : null;
 			
 		if (jqcomp) {
 
-			if (cutw) {
-				var width = this.sheet.custColWidth.getDiffPixel(l, r);
+			if (cutw) { //merge across frozen column
+				var width = this.sheet.custColWidth.getDiffPixel(l, r); //frozen columns total width
 				jqcomp.css("width", width);
 				
 				var mwidth = l != ml || r != mr ? 
 						this.sheet.custColWidth.getDiffPixel(ml, mr) - 4 : width; // -4 is padding(2px) * 2
-				if (width != mwidth) {
+				if (width != mwidth) { //merged across frozen columns
 					var jqreal = jq(this.getTextNode());
 					jqreal.attr("mergewidth", true);
 				}
