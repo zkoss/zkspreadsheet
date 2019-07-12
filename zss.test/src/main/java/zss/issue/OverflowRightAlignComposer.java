@@ -1,18 +1,33 @@
 package zss.issue;
 
+import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.select.SelectorComposer;
 import org.zkoss.zk.ui.select.annotation.*;
 import org.zkoss.zss.api.*;
+import org.zkoss.zss.api.model.CellStyle;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zul.Vlayout;
 
 import java.util.*;
 
-public class OverflowRightAlignComposer extends SelectorComposer<Vlayout> {
+public class OverflowRightAlignComposer extends SelectorComposer<Component> {
 
     @Wire
     private Spreadsheet ss;
     private LinkedList<Range> rangesToNotify = new LinkedList<Range>();
+
+    @Override
+    public void doAfterCompose(Component comp) throws Exception {
+        super.doAfterCompose(comp);
+        mergeAcrossFrozenColumns();
+    }
+
+    private void mergeAcrossFrozenColumns() {
+        Range range = Ranges.range(ss.getSelectedSheet(),8,0,8,4);
+        range.merge(false);
+        range.setCellValue("A9:D9 merged by API with right alignement");
+        CellOperationUtil.applyAlignment(range, CellStyle.Alignment.RIGHT);
+    }
 
     @Listen("onClick = #fill")
     public void fill() {
@@ -30,6 +45,13 @@ public class OverflowRightAlignComposer extends SelectorComposer<Vlayout> {
     @Listen("onClick = #freeze")
     public void freeze(){
         Ranges.range(ss.getSelectedSheet()).setFreezePanel(0, 3);
+    }
+
+    @Listen("onClick = #merge")
+    public void merge(){
+        Ranges.range(ss.getSelectedSheet(), 9, 0, 9, 3).merge(false);
+        Ranges.range(ss.getSelectedSheet(), 10, 2, 10, 3).merge(false);
+
     }
 
     private void notifyRanges() {

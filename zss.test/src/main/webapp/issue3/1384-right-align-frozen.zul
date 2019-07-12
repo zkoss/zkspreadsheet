@@ -3,5 +3,6 @@
 <spreadsheet id="ss"  src="/issue3/book/1384-overflow-right-align-frozen.xlsx" maxVisibleRows="550" maxVisibleColumns="250" width="100%" height="90%" showContextMenu="true" showSheetbar="true" showToolbar="true" showFormulabar="true" ignoreAutoHeight="true"/>
     <button id="unfreeze" label="unfreeze"/>
     <button id="freeze" label="freeze"/>
+    <button id="merge" label="merge"/>
     </div>
 </zk>
