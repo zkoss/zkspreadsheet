@@ -643,11 +643,12 @@ zss.DataPanel = zk.$extends(zk.Object, {
 				delete self.selectFocustagId;
 			}, 0);
 	},
+	/** In order to achieve direct-edit, enter a text without entering edit mode.
+	* select the whole text in the inline editor, so that when a user press a key can clear the existing text and enter the pressed key.
+	**/
 	selectFocustag: function () {
-		var inlineEditor = this.sheet.inlineEditor;
-		inlineEditor.getInputNode().focus();
-		//jq(this.focustag).select();
-		inlineEditor.select();
+	    //ZSS-1350
+		this.sheet.inlineEditor.select();
 	},
 	// ZSS-737: it's used for pasting from clipboard as plain text.
 	getInputNode: function () {
