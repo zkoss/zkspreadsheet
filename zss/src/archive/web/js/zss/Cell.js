@@ -852,9 +852,9 @@ zss.Cell = zk.$extends(zk.Widget, {
         if (this.cellType == STR_CELL || this.cellType == FORMULA_CELL){
             // when page creation or scrolling to render
             if (this.sheet._wgt.isSheetCSSReady()) {
-                this._processRightAlignmentOverflow();
+                this.processAlignmentOverflow();
             }else{ // when sheet switching
-                this.sheet.addSSInitLater(this._processRightAlignmentOverflow.bind(this));
+                this.sheet.addSSInitLater(this.processAlignmentOverflow.bind(this));
             }
         }
 
@@ -891,32 +891,42 @@ zss.Cell = zk.$extends(zk.Widget, {
 		this.$supers(zss.Cell, 'unbind_', arguments);
 	},
     /** ZSS-1338
-    * Shift a cell text under right alignment under the following cases:
+    * Shift a cell text under right || center alignment under the following cases:
     * - an overflowed text
     * - a merged cell
     * Zss clears inline style after changing align or editing.
-    * Don't handle overflow here. right align requires to handle separately from text overflow, e.g a merged cell is in right alignment without overflow.
+    * Don't handle overflow here. Alignment requires to be handled separately from the overflow, e.g a merged cell is in right alignment without overflow.
     */
-    shiftRightAlignText: function() {
+    shiftAlignedText: function() {
         if (!(this.overflow || this.isMerged())){ //ignore some irrelevant cells to avoid width calculation cost
             return;
         }
-        var RIGHT_ALIGN = "zscell-right-alignment"; //ie9 doesn't support const
+        var ALIGNMENT_SHIFT = "zscell-alignment-shifted"; //ie9 doesn't support const
 		var $textNode = jq(this.getTextNode());
-        if (this.halign == 'r'){
-			//calculating width only in a right-align cell for it's a high cost operation
-            var noTextWidth = (this._txtwd == undefined || this._txtwd < 0);  //ZSS-1171
-            var sw = noTextWidth ? this.getTextNode().scrollWidth : this._txtwd;
-            var textWidth = zk.ie9_ ? sw : jq(this.$n('cave')).width();
+		if (this.halign == 'l'){ //left
+            $textNode.removeClass(ALIGNMENT_SHIFT);
+        }else{
+            this.computeTextWidth();
 			var cellInnerWidth = jq(this.$n()).width(); // without padding
-			if (textWidth > cellInnerWidth){
-				$textNode.addClass(RIGHT_ALIGN);
+			if (this._txtwd > cellInnerWidth){
+				$textNode.addClass(ALIGNMENT_SHIFT);
 				//need to set inline style for every edit, will be reset by update_()
-				$textNode.css('left', jq.px(cellInnerWidth - textWidth));
-			}
-        }else{ //left or center
-            $textNode.removeClass(RIGHT_ALIGN);
+                if (this.halign == 'r'){
+				    $textNode.css('left', jq.px(cellInnerWidth - this._txtwd));
+                }else if (this.halign == 'c'){
+				    $textNode.css('left', jq.px(Math.round((cellInnerWidth - this._txtwd)/2)));
+			    }
+            }
         }
+    },
+    /** compute the current text width in pixel and store the result since it costs heavily.
+    */
+    computeTextWidth: function(){
+        var noTextWidth = (this._txtwd == undefined || this._txtwd < 0);  //ZSS-1171
+        var currentWidth = noTextWidth ? this.getTextNode().scrollWidth : this._txtwd;
+        var textWidth = zk.ie9_ ? currentWidth : jq(this.$n('cave')).width();
+        this._txtwd = textWidth;
+        return textWidth;
     },
 	//ZSS-944
 	/**
@@ -957,7 +967,7 @@ zss.Cell = zk.$extends(zk.Widget, {
 			}
 		}
 	},
-	_processRightAlignmentOverflow: function(){
+	processAlignmentOverflow: function(){
         // ZSS-224: skip process overflow according to the hint from server
         // it indicates that this cell's sibling isn't blank
         var skipOverflowOnBinding = (this.overflowOpt & 2) != 0; // skip overflow when initializing
@@ -965,7 +975,8 @@ zss.Cell = zk.$extends(zk.Widget, {
             this._processOverflow(); // heavy duty
         }
         //ZSS-1364, right alignment requires the actual cell width after applying a sheet CSS
-        this.shiftRightAlignText();
+        //ZSS-1388
+        this.shiftAlignedText();
 	},
 	//super//
 	getZclass: function () {

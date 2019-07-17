@@ -511,8 +511,7 @@
     position: relative;
     padding-left: 0px;
 }
-
-.zscell-right-alignment{
+.zscell-alignment-shifted{
     position: relative;
 }
 
