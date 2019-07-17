@@ -1,0 +1,8 @@
+<zk>
+<spreadsheet id="ss"  src="/alignment/book/1338-overflow-right-align.xlsx" maxVisibleRows="550" maxVisibleColumns="250" width="100%" height="90%" showContextMenu="true" showSheetbar="true" showToolbar="true" showFormulabar="true" />
+    <button label="enlarge column width">
+        <attribute name="onClick"><![CDATA[
+				Ranges.range(ss.getSelectedSheet(), 0, 5).setColumnWidth(200);
+			]]></attribute>
+    </button>
+</zk>
