@@ -98,11 +98,9 @@ We also merge lots of POI test cases from a previous project &quot;zsstest&quot;
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>cpsuite</groupId>
+			<groupId>com.googlecode.cedar-common</groupId>
 			<artifactId>cpsuite</artifactId>
 			<version>1.2.6</version>
-			<scope>system</scope>
-    		<systemPath>${project.basedir}/lib/cpsuite-1.2.6.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>

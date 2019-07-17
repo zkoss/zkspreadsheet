@@ -15,7 +15,7 @@
 		<maven.compiler.source>1.6</maven.compiler.source>
 		<maven.compiler.target>1.6</maven.compiler.target>
 	</properties>
-	<version>3.9.5</version>
+	<version>3.9.5-SNAPSHOT</version>
 	<packaging>war</packaging>
 	<name>ZK Spreadsheet App</name>
 	<url>http://www.zkoss.org/zssapp</url>
