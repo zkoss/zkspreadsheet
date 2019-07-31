@@ -1,3 +1,14 @@
+ZK Spreadsheet 3.9.5
+
+Bug:
+[ZSS-1350] - When Spreadsheet gets the focus, it scroll the whole page up
+[ZSS-1366] - clicking a cell causes a dragging selection
+[ZSS-1380] - ZSS doesn't clear the highlight when pasting range overlaps the source range
+[ZSS-1384] - render a text in right alignment incorrectly when the cell is across frozen columns
+[ZSS-1385] - rendering right alignment text takes heavy cost at client side
+[ZSS-1386] - inline editbox size flickering
+[ZSS-1388] - an overflowed text is not center-aligned correctly
+
 ZK Spreadsheet 3.9.4
 
 *Bugs:
