@@ -806,19 +806,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			}
 			break;
 		case "startedit":
-			var editType = result.et,
-				dp = this.dp;
-			//ZSS 171
-			this._skipInsertCellRef = true;
-			if ('inlineEditing' == editType) {
-				if (!dp._moveFocus(row, col, true, true)) {
-					//TODO, if cell not initial, i should skip or put to delay batch? 
-					break;
-				}
-			}
-			//ZSS 171
-			this._skipInsertCellRef = false;
-			dp._startEditing(value, server, editType);
+			this.dp._startEditing(value, server, result.et);
 			break;
 		case "stopedit":
 			this.dp._stopEditing();
