@@ -5,7 +5,7 @@
 	<groupId>org.zkoss.zss</groupId>
 	<artifactId>zss</artifactId>
 	<properties>
-		<zk.version>8.0.1.1</zk.version>
+		<zk.version>8.0.5</zk.version>
 		<commons-math.version>2.2</commons-math.version>
 		<servlet.version>2.4</servlet.version>
 		<maven.compiler.source>1.6</maven.compiler.source>
