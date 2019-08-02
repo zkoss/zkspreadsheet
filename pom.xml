@@ -1,26 +1,175 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.zkoss.zss.parent</groupId>
     <artifactId>build</artifactId>
-    <version>1</version>
+    <version>3.9.5</version>
     <packaging>pom</packaging>
     <name>ZK Spreadsheet Build</name>
     <description>
+        to build binary zip file
         https://maven.apache.org/guides/introduction/introduction-to-the-pom.html#Project_Aggregation
     </description>
+    <repositories>
+        <repository>
+            <id>ZK Repository</id>
+            <url>http://mavensync.zkoss.org/maven2</url>
+        </repository>
+        <repository>
+            <id>ZK Evaluation Repository</id>
+            <url>http://mavensync.zkoss.org/eval</url>
+        </repository>
+        <repository>
+            <id>ZK EE</id>
+            <url>https://maven.zkoss.org/repo/zk/ee</url>
+        </repository>
+    </repositories>
     <modules>
         <module>../zsspoi/zpoi</module>
-        <module>zssmodel</module>
         <module>zss</module>
-        <module>../zsscml/zpoiex</module>
+        <module>zssmodel</module>
         <module>../zsscml/zssex</module>
+        <module>../zsscml/zpoiex</module>
         <module>../zsscml/zssjsf</module>
         <module>../zsscml/zssjsp</module>
         <module>../zsscml/zsspdf</module>
-        <module>../zsscml/zsshtml</module>
     </modules>
-    <build>
-    </build>
+    <profiles>
+        <profile>
+            <id>ose</id>
+            <dependencies>
+                <dependency>
+                    <groupId>org.zkoss.zss</groupId>
+                    <artifactId>zss</artifactId>
+                    <version>${project.version}</version>
+                </dependency>
+            </dependencies>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-assembly-plugin</artifactId>
+                        <version>3.1.1</version>
+                        <configuration>
+                            <finalName>zss-bin-${project.version}</finalName>
+                            <appendAssemblyId>false</appendAssemblyId>
+                            <descriptors>
+                                <descriptor>assembly/ose-binary.xml</descriptor>
+                            </descriptors>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>binary-zip</id>
+                                <phase>process-resources</phase>
+                                <goals>
+                                    <goal>single</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>ee</id>
+            <dependencies>
+                <dependency>
+                    <groupId>org.zkoss.zss</groupId>
+                    <artifactId>zssex</artifactId>
+                    <version>${project.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>org.zkoss.zss</groupId>
+                    <artifactId>zssjsf</artifactId>
+                    <version>${project.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>org.zkoss.zss</groupId>
+                    <artifactId>zssjsp</artifactId>
+                    <version>${project.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>org.zkoss.zss</groupId>
+                    <artifactId>zsspdf</artifactId>
+                    <version>${project.version}</version>
+                </dependency>
+            </dependencies>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-assembly-plugin</artifactId>
+                        <version>3.1.1</version>
+                        <configuration>
+                            <finalName>zssee-bin-${project.version}</finalName>
+                            <appendAssemblyId>false</appendAssemblyId>
+                            <descriptors>
+                                <descriptor>assembly/ee-binary.xml</descriptor>
+                            </descriptors>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>binary-zip</id>
+                                <!-- to avoid compiling -->
+                                <phase>process-resources</phase>
+                                <goals>
+                                    <goal>single</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>eval</id>
+            <dependencies>
+                <dependency>
+                    <groupId>org.zkoss.zss</groupId>
+                    <artifactId>zssex</artifactId>
+                    <version>${project.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>org.zkoss.zss</groupId>
+                    <artifactId>zssjsf</artifactId>
+                    <version>${project.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>org.zkoss.zss</groupId>
+                    <artifactId>zssjsp</artifactId>
+                    <version>${project.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>org.zkoss.zss</groupId>
+                    <artifactId>zsspdf</artifactId>
+                    <version>${project.version}</version>
+                </dependency>
+            </dependencies>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-assembly-plugin</artifactId>
+                        <version>3.1.1</version>
+                        <configuration>
+                            <finalName>zssee-bin-${project.version}</finalName>
+                            <appendAssemblyId>false</appendAssemblyId>
+                            <descriptors>
+                                <descriptor>assembly/ose-binary.xml</descriptor>
+                            </descriptors>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>binary-zip</id>
+                                <!-- to avoid compiling -->
+                                <phase>process-resources</phase>
+                                <goals>
+                                    <goal>single</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

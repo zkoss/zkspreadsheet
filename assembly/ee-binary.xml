@@ -1,0 +1,44 @@
+<assembly xmlns="http://maven.apache.org/ASSEMBLY/2.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/ASSEMBLY/2.0.0 http://maven.apache.org/xsd/assembly-2.0.0.xsd">
+    <id>binary</id>
+    <formats>
+        <format>zip</format>
+    </formats>
+    <dependencySets>
+        <dependencySet>
+            <outputDirectory>dist/</outputDirectory>
+            <useProjectArtifact>true</useProjectArtifact>
+            <scope>compile</scope>
+        </dependencySet>
+    </dependencySets>
+    <fileSets>
+        <fileSet>
+<!--            release note -->
+            <directory>dist/doc/</directory>
+            <includes>
+                <include>**</include>
+            </includes>
+            <outputDirectory>doc</outputDirectory>
+        </fileSet>
+    </fileSets>
+    <moduleSets>
+        <moduleSet>
+            <includes>
+                <include>org.zkoss.zss:*</include>
+                <include>org.zkoss.poi:*</include>
+            </includes>
+            <sources>
+                <includeModuleDirectory>false</includeModuleDirectory>
+                <fileSets>
+                    <fileSet>
+                        <directory>src</directory>
+                        <includes>
+                            <include>**</include>
+                        </includes>
+                        <outputDirectory>src/${module.artifactId}</outputDirectory>
+                    </fileSet>
+                </fileSets>
+            </sources>
+        </moduleSet>
+    </moduleSets>
+</assembly>
