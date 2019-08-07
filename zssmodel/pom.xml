@@ -5,7 +5,7 @@
 	<groupId>org.zkoss.zss</groupId>
 	<artifactId>zssmodel</artifactId>
 	<properties>
-		<zpoi.version>3.9.16-SNAPSHOT</zpoi.version>
+		<zpoi.version>3.9.16</zpoi.version>
 		<zk.version>8.0.5</zk.version>
 		<jsoup.version>1.7.3</jsoup.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
