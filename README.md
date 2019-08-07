@@ -5,19 +5,8 @@ ZK Spreadsheet is an open source embeddable web-based online spreadsheet that de
 > Newer. Better. Faster.
 > Check out [Keikai](https://keikai.io) - 2019 brand-new Web Spreadsheet from ZK Team.
 
-
-# Binary Release Build Process
-## ZSS
-`bin/build_binary.py`
-
-## zssapp
-### official
-`mvn package`
-
-### Eval
-```
-mvn -P eval
-mvn package
+# Release Process
+http://internalwiki.potix.com:7070/mediawiki13/index.php/ZSS-Routine-Release-Official#Steps_to_Release_to_Maven_Repository_.28since_3.9.4.29
 ```
 
 # Naming Convention for abbreviation names
