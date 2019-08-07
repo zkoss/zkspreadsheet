@@ -15,8 +15,8 @@ Copyright (C) 2010 Potix Corporation. All Rights Reserved.
 	<config-name>zss</config-name><!-- used to resolve dependency -->
 	<version>
 		<version-class>org.zkoss.zss.ui.Version</version-class>
-		<version-uid>3.9.5</version-uid>
-		<zk.version>7.0.3</zk.version><!-- or later -->
+		<version-uid>3.9.6</version-uid>
+		<zk.version>8.0.5</zk.version><!-- or later -->
 	</version>
 	<listener>
 		<listener-class>org.zkoss.zss.ui.WebAppInit</listener-class>
