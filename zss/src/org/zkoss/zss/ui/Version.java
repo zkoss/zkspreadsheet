@@ -29,7 +29,7 @@ import org.zkoss.lang.Classes;
 public class Version {
 	/** Returns the version UID.
 	 */
-	public static final String UID = "3.9.5";
+	public static final String UID = "3.9.6";
 	
 	/** Features. */
 	private static final boolean
