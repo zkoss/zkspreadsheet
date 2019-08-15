@@ -9,7 +9,7 @@
 		<hbox hflex="1">
 			<button label="1" onClick='Ranges.range(ss.getSelectedSheet(), "B2:D4").merge(false)'/>
 			<button label="2" onClick='Ranges.range(ss.getSelectedSheet(), "B2").setCellEditText("Hello")'/>
-			<button label="3" onClick='Ranges.range(ss.getSelectedSheet(), "B1").toRowRange().setHidden(true)'/>
+			<button label="3" onClick='Ranges.range(ss.getSelectedSheet(), "B1").toColumnRange().setHidden(true)'/>
 		</hbox>	
 		<spreadsheet id="ss" src="/issue3/book/blank.xlsx" hflex="1" vflex="1"
 			ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e" maxrows="500" maxcolumns="100" showToolbar="true" showFormulabar="true"
