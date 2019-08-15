@@ -1,7 +1,7 @@
 <zk>
 	<vlayout width="100%" height="100%">
 		<hbox>
-			<vlayout align="end">
+			<vlayout >
 				<hlayout> 
 					<button label="fill down" onClick='filldown();'></button>
 					<button label="fill up" onClick='fillup();'></button>
@@ -15,7 +15,7 @@
 
 			]]></label>
 		</hbox>
-		<spreadsheet id="ss" src="/issue3/book/631-fill-merge.xlsx" maxrows="200" maxcolumns="40"
+		<spreadsheet id="ss" src="/merge/book/631-fill-merge.xlsx" maxrows="200" maxcolumns="40"
 			hflex="1" vflex="1" ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e"
 			showContextMenu="true" showSheetbar="true" showToolbar="true" showFormulabar="true" />
 	</vlayout>

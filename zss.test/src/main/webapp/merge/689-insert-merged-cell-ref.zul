@@ -19,6 +19,6 @@ Copyright (C) 2014 Potix Corporation. All Rights Reserved.
 		2. select the red area, the formula reference should be "C4".
 		3. select the green and red area, the formula reference should be "C3:D6". 
 	</label>
-	<spreadsheet src="/issue3/book/689-insert-merged-cell-ref.xlsx"	showFormulabar="true" height="500px" width="500px">
+	<spreadsheet src="/merge/book/689-insert-merged-cell-ref.xlsx"	showFormulabar="true" height="500px" width="500px">
 	</spreadsheet>
 </window>

@@ -4,7 +4,7 @@ Since 3.8.3
 1. Scroll to B28, you should see the blue merged cell(B24:B28).
 2. If the merged cell is not correctly merged, it is a bug.
 	</label>
-	<spreadsheet id="ss" src="/issue3/book/1178-mergedcell.xlsx" maxVisibleRows="60" maxVisibleColumns="40"
+	<spreadsheet id="ss" src="/merge/book/1178-mergedcell.xlsx" maxVisibleRows="60" maxVisibleColumns="40"
 		hflex="1" height="800px" showContextMenu="true" showSheetbar="true" showToolbar="true" 
 		showFormulabar="true" />
 </vlayout>

@@ -22,7 +22,7 @@ import org.zkoss.zul.Vlayout;
 
 public class ZKInsertMerge1115 extends SelectorComposer<Vlayout> {
 	
-	private final String EXCELFILE = "/issue3/book/1115-zkinsertmerge.xlsx";
+	private final String EXCELFILE = "/merge/book/1115-zkinsertmerge.xlsx";
     public final static String SYMBOL_COLLAPSED = "\u25C4\u25BA ";
     public final static String SYMBOL_EXPANDED  = "\u25BA\u25C4 ";
     

@@ -14,7 +14,7 @@ Since 3.8.2
 10. Drag scroll handle to move to the center around label H15. Should be OK.
 </label>
 
-<spreadsheet id="ss" src="/issue3/book/1117-merge-shift.xlsx" maxVisibleRows="800" maxVisibleColumns="111" width="835px" 
+<spreadsheet id="ss" src="/merge/book/1117-merge-shift.xlsx" maxVisibleRows="800" maxVisibleColumns="111" width="835px"
 		height="400px" 
 		showContextMenu="true" showSheetbar="true" showToolbar="true" showFormulabar="true" 
 		/>

@@ -1,0 +1,14 @@
+<zk>
+	<vlayout hflex="1" vflex="1">
+		<hbox hflex="1">
+		<button label="setValue A1" onClick='Ranges.range(ss.getSelectedSheet(), "A1").setCellValue(100)'/>
+		<button label="Merge C3:E5" onClick='Ranges.range(ss.getSelectedSheet(), "C3:E5").merge(false)'/>
+		<button label="Copy A1 to C3:E5" onClick='Ranges.range(ss.getSelectedSheet(), "A1").paste(Ranges.range(ss.getSelectedSheet(), "C3:E5"), false)'/>
+		</hbox>
+		
+		<spreadsheet id="ss" src="/issue3/book/blank.xlsx" hflex="1" vflex="1"
+			maxVisibleRows="500" maxVisibleColumns="200" showToolbar="true" showFormulabar="true"
+			showSheetbar="true" showContextMenu="true" selectedSheet="Sheet1">
+		</spreadsheet>
+	</vlayout>
+</zk>

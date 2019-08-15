@@ -25,7 +25,7 @@ import org.zkoss.zul.Vlayout;
 
 public class ZkInsertMerge1171 extends SelectorComposer<Vlayout> {
 
-	public final static String EXCEL_FILE = Executions.getCurrent().getDesktop().getWebApp().getRealPath("/issue3/book/1171-ff-slow-merge.xlsx");
+	public final static String EXCEL_FILE = Executions.getCurrent().getDesktop().getWebApp().getRealPath("/merge/book/1171-ff-slow-merge.xlsx");
 	
 	public final static String SYMBOL_COLLAPSED = "\u25C4\u25BA";
 	public final static String SYMBOL_EXPANDED = "\u25BA\u25C4";

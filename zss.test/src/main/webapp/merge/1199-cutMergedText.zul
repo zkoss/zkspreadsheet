@@ -4,7 +4,7 @@ Since 3.8.3
 1. Check the merged text in B2:G3.
 2. You should not see the text inside clipped; if so, it is a bug.
 	</label>
-	<spreadsheet id="ss" src="/issue3/book/1199-cutMergedText.xlsx" maxVisibleRows="60" maxVisibleColumns="40"
+	<spreadsheet id="ss" src="/merge/book/1199-cutMergedText.xlsx" maxVisibleRows="60" maxVisibleColumns="40"
 		hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
 		showFormulabar="true" />	
 </vlayout>

@@ -6,6 +6,6 @@ Since 3.6.0
 3. You should see a drop down button show to the right of the right border of C2.
 4. If not, then it is a bug.
 </label>
-	<spreadsheet id="ss" src="/issue3/book/805-validation-mergecell.xlsx" vflex="1"  maxVisibleRows="150"
+	<spreadsheet id="ss" src="/merge/book/805-validation-mergecell.xlsx" vflex="1"  maxVisibleRows="150"
 		maxVisibleColumns="40" showToolbar="true" showSheetbar="true" showFormulabar="true" width="600px"/>
 </zk>

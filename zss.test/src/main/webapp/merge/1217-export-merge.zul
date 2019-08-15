@@ -23,7 +23,7 @@ Since 3.9.0
      }
 ]]>
 </zscript>
-	<spreadsheet id="ss" src="/issue3/book/1217-export-merge.xlsx" maxVisibleRows="60" maxVisibleColumns="40"
+	<spreadsheet id="ss" src="/merge/book/1217-export-merge.xlsx" maxVisibleRows="60" maxVisibleColumns="40"
 		hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
 		showFormulabar="true" />	
 </vlayout>
