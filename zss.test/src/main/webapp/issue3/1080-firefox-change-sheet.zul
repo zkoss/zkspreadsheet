@@ -10,7 +10,7 @@ Firefox. Since 3.8.1
 6. You should be aware that you are still in Sheet1 and the value in cell A1 is 1.
 7. If not, it is a bug.
 </label>
-<spreadsheet id="ss" src="/issue3/book/blank.xlsx" maxVisibleRows="60" maxVisibleColumns="40"
+<spreadsheet id="ss" src="/book/blank.xlsx" maxVisibleRows="60" maxVisibleColumns="40"
     hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
     showFormulabar="true"/>
 </vlayout>

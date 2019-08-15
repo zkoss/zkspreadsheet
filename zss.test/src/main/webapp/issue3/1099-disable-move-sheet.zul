@@ -9,7 +9,7 @@ Since 3.8.0
 6. If not, it is a bug.
 	</label>
 <button label="Disable Move Sheet" onClick="disableMoveSheet()"/>
-	<spreadsheet id="ss" src="/issue3/book/blank.xlsx" maxVisibleRows="60" maxVisibleColumns="40"
+	<spreadsheet id="ss" src="/book/blank.xlsx" maxVisibleRows="60" maxVisibleColumns="40"
 		hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
 		showFormulabar="true" />
 		<zscript><![CDATA[

@@ -7,7 +7,7 @@ Since 3.8.0
 4. Select A2, right click to select Hyperlink option; enter in Address box http://www.zkoss.org and press OK.
 5. Should see a blue hyperlink to http://www.zkoss.org with underline shown on A2; if not, it is a bug.
 	</label>
-	<spreadsheet id="ss" src="/issue3/book/blank.xlsx" maxVisibleRows="60" maxVisibleColumns="40"
+	<spreadsheet id="ss" src="/book/blank.xlsx" maxVisibleRows="60" maxVisibleColumns="40"
 		hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
 		showFormulabar="true" />
 </vlayout>

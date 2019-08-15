@@ -24,6 +24,6 @@ Since 3.8.0
      }
 ]]>
 </zscript>
-    <spreadsheet id="spreadsheet"  src="/issue3/book/blank.xlsx" maxVisibleRows="50" maxVisibleColumns="50" vflex="1" width="100%" showToolbar="true" showSheetbar="true" showContextMenu="true" showFormulabar="true"></spreadsheet>
+    <spreadsheet id="spreadsheet"  src="/book/blank.xlsx" maxVisibleRows="50" maxVisibleColumns="50" vflex="1" width="100%" showToolbar="true" showSheetbar="true" showContextMenu="true" showFormulabar="true"></spreadsheet>
 </vlayout>
 

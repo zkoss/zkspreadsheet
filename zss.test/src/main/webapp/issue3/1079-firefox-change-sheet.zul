@@ -9,7 +9,7 @@ Firefox and IE9. Since 3.8.1
 6. The editing should stop automatically and you are in Sheet2 now
 7. Select back to Sheet1, you should see value 4 in cell C4 now.
 </label>
-<spreadsheet id="ss" src="/issue3/book/blank.xlsx" maxVisibleRows="60" maxVisibleColumns="40"
+<spreadsheet id="ss" src="/book/blank.xlsx" maxVisibleRows="60" maxVisibleColumns="40"
     hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
     showFormulabar="true"/>
 </vlayout>

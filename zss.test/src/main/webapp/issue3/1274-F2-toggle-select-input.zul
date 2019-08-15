@@ -11,6 +11,6 @@ Since 3.9.1
 8. Now remove C2 by press Del key twice; the formula becomes =sum(B1)+
 9. Press F2 key angain; now press right arraow key once; the formula becomes =sum(B1)+D2
     </label>
-	<spreadsheet id="ss" src="/issue3/book/blank.xlsx" maxVisibleRows="30" maxVisibleColumns="40"
+	<spreadsheet id="ss" src="/book/blank.xlsx" maxVisibleRows="30" maxVisibleColumns="40"
 		hflex="1" vflex="1" />	
 </vlayout>

@@ -4,7 +4,7 @@ Since 3.6.0
 1. keep browser window is small enough to show only 5 rows.
 2. make sure the corner and top panel work well after reload.
 </label>
-	<spreadsheet id="ss" vflex="1" hflex="1" src="/issue3/book/blank.xlsx"  showToolbar="true" />
+	<spreadsheet id="ss" vflex="1" hflex="1" src="/book/blank.xlsx"  showToolbar="true" />
 	<zscript><![CDATA[
 		org.zkoss.zss.api.Ranges.range(ss.getSelectedSheet()).setFreezePanel(2,2);
 	]]></zscript>

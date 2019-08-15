@@ -5,6 +5,6 @@
 		</label>
 		<spreadsheet showToolbar="true"
 			id="spreadsheet" vflex="true" width="100%"
-			src="/issue3/book/blank.xlsx" maxcolumns="40" maxrows="200"></spreadsheet>
+			src="/book/blank.xlsx" maxcolumns="40" maxrows="200"></spreadsheet>
 	</window>
 </zk>

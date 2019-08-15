@@ -9,7 +9,7 @@ Since 3.8.0
 		issue description: this issue is in order to dragging a anchor tag instead of normal select, the dragging handler will be out of control
 		so you can make sure dragging anchor tag doens't happen to pass this test case
 	</label>
-	<spreadsheet id="ss" src="/issue3/book/blank.xlsx" maxVisibleRows="60" maxVisibleColumns="40"
+	<spreadsheet id="ss" src="/book/blank.xlsx" maxVisibleRows="60" maxVisibleColumns="40"
 		hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
 		showFormulabar="true" />	
 </vlayout>

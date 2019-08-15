@@ -3,7 +3,7 @@
 1. type text "this is a test" into A1. make sure you can see this whole sentence.
 2. click 'increase indent' button on toolbar with selection on A1 for 10 times, make sure whole sentence shoudn't be covered by other cells.
 	</label>
-	<spreadsheet id="ss" src="/issue3/book/blank.xlsx" maxVisibleRows="30" maxVisibleColumns="40"
+	<spreadsheet id="ss" src="/book/blank.xlsx" maxVisibleRows="30" maxVisibleColumns="40"
 		hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
 		showFormulabar="true" />	
 </vlayout>

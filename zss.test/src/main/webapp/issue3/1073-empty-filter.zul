@@ -6,7 +6,7 @@ Since 3.8.1
 3. You should see a popup window complains "Cannot find any data to filter, please retry and select a range of cells that contain data"
 4. If not it is a bug. 
     </label>
-<spreadsheet src="/issue3/book/blank.xlsx" hflex="1" vflex="1"
+<spreadsheet src="/book/blank.xlsx" hflex="1" vflex="1"
         maxrows="2000" maxcolumns="20"
         showToolbar="true" showFormulabar="true" showSheetbar="true"/>
 </vlayout>

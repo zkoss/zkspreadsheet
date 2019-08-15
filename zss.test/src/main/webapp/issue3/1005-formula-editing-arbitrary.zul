@@ -16,7 +16,7 @@
 		3. make sure the reference is "=H1" or "=I1" or "=J1".
 	</label>
 	
-	<spreadsheet id="ss" src="/issue3/book/blank.xlsx" maxVisibleRows="50" maxVisibleColumns="50"
+	<spreadsheet id="ss" src="/book/blank.xlsx" maxVisibleRows="50" maxVisibleColumns="50"
 		hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
 		showFormulabar="true" />
 </vlayout>

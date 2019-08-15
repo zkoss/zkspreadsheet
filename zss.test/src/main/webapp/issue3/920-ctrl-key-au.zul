@@ -13,7 +13,7 @@
 	</label>
 	
 	<div width="100%" vflex="1">
-	   	<spreadsheet id="ss" src="/issue3/book/blank.xlsx" maxVisibleRows="50" vflex="1" width="100%" 
+	   	<spreadsheet id="ss" src="/book/blank.xlsx" maxVisibleRows="50" vflex="1" width="100%"
    			showSheetbar="true" showContextMenu="true" showFormulabar="true" hiderowhead="true" hidecolumnhead="true"/>
 	</div>
 </zk>

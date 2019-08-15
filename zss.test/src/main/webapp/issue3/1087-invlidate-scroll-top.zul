@@ -7,7 +7,7 @@ Since 3.8.1
 4. If not, it is a bug.
 	</label>
 <button id="invalidate" label="invalidate" onClick="ss.invalidate()"/>
-	<spreadsheet id="ss" src="/issue3/book/blank.xlsx"
+	<spreadsheet id="ss" src="/book/blank.xlsx"
 		hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
 		showFormulabar="true" />
 </vlayout>

@@ -13,7 +13,7 @@
 11. Click the link and you browser shall create a new tab and visit http://www.zkoss.org.
 </label>
 <vlayout vflex="1" hflex="1">
-    <spreadsheet id="spreadsheet" src="/issue3/book/blank.xlsx" maxVisibleRows="50" vflex="1" hflex="1"
+    <spreadsheet id="spreadsheet" src="/book/blank.xlsx" maxVisibleRows="50" vflex="1" hflex="1"
     showSheetbar="true" showContextMenu="true" showFormulabar="true"></spreadsheet>
     </vlayout>
 </zk>

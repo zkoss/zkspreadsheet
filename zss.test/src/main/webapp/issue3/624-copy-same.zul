@@ -26,7 +26,7 @@
 			3. copy A3:B3 then paste to A3:D3
 			4. above steps shouldn't cause java exception.
 		</label>
-		<spreadsheet id="ss" src="/issue3/book/blank.xlsx" maxrows="200" maxcolumns="40"
+		<spreadsheet id="ss" src="/book/blank.xlsx" maxrows="200" maxcolumns="40"
 			hflex="1" vflex="1" ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e"
 			showContextMenu="true" showSheetbar="true" showToolbar="true" showFormulabar="true" />
 	</vlayout>

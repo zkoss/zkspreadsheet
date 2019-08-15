@@ -21,7 +21,7 @@
 			</label>
 		</hlayout>
 
-		<spreadsheet id="ss" src="/issue3/book/blank.xlsx" hflex="1" vflex="1"
+		<spreadsheet id="ss" src="/book/blank.xlsx" hflex="1" vflex="1"
 			maxrows="500" maxcolumns="100" showToolbar="true" showFormulabar="true"
 			showSheetbar="true" showContextMenu="true">
 		</spreadsheet>

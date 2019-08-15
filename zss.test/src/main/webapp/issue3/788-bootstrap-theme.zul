@@ -8,7 +8,7 @@ this case must to be used with ZK bootstrap theme.
 4. right-click on cell, you shouldn't see there is a underline on the menu item when mouse hover.
 </label>
 	<button label="setFreeze" onClick="Ranges.range(ss.getSelectedSheet()).setFreezePanel(3,3)" />
-	<spreadsheet id="ss" vflex="1" hflex="1" src="/issue3/book/blank.xlsx" 
+	<spreadsheet id="ss" vflex="1" hflex="1" src="/book/blank.xlsx"
 		showToolbar="true" showSheetbar="true" showFormulabar="true" showContextMenu="true"
 		maxVisibleRows="100" maxVisibleColumns="100"/>
 </zk>

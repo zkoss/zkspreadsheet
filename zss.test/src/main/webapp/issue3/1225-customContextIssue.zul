@@ -8,7 +8,7 @@ Since 3.9.0
 
 		<spreadsheet id="ss" width="100%" height="50%" showFormulabar="true" context="myContext"
 			showContextMenu="false" showToolbar="true" showSheetbar="true" maxVisibleRows="100"
-			maxVisibleColumns="20" src="/issue3/book/blank.xlsx" />
+			maxVisibleColumns="20" src="/book/blank.xlsx" />
 		<menupopup id="myContext">
 			<menuitem id="display" label="Display Information" onClick="display()" />
 			<menuitem id="open" label="Open Dialog" />

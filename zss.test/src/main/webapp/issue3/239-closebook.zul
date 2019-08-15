@@ -5,7 +5,7 @@
 			showSheetbar="true" showContextMenu="true">
 		</spreadsheet>
 		<zscript><![CDATA[
-		    java.io.File f = new java.io.File(WebApps.getCurrent().getRealPath("/issue3/book/blank.xlsx"));              
+		    java.io.File f = new java.io.File(WebApps.getCurrent().getRealPath("/book/blank.xlsx"));
 			Book book = Importers.getImporter().imports(f,"test");
 			ss.setBook(book);
 		]]></zscript>

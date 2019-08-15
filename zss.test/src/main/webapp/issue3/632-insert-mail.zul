@@ -21,7 +21,7 @@ Copyright (C) 2014 Potix Corporation. All Rights Reserved.
 	</label>
 	<button label="insert mail link" onClick="insertMail()"/>
 	<button label="focus A1" onClick="ss.focusTo(0, 0)"/>
-	<spreadsheet id="ss" src="/issue3/book/blank.xlsx" showToolbar="true" showContextMenu="true" height="600px" width="800px" />
+	<spreadsheet id="ss" src="/book/blank.xlsx" showToolbar="true" showContextMenu="true" height="600px" width="800px" />
 	<zscript><![CDATA[
      	import org.zkoss.zss.api.model.Hyperlink.HyperlinkType;
      	public void insertMail() throws java.io.IOException {

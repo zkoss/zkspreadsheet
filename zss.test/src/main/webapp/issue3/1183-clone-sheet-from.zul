@@ -17,7 +17,7 @@
 	<spreadsheet id="ss1" src="/issue3/book/1183-clone-sheet-from.xlsx" maxVisibleRows="200" maxVisibleColumns="40"
 		hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
 		showFormulabar="true"/>
-	<spreadsheet id="ss" src="/issue3/book/blank.xlsx" maxVisibleRows="200" maxVisibleColumns="40"
+	<spreadsheet id="ss" src="/book/blank.xlsx" maxVisibleRows="200" maxVisibleColumns="40"
         hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
         showFormulabar="true"/>
 	<zscript><![CDATA[

@@ -6,7 +6,7 @@ Since 3.8.0
 </label>
 	<button id="disabledBtn" label="disable rename" onClick="ss.disableUserAction(AuxAction.RENAME_SHEET, true);"/>
 	<button id="enabledBtn" label="enable rename" onClick="ss.disableUserAction(AuxAction.RENAME_SHEET, false);"/>
-	<spreadsheet id="ss" vflex="1" hflex="1" src="/issue3/book/blank.xlsx"
+	<spreadsheet id="ss" vflex="1" hflex="1" src="/book/blank.xlsx"
 		showToolbar="true" showSheetbar="true" showFormulabar="true" showContextMenu="true"
 		maxVisibleRows="100" maxVisibleColumns="100"/>
 </zk>

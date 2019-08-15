@@ -41,7 +41,7 @@ public class Composer1283PopulatePerformance extends SelectorComposer<Component>
     public void onPostImport(Event event) throws Exception {
         Clock clock = new Clock();
         clock.start();
-        File template = new File(WebApps.getCurrent().getRealPath("/issue3/book/blank.xlsx"));
+        File template = new File(WebApps.getCurrent().getRealPath("/book/blank.xlsx"));
         String templateDocName = "input";
 //        this.book = FILE_IMPORTER.imports(template, templateDocName);
 //        this.postImport(this.book);
@@ -57,7 +57,7 @@ public class Composer1283PopulatePerformance extends SelectorComposer<Component>
     public void onUsual(Event event) throws Exception {
         Clock clock = new Clock();
         clock.start();
-        File template = new File(WebApps.getCurrent().getRealPath("/issue3/book/blank.xlsx"));
+        File template = new File(WebApps.getCurrent().getRealPath("/book/blank.xlsx"));
         String templateDocName = "input";
         this.book = FILE_IMPORTER.imports(template, templateDocName);
         this.postImport(this.book);
@@ -74,7 +74,7 @@ public class Composer1283PopulatePerformance extends SelectorComposer<Component>
 //    @Override
 //    public void doAfterCompose(Component comp) throws Exception {
 //        super.doAfterCompose(comp);
-//        File template = new File(WebApps.getCurrent().getRealPath("/issue3/book/blank.xlsx"));
+//        File template = new File(WebApps.getCurrent().getRealPath("/book/blank.xlsx"));
 //        String templateDocName = "input";
 ////        this.book = FILE_IMPORTER.imports(template, templateDocName);
 ////        this.postImport(this.book);

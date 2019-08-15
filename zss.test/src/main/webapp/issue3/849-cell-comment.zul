@@ -13,7 +13,7 @@ Since 3.7.0
 		<button label="freeze sheet" onClick='Ranges.range(ss.getSelectedSheet(), 5,5).setFreezePanel(5,5)' />
 		<button label="unfreeze sheet" onClick='Ranges.range(ss.getSelectedSheet()).setFreezePanel(0, 0)' />
 	</hbox>
-	<spreadsheet id="ss" vflex="1" width="100%" src="/issue3/book/blank.xlsx"
+	<spreadsheet id="ss" vflex="1" width="100%" src="/book/blank.xlsx"
 		showToolbar="true" showSheetbar="true" showFormulabar="true" showContextMenu="true"
 		maxVisibleRows="100" maxVisibleColumns="100"/>
 		

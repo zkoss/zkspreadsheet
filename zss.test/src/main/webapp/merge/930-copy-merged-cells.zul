@@ -8,7 +8,7 @@ Since 3.8.1
 5. Now press Ctrl-C to copy again; the copy mark is on Cell B6.
 6. Select cell B9.
 7. Press Ctrl-V to paste the copy and you should see B9:C10 merged and selected.</label>
-<spreadsheet id="ss" src="/issue3/book/blank.xlsx" maxVisibleRows="60" maxVisibleColumns="40"
+<spreadsheet id="ss" src="/book/blank.xlsx" maxVisibleRows="60" maxVisibleColumns="40"
     hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
     showFormulabar="true"/>
 </vlayout>

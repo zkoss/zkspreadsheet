@@ -4,7 +4,7 @@
 <vlayout vflex="1" width="100%">
 <button label="create sheet" onClick="create3()"/>
 <button label="delete sheet" onClick="delete()"/>
-<spreadsheet id="ss" src="/issue3/book/blank.xlsx" maxVisibleRows="800" maxVisibleColumns="100" hflex="1" 
+<spreadsheet id="ss" src="/book/blank.xlsx" maxVisibleRows="800" maxVisibleColumns="100" hflex="1"
 		vflex="1" preloadColumnSize="5" preloadRowSize="5"
 		showContextMenu="true" showSheetbar="true" showToolbar="true" showFormulabar="true"/>
 <!-- 

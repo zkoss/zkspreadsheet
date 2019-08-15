@@ -7,5 +7,5 @@ Since 3.6.0
 4. Right click on sheet1 and choose copy. You will see Sheet1 (4) with same content as Sheet1.
 5. Change the name of Sheet1 (2) to Sheet1 (15) and choose copy. You will see Sheet1 (16) with the same content as Sheet1 (15).
 </label>
-	<spreadsheet id="ss" vflex="1" src="/issue3/book/blank.xlsx" showToolbar="true" showSheetbar="true" showFormulabar="true" width="600px"/>
+	<spreadsheet id="ss" vflex="1" src="/book/blank.xlsx" showToolbar="true" showSheetbar="true" showFormulabar="true" width="600px"/>
 </zk>

@@ -44,7 +44,7 @@
 			5. change A1 to 20
 			6. validate B1
 		</label>
-		<spreadsheet id="ss" src="/issue3/book/blank.xlsx" hflex="1" vflex="1" height="200px"
+		<spreadsheet id="ss" src="/book/blank.xlsx" hflex="1" vflex="1" height="200px"
 			maxVisibleRows="100" maxVisibleColumns="20" showToolbar="true" showFormulabar="true"
 			showSheetbar="true" showContextMenu="true">
 		</spreadsheet>

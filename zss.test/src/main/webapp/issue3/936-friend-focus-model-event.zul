@@ -19,7 +19,7 @@ On sheet 1.
     <zscript><![CDATA[
 		Book sharedBook = null;
         try {        	
-	        sharedBook = Importers.getImporter().imports(new java.io.File(desktop.getWebApp().getRealPath("/issue3/book/blank.xlsx")), "test");
+	        sharedBook = Importers.getImporter().imports(new java.io.File(desktop.getWebApp().getRealPath("/book/blank.xlsx")), "test");
         } catch (Exception e) {
         	throw e;
         }

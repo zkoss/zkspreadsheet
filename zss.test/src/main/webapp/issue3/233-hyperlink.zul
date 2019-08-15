@@ -7,7 +7,7 @@
 	</vlayout>
 	<label id="msg1"/>
 	<label id="msg2"/>
-		<spreadsheet id="ss" src="/issue3/book/blank.xlsx" hflex="1" vflex="1" onCellHyperlink="onCellHyperLink(event)"
+		<spreadsheet id="ss" src="/book/blank.xlsx" hflex="1" vflex="1" onCellHyperlink="onCellHyperLink(event)"
 			maxVisibleRows="500" maxVisibleColumns="100" showToolbar="true" showFormulabar="true" onCellClick="onCellClick(event)"
 			showSheetbar="true" showContextMenu="true">
 		</spreadsheet>

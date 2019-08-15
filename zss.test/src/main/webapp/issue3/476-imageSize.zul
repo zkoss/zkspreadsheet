@@ -37,7 +37,7 @@
 	</button>
 	1. press "insert picture" and export it. make sure the picture in exported file looks fine as well.
 	xlsx <button label="export" onClick='export(source, ".xlsx");' /> 
-	<spreadsheet id="source" src="/issue3/book/blank.xlsx" maxVisibleRows="100" maxVisibleColumns="40"
+	<spreadsheet id="source" src="/book/blank.xlsx" maxVisibleRows="100" maxVisibleColumns="40"
 			hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true"
 			ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e" />
 	</vlayout>

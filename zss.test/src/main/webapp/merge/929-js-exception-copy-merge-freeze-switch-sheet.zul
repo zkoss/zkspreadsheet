@@ -15,7 +15,7 @@ Since 3.8.1
         org.zkoss.zss.api.Ranges.range(ss.getSelectedSheet()).setFreezePanel(5,5);
     }
 ]]></zscript>
-<spreadsheet id="ss" src="/issue3/book/blank.xlsx" maxVisibleRows="60" maxVisibleColumns="40"
+<spreadsheet id="ss" src="/book/blank.xlsx" maxVisibleRows="60" maxVisibleColumns="40"
     hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
     showFormulabar="true"/>
 </vlayout>

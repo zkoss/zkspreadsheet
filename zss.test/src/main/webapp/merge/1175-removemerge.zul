@@ -10,7 +10,7 @@ Since 3.8.3
 <button label="delete 4 columns with false autoRefresh" id="delete" onClick="delete()"/>
 <button label="delete 4 columns directly" id="delete2" onClick="delete2()"/>
 	<spreadsheet id="spreadsheet" hflex="1" height="500px"
-	src="/issue3/book/blank.xlsx" 
+	src="/book/blank.xlsx"
 	showToolbar="true"
 	showFormulabar="false"
 	showSheetbar="true"

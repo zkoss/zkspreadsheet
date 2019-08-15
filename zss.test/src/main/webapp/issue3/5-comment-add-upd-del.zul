@@ -9,7 +9,7 @@ Since 3.7.0
 6. protect sheet mode with edit objects allowed can be also worked for above 5 steps, deny otherwise.
 7. make suer above 6 steps work well.
 </label>
-	<spreadsheet id="ss" vflex="1" hflex="1" src="/issue3/book/blank.xlsx"
+	<spreadsheet id="ss" vflex="1" hflex="1" src="/book/blank.xlsx"
 		showToolbar="true" showSheetbar="true" showFormulabar="true" showContextMenu="true"
 		maxVisibleRows="100" maxVisibleColumns="100"/>
 </zk>

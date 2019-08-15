@@ -14,7 +14,7 @@ Steps:
 			<button label="Apply outside border" onClick="applyBorder()"></button>
 			<button label="Insert column" onClick="insertColumn()"></button>
 		</hlayout>
-		<spreadsheet id="ss" src="/issue3/book/blank.xlsx" width="1500px" height="800px"
+		<spreadsheet id="ss" src="/book/blank.xlsx" width="1500px" height="800px"
 			ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e" maxrows="500" maxcolumns="100" showToolbar="true" showFormulabar="true"
 			showSheetbar="true" showContextMenu="true">
 		</spreadsheet>

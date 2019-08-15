@@ -6,5 +6,5 @@ Since 3.6.0
 2. afterward, make sure the height and width of focus mark is fine.
 3. press ctrl + z to make sure we can undo this action.
 </label>
-	<spreadsheet id="ss" vflex="1" src="/issue3/book/blank.xlsx" showToolbar="true" showSheetbar="true" showFormulabar="true" width="600px"/>
+	<spreadsheet id="ss" vflex="1" src="/book/blank.xlsx" showToolbar="true" showSheetbar="true" showFormulabar="true" width="600px"/>
 </zk>

@@ -18,7 +18,7 @@ Copyright (C) 2014 Potix Corporation. All Rights Reserved.
 1. right click on inactive sheet tab.
 2. see the context menu will disappear every two times.
 	</label>
-	<spreadsheet src="/issue3/book/blank.xlsx" showContextMenu="true" showSheetbar="true"
+	<spreadsheet src="/book/blank.xlsx" showContextMenu="true" showSheetbar="true"
 		height="500px" width="800px">
 	</spreadsheet>
 </window>

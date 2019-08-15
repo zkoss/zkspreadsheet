@@ -10,7 +10,7 @@ Since 3.8.2
 <button id="publish" label="populate data - event queue"/>
 	<spreadsheet id="ss" width="100%"  vflex="1" showSheetbar="true" 
 		maxVisibleRows="1000" maxVisibleColumns="30"  
-		src="/issue3/book/blank.xlsx"/>
+		src="/book/blank.xlsx"/>
 </div>
 </vlayout>
 </zk>

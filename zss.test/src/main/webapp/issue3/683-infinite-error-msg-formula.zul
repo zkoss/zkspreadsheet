@@ -20,6 +20,6 @@ Copyright (C) 2014 Potix Corporation. All Rights Reserved.
 		3. should only show error message once
 		4. do step 1-3 again in formula bar editor 
 	</label>
-	<spreadsheet src="/issue3/book/blank.xlsx" showFormulabar="true" height="500px" width="700px">
+	<spreadsheet src="/book/blank.xlsx" showFormulabar="true" height="500px" width="700px">
 	</spreadsheet>
 </window>

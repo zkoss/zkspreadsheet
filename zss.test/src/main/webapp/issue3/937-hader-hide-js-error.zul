@@ -3,6 +3,6 @@
 Since 3.8.0
 change sheet tab to "Sheet2", if you get a js error in this page, that's a bug.
 </label>
-    <spreadsheet id="ss" src="/issue3/book/blank.xlsx" maxVisibleRows="50" vflex="1" width="100%" 
+    <spreadsheet id="ss" src="/book/blank.xlsx" maxVisibleRows="50" vflex="1" width="100%"
     showSheetbar="true" showContextMenu="true" showFormulabar="true" hiderowhead="true" hidecolumnhead="true"></spreadsheet>
 </zk>

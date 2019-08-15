@@ -3,7 +3,7 @@
 		scroll vertically and horizontally in four frozen panel. make sure it works.
 	</label>
 	
-	<spreadsheet id="ss" src="/issue3/book/blank.xlsx" maxVisibleRows="50" maxVisibleColumns="50"
+	<spreadsheet id="ss" src="/book/blank.xlsx" maxVisibleRows="50" maxVisibleColumns="50"
 		hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
 		showFormulabar="true" />
 		

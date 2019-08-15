@@ -19,6 +19,6 @@ Copyright (C) 2014 Potix Corporation. All Rights Reserved.
 		2. press up, down, left, right, home, end, page up or page down
 		3. it will navigate to other cells and C4 should contain "aaa"
 	</label>
-	<spreadsheet src="/issue3/book/blank.xlsx" showFormulabar="true" height="500px" width="800px" maxVisibleRows="100">
+	<spreadsheet src="/book/blank.xlsx" showFormulabar="true" height="500px" width="800px" maxVisibleRows="100">
 	</spreadsheet>
 </window>

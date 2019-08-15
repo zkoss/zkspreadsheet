@@ -12,6 +12,6 @@ Since 3.8.3
 9. Should see ONLY "中文" in editing box; press Enter key and Cell A1 left editing mode
 10. Should see ONLY "中文" in Cell A1; if not, it is a bug.
 </label>
-	<spreadsheet id="ss2" src="/issue3/book/blank.xlsx" showToolbar="true" maxVisibleRows="100" maxVisibleColumns="100" width="700px"
+	<spreadsheet id="ss2" src="/book/blank.xlsx" showToolbar="true" maxVisibleRows="100" maxVisibleColumns="100" width="700px"
         height="500px" preloadColumnSize="100" preloadRowSize="100"/>	
 </vlayout>

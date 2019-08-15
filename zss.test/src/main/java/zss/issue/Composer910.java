@@ -38,8 +38,8 @@ public class Composer910 extends SelectorComposer<Window> {
         super.doAfterCompose(comp);
          
         Importer importer = Importers.getImporter();
-        Book resumeBook = importer.imports(getFile("/issue3/book/blank.xlsx"),"resume.xlsx");
-        Book profileBook = importer.imports(getFile("/issue3/book/blank.xlsx"),"profile.xlsx");
+        Book resumeBook = importer.imports(getFile("/book/blank.xlsx"),"resume.xlsx");
+        Book profileBook = importer.imports(getFile("/book/blank.xlsx"),"profile.xlsx");
         profileSpreadsheet.setBook(profileBook);
         resumeSpreadsheet.setBook(resumeBook);
          

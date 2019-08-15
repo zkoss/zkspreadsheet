@@ -16,6 +16,6 @@ Since 3.8.0
 	<button label="toggle row headers" onClick="ss.setHiderowhead(!ss.isHiderowhead())"/>
 	<button label="freeze" onClick='Ranges.range(ss.getSelectedSheet()).setFreezePanel(4, 4);'/>
 	<button label="unfreeze" onClick='Ranges.range(ss.getSelectedSheet()).setFreezePanel(0, 0);'/>
-    <spreadsheet id="ss" src="/issue3/book/blank.xlsx" maxVisibleRows="50" vflex="1" width="100%" 
+    <spreadsheet id="ss" src="/book/blank.xlsx" maxVisibleRows="50" vflex="1" width="100%"
     showSheetbar="true" showContextMenu="true" showFormulabar="true" hiderowhead="true" hidecolumnhead="true"></spreadsheet>
 </zk>

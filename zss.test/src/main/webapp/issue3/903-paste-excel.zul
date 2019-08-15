@@ -13,6 +13,6 @@ Since 3.7.0
 </label>
 	<label>For selenium text, you can simply paste in this text box.</label>
 	<textbox width="200px" height="50px" multiline="true" id="textbox"/>
-    <spreadsheet id="spreadsheet" src="/issue3/book/blank.xlsx" maxVisibleRows="50" vflex="1" width="100%" 
+    <spreadsheet id="spreadsheet" src="/book/blank.xlsx" maxVisibleRows="50" vflex="1" width="100%"
     showSheetbar="true" showContextMenu="true" showFormulabar="true"></spreadsheet>
 </zk>

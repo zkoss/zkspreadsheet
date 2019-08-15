@@ -15,7 +15,7 @@ Since 3.8.3
 <button id="normal" label="normal event"/>
     <spreadsheet id="ss" width="100%"  vflex="1" showSheetbar="true" 
         maxVisibleRows="1000" maxVisibleColumns="30"  showFormulabar="true"
-        src="/issue3/book/blank.xlsx" />
+        src="/book/blank.xlsx" />
 </div>
 
 </vlayout>

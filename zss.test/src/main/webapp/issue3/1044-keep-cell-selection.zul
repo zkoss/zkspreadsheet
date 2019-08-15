@@ -6,7 +6,7 @@ Since 3.8.1
 3. If not, it is a bug.
 	</label>
 <button id="alert" label="alert" onClick='alert("Keep cell selection range")'/>
-<spreadsheet id="ss" src="/issue3/book/blank.xlsx" maxVisibleRows="60" maxVisibleColumns="40"
+<spreadsheet id="ss" src="/book/blank.xlsx" maxVisibleRows="60" maxVisibleColumns="40"
 	hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
 	showFormulabar="true"/>
 	

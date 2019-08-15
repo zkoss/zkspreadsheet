@@ -21,7 +21,7 @@ Since 3.8.1
 <button id="btn2" label="show addRow/addColumn buttons" onClick="ss.setShowAddRow(true);ss.setShowAddColumn(true);"/>
 <button id="btn3" label="hide sheetbar" onClick="ss.setShowSheetbar(false);"/>
 <button id="btn4" label="show sheetbar" onClick="ss.setShowSheetbar(true);"/>
-	<spreadsheet id="ss" src="/issue3/book/blank.xlsx"
+	<spreadsheet id="ss" src="/book/blank.xlsx"
 		hflex="1" vflex="1" showContextMenu="true" showSheetbar="true" showToolbar="true" 
 		showFormulabar="true" />
 </vlayout>
