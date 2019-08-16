@@ -2421,33 +2421,33 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			zcss.setRule(name + " .zshr" + zsh, ["max-height"], [height + "px"], createbefor, cssId); // real in cell
 		}
 		
-		//set merged cell height;
-		var ranges = this.mergeMatrix.getRangesByRow(row),
-			size = ranges.length,
-			range;
-		
-		for (var i = 0; i < size; i++) {
-			range = ranges[i];
-			var h = custRowHeight.getStartPixel(range.bottom + 1);
-			h -= custRowHeight.getStartPixel(range.top);
+		//resize merged cells height;
+		var ranges = this.mergeMatrix.getRangesByRow(row);
+		for (var i = 0; i < ranges.length; i++) {
+			var range = ranges[i];
+            var mergedCellCssSelector = this.getMergedCellCssSelector(range);
+			var mergedHeight = custRowHeight.getStartPixel(range.bottom + 1);
+			mergedHeight -= custRowHeight.getStartPixel(range.top); //is different from getDiffPixel(range.top, range.bottom), unknown reason
 
 			//ZSS-1115: see test case 1115-insert-merge.zul; hidden column
 			// and vertical merge; should still hide the cell
-			var w = custColWidth.getStartPixel(range.right + 1);
-			w -= custColWidth.getStartPixel(range.left);
+			var mergedWidth = custColWidth.getStartPixel(range.right + 1);
+			mergedWidth -= custColWidth.getStartPixel(range.left);
 
-			celltextheight = h;
-			cellheight = (zk.ie && zk.ie < 11) || zk.safari || zk.opera ? celltextheight : h;
+			celltextheight = mergedHeight;
+			cellheight = (zk.ie && zk.ie < 11) || zk.safari || zk.opera ? celltextheight : mergedHeight;
 
-			if (h <= 0 || w <= 0) { //ZSS-1115: @see test ase 1115-insert-merge.zul; must check w, too. 
-				zcss.setRule(name+" .zsmerge"+range.id,"display","none",true, cssId);
+			if (mergedHeight <= 0 || mergedWidth <= 0) { //ZSS-1115: @see test ase 1115-insert-merge.zul; must check w, too.
+				zcss.setRule(mergedCellCssSelector,"display","none",true, cssId);
 			} else {
 				// ZSS-330, ZSS-382: when row was hidden, the left-top cell of merge is also hidden by row style.  
 				// But, the left-top cell must display, its position and size should be adjusted automatically
-				zcss.setRule(name+" .zsmerge"+range.id,"display","inline-block",true, cssId);
-				zcss.setRule(name+" .zsmerge"+range.id,"height", jq.px0(cellheight), true, cssId);
-				zcss.setRule(name+" .zsmerge"+range.id+" .zscelltxt","height", jq.px0(celltextheight),true, cssId);
-				zcss.setRule(name+" .zsmerge"+range.id,"border-bottom-width","1px",true, cssId); // re-apply bottom border for grid line; Or grid line will be missed if row was hidden  
+				zcss.setRule(mergedCellCssSelector,"display","inline-block",true, cssId);
+				zcss.setRule(mergedCellCssSelector,"height", jq.px0(cellheight), true, cssId);
+				//ZSS-1390 whole merged cell is hidden, width is 0, need to resize after un-hiding
+				zcss.setRule(mergedCellCssSelector,"width", jq.px0(mergedWidth), true, cssId);
+				zcss.setRule(mergedCellCssSelector+" .zscelltxt","height", jq.px0(celltextheight),true, cssId);
+				zcss.setRule(mergedCellCssSelector,"border-bottom-width","1px",true, cssId); // re-apply bottom border for grid line; Or grid line will be missed if row was hidden
 			}
 		}
 		
@@ -3590,6 +3590,9 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			}
 		}
 		return false;
+	},
+	getMergedCellCssSelector: function(range){
+	    return this._wgt.getSelectorPrefix() +" .zsmerge"+range.id
 	}
 }, {
 	NOFOCUS: 0,
