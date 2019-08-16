@@ -2225,34 +2225,34 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		}
 
 		//set merged cell width;
-		var ranges = this.mergeMatrix.getRangesByColumn(col),
-			size = ranges.length,
-			range;
-		
-		for (var i = 0; i < size; i++) {
-			range = ranges[i];
-			var w = custColWidth.getStartPixel(range.right + 1);
-			w -= custColWidth.getStartPixel(range.left);
+		var ranges = this.mergeMatrix.getRangesByColumn(col);
+
+		for (var i = 0; i < ranges.length; i++) {
+			var range = ranges[i];
+			var mergedWidth = custColWidth.getStartPixel(range.right + 1);
+			mergedWidth -= custColWidth.getStartPixel(range.left);
 			
 			//ZSS-1115: see test case 1115-insert-merge.zul; 
 			// hidden row and horizontal merge; should still hide the cell
-			var h = custRowHeight.getStartPixel(range.bottom + 1);
-			h -= custRowHeight.getStartPixel(range.top);
+			var mergedHeight = custRowHeight.getStartPixel(range.bottom + 1);
+			mergedHeight -= custRowHeight.getStartPixel(range.top);
 
-			celltextwidth = w - 2 * cp;
+			celltextwidth = mergedWidth - 2 * cp;
 			fixpadding = false;
 			if (celltextwidth < 0) {
 				fixpadding = true;
-				celltextwidth = w;
+				celltextwidth = mergedWidth;
 			}
-			cellwidth = w;
-			if (w <= 0 || h <= 0) //ZSS-1115: hidden row + horizontal merge 
+			cellwidth = mergedWidth;
+			if (mergedWidth <= 0 || mergedHeight <= 0) //ZSS-1115: hidden row + horizontal merge
 				zcss.setRule(name+" .zsmerge"+range.id,"display","none",true, cssId);
 			else {
 				// ZSS-330, ZSS-382: when column was hidden, the left-top cell of merge is also hidden by column style.  
 				// But, the left-top cell must display, its position and size should be adjusted automatically
 				zcss.setRule(name+" .zsmerge"+range.id,"display","inline-block",true, cssId);
 				zcss.setRule(name+" .zsmerge"+range.id,"width", jq.px0(cellwidth), true, cssId);
+				//similar to ZSS-1390, resize cell height after unhiding
+				zcss.setRule(name+" .zsmerge"+range.id,"height", jq.px0(mergedHeight), true, cssId);
 				zcss.setRule(name+" .zsmerge"+range.id+" .zscelltxt","width", jq.px0(celltextwidth), true, cssId);
 				if (fixpadding)
 					zcss.setRule(name+" .zsmerge"+range.id,"padding", "0px",true, cssId);
