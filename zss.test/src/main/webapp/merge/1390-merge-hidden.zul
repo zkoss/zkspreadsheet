@@ -1,0 +1,17 @@
+<zk>
+    <spreadsheet id="spreadsheet" src="/merge/book/1390-mergedHidden.xlsx" hflex="1" height="90%"
+                 showToolbar="true" showSheetbar="true" showContextMenu="true" onCellClick="unhide(event)"/>
+    <zscript><![CDATA[
+import org.zkoss.zss.ui.event.*;
+
+public void unhide(CellMouseEvent event){
+    if (event.getRow() == 0){
+        Sheet sheet = spreadsheet.getSelectedSheet();
+        Ranges.range(sheet, "A2:A3").toRowRange().setHidden(false);
+    }else if (event.getColumn() == 6){
+        Sheet sheet = spreadsheet.getSelectedSheet();
+        Ranges.range(sheet, "F1").toColumnRange().setHidden(false);
+    }
+}
+    ]]></zscript>
+</zk>
