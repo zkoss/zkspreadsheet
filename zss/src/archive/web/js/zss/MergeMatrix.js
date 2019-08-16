@@ -25,7 +25,7 @@ zss.MergeMatrix =  zk.$extends(zk.Object, {
 	mergeMatrix: [],
 	$init: function (matrix, sheet) {
 		this.$supers('$init', arguments);
-		this.mergeMatrix = matrix;
+		this.mergeMatrix = matrix; // array of zss.Range
 		this.sheet = sheet;
 	},
 	/**

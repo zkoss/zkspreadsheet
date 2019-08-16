@@ -186,7 +186,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 	lineHeight: 'normal', 
 	$init: function (wgt) {
 		this.$supers(zss.SSheetCtrl, '$init', []);
-		this._wgt = wgt;
+		this._wgt = wgt; //Spreadsheet
 		this.setHflex(true);
 		this.setVflex(true);
 		this.pageKeySize = 100;
