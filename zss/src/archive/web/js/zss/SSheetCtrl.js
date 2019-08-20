@@ -2448,7 +2448,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 				//ZSS-1390 whole merged cell is hidden, width is 0, need to resize after un-hiding
 				zcss.setRule(mergedCellCssSelector,"width", jq.px0(mergedWidth), true, cssId);
 				zcss.setRule(mergedCellCssSelector+" .zscelltxt","height", jq.px0(celltextheight),true, cssId);
-				zcss.setRule(mergedCellCssSelector+" .zscelltxt","width", jq.px0(mergedWidth),true, cssId);
+				zcss.setRule(mergedCellCssSelector+" .zscelltxt","width", jq.px0(mergedWidth - 2 * this.cellPad),true, cssId);
 				zcss.setRule(mergedCellCssSelector,"border-bottom-width","1px",true, cssId); // re-apply bottom border for grid line; Or grid line will be missed if row was hidden
 			}
 		}
