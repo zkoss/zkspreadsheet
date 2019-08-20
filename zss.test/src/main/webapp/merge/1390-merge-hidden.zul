@@ -5,12 +5,15 @@
 import org.zkoss.zss.ui.event.*;
 
 public void unhide(CellMouseEvent event){
+    Sheet sheet = spreadsheet.getSelectedSheet();
     if (event.getRow() == 0){
-        Sheet sheet = spreadsheet.getSelectedSheet();
         Ranges.range(sheet, "A2:A3").toRowRange().setHidden(false);
+    }else if (event.getRow() == 9){
+        Ranges.range(sheet, "A11").toRowRange().setHidden(false);
     }else if (event.getColumn() == 6){
-        Sheet sheet = spreadsheet.getSelectedSheet();
         Ranges.range(sheet, "F1").toColumnRange().setHidden(false);
+    }else if (event.getColumn() == 8){
+        Ranges.range(sheet, "H1").toColumnRange().setHidden(false);
     }
 }
     ]]></zscript>
