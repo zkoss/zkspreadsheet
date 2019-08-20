@@ -2254,6 +2254,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 				//similar to ZSS-1390, resize cell height after unhiding
 				zcss.setRule(name+" .zsmerge"+range.id,"height", jq.px0(mergedHeight), true, cssId);
 				zcss.setRule(name+" .zsmerge"+range.id+" .zscelltxt","width", jq.px0(celltextwidth), true, cssId);
+				zcss.setRule(name+" .zsmerge"+range.id+" .zscelltxt","height", jq.px0(mergedHeight), true, cssId);
 				if (fixpadding)
 					zcss.setRule(name+" .zsmerge"+range.id,"padding", "0px",true, cssId);
 				else
@@ -2421,7 +2422,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			zcss.setRule(name + " .zshr" + zsh, ["max-height"], [height + "px"], createbefor, cssId); // real in cell
 		}
 		
-		//resize merged cells height;
+		//resize merged cells
 		var ranges = this.mergeMatrix.getRangesByRow(row);
 		for (var i = 0; i < ranges.length; i++) {
 			var range = ranges[i];
@@ -2447,6 +2448,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 				//ZSS-1390 whole merged cell is hidden, width is 0, need to resize after un-hiding
 				zcss.setRule(mergedCellCssSelector,"width", jq.px0(mergedWidth), true, cssId);
 				zcss.setRule(mergedCellCssSelector+" .zscelltxt","height", jq.px0(celltextheight),true, cssId);
+				zcss.setRule(mergedCellCssSelector+" .zscelltxt","width", jq.px0(mergedWidth),true, cssId);
 				zcss.setRule(mergedCellCssSelector,"border-bottom-width","1px",true, cssId); // re-apply bottom border for grid line; Or grid line will be missed if row was hidden
 			}
 		}
