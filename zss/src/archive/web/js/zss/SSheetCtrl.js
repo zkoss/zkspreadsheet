@@ -2231,34 +2231,35 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			var range = ranges[i];
 			var mergedWidth = custColWidth.getStartPixel(range.right + 1);
 			mergedWidth -= custColWidth.getStartPixel(range.left);
-			
-			//ZSS-1115: see test case 1115-insert-merge.zul; 
+
+			//ZSS-1115: see test case 1115-insert-merge.zul;
 			// hidden row and horizontal merge; should still hide the cell
 			var mergedHeight = custRowHeight.getStartPixel(range.bottom + 1);
 			mergedHeight -= custRowHeight.getStartPixel(range.top);
 
-			celltextwidth = mergedWidth - 2 * cp;
+			celltextwidth = mergedWidth - 2 * this.cellPad;
 			fixpadding = false;
 			if (celltextwidth < 0) {
 				fixpadding = true;
 				celltextwidth = mergedWidth;
 			}
 			cellwidth = mergedWidth;
+            var mergedCellCssSelector = this.getMergedCellCssSelector(range);
 			if (mergedWidth <= 0 || mergedHeight <= 0) //ZSS-1115: hidden row + horizontal merge
-				zcss.setRule(name+" .zsmerge"+range.id,"display","none",true, cssId);
+				zcss.setRule(mergedCellCssSelector, "display","none",true, cssId);
 			else {
 				// ZSS-330, ZSS-382: when column was hidden, the left-top cell of merge is also hidden by column style.  
 				// But, the left-top cell must display, its position and size should be adjusted automatically
-				zcss.setRule(name+" .zsmerge"+range.id,"display","inline-block",true, cssId);
-				zcss.setRule(name+" .zsmerge"+range.id,"width", jq.px0(cellwidth), true, cssId);
+				zcss.setRule(mergedCellCssSelector, "display","inline-block",true, cssId);
+				zcss.setRule(mergedCellCssSelector, "width", jq.px0(cellwidth), true, cssId);
 				//similar to ZSS-1390, resize cell height after unhiding
-				zcss.setRule(name+" .zsmerge"+range.id,"height", jq.px0(mergedHeight), true, cssId);
-				zcss.setRule(name+" .zsmerge"+range.id+" .zscelltxt","width", jq.px0(celltextwidth), true, cssId);
-				zcss.setRule(name+" .zsmerge"+range.id+" .zscelltxt","height", jq.px0(mergedHeight), true, cssId);
+				zcss.setRule(mergedCellCssSelector, "height", jq.px0(mergedHeight), true, cssId);
+				zcss.setRule(mergedCellCssSelector + " .zscelltxt","width", jq.px0(celltextwidth), true, cssId);
+				zcss.setRule(mergedCellCssSelector + " .zscelltxt","height", jq.px0(mergedHeight), true, cssId);
 				if (fixpadding)
-					zcss.setRule(name+" .zsmerge"+range.id,"padding", "0px",true, cssId);
+					zcss.setRule(mergedCellCssSelector, "padding", "0px",true, cssId);
 				else
-					zcss.setRule(name+" .zsmerge"+range.id,"padding", "", true, cssId);
+					zcss.setRule(mergedCellCssSelector, "padding", "", true, cssId);
 			}
 		}
 		
