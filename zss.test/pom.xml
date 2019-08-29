@@ -3,6 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.zkoss</groupId>
 	<artifactId>zss.test</artifactId>
+<!--	<version>3.9.6.FL.20190820-Eval</version>-->
 	<version>3.9.6-SNAPSHOT</version>
 	<properties>
 		<maven.build.timestamp.format>yyyy-MM-dd</maven.build.timestamp.format>
@@ -47,14 +48,14 @@ We also merge lots of POI test cases from a previous project &quot;zsstest&quot;
 	<dependencies>
 		<dependency>
 			<groupId>org.zkoss.zats</groupId>
-			<artifactId>zats-mimic-ext6</artifactId>
-			<version>1.1.0</version>
+			<artifactId>zats-mimic-ext7</artifactId>
+			<version>2.1.0</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.11</version>
+			<version>4.12</version>
 		</dependency>
 		<dependency>
 			<groupId>org.hamcrest</groupId>
