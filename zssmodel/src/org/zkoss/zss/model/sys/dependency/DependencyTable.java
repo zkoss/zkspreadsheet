@@ -24,7 +24,9 @@ import java.util.Set;
  * A is B's dependent, B is A's precedent.
  * When B changes , should call {@link #getDependents(Ref)} of B to create notification of A
  * When A been clear or deleted, should call {@link #clearDependents(Ref)} of A to clear tracking data
- * 
+ * For example, in A1
+ * =SUM(B1 + C1)
+ * when edit B1 (precedent), its dependents is A1
  * @author dennis
  * @since 3.5.0
  */
