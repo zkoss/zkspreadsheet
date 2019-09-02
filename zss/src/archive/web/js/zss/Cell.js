@@ -854,7 +854,15 @@ zss.Cell = zk.$extends(zk.Widget, {
             if (this.sheet._wgt.isSheetCSSReady()) {
                 this.processAlignmentOverflow();
             }else{ // when sheet switching
-                this.sheet.addSSInitLater(this.processAlignmentOverflow.bind(this));
+                var cell = this;
+                this.sheet.addSSInitLater(function(){
+                    //ZSS-1394 quickly switching sheets causes a javacript error
+                    //since this function processes alignment later, users could change to another sheet at this moment and cause the cell unbound
+                    //cell.sheet == sheet means it's unbound.
+                    if (cell.sheet != null){
+                        cell.processAlignmentOverflow();
+                    }
+                });
             }
         }
 
