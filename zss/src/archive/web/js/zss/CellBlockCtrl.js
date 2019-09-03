@@ -117,6 +117,7 @@ zss.CellBlockCtrl = zk.$extends(zk.Widget, {
 		var range = this.range;
 		if(!range || row < range.top || row > range.bottom || col < range.left || col > range.right)
 			return null;
+        // this object doesn't contain cell data of left and top frozen cells
 		return this.rows[row - range.top].getCellAt(col - range.left);
 	},
 	/**
