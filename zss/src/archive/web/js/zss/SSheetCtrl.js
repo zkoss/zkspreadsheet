@@ -172,6 +172,9 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
     widgetName: 'SSheetCtrl',
 	$o: zk.$void, //no need to invoke _addIdSpaceDown, no fellows relationship
 	/**
+	* activeBlock: null, CellBlockCtrl, cell data without frozen top and left
+	**/
+	/**
 	 * Editing formula info
 	 * 
 	 * <ul>
