@@ -270,21 +270,23 @@ zss.Row = zk.$extends(zk.Widget, {
 	getHeight: function(){
 		return this.sheet.custRowHeight._getCustomizedSize(this.r);
 	},
+	/** when moving into a cell with a hyperlink, turn the cursor to the pointer.
+	 * when moving out of the cell, reset the cursor back to normal.
+	**/
 	doMouseMove_: function(evt) {
-		var sheet = this.sheet,
-			mx = evt.pageX,
+		var mx = evt.pageX,
 			my = evt.pageY,
-			position = zss.SSheetCtrl._calCellPos(sheet, mx, my),
+			position = zss.SSheetCtrl._calCellPos(this.sheet, mx, my),
 			row = position[0],
 			column = position[1],
-			cell = sheet.getCell(row, column);
-
-		//ZSS-454 Cannot click on hyperlink in the merge cell.
-		if (cell.isMerged()) {
-			cell = sheet.getCell(cell.mert,cell.merl);
-		}
+			cell = this.sheet.getCell(row, column);
 
 		if (cell) {
+		    //ZSS-454 Cannot click on hyperlink in the merge cell.
+		    //ZSS-1395 when moving a cursor, zss sometimes throws a javascript error
+            if (cell.isMerged()) {
+                cell = this.sheet.getCell(cell.mert,cell.merl);
+            }
 			var $anchor = jq(cell.comp).find('a');
 			if ($anchor.length > 0) {
 				var anchor = $anchor[0];
