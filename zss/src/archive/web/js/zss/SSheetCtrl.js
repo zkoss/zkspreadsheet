@@ -240,8 +240,8 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		this.leftWidth = wgt.getLeftPanelWidth(); //default left panel width 28
 		this.rowHeight = wgt.getRowHeight(); //default row height 20
 		this.colWidth = wgt.getColumnWidth(); //default column width 80
-		this.frozenRow = wgt.getRowFreeze();
-		this.frozenCol = wgt.getColumnFreeze();
+		this.frozenRow = wgt.getRowFreeze(); //the last frozen row index
+		this.frozenCol = wgt.getColumnFreeze(); //the last frozen column index
 
 		this.custColWidth = new zss.PositionHelper(this.colWidth, snapshot ? snapshot.getCustColWidth() : newPositionArray(wgt.getCsc()));
 		this.custColWidth.ids = new zss.Id(snapshot?snapshot.getCustColLastId():0, 2);
