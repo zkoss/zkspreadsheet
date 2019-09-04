@@ -255,7 +255,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		//merge range
 		this.mergeMatrix = new zss.MergeMatrix(snapshot ? snapshot.getMergeMatrix() : newMergeMatrixArray(wgt.getMergeRange()), this);
 
-		var data = wgt._cacheCtrl.getSelectedSheet(),
+		var data = wgt._cacheCtrl.getSheetBy(this.serverSheetId),
 			sheetCSSReady = wgt.isSheetCSSReady();
 		visRng = visRng || zss.SSheetCtrl._getVisibleRange(this);
 		if (data) {			
