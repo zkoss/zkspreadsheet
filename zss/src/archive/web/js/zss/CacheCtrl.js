@@ -1009,7 +1009,7 @@ zss.ActiveRange = zk.$extends(zk.Object, {
 		}
 	}
 /**
- * Snapshot sheet relate status and attributes
+ * Snapshot sheet UI status e.g. focus, scrolling position and attributes
  * 
  * <ul>
  * 	<li>sheet style</li>
@@ -1023,18 +1023,17 @@ zss.ActiveRange = zk.$extends(zk.Object, {
  *  <li>highlight</li>
  * 	<li>displayGridlines</li>
  * 	<li>protect</li>
- * 	<li></li>
  * </ul>
  */
 zss.Snapshot = zk.$extends(zk.Object, {
-	$init: function (wgt) {
-		var sheet = wgt.sheetCtrl,
+	$init: function (spreadsheet) {
+		var sheet = spreadsheet.sheetCtrl,
 			dataPanel = sheet.dp,
 			leftPanel = sheet.lp,
 			topPanel = sheet.tp,
 			scrollPanel = sheet.sp,
 			visRng = zss.SSheetCtrl._getVisibleRange(sheet);
-		copyAttributes(this, wgt, 
+		copyAttributes(this, spreadsheet,
 			['_scss', '_displayGridlines', '_rowFreeze', '_columnFreeze', '_rowHeight', '_columnWidth', '_protect', '_maxRows', '_maxColumns']);
 		
 		this.setCustRowHeight(sheet.custRowHeight.custom);
@@ -1054,21 +1053,21 @@ zss.Snapshot = zk.$extends(zk.Object, {
 		this.setLeftPanelPos(leftPanel.toppos);
 		this.setTopPanelPos(topPanel.leftpos);
 		
-		if (wgt.getDataValidations) {
-			var dv = wgt.getDataValidations();
+		if (spreadsheet.getDataValidations) {
+			var dv = spreadsheet.getDataValidations();
 			if (dv) {
 				this.setDataValidations(dv);
 			}
 		}
-		if (wgt.getAutoFilter) {
-			var af = wgt.getAutoFilter();
+		if (spreadsheet.getAutoFilter) {
+			var af = spreadsheet.getAutoFilter();
 			if (af) {
 				this.setAutoFilter(af);
 			}
 		}
 		//ZSS-988
-		if (wgt.getTableFilters) {
-			var tbafs = wgt.getTableFilters();
+		if (spreadsheet.getTableFilters) {
+			var tbafs = spreadsheet.getTableFilters();
 			if (tbafs) {
 				this.setTableFilters(tbafs);
 			}
@@ -1139,9 +1138,9 @@ zss.CacheCtrl = zk.$extends(zk.Object, {
 	 * Current sheet data
 	 */
 	selected: null,
-	$init: function (wgt, v) {
-		this._wgt = wgt;
-		this.sheet = wgt.sheetCtrl;
+	$init: function (spreadsheet, v) {
+		this._wgt = spreadsheet;
+		this.sheet = spreadsheet.sheetCtrl;
 		
 		//key: sheet uuid, value: zss.ActiveRange
 		this.sheets = {};
