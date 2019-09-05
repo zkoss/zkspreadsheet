@@ -518,22 +518,22 @@ zss.SheetSelector = zk.$extends(zul.tab.Tabbox, {
 			
 			var cacheCtrl = wgt._cacheCtrl;
 			if (cacheCtrl) {
-				cacheCtrl.snap(currSheetId);//snapshot current sheet status
-				if (cacheCtrl.isCached(sheetId)) {
-					
+				this._wgt._cacheCtrl.snap(currSheetId);//snapshot current sheet status
+                var snapshot = this._wgt._cacheCtrl.getSnapshot(sheetId);
+				if (snapshot) {
+
 					//restore target sheet status: focus, selection etc..
-					var snapshop = cacheCtrl.getSnapshot(sheetId),
-						visRng = snapshop.getVisibleRange(),
-						focus = snapshop.getFocus(),
-						sel = snapshop.getSelection(),
-						hsel = snapshop.getHighlight(),
-						dv = snapshop.getDataValidations(),
-						af = snapshop.getAutoFilter(),
-						tbafs = snapshop.getTableFilters(), //ZSS-988
-						frow = snapshop.getRowFreeze(),
-						fcol = snapshop.getColumnFreeze(),
-						maxRows = snapshop.getMaxRows(), //ZSS-1082
-						maxColumns = snapshop.getMaxColumns(); //ZSS-1082
+					var	visRng = snapshot.getVisibleRange(),
+						focus = snapshot.getFocus(),
+						sel = snapshot.getSelection(),
+						hsel = snapshot.getHighlight(),
+						dv = snapshot.getDataValidations(),
+						af = snapshot.getAutoFilter(),
+						tbafs = snapshot.getTableFilters(), //ZSS-988
+						frow = snapshot.getRowFreeze(),
+						fcol = snapshot.getColumnFreeze(),
+						maxRows = snapshot.getMaxRows(), //ZSS-1082
+						maxColumns = snapshot.getMaxColumns(); //ZSS-1082
 						
 					//ZSS-1082
 					wgt.setMaxRows(maxRows);
