@@ -24,13 +24,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.zkoss.util.Locales;
 import org.zkoss.zss.Setup;
-import org.zkoss.zss.model.CellRegion;
-import org.zkoss.zss.model.ErrorValue;
-import org.zkoss.zss.model.SBook;
-import org.zkoss.zss.model.SBooks;
-import org.zkoss.zss.model.SCell;
-import org.zkoss.zss.model.SSheet;
-import org.zkoss.zss.model.SheetRegion;
 import org.zkoss.zss.model.SCell.CellType;
 import org.zkoss.zss.model.impl.AbstractBookSeriesAdv;
 import org.zkoss.zss.model.impl.BookSeriesBuilderImpl;
@@ -322,33 +315,33 @@ public class FormulaEvalTest {
 		Assert.assertEquals(ErrorValue.INVALID_NAME, getCell(sheetB, "B4").getErrorValue().getCode());
 	}
 	
-	private SCell getCell(SSheet sheet, String ref) {
+	public static SCell getCell(SSheet sheet, String ref) {
 		CellRegion region = new CellRegion(ref);
 		return sheet.getCell(region.getRow(), region.getColumn());
 	}
 
-	private Ref toAreaRef(String sheet1, String sheet2, String area) {
+	public static Ref toAreaRef(String sheet1, String sheet2, String area) {
 		return toAreaRef("book1", sheet1, sheet2, area);
 	}
-	private Ref toAreaRef(String book, String sheet1, String sheet2, String area) {
+	public static Ref toAreaRef(String book, String sheet1, String sheet2, String area) {
 		CellRegion r = new CellRegion(area);
 		return new RefImpl(book, sheet1, sheet2, r.getRow(), r.getColumn(), r.getLastRow(),
 				r.getLastColumn());
 	}
 
-	private Ref toSheetRef(String sheet1) {
+	public static Ref toSheetRef(String sheet1) {
 		return new RefImpl("book1", sheet1, -1);
 	}
 
-	private Ref toCellRef(String sheet1, String sheet2, String cell) {
+	public static Ref toCellRef(String sheet1, String sheet2, String cell) {
 		return toCellRef("book1", sheet1, sheet2, cell);
 	}
-	private Ref toCellRef(String book, String sheet1, String sheet2, String cell) {
+	public static Ref toCellRef(String book, String sheet1, String sheet2, String cell) {
 		CellRegion r = new CellRegion(cell);
 		return new RefImpl(book, sheet1, sheet2, r.getRow(), r.getColumn());
 	}
 
-	private Ref toNameRef(String name) {
+	public static Ref toNameRef(String name) {
 		return new NameRefImpl("book1", null, name);
 	}
 	

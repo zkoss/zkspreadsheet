@@ -9,6 +9,8 @@
 		<maven.build.timestamp.format>yyyy-MM-dd</maven.build.timestamp.format>
 		<packname>-0.0.1-SNAPSHOT-FL-${maven.build.timestamp}</packname>
 		<zk.version>8.0.5</zk.version>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
 	</properties>
 	<packaging>war</packaging>
 	<name>The ZK Spreadsheet Test Project</name>
@@ -129,19 +131,6 @@ We also merge lots of POI test cases from a previous project &quot;zsstest&quot;
 					<scanIntervalSeconds>5</scanIntervalSeconds>
 					<jettyXml>jetty.xml</jettyXml>
 				</configuration>
-			</plugin>			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.3.2</version>
-				<configuration>
-					<source>1.6</source>
-					<target>1.6</target>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-war-plugin</artifactId>
-				<version>2.4</version>
 			</plugin>
 		</plugins>
 	</build>

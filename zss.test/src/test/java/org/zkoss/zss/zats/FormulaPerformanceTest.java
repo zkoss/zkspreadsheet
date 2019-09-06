@@ -1,17 +1,14 @@
 package org.zkoss.zss.zats;
 
 import org.junit.*;
-import org.junit.internal.AssumptionViolatedException;
 import org.junit.rules.Stopwatch;
-import org.junit.runner.Description;
 import org.zkoss.zats.mimic.*;
 import org.zkoss.zss.api.Ranges;
-import org.zkoss.zss.api.model.*;
+import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.ui.Spreadsheet;
 
 import java.util.concurrent.TimeUnit;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 
@@ -21,44 +18,35 @@ import static org.junit.Assert.assertTrue;
  */
 public class FormulaPerformanceTest extends SpreadsheetTestCaseBase{
 
+	private Spreadsheet spreadsheet;
+	private DesktopAgent desktop;
+	private ComponentAgent zss;
+
 	@Test
     public void importFile(){
 		Zats.newClient().connect("/performance/formula.zul");
 		assertTrue(stopwatch.runtime(TimeUnit.MILLISECONDS) < 12000 );
     }
 
+	@Test
+	public void editCells(){
+		desktop =  Zats.newClient().connect("/performance/formula.zul");
+		zss = desktop.query("spreadsheet");
+		spreadsheet = zss.as(Spreadsheet.class);
+		assertTrue(spreadsheet.getSelectedSheetName().equals("录入表"));
+		int startingRow = 4;
+		int nCells = 1;
+		Sheet sheet = spreadsheet.getSelectedSheet();
+		long startTime =  stopwatch.runtime(TimeUnit.MILLISECONDS);
+		for (int row = startingRow ; row < startingRow + nCells ; row++ ) {
+			Ranges.range(sheet, row, 7).setCellEditText("1");
+		}
+		long endTime =  stopwatch.runtime(TimeUnit.MILLISECONDS);
+		assertTrue(endTime - startTime < 80000 );
+	}    
+
 
 	@Rule
-	public final Stopwatch stopwatch = new Stopwatch() {
-		protected void succeeded(long nanos, Description description) {
-			System.out.println(description.getMethodName() + " succeeded, time taken " + toMillis(nanos));
-		}
+	public final Stopwatch stopwatch = new PrintStopwatch();
 
-		/**
-		 * Invoked when a test fails
-		 */
-		protected void failed(long nanos, Throwable e, Description description) {
-			System.out.println(description.getMethodName() + " failed, time taken " + toMillis(nanos));
-		}
-
-		/**
-		 * Invoked when a test is skipped due to a failed assumption.
-		 */
-		protected void skipped(long nanos, AssumptionViolatedException e,
-							   Description description) {
-			System.out.println(description.getMethodName() + " skipped, time taken " + toMillis(nanos));
-		}
-
-		/**
-		 * Invoked when a test method finishes (whether passing or failing)
-		 */
-		protected void finished(long nanos, Description description) {
-			System.out.println(description.getMethodName() + " finished, time taken " + toMillis(nanos));
-		}
-
-		private String toMillis(long nanos){
-			return TimeUnit.MILLISECONDS.convert(nanos, TimeUnit.NANOSECONDS) + " " + TimeUnit.MILLISECONDS.toString();
-		}
-	};
-	
 }
