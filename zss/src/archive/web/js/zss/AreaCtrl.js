@@ -159,10 +159,11 @@ zss.SelAreaCtrl = zk.$extends(zss.AreaCtrl, {
 			col = cellpos[1],
 			cell = sheet.getCell(row, col);
 		//ZSS-454 Cannot click on hyperlink in the merge cell.
-		if (cell.isMerged()) {
-			cell = sheet.getCell(cell.mert,cell.merl);
-		}
+		//ZSS-1395 when moving a cursor, cell might be null for a sheet might not receive data yet
 		if (cell) {
+            if (cell.isMerged()) {
+                cell = sheet.getCell(cell.mert,cell.merl);
+            }
 			//ZSS-864
 			if (sheet._showCellComment)
 				sheet._showCellComment(cell);

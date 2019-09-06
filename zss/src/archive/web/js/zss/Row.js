@@ -281,9 +281,9 @@ zss.Row = zk.$extends(zk.Widget, {
 			column = position[1],
 			cell = this.sheet.getCell(row, column);
 
+        //ZSS-1395 when moving a cursor, cell might be null for a sheet might not receive data yet
 		if (cell) {
 		    //ZSS-454 Cannot click on hyperlink in the merge cell.
-		    //ZSS-1395 when moving a cursor, zss sometimes throws a javascript error
             if (cell.isMerged()) {
                 cell = this.sheet.getCell(cell.mert,cell.merl);
             }
