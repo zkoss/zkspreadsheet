@@ -1,0 +1,11 @@
+<zk>
+    <!--
+    * a convenient to import a file with query string e.g.
+    http://localhost:8080/zss.test/issue.zul?file=/book/math.xlsx
+    * without query string, it imports /book/blank.xlsx
+    -->
+    <spreadsheet id="ss" src="${empty param.file?'/book/blank.xlsx':param.file}"
+         maxVisibleRows="200" maxVisibleColumns="40"
+         width="100%" height="100%" showContextMenu="true" showSheetbar="true" showToolbar="true"
+         showFormulabar="true"/>
+</zk>
