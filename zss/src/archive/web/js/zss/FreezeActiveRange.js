@@ -17,13 +17,20 @@ Copyright (C) 2012 Potix Corporation. All Rights Reserved.
 */
 (function () {
 
-//ZSS-392: update freeze panels' activeRange individually
+/**
+ * cell cache for 3 frozen block (
+ * ZSS-392: update freeze panels' activeRange individually
+ */
 zss.FreezeActiveRange = zk.$extends(zss.ActiveRange, {
+    /** the position of this frozen block, could be LEFT, TOP, or CORNER
+    */
+    position: null,
 
-	$init: function (data) {
-		this.$supers(zss.FreezeActiveRange, '$init', [data]); 
+	$init: function (data, position) {
+		this.$supers(zss.FreezeActiveRange, '$init', [data]);
+		this.position = position;
 	},
-	
+
 	// override
 	update: function (v, dir) {
 		// just update cells
@@ -45,6 +52,12 @@ zss.FreezeActiveRange = zk.$extends(zss.ActiveRange, {
 		this.removeRows_(row, size, headers);
 	}
 	
+},
+{
+// the position of this frozen block
+    LEFT: 'LEFT',
+    TOP: 'TOP',
+    CORNER: 'CORNER',
 });
 
 })();
