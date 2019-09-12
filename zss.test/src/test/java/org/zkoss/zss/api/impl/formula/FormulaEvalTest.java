@@ -9,7 +9,7 @@
 
 Copyright (C) 2013 Potix Corporation. All Rights Reserved.
  */
-package org.zkoss.zss.model;
+package org.zkoss.zss.api.impl.formula;
 
 import java.io.Closeable;
 import java.io.InputStream;
@@ -24,6 +24,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.zkoss.util.Locales;
 import org.zkoss.zss.Setup;
+import org.zkoss.zss.model.*;
 import org.zkoss.zss.model.SCell.CellType;
 import org.zkoss.zss.model.impl.AbstractBookSeriesAdv;
 import org.zkoss.zss.model.impl.BookSeriesBuilderImpl;

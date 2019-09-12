@@ -4,7 +4,6 @@ import org.junit.*;
 import org.junit.rules.Stopwatch;
 import org.zkoss.util.Locales;
 import org.zkoss.zss.Setup;
-import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.model.impl.SimpleBookSeriesImpl;
 import org.zkoss.zss.model.sys.dependency.Ref;
 import org.zkoss.zss.range.*;
@@ -15,7 +14,7 @@ import java.io.IOException;
 import java.util.*;
 
 import static org.junit.Assert.assertEquals;
-import static org.zkoss.zss.model.FormulaEvalTest.toCellRef;
+import static org.zkoss.zss.api.impl.formula.FormulaEvalTest.toCellRef;
 
 
 public class DependencyTableTest {
