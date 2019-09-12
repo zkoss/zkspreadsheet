@@ -861,21 +861,21 @@ zss.ActiveRange = zk.$extends(zk.Object, {
 			if(this.leftFrozen) {
 				this.leftFrozen.update(v.leftFrozen, dir);
 			} else {
-				this.leftFrozen = new zss.FreezeActiveRange(v.leftFrozen);
+				this.leftFrozen = new zss.FreezeActiveRange(v.leftFrozen, zss.FreezeActiveRange.LEFT);
 			}
 		}
 		if(v.topFrozen) { // top frozen data
 			if(this.topFrozen) {
 				this.topFrozen.update(v.topFrozen, dir);
 			} else {
-				this.topFrozen = new zss.FreezeActiveRange(v.topFrozen);
+				this.topFrozen = new zss.FreezeActiveRange(v.topFrozen, zss.FreezeActiveRange.TOP);
 			}
 		}
 		if(v.cornerFrozen) { // corner frozen data
 			if(this.cornerFrozen) {
 				this.cornerFrozen.update(v.cornerFrozen, dir);
 			} else {
-				this.cornerFrozen = new zss.FreezeActiveRange(v.cornerFrozen);
+				this.cornerFrozen = new zss.FreezeActiveRange(v.cornerFrozen, zss.FreezeActiveRange.CORNER);
 			}
 		}
 		
