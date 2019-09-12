@@ -47,29 +47,31 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 		delete wgt.sheetCtrl._skipMove; //reset to don't skip
 	}
 
-	function doBlockUpdate(wgt, json, token) {
+	function doBlockUpdate(spreadsheet, json, token) {
 		//ZSS-1267: start the rendering message...
-		if (wgt.sheetCtrl) {
-			wgt.sheetCtrl.startRenderingMessage();
+		if (spreadsheet.sheetCtrl) {
+			spreadsheet.sheetCtrl.startRenderingMessage();
 		}
 
-		var ar = wgt._cacheCtrl.getSelectedSheet(),
-			tp = json.type;
-		if (ar && tp != 'ack') { //fetch cell will empty return,(not thing need to fetch)
-			var d = json.data,
-				tRow = json.top,
-				lCol = json.left,
-				bRow = tRow + json.height - 1,
-				rCol = lCol + json.width - 1;
-			ar.update(d);
-			wgt.sheetCtrl._cmdBlockUpdate(tp, d.dir, tRow, lCol, bRow, rCol);
-		}
+        if (json.type != 'ack'){
+            //this function is invoked by server response, don't call Cachectrl.getSelectedSheet() for selected sheet might be inconsistent between server and client
+            var cachedCellData = spreadsheet._cacheCtrl.getSheetBy(json.data.id);
+            if (cachedCellData) { //fetch cell will empty return,(not thing need to fetch)
+                var d = json.data,
+                    tRow = json.top,
+                    lCol = json.left,
+                    bRow = tRow + json.height - 1,
+                    rCol = lCol + json.width - 1;
+                cachedCellData.update(d);
+                spreadsheet.sheetCtrl._cmdBlockUpdate(json.type, d.dir, tRow, lCol, bRow, rCol);
+            }
+        }
 		if (token)
 			zkS.doCallback(token);
-		
+
 		//ZSS-1267: close the rendering message...
-		if (wgt.sheetCtrl) {
-			wgt.sheetCtrl.closeRenderingMessage();
+		if (spreadsheet.sheetCtrl) {
+			spreadsheet.sheetCtrl.closeRenderingMessage();
 		}
 	}
 	
@@ -551,14 +553,14 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 		/**
 		 * Sets selected sheet uuid
 		 * 
-		 * @param string sheey uuid
+		 * @param string sheet uuid
 		 * @param boolean fromServer
 		 * @param zss.Range visible range (from client) 
 		 */
 		sheetId: function (id, fromServer, visRange) {
 			//For isSheetCSSReady() to work correctly.
-			//when during select sheet in client side, server send focus au response first (set attributes later), 
-			// _sheetId will be last selected sheet, cause isSheetCSSReady() doesn't work correctly 
+			//during selecting a sheet at client side, server sends focus au response first (set attributes later),
+			// _sheetId will be the last selected sheet at client, cause isSheetCSSReady() doesn't work correctly
 			this._invalidatedSheetId = false;
 			
 			var sheetCtrl = this.sheetCtrl,
@@ -1122,14 +1124,15 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 		}
 	},
 	/**
-	 * Recive active range data
+	 * Receive active range data from server
 	 */
 	setActiveRangeUpdate: function (v) {
 		this._fetchActiveRange = null;
 		var cacheCtrl = this._cacheCtrl;
 		if (cacheCtrl) {
 			this.sheetCtrl.activeBlock.loadstate = zss.MainBlockCtrl.IDLE;
-			cacheCtrl.getSelectedSheet().fetchUpdate(v);
+			//don't call getSelectedSheet() since it's invoked by server response, selected sheet might be inconsistent between client and server for network latency
+			cacheCtrl.getSheetBy(v.id).fetchUpdate(v);
 			this.sheetCtrl.activeBlock.loadForVisible(); // 20160203, henrichen: load cell from cache
 			this.sheetCtrl.sendSyncblock();
 			//ZSS-1134: This is patchy; IE9 sometimes wrongly set 

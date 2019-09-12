@@ -1066,6 +1066,8 @@ zss.CacheCtrl = zk.$extends(zk.Object, {
 		
 		this.selected = rng;
 	},
+	/** selected sheet might be inconsistent between server and client for network latency
+	*/
 	getSelectedSheet: function () {
 		return this.selected;
 	}
