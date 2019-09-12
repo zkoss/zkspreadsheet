@@ -239,18 +239,20 @@ public class FormulaPerformanceTest {
 	public void testDepend() {
 		SBook book = SBooks.createBook("Book1");
 		SSheet sheet = book.createSheet("Sheet1");
-		sheet.getCell(0, 0).setNumberValue(3.0); // A1
-		sheet.getCell(0, 1).setFormulaValue("A1 * 2"); // B1
-		Assert.assertEquals(3.0, sheet.getCell(0, 0).getNumberValue(), EPSILON);
-		Assert.assertEquals(6.0, sheet.getCell(0, 1).getNumberValue(), EPSILON);
+		SCell a1 = sheet.getCell(0, 0);
+		a1.setNumberValue(3.0); // A1
+		SCell b1 = sheet.getCell(0, 1);
+		b1.setFormulaValue("A1 * 2"); // B1
+		Assert.assertEquals(3.0, a1.getNumberValue(), EPSILON);
+		Assert.assertEquals(6.0, b1.getNumberValue(), EPSILON);
 
-		sheet.getCell(0, 0).setNumberValue(1.0);
-		Assert.assertEquals(6.0, sheet.getCell(0, 1).getNumberValue(), EPSILON);
-//		sheet.getCell(0, 1).clearFormulaResultCache();// cell clear it's cache automatically
-		Assert.assertEquals(2.0, sheet.getCell(0, 1).getNumberValue(), EPSILON);
+		a1.setNumberValue(1.0);
+		Assert.assertEquals(6.0, b1.getNumberValue(), EPSILON);
+		sheet.getCell(0, 1).clearFormulaResultCache();// cell clear it's cache automatically
+		Assert.assertEquals(2.0, b1.getNumberValue(), EPSILON);
 
-		sheet.getCell(0, 0).clearValue();
-//		sheet.getCell(0, 1).clearFormulaResultCache();// cell clear it's cache automatically
-		Assert.assertEquals(0.0, sheet.getCell(0, 1).getNumberValue(), EPSILON);
+		a1.clearValue();
+		sheet.getCell(0, 1).clearFormulaResultCache();// cell clear it's cache automatically
+		Assert.assertEquals(0.0, b1.getNumberValue(), EPSILON);
 	}
 }

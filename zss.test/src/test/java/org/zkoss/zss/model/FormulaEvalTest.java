@@ -578,7 +578,7 @@ public class FormulaEvalTest {
 	}
 	
 	@Test
-	@Ignore
+	@Ignore("not supported")
 	public void testArrayFormula() {
 		SBook book = getBook("book/formula-eval.xlsx", "Book1");
 		SSheet sheet = book.getSheetByName("array");
