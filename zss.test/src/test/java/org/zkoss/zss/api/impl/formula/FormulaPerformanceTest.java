@@ -11,11 +11,8 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
  */
 package org.zkoss.zss.api.impl.formula;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.*;
+import org.junit.rules.Stopwatch;
 import org.zkoss.poi.ss.usermodel.CellValue;
 import org.zkoss.poi.ss.util.AreaReference;
 import org.zkoss.poi.ss.util.CellReference;
@@ -24,11 +21,17 @@ import org.zkoss.poi.xssf.usermodel.XSSFFormulaEvaluator;
 import org.zkoss.poi.xssf.usermodel.XSSFRow;
 import org.zkoss.poi.xssf.usermodel.XSSFSheet;
 import org.zkoss.poi.xssf.usermodel.XSSFWorkbook;
-import org.zkoss.zss.Setup;
+import org.zkoss.zss.*;
+import org.zkoss.zss.api.Ranges;
+import org.zkoss.zss.api.model.*;
 import org.zkoss.zss.model.SBook;
 import org.zkoss.zss.model.SBooks;
 import org.zkoss.zss.model.SCell;
 import org.zkoss.zss.model.SSheet;
+import org.zkoss.zss.zats.PrintStopwatch;
+
+import java.util.concurrent.TimeUnit;
+
 /**
  * @author Pao
  */
@@ -254,5 +257,21 @@ public class FormulaPerformanceTest {
 		a1.clearValue();
 		sheet.getCell(0, 1).clearFormulaResultCache();// cell clear it's cache automatically
 		Assert.assertEquals(0.0, b1.getNumberValue(), EPSILON);
+	}
+
+	/**
+	 * a formula that references the whole column like: =SUMIF(dataSource!A:A,">160000") takes long time
+	 */
+	@Test
+	public void wholeColumnRange(){
+		Book book = Util.loadBook(this, "book/columnRange.xlsx");
+		Sheet sheet2 = book.getSheetAt(1);
+		long begin = System.currentTimeMillis();
+		for (int row = 0 ; row <100 ; row++){
+			Assert.assertEquals("63000", Ranges.range(sheet2, row, 0).getCellFormatText());;
+		}
+
+		long time = System.currentTimeMillis() - begin;
+		System.out.println(time + " ms");
 	}
 }
