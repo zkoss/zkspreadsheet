@@ -28,7 +28,12 @@ Copyright (C) 2006 Potix Corporation. All Rights Reserved.
 		<name>org.zkoss.zk.WPD.cache</name>
 		<value>false</value>
 	</library-property>
-	
+
+	<library-property>
+		<name>org.zkoss.util.logging.config.file</name>
+		<value>/zk-log.properties</value>
+	</library-property>
+
 	<!-- To specify which color picker (CE & PE) Spreadsheet uses  
 	<library-property>
 		<name>org.zkoss.zss.colorPickerExUsed</name>
