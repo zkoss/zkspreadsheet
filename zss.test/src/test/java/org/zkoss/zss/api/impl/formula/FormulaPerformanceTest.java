@@ -9,26 +9,17 @@
 
 Copyright (C) 2013 Potix Corporation. All Rights Reserved.
  */
-package org.zkoss.zss.model;
+package org.zkoss.zss.api.impl.formula;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.*;
 import org.zkoss.poi.ss.usermodel.CellValue;
-import org.zkoss.poi.ss.util.AreaReference;
-import org.zkoss.poi.ss.util.CellReference;
-import org.zkoss.poi.xssf.usermodel.XSSFCell;
-import org.zkoss.poi.xssf.usermodel.XSSFFormulaEvaluator;
-import org.zkoss.poi.xssf.usermodel.XSSFRow;
-import org.zkoss.poi.xssf.usermodel.XSSFSheet;
-import org.zkoss.poi.xssf.usermodel.XSSFWorkbook;
-import org.zkoss.zss.Setup;
-import org.zkoss.zss.model.SBook;
-import org.zkoss.zss.model.SBooks;
-import org.zkoss.zss.model.SCell;
-import org.zkoss.zss.model.SSheet;
+import org.zkoss.poi.ss.util.*;
+import org.zkoss.poi.xssf.usermodel.*;
+import org.zkoss.zss.*;
+import org.zkoss.zss.api.Ranges;
+import org.zkoss.zss.api.model.*;
+import org.zkoss.zss.model.*;
+
 /**
  * @author Pao
  */
@@ -239,18 +230,36 @@ public class FormulaPerformanceTest {
 	public void testDepend() {
 		SBook book = SBooks.createBook("Book1");
 		SSheet sheet = book.createSheet("Sheet1");
-		sheet.getCell(0, 0).setNumberValue(3.0); // A1
-		sheet.getCell(0, 1).setFormulaValue("A1 * 2"); // B1
-		Assert.assertEquals(3.0, sheet.getCell(0, 0).getNumberValue(), EPSILON);
-		Assert.assertEquals(6.0, sheet.getCell(0, 1).getNumberValue(), EPSILON);
+		SCell a1 = sheet.getCell(0, 0);
+		a1.setNumberValue(3.0); // A1
+		SCell b1 = sheet.getCell(0, 1);
+		b1.setFormulaValue("A1 * 2"); // B1
+		Assert.assertEquals(3.0, a1.getNumberValue(), EPSILON);
+		Assert.assertEquals(6.0, b1.getNumberValue(), EPSILON);
 
-		sheet.getCell(0, 0).setNumberValue(1.0);
-		Assert.assertEquals(6.0, sheet.getCell(0, 1).getNumberValue(), EPSILON);
-//		sheet.getCell(0, 1).clearFormulaResultCache();// cell clear it's cache automatically
-		Assert.assertEquals(2.0, sheet.getCell(0, 1).getNumberValue(), EPSILON);
+		a1.setNumberValue(1.0);
+		Assert.assertEquals(6.0, b1.getNumberValue(), EPSILON);
+		sheet.getCell(0, 1).clearFormulaResultCache();// cell clear it's cache automatically
+		Assert.assertEquals(2.0, b1.getNumberValue(), EPSILON);
 
-		sheet.getCell(0, 0).clearValue();
-//		sheet.getCell(0, 1).clearFormulaResultCache();// cell clear it's cache automatically
-		Assert.assertEquals(0.0, sheet.getCell(0, 1).getNumberValue(), EPSILON);
+		a1.clearValue();
+		sheet.getCell(0, 1).clearFormulaResultCache();// cell clear it's cache automatically
+		Assert.assertEquals(0.0, b1.getNumberValue(), EPSILON);
+	}
+
+	/**
+	 * a formula that references the whole column like: =SUMIF(dataSource!A:A,">160000") takes long time
+	 */
+	@Test
+	public void wholeColumnRange(){
+		Book book = Util.loadBook(this, "book/columnRange.xlsx");
+		Sheet sheet2 = book.getSheetAt(1);
+		long begin = System.currentTimeMillis();
+		for (int row = 0 ; row <100 ; row++){
+			Assert.assertEquals("63000", Ranges.range(sheet2, row, 0).getCellFormatText());;
+		}
+
+		long time = System.currentTimeMillis() - begin;
+		System.out.println(time + " ms");
 	}
 }

@@ -3,11 +3,14 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.zkoss</groupId>
 	<artifactId>zss.test</artifactId>
+<!--	<version>3.9.6.FL.20190820-Eval</version>-->
 	<version>3.9.6-SNAPSHOT</version>
 	<properties>
 		<maven.build.timestamp.format>yyyy-MM-dd</maven.build.timestamp.format>
 		<packname>-0.0.1-SNAPSHOT-FL-${maven.build.timestamp}</packname>
 		<zk.version>8.0.5</zk.version>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
 	</properties>
 	<packaging>war</packaging>
 	<name>The ZK Spreadsheet Test Project</name>
@@ -47,14 +50,14 @@ We also merge lots of POI test cases from a previous project &quot;zsstest&quot;
 	<dependencies>
 		<dependency>
 			<groupId>org.zkoss.zats</groupId>
-			<artifactId>zats-mimic-ext6</artifactId>
-			<version>1.1.0</version>
+			<artifactId>zats-mimic-ext7</artifactId>
+			<version>2.1.0</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.11</version>
+			<version>4.12</version>
 		</dependency>
 		<dependency>
 			<groupId>org.hamcrest</groupId>
@@ -128,19 +131,6 @@ We also merge lots of POI test cases from a previous project &quot;zsstest&quot;
 					<scanIntervalSeconds>5</scanIntervalSeconds>
 					<jettyXml>jetty.xml</jettyXml>
 				</configuration>
-			</plugin>			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.3.2</version>
-				<configuration>
-					<source>1.6</source>
-					<target>1.6</target>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-war-plugin</artifactId>
-				<version>2.4</version>
 			</plugin>
 		</plugins>
 	</build>

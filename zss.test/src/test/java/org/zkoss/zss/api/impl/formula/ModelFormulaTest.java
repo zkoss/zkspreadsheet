@@ -1,4 +1,4 @@
-package org.zkoss.zss.model;
+package org.zkoss.zss.api.impl.formula;
 
 import java.util.Locale;
 import java.util.Set;
