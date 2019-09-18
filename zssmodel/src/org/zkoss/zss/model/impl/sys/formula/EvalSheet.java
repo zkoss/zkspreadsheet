@@ -44,9 +44,15 @@ public class EvalSheet implements EvaluationSheet, Serializable {
 		return _sheet;
 	}
 
+	/**
+	 * return null for an empty cell to save evaluation time.
+	 * @param rowIndex
+	 * @param columnIndex
+	 * @return
+	 */
 	public EvaluationCell getCell(int rowIndex, int columnIndex) {
 		SCell cell = _sheet.getCell(rowIndex, columnIndex);
-		return cell != null ? new EvalCell(cell) : null;
+		return cell.isNull() ? null : new EvalCell(cell) ;
 	}
 
 	/*package*/ class EvalCell implements EvaluationCell {
