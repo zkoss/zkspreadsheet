@@ -51,6 +51,9 @@ public class EvalSheet implements EvaluationSheet, Serializable {
 	 * @return
 	 */
 	public EvaluationCell getCell(int rowIndex, int columnIndex) {
+		if (rowIndex > _sheet.getEndRowIndex()){
+			return null;
+		}
 		SCell cell = _sheet.getCell(rowIndex, columnIndex);
 		return cell.isNull() ? null : new EvalCell(cell) ;
 	}
