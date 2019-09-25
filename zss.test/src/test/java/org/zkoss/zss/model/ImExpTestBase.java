@@ -315,12 +315,13 @@ public class ImExpTestBase {
 		//column style
 		assertEquals(SFont.Boldweight.BOLD, sheet.getColumn(0).getCellStyle().getFont().getBoldweight());
 		//width
-		assertEquals(228, sheet.getColumn(0).getWidth()); 
+		assertEquals(64, sheet.getDefaultColumnWidth());
+		assertEquals(228, sheet.getColumn(0).getWidth());
 		assertEquals(100, sheet.getColumn(1).getWidth());
 		assertEquals(102, sheet.getColumn(2).getWidth());
 		assertEquals(64, sheet.getColumn(4).getWidth());	//the hidden column
 		assertEquals(64, sheet.getColumn(5).getWidth());	//default width
-		
+
 		//the hidden column
 		assertFalse(sheet.getColumn(3).isHidden());
 		assertTrue(sheet.getColumn(4).isHidden());		
