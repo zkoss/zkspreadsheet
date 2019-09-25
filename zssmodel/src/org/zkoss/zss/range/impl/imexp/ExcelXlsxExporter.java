@@ -64,13 +64,19 @@ public class ExcelXlsxExporter extends AbstractExcelExporter {
     		xssfSheet.getCTWorksheet().addNewCols();
     	}
 
-    	//ZSS-1132
 		final int defaultWidth = sheet.getDefaultColumnWidth();
 		final int columnWidth = columnArr.getWidth();
 		final AbstractBookAdv book = (AbstractBookAdv)sheet.getBook();
 		final int charWidth = book.getCharWidth();
-		
-    	CTCol col = ctSheet.getColsArray(0).addNewCol();
+		//ZSS-1402
+		CTSheetFormatPr ctSheetFormatPr = ctSheet.getSheetFormatPr();
+		if (ctSheetFormatPr == null) {
+			ctSheetFormatPr = ctSheet.addNewSheetFormatPr();
+		}
+		ctSheetFormatPr.setDefaultColWidth(UnitUtil.pxToCTChar(defaultWidth, charWidth));
+
+		//ZSS-1132
+		CTCol col = ctSheet.getColsArray(0).addNewCol();
         col.setMin(columnArr.getIndex()+1);
         col.setMax(columnArr.getLastIndex()+1);
     	col.setStyle(toPOICellStyle(columnArr.getCellStyle()).getIndex());
