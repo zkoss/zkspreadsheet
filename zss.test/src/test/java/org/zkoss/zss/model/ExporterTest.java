@@ -118,7 +118,14 @@ public class ExporterTest extends ImExpTestBase {
 		SBook book = ImExpTestUtil.loadBook(outFile, DEFAULT_BOOK_NAME);
 		columnTest(book);
 	}
-	
+
+	@Test
+	public void columnDefaultWidthTest() {
+		File outFile = ImExpTestUtil.write(ImExpTestUtil.loadBook(COLUMN_WIDTH_FILE_UNDER_TEST, "XSSFBook"), EXPORTER_TYPE);
+		SBook book = ImExpTestUtil.loadBook(outFile, DEFAULT_BOOK_NAME);
+		assertEquals(89, book.getSheet(0).getDefaultColumnWidth());
+	}
+
 	@Test
 	public void lastChangedColumnTest() {
 		File outFile = ImExpTestUtil.write(ImExpTestUtil.loadBook(IMPORT_FILE_UNDER_TEST, "XSSFBook"), EXPORTER_TYPE);

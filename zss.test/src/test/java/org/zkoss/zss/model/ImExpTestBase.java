@@ -44,6 +44,7 @@ public class ImExpTestBase {
 	protected URL CHART_IMPORT_FILE_UNDER_TEST = ImporterTest.class.getResource("book/chart.xlsx");
 	protected URL PICTURE_IMPORT_FILE_UNDER_TEST = ImporterTest.class.getResource("book/picture.xlsx");
 	protected URL FILTER_IMPORT_FILE_UNDER_TEST = ImporterTest.class.getResource("book/filter.xlsx");
+	protected URL COLUMN_WIDTH_FILE_UNDER_TEST = ImporterTest.class.getResource("book/customDefaultWidth.xlsx");
 	protected static String DEFAULT_BOOK_NAME = "PoiBook";
 	
 	protected void hyperlinkTest(SBook book) {

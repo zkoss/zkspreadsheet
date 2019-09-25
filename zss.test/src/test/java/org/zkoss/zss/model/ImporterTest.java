@@ -129,7 +129,13 @@ public class ImporterTest extends ImExpTestBase {
 		SBook book = ImExpTestUtil.loadBook(IMPORT_FILE_UNDER_TEST, "XSSFBook");
 		columnTest(book);		
 	}
-	
+
+	@Test
+	public void columnWidthTest(){
+		SBook book = ImExpTestUtil.loadBook(COLUMN_WIDTH_FILE_UNDER_TEST, "XSSFBook");
+		assertEquals(89, book.getSheet(0).getDefaultColumnWidth());
+	}
+
 	/**
 	 * import last column that only has column width change but has all empty cells 
 	 */
