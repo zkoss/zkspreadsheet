@@ -56,11 +56,11 @@ public abstract class AbstractCellAdv implements SCell,LinkedModelObject,Seriali
 				return;
 			}
 		}
-		throw new IllegalStateException("is "+getType()+", not the one of "+Arrays.asList(types));
+		throw new IllegalStateException(getReferenceString() + " is "+getType()+", not the one of "+Arrays.asList(types));
 	}
 	protected void checkFormulaResultType(CellType... types){
 		if(!getType().equals(CellType.FORMULA)){
-			throw new IllegalStateException("is "+getType()+", not the one of "+types);
+			throw new IllegalStateException(getReferenceString() +" is "+getType()+", not the one of "+Arrays.asList(types));
 		}
 		
 		Set<CellType> set = new LinkedHashSet<CellType>();
@@ -68,7 +68,7 @@ public abstract class AbstractCellAdv implements SCell,LinkedModelObject,Seriali
 			set.add(t);
 		}
 		if(!set.contains(getFormulaResultType())){
-			throw new IllegalStateException("is "+getFormulaResultType()+", not the one of "+Arrays.asList(types));
+			throw new IllegalStateException(getReferenceString() +" is "+getFormulaResultType()+", not the one of "+Arrays.asList(types));
 		}
 	}
 	
