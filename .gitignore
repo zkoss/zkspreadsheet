@@ -11,3 +11,4 @@ target/
 
 .idea/
 *.iml
+zss.test.browser/node_modules
