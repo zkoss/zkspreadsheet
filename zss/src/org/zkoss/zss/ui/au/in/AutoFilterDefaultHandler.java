@@ -35,34 +35,18 @@ import org.zkoss.util.resource.Labels;
 import org.zkoss.zss.api.AreaRef;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.api.model.impl.SheetImpl;
-import org.zkoss.zss.model.CellRegion;
-import org.zkoss.zss.model.SAutoFilter;
-import org.zkoss.zss.model.SCell;
-import org.zkoss.zss.model.SCellStyle;
-import org.zkoss.zss.model.SColorFilter;
-import org.zkoss.zss.model.SCustomFilter;
-import org.zkoss.zss.model.SCustomFilters;
-import org.zkoss.zss.model.SDynamicFilter;
-import org.zkoss.zss.model.SExtraStyle;
+import org.zkoss.zss.model.*;
 import org.zkoss.zss.model.SFill.FillPattern;
-import org.zkoss.zss.model.SFont;
-import org.zkoss.zss.model.SSheet;
 import org.zkoss.zss.model.SAutoFilter.FilterOp;
 import org.zkoss.zss.model.SAutoFilter.NFilterColumn;
 import org.zkoss.zss.model.SCell.CellType;
-import org.zkoss.zss.model.STable;
-import org.zkoss.zss.model.SFill;
-import org.zkoss.zss.model.STop10Filter;
+import org.zkoss.zss.model.impl.*;
 import org.zkoss.zss.model.sys.EngineFactory;
 import org.zkoss.zss.model.sys.format.FormatContext;
 import org.zkoss.zss.model.sys.format.FormatEngine;
 import org.zkoss.zss.model.sys.format.FormatResult;
 import org.zkoss.zss.model.util.Strings;
 import org.zkoss.zss.model.impl.AbstractAutoFilterAdv.FilterColumnImpl;
-import org.zkoss.zss.model.impl.AbstractSheetAdv;
-import org.zkoss.zss.model.impl.FillImpl;
-import org.zkoss.zss.model.impl.FontImpl;
-import org.zkoss.zss.model.impl.AutoFilterImpl;
 import org.zkoss.zss.range.impl.FilterRowInfo;
 import org.zkoss.zss.range.impl.FilterRowInfoComparator;
 import org.zkoss.zss.range.SRange;
@@ -234,7 +218,7 @@ import org.zkoss.zss.ui.Spreadsheet;
 		for (SFill fill : fcitems) {
 			HashMap item = new HashMap();
 			fcfills.add(item);
-			if (fill.getFillPattern() == FillPattern.NONE) {
+			if (fill.getFillPattern() == FillPattern.NONE && BLANK_FONT.getColor().equals(fill.getFillColor())) {
 				item.put("t", "Auto");
 			} else {
 				item.put("t", "");
@@ -478,7 +462,7 @@ import org.zkoss.zss.ui.Spreadsheet;
 			final SFont font = style == null ? null : style.getFont();
 			final boolean isDefaultFont = defaultFont.equals(font);
 			final SFill fcfill = font == null || isDefaultFont ? 
-				BLANK_FILL : new FillImpl(FillPattern.SOLID, font.getColor(), null);
+				BLANK_FILL : new FillImpl(FillPattern.NONE, font.getColor(), ColorImpl.WHITE);
 			fcitems.add(fcfill);			
 			int type0 = 3; //ZSS-1241
 			

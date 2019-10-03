@@ -32,25 +32,11 @@ import java.util.TimeZone;
 import org.zkoss.lang.Integers;
 import org.zkoss.poi.ss.usermodel.DateUtil;
 import org.zkoss.zk.ui.Executions;
-import org.zkoss.zss.model.CellRegion;
-import org.zkoss.zss.model.InvalidModelOpException;
-import org.zkoss.zss.model.SAutoFilter;
-import org.zkoss.zss.model.SBook;
-import org.zkoss.zss.model.SCell;
+import org.zkoss.zss.model.*;
 import org.zkoss.zss.model.SCell.CellType;
-import org.zkoss.zss.model.SCellStyle;
-import org.zkoss.zss.model.SColorFilter;
-import org.zkoss.zss.model.SCustomFilter;
-import org.zkoss.zss.model.SCustomFilters;
-import org.zkoss.zss.model.SDynamicFilter;
-import org.zkoss.zss.model.SExtraStyle;
-import org.zkoss.zss.model.SFill;
-import org.zkoss.zss.model.SRow;
-import org.zkoss.zss.model.STable;
 import org.zkoss.zss.model.SAutoFilter.FilterOp;
 import org.zkoss.zss.model.SAutoFilter.NFilterColumn;
 import org.zkoss.zss.model.SFill.FillPattern;
-import org.zkoss.zss.model.STop10Filter;
 import org.zkoss.zss.model.impl.AbstractSheetAdv;
 import org.zkoss.zss.model.impl.AbstractCellAdv;
 import org.zkoss.zss.model.impl.CellStyleImpl;
@@ -639,7 +625,7 @@ import org.zkoss.zss.range.impl.LessThanOrEqual;
 		final int col1 = affectedArea.getColumn(); 
 		final int col =  col1 + field - 1;
 		final int row = row1 + 1;
-		final int row2 = affectedArea.getLastRow();
+		final int lastRow = affectedArea.getLastRow();
 
 		SFill fill = fc.getColorFilter().getExtraStyle().getFill();
 		final boolean byFontColor = fc.getColorFilter().isByFontColor();
@@ -647,11 +633,11 @@ import org.zkoss.zss.range.impl.LessThanOrEqual;
 		if (!byFontColor && fill.getFillPattern() == FillPattern.SOLID) {
 			fill = new ExtraFillImpl(FillPattern.SOLID, fill.getBackColor(), fill.getFillColor());
 		}
-		
+
 		LinkedHashMap<Integer, Boolean> affectedRows = new LinkedHashMap<Integer, Boolean>(); 
-		for (int r = row; r <= row2; ++r) {
+		for (int r = row; r <= lastRow; ++r) {
 			final SCell cell = sheet.getCell(r, col);
-			final SCellStyle style = cell.isNull() ? null : cell.getCellStyle();
+			final SCellStyle style = cell.isNull() ? BLANK_STYLE : cell.getCellStyle();
 			if (!_match(style, fill, byFontColor)) { //to be hidden
 				final SRow rowobj = sheet.getRow(r);
 				if (!rowobj.isHidden()) { //a non-hidden row
