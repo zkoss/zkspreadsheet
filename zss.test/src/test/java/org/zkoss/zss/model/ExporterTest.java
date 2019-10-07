@@ -27,10 +27,7 @@ import static org.junit.Assert.assertEquals;
 public class ExporterTest extends ImExpTestBase {
 	
 	protected Type EXPORTER_TYPE = ExcelExportFactory.Type.XLSX;
-	@BeforeClass
-	static public void beforeClass() {
-		Setup.touch();
-	}
+
 	@Before
 	public void beforeTest() {
 		Locales.setThreadLocal(Locale.TAIWAN);

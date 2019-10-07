@@ -6,6 +6,8 @@ import java.net.URL;
 import java.text.DateFormat;
 import java.util.Locale;
 
+import org.junit.BeforeClass;
+import org.zkoss.zss.Setup;
 import org.zkoss.zss.model.ErrorValue;
 import org.zkoss.zss.model.SAutoFilter;
 import org.zkoss.zss.model.SBook;
@@ -46,7 +48,12 @@ public class ImExpTestBase {
 	protected URL FILTER_IMPORT_FILE_UNDER_TEST = ImporterTest.class.getResource("book/colorFilter.xlsx");
 	protected URL COLUMN_WIDTH_FILE_UNDER_TEST = ImporterTest.class.getResource("book/customDefaultWidth.xlsx");
 	protected static String DEFAULT_BOOK_NAME = "PoiBook";
-	
+
+	@BeforeClass
+	static public void beforeClass() {
+		Setup.touch();
+	}
+
 	protected void hyperlinkTest(SBook book) {
 		SSheet sheet = book.getSheetByName("Style");
 		SCell cell = sheet.getCell("B31");
