@@ -75,10 +75,9 @@ abstract public class AbstractExcelImporter extends AbstractImporter implements 
 	private static final Log _logger = Log.lookup(AbstractExcelImporter.class);
 	
 	/**
-	 * <poi CellStyle index, {@link SCellStyle} object> Keep track of imported
-	 * style during importing to avoid creating duplicated style objects.
+	 * Keep track of imported style during importing to avoid creating duplicated style objects.
 	 */
-	protected Map<CellStyle, SCellStyle> importedStyle = new HashMap<CellStyle, SCellStyle>(); 	//ZSS-685
+	protected StyleCache importedStyle = new StyleCache();
 	/** <poi Font index, {@link SFont} object> **/
 	protected Map<Short, SFont> importedFont = new HashMap<Short, SFont>();
 	/** target book model */
@@ -568,7 +567,7 @@ abstract public class AbstractExcelImporter extends AbstractImporter implements 
 	}
 	protected SCellStyle importCellStyle(CellStyle poiCellStyle, boolean inStyleTable) {
 		SCellStyle cellStyle = null;
-//		short idx = poiCellStyle.getIndex(); // ZSS-685
+
 		if ((cellStyle = importedStyle.get(poiCellStyle)) == null) { // ZSS-685
 			cellStyle = book.createCellStyle(inStyleTable);
 			importedStyle.put(poiCellStyle, cellStyle); // ZSS-685
@@ -830,5 +829,46 @@ abstract public class AbstractExcelImporter extends AbstractImporter implements 
 	//ZSS-992
 	protected void importTableStyles() {
 		// do nothing; ExcelXlsxImporter should override it
+	}
+
+	/**
+	 * The 2-key cache of the mapping between imported {@link CellStyle} and {@link SCellStyle} to avoid the cost of creating redundant {@link SCellStyle} (consume memory) and comparing the same {@link CellStyle} (equals() costs high). <br/>
+	 * There are 2 keys for each {@link SCellStyle}:
+	 * <ol>
+	 * <li>{@link CellStyle}'s index </li>
+	 * <li>{@link CellStyle} object</li>
+	 * </ol>
+	 *
+	 * The algorithm is: <br/>
+	 * <ol>
+	 * <li>Get {@link SCellStyle} by {@link CellStyle}'s index first, if it exists, just return. So that we can avoid calling {@link CellStyle#equals(Object)} which is high cost.</li>
+	 * <li>If nothing found in the previous step, get by key {@link CellStyle}, if it exists, just return. So that we can avoid creating redundant {@link SCellStyle}</li>. Because 2 styles with different indexes can have identical content (ZSS-685). <br/>
+	 * <li>If we can't find {@link SCellStyle} in the cache, we store the created {@link SCellStyle} with 2 keys above.</li>
+	 * </ol>
+	 */
+	class StyleCache {
+		protected Map<Integer, SCellStyle> importedStyleIndex = new HashMap<Integer, SCellStyle>();
+		protected Map<CellStyle, SCellStyle> importedStyle = new HashMap<CellStyle, SCellStyle>(); 	//ZSS-685
+
+		public void put(CellStyle poiCellStyle, SCellStyle zssCellStyle){
+			importedStyleIndex.put(poiCellStyle.getIndex(), zssCellStyle);
+			importedStyle.put(poiCellStyle, zssCellStyle);
+		}
+
+		public SCellStyle get(CellStyle poiCellStyle){
+			SCellStyle zssCellStyle = null;
+			if ( (zssCellStyle = importedStyleIndex.get(poiCellStyle.getIndex())) != null ){
+				return zssCellStyle;
+			}
+			if ( (zssCellStyle = importedStyle.get(poiCellStyle)) != null ){
+				return zssCellStyle;
+			}
+			return null;
+		}
+
+		public void clear(){
+			importedStyle.clear();
+			importedStyleIndex.clear();
+		}
 	}
 }
