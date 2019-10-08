@@ -38,5 +38,12 @@ export class AutoFilter{
     async getBackgroundColorCount(){
         await this.selectColorFilter();
         return this.spreadsheetSelector.find('.zsafp-fcitem').count; 
+    }
+    
+    async selectNumberFilter(){
+        await t.click(this.spreadsheetSelector.find('.zsafp-value'));
+    }  
+    async selectNumberFilterEquals(){
+        await t.click(this.spreadsheetSelector.find('.zsafp-valuedlg .zsafp-vitem').nth(0));
     }  
 }
