@@ -593,8 +593,7 @@ import org.zkoss.zss.range.impl.LessThanOrEqual;
 		
 		LinkedHashMap<Integer, Boolean> affectedRows = new LinkedHashMap<Integer, Boolean>(); 
 		for (int r = row; r <= row2; ++r) {
-			final SCell cell = sheet.getCell(r, col);
-			if (!match.match(cell.isNull() ? null : cell)) { //to be hidden
+			if (!match.match(sheet.getCell(r, col))) { //to be hidden
 				final SRow rowobj = sheet.getRow(r);
 				if (!rowobj.isHidden()) { //a non-hidden row
 					affectedRows.put(r, true);
