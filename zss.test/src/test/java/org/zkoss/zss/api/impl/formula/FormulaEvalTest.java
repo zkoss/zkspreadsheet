@@ -11,8 +11,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
  */
 package org.zkoss.zss.api.impl.formula;
 
-import java.io.Closeable;
-import java.io.InputStream;
+import java.io.*;
 import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.Set;
@@ -1048,6 +1047,16 @@ public class FormulaEvalTest {
 		testFormulaExtendPtgs("SUM(I5:G3)", sheetA, "G1:L1", null, false, "SUM(G4:I6)", engine);
 		testFormulaExtendPtgs("SUM(G5:I3)", sheetA, "G1:L1", null, false, "SUM(G4:I6)", engine);
 		testFormulaExtendPtgs("SUM(I3:G5)", sheetA, "G1:L1", null, false, "SUM(G4:I6)", engine);
+	}
+
+	//zss-1411
+	@Test
+	public void testRowInsertion(){
+		FormulaEngine engine = EngineFactory.getInstance().createFormulaEngine();
+		SBook book1 = SBooks.createBook("Book1");
+		SSheet sheet1 = book1.createSheet("Sheet1");
+		String formula = "SUM(A:B)";
+		testFormulaExtendPtgs(formula, sheet1, "2:2", null, false, formula, engine);
 	}
 	
 	//ZSS-747
