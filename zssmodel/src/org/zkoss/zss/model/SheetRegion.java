@@ -18,6 +18,7 @@ package org.zkoss.zss.model;
 
 import java.io.Serializable;
 
+import org.zkoss.poi.ss.SpreadsheetVersion;
 import org.zkoss.poi.ss.util.AreaReference;
 import org.zkoss.poi.ss.util.CellReference;
 /**
@@ -44,7 +45,7 @@ public class SheetRegion implements Serializable{
 	public SheetRegion(SSheet sheet,String areaReference){
 		
 		//regard to testcase 439, now range should support "1:2" -> means row 1 to 2 
-		AreaReference ref = new AreaReference(areaReference,sheet.getBook().getMaxRowIndex());
+		AreaReference ref = new AreaReference(areaReference, SpreadsheetVersion.EXCEL2007);
 		int row = ref.getFirstCell().getRow();
 		int column = ref.getFirstCell().getCol();
 		int lastRow = ref.getLastCell().getRow();
