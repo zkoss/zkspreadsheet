@@ -46,14 +46,23 @@ import org.zkoss.zss.range.impl.imexp.ExcelImportFactory;
 public class FormulaEvalTest {
 
 	private SImporter importer;
+	private static FormulaEngine formulaEngine;
+	//default object
+	private SBook book1;
+	private SSheet sheet1;
+
+
 	@BeforeClass
 	static public void beforeClass() {
 		Setup.touch();
+		formulaEngine = EngineFactory.getInstance().createFormulaEngine();
 	}
 	@Before
 	public void beforeTest() {
 		importer= new ExcelImportFactory().createImporter();
 		Locales.setThreadLocal(Locale.TAIWAN);
+		this.book1 = SBooks.createBook("Book1");
+		this.sheet1 = book1.createSheet("Sheet1");
 	}
 
 	@Test
@@ -714,8 +723,8 @@ public class FormulaEvalTest {
 		testFormulaMove(engine, sheetA, f, new SheetRegion(book2SheetA, "A1:A3"), 2, 0,
 				"SUM(A1:A3)+SUM(SheetA!A1:A3)+SUM([Book2]SheetA!A3:A5)+SUM([Book2]SheetB!A1:A3)"); // shift in external book
 
-		// absolute formula only effect copy and auto-fill operation
-		// move, insert and delete operations still effect absolute formulas  
+		// absolute formula doesn't change copy and auto-fill operation
+		// move, insert and delete operations still affect absolute formulas
 		f = "SUM($C3:$E5)+SUM(C$3:E$5)+SUM($C$3:$E$5)";
 		testFormulaMove(engine, sheetA, f, new SheetRegion(sheetA, "C3:E5"), 2, 2,
 				"SUM($E5:$G7)+SUM(E$5:G$7)+SUM($E$5:$G$7)");
@@ -898,6 +907,10 @@ public class FormulaEvalTest {
 		testFormulaShrink("SUM(G3:I5)", sheetA, "G1:L1", null, false, "SUM(G2:I4)", engine);
 	}
 
+	/**
+	 * verify cells deletion
+	 * @param regionSheet null means the same as formulaSheet
+	 */
 	private void testFormulaShrink(String formula, SSheet formulaSheet, String region, SSheet regionSheet, boolean hrizontal, String expected, FormulaEngine engine) {
 		if(regionSheet == null) {
 			regionSheet = formulaSheet;
@@ -1049,17 +1062,104 @@ public class FormulaEvalTest {
 		testFormulaExtendPtgs("SUM(I3:G5)", sheetA, "G1:L1", null, false, "SUM(G4:I6)", engine);
 	}
 
+	static final String ROW_1 = "1:1";
+	static final String ROW_5 = "5:5";
+	static final String COL_A = "A:A";
+	static final String COL_E = "E:E";
+	static final String D2_E3 = "D2:E3"; // 2x2 cells, for horizontal and vertical
 	//zss-1411
 	@Test
-	public void testRowInsertion(){
-		FormulaEngine engine = EngineFactory.getInstance().createFormulaEngine();
-		SBook book1 = SBooks.createBook("Book1");
-		SSheet sheet1 = book1.createSheet("Sheet1");
-		String formula = "SUM(A:B)";
-		testFormulaExtendPtgs(formula, sheet1, "2:2", null, false, formula, engine);
+	public void testWholeColumnFormulaInsertionDeletion(){
+		final String WHOLE_COLUMN_FORMULA = "SUM(D:F)"; //some columns in the middle, no at the edge
+
+		testFormulaExtendPtgs(WHOLE_COLUMN_FORMULA, sheet1, ROW_5, null, false, WHOLE_COLUMN_FORMULA, formulaEngine);
+		testFormulaShrink(WHOLE_COLUMN_FORMULA, sheet1, ROW_5, null, false, WHOLE_COLUMN_FORMULA, formulaEngine);
+
+		testFormulaExtendPtgs(WHOLE_COLUMN_FORMULA, sheet1, COL_E, null, true, "SUM(D:G)", formulaEngine);
+		testFormulaShrink(WHOLE_COLUMN_FORMULA, sheet1, COL_E, null, true, "SUM(D:E)", formulaEngine);
+
+		//expect to shift right
+		testFormulaExtendPtgs(WHOLE_COLUMN_FORMULA, sheet1, COL_A, null, true, "SUM(E:G)", formulaEngine);
+		//expect to shift left
+		testFormulaShrink(WHOLE_COLUMN_FORMULA, sheet1, COL_A, null, true, "SUM(C:E)", formulaEngine);
+
+		testFormulaExtendPtgs(WHOLE_COLUMN_FORMULA, sheet1, D2_E3, null, false, WHOLE_COLUMN_FORMULA, formulaEngine);
+		testFormulaShrink(WHOLE_COLUMN_FORMULA, sheet1, D2_E3, null, false, WHOLE_COLUMN_FORMULA, formulaEngine);
+
+		testFormulaExtendPtgs(WHOLE_COLUMN_FORMULA, sheet1, D2_E3, null, true, WHOLE_COLUMN_FORMULA, formulaEngine);
+		testFormulaShrink(WHOLE_COLUMN_FORMULA, sheet1, D2_E3, null, true, WHOLE_COLUMN_FORMULA, formulaEngine);
+
+		final String ABS_WHOLE_COLUMN_FORMULA = "SUM($D:$F)"; //some columns in the middle, no at the edge
+		testFormulaExtendPtgs(ABS_WHOLE_COLUMN_FORMULA, sheet1, COL_E, null, true, "SUM($D:$G)", formulaEngine);
+		testFormulaShrink(ABS_WHOLE_COLUMN_FORMULA, sheet1, COL_E, null, true, "SUM($D:$E)", formulaEngine);
+
+		testFormulaExtendPtgs(ABS_WHOLE_COLUMN_FORMULA, sheet1, COL_A, null, true, "SUM($E:$G)", formulaEngine);
+		//expect to shift left
+		testFormulaShrink(ABS_WHOLE_COLUMN_FORMULA, sheet1, COL_A, null, true, "SUM($C:$E)", formulaEngine);
+
+		final String SHEET_WHOLE_COLUMN_3D_FORMULA = "SUM(Sheet1!D:F)";
+		testFormulaExtendPtgs(SHEET_WHOLE_COLUMN_3D_FORMULA, sheet1, COL_E, null, true, "SUM(Sheet1!D:G)", formulaEngine);
+		testFormulaShrink(SHEET_WHOLE_COLUMN_3D_FORMULA, sheet1, COL_E, null, true, "SUM(Sheet1!D:E)", formulaEngine);
+
+		//expect to shift right
+		testFormulaExtendPtgs(SHEET_WHOLE_COLUMN_3D_FORMULA, sheet1, COL_A, null, true, "SUM(Sheet1!E:G)", formulaEngine);
+		//expect to shift left
+		testFormulaShrink(SHEET_WHOLE_COLUMN_3D_FORMULA, sheet1, COL_A, null, true, "SUM(Sheet1!C:E)", formulaEngine);
+
+		final String WHOLE_COLUMN_3D_FORMULA = "SUM(Sheet1:Sheet2!D:F)";
+		testFormulaExtendPtgs(WHOLE_COLUMN_3D_FORMULA, sheet1, COL_A, null, true, WHOLE_COLUMN_3D_FORMULA, formulaEngine);
+		testFormulaShrink(WHOLE_COLUMN_3D_FORMULA, sheet1, COL_A, null, true, WHOLE_COLUMN_3D_FORMULA, formulaEngine);
+
 	}
-	
-	//ZSS-747
+
+	//zss-1411
+	@Test
+	public void testWholeRowFormulaInsertionDeletion() {
+		final String WHOLE_ROW_FORMULA = "SUM(4:6)";
+
+		testFormulaExtendPtgs(WHOLE_ROW_FORMULA, sheet1, ROW_5, null, false, "SUM(4:7)", formulaEngine);
+		testFormulaShrink(WHOLE_ROW_FORMULA, sheet1, ROW_5, null, false, "SUM(4:5)", formulaEngine);
+
+		//expect to shift down
+		testFormulaExtendPtgs(WHOLE_ROW_FORMULA, sheet1, ROW_1, null, false, "SUM(5:7)", formulaEngine);
+		//expect to shift up
+		testFormulaShrink(WHOLE_ROW_FORMULA, sheet1, ROW_1, null, false, "SUM(3:5)", formulaEngine);
+
+		testFormulaExtendPtgs(WHOLE_ROW_FORMULA, sheet1, COL_E, null, true, WHOLE_ROW_FORMULA, formulaEngine);
+		testFormulaShrink(WHOLE_ROW_FORMULA, sheet1, COL_E, null, true, WHOLE_ROW_FORMULA, formulaEngine);
+
+		testFormulaExtendPtgs(WHOLE_ROW_FORMULA, sheet1, D2_E3, null, false, WHOLE_ROW_FORMULA, formulaEngine);
+		testFormulaShrink(WHOLE_ROW_FORMULA, sheet1, D2_E3, null, false, WHOLE_ROW_FORMULA, formulaEngine);
+
+		testFormulaExtendPtgs(WHOLE_ROW_FORMULA, sheet1, D2_E3, null, true, WHOLE_ROW_FORMULA, formulaEngine);
+		testFormulaShrink(WHOLE_ROW_FORMULA, sheet1, D2_E3, null, true, WHOLE_ROW_FORMULA, formulaEngine);
+
+		final String ABS_WHOLE_ROW_FORMULA = "SUM($4:$6)";
+		testFormulaExtendPtgs(ABS_WHOLE_ROW_FORMULA, sheet1, ROW_5, null, false, "SUM($4:$7)", formulaEngine);
+		testFormulaShrink(ABS_WHOLE_ROW_FORMULA, sheet1, ROW_5, null, false, "SUM($4:$5)", formulaEngine);
+
+		testFormulaExtendPtgs(ABS_WHOLE_ROW_FORMULA, sheet1, ROW_1, null, false, "SUM($5:$7)", formulaEngine);
+		testFormulaShrink(ABS_WHOLE_ROW_FORMULA, sheet1, ROW_1, null, false, "SUM($3:$5)", formulaEngine);
+	}
+
+	@Test
+	public void testWholeColumnFormulaMove() {
+		final String WHOLE_COLUMN_FORMULA = "SUM(D:F)"; //some columns in the middle, no at the edge
+		testFormulaMove(formulaEngine, sheet1, WHOLE_COLUMN_FORMULA, new SheetRegion(sheet1, "A1"), 2, 2, WHOLE_COLUMN_FORMULA);
+	}
+
+	@Test
+	public void testWholeRowFormulaMove() {
+		final String WHOLE_ROW_FORMULA = "SUM(D:F)"; //some columns in the middle, no at the edge
+		testFormulaMove(formulaEngine, sheet1, WHOLE_ROW_FORMULA, new SheetRegion(sheet1, "A1"), 2, 2, WHOLE_ROW_FORMULA);
+
+	}
+
+	/**
+	 * ZSS-747. verify cells insertion
+	 *
+	 * @param regionSheet null means the same as formulaSheet
+	 */
 	private void testFormulaExtendPtgs(String formula, SSheet formulaSheet, String region, SSheet regionSheet, boolean hrizontal, String expected, FormulaEngine engine) {
 		if(regionSheet == null) {
 			regionSheet = formulaSheet;
