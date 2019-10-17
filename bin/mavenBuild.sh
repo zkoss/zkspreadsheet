@@ -35,6 +35,8 @@ function buildBundleInstall(){
 
 # build a maven bundle file
 function buildBundle(){
+    # -B,--batch-mode	Run in non-interactive (batch) mode
+    # -f,--file <arg>	Force the use of an alternate POM file (or directory with pom.xml).
     mvn -B -f $1 versions:set -DremoveSnapshot #remove '-SNAPSHOT' from project version
     if [[ $edition = "official" ]]
     then

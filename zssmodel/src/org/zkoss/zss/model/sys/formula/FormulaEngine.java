@@ -106,7 +106,7 @@ public interface FormulaEngine {
 	
 	//ZSS-747
 	/**
-	 * Shift the formula that care on sheet and region.
+	 * Shift the formula that care on sheet and region for cells insertion, deletion, and paste
 	 * @param formula
 	 * @param srcRegion
 	 * @param rowOffset
@@ -120,7 +120,7 @@ public interface FormulaEngine {
 	
 	//ZSS-747
 	/**
-	 * 
+	 * modify {@link FormulaExpression} for cells deletion
 	 * @param fexpr
 	 * @param srcRegion
 	 * @param hrizontal
@@ -133,7 +133,7 @@ public interface FormulaEngine {
 	
 	//ZSS-747
 	/**
-	 * 
+	 * modify {@link FormulaExpression} for cells insertion
 	 * @param fexpr
 	 * @param srcRegion
 	 * @param hrizontal

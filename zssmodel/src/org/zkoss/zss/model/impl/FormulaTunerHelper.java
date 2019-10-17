@@ -462,7 +462,13 @@ import org.zkoss.zss.model.sys.formula.FormulaParseContext;
 		}
 		return engine;
 	}
-	
+
+	/**
+	 *
+	 * @param sheetRegion
+	 * @param dependents
+	 * @param horizontal cell shift direction
+	 */
 	public void extend(SheetRegion sheetRegion,Set<Ref> dependents, boolean horizontal) {
 		//because of the chart shifting is for all chart, but the input dependent is on series,
 		//so we need to collect the dependent for only shift chart once
