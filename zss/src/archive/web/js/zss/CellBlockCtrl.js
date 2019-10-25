@@ -85,6 +85,7 @@ zss.CellBlockCtrl = zk.$extends(zk.Widget, {
 		//ZSS-1117
 		this._setTempMergeCells();
 		delete this._newrange;
+		this.sheet.addSSInitLater(this.sheet.batchShiftAlignedText.bind(this.sheet));
 	},
 	unbind_: function () {
 		this.$supers(zss.CellBlockCtrl, 'unbind_', arguments);
@@ -314,6 +315,7 @@ zss.CellBlockCtrl = zk.$extends(zk.Widget, {
 			delete sheet._cah;
 		}
 		delete this._finalNewrange;	// ZSS-1332	
+		this.sheet.addSSInitLater(this.sheet.batchShiftAlignedText.bind(this.sheet));
 	},
 	/**
 	 * Sets rows's width position index

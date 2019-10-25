@@ -864,6 +864,8 @@ zss.Cell = zk.$extends(zk.Widget, {
                     }
                 });
             }
+           jq(this).trigger('waitAlign', [this]);
+
         }
 
 		//ZSS-944
@@ -914,27 +916,24 @@ zss.Cell = zk.$extends(zk.Widget, {
 		if (this.halign == 'l'){ //left
             $textNode.removeClass(ALIGNMENT_SHIFT);
         }else{
-            this.computeTextWidth();
-			var cellInnerWidth = jq(this.$n()).width(); // without padding
-			if (this._txtwd > cellInnerWidth){
+			if (this._txtwd > this.cellInnerWidth){
 				$textNode.addClass(ALIGNMENT_SHIFT);
 				//need to set inline style for every edit, will be reset by update_()
                 if (this.halign == 'r'){
-				    $textNode.css('left', jq.px(cellInnerWidth - this._txtwd));
+				    $textNode.css('left', jq.px(this.cellInnerWidth - this._txtwd));
                 }else if (this.halign == 'c'){
-				    $textNode.css('left', jq.px(Math.round((cellInnerWidth - this._txtwd)/2)));
+				    $textNode.css('left', jq.px(Math.round((this.cellInnerWidth - this._txtwd)/2)));
 			    }
             }
         }
     },
-    /** compute the current text width in pixel and store the result since it costs heavily.
+    /** compute the current text width and cell inner width in pixel and store the result since it costs heavily.
     */
     computeTextWidth: function(){
-        var noTextWidth = (this._txtwd == undefined || this._txtwd < 0);  //ZSS-1171
-        var currentWidth = noTextWidth ? this.getTextNode().scrollWidth : this._txtwd;
-        var textWidth = zk.ie9_ ? currentWidth : jq(this.$n('cave')).width();
-        this._txtwd = textWidth;
-        return textWidth;
+        if (this._txtwd == null || this.cellInnerWidth == null){
+            this._txtwd =  zk.ie9_ ? this.getTextNode().scrollWidth : jq(this.$n('cave')).width();
+            this.cellInnerWidth = jq(this.$n()).width();
+        }
     },
 	//ZSS-944
 	/**
@@ -982,9 +981,6 @@ zss.Cell = zk.$extends(zk.Widget, {
         if (this.overflow && !skipOverflowOnBinding) {
             this._processOverflow(); // heavy duty
         }
-        //ZSS-1364, right alignment requires the actual cell width after applying a sheet CSS
-        //ZSS-1388
-        this.shiftAlignedText();
 	},
 	//super//
 	getZclass: function () {

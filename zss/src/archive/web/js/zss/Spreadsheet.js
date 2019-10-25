@@ -285,6 +285,7 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 			} else {
 				sheet.addSSInitLater(doBlockUpdate, this, json, token);
 			}
+			this.sheetCtrl.batchShiftAlignedText();
 		},
 		dataBlockUpdateJump: _dataUpdate,
 		dataBlockUpdateEast: _dataUpdate,
@@ -308,6 +309,7 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 			} else {
 				sheet.addSSInitLater(doUpdate, this, shtId, data, token);
 			}
+			this.sheetCtrl.batchShiftAlignedText();
 		},
 		dataUpdateStart: _updateCell,
 		dataUpdateCancel: _updateCell,
