@@ -530,10 +530,7 @@
 
 .zscelltxt-real {
 	width: 100%;
-	<c:if test="${c:browser('ie7-') || c:browser('ie6-')}">
-		left: 0;
-		position: absolute;
-	</c:if>
+	position: inherit;
 }
 
 /* ZSS-918: vertical text */

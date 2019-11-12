@@ -909,20 +909,20 @@ zss.Cell = zk.$extends(zk.Widget, {
         if (!(this.overflow || this.isMerged())){ //ignore some irrelevant cells to avoid width calculation cost
             return;
         }
-        var ALIGNMENT_SHIFT = "zscell-alignment-shifted"; //ie9 doesn't support const
-		var $textNode = jq(this.getTextNode());
-		if (this.halign == 'l'){ //left
-            $textNode.removeClass(ALIGNMENT_SHIFT);
-        }else{
+        var ALIGNMENT_SHIFT = "zscell-alignment-shifted";
+		var $cave = jq(this.$n('cave'));
+		if (this.halign == 'l'){
+            $cave.remove(ALIGNMENT_SHIFT);
+        }else{ //right or center
+		    $cave.addClass(ALIGNMENT_SHIFT);
             this.computeTextWidth();
-			var cellInnerWidth = jq(this.$n()).width(); // without padding
+			var cellInnerWidth = jq(this.$n()).width(); // without cell padding
 			if (this._txtwd > cellInnerWidth){
-				$textNode.addClass(ALIGNMENT_SHIFT);
-				//need to set inline style for every edit, will be reset by update_()
+				//need to set inline style for every edit, will be reset by this.update_()
                 if (this.halign == 'r'){
-				    $textNode.css('left', jq.px(cellInnerWidth - this._txtwd));
+				    $cave.css('left', jq.px(cellInnerWidth - this._txtwd));
                 }else if (this.halign == 'c'){
-				    $textNode.css('left', jq.px(Math.round((cellInnerWidth - this._txtwd)/2)));
+				    $cave.css('left', jq.px(Math.round((cellInnerWidth - this._txtwd)/2)));
 			    }
             }
         }
