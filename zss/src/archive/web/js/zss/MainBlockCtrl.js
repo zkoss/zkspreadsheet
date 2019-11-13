@@ -153,6 +153,7 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 			}
 			break;
 		}
+		this.sheet.batchShiftAlignedText();
 		if (cache) {
 			this.sheet.dp._fixSize(this);
 			this._recheckVisible(); //will sendSyncblock 

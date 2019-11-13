@@ -187,6 +187,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 	editingFormulaInfo: null,
 	// ZSS-514: change default line hight to normal
 	lineHeight: 'normal', 
+	cellQueue: [], //those cells wait for text shift
 	$init: function (wgt) {
 		this.$supers(zss.SSheetCtrl, '$init', []);
 		this._wgt = wgt; //Spreadsheet
@@ -325,6 +326,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		} else {
 			this._resize();
 		}
+        this.addSSInitLater(this.batchShiftAlignedText.bind(this));
 		doAfterCSSReady(this);
 	},
 	//ZSS-1087: restore panel postion 
@@ -455,6 +457,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			return this.$supers(zss.SSheetCtrl, 'isWatchable_', arguments);
 	},
 	bind_: function (desktop, skipper, after) {
+        this.listenWaitAlign();
 		this.$supers(zss.SSheetCtrl, 'bind_', arguments);
 		//ZSS 125: already process wrap on row.bind_
 		delete this._wrapRange;
@@ -464,6 +467,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		
 		var n = this.comp = this.$n();
 		n.ctrl = this;
+        this.addSSInitLater(this.batchShiftAlignedText.bind(this));
 	},
 	unbind_: function () { 
 		this.unlisten({onContentsChanged: this, onRowHeightChanged: this});
@@ -496,6 +500,28 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		this._lastmdelm = this._lastmdstr = null;
 		
 		this.$supers(zss.SSheetCtrl, 'unbind_', arguments);
+	},
+	listenWaitAlign: function(){
+	    var ssheetCtrl = this;
+		jq(this).on('waitAlign', function(event, cell){
+            ssheetCtrl.cellQueue.push(cell);
+            event.stopPropagation();
+		});
+	},
+	/** calculate text width in batch instead of in each cell to avoid reflow
+	 */
+	batchShiftAlignedText: function(){
+	    this.cellQueue.forEach(function(cell, index, array) {
+	        if (cell.$n() != null){
+                cell.computeTextWidth();
+	        }
+        });
+	    this.cellQueue.forEach(function(cell, index, array) {
+	        if (cell.$n() != null){
+                cell.shiftAlignedText();
+            }
+        });
+        this.cellQueue = [];
 	},
 	//ZSS-944
 	/**

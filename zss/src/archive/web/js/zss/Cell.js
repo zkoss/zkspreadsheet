@@ -130,6 +130,10 @@ zss.Cell = zk.$extends(zk.Widget, {
 	 * Default: false
 	 */
 	//_listenProcessOverflow: false,
+	/** visible overflow text width, an overflow text might be cut by an adjacent text, so its visible width might changes for edit. we cache it to avoid heavy cost width calculation. It should be cleared when a text width changes.
+	 * Instead, this._txtwd stores the full text width (not cut by an adjacent text)
+	 */
+	visibleTextWidth: null,
 	$init: function (sheet, block, row, col, src) {
 		this.$supers(zss.Cell, '$init', []);
 		
@@ -211,6 +215,7 @@ zss.Cell = zk.$extends(zk.Widget, {
 		
 		//ZSS-1171: CellImpl.java#_textWidth from cache to model
 		this._txtwd = cellData._txtwd;
+		this.visibleTextWidth = null;
 	},
 	//ZSS-1181
 	_updateCacheSrc: function (src) {
@@ -432,8 +437,11 @@ zss.Cell = zk.$extends(zk.Widget, {
 
 		//ZSS-944: invalidate the cached text width
 		//ZSS-1171: overflow might change
-		var overflowChd = txtChd || fontSizeChanged || orgFamily != real.style.fontFamily || indentionChd; 
-		if (overflowChd) delete this._txtwd;  
+		var overflowChd = txtChd || fontSizeChanged || orgFamily != real.style.fontFamily || indentionChd || halignChanged;
+		if (overflowChd) {
+		    delete this._txtwd;
+		    this.visibleTextWidth = null;
+		}
 
 		// ZSS-944
 		if (toRotate90) {
@@ -864,6 +872,8 @@ zss.Cell = zk.$extends(zk.Widget, {
                     }
                 });
             }
+           jq(this).trigger('waitAlign', [this]);
+
         }
 
 		//ZSS-944
@@ -899,7 +909,7 @@ zss.Cell = zk.$extends(zk.Widget, {
 		this.$supers(zss.Cell, 'unbind_', arguments);
 	},
     /** ZSS-1338
-    * Shift a cell text under right || center alignment under the following cases:
+    * Shift a cell text in right || center alignment under the following cases:
     * - an overflowed text
     * - a merged cell
     * Zss clears inline style after changing align or editing.
@@ -909,32 +919,26 @@ zss.Cell = zk.$extends(zk.Widget, {
         if (!(this.overflow || this.isMerged())){ //ignore some irrelevant cells to avoid width calculation cost
             return;
         }
-        var ALIGNMENT_SHIFT = "zscell-alignment-shifted";
-		var $cave = jq(this.$n('cave'));
-		if (this.halign == 'l'){
-            $cave.remove(ALIGNMENT_SHIFT);
-        }else{ //right or center
-		    $cave.addClass(ALIGNMENT_SHIFT);
+        if (this.halign == 'r' || this.halign == 'c'){
+            var $cave = jq(this.$n('cave'));
             this.computeTextWidth();
-			var cellInnerWidth = jq(this.$n()).width(); // without cell padding
-			if (this._txtwd > cellInnerWidth){
-				//need to set inline style for every edit, will be reset by this.update_()
+            if (this.visibleTextWidth > this.cellInnerWidth){
+                //need to set inline style for every edit, will be reset by this.update_()
                 if (this.halign == 'r'){
-				    $cave.css('left', jq.px(cellInnerWidth - this._txtwd));
+                    $cave.css('left', jq.px(this.cellInnerWidth - this.visibleTextWidth));
                 }else if (this.halign == 'c'){
-				    $cave.css('left', jq.px(Math.round((cellInnerWidth - this._txtwd)/2)));
-			    }
+                    $cave.css('left', jq.px(Math.round((this.cellInnerWidth - this.visibleTextWidth)/2)));
+                }
             }
         }
     },
-    /** compute the current text width in pixel and store the result since it costs heavily.
+    /** compute the current text width and cell inner width in pixel and store the result since it costs heavily.
     */
     computeTextWidth: function(){
-        var noTextWidth = (this._txtwd == undefined || this._txtwd < 0);  //ZSS-1171
-        var currentWidth = noTextWidth ? this.getTextNode().scrollWidth : this._txtwd;
-        var textWidth = zk.ie9_ ? currentWidth : jq(this.$n('cave')).width();
-        this._txtwd = textWidth;
-        return textWidth;
+        if (this.visibleTextWidth == null || this.cellInnerWidth == null){
+            this.visibleTextWidth =  zk.ie9_ ? this.getTextNode().scrollWidth : jq(this.$n('cave')).width();
+            this.cellInnerWidth = jq(this.$n()).width(); //cell width without padding and border
+        }
     },
 	//ZSS-944
 	/**
@@ -982,9 +986,6 @@ zss.Cell = zk.$extends(zk.Widget, {
         if (this.overflow && !skipOverflowOnBinding) {
             this._processOverflow(); // heavy duty
         }
-        //ZSS-1364, right alignment requires the actual cell width after applying a sheet CSS
-        //ZSS-1388
-        this.shiftAlignedText();
 	},
 	//super//
 	getZclass: function () {
