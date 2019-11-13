@@ -647,6 +647,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			this.deferFireCellSelection(r.lCol, r.tRow, r.rCol, r.bRow);
 			this._selectionRange = null;
 		}
+		this.batchShiftAlignedText();
 	},
 	onRowHeightChanged: function () {
 		var h = this.hlArea;
