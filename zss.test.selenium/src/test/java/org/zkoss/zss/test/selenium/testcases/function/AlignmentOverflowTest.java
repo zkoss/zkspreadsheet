@@ -70,19 +70,33 @@ public class AlignmentOverflowTest extends ZSSTestCase {
         basename();
         SpreadsheetWidget ss = focusSheet();
         SheetCtrlWidget sheetCtrl = ss.getSheetCtrl();
-        click(sheetCtrl.getCell("D9"));
         doubleClick(sheetCtrl.getCell("D9"));
         waitForTime(Setup.getTimeoutL0());
         EditorWidget editor = sheetCtrl.getInlineEditor();
-        sendKeys(editor, "cut");
-        click(sheetCtrl.getCell("A1"));
+        type(editor, "cut");
         captureOrAssert("partial1");
-        click(sheetCtrl.getCell("E9"));
         doubleClick(sheetCtrl.getCell("E9"));
-        sendKeys(editor, "cut");
-        click(sheetCtrl.getCell("A1"));
+        type(editor, "cut");
         waitForTime(Setup.getTimeoutL0());
         captureOrAssert("partial2");
+    }
+
+
+    @Test
+    public void testCutOverflowLeftAlignment() throws Exception {
+        getTo(OVERFLOW_RIGHT_ALIGN_ZUL);
+        basename();
+        SpreadsheetWidget ss = focusSheet();
+        SheetCtrlWidget sheetCtrl = ss.getSheetCtrl();
+        CellWidget e1 = sheetCtrl.getCell("E1");
+        doubleClick(e1);
+        waitForTime(Setup.getTimeoutL0());
+        EditorWidget editor = sheetCtrl.getInlineEditor();
+        type(editor, "cut");
+        captureOrAssert("cutLeft1");
+        click(e1);
+        delete(editor);
+        captureOrAssert("cutLeft2");
     }
 
     @Test

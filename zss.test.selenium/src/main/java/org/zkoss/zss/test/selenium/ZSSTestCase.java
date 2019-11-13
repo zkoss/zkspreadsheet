@@ -2,7 +2,7 @@ package org.zkoss.zss.test.selenium;
 
 import static org.junit.Assert.assertTrue;
 
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.zkoss.zss.test.selenium.entity.ClientWidget;
@@ -41,7 +41,17 @@ public class ZSSTestCase extends ZKClientTestCase {
 		element.sendKeys(keyCode);
 		waitForTrip(lt, 1, Setup.getAuDelay());
 	}
-	
+
+	public void type(ClientWidget editor, String keyCode) {
+		WebElement element = editor.toWebElement();
+		sendKeys(editor, keyCode);
+		element.sendKeys(Keys.ENTER);
+	}
+
+	public void delete(ClientWidget editor){
+		editor.toWebElement().sendKeys(Keys.DELETE);
+	}
+
 	public void rightClick(WebElement element) {
 		Actions action= new Actions(driver());
 		action.contextClick(element).perform();
