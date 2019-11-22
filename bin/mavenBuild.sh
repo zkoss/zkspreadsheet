@@ -37,7 +37,10 @@ function buildBundleInstall(){
 function buildBundle(){
     # -B,--batch-mode	Run in non-interactive (batch) mode
     # -f,--file <arg>	Force the use of an alternate POM file (or directory with pom.xml).
-    mvn -B -f $1 versions:set -DremoveSnapshot #remove '-SNAPSHOT' from project version
+    if [[ "freshly" = $edition ]]
+    then # assume official and eval version has no '-SNAPSHOT' appended
+        mvn -B -f $1 versions:set -DremoveSnapshot #remove '-SNAPSHOT' from project version
+    fi
     if [[ $edition = "official" ]]
     then
         mvn -B -f $1 -P $edition ${bundleGoals}
