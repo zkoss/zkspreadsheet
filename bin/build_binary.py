@@ -10,10 +10,10 @@ PROFILE_EE = '-P ee'
 PROFILE_EVAL = '-P eval'
 PROFILE_OSE = '-P ose'
 POM = 'pom.xml'
-VERSION = '3.9.5'
+version = read_pom_version.findProjectVersion(POM)
 
 def create_ee_zip():
-    read_pom_version.modifyVersion(POM, VERSION)
+    read_pom_version.modifyVersion(POM, version)
     subprocess.check_call([MVN, PROFILE_EE, PHASE])
 
 
@@ -21,7 +21,7 @@ def create_ose_zip():
     subprocess.check_call([MVN, PROFILE_OSE, PHASE])
 
 def create_ee_eval_zip():
-    read_pom_version.modifyVersion(POM, VERSION+"-Eval")
+    read_pom_version.modifyVersion(POM, version + "-Eval")
     subprocess.check_call([MVN, PROFILE_EVAL, PHASE])
 
 
