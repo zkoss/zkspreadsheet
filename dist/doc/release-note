@@ -1,6 +1,27 @@
+ZK Spreadsheet 3.9.6
+
+*Bugs:
+[ZSS-1390] - render merged and hidden cells as un-merged cells
+[ZSS-1394] - quickly switching sheets causes a javacript error
+[ZSS-1395] - when moving a cursor, zss sometimes throws a javascript error
+[ZSS-1396] - zss throws a javascript error when quickly switching sheets
+[ZSS-1397] - when switching sheets quickly, zss sometimes throws a javascript error
+[ZSS-1399] - quickly switching sheets cause a javascript error "Cannot read property 'text' of undefined"
+[ZSS-1400] - color filter causes null pointer exception
+[ZSS-1401] - open a number filter causes a null pointer exception
+[ZSS-1402] - default column width changes after exporting
+[ZSS-1405] - many text cells with right alignment consume much client rendering time
+[ZSS-1406] - importing a file with 350 thousands cells takes a long time
+[ZSS-1411] - insert a row turns a whole column address into a absolute address
+[ZSS-1414] - a text in right alignment overflows at wrong position when being cut
+
+*New Feature
+[ZSS-1393] - users can override ZK dependencies without excluding jar
+
+
 ZK Spreadsheet 3.9.5
 
-Bug:
+*Bugs:
 [ZSS-1350] - When Spreadsheet gets the focus, it scroll the whole page up
 [ZSS-1366] - clicking a cell causes a dragging selection
 [ZSS-1380] - ZSS doesn't clear the highlight when pasting range overlaps the source range
