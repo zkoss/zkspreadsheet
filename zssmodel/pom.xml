@@ -6,7 +6,7 @@
 	<artifactId>zssmodel</artifactId>
 	<properties>
 		<zpoi.version>3.9.17</zpoi.version>
-		<zk.version>8.0.5</zk.version>
+		<zk.version>8.6.4.2-Eval</zk.version>
 		<jsoup.version>1.7.3</jsoup.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>1.6</maven.compiler.source>
