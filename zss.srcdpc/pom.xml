@@ -9,7 +9,7 @@
 	<name>srcdpc</name>
 	<url>http://maven.apache.org</url>
 	<properties>
-		<zk.version>8.0.1.1-Eval</zk.version>
+		<zk.version>9.6.0.2</zk.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 	<repositories>
