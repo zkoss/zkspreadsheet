@@ -7,7 +7,7 @@
 	<properties>
 		<zpoi.version>3.9.17</zpoi.version>
 		<zk.version>8.0.5</zk.version>
-		<jsoup.version>1.7.3</jsoup.version>
+		<jsoup.version>1.15.3</jsoup.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>1.6</maven.compiler.source>
 		<maven.compiler.target>1.6</maven.compiler.target>
